@@ -38,6 +38,13 @@
   `FUN_0001084a` at `0x1084a` installs the demo's 18 cursor rows before script
   execution; ScummVM likewise omits retail-only managers whose resources are
   absent from the demo.
+- The demo opcode `0x17` handler at `0x13783` allocates the complete accumulated
+  choice model and creates one list chooser control with ID `0x4e2`. Unlike
+  retail `HandleSceneEntryChoiceListLifecycle` at `0x1523d`, it does not create
+  auxiliary scroll-arrow controls, and the demo `INTERFAC.PL` has no
+  `MNARROW0..3` members. ScummVM therefore gives the arrowless demo chooser a
+  four-row viewport in the available lower display band while retaining the
+  retail three-row viewport and arrow controls when those assets are present.
 - The demo also has a shorter opcode `0x1a` layout. Its handler at `0x13e46`
   forwards path, auxiliary text, Y, and X to `FUN_000142bb` at `0x142bb` and
   forces scene-relative presentation controls on. Retail

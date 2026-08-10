@@ -15,7 +15,8 @@
 
 namespace Ripper {
 
-static const uint kVisibleChoiceCount = 3;
+static const uint kRetailVisibleChoiceCount = 3;
+static const uint kArrowlessVisibleChoiceCount = 4;
 static const int kChoiceRowHeight = 13;
 static const int kChoiceTop = 344;
 static const int kChoiceHorizontalPadding = 5;
@@ -89,7 +90,7 @@ void DialogueChooser::draw(bool captureBacking) {
 	const uint renderedPixelCount = _chooserBounds.width() * _chooserBounds.height();
 	const bool rebuildVisual = _visualDirty || _renderedChoicePixels.size() != renderedPixelCount;
 	if (rebuildVisual) {
-		for (uint visibleRow = 0; visibleRow < kVisibleChoiceCount; ++visibleRow) {
+		for (uint visibleRow = 0; visibleRow < _chooser.visibleCount(); ++visibleRow) {
 			uint choiceIndex = 0;
 			const bool hasChoice = _chooser.resolveVisibleRow(visibleRow, choiceIndex);
 			const int row = _chooserBounds.top + visibleRow * kChoiceRowHeight;
@@ -142,7 +143,7 @@ void DialogueChooser::draw(bool captureBacking) {
 	}
 	g_system->unlockScreen();
 
-	if (_choices.size() > kVisibleChoiceCount) {
+	if (hasScrollArrows() && _choices.size() > _chooser.visibleCount()) {
 		drawBitmap(_arrowFrames[_hoveredArrow == 1 &&
 			_chooser.firstVisibleIndex() > 0 ? 1 : 0],
 			_upArrowBounds.left, _upArrowBounds.top);
@@ -224,7 +225,7 @@ bool DialogueChooser::activateChoices(const char *source) {
 	}
 	_pending = true;
 	_visualDirty = true;
-	_chooser.reset(_choices.size(), kVisibleChoiceCount);
+	_chooser.reset(_choices.size(), maximumVisibleChoiceCount());
 	_hoveredArrow = 0;
 	_backingBounds = Common::Rect();
 	_backingPixels.clear();
@@ -232,8 +233,9 @@ bool DialogueChooser::activateChoices(const char *source) {
 	updateLayout();
 	rebuildPresentationBands("chooser-activation");
 	debugC(1, kDebugDialogue,
-		"Ripper: activated shared dialogue chooser source=%s choices=%u bounds=%d,%d,%d,%d",
-		source, _choices.size(), _chooserBounds.left, _chooserBounds.top,
+		"Ripper: activated shared dialogue chooser source=%s choices=%u visibleRows=%u arrows=%d bounds=%d,%d,%d,%d",
+		source, _choices.size(), _chooser.visibleCount(), hasScrollArrows(),
+		_chooserBounds.left, _chooserBounds.top,
 		_chooserBounds.width(), _chooserBounds.height());
 	return true;
 }
@@ -244,7 +246,8 @@ bool DialogueChooser::service(const MouseState &mouse, uint &result) {
 	updateHover(mouse.position);
 	if ((mouse.pressed & kMouseButtonLeft) == 0)
 		return false;
-	if (_choices.size() > kVisibleChoiceCount && _upArrowBounds.contains(mouse.position)) {
+	if (hasScrollArrows() && _choices.size() > _chooser.visibleCount() &&
+			_upArrowBounds.contains(mouse.position)) {
 		if (_chooser.scrollWindow(-1)) {
 			_visualDirty = true;
 			debugC(1, kDebugDialogue,
@@ -253,7 +256,8 @@ bool DialogueChooser::service(const MouseState &mouse, uint &result) {
 		}
 		return false;
 	}
-	if (_choices.size() > kVisibleChoiceCount && _downArrowBounds.contains(mouse.position)) {
+	if (hasScrollArrows() && _choices.size() > _chooser.visibleCount() &&
+			_downArrowBounds.contains(mouse.position)) {
 		if (_chooser.scrollWindow(1)) {
 			_visualDirty = true;
 			debugC(1, kDebugDialogue,
@@ -319,7 +323,7 @@ void DialogueChooser::updateHover(const Common::Point &point) {
 
 bool DialogueChooser::contains(const Common::Point &point) const {
 	return _pending && !_choices.empty() && (_chooserBounds.contains(point) ||
-		(_choices.size() > kVisibleChoiceCount &&
+		(hasScrollArrows() && _choices.size() > _chooser.visibleCount() &&
 			(_upArrowBounds.contains(point) || _downArrowBounds.contains(point))));
 }
 
@@ -381,7 +385,7 @@ bool DialogueChooser::syncGame(Common::Serializer &serializer) {
 			_pending = false;
 			_chooser.clear();
 		} else {
-			if (!_chooser.restore(_choices.size(), kVisibleChoiceCount,
+			if (!_chooser.restore(_choices.size(), maximumVisibleChoiceCount(),
 					selectedChoice, firstVisibleChoice))
 				return false;
 			updateLayout();
@@ -394,6 +398,14 @@ uint DialogueChooser::measureText(const Common::String &text) const {
 	return BitmapFontRenderer::measureText(_font, text);
 }
 
+bool DialogueChooser::hasScrollArrows() const {
+	return _arrowFrames.size() >= 4;
+}
+
+uint DialogueChooser::maximumVisibleChoiceCount() const {
+	return hasScrollArrows() ? kRetailVisibleChoiceCount : kArrowlessVisibleChoiceCount;
+}
+
 void DialogueChooser::updateLayout() {
 	uint textWidth = 0;
 	for (uint i = 0; i < _choices.size(); ++i)
@@ -401,8 +413,8 @@ void DialogueChooser::updateLayout() {
 	const int width = MIN<int>(textWidth + kChoiceHorizontalPadding * 2, 620);
 	const int left = (640 - width) / 2;
 	_chooserBounds = Common::Rect(left, kChoiceTop, left + width,
-		kChoiceTop + kVisibleChoiceCount * kChoiceRowHeight);
-	if (_arrowFrames.size() < 4)
+		kChoiceTop + _chooser.visibleCount() * kChoiceRowHeight);
+	if (!hasScrollArrows())
 		return;
 	const int arrowLeft = _chooserBounds.right + kArrowGap;
 	_upArrowBounds = Common::Rect(arrowLeft, _chooserBounds.top,
@@ -414,7 +426,7 @@ void DialogueChooser::updateLayout() {
 
 Common::Rect DialogueChooser::visualBounds() const {
 	Common::Rect bounds = _chooserBounds;
-	if (_choices.size() > kVisibleChoiceCount && _arrowFrames.size() >= 4) {
+	if (hasScrollArrows() && _choices.size() > _chooser.visibleCount()) {
 		bounds.left = MIN(bounds.left, MIN(_upArrowBounds.left, _downArrowBounds.left));
 		bounds.top = MIN(bounds.top, MIN(_upArrowBounds.top, _downArrowBounds.top));
 		bounds.right = MAX(bounds.right, MAX(_upArrowBounds.right, _downArrowBounds.right));
