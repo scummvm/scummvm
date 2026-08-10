@@ -81,8 +81,8 @@ bool ToolbarManager::initialize(ResourceManager &resources, bool demoVariant) {
 	if (!resources.loadGameText(gameText) || gameText.size() < actionCount ||
 		!resources.loadInterfaceBitmapFont(
 			_demoVariant ? "small.fnt" : "7pt_font.fnt", _font) ||
-		(!_demoVariant && (!_remoteControl->initialize(resources) ||
-			!_optionsPanel->initialize(resources))))
+		(!_demoVariant && !_remoteControl->initialize(resources)) ||
+		!_optionsPanel->initialize(resources, _demoVariant))
 		return false;
 
 	_actions.clear();
@@ -335,10 +335,14 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 			return;
 		}
 		if (actionIndex == 5) {
-			// RunTake2IniSliderSetupMenu at 0x17fc0 uses the demo-only OPTIONS
-			// presentation and OPTION1..11 controls. Do not substitute the retail
-			// REMOTE.SMK slider panel, whose assets and layout are unrelated.
-			warning("Ripper: demo toolbar settings action 0x519 is not yet implemented");
+			debugC(1, kDebugGeneral,
+				"Ripper: demo toolbar action=6 id=0x519 label='%s' entering RunTake2IniSliderSetupMenu@0x17fc0",
+				_actions[actionIndex].label.c_str());
+			leave();
+			_engine->getInput()->discardMouseTransitions();
+			if (!_optionsPanel->run())
+				warning("Ripper: demo Options action failed");
+			_engine->getInput()->discardMouseTransitions();
 			return;
 		}
 		if (actionIndex == 7) {
@@ -494,7 +498,10 @@ bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,
 			_hoveredAction < 0 ? 0 : _hoveredAction + 1, mouse.position.x, mouse.position.y);
 	}
 
-	if (!_previewEnabled && now - _sessionStartMillis >= kPreviewDelayMillis) {
+	const bool previewAllowed = !_demoVariant ||
+		_engine->getSettings()->getDemoToggle(RipperSettings::kDemoToolbarHelp);
+	if (!_previewEnabled && previewAllowed &&
+			now - _sessionStartMillis >= kPreviewDelayMillis) {
 		_previewEnabled = true;
 		debugC(3, kDebugScene, "Ripper: toolbar previews enabled after 27 DOS ticks");
 	}

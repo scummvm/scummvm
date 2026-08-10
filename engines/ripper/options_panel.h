@@ -43,7 +43,7 @@ class OptionsPanelManager {
 public:
 	explicit OptionsPanelManager(RipperEngine *engine);
 
-	bool initialize(ResourceManager &resources);
+	bool initialize(ResourceManager &resources, bool demoVariant = false);
 	bool run();
 
 private:
@@ -55,6 +55,14 @@ private:
 		bool bufferedVideo;
 	};
 
+	struct DemoState {
+		bool toggles[RipperSettings::kDemoToggleCount];
+		int sliders[RipperSettings::kDemoSliderCount];
+		uint16 actionKeys[RipperSettings::kActionKeyCount - 1];
+	};
+
+	bool initializeRetail(ResourceManager &resources);
+	bool initializeDemo(ResourceManager &resources);
 	bool loadFrameSet(ResourceManager &resources, const char *prefix, uint count,
 		Common::Array<BitmapAssetFrame> &frames);
 	bool captureDisplay();
@@ -73,6 +81,12 @@ private:
 	bool serviceBackground(Video::SmackerDecoder &decoder);
 	void playControlSound(uint controlIndex);
 	void commitState(const State &state);
+	bool runRetail();
+	bool runDemo();
+	void drawDemoState(const DemoState &state, int captureSlot = -1);
+	void commitDemoState(const DemoState &state);
+	void resetDemoState(DemoState &state) const;
+	int demoSliderValueFromPoint(uint slider, int x) const;
 
 	RipperEngine *_engine;
 	BitmapAssetFrame _background;
@@ -82,9 +96,14 @@ private:
 	Common::Array<BitmapAssetFrame> _combatFrames;
 	Common::Array<BitmapAssetFrame> _puzzleFrames;
 	Common::Array<BitmapAssetFrame> _accentFrames;
+	Common::Array<BitmapAssetFrame> _demoFrames;
+	Common::Array<Common::String> _demoButtonLabels;
+	Common::Array<Common::String> _demoCaptureLabels;
+	Common::String _demoCapturePrompt;
 	UiControlRegistry _controls;
 	IndexedDisplaySnapshot _savedDisplay;
 	Audio::SoundHandle _soundHandle;
+	bool _demoVariant;
 	bool _initialized;
 };
 
