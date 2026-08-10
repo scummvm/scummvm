@@ -1146,37 +1146,17 @@ bool ScriptManager::runStartupPath() {
 
 	int result = 0;
 	const ScriptFrame &startupFrame = _startup.getFrames()[0];
-	if (!executeCallback(_startup, startupFrame.exitCallbackOffset, result) || result != -3) {
+	if (!executeCallback(_startup, startupFrame.exitCallbackOffset, result) ||
+			result != -3 || _runtime.pendingSceneMember.empty()) {
 		warning("Ripper: startup script did not request the BA0 transition (result=%d)", result);
 		return false;
 	}
 
-	uint ba0StartFrame = 0xffffffff;
-	for (uint i = 0; i < _runtime.activeScript.getFrames().size(); ++i) {
-		if (_runtime.activeScript.getString(_runtime.activeScript.getFrames()[i].labelOffset).equalsIgnoreCase("start")) {
-			ba0StartFrame = i;
-			break;
-		}
-	}
-	if (ba0StartFrame == 0xffffffff) {
-		warning("Ripper: BA0 does not contain the start frame");
-		return false;
-	}
-
-	// InitializeSceneDisplayModeAndContext at 0x1e28a switches to a newly cleared scene page.
-	// ScummVM retains one framebuffer across presentations, so clear the previous cinematic here.
-	g_system->fillScreen(0);
-	presentScreen();
-	debugC(1, kDebugScene, "Ripper: initialized cleared scene display for BA0");
-
-	debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='start'", ba0StartFrame);
-	bindBa0Frame(ba0StartFrame);
-	initializeBa0InteractionState(_runtime.activeScript.getFrames()[ba0StartFrame]);
-	result = 0;
-	if (!executeCallback(_runtime.activeScript, _runtime.activeScript.getFrames()[ba0StartFrame].enterCallbackOffset, result) || result != 0)
-		return false;
-	beginBa0InteractionWait("start", _runtime.activeScript.getFrames()[ba0StartFrame].interactionCount);
-	return true;
+	// Demo RunSceneScriptLoop at 0x113cf copies the opcode-0x1d target after
+	// RIPPER.RUN returns -3, destroys that runtime, and creates BA0.RUN before
+	// executing its first frame. Use the normal transition path so no pending
+	// handoff can abort BA0's first-frame presentation.
+	return performPendingSceneTransition();
 }
 
 bool ScriptManager::executeConcurrentFrame() {
