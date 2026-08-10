@@ -1537,7 +1537,7 @@ void game_control() {
 
 	kernel_game_shutdown();
 
-	// pl conv_system_cleanup();
+	conv_system_cleanup();
 	mcga_reset();
 }
 

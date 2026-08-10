@@ -1179,6 +1179,7 @@ void conv_system_init() {
 
 void conv_system_cleanup() {
 	delete savedConv;
+	savedConv = nullptr;
 }
 
 
