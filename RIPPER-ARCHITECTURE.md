@@ -61,7 +61,9 @@
   pending scene fields and returns `-3` unconditionally. Demo scene action 200
   follows the `0x13bd1` branch of the dispatcher at `0x13a52`: it enqueues the
   `R_P_L1.WAV` descriptor loaded by `FUN_000104bf` at `0x10794` and applies its
-  normal `0x2fff` packed volume; action 201 stops that retained audio handle.
+  normal `0x2fff` packed volume. The zero-initialized descriptor receives no
+  repeat setup, so the 11,025 Hz mono PCM cue plays once for 23.986 seconds;
+  action 201 stops the retained audio handle if it is still active.
 
 ## Detection
 
@@ -2194,9 +2196,13 @@
 - `ExecuteSceneFrameAndInteractions` at `0x13277` runs frame callbacks,
   presentations, chooser selection, and interaction callbacks.
 - `ExecuteSceneFrameAndInteractions` constructs the frame's hotspot controls
-  before running its entry and persistent callbacks. An opcode `0x17` chooser
-  is added to the same live control registry rather than replacing those
-  hotspots. `PollInteractionAndResolveSelection` services both registries;
+  before running its entry and persistent callbacks. Type-0 controls remain
+  inactive while `ExecutePresentationEntry` plays their controlled media, then
+  become visible and enter the polling loop only after that presentation
+  returns; the demo implementation follows this ordering at `0x11be0`. An
+  opcode `0x17` chooser is added to the same live control registry rather than
+  replacing those hotspots. `PollInteractionAndResolveSelection` services both
+  registries;
   when a scene hotspot wins, `CleanupCurrentSceneFrameInteractions` at
   `0x13832` dispatches phase 3 to the active chooser handler before running
   the hotspot callback. Phase 3 destroys the chooser, and
@@ -2252,9 +2258,9 @@
   the scene-selection menu first clear every preserve bit, so those transitions
   retire the entire table. Each active-frame `-2` yield resets pending trigger
   frame and volume-ramp scheduling without discarding the loaded resources.
-  Choice-list activation does not stop or replace named triggers, so
-  `R_P_L1.WAV` continues beneath dialogue selection until a later explicit stop
-  or clear.
+  Choice-list activation does not stop or replace named triggers, so the
+  one-shot `R_P_L1.WAV` cue continues beneath dialogue selection until it ends
+  naturally or a later explicit stop or clear occurs.
 - Opcode `0x14` stores its argument as the next frame index and returns control
   code `-2`. `RunSceneScriptLoop` responds by servicing the concurrent runtime
   once before continuing BA0 at that stored frame.
