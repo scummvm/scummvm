@@ -48,9 +48,13 @@
   retail three-row viewport and arrow controls when those assets are present.
   The demo handler stores presentation template `0x68d08` at `0x16342` before
   creating the control. `InitializeSharedPresentationTemplates` at `0x10c9d`
-  configures that template with normal text/background indices `253/0` and
-  selected indices `254/250`; retail uses `251/0` and `4/248`. ScummVM selects
-  the corresponding indexed colors with the detected game variant.
+  configures that template with normal glyph lookup byte/background index
+  `253/0`, selected glyph lookup byte/background index `254/250`, and the
+  `small.fnt` source pixels are translated by display command `0x19` through
+  the active lookup template. Captured demo output resolves the selected glyph
+  to MENUB's dark-gray ramp index `7`; ScummVM's direct indexed rasterizer uses
+  that resolved index rather than treating lookup byte `254` as the final
+  color. Retail directly uses `251/0` and `4/248`.
 - The demo also has a shorter opcode `0x1a` layout. Its handler at `0x13e46`
   forwards path, auxiliary text, Y, and X to `FUN_000142bb` at `0x142bb` and
   forces scene-relative presentation controls on. Retail
