@@ -20,7 +20,6 @@
 
 #include "ripper/wac/broken_mug.h"
 
-#include "common/archive.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -33,6 +32,7 @@
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
+#include "ripper/resources.h"
 #include "ripper/ripper.h"
 #include "ripper/wac/wac.h"
 
@@ -84,8 +84,10 @@ BrokenMugPuzzle::BrokenMugPuzzle(RipperEngine *engine) : _engine(engine),
 
 bool BrokenMugPuzzle::loadPiece(uint pieceIndex) {
 	const Common::String name = Common::String::format("mug%u.smk", pieceIndex);
-	Common::SeekableReadStream *stream =
-		SearchMan.createReadStreamForMember(Common::Path(name));
+	ResourceManager *resources = _engine->getResources();
+	Common::SeekableReadStream *stream = resources && resources->puzzle().hasMember(name) ?
+		resources->puzzle().createReadStreamForMember(name) :
+		(resources ? resources->createReadStreamForPath(name) : nullptr);
 	if (!stream) {
 		warning("Ripper: unable to open broken mug asset '%s'", name.c_str());
 		return false;

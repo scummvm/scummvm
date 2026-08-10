@@ -223,6 +223,7 @@ private:
 		kSourceDirectFile,
 		kSourceConfiguredPath,
 		kSourceInterfaceLibrary,
+		kSourcePuzzleLibrary,
 		kSourceSoundEffect,
 		kSourceBlockingAudio
 	};

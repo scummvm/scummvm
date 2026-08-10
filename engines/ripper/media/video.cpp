@@ -1080,7 +1080,7 @@ bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
 	plan.palette.patchWacMediaPalette = true;
 	Common::String source;
 	const bool result = playValidatedSmacker(
-		openSource(path, kSourceDirectFile, source), path, "WAC", plan);
+		openSource(path, kSourcePuzzleLibrary, source), path, "WAC", plan);
 	_input->drainKeys();
 	return result;
 }

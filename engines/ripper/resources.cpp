@@ -644,6 +644,7 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 
 	Common::String scriptLibrary;
 	Common::String interfaceLibrary;
+	Common::String puzzleLibrary;
 	Common::String soundLibrary;
 	if (!ini.getKey("script", "files", scriptLibrary) ||
 		!ini.getKey("interface", "files", interfaceLibrary) ||
@@ -651,9 +652,15 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 		warning("Ripper: RIPPER.INI is missing FILES script, interface, or sound entries");
 		return false;
 	}
+	ini.getKey("puzzle", "files", puzzleLibrary);
 
-	debugC(2, kDebugResources, "Ripper: RIPPER.INI script='%s' interface='%s' sound='%s'",
-		scriptLibrary.c_str(), interfaceLibrary.c_str(), soundLibrary.c_str());
+	debugC(2, kDebugResources,
+		"Ripper: RIPPER.INI script='%s' interface='%s' puzzle='%s' sound='%s'",
+		scriptLibrary.c_str(), interfaceLibrary.c_str(), puzzleLibrary.c_str(),
+		soundLibrary.c_str());
+	Common::String puzzleDirectory;
+	ini.getKey("puzzle", "paths", puzzleDirectory);
+	puzzleDirectory.trim();
 	static const char *const searchDirectoryKeys[] = {
 		"scene",
 		"puzzle",
@@ -676,9 +683,18 @@ bool ResourceManager::initialize(bool loadNestedOptions) {
 		_scripts.open(Common::Path(scriptLibrary));
 	if (scriptLibrary.empty())
 		debugC(1, kDebugResources, "Ripper: using loose script resources from the game directory");
+	Common::Path puzzleLibraryPath(puzzleLibrary);
+	if (!puzzleLibrary.empty() && !puzzleDirectory.empty())
+		puzzleLibraryPath = Common::Path(puzzleDirectory).appendComponent(puzzleLibrary);
+	const bool puzzleSourceReady = puzzleLibrary.empty() ||
+		_puzzle.open(puzzleLibraryPath);
+	if (puzzleLibrary.empty())
+		debugC(1, kDebugResources,
+			"Ripper: using loose puzzle resources from configured search paths");
 	if (!scriptSourceReady ||
-			!_interface.open(Common::Path(interfaceLibrary)) ||
-			!_sound.open(Common::Path(soundLibrary)))
+		!_interface.open(Common::Path(interfaceLibrary)) ||
+		!puzzleSourceReady ||
+		!_sound.open(Common::Path(soundLibrary)))
 		return false;
 	if (!loadNestedOptions) {
 		debugC(1, kDebugResources,

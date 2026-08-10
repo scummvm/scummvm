@@ -62,6 +62,21 @@ Common::SeekableReadStream *MediaPlayer::openSource(const Common::String &path,
 		}
 	}
 
+	if (policy == kSourcePuzzleLibrary) {
+		Common::SeekableReadStream *stream =
+			resources && resources->puzzle().hasMember(path) ?
+				resources->puzzle().createReadStreamForMember(path) : nullptr;
+		if (stream) {
+			source = "puzzle-library";
+			return stream;
+		}
+		stream = resources ? resources->createReadStreamForPath(path) : nullptr;
+		if (stream) {
+			source = "search-path";
+			return stream;
+		}
+	}
+
 	if (policy == kSourceSoundEffect || policy == kSourceBlockingAudio) {
 		Common::SeekableReadStream *stream =
 			resources && resources->sound().hasMember(path) ?
