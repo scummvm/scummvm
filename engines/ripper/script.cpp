@@ -587,8 +587,9 @@ uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
 
 void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
 		uint interactionCount) {
-	// ExecuteSceneFrameAndInteractions at 0x13277 services the new controls once after
-	// frame media, discarding that result before it starts the blocking chooser loop.
+	// ExecuteSceneFrameAndInteractions at 0x13277 (retail) and 0x11be0 (demo)
+	// service the new controls once after type-0 frame media, discarding that
+	// result before starting the blocking chooser loop.
 	if (_engine->getInput()->pollEvents())
 		_engine->quitGame();
 	_engine->getInput()->discardMouseTransitions();
@@ -1290,8 +1291,6 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				"Ripper: frame presentation label='%s' media='%s' origin=%d,%d",
 				label.c_str(), mediaPath.c_str(), frame.x, frame.y);
 			markScenePlayed(label);
-			if (frame.interactionCount != 0)
-				beginBa0InteractionWait(label, frame.interactionCount);
 			const bool dialogueIdleCallback =
 				frame.idleCallbackOffset != 0 && _dialogue->hasChoices();
 			if (dialogueIdleCallback) {
@@ -1333,7 +1332,13 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			const bool dialoguePending = _dialogue->isPending();
 			const bool waitsForSceneInput =
 				frame.interactionCount != 0 || dialoguePending || idleTextRequest;
-			if (waitsForSceneInput && !_runtime.awaitingInteraction)
+			// ExecuteSceneFrameAndInteractions at 0x11be0 activates demo type-0
+			// controls only after ExecutePresentationEntry returns. Type-1 controls
+			// and callback-owned input must remain active while their media loops.
+			const bool activatesInputDuringMedia =
+				(frame.presentationType == 1 && frame.interactionCount != 0) ||
+				dialoguePending || idleTextRequest;
+			if (activatesInputDuringMedia && !_runtime.awaitingInteraction)
 				beginBa0InteractionWait(label, frame.interactionCount);
 			// ExecuteSceneFrameAndInteractions at 0x13277 enters
 			// PollInteractionAndResolveSelection at 0x13c8d when either scene
@@ -1441,6 +1446,13 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					"Ripper: retained controlled sequence display media='%s' "
 					"route=RunMediaSequence@0x1e516",
 					mediaPath.c_str());
+			}
+			if (frame.interactionCount != 0 && !_runtime.awaitingInteraction) {
+				beginBa0InteractionWait(label, frame.interactionCount);
+				debugC(2, kDebugScene,
+					"Ripper: activated post-presentation interactions "
+					"frame='%s' count=%u",
+					label.c_str(), frame.interactionCount);
 			}
 			if (waitsForSceneInput)
 				return true;
