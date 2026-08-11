@@ -2457,6 +2457,13 @@ int ASound9::command6() { return ASound::command6(); }
 int ASound9::command7() { return ASound::command7(); }
 int ASound9::command8() { return ASound::command8(); }
 
+void ASound9::callFunction(uint16 offset) {
+	if (offset == 0x1adc)
+		command32();
+	else
+		ASound::callFunction(offset);
+}
+
 // ---------------------------------------------------------------------------
 // Music command 32 — deferred loader (isMusicChannelsActive pattern B)
 // ---------------------------------------------------------------------------

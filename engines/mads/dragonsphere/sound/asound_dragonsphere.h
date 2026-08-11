@@ -546,6 +546,13 @@ private:
 
 	static const CommandPtr _commandList[65];
 
+protected:
+	/**
+	 * Calls a function at a fixed offset within the sound driver.
+	 * @param offset		Offset of the function
+	 */
+	void callFunction(uint16 offset) override;
+
 public:
 	ASound9(Audio::Mixer *mixer);
 	~ASound9() override {}
