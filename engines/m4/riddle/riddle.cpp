@@ -33,6 +33,36 @@
 namespace M4 {
 namespace Riddle {
 
+struct MessageLog {
+	const char *_english;
+	const char *_german;
+	const char *_spanish;
+	const char *_french;
+	const char *_italian;
+};
+
+static const MessageLog MESSAGE_TITLES[] = {
+	{"Reminder from Feng Li", "Erinnerung von Feng Li", "Reminder from Feng Li", "M\x0emo de Feng Li", "Promemoria da Feng Li"},
+	{"Appeal for Oddities from Feng Li", "Bitte von Feng Li um Kuriosit\x06""ten", "Appeal for Oddities from Feng Li", "Demande d'objets de Feng Li", "Richiesta attrazioni da Feng Li"},
+	{"2nd Appeal for Oddities from Feng Li", "2. Bitte von Feng Li um Kuriosit\x06""ten", "2nd Appeal for Oddities from Feng Li", "2\x10 demande d'objets de Feng Li", "2. richiesta attrazioni da Feng Li"},
+	{"3rd Appeal for Oddities from Feng Li", "3. Bitte von Feng Li um Kuriosit\x06""ten", "3rd Appeal for Oddities from Feng Li", "3\x10 demande d'objets de Feng Li", "3. richiesta attrazioni da Feng Li"},
+	{"Urgent Warning from Feng Li", "Dringende Warnung von Feng Li", "Urgent Warning from Feng Li", "Mise end garde urgente de Feng Li", "Avviso urgente da Feng Li"},
+	{"Radiogram from Mei's Aunt & Uncle", "Telegramm von Mei's Tante & Onkel", "Radiogram from Mei's Aunt & Uncle", "Message des tante et oncle de Mei", "Radiogramma dagli zii di Mei"},
+	{"Radiogram from Danzig Chief of Police", "Telegramm vom Danziger Polizeichef", "Radiogram from Danzig Chief of Police", "Message du pr\x0e""fet", "Radiogramma dal capo della polizia di Danzica"},
+	{"Message about Emerald from Feng Li", "Klage \x0e""ber Smaragd von Feng Li", "Message about Emerald from Feng Li", "Message de Feng Li sur l'\x0emeraude", "Messagio sullo smeraldo da Feng Li"},
+	{"Ultimatum about Emerald from Feng Li", "Ultimatum wegen des Smaragds von Feng Li", "Ultimatum about Emerald from Feng Li", "Ultimatum de Feng Li sur l'\x0emeraude", "Ultimatum sullo smeraldo da Feng Li"},
+	{"Refused Delivery", "Annahme verweigert", "Refused Delivery", "Livraison refus\x0e""e", "Consegna rifiutata"},
+	{"Radiogram from Prof. Menendez's Assistant", "Telegramm von Prof. Menendez' Assistenten", "Radiogram from Prof. Menendez's Assistant", "Message de l'assistant de Menendez", "Radiogramma dall'assistente del Prof. Menendey"},
+	{"2nd Radiogram from Prof. Menendez's Assistant", "2. Telegramm von Prof. Menendez' Assistenten", "2nd Radiogram from Prof. Menendez's Assistant", "2\0x10 Message de l'assistant de Menendez", "2. radiogramma dall'assistente del Prof. Menendez"},
+	{"Radiogram from Mei", "Telegramm von Mei", "Radiogram from Mei", "Radiogram de Mei", "Radiogramma da Mei"},
+	{"Thank You Note from Feng Li", "Dankschreiben von Feng Li", "Thank You Note from Feng Li", "Note de remerciment de Feng Li", "Ringraziamento da Feng Li"}
+};
+
+static const MessageLog MESSAGE_OPTIONS[] = {
+	{"MESSAGE LOG", "LOGBUCH F\x04""R TELEGRAMME", "MESSAGE LOG", "CARNET DE MESSAGES", "REGISTRO DEI TELEGRAMMI"},
+	{"CLOSE LOG", "SCHLIESSEN",	 "CLOSE LOG", "SORTIE", "CHIUDERE"},
+};
+
 RiddleEngine::RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 		M4Engine(syst, gameDesc) {
 	_sections.push_back(&_section1);
@@ -587,23 +617,24 @@ void messageLogCallback(TextItem *textItem, TextScrn *textScrn) {
 	kernel_trigger_dispatchx(_G(messageLogTrigger));
 }
 
+const char* getTranslatedMessageLogItem(const MessageLog* messages, int index) {
+	Common::Language lang = g_engine->getLanguage();
+
+	const char *messageTitle = messages[index]._english;
+	if (lang == Common::DE_DEU)
+		messageTitle = messages[index]._german;
+	else if (lang == Common::ES_ESP)
+		messageTitle = messages[index]._spanish;
+	else if (lang == Common::FR_FRA)
+		messageTitle = messages[index]._french;
+	else if (lang == Common::IT_ITA)
+		messageTitle = messages[index]._italian;
+
+	return messageTitle;
+}
+
+
 void RiddleEngine::showMessageLog(int trigger) {
-	static const char *MESSAGE_TITLES[14] = {
-		"Reminder from Feng Li",
-		"Appeal for Oddities from Feng Li",
-		"2nd Appeal for Oddities from Feng Li",
-		"3rd Appeal for Oddities from Feng Li",
-		"Urgent Warning from Feng Li",
-		"Radiogram from Mei's Aunt & Uncle",
-		"Radiogram from Danzig Chief of Police",
-		"Message about Emerald from Feng Li",
-		"Ultimatum about Emerald from Feng Li",
-		"Refused Delivery",
-		"Radiogram from Prof. Menendez's Assistant",
-		"2nd Radiogram from Prof. Menendez's Assistant",
-		"Radiogram from Mei",
-		"Thank You Note from Feng Li"
-	};
 
 	_G(messageLogTrigger) = kernel_trigger_create(trigger);
 	gr_font_set(_G(font_inter));
@@ -614,7 +645,7 @@ void RiddleEngine::showMessageLog(int trigger) {
 	for (int i = 0; i < 14; ++i) {
 		if (_G(flags)[(Flag)(V350 + i)]) {
 			++ecx;
-			const int width = gr_font_string_width(MESSAGE_TITLES[i], 0);
+			const int width = gr_font_string_width(getTranslatedMessageLogItem(MESSAGE_TITLES,i), 0);
 			if (width > maxWidth)
 				maxWidth = width;
 		}
@@ -625,18 +656,19 @@ void RiddleEngine::showMessageLog(int trigger) {
 
 	maxWidth += 16;
 	_G(messageScreen) = TextScrn_Create(601 - maxWidth, 361 - ((ecx + 2) * (fontHeight + 2) + 16), 600, 360, 65, 422, 13, 15);
-	TextScrn_Add_Message(_G(messageScreen), 8, 8, 0, TS_CENTRE, "MESSAGE LOG");
+
+	TextScrn_Add_Message(_G(messageScreen), 8, 8, 0, TS_CENTRE, getTranslatedMessageLogItem(MESSAGE_OPTIONS, 0));
 
 	int32 edi = fontHeight + 14;
 	
 	int i = 0;
 	for (; i < 14; ++i) {
 		if (_G(flags)[(Flag)(V350 + i)]) {
-			TextScrn_Add_TextItem(_G(messageScreen), 8, edi, i + 1, TS_GIVEN, MESSAGE_TITLES[i], (M4CALLBACK)messageLogCallback);
+			TextScrn_Add_TextItem(_G(messageScreen), 8, edi, i + 1, TS_GIVEN, getTranslatedMessageLogItem(MESSAGE_TITLES, i), (M4CALLBACK)messageLogCallback);
 			edi += 1 + fontHeight;
 		}
 	}
-	TextScrn_Add_TextItem(_G(messageScreen), 8, edi + 4, i + 2, TS_GIVEN, "CLOSE LOG", (M4CALLBACK)messageLogCallback);
+	TextScrn_Add_TextItem(_G(messageScreen), 8, edi + 4, i + 2, TS_GIVEN, getTranslatedMessageLogItem(MESSAGE_OPTIONS, 1), (M4CALLBACK)messageLogCallback);
 	TextScrn_Activate(_G(messageScreen));
 }
 

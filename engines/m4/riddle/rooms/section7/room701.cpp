@@ -1451,11 +1451,10 @@ void Room701::conv701a() {
 
 	} else if (who == 1) {
 		if (_conv701aNode == 1 && entry == 1) {
-			conv_set_box_xy(490, -4);
+			conv_set_box_xy(10, -4);
 			set_dlg_rect();
 			int32 x1, y1, x2, y2;
 			conv_get_dlg_coords(&x1, &y1, &x2, &y2);
-			conv_get_dlg_coords(&x1, &y1, &x2, &y2); // useless?
 			conv_set_dlg_coords(x1, y1 - 10, x2, y2 - 10);
 			set_dlg_rect();
 		} else {

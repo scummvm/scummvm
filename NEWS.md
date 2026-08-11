@@ -60,6 +60,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Numerous Riddle of Master Lu fixes for crashes, missing functionality, and game bugs.
    - Fixed original game bug where conversations with Wolf could freeze the game.
    - Added original game cheat codes for bypassing the maze.
+   - Added translation of message log entries
 
  MM:
    - Fix multiple M&M1 classic combat crashes.
