@@ -177,11 +177,15 @@ class RSound : public SoundDriver {
 public:
 	/**
 	 * Member-function pointer type for deferred sound-loader callbacks.
+	 * Returns int (the return value is discarded by tickCallback()) so
+	 * that MAKE_CALLBACK's reinterpret_cast only ever crosses the
+	 * enclosing-class boundary, never the return type as well - every
+	 * driver-specific callback target is required to return int to match.
 	 * Public so driver subclasses can build a MAKE_CALLBACK-style cast
 	 * (reinterpret_cast<RSound::CallbackFunction>(&DerivedClass::fn)) to
 	 * pass to scheduleCallback().
 	 */
-	typedef void (RSound::*CallbackFunction)();
+	typedef int (RSound::*CallbackFunction)();
 
 private:
 	uint16 _randomSeed;

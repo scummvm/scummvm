@@ -73,7 +73,7 @@ static void room_701_init() {
 	kernel_seq_loc(g_sequence_ids[1], 48, 136);
 	kernel_seq_depth(g_sequence_ids[1], 10);
 
-	int boatStatus = (previous_room == 703) ? BOAT_GONE : global[kBoatStatus];
+	int boatStatus = (previous_room == 703) ? (int16)BOAT_GONE : global[kBoatStatus];
 
 	switch (boatStatus) {
 	case BOAT_TIED_FLOATING:

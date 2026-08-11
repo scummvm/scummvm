@@ -57,7 +57,7 @@ private:
 	static const CommandPtr _commandList[102];
 
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 
 	int command17();
 
@@ -72,26 +72,26 @@ private:
 	int command31();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 	int command34();
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 	int command36();
-	void loadCommand36();
+	int loadCommand36();
 	int command37();
-	void loadCommand37();
+	int loadCommand37();
 	int command38();
-	void loadCommand38();
+	int loadCommand38();
 	int command39();
-	void loadCommand39();
+	int loadCommand39();
 	int command40();
-	void loadCommand40();
+	int loadCommand40();
 	int command41();
-	void loadCommand41();
+	int loadCommand41();
 	int command42();
-	void loadCommand42();
+	int loadCommand42();
 
 	/**
 	 * Shared tail of command43()/command48(): writes a variant byte
@@ -103,16 +103,16 @@ private:
 	void command43_48Tail(byte variant);
 	int command43();
 	int command48();
-	void loadCommand43_48();
+	int loadCommand43_48();
 
 	int command44();
-	void loadCommand44();
+	int loadCommand44();
 	int command45();
-	void loadCommand45();
+	int loadCommand45();
 	int command46();
-	void loadCommand46();
+	int loadCommand46();
 	int command47();
-	void loadCommand47();
+	int loadCommand47();
 
 	int command64();
 	int command65();
@@ -192,7 +192,7 @@ private:
 	void resetChannels1to6();
 
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 	int command17();
 	int command18();
 
@@ -205,14 +205,14 @@ private:
 	int command31();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 	int command34();
-	void loadCommand34();
+	int loadCommand34();
 
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 
 	int command64();
 	int command65();
@@ -277,7 +277,7 @@ private:
 	int command5();
 
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 	int command17();
 	int command18();
 
@@ -298,9 +298,9 @@ private:
 	int command64();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 
 	int command65();
 	int command67();
@@ -370,7 +370,7 @@ private:
 	 * deferred callback.
 	 */
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 
 	int command17();
 	int command18();
@@ -387,24 +387,24 @@ private:
 	int command31();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 
 	/** Calls command1() (not command3(), unlike every other bucket-4 command here) before loading a single channel. */
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 
 	int command36();
-	void loadCommand36();
+	int loadCommand36();
 	int command37();
-	void loadCommand37();
+	int loadCommand37();
 	int command38();
-	void loadCommand38();
+	int loadCommand38();
 	int command39();
-	void loadCommand39();
+	int loadCommand39();
 	int command40();
-	void loadCommand40();
+	int loadCommand40();
 
 	int command64();
 	int command65();
@@ -464,8 +464,8 @@ private:
 	bool _command16Played = false;
 
 	int command16();
-	void loadCommand16A();
-	void loadCommand16B();
+	int loadCommand16A();
+	int loadCommand16B();
 
 	int command17();
 	int command18();
@@ -488,20 +488,20 @@ private:
 	int command31();
 
 	int command32();
-	void loadCommand32();
+	int loadCommand32();
 	int command33();
-	void loadCommand33();
+	int loadCommand33();
 	int command34();
-	void loadCommand34();
+	int loadCommand34();
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 	int command36();
 
 	/** No gate at all (unlike every other bucket-4 command here): just clears _callbackFnPtr, calls command1(), then 4x playSoundChannels1To5(). */
 	int command37();
 
 	int command38();
-	void loadCommand38();
+	int loadCommand38();
 
 	int command64();
 	int command65();
@@ -602,7 +602,7 @@ private:
 	static const CommandPtr _commandList[99];
 
 	int command16();
-	void loadCommand16();
+	int loadCommand16();
 	int command17();
 	int command18();
 
@@ -622,12 +622,12 @@ private:
 	 */
 	int command32();
 	int command33();
-	void command32_33Load();
+	int command32_33Load();
 	void command32_33LoadCh4();
 	byte _command33Flag = 0;
 
 	int command34();
-	void command34LoadCh1AndRest();
+	int command34LoadCh1AndRest();
 	void command34LoadRestOnly();
 
 	int command35();
@@ -639,7 +639,7 @@ private:
 	int command40();
 
 	int command44();
-	void loadCommand44();
+	int loadCommand44();
 	int command45();
 
 	int command64();
@@ -744,7 +744,7 @@ private:
 	 * counter=98/period=84 timer) and differ only in which variant setup
 	 * helper runs first.
 	 */
-	void command33_47_60Load();
+	int command33_47_60Load();
 	int command60();
 
 	/** Dispatch table entries 33 AND 47 both point to this single function (confirmed identical symbol at both table slots). */
@@ -752,22 +752,22 @@ private:
 
 	/** Dispatch table entries 34 AND 54 both point to this single function (confirmed identical symbol at both table slots). */
 	int command34Or54();
-	void loadCommand34Or54();
+	int loadCommand34Or54();
 
 	int command35();
-	void loadCommand35();
+	int loadCommand35();
 	int command36();
-	void loadCommand36();
+	int loadCommand36();
 	int command37();
-	void loadCommand37();
+	int loadCommand37();
 	int command38();
-	void loadCommand38();
+	int loadCommand38();
 	int command39();
-	void loadCommand39();
+	int loadCommand39();
 	int command40();
-	void loadCommand40();
+	int loadCommand40();
 	int command41();
-	void loadCommand41();
+	int loadCommand41();
 
 	/**
 	 * Matches an unlabeled function immediately following command41() in
@@ -775,10 +775,10 @@ private:
 	 * by elimination.
 	 */
 	int command53();
-	void loadCommand53();
+	int loadCommand53();
 
 	int command42();
-	void loadCommand42();
+	int loadCommand42();
 
 	int command43();
 
@@ -790,7 +790,7 @@ private:
 	int command50();
 
 	int command51();
-	void loadCommand51();
+	int loadCommand51();
 
 	/**
 	 * Matches rsound_command52: the deferred-schedule branch loads bx
@@ -801,16 +801,16 @@ private:
 	 * omitted here.
 	 */
 	int command52();
-	void loadCommand52();
+	int loadCommand52();
 
 	int command55();
-	void loadCommand55();
+	int loadCommand55();
 	int command57();
-	void loadCommand57();
+	int loadCommand57();
 
 	/** Calls the full command0() reset (not command1(), unlike every other command in this batch) before loading. */
 	int command58();
-	void loadCommand58();
+	int loadCommand58();
 
 	int command59();
 

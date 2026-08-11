@@ -85,13 +85,14 @@ int RSound1::command16() {
 	return 0;
 }
 
-void RSound1::loadCommand16() {
+int RSound1::loadCommand16() {
 	setMusicIndex(0x10);
 	command3();
 	_channels[0].load(loadData(0x7BA));
 	_channels[1].load(loadData(0x8C3));
 	_channels[2].load(loadData(0x939));
 	_channels[3].load(loadData(0x9AF));
+	return 0;
 }
 
 int RSound1::command17() {
@@ -178,13 +179,14 @@ int RSound1::command32() {
 	return 0;
 }
 
-void RSound1::loadCommand32() {
+int RSound1::loadCommand32() {
 	setMusicIndex(0x20);
 	command3();
 	_channels[0].load(loadData(0xA14));
 	_channels[1].load(loadData(0xA5A));
 	_channels[2].load(loadData(0xAB9));
 	_channels[3].load(loadData(0xAD6));
+	return 0;
 }
 
 int RSound1::command33() {
@@ -199,12 +201,13 @@ int RSound1::command33() {
 	return 0;
 }
 
-void RSound1::loadCommand33() {
+int RSound1::loadCommand33() {
 	command3();
 	_channels[0].load(loadData(0xAFC));
 	_channels[1].load(loadData(0xB9E));
 	_channels[2].load(loadData(0xBFD));
 	_channels[3].load(loadData(0xC20));
+	return 0;
 }
 
 int RSound1::command34() {
@@ -235,12 +238,13 @@ int RSound1::command35() {
 	return 0;
 }
 
-void RSound1::loadCommand35() {
+int RSound1::loadCommand35() {
 	command3();
 	_channels[0].load(loadData(0xDDA));
 	_channels[1].load(loadData(0xE6F));
 	_channels[2].load(loadData(0xEF4));
 	_channels[3].load(loadData(0xF3F));
+	return 0;
 }
 
 int RSound1::command36() {
@@ -255,12 +259,13 @@ int RSound1::command36() {
 	return 0;
 }
 
-void RSound1::loadCommand36() {
+int RSound1::loadCommand36() {
 	command3();
 	_channels[0].load(loadData(0xF66));
 	_channels[1].load(loadData(0x1028));
 	_channels[2].load(loadData(0x1113));
 	_channels[3].load(loadData(0x11A6));
+	return 0;
 }
 
 int RSound1::command37() {
@@ -275,10 +280,11 @@ int RSound1::command37() {
 	return 0;
 }
 
-void RSound1::loadCommand37() {
+int RSound1::loadCommand37() {
 	command3();
 	_channels[0].load(loadData(0x120C));
 	_channels[1].load(loadData(0x1267));
+	return 0;
 }
 
 int RSound1::command38() {
@@ -295,12 +301,13 @@ int RSound1::command38() {
 	return 0;
 }
 
-void RSound1::loadCommand38() {
+int RSound1::loadCommand38() {
 	command3();
 	_channels[4].load(loadData(0x12CE));
 	_channels[2].load(loadData(0x1373));
 	_channels[3].load(loadData(0x1449));
 	_channels[1].load(loadData(0x1534));
+	return 0;
 }
 
 int RSound1::command39() {
@@ -315,11 +322,12 @@ int RSound1::command39() {
 	return 0;
 }
 
-void RSound1::loadCommand39() {
+int RSound1::loadCommand39() {
 	command3();
 	_channels[0].load(loadData(0x1622));
 	_channels[1].load(loadData(0x1678));
 	_channels[2].load(loadData(0x16D7));
+	return 0;
 }
 
 int RSound1::command40() {
@@ -334,13 +342,14 @@ int RSound1::command40() {
 	return 0;
 }
 
-void RSound1::loadCommand40() {
+int RSound1::loadCommand40() {
 	command3();
 	_channels[0].load(loadData(0x172E));
 	_channels[1].load(loadData(0x189C));
 	_channels[2].load(loadData(0x1A47));
 	_channels[3].load(loadData(0x1D0A));
 	_channels[4].load(loadData(0x1F05));
+	return 0;
 }
 
 int RSound1::command41() {
@@ -357,13 +366,14 @@ int RSound1::command41() {
 	return 0;
 }
 
-void RSound1::loadCommand41() {
+int RSound1::loadCommand41() {
 	command3();
 	_channels[0].load(loadData(0x219E));
 	_channels[1].load(loadData(0x220C));
 	_channels[8].load(loadData(0x2283));
 	_channels[3].load(loadData(0x22D8));
 	_channels[4].load(loadData(0x23B1));
+	return 0;
 }
 
 int RSound1::command42() {
@@ -378,7 +388,7 @@ int RSound1::command42() {
 	return 0;
 }
 
-void RSound1::loadCommand42() {
+int RSound1::loadCommand42() {
 	setMusicIndex(0x29);
 	command3();
 	_channels[0].load(loadData(0x2400));
@@ -386,6 +396,7 @@ void RSound1::loadCommand42() {
 	_channels[2].load(loadData(0x245C));
 	_channels[3].load(loadData(0x2499));
 	_channels[4].load(loadData(0x24D0));
+	return 0;
 }
 
 void RSound1::command43_48Tail(byte variant) {
@@ -411,7 +422,7 @@ int RSound1::command48() {
 	return 0;
 }
 
-void RSound1::loadCommand43_48() {
+int RSound1::loadCommand43_48() {
 	setMusicIndex(0x28);
 	command3();
 	_channels[0].load(loadData(0x24EC));
@@ -419,6 +430,7 @@ void RSound1::loadCommand43_48() {
 	_channels[2].load(loadData(0x257D));
 	_channels[3].load(loadData(0x25A4));
 	_channels[4].load(loadData(0x25CD));
+	return 0;
 }
 
 int RSound1::command44() {
@@ -434,13 +446,14 @@ int RSound1::command44() {
 	return 0;
 }
 
-void RSound1::loadCommand44() {
+int RSound1::loadCommand44() {
 	command3();
 	_channels[0].load(loadData(0x268C));
 	_channels[1].load(loadData(0x26D2));
 	_channels[2].load(loadData(0x2717));
 	_channels[3].load(loadData(0x273F));
 	_channels[4].load(loadData(0x2801));
+	return 0;
 }
 
 int RSound1::command45() {
@@ -455,13 +468,14 @@ int RSound1::command45() {
 	return 0;
 }
 
-void RSound1::loadCommand45() {
+int RSound1::loadCommand45() {
 	command3();
 	_channels[0].load(loadData(0x28F6));
 	_channels[1].load(loadData(0x2A60));
 	_channels[2].load(loadData(0x2B46));
 	_channels[3].load(loadData(0x2C41));
 	_channels[4].load(loadData(0x2D2F));
+	return 0;
 }
 
 int RSound1::command46() {
@@ -476,10 +490,11 @@ int RSound1::command46() {
 	return 0;
 }
 
-void RSound1::loadCommand46() {
+int RSound1::loadCommand46() {
 	command3();
 	_channels[0].load(loadData(0x2EC6));
 	_channels[1].load(loadData(0x2F1B));
+	return 0;
 }
 
 int RSound1::command47() {
@@ -496,12 +511,13 @@ int RSound1::command47() {
 	return 0;
 }
 
-void RSound1::loadCommand47() {
+int RSound1::loadCommand47() {
 	command3();
 	_channels[4].load(loadData(0x1342));
 	_channels[2].load(loadData(0x13EC));
 	_channels[3].load(loadData(0x1503));
 	_channels[1].load(loadData(0x15BE));
+	return 0;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -761,10 +777,11 @@ int RSound2::command16() {
 	return 0;
 }
 
-void RSound2::loadCommand16() {
+int RSound2::loadCommand16() {
 	command3();
 	_channels[0].load(loadData(0xEE0));
 	_channels[1].load(loadData(0xF2F));
+	return 0;
 }
 
 int RSound2::command17() {
@@ -841,7 +858,7 @@ int RSound2::command32() {
 	return 0;
 }
 
-void RSound2::loadCommand32() {
+int RSound2::loadCommand32() {
 	command3();
 	_channels[0].load(loadData(0x7BA));
 	_channels[1].load(loadData(0x80B));
@@ -849,6 +866,7 @@ void RSound2::loadCommand32() {
 	_channels[3].load(loadData(0x95F));
 	_channels[4].load(loadData(0x9E3));
 	_channels[5].load(loadData(0xA2D));
+	return 0;
 }
 
 int RSound2::command33() {
@@ -863,7 +881,7 @@ int RSound2::command33() {
 	return 0;
 }
 
-void RSound2::loadCommand33() {
+int RSound2::loadCommand33() {
 	command3();
 	_channels[0].load(loadData(0xA54));
 	_channels[1].load(loadData(0xAF3));
@@ -871,6 +889,7 @@ void RSound2::loadCommand33() {
 	_channels[3].load(loadData(0xC3F));
 	_channels[4].load(loadData(0xD17));
 	_channels[5].load(loadData(0xD9D));
+	return 0;
 }
 
 int RSound2::command34() {
@@ -885,7 +904,7 @@ int RSound2::command34() {
 	return 0;
 }
 
-void RSound2::loadCommand34() {
+int RSound2::loadCommand34() {
 	command3();
 	_channels[0].load(loadData(0xE4A));
 	_channels[1].load(loadData(0xEE2));
@@ -893,6 +912,7 @@ void RSound2::loadCommand34() {
 	_channels[3].load(loadData(0xF82));
 	_channels[4].load(loadData(0xFCD));
 	_channels[5].load(loadData(0x1024));
+	return 0;
 }
 
 int RSound2::command35() {
@@ -909,7 +929,7 @@ int RSound2::command35() {
 	return 0;
 }
 
-void RSound2::loadCommand35() {
+int RSound2::loadCommand35() {
 	// Asymmetric timer: counter=192, period=80.
 	resetCallbackTimerEx(192, 80);
 	command3();
@@ -919,6 +939,7 @@ void RSound2::loadCommand35() {
 	_channels[3].load(loadData(0x1320));
 	_channels[4].load(loadData(0x13FA));
 	_channels[5].load(loadData(0x149C));
+	return 0;
 }
 
 int RSound2::command64() {
@@ -1055,7 +1076,7 @@ int RSound3::command16() {
 	return 0;
 }
 
-void RSound3::loadCommand16() {
+int RSound3::loadCommand16() {
 	// Asymmetric timer: counter=28, period=84.
 	resetCallbackTimerEx(28, 84);
 	command3();
@@ -1065,6 +1086,7 @@ void RSound3::loadCommand16() {
 	_channels[3].load(loadData(0xA72));
 	_channels[4].load(loadData(0xAE6));
 	_channels[8].load(loadData(0xBBF));
+	return 0;
 }
 
 int RSound3::command17() {
@@ -1147,7 +1169,7 @@ int RSound3::command32() {
 	return 0;
 }
 
-void RSound3::loadCommand32() {
+int RSound3::loadCommand32() {
 	command3();
 	_channels[0].load(loadData(0xCAE));
 	_channels[1].load(loadData(0xD68));
@@ -1155,6 +1177,7 @@ void RSound3::loadCommand32() {
 	_channels[3].load(loadData(0xEC8));
 	_channels[4].load(loadData(0xEED));
 	_channels[5].load(loadData(0xFAE));
+	return 0;
 }
 
 int RSound3::command33() {
@@ -1169,7 +1192,7 @@ int RSound3::command33() {
 	return 0;
 }
 
-void RSound3::loadCommand33() {
+int RSound3::loadCommand33() {
 	command3();
 	_channels[0].load(loadData(0x102A));
 	_channels[1].load(loadData(0x10FE));
@@ -1177,6 +1200,7 @@ void RSound3::loadCommand33() {
 	_channels[3].load(loadData(0x116F));
 	_channels[4].load(loadData(0x1264));
 	_channels[8].load(loadData(0x1284));
+	return 0;
 }
 
 int RSound3::command65() {
@@ -1368,12 +1392,13 @@ int RSound4::command16() {
 	return 0;
 }
 
-void RSound4::loadCommand16() {
+int RSound4::loadCommand16() {
 	command3();
 	_channels[0].load(loadData(0x7C4));
 	_channels[1].load(loadData(0x804));
 	_channels[2].load(loadData(0x838));
 	_channels[8].load(loadData(0x887));
+	return 0;
 }
 
 int RSound4::command17() {
@@ -1456,7 +1481,7 @@ int RSound4::command32() {
 	return 0;
 }
 
-void RSound4::loadCommand32() {
+int RSound4::loadCommand32() {
 	command3();
 	_channels[0].load(loadData(0x964));
 	_channels[1].load(loadData(0xA44));
@@ -1464,6 +1489,7 @@ void RSound4::loadCommand32() {
 	_channels[3].load(loadData(0xCFC));
 	_channels[4].load(loadData(0xD18));
 	_channels[5].load(loadData(0xD92));
+	return 0;
 }
 
 int RSound4::command33() {
@@ -1478,13 +1504,14 @@ int RSound4::command33() {
 	return 0;
 }
 
-void RSound4::loadCommand33() {
+int RSound4::loadCommand33() {
 	command3();
 	_channels[0].load(loadData(0xE10));
 	_channels[1].load(loadData(0xE2E));
 	_channels[2].load(loadData(0xE56));
 	_channels[3].load(loadData(0xE97));
 	_channels[8].load(loadData(0xF5E));
+	return 0;
 }
 
 int RSound4::command35() {
@@ -1499,12 +1526,13 @@ int RSound4::command35() {
 	return 0;
 }
 
-void RSound4::loadCommand35() {
+int RSound4::loadCommand35() {
 	// NOTE: calls command1(), not command3() - unlike every other
 	// bucket-4 command in this driver, confirmed directly from the
 	// disassembly.
 	command1();
 	_channels[0].load(loadData(0xFFA));
+	return 0;
 }
 
 int RSound4::command36() {
@@ -1522,13 +1550,14 @@ int RSound4::command36() {
 	return 0;
 }
 
-void RSound4::loadCommand36() {
+int RSound4::loadCommand36() {
 	command3();
 	_channels[0].load(loadData(0x1950));
 	_channels[1].load(loadData(0x1BB6));
 	_channels[2].load(loadData(0x1BFF));
 	_channels[3].load(loadData(0x1C1A));
 	_channels[4].load(loadData(0x1E15));
+	return 0;
 }
 
 int RSound4::command37() {
@@ -1543,13 +1572,14 @@ int RSound4::command37() {
 	return 0;
 }
 
-void RSound4::loadCommand37() {
+int RSound4::loadCommand37() {
 	command3();
 	_channels[0].load(loadData(0x1062));
 	_channels[1].load(loadData(0x10A0));
 	_channels[2].load(loadData(0x10CB));
 	_channels[3].load(loadData(0x1100));
 	_channels[4].load(loadData(0x1141));
+	return 0;
 }
 
 int RSound4::command38() {
@@ -1564,13 +1594,14 @@ int RSound4::command38() {
 	return 0;
 }
 
-void RSound4::loadCommand38() {
+int RSound4::loadCommand38() {
 	command3();
 	_channels[0].load(loadData(0x1172));
 	_channels[1].load(loadData(0x11C9));
 	_channels[2].load(loadData(0x1202));
 	_channels[3].load(loadData(0x122F));
 	_channels[8].load(loadData(0x126E));
+	return 0;
 }
 
 int RSound4::command39() {
@@ -1585,7 +1616,7 @@ int RSound4::command39() {
 	return 0;
 }
 
-void RSound4::loadCommand39() {
+int RSound4::loadCommand39() {
 	command3();
 	_channels[0].load(loadData(0x14DE));
 	_channels[1].load(loadData(0x1550));
@@ -1593,6 +1624,7 @@ void RSound4::loadCommand39() {
 	_channels[3].load(loadData(0x1672));
 	_channels[4].load(loadData(0x170D));
 	_channels[8].load(loadData(0x17C8));
+	return 0;
 }
 
 int RSound4::command40() {
@@ -1607,13 +1639,14 @@ int RSound4::command40() {
 	return 0;
 }
 
-void RSound4::loadCommand40() {
+int RSound4::loadCommand40() {
 	command3();
 	_channels[0].load(loadData(0x7BF));
 	_channels[1].load(loadData(0x7FF));
 	_channels[2].load(loadData(0x833));
 	_channels[3].load(loadData(0x7BA));
 	_channels[8].load(loadData(0x887));
+	return 0;
 }
 
 int RSound4::command64() {
@@ -1779,7 +1812,7 @@ int RSound5::command16() {
 	return 0;
 }
 
-void RSound5::loadCommand16A() {
+int RSound5::loadCommand16A() {
 	command3();
 	_channels[0].load(loadData(0x7DC));
 	_channels[1].load(loadData(0x935));
@@ -1787,9 +1820,10 @@ void RSound5::loadCommand16A() {
 	_channels[3].load(loadData(0xA85));
 	_channels[4].load(loadData(0xAFA));
 	_channels[8].load(loadData(0xD15));
+	return 0;
 }
 
-void RSound5::loadCommand16B() {
+int RSound5::loadCommand16B() {
 	setMusicIndex(0x10);
 	command3();
 	_channels[0].load(loadData(0x7E9));
@@ -1798,6 +1832,7 @@ void RSound5::loadCommand16B() {
 	_channels[3].load(loadData(0xA8B));
 	_channels[4].load(loadData(0xB08));
 	_channels[8].load(loadData(0xD1B));
+	return 0;
 }
 
 int RSound5::command17() {
@@ -1887,7 +1922,7 @@ int RSound5::command32() {
 	return 0;
 }
 
-void RSound5::loadCommand32() {
+int RSound5::loadCommand32() {
 	setMusicIndex(0x10);
 	command1();
 	_channels[0].load(loadData(0xDCA));
@@ -1895,6 +1930,7 @@ void RSound5::loadCommand32() {
 	_channels[2].load(loadData(0xE37));
 	_channels[3].load(loadData(0xE5F));
 	_channels[8].load(loadData(0xEE4));
+	return 0;
 }
 
 int RSound5::command33() {
@@ -1909,7 +1945,7 @@ int RSound5::command33() {
 	return 0;
 }
 
-void RSound5::loadCommand33() {
+int RSound5::loadCommand33() {
 	setMusicIndex(0x10);
 	command3();
 	_channels[0].load(loadData(0xFDA));
@@ -1918,6 +1954,7 @@ void RSound5::loadCommand33() {
 	_channels[3].load(loadData(0x129E));
 	_channels[4].load(loadData(0x136A));
 	_channels[8].load(loadData(0x1408));
+	return 0;
 }
 
 int RSound5::command34() {
@@ -1932,7 +1969,7 @@ int RSound5::command34() {
 	return 0;
 }
 
-void RSound5::loadCommand34() {
+int RSound5::loadCommand34() {
 	setMusicIndex(0x10);
 	command1();
 	_channels[0].load(loadData(0x16EA));
@@ -1941,6 +1978,7 @@ void RSound5::loadCommand34() {
 	_channels[3].load(loadData(0x1915));
 	_channels[4].load(loadData(0x19A9));
 	_channels[8].load(loadData(0x1B30));
+	return 0;
 }
 
 int RSound5::command35() {
@@ -1955,13 +1993,14 @@ int RSound5::command35() {
 	return 0;
 }
 
-void RSound5::loadCommand35() {
+int RSound5::loadCommand35() {
 	setMusicIndex(0x10);
 	command1();
 	_channels[0].load(loadData(0x1B54));
 	_channels[1].load(loadData(0x1B86));
 	_channels[2].load(loadData(0x1BCB));
 	_channels[3].load(loadData(0x1BE6));
+	return 0;
 }
 
 int RSound5::command36() {
@@ -1995,7 +2034,7 @@ int RSound5::command38() {
 	return 0;
 }
 
-void RSound5::loadCommand38() {
+int RSound5::loadCommand38() {
 	setMusicIndex(0x10);
 	command1();
 	_channels[0].load(loadData(0x1CDC));
@@ -2004,6 +2043,7 @@ void RSound5::loadCommand38() {
 	_channels[3].load(loadData(0x1E1C));
 	_channels[4].load(loadData(0x1E34));
 	_channels[8].load(loadData(0x1F44));
+	return 0;
 }
 
 int RSound5::command64() {
@@ -2246,12 +2286,13 @@ int RSound6::command16() {
 	return 0;
 }
 
-void RSound6::loadCommand16() {
+int RSound6::loadCommand16() {
 	setMusicIndex(0x10);
 	command3();
 	_channels[0].load(loadData(0x7BA));
 	_channels[1].load(loadData(0x842));
 	_channels[2].load(loadData(0x881));
+	return 0;
 }
 
 int RSound6::command17() {
@@ -2321,7 +2362,7 @@ void RSound6::command32_33LoadCh4() {
 	_channels[3].load(loadData(0x9FB));
 }
 
-void RSound6::command32_33Load() {
+int RSound6::command32_33Load() {
 	// Falls through to the shared flag check at its end.
 	command3();
 	_channels[0].load(loadData(0x8CE));
@@ -2330,6 +2371,7 @@ void RSound6::command32_33Load() {
 	_channels[8].load(loadData(0x96E));
 	if (_command33Flag == 0xFF)
 		command32_33LoadCh4();
+	return 0;
 }
 
 int RSound6::command32() {
@@ -2372,13 +2414,14 @@ int RSound6::command33() {
 
 /*-----------------------------------------------------------------------*/
 
-void RSound6::command34LoadCh1AndRest() {
+int RSound6::command34LoadCh1AndRest() {
 	// Falls through to command34LoadRestOnly().
 	command3();
 	_channels[0].load(loadData(0xA1A));
 	_channels[1].load(loadData(0xA5C));
 	_channels[2].load(loadData(0xA95));
 	_channels[3].load(loadData(0xB22));
+	return 0;
 }
 
 void RSound6::command34LoadRestOnly() {
@@ -2511,7 +2554,7 @@ int RSound6::command44() {
 	return 0;
 }
 
-void RSound6::loadCommand44() {
+int RSound6::loadCommand44() {
 	setMusicIndex(0x10);
 	command3();
 	_channels[0].load(loadData(0x1F48));
@@ -2520,6 +2563,7 @@ void RSound6::loadCommand44() {
 	_channels[3].load(loadData(0x1FEF));
 	_channels[4].load(loadData(0x201D));
 	_channels[8].load(loadData(0x2073));
+	return 0;
 }
 
 int RSound6::command45() {
@@ -2834,7 +2878,7 @@ void RSound9::variantSetupB() {
 	*loadData(0x95E) = 0x3B;
 }
 
-void RSound9::command33_47_60Load() {
+int RSound9::command33_47_60Load() {
 	command1();
 	_channels[0].load(loadData(0x8E2));
 	_channels[1].load(loadData(0x940));
@@ -2843,6 +2887,7 @@ void RSound9::command33_47_60Load() {
 	_channels[4].load(loadData(0xA83));
 	_channels[5].load(loadData(0xAE1));
 	_channels[6].load(loadData(0xC43));
+	return 0;
 }
 
 int RSound9::command60() {
@@ -2874,7 +2919,7 @@ int RSound9::command34Or54() {
 	return 0;
 }
 
-void RSound9::loadCommand34Or54() {
+int RSound9::loadCommand34Or54() {
 	command1();
 	_channels[0].load(loadData(0xD1E));
 	_channels[1].load(loadData(0xF0D));
@@ -2883,6 +2928,7 @@ void RSound9::loadCommand34Or54() {
 	_channels[5].load(loadData(0x15A5));
 	_channels[6].load(loadData(0x15F0));
 	_channels[8].load(loadData(0x130B));
+	return 0;
 }
 
 int RSound9::command35() {
@@ -2894,7 +2940,7 @@ int RSound9::command35() {
 	return 0;
 }
 
-void RSound9::loadCommand35() {
+int RSound9::loadCommand35() {
 	command1();
 	_channels[0].load(loadData(0x1644));
 	_channels[1].load(loadData(0x16B0));
@@ -2903,6 +2949,7 @@ void RSound9::loadCommand35() {
 	_channels[8].load(loadData(0x180E));
 	_channels[5].load(loadData(0x1830));
 	_channels[6].load(loadData(0x18AC));
+	return 0;
 }
 
 int RSound9::command36() {
@@ -2914,7 +2961,7 @@ int RSound9::command36() {
 	return 0;
 }
 
-void RSound9::loadCommand36() {
+int RSound9::loadCommand36() {
 	command1();
 	_channels[0].load(loadData(0x1A0E));
 	_channels[1].load(loadData(0x1A84));
@@ -2923,6 +2970,7 @@ void RSound9::loadCommand36() {
 	_channels[4].load(loadData(0x1DEA));
 	_channels[5].load(loadData(0x1E56));
 	_channels[6].load(loadData(0x1EC2));
+	return 0;
 }
 
 int RSound9::command37() {
@@ -2934,7 +2982,7 @@ int RSound9::command37() {
 	return 0;
 }
 
-void RSound9::loadCommand37() {
+int RSound9::loadCommand37() {
 	command1();
 	_channels[0].load(loadData(0x1F04));
 	_channels[1].load(loadData(0x1F94));
@@ -2942,6 +2990,7 @@ void RSound9::loadCommand37() {
 	_channels[3].load(loadData(0x206A));
 	_channels[8].load(loadData(0x213C));
 	_channels[5].load(loadData(0x219E));
+	return 0;
 }
 
 int RSound9::command38() {
@@ -2953,7 +3002,7 @@ int RSound9::command38() {
 	return 0;
 }
 
-void RSound9::loadCommand38() {
+int RSound9::loadCommand38() {
 	command1();
 	_channels[0].load(loadData(0x22D2));
 	_channels[1].load(loadData(0x234A));
@@ -2962,6 +3011,7 @@ void RSound9::loadCommand38() {
 	_channels[4].load(loadData(0x23FA));
 	_channels[8].load(loadData(0x245C));
 	_channels[6].load(loadData(0x24BC));
+	return 0;
 }
 
 int RSound9::command39() {
@@ -2973,7 +3023,7 @@ int RSound9::command39() {
 	return 0;
 }
 
-void RSound9::loadCommand39() {
+int RSound9::loadCommand39() {
 	command1();
 	_channels[0].load(loadData(0x24F8));
 	_channels[1].load(loadData(0x2584));
@@ -2982,6 +3032,7 @@ void RSound9::loadCommand39() {
 	_channels[4].load(loadData(0x2B8A));
 	_channels[8].load(loadData(0x2C22));
 	_channels[6].load(loadData(0x2C66));
+	return 0;
 }
 
 int RSound9::command40() {
@@ -2993,7 +3044,7 @@ int RSound9::command40() {
 	return 0;
 }
 
-void RSound9::loadCommand40() {
+int RSound9::loadCommand40() {
 	command1();
 	_channels[0].load(loadData(0xD1E));
 	_channels[1].load(loadData(0xF0D));
@@ -3002,6 +3053,7 @@ void RSound9::loadCommand40() {
 	_channels[4].load(loadData(0x2E54));
 	_channels[5].load(loadData(0x2F33));
 	_channels[6].load(loadData(0x2F6B));
+	return 0;
 }
 
 int RSound9::command41() {
@@ -3013,7 +3065,7 @@ int RSound9::command41() {
 	return 0;
 }
 
-void RSound9::loadCommand41() {
+int RSound9::loadCommand41() {
 	command1();
 	_channels[0].load(loadData(0x2F94));
 	_channels[2].load(loadData(0x3460));
@@ -3021,6 +3073,7 @@ void RSound9::loadCommand41() {
 	_channels[4].load(loadData(0x369A));
 	_channels[5].load(loadData(0x3773));
 	_channels[6].load(loadData(0x39F6));
+	return 0;
 }
 
 int RSound9::command53() {
@@ -3035,7 +3088,7 @@ int RSound9::command53() {
 	return 0;
 }
 
-void RSound9::loadCommand53() {
+int RSound9::loadCommand53() {
 	command1();
 	_channels[1].load(loadData(0x33C0));
 	_channels[2].load(loadData(0x3575));
@@ -3043,6 +3096,7 @@ void RSound9::loadCommand53() {
 	_channels[4].load(loadData(0x36FF));
 	_channels[5].load(loadData(0x3966));
 	_channels[6].load(loadData(0x3B89));
+	return 0;
 }
 
 int RSound9::command42() {
@@ -3054,7 +3108,7 @@ int RSound9::command42() {
 	return 0;
 }
 
-void RSound9::loadCommand42() {
+int RSound9::loadCommand42() {
 	command1();
 	_channels[0].load(loadData(0x2FDD));
 	_channels[1].load(loadData(0x3031));
@@ -3063,6 +3117,7 @@ void RSound9::loadCommand42() {
 	_channels[4].load(loadData(0x36D1));
 	_channels[5].load(loadData(0x3856));
 	_channels[6].load(loadData(0x3A93));
+	return 0;
 }
 
 int RSound9::command43() {
@@ -3114,12 +3169,13 @@ int RSound9::command51() {
 	return 0;
 }
 
-void RSound9::loadCommand51() {
+int RSound9::loadCommand51() {
 	command1();
 	_channels[0].load(loadData(0x458E));
 	_channels[1].load(loadData(0x4623));
 	_channels[2].load(loadData(0x46A8));
 	_channels[3].load(loadData(0x46F3));
+	return 0;
 }
 
 int RSound9::command52() {
@@ -3134,13 +3190,14 @@ int RSound9::command52() {
 	return 0;
 }
 
-void RSound9::loadCommand52() {
+int RSound9::loadCommand52() {
 	command1();
 	_channels[0].load(loadData(0x40C6));
 	_channels[1].load(loadData(0x432C));
 	_channels[2].load(loadData(0x4375));
 	_channels[3].load(loadData(0x438E));
 	_channels[4].load(loadData(0x4587));
+	return 0;
 }
 
 int RSound9::command55() {
@@ -3154,7 +3211,7 @@ int RSound9::command55() {
 	return 0;
 }
 
-void RSound9::loadCommand55() {
+int RSound9::loadCommand55() {
 	command1();
 	_channels[0].load(loadData(0x471A));
 	_channels[1].load(loadData(0x47EE));
@@ -3162,6 +3219,7 @@ void RSound9::loadCommand55() {
 	_channels[3].load(loadData(0x4ABF));
 	_channels[4].load(loadData(0x4ADB));
 	_channels[5].load(loadData(0x4B35));
+	return 0;
 }
 
 int RSound9::command57() {
@@ -3175,7 +3233,7 @@ int RSound9::command57() {
 	return 0;
 }
 
-void RSound9::loadCommand57() {
+int RSound9::loadCommand57() {
 	command1();
 	_channels[0].load(loadData(0x4B96));
 	_channels[1].load(loadData(0x4BF0));
@@ -3183,6 +3241,7 @@ void RSound9::loadCommand57() {
 	_channels[3].load(loadData(0x4C8A));
 	_channels[4].load(loadData(0x4CBC));
 	_channels[8].load(loadData(0x4D16));
+	return 0;
 }
 
 int RSound9::command58() {
@@ -3196,7 +3255,7 @@ int RSound9::command58() {
 	return 0;
 }
 
-void RSound9::loadCommand58() {
+int RSound9::loadCommand58() {
 	// Calls the full command0() reset (not command1(), unlike every
 	// other command in this batch) before loading.
 	command0();
@@ -3204,6 +3263,7 @@ void RSound9::loadCommand58() {
 	_channels[1].load(loadData(0x4DD1));
 	_channels[2].load(loadData(0x4DEB));
 	_channels[3].load(loadData(0x4E2C));
+	return 0;
 }
 
 int RSound9::command59() {
