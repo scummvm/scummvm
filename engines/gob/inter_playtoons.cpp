@@ -27,8 +27,10 @@
 
 #include "common/endian.h"
 #include "common/str.h"
+#include "common/printman.h"
 #include "common/translation.h"
 
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 
 #include "gob/gob.h"
@@ -91,11 +93,12 @@ void Inter_Playtoons::setupOpcodesFunc() {
 
 	CLEAROPCODEFUNC(0x3D);
 	OPCODEFUNC(0x0B, oPlaytoons_printText);
-	OPCODEFUNC(0x1B, oPlaytoons_F_1B);
+	OPCODEFUNC(0x1B, oPlaytoons_createButton);
 	OPCODEFUNC(0x24, oPlaytoons_putPixel);
 	OPCODEFUNC(0x27, oPlaytoons_freeSprite);
 	OPCODEFUNC(0x3F, oPlaytoons_checkData);
 	OPCODEFUNC(0x4D, oPlaytoons_readData);
+	OPCODEFUNC(0x4E, oPlaytoons_writeData);
 }
 
 void Inter_Playtoons::setupOpcodesGob() {
@@ -188,8 +191,8 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 	_vm->_game->_script->skip(1);
 }
 
-void Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
-	_vm->_game->_hotspots->oPlaytoons_F_1B();
+void Inter_Playtoons::oPlaytoons_createButton(OpFuncParams &params) {
+	_vm->_game->_hotspots->createButton();
 }
 
 void Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {
@@ -214,6 +217,23 @@ void Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
 		index = _vm->_game->_script->readInt16();
 	else
 		index = _vm->_game->_script->readValExpr();
+
+	if (index < 0 || index >= Draw::kSpriteCount) {
+		warning("oPlaytoons_freeSprite: invalid sprite index %d", index);
+		return;
+	}
+
+	if (_vm->getGameType() == kGameTypeAdibou2 &&
+			_vm->_util->getFrameRate() == 5 &&
+			_vm->isCurrentTot("BS_LAB50.TOT")) {
+		// WORKAROUND: In the "puzzle shapes" game of Adibou2/Sciences, the script
+		// sets the frame rate to 5Hz for a special animation but forgets to reset it
+		// afterward, making some videos laggy (e.g. Adibou help mode).
+		// The sound was not affected in the original engine (while it is laggy as well
+		// in ScummVM), making the bug more discrete.
+		_vm->_util->setFrameRate(12);
+	}
+
 	_vm->_draw->freeSprite(index);
 }
 
@@ -321,6 +341,99 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	delete stream;
 }
 
+void Inter_Playtoons::oPlaytoons_writeData(OpFuncParams &params) {
+	Common::String file = getFile(_vm->_game->_script->evalString(), false);
+
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
+	int32 size    = _vm->_game->_script->readValExpr();
+	int32 offset  = _vm->_game->_script->evalInt();
+
+	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
+		   file.c_str(), dataVar, size, offset);
+
+	WRITE_VAR(1, 1);
+
+	if (file.compareToIgnoreCase("PRINTER") == 0) {
+		// Send a sprite to the printer.
+		WRITE_VAR(1, 0);
+
+		int32 spriteIndex = -size - 1;
+		if (spriteIndex == 1000) {
+			// Just query the printable area size, without printing anything.
+			Common::Rect printArea = g_system->getPrintingManager()->getPrintableArea();
+			if (!printArea.isEmpty()) {
+				WRITE_VAR(2, printArea.width());
+				WRITE_VAR(3, printArea.height());
+			}
+
+			return;
+		}
+
+		if (spriteIndex < 0 || spriteIndex >= Draw::kSpriteCount) {
+			warning("o7_writeData: Invalid sprite index %d for printing", spriteIndex);
+			return;
+		}
+
+		SurfacePtr sprite = _vm->_draw->_spritesArray[spriteIndex];
+		if (!sprite) {
+			warning("o7_writeData: no sprite at index %d for printing", spriteIndex);
+			return;
+		}
+
+		Graphics::ManagedSurface surf(sprite->getWidth(),
+									  sprite->getHeight(),
+									  sprite->getBPP() > 1 ? _vm->getPixelFormat()
+														   : Graphics::PixelFormat::createFormatCLUT8());
+
+		if (sprite->getBPP() > 1) {
+			// Fill the background with white color, and ensure 0 is treated as the transparent color key
+			surf.fillRect(Common::Rect(0, 0, surf.w, surf.h),
+						  surf.format.RGBToColor(255, 255, 255));
+			surf.copyRectToSurfaceWithKey(sprite->getData(),
+										  sprite->getWidth() * sprite->getBPP(),
+										  0,
+										  0,
+										  sprite->getWidth(),
+										  sprite->getHeight(),
+										  0);
+		} else {
+			byte pal[768];
+			int16 numcolors = _vm->_global->_setAllPalette ? 256 : 16;
+			for (int i = 0; i < numcolors; i++) {
+				_vm->_video->setPalColor(pal + i * 3, _vm->_global->_pPaletteDesc->vgaPal[i]);
+			}
+			surf.setPalette(pal, 0, numcolors);
+			surf.copyRectToSurface(sprite->getData(),
+								   sprite->getWidth() * sprite->getBPP(),
+								   0,
+								   0,
+								   sprite->getWidth(),
+								   sprite->getHeight());
+		}
+
+		g_gui.printImage(surf);
+		return;
+	}
+
+	if (size == 0) {
+		dataVar = 0;
+		size = _vm->_game->_script->getVariablesCount() * 4;
+	}
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad ? _vm->_saveLoad->getSaveMode(file.c_str()) : SaveLoad::kSaveModeNone;
+	if (mode == SaveLoad::kSaveModeSave) {
+		if (!_vm->_saveLoad->save(file.c_str(), dataVar, size, offset)) {
+			GUI::MessageDialog dialog(_("Failed to save game to file."));
+			dialog.runModal();
+		} else
+			WRITE_VAR(1, 0);
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return;
+	else if (mode == SaveLoad::kSaveModeNone)
+		warning("Attempted to write to file \"%s\"", file.c_str());
+}
+
+
 void Inter_Playtoons::oPlaytoons_loadMultObject() {
 	assert(_vm->_mult->_objects);
 
@@ -349,7 +462,7 @@ void Inter_Playtoons::oPlaytoons_loadMultObject() {
 }
 
 void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
-	int16 objIndex;
+	int32 objIndex;
 	uint16 readVar[4];
 	uint16 types[4];
 	Mult::Mult_AnimData animData;
@@ -455,42 +568,6 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 		file += ".ITK";
 
 	_vm->_dataIO->openArchive(file, false);
-}
-
-Common::String Inter_Playtoons::getFile(const char *path, bool stripPath) {
-	const char *orig = path;
-
-	if      (!strncmp(path, "@:\\", 3))
-		path += 3;
-	else if (!strncmp(path, "<ME>", 4))
-		path += 4;
-	else if (!strncmp(path, "<CD>", 4))
-		path += 4;
-	else if (!strncmp(path, "<STK>", 5))
-		path += 5;
-	else if (!strncmp(path, "<ALLCD>", 7))
-		path += 7;
-
-	if (stripPath) {
-		const char *backslash = strrchr(path, '\\');
-		if (backslash)
-			path = backslash + 1;
-	}
-
-	Common::String newPath = path;
-	// Comma in filenames tells this engine that the file handle may be reused for next read/write operations
-	// E.g. myfile,0 will keep the file handle for "myfile".
-	// If later we request file I/O for "myfile,1" the file handle will be reused.
-	// It seems that we can just ignore this, as the seek position of the handle is reset anyway.
-	uint32 commaPos = newPath.find(',');
-	if (commaPos != Common::String::npos)
-		newPath = newPath.substr(0, commaPos);
-
-	if (orig != newPath)
-		debugC(2, kDebugFileIO, "Inter_Playtoons::getFile(): Evaluating path"
-				"\"%s\" to \"%s\"", orig, path);
-
-	return newPath;
 }
 
 bool Inter_Playtoons::readSprite(Common::String file, int32 dataVar,

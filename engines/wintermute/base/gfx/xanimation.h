@@ -31,9 +31,6 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/coll_templ.h"
 
-#include "math/quat.h"
-#include "math/vector3d.h"
-
 namespace Wintermute {
 
 class FrameNode;
@@ -59,17 +56,17 @@ public:
 protected:
 	struct BonePositionKey {
 		uint32 _time;
-		Math::Vector3d _pos;
+		DXVector3 _pos;
 	};
 
 	struct BoneScaleKey {
 		uint32 _time;
-		Math::Vector3d _scale;
+		DXVector3 _scale;
 	};
 
 	struct BoneRotationKey {
 		uint32 _time;
-		Math::Quaternion _rotation;
+		DXQuaternion _rotation;
 	};
 
 protected:

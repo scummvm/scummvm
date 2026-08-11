@@ -26,17 +26,21 @@
 #include "access/resources.h"
 #include "access/amazon/amazon_player.h"
 #include "access/martian/martian_player.h"
+#include "access/noctropolis/noctropolis_player.h"
 
 namespace Access {
 
 Player *Player::init(AccessEngine *vm) {
 	switch (vm->getGameID()) {
-	case GType_Amazon:
+	case kGameAmazon:
 		vm->_playerDataCount = 8;
 		return new Amazon::AmazonPlayer(vm);
-	case GType_MartianMemorandum:
+	case kGameMartianMemorandum:
 		vm->_playerDataCount = 10;
 		return new Martian::MartianPlayer(vm);
+	case kGameNoctropolis:
+		vm->_playerDataCount = 0;
+		return new Noctropolis::NoctropolisPlayer(vm);
 	default:
 		vm->_playerDataCount = 8;
 		return new Player(vm);
@@ -72,6 +76,7 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerDirection = NONE;
 	_xFlag = _yFlag = 0;
 	_inactiveYOff = 0;
+	_jetpackFlag = 0;
 
 	_sideWalkMin = _sideWalkMax = 0;
 	_upWalkMin = _upWalkMax = 0;
@@ -108,6 +113,8 @@ void Player::load() {
 	_walkOffUL = new Common::Point[dataCount];
 	_walkOffDL = new Common::Point[dataCount];
 
+	// NOTE: Although the values get set here to Amazon defaults, they are overridden
+	// in all the sub-class load() functions.
 	_playerOffset.x = _vm->_screen->_scaleTable1[25];
 	_playerOffset.y = _vm->_screen->_scaleTable1[67];
 	_leftDelta = -3;
@@ -129,25 +136,41 @@ void Player::load() {
 
 	_playerSprites = _playerSprites1;
 	if (_manPal1) {
-		// Those values are from MM as Amazon doesn't use it
-		Common::copy(_manPal1 + 0x2A0, _manPal1 + 0x2A0 + 0x42, _vm->_screen->_manPal);
+		if (_vm->getGameID() == kGameNoctropolis) {
+			//if (_vm->_room->_roomFlag & kRoomFlagStiletto) {
+			//	Common::copy(_manPal1 + 0x1e0, _manPal1 + 0x1e0 + 99, _vm->_screen->_stilPal);
+			//}
+			Common::copy(_manPal1 + 0x240, _manPal1 + 0x240 + 0x84, _vm->_screen->_manPal);
+		} else {
+			// Those values are from MM as Amazon doesn't use it
+			Common::copy(_manPal1 + 0x2A0, _manPal1 + 0x2A0 + 0x42, _vm->_screen->_manPal);
+		}
 	} else {
-		Common::fill(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x60, 0);
+		Common::fill(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x84, 0);
 	}
 }
 
-void Player::loadTexPalette() {
-	Resource *texPal = _vm->_files->loadFile("TEXPAL.COL");
-	int size = texPal->_size;
+void Player::loadPalResource(Resource *pal) {
+	int size = pal->_size;
 	assert(size == 768);
 	_manPal1 = new byte[size];
-	memcpy(_manPal1, texPal->data(), size);
+	memcpy(_manPal1, pal->data(), size);
+}
+
+void Player::loadTexPalette() {
+	Resource *pal = _vm->_files->loadRawFile("TEXPAL.COL");
+	loadPalResource(pal);
+	delete pal;
+}
+
+void Player::loadNoctPalette(int fileNum, int subFile) {
+	Resource *pal = _vm->_files->loadFile(fileNum, subFile);
+	loadPalResource(pal);
+	delete pal;
 }
 
 void Player::loadSprites(const Common::Path &name) {
-	freeSprites();
-
-	Resource *data = _vm->_files->loadFile(name);
+	Resource *data = _vm->_files->loadRawFile(name);
 
 #if 0
 	Common::DumpFile *outFile = new Common::DumpFile();
@@ -175,6 +198,12 @@ void Player::removeSprite1() {
 	}
 }
 
+bool Player::isMMHover() const {
+	// Whether or not this is MM and the player is on the hoverboard.
+	return (_vm->getGameID() == kGameMartianMemorandum &&
+		_vm->_flags[174] == 1);
+}
+
 void Player::calcManScale() {
 	if (!_vm->_manScaleOff) {
 		_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) *
@@ -182,13 +211,61 @@ void Player::calcManScale() {
 		_vm->_screen->setScaleTable(_vm->_scale);
 
 		_playerOffset.x = _vm->_screen->_scaleTable1[20];
-		_playerOffset.y = _vm->_screen->_scaleTable1[67];
+		_playerOffset.y = _vm->_screen->_scaleTable1[(_vm->getGameID() == kGameMartianMemorandum) ? 62 : 67];
 		_inactiveYOff = _playerOffset.y;
 	}
 }
 
+void Player::jetpack() {
+	_playerDirection = UP;
+	ImageFlag flags = IMGFLAG_NONE;
+	if (!_vm->_timers[0]._flag) {
+		_vm->_timers[0]._flag = 1;
+		_jetpackFlag ^= 1;
+		_rawPlayer.y -= 4;
+		if (_move == RIGHT) {
+			_frame = 0;
+			flags = IMGFLAG_CROPPED;
+			if (_rawPlayer.x < 0x101)
+				_rawPlayer.x += 2;
+			else
+				_rawPlayer.x = 256;
+		}
+		if (_move == LEFT) {
+			_frame = 0;
+			flags = IMGFLAG_BACKWARDS;
+			_rawPlayer.x -= 2;
+			if (_rawPlayer.x < 0)
+				_rawPlayer.x = 0;
+		}
+
+		// Leave tex facing whichever direction he was previously
+		// unless moving in some direction
+		if (_move == LEFT || _move == RIGHT)
+			_flags = (_flags & 0xfd) | flags;
+	}
+
+	_flags |= IMGFLAG_UNSCALED;
+
+	_position.x = _rawPlayer.x;
+	_position.y = _rawPlayer.y - _playerOffset.y;
+	_offsetY = _playerOffset.y;
+	_frameNumber = 23 + _jetpackFlag;
+
+	ImageEntry ie = *this;
+	ie._spritesPtr = _vm->_objectsTable[35];
+	_vm->_images.addToList(ie);
+}
+
 void Player::walk() {
 	_collideFlag = false;
+
+	if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[173] == 1) {
+		// Special case for MM Jetpack
+		jetpack();
+		return;
+	}
+
 	_playerDirection = NONE;
 
 	if (_playerOff)
@@ -252,9 +329,9 @@ void Player::walkUp() {
 
 	_playerDirection = UP;
 	int walkOff = _walkOffUp[_frame - _upWalkMin];
-	int tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOff];
+	int tempL = _rawPlayerLow.y - (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOff]);
 	_rawYTempL = (byte)tempL;
-	int yTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff] -
+	int yTemp = _rawPlayer.y - (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOff]) -
 		(tempL < 0 ? 1 : 0);
 	_rawYTemp = yTemp;
 	_rawXTemp = _rawPlayer.x;
@@ -267,9 +344,10 @@ void Player::walkUp() {
 
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom
-		//if (_vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
-		//	warning("TODO: walkUp - si = 0?");
+		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 8 || _frame == 12))
+			_vm->_sound->playSound(0);
+		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
+			_vm->_sound->playSound(0);
 
 		if (++_frame > _upWalkMax)
 			_frame = _upWalkMin;
@@ -283,10 +361,10 @@ void Player::walkDown() {
 		_frame = _downWalkMin;
 
 	_playerDirection = DOWN;
-	int walkOff = _walkOffDown[_frame - _downWalkMin];
-	int tempL = _vm->_screen->_scaleTable2[walkOff] + _rawPlayerLow.y;
+	int walkOff =  _walkOffDown[_frame - _downWalkMin];
+	int tempL = (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOff]) + _rawPlayerLow.y;
 	_rawYTempL = (byte)tempL;
-	_rawYTemp = _vm->_screen->_scaleTable1[walkOff] + _rawPlayer.y + (tempL >= 0x100 ? 1 : 0);
+	_rawYTemp = (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOff]) + _rawPlayer.y + (tempL >= 0x100 ? 1 : 0);
 	_rawXTemp = _rawPlayer.x;
 
 	if (_vm->_room->codeWalls()) {
@@ -297,9 +375,10 @@ void Player::walkDown() {
 
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom
-		//if (_vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
-		//	warning("TODO: walkDown - si = 0?");
+		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 17 || _frame == 21))
+			_vm->_sound->playSound(0);
+		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
+			_vm->_sound->playSound(0);
 
 		if (++_frame > _downWalkMax)
 			_frame = _downWalkMin;
@@ -322,9 +401,9 @@ void Player::walkLeft() {
 	}
 	if (flag) {
 		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
-		int tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		int tempL = _rawPlayerLow.x - (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOffset]);
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
+		_rawXTemp = _rawPlayer.x - (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOffset]) -
 			(tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
@@ -338,9 +417,10 @@ void Player::walkLeft() {
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom1
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkLeft - si = 0?");
+		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+			_vm->_sound->playSound(0);
+		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		if (_frame > _sideWalkMax)
 			_frame = _sideWalkMin;
@@ -363,9 +443,9 @@ void Player::walkRight() {
 	}
 	if (flag) {
 		int walkOffset = _walkOffRight[_frame - _sideWalkMin];
-		int tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
+		int tempL = _rawPlayerLow.x + (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOffset]);
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
+		_rawXTemp = _rawPlayer.x + (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOffset]) +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
@@ -378,6 +458,11 @@ void Player::walkRight() {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
+
+		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+			_vm->_sound->playSound(0);
+		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		// Useless check removed
 		if (_frame > _sideWalkMax)
@@ -427,9 +512,8 @@ void Player::walkUpLeft() {
 		++_frame;
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom1
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkUpLeft - si = 0?");
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		if (_frame > _diagUpWalkMax)
 			_frame = _diagUpWalkMin;
@@ -478,9 +562,8 @@ void Player::walkDownLeft() {
 		++_frame;
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom1
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkDownLeft - si = 0?");
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		if (_frame > _diagDownWalkMax)
 			_frame = _diagDownWalkMin;
@@ -529,9 +612,8 @@ void Player::walkUpRight() {
 		++_frame;
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkUpRight - si = 0?");
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		if (_frame > _diagUpWalkMax)
 			_frame = _diagUpWalkMin;
@@ -579,9 +661,8 @@ void Player::walkDownRight() {
 
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom1
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkDownRight - si = 0?");
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		++_frame;
 		if (_frame > _diagDownWalkMax)
@@ -668,17 +749,29 @@ void Player::plotCom(int flags) {
 }
 
 void Player::plotCom0() {
-	plotCom(_vm->getGameID() == GType_Amazon ? 0 : IMGFLAG_BACKWARDS);
+	plotCom(_vm->getGameID() == kGameAmazon ? 0 : IMGFLAG_BACKWARDS);
 }
 
 void Player::plotCom1() {
-	plotCom(_vm->getGameID() == GType_Amazon ? IMGFLAG_BACKWARDS : 0);
+	plotCom(_vm->getGameID() == kGameAmazon ? IMGFLAG_BACKWARDS : 0);
 }
 
 void Player::plotCom2() {
 	// WORKAROUND: Amazon has at least one cutscene with the player not properly turned off
-	if (!_playerOff && _spritesPtr != nullptr)
-		_vm->_images.addToList(*this);
+	if (_playerOff)
+		return;
+
+	if (_spritesPtr != nullptr) {
+		ImageEntry ie = *this;
+		if (!isMMHover()) {
+			_vm->_images.addToList(ie);
+		} else if (_vm->_objectsTable[23]) {
+			// MM player on hoverboard
+			ie._spritesPtr = _vm->_objectsTable[23];
+			ie._frameNumber = 13;
+			_vm->_images.addToList(ie);
+		}
+	}
 }
 
 void Player::plotCom3() {
@@ -709,6 +802,8 @@ void Player::checkScroll() {
 	_scrollFlag = false;
 	if (_playerDirection == NONE)
 		return;
+
+	calcPlayer();
 
 	if ((_playerDirection == UPLEFT || _playerDirection == DOWNLEFT ||
 			_playerDirection == LEFT) && _playerX <= _scrollThreshold) {
@@ -746,8 +841,9 @@ bool Player::scrollUp(int forcedAmount) {
 		_scrollAmount = forcedAmount;
 
 	if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >=
-			_vm->_room->_playFieldHeight)
+			_vm->_room->_playFieldHeight) {
 		return true;
+	}
 
 	_scrollFlag = true;
 	_vm->_scrollY = _vm->_scrollY + _scrollAmount;
@@ -814,7 +910,7 @@ bool Player::scrollLeft(int forcedAmount) {
 		return true;
 	} else {
 		_scrollFlag = true;
-		_vm->_scrollX = _vm->_scrollX + _scrollAmount;
+		_vm->_scrollX += _scrollAmount;
 
 		do {
 			if (_vm->_scrollX < TILE_WIDTH)
@@ -844,7 +940,7 @@ bool Player::scrollRight(int forcedAmount) {
 		do {
 			_vm->_scrollX += TILE_WIDTH;
 			if (--_vm->_scrollCol < 0) {
-				_scrollEnd = true;
+				_scrollEnd = 1;
 				_vm->_scrollX = 0;
 				_vm->_scrollCol = 0;
 				return true;

@@ -104,6 +104,7 @@ public:
 	int16 _kills;  // Number of characters killed
 	int16 _experience;
 	bool _frozen;
+	int16 _freezeTimer;
 	int16 _userVariables[26 * 9];
 	int16 _statVariables[18];
 };

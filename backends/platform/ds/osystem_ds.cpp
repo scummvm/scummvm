@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include <portdefs.h> // Protect uintXX typedefs
 #include <nds.h>
 #include <filesystem.h>
 
@@ -45,7 +46,8 @@ OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
 	: _eventSource(NULL), _engineRunning(false), _disableCursorPalette(true),
-	_graphicsMode(GFX_HWSCALE), _stretchMode(100),
+	_currentState(), _oldState(), _hiresHack(false), _screenChangeID(0),
+	_transactionMode(kTransactionNone),
 	_paletteDirty(false), _cursorDirty(false), _overlayInGUI(false),
 	_pfCLUT8(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfABGR1555(Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15)),
@@ -82,7 +84,7 @@ void OSystem_DS::initBackend() {
 	ConfMan.setBool("FM_medium_quality", true);
 
 	_eventSource = new DSEventSource();
-	_eventManager = new DefaultEventManager(_eventSource);
+	_eventManager = new DSEventManager(_eventSource);
 
 	_savefileManager = new DefaultSaveFileManager();
 	_timerManager = new DefaultTimerManager();
@@ -98,6 +100,9 @@ void OSystem_DS::initBackend() {
 
 void OSystem_DS::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	s.add("nitro:/", new Common::FSDirectory("nitro:/"), priority);
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 uint32 OSystem_DS::getMillis(bool skipRecord) {
@@ -177,10 +182,10 @@ static const Common::HardwareInputTableEntry ndsJoystickButtons[] = {
 	{ "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Start")       },
 	{ "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
 	{ "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
-	{ "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
-	{ "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
-	{ "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
-	{ "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
+	{ "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad up")    },
+	{ "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad down")  },
+	{ "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad left")  },
+	{ "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad right") },
 	{ nullptr,              0,                                      nullptr           }
 };
 
@@ -219,8 +224,23 @@ Common::String OSystem_DS::getSystemLanguage() const {
 
 void OSystem_DS::engineInit() {
 	_engineRunning = true;
+
+	const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
+	assert(activeDomain);
+
+	const Common::String engineId = activeDomain->getValOrDefault("engineid");
+	const Common::String gameId = activeDomain->getValOrDefault("gameid");
+
+	if ((engineId == "cine" && gameId == "fw")  ||
+	    (engineId == "gob"  && gameId == "lit") ||
+	     engineId == "supernova") {
+		_hiresHack = true;
+	} else {
+		_hiresHack = false;
+	}
 }
 
 void OSystem_DS::engineDone() {
 	_engineRunning = false;
+	_hiresHack = false;
 }

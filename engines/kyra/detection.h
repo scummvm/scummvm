@@ -65,6 +65,8 @@ struct GameFlags {
 namespace {
 
 struct KYRAGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	Kyra::GameFlags flags;
@@ -80,6 +82,9 @@ struct KYRAGameDescription {
 
 #define GAMEOPTION_EOB_HPGRAPHS   GUIO_GAMEOPTIONS6
 #define GAMEOPTION_EOB_MOUSESWAP  GUIO_GAMEOPTIONS7
+#define GAMEOPTION_EOB_ADDRULES   GUIO_GAMEOPTIONS9
+#define GAMEOPTION_EOB_RELOAD	  GUIO_GAMEOPTIONS10
+#define GAMEOPTION_EOB_NPCPATCH   GUIO_GAMEOPTIONS11
 
 } // End of anonymous namespace
 

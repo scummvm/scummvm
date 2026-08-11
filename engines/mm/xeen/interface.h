@@ -175,6 +175,7 @@ public:
 	int _levitateUIFrame;
 	bool _upDoorText;
 	Common::String _screenText;
+	Common::String _ttsPreviousScreenText;
 	byte _tillMove;
 	int _charFX[6];
 	IconsMode _iconsMode;

@@ -34,12 +34,12 @@ City::City() : Map() {
 }
 
 City::~City() {
-	for (PersonList::iterator i = _persons.begin(); i != _persons.end(); i++)
-		delete *i;
-	for (PersonRoleList::iterator j = _personRoles.begin(); j != _personRoles.end(); j++)
-		delete *j;
-	for (Std::vector<Dialogue *>::iterator k = _extraDialogues.begin(); k != _extraDialogues.end(); k++)
-		delete *k;
+	for (auto *i : _persons)
+		delete i;
+	for (auto *j : _personRoles)
+		delete j;
+	for (auto *k : _extraDialogues)
+		delete k;
 }
 
 Common::String City::getName() {

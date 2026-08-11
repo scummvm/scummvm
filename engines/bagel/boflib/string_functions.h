@@ -26,7 +26,7 @@
 namespace Bagel {
 
 /**
- * Counts number of occurence of a specified char in String
+ * Counts number of occurrences of a specified char in String
  * @param str       Pointer to string to parse
  * @param c         Character to count in str
  * @return          Number of times character c occurs in string str
@@ -34,7 +34,7 @@ namespace Bagel {
 extern int strCharCount(const char *str, char c);
 
 /**
- * Replaces all occurence of cOld in string with cNew
+ * Replaces all occurrences of cOld in string with cNew
  * @param pszbuf    String to search
  * @param cOld      Character to find in pszBuf
  * @param cNew      Character to replace cOld

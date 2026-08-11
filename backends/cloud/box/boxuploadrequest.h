@@ -23,8 +23,8 @@
 #define BACKENDS_CLOUD_BOX_BOXUPLOADREQUEST_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/request.h"
 #include "common/callback.h"
 
 namespace Cloud {

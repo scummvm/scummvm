@@ -29,12 +29,44 @@ namespace Riddle {
 namespace Rooms {
 
 class Room605 : public Room {
+private:
+	int _trigger1 = 0;
+	bool _walkerHidden = false;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _ttShould = 0;
+	int _ttMode = 0;
+	int _ripHandsHips = 0;
+	int _ripHandOnChin = 0;
+	int _ripTwoHandTalk = 0;
+	int _ripTalk = 0;
+	int _ripGetsIrisWithCloth = 0;
+	int _ripHandOnIris = 0;
+	int _605tt = 0;
+	machine *_pupil = nullptr;
+	machine *_ripley = nullptr;
+	machine *_tt = nullptr;
+	machine *_ttShadow = nullptr;
+	machine *_shadow = nullptr;
+
+	void conv605a();
+	bool takePupilDisk();
+	bool sleeveDisk1();
+	bool sleeveDisk2();
+	bool parserMisc();
+
 public:
 	Room605() : Room() {}
 	~Room605() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms

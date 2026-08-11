@@ -39,18 +39,14 @@ class UIObject;
 class AdResponse;
 class AdResponseBox : public BaseObject {
 public:
-	BaseObject *getNextAccessObject(BaseObject *CurrObject);
-	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
+	BaseObject *getNextAccessObject(BaseObject *currObject);
+	BaseObject *getPrevAccessObject(BaseObject *currObject);
 	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
-	void addResponse(const AdResponse* response);
-	bool handleResponse(const AdResponse *response);
-	bool handleResponseNum(uint32 num);
-	int32 getIdForResponseNum(uint32 num) const;
+	bool handleResponse(AdResponse *response);
 	void setLastResponseText(const char *text, const char *textOrig);
-	const char *getLastResponseText() const;
-	const char *getLastResponseTextOrig() const;
-
+	char *_lastResponseText;
+	char *_lastResponseTextOrig;
 	DECLARE_PERSISTENT(AdResponseBox, BaseObject)
 	ScScript *_waitingScript;
 	bool listen(BaseScriptHolder *param1, uint32 param2) override;
@@ -62,35 +58,29 @@ public:
 
 	bool weedResponses();
 	bool display() override;
-
+	int32 _spacing;
+	int32 _scrollOffset;
+	BaseFont *_fontHover;
+	BaseFont *_font;
+	BaseFont *_fontVisitedHover;
+	BaseFont *_fontVisited;
 	bool createButtons();
 	bool invalidateButtons();
 	void clearButtons();
 	void clearResponses();
 	AdResponseBox(BaseGame *inGame);
 	~AdResponseBox() override;
-
+	BaseArray<AdResponse *> _responses;
+	BaseArray<UIButton *> _respButtons;
+	UIWindow *_window;
+	UIWindow *_shieldWindow;
+	bool _horizontal;
+	Common::Rect32 _responseArea;
+	int32 _verticalAlign;
+	TTextAlign _align;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
-
-	UIWindow *getResponseWindow();
-	uint32 getNumResponses() const;
-private:
-	int32 _spacing;
-	int32 _scrollOffset;
-	BaseFont *_fontHover;
-	BaseFont *_font;
-	bool _horizontal;
-	Rect32 _responseArea;
-	int32 _verticalAlign;
-	TTextAlign _align;
-	BaseArray<UIButton *> _respButtons;
-	BaseArray<const AdResponse *> _responses;
-	UIWindow *_shieldWindow;
-	char *_lastResponseText;
-	char *_lastResponseTextOrig;
-	UIWindow *_window;
 };
 
 } // End of namespace Wintermute

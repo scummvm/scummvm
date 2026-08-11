@@ -33,8 +33,6 @@
 
 namespace hpl {
 
-TGLenum ColorFormatToTGL(eColorDataFormat format);
-
 TGLenum TextureTargetToTGL(eTextureTarget target);
 
 TGLenum GetTGLTextureTargetEnum(eTextureTarget type);

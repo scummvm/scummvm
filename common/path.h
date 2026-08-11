@@ -114,7 +114,7 @@ private:
 	 * @param separator The directory separator used in str
 	 */
 	static inline bool needsEncoding(const char *str, char separator) {
-		return *str && // String is not empty and
+		return str && *str && // String is not empty and
 		       (separator != SEPARATOR || // separator is not the one we use
 		        *str == ESCAPE); // or string begins with ESCAPE
 	}
@@ -163,9 +163,6 @@ private:
 	 * @param other The other path to compare with
 	 */
 	bool compareComponents(bool (*comparator)(const String &x, const String &y), const Path &other) const;
-
-	static Path &punycode_decodefilename_helper(Path &path, const String &in, bool last);
-	static Path &punycode_encodefilename_helper(Path &path, const String &in, bool last);
 
 	/**
 	 * Determines if the path is escaped
@@ -304,6 +301,11 @@ public:
 	 */
 	String baseName() const;
 
+	/**
+	 * Returns number of components in this path,
+	 */
+	int numComponents() const;
+
 	/** Check whether this path is identical to path @p x. */
 	bool operator==(const Path &x) const {
 		return _str == x._str;
@@ -394,6 +396,25 @@ public:
 	Path &appendInPlace(const char *str, char separator = '/');
 
 	/**
+	 * Appends the given path to this path (in-place).
+	 * Does not automatically add a directory separator.
+	 * For string based versions, expects / as a directory separator.
+	 */
+	Path &operator+=(const Path &x) {
+		return appendInPlace(x);
+	}
+
+	/** @overload */
+	Path &operator+=(const String &str) {
+		return appendInPlace(str);
+	}
+
+	/** @overload */
+	Path &operator+=(const char *str) {
+		return appendInPlace(str);
+	}
+
+	/**
 	 * Returns this path with the given path appended (out-of-place).
 	 * Does not automatically add a directory separator.
 	 */
@@ -417,7 +438,7 @@ public:
 
 	/**
 	 * Appends exactly one component, without any separators
-	 * and prepends a separator if necessarry
+	 * and prepends a separator if necessary
 	 */
 	WARN_UNUSED_RESULT Path appendComponent(const char *str) const;
 
@@ -439,6 +460,25 @@ public:
 
 	/** @overload */
 	Path &joinInPlace(const char *str, char separator = '/');
+
+	/**
+	 * Joins the given path to this path (in-place).
+	 * Automatically adds a directory separator.
+	 * For string based versions, expects / as a directory separator.
+	 */
+	Path &operator/=(const Path &x) {
+		return joinInPlace(x);
+	}
+
+	/** @overload */
+	Path &operator/=(const String &str) {
+		return joinInPlace(str);
+	}
+
+	/** @overload */
+	Path &operator/=(const char *str) {
+		return joinInPlace(str);
+	}
 
 	/**
 	 * Returns this path joined with the given path (out-of-place).
@@ -463,9 +503,41 @@ public:
 	}
 
 	/**
+	 * Returns this path joined with the given path (out-of-place).
+	 * Automatically adds a directory separator.
+	 * For string based versions, expects / as a directory separator.
+	 */
+	WARN_UNUSED_RESULT Path operator/(const Path &x) const {
+		return join(x);
+	}
+
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const String &str) const {
+		return join(str);
+	}
+
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const char *str) const {
+		return join(str);
+	}
+
+	/**
 	 * Removes the trainling separators if any in this path (in-place).
 	 */
 	Path &removeTrailingSeparators();
+
+	/**
+	 * Removes extension from the last component of this path (in-place).
+	 * If the last component has no extension, this does nothing.
+	 *
+	 * Punycode encoded paths are not supported.
+	 *
+	 * If nullptr is passed as @p ext, it will remove the last extension,
+	 * otherwise it will remove the extension only if it matches @p ext.
+	 *
+	 * The extension must have a leading dot, e.g. ".txt".
+	 */
+	Path &removeExtension(const char *ext = nullptr);
 
 	/**
 	 * Returns whether this path ends with a separator
@@ -492,6 +564,19 @@ public:
 	* Convert path to Punycode
 	 */
 	Path punycodeEncode() const;
+
+	/**
+	 * Returns whether the path will need to be Punycoded
+	 */
+	bool punycodeNeedsEncode() const;
+
+	/**
+	 * Returns whether the path is already Punycoded
+	 *
+	 * Only the prefix is checked and not the Punycode correctness.
+	 * Use this function only with known Punycoded paths.
+	 */
+	bool punycodeIsEncoded() const;
 
 	/**
 	 * Convert all characters in the path to lowercase.
@@ -551,10 +636,10 @@ public:
 	/**
 	 * Use by ConfigManager to store a path in a protected fashion
 	 * All components are punyencoded and / is used as a delimiter for all platforms
+	 * Under Windows don't encode when it's not needed and make use of \ separator
+	 * in this case
 	 */
-	String toConfig() const {
-		return punycodeEncode().toString('/');
-	}
+	String toConfig() const;
 
 	/**
 	 * Used by ConfigManager to parse a configuration value in a backwards compatible way

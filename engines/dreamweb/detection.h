@@ -25,6 +25,8 @@
 namespace DreamWeb {
 
 struct DreamWebGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
 
@@ -32,6 +34,7 @@ struct DreamWebGameDescription {
 #define GAMEOPTION_BRIGHTPALETTE     GUIO_GAMEOPTIONS2
 #define GAMEOPTION_TTS_THINGS        GUIO_GAMEOPTIONS3
 #define GAMEOPTION_TTS_SPEECH        GUIO_GAMEOPTIONS4
+#define GAMEOPTION_COPY_PROTECTION   GUIO_GAMEOPTIONS5
 
 #define GF_INSTALLER 1
 

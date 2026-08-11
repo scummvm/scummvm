@@ -31,14 +31,20 @@ static const PlainGameDescriptor watchmakerGames[] = {
 	{nullptr, nullptr}
 };
 
-static const DebugChannelDef debugFlagList[] = {
-	{Watchmaker::kDebugGeneral, "general", "General debug level"},
-	DEBUG_CHANNEL_END
-};
-
 namespace Watchmaker {
 
 static const ADGameDescription gameDescriptions[] = {
+	// The Watchmaker English 0.92
+	{
+		"watchmaker",
+		nullptr,
+		AD_ENTRY1s("WmStart.dat", "a0532ab9a2ea33ce1c6953168ed04d7c", 190251),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	// The Watchmaker English Retail
 	{
 		"watchmaker",
@@ -66,9 +72,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace Watchmaker
 
-class WatchmakerMetaEngineDetection : public AdvancedMetaEngineDetection {
+class WatchmakerMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	WatchmakerMetaEngineDetection() : AdvancedMetaEngineDetection(Watchmaker::gameDescriptions, sizeof(ADGameDescription), watchmakerGames) {
+	WatchmakerMetaEngineDetection() : AdvancedMetaEngineDetection(Watchmaker::gameDescriptions, watchmakerGames) {
 	}
 
 	const char *getName() const override {
@@ -81,10 +87,6 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "The Watchmaker (C) 2002 Trecision SpA.";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
 	}
 };
 

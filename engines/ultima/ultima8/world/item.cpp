@@ -28,6 +28,7 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/gfx/main_shape_archive.h"
 #include "ultima/ultima8/gfx/gump_shape_archive.h"
@@ -180,7 +181,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 		World::get_instance()->etherealRemove(_objId);
 	}
 
-	// Remove from container (if contained or equiped)
+	// Remove from container (if contained or equipped)
 	if (_flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
 		if (_parent) {
 			// If we are flagged as Ethereal, we are already removed
@@ -294,7 +295,7 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 		World::get_instance()->etherealRemove(_objId);
 	}
 
-	// Remove from container (if contained or equiped)
+	// Remove from container (if contained or equipped)
 	if (_flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
 		if (_parent) {
 			// If we are flagged as Ethereal, we are already removed
@@ -627,11 +628,10 @@ bool Item::isOnScreen() const {
 	if (!game_map)
 		return false;
 
-	Rect game_map_dims;
 	int32 screenx = -1;
 	int32 screeny = -1;
 	game_map->GetLocationOfItem(_objId, screenx, screeny);
-	game_map->GetDims(game_map_dims);
+	Common::Rect32 game_map_dims = game_map->getDims();
 	const Shape *shape = getShapeObject();
 	if (!shape)
 		return false;
@@ -653,11 +653,10 @@ bool Item::isPartlyOnScreen() const {
 	if (!game_map)
 		return false;
 
-	Rect game_map_dims;
 	int32 screenx = -1;
 	int32 screeny = -1;
 	game_map->GetLocationOfItem(_objId, screenx, screeny);
-	game_map->GetDims(game_map_dims);
+	Common::Rect32 game_map_dims = game_map->getDims();
 	const Shape *shape = getShapeObject();
 	if (!shape)
 		return false;
@@ -742,7 +741,7 @@ int Item::getRange(const Item &item2, bool checkz) const {
 int Item::getRangeIfVisible(const Item &item2) const {
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
-	Std::list<CurrentMap::SweepItem> hitItems;
+	Common::List<CurrentMap::SweepItem> hitItems;
 
 	Point3 start = getCentre();
 	Point3 end = item2.getCentre();
@@ -754,17 +753,13 @@ int Item::getRangeIfVisible(const Item &item2) const {
 
 	map->sweepTest(start, end, dims, getShapeInfo()->_flags, _objId, true, &hitItems);
 
-	if (hitItems.size() > 0) {
-		for (Std::list<CurrentMap::SweepItem>::const_iterator it = hitItems.begin();
-			 it != hitItems.end();
-			 it++) {
-			int objId = it->_item;
-			if (it->_blocking && objId != _objId && objId != item2.getObjId()) {
-				//int out[3];
-				//it->GetInterpolatedCoords(out, start, end);
-				//warning("found blocking item %d at %d %d %d.", objId, out[0], out[1], out[2]);
-				return 0;
-			}
+	for (const auto &hit : hitItems) {
+		int objId = hit._item;
+		if (hit._blocking && objId != _objId && objId != item2.getObjId()) {
+			//int out[3];
+			//hit.GetInterpolatedCoords(out, start, end);
+			//warning("found blocking item %d at %d %d %d.", objId, out[0], out[1], out[2]);
+			return 0;
 		}
 	}
 
@@ -1065,8 +1060,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	getFootpadWorld(dims[0], dims[1], dims[2]);
 
 	// Do the sweep test
-	Std::list<CurrentMap::SweepItem> collisions;
-	Std::list<CurrentMap::SweepItem>::iterator it;
+	Common::List<CurrentMap::SweepItem> collisions;
 	map->sweepTest(start, end, dims, getShapeInfo()->_flags, _objId, false, &collisions);
 
 	// Ok, now to work out what to do
@@ -1085,11 +1079,13 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	if (teleport || _parent) {
 		// If teleporting and not force, work out if we can reach the end
 		if (!force) {
-			for (it = collisions.begin(); it != collisions.end(); it++) {
+			for (const auto &collision : collisions) {
 				// Uh oh, we hit something, can't move
-				if (it->_endTime == 0x4000 && !it->_touching && it->_blocking) {
-					if (hititem) *hititem = it->_item;
-					if (dirs) *dirs = it->_dirs;
+				if (collision._endTime == 0x4000 && !collision._touching && collision._blocking) {
+					if (hititem)
+						*hititem = collision._item;
+					if (dirs)
+						*dirs = collision._dirs;
 					return 0;
 				}
 			}
@@ -1097,18 +1093,18 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 		// Trigger all the required events
 		bool we_were_released = false;
-		for (it = collisions.begin(); it != collisions.end(); it++) {
-			Item *item = getItem(it->_item);
+		for (const auto &collision : collisions) {
+			Item *item = getItem(collision._item);
 			if (!item)
 				continue; // shouldn't happen..
 
 			// Hitting us at the start and end, don't do anything
-			if (!_parent && it->_hitTime == 0x0000 &&
-			        it->_endTime == 0x4000) {
+			if (!_parent && collision._hitTime == 0x0000 &&
+				collision._endTime == 0x4000) {
 				continue;
 			}
 			// Hitting us at the end (call hit on us, got hit on them)
-			else if (it->_endTime == 0x4000) {
+			else if (collision._endTime == 0x4000) {
 				if (_objId == kMainActorId && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
@@ -1116,7 +1112,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 				callUsecodeEvent_hit(item->getObjId(), hitforce);
 			}
 			// Hitting us at the start (call release on us and them)
-			else if (!_parent && it->_hitTime == 0x0000) {
+			else if (!_parent && collision._hitTime == 0x0000) {
 				if (_objId == kMainActorId)
 					item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
@@ -1139,15 +1135,19 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		// if not, need to do 'stuff'
 		// We don't care about items hitting us at the start
 		if (!force) {
-			for (it = collisions.begin(); it != collisions.end(); it++) {
+			Common::List<CurrentMap::SweepItem>::iterator it;
+			for (it = collisions.begin(); it != collisions.end(); ++it) {
 				if (it->_blocking && !it->_touching) {
-					if (hititem) *hititem = it->_item;
-					if (dirs) *dirs = it->_dirs;
+					if (hititem)
+						*hititem = it->_item;
+					if (dirs)
+						*dirs = it->_dirs;
 					hit = it->_hitTime;
 					break;
 				}
 			}
-			if (hit < 0) hit = 0;
+			if (hit < 0)
+				hit = 0;
 
 			if (hit != 0x4000) {
 				debugC(kDebugCollision, "Hit time: %d; Start: %d, %d, %d; End: %d, %d, %d",
@@ -1161,12 +1161,12 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 		// Trigger all the required events
 		bool we_were_released = false;
-		for (it = collisions.begin(); it != collisions.end(); it++) {
-			Item *item = getItem(it->_item);
+		for (const auto &collision : collisions) {
+			Item *item = getItem(collision._item);
 			if (!item) continue;
 
 			// Did we go past the endpoint of the move?
-			if (it->_hitTime > hit) break;
+			if (collision._hitTime > hit) break;
 
 			uint16 proc_gothit = 0, proc_rel = 0;
 
@@ -1174,8 +1174,8 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			// called gotHit and hit.  In Crusader we call
 			// hit for every hitting frame to make sickbays
 			// and teleporters work.
-			bool call_hit = it->_hitTime >= 0 || GAME_IS_CRUSADER;
-			if ((!it->_touching || it->_touchingFloor) && call_hit) {
+			bool call_hit = collision._hitTime >= 0 || GAME_IS_CRUSADER;
+			if ((!collision._touching || collision._touchingFloor) && call_hit) {
 				if (_objId == kMainActorId && guiapp->isShowTouchingItems())
 					item->setExtFlag(Item::EXT_HIGHLIGHT);
 
@@ -1184,7 +1184,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			}
 
 			// If not hitting at end, we will need to call release
-			if (it->_endTime < hit) {
+			if (collision._endTime < hit) {
 				if (_objId == kMainActorId)
 					item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
@@ -1287,7 +1287,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		break;
 	}
 
-	// HACK: this should be fixed to use inheritence so the behavior
+	// HACK: this should be fixed to use inheritance so the behavior
 	// is clean for both Item and Actor.
 	DirectionMode dirmode = dirmode_8dirs;
 	const Actor *thisactor = dynamic_cast<Actor *>(this);
@@ -1454,18 +1454,17 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 			const Point3 end = oc;
 			const int32 dims[3] = {2, 2, 2};
 
-			Std::list<CurrentMap::SweepItem> collisions;
-			Std::list<CurrentMap::SweepItem>::iterator it;
+			Common::List<CurrentMap::SweepItem> collisions;
 			cm->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
 						   _objId, true, &collisions);
-			for (it = collisions.begin(); it != collisions.end(); it++) {
-				if (it->_item == getObjId())
+			for (const auto &collision : collisions) {
+				if (collision._item == getObjId())
 					continue;
-				if (it->_touching)
+				if (collision._touching)
 					continue;
-				if (it->_item != other->getObjId())
+				if (collision._item != other->getObjId())
 					break;
-				Point3 out = it->GetInterpolatedCoords(start, end);
+				Point3 out = collision.GetInterpolatedCoords(start, end);
 				dist = MAX(abs(_x - out.x), abs(_y - out.y));
 				break;
 			}
@@ -2031,12 +2030,10 @@ void Item::clearGump() {
 	_flags &= ~FLG_GUMP_OPEN;
 }
 
-ProcId Item::bark(const Std::string &msg, ObjId id) {
+ProcId Item::bark(const Common::String &msg) {
 	closeBark();
 
 	uint32 shapenum = getShape();
-	if (id == kGuardianId)
-		shapenum = kGuardianId; // Hack for guardian barks
 
 	Gump *gump = new BarkGump(getObjId(), msg, shapenum);
 	_bark = gump->getObjId();
@@ -2412,25 +2409,26 @@ int Item::getThrowRange() const {
 }
 
 static bool checkLineOfSightCollisions(
-	const Std::list<CurrentMap::SweepItem> &collisions,
+	const Common::List<CurrentMap::SweepItem> &collisions,
 	bool usingAlternatePos, ObjId item, ObjId other) {
-	Std::list<CurrentMap::SweepItem>::const_iterator it;
 	int32 other_hit_time = 0x4000;
 	int32 blocked_time = 0x4000;
-	for (it = collisions.begin(); it != collisions.end(); it++) {
+	for (const auto &collision : collisions) {
 		// ignore self and other
-		if (it->_item == item) continue;
-		if (it->_item == other && !usingAlternatePos) {
-			other_hit_time = it->_hitTime;
+		if (collision._item == item)
+			continue;
+		if (collision._item == other && !usingAlternatePos) {
+			other_hit_time = collision._hitTime;
 			continue;
 		}
 
 		// only touching?
-		if (it->_touching) continue;
+		if (collision._touching)
+			continue;
 
 		// hit something
-		if (it->_blocking && it->_hitTime < blocked_time) {
-			blocked_time = it->_hitTime;
+		if (collision._blocking && collision._hitTime < blocked_time) {
+			blocked_time = collision._hitTime;
 		}
 	}
 
@@ -2483,8 +2481,7 @@ bool Item::canReach(const Item *other, int range,
 	if (otherZ > pt1.z && otherZ < pt1.z + thisZd)
 		start.z = end.z; // bottom of other between bottom and top of this
 
-	Std::list<CurrentMap::SweepItem> collisions;
-	Std::list<CurrentMap::SweepItem>::iterator it;
+	Common::List<CurrentMap::SweepItem> collisions;
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
@@ -3056,8 +3053,15 @@ uint32 Item::I_getWeightIncludingContents(const uint8 *args,
 uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_STRING(str);
-	if (id_item == kGuardianId)
-		item = getItem(kMainActorId);
+	if (!item && id_item == kGuardianId) {
+		Actor *actor = ItemFactory::createActor(kGuardianId, 0, 0, Item::FLG_ETHEREAL | Item::FLG_IN_NPC_LIST, kGuardianId, 0, Item::EXT_PERMANENT_NPC, false);
+		if (!actor) {
+			warning("Couldn't create actor");
+			return 0;
+		}
+		ObjectManager::get_instance()->assignActorObjId(actor, kGuardianId);
+		item = actor;
+	}
 
 	if (!item) {
 		// Hack! Items should always be valid?
@@ -3065,7 +3069,7 @@ uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 
-	return item->bark(str, id_item);
+	return item->bark(str);
 }
 
 uint32 Item::I_look(const uint8 *args, unsigned int /*argsize*/) {
@@ -3621,7 +3625,7 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	// If there are blockers, do partial move unless abort_if_blocked is set.
 	//
 	int retval = 1;
-	Std::list<CurrentMap::SweepItem> collisions;
+	Common::List<CurrentMap::SweepItem> collisions;
 	Point3 start = item->getLocation();
 	Point3 end(x, y, z);
 	int32 dims[3];
@@ -3629,9 +3633,8 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	CurrentMap *map = World::get_instance()->getCurrentMap();
 	map->sweepTest(start, end, dims, item->getShapeInfo()->_flags,
 				   item->getObjId(), true, &collisions);
-	for (Std::list<CurrentMap::SweepItem>::iterator it = collisions.begin();
-		 it != collisions.end(); it++) {
-		if (it->_blocking && !it->_touching && it->_endTime > 0) {
+	for (const auto &collision : collisions) {
+		if (collision._blocking && !collision._touching && collision._endTime > 0) {
 			if (abort_if_blocked)
 				return 0;
 			retval = 0;

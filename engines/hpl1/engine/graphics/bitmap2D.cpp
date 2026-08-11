@@ -40,12 +40,8 @@ static Image::ImageDecoder *loadImage(const tString &filepath, Image::ImageDecod
 	return decoder;
 }
 
-Image::JPEGDecoder *setupJPEGDecoder(Image::JPEGDecoder *jpeg) {
-#ifdef SCUMM_BIG_ENDIAN
-	jpeg->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	jpeg->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#endif
+Image::JPEGDecoder *setupJPEGDecoder(Image::JPEGDecoder *jpeg, const Graphics::PixelFormat &desiredFormat) {
+	jpeg->setOutputPixelFormat(desiredFormat);
 	return jpeg;
 }
 
@@ -58,9 +54,11 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type, const Graphics:
 	else if (type == "tga")
 		_decoder.reset(loadImage(filepath, new Image::TGADecoder));
 	else if (type == "jpg" || type == "jpeg")
-		_decoder.reset(loadImage(filepath, setupJPEGDecoder(new Image::JPEGDecoder)));
+		_decoder.reset(loadImage(filepath, setupJPEGDecoder(new Image::JPEGDecoder, desiredFormat)));
+#ifdef USE_GIF
 	else if (type == "gif")
 		_decoder.reset(loadImage(filepath, new Image::GIFDecoder));
+#endif
 	else
 		error("trying to load unsupported image format %s", type.c_str());
 	_width = _decoder->getSurface()->w;

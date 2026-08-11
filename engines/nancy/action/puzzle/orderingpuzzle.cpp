@@ -52,6 +52,17 @@ void OrderingPuzzle::init() {
 		_screenPosition.extend(_checkButtonDest);
 	}
 
+	// The recipe display only exists for the Nancy 11 multi-stage alchemy keypad
+	if (_puzzleType == kKeypad && _numStages > 1) {
+		for (uint i = 0; i < _mixedListDests.size(); ++i) {
+			_screenPosition.extend(_mixedListDests[i]);
+		}
+
+		for (uint i = 0; i < _currentRecipeDests.size(); ++i) {
+			_screenPosition.extend(_currentRecipeDests[i]);
+		}
+	}
+
 	g_nancy->_resource->loadImage(_imageName, _image);
 	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphics->getInputPixelFormat());
 
@@ -64,6 +75,8 @@ void OrderingPuzzle::init() {
 	setTransparent(true);
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 	setVisible(true);
+
+	drawStageDisplay();
 
 	RenderObject::init();
 }
@@ -83,6 +96,11 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		numElements = maxNumElements = 5;
 	} else {
 		ser.syncAsUint16LE(numElements);
+	}
+
+	// Nancy 11 bumped the base ordering puzzle's element cap from 15 to 16
+	if (_puzzleType == kOrdering && g_nancy->getGameType() >= kGameTypeNancy11) {
+		maxNumElements = 16;
 	}
 
 	switch (_puzzleType) {
@@ -174,8 +192,20 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		readRectArray(ser, _overlaySrcs, numOverlays);
 		readRectArray(ser, _overlayDests, numOverlays);
 	} else if (isPiano && g_nancy->getGameType() >= kGameTypeNancy8) {
-		readFilenameArray(stream, _pianoSoundNames, numElements);
-		stream.skip((maxNumElements - numElements) * 33);
+		if (g_nancy->getGameType() >= kGameTypeNancy11) {
+			// Nancy 11 stores two interleaved sound names per key (e.g. a press and
+			// a release sound), padded to maxNumElements pairs
+			_pianoSoundNames.resize(numElements);
+			_pianoReleaseSoundNames.resize(numElements);
+			for (uint i = 0; i < numElements; ++i) {
+				readFilename(stream, _pianoSoundNames[i]);
+				readFilename(stream, _pianoReleaseSoundNames[i]);
+			}
+			stream.skip((maxNumElements - numElements) * 2 * 33);
+		} else {
+			readFilenameArray(stream, _pianoSoundNames, numElements);
+			stream.skip((maxNumElements - numElements) * 33);
+		}
 	}
 
 	if (ser.getVersion() > kGameTypeVampire) {
@@ -187,26 +217,135 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_solveExitScene.readData(stream, ser.getVersion() == kGameTypeVampire);
+	if (ser.getVersion() == kGameTypeVampire) {
+		_solveExitScene._sceneChange.readData(stream, true);
+		ser.skip(2); // shouldStopRendering
+		ser.syncAsSint16LE(_solveExitScene._flag.label);
+		ser.syncAsByte(_solveExitScene._flag.flag);
+	} else {
+		_solveExitScene.readData(stream);
+	}
+
 	ser.syncAsUint16LE(_solveSoundDelay);
 	_solveSound.readNormal(stream);
-	_exitScene.readData(stream, ser.getVersion() == kGameTypeVampire);
+
+	if (ser.getVersion() == kGameTypeVampire) {
+		_exitScene._sceneChange.readData(stream, true);
+		ser.skip(2); // shouldStopRendering
+		ser.syncAsSint16LE(_exitScene._flag.label);
+		ser.syncAsByte(_exitScene._flag.flag);
+	} else {
+		_exitScene.readData(stream);
+	}
+
 	readRect(stream, _exitHotspot);
 
 	if (isKeypad && g_nancy->getGameType() >= kGameTypeNancy7) {
 		if (_puzzleType == kKeypad) {
-			readRectArray(ser, _down1Rects, numElements, maxNumElements);
-			readRectArray(ser, _destRects, numElements, maxNumElements);
-		} else if (_puzzleType == kKeypadTerse) {
-			_down1Rects.resize(numElements);
-			_destRects.resize(numElements);
+			if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				// Nancy 12 reworked the keypad block: grid dimensions and the per-stage
+				// codes (the win still uses the sequence read above), then three button
+				// rect arrays - sprite source rects, on-screen dest positions, and tighter
+				// per-button hotspots. The dest rects double as the hotspots here.
+				_buttonCursorID = stream.readUint16LE();
+				_exitCursorID = stream.readUint16LE();
+				stream.skip(0x309 - 0x110); // grid + per-stage codes (not modeled)
+				readRectArray(stream, _down1Rects, numElements, 30); // button sprite source rects
+				readRectArray(stream, _destRects, numElements, 30);  // on-screen button positions
+				stream.skip(30 * 16);       // tighter per-button hotspots (we use _destRects)
+			} else {
+				if (g_nancy->getGameType() >= kGameTypeNancy11) {
+					// Nancy 11 multi-stage keypad (the alchemy keypad): a stage count, the display rects,
+					// the codes for stages 1+, a code matrix and an alternate scene (both unused by the
+					// sequential model), then the button rects.
+					_numStages = stream.readUint16LE();
 
+					// The mixed-recipe list: as each stage is solved its small symbol is added to a vertical
+					// column on the right; the current stage's symbol is shown large at the bottom.
+					readRectArray(stream, _mixedListSrcs, 5);
+					readRectArray(stream, _mixedListDests, 5);
+					readRectArray(stream, _currentRecipeSrcs, 5);
+					readRectArray(stream, _currentRecipeDests, 5);
+					_stageDisplayBlink = (stream.readByte() != 0);
+
+					_stageSequences.resize(4);
+					_stageCheckOrder.resize(4);
+					for (uint s = 0; s < 4; ++s) {
+						uint16 len = stream.readUint16LE();
+						_stageCheckOrder[s] = (stream.readByte() != 0);
+						len = MIN<uint16>(len, 30);
+						_stageSequences[s].resize(len);
+						for (uint16 k = 0; k < len; ++k)
+							_stageSequences[s][k] = stream.readByte();
+						stream.skip(30 - len);
+					}
+
+					// The 5x5 matrix holds the lethal recipes (1-based key ids, a 0 terminates a row);
+					// entering one and pressing the cauldron jumps to the death scene that follows.
+					_dangerRecipes.clear();
+					for (uint r = 0; r < 5; ++r) {
+						Common::Array<uint16> recipe;
+						bool ended = false;
+						for (uint c = 0; c < 5; ++c) {
+							byte key = stream.readByte();
+							if (!ended && key != 0) {
+								recipe.push_back(key - 1);
+							} else {
+								ended = true;
+							}
+						}
+
+						if (!recipe.empty()) {
+							_dangerRecipes.push_back(recipe);
+						}
+					}
+
+					_deathScene.readData(stream);
+				}
+				readRectArray(ser, _down1Rects, numElements, maxNumElements);
+				readRectArray(ser, _destRects, numElements, maxNumElements);
+			}
+		} else if (_puzzleType == kKeypadTerse) {
 			// Terse elements are the same size & placed on a grid (in the source image AND on screen)
+
+			// In Nancy 11 the grid block is preceded by the scene to advance to on solving, which
+			// overrides the solve scene's target (the rest of the solve scene change is reused).
+			// 0 and 9999 mean "none", falling back to the solve scene read earlier.
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				uint16 advanceSceneID = stream.readUint16LE();
+
+				// HACK: In Nancy11, in the Betty automaton scene, this is set to scene 2721, but
+				// scene 2720 (the one set initially) is the one that eventually allows the player
+				// to gain the needed token to proceed.
+				// TODO: What is the correct way to handle this?
+				if (g_nancy->getGameType() == kGameTypeNancy11 && advanceSceneID == 2721 &&
+					_solveExitScene._sceneChange.sceneID == 2720)
+					advanceSceneID = 2720;
+
+				if (advanceSceneID != 0 && advanceSceneID != kNoScene) {
+					_solveExitScene._sceneChange.sceneID = advanceSceneID;
+				}
+			}
+
 			uint16 columns = stream.readUint16LE();
-			stream.skip(2); // rows
+			uint16 rows = stream.readUint16LE();
 
 			uint16 width = stream.readUint16LE();
 			uint16 height = stream.readUint16LE();
+
+			// Nancy 11 stores the element count as 0 and derives it from the grid dimensions
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				numElements = columns * rows;
+			}
+
+			// Guard against malformed dimensions (columns is a divisor below)
+			if (columns == 0) {
+				columns = 1;
+			}
+			numElements = MIN<uint16>(numElements, maxNumElements);
+
+			_down1Rects.resize(numElements);
+			_destRects.resize(numElements);
 
 			Common::Point srcStartPos, srcDist, destStartPos, destDist;
 
@@ -235,6 +374,11 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 				dest.setWidth(width + 1);
 				dest.setHeight(height + 1);
 			}
+		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy12 && _puzzleType == kKeypadTerse) {
+			// Nancy 12 keypad-terse grew by 4 bytes (exact layout not yet mapped).
+			stream.skip(4);
 		}
 
 		_hotspots = _destRects;
@@ -277,9 +421,56 @@ void OrderingPuzzle::execute() {
 				}
 			}
 
+			if (_puzzleType == kKeypad && _numStages > 1) {
+				// Nancy 11 alchemy keypad: mix the recipes one stage at a time. The cauldron confirms the
+				// current entry - the right ingredients blink the recipe symbol + play a chime and advance
+				// (or win on the last stage); a lethal combination jumps to the death scene; anything else
+				// just clears.
+				if (!_checkButtonPressed || g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
+					return;
+				}
+
+				_checkButtonPressed = false;
+
+				// Release the cauldron button: clear the pressed sprite so the next press animates again
+				Common::Rect checkButtonRect = _checkButtonDest;
+				checkButtonRect.translate(-_screenPosition.left, -_screenPosition.top);
+				_drawSurface.fillRect(checkButtonRect, _drawSurface.getTransparentColor());
+				_needsRedraw = true;
+
+				if (enteredKeysMatchStage()) {
+					g_nancy->_sound->loadSound(_solveSound);
+					g_nancy->_sound->playSound(_solveSound);
+					_stageBlinkEndTime = g_nancy->getTotalPlayTime() + 400 + _solveSoundDelay * 1000;
+					_stageBlinkNextToggle = g_nancy->getTotalPlayTime() + 100;
+					_stageSymbolVisible = !_stageDisplayBlink;
+					drawStageDisplay();
+					_solveState = kStageBlink;
+					break;
+				}
+
+				if (enteredKeysMatchDangerRecipe()) {
+					_stageDeath = true;
+					_state = kActionTrigger;
+					break;
+				}
+
+				clearAllElements();
+				return;
+			}
+
 			bool solved = true;
 
 			if (_puzzleType != kPiano) {
+				// The pre-nancy7 keypad whose buttons pop back up is a rolling entry pad: only the
+				// most recent presses count, so the correct code opens the lock even if wrong digits
+				// were entered first. Keep just the last few presses so the check below matches a
+				// sliding window (same approach as the piano puzzle below).
+				if (_puzzleType == kKeypad && !_itemsStayDown && g_nancy->getGameType() <= kGameTypeNancy6 &&
+						_clickedSequence.size() > _correctSequence.size() && !_correctSequence.empty()) {
+					_clickedSequence.erase(&_clickedSequence[0], &_clickedSequence[_clickedSequence.size() - _correctSequence.size()]);
+				}
+
 				if (_clickedSequence.size() >= _correctSequence.size()) {
 					bool equal = true;
 					if (_checkOrder) {
@@ -315,9 +506,25 @@ void OrderingPuzzle::execute() {
 								}
 							}
 
-							if (_clickedSequence.size() > maxNumPressed) {
+							// Puzzles with a manual check button (e.g. the Nancy 11 Betty automaton keypad)
+							// keep the entered buttons down until the check button is pressed, so they
+							// must not auto-clear the entry here based on its length.
+							if (!_needButtonToCheckSuccess && _clickedSequence.size() > maxNumPressed) {
 								clearAllElements();
 								return;
+							}
+
+							// In the clam puzzle with flags in Nancy9, test for the exact
+							// number of flag buttons pressed. Keeping this with a game
+							// version check for now, to avoid regressions in other puzzle
+							// types in other games.
+							// TODO: Merge with the above check once all the puzzle types
+							// have been retested
+							if (g_nancy->getGameType() == kGameTypeNancy9 && _puzzleType == kOrdering) {
+								if (_clickedSequence.size() >= _correctSequence.size()) {
+									clearAllElements();
+									return;
+								}
 							}
 						} else {
 							// OrderItems has a slight delay, after which it actually clears
@@ -357,19 +564,42 @@ void OrderingPuzzle::execute() {
 				}
 			}
 
-			if (_puzzleType == kKeypad && _needButtonToCheckSuccess) {
-				// KeypadPuzzle moves to the "success" scene regardless whether the puzzle was solved or not,
-				// provided the check button is pressed.
-				if (_checkButtonPressed) {
-					if (!g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
-						if (solved) {
-							NancySceneState.setEventFlag(_solveExitScene._flag);
+			if ((_puzzleType == kKeypad || _puzzleType == kKeypadTerse) && _needButtonToCheckSuccess) {
+				// The entry is only acted on when the confirm ("red") button is pressed.
+				if (!_checkButtonPressed) {
+					return;
+				}
+
+				if (g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
+					// Wait for the button-press sound to finish first.
+					return;
+				}
+
+				if (g_nancy->getGameType() >= kGameTypeNancy11) {
+					// The confirm button does nothing on an empty entry. A pad that carries a code also
+					// does nothing on a non-matching entry (wrong names or a wrong order), clearing it.
+					// Otherwise it advances.
+					bool codedMismatch = !_correctSequence.empty() && !solved && _itemsStayDown;
+
+					if (_clickedSequence.empty() || codedMismatch) {
+						if (codedMismatch) {
+							clearAllElements();
 						}
-					} else {
+
+						_checkButtonPressed = false;
+						Common::Rect destRect = _checkButtonDest;
+						destRect.translate(-_screenPosition.left, -_screenPosition.top);
+						_drawSurface.fillRect(destRect, _drawSurface.getTransparentColor());
+						_needsRedraw = true;
 						return;
 					}
+
+					NancySceneState.setEventFlag(_solveExitScene._flag);
 				} else {
-					return;
+					// Earlier games advance to the success scene regardless; the flag is set only on a solve.
+					if (solved) {
+						NancySceneState.setEventFlag(_solveExitScene._flag);
+					}
 				}
 			} else {
 				if (solved) {
@@ -413,6 +643,35 @@ void OrderingPuzzle::execute() {
 			}
 
 			break;
+		case kStageBlink:
+			// Blink the just-solved recipe symbol while the chime plays, then reveal the next stage
+			// (or move to the win scene after the last one).
+			if (_stageDisplayBlink && g_nancy->getTotalPlayTime() >= _stageBlinkNextToggle) {
+				_stageSymbolVisible = !_stageSymbolVisible;
+				_stageBlinkNextToggle = g_nancy->getTotalPlayTime() + 100;
+				drawStageDisplay();
+			}
+
+			if (g_nancy->getTotalPlayTime() < _stageBlinkEndTime || g_nancy->_sound->isSoundPlaying(_solveSound)) {
+				break;
+			}
+
+			_stageSymbolVisible = true;
+
+			if (_currentStage + 1 < (int)_numStages) {
+				++_currentStage;
+				_correctSequence = _stageSequences[_currentStage - 1];
+				_checkOrder = _stageCheckOrder[_currentStage - 1];
+				clearAllElements();
+				drawStageDisplay();
+				_solveState = kNotSolved;
+				break;
+			}
+
+			NancySceneState.setEventFlag(_solveExitScene._flag);
+			_currentStage = 0;
+			_state = kActionTrigger;
+			break;
 		}
 
 		break;
@@ -425,7 +684,9 @@ void OrderingPuzzle::execute() {
 
 		g_nancy->_sound->stopSound(_solveSound);
 
-		if (_solveState == kNotSolved) {
+		if (_stageDeath) {
+			_deathScene.execute();
+		} else if (_solveState == kNotSolved) {
 			_exitScene.execute();
 		} else {
 			NancySceneState.changeScene(_solveExitScene._sceneChange);
@@ -442,12 +703,19 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	bool canClick = true;
-	if ((_itemsStayDown || _puzzleType == kPiano) && g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
+	if (_itemsStayDown && g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
 		canClick = false;
+	} else if (_puzzleType == kPiano) {
+		for (uint i = 0; i < _hotspots.size(); ++i) {
+			if (_downItems[i]) {
+				canClick = false;
+				break;
+			}
+		}
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+		setHoverCursor(_exitCursorID, g_nancy->_cursor->_puzzleExitCursor);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
@@ -456,10 +724,11 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_needButtonToCheckSuccess && NancySceneState.getViewport().convertViewportToScreen(_checkButtonDest).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+		setHoverCursor(_buttonCursorID, CursorManager::kHotspot);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_checkButtonPressed = true;
+			g_nancy->_sound->loadSound(_pushDownSound);
 			g_nancy->_sound->playSound(_pushDownSound);
 			Common::Rect destRect = _checkButtonDest;
 			destRect.translate(-_screenPosition.left, -_screenPosition.top);
@@ -473,11 +742,11 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
 			// Set the custom cursor for nancy8+ PianoPuzzle
 			if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor1Dest).contains(input.mousePos)) {
-				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor1Id);
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor1Id, true);
 			} else if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor2Dest).contains(input.mousePos)) {
-				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor2Id);
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor2Id, true);
 			} else {
-				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+				setHoverCursor(_buttonCursorID, CursorManager::kHotspot);
 			}
 
 			if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
@@ -551,10 +820,19 @@ Common::String OrderingPuzzle::getRecordTypeName() const {
 	}
 }
 
+void OrderingPuzzle::setHoverCursor(int16 cursorID, CursorManager::CursorType defaultCursor) {
+	if (cursorID >= 0) {
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorID, true);
+	} else {
+		g_nancy->_cursor->setCursorType(defaultCursor);
+	}
+}
+
 void OrderingPuzzle::pushDown(uint id) {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		g_nancy->_sound->playSound("BUOK");
 	} else {
+		g_nancy->_sound->loadSound(_pushDownSound);
 		g_nancy->_sound->playSound(_pushDownSound);
 	}
 
@@ -567,6 +845,7 @@ void OrderingPuzzle::pushDown(uint id) {
 }
 
 void OrderingPuzzle::setToSecondState(uint id) {
+	g_nancy->_sound->loadSound(_itemSound);
 	g_nancy->_sound->playSound(_itemSound);
 
 	_secondStateItems[id] = true;
@@ -583,7 +862,7 @@ void OrderingPuzzle::popUp(uint id) {
 		if (g_nancy->getGameType() == kGameTypeVampire) {
 			g_nancy->_sound->playSound("BUOK");
 		} else {
-			if (_popUpSound.name.size()) {
+			if (!_popUpSound.name.empty() && _popUpSound.name != "NO SOUND") {
 				g_nancy->_sound->playSound(_popUpSound);
 			} else {
 				g_nancy->_sound->playSound(_pushDownSound);
@@ -611,6 +890,92 @@ void OrderingPuzzle::clearAllElements() {
 
 	_clickedSequence.clear();
 	return;
+}
+
+void OrderingPuzzle::drawStageDisplay() {
+	if (!(_puzzleType == kKeypad && _numStages > 1) || _currentRecipeDests.empty()) {
+		return;
+	}
+
+	// The current stage's recipe symbol, shown large at the bottom (hidden on blink-off frames)
+	if (_currentStage < (int)_currentRecipeSrcs.size()) {
+		Common::Rect destRect = _currentRecipeDests[_currentStage];
+		destRect.translate(-_screenPosition.left, -_screenPosition.top);
+		if (_stageSymbolVisible) {
+			_drawSurface.blitFrom(_image, _currentRecipeSrcs[_currentStage], destRect);
+		} else {
+			_drawSurface.fillRect(destRect, _drawSurface.getTransparentColor());
+		}
+	}
+
+	// The list of already-mixed recipe symbols, stacked in the vertical column
+	for (int i = 0; i <= _currentStage && i < (int)_mixedListSrcs.size(); ++i) {
+		Common::Rect destRect = _mixedListDests[i];
+		destRect.translate(-_screenPosition.left, -_screenPosition.top);
+		_drawSurface.blitFrom(_image, _mixedListSrcs[i], destRect);
+	}
+
+	_needsRedraw = true;
+}
+
+bool OrderingPuzzle::enteredKeysMatchStage() const {
+	// The entry must be exactly the current stage's code (positional if _checkOrder, otherwise the
+	// same multiset of keys).
+	if (_clickedSequence.size() != _correctSequence.size()) {
+		return false;
+	}
+
+	if (_checkOrder) {
+		return _clickedSequence == _correctSequence;
+	}
+
+	Common::Array<uint16> pool = _clickedSequence;
+	for (uint i = 0; i < _correctSequence.size(); ++i) {
+		bool found = false;
+		for (uint j = 0; j < pool.size(); ++j) {
+			if (pool[j] == _correctSequence[i]) {
+				pool.remove_at(j);
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool OrderingPuzzle::enteredKeysMatchDangerRecipe() const {
+	// A lethal combination is matched when the entered keys contain every key of one of the danger
+	// recipes (order and extra presses don't matter).
+	for (uint i = 0; i < _dangerRecipes.size(); ++i) {
+		const Common::Array<uint16> &recipe = _dangerRecipes[i];
+		bool matched = true;
+
+		for (uint j = 0; j < recipe.size(); ++j) {
+			bool found = false;
+			for (uint k = 0; k < _clickedSequence.size(); ++k) {
+				if (_clickedSequence[k] == recipe[j]) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				matched = false;
+				break;
+			}
+		}
+
+		if (matched) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Action

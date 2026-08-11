@@ -42,9 +42,9 @@ const SoundChannelInfo _nancy3andUpSoundChannelInfo = {
 	{ 4, 5, 6, 7, 8, 9, 10, 11, 17, 18, 20, 21, 22, 23, 24, 25, 31 }
 };
 
-const Common::Array<Common::Language> _nancy3LanguagesOrder = {
-	Common::Language::EN_ANY,
-	Common::Language::RU_RUS
+const Common::Array<GameLanguage> _nancy3LanguagesOrder = {
+	GameLanguage::kEnglish,
+	GameLanguage::kRussian
 };
 
 const Common::Array<Common::Array<ConditionalDialogue>> _nancy3ConditionalDialogue = {
@@ -212,7 +212,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy3ConditionalDialog
 },
 {	// Ned, 0 responses
 },
-{	// Rose, 
+{	// Rose,
 	{	75, 1750, "NRM17",
 		{ { kEv, 211, true }, { kEv, 186, false } } },
 	{	76, 1751, "NRM18",

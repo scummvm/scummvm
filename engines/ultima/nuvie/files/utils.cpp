@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/files/utils.h"
 #include "ultima/nuvie/nuvie.h"
 #include "common/file.h"

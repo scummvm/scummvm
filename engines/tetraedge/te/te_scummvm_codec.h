@@ -32,12 +32,12 @@ public:
 	TeScummvmCodec();
 	virtual ~TeScummvmCodec();
 
-	virtual bool load(const Common::FSNode &node) override;
+	virtual bool load(const TetraedgeFSNode &node) override;
 	virtual bool load(Common::SeekableReadStream &stream) = 0;
 	virtual uint width() override;
 	virtual uint height() override;
 	virtual int nbFrames() override { return 1; }
-	virtual TeImage::Format imageFormat() override;
+	virtual Graphics::PixelFormat pixelFormat() override;
 	virtual void setLeftBorderSize(uint val) override;
 	virtual uint leftBorderSize() override { return 0; }
 	virtual void setRightBorderSize(uint val) override;

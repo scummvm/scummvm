@@ -21,6 +21,7 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/shared/util/string.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -40,6 +41,14 @@ void quitprintf(const char *fmt, ...) {
 	// too many places calling it presume it doesn't return,
 	// and will throw a wobbly if does
 	error("%s", text.GetCStr());
+}
+
+void set_our_eip(int eip) {
+	_G(our_eip) = eip;
+}
+
+int get_our_eip() {
+	return _G(our_eip);
 }
 
 } // namespace AGS3

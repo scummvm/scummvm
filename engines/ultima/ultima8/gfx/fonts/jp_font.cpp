@@ -19,12 +19,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/gfx/fonts/jp_font.h"
+
+#include "ultima/ultima8/gfx/fonts/jp_rendered_text.h"
 #include "ultima/ultima8/gfx/fonts/shape_font.h"
 #include "ultima/ultima8/gfx/shape_frame.h"
-#include "ultima/ultima8/gfx/fonts/jp_rendered_text.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -55,7 +54,7 @@ int JPFont::getBaselineSkip() {
 }
 
 
-void JPFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
+void JPFont::getStringSize(const Common::String &text, int32 &width, int32 &height) {
 	int hlead = _shapeFont->getHlead();
 	width = hlead;
 	height = getHeight();
@@ -74,24 +73,24 @@ void JPFont::getStringSize(const Std::string &text, int32 &width, int32 &height)
 	}
 }
 
-void JPFont::getTextSize(const Std::string &text,
+void JPFont::getTextSize(const Common::String &text,
 						 int32 &resultwidth, int32 &resultheight,
 						 unsigned int &remaining,
 						 int32 width, int32 height, TextAlign align,
 						 bool u8specials, bool pagebreaks) {
-	Std::list<PositionedText> tmp;
+	Common::List<PositionedText> tmp;
 	tmp = typesetText<SJISTraits>(this, text, remaining,
 	                              width, height, align, u8specials, pagebreaks,
 	                              resultwidth, resultheight);
 }
 
-RenderedText *JPFont::renderText(const Std::string &text,
+RenderedText *JPFont::renderText(const Common::String &text,
 								 unsigned int &remaining,
 								 int32 width, int32 height, TextAlign align,
 								 bool u8specials, bool pagebreaks,
-								 Std::string::size_type cursor) {
+								 Common::String::size_type cursor) {
 	int32 resultwidth, resultheight;
-	Std::list<PositionedText> lines;
+	Common::List<PositionedText> lines;
 	lines = typesetText<SJISTraits>(this, text, remaining,
 	                                width, height, align, u8specials, pagebreaks,
 	                                resultwidth, resultheight,

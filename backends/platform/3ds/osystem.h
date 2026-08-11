@@ -25,12 +25,16 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/base-backend.h"
+#include "common/frac.h"
+#include "graphics/blit.h"
+#include "graphics/dirtyrects.h"
 #include "graphics/paletteman.h"
 #include "base/main.h"
 #include "audio/mixer_intern.h"
 #include "backends/graphics/graphics.h"
 #include "backends/log/log.h"
 #include "backends/platform/3ds/sprite.h"
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/ustr.h"
@@ -53,8 +57,8 @@ enum InputMode {
 enum GraphicsModeID {
 	RGBA8,
 	RGB565,
-	RGB555,
 	RGB5A1,
+	RGBA4,
 	CLUT8
 };
 
@@ -98,7 +102,7 @@ struct GfxState {
 };
 
 
-class OSystem_3DS : public EventsBaseBackend, public PaletteManager, public Common::EventObserver {
+class OSystem_3DS : virtual public BaseBackend, public Common::EventSource, public PaletteManager, public Common::EventObserver {
 public:
 	OSystem_3DS();
 	virtual ~OSystem_3DS();
@@ -159,6 +163,8 @@ public:
 	                      int h);
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
+	void fillScreen(uint32 col);
+	void fillScreen(const Common::Rect &r, uint32 col);
 	void updateScreen();
 	void setShakePos(int shakeXOffset, int shakeYOffset);
 	void setFocusRectangle(const Common::Rect &rect);
@@ -171,16 +177,17 @@ public:
 	void grabOverlay(Graphics::Surface &surface);
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w,
 	                       int h);
-	virtual int16 getOverlayHeight();
-	virtual int16 getOverlayWidth();
+	virtual int16 getOverlayHeight() const;
+	virtual int16 getOverlayWidth() const;
 	void displayMessageOnOSD(const Common::U32String &msg) override;
 	void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 
 	bool showMouse(bool visible);
 	void warpMouse(int x, int y);
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
-	                    int hotspotY, uint32 keycolor, bool dontScale = false,
-	                    const Graphics::PixelFormat *format = NULL, const byte *mask = NULL);
+	                    int hotspotY, uint32 keycolor,
+	                    const Graphics::PixelFormat *format, const byte *mask,
+	                    frac_t scaleX, frac_t scaleY);
 	void setCursorPalette(const byte *colors, uint start, uint num);
 
 	// Transform point from touchscreen coords into gamescreen coords
@@ -228,6 +235,7 @@ private:
 	TransactionDetails _transactionDetails;
 
 	GfxState _gfxState, _oldGfxState;
+	Graphics::FastBlitFunc _blitFunc;
 	Graphics::PixelFormat _pfDefaultTexture;
 	Graphics::PixelFormat _pfGame, _oldPfGame;
 	Graphics::PixelFormat _pfCursor;
@@ -236,7 +244,7 @@ private:
 	uint32 _paletteMap[256];
 
 	Graphics::Surface _gameScreen;
-	bool _gameTextureDirty;
+	Graphics::DirtyRectList _dirtyRects;
 	Sprite _gameTopTexture;
 	Sprite _gameBottomTexture;
 	Sprite _overlay;
@@ -286,7 +294,6 @@ private:
 	Sprite _cursorTexture;
 	bool _cursorPaletteEnabled;
 	bool _cursorVisible;
-	bool _cursorScalable;
 	float _cursorScreenX, _cursorScreenY;
 	float _cursorOverlayX, _cursorOverlayY;
 	float _cursorDeltaX, _cursorDeltaY;

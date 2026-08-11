@@ -24,7 +24,6 @@
 
 #include "common/rect.h"
 #include "graphics/surface.h"
-
 #include "zvision/scripting/scripting_effect.h"
 #include "zvision/text/text.h"
 #include "zvision/text/truetype_font.h"
@@ -52,19 +51,22 @@ private:
 
 	TextStyleState _state;
 	StyledTTFont _fnt;
-	Common::String _txtbuf;
+	Common::U32String _txtbuf;
 	uint32 _txtpos;
+	uint32 _lineStartPos;
+	bool _isRTL;
 
 	int32 _delay;
 	int32 _nexttime;
 	Graphics::Surface _img;
 	int16 _dx;
+	int16 _startX;
 	int16 _dy;
 private:
 
 	void newline();
 	void scroll();
-	void outchar(uint16 chr);
+	void outchar(uint32 chr);
 };
 
 } // End of namespace ZVision

@@ -25,8 +25,9 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/transitions.h"
 
 namespace Sci {
@@ -108,6 +109,8 @@ void GfxTransitions::init() {
 	// setup default transition
 	_number = SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER;
 	_blackoutFlag = false;
+
+	_transitionStartTime = 0;
 }
 
 void GfxTransitions::setup(int16 number, bool blackoutFlag) {
@@ -278,17 +281,17 @@ void GfxTransitions::setNewScreen(bool blackoutFlag) {
 	}
 }
 
-void GfxTransitions::copyRectToScreen(const Common::Rect rect, bool blackoutFlag) {
+void GfxTransitions::copyRectToScreen(const Common::Rect &rect, bool blackoutFlag) {
 	if (!blackoutFlag) {
 		_screen->copyRectToScreen(rect);
 	} else {
 		if (!_screen->getUpscaledHires()) {
-			g_system->fillScreen(rect, 0);
+			_screen->gfxDriver()->clearRect(rect);
 		} else {
 			Common::Rect upscaledRect = rect;
 			_screen->adjustToUpscaledCoordinates(upscaledRect.top, upscaledRect.left);
 			_screen->adjustToUpscaledCoordinates(upscaledRect.bottom, upscaledRect.right);
-			g_system->fillScreen(upscaledRect, 0);
+			_screen->gfxDriver()->clearRect(rect);
 		}
 	}
 }

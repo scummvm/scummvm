@@ -24,6 +24,8 @@
 namespace Scumm {
 
 int IMuseDigital::addTrackToList(IMuseDigiTrack **listPtr, IMuseDigiTrack *listPtr_Item) {
+	Common::StackLock lock(*_mutex);
+
 	// [0] is ->prev, [1] is ->next
 	if (!listPtr_Item || listPtr_Item->prev || listPtr_Item->next) {
 		debug(5, "IMuseDigital::addTrackToList(): ERROR: arguments might be null");
@@ -49,6 +51,8 @@ int IMuseDigital::addTrackToList(IMuseDigiTrack **listPtr, IMuseDigiTrack *listP
 }
 
 int IMuseDigital::removeTrackFromList(IMuseDigiTrack **listPtr, IMuseDigiTrack *listPtr_Item) {
+	Common::StackLock lock(*_mutex);
+
 	IMuseDigiTrack *currentTrack = *listPtr;
 	IMuseDigiTrack *nextTrack;
 	if (listPtr_Item && currentTrack) {

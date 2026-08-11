@@ -84,14 +84,14 @@
 		[_fullSetElementsThumbstick addObjectsFromArray:_commonElements];
 		[_fullSetElementsThumbstick addObjectsFromArray:_additionalElements];
 	
-		NSMutableSet<NSString *> *_miniSetElementsThumbstick = [[NSMutableSet alloc] initWithObjects:GCInputLeftThumbstick,  nil];
+		NSMutableSet<NSString *> *_miniSetElementsThumbstick = [[NSMutableSet alloc] initWithObjects:GCInputLeftThumbstick, nil];
 		[_miniSetElementsThumbstick addObjectsFromArray:_commonElements];
 
 		NSMutableSet<NSString *> *_fullSetElementsDpad = [[NSMutableSet alloc] initWithObjects: GCInputDirectionalDpad, nil];
 		[_fullSetElementsDpad addObjectsFromArray:_commonElements];
 		[_fullSetElementsDpad addObjectsFromArray:_additionalElements];
 
-		NSMutableSet<NSString *> *_miniSetElementsDpad = [[NSMutableSet alloc] initWithObjects:GCInputDirectionalDpad,  nil];
+		NSMutableSet<NSString *> *_miniSetElementsDpad = [[NSMutableSet alloc] initWithObjects:GCInputDirectionalDpad, nil];
 		[_miniSetElementsDpad addObjectsFromArray:_commonElements];
 
 		_configThumbstick.elements = _fullSetElementsThumbstick;
@@ -99,11 +99,23 @@
 		_configDpad.elements = _fullSetElementsDpad;
 		_configMiniDpad.elements = _miniSetElementsDpad;
 
+		[_miniSetElementsDpad release];
+		[_fullSetElementsDpad release];
+		[_miniSetElementsThumbstick release];
+		[_fullSetElementsThumbstick release];
+		[_commonElements release];
+		[_additionalElements release];
+
 		_virtualControllerThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configThumbstick];
 		_virtualControllerMiniThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configMiniThumbstick];
 		_virtualControllerDpad = [[GCVirtualController alloc] initWithConfiguration:_configDpad];
 		_virtualControllerMiniDpad = [[GCVirtualController alloc] initWithConfiguration:_configMiniDpad];
 		_currentController = _virtualControllerThumbstick;
+
+		[_configDpad release];
+		[_configMiniDpad release];
+		[_configThumbstick release];
+		[_configMiniThumbstick release];
 	}
 #endif
 #endif
@@ -112,7 +124,7 @@
 	return self;
 }
 
-// Undocumented way to retreive the GCControllerView.
+// Undocumented way to retrieve the GCControllerView.
 // Drill down the layer structure to get the GCControllerView.
 // The view layers for iPhones are:
 // - TransitionView
@@ -128,29 +140,6 @@
 			// Set the frame alpha to the user specified value
 			// to make the virtual controller more transparent
 			view.alpha = ((float)ConfMan.getInt("gamepad_controller_opacity") / 10.0);
-
-			// Since the iOS7 view controller frame is adjusted for the safe area, the same
-			// has to be done for the gamepad controller view. One could think that subviews
-			// would adjust automatically but it seems that the gamepad controller buttons
-			// can be positioned outside the device screen if not adjusting manually.
-			if (@available(iOS 11.0, *)) {
-				UIEdgeInsets insets = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
-				UIInterfaceOrientation orientation = [iOS7AppDelegate currentOrientation];
-
-				// Set anchor point to lower right corner
-				view.layer.anchorPoint = CGPointMake(1, 1);
-
-				// Specify the position of the view layer from the anchor point
-				if (orientation == UIInterfaceOrientationLandscapeLeft) {
-					view.layer.position = CGPointMake(view.frame.size.width, view.layer.position.y);
-				} else if (orientation == UIInterfaceOrientationLandscapeRight) {
-					// When a device with e.g. a sensor bar is rotated so the sensor bar
-					// is to the left, we can adjust the anchor point a bit more to the left
-					// to make the left thumb buttons be at the same distance from the screen
-					// border.
-					view.layer.position = CGPointMake(view.frame.size.width - insets.left, view.layer.position.y);
-				}
-			}
 			stop = YES;
 		} else {
 			// Keep drilling

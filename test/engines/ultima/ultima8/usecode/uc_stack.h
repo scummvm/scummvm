@@ -17,25 +17,25 @@ class U8UCStackTestSuite : public CxxTest::TestSuite {
 	void test_dynamic_stack() {
 		Ultima::Ultima8::DynamicUCStack stack;
 		Ultima::Ultima8::DynamicUCStack stack2(32);
-		TS_ASSERT_EQUALS(stack2.getSize(), 32);
+		TS_ASSERT_EQUALS(stack2.getSize(), 32u);
 		test_for_stack(stack);
 		test_for_stack(stack2);
 	}
 
 	private:
 	void test_for_stack(Ultima::Ultima8::BaseUCStack &s) {
-		TS_ASSERT_EQUALS(s.stacksize(), 0);
+		TS_ASSERT_EQUALS(s.stacksize(), 0u);
 		s.push4(0xDEADBEEF);
-		TS_ASSERT_EQUALS(s.stacksize(), 4);
-		TS_ASSERT_EQUALS(s.pop2(), 0xBEEF);
-		TS_ASSERT_EQUALS(s.pop2(), 0xDEAD);
+		TS_ASSERT_EQUALS(s.stacksize(), 4u);
+		TS_ASSERT_EQUALS(s.pop2(), 0xBEEFu);
+		TS_ASSERT_EQUALS(s.pop2(), 0xDEADu);
 		s.push1(0xFE);
-		TS_ASSERT_EQUALS(s.stacksize(), 1);
+		TS_ASSERT_EQUALS(s.stacksize(), 1u);
 		s.push1(0xED);
 		s.push2(0xC0DE);
-		TS_ASSERT_EQUALS(s.pop2(), 0xC0DE);
-		TS_ASSERT_EQUALS(s.pop2(), 0xFEED);
-		TS_ASSERT_EQUALS(s.stacksize(), 0);
+		TS_ASSERT_EQUALS(s.pop2(), 0xC0DEu);
+		TS_ASSERT_EQUALS(s.pop2(), 0xFEEDu);
+		TS_ASSERT_EQUALS(s.stacksize(), 0u);
 		TS_ASSERT_EQUALS(s.getSP(), s.getSize());
 		s.push4(0xCAFEF00D);
 		TS_ASSERT_EQUALS(s.getSP(), s.getSize()-4);

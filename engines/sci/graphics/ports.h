@@ -46,7 +46,7 @@ typedef Common::List<Port *> PortList;
 typedef Common::Array<Port *> PortArray;
 
 /**
- * Ports class, includes all port managment for SCI0->SCI1.1 games. Ports are some sort of windows in SCI
+ * Ports class, includes all port management for SCI0->SCI1.1 games. Ports are some sort of windows in SCI
  *  this class also handles adjusting coordinates to a specific port
  */
 class GfxPorts : public Common::Serializable {
@@ -63,6 +63,8 @@ public:
 	reg_t kernelGetActive();
 	reg_t kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title);
 	void kernelDisposeWindow(uint16 windowId, bool reanimate);
+
+	void setActiveWindowHasEditText() { _portIdWithEditText = (int16)getPort()->id; }
 
 	int16 isFrontWindow(Window *wnd);
 	void beginUpdate(Window *wnd);
@@ -137,6 +139,7 @@ private:
 	// Priority Bands related variables
 	int16 _priorityTop, _priorityBottom, _priorityBandCount;
 	byte _priorityBands[200];
+	int16 _portIdWithEditText = -1; // ID of the port that has an edit text field
 };
 
 } // End of namespace Sci

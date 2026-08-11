@@ -47,6 +47,8 @@ typedef void (*sighandler_t)(int);
 #include "common/scummsys.h"
 
 #if defined(USE_NULL_DRIVER)
+#include "common/events.h"
+
 #include "backends/modular-backend.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "base/main.h"
@@ -154,9 +156,9 @@ void OSystem_NULL::initBackend() {
 	_mixerManager = new NullMixerManager();
 	// Setup and start mixer
 	_mixerManager->init();
-#endif
 
 	BaseBackend::initBackend();
+#endif
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
@@ -249,6 +251,9 @@ void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
 void OSystem_NULL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	s.add("test/engine-data", new Common::FSDirectory("test/engine-data", 4), priority);
 	s.add("gui/themes", new Common::FSDirectory("gui/themes", 4), priority);
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 OSystem *OSystem_NULL_create(bool silenceLogs) {

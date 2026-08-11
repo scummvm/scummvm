@@ -293,6 +293,7 @@ public:
 	int _cursorX = 0;
 	int _cursorY = 0;
 	bool _isUtf8 = false;
+	bool _transcodeChineseToSimplified = false;
 	Font *_overrideFont = nullptr;
 };
 

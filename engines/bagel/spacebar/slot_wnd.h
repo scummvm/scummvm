@@ -23,9 +23,9 @@
 #ifndef BAGEL_SPACEBAR_SLOT_WND_H
 #define BAGEL_SPACEBAR_SLOT_WND_H
 
-#include "bagel/baglib/storage_dev_win.h"
-#include "bagel/boflib/gui/text_box.h"
-#include "bagel/boflib/gui/button.h"
+#include "bagel/spacebar/baglib/storage_dev_win.h"
+#include "bagel/spacebar/boflib/gui/text_box.h"
+#include "bagel/spacebar/boflib/gui/button.h"
 #include "bagel/boflib/sound.h"
 
 namespace Bagel {
@@ -93,9 +93,9 @@ protected:
 	bool _bAutoDecrement;
 	CBofBitmap *_bFixBmp;
 	CBofBitmap *_pLoseBmp;
-	CBofSound *_pBkgSnd;			// Casino background sounds
+	CBofSound *_pBkgSnd;            // Casino background sounds
 	CBofSound *_pSlotSound;
-	CBofSound *_pWinSound;			// Allow all ambient noise to continue playing
+	CBofSound *_pWinSound;          // Allow all ambient noise to continue playing
 	bool _bLose;
 
 public:
@@ -104,8 +104,8 @@ public:
 	virtual void onBofButton(CBofObject *pButton, int nState);
 	virtual void onMainLoop();
 
-	virtual ErrorCode attach();	// This function attaches the background and necessary bitmaps
-	virtual ErrorCode detach();	// This function detaches the background and necessary bitmaps
+	virtual ErrorCode attach(); // This function attaches the background and necessary bitmaps
+	virtual ErrorCode detach(); // This function detaches the background and necessary bitmaps
 
 	void addBet(int nBetVal);
 	void betAll();
@@ -127,7 +127,7 @@ public:
 	void onPaint(CBofRect *pRect);
 	void onTimer(uint32 nTimerId);
 	void onLButtonDown(uint32 nFlags, CBofPoint *pPoint, void * = nullptr);
-	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) { }
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void * = nullptr) { }
 
 };
 

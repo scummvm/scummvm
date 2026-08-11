@@ -19,7 +19,6 @@
  *
  */
 
-#include <emmintrin.h>
 #include "ags/ags.h"
 #include "ags/globals.h"
 #include "ags/lib/allegro/color.h"
@@ -27,6 +26,19 @@
 #include "ags/lib/allegro/gfx.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
+
+#include <emmintrin.h>
+
+#if !defined(__x86_64__)
+
+#if defined(__clang__)
+#pragma clang attribute push (__attribute__((target("sse2"))), apply_to=function)
+#elif defined(__GNUC__)
+#pragma GCC push_options
+#pragma GCC target("sse2")
+#endif
+
+#endif // !defined(__x86_64__)
 
 namespace AGS3 {
 
@@ -194,7 +206,7 @@ static inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m
 	// srcCols[2] = A | R | G | B
 	// srcCols[3] = A | R | G | B
 	//  ->
-	// to 4 float32x4_t's each being a seperate channel with each lane
+	// to 4 float32x4_t's each being a separate channel with each lane
 	// corresponding to their respective srcCols lane
 	// dda = { A[0], A[1], A[2], A[3] }
 	// ddr = { R[0], R[1], R[2], R[3] }
@@ -990,3 +1002,13 @@ template void BITMAP::drawSSE2<false>(DrawInnerArgs &);
 template void BITMAP::drawSSE2<true>(DrawInnerArgs &);
 
 } // namespace AGS3
+
+#if !defined(__x86_64__)
+
+#if defined(__clang__)
+#pragma clang attribute pop
+#elif defined(__GNUC__)
+#pragma GCC pop_options
+#endif
+
+#endif // !defined(__x86_64__)

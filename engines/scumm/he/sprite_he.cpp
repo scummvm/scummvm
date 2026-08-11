@@ -41,7 +41,9 @@ Sprite::Sprite(ScummEngine_v90he *vm)
 	_activeSpriteCount(0),
 	_maxSpriteGroups(0),
 	_maxSprites(0),
-	_maxImageLists(0) {
+	_maxImageLists(0),
+	_imageLists(nullptr),
+	_imageListStack(nullptr) {
 }
 
 Sprite::~Sprite() {
@@ -86,7 +88,7 @@ int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int cl
 	if (!_activeSpriteCount)
 		return 0;
 
-	spritePtr = &_activeSprites [_activeSpriteCount - 1];
+	spritePtr = &_activeSprites[_activeSpriteCount - 1];
 
 	if (quickCheck != 0) {
 		for (int counter = 0; counter < _activeSpriteCount; counter++, spritePtr--) {
@@ -170,6 +172,42 @@ int Sprite::spriteFromPoint(int x, int y, int groupCheck, int quickCheck, int cl
 
 					// Get the last active image state...
 					state = (*spritePtr)->lastState;
+				}
+
+				// The following code seems to only be present in FunShop titles
+				// and is responsible for accurately passing the mouse hover check
+				// for clip art sprites...
+				if (_vm->_game.id == GID_FUNSHOP) {
+					int angle = (*spritePtr)->lastAngle;
+					int scale = (*spritePtr)->lastScale;
+
+					bool scaleSpecified = (kSFScaleSpecified & (*spritePtr)->flags);
+					bool angleSpecified = (kSFAngleSpecified & (*spritePtr)->flags);
+
+					if (scaleSpecified || angleSpecified) {
+						// Scale the incoming point into image relative position...
+						if (scaleSpecified) {
+							if (scale <= 0) {
+								continue;
+							}
+
+							testPointX = (testPointX * 256) / scale;
+							testPointY = (testPointY * 256) / scale;
+						}
+
+						// Rotate the test point...
+						if (angleSpecified) {
+							Common::Point testPoint((int16)testPointX, (int16)testPointY);
+							_vm->_wiz->polyRotatePoints(&testPoint, 1, ((360 - angle) % 360));
+						}
+
+						// Adjust the pos to image relative coords...
+						int32 w, h;
+
+						_vm->_wiz->getWizImageDim(image, state, w, h);
+						testPointX += (w / 2);
+						testPointY += (h / 2);
+					}
 				}
 
 				if (!_vm->_wiz->hitTestWiz(image, state, testPointX, testPointY, (*spritePtr)->lastRenderFlags)) {
@@ -1631,6 +1669,118 @@ static int compareSpritePriority(const void *a, const void *b) {
 	return spr1->priority - spr2->priority;
 }
 
+#define SWAP_SPRITE_PTRS(e1, e2, te) { \
+	te = *e1;                          \
+	*e1 = *e2;                         \
+	*e2 = te;                          \
+}
+
+#define SPRITE_QSORT_CUTOFF 8
+
+void Sprite::qsortSpriteArray(SpriteInfo **base, uint num) {
+	SpriteInfo **lostk[30], **histk[30];
+	SpriteInfo **loguy, **higuy;
+	SpriteInfo **lo, **hi;
+	SpriteInfo **mid;
+	SpriteInfo *t;
+
+	uint size;
+	int stkptr;
+
+	if (num < 2)
+		return;
+
+	stkptr = 0;
+
+	lo = base;
+	hi = base + (num - 1);
+
+recurse:
+	size = (hi - lo) + 1;
+
+	if (size <= SPRITE_QSORT_CUTOFF) {
+		shortsortSpriteArray(lo, hi);
+	} else {
+		mid = lo + (size / 2);
+		SWAP_SPRITE_PTRS(mid, lo, t);
+
+		loguy = lo;
+		higuy = hi + 1;
+
+		for (;;) {
+			do {
+				++loguy;
+			} while (loguy <= hi && compareSpriteCombinedPriority(const_cast<SpriteInfo **>(loguy), const_cast<SpriteInfo **>(lo)) <= 0);
+
+			do {
+				--higuy;
+			} while (higuy > lo && compareSpriteCombinedPriority(const_cast<SpriteInfo **>(higuy), const_cast<SpriteInfo **>(lo)) >= 0);
+
+			if (higuy < loguy)
+				break;
+
+			SWAP_SPRITE_PTRS(loguy, higuy, t);
+		}
+
+		SWAP_SPRITE_PTRS(lo, higuy, t);
+
+		if (higuy - 1 - lo >= hi - loguy) {
+			if (lo + 1 < higuy) {
+				lostk[stkptr] = lo;
+				histk[stkptr] = higuy - 1;
+				++stkptr;
+			}
+
+			if (loguy < hi) {
+				lo = loguy;
+				goto recurse;
+			}
+		} else {
+			if (loguy < hi) {
+				lostk[stkptr] = loguy;
+				histk[stkptr] = hi;
+				++stkptr;
+			}
+
+			if (lo + 1 < higuy) {
+				hi = higuy - 1;
+				goto recurse;
+			}
+		}
+	}
+
+	--stkptr;
+
+	if (stkptr >= 0) {
+		lo = lostk[stkptr];
+		hi = histk[stkptr];
+		goto recurse;
+	} else {
+		return;
+	}
+}
+
+void Sprite::shortsortSpriteArray(SpriteInfo **lo, SpriteInfo **hi) {
+	SpriteInfo **p, **max, *t;
+
+	while (hi > lo) {
+		max = lo;
+
+		for (p = lo + 1; p <= hi; p++) {
+			if (compareSpriteCombinedPriority(const_cast<SpriteInfo **>(p), const_cast<SpriteInfo **>(max)) > 0) {
+				max = p;
+			}
+		}
+
+		SWAP_SPRITE_PTRS(max, hi, t);
+		hi--;
+	}
+}
+
+#undef SPRITE_QSORT_CUTOFF
+
+#undef SWAP_SPRITE_PTRS
+
 void Sprite::buildActiveSpriteList() {
 	SpriteInfo **spritePtr;
 
@@ -1652,7 +1802,7 @@ void Sprite::buildActiveSpriteList() {
 			}
 		}
 
-		if (_vm->_game.heversion > 90) {
+		if (_vm->_game.heversion > 95) {
 			_spriteTable[i].combinedPriority =  (_spriteTable[i].priority +
 				(((_spriteTable[i].group) ? _groupTable[_spriteTable[i].group].priority : 0)));
 		}
@@ -1664,7 +1814,7 @@ void Sprite::buildActiveSpriteList() {
 	// Sort the list of active sprites...
 	if (_activeSpriteCount) {
 		if (_vm->_game.heversion > 95) {
-			qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpriteCombinedPriority);
+			qsortSpriteArray(_activeSprites, _activeSpriteCount);
 		} else {
 			qsort(_activeSprites, _activeSpriteCount, sizeof(SpriteInfo *), compareSpritePriority);
 		}
@@ -1701,12 +1851,24 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 		// If it reaches a positive priority it stops, because the active list
 		// should be sorted by this point...
 		if (negativeOrPositiveRender) {
-			if (spritePtr[i]->combinedPriority >= 0) {
-				break;
+			if (_vm->_game.heversion > 95) {
+				if (spritePtr[i]->combinedPriority >= 0) {
+					break;
+				}
+			} else {
+				if (spritePtr[i]->priority >= 0) {
+					break;
+				}
 			}
 		} else {
-			if (spritePtr[i]->combinedPriority < 0) {
-				continue;
+			if (_vm->_game.heversion > 95) {
+				if (spritePtr[i]->combinedPriority < 0) {
+					continue;
+				}
+			} else {
+				if (spritePtr[i]->priority < 0) {
+					continue;
+				}
 			}
 		}
 

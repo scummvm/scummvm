@@ -490,7 +490,7 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	info.height = info.bg.h;
 
 	// Overwrite the first color (transparent key) in the palette
-	p = decoder.getPalette();
+	p = decoder.getPalette().data();
 	info.palette.setEntry(0, p[0] >> 2, p[1] >> 2, p[2] >> 0);
 
 	for (i = 16; i < 32; i++) {

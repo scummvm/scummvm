@@ -83,7 +83,7 @@ const KeyFrame* AnimData::getKeyframe(uint index) const {
 	return &_keyframes[index];
 }
 
-uint16 AnimData::getLoopFrame() const {
+uint16 AnimData::getLoopFrame() const { // GetBouclageAnim
 	return _loopFrame;
 }
 

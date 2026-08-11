@@ -25,7 +25,8 @@
 
 namespace MTropolis {
 
-ElementLoaderContext::ElementLoaderContext(Runtime *elc_runtime, size_t elc_streamIndex) : runtime(elc_runtime), streamIndex(elc_streamIndex) {
+ElementLoaderContext::ElementLoaderContext(Runtime *pRuntime, Project *pProject, size_t pStreamIndex)
+	: runtime(pRuntime), project(pProject), streamIndex(pStreamIndex) {
 }
 
 template<typename TElement, typename TElementData>
@@ -40,12 +41,17 @@ private:
 
 template<typename TElement, typename TElementData>
 Common::SharedPtr<Element> ElementFactory<TElement, TElementData>::createElement(ElementLoaderContext &context, const Data::DataObject &dataObject) {
-	Common::SharedPtr<TElement> element(new TElement());
+	TElement *tElementPtr = new TElement();
+	Common::SharedPtr<TElement> element(tElementPtr);
+	Element *elementPtr = tElementPtr;
 
-	if (!element->load(context, static_cast<const TElementData &>(dataObject)))
+	if (!element->load(context, static_cast<const TElementData &>(dataObject))) {
 		element.reset();
-	else
-		element->setSelfReference(element);
+	} else {
+		elementPtr->setSelfReference(element);
+		if (elementPtr->getName().empty())
+			elementPtr->tryAutoSetName(context.runtime, context.project);
+	}
 
 	return Common::SharedPtr<Element>(element);
 }

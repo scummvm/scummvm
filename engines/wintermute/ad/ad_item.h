@@ -37,6 +37,13 @@ class AdItem : public AdTalkHolder {
 	using Wintermute::AdObject::display;
 
 public:
+	bool _displayAmount;
+	int32 _amount;
+	int32 _amountOffsetX;
+	int32 _amountOffsetY;
+	TTextAlign _amountAlign;
+	char *_amountString;
+
 	bool update() override;
 	DECLARE_PERSISTENT(AdItem, AdTalkHolder)
 	bool display(int x, int y);
@@ -52,17 +59,10 @@ public:
 	bool loadBuffer(char *buffer, bool complete = true);
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
-private:
-	bool _displayAmount;
-	int32 _amount;
-	int32 _amountOffsetX;
-	int32 _amountOffsetY;
-	TTextAlign _amountAlign;
-	char *_amountString;
 };
 
 } // End of namespace Wintermute

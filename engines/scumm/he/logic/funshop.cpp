@@ -67,7 +67,7 @@ int32 LogicHEfunshop::dispatch(int op, int numArgs, int32 *args) {
 void LogicHEfunshop::op_1004(int32 *args) {
 	double data[8], at, sq;
 	int32 x, y;
-	int i=0;
+	int i;
 
 	for (i = 0; i <= 6; i += 2) {
 		data[i] = getFromArray(args[0], 0, 519 + i);

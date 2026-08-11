@@ -120,7 +120,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// BladeRunner (Chinese)
 	{
 		"bladerunner",
-		_s("Missing game code"), // Reason for being unsupported
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 		AD_ENTRY2s("STARTUP.MIX", "c198b54a5366b88b1734bbca21d3b192", 2678672,
 				   "95blade.dll", "187f257c3183d6b0a0aee69e5cde4c76", 307200),
 		Common::ZH_CHN,
@@ -206,7 +206,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("STARTUP.MIX", "c198b54a5366b88b1734bbca21d3b192", 2678672),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSUPPORTED,
 		GUIO7(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GAMEOPTION_DISABLE_STAMINA_DRAIN, GAMEOPTION_SHOW_SUBS_IN_CRAWL, GUIO_NOMIDI)
 	},
 
@@ -217,7 +217,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("STARTUP.MIX", "d62498a7415682bb3ff86a894303c836", 2810053),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSUPPORTED,
 		GUIO7(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GAMEOPTION_DISABLE_STAMINA_DRAIN, GAMEOPTION_SHOW_SUBS_IN_CRAWL, GUIO_NOMIDI)
 	},
 

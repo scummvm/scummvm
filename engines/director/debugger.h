@@ -59,9 +59,13 @@ struct Breakpoint {
 	bool varRead = false;
 	bool varWrite = false;
 
+	// Optional Lingo expression; the breakpoint only fires when it is true.
+	Common::String condition;
+
 	Common::String format() const;
 };
 
+class Cast;
 
 class Debugger : public GUI::Debugger {
 public:
@@ -83,6 +87,9 @@ public:
 	void entityWriteHook(int entity, int field);
 
 private:
+	void disasmAllCast(Cast *cast);
+	void disasmCast(Cast *cast, int scriptId, const Common::String &funcName);
+
 	bool cmdHelp(int argc, const char **argv);
 
 	bool cmdVersion(int argc, const char **argv);
@@ -106,6 +113,8 @@ private:
 	bool cmdStep(int argc, const char **argv);
 	bool cmdNext(int argc, const char **argv);
 	bool cmdFinish(int argc, const char **argv);
+	bool cmdWindows(int argc, const char **argv);
+	bool cmdXLibs(int argc, const char **argv);
 
 	bool cmdBpSet(int argc, const char **argv);
 	bool cmdBpMovie(int argc, const char **argv);
@@ -127,6 +136,7 @@ private:
 
 	bool lingoCommandProcessor(const char *inputOrig);
 	bool lingoEval(const char *inputOrig);
+	bool evalCondition(const Common::String &cond);
 
 
 	Common::DumpFile _out;

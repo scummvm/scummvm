@@ -111,7 +111,7 @@ void Lobby::receiveData() {
 
 void Lobby::processLine(Common::String line) {
 	debugC(DEBUG_NETWORK, "LOBBY: Received Data: %s", line.c_str());
-	Common::JSONValue *json = Common::JSON::parse(line.c_str());
+	Common::JSONValue *json = Common::JSON::parse(line);
 	if (!json) {
 		warning("LOBBY: Received trunciated data from server! %s", line.c_str());
 		return;
@@ -144,6 +144,10 @@ void Lobby::processLine(Common::String line) {
 			Common::String filename = root["filename"]->asString();
 			Common::String data = root["data"]->asString();
 			handleFileData(filename, data);
+		} else if (command == "system_alert") {
+			int type = root["type"]->asIntegerNumber();
+			Common::String message = root["message"]->asString();
+			systemAlert(type, message);
 		} else if (command == "population_resp") {
 			int areaId = root["area"]->asIntegerNumber();
 			int population = root["population"]->asIntegerNumber();
@@ -241,7 +245,7 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 		break;
 	case OP_NET_PING_OPPONENT:
 		// NOTE: See getUserProfile, this op only gets
-		// called after an oponent picks up the phone.
+		// called after an opponent picks up the phone.
 		break;
 	case OP_NET_RECEIVER_BUSY:
 		sendBusy(args[0]);
@@ -337,7 +341,7 @@ void Lobby::openUrl(const char *url) {
 	    urlString == "http://www.humongoussports.com/backyard/registration/register.asp") {
 		if (_vm->displayMessageYesNo("Online Play for this game is provided by Backyard Sports Online, which is a\nservice provided by the ScummVM project.\nWould you like to go to their registration page?")) {
 			if (!g_system->openUrl("https://backyardsports.online/register")) {
-				_vm->displayMessage(0, "Failed to open registration URL.  Please navigate to this page manually.\n\n\"https://backyardsports.online/register\"");
+				_vm->displayMessage("Failed to open registration URL.  Please navigate to this page manually.\n\n\"https://backyardsports.online/register\"");
 			}
 		}
 	} else {
@@ -349,8 +353,6 @@ bool Lobby::connect() {
 	if (_socket)
 		return true;
 
-	_socket = new Networking::CurlSocket();
-
 	// NOTE: Even though the protocol starts with http(s), this is an entirely
 	// different protocol.  This is done so we can achieve communicating over
 	// TLS/SSL sockets.
@@ -360,9 +362,9 @@ bool Lobby::connect() {
 	}
 
 	// Parse the URL for checks:
-	Networking::CurlURL url;
-	if (url.parseURL(lobbyUrl)) {
-		Common::String scheme = url.getScheme();
+	Networking::URL *url = Networking::URL::parseURL(lobbyUrl);
+	if (url) {
+		Common::String scheme = url->getScheme();
 		if (!scheme.contains("http")) {
 			warning("LOBBY: Unsupported scheme in URL: \"%s\"", scheme.c_str());
 			writeStringArray(109, "Unsupported scheme in server address");
@@ -370,7 +372,7 @@ bool Lobby::connect() {
 			return false;
 		}
 
-		int port = url.getPort();
+		int port = url->getPort();
 		switch (port) {
 		case -1:
 			warning("LOBBY: Unable to get port.");
@@ -382,17 +384,18 @@ bool Lobby::connect() {
 			lobbyUrl += ":9130";
 			break;
 		}
+
+		delete url;
 	} else
 		warning("LOBBY: Could not parse URL, attempting to connect as is");
 
 	debugC(DEBUG_NETWORK, "LOBBY: Connecting to %s", lobbyUrl.c_str());
 
-	if (_socket->connect(lobbyUrl)) {
+	_socket = Networking::Socket::connect(lobbyUrl);
+	if (_socket) {
 		debugC(DEBUG_NETWORK, "LOBBY: Successfully connected to %s", lobbyUrl.c_str());
 		return true;
 	} else {
-		delete _socket;
-		_socket = nullptr;
 		writeStringArray(109, "Unable to contact server");
 		_vm->writeVar(108, -99);
 	}
@@ -608,9 +611,9 @@ void Lobby::sendGameResults(int userId, int arrayIndex, int lastFlag) {
 	setProfileRequest.setVal("cmd", new Common::JSONValue("game_results"));
 	setProfileRequest.setVal("user", new Common::JSONValue((long long int)userId));
 
-	ScummEngine_v90he::ArrayHeader *ah = (ScummEngine_v90he::ArrayHeader *)_vm->getResourceAddress(rtString, arrayIndex & ~0x33539000);
-	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+	ScummEngine_v90he::ArrayHeader *ah = (ScummEngine_v90he::ArrayHeader *)_vm->getResourceAddress(rtString, arrayIndex & ~MAGIC_ARRAY_NUMBER);
+	int32 size = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
+		(FROM_LE_32(ah->downMax) - FROM_LE_32(ah->downMin) + 1);
 
 	Common::JSONArray arrayData;
 	for (int i = 0; i < size; i++) {

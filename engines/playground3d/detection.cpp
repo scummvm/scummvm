@@ -42,9 +42,9 @@ static const ADGameDescription playground3dDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-class Playground3dMetaEngineDetection : public AdvancedMetaEngineDetection {
+class Playground3dMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	Playground3dMetaEngineDetection() : AdvancedMetaEngineDetection(playground3dDescriptions, sizeof(ADGameDescription), playground3d_setting) {
+	Playground3dMetaEngineDetection() : AdvancedMetaEngineDetection(playground3dDescriptions, playground3d_setting) {
 		_md5Bytes = 512;
 	}
 

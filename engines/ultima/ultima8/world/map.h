@@ -22,7 +22,13 @@
 #ifndef ULTIMA8_WORLD_MAP_H
 #define ULTIMA8_WORLD_MAP_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/list.h"
+
+namespace Common {
+class ReadStream;
+class WriteStream;
+class SeekableReadStream;
+}
 
 namespace Ultima {
 namespace Ultima8 {
@@ -51,7 +57,7 @@ public:
 private:
 
 	// load items from something formatted like 'fixed.dat'
-	void loadFixedFormatObjects(Std::list<Item *> &itemlist,
+	void loadFixedFormatObjects(Common::List<Item *> &itemlist,
 								Common::SeekableReadStream *rs,
 	                            uint32 extendedflags);
 
@@ -71,8 +77,8 @@ private:
 	// since fixed items will be cached out most of the time)
 
 
-	Std::list<Item *> _fixedItems;
-	Std::list<Item *> _dynamicItems;
+	Common::List<Item *> _fixedItems;
+	Common::List<Item *> _dynamicItems;
 
 	uint32 _mapNum;
 };

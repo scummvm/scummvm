@@ -33,15 +33,28 @@
 namespace Nancy {
 namespace UI {
 
-Button::Button(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &clickSrcBounds, const Common::Rect &destBounds, const Common::Rect &hoverSrcBounds, const Common::Rect &disabledSrcBounds) :
+Button::Button(uint16 zOrder,
+			Graphics::ManagedSurface &surface,
+			const Common::Rect &clickSrcBounds,
+			const Common::Rect &destBounds,
+			const Common::Rect &hoverSrcBounds,
+			const Common::Rect &disabledSrcBounds,
+			const Common::Rect &baseSrcBounds) :
 		RenderObject(zOrder, surface, clickSrcBounds, destBounds),
 		surf(surface),
 		_clickSrc(clickSrcBounds),
 		_hoverSrc(hoverSrcBounds),
 		_disabledSrc(disabledSrcBounds),
+		_baseSrc(baseSrcBounds),
 		_isClicked(false),
 		_isDisabled(false) {
-	setVisible(false);
+	if (!_baseSrc.isEmpty()) {
+		_drawSurface.create(surf, _baseSrc);
+		setVisible(true);
+	} else {
+		setVisible(false);
+	}
+
 	setTransparent(true);
 }
 
@@ -67,7 +80,12 @@ void Button::handleInput(NancyInput &input) {
 			}
 		}
 	} else if (!_isClicked && _isVisible) {
-		setVisible(false);
+		if (!_baseSrc.isEmpty()) {
+			_drawSurface.create(surf, _baseSrc);
+			setVisible(true);
+		} else {
+			setVisible(false);
+		}
 	}
 }
 
@@ -78,10 +96,20 @@ void Button::setDisabled(bool disabled) {
 			_drawSurface.create(surf, _disabledSrc);
 			setVisible(true);
 		} else {
-			setVisible(false);
+			if (!_baseSrc.isEmpty()) {
+				_drawSurface.create(surf, _baseSrc);
+				setVisible(true);
+			} else {
+				setVisible(false);
+			}
 		}
 	} else {
-		setVisible(false);
+		if (!_baseSrc.isEmpty()) {
+			_drawSurface.create(surf, _baseSrc);
+			setVisible(true);
+		} else {
+			setVisible(false);
+		}
 		_isDisabled = false;
 	}
 }

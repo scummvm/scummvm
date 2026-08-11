@@ -54,6 +54,15 @@
 
 namespace Saga {
 
+const char *engineKeyMapId = "engine-default";
+const char *gameKeyMapId = "game-shortcuts";
+const char *optionKeyMapId = "option-panel";
+const char *saveKeyMapId = "save-panel";
+const char *loadKeyMapId = "load-panel";
+const char *quitKeyMapId = "quit-panel";
+const char *converseKeyMapId = "converse-panel";
+
+
 static const GameResourceDescription ITE_Resources_GermanAGACD = {
 	1810,	// Scene lookup table RN
 	216,	// Script lookup table RN
@@ -709,6 +718,48 @@ void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundReso
 		textString = getTextString(kTextICantPickup);
 		soundResourceId = 246;		// Boar voice 7
 	}
+}
+
+void SagaEngine::enableKeyMap(int mode) {
+	PanelModes newPanelMode = (PanelModes)mode;
+	if (_currentPanelMode == newPanelMode) {
+		return;
+	}
+
+	Common::String id;
+	switch (newPanelMode) {
+	case kPanelMain:
+		id = gameKeyMapId;
+		break;
+	case kPanelOption:
+		id = optionKeyMapId;
+		break;
+	case kPanelSave:
+		id = saveKeyMapId;
+		break;
+	case kPanelLoad:
+		id = loadKeyMapId;
+		break;
+	case kPanelQuit:
+		id = quitKeyMapId;
+		break;
+	case kPanelConverse:
+		id = converseKeyMapId;
+		break;
+	default:
+		id = ""; // disable all keymaps if it is not any of above Panels
+		break;
+	}
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	const Common::KeymapArray &keymaps = keymapper->getKeymaps();
+	for (Common::Keymap *keymap : keymaps) {
+		const Common::String &keymapId = keymap->getId();
+		if (keymap->getType() == Common::Keymap::kKeymapTypeGame && keymapId != engineKeyMapId) {
+			keymap->setEnabled(keymapId == id);
+		}
+	}
+	_currentPanelMode = newPanelMode;
 }
 
 ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {

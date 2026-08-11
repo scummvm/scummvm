@@ -79,7 +79,7 @@ void expression_init() {
 	Right_Assoc[OP_ASSIGN]     = true;
 
 
-	Precedence[OP_LPAREN]     = 14;		// must always be the higest
+	Precedence[OP_LPAREN]     = 14;		// must always be the highest
 	Precedence[OP_DOT]        = 13;
 
 	Precedence[OP_CHS]        = 12;

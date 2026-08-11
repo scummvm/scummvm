@@ -39,6 +39,7 @@
 
 #include "sword1/debug.h"
 
+#include "gui/error.h"
 #include "gui/message.h"
 
 namespace Sword1 {
@@ -1014,9 +1015,14 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 	} else {
 		MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _sound, _system);
 		if (player) {
+			Common::Error err;
+
 			_screen->clearScreen();
-			if (player->load(sequenceId))
+			err = player->load(sequenceId);
+			if (err.getCode() == Common::kNoError)
 				player->play();
+			else
+				GUI::displayErrorDialog(err);
 			delete player;
 
 			// In some instances, when you start a video when the palette is still fading
@@ -1729,7 +1735,7 @@ int Logic::fnRestartGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32
 
 int Logic::fnQuitGame(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	if (SwordEngine::_systemVars.isDemo) {
-		GUI::MessageDialog dialog(_("This is the end of the Broken Sword 1 Demo"), _("OK"));
+		GUI::MessageDialog dialog(_("This is the end of the Broken Sword 1 Demo"));
 		dialog.runModal();
 		Engine::quitGame();
 	} else

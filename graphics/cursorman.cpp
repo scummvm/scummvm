@@ -31,6 +31,32 @@ DECLARE_SINGLETON(Graphics::CursorManager);
 
 namespace Graphics {
 
+static const int CURSOR_W = 12;
+static const int CURSOR_H = 20;
+static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
+	1,1,0,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,1,1,1,1,1,
+	1,2,2,2,1,2,2,1,0,0,0,0,
+	1,2,2,1,1,2,2,1,0,0,0,0,
+	1,2,1,0,0,1,2,2,1,0,0,0,
+	1,1,0,0,0,1,2,2,1,0,0,0,
+	1,0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,0,1,2,2,1,0,
+	0,0,0,0,0,0,0,1,2,2,1,0,
+	0,0,0,0,0,0,0,0,1,1,0,0,
+};
+static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
+
 CursorManager::~CursorManager() {
 	for (Common::Stack<Cursor *>::size_type i = 0; i < _cursorStack.size(); ++i)
 		delete _cursorStack[i];
@@ -59,7 +85,39 @@ bool CursorManager::showMouse(bool visible) {
 	return g_system->showMouse(visible);
 }
 
-void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+bool CursorManager::systemSupportsCursorMask(const byte *mask, uint width, uint height) {
+	if (!mask)
+		return true;
+
+	bool supportsCursorMask = g_system->hasFeature(OSystem::kFeatureCursorMask);
+	bool supportsCursorMaskInvert = g_system->hasFeature(OSystem::kFeatureCursorMaskInvert);
+	bool supportsCursorMaskPaletteXorColorXnor = g_system->hasFeature(OSystem::kFeatureCursorMaskPaletteXorColorXnor);
+
+	for (uint i = 0; i < width * height; i++) {
+		switch (mask[i]) {
+		case kCursorMaskTransparent:
+		case kCursorMaskOpaque:
+			if (!supportsCursorMask)
+				return false;
+			break;
+		case kCursorMaskInvert:
+			if (!supportsCursorMaskInvert)
+				return false;
+			break;
+		case kCursorMaskPaletteXorColorXnor:
+			if (!supportsCursorMaskPaletteXorColorXnor)
+				return false;
+			break;
+		default:
+			warning("Unknown cursor mask value %d", mask[i]);
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	PixelFormat pixelFormat;
 	if (format)
 		pixelFormat = *format;
@@ -67,22 +125,22 @@ void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, in
 		pixelFormat = PixelFormat::createFormatCLUT8();
 
 	Surface surf;
-	// we wont touch 'buf' ...
+	// we won't touch 'buf' ...
 	surf.init(w, h, w * pixelFormat.bytesPerPixel, const_cast<void *>(buf), pixelFormat);
 
-	pushCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
+	pushCursor(surf, hotspotX, hotspotY, keycolor, mask, scaleX, scaleY);
 }
 
-void CursorManager::pushCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
-	if (!g_system->hasFeature(OSystem::kFeatureCursorMask))
+void CursorManager::pushCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, const byte *mask, frac_t scaleX, frac_t scaleY) {
+	if (!systemSupportsCursorMask(mask, surf.w, surf.h))
 		mask = nullptr;
 
-	Cursor *cur = new Cursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
+	Cursor *cur = new Cursor(surf, hotspotX, hotspotY, keycolor, mask, scaleX, scaleY);
 
 	cur->_visible = isVisible();
 	_cursorStack.push(cur);
 
-	g_system->setMouseCursor(cur->_surf.getPixels(), cur->_surf.w, cur->_surf.h, hotspotX, hotspotY, keycolor, dontScale, &cur->_surf.format, mask);
+	g_system->setMouseCursor(cur->_surf.getPixels(), cur->_surf.w, cur->_surf.h, hotspotX, hotspotY, keycolor, &cur->_surf.format, mask, scaleX, scaleY);
 }
 
 void CursorManager::popCursor() {
@@ -94,9 +152,9 @@ void CursorManager::popCursor() {
 
 	if (!_cursorStack.empty()) {
 		cur = _cursorStack.top();
-		g_system->setMouseCursor(cur->_surf.getPixels(), cur->_surf.w, cur->_surf.h, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_dontScale, &cur->_surf.format, cur->_mask);
+		g_system->setMouseCursor(cur->_surf.getPixels(), cur->_surf.w, cur->_surf.h, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, &cur->_surf.format, cur->_mask, cur->_scaleX, cur->_scaleY);
 	} else {
-		g_system->setMouseCursor(nullptr, 0, 0, 0, 0, 0);
+		g_system->setMouseCursor(nullptr, 0, 0, 0, 0, 0, nullptr, nullptr, 0, 0);
 	}
 
 	g_system->showMouse(isVisible());
@@ -116,11 +174,11 @@ void CursorManager::popAllCursors() {
 		}
 	}
 
-	g_system->setMouseCursor(nullptr, 0, 0, 0, 0, 0);
+	g_system->setMouseCursor(nullptr, 0, 0, 0, 0, 0, nullptr, nullptr, 0, 0);
 	g_system->showMouse(isVisible());
 }
 
-void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	PixelFormat pixelFormat;
 	if (format)
 		pixelFormat = *format;
@@ -128,18 +186,18 @@ void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX,
 		pixelFormat = PixelFormat::createFormatCLUT8();
 
 	Surface surf;
-	// we wont touch 'buf' ...
+	// we won't touch 'buf' ...
 	surf.init(w, h, w * pixelFormat.bytesPerPixel, const_cast<void *>(buf), pixelFormat);
 
-	replaceCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
+	replaceCursor(surf, hotspotX, hotspotY, keycolor, mask, scaleX, scaleY);
 }
 
-void CursorManager::replaceCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
-	if (!g_system->hasFeature(OSystem::kFeatureCursorMask))
+void CursorManager::replaceCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, const byte *mask, frac_t scaleX, frac_t scaleY) {
+	if (!systemSupportsCursorMask(mask, surf.w, surf.h))
 		mask = nullptr;
 
 	if (_cursorStack.empty()) {
-		pushCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
+		pushCursor(surf, hotspotX, hotspotY, keycolor, mask, scaleX, scaleY);
 		return;
 	}
 
@@ -175,14 +233,15 @@ void CursorManager::replaceCursor(const Surface &surf, int hotspotX, int hotspot
 	cur->_hotspotX = hotspotX;
 	cur->_hotspotY = hotspotY;
 	cur->_keycolor = keycolor;
-	cur->_dontScale = dontScale;
+	cur->_scaleX = scaleX;
+	cur->_scaleY = scaleY;
 
-	g_system->setMouseCursor(cur->_surf.getPixels(), surf.w, surf.h, hotspotX, hotspotY, keycolor, dontScale, &cur->_surf.format, mask);
+	g_system->setMouseCursor(cur->_surf.getPixels(), surf.w, surf.h, hotspotX, hotspotY, keycolor, &cur->_surf.format, mask, scaleX, scaleY);
 }
 
-void CursorManager::replaceCursor(const Graphics::Cursor *cursor) {
+void CursorManager::replaceCursor(const Graphics::Cursor *cursor, frac_t scaleX, frac_t scaleY) {
 	replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
-				  cursor->getHotspotY(), cursor->getKeyColor(), false, nullptr, cursor->getMask());
+				  cursor->getHotspotY(), cursor->getKeyColor(), nullptr, cursor->getMask(), scaleX, scaleY);
 
 	if (cursor->getPalette())
 		replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
@@ -275,7 +334,19 @@ void CursorManager::lock(bool locked) {
 	_locked = locked;
 }
 
-CursorManager::Cursor::Cursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
+void CursorManager::setDefaultArrowCursor(bool push) {
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+
+	if (push) {
+		pushCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
+		pushCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, &format);
+	} else {
+		replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
+		replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, &format);
+	}
+}
+
+CursorManager::Cursor::Cursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	const uint32 keycolor_mask = (((uint32) -1) >> (sizeof(uint32) * 8 - surf.format.bytesPerPixel * 8));
 	_keycolor = keycolor & keycolor_mask;
 	_size = surf.w * surf.h * surf.format.bytesPerPixel;
@@ -294,7 +365,8 @@ CursorManager::Cursor::Cursor(const Surface &surf, int hotspotX, int hotspotY, u
 
 	_hotspotX = hotspotX;
 	_hotspotY = hotspotY;
-	_dontScale = dontScale;
+	_scaleX = scaleX;
+	_scaleY = scaleY;
 	_visible = false;
 }
 

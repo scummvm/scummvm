@@ -71,7 +71,7 @@ void cBackgroundImage::Draw(const cRect2f &aCollideRect, iLowLevelGraphics *apLo
 	cVector3f vScreenPos(aCollideRect.x * mvPosPercent.x - mvPos.x,
 						 aCollideRect.y * mvPosPercent.y, mvPos.z - mvPos.y);
 
-	// Calulate at what positions(s) the background is to be drawn.
+	// Calculate at what positions(s) the background is to be drawn.
 	if (mbTile) {
 		// The number of images needed.
 		cVector2l vNum;

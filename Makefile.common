@@ -1,6 +1,5 @@
 # This file is used by Makefile and declares common build rules,
 # a list of common object files etc.
-#
 
 ######################################################################
 # The default build target: just build the scummvm executable
@@ -134,8 +133,8 @@ $(EXECUTABLE): $(DETECT_OBJS) $(OBJS)
 	+$(QUIET)$(LS) $@
 
 ifdef SPLIT_DWARF
-$(EXECUTABLE).dwp: $(EXECUTABLE)
-	$(QUIET_DWP)$(DWP) -e $(EXECUTABLE)
+%.dwp: %
+	$(QUIET_DWP)$(DWP) -e $< -o $@
 endif
 
 # Grab the ScummVM Manual from Read the Docs
@@ -296,7 +295,7 @@ else
 GIT_DIRTY_FLAG = --dirty
 endif
 # Get the working copy base revision
-VER_REV := $(shell cd $(srcdir); git describe $(GIT_DIRTY_FLAG) --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
+VER_REV := $(shell cd $(srcdir); git describe $(GIT_DIRTY_FLAG) --always --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
 endif
 else
 GITROOT := git://github.com/scummvm/scummvm.git
@@ -371,7 +370,7 @@ dist-src: \
 
 # Common files
 DIST_FILES_DOCS:=AUTHORS COPYING COPYRIGHT NEWS.md README.md CONTRIBUTING.md
-DIST_FILES_DOCS+=LICENSES/COPYING.Apache LICENSES/COPYING.BSD LICENSES/COPYING.BSL LICENSES/COPYING.FREEFONT
+DIST_FILES_DOCS+=LICENSES/COPYING.Apache LICENSES/COPYING.BSD LICENSES/COPYING.BSL
 DIST_FILES_DOCS+=LICENSES/COPYING.GLAD LICENSES/COPYING.ISC LICENSES/COPYING.LGPL LICENSES/COPYING.LUA
 DIST_FILES_DOCS+=LICENSES/COPYING.MIT LICENSES/COPYING.MKV LICENSES/COPYING.MPL LICENSES/COPYING.OFL LICENSES/COPYING.TINYGL
 DIST_FILES_DOCS+=LICENSES/CatharonLicense.txt
@@ -396,7 +395,7 @@ DIST_FILES_DOCS_es:=$(addprefix $(srcdir)/doc/es/,InicioRapido)
 DIST_FILES_DOCS_fr:=$(addprefix $(srcdir)/doc/fr/,DemarrageRapide)
 DIST_FILES_DOCS_it:=$(addprefix $(srcdir)/doc/it/,GuidaRapida)
 DIST_FILES_DOCS_no-nb:=$(addprefix $(srcdir)/doc/no-nb/,HurtigStart)
-DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/se/,LasMig Snabbstart)
+DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/sv/,LasMig Snabbstart)
 
 # Themes files
 DIST_FILES_THEMES=scummmodern.zip scummclassic.zip scummremastered.zip residualvm.zip gui-icons.dat shaders.dat
@@ -460,11 +459,14 @@ endif
 ifdef ENABLE_FREESCAPE
 DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/freescape/shaders/*)
 endif
+ifdef ENABLE_COLONY
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/colony/shaders/*)
+endif
 endif
 
 # Soundfonts
 DIST_FILES_SOUNDFONTS=
-ifdef USE_FLUIDSYNTH
+ifneq "$(or $(USE_FLUIDSYNTH),$(USE_FLUIDLITE))" ""
 DIST_FILES_SOUNDFONTS:=$(addprefix $(srcdir)/dists/soundfonts/,Roland_SC-55.sf2)
 DIST_FILES_DOCS+=$(addprefix $(srcdir)/dists/soundfonts/,COPYRIGHT.Roland_SC-55)
 endif

@@ -19,11 +19,11 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "image/bmp.h"
-
 #include "ultima/ultima8/gumps/cru_demo_gump.h"
 
+#include "common/config-manager.h"
+#include "common/stack.h"
+#include "image/bmp.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/gfx/render_surface.h"
@@ -52,8 +52,9 @@ CruDemoGump::CruDemoGump(Common::SeekableReadStream *bmprs, uint32 flags, int32 
 	if (decoder.loadStream(*bmprs)) {
 		// This does an extra copy via the ManagedSurface, but it's a once-off.
 		const Graphics::Surface *bmpsurf = decoder.getSurface();
-		Graphics::ManagedSurface ms(bmpsurf);
-		ms.setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
+		Graphics::ManagedSurface ms;
+		ms.copyFrom(*bmpsurf);
+		ms.setPalette(decoder.getPalette().data(), 0, decoder.getPalette().size());
 		Common::Rect srcRect(640, 480);
 		_background->Blit(ms, srcRect, 0, 0);
 	} else {

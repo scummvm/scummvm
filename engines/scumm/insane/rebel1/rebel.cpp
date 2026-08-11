@@ -1,0 +1,747 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "common/system.h"
+#include "common/events.h"
+#include "common/endian.h"
+
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
+#include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
+
+#include "scumm/scumm_v7.h"
+#include "scumm/scumm.h"
+#include "scumm/smush/smush_player.h"
+#include "scumm/insane/rebel1/rebel.h"
+
+namespace Scumm {
+
+// Per-difficulty tuning tables from assault_data_3.bin (also loadable from C:\rebltune.txt)
+// 21 sub-levels x 3 difficulties x 13 fields
+// Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill, time, levelPts, bonus, flags
+const int16 kTuningTable[21][3][13] = {
+	// Sub-level 0: "1A" (Flight Training part 1)
+	{
+		{ 100, 100,  60, 110,   0,   0,  15,   0,   0,   5,  500,  100, 2048 },  // Easy
+		{ 100, 105,  60, 115,   0,   0,  25,   0,   0,   5, 1000,  200, 2048 },  // Normal
+		{ 105, 110,  65, 120,   0,   0,  30,   0,   0,  10, 1500,  500, 2050 },  // Hard
+	},
+	// Sub-level 1: "1B" (Flight Training part 2)
+	{
+		{ 100,  16, 120,   0,   7,   0,  15,   0,  25,   5,  500,  100, 3072 },  // Easy
+		{ 100,  18, 120,   0,   5,   0,  20,   0,  50,   5, 1000,  200, 3072 },  // Normal
+		{ 100,  20, 150,   0,   1,   0,  25,   0,  75,  10, 1500,  500, 3074 },  // Hard
+	},
+	// Sub-level 2: "2" (Asteroid Field Training)
+	{
+		{   0,   0,   0,   0,   4,  15,  25,   0,  25,  10,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   2,  18,  30,   0,  50,  10, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  20,  35,   0,  75,  10, 1500,  500, 2050 },  // Hard
+	},
+	// Sub-level 3: "3" (Planet Kolaador)
+	{
+		{  70, 100, 150,  90,   0,   0,  20,   0,   0,   5, 1000,  100, 2048 },  // Easy
+		{  72, 105, 155, 105,   0,   0,  25,   0,   0,   5, 2000,  200, 2048 },  // Normal
+		{  75, 110, 160, 110,   0,   0,  28,   0,   0,  10, 3000,  500, 2050 },  // Hard
+	},
+	// Sub-level 4: "4A" (Star Destroyer Attack part 1)
+	{
+		{   0,   0,   0,   0,   2,  11,   0,   4,  25,   5,  500,  750, 2048 },  // Easy
+		{   0,   0,   0,   0,   1,  25,   0,   6,  50,   5, 1000, 1500, 2048 },  // Normal
+		{   0,   0,   0,   0,   1,  28,   0,   6,  75,  10, 1500, 2000, 2050 },  // Hard
+	},
+	// Sub-level 5: "4B" (Star Destroyer Attack part 2)
+	{
+		{   0,   0,   0,   0,   3,  20,   0,   2,  50,   5,  500,  750, 2064 },  // Easy
+		{   0,   0,   0,   0,   1,  25,   0,   5, 100,   5, 1000, 1500, 2064 },  // Normal
+		{   0,   0,   0,   0,   1,  28,   0,   6, 200,  10, 1500, 2000, 2064 },  // Hard
+	},
+	// Sub-level 6: "5A" (Tatooine Attack part 1)
+	{
+		{  70, 150,  50,  25,  10,   0,  20,   0,  25,   5,  500,   15, 3072 },  // Easy
+		{  72, 165, 155,  30,   8,   0,  30,   0,  50,   5, 1000,   30, 3072 },  // Normal
+		{ 110, 190,  55,  65,   3,   0,  33,   0,  75,  10, 1500,   75, 3074 },  // Hard
+	},
+	// Sub-level 7: "5B" (Tatooine Attack part 2)
+	{
+		{   0,   0,   0,   0,   5,   0,   0,   2,  25,   0,  500,   15, 2048 },  // Easy
+		{   0,   0,   0,   0,   3,   0,   0,   5,  50,   5, 1000,   30, 2048 },  // Normal
+		{   0,   0,   0,   0,   1,   0,   0,   6,  75,  10, 1500,   75, 2050 },  // Hard
+	},
+	// Sub-level 8: "6" (Asteroid Field Chase)
+	{
+		{   0,   0,   0,   0,   2,  20,  20,   0,  25,   5,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   1,  25,  30,   0,  50,   5, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  28,  33,   0,  75,  10, 1500,  500, 2050 },  // Hard
+	},
+	// Sub-level 9: "7" (Imperial Probe Droids)
+	{
+		{ 100, 150, 150,  25,   7,   0,  12,   2,  50,   5,  500,  100, 3072 },  // Easy
+		{ 100, 160, 200,  35,   4,   0,  30,   4, 100,   5, 1000,  200, 3072 },  // Normal
+		{ 100, 180, 250,  50,   3,   0,  33,   5, 100,  10, 1500,  500, 3074 },  // Hard
+	},
+	// Sub-level 10: "8" (Imperial Walkers)
+	{
+		{   0,   0,   0,   0,   0,   0,  30,   0,  25,   0, 1000,  100, 3074 },  // Easy
+		{   0,   0,   0,   0,   0,   0,  36,   0,  50,   0, 2000,  200, 3074 },  // Normal
+		{   0,   0,   0,   0,   0,   0,  39,   0,  75,   0, 3000,  500, 3074 },  // Hard
+	},
+	// Sub-level 11: "9A" (Stormtroopers part 1)
+	{
+		{   0,   0,   0,   0,   4,   0,   0,  15,  25,   0, 1000,  100, 3074 },  // Easy
+		{   0,   0,   0,   0,   2,   0,   0,  25,  50,   0, 2000,  200, 3078 },  // Normal
+		{   0,   0,   0,   0,   0,   0,   0,  30,  75,   0, 3000,  500, 3078 },  // Hard
+	},
+	// Sub-level 12: "9B" (Stormtroopers part 2)
+	{
+		{   0,   0,   0,   0,   0,   0,   0,  15,  25,   0, 1000,  100, 3098 },  // Easy
+		{   0,   0,   0,   0,   0,   0,   0,  25,  50,   0, 2000,  200, 3098 },  // Normal
+		{   0,   0,   0,   0,   0,   0,   0,  30,  75,   0, 3000,  500, 3098 },  // Hard
+	},
+	// Sub-level 13: "10" (Protect Rebel Transport)
+	{
+		{   0,   0,   0,   0,   3,  10,   0,   5,  25,   5,  500,  200, 2048 },  // Easy
+		{   0,   0,   0,   0,   1,  16,   0,   5,  50,   5, 1000,  400, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  18,   0,   7,  75,  10, 1500, 1000, 2050 },  // Hard
+	},
+	// Sub-level 14: "11" (Yavin Training)
+	{
+		{  70, 150, 150,  25,  12,   0,  30,   0,  50,   5,  500,  200, 3072 },  // Easy
+		{  72, 165, 155,  30,   7,   0,  36,   0,  50,   5, 1000,  400, 3072 },  // Normal
+		{  75, 170, 160,  33,   3,   0,  39,   0,  75,  10, 1500, 1000, 3074 },  // Hard
+	},
+	// Sub-level 15: "12" (TIE Attack)
+	{
+		{   0,   0,   0,   0,   4,  13,   0,   5,  25,   5,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   2,  20,   0,   5,  50,   5, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  23,   0,   5,  75,  10, 1500,  500, 2050 },  // Hard
+	},
+	// Sub-level 16: "13" (Death Star Surface)
+	{
+		{ 100,  16, 120,   0,  20,   0,  35,   8,  75,   5,  500,  100, 3072 },  // Easy
+		{ 100,  18, 120,   0,  18,   0,  36,  10, 100,   5, 1000,  200, 3072 },  // Normal
+		{ 100,  20, 150,   0,  15,   0,  39,  12, 200,  10, 1500,  500, 3074 },  // Hard
+	},
+	// Sub-level 17: "14A" (Surface Cannon part 1)
+	{
+		{   0,   0,   0,   0,   0,  20,  35,   8,  25,   0, 1000,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   0,  27,  36,  12,  50,   0, 2000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  28,  39,  12,  75,   0, 3000,  500, 2050 },  // Hard
+	},
+	// Sub-level 18: "14B" (Surface Cannon part 2)
+	{
+		{   0,   0,   0,   0,  10,  20,  35,   8,  25,   0, 1000,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   5,  25,  36,  10,  50,   0, 2000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   4,  28,  39,  12,  75,   0, 3000,  500, 2050 },  // Hard
+	},
+	// Sub-level 19: "15A" (Death Star trench final part 1)
+	{
+		{   0,   0,   0,   0,   4,   0,  28,   3,  25,   5,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   3,   0,  36,   3,  50,   5, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   3,   0,  39,   4,  75,  10, 1500,  500, 2050 },  // Hard
+	},
+	// Sub-level 20: "15B" (Death Star trench final part 2)
+	{
+		{   0,   0,   0,   0,   4,  10,  30,   3,  25,   5,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   3,  20,  34,   3,  50,   5, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   2,  22,  35,   4,  75,  10, 1500,  500, 2050 },  // Hard
+	},
+};
+const int kNumTunedLevels = 21;
+
+
+void InsaneRebel1::loadTuningForLevel(int level) {
+	int d = CLIP(_difficulty, 0, 2);
+	int l = CLIP(level, 0, kNumTunedLevels - 1);
+	_tuning.roll     = kTuningTable[l][d][0];
+	_tuning.lift     = kTuningTable[l][d][1];
+	_tuning.slide    = kTuningTable[l][d][2];
+	_tuning.drift    = kTuningTable[l][d][3];
+	_tuning.snap     = kTuningTable[l][d][4];
+	_tuning.miss     = kTuningTable[l][d][5];
+	_tuning.wham     = kTuningTable[l][d][6];
+	_tuning.shot     = kTuningTable[l][d][7];
+	_tuning.kill     = kTuningTable[l][d][8];
+	_tuning.time     = kTuningTable[l][d][9];
+	_tuning.levelPts = kTuningTable[l][d][10];
+	_tuning.bonus    = kTuningTable[l][d][11];
+	_tuning.flags    = kTuningTable[l][d][12];
+	resetGameplayFlagsFromTuning();
+	_protectedTargetA = 0;
+	_protectedTargetB = 0;
+
+	debugC(DEBUG_INSANE, "Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
+		"miss=%d wham=%d shot=%d kill=%d time=%d levelPts=%d bonus=%d flags=0x%x",
+		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.snap,
+		_tuning.miss, _tuning.wham, _tuning.shot, _tuning.kill,
+		_tuning.time, _tuning.levelPts, _tuning.bonus, _tuning.flags);
+}
+
+bool InsaneRebel1::isTouchscreenActive() const {
+	return g_system->hasFeature(OSystem::kFeatureTouchscreen);
+}
+
+void InsaneRebel1::resetGameplayFlagsFromTuning() {
+	const uint16 tuningFlags = (uint16)_tuning.flags;
+	_gameplayFlags75fe = tuningFlags & 0x00FF;
+	_gameplayFlags75ff = tuningFlags >> 8;
+}
+
+// English fallbacks for the UI strings normally extracted from ASSAULT.EXE.
+// Order must match Rebel1UiStringId in rebel.h.
+static const char *const kRebel1UiFallback[kR1StrUiCount] = {
+	"MAIN MENU",
+	"START NEW GAME",
+	"GAME OPTIONS",
+	"ENTER PASSCODE",
+	"CONTINUE DEMO",
+	"EXIT TO DOS",
+	"TOP PILOTS",
+	"ENTER PASSCODE",
+	"NEW HIGH SCORE",
+	"GAME OPTIONS",
+	"EXIT MENU",
+	"ROOKIE1 IS FEMALE",
+	"ROOKIE1 IS MALE",
+	"MUSIC IS ON",
+	"MUSIC IS OFF",
+	"SFX AND VOICE ARE ON",
+	"SFX AND VOICE ARE OFF",
+	"DIALOGUE TEXT IS ON",
+	"DIALOGUE TEXT IS OFF",
+	"Y AXIS IS INVERTED",
+	"Y AXIS IS NORMAL",
+	"VOLUME AT %hd PERCENT",
+	"DIFFICULTY IS EASY",
+	"DIFFICULTY IS NORMAL",
+	"DIFFICULTY IS HARD",
+	"Chapter Complete",
+	"Completion bonus: %d",
+	"Bonus: %d",
+	"Password: %s",
+	"Path Taken: Hard",
+	"Path Taken: Easy",
+	"Target Accuracy: Perfect",
+	"Target Accuracy: %d percent",
+	"Part II",
+	"Part I",
+	"Torpedo Hit",
+	"Torpedo Missed",
+	"Torpedo on mark",
+	"<<SHOOT TARGETS FOR BONUS",
+	"<<WALKER %d%%",
+	"<<TIME %d"
+};
+
+// The printf conversions used by a format string ("%%" doesn't count), e.g.
+// "hd" for "<VOLUME AT %hd PERCENT". Used to reject extracted strings whose
+// conversions don't match the fallback's before they reach sprintf.
+static Common::String rebel1FormatSpecs(const char *s) {
+	Common::String out;
+	for (const char *p = s; *p; p++) {
+		if (*p != '%')
+			continue;
+		p++;
+		if (*p == '%' || *p == '\0')
+			continue;
+		while (*p == 'h' || *p == 'l')
+			out += *p++;
+		if (*p)
+			out += *p;
+	}
+	return out;
+}
+
+const char *InsaneRebel1::uiStr(int id) const {
+	if (id < 0 || id >= kR1StrUiCount)
+		return "";
+	if (!_uiStrings[id].empty())
+		return _uiStrings[id].c_str();
+	return kRebel1UiFallback[id];
+}
+
+// All localized DOS releases keep their UI text in ASSAULT.EXE as NUL-terminated
+// strings interleaved with the (language-neutral) data file names, in the same
+// local order across builds. Extract them anchored on those neighbors; anything
+// that fails validation keeps its English fallback.
+void InsaneRebel1::loadLocalizedUiStrings() {
+	Common::File f;
+	if (!f.open("ASSAULT.EXE"))
+		return;
+
+	int32 size = (int32)f.size();
+	if (size <= 0 || size > 2 * 1024 * 1024)
+		return;
+
+	byte *data = new byte[size];
+	if (f.read(data, size) != (uint32)size) {
+		delete[] data;
+		return;
+	}
+
+	// Collect NUL-terminated printable strings (DOS codepage bytes allowed).
+	Common::Array<Common::String> strs;
+	int32 runStart = -1;
+	for (int32 i = 0; i < size; i++) {
+		const byte b = data[i];
+		const bool printable = (b >= 0x20 && b <= 0x7E) || (b >= 0x80 && b <= 0xFE);
+		if (printable) {
+			if (runStart < 0)
+				runStart = i;
+		} else {
+			if (b == 0 && runStart >= 0 && i - runStart >= 2)
+				strs.push_back(Common::String((const char *)data + runStart, i - runStart));
+			runStart = -1;
+		}
+	}
+	delete[] data;
+
+	auto find = [&strs](const Common::String &needle, int from) -> int {
+		for (uint i = (uint)MAX(from, 0); i < strs.size(); i++)
+			if (strs[i] == needle)
+				return (int)i;
+		return -1;
+	};
+
+	auto assign = [&](int id, int idx) -> bool {
+		if (id < 0 || id >= kR1StrUiCount || idx < 0 || idx >= (int)strs.size())
+			return false;
+		Common::String s = strs[idx];
+		const char *fb = kRebel1UiFallback[id];
+		if (fb[0] == '<') {
+			// HUD strings keep their '<' layer markup.
+			if (s[0] != '<')
+				return false;
+		} else {
+			while (!s.empty() && s[0] == '<')
+				s.deleteChar(0);
+		}
+		if (s.size() < 2 || s.size() > 60)
+			return false;
+		if (s.contains('\\'))
+			return false;
+		if (rebel1FormatSpecs(s.c_str()) != rebel1FormatSpecs(fb))
+			return false;
+		_uiStrings[id] = s;
+		return true;
+	};
+
+	// Main menu: title and the five original items follow OPEN\O1OPTION.ANM.
+	int idx = find("OPEN\\O1OPTION.ANM", 0);
+	if (idx >= 0) {
+		assign(kR1StrMainMenuTitle, idx + 1);
+		for (int i = 0; i < 5; i++)
+			assign(kR1StrMenuNewGame + i, idx + 2 + i);
+	}
+
+	// High score table title follows OPEN\O1SCORE.ANM.
+	idx = find("OPEN\\O1SCORE.ANM", 0);
+	if (idx >= 0)
+		assign(kR1StrTopPilots, idx + 1);
+
+	// The joystick calibration coordinate format "(%d,%d)" sits between the
+	// passcode/calibration strings and the options menu block.
+	const int calib = find("OPEN\\O1CALIB.ANM", 0);
+	int paren = (calib >= 0) ? find("(%d,%d)", calib) : -1;
+	if (paren >= 0 && paren > calib + 40)
+		paren = -1;
+	if (paren >= 0) {
+		// 4 calibration instructions and the screen title precede it.
+		assign(kR1StrEnterPasscodeTitle, paren - 6);
+
+		int j = paren + 1;
+		while (j < (int)strs.size() && strs[j].hasPrefix("<<"))
+			j++;
+		if (assign(kR1StrOptionsTitle, j)) {
+			for (int i = 0; i < 15 && j + 1 + i < (int)strs.size(); i++) {
+				if (!strs[j + 1 + i].hasPrefix("<"))
+					break;
+				assign(kR1StrOptExitMenu + i, j + 1 + i);
+			}
+		}
+	}
+
+	// Chapter summary block: the only "...: %s" string is the password line,
+	// preceded by the title and the two bonus formats.
+	int pw = -1;
+	for (uint i = 0; i < strs.size(); i++) {
+		const Common::String &s = strs[i];
+		if (s.size() >= 7 && s.hasSuffix(": %s") && !s.contains('\\') && !s.hasPrefix("<") &&
+				rebel1FormatSpecs(s.c_str()) == "s") {
+			if (pw >= 0) {
+				pw = -1;  // ambiguous
+				break;
+			}
+			pw = (int)i;
+		}
+	}
+	if (pw >= 0) {
+		assign(kR1StrPasswordFmt, pw);
+		assign(kR1StrChapterComplete, pw - 1);
+		assign(kR1StrBonusFmt, pw - 2);
+		assign(kR1StrCompletionBonusFmt, pw - 3);
+		// v1.7 keeps NEW HIGH SCORE with this block; v1.0 keeps it with the
+		// calibration block.
+		if (!assign(kR1StrNewHighScore, pw - 4) && paren >= 0)
+			assign(kR1StrNewHighScore, paren - 7);
+	}
+
+	// Level result strings, each anchored on the video played before them.
+	idx = find("LVL1\\L1END.ANM", 0);
+	if (idx >= 0) {
+		assign(kR1StrPathHard, idx + 1);
+		assign(kR1StrPathEasy, idx + 2);
+		assign(kR1StrAccuracyPerfect, idx + 3);
+		assign(kR1StrAccuracyFmt, idx + 4);
+		assign(kR1StrPartII, idx + 5);
+		assign(kR1StrPartI, idx + 6);
+	}
+	idx = find("LVL4\\L4END2.ANM", 0);
+	if (idx >= 0) {
+		assign(kR1StrTorpedoHit, idx + 1);
+		assign(kR1StrTorpedoMissed, idx + 2);
+	}
+	idx = find("LVL5\\L5PLAY2.ANM", 0);
+	if (idx >= 0)
+		assign(kR1StrShootTargets, idx + 1);
+	idx = find("LVL8\\L8PLAY.ANM", 0);
+	if (idx >= 0) {
+		assign(kR1StrWalkerFmt, idx + 1);
+		assign(kR1StrTimeFmt, idx + 2);
+	}
+	idx = find("LVL15\\L15END1.ANM", 0);
+	if (idx >= 0)
+		assign(kR1StrTorpedoOnMark, idx + 1);
+
+	// Chapter title cards: title and "Chapter N" label follow the chapter's
+	// intro video name.
+	for (int n = 1; n <= 15; n++) {
+		Common::String anchor = (n == 1) ? Common::String("LVL1\\L1HANGAR.ANM")
+			: Common::String::format("LVL%d\\L%dINTRO.ANM", n, n);
+		idx = find(anchor, 0);
+		if (idx < 0 || idx + 2 >= (int)strs.size())
+			continue;
+		const Common::String &title = strs[idx + 1];
+		const Common::String &label = strs[idx + 2];
+		if (title.size() >= 2 && title.size() <= 40 && !title.contains('\\') &&
+				!title.contains('%') && title[0] != '<')
+			_chapterTitles[n - 1] = title;
+		if (label.size() >= 2 && label.size() <= 40 && !label.contains('\\') &&
+				!label.contains('%') && label[0] != '<')
+			_chapterLabels[n - 1] = label;
+	}
+
+	int loaded = 0;
+	for (int i = 0; i < kR1StrUiCount; i++)
+		if (!_uiStrings[i].empty())
+			loaded++;
+	debugC(DEBUG_INSANE, "InsaneRebel1: %d/%d UI strings loaded from ASSAULT.EXE", loaded, kR1StrUiCount);
+}
+
+InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
+	Insane::_vm = scumm;
+
+	_screenWidth = 384;
+	_screenHeight = 242;
+
+	_shipPosX = kRA1CenterX;
+	_shipPosY = kRA1CenterY;
+	_flightAimX = kRA1CenterX;
+	_flightAimY = kRA1CenterY;
+	_shipDirIndex = 17;  // Center of 5x7 grid (2*7 + 3)
+
+	_corridorLeftX = kRA1MinX;
+	_corridorTopY = kRA1MinY;
+	_corridorRightX = kRA1MaxX;
+	_corridorBottomY = kRA1MaxY;
+
+	_rollAccum = 0;
+	_liftSmooth = 0;
+	_posAccumX = 0;
+	_posAccumY = 0;
+	_turretFrameShipOffsetX = 0;
+	_turretFrameShipOffsetY = 0;
+	_turretFrameShipCenterX = kRA1CenterX;
+	_turretFrameShipCenterY = kRA1CenterY;
+	_turretFrameShipCenterValid = false;
+	_driftParam = 0;
+
+	_difficulty = 0;
+	loadTuningForLevel(0);
+
+	_perspectiveX = 0;
+	_perspectiveY = 0;
+	_projectionCurveExtent = 1;
+	_onFootCharX = 0;
+	_onFootCharY = 0;
+	_onFootAnimCounter = 0;
+	_onFootInitialized = false;
+	memset(_projectionTable, 0, sizeof(_projectionTable));
+
+	memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+	memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+	memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+	memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+	_inputAxisDeltaX = 0;
+	_avgInputX = 0;
+	_avgInputY = 0;
+	_op0BDigitalAxisX = 0;
+	_op0BDigitalAxisY = 0;
+	_joystickAxisX = 0;
+	_joystickAxisY = 0;
+	_lastJoystickAxisEventTime = 0;
+	_level2JoystickFilteredX = 0;
+	_level2JoystickFilteredY = 0;
+	_gamepadAimAxisX = 0;
+	_gamepadAimAxisY = 0;
+	_gamepadAimActive = false;
+	_gameplayMouseSettleUntil = 0;
+	_activeInputSource = kInputSourceMouse;
+
+	_currentLevel = 0;
+	_resumeLevel = 1;
+	_activeSaveSlot = -1;
+	_loadRequested = false;
+	_flyControlMode = 0;
+	_turretEmitterLeftX = 0;
+	_turretEmitterLeftY = 0;
+	_turretEmitterRightX = 0;
+	_turretEmitterRightY = 0;
+	_activeGameOpcode = 0;
+	_frameGameOpcodeHintMask = 0;
+	_frameGameOpcodeMask = 0;
+	_frameHasGameChunk = false;
+	_frameDispatchFlags = 0;
+	_gameOp0BPhysicsUpdatedThisFrame = false;
+	_gameOp0BOverlayRenderedThisFrame = false;
+
+	_health = kMaxHealth;
+	_lives = 3;
+	_score = 0;
+	_prevScore = 0;
+	_damageFlags = 0;
+	_prevDamageFlags = 0;
+	_gameLatch5D = 0;
+	_gameLatch5F = 0;
+	_damageCooldown = 0;
+	_deathTimer = 0;
+	_screenFlash = 0;
+	_frameCounter = 0;
+	_currentSmushFrame = 0;
+	_screenShakeEnabled = false;
+	memset(_screenFlashBasePalette, 0, sizeof(_screenFlashBasePalette));
+	_screenFlashBasePaletteValid = false;
+	_deathCauseIndicator = 0;
+	_hudRenderFlag = 0;
+	_hudDirtyFlag = 0;
+	_maxChapterUnlocked = 0;
+	_unlockAllLevels = ConfMan.getBool("rebel1_unlock_all");
+	_noDamage = ConfMan.getBool("rebel1_no_damage");
+	_interactiveVideoActive = false;
+	_preserveInteractiveRuntimeState = false;
+	_interactiveVideoCheatSkipped = false;
+	_restoreInteractiveVideoAudioState = false;
+	memset(_savedInteractiveVideoTrackState, 0, sizeof(_savedInteractiveVideoTrackState));
+	memset(_savedInteractiveVideoTrackGroupId, 0, sizeof(_savedInteractiveVideoTrackGroupId));
+	_savedInteractiveVideoTrackCount = 0;
+	_gameCounter = 0;
+	_pathBranchEnabled = false;
+	_rightPathSelected = false;
+	_levelRouteIndex = -1;
+	_pendingRouteIndex = -1;
+	_pendingRouteStartFrame = 0;
+	_pendingRouteCutoverFrame = -1;
+	_pendingRouteVideoStartFrame = 0;
+	_level7WarningFrames = 0;
+	_level7WarningThreshold = 0;
+	_levelGameplayPhase = 0;
+	_level14Play2BSplicePending = false;
+	_level14Play2BSpliced = false;
+	_level14Play2BSpliceFrame = 0;
+	_level5SuccessFramesRemaining = 0;
+	_level14SuccessFrames = 0;
+	_menuActive = false;
+	_introTextActive = false;
+	_introTextStartFrame = 0;
+	_introTextEndFrame = 0;
+	_introTextLevel = 0;
+	memset(&_chapterSummary, 0, sizeof(_chapterSummary));
+	_menuConfirmed = false;
+	_menuSelection = 0;
+	_menuFrameCounter = 0;
+	_optionsActive = false;
+	_optionsSel = 0;
+	_levelSelectActive = false;
+	_levelSelectSel = 0;
+	_startLevel = 1;
+
+	_optRookieOneFemale = false;
+	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
+	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType) &&
+		!_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
+	_optTextEnabled = ConfMan.getBool("subtitles");
+	_optControlsYFlip = false;
+	_optRapidFire = ConfMan.hasKey("rebel1_rapid_fire") ? ConfMan.getBool("rebel1_rapid_fire") : true;
+	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
+
+	const struct { const char *name; int32 score; byte difficulty; } kDefaultScores[kHighScoreCount] = {
+		{"Vince",   10000, 2}, {"Tamlynn",  9000, 2}, {"Chip",    8000, 2},
+		{"Brett",    7000, 1}, {"Casey",    6000, 1}, {"Justin",  5000, 1},
+		{"Bill",     4000, 0}, {"Aaron",    3000, 0}, {"Mary",    2000, 0},
+		{"Ron",      1000, 0}
+	};
+	for (int i = 0; i < kHighScoreCount; i++) {
+		Common::sprintf_s(_highScores[i].name, "<%s", kDefaultScores[i].name);
+		_highScores[i].score = kDefaultScores[i].score;
+		_highScores[i].difficulty = kDefaultScores[i].difficulty;
+	}
+	_highScoresActive = false;
+	_textEntryActive = false;
+	_textEntryPasscodeMode = false;
+	_textEntryDone = false;
+	_textEntryCanceled = false;
+	_virtualKeyboardActive = false;
+	_textEntryPickerIndex = 0;
+	_textEntryPickerOffsetX = 0;
+	_textEntryMaxChars = 0;
+	_highScoreEntryIndex = -1;
+	memset(_textEntryBuffer, 0, sizeof(_textEntryBuffer));
+
+	_playerFired = false;
+	_playerSecondaryHeld = false;
+	_fireCooldown = 0;
+	_rapidFireCounter = 0;
+	_gameplayFlags75fe = 0;
+	_gameplayFlags75ff = 0;
+	memset(_shotSlots, 0, sizeof(_shotSlots));
+	_shotAlternator = 0;
+	_shotSideToggle = false;
+	_targetProximity = 0;
+	_prevTargetProx = 0;
+	_targetAnimCounter = 0;
+	_targetCount = 0;
+	_prevTargetCount = 0;
+	memset(_targetBoxX, 0, sizeof(_targetBoxX));
+	memset(_targetBoxY, 0, sizeof(_targetBoxY));
+	memset(_targetBoxVariant, 0, sizeof(_targetBoxVariant));
+	memset(_gostSlots, 0, sizeof(_gostSlots));
+	_gostSlotIdx = 0;
+	_killCount = 0;
+	_lastHitTarget = 0;
+	_frameObjectHitRevealPending = false;
+	resetEnemyShotSlots();
+	_protectedTargetA = 0;
+	_protectedTargetB = 0;
+	_shieldGenHitsA = 0;
+	_shieldGenHitsB = 0;
+	_torpedoFired = false;
+	_walkerHealth = 100;
+	_walkerTimer = 0;
+	_walkerBranchChoice = 0;
+	_walkerRoundReplay = false;
+	resetFrameObjectState();
+
+	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
+		debugC(DEBUG_INSANE, "InsaneRebel1::InsaneRebel1(): HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);
+	} else if (loadRA1Nut("SYS/TECHFONT.NUT", _hudFontBank)) {
+		debugC(DEBUG_INSANE, "InsaneRebel1::InsaneRebel1(): HUD/menu glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _hudFontBank.numSprites);
+	} else {
+		warning("InsaneRebel1::InsaneRebel1(): failed to load RA1 HUD font bank (TECHFONT/TALKFONT)");
+	}
+
+	if (loadRA1Nut("SYS/TITLFONT.NUT", _titleFontBank)) {
+		debugC(DEBUG_INSANE, "InsaneRebel1::InsaneRebel1(): title glyph font loaded from SYS/TITLFONT.NUT (%d chars)", _titleFontBank.numSprites);
+	} else if (loadRA1Nut("SYS/TALKFONT.NUT", _titleFontBank)) {
+		debugC(DEBUG_INSANE, "InsaneRebel1::InsaneRebel1(): title glyph font fallback loaded from SYS/TALKFONT.NUT (%d chars)", _titleFontBank.numSprites);
+	} else {
+		warning("InsaneRebel1::InsaneRebel1(): failed to load title font bank (TITLFONT/TALKFONT)");
+	}
+
+	if (loadRA1Nut("SYS/TECHFONT.NUT", _techFontBank)) {
+		debugC(DEBUG_INSANE, "InsaneRebel1::InsaneRebel1(): targeting glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _techFontBank.numSprites);
+	} else if (loadRA1Nut("SYS/TALKFONT.NUT", _techFontBank)) {
+		debugC(DEBUG_INSANE, "InsaneRebel1::InsaneRebel1(): targeting glyph font fallback loaded from SYS/TALKFONT.NUT (%d chars)", _techFontBank.numSprites);
+	} else {
+		warning("InsaneRebel1::InsaneRebel1(): failed to load targeting font bank (TECHFONT/TALKFONT)");
+	}
+
+	loadLocalizedUiStrings();
+
+	initAudio(11025);
+	memset(_sfxData, 0, sizeof(_sfxData));
+	memset(_sfxSize, 0, sizeof(_sfxSize));
+	loadSfx();
+
+	_smush_roadrashRip = nullptr;
+	_smush_roadrsh2Rip = nullptr;
+	_smush_roadrsh3Rip = nullptr;
+	_smush_goglpaltRip = nullptr;
+	_smush_tovista1Flu = nullptr;
+	_smush_tovista2Flu = nullptr;
+	_smush_toranchFlu = nullptr;
+	_smush_minedrivFlu = nullptr;
+	_smush_minefiteFlu = nullptr;
+	_smush_bensgoggNut = nullptr;
+	_smush_bencutNut = nullptr;
+	_smush_iconsNut = nullptr;
+	_smush_icons2Nut = nullptr;
+
+	_vm->_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false);
+}
+
+void InsaneRebel1::setCurrentSmushFrame(int32 frame) {
+	_currentSmushFrame = frame;
+}
+
+void InsaneRebel1::warpGameplayMouseNow(int x, int y) {
+	Common::EventManager *eventMan = _vm->_system->getEventManager();
+	if (eventMan)
+		eventMan->purgeMouseEvents();
+
+	_vm->_mouse.x = x;
+	_vm->_mouse.y = y;
+	_vm->_system->warpMouse(_vm->_macScreen ? x * 2 : x,
+		_vm->_macScreen ? y * 2 + 2 * _vm->_macScreenDrawOffset : y);
+
+	if (eventMan)
+		eventMan->purgeMouseEvents();
+}
+
+void InsaneRebel1::enableIOSGamepadController() {
+	_iosGamepadControllerState.enable();
+}
+
+void InsaneRebel1::restoreIOSGamepadController() {
+	_iosGamepadControllerState.restore();
+}
+
+InsaneRebel1::~InsaneRebel1() {
+	restoreIOSGamepadController();
+	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	terminateAudio();
+	freeSfx();
+}
+
+} // End of namespace Scumm

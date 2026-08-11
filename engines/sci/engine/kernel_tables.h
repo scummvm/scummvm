@@ -263,7 +263,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
 	{ SIG_SCIALL,         12, MAP_CALL(GraphUpdateBox),            "iiii(i)",              kGraphUpdateBox_workarounds },
 	{ SIG_SCIALL,         13, MAP_CALL(GraphRedrawBox),            "iiii",                 kGraphRedrawBox_workarounds },
 	{ SIG_SCIALL,         14, MAP_CALL(GraphAdjustPriority),       "ii",                   NULL },
-	{ SIG_SCI11,          15, MAP_CALL(GraphSaveUpscaledHiresBox), "iiii",                 NULL }, // kq6 hires
+	{ SIG_SCI11,          15, MAP_CALL(GraphSaveUpscaledHiresBox), "iiii(i)",              NULL }, // kq6 hires
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -727,7 +727,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	{ "GetSaveFiles", kGetSaveFiles32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "rrr",        NULL,            NULL },
 #endif
-	{ MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
+	{ MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            kGetSaveFiles_workarounds },
 	{ MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GlobalToLocal),     SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
 #ifdef ENABLE_SCI32

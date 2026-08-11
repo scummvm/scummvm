@@ -33,6 +33,8 @@ enum DirectorGameGID {
 };
 
 struct DirectorGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	DirectorGameGID gameGID;

@@ -36,7 +36,7 @@ namespace Wintermute {
 class SX3fStatistics : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(SX3fStatistics, BaseScriptable)
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
@@ -48,7 +48,7 @@ private:
 	Common::String _chapter;
 	Common::String _language;
 	Common::String _buildNum;
-	int32 _repeat;
+	int32 _repeat{};
 };
 
 } // End of namespace Wintermute

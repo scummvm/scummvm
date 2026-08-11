@@ -620,6 +620,29 @@ static const byte hebrewCharsetDataV2[] = {
 		0x00, 0xf8, 0x44, 0x44, 0x44, 0x44, 0xc4, 0x00,
 };
 
+// Catalan MM font.
+static const byte catalanCharsetDataV2[] = {
+	34, 32,
+	36, 33,
+	37, 37,
+	38, 41,
+	39, 2,
+	47, 38,
+	59, 39,
+	60, 40,
+	61, 16,
+	62, 30,
+	91, 20,
+	92, 19,
+	93, 31,
+	95, 22,
+	123, 29,
+	124, 34,
+	125, 35,
+	126, 36,
+	127, 18,
+};
+
 // Special characters
 static const byte specialCharsetData[] = {
 	0x18, 0x3e, 0x60, 0x3c, 0x06, 0x7c, 0x18, 0x00,
@@ -652,7 +675,32 @@ static const byte specialCharsetData[] = {
 	0x08, 0x10, 0x3c, 0x06, 0x3e, 0x66, 0x3e, 0x00,
 	0x10, 0x08, 0x00, 0x38, 0x18, 0x18, 0x3c, 0x00,
 	0x10, 0x08, 0x00, 0x3c, 0x66, 0x66, 0x3c, 0x00,
+	0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00,
+	0x08, 0x10, 0x00, 0x38, 0x18, 0x18, 0x3C, 0x00,
+	0x10, 0x08, 0x3C, 0x66, 0x7E, 0x66, 0x66, 0x00,
+	0x10, 0x08, 0x7E, 0x60, 0x7C, 0x60, 0x7E, 0x00,
+	0x08, 0x10, 0x00, 0x3C, 0x66, 0x66, 0x3C, 0x00,
+	0x08, 0x10, 0x00, 0x66, 0x66, 0x66, 0x3E, 0x00,
+	0x00, 0x6C, 0x00, 0x66, 0x66, 0x66, 0x3E, 0x00,
+	0x08, 0x10, 0x7E, 0x60, 0x7C, 0x60, 0x7E, 0x00,
+	0x10, 0x08, 0x3C, 0x66, 0x66, 0x66, 0x3C, 0x00,
+	0x08, 0x10, 0x3C, 0x66, 0x66, 0x66, 0x3C, 0x00,
+	0x08, 0x10, 0x66, 0x66, 0x66, 0x66, 0x3C, 0x00,
+	0x08, 0x10, 0x3C, 0x18, 0x18, 0x18, 0x3C, 0x00,
+	0x66, 0x00, 0x3C, 0x18, 0x18, 0x18, 0x3C, 0x00,
+	0x3C, 0x66, 0x60, 0x60, 0x66, 0x3C, 0x18, 0x38,
 };
+
+#ifdef USE_TTS
+
+static const uint16 specialCharactersEncoding[] = {
+	0x0024, 0x0025, 0x0060, 0x0040, 0xc3bc, 0xc3a4, 0xc39c, 0xc3b6,	// $, %, `, @, ü, ä, Ü, ö
+	0xc384, 0xc396, 0xc39f, 0xc396, 0xc39f, 0xc384, 0xc39c, 0x0020,	// Ä, Ö, ß, Ö, ß, Ä, Ü, ↑ (replaced with space)
+	0xc3a0, 0xc3a2, 0xc3a7, 0xc3a9, 0xc3a8, 0xc3aa, 0xc3af, 0xc3ae,	// à, â, ç, é, è, ê, ï, î
+	0xc3b4, 0xc3b9, 0xc3bb, 0xc3a1, 0xc3ac, 0xc3b2					// ô, ù, û, á, ì, ò
+};
+
+#endif
 
 CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	: CharsetRendererV3(vm) {
@@ -702,6 +750,11 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 		replacementMap = hebrewCharsetMapV2;
 		replacementChars = sizeof(hebrewCharsetMapV2) / 2;
 		replacementData = hebrewCharsetDataV2;
+		break;
+	case Common::CA_ESP:
+		replacementMap = catalanCharsetDataV2;
+		replacementChars = sizeof(catalanCharsetDataV2) / 2;
+		replacementData = specialCharsetData;
 		break;
 	default:
 		if (_vm->_game.version == 1 && !(_vm->_game.features & GF_DEMO)) {
@@ -761,6 +814,126 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	_vm->quitGame();
 #endif
 }
+
+#ifdef USE_TTS
+
+Common::U32String CharsetRendererV2::convertText(const Common::String &text, Common::Language language) const {
+	const byte *map = nullptr;
+	int mapLen = 0;
+	Common::CodePage encoding;
+
+	switch (language) {
+	case Common::EN_ANY:
+	case Common::EN_GRB:
+	case Common::EN_USA:
+		if (_vm->_game.version == 1 && !(_vm->_game.features & GF_DEMO)) {
+			map = englishCharsetDataV1;
+			mapLen = ARRAYSIZE(englishCharsetDataV1);
+			encoding = Common::CodePage::kUtf8;
+		} else {
+			return Common::U32String(text, Common::CodePage::kDos850);
+		}
+		break;
+	case Common::DE_DEU:
+		if (_vm->_game.version == 0) {
+			map = germanCharsetDataV0;
+			mapLen = ARRAYSIZE(germanCharsetDataV0);
+		} else {
+			map = germanCharsetDataV2;
+			mapLen = ARRAYSIZE(germanCharsetDataV2);
+		}
+		encoding = Common::CodePage::kUtf8;
+		break;
+	case Common::FR_FRA:
+		map = frenchCharsetDataV2;
+		mapLen = ARRAYSIZE(frenchCharsetDataV2);
+		encoding = Common::CodePage::kUtf8;
+		break;
+	case Common::IT_ITA:
+		map = italianCharsetDataV2;
+		mapLen = ARRAYSIZE(italianCharsetDataV2);
+		encoding = Common::CodePage::kUtf8;
+		break;
+	case Common::ES_ESP:
+		map = spanishCharsetDataV2;
+		mapLen = ARRAYSIZE(spanishCharsetDataV2);
+		encoding = Common::CodePage::kUtf8;
+		break;
+	case Common::RU_RUS:
+		map = russCharsetDataV2;
+		mapLen = ARRAYSIZE(russCharsetDataV2);
+		encoding = Common::CodePage::kDos866;
+
+		if ((_vm->_game.id != GID_MANIAC && _vm->_game.id != GID_ZAK) || _vm->_game.version != 2) {
+			return Common::U32String(text, Common::CodePage::kDos866);
+		}
+		break;
+	case Common::HE_ISR:
+		encoding = Common::CodePage::kDos862;
+		break;
+	default:
+		return Common::U32String(text, _vm->getDialogCodePage());
+	}
+
+	const byte *bytes = (const byte *)text.c_str();
+	byte *convertedBytes = new byte[text.size() * 2 + 1];
+
+	int i = 0;
+	for (const byte *b = bytes; *b; ++b) {
+		if (map) {
+			// Change DOS 850 code for © to UTF-8
+			if (language != Common::RU_RUS && *b == 0xb8) {
+				convertedBytes[i] = 0xc2;
+				convertedBytes[i + 1] = 0xa9;
+				i += 2;
+				continue;
+			}
+
+			bool inMap = false;
+			for (int j = 0; j < mapLen; j += 2) {
+				if (*b == map[j]) {
+					if (language != Common::RU_RUS) {
+						byte firstByte = (specialCharactersEncoding[map[j + 1]] >> 8) & 0xff;
+
+						if (firstByte != 0) {
+							convertedBytes[i] = firstByte;
+							convertedBytes[i + 1] = specialCharactersEncoding[map[j + 1]] & 0xff;
+							i++;
+						} else {
+							convertedBytes[i] = specialCharactersEncoding[map[j + 1]] & 0xff;
+						}
+					} else {
+						convertedBytes[i] = map[j + 1];
+					}
+
+					inMap = true;
+					break;
+				}
+			}
+
+			if (!inMap) {
+				convertedBytes[i] = *b;
+			}
+		} else {
+			convertedBytes[i] = *b;
+
+			if (language == Common::HE_ISR) {
+				convertedBytes[i] += 63;
+			}
+		}
+
+		i++;
+	}
+
+	convertedBytes[i] = 0;
+
+	Common::U32String result((char *)convertedBytes, encoding);
+	delete[] convertedBytes;
+
+	return result;
+}
+
+#endif
 
 CharsetRendererV2::~CharsetRendererV2() {
 	if (_deleteFontPtr)

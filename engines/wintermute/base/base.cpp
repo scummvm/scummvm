@@ -30,19 +30,20 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseClass::BaseClass(BaseGame *gameOwner) {
-	_gameRef = gameOwner;
+	_game = gameOwner;
 	_persistable = true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 BaseClass::BaseClass() {
-	_gameRef = nullptr;
+	_game = nullptr;
 	_persistable = true;
 }
 
@@ -59,18 +60,18 @@ Common::String BaseClass::getEditorProp(const Common::String &propName, const Co
 	if (_editorPropsIter != _editorProps.end()) {
 		return _editorPropsIter->_value.c_str();
 	} else {
-		return initVal; // Used to be NULL
+		return initVal;
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseClass::setEditorProp(const Common::String &propName, const Common::String &propValue) {
-	if (propName.size() == 0) {
+	if (propName.empty()) {
 		return STATUS_FAILED;
 	}
 
-	if (propValue.size() == 0) {
+	if (propValue.empty()) {
 		_editorProps.erase(propName);
 	} else {
 		_editorProps[propName] = propValue;
@@ -94,18 +95,18 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 	TOKEN_TABLE_END
 
 
-	if (!_gameRef->_editorMode) {
+	if (!_game->_editorMode) {
 		return STATUS_OK;
 	}
 
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_EDITOR_PROPERTY) {
-			BaseEngine::LOG(0, "'EDITOR_PROPERTY' keyword expected.");
+			_game->LOG(0, "'EDITOR_PROPERTY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -117,14 +118,14 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME: {
-			delete[] propName;
+			SAFE_DELETE_ARRAY(propName);
 			size_t propNameSize = strlen(params) + 1;
 			propName = new char[propNameSize];
 			Common::strcpy_s(propName, propNameSize, params);
 			break;
 		}
 		case TOKEN_VALUE: {
-			delete[] propValue;
+			SAFE_DELETE_ARRAY(propValue);
 			size_t propValueSize = strlen(params) + 1;
 			propValue = new char[propValueSize];
 			Common::strcpy_s(propValue, propValueSize, params);
@@ -136,29 +137,23 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		delete[] propName;
-		delete[] propValue;
-		propName = nullptr;
-		propValue = nullptr;
-		BaseEngine::LOG(0, "Syntax error in EDITOR_PROPERTY definition");
+		SAFE_DELETE_ARRAY(propName);
+		SAFE_DELETE_ARRAY(propValue);
+		_game->LOG(0, "Syntax error in EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
-		delete[] propName;
-		delete[] propValue;
-		propName = nullptr;
-		propValue = nullptr;
-		BaseEngine::LOG(0, "Error loading EDITOR_PROPERTY definition");
+		SAFE_DELETE_ARRAY(propName);
+		SAFE_DELETE_ARRAY(propValue);
+		_game->LOG(0, "Error loading EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 
 
 	setEditorProp(propName, propValue);
 
-	delete[] propName;
-	delete[] propValue;
-	propName = nullptr;
-	propValue = nullptr;
+	SAFE_DELETE_ARRAY(propName);
+	SAFE_DELETE_ARRAY(propValue);
 
 	return STATUS_OK;
 }

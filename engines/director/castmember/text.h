@@ -24,55 +24,95 @@
 
 #include "director/castmember/castmember.h"
 
+namespace Graphics {
+class MacText;
+}
+
 namespace Director {
 
 class TextCastMember : public CastMember {
 public:
 	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1 = 0, bool asButton = false);
 	TextCastMember(Cast *cast, uint16 castId, TextCastMember &source);
+
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new TextCastMember(cast, castId, *this)); }
+
 	void setColors(uint32 *fgcolor, uint32 *bgcolor) override;
 
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
+	Graphics::MacText *getWidget();
+
+	CollisionTest isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) override;
+
 	bool isEditable() override { return _editable; }
 	void setEditable(bool editable) override { _editable = editable; }
-	void updateFromWidget(Graphics::MacWidget *widget) override;
+	void updateFromWidget(Graphics::MacWidget *widget, bool spriteEditable) override;
 	Graphics::TextAlign getAlignment();
 
 	uint32 getBackColor() override { return _bgcolor; }
 	void setBackColor(uint32 bgCol) override;
 	uint32 getForeColor() override { return _fgcolor; }
+	uint32 getForeColor(int start, int end);
 	void setForeColor(uint32 fgCol) override;
+	void setForeColor(uint32 fgCol, int start, int end);
 
 	bool hasField(int field) override;
 	Datum getField(int field) override;
-	bool setField(int field, const Datum &value) override;
+	void setField(int field, const Datum &value) override;
 
 	bool hasChunkField(int field);
 	Datum getChunkField(int field, int start, int end);
 	bool setChunkField(int field, int start, int end, const Datum &value);
 
+	int getLineCount();
+	int getLineHeight(int line);
+
 	int getTextHeight();
 
+	Common::String getTextFont();
+	Common::String getTextFont(int start, int end);
+	void setTextFont(const Common::String &fontName);
+	void setTextFont(const Common::String &fontName, int start, int end);
+
 	int getTextSize();
+	int getTextSize(int start, int end);
 	void setTextSize(int textSize);
+	void setTextSize(int textSize, int start, int end);
+
+	Common::String getTextStyle();
+	Common::String getTextStyle(int start, int end);
+	void setTextStyle(const Common::String &textStyle);
+	void setTextStyle(const Common::String &textStyle, int start, int end);
+
+	void scrollByLine(int count);
 
 	Common::String formatInfo() override;
 
 	void load() override;
 	void unload() override;
 
-	SizeType _borderSize;
-	SizeType _gutterSize;
-	SizeType _boxShadow;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
+	bool canWriteCastData() override;
+
+	uint32 getSTXTResourceSize();
+	uint32 writeSTXTResource(Common::SeekableWriteStream *writeStream, uint32 offset);
+	uint8 getFormattingCount();
+
+	uint8 _borderSize;
+	uint8 _gutterSize;
+	uint8 _boxShadow;
 	uint16 _maxHeight;
 	uint16 _textHeight;
 
 	uint32 _fontId;
+	uint16 _height;
+	uint16 _ascent;
 	uint16 _fontSize;
 	TextType _textType;
 	TextAlignType _textAlign;
-	SizeType _textShadow;
+	uint8 _textShadow;
 	uint16 _scroll;
 	byte _textSlant;
 	byte _textFlags;
@@ -93,18 +133,10 @@ public:
 	void setRawText(const Common::String &text);
 
 private:
-	Graphics::MacWidget *createWindowOrWidget(Common::Rect &bbox, Channel *channel, Common::Rect dims, Graphics::MacFont *macFont);
+	Graphics::MacWidget *createWindowOrWidget(Common::Rect &bbox, Common::Rect dims, Graphics::MacFont *macFont);
 
 	uint32 _bgcolor;
 	uint32 _fgcolor;
-};
-
-class RTECastMember : public TextCastMember {
-public:
-	RTECastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
-
-	void loadChunks();
-	void load() override;
 };
 
 } // End of namespace Director

@@ -27,59 +27,64 @@
 
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
-#include "engines/wintermute/base/gfx/xskinmesh_loader.h"
+#include "engines/wintermute/base/gfx/xskinmesh.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-SkinMeshHelper::SkinMeshHelper(XSkinMeshLoader *mesh) {
+SkinMeshHelper::SkinMeshHelper(DXMesh *mesh, DXSkinInfo *skinInfo) {
 	_mesh = mesh;
+	_skinInfo = skinInfo;
 }
 
 //////////////////////////////////////////////////////////////////////////
 SkinMeshHelper::~SkinMeshHelper() {
-	delete _mesh;
+	SAFE_DELETE(_mesh);
+	SAFE_DELETE(_skinInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////
 uint SkinMeshHelper::getNumFaces() {
-	return _mesh->_meshObject->_numFaces;
+	return _mesh->getNumFaces();
 }
 
 //////////////////////////////////////////////////////////////////////////
 uint SkinMeshHelper::getNumBones() {
-	return 0;//_mesh->getNumBones();
+	return _skinInfo->getNumBones();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::getOriginalMesh(XSkinMeshLoader **mesh) {
-	return true;//_mesh->cloneMeshFVF(_mesh->getOptions(), _mesh->getFVF(), mesh);
+bool SkinMeshHelper::getOriginalMesh(DXMesh **mesh) {
+	return _mesh->cloneMesh(mesh);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::generateSkinnedMesh(uint32 options, float minWeight, uint32 *adjacencyOut, XSkinMeshLoader **mesh) {
+bool SkinMeshHelper::generateSkinnedMesh(uint32 *adjacencyOut, DXMesh **mesh) {
 	bool res = getOriginalMesh(mesh);
-	/*	if (res) {
-	 (*mesh)->generateAdjacency(adjacencyOut);
-	 }*/
-	
+	if (res) {
+		(*mesh)->generateAdjacency(adjacencyOut);
+	}
+
 	return res;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SkinMeshHelper::updateSkinnedMesh(const Math::Matrix4 *boneTransforms, XSkinMeshLoader *mesh) {
-	return true;//_mesh->updateSkinnedMesh(boneTransforms);
+bool SkinMeshHelper::updateSkinnedMesh(const DXMatrix *boneTransforms, DXMesh *mesh) {
+	void *sourceVerts = reinterpret_cast<void *>(_mesh->getVertexBuffer().ptr());
+	void *targetVerts = reinterpret_cast<void *>(mesh->getVertexBuffer().ptr());
+
+	return _skinInfo->updateSkinnedMesh(boneTransforms, sourceVerts, targetVerts);
 }
 
 //////////////////////////////////////////////////////////////////////////
-const char *SkinMeshHelper::getBoneName(uint boneIndex) {
-	return "";//_mesh->getBoneName(boneIndex);
+const char *SkinMeshHelper::getBoneName(uint32 boneIndex) {
+	return _skinInfo->getBoneName(boneIndex);
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Matrix4 SkinMeshHelper::getBoneOffsetMatrix(uint boneIndex) {
-	return Math::Matrix4();//_mesh->getBoneOffsetMatrix(boneIndex);
+DXMatrix *SkinMeshHelper::getBoneOffsetMatrix(uint32 boneIndex) {
+	return _skinInfo->getBoneOffsetMatrix(boneIndex);
 }
 
 } // namespace Wintermute

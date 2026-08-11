@@ -51,6 +51,13 @@ void CharInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 
 // CharRange
 
+CharRange::CharRange() : _charInfos(nullptr) {
+}
+
+CharRange::~CharRange() {
+	delete[] _charInfos;
+}
+
 void CharRange::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_firstChar = stream.readUint16LE();
 	_lastChar = stream.readUint16LE();
@@ -75,10 +82,11 @@ bool CharRange::containsChar(uint16 c) {
 
 // FontResource
 
-FontResource::FontResource() {
+FontResource::FontResource() : _charRanges(nullptr) {
 }
 
 FontResource::~FontResource() {
+	delete[] _charRanges;
 }
 
 void FontResource::load(Resource *resource) {

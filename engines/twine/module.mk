@@ -5,15 +5,14 @@ MODULE_OBJS := \
 	audio/sound.o \
 	\
 	debugger/console.o \
-	debugger/debug.o \
-	debugger/debug_grid.o \
-	debugger/debug_scene.o \
+	debugger/debug_state.o \
 	\
 	menu/interface.o \
 	menu/menu.o \
 	menu/menuoptions.o \
 	\
 	parser/anim.o \
+	parser/anim3ds.o \
 	parser/blocklibrary.o \
 	parser/body.o \
 	parser/entity.o \
@@ -51,13 +50,19 @@ MODULE_OBJS := \
 	resources/resources.o \
 	\
 	movies.o \
-	holomap.o \
+	holomap_v1.o \
+	holomap_v2.o \
 	input.o \
 	metaengine.o \
 	shared.o \
 	slideshow.o \
 	text.o \
 	twine.o
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugger/debugtools.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWINE), DYNAMIC_PLUGIN)

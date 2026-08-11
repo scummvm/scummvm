@@ -23,15 +23,18 @@
 #include "access/access.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
+#include "access/noctropolis/noctropolis_resources.h"
 #include "common/translation.h"
 
 namespace Access {
 
 Resources *Resources::init(AccessEngine *vm) {
-	if (vm->getGameID() == GType_Amazon)
+	if (vm->getGameID() == kGameAmazon)
 		return new Amazon::AmazonResources(vm);
-	else if (vm->getGameID() == GType_MartianMemorandum)
+	else if (vm->getGameID() == kGameMartianMemorandum)
 		return new Martian::MartianResources(vm);
+	else if (vm->getGameID() == kGameNoctropolis)
+		return new Noctropolis::NoctropolisResources(vm);
 
 	error("Unknown game");
 }
@@ -65,28 +68,28 @@ bool Resources::load(Common::U32String &errorMessage) {
 	// Load in the index
 	uint count = f.readUint16LE();
 	_datIndex.resize(count);
-	for (uint idx = 0; idx < _datIndex.size(); ++idx) {
-		_datIndex[idx]._gameId = f.readByte();
-		_datIndex[idx]._discType = f.readByte();
-		_datIndex[idx]._demoType = f.readByte();
+	for (auto &datEntry : _datIndex) {
+		datEntry._gameId = f.readByte();
+		datEntry._discType = f.readByte();
+		datEntry._demoType = f.readByte();
 
 		byte language = f.readByte();
 		switch (language) {
 		case 0:
-			_datIndex[idx]._language = (Common::Language)0;
+			datEntry._language = (Common::Language)0;
 			break;
 		case 5:
-			_datIndex[idx]._language = Common::EN_ANY;
+			datEntry._language = Common::EN_ANY;
 			break;
 		case 23:
-			_datIndex[idx]._language = Common::ES_ESP;
+			datEntry._language = Common::ES_ESP;
 			break;
 		default:
 			error("Unknown language");
 			break;
 		}
 
-		_datIndex[idx]._fileOffset = f.readUint32LE();
+		datEntry._fileOffset = f.readUint32LE();
 	}
 
 	// Load in the data for the game
@@ -98,6 +101,8 @@ bool Resources::load(Common::U32String &errorMessage) {
 void Resources::load(Common::SeekableReadStream &s) {
 	uint count;
 
+	assert(_vm->getGameID() != kGameNoctropolis);
+
 	// Get the offset of the data for the game
 	uint entryOffset = findEntry(_vm->getGameID(), _vm->isCD() ? 1 : 0,
 		_vm->isDemo() ? 1 : 0, _vm->getLanguage());
@@ -107,7 +112,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 	count = s.readUint16LE();
 	FILENAMES.resize(count);
 	for (uint idx = 0; idx < count; ++idx)
-		FILENAMES[idx] = readString(s);
+		FILENAMES[idx] = s.readString();
 
 	// Load the character data
 	count = s.readUint16LE();
@@ -123,7 +128,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 	count = s.readUint16LE();
 	ROOMTBL.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
-		ROOMTBL[idx]._desc = readString(s);
+		ROOMTBL[idx]._desc = s.readString();
 		ROOMTBL[idx]._travelPos.x = s.readSint16LE();
 		ROOMTBL[idx]._travelPos.y = s.readSint16LE();
 		uint count2 = s.readUint16LE();
@@ -137,22 +142,21 @@ void Resources::load(Common::SeekableReadStream &s) {
 	DEATHS.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
 		DEATHS[idx]._screenId = s.readByte();
-		DEATHS[idx]._msg = readString(s);
+		DEATHS[idx]._msg = s.readString();
 	}
 
 	// Load in the inventory list
 	count = s.readUint16LE();
 	INVENTORY.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
-		INVENTORY[idx]._desc = readString(s);
+		INVENTORY[idx]._desc = s.readString();
 		for (uint idx2 = 0; idx2 < 4; ++idx2)
 			INVENTORY[idx]._combo[idx2] = s.readSint16LE();
 	}
 }
 
 uint Resources::findEntry(byte gameId, byte discType, byte demoType, Common::Language language) {
-	for (uint idx = 0; idx < _datIndex.size(); ++idx) {
-		DATEntry &de = _datIndex[idx];
+	for (const DATEntry &de : _datIndex) {
 		if (de._gameId == gameId && de._discType == discType &&
 			de._demoType == demoType && de._language == language)
 			return de._fileOffset;
@@ -161,14 +165,37 @@ uint Resources::findEntry(byte gameId, byte discType, byte demoType, Common::Lan
 	error("Could not locate appropriate access.dat entry");
 }
 
-Common::String Resources::readString(Common::SeekableReadStream &s) {
-	Common::String result;
-	char c;
+static const char *const GENERAL_MESSAGES[] = {
+	"LOOKING THERE REVEALS NOTHING OF INTEREST.", // LOOK_MESSAGE
+	"THAT DOESN'T OPEN.",               // OPEN_MESSAGE
+	"THAT WON'T MOVE.",                 // MOVE_MESSAGE
+	"YOU CAN'T TAKE THAT.",             // GET_MESSAGE
+	"THAT DOESN'T SEEM TO WORK.",       // USE_MESSAGE
+	"YOU CAN'T CLIMB THAT.",            // GO_MESSAGE
+	"THERE SEEMS TO BE NO RESPONSE.",   // TALK_MESSAGE
+	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
+	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
+	"THAT DOESN'T SEEM TO WORK."        // USE_MESSAGE
+};
 
-	while ((c = s.readByte()) != 0)
-		result += c;
+static const char *const ESP_GENERAL_MESSAGES[] = {
+	"MIRANDO AHI NO ENCONTRARAS NADA DE INTERES.", // LOOK_MESSAGE
+	"NO ESTA ABIERTO.",                 // OPEN_MESSAGE
+	"NO PUEDES MOVERLO.",               // MOVE_MESSAGE
+	"NO PUEDES COGER ESO.",             // GET_MESSAGE
+	"NO PARECE QUE FUNCIONE.",          // USE_MESSAGE
+	"NO PUEDES SUBIRTE A ESO.",         // GO_MESSAGE
+	"PARECE QUE NO TE RESPONDE.",       // TALK_MESSAGE
+	"NO HAY AYUDA PARA ESE OBJETO.",    // HELP_MESSAGE
+	"NO HAY AYUDA PARA ESE OBJETO.",    // HELP_MESSAGE
+	"NO PARECE QUE FUNCIONE."           // USE_MESSAGE
+};
 
-	return result;
+const char *Resources::getGeneralMessage(int command) const {
+	if (_vm->getLanguage() == Common::ES_ESP)
+		return ESP_GENERAL_MESSAGES[command];
+	else
+		return GENERAL_MESSAGES[command];
 }
 
 /*------------------------------------------------------------------------*/
@@ -192,32 +219,6 @@ const byte INITIAL_PALETTE[18 * 3] = {
 	0x20, 0x20, 0x20,
 	0x10, 0x10, 0x10,
 	0x00, 0x00, 0x00
-};
-
-const char *const GENERAL_MESSAGES[] = {
-	"LOOKING THERE REVEALS NOTHING OF INTEREST.", // LOOK_MESSAGE
-	"THAT DOESN'T OPEN.",               // OPEN_MESSAGE
-	"THAT WON'T MOVE.",                 // MOVE_MESSAGE
-	"YOU CAN'T TAKE THAT.",             // GET_MESSAGE
-	"THAT DOESN'T SEEM TO WORK.",       // USE_MESSAGE
-	"YOU CAN'T CLIMB THAT.",            // GO_MESSAGE
-	"THERE SEEMS TO BE NO RESPONSE.",   // TALK_MESSAGE
-	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
-	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
-	"THAT DOESN'T SEEM TO WORK."        // USE_MESSAGE
-};
-
-const char *const ESP_GENERAL_MESSAGES[] = {
-	"MIRANDO AHI NO ENCONTRARAS NADA DE INTERES.", // LOOK_MESSAGE
-	"NO ESTA ABIERTO.",                 // OPEN_MESSAGE
-	"NO PUEDES MOVERLO.",               // MOVE_MESSAGE
-	"NO PUEDES COGER ESO.",             // GET_MESSAGE
-	"NO PARECE QUE FUNCIONE.",          // USE_MESSAGE
-	"NO PUEDES SUBIRTE A ESO.",         // GO_MESSAGE
-	"PARECE QUE NO TE RESPONDE.",       // TALK_MESSAGE
-	"NO HAY AYUDA PARA ESE OBJETO.",    // HELP_MESSAGE
-	"NO HAY AYUDA PARA ESE OBJETO.",    // HELP_MESSAGE
-	"NO PARECE QUE FUNCIONE."           // USE_MESSAGE
 };
 
 const int INVCOORDS[][4] = {

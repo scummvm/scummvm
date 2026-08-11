@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -49,7 +50,7 @@ UIEntity::UIEntity(BaseGame *inGame) : UIObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 UIEntity::~UIEntity() {
 	if (_entity) {
-		_gameRef->unregisterObject(_entity);
+		_game->unregisterObject(_entity);
 	}
 	_entity = nullptr;
 }
@@ -57,9 +58,9 @@ UIEntity::~UIEntity() {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UIEntity::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIEntity::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -68,7 +69,7 @@ bool UIEntity::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing ENTITY container file '%s'", filename);
+		_game->LOG(0, "Error parsing ENTITY container file '%s'", filename);
 	}
 
 
@@ -107,11 +108,11 @@ bool UIEntity::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd = 2;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ENTITY_CONTAINER) {
-			_gameRef->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
+			_game->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -164,17 +165,17 @@ bool UIEntity::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ENTITY_CONTAINER definition");
+		_game->LOG(0, "Syntax error in ENTITY_CONTAINER definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading ENTITY_CONTAINER definition");
+		_game->LOG(0, "Error loading ENTITY_CONTAINER definition");
 		return STATUS_FAILED;
 	}
 
 	correctSize();
 
-	if (_gameRef->_editorMode) {
+	if (_game->_editorMode) {
 		_width = 50;
 		_height = 50;
 	}
@@ -187,7 +188,7 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY_CONTAINER\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 
 	buffer->putTextIndent(indent + 2, "\n");
 
@@ -197,14 +198,14 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "DISABLED=%s\n", _disable ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "VISIBLE=%s\n", _visible ? "TRUE" : "FALSE");
 
-	if (_entity && _entity->getFilename()) {
-		buffer->putTextIndent(indent + 2, "ENTITY=\"%s\"\n", _entity->getFilename());
+	if (_entity && _entity->_filename && _entity->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "ENTITY=\"%s\"\n", _entity->_filename);
 	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// scripts
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -220,18 +221,17 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::setEntity(const char *filename) {
 	if (_entity) {
-		_gameRef->unregisterObject(_entity);
+		_game->unregisterObject(_entity);
 	}
-	_entity = new AdEntity(_gameRef);
+	_entity = new AdEntity(_game);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
-		delete _entity;
-		_entity = nullptr;
+		SAFE_DELETE(_entity);
 		return STATUS_FAILED;
 	} else {
 		_entity->_nonIntMouseEvents = true;
 		_entity->_sceneIndependent = true;
 		_entity->makeFreezable(false);
-		_gameRef->registerObject(_entity);
+		_game->registerObject(_entity);
 	}
 	return STATUS_OK;
 }
@@ -307,13 +307,13 @@ bool UIEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIEntity::scGetProperty(const Common::String &name) {
+ScValue *UIEntity::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("entity container");
 		return _scValue;
 	}
@@ -321,7 +321,7 @@ ScValue *UIEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Freezable
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Freezable") {
+	else if (strcmp(name, "Freezable") == 0) {
 		if (_entity) {
 			_scValue->setBool(_entity->_freezable);
 		} else {

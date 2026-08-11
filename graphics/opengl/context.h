@@ -75,6 +75,9 @@ public:
 	/** Whether GL_ARB_texture_non_power_of_two is available or not. */
 	bool NPOTSupported;
 
+	/** Whether GL_ARB_imaging is available or not. */
+	bool imagingSupported;
+
 	/** Whether shader support is available or not. */
 	bool shadersSupported;
 
@@ -95,6 +98,9 @@ public:
 	 * if multisample FBOs are supported. Contains -1 otherwise.
 	 */
 	int multisampleMaxSamples;
+
+	/** Whether BGRA support is available or not. */
+	bool bgraSupported;
 
 	/** Whether packed pixels support is available or not. */
 	bool packedPixelsSupported;
@@ -119,6 +125,9 @@ public:
 
 	/** Whether texture max level is available or not. */
 	bool textureMaxLevelSupported;
+
+	/** Texture lookup result precision. */
+	unsigned int textureLookupPrecision;
 
 private:
 	/**

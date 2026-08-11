@@ -115,6 +115,10 @@ public:
 	virtual byte getColor() { return _color; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
+
+#ifdef USE_TTS
+	virtual Common::U32String convertText(const Common::String &text, Common::Language language) const { return Common::U32String(text, _vm->getDialogCodePage()); }
+#endif
 };
 
 class CharsetRendererCommon : public CharsetRenderer {
@@ -202,7 +206,7 @@ private:
 
 class CharsetRendererNES : public CharsetRendererCommon {
 protected:
-	byte *_trTable;
+	byte *_trTable = nullptr;
 
 	void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
 
@@ -223,7 +227,7 @@ protected:
 	virtual int getDrawHeightIntern(uint16 chr);
 	virtual void setDrawCharIntern(uint16 chr) {}
 
-	const byte *_widthTable;
+	const byte *_widthTable = nullptr;
 
 public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererPC(vm) {}
@@ -281,11 +285,15 @@ public:
 
 	void setCurID(int32 id) override {}
 	int getCharWidth(uint16 chr) const override { return 8; }
+
+#ifdef USE_TTS
+	Common::U32String convertText(const Common::String &text, Common::Language language) const override;
+#endif
 };
 
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
-	const Graphics::Font *_font;
+	const Graphics::Font *_font = nullptr;
 	bool _useCorrectFontSpacing;
 	bool _pad;
 	int _lastTop;

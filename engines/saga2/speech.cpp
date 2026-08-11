@@ -90,7 +90,7 @@ static TextSpan     speechLineList[64],   // list of speech lines
 int16               speechLineCount,        // count of speech lines
                     speechButtonCount;      // count of speech buttons
 
-static StaticPoint16 initialSpeechPosition = {0, 0};  // inital coords of speech
+static StaticPoint16 initialSpeechPosition = {0, 0};  // initial coords of speech
 
 //  Image data for the little "bullet"
 static uint8 BulletData[] = {

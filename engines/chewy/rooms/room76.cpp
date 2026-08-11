@@ -127,8 +127,8 @@ void Room76::talk2() {
 void Room76::proc3(int diaNr) {
 	startAadWait(diaNr);
 	_G(det)->del_static_ani(2);
-	startSetAILWait(3, 1, ANI_FRONT);
-	startSetAILWait(4, 2, ANI_FRONT);
+	startDetailWait(3, 1, ANI_FRONT);
+	startDetailWait(4, 2, ANI_FRONT);
 	_G(det)->set_static_ani(2, -1);
 }
 
@@ -162,10 +162,10 @@ int Room76::proc6() {
 		proc3(424);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(det)->del_static_ani(2);
-		startSetAILWait(5, 1, ANI_FRONT);
+		startDetailWait(5, 1, ANI_FRONT);
 		_G(det)->set_static_ani(2, -1);
-		startSetAILWait(9, 1, ANI_FRONT);
-		startSetAILWait(10, 1, ANI_FRONT);
+		startDetailWait(9, 1, ANI_FRONT);
+		startDetailWait(10, 1, ANI_FRONT);
 		showCur();
 	} else if (isCurInventory(94)) {
 		hideCur();

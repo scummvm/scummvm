@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "common/serializer.h"
+#include "common/text-to-speech.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
@@ -59,11 +60,11 @@ static const uint8 kSavegameVersion = 1;
 #define EFH_SAVE_HEADER MKTAG('E', 'F', 'H', 'S')
 
 enum EfhDebugChannels {
-	kDebugEngine = 1 << 0,
-	kDebugUtils = 1 << 1,
-	kDebugGraphics = 1 << 2,
-	kDebugScript = 1 << 3,
-	kDebugFight = 1 << 4
+	kDebugEngine = 1,
+	kDebugUtils,
+	kDebugGraphics,
+	kDebugScript,
+	kDebugFight,
 };
 
 class EfhGraphicsStruct {
@@ -257,6 +258,162 @@ struct TeamMonster {
 	void init();
 };
 
+enum TTSMenuRestriction {
+	kNoRestriction,
+	kLowStatusMenu,
+	kMenu
+};
+
+/* typed enum to match unsignedness of Common::CustomEventType */
+enum EFHAction : Common::CustomEventType {
+	kActionNone,
+	kActionQuit,
+	kActionSkipVideo,
+	kActionSkipSong,
+	kActionSkipSongAndIntro,
+	kActionSave,
+	kActionLoad,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveUpLeft,
+	kActionMoveUpRight,
+	kActionMoveDownLeft,
+	kActionMoveDownRight,
+	kActionCharacter1Status,
+	kActionCharacter2Status,
+	kActionCharacter3Status,
+	kActionYes,
+	kActionNo,
+	kActionCharacter1,
+	kActionCharacter2,
+	kActionCharacter3,
+	kActionCancelCharacterSelection,
+	kActionStartFight,
+	kActionLeave,
+	kActionStatus,
+	kActionTalk,
+	kActionAttack,
+	kActionDefend,
+	kActionHide,
+	kActionRun,
+	kActionTeamStatus,
+	kActionTerrain,
+	kActionEnemy1,
+	kActionEnemy2,
+	kActionEnemy3,
+	kActionEnemy4,
+	kActionEnemy5,
+	kActionCancelEnemySelection,
+	kActionreset,
+	kActionExitStatusMenu,
+	kActionActive,
+	kActionDrop,
+	kActionEquip,
+	kActionGive,
+	kActionInfo,
+	kActionPassive,
+	kActionTrade,
+	kActionUse,
+	kActionSelect,
+	kActionScrollDown,
+	kActionScrollUp,
+	kActionExitSubMenu,
+	kActionOption1,
+	kActionOption2,
+	kActionOption3,
+	kActionOption4,
+	kActionOption5,
+	kActionOption6,
+	kActionOption7,
+	kActionOption8,
+	kActionOption9,
+	kActionOption10,
+	kActionOption11,
+	kActionOption12,
+	kActionOption13,
+	kActionOption14,
+	kActionSound13,
+	kActionSound14,
+	kActionSound15,
+	kActionSound5,
+	kActionSound10,
+	kActionSound9,
+	kActionSound16,
+};
+
+struct EfhSelectionAction {
+	EFHAction _action;
+	int8 _id;
+};
+
+static const EfhSelectionAction _efhEnemySelectionCodes[] = {
+	{ kActionEnemy1, 0 },
+	{ kActionEnemy2, 1 },
+	{ kActionEnemy3, 2 },
+	{ kActionEnemy4, 3 },
+	{ kActionEnemy5, 4 },
+};
+
+static const EfhSelectionAction _efhTeamSelectionCodes[] = {
+	{ kActionCharacter1, 0 },
+	{ kActionCharacter2, 1 },
+	{ kActionCharacter3, 2 },
+};
+
+static const EfhSelectionAction _efhStatusMenuSubMenuCodes[] = {
+	{ kActionOption1, 0 },
+	{ kActionOption2, 1 },
+	{ kActionOption3, 2 },
+	{ kActionOption4, 3 },
+	{ kActionOption5, 4 },
+	{ kActionOption6, 5 },
+	{ kActionOption7, 6 },
+	{ kActionOption8, 7 },
+	{ kActionOption9, 8 },
+	{ kActionOption10, 9 },
+	{ kActionOption11, 10 },
+	{ kActionOption12, 11 },
+	{ kActionOption13, 12 },
+	{ kActionOption14, 13 },
+};
+
+enum EfhKeymapCode {
+	kKeymapDefault,
+	kKeymapMenu,
+	kKeymapSkipVideo,
+	kKeymapSkipSong,
+	kKeymapStatusMenu,
+	kKeymapStatusMenuNavigation,
+	kKeymapStatusMenuSubMenu,
+	kKeymapInteraction,
+	kKeymapFight,
+	kKeymapCharacterSelection,
+	kKeymapEnemySelection,
+	kKeymapDeathMenu,
+};
+
+struct EfhKeymap {
+	EfhKeymapCode _keymap;
+	const char *_id;
+};
+
+static const EfhKeymap _efhKeymaps[] = {
+	{ kKeymapDefault, "efh-default" },
+	{ kKeymapMenu, "menu" },
+	{ kKeymapSkipVideo, "skip-video" },
+	{ kKeymapSkipSong, "skip-song" },
+	{ kKeymapStatusMenu, "status-menu" },
+	{ kKeymapStatusMenuNavigation, "status-menu-navigation" },
+	{ kKeymapStatusMenuSubMenu, "status-menu-submenu" },
+	{ kKeymapInteraction, "interaction" },
+	{ kKeymapFight, "fight" },
+	{ kKeymapCharacterSelection, "character-selection" },
+	{ kKeymapEnemySelection, "enemy-selection" },
+	{ kKeymapDeathMenu, "death-menu" },
+};
+
 class EfhEngine : public Engine {
 public:
 	EfhEngine(OSystem *syst, const ADGameDescription *gd);
@@ -282,9 +439,6 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
-	bool _shouldQuit;
-	bool shouldQuitGame() const { return _shouldQuit || shouldQuit(); }
-
 protected:
 	int _lastTime;
 	// Engine APIs
@@ -299,7 +453,6 @@ private:
 	void playIntro();
 	void initEngine();
 	void initMapMonsters();
-	void loadMapArrays(int idx);
 	void saveAnimImageSetId();
 	int16 getEquipmentDefense(int16 charId);
 	uint16 getEquippedExclusiveType(int16 charId, int16 exclusiveType, bool flag);
@@ -310,7 +463,6 @@ private:
 	void loadEfhGame();
 	void copyCurrentPlaceToBuffer(int16 id);
 	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
-	void writeTechAndMapFiles();
 	uint16 getStringWidth(const Common::String &str) const;
 	void setTextPos(int16 textPosX, int16 textPosY);
 	void drawGameScreenAndTempText(bool flag);
@@ -341,10 +493,12 @@ private:
 	void goSouthEast();
 	void goNorthWest();
 	void goSouthWest();
+	void showCharacterStatus(uint8 character);
 	void handleNewRoundEffects();
 	void resetGame();
 	void computeMapAnimation();
 	void handleAnimations();
+	void handleEvents();
 	int8 checkMonsterMoveCollisionAndTileTexture(int16 monsterId);
 	bool moveMonsterAwayFromTeam(int16 monsterId);
 	bool moveMonsterTowardsTeam(int16 monsterId);
@@ -464,7 +618,7 @@ private:
 	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
 
 	// Menu
-	int16 displayBoxWithText(const Common::String &str, int16 menuType, int16 displayOption, bool displayTeamWindowFl);
+	int16 displayBoxWithText(const Common::String &str, int16 menuType, int16 displayOption, bool displayTeamWindowFl, bool voiceText = true);
 	bool handleDeathMenu();
 	void displayCombatMenu(int16 charId);
 	void displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str);
@@ -492,7 +646,7 @@ private:
 	// Sound
 	void songDelay(int delay);
 	void playNote(int frequencyIndex, int totalDelay);
-	Common::KeyCode playSong(uint8 *buffer);
+	Common::CustomEventType playSong(uint8 *buffer);
 	void generateSound1(int lowFreq, int highFreq, int duration);
 	void generateSound2(int startFreq, int endFreq, int speed);
 	void generateSound3();
@@ -500,24 +654,26 @@ private:
 	void generateSound5(int repeat);
 	void generateSound(int16 soundType);
 	void genericGenerateSound(int16 soundType, int16 repeatCount);
+	void sayText(const Common::String &text, TTSMenuRestriction menuRestriction, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::QUEUE) const;
+	void stopTextToSpeech() const;
 
 	// Utils
-	void setDefaultNoteDuration();
 	void decryptImpFile(bool techMapFl);
 	void loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
 	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	int16 getRandom(int16 maxVal);
-	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
-	Common::KeyCode getInput(int16 delay);
-	Common::KeyCode getKeyCode(const Common::Event & event);
-	Common::KeyCode waitForKey();
-	Common::KeyCode mapInputCode(Common::KeyCode input);
-	Common::KeyCode handleAndMapInput(bool animFl);
-	Common::KeyCode getInputBlocking();
-	void setNumLock();
+	Common::CustomEventType getLastCharAfterAnimCount(int16 delay, bool waitForTTS = true);
+	Common::CustomEventType getInput(int16 delay);
+	Common::CustomEventType waitForKey();
+	Common::CustomEventType handleAndMapInput(bool animFl);
 	bool getValidationFromUser();
 	uint32 ROR(uint32 val, uint8 shiftVal);
 	Common::String getArticle(int pronoun);
+	void setKeymap(EfhKeymapCode keymapCode);
+
+	// Actions
+	void handleActionSave();
+	void handleActionLoad();
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];
@@ -617,6 +773,10 @@ private:
 	int16 _menuStatItemArr[15];
 	int16 _menuDepth;
 	int16 _menuItemCounter;
+	int16 _selectedMenuBox;
+	bool _sayMenu;
+	bool _sayLowStatusScreen;
+	bool _initiatedTalkByMenu;
 
 	TeamChar _teamChar[3];
 	TeamMonster _teamMonster[5];
@@ -625,8 +785,7 @@ private:
 
 	int16 _regenCounter;
 
-	Audio::PCSpeaker *_speakerStream;
-	Audio::SoundHandle _speakerHandle;
+	Audio::PCSpeaker *_speaker;
 };
 
 } // End of namespace Efh

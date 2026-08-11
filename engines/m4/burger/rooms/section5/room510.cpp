@@ -22,6 +22,8 @@
 #include "m4/burger/rooms/section5/room510.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -73,7 +75,7 @@ void Room510::init() {
 void Room510::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
-		_G(game).new_room = _G(game).previous_room;
+		_G(game).setRoom(_G(game).previous_room);
 		break;
 
 	case 2:
@@ -262,7 +264,7 @@ void Room510::setButtonState(int index, GUI::ControlStatus state) {
 }
 
 void Room510::buttonAction(int index, int firstFrame, int lastFrame) {
-	int max = (index == 4) ? 1 : 2;
+	const int max = (index == 4) ? 1 : 2;
 	digi_play(Common::String::format("510b00%d%c", index, 'a' + imath_ranged_rand(0, max)).c_str(), 2);
 	series_play("510waves", 0, 0, 2, 6, 2, 100, 0, 0, firstFrame, lastFrame);
 }

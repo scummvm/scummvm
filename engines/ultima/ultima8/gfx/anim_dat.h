@@ -22,7 +22,6 @@
 #ifndef ULTIMA8_GFX_ANIMDAT_H
 #define ULTIMA8_GFX_ANIMDAT_H
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
 namespace Ultima {
@@ -45,7 +44,7 @@ public:
 	//! Return the action number for a given animation sequence on the given actor
 	static uint32 getActionNumberForSequence(Animation::Sequence action, const Actor *actor);
 private:
-	Std::vector<ActorAnim *> _anims;
+	Common::Array<ActorAnim *> _anims;
 };
 
 } // End of namespace Ultima8

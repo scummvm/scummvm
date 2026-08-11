@@ -47,11 +47,11 @@ AdPath::~AdPath() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdPath::reset() {
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
 
-	_points.clear();
+	_points.removeAll();
 	_currIndex = -1;
 	_ready = false;
 }
@@ -59,7 +59,7 @@ void AdPath::reset() {
 
 //////////////////////////////////////////////////////////////////////////
 BasePoint *AdPath::getFirst() {
-	if (_points.size() > 0) {
+	if (_points.getSize() > 0) {
 		_currIndex = 0;
 		return _points[_currIndex];
 	} else {
@@ -71,7 +71,7 @@ BasePoint *AdPath::getFirst() {
 //////////////////////////////////////////////////////////////////////////
 BasePoint *AdPath::getNext() {
 	_currIndex++;
-	if (_currIndex < (int32)_points.size()) {
+	if (_currIndex < _points.getSize()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;
@@ -81,7 +81,7 @@ BasePoint *AdPath::getNext() {
 
 //////////////////////////////////////////////////////////////////////////
 BasePoint *AdPath::getCurrent() {
-	if (_currIndex >= 0 && _currIndex < (int32)_points.size()) {
+	if (_currIndex >= 0 && _currIndex < _points.getSize()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;
@@ -107,7 +107,7 @@ bool AdPath::setReady(bool ready) {
 //////////////////////////////////////////////////////////////////////////
 bool AdPath::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
 	persistMgr->transferSint32(TMEMBER(_currIndex));
 	_points.persist(persistMgr);

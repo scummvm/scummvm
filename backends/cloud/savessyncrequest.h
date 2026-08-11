@@ -22,7 +22,7 @@
 #ifndef BACKENDS_CLOUD_SAVESSYNCREQUEST_H
 #define BACKENDS_CLOUD_SAVESSYNCREQUEST_H
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "backends/cloud/storage.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"

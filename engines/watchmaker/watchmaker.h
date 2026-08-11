@@ -37,10 +37,6 @@ namespace Watchmaker {
 
 class Console;
 
-enum WatchmakerDebugChannels {
-	kDebugGeneral = 1 << 0
-};
-
 class WatchmakerGame : public Engine {
 public:
 	WatchmakerGame(OSystem *syst, const ADGameDescription *gameDesc);

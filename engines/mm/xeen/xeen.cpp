@@ -31,6 +31,16 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint16 spanishEncodingTable[] = {
+	0x23, 0xc3a1, 0x24, 0xc3a9, 0x25, 0xc3bc, 0x26, 0xc3b3, 0x3d, 0xc3b1, 0x5b, 0xc2bf,	// á, é, ü, ó, ñ, ¿
+	0x5c, 0xc39a, 0x5d, 0xc3ba, 0x5e, 0xc389, 0x5f, 0xc381, 0x7b, 0xc2a1, 0x7d, 0xc3ad,	// Ú, ú, É, Á, ¡, í
+	0
+};
+
+#endif
+
 XeenEngine *g_vm = nullptr;
 
 XeenEngine::XeenEngine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
@@ -59,6 +69,9 @@ XeenEngine::XeenEngine(OSystem *syst, const MightAndMagicGameDescription *gameDe
 	_loadSaveSlot = -1;
 	_gameWon[0] = _gameWon[1] = _gameWon[2] = false;
 	_finalScore = 0;
+#ifdef USE_TTS
+	_mouseMoved = false;
+#endif
 	g_vm = this;
 }
 
@@ -110,6 +123,46 @@ bool XeenEngine::initialize() {
 
 	// Setup mixer
 	syncSoundSettings();
+
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+
+	switch (getLanguage()) {
+	case Common::EN_ANY:
+		_ttsLanguage = kEnglish;
+		break;
+	case Common::DE_DEU:
+		_ttsLanguage = kGerman;
+		break;
+	case Common::FR_FRA:
+		_ttsLanguage = kFrench;
+		break;
+	case Common::ES_ESP:
+		_ttsLanguage = kSpanish;
+		break;
+	case Common::RU_RUS:
+		_ttsLanguage = kRussian;
+		break;
+	case Common::ZH_TWN:
+		_ttsLanguage = kChinese;
+		break;
+	default:
+		_ttsLanguage = kEnglish;
+		break;
+	}
+
+	if (_ttsLanguage == kRussian) {
+		_ttsTextEncoding = Common::CodePage::kDos866;
+	} else if (_ttsLanguage == kChinese) {
+		_ttsTextEncoding = Common::CodePage::kBig5;
+	} else {
+		_ttsTextEncoding = Common::CodePage::kDos850;
+	}
+#endif
 
 	// Load settings
 	loadSettings();
@@ -326,6 +379,69 @@ void XeenEngine::saveSettings() {
 void XeenEngine::GUIError(const Common::U32String &msg) {
 	GUIErrorMessage(msg);
 }
+
+#ifdef USE_TTS
+
+void XeenEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+	if (text.empty()) {
+		return;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		if (getLanguage() == Common::ES_ESP) {
+			ttsMan->say(convertSpanishText(text), action);
+		} else {
+			ttsMan->say(text, action, _ttsTextEncoding);
+		}
+	}
+}
+
+void XeenEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+}
+
+Common::U32String XeenEngine::convertSpanishText(const Common::String &text) const {
+	const byte *bytes = (const byte *)text.c_str();
+	byte *convertedBytes = new byte[text.size() * 2 + 1];
+
+	int i = 0;
+	for (const byte *b = bytes; *b; ++b) {
+		if (*b == 0x60) {	// ` to =
+			convertedBytes[i] = 0x3d;
+			i++;
+			continue;
+		}
+
+		bool inTable = false;
+		for (uint j = 0; spanishEncodingTable[j]; j += 2) {
+			if (*b == spanishEncodingTable[j]) {
+				convertedBytes[i] = (spanishEncodingTable[j + 1] >> 8) & 0xff;
+				convertedBytes[i + 1] = spanishEncodingTable[j + 1] & 0xff;
+				i += 2;
+				inTable = true;
+				break;
+			}
+		}
+
+		if (!inTable) {
+			convertedBytes[i] = *b;
+			i++;
+		}
+	}
+
+	convertedBytes[i] = 0;
+
+	Common::U32String result((char *)convertedBytes);
+	delete[] convertedBytes;
+
+	return result;
+}
+
+#endif
 
 
 uint32 XeenEngine::getSpecificGameId() const {

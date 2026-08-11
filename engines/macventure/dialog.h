@@ -35,6 +35,10 @@
 #include "macventure/macventure.h"
 #include "macventure/prebuilt_dialogs.h"
 
+namespace Graphics {
+class MacText;
+}
+
 namespace MacVenture {
 
 using namespace Graphics::MacGUIConstants;
@@ -43,8 +47,9 @@ class DialogElement;
 
 class Dialog {
 public:
+	Dialog(Gui *gui, Common::MacResManager *resourceManager, uint16 resID);
 	Dialog(Gui *gui, Common::Point pos, uint width, uint height);
-	Dialog(Gui *gui, PrebuiltDialogs prebuilt);
+	Dialog(Gui *gui, PrebuiltDialogs prebuilt, const Common::String &title);
 
 	~Dialog();
 
@@ -53,16 +58,18 @@ public:
 	void localize(Common::Point &point);
 	void handleDialogAction(DialogElement *trigger, DialogAction action);
 
+	Graphics::MacWindowManager *getMacWindowManager() const;
 	const Graphics::Font &getFont();
 
 	void addButton(Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
-	void addText(Common::String content, Common::Point position);
-	void addTextInput(Common::Point position, int width, int height);
+	void addText(Common::String content, Common::Point position, int width = 0, int height = 0, Graphics::TextAlign alignment = Graphics::kTextAlignLeft);
+	void addTextInput(Common::Point position, int width, int height, Graphics::TextAlign alignment = Graphics::kTextAlignLeft);
 
 	void setUserInput(Common::String content);
+	DialogElement *getElement(Common::String elementID);
 
 private:
-	void addPrebuiltElement(const PrebuiltDialogElement &element);
+	void addPrebuiltElement(const PrebuiltDialogElement &element, const Common::String &title = "");
 
 	void calculateBoundsFromPrebuilt(const PrebuiltDialogBounds &bounds);
 
@@ -76,12 +83,14 @@ private:
 
 class DialogElement {
 public:
-	DialogElement(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
+	DialogElement(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0, Graphics::TextAlign alignment = Graphics::kTextAlignLeft);
 	virtual ~DialogElement() {}
 
 	bool processEvent(Dialog *dialog, Common::Event event);
 	void draw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
 	const Common::String &getText();
+
+	void setAction(DialogAction action) { _action = action; }
 
 private:
 	virtual bool doProcessEvent(Dialog *dialog, Common::Event event) = 0;
@@ -90,6 +99,7 @@ private:
 
 protected:
 	Common::String _text;
+	Graphics::MacText *_macText;
 	Common::Rect _bounds;
 	DialogAction _action;
 };
@@ -107,7 +117,7 @@ private:
 
 class DialogPlainText : public DialogElement {
 public:
-	DialogPlainText(Dialog *dialog, Common::String content, Common::Point position);
+	DialogPlainText(Dialog *dialog, Common::String content, Common::Point position, int width, int height, Graphics::TextAlign alignment = Graphics::kTextAlignLeft);
 	~DialogPlainText() override;
 
 private:
@@ -117,12 +127,26 @@ private:
 
 class DialogTextInput : public DialogElement {
 public:
-	DialogTextInput(Dialog *dialog, Common::Point position, uint width, uint height);
+	DialogTextInput(Dialog *dialog, Gui *gui, Common::Point position, uint width, uint height, Graphics::TextAlign alignment = Graphics::kTextAlignLeft);
 	~DialogTextInput() override;
+
+	void updateCursorPos();
+	void undrawCursor();
+
+	Common::Point _cursorPos;
+	bool _cursorState;
+	bool _cursorDirty;
 
 private:
 	bool doProcessEvent(Dialog *dialog, Common::Event event) override;
 	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) override;
+
+	int getCursorHeight() const;
+
+	Gui *_gui;
+
+	Common::Rect _cursorRect;
+	Graphics::ManagedSurface *_cursorSurface;
 };
 
 } // End of namespace MacVenture

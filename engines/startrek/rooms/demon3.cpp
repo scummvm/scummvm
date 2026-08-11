@@ -24,100 +24,100 @@
 namespace StarTrek {
 
 extern const RoomAction demon3ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::demon3Tick1 },
-	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::demon3Timer0Expired },
-	{ {ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::demon3Timer1Expired },
-	{ {ACTION_TIMER_EXPIRED, 3, 0, 0}, &Room::demon3Timer3Expired },
+	{ {ACTION_TICK, 1, 0, 0, 0}, &Room::demon3Tick1 },
+	{ {ACTION_TIMER_EXPIRED, 0, 0, 0, 0}, &Room::demon3Timer0Expired },
+	{ {ACTION_TIMER_EXPIRED, 1, 0, 0, 0}, &Room::demon3Timer1Expired },
+	{ {ACTION_TIMER_EXPIRED, 3, 0, 0, 0}, &Room::demon3Timer3Expired },
 
-	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::demon3FinishedAnimation1 },
-	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::demon3FinishedAnimation2 },
-	{ {ACTION_FINISHED_WALKING, 5, 0, 0}, &Room::demon3FinishedWalking5 },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0, 0}, &Room::demon3FinishedAnimation1 },
+	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0, 0}, &Room::demon3FinishedAnimation2 },
+	{ {ACTION_FINISHED_WALKING, 5, 0, 0, 0}, &Room::demon3FinishedWalking5 },
 
-	{ {ACTION_FINISHED_WALKING, 3, 0, 0}, &Room::demon3McCoyInFiringPosition },
-	{ {ACTION_FINISHED_WALKING, 2, 0, 0}, &Room::demon3SpockInFiringPosition },
-	{ {ACTION_FINISHED_WALKING, 4, 0, 0}, &Room::demon3RedShirtInFiringPosition },
-	{ {ACTION_FINISHED_WALKING, 1, 0, 0}, &Room::demon3KirkInFiringPosition },
+	{ {ACTION_FINISHED_WALKING, 3, 0, 0, 0}, &Room::demon3McCoyInFiringPosition },
+	{ {ACTION_FINISHED_WALKING, 2, 0, 0, 0}, &Room::demon3SpockInFiringPosition },
+	{ {ACTION_FINISHED_WALKING, 4, 0, 0, 0}, &Room::demon3RedShirtInFiringPosition },
+	{ {ACTION_FINISHED_WALKING, 1, 0, 0, 0}, &Room::demon3KirkInFiringPosition },
 
-	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::demon3FireAtBoulder },
+	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0, 0}, &Room::demon3FireAtBoulder },
 
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_REDSHIRT, 0}, &Room::demon3UsePhaserOnRedshirt },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_REDSHIRT, 0}, &Room::demon3UsePhaserOnRedshirt },
+	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_REDSHIRT, 0, 0}, &Room::demon3UsePhaserOnRedshirt },
+	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_REDSHIRT, 0, 0}, &Room::demon3UsePhaserOnRedshirt },
 
-	{ {ACTION_USE, OBJECT_IPHASERS,  9, 0}, &Room::demon3UseStunPhaserOnBoulder },
-	{ {ACTION_USE, OBJECT_IPHASERS, 10, 0}, &Room::demon3UseStunPhaserOnBoulder },
-	{ {ACTION_USE, OBJECT_IPHASERS, 11, 0}, &Room::demon3UseStunPhaserOnBoulder },
-	{ {ACTION_USE, OBJECT_IPHASERS, 12, 0}, &Room::demon3UseStunPhaserOnBoulder },
+	{ {ACTION_USE, OBJECT_IPHASERS,  9, 0, 0}, &Room::demon3UseStunPhaserOnBoulder },
+	{ {ACTION_USE, OBJECT_IPHASERS, 10, 0, 0}, &Room::demon3UseStunPhaserOnBoulder },
+	{ {ACTION_USE, OBJECT_IPHASERS, 11, 0, 0}, &Room::demon3UseStunPhaserOnBoulder },
+	{ {ACTION_USE, OBJECT_IPHASERS, 12, 0, 0}, &Room::demon3UseStunPhaserOnBoulder },
 
-	{ {ACTION_USE, OBJECT_IPHASERK,  9, 0}, &Room::demon3UsePhaserOnBoulder1 },
-	{ {ACTION_USE, OBJECT_IPHASERK, 10, 0}, &Room::demon3UsePhaserOnBoulder2 },
-	{ {ACTION_USE, OBJECT_IPHASERK, 11, 0}, &Room::demon3UsePhaserOnBoulder3 },
-	{ {ACTION_USE, OBJECT_IPHASERK, 12, 0}, &Room::demon3UsePhaserOnBoulder4 },
+	{ {ACTION_USE, OBJECT_IPHASERK,  9, 0, 0}, &Room::demon3UsePhaserOnBoulder1 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 10, 0, 0}, &Room::demon3UsePhaserOnBoulder2 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 11, 0, 0}, &Room::demon3UsePhaserOnBoulder3 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 12, 0, 0}, &Room::demon3UsePhaserOnBoulder4 },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, 13, 0}, &Room::demon3UseSTricorderOnMiner },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::demon3UseSTricorderOnPanel },
-	{ {ACTION_USE, OBJECT_ISTRICOR,  9, 0}, &Room::demon3UseSTricorderOnBoulder },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 10, 0}, &Room::demon3UseSTricorderOnBoulder },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 11, 0}, &Room::demon3UseSTricorderOnBoulder },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 12, 0}, &Room::demon3UseSTricorderOnBoulder },
-	{ {ACTION_USE, OBJECT_IMTRICOR,  9, 0}, &Room::demon3UseMTricorderOnBoulder },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 10, 0}, &Room::demon3UseMTricorderOnBoulder },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 11, 0}, &Room::demon3UseMTricorderOnBoulder },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 12, 0}, &Room::demon3UseMTricorderOnBoulder },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 13, 0, 0}, &Room::demon3UseSTricorderOnMiner },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0, 0}, &Room::demon3UseSTricorderOnPanel },
+	{ {ACTION_USE, OBJECT_ISTRICOR,  9, 0, 0}, &Room::demon3UseSTricorderOnBoulder },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 10, 0, 0}, &Room::demon3UseSTricorderOnBoulder },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 11, 0, 0}, &Room::demon3UseSTricorderOnBoulder },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 12, 0, 0}, &Room::demon3UseSTricorderOnBoulder },
+	{ {ACTION_USE, OBJECT_IMTRICOR,  9, 0, 0}, &Room::demon3UseMTricorderOnBoulder },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 10, 0, 0}, &Room::demon3UseMTricorderOnBoulder },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 11, 0, 0}, &Room::demon3UseMTricorderOnBoulder },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 12, 0, 0}, &Room::demon3UseMTricorderOnBoulder },
 
-	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0}, &Room::demon3UseCrewmanOnPanel },
-	{ {ACTION_USE, OBJECT_SPOCK, 0x20, 0}, &Room::demon3UseCrewmanOnPanel },
-	{ {ACTION_USE, OBJECT_MCCOY, 0x20, 0}, &Room::demon3UseCrewmanOnPanel },
-	{ {ACTION_USE, OBJECT_REDSHIRT, 0x20, 0}, &Room::demon3UseRedshirtOnPanel },
-	{ {ACTION_FINISHED_WALKING, 8, 0, 0}, &Room::demon3RedshirtReachedPanel },
-	{ {ACTION_FINISHED_ANIMATION, 5, 0, 0}, &Room::demon3RedshirtUsedPanel },
-	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0}, &Room::demon3RedshirtElectrocuted },
+	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0, 0}, &Room::demon3UseCrewmanOnPanel },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x20, 0, 0}, &Room::demon3UseCrewmanOnPanel },
+	{ {ACTION_USE, OBJECT_MCCOY, 0x20, 0, 0}, &Room::demon3UseCrewmanOnPanel },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x20, 0, 0}, &Room::demon3UseRedshirtOnPanel },
+	{ {ACTION_FINISHED_WALKING, 8, 0, 0, 0}, &Room::demon3RedshirtReachedPanel },
+	{ {ACTION_FINISHED_ANIMATION, 5, 0, 0, 0}, &Room::demon3RedshirtUsedPanel },
+	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0, 0}, &Room::demon3RedshirtElectrocuted },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::demon3UseSTricorderOnDoor },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::demon3UseSTricorderOnAnything },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 14, 0}, &Room::demon3UseMTricorderOnDoor },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0}, &Room::demon3UseMTricorderOnDoor },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 0x22, 0}, &Room::demon3UseMTricorderOnDoor },
-	{ {ACTION_USE, OBJECT_IPHASERS, 14, 0}, &Room::demon3UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_IPHASERK, 14, 0}, &Room::demon3UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0x21, 0}, &Room::demon3UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0x21, 0}, &Room::demon3UsePhaserOnDoor },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0, 0}, &Room::demon3UseSTricorderOnDoor },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0, 0}, &Room::demon3UseSTricorderOnAnything },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 14, 0, 0}, &Room::demon3UseMTricorderOnDoor },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0, 0}, &Room::demon3UseMTricorderOnDoor },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x22, 0, 0}, &Room::demon3UseMTricorderOnDoor },
+	{ {ACTION_USE, OBJECT_IPHASERS, 14, 0, 0}, &Room::demon3UsePhaserOnDoor },
+	{ {ACTION_USE, OBJECT_IPHASERK, 14, 0, 0}, &Room::demon3UsePhaserOnDoor },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0x21, 0, 0}, &Room::demon3UsePhaserOnDoor },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0x21, 0, 0}, &Room::demon3UsePhaserOnDoor },
 
-	{ {ACTION_USE, OBJECT_IHAND, 0x20, 0}, &Room::demon3UseHandOnPanel },
-	{ {ACTION_FINISHED_WALKING, 7, 0, 0}, &Room::demon3KirkReachedHandPanel },
-	{ {ACTION_FINISHED_ANIMATION, 6, 0, 0}, &Room::demon3KirkUsedHandPanel },
+	{ {ACTION_USE, OBJECT_IHAND, 0x20, 0, 0}, &Room::demon3UseHandOnPanel },
+	{ {ACTION_FINISHED_WALKING, 7, 0, 0, 0}, &Room::demon3KirkReachedHandPanel },
+	{ {ACTION_FINISHED_ANIMATION, 6, 0, 0, 0}, &Room::demon3KirkUsedHandPanel },
 
-	{ {ACTION_USE, OBJECT_IMTRICOR, 13, 0}, &Room::demon3UseMTricorderOnMiner },
-	{ {ACTION_USE, OBJECT_MCCOY, 13, 0}, &Room::demon3UseMedkitOnMiner },
-	{ {ACTION_USE, OBJECT_IMEDKIT, 13, 0}, &Room::demon3UseMedkitOnMiner },
-	{ {ACTION_FINISHED_WALKING, 6, 0, 0}, &Room::demon3McCoyReachedMiner },
-	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::demon3McCoyFinishedHealingMiner },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 13, 0, 0}, &Room::demon3UseMTricorderOnMiner },
+	{ {ACTION_USE, OBJECT_MCCOY, 13, 0, 0}, &Room::demon3UseMedkitOnMiner },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 13, 0, 0}, &Room::demon3UseMedkitOnMiner },
+	{ {ACTION_FINISHED_WALKING, 6, 0, 0, 0}, &Room::demon3McCoyReachedMiner },
+	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0, 0}, &Room::demon3McCoyFinishedHealingMiner },
 
-	{ {ACTION_GET, 13, 0, 0}, &Room::demon3GetMiner },
-	{ {ACTION_TALK, 13, 0, 0}, &Room::demon3TalkToMiner },
+	{ {ACTION_GET, 13, 0, 0, 0}, &Room::demon3GetMiner },
+	{ {ACTION_TALK, 13, 0, 0, 0}, &Room::demon3TalkToMiner },
 
-	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::demon3TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::demon3TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::demon3TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::demon3TalkToRedshirt },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0, 0}, &Room::demon3TalkToKirk },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0, 0}, &Room::demon3TalkToSpock },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0, 0}, &Room::demon3TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::demon3TalkToRedshirt },
 
-	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::demon3LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::demon3LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::demon3LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::demon3LookAtRedshirt },
+	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0, 0}, &Room::demon3LookAtKirk },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0, 0}, &Room::demon3LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0, 0}, &Room::demon3LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::demon3LookAtRedshirt },
 
-	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::demon3LookAnywhere },
-	{ {ACTION_LOOK, 13, 0, 0}, &Room::demon3LookAtMiner },
-	{ {ACTION_LOOK,  9, 0, 0}, &Room::demon3LookAtBoulder1 },
-	{ {ACTION_LOOK, 10, 0, 0}, &Room::demon3LookAtBoulder2 },
-	{ {ACTION_LOOK, 11, 0, 0}, &Room::demon3LookAtBoulder3 },
-	{ {ACTION_LOOK, 12, 0, 0}, &Room::demon3LookAtBoulder4 },
-	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::demon3LookAtStructure },
-	{ {ACTION_LOOK, 14, 0, 0}, &Room::demon3LookAtDoor },
-	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::demon3LookAtDoor },
-	{ {ACTION_LOOK, 15, 0, 0}, &Room::demon3LookAtPanel },
-	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::demon3LookAtPanel },
-	{ {ACTION_LOOK, 8, 0, 0}, &Room::demon3LookAtLight },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_LOOK, 0xff, 0, 0, 0}, &Room::demon3LookAnywhere },
+	{ {ACTION_LOOK, 13, 0, 0, 0}, &Room::demon3LookAtMiner },
+	{ {ACTION_LOOK,  9, 0, 0, 0}, &Room::demon3LookAtBoulder1 },
+	{ {ACTION_LOOK, 10, 0, 0, 0}, &Room::demon3LookAtBoulder2 },
+	{ {ACTION_LOOK, 11, 0, 0, 0}, &Room::demon3LookAtBoulder3 },
+	{ {ACTION_LOOK, 12, 0, 0, 0}, &Room::demon3LookAtBoulder4 },
+	{ {ACTION_LOOK, 0x22, 0, 0, 0}, &Room::demon3LookAtStructure },
+	{ {ACTION_LOOK, 14, 0, 0, 0}, &Room::demon3LookAtDoor },
+	{ {ACTION_LOOK, 0x21, 0, 0, 0}, &Room::demon3LookAtDoor },
+	{ {ACTION_LOOK, 15, 0, 0, 0}, &Room::demon3LookAtPanel },
+	{ {ACTION_LOOK, 0x20, 0, 0, 0}, &Room::demon3LookAtPanel },
+	{ {ACTION_LOOK, 8, 0, 0, 0}, &Room::demon3LookAtLight },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum demon3TextIds {
@@ -246,7 +246,7 @@ void Room::demon3Tick1() {
 
 	if (!_awayMission->demon.field56) {
 		_awayMission->demon.field56 = true;
-		playMidiMusicTracks(0, -1);
+		playMidiMusicTracks(MIDITRACK_0);
 	}
 }
 
@@ -258,7 +258,7 @@ void Room::demon3Timer0Expired() {
 	_awayMission->demon.boulder1Gone = true;
 	_awayMission->demon.numBouldersGone++;
 	_awayMission->disableInput = true;
-	playMidiMusicTracks(2, -1);
+	playMidiMusicTracks(MIDITRACK_2);
 	playVoc("BOULDERK");
 }
 
@@ -298,7 +298,7 @@ void Room::demon3FinishedAnimation2() {
 
 void Room::demon3FinishedWalking5() {
 	loadActorAnim2(OBJECT_MCCOY, "mscanw", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM3_019);
 
 	_awayMission->disableInput = false;
@@ -376,7 +376,7 @@ void Room::demon3FireAtBoulder() {
 	}
 
 	loadActorAnim(17, _roomVar.demon.boulderAnim, 0, 0, 0);
-	playSoundEffectIndex(0x06);
+	playSoundEffectIndex(kSfxPhaser);
 	if (!_roomVar.demon.boulder1Shot)
 		_awayMission->timers[0] = 1;
 	_awayMission->disableInput = false;
@@ -470,13 +470,13 @@ void Room::demon3BoulderCommon() {
 
 void Room::demon3UseSTricorderOnMiner() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM3_008);
 }
 
 void Room::demon3UseSTricorderOnPanel() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM3_009);
 }
 
@@ -484,7 +484,7 @@ void Room::demon3UseSTricorderOnBoulder() {
 	if (_awayMission->demon.foundMiner)
 		return;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM3_010);
 }
 
@@ -492,7 +492,7 @@ void Room::demon3UseMTricorderOnBoulder() {
 	if (_awayMission->demon.foundMiner)
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM3_020);
 }
 
@@ -527,7 +527,7 @@ void Room::demon3RedshirtUsedPanel() {
 		showText(TX_SPEAKER_EVERTS, TX_DEM3_A32);
 
 		loadActorAnim2(OBJECT_REDSHIRT, "rkille", -1, -1, 3);
-		playSoundEffectIndex(0x06);
+		playSoundEffectIndex(kSfxPhaser);
 		_awayMission->redshirtDead = true;
 		_awayMission->demon.field45 = true;
 	} else {
@@ -555,19 +555,19 @@ void Room::demon3RedshirtElectrocuted() {
 
 void Room::demon3UseSTricorderOnDoor() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM3_012);
 }
 
 void Room::demon3UseSTricorderOnAnything() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM3_027);
 }
 
 void Room::demon3UseMTricorderOnDoor() {
 	loadActorAnim2(OBJECT_SPOCK, "mscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM3_016);
 }
 
@@ -604,7 +604,7 @@ void Room::demon3KirkUsedHandPanel() {
 
 void Room::demon3UseMTricorderOnMiner() {
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (_awayMission->demon.minerDead) {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_022);

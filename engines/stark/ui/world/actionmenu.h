@@ -63,7 +63,7 @@ private:
 	void updateActionSound();
 
 	enum ActionMenuType {
-		kActionNone  = -1,
+		kActionNoneM = -1,
 		kActionHand  =  0,
 		kActionEye   =  1,
 		kActionMouth =  2

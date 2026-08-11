@@ -19,11 +19,15 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
+#include "m4/riddle/gui/game_menu.h"
 #include "m4/riddle/riddle.h"
+#include "m4/riddle/triggers.h"
 #include "m4/riddle/console.h"
 #include "m4/riddle/vars.h"
-#include "m4/core/errors.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/adv_r/other.h"
 #include "m4/console.h"
 
 namespace M4 {
@@ -40,6 +44,11 @@ RiddleEngine::RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 	_sections.push_back(&_section7);
 	_sections.push_back(&_section8);
 	_sections.push_back(&_section9);
+}
+
+void RiddleEngine::initializePath(const Common::FSNode &gamePath) {
+	M4Engine::initializePath(gamePath);
+	SearchMan.addSubDirectoryMatching(gamePath, "option1");
 }
 
 M4::Vars *RiddleEngine::createVars() {
@@ -59,21 +68,781 @@ void RiddleEngine::showEngineInfo() {
 }
 
 void RiddleEngine::syncFlags(Common::Serializer &s) {
-	//g_vars->_flags.sync(s);
+	g_vars->_flags.sync(s);
+}
+
+void RiddleEngine::showSaveScreen() {
+	if (_useOriginalSaveLoad) {
+		GUI::CreateF2SaveMenu(_G(master_palette));
+	} else {
+		M4Engine::showSaveScreen();
+	}
+}
+
+void RiddleEngine::showLoadScreen(LoadDialogSource source) {
+	if (_useOriginalSaveLoad) {
+		switch (source) {
+		case kLoadFromMainMenu:
+			GUI::CreateLoadMenuFromMain(_G(master_palette));
+			break;
+		case kLoadFromGameDialog:
+			GUI::CreateLoadMenu(_G(master_palette));
+			break;
+		case kLoadFromHotkey:
+			GUI::CreateF3LoadMenu(_G(master_palette));
+			break;
+		}
+	} else {
+		M4Engine::showLoadScreen(source);
+	}
 }
 
 void RiddleEngine::global_daemon() {
-	// TODO
-}
+	_G(i_just_hyperwalked) = false;
 
-void RiddleEngine::global_pre_parser() {
-	// TODO
+	if (_G(kernel).trigger == kGOTO_MAIN_MENU)
+		_G(game).setRoom(494);
 }
 
 void RiddleEngine::global_parser() {
-	_G(kernel).trigger_mode = KT_DAEMON;
-	// TODO
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool talkFlag = player_said_any("talk", "talk to");
+	const bool takeFlag = player_said("take");
+	const bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	const bool npcFlag = player_said("MEI CHEN") ||
+	                     player_said("FENG LI") ||
+	                     player_said("TWELVETREES") ||
+	                     player_said("WOLF") ||
+	                     player_said("PERSON IN PIT") ||
+	                     player_said("TWELVETREES ") ||
+	                     player_said("OLD WOMAN") ||
+	                     player_said("OLD LADY") ||
+	                     player_said("AGENT") ||
+	                     player_said("BUTLER") ||
+	                     player_said("ACOLYTE") ||
+	                     player_said("OFFICIAL") ||
+	                     player_said("GATEKEEPER") ||
+	                     player_said("PEASANT") ||
+	                     player_said("MENENDEZ") ||
+	                     player_said("GUARD") ||
+	                     player_said("FARMER");
+	const bool combineFlag = inv_player_has(_G(player).verb) &&
+	                         inv_player_has(_G(player).noun);
+	const bool splitFlag = useFlag && inv_player_has(_G(player).noun);
+
+	if (npcFlag && inv_player_has(_G(player).verb)) {
+		digi_play("com017", 1);
+	} else if (npcFlag && player_said("TURTLE")) {
+		digi_play("305r19b", 1);
+
+	} else if (combineFlag && player_said("WHALE BONE HORN", "PULL CORD")) {
+		combineItems("HORN/PULL CORD");
+	} else if (combineFlag && player_said("CIGAR WITHOUT BAND", "CIGAR BAND")) {
+		combineItems("CIGAR");
+	} else if (combineFlag && player_said("WOODEN LADDER", "ROPE")) {
+		combineItems("LADDER/ROPE");
+	} else if (combineFlag && player_said("GREEN VINE", "WOODEN LADDER")) {
+		combineItems("LADDER/GREEN VINE");
+	} else if (combineFlag && player_said("GREEN VINE", "WOODEN LADDER")) {
+		combineItems("LADDER/GREEN VINE");
+	} else if (combineFlag && player_said("BROWN VINE", "WOODEN LADDER")) {
+		combineItems("LADDER/BROWN VINE");
+	} else if (combineFlag && player_said("VINES", "WOODEN LADDER")) {
+		combineItems("LADDER/VINES");
+	} else if (combineFlag && player_said("BROWN VINE", "GREEN VINE")) {
+		combineItems("VINES");
+
+	} else if (takeFlag && player_said_any("statue", "statue ")) {
+		digi_play("608r22", 1);
+	} else if (splitFlag && player_said("HORN/PULL CORD")) {
+		splitItems("WHALE BONE HORN", "PULL CORD");
+	} else if (splitFlag && player_said("LADDER/ROPE")) {
+		splitItems("WOODEN LADDER", "ROPE");
+	} else if (splitFlag && player_said("CIGAR")) {
+		splitItems("CIGAR BAND", "CIGAR WITHOUT BAND");
+	} else if (splitFlag && player_said("LADDER/GREEN VINE")) {
+		splitItems("WOODEN LADDER", "GREEN VINE");
+	} else if (splitFlag && player_said("LADDER/BROWN VINE")) {
+		splitItems("WOODEN LADDER", "BROWN VINE");
+	} else if (splitFlag && player_said("ENVELOPE")) {
+		splitItems("VON SELTSAM'S NOTE", "POSTAGE STAMP");
+		kernel_examine_inventory_object("PING VON SELTSAM'S NOTE", _G(master_palette),
+			5, 1, 270, 150, 10000, "406R18C",-1);
+	} else if (splitFlag && player_said("LADDER/VINES")) {
+		splitItems("WOODEN LADDER", "VINES");
+	} else if (splitFlag && player_said("VINES")) {
+		splitItems("GREEN VINE", "BROWN VINE");
+	} else if (splitFlag && player_said("POST MARKED ENVELOPE")) {
+		inv_move_object("POST MARKED ENVELOPE", NOWHERE);
+		inv_give_to_player("VON SELTSAM'S LETTER");
+		Common::strcpy_s(_G(player).noun, "VON SELTSAM'S LETTER");
+
+	} else if (player_said_any("LIGHTER", "LIT LIGHTER") && player_said("TURTLE")) {
+		digi_play("com090a", 1);
+	} else if (useFlag && HAS("LIGHTER")) {
+		inv_move_object("LIGHTER", NOWHERE);
+		inv_give_to_player("LIT LIGHTER");
+		digi_play("604_s01", 2);
+	} else if (useFlag && HAS("LIT LIGHTER")) {
+		inv_move_object("LIT LIGHTER", NOWHERE);
+		inv_give_to_player("LIGHTER");
+	} else if (useFlag && player_said_any("URN", "URN ") &&
+			_G(game).room_id != 802 && _G(game).room_id != 403) {
+		digi_play("COM072", 1, 255, -1, 997);
+	} else if (useFlag && player_said("UNLIT URN")) {
+		digi_play("COM073", 1, 255, -1, 997);
+
+	} else if ((player_said("journal", " ") ||
+			player_said("journal", "tower") ||
+			player_said("journal", "tower ") ||
+			player_said("journal", "dome") ||
+			player_said("journal", "observatory dome") ||
+			player_said("journal", "terrace")) &&
+			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun) &&
+			_G(game).room_id >= 504 && _G(game).room_id <= 510 &&
+			_G(game).room_id != 507) {
+		if (_G(flags)[kMocaMocheCartoon]) {
+			digi_play("COM029", 1, 255, -1, 997);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[V089] = 1;
+				_G(flags)[kMocaMocheCartoon] = 1;
+			}
+
+			sketchInJournal("COM028");
+		}
+	} else if ((player_said("journal", " ") || player_said("journal", "temple")) &&
+			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun) &&
+			_G(game).room_id >= 702 && _G(game).room_id <= 799) {
+		if (_G(flags)[kTempleCartoon]) {
+			digi_play("com033", 1);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[kTempleCartoon] = 1;
+				_G(flags)[V089] = 1;
+			}
+
+			sketchInJournal("com032");
+		}
+	} else if (player_said("journal") && player_said_any(" ", "lava") &&
+			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun) &&
+			_G(game).room_id >= 601 && _G(game).room_id <= 699) {
+		if (_G(flags)[kEasterIslandCartoon]) {
+			digi_play("203r54", 1);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[kEasterIslandCartoon] = 1;
+				_G(flags)[V089] = 1;
+			}
+
+			sketchInJournal("605r13");
+		}
+	} else if ((player_said("journal", "romanov emerald") ||
+			player_said("journal", "emerald/cork")) &&
+			!takeFlag && !lookFlag) {
+		if (_G(flags)[kEmeraldCartoon]) {
+			digi_play("407r33", 1);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[kEmeraldCartoon] = 1;
+				_G(flags)[V089] = 1;
+			}
+
+			sketchInJournal(nullptr);
+		}
+	} else if (player_said("journal", "rongorongo tablet") &&
+			!takeFlag && !lookFlag) {
+		if (_G(flags)[V288]) {
+			digi_play("com086", 1, 255, -1, 997);
+		} else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[V288] = 1;
+			}
+
+			sketchInJournal(nullptr);
+		}
+
+	} else if (lookFlag && player_said("JOURNAL")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1111);
+			break;
+		case 1111:
+			other_save_game_for_resurrection();
+			_G(game).setRoom(996);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("MEI CHEN")) {
+		digi_play("com043", 1);
+	} else if (lookFlag && player_said("feng li")) {
+		digi_play("com139", 1, 255, -1, 997);
+	} else if ((player_said("SHRUNKEN HEAD") ||
+			player_said("INCENSE BURNER") ||
+			player_said("CRYSTAL SKULL") ||
+			player_said("WHALE BONE HORN") ||
+			player_said("WHEELED TOY") ||
+			player_said("SILVER BUTTERFLY") ||
+			player_said("REBUS AMULET") ||
+			player_said("CHISEL") ||
+			player_said("GERMAN BANKNOTE") ||
+			player_said("POSTAGE STAMP") ||
+			player_said("STICK AND SHELL MAP") ||
+			player_said("ROMANOV EMERALD")) &&
+			player_said("agent")) {
+		digi_play("com021", 1, 255, -1, 997);
+	} else if (!lookFlag && !takeFlag && !useFlag && !talkFlag &&
+			player_said("AGENT")) {
+		if (player_said_any("US DOLLARS", "CHINESE YUAN", "POMERANIAN MARKS",
+			"PERUVIAN INTI", "GERMAN BANKNOTE", "SIKKIMESE RUPEE")) {
+			digi_play("COM012", 1, 255, -1, 997);
+		} else {
+			digi_play("COM017", 1, 255, -1, 997);
+		}
+	} else if ((lookFlag || useFlag) && player_said("MESSAGE LOG")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			showMessageLog(7777);
+			break;
+		case 1:
+			player_update_info();
+			_ripAction = series_load("RIP TREK READS TELEGRAM POS5");
+			setGlobals1(_ripAction, 1, 20, 20, 31, 2);
+			sendWSMessage_110000(2);
+			break;
+		case 2:
+			if (_G(player).walker_in_this_scene && _G(flags)[V292])
+				sendWSMessage_190000(12);
+
+			if (_G(flags)[V349] < 14) {
+				static const char *DIGI[14] = {
+					"201r26", "301r18", "301r19", "301r20", "301r21",
+					"201r61c","401R31", "401R37", "401r38", "401r39",
+					"501R02", "501R03", "701R39", "401R36"
+				};
+				digi_play(DIGI[_G(flags)[V349]], 1, 255, 3);
+			}
+			break;
+		case 3:
+			if (_G(player).walker_in_this_scene && _G(flags)[V292]) {
+				sendWSMessage_140000(5);
+				sendWSMessage_190000(5);
+			} else {
+				_G(flags)[V052] = 0;
+				player_set_commands_allowed(true);
+			}
+			break;
+		case 5:
+			series_unload(_ripAction);
+			_G(flags)[V052] = 0;
+			player_set_commands_allowed(true);
+			break;
+		case 7777:
+			if (_G(messageLogResult) != 16) {
+				_G(flags)[V052] = 1;
+
+				if (_G(player).walker_in_this_scene && _G(flags)[V292]) {
+					player_update_info();
+
+					switch (_G(player_info).facing) {
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+						ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 5, true);
+						break;
+					case 5:
+					case 7:
+						kernel_timing_trigger(1, 1);
+						player_set_commands_allowed(false);
+						break;
+					case 8:
+					case 9:
+					case 10:
+					case 11:
+						ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 7, true);
+						break;
+					default:
+						break;
+					}
+
+					player_set_commands_allowed(false);
+				} else {
+					kernel_timing_trigger(1, 2);
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("WHALE BONE HORN")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(player).walker_in_this_scene && _G(flags)[V292]) {
+				player_update_info();
+
+				switch (_G(player_info).facing) {
+				case 1:
+					ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 2, 1);
+					break;
+				case 2:
+				case 3:
+				case 9:
+				case 10:
+					kernel_timing_trigger(1, 1);
+					break;
+				case 4:
+				case 5:
+					ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 3, 1);
+					break;
+				case 7:
+				case 8:
+					ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 9, 1);
+					break;
+				case 11:
+					ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 10, 1);
+					break;
+				default:
+					break;
+				}
+
+				player_set_commands_allowed(false);
+
+			} else {
+				digi_play("950HORN", 1);
+			}
+			break;
+		case 1:
+			player_update_info();
+			_savedFacing = _G(player_info).facing;
+
+			if (_savedFacing == 2 || _savedFacing == 10) {
+				_ripAction = series_load("RIP HORN BLOW POS2");
+				setGlobals1(_ripAction, 1, 23, 24, 24, 0, 25, 33, 34, 34, 0, 35, 48, 48, 48);
+				sendWSMessage_110000(2);
+			} else {
+				_ripAction = series_load("RIP HORN BLOW POS3");
+				setGlobals1(_ripAction, 1, 23, 24, 24, 0, 25, 29, 30, 30, 0, 31, 42, 42, 42);
+				sendWSMessage_110000(2);
+			}
+			break;
+		case 2:
+			sendWSMessage_120000(3);
+			sendWSMessage_190000((_savedFacing == 3 || _savedFacing == 9) ? 40 : 20);
+			digi_play("950HORN", 1);
+			break;
+		case 3:
+			sendWSMessage_130000(4);
+			sendWSMessage_190000(5);
+			break;
+		case 4:
+			sendWSMessage_150000(5);
+			break;
+		case 5:
+			series_unload(_ripAction);
+
+			if (_G(game).room_id != 604 && _G(game).room_id != 610)
+				player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (_G(kernel).trigger == kINVENTORY_CLOSEUP_END) {
+		if (player_said_any("MENENDEZ'S LETTER", "VON SELTSAM'S LETTER",
+				"ENVELOPE", "VON SELTSAM'S NOTE"))
+			digi_stop(1);
+		player_set_commands_allowed(true);
+	} else if (_G(kernel).trigger == 10000) {
+		player_set_commands_allowed(false);
+		kernel_timing_trigger(1, 10001);
+	} else if (_G(kernel).trigger == 10001) {
+		player_set_commands_allowed(true);
+		digi_stop(1);
+		kernel_examine_inventory_object("PING POSTAGE STAMP", _G(master_palette), 5, 1,
+			270, 150, 990, "406R19", -1);
+	} else if (useFlag && HAS("TWELVETREES' NOTE")) {
+		inv_move_object("TWELVETREES' NOTE", NOWHERE);
+		inv_give_to_player("TWELVETREES' MAP");
+		Common::strcpy_s(_G(player).noun, "TWELVETREES' MAP");
+	} else if (lookFlag && player_said("TOWER")) {
+		digi_play("COM135", 1, 255, -1, 997);
+	} else if (lookFlag && inv_player_has(_G(player).noun)) {
+		lookAtInventoryItem();
+	} else if (player_said("LIT LIGHTER", "CIGAR WITHOUT BAND") ||
+			player_said("LIGHTER", "CIGAR WITHOUT BAND") ||
+			player_said("LIGHTER", "CIGAR") ||
+			player_said("LIT LIGHTER", "CIGAR") ||
+			(useFlag && player_said("CIGAR WITHOUT BAND"))) {
+		digi_play("com100", 1);
+	} else if (inv_player_has(_G(player).noun) && inv_player_has(_G(player).verb)) {
+		if (player_said("journal")) {
+			digi_play("com085", 1, 255, -1, 997);
+		} else {
+			digi_play("207R12", 1);
+		}
+	} else if (player_said("journal") && !takeFlag && !lookFlag &&
+			!inv_player_has(_G(player).noun)) {
+		switch (_G(game).room_id) {
+		case 202:
+			digi_play("202r16", 1);
+			break;
+		case 203:
+			digi_play("203r33", 1);
+			break;
+		case 301:
+			digi_play("310r12", 1);
+			break;
+		case 303:
+			digi_play("303R43", 1);
+			break;
+		case 304:
+			digi_play("304r78", 1);
+			break;
+		case 305:
+			digi_play("305r38", 1);
+			break;
+		default:
+			digi_play("com014", 1);
+			break;
+		}
+	} else if (lookFlag && _G(player).click_y <= 374 &&
+			inv_player_has(_G(player).noun)) {
+		switch (_G(game).room_id) {
+		case 301:
+			digi_play(_G(player).been_here_before ? "301r13" : "301r02", 1);
+			break;
+		case 303:
+			digi_play("303r23", 1);
+			break;
+		case 304:
+			digi_play(_G(flags)[V001] ? "304r02" : "304r55", 1);
+			break;
+		case 305:
+			digi_play("305r30", 1);
+			break;
+		case 605:
+			digi_play("605r02", 1);
+			break;
+		default:
+			break;
+		}
+	} else if (takeFlag && !inv_player_has(_G(player).noun)) {
+		static const char *DIGI[5] = {
+			"207r09", "207r10", "207r11", "207r38", "207r39"
+		};
+		digi_play(DIGI[imath_ranged_rand(0, 4)], 1);
+	} else if (!player_said("walk to")) {
+		switch (_G(game).room_id) {
+		case 407: {
+			static const char *DIGI[6] = {
+				"com006", "com011", "com018", "com019", "com096", "com129"
+			};
+			digi_play(DIGI[imath_ranged_rand(0, 5)], 1);
+			break;
+		}
+		case 604:
+		case 610:
+			if (_G(flags)[V203] == 8 &&
+				(inv_player_has(_G(player).verb) || inv_player_has(_G(player).noun)) &&
+				(!useFlag || !inv_player_has(_G(player).noun))
+			) {
+				digi_play(_G(game).room_id == 610 ? "610r16" : "604r33", 1);
+			} else {
+				static const char *DIGI[5] = {
+					"301r23", "301r26", "301r25", "301r35", "301r36"
+				};
+				digi_play(DIGI[imath_ranged_rand(0, 4)], 1);
+			}
+			break;
+		default: {
+			static const char *DIGI[5] = {
+				"301r23", "301r26", "301r25", "301r35", "301r36"
+			};
+			digi_play(DIGI[imath_ranged_rand(0, 4)], 1);
+			break;
+		}
+		}
+	}
 }
 
+void RiddleEngine::combineItems(const char *newItem) {
+	inv_move_object(_G(player).verb, NOWHERE);
+	inv_move_object(_G(player).noun, NOWHERE);
+	inv_give_to_player(newItem);
+}
+
+void RiddleEngine::splitItems(const char *item1, const char *item2) {
+	inv_move_object(_G(player).noun, NOWHERE);
+	inv_give_to_player(item1);
+	inv_give_to_player(item2);
+}
+
+void messageLogCallback(TextItem *textItem, TextScrn *textScrn) {
+	_G(flags[V349]) = textItem->tag - 1;
+	_G(messageLogResult) = textItem->tag;
+	TextScrn_Destroy(_G(messageScreen));
+	_G(messageScreen) = nullptr;
+	kernel_trigger_dispatchx(_G(messageLogTrigger));
+}
+
+void RiddleEngine::showMessageLog(int trigger) {
+	static const char *MESSAGE_TITLES[14] = {
+		"Reminder from Feng Li",
+		"Appeal for Oddities from Feng Li",
+		"2nd Appeal for Oddities from Feng Li",
+		"3rd Appeal for Oddities from Feng Li",
+		"Urgent Warning from Feng Li",
+		"Radiogram from Mei's Aunt & Uncle",
+		"Radiogram from Danzig Chief of Police",
+		"Message about Emerald from Feng Li",
+		"Ultimatum about Emerald from Feng Li",
+		"Refused Delivery",
+		"Radiogram from Prof. Menendez's Assistant",
+		"2nd Radiogram from Prof. Menendez's Assistant",
+		"Radiogram from Mei",
+		"Thank You Note from Feng Li"
+	};
+
+	_G(messageLogTrigger) = kernel_trigger_create(trigger);
+	gr_font_set(_G(font_inter));
+	const int32 fontHeight = gr_font_get_height();
+	int32 ecx = 0;
+	int32 maxWidth = 0;
+	
+	for (int i = 0; i < 14; ++i) {
+		if (_G(flags)[(Flag)(V350 + i)]) {
+			++ecx;
+			const int width = gr_font_string_width(MESSAGE_TITLES[i], 0);
+			if (width > maxWidth)
+				maxWidth = width;
+		}
+	}
+
+	if (ecx == 0)
+		return;
+
+	maxWidth += 16;
+	_G(messageScreen) = TextScrn_Create(601 - maxWidth, 361 - ((ecx + 2) * (fontHeight + 2) + 16), 600, 360, 65, 422, 13, 15);
+	TextScrn_Add_Message(_G(messageScreen), 8, 8, 0, TS_CENTRE, "MESSAGE LOG");
+
+	int32 edi = fontHeight + 14;
+	
+	int i = 0;
+	for (; i < 14; ++i) {
+		if (_G(flags)[(Flag)(V350 + i)]) {
+			TextScrn_Add_TextItem(_G(messageScreen), 8, edi, i + 1, TS_GIVEN, MESSAGE_TITLES[i], (M4CALLBACK)messageLogCallback);
+			edi += 1 + fontHeight;
+		}
+	}
+	TextScrn_Add_TextItem(_G(messageScreen), 8, edi + 4, i + 2, TS_GIVEN, "CLOSE LOG", (M4CALLBACK)messageLogCallback);
+	TextScrn_Activate(_G(messageScreen));
+}
+
+void RiddleEngine::hide_message_log_dialog() {
+	if (_G(messageScreen))
+		TextScrn_Destroy(_G(messageScreen));
+
+	_G(messageScreen) = nullptr;
+}
+
+void RiddleEngine::lookAtInventoryItem() {
+	if (_G(kernel).trigger != -1)
+		return;
+
+	const int f201 = _G(flags)[V201];
+	const int f207 = _G(flags)[V207];
+	const int f208 = _G(flags)[V208];
+	const int f209 = _G(flags)[V209];
+
+	Common::String str = "PING ";
+	str += _G(player).noun;
+	const char *digi = nullptr;
+
+	if (player_said("HORN/PULL CORD"))
+		digi = "COM117";
+	else if (player_said("HORN/PULL CORD/WATER"))
+		digi = "COM116";
+	else if (player_said("MENENDEZ'S LETTER"))
+		digi = "407r41";
+	else if (player_said("VON SELTSAM'S LETTER"))
+		digi = "303r10";
+	else if (player_said("VON SELTSAM'S NOTE"))
+		digi = "406R18";
+	else if (player_said("POSTAGE STAMP"))
+		digi = "406R19";
+	else if (player_said("TOMB MESSAGE")) {
+		if (_G(flags)[V031]) {
+			digi = "406R18";
+		} else {
+			digi = "406R18C";
+			_G(flags)[V031] = 1;
+		}
+	} else if (player_said("TWELVETREES' MAP")) {
+		if (!_G(flags)[V037]) {
+			_G(flags)[V037] = 1;
+			digi = player_been_here(623) ? "603r30" : "603r31";
+		}
+
+		str = "PING OBJ1";
+
+		if (!f201 && !f207 && !f209 && !f208)
+			str += "36";
+		else if (f201 && !f207 && !f209 && !f208)
+			str += "22";
+		else if (!f201 && f207 && !f209 && !f208)
+			str += "23";
+		else if (!f201 && !f207 && f209 && !f208)
+			str += "24";
+		else if (!f201 && !f207 && !f209 && f208)
+			str += "25";
+		else if (f201 && f207 && !f209 && !f208)
+			str += "26";
+		else if (f201 && !f207 && !f209 && f208)
+			str += "27";
+		else if (f201 && !f207 && f209 && !f208)
+			str += "28";
+		else if (!f201 && f207 && f209 && !f208)
+			str += "29";
+		else if (!f201 && f207 && !f209 && f208)
+			str += "30";
+		else if (!f201 && !f207 && f209 && f208)
+			str += "31";
+		else if (f201 && f207 && !f209 && f208)
+			str += "32";
+		else if (f201 && !f207 && f209 && f208)
+			str += "33";
+		else if (f201 && f207 && f209 && !f208)
+			str += "34";
+		else if (!f201 && f207 && f209 && f208)
+			str += "35";
+		else if (f201 && f207 && f209 && f208)
+			str = "PING TWELVETREES' MAP";
+	}
+
+	kernel_examine_inventory_object(str.c_str(), _G(master_palette), 5, 1, 270, 150, kINVENTORY_CLOSEUP_END, digi, -1);
+}
+
+void sketchInJournal(const char *digiName) {
+	int start = 0, finish = 0;
+
+	switch (_G(kernel).trigger) {
+	case -1:
+	case 8:
+		player_update_info();
+
+		switch (_G(player_info).facing) {
+		case 1:
+		case 2:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 2);
+			break;
+
+		case 3:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 3);
+			break;
+
+		case 4:
+		case 5:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 4);
+			break;
+
+		case 7:
+		case 8:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 8);
+			break;
+
+		case 9:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 9);
+			break;
+
+		case 10:
+		case 11:
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 10);
+			break;
+
+		default:
+			break;
+		}
+
+		player_set_commands_allowed(false);
+		break;
+
+	case 1:
+		player_update_info();
+		digi_preload("950_s34");
+
+		switch (_G(player_info).facing) {
+		case 2:
+		case 10:
+			finish = 39;
+			start = 17;
+			_G(ripSketching) = series_load("RIP SKETCHING IN NOTEBOOK POS 2");
+			break;
+
+		case 3:
+		case 9:
+			finish = 36;
+			start = 22;
+			_G(ripSketching) = series_load("RIP SKETCHING IN NOTEBOOK POS 3");
+			break;
+
+		case 4:
+		case 8:
+			finish = 45;
+			start = 19;
+			_G(ripSketching) = series_load("RIP SKETCHING IN NOTEBOOK POS 4");
+			break;
+
+		default:
+			break;
+		}
+
+		setGlobals1(_G(ripSketching), 1, start, start, start, 0, start + 1, finish, finish, finish);
+		sendWSMessage_110000(3);
+
+		if (digiName)
+			digi_play(digiName, 1);
+		break;
+
+	case 3:
+		if (_G(player_info).facing == 0 || _G(player_info).facing == 9)
+			sendWSMessage_190000(9);
+
+		sendWSMessage_120000(4);
+		digi_play("950_s34", 2, 200, 7);
+		break;
+
+	case 4:
+		sendWSMessage_110000(5);
+		break;
+
+	case 5:
+		sendWSMessage_140000(6);
+		break;
+
+	case 6:
+		series_unload(_G(ripSketching));
+		digi_unload("950_s34");
+		player_set_commands_allowed(true);
+		break;
+
+	case 7:
+		if (_G(player_info).facing == 3 || _G(player_info).facing == 9)
+			sendWSMessage_190000(5);
+		break;
+
+	default:
+		break;
+	}
+}
+
+bool RiddleEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	if (g_vars && _G(game).room_id == 494)
+		// Allow loading games from the main menu
+		return true;
+	else
+		return M4Engine::canLoadGameStateCurrently(msg);
+}
 } // namespace Riddle
 } // namespace M4

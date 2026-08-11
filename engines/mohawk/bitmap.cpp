@@ -669,7 +669,7 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	byte *newPal = nullptr;
 
 	if (bitmapDecoder.hasPalette()) {
-		const byte *palette = bitmapDecoder.getPalette();
+		const byte *palette = bitmapDecoder.getPalette().data();
 		newPal = (byte *)malloc(256 * 3);
 		memcpy(newPal, palette, 256 * 3);
 	}
@@ -752,7 +752,7 @@ MohawkSurface *LivingBooksBitmap_v1::decodeImageLB(Common::SeekableReadStreamEnd
 }
 
 // Partially based on the Prince of Persia Format Specifications
-// See http://sdfg.com.ar/git/?p=fp-git.git;a=blob;f=FP/doc/FormatSpecifications
+// See https://sdfg.com.ar/git/r/fp-git.git/b/master/t/FP/doc/f=FormatSpecifications.html
 
 MohawkSurface *DOSBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	_header.height = stream->readUint16LE();

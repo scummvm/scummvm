@@ -24,6 +24,7 @@
 #include "sherlock/sherlock.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "graphics/palette.h"
 
 namespace Sherlock {
 
@@ -48,13 +49,13 @@ ImageFile::ImageFile(const Common::Path &name, bool skipPal, bool animImages) {
 	_name = name;
 	_stream = _vm->_res->load(name);
 
-	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
+	Common::fill(&_palette[0], &_palette[Graphics::PALETTE_SIZE], 0);
 	load(*_stream, skipPal, animImages);
 }
 
 ImageFile::ImageFile(Common::SeekableReadStream &stream, bool skipPal) {
 	_stream = nullptr;
-	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
+	Common::fill(&_palette[0], &_palette[Graphics::PALETTE_SIZE], 0);
 	load(stream, skipPal, false);
 }
 
@@ -191,8 +192,8 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 		}
 		// Found palette, so read it in
 		stream.seek(8, SEEK_CUR); // Skip over the rest of the signature text "VGA palette"
-		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
-			_palette[idx] = VGA_COLOR_TRANS(stream.readByte());
+		for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx)
+			_palette[idx] = PALETTE_6BIT_TO_8BIT(stream.readByte());
 	} else {
 		// Not a palette, so rewind to start of frame data for normal frame processing
 		stream.seek(-8, SEEK_CUR);

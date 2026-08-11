@@ -30,30 +30,44 @@ namespace Rooms {
 
 class Room304 : public Room {
 private:
+	bool _closeCartoonFl = false;
 	int _val1 = 0;
-	int _val2 = 0;
-	int _val3 = 0;
-	int _val4 = 0;
+	bool _useSword = false;
+	bool _useHandlingStick = false;
+	bool _cobraKillingFl = false;
 	machine *_sword = nullptr;
 	machine *_trunk = nullptr;
 	machine *_stick = nullptr;
-	machine *_handle = nullptr;
 	int _smoke = -1;
-	machine *_machine1 = nullptr;
+	machine *_mei = nullptr;
 	machine *_machine2 = nullptr;
-	machine *_machine3 = nullptr;
+	machine *_cartoonMach = nullptr;
+	machine *_cobraKills = nullptr;
+	machine *_field60 = nullptr;
 	int _cutSnake = -1;
 	int _mei1 = -1;
 	int _mei2 = -1;
 	int _mei3 = -1;
 	int _cobra = -1;
+	int _headUp1 = -1;
+	machine *_headUp2 = nullptr;
+	int _suit1 = 0;
+	int _suit2 = 0;
+	int _suit3 = 0;
+	int _safe1 = 0;
+	int _safe2 = 0;
+	machine *_safe3 = nullptr;
+
+	int _ctr1 = 0;
 
 	static void intrMsg(frac16 myMessage, struct machine *sender);
+	void handlingStickAndSword();
 
 public:
 	Room304() : Room() {}
 	~Room304() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 	void pre_parser() override;

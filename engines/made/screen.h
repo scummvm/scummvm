@@ -26,6 +26,8 @@
 
 #include "common/rect.h"
 
+#include "graphics/cursor.h"
+
 namespace Made {
 
 struct SpriteChannel {
@@ -37,6 +39,7 @@ struct SpriteChannel {
 	int16 textColor, outlineColor;
 	int16 frameNum;
 	int16 mask;
+	Common::String previousText;
 };
 
 struct ClipInfo {
@@ -129,6 +132,9 @@ public:
 		_textY = _textRect.top;
 	}
 
+	void setQueueNextText(bool value) { _queueNextText = value; }
+	void setVoiceTimeText(bool value) { _voiceTimeText = value; }
+
 	uint16 updateChannel(uint16 channelIndex);
 	void deleteChannel(uint16 channelIndex);
 	int16 getChannelType(uint16 channelIndex);
@@ -160,6 +166,9 @@ public:
 	int16 getAnimFrame(uint16 channelIndex);
 
 	uint16 placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, int16 y, uint16 fontNum, int16 textColor, int16 outlineColor);
+#ifdef USE_TTS
+	void voiceChannelText(const char *text, uint16 channelIndex);
+#endif
 
 	void show();
 	void flash(int count);
@@ -182,6 +191,7 @@ public:
 	SpriteListItem getFromSpriteList(int16 index);
 	void clearSpriteList();
 
+	void setMouseCursor(const Graphics::Cursor *cursor);
 	void setDefaultMouseCursor();
 
 protected:
@@ -215,6 +225,9 @@ protected:
 
 	uint16 _channelsUsedCount;
 	SpriteChannel _channels[100];
+
+	bool _queueNextText;
+	bool _voiceTimeText;
 
 	Common::Array<SpriteListItem> _spriteList;
 

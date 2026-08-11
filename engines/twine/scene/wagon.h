@@ -29,10 +29,10 @@ namespace TwinE {
 
 class Wagon {
 private:
-	TwinEEngine *_engine;
+	//TwinEEngine *_engine;
 
 public:
-	Wagon(TwinEEngine *engine) : _engine(engine) {}
+	Wagon(TwinEEngine *engine) /* : _engine(engine) */ {}
 
 	void DoAnimWagon();
 	void DoDirWagon(ActorStruct *ptrobj);

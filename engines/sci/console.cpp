@@ -44,7 +44,7 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint16.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/view.h"
 
@@ -304,7 +304,7 @@ void Console::postEnter() {
 			playVideo(*videoDecoder);
 			_engine->_gfxCursor->kernelShow();
 		} else
-			warning("Could not play video %s\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
+			warning("Could not play video %s", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
 
 		_videoFile.clear();
 		_videoFrameDelay = 0;
@@ -377,7 +377,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" draw_cel - Draws a cel from a view resource\n");
 	debugPrintf(" pic_visualize - Enables visualization of the drawing process of EGA pictures\n");
 	debugPrintf(" undither - Enable/disable undithering\n");
-	debugPrintf(" play_video - Plays a SEQ, AVI, VMD, RBT or DUK video\n");
+	debugPrintf(" play_video - Plays a SEQ or AVI video\n");
 	debugPrintf(" animate_list / al - Shows the current list of objects in kAnimate's draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" window_list / wl - Shows a list of all the windows (ports) in the draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" plane_list / pl - Shows a list of all the planes in the draw list (SCI2+)\n");
@@ -1329,14 +1329,14 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	Common::List<ResourceId> resources = _engine->getResMan()->listResources(kResourceTypeSound);
 	Common::sort(resources.begin(), resources.end());
 	int instruments[128];
-	bool instrumentsSongs[128][1000];
+	uint8 instrumentsSongs[128][1000 / 8];
 
 	for (int i = 0; i < 128; i++)
 		instruments[i] = 0;
 
 	for (int i = 0; i < 128; i++)
-		for (int j = 0; j < 1000; j++)
-			instrumentsSongs[i][j] = false;
+		for (int j = 0; j < 1000 / 8; j++)
+			instrumentsSongs[i][j] = 0;
 
 	if (songNumber == -1) {
 		debugPrintf("%d sounds found, checking their instrument mappings...\n", resources.size());
@@ -1396,7 +1396,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 
 					debugPrintf(" %d", instrument);
 					instruments[instrument]++;
-					instrumentsSongs[instrument][itr->getNumber()] = true;
+					instrumentsSongs[instrument][itr->getNumber() >> 3] |= 1 << (itr->getNumber() & 7);
 				} else {
 					channelData++;
 				}
@@ -1462,7 +1462,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 			if (instruments[i] > 0) {
 				debugPrintf("Instrument %d: ", i);
 				for (int j = 0; j < 1000; j++) {
-					if (instrumentsSongs[i][j])
+					if ((instrumentsSongs[i][j >> 3] & (1 << (j & 7))) != 0)
 						debugPrintf("%d, ", j);
 				}
 				debugPrintf("\n");
@@ -2280,8 +2280,6 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 					debugPrintf(" priority");
 				if (mask & GFX_SCREEN_MASK_CONTROL)
 					debugPrintf(" control");
-				if (mask & GFX_SCREEN_MASK_DISPLAY)
-					debugPrintf(" display");
 				debugPrintf("\n");
 			}
 		}
@@ -2361,8 +2359,6 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 		debugPrintf(" priority");
 	if (mask & GFX_SCREEN_MASK_CONTROL)
 		debugPrintf(" control");
-	if (mask & GFX_SCREEN_MASK_DISPLAY)
-		debugPrintf(" display");
 	debugPrintf("\n");
 
 	if (!_engine->_gfxPaint16 || !_engine->_gfxScreen)
@@ -4032,7 +4028,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		_engine->_gamestate->_executionStackPosChanged = true;
 		debugPrintf("Message scheduled for execution\n");
 
-		// We call run_engine explictly so we can restore the value of r_acc
+		// We call run_engine explicitly so we can restore the value of r_acc
 		// after execution.
 		run_vm(_engine->_gamestate);
 		_engine->_gamestate->xs = old_xstack;
@@ -4267,8 +4263,7 @@ bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
-	Breakpoint bp;
-	bp._type = BREAK_SELECTOREXEC;
+	Breakpoint bp(BREAK_SELECTOREXEC);
 	bp._name = argv[1];
 	bp._action = action;
 
@@ -4301,8 +4296,7 @@ bool Console::cmdBreakpointRead(int argc, const char **argv) {
 		}
 	}
 
-	Breakpoint bp;
-	bp._type = BREAK_SELECTORREAD;
+	Breakpoint bp(BREAK_SELECTORREAD);
 	bp._name = argv[1];
 	bp._action = action;
 
@@ -4335,8 +4329,7 @@ bool Console::cmdBreakpointWrite(int argc, const char **argv) {
 		}
 	}
 
-	Breakpoint bp;
-	bp._type = BREAK_SELECTORWRITE;
+	Breakpoint bp(BREAK_SELECTORWRITE);
 	bp._name = argv[1];
 	bp._action = action;
 
@@ -4401,8 +4394,7 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 		return true;
 	}
 
-	Breakpoint bp;
-	bp._type = BREAK_KERNEL;
+	Breakpoint bp(BREAK_KERNEL);
 	bp._name = pattern;
 	bp._action = action;
 
@@ -4433,11 +4425,7 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 		}
 	}
 
-	/* Note: We can set a breakpoint on a method that has not been loaded yet.
-	   Thus, we can't check whether the command argument is a valid method name.
-	   A breakpoint set on an invalid method name will just never trigger. */
-	Breakpoint bp;
-	bp._type = BREAK_EXPORT;
+	Breakpoint bp(BREAK_EXPORT);
 	// script number, export number
 	bp._address = (atoi(argv[1]) << 16 | atoi(argv[2]));
 	bp._action = action;
@@ -4475,8 +4463,7 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 		}
 	}
 
-	Breakpoint bp;
-	bp._type = BREAK_ADDRESS;
+	Breakpoint bp(BREAK_ADDRESS);
 	bp._regAddress = make_reg32(addr.getSegment(), addr.getOffset());
 	bp._action = action;
 

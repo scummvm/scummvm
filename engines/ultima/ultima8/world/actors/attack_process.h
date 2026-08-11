@@ -84,7 +84,7 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-	static const uint16 ATTACK_PROC_TYPE;
+	static const uint16 ATTACK_PROC_TYPE = 0x259;
 private:
 	/** Set the current tactic in use from the combat.dat file.  If 0,
 	 * will use the genericAttack function. */

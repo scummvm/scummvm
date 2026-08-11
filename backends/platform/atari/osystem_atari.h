@@ -24,12 +24,15 @@
 
 #include "backends/modular-backend.h"
 
-class OSystem_Atari : public ModularMixerBackend, public ModularGraphicsBackend {
+class OSystem_Atari final : public ModularMixerBackend, public ModularGraphicsBackend {
 public:
 	OSystem_Atari();
 	virtual ~OSystem_Atari();
 
 	void initBackend() override;
+
+	void engineInit() override;
+	void engineDone() override;
 
 	Common::MutexInternal *createMutex() override;
 	uint32 getMillis(bool skipRecord = false) override;
@@ -40,6 +43,7 @@ public:
 	Common::HardwareInputSet *getHardwareInputSet() override;
 
 	void quit() override;
+	void fatalError() override;
 
 	void logMessage(LogMessageType::Type type, const char *message) override;
 
@@ -51,14 +55,11 @@ public:
 private:
 	long _startTime;
 
-	bool _videoInitialized = false;
 	bool _timerInitialized = false;
 
 	int16 _vdi_handle;
 	int _vdi_width;
 	int _vdi_height;
-
-	void (*_old_procterm)(void) = nullptr;
 };
 
 #endif

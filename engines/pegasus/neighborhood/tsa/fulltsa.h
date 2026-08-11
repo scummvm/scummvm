@@ -73,7 +73,7 @@ public:
 	bool canSolve() override;
 	void doSolve() override;
 
-	void updateCursor(const Common::Point, const Hotspot *) override;
+	void updateCursor(const Common::Point &, const Hotspot *) override;
 
 protected:
 	enum {

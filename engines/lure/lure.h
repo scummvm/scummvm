@@ -59,9 +59,31 @@ enum LureLanguage {
 	LANG_DE_DEU = 7,
 	LANG_ES_ESP = 17,
 	LANG_EN_ANY = 3,
-	LANG_RU_RUS = 3,	// English data has been overridden
+	LANG_RU_RUS = 5,
 	LANG_EN_KONAMI = 4,
 	LANG_UNKNOWN = -1
+};
+
+enum LUREActions {
+	kActionNone,
+	kActionSaveGame,
+	kActionRestoreGame,
+	kActionRestartGame,
+	kActionQuitGame,
+	kActionEscape,
+	kActionFightMoveLeft,
+	kActionFightMoveRight,
+	kActionFightCursorLeftTop,
+	kActionFightCursorLeftMiddle,
+	kActionFightCursorLeftBottom,
+	kActionFightCursorRightTop,
+	kActionFightCursorRightMiddle,
+	kActionFightCursorRightBottom,
+	kActionIndexNext,
+	kActionIndexPrevious,
+	kActionIndexSelect,
+	kActionYes,
+	kActionNo
 };
 
 struct LureGameDescription;

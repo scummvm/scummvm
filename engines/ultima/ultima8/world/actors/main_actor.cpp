@@ -19,35 +19,34 @@
  *
  */
 
-#include "ultima/ultima.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/teleport_egg.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
-#include "ultima/ultima8/world/target_reticle_process.h"
-#include "ultima/ultima8/world/camera_process.h"
-#include "ultima/ultima8/gfx/shape_info.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/world/actors/avatar_death_process.h"
-#include "ultima/ultima8/kernel/delay_process.h"
+
+#include "ultima/ultima.h"
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/gfx/anim_dat.h"
+#include "ultima/ultima8/gfx/shape_info.h"
 #include "ultima/ultima8/gfx/wpn_ovlay_dat.h"
-#include "ultima/ultima8/gfx/main_shape_archive.h"
 #include "ultima/ultima8/gumps/cru_pickup_area_gump.h"
-#include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/world/fire_type.h"
-#include "ultima/ultima8/world/sprite_process.h"
-#include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
-#include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/world/actors/avatar_death_process.h"
+#include "ultima/ultima8/world/actors/avatar_gravity_process.h"
+#include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
+#include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/fire_type.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/teleport_egg.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -98,10 +97,9 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 		// valid item type?
 		if (equiptype == ShapeInfo::SE_NONE && !backpack) return false;
 
-		Std::list<Item *>::iterator iter;
-		for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-			uint32 cet = (*iter)->getShapeInfo()->_equipType;
-			bool cbackpack = ((*iter)->getShape() == backpack_shape);
+		for (const auto *i : _contents) {
+			uint32 cet = i->getShapeInfo()->_equipType;
+			bool cbackpack = (i->getShape() == backpack_shape);
 
 			// already have an item with the same equiptype
 			if (cet == equiptype || (cbackpack && backpack)) return false;
@@ -433,10 +431,9 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 uint16 MainActor::getDefenseType() const {
 	uint16 type = 0;
 
-	Std::list<Item *>::const_iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		uint32 frameNum = (*iter)->getFrame();
-		const ShapeInfo *si = (*iter)->getShapeInfo();
+	for (const auto *i : _contents) {
+		uint32 frameNum = i->getFrame();
+		const ShapeInfo *si = i->getShapeInfo();
 		if (si->_armourInfo) {
 			type |= si->_armourInfo[frameNum]._defenseType;
 		}
@@ -448,10 +445,9 @@ uint16 MainActor::getDefenseType() const {
 uint32 MainActor::getArmourClass() const {
 	uint32 armour = 0;
 
-	Std::list<Item *>::const_iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		uint32 frameNum = (*iter)->getFrame();
-		const ShapeInfo *si = (*iter)->getShapeInfo();
+	for (const auto *i : _contents) {
+		uint32 frameNum = i->getFrame();
+		const ShapeInfo *si = i->getShapeInfo();
 		if (si->_armourInfo) {
 			armour += si->_armourInfo[frameNum]._armourClass;
 		}
@@ -705,7 +701,7 @@ void MainActor::addKeycard(int bitno) {
 	_keycards |= (1 << bitno);
 }
 
-static uint16 getIdOfNextItemInList(const Std::vector<Item *> &items, uint16 current) {
+static uint16 getIdOfNextItemInList(const Common::Array<Item *> &items, uint16 current) {
 	const int n = items.size();
 	if (n == 0)
 		return 0;
@@ -723,7 +719,7 @@ static uint16 getIdOfNextItemInList(const Std::vector<Item *> &items, uint16 cur
 }
 
 void MainActor::nextWeapon() {
-	Std::vector<Item *> weapons;
+	Common::Array<Item *> weapons;
 	getItemsWithShapeFamily(weapons, ShapeInfo::SF_CRUWEAPON, true);
 	_activeWeapon = getIdOfNextItemInList(weapons, _activeWeapon);
 
@@ -750,7 +746,7 @@ void MainActor::dropWeapon() {
 }
 
 void MainActor::nextInvItem() {
-	Std::vector<Item *> items;
+	Common::Array<Item *> items;
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUINVITEM, true);
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUBOMB, true);
 	if (GAME_IS_REMORSE) {
@@ -801,7 +797,7 @@ bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
 	}
 
 	uint8 namelength = rs->readByte();
-	_name.resize(namelength);
+	_name.assign(namelength, ' ');
 	for (unsigned int i = 0; i < namelength; ++i)
 		_name[i] = rs->readByte();
 

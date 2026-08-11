@@ -31,6 +31,10 @@
 
 #include "engines/playground3d/gfx.h"
 
+namespace OpenGL {
+class Texture;
+}
+
 namespace Playground3d {
 
 class OpenGLRenderer : public Renderer {
@@ -51,19 +55,20 @@ public:
 	void setupViewport(int x, int y, int width, int height) override;
 	void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 	void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
+	void drawQuadStripTest() override;
 	void dimRegionInOut(float fade) override;
 	void drawInViewport() override;
 	void drawRgbaTexture() override;
 
 	void enableFog(const Math::Vector4d &fogColor) override;
+	void disableFog() override;
+
+	void enableScissor(int x, int y, int width, int height) override;
+	void disableScissor() override;
 
 private:
 	Math::Vector3d _pos;
-	GLuint _textureRgbaId[5];
-	GLuint _textureRgbId[5];
-	GLuint _textureRgb565Id[2];
-	GLuint _textureRgba5551Id[2];
-	GLuint _textureRgba4444Id[2];
+	OpenGL::Texture *_textures[TextureType::MAX];
 
 	void drawFace(uint face);
 };

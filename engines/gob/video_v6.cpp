@@ -28,24 +28,32 @@
 #include "common/endian.h"
 #include "common/savefile.h"
 
+#include "graphics/blit.h"
 #include "graphics/conversion.h"
 
+#include "gob/dataio.h"
 #include "gob/gob.h"
 #include "gob/video.h"
-#include "gob/util.h"
-#include "gob/draw.h"
-#include "gob/global.h"
 
 namespace Gob {
 
-Video_v6::Video_v6(GobEngine *vm) : Video_v2(vm) {
+Video_v6::Video_v6(GobEngine *vm) : Video_v2(vm), _highColorPackedSpriteFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)
+{
 }
 
 char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	    int16 x, int16 y, int16 transp, Surface &destDesc) {
 
 	if ((sprBuf[0] == 1) && (sprBuf[1] == 3)) {
-		drawPacked(sprBuf, x, y, destDesc);
+		if (transp != 0) {
+			int16 width = READ_LE_UINT16(sprBuf + 2);
+			int16 height = READ_LE_UINT16(sprBuf + 4);
+			Surface tempSurf(width, height, destDesc.getBPP());
+			drawPacked(sprBuf, 0, 0, tempSurf);
+			destDesc.blit(tempSurf, 0, 0, width - 1, height - 1, x, y, 0);
+		} else {
+			drawPacked(sprBuf, x, y, destDesc);
+		}
 		return 1;
 	}
 
@@ -67,6 +75,10 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	return 1;
 }
 
+#ifndef INT32_MAX
+#define INT32_MAX              (2147483647)
+#endif
+
 void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDesc) {
 	const byte *data = sprBuf + 2;
 
@@ -75,22 +87,50 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDes
 	data += 4;
 
 	const byte *srcData = data;
-	byte *uncBuf = nullptr;
+	byte dataType = *srcData++;
 
-	if (*srcData++ != 0) {
-		uint32 size = READ_LE_UINT32(data);
+	if (dataType == 0) {
+		// Uncompressed YUV data
+		drawYUVData(srcData, surfDesc, width, height, x, y);
+	} else if (dataType == 1) {
+		// Compressed YUV data
+		warning("drawPacked: untested case, compressed YUV data");
+		int32 uncompresedSize = 0;
+		byte *uncompressedData = DataIO::unpack(srcData, INT32_MAX, uncompresedSize, 1);
+		drawYUVData(uncompressedData, surfDesc, width, height, x, y);
+		delete[] uncompressedData;
+	} else if (dataType == 3) {
+		// Compressed high-color RGB data
+		int32 uncompresesSize = 0;
+		byte *uncompressedData = DataIO::unpack(srcData, INT32_MAX, uncompresesSize, 1);
+		Graphics::PixelFormat &format = _highColorPackedSpriteFormat;
 
-		uncBuf = new byte[size];
+		if (_vm->getPixelFormat().aBits() > 0) {
+			// We need to force the transparent color 0 to be mapped to 0 in the target format
+			// First we fill the destination area with 0, then we will cross-blit skipping pixels with value 0 in the source
+			surfDesc.fillRectRaw(x, y, x + width - 1, y + height - 1, 0);
+		}
 
-		//spriteUncompressor(data, buf);
-		warning("Urban Stub: drawPacked: spriteUncompressor(data, uncBuf)");
+		bool conversionOk = false;
+		if (_vm->getPixelFormat().aBits() > 0) {
+			conversionOk = Graphics::crossKeyBlit(surfDesc.getData(x, y), uncompressedData,
+												  surfDesc.getWidth() * surfDesc.getBPP(), width * format.bytesPerPixel,
+												  width, height,
+												  _vm->getPixelFormat(), format, 0);
+		} else {
+			conversionOk = Graphics::crossBlit(surfDesc.getData(x, y), uncompressedData,
+											   surfDesc.getWidth() * surfDesc.getBPP(), width * format.bytesPerPixel,
+											   width, height,
+											   _vm->getPixelFormat(), format);
+		}
 
-		srcData = uncBuf;
+		if (!conversionOk)
+			warning("drawPacked: error when cross-blitting from compressed RGB high-color data");
+
+		delete[] uncompressedData;
+	} else {
+		warning("drawPacked: unknown compression type %d", dataType);
 	}
-
-	drawYUVData(srcData, surfDesc, width, height, x, y);
-
-	delete[] uncBuf;
 }
 
 void Video_v6::drawYUVData(const byte *srcData, Surface &destDesc,

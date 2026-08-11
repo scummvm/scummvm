@@ -290,14 +290,14 @@ void Cursor::UnHideCursorTrails() {
 }
 
 /**
- * Delete auxillary cursor. Restore animation offsets in the image.
+ * Delete auxiliary cursor. Restore animation offsets in the image.
  */
 void Cursor::DelAuxCursor() {
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_auxCursor);
 }
 
 /**
- * Set auxillary cursor.
+ * Set auxiliary cursor.
  * Save animation offsets from the image if required.
  */
 void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
@@ -322,14 +322,14 @@ void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
 
 	GetCursorXY(&x, &y, false);	// Note: also waits for cursor to appear
 
-	pim = _vm->_handle->GetImage(READ_32(pFrame)); // Get pointer to auxillary cursor's image
+	pim = _vm->_handle->GetImage(READ_32(pFrame)); // Get pointer to auxiliary cursor's image
 
 	_auxCursorOffsetX = (short)(pim->imgWidth / 2 - ((int16) pim->anioffX));
 	_auxCursorOffsetY = (short)((pim->imgHeight & ~C16_FLAG_MASK) / 2 -
 		((int16) pim->anioffY));
 	delete pim;
 
-	// Initialize and insert the auxillary cursor object
+	// Initialize and insert the auxiliary cursor object
 	_auxCursor = MultiInitObject(pmi);
 	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _auxCursor);
 
@@ -425,7 +425,7 @@ void Cursor::InitCurObj() {
 	}
 
 	if (TinselVersion <= 1)
-		_auxCursor = nullptr; // No auxillary cursor
+		_auxCursor = nullptr; // No auxiliary cursor
 
 	_mainCursor = MultiInitObject(pmi);
 	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _mainCursor);
@@ -476,7 +476,7 @@ void Cursor::DropCursor() {
 		_cursorProcessesRestarted = false;
 	}
 
-	_auxCursor = nullptr;		// No auxillary cursor
+	_auxCursor = nullptr;		// No auxiliary cursor
 	_mainCursor = nullptr;		// No cursor object (imminently deleted elsewhere)
 	_hiddenCursor = false;	// Not hidden in next scene
 	_hiddenTrails = false;	// Trailers not hidden in next scene

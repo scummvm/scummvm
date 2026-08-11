@@ -30,6 +30,7 @@
 #include "buried/graphics.h"
 #include "buried/inventory_window.h"
 #include "buried/livetext.h"
+#include "buried/message.h"
 #include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/scene_view.h"
@@ -673,6 +674,9 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 	if (_vm->isDemo() && newSceneStaticData.location.environment != oldLocation.environment)
 		startDemoAmbientSound();
 
+	// Ensure cursor icon matches interaction points at the destination node.
+	resetCursor();
+
 	return true;
 }
 
@@ -744,6 +748,8 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	_vm->_sound->setAmbientSound();
 	_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_BC_JUMP_AUDIO_FILENAME));
 
+	_vm->enableCutsceneKeymap(true);
+
 	// Play the movie
 	jumpMovie->playToFrame(24);
 
@@ -751,6 +757,8 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 		_vm->yield(jumpMovie.get(), -1);
 		_vm->_sound->timerCallback();
 	}
+
+	_vm->enableCutsceneKeymap(false);
 
 	if (_vm->shouldQuit())
 		return true;
@@ -791,11 +799,15 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 
 	_vm->_sound->stop();
 
+	_vm->enableCutsceneKeymap(true);
+
 	// Play the movie
 	jumpMovie->playVideo();
 
 	while (!_vm->shouldQuit() && jumpMovie->getMode() != VideoWindow::kModeStopped)
 		_vm->yield(jumpMovie.get(), -1);
+
+	_vm->enableCutsceneKeymap(false);
 
 	if (_vm->shouldQuit())
 		return true;
@@ -876,6 +888,8 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 	startEnvironmentAmbient(oldLocation.timeZone, oldLocation.environment, newLocation.timeZone, newLocation.environment);
 	_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_BC_JUMP_AUDIO_FILENAME));
 
+	_vm->enableCutsceneKeymap(true);
+	
 	// Play the movie
 	jumpMovie->seekToFrame(24);
 	jumpMovie->playToFrame(48);
@@ -884,6 +898,8 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 		_vm->yield(jumpMovie.get(), -1);
 		_vm->_sound->timerCallback();
 	}
+
+	_vm->enableCutsceneKeymap(false);
 
 	if (_vm->shouldQuit())
 		return true;
@@ -1053,6 +1069,8 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 	if (audioStream)
 		_vm->_sound->stop();
 
+	_vm->enableCutsceneKeymap(true);
+
 	animationMovie->seekToFrame(destinationData.transitionStartFrame);
 	animationMovie->showWindow(kWindowShow);
 	animationMovie->playToFrame(destinationData.transitionStartFrame + destinationData.transitionLength - 1);
@@ -1062,6 +1080,8 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 		_vm->_sound->timerCallback();
 	}
 
+	_vm->enableCutsceneKeymap(false);
+
 	if (_vm->shouldQuit()) {
 		newBackground->free();
 		delete newBackground;
@@ -1069,16 +1089,21 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 		return true;
 	}
 
-	animationMovie.reset();
-
-	if (audioStream)
-		_vm->_sound->restart();
-
+	// Update `_preBuffer` with the destination background and push it to the screen BEFORE
+	// destroying the video window. Resetting animationMovie triggers an immediate window repaint.
+	// Blitting newBackground into _preBuffer here ensures that when the movie ends, the display
+	// shows the intended target destination frame rather than stale video content.
 	if (newBackground) {
 		_vm->_gfx->crossBlit(_preBuffer, 0, 0, 432, 189, newBackground, 0, 0);
 		newBackground->free();
 		delete newBackground;
+		newBackground = nullptr;
 	}
+
+	animationMovie.reset();
+
+	if (audioStream)
+		_vm->_sound->restart();
 
 	_paused = false;
 
@@ -1123,11 +1148,15 @@ bool SceneViewWindow::walkTransition(const Location &location, const Destination
 	// Start the footsteps
 	_vm->_sound->startFootsteps(destinationData.transitionData);
 
+	_vm->enableCutsceneKeymap(true);
+
 	_walkMovie->playToFrame(destinationData.transitionStartFrame + destinationData.transitionLength - 1);
 	while (!_vm->shouldQuit() && _walkMovie->getMode() != VideoWindow::kModeStopped) {
 		_vm->yield(_walkMovie, -1);
 		_vm->_sound->timerCallback();
 	}
+
+	_vm->enableCutsceneKeymap(false);
 
 	if (_vm->shouldQuit()) {
 		newBackground->free();
@@ -1489,6 +1518,7 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	// Empty the input queue
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	// Stop background sound if the video has sound
 	if (animDatabase[i].audioStreamCount > 0)
@@ -1496,16 +1526,21 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 
 	animationMovie->playToFrame(animDatabase[i].startFrame + animDatabase[i].frameCount - 1);
 
+	_vm->enableCutsceneKeymap(true);
+
 	while (!_vm->shouldQuit() && animationMovie->getMode() != VideoWindow::kModeStopped) {
 		_vm->yield(animationMovie.get(), -1);
 		_vm->_sound->timerCallback();
 	}
+
+	_vm->enableCutsceneKeymap(false);
 
 	if (_vm->shouldQuit())
 		return true;
 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	// Restart background sound if the video had sound
 	if (animDatabase[i].audioStreamCount > 0)
@@ -1535,9 +1570,12 @@ bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
 	// Empty the input queue
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	_vm->_sound->stop();
 	animationMovie->playVideo();
+
+	_vm->enableCutsceneKeymap(true);
 
 	while (!_vm->shouldQuit() && animationMovie->getMode() != VideoWindow::kModeStopped) {
 		_vm->yield(animationMovie.get(), -1);
@@ -1547,9 +1585,12 @@ bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
 	if (_vm->shouldQuit())
 		return true;
 
+	_vm->enableCutsceneKeymap(false);
+
 	_vm->_sound->restart();
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_STOPPED) == SC_FALSE)
 		return false;
@@ -1599,10 +1640,13 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	// Empty the input queue
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	// Stop background sound if the video has sound
 	if (animDatabase[i].audioStreamCount > 0)
 		_vm->_sound->stop();
+
+	_vm->enableCutsceneKeymap(true);
 
 	animationMovie->playToFrame(animDatabase[i].startFrame + animDatabase[i].frameCount - 1);
 
@@ -1611,11 +1655,14 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 		_vm->_sound->timerCallback();
 	}
 
+	_vm->enableCutsceneKeymap(false);
+
 	if (_vm->shouldQuit())
 		return true;
 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	// Restart background sound if the video had sound
 	if (animDatabase[i].audioStreamCount > 0)
@@ -1672,10 +1719,13 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 	// Empty the input queue
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	// Stop background sound if the video has sound
 	if (animDatabase[i].audioStreamCount > 0)
 		_vm->_sound->stop();
+
+	_vm->enableCutsceneKeymap(true);
 
 	animationMovie->playToFrame(animDatabase[i].startFrame + animDatabase[i].frameCount - 1);
 
@@ -1684,11 +1734,14 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 		_vm->_sound->timerCallback();
 	}
 
+	_vm->enableCutsceneKeymap(false);
+
 	if (_vm->shouldQuit())
 		return true;
 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	// Restart background sound if the video had sound
 	if (animDatabase[i].audioStreamCount > 0)
@@ -2246,75 +2299,69 @@ void SceneViewWindow::onMouseMove(const Common::Point &point, uint flags) {
 		_currentScene->mouseMove(this, point);
 }
 
-void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
-	switch (key.keycode) {
-	case Common::KEYCODE_a:
-		if ((key.flags & Common::KBD_CTRL) && ((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipAI)) {
+void SceneViewWindow::onActionEnd(const Common::CustomEventType &action, uint flags) {
+	switch (action) {
+	case kActionBiochipAI:
+		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipAI)) {
 			((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipAI);
 			return;
 		}
 		break;
-	case Common::KEYCODE_b:
-		if ((key.flags & Common::KBD_CTRL) && ((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipBlank)) {
+	case kActionBiochipBlank:
+		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipBlank)) {
 			((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipBlank);
 			return;
 		}
 		break;
-	case Common::KEYCODE_c:
-		if ((key.flags & Common::KBD_CTRL) && ((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipCloak)) {
+	case kActionBiochipCloak:
+		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipCloak)) {
 			((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipCloak);
 			return;
 		}
 		break;
-	case Common::KEYCODE_e:
-		if ((key.flags & Common::KBD_CTRL) && ((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipEvidence)) {
+	case kActionBiochipEvidence:
+		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipEvidence)) {
 			((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipEvidence);
 			return;
 		}
 		break;
-	case Common::KEYCODE_f:
-		if ((key.flags & Common::KBD_CTRL) && ((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipFiles)) {
+	case kActionBiochipFiles:
+		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipFiles)) {
 			((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipFiles);
 			return;
 		}
 		break;
-	case Common::KEYCODE_i:
-		if ((key.flags & Common::KBD_CTRL) && ((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipInterface)) {
+	case kActionBiochipInterface:
+		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipInterface)) {
 			((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipInterface);
 			return;
 		}
 		break;
-	case Common::KEYCODE_j:
-		if ((key.flags & Common::KBD_CTRL) && ((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipJump)) {
+	case kActionBiochipJump:
+		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipJump)) {
 			((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipJump);
 			return;
 		}
 		break;
-	case Common::KEYCODE_t:
-		if ((key.flags & Common::KBD_CTRL) && ((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipTranslate)) {
+	case kActionBiochipTranslate:
+		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipTranslate)) {
 			((GameUIWindow *)_parent)->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipTranslate);
 			return;
 		}
 		break;
-	case Common::KEYCODE_q:
-		if (key.flags & Common::KBD_CTRL) {
-			// Return to main menu
-			if (_vm->runQuitDialog())
-				((FrameWindow *)_vm->_mainWindow)->showMainMenu();
-			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
-			return;
-		}
-		break;
-	case Common::KEYCODE_d:
-		if (key.flags & Common::KBD_CTRL) {
-			// Current points (ScummVM enhancement - Agent evaluation
-			// from death screens)
-			_vm->showPoints();
-			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
-			return;
-		}
-		break;
-	case Common::KEYCODE_SPACE:
+	case kActionQuitToMainMenuInv:
+		// Return to main menu
+		if (_vm->runQuitDialog())
+			((FrameWindow *)_vm->_mainWindow)->showMainMenu();
+		((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
+		return;
+	case kActionPoints:
+		// Current points (ScummVM enhancement - Agent evaluation
+		// from death screens)
+		_vm->showPoints();
+		((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
+		return;
+	case kActionAIComment:
 		if (((GameUIWindow *)_parent)->_inventoryWindow->isItemInInventory(kItemBioChipAI) && _globalFlags.bcCloakingEnabled != 1) {
 			if (!_lastAICommentFileName.empty()) {
 				if (!_vm->_sound->isAsynchronousAICommentPlaying()) {
@@ -2331,12 +2378,22 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	default:
 		break;
 	}
+}
 
+void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	if (_currentScene)
 		_currentScene->onCharacter(this, key);
 }
 
 void SceneViewWindow::onPaint() {
+	// Bypass scene-specific painting while a transition animation or cutscene is playing.
+	// During active transitions, the scene view is in a transient state. Painting at that time
+	// can cause access of frame data with mismatched data e.g. post-transition still frame data
+	// indexed using pre-transition frame information.
+	if (_paused) {
+		return;
+	}
+
 	// Original didn't draw if the async movie was playing, but that doesn't seem right.
 	if (_currentScene && !_infoWindowDisplayed && !_bioChipWindowDisplayed) {
 		if (_currentScene->_staticData.navFrameIndex >= -1) {
@@ -2460,8 +2517,9 @@ bool SceneViewWindow::changeSpriteStatus(bool status) {
 }
 
 bool SceneViewWindow::resetCursor() {
-	_vm->_gfx->setCursor((Cursor)_curCursor);
-	return true;
+	// Ensure the pointer icon is appropriate for the current scene by simulating
+	// a mouse move to its existing position.
+	return onSetCursor(kMessageTypeMouseMove);
 }
 
 bool SceneViewWindow::displayLiveText(const Common::String &text, bool notifyUser) {

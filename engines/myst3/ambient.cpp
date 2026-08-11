@@ -183,7 +183,10 @@ void Ambient::applySounds(uint32 fadeOutDelay) {
 		// The sound was already playing
 		if (!existingChannel) {
 			uint volume = 0;
-//			if (sound.volumeFlag) // TODO: Used in the original
+			// This check allows for proper fade in (when volumeFlag is 0) for sounds
+			// eg. when raising the elevator/platform to reach the main control panel
+			// for the resonating rings (the harmonic frequency sounds should fade in)
+			if (sound.volumeFlag)
 				volume = sound.volume;
 
 			channel->play(sound.id, volume, sound.heading, sound.headingAngle, true, kAmbient);

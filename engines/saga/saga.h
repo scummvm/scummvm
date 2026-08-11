@@ -29,6 +29,9 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+
 #include "saga/gfx.h"
 #include "saga/detection.h"
 
@@ -94,6 +97,50 @@ enum ERRORCODE {
 	FAILURE = -1,
 	SUCCESS = 0
 };
+
+enum SAGAAction {
+	kActionNone,
+	kActionLookAt,
+	kActionWalkTo,
+	kActionPickUp,
+	kActionTalkTo,
+	kActionOpen,
+	kActionClose,
+	kActionUse,
+	kActionGive,
+	kActionTake,
+	kActionSwallow,
+	kActionPush,
+	kActionPause,
+	kActionAbortSpeech,
+	kActionBossKey,
+	kActionEscape,
+	kActionShowDialogue,
+	kActionOptions,
+	kActionOptionQuit,
+	kActionOptionCancel,
+	kActionOptionSave,
+	kActionOptionOkay,
+	kActionOptionReadingSpeed,
+	kActionOptionMusic,
+	kActionOptionSound,
+	kActionOptionVoices,
+	kActionOptionContinue,
+	kActionOptionLoad,
+	kActionOptionQuitGame,
+	kActionOptionSaveGame,
+	kActionConverseExit,
+	kActionConversePosUp,
+	kActionConversePosDown
+};
+
+extern const char *engineKeyMapId;
+extern const char *gameKeyMapId;
+extern const char *optionKeyMapId;
+extern const char *saveKeyMapId;
+extern const char *loadKeyMapId;
+extern const char *quitKeyMapId;
+extern const char *converseKeyMapId;
 
 enum VerbTypeIds {
 	kVerbITENone = 0,
@@ -631,7 +678,11 @@ public:
 	const char *getTextString(int textStringId);
 	void getExcuseInfo(int verb, const char *&textString, int &soundResourceId);
 
+	void enableKeyMap(int mode);
+
 private:
+
+	int _currentPanelMode;
 
 public:
 	ColorId KnownColor2ColorId(KnownColor knownColor);

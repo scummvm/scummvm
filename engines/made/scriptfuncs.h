@@ -29,10 +29,6 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-namespace Audio {
-class PCSpeaker;
-}
-
 namespace Made {
 
 class MadeEngine;
@@ -62,6 +58,7 @@ protected:
 	Audio::SoundHandle _voiceStreamHandle;
 	SoundResource* _soundResource;
 	bool _soundStarted;
+	bool _soundWasPlaying;
 	// The sound length in milliseconds for purpose of checking if the sound is
 	// still playing.
 	int _soundCheckLength;
@@ -69,12 +66,10 @@ protected:
 	uint8 _gameAudioVolume;
 
 	// PlayNote/StopNote and PlayTele/StopTele wave generators
-	Audio::SoundHandle _pcSpeakerHandle1, _pcSpeakerHandle2;
-	Audio::PCSpeaker *_pcSpeaker1, *_pcSpeaker2;
+	Audio::SoundHandle _sine1, _sine2;
 
 	Common::Array<const ExternalFunc *> _externalFuncs;
 	Common::Array<const char *> _externalFuncNames;
-	GenericResource *_musicRes;
 
 	int16 sfSystemCall(int16 argc, int16 *argv);
 	int16 sfInitGraf(int16 argc, int16 *argv);

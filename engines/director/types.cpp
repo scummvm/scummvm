@@ -20,11 +20,12 @@
  */
 
 #include "common/array.h"
+#include "common/str.h"
 #include "director/types.h"
 
 namespace Director {
 
-const char *scriptTypes[] = {
+const char *const scriptTypes[] = {
 	"ScoreScript",
 	"CastScript",
 	"MovieScript",
@@ -47,7 +48,7 @@ const char *scriptType2str(ScriptType scr) {
 	return scriptTypes[scr];
 }
 
-const char *castTypes[] = {
+const char *const castTypes[] = {
 	"empty",
 	"bitmap",
 	"filmLoop",
@@ -60,23 +61,24 @@ const char *castTypes[] = {
 	"movie",
 	"digitalVideo",
 	"script",
-	"RTE",
-	"???",
+	"richText",
+	"OLE",
 	"transition",
+	"Xtra",
 };
 
 const char *castType2str(CastType type) {
 	if (type == kCastTypeAny)
 		return "any";
 
-	if (type <= kCastTransition)
+	if (type <= kCastXtra && type >= kCastTypeNull)
 		return castTypes[type];
 
 	warning("BUILDBOT: Unknown castType: %d", type);
 	return "<unknown>";
 }
 
-const char *spriteType[] = {
+const char *const spriteType[] = {
 	"Inactive",
 	"Bitmap",
 	"Rectangle",
@@ -106,7 +108,7 @@ const char *spriteType2str(SpriteType type) {
 	return "<unknown>";
 }
 
-const char *inkType[] = {
+const char *const inkType[] = {
 	"Copy",
 	"Transparent",
 	"Reverse",
@@ -128,9 +130,8 @@ const char *inkType[] = {
 	"Dark"
 };
 
-
 const char *inkType2str(InkType type) {
-	if (type <= kInkTypeMask)
+	if (type >= kInkTypeCopy && type <= kInkTypeMask)
 		return inkType[type];
 
 	if (type >= kInkTypeBlend && type <= kInkTypeDark)
@@ -138,6 +139,223 @@ const char *inkType2str(InkType type) {
 
 	return "<unknown>";
 
+}
+
+const char *const symbolType[] = {
+	"VOIDSYM",
+	"OPCODE",
+	"CBLTIN",
+	"FBLTIN",
+	"HBLTIN",
+	"KBLTIN",
+	"FBLTIN_LIST",
+	"HBLTIN_LIST",
+	"HANDLER",
+};
+
+const char *symbolType2str(SymbolType type) {
+	if (type >= VOIDSYM && type <= HANDLER)
+		return symbolType[type];
+
+	warning("BUILDBOT: Unknown SymbolType: %d", type);
+	return "<unknown>";
+}
+
+const char *const leventType[] = {
+	"prepareMovie",
+	"startMovie",
+	"stepMovie",
+	"stopMovie",
+
+	"new",
+	"beginSprite",
+	"endSprite",
+
+	"none",
+	"generic",
+	"enterFrame",
+	"prepareFrame",
+	"idle",
+	"stepFrame",
+	"exitFrame",
+	"timeout",
+
+	"activateWindow",
+	"deactivateWindow",
+	"moveWindow",
+	"resizeWindow",
+	"openWindow",
+	"closeWindow",
+	"zoomWindow",
+
+	"keyUp",
+	"keyDown",
+	"mouseUp",
+	"mouseDown",
+	"rightMouseUp",
+	"rightMouseDown",
+	"mouseEnter",
+	"mouseLeave",
+	"mouseUpOutSide",
+	"mouseWithin",
+
+	"startUp",
+
+	"menuCallback",
+
+	"getBehaviorDescription",
+	"getPropertyDescriptionList",
+	"runPropertyDialog",
+
+	"cuePassed",
+};
+
+const char *leventType2str(LEvent type) {
+	if (type <= kEventCuePassed)
+		return leventType[type];
+
+	warning("BUILDBOT: Unknown leventType: %d", type);
+	return "<unknown>";
+}
+
+const char *const eventHandlerSourceType[] = {
+	"NoneHandler",
+	"PrimaryHandler",
+	"SpriteHandler",
+	"CastHandler",
+	"FrameHandler",
+	"MovieHandler",
+};
+
+const char *eventHandlerSourceType2str(EventHandlerSourceType type) {
+	if (type <= kMovieHandler)
+		return eventHandlerSourceType[type];
+
+	warning("BUILDBOT: Unknown EventHandlerSourceType: %d", type);
+	return "<unknown>";
+}
+
+#define defFlag(x) { x, #x }
+
+struct FlagsList {
+	int f;
+	const char *s;
+} static objFlagList[] = {
+	defFlag(kNoneObj),
+	defFlag(kFactoryObj),
+	defFlag(kXObj),
+	defFlag(kScriptObj),
+	defFlag(kXtraObj),
+	defFlag(kWindowObj),
+	defFlag(kCastMemberObj),
+};
+
+Common::String objectType2str(int fl) {
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(objFlagList); i++) {
+		if (fl & objFlagList[i].f) {
+			if (!res.empty())
+				res += " | ";
+
+			res += objFlagList[i].s;
+			fl &= ~objFlagList[i].f;
+		}
+	}
+
+	if (fl)
+		res += Common::String::format(" | %x", fl);
+
+	return res;
+}
+
+Common::String paletteType2str(PaletteType value) {
+	switch (value) {
+	case kClutSystemMac:
+		return "systemMac";
+		break;
+	case kClutSystemWin:
+		return "systemWinDir4";
+		break;
+	case kClutSystemWinD5:
+		return "systemWin";
+		break;
+	case kClutGrayscale:
+		return "grayscale";
+		break;
+	case kClutMetallic:
+		return "metallic";
+		break;
+	case kClutNTSC:
+		return "NTSC";
+		break;
+	case kClutPastels:
+		return "pastels";
+		break;
+	case kClutRainbow:
+		return "rainbow";
+		break;
+	case kClutVivid:
+		return "vivid";
+		break;
+	default:
+		return "<unknown>";
+		break;
+	}
+}
+
+Common::String textAlignType2str(TextAlignType value) {
+	switch (value) {
+	case kTextAlignLeft:
+		return "left";
+		break;
+	case kTextAlignCenter:
+		return "center";
+		break;
+	case kTextAlignRight:
+		return "right";
+		break;
+	default:
+		return "<unknown>";
+		break;
+	}
+}
+
+Common::String shapeType2str(ShapeType value) {
+	switch (value) {
+	case kShapeRectangle:
+		return "rect";
+		break;
+	case kShapeRoundRect:
+		return "roundRect";
+		break;
+	case kShapeOval:
+		return "oval";
+		break;
+	case kShapeLine:
+		return "line";
+		break;
+	default:
+		return "<unknown>";
+		break;
+	}
+}
+
+Common::String textType2str(TextType value) {
+	switch (value) {
+	case kTextTypeAdjustToFit:
+		return "adjust";
+		break;
+	case kTextTypeScrolling:
+		return "scroll";
+		break;
+	case kTextTypeFixed:
+		return "fixed";
+		break;
+	default:
+		return "<unknown>";
+		break;
+	}
 }
 
 } // End of namespace Director

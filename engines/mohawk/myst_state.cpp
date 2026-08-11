@@ -268,7 +268,7 @@ bool MystGameState::saveMetadata(int slot, const Graphics::Surface *thumbnail) {
 }
 
 SaveStateDescriptor MystGameState::querySaveMetaInfos(const MetaEngine *metaEngine, int slot) {
-	SaveStateDescriptor desc(metaEngine, slot, Common::U32String());
+	SaveStateDescriptor desc(metaEngine, slot);
 
 	// Open the save file
 	Common::String filename = buildSaveFilename(slot);
@@ -514,14 +514,16 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 		warning("Unexpected File Position 0x%03X At End of Save/Load", s.bytesSynced());
 }
 
-void MystGameState::deleteSave(int slot) {
+bool MystGameState::deleteSave(int slot) {
 	Common::String filename = buildSaveFilename(slot);
 	Common::String metadataFilename = buildMetadataFilename(slot);
 
 	debugC(kDebugSaveLoad, "Deleting save file \'%s\'", filename.c_str());
 
-	g_system->getSavefileManager()->removeSavefile(filename);
-	g_system->getSavefileManager()->removeSavefile(metadataFilename);
+	bool success = true;
+	success &= g_system->getSavefileManager()->removeSavefile(filename);
+	success &= g_system->getSavefileManager()->removeSavefile(metadataFilename);
+	return success;
 }
 
 void MystGameState::addZipDest(MystStack stack, uint16 view) {

@@ -271,7 +271,7 @@ GUI_status ActorView::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status ActorView::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status ActorView::MouseDown(int x, int y, Events::MouseButton button) {
 	return GUI_PASS;
 }
 

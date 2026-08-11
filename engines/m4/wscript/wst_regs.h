@@ -23,8 +23,6 @@
 #ifndef M4_WSCRIPT_WST_REGS_H
 #define M4_WSCRIPT_WST_REGS_H
 
-#include "m4/m4_types.h"
-
 namespace M4 {
 
 enum {
@@ -85,11 +83,7 @@ enum {
 #define TAG_MOVE_CEL		0x00004000
 #define TAG_MAP_CEL			0x00002000
 
-#define GLOB_COUNT 39
-
 extern const char *myRegLabels[];
-extern const char *myGlobLabels[];
-extern const char *tagLabels[];
 
 } // End of namespace M4
 

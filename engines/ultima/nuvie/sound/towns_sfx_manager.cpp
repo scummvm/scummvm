@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "audio/mixer.h"
@@ -100,7 +100,7 @@ void TownsSfxManager::loadSound1Dat() {
 	}
 
 	// Fire SFX is made up of three individual samples played in a random sequence
-	Std::vector<Audio::RewindableAudioStream *> streams;
+	Common::Array<Audio::RewindableAudioStream *> streams;
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[6].buf, sounds1_dat[6].len));
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[7].buf, sounds1_dat[7].len));
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[8].buf, sounds1_dat[8].len));

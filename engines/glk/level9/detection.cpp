@@ -248,19 +248,21 @@ long Scanner::ScanV1(byte *startFile, uint32 size) {
 		}
 	}
 	_l9V1Game = -1;
-	if (_dictData && (dictVal1 != 0xff || dictVal2 != 0xff)) {
+	if (dictVal1 != 0xff || dictVal2 != 0xff) {
 		for (i = 0; i < sizeof L9_V1_GAMES / sizeof L9_V1_GAMES[0]; i++) {
 			if ((L9_V1_GAMES[i].dictVal1 == dictVal1) && (L9_V1_GAMES[i].dictVal2 == dictVal2)) {
 				_l9V1Game = i;
-				(*_dictData) = startFile + dictOff1 - L9_V1_GAMES[i].dictStart;
+				if (_dictData)
+					(*_dictData) = startFile + dictOff1 - L9_V1_GAMES[i].dictStart;
 			}
 		}
 	}
 
 	free(Image);
 
-	if (MaxPos > 0 && _aCodePtr) {
-		(*_aCodePtr) = startFile + MaxPos;
+	if (MaxPos > 0) {
+		if (_aCodePtr)
+			(*_aCodePtr) = startFile + MaxPos;
 		return 0;
 	}
 
@@ -537,6 +539,12 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 	gln_game_tableref_t game;
 	gln_patch_tableref_t patch;
 
+	/* Handle v1 games */
+	if (_l9V1Game >= 0) {
+		assert((unsigned)_l9V1Game < sizeof (GLN_V1GAME_TABLE) / sizeof (GLN_V1GAME_TABLE[0]));
+		return &GLN_V1GAME_TABLE[_l9V1Game];
+	}
+
 	/* If the data file appears too short for a header, give up now. */
 	if (_fileSize < 30)
 		return nullptr;
@@ -545,10 +553,13 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 	 * Find the version of the game, and the length of game data.  This logic
 	 * is taken from L9cut, with calcword() replaced by simple byte comparisons.
 	 * If the length exceeds the available data, fail.
+	 * The alternative conditions are exceptional with Colossal Adventure v2 for MSX.
 	 */
 	assert(_startData);
-	is_version2 = _startData[4] == 0x20 && _startData[5] == 0x00
-		&& _startData[10] == 0x00 && _startData[11] == 0x80
+	is_version2 = ((_startData[4] == 0x20 && _startData[5] == 0x00)
+	                || (_startData[6] == 0x20 && _startData[7] == 0x00))
+		&& ((_startData[10] == 0x00 && _startData[11] == 0x80)
+		     || (_startData[8] == 0x00 && _startData[9] == 0x80))
 		&& _startData[20] == _startData[22]
 		&& _startData[21] == _startData[23];
 
@@ -589,6 +600,15 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 	/* If no game identified, retry without the CRC.  This is guesswork. */
 	if (!game)
 		game = gln_gameid_lookup_game(length, checksum, crc, true);
+
+	if (!game && 0) {
+		if (is_version2)
+			game = &GLN_UNGAME_TABLE[1];
+		else if (length >= 0x8500)
+			game = &GLN_UNGAME_TABLE[3];
+		else
+			game = &GLN_UNGAME_TABLE[2];
+        }
 
 	return game;
 }
@@ -708,7 +728,37 @@ void Level9MetaEngine::getSupportedGames(PlainGameList &games) {
 	}
 }
 
+const GlkDetectionEntry* Level9MetaEngine::getDetectionEntries() {
+	static Common::Array<GlkDetectionEntry> entries;
+	for (const gln_game_table_t *entry = GLN_GAME_TABLE; entry->gameId; ++entry) {
+		const char* crc = "";
+		GlkDetectionEntry detection = {
+			entry->gameId,
+			entry->extra,
+			crc,
+			entry->length,
+			Common::EN_ANY,
+			Common::kPlatformUnknown
+		};
+		entries.push_back(detection);
+	}
+
+	entries.push_back({nullptr,
+					   nullptr,
+					   nullptr,
+					   0,
+					   Common::UNK_LANG,
+					   Common::kPlatformUnknown});
+
+	return entries.data();
+}
+
 GameDescriptor Level9MetaEngine::findGame(const char *gameId) {
+	if (!strncmp(gameId, "level9v", 7)) {
+//		GameDescriptor gd(gameId, "Unknown Level 9 game or version", 0);
+//		return gd;
+		return PlainGameDescriptor::empty();
+	}
 	for (const gln_game_table_t *pd = GLN_GAME_TABLE; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId)) {
 			GameDescriptor gd(pd->gameId, pd->name, 0);
@@ -716,7 +766,7 @@ GameDescriptor Level9MetaEngine::findGame(const char *gameId) {
 		}
 	}
 
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
@@ -757,6 +807,8 @@ bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		// Check for the specific game
 		byte *startData = startFile + offset;
 		GameDetection detection(startData, fileSize);
+		detection._gameType = scanner._gameType;
+		detection._l9V1Game = scanner._l9V1Game;
 
 		const gln_game_tableref_t game = detection.gln_gameid_identify_game();
 		if (!game)

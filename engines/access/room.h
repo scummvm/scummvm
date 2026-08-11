@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "access/data.h"
+#include "access/detection.h"
 
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 16
@@ -57,13 +58,22 @@ public:
 	}
 };
 
-enum Function { FN_NONE = 0, FN_CLEAR1 = 1, FN_CLEAR2 = 2, FN_RELOAD = 3, FN_BREAK = 4 };
+enum Function { FN_NONE = 0, FN_CLEAR1 = 1, FN_CLEAR2 = 2, FN_RELOAD = 3, FN_BREAK = 4, FN_5 = 5 };
+
+// room flags for Noctropolis
+enum RoomFlag {
+	kRoomFlagStiletto = 2,
+	kRoomFlagTopView = 4,
+	kRoomFlagNoPlayer = 0x80,
+};
+
 
 class Room : public Manager {
 private:
 	void roomLoop();
 
-	void loadPlayField(int fileNum, int subfile);
+	void cmdExitContinuance();
+	void roomLoopContinuance();
 
 	void commandOff();
 
@@ -79,6 +89,7 @@ private:
 	void cycleCommand(int incr);
 
 	bool checkCode(int v1, int v2);
+
 protected:
 	void loadRoomData(const byte *roomData);
 
@@ -93,11 +104,10 @@ protected:
 	void freeTileData();
 
 	int checkBoxes();
-	int checkBoxes1(const Common::Point &pt);
 	int checkBoxes2(const Common::Point &pt, int start, int count);
 	void checkBoxes3();
 
-	int validateBox(int boxId);
+	virtual int validateBox(int boxId);
 
 	/**
 	 * Inner handler for switching to a given command mode
@@ -105,6 +115,8 @@ protected:
 	void executeCommand(int commandId);
 
 	void clearCamera();
+
+	virtual void roomInit();
 
 	virtual void reloadRoom() = 0;
 
@@ -114,7 +126,9 @@ protected:
 
 	virtual void doCommands();
 
-	virtual void mainAreaClick() = 0;
+	virtual void mainAreaLClick() = 0;
+
+	virtual void mainAreaRClick() {};
 
 	virtual void walkCursor();
 public:
@@ -122,13 +136,14 @@ public:
 	Common::Array<JetFrame> _jetFrame;
 	Function _function;
 	int _roomFlag;
-	byte *_playField;
+	byte _palIntensity;
+	uint16 *_playField;
 	int _matrixSize;
 	int _playFieldWidth;
 	int _playFieldHeight;
 	byte *_tile;
 	int _selectCommand;
-	bool _conFlag;
+	bool _conFlag; // not the same as script->_continuenceFlag which is used in Noctropolis
 	int _rMouse[10][2];
 public:
 	Room(AccessEngine *vm);
@@ -137,7 +152,7 @@ public:
 
 	void doRoom();
 
-	virtual void loadRoom(int roomNumber) = 0;
+	void loadRoom(int roomNumber);
 
 	virtual void roomMenu() = 0;
 
@@ -171,16 +186,22 @@ public:
 	* Switch to a given command mode
 	*/
 	void handleCommand(int commandId);
+
+	void loadPlayField(int fileNum, int subfile);
+
+	int checkBoxes1(const Common::Point &pt);
 };
 
 class RoomInfo {
 public:
 	struct SoundIdent : FileIdent {
+		Common::String _soundFilename;
 		int _priority;
 	};
 public:
-	int _roomFlag;
+	byte _roomFlag;
 	int _estIndex;
+	byte _palIntensity;
 	FileIdent _musicFile;
 	int _scaleH1;
 	int _scaleH2;
@@ -197,7 +218,7 @@ public:
 	Common::Array<ExtraCell> _extraCells;
 	Common::Array<SoundIdent> _sounds;
 public:
-	RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo);
+	RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool isDemo);
 };
 
 } // End of namespace Access

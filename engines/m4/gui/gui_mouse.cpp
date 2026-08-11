@@ -32,19 +32,14 @@ namespace M4 {
 static void transShow(void *s, void *r, void *b, int32 destX, int32 destY);
 
 bool gui_mouse_init() {
-	_G(mouseBuffer).data = nullptr;
-	if ((_G(mouseBuffer).data = (uint8 *)mem_alloc(32 * 32, "mouse graphic")) == nullptr) {
-		return false;
-	}
+	_G(mouseBuffer).data = (uint8 *)mem_alloc(32 * 32, "mouse graphic");
 	_G(mouseBuffer).w = 32;
 	_G(mouseBuffer).stride = 32;
 	_G(mouseBuffer).h = 32;
 
 	auto &mouseSprite = _G(mouseSprite);
 	if (!mouseSprite) {
-		if ((mouseSprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "mouse sprite")) == nullptr) {
-			return false;
-		}
+		mouseSprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "mouse sprite");
 
 		mouseSprite->x = 0;
 		mouseSprite->y = 0;
@@ -63,9 +58,7 @@ bool gui_mouse_init() {
 		_G(mouseY2offset) = mouseSprite->h - _G(mouseY1offset) - 1;
 	}
 
-	if ((_G(mouseScreenSource) = (transSprite *)mem_alloc(sizeof(transSprite), "mouse transSprite")) == nullptr) {
-		return false;
-	}
+	_G(mouseScreenSource) = (transSprite *)mem_alloc(sizeof(transSprite), "mouse transSprite");
 
 	_G(mouseScreenSource)->srcSprite = mouseSprite;
 	_G(mouseScreenSource)->scrnBuffer = &_G(mouseBuffer);
@@ -96,31 +89,25 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 	ScreenContext *myScreen = (ScreenContext *)s;
 	matte *myRectList = (matte *)r;
 	Buffer *destBuffer = (Buffer *)b;
-	ScreenContext *tempScreen;
-	transSprite *mySource;
-	M4sprite *mySprite;
-	Buffer *myBuff;
 	Buffer drawSpriteBuff;
 	DrawRequest spriteDrawReq;
 	matte *myMatte, tempMatte;
 	RectList *updateList, *updateRect;
 	RectList *newUpdateList;
-	uint8 *rowPtr, *destPtr;
-	int32 i, j;
 
 	// Parameter verification
 	if (!myScreen)
 		return;
 
-	mySource = (transSprite *)(myScreen->scrnContent);
+	transSprite *mySource = (transSprite *)(myScreen->scrnContent);
 	if (!mySource)
 		return;
 
-	myBuff = (Buffer *)(mySource->scrnBuffer);
+	Buffer *myBuff = (Buffer *)(mySource->scrnBuffer);
 	if (!myBuff)
 		return;
 
-	mySprite = mySource->srcSprite;
+	M4sprite *mySprite = mySource->srcSprite;
 	if (!mySprite)
 		return;
 
@@ -138,7 +125,7 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 			updateList->next = nullptr;
 
 			// Now loop through all the screens behind myScreen
-			tempScreen = myScreen->behind;
+			ScreenContext *tempScreen = myScreen->behind;
 			while (tempScreen && updateList) {
 				// Duplicate the updateList
 				newUpdateList = vmng_DuplicateRectList(updateList);
@@ -165,7 +152,7 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 				}
 
 				// The newUpdateList now contains all the pieces not covered by tempScreen;
-				// turf the update list, and replace it with the newupdateList
+				// turf the update list, and replace it with the newUpdateList
 				vmng_DisposeRectList(&updateList);
 				updateList = newUpdateList;
 
@@ -220,13 +207,13 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 			// Else the data for the transparent sprite is stored directly in mySprite->data
 
 			// Loop through the rows
-			for (j = 0; (j < mySprite->h) && (j < myBuff->h); j++) {
+			for (int32 j = 0; (j < mySprite->h) && (j < myBuff->h); j++) {
 				// Set the rowPtr and the destPtr
-				rowPtr = mySprite->data + (j * mySprite->w);
-				destPtr = myBuff->data + (j * myBuff->stride);
+				uint8 *rowPtr = mySprite->data + (j * mySprite->w);
+				uint8 *destPtr = myBuff->data + (j * myBuff->stride);
 
 				// Loop through the columns
-				for (i = 0; (i < mySprite->w) && (i < myBuff->w); i++) {
+				for (int32 i = 0; (i < mySprite->w) && (i < myBuff->w); i++) {
 					if (*rowPtr) {
 						*destPtr = *rowPtr;
 					}
@@ -256,9 +243,6 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 }
 
 bool mouse_set_sprite(int32 spriteNum) {
-	M4sprite *tempSprite;
-	int32 minX, minY, maxX, maxY;
-
 	if (_G(mouseIsLocked)) {
 		_G(newMouseNum) = spriteNum;
 		return true;
@@ -271,13 +255,9 @@ bool mouse_set_sprite(int32 spriteNum) {
 	if (!_G(mouseSeriesHandle) || !*_G(mouseSeriesHandle))
 		return false;
 
-	minX = _G(oldX) - _G(mouseX1offset);
-	minY = _G(oldY) - _G(mouseY1offset);
-	maxX = _G(oldX) + _G(mouseX2offset);
-	maxY = _G(oldY) + _G(mouseY2offset);
-
-	if ((tempSprite = CreateSprite(_G(mouseSeriesHandle), _G(mouseSeriesOffset), spriteNum,
-			_G(mouseSprite), nullptr)) == nullptr)
+	M4sprite *tempSprite = CreateSprite(_G(mouseSeriesHandle), _G(mouseSeriesOffset), spriteNum,
+	                                    _G(mouseSprite), nullptr);
+	if (tempSprite == nullptr)
 		return false;
 
 	_G(mouseSprite) = tempSprite;
@@ -285,14 +265,6 @@ bool mouse_set_sprite(int32 spriteNum) {
 	_G(mouseY1offset) = _G(mouseSprite)->yOffset;
 	_G(mouseX2offset) = _G(mouseSprite)->w - _G(mouseX1offset) - 1;
 	_G(mouseY2offset) = _G(mouseSprite)->h - _G(mouseY1offset) - 1;
-	if (_G(mouseX) - _G(mouseX1offset) < minX)
-		minX = _G(mouseX) - _G(mouseX1offset);
-	if (_G(mouseY) - _G(mouseY1offset) < minY)
-		minY = _G(mouseY) - _G(mouseY1offset);
-	if (_G(mouseX) + _G(mouseX2offset) > maxX)
-		maxX = _G(mouseX) + _G(mouseX2offset);
-	if (_G(mouseY) + _G(mouseY2offset) > maxY)
-		maxY = _G(mouseY) + _G(mouseY2offset);
 
 	gui_mouse_refresh();
 	_G(currMouseNum) = spriteNum;

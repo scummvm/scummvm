@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/game_view.h"
+#include "mm/mm1/views_enh/scroll_text.h"
 #include "mm/mm1/mm1.h"
 
 namespace MM {
@@ -195,6 +196,17 @@ bool GameView::tick() {
 	}
 
 	return true;
+}
+
+void GameView::drawDialogMessage() {
+	Common::String msg = _dialogMessage;
+	msg.trim();
+	msg.setChar(toupper(msg[0]), 0);	// Capitalize
+
+	ScrollText view("GameViewMessage", nullptr);
+	view.setBounds(Common::Rect(9 * 8, 8 * 8, 23 * 8, 11 * 8));
+	view.addLine(msg, MM1::ALIGN_MIDDLE);
+	view.draw();
 }
 
 } // namespace ViewsEnh

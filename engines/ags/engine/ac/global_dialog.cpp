@@ -36,7 +36,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 void RunDialog(int tum) {
-	if ((tum < 0) | (tum >= _GP(game).numdialog))
+	if ((tum < 0) || (tum >= _GP(game).numdialog))
 		quit("!RunDialog: invalid topic number specified");
 
 	can_run_delayed_command();
@@ -70,9 +70,9 @@ void StopDialog() {
 }
 
 void SetDialogOption(int dlg, int opt, int onoroff, bool dlg_script) {
-	if ((dlg < 0) | (dlg >= _GP(game).numdialog))
+	if ((dlg < 0) || (dlg >= _GP(game).numdialog))
 		quit("!SetDialogOption: Invalid topic number specified");
-	if ((opt < 1) | (opt > _G(dialog)[dlg].numoptions)) {
+	if ((opt < 1) || (opt > _G(dialog)[dlg].numoptions)) {
 		// Pre-3.1.1 games had "dialog scripts" that were written in different language and
 		// parsed differently; its "option-on/off" commands were more permissive.
 		if (dlg_script) {
@@ -84,16 +84,16 @@ void SetDialogOption(int dlg, int opt, int onoroff, bool dlg_script) {
 	opt--;
 
 	_G(dialog)[dlg].optionflags[opt] &= ~DFLG_ON;
-	if ((onoroff == 1) & ((_G(dialog)[dlg].optionflags[opt] & DFLG_OFFPERM) == 0))
+	if ((onoroff == 1) && ((_G(dialog)[dlg].optionflags[opt] & DFLG_OFFPERM) == 0))
 		_G(dialog)[dlg].optionflags[opt] |= DFLG_ON;
 	else if (onoroff == 2)
 		_G(dialog)[dlg].optionflags[opt] |= DFLG_OFFPERM;
 }
 
 int GetDialogOption(int dlg, int opt) {
-	if ((dlg < 0) | (dlg >= _GP(game).numdialog))
+	if ((dlg < 0) || (dlg >= _GP(game).numdialog))
 		quit("!GetDialogOption: Invalid topic number specified");
-	if ((opt < 1) | (opt > _G(dialog)[dlg].numoptions))
+	if ((opt < 1) || (opt > _G(dialog)[dlg].numoptions))
 		quit("!GetDialogOption: Invalid option number specified");
 	opt--;
 

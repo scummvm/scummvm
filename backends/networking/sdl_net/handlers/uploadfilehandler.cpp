@@ -51,7 +51,7 @@ void UploadFileHandler::handle(Client &client) {
 	// transform virtual path to actual file system one
 	Common::String basePath;
 	Common::Path baseFSPath, fsPath;
-	if (!urlToPath(path, fsPath, basePath, baseFSPath, false) || path.empty()) {
+	if (!urlToPath(path, fsPath, basePath, baseFSPath)) {
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}

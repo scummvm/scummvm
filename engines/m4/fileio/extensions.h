@@ -26,8 +26,6 @@
 
 namespace M4 {
 
-Common::String f_extension_add(const Common::String &name, const Common::String &ext);
-
 Common::String f_extension_new(const Common::String &name, const Common::String &ext);
 
 } // namespace M4

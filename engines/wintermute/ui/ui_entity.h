@@ -43,16 +43,14 @@ public:
 
 	bool display() override { return display(0, 0); }
 	bool display(int offsetX, int offsetY) override;
+	AdEntity *_entity;
 	bool setEntity(const char *filename);
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
-
-private:
-	AdEntity *_entity;
 };
 
 } // End of namespace Wintermute

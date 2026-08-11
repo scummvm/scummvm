@@ -309,7 +309,7 @@ bool U6UseCode::message_obj(Obj *obj, CallbackMessage msg, void *msg_data) {
 		items.ent_ref = (MapEntity *)msg_data;
 		break;
 	case MESG_TEXT_READY:
-		items.string_ref = (string *)msg_data;
+		items.string_ref = (Common::String *)msg_data;
 		break;
 	case MESG_DATA_READY:
 		items.data_ref = (char *)msg_data; // pointer to EventInput structure
@@ -765,8 +765,8 @@ bool U6UseCode::use_rune(Obj *obj, UseCodeEvent ev) {
 }
 
 void U6UseCode::remove_gargoyle_egg(uint16 x, uint16 y, uint8 z) {
-	Std::list<Egg *> *egg_list = game->get_egg_manager()->get_egg_list();
-	Std::list<Egg *>::iterator egg_itr;
+	Common::List<Egg *> *egg_list = game->get_egg_manager()->get_egg_list();
+	Common::List<Egg *>::iterator egg_itr;
 
 	for (egg_itr = egg_list->begin(); egg_itr != egg_list->end();) {
 		Egg *egg = *egg_itr;
@@ -1427,8 +1427,8 @@ bool U6UseCode::use_rubber_ducky(Obj *obj, UseCodeEvent ev) {
 	return true;
 }
 
-sint16 U6UseCode::parseLatLongString(U6UseCodeLatLonEnum mode, Std::string *input) {
-	uint16 len = input->length();
+sint16 U6UseCode::parseLatLongString(U6UseCodeLatLonEnum mode, Common::String *input) {
+	uint16 len = input->size();
 	sint16 val = 0;
 	for (uint16 i = 0; i < len; i++) {
 		char c = (*input)[i];
@@ -1526,7 +1526,7 @@ bool U6UseCode::use_crystal_ball(Obj *obj, UseCodeEvent ev) {
 
 /* USE: Enter instrument playing mode, with sound for used object. */
 bool U6UseCode::play_instrument(Obj *obj, UseCodeEvent ev) {
-// FIXME: need intrument sounds AND a config option to simply change music
+// FIXME: need instrument sounds AND a config option to simply change music
 // track when an instrument is played. Maybe NORTH_KEY and SOUTH_KEY can cycle through sounds/music and DO_ACTION_KEY can play it.
 /// FIXME: also some floating music note icons like in U7
 	game->get_event()->close_gumps(); // gumps will steal input
@@ -2275,7 +2275,7 @@ bool U6UseCode::use_horse(Obj *obj, UseCodeEvent ev) {
 
 		// create a temporary horse on the map.
 		actor_manager->create_temp_actor(OBJ_U6_HORSE, NO_OBJ_STATUS, obj->x, obj->y, obj->z, ACTOR_ALIGNMENT_DEFAULT, WORKTYPE_U6_ANIMAL_WANDER);
-	} else if (!actor_manager->is_temp_actor(actor)) { // Try to mount horse. Don't use permenant Actors eg Smith, push-me pull-you
+	} else if (!actor_manager->is_temp_actor(actor)) { // Try to mount horse. Don't use permanent Actors eg Smith, push-me pull-you
 		scroll->display_string("\nHorse not boardable!\n");
 	} else { // mount up.
 		if (UseCode::out_of_use_range(obj, true))

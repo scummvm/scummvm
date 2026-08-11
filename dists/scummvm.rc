@@ -29,7 +29,7 @@ shaders.dat            FILE    "gui/themes/shaders.dat"
 
 #include "dists/scummvm_rc_engine_data_core.rh"
 
-#ifdef USE_FLUIDSYNTH
+#if defined(USE_FLUIDSYNTH) || defined(USE_FLUIDLITE)
 Roland_SC-55.sf2       FILE    "dists/soundfonts/Roland_SC-55.sf2"
 #endif
 
@@ -100,10 +100,12 @@ shaders/stark_shadow.fragment        FILE    "engines/stark/shaders/stark_shadow
 shaders/stark_shadow.vertex          FILE    "engines/stark/shaders/stark_shadow.vertex"
 #endif
 #if PLUGIN_ENABLED_STATIC(WINTERMUTE)
+shaders/wme_brightness_julia.fragment   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_brightness_julia.fragment"
+shaders/wme_brightness_julia.vertex     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_brightness_julia.vertex"
+shaders/wme_brightness_oknytt.fragment  FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_brightness_oknytt.fragment"
+shaders/wme_brightness_oknytt.vertex    FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_brightness_oknytt.vertex"
 shaders/wme_fade.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
 shaders/wme_fade.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
-shaders/wme_flat_shadow_mask.fragment   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.fragment"
-shaders/wme_flat_shadow_mask.vertex     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.vertex"
 shaders/wme_flat_shadow_modelx.fragment FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment"
 shaders/wme_flat_shadow_modelx.vertex   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex"
 shaders/wme_geometry.fragment           FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
@@ -112,10 +114,14 @@ shaders/wme_line.fragment               FILE    "engines/wintermute/base/gfx/ope
 shaders/wme_line.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.vertex"
 shaders/wme_modelx.fragment             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.fragment"
 shaders/wme_modelx.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.vertex"
+shaders/wme_postfilter.fragment         FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_postfilter.fragment"
+shaders/wme_postfilter.vertex           FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_postfilter.vertex"
 shaders/wme_shadow_mask.fragment        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.fragment"
 shaders/wme_shadow_mask.vertex          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex"
 shaders/wme_shadow_volume.fragment      FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment"
 shaders/wme_shadow_volume.vertex        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.vertex"
+shaders/wme_simple_shadow.fragment      FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_simple_shadow.fragment"
+shaders/wme_simple_shadow.vertex        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_simple_shadow.vertex"
 shaders/wme_sprite.fragment             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment"
 shaders/wme_sprite.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex"
 #endif
@@ -126,6 +132,10 @@ shaders/playground3d_cube.fragment      FILE    "engines/playground3d/shaders/pl
 shaders/playground3d_cube.vertex        FILE    "engines/playground3d/shaders/playground3d_cube.vertex"
 shaders/playground3d_fade.fragment      FILE    "engines/playground3d/shaders/playground3d_fade.fragment"
 shaders/playground3d_fade.vertex        FILE    "engines/playground3d/shaders/playground3d_fade.vertex"
+shaders/playground3d_offset.fragment    FILE    "engines/playground3d/shaders/playground3d_offset.fragment"
+shaders/playground3d_offset.vertex      FILE    "engines/playground3d/shaders/playground3d_offset.vertex"
+shaders/playground3d_viewport.fragment  FILE    "engines/playground3d/shaders/playground3d_viewport.fragment"
+shaders/playground3d_viewport.vertex    FILE    "engines/playground3d/shaders/playground3d_viewport.vertex"
 #endif
 #if PLUGIN_ENABLED_STATIC(HPL1)
 shaders/hpl1_Ambient_Color.fragment                    FILE   "engines/hpl1/engine/impl/shaders/hpl1_Ambient_Color.fragment"
@@ -177,6 +187,8 @@ shaders/hpl1_Fog_Trans.vertex                          FILE   "engines/hpl1/engi
 shaders/hpl1_Fog_Trans_Alpha.fragment                  FILE   "engines/hpl1/engine/impl/shaders/hpl1_Fog_Trans_Alpha.fragment"
 shaders/hpl1_Fog_Trans_Mod.fragment                    FILE   "engines/hpl1/engine/impl/shaders/hpl1_Fog_Trans_Mod.fragment"
 shaders/hpl1_Fog_Trans_ModX2.fragment                  FILE   "engines/hpl1/engine/impl/shaders/hpl1_Fog_Trans_ModX2.fragment"
+shaders/hpl1_gamma_correction.fragment                 FILE   "engines/hpl1/engine/impl/shaders/hpl1_gamma_correction.fragment"
+shaders/hpl1_gamma_correction.vertex                   FILE   "engines/hpl1/engine/impl/shaders/hpl1_gamma_correction.vertex"
 shaders/hpl1_PostEffect_Bloom.fragment                 FILE   "engines/hpl1/engine/impl/shaders/hpl1_PostEffect_Bloom.fragment"
 shaders/hpl1_PostEffect_Bloom.vertex                   FILE   "engines/hpl1/engine/impl/shaders/hpl1_PostEffect_Bloom.vertex"
 shaders/hpl1_PostEffect_Blur.vertex                    FILE   "engines/hpl1/engine/impl/shaders/hpl1_PostEffect_Blur.vertex"
@@ -208,6 +220,8 @@ shaders/freescape_bitmap.fragment    FILE    "engines/freescape/shaders/freescap
 shaders/freescape_bitmap.vertex      FILE    "engines/freescape/shaders/freescape_bitmap.vertex"
 shaders/freescape_triangle.fragment  FILE    "engines/freescape/shaders/freescape_triangle.fragment"
 shaders/freescape_triangle.vertex    FILE    "engines/freescape/shaders/freescape_triangle.vertex"
+shaders/freescape_cubemap.fragment   FILE    "engines/freescape/shaders/freescape_cubemap.fragment"
+shaders/freescape_cubemap.vertex     FILE    "engines/freescape/shaders/freescape_cubemap.vertex"
 #endif
 #endif
 #endif
@@ -234,7 +248,7 @@ BEGIN
             VALUE "FileDescription", "ScummVM: A free interpreter for numerous adventure games and role-playing games\0"
             VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "scummvm\0"
-            VALUE "LegalCopyright", "Copyright \xA9 2001-2024 The ScummVM Team\0"
+            VALUE "LegalCopyright", "Copyright \xA9 2001-2026 The ScummVM Team\0"
             VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky and Broken Sword are a TM of Revolution. Flight of the Amazon Queen is a TM of John Passfield and Steve Stamatiadis. \0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "ProductName", "ScummVM\0"

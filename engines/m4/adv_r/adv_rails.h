@@ -39,7 +39,7 @@ struct Rails_Globals {
 	int32 memtypePATHN = 0;
 };
 
-bool InitRails();
+void InitRails();
 void rail_system_shutdown();
 void ClearRails();
 noWalkRect *intr_add_no_walk_rect(int32 x1, int32 y1, int32 x2, int32 y2, int32 altX, int32 altY, Buffer *walkCodes);
@@ -57,7 +57,7 @@ bool RemoveRailNode(int32 nodeID, Buffer *walkCodes, bool restoreEdges);
 bool RailNodeExists(int32 nodeID, int32 *nodeX, int32 *nodeY);
 int16 GetEdgeLength(int32 node1, int32 node2);
 bool GetShortestPath(int32 origID, int32 destID, railNode **shortPath);
-railNode *CreateCustomPath(int32 coord, ...);
+railNode *CreateCustomPath(int coord, ...);
 void DisposePath(railNode *pathStart);
 bool intr_LineCrossesRect(int32 line_x1, int32 line_y1, int32 line_x2, int32 line_y2,
 	int32 rect_x1, int32 rect_y1, int32 rect_x2, int32 rect_y2);

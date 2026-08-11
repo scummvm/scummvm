@@ -63,7 +63,8 @@ bool b64Validate(String &string) {
 
 String b64EncodeString(String &string) {
 	String out;
-	int32 val = 0, valb = -6;
+	uint32 val = 0;
+	int32 valb = -6;
 	for (uint8 c : string) {
 		val = (val << 8) + c;
 		valb += 8;
@@ -81,7 +82,8 @@ String b64EncodeString(String &string) {
 
 String b64EncodeStream(ReadStream &stream) {
 	String out;
-	int32 val = 0, valb = -6;
+	uint32 val = 0;
+	int32 valb = -6;
 	while (true) {
 		uint8 b = stream.readByte();
 		if (stream.eos())
@@ -102,7 +104,8 @@ String b64EncodeStream(ReadStream &stream) {
 
 String b64EncodeData(void *dataPtr, size_t dataSize) {
 	String out;
-	int32 val = 0, valb = -6;
+	uint32 val = 0;
+	int32 valb = -6;
 	uint8 *p = (uint8 *)dataPtr;
 
 	for (size_t i = 0; i < dataSize; i++) {
@@ -133,7 +136,8 @@ String b64DecodeString(String &string) {
 		T[encodingTable[i]] = i;
 	}
 
-	int val = 0, valb = -8;
+	uint32 val = 0;
+	int32 valb = -8;
 	for (char c : string) {
 		if (T[c] == -1)
 			break;
@@ -162,7 +166,8 @@ MemoryReadStream *b64DecodeStream(String &string, uint32 outputLength) {
 		T[encodingTable[i]] = i;
 	}
 
-	int val = 0, valb = -8, valc = 0;
+	uint32 val = 0, valc = 0;
+	int32 valb = -8;
 	for (char c : string) {
 		if (T[c] == -1)
 			break;
@@ -188,7 +193,8 @@ bool b64DecodeData(String &string, void *dataPtr) {
 		T[encodingTable[i]] = i;
 	}
 
-	int val = 0, valb = -8, valc = 0;
+	uint32 val = 0, valc = 0;
+	int32 valb = -8;
 	for (char c : string) {
 		if (T[c] == -1)
 			break;

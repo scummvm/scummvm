@@ -40,12 +40,19 @@
 #include "m4/riddle/rooms/section8/room834.h"
 #include "m4/riddle/rooms/section8/room844.h"
 #include "m4/riddle/rooms/section8/room850.h"
+#include "m4/riddle/rooms/section8/room852.h"
 #include "m4/riddle/rooms/section8/room860.h"
 #include "m4/riddle/rooms/section8/room861.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
+
+extern const int16 S8_SHADOW_DIRS1[];
+extern const char *S8_SHADOW_NAMES1[];
+
+extern const int16 S8_SHADOW_DIRS2[];
+extern const char *S8_SHADOW_NAMES2[];
 
 class Section8 : public Section {
 private:
@@ -66,6 +73,7 @@ private:
 	Room834 _room834;
 	Room844 _room844;
 	Room850 _room850;
+	Room852 _room852;
 	Room860 _room860;
 	Room861 _room861;
 

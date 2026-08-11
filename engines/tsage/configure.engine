@@ -1,3 +1,6 @@
 # This file is included from the main "configure" script
-# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine tsage "TsAGE" yes
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
+add_engine tsage "TsAGE" yes "ringworld blueforce ringworld2"
+add_engine ringworld "Ringworld: Revenge of the Patriarch" yes
+add_engine blueforce "Blue Force" yes
+add_engine ringworld2 "Return to Ringworld" yes

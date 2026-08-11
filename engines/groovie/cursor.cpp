@@ -250,7 +250,7 @@ private:
 
 	Graphics::PixelFormat _format;
 
-	void decodeFrame(byte *pal, byte *data, byte *dest);
+	void decodeFrame(byte *pal, byte *data, byte *dest, uint32 size);
 };
 
 Cursor_v2::Cursor_v2(Common::File &file) {
@@ -270,23 +270,23 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 
 	uint16 tmp16;
 	int loop2count = file.readUint16LE();
-	debugC(5, kDebugCursor, "loop2count?: %d\n", loop2count);
+	debugC(5, kDebugCursor, "loop2count?: %d", loop2count);
 	for (int l = 0; l < loop2count; l++) {
 		tmp16 = file.readUint16LE();
-		debugC(5, kDebugCursor, "loop2a: %d\n", tmp16);	// Index frame can merge to/from?
+		debugC(5, kDebugCursor, "loop2a: %d", tmp16);	// Index frame can merge to/from?
 		tmp16 = file.readUint16LE();
-		debugC(5, kDebugCursor, "loop2b: %d\n", tmp16);	// Number of frames?
+		debugC(5, kDebugCursor, "loop2b: %d", tmp16);	// Number of frames?
 	}
 
 	file.read(pal, 0x20 * 3);
 
 	for (int f = 0; f < _numFrames; f++) {
 		uint32 tmp32 = file.readUint32LE();
-		debugC(5, kDebugCursor, "loop3: %d\n", tmp32);
+		debugC(5, kDebugCursor, "loop3: %d", tmp32);
 
 		byte *data = new byte[tmp32];
 		file.read(data, tmp32);
-		decodeFrame(pal, data, _img + (f * _width * _height * 4));
+		decodeFrame(pal, data, _img + (f * _width * _height * 4), tmp32);
 
 		delete[] data;
 	}
@@ -298,7 +298,7 @@ Cursor_v2::~Cursor_v2() {
 	delete[] _img;
 }
 
-void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
+void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest, uint32 size) {
 	// Scratch memory
 	byte *tmp = new byte[_width * _height * 4]();
 	byte *ptr = tmp;
@@ -314,14 +314,22 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 	// Start frame decoding
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
+			if (!size) {
+				debugC(1, kDebugCursor, "Cursor_v2::decodeFrame(): Frame underflow");
+				break;
+			}
+
 			// If both counters are empty
 			if (ctrA == 0 && ctrB == 0) {
 				if (*data & 0x80) {
 					ctrA = (*data++ & 0x7F) + 1;
+					size--;
 				} else {
 					ctrB = *data++ + 1;
 					alpha = alphaDecoded[(*data & 0xE0) >> 5];
 					palIdx = *data++ & 0x1F;
+
+					size -= 2;
 				}
 			}
 
@@ -329,6 +337,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 				// Block type A - chunk of non-continuous pixels
 				palIdx = *data & 0x1F;
 				alpha = alphaDecoded[(*data++ & 0xE0) >> 5];
+				size--;
 
 				r = *(pal + palIdx);
 				g = *(pal + palIdx + 0x20);
@@ -353,6 +362,9 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 			}
 			ptr += 4;
 		}
+
+		if (!size)
+			break;
 	}
 
 	// Convert to screen format
@@ -376,7 +388,7 @@ void Cursor_v2::showFrame(uint16 frame) {
 	int offset = _width * _height * frame * 4;
 	// SDL uses keycolor even though we're using ABGR8888, so just set it to a pink color that isn't used
 	uint32 keycolor = _format.ARGBToColor(0, 255, 128, 255);
-	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, keycolor, false, &_format);
+	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, keycolor, &_format);
 }
 
 void blendCursorPixel(uint32 &d, uint32 &s) {
@@ -434,7 +446,7 @@ void Cursor_v2::show2Cursors(Cursor_v2 *c1, uint16 frame1, Cursor_v2 *c2, uint16
 	uint32 keycolor = format.ARGBToColor(0, 255, 128, 255);
 
 	// replaceCursor copies the buffer, so we're ok to delete it
-	CursorMan.replaceCursor((const byte *)img, width, height, c1->_hotspotX, c1->_hotspotY, keycolor, false, &c1->_format);
+	CursorMan.replaceCursor((const byte *)img, width, height, c1->_hotspotX, c1->_hotspotY, keycolor, &c1->_format);
 	delete[] img;
 }
 

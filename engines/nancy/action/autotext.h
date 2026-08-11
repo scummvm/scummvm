@@ -28,15 +28,26 @@
 namespace Nancy {
 namespace Action {
 
+// Blits a filled viewport autotext surface (ids 0-2) on top of the scene
+// background. Nancy 10+ spawns an Overlay for this; we render it directly.
+class AutotextRender : public RenderObject {
+public:
+	AutotextRender(uint16 zOrder) : RenderObject(zOrder) {}
+	virtual ~AutotextRender() {}
+
+	bool isViewportRelative() const override { return true; }
+};
+
 // Action record used for rendering text inside the game viewport.
 // Can be used in two ways: for single-use texts that get thrown away
 // after a scene change, or for permanent storage (used in nancy's journal)
-// Does not own or display any image data; it draws to a surface inside
-// GraphicsManager, which other ActionRecords (Overlay and PeepholePuzzle) can use.
+// Draws to a surface inside GraphicsManager, which other ActionRecords
+// (Overlay and PeepholePuzzle) can use. For viewport surfaces (ids 0-2) it
+// also blits that surface onscreen itself, via an owned AutotextRender.
 class Autotext : public virtual ActionRecord, public Misc::HypertextParser {
 public:
 	Autotext() {}
-	virtual ~Autotext() {}
+	virtual ~Autotext() { delete _viewportRender; }
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -64,6 +75,17 @@ protected:
 	bool _shouldDrawMarks = false;
 
 	Common::Array<uint16> _hotspotScenes;
+
+	// Nancy 10+ placement descriptor for viewport surfaces (0-2).
+	// Absent from TextScroll records, which place themselves.
+	bool _hasPlacementDescriptor = true;
+	uint16 _placementMode = 0;
+	Common::Rect _viewportDest;
+	Common::Rect _viewportSrc;
+
+	// Set to false by subclasses (TextScroll) that handle their own display
+	bool _selfDisplay = true;
+	AutotextRender *_viewportRender = nullptr;
 
 	Graphics::ManagedSurface _image;
 };

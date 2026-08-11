@@ -937,7 +937,7 @@ function actor_update_all()
          perform_worktype(selected_actor)
          party_update()
          if selected_actor.wt > 1 and selected_actor.wt < 0x1b then
-            --FIXME targetting?? do *(&bjlist_unk_19f1_ptr + actor_num) = actor_num
+            --FIXME targeting?? do *(&bjlist_unk_19f1_ptr + actor_num) = actor_num
          end
       end
 

@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -43,22 +44,21 @@ IMPLEMENT_PERSISTENT(UITiledImage, false)
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 	_image = nullptr;
 
-	_upLeft.setEmpty();
-	_upMiddle.setEmpty();
-	_upRight.setEmpty();
-	_middleLeft.setEmpty();
-	_middleMiddle.setEmpty();
-	_middleRight.setEmpty();
-	_downLeft.setEmpty();
-	_downMiddle.setEmpty();
-	_downRight.setEmpty();
+	BasePlatform::setRectEmpty(&_upLeft);
+	BasePlatform::setRectEmpty(&_upMiddle);
+	BasePlatform::setRectEmpty(&_upRight);
+	BasePlatform::setRectEmpty(&_middleLeft);
+	BasePlatform::setRectEmpty(&_middleMiddle);
+	BasePlatform::setRectEmpty(&_middleRight);
+	BasePlatform::setRectEmpty(&_downLeft);
+	BasePlatform::setRectEmpty(&_downMiddle);
+	BasePlatform::setRectEmpty(&_downRight);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::~UITiledImage() {
-	delete _image;
-	_image = nullptr;
+	SAFE_DELETE(_image);
 }
 
 
@@ -71,41 +71,41 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 
-	int nuColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
-	int nuRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
+	int numColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
+	int numRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
-	_gameRef->_renderer->startSpriteBatch();
+	_game->_renderer->startSpriteBatch();
 
 	// top left/right
-	_image->_surface->displayTrans(x,                                                       y, _upLeft);
-	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y, _upRight);
+	_image->_surface->displayTrans(x, y, _upLeft);
+	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + numColumns * tileWidth, y, _upRight);
 
 	// bottom left/right
-	_image->_surface->displayTrans(x,                                                       y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downLeft);
-	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + nuColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downRight);
+	_image->_surface->displayTrans(x, y + (_upMiddle.bottom - _upMiddle.top) + numRows * tileHeight, _downLeft);
+	_image->_surface->displayTrans(x + (_upLeft.right - _upLeft.left) + numColumns * tileWidth, y + (_upMiddle.bottom - _upMiddle.top) + numRows * tileHeight, _downRight);
 
 	// left/right
-	if (nuRows > 0) {
+	if (numRows > 0) {
 		int yyy = y + (_upMiddle.bottom - _upMiddle.top);
-		_image->_surface->displayTiled(x, yyy, _middleLeft, 1, nuRows);
-		_image->_surface->displayTiled(x + (_middleLeft.right - _middleLeft.left) + nuColumns * tileWidth, yyy, _middleRight, 1, nuRows);
+		_image->_surface->displayTiled(x, yyy, _middleLeft, 1, numRows);
+		_image->_surface->displayTiled(x + (_middleLeft.right - _middleLeft.left) + numColumns * tileWidth, yyy, _middleRight, 1, numRows);
 	}
 
 	// top/bottom
-	if (nuColumns > 0) {
+	if (numColumns > 0) {
 		int xxx = x + (_upLeft.right - _upLeft.left);
-		_image->_surface->displayTiled(xxx, y, _upMiddle, nuColumns, 1);
-		_image->_surface->displayTiled(xxx, y + (_upMiddle.bottom - _upMiddle.top) + nuRows * tileHeight, _downMiddle, nuColumns, 1);
+		_image->_surface->displayTiled(xxx, y, _upMiddle, numColumns, 1);
+		_image->_surface->displayTiled(xxx, y + (_upMiddle.bottom - _upMiddle.top) + numRows * tileHeight, _downMiddle, numColumns, 1);
 	}
 
 	// tiles
-	if (nuRows > 0 && nuColumns > 0) {
+	if (numRows > 0 && numColumns > 0) {
 		int yyy = y + (_upMiddle.bottom - _upMiddle.top);
 		int xxx = x + (_upLeft.right - _upLeft.left);
-		_image->_surface->displayTiled(xxx, yyy, _middleMiddle, nuColumns, nuRows);
+		_image->_surface->displayTiled(xxx, yyy, _middleMiddle, numColumns, numRows);
 	}
 
-	_gameRef->_renderer->endSpriteBatch();
+	_game->_renderer->endSpriteBatch();
 
 	return STATUS_OK;
 }
@@ -113,9 +113,9 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UITiledImage::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -124,7 +124,7 @@ bool UITiledImage::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
+		_game->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
 	}
 
 
@@ -173,14 +173,14 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 	bool hTiles = false, vTiles = false;
 	int h1 = 0, h2 = 0, h3 = 0;
 	int v1 = 0, v2 = 0, v3 = 0;
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_TILED_IMAGE) {
-			_gameRef->LOG(0, "'TILED_IMAGE' keyword expected.");
+			_game->LOG(0, "'TILED_IMAGE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -195,11 +195,10 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_IMAGE:
-			delete _image;
-			_image = new BaseSubFrame(_gameRef);
+			SAFE_DELETE(_image);
+			_image = new BaseSubFrame(_game);
 			if (!_image || DID_FAIL(_image->setSurface(params))) {
-				delete _image;
-				_image = nullptr;
+				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -259,29 +258,29 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in TILED_IMAGE definition");
+		_game->LOG(0, "Syntax error in TILED_IMAGE definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading TILED_IMAGE definition");
+		_game->LOG(0, "Error loading TILED_IMAGE definition");
 		return STATUS_FAILED;
 	}
 
 	if (vTiles && hTiles) {
 		// up row
-		_upLeft.setRect(0, 0, h1, v1);
-		_upMiddle.setRect(h1, 0, h1 + h2, v1);
-		_upRight.setRect(h1 + h2, 0, h1 + h2 + h3, v1);
+		BasePlatform::setRect(&_upLeft, 0, 0, h1, v1);
+		BasePlatform::setRect(&_upMiddle, h1, 0, h1 + h2, v1);
+		BasePlatform::setRect(&_upRight, h1 + h2, 0, h1 + h2 + h3, v1);
 
 		// middle row
-		_middleLeft.setRect(0, v1, h1, v1 + v2);
-		_middleMiddle.setRect(h1, v1, h1 + h2, v1 + v2);
-		_middleRight.setRect(h1 + h2, v1, h1 + h2 + h3, v1 + v2);
+		BasePlatform::setRect(&_middleLeft, 0, v1, h1, v1 + v2);
+		BasePlatform::setRect(&_middleMiddle, h1, v1, h1 + h2, v1 + v2);
+		BasePlatform::setRect(&_middleRight, h1 + h2, v1, h1 + h2 + h3, v1 + v2);
 
 		// down row
-		_downLeft.setRect(0, v1 + v2, h1, v1 + v2 + v3);
-		_downMiddle.setRect(h1, v1 + v2, h1 + h2, v1 + v2 + v3);
-		_downRight.setRect(h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
+		BasePlatform::setRect(&_downLeft, 0, v1 + v2, h1, v1 + v2 + v3);
+		BasePlatform::setRect(&_downMiddle, h1, v1 + v2, h1 + h2, v1 + v2 + v3);
+		BasePlatform::setRect(&_downRight, h1 + h2, v1 + v2, h1 + h2 + h3, v1 + v2 + v3);
 	}
 
 	// default
@@ -289,34 +288,34 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 		int width = _image->_surface->getWidth() / 3;
 		int height = _image->_surface->getHeight() / 3;
 
-		if (_upLeft.isRectEmpty()) {
-			_upLeft.setRect(0, 0, width, height);
+		if (BasePlatform::isRectEmpty(&_upLeft)) {
+			BasePlatform::setRect(&_upLeft, 0, 0, width, height);
 		}
-		if (_upMiddle.isRectEmpty()) {
-			_upMiddle.setRect(width, 0, 2 * width, height);
+		if (BasePlatform::isRectEmpty(&_upMiddle)) {
+			BasePlatform::setRect(&_upMiddle, width, 0, 2 * width, height);
 		}
-		if (_upRight.isRectEmpty()) {
-			_upRight.setRect(2 * width, 0, 3 * width, height);
-		}
-
-		if (_middleLeft.isRectEmpty()) {
-			_middleLeft.setRect(0, height, width, 2 * height);
-		}
-		if (_middleMiddle.isRectEmpty()) {
-			_middleMiddle.setRect(width, height, 2 * width, 2 * height);
-		}
-		if (_middleRight.isRectEmpty()) {
-			_middleRight.setRect(2 * width, height, 3 * width, 2 * height);
+		if (BasePlatform::isRectEmpty(&_upRight)) {
+			BasePlatform::setRect(&_upRight, 2 * width, 0, 3 * width, height);
 		}
 
-		if (_downLeft.isRectEmpty()) {
-			_downLeft.setRect(0, 2 * height, width, 3 * height);
+		if (BasePlatform::isRectEmpty(&_middleLeft)) {
+			BasePlatform::setRect(&_middleLeft, 0, height, width, 2 * height);
 		}
-		if (_downMiddle.isRectEmpty()) {
-			_downMiddle.setRect(width, 2 * height, 2 * width, 3 * height);
+		if (BasePlatform::isRectEmpty(&_middleMiddle)) {
+			BasePlatform::setRect(&_middleMiddle, width, height, 2 * width, 2 * height);
 		}
-		if (_downRight.isRectEmpty()) {
-			_downRight.setRect(2 * width, 2 * height, 3 * width, 3 * height);
+		if (BasePlatform::isRectEmpty(&_middleRight)) {
+			BasePlatform::setRect(&_middleRight, 2 * width, height, 3 * width, 2 * height);
+		}
+
+		if (BasePlatform::isRectEmpty(&_downLeft)) {
+			BasePlatform::setRect(&_downLeft, 0, 2 * height, width, 3 * height);
+		}
+		if (BasePlatform::isRectEmpty(&_downMiddle)) {
+			BasePlatform::setRect(&_downMiddle, width, 2 * height, 2 * width, 3 * height);
+		}
+		if (BasePlatform::isRectEmpty(&_downRight)) {
+			BasePlatform::setRect(&_downRight, 2 * width, 2 * height, 3 * width, 3 * height);
 		}
 	}
 
@@ -328,8 +327,8 @@ bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TILED_IMAGE\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	if (_image && _image->getSurfaceFilename()) {
-		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getSurfaceFilename());
+	if (_image && _image->_surfaceFilename && _image->_surfaceFilename[0]) {
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
 	}
 
 	int h1, h2, h3;
@@ -359,11 +358,11 @@ void UITiledImage::correctSize(int32 *width, int32 *height) {
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 
-	int nuColumns = (*width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
-	int nuRows = (*height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
+	int numColumns = (*width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
+	int numRows = (*height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
-	*width  = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + nuColumns * tileWidth;
-	*height = (_upMiddle.bottom - _upMiddle.top) + (_downMiddle.bottom - _downMiddle.top) + nuRows * tileHeight;
+	*width = (_middleLeft.right - _middleLeft.left) + (_middleRight.right - _middleRight.left) + numColumns * tileWidth;
+	*height = (_upMiddle.bottom - _upMiddle.top) + (_downMiddle.bottom - _downMiddle.top) + numRows * tileHeight;
 }
 
 

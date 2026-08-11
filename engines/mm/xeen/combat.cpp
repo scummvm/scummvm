@@ -206,22 +206,22 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 				fx = 27;
 				break;
 			case DT_FIRE:
-				damage -= party._fireResistence;
+				damage -= party._fireResistance;
 				frame = 1;
 				fx = 22;
 				break;
 			case DT_ELECTRICAL:
-				damage -= party._electricityResistence;
+				damage -= party._electricityResistance;
 				frame = 2;
 				fx = 23;
 				break;
 			case DT_COLD:
-				damage -= party._coldResistence;
+				damage -= party._coldResistance;
 				frame = 3;
 				fx = 24;
 				break;
 			case DT_POISON:
-				damage -= party._poisonResistence;
+				damage -= party._poisonResistance;
 				frame = 4;
 				fx = 26;
 				break;
@@ -315,22 +315,22 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 			fx = 27;
 			break;
 		case DT_FIRE:
-			damage -= party._fireResistence;
+			damage -= party._fireResistance;
 			frame = 1;
 			fx = 22;
 			break;
 		case DT_ELECTRICAL:
-			damage -= party._electricityResistence;
+			damage -= party._electricityResistance;
 			frame = 2;
 			fx = 23;
 			break;
 		case DT_COLD:
-			damage -= party._coldResistence;
+			damage -= party._coldResistance;
 			frame = 3;
 			fx = 24;
 			break;
 		case DT_POISON:
-			damage -= party._poisonResistence;
+			damage -= party._poisonResistance;
 			frame = 4;
 			fx = 26;
 			break;
@@ -1209,7 +1209,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 
 	if (rangeType != RT_SINGLE) {
 		if (_shootType != ST_1 || _damageType == DT_MAGIC_ARROW) {
-			if (!monsterData._magicResistence || monsterData._magicResistence <=
+			if (!monsterData._magicResistance || monsterData._magicResistance <=
 					_vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
 				if (_monsterDamage != 0) {
 					attack2(damage, rangeType);
@@ -1420,13 +1420,13 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			monster._damageType = DT_PHYSICAL;
 
 		if ((rangeType == RT_SINGLE || _damageType == DT_PHYSICAL) && _attackWeaponId < XEEN_SLAYER_SWORD) {
-			if (monsterData._phsyicalResistence != 0) {
-				if (monsterData._phsyicalResistence == 100) {
+			if (monsterData._phsyicalResistance != 0) {
+				if (monsterData._phsyicalResistance == 100) {
 					// Completely immune to the damage
 					damage = 0;
 				} else {
 					// Reduce the damage based on physical resistance
-					damage = damage * (100 - monsterData._phsyicalResistence) / 100;
+					damage = damage * (100 - monsterData._phsyicalResistance) / 100;
 				}
 			}
 		}
@@ -1438,7 +1438,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			monster._postAttackDelay = 5;
 		}
 
-		int monsterResist = getMonsterResistence(rangeType);
+		int monsterResist = getMonsterResistance(rangeType);
 		damage += monsterResist;
 		if (monsterResist > 0) {
 			_pow[_attackDurationCtr]._elemFrame = XeenItem::getElementalCategory(_weaponElemMaterial) + 1;
@@ -1741,35 +1741,35 @@ int Combat::getDamageScale(int v) {
 		return 0x8000;
 }
 
-int Combat::getMonsterResistence(RangeType rangeType) {
+int Combat::getMonsterResistance(RangeType rangeType) {
 	Map &map = *_vm->_map;
 	assert(_monster2Attack != -1);
 	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
 	MonsterStruct &monsterData = *monster._monsterData;
-	int resistence = 0, damage = 0;
+	int resistance = 0, damage = 0;
 
 	if (rangeType != RT_SINGLE && rangeType != RT_HIT) {
 		switch (_damageType) {
 		case DT_PHYSICAL:
-			resistence = monsterData._phsyicalResistence;
+			resistance = monsterData._phsyicalResistance;
 			break;
 		case DT_MAGICAL:
-			resistence = monsterData._magicResistence;
+			resistance = monsterData._magicResistance;
 			break;
 		case DT_FIRE:
-			resistence = monsterData._fireResistence;
+			resistance = monsterData._fireResistance;
 			break;
 		case DT_ELECTRICAL:
-			resistence = monsterData._electricityResistence;
+			resistance = monsterData._electricityResistance;
 			break;
 		case DT_COLD:
-			resistence = monsterData._coldResistence;
+			resistance = monsterData._coldResistance;
 			break;
 		case DT_POISON:
-			resistence = monsterData._poisonResistence;
+			resistance = monsterData._poisonResistance;
 			break;
 		case DT_ENERGY:
-			resistence = monsterData._energyResistence;
+			resistance = monsterData._energyResistance;
 			break;
 		default:
 			break;
@@ -1780,25 +1780,25 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 
 		if (material != 0) {
 			if (material < 9)
-				resistence = monsterData._fireResistence;
+				resistance = monsterData._fireResistance;
 			else if (material < 16)
-				resistence = monsterData._electricityResistence;
+				resistance = monsterData._electricityResistance;
 			else if (material < 21)
-				resistence = monsterData._coldResistence;
+				resistance = monsterData._coldResistance;
 			else if (material < 26)
-				resistence = monsterData._poisonResistence;
+				resistance = monsterData._poisonResistance;
 			else if (material < 34)
-				resistence = monsterData._energyResistence;
+				resistance = monsterData._energyResistance;
 			else
-				resistence = monsterData._magicResistence;
+				resistance = monsterData._magicResistance;
 		}
 	}
 
-	if (resistence != 0) {
-		if (resistence == 100)
+	if (resistance != 0) {
+		if (resistance == 100)
 			return 0;
 		else
-			return ((100 - resistence) * damage) / 100;
+			return ((100 - resistance) * damage) / 100;
 	}
 
 	return damage;

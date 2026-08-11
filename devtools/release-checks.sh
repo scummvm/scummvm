@@ -79,14 +79,14 @@ cd "$oldpwd"
 
 echo_n "Checking default icons pack..."
 
-fileDate=`git log -1 gui/themes/gui-icons.dat | grep Date | sed 's/Date: //'`
+fileDate=`git log -1 --pretty=format:"%aI" gui/themes/gui-icons.dat`
 
 cd ../scummvm-icons
 
 num_lines=`git -P log --oneline "--since=$fileDate" default/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines unprocessed commits. ${RED}Repack gui/themes/gui-icons.dat${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd ../scummvm-icons/default; zip -r9 ../../scummvm/gui/themes/gui-icons.dat .'${NC}"
 
   failPlus
 else
@@ -117,7 +117,7 @@ cd "$oldpwd"
 
 echo_n "Checking default shaders pack..."
 
-fileDate=`git log -1 gui/themes/shaders.dat | grep Date | sed 's/Date: //'`
+fileDate=`git log -1 --pretty=format:"%aI" gui/themes/shaders.dat`
 
 cd ../scummvm-shaders
 
@@ -193,12 +193,26 @@ fi
 
 echo_n "Checking translations..."
 
-fileDate=`git log -1 gui/themes/translations.dat | grep Date | sed 's/Date: //'`
+fileDate=`git log -1 --pretty=format:"%aI" gui/themes/translations.dat`
 
 num_lines=`git -P log --oneline "--since=$fileDate" po/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
   echo -e "$num_lines unprocessed commits. ${RED}Run 'make translations-dat'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+echo_n "Checking Android translations..."
+
+fileDate=`git log -1 --pretty=format:"%aI" dists/android/res/values-*/strings.xml`
+
+num_lines=`git -P log --oneline "--since=$fileDate" po/ | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'make android-translations'${NC}"
 
   failPlus
 else
@@ -280,7 +294,10 @@ fi
 echo_n "Checking missing/extra POTFILES..."
 
 # Now get list of includes
-git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | grep -v devtools/generate-android-i18n-strings.py | grep -v engines/gob/detection/tables.h | sort > $TMP
+git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | \
+    grep -v devtools/generate-android-i18n-strings.py | grep -v engines/gob/detection/tables.h | \
+    grep -v avfaudio-text-to-speech.mm | grep -v engines/m4/subtitles.cpp | \
+    grep -v testbed/metaengine.cpp | grep -v waynesworld/waynesworld.cpp| sort > $TMP
 
 res=`diff -  $TMP <<< "$list"`
 
@@ -424,14 +441,14 @@ absentFiles=0
 declare -a licensefiles=(
   "Makefile.common#DIST_FILES_DOCS.*%FILE%"
   "backends/platform/maemo/debian/rules#install -m0644.*%FILE%.*debian/scummvm/usr/share/doc/scummvm"
-  "backends/platform/sdl/macosx/appmenu_osx.mm#openFromBundle\(@\"%FILEUNDOTTED%\"\);"
+  "backends/platform/sdl/macosx/appmenu_osx.mm#openFromBundle\(@\"%FILEUNDOTTED%\", @\"licenses\"\);"
   "backends/platform/sdl/win32/win32.mk#cp \\$\(srcdir\)/%FILE% \\$\(WIN32PATH\)/%FILEBASE%\.txt"
   "devtools/create_project/create_project.cpp#in\.push_back\(setup.srcDir \+ \"/%FILE%\"\)"
   "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"%FILE%\"\);"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/%FILEBASE% %FILE% scummvm.man.readme"
   "dists/redhat/scummvm.spec#%doc AUTHORS README.md.*%FILE%"
   "dists/redhat/scummvm.spec.in#%doc AUTHORS README.md.*%FILE%"
-  "ports.mk#cp \\$\(bundle_name\)/Contents/Resources/%FILEBASE% \\$\(bundle_name\)/Contents/Resources/%FILEUNDOTTED%"
+  "ports.mk#mv \\$\(bundle_name\)/Contents/Resources/%FILEBASE% \\$\(bundle_name\)/Contents/Resources/licenses/%FILEUNDOTTED%"
   "ports.mk#mv \./ScummVM-snapshot/%FILEBASE% \./ScummVM-snapshot"
 )
 
@@ -504,7 +521,7 @@ IFS="$OLDIFS"
 
 echo_n "Checking bagel.dat..."
 
-fileDate=`git log -1 dists/engine-data/bagel.dat | grep Date | sed 's/Date: //'`
+fileDate=`git log -1 --pretty=format:"%aI" dists/engine-data/bagel.dat`
 
 num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_bagel/files | wc -l`
 
@@ -523,7 +540,7 @@ fi
 
 echo_n "Checking mm.dat..."
 
-fileDate=`git log -1 dists/engine-data/mm.dat | grep Date | sed 's/Date: //'`
+fileDate=`git log -1 --pretty=format:"%aI" dists/engine-data/mm.dat`
 
 num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_mm/files | wc -l`
 
@@ -542,7 +559,7 @@ fi
 
 echo_n "Checking nancy.dat..."
 
-fileDate=`git log -1 dists/engine-data/nancy.dat | grep Date | sed 's/Date: //'`
+fileDate=`git log -1 --pretty=format:"%aI" dists/engine-data/nancy.dat`
 
 num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_nancy/files | wc -l`
 
@@ -561,7 +578,7 @@ fi
 
 echo_n "Checking ultima.dat..."
 
-fileDate=`git log -1 dists/engine-data/ultima.dat | grep Date | sed 's/Date: //'`
+fileDate=`git log -1 --pretty=format:"%aI" dists/engine-data/ultima.dat`
 
 num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_ultima/files | wc -l`
 
@@ -581,7 +598,7 @@ fi
 
 echo_n "Checking ultima8.dat..."
 
-fileDate=`git log -1 dists/engine-data/ultima8.dat | grep Date | sed 's/Date: //'`
+fileDate=`git log -1 --pretty=format:"%aI" dists/engine-data/ultima8.dat`
 
 num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_ultima8 | wc -l`
 

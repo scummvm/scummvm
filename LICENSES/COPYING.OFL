@@ -1,13 +1,22 @@
 NOTE: This license file only applies to the fillowing files distributed
 along with our theme files:
 
- * SourceCodeVariable-Roman.ttf
  * LiberationMono-Bold.ttf
  * LiberationMono-Regular.ttf
  * LiberationSans-Bold.ttf
  * LiberationSans-Regular.ttf
  * LiberationSerif-Bold.ttf
  * LiberationSerif-Regular.ttf
+ * NotoNaskhArabic-Bold.ttf
+ * NotoNaskhArabic-Regular.ttf
+ * NotoSerif-Bold-Italic.ttf
+ * NotoSerif-Bold.ttf
+ * NotoSerif-Italic.ttf
+ * NotoSerif-Regular.ttf
+ * NotoSans-Bold.ttf
+ * NotoSans-Regular.ttf
+ * NotoSansRunic-Regular.ttf
+ * SourceCodeVariable-Roman.ttf
 
 Copyright 2010, 2012 Adobe Systems Incorporated (http://www.adobe.com/),
 with Reserved Font Name 'Source'. All Rights Reserved. Source is a

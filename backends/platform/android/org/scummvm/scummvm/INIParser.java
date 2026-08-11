@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.scummvm.scummvm;
 
 import android.util.Log;
@@ -6,7 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +41,7 @@ public class INIParser {
 	}
 
 	public static Map<String, Map<String, String>> parse(Reader reader) throws IOException {
-		Map<String, Map<String, String>> ret = new HashMap<>();
+		Map<String, Map<String, String>> ret = new LinkedHashMap<>();
 		BufferedReader lineReader = new BufferedReader(reader);
 		Map<String, String> domain = null;
 		int lineno = 0;
@@ -64,7 +85,7 @@ public class INIParser {
 				}
 
 				String domainName = line.substring(1, i);
-				domain = new HashMap<>();
+				domain = new LinkedHashMap<>();
 				ret.put(domainName, domain);
 
 				continue;
@@ -145,6 +166,8 @@ public class INIParser {
 		}
 
 		String decoded = punycodeDecode(component);
+		// punycodeDecode returns component on failure
+		//noinspection StringEquality
 		if (component == decoded) {
 			return component;
 		}
@@ -163,6 +186,7 @@ public class INIParser {
 	}
 
 	/* Java isWhitespace is more inclusive than C one */
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	private static boolean isSpace(char c) {
 		return (c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\013');
 	}

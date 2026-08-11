@@ -37,6 +37,10 @@ void TADSMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
+const GlkDetectionEntry* TADSMetaEngine::getDetectionEntries() {
+	return TADS_GAMES;
+}
+
 GameDescriptor TADSMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = TADS2_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId)) {

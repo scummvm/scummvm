@@ -27,13 +27,9 @@
 namespace M4 {
 
 enum M4DebugChannels {
-	kDebugScript = 1 << 0,
-	kDebugConversations = 1 << 1,
-	kDebugGraphics = 1 << 2,
-	kDebugSound = 1 << 3,
-	kDebugCore = 1 << 4,
-	kDebugWSSequ = 1 << 5,
-	kDebugWSMach = 1 << 6
+	kDebugScripts = 1,
+	kDebugMessages,
+	kDebugCore,
 };
 
 enum M4GameType {
@@ -55,6 +51,8 @@ enum Features {
 };
 
 struct M4GameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameType;
@@ -65,7 +63,7 @@ struct M4GameDescription {
 
 } // End of namespace M4
 
-class M4MetaEngineDetection : public AdvancedMetaEngineDetection {
+class M4MetaEngineDetection : public AdvancedMetaEngineDetection<M4::M4GameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:
@@ -81,7 +79,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "M4 (C)";
+		return "M4 (C) 1995-1996 Sanctuary Woods Multimedia Corporation";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {

@@ -25,6 +25,8 @@
 namespace Toltecs {
 
 struct ToltecsGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
 

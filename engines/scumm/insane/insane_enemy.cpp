@@ -196,7 +196,7 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 				case 6:
 					if (!_enemyState[EN_ROTT1][7]) {
 						_enemyState[EN_ROTT1][7] = 1;
-						if (_enemy[EN_ROTT1].occurences)
+						if (_enemy[EN_ROTT1].occurrences)
 							prepareScenePropScene(55, 0, 0);
 					}
 					break;

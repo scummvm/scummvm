@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_GUI_GUI_DIALOG_H
 #define AGS_ENGINE_GUI_GUI_DIALOG_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {
@@ -45,7 +45,7 @@ void refresh_gui_screen();
 int  loadgamedialog();
 int  savegamedialog();
 void preparesavegamelist(int ctrllist);
-void enterstringwindow(const char *prompttext, char *stouse);
+void enterstringwindow(const char *prompttext, char *dst_buf, size_t dst_sz);
 int  enternumberwindow(char *prompttext);
 int  roomSelectorWindow(int currentRoom, int numRooms,
 	const std::vector<int> &roomNumbers, const std::vector<AGS::Shared::String> &roomNames);

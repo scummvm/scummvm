@@ -90,7 +90,7 @@ static void drawThreads() {
 				ImGui::TableNextColumn();
 				ImGui::Text("%-56s", thread->getName().c_str());
 				ImGui::TableNextColumn();
-				if (thread->getId() != g_twp->_cutscene.id) {
+				if(!g_twp->_cutscene || (thread->getId() != g_twp->_cutscene->getId())) {
 					ImGui::Text("%-6s", thread->isGlobal() ? "global" : "local");
 				} else {
 					ImGui::Text("%-6s", "cutscene");
@@ -283,7 +283,7 @@ static void drawResources() {
 	ImVec2 cursor = ImGui::GetCursorPos();
 	ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + 10.f));
 	ImGui::Text("Preview:");
-	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY);
+	ImGui::BeginChild("TexturePreview", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY);
 	for (auto &res : g_twp->_resManager->_textures) {
 		if (_state->_textureSelected == res._key) {
 			ImGui::Image((ImTextureID)(intptr_t)res._value.id, ImVec2(res._value.width, res._value.height));
@@ -369,8 +369,8 @@ static void drawGeneral() {
 	ImGui::Text("%lld", size);
 	ImGui::TextColored(gray, "Cutscene:");
 	ImGui::SameLine();
-	if (g_twp->_cutscene.id) {
-		Common::SharedPtr<Thread> cutscene(sqthread(g_twp->_cutscene.id));
+	if (g_twp->_cutscene) {
+		Common::SharedPtr<ThreadBase> cutscene(sqthread(g_twp->_cutscene->getId()));
 		ImGui::Text("%s", cutscene->getName().c_str());
 	} else {
 		ImGui::Text("no");
@@ -625,12 +625,15 @@ void onImGuiInit() {
 }
 
 void onImGuiRender() {
-	if (!debugChannelSet(-1, kDebugConsole)) {
-		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
+	ImGuiIO& io = ImGui::GetIO();
+	if (!debugChannelSet(-1, kDebugImGui)) {
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
+		io.MouseDrawCursor = false;
 		return;
 	}
 
-	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
+	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
+	io.MouseDrawCursor = true;
 	drawGeneral();
 	drawThreads();
 	drawObjects();

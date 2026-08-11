@@ -174,7 +174,7 @@ void Movie::playVideo(bool isFirstIntroVideo) {
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+			if ((event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && event.customType == kActionEscape)) {
 				_vm->dirtyAllScreen();
 				return;
 			}

@@ -27,7 +27,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/str.h"
-
+#include "backends/keymapper/keymapper.h"
 #include "trecision/animmanager.h"
 #include "trecision/animtype.h"
 #include "trecision/actor.h"
@@ -112,6 +112,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_nextRefresh = 0;
 
 	_curKey = Common::KEYCODE_INVALID;
+	_curAction = kActionNone;
 	_curAscii = 0;
 	_mousePos = Common::Point(0, 0);
 	_mouseMoved = _mouseLeftBtn = _mouseRightBtn = false;
@@ -237,6 +238,7 @@ Common::Error TrecisionEngine::run() {
 void TrecisionEngine::eventLoop() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
+		Common::Keymapper *keymapper = _eventMan->getKeymapper();
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
 			_mouseMoved = true;
@@ -251,25 +253,38 @@ void TrecisionEngine::eventLoop() {
 			_mouseRightBtn = true;
 			break;
 
-		case Common::EVENT_KEYUP:
-			_curKey = event.kbd.keycode;
-			_curAscii = event.kbd.ascii;
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_p:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			_curAction = event.customType;
+			switch (event.customType) {
+			case kActionFastWalk:
+				_fastWalk ^= true;
+				break;
+			case kActionPause:
 				if (!_gamePaused && !_keybInput) {
 					_curKey = Common::KEYCODE_INVALID;
+					_curAction = kActionNone;
+					keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+
 					_gamePaused = true;
 					waitKey();
 				}
+
+				keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 				_gamePaused = false;
 				break;
 
-			case Common::KEYCODE_CAPSLOCK:
-				_fastWalk ^= true;
-				break;
 			default:
 				break;
 			}
+			return;
+
+		case Common::EVENT_KEYUP:
+			_curKey = event.kbd.keycode;
+			_curAscii = event.kbd.ascii;
+			break;
+
+		case Common::EVENT_JOYBUTTON_UP:
+			_joyButtonUp = true;
 			break;
 
 		default:

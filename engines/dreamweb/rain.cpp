@@ -25,16 +25,13 @@
 namespace DreamWeb {
 
 void DreamWebEngine::showRain() {
-	Common::List<Rain>::iterator i;
-
 	// Do nothing if there's no rain at all
 	if (_rainList.empty())
 		return;
 
 	const uint8 *frameData = _mainSprites.getFrameData(58);
 
-	for (i = _rainList.begin(); i != _rainList.end(); ++i) {
-		Rain &rain = *i;
+	for (auto &rain : _rainList) {
 		uint16 y = rain.y + _mapAdY + _mapYStart;
 		uint16 x = rain.x + _mapAdX + _mapXStart;
 		uint16 size = rain.size;

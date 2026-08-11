@@ -68,6 +68,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"create", "The Story of Creation"},
 	{"daniel", "Daniel in the Lions' Den"},
 	{"harryhh","Harry and the Haunted House"},
+	{"noah", "Noah's Ark"},
 	{"stellaluna", "Stellaluna"},
 	{"sheila", "Sheila Rae, the Brave"},
 	{"rugratsps", "Rugrats Print Shop" },
@@ -93,9 +94,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class MohawkMetaEngineDetection : public AdvancedMetaEngineDetection {
+class MohawkMetaEngineDetection : public AdvancedMetaEngineDetection<Mohawk::MohawkGameDescription> {
 public:
-	MohawkMetaEngineDetection() : AdvancedMetaEngineDetection(Mohawk::gameDescriptions, sizeof(Mohawk::MohawkGameDescription), mohawkGames) {
+	MohawkMetaEngineDetection() : AdvancedMetaEngineDetection(Mohawk::gameDescriptions, mohawkGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

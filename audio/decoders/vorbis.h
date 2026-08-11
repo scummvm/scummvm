@@ -25,6 +25,7 @@
  *  - agos
  *  - draci
  *  - kyra
+ *  - qdengine
  *  - queen
  *  - saga
  *  - sci

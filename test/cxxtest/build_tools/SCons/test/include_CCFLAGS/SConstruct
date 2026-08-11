@@ -1,0 +1,12 @@
+flags = '-pedantic-errors -Weffc++ -Wall -Wextra -ansi'
+env = Environment(
+    toolpath=['../../'],
+    tools=['default','cxxtest'],
+    CCFLAGS=flags,
+    CXXFLAGS=flags,
+    CXXTEST_CXXFLAGS_REMOVE=['-pedantic-errors','-Weffc++','-Wextra','-Wall','-W'],
+    CXXTEST_CCFLAGS_REMOVE=['-pedantic-errors','-Weffc++','-Wextra','-Wall','-W']
+    )
+
+env.CxxTest(['src/not-with-pedantic.h'])
+env.CxxTest(['src/only_with_ansi.t.h'])

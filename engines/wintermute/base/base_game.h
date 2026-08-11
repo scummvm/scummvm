@@ -30,16 +30,17 @@
 
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_game_custom_actions.h"
-#include "engines/wintermute/base/timer.h"
+#include "engines/wintermute/base/base_string_table.h"
+#include "engines/wintermute/ext/plugin_event.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/debugger.h"
-#include "common/events.h"
-#include "common/random.h"
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #endif
+
+#include "common/events.h"
+#include "common/random.h"
 
 namespace Wintermute {
 
@@ -59,6 +60,7 @@ class BaseRegistry;
 class BaseSurfaceStorage;
 class BaseKeyboardState;
 class BaseGameSettings;
+class BaseAccessMgr;
 class ScEngine;
 class SXMath;
 class SXDirectory;
@@ -72,17 +74,23 @@ class BaseRenderer3D;
 struct FogParameters;
 #endif
 
-class BaseGame: public BaseObject {
+#define NUM_MUSIC_CHANNELS 5
+
+class BaseGame : public BaseObject {
 public:
+
+
 	DECLARE_PERSISTENT(BaseGame, BaseObject)
 
-	virtual bool getLayerSize(int *LayerWidth, int *LayerHeight, Rect32 *viewport, bool *customViewport);
+	virtual bool onScriptShutdown(ScScript *script);
+
+	virtual bool getLayerSize(int *LayerWidth, int *LayerHeight, Common::Rect32 *viewport, bool *customViewport);
 #ifdef ENABLE_WME3D
 	virtual uint32 getAmbientLightColor();
 	virtual bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end);
 #endif
-
-	virtual bool onScriptShutdown(ScScript *script);
+	virtual BaseObject *getNextAccessObject(BaseObject *currObject);
+	virtual BaseObject *getPrevAccessObject(BaseObject *currObject);
 
 	virtual bool onActivate(bool activate, bool refreshMouse);
 	virtual bool onMouseLeftDown();
@@ -100,87 +108,111 @@ public:
 	bool isRightDoubleClick();
 
 	bool _autorunDisabled;
-
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
+	virtual bool miniUpdate();
 
-	virtual void miniUpdate();
-
-	void getMousePos(Point32 *Pos);
-	Rect32 _mouseLockRect;
+	void getMousePos(Common::Point32 *pos);
+	Common::Rect32 _mouseLockRect;
 
 	bool _shuttingDown;
 
 	virtual bool displayDebugInfo();
+	bool _debugShowFPS;
 
-	void setShowFPS(bool enabled) { _debugShowFPS = enabled; }
-	bool getBilinearFiltering() { return _bilinearFiltering; }
-	bool getSuspendedRendering() const { return _suspendedRendering; }
+	bool _suspendedRendering;
+	int32 _soundBufferSizeSec;
 	virtual bool renderShadowGeometry();
 
 	TTextEncoding _textEncoding;
 	bool _textRTL;
+
+	BaseSprite *_loadingIcon;
+	int32 _loadingIconX;
+	int32 _loadingIconY;
+	int32 _loadingIconPersistent;
 
 	virtual bool resetContent();
 
 	void DEBUG_DumpClassRegistry();
 	bool setWaitCursor(const char *filename);
 
+	char *_localSaveDir;
+	bool _saveDirChecked;
+
 #ifdef ENABLE_WME3D
 	bool _supportsRealTimeShadows;
 	TShadowType _maxShadowType;
-
 	bool setMaxShadowType(TShadowType maxShadowType);
 	virtual TShadowType getMaxShadowType(BaseObject *object = nullptr);
+#endif
+
+	bool _indicatorDisplay;
+	uint32 _indicatorColor;
+	int32 _indicatorProgress;
+	int32 _indicatorX;
+	int32 _indicatorY;
+	int32 _indicatorWidth;
+	int32 _indicatorHeight;
+
+	bool _richSavedGames;
+	char *_savedGameExt;
 
 	int32 _editorResolutionWidth;
 	int32 _editorResolutionHeight;
-#endif
 
-	uint32 getSaveThumbWidth() const { return _thumbnailWidth; }
-	uint32 getSaveThumbHeight() const { return _thumbnailHeight; }
+	char *_loadImageName;
+	char *_saveImageName;
+	int32 _saveImageX;
+	int32 _saveImageY;
+	int32 _loadImageX;
+	int32 _loadImageY;
+	BaseSurface *_saveLoadImage;
+	bool _hasDrawnSaveLoadImage;
+
+	bool displayIndicator();
+#ifdef ENABLE_FOXTAIL
+	bool displayIndicatorFoxTail();
+#endif
+	uint32 _thumbnailWidth;
+	uint32 _thumbnailHeight;
+
+	bool _reportTextureFormat;
+
+	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = nullptr, void *data = nullptr);
+	ENGINE_LOG_CALLBACK _engineLogCallback;
+	void *_engineLogCallbackData;
 
 	bool _editorMode;
 	void getOffset(int *offsetX, int *offsetY) const;
 	void setOffset(int32 offsetX, int32 offsetY);
 	int getSequence();
-
 	int32 _offsetY;
 	int32 _offsetX;
 	float _offsetPercentX;
 	float _offsetPercentY;
-
-	inline BaseObject *getMainObject() { return _mainObject; }
-	inline BaseFont *getSystemFont() { return _systemFont; }
-	inline BaseFont *getVideoFont() { return _videoFont; }
-
+	BaseObject *_mainObject;
 	bool initInput();
 	bool initLoop();
-	uint32 _currentTime;
+	uint32 _currentTime{};
 	uint32 _deltaTime;
-
-	// Init-functions:
+	BaseFont *_systemFont;
+	BaseFont *_videoFont;
 	bool initConfManSettings();
 	bool initRenderer();
-	bool loadGameSettingsFile();
 	bool initialize1();
 	bool initialize2();
 	bool initialize3();
+	BaseAccessMgr *_accessMgr;
+	BaseFileManager *_fileManager;
 	BaseTransitionMgr *_transMgr;
 
-	// String Table
-	void expandStringByStringTable(char **str) const;
-	void expandStringByStringTable(Common::String &str) const;
-	char *getKeyFromStringTable(const char *str) const;
-
 	void LOG(bool res, const char *fmt, ...);
-
 	BaseRenderer *_renderer;
 #ifdef ENABLE_WME3D
 	BaseRenderer3D *_renderer3D;
 	bool _playing3DGame;
 #endif
-
 	BaseSoundMgr *_soundMgr;
 #if EXTENDED_DEBUGGER_ENABLED
 	DebuggableScEngine *_scEngine;
@@ -193,87 +225,169 @@ public:
 	BaseFontStorage *_fontStorage;
 	BaseGame(const Common::String &targetName);
 	~BaseGame() override;
-
-	bool _debugDebugMode;
-
+	void debugDisable();
+	void debugEnable(const char *filename = nullptr);
+	bool _debugMode;
+	void *_debugLogFile;
 	int32 _sequence;
 	virtual bool loadFile(const char *filename);
 	virtual bool loadBuffer(char *buffer, bool complete = true);
-
+	BaseArray<BaseQuickMsg *> _quickMessages;
+	BaseArray<UIWindow *> _windows;
+	BaseArray<BaseViewport *> _viewportStack;
 	int32 _viewportSP;
+	bool _mouseLeftDown;
+	bool _mouseRightDown;
+	bool _mouseMidlleDown;
+	BaseStringTable *_stringTable;
 
+	int _settingsResWidth;
+	int _settingsResHeight;
+	bool _settingsRequireAcceleration;
+	bool _settingsAllowWindowed;
+	bool _settingsAllowAdvanced;
+	bool _settingsAllowAccessTab;
+	bool _settingsAllowAboutTab;
+	bool _settingsRequireSound;
+	bool _settingsAllowDesktopRes;
+	int32 _settingsTLMode;
+	char *_settingsGameFile;
+	BaseFader *_fader;
 	bool _suppressScriptErrors;
-	bool _mouseLeftDown; // TODO: Hide
+
+	bool invalidateDeviceObjects() override;
+	bool restoreDeviceObjects() override;
 
 	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
+
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
+
 	// compatibility bits
 	bool _compatKillMethodThreads;
 
-	const char* getGameTargetName() const { return _targetName.c_str(); }
-	void setGameTargetName(const Common::String& targetName) { _targetName = targetName; }
+private:
+	// FPS stuff
+	uint32 _lastTime;
+	uint32 _fpsTime;
+	uint32 _framesRendered;
+
+public:
 	uint32 _surfaceGCCycleTime;
 	bool _smartCache; // RO
+	bool _videoSubtitles;
 	bool _subtitles; // RO
-
+	uint32 _musicStartTime[NUM_MUSIC_CHANNELS];
+	bool _compressedSavegames;
 	int32 _scheduledLoadSlot;
-
-	bool getIsLoading() const { return _loading; }
-
+	bool _loading;
+	bool _personalizedSave;
+	static bool emptySaveSlot(int slot);
+	static bool isSaveSlotUsed(int slot);
+	static bool getSaveSlotDescription(int slot, Common::String &desc);
+	static void getSaveSlotTimestamp(int slot, TimeDate *time);
+	static bool getSaveSlotFilename(int slot, Common::String &desc);
+	void setWindowTitle();
 	bool handleMouseWheel(int32 delta) override;
 	bool _quitting;
-	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const;
-
+	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
 	bool handleKeypress(Common::Event *event, bool printable = false) override;
 	virtual void handleKeyRelease(Common::Event *event);
+	bool handleAccessKey(Common::Event *event, bool printable);
 	virtual bool handleCustomActionStart(BaseGameCustomAction action);
 	virtual bool handleCustomActionEnd(BaseGameCustomAction action);
-
+	int32 _freezeLevel;
 	bool unfreeze();
 	bool freeze(bool includingMusic = true);
 	bool focusWindow(UIWindow *window);
+	VideoPlayer *_videoPlayer;
+	VideoTheoraPlayer *_theoraPlayer;
 	bool _loadInProgress;
 	UIWindow *_focusedWindow;
 	bool _editorForceScripts;
-
+	static void afterLoadRegion(void *region, void *data);
+	static void afterLoadSubFrame(void *subframe, void *data);
+	static void afterLoadSound(void *sound, void *data);
+	static void afterLoadFont(void *font, void *data);
+#ifdef ENABLE_WME3D
+	static void afterLoadXModel(void *model, void *data);
+#endif
+	static void afterLoadScript(void *script, void *data);
+	static void afterLoadScene(void *scene, void *data);
 	static void invalidateValues(void *value, void *data);
-
 	bool loadSettings(const char *filename);
-
+	bool resumeMusic(int channel);
+	bool setMusicStartTime(int channel, uint32 time);
+	bool pauseMusic(int channel);
+	bool stopMusic(int channel);
+	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0, uint32 privVolume = 100);
+	BaseSound *_music[NUM_MUSIC_CHANNELS];
+	bool _musicCrossfadeRunning;
+	bool _musicCrossfadeSwap;
+	uint32 _musicCrossfadeStartTime;
+	uint32 _musicCrossfadeLength;
+	int32 _musicCrossfadeChannel1;
+	int32 _musicCrossfadeChannel2;
+	int32 _musicCrossfadeVolume1;
+	int32 _musicCrossfadeVolume2;
 	bool displayWindows(bool inGame = false);
+	Common::String readRegistryString(const Common::String &key, const Common::String &initValue) const;
 	bool _useD3D;
 	virtual bool cleanup();
 	bool loadGame(uint32 slot);
 	bool loadGame(const char *filename);
 	bool saveGame(int32 slot, const char *desc, bool quickSave = false);
 	bool showCursor() override;
-
+	BaseSprite *_cursorNoninteractive;
 	BaseObject *_activeObject;
-
+	BaseKeyboardState *_keyboardState;
 	bool _interactive;
 	TGameState _state;
 	TGameState _origState;
 	bool _origInteractive;
+	uint32 _timer;
+	uint32 _timerDelta;
+	uint32 _timerLast;
 
-	const Timer *getTimer() const { return &_timerNormal; }
-	const Timer *getLiveTimer() const { return &_timerLive; }
-private:
-	Timer _timerNormal;
-	Timer _timerLive;
-public:
+	uint32 _liveTimer;
+	uint32 _liveTimerDelta;
+	uint32 _liveTimerLast;
+
 	BaseObject *_capturedObject;
-	Point32 _mousePos;
+	Common::Point32 _mousePos;
 	bool validObject(BaseObject *object);
 	bool unregisterObject(BaseObject *object);
 	bool registerObject(BaseObject *object);
 	void quickMessage(const char *text);
 	void quickMessageForm(char *fmt, ...);
 	bool displayQuickMsg();
+	uint32 _fps;
+	bool updateMusicCrossfade();
 
+	bool isVideoPlaying();
+	bool stopVideo();
+
+	BaseArray<BaseObject *> _regObjects;
+
+	// accessibility flags
+	bool _accessTTSEnabled;
+	bool _accessTTSTalk;
+	bool _accessTTSCaptions;
+	bool _accessTTSKeypress;
+	bool _accessKeyboardEnabled;
+	bool _accessKeyboardCursorSkip;
+	bool _accessKeyboardPause;
+
+	bool _accessGlobalPaused;
+
+	UIWindow *_accessShieldWin;
+	bool accessPause();
+	bool accessUnpause();
+
+public:
 	virtual bool displayContent(bool update = true, bool displayAll = false);
 	virtual bool displayContentSimple();
 	bool _forceNonStreamedSounds;
@@ -282,99 +396,37 @@ public:
 	void setInteractive(bool state);
 	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
 	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
-	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr) const;
-	bool getCurrentViewportRect(Rect32 *rect, bool *custom = nullptr) const;
+	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr);
+	bool getCurrentViewportRect(Common::Rect32 *rect, bool *custom = nullptr);
 	bool popViewport();
-	bool pushViewport(BaseViewport *Viewport);
-	bool setActiveObject(BaseObject *Obj);
+	bool pushViewport(BaseViewport *viewport);
+	bool setActiveObject(BaseObject *obj);
+
 	BaseSprite *_lastCursor;
-	bool drawCursor(BaseSprite *Cursor);
-	bool storeSaveThumbnail();
-	void deleteSaveThumbnail();
+	bool drawCursor(BaseSprite *cursor);
+
+	virtual bool initAfterLoad();
 
 	SaveThumbHelper *_cachedThumbnail;
-	void addMem(int32 bytes);
-	bool _touchInterface;
-	bool _constrainedMemory;
 
-	bool stopVideo();
-protected:
-	BaseFont *_systemFont;
-	BaseFont *_videoFont;
-
-	BaseSprite *_loadingIcon;
-	int32 _loadingIconX;
-	int32 _loadingIconY;
-	int32 _loadingIconPersistent;
-
-	BaseFader *_fader;
-
-	int32 _freezeLevel;
-	VideoPlayer *_videoPlayer;
-	VideoTheoraPlayer *_theoraPlayer;
 private:
-	bool _debugShowFPS;
-	bool _bilinearFiltering;
-#ifdef ENABLE_WME3D
-	bool _force2dRenderer;
-#endif
-	void *_debugLogFile;
-	void DEBUG_DebugDisable();
-	void DEBUG_DebugEnable(const char *filename = nullptr);
+	bool getSaveDir(char *Buffer);
 
-	BaseObject *_mainObject;
 
-	bool _mouseRightDown;
-	bool _mouseMidlleDown;
 
-	BaseGameSettings *_settings;
-
-	int32 _soundBufferSizeSec;
-
-	bool invalidateDeviceObjects() override;
-	bool restoreDeviceObjects() override;
-
-	// TODO: This can probably be removed completely:
-	bool _saveDirChecked;
-
-	Common::String _localSaveDir;
-	bool _loading;
-
-	bool _reportTextureFormat;
-
-	// FPS stuff
-	uint32 _lastTime;
-	uint32 _fpsTime;
-	uint32 _framesRendered;
+public:
+	BaseGameMusic *_musicSystem;
 	Common::String _targetName;
 
-	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = nullptr, void *data = nullptr);
-	ENGINE_LOG_CALLBACK _engineLogCallback;
-	void *_engineLogCallbackData;
+	void setIndicatorVal(int value);
+	bool getBilinearFiltering() { return _bilinearFiltering; }
+	void addMem(int32 bytes);
 
-	bool _videoSubtitles;
-
-	bool _personalizedSave;
-
-	uint32 _thumbnailWidth;
-	uint32 _thumbnailHeight;
-
-	void setWindowTitle();
-
-	bool _suspendedRendering;
-
-	BaseSprite *_cursorNoninteractive;
-	BaseKeyboardState *_keyboardState;
-
-	uint32 _fps;
-	BaseGameMusic *_musicSystem;
-
-	bool isVideoPlaying();
-
-	BaseArray<BaseQuickMsg *> _quickMessages;
-	BaseArray<UIWindow *> _windows;
-	BaseArray<BaseViewport *> _viewportStack;
-	BaseArray<BaseObject *> _regObjects;
+	bool _touchInterface;
+	bool _bilinearFiltering{};
+#ifdef ENABLE_WME3D
+	bool _force2dRenderer{};
+#endif
 
 	AnsiString getDeviceType() const;
 
@@ -393,10 +445,6 @@ private:
 	bool isDoubleClick(int32 buttonIndex);
 	uint32 _usedMem;
 
-// TODO: This should be expanded into a proper class eventually:
-	Common::String readRegistryString(const Common::String &key, const Common::String &initValue) const;
-
-
 protected:
 	// WME Lite specific
 	bool _autoSaveOnExit;
@@ -405,9 +453,11 @@ protected:
 
 public:
 	void autoSaveOnExit();
+	PluginEvent &pluginEvents() { return _pluginEvents; }
+
+private:
 
 #ifdef ENABLE_HEROCRAFT
-private:
 	// HeroCraft games specific random source with ability a in-script function to set the seed
 	Common::RandomSource *_rndHc;
 
@@ -415,6 +465,7 @@ private:
 	uint8 getFilePartChecksumHc(const char *filename, uint32 begin, uint32 end);
 #endif
 
+	PluginEvent _pluginEvents;
 };
 
 } // End of namespace Wintermute

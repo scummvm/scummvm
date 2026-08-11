@@ -42,7 +42,6 @@ MODULE_OBJS := \
 	base/scriptables/script_ext_mem_buffer.o \
 	base/scriptables/script_ext_string.o \
 	base/file/base_disk_file.o \
-	base/file/base_file.o \
 	base/file/base_file_entry.o \
 	base/file/base_package.o \
 	base/file/base_save_thumb_file.o \
@@ -57,22 +56,22 @@ MODULE_OBJS := \
 	base/gfx/osystem/base_surface_osystem.o \
 	base/gfx/osystem/base_render_osystem.o \
 	base/gfx/osystem/render_ticket.o \
+	base/gfx/xmath.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
 	base/particles/part_force.o \
 	base/sound/base_sound.o \
 	base/sound/base_sound_buffer.o \
 	base/sound/base_sound_manager.o \
-	base/base_active_rect.o \
 	base/base.o \
+	base/base_access_mgr.o \
+	base/base_active_rect.o \
 	base/base_dynamic_buffer.o \
 	base/base_engine.o \
 	base/base_fader.o \
 	base/base_file_manager.o \
 	base/base_frame.o \
 	base/base_game.o \
-	base/base_game_music.o \
-	base/base_game_settings.o \
 	base/base_keyboard_state.o \
 	base/base_named_object.o \
 	base/base_object.o \
@@ -89,21 +88,23 @@ MODULE_OBJS := \
 	base/base_surface_storage.o \
 	base/base_transition_manager.o \
 	base/base_viewport.o \
-	base/saveload.o \
 	base/save_thumb_helper.o \
-	base/timer.o \
 	ext/dll_dlltest.o \
 	ext/dll_geturl.o \
 	ext/dll_httpconnect.o \
 	ext/dll_img.o \
 	ext/dll_installutil.o \
 	ext/dll_kernel32.o \
+	ext/dll_protect.o \
+	ext/dll_routine.o \
 	ext/dll_shell32.o \
 	ext/dll_tools.o \
 	ext/scene_achievements.o \
 	ext/wme_3fstatistics.o \
 	ext/wme_commandlinehelper.o \
+	ext/wme_displacement.o \
 	ext/wme_galaxy.o \
+	ext/wme_protection.o \
 	ext/wme_steam.o \
 	ext/wme_windowmode.o \
 	debugger/breakpoint.o \
@@ -119,8 +120,6 @@ MODULE_OBJS := \
 	debugger/watch.o \
 	debugger/watch_instance.o \
 	math/math_util.o \
-	math/matrix4.o \
-	math/vector2.o \
 	metaengine.o \
 	platform_osystem.o \
 	system/sys_class.o \
@@ -159,11 +158,17 @@ MODULE_OBJS += \
 	ad/ad_scene_geometry.o \
 	ad/ad_walkplane.o \
 	ad/ad_waypoint_group3d.o \
+	base/base_animation_transition_time.o \
 	base/gfx/3dcamera.o \
 	base/gfx/3dlight.o \
+	base/gfx/3deffect.o \
+	base/gfx/3deffect_params.o \
+	base/gfx/3dface.o \
 	base/gfx/3dloader_3ds.o \
 	base/gfx/3dmesh.o \
 	base/gfx/3dshadow_volume.o \
+	base/gfx/3dutils.o \
+	base/gfx/3dvertex.o \
 	base/gfx/base_renderer3d.o \
 	base/gfx/skin_mesh_helper.o \
 	base/gfx/xactive_animation.o \
@@ -176,7 +181,7 @@ MODULE_OBJS += \
 	base/gfx/xmaterial.o \
 	base/gfx/xmesh.o \
 	base/gfx/xmodel.o \
-	base/gfx/xskinmesh_loader.o \
+	base/gfx/xskinmesh.o \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d_shader.o \
@@ -186,8 +191,21 @@ MODULE_OBJS += \
 	base/gfx/opengl/mesh3ds_opengl_shader.o \
 	base/gfx/opengl/shadow_volume_opengl.o \
 	base/gfx/opengl/shadow_volume_opengl_shader.o \
-	base/base_animation_transition_time.o
+	ext/wme_blackandwhite.o \
+	ext/wme_shadowmanager.o \
+	ext/wme_vlink.o
+
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	base/gfx/tinygl/base_render_tinygl.o \
+	base/gfx/tinygl/base_surface_tinygl.o \
+	base/gfx/tinygl/mesh3ds_tinygl.o \
+	base/gfx/tinygl/meshx_tinygl.o \
+	base/gfx/tinygl/shadow_volume_tinygl.o
 endif
+
+endif
+
 
 MODULE_DIRS += \
 	engines/wintermute

@@ -210,7 +210,7 @@ void RoomPathsData::clearOccupied(int x, int y, int width) {
 // decompresses the bit-packed data for which parts of a room are occupied
 // into a byte array. It also adds a column and row of padding around the
 // edges of the screen, and extends occupied areas to adjust for the width
-// of the chracter
+// of the character
 
 void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int characterWidth) {
 	byte *pIn = &_data[ROOM_PATHS_SIZE - 1];
@@ -1128,6 +1128,11 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 			(hotspot->currentActions().top().action() == EXEC_HOTSPOT_SCRIPT)))
 			// Entry is skipped if hotspot not present or is executing hotspot script
 			continue;
+
+		// Don't treat the hotspot we're deliberately walking up to as an obstacle
+		if (charHotspot->walkToHotspot() == hotspot->hotspotId()) {
+			continue;
+		}
 
 		// Scan through the pause list to see if there's a record for the
 		// calling character and the impinging list entry

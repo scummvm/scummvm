@@ -155,7 +155,8 @@ Common::SeekableReadStream *N64FilesystemNode::createReadStream() {
 	return RomfsStream::makeFromPath(getPath(), false);
 }
 
-Common::SeekableWriteStream *N64FilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *N64FilesystemNode::createWriteStream(bool atomic) {
+	// TODO: Add atomic support if possible
 	return RomfsStream::makeFromPath(getPath(), true);
 }
 

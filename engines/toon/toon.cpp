@@ -35,7 +35,6 @@
 #include "common/memstream.h"
 #include "common/translation.h"
 
-#include "audio/mididrv.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
@@ -171,9 +170,17 @@ void ToonEngine::init() {
 	_audioManager->loadAudioPack(2, "GENERIC.SEI", "GENERIC.SEL");
 
 
-	// Query the selected music device (defaults to MT_AUTO device).
-	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto"));
-	_noMusicDriver = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+	// Get the selected "music device" (defaults to MT_AUTO device)
+	// as set from Audio > Music Device dropdown setting, which commonly is for MIDI driver selection.
+	// Since this engine does not use MIDI, but the setting is still available from the "Global Options... > Audio"
+	// and the specific game options (Game Options... > Audio), we respect only the option "No Music" to avoid end user confusion.
+	// All other options for this dropdown will result in music playing and are treated as irrelevant.
+	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	_noMusicDriver = (selDevStr.compareToIgnoreCase(Common::String("null")) == 0);
+
+	if (_noMusicDriver) {
+		warning("AUDIO: MUSIC IS FORCED TO OFF (BY THE MIDI DRIVER SETTING - music_driver was set to \"null\")");
+	}
 
 	syncSoundSettings();
 
@@ -203,7 +210,7 @@ void ToonEngine::parseInput() {
 	Common::Event event;
 	while (!breakPollEventloop && _event->pollEvent(event)) {
 
-		const bool hasModifier = (event.kbd.flags & Common::KBD_NON_STICKY) != 0;
+		//const bool hasModifier = (event.kbd.flags & Common::KBD_NON_STICKY) != 0;
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
@@ -221,45 +228,50 @@ void ToonEngine::parseInput() {
 			breakPollEventloop = true;
 			break;
 
-		case Common::EVENT_KEYDOWN:
-			if ((event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) && !hasModifier) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (event.customType) {
+			case kActionStopCurrentVoice:
 				_audioManager->stopCurrentVoice();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_F5 && !hasModifier) {
+				break;
+			case kActionSaveGame:
 				if (_gameState->_inMenu) {
 					playSoundWrong();
 				} else if (canSaveGameStateCurrently())
 					saveGame(-1, "");
-			}
-			if (event.kbd.keycode == Common::KEYCODE_F6 && !hasModifier) {
+				break;
+			case kActionLoadGame:
 				if (_gameState->_inMenu) {
 					playSoundWrong();
 				} else if (canLoadGameStateCurrently())
 					loadGame(-1);
-			}
-			if (event.kbd.keycode == Common::KEYCODE_t && !hasModifier) {
+				break;
+			case kActionSubtitles:
 				ConfMan.setBool("subtitles", !ConfMan.getBool("subtitles"));
 				syncSoundSettings();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_m && !hasModifier) {
+				break;
+			case kActionMuteMusic:
 				ConfMan.setBool("music_mute", !ConfMan.getBool("music_mute"));
 				syncSoundSettings();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_d && !hasModifier) {
+				break;
+			case kActionSpeechMute:
 				ConfMan.setBool("speech_mute", !ConfMan.getBool("speech_mute"));
 				syncSoundSettings();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
+				break;
+			case kActionSFXMute:
 				ConfMan.setBool("sfx_mute", !ConfMan.getBool("sfx_mute"));
 				syncSoundSettings();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_F1 && !hasModifier) {
+				break;
+			case kActionShowOptions:
 				if (_gameState->_inMenu) {
 					playSoundWrong();
 				} else
 					showOptions();
+				break;
+			default:
+				break;
 			}
-
+			break;
+		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags & Common::KBD_ALT) {
 				int slotNum = event.kbd.keycode - (event.kbd.keycode >= Common::KEYCODE_KP0 ? Common::KEYCODE_KP0 : Common::KEYCODE_0);
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
@@ -1839,8 +1851,6 @@ void ToonEngine::fixPaletteEntries(uint8 *palette, int num) {
 
 // adapted from KyraEngine
 void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
-	static int32 numReentrant = 0;
-	++numReentrant;
 	const int startScript = _lastProcessedSceneScript;
 
 	_updatingSceneScriptRunFlag = true;
@@ -1878,7 +1888,6 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 	} while (_lastProcessedSceneScript != startScript && !_shouldQuit);
 
 	_updatingSceneScriptRunFlag = false;
-	--numReentrant;
 }
 
 void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
@@ -3808,7 +3817,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 	//      ScummVM's ConfMan volume levels, text speed, and subtitles settings.
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
@@ -3902,7 +3911,7 @@ bool ToonEngine::loadGame(int32 slot) {
 	int16 savegameId;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {

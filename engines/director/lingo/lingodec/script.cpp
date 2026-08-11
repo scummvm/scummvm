@@ -36,7 +36,8 @@ void Script::read(Common::SeekableReadStream &stream) {
 	stream.seek(38);
 	/* 38 */ scriptFlags = stream.readUint32BE();
 	/* 42 */ unk42 = stream.readSint16BE();
-	/* 44 */ castID = stream.readSint32BE();
+	/* 44 */ unk43 = stream.readSint16BE();
+	/* 46 */ castID = stream.readSint16BE();
 	/* 48 */ factoryNameID = stream.readSint16BE();
 	/* 50 */ handlerVectorsCount = stream.readUint16BE();
 	/* 52 */ handlerVectorsOffset = stream.readUint32BE();

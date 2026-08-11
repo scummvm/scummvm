@@ -40,33 +40,14 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "hpl1/debug.h"
 #include "hpl1/engine/impl/OcclusionQueryOGL.h"
 #include "hpl1/graphics.h"
-#include "hpl1/opengl.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 namespace hpl {
-
-GLenum ColorFormatToGL(eColorDataFormat format) {
-	switch (format) {
-	case eColorDataFormat_RGB:
-		return GL_RGB;
-	case eColorDataFormat_RGBA:
-		return GL_RGBA;
-	case eColorDataFormat_ALPHA:
-		return GL_ALPHA;
-	case eColorDataFormat_BGR:
-		return GL_BGR;
-	case eColorDataFormat_BGRA:
-		return GL_BGRA;
-	default:
-		break;
-	}
-	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid color format (%d)\n", format);
-	return GL_RGB;
-}
 
 GLenum TextureTargetToGL(eTextureTarget target) {
 	switch (target) {
@@ -96,11 +77,7 @@ cLowLevelGraphicsSDL::cLowLevelGraphicsSDL() {
 	mvVirtualSize.y = 600;
 	mfGammaCorrection = 1.0;
 	mpRenderTarget = nullptr;
-#ifdef SCUMM_BIG_ENDIAN
-	mpPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-	mpPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
+	mpPixelFormat = Graphics::PixelFormat::createFormatRGBA32();
 
 	Common::fill(mpCurrentTexture, mpCurrentTexture + MAX_TEXTUREUNITS, nullptr);
 
@@ -275,7 +252,7 @@ int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
 		return 1; // gl 1.4
 
 	case eGraphicCaps_GL_MultiTexture:
-		return GLAD_GL_ARB_multitexture; // gl 1.4
+		return 1; // gl 1.2.1
 
 	default:
 		break;
@@ -287,7 +264,7 @@ int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
 //-----------------------------------------------------------------------
 
 void cLowLevelGraphicsSDL::ShowCursor(bool toggle) {
-	g_system->showMouse(toggle);
+	CursorMan.showMouse(toggle);
 }
 
 //-----------------------------------------------------------------------
@@ -1361,6 +1338,7 @@ void cLowLevelGraphicsSDL::CopyContextToTexure(iTexture *apTex, const cVector2l 
 	// Log("ScreenOffset: %d %d (h: %d s: %d p: %d)\n",avPos.x,lScreenY,mvScreenSize.y,
 	//												avSize.y,avPos.y);
 
+	g_system->presentBuffer();
 	SetTexture(0, apTex);
 	GL_CHECK(glCopyTexSubImage2D(GetGLTextureTargetEnum(apTex->GetTarget()), 0,
 								 avTexOffset.x, lTexY, avPos.x, lScreenY, avSize.x, avSize.y));
@@ -1665,7 +1643,7 @@ GLenum cLowLevelGraphicsSDL::GetGLTextureFuncEnum(eTextureFunc type) {
 		return GL_REPLACE;
 	case eTextureFunc_Add:
 		return GL_ADD;
-	case eTextureFunc_Substract:
+	case eTextureFunc_Subtract:
 		return GL_SUBTRACT;
 	case eTextureFunc_AddSigned:
 		return GL_ADD_SIGNED;
@@ -1811,4 +1789,4 @@ void cLowLevelGraphicsSDL::SetMatrixMode(eMatrix type) {
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL

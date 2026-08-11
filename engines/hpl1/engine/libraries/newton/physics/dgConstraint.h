@@ -22,7 +22,7 @@
 #if !defined(AFX_DGCONSTRAINT_H__F9EC24E0_6E0F_4CD5_909E_A5F5E1AC7C0B__INCLUDED_)
 #define AFX_DGCONSTRAINT_H__F9EC24E0_6E0F_4CD5_909E_A5F5E1AC7C0B__INCLUDED_
 
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#include "common/util.h"
 
 #include "dgBodyMasterList.h"
 

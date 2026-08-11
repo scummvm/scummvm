@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/inttypes.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"

@@ -56,9 +56,9 @@ global uchar do_disambig;  /* 0= execution
 
 /* Flags used during turn execution */
 global rbool beforecmd;     /* Only used by 1.8x games */
-global rbool supress_debug; /* Causes debugging info to _not_ be printed
+global rbool suppress_debug; /* Causes debugging info to _not_ be printed
 				  even if debugging is on; used by disambiguator
-				  and to supress ANY commands */
+				  and to suppress ANY commands */
 global rbool was_metaverb; /* Was the verb that just executed a metaverb? */
 /* Metaverbs are commands that should not take game time
 to execute: SAVE, RESTORE, RESTART, QUIT, SCRIPT, UNSCRIPT,

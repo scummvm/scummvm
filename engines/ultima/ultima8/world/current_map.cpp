@@ -19,9 +19,10 @@
  *
  */
 
-#include "ultima/ultima.h"
-#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/world/current_map.h"
+
+#include "common/stream.h"
+#include "ultima/ultima.h"
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/world.h"
@@ -46,7 +47,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Std::list<Item *> item_list;
+typedef Common::List<Item *> item_list;
 
 const int INT_MAX_VALUE = 0x7fffffff;
 const int INT_MIN_VALUE = -INT_MAX_VALUE - 1;
@@ -78,9 +79,8 @@ CurrentMap::~CurrentMap() {
 void CurrentMap::clear() {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; j++) {
-			item_list::iterator iter;
-			for (iter = _items[i][j].begin(); iter != _items[i][j].end(); ++iter)
-				delete *iter;
+			for (auto *item : _items[i][j])
+				delete item;
 			_items[i][j].clear();
 		}
 		memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
@@ -118,10 +118,7 @@ void CurrentMap::writeback() {
 
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; j++) {
-			item_list::iterator iter;
-			for (iter = _items[i][j].begin(); iter != _items[i][j].end(); ++iter) {
-				Item *item = *iter;
-
+			for (auto *item : _items[i][j]) {
 				// item is being removed from the CurrentMap item lists
 				item->clearExtFlag(Item::EXT_INCURMAP);
 
@@ -160,11 +157,8 @@ void CurrentMap::writeback() {
 	_eggHatcher = 0;
 }
 
-void CurrentMap::loadItems(const Std::list<Item *> &itemlist, bool callCacheIn) {
-	item_list::const_iterator iter;
-	for (iter = itemlist.begin(); iter != itemlist.end(); ++iter) {
-		Item *item = *iter;
-
+void CurrentMap::loadItems(const Common::List<Item *> &itemlist, bool callCacheIn) {
+	for (auto *item : itemlist) {
 		item->assignObjId();
 
 		// No fast area for you!
@@ -245,10 +239,8 @@ void CurrentMap::addItem(Item *item) {
 #ifdef VALIDATE_CHUNKS
 	for (int32 ccy = 0; ccy < MAP_NUM_CHUNKS; ccy++) {
 		for (int32 ccx = 0; ccx < MAP_NUM_CHUNKS; ccx++) {
-			item_list::const_iterator iter;
-			for (iter = _items[ccx][ccy].begin();
-					iter != _items[ccx][ccy].end(); ++iter) {
-				if (*iter == item) {
+			for (const auto *existing : _items[ccx][ccy])
+				if (existing == item) {
 					warning("item %d already exists in map chunk (%d, %d)", item->getObjId(), ccx, ccy);
 				}
 			}
@@ -282,10 +274,8 @@ void CurrentMap::addItemToEnd(Item *item) {
 #ifdef VALIDATE_CHUNKS
 	for (int32 ccy = 0; ccy < MAP_NUM_CHUNKS; ccy++) {
 		for (int32 ccx = 0; ccx < MAP_NUM_CHUNKS; ccx++) {
-			item_list::const_iterator iter;
-			for (iter = _items[ccx][ccy].begin();
-					iter != _items[ccx][ccy].end(); ++iter) {
-				if (*iter == item) {
+			for (const auto *existing : _items[ccx][ccy])
+				if (existing == item) {
 					warning("item %d already exists in map chunk (%d, %d)", item->getObjId(), ccx, ccy);
 				}
 			}
@@ -436,7 +426,7 @@ static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, in
 static inline void CalcFastAreaLimits(int32 &sx_limit,
 									  int32 &sy_limit,
 									  int32 &xy_limit,
-									  const Rect &dims,
+									  const Common::Rect32 &dims,
 									  int mapChunkSize) {
 	// By default the fastArea is the screensize rounded down to the nearest
 	// map chunk, plus 3 wide and 7 high.
@@ -460,8 +450,7 @@ void CurrentMap::updateFastArea(const Point3 &from, const Point3 &to) {
 	int z_max = MAX(from.z, to.z);
 
 	// Work out Fine (screenspace) Limits of chunks with half chunk border
-	Rect dims;
-	Ultima8Engine::get_instance()->getGameMapGump()->GetDims(dims);
+	Common::Rect32 dims = Ultima8Engine::get_instance()->getGameMapGump()->getDims();
 
 	int32 sleft  = ((x_min - y_min) / 4)         - (dims.width() / 2 + _mapChunkSize / 4);
 	int32 stop   = ((x_min + y_min) / 8 - z_max) - (dims.height() / 2 + _mapChunkSize / 8);
@@ -517,17 +506,15 @@ void CurrentMap::updateFastArea(const Point3 &from, const Point3 &to) {
 void CurrentMap::setChunkFast(int32 cx, int32 cy) {
 	_fast[cy][cx / 32] |= 1 << (cx & 31);
 
-	item_list::iterator iter;
-	for (iter = _items[cx][cy].begin();
-	        iter != _items[cx][cy].end(); ++iter) {
-		(*iter)->enterFastArea();
+	for (auto *item : _items[cx][cy]) {
+		item->enterFastArea();
 	}
 }
 
 void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 	_fast[cy][cx / 32] &= ~(1 << (cx & 31));
 
-	item_list::iterator iter = _items[cx][cy].begin();
+	auto iter = _items[cx][cy].begin();
 	while (iter != _items[cx][cy].end()) {
 		Item *item = *iter;
 		++iter;
@@ -592,12 +579,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 	//
 	for (int cy = miny; cy <= maxy; cy++) {
 		for (int cx = minx; cx <= maxx; cx++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-
-				const Item *item = *iter;
-
+			for (const auto *item : _items[cx][cy]) {
 				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
@@ -639,12 +621,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 	for (int cy = miny; cy <= maxy; cy++) {
 		for (int cx = minx; cx <= maxx; cx++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-
-				const Item *item = *iter;
-
+			for (const auto *item : _items[cx][cy]) {
 				if (item->getObjId() == check->getObjId())
 					continue;
 				if (item->hasExtFlags(Item::EXT_SPRITE))
@@ -685,10 +662,8 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 TeleportEgg *CurrentMap::findDestination(uint16 id) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; j++) {
-			item_list::iterator iter;
-			for (iter = _items[i][j].begin();
-			        iter != _items[i][j].end(); ++iter) {
-				TeleportEgg *egg = dynamic_cast<TeleportEgg *>(*iter);
+			for (auto *item : _items[i][j]) {
+				TeleportEgg *egg = dynamic_cast<TeleportEgg *>(item);
 				if (egg) {
 					if (!egg->isTeleporter() && egg->getTeleportId() == id)
 						return egg;
@@ -699,7 +674,7 @@ TeleportEgg *CurrentMap::findDestination(uint16 id) {
 	return nullptr;
 }
 
-const Std::list<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
+const Common::List<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
 	if (gx < 0 || gy < 0 || gx >= MAP_NUM_CHUNKS || gy >= MAP_NUM_CHUNKS)
 		return nullptr;
 	return &_items[gx][gy];
@@ -738,10 +713,7 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-				 iter != _items[cx][cy].end(); ++iter) {
-				const Item *item = *iter;
+			for (const auto *item : _items[cx][cy]) {
 				if (item->getObjId() == id)
 					continue;
 				if (item->hasExtFlags(Item::EXT_SPRITE))
@@ -852,9 +824,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			for (item_list::const_iterator iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-				const Item *citem = *iter;
+			for (const auto *citem : _items[cx][cy]) {
 				if (citem->getObjId() == item->getObjId())
 					continue;
 				if (citem->hasExtFlags(Item::EXT_SPRITE))
@@ -983,7 +953,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 						   const int32 dims[3], uint32 shapeflags,
 						   ObjId item, bool blocking_only,
-						   Std::list<SweepItem> *hit) const {
+						   Common::List<SweepItem> *hit) const {
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING | ShapeInfo::SI_LAND);
 
 	int minx = ((start.x - dims[0]) / _mapChunkSize) - 1;
@@ -1031,15 +1001,13 @@ bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 		   vel[0] - ext[0], vel[1] - ext[1], vel[2] - ext[2],
 		   vel[0] + ext[0], vel[1] + ext[1], vel[2] + ext[2]);
 
-	Std::list<SweepItem>::iterator sw_it;
-	if (hit) sw_it = hit->end();
+	Common::List<SweepItem>::iterator sw_it;
+	if (hit)
+		sw_it = hit->end();
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-				const Item *other_item = *iter;
+			for (const auto *other_item : _items[cx][cy]) {
 				if (other_item->getObjId() == item)
 					continue;
 				if (other_item->hasExtFlags(Item::EXT_SPRITE))
@@ -1200,7 +1168,7 @@ bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 					}
 
 					// Now add it
-					sw_it = hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
+					hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
 
 					//debugC(kDebugCollision, "Hit item %u (%d, %d, %d) at first: %d, last: %d",
 					//	   other_item->getObjId(), other[0], other[1], other[2], first, last);

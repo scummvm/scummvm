@@ -21,11 +21,10 @@
 
 #include "ultima/ultima8/gumps/cru_health_gump.h"
 
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/gfx/palette.h"
 #include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gfx/render_surface.h"
-#include "ultima/ultima8/gfx/texture.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -64,7 +63,7 @@ void CruHealthGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	if (!gamepal)
 		return;
 
-	Rect rect(34, 7, 34 + width, 21);
+	Common::Rect32 rect(34, 7, 34 + width, 21);
 	surf->fillRect(rect, gamepal->_native[HEALTH_BAR_COLOR]);
 }
 

@@ -54,6 +54,9 @@ inline static void convertPaletteToMap(uint32 *dst, const byte *src, uint colors
 
 /**
  * Blits a rectangle.
+ * Cautions: 
+ *  source & destination buffers must have same bpp
+ *  blit function has no protection against buffer overruns; w.bpp & h must not exceed respective byte dimensions (pitch & height) of either buffer
  *
  * @param dst			the buffer which will receive the converted graphics data
  * @param src			the buffer containing the original graphics data
@@ -207,6 +210,70 @@ bool crossMaskBlitMap(byte *dst, const byte *src, const byte *mask,
 			   const uint w, const uint h,
 			   const uint bytesPerPixel, const uint32 *map);
 
+bool alphaBlit(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+			   const byte flip, const byte aMod);
+
+bool alphaKeyBlit(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+			   const uint32 key, const byte flip, const byte aMod);
+
+bool alphaMaskBlit(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt,
+			   const byte flip, const byte aMod);
+
+bool alphaBlitMap(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			   const byte flip, const byte aMod);
+
+bool alphaKeyBlitMap(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			   const uint32 key, const byte flip, const byte aMod);
+
+bool alphaMaskBlitMap(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const uint32 *map,
+			   const byte flip, const byte aMod);
+
+typedef void (*FastBlitFunc)(byte *, const byte *, const uint, const uint, const uint, const uint);
+
+#ifdef SCUMMVM_NEON
+// Fast blit functions for ARM NEON
+void fastBlitNEON_XRGB1555_RGB565(byte *, const byte *, const uint, const uint, const uint, const uint);
+#endif
+
+/**
+ * Look up optimised routines for converting between pixel formats.
+ *
+ * @param dstFmt	the desired pixel format
+ * @param srcFmt	the original pixel format
+ * @return			a function pointer to an optimised routine,
+ *					or nullptr if none are available.
+ *
+ * @note Not all combinations of pixel formats are supported on
+ *       all platforms. Users of this function should provide a
+ *       fallback using crossBlit() if no optimised functions
+ *       can be found.
+ * @note This can convert a surface in place, regardless of the
+ *       source and destination format, as long as there is enough
+ *       space for the destination. The dstPitch / srcPitch ratio
+ *       must at least equal the dstBpp / srcBpp ratio for
+ *       dstPitch >= srcPitch and at most dstBpp / srcBpp for
+ *       dstPitch < srcPitch though.
+ */
+FastBlitFunc getFastBlitFunc(const PixelFormat &dstFmt, const PixelFormat &srcFmt);
+
 bool scaleBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint dstW, const uint dstH,
@@ -287,10 +354,17 @@ private:
 	static void blitGeneric(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 	template<class T>
 	static void blitT(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
-#undef LOGIC_FUNCS_EXT
 
 	typedef void(*BlitFunc)(Args &, const TSpriteBlendMode &, const AlphaType &);
 	static BlitFunc blitFunc;
+
+	static void fillGeneric(Args &args, const TSpriteBlendMode &blendMode);
+	template<class T>
+	static void fillT(Args &args, const TSpriteBlendMode &blendMode);
+
+	typedef void(*FillFunc)(Args &, const TSpriteBlendMode &);
+	static FillFunc fillFunc;
+
 	friend class ::BlendBlitUnfilteredTestSuite;
 	friend class BlendBlitImpl_Default;
 	friend class BlendBlitImpl_NEON;
@@ -347,8 +421,8 @@ public:
 	 * @param srcPitch source pitch
 	 * @param posX where src will be blitted to (onto dest)
 	 * @param posY where src will be blitted to (onto dest)
-	 * @param width width of the input surface
-	 * @param height height of the input surface
+	 * @param width width of the destination area
+	 * @param height height of the destination area
 	 * @param scaleX scale factor to use when blitting (src / dst) (0.5 for 2x scale) use BlendBlit::SCALE_THRESHOLD
 	 * @param scaleY scale factor to use when blitting (src / dst) (0.5 for 2x scale) use BlendBlit::SCALE_THRESHOLD
 	 * @param scaleXsrcOff since you can only offset the *src pointer to effectivly
@@ -369,6 +443,21 @@ public:
 			  const uint32 colorMod, const uint flipping,
 			  const TSpriteBlendMode blendMode,
 			  const AlphaType alphaType);
+
+	/**
+	 * Optimized version of doFill to be used with alpha blended fills
+	 * NOTE: Can only be used with BlendBlit::getSupportedPixelFormat format
+	 * @param dst a pointer to the destination buffer (can be offseted by pixels)
+	 * @param dstPitch destination pitch
+	 * @param width width of the destination area
+	 * @param height height of the destination area
+	 * @param colorMod the color to multiply by. (0xffffffff does no multiplication and has 0 overhead usually)
+	 * @param blendMode the blending mode to be used
+	 */
+	static void fill(byte *dst, const uint dstPitch,
+			  const uint width, const uint height,
+			  const uint32 colorMod,
+			  const TSpriteBlendMode blendMode);
 
 }; // End of class BlendBlit
 

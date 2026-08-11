@@ -40,12 +40,11 @@ public:
 	bool _preserveInteractive;
 	bool update();
 	bool start(TTransitionType type, bool nonInteractive = false);
-	bool isReady() const;
+	bool isReady();
 	TTransMgrState _state;
 	BaseTransitionMgr(BaseGame *inGame);
 	~BaseTransitionMgr() override;
 	TTransitionType _type;
-
 };
 
 } // End of namespace Wintermute

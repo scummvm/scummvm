@@ -27,13 +27,12 @@
 
 namespace Image {
 
-const byte XBMDecoder::_palette[2 * 3] = {
+static const byte xbmPalette[2 * 3] = {
 	0xFF, 0xFF, 0xFF,
 	0x00, 0x00, 0x00
 };
 
-XBMDecoder::XBMDecoder() {
-	_surface = 0;
+XBMDecoder::XBMDecoder() : _surface(nullptr), _palette(xbmPalette, 2) {
 }
 
 XBMDecoder::~XBMDecoder() {

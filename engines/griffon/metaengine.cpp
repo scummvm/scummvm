@@ -50,7 +50,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 #endif
 
-class GriffonMetaEngine: public AdvancedMetaEngine {
+class GriffonMetaEngine: public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "griffon";
@@ -156,7 +156,7 @@ Common::KeymapArray GriffonMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("SPEEDUP", _("Speed Up Cutscene"));
+	act = new Action("SPEEDUP", _("Speed up cutscene"));
 	act->setCustomEngineActionEvent(Griffon::kGriffonCutsceneSpeedUp);
 	act->addDefaultInputMapping("LSHIFT");
 	act->addDefaultInputMapping("RSHIFT");

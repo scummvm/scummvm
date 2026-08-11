@@ -47,7 +47,7 @@ Screen::Screen(VoyeurEngine *vm) : Graphics::Screen(), _vm(vm), _drawPtr(&_defau
 	_backgroundPage = nullptr;
 	_vPort = nullptr;
 	_fontPtr = nullptr;
-	Common::fill(&_VGAColors[0], &_VGAColors[PALETTE_SIZE], 0);
+	Common::fill(&_VGAColors[0], &_VGAColors[Graphics::PALETTE_SIZE], 0);
 	_fontChar = new PictureResource(DISPFLAG_NONE, 0xff, 0xff, 0, Common::Rect(), 0, nullptr, 0);
 	_backColors = nullptr;
 }
@@ -1070,7 +1070,7 @@ void Screen::drawDot() {
 }
 
 void Screen::synchronize(Common::Serializer &s) {
-	s.syncBytes(&_VGAColors[0], PALETTE_SIZE);
+	s.syncBytes(&_VGAColors[0], Graphics::PALETTE_SIZE);
 }
 
 } // End of namespace Voyeur

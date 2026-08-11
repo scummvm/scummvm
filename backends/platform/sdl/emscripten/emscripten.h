@@ -23,9 +23,26 @@
 #define PLATFORM_SDL_EMSCRIPTEN_H
 
 #include "backends/platform/sdl/posix/posix.h"
+#ifdef USE_CLOUD
+#include "backends/networking/http/request.h"
+#include "common/ustr.h"
+typedef Common::BaseCallback<const Common::String *> *CloudConnectionCallback;
+#endif
 
+extern "C" {
+void cloud_connection_json_callback(char *str);       // pass cloud storage activation data from JS to setup wizard
+}
 class OSystem_Emscripten : public OSystem_POSIX {
+#ifdef USE_CLOUD
+	friend void ::cloud_connection_json_callback(char *str);
+#endif
+protected:
+#ifdef USE_CLOUD
+	CloudConnectionCallback _cloudConnectionCallback;
+#endif
+
 public:
+	void initBackend() override;
 	bool hasFeature(Feature f) override;
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
@@ -35,11 +52,23 @@ public:
 #ifdef USE_OPENGL
 	GraphicsManagerType getDefaultGraphicsManager() const override;
 #endif
+	Common::MutexInternal *createMutex() override;
 	void exportFile(const Common::Path &filename);
+	void delayMillis(uint msecs) override;
+	void init() override;
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 
+#ifdef USE_CLOUD
+	void setCloudConnectionCallback(CloudConnectionCallback cb) { _cloudConnectionCallback = cb; }
+	bool openUrl(const Common::String &url) override;
+#endif // USE_CLOUD
+    
 protected:
 	Common::Path getDefaultConfigFileName() override;
 	Common::Path getDefaultLogFileName() override;
+
+private:
+	void updateTimers();
 };
 
 #endif

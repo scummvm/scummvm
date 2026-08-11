@@ -659,7 +659,7 @@ void Scene2202::update() {
 	if (_ssDoneMovingCube) {
 		setSurfacePriority(_ssDoneMovingCube->getSurface(), _surfacePriority);
 		_ssDoneMovingCube = nullptr;
-		if (testIsSolved()) {
+		if (!_isCubeMoving && testIsSolved()) {
 			playSound(0);
 			setGlobalVar(V_TILE_PUZZLE_SOLVED, 1);
 			_isSolved = true;

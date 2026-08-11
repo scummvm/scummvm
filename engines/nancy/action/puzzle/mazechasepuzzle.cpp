@@ -144,6 +144,8 @@ void MazeChasePuzzle::updateGraphics() {
 }
 
 void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
+	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
+
 	readFilename(stream, _imageName);
 
 	uint width = stream.readUint16LE();
@@ -152,6 +154,12 @@ void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_exitPos.x = stream.readUint16LE();
 	_exitPos.y = stream.readUint16LE();
+
+	if (isNancy10) {
+		// Selects how the player piece leaves the board when it reaches the
+		// exit: zero makes it disappear at the hole, non-zero slides it off.
+		_pieceDisappearsAtExit = stream.readByte() == 0;
+	}
 
 	_grid.resize(height, Common::Array<uint16>(width));
 	for (uint y = 0; y < height; ++y) {
@@ -166,6 +174,14 @@ void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < _startLocations.size(); ++i) {
 		_startLocations[i].x = stream.readUint16LE();
 		_startLocations[i].y = stream.readUint16LE();
+	}
+
+	if (isNancy10) {
+		// Fixed 3 slots (player + up to 2 enemies); skip the unused tail.
+		const uint kMaxSlots = 3;
+		const uint used = numEnemies + 1;
+		if (used < kMaxSlots)
+			stream.skip((kMaxSlots - used) * 4);
 	}
 
 	readRect(stream, _playerSrc);
@@ -219,8 +235,14 @@ void MazeChasePuzzle::execute() {
 		}
 
 		if (_pieces[0]._gridPos == _exitPos) {
-			_pieces[0]._gridPos = _exitPos + Common::Point(_exitPos.x == 0 ? -1 : 1, 0);
-			++_currentAnimFrame;
+			if (_pieceDisappearsAtExit) {
+				// The piece vanishes at the hole instead of sliding past the edge
+				_pieces[0].setVisible(false);
+			} else {
+				_pieces[0]._gridPos = _exitPos + Common::Point(_exitPos.x == 0 ? -1 : 1, 0);
+				++_currentAnimFrame;
+			}
+
 			g_nancy->_sound->loadSound(_solveSound);
 			g_nancy->_sound->playSound(_solveSound);
 			_solved = true;

@@ -40,10 +40,6 @@
 #include "kingdom/logic.h"
 
 namespace Kingdom {
-	enum KingdomDebugChannels {
-		kDebugGeneral = 1 << 0
-	};
-
 	struct KingArtEntry {
 		uint8 _width;
 		uint8 _height;

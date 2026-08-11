@@ -22,9 +22,8 @@
 #ifndef ULTIMA8_WORLD_SORTITEM_H
 #define ULTIMA8_WORLD_SORTITEM_H
 
+#include "common/rect.h"
 #include "common/str.h"
-#include "ultima/ultima8/misc/common_types.h"
-#include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/misc/box.h"
 
 //#define SORTITEM_OCCLUSION_EXPERIMENTAL 1
@@ -63,7 +62,7 @@ struct SortItem {
 	uint32                  _flags;     // Item flags
 	uint32                  _extFlags;  // Item extended flags
 
-	Rect                    _sr; // Screenspace rect for shape frame
+	Common::Rect32          _sr; // Screenspace rect for shape frame
 	/*
 	            Bounding Box layout
 
@@ -120,9 +119,9 @@ struct SortItem {
 
 	int32   _order;      // Rendering _order. -1 is not yet drawn
 
-	// Note that Std::priority_queue could be used here, BUT there is no guarentee that it's implementation
+	// Note that PriorityQueue could be used here, BUT there is no guarantee that it's implementation
 	// will be friendly to insertions
-	// Alternatively i could use Std::list, BUT there is no guarentee that it will keep wont delete
+	// Alternatively i could use Common::List, BUT there is no guarantee that it will keep won't delete
 	// the unused nodes after doing a clear
 	// So the only reasonable solution is to write my own list
 	struct DependsList {

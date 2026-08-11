@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import struct
+from hanzi_charmap import simplified_charmap, traditional_charmap
 
 def merge_ranges(*ranges):
     # Use a set for efficient lookup
@@ -31,7 +32,12 @@ def processtable(inputfilename, outfile, highrange, lowrange):
     for (k, v) in sorted(res.items()):
         outfile.write(struct.pack("<H", v))
 
-
+def process_hanzi_t2s(outfile):
+    l = min(len(traditional_charmap), len(simplified_charmap))
+    outfile.write(struct.pack("<i", l))
+    for i in range(l):
+        outfile.write(struct.pack("<HH", ord(traditional_charmap[i]), ord(simplified_charmap[i])))
+    
 encdat = open("encoding.dat", "wb")
 encdat.write(b'SCVMENCD')
 # version
@@ -66,7 +72,10 @@ tables = [
         FILE: "CP936.TXT",
         HIGH: range(0x81, 0xFF),
         LOW: merge_ranges(range(0x40, 0x7f), range(0x80, 0xff))
-    }
+    },
+    {
+        FILE: "hanzi_charmap.py"
+    },
 ]
 
 # number of tables
@@ -76,8 +85,14 @@ curofs = 16 + 4 * len(tables)
 
 for v in tables:
     encdat.write(struct.pack("<i", curofs))
-    curofs += len(v[HIGH]) * len(v[LOW]) * 2
+    if v[FILE] == "hanzi_charmap.py":
+        curofs += min(len(traditional_charmap), len(simplified_charmap)) * 4 + 4
+    else:
+        curofs += len(v[HIGH]) * len(v[LOW]) * 2
 
 for v in tables:
-    processtable(v[FILE], encdat, v[HIGH], v[LOW])
+    if v[FILE] == "hanzi_charmap.py":
+        process_hanzi_t2s(encdat)
+    else:
+        processtable(v[FILE], encdat, v[HIGH], v[LOW])
 

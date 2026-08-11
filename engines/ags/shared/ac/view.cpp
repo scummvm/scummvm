@@ -20,11 +20,10 @@
  */
 
 #include "ags/shared/ac/view.h"
-#include "ags/shared/util/aligned_stream.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
-using AGS::Shared::AlignedStream;
 using AGS::Shared::Stream;
 
 ViewFrame::ViewFrame()
@@ -44,6 +43,7 @@ void ViewFrame::ReadFromFile(Stream *in) {
 	xoffs = in->ReadInt16();
 	yoffs = in->ReadInt16();
 	speed = in->ReadInt16();
+	in->ReadInt16(); // alignment padding to int32
 	flags = in->ReadInt32();
 	sound = in->ReadInt32();
 	in->ReadInt32(); // reserved 1
@@ -55,6 +55,7 @@ void ViewFrame::WriteToFile(Stream *out) {
 	out->WriteInt16(xoffs);
 	out->WriteInt16(yoffs);
 	out->WriteInt16(speed);
+	out->WriteInt16(0); // alignment padding to int32
 	out->WriteInt32(flags);
 	out->WriteInt32(sound);
 	out->WriteInt32(0);
@@ -85,28 +86,24 @@ void ViewLoopNew::Dispose() {
 void ViewLoopNew::WriteToFile_v321(Stream *out) {
 	out->WriteInt16(static_cast<uint16_t>(numFrames));
 	out->WriteInt32(flags);
-	WriteFrames_Aligned(out);
+	WriteFrames(out);
 }
 
-void ViewLoopNew::WriteFrames_Aligned(Stream *out) {
-	AlignedStream align_s(out, Shared::kAligned_Write);
+void ViewLoopNew::WriteFrames(Stream *out) {
 	for (int i = 0; i < numFrames; ++i) {
-		frames[i].WriteToFile(&align_s);
-		align_s.Reset();
+		frames[i].WriteToFile(out);
 	}
 }
 
 void ViewLoopNew::ReadFromFile_v321(Stream *in) {
 	Initialize(static_cast<uint16_t>(in->ReadInt16()));
 	flags = in->ReadInt32();
-	ReadFrames_Aligned(in);
+	ReadFrames(in);
 }
 
-void ViewLoopNew::ReadFrames_Aligned(Stream *in) {
-	AlignedStream align_s(in, Shared::kAligned_Read);
+void ViewLoopNew::ReadFrames(Stream *in) {
 	for (int i = 0; i < numFrames; ++i) {
-		frames[i].ReadFromFile(&align_s);
-		align_s.Reset();
+		frames[i].ReadFromFile(in);
 	}
 }
 
@@ -150,6 +147,7 @@ void ViewStruct272::ReadFromFile(Stream *in) {
 	for (int i = 0; i < 16; ++i) {
 		numframes[i] = in->ReadInt16();
 	}
+	in->ReadInt16(); // alignment padding to int32
 	in->ReadArrayOfInt32(loopflags, 16);
 	for (int j = 0; j < 16; ++j) {
 		for (int i = 0; i < 20; ++i) {

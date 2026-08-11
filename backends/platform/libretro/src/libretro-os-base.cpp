@@ -14,7 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #if defined(_WIN32)
 #include "backends/fs/windows/windows-fs-factory.h"
 #define FS_SYSTEM_FACTORY WindowsFilesystemFactory
@@ -31,13 +30,16 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/platform/libretro/include/libretro-defs.h"
 #include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
 #include "backends/platform/libretro/include/libretro-os.h"
-#include "backends/platform/libretro/include/libretro-fs.h"
-#include "backends/platform/libretro/include/libretro-graphics.h"
+#include "backends/platform/libretro/include/libretro-graphics-surface.h"
+#ifdef USE_OPENGL
+#include "backends/platform/libretro/include/libretro-graphics-opengl.h"
+#endif
 
 OSystem_libretro::OSystem_libretro() : _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mixer(0), _startTime(0), _cursorStatus(0) {
 	_fsFactory = new FS_SYSTEM_FACTORY();
@@ -57,42 +59,9 @@ OSystem_libretro::~OSystem_libretro() {
 }
 
 void OSystem_libretro::initBackend() {
-	Common::String s_homeDir(LibRetroFilesystemNode::getHomeDir());
-	Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
-	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
-	Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
+	/* ScummVM paths checks are triggered by applyBackendSettings on setupGraphics() */
 
-	if (! LibRetroFilesystemNode(s_themeDir).isDirectory())
-		s_themeDir.clear();
-	if (! LibRetroFilesystemNode(s_extraDir).isDirectory())
-		s_extraDir.clear();
-	if (! LibRetroFilesystemNode(s_soundfontPath).exists())
-		s_soundfontPath.clear();
-	if ((s_homeDir.empty() || ! LibRetroFilesystemNode(s_homeDir).isDirectory()) && ! s_systemDir.empty())
-		s_homeDir = s_systemDir;
-
-	//Register default paths
-	if (! s_homeDir.empty()) {
-		ConfMan.registerDefault("browser_lastpath", s_homeDir);
-		retro_log_cb(RETRO_LOG_DEBUG, "Default browser last path set to: %s\n", s_homeDir.c_str());
-	}
-	if (! s_saveDir.empty()) {
-		ConfMan.registerDefault("savepath", s_saveDir);
-		retro_log_cb(RETRO_LOG_DEBUG, "Default save path set to: %s\n", s_saveDir.c_str());
-	}
-
-	//Check current path settings
-	if (!checkPathSetting("savepath", s_saveDir))
-		retro_osd_notification("ScummVM save folder not found.");
-	if (!checkPathSetting("themepath", s_themeDir))
-		retro_osd_notification("ScummVM theme folder not found.");
-	if (!checkPathSetting("extrapath", s_extraDir))
-		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
-	checkPathSetting("soundfont", s_soundfontPath, false);
-	checkPathSetting("browser_lastpath", s_homeDir);
-	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_homeDir : s_playlistDir);
-
-	//Check other settings
+	/* Initialize other settings */
 	if (! ConfMan.hasKey("libretro_playlist_version"))
 		ConfMan.set("libretro_playlist_version", 0);
 
@@ -102,6 +71,7 @@ void OSystem_libretro::initBackend() {
 	if (! ConfMan.hasKey("libretro_hooks_clear"))
 		ConfMan.set("libretro_hooks_clear", 0);
 
+	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
 
 	_mixer = new Audio::MixerImpl(retro_setting_get_sample_rate(), true, retro_setting_get_audio_samples_buffer_size());
@@ -113,7 +83,7 @@ void OSystem_libretro::initBackend() {
 
 	resetGraphicsManager();
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 	refreshRetroSettings();
 }
 
@@ -125,10 +95,10 @@ void OSystem_libretro::engineInit() {
 	}
 
 	/* See LibretroPalette::set workaround */
-	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW){
-		dynamic_cast<LibretroGraphics *>(_graphicsManager)->_mousePalette.reset();
-		dynamic_cast<LibretroGraphics *>(_graphicsManager)->_gamePalette.reset();
-	}
+	/*if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW){
+	    dynamic_cast<LibretroGraphics *>(_graphicsManager)->_mousePalette.reset();
+	    dynamic_cast<LibretroGraphics *>(_graphicsManager)->_gamePalette.reset();
+	}*/
 }
 
 Audio::Mixer *OSystem_libretro::getMixer() {
@@ -144,30 +114,7 @@ void OSystem_libretro::destroy() {
 	delete this;
 }
 
-bool OSystem_libretro::checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory) {
-	Common::String setPath;
-	if (ConfMan.hasKey(setting))
-		setPath = Common::Path::fromConfig(ConfMan.get(setting)).toString();
-
-	if (setPath.empty() || ! (isDirectory ? LibRetroFilesystemNode(setPath).isDirectory() : LibRetroFilesystemNode(setPath).exists()))
-		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
-	if (! ConfMan.hasKey(setting))
-		if (defaultPath.empty())
-			return false;
-		else
-			ConfMan.set(setting, defaultPath);
-	return true;
-}
-
-void OSystem_libretro::setLibretroDir(const char * path, Common::String &var) {
-	var = Common::String(path ? path : "");
-	if (! var.empty())
-		if (! LibRetroFilesystemNode(var).isDirectory())
-			var.clear();
-	return;
-}
-
-void OSystem_libretro::getScreen(const Graphics::Surface *&screen) {
+void OSystem_libretro::getScreen(const Graphics::ManagedSurface *&screen) {
 	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_SW)
 		screen = dynamic_cast<LibretroGraphics *>(_graphicsManager)->getScreen();
 }
@@ -178,40 +125,25 @@ void OSystem_libretro::refreshScreen(void) {
 }
 
 #ifdef USE_OPENGL
+#ifdef USE_GLAD
 void *OSystem_libretro::getOpenGLProcAddress(const char *name) const {
 	return retro_get_proc_address(name);
 }
 #endif
-
-int16 OSystem_libretro::getScreenWidth(void){
-#ifdef USE_OPENGL
-	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
-		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->getWindowWidth();
+void OSystem_libretro::resetGraphicsContext(void) {
+	if ((retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW) && (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_HAVE_OPENGL))
+		dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->resetContext(OpenGL::kContextGL);
+	else if ((retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW) && (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_HAVE_OPENGLES2))
+		dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->resetContext(OpenGL::kContextGLES2);
+}
 #endif
-	if (dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI())
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getOverlayWidth();
-	else
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getWidth();
+
+int16 OSystem_libretro::getScreenWidth(void) {
+	return dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth();
 }
 
-int16 OSystem_libretro::getScreenHeight(void){
-#ifdef USE_OPENGL
-	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
-		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->getWindowHeight();
-#endif
-	if (dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI())
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getOverlayHeight();
-	else
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->getHeight();
-}
-
-bool OSystem_libretro::isOverlayInGUI(void) {
-#ifdef USE_OPENGL
-	if (retro_get_video_hw_mode() & VIDEO_GRAPHIC_MODE_REQUEST_HW)
-		return dynamic_cast<LibretroOpenGLGraphics *>(_graphicsManager)->isOverlayInGUI();
-	else
-#endif
-		return dynamic_cast<LibretroGraphics *>(_graphicsManager)->isOverlayInGUI();
+int16 OSystem_libretro::getScreenHeight(void) {
+	return dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight();
 }
 
 void OSystem_libretro::resetGraphicsManager(void) {
@@ -229,4 +161,8 @@ void OSystem_libretro::resetGraphicsManager(void) {
 	else
 #endif
 		_graphicsManager = new LibretroGraphics();
+}
+
+bool OSystem_libretro::inLauncher() {
+	return (nullptr == ConfMan.getActiveDomain());
 }

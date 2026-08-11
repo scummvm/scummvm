@@ -36,26 +36,6 @@ static const DebugChannelDef debugFlagList[] = {
 	{Sludge::kSludgeDebugSound, "sound", "Sound debug level"},
 	DEBUG_CHANNEL_END
 };
-static const PlainGameDescriptor sludgeGames[] = {
-	{ "sludge",			"Sludge Game" },
-	{ "welcome",		"Welcome Example" },
-	{ "verbcoin",		"Verb Coin" },
-	{ "parallax",		"Parallax Demo" },
-	{ "robinsrescue",	"Robin's Rescue" },
-	{ "outoforder",		"Out Of Order" },
-	{ "frasse",			"Frasse and the Peas of Kejick" },
-	{ "interview",		"The Interview" },
-	{ "life",			"Life Flashes By" },
-	{ "tgttpoacs",		"The Game That Takes Place on a Cruise Ship" },
-	{ "mandy",			"Mandy Christmas Adventure" },
-	{ "cubert",			"Cubert Badbone, P.I." },
-	{ "gjgagsas",		"The Game Jam Game About Games, Secrets and Stuff" },
-	{ "tsotc",			"The Secret of Tremendous Corporation" },
-	{ "nsc",			"Nathan's Second Chance" },
-	{ "atw",			"Above The Waves" },
-	{ "leptonsquest",	"Lepton's Quest" },
-	{ 0, 0 }
-};
 
 #include "sludge/detection_tables.h"
 
@@ -75,9 +55,9 @@ static Sludge::SludgeGameDescription s_fallbackDesc =
 
 static char s_fallbackFileNameBuffer[51];
 
-class SludgeMetaEngineDetection : public AdvancedMetaEngineDetection {
+class SludgeMetaEngineDetection : public AdvancedMetaEngineDetection<Sludge::SludgeGameDescription> {
 public:
-	SludgeMetaEngineDetection() : AdvancedMetaEngineDetection(Sludge::gameDescriptions, sizeof(Sludge::SludgeGameDescription), sludgeGames) {
+	SludgeMetaEngineDetection() : AdvancedMetaEngineDetection(Sludge::gameDescriptions, Sludge::sludgeGames) {
 		_maxScanDepth = 1;
 	}
 

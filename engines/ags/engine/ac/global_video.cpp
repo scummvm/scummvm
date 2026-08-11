@@ -104,6 +104,14 @@ void PlayVideo(const char *name, int skip, int scr_flags) {
 		return;
 	}
 
+	// WORKAROUND: for Diamonds in the Rough
+	// Same as above
+	if ((_GP(game).uniqueid == 1050154255) &&
+		!strcmp(name, "Atropos.avi")) {
+		warning("Skipped unsupported \'Atropos.avi\' video");
+		return;
+	}
+
 	// Convert PlayVideo flags to common video flags
 	/* NOTE: historically using decimal "flags"
 	default (0): the video will be played at original size,

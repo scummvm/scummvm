@@ -641,11 +641,11 @@ void Events::freeList() {
 void Events::processEventTime(long msec) {
 	uint16 event_count = 0;
 
-	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
-		eventi->front().time -= msec;
+	for (auto &eventi : _eventList) {
+		eventi.front().time -= msec;
 		event_count++;
 
-		if (eventi->front().type == kEvTImmediate)
+		if (eventi.front().type == kEvTImmediate)
 			break;
 
 		if (event_count > EVENT_WARNINGCOUNT) {

@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/math.h"
-
 #include "math/ray.h"
 
 #include "tetraedge/te/te_pick_mesh.h"

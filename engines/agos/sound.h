@@ -58,8 +58,9 @@ private:
 	bool _hasEffectsFile;
 	bool _hasVoiceFile;
 	uint16 _ambientPlaying;
+	uint _voicePlaying;
 
-	// Personal Nightmare specfic
+	// Personal Nightmare specific
 	byte *_soundQueuePtr;
 	uint16 _soundQueueNum;
 	uint32 _soundQueueSize;
@@ -87,7 +88,7 @@ public:
 	void playEffects(uint sound);
 	void playAmbient(uint sound);
 
-	// Personal Nightmare specfic
+	// Personal Nightmare specific
 	void handleSoundQueue();
 	void queueSound(byte *ptr, uint16 sound, uint32 size, uint16 freq);
 
@@ -105,6 +106,7 @@ public:
 	bool hasVoice() const;
 	bool isSfxActive() const;
 	bool isVoiceActive() const;
+	uint getCurrentVoice() const { return _voicePlaying; }
 	void stopAllSfx();
 	void stopSfx();
 	void stopSfx5();

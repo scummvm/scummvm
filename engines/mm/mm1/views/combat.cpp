@@ -91,6 +91,7 @@ bool Combat::msgGame(const GameMessage &msg) {
 		_spellResult._lines.clear();
 		_spellResult._lines.push_back(Line(msg._value, 1, msg._stringValue));
 		_spellResult._delaySeconds = 3;
+		Sound::sound(SOUND_2);
 
 		setMode(SPELL_RESULT);
 		return true;
@@ -189,6 +190,9 @@ void Combat::draw() {
 }
 
 void Combat::timeout() {
+	if (!isFocused())
+		return;
+
 	switch (_mode) {
 	case NEXT_ROUND:
 		nextRound2();
@@ -533,6 +537,7 @@ void Combat::writeMonsters() {
 }
 
 void Combat::writeMonsterStatus(int monsterNum) {
+	auto *currMonster = _monsterP;
 	_monsterP = _remainingMonsters[monsterNum];
 	monsterIndexOf();
 	byte statusBits = _remainingMonsters[monsterNum]->_status;
@@ -557,6 +562,8 @@ void Combat::writeMonsterStatus(int monsterNum) {
 	} else {
 		writeSpaces(40 - _textPos.x);
 	}
+
+	_monsterP = currMonster;
 }
 
 void Combat::writeDots() {

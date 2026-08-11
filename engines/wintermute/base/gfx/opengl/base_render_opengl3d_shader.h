@@ -24,14 +24,9 @@
 
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/dctypes.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/math/vector2.h"
 
 #include "graphics/opengl/system_headers.h"
 #include "graphics/transform_struct.h"
-
-#include "math/matrix4.h"
-#include "math/ray.h"
 
 #if defined(USE_OPENGL_SHADERS)
 
@@ -42,50 +37,88 @@ namespace Wintermute {
 class BaseSurfaceOpenGL3D;
 
 class BaseRenderOpenGL3DShader : public BaseRenderer3D {
+	friend class BaseSurfaceOpenGL3DShader;
+	friend class Mesh3DSOpenGLShader;
+	friend class XMeshOpenGLShader;
+	friend class ShadowVolumeOpenGLShader;
+
+	struct SpriteVertex {
+		float x;
+		float y;
+		float z;
+		float u;
+		float v;
+		float r;
+		float g;
+		float b;
+		float a;
+	};
+
+	struct RectangleVertex {
+		float x;
+		float y;
+		float z;
+	};
+
+	struct SimpleShadowVertex {
+		float x;
+		float y;
+		float z;
+		float nx;
+		float ny;
+		float nz;
+		float u;
+		float v;
+	};
+
+
 public:
 	BaseRenderOpenGL3DShader(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3DShader() override;
 
-	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) override;
+	bool invalidateTexture(BaseSurface *texture) override;
 
-	void setAmbientLight() override;
+	bool invalidateDeviceObjects() override;
+	bool restoreDeviceObjects() override;
 
-	int maximumLightsCount() override;
-	void enableLight(int index) override;
-	void disableLight(int index) override;
-	void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) override;
+	bool resetDevice() override;
+
+	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange = false) override;
+
+	void setAmbientLightRenderState() override;
+
+	int getMaxActiveLights() override;
+	void lightEnable(int index, bool enable) override;
+	void setLightParameters(int index, const DXVector3 &position, const DXVector3 &direction, const DXVector4 &diffuse, bool spotlight) override;
 
 	void enableCulling() override;
 	void disableCulling() override;
 
 	bool enableShadows() override;
 	bool disableShadows() override;
-	void displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) override;
-	bool stencilSupported() override;
+	bool shadowVolumeSupported() override;
 
-	void dumpData(const char *filename) override {}
-	BaseImage *takeScreenshot() override;
-	void setWindowed(bool windowed) override;
-	void fadeToColor(byte r, byte g, byte b, byte a) override;
-	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
+	BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) override;
+	bool fadeToColor(byte r, byte g, byte b, byte a) override;
+	bool flip() override;
+	bool clear() override;
 
 	bool setViewport(int left, int top, int right, int bottom) override;
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
+	bool fillRect(int x, int y, int w, int h, uint32 color) override;
+
+	DXMatrix *buildMatrix(DXMatrix* out, const DXVector2 *centre, const DXVector2 *scaling, float angle);
+	void transformVertices(struct SpriteVertex *vertices, const DXVector2 *centre, const DXVector2 *scaling, float angle);
 
 	bool setProjection() override;
-	bool setProjection2D() override;
-	void setWorldTransform(const Math::Matrix4 &transform) override;
+	bool setProjection2D(OpenGL::Shader *);
+	bool setWorldTransform(const DXMatrix &transform) override;
+	bool setViewTransform(const DXMatrix &transform) override;
+	bool setProjectionTransform(const DXMatrix &transform) override;
 
-	bool windowedBlt() override;
-
-	void onWindowChange() override;
 	bool initRenderer(int width, int height, bool windowed) override;
-	bool flip() override;
-	bool indicatorFlip() override;
-	bool forcedFlip() override;
 	bool setup2D(bool force = false) override;
 	bool setup3D(Camera3D *camera, bool force = false) override;
-	bool setupLines() override;
 
 	Common::String getName() const override {
 		return "OpenGL 3D renderer";
@@ -106,14 +139,11 @@ public:
 
 	BaseSurface *createSurface() override;
 
-	bool startSpriteBatch() override {
-		return STATUS_OK;
-	};
-	bool endSpriteBatch() override {
-		return STATUS_OK;
-	};
+	bool startSpriteBatch() override;
+	bool endSpriteBatch() override;
+	bool commitSpriteBatch() override;
 
-	bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
+	bool drawSpriteEx(BaseSurface *texture, const Common::Rect32 &rect, const DXVector2 &pos, const DXVector2 &rot, const DXVector2 &scale,
 	                  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) override;
 
 	void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
@@ -124,37 +154,46 @@ public:
 	XMesh *createXMesh() override;
 	ShadowVolume *createShadowVolume() override;
 
+	bool setViewport3D(DXViewport *viewport) override;
+
+	void postfilter() override;
+	void setPostfilter(PostFilter postFilter) override { _postFilterMode = postFilter; };
+
+	OpenGL::Shader *_shadowMaskShader;
+
 private:
-	Math::Matrix4 _projectionMatrix2d;
+	bool setupLines();
+	void displaySimpleShadow(BaseObject *object) override;
 
-	Common::Array<Math::Matrix4> _transformStack;
+	SimpleShadowVertex _simpleShadow[4];
 
-	float _fov;
-	float _nearPlane;
-	float _farPlane;
-	TRendererState _renderState;
-	bool _spriteBatchMode;
+	Graphics::TSpriteBlendMode _blendMode;
+
+	DXMatrix _glProjectionMatrix;
+	float _alphaRef;
+
+	Common::Array<DXMatrix> _transformStack;
 
 	Math::Vector4d _flatShadowColor;
-	int _shadowTextureWidth;
-	int _shadowTextureHeight;
 
-	GLuint _spriteVBO;
-	GLuint _fadeVBO;
-	GLuint _lineVBO;
-	GLuint _flatShadowMaskVBO;
-	GLuint _flatShadowFrameBuffer;
-	GLuint _flatShadowRenderTexture;
-	GLuint _flatShadowDepthBuffer;
-	OpenGL::Shader *_spriteShader;
-	OpenGL::Shader *_fadeShader;
-	OpenGL::Shader *_xmodelShader;
-	OpenGL::Shader *_geometryShader;
-	OpenGL::Shader *_shadowVolumeShader;
-	OpenGL::Shader *_shadowMaskShader;
-	OpenGL::Shader *_lineShader;
-	OpenGL::Shader *_flatShadowXModelShader;
-	OpenGL::Shader *_flatShadowMaskShader;
+	GLuint _spriteVBO{};
+	GLuint _fadeVBO{};
+	GLuint _rectangleVBO{};
+	GLuint _simpleShadowVBO{};
+	GLuint _postfilterVBO{};
+	GLuint _brightnessVBO{};
+	OpenGL::Shader *_spriteShader{};
+	OpenGL::Shader *_fadeShader{};
+	OpenGL::Shader *_xmodelShader{};
+	OpenGL::Shader *_geometryShader{};
+	OpenGL::Shader *_simpleShadowShader{};
+	OpenGL::Shader *_flatShadowShader{};
+	OpenGL::Shader *_shadowVolumeShader{};
+	OpenGL::Shader *_lineShader{};
+	OpenGL::Shader *_postfilterShader{};
+	OpenGL::Shader *_brightnessShaderOknytt{};
+	OpenGL::Shader *_brightnessShaderJulia{};
+	GLuint _postfilterTexture;
 };
 
 } // namespace Wintermute

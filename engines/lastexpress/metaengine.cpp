@@ -25,7 +25,7 @@
 
 namespace LastExpress {
 
-class LastExpressMetaEngine : public AdvancedMetaEngine {
+class LastExpressMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "lastexpress";
@@ -33,16 +33,12 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
-
 protected:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
 Common::Error LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
+	*engine = new LastExpressEngine(syst, gd);
 	return Common::kNoError;
 }
 
@@ -50,22 +46,17 @@ bool LastExpressEngine::isDemo() const {
 	return (bool)(_gameDescription->flags & ADGF_DEMO);
 }
 
+bool LastExpressEngine::isGoldEdition() const {
+	return (Common::String(_gameDescription->extra) == "Gold Edition");
+}
+
+bool LastExpressEngine::isCompressed() const {
+	return (bool)(_gameDescription->flags & GF_COMPRESSED);
+}
+
 bool LastExpressMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return f == kSupportsListSaves
-	    || f == kSupportsLoadingDuringStartup
 	    || f == kSupportsDeleteSave;
-}
-
-SaveStateList LastExpressMetaEngine::listSaves(const char *target) const {
-	return LastExpress::SaveLoad::list(this, target);
-}
-
-int LastExpressMetaEngine::getMaximumSaveSlot() const {
-	return LastExpress::SaveLoad::kMaximumSaveSlots - 1;
-}
-
-void LastExpressMetaEngine::removeSaveState(const char *target, int slot) const {
-	LastExpress::SaveLoad::remove(target, (LastExpress::GameId)slot);
 }
 
 } // End of namespace LastExpress

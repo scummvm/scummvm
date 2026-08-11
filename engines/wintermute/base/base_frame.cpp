@@ -38,6 +38,8 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -59,19 +61,17 @@ BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 
 //////////////////////////////////////////////////////////////////////
 BaseFrame::~BaseFrame() {
-	delete _sound;
-	_sound = nullptr;
+	SAFE_DELETE(_sound);
 
-	for (uint32 i = 0; i < _subframes.size(); i++) {
+	for (int32 i = 0; i < _subframes.getSize(); i++) {
 		delete _subframes[i];
 	}
-	_subframes.clear();
+	_subframes.removeAll();
 
-	for (uint32 i = 0; i < _applyEvent.size(); i++) {
-		delete[] _applyEvent[i];
-		_applyEvent[i] = nullptr;
+	for (int32 i = 0; i < _applyEvent.getSize(); i++) {
+		SAFE_DELETE_ARRAY(_applyEvent[i]);
 	}
-	_applyEvent.clear();
+	_applyEvent.removeAll();
 }
 
 
@@ -79,10 +79,14 @@ BaseFrame::~BaseFrame() {
 bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, bool allFrames, float rotate, Graphics::TSpriteBlendMode blendMode) {
 	bool res;
 
-	for (uint32 i = 0; i < _subframes.size(); i++) {
+	for (int32 i = 0; i < _subframes.getSize(); i++) {
 		// filter out subframes unsupported by current renderer
+		//
+		// This is not present in original Lite version of WME.
+		// It's in assumption Lite support only 2D games.
+		// Our 3D renderer has full 2D capability, so not filter 2D only subframes.
 		if (!allFrames) {
-			if ((_subframes[i]->_2DOnly && _gameRef->_useD3D) || (_subframes[i]->_3DOnly && !_gameRef->_useD3D))
+			if (/*(_subframes[i]->_2DOnly && _game->_useD3D) || */(_subframes[i]->_3DOnly && !_game->_useD3D))
 				continue;
 		}
 		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
@@ -93,13 +97,6 @@ bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float
 	return STATUS_OK;
 }
 
-void BaseFrame::stopSound() {
-	if (_sound) {
-		_sound->stop();
-	}
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 	if (_sound && !muted) {
@@ -108,13 +105,13 @@ bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 		}
 		_sound->play();
 		/*
-		if (_gameRef->_state == GAME_FROZEN) {
-		    _sound->Pause(true);
+		if (_game->_state == GAME_FROZEN) {
+		    _sound->pause(true);
 		}
 		*/
 	}
 	if (owner) {
-		for (uint32 i = 0; i < _applyEvent.size(); i++) {
+		for (int32 i = 0; i < _applyEvent.getSize(); i++) {
 			owner->applyEvent(_applyEvent[i]);
 		}
 	}
@@ -174,8 +171,8 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
-	Rect32 rect;
+	BaseParser parser(_game);
+	Common::Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	int hotspotX = 0, hotspotY = 0;
@@ -186,7 +183,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	bool decoration = false;
 	bool mirrorX = false;
 	bool mirrorY = false;
-	rect.setEmpty();
+	BasePlatform::setRectEmpty(&rect);
 	char *surface_file = nullptr;
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
@@ -253,7 +250,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_SUBFRAME: {
-			BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
+			BaseSubFrame *subframe = new BaseSubFrame(_game);
 			if (!subframe || DID_FAIL(subframe->loadBuffer(params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
@@ -265,16 +262,14 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 		case TOKEN_SOUND: {
 			if (_sound) {
-				delete _sound;
-				_sound = nullptr;
+				SAFE_DELETE(_sound);
 			}
-			_sound = new BaseSound(_gameRef);
-			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
-				if (BaseEngine::instance().getSoundMgr()->_soundAvailable) {
-					BaseEngine::LOG(0, "Error loading sound '%s'.", params);
+			_sound = new BaseSound(_game);
+			if (!_sound || DID_FAIL(_sound->setSound(params, TSoundType::SOUND_SFX, false))) {
+				if (_game->_soundMgr->_soundAvailable) {
+					_game->LOG(0, "Error loading sound '%s'.", params);
 				}
-				delete _sound;
-				_sound = nullptr;
+				SAFE_DELETE(_sound);
 			}
 		}
 		break;
@@ -304,17 +299,17 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		BaseEngine::LOG(0, "Syntax error in FRAME definition");
+		_game->LOG(0, "Syntax error in FRAME definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		BaseEngine::LOG(0, "Error loading FRAME definition");
+		_game->LOG(0, "Error loading FRAME definition");
 		return STATUS_FAILED;
 	}
 
 
-	BaseSubFrame *sub = new BaseSubFrame(_gameRef);
+	BaseSubFrame *sub = new BaseSubFrame(_game);
 	if (surface_file != nullptr) {
 		if (customTrans) {
 			sub->setSurface(surface_file, false, r, g, b, lifeTime, keepLoaded);
@@ -324,7 +319,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 		if (!sub->_surface) {
 			delete sub;
-			BaseEngine::LOG(0, "Error loading SUBFRAME");
+			_game->LOG(0, "Error loading SUBFRAME");
 			return STATUS_FAILED;
 		}
 
@@ -334,10 +329,10 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 
-	if (rect.isRectEmpty()) {
+	if (BasePlatform::isRectEmpty(&rect)) {
 		sub->setDefaultRect();
 	} else {
-		sub->setRect(rect);
+		sub->_rect = rect;
 	}
 
 	sub->_hotspotX = hotspotX;
@@ -350,22 +345,22 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 
 	sub->_editorSelected = editorSelected;
-	_subframes.insert_at(0, sub);
+	_subframes.insertAt(0, sub);
 
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
+bool BaseFrame::getBoundingRect(Common::Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
 	}
-	rect->setEmpty();
+	BasePlatform::setRectEmpty(rect);
 
-	Rect32 subRect;
+	Common::Rect32 subRect;
 
-	for (uint32 i = 0; i < _subframes.size(); i++) {
+	for (int32 i = 0; i < _subframes.getSize(); i++) {
 		_subframes[i]->getBoundingRect(&subRect, x, y, scaleX, scaleY);
 		BasePlatform::unionRect(rect, rect, &subRect);
 	}
@@ -383,8 +378,8 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
 	}
 
-	if (_sound && _sound->getFilename()) {
-		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sound->getFilename());
+	if (_sound && _sound->_soundFilename && _sound->_soundFilename[0]) {
+		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename);
 	}
 
 	buffer->putTextIndent(indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
@@ -397,15 +392,15 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "EDITOR_EXPANDED=%s\n", _editorExpanded ? "TRUE" : "FALSE");
 	}
 
-	if (_subframes.size() > 0) {
+	if (_subframes.getSize() > 0) {
 		_subframes[0]->saveAsText(buffer, indent, false);
 	}
 
-	for (uint32 i = 1; i < _subframes.size(); i++) {
+	for (int32 i = 1; i < _subframes.getSize(); i++) {
 		_subframes[i]->saveAsText(buffer, indent + 2);
 	}
 
-	for (uint32 i = 0; i < _applyEvent.size(); i++) {
+	for (int32 i = 0; i < _applyEvent.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "APPLY_EVENT=\"%s\"\n", _applyEvent[i]);
 	}
 
@@ -447,8 +442,8 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "GetSound") == 0) {
 		stack->correctParams(0);
 
-		if (_sound && _sound->getFilename()) {
-			stack->pushString(_sound->getFilename());
+		if (_sound && _sound->_soundFilename && _sound->_soundFilename[0]) {
+			stack->pushString(_sound->_soundFilename);
 		} else {
 			stack->pushNULL();
 		}
@@ -461,15 +456,13 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "SetSound") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		delete _sound;
-		_sound = nullptr;
+		SAFE_DELETE(_sound);
 
 		if (!val->isNULL()) {
-			_sound = new BaseSound(_gameRef);
-			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), Audio::Mixer::kSFXSoundType, false))) {
+			_sound = new BaseSound(_game);
+			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), TSoundType::SOUND_SFX, false))) {
 				stack->pushBool(false);
-				delete _sound;
-				_sound = nullptr;
+				SAFE_DELETE(_sound);
 			} else {
 				stack->pushBool(true);
 			}
@@ -485,7 +478,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= (int32)_subframes.size()) {
+		if (index < 0 || index >= _subframes.getSize()) {
 			script->runtimeError("Frame.GetSubframe: Subframe index %d is out of range.", index);
 			stack->pushNULL();
 		} else {
@@ -503,15 +496,15 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		ScValue *val = stack->pop();
 		if (val->isInt()) {
 			int index = val->getInt(-1);
-			if (index < 0 || index >= (int32)_subframes.size()) {
+			if (index < 0 || index >= _subframes.getSize()) {
 				script->runtimeError("Frame.DeleteSubframe: Subframe index %d is out of range.", index);
 			}
 		} else {
 			BaseSubFrame *sub = (BaseSubFrame *)val->getNative();
-			for (uint32 i = 0; i < _subframes.size(); i++) {
+			for (int32 i = 0; i < _subframes.getSize(); i++) {
 				if (_subframes[i] == sub) {
 					delete _subframes[i];
-					_subframes.remove_at(i);
+					_subframes.removeAt(i);
 					break;
 				}
 			}
@@ -531,7 +524,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 			filename = val->getString();
 		}
 
-		BaseSubFrame *sub = new BaseSubFrame(_gameRef);
+		BaseSubFrame *sub = new BaseSubFrame(_game);
 		if (filename != nullptr) {
 			sub->setSurface(filename);
 			sub->setDefaultRect();
@@ -558,15 +551,15 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 			filename = val->getString();
 		}
 
-		BaseSubFrame *sub = new BaseSubFrame(_gameRef);
+		BaseSubFrame *sub = new BaseSubFrame(_game);
 		if (filename != nullptr) {
 			sub->setSurface(filename);
 		}
 
-		if (index >= (int32)_subframes.size()) {
+		if (index >= _subframes.getSize()) {
 			_subframes.add(sub);
 		} else {
-			_subframes.insert_at(index, sub);
+			_subframes.insertAt(index, sub);
 		}
 
 		stack->pushNative(sub, true);
@@ -579,7 +572,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	else if (strcmp(name, "GetSubframe") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= (int32)_applyEvent.size()) {
+		if (index < 0 || index >= _applyEvent.getSize()) {
 			script->runtimeError("Frame.GetEvent: Event index %d is out of range.", index);
 			stack->pushNULL();
 		} else {
@@ -594,7 +587,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	else if (strcmp(name, "AddEvent") == 0) {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
-		for (uint32 i = 0; i < _applyEvent.size(); i++) {
+		for (int32 i = 0; i < _applyEvent.getSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				stack->pushNULL();
 				return STATUS_OK;
@@ -611,10 +604,10 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	else if (strcmp(name, "DeleteEvent") == 0) {
 		stack->correctParams(1);
 		const char *event = stack->pop()->getString();
-		for (uint32 i = 0; i < _applyEvent.size(); i++) {
+		for (int32 i = 0; i < _applyEvent.getSize(); i++) {
 			if (scumm_stricmp(_applyEvent[i], event) == 0) {
 				delete[] _applyEvent[i];
-				_applyEvent.remove_at(i);
+				_applyEvent.removeAt(i);
 				break;
 			}
 		}
@@ -624,7 +617,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.size() == 1) {
+		if (_subframes.getSize() == 1) {
 			return _subframes[0]->scCallMethod(script, stack, thisStack, name);
 		} else {
 			return BaseScriptable::scCallMethod(script, stack, thisStack, name);
@@ -634,16 +627,16 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseFrame::scGetProperty(const Common::String &name) {
+ScValue *BaseFrame::scGetProperty(const char *name) {
 	if (!_scValue) {
-		_scValue = new ScValue(_gameRef);
+		_scValue = new ScValue(_game);
 	}
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("frame");
 		return _scValue;
 	}
@@ -651,7 +644,7 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Delay
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Delay") {
+	else if (strcmp(name, "Delay") == 0) {
 		_scValue->setInt(_delay);
 		return _scValue;
 	}
@@ -659,7 +652,7 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Keyframe
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Keyframe") {
+	else if (strcmp(name, "Keyframe") == 0) {
 		_scValue->setBool(_keyframe);
 		return _scValue;
 	}
@@ -667,7 +660,7 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// KillSounds
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "KillSounds") {
+	else if (strcmp(name, "KillSounds") == 0) {
 		_scValue->setBool(_killSound);
 		return _scValue;
 	}
@@ -675,7 +668,7 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MoveX") {
+	else if (strcmp(name, "MoveX") == 0) {
 		_scValue->setInt(_moveX);
 		return _scValue;
 	}
@@ -683,7 +676,7 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MoveY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MoveY") {
+	else if (strcmp(name, "MoveY") == 0) {
 		_scValue->setInt(_moveY);
 		return _scValue;
 	}
@@ -691,22 +684,22 @@ ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumSubframes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumSubframes") {
-		_scValue->setInt(_subframes.size());
+	else if (strcmp(name, "NumSubframes") == 0) {
+		_scValue->setInt(_subframes.getSize());
 		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// NumEvents (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumEvents") {
-		_scValue->setInt(_applyEvent.size());
+	else if (strcmp(name, "NumEvents") == 0) {
+		_scValue->setInt(_applyEvent.getSize());
 		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.size() == 1) {
+		if (_subframes.getSize() == 1) {
 			return _subframes[0]->scGetProperty(name);
 		} else {
 			return BaseScriptable::scGetProperty(name);
@@ -759,7 +752,7 @@ bool BaseFrame::scSetProperty(const char *name, ScValue *value) {
 
 	//////////////////////////////////////////////////////////////////////////
 	else {
-		if (_subframes.size() == 1) {
+		if (_subframes.getSize() == 1) {
 			return _subframes[0]->scSetProperty(name, value);
 		} else {
 			return BaseScriptable::scSetProperty(name, value);
@@ -774,6 +767,6 @@ const char *BaseFrame::scToString() {
 }
 
 Common::String BaseFrame::debuggerToString() const {
-	return Common::String::format("%p: Frame \"%s\": #subframes %d ", (const void *)this, getName(), _subframes.size());
+	return Common::String::format("%p: Frame \"%s\": #subframes %d ", (const void *)this, _name, _subframes.getSize());
 }
 } // End of namespace Wintermute

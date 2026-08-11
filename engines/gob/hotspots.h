@@ -104,7 +104,18 @@ public:
 	int16 findCursor(uint16 x, uint16 y) const;
 
 	/** implementation of oPlaytoons_F_1B code*/
-	void oPlaytoons_F_1B();
+	void createButton();
+
+#ifdef USE_TTS
+	bool hoveringOverHotspot() const;
+	void addHotspotTTSText(const Common::String &text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int16 surf);
+	void voiceUnassignedHotspots();
+	void voiceHotspotTTSText(int16 x, int16 y);
+	void clearHotspotTTSText();
+	void clearUnassignedHotspotTTSText();
+	void clearPreviousSaid();
+	void adjustHotspotTTSTextRect(int16 oldLeft, int16 oldTop, int16 oldRight, int16 oldBottom, int16 newX, int16 newY, int16 surf);
+#endif
 
 private:
 	struct Hotspot {
@@ -118,7 +129,8 @@ private:
 		uint16  funcEnter;
 		uint16  funcLeave;
 		uint16  funcPos;
-		Script *script;
+		Script *scriptFuncLeave;
+		Script *scriptFuncPos;
 
 		Hotspot();
 		Hotspot(uint16 i,
@@ -156,6 +168,16 @@ private:
 		void enable ();
 	};
 
+#ifdef USE_TTS
+	struct HotspotTTSText {
+		Common::String str;
+		Common::Rect rect;
+		int16 hotspot;
+		bool voiced;
+		int16 surf;
+	};
+#endif
+
 	struct StackEntry {
 		bool     shouldPush;
 		Hotspot *hotspots;
@@ -187,6 +209,13 @@ private:
 	uint16 _currentId;
 	uint16 _currentX;
 	uint16 _currentY;
+
+#ifdef USE_TTS
+	Common::String _previousSaid;
+	bool _hotspotSpokenLast;
+	Common::Array<HotspotTTSText> _hotspotTTSText;
+	int16 _currentHotspotTTSTextIndex;
+#endif
 
 	/** Add a hotspot, returning the new index. */
 	uint16 add(const Hotspot &hotspot);
@@ -277,6 +306,11 @@ private:
 
 	/** Go through all inputs we manage and redraw their texts. */
 	void updateAllTexts(const InputDesc *inputs) const;
+
+#ifdef USE_TTS
+	void expandHotspotTTSText(uint16 spotID);
+	void removeHotspotTTSText(uint16 spotID);
+#endif
 };
 
 } // End of namespace Gob

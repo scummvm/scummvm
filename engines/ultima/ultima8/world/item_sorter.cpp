@@ -72,7 +72,7 @@ ItemSorter::~ItemSorter() {
 	}
 }
 
-void ItemSorter::BeginDisplayList(const Rect &clipWindow, const Point3 &cam) {
+void ItemSorter::BeginDisplayList(const Common::Rect32 &clipWindow, const Point3 &cam) {
 	// Get the _shapes, if required
 	if (!_shapes) _shapes = GameData::get_instance()->getMainShapes();
 
@@ -274,7 +274,7 @@ void ItemSorter::AddItem(const Item *add) {
 			add->getFlags(), add->getExtFlags(), add->getObjId());
 }
 
-void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool showFootpads) {
+void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool showFootpads, int gridlines) {
 	if (_sortLimit) {
 		// Clear the surface when debugging the sorter
 		uint32 color = TEX32_PACK_RGB(0, 0, 0);
@@ -370,7 +370,7 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 	_painted = nullptr;  // Reset the paint tracking
 	while (it != end) {
 		if (it->_order == -1)
-			if (PaintSortItem(surf, it, showFootpads))
+			if (PaintSortItem(surf, it, showFootpads, gridlines))
 				return;
 		it = it->_next;
 	}
@@ -399,7 +399,7 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
  * Recursively paint this item and all its dependencies.
  * Returns true if recursion should stop.
  */
-bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootpad) {
+bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootpad, int gridlines) {
 	// Don't paint this, or dependencies (yet) if occluded
 	if (si->_occluded)
 		return false;
@@ -408,21 +408,18 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootp
 	si->_order = -2;
 
 	// Iterate through our dependancies, and paint them, if possible
-	SortItem::DependsList::iterator it = si->_depends.begin();
-	SortItem::DependsList::iterator end = si->_depends.end();
-	while (it != end) {
-		if ((*it)->_order == -2) {
+	for (auto *d : si->_depends) {
+		if (d->_order == -2) {
 			if (!_sortLimit) {
 				debugC(kDebugObject, "Cycle in paint dependency graph %d -> %d -> ... -> %d",
-					   si->_shapeNum, (*it)->_shapeNum, si->_shapeNum);
+					   si->_shapeNum, d->_shapeNum, si->_shapeNum);
 			}
 			break;
 		}
-		else if ((*it)->_order == -1) {
-			if (PaintSortItem(surf, *it, showFootpad))
+		else if (d->_order == -1) {
+			if (PaintSortItem(surf, d, showFootpad, gridlines))
 				return true;
 		}
-		++it;
 	}
 
 	// Now paint us!
@@ -460,6 +457,43 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootp
 				surf->drawLine32(color, si->_sxBot, syNearTop, si->_sxBot, si->_syBot);
 				surf->drawLine32(color, si->_sxLeft, syLeftBot, si->_sxBot, si->_syBot);
 				surf->drawLine32(color, si->_sxRight, syRightBot, si->_sxBot, si->_syBot);
+			}
+		}
+
+		// Draw gridlines
+		if (gridlines > 0 && (si->_land || si->_roof || si->_flat)) {
+			uint32 color = TEX32_PACK_RGB(0x00, 0xFF, 0xFF);
+
+			int32 gridx = (si->_xLeft / gridlines + 1) * gridlines;
+			while (gridx <= si->_x) {
+				int32 sx1 = gridx / 4 - si->_y / 4 - _camSx;
+				int32 sy1 = gridx / 8 + si->_y / 8 - si->_zTop - _camSy;
+				int32 sx2 = gridx / 4 - si->_yFar / 4 - _camSx;
+				int32 sy2 = gridx / 8 + si->_yFar / 8 - si->_zTop - _camSy;
+				surf->drawLine32(color, sx1, sy1, sx2, sy2);
+				if (si->_z < si->_zTop) {
+					int32 sx3 = gridx / 4 - si->_y / 4 - _camSx;
+					int32 sy3 = gridx / 8 + si->_y / 8 - si->_z - _camSy;
+					surf->drawLine32(color, sx1, sy1, sx3, sy3);
+				}
+
+				gridx += gridlines;
+			}
+
+			int32 gridy = (si->_yFar / gridlines + 1) * gridlines;
+			while (gridy <= si->_y) {
+				int32 sx1 = si->_xLeft / 4 - gridy / 4 - _camSx;
+				int32 sy1 = si->_xLeft / 8 + gridy / 8 - si->_zTop - _camSy;
+				int32 sx2 = si->_x / 4 - gridy / 4 - _camSx;
+				int32 sy2 = si->_x / 8 + gridy / 8 - si->_zTop - _camSy;
+				surf->drawLine32(color, sx1, sy1, sx2, sy2);
+				if (si->_z < si->_zTop) {
+				int32 sx3 = si->_x / 4 - gridy / 4 - _camSx;
+				int32 sy3 = si->_x / 8 + gridy / 8 - si->_z - _camSy;
+					surf->drawLine32(color, sx2, sy2, sx3, sy3);
+				}
+
+				gridy += gridlines;
 			}
 		}
 
@@ -512,7 +546,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 		_painted = nullptr;
 		while (it != nullptr) {
 			if (it->_order == -1)
-				if (PaintSortItem(nullptr, it, false))
+				if (PaintSortItem(nullptr, it, false, 0))
 					break;
 
 			it = it->_next;

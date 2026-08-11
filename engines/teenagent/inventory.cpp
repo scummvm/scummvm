@@ -62,8 +62,8 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	_objects.push_back(ioBlank);
 	for (byte i = 0; i < kNumInventoryItems; ++i) {
 		InventoryObject io;
-		uint16 objAddr = vm->res->dseg.get_word(dsAddr_inventoryItemDataPtrTable + i * 2);
-		io.load(vm->res->dseg.ptr(objAddr));
+		uint32 objAddr = vm->res->getItemAddr(i);
+		io.load(vm->res->eseg.ptr(objAddr));
 		_objects.push_back(io);
 	}
 
@@ -202,7 +202,8 @@ bool Inventory::processEvent(const Common::Event &event) {
 				return true;
 			//activate(false);
 			int w = _vm->res->font7.render(NULL, 0, 0, _hoveredObj->description, textColorMark);
-			_vm->scene->displayMessage(_hoveredObj->description, textColorMark, Common::Point((kScreenWidth - w) / 2, 162));
+			uint16 voiceIndex = _vm->res->getVoiceIndex(_vm->res->getItemAddr(_hoveredObj->id - 1));
+			_vm->scene->displayMessage(_hoveredObj->description, voiceIndex, textColorMark, Common::Point((kScreenWidth - w) / 2, 162));
 			return true;
 		}
 
@@ -212,8 +213,10 @@ bool Inventory::processEvent(const Common::Event &event) {
 			return true;
 
 		debugC(0, kDebugInventory, "combine(%u, %u)!", id1, id2);
-		byte *table = _vm->res->dseg.ptr(dsAddr_objCombiningTablePtr);
-		while (table[0] != 0 && table[1] != 0) {
+		for (uint i = 0; i < kNumCombinations; i++) {
+			uint32 addr = _vm->res->getCombinationAddr(i);
+			byte *table = _vm->res->eseg.ptr(addr);
+
 			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
 				byte newObj = table[2];
 				if (newObj != 0) {
@@ -223,15 +226,14 @@ bool Inventory::processEvent(const Common::Event &event) {
 					add(newObj);
 					_vm->playSoundNow(&_vm->res->sam_sam, 69);
 				}
-				uint16 msg = READ_LE_UINT16(table + 3);
-				_vm->displayMessage(msg);
+				Common::String msg = Object::parseDescription((const char *)(table + 3));
+				_vm->displayMessage(msg, _vm->res->getVoiceIndex(addr));
 				activate(false);
 				resetSelectedObject();
 				return true;
 			}
-			table += 5;
 		}
-		_vm->displayMessage(dsAddr_objCombineErrorMsg);
+		_vm->displayMessage(_vm->res->getMessageAddr(kObjCombineErrorMsg));
 		activate(false);
 		resetSelectedObject();
 		return true;
@@ -253,15 +255,17 @@ bool Inventory::processEvent(const Common::Event &event) {
 			debugC(0, kDebugInventory, "selected object %s", _selectedObj->name.c_str());
 		return true;
 
-	case Common::EVENT_KEYDOWN:
-		if (_active && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (_active && event.customType == kActionCloseInventory) {
 			activate(false);
 			return true;
 		}
-		if (event.kbd.keycode == Common::KEYCODE_RETURN) {
+		if (event.customType == kActionToggleInventory) {
 			activate(!_active);
 			return true;
 		}
+		if (event.customType == kActionSkipDialog)
+			return true;
 		return false;
 
 	case Common::EVENT_LBUTTONUP:
@@ -339,6 +343,10 @@ void Inventory::Item::render(Inventory *inventory, uint itemId, Graphics::Surfac
 	if (_hovered && inventory->_vm->scene->getMessage().empty()) {
 		int w = inventory->_vm->res->font7.render(NULL, 0, 0, name, textColorMark, true);
 		inventory->_vm->res->font7.render(dst, (kScreenWidth - w) / 2, 180, name, textColorMark, true);
+
+		inventory->_vm->sayText(name);
+	} else if (!inventory->_hoveredObj && inventory->_vm->scene->getMessage().empty()) {
+		inventory->_vm->_previousSaid.clear();
 	}
 }
 

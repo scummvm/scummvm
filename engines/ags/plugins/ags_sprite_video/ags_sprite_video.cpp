@@ -35,28 +35,28 @@ char video_filename[200];
 
 struct D3D : public IAGSScriptManagedObject {
 public:
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		delete this;
 		return true;
 	}
 	const char *GetType() override {
 		return "D3D";
 	};
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };
 
 struct D3DVideo : public IAGSScriptManagedObject {
 public:
-	int Dispose(const char *address, bool force) override {
+	int Dispose(void *address, bool force) override {
 		delete this;
 		return true;
 	}
 	const char *GetType() override {
 		return "D3DVideo";
 	};
-	int Serialize(const char *address, char *buffer, int bufsize) override {
+	int Serialize(void *address, char *buffer, int bufsize) override {
 		return 0;
 	}
 };
@@ -79,6 +79,9 @@ void AGSSpriteVideo::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(D3D_Video::Autoplay^0, AGSSpriteVideo::Autoplay);
 	SCRIPT_METHOD(D3D_Video::IsAutoplaying, AGSSpriteVideo::IsAutoplaying);
 	SCRIPT_METHOD(D3D_Video::StopAutoplay, AGSSpriteVideo::StopAutoplay);
+	SCRIPT_METHOD(D3D_Video::get_renderStage, AGSSpriteVideo::get_renderstage);
+	SCRIPT_METHOD(D3D_Video::set_renderStage, AGSSpriteVideo::set_renderstage);
+	SCRIPT_METHOD(D3D_Video::NextFrame^0, AGSSpriteVideo::NextFrame);
 }
 
 void AGSSpriteVideo::SetLoopsPerSecond(ScriptMethodParams &params) {
@@ -167,6 +170,18 @@ void AGSSpriteVideo::IsAutoplaying(ScriptMethodParams &params) {
 
 void AGSSpriteVideo::StopAutoplay(ScriptMethodParams &params) {
 	debug(0, "AGSSpriteVideo: STUB - D3D StopAutoplay");
+}
+
+void AGSSpriteVideo::get_renderstage(ScriptMethodParams &params) {
+	debug(0, "AGSSpriteVideo: STUB - D3D get_renderstage");
+}
+
+void AGSSpriteVideo::set_renderstage(ScriptMethodParams &params) {
+	debug(0, "AGSSpriteVideo: STUB - D3D set_renderstage");
+}
+
+void AGSSpriteVideo::NextFrame(ScriptMethodParams &params) {
+	debug(0, "AGSSpriteVideo: STUB - D3D NextFrame");
 }
 
 } // namespace AGSSpriteVideo

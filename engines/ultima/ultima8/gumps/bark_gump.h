@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GUMPS_BARKGUMP_H
 #define ULTIMA8_GUMPS_BARKGUMP_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/gumps/item_relative_gump.h"
 #include "ultima/ultima8/misc/classtype.h"
 
@@ -34,7 +34,7 @@ namespace Ultima8 {
 */
 class BarkGump : public ItemRelativeGump {
 protected:
-	Std::string _barked;
+	Common::String _barked;
 	int32 _counter;
 	ObjId _textWidget;
 	uint32 _speechShapeNum;
@@ -47,7 +47,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	BarkGump();
-	BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum = 0);
+	BarkGump(uint16 owner, const Common::String &msg, uint32 speechShapeNum = 0);
 	~BarkGump() override;
 
 	// Run the gump (decrement the counter)

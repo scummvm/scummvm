@@ -236,7 +236,7 @@ char **splitIntoWords(glui32 *string, int length) {
 
 	wordlength[words_found]--; /* Don't count final newline character */
 
-	/* Now we've created two arrays, one for starting postions
+	/* Now we've created two arrays, one for starting positions
 	 and one for word length. Now we convert these into an array of strings */
 	glui32 **words = new glui32 *[words_found];
 	char **words8 = new char *[words_found];

@@ -29,23 +29,25 @@
 
 namespace CreateProjectTool {
 
-CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version)
-	: ProjectProvider(global_warnings, project_warnings, global_errors, version) {
+CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors)
+	: ProjectProvider(global_warnings, project_warnings, global_errors) {
 }
 
-const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *feature, bool useSDL2) const {
+const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *feature, SDLVersion useSDL) const {
 	static const Library s_libraries[] = {
 		{ "sdl",        "sdl",               kSDLVersion1,   "FindSDL",      "SDL",      "SDL_INCLUDE_DIR",       "SDL_LIBRARY",         nullptr, nullptr },
 		{ "sdl",        "sdl2",              kSDLVersion2,   nullptr,        "SDL2",     nullptr,                 "SDL2_LIBRARIES",      nullptr, nullptr },
+		{ "sdl",        "sdl3",              kSDLVersion3,   nullptr,        "SDL3",     nullptr,                 "SDL3_LIBRARIES",      nullptr, nullptr },
 		{ "freetype2",  "freetype2",         kSDLVersionAny, "FindFreetype", "Freetype", "FREETYPE_INCLUDE_DIRS", "FREETYPE_LIBRARIES",  nullptr, nullptr },
 		{ "zlib",       "zlib",              kSDLVersionAny, "FindZLIB",     "ZLIB",     "ZLIB_INCLUDE_DIRS",     "ZLIB_LIBRARIES",      nullptr, nullptr },
 		{ "png",        "libpng",            kSDLVersionAny, "FindPNG",      "PNG",      "PNG_INCLUDE_DIRS",      "PNG_LIBRARIES",       nullptr, nullptr },
 		{ "jpeg",       "libjpeg",           kSDLVersionAny, "FindJPEG",     "JPEG",     "JPEG_INCLUDE_DIRS",     "JPEG_LIBRARIES",      nullptr, nullptr },
 		{ "mpeg2",      "libmpeg2",          kSDLVersionAny, "FindMPEG2",    "MPEG2",    "MPEG2_INCLUDE_DIRS",    "MPEG2_mpeg2_LIBRARY", nullptr, nullptr },
 		{ "opengl",     nullptr,             kSDLVersionAny, "FindOpenGL",   "OpenGL",   "OPENGL_INCLUDE_DIR",    "OPENGL_gl_LIBRARY",   nullptr, nullptr },
-		{ "libcurl",    "libcurl",           kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      nullptr, nullptr },
+		{ "libcurl",    "libcurl",           kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      nullptr, "ws2_32" },
 		{ "sdlnet",     nullptr,             kSDLVersion1,   "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   nullptr, nullptr },
 		LibraryProps("sdlnet", "SDL2_net", kSDLVersion2).Libraries("SDL2_net"),
+		LibraryProps("sdlnet", "SDL3_net", kSDLVersion3).Libraries("SDL3_net"),
 		LibraryProps("flac", "flac").Libraries("FLAC"),
 		LibraryProps("mad", "mad").Libraries("mad"),
 		LibraryProps("mikmod", "mikmod").Libraries("mikmod"),
@@ -61,15 +63,16 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("discord", "discord").Libraries("discord-rpc"),
 		LibraryProps("tts").WinLibraries("sapi ole32"),
 		LibraryProps("enet").WinLibraries("winmm ws2_32"),
-		LibraryProps("retrowave", "retrowave").Libraries("retrowave")
+		LibraryProps("retrowave", "retrowave").Libraries("retrowave"),
+		LibraryProps("a52", "a52").Libraries("a52"),
+		LibraryProps("mpc", "mpcdec").Libraries("mpcdec")
 	};
 
-	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
-		bool matchingSDL = (s_libraries[i].sdlVersion == kSDLVersionAny)
-		                   || (useSDL2 && s_libraries[i].sdlVersion == kSDLVersion2)
-		                   || (!useSDL2 && s_libraries[i].sdlVersion == kSDLVersion1);
-		if (std::strcmp(feature, s_libraries[i].feature) == 0 && matchingSDL) {
-			return &s_libraries[i];
+	for (const auto &library : s_libraries) {
+		bool matchingSDL = (library.sdlVersion == kSDLVersionAny)
+		                   || (library.sdlVersion == useSDL);
+		if (std::strcmp(feature, library.feature) == 0 && matchingSDL) {
+			return &library;
 		}
 	}
 
@@ -85,8 +88,22 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "cmake_minimum_required(VERSION 3.13)\n";
 	workspace << "project(" << setup.projectDescription << ")\n\n";
 
-	workspace << R"(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+	workspace << R"EOS(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11) # Globally enable C++11
+add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:RELEASE_BUILD>)
+add_compile_options($<$<NOT:$<CONFIG:Debug>>:-UNDEBUG>)
+
+# Remove /D NDEBUG to avoid MSVC warnings about conflicting defines.
+foreach (flags_var_to_scrub
+		CMAKE_CXX_FLAGS_RELEASE
+		CMAKE_CXX_FLAGS_RELWITHDEBINFO
+		CMAKE_CXX_FLAGS_MINSIZEREL
+		CMAKE_C_FLAGS_RELEASE
+		CMAKE_C_FLAGS_RELWITHDEBINFO
+		CMAKE_C_FLAGS_MINSIZEREL)
+	string (REGEX REPLACE "(^| )[/-]D *NDEBUG($| )" " "
+		"${flags_var_to_scrub}" "${${flags_var_to_scrub}}")
+endforeach()
 
 find_package(PkgConfig QUIET)
 include(CMakeParseArguments)
@@ -124,7 +141,7 @@ macro(find_feature)
 	endif()
 endmacro()
 
-)";
+)EOS";
 
 	workspace << R"EOS(function(add_engine engine_name)
 	string(TOUPPER ${engine_name} _engine_var)
@@ -163,8 +180,10 @@ endfunction()
 	for (const std::string &includeDir : setup.includeDirs)
 		includeDirsList += includeDir + ' ';
 
-	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
-			  << includeDirsList << "$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
+	workspace << "include_directories(. ${"
+			  << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix
+			  << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
+			  << includeDirsList << "$ENV{"<<LIBS_DEFINE<<"}/include)\n\n";
 
 	workspace << "# Libraries and features\n\n";
 	writeFeatureLibSearch(setup, workspace, "sdl");
@@ -177,8 +196,8 @@ if (TARGET SDL2::SDL2)
 endif()
 include_directories(${SDL2_INCLUDE_DIRS})
 
-# Explicitly support MacPorts (hopefully harmless on other platforms)
-link_directories(/opt/local/lib)
+# Explicitly support MacPorts and Homebrew (hopefully harmless on other platforms)
+link_directories(/opt/local/lib /opt/homebrew/lib)
 
 )";
 
@@ -186,6 +205,8 @@ link_directories(/opt/local/lib)
 		if (!feature.enable || featureExcluded(feature.name)) continue;
 
 		writeFeatureLibSearch(setup, workspace, feature.name);
+
+		if (!feature.define || !feature.define[0]) continue;
 		workspace << "add_definitions(-D" << feature.define << ")\n";
 	}
 	workspace << "\n";
@@ -201,7 +222,7 @@ file(APPEND "engines/plugins_table.h" "/* This file is automatically generated b
 }
 
 void CMakeProvider::writeFeatureLibSearch(const BuildSetup &setup, std::ofstream &workspace, const char *feature) const {
-	const Library *library = getLibraryFromFeature(feature, setup.useSDL2);
+	const Library *library = getLibraryFromFeature(feature, setup.useSDL);
 	if (library) {
 		workspace << "find_feature(";
 		workspace << "name " << library->feature;
@@ -310,7 +331,7 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		writeEnginesLibrariesHandling(setup, project);
 
 		project << "# Libraries\n";
-		const Library *sdlLibrary = getLibraryFromFeature("sdl", setup.useSDL2);
+		const Library *sdlLibrary = getLibraryFromFeature("sdl", setup.useSDL);
 		std::string libraryDirsList;
 		for (const std::string &libraryDir : setup.libraryDirs)
 			libraryDirsList += libraryDir + ' ';
@@ -319,6 +340,10 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "if (WIN32)\n";
 		project << "\ttarget_sources(" << name << " PUBLIC " << setup.filePrefix << "/dists/" << name << ".rc)\n";
 		project << "\ttarget_link_libraries(" << name << " winmm)\n";
+		// Needed for select (used in socket.cpp), when curl is linked dynamically
+		project << "\tif (libcurl_FOUND)\n";
+		project << "\t\ttarget_link_libraries(" << name << " ws2_32)\n";
+		project << "\tendif()\n";
 		project << "endif()\n";
 		project << "\n";
 
@@ -336,8 +361,16 @@ void CMakeProvider::writeWarnings(std::ofstream &output) const {
 		output << ' ' << warning;
 	}
 	output << "\")\n";
-	output << "\tif(CMAKE_CXX_COMPILER_ID STREQUAL \"GNU\" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12.0)\n";
-	output << "\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member\")\n";
+	output << "\tif(CMAKE_CXX_COMPILER_ID STREQUAL \"GNU\")\n";
+	output << "\t\tif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 7.1)\n";
+	output << "\t\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-stringop-overflow\")\n";
+	output << "\t\tendif()\n";
+	output << "\t\tif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 8.1)\n";
+	output << "\t\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-stringop-truncation\")\n";
+	output << "\t\tendif()\n";
+	output << "\t\tif(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12.0)\n";
+	output << "\t\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member\")\n";
+	output << "\t\tendif()\n";
 	output << "\tendif()\n";
 	output << "endif()\n";
 }
@@ -353,8 +386,10 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 	output << "endif()\n";
 
 	output << "add_definitions(-DSDL_BACKEND)\n";
-	if (setup.useSDL2) {
+	if (setup.useSDL == kSDLVersion2) {
 		output << "add_definitions(-DUSE_SDL2)\n";
+	} else if (setup.useSDL == kSDLVersion3) {
+		output << "add_definitions(-DUSE_SDL3)\n";
 	}
 
 	if (getFeatureBuildState("opengl", setup.features)) {

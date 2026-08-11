@@ -34,7 +34,6 @@ namespace Dialogs {
 
 int16 Inventory::inv_rand_x;
 int16 Inventory::inv_rand_y;
-int Inventory::keyVal;
 
 
 void Inventory::plot_menu() {
@@ -175,8 +174,13 @@ void Inventory::plot_menu() {
 	}
 }
 
+bool checkInventorykey() {
+	return g_events->_kbInfo._scanCode == Common::KEYCODE_RETURN ||
+		   g_events->_kbInfo._scanCode == Common::KEYCODE_F1 ||
+		   g_events->_kbInfo._scanCode == Common::KEYCODE_F2;
+}
+
 void Inventory::menu() {
-	keyVal = 0;
 	_G(flags).InventMenu = true;
 	const int16 oldDispFlag = _G(gameState).DispFlag;
 	_G(gameState).DispFlag = false;
@@ -197,8 +201,10 @@ void Inventory::menu() {
 
 	int16 menu_flag1 = MENU_DISPLAY;
 	int16 taste_flag = 28;
+
+	_G(minfo).button = 0;
 	g_events->_kbInfo._keyCode = '\0';
-	bool mouseFl = true;
+	g_events->_kbInfo._scanCode = '\0';
 
 	for (int16 i = 0; i < 3; i++) {
 		_G(ani_invent_delay)[i][0] = 30000;
@@ -210,92 +216,87 @@ void Inventory::menu() {
 	_G(show_invent_menu) = 1;
 
 	while (_G(show_invent_menu) == 1 && !SHOULD_QUIT) {
-		if (!_G(minfo).button)
-			mouseFl = false;
-		if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN || keyVal) {
-			if (!mouseFl) {
-				mouseFl = true;
-				g_events->_kbInfo._keyCode = '\0';
+		if (_G(minfo).button == 1 || checkInventorykey()) {
+			int16 k = _G(out)->findHotspot(_G(inventoryHotspots));
+			if (g_events->_kbInfo._scanCode == Common::KEYCODE_F1)
+				k = 0;
+			else if (g_events->_kbInfo._scanCode == Common::KEYCODE_F2)
+				k = 1;
+			else if (g_events->_kbInfo._scanCode == Common::KEYCODE_RETURN)
+				k = 5;
 
-				int16 k = _G(out)->findHotspot(_G(inventoryHotspots));
-				if (keyVal == Common::KEYCODE_F1)
-					k = 0;
-				else if (keyVal == Common::KEYCODE_F2)
-					k = 1;
-				else if (keyVal == Common::KEYCODE_RETURN)
-					k = 5;
+			_G(minfo).button = 0;
+			g_events->_kbInfo._keyCode = '\0';
+			g_events->_kbInfo._scanCode = '\0';
 
-				keyVal = 0;
-
-				switch (k) {
-				case 0:
-					_G(invent_cur_mode) = CUR_USE;
-					_G(menu_item) = CUR_USE;
-					if (!_G(cur)->usingInventoryCursor()) {
-						cursorChoice(CUR_USE);
-					}
-					break;
-
-				case 1:
-					if (_G(cur)->usingInventoryCursor()) {
-						inv_rand_x = -1;
-						inv_rand_y = -1;
-						ret_look = look(_G(cur)->getInventoryCursor(), INV_ATS_MODE, -1);
-
-						taste_flag = Common::KEYCODE_ESCAPE;
-					} else {
-						_G(invent_cur_mode) = CUR_LOOK;
-						_G(menu_item) = CUR_LOOK;
-						cursorChoice(CUR_LOOK);
-					}
-					break;
-
-				case 3:
-					g_events->setHotKey(Common::KEYCODE_PAGEUP);
-					break;
-
-				case 4:
-					g_events->setHotKey(Common::KEYCODE_PAGEDOWN);
-					break;
-
-				case 5:
-					inv_rand_x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
-					inv_rand_y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
-					k = inv_rand_x + (inv_rand_y * 5);
-					k += _G(gameState).InventY * 5;
-					if (_G(invent_cur_mode) == CUR_USE) {
-						if (!_G(cur)->usingInventoryCursor()) {
-							if (_G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
-								_G(menu_item) = CUR_USE;
-								_G(cur)->setInventoryCursor(_G(gameState).InventSlot[k]);
-								del_invent_slot(_G(gameState).InventSlot[k]);
-							}
-						} else if (_G(gameState).InventSlot[k] != -1)
-							evaluateObj(_G(gameState).InventSlot[k], INVENTORY_NORMAL);
-						else {
-							_G(gameState).InventSlot[k] = _G(cur)->getInventoryCursor();
-							_G(obj)->sort();
-							_G(cur)->setInventoryCursor(-1);
-							_G(menu_item) = _G(invent_cur_mode);
-							cursorChoice(_G(invent_cur_mode));
-						}
-					} else if (_G(invent_cur_mode) == CUR_LOOK && _G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
-						ret_look = look(_G(gameState).InventSlot[k], INV_ATS_MODE, -1);
-						cursorChoice(_G(invent_cur_mode));
-						taste_flag = Common::KEYCODE_ESCAPE;
-					}
-					break;
-
-				default:
-					break;
+			switch (k) {
+			case 0:
+				_G(invent_cur_mode) = CUR_USE;
+				_G(menu_item) = CUR_USE;
+				if (!_G(cur)->usingInventoryCursor()) {
+					cursorChoice(CUR_USE);
 				}
+				break;
+
+			case 1:
+				if (_G(cur)->usingInventoryCursor()) {
+					inv_rand_x = -1;
+					inv_rand_y = -1;
+					ret_look = look(_G(cur)->getInventoryCursor(), INV_ATS_MODE, -1);
+
+					taste_flag = Common::KEYCODE_ESCAPE;
+				} else {
+					_G(invent_cur_mode) = CUR_LOOK;
+					_G(menu_item) = CUR_LOOK;
+					cursorChoice(CUR_LOOK);
+				}
+				break;
+
+			case 3:
+				g_events->setHotKey(Common::KEYCODE_PAGEUP);
+				break;
+
+			case 4:
+				g_events->setHotKey(Common::KEYCODE_PAGEDOWN);
+				break;
+
+			case 5:
+				inv_rand_x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
+				inv_rand_y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
+				k = inv_rand_x + (inv_rand_y * 5);
+				k += _G(gameState).InventY * 5;
+				if (_G(invent_cur_mode) == CUR_USE) {
+					if (!_G(cur)->usingInventoryCursor()) {
+						if (_G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
+							_G(menu_item) = CUR_USE;
+							_G(cur)->setInventoryCursor(_G(gameState).InventSlot[k]);
+							del_invent_slot(_G(gameState).InventSlot[k]);
+						}
+					} else if (_G(gameState).InventSlot[k] != -1)
+						evaluateObj(_G(gameState).InventSlot[k], INVENTORY_NORMAL);
+					else {
+						_G(gameState).InventSlot[k] = _G(cur)->getInventoryCursor();
+						_G(obj)->sort();
+						_G(cur)->setInventoryCursor(-1);
+						_G(menu_item) = _G(invent_cur_mode);
+						cursorChoice(_G(invent_cur_mode));
+					}
+				} else if (_G(invent_cur_mode) == CUR_LOOK && _G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
+					ret_look = look(_G(gameState).InventSlot[k], INV_ATS_MODE, -1);
+					cursorChoice(_G(invent_cur_mode));
+					taste_flag = Common::KEYCODE_ESCAPE;
+				}
+				break;
+
+			default:
+				break;
 			}
 		} else if (_G(minfo).button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
-			if (!mouseFl) {
-				// Set virtual key
-				g_events->setHotKey(Common::KEYCODE_ESCAPE);
-				mouseFl = true;
-			}
+			// Set virtual key
+			g_events->setHotKey(Common::KEYCODE_ESCAPE);
+			_G(minfo).button = 0;
+			g_events->_kbInfo._keyCode = '\0';
+			g_events->_kbInfo._scanCode = '\0';
 		}
 
 		if (ret_look == 0) {
@@ -305,9 +306,7 @@ void Inventory::menu() {
 				cursorChoice(CUR_USE);
 		} else if (ret_look == 5) {
 			taste_flag = false;
-			mouseFl = false;
 			_G(minfo).button = 1;
-			keyVal = Common::KEYCODE_RETURN;
 		}
 
 		ret_look = -1;
@@ -319,14 +318,6 @@ void Inventory::menu() {
 				taste_flag = 0;
 		} else {
 			switch (keyCode) {
-			case Common::KEYCODE_F1:
-				keyVal = Common::KEYCODE_F1;
-				break;
-
-			case Common::KEYCODE_F2:
-				keyVal = Common::KEYCODE_F2;
-				break;
-
 			case Common::KEYCODE_ESCAPE:
 				if (!menuFirstFl) {
 					_G(cur)->showCursor();
@@ -371,12 +362,14 @@ void Inventory::menu() {
 				if (_G(gameState).InventY > 0)
 					--_G(gameState).InventY;
 				g_events->_kbInfo._keyCode = '\0';
+				g_events->_kbInfo._scanCode = '\0';
 				break;
 
 			case Common::KEYCODE_PAGEDOWN:
 				if (_G(gameState).InventY < (MAX_MOV_OBJ / 5) - 3)
 					++_G(gameState).InventY;
 				g_events->_kbInfo._keyCode = '\0';
+				g_events->_kbInfo._scanCode = '\0';
 				break;
 
 			default:

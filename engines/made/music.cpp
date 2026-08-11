@@ -35,9 +35,9 @@
 
 namespace Made {
 
-const uint8 MusicPlayer::MT32_GOODBYE_MSG[] = { 0x52, 0x65, 0x74, 0x75, 0x72, 0x6E, 0x20, 0x54, 0x6F, 0x20, 0x5A, 0x6F, 0x72, 0x6B, 0x20, 0x53, 0x6F, 0x6F, 0x6E, 0x21 };
+const uint8 DOSMusicPlayer::MT32_GOODBYE_MSG[] = { 0x52, 0x65, 0x74, 0x75, 0x72, 0x6E, 0x20, 0x54, 0x6F, 0x20, 0x5A, 0x6F, 0x72, 0x6B, 0x20, 0x53, 0x6F, 0x6F, 0x6E, 0x21 };
 
-MusicPlayer::MusicPlayer(MadeEngine *vm, bool milesAudio) : _vm(vm), _parser(nullptr) {
+DOSMusicPlayer::DOSMusicPlayer(MadeEngine *vm, bool milesAudio) : _vm(vm), _parser(nullptr) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	_driverType = MidiDriver::getMusicType(dev);
 	if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
@@ -83,7 +83,7 @@ MusicPlayer::MusicPlayer(MadeEngine *vm, bool milesAudio) : _vm(vm), _parser(nul
 	syncSoundSettings();
 }
 
-MusicPlayer::~MusicPlayer() {
+DOSMusicPlayer::~DOSMusicPlayer() {
 	if (_parser) {
 		_parser->stopPlaying();
 		delete _parser;
@@ -95,7 +95,7 @@ MusicPlayer::~MusicPlayer() {
 	}
 }
 
-void MusicPlayer::close() {
+void DOSMusicPlayer::close() {
 	if (_parser)
 		_parser->stopPlaying();
 
@@ -107,7 +107,39 @@ void MusicPlayer::close() {
 	}
 }
 
-void MusicPlayer::playXMIDI(GenericResource *midiResource) {
+bool DOSMusicPlayer::load(int16 musicNum) {
+	GenericResource *xmidi = _vm->_res->getXmidi(musicNum);
+	if (xmidi) {
+		_vm->_res->freeResource(xmidi);
+		return true;
+	}
+	return false;
+}
+
+void DOSMusicPlayer::play(int16 musicNum) {
+	if (_vm->getGameID() == GID_RTZ) {
+		if (musicNum > 0) {
+			_musicRes = _vm->_res->getXmidi(musicNum);
+			if (_musicRes)
+				playXMIDI(_musicRes);
+		}
+	} else {
+		// HACK: music number 2 in LGOP2 is file MT32SET.TON, which
+		// is used to set the MT32 instruments. This is not loaded
+		// correctly and the game freezes, and since we don't support
+		// MT32 music yet, we ignore it here
+		// FIXME: Remove this hack and handle this file properly
+		if (_vm->getGameID() == GID_LGOP2 && musicNum == 2)
+			return;
+		if (musicNum > 0) {
+			_musicRes = _vm->_res->getMidi(musicNum);
+			if (_musicRes)
+				playSMF(_musicRes);
+		}
+	}
+}
+
+void DOSMusicPlayer::playXMIDI(GenericResource *midiResource) {
 	if (_parser) {
 		_parser->unloadMusic();
 	} else {
@@ -123,7 +155,7 @@ void MusicPlayer::playXMIDI(GenericResource *midiResource) {
 	_parser->loadMusic(midiResource->getData(), midiResource->getSize());
 }
 
-void MusicPlayer::playSMF(GenericResource *midiResource) {
+void DOSMusicPlayer::playSMF(GenericResource *midiResource) {
 	if (_parser) {
 		_parser->unloadMusic();
 	} else {
@@ -139,37 +171,42 @@ void MusicPlayer::playSMF(GenericResource *midiResource) {
 	_parser->loadMusic(midiResource->getData(), midiResource->getSize());
 }
 
-void MusicPlayer::pause() {
+void DOSMusicPlayer::pause() {
 	if (_parser)
 		_parser->pausePlaying();
 }
 
-void MusicPlayer::resume() {
+void DOSMusicPlayer::resume() {
 	if (_parser)
 		_parser->resumePlaying();
 }
 
-void MusicPlayer::stop() {
+void DOSMusicPlayer::stop() {
 	if (_parser)
 		_parser->stopPlaying();
+
+	if (_musicRes) {
+		_vm->_res->freeResource(_musicRes);
+		_musicRes = nullptr;
+	}
 }
 
-bool MusicPlayer::isPlaying() {
+bool DOSMusicPlayer::isPlaying() {
 	return _parser ? _parser->isPlaying() : false;
 }
 
-void MusicPlayer::syncSoundSettings() {
+void DOSMusicPlayer::syncSoundSettings() {
 	if (_driver)
 		_driver->syncSoundSettings();
 }
 
-void MusicPlayer::onTimer() {
+void DOSMusicPlayer::onTimer() {
 	if (_parser)
 		_parser->onTimer();
 }
 
-void MusicPlayer::timerCallback(void *data) {
-	((MusicPlayer *)data)->onTimer();
+void DOSMusicPlayer::timerCallback(void *data) {
+	((DOSMusicPlayer *)data)->onTimer();
 }
 
 MidiDriver_ADLIB_MADE::MidiDriver_ADLIB_MADE(OPL::Config::OplType oplType) : MidiDriver_ADLIB_Multisource(oplType) {

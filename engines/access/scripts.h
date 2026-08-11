@@ -32,11 +32,14 @@ class AccessEngine;
 class Scripts;
 
 #define SCRIPT_START_BYTE 0xE0
+#define INIT_ROOM_SCRIPT 1000
 #define ROOM_SCRIPT 2000
 
 typedef void(Scripts::*ScriptMethodPtr)();
 
 class Scripts : public Manager {
+	friend class Debugger;
+
 private:
 	int _specialFunction;
 
@@ -48,24 +51,23 @@ protected:
 	Common::SeekableReadStream *_data;
 	ScriptMethodPtr COMMAND_LIST[100];
 
-	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
+	virtual bool executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
 
 	void charLoop();
 
-	/**
-	 * Read a null terminated string from the script
-	 */
-	Common::String readString();
-
 	void cmdObject();
 	void cmdEndObject();
+	void cmdEndObject_v3();
 	void cmdJumpLook();
+	void cmdJumpOpen();
 	void cmdJumpHelp();
 	void cmdJumpGet();
 	void cmdJumpMove();
 	void cmdJumpUse();
+	void cmdJumpUse_v3();
 	void cmdJumpTalk();
+	void cmdJumpTalk_v3();
 	void cmdNull();
 	void cmdPrint_v1();
 	void cmdPrint_v2();
@@ -81,13 +83,14 @@ protected:
 	void cmdAddScore();
 	void cmdSetInventory();
 	void cmdCheckInventory();
-	void cmdSetTex();
+	void cmdSetPlayerCoords();
 	void cmdNewRoom();
 	void cmdConverse();
 	void cmdCheckFrame();
 	void cmdCheckAnim();
 	void cmdSnd();
 	void cmdRetNeg();
+	void cmdBD();
 	void cmdCheckLoc();
 	void cmdSetAnim();
 	void cmdDispInv_v1();
@@ -96,8 +99,10 @@ protected:
 	void cmdSetTimer();
 	void cmdCheckTimer();
 	void cmdJumpGoto();
+	void cmdJumpGoto_v3();
 	void cmdSetTravel();
-	void cmdSetVideo();
+	void cmdSetVideo_v1();
+	void cmdSetVideo_v3();
 	void cmdPlayVideo();
 	void cmdPlotImage();
 	void cmdSetDisplay();
@@ -127,18 +132,52 @@ protected:
 	void cmdPlayVideoSound();
 	void cmdPrintWatch();
 	void cmdDispAbout();
+	void cmdDispAbout_v3();
 	void cmdPushLocation();
+	void cmdPushLocation_v1();
 	void cmdCheckTravel();
 	void cmdBlock();
 	void cmdPlayerOff();
 	void cmdPlayerOn();
 	void cmdDead();
 	void cmdFadeOut();
+	void cmdFadeOut_v3();
 	void cmdEndVideo();
 	void cmdHelp_v1();
-	void cmdHelp_v2();
+	//void cmdHelp_v2(); // only in AmazonScripts
 	void cmdCycleBack();
 	void cmdSetHelp();
+	void cmdDoTravel_Noct();
+	void cmdDigitalPlay();
+	void cmdFillSound();
+	void cmdPlayVid1();
+	void cmdCharWait();
+	void cmdUndoText();
+	void cmdResetAnim();
+	void cmdWalkTo();
+	void cmdWalkCheck();
+	void cmdSoundEnd();
+	void cmdFadeWhite();
+	void cmdGotoFrame();
+	void cmdPlayerScale();
+	void cmdRestoreBlock();
+	void cmdCopyScnBuf();
+	void cmdStilWalkTo();
+	void cmdStilWalkCheck();
+	void cmdStilOff();
+	void cmdStilOn();
+	void cmdReturnExit();
+	void cmdSetCoords();
+	void cmdSetStilCoords();
+	void cmdSetPlayerDir();
+	void cmdSetStilDir();
+	void cmdStilScale();
+	void cmdLockInterface();
+	void cmdUnlockInterface();
+	void cmdCharSpeak_v3();
+	void cmdPlayerSpeak();
+	void cmdPlayerChoice();
+
 public:
 	int _sequence;
 	bool _endFlag;
@@ -148,6 +187,9 @@ public:
 	int32 _choiceStart;
 	Common::Point _charsOrg, _texsOrg;
 
+	int _continuenceType;  // Only used in Noctropolis
+	bool _continuenceFlag; // Only set in Noctropolis (always false otherwise). See also room->_conFlag which is used in earlier games.
+
 public:
 	Scripts(AccessEngine *vm);
 
@@ -155,22 +197,24 @@ public:
 
 	void setOpcodes();
 	void setOpcodes_v2();
+	void setOpcodes_v3();
 
 	void setScript(Resource *data, bool restartFlag = false);
 
 	void freeScriptData();
 
-	void searchForSequence();
+	virtual void searchForSequence();
 
 	int executeScript();
 
 	void findNull();
-	void doCmdPrint_v1(Common::String msg);
+	void doCmdPrint_v1(const Common::String &msg);
+
 
 	/**
 	 * Print a given message to the screen in a bubble box
 	 */
-	void printString(const Common::String &msg);
+	void printString(const Common::String &msg, Common::Point pt = Common::Point(-1, -1));
 
 	// Script commands that need to be public
 	void cmdFreeSound();

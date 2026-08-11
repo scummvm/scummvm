@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -61,7 +61,7 @@ ConverseGumpWOU::ConverseGumpWOU(const Configuration *cfg, Font *f, Screen *s)
 
 	set_scroll_dimensions(18, 18);
 
-	Std::string height_str;
+	Common::String height_str;
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off = game->get_game_y_offset();
 

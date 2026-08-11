@@ -206,8 +206,8 @@ void ZipSoundArchive::openArchive(const char *path, const char *extension, Sound
 
 		// The sample files are in the form ####.mp3 but not all numbers are used so we need to
 		// iterate the archive and find the last file
-		for (Common::ArchiveMemberList::iterator iter = files.begin(); iter != files.end(); iter++) {
-			Common::String filename = (*iter)->getName();
+		for (auto &file : files) {
+			Common::String filename = file->getName();
 			filename.erase(filename.size() - 4);  // remove .mp3 extension
 			uint file_number = atoi(filename.c_str());
 			if(file_number > _sampleCount)		// finds the last file (numerically)
@@ -232,8 +232,8 @@ void ZipSoundArchive::clearCache() {
 	// Just deallocate the link-list of (very short) headers for each
 	// dubbed sentence played in the current location.  If the callers have
 	// not called .close() on any of the items, call them now.
-	for (Common::List<SoundSample>::iterator it = _cache.begin(); it != _cache.end(); ++it) {
-		it->close();
+	for (auto &sample : _cache) {
+		sample.close();
 	}
 	_cache.clear();
 }

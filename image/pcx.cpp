@@ -28,17 +28,14 @@
 
 /**
  * Based on the PCX specs:
- * http://www.fileformat.info/format/pcx/spec/a10e75307b3a4cc49c3bbe6db4c41fa2/view.htm
+ * https://web.archive.org/web/20151028182714/http://www.fileformat.info/format/pcx/spec/a10e75307b3a4cc49c3bbe6db4c41fa2/view.htm
  * and the PCX decoder of FFmpeg (libavcodec/pcx.c):
- * https://git.ffmpeg.org/gitweb/ffmpeg.git/blob/HEAD:/libavcodec/pcx.c
+ * https://git.ffmpeg.org/gitweb/ffmpeg.git/blob/tags/n0.11.1:/libavcodec/pcx.c
  */
 
 namespace Image {
 
-PCXDecoder::PCXDecoder() {
-	_surface = 0;
-	_palette = 0;
-	_paletteColorCount = 0;
+PCXDecoder::PCXDecoder(): _surface(nullptr), _palette(0) {
 }
 
 PCXDecoder::~PCXDecoder() {
@@ -49,12 +46,10 @@ void PCXDecoder::destroy() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = 0;
+		_surface = nullptr;
 	}
 
-	delete[] _palette;
-	_palette = 0;
-	_paletteColorCount = 0;
+	_palette.clear();
 }
 
 bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -87,11 +82,12 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	stream.skip(4);	// HDpi, VDpi
 
 	// Read the EGA palette (colormap)
-	_palette = new byte[16 * 3];
+	_palette.resize(16, false);
 	for (uint16 i = 0; i < 16; i++) {
-		_palette[i * 3 + 0] = stream.readByte();
-		_palette[i * 3 + 1] = stream.readByte();
-		_palette[i * 3 + 2] = stream.readByte();
+		byte r = stream.readByte();
+		byte g = stream.readByte();
+		byte b = stream.readByte();
+		_palette.set(i, r, g, b);
 	}
 
 	if (stream.readByte() != 0)	// reserved, should be set to 0
@@ -115,28 +111,23 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int x, y;
 
 	if (nPlanes == 3 && bitsPerPixel == 8) {	// 24bpp
-		Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		_surface->create(width, height, format);
+		_surface->create(width, height, Graphics::PixelFormat::createFormatRGB24());
 		dst = (byte *)_surface->getPixels();
-		_paletteColorCount = 0;
+		_palette.clear();
 
 		for (y = 0; y < height; y++) {
 			decodeRLE(stream, scanLine, bytesPerscanLine, compressed);
 
 			for (x = 0; x < width; x++) {
-				byte b = scanLine[x];
-				byte g = scanLine[x +  bytesPerLine];
-				byte r = scanLine[x + (bytesPerLine << 1)];
-				uint32 color = format.RGBToColor(r, g, b);
-
-				*((uint32 *)dst) = color;
-				dst += format.bytesPerPixel;
+				*dst++ = scanLine[x];
+				*dst++ = scanLine[x +  bytesPerLine];
+				*dst++ = scanLine[x + (bytesPerLine << 1)];
 			}
 		}
 	} else if (nPlanes == 1 && bitsPerPixel == 8) {	// 8bpp indexed
 		_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		dst = (byte *)_surface->getPixels();
-		_paletteColorCount = 16;
+		_palette.resize(16, true);
 
 		for (y = 0; y < height; y++, dst += _surface->pitch) {
 			decodeRLE(stream, scanLine, bytesPerscanLine, compressed);
@@ -151,20 +142,18 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 			}
 
 			// Read the VGA palette
-			delete[] _palette;
-			_palette = new byte[256 * 3];
+			_palette.resize(256, false);
 			for (uint16 i = 0; i < 256; i++) {
-				_palette[i * 3 + 0] = stream.readByte();
-				_palette[i * 3 + 1] = stream.readByte();
-				_palette[i * 3 + 2] = stream.readByte();
+				byte r = stream.readByte();
+				byte g = stream.readByte();
+				byte b = stream.readByte();
+				_palette.set(i, r, g, b);
 			}
-
-			_paletteColorCount = 256;
 		}
 	} else if ((nPlanes == 2 || nPlanes == 3 || nPlanes == 4) && bitsPerPixel == 1) {	// planar, 4, 8 or 16 colors
 		_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		dst = (byte *)_surface->getPixels();
-		_paletteColorCount = 16;
+		_palette.resize(16, true);
 
 		for (y = 0; y < height; y++, dst += _surface->pitch) {
 			decodeRLE(stream, scanLine, bytesPerscanLine, compressed);

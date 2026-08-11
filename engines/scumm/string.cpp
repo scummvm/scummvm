@@ -68,7 +68,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 		// We have to do it here, because we don't want to delay the
 		// animation of Rapp turning back to Ashes.
 		if (_game.id == GID_MONKEY2 && _roomResource == 19 &&
-			vm.slot[_currentScript].number == 203 &&
+			currentScriptSlotIs(203) &&
 			_actorToPrintStrFor == 255 && strcmp((const char *)msg, " ") == 0 &&
 			getOwner(200) == VAR(VAR_EGO) && VAR(VAR_HAVE_MSG) &&
 			enhancementEnabled(kEnhMinorBugFixes)) {
@@ -79,11 +79,11 @@ void ScummEngine::printString(int m, const byte *msg) {
 		// reactions to Max beating up the scientist run much too quick
 		// for the animation to match. We get around this by slowing
 		// down that animation.
- 		//
+		//
 		// In the italian CD version, the whole scene is sped up to
 		// keep up with Sam's speech. We compensate for this by slowing
 		// down the other animations.
-		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && enhancementEnabled(kEnhTimingChanges)) {
+		if (_game.id == GID_SAMNMAX && currentScriptSlotIs(65) && enhancementEnabled(kEnhTimingChanges)) {
 			Actor *a;
 
 			if (_language == Common::DE_DEU && strcmp(_game.variant, "Floppy") != 0) {
@@ -107,6 +107,9 @@ void ScummEngine::printString(int m, const byte *msg) {
 		actorTalk(msg);
 		break;
 	case 1:
+#ifdef USE_TTS
+		_voiceNextString = true;
+#endif
 		drawString(1, msg);
 		break;
 	case 2:
@@ -162,11 +165,83 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 		else
 			VAR(VAR_KEYPRESS) = showOldStyleBannerAndPause((const char *)msg, _string[3].color, -1).ascii;
 	} else {
-		InfoDialog dialog(this, Common::U32String((char *)buf));
+		InfoDialog dialog(this, Common::U32String((char *)buf, getDialogCodePage()));
 		VAR(VAR_KEYPRESS) = runDialog(dialog);
 	}
 
 }
+
+#ifdef USE_TTS
+
+void ScummEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+	if (text.empty()) {
+		return;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		// Some games, like Loom, may display strings of only characters (such as underscores) that make for awkward voicing.
+		// Before voicing text, make sure it has either an alphanumeric character or a non-ASCII character (for languages
+		// like Russian or Hebrew that may only have non-ASCII characters)
+		for (uint i = 0; i < text.size(); ++i) {
+			if (Common::isAlnum(text[i]) || !Common::isAscii(text[i])) {
+				Common::String ttsMessage = text;
+				ttsMessage.replace('^', ' ');
+
+				Common::String copyrightReplacement;
+				Common::String toReplace = "=";
+
+				switch (getDialogCodePage()) {
+				case Common::kDos850:
+					copyrightReplacement = "\xb8";
+					break;
+				case Common::kWindows1252:
+				case Common::kWindows1255:
+					copyrightReplacement = "\xa9";
+					break;
+				default:
+					// Replace what would be the copyright symbol with a space for encodings that don't have it
+					copyrightReplacement = "\x20";
+					break;
+				}
+
+				// Loom uses a unique code for the copyright symbol, which also seems to include the 1 that comes after it
+				if (_game.id == GID_LOOM) {
+					toReplace = "\x3e\x2a";
+					copyrightReplacement += " 1";
+				}
+
+				Common::replace(ttsMessage, toReplace, copyrightReplacement);
+				Common::replace(ttsMessage, "\x1c", copyrightReplacement);
+
+				ttsMan->say(_charset->convertText(ttsMessage, _language), action);
+				return;
+			}
+		}
+	}
+}
+
+void ScummEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+}
+
+void ScummEngine::sayButtonText() {
+	int hoveredControl = getInternalGUIControlFromCoordinates(_mouse.x, _mouse.y);
+	if (hoveredControl != -1 && _previousControl != hoveredControl) {
+		if (!_internalGUIControls[hoveredControl].alternateTTSLabel.empty()) {
+			sayText(_internalGUIControls[hoveredControl].alternateTTSLabel, Common::TextToSpeechManager::INTERRUPT);
+		} else {
+			sayText(_internalGUIControls[hoveredControl].label, Common::TextToSpeechManager::INTERRUPT);
+		}
+	}
+
+	_previousControl = hoveredControl;
+}
+
+#endif
 
 #pragma mark -
 #pragma mark --- Core message/subtitle code ---
@@ -450,10 +525,13 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			oldy = _charset->getFontHeight();
 			_charset->setCurID(*buffer++);
 			buffer += 2;
-			memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
+			if (_charset->getCurID() != -1)
+				memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 			_nextTop -= _charset->getFontHeight() - oldy;
 			break;
 		default:
+			// We should never get here! Any invalid control code by this point
+			// has already been converted by a normal character to be displayed.
 			error("handleNextCharsetCode: invalid code %d", c);
 		}
 	}
@@ -527,7 +605,8 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			endLoop = endText = true;
 			break;
 		default:
-			error("handleNextCharsetCode: invalid code %d", c);
+			// Ignore the control code...
+			warning("ScummEngine_v72he::handleNextCharsetCode(): Ignoring invalid control code");
 		}
 	}
 	_charsetBufPos = buffer - _charsetBuffer;
@@ -642,9 +721,9 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) co
 	byte *current = text;
 
 	int32 bufferSize = 384;
-	byte * const buff = (byte *)calloc(sizeof(byte), bufferSize);
+	byte * const buff = (byte *)calloc(bufferSize, sizeof(byte));
 	assert(buff);
-	byte * const stack = (byte *)calloc(sizeof(byte), bufferSize);
+	byte * const stack = (byte *)calloc(bufferSize, sizeof(byte));
 	assert(stack);
 
 	while (1) {
@@ -848,6 +927,8 @@ void ScummEngine_v2::drawSentence() {
 	Common::Rect sentenceline;
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 
 	if (!((_userState & USERSTATE_IFACE_SENTENCE) ||
 		  (_game.platform == Common::kPlatformNES && (_userState & USERSTATE_IFACE_ALL))))
@@ -890,9 +971,9 @@ void ScummEngine_v2::drawSentence() {
 	}
 
 	_string[2].charset = 1;
-	_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
-	_string[2].xpos = 0;
-	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+	_string[2].ypos = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
+	_string[2].xpos = 0 + pixelXOffset;
+	_string[2].right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 	if (_game.platform == Common::kPlatformNES) {
 		_string[2].xpos = 16;
 		_string[2].color = 0;
@@ -903,6 +984,9 @@ void ScummEngine_v2::drawSentence() {
 	}
 
 	byte string[80];
+#ifdef USE_TTS
+	Common::String oldSentence = _sentenceBuf;
+#endif
 	const char *ptr = _sentenceBuf.c_str();
 	int i = 0, len = 0;
 
@@ -930,12 +1014,18 @@ void ScummEngine_v2::drawSentence() {
 		sentenceline.left = 16;
 		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
 	} else {
-		sentenceline.top = _virtscr[kVerbVirtScreen].topline;
-		sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
-		sentenceline.left = 0;
-		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+		sentenceline.top = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
+		sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8 + pixelYOffset;
+		sentenceline.left = 0 + pixelXOffset;
+		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 	}
 	restoreBackground(sentenceline);
+
+#ifdef USE_TTS
+	if (oldSentence != _sentenceBuf) {
+		_voiceNextString = true;
+	}
+#endif
 
 	drawString(2, (byte *)string);
 }
@@ -966,7 +1056,7 @@ void ScummEngine::displayDialog() {
 		int s;
 
 		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
-		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop - _screenDrawOffset;
+		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
 
 		if (_game.version <= 5) {
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
@@ -1000,7 +1090,7 @@ void ScummEngine::displayDialog() {
 			_string[0].xpos = _screenWidth - 80;
 	}
 
-	_charset->_top = _string[0].ypos + _screenTop + _screenDrawOffset;
+	_charset->_top = _string[0].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[0].xpos;
 	_charset->_right = _string[0].right;
 	_charset->_center = _string[0].center;
@@ -1011,7 +1101,7 @@ void ScummEngine::displayDialog() {
 	else
 		_charset->setCurID(_string[0].charset);
 
-	if (_game.version >= 5)
+	if (_game.version >= 5 && _charset->getCurID() != -1)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -1019,7 +1109,12 @@ void ScummEngine::displayDialog() {
 		memcpy(&_charset->_str, &_curStringRect, sizeof(Common::Rect));
 #endif
 
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (_talkDelay || (ttsMan && ttsMan->isSpeaking()))
+#else
 	if (_talkDelay)
+#endif
 		return;
 
 	if ((_game.version <= 6 && _haveMsg == 1) ||
@@ -1072,7 +1167,7 @@ void ScummEngine::displayDialog() {
 		// If the string is centered and this is MI1 Sega CD, don't add linebreaks right away;
 		// we will take care of it in a different way just below ... :-)
 		if (_game.platform != Common::kPlatformSegaCD ||
-			(_game.platform != Common::kPlatformSegaCD && !_charset->_center)) {
+			(_game.platform == Common::kPlatformSegaCD && !_charset->_center)) {
 			_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, maxWidth);
 		}
 	}
@@ -1108,9 +1203,24 @@ void ScummEngine::displayDialog() {
 	if (_isRTL)
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
+	if (_sound->shouldInjectMISEAudio()) {
+		int numberOfWaits = countNumberOfWaits();
+		int32 currentActor = VAR_TALK_ACTOR != 0xFF ? VAR(VAR_TALK_ACTOR) : 0;
+
+		// Explicitly truncate all relevant params to uint16! This is intentional!
+		_sound->startRemasteredSpeech(
+			(const char *)&_charsetBuffer[_charsetBufPos],
+			(uint16)_currentRoom,
+			(uint16)currentActor,
+			(uint16)numberOfWaits);
+	}
+
 	bool createTextBox = (_macGui && _game.id == GID_INDY3);
 	bool drawTextBox = false;
 
+#ifdef USE_TTS
+	Common::String ttsMessage;
+#endif
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg accordingly
@@ -1121,6 +1231,9 @@ void ScummEngine::displayDialog() {
 		}
 
 		if (c == 13) {
+#ifdef USE_TTS
+			ttsMessage += ' ';
+#endif
 			if (!newLine())
 				break;
 			continue;
@@ -1169,6 +1282,9 @@ void ScummEngine::displayDialog() {
 		if (_game.version <= 3) {
 			_charset->printChar(c, false);
 			_msgCount += 1;
+#ifdef USE_TTS
+			ttsMessage += c;
+#endif
 		} else {
 			if (_game.features & GF_16BIT_COLOR) {
 				// HE games which use sprites for subtitles
@@ -1181,6 +1297,9 @@ void ScummEngine::displayDialog() {
 				// of this message -> don't print it.
 			} else {
 				_charset->printChar(c, false);
+#ifdef USE_TTS
+				ttsMessage += c;
+#endif
 			}
 		}
 		_nextLeft = _charset->_left;
@@ -1194,6 +1313,14 @@ void ScummEngine::displayDialog() {
 		}
 	}
 
+#ifdef USE_TTS
+	if (!_mixer->isSoundHandleActive(*_sound->_talkChannelHandle) && 
+		(_game.heversion < 60 || !_sound->isSoundInUse(HSND_TALKIE_SLOT)) && 
+		!_sound->pollCD()) {
+		sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+	}
+#endif
+
 	if (drawTextBox)
 		mac_drawIndy3TextBox();
 
@@ -1203,7 +1330,28 @@ void ScummEngine::displayDialog() {
 #endif
 }
 
-void ScummEngine::drawString(int a, const byte *msg) {
+int ScummEngine::countNumberOfWaits() {
+	int idx, numWaits;
+	byte curChar;
+
+	idx = 0;
+	numWaits = 0;
+
+	if (_charsetBufPos) {
+		do {
+			curChar = _charsetBuffer[idx++];
+			if (curChar == 0xFF || curChar == 0xFE) {
+				if (_charsetBuffer[idx] == 3)
+					++numWaits;
+				++idx;
+			}
+		} while (idx < _charsetBufPos);
+	}
+
+	return numWaits;
+}
+
+void ScummEngine::drawString(int a, const byte *msg, Common::TextToSpeechManager::Action ttsAction) {
 	byte buf[270];
 	byte *space;
 	int i, c;
@@ -1220,7 +1368,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	if (_isRTL)
 		fakeBidiString(buf, false, sizeof(buf));
 
-	_charset->_top = _string[a].ypos + _screenTop + _screenDrawOffset;
+	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
 	_charset->_right = _string[a].right;
 	_charset->_center = _string[a].center;
@@ -1228,10 +1376,53 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
+#ifdef USE_TTS
+	bool bypassTalkDelay = false;
+
+	// Help menu, which uses objects for buttons
+	if (_game.id == GID_PASS && _roomResource == 2) {
+		for (uint8 index = 0; index < ARRAYSIZE(_passHelpButtons); ++index) {
+			if (_passHelpButtons[index].empty()) {
+				_voiceNextString = false;
+				int obj = findObject(_charset->_left, _charset->_top);
+
+				if (obj != 0) {
+					int adjustedObj = obj - 956;
+					if (adjustedObj >= 0 && adjustedObj < ARRAYSIZE(_passHelpButtons)) {
+						_passHelpButtons[adjustedObj] = (const char *)buf;
+					}
+				}
+				break;
+			}
+		}
+
+		if (_voiceNextString) {
+			bypassTalkDelay = true;
+		}
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (_voiceNextString && (getTalkingActor() == 0xFF || getTalkingActor() == 0) && 
+		(!_talkDelay || bypassTalkDelay || (ttsMan && !ttsMan->isSpeaking()) || ttsAction == Common::TextToSpeechManager::QUEUE)) {
+		const char *message = (const char *)buf;
+		if (!_checkPreviousSaid || scumm_stricmp(message, _previousSaid.c_str()) != 0) {
+			sayText(message, ttsAction);
+
+			if (!bypassTalkDelay) {
+				_previousSaid = message;
+			}
+		}
+
+		_voicePassHelpButtons = true;
+		_checkPreviousSaid = false;
+		_voiceNextString = false;
+	}
+#endif
+
 	VirtScreen *vs = findVirtScreen(_charset->_top);
 	bool shadowModeFlag = (vs && vs->number == kMainVirtScreen);
 
-	if (_game.version >= 5)
+	if (_game.version >= 5 && _charset->getCurID() != -1)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], _game.id == GID_DIG ? sizeof(_charsetColorMap) : 4);
 
 	fontHeight = _charset->getFontHeight();
@@ -1432,19 +1623,18 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		if (chr == 0xFF) {
 			chr = src[num++];
 
-			// WORKAROUND for bug #1675, a script bug in Indy3. Apparently,
-			// a german 'sz' was encoded incorrectly as 0xFF2E. We replace
-			// this by the correct encoding here. See also ScummEngine::resStrLen().
-			if (_game.id == GID_INDY3 && chr == 0x2E) {
-				*dst++ = 0xE1;
-				continue;
-			}
-
-			// WORKAROUND for bug #2715: Yet another script bug in Indy3.
-			// Once more a german 'sz' was encoded incorrectly, but this time
-			// they simply encoded it as 0xFF instead of 0xE1. Happens twice
-			// in script 71.
-			if (_game.id == GID_INDY3 && chr == 0x20 && vm.slot[_currentScript].number == 71) {
+			// WORKAROUND: In the German releases of Indy3, some Eszett characters
+			// were encoded incorrectly as 0xFF instead of 0xE1 (see bugs #1675 and
+			// #2715). At least the DOS and Amiga German releases are affected.
+			// We've been fixing this since ScummVM 0.10.0 in order to prevent a
+			// fatal error, but since ScummVM 2.9.0 our convertMessageToString()
+			// is more accurate and won't cause an error anymore, so fixing the
+			// invalid characters now becomes a typo-fix Enhancement.
+			//
+			// See also the corresponding ScummEngine::resStrLen() workaround.
+			if (enhancementEnabled(kEnhTextLocFixes) && _game.id == GID_INDY3 && _language == Common::DE_DEU &&
+				((_roomResource == 23 && chr == 0x2E) ||
+				 (_roomResource == 21 && chr == 0x20))) {
 				num--;
 				*dst++ = 0xE1;
 				continue;
@@ -1485,8 +1675,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					// though Sam is the one actually speaking. For example, the French and
 					// German releases use `startAnim(8)` while the English release correctly
 					// uses `startAnim(7)` for this.
-					if (_game.id == GID_SAMNMAX && _currentRoom == 52 && vm.slot[_currentScript].number == 102 &&
-						chr == 9 && readVar(0x8000 + 95) != 0 && (VAR(171) == 997 || VAR(171) == 998) &&
+					if (_game.id == GID_SAMNMAX && _currentRoom == 52 && currentScriptSlotIs(102) &&
+						chr == 9 && readVar(ROOM_VAL(95)) != 0 && (VAR(171) == 997 || VAR(171) == 998) &&
 						dst[-2] == 8 && enhancementEnabled(kEnhMinorBugFixes)) {
 						dst[-2] = 7;
 					}
@@ -1497,7 +1687,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					}
 					break;
 				default:
-					error("convertMessageToString(): string escape sequence %d unknown", chr);
+					// Invalid control code. Just ignore it and set the buffer index where it should be...
+					num -= 2;
 				}
 				num += (_game.version == 8) ? 4 : 2;
 			}
@@ -1516,7 +1707,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 
 	// WORKAROUND bug #12249 (occurs also in original): Missing actor animation in German versions of SAMNMAX
 	// Adding the missing startAnim(14) animation escape sequence while copying the text fixes it.
-	if (_game.id == GID_SAMNMAX && _currentRoom == 56 && vm.slot[_currentScript].number == 200 &&
+	if (_game.id == GID_SAMNMAX && _currentRoom == 56 && currentScriptSlotIs(200) &&
 		_language == Common::DE_DEU && enhancementEnabled(kEnhMinorBugFixes)) {
 		// 0xE5E6 is the CD version, 0xE373 is for the floppy version
 		if (vm.slot[_currentScript].offs == 0xE5E6 || vm.slot[_currentScript].offs == 0xE373) {
@@ -1525,6 +1716,18 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			*dst++ = 0x0E;
 			*dst++ = 0x00;
 		}
+	}
+
+	// WORKAROUND bug #2055: German Indy4 has bogus "Across-arms " text at
+	// the end of some strings, when speaking with Sophia after a failed
+	// seance with Trottier in Monte Carlo.  Because of the way these
+	// strings are built and handled by script 28-204, the fix has to be
+	// done here and this way...
+	if (_game.id == GID_INDY4 && _language == Common::DE_DEU && _currentRoom == 28 &&
+		isScriptRunning(204) && enhancementEnabled(kEnhTextLocFixes)) {
+		const int bogusTextLen = sizeof("Across-arms ") - 1;
+		if (dstSize - (end - dst) > bogusTextLen && memcmp(dst - bogusTextLen, "Across-arms ", bogusTextLen) == 0)
+			dst -= bogusTextLen;
 	}
 
 	// WORKAROUND: Russian The Dig pads messages with 03. No idea why
@@ -1609,7 +1812,7 @@ int ScummEngine::convertVerbMessage(byte *dst, int dstSize, int var) {
 	num = readVar(var);
 	if (num) {
 		for (k = 1; k < _numVerbs; k++) {
-			// Fix ZAK FM-TOWNS bug #1734 by emulating exact (inconsistant?) behavior of the original code
+			// Fix ZAK FM-TOWNS bug #1734 by emulating exact (inconsistent?) behavior of the original code
 			if (num == _verbs[k].verbid && !_verbs[k].type && (!_verbs[k].saveid || (_game.version == 3 && _game.platform == Common::kPlatformFMTowns))) {
 				// Process variation of Korean postpositions
 				// Used by Korean fan translated games (monkey1, monkey2)
@@ -1683,7 +1886,21 @@ int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 	num = readVar(var);
 	if (num) {
 		const byte *ptr = getObjOrActorName(num);
+
 		if (ptr) {
+			// WORKAROUND: Some releases of Indy3 miss the description of one of the
+			// tunnels in the catacombs. For example, it's there in the Macintosh or
+			// in the Japanese FM-TOWNS release, but missing from the English FM-TOWNS
+			// or the DOS VGA releases. This is a minor issue, but since LEC themselves
+			// fixed this for some releases, we can do the same... just copy the object
+			// description from the other tunnel, if the former is empty.
+			if (_game.id == GID_INDY3 && _roomResource == 59 && num == 725 && *ptr == 0 &&
+				whereIsObject(724) != WIO_NOT_FOUND && enhancementEnabled(kEnhMinorBugFixes)) {
+				const byte *fallbackObjPtr = getObjOrActorName(724);
+				if (fallbackObjPtr)
+					ptr = fallbackObjPtr;
+			}
+
 			int increment = convertMessageToString(ptr, dst, dstSize);
 			// Save the final consonant (jongsung) of the last Korean character
 			// Used by Korean fan translated games (monkey1, monkey2)
@@ -2310,8 +2527,9 @@ Common::CodePage ScummEngine::getDialogCodePage() const {
 		return Common::kWindows949;
 	case Common::JA_JPN:
 		return Common::kWindows932;
-	case Common::ZH_TWN:
 	case Common::ZH_CHN:
+		return Common::kWindows936;
+	case Common::ZH_TWN:
 		return Common::kWindows950;
 	case Common::RU_RUS:
 		return Common::kDos866;

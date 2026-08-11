@@ -29,6 +29,16 @@
 
 static bool cleanupDone = false;
 
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+static bool sdlGLLoadLibrary(const char *path) {
+	return SDL_GL_LoadLibrary(path);
+}
+#else
+static bool sdlGLLoadLibrary(const char *path) {
+	return SDL_GL_LoadLibrary(path) != 0;
+}
+#endif
+
 static void cleanup() {
 	if (!cleanupDone)
 		g_system->destroy();
@@ -83,7 +93,7 @@ void OSystem_AmigaOS::initBackend() {
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-		if (SDL_GL_LoadLibrary(NULL) < 0) {
+		if (!sdlGLLoadLibrary(NULL)) {
 			if (force) {
 				warning("OpenGL implementation chosen is unsupported, falling back");
 				force = 0;
@@ -101,7 +111,7 @@ void OSystem_AmigaOS::initBackend() {
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, 0);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-		if (SDL_GL_LoadLibrary(NULL) < 0) {
+		if (!sdlGLLoadLibrary(NULL)) {
 			if (force) {
 				warning("OpenGL implementation chosen is unsupported, falling back");
 				force = 0;
@@ -116,12 +126,6 @@ void OSystem_AmigaOS::initBackend() {
 	}
 	// First time user defaults
 	ConfMan.registerDefault("audio_buffer_size", "2048");
-	ConfMan.registerDefault("fullscreen", true);
-	ConfMan.registerDefault("gfx_mode", "surfacesdl");
-	ConfMan.registerDefault("stretch_mode", "stretch");
-	ConfMan.registerDefault("gui_mode", "antialias");
-	ConfMan.registerDefault("gui_theme", "scummremastered");
-	ConfMan.registerDefault("gui_scale", "125");
 	ConfMan.registerDefault("extrapath", Common::Path("extras/"));
 	ConfMan.registerDefault("iconspath", Common::Path("icons/"));
 	ConfMan.registerDefault("pluginspath", Common::Path("plugins/"));
@@ -130,24 +134,6 @@ void OSystem_AmigaOS::initBackend() {
 	// First time .ini defaults
 	if (!ConfMan.hasKey("audio_buffer_size")) {
 		ConfMan.set("audio_buffer_size", "2048");
-	}
-	if (!ConfMan.hasKey("fullscreen")) {
-		ConfMan.setBool("fullscreen", true);
-	}
-	if (!ConfMan.hasKey("gfx_mode")) {
-		ConfMan.set("gfx_mode", "surfacesdl");
-	}
-	if (!ConfMan.hasKey("stretch_mode")) {
-		ConfMan.set("stretch_mode", "stretch");
-	}
-	if (!ConfMan.hasKey("gui_mode")) {
-		ConfMan.set("gui_mode", "antialias");
-	}
-	if (!ConfMan.hasKey("gui_theme")) {
-		ConfMan.set("gui_theme", "scummremastered");
-	}
-	if (!ConfMan.hasKey("gui_scale")) {
-		ConfMan.set("gui_scale", "125");
 	}
 	if (!ConfMan.hasKey("extrapath")) {
 		ConfMan.setPath("extrapath", "extras/");

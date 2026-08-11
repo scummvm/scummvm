@@ -493,6 +493,7 @@ void decodeV2String(Common::Language lang, Common::String &str) {
 	static const mapping mapES[] = { { '\0', '\0' } };
 	static const mapping mapRU[] = { { '\0', '\0' } };
 	static const mapping mapSE[] = { { '\0', '\0' } };
+	static const mapping mapCA[] = { { '\0', '\0' } };
 
 	const mapping *map = 0;
 	switch (lang) {
@@ -511,8 +512,11 @@ void decodeV2String(Common::Language lang, Common::String &str) {
 	case Common::RU_RUS:
 		map = mapRU;
 		break;
-	case Common::SE_SWE:
+	case Common::SV_SWE:
 		map = mapSE;
+		break;
+	case Common::CA_ESP:
+		map = mapCA;
 		break;
 	default:
 		break;
@@ -639,6 +643,22 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			{4, "Spelet pausat. Tryck MELLANSLAG f""\x94""r att forts""\x84""tta."},
 			{5, """\x8e""r du s""\x84""ker p""\x86"" att du vill starta om? (J/N)J"},
 			{6, """\x8e""r du s""\x84""ker p""\x86"" att du vill avsluta? (J/N)J"}
+		},
+		{	// Japanese
+			{1, "Insert Disk %c and Press Button to Continue."}, //Placeholder
+			{2, "Unable to Find %s, (%c%d) Press Button."}, //Placeholder
+			{3, "Error reading disk %c, (%c%d) Press Button."}, //Placeholder
+			{4, "Game paused, press SPACE to continue.  "}, //Placeholder
+			{5, "Are you sure you want to restart? (y/n)y"}, //Placeholder
+			{6, "Are you sure you want to quit? (y/n)y"} //Placeholder
+		},
+		{	// Catalan
+			{1, "Insereix el disc n. Prem ENTER."},
+			{2, "No es troba l'arxiu nn.lfl. Prem ENTER."},
+			{3, "ERROR. Prem una tecla per reintentar."},
+			{4, "Joc en pausa. Prem ESPAI per continuar."},
+			{5, "Segur que vols reiniciar? (S o N)S"},
+			{6, "Segur que vols sortir? (S o N)S"}
 		}
 	};
 
@@ -704,7 +724,8 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		{0, """\xc2\xa8""Est""\xc2\xa0""s seguro de querer abandonar? (S/N)S"}, // ES
 		{0, "(Y/N)Y"}, // RU - Placeholder: I don't know of any RU version of v3 games
 		{0, "(Y/N)Y"}, // SE - Placeholder: I don't know of any SE version of v3 games
-		{0, "\x96{\x93\x96\x82\xC9\x8FI\x97\xB9\x82\xB5\x82\xC4\x82\xE0\x82\xA2\x82\xA2\x82\xC5\x82\xB7\x82\xA9\x81H  (Y/N)Y"} // JA
+		{0, "\x96{\x93\x96\x82\xC9\x8FI\x97\xB9\x82\xB5\x82\xC4\x82\xE0\x82\xA2\x82\xA2\x82\xC5\x82\xB7\x82\xA9\x81H  (Y/N)Y"}, // JA
+		{0, "Segur que vols sortir? (S/N)S"} // CA
 	};
 
 	// DOTT (CD) doesn't have translations for some menu options, but this was
@@ -779,11 +800,14 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 	case Common::RU_RUS:
 		langIndex = useFixedDottMenuStrings ? 0 : 5;
 		break;
-	case Common::SE_SWE:
+	case Common::SV_SWE:
 		langIndex = useFixedDottMenuStrings ? 0 : 6;
 		break;
 	case Common::JA_JPN:
 		langIndex = useHardcodedV3QuitPrompt ? 7 : 0;
+		break;
+	case Common::CA_ESP:
+		langIndex = useFixedDottMenuStrings ? 0 : 8;
 		break;
 	default:
 		// Just stick with English.
@@ -802,8 +826,8 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		return fixedDottMenuStrings[langIndex][stringno];
 	}
 
-	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
-		stringno -= ARRAYSIZE(strMap1) - 1;
+	if (stringno >= ARRAYSIZE(strMap1[0])) {
+		stringno -= ARRAYSIZE(strMap1[0]);
 		assert(stringno < ARRAYSIZE(strMap2));
 		return strMap2[stringno];
 	}
@@ -884,8 +908,8 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::U32String &label, int minVa
 	assert(_min <= _value && _value <= _max);
 }
 
-void ValueDisplayDialog::drawDialog(GUI::DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void ValueDisplayDialog::drawDialog(GUI::DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
 	const int labelWidth = _w - 8 - _percentBarWidth;
 	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4,
@@ -1183,6 +1207,55 @@ GUI::CheckboxWidget *ScummOptionsContainerWidget::createOriginalGUICheckbox(GuiO
 	);
 }
 
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createGammaCorrectionCheckbox(GuiObject *boss, const Common::String &name) {
+	return new GUI::CheckboxWidget(boss, name,
+		_("Enable gamma correction"),
+		_("Brighten the graphics to simulate a Macintosh monitor.")
+	);
+}
+
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createSegaShadowModeCheckbox(GuiObject *boss, const Common::String &name) {
+	return new GUI::CheckboxWidget(boss, name,
+		_("Simulate Sega colors"),
+		_("Instead of using the colors defined in the game, simulate colors used on actual Sega hardware. These are significantly darker, though it's unclear if that was intended or not.")
+	);
+}
+
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createSegaCdWaitCursorWhenPausedCheckbox(GuiObject *boss, const Common::String &name) {
+	return new GUI::CheckboxWidget(boss, name,
+		_("Show wait cursor when paused"),
+		_("When paused, show the animated wait cursor from the original Sega CD version.")
+	);
+}
+
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createCopyProtectionCheckbox(GuiObject *boss, const Common::String &name) {
+	return new GUI::CheckboxWidget(boss, name,
+		_("Enable copy protection"),
+		_("Enable any copy protection that would otherwise be bypassed by default.")
+	);
+}
+
+#ifdef USE_TTS
+
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createEnableTTSCheckbox(GuiObject *boss, const Common::String &name) {
+	// Set a "tts_enabled" bool specifically for this domain, since otherwise, the game options will take the "tts_enabled" bool
+	// from global options (i.e. when games using this checkbox are added for the first time, they don't check the default domain, 
+	// and instead try to get from the game's specific domain, but the "tts_enabled" bool doesn't exist in that domain yet, so it
+	// pulls from the app domain instead. Therefore, if the user has TTS enabled for the ScummVM domain, the TTS game option 
+	// will default to enabled. This doesn't match the behavior of other games, which always default TTS to false, so make sure 
+	// TTS defaults to false by adding the bool manually here)
+	if (!ConfMan.hasKey("tts_enabled", _domain)) {
+		ConfMan.setBool("tts_enabled", false, _domain);
+	}
+
+	return new GUI::CheckboxWidget(boss, name,
+		_("Enable Text to Speech"),
+		_("Use TTS to read text in the game (if TTS is available)")
+	);
+}
+
+#endif
+
 void ScummOptionsContainerWidget::updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value) {
 	int adjustment = slider->getValue();
 	const char *sign = "";
@@ -1200,9 +1273,7 @@ void ScummOptionsContainerWidget::updateAdjustmentSlider(GUI::SliderWidget *slid
 // SCUMM game settings
 
 ScummGameOptionsWidget::ScummGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
-		ScummOptionsContainerWidget(boss, name, "ScummGameOptionsDialog", domain),
-		_options(options), _smoothScrollCheckbox(nullptr),
-		_semiSmoothScrollCheckbox(nullptr) {
+		ScummOptionsContainerWidget(boss, name, "ScummGameOptionsDialog", domain), _options(options) {
 	for (uint i = 0; i < _options.size(); i++) {
 		GUI::CheckboxWidget *checkbox = nullptr;
 		if (strcmp(_options[i].configOption, "enhancements") == 0) {
@@ -1314,6 +1385,10 @@ LoomEgaGameOptionsWidget::LoomEgaGameOptionsWidget(GuiObject *boss, const Common
 
 	createEnhancementsWidget(widgetsBoss(), "LoomEgaGameOptionsDialog");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableOriginalGUI");
+	_enableCopyProtectionCheckbox = createCopyProtectionCheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableCopyProtection");
+#ifdef USE_TTS
+	_enableTTSCheckbox = createEnableTTSCheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableTTS");
+#endif
 }
 
 void LoomEgaGameOptionsWidget::load() {
@@ -1328,6 +1403,10 @@ void LoomEgaGameOptionsWidget::load() {
 	updateOvertureTicksValue();
 
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
+	_enableCopyProtectionCheckbox->setState(ConfMan.getBool("copy_protection", _domain));
+#ifdef USE_TTS
+	_enableTTSCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+#endif
 }
 
 bool LoomEgaGameOptionsWidget::save() {
@@ -1335,6 +1414,10 @@ bool LoomEgaGameOptionsWidget::save() {
 
 	ConfMan.setInt("loom_overture_ticks", _overtureTicksSlider->getValue(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
+	ConfMan.setBool("copy_protection", _enableCopyProtectionCheckbox->getState(), _domain);
+#ifdef USE_TTS
+	ConfMan.setBool("tts_enabled", _enableTTSCheckbox->getState(), _domain);
+#endif
 	return true;
 }
 
@@ -1344,7 +1427,13 @@ void LoomEgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Commo
 			.addPadding(0, 0, 0, 0)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
-				.addWidget("EnableOriginalGUI", "Checkbox");
+				.addWidget("EnableOriginalGUI", "Checkbox")
+				.addWidget("EnableCopyProtection", "Checkbox");
+
+#ifdef USE_TTS
+	layouts.addWidget("EnableTTS", "Checkbox");
+#endif
+
 	addEnhancementsLayout(layouts)
 		.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
@@ -1374,26 +1463,34 @@ void LoomEgaGameOptionsWidget::updateOvertureTicksValue() {
 	_overtureTicksValue->setLabel(Common::String::format("%d:%02d.%d", ticks / 600, (ticks % 600) / 10, ticks % 10));
 }
 
-// Mac Loom/MI1 options
-LoomMonkeyMacGameOptionsWidget::LoomMonkeyMacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId) :
-	ScummOptionsContainerWidget(boss, name, "LoomMonkeyMacGameOptionsWidget", domain), _sndQualitySlider(nullptr), _sndQualityValue(nullptr), _enableOriginalGUICheckbox(nullptr), _quality(0) {
-	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.SndQualityLabel", _("Music Quality:"));
+// Options for various Mac games
+MacGameOptionsWidget::MacGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, int gameId, const Common::String &extra) :
+	ScummOptionsContainerWidget(boss, name, "MacGameOptionsWidget", domain) {
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "MacGameOptionsWidget.SndQualityLabel", _("Music Quality:"));
 	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
-	_sndQualitySlider = new GUI::SliderWidget(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.SndQuality", gameId == GID_MONKEY ?
+	_sndQualitySlider = new GUI::SliderWidget(widgetsBoss(), "MacGameOptionsWidget.SndQuality", gameId == GID_MONKEY ?
 		_("Select music quality. The original lets you choose this from the Game menu.") :
 		_("Select music quality. The original determines the basic setup by hardware detection and speed tests, "
 			"but also allows changes through the Game menu to some degree."), kQualitySliderUpdate);
-	_sndQualitySlider->setMinValue(gameId == GID_MONKEY ? 6 : 0);
+	_sndQualitySlider->setMinValue(gameId == GID_LOOM ? 0 : 6);
 	_sndQualitySlider->setMaxValue(9);
-	_sndQualityValue = new GUI::StaticTextWidget(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.SndQualityValue", Common::U32String());
+	_sndQualityValue = new GUI::StaticTextWidget(widgetsBoss(), "MacGameOptionsWidget.SndQualityValue", Common::U32String());
 	_sndQualityValue->setFlags(GUI::WIDGET_CLEARBG);
 	updateQualitySlider();
-	createEnhancementsWidget(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget");
-	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomMonkeyMacGameOptionsWidget.EnableOriginalGUI");
+	createEnhancementsWidget(widgetsBoss(), "MacGameOptionsWidget");
+	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableOriginalGUI");
+	_enableGammaCorrectionCheckbox = createGammaCorrectionCheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableGammaCorrection");
+
+	if (gameId == GID_MONKEY || gameId == GID_MONKEY2 || (gameId == GID_INDY4 && extra == "Floppy"))
+		_enableCopyProtectionCheckbox = createCopyProtectionCheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableCopyProtection");
+
+#ifdef USE_TTS
+	_enableTTSCheckbox = createEnableTTSCheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableTTS");
+#endif
 }
 
-void LoomMonkeyMacGameOptionsWidget::load() {
+void MacGameOptionsWidget::load() {
 	ScummOptionsContainerWidget::load();
 
 	_quality = 0;
@@ -1411,22 +1508,48 @@ void LoomMonkeyMacGameOptionsWidget::load() {
 	_sndQualitySlider->setValue(_quality);
 	updateQualitySlider();
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
+	_enableGammaCorrectionCheckbox->setState(ConfMan.getBool("gamma_correction", _domain));
+
+	if (_enableCopyProtectionCheckbox)
+		_enableCopyProtectionCheckbox->setState(ConfMan.getBool("copy_protection", _domain));
+
+#ifdef USE_TTS
+	_enableTTSCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+#endif
 }
 
-bool LoomMonkeyMacGameOptionsWidget::save() {
+bool MacGameOptionsWidget::save() {
 	bool res = ScummOptionsContainerWidget::save();
 	ConfMan.setInt("mac_snd_quality", _quality, _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
+	ConfMan.setBool("gamma_correction", _enableGammaCorrectionCheckbox->getState(), _domain);
+
+	if (_enableCopyProtectionCheckbox)
+		ConfMan.setBool("copy_protection", _enableCopyProtectionCheckbox->getState(), _domain);
+
+#ifdef USE_TTS
+	ConfMan.setBool("tts_enabled", _enableTTSCheckbox->getState(), _domain);
+#endif
+
 	return res;
 }
 
-void LoomMonkeyMacGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+void MacGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
 			.addPadding(0, 0, 0, 0)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
-				.addWidget("EnableOriginalGUI", "Checkbox");
+				.addWidget("EnableOriginalGUI", "Checkbox")
+				.addWidget("EnableGammaCorrection", "Checkbox");
+
+	if (_enableCopyProtectionCheckbox)
+		layouts.addWidget("EnableCopyProtection", "Checkbox");
+
+#ifdef USE_TTS
+	layouts.addWidget("EnableTTS", "Checkbox");
+#endif
+
 	addEnhancementsLayout(layouts)
 			.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
@@ -1442,7 +1565,7 @@ void LoomMonkeyMacGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const
 		.closeDialog();
 }
 
-void LoomMonkeyMacGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void MacGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kQualitySliderUpdate:
 		updateQualitySlider();
@@ -1453,7 +1576,7 @@ void LoomMonkeyMacGameOptionsWidget::handleCommand(GUI::CommandSender *sender, u
 	}
 }
 
-void LoomMonkeyMacGameOptionsWidget::updateQualitySlider() {
+void MacGameOptionsWidget::updateQualitySlider() {
 	_quality = _sndQualitySlider->getValue();
 	static const char *const descr1[] = { _s("auto"), _s("Low"), _s("Medium"), _s("High") };
 	static const char *const descr2[] = { _s("auto"), _s("Good"), _s("Better"), _s("Best") };
@@ -1491,6 +1614,9 @@ LoomVgaGameOptionsWidget::LoomVgaGameOptionsWidget(GuiObject *boss, const Common
 
 	createEnhancementsWidget(widgetsBoss(), "LoomVgaGameOptionsDialog");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomVgaGameOptionsDialog.EnableOriginalGUI");
+#ifdef USE_TTS
+	_enableTTSCheckbox = createEnableTTSCheckbox(widgetsBoss(), "LoomVgaGameOptionsDialog.EnableTTS");
+#endif
 }
 
 void LoomVgaGameOptionsWidget::load() {
@@ -1505,12 +1631,18 @@ void LoomVgaGameOptionsWidget::load() {
 	updatePlaybackAdjustmentValue();
 
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
+#ifdef USE_TTS
+	_enableTTSCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+#endif
 }
 
 bool LoomVgaGameOptionsWidget::save() {
 	ScummOptionsContainerWidget::save();
 	ConfMan.setInt("loom_playback_adjustment", _playbackAdjustmentSlider->getValue(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
+#ifdef USE_TTS
+	ConfMan.setBool("tts_enabled", _enableTTSCheckbox->getState(), _domain);
+#endif
 	return true;
 }
 
@@ -1521,6 +1653,11 @@ void LoomVgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Commo
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
 				.addWidget("EnableOriginalGUI", "Checkbox");
+
+#ifdef USE_TTS
+	layouts.addWidget("EnableTTS", "Checkbox");
+#endif
+
 	addEnhancementsLayout(layouts)
 			.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
@@ -1553,7 +1690,19 @@ void LoomVgaGameOptionsWidget::updatePlaybackAdjustmentValue() {
 
 MI1CdGameOptionsWidget::MI1CdGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
 		ScummOptionsContainerWidget(boss, name, "MI1CdGameOptionsDialog", domain) {
-	Common::String extra = ConfMan.get("extra", domain);
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+
+	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableOriginalGUI");
+
+#ifdef USE_TTS
+	_enableTTSCheckbox = createEnableTTSCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableTTS");
+#endif
+
+	if (platform == Common::kPlatformSegaCD)
+		_enableSegaShadowModeCheckbox = createSegaShadowModeCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableSegaShadowMode");
+
+	if (platform == Common::kPlatformSegaCD)
+		_enableSegaCdWaitCursorWhenPausedCheckbox = createSegaCdWaitCursorWhenPausedCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableSegaCdWaitCursorWhenPaused");
 
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.IntroAdjustmentLabel", _("Intro Adjust:"));
 
@@ -1582,11 +1731,20 @@ MI1CdGameOptionsWidget::MI1CdGameOptionsWidget(GuiObject *boss, const Common::St
 	_outlookAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
 
 	createEnhancementsWidget(widgetsBoss(), "MI1CdGameOptionsDialog");
-	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableOriginalGUI");
 }
 
 void MI1CdGameOptionsWidget::load() {
 	ScummOptionsContainerWidget::load();
+
+	if (_enableSegaShadowModeCheckbox)
+		_enableSegaShadowModeCheckbox->setState(ConfMan.getBool("enable_sega_shadow_mode", _domain));
+
+	if (_enableSegaCdWaitCursorWhenPausedCheckbox) {
+		bool enabled = false;
+		if (ConfMan.hasKey("sega_cd_wait_cursor_when_paused", _domain))
+			enabled = ConfMan.getBool("sega_cd_wait_cursor_when_paused", _domain);
+		_enableSegaCdWaitCursorWhenPausedCheckbox->setState(enabled);
+	}
 
 	int introAdjustment = 0;
 	int outlookAdjustment = 0;
@@ -1603,24 +1761,49 @@ void MI1CdGameOptionsWidget::load() {
 	updateOutlookAdjustmentValue();
 
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
+#ifdef USE_TTS
+	_enableTTSCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+#endif
 }
 
 bool MI1CdGameOptionsWidget::save() {
 	ScummOptionsContainerWidget::save();
 
+	if (_enableSegaShadowModeCheckbox)
+		ConfMan.setBool("enable_sega_shadow_mode", _enableSegaShadowModeCheckbox->getState(), _domain);
+
+	if (_enableSegaCdWaitCursorWhenPausedCheckbox)
+		ConfMan.setBool("sega_cd_wait_cursor_when_paused", _enableSegaCdWaitCursorWhenPausedCheckbox->getState(), _domain);
+
 	ConfMan.setInt("mi1_intro_adjustment", _introAdjustmentSlider->getValue(), _domain);
 	ConfMan.setInt("mi1_outlook_adjustment", _outlookAdjustmentSlider->getValue(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
+#ifdef USE_TTS
+	ConfMan.setBool("tts_enabled", _enableTTSCheckbox->getState(), _domain);
+#endif
 	return true;
 }
 
 void MI1CdGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
+
 	layouts.addDialog(layoutName, overlayedLayout)
 		.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
 			.addPadding(0, 0, 0, 0)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
 				.addWidget("EnableOriginalGUI", "Checkbox");
+
+	if (platform == Common::kPlatformSegaCD)
+		layouts.addWidget("EnableSegaShadowMode", "Checkbox");
+
+	if (platform == Common::kPlatformSegaCD)
+		layouts.addWidget("EnableSegaCdWaitCursorWhenPaused", "Checkbox");
+
+#ifdef USE_TTS
+	layouts.addWidget("EnableTTS", "Checkbox");
+#endif
+
 	addEnhancementsLayout(layouts)
 			.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
@@ -1673,35 +1856,43 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 	_audioOverride = nullptr;
 	const Common::String guiOptionsString = ConfMan.get("guioptions", domain);
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
-	if (guiOptions.contains(GUIO_AUDIO_OVERRIDE))
+	if (guiOptions.contains(GAMEOPTION_AUDIO_OVERRIDE))
 		_audioOverride = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.AudioOverride", _("Load modded audio"), _("Replace music, sound effects, and speech clips with modded audio files, if available."));
-
-	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
-	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
 	if (_gameid == "football" || _gameid == "baseball2001") {
 		// Lobby configuration (Do not include LAN settings)
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
+		GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
+		text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
 		text->setLabel(_("Online Server:"));
 		_lobbyServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.LobbyServerAddress", Common::U32String(""), _("Address of the server to connect to for online play.  It must start with either \"https://\" or \"http://\" schemas."));
 		_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
-		_enableCompetitiveMods = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableCompetitiveMods", _("Enable online competitive mods"), _("Enables custom-made modifications intented for online competitive play."));
+		_enableCompetitiveMods = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableCompetitiveMods", _("Enable online competitive mods"), _("Enables custom-made modifications intended for online competitive play."));
+
+		// Display network version
+		_networkVersion = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.NetworkVersion", Common::String::format("Multiplayer Version: %s", NETWORK_VERSION));
 #endif
 	} else {
 		// Network configuration (Include LAN settings)
+		GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
+		text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
 		_enableSessionServer = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableSessionServer", _("Enable connection to Multiplayer Server"), _("Toggles the connection to the server that allows hosting and joining online multiplayer games over the Internet."), kEnableSessionCmd);
 		_enableLANBroadcast = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableLANBroadcast", _("Host games over LAN"), _("Allows the game sessions to be discovered over your local area network."));
 
-		if (_gameid == "moonbase")
+		if (_gameid == "moonbase") {
+			// I18N: Moonbase Console is a program name
 			_generateRandomMaps = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.GenerateRandomMaps", _("Generate random maps"), _("Allow random map generation (Based from Moonbase Console)."));
+		}
 
 		_sessionServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerAddress", Common::U32String(""), _("Address of the server to connect to for hosting and joining online game sessions."));
 
 		_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
-	}
 
-	// Display network version
-	_networkVersion = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.NetworkVersion", Common::String::format("Multiplayer Version: %s", NETWORK_VERSION));
+		// Display network version
+		_networkVersion = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.NetworkVersion", Common::String::format("Multiplayer Version: %s", NETWORK_VERSION));
+	}
 }
 
 void HENetworkGameOptionsWidget::load() {
@@ -1712,7 +1903,7 @@ void HENetworkGameOptionsWidget::load() {
 		_audioOverride->setState(audioOverride);
 	}
 	if (_gameid == "football" || _gameid == "baseball2001") {
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		Common::String lobbyServerAddr = "https://multiplayer.scummvm.org:9130";
 		bool enableCompetitiveMods = false;
 
@@ -1742,9 +1933,11 @@ void HENetworkGameOptionsWidget::load() {
 		_sessionServerAddr->setEditString(sessionServerAddr);
 		_sessionServerAddr->setEnabled(enableSessionServer);
 
-		if (ConfMan.hasKey("generate_random_maps", _domain))
-			generateRandomMaps = ConfMan.getBool("generate_random_maps", _domain);
-		_generateRandomMaps->setState(generateRandomMaps);
+		if (_gameid == "moonbase") {
+			if (ConfMan.hasKey("generate_random_maps", _domain))
+				generateRandomMaps = ConfMan.getBool("generate_random_maps", _domain);
+			_generateRandomMaps->setState(generateRandomMaps);
+		}
 	}
 }
 
@@ -1752,7 +1945,7 @@ bool HENetworkGameOptionsWidget::save() {
 	if (_audioOverride)
 		ConfMan.setBool("audio_override", _audioOverride->getState(), _domain);
 	if (_gameid == "football" || _gameid == "baseball2001") {
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		ConfMan.set("lobby_server", _lobbyServerAddr->getEditString(), _domain);
 		ConfMan.setBool("enable_competitive_mods", _enableCompetitiveMods->getState(), _domain);
 #endif
@@ -1768,11 +1961,11 @@ bool HENetworkGameOptionsWidget::save() {
 
 void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	if (_gameid == "football" || _gameid == "baseball2001") {
-#ifdef USE_LIBCURL
 		layouts.addDialog(layoutName, overlayedLayout)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
 				.addPadding(0, 0, 12, 0)
 				.addWidget("AudioOverride", "Checkbox")
+#ifdef USE_BASIC_NET
 				.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 					.addPadding(0, 0, 12, 0)
 					.addWidget("SessionServerLabel", "OptionsLabel")
@@ -1781,9 +1974,9 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 				.closeLayout()
 				.addWidget("EnableCompetitiveMods", "Checkbox")
 				.addWidget("NetworkVersion", "")
+#endif
 			.closeLayout()
 		.closeDialog();
-#endif
 	} else {
 		layouts.addDialog(layoutName, overlayedLayout)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)

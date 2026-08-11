@@ -67,7 +67,7 @@ bool objIsPlayerActor(GameObject *obj) {
 	            &&  isPlayerActor((Actor *)obj);
 }
 
-//  Determine if this object is an enemy of the protaganists
+//  Determine if this object is an enemy of the protagonists
 bool objIsEnemy(GameObject *obj) {
 	return      isActor(obj)
 	            &&  isEnemy((Actor *)obj);
@@ -92,7 +92,7 @@ bool actorIsPlayerActor(Actor *a) {
 	return isPlayerActor(a);
 }
 
-//  Determine if this actor is an enemy of the protaganists
+//  Determine if this actor is an enemy of the protagonists
 bool actorIsEnemy(Actor *a) {
 	return isEnemy(a);
 }

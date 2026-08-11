@@ -73,7 +73,7 @@ enum ColourIndex {
 #define REMPAL(c, v) (pnRemoraColour[m_nCurrentPalette][c][v])
 
 const uint8 pnRemoraColour[REMORA_NUM_COLOUR_SCHEMES][REMORA_COLOURS_PER_SCHEME][3] = {
-	// Pallete 0.
+	// Palette 0.
 	{{0, 180, 241},   // CI_HEADING
 	 {255, 255, 255}, // CI_WARNING
 	 {0, 221, 160},   // CI_OPTION
@@ -100,7 +100,7 @@ const uint8 pnRemoraColour[REMORA_NUM_COLOUR_SCHEMES][REMORA_COLOURS_PER_SCHEME]
 	 {7, 141, 23},    // CI_M08_UNLOCKED_DOOR
 	 {0, 90, 220}},   // CI_M08_BARRIERS
 
-	// Pallete 1.
+	// Palette 1.
 	{{0, 241, 180},   // CI_HEADING
 	 {255, 255, 255}, // CI_WARNING
 	 {0, 160, 221},   // CI_OPTION
@@ -127,7 +127,7 @@ const uint8 pnRemoraColour[REMORA_NUM_COLOUR_SCHEMES][REMORA_COLOURS_PER_SCHEME]
 	 {7, 235, 23},    // CI_M08_UNLOCKED_DOOR
 	 {0, 230, 90}},   // CI_M08_BARRIERS
 
-	// Pallete 2.
+	// Palette 2.
 	{{247, 236, 23},  // CI_HEADING
 	 {252, 21, 10},   // CI_WARNING
 	 {235, 165, 33},  // CI_OPTION

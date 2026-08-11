@@ -10,8 +10,8 @@
 ;These drivers are not stand alone. We had them as an integral part of the
 ;game.
 ;
-;Put interupt no. into SOUNDINT, base address (eg 220h) into SOUNDBASEADD.
-;If interupt is 255 then no card is assumed.
+;Put interrupt no. into SOUNDINT, base address (eg 220h) into SOUNDBASEADD.
+;If interrupt is 255 then no card is assumed.
 ;
 ;Call soundstartup at beginning of program to test card and initialise.
 ;
@@ -481,7 +481,7 @@ Checksoundint	proc	near
 
 	mov	dx,oldsoundintseg
 	mov	ds,dx
-	mov	dx,oldsoundintadd	;Restore old interupt vector
+	mov	dx,oldsoundintadd	;Restore old interrupt vector
 	mov	ah,25h
 	mov	al,soundint
 	add	al,8
@@ -489,7 +489,7 @@ Checksoundint	proc	near
 
 	cmp	testresult,1
 	jz	interuptworked
-	mov	gameerror,6	;interupt wrong
+	mov	gameerror,6	;interrupt wrong
 	jmp	quickquit	;exit to DOS with error
 
 interuptworked:	ret
@@ -562,7 +562,7 @@ Soundend	proc	near
 	call	disablesoundint
 
 	mov	ds,oldsoundintseg		;for keys
-	mov	dx,oldsoundintadd		;Restore old interupt vector
+	mov	dx,oldsoundintadd		;Restore old interrupt vector
 	mov	ah,25h
 	mov	al,soundint
 	add	al,8

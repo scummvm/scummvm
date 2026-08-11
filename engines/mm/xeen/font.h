@@ -24,6 +24,7 @@
 
 #include "common/language.h"
 #include "mm/shared/xeen/xsurface.h"
+#include "graphics/big5.h"
 
 namespace MM {
 namespace Xeen {
@@ -41,12 +42,14 @@ struct FontData {
 	static byte _bgColor;
 	static bool _fontReduced;
 	static Justify _fontJustify;
+	static Graphics::Big5Font *_big5Font;
 };
 
 class FontSurface: public Shared::Xeen::XSurface, public FontData {
 private:
 	const char *_displayString;
 	bool _msgWraps;
+	bool _isBig5;
 
 	Common::Language lang;
 	/**
@@ -64,7 +67,7 @@ private:
 	/**
 	 * Return the next pending character to display
 	 */
-	char getNextChar();
+	uint16_t getNextChar();
 
 	/**
 	 * Return the width of a given character
@@ -89,7 +92,7 @@ private:
 	/**
 	 * Wrie a character to the surface
 	 */
-	void writeChar(char c, const Common::Rect &clipRect);
+	void writeChar(uint16_t c, const Common::Rect &clipRect);
 public:
 	Common::Point &_writePos;
 public:
@@ -105,20 +108,32 @@ public:
 
 	/**
 	 * Write a string to the surface
-	 * @param s			String to display
-	 * @param clipRect	Window bounds to display string within
-	 * @returns			Any string remainder that couldn't be displayed
+	 * @param s				String to display
+	 * @param clipRect		Window bounds to display string within
+	 * @param ttsVoiceText	Whether to voice the string with TTS
+	 * @param ttsMessage	Message for TTS, which will be built
+	 * @returns				Any string remainder that couldn't be displayed
 	 * @remarks		Note that bounds is just used for wrapping purposes. Unless
 	 *		justification is set, the message will be written at _writePos
 	 */
-	const char *writeString(const Common::String &s, const Common::Rect &clipRect);
+	const char *writeString(const Common::String &s, const Common::Rect &clipRect, bool ttsVoiceText = true, Common::String *ttsMessage = nullptr);
+
+	/**
+	 * Returns the tail of a plain text string, dropping as many leading
+	 * characters as necessary for the rendered text to be narrower than
+	 * the given pixel width, and so display without wrapping
+	 * @param s			String to fit; measuring stops at any control code
+	 * @param maxWidth	Pixel width the rendered string must stay below
+	 * @returns			Pointer within s to the portion that fits
+	 */
+	const char *fitToWidth(const char *s, int maxWidth);
 	bool isSpace(char c);
 	/**
 	 * Write a charcter to the window
 	 * @param c			Character
 	 * @param clipRect	Window bounds to display string within
 	 */
-	void writeCharacter(char c, const Common::Rect &clipRect);
+	void writeCharacter(uint16_t c, const Common::Rect &clipRect);
 };
 
 } // End of namespace Xeen

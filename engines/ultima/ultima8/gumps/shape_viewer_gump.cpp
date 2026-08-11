@@ -90,9 +90,9 @@ ShapeViewerGump::ShapeViewerGump(int x, int y, int width, int height,
 }
 
 ShapeViewerGump::~ShapeViewerGump() {
-	for (Common::Array<ShapeArchiveEntry>::iterator it = _archives.begin(); it != _archives.end(); it++) {
-		if (it->_disposeAfterUse == DisposeAfterUse::YES) {
-			delete it->_archive;
+	for (auto &entry : _archives) {
+		if (entry._disposeAfterUse == DisposeAfterUse::YES) {
+			delete entry._archive;
 		}
 	}
 }
@@ -378,8 +378,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 	}
 
 	Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
-	Rect res;
-	desktopGump->GetDims(res);
+	Common::Rect32 res = desktopGump->getDims();
 
 	int xoff, yoff, width, height;
 

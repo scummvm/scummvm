@@ -20,9 +20,11 @@
  */
 
 #include "ags/engine/ac/dynobj/script_drawing_surface.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/ac/common.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/drawing_surface.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/ac/game_setup_struct.h"
@@ -41,7 +43,7 @@ Bitmap *ScriptDrawingSurface::GetBitmapSurface() {
 	else if (dynamicSpriteNumber >= 0)
 		return _GP(spriteset)[dynamicSpriteNumber];
 	else if (dynamicSurfaceNumber >= 0)
-		return _G(dynamicallyCreatedSurfaces)[dynamicSurfaceNumber];
+		return _G(dynamicallyCreatedSurfaces)[dynamicSurfaceNumber].get();
 	else if (linkedBitmapOnly != nullptr)
 		return linkedBitmapOnly;
 	else if (roomMaskType > kRoomAreaNone)
@@ -62,7 +64,7 @@ void ScriptDrawingSurface::FinishedDrawing() {
 	modified = 1;
 }
 
-int ScriptDrawingSurface::Dispose(const char *address, bool force) {
+int ScriptDrawingSurface::Dispose(void *address, bool force) {
 
 	// dispose the drawing surface
 	DrawingSurface_Release(this);
@@ -74,11 +76,11 @@ const char *ScriptDrawingSurface::GetType() {
 	return "DrawingSurface";
 }
 
-size_t ScriptDrawingSurface::CalcSerializeSize() {
+size_t ScriptDrawingSurface::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t) * 9;
 }
 
-void ScriptDrawingSurface::Serialize(const char *address, Stream *out) {
+void ScriptDrawingSurface::Serialize(const void *address, Stream *out) {
 	// pack mask type in the last byte of a negative integer
 	// note: (-1) is reserved for "unused", for backward compatibility
 	if (roomMaskType > 0)

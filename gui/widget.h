@@ -77,6 +77,7 @@ enum {
 	kContainerWidget	= 'CTNR',
 	kScrollContainerWidget = 'SCTR',
 	kRichTextWidget		= 'RTXT',
+	kEEWidget			= 'EEGG',
 };
 
 enum {
@@ -114,6 +115,7 @@ private:
 public:
 	static Widget *findWidgetInChain(Widget *start, int x, int y);
 	static Widget *findWidgetInChain(Widget *start, const char *name);
+	static Widget *findWidgetInChain(Widget *w, uint32 type);
 	static bool containsWidgetInChain(Widget *start, Widget *search);
 
 public:
@@ -160,6 +162,8 @@ public:
 
 	uint32 getType() const { return _type; }
 
+	// Check if the widget or its children contain a visible scrollbar
+	virtual bool hasVisibleScrollBar() const;
 	void setFlags(int flags);
 	void clearFlags(int flags);
 	int getFlags() const		{ return _flags; }
@@ -223,6 +227,7 @@ public:
 	void setFontColor(ThemeEngine::FontColor color);
 
 protected:
+	void reflowLayout() override;
 	void drawWidget() override;
 	void setFont(ThemeEngine::FontStyle font, Common::Language lang);
 };
@@ -308,17 +313,18 @@ public:
 	PicButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	~PicButtonWidget() override;
 
-	void setGfx(const Graphics::ManagedSurface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
+	void setGfx(Common::SharedPtr<Graphics::ManagedSurface> &gfx, int statenum = kPicButtonStateEnabled);
 	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
-	void setGfxFromTheme(const char *name, int statenum = kPicButtonStateEnabled, bool scale = true);
+	void setGfxFromTheme(const char *name, int statenum = kPicButtonStateEnabled);
 	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
+	void clearGfx(int statenum = kPicButtonStateEnabled) { _gfx[statenum].reset(); }
 
 	void setButtonDisplay(bool enable) {_showButton = enable; }
 
 protected:
 	void drawWidget() override;
 
-	Graphics::ManagedSurface _gfx[kPicButtonStateMax + 1];
+	Common::SharedPtr<Graphics::ManagedSurface> _gfx[kPicButtonStateMax + 1];
 	Graphics::AlphaType _alphaType[kPicButtonStateMax + 1];
 	bool _showButton;
 };
@@ -446,15 +452,16 @@ public:
 	GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String());
 	~GraphicsWidget() override;
 
-	void setGfx(const Graphics::ManagedSurface *gfx, bool scale = false);
+	void setGfx(Common::SharedPtr<Graphics::ManagedSurface> &gfx);
 	void setGfx(const Graphics::Surface *gfx, bool scale = false);
 	void setGfx(int w, int h, int r, int g, int b);
 	void setGfxFromTheme(const char *name);
+	void clearGfx() { _gfx.reset(); }
 
 protected:
 	void drawWidget() override;
 
-	Graphics::ManagedSurface _gfx;
+	Common::SharedPtr<Graphics::ManagedSurface> _gfx;
 	Graphics::AlphaType _alphaType;
 };
 
@@ -565,6 +572,7 @@ public:
 protected:
 	// Widget API
 	void reflowLayout() override;
+	Common::Rect getClipRect() const override;
 	void drawWidget() override {}
 	bool containsWidget(Widget *widget) const override;
 	Widget *findWidget(int x, int y) override;
@@ -587,7 +595,6 @@ protected:
 };
 
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0, bool scale = false);
-const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h, bool filtering = false);
 
 } // End of namespace GUI
 

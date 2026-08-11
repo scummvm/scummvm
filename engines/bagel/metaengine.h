@@ -26,12 +26,30 @@
 #include "engines/advancedDetector.h"
 
 namespace Bagel {
-	enum KeybindingAction {
-		KEYBIND_NONE, KEYBIND_WAIT, KEYBIND_CHEAT714
-	};
-}
+namespace HodjNPodj {
+extern Common::KeyCode KeybindToKeycode(int key);
+} // namespace HodjNPodj
 
-class BagelMetaEngine : public AdvancedMetaEngine {
+enum KeybindingAction {
+	KEYBIND_NONE, KEYBIND_WAIT, KEYBIND_CHEAT714,
+	KEYBIND_UP, KEYBIND_DOWN, KEYBIND_LEFT, KEYBIND_RIGHT,
+	KEYBIND_SELECT, KEYBIND_ESCAPE, KEYBIND_PAGEUP,
+	KEYBIND_PAGEDOWN, KEYBIND_HOME, KEYBIND_END
+};
+
+
+enum KeybindingMode {
+	KBMODE_NORMAL,		///< Keys available when normal in-game
+	KBMODE_MINIMAL,		///< Keys when in a textbox,
+	KBMODE_ALL
+};
+
+} // namespace Bagel
+
+class BagelMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
+private:
+	static Common::String getGameId(const Common::String &target);
+
 public:
 	const char *getName() const override;
 
@@ -46,7 +64,19 @@ public:
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+
+	/**
+	 * Initialize keymaps
+	 */
+	static Common::KeymapArray initKeymaps(Bagel::KeybindingMode mode, bool isSpacebar);
+
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	/**
+	 * Set the keybinding mode
+	 */
+	static void setKeybindingMode(Bagel::KeybindingMode mode);
 };
 
 #endif // BAGEL_METAENGINE_H

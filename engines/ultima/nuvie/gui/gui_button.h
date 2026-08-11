@@ -94,8 +94,8 @@ public:
 	void Display(bool full_redraw) override;
 
 	/* Mouse hits activate us */
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override;
 
 	/* Clickable or not ... */
@@ -114,7 +114,7 @@ public:
 	virtual void set_highlighted(bool val) {
 		is_highlighted = val;
 	}
-	virtual GUI_status Activate_button(int x = 0, int y = 0, Shared::MouseButton button = Shared::BUTTON_LEFT);
+	virtual GUI_status Activate_button(int x = 0, int y = 0, Events::MouseButton button = Events::BUTTON_LEFT);
 
 protected:
 	/* yields an appropriate image */

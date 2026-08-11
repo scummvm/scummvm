@@ -73,7 +73,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 	int16 curWordPos = 0;
 	setTextPos(posX, curLineNb * 9 + posY);
 
-	while (!doneFlag && !shouldQuitGame()) {
+	while (!doneFlag && !shouldQuit()) {
 		uint8 curChar = *buffer;
 		if (curChar != 0x5E && curChar != 0x20 && curChar != 0 && curChar != 0x7C) { // '^', ' ', NUL, '|'
 			noTextFlag = false;
@@ -150,7 +150,6 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			// Change map. { map number, posX, posY }
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (scriptExecuteFlag) {
-				writeTechAndMapFiles();
 				_oldMapPosX = _mapPosX = scriptNumberArray[1];
 				_oldMapPosY = _mapPosY = scriptNumberArray[2];
 				loadTechMapImp(scriptNumberArray[0]);
@@ -484,6 +483,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			_teamChar[teamSlot]._id = joiningNpcId;
 		}
 		refreshTeamSize();
+		_sayLowStatusScreen = true;
 	}
 
 	return retVal;

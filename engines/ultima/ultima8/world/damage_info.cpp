@@ -19,11 +19,12 @@
  *
  */
 
+#include "ultima/ultima8/world/damage_info.h"
+
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {

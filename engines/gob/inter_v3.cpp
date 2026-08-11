@@ -82,7 +82,7 @@ void Inter_v3::o3_speakerOn(OpFuncParams &params) {
 	// our PC speaker emulator sometimes "swallows" very short beeper
 	// bursts issued in this way, this is in general quite wonky and
 	// prone to fail, as can be seen in bug report #5808. Therefore,
-	// we explicitely set a length in this case and ignore the next
+	// we explicitly set a length in this case and ignore the next
 	// speaker off command.
 	if (frequency == 50) {
 		length = 5;

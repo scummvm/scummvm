@@ -53,9 +53,10 @@ enum {
 };
 
 enum {
-	kDebugScript = 1 << 0,
-	kDebugSound = 1 << 1,
-	kDebugResource = 1 << 2
+	kDebugScript = 1,
+	kDebugSound,
+	kDebugInternalDebugger,
+	kDebugResource,
 };
 
 #define MESSAGE_BASIC 1

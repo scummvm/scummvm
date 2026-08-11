@@ -25,8 +25,8 @@
 
 #include "audio/audiostream.h"
 #include "image/bmp.h"
-#include "video/bink_decoder.h"
 
+#include "engines/nancy/movieplayer.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/console.h"
 #include "engines/nancy/resource.h"
@@ -58,6 +58,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
 	registerCmd("scene_id", WRAP_METHOD(NancyConsole, Cmd_sceneID));
 	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listActionRecords));
+	registerCmd("actionrecord_export", WRAP_METHOD(NancyConsole, Cmd_actionRecordExport));
 	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
 	registerCmd("get_eventflags", WRAP_METHOD(NancyConsole, Cmd_getEventFlags));
 	registerCmd("set_eventflags", WRAP_METHOD(NancyConsole, Cmd_setEventFlags));
@@ -76,40 +77,29 @@ NancyConsole::~NancyConsole() {}
 void NancyConsole::postEnter() {
 	GUI::Debugger::postEnter();
 	if (!_videoFile.empty()) {
-		Common::Path withExt = _videoFile;
-		Video::VideoDecoder *dec = new AVFDecoder();
+		MoviePlayer player;
 
-		if (!dec->loadFile(withExt.append(".avf"))) {
-			// No AVF found, try Bink
-			delete dec;
-			dec = new Video::BinkDecoder();
-
-			if (!dec->loadFile(withExt.append(".bik"))) {
-				debugPrintf("Failed to load video '%s'\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
-				delete dec;
-				dec = nullptr;
-			}
-		}
-
-		if (dec) {
+		if (!player.loadFile(_videoFile)) {
+			debugPrintf("Failed to load video '%s'\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
+		} else {
 			Graphics::ManagedSurface surf;
 
 			if (!_paletteFile.empty()) {
 				GraphicsManager::loadSurfacePalette(surf, _paletteFile);
 			}
 
-			dec->start();
+			player.start();
 			Common::EventManager *ev = g_system->getEventManager();
-			while (!g_nancy->shouldQuit() && !dec->endOfVideo()) {
+			while (!g_nancy->shouldQuit() && !player.endOfVideo()) {
 				Common::Event event;
 				if (ev->pollEvent(event)) {
-					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == Nancy::InputManager::kNancyActionLeftClick) {
+					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == InputManager::kNancyActionLeftClick) {
 						break;
 					}
 				}
 
-				if (dec->needsUpdate()) {
-					const Graphics::Surface *frame = dec->decodeNextFrame();
+				if (player.needsUpdate()) {
+					const Graphics::Surface *frame = player.decodeNextFrame();
 					if (frame) {
 						GraphicsManager::copyToManaged(*frame, surf, !_paletteFile.empty());
 						g_nancy->_graphics->debugDrawToScreen(surf);
@@ -124,7 +114,6 @@ void NancyConsole::postEnter() {
 
 		_videoFile.clear();
 		_paletteFile.clear();
-		delete dec;
 	}
 
 	if (!_imageFile.empty()) {
@@ -140,7 +129,7 @@ void NancyConsole::postEnter() {
 			while (!g_nancy->shouldQuit()) {
 				Common::Event event;
 				if (ev->pollEvent(event)) {
-					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == Nancy::InputManager::kNancyActionLeftClick) {
+					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == InputManager::kNancyActionLeftClick) {
 						break;
 					}
 
@@ -165,16 +154,16 @@ void NancyConsole::postEnter() {
 }
 
 bool NancyConsole::Cmd_cifExport(int argc, const char **argv) {
-	if (argc < 2 || argc > 3) {
+	if (argc != 2) {
 		debugPrintf("Exports the specified resource to .cif file\n");
-		debugPrintf("Usage: %s <name> [cal]\n", argv[0]);
+		debugPrintf("Usage: %s <name>\n", argv[0]);
 		return true;
 	}
 
-	if (!g_nancy->_resource->exportCif((argc == 2 ? "" : argv[2]), argv[1]))
+	if (!g_nancy->_resource->exportCif(argv[1]))
 		debugPrintf("Failed to export '%s'\n", argv[1]);
 
-	return cmdExit(0, nullptr);
+	return true;
 }
 
 bool NancyConsole::Cmd_ciftreeExport(int argc, const char **argv) {
@@ -193,7 +182,7 @@ bool NancyConsole::Cmd_ciftreeExport(int argc, const char **argv) {
 	if (!g_nancy->_resource->exportCifTree(argv[1], files))
 		debugPrintf("Failed to export '%s'\n", argv[1]);
 
-	return cmdExit(0, nullptr);
+	return true;
 }
 
 bool NancyConsole::Cmd_cifList(int argc, const char **argv) {
@@ -425,6 +414,11 @@ bool NancyConsole::Cmd_playSound(int argc, const char **argv) {
 		return true;
 	}
 
+	if (g_nancy->_sound->isCommonSound(argv[1])) {
+		g_nancy->_sound->playSound(argv[1]);
+		return true;
+	}
+
 	Common::File *f = new Common::File;
 	if (!f->open(Common::Path(argv[1]).appendInPlace(".his"))) {
 		debugPrintf("Failed to open '%s.his'\n", argv[1]);
@@ -451,7 +445,7 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 		return true;
 	}
 
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
@@ -466,13 +460,13 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 	SceneChangeDescription scene;
 	scene.sceneID = (uint16)atoi(argv[1]);
 	NancySceneState.changeScene(scene);
-	NancySceneState._state = State::Scene::kLoad;
+	NancySceneState.setState(State::Scene::kLoad);
 	delete iff;
 	return cmdExit(0, nullptr);
 }
 
 bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
@@ -481,12 +475,16 @@ bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
 	return true;
 }
 
-void NancyConsole::printActionRecord(const Nancy::Action::ActionRecord *record, bool noDependencies) {
+void NancyConsole::printActionRecord(const Action::ActionRecord *record, bool noDependencies) {
 	debugPrintf("\n%s\n\ttype: %i, %s\n\texecType: %s",
 		record->_description.c_str(),
 		record->_type,
 		record->getRecordTypeName().c_str(),
-		record->_execType == Nancy::Action::ActionRecord::kRepeating ? "kRepeating" : "kOneShot");
+		record->_execType == Action::ActionRecord::kRepeating ? "kRepeating" : "kOneShot");
+
+	Common::String extraInfo = record->getRecordExtraInfo();
+	if (!extraInfo.empty())
+		debugPrintf("\n\textraInfo: %s", extraInfo.c_str());
 
 	if (!noDependencies && record->_dependencies.children.size()) {
 		debugPrintf("\n\tDependencies:");
@@ -495,8 +493,8 @@ void NancyConsole::printActionRecord(const Nancy::Action::ActionRecord *record, 
 	}
 }
 
-void NancyConsole::recursePrintDependencies(const Nancy::Action::DependencyRecord &record) {
-	using namespace Nancy::Action;
+void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &record) {
+	using namespace Action;
 
 	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
@@ -504,41 +502,43 @@ void NancyConsole::recursePrintDependencies(const Nancy::Action::DependencyRecor
 	for (const DependencyRecord &dep : record.children) {
 		debugPrintf("\n\t\t");
 		switch (dep.type) {
-		case DependencyType::kNone :
+		case DependencyType::kNone:
 			debugPrintf("kNone");
 			break;
-		case DependencyType::kInventory :
+		case DependencyType::kInventory:
 			debugPrintf("kInventory, item %u, %s, %s",
 				dep.label,
-				inventoryData->itemDescriptions[dep.label].name.c_str(),
+				(uint16)dep.label < inventoryData->itemDescriptions.size() ?
+					inventoryData->itemDescriptions[dep.label].name.c_str() :
+					"Invalid",
 				dep.condition == g_nancy->_true ? "true" : "false");
 			break;
-		case DependencyType::kEvent :
+		case DependencyType::kEvent:
 			debugPrintf("kEvent, flag %u, %s, %s",
 				dep.label,
-				g_nancy->getStaticData().eventFlagNames[dep.label >= 1000 ? dep.label - 1000 : dep.label].c_str(),
+				g_nancy->getEventFlagName(dep.label).c_str(),
 				dep.condition == g_nancy->_true ? "true" : "false");
 			break;
-		case DependencyType::kLogic :
+		case DependencyType::kLogic:
 			debugPrintf("kLogic, flag %u, %s",
 				dep.label,
 				dep.condition == g_nancy->_true ? "used" : "not used");
 			break;
-		case DependencyType::kElapsedGameTime :
+		case DependencyType::kElapsedGameTime:
 			debugPrintf("kElapsedGameTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 				dep.hours,
 				dep.minutes,
 				dep.seconds,
 				dep.milliseconds);
 			break;
-		case DependencyType::kElapsedSceneTime :
+		case DependencyType::kElapsedSceneTime:
 			debugPrintf("kElapsedSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 				dep.hours,
 				dep.minutes,
 				dep.seconds,
 				dep.milliseconds);
 			break;
-		case DependencyType::kElapsedPlayerTime :
+		case DependencyType::kElapsedPlayerTime:
 			debugPrintf("kPlayerTime, player time %s %i hours, %i minutes, %i seconds, %i milliseconds",
 				dep.condition == 0 ? "greater than" : (dep.condition == 1 ? "less than" : "equals"),
 				dep.hours,
@@ -546,45 +546,45 @@ void NancyConsole::recursePrintDependencies(const Nancy::Action::DependencyRecor
 				dep.seconds,
 				dep.milliseconds);
 			break;
-		case DependencyType::kSceneCount :
+		case DependencyType::kSceneCount:
 			debugPrintf("kSceneCount, scene ID %i, hit count %s %i",
 				dep.hours,
 				dep.milliseconds == 1 ? ">" : dep.milliseconds == 2 ? "<" : "==",
 				dep.minutes);
 			break;
-		case DependencyType::kElapsedPlayerDay :
+		case DependencyType::kElapsedPlayerDay:
 			debugPrintf("kElapsedPlayerDay");
 			break;
-		case DependencyType::kCursorType :
+		case DependencyType::kCursorType:
 			debugPrintf("kCursorType, item %u, %s",
 				dep.label,
 				inventoryData->itemDescriptions[dep.label].name.c_str());
 			break;
-		case DependencyType::kPlayerTOD :
+		case DependencyType::kPlayerTOD:
 			debugPrintf("kPlayerTOD, %s",
 				dep.label == 0 ? "kPlayerDay" : dep.label == 1 ? "kPLayerNight" : "kPLayerDuskDawn");
 			break;
-		case DependencyType::kTimerLessThanDependencyTime :
+		case DependencyType::kTimerLessThanDependencyTime:
 			debugPrintf("kTimerLessThanDependencyTime");
 			break;
-		case DependencyType::kTimerGreaterThanDependencyTime :
+		case DependencyType::kTimerGreaterThanDependencyTime:
 			debugPrintf("kTimerGreaterThanDependencyTime");
 			break;
-		case DependencyType::kDifficultyLevel :
+		case DependencyType::kDifficultyLevel:
 			debugPrintf("kDifficultyLevel, level %i", dep.condition);
 			break;
-		case DependencyType::kClosedCaptioning :
+		case DependencyType::kClosedCaptioning:
 			debugPrintf("kClosedCaptioning, %s", dep.condition == 2 ? "true" : "false");
 			break;
-		case DependencyType::kSound :
+		case DependencyType::kSound:
 			debugPrintf("kSound, channel %i", dep.condition);
 			break;
-		case DependencyType::kOpenParenthesis :
+		case DependencyType::kOpenParenthesis:
 			debugPrintf("((((((((\n");
 			recursePrintDependencies(dep);
 			debugPrintf("\n))))))))");
 			break;
-		case DependencyType::kRandom :
+		case DependencyType::kRandom:
 			debugPrintf("kRandom, chance %i", dep.condition);
 			break;
 		default:
@@ -597,11 +597,11 @@ void NancyConsole::recursePrintDependencies(const Nancy::Action::DependencyRecor
 }
 
 bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
-	using namespace Nancy::Action;
+	using namespace Action;
 
 	if (argc == 1) {
 		// Print the current scene
-		if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		if (g_nancy->getState() != NancyState::kScene) {
 			debugPrintf("Not in the kScene state\n");
 			return true;
 		}
@@ -671,6 +671,68 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 	return true;
 }
 
+bool NancyConsole::Cmd_actionRecordExport(int argc, const char **argv) {
+	using namespace Action;
+
+	if (argc < 2) {
+		debugPrintf("Exports an action record of the current or a specified scene to a file\n");
+		debugPrintf("Usage: %s <actionRecordID> <sceneID>\n", argv[0]);
+		return true;
+	}
+
+	int recordId = atoi(argv[1]);
+	uint16 sceneId = 0;
+
+	if (argc == 2) {
+		// Export the record from the current scene
+		if (g_nancy->getState() != NancyState::kScene) {
+			debugPrintf("Not in the kScene state\n");
+			return true;
+		}
+
+		sceneId = NancySceneState.getSceneInfo().sceneID;
+	} else if (argc == 3) {
+		// Export a record from a different scene. We need to load all records into a temporary array and read from it
+		sceneId = (uint16)atoi(argv[2]);
+	}
+
+	Common::String s = Common::String::format("S%u", sceneId);
+
+	IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path(s));
+	if (!sceneIFF) {
+		debugPrintf("Invalid scene S%s\n", argv[1]);
+		return true;
+	}
+
+	Common::SeekableReadStream *chunk = sceneIFF->getChunkStream("ACT", recordId);
+	if (chunk) {
+		char descBuf[48];
+		chunk->read(descBuf, 48);
+		descBuf[47] = '\0';
+		Common::String desc(descBuf);
+		desc.replace('/', '-');
+		desc.replace('\\', '-');
+		desc.replace('>', '_');
+		desc.replace('<', '_');
+		byte ARType = chunk->readByte();
+		chunk->skip(1); // execType
+
+		Common::DumpFile f;
+		Common::String filename = Common::String::format("%s_ar_%d_scene_%d_%d_%s.dat", g_nancy->getGameId(), ARType, sceneId, recordId, desc.c_str());
+		f.open(Common::Path(filename));
+		f.writeStream(chunk, chunk->size() - 50);
+		f.close();
+		debugPrintf("Exported record %d (%s) from scene S%u to %s\n", recordId, descBuf, sceneId, filename.c_str());
+	} else {
+		debugPrintf("Invalid record ID %d\n", recordId);
+	}
+	delete chunk;
+
+	delete sceneIFF;
+
+	return true;
+}
+
 bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 	if (argc < 2 || argc % 2) {
 		debugPrintf("Scans all IFFs for ActionRecords of the provided type\n");
@@ -712,6 +774,12 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 	g_nancy->_resource->list("promotree", list, CifInfo::kResTypeScript);
 
 	char descBuf[0x30];
+
+	Common::ArchiveMemberList searchManList;
+	SearchMan.listMatchingMembers(searchManList, "*.iff");
+	for (auto &i : searchManList) {
+		list.push_back(i->getPathInArchive());
+	}
 
 	for (Common::Path &cifName : list) {
 		Common::String name = cifName.baseName();
@@ -764,33 +832,39 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
 
 	uint numEventFlags = g_nancy->getStaticData().numEventFlags;
 
+	// Event flags are addressed by label. Nancy3 and later number them from 1000
+	// (and Nancy12+ splits them into a 1xxx generic and a 2xxx game-specific range),
+	// so the label of the flag stored at index i is i + baseLabel.
+	int baseLabel = g_nancy->getGameType() >= kGameTypeNancy3 ? 1000 : 0;
+
 	debugPrintf("Total number of event flags: %u\n", numEventFlags);
 
 	if (argc == 1) {
 		for (uint i = 0; i < numEventFlags; ++i) {
-			debugPrintf("\nFlag %u, %s, %s",
-				i,
-				g_nancy->getStaticData().eventFlagNames[i].c_str(),
-				NancySceneState.getEventFlag(i, g_nancy->_true) == true ? "true" : "false");
+			int label = baseLabel + (int)i;
+			debugPrintf("\nFlag %d, %s, %s",
+				label,
+				g_nancy->getEventFlagName(label).c_str(),
+				NancySceneState.getEventFlag(label, g_nancy->_true) ? "true" : "false");
 		}
 	} else {
 		for (int i = 1; i < argc; ++i) {
-			int flagID = atoi(argv[i]);
-			if (flagID < 0 || flagID >= (int)numEventFlags) {
+			int label = baseLabel + atoi(argv[i]);
+			if (label - baseLabel < 0 || label - baseLabel >= (int)numEventFlags) {
 				debugPrintf("\nInvalid flag %s", argv[i]);
 				continue;
 			}
-			debugPrintf("\nFlag %u, %s, %s",
-				flagID,
-				g_nancy->getStaticData().eventFlagNames[flagID].c_str(),
-				NancySceneState.getEventFlag(flagID, g_nancy->_true) == true ? "true" : "false");
+			debugPrintf("\nFlag %d, %s, %s",
+				label,
+				g_nancy->getEventFlagName(label).c_str(),
+				NancySceneState.getEventFlag(label, g_nancy->_true) ? "true" : "false");
 
 		}
 	}
@@ -807,23 +881,26 @@ bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 		return true;
 	}
 
+	// Event flags are addressed by label (numbered from 1000 in Nancy3 and later)
+	int baseLabel = g_nancy->getGameType() >= kGameTypeNancy3 ? 1000 : 0;
+
 	for (int i = 1; i < argc; i += 2) {
-		int flagID = atoi(argv[i]);
-		if (flagID < 0 || flagID >= (int)g_nancy->getStaticData().numEventFlags) {
+		int label = baseLabel + atoi(argv[i]);
+		if (label - baseLabel < 0 || label - baseLabel >= (int)g_nancy->getStaticData().numEventFlags) {
 			debugPrintf("Invalid flag %s\n", argv[i]);
 			continue;
 		}
 
 		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
-			NancySceneState.setEventFlag(flagID, g_nancy->_true);
-			debugPrintf("Set flag %i, %s, to true\n",
-				flagID,
-				g_nancy->getStaticData().eventFlagNames[flagID].c_str());
+			NancySceneState.setEventFlag(label, g_nancy->_true);
+			debugPrintf("Set flag %d, %s, to true\n",
+				label,
+				g_nancy->getEventFlagName(label).c_str());
 		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
-			NancySceneState.setEventFlag(flagID, g_nancy->_false);
-			debugPrintf("Set flag %i, %s, to false\n",
-				flagID,
-				g_nancy->getStaticData().eventFlagNames[flagID].c_str());
+			NancySceneState.setEventFlag(label, g_nancy->_false);
+			debugPrintf("Set flag %d, %s, to false\n",
+				label,
+				g_nancy->getEventFlagName(label).c_str());
 		} else {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;
@@ -834,7 +911,7 @@ bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
@@ -880,7 +957,7 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
 
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
@@ -918,12 +995,12 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_getPlayerTime(int argc, const char **argv) {
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
 
-	Time time = NancySceneState._timers.playerTime;
+	Time time = NancySceneState.getPlayerTime();
 	debugPrintf("Player time: %u days, %u hours, %u minutes; %u\n",
 		time.getDays(),
 		time.getHours(),
@@ -933,7 +1010,7 @@ bool NancyConsole::Cmd_getPlayerTime(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_setPlayerTime(int argc, const char **argv) {
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
@@ -964,7 +1041,7 @@ bool NancyConsole::Cmd_setPlayerTime(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_getDifficulty(int argc, const char **argv) {
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
@@ -975,7 +1052,7 @@ bool NancyConsole::Cmd_getDifficulty(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_setDifficulty(int argc, const char **argv) {
-	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
@@ -1002,7 +1079,7 @@ bool NancyConsole::Cmd_setDifficulty(int argc, const char **argv) {
 bool NancyConsole::Cmd_soundInfo(int argc, const char **argv) {
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
 		const Math::Vector3d &pos = NancySceneState.getSceneSummary().listenerPosition;
-		const Math::Vector3d &ori = g_nancy->_sound->_orientation;
+		const Math::Vector3d &ori = g_nancy->_sound->getOrientation();
 		debugPrintf("3D listener position: %f, %f, %f\n", pos.x(), pos.y(), pos.z());
 		debugPrintf("3D listener orientation: %f, %f, %f\n\n", ori.x(), ori.y(), ori.z());
 	}
@@ -1021,22 +1098,7 @@ bool NancyConsole::Cmd_soundInfo(int argc, const char **argv) {
 	}
 
 	for (byte channelID : channelIDs) {
-		const auto &chan = g_nancy->_sound->_channels[channelID];
-
-		if (g_nancy->_sound->isSoundPlaying(channelID)) {
-			debugPrintf("Channel %u, filename %s\n", channelID, chan.name.c_str());
-			debugPrintf("Source rate %i, playing at %i\n", chan.stream->getRate(), g_nancy->_sound->_mixer->getChannelRate(chan.handle));
-			debugPrintf("Volume: %u, pan: %i, numLoops: %u\n\n", chan.volume, g_nancy->_sound->_mixer->getChannelBalance(chan.handle), chan.numLoops);
-
-			if (chan.playCommands != SoundManager::kPlaySequential) {
-				debugPrintf("\tPlay commands 0x%08x\n", chan.playCommands);
-
-				if (chan.effectData) {
-					debugPrintf("\tPosition: %f, %f, %f, ", chan.position.x(), chan.position.y(), chan.position.z());
-					debugPrintf("delta: %f, %f, %f\n\n", chan.positionDelta.x(), chan.positionDelta.y(), chan.positionDelta.z());
-				}
-			}
-		}
+		debugPrintf("%s", g_nancy->_sound->getChannelInfo(channelID).c_str());
 	}
 
 	return true;

@@ -24,7 +24,7 @@
 
 #include "ags/plugins/ags_sprite_font/sprite_font.h"
 #include "ags/plugins/ags_plugin.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -34,7 +34,7 @@ class SpriteFontRenderer : public IAGSFontRenderer2 {
 protected:
 	IAGSEngine *_engine;
 	SpriteFont *getFontFor(int fontNum);
-	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
+	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height, int colour);
 	std::vector<SpriteFont *> _fonts;
 
 public:

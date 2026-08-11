@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 #include "ultima/nuvie/core/nuvie_defs.h"
 
@@ -44,7 +44,7 @@ namespace Nuvie {
 
 PortraitView::PortraitView(const Configuration *cfg) : View(cfg),
 		portrait_data(nullptr), portrait(nullptr),	bg_data(nullptr),
-		name_string(new string), show_cursor(false), doll_widget(nullptr),
+		name_string(new Common::String), show_cursor(false), doll_widget(nullptr),
 		waiting(false), display_doll(false), cur_actor_num(0) {
 	gametype = get_game_type(cfg);
 

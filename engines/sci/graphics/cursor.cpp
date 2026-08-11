@@ -30,7 +30,8 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/drivers/gfxdriver.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
@@ -40,7 +41,7 @@
 namespace Sci {
 
 GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen, GfxCoordAdjuster16 *coordAdjuster, EventManager *eventMan)
-	: _resMan(resMan), _palette(palette), _screen(screen), _coordAdjuster(coordAdjuster), _event(eventMan) {
+	: _resMan(resMan), _palette(palette), _screen(screen), _coordAdjuster(coordAdjuster), _event(eventMan), _winCursorStyle(kWinCursorStyleDefault) {
 
 	_upscaledHires = _screen->getUpscaledHires();
 	_isVisible = true;
@@ -58,20 +59,19 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	_zoomColor = 0;
 	_zoomMultiplier = 0;
 
-	if (g_sci && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformWindows)
-		_useOriginalKQ6WinCursors = ConfMan.getBool("windows_cursors");
-	else
-		_useOriginalKQ6WinCursors = false;
-
-	if (g_sci && g_sci->getGameId() == GID_SQ4 && g_sci->getPlatform() == Common::kPlatformWindows)
-		_useOriginalSQ4WinCursors = ConfMan.getBool("windows_cursors");
-	else
-		_useOriginalSQ4WinCursors = false;
-
-	if (g_sci && g_sci->getGameId() == GID_SQ4 && getSciVersion() == SCI_VERSION_1_1)
-		_useSilverSQ4CDCursors = ConfMan.getBool("silver_cursors");
-	else
-		_useSilverSQ4CDCursors = false;
+	if (g_sci && g_sci->getPlatform() == Common::kPlatformWindows) {
+		int gid = g_sci->getGameId();
+		if (ConfMan.getBool("windows_cursors")) {
+			if (gid == GID_KQ6 || gid == GID_LAURABOW2 || gid == GID_ECOQUEST2)
+				_winCursorStyle = kWinCursorStyleBWAlt2;
+			else if (gid == GID_SQ4 || gid == GID_PEPPER)
+				_winCursorStyle = kWinCursorStyleBWAlt1;
+		}
+		// The silver_cursors setting is supposed to have priority over the windows_cursors setting
+		// (althought it would look better in the launcher if these options were mutually exclusive).
+		if (ConfMan.getBool("silver_cursors") && gid == GID_SQ4)
+			_winCursorStyle = kWinCursorStyleSilver;
+	}
 }
 
 GfxCursor::~GfxCursor() {
@@ -175,12 +175,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 				resourceId, hotspot.x, hotspot.y, heightWidth, heightWidth);
 	}
 
-	CursorMan.replaceCursor(rawBitmap->getUnsafeDataAt(0, heightWidth * heightWidth), heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
-	if (g_system->getScreenFormat().bytesPerPixel != 1) {
-		byte buf[3*256];
-		_screen->grabPalette(buf, 0, 256);
-		CursorMan.replaceCursorPalette(buf, 0, 256);
-	}
+	_screen->gfxDriver()->replaceCursor(rawBitmap->getUnsafeDataAt(0, heightWidth * heightWidth), heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
 
 	kernelShow();
 }
@@ -189,12 +184,12 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	if (_cachedCursors.size() >= MAX_CACHED_CURSORS)
 		purgeCache();
 
-	// Use the original Windows cursors in KQ6, if requested
-	if (_useOriginalKQ6WinCursors)
+	// Use the original Windows cursors in KQ6 or LB2, if requested
+	if (_winCursorStyle == kWinCursorStyleBWAlt2)
 		viewNum += 2000;		// Windows cursors
 
 	// Use the alternate silver cursors in SQ4 CD, if requested
-	if (_useSilverSQ4CDCursors) {
+	if (_winCursorStyle == kWinCursorStyleSilver) {
 		switch(viewNum) {
 		case 850:
 		case 852:
@@ -211,7 +206,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		default:
 			break;
 		}
-	} else if (_useOriginalSQ4WinCursors) {
+	} else if (_winCursorStyle == kWinCursorStyleBWAlt1) {
 		// Use the Windows black and white cursors
 		celNum += 1;
 	}
@@ -240,7 +235,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	}
 
 	const SciSpan<const byte> &rawBitmap = cursorView->getBitmap(loopNum, celNum);
-	if (_upscaledHires != GFX_SCREEN_UPSCALED_DISABLED && _upscaledHires != GFX_SCREEN_UPSCALED_480x300 && !_useOriginalKQ6WinCursors) {
+	if (_upscaledHires != GFX_SCREEN_UPSCALED_DISABLED && _upscaledHires != GFX_SCREEN_UPSCALED_480x300 && _winCursorStyle != kWinCursorStyleBWAlt2) {
 		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better
 		width *= 2;
 		height *= 2;
@@ -249,14 +244,9 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		Common::SpanOwner<SciSpan<byte> > cursorBitmap;
 		cursorBitmap->allocate(width * height, "upscaled cursor bitmap");
 		_screen->scale2x(rawBitmap, *cursorBitmap, celInfo->width, celInfo->height);
-		CursorMan.replaceCursor(cursorBitmap->getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+		_screen->gfxDriver()->replaceCursor(cursorBitmap->getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 	} else {
-		CursorMan.replaceCursor(rawBitmap.getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
-	}
-	if (g_system->getScreenFormat().bytesPerPixel != 1) {
-		byte buf[3*256];
-		_screen->grabPalette(buf, 0, 256);
-		CursorMan.replaceCursorPalette(buf, 0, 256);
+		_screen->gfxDriver()->replaceCursor(rawBitmap.getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 	}
 
 	kernelShow();
@@ -287,12 +277,11 @@ void GfxCursor::setPosition(Common::Point pos) {
 		return;
 
 	if (!_upscaledHires) {
-		g_system->warpMouse(pos.x, pos.y);
+		_screen->gfxDriver()->setMousePos(pos);
 	} else {
 		_screen->adjustToUpscaledCoordinates(pos.y, pos.x);
 		g_system->warpMouse(pos.x, pos.y);
 	}
-
 	// WORKAROUNDS for games with windows that are hidden when the mouse cursor
 	// is moved outside them - also check setPositionWorkarounds above.
 	//
@@ -331,7 +320,7 @@ void GfxCursor::setPosition(Common::Point pos) {
 }
 
 Common::Point GfxCursor::getPosition() {
-	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	Common::Point mousePos = g_sci->_gfxScreen->gfxDriver()->getMousePos();
 
 	if (_upscaledHires)
 		_screen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
@@ -409,7 +398,7 @@ void GfxCursor::refreshPosition() {
 			}
 		}
 
-		CursorMan.replaceCursor(_cursorSurface->getUnsafeDataAt(0, cursorCelInfo->width * cursorCelInfo->height), cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
+		_screen->gfxDriver()->replaceCursor(_cursorSurface->getUnsafeDataAt(0, cursorCelInfo->width * cursorCelInfo->height), cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
 		if (g_system->getScreenFormat().bytesPerPixel != 1) {
 			byte buf[3*256];
 			_screen->grabPalette(buf, 0, 256);

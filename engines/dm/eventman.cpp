@@ -47,47 +47,35 @@ namespace DM {
 void EventManager::initArrays() {
 	KeyboardInput primaryKeyboardInputInterface[7] = { // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
 		/* { Command, Code } */
-		KeyboardInput(kDMCommandToggleInventoryChampion0, Common::KEYCODE_F1, 0), /* F1 (<CSI>1~) Atari ST: Code = 0x3B00 */
-		KeyboardInput(kDMCommandToggleInventoryChampion1, Common::KEYCODE_F2, 0), /* F2 (<CSI>2~) Atari ST: Code = 0x3C00 */
-		KeyboardInput(kDMCommandToggleInventoryChampion2, Common::KEYCODE_F3, 0), /* F3 (<CSI>3~) Atari ST: Code = 0x3D00 */
-		KeyboardInput(kDMCommandToggleInventoryChampion3, Common::KEYCODE_F4, 0), /* F4 (<CSI>4~) Atari ST: Code = 0x3E00 */
-		KeyboardInput(kDMCommandSaveGame, Common::KEYCODE_s, Common::KBD_CTRL), /* CTRL-S       Atari ST: Code = 0x0013 */
-		KeyboardInput(kDMCommandFreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc (0x1B)   Atari ST: Code = 0x001B */
-		KeyboardInput(kDMCommandNone, Common::KEYCODE_INVALID, 0)
+		KeyboardInput(kDMCommandToggleInventoryChampion0, kActionToggleInventoryChampion0), /* F1 (<CSI>1~) Atari ST: Code = 0x3B00 */
+		KeyboardInput(kDMCommandToggleInventoryChampion1, kActionToggleInventoryChampion1), /* F2 (<CSI>2~) Atari ST: Code = 0x3C00 */
+		KeyboardInput(kDMCommandToggleInventoryChampion2, kActionToggleInventoryChampion2), /* F3 (<CSI>3~) Atari ST: Code = 0x3D00 */
+		KeyboardInput(kDMCommandToggleInventoryChampion3, kActionToggleInventoryChampion3), /* F4 (<CSI>4~) Atari ST: Code = 0x3E00 */
+		KeyboardInput(kDMCommandSaveGame, kActionSave), /* CTRL-S       Atari ST: Code = 0x0013 */
+		KeyboardInput(kDMCommandFreezeGame, kActionFreezeGame), /* Esc (0x1B)   Atari ST: Code = 0x001B */
+		KeyboardInput(kDMCommandNone, kActionNone)
 	};
 
 	KeyboardInput secondaryKeyboardInputMovement[19] = { // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement
 		/* { Command, Code } */
-		KeyboardInput(kDMCommandTurnLeft, Common::KEYCODE_KP4, 0), /* Numeric pad 4 Atari ST: Code = 0x5200 */
-		KeyboardInput(kDMCommandMoveForward, Common::KEYCODE_KP5, 0), /* Numeric pad 5 Atari ST: Code = 0x4800 */
-		KeyboardInput(kDMCommandTurnRight, Common::KEYCODE_KP6, 0), /* Numeric pad 6 Atari ST: Code = 0x4700 */
-		KeyboardInput(kDMCommandMoveLeft, Common::KEYCODE_KP1, 0), /* Numeric pad 1 Atari ST: Code = 0x4B00 */
-		KeyboardInput(kDMCommandMoveBackward, Common::KEYCODE_KP2, 0), /* Numeric pad 2 Atari ST: Code = 0x5000 */
-		KeyboardInput(kDMCommandMoveRight, Common::KEYCODE_KP3, 0), /* Numeric pad 3 Atari ST: Code = 0x4D00. Remaining entries below not present */
-		KeyboardInput(kDMCommandMoveForward, Common::KEYCODE_w, 0), /* Up Arrow (<CSI>A) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveForward, Common::KEYCODE_w, Common::KBD_SHIFT), /* Shift Up Arrow (<CSI>T) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveLeft, Common::KEYCODE_a, 0), /* Backward Arrow (<CSI>D) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveLeft, Common::KEYCODE_a, Common::KBD_SHIFT), /* Shift Forward Arrow (<CSI> A) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveRight, Common::KEYCODE_d, 0), /* Forward Arrow (<CSI>C) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveRight, Common::KEYCODE_d, Common::KBD_SHIFT), /* Shift Backward Arrow (<CSI> @) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveBackward, Common::KEYCODE_s, 0), /* Down arrow (<CSI>B) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveBackward, Common::KEYCODE_s, Common::KBD_SHIFT), /* Shift Down arrow (<CSI>S) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandTurnLeft, Common::KEYCODE_q, 0), /* Del (0x7F) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandTurnLeft, Common::KEYCODE_q, Common::KBD_SHIFT), /* Shift Del (0x7F) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandTurnRight, Common::KEYCODE_e, 0), /* Help (<CSI>?~) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandTurnRight, Common::KEYCODE_e, Common::KBD_SHIFT), /* Shift Help (<CSI>?~) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandNone, Common::KEYCODE_INVALID, 0)
+		KeyboardInput(kDMCommandTurnLeft, kActionTurnLeft), /* Numeric pad 4 Atari ST: Code = 0x5200 */
+		KeyboardInput(kDMCommandMoveForward, kActionMoveForward), /* Numeric pad 5 Atari ST: Code = 0x4800 */
+		KeyboardInput(kDMCommandTurnRight, kActionTurnRight), /* Numeric pad 6 Atari ST: Code = 0x4700 */
+		KeyboardInput(kDMCommandMoveLeft, kActionMoveLeft), /* Numeric pad 1 Atari ST: Code = 0x4B00 */
+		KeyboardInput(kDMCommandMoveBackward, kActionMoveBackward), /* Numeric pad 2 Atari ST: Code = 0x5000 */
+		KeyboardInput(kDMCommandMoveRight, kActionMoveRight), /* Numeric pad 3 Atari ST: Code = 0x4D00. Remaining entries below not present */
+		KeyboardInput(kDMCommandNone, kActionNone)
 	};
 	KeyboardInput primaryKeyboardInputPartySleeping[3] = { // @ G0460_as_Graphic561_PrimaryKeyboardInput_PartySleeping
 		/* { Command, Code } */
-		KeyboardInput(kDMCommandWakeUp, Common::KEYCODE_RETURN, 0), /* Return */
-		KeyboardInput(kDMCommandFreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc */
-		KeyboardInput(kDMCommandNone, Common::KEYCODE_INVALID, 0)
+		KeyboardInput(kDMCommandWakeUp, kActionWakeUp), /* Return */
+		KeyboardInput(kDMCommandFreezeGame, kActionFreezeGame), /* Esc */
+		KeyboardInput(kDMCommandNone, kActionNone)
 	};
 	KeyboardInput primaryKeyboardInputFrozenGame[2] = { // @ G0461_as_Graphic561_PrimaryKeyboardInput_FrozenGame
 		/* { Command, Code } */
-		KeyboardInput(kDMCommandUnfreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc */
-		KeyboardInput(kDMCommandNone, Common::KEYCODE_INVALID, 0)
+		KeyboardInput(kDMCommandUnfreezeGame, kActionFreezeGame), /* Esc */
+		KeyboardInput(kDMCommandNone, kActionNone)
 	};
 	MouseInput primaryMouseInputEntrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
 		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
@@ -389,7 +377,6 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_primaryKeyboardInput = nullptr;
 	_secondaryKeyboardInput = nullptr;
 	_ignoreMouseMovements = false;
-	warning("_g587_hideMousePointerRequestCount should start with value 1");
 	_hideMousePointerRequestCount = 0;
 	_mouseButtonStatus = 0;
 	_highlightScreenBox.setToZero();
@@ -475,7 +462,7 @@ void EventManager::mouseDropChampionIcon() {
 	_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 	_mousePointerBitmapUpdated = true;
 	bool useByteBoxCoordinatesBackup = displMan._useByteBoxCoordinates;
-	displMan.blitToScreen(_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex << 2], 16, kDMColorDarkestGray, 18);
+	displMan.blitToScreen(_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex], 16, kDMColorDarkestGray, 18);
 	displMan._useByteBoxCoordinates = useByteBoxCoordinatesBackup;
 	_preventBuildPointerScreenArea = false;
 }
@@ -542,7 +529,7 @@ void EventManager::buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
 			_mousePointerType = k4_pointerTypeAutoselect;
 		else {
 			championIdx++;
-			if (championIdx == _vm->_inventoryMan->_inventoryChampionOrdinal)
+			if (championIdx == (uint16)_vm->_inventoryMan->_inventoryChampionOrdinal)
 				_mousePointerType = k0_pointerTypeArrow;
 			else if (mousePosY <= 6)
 				_mousePointerType = k0_pointerTypeArrow;
@@ -617,11 +604,17 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 				*grabKey = event;
 				return event.type;
 			}
-
+			break;
+		}
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
+			if (grabKey) {
+				*grabKey = event;
+				return event.type;
+			}
 			if (_primaryKeyboardInput) {
 				KeyboardInput *input = _primaryKeyboardInput;
 				while (input->_commandToIssue != kDMCommandNone) {
-					if ((input->_key == event.kbd.keycode) && (input->_modifiers == (event.kbd.flags & input->_modifiers))) {
+					if (input->_action == event.customType) {
 						processPendingClick(); // possible fix to BUG0_73
 						_commandQueue.push(Command(Common::Point(-1, -1), input->_commandToIssue));
 						break;
@@ -633,7 +626,7 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 			if (_secondaryKeyboardInput) {
 				KeyboardInput *input = _secondaryKeyboardInput;
 				while (input->_commandToIssue != kDMCommandNone) {
-					if ((input->_key == event.kbd.keycode) && (input->_modifiers == (event.kbd.flags & input->_modifiers))) {
+					if (input->_action == event.customType) {
 						processPendingClick(); // possible fix to BUG0_73
 						_commandQueue.push(Command(Common::Point(-1, -1), input->_commandToIssue));
 						break;
@@ -662,12 +655,13 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 		}
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP: {
-			MouseButton button = (event.type == Common::EVENT_LBUTTONDOWN) ? kDMMouseButtonLeft : kDMMouseButtonRight;
+			MouseButton button = (event.type == Common::EVENT_LBUTTONUP) ? kDMMouseButtonLeft : kDMMouseButtonRight;
 			_mouseButtonStatus &= ~button;
 			resetPressingEyeOrMouth();
 			break;
 		}
 		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_vm->_engineShouldQuit = true;
 			break;
 		default:
@@ -1027,8 +1021,10 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 			movementArrowIdx += (_vm->_dungeonMan->_partyDir + 2);
 			int16 firstDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, _vm->normalizeModulo4(movementArrowIdx));
 			int16 secondDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, _vm->turnDirRight(movementArrowIdx));
-			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(firstDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
-			if (firstDamagedChampionIndex != secondDamagedChampionIndex)
+			int16 damage = 0;
+			if (firstDamagedChampionIndex >= 0)
+				damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(firstDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
+			if (secondDamagedChampionIndex >= 0 && firstDamagedChampionIndex != secondDamagedChampionIndex)
 				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(secondDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
 
 			if (damage)
@@ -1175,8 +1171,8 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		int16 mapY = _vm->_dungeonMan->_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 
 		if (_vm->_championMan->_leaderEmptyHanded) {
-			Junk *junkPtr = (Junk*)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
+			Door *doorPtr = _vm->_dungeonMan->getDoor(_vm->_dungeonMan->getSquareFirstThing(mapX, mapY));
+			if (doorPtr && (doorPtr->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_stopWaitingForPlayerInput = true;
 				_vm->_sound->requestPlay(kDMSoundIndexSwitch, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 				_vm->_moveSens->addEvent(kDMEventTypeDoor, mapX, mapY, kDMCellNorthWest, kDMSensorEffectToggle, _vm->_gameTime + 1);
@@ -1200,7 +1196,6 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		}
 	} else {
 		Thing thingHandObject = _vm->_championMan->_leaderHandObject;
-		Junk *junkPtr = (Junk*)_vm->_dungeonMan->getThingData(thingHandObject);
 		if (_vm->_dungeonMan->_squareAheadElement == kDMElementTypeWall) {
 			for (uint16 currViewCell = kDMViewCellFronLeft; currViewCell < kDMViewCellFrontRight + 1; currViewCell++) {
 				if (boxObjectPiles[currViewCell].isPointInside(posX, posY)) {
@@ -1216,9 +1211,9 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 						uint16 iconIdx = _vm->_objectMan->getIconIndex(thingHandObject);
 						uint16 weight = _vm->_dungeonMan->getObjectWeight(thingHandObject);
 						if ((iconIdx >= kDMIconIndiceJunkWater) && (iconIdx <= kDMIconIndiceJunkWaterSkin))
-							junkPtr->setChargeCount(3); /* Full */
+							_vm->_dungeonMan->getJunk(thingHandObject)->setChargeCount(3); /* Full */
 						else if (iconIdx == kDMIconIndicePotionEmptyFlask)
-							((Potion*)junkPtr)->setType(kDMPotionTypeWaterFlask);
+							_vm->_dungeonMan->getPotion(thingHandObject)->setType(kDMPotionTypeWaterFlask);
 						else {
 							commandProcessType80ClickInDungeonViewTouchFrontWall();
 							return;
@@ -1266,7 +1261,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		box._rect.right = box._rect.left + 66;
 		dispMan._useByteBoxCoordinates = false;
 		dispMan.fillScreenBox(box, kDMColorBlack);
-		dispMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[champMan.getChampionIconIndex(champ->_cell, dunMan._partyDir) * 2], kDMColorBlack);
+		dispMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[champMan.getChampionIconIndex(champ->_cell, dunMan._partyDir)], kDMColorBlack);
 		_vm->_menuMan->drawEnabledMenus();
 		showMouse();
 		return;
@@ -1279,13 +1274,13 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
 		if (thing != _vm->_thingNone) {
-			_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0), mapX, mapY);
+			_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0xFFFF), mapX, mapY);
 		}
 	}
 	Thing thing = dunMan.getSquareFirstThing(mapX, mapY);
 	for (;;) { // infinite
 		if (thing.getType() == kDMThingTypeSensor) {
-			((Sensor*)dunMan.getThingData(thing))->setTypeDisabled();
+			dunMan.getSensor(thing)->setTypeDisabled();
 			break;
 		}
 		thing = dunMan.getNextThing(thing);
@@ -1370,7 +1365,7 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
 		if ((groupThing != _vm->_thingEndOfList) &&
 			!_vm->_moveSens->isLevitating(groupThing) &&
-			_vm->_groupMan->getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->getThingData(groupThing), _vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir))) {
+			_vm->_groupMan->getCreatureOrdinalInCell(_vm->_dungeonMan->getGroup(groupThing), _vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir))) {
 			return; /* It is not possible to grab an object on floor if there is a non levitating creature on its cell */
 		}
 	}
@@ -1403,7 +1398,7 @@ void EventManager::clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
 	Thing removedThing = _vm->_championMan->getObjectRemovedFromLeaderHand();
 	_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(removedThing, currCell), kDMMapXNotOnASquare, 0, mapX, mapY);
 	if (droppingIntoAnAlcove && _vm->_dungeonMan->_isFacingViAltar && (_vm->_objectMan->getIconIndex(removedThing) == kDMIconIndiceJunkChampionBones)) {
-		Junk *removedJunk = (Junk*)_vm->_dungeonMan->getThingData(removedThing);
+		Junk *removedJunk = _vm->_dungeonMan->getJunk(removedThing);
 		TimelineEvent newEvent;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 1);
 		newEvent._type = kDMEventTypeViAltarRebirth;
@@ -1446,7 +1441,7 @@ void EventManager::drawSleepScreen() {
 void EventManager::discardAllInput() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event) && !_vm->_engineShouldQuit) {
-		if (event.type == Common::EVENT_QUIT)
+		if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER)
 			_vm->_engineShouldQuit = true;
 	}
 	_commandQueue.clear();
@@ -1502,7 +1497,7 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 		uint16 championIconIndex = _vm->ordinalToIndex(_useChampionIconOrdinalAsMousePointerBitmap);
 		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 		int16 championCellIndex = _vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championIconIndex + _vm->_dungeonMan->_partyDir));
-		if (championIconIndex == champIconIndex) {
+		if (championCellIndex >= 0 && championIconIndex == champIconIndex) {
 			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		} else {
@@ -1514,9 +1509,11 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 			} else
 				displMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[championIconIndex], kDMColorBlack);
 
-			_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)_vm->normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir);
-			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
-			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
+			if (championCellIndex >= 0) {
+				_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)_vm->normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir);
+				setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
+				_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
+			}
 		}
 	}
 	_preventBuildPointerScreenArea = false;
@@ -1617,7 +1614,7 @@ void EventManager::commandProcessType111To115_ClickInActionArea(int16 posX, int1
 			if (mouseCommand == kDMCommandClickInActionAreaPass) {
 				commandHighlightBoxEnable(285, 319, 77, 83);
 				_vm->_menuMan->didClickTriggerAction(-1);
-			} else if ((mouseCommand - kDMCommandClickInActionAreaPass) <= _vm->_menuMan->_actionCount) {
+			} else if (mouseCommand > kDMCommandClickInActionAreaPass && (mouseCommand - kDMCommandClickInActionAreaPass) <= _vm->_menuMan->_actionCount) {
 				if (mouseCommand == kDMCommandClickInActionAreaAction0)
 					commandHighlightBoxEnable(234, 318, 86, 96);
 				else if (mouseCommand == kDMCommandClickInActionAreaAction1)
@@ -1657,6 +1654,7 @@ void EventManager::waitForMouseOrKeyActivity() {
 		if (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 				_vm->_engineShouldQuit = true;
 			case Common::EVENT_KEYDOWN: // Intentional fall through
 			case Common::EVENT_LBUTTONDOWN:
@@ -1681,6 +1679,22 @@ void EventManager::highlightBoxDisable() {
 	if (_highlightBoxEnabled == true) {
 		highlightScreenBox(_highlightScreenBox._rect.left, _highlightScreenBox._rect.right, _highlightScreenBox._rect.top, _highlightScreenBox._rect.bottom);
 		_highlightBoxEnabled = false;
+	}
+}
+
+void EventManager::highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) {
+	x1 = CLIP<int16>(x1, 0, _vm->_displayMan->_screenWidth - 1);
+	x2 = CLIP<int16>(x2, 0, _vm->_displayMan->_screenWidth - 1);
+	y1 = CLIP<int16>(y1, 0, _vm->_displayMan->_screenHeight - 1);
+	y2 = CLIP<int16>(y2, 0, _vm->_displayMan->_screenHeight - 1);
+
+	byte *screen = _vm->_displayMan->_bitmapScreen;
+	uint16 pitch = _vm->_displayMan->_screenWidth;
+
+	for (int16 y = y1; y <= y2; ++y) {
+		for (int16 x = x1; x <= x2; ++x) {
+			screen[y * pitch + x] ^= 0x04;
+		}
 	}
 }
 

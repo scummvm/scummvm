@@ -41,5 +41,6 @@ const char *const kStandardActionEE            = "EEKY";
 const char *const kStandardActionCut           = "CUT";
 const char *const kStandardActionCopy          = "COPY";
 const char *const kStandardActionPaste         = "PASTE";
+const char *const kStandardActionToggleHotspots = "HOTS";
 
 } //namespace Common

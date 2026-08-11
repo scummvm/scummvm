@@ -93,7 +93,7 @@ void ModelComponent::init() {
 			Debug::warning(Debug::Costumes, "Parent of model %s wasn't a mesh", _name.c_str());
 		}
 
-		// Use parent availablity to decide whether to default the
+		// Use parent availability to decide whether to default the
 		// component to being visible
 		if (_parent)
 			setKey(0);

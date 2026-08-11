@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/thread.h"
+#include "common/std/thread.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/core/platform.h"
 #include "ags/engine/ac/sys_events.h"

@@ -22,6 +22,7 @@
 #include "common/memstream.h"
 
 #include "graphics/thumbnail.h"
+#include "engines/metaengine.h"
 
 #include "ngi/ngi.h"
 
@@ -126,7 +127,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	saveFile->write(stream.getData(), stream.size());
 
 	uint headerPos = saveFile->pos();
-	FullpipeSavegameHeader header2;
+	ExtendedSavegameHeader header2;
 
 	Common::strcpy_s(header2.id, "SVMCR");
 	header2.version = NGI_SAVEGAME_VERSION;

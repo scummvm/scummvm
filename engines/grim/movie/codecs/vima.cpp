@@ -105,7 +105,7 @@ void vimaInit(uint16 *destTable) {
 	for (destTableStartPos = 0, incer = 0; destTableStartPos < 64; destTableStartPos++, incer++) {
 		unsigned int destTablePos, imcTable1Pos;
 		for (imcTable1Pos = 0, destTablePos = destTableStartPos;
-				imcTable1Pos < sizeof(imcTable1) / sizeof(imcTable1[0]); imcTable1Pos++, destTablePos += 64) {
+				imcTable1Pos < ARRAYSIZE(imcTable1); imcTable1Pos++, destTablePos += 64) {
 			int put = 0, count, tableValue;
 			for (count = 32, tableValue = imcTable1[imcTable1Pos]; count != 0; count >>= 1, tableValue >>= 1) {
 				if (incer & count) {

@@ -20,7 +20,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/translation.h"
 
 #include "audio/mixer.h"
 
@@ -30,6 +29,8 @@
 #include "neverhood/gamemodule.h"
 
 #include "engines/savestate.h"
+
+#include "backends/keymapper/keymapper.h"
 
 #if defined(USE_FREETYPE2)
 #include "graphics/font.h"
@@ -502,7 +503,7 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 		leaveScene(0);
 		break;
 	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_ESCAPE && _canAbort)
+		if (param.asInteger() == kActionSkipFull && _canAbort)
 			leaveScene(0);
 		break;
 	case NM_MOUSE_HIDE:
@@ -920,7 +921,7 @@ int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) 
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		dialog = new GUI::SaveLoadChooser(true);
 
 		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
@@ -933,7 +934,7 @@ int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) 
 
 		saveDesc = desc;
 	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		dialog = new GUI::SaveLoadChooser(false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
 
@@ -973,6 +974,10 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 		}
 		return;
 	}
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game")->setEnabled(false);
+	keymapper->getKeymap("save-management")->setEnabled(true);
 
 	setBackground(backgroundFileHash);
 	setPalette(backgroundFileHash);
@@ -1031,6 +1036,7 @@ void GameStateMenu::performAction() {
 
 uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	switch (messageNum) {
 	case 0x000A:
 		if (!_textEditWidget->isReadOnly()) {
@@ -1039,11 +1045,15 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 		}
 		break;
 	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_RETURN)
+		if (param.asInteger() == kActionConfirm) {
 			performAction();
-		else if (param.asInteger() == Common::KEYCODE_ESCAPE)
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
+		} else if (param.asInteger() == kActionPause) {
 			leaveScene(1);
-		else if (!_textEditWidget->isReadOnly()) {
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
+		} else if (!_textEditWidget->isReadOnly()) {
 			sendMessage(_textEditWidget, 0x000B, param.asInteger());
 			setCurrWidget(_textEditWidget);
 		}
@@ -1053,9 +1063,13 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 		switch (param.asInteger()) {
 		case 0:
 			performAction();
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
 			break;
 		case 1:
 			leaveScene(1);
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
 			break;
 		case 2:
 			_listBox->pageUp();

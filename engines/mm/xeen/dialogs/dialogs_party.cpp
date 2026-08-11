@@ -32,8 +32,32 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kPartyDialogFaceCount = 4;
+static const uint8 kPartyDialogButtonCount = 6;
+static const uint8 kPartyDialogInfoPerFaceCount = 4;
+
+#endif
+
+enum PartyDialogButtonTTSTextIndex {
+	kPartyDialogUp = 0,
+	kPartyDialogDown = 1,
+	kPartyDialogDelete = 2,
+	kPartyDialogRemove = 3,
+	kPartyDialogCreate = 4,
+	kPartyDialogExit = 5,
+	kPartyDialogFace1 = 6,
+	kPartyDialogFace2 = 7,
+	kPartyDialogFace3 = 8,
+	kPartyDialogFace4 = 9
+};
+
 PartyDialog::PartyDialog(XeenEngine *vm) : ButtonContainer(vm),
 		PartyDrawer(vm), _vm(vm) {
+#ifdef USE_TTS
+	_faceCount = 0;
+#endif
 	initDrawStructs();
 }
 
@@ -58,6 +82,11 @@ void PartyDialog::execute() {
 	loadButtons();
 	setupBackground();
 
+	Common::String ttsMessage;
+#ifdef USE_TTS
+	bool returnFromCreate = false;
+#endif
+
 	while (!_vm->shouldExit()) {
 		_vm->_mode = MODE_INTERACTIVE;
 
@@ -68,7 +97,13 @@ void PartyDialog::execute() {
 		Window &w = windows[11];
 		w.open();
 		setupFaces(startingChar, false);
-		w.writeString(Common::String::format(Res.PARTY_DIALOG_TEXT, _partyDetails.c_str()));
+		w.writeString(Common::String::format(Res.PARTY_DIALOG_TEXT, _partyDetails.c_str()), false, &ttsMessage);
+		
+#ifdef USE_TTS
+		speakText(ttsMessage, returnFromCreate);
+		returnFromCreate = false;
+#endif
+
 		w.drawList(&_faceDrawStructs[0], 4);
 
 		_uiSprites.draw(w, 0, Common::Point(16, 100));
@@ -206,6 +241,9 @@ void PartyDialog::execute() {
 					screen.fadeOut();
 					screen.blitFrom(savedBg);
 					windows[0].update();
+#ifdef USE_TTS
+					returnFromCreate = true;
+#endif
 
 					modeFlag = true;
 					breakFlag = true;
@@ -274,13 +312,13 @@ void PartyDialog::loadCharacters() {
 
 void PartyDialog::loadButtons() {
 	_uiSprites.load("inn.icn");
-	addButton(Common::Rect(16, 100, 40, 120), Common::KEYCODE_UP, &_uiSprites);
-	addButton(Common::Rect(52, 100, 76, 120), Common::KEYCODE_DOWN, &_uiSprites);
+	addButton(Common::Rect(16, 100, 40, 120), Common::KEYCODE_UP, &_uiSprites, kPartyDialogUp);
+	addButton(Common::Rect(52, 100, 76, 120), Common::KEYCODE_DOWN, &_uiSprites, kPartyDialogDown);
 
-	addButton(Common::Rect(87, 100, 111, 120), Res.KeyConstants.DialogsParty.KEY_DELETE, &_uiSprites);
-	addButton(Common::Rect(122, 100, 146, 120), Res.KeyConstants.DialogsParty.KEY_REMOVE, &_uiSprites);
-	addButton(Common::Rect(157, 100, 181, 120), Res.KeyConstants.DialogsParty.KEY_CREATE, &_uiSprites);
-	addButton(Common::Rect(192, 100, 216, 120), Res.KeyConstants.DialogsParty.KEY_EXIT, &_uiSprites);
+	addButton(Common::Rect(87, 100, 111, 120), Res.KeyConstants.DialogsParty.KEY_DELETE, &_uiSprites, kPartyDialogDelete);
+	addButton(Common::Rect(122, 100, 146, 120), Res.KeyConstants.DialogsParty.KEY_REMOVE, &_uiSprites, kPartyDialogRemove);
+	addButton(Common::Rect(157, 100, 181, 120), Res.KeyConstants.DialogsParty.KEY_CREATE, &_uiSprites, kPartyDialogCreate);
+	addButton(Common::Rect(192, 100, 216, 120), Res.KeyConstants.DialogsParty.KEY_EXIT, &_uiSprites, kPartyDialogExit);
 
 	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE);
 }
@@ -309,11 +347,14 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 	// Reset the button areas for the display character images
 	while (_buttons.size() > 7)
 		_buttons.remove_at(7);
-	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1);
-	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2);
-	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3);
-	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, nullptr, kPartyDialogFace1);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, nullptr, kPartyDialogFace2);
+	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3, nullptr, kPartyDialogFace3);
+	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4, nullptr, kPartyDialogFace4);
 
+#ifdef USE_TTS
+	_faceCount = 0;
+#endif
 
 	for (posIndex = 0; posIndex < 4; ++posIndex) {
 		charId = (firstDisplayChar + posIndex) >= (int)_charList.size() ? -1 :
@@ -325,6 +366,10 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 				_buttons.remove_at(_buttons.size() - 1);
 			break;
 		}
+
+#ifdef USE_TTS
+		_faceCount++;
+#endif
 
 		Common::Rect &b = _buttons[7 + posIndex]._bounds;
 		b.moveTo((posIndex & 1) ? 117 : 16, b.top);
@@ -359,7 +404,11 @@ void PartyDialog::startingCharChanged(int firstDisplayChar) {
 	Window &w = windows[11];
 
 	setupFaces(firstDisplayChar, true);
-	w.writeString(Common::String::format(Res.PARTY_DIALOG_TEXT, _partyDetails.c_str()));
+	Common::String ttsMessage;
+	w.writeString(Common::String::format(Res.PARTY_DIALOG_TEXT, _partyDetails.c_str()), false, &ttsMessage);
+#ifdef USE_TTS
+	speakText(ttsMessage, false);
+#endif
 	w.drawList(_faceDrawStructs, 4);
 
 	_uiSprites.draw(w, 0, Common::Point(16, 100));
@@ -391,10 +440,10 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	saveButtons();
 	addButton(Common::Rect(225, isDelete ? 120 : 84, 249, isDelete ? 140 : 104),
 		Common::KEYCODE_ESCAPE, &iconSprites);
-	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1);
-	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2);
-	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3);
-	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, nullptr, kPartyDialogFace1);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, nullptr, kPartyDialogFace2);
+	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3, nullptr, kPartyDialogFace3);
+	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4, nullptr, kPartyDialogFace4);
 	addPartyButtons(_vm);
 
 	int result = -1, v;
@@ -443,6 +492,40 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	restoreButtons();
 	return result == -1 ? 0 : result;
 }
+
+#ifdef USE_TTS
+
+void PartyDialog::speakText(const Common::String &text, bool isCharacterCreation) {
+	uint index = 0;
+
+	// After returning from the character creation screen, the text is duplicated, with the first iteration being
+	// outdated
+	if (isCharacterCreation) {
+		for (uint i = 0; i < _faceCount; ++i) {
+			getNextTextSection(text, index, kPartyDialogInfoPerFaceCount);
+		}
+
+		getNextTextSection(text, index, kPartyDialogButtonCount);
+	}
+
+	_buttonTexts.clear();
+
+	Common::String faceTexts[kPartyDialogFaceCount];
+	for (uint8 i = 0; i < _faceCount; ++i) {
+		faceTexts[i] = getNextTextSection(text, index, kPartyDialogInfoPerFaceCount);
+		_vm->sayText(faceTexts[i]);
+	}
+
+	Common::String buttonTexts = addNextTextToButtons(text, index, kPartyDialogButtonCount);
+	_vm->sayText(buttonTexts);
+
+	// Since the number of faces can vary, sort them after the bottom buttons
+	for (uint8 i = 0; i < _faceCount; ++i) {
+		_buttonTexts.push_back(faceTexts[i]);
+	}
+}
+
+#endif
 
 } // End of namespace Xeen
 } // End of namespace MM

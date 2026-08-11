@@ -61,7 +61,7 @@ EggManager::~EggManager() {
 }
 
 void EggManager::clean(bool keep_obj) {
-	Std::list<Egg *>::iterator egg_iter;
+	Common::List<Egg *>::iterator egg_iter;
 
 	for (egg_iter = egg_list.begin(); egg_iter != egg_list.end();) {
 		//egg = *egg_iter;
@@ -92,7 +92,7 @@ void EggManager::add_egg(Obj *egg_obj) {
 
 
 void EggManager::remove_egg(Obj *egg_obj, bool keep_obj) {
-	Std::list<Egg *>::iterator egg_iter;
+	Common::List<Egg *>::iterator egg_iter;
 
 	for (egg_iter = egg_list.begin(); egg_iter != egg_list.end(); egg_iter++) {
 		if ((*egg_iter)->obj == egg_obj) {

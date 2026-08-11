@@ -102,14 +102,13 @@ bool Debugger::cmdDumpPic(int argc, const char **argv) {
 void Debugger::saveRawPicture(const RawDecoder &rd, Common::WriteStream &ws) {
 #ifdef USE_PNG
 	const Graphics::Surface *surface = rd.getSurface();
-	const byte *palette = rd.getPalette();
-	int paletteCount = rd.getPaletteColorCount();
+	const Graphics::Palette &palette = rd.getPalette();
 	int palStart = 0;
 	bool hasTransColor = rd.hasTransparentColor();
 	uint32 transColor = rd.getTransparentColor();
 
 	// If the image doesn't have a palette, we can directly write out the image
-	if (!palette) {
+	if (palette.empty()) {
 		Image::writePNG(ws, *surface);
 		return;
 	}
@@ -126,9 +125,10 @@ void Debugger::saveRawPicture(const RawDecoder &rd, Common::WriteStream &ws) {
 			if ((hasTransColor && (uint32)*srcP == transColor) || (int)*srcP < palStart) {
 				*destP = format.ARGBToColor(0, 0, 0, 0);
 			} else {
-				assert(*srcP < paletteCount);
-				const byte *palP = &palette[*srcP * 3];
-				*destP = format.ARGBToColor(255, palP[0], palP[1], palP[2]);
+				assert(*srcP < palette.size());
+				byte r, g, b;
+				palette.get(*srcP, r, g, b);
+				*destP = format.ARGBToColor(255, r, g, b);
 			}
 		}
 	}

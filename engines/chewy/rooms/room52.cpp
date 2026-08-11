@@ -82,7 +82,7 @@ int16 Room52::use_hot_dog() {
 		_G(gameState).R52HotDogOk = true;
 		plot_armee(20);
 		_G(det)->playSound(0, 0);
-		_G(atds)->set_ats_str(341, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(341, 1, ATS_DATA);
 		autoMove(2, P_CHEWY);
 		setPersonSpr(P_LEFT, P_CHEWY);
 		startAadWait(288);
@@ -91,7 +91,7 @@ int16 Room52::use_hot_dog() {
 		action_ret = true;
 		autoMove(5, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(7, 1, ANI_FRONT);
+		startDetailWait(7, 1, ANI_FRONT);
 		_G(det)->playSound(7, 0);
 		_G(det)->startDetail(8, 255, ANI_FRONT);
 
@@ -103,12 +103,12 @@ int16 Room52::use_hot_dog() {
 		_G(det)->stopSound(0);
 		_G(det)->stopDetail(0);
 		_G(det)->stopDetail(8);
-		startSetAILWait(7, 1, ANI_BACK);
+		startDetailWait(7, 1, ANI_BACK);
 		_G(det)->stopSound(0);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(atds)->setControlBit(341, ATS_ACTIVE_BIT);
 		startAadWait(303);
-		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_all_ats_str(KILLER_INV, 1, INV_ATS_DATA);
 		_G(gameState).R52KakerWeg = true;
 	}
 

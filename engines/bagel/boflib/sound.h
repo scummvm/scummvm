@@ -29,10 +29,8 @@
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/error.h"
 #include "bagel/boflib/queue.h"
-#include "bagel/boflib/gui/window.h"
 
 namespace Bagel {
-
 
 //
 // Wavemix-related constants
@@ -60,10 +58,16 @@ namespace Bagel {
 #define SOUND_LOCK 0x1000    // Reserve this channel until user stops it
 #define SOUND_PRELOAD 0x2000 // Only works for Resource MAC snd files
 #define SOUND_OVEROK 0x4000  // OK to play another sound over this file
+#define SND_MEMORY 0x8000    // Raw in-memory sound passed rather than a filename
+
+#define SND_NODEFAULT 0
+#define SND_SYNC 0
+#define SND_ASYNC SOUND_ASYNCH
 
 #define SOUND_TYPE_WAV 1
 #define SOUND_TYPE_XM 2
 #define SOUND_TYPE_QT 3
+#define SOUND_TYPE_SMF 4
 
 #define FMT_MILLISEC 1 // Time format specifiers.
 #define FMT_BPM 2
@@ -74,9 +78,16 @@ class CBofSound : public CBofError, public CBofObject, public CLList {
 public:
 	friend class MusicPlayer;
 
-	CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, int nLoops = 1);
+	CBofSound();
+	CBofSound(void *pWnd, const char *pszPathName, uint16 wFlags, int nLoops = 1);
 	virtual ~CBofSound();
+	void addToSoundChain();
 
+	void initialize(const char *pszPathName, uint16 wFlags) {
+		initialize(nullptr, pszPathName, wFlags);
+	}
+	void initialize(void *pWnd, const char *pszPathName, uint16 wFlags);
+	void setDrivePath(const char *path) {}
 	bool midiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
 	bool play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);
 	bool pause();
@@ -163,6 +174,25 @@ public:
 	static bool bofSleep(uint32 dwTime);
 	static void audioTask();
 	static bool soundsPlaying();
+	static bool MidiAvailable() {
+		return true;
+	}
+	static bool SoundAvailable() {
+		return true;
+	}
+	static bool SoundVolumeAvailable() {
+		return true;
+	}
+	static bool MidiVolumeAvailable() {
+		return true;
+	}
+
+	static CBofSound *OnMCIStopped(WPARAM wParam, LPARAM lParam) {
+		return nullptr;
+	}
+	static CBofSound *OnMMIOStopped(WPARAM wParam, LPARAM lParam) {
+		return nullptr;
+	}
 
 private:
 	bool loadSound();
@@ -190,29 +220,27 @@ private:
 	bool _bStarted = false;
 	int _nVol = 0;
 
-	CBofWindow *_pWnd = nullptr; // Parent window for messages
+	void *_pWnd = nullptr; // Parent window for messages
 
 	static char _szDrivePath[MAX_DIRPATH]; // Path spec to drive
 	static CBofSound *_pSoundChain;        // First item in chain or nullptr
 	static int _nCount;                    // Count of active sounds
 	static int _nWavCount;                 // Number of wave sound devices
 	static int _nMidiCount;                // Number of midi sound devices
-	static bool _bSoundAvailable;          // Whether wave sound is available
-	static bool _bMidiAvailable;           // Whether midi sound is available
-	static bool _bWaveVolume;              // Whether wave volume can be set
-	static bool _bMidiVolume;              // Whether midi volume can be set
-	static CBofWindow *_pMainWnd;          // Window for message processing
+	static void *_pMainWnd;                // Window for message processing
 	static bool _bInit;
 
 	static int _nSlotVol[NUM_QUEUES];
 	static CQueue *_cQueue[NUM_QUEUES];
 };
 
-bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);
-bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = false);
-
-// Support legacy code
 #define CSound CBofSound
+
+extern bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0);
+extern bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot = 0, bool bWait = false);
+extern bool MessageBeep(int uType);
+
+#define sndPlaySound BofPlaySound
 
 } // namespace Bagel
 

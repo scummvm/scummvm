@@ -38,6 +38,9 @@ void MessageDialog::execute(const Common::String &msg, MessageWaitType waitType)
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[6];
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	w.open();
 	w.writeString(msg);
 	w.update();
@@ -48,6 +51,9 @@ void MessageDialog::execute(const Common::String &msg, MessageWaitType waitType)
 			events.pollEventsAndWait();
 
 		events.clearEvents();
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+#endif
 		break;
 
 	case WT_ANIMATED_WAIT:
@@ -66,6 +72,9 @@ void MessageDialog::execute(const Common::String &msg, MessageWaitType waitType)
 			if (checkEvents(_vm))
 				break;
 		} while (!_vm->shouldExit() && !_buttonValue);
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+#endif
 		break;
 
 	case WT_LOC_WAIT:
@@ -117,6 +126,9 @@ void CantCast::execute(int spellId, int componentNum) {
 	events.clearEvents();
 
 	w.close();
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	_vm->_mode = oldMode;
 }
 

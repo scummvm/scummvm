@@ -30,6 +30,7 @@ namespace TwinE {
 #define MAX_BUTTONS 10
 #define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
+#define kDemoMenu 9999
 #define kQuitEngine 9998
 
 class BodyData;
@@ -43,9 +44,10 @@ private:
 		// is used to calc the height where the first button will appear
 		MenuSettings_NumberOfButtons = 1,
 		MenuSettings_ButtonsBoxHeight = 2,
-		MenuSettings_HeaderEnd = 3, // TODO: unknown
-		MenuSettings_FirstButtonState = 4,
-		MenuSettings_FirstButton = 5
+		MenuSettings_TextBankId = 3,
+
+		MenuSettings_FirstButtonState,
+		MenuSettings_FirstButton
 	};
 
 	int16 _settings[4 + MAX_BUTTONS * 2] {0};
@@ -112,7 +114,7 @@ public:
 	}
 
 	void setTextBankId(TextBankId textBankIndex) {
-		_settings[MenuSettings_HeaderEnd] = (int16)textBankIndex;
+		_settings[MenuSettings_TextBankId] = (int16)textBankIndex;
 	}
 
 	void addButton(TextId textId, int16 state = 0) {
@@ -161,7 +163,7 @@ private:
 	// objectRotation
 	int16 _itemAngle[NUM_INVENTORY_ITEMS];
 	/** Behaviour menu move pointer */
-	ActorMoveStruct _moveMenu;
+	RealValue _moveMenu;
 
 	/**
 	 * Draws main menu button
@@ -180,7 +182,7 @@ private:
 	/** Used to run the advanced options menu */
 	int32 advoptionsMenu();
 	/** Used to run the volume menu */
-	int32 volumeMenu();
+	int32 volumeOptions();
 	int32 languageMenu();
 	/** Used to run the save game management menu */
 	int32 savemanageMenu();
@@ -188,10 +190,12 @@ private:
 	Common::Rect calcBehaviourRect(int32 left, int32 top, HeroBehaviourType behaviour) const;
 	bool isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour) const;
 	void drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox);
-	void drawInventoryItems(int32 left, int32 top);
+	void drawListInventory(int32 left, int32 top);
 	void prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour); // DrawComportement
 	void drawBehaviourMenu(int32 left, int32 top, int32 angle); // DrawMenuComportement
-	void drawItem(int32 left, int32 top, int32 item);
+	Common::Rect calcItemRect(int32 left, int32 top, int32 item, int32 *centerX = nullptr, int32 *centerY = nullptr) const;
+	// draw the 2d sprite of the item
+	void drawOneInventory(int32 left, int32 top, int32 item);
 
 	void drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color = COLOR_GOLD);
 
@@ -225,7 +229,8 @@ public:
 	 * @param menuSettings menu settings array with the information to build the menu options
 	 * @return pressed menu button identification
 	 */
-	int32 processMenu(MenuSettings *menuSettings);
+	void menuDemo();
+	int32 doGameMenu(MenuSettings *menuSettings);
 
 	bool init();
 
@@ -233,7 +238,7 @@ public:
 	EngineState run();
 
 	/** Used to run the in-game give-up menu */
-	int32 giveupMenu();
+	int32 quitMenu();
 
 	void inGameOptionsMenu();
 
@@ -246,7 +251,7 @@ public:
 	int32 newGameClassicMenu();
 
 	/** Process in-game inventory menu */
-	void processInventoryMenu();
+	void inventory();
 };
 
 } // namespace TwinE

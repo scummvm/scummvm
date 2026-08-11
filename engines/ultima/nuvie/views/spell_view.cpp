@@ -410,7 +410,7 @@ GUI_status SpellView::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status SpellView::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status SpellView::MouseDown(int x, int y, Events::MouseButton button) {
 	y -= area.top;
 	x -= area.left;
 	Events *event = Game::get_game()->get_event();
@@ -428,7 +428,7 @@ GUI_status SpellView::MouseDown(int x, int y, Shared::MouseButton button) {
 		doing_nothing = (y < 8 || y > 71 || x < 16 || x > 134);
 	}
 
-	if (button == Shared::BUTTON_RIGHT)
+	if (button == Events::BUTTON_RIGHT)
 		return cancel_spell();
 
 	if (selecting_spell_target && !event_mode) { // cast selected spell on the map
@@ -516,8 +516,9 @@ void SpellView::close_look() {
 
 void SpellView::show_spell_description() {
 	if (get_selected_index() != -1) {
-		uint8 index = (level - 1) * 16 + get_selected_index();
-		Game::get_game()->get_magic()->show_spell_description(index);
+		sint16 index = get_selected_spell();
+		if (index < 256 && index > -1)
+			Game::get_game()->get_magic()->show_spell_description((uint8)index);
 	}
 	close_look();
 }

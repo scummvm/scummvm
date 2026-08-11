@@ -180,19 +180,15 @@ CShowTextMsg::CShowTextMsg(StringId stringId) : CMessage() {
 
 /*------------------------------------------------------------------------*/
 
-Movement CMovementMsg::getMovement(Common::KeyCode keycode) {
-	switch (keycode) {
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
+Movement CMovementMsg::getMovement(Common::CustomEventType action) {
+	switch (action) {
+	case kActionMovementLeft:
 		return TURN_LEFT;
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
+	case kActionMovementRight:
 		return TURN_RIGHT;
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
+	case kActionMovementForwards:
 		return MOVE_FORWARDS;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
+	case kActionMovementBackwards:
 		return MOVE_BACKWARDS;
 	default:
 		return MOVE_NONE;

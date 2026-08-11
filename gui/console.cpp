@@ -28,6 +28,7 @@
 #include "base/version.h"
 
 #include "common/system.h"
+#include "common/util.h"
 
 #include "graphics/fontman.h"
 
@@ -97,23 +98,22 @@ ConsoleDialog::~ConsoleDialog() {
 }
 
 void ConsoleDialog::init() {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	const Common::Rect safeArea = g_system->getSafeOverlayArea();
 
 	_font = &g_gui.getFont(ThemeEngine::kFontStyleConsole);
 
 	_leftPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Left", 0);
 	_rightPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Right", 0);
-	_topPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Top", 0);
+	_topPadding = MAX(g_gui.xmlEval()->getVar("Globals.Console.Padding.Top", 0), (int)safeArea.top);
 	_bottomPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Bottom", 0);
 
 	// Calculate the real width/height (rounded to char/line multiples)
-	_w = (uint16)(_widthPercent * screenW);
-	_h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
+	_w = (uint16)(_widthPercent * safeArea.width());
+	_h = (uint16)((_heightPercent * safeArea.height() - 2) / kConsoleLineHeight);
 
 	_w = _w - _w / 20;
-	_h = _h * kConsoleLineHeight + 2;
-	_x = _w / 40;
+	_h = _h * kConsoleLineHeight + 2 + safeArea.top;
+	_x = MAX(_w / 40, (int)safeArea.left);
 
 	// Set scrollbar dimensions
 	int scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
@@ -167,14 +167,13 @@ void ConsoleDialog::open() {
 	// visible screen area, then shift it down in handleTickle() over a
 	// certain period of time.
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	const Common::Rect safeArea = g_system->getSafeOverlayArea();
 
 	// Calculate the real width/height (rounded to char/line multiples)
-	uint16 w = (uint16)(_widthPercent * screenW);
-	uint16 h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);
+	uint16 w = (uint16)(_widthPercent * safeArea.width());
+	uint16 h = (uint16)((_heightPercent * safeArea.height() - 2) / kConsoleLineHeight);
 
-	h = h * kConsoleLineHeight + 2;
+	h = h * kConsoleLineHeight + 2 + safeArea.top;
 	w = w - w / 20;
 
 	if (_w != w || _h != h)
@@ -202,8 +201,8 @@ void ConsoleDialog::close() {
 	Dialog::close();
 }
 
-void ConsoleDialog::drawDialog(DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void ConsoleDialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
 	for (int line = 0; line < _linesPerPage; line++)
 		drawLine(line);
@@ -254,8 +253,12 @@ void ConsoleDialog::handleTickle() {
 	if (_selectionTime < time) {
 		_selectionTime += kDraggingTime;
 		if (_isDragging && _scrollDirection != 0) {
-			_scrollBar->handleMouseWheel(0, 0, -_scrollDirection);
+			handleMouseWheel(0, 0, -_scrollDirection);
 			_selEnd -= kCharsPerLine * _scrollDirection;
+			if (clampSelection(_selEnd))
+				// Scrolled as far as possible. Don't re-execute this block
+				// unnecessarily.
+				_scrollDirection = 0;
 		}
 	}
 	// Perform the "slide animation".
@@ -905,12 +908,13 @@ void ConsoleDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 
 		w->handleMouseDown(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 	} else if (_selBegin == -1 || _selEnd == -1) {
-		if (y > _h)
-			return;
+		x = MIN(MAX(x, _leftPadding), kCharsPerLine * kConsoleCharWidth + _leftPadding);
+		y = MIN(MAX(y, _topPadding), (decltype(y))_h - kConsoleLineHeight);
 
 		int lineNumber = (y - _topPadding) / kConsoleLineHeight;
 		int ind = (x - _leftPadding) / kConsoleCharWidth;
 		_selBegin = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + ind;
+		clampSelection(_selBegin);
 		_selEnd = _selBegin;
 		_isDragging = true;
 	} else {
@@ -920,15 +924,31 @@ void ConsoleDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 }
 
+bool ConsoleDialog::clampSelection(int &sel) {
+	int oldSel = sel;
+	int lowerBound = 0;
+	int upperBound;
+
+	upperBound = MAX(_promptEndPos, _currentPos);
+	upperBound = MAX(upperBound, _linesPerPage * kCharsPerLine); // at least the whole first page
+	upperBound += kCharsPerLine - (upperBound % kCharsPerLine); // to end of line
+
+	sel = MAX(lowerBound, MIN(upperBound, sel));
+	return sel != oldSel;
+}
+
 void ConsoleDialog::handleMouseMoved(int x, int y, int button) {
 	if (!_isDragging)
 		Dialog::handleMouseMoved(x, y, button);
 	else {
 		int selEndPreviousMove = _selEnd;
+		x = MIN(MAX(x, _leftPadding), kCharsPerLine * kConsoleCharWidth + _leftPadding);
+		y = MIN(MAX(y, _topPadding), (decltype(y))_h - kConsoleLineHeight);
 		int lineNumber = (y - _topPadding) / kConsoleLineHeight;
 		lineNumber = MIN(lineNumber, _linesPerPage - 1);
 		int col = (x - _leftPadding) / kConsoleCharWidth;
 		_selEnd = (_scrollLine - _linesPerPage + 1 + lineNumber) * kCharsPerLine + col;
+		clampSelection(_selEnd);
 
 		if (_selEnd == selEndPreviousMove)
 			return;

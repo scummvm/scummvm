@@ -40,7 +40,7 @@ TeIFont::GlyphData TeIFont::glyph(uint pxSize, uint charcode) {
 	Common::Rect bbox = font->getBoundingBox(charcode);
 	TeImage *img = new TeImage();
 	Common::SharedPtr<TePalette> nullpal;
-	img->createImg(bbox.width(), bbox.height(), nullpal, TeImage::RGBA8);
+	img->createImg(bbox.width(), bbox.height(), nullpal, Graphics::PixelFormat::createFormatRGBA32());
 	font->drawChar(img, charcode, 0, 0, 0xffffffff);
 	GlyphData retval;
 	retval._charcode = charcode;
@@ -51,10 +51,14 @@ TeIFont::GlyphData TeIFont::glyph(uint pxSize, uint charcode) {
 
 Common::CodePage TeIFont::codePage() const {
 	Common::String lang = g_engine->getCore()->language();
-	if (lang == "he")
-		return Common::kWindows1255;
+	if (g_engine->isUtf8Release())
+		return Common::CodePage::kUtf8;
 	if (lang == "ru")
 		return Common::kISO8859_5;
+	if (g_engine->getGamePlatform() == Common::Platform::kPlatformAndroid)
+		return Common::CodePage::kUtf8;
+	if (lang == "he")
+		return Common::kWindows1255;
 	return Common::kLatin1;
 }
 

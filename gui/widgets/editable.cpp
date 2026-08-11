@@ -571,7 +571,7 @@ int EditableWidget::getSelectionCarretOffset() const {
 		return;
 
 	if (g_gui.useRTL())
-		x += g_system->getOverlayWidth() - _w - xOff + g_gui.getOverlayOffset();
+		x += g_system->getOverlayWidth() - _w - xOff;
 	else
 		x += xOff;
 	y += yOff;

@@ -72,6 +72,7 @@ public:
 
 	void setMouseClick(uint8 button);
 	void setKbdChar(uint8 c);
+	void setAction(uint8 a);
 
 	void setBitFlag(int bitnum, bool value);
 	bool getBitFlag(int bitnum);
@@ -118,6 +119,7 @@ private:
 	uint8 _eventMouseClicked;
 	uint8 _kbdChar;
 	uint8 _eventKbdChar;
+	uint8 _eventAction;
 	uint16 _inputLoopAddress;
 	uint8 _newCursorStyle;
 	uint16 _hotspotTopAction;
@@ -161,7 +163,7 @@ private:
 
 	void loadgame(uint slot);
 	bool preview_loadgame(uint slot);
-	void savegame(uint slot, const char name[27]);
+	void savegame(uint slot, const Common::String &name);
 	bool playvideofromref(uint32 fileref, bool loopUntilAudioDone = false);
 	bool playBackgroundSound(uint32 fileref, uint32 loops);
 	void printString(Graphics::Surface *surface, const char *str);

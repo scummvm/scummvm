@@ -38,6 +38,8 @@
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 #include "common/rect.h"
 
@@ -47,7 +49,7 @@ IMPLEMENT_PERSISTENT(AdInventoryBox, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
-	_itemsArea.setEmpty();
+	BasePlatform::setRectEmpty(&_itemsArea);
 	_scrollOffset = 0;
 	_spacing = 0;
 	_itemWidth = _itemHeight = 50;
@@ -65,11 +67,10 @@ AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdInventoryBox::~AdInventoryBox() {
-	_gameRef->unregisterObject(_window);
+	_game->unregisterObject(_window);
 	_window = nullptr;
 
-	delete _closeButton;
-	_closeButton = nullptr;
+	SAFE_DELETE(_closeButton);
 }
 
 
@@ -79,19 +80,18 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 
 	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->getName(), "close") == 0) {
+		if (scumm_stricmp(obj->_name, "close") == 0) {
 			_visible = false;
-		} else if (scumm_stricmp(obj->getName(), "prev") == 0) {
+		} else if (scumm_stricmp(obj->_name, "prev") == 0) {
 			_scrollOffset -= _scrollBy;
 			_scrollOffset = MAX<int32>(_scrollOffset, 0);
-		} else if (scumm_stricmp(obj->getName(), "next") == 0) {
+		} else if (scumm_stricmp(obj->_name, "next") == 0) {
 			_scrollOffset += _scrollBy;
 		} else {
 			return BaseObject::listen(param1, param2);
 		}
 		break;
 	default:
-		error("AdInventoryBox::Listen - Unhandled enum");
 		break;
 	}
 
@@ -101,7 +101,7 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::display() {
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 
 	if (!_visible) {
 		return STATUS_OK;
@@ -113,38 +113,38 @@ bool AdInventoryBox::display() {
 
 	if (_window) {
 		_window->enableWidget("prev", _scrollOffset > 0);
-		_window->enableWidget("next", _scrollOffset + itemsX * itemsY < (int32)adGame->_inventoryOwner->getInventory()->_takenItems.size());
+		_window->enableWidget("next", _scrollOffset + itemsX * itemsY < adGame->_inventoryOwner->getInventory()->_takenItems.getSize());
 	}
 
 
 	if (_closeButton) {
 		_closeButton->_posX = _closeButton->_posY = 0;
-		_closeButton->setWidth(_gameRef->_renderer->getWidth());
-		_closeButton->setHeight(_gameRef->_renderer->getHeight());
+		_closeButton->_width = _game->_renderer->getWidth();
+		_closeButton->_height = _game->_renderer->getHeight();
 
 		_closeButton->display();
 	}
 
 
 	// display window
-	Rect32 rect = _itemsArea;
+	Common::Rect32 rect = _itemsArea;
 	if (_window) {
-		rect.offsetRect(_window->_posX, _window->_posY);
+		BasePlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		_window->display();
 	}
 
 	// display items
 	if (_window && _window->_alphaColor != 0) {
-		_gameRef->_renderer->_forceAlphaColor = _window->_alphaColor;
+		_game->_renderer->_forceAlphaColor = _window->_alphaColor;
 	}
 	int yyy = rect.top;
 	for (int j = 0; j < itemsY; j++) {
 		int xxx = rect.left;
 		for (int i = 0; i < itemsX; i++) {
 			int itemIndex = _scrollOffset + j * itemsX + i;
-			if (itemIndex >= 0 && itemIndex < (int32)adGame->_inventoryOwner->getInventory()->_takenItems.size()) {
+			if (itemIndex >= 0 && itemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.getSize()) {
 				AdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[itemIndex];
-				if (item != ((AdGame *)_gameRef)->_selectedItem || !_hideSelected) {
+				if (item != ((AdGame *)_game)->_selectedItem || !_hideSelected) {
 					item->update();
 					item->display(xxx, yyy);
 				}
@@ -155,7 +155,7 @@ bool AdInventoryBox::display() {
 		yyy += (_itemHeight + _spacing);
 	}
 	if (_window && _window->_alphaColor != 0) {
-		_gameRef->_renderer->_forceAlphaColor = 0;
+		_game->_renderer->_forceAlphaColor = 0;
 	}
 
 	return STATUS_OK;
@@ -164,9 +164,9 @@ bool AdInventoryBox::display() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdInventoryBox::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdInventoryBox::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -175,7 +175,7 @@ bool AdInventoryBox::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
+		_game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
 	}
 
 
@@ -222,13 +222,13 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd = 2;
-	BaseParser parser;
+	BaseParser parser(_game);
 	bool alwaysVisible = false;
 
 	_exclusive = false;
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_INVENTORY_BOX) {
-			_gameRef->LOG(0, "'INVENTORY_BOX' keyword expected.");
+			_game->LOG(0, "'INVENTORY_BOX' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -251,14 +251,13 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_WINDOW:
-			delete _window;
-			_window = new UIWindow(_gameRef);
+			SAFE_DELETE(_window);
+			_window = new UIWindow(_game);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
-				delete _window;
-				_window = nullptr;
+				SAFE_DELETE(_window);
 				cmd = PARSERR_GENERIC;
 			} else {
-				_gameRef->registerObject(_window);
+				_game->registerObject(_window);
 			}
 			break;
 
@@ -303,17 +302,17 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in INVENTORY_BOX definition");
+		_game->LOG(0, "Syntax error in INVENTORY_BOX definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading INVENTORY_BOX definition");
+		_game->LOG(0, "Error loading INVENTORY_BOX definition");
 		return STATUS_FAILED;
 	}
 
 	if (_exclusive) {
-		delete _closeButton;
-		_closeButton = new UIButton(_gameRef);
+		SAFE_DELETE(_closeButton);
+		_closeButton = new UIButton(_game);
 		if (_closeButton) {
 			_closeButton->setName("close");
 			_closeButton->setListener(this, _closeButton, 0);
@@ -324,8 +323,8 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 	_visible = alwaysVisible;
 
 	if (_window) {
-		for (uint32 i = 0; i < _window->_widgets.size(); i++) {
-			if (!_window->_widgets[i]->getListener()) {
+		for (int32 i = 0; i < _window->_widgets.getSize(); i++) {
+			if (!_window->_widgets[i]->_listenerObject) {
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 			}
 		}
@@ -339,7 +338,7 @@ bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "INVENTORY_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "AREA { %d, %d, %d, %d }\n", _itemsArea.left, _itemsArea.top, _itemsArea.right, _itemsArea.bottom);

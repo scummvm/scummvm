@@ -303,6 +303,7 @@ static const CommonPhrase BELLBOT_COMMON_PHRASES_EN[] = {
 	{ "no help", 0x30D6F, 0x6D, 0 },
 	{ "sorry", 0x30D76, 0x6D, 0 },
 	{ "not mean that", 0x30D76, 0x6D, 0 },
+	// FIXME: Spelling incorrect. didnt should be didn't. Fixing changes game data and thus may cause issues
 	{ "didnt mean that", 0x30D76, 0x6D, 0 },
 	{ "apologise", 0x30D76, 0x6D, 0 },
 	{ "play golf", 0x313B6, 0x00, 0 },
@@ -1142,7 +1143,7 @@ void writeResource(const char *resName, const char *sectionStr, uint32 resId, bo
 
 void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
+	snprintf(nameBuffer, ARRAYSIZE(nameBuffer), "%s/%u", sectionStr, resId);
 	if (!isEnglish)
 		strcat(nameBuffer, "/DE");
 
@@ -1159,7 +1160,7 @@ void writeResource(const char *resName, const char *sectionStr, const char *resI
 
 void writeResource(const char *sectionStr, const char *resId, bool isEnglish = true) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
+	snprintf(nameBuffer, ARRAYSIZE(nameBuffer), "%s/%s", sectionStr, resId);
 	if (!isEnglish)
 		strcat(nameBuffer, "/DE");
 
@@ -1203,7 +1204,7 @@ void writeBitmap(const char *name, Common::File *file) {
 
 void writeBitmap(const char *sectionStr, const char *resId, bool isEnglish = true) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%s%s", sectionStr, resId,
+	snprintf(nameBuffer, ARRAYSIZE(nameBuffer), "%s/%s%s", sectionStr, resId,
 		isEnglish ? "" : "/DE");
 
 	Common::PEResources *res = isEnglish ? resEng : resGer;
@@ -1215,7 +1216,7 @@ void writeBitmap(const char *sectionStr, const char *resId, bool isEnglish = tru
 
 void writeBitmap(const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%u%s", sectionStr, resId,
+	snprintf(nameBuffer, ARRAYSIZE(nameBuffer), "%s/%u%s", sectionStr, resId,
 		isEnglish ? "" : "/DE");
 
 	Common::PEResources *res = isEnglish ? resEng : resGer;
@@ -1405,7 +1406,7 @@ void writeStarfieldPoints2() {
 void writePhrases(const char *name, const CommonPhrase *phrases) {
 	outputFile->seek(dataOffset);
 
-	for (uint idx = 0; phrases->_str; ++idx, ++phrases) {
+	for (; phrases->_str; ++phrases) {
 		outputFile->writeString(phrases->_str);
 		outputFile->writeLong(phrases->_dialogueId);
 		outputFile->writeLong(phrases->_roomNum);

@@ -30,7 +30,6 @@
 
 #include "gui/saveload.h"
 #include "common/system.h"
-#include "common/translation.h"
 
 namespace Avalanche {
 
@@ -1903,7 +1902,7 @@ void Parser::doThat() {
 		break;
 
 	case kVerbCodeLoad: {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 		int16 savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 
@@ -1915,7 +1914,7 @@ void Parser::doThat() {
 		}
 		break;
 	case kVerbCodeSave: {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		int16 savegameId = dialog->runModalWithCurrentTarget();
 		Common::String savegameDescription = dialog->getResultString();
 		delete dialog;

@@ -316,12 +316,12 @@ LBValue LBCode::runCode(byte terminator) {
 		if (_stack.size())
 			result = _stack.pop();
 		if (_currToken == terminator || _currToken == kTokenEndOfFile) {
-			debugN("\n");
+			debugCN(kDebugCode, "\n");
 			break;
 		}
 		if (_currToken != kTokenEndOfStatement && _currToken != kTokenEndOfFile)
 			error("missing EOS (got %02x)", _currToken);
-		debugN("\n");
+		debugCN(kDebugCode, "\n");
 	}
 
 	return result;
@@ -333,9 +333,9 @@ void LBCode::parseStatement() {
 	while (_currToken == kTokenAnd || _currToken == kTokenOr) {
 		byte op = _currToken;
 		if (op == kTokenAnd)
-			debugN(" && ");
+			debugCN(kDebugCode, " && ");
 		else
-			debugN(" || ");
+			debugCN(kDebugCode, " || ");
 
 		nextToken();
 		parseComparisons();
@@ -348,7 +348,7 @@ void LBCode::parseStatement() {
 		else
 			result = !val1.isZero() || !val2.isZero();
 
-		debugN(" [--> %s]", result ? "true" : "false");
+		debugCN(kDebugCode, " [--> %s]", result ? "true" : "false");
 		_stack.push(result);
 	}
 }
@@ -362,25 +362,25 @@ void LBCode::parseComparisons() {
 	byte comparison = _currToken;
 	switch (comparison) {
 	case kTokenEquals:
-		debugN(" == ");
+		debugCN(kDebugCode, " == ");
 		break;
 	case kTokenLessThan:
-		debugN(" < ");
+		debugCN(kDebugCode, " < ");
 		break;
 	case kTokenGreaterThan:
-		debugN(" > ");
+		debugCN(kDebugCode, " > ");
 		break;
 	case kTokenLessThanEq:
-		debugN(" <= ");
+		debugCN(kDebugCode, " <= ");
 		break;
 	case kTokenGreaterThanEq:
-		debugN(" >= ");
+		debugCN(kDebugCode, " >= ");
 		break;
 	case kTokenNotEq:
-		debugN(" != ");
+		debugCN(kDebugCode, " != ");
 		break;
 	default:
-		debugN(" ?? ");
+		debugCN(kDebugCode, " ?? ");
 		break;
 	}
 
@@ -416,7 +416,7 @@ void LBCode::parseComparisons() {
 		break;
 	}
 
-	debugN(" [--> %s]", result ? "true" : "false");
+	debugCN(kDebugCode, " [--> %s]", result ? "true" : "false");
 	_stack.push(result);
 }
 
@@ -424,14 +424,14 @@ void LBCode::parseConcat() {
 	parseArithmetic1();
 
 	while (_currToken == kTokenConcat) {
-		debugN(" & ");
+		debugCN(kDebugCode, " & ");
 		nextToken();
 		parseArithmetic1();
 
 		LBValue val2 = _stack.pop();
 		LBValue val1 = _stack.pop();
 		Common::String result = val1.toString() + val2.toString();
-		debugN(" [--> \"%s\"]", result.c_str());
+		debugCN(kDebugCode, " [--> \"%s\"]", result.c_str());
 		_stack.push(result);
 	}
 }
@@ -442,9 +442,9 @@ void LBCode::parseArithmetic1() {
 	while (_currToken == kTokenMinus || _currToken == kTokenPlus) {
 		byte op = _currToken;
 		if (op == kTokenMinus)
-			debugN(" - ");
+			debugCN(kDebugCode, " - ");
 		else if (op == kTokenPlus)
-			debugN(" + ");
+			debugCN(kDebugCode, " + ");
 
 		nextToken();
 		parseArithmetic2();
@@ -457,7 +457,7 @@ void LBCode::parseArithmetic1() {
 			result = val1.toInt() - val2.toInt();
 		else
 			result = val1.toInt() + val2.toInt();
-		debugN(" [--> %d]", result.toInt());
+		debugCN(kDebugCode, " [--> %d]", result.toInt());
 		_stack.push(result);
 	}
 }
@@ -469,16 +469,16 @@ void LBCode::parseArithmetic2() {
 		byte op = _currToken;
 		switch (op) {
 		case kTokenMultiply:
-			debugN(" * ");
+			debugCN(kDebugCode, " * ");
 			break;
 		case kTokenDivide:
-			debugN(" / ");
+			debugCN(kDebugCode, " / ");
 			break;
 		case kTokenIntDivide:
-			debugN(" div ");
+			debugCN(kDebugCode, " div ");
 			break;
 		case kTokenModulo:
-			debugN(" %% ");
+			debugCN(kDebugCode, " %% ");
 			break;
 		default:
 			return;
@@ -519,7 +519,7 @@ void LBCode::parseArithmetic2() {
 void LBCode::parseMain() {
 	byte prefix = 0;
 	if (_currToken == kTokenMinus || _currToken == kTokenPlus) {
-		debugN("%s", _currToken == kTokenMinus ? "-" : "+");
+		debugCN(kDebugCode, "%s", _currToken == kTokenMinus ? "-" : "+");
 		prefix = _currToken;
 		nextToken();
 	}
@@ -529,7 +529,7 @@ void LBCode::parseMain() {
 		assert(_currValue.type == kLBValueString);
 		{
 		Common::String varname = _currValue.string;
-		debugN("%s", varname.c_str());
+		debugCN(kDebugCode, "%s", varname.c_str());
 		nextToken();
 		if (varname.equalsIgnoreCase("self")) {
 			_stack.push(LBValue(_currSource));
@@ -540,12 +540,12 @@ void LBCode::parseMain() {
 		bool indexing = false;
 		Common::Array<LBValue> index;
 		while (_currToken == kTokenListStart) {
-			debugN("[");
+			debugCN(kDebugCode, "[");
 			nextToken();
 			parseStatement();
 			if (_currToken != kTokenListEnd)
 				error("expected list end");
-			debugN("]");
+			debugCN(kDebugCode, "]");
 			nextToken();
 			if (!_stack.size())
 				error("index failed");
@@ -553,7 +553,7 @@ void LBCode::parseMain() {
 			index.push_back(_stack.pop());
 		}
 		if (_currToken == kTokenAssign) {
-			debugN(" = ");
+			debugCN(kDebugCode, " = ");
 			nextToken();
 			parseStatement();
 			if (!_stack.size())
@@ -573,11 +573,11 @@ void LBCode::parseMain() {
 			// FIXME: do +=/-= belong here?
 			byte token = _currToken;
 			if (_currToken == kTokenPlusEquals)
-				debugN(" += ");
+				debugCN(kDebugCode, " += ");
 			else if (_currToken == kTokenMinusEquals)
-				debugN(" -= ");
+				debugCN(kDebugCode, " -= ");
 			else if (_currToken == kTokenAndEquals)
-				debugN(" &= ");
+				debugCN(kDebugCode, " &= ");
 			nextToken();
 			parseStatement();
 			if (!_stack.size())
@@ -616,7 +616,7 @@ void LBCode::parseMain() {
 		}
 		// FIXME: pre/postincrement for non-integers
 		if (_currToken == kTokenPlusPlus) {
-			debugN("++");
+			debugCN(kDebugCode, "++");
 			if (indexing) {
 				LBValue *val = getIndexedVar(varname, index);
 				if (val)
@@ -625,7 +625,7 @@ void LBCode::parseMain() {
 				_vm->_variables[varname].integer++;
 			nextToken();
 		} else if (_currToken == kTokenMinusMinus) {
-			debugN("--");
+			debugCN(kDebugCode, "--");
 			if (indexing) {
 				LBValue *val = getIndexedVar(varname, index);
 				if (val)
@@ -642,9 +642,9 @@ void LBCode::parseMain() {
 		{
 		byte token = _currToken;
 		if (token == kTokenPlusPlus)
-			debugN("++");
+			debugCN(kDebugCode, "++");
 		else
-			debugN("--");
+			debugCN(kDebugCode, "--");
 		nextToken();
 
 		// FIXME: do we need to handle indexing?
@@ -652,7 +652,7 @@ void LBCode::parseMain() {
 			error("expected identifier");
 		assert(_currValue.type == kLBValueString);
 		Common::String varname = _currValue.string;
-		debugN("%s", varname.c_str());
+		debugCN(kDebugCode, "%s", varname.c_str());
 		LBValue &val = _vm->_variables[varname];
 
 		// FIXME: pre/postincrement for non-integers
@@ -671,41 +671,41 @@ void LBCode::parseMain() {
 	case 0x5e: // TODO: ??
 	case kTokenKeycode:
 		assert(_currValue.type == kLBValueInteger);
-		debugN("%d", _currValue.integer);
+		debugCN(kDebugCode, "%d", _currValue.integer);
 		_stack.push(_currValue);
 		nextToken();
 		break;
 
 	case kTokenString:
 		assert(_currValue.type == kLBValueString);
-		debugN("\"%s\"", _currValue.string.c_str());
+		debugCN(kDebugCode, "\"%s\"", _currValue.string.c_str());
 		_stack.push(_currValue);
 		nextToken();
 		break;
 
 	case kTokenTrue:
-		debugN("TRUE");
+		debugCN(kDebugCode, "TRUE");
 		_stack.push(true);
 		nextToken();
 		break;
 	case kTokenFalse:
-		debugN("FALSE");
+		debugCN(kDebugCode, "FALSE");
 		_stack.push(false);
 		nextToken();
 		break;
 
 	case kTokenOpenBracket:
-		debugN("(");
+		debugCN(kDebugCode, "(");
 		nextToken();
 		parseStatement();
 		if (_currToken != kTokenCloseBracket)
 			error("no kTokenCloseBracket (%02x), multiple entries?", _currToken);
-		debugN(")");
+		debugCN(kDebugCode, ")");
 		nextToken();
 		break;
 
 	case kTokenListStart:
-		debugN("[");
+		debugCN(kDebugCode, "[");
 		nextToken();
 		{
 		Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
@@ -715,19 +715,19 @@ void LBCode::parseMain() {
 				error("unexpected empty stack during literal list evaluation");
 			list->array.push_back(_stack.pop());
 			if (_currToken == kTokenComma) {
-				debugN(", ");
+				debugCN(kDebugCode, ", ");
 				nextToken();
 			} else if (_currToken != kTokenListEnd)
 				error("encountered unexpected token %02x during literal list", _currToken);
 		}
-		debugN("]");
+		debugCN(kDebugCode, "]");
 		nextToken();
 		_stack.push(list);
 		}
 		break;
 
 	case kTokenNot:
-		debugN("!");
+		debugCN(kDebugCode, "!");
 		nextToken();
 		// not parseStatement, ! takes predecence over logical ops
 		parseComparisons();
@@ -738,7 +738,7 @@ void LBCode::parseMain() {
 
 	case kTokenEval:
 		// FIXME: original token?
-		debugN("..");
+		debugCN(kDebugCode, "..");
 		nextToken();
 		parseStatement();
 		if (!_stack.size())
@@ -820,7 +820,7 @@ Common::Array<LBValue> LBCode::readParams() {
 	byte numParams = _data[_currOffset++];
 
 	if (!numParams) {
-		debugN("()");
+		debugCN(kDebugCode, "()");
 		nextToken();
 		return params;
 	}
@@ -829,13 +829,13 @@ Common::Array<LBValue> LBCode::readParams() {
 	if (_currToken != kTokenOpenBracket)
 		error("missing ( before code parameter list (got %02x)", _currToken);
 	nextToken();
-	debugN("(");
+	debugCN(kDebugCode, "(");
 
 	for (uint i = 0; i < numParams; i++) {
 		if (i != 0) {
 			if (_currToken != ',')
 				error("missing , between code parameters (got %02x)", _currToken);
-			debugN(", ");
+			debugCN(kDebugCode, ", ");
 			nextToken();
 		}
 
@@ -850,7 +850,7 @@ Common::Array<LBValue> LBCode::readParams() {
 	if (_currToken != kTokenCloseBracket)
 		error("missing ) after code parameter list (got %02x)", _currToken);
 	nextToken();
-	debugN(")");
+	debugCN(kDebugCode, ")");
 
 	return params;
 }
@@ -1023,7 +1023,7 @@ void LBCode::runGeneralCommand() {
 		error("bad command type 0x%02x in runGeneralCommand", commandType);
 
 	CodeCommandInfo &info = generalCommandInfo[commandType - 1];
-	debugN("%s", info.name);
+	debugCN(kDebugCode, "%s", info.name);
 	Common::Array<LBValue> params = readParams();
 
 	if (!info.func)
@@ -1515,7 +1515,7 @@ void LBCode::runItemCommand() {
 		error("bad command type 0x%02x in runItemCommand", commandType);
 
 	CodeCommandInfo &info = itemCommandInfo[commandType - 1];
-	debugN("%s", info.name);
+	debugCN(kDebugCode, "%s", info.name);
 	Common::Array<LBValue> params = readParams();
 
 	if (!info.func)
@@ -1604,7 +1604,7 @@ void LBCode::runNotifyCommand() {
 	switch (commandType) {
 	case kLBNotifyChangePage:
 		{
-		debugN("goto");
+		debugCN(kDebugCode, "goto");
 		Common::Array<LBValue> params = readParams();
 		// TODO: type-checking
 		NotifyEvent notifyEvent(kLBNotifyChangePage, 1);
@@ -1652,7 +1652,7 @@ void LBCode::runNotifyCommand() {
 
 	case kLBNotifyIntroDone:
 		{
-		debugN("startphasemain");
+		debugCN(kDebugCode, "startphasemain");
 		Common::Array<LBValue> params = readParams();
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to startphasemain", params.size());
@@ -1662,7 +1662,7 @@ void LBCode::runNotifyCommand() {
 
 	case kLBNotifyQuit:
 		{
-		debugN("quit");
+		debugCN(kDebugCode, "quit");
 		Common::Array<LBValue> params = readParams();
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to quit", params.size());

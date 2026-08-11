@@ -182,7 +182,7 @@ void Settings::synchronize(Shared::ConfSerializer &s) {
 	s.syncAsString("logging", _logging, DEFAULT_LOGGING);
 }
 
-const Std::vector<Common::String> &Settings::getBattleDiffs() {
+const Common::Array<Common::String> &Settings::getBattleDiffs() {
 	return _battleDiffs;
 }
 

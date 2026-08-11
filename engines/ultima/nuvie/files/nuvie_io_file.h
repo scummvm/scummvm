@@ -22,7 +22,7 @@
 #ifndef NUVIE_FILES_NUVIE_IO_FILE_H
 #define NUVIE_FILES_NUVIE_IO_FILE_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "common/file.h"
 #include "common/memstream.h"

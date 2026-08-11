@@ -897,6 +897,69 @@ const ScummNESFile::ResourceGroup res_charset = {
 	}
 };
 
+static const ScummNESFile::Resource res_titles_usa[2] = { {0x02701, 0x0BCA}, {0x0324D, 0x091F} };
+static const ScummNESFile::Resource res_titles_eur[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_swe[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_fra[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_ger[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_esp[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+static const ScummNESFile::Resource res_titles_ita[2] = { {0x02701, 0x0B8C}, {0x0320F, 0x091F} };
+
+static const ScummNESFile::ResourceGroup res_titles = {
+	ScummNESFile::NES_TITLES,
+	{
+	res_titles_usa,
+	res_titles_eur,
+	res_titles_swe,
+	res_titles_fra,
+	res_titles_ger,
+	res_titles_esp,
+	res_titles_ita,
+	}
+};
+
+static const ScummNESFile::Resource res_title2_sparklechr_usa[1] = { { 0x024E9, 0x0060 } };
+static const ScummNESFile::Resource res_title2_sparklechr_eur[1] = { { 0x024E0, 0x0060 } };
+static const ScummNESFile::Resource res_title2_sparklechr_swe[1] = { { 0x024E0, 0x0060 } };
+static const ScummNESFile::Resource res_title2_sparklechr_fra[1] = { { 0x024E0, 0x0060 } };
+static const ScummNESFile::Resource res_title2_sparklechr_ger[1] = { { 0x024E0, 0x0060 } };
+static const ScummNESFile::Resource res_title2_sparklechr_esp[1] = { { 0x024E0, 0x0060 } };
+static const ScummNESFile::Resource res_title2_sparklechr_ita[1] = { { 0x024E0, 0x0060 } };
+
+static const ScummNESFile::ResourceGroup res_title2_sparklechr = {
+	ScummNESFile::NES_TITLE2_SPARKLECHR,
+	{
+	res_title2_sparklechr_usa,
+	res_title2_sparklechr_eur,
+	res_title2_sparklechr_swe,
+	res_title2_sparklechr_fra,
+	res_title2_sparklechr_ger,
+	res_title2_sparklechr_esp,
+	res_title2_sparklechr_ita,
+	}
+};
+
+static const ScummNESFile::Resource res_title2_sparklepal_usa[1] = { { 0x02549, 0x0010 } };
+static const ScummNESFile::Resource res_title2_sparklepal_eur[1] = { { 0x02540, 0x0010 } };
+static const ScummNESFile::Resource res_title2_sparklepal_swe[1] = { { 0x02540, 0x0010 } };
+static const ScummNESFile::Resource res_title2_sparklepal_fra[1] = { { 0x02540, 0x0010 } };
+static const ScummNESFile::Resource res_title2_sparklepal_ger[1] = { { 0x02540, 0x0010 } };
+static const ScummNESFile::Resource res_title2_sparklepal_esp[1] = { { 0x02540, 0x0010 } };
+static const ScummNESFile::Resource res_title2_sparklepal_ita[1] = { { 0x02540, 0x0010 } };
+
+static const ScummNESFile::ResourceGroup res_title2_sparklepal = {
+	ScummNESFile::NES_TITLE2_SPARKLEPAL,
+	{
+		res_title2_sparklepal_usa,
+		res_title2_sparklepal_eur,
+		res_title2_sparklepal_swe,
+		res_title2_sparklepal_fra,
+		res_title2_sparklepal_ger,
+		res_title2_sparklepal_esp,
+		res_title2_sparklepal_ita,
+	}
+};
+
 static const ScummNESFile::Resource res_preplist_usa[1] = { { 0x3FB5A, 0x000E } };
 static const ScummNESFile::Resource res_preplist_eur[1] = { { 0x3FB90, 0x000E } };
 static const ScummNESFile::Resource res_preplist_swe[1] = { { 0x3FBA9, 0x000E } };
@@ -942,6 +1005,108 @@ uint16 ScummNESFile::fileReadUint16LE() {
 	uint16 a = fileReadByte();
 	uint16 b = fileReadByte();
 	return a | (b << 8);
+}
+
+void ScummNESFile::decodeTitleRLE(Common::Array<byte> &dst, uint32 expectedSize) {
+	dst.clear();
+	dst.reserve(expectedSize);
+
+	while (dst.size() < expectedSize) {
+		const byte loop = fileReadByte();
+		const uint32 count = (uint32)(loop & 0x7F);
+
+		if (count == 0) {
+			continue;
+		}
+
+		if (loop & 0x80) {
+			for (uint32 i = 0; i < count && dst.size() < expectedSize; ++i) {
+				dst.push_back(fileReadByte());
+			}
+		} else {
+			const byte data = fileReadByte();
+			for (uint32 i = 0; i < count && dst.size() < expectedSize; ++i) {
+				dst.push_back(data);
+			}
+		}
+	}
+}
+
+
+bool ScummNESFile::decodeTitleScreen(uint index, NESTitleScreen &out) {
+	if (index >= 2)
+		return false;
+
+	const Resource *res = res_titles.langs[_ROMset];
+	if (!res)
+		return false;
+
+	res = &res[index];
+
+	_baseStream->seek(res->offset, SEEK_SET);
+
+	out.unk1 = fileReadUint16LE();
+	out.unk2 = fileReadUint16LE();
+
+	out.numberOfTiles = (byte)(fileReadByte() + 1);
+
+	const uint32 gfxSize = (uint32)out.numberOfTiles * 16u;
+	decodeTitleRLE(out.gfx, gfxSize);
+
+	out.unk3 = fileReadUint16LE();
+	out.unk4 = fileReadByte();
+	out.width = (byte)(fileReadByte() + 1);
+	out.height = (byte)(fileReadByte() + 1);
+
+	decodeTitleRLE(out.nametable, (uint32)out.width * (uint32)out.height);
+
+	out.unk5 = fileReadUint16LE();
+	out.unk6 = fileReadByte();
+	out.attrWidth = (byte)(fileReadByte() + 1);
+	out.attrHeight = (byte)(fileReadByte() + 1);
+
+	decodeTitleRLE(out.attributes, (uint32)out.attrWidth * (uint32)out.attrHeight);
+
+	out.stepNum = fileReadByte();
+
+	out.palette.clear();
+	out.palette.reserve(16);
+	for (int i = 0; i < 16; ++i)
+		out.palette.push_back(fileReadByte());
+
+	out.endOfData = fileReadByte();
+
+	return true;
+}
+
+bool ScummNESFile::readTitle2SparkleChr(Common::Array<byte> &out) {
+	const Resource *res = nullptr;
+	if (_ROMset < 0 || _ROMset >= kROMsetNum)
+		return false;
+
+	res = res_title2_sparklechr.langs[_ROMset];
+	if (!res)
+		return false;
+
+	_baseStream->seek(res->offset, SEEK_SET);
+	out.resize(res->length);
+	if (_baseStream->read(out.data(), res->length) != res->length)
+		return false;
+
+	return true;
+}
+
+bool ScummNESFile::readTitle2SparklePalette(Common::Array<byte> &out) {
+	const Resource *res = res_title2_sparklepal.langs[_ROMset];
+	if (!res)
+		return false;
+
+	out.resize(res->length);
+	_baseStream->seek(res->offset, SEEK_SET);
+	if (_baseStream->read(out.data(), res->length) != res->length)
+		return false;
+
+	return true;
 }
 
 uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource *res, ResType type) {

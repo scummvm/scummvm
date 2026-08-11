@@ -17,6 +17,8 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str, "test-string");
 		str = Common::String(str.c_str()+5, str.c_str()+8);
 		TS_ASSERT_EQUALS(str, "str");
+		str = Common::String(5, 'a');
+		TS_ASSERT_EQUALS(str, "aaaaa");
 	}
 
 	void test_trim() {
@@ -76,6 +78,24 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2.firstChar(), 'b');
 	}
 
+	void test_assign1() {
+		Common::String str("foobar");
+		str.assign("bar");
+		TS_ASSERT_EQUALS(str, "bar");
+	}
+
+	void test_assign2() {
+		Common::String str("foobar");
+		str.assign("abcdef", 3);
+		TS_ASSERT_EQUALS(str, "abc");
+	}
+
+	void test_assign3() {
+		Common::String str("foobar");
+		str.assign(3, '0');
+		TS_ASSERT_EQUALS(str, "000");
+	}
+
 	void test_concat1() {
 		Common::String str("foo");
 		Common::String str2("bar");
@@ -94,6 +114,12 @@ class StringTestSuite : public CxxTest::TestSuite
 		Common::String str("foo");
 		str += 'X';
 		TS_ASSERT_EQUALS(str, "fooX");
+	}
+
+	void test_concat4() {
+		Common::String str("foo");
+		str.append(2, '+');
+		TS_ASSERT_EQUALS(str, "foo++");
 	}
 
 	void test_refCount() {
@@ -640,18 +666,18 @@ class StringTestSuite : public CxxTest::TestSuite
 		// Makes a deep copy without changing the length of the original
 		Common::U32String s1 = Common::U32String("TestTestTestTestTestTestTestTestTestTestTest");
 		Common::U32String s2(s1);
-		TS_ASSERT_EQUALS(s1, "TestTestTestTestTestTestTestTestTestTestTest");
-		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s1, U"TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s2, U"TestTestTestTestTestTestTestTestTestTestTest");
 		s1.replace(0, 4, Common::U32String("TEST"));
-		TS_ASSERT_EQUALS(s1, "TESTTestTestTestTestTestTestTestTestTestTest");
-		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s1, U"TESTTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s2, U"TestTestTestTestTestTestTestTestTestTestTest");
 
 		// Makes a deep copy when we shorten the string
 		Common::U32String s3 = Common::U32String("TestTestTestTestTestTestTestTestTestTestTest");
 		Common::U32String s4(s3);
 		s3.replace(0, 32, Common::U32String());
-		TS_ASSERT_EQUALS(s3, "TestTestTest");
-		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s3, U"TestTestTest");
+		TS_ASSERT_EQUALS(s4, U"TestTestTestTestTestTestTestTestTestTestTest");
 	}
 
 	void test_find() {

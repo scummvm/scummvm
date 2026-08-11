@@ -69,6 +69,8 @@ enum GameVersion {
 };
 
 struct AdlGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	GameType gameType;
 	GameVersion version;
@@ -81,6 +83,8 @@ struct AdlGameDescription {
 #define GAMEOPTION_COLOR_DEFAULT_ON  GUIO_GAMEOPTIONS3
 #define GAMEOPTION_NTSC              GUIO_GAMEOPTIONS4
 #define GAMEOPTION_MONO_TEXT         GUIO_GAMEOPTIONS5
+#define GAMEOPTION_APPLE2E_CURSOR    GUIO_GAMEOPTIONS6
+#define GAMEOPTION_TTS               GUIO_GAMEOPTIONS7
 
 } // End of namespace Adl
 

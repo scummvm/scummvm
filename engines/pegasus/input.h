@@ -427,7 +427,7 @@ public:
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 
 	virtual void activateHotspots();
-	virtual void updateCursor(const Common::Point, const Hotspot *);
+	virtual void updateCursor(const Common::Point &, const Hotspot *);
 	virtual bool isClickInput(const Input &, const Hotspot *);
 	virtual bool wantsCursor();
 

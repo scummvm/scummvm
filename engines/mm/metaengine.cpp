@@ -41,6 +41,17 @@
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+	{
 		GAMEOPTION_SHOW_ITEM_COSTS,
 		{
 			_s("Show item costs in standard inventory mode"),
@@ -73,10 +84,23 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read text in the game (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+#endif
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class MMMetaEngine : public AdvancedMetaEngine {
+class MMMetaEngine : public AdvancedMetaEngine<MM::MightAndMagicGameDescription> {
 private:
 	/**
 	 * Gets the game Id given a target string
@@ -93,7 +117,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const MM::MightAndMagicGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
@@ -108,9 +132,7 @@ bool MMMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup);
 }
 
-Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const MM::MightAndMagicGameDescription *gd = (const MM::MightAndMagicGameDescription *)desc;
-
+Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const MM::MightAndMagicGameDescription *gd) const {
 	switch (gd->gameID) {
 #ifdef ENABLE_MM1
 	case MM::GType_MightAndMagic1:
@@ -154,13 +176,38 @@ SaveStateDescriptor MMMetaEngine::querySaveMetaInfos(const char *target, int slo
 }
 
 Common::KeymapArray MMMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	KeymapArray keymaps;
+
+	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "mm-main", _("Might and Magic"));
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	mainKeymap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	mainKeymap->addAction(act);
+
+	keymaps.push_back(mainKeymap);
+
 #ifdef ENABLE_MM1
 	const Common::String gameId = getGameId(target);
-	if (gameId == "mm1" || gameId == "mm1_enh")
-		return MM::MM1::MetaEngine::initKeymaps();
+	if (gameId == "mm1" || gameId == "mm1_enh") {
+		KeymapArray mm1Keymaps = MM::MM1::MetaEngine::initKeymaps();
+
+		for (KeymapArray::iterator it = mm1Keymaps.begin(); it != mm1Keymaps.end(); ++it)
+			keymaps.push_back(*it);
+	}
 #endif
 
-	return Common::KeymapArray();
+	return keymaps;
 }
 
 Common::String MMMetaEngine::getGameId(const Common::String &target) {

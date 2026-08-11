@@ -28,6 +28,7 @@
 #include "engines/engine.h"
 
 #include "common/random.h"
+#include "common/text-to-speech.h"
 
 /**
  * This is the namespace of the Made engine.
@@ -84,6 +85,7 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
+	Common::Language getLanguage() const;
 
 public:
 	PmvPlayer *_pmvPlayer;
@@ -92,6 +94,8 @@ public:
 	GameDatabase *_dat;
 	ScriptInterpreter *_script;
 	MusicPlayer *_music;
+
+	bool _useWinCursors;
 
 	uint16 _eventNum;
 	int _eventMouseX, _eventMouseY;
@@ -106,6 +110,29 @@ public:
 	uint32 _cdTimeStart;
 	bool _introMusicDigital;
 
+	Common::CodePage _ttsTextEncoding;
+	int _previousRect;
+	int _previousTextBox;
+	bool _saveLoadScreenOpen;
+	bool _openingCreditsOpen;
+	bool _tapeRecorderOpen;
+
+	bool _voiceText;
+	bool _forceVoiceText;
+	bool _forceQueueText;
+
+#ifdef USE_TTS
+	Common::String _rtzSaveLoadButtonText[2];
+	uint8 _rtzFirstSaveSlot;
+	uint8 _rtzSaveLoadIndex;
+
+	Common::String _tapeRecorderText[4];
+	uint8 _tapeRecorderIndex;
+
+	Common::String _playOMaticButtonText[4];
+	uint8 _playOMaticButtonIndex;
+#endif
+
 	int32 _timers[50];
 	int16 getTicks();
 	int16 getTimer(int16 timerNum);
@@ -114,6 +141,13 @@ public:
 	int16 allocTimer();
 	void freeTimer(int16 timerNum);
 	void resetAllTimers();
+
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT) const;
+	void stopTextToSpeech() const;
+#ifdef USE_TTS
+	void checkHoveringSaveLoadScreen();
+	void checkHoveringPlayOMatic(int16 spriteY = -1);
+#endif
 
 	const Common::String getTargetName() { return _targetName; }
 	Common::String getSavegameFilename(int16 saveNum);

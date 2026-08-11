@@ -23,10 +23,6 @@
 
 #if defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
-#ifdef ELF_LOADER_CXA_ATEXIT
-#include <cxxabi.h>
-#endif
-
 #include "backends/plugins/elf/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "backends/plugins/elf/memory-manager.h"
@@ -57,10 +53,13 @@
  * __cxa_finalize(&__dso_handle) to call all destructors of only that DSO.
  *
  * Prerequisites:
- * - The used libc needs to support __cxa_atexit
+ * - The used libc needs to support __cxa_atexit (or the target must supply it;
+ *   see backends/plugins/elf/cxa-atexit.cpp)
  * - -fuse-cxa-atexit in CXXFLAGS
- * - Every plugin needs its own hidden __dso_handle symbol
- *   This is automatically done via REGISTER_PLUGIN_DYNAMIC, see base/plugins.h
+ * - Every plugin needs its own hidden __dso_handle symbol, and an exported
+ *   PLUGIN_finalize() helper that calls __cxa_finalize(&__dso_handle) from
+ *   inside the plugin. This is automatically done via REGISTER_PLUGIN_DYNAMIC,
+ *   see base/plugins.h.
  *
  * When __cxa_atexit can not be used, each plugin needs to link against
  * libstdc++ to embed its own set of C++ ABI symbols. When not doing so,
@@ -86,7 +85,7 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 	// standard and POSIX: ISO C++ disallows casting between function pointers
 	// and data pointers, but dlsym always returns a void pointer. For details,
-	// see e.g. <http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
+	// see e.g. <https://web.archive.org/web/20061205092618/http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
 	assert(sizeof(VoidFunc) == sizeof(func));
 	VoidFunc tmp;
 	memcpy(&tmp, &func, sizeof(VoidFunc));
@@ -137,11 +136,9 @@ bool ELFPlugin::loadPlugin() {
 
 #ifdef ELF_LOADER_CXA_ATEXIT
 	if (ret) {
-		// FIXME HACK: Reverse HACK of findSymbol() :P
-		VoidFunc tmp;
-		tmp = findSymbol("__dso_handle");
-		memcpy(&_dso_handle, &tmp, sizeof(VoidFunc));
-		debug(2, "elfloader: __dso_handle is %p", _dso_handle);
+		_finalizeFunc = findSymbol("PLUGIN_finalize");
+		if (!_finalizeFunc)
+			warning("elfloader: plugin '%s' is missing PLUGIN_finalize", _filename.toString(Common::Path::kNativeSeparator).c_str());
 	}
 #endif
 
@@ -155,10 +152,10 @@ void ELFPlugin::unloadPlugin() {
 
 	if (_dlHandle) {
 #ifdef ELF_LOADER_CXA_ATEXIT
-		if (_dso_handle) {
-			debug(2, "elfloader: calling __cxa_finalize");
-			__cxxabiv1::__cxa_finalize(_dso_handle);
-			_dso_handle = 0;
+		if (_finalizeFunc) {
+			debug(2, "elfloader: calling PLUGIN_finalize");
+			_finalizeFunc();
+			_finalizeFunc = 0;
 		}
 #endif
 

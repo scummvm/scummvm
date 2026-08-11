@@ -49,6 +49,9 @@ class Pipeline;
 #if !USE_FORCED_GLES
 class LibRetroPipeline;
 #endif
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+class Renderer3D;
+#endif
 
 enum {
 	GFX_OPENGL = 0
@@ -106,6 +109,7 @@ public:
 	void fillScreen(const Common::Rect &r, uint32 col) override;
 
 	void updateScreen() override;
+	void presentBuffer() override;
 
 	Graphics::Surface *lockScreen() override;
 	void unlockScreen() override;
@@ -115,6 +119,8 @@ public:
 
 	int16 getOverlayWidth() const override;
 	int16 getOverlayHeight() const override;
+	void showOverlay(bool inGUI) override;
+	void hideOverlay() override;
 
 	Graphics::PixelFormat getOverlayFormat() const override;
 
@@ -122,7 +128,7 @@ public:
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;
@@ -184,8 +190,8 @@ protected:
 #ifdef USE_RGB_COLOR
 		    gameFormat(),
 #endif
-		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), filtering(true),
-		    scalerIndex(0), scaleFactor(1), shader() {
+		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), flags(0),
+			filtering(true), scalerIndex(0), scaleFactor(1), shader() {
 		}
 
 		bool valid;
@@ -196,6 +202,7 @@ protected:
 #endif
 		bool aspectRatioCorrection;
 		int graphicsMode;
+		uint flags;
 		bool filtering;
 
 		uint scalerIndex;
@@ -210,7 +217,8 @@ protected:
 #endif
 			    && aspectRatioCorrection == right.aspectRatioCorrection
 			    && graphicsMode == right.graphicsMode
-				&& filtering == right.filtering
+			    && flags == right.flags
+			    && filtering == right.filtering
 			    && shader == right.shader;
 		}
 
@@ -270,10 +278,11 @@ protected:
 	 *
 	 * @parma requestedWidth  This is the requested actual game screen width.
 	 * @param requestedHeight This is the requested actual game screen height.
-	 * @param format          This is the requested pixel format of the virtual game screen.
+	 * @param resizable       This indicates that the window should not be resized because we can't handle it.
+	 * @param antialiasing    This is the requested antialiasing level.
 	 * @return true on success, false otherwise
 	 */
-	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
+	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) = 0;
 
 	bool loadShader(const Common::Path &fileName);
 
@@ -328,7 +337,7 @@ protected:
 	void recalculateDisplayAreas() override;
 	void handleResizeImpl(const int width, const int height) override;
 
-	void updateLinearFiltering();
+	void updateTextureSettings();
 
 	Pipeline *getPipeline() const { return _pipeline; }
 
@@ -351,6 +360,13 @@ protected:
 	 * The rendering surface for the virtual game screen.
 	 */
 	Surface *_gameScreen;
+
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	/**
+	 * The rendering helper for 3D games.
+	 */
+	Renderer3D *_renderer3d;
+#endif
 
 	/**
 	 * The game palette if in CLUT8 mode.
@@ -434,9 +450,14 @@ protected:
 	bool _cursorUseKey;
 
 	/**
-	 * Whether no cursor scaling should be applied.
+	 * The X scaling factor for the cursor.
 	 */
-	bool _cursorDontScale;
+	float _cursorScaleX;
+
+	/**
+	 * The Y scaling factor for the cursor.
+	 */
+	float _cursorScaleY;
 
 	/**
 	 * Whether the special cursor palette is enabled.

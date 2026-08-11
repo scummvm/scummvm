@@ -31,6 +31,7 @@ public:
 	MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version, const MSVCVersion &msvcVersion);
 
 protected:
+	const int _version;
 	const MSVCVersion _msvcVersion;
 
 	StringList _enableLanguageExtensions;
@@ -46,6 +47,7 @@ protected:
 		const char *feature; ///< Feature ID.
 		const char *release; ///< Filename of the Release build of the library.
 		const char *debug;   ///< Filename of the Debug build of the library.
+		SDLVersion sdl;      ///< Required SDL version.
 		const char *depends; ///< Win32 libs this library must be linked against.
 	};
 
@@ -53,6 +55,8 @@ protected:
 	std::string outputLibraryDependencies(const BuildSetup &setup, bool isRelease) const;
 
 	void createWorkspace(const BuildSetup &setup) override;
+	void createWorkspaceClassic(const BuildSetup &setup);
+	void createWorkspaceXml(const BuildSetup &setup);
 
 	void createOtherBuildFiles(const BuildSetup &setup) override;
 
@@ -99,7 +103,7 @@ protected:
 	/**
 	 * Get the command line for the revision tool (shared between all Visual Studio based providers)
 	 */
-	std::string getPreBuildEvent() const;
+	std::string getPreBuildEvent(const BuildSetup &setup) const;
 
 	/**
 	* Get the command line for the test generator

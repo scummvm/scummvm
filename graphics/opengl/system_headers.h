@@ -70,28 +70,6 @@
 	#endif
 	#undef GL_GLEXT_PROTOTYPES
 
-	#ifndef GL_BGRA
-		#define GL_BGRA GL_BGRA_EXT
-	#endif
-
-	#if !defined(GL_UNPACK_ROW_LENGTH)
-		// The Android SDK does not declare GL_UNPACK_ROW_LENGTH_EXT
-		#define GL_UNPACK_ROW_LENGTH 0x0CF2
-	#endif
-
-	#if !defined(GL_MAX_SAMPLES)
-		// The Android SDK and SDL1 don't declare GL_MAX_SAMPLES
-		#define GL_MAX_SAMPLES 0x8D57
-	#endif
-
-	#if !defined(GL_STACK_OVERFLOW_KHR)
-		#define GL_STACK_OVERFLOW_KHR 0x0503
-	#endif
-
-	#if !defined(GL_STACK_UNDERFLOW_KHR)
-		#define GL_STACK_UNDERFLOW_KHR 0x0504
-	#endif
-
 #elif USE_FORCED_GLES
 
 	#define GL_GLEXT_PROTOTYPES
@@ -104,11 +82,72 @@
 	#endif
 	#undef GL_GLEXT_PROTOTYPES
 
+#else
+
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glext.h>
+#undef GL_GLEXT_PROTOTYPES
+
 #endif
 #endif
 
 #if !defined(GL_TEXTURE_MAX_LEVEL) && defined(GL_TEXTURE_MAX_LEVEL_APPLE)
 	#define GL_TEXTURE_MAX_LEVEL GL_TEXTURE_MAX_LEVEL_APPLE
+#endif
+
+#if !defined(GL_BGRA) && defined(GL_BGRA_EXT)
+	#define GL_BGRA GL_BGRA_EXT
+#endif
+
+#if !defined(GL_UNPACK_ROW_LENGTH)
+	// The Android SDK does not declare GL_UNPACK_ROW_LENGTH_EXT
+	#define GL_UNPACK_ROW_LENGTH 0x0CF2
+#endif
+
+#if !defined(GL_MAX_SAMPLES)
+	// The Android SDK and SDL1 don't declare GL_MAX_SAMPLES
+	#define GL_MAX_SAMPLES 0x8D57
+#endif
+
+#if !defined(GL_STACK_OVERFLOW)
+	#define GL_STACK_OVERFLOW 0x0503
+#endif
+
+#if !defined(GL_STACK_UNDERFLOW)
+	#define GL_STACK_UNDERFLOW 0x0504
+#endif
+
+#if !defined(GL_CLAMP_TO_BORDER)
+	#define GL_CLAMP_TO_BORDER 0x812D
+#endif
+
+#if !defined(GL_MIRRORED_REPEAT)
+	#define GL_MIRRORED_REPEAT 0x8370
+#endif
+
+#if !defined(GL_DRAW_FRAMEBUFFER_BINDING)
+	#define GL_DRAW_FRAMEBUFFER_BINDING 0x8CA6
+#endif
+
+#if !defined(GL_DEPTH_COMPONENT24)
+	// For GLES2 with GL_OES_depth24
+	#define GL_DEPTH_COMPONENT24 0x81A6
+#endif
+
+#if !defined(GL_DEPTH_STENCIL)
+	// For GLES2 with GL_OES_packed_depth_stencil
+	#define GL_DEPTH_STENCIL 0x84F9
+#endif
+
+#if !defined(GL_DEPTH24_STENCIL8)
+	// For GLES2 with GL_OES_packed_depth_stencil
+	#define GL_DEPTH24_STENCIL8 0x88F0
+#endif
+
+#if !defined(GL_DEPTH_STENCIL_ATTACHMENT)
+	// For WebGL: see https://github.com/emscripten-core/emscripten/issues/4832
+	#define GL_DEPTH_STENCIL_ATTACHMENT 0x821A
 #endif
 
 #endif

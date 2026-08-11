@@ -218,9 +218,13 @@ Subroutine *AGOSEngine::getSubroutineByID(uint subroutineId) {
 }
 
 void AGOSEngine::alignTableMem() {
-	while (!IS_ALIGNED(_tablesHeapPtr, sizeof(byte *))) {
-		_tablesHeapPtr++;
-		_tablesHeapCurPos++;
+	uintptr uptrVal = (uintptr)_tablesHeapPtr;
+	size_t delta;
+
+	if (!IS_ALIGNED(uptrVal, sizeof(byte *))) {
+		delta = (~uptrVal + 1) & (sizeof(byte *) - 1);
+		_tablesHeapPtr += delta;
+		_tablesHeapCurPos += delta;
 	}
 }
 

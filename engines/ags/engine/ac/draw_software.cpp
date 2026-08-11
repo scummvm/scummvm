@@ -45,7 +45,7 @@
 //
 //=============================================================================
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/util/scaling.h"

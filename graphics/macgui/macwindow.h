@@ -45,7 +45,9 @@ enum WindowType {
 };
 
 enum {
-	kBorderWidth = 17
+	kBorderWidth = 17,
+	kWindowMinWidth = 70,
+	kWindowMinHeight = 70
 };
 
 enum WindowClick {
@@ -57,7 +59,12 @@ enum WindowClick {
 	kBorderCloseButton,
 	kBorderInner,
 	kBorderBorder,
-	kBorderResizeButton
+	kBorderResizeButton,
+	kBorderActivate,
+	kBorderDeactivate,
+	kBorderDragged,
+	kBorderResized,
+	kBorderMaximizeButton,
 };
 
 enum {
@@ -98,7 +105,7 @@ public:
 	 * Accessor method to check whether the window is editable (e.g. for resizing).
 	 * @return True if the window is editable as indicated in the constructor.
 	 */
-	bool isEditable() { return _editable; }
+	bool isEditable() override { return _editable; }
 
 	/**
 	 * Mutator to change the visible state of the window.
@@ -137,7 +144,7 @@ public:
 	 * being marked as dirty unless otherwise specified.
 	 * @param forceRedraw Its behavior depends on the subclass.
 	 */
-	virtual bool draw(bool forceRedraw = false) = 0;
+	bool draw(bool forceRedraw = false) override = 0;
 
 	/**
 	 * Method called to draw the window into the target surface.
@@ -146,7 +153,7 @@ public:
 	 * @param g Surface on which to draw the window.
 	 * @param forceRedraw It's behavior depends on the subclass.
 	 */
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
+	bool draw(ManagedSurface *g, bool forceRedraw = false) override = 0;
 
 	/**
 	 * Method called by the WM when there is an event concerning the window.
@@ -155,7 +162,7 @@ public:
 	 * @param event Event to be processed.
 	 * @return true If the event was successfully consumed and processed.
 	 */
-	virtual bool processEvent(Common::Event &event) = 0;
+	bool processEvent(Common::Event &event) override = 0;
 
 	/**
 	 * Method that checks if the window is needs redrawing.
@@ -170,6 +177,12 @@ public:
 	 *					- Any additional required data (e.g. the engine's GUI).
 	 */
 	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
+
+	/**
+	 * Mutator to change the draggable state of the window.
+	 * @param draggable Target state.
+	 */
+	void setDraggable(bool draggable) { _draggable = draggable; }
 
 protected:
 	int _id;
@@ -202,6 +215,13 @@ public:
 	 * @param wm See BaseMacWindow.
 	 */
 	MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm);
+
+	/**
+	 * Copy constructor for MacWindow
+	 * Needs defining because ManagedSurface has a deprecated default copy constructor
+	 * @param source Source window to copy from
+	 */
+	MacWindow(const MacWindow &source);
 	virtual ~MacWindow() {}
 
 	/**
@@ -331,8 +351,8 @@ public:
 	 * @param bo Width of the bottom side of the border, in pixels.
 	 */
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets);
-	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, BorderOffsets offsets);
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, const BorderOffsets &offsets);
+	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, const BorderOffsets &offsets);
 	void disableBorder();
 	void loadInternalBorder(uint32 flags);
 	/**
@@ -368,14 +388,19 @@ public:
 	void addDirtyRect(const Common::Rect &r);
 	void markAllDirty();
 	void mergeDirtyRects();
+	Common::Rect getDirtyRectBounds();
+	void clearDirtyRects() { _dirtyRects.clear(); }
+	Common::List<Common::Rect> &getDirtyRectList() { return _dirtyRects; }
 
 	bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
 
-	void setBorderDirty(bool dirty) { _borderIsDirty = true; }
+	void setBorderDirty(bool dirty) { _borderIsDirty = dirty; }
+	void setContentDirty(bool dirty) { _contentIsDirty = dirty; }
 	void resizeBorderSurface();
 
 	void setMode(uint32 mode) { _mode = mode; }
 	void setBorderOffsets(BorderOffsets &offsets) { _macBorder.setOffsets(offsets); }
+	const BorderOffsets &getBorderOffsets() const { return _macBorder.getOffset(); }
 
 	void updateInnerDims();
 
@@ -395,7 +420,6 @@ private:
 protected:
 	void drawBorder();
 	WindowClick isInBorder(int x, int y) const;
-	BorderOffsets getBorderOffsets() const { return _macBorder.getOffset(); }
 
 protected:
 	ManagedSurface _borderSurface;

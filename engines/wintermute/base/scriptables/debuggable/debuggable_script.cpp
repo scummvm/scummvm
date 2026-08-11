@@ -33,12 +33,12 @@ namespace Wintermute {
 DebuggableScript::DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine) : ScScript(inGame, engine), _engine(engine), _stepDepth(kDefaultStepDepth) {
 	_engine->_watches.subscribe(this);
 	for (uint i = 0; i < _engine->_watches.size(); i++) {
-		_watchInstances.push_back(new WatchInstance(_engine->_watches[i], this));
+		_watchInstances.add(new WatchInstance(_engine->_watches[i], this));
 	}
 }
 
 DebuggableScript::~DebuggableScript() {
-	for (uint i = 0; i < _watchInstances.size(); i++) {
+	for (int32 i = 0; i < _watchInstances.getSize(); i++) {
 		delete _watchInstances[i];
 	}
 	_engine->_watches.unsubscribe(this);
@@ -56,7 +56,7 @@ void DebuggableScript::postInstHook(uint32 inst) {
 		}
 	}
 
-	for (uint i = 0; i < _watchInstances.size(); i++) {
+	for (int32 i = 0; i < _watchInstances.getSize(); i++) {
 		this->_watchInstances[i]->evaluate();
 	}
 
@@ -94,7 +94,7 @@ ScValue *DebuggableScript::resolveName(const Common::String &name) {
 	cstr[255] = '\0'; // We 0-terminate it just in case it's > 256 chars.
 
 	ScValue *value = getVar(cstr);
-	ScValue *res = new ScValue(_gameRef);
+	ScValue *res = new ScValue(_game);
 
 	if (value == nullptr) {
 		return res;
@@ -125,12 +125,12 @@ Common::String DebuggableScript::dbgGetFilename() const {
 
 void DebuggableScript::updateWatches() {
 	// We drop obsolete watches
-	for (uint i = 0; i < _watchInstances.size(); i++) {
+	for (int32 i = 0; i < _watchInstances.getSize(); i++) {
 		Watch *findMe = _watchInstances[i]->_watch;
 		if (Common::find(_engine->_watches.begin(), _engine->_watches.end(), findMe) == _engine->_watches.end()) {
 			// Not found on engine-wide list, must have been removed from watches. Must remove it from local list.
 			delete _watchInstances[i];
-			_watchInstances.remove_at(i);
+			_watchInstances.removeAt(i);
 		}
 	}
 
@@ -139,7 +139,7 @@ void DebuggableScript::updateWatches() {
 		Watch *findMe = _engine->_watches[i];
 		if (Common::find(_engine->_watches.begin(), _engine->_watches.end(), findMe) == _engine->_watches.end()) {
 			// Not found on local list, must be a new one.
-			_watchInstances.push_back(new WatchInstance(_engine->_watches[i], this));
+			_watchInstances.add(new WatchInstance(_engine->_watches[i], this));
 		}
 	}
 }

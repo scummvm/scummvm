@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_WORLD_MISSILETRACKER_H
 #define ULTIMA8_WORLD_MISSILETRACKER_H
 
+#include "ultima/ultima8/misc/common_types.h"
+
 namespace Ultima {
 namespace Ultima8 {
 

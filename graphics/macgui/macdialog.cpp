@@ -59,18 +59,31 @@
 namespace Graphics {
 
 enum {
-	kDialogHeight = 113
+	kDialogHeight = 113,
+	kDialogBottomPadding = 15
 };
 
 MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton) :
 	_screen(screen), _wm(wm), _mactext(mactext), _maxTextWidth(maxTextWidth), _buttons(buttons), _defaultButton(defaultButton) {
+	// if we have buttons the height of the dialog box should resize accordingly
+	int buttonBottomPos = 0;
+	if (_buttons) {
+		for (uint i = 0; i < _buttons->size(); i++) {
+			if ((*_buttons)[i]->bounds.bottom > buttonBottomPos)
+				buttonBottomPos = (*_buttons)[i]->bounds.bottom;
+		}
+	}
 
-	int height = kDialogHeight + _mactext->getTextHeight();
+	int height;
+	if (buttonBottomPos > 0)
+		height = buttonBottomPos + kDialogBottomPadding;
+	else
+		height = kDialogHeight + _mactext->getTextHeight();
 
 	_font = getDialogFont();
 
 	_tempSurface = new ManagedSurface();
-	_tempSurface->create(width + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface->create(width + 1, height + 1, _screen ? _screen->format : _wm->_pixelformat);
 
 	_bbox.left = (_screen->w - width) / 2;
 	_bbox.top = (_screen->h - height) / 2;
@@ -78,6 +91,7 @@ MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, Ma
 	_bbox.bottom = (_screen->h + height) / 2;
 
 	_pressedButton = -1;
+	_mouseOverButton = -1;
 
 	_mouseOverPressedButton = false;
 
@@ -95,12 +109,17 @@ MacDialog::~MacDialog() {
 }
 
 const Graphics::Font *MacDialog::getDialogFont() {
-	return _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
+	return _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12));
 }
 
 void MacDialog::paint() {
-	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
-	drawFilledRect1(_bbox, kColorWhite, _wm->getDrawPixel(), &pd);
+	if (!_needsRedraw)
+		return;
+
+	Primitives &primitives = _wm->getDrawPrimitives();
+
+	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, {1, 1}, _wm->_colorBlack, false);
+	primitives.drawFilledRect1(_bbox, _wm->_colorWhite, &pd);
 	_mactext->drawToPoint(_screen, Common::Point(_bbox.left + (_bbox.width() - _maxTextWidth)/2, _bbox.top + 16));
 	static int boxOutline[] = {1, 0, 0, 1, 1};
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));
@@ -115,15 +134,15 @@ void MacDialog::paint() {
 			buttonOutline[0] = buttonOutline[1] = 0;
 		}
 
-		int color = kColorBlack;
+		uint32 color = _wm->_colorBlack;
 
 		if ((int)i == _pressedButton && _mouseOverPressedButton) {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
 							button->bounds.right - 5, button->bounds.bottom - 5);
 
-			drawFilledRect1(bb, kColorBlack, _wm->getDrawPixel(), &pd);
+			primitives.drawFilledRect1(bb, _wm->_colorBlack, &pd);
 
-			color = kColorWhite;
+			color = _wm->_colorWhite;
 		}
 		int w = _font->getStringWidth(button->text);
 		int x = button->bounds.left + (button->bounds.width() - w) / 2;
@@ -133,19 +152,24 @@ void MacDialog::paint() {
 
 		drawOutline(button->bounds, buttonOutline, ARRAYSIZE(buttonOutline));
 	}
-
-	g_system->copyRectToScreen(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch,
-							   _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
-
 	_needsRedraw = false;
 }
 
+void MacDialog::blit() {
+	paint();
+
+	g_system->copyRectToScreen(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch,
+							   _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
+}
+
 void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
-	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);	
+	Primitives &primitives = _wm->getDrawPrimitives();
+
+	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, {1, 1}, _wm->_colorBlack, false);
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0) {
 			Common::Rect r(bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i);
-			drawRect1(r, kColorBlack, _wm->getDrawPixel(), &pd);
+			primitives.drawRect1(r, _wm->_colorBlack, &pd);
 		}
 }
 
@@ -153,6 +177,12 @@ int MacDialog::run() {
 	bool shouldQuitEngine = false;
 	bool shouldQuit = false;
 	Common::Rect r(_bbox);
+	// we set _fullRefresh to true inside closeMenu() but it does not update the screen
+	// to ensure we capture the background without the menu we must force a draw
+	// draw() checks _fullRefresh flag which is set to true by closeMenu()
+	// so draw() will draw the screen again without the menu pixels
+	// if we don't call draw() then the background captured in the next line has the pixels of the menu.
+	_wm->draw();
 
 	_tempSurface->copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
 	_wm->pushCursor(kMacCursorArrow, nullptr);
@@ -161,6 +191,9 @@ int MacDialog::run() {
 		Common::Event event;
 
 		while (g_system->getEventManager()->pollEvent(event)) {
+			if (processEvent(event))
+				continue;
+
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				shouldQuitEngine = true;
@@ -190,7 +223,7 @@ int MacDialog::run() {
 		}
 
 		if (_needsRedraw)
-			paint();
+			blit();
 
 		g_system->updateScreen();
 		g_system->delayMillis(50);
@@ -216,15 +249,22 @@ int MacDialog::matchButton(int x, int y) {
 }
 
 void MacDialog::mouseMove(int x, int y) {
-	if (_pressedButton != -1) {
-		int match = matchButton(x, y);
+	int match = matchButton(x, y);
 
+	if (_pressedButton != -1) {
 		if (_mouseOverPressedButton && match != _pressedButton) {
 			_mouseOverPressedButton = false;
 			_needsRedraw = true;
 		} else if (!_mouseOverPressedButton && match == _pressedButton) {
 			_mouseOverPressedButton = true;
 			_needsRedraw = true;
+		}
+	}
+
+	if (_mouseOverButton != match) {
+		_mouseOverButton = match;
+		if (match != -1) {
+			_wm->sayText(_buttons->operator[](match)->text);
 		}
 	}
 }

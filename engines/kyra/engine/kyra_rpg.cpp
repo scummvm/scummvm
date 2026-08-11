@@ -50,9 +50,10 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_vcnShift = 0;
 	_vcnColTable = 0;
 	_vcnShiftVal = 0;
-	_vcnBpp = flags.useHiColorMode ? 2 : 1;
-	_vcnSrcBitsPerPixel = (flags.platform == Common::kPlatformAmiga) ? 5 : (_vcnBpp == 2 ? 8 : 4);
-	_vcnDrawLine = 0;
+	_vcnBpp = 1;
+	_vcnSrcBitsPerPixel = (_flags.platform == Common::kPlatformAmiga) ? 5 : (_flags.platform == Common::kPlatformFMTowns ? 8 : 4);
+	_vcnDrawLine = nullptr;
+	_vcnHiColorPalette = nullptr;
 	_vmpVisOffs = (flags.platform == Common::kPlatformSegaCD) ? _vmpOffsetsSegaCD : _vmpOffsetsDefault;
 
 	_vmpPtr = 0;
@@ -193,8 +194,7 @@ Common::Error KyraRpgEngine::init() {
 	_wllWallFlags = new uint8[256]();
 
 	_blockDrawingBuffer = new uint16[1320]();
-	int windowBufferSize = _flags.useHiColorMode ? 42240 : 21120;
-	_sceneWindowBuffer = new uint8[windowBufferSize]();
+	_sceneWindowBuffer = nullptr;
 
 	_lvlShapeTop = new int16[18]();
 	_lvlShapeBottom = new int16[18]();
@@ -204,15 +204,7 @@ Common::Error KyraRpgEngine::init() {
 	for (int i = 0; i < 128; i++)
 		_vcnColTable[i] = i & 0x0F;
 
-	if (_vcnBpp == 2)
-		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_hiCol),
-			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_hiCol));
-	else if (_flags.platform == Common::kPlatformAmiga || (_flags.gameID == GI_EOB1 && _flags.use16ColorMode))
-		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_planar),
-			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_planar));
-	else
-		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_4bit),
-			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_4bit));
+	setVcnFormat(1, Common::kRenderDefault);
 
 	_doorShapes = new uint8*[6]();
 

@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_WORLD_ITEMFACTORY_H
 #define ULTIMA8_WORLD_ITEMFACTORY_H
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima8 {
 

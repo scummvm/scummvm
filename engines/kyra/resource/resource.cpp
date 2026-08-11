@@ -137,10 +137,12 @@ bool Resource::reset() {
 			gameDir.listMatchingMembers(files, "*.PAK");
 			gameDir.listMatchingMembers(files, "*.APK");
 
-			if (_vm->gameFlags().platform == Common::Platform::kPlatformMacintosh && gameDir.getSubDirectory("runtime") != nullptr) {
+			if (_vm->gameFlags().platform == Common::Platform::kPlatformMacintosh) {
 				gameDirRuntime.reset(gameDir.getSubDirectory("runtime"));
-				gameDirRuntime->listMatchingMembers(files, "*.PAK");
-				gameDirRuntime->listMatchingMembers(files, "*.APK");
+				if (gameDirRuntime) {
+					gameDirRuntime->listMatchingMembers(files, "*.PAK");
+					gameDirRuntime->listMatchingMembers(files, "*.APK");
+				}
 			}
 
 			for (Common::ArchiveMemberList::const_iterator i = files.begin(); i != files.end(); ++i) {

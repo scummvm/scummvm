@@ -41,7 +41,7 @@ public:
 
 	/**
 	 * Processes pending events and does a frame output.
-	 * @returns		True if Escape was pressed to abort loop
+	 * @returns     True if Escape was pressed to abort loop
 	 */
 	bool frame();
 };

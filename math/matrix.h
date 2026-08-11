@@ -142,12 +142,17 @@ public:
 	Matrix<rows, cols> &operator/=(float factor);
 	Matrix<rows, cols> &operator/=(const Matrix<rows, cols> &m);
 
+#if defined(_MSC_VER) && _MSC_VER < 1910 // HACK: C2248 bug in MSVC 2015
+public:
+#else
 protected:
+#endif
 	constexpr MatrixBase() = default;
 	MatrixBase(const float *data);
 	MatrixBase(const MatrixBase<rows, cols> &m);
 	MatrixBase &operator=(const MatrixBase<rows, cols> &m);
 
+protected:
 	inline const Matrix<rows, cols> &getThis() const {
 		return *static_cast<const Matrix<rows, cols> *>(this); }
 	inline Matrix<rows, cols> &getThis() {
@@ -163,7 +168,11 @@ private:
  */
 template<int r, int c>
 class MatrixType : public MatrixBase<r, c> {
+#if defined(_MSC_VER) && _MSC_VER < 1910 // HACK: C2248 bug in MSVC 2015
+public:
+#else
 protected:
+#endif
 	constexpr MatrixType() : MatrixBase<r, c>() { }
 	MatrixType(const float *data) : MatrixBase<r, c>(data) { }
 	MatrixType(const MatrixBase<r, c> &m) : MatrixBase<r, c>(m) { }

@@ -78,10 +78,17 @@ struct XToken {
 	float           _floatVal;
 };
 
-struct XVector {
+struct XVector3 {
 	float           _x;
 	float           _y;
 	float           _z;
+};
+
+struct XVector4 {
+	float           _x;
+	float           _y;
+	float           _z;
+	float           _w;
 };
 
 struct XCoords2d {
@@ -157,7 +164,7 @@ struct XSkinWeightsObject {
 
 struct XMeshObject {
 	uint32          _numVertices;
-	XVector         *_vertices{};
+    XVector3        *_vertices{};
 	uint32          _numFaces;
 	XMeshFace       *_faces{};
 
@@ -169,7 +176,7 @@ struct XMeshObject {
 
 struct XMeshNormalsObject {
 	uint32          _numNormals;
-	XVector         *_normals{};
+    XVector3        *_normals{};
 	uint32          _numFaceNormals;
 	XMeshFace       *_faceNormals{};
 
@@ -383,9 +390,9 @@ private:
 	const int kCabInputmax = kCabBlockSize + 12;
 
 	bool _initialised{};
-	XToken _currentToken;
+	XToken _currentToken{};
 	byte *_decompBuffer{};
-	byte *_buffer;
+	byte *_buffer{};
 	uint32 _bufferLeft;
 	bool _isText;
 	uint32 _listNbElements;
@@ -473,7 +480,7 @@ public:
 		return false;
 	}
 
-	bool getChildren(uint &num) {
+	bool getChildren(uint32 &num) {
 		if (_xobject) {
 			num = _xobject->_children.size();
 			return true;
@@ -552,7 +559,7 @@ public:
 		return false;
 	}
 
-	bool getChildren(uint &num) {
+	bool getChildren(uint32 &num) {
 		if (_file) {
 			num = _file->_xobjects.size();
 			return true;

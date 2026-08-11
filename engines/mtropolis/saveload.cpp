@@ -73,13 +73,13 @@ bool MTropolisEngine::promptSave(ISaveWriter *writer, const Graphics::Surface *s
 	Common::String desc;
 	int slot;
 
-	Common::SharedPtr<GUI::SaveLoadChooser> dialog(new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true));
+	Common::SharedPtr<GUI::SaveLoadChooser> dialog(new GUI::SaveLoadChooser(true));
 
 	slot = dialog->runModalWithCurrentTarget();
 	desc = dialog->getResultString();
 
 	if (desc.empty()) {
-		// create our own description for the saved game, the user didnt enter it
+		// create our own description for the saved game, the user didn't enter it
 		desc = dialog->createDefaultSaveDescription(slot);
 	}
 
@@ -117,7 +117,7 @@ bool MTropolisEngine::promptLoad(ISaveReader *reader) {
 	int slot;
 
 	{
-		Common::SharedPtr<GUI::SaveLoadChooser> dialog(new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false));
+		Common::SharedPtr<GUI::SaveLoadChooser> dialog(new GUI::SaveLoadChooser(false));
 		slot = dialog->runModalWithCurrentTarget();
 	}
 

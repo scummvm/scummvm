@@ -80,6 +80,7 @@ public:
 	void init(const Common::String &recordFileName, RecordMode mode);
 	void deinit();
 	bool processDelayMillis();
+	void setFastPlayback(bool fastPlayback);
 	uint32 getRandomSeed(const Common::String &name);
 	void processTimeAndDate(TimeDate &td, bool skipRecord);
 	void processMillis(uint32 &millis, bool skipRecord);
@@ -187,7 +188,16 @@ public:
 	bool switchMode();
 	void switchFastMode();
 
+#ifdef USE_IMGUI
+	void showImGui();
+#endif
+
 private:
+
+#ifdef USE_IMGUI
+	bool isImGuiRecorderEnabled() const;
+#endif
+
 	bool pollEvent(Common::Event &ev) override;
 	bool notifyEvent(const Common::Event &event) override;
 	bool _initialized;

@@ -30,8 +30,8 @@ namespace Nuvie {
 
 class Actor;
 
-typedef Std::vector<Actor *> ActorList;
-typedef Std::vector<Actor *>::iterator ActorIterator;
+typedef Common::Array<Actor *> ActorList;
+typedef Common::Array<Actor *>::iterator ActorIterator;
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

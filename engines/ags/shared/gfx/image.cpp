@@ -52,12 +52,10 @@ BITMAP *decodeImageStream(Common::SeekableReadStream &stream, color *pal) {
 		dest->blitFrom(*src);
 
 		// Copy the palette
-		const byte *palP = decoder.getPalette();
-		if (palP && pal) {
-			for (int idx = 0; idx < 256; ++idx, palP += 3) {
-				pal[idx].r = palP[0];
-				pal[idx].g = palP[1];
-				pal[idx].b = palP[2];
+		const Graphics::Palette &palP = decoder.getPalette();
+		if (pal) {
+			for (uint idx = 0; idx < palP.size(); ++idx) {
+				palP.get(idx, pal[idx].r, pal[idx].g, pal[idx].b);
 				pal[idx].filler = 0xff;
 			}
 		}
@@ -134,66 +132,20 @@ BITMAP *load_bitmap(PACKFILE *pf, color *pal) {
 	error("Unknown image file");
 }
 
-int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
-#ifdef SCUMM_LITTLE_ENDIAN
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#else
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#endif
-	Graphics::ManagedSurface surface(bmp->w, bmp->h, requiredFormat_3byte);
-
-	Graphics::ManagedSurface &src = bmp->getSurface();
-	if (bmp->format.bytesPerPixel == 1) {
-		Graphics::ManagedSurface temp = src;
-		if (pal) {
-			byte palette[256 * 3];
-			for (int c = 0, i = 0; c < 256; ++c, i += 3) {
-				palette[i] = VGA_COLOR_TRANS(pal[c].r);
-				palette[i + 1] = VGA_COLOR_TRANS(pal[c].g);
-				palette[i + 2] = VGA_COLOR_TRANS(pal[c].b);
-			}
-			temp.setPalette(palette, 0, 256);
+bool save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
+	const Graphics::ManagedSurface &src = bmp->getSurface();
+	if (bmp->format.isCLUT8() && pal) {
+		byte palette[256 * 3];
+		for (int c = 0, i = 0; c < 256; ++c, i += 3) {
+			palette[i] = VGA_COLOR_TRANS(pal[c].r);
+			palette[i + 1] = VGA_COLOR_TRANS(pal[c].g);
+			palette[i + 2] = VGA_COLOR_TRANS(pal[c].b);
 		}
 
-		surface.rawBlitFrom(temp, Common::Rect(0, 0, src.w, src.h),
-			Common::Point(0, 0));
+		return Image::writeBMP(out, src, palette);
 	} else {
-		// Copy from the source surface without alpha transparency
-		Graphics::ManagedSurface temp = src;
-		temp.format.aLoss = 8;
-
-		surface.rawBlitFrom(temp, Common::Rect(0, 0, src.w, src.h),
-			Common::Point(0, 0));
+		return Image::writeBMP(out, src);
 	}
-
-	// Write out the bitmap
-	int dstPitch = surface.w * 3;
-	int extraDataLength = (dstPitch % 4) ? 4 - (dstPitch % 4) : 0;
-	int padding = 0;
-
-	out.writeByte('B');
-	out.writeByte('M');
-	out.writeUint32LE(surface.h * dstPitch + 54);
-	out.writeUint32LE(0);
-	out.writeUint32LE(54);
-	out.writeUint32LE(40);
-	out.writeUint32LE(surface.w);
-	out.writeUint32LE(surface.h);
-	out.writeUint16LE(1);
-	out.writeUint16LE(24);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-
-	for (uint y = surface.h; y-- > 0;) {
-		out.write((const void *)surface.getBasePtr(0, y), dstPitch);
-		out.write(&padding, extraDataLength);
-	}
-
-	return true;
 }
 
 } // namespace AGS

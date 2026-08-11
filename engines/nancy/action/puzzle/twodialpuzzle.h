@@ -40,9 +40,13 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "TwoDialPuzzle"; }
-	bool isViewportRelative() const override { return true; }
+
+	void runPreNancy12();
+	void runNancy12();
 
 	Common::Path _imageName;
 
@@ -54,6 +58,26 @@ protected:
 	Common::Array<Common::Rect> _srcs[2];
 
 	uint16 _correctPositions[2] = { 0, 0 };
+
+	// Nancy 12+ replaced the single correctPositions pair with a list of
+	// event-flag-gated solutions: a combo only solves while its condition flag
+	// matches, and it changes to its own target scene.
+	struct DialSolution {
+		uint16 positions[2] = { 0, 0 };
+		uint16 sceneID = 0;
+		FlagDescription condition;
+	};
+	Common::Array<DialSolution> _solutions;
+
+	// Nancy 12+ splits the run phase into three steps: the dials must rest on a
+	// matching solution long enough for it to count, then the solve sound plays
+	// out before the record finishes. Turning a dial also drops back into
+	// kWaitForSounds, which suspends the check until the dial stops rattling.
+	enum SolveState { kCheckSolutions, kPlaySolveSound, kWaitForSounds };
+	SolveState _solveState = kCheckSolutions;
+	int16 _lastMatchedSolution = -1;
+	// The time by which the dials must still rest on _lastMatchedSolution
+	uint32 _dwellEndTime = 0;
 
 	SoundDescription _rotateSounds[2];
 
@@ -69,6 +93,7 @@ protected:
 	int16 _currentPositions[2] = { 0, 0 };
 
 	bool _isSolved = false;
+	// The time at which the solve sound starts, once the puzzle has been solved
 	uint32 _solveSoundDelayTime = 0;
 };
 

@@ -81,7 +81,7 @@ enum UCSegments {
 
 UCMachine *UCMachine::_ucMachine = nullptr;
 
-UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
+UCMachine::UCMachine(const Intrinsic *iset, unsigned int icount) {
 	debug(1, "Creating UCMachine...");
 
 	_ucMachine = this;
@@ -138,14 +138,13 @@ void UCMachine::reset() {
 	}
 
 	// clear strings, lists
-	Common::HashMap<uint16, UCList *>::iterator iter;
-	for (iter = _listHeap.begin(); iter != _listHeap.end(); ++iter)
-		delete(iter->_value);
+	for (auto &i : _listHeap)
+		delete i._value;
 	_listHeap.clear();
 	_stringHeap.clear();
 }
 
-void UCMachine::loadIntrinsics(Intrinsic *i, unsigned int icount) {
+void UCMachine::loadIntrinsics(const Intrinsic *i, unsigned int icount) {
 	_intrinsics = i;
 	_intrinsicCount = icount;
 }
@@ -2011,12 +2010,10 @@ void UCMachine::execProcess(UCProcess *p) {
 }
 
 
-const Std::string &UCMachine::getString(uint16 str) const {
-	static const Std::string emptystring("");
+const Common::String &UCMachine::getString(uint16 str) const {
+	static const Common::String emptystring("");
 
-	Common::HashMap<uint16, Std::string>::const_iterator iter =
-			_stringHeap.find(str);
-
+	const auto iter = _stringHeap.find(str);
 	if (iter != _stringHeap.end())
 		return iter->_value;
 
@@ -2024,8 +2021,7 @@ const Std::string &UCMachine::getString(uint16 str) const {
 }
 
 UCList *UCMachine::getList(uint16 l) {
-	Common::HashMap<uint16, UCList *>::iterator iter = _listHeap.find(l);
-
+	const auto iter = _listHeap.find(l);
 	if (iter != _listHeap.end())
 		return iter->_value;
 
@@ -2063,7 +2059,7 @@ void UCMachine::freeString(uint16 s) {
 	//! (when something accesses _stringHeap[0])
 	//! This may not be desirable, but OTOH the created string will be
 	//! empty, so not too much of a problem.
-	Common::HashMap<uint16, Std::string>::iterator iter = _stringHeap.find(s);
+	const auto iter = _stringHeap.find(s);
 	if (iter != _stringHeap.end()) {
 		_stringHeap.erase(iter);
 		_stringIDs->clearID(s);
@@ -2071,7 +2067,7 @@ void UCMachine::freeString(uint16 s) {
 }
 
 void UCMachine::freeList(uint16 l) {
-	Common::HashMap<uint16, UCList *>::iterator iter = _listHeap.find(l);
+	const auto iter = _listHeap.find(l);
 	if (iter != _listHeap.end() && iter->_value) {
 		iter->_value->free();
 		delete iter->_value;
@@ -2081,7 +2077,7 @@ void UCMachine::freeList(uint16 l) {
 }
 
 void UCMachine::freeStringList(uint16 l) {
-	Common::HashMap<uint16, UCList *>::iterator iter = _listHeap.find(l);
+	const auto iter = _listHeap.find(l);
 	if (iter != _listHeap.end() && iter->_value) {
 		iter->_value->freeStrings();
 		delete iter->_value;
@@ -2263,29 +2259,27 @@ void UCMachine::usecodeStats() const {
 	g_debugger->debugPrintf("Usecode Machine memory stats:\n");
 	g_debugger->debugPrintf("Strings    : %u/65534\n", _stringHeap.size());
 #ifdef DUMPHEAP
-	Common::HashMap<uint16, Std::string>::const_iterator iter;
-	for (iter = _stringHeap.begin(); iter != _stringHeap.end(); ++iter)
-		g_debugger->debugPrintf("%d:%s\n", iter->_key << ":" << iter->_value.c_str());
+	for (const auto &i : _stringHeap)
+		g_debugger->debugPrintf("%d:%s\n", i._key << ":" << i._value.c_str());
 #endif
 	g_debugger->debugPrintf("Lists      : %u/65534\n", _listHeap.size());
 #ifdef DUMPHEAP
-	Common::HashMap<uint16, UCList *>::const_iterator iterl;
-	for (iterl = _listHeap.begin(); iterl != _listHeap.end(); ++iterl) {
-		if (!iterl->_value) {
-			g_debugger->debugPrintf("%d: <null>\n", iterl->_key);
+	for (const auto &l : _listHeap) {
+		if (!l._value) {
+			g_debugger->debugPrintf("%d: <null>\n", l._key);
 			continue;
 		}
-		if (iterl->_value->getElementSize() == 2) {
-			g_debugger->debugPrintf("%d:", iterl->_key);
+		if (l._value->getElementSize() == 2) {
+			g_debugger->debugPrintf("%d:", l._key);
 
-			for (unsigned int i = 0; i < iterl->_value->getSize(); ++i) {
+			for (unsigned int i = 0; i < l._value->getSize(); ++i) {
 				if (i > 0) g_debugger->debugPrintf(",");
-				g_debugger->debugPrintf("%d", iterl->_value->getuint16(i));
+				g_debugger->debugPrintf("%d", l._value->getuint16(i));
 			}
 			g_debugger->debugPrintf("\n");
 		} else {
 			g_debugger->debugPrintf("%d: %u elements of size %u\n",
-				iterl->_key, iterl->_value->getSize(), iterl->_value->getElementSize());
+				l._key, l._value->getSize(), l._value->getElementSize());
 		}
 	}
 #endif
@@ -2299,11 +2293,10 @@ void UCMachine::saveStrings(Common::WriteStream *ws) const {
 	_stringIDs->save(ws);
 	ws->writeUint32LE(static_cast<uint32>(_stringHeap.size()));
 
-	Common::HashMap<uint16, Std::string>::const_iterator iter;
-	for (iter = _stringHeap.begin(); iter != _stringHeap.end(); ++iter) {
-		ws->writeUint16LE((*iter)._key);
-		ws->writeUint32LE((*iter)._value.size());
-		ws->write((*iter)._value.c_str(), (*iter)._value.size());
+	for (const auto &i : _stringHeap) {
+		ws->writeUint16LE(i._key);
+		ws->writeUint32LE(i._value.size());
+		ws->write(i._value.c_str(), i._value.size());
 	}
 }
 
@@ -2311,10 +2304,9 @@ void UCMachine::saveLists(Common::WriteStream *ws) const {
 	_listIDs->save(ws);
 	ws->writeUint32LE(_listHeap.size());
 
-	Common::HashMap<uint16, UCList *>::const_iterator iter;
-	for (iter = _listHeap.begin(); iter != _listHeap.end(); ++iter) {
-		ws->writeUint16LE((*iter)._key);
-		(*iter)._value->save(ws);
+	for (const auto &i : _listHeap) {
+		ws->writeUint16LE(i._key);
+		i._value->save(ws);
 	}
 }
 

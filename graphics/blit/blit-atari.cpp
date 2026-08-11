@@ -20,51 +20,13 @@
  */
 
 #include "graphics/blit.h"
-#include "graphics/surface.h"
-#include "backends/platform/atari/dlmalloc.h"
 
-#include <cstdlib>	// malloc
-#include <cstring>	// memcpy, memset
 #include <mint/cookie.h>
 
-#include "backends/graphics/atari/atari-graphics-superblitter.h"
-#include "common/textconsole.h"	// error
+#include "backends/graphics/atari/atari-supervidel.h"
+#include "backends/platform/atari/dlmalloc.h"	// MALLOC_ALIGNMENT
 
-// bits 26:0
-#define SV_BLITTER_SRC1           ((volatile long*)0x80010058)
-#define SV_BLITTER_SRC2           ((volatile long*)0x8001005C)
-#define SV_BLITTER_DST            ((volatile long*)0x80010060)
-// The amount of bytes that are to be copied in a horizontal line, minus 1
-#define SV_BLITTER_COUNT          ((volatile long*)0x80010064)
-// The amount of bytes that are to be added to the line start address after a line has been copied, in order to reach the next one
-#define SV_BLITTER_SRC1_OFFSET    ((volatile long*)0x80010068)
-#define SV_BLITTER_SRC2_OFFSET    ((volatile long*)0x8001006C)
-#define SV_BLITTER_DST_OFFSET     ((volatile long*)0x80010070)
-// bits 11:0 - The amount of horizontal lines to do
-#define SV_BLITTER_MASK_AND_LINES ((volatile long*)0x80010074)
-// bit    0 - busy / start
-// bits 4:1 - blit mode
-#define SV_BLITTER_CONTROL        ((volatile long*)0x80010078)
-// bit 0 - empty (read only)
-// bit 1 - full (read only)
-// bits 31:0 - data (write only)
-#define SV_BLITTER_FIFO           ((volatile long*)0x80010080)
-
-#ifdef USE_SV_BLITTER
-static bool isSuperBlitterLocked;
-
-static void syncSuperBlitter() {
-	// if externally locked, let the owner decide when to sync (unlock)
-	if (isSuperBlitterLocked)
-		return;
-
-	// while FIFO not empty...
-	if (superVidelFwVersion >= 9)
-		while (!(*SV_BLITTER_FIFO & 1));
-	// while busy blitting...
-	while (*SV_BLITTER_CONTROL & 1);
-}
-#endif
+static_assert(MALLOC_ALIGNMENT == 16, "MALLOC_ALIGNMENT must be == 16");
 
 #ifdef USE_MOVE16
 static inline bool hasMove16() {
@@ -72,82 +34,62 @@ static inline bool hasMove16() {
 	static bool hasMove16 = Getcookie(C__CPU, &val) == C_FOUND && val >= 40;
 	return hasMove16;
 }
-#endif
 
-void lockSuperBlitter() {
-#ifdef USE_SV_BLITTER
-	assert(!isSuperBlitterLocked);
-
-	isSuperBlitterLocked = true;
-#endif
+template<typename T>
+constexpr bool isAligned(T val) {
+	return (reinterpret_cast<uintptr>(val) & (MALLOC_ALIGNMENT - 1)) == 0;
 }
-
-void unlockSuperBlitter() {
-#ifdef USE_SV_BLITTER
-	assert(isSuperBlitterLocked);
-
-	isSuperBlitterLocked = false;
-	if (hasSuperVidel())
-		syncSuperBlitter();
 #endif
-}
-
-// see atari-graphics.cpp
-extern bool g_unalignedPitch;
-extern mspace g_mspace;
 
 namespace Graphics {
 
-constexpr size_t ALIGN = 16;	// 16 bytes
-
-// hijack surface overrides here as well as these are tightly related
-// to the blitting routine below
-void Surface::create(int16 width, int16 height, const PixelFormat &f) {
-	assert(width >= 0 && height >= 0);
-	free();
-
-	w = width;
-	h = height;
-	format = f;
-	// align pitch to a 16-byte boundary for a possible C2P conversion
-	pitch = g_unalignedPitch
-		? w * format.bytesPerPixel
-		: (w * format.bytesPerPixel + ALIGN - 1) & (-ALIGN);
-
-	if (width && height) {
+// Function to blit a rect with a transparent color key
+void keyBlitLogicAtari(byte *dst, const byte *src, const uint w, const uint h,
+					   const uint srcDelta, const uint dstDelta, const uint32 key) {
 #ifdef USE_SV_BLITTER
-		if (g_mspace) {
-			pixels = mspace_calloc(g_mspace, height * pitch, f.bytesPerPixel);
+	if (key == 0 && (uintptr)src >= 0xA0000000 && (uintptr)dst >= 0xA0000000) {
+		if (g_superVidelFwVersion >= 9) {
+			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC1
+			*SV_BLITTER_FIFO = (long)(g_blitMask ? g_blitMask : src);	// SV_BLITTER_SRC2
+			*SV_BLITTER_FIFO = (long)dst;				// SV_BLITTER_DST
+			*SV_BLITTER_FIFO = w - 1;					// SV_BLITTER_COUNT
+			*SV_BLITTER_FIFO = srcDelta + w;			// SV_BLITTER_SRC1_OFFSET
+			*SV_BLITTER_FIFO = srcDelta + w;			// SV_BLITTER_SRC2_OFFSET
+			*SV_BLITTER_FIFO = dstDelta + w;			// SV_BLITTER_DST_OFFSET
+			*SV_BLITTER_FIFO = h;						// SV_BLITTER_MASK_AND_LINES
+			*SV_BLITTER_FIFO = 0x03;					// SV_BLITTER_CONTROL
+		}  else {
+			// make sure the blitter is idle
+			while (*SV_BLITTER_CONTROL & 1);
 
-			if (!pixels)
-				error("Not enough memory to allocate a surface");
-			else if (pixels <= (void *)0xA0000000)
-				warning("SuperVidel surface allocated in regular memory");
-		} else {
-#else
-		{
+			*SV_BLITTER_SRC1           = (long)src;
+			*SV_BLITTER_SRC2           = (long)(g_blitMask ? g_blitMask : src);
+			*SV_BLITTER_DST            = (long)dst;
+			*SV_BLITTER_COUNT          = w - 1;
+			*SV_BLITTER_SRC1_OFFSET    = srcDelta + w;
+			*SV_BLITTER_SRC2_OFFSET    = srcDelta + w;
+			*SV_BLITTER_DST_OFFSET     = dstDelta + w;
+			*SV_BLITTER_MASK_AND_LINES = h;
+			*SV_BLITTER_CONTROL        = 0x03;
+		}
+
+		SyncSuperBlitter();
+	} else
 #endif
-			pixels = ::calloc(height * pitch, f.bytesPerPixel);
-			if (!pixels)
-				error("Not enough memory to allocate a surface");
-			else
-				assert(((uintptr)pixels & (ALIGN - 1)) == 0);
+	{
+		for (uint y = 0; y < h; ++y) {
+			for (uint x = 0; x < w; ++x) {
+				const uint32 color = *src++;
+				if (color != key)
+					*dst++ = color;
+				else
+					dst++;
+			}
+
+			src += srcDelta;
+			dst += dstDelta;
 		}
 	}
-}
-
-void Surface::free() {
-#ifdef USE_SV_BLITTER
-	if (g_mspace)
-		mspace_free(g_mspace, pixels);
-	else
-#endif
-	if (pixels)
-		::free(pixels);
-
-	pixels = nullptr;
-	w = h = pitch = 0;
-	format = PixelFormat();
 }
 
 // Function to blit a rect (version optimized for Atari Falcon with SuperVidel's SuperBlitter)
@@ -159,8 +101,8 @@ void copyBlit(byte *dst, const byte *src,
 		return;
 
 #ifdef USE_SV_BLITTER
-	if (((uintptr)src & 0xFF000000) >= 0xA0000000 && ((uintptr)dst & 0xFF000000) >= 0xA0000000) {
-		if (superVidelFwVersion >= 9) {
+	if ((uintptr)src >= 0xA0000000 && (uintptr)dst >= 0xA0000000) {
+		if (g_superVidelFwVersion >= 9) {
 			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC1
 			*SV_BLITTER_FIFO = 0x00000000;				// SV_BLITTER_SRC2
 			*SV_BLITTER_FIFO = (long)dst;				// SV_BLITTER_DST
@@ -185,12 +127,12 @@ void copyBlit(byte *dst, const byte *src,
 			*SV_BLITTER_CONTROL        = 0x01;
 		}
 
-		syncSuperBlitter();
+		SyncSuperBlitter();
 	} else
 #endif
 	if (dstPitch == srcPitch && dstPitch == (w * bytesPerPixel)) {
 #ifdef USE_MOVE16
-		if (hasMove16() && ((uintptr)src & (ALIGN - 1)) == 0 && ((uintptr)dst & (ALIGN - 1)) == 0) {
+		if (hasMove16() && isAligned(src) && isAligned(dst)) {
 			__asm__ volatile(
 			"	move.l	%2,%%d0\n"
 			"	lsr.l	#4,%%d0\n"
@@ -220,8 +162,8 @@ void copyBlit(byte *dst, const byte *src,
 			"	move16	(%0)+,(%1)+\n"
 			"2:\n"
 			"	dbra	%%d0,1b\n"
-			// handle also the unlikely case when 'dstPitch'
-			// is not divisible by 16 but 'src' and 'dst' are
+			// handle also the case when 'dstPitch' is not
+			// divisible by 16 but 'src' and 'dst' are
 			"3:\n"
 			"	moveq	#0x0f,%%d0\n"
 			"	and.l	%2,%%d0\n"
@@ -256,8 +198,7 @@ void copyBlit(byte *dst, const byte *src,
 		}
 	} else {
 #ifdef USE_MOVE16
-		if (hasMove16() && ((uintptr)src & (ALIGN - 1)) == 0 && ((uintptr)dst & (ALIGN - 1)) == 0
-				&& (srcPitch & (ALIGN - 1)) == 0 && (dstPitch & (ALIGN - 1)) == 0) {
+		if (hasMove16() && isAligned(src) && isAligned(dst) && isAligned(srcPitch) && isAligned(dstPitch)) {
 			__asm__ volatile(
 			"	move.l	%2,%%d0\n"
 

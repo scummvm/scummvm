@@ -23,9 +23,7 @@
 #define ULTIMA8_FILESYS_U8SAVEFILE_H
 
 #include "common/archive.h"
-
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima8 {

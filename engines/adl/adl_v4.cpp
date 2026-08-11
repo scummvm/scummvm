@@ -90,35 +90,32 @@ void AdlEngine_v4::loadState(Common::ReadStream &stream) {
 	if (size != _state.regions.size())
 		error("Region count mismatch (expected %i; found %i)", _state.regions.size(), size);
 
-	Common::Array<Region>::iterator region;
-	for (region = _state.regions.begin(); region != _state.regions.end(); ++region) {
+	for (auto &region : _state.regions) {
 		size = stream.readUint32BE();
-		if (size != region->rooms.size())
-			error("Room count mismatch (expected %i; found %i)", region->rooms.size(), size);
+		if (size != region.rooms.size())
+			error("Room count mismatch (expected %i; found %i)", region.rooms.size(), size);
 
-		Common::Array<RoomState>::iterator room;
-		for (room = region->rooms.begin(); room != region->rooms.end(); ++room) {
-			room->picture = stream.readByte();
-			room->isFirstTime = stream.readByte();
+		for (auto &room : region.rooms) {
+			room.picture = stream.readByte();
+			room.isFirstTime = stream.readByte();
 		}
 
 		size = stream.readUint32BE();
-		if (size != region->vars.size())
-			error("Variable count mismatch (expected %i; found %i)", region->vars.size(), size);
+		if (size != region.vars.size())
+			error("Variable count mismatch (expected %i; found %i)", region.vars.size(), size);
 
-		for (uint i = 0; i < region->vars.size(); ++i)
-			region->vars[i] = stream.readByte();
+		for (uint i = 0; i < region.vars.size(); ++i)
+			region.vars[i] = stream.readByte();
 	}
 
 	size = stream.readUint32BE();
 	if (size != _state.items.size())
 		error("Item count mismatch (expected %i; found %i)", _state.items.size(), size);
 
-	Common::List<Item>::iterator item;
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		item->room = stream.readByte();
-		item->region = stream.readByte();
-		item->state = stream.readByte();
+	for (auto &item : _state.items) {
+		item.room = stream.readByte();
+		item.region = stream.readByte();
+		item.state = stream.readByte();
 	}
 
 	size = stream.readUint32BE();
@@ -147,26 +144,23 @@ void AdlEngine_v4::saveState(Common::WriteStream &stream) {
 	stream.writeByte(_state.prevRegion);
 
 	stream.writeUint32BE(_state.regions.size());
-	Common::Array<Region>::const_iterator region;
-	for (region = _state.regions.begin(); region != _state.regions.end(); ++region) {
-		stream.writeUint32BE(region->rooms.size());
-		Common::Array<RoomState>::const_iterator room;
-		for (room = region->rooms.begin(); room != region->rooms.end(); ++room) {
-			stream.writeByte(room->picture);
-			stream.writeByte(room->isFirstTime);
+	for (const auto &region : _state.regions) {
+		stream.writeUint32BE(region.rooms.size());
+		for (const auto &room : region.rooms) {
+			stream.writeByte(room.picture);
+			stream.writeByte(room.isFirstTime);
 		}
 
-		stream.writeUint32BE(region->vars.size());
-		for (uint i = 0; i < region->vars.size(); ++i)
-			stream.writeByte(region->vars[i]);
+		stream.writeUint32BE(region.vars.size());
+		for (uint i = 0; i < region.vars.size(); ++i)
+			stream.writeByte(region.vars[i]);
 	}
 
 	stream.writeUint32BE(_state.items.size());
-	Common::List<Item>::const_iterator item;
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		stream.writeByte(item->room);
-		stream.writeByte(item->region);
-		stream.writeByte(item->state);
+	for (const auto &item : _state.items) {
+		stream.writeByte(item.room);
+		stream.writeByte(item.region);
+		stream.writeByte(item.state);
 	}
 
 	stream.writeUint32BE(_state.vars.size() - getRegion(1).vars.size());
@@ -175,14 +169,12 @@ void AdlEngine_v4::saveState(Common::WriteStream &stream) {
 }
 
 Common::String AdlEngine_v4::loadMessage(uint idx) const {
-	Common::String str = AdlEngine_v3::loadMessage(idx);
-
-	for (uint i = 0; i < str.size(); ++i) {
-		const char *xorStr = "AVISDURGAN";
-		str.setChar(str[i] ^ xorStr[i % strlen(xorStr)], i);
+	if (_messages[idx]) {
+		Common::StreamPtr strStream(_messages[idx]->createReadStream());
+		return readString(*strStream, 0xff, "AVISDURGAN");
 	}
 
-	return str;
+	return Common::String();
 }
 
 Common::String AdlEngine_v4::getItemDescription(const Item &item) const {
@@ -295,7 +287,7 @@ void AdlEngine_v4::loadRegion(byte region) {
 	fixupDiskOffset(track, sector);
 
 	for (uint block = 0; block < 7; ++block) {
-		StreamPtr stream(_disk->createReadStream(track, sector, offset, 1));
+		Common::StreamPtr stream(_disk->createReadStream(track, sector, offset, 1));
 
 		uint16 addr = stream->readUint16LE();
 		uint16 size = stream->readUint16LE();
@@ -382,6 +374,17 @@ byte AdlEngine_v4::restoreRoomState(byte room) {
 		getRoom(room).curPicture = getRoom(room).picture = backup.picture;
 		getRoom(room).isFirstTime = false;
 		return 0;
+	}
+
+	// WORKAROUND: Fix for bug #15379: "ADL: HIRES5: Game unsolvable after
+	// loading savegame. Save state not properly restored?".
+	// There's a problem in the original engine when a picture is set for a
+	// room that hasn't been visited yet. If the user then saves before
+	// visiting that room, the picture change will be ignored when play is
+	// resumed from that savegame.
+	if (backup.picture != 1) {
+		warning("Detected picture change for unvisited room %d in region %d", room, _state.region);
+		getRoom(room).curPicture = getRoom(room).picture = backup.picture;
 	}
 
 	return 1;
@@ -482,28 +485,26 @@ int AdlEngine_v4::o_moveAllItems(ScriptEnv &e) {
 
 	byte room2 = roomArg(e.arg(2));
 
-	Common::List<Item>::iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (room1 != item->room)
+	for (auto &item : _state.items) {
+		if (room1 != item.room)
 			continue;
 
 		if (room1 != IDI_ANY) {
-			if (_state.region != item->region)
+			if (_state.region != item.region)
 				continue;
 			if (room2 == IDI_ANY) {
 				if (isInventoryFull())
 					break;
-				if (item->state == IDI_ITEM_DOESNT_MOVE)
+				if (item.state == IDI_ITEM_DOESNT_MOVE)
 					continue;
 			}
 		}
 
-		item->room = room2;
-		item->region = _state.region;
+		item.room = room2;
+		item.region = _state.region;
 
 		if (room1 == IDI_ANY)
-			item->state = IDI_ITEM_DROPPED;
+			item.state = IDI_ITEM_DROPPED;
 	}
 
 	return 2;

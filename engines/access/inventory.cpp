@@ -43,7 +43,7 @@ void InventoryEntry::load(const Common::String &name, const int *data) {
 	}
 }
 
-int InventoryEntry::checkItem(int itemId) {
+int InventoryEntry::checkItem(int itemId) const {
 	if (_otherItem1 == itemId)
 		return _newItem1;
 	else if (_otherItem2 == itemId)
@@ -72,8 +72,6 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_invChangeFlag = true;
 	_invRefreshFlag = false;
 	_invModeFlag = false;
-	_startAboutItem = 0;
-	_startTravelItem = 0;
 	_iconDisplayFlag = true;
 	_boxNum = 0;
 
@@ -94,7 +92,7 @@ int &InventoryManager::operator[](int idx) {
 	return (idx >= (int)_inv.size()) ? invalid : _inv[idx]._value;
 }
 
-int InventoryManager::useItem() {
+int InventoryManager::useItem() const {
 	return _vm->_useItem;
 }
 
@@ -110,133 +108,6 @@ void InventoryManager::refreshInventory() {
 	//		_invRefreshFlag = true;
 	//		newDisplayInv();
 	// }
-}
-
-int InventoryManager::newDisplayInv() {
-	Screen &screen = *_vm->_screen;
-	EventsManager &events = *_vm->_events;
-	Room &room = *_vm->_room;
-	FileManager &files = *_vm->_files;
-
-	_invModeFlag = true;
-	_vm->_timers.saveTimers();
-
-	if (!room._tile && !_invRefreshFlag) {
-		saveScreens();
-	}
-
-	savedFields();
-	screen.setPanel(1);
-	events._cursorExitFlag = false;
-	getList();
-	initFields();
-
-	files._setPaletteFlag = false;
-	files.loadScreen(&_vm->_buffer1, 99, 0);
-	_vm->_buffer1.copyTo(&_vm->_buffer2);
-	_vm->copyBF2Vid();
-
-	// Set cells
-	Common::Array<CellIdent> cells;
-	cells.push_back(CellIdent(99, 99, 1));
-	_vm->loadCells(cells);
-
-	showAllItems();
-
-	if (!_invRefreshFlag) {
-		chooseItem();
-		if (_vm->_useItem != -1) {
-			int savedScale = _vm->_scale;
-			_vm->_scale = 153;
-			_vm->_screen->setScaleTable(_vm->_scale);
-			_vm->_buffer1.clearBuffer();
-
-			SpriteResource *spr = _vm->_objectsTable[99];
-			SpriteFrame *frame = spr->getFrame(_vm->_useItem);
-
-			int w = screen._scaleTable1[46];
-			int h = screen._scaleTable1[35];
-			_vm->_buffer1.sPlotF(frame, Common::Rect(0, 0, w, h));
-			events.setCursorData(&_vm->_buffer1, Common::Rect(0, 0, w, h));
-
-			_vm->_scale = savedScale;
-			screen.setScaleTable(_vm->_scale);
-		}
-	}
-
-	freeInvCells();
-	screen.setPanel(0);
-	events.debounceLeft();
-
-	restoreFields();
-	screen.restorePalette();
-	// The original was testing the vesa mode too.
-	// We removed this check as we don't use pre-rendering
-	if (!_invRefreshFlag) {
-		screen.clearScreen();
-		screen.setPalette();
-	}
-
-	if (!room._tile && !_invRefreshFlag) {
-		restoreScreens();
-	} else {
-		screen.setBufferScan();
-		room.buildScreen();
-
-		// The original was doing a check on the vesa mode at this point.
-		// We don't need it as we don't do inventory pre-rendering
-		screen.fadeOut();
-		_vm->copyBF2Vid();
-	}
-
-	events._cursorExitFlag = false;
-	screen._screenChangeFlag = false;
-	_invModeFlag = false;
-	events.debounceLeft();
-	_vm->_timers.restoreTimers();
-	_vm->_startup = 1;
-
-	int result = 0;
-	if (!_invRefreshFlag) {
-		if (_vm->_useItem == -1) {
-			result = 2;
-			events.forceSetCursor(CURSOR_CROSSHAIRS);
-		} else
-			events.forceSetCursor(CURSOR_INVENTORY);
-	}
-
-	_invRefreshFlag = false;
-	_invChangeFlag = false;
-	return result;
-}
-
-int InventoryManager::displayInv() {
-	int *inv = (int *) malloc(_vm->_res->INVENTORY.size() * sizeof(int));
-	const char **names = (const char **)malloc(_vm->_res->INVENTORY.size() * sizeof(const char *));
-
-	for (uint i = 0; i < _vm->_res->INVENTORY.size(); i++) {
-		inv[i] = _inv[i]._value;
-		names[i] = _inv[i]._name.c_str();
-	}
-	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
-	_vm->_invBox->getList(names, inv);
-
-	int btnSelected = 0;
-	int boxX = _vm->_invBox->doBox_v1(_startInvItem, _startInvBox, btnSelected);
-	_startInvItem = _vm->_boxDataStart;
-	_startInvBox = _vm->_boxSelectY;
-
-	if (boxX == -1)
-		btnSelected = 2;
-
-	if (btnSelected != 2)
-		_vm->_useItem = _vm->_invBox->_tempListIdx[boxX];
-	else
-		_vm->_useItem = -1;
-
-	free(names);
-	free(inv);
-	return 0;
 }
 
 void InventoryManager::savedFields() {
@@ -345,7 +216,7 @@ void InventoryManager::putInvIcon(int itemIndex, int itemId) {
 
 void InventoryManager::chooseItem() {
 	EventsManager &events = *_vm->_events;
-	_vm->_useItem = -1;
+	setUseItem(-1);
 
 	while (!_vm->shouldQuit()) {
 		// Check for events
@@ -358,7 +229,7 @@ void InventoryManager::chooseItem() {
 
 		if (selIndex > 23) {
 			if (selIndex == 25)
-				_vm->_useItem = -1;
+				setUseItem(-1);
 			break;
 		} else if (selIndex < (int)_items.size() && _items[selIndex] != -1) {
 			_boxNum = selIndex;
@@ -366,7 +237,7 @@ void InventoryManager::chooseItem() {
 			combineItems();
 			_vm->copyBF2Vid();
 			outlineIcon(_boxNum);
-			_vm->_useItem = _items[_boxNum];
+			setUseItem(_items[_boxNum]);
 		}
 	}
 }
@@ -376,7 +247,7 @@ void InventoryManager::freeInvCells() {
 	_vm->_objectsTable[99] = nullptr;
 }
 
-int InventoryManager::coordIndexOf() {
+int InventoryManager::coordIndexOf() const {
 	const Common::Point pt = _vm->_events->_mousePos;
 
 	for (int i = 0; i < (int)_invCoords.size(); ++i) {
@@ -408,7 +279,7 @@ void InventoryManager::outlineIcon(int itemIndex) {
 	screen.frameRect(_invCoords[itemIndex], 7);
 
 	Common::String s = _tempLOff[itemIndex];
-	Font &font = *_vm->_fonts._font2;
+	const Font &font = *_vm->_fonts._font2;
 	int strWidth = font.stringWidth(s);
 
 	font._fontColors[0] = 0;

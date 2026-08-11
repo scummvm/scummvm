@@ -610,18 +610,18 @@ void Inter_v2::o2_pushVars() {
 		if ((_vm->_game->_script->peekByte() == 25) ||
 				(_vm->_game->_script->peekByte() == 28)) {
 
-			int16 varOff = _vm->_game->_script->readVarIndex();
+			uint16 varOff = _vm->_game->_script->readVarIndex();
 			_vm->_game->_script->skip(1);
 
 			_varStack.pushData(*_variables, varOff, _vm->_global->_inter_animDataSize * 4);
 
 		} else {
-			int16 value;
+			int32 value;
 
 			if (_vm->_game->_script->evalExpr(&value) != 20)
 				value = 0;
 
-			_varStack.pushInt((uint32)value);
+			_varStack.pushInt(value);
 		}
 	}
 }
@@ -828,8 +828,7 @@ void Inter_v2::o2_initScreen() {
 			_vm->_video->setSize();
 
 		}
-	}
-	else if (_vm->getGameType() == kGameTypeAdibou1 || _vm->getGameType() == kGameTypeAdi2) {
+	} else if (_vm->getGameType() == kGameTypeAdibou1 || _vm->getGameType() == kGameTypeAdi2) {
 		if (_vm->is640x400() && width == 640 && height == 480) {
 			// Force height to 400: the game is mostly scaled from the 320x200 version and
 			// never makes use of the space beyond height 400, so we can get rid of it.
@@ -1050,7 +1049,7 @@ void Inter_v2::o2_assign(OpFuncParams &params) {
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
-		int16 result;
+		int32 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {
@@ -1208,10 +1207,21 @@ void Inter_v2::o2_addHotspot(OpFuncParams &params) {
 		top     = 0;
 	}
 
-	if (id < 0)
-		_vm->_game->_hotspots->add(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
+	if (id < 0) {
+		int16 hotspotLeft = 0;
+		int16 hotspotTop = 0;
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+			// The operation is no longer a "floor to previous multiple of 4", but a "minus 4"
+			// NOTE: may be needed by other games as well
+			hotspotLeft = left - 4;
+			hotspotTop  = top  - 4;
+		} else {
+			hotspotLeft = left & 0xFFFC;
+			hotspotTop  = top  & 0xFFFC;
+		}
+		_vm->_game->_hotspots->add(0xD000 - id, hotspotLeft, hotspotTop,
 				left + width + 3, top + height + 3, flags, key, 0, 0, funcPos);
-	else
+	} else
 		_vm->_game->_hotspots->add(0xE000 + id, left, top,
 				left + width - 1, top + height - 1, flags, key, 0, 0, funcPos);
 }
@@ -1244,8 +1254,8 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 
 	stringVar = stringStartVar;
 	if (part == -1) {
-		warning("o2_getTotTextItemPart, part == -1");
 		_vm->_draw->_hotspotText = GET_VARO_STR(stringVar);
+		return;
 	}
 
 	WRITE_VARO_UINT8(stringVar, 0);
@@ -1419,6 +1429,7 @@ void Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 	int16 cmd;
 
 	cmd = _vm->_game->_script->readInt16();
+	_vm->_vidPlayer->liveVideosLoop();
 
 	gobParams.paramCount = _vm->_game->_script->readInt16();
 	gobParams.extraData = cmd;
@@ -1459,7 +1470,7 @@ void Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 
 void Inter_v2::o2_checkData(OpFuncParams &params) {
 	Common::String file = _vm->_game->_script->evalString();
-	int16 varOff = _vm->_game->_script->readVarIndex();
+	uint16 varOff = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: For some reason, the variable indicating which TOT to load next
 	// is overwritten in the guard house card game in Woodruff.
@@ -1538,6 +1549,15 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 
 	WRITE_VAR(1, 1);
 	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
+
+	// Fall back to the version from our detection tables, if the VERSION
+	// file does not exist - bug #14857
+	if (!stream && !scumm_stricmp(file, "version") && !offset && size == 5) {
+		Common::strlcpy((char *)buf, _vm->getGameVersion(), 5);
+		WRITE_VAR(1, 0);
+		return;
+	}
+
 	if (!stream)
 		return;
 
@@ -1565,7 +1585,7 @@ void Inter_v2::o2_readData(OpFuncParams &params) {
 void Inter_v2::o2_writeData(OpFuncParams &params) {
 	const char *file = _vm->_game->_script->evalString();
 
-	int16 dataVar = _vm->_game->_script->readVarIndex();
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int32 size    = _vm->_game->_script->readValExpr();
 	int32 offset  = _vm->_game->_script->evalInt();
 

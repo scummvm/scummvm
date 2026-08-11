@@ -116,6 +116,10 @@ void InputEngine::update() {
 			break;
 
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd.ascii != 0) {
+				reportCharacter(event.kbd.ascii);
+			}
+			// fall through
 		case Common::EVENT_KEYUP:
 			alterKeyboardState(event.kbd.keycode, (event.type == Common::EVENT_KEYDOWN) ? 0x80 : 0);
 			break;
@@ -204,6 +208,16 @@ bool InputEngine::wasKeyDown(uint keyCode) {
 	assert(keyCode < ARRAYSIZE(_keyboardState[_currentState]));
 	return ((_keyboardState[_currentState][keyCode] & 0x80) == 0) &&
 	       ((_keyboardState[_currentState ^ 1][keyCode] & 0x80) != 0);
+}
+
+void InputEngine::setMouseX(int posX) {
+	_mouseX = posX;
+	g_system->warpMouse(_mouseX, _mouseY);
+}
+
+void InputEngine::setMouseY(int posY) {
+	_mouseY = posY;
+	g_system->warpMouse(_mouseX, _mouseY);
 }
 
 void InputEngine::setCharacterCallback(CharacterCallback callback) {

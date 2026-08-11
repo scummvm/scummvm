@@ -52,8 +52,7 @@ namespace M4 {
 #define DECL_POINTER	1
 
 struct Converstation_Globals {
-	Common::Array<byte> conv_save_buff;
-	Common::Array<byte> convSave;
+	Common::Array<byte> convSave;	// Original used an actual file. We use a memory buffer
 	int	event = 0;
 	int	event_ready = 0;
 	char conv_name[16];
@@ -103,13 +102,12 @@ void conv_set_handle(Conv *c);
 
 void conv_resume(Conv *c);
 void conv_resume();
-void conv_reset(char *filename);
+void conv_reset(const char *filename);
 
 void conv_reset_all();
 void conv_play(Conv *c);
+void conv_play();
 
-void set_conv_name(const char *s);
-const char *get_conv_name();
 const char *conv_sound_to_play();
 int32 conv_whos_talking();
 

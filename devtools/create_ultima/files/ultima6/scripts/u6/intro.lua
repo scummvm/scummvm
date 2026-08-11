@@ -1,7 +1,7 @@
-SDLK_UP           = 82 + 1073741824
-SDLK_DOWN         = 81 + 1073741824
-SDLK_RIGHT        = 79 + 1073741824
-SDLK_LEFT         = 80 + 1073741824
+SDLK_UP           = 273
+SDLK_DOWN         = 274
+SDLK_RIGHT        = 275
+SDLK_LEFT         = 276
 
 g_img_tbl = {}
 
@@ -1705,15 +1705,8 @@ g_keycode_tbl =
 [121]="y",
 [122]="z",
 }
-local function create_character()
-	music_play("create.m")
 
-	local bubbles = sprite_new(image_new(100,100, 0), 110, 30, false)
-	local bg = sprite_new(image_load("vellum1.shp", 0), 0x10, 0x50, true)
-	image_print(bg.image, "By what name shalt thou be called?", 7, 303, 36, 24, 0x48)
-
-	local name = sprite_new(nil, 0x34, 0x78, true)
-	name.text = ""
+local function collect_name_string(name)
 	local char_index = 0
 	local input = nil
 
@@ -1722,8 +1715,6 @@ local function create_character()
 		input = input_poll()
 		if input ~= nil then
 			if should_exit(input) == true then
-				bg.visible = false
-				name.visible = false
 				return false
 			end
 			local name_text = name.text
@@ -1792,6 +1783,24 @@ local function create_character()
 			end
 			input = nil
 		end
+	end
+	return true
+end
+
+local function create_character()
+	music_play("create.m")
+
+	local bubbles = sprite_new(image_new(100,100, 0), 110, 30, false)
+	local bg = sprite_new(image_load("vellum1.shp", 0), 0x10, 0x50, true)
+	image_print(bg.image, "By what name shalt thou be called?", 7, 303, 36, 24, 0x48)
+
+	local name = sprite_new(nil, 0x34, 0x78, true)
+	name.text = ""
+
+	if collect_name_string(name) == false then
+		bg.visible = false
+		name.visible = false
+		return false
 	end
 
 	name.x = 0x10 + (284 - canvas_string_length(name.text)) / 2
@@ -2225,6 +2234,359 @@ local function create_character()
 
 	g_gypsy_img_tbl = nil
 	g_gypsy_tbl = nil
+
+	return true
+end
+
+local function centre_string(image, string, y, color)
+	local x = (image.w - canvas_string_length(string)) / 2
+	image_print_raw(image, string, x, y, color)
+end
+
+local function print_transfer_field_names(image)
+	local names = {
+		"Name",
+		"Sex",
+		"Class",
+		"Str",
+		"Dex",
+		"Int",
+		"Magic",
+		"Exp",
+		"Level"
+	}
+	for i, name in ipairs(names) do
+		local x = 60 - canvas_string_length(name)
+		image_print_raw(image, name, x, 21 + ((i-1) * 8), 0x3d)
+	end
+end
+
+local function print_old_save_field_data(image, text, yOffset)
+	image_print_raw(image, text, 65, 21 + (yOffset * 8), 2)
+end
+
+local function print_new_save_field_data(image, text, yOffset)
+	image_print_raw(image, text, 146, 21 + (yOffset * 8), 9)
+end
+
+local function clicked_on_button(btnSprite)
+	local x = get_mouse_x()
+	local y = get_mouse_y()
+
+	return x >= btnSprite.x and x < btnSprite.x + btnSprite.image.w
+		and y >= btnSprite.y and y < btnSprite.y + btnSprite.image.h
+end
+
+local function transfer_page1()
+	load_images("vellum1.shp")
+	local bg = sprite_new(g_img_tbl[0], 0x10, 0x50, true)
+
+	centre_string(bg.image, "TRANSFER A CHARACTER", 9, 0x3d)
+	image_draw_line(bg.image, 9, 18, 274, 18, 0x3d)
+
+	centre_string(bg.image, "Enter the letter of the", 40, 0x3d)
+	centre_string(bg.image, "floppy/hard drive containing your", 40 + 9, 0x3d)
+	centre_string(bg.image, "Ultima V Britannia", 40 + 18, 0x3d)
+	centre_string(bg.image, "or Ultima IV Player disk....", 40 + 27, 0x3d)
+
+	local letters = {}
+	for i = 0,10 do -- load drive select letter buttons
+		letters[i] = sprite_new(g_img_tbl[5 + i], 30 + i * (g_img_tbl[5].w + 1), 174, true)
+	end
+	letters[11] = sprite_new(g_img_tbl[4], 33 + 11 * (g_img_tbl[5].w + 1), 174, true) -- load esc-abort button
+
+	local input
+	local exiting = false
+	while input == nil do
+		canvas_update()
+		input = input_poll()
+		if input ~= nil then
+			if should_exit(input) == true then
+				exiting = true
+			end
+			if input == 0 then
+				if clicked_on_button(letters[11]) == true then
+					exiting = true
+				end
+			end
+		end
+	end
+
+	for i = 0,11 do
+		letters[i].visible = false
+	end
+
+	bg.visible = false
+
+	return not exiting
+end
+
+local function transfer_showStats(transferData)
+	load_images("vellum1.shp")
+	local bg = sprite_new(g_img_tbl[0], 0x10, 0x50, true)
+
+	local transferGameName = "No Save"
+	if transferData.oldSave.game_type == 4 then
+		transferGameName = "Ultima IV"
+	elseif transferData.oldSave.game_type == 5 then
+		transferGameName = "Ultima V"
+	end
+
+	local name = sprite_new(nil, bg.x + 146, bg.y + 21, true)
+	name.text = transferData.newSave.name
+	name.text_color = 9
+
+	local gender_sprite = sprite_new(nil, bg.x + 146, bg.y + 21 + 8, true)
+	if transferData.newSave.gender == 0 then
+		gender_sprite.text = "Female"
+	else
+		gender_sprite.text = "Male"
+	end
+	gender_sprite.text_color = 9
+
+	image_print_raw(bg.image, transferGameName, 65, 9, 0x3d)
+	image_print_raw(bg.image, "Ultima VI", 146, 9, 0x3d)
+	image_draw_line(bg.image, 9, 18, 274, 18, 0x3d)
+
+	print_transfer_field_names(bg.image)
+
+	print_old_save_field_data(bg.image, transferData.oldSave.name, 0)
+	if transferData.oldSave.gender == 0 then
+		print_old_save_field_data(bg.image, "Female", 1)
+	elseif transferData.oldSave.gender == 1 then
+		print_old_save_field_data(bg.image, "Male", 1)
+	end
+	print_old_save_field_data(bg.image, transferData.oldSave.class, 2)
+	print_old_save_field_data(bg.image, transferData.oldSave.str, 3)
+	print_old_save_field_data(bg.image, transferData.oldSave.dex, 4)
+	print_old_save_field_data(bg.image, transferData.oldSave.int, 5)
+	print_old_save_field_data(bg.image, transferData.oldSave.magic, 6)
+	print_old_save_field_data(bg.image, transferData.oldSave.exp, 7)
+	print_old_save_field_data(bg.image, transferData.oldSave.level, 8)
+
+	print_new_save_field_data(bg.image, transferData.newSave.class, 2)
+	print_new_save_field_data(bg.image, transferData.newSave.str, 3)
+	print_new_save_field_data(bg.image, transferData.newSave.dex, 4)
+	print_new_save_field_data(bg.image, transferData.newSave.int, 5)
+	print_new_save_field_data(bg.image, transferData.newSave.magic, 6)
+	print_new_save_field_data(bg.image, transferData.newSave.exp, 7)
+	print_new_save_field_data(bg.image, transferData.newSave.level, 8)
+
+	local btn_x = 27
+	local new_name = sprite_new(g_img_tbl[2], btn_x, 174, true)
+	btn_x = btn_x + new_name.image.w + 1
+	local new_s = sprite_new(g_img_tbl[3], btn_x, 174, true)
+	btn_x = btn_x + new_s.image.w + 1
+	local continue_btn = sprite_new(g_img_tbl[16], btn_x, 174, true)
+	btn_x = btn_x + continue_btn.image.w + 1
+	local esc_btn = sprite_new(g_img_tbl[4], btn_x, 174, true)
+
+	local input
+	local exiting = false
+	while input == nil do
+		canvas_update()
+		input = input_poll()
+		if input ~= nil then
+			if should_exit(input) == true or (input == 0 and clicked_on_button(esc_btn) == true) then
+				exiting = true
+				break
+			elseif input == 99 or (input == 0 and clicked_on_button(continue_btn) == true) then
+				break
+			elseif input == 115 or (input == 0 and clicked_on_button(new_s) == true) then
+				if transferData.newSave.gender == 0 then
+					transferData.newSave.gender = 1
+					gender_sprite.text = "Male"
+				else
+					transferData.newSave.gender = 0
+					gender_sprite.text = "Female"
+				end
+			elseif input == 110 or (input == 0 and clicked_on_button(new_name) == true) then
+				name.text = ""
+				name.text_color = 0
+				if collect_name_string(name) == false then
+					name.text = transferData.oldSave.name
+				end
+				name.text_color = 9
+			end
+			input = nil
+		end
+	end
+
+	name.visible = false
+	gender_sprite.visible = false
+	new_name.visible = false
+	new_s.visible = false
+	continue_btn.visible = false
+	esc_btn.visible = false
+	bg.visible = false
+
+	return not exiting
+end
+
+local function transfer_portrait(transferData)
+	load_images("vellum1.shp")
+	local bg = sprite_new(g_img_tbl[0], 0x10, 0x50, true)
+
+	centre_string(bg.image, transferData.newSave.name, 9, 0x3d)
+	image_draw_line(bg.image, 9, 18, 274, 18, 0x3d)
+
+	local new_sex = sprite_new(g_img_tbl[3], 0x5e, 0x70, true)
+	local new_portrait = sprite_new(g_img_tbl[0x12], 0x3e, 0x81, true)
+	local transfer_btn = sprite_new(g_img_tbl[1], 0x56, 0x92, true)
+	local esc_abort = sprite_new(g_img_tbl[4], 0x50, 0xa3, true)
+
+	local montage_img_tbl = image_load_all("montage.shp")
+	local avatar = sprite_new(montage_img_tbl[transferData.newSave.gender*6+transferData.newSave.portrait], 0xc3, 0x76, true)
+
+	local sex_highlight = sprite_new(image_new(58, 2), new_sex.x, new_sex.y +14, true)
+	image_draw_line(sex_highlight.image, 0, 0, 59, 0, 248)
+	image_draw_line(sex_highlight.image, 0, 1, 59, 1, 248)
+
+	local portrait_highlight = sprite_new(image_new(90, 2), new_portrait.x, new_portrait.y +14, false)
+	image_draw_line(portrait_highlight.image, 0, 0, 91, 0, 248)
+	image_draw_line(portrait_highlight.image, 0, 1, 91, 1, 248)
+
+	local continue_highlight = sprite_new(image_new(66, 2), transfer_btn.x, transfer_btn.y +14, false)
+	image_draw_line(continue_highlight.image, 0, 0, 67, 0, 248)
+	image_draw_line(continue_highlight.image, 0, 1, 67, 1, 248)
+
+	local esc_abort_highlight = sprite_new(image_new(72, 2), esc_abort.x, esc_abort.y +14, false)
+	image_draw_line(esc_abort_highlight.image, 0, 0, 73, 0, 248)
+	image_draw_line(esc_abort_highlight.image, 0, 1, 73, 1, 248)
+
+	local input
+	local exiting = false
+	while input == nil do
+		canvas_update()
+		input = input_poll()
+		if input ~= nil then
+			if should_exit(input) == true or (input == 0 and clicked_on_button(esc_abort) == true) then
+				exiting = true
+				break
+			elseif input == 116 or (input == 0 and clicked_on_button(transfer_btn) == true) then
+				break
+			elseif input == 115 or (input == 0 and clicked_on_button(new_sex) == true) then
+				if transferData.newSave.gender == 0 then
+					transferData.newSave.gender = 1
+				else
+					transferData.newSave.gender = 0
+				end
+				avatar.image = montage_img_tbl[transferData.newSave.gender*6+transferData.newSave.portrait]
+			elseif input == 112 or (input == 0 and clicked_on_button(new_portrait) == true) then
+				if transferData.newSave.portrait == 5 then
+					transferData.newSave.portrait = 0
+				else
+					transferData.newSave.portrait = transferData.newSave.portrait + 1
+				end
+
+				avatar.image = montage_img_tbl[transferData.newSave.gender*6+transferData.newSave.portrait]
+			end
+			input = nil
+		end
+	end
+
+	if not exiting then
+		canvas_set_bg_color(0)
+		fade_out()
+	end
+
+	bg.visible = false
+	avatar.visible = false
+
+	new_sex.visible = false
+	new_portrait.visible = false
+	transfer_btn.visible = false
+	esc_abort.visible = false
+
+	sex_highlight.visible = false
+	portrait_highlight.visible = false
+	continue_highlight.visible = false
+	esc_abort_highlight.visible = false
+
+	return not exiting
+end
+
+local function update_u4_stat(stat)
+	if stat > 9 then
+		if stat < 30 then
+			stat = math.floor((stat - 9) / 2) + 10
+		else
+			stat = math.floor((stat - 30) / 4) + 20
+		end
+	end
+	return stat
+end
+
+local function transfer_no_save_found()
+	load_images("vellum1.shp")
+	local bg = sprite_new(g_img_tbl[0], 0x10, 0x50, true)
+
+	centre_string(bg.image, "TRANSFER A CHARACTER", 9, 0x3d)
+	image_draw_line(bg.image, 9, 18, 274, 18, 0x3d)
+
+	centre_string(bg.image, "No character found! If you wish to", 40, 0x3d)
+	centre_string(bg.image, "transfer a character from a hard disk", 40 + 9, 0x3d)
+	centre_string(bg.image, "please copy either SAVED.GAM or PARTY.SAV", 40 + 18, 0x3d)
+	centre_string(bg.image, "into your Ultima VI game directory.", 40 + 27, 0x3d)
+
+	wait_for_input()
+
+	bg.visible = false
+end
+
+local function transfer()
+	if transfer_page1() == false then
+		return false
+	end
+
+	local transferData = {}
+	transferData.oldSave = transfer_save_game()
+
+	transferData.newSave = {}
+	transferData.newSave.portrait = 0
+	for k,v in pairs(transferData.oldSave) do
+		transferData.newSave[k] = v
+	end
+
+	if transferData.oldSave.game_type == 0 then
+		transfer_no_save_found()
+		return false
+	end
+
+	if transferData.oldSave.game_type == 4 then
+		transferData.newSave.str = update_u4_stat(transferData.newSave.str)
+		transferData.newSave.dex = update_u4_stat(transferData.newSave.dex)
+		transferData.newSave.int = update_u4_stat(transferData.newSave.int)
+	end
+	transferData.newSave.class = "Avatar"
+	transferData.newSave.magic = transferData.newSave.int
+	transferData.newSave.exp = math.floor(transferData.newSave.exp / 10)
+	transferData.newSave.level = 1
+	local tmpXp = math.floor(transferData.oldSave.exp / 1000)
+	while tmpXp > 0 do
+		transferData.newSave.level = transferData.newSave.level + 1
+		tmpXp = math.floor(tmpXp / 2)
+	end
+
+	if transfer_showStats(transferData) == false then
+		return false
+	end
+
+	if transfer_portrait(transferData) == false then
+		return false
+	end
+
+	config_set("config/newgame", true)
+
+	config_set("config/newgamedata/name", transferData.newSave.name)
+	config_set("config/newgamedata/gender", transferData.newSave.gender)
+	config_set("config/newgamedata/portrait", transferData.newSave.portrait)
+	config_set("config/newgamedata/str", transferData.newSave.str)
+	config_set("config/newgamedata/dex", transferData.newSave.dex)
+	config_set("config/newgamedata/int", transferData.newSave.int)
+	config_set("config/newgamedata/magic", transferData.newSave.magic)
+	config_set("config/newgamedata/exp", transferData.newSave.exp)
+	config_set("config/newgamedata/level", transferData.newSave.level)
 
 	return true
 end
@@ -3038,6 +3400,19 @@ local function selected_create_character()
 	return false
 end
 
+local function selected_transfer()
+    main_menu_set_pal(2)
+    fade_out_sprite(g_menu["menu"],6)
+	if transfer() == true then
+		return true
+	end
+    canvas_set_palette("palettes.int", 0)
+    g_menu_idx=0
+    main_menu_set_pal(g_menu_idx)
+    fade_in_sprite(g_menu["menu"])
+	return false
+end
+
 local function selected_acknowledgments()
 	main_menu_set_pal(3)
 	fade_out_sprite(g_menu["menu"],6)
@@ -3075,7 +3450,10 @@ local function main_menu()
 					return "J"
 				end
 			elseif input == 116 or input == 13 and g_menu_idx == 2 then --t
-				--transfer a character
+				if selected_transfer() == true then
+					intro()
+					return "J"
+				end
 			elseif input == 97 or input == 13 and g_menu_idx == 3 then  --a
 				selected_acknowledgments()
 			elseif input == 106 or input == 13 and g_menu_idx == 4 then --j
@@ -3129,7 +3507,10 @@ local function main_menu()
 							return "J"
 						end
 					elseif y > 127 and y < 149 then
-						--transfer a character
+						if selected_transfer() == true then
+							intro()
+							return "J"
+						end
 					elseif y > 148 and y < 170 then
 						selected_acknowledgments()
 					elseif y > 169 and y < 196 then

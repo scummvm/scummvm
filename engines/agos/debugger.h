@@ -46,6 +46,10 @@ private:
 	bool Cmd_StartSubroutine(int argc, const char **argv);
 	bool Cmd_dumpImage(int argc, const char **argv);
 	bool Cmd_dumpScript(int argc, const char **argv);
+	bool Cmd_GetTime(int argc, const char **argv);
+	bool Cmd_StartDay(int argc, const char **argv);
+	bool Cmd_StartNight(int argc, const char **argv);
+	bool setPNDebugTime(uint16 hour, uint16 minute);
 };
 
 } // End of namespace AGOS

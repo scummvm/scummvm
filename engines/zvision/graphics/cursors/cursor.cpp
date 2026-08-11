@@ -19,12 +19,10 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/graphics/cursors/cursor.h"
-
-#include "common/str.h"
 #include "common/file.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "zvision/graphics/cursors/cursor.h"
 
 namespace ZVision {
 
@@ -41,7 +39,7 @@ ZorkCursor::ZorkCursor(ZVision *engine, const Common::Path &fileName)
 	  _hotspotX(0),
 	  _hotspotY(0) {
 	Common::File file;
-	if (!engine->getSearchManager()->openFile(file, fileName))
+	if (!file.open(fileName))
 		error("Cursor file %s does not exist", fileName.toString().c_str());
 
 	uint32 magic = file.readUint32BE();

@@ -663,7 +663,7 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-	bool result;
+	bool result = false;
 
 	// SQ4 floppy prepends /\ to the filenames
 	if (name.hasPrefix("/\\")) {
@@ -671,7 +671,7 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		name.deleteChar(0);
 	}
 
-	if (name.hasPrefix("sq4sg.")) {
+	if (g_sci->getGameId() == GID_SQ4 && name.hasPrefix("sq4sg.")) {
 		// Special case for SQ4 floppy: This game has hardcoded save game names.
 		// They are named "sq4sg.xxx", where xxx is the virtual ID. We construct
 		// the appropriate save game name and delete it.
@@ -698,6 +698,17 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 			result = saveFileMan->removeSavefile(wrappedName);
 		}
 #endif
+	} else if (g_sci->getGameId() == GID_KQ5 && 
+				g_sci->getPlatform() == Common::kPlatformFMTowns && 
+				name.hasPrefix("a:\\KQ5sg.")) {
+		// KQ5 FM-Towns uses a custom save/restore UI in script 764.
+		// It directly deletes save files using a hard-coded path.
+		int saveNo = 0;
+		sscanf(name.c_str(), "a:\\KQ5sg.%d", &saveNo);
+		if (1 <= saveNo && saveNo <= 10) { // UI has ten buttons
+			name = g_sci->getSavegameName(saveNo);
+			result = saveFileMan->removeSavefile(name);
+		}
 	} else {
 		const Common::String wrappedName = g_sci->wrapFilename(name);
 		result = saveFileMan->removeSavefile(wrappedName);
@@ -807,8 +818,6 @@ reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 
-	bool exists = false;
-
 	if (g_sci->getGameId() == GID_PEPPER) {
 		// HACK: Special case for Pepper's Adventure in Time
 		// The game checks like crazy for the file CDAUDIO when entering the game menu.
@@ -820,36 +829,48 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef ENABLE_SCI32
-	if (isSaveCatalogue(name)) {
-		return saveCatalogueExists(name) ? TRUE_REG : NULL_REG;
-	}
-
-	int findSaveNo = -1;
-
-	if (g_sci->getGameId() == GID_LSL7 && name == "autosvsg.000") {
-		// LSL7 checks to see if the autosave save exists when deciding whether
-		// to go to the main menu or not on startup
-		findSaveNo = kAutoSaveId;
-	} else if (g_sci->getGameId() == GID_RAMA) {
-		// RAMA checks to see if save game files exist before showing them in
-		// the native save/load dialogue
-		if (name == "autorama.sg") {
-			findSaveNo = kAutoSaveId;
-		} else if (sscanf(name.c_str(), "ramasg.%d", &findSaveNo) == 1) {
-			findSaveNo += kSaveIdShift;
+	if (getSciVersion() >= SCI_VERSION_2) {
+		if (isSaveCatalogue(name)) {
+			return saveCatalogueExists(name) ? TRUE_REG : NULL_REG;
 		}
-	}
 
-	if (findSaveNo != -1) {
-		return g_sci->getSaveFileManager()->listSavefiles(g_sci->getSavegameName(findSaveNo)).empty() ? NULL_REG : TRUE_REG;
+		int findSaveNo = -1;
+		if (g_sci->getGameId() == GID_LSL7 && name == "autosvsg.000") {
+			// LSL7 checks to see if the autosave save exists when deciding whether
+			// to go to the main menu or not on startup
+			findSaveNo = kAutoSaveId;
+		} else if (g_sci->getGameId() == GID_RAMA) {
+			// RAMA checks to see if save game files exist before showing them in
+			// the native save/load dialogue
+			if (name == "autorama.sg") {
+				findSaveNo = kAutoSaveId;
+			} else if (sscanf(name.c_str(), "ramasg.%d", &findSaveNo) == 1) {
+				findSaveNo += kSaveIdShift;
+			}
+		}
+
+		if (findSaveNo != -1) {
+			return g_sci->getSaveFileManager()->listSavefiles(g_sci->getSavegameName(findSaveNo)).empty() ? NULL_REG : TRUE_REG;
+		}
+		// TODO: It may apparently be worth caching the existence of
+		// phantsg.dir, and possibly even keeping it open persistently
 	}
 #endif
 
-	// TODO: It may apparently be worth caching the existence of
-	// phantsg.dir, and possibly even keeping it open persistently
+	if (g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformFMTowns) {
+		// KQ5 FM-Towns uses a custom save/restore UI in script 764.
+		// It directly tests for save files using a hard-coded path.
+		int saveNo = 0;
+		sscanf(name.c_str(), "a:\\KQ5sg.%d", &saveNo);
+		if (1 <= saveNo && saveNo <= 10) { // UI has ten buttons
+			Common::Array<SavegameDesc> saves;
+			listSavegames(saves);
+			return (findSavegame(saves, saveNo) != -1) ? TRUE_REG : NULL_REG;
+		}
+	}
 
 	// Check for regular file
-	exists = Common::File::exists(Common::Path(name));
+	bool exists = Common::File::exists(Common::Path(name));
 
 	// Check for a savegame with the name
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
@@ -894,7 +915,7 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	if (!exists && name == "memory.drv") {
 		// Create a new file, and write the bytes for the empty password
 		// string inside
-		byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
+		const byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
 		Common::WriteStream *outFile = saveFileMan->openForSaving(wrappedName);
 		for (int i = 0; i < 10; i++)
 			outFile->writeByte(defaultContent[i]);
@@ -1080,7 +1101,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 		// we are supposed to show a dialog for the user and let him choose where to save
 		g_sci->_soundCmd->pauseAll(true); // pause music
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		savegameId = dialog->runModalWithCurrentTarget();
 		game_description = dialog->getResultString();
 		if (game_description.empty()) {
@@ -1121,6 +1142,15 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 			case GID_JONES:
 				// Jones has one save slot only
 				savegameId = 0;
+				break;
+			case GID_KQ5:
+				if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
+					// KQ5 FM-Towns uses custom save/restore code.
+					// Use the provided id.
+					savegameId = virtualId;
+					// Use a default description, game passes path since it wasn't displayed.
+					game_description = Common::String::format("Save %d", savegameId);
+				}
 				break;
 			case GID_QFG3: {
 				// Auto-save system used by QFG3
@@ -1213,7 +1243,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 			// get properly released. In that case we don't add another pause here.
 			if (!g_sci->_soundCmd->isGlobalPauseActive()) 
 				g_sci->_soundCmd->pauseAll(true); 
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 			if (savegameId < 0) {
@@ -1227,6 +1257,9 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		if (g_sci->getGameId() == GID_JONES) {
 			// Jones has one save slot only
 			savegameId = 0;
+		} else if (g_sci->getGameId() == GID_KQ5 &&	g_sci->getPlatform() == Common::kPlatformFMTowns) {
+			// KQ5 FM-Towns uses custom save/restore code.
+			// Use the provided id.
 		} else {
 			// Real call from script, we need to adjust ID
 			if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
@@ -1253,6 +1286,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_soundCmd->pauseAll(false); // unpause music
 		else
 			g_sci->_soundCmd->resetGlobalPauseCounter(); // reset music global pause counter without affecting the individual sounds
+	} else if (s->r_acc.isNull() && g_sci->_soundCmd->isGlobalPauseActive()) {
+		g_sci->_soundCmd->resetGlobalPauseCounter(); // reset music global pause counter without affecting the individual sounds
 	}
 
 	return s->r_acc;
@@ -1286,6 +1321,10 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	uint savegameId = 0;
 	if (g_sci->getGameId() == GID_JONES) {
 		// Jones has one save slot only
+	} else if (g_sci->getGameId() == GID_KQ5 &&	g_sci->getPlatform() == Common::kPlatformFMTowns) {
+		// KQ5 FM-Towns uses custom save/restore code.
+		// Use the provided id.
+		savegameId = virtualId;
 	} else {
 		// Find saved game
 		if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))

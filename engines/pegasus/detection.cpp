@@ -55,7 +55,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075081),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK|GF_DVD,
+			ADGF_MACRESFORK|ADGF_DVD,
 			GUIO0()
 		},
 	},
@@ -66,7 +66,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075081),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_MACRESFORK|GF_DVD,
+			ADGF_MACRESFORK|ADGF_DVD,
 			GUIO0()
 		},
 	},
@@ -78,7 +78,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2075081),
 			Common::EN_ANY,
 			Common::kPlatformLinux,
-			ADGF_MACRESFORK|GF_DVD,
+			ADGF_MACRESFORK|ADGF_DVD,
 			GUIO0()
 		},
 	},
@@ -121,7 +121,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "r:d0fcda50dc75c7a81ae314e6a813f4d2", 93239),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
+			ADGF_MACRESFORK | ADGF_DEMO | ADGF_DVD,
 			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
 		},
 	},
@@ -133,7 +133,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "r:d0fcda50dc75c7a81ae314e6a813f4d2", 93239),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
+			ADGF_MACRESFORK | ADGF_DEMO | ADGF_DVD,
 			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
 		},
 	},
@@ -144,9 +144,9 @@ static const PegasusGameDescription gameDescriptions[] = {
 } // End of namespace Pegasus
 
 
-class PegasusMetaEngineDetection : public AdvancedMetaEngineDetection {
+class PegasusMetaEngineDetection : public AdvancedMetaEngineDetection<Pegasus::PegasusGameDescription> {
 public:
-	PegasusMetaEngineDetection() : AdvancedMetaEngineDetection(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
+	PegasusMetaEngineDetection() : AdvancedMetaEngineDetection(Pegasus::gameDescriptions, pegasusGames) {
 	}
 
 	const char *getName() const override {

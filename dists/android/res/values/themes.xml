@@ -6,7 +6,15 @@
 		<item name="keyboardViewStyle">@style/View.CustomKeyboard</item>
 	</style>
 
-	<style name="SplashTheme" parent="AppTheme">
+	<style name="SplashThemeBase" parent="AppTheme">
+	</style>
+
+	<style name="SplashTheme_v21" parent="SplashThemeBase">
+	</style>
+	<style name="SplashTheme_v30" parent="SplashTheme_v21">
+	</style>
+
+	<style name="SplashTheme" parent="SplashTheme_v30">
 		<item name="android:windowBackground">@drawable/splash</item>
 	</style>
 
@@ -14,6 +22,16 @@
 	<style name="ShortcutCreatorThemeBase" parent="@android:style/Theme.DeviceDefault">
 	</style>
 
-	<style name="ShortcutCreatorTheme" parent="ShortcutCreatorThemeBase">
+	<style name="ShortcutCreatorTheme_v11" parent="ShortcutCreatorThemeBase">
+		<item name="android:windowActionBar">false</item>
+		<item name="android:windowNoTitle">true</item>
+	</style>
+
+	<style name="ShortcutCreatorTheme_v21" parent="ShortcutCreatorTheme_v11">
+	</style>
+	<style name="ShortcutCreatorTheme_v30" parent="ShortcutCreatorTheme_v21">
+	</style>
+
+	<style name="ShortcutCreatorTheme" parent="ShortcutCreatorTheme_v30">
 	</style>
 </resources>

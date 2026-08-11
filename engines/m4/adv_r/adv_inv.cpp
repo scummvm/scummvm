@@ -43,19 +43,17 @@ InventoryBase::~InventoryBase() {
 
 void InventoryBase::syncGame(Common::Serializer &s) {
 	char invName[MAX_NAME_LENGTH];
-	uint32 inv_size, scene;
-	int32 i;
 
-	inv_size = _tail * (MAX_NAME_LENGTH + sizeof(uint32));
+	uint32 inv_size = _tail * (MAX_NAME_LENGTH + sizeof(uint32));
 	s.syncAsUint32LE(inv_size);
 	if (s.isLoading()) {
 		assert((inv_size % (MAX_NAME_LENGTH + sizeof(uint32))) == 0);
 		_tail = inv_size / (MAX_NAME_LENGTH + sizeof(uint32));
 	}
 
-	for (i = 0; i < _tail; ++i) {
+	for (int32 i = 0; i < _tail; ++i) {
 		char *objName = _G(inventory)->_objects[i]->name;
-		scene = _G(inventory)->_objects[i]->scene;
+		uint32 scene = _G(inventory)->_objects[i]->scene;
 
 		if (s.isLoading()) {
 			s.syncBytes((byte *)invName, MAX_NAME_LENGTH);
@@ -70,30 +68,25 @@ void InventoryBase::syncGame(Common::Serializer &s) {
 			s.syncBytes((byte *)invName, MAX_NAME_LENGTH);
 			s.syncAsUint32LE(scene);
 		}
-
 	}
 }
 
-bool inv_init(int32 num_objects) {
+void inv_init(int32 num_objects) {
 	term_message("Fluffing up the backpack", nullptr);
-	int i;
-
 	_G(inventory)->_objects.resize(num_objects);
 
-	if (!mem_register_stash_type(&_G(inv_obj_mem_type), sizeof(InvObj), num_objects, "obj"))
-		error_show(FL, 'OOM!', "fail to mem_register_stash_type for inv_obj");
+	mem_register_stash_type(&_G(inv_obj_mem_type), sizeof(InvObj), num_objects, "obj");
 
-	for (i = 0; i < num_objects; i++) {
+	for (int i = 0; i < num_objects; i++) {
 		_G(inventory)->_objects[i] = (InvObj *)mem_get_from_stash(_G(inv_obj_mem_type), "obj");
 		if (!_G(inventory)->_objects[i])
-			error_show(FL, 'OOM!', "%d bytes", (int32)sizeof(InvObj));
+			error_show(FL, "%d bytes", (int32)sizeof(InvObj));
 	}
 
 	_G(inventory)->_tail = 0;
-	return true;
 }
 
-bool inv_register_thing(const Common::String &itemName, const Common::String &itemVerbs,
+void inv_register_thing(const Common::String &itemName, const Common::String &itemVerbs,
 		int32 scene, int32 cel, int32 cursor) {
 	char *s_name = mem_strdup(itemName.c_str());
 	char *s_verbs = mem_strdup(itemVerbs.c_str());
@@ -120,18 +113,15 @@ bool inv_register_thing(const Common::String &itemName, const Common::String &it
 	if (scene == BACKPACK) {
 		_G(inventory)->add(s_name, s_verbs, cel, cursor);
 	}
-
-	return true;
 }
 
 //-------------------------------------------------------------------
 
 int32 inv_where_is(const Common::String &itemName) {
-	int i;
 	Common::String name = itemName;
 	name.toUppercase();
 
-	for (i = 0; i < _G(inventory)->_tail; i++) {
+	for (int i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
 			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->scene;
@@ -147,11 +137,10 @@ bool inv_player_has(const Common::String &itemName) {
 }
 
 bool inv_put_thing_in(const Common::String &itemName, int32 scene) {
-	int i;
 	Common::String name = itemName;
 	name.toUppercase();
 
-	for (i = 0; i < _G(inventory)->_tail; i++) {
+	for (int i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
 			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				// Remove object from backpack?
@@ -173,11 +162,10 @@ bool inv_put_thing_in(const Common::String &itemName, int32 scene) {
 }
 
 int32 inv_get_cursor(const Common::String &itemName) {
-	int i;
 	Common::String name = itemName;
 	name.toUppercase();
 
-	for (i = 0; i < _G(inventory)->_tail; i++) {
+	for (int i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
 			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->cursor;
@@ -189,11 +177,10 @@ int32 inv_get_cursor(const Common::String &itemName) {
 }
 
 int32 inv_get_cel(const Common::String &itemName) {
-	int i;
 	Common::String name = itemName;
 	name.toUppercase();
 
-	for (i = 0; i < _G(inventory)->_tail; i++) {
+	for (int i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
 			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->cel;
@@ -204,11 +191,10 @@ int32 inv_get_cel(const Common::String &itemName) {
 }
 
 const char *inv_get_verbs(const Common::String &itemName) {
-	int i;
 	Common::String name = itemName;
 	name.toUppercase();
 
-	for (i = 0; i < _G(inventory)->_tail; i++) {
+	for (int i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
 			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->verbs;
@@ -224,11 +210,10 @@ const char *inv_get_verbs(const Common::String &itemName) {
 // memory pointer.
 
 static char *inv_get_name(const Common::String &itemName) {
-	int i;
 	Common::String name = itemName;
 	name.toUppercase();
 
-	for (i = 0; i < _G(inventory)->_tail; i++) {
+	for (int i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
 			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->name;

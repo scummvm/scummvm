@@ -35,9 +35,9 @@ const GameConstants _nancy4Constants ={
 	32												// wonGameFlagID
 };
 
-const Common::Array<Common::Language> _nancy4LanguagesOrder = {
-	Common::Language::EN_ANY,
-	Common::Language::RU_RUS
+const Common::Array<GameLanguage> _nancy4LanguagesOrder = {
+	GameLanguage::kEnglish,
+	GameLanguage::kRussian
 };
 
 const Common::Array<Common::Array<ConditionalDialogue>> _nancy4ConditionalDialogue = {
@@ -300,7 +300,7 @@ const Common::Array<Common::Array<const char *>> _nancy4ConditionalDialogueTexts
 	"How can I get to that secret door when the elevator's always in the way?<h><n>", // NDN24a
 	// 65
 	"According to the decoder, the symbols in the stained glass window mean 'Purple Rose Holds Diamond Key of Queen.'<h><n>", // NDN25a
-	"How do you think Ezra Wickford got his hands on Marie Antoinette's red medallion?<h><n>", // NDN26 
+	"How do you think Ezra Wickford got his hands on Marie Antoinette's red medallion?<h><n>", // NDN26
 	"How do you think Professor Hotchkiss ended up with Marie Antoinette's green medallion?<h><n>", // NDN27
 	"What do you think 'hope to those who search' means?<h><n>", // NDN28
 	"What do you think 'Diamond of misery in my journal' means?<h><n>", // NDN29

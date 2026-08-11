@@ -43,8 +43,11 @@ const Rect &Camera::GetRect() const {
 void Camera::SetSize(const Size cam_size) {
 	// TODO: currently we don't support having camera larger than room background
 	// (or rather - looking outside of the room background); look into this later
-	const Size real_room_sz = Size(data_to_game_coord(_GP(thisroom).Width), data_to_game_coord(_GP(thisroom).Height));
-	Size real_size = Size::Clamp(cam_size, Size(1, 1), real_room_sz);
+	const Size real_room_sz = (_G(displayed_room) >= 0 && (_GP(thisroom).Width > 0 && _GP(thisroom).Height > 0)) ?
+							  Size(data_to_game_coord(_GP(thisroom).Width), data_to_game_coord(_GP(thisroom).Height)) :
+							  Size(INT32_MAX, INT32_MAX);
+
+	const Size real_size = Size::Clamp(cam_size, Size(1, 1), real_room_sz);
 	if (_position.GetWidth() == real_size.Width && _position.GetHeight() == real_size.Height)
 		return;
 

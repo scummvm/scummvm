@@ -71,9 +71,6 @@ public:
 
 		bool           contains(const String &key) const { return _entries.contains(key); } /*!< Check whether the domain contains a @p key. */
 		/** Return the configuration value for the given key.
-		 *  If no entry exists for the given key in the configuration, it is created.
-		 */
-		/** Return the configuration value for the given key.
 		 *  @note This function does *not* create a configuration entry
 		 *  for the given key if it does not exist.
 		 */
@@ -81,6 +78,9 @@ public:
 
 		void           setVal(const String &key, const String &value) { _entries.setVal(key, value); } /*!< Assign a @p value to a @p key. */
 
+		/** Return the configuration value for the given key.
+		 *  If no entry exists for the given key in the configuration, it is created.
+		 */
 		String &getOrCreateVal(const String &key) { return _entries.getOrCreateVal(key); }
 		String        &getVal(const String &key) { return _entries.getVal(key); } /*!< Retrieve the value of a @p key. */
 		const String  &getVal(const String &key) const { return _entries.getVal(key); } /*!< @overload */
@@ -89,8 +89,8 @@ public:
 		  * @return True if the key exists, false otherwise.
 		  * You can use this method if you frequently attempt to access keys that do not exist.
 		  */
-		const String &getValOrDefault(const String &key) const { return _entries.getValOrDefault(key); }
 		bool tryGetVal(const String &key, String &out) const { return _entries.tryGetVal(key, out); }
+		const String &getValOrDefault(const String &key) const { return _entries.getValOrDefault(key); }
 
 		void           clear() { _entries.clear(); } /*!< Clear all configuration entries in the domain. */
 
@@ -116,10 +116,10 @@ public:
 	/** The name of keymapper domain used to store the key maps. */
 	static char const *const kKeymapperDomain;
 
-	/** The name of the session domain where configs are put 
-	 * for the entire session or until they are overwritten or removed. 
+	/** The name of the session domain where configs are put
+	 * for the entire session or until they are overwritten or removed.
 	 * These settings don't get saved to disk. */
-	static char const *const kSessionDomain; 
+	static char const *const kSessionDomain;
 
 #ifdef USE_CLOUD
 	/** The name of cloud domain used to store the user's tokens. */
@@ -188,9 +188,11 @@ public:
 	int                      getInt(const String &key, const String &domName = String()) const; /*!< Get integer value. */
 	bool                     getBool(const String &key, const String &domName = String()) const; /*!< Get Boolean value. */
 	Path                     getPath(const String &key, const String &domName = String()) const; /*!< Get path value. */
+	float                    getFloat(const String &key, const String &domName = String()) const; /*!< Get float value. */
 	void                     setInt(const String &key, int value, const String &domName = String()); /*!< Set integer value. */
 	void                     setBool(const String &key, bool value, const String &domName = String()); /*!< Set Boolean value. */
 	void                     setPath(const String &key, const Path &value, const String &domName = String()); /*!< Set path value. */
+	void                     setFloat(const String &key, float value, const String &domName = String()); /*!< Set float value. */
 
 	void                     registerDefault(const String &key, const String &value); /*!< Register a value as the default. */
 	void                     registerDefault(const String &key, const char *value); /*!< @overload */
@@ -245,7 +247,7 @@ private:
 
 	Domain			_keymapperDomain;
 
-	Domain          _sessionDomain; 	
+	Domain          _sessionDomain;
 
 #ifdef USE_CLOUD
 	Domain			_cloudDomain;

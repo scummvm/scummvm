@@ -116,11 +116,9 @@ void UCProcess::freeOnTerminate(uint16 index, int type) {
 }
 
 void UCProcess::terminate() {
-	Std::list<Common::Pair<uint16, int> >::iterator i;
-
-	for (i = _freeOnTerminate.begin(); i != _freeOnTerminate.end(); ++i) {
-		uint16 index = (*i).first;
-		int typeNum = (*i).second;
+	for (auto &i : _freeOnTerminate) {
+		uint16 index = i.first;
+		int typeNum = i.second;
 
 		switch (typeNum) {
 		case 1: // string
@@ -161,10 +159,9 @@ void UCProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_ip);
 	ws->writeUint32LE(_temp32);
 	ws->writeUint32LE(static_cast<uint32>(_freeOnTerminate.size()));
-	Std::list<Common::Pair<uint16, int> >::iterator iter;
-	for (iter = _freeOnTerminate.begin(); iter != _freeOnTerminate.end(); ++iter) {
-		ws->writeUint16LE(iter->first);
-		ws->writeUint32LE(static_cast<uint32>(iter->second));
+	for (const auto &i : _freeOnTerminate) {
+		ws->writeUint16LE(i.first);
+		ws->writeUint32LE(static_cast<uint32>(i.second));
 	}
 	_stack.save(ws);
 }

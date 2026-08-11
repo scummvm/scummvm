@@ -48,10 +48,9 @@ AdObject3D::AdObject3D(BaseGame *inGame) : AdObject(inGame) {
 
 	_velocity = 1.0f;
 	_angVelocity = 1.0f;
-	_lastPosVector = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_lastPosVector = DXVector3(0.0f, 0.0f, 0.0f);
 
 	_state = _nextState = STATE_READY;
-
 	_dropToFloor = true;
 	_shadowType = SHADOW_STENCIL;
 
@@ -66,38 +65,39 @@ AdObject3D::AdObject3D(BaseGame *inGame) : AdObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdObject3D::~AdObject3D() {
 	_tempSkelAnim = nullptr; // ref only
-	delete _shadowVolume;
-	_shadowVolume = nullptr;
+	SAFE_DELETE(_shadowVolume);
 
 	clearIgnoredLights();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void AdObject3D::clearIgnoredLights() {
-	for (uint32 i = 0; i < _ignoredLights.size(); ++i) {
+	for (int32 i = 0; i < _ignoredLights.getSize(); ++i) {
 		delete _ignoredLights[i];
 	}
-
-	_ignoredLights.clear();
+	_ignoredLights.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject3D::addIgnoredLight(char *lightName) {
-	for (uint32 i = 0; i < _ignoredLights.size(); i++) {
-		if (_ignoredLights[i] == lightName) {
+bool AdObject3D::addIgnoredLight(const char *lightName) {
+	for (int32 i = 0; i < _ignoredLights.getSize(); i++) {
+		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
 			return true;
 		}
 	}
-
-	_ignoredLights.add(lightName);
+	size_t tempSize = strlen(lightName) + 1;
+	char *temp = new char[tempSize];
+	Common::strcpy_s(temp, tempSize, lightName);
+	_ignoredLights.add(temp);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject3D::removeIgnoredLight(char *lightName) {
-	for (uint32 i = 0; i < _ignoredLights.size(); i++) {
-		if (_ignoredLights[i] == lightName) {
-			_ignoredLights.remove_at(i);
+bool AdObject3D::removeIgnoredLight(const char *lightName) {
+	for (int32 i = 0; i < _ignoredLights.getSize(); i++) {
+		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
+			delete[] _ignoredLights[i];
+			_ignoredLights.removeAt(i);
 			return true;
 		}
 	}
@@ -106,11 +106,11 @@ bool AdObject3D::removeIgnoredLight(char *lightName) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::update() {
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 
 	// drop to floor
-	if (_dropToFloor && adGame->_scene && adGame->_scene->_sceneGeometry) {
-		_posVector.y() = adGame->_scene->_sceneGeometry->getHeightAt(_posVector, 5.0f);
+	if (_dropToFloor && adGame->_scene && adGame->_scene->_geom) {
+		_posVector._y = adGame->_scene->_geom->getHeightAt(_posVector, 5.0f);
 	}
 
 	getMatrix(&_worldMatrix);
@@ -126,9 +126,20 @@ bool AdObject3D::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject3D::convert3DTo2D(Math::Matrix4 *worldMat, int32 *posX, int32 *posY) {
-	Math::Vector3d origin(0.0f, 0.0f, 0.0f);
-	_gameRef->_renderer3D->project(*worldMat, origin, *posX, *posY);
+bool AdObject3D::convert3DTo2D(DXMatrix *worldMat, int32 *posX, int32 *posY) {
+	BaseRenderer3D *renderer = _game->_renderer3D;
+	DXMatrix viewMat, projMat;
+	DXVector3 vec2d(0.0f, 0.0f, 0.0f);
+	renderer->getViewTransform(&viewMat);
+	renderer->getProjectionTransform(&projMat);
+
+	DXViewport viewport = renderer->getViewPort();
+
+	DXVector3 origin(0.0f, 0.0f, 0.0f);
+	DXVec3Project(&vec2d, &origin, &viewport, &projMat, &viewMat, worldMat);
+
+	*posX = vec2d._x + _game->_offsetX - _game->_renderer3D->_drawOffsetX;
+	*posY = vec2d._y + _game->_offsetY - _game->_renderer3D->_drawOffsetY;
 
 	return true;
 }
@@ -140,10 +151,10 @@ bool AdObject3D::display() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::setupLights() {
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 
-	if (adGame->_scene && adGame->_scene->_sceneGeometry) {
-		return adGame->_scene->_sceneGeometry->enableLights(_posVector, _ignoredLights);
+	if (adGame->_scene && adGame->_scene->_geom) {
+		return adGame->_scene->_geom->enableLights(_posVector, _ignoredLights);
 	} else {
 		return false;
 	}
@@ -171,10 +182,9 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SkipTo3D") == 0) {
 		stack->correctParams(3);
-		_posVector.x() = stack->pop()->getFloat();
-		_posVector.y() = stack->pop()->getFloat();
-		// scripts will expect a Direct3D coordinate system
-		_posVector.z() = -stack->pop()->getFloat();
+		_posVector._x = stack->pop()->getFloat();
+		_posVector._y = stack->pop()->getFloat();
+		_posVector._z = stack->pop()->getFloat();
 
 		stack->pushNULL();
 
@@ -203,15 +213,14 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "GetBonePosition3D") == 0) {
 		stack->correctParams(1);
 		const char *boneName = stack->pop()->getString();
-		Math::Vector3d pos(0, 0, 0);
+		DXVector3 pos(0, 0, 0);
 		getBonePosition3D(boneName, &pos);
 
 		ScValue *val = stack->getPushValue();
-
 		if (val) {
-			val->setProperty("X", pos.x());
-			val->setProperty("Y", pos.y());
-			val->setProperty("Z", pos.z());
+			val->setProperty("X", pos._x);
+			val->setProperty("Y", pos._y);
+			val->setProperty("Z", pos._z);
 		}
 
 		return true;
@@ -221,8 +230,7 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AddIgnoredLight") == 0) {
 		stack->correctParams(1);
-		char *lightName = nullptr;
-		BaseUtils::setString(&lightName, stack->pop()->getString());
+		const char *lightName = stack->pop()->getString();
 		stack->pushBool(addIgnoredLight(lightName));
 		return true;
 	}
@@ -231,8 +239,7 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveIgnoredLight") == 0) {
 		stack->correctParams(1);
-		char *lightName = nullptr;
-		BaseUtils::setString(&lightName, stack->pop()->getString());
+		const char *lightName = stack->pop()->getString();
 		stack->pushBool(removeIgnoredLight(lightName));
 		return true;
 	}
@@ -243,58 +250,55 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 }
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdObject3D::scGetProperty(const Common::String &name) {
+ScValue *AdObject3D::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Angle
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Angle") {
-		float tmp = 0.0f;
-		_scValue->setFloat(tmp);
-		_angle = tmp;
+	if (strcmp(name, "Angle") == 0) {
+		_scValue->setFloat(_angle);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PosX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PosX") {
-		_scValue->setFloat(_posVector.x());
+	else if (strcmp(name, "PosX") == 0) {
+		_scValue->setFloat(_posVector._x);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PosY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PosY") {
-		_scValue->setFloat(_posVector.y());
+	else if (strcmp(name, "PosY") == 0) {
+		_scValue->setFloat(_posVector._y);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PosZ
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PosZ") {
-		// scripts will expect a Direct3D coordinate system
-		_scValue->setFloat(-_posVector.z());
+	else if (strcmp(name, "PosZ") == 0) {
+		_scValue->setFloat(_posVector._z);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Velocity
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Velocity") {
+	else if (strcmp(name, "Velocity") == 0) {
 		_scValue->setFloat(_velocity);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AngularVelocity / AngVelocity
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AngularVelocity" || name == "AngVelocity") {
+	else if (strcmp(name, "AngularVelocity") == 0 || strcmp(name, "AngVelocity") == 0) {
 		_scValue->setFloat(_angVelocity);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// DropToFloor
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "DropToFloor") {
+	else if (strcmp(name, "DropToFloor") == 0) {
 		_scValue->setBool(_dropToFloor);
 		return _scValue;
 	}
@@ -302,7 +306,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ShadowType
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ShadowType") {
+	else if (strcmp(name, "ShadowType") == 0) {
 		_scValue->setInt(_shadowType);
 		return _scValue;
 	}
@@ -310,7 +314,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Shadow (obsolete)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Shadow") {
+	else if (strcmp(name, "Shadow") == 0) {
 		_scValue->setBool(_shadowType > SHADOW_NONE);
 		return _scValue;
 	}
@@ -318,7 +322,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SimpleShadow (obsolete)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SimpleShadow") {
+	else if (strcmp(name, "SimpleShadow") == 0) {
 		_scValue->setBool(_shadowType == SHADOW_SIMPLE);
 		return _scValue;
 	}
@@ -326,7 +330,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ShadowColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ShadowColor") {
+	else if (strcmp(name, "ShadowColor") == 0) {
 		_scValue->setInt(_shadowColor);
 		return _scValue;
 	}
@@ -334,7 +338,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Scale") {
+	else if (strcmp(name, "Scale") == 0) {
 		_scValue->setFloat(_scale3D * 100.0f);
 		return _scValue;
 	}
@@ -342,7 +346,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DrawBackfaces
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "DrawBackfaces") {
+	else if (strcmp(name, "DrawBackfaces") == 0) {
 		_scValue->setBool(_drawBackfaces);
 		return _scValue;
 	}
@@ -350,7 +354,7 @@ ScValue *AdObject3D::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmbientLightColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AmbientLightColor") {
+	else if (strcmp(name, "AmbientLightColor") == 0) {
 		if (_hasAmbientLightColor) {
 			_scValue->setInt(_ambientLightColor);
 		} else {
@@ -379,22 +383,21 @@ bool AdObject3D::scSetProperty(const char *name, ScValue *value) {
 	// PosX
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PosX") == 0) {
-		_posVector.x() = value->getFloat();
+		_posVector._x = value->getFloat();
 		return true;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PosY
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PosY") == 0) {
-		_posVector.y() = value->getFloat();
+		_posVector._y = value->getFloat();
 		return true;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// PosZ
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PosZ") == 0) {
-		// scripts will expect a Direct3D coordinate system
-		_posVector.z() = -value->getFloat();
+		_posVector._z = value->getFloat();
 		return true;
 	}
 
@@ -403,9 +406,9 @@ bool AdObject3D::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "X") == 0) {
 		_posX = value->getInt();
-		AdGame *adGame = (AdGame *)_gameRef;
-		Math::Vector3d pos;
-		if (adGame->_scene->_sceneGeometry && adGame->_scene->_sceneGeometry->convert2Dto3D(_posX, _posY, &pos)) {
+		AdGame *adGame = (AdGame *)_game;
+		DXVector3 pos;
+		if (adGame->_scene->_geom && adGame->_scene->_geom->convert2Dto3D(_posX, _posY, &pos)) {
 			_posVector = pos;
 		}
 		return true;
@@ -416,9 +419,9 @@ bool AdObject3D::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Y") == 0) {
 		_posY = value->getInt();
-		AdGame *adGame = (AdGame *)_gameRef;
-		Math::Vector3d pos;
-		if (adGame->_scene->_sceneGeometry && adGame->_scene->_sceneGeometry->convert2Dto3D(_posX, _posY, &pos)) {
+		AdGame *adGame = (AdGame *)_game;
+		DXVector3 pos;
+		if (adGame->_scene->_geom && adGame->_scene->_geom->convert2Dto3D(_posX, _posY, &pos)) {
 			_posVector = pos;
 		}
 		return true;
@@ -466,7 +469,6 @@ bool AdObject3D::scSetProperty(const char *name, ScValue *value) {
 		if (_shadowType < 0) {
 			_shadowType = SHADOW_NONE;
 		}
-
 		if (_shadowType > SHADOW_STENCIL) {
 			_shadowType = SHADOW_STENCIL;
 		}
@@ -559,14 +561,14 @@ bool AdObject3D::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::skipTo(int x, int y, bool tolerant) {
-	AdGame *adGame = (AdGame *)_gameRef;
-	Math::Vector3d pos;
+	AdGame *adGame = (AdGame *)_game;
+	DXVector3 pos;
 
 	bool success;
 	if (tolerant) {
-		success = adGame->_scene->_sceneGeometry && adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(x, y, &pos);
+		success = adGame->_scene->_geom && adGame->_scene->_geom->convert2Dto3DTolerant(x, y, &pos);
 	} else {
-		success = adGame->_scene->_sceneGeometry && adGame->_scene->_sceneGeometry->convert2Dto3D(x, y, &pos);
+		success = adGame->_scene->_geom && adGame->_scene->_geom->convert2Dto3D(x, y, &pos);
 	}
 
 	if (success) {
@@ -581,10 +583,8 @@ bool AdObject3D::skipTo(int x, int y, bool tolerant) {
 
 //////////////////////////////////////////////////////////////////////////
 ShadowVolume *AdObject3D::getShadowVolume() {
-	if (_shadowVolume == nullptr) {
-		_shadowVolume = _gameRef->_renderer3D->createShadowVolume();
-	}
-
+	if (_shadowVolume == nullptr)
+		_shadowVolume = _game->_renderer3D->createShadowVolume();
 	return _shadowVolume;
 }
 
@@ -594,46 +594,52 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 		return false;
 	}
 
-	AdGame *adGame = (AdGame *)_gameRef;
-
-	if (!adGame->_scene || !adGame->_scene->_sceneGeometry)
+	AdGame *adGame = (AdGame *)_game;
+	if (!adGame->_scene || !adGame->_scene->_geom)
 		return false;
 
-	Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(boneName);
-
+	DXMatrix *boneMat = _xmodel->getBoneMatrix(boneName);
 	if (!boneMat) {
 		return false;
 	}
 
-	Math::Matrix4 bonePosMat = *boneMat * _worldMatrix;
+	DXMatrix bonePosMat;
+	DXMatrixMultiply(&bonePosMat, boneMat, &_worldMatrix);
 
-	Math::Vector4d vectBone4 = Math::Vector4d(0.0f, 0.0f, 0.0f, 0.0f);
-	bonePosMat.transformVector(&vectBone4);
-	Math::Vector3d vectBone(vectBone4.x(), vectBone4.y(), vectBone4.z());
+	DXVector4 vectBone4;
+	DXVector3 vectBone3(0, 0, 0);
+	DXVec3Transform(&vectBone4, &vectBone3, &bonePosMat);
+	DXVector3 vectBone(vectBone4._x, vectBone4._y, vectBone4._z);
 
-	adGame->_scene->_sceneGeometry->convert3Dto2D(&vectBone, x, y);
+	adGame->_scene->_geom->convert3Dto2D(&vectBone, x, y);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdObject3D::getBonePosition3D(const char *boneName, Math::Vector3d *pos, Math::Vector3d *offset) {
+bool AdObject3D::getBonePosition3D(const char *boneName, DXVector3 *pos, DXVector3 *offset) {
 	if (!_xmodel) {
 		return false;
 	}
 
-	Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(boneName);
+	DXMatrix *boneMat = _xmodel->getBoneMatrix(boneName);
 	if (!boneMat) {
 		return false;
 	}
 
-	Math::Matrix4 bonePosMat = *boneMat * _worldMatrix;
-	*pos = Math::Vector3d(0.0f, 0.0f, 0.0f);
-
-	if (offset) {
-		*pos = *offset;
+	DXVector3 vz(0, 0, 0);
+	if (!offset) {
+		offset = &vz;
 	}
 
-	bonePosMat.transform(pos, true);
+	DXMatrix bonePosMat;
+	DXMatrixMultiply(&bonePosMat, boneMat, &_worldMatrix);
+
+	DXVector4 vectBone4;
+	DXVec3Transform(&vectBone4, offset, &bonePosMat);
+
+	pos->_x = vectBone4._x;
+	pos->_y = vectBone4._y;
+	pos->_z = vectBone4._z;
 
 	return true;
 }

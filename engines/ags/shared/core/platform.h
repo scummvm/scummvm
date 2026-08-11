@@ -104,6 +104,11 @@ namespace AGS3 {
 #error "Unknown platform"
 #endif
 
+#if 0
+#define AGS_PLATFORM_WINDOWS_MINGW (1)
+#else
+#define AGS_PLATFORM_WINDOWS_MINGW (0)
+#endif
 
 #if defined(__LP64__)
 // LP64 machine, macOS or Linux
@@ -129,12 +134,8 @@ namespace AGS3 {
 #error "No endianness defined"
 #endif
 
-#if defined(_DEBUG)
-#define AGS_PLATFORM_DEBUG  (1)
-#elif ! defined(NDEBUG)
-#define AGS_PLATFORM_DEBUG  (1)
-#else
-#define AGS_PLATFORM_DEBUG  (0)
+#if defined(SCUMM_NEED_ALIGNMENT)
+#define AGS_STRICT_ALIGNMENT
 #endif
 
 #define AGS_PLATFORM_DESKTOP ((AGS_PLATFORM_OS_WINDOWS) || (AGS_PLATFORM_OS_LINUX) || (AGS_PLATFORM_OS_MACOS))

@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_UTIL_UTF8_H
 #define AGS_SHARED_UTIL_UTF8_H
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {

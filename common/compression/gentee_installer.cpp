@@ -629,7 +629,8 @@ public:
 	explicit PackageArchive(Common::SeekableReadStream *stream);
 	~PackageArchive();
 
-	bool load(const char *prefix);
+	bool loadPAK(const char *prefix);
+	bool loadFromEXE(const char *prefix);
 
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
@@ -657,35 +658,91 @@ PackageArchive::~PackageArchive() {
 	delete _stream;
 }
 
-bool PackageArchive::load(const char *prefix) {
-	byte pakFileSizeBytes[4];
+bool PackageArchive::loadFromEXE(const char *prefix) {
+	// Gentee Installer executables have up to three components:
+	//
+	// - The loader, which is a small loader about 7.5kb in size that contains
+	//   the decompression function.  The PAK file name is embedded at 0x3a0
+	//   and the DLL payload locator is embedded at 0x3f0.
+	//
+	// - The DLL payload, which is a compressed DLL that gets decompressed to
+	//   a file named ginstall.dll and then loaded and used to execute most of
+	//   the installer interpreter logic.
+	// 
+	// - Possibly an embedded PAK file.
+
+	if (_stream->size() < 1024) {
+		warning("GenteeInstaller::PackageArchive::loadFromEXE: Couldn't read pak file size declaration");
+		return false;
+	}
+
+	if (!_stream->seek(1024 - 16, SEEK_SET)) {
+		warning("GenteeInstaller::PackageArchive::loadFromEXE: Couldn't seek to ginstall.dll payload locator");
+		return false;
+	}
+
+	byte payloadLocatorBytes[12];
+
+	if (_stream->read(payloadLocatorBytes, 12) != 12) {
+		warning("GenteeInstaller::PackageArchive::loadFromEXE: Couldn't read ginstall.dll payload locator");
+		return false;
+	}
+
+	uint32 payloadLocation = READ_LE_UINT32(payloadLocatorBytes + 0);
+	uint32 payloadSizeCompressed = READ_LE_UINT32(payloadLocatorBytes + 4);
+	//uint32 payloadSizeUncompressed = READ_LE_UINT32(payloadLocatorBytes + 8);
+
+	int64 endOfPayload = static_cast<int64>(payloadLocation) + static_cast<int64>(payloadSizeCompressed);
+
+	if (endOfPayload >= _stream->size()) {
+		warning("GenteeInstaller::PackageArchive::loadFromEXE: Couldn't locate embedded PAK");
+		return false;
+	}
+
+	if (!_stream->seek(endOfPayload, SEEK_SET)) {
+		warning("GenteeInstaller::PackageArchive::loadFromEXE: Couldn't seek to embedded PAK");
+		return false;
+	}
+
+	return loadPAK(prefix);
+}
+
+bool PackageArchive::loadPAK(const char *prefix) {
+	byte pakFileEOFBytes[4];
 
 	int64 pakFileStartPos = _stream->pos();
 	int64 maxPakFileSize = _stream->size() - pakFileStartPos;
 
-	if (_stream->read(pakFileSizeBytes, 4) != 4) {
-		warning("GenteeInstaller::PackageArchive::load: Couldn't read pak file size declaration");
+	if (_stream->read(pakFileEOFBytes, 4) != 4) {
+		warning("GenteeInstaller::PackageArchive::loadPAK: Couldn't read pak file size declaration");
 		return false;
 	}
 
-	uint32 pakFileSize = READ_LE_UINT32(pakFileSizeBytes);
+	uint32 pakFileEOF = READ_LE_UINT32(pakFileEOFBytes);
 
-	if (static_cast<int64>(pakFileSize) < maxPakFileSize) {
-		warning("GenteeInstaller::PackageArchive::load: Pak file size was larger than would be possible");
+	if (static_cast<int64>(pakFileEOF) > _stream->size()) {
+		warning("GenteeInstaller::PackageArchive::loadPAK: Pak file size was larger than would be possible");
 		return false;
 	}
+
+	if (static_cast<int64>(pakFileEOF) < pakFileStartPos) {
+		warning("GenteeInstaller::PackageArchive::loadPAK: Pak file EOF preceded the start position");
+		return false;
+	}
+
+	uint32 pakFileSize = static_cast<uint32>(static_cast<int64>(pakFileEOF) - pakFileStartPos);
 
 	if (pakFileStartPos != 0 || maxPakFileSize != pakFileSize) {
 		_stream = new Common::SeekableSubReadStream(_stream, pakFileStartPos, static_cast<uint32>(pakFileStartPos) + pakFileSize, DisposeAfterUse::YES);
 		if (!_stream->seek(4)) {
-			warning("GenteeInstaller::PackageArchive::load: Couldn't reset pak position");
+			warning("GenteeInstaller::PackageArchive::loadPAK: Couldn't reset pak position");
 			return false;
 		}
 	}
 
 	byte pakFileHeader[16];
 	if (_stream->read(pakFileHeader, 16) != 16) {
-		warning("GenteeInstaller::PackageArchive::load: Couldn't load pak header");
+		warning("GenteeInstaller::PackageArchive::loadPAK: Couldn't load pak header");
 		return false;
 	}
 
@@ -699,7 +756,7 @@ bool PackageArchive::load(const char *prefix) {
 		return false;
 
 	if (firstChunk.size() < 3) {
-		warning("GenteeInstaller::PackageArchive::load: First chunk is malformed");
+		warning("GenteeInstaller::PackageArchive::loadPAK: First chunk is malformed");
 		return false;
 	}
 
@@ -714,7 +771,7 @@ bool PackageArchive::load(const char *prefix) {
 			return false;
 
 		if (commandletChunk.size() < 3) {
-			warning("GenteeInstaller::PackageArchive::load: Commandlet was malformed");
+			warning("GenteeInstaller::PackageArchive::loadPAK: Commandlet was malformed");
 			return false;
 		}
 
@@ -723,7 +780,7 @@ bool PackageArchive::load(const char *prefix) {
 		if (commandletCode == 0x87f4) {
 			// Unpack file commandlet
 			if (commandletChunk.size() < 36 || commandletChunk.back() != 0) {
-				warning("GenteeInstaller::PackageArchive::load: File commandlet was malformed");
+				warning("GenteeInstaller::PackageArchive::loadPAK: File commandlet was malformed");
 				return false;
 			}
 
@@ -742,7 +799,7 @@ bool PackageArchive::load(const char *prefix) {
 
 				byte decompressedSizeBytes[4];
 				if (_stream->read(decompressedSizeBytes, 4) != 4) {
-					warning("GenteeInstaller::PackageArchive::load: Decompressed file size was malformed");
+					warning("GenteeInstaller::PackageArchive::loadPAK: Decompressed file size was malformed");
 					return false;
 				}
 
@@ -759,9 +816,8 @@ bool PackageArchive::load(const char *prefix) {
 						amountToSkip = kSkipBufSize;
 
 					if (fileCtx->decompressBytes(skipBuf, amountToSkip) != amountToSkip) {
-						warning("GenteeInstaller::PackageArchive::load: Couldn't decompress file data to skip it");
+						warning("GenteeInstaller::PackageArchive::loadPAK: Couldn't decompress file data to skip it");
 						return false;
-
 					}
 
 					skipRemaining -= amountToSkip;
@@ -771,7 +827,7 @@ bool PackageArchive::load(const char *prefix) {
 			} else {
 				decompressedSize = READ_LE_UINT32(&commandletChunk[7]);
 				if (!_stream->skip(decompressedSize)) {
-					warning("GenteeInstaller::PackageArchive::load: Failed to skip uncompressed file data");
+					warning("GenteeInstaller::PackageArchive::loadPAK: Failed to skip uncompressed file data");
 					return false;
 				}
 				dataEnd = _stream->pos();
@@ -779,9 +835,10 @@ bool PackageArchive::load(const char *prefix) {
 
 			debug(3, "GenteeInstaller: Detected %s item '%s' size %u at pos %u .. %u", (isCompressed ? "compressed" : "stored"), fileName.c_str(), static_cast<uint>(decompressedSize), static_cast<uint>(dataStart), static_cast<uint>(dataEnd));
 
+			fileName.replace('\\', '/');
+
 			if (fileName.hasPrefix(prefix)) {
 				fileName = fileName.substr(strlen(prefix));
-				fileName.replace('\\', '/');
 				Common::Path path(fileName, '/');
 
 				Common::SharedPtr<ArchiveItem> item(new ArchiveItem(_stream, getGuardMutex(), path, dataStart, static_cast<uint>(dataEnd - dataStart), decompressedSize, isCompressed));
@@ -898,7 +955,7 @@ Common::Mutex *ThreadSafePackageArchive::getGuardMutex() {
 
 
 
-Common::Archive *createGenteeInstallerArchive(Common::SeekableReadStream *stream, const char *prefixToRemove, bool threadSafe) {
+Common::Archive *createGenteeInstallerArchive(Common::SeekableReadStream *stream, const char *prefixToRemove, bool embedded, bool threadSafe) {
 	if (!prefixToRemove)
 		prefixToRemove = "";
 
@@ -909,7 +966,9 @@ Common::Archive *createGenteeInstallerArchive(Common::SeekableReadStream *stream
 	else
 		archive = new GenteeInstaller::PackageArchive(stream);
 
-	if (!archive->load(prefixToRemove)) {
+	bool loaded = embedded ? archive->loadFromEXE(prefixToRemove) : archive->loadPAK(prefixToRemove);
+
+	if (!loaded) {
 		delete archive;
 		return nullptr;
 	}

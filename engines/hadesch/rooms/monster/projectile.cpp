@@ -181,8 +181,8 @@ void Battleground::launchProjectile(int startScale, Common::Point startPoint, in
 }
 
 void Battleground::handleAbsoluteClick(Common::Point p) {
-	for (Common::Array<Common::SharedPtr<Projectile> >::iterator it = _projectiles.begin(); it != _projectiles.end(); it++) {
-		it->operator->()->handleAbsoluteClick(*it, p);
+	for (auto &projectile : _projectiles) {
+		projectile.operator->()->handleAbsoluteClick(projectile, p);
 	}
 }
 
@@ -229,8 +229,8 @@ void Battleground::stopFight() {
 }
 
 void Battleground::stopProjectiles() {
-	for (Common::Array<Common::SharedPtr<Projectile> >::iterator it = _projectiles.begin(); it != _projectiles.end(); it++)
-		it->operator->()->stop();
+	for (auto &projectile : _projectiles)
+		projectile.operator->()->stop();
 }
 
 class HandlerProjectile : public EventHandler {

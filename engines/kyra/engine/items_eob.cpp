@@ -34,50 +34,54 @@ Common::SeekableReadStreamEndian *EoBCoreEngine::getItemDefinitionFile(int index
 
 void EoBCoreEngine::loadItemDefs() {
 	Common::SeekableReadStreamEndian *s = getItemDefinitionFile(0);
-	memset(_items, 0, sizeof(EoBItem) * 600);
+	_items.clear();
 	_numItems = s->readUint16();
 
-	for (int i = 0; i < 600; i++)
-		_items[i].block = -1;
-
 	for (int i = 0; i < _numItems; i++) {
-		_items[i].nameUnid = s->readByte();
-		_items[i].nameId = s->readByte();
-		_items[i].flags = s->readByte();
-		_items[i].icon = s->readSByte();
-		_items[i].type = s->readSByte();
-		_items[i].pos = s->readSByte();
-		_items[i].block = s->readSint16();
-		_items[i].next = s->readSint16();
-		_items[i].prev = s->readSint16();
-		_items[i].level = s->readByte();
-		_items[i].value = s->readSByte();
+		EoBItem it;
+		it.nameUnid = s->readByte();
+		it.nameId = s->readByte();
+		it.flags = s->readByte();
+		it.icon = s->readSByte();
+		it.type = s->readSByte();
+		it.pos = s->readSByte();
+		it.block = s->readSint16();
+		it.next = s->readSint16();
+		it.prev = s->readSint16();
+		it.level = s->readByte();
+		it.value = s->readSByte();
+		_items.push_back(it);
 	}
 
 	if (_flags.platform == Common::kPlatformSegaCD) {
-		_items[498].block = _items[499].block = -2;
-
 		int temp = 0;
 		const uint8 *pos = _staticres->loadRawData(kEoB1MapLevelData, temp);
 
 		for (int i = _numItems; i < _numItems + temp / 14; i++) {
-			_items[i].nameUnid = *pos++;
-			_items[i].nameId = *pos++;
-			_items[i].flags = *pos++;
-			_items[i].icon = (int8)*pos++;
-			_items[i].type = (int8)*pos++;
-			_items[i].pos = (int8)*pos++;
-			_items[i].block = (int16)READ_BE_UINT16(pos);
+			EoBItem it;
+			it.nameUnid = *pos++;
+			it.nameId = *pos++;
+			it.flags = *pos++;
+			it.icon = (int8)*pos++;
+			it.type = (int8)*pos++;
+			it.pos = (int8)*pos++;
+			it.block = (int16)READ_BE_UINT16(pos);
 			pos += 2;
-			_items[i].next = (int16)READ_BE_UINT16(pos);
+			it.next = (int16)READ_BE_UINT16(pos);
 			pos += 2;
-			_items[i].prev = (int16)READ_BE_UINT16(pos);
+			it.prev = (int16)READ_BE_UINT16(pos);
 			pos += 2;
-			_items[i].level = *pos++;
-			_items[i].value = (int8)*pos++;
+			it.level = *pos++;
+			it.value = (int8)*pos++;
+			_items.push_back(it);
 		}
 		_numItems += (temp / 14);
 		_items[22].nameUnid = _items[27].nameUnid = _items[28].nameUnid = _items[29].nameUnid = _items[59].nameUnid = 96;
+
+		for (int i = _numItems; i < 500; i++)
+			_items.emplace_back(EoBItem());
+
+		_items[498].block = _items[499].block = -2;
 	}
 
 	if (_itemNamesStatic) {
@@ -98,7 +102,8 @@ void EoBCoreEngine::loadItemDefs() {
 	uint16 numTypes = s->readUint16();
 
 	delete[] _itemTypes;
-	_itemTypes = new EoBItemType[65]();
+	size_t itemTypeTableSize = 65;
+	_itemTypes = new EoBItemType[itemTypeTableSize]();
 
 	for (int i = 0; i < numTypes; i++) {
 		_itemTypes[i].invFlags = s->readUint16();
@@ -116,10 +121,29 @@ void EoBCoreEngine::loadItemDefs() {
 		_itemTypes[i].extraProperties = s->readUint16();
 	}
 
+	/*
+	 * In the original Eye of the Beholder 1 data files, bow and sling item
+	 * types have damage dice that are not in line with AD&D 2nd edition rules:
+	 *
+	 * Bow:   dmgNumPipsS = 8, dmgNumPipsL = 10
+	 * Sling: dmgNumPipsS = 6, dmgNumPipsL = 6
+	 */
+	if (_flags.gameID == GI_EOB1 && _configADDRuleEnhancements) {
+		debugC(1, kDebugLevelMain, "patching EotB 1 bow   (%d), old dice S d%d, L d%d, new dice S d6, L d6",
+			   kItemTypeBow, _itemTypes[kItemTypeBow].dmgNumPipsS, _itemTypes[kItemTypeBow].dmgNumPipsL);
+		_itemTypes[kItemTypeBow].dmgNumPipsS = 6;
+		_itemTypes[kItemTypeBow].dmgNumPipsL = 6;
+		debugC(1, kDebugLevelMain, "patching EotB 1 sling (%d), old dice S d%d, L  d%d, new dice S d4, L d4",
+			   kItemTypeSling, _itemTypes[kItemTypeSling].dmgNumPipsS, _itemTypes[kItemTypeSling].dmgNumPipsL);
+		_itemTypes[kItemTypeSling].dmgNumPipsS = 4;
+		_itemTypes[kItemTypeSling].dmgNumPipsL = 4;
+	}
+
 	delete s;
 }
 
 Kyra::Item EoBCoreEngine::duplicateItem(Item itemIndex) {
+	assert(itemIndex < (Item)_items.size());
 	EoBItem *itm = &_items[itemIndex];
 
 	if (itm->block == -1)
@@ -128,7 +152,7 @@ Kyra::Item EoBCoreEngine::duplicateItem(Item itemIndex) {
 	Item i = 1;
 	bool foundSlot = false;
 
-	for (; i < 600; i++) {
+	for (; i < (Item)_items.size(); i++) {
 		if (_items[i].block == -1) {
 			foundSlot = true;
 			break;
@@ -136,9 +160,10 @@ Kyra::Item EoBCoreEngine::duplicateItem(Item itemIndex) {
 	}
 
 	if (!foundSlot)
-		return 0;
+		_items.push_back(*itm);
+	else
+		_items[i] = *itm;
 
-	memcpy(&_items[i], itm, sizeof(EoBItem));
 	return i;
 }
 
@@ -354,7 +379,7 @@ int EoBCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int co
 	int res = 0;
 
 	for (bool forceLoop = true; o1 != o2 || forceLoop; o1 = _items[o1].prev) {
-		EoBItem *itm = &_items[o1];
+		const EoBItem *itm = &_items[o1];
 		forceLoop = false;
 		if (id != -1 || type != -1) {
 			if (((id != -1) || (id == -1 && type != itm->type)) && ((type != -1) || (type == -1 && id != o1)))
@@ -594,7 +619,7 @@ void EoBCoreEngine::eatItemInHand(int charIndex) {
 	}
 }
 
-bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type) {
+bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, int startPos, int dir, int type, Item projectileWeapon) {
 	EoBFlyingObject *t = _flyingObjects;
 	int slot = 0;
 	for (; slot < 10; slot++) {
@@ -619,6 +644,8 @@ bool EoBCoreEngine::launchObject(int charIndex, Item item, uint16 startBlock, in
 	t->objectType = type;
 	t->attackerId = charIndex;
 	t->callBackIndex = 0;
+
+	t->projectileWeapon = projectileWeapon;
 
 	snd_playSoundEffect(type == 7 ? 26 : 11);
 	return true;
@@ -746,7 +773,7 @@ void EoBCoreEngine::explodeObject(EoBFlyingObject *fo, int block, Item item) {
 		fo->enable = 2;
 
 	_screen->fillRect(0, 0, 176, 120, 0, 2);
-	uint8 col = _screen->getPagePixel(2, 0, 0);
+	int col = _screen->getPagePixel(2, 0, 0);
 	drawSceneShapes(_expObjectShpStart[dm]);
 
 	setLevelShapesDim(tl, x1, x2, 5);
@@ -791,17 +818,43 @@ void EoBCoreEngine::checkFlyingObjects() {
 }
 
 void EoBCoreEngine::reloadWeaponSlot(int charIndex, int slotIndex, int itemType, int arrowOrDagger) {
+	if (_configEnhancedReload) {
+		return reloadWeaponSlotEnhanced(charIndex, slotIndex);
+	}
+
 	if (arrowOrDagger && _characters[charIndex].inventory[16]) {
+		// this branch is never taken because arrowOrDagger = 0 is passed by the only caller
 		_characters[charIndex].inventory[slotIndex] = getQueuedItem(&_characters[charIndex].inventory[16], 0, -1);
 	} else {
 		for (int i = 24; i >= 22; i--) {
 			if (!_characters[charIndex].inventory[i])
 				continue;
 			if (_items[_characters[charIndex].inventory[i]].type == itemType && itemType != -1)
+				// this branch is never taken because itemType = -1 is passed by the only caller
 				continue;
 			_characters[charIndex].inventory[slotIndex] = _characters[charIndex].inventory[i];
 			_characters[charIndex].inventory[i] = 0;
 			return;
+		}
+	}
+}
+
+bool EoBCoreEngine::isThrownWeaponItemType(int itemType) {
+	return (_itemTypes[itemType].extraProperties & 0x7F) == 2;
+}
+
+void EoBCoreEngine::reloadWeaponSlotEnhanced(int charIndex, int slotIndex) {
+	const uint8 kThrownWeaponSlotCount = 17;
+	const uint8 kThrownWeaponSlots[kThrownWeaponSlotCount] = {
+		24, 23, 22,  // belt, bottom to top
+		2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15  // backpack
+	};
+
+	for (int i = 0; i < kThrownWeaponSlotCount; i++) {
+		uint8 candidateSlotIndex = kThrownWeaponSlots[i];
+		if (_characters[charIndex].inventory[candidateSlotIndex] && isThrownWeaponItemType(_items[_characters[charIndex].inventory[candidateSlotIndex]].type)) {
+			SWAP(_characters[charIndex].inventory[slotIndex], _characters[charIndex].inventory[candidateSlotIndex]);
+			break;
 		}
 	}
 }

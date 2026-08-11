@@ -36,6 +36,7 @@ namespace Common {
 	class ReadStreamEndian;
 	class MemoryReadStreamEndian;
 	class SeekableReadStreamEndian;
+	class SeekableWriteStream;
 }
 
 namespace Director {
@@ -52,6 +53,8 @@ class Channel;
 class Sprite;
 class CastMember;
 class AudioDecoder;
+struct BehaviorElement;
+struct SpriteInfo;
 
 struct Label {
 	Common::String comment;
@@ -62,16 +65,19 @@ struct Label {
 
 class Score {
 public:
-	Score(Movie *movie);
+	Score(Movie *movie, bool haveInteractivity);
 	~Score();
 
 	Movie *getMovie() const { return _movie; }
 
-	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
+	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version, bool loadSprites = false);
 	bool loadFrame(int frame, bool loadCast);
 	bool readOneFrame();
 	void updateFrame(Frame *frame);
 	Frame *getFrameData(int frameNum);
+
+	void writeVWSCResource(Common::SeekableWriteStream *writeStream, uint32 offset);
+	uint32 getVWSCResourceSize();
 
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
@@ -80,7 +86,7 @@ public:
 	static int compareLabels(const void *a, const void *b);
 	uint16 getLabel(Common::String &label);
 	Common::String *getLabelList();
-	Common::String *getFrameLabel(uint id);
+	Common::String getFrameLabel(uint id);
 	void setStartToLabel(Common::String &label);
 	void gotoLoop();
 	void gotoNext();
@@ -109,18 +115,22 @@ public:
 	int getCurrentLabelNumber();
 	int getNextLabelNumber(int referenceFrame);
 
+	uint16 getSpriteIDOfActiveWidget();
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	uint16 getMouseSpriteIDFromPos(Common::Point pos);
 	uint16 getActiveSpriteIDFromPos(Common::Point pos);
-	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
-	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
+	bool checkSpriteRollOver(uint16 spriteId, Common::Point pos);
+	uint16 getRollOverSpriteIDFromPos(Common::Point pos);
+	Common::Array<Channel *> getSpriteIntersections(const Common::Rect &r);
 	uint16 getSpriteIdByMemberId(CastMemberID id);
+	Common::Rect getChannelDirtyRectBounds();
 	bool refreshPointersForCastMemberID(CastMemberID id);
+	bool refreshPointersForCastLib(uint16 castLib);
 
 	bool renderTransition(uint16 frameId, RenderMode mode);
-	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal, bool sound1Changed = true, bool sound2Changed = true);
 	void incrementFilmLoops();
-	void updateSprites(RenderMode mode = kRenderModeNormal);
+	void updateSprites(RenderMode mode = kRenderModeNormal, bool withClean = false);
 	bool renderPrePaletteCycle(RenderMode mode = kRenderModeNormal);
 	void setLastPalette();
 	bool isPaletteColorCycling();
@@ -130,9 +140,16 @@ public:
 
 	void invalidateRectsForMember(CastMember *member);
 
-	void playSoundChannel(bool puppetOnly);
+	void playSoundChannel(bool puppetOnly, bool sound1Changed = true, bool sound2Changed = true);
 
 	Common::String formatChannelInfo();
+
+	Common::MemoryReadStreamEndian *getSpriteDetailsStream(int spriteIdx);
+
+	// They live in lingo/lingo-events.cpp
+	void killScriptInstances(int frameNum);
+	void createScriptInstances(int frameNum);
+	Datum createScriptInstance(BehaviorElement *behavior);
 
 private:
 	bool isWaitingForNextFrame();
@@ -147,11 +164,21 @@ private:
 	bool processImmediateFrameScript(Common::String s, int id);
 	bool processFrozenScripts(bool recursion = false, int count = 0);
 
+	void writeFrame(Common::SeekableWriteStream *writeStream, Frame frame, uint32 channelSize, uint32 mainChannelSize);
+
+	void seekToMemberInList(int frame);
+
+	void loadFrameSpriteDetails(bool skipLog);
+
+	BehaviorElement loadSpriteBehavior(Common::MemoryReadStreamEndian *stream, bool skipLog);
+	SpriteInfo loadSpriteInfo(int spriteId, bool skipLog);
+
 public:
 	Common::Array<Channel *> _channels;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
+	Datum _scriptChannelScriptInstance;
 
 	Common::Array<Frame *> _scoreCache;
 
@@ -160,16 +187,28 @@ public:
 	Frame *_currentFrame;
 	uint32 _curFrameNumber;
 	uint32 _numFrames;
-	uint32 _framesVersion;
-	uint32 _numChannels;
 	uint8 _currentTempo;
 	CastMemberID _currentPaletteId;
 
+	// header D4+
+	uint32 _framesStreamSize;
+	int32 _frame1Offset;
+	int32 _numOfFrames;
+	uint16 _framesVersion;
+	uint16 _spriteRecordSize;
+	uint16 _numChannels;
+	int16 _numChannelsDisplayed;  // D7+, no-op in earlier versions
+	//  20 bytes in total
+
+	int16 _maxChannelsUsed; // max channel number used in the score, used to optimize rendering
+
 	uint _firstFramePosition;
-	uint _framesStreamSize;
+	uint _indexStart = 0;
+	uint _frameDataOffset = 0;
 	Common::MemoryReadStreamEndian *_framesStream;
 
 	byte _currentFrameRate;
+	int _currentDigitalVideoTimeScale;
 	byte _puppetTempo;
 
 	bool _puppetPalette;
@@ -181,17 +220,25 @@ public:
 	uint32 _nextFrameDelay;
 	int _lastTempo;
 	int _waitForChannel;
+	int _waitForChannelCue;
 	int _waitForVideoChannel;
 	bool _waitForClick;
 	bool _waitForClickCursor;
 	bool _cursorDirty;
 	bool _activeFade;
 	bool _exitFrameCalled;
+	bool _stopPlayCalled;
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;
+	bool _skipIdle;
 
-	int _numChannelsDisplayed;
+	Common::Array<uint32> _spriteDetailOffsets;
+	Common::Array<bool> _spriteDetailAccessed;
+
+	bool _disableGoPlayUpdateStage;
+
+	bool _haveInteractivity;
 
 private:
 	DirectorEngine *_vm;
@@ -203,7 +250,15 @@ private:
 	int _currentLabel;
 	DirectorSound *_soundManager;
 
+	// score frame number at the last film loop advance
+	uint32 _filmLoopsLastFrame = 0;
+
+	// true when the current frame is held by an explicit jump (e.g. go the
+	// frame) rather than natural playback; in D4 this freezes film loops.
+	bool _frameHeldByJump = false;
+
 	int _previousBuildBotBuild = -1;
+	bool _firstRun = true;
 };
 
 } // End of namespace Director

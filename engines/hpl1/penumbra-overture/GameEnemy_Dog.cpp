@@ -837,7 +837,7 @@ bool cGameEnemyState_Dog_Hunt::OnHearNoise(const cVector3f &avPosition, float af
 			// Check if a node is found near the sound.
 			cAINode *pNode = mpMover->GetAINodeAtPosInRange(avPosition, 0.0f, 5.0f, true, 0.1f);
 			if (pNode) {
-				// Update last player postion.
+				// Update last player position.
 				mbLostPlayer = false;
 				mfUpdatePathCount = 0;
 				mpEnemy->SetLastPlayerPos(pNode->GetPosition());
@@ -1125,7 +1125,7 @@ void cGameEnemyState_Dog_Flee::OnUpdate(float afTimeStep) {
 	} else {
 		// Move forward
 		if (mpMover->IsMoving() == false || mpMover->GetStuckCounter() > 0.3f || mfTimer <= 0) {
-			// Check if there is any enemies nearaby and if anyone is allready fighting
+			// Check if there are any enemies nearby and if anyone is already fighting
 			if (mpEnemy->CheckForTeamMate(mpEnemyDog->mfCallBackupRange * 1.5f, false) &&
 				mpEnemy->CheckForTeamMate(8, true) == false) {
 				float fPlayerDist = mpMover->DistanceToChar(mpInit->mpPlayer->GetCharacterBody());

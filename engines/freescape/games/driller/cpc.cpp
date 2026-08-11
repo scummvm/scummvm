@@ -30,6 +30,24 @@ namespace Freescape {
 
 void DrillerEngine::initCPC() {
 	_viewArea = Common::Rect(36, 16, 284, 117);
+	// Sound mappings from DRILL.BIN disassembly (sub_4760h call sites)
+	_soundIndexShoot = 1;            // 0x5BBC: LD A,01h; CALL 4760h
+	_soundIndexCollide = 19;         // 0x4CE6/0x5AE4: LD A,13h; CALL 4760h
+	_soundIndexStepUp = 3;           // 0x5025: deferred via (3B63h)
+	_soundIndexStepDown = 4;         // 0x4FB2: deferred via (3B63h)
+	_soundIndexFall = 9;             // long dur=24 falling sound
+	_soundIndexStart = 6;            // 0x4906/0x4C84: game start transition
+	_soundIndexMenu = 6;             // reuse start/transition sound
+	_soundIndexAreaChange = 10;      // TODO: verify this
+	_soundIndexHit = 2;              // 0x6801: LD A,02h; drill/hit destruction
+	_soundIndexFallen = 9;           // long dur=24 tone sweep
+	_soundIndexNoShield = 9;         // game-over conditions reuse fallen sound
+	_soundIndexNoEnergy = 9;
+	_soundIndexTimeout = 9;
+	_soundIndexForceEndGame = 9;
+	_soundIndexCrushed = 9;
+	_soundIndexMissionComplete = 13; // via object handler at 0x61E4
+	// Sound 5 is used when deploying or recalling the drill, but these are not currently implemented yet
 }
 
 byte kCPCPaletteTitleData[4][3] = {
@@ -46,37 +64,9 @@ byte kCPCPaletteBorderData[4][3] = {
 	{0x00, 0x80, 0x00},
 };
 
-byte getCPCPixelMode0(byte cpc_byte, int index) {
-	if (index == 0)
-		return ((cpc_byte & 0x08) >> 2) | ((cpc_byte & 0x80) >> 7);
-	else if (index == 1)
-		return ((cpc_byte & 0x04) >> 1) | ((cpc_byte & 0x40) >> 6);
-	else if (index == 2)
-		return (cpc_byte & 0x02)        | ((cpc_byte & 0x20) >> 5);
-	else if (index == 3)
-		return ((cpc_byte & 0x01) << 1) | ((cpc_byte & 0x10) >> 4);
-	else
-		error("Invalid index %d requested", index);
-}
+// getCPCPixelMode1, getCPCPixelMode0, and getCPCPixel moved to freescape.cpp
 
-byte getCPCPixelMode1(byte cpc_byte, int index) {
-	if (index == 0)
-		return ((cpc_byte & 0x08) >> 0) | ((cpc_byte & 0x80) >> 5) |
-	           ((cpc_byte & 0x20) >> 4) | ((cpc_byte & 0x02) >> 1);
-	else if (index == 2)
-		return ((cpc_byte & 0x04) >> 1) | ((cpc_byte & 0x40) >> 6);
-	else
-		return 0;//error("Invalid index %d requested", index);
-}
-
-byte getCPCPixel(byte cpc_byte, int index, bool mode0) {
-	if (mode0)
-		return getCPCPixelMode0(cpc_byte, index);
-	else
-		return getCPCPixelMode1(cpc_byte, index);
-}
-
-Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode0) {
+Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mode1) {
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
@@ -89,7 +79,7 @@ Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mo
 				byte cpc_byte = file->readByte(); // Get CPC byte
 
 				// Process first pixel
-				int pixel_0 = getCPCPixel(cpc_byte, 0, mode0); // %Aa
+				int pixel_0 = getCPCPixel(cpc_byte, 0, mode1); // %Aa
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 0; // Coord X for the pixel
 				surface->setPixel(x, y, pixel_0);
@@ -97,14 +87,14 @@ Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mo
 				// Process second pixel
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 1; // Coord X for the pixel
-				if (mode0) {
-					int pixel_1 = getCPCPixel(cpc_byte, 1, mode0); // %Bb
+				if (mode1) {
+					int pixel_1 = getCPCPixel(cpc_byte, 1, mode1); // %Bb
 					surface->setPixel(x, y, pixel_1);
 				} else
 					surface->setPixel(x, y, pixel_0);
 
 				// Process third pixel
-				int pixel_2 = getCPCPixel(cpc_byte, 2, mode0); // %Cc
+				int pixel_2 = getCPCPixel(cpc_byte, 2, mode1); // %Cc
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 2; // Coord X for the pixel
 				surface->setPixel(x, y, pixel_2);
@@ -112,8 +102,8 @@ Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file, bool mo
 				// Process fourth pixel
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 3; // Coord X for the pixel
-				if (mode0) {
-					int pixel_3 = getCPCPixel(cpc_byte, 3, mode0); // %Dd
+				if (mode1) {
+					int pixel_3 = getCPCPixel(cpc_byte, 3, mode1); // %Dd
 					surface->setPixel(x, y, pixel_3);
 				} else
 					surface->setPixel(x, y, pixel_2);
@@ -149,8 +139,9 @@ void DrillerEngine::loadAssetsCPCFullGame() {
 	if (!file.isOpen())
 		error("Failed to open DRILL.BIN");
 
+	_sound = loadSoundsCPC(&file, 0x23D2 + 0x80, 68, 0x2416 + 0x80, 104, 0x247E + 0x80, 140);
 	loadMessagesFixedSize(&file, 0x214c, 14, 20);
-	loadFonts(&file, 0x5b69, _font);
+	loadFonts(&file, 0x5b69);
 	loadGlobalObjects(&file, 0x1d07, 8);
 	load8bitBinary(&file, 0x5ccb, 16);
 }
@@ -159,6 +150,8 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 	uint32 color = _currentArea->_underFireBackgroundColor;
 	uint8 r, g, b;
 
+	if (isEncodedCPCDirectColor(color))
+		color = decodeCPCDirectColor(color);
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
@@ -167,20 +160,22 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 		color = (*_gfx->_colorRemaps)[color];
 	}
 
+	if (isEncodedCPCDirectColor(color))
+		color = decodeCPCDirectColor(color);
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 200, 185, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 153, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 161, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 151, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 151, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 151, 161, front, back, surface);
 	if (_playerHeightNumber >= 0)
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 54, 161, front, back, surface);
 	else
 		drawStringInSurface(Common::String::format("%s", "J"), 54, 161, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 47, 145, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 44, 153, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 239, 129, front, back, surface);
 
@@ -188,7 +183,7 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 209, 8, front, back, surface);
 	drawStringInSurface(Common::String::format("%02d", minutes), 232, 8, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 255, 8, front, back, surface);
 
 	Common::String message;
 	int deadline;
@@ -225,6 +220,9 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 		Common::Rect shieldBar(88 - shield, 177, 88, 183);
 		surface->fillRect(shieldBar, front);
 	}
+
+	drawCompass(surface, 87, 156, compassYaw() - 30, 10, 75, front);
+	drawCompass(surface, 230, 156, _pitch - 30, 10, 60, front);
 }
 
 } // End of namespace Freescape

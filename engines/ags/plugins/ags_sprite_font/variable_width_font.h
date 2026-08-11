@@ -24,7 +24,7 @@
 
 #include "ags/plugins/ags_sprite_font/character_entry.h"
 #include "ags/plugins/ags_plugin.h"
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 
 namespace AGS3 {
 namespace Plugins {

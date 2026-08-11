@@ -19,12 +19,25 @@
  *
  */
 
+// Same as for backends/platform/android/android.cpp: Sonivox headers
+// are using `__attribute__((format(printf, ...))` and this clashes
+// with our printf override hack.
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/scummsys.h"
 
 #if defined(USE_SONIVOX)
 
 #include <sonivox/eas.h>
 #include <sonivox/eas_reverb.h>
+
+// Sonivox's LIB_VERSION is currently unreliable, because the preprocessor
+// can't do comparisons against it, as it embeds its own typedef'd casts.
+// Fortunately, EAS_REF_VOLUME was introduced after the eas_report.h
+// header was made public. We only need this header in this case.
+#ifdef EAS_REF_VOLUME
+#include <sonivox/eas_report.h>
+#endif
 
 #include "common/debug.h"
 #include "common/endian.h"
@@ -157,6 +170,13 @@ int MidiDriver_EAS::open() {
 		warning("unsupported EAS buffer size: %d", (int32)_config->mixBufferSize);
 		return -1;
 	}
+
+#ifdef _EAS_SEVERITY_ERROR
+	// In releases where eas_report.h is available, the following function
+	// was made public, after Sonivox started giving way more debug output.
+	// Use it to avoid very noisy warnings and such.
+	EAS_SetDebugLevel(_EAS_SEVERITY_ERROR);
+#endif
 
 	EAS_RESULT res = EAS_Init(&_EASHandle);
 	if (res) {

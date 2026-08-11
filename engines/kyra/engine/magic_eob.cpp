@@ -1149,10 +1149,12 @@ void EoBCoreEngine::spellCallback_start_stoneToFlesh() {
 
 void EoBCoreEngine::spellCallback_start_trueSeeing() {
 	_wllVmpMap[46] = 0;
+	_sceneUpdateRequired = true;
 }
 
 bool EoBCoreEngine::spellCallback_end_trueSeeing(void *) {
 	_wllVmpMap[46] = 1;
+	_sceneUpdateRequired = true;
 	return true;
 }
 

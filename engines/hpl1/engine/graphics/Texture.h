@@ -135,9 +135,6 @@ public:
 
 	virtual void Update(float afTimeStep) = 0;
 
-	virtual void SetPixels2D(int alLevel, const cVector2l &avOffset, const cVector2l &avSize,
-							 eColorDataFormat aDataFormat, void *apPixelData) = 0;
-
 	virtual void SetFilter(eTextureFilter aFilter) = 0;
 	virtual void SetAnisotropyDegree(float afX) = 0;
 	eTextureFilter GetFilter() { return mFilter; }

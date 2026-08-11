@@ -421,7 +421,7 @@ int tryLoadingHulk(GameInfo info, int dictStart) {
 		_G(_hulkItemImageOffsets) = 0x2731;
 		_G(_hulkLookImageOffsets) = 0x2761;
 		_G(_hulkSpecialImageOffsets) = 0x2781;
-		_G(_hulkImageOffset) = -0x7ff;
+		_G(_hulkImageOffset) = static_cast<size_t>(-0x7ff);
 	}
 
 	return 1;

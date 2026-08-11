@@ -54,9 +54,7 @@ uint32 GlobEgg::enterFastArea() {
 		const MapGlob *glob = GameData::get_instance()->getGlob(_quality);
 		if (!glob) return 0;
 
-		Std::vector<GlobItem>::const_iterator iter;
-		for (iter = glob->_contents.begin(); iter != glob->_contents.end(); ++iter) {
-			const GlobItem &globitem = *iter;
+		for (const auto &globitem : glob->_contents) {
 			Item *item = ItemFactory::createItem(globitem.shape, globitem.frame,
 			                                     0,
 			                                     FLG_DISPOSABLE | FLG_FAST_ONLY,

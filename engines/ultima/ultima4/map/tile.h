@@ -235,7 +235,7 @@ private:
 
 	Image *_image;       /**< The original image for this tile (with all of its frames) */
 	bool _tiledInDungeon;
-	Std::vector<Direction> _directions;
+	Common::Array<Direction> _directions;
 
 	Common::String _animationRule;
 

@@ -53,7 +53,7 @@ struct Surface;
  *
  * Saves are writable and deletable by default.
  */
-class SaveStateDescriptor {
+class SaveStateDescriptor final {
 private:
 	enum SaveType {
 		kSaveTypeUndetermined,
@@ -64,8 +64,9 @@ private:
 	void initSaveSlot(const MetaEngine *metaEngine);
 public:
 	SaveStateDescriptor();
-	SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::U32String &d);
+	SaveStateDescriptor(const MetaEngine *metaEngine, int slot);
 	SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::String &d);
+	SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::U32String &d);
 
 	/**
 	 * @param slot The saveslot id, as it would be passed to the "-x" command line switch.
@@ -80,13 +81,13 @@ public:
 	/**
 	 * @param desc A human readable description of the save state.
 	 */
-	void setDescription(const Common::String &desc) { _description = desc.decode(); }
-	void setDescription(const Common::U32String &desc) { _description = desc; }
+	void setDescription(const Common::String &desc) { _description = desc; }
+	void setDescription(const Common::U32String &desc) { _description = desc.encode(); }
 
 	/**
 	 * @return A human readable description of the save state.
 	 */
-	const Common::U32String &getDescription() const { return _description; }
+	const Common::String &getDescription() const { return _description; }
 
 	/** Optional entries only included when querying via MetaEngine::querySaveMetaInfo */
 
@@ -234,7 +235,7 @@ private:
 	/**
 	 * A human readable description of the save state.
 	 */
-	Common::U32String _description;
+	Common::String _description;
 
 	/**
 	 * Whether the save state can be deleted.

@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/scummsys.h"
 
 #if defined(DYNAMIC_MODULES) && defined(__WII__)

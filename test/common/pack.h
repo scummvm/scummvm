@@ -3,7 +3,7 @@
 #include "common/scummsys.h"
 #include <stddef.h>
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct TestStruct {
 	uint32 x;
@@ -13,7 +13,7 @@ struct TestStruct {
 	byte b;
 } PACKED_STRUCT;
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 #define OFFS(type,item) (((ptrdiff_t)(&((type *)42)->type::item))-42)
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/menu.h"
@@ -109,7 +110,7 @@ void actionsMenu(byte **pinfo) {
 	y = act_menu_y;
 
 	/*menu sprite*/
-	backupAndShowSprite(0, x, y);
+	g_vm->_renderer->backupAndShowSprite(0, x, y);
 	playSound(18);
 
 	choices = *((*pinfo)++);
@@ -131,10 +132,11 @@ void actionsMenu(byte **pinfo) {
 	act_dot_rects_end = act_dot_rects + numchoices + 1;
 
 	for (i = 0; i < numchoices; i++)
-		drawSpriteN(1, act_dot_rects[i].sx, act_dot_rects[i].sy, CGA_SCREENBUFFER);
+		drawSpriteN(1, act_dot_rects[i].sx, act_dot_rects[i].sy, SCREENBUFFER);
 
-	selectCursor(CURSOR_FINGER);
+	g_vm->_renderer->selectCursor(CURSOR_FINGER);
 	processInput();
+	clearButtons();
 
 	choice = 0;
 	act_dot_rects_cur = act_dot_rects;
@@ -157,23 +159,23 @@ void actionsMenu(byte **pinfo) {
 
 		if (command_hint != last_command_hint)
 			drawCommandHint();  /*to backbuffer*/
-		drawHintsAndCursor(CGA_SCREENBUFFER);
+		drawHintsAndCursor(SCREENBUFFER);
 	} while (buttons == 0);
-	undrawCursor(CGA_SCREENBUFFER);
+	undrawCursor(SCREENBUFFER);
 
 	if (the_command != 0xFFFF) {
 		playSound(19);
 		waitVBlank();
 
 		/*draw dot explosion animation*/
-		drawSpriteN(24, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
-		drawSpriteN(2, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
-		drawSpriteN(25, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
+		drawSpriteN(24, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
+		g_system->delayMillis(50);
+		drawSpriteN(2, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
+		g_system->delayMillis(50);
+		drawSpriteN(25, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
+		g_system->delayMillis(50);
 	}
-	cga_RestoreBackupImage(CGA_SCREENBUFFER);
+	g_vm->_renderer->restoreBackupImage(SCREENBUFFER);
 
 	*pinfo += numchoices * 3;
 }
@@ -181,6 +183,7 @@ void actionsMenu(byte **pinfo) {
 /*TODO: maybe rename to SpotsLoop*/
 void menuLoop(byte spotmask, byte spotvalue) {
 	processInput();
+	clearButtons();
 	do {
 		pollInput();
 		checkHotspots(spotmask, spotvalue);
@@ -192,7 +195,7 @@ void menuLoop(byte spotmask, byte spotvalue) {
 }
 
 void processMenu(void) {
-	selectCursor(CURSOR_BODY);
+	g_vm->_renderer->selectCursor(CURSOR_BODY);
 	menuLoop(SPOTFLG_80 | SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8, SPOTFLG_80 | SPOTFLG_10);
 }
 
@@ -200,7 +203,7 @@ void processMenu(void) {
 rect_t menu_buttons_rects[] = {
 	{296 / 4, 312 / 4,  15,  30},   /*Room's Objects*/
 	{296 / 4, 312 / 4,  40,  56},   /*Psi Powers*/
-	{296 / 4, 312 / 4,  56,  72},   /*Posessions*/
+	{296 / 4, 312 / 4,  56,  72},   /*Possessions*/
 	{296 / 4, 312 / 4,  72,  88},   /*Energy Level*/
 	{296 / 4, 312 / 4,  88, 104},   /*Wait*/
 	{296 / 4, 312 / 4, 104, 120},   /*Load*/

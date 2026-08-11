@@ -25,18 +25,15 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/dctypes.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/math/vector2.h"
 
 #include "graphics/transform_struct.h"
 #include "graphics/surface.h"
 
-#include "math/matrix4.h"
-#include "math/ray.h"
-
 #if defined(USE_OPENGL_SHADERS)
 
 #include "graphics/opengl/system_headers.h"
+
+#include "engines/wintermute/base/gfx/xmath.h"
 
 #endif
 
@@ -51,72 +48,140 @@ class Mesh3DS;
 class XMesh;
 class ShadowVolume;
 
+#define DEFAULT_NEAR_PLANE 90.0f
+#define DEFAULT_FAR_PLANE  10000.0f
+
+enum PostFilter {
+	kPostFilterOff,
+	kPostFilterBlackAndWhite,
+	kPostFilterSepia
+};
+
 class BaseRenderer3D : public BaseRenderer {
 public:
 	BaseRenderer3D(BaseGame *inGame = nullptr);
 	~BaseRenderer3D() override;
 
+	bool getProjectionParams(float *resWidth, float *resHeight, float *layerWidth, float *layerHeight,
+	                         float *modWidth, float *modHeight, bool *customViewport);
+	virtual int getMaxActiveLights() = 0;
+
 	bool setAmbientLightColor(uint32 color);
 	bool setDefaultAmbientLightColor();
-	virtual void setAmbientLight() = 0;
 
 	uint32 _ambientLightColor;
-	bool _overrideAmbientLightColor;
+	bool _ambientLightOverride;
 
-	virtual int maximumLightsCount() = 0;
-	virtual void enableLight(int index) = 0;
-	virtual void disableLight(int index) = 0;
-	virtual void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction,
-	                                const Math::Vector4d &diffuse, bool spotlight) = 0;
+	void dumpData(const char *filename) {};
+	bool setup3DCustom(DXMatrix &viewMat, DXMatrix &projMat);
+	virtual bool enableShadows() = 0;
+	virtual bool disableShadows() = 0;
+	virtual bool shadowVolumeSupported() = 0;
+	virtual bool invalidateTexture(BaseSurface *texture) = 0;
 
-	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) = 0;
+	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange = false) = 0;
+
+	virtual bool invalidateDeviceObjects() = 0;
+	virtual bool restoreDeviceObjects() = 0;
+	BaseSurface *_lastTexture;
+	bool fade(uint16 alpha) override;
+	bool drawSprite(BaseSurface *texture, const Common::Rect32 &rect, float zoomX, float zoomY, const DXVector2 &pos,
+	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+	virtual bool drawSpriteEx(BaseSurface *texture, const Common::Rect32 &rect, const DXVector2 &pos, const DXVector2 &rot, const DXVector2 &scale,
+	                float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
+	Camera3D *_camera;
+	virtual bool resetDevice() = 0;
+	void initLoop() override;
+	bool windowedBlt() override;
+
+	virtual bool startSpriteBatch() override = 0;
+	virtual bool endSpriteBatch() override = 0;
+	virtual bool commitSpriteBatch() = 0;
+
+
+	// ScummVM specific methods -->
+
+	virtual void lightEnable(int index, bool enable) = 0;
+	virtual void setLightParameters(int index, const DXVector3 &position, const DXVector3 &direction,
+	                                const DXVector4 &diffuse, bool spotlight) = 0;
 
 	virtual void enableCulling() = 0;
 	virtual void disableCulling() = 0;
 
-	virtual bool enableShadows() = 0;
-	virtual bool disableShadows() = 0;
-	virtual void displayShadow(BaseObject *object, const Math::Vector3d &light, bool lightPosRelative) = 0;
-	virtual bool stencilSupported() = 0;
+	DXViewport getViewPort();
 
-	Rect32 getViewPort() override;
+	void setWindowed(bool windowed) override;
+	void onWindowChange() override;
 
 	Graphics::PixelFormat getPixelFormat() const override;
-	void fade(uint16 alpha) override;
 
-	void initLoop() override;
+	virtual bool setWorldTransform(const DXMatrix &transform) = 0;
+	virtual bool setViewTransform(const DXMatrix &transform) = 0;
+	virtual bool setProjectionTransform(const DXMatrix &transform) = 0;
 
-	virtual bool setProjection2D() = 0;
-	virtual void setWorldTransform(const Math::Matrix4 &transform) = 0;
+	void getWorldTransform(DXMatrix *transform) {
+		*transform = _worldMatrix;
+	}
 
-	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int32 &x, int32 &y);
-	Math::Ray rayIntoScene(int x, int y);
+	void getViewTransform(DXMatrix *transform) {
+		*transform = _viewMatrix;
+	}
 
-	Math::Matrix4 lastProjectionMatrix() {
-		return _projectionMatrix3d;
+	void getProjectionTransform(DXMatrix *transform) {
+		*transform = _projectionMatrix;
 	}
 
 	virtual Mesh3DS *createMesh3DS() = 0;
 	virtual XMesh *createXMesh() = 0;
 	virtual ShadowVolume *createShadowVolume() = 0;
 
-	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
-	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
-	virtual bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
-	                          float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
 
 	virtual void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
 	                                 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) = 0;
 	virtual void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) = 0;
 
-	Math::Matrix3 build2dTransformation(const Vector2 &center, float angle);
+	virtual void displaySimpleShadow(BaseObject *object) = 0;
+
+	virtual void postfilter() = 0;
+	virtual void setPostfilter(PostFilter postFilter) = 0;
+	bool flip() override;
+	bool indicatorFlip(int32 x, int32 y, int32 width, int32 height) override;
+	bool forcedFlip() override;
+	virtual bool setViewport3D(DXViewport *viewport) = 0;
+
+	void invalidateLastTexture() {
+		_lastTexture = nullptr;
+	}
+
+	void endSaveLoad() override;
+
+	void setBrightnessOknytt(int32 brightness) {
+		_brightnessOknytt = brightness;
+	}
+	float getBrightnessOknytt() {
+		return _brightnessOknytt;
+	}
+	void setBrightnessJulia(float brightness) {
+		_brightnessJulia = brightness;
+	}
+
+	// ScummVM specific methods <--
 
 protected:
-	Math::Matrix4 _lastViewMatrix;
-	Math::Matrix4 _projectionMatrix3d;
-	Rect32 _viewport3dRect;
+	DXMatrix _worldMatrix;
+	DXMatrix _viewMatrix;
+	DXMatrix _projectionMatrix;
+	DXViewport _viewport{};
+	float _fov;
+	float _nearClipPlane;
+	float _farClipPlane;
+	TRendererState _state;
+	PostFilter _postFilterMode;
+	bool _flipInProgress;
+	int32 _brightnessOknytt;
+	float _brightnessJulia;
 
-	void flipVertical(Graphics::Surface *s);
+	virtual void setAmbientLightRenderState() = 0;
 };
 
 } // namespace Wintermute

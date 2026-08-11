@@ -55,7 +55,7 @@ static const uint8 OPL2LPTRegisterWrite[] = {
 namespace OPL {
 namespace OPL2LPT {
 
-class OPL : public ::OPL::RealOPL {
+class OPL : public ::OPL::OPL, public Audio::RealChip {
 private:
 	struct parport *_pport;
 	Config::OplType _type;
@@ -69,7 +69,6 @@ public:
 	void reset();
 
 	void write(int a, int v);
-	byte read(int a);
 
 	void writeReg(int r, int v);
 };
@@ -148,11 +147,6 @@ void OPL::write(int port, int val) {
 			break;
 		}
 	}
-}
-
-byte OPL::read(int port) {
-	// No read support for the OPL2LPT
-	return 0;
 }
 
 void OPL::writeReg(int r, int v) {

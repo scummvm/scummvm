@@ -115,7 +115,7 @@ uint EmiRegistry::convertSpeechModeFromGUI(bool subtitles, bool speechMute) cons
 	return 1;
 }
 
-bool EmiRegistry::Get(const Common::String key, float &res) const {
+bool EmiRegistry::Get(const Common::String &key, float &res) const {
 	Debug::debug(Debug::Engine, "GetResidualVMPreference(%s)", key.c_str());
 
 	if (!_transMap.contains(key))
@@ -150,7 +150,7 @@ bool EmiRegistry::Get(const Common::String key, float &res) const {
 	return true;
 }
 
-void EmiRegistry::Set(const Common::String key, float &value)  {
+void EmiRegistry::Set(const Common::String &key, float &value)  {
 	Debug::debug(Debug::Engine, "SetResidualVMPreference(%s, %f)", key.c_str(), value);
 
 	if (!_transMap.contains(key))

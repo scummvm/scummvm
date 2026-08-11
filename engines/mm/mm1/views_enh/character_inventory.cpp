@@ -346,14 +346,17 @@ void CharacterInventory::trade(const Common::String &mode, int amount, Character
 	Character &src = *g_globals->_currCharacter;
 
 	if (mode == "GEMS") {
+		amount = MIN<uint16>(amount, src._gems);
 		src._gems -= amount;
 		destChar->_gems = MIN(destChar->_gems + amount, 0xffff);
 
 	} else if (mode == "GOLD") {
+		amount = MIN<uint16>(amount, src._gold);
 		src._gold -= amount;
 		destChar->_gold += amount;
 
 	} else if (mode == "FOOD") {
+		amount = MIN<uint16>(amount, src._food);
 		src._food -= amount;
 		destChar->_food = MIN(destChar->_food + amount, MAX_FOOD);
 	}

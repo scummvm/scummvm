@@ -39,6 +39,20 @@ namespace Agi {
  * @param n room number
  */
 void AgiEngine::newRoom(int16 newRoomNr) {
+	// The Gold Rush copy protection quiz is based on the book "California
+	// Gold, story of the rush to riches" by Phyllis and Lou Zauner. It was
+	// published in 1980, eight years before the game, so presumably Sierra
+	// had some sort of licensing agreement. It was not included with the
+	// Software Farm re-release, and that version skips (but does not
+	// reomve) the copy protection.
+	//
+	// Since this was done by the original authors, we disable it in all
+	// versions but give the player the option to re-enable it.
+
+	if (getGameID() == GID_GOLDRUSH && _game.curLogicNr == 129) {
+		newRoomNr = ConfMan.getBool("copy_protection") ? 125 : 73;
+	}
+
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
 	// Loading trigger
@@ -58,7 +72,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		screenObj.cycleTimeCount = 1;
 		screenObj.stepSize = 1;
 	}
-	agiUnloadResources();
+	unloadResources();
 
 	_game.playerControl = true;
 	_game.block.active = false;
@@ -69,7 +83,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	setVar(VM_VAR_BORDER_CODE, 0);
 	setVar(VM_VAR_EGO_VIEW_RESOURCE, screenObjEgo->currentViewNr);
 
-	agiLoadResource(RESOURCETYPE_LOGIC, newRoomNr);
+	loadResource(RESOURCETYPE_LOGIC, newRoomNr);
 
 	// Reposition ego in the new room
 	switch (getVar(VM_VAR_BORDER_TOUCH_EGO)) {
@@ -96,7 +110,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 
 		screenObjEgo->flags &= ~fDidntMove;
 		// animateObject(0);
-		agiLoadResource(RESOURCETYPE_VIEW, screenObjEgo->currentViewNr);
+		loadResource(RESOURCETYPE_VIEW, screenObjEgo->currentViewNr);
 		setView(screenObjEgo, screenObjEgo->currentViewNr);
 
 	} else {
@@ -122,21 +136,13 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		if (getGameID() == GID_LSL1) {
 			setFlag(36, 0); // clear "ignore special" flag on every room change
 		}
-		// WORKAROUND: Gold Rush runs a speed test to calculate how fast the in-game
-		// clock should advance at Fast and Fastest settings, based on CPU speed.
-		// The goal was to produce a real-time clock, even though it's really driven
-		// by game cycles. This test is incompatible with our speed throttling because
-		// it runs in Fastest mode and the results are based on running unthrottled.
-		// This causes in an artificially poor test result, resulting in the clock
-		// running much too fast at Fast and Fastest speeds. We fix this by overriding
-		// the test result with speeds that match ours. Fixes bugs #4147, #13910
-		if (getGameID() == GID_GOLDRUSH && newRoomNr == 1) {
-			setVar(165, 20); // Fast:	 20 game cycles => 1 Gold Rush second
-			setVar(167, 40); // Fastest: 40 game cycles => 1 Gold Rush second
-			// Gold Rush 3.0 (1998) disables Fastest if the speed test indicates
-			// a fast machine. That shouldn't happen, but make sure it doesn't.
-			if (getPlatform() == Common::kPlatformDOS) {
-				setFlag(172, 0); // Allow Fastest
+
+		// WORKAROUND: KQ3 has a script bug where listening to fish talk in room 31
+		// prevents hearing the critical mice conversation on the ship in room 86.
+		// Each scene uses a series of flag numbers, but they overlap. Bug #15130
+		if (getGameID() == GID_KQ3 && newRoomNr == 77) {
+			for (int16 flag = 193; flag <= 197; flag++) {
+				setFlag(flag, 0); // clear all mice flags when starting ship voyage
 			}
 		}
 	}
@@ -189,7 +195,7 @@ void AgiEngine::interpretCycle() {
 	screenObjEgo->direction = getVar(VM_VAR_EGO_DIRECTION);
 
 	if (getVar(VM_VAR_SCORE) != oldScore || getFlag(VM_FLAG_SOUND_ON) != oldSound)
-		_game._vm->_text->statusDraw();
+		_game._vm->_text->statusDraw(getVar(VM_VAR_SCORE) != oldScore, getFlag(VM_FLAG_SOUND_ON) != oldSound);
 
 	setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
 	setVar(VM_VAR_BORDER_CODE, 0);
@@ -308,7 +314,7 @@ uint16 AgiEngine::processAGIEvents() {
 		for (int i = 0; i < 4; i++)
 			if (_game.controllerOccurred[_game.appleIIgsSpeedControllerSlot + i]) {
 				_game.controllerOccurred[_game.appleIIgsSpeedControllerSlot + i] = false;
-				_game.setAppleIIgsSpeedLevel(i);
+				_game.setSpeedLevel(i);
 			}
 
 	_gfx->updateScreen();
@@ -316,11 +322,7 @@ uint16 AgiEngine::processAGIEvents() {
 	return key;
 }
 
-int AgiEngine::playGame() {
-	int ec = errOK;
-	const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite = nullptr;
-	const AgiAppleIIgsDelayOverwriteRoomEntry *appleIIgsDelayRoomOverwrite = nullptr;
-
+void AgiEngine::playGame() {
 	debugC(2, kDebugLevelMain, "initializing...");
 	debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
 
@@ -343,7 +345,7 @@ int AgiEngine::playGame() {
 	_game.gfxMode = true;
 	_text->promptRow_Set(22);
 
-	debug(0, "Running AGI script.\n");
+	debug(0, "Running AGI script");
 
 	setFlag(VM_FLAG_ENTERED_CLI, false);
 	setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
@@ -362,14 +364,10 @@ int AgiEngine::playGame() {
 
 	artificialDelay_Reset();
 
+	const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite = nullptr;
 	if (getPlatform() == Common::kPlatformApple2GS) {
 		// Look up, if there is a time delay overwrite table for the current game
-		appleIIgsDelayOverwrite = appleIIgsDelayOverwriteGameTable;
-		while (appleIIgsDelayOverwrite->gameId != GID_AGIDEMO) {
-			if (appleIIgsDelayOverwrite->gameId == getGameID())
-				break; // game found
-			appleIIgsDelayOverwrite++;
-		}
+		appleIIgsDelayOverwrite = getAppleIIgsDelayOverwriteGameEntry(getGameID());
 	}
 
 	do {
@@ -377,63 +375,26 @@ int AgiEngine::playGame() {
 
 		inGameTimerUpdate();
 
-		uint8 timeDelay = getVar(VM_VAR_TIME_DELAY);
-
-		if (getPlatform() == Common::kPlatformApple2GS) {
-			timeDelay++;
-			// It seems that either Apple IIgs ran very slowly or that the delay in its interpreter was not working as everywhere else
-			// Most games on that platform set the delay to 0, which means no delay in DOS
-			// Gold Rush! even "optimizes" itself when larger sprites are on the screen it sets TIME_DELAY to 0.
-			// Normally that game runs at TIME_DELAY 1.
-			// Maybe a script patch for this game would make sense.
-			// TODO: needs further investigation
-
-			int16 timeDelayOverwrite = -99;
-
-			// Now check, if we got a time delay overwrite entry for current room
-			if (appleIIgsDelayOverwrite->roomTable) {
-				byte curRoom = getVar(VM_VAR_CURRENT_ROOM);
-				int16 curPictureNr = _picture->getResourceNr();
-
-				appleIIgsDelayRoomOverwrite = appleIIgsDelayOverwrite->roomTable;
-				while (appleIIgsDelayRoomOverwrite->fromRoom >= 0) {
-					if ((appleIIgsDelayRoomOverwrite->fromRoom <= curRoom) && (appleIIgsDelayRoomOverwrite->toRoom >= curRoom)) {
-						if ((appleIIgsDelayRoomOverwrite->activePictureNr == curPictureNr) || (appleIIgsDelayRoomOverwrite->activePictureNr == -1)) {
-							if (appleIIgsDelayRoomOverwrite->onlyWhenPlayerNotInControl) {
-								if (_game.playerControl) {
-									// Player is actually currently in control? -> then skip this entry
-									appleIIgsDelayRoomOverwrite++;
-									continue;
-								}
-							}
-							timeDelayOverwrite = appleIIgsDelayRoomOverwrite->timeDelayOverwrite;
-							break;
-						}
-					}
-					appleIIgsDelayRoomOverwrite++;
-				}
+		byte timeDelay;
+		if (getPlatform() == Common::kPlatformApple2) {
+			// Apple II games did not have speed control. The interpreter ran as
+			// fast as it could, but it was still quite slow. Game scripts still
+			// set variable 10, but they do so inconsistently because they were
+			// ported from other platforms and it had no effect.
+			// We add speed control in `Words::handleSpeedCommands`.
+			timeDelay = _game.speedLevel;
+		} else if (getVersion() < 0x2000) {
+			// AGIv1 uses an internal speed level, set by the `set.speed` opcode
+			timeDelay = _game.speedLevel;
+		} else if (getPlatform() == Common::kPlatformApple2GS) {
+			byte newTimeDelay = 0xff;
+			timeDelay = getAppleIIgsTimeDelay(appleIIgsDelayOverwrite, newTimeDelay);
+			if (newTimeDelay != 0xff) {
+				setVar(VM_VAR_TIME_DELAY, newTimeDelay);
 			}
-
-			if (timeDelayOverwrite == -99) {
-				// use default time delay in case no room specific one was found ...
-				if (_game.appleIIgsSpeedLevel == 2)
-					// ... and the user set the speed to "Normal" ...
-					timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
-				else
-					// ... otherwise, use the speed the user requested (either from menu, or from text parser)
-					timeDelayOverwrite = _game.appleIIgsSpeedLevel;
-			}
-
-
-			if (timeDelayOverwrite >= 0) {
-				if (timeDelayOverwrite != timeDelay) {
-					// delayOverwrite is not the same as the delay taken from the scripts? overwrite it
-					//warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
-
-					setVar(VM_VAR_TIME_DELAY, timeDelayOverwrite - 1); // adjust for Apple IIgs
-					timeDelay = timeDelayOverwrite;
-				}
-			}
+		} else {
+			// AGIv2 and AGIv3 use the time delay variable set by game scripts
+			timeDelay = getVar(VM_VAR_TIME_DELAY);
 		}
 
 		// Increment the delay value by one, so that we wait for at least 1 cycle
@@ -477,8 +438,6 @@ int AgiEngine::playGame() {
 	} while (!(shouldQuit() || _restartGame));
 
 	_sound->stopSound();
-
-	return ec;
 }
 
 int AgiEngine::runGame() {
@@ -489,7 +448,8 @@ int AgiEngine::runGame() {
 		debugC(2, kDebugLevelMain, "game loop");
 		debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
 
-		if (agiInit() != errOK)
+		ec = agiInit();
+		if (ec != errOK)
 			break;
 
 		if (_restartGame) {
@@ -511,6 +471,10 @@ int AgiEngine::runGame() {
 		case Common::kPlatformAmiga:
 			setVar(VM_VAR_COMPUTER, kAgiComputerAmiga);
 			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundTandy);
+			break;
+		case Common::kPlatformApple2:
+			setVar(VM_VAR_COMPUTER, kAgiComputerApple2);
+			setVar(VM_VAR_SOUNDGENERATOR, kAgiSoundPC);
 			break;
 		case Common::kPlatformApple2GS:
 			setVar(VM_VAR_COMPUTER, kAgiComputerApple2GS);
@@ -557,7 +521,7 @@ int AgiEngine::runGame() {
 		setVar(VM_VAR_MAX_INPUT_CHARACTERS, 38);
 		_text->promptDisable();
 
-		ec = playGame();
+		playGame();
 		agiDeinit();
 	} while (_restartGame);
 
@@ -567,6 +531,74 @@ int AgiEngine::runGame() {
 	releaseImageStack();
 
 	return ec;
+}
+
+/**
+ * Returns the time delay to use for an Apple IIgs interpreter cycle.
+ * Optionally returns a new value for the time delay variable (variable 10).
+ */
+byte AgiEngine::getAppleIIgsTimeDelay(
+	const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite,
+	byte &newTimeDelay) const {
+
+	byte timeDelay = _game.vars[VM_VAR_TIME_DELAY];
+	timeDelay++;
+	// It seems that either Apple IIgs ran very slowly or that the delay in its interpreter was not working as everywhere else
+	// Most games on that platform set the delay to 0, which means no delay in DOS
+	// Gold Rush! even "optimizes" itself when larger sprites are on the screen it sets TIME_DELAY to 0.
+	// Normally that game runs at TIME_DELAY 1.
+	// Maybe a script patch for this game would make sense.
+	// TODO: needs further investigation
+
+	int16 timeDelayOverwrite = -99;
+
+	// Now check, if we got a time delay overwrite entry for current room
+	if (appleIIgsDelayOverwrite->roomTable) {
+		byte curRoom = _game.vars[VM_VAR_CURRENT_ROOM];
+		int16 curPictureNr = _picture->getResourceNr();
+
+		const AgiAppleIIgsDelayOverwriteRoomEntry *appleIIgsDelayRoomOverwrite = nullptr;
+		appleIIgsDelayRoomOverwrite = appleIIgsDelayOverwrite->roomTable;
+		while (appleIIgsDelayRoomOverwrite->fromRoom >= 0) {
+			if ((appleIIgsDelayRoomOverwrite->fromRoom <= curRoom) && (appleIIgsDelayRoomOverwrite->toRoom >= curRoom)) {
+				if ((appleIIgsDelayRoomOverwrite->activePictureNr == curPictureNr) || (appleIIgsDelayRoomOverwrite->activePictureNr == -1)) {
+					if (appleIIgsDelayRoomOverwrite->onlyWhenPlayerNotInControl) {
+						if (_game.playerControl) {
+							// Player is actually currently in control? -> then skip this entry
+							appleIIgsDelayRoomOverwrite++;
+							continue;
+						}
+					}
+					timeDelayOverwrite = appleIIgsDelayRoomOverwrite->timeDelayOverwrite;
+					break;
+				}
+			}
+			appleIIgsDelayRoomOverwrite++;
+		}
+	}
+
+	if (timeDelayOverwrite == -99) {
+		// use default time delay in case no room specific one was found ...
+		if (_game.speedLevel == 2)
+			// ... and the user set the speed to "Normal" ...
+			timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
+		else
+			// ... otherwise, use the speed the user requested (either from menu, or from text parser)
+			timeDelayOverwrite = _game.speedLevel;
+	}
+
+
+	if (timeDelayOverwrite >= 0) {
+		if (timeDelayOverwrite != timeDelay) {
+			// delayOverwrite is not the same as the delay taken from the scripts? overwrite it
+			//warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
+
+			newTimeDelay = timeDelayOverwrite - 1; // adjust for Apple IIgs
+			timeDelay = timeDelayOverwrite;
+		}
+	}
+
+	return timeDelay;
 }
 
 } // End of namespace Agi

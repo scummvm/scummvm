@@ -37,28 +37,23 @@ ScalpelInventory::ScalpelInventory(SherlockEngine *vm) : Inventory(vm) {
 	_fixedTextUse  = FIXED(Inventory_Use);
 	_fixedTextGive = FIXED(Inventory_Give);
 
-	_hotkeyExit = toupper(_fixedTextExit[0]);
-	_hotkeyLook = toupper(_fixedTextLook[0]);
-	_hotkeyUse = toupper(_fixedTextUse[0]);
-	_hotkeyGive = toupper(_fixedTextGive[0]);
-
-	_hotkeysIndexed[0] = _hotkeyExit;
-	_hotkeysIndexed[1] = _hotkeyLook;
-	_hotkeysIndexed[2] = _hotkeyUse;
-	_hotkeysIndexed[3] = _hotkeyGive;
-	_hotkeysIndexed[4] = '-';
-	_hotkeysIndexed[5] = '+';
-	_hotkeysIndexed[6] = ',';
-	_hotkeysIndexed[7] = '.';
+	_actionsIndexed[0] = kActionScalpelInvExit;
+	_actionsIndexed[1] = kActionScalpelInvLook;
+	_actionsIndexed[2] = kActionScalpelInvUse;
+	_actionsIndexed[3] = kActionScalpelInvGive;
+	_actionsIndexed[4] = kActionScalpelInvLeft;
+	_actionsIndexed[5] = kActionScalpelInvRight;
+	_actionsIndexed[6] = kActionScalpelInvPageLeft;
+	_actionsIndexed[7] = kActionScalpelInvPageRight;
 }
 
 ScalpelInventory::~ScalpelInventory() {
 }
 
-int ScalpelInventory::identifyUserButton(int key) {
-	for (uint16 hotkeyNr = 0; hotkeyNr < sizeof(_hotkeysIndexed); hotkeyNr++) {
-		if (key == _hotkeysIndexed[hotkeyNr])
-			return hotkeyNr;
+int ScalpelInventory::identifyUserButton(Common::CustomEventType action) {
+	for (uint16 actionNr = 0; actionNr < ARRAYSIZE(_actionsIndexed); actionNr++) {
+		if (action == _actionsIndexed[actionNr])
+			return actionNr;
 	}
 	return -1;
 }
@@ -108,10 +103,10 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 	_invMode = (InvMode)((int)mode);
 
 	if (mode != PLAIN_INVENTORY) {
-		assert((uint)mode < sizeof(_hotkeysIndexed));
-		ui._oldKey = _hotkeysIndexed[mode];
+		assert((uint)mode < ARRAYSIZE(_actionsIndexed));
+		ui._oldAction = _actionsIndexed[mode];
 	} else {
-		ui._oldKey = -1;
+		ui._oldAction = (Common::CustomEventType) -1;
 	}
 
 	invCommands(0);

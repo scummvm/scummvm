@@ -23,10 +23,9 @@
 #define GRAPHICS_SCREEN_H
 
 #include "graphics/managed_surface.h"
+#include "graphics/dirtyrects.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
-#include "common/list.h"
-#include "common/rect.h"
 
 namespace Graphics {
 
@@ -50,17 +49,8 @@ protected:
 	/**
 	 * List of affected areas of the screen
 	 */
-	Common::List<Common::Rect> _dirtyRects;
-protected:
-	/**
-	 * Merges together overlapping dirty areas of the screen
-	 */
-	void mergeDirtyRects();
+	DirtyRectList _dirtyRects;
 
-	/**
-	 * Returns the union of two dirty area rectangles
-	 */
-	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 public:
 	Screen();
 	Screen(int width, int height);
@@ -80,13 +70,13 @@ public:
 	/**
 	 * Clear the current dirty rects list
 	 */
-	virtual void clearDirtyRects() { _dirtyRects.clear(); }
+	void clearDirtyRects() override { _dirtyRects.clear(); }
 
 	/**
 	 * Adds a rectangle to the list of modified areas of the screen during the
 	 * current frame
 	 */
-	virtual void addDirtyRect(const Common::Rect &r);
+	void addDirtyRect(const Common::Rect &r) override;
 
 	/**
 	 * Updates the screen by copying any affected areas to the system

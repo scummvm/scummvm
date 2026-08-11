@@ -372,7 +372,7 @@ void World::save(Common::WriteStream *ws) {
 
 	// empty stack and refill it again
 	uint16 *e = new uint16[es];
-	Std::list<ObjId>::const_iterator it = _ethereal.begin();
+	auto it = _ethereal.begin();
 	unsigned int i;
 	for (i = 0; i < es; ++i) {
 		e[es - i] = *it;

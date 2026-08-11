@@ -37,7 +37,7 @@ Common::Platform KingdomGame::getPlatform() const { return _gameDescription->pla
 } // End of namespace Kingdom
 
 
-class KingdomMetaEngine : public AdvancedMetaEngine {
+class KingdomMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "kingdom";
@@ -48,7 +48,7 @@ public:
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -74,21 +74,19 @@ int KingdomMetaEngine::getMaximumSaveSlot() const {
 
 SaveStateList KingdomMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = Common::String::format("%s.0##", target);
-
-	filenames = saveFileMan->listSavefiles(pattern);
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 
 	Kingdom::KingdomSavegameHeader header;
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
+	for (const auto &filename : filenames) {
+		const char *ext = strrchr(filename.c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
 
 		if (slot >= 0 && slot < MAX_SAVES) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 
 			if (in) {
 				if (Kingdom::KingdomGame::readSavegameHeader(in, header)) {
@@ -108,9 +106,9 @@ SaveStateList KingdomMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void KingdomMetaEngine::removeSaveState(const char *target, int slot) const {
+bool KingdomMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor KingdomMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

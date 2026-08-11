@@ -20,7 +20,7 @@
  */
 
 #include "sci/sci.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 

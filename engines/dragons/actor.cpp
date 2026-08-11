@@ -18,11 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "common/debug.h"
+#include "dragons/actor.h"
+#include "dragons/actorresource.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonini.h"
-#include "dragons/actorresource.h"
-#include "dragons/actor.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
 
@@ -64,12 +63,14 @@ Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, in
 
 Actor *ActorManager::findFreeActor(int16 resourceId) {
 	int i = 0;
-	for (ActorsIterator it = _actors.begin(); it != _actors.end() && i < 23; ++it, i++) {
-		Actor *actor = it;
-		if (!(actor->_flags & ACTOR_FLAG_40)) {
-			actor->_resourceID = resourceId;
-			actor->_walkSpeed = 0x100000;
-			return actor;
+	for (auto &actor : _actors) {
+		if (i++ >= 23)
+			break;
+
+		if (!(actor._flags & ACTOR_FLAG_40)) {
+			actor._resourceID = resourceId;
+			actor._walkSpeed = 0x100000;
+			return &actor;
 		}
 	}
 	return nullptr;

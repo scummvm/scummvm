@@ -655,6 +655,7 @@ static const char *const kEoB2ClericSpellsListPC98Japanese[30] = {
 	"True Seeing",
 	"Harm",
 	"Heal",
+	// FIXME: Spelling incorrect. ressurection should be resurrection. Fixing changes game data and thus may cause issues
 	"Ressurection",
 	"Lay on Hands",
 	"Turn undead"
@@ -721,6 +722,7 @@ static const char *const kEoB2SpellNamesPC98Japanese[68] = {
 	"True Seeing",
 	"Harm",
 	"Heal",
+	// FIXME: Spelling incorrect. ressurection should be resurrection. Fixing changes game data and thus may cause issues
 	"Ressurection",
 	"Lay on Hands",
 	"Turn Undead",

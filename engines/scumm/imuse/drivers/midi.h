@@ -24,14 +24,16 @@
 
 #include "audio/mididrv.h"
 
-namespace Scumm {
-
+namespace IMSMidi {
 class IMuseChannel_Midi;
 class IMuseChannel_MT32;
 struct ChannelNode;
+} // End of namespace IMSMidi
+
+namespace Scumm {
 
 class IMuseDriver_GMidi : public MidiDriver {
-	friend class IMuseChannel_Midi;
+	friend class IMSMidi::IMuseChannel_Midi;
 public:
 	IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGSMode, bool newSystem);
 	virtual ~IMuseDriver_GMidi() override;
@@ -44,8 +46,8 @@ public:
 	uint32 property(int prop, uint32 param) override { return _drv ? _drv->property(prop, param) : 0; }
 	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override { if (_drv) _drv->setTimerCallback(timerParam, timerProc); }
 	uint32 getBaseTempo() override { return _drv ? _drv->getBaseTempo() : 0; }
-	void send(uint32 b) override { if (_drv) _drv->send(b); };
-	void sysEx(const byte *msg, uint16 length) override { if (_drv) _drv->sysEx(msg, length); } 
+	void send(uint32 b) override { if (_drv && trackMidiState(b)) _drv->send(b); };
+	void sysEx(const byte *msg, uint16 length) override { if (_drv) _drv->sysEx(msg, length); }
 	virtual void setPitchBendRange(byte channel, uint range) override { if (_drv) _drv->setPitchBendRange(channel, range); }
 
 	// Channel allocation functions
@@ -53,7 +55,7 @@ public:
 	MidiChannel *getPercussionChannel() override;
 
 protected:
-	IMuseChannel_Midi *getPart(int number);
+	IMSMidi::IMuseChannel_Midi *getPart(int number);
 	virtual void createChannels();
 	virtual void createParts();
 	virtual void releaseChannels();
@@ -62,7 +64,8 @@ protected:
 	const bool _newSystem;
 	byte _numChannels;
 	byte _numVoices;
-	IMuseChannel_Midi **_imsParts;
+	IMSMidi::IMuseChannel_Midi **_imsParts;
+	bool _noProgramTracking;
 
 private:
 	virtual void initDevice();
@@ -76,17 +79,20 @@ private:
 	void clearSustainFlag(byte chan, byte note) { if (_notesSustained && chan < 16 && note < 128) _notesSustained[note] &= ~(1 << chan); }
 	bool querySustainFlag(byte chan, byte note) const { return (_notesSustained && chan < 16 && note < 128) ? _notesSustained[note] & (1 << chan) : false; }
 
+	bool trackMidiState(uint32 b);
+
 	const bool _gsMode;
 
-	ChannelNode *_idleChain;
-	ChannelNode *_activeChain;
+	IMSMidi::ChannelNode *_idleChain;
+	IMSMidi::ChannelNode *_activeChain;
 
 	uint16 *_notesPlaying;
 	uint16 *_notesSustained;
+	byte *_midiRegState;
 };
 
 class IMuseDriver_MT32 final : public IMuseDriver_GMidi {
-	friend class IMuseChannel_MT32;
+	friend class IMSMidi::IMuseChannel_MT32;
 public:
 	IMuseDriver_MT32(MidiDriver::DeviceHandle dev, bool newSystem);
 	~IMuseDriver_MT32() override {}
@@ -101,7 +107,7 @@ private:
 	// Convenience function that allows to send the sysex message with the exact same arguments as they are used in the original drivers.
 	void sendMT32Sysex(uint32 addr, const byte *data, uint32 dataSize);
 
-	ChannelNode *_hwRealChain;
+	IMSMidi::ChannelNode *_hwRealChain;
 
 	const byte *_programsMapping;
 };

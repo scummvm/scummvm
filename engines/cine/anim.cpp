@@ -458,7 +458,7 @@ void freeAnimDataTable() {
 static byte getAnimTransparentColor(const char *animName) {
 	char name[15];
 
-	removeExtention(name, animName, sizeof(name));
+	removeExtension(name, animName, sizeof(name));
 
 	for (int i = 0; i < ARRAYSIZE(transparencyData); i++) {
 		if (!strcmp(name, transparencyData[i].name)) {
@@ -867,7 +867,7 @@ int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 		g_sound->musicType() != MT_MT32 &&
 		(strstr(resourceName, ".SPL") || strstr(resourceName, ".H32"))) {
 		char base[20];
-		removeExtention(base, resourceName, sizeof(base));
+		removeExtension(base, resourceName, sizeof(base));
 
 		for (uint i = 0; i < ARRAYSIZE(resNameMapping); i++) {
 			if (scumm_stricmp(base, resNameMapping[i].from) == 0) {

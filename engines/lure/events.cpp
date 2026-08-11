@@ -185,7 +185,8 @@ void Events::waitForPress() {
 	while (!keyButton) {
 		while (pollEvent()) {
 			if ((_event.type == Common::EVENT_QUIT) || (_event.type == Common::EVENT_RETURN_TO_LAUNCHER)) return;
-			else if ((_event.type == Common::EVENT_KEYDOWN) && (_event.kbd.ascii != 0))
+			else if (((_event.type == Common::EVENT_KEYDOWN) && (_event.kbd.ascii != 0)) ||
+					 ((_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) && (_event.customType != kActionNone)))
 				keyButton = true;
 			else if ((_event.type == Common::EVENT_LBUTTONDOWN) ||
 				(_event.type == Common::EVENT_MBUTTONDOWN) ||
@@ -212,6 +213,7 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 
 		if (events.pollEvent()) {
 			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) ||
+				((events.type() == Common::EVENT_CUSTOM_ENGINE_ACTION_START) && (events.customType() != kActionNone)) ||
 				(events.type() == Common::EVENT_LBUTTONDOWN))
 				return true;
 		}

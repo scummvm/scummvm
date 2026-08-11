@@ -22,8 +22,8 @@
 #ifndef ULTIMA8_GUMPS_WEASELDAT_H
 #define ULTIMA8_GUMPS_WEASELDAT_H
 
+#include "common/array.h"
 #include "common/stream.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -58,12 +58,12 @@ public:
 
 	uint16 getNumOfType(WeaselType type) const;
 
-	const Std::vector<WeaselEntry> &getItems() const {
+	const Common::Array<WeaselEntry> &getItems() const {
 		return _items;
 	}
 
 private:
-	Std::vector<WeaselEntry> _items;
+	Common::Array<WeaselEntry> _items;
 };
 
 } // End of namespace Ultima8

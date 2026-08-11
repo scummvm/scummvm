@@ -23,7 +23,7 @@
 // Graphics initialization
 //
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/core/platform.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/debugging/debugger.h"
@@ -207,8 +207,8 @@ static Size precalc_screen_size(const Size &game_size, const WindowSetup &ws, co
 bool try_init_compatible_mode(const DisplayMode &dm) {
 	const Size &screen_size = Size(dm.Width, dm.Height);
 	// Find nearest compatible mode and init that
-	Debug::Printf("Attempting to find nearest supported resolution for screen size %d x %d (%d-bit) %s",
-		dm.Width, dm.Height, dm.ColorDepth, dm.IsWindowed() ? "windowed" : "fullscreen");
+	Debug::Printf("Attempt to find nearest supported resolution for screen size %d x %d (%d-bit) %s, on display %d",
+				  dm.Width, dm.Height, dm.ColorDepth, dm.IsWindowed() ? "windowed" : "fullscreen", sys_get_window_display_index());
 	const Size device_size = get_max_display_size(dm.IsWindowed());
 	if (dm.IsWindowed())
 		Debug::Printf("Maximal allowed window size: %d x %d", device_size.Width, device_size.Height);
@@ -238,7 +238,7 @@ bool try_init_compatible_mode(const DisplayMode &dm) {
 	if (!result && dm.IsWindowed()) {
 		// When initializing windowed mode we could start with any random window size;
 		// if that did not work, try to find nearest supported mode, as with fullscreen mode,
-		// except refering to max window size as an upper bound
+		// except referring to max window size as an upper bound
 		if (find_nearest_supported_mode(*modes.get(), screen_size, dm.ColorDepth, nullptr, &device_size, dm_compat)) {
 			dm_compat.Vsync = dm.Vsync;
 			dm_compat.Mode = kWnd_Windowed;
@@ -453,8 +453,8 @@ bool graphics_mode_set_dm_any(const Size &game_size, const WindowSetup &ws,
 }
 
 bool graphics_mode_set_dm(const DisplayMode &dm) {
-	Debug::Printf("Attempt to switch gfx mode to %d x %d (%d-bit) %s",
-		dm.Width, dm.Height, dm.ColorDepth, dm.IsWindowed() ? "windowed" : "fullscreen");
+	Debug::Printf("Attempt to switch gfx mode to %d x %d (%d-bit) %s, on display %d",
+				  dm.Width, dm.Height, dm.ColorDepth, dm.IsWindowed() ? "windowed" : "fullscreen", sys_get_window_display_index());
 
 	// Tell Allegro new default bitmap color depth (must be done before set_gfx_mode)
 	// TODO: this is also done inside ALSoftwareGraphicsDriver implementation; can remove one?
@@ -466,14 +466,13 @@ bool graphics_mode_set_dm(const DisplayMode &dm) {
 	}
 
 	DisplayMode rdm = _G(gfxDriver)->GetDisplayMode();
-	if (rdm.IsWindowed())
-		_GP(SavedWindowedSetting).Dm = rdm;
-	else
-		_GP(SavedFullscreenSetting).Dm = rdm;
+	ActiveDisplaySetting &setting = rdm.IsWindowed() ? _GP(SavedWindowedSetting) : _GP(SavedFullscreenSetting);
+	setting.Dm = rdm;
+	setting.DisplayIndex = sys_get_window_display_index();
 	Debug::Printf(kDbgMsg_Info, "Graphics driver set: %s", _G(gfxDriver)->GetDriverName());
-	Debug::Printf(kDbgMsg_Info, "Graphics mode set: %d x %d (%d-bit) %s",
+	Debug::Printf(kDbgMsg_Info, "Graphics mode set: %d x %d (%d-bit) %s, on display %d",
 		rdm.Width, rdm.Height, rdm.ColorDepth,
-		rdm.IsWindowed() ? "windowed" : (rdm.IsRealFullscreen() ? "fullscreen" : "fullscreen desktop"));
+		rdm.IsWindowed() ? "windowed" : (rdm.IsRealFullscreen() ? "fullscreen" : "fullscreen desktop"), setting.DisplayIndex);
 	Debug::Printf(kDbgMsg_Info, "Graphics mode set: refresh rate (optional): %d, vsync: %d", rdm.RefreshRate, rdm.Vsync);
 	return true;
 }

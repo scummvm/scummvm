@@ -49,10 +49,12 @@ ShadowVolumeOpenGL::~ShadowVolumeOpenGL() {
 bool ShadowVolumeOpenGL::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
+	_game->_renderer3D->_lastTexture = nullptr;
 
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, _vertices.data());
-	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+	glVertexPointer(3, GL_FLOAT, 0, _vertices.getData());
+	glDrawArrays(GL_TRIANGLES, 0, _vertices.getSize());
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	return true;
@@ -60,9 +62,10 @@ bool ShadowVolumeOpenGL::render() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGL::renderToStencilBuffer() {
-	// Disable z-buffer writes (note: z-testing still occurs), and enable the
+	// Disable z-buffer/color writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	glDepthMask(GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_STENCIL_TEST);
@@ -72,24 +75,21 @@ bool ShadowVolumeOpenGL::renderToStencilBuffer() {
 	// Stencil test passes if ((ref & mask) cmpfn (stencil & mask)) is true.
 	// Note: since we set up the stencil-test to always pass, the STENCILFAIL
 	// renderstate is really not needed.
-	glStencilFunc(GL_ALWAYS, 0x1, 0xFFFFFFFF);
+	glStencilFunc(GL_ALWAYS, 0x1, (GLuint)~0);
 
 	glShadeModel(GL_FLAT);
-	// Make sure that no pixels get drawn to the frame buffer
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ZERO, GL_ONE);
 
 	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
 	// Draw back-side of shadow volume in stencil/z only
-	glCullFace(GL_FRONT);
+	glFrontFace(GL_CCW);
 	render();
 
 	// Decrement stencil buffer value
 	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 	// Draw front-side of shadow volume in stencil/z only
-	glCullFace(GL_BACK);
+	glFrontFace(GL_CW);
 	render();
 
 	// Restore render states
@@ -97,6 +97,7 @@ bool ShadowVolumeOpenGL::renderToStencilBuffer() {
 	glFrontFace(GL_CCW);
 	glShadeModel(GL_SMOOTH);
 	glDepthMask(GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDisable(GL_STENCIL_TEST);
 	glDisable(GL_BLEND);
 
@@ -113,16 +114,19 @@ bool ShadowVolumeOpenGL::renderToScene() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Only write where stencil val >= 1 (count indicates # of shadows that overlap that pixel)
-	glStencilFunc(GL_LEQUAL, 0x1, 0xFFFFFFFF);
+	glStencilFunc(GL_LEQUAL, 0x1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
 	glDisable(GL_FOG);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_ALPHA_TEST);
 
-	_gameRef->_renderer3D->setProjection2D();
-
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	BaseRenderOpenGL3D *renderer = dynamic_cast<BaseRenderOpenGL3D *>(_game->_renderer3D);
+	renderer->setProjection2D();
+
+	glFrontFace(GL_CW);
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -140,7 +144,7 @@ bool ShadowVolumeOpenGL::renderToScene() {
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_STENCIL_TEST);
 
-	_gameRef->_renderer3D->setup3D(nullptr, true);
+	_game->_renderer3D->setup3D(nullptr, true);
 
 	// clear stencil buffer
 	glClearStencil(0);
@@ -151,23 +155,27 @@ bool ShadowVolumeOpenGL::renderToScene() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGL::initMask() {
-	Rect32 viewport = _gameRef->_renderer->getViewPort();
+	auto *rend = _game->_renderer3D;
 
-	_shadowMask[0].x = viewport.left;
-	_shadowMask[0].y = viewport.bottom;
-	_shadowMask[0].z = 0.0f;
+	// bottom left
+	_shadowMask[0].x = 0.0f;
+	_shadowMask[0].y = rend->getHeight();
+	_shadowMask[0].z = 1.0f;
 
-	_shadowMask[1].x = viewport.left;
-	_shadowMask[1].y = viewport.top;
-	_shadowMask[1].z = 0.0f;
+	// top left
+	_shadowMask[1].x = 0.0f;
+	_shadowMask[1].y = 0.0f;
+	_shadowMask[1].z = 1.0f;
 
-	_shadowMask[2].x = viewport.right;
-	_shadowMask[2].y = viewport.bottom;
-	_shadowMask[2].z = 0.0f;
+	// bottom right
+	_shadowMask[2].x = rend->getWidth();
+	_shadowMask[2].y = rend->getHeight();
+	_shadowMask[2].z = 1.0f;
 
-	_shadowMask[3].x = viewport.right;
-	_shadowMask[3].y = viewport.top;
-	_shadowMask[3].z = 0.0f;
+	// top right
+	_shadowMask[3].x = rend->getWidth();
+	_shadowMask[3].y = 0.0f;
+	_shadowMask[3].z = 1.0f;
 
 	byte a = RGBCOLGetA(_color);
 	byte r = RGBCOLGetR(_color);

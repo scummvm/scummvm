@@ -27,6 +27,17 @@
 
 namespace Sci {
 
+void reg_t::init(SegmentId segment, uint32 offset) {
+	if (getSciVersion() < SCI_VERSION_3) {
+		_segment = segment;
+		_offset = offset;
+	} else {
+		// Set the lower 14 bits of the segment, and preserve the upper 2 ones for the offset
+		_segment = ((offset & 0x30000) >> 2) | (segment & 0x3FFF);
+		_offset = offset & 0xFFFF;
+	}
+}
+
 SegmentId reg_t::getSegment() const {
 	if (getSciVersion() < SCI_VERSION_3) {
 		return _segment;

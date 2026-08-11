@@ -56,7 +56,7 @@ public:
 	AbstractFSNode *getParent() const override;
 
 	Common::SeekableReadStream *createReadStream() override;
-	Common::SeekableWriteStream *createWriteStream() override { return 0; }
+	Common::SeekableWriteStream *createWriteStream(bool atomic) override { return 0; }
 	bool createDirectory() override { return false; }
 
 	static AbstractFSNode *makeFileNodePath(const Common::String &path);
@@ -155,7 +155,7 @@ AbstractFSNode *RoninCDFileNode::getParent() const {
 
 
 Common::SeekableReadStream *RoninCDFileNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), false);
+	return StdioStream::makeFromPath(getPath().c_str(), StdioStream::WriteMode_Read);
 }
 
 AbstractFSNode *OSystem_Dreamcast::makeRootFileNode() const {

@@ -58,8 +58,6 @@ const char gScummVMVersion[] = SCUMMVM_VERSION SCUMMVM_REVISION;
 #if defined(__amigaos4__) || defined(__MORPHOS__)
 static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" AMIGA_DATE ")";
 #endif
-const char gScummVMBuildDate[] = __DATE__ " " __TIME__;
-const char gScummVMVersionDate[] = SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
 const char gScummVMCompiler[] = ""
 #define STR_HELPER(x)	#x
 #define STR(x)		STR_HELPER(x)
@@ -68,6 +66,9 @@ const char gScummVMCompiler[] = ""
 #elif defined(__INTEL_COMPILER)
 	"ICC " STR(__INTEL_COMPILER) "." STR(__INTEL_COMPILER_UPDATE)
 #elif defined(__clang__)
+#  if defined(__apple_build_version__)
+	"Apple "
+#  endif
 	"Clang " STR(__clang_major__) "." STR(__clang_minor__) "." STR(__clang_patchlevel__)
 #elif defined(__GNUC__)
 	"GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
@@ -77,7 +78,15 @@ const char gScummVMCompiler[] = ""
 #undef STR
 #undef STR_HELPER
 	;
-const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
+
+#ifdef RELEASE_BUILD
+	const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION;
+	const char gScummVMBuildDate[] = SCUMMVM_VERSION;
+#else
+	const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
+	const char gScummVMBuildDate[] = __DATE__ " " __TIME__;
+#endif
+
 const char gScummVMFeatures[] = ""
 #ifdef TAINTED_BUILD
 	// TAINTED means the build contains engines/subengines not enabled by default
@@ -85,12 +94,7 @@ const char gScummVMFeatures[] = ""
 #endif
 
 #ifdef USE_TREMOR
-#  ifdef USE_TREMOLO
-	// libTremolo is used on WinCE for better ogg performance
-	"Tremolo "
-#  else
 	"Tremor "
-#  endif
 #elif defined(USE_VORBIS)
 	"Vorbis "
 #endif
@@ -202,22 +206,13 @@ const char gScummVMFeatures[] = ""
 #endif
 
 #ifdef USE_CLOUD
-	"cloud ("
-#  ifdef USE_LIBCURL
-	"servers"
-#    ifdef USE_SDL_NET
-	", local) "
-#    else
-	") "
-#    endif
-#  endif
-#else
-#  ifdef USE_LIBCURL
+	"cloud "
+#endif
+#ifdef USE_LIBCURL
 	"libcurl "
-#  endif
-#  ifdef USE_SDL_NET
+#endif
+#ifdef USE_SDL_NET
 	"SDL_net "
-#  endif
 #endif
 
 #ifdef USE_ENET
@@ -225,7 +220,9 @@ const char gScummVMFeatures[] = ""
 #endif
 
 #ifdef SDL_BACKEND
-#  ifdef USE_SDL2
+#  ifdef USE_SDL3
+	"SDL3 "
+#  elif USE_SDL2
 	"SDL2 "
 #  else
 	"SDL1.2 "
@@ -256,4 +253,9 @@ const char gScummVMFeatures[] = ""
 #ifdef USE_RETROWAVE
 	"RetroWave "
 #endif
+
+#ifdef USE_NFM
+	"Nokturnal nFM "
+#endif
+
 	;

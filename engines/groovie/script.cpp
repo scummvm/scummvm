@@ -118,6 +118,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_videoSkipAddress = 0;
 	resetFastForward();
 	_eventKbdChar = 0;
+	_eventAction = kActionNone;
 	_eventMouseClicked = 0;
 	_wantAutosave = false;
 }
@@ -397,6 +398,10 @@ void Script::setKbdChar(uint8 c) {
 	_eventKbdChar = c;
 }
 
+void Script::setAction(uint8 a) {
+	_eventAction = a;
+}
+
 Common::String &Script::getContext() {
 	return _debugString;
 }
@@ -650,14 +655,14 @@ void Script::directGameSave(int slot, const Common::String &desc) {
 	savegame(slot, name);
 }
 
-void Script::savegame(uint slot, const char name[27]) {
+void Script::savegame(uint slot, const Common::String &name) {
 	char newchar;
 	debugC(0, kDebugScript, "savegame %d, canDirectSave: %d", slot, canDirectSave());
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
 
 	if (!file) {
 		debugC(9, kDebugScript, "Save file pointer is null");
-		GUI::MessageDialog dialog(_("Failed to save game"), _("OK"));
+		GUI::MessageDialog dialog(_("Failed to save game"));
 		dialog.runModal();
 		return;
 	}
@@ -676,24 +681,23 @@ void Script::savegame(uint slot, const char name[27]) {
 	} else if (_version == kGroovieUHP) {
 		name_len = 27;
 	}
-	file->write(name, name_len);
+	file->write(name.c_str(), name_len);
 	file->write(_variables + name_len, 0x400 - name_len);
 	delete file;
 
 	// Cache the saved name
-	char cacheName[28];
+	Common::String cacheName;
 	for (uint i = 0; i < name_len; i++) {
-		newchar = name[i] + 0x30;
+		newchar = name.size() > i ? name[i] + 0x30 : ' ';
 		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A) && newchar != 0x2E) {
-			cacheName[i] = '\0';
 			break;
 		} else if (newchar == 0x2E) { // '.', generated when space is pressed
-			cacheName[i] = ' ';
+			cacheName += ' ';
 		} else {
-			cacheName[i] = newchar;
+			cacheName += newchar;
 		}
 	}
-	cacheName[name_len] = '\0';
+
 	_saveNames[slot] = cacheName;
 }
 
@@ -828,7 +832,7 @@ void Script::o_videofromref() {			// 0x09
 
 	case 0x2420:	// load from the main menu
 		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload") && _currentInstruction == 381) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
@@ -851,7 +855,7 @@ void Script::o_videofromref() {			// 0x09
 			int choice = saveOrLoad.runModal();
 			if (choice == GUI::kMessageOK) {
 				// Save
-				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 				int slot = dialog->runModalWithCurrentTarget();
 				Common::String saveName = dialog->getResultString();
 				delete dialog;
@@ -863,7 +867,7 @@ void Script::o_videofromref() {			// 0x09
 				_currentInstruction = 0x17C8; // back to game menu
 			} else {
 				// Restore
-				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 				int slot = dialog->runModalWithCurrentTarget();
 				delete dialog;
 
@@ -931,7 +935,9 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 		// Close the previous video file
 		if (_videoFile) {
 			_videoRef = uint32(-1);
-			delete _videoFile;
+
+			if (!_vm->_videoPlayer->isFileHandled())
+				delete _videoFile;
 		}
 
 		if (fileref == uint32(-1))
@@ -983,11 +989,12 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 	}
 
 	// Check if the user wants to skip the video
-	if (_eventMouseClicked == 2 || _eventKbdChar == Common::KEYCODE_ESCAPE || _eventKbdChar == Common::KEYCODE_SPACE) {
+	if (_eventMouseClicked == 2 || _eventAction == kActionSkip) {
 		// we don't want to clear a left click here, that would eat the input
 		if (_eventMouseClicked == 2)
 			_eventMouseClicked = 0;
 		_eventKbdChar = 0;
+		_eventAction = kActionNone;
 		if (_videoSkipAddress != 0) {
 			// Jump to the given address
 			_currentInstruction = _videoSkipAddress;
@@ -1031,13 +1038,15 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// The video has ended, or it was being looped and the audio has ended.
 
 			// Close the file
-			delete _videoFile;
+			if (!_vm->_videoPlayer->isFileHandled())
+				delete _videoFile;
 			_videoFile = nullptr;
 			_videoRef = uint32(-1);
 
 			// Clear the input events while playing the video
 			_eventMouseClicked = 0;
 			_eventKbdChar = 0;
+			_eventAction = kActionNone;
 
 			// Newline
 			debugCN(1, kDebugScript, "\n");
@@ -1103,6 +1112,7 @@ void Script::o_inputloopstart() {	//0x0B
 	// Save the current pressed character for the whole loop
 	_kbdChar = _eventKbdChar;
 	_eventKbdChar = 0;
+	_eventAction = kActionNone;
 }
 
 void Script::o_keyboardaction() {
@@ -1329,7 +1339,7 @@ void Script::o_sleep() {
 	while (_vm->_system->getMillis() < endTime && !_fastForwarding) {
 		_vm->_system->getEventManager()->pollEvent(ev);
 		if (ev.type == Common::EVENT_RBUTTONDOWN
-			|| (ev.type == Common::EVENT_KEYDOWN && (ev.kbd.ascii == Common::KEYCODE_SPACE || ev.kbd.ascii == Common::KEYCODE_ESCAPE))
+			|| (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && (ev.customType == kActionSkip))
 		) {
 			_fastForwarding = true;
 			break;
@@ -1613,10 +1623,17 @@ void Script::o_savegame() {
 
 	debugC(0, kDebugScript, "Groovie::Script: SAVEGAME var[0x%04X] -> slot=%d", varnum, slot);
 
-	// TLC uses 19 characters, but there's no harm in copying the extra bytes for the other games
-	// the savegame function will trim it when needed
-	char name[19];
-	memcpy(name, _variables, 19);
+	Common::String name;
+	for (int i = 0; i < 27; i++) {
+		if (i < 19) {
+			if (_variables[i] == 0)
+				break;
+
+			name += _variables[i];
+		} else {
+			name += '\0' - 0x30;
+		}
+	}
 	savegame(slot, name);
 }
 
@@ -1918,7 +1935,7 @@ void Script::o_checkvalidsaves() {
 	while (it != list.end()) {
 		int8 slot = it->getSaveSlot();
 		if (SaveLoad::isSlotValid(slot)) {
-			debugC(2, kDebugScript, "Groovie::Script:  Found valid savegame: %s", it->getDescription().encode().c_str());
+			debugC(2, kDebugScript, "Groovie::Script:  Found valid savegame: %s", it->getDescription().c_str());
 
 			// Mark this slot as used
 			if (slot < maxSaves) {
@@ -2223,7 +2240,7 @@ void Script::o2_videofromref() {
 	if (_version == kGroovieT11H && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
 		if (_currentInstruction == 0xE50A && _scriptFile == "script.grv") {
 			// Load from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
@@ -2236,7 +2253,7 @@ void Script::o2_videofromref() {
 			}
 		} else if (_currentInstruction == 0xE955 && _scriptFile == "script.grv") {
 			// Save from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 			int slot = dialog->runModalWithCurrentTarget();
 			Common::String saveName = dialog->getResultString();
 			delete dialog;
@@ -2250,7 +2267,7 @@ void Script::o2_videofromref() {
 		// T11H Souped Up
 		else if (_currentInstruction == 0x10 && _scriptFile == "suscript.grv") {
 			// Load from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
@@ -2263,7 +2280,7 @@ void Script::o2_videofromref() {
 			}
 		} else if (_currentInstruction == 0x1E && _scriptFile == "suscript.grv") {
 			// Save from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 			int slot = dialog->runModalWithCurrentTarget();
 			Common::String saveName = dialog->getResultString();
 			delete dialog;
@@ -2304,7 +2321,7 @@ void Script::o2_vdxtransition() {
 	if (_version == kGroovieCDY && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
 		if (_currentInstruction == 0x59 && _scriptFile == "save_cam.grv") {
 			// Save from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 			int slot = dialog->runModalWithCurrentTarget();
 			Common::String saveName = dialog->getResultString();
 			delete dialog;
@@ -2320,7 +2337,7 @@ void Script::o2_vdxtransition() {
 #if 0
 		else if (_currentInstruction == 0xA12C && _scriptFile == "clanmain.grv") {
 			// Load from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 

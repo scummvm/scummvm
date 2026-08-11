@@ -23,7 +23,6 @@
 #define ULTIMA8_GFX_CYCLEPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {

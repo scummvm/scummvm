@@ -652,7 +652,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 
 		bool key = false;
 		for (int t = bl->drawObjects; t; ) {
-			EoBItem *itm = &_vm->_items[t];
+			const EoBItem *itm = &_vm->_items[t];
 			if (itm->type == 38)
 				key = true;
 			t = (itm->next != bl->drawObjects) ? itm->next : 0;

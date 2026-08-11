@@ -167,8 +167,7 @@ void Room903::daemon() {
 
 	case 15:
 		g_vars->initialize_game();
-		_G(game).new_room = 801;
-		_G(game).new_section = 8;
+		_G(game).setRoom(801);
 		break;
 
 	case 16:

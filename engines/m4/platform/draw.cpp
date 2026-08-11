@@ -26,16 +26,15 @@
 namespace M4 {
 
 void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
-	byte val, count;
-	int line = 0, numY = 0;
+	int line = 0;
 	byte *destP = outBuff;
 
 	for (;;) {
-		count = *inBuff++;
+		byte count = *inBuff++;
 
 		if (count) {
 			// Basic run length
-			val = *inBuff++;
+			byte val = *inBuff++;
 			Common::fill(destP, destP + count, val);
 			destP += count;
 
@@ -59,7 +58,7 @@ void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
 			} else {
 				// Move down by X, Y amount
 				destP += *inBuff++;		// x amount
-				numY = *inBuff++;		// y amount
+				int numY = *inBuff++;		// y amount
 				line += numY;
 				destP += numY * pitch;
 			}
@@ -67,29 +66,11 @@ void RLE8Decode(const uint8 *inBuff, uint8 *outBuff, uint32 pitch) {
 	}
 }
 
-uint8 *SkipRLE_Lines(uint32 linesToSkip, uint8 *rleData) {
-	while (linesToSkip > 0) {
-		if (*rleData) {
-			// Simple RLE sequence, so skip over count and value
-			rleData += 2;
-
-		} else if (rleData[1] >= 3) {
-			rleData += 2 + rleData[2];
-		} else {
-			rleData += 2;
-			--linesToSkip;
-		}
-	}
-
-	return rleData;
-}
-
 size_t RLE8Decode_Size(byte *src, int pitch) {
-	size_t total = 0, line = 0, y;
-	byte count;
+	size_t total = 0, line = 0;
 
 	for (;;) {
-		count = *src++;
+		byte count = *src++;
 
 		if (count) {
 			total += count;
@@ -113,7 +94,7 @@ size_t RLE8Decode_Size(byte *src, int pitch) {
 			} else {
 				// Move down by X, Y amount
 				total += *src++;	// x amount
-				y = *src++;			// y amount
+				const byte y = *src++;			// y amount
 				line += y;
 				total += y * pitch;
 			}
@@ -127,14 +108,14 @@ void RLE_Draw(Buffer *src, Buffer *dest, int32 x, int32 y) {
 	const byte *srcP = src->data;
 	byte *destData = dest->data + y * dest->w + x;
 	byte *destP = destData;
-	int destWidth = dest->w;
-	byte count, val;
+	const int destWidth = dest->w;
+	byte val;
 	int line = 0;
 
 	assert(x >= 0 && y >= 0 && x < dest->w && y < dest->h);
 
 	for (;;) {
-		count = *srcP++;
+		byte count = *srcP++;
 
 		if (count) {
 			// Basic run length

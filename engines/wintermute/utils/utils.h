@@ -29,7 +29,6 @@
 #define WINTERMUTE_UTILS_H
 
 #include "engines/wintermute/wintypes.h"
-#include "engines/wintermute/math/rect32.h"
 
 namespace Wintermute {
 
@@ -51,12 +50,17 @@ public:
 	static float randomFloat(float from, float to);
 	static float randomAngle(float from, float to);
 
+	static bool matchesPattern(const char *pattern, const char *string);
+
 	static void RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL);
 	static uint32 HSLtoRGB(byte H, byte S, byte L);
 
 private:
 	static float Hue2RGB(float v1, float v2, float vH);
 };
+
+void qsort_msvc(void *base, uint32 nmemb, uint32 size,
+                int32 (*compare)(const void *, const void *));
 
 } // End of namespace Wintermute
 

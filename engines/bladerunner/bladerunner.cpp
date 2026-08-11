@@ -94,8 +94,8 @@
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/thumbnail.h"
-#include "audio/mididrv.h"
 
 namespace BladeRunner {
 
@@ -106,6 +106,7 @@ const char *BladeRunnerEngine::kCommonKeymapId = "bladerunner-common";
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst),
 	  _rnd("bladerunner") {
+	_newGameRandomSeed = _rnd.getSeed();
 
 	_windowIsActive     = true;
 	_gameIsRunning      = true;
@@ -370,18 +371,6 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kNoGameDataFoundError, missingFileStr);
 	}
 
-	Common::List<Graphics::PixelFormat> tmpSupportedFormatsList = g_system->getSupportedFormats();
-	if (!tmpSupportedFormatsList.empty()) {
-		_screenPixelFormat = tmpSupportedFormatsList.front();
-	} else {
-		// Workaround for some devices which return an empty supported formats list.
-		// TODO: A better fix for getSupportedFormats() - maybe figure why in only some device it might return an empty list
-		//
-		// Use this as a fallback format - Should be a format supported
-		_screenPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
-	}
-	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
-
 	int16 gameBRWidth = kOriginalGameWidth;
 	int16 gameBRHeight = kOriginalGameHeight;
 	if (_isNonInteractiveDemo) {
@@ -394,8 +383,21 @@ Common::Error BladeRunnerEngine::run() {
 		}
 	}
 
-	initGraphics(gameBRWidth, gameBRHeight, &_screenPixelFormat);
-	_system->showMouse(_isNonInteractiveDemo ? false : true);
+#ifdef __3DS__
+	// On the 3DS following pixel format is the closest supported
+	// format to the one used by the game data files. We use it here
+	// to take advantage of faster blitting functions.
+	// TODO: Determine this programatically?
+	Graphics::PixelFormat fmt5551(2, 5, 5, 5, 1, 11, 6, 1, 0);
+	initGraphics(gameBRWidth, gameBRHeight, &fmt5551);
+#else
+	initGraphics(gameBRWidth, gameBRHeight, nullptr);
+#endif
+
+	_screenPixelFormat = g_system->getScreenFormat();
+	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
+
+	CursorMan.showMouse(_isNonInteractiveDemo ? false : true);
 
 	bool hasSavegames = !SaveFileManager::list(getMetaEngine(), _targetName).empty();
 
@@ -414,9 +416,9 @@ Common::Error BladeRunnerEngine::run() {
 				getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->setEnabled(true);
 				const Common::Keymap::ActionArray karr = getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->getActions();
 				for (uint8 i = 0; i < karr.size(); ++i) {
-					if (karr[i]->description == "COMBAT"
-					    || karr[i]->description == "SKIPDLG"
-					    || karr[i]->description == "KIADB") {
+					if (karr[i]->description == U"COMBAT"
+					    || karr[i]->description == U"SKIPDLG"
+					    || karr[i]->description == U"KIADB") {
 						getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->unregisterMapping(karr[i]);
 					}
 				}
@@ -498,12 +500,14 @@ Common::Error BladeRunnerEngine::run() {
 			} else if (hasSavegames) {
 				_kia->_forceOpen = true;
 				_kia->open(kKIASectionLoad);
+			} else {
+				// Despite the redundancy (wrt initializations done in startup()),
+				// newGame() also does some additional setting up explicitly,
+				// so better to keep this here (helps with code readability too
+				// and with using the proper seed for randomization).
+				newGame(kGameDifficultyMedium);
 			}
 		}
-		// TODO: why is the game starting a new game here when everything is done in startup?
-		//  else {
-		// 	newGame(kGameDifficultyMedium);
-		// }
 		gameLoop();
 
 		_mouse->disable();
@@ -623,18 +627,17 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_ambientSounds = new AmbientSounds(this);
 
-	// Query the selected music device (defaults to MT_AUTO device).
+	// Get the selected "music device" (defaults to MT_AUTO device)
+	// as set from Audio > Music Device dropdown setting, which commonly is for MIDI driver selection.
+	// Since this engine does not use MIDI, but the setting is still available from the "Global Options... > Audio"
+	// and the specific game options (Game Options... > Audio), we respect only the option "No Music" to avoid end user confusion.
+	// All other options for this dropdown will result in music playing and are treated as irrelevant.
 	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
-	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
-	//
-	// We just respect the "No Music" choice (or an invalid choice)
-	//
-	// We're lenient with all the invalid/ irrelevant choices in the Audio Driver dropdown
-	// TODO Ideally these controls (OptionsDialog::addAudioControls()) ie. "Music Device" and "Adlib Emulator"
-	//      should not appear in games like Blade Runner, since they are largely irrelevant
-	//      and may cause confusion when combined/ conflicting with the global settings
-	//      which are by default applied, if the user does not explicitly override them.
-	_noMusicDriver = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+	_noMusicDriver = (selDevStr.compareToIgnoreCase(Common::String("null")) == 0);
+
+	if (_noMusicDriver) {
+		warning("AUDIO: MUSIC IS FORCED TO OFF (BY THE MIDI DRIVER SETTING - music_driver was set to \"null\")");
+	}
 
 	// BLADE.INI was read here, but it was replaced by ScummVM configuration
 	//
@@ -839,6 +842,36 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		_aiScripts = new AIScripts(this, actorCount);
 
 		initChapterAndScene();
+
+		// Handle Boot Params here:
+		// If this process (loading an explicit set of Chapter, Set and Scene) fails,
+		// then the game will keep with the default Chapter, Set and Scene for a New Game
+		// as set in the initChapterAndScene() above.
+		// If the process succeeds (_bootParam will be true), then in run()
+		// we skip auto-starting a New Game proper or showing the KIA to load a saved game / start new game,
+		// and go directly to gameLoop() to start the game with the custom settings for Chapter, Set and Scene.
+		if (ConfMan.hasKey("boot_param")) {
+			int param = ConfMan.getInt("boot_param"); // CTTTSSS
+			if (param < 1000000 || param >= 6000000) {
+				debug("Invalid boot parameter. Valid format is: CTTTSSS");
+			} else {
+				int chapter = param / 1000000;
+				param -= chapter * 1000000;
+				int set = param / 1000;
+				param -= set * 1000;
+				int scene = param;
+
+				// init chapter to default first chapter (required by dbgAttemptToLoadChapterSetScene())
+				_settings->setChapter(1);
+				_validBootParam = _debugger->dbgAttemptToLoadChapterSetScene(chapter, set, scene);
+				if (_validBootParam) {
+					debug("Explicitly loading Chapter: %d Set: %d Scene: %d", chapter, set, scene);
+				} else {
+					debug("Invalid combination of Chapter Set and Scene ids as boot parameters");
+				}
+			}
+		}
+
 	}
 	return true;
 }
@@ -856,32 +889,8 @@ void BladeRunnerEngine::initChapterAndScene() {
 		_actors[i]->movementTrackNext(true);
 	}
 
-	if (ConfMan.hasKey("boot_param")) {
-		int param = ConfMan.getInt("boot_param"); // CTTTSSS
-		if (param < 1000000 || param >= 6000000) {
-			debug("Invalid boot parameter. Valid format is: CTTTSSS");
-		} else {
-			int chapter = param / 1000000;
-			param -= chapter * 1000000;
-			int set = param / 1000;
-			param -= set * 1000;
-			int scene = param;
-
-			// init chapter to default first chapter (required by dbgAttemptToLoadChapterSetScene())
-			_settings->setChapter(1);
-			_validBootParam = _debugger->dbgAttemptToLoadChapterSetScene(chapter, set, scene);
-			if (_validBootParam) {
-				debug("Explicitly loading Chapter: %d Set: %d Scene: %d", chapter, set, scene);
-			} else {
-				debug("Invalid combination of Chapter Set and Scene ids");
-			}
-		}
-	}
-
-	if (!_validBootParam) {
-		_settings->setChapter(1);
-		_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
-	}
+	_settings->setChapter(1);
+	_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
 }
 
 void BladeRunnerEngine::shutdown() {
@@ -1284,14 +1293,12 @@ void BladeRunnerEngine::gameTick() {
 		// We need to copy pixel by pixel, converting each pixel from 16 to 32bit
 		for (int y = 0; y < kOriginalGameHeight; ++y) {
 			for (int x = 0; x < kOriginalGameWidth; ++x) {
-				uint8 a, r, g, b;
-				//getGameDataColor(_zbuffer->getData()[y*kOriginalGameWidth + x], a, r, g, b);
-				a = 1;
+				uint8 r, g, b;
 				r = _zbuffer->getData()[y*kOriginalGameWidth + x] / 256;
 				g = r;
 				b = r;
 				void   *dstPixel = _surfaceFront.getBasePtr(x, y);
-				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.ARGBToColor(a, r, g, b));
+				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.RGBToColor(r, g, b));
 			}
 		}
 	}
@@ -2630,6 +2637,7 @@ bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface 
 		else
 			Graphics::saveThumbnail(s);
 	} else {
+		// TODO: Do we need to set the alpha channel for original save files?
 		thumb->convertToInPlace(gameDataPixelFormat());
 
 		uint16 *thumbnailData = (uint16*)thumb->getPixels();
@@ -2800,6 +2808,13 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream, int version
 }
 
 void BladeRunnerEngine::newGame(int difficulty) {
+	// Set a (new) seed for randomness when starting a new game.
+	// This also makes sure that if there's a custom random seed set in ScummVM's configuration,
+	// that's the one that will be used.
+	_newGameRandomSeed = Common::RandomSource::generateNewSeed();
+	_rnd.setSeed(_newGameRandomSeed );
+	//debug("Random seed for the New Game is: %u", _newGameRandomSeed );
+
 	_settings->reset();
 	_combat->reset();
 
@@ -2826,6 +2841,18 @@ void BladeRunnerEngine::newGame(int difficulty) {
 		_suspectsDatabase->get(i)->reset();
 	}
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// Fix for Designers Cut setting in a New Game
+	// The original game would always clear the setting for Designers Cut when starting a New Game,
+	// even if it was set beforehand from the KIA Menu. It would, however, maintain the KIA setting for McCoy's Mood.
+	// By not maintaining the value for Designers Cut when starting a New Game, it was impossible to skip a line
+	// of dialogue for McCoy which plays at the end of the intro of the game, before the player gains control,
+	// and which is actually marked for skipping in Designers Cut mode (see SceneScriptRC01::SceneLoaded())
+	//
+	// Part 1 of fix for Designers Cut setting
+	// Before clearing the _gameFlags check if kFlagDirectorsCut was already set
+	bool isDirectorsCut = _gameFlags->query(kFlagDirectorsCut);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	_gameFlags->clear();
 
 	for (uint i = 0; i < _gameInfo->getGlobalVarCount(); ++i) {
@@ -2844,6 +2871,16 @@ void BladeRunnerEngine::newGame(int difficulty) {
 
 	InitScript initScript(this);
 	initScript.SCRIPT_Initialize_Game();
+
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// Part 2 of fix for Designers Cut setting
+	// Maintain the flag (if it was set) for the New Game
+	// Note: This is done here, since SCRIPT_Initialize_Game() also clears the game flags
+	if (isDirectorsCut) {
+		_gameFlags->set(kFlagDirectorsCut);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	_actorUpdateCounter = 0;
 	_actorUpdateTimeLast = 0;
 	initChapterAndScene();
@@ -2894,20 +2931,16 @@ void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 
 Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	Graphics::Surface thumbnail;
-	thumbnail.create(kOriginalGameWidth / 8, kOriginalGameHeight / 8, gameDataPixelFormat());
+	thumbnail.create(kOriginalGameWidth / 8, kOriginalGameHeight / 8, _surfaceFront.format);
 
 	for (int y = 0; y < thumbnail.h; ++y) {
 		for (int x = 0; x < thumbnail.w; ++x) {
-			uint8 r, g, b;
-
-			uint32  srcPixel = READ_UINT32(_surfaceFront.getBasePtr(CLIP(x * 8, 0, _surfaceFront.w - 1), CLIP(y * 8, 0, _surfaceFront.h - 1)));
-			void   *dstPixel = thumbnail.getBasePtr(CLIP(x, 0, thumbnail.w - 1), CLIP(y, 0, thumbnail.h - 1));
-
-			// Throw away alpha channel as it is not needed
-			_surfaceFront.format.colorToRGB(srcPixel, r, g, b);
-			drawPixel(thumbnail, dstPixel, thumbnail.format.RGBToColor(r, g, b));
+			uint32 srcPixel = _surfaceFront.getPixel(CLIP(x * 8, 0, _surfaceFront.w - 1), CLIP(y * 8, 0, _surfaceFront.h - 1));
+			thumbnail.setPixel(CLIP(x, 0, thumbnail.w - 1), CLIP(y, 0, thumbnail.h - 1), srcPixel);
 		}
 	}
+
+	thumbnail.convertToInPlace(gameDataPixelFormat());
 
 	return thumbnail;
 }

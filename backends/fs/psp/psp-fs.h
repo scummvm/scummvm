@@ -63,7 +63,7 @@ public:
 	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *createReadStream();
-	virtual Common::SeekableWriteStream *createWriteStream();
+	virtual Common::SeekableWriteStream *createWriteStream(bool atomic);
 	virtual bool createDirectory();
 };
 

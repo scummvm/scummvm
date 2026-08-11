@@ -22,7 +22,6 @@
  */
 
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -34,7 +33,6 @@
 
 #include "sword2/sword2.h"
 #include "sword2/saveload.h"
-#include "sword2/obsolete.h"
 
 namespace Sword2 {
 
@@ -55,7 +53,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 } // End of namespace Sword2
 
-class Sword2MetaEngine : public AdvancedMetaEngine {
+class Sword2MetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "sword2";
@@ -69,12 +67,8 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) override {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
@@ -104,12 +98,12 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &filename : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+		int slotNum = atoi(filename.c_str() + filename.size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::InSaveFile *in = saveFileMan->openForLoading(filename);
 			if (in) {
 				in->readUint32LE();
 				in->read(saveDesc, SAVE_DESCRIPTION_LEN);
@@ -126,11 +120,11 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 
 int Sword2MetaEngine::getMaximumSaveSlot() const { return 999; }
 
-void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
+bool Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += Common::String::format(".%03d", slot);
 
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

@@ -131,7 +131,7 @@ int32 LZWdecompressor::decompress(Common::MemoryReadStream &inStream, int32 inpu
 	byte *reversedDecodedStringEnd = reversedDecodedStringStart = _tempBuffer;
 	byte *originalOut = out;
 	_repetitionEnabled = false;
-	_codeBitCount = 9;
+	// _codeBitCount = 9;
 	_dictFlushed = false;
 	_currentMaximumCode = (1 << (_codeBitCount = 9)) - 1;
 	for (int16 code = 255; code >= 0; code--) {

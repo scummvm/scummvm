@@ -41,13 +41,14 @@ public:
 protected:
 	void activateInternal() override;
 	void deactivateInternal() override;
-	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
+	void drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
 
 	GLuint _coordsVBO;
 	GLuint _texcoordsVBO;
 	GLuint _colorVBO;
 
 	GLfloat _colorAttributes[4*4];
+	bool _colorDirty;
 
 	Shader *const _activeShader;
 };

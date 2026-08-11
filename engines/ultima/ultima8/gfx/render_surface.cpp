@@ -120,15 +120,17 @@ bool RenderSurface::EndPainting() {
 }
 
 //
-// void RenderSurface::GetSurfaceDims(Rect &r)
+// Common::Rect32 RenderSurface::GetSurfaceDims()
 //
-// Desc: Get the Surface Dimentions (and logical origin)
+// Desc: Get the Surface Dimensions (and logical origin)
 // r: Rect object to fill
 //
-void RenderSurface::GetSurfaceDims(Rect &r) const {
+Common::Rect32 RenderSurface::getSurfaceDims() const {
+	Common::Rect32 r;
 	r.moveTo(_ox, _oy);
 	r.setWidth(_surface->w);
 	r.setHeight(_surface->h);
+	return r;
 }
 
 //
@@ -160,22 +162,22 @@ void RenderSurface::GetOrigin(int32 &x, int32 &y) const {
 }
 
 //
-// void RenderSurface::GetClippingRect(Rect &r)
+// Common::Rect32 RenderSurface::getClippingRect()
 //
 // Desc: Get the Clipping Rectangle
 // r: Rect object to fill
 //
-void RenderSurface::GetClippingRect(Rect &r) const {
-	r = Rect(_clipWindow.left, _clipWindow.top, _clipWindow.right, _clipWindow.bottom);
+Common::Rect32 RenderSurface::getClippingRect() const {
+	return Common::Rect32(_clipWindow.left, _clipWindow.top, _clipWindow.right, _clipWindow.bottom);
 }
 
 //
-// void RenderSurface::GetClippingRect(Rect &r)
+// void RenderSurface::setClippingRect(const Common::Rect32 &r)
 //
 // Desc: Set the Clipping Rectangle
 // r: Rect object that contains new Clipping Rectangle
 //
-void RenderSurface::SetClippingRect(const Rect &r) {
+void RenderSurface::setClippingRect(const Common::Rect32 &r) {
 	// What we need to do is to clip the clipping rect to the phyiscal screen
 	_clipWindow = Common::Rect(r.left, r.top, r.right, r.bottom);
 	_clipWindow.clip(Common::Rect(-_ox, -_oy, -_ox + _surface->w, -_oy + _surface->h));
@@ -201,14 +203,14 @@ bool RenderSurface::IsFlipped() const {
 	return _flipped;
 }
 
-void RenderSurface::fillRect(const Rect &r, uint32 color) {
+void RenderSurface::fillRect(const Common::Rect32 &r, uint32 color) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
 	rect.translate(_ox, _oy);
 	_surface->fillRect(rect, color);
 }
 
-void RenderSurface::frameRect(const Rect& r, uint32 color) {
+void RenderSurface::frameRect(const Common::Rect32& r, uint32 color) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
 	rect.translate(_ox, _oy);
@@ -219,7 +221,7 @@ void RenderSurface::drawLine(int32 sx, int32 sy, int32 ex, int32 ey, uint32 colo
 	_surface->drawLine(sx + _ox, sy + _oy, ex + _ox, ey + _oy, color);
 }
 
-void RenderSurface::fill32(uint32 rgb, const Rect &r) {
+void RenderSurface::fill32(uint32 rgb, const Common::Rect32 &r) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
 	rect.translate(_ox, _oy);
@@ -268,7 +270,7 @@ void inline fillBlendedLogic(uint8 *pixels, int32 pitch, uint32 rgba, const Comm
 
 } // End of anonymous namespace
 
-void RenderSurface::fillBlended(uint32 rgba, const Rect &r) {
+void RenderSurface::fillBlended(uint32 rgba, const Common::Rect32 &r) {
 	int alpha = TEX32_A(rgba);
 	if (alpha == 0xFF) {
 		fill32(rgba, r);
@@ -286,7 +288,7 @@ void RenderSurface::fillBlended(uint32 rgba, const Rect &r) {
 		fillBlendedLogic<uint16>(_pixels, _pitch, rgba, rect, _surface->format);
 }
 
-void RenderSurface::frameRect32(uint32 rgb, const Rect &r) {
+void RenderSurface::frameRect32(uint32 rgb, const Common::Rect32 &r) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_clipWindow);
 	rect.translate(_ox, _oy);
@@ -374,11 +376,21 @@ void inline fadedBlitLogic(uint8 *pixels, int32 pitch,
 	int srcStep = sizeof(uintSrc);
 	int srcDelta = src.pitch - w * sizeof(uintSrc);
 
+	byte palette[768];
+	src.grabPalette(palette, 0, 256);
+
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			uint8 sa, sr, sg, sb;
 			const uint32 color = *(reinterpret_cast<const uintSrc *>(srcPixels));
-			src.format.colorToARGB(color, sa, sr, sg, sb);
+			if (src.format.isCLUT8()) {
+				sa = 0xff;
+				sr = palette[color * 3 + 0];
+				sg = palette[color * 3 + 1];
+				sb = palette[color * 3 + 2];
+			} else {
+				src.format.colorToARGB(color, sa, sr, sg, sb);
+			}
 
 			if (sa == 0xFF || (sa  && !alpha_blend)) {
 				uintDst *dest = reinterpret_cast<uintDst *>(dstPixels);
@@ -425,8 +437,11 @@ void RenderSurface::FadedBlit(const Graphics::ManagedSurface &src, const Common:
 		else if (src.format.bytesPerPixel == 2) {
 			fadedBlitLogic<uint32, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		}
+		else if (src.format.isCLUT8()) {
+			fadedBlitLogic<uint32, uint8>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		}
 		else {
-			error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+			error("FadedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 		}
 	} else if (_surface->format.bytesPerPixel == 2) {
 		if (src.format.bytesPerPixel == 4) {
@@ -435,12 +450,15 @@ void RenderSurface::FadedBlit(const Graphics::ManagedSurface &src, const Common:
 		else if (src.format.bytesPerPixel == 2) {
 			fadedBlitLogic<uint16, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		}
+		else if (src.format.isCLUT8()) {
+			fadedBlitLogic<uint16, uint8>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		}
 		else {
-			error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+			error("FadedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 		}
 	}
 	else {
-		error("FadedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+		error("FadedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 	}
 }
 
@@ -501,13 +519,23 @@ void inline maskedBlitLogic(uint8 *pixels, int32 pitch,
 	int srcStep = sizeof(uintSrc);
 	int srcDelta = src.pitch - w * sizeof(uintSrc);
 
+	byte palette[768];
+	src.grabPalette(palette, 0, 256);
+		
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
 			uintDst *dest = reinterpret_cast<uintDst *>(dstPixels);
 			if (!aMask || (*dest & aMask)) {
 				uint8 sa, sr, sg, sb;
 				const uint32 color = *(reinterpret_cast<const uintSrc *>(srcPixels));
-				src.format.colorToARGB(color, sa, sr, sg, sb);
+				if (src.format.isCLUT8()) {
+					sa = 0xff;
+					sr = palette[color * 3 + 0];
+					sg = palette[color * 3 + 1];
+					sb = palette[color * 3 + 2];
+				} else {
+					src.format.colorToARGB(color, sa, sr, sg, sb);
+				}
 
 				if (sa == 0xFF || (sa && !alpha_blend)) {
 					*dest = format.RGBToColor((sr * ia + r) >> 8,
@@ -551,19 +579,23 @@ void RenderSurface::MaskedBlit(const Graphics::ManagedSurface &src, const Common
 			maskedBlitLogic<uint32, uint32>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		} else if (src.format.bytesPerPixel == 2) {
 			maskedBlitLogic<uint32, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		} else if (src.format.isCLUT8()) {
+			maskedBlitLogic<uint32, uint8>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		} else {
-			error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+			error("MaskedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 		}
 	} else if (_surface->format.bytesPerPixel == 2) {
 		if (src.format.bytesPerPixel == 4) {
 			maskedBlitLogic<uint16, uint32>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		} else if (src.format.bytesPerPixel == 2) {
 			maskedBlitLogic<uint16, uint16>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
+		} else if (src.format.isCLUT8()) {
+			maskedBlitLogic<uint16, uint8>(_pixels, _pitch, _clipWindow, _surface->format, src, srcRect, dx, dy, col32, alpha_blend);
 		} else {
-			error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+			error("MaskedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 		}
 	} else {
-		error("MaskedBlit not supported from %d bpp to %d bpp", src.format.bpp(), _surface->format.bpp());
+		error("MaskedBlit not supported from %s to %s", src.format.toString().c_str(), _surface->format.toString().c_str());
 	}
 }
 
@@ -637,7 +669,7 @@ void inline paintLogic(uint8 *pixels, int32 pitch,
 	const int srcDelta = src.pitch - (w * srcStep);
 	const int dstDelta = pitch - (w * dstStep);
 
-	const uint8 keycolor = frame->_keycolor;
+		const uint8 keycolor = frame->_keycolor;
 	const uint8 *srcPixels = reinterpret_cast<const uint8 *>(src.getBasePtr(srcRect.left, srcRect.top));
 	uint8 *dstPixels = reinterpret_cast<uint8 *>(pixels + x * sizeof(uintX) + pitch * y);
 
@@ -867,6 +899,10 @@ void RenderSurface::Paint(const Shape *s, uint32 framenum, int32 x, int32 y, boo
 		paintLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map);
+	else if (_surface->format.isCLUT8())
+		paintLogic<uint8>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, map);
+	else
+		error("Paint not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 //
@@ -886,6 +922,8 @@ void RenderSurface::PaintTranslucent(const Shape *s, uint32 framenum, int32 x, i
 		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, 0, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, 0, map, xform_map);
+	else
+		error("PaintTranslucent not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 //
@@ -905,6 +943,8 @@ void RenderSurface::PaintInvisible(const Shape *s, uint32 framenum, int32 x, int
 		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, 0, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, 0, map, xform_map);
+	else
+		error("PaintInvisible not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 //
@@ -924,6 +964,8 @@ void RenderSurface::PaintHighlight(const Shape *s, uint32 framenum, int32 x, int
 		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, col32, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, false, col32, map, xform_map);
+	else
+		error("PaintHighlight not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 //
@@ -943,6 +985,8 @@ void RenderSurface::PaintHighlightInvis(const Shape *s, uint32 framenum, int32 x
 		paintBlendedLogic<uint32>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, col32, map, xform_map);
 	else if (_surface->format.bytesPerPixel == 2)
 		paintBlendedLogic<uint16>(_pixels, _pitch, _clipWindow, _surface->format, frame, x, y, mirrored, true, col32, map, xform_map);
+	else
+		error("PaintHighlightInvis not supported for surface format: %s", _surface->format.toString().c_str());
 }
 
 } // End of namespace Ultima8

@@ -37,6 +37,10 @@ private:
 	void execute();
 
 	void protectionText();
+
+#ifdef USE_TTS
+	void speakText(const Common::String &text) const;
+#endif
 public:
 	static void show(XeenEngine *vm);
 };

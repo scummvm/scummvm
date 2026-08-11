@@ -62,6 +62,11 @@ void FindMovingObjects(		// Creates clipping rectangles for all the objects that
 
 void MergeClipRect();	// Merges any clipping rectangles that overlap
 
+void UpdateClipRectSingle(		// Redraws single object within this clipping rectangle
+	OBJECT *pObj,	// object to draw
+	Common::Point *pWin,		// window top left position
+	Common::Rect *pClip);		// pointer to clip rectangle
+
 void UpdateClipRect(		// Redraws all objects within this clipping rectangle
 	OBJECT **pObjList,	// object list to draw
 	Common::Point *pWin,		// window top left position

@@ -19,25 +19,20 @@
  *
  */
 
+#include "audio/mixer.h"
+#include "common/bufferedstream.h"
+#include "common/file.h"
 #include "common/scummsys.h"
-
-#include "zvision/core/console.h"
-
+#include "common/system.h"
+#include "gui/debugger.h"
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
+#include "zvision/core/console.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/sound/zork_raw.h"
 #include "zvision/text/string_manager.h"
 #include "zvision/video/zork_avi_decoder.h"
-#include "zvision/sound/zork_raw.h"
-#include "zvision/graphics/cursors/cursor.h"
-
-#include "common/system.h"
-#include "common/file.h"
-#include "common/bufferedstream.h"
-
-#include "gui/debugger.h"
-
-#include "audio/mixer.h"
 
 namespace ZVision {
 
@@ -85,8 +80,9 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 		int isStereo = atoi(argv[3]);
 
 		Common::File *file = new Common::File();
-		if (!_engine->getSearchManager()->openFile(*file, argv[1])) {
+		if (!file->open(argv[1])) {
 			warning("File not found: %s", argv[1]);
+			delete file;
 			return true;
 		}
 
@@ -108,7 +104,7 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 	}
 
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, argv[1])) {
+	if (!file.open(argv[1])) {
 		warning("File not found: %s", argv[1]);
 		return true;
 	}
@@ -204,7 +200,7 @@ bool Console::cmdLocation(int argc, const char **argv) {
 	Location curLocation = _engine->getScriptManager()->getCurrentLocation();
 	Common::String scrFile = Common::String::format("%c%c%c%c.scr", curLocation.world, curLocation.room, curLocation.node, curLocation.view);
 	debugPrintf("Current location: world '%c', room '%c', node '%c', view '%c', offset %d, script %s\n",
-				curLocation.world, curLocation.room, curLocation.node, curLocation.view, curLocation.offset, scrFile.c_str());
+	            curLocation.world, curLocation.room, curLocation.node, curLocation.view, curLocation.offset, scrFile.c_str());
 
 	if (argc != 6) {
 		debugPrintf("Use %s <char: world> <char: room> <char:node> <char:view> <int: x offset> to change your location\n", argv[0]);
@@ -237,7 +233,7 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 	}
 
 	Common::File f;
-	if (!_engine->getSearchManager()->openFile(f, argv[1])) {
+	if (!f.open(argv[1])) {
 		warning("File not found: %s", argv[1]);
 		return true;
 	}
@@ -256,16 +252,20 @@ bool Console::cmdDumpFiles(int argc, const char **argv) {
 		return true;
 	}
 
-	SearchManager::MatchList fileList;
-	_engine->getSearchManager()->listMembersWithExtension(fileList, argv[1]);
+	Common::ArchiveMemberList fileList;
+	Common::Path pattern;
+	pattern = Common::Path(Common::String::format("*.%s", argv[1]));
+	SearchMan.listMatchingMembers(fileList, pattern);
 
-	for (SearchManager::MatchList::iterator iter = fileList.begin(); iter != fileList.end(); ++iter) {
-		fileName = iter->_value.name;
+	for (auto &file : fileList) {
+		fileName = file.get()->getFileName();
 		debugPrintf("Dumping %s\n", fileName.toString().c_str());
 
-		in = iter->_value.arch->createReadStreamForMember(iter->_value.name);
+		in = file.get()->createReadStream();
 		if (in)
 			dumpFile(in, fileName);
+		else
+			debugPrintf("Failed to dump!");
 		delete in;
 	}
 
@@ -285,7 +285,7 @@ bool Console::cmdDumpImage(int argc, const char **argv) {
 	}
 
 	Common::File f;
-	if (!_engine->getSearchManager()->openFile(f, fileName)) {
+	if (!f.open(fileName)) {
 		warning("File not found: %s", argv[1]);
 		return true;
 	}

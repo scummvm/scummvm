@@ -26,7 +26,7 @@ namespace Cruise {
 
 struct backgroundTableStruct {
 	char name[16];
-	char extention[6];
+	char extension[6];
 };
 
 extern short int cvtPalette[0x20];

@@ -359,7 +359,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 		// HACK: In Chinese EOBII some characters overdraw the valid boundaries by one pixel
 		// (at least the ',' does). So, the original redraws the border here. We do the same
-		// since for now I don't have any good idea how to do this less ugly... 
+		// since for now I don't have any good idea how to do this less ugly...
 		if (_isChinese && _vm->_flags.gameID == GI_EOB2 && sdx == 7)
 			_screen->drawBox(3, 170, 290, 199, _vm->guiSettings()->colors.fill);
 
@@ -416,7 +416,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 			s = strlen(str);
 			if ((lw + _textDimData[sdx].column) >= w) {
 				s -= ((lw + _textDimData[sdx].column - w) >> 3);
-				w -= _textDimData[sdx].column;	
+				w -= _textDimData[sdx].column;
 			}
 
 		} else if ((lw + _textDimData[sdx].column) >= w) {
@@ -436,7 +436,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 				for (strPos = 0; strPos < s; ++strPos) {
 					uint8 c = str[strPos];
 					if (isTwoByteChar(c))
-						lw += (_screen->getCharWidth(c | (uint8)str[++strPos] << 8) + _textDimData[sdx].charSpacing);						
+						lw += (_screen->getCharWidth(c | (uint8)str[++strPos] << 8) + _textDimData[sdx].charSpacing);
 					else
 						lw += _screen->getCharWidth(c);
 

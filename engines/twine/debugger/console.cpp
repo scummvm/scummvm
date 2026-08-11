@@ -22,8 +22,7 @@
 #include "twine/debugger/console.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "twine/debugger/debug_grid.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/holomap.h"
 #include "twine/renderer/redraw.h"
 #include "twine/resources/hqr.h"
@@ -50,9 +49,6 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_scenery_view", WRAP_METHOD(TwinEConsole, doToggleSceneryView));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
 	registerCmd("dumpfile", WRAP_METHOD(TwinEConsole, doDumpFile));
-	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
-	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
-	registerCmd("toggle_darkpal", WRAP_METHOD(TwinEConsole, doToggleDarkPal));
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
 	registerCmd("toggle_tracks", WRAP_METHOD(TwinEConsole, doToggleTrackRendering));
 	registerCmd("toggle_godmode", WRAP_METHOD(TwinEConsole, doToggleGodMode));
@@ -60,7 +56,6 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_actors", WRAP_METHOD(TwinEConsole, doToggleActorRendering));
 	registerCmd("toggle_clips", WRAP_METHOD(TwinEConsole, doToggleClipRendering));
 	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
-	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
 	registerCmd("toggle_scenerendering", WRAP_METHOD(TwinEConsole, doToggleSceneRendering));
 	registerCmd("set_track_obj", WRAP_METHOD(TwinEConsole, doSetTrackObject));
 	registerCmd("scene_actor", WRAP_METHOD(TwinEConsole, doSkipSceneActorsBut));
@@ -69,11 +64,10 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("set_game_flag", WRAP_METHOD(TwinEConsole, doSetGameFlag));
 	registerCmd("show_game_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
 	registerCmd("set_inventory_flag", WRAP_METHOD(TwinEConsole, doSetInventoryFlag));
-	registerCmd("show_inventory_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
+	registerCmd("show_inventory_flag", WRAP_METHOD(TwinEConsole, doPrintInventoryFlag));
 	registerCmd("set_holomap_flag", WRAP_METHOD(TwinEConsole, doSetHolomapFlag));
 	registerCmd("set_holomap_trajectory", WRAP_METHOD(TwinEConsole, doSetHolomapTrajectory));
-	registerCmd("show_holomap_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
-	registerCmd("toggle_enhancements", WRAP_METHOD(TwinEConsole, doToggleEnhancements));
+	registerCmd("show_holomap_flag", WRAP_METHOD(TwinEConsole, doPrintHolomapFlag));
 }
 
 TwinEConsole::~TwinEConsole() {
@@ -96,38 +90,30 @@ void TwinEConsole::postEnter() {
 	} else {                                   \
 		debugPrintf("Enabling " description);  \
 		(var) = true;                          \
-	}                                          \
-	if ((var) && !_engine->_cfgfile.Debug) {    \
-		doToggleDebug(0, nullptr);             \
 	}
 
 bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_showingZones, "zone rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_showingZones, "zone rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleActorRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_showingActors, "actor rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_showingActors, "actor rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleTrackRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_showingTracks, "tracks rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_showingTracks, "tracks rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleGodMode(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_godMode, "god mode\n")
-	return true;
-}
-
-bool TwinEConsole::doToggleEnhancements(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_scene->_enableEnhancements, "enable enhancements\n")
+	TOGGLE_DEBUG(_engine->_debugState->_godMode, "god mode\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleClipRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->_showingClips, "clip rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_showingClips, "clip rendering\n")
 	return true;
 }
 
@@ -159,17 +145,12 @@ bool TwinEConsole::doSkipSceneActorsBut(int argc, const char **argv) {
 	}
 	const int16 actorIdx = atoi(argv[1]);
 	debugPrintf("Only load actor %d in the next scene\n", actorIdx);
-	_engine->_debugScene->_onlyLoadActor = actorIdx;
+	_engine->_debugState->_onlyLoadActor = actorIdx;
 	return true;
 }
 
 bool TwinEConsole::doToggleFreeCamera(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->_useFreeCamera, "free camera movement\n")
-	return true;
-}
-
-bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->_canChangeScenes, "scene switching via keybinding\n")
+	TOGGLE_DEBUG(_engine->_debugState->_useFreeCamera, "free camera movement\n")
 	return true;
 }
 
@@ -186,7 +167,7 @@ bool TwinEConsole::doSetTrackObject(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleSceneRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->_disableGridRendering, "scene rendering\n")
+	TOGGLE_DEBUG(_engine->_debugState->_disableGridRendering, "scene rendering\n")
 	return true;
 }
 
@@ -212,7 +193,7 @@ bool TwinEConsole::doSetHolomapTrajectory(int argc, const char **argv) {
 		debugPrintf("Expected to get a holomap trajectory index as parameter\n");
 		return true;
 	}
-	_engine->_scene->_holomapTrajectory = atoi(argv[1]);
+	_engine->_scene->_numHolomapTraj = atoi(argv[1]);
 	_engine->_scene->reloadCurrentScene();
 	return false;
 }
@@ -230,16 +211,16 @@ bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {
 
 	const int idx = atoi(argv[1]);
 	if (idx == -1) {
-		for (int i = 0; i < NUM_LOCATIONS; ++i) {
-			_engine->_holomap->setHolomapPosition(i);
+		for (int i = 0; i < _engine->numHoloPos(); ++i) {
+			_engine->_holomap->setHoloPos(i);
 		}
 		return true;
 	}
-	if (idx >= 0 && idx >= NUM_LOCATIONS) {
-		debugPrintf("given index exceeds the max allowed value of %i\n", NUM_LOCATIONS - 1);
+	if (idx < 0 || idx >= _engine->numHoloPos()) {
+		debugPrintf("given index exceeds the max allowed value of %i\n", _engine->numHoloPos() - 1);
 		return true;
 	}
-	_engine->_holomap->setHolomapPosition(idx);
+	_engine->_holomap->setHoloPos(idx);
 	return true;
 }
 
@@ -288,14 +269,14 @@ bool TwinEConsole::doPrintInventoryFlag(int argc, const char **argv) {
 
 bool TwinEConsole::doPrintHolomapFlag(int argc, const char **argv) {
 	if (argc <= 1) {
-		for (int i = 0; i < _engine->numLocations(); ++i) {
+		for (int i = 0; i < _engine->numHoloPos(); ++i) {
 			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->_holomapFlags[i]);
 		}
 		return true;
 	}
 
 	const uint16 idx = atoi(argv[1]);
-	if (idx < _engine->numLocations()) {
+	if (idx < _engine->numHoloPos()) {
 		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->_holomapFlags[idx]);
 	}
 
@@ -329,47 +310,8 @@ bool TwinEConsole::doGiveKashes(int argc, const char **argv) {
 	return true;
 }
 
-bool TwinEConsole::doToggleDarkPal(int argc, const char **argv) {
-	if (_engine->_screens->_useAlternatePalette) {
-		debugPrintf("Disabling dark palette\n");
-		_engine->_screens->setNormalPal();
-	} else {
-		debugPrintf("Enabling dark palette\n");
-		_engine->_screens->setDarkPal();
-	}
-	return true;
-}
-
-bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
-	if (_engine->_cfgfile.Debug) {
-		debugPrintf("Disabling debug mode\n");
-		_engine->_cfgfile.Debug = false;
-	} else {
-		debugPrintf("Enabling debug mode\n");
-		_engine->_cfgfile.Debug = true;
-	}
-	return true;
-}
-
-bool TwinEConsole::doListMenuText(int argc, const char **argv) {
-	TextBankId textBankId = TextBankId::Inventory_Intro_and_Holomap;
-	if (argc >= 2) {
-		textBankId = (TextBankId)atoi(argv[1]);
-	}
-	const TextBankId oldTextBankId = _engine->_text->textBank();
-	_engine->_text->initDial(textBankId);
-	for (int32 i = 0; i < 1000; ++i) {
-		char buf[256];
-		if (_engine->_text->getMenuText((TextId)i, buf, sizeof(buf))) {
-			debugPrintf("%4i: %s\n", i, buf);
-		}
-	}
-	_engine->_text->initDial(oldTextBankId);
-	return true;
-}
-
 bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
-	IVec3 &pos = _engine->_scene->_sceneHero->_pos;
+	IVec3 &pos = _engine->_scene->_sceneHero->_posObj;
 	if (argc < 4) {
 		debugPrintf("Current hero position: %i:%i:%i\n", pos.x, pos.y, pos.z);
 		return true;
@@ -395,7 +337,7 @@ bool TwinEConsole::doPlayMidi(int argc, const char **argv) {
 		return true;
 	}
 	int newMidiIndex = atoi(argv[1]);
-	_engine->_music->playMidiMusic(newMidiIndex);
+	_engine->_music->playMidiFile(newMidiIndex);
 	return true;
 }
 
@@ -405,7 +347,7 @@ bool TwinEConsole::doPlayMusic(int argc, const char **argv) {
 		return true;
 	}
 	int newMusicTrackIndex = atoi(argv[1]);
-	_engine->_music->playTrackMusic(newMusicTrackIndex);
+	_engine->_music->playMusic(newMusicTrackIndex);
 	return true;
 }
 
@@ -419,9 +361,9 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 		debugPrintf("Scene index out of bounds\n");
 		return true;
 	}
-	_engine->_scene->_needChangeScene = atoi(argv[1]);
-	_engine->_scene->_heroPositionType = ScenePositionType::kScene;
-	_engine->_scene->changeScene();
+	_engine->_scene->_newCube = atoi(argv[1]);
+	_engine->_scene->_flagChgCube = ScenePositionType::kScene;
+	_engine->_scene->changeCube();
 	return true;
 }
 
@@ -477,7 +419,7 @@ static const char *ItemNames[] = {
 	"BonusList",
 	"CloverLeaf"
 };
-STATIC_ASSERT(ARRAYSIZE(ItemNames) == InventoryItems::MaxInventoryItems, "Array size doesn't match items");
+static_assert(ARRAYSIZE(ItemNames) == InventoryItems::MaxInventoryItems, "Array size doesn't match items");
 
 bool TwinEConsole::doGiveItem(int argc, const char **argv) {
 	if (argc <= 1) {

@@ -283,7 +283,7 @@ const char *res_man::OpenFile(int32 &cluster_search, RMParams *params) {
 	return nullptr;
 }
 
-// Get the header infomation for a particular file from a cluster
+// Get the header information for a particular file from a cluster
 // Will load the cluster in if need be
 HEADER_NORMAL *res_man::GetFileHeader(int32 &cluster_search, RMParams *params) {
 	Cluster_API *clu;

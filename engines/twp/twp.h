@@ -70,7 +70,7 @@ class Scene;
 struct ShaderParams;
 class Task;
 class TextDb;
-class Thread;
+class ThreadBase;
 struct TwpGameDescription;
 struct Verb;
 struct VerbId;
@@ -120,7 +120,7 @@ public:
 	void updateSettingVars();
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return _cutscene.id == 0;
+		return !_cutscene;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
@@ -167,8 +167,6 @@ public:
 
 	int runDialog(GUI::Dialog &dialog) override;
 
-	SQRESULT skipCutscene();
-
 private:
 	void update(float elapsedMs);
 	void draw(RenderTexture *texture = nullptr);
@@ -187,6 +185,7 @@ private:
 	Common::Array<ActorSwitcherSlot> actorSwitcherSlots();
 	ActorSwitcherSlot actorSwitcherSlot(ActorSlot *slot);
 	Scaling *getScaling(const Common::String &name);
+	void skipCutscene();
 
 private:
 	unique_ptr<Vm> _vm;
@@ -196,7 +195,7 @@ public:
 	unique_ptr<ResManager> _resManager;
 	Common::Array<Common::SharedPtr<Room> > _rooms;
 	Common::Array<Common::SharedPtr<Object> > _actors;
-	Common::Array<Common::SharedPtr<Thread> > _threads;
+	Common::Array<Common::SharedPtr<ThreadBase> > _threads;
 	Common::Array<Common::SharedPtr<Task> > _tasks;
 	Common::Array<Common::SharedPtr<Callback> > _callbacks;
 	Common::SharedPtr<Object> _actor;
@@ -212,14 +211,7 @@ public:
 	float _nextHoldToMoveTime = 0.f;
 	int _frameCounter = 0;
 	Common::SharedPtr<Lighting> _lighting;
-	struct {
-		int id = 0;
-		InputStateFlag inputState = (InputStateFlag)0;
-		bool showCursor = false;
-		bool inOverride = false;
-		HSQOBJECT envObj;
-		HSQOBJECT closureOverride;
-	} _cutscene;
+	Common::SharedPtr<Cutscene> _cutscene;
 	unique_ptr<Scene> _scene;
 	unique_ptr<Scene> _screenScene;
 	unique_ptr<NoOverrideNode> _noOverride;

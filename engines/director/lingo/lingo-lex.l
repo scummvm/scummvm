@@ -1,3 +1,4 @@
+%top{
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -18,16 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-%option noyywrap
-%option noinput
-%option nounput
-%option never-interactive
-%option case-insensitive
-
-%option outfile="engines/director/lingo/lingo-lex.cpp"
-
-%{
 
 #define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
@@ -53,6 +44,18 @@ using namespace Director;
 
 static const char *inputbuffer;
 static uint inputlen;
+
+}
+
+%option noyywrap
+%option noinput
+%option nounput
+%option never-interactive
+%option case-insensitive
+
+%option outfile="engines/director/lingo/lingo-lex.cpp"
+
+%{
 
 // Push lines in stack
 static void pushLine(uint num) {
@@ -135,10 +138,10 @@ static Common::String *readUntilWhitespace(const char **ptr) {
 	return res;
 }
 
-static Common::String *readUntilNull(const char **ptr) {
+static Common::String *readUntilNewline(const char **ptr) {
 	Common::String *res = new Common::String;
 
-	while (**ptr) {
+	while ((**ptr != '\n') && (**ptr != '\r') && (**ptr != '\0')) {
 		if (**ptr == '\xC2' && *(*ptr + 1) == '\xAC') { // continuation
 			*ptr += 2;
 			*res += ' '; // replace with space
@@ -154,7 +157,7 @@ static Common::String *readUntilNull(const char **ptr) {
 %}
 
 identifier [_[:alpha:]][_\.[:alnum:]]*
-constfloat [[:digit:]]+\.[[:digit:]]*
+constfloat [[:digit:]]*\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\r\n]*\"
 operator [-+*/%^:,()><&\[\]]
@@ -176,6 +179,7 @@ after		{ count(); return tAFTER; }		// D3
 and			{ count(); return tAND; }
 before		{ count(); return tBEFORE; }	// D3
 cast		{ count(); return tCAST; }
+castlib		{ count(); return tCASTLIB; }	// D5
 castlibs	{ count(); return tCASTLIBS; }	// D5
 char		{ count(); return tCHAR; }		// D3
 chars		{ count(); return tCHARS; }
@@ -220,6 +224,7 @@ line		{ count(); return tLINE; }
 lines		{ count(); return tLINES; }
 long		{ count(); return tLONG; }
 macro		{ count(); return tMACRO; }
+member		{ count(); return tMEMBER; }
 menu		{ count(); return tMENU; }
 menus		{ count(); return tMENUS; }
 menuItem	{ count(); return tMENUITEM;}
@@ -252,7 +257,7 @@ the			{ count(); return tTHE; }
 then		{ count(); return tTHEN; }
 time		{ count(); return tTIME; }
 to			{ count(); return tTO; }
-when{spc}+{eventname}{spc}+then{spc}+{unparsedstmt}	{
+when{spc}+{eventname}{spc}+then{spc}*{unparsedstmt}	{
 		count();
 
 		const char *ptr =  &yytext[5]; // Skip 'when '
@@ -261,10 +266,10 @@ when{spc}+{eventname}{spc}+then{spc}+{unparsedstmt}	{
 		Common::String *eventName = readUntilWhitespace(&ptr);
 
 		skipWhitespace(&ptr);
-		ptr += 5; // Skip 'then '
+		ptr += 4; // Skip 'then'
 		skipWhitespace(&ptr);
 
-		Common::String *stmt = readUntilNull(&ptr);
+		Common::String *stmt = readUntilNewline(&ptr);
 
 		yylval.w.eventName = eventName;
 		yylval.w.stmt = stmt;

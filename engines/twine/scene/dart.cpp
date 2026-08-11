@@ -28,12 +28,9 @@
 namespace TwinE {
 
 void Dart::InitDarts() {
-#if 0
-	T_DART *ptrd;
-	uint8 *ptrbody;
-	uint32 t;
 	int32 x0, x1, y0, y1, z0, z1;
-	int32 size;
+#if 0
+	uint8 *ptrbody;
 	T_BODY_HEADER *ptr;
 
 	ptrbody = (uint8 *)GivePtrObjFix(BODY_3D_DART);
@@ -51,13 +48,16 @@ void Dart::InitDarts() {
 	y1 = ptr->YMax;
 	z0 = ptr->ZMin;
 	z1 = ptr->ZMax;
+#else
+	x0 = x1 = y0 = y1 = z0 = z1 = 0;
+#endif
 
 	// Average
-	size = ((x1 - x0) + (z1 - z0)) / 4;
+	int32 size = ((x1 - x0) + (z1 - z0)) / 4;
 
-	ptrd = ListDart;
+	T_DART *ptrd = ListDart;
 
-	for (t = 0; t < MAX_DARTS; t++, ptrd++) {
+	for (uint32 t = 0; t < MAX_DARTS; t++, ptrd++) {
 		ptrd->Body = BODY_3D_DART;
 
 		ptrd->XMin = -size;
@@ -70,7 +70,6 @@ void Dart::InitDarts() {
 		ptrd->Flags = 0;
 		ptrd->NumCube = -1;
 	}
-#endif
 }
 
 int32 Dart::GetDart() {
@@ -107,20 +106,20 @@ void Dart::CheckDartCol(ActorStruct *ptrobj) {
 	int32 x0, y0, z0, x1, y1, z1;
 	int32 xt0, yt0, zt0, xt1, yt1, zt1;
 
-	if (ptrobj->_staticFlags.bIsHidden)
+	if (ptrobj->_flags.bIsInvisible)
 		return;
 
-	x0 = ptrobj->_pos.x + ptrobj->_boundingBox.mins.x;
-	x1 = ptrobj->_pos.x + ptrobj->_boundingBox.maxs.x;
-	y0 = ptrobj->_pos.y + ptrobj->_boundingBox.mins.y;
-	y1 = ptrobj->_pos.y + ptrobj->_boundingBox.maxs.y;
-	z0 = ptrobj->_pos.z + ptrobj->_boundingBox.mins.z;
-	z1 = ptrobj->_pos.z + ptrobj->_boundingBox.maxs.z;
+	x0 = ptrobj->_posObj.x + ptrobj->_boundingBox.mins.x;
+	x1 = ptrobj->_posObj.x + ptrobj->_boundingBox.maxs.x;
+	y0 = ptrobj->_posObj.y + ptrobj->_boundingBox.mins.y;
+	y1 = ptrobj->_posObj.y + ptrobj->_boundingBox.maxs.y;
+	z0 = ptrobj->_posObj.z + ptrobj->_boundingBox.mins.z;
+	z1 = ptrobj->_posObj.z + ptrobj->_boundingBox.maxs.z;
 
 	ptrd = ListDart;
 
 	for (n = 0; n < MAX_DARTS; n++, ptrd++) {
-		if (ptrd->NumCube == _engine->_scene->_currentSceneIdx && !(ptrd->Flags & DART_TAKEN)) {
+		if (ptrd->NumCube == _engine->_scene->_numCube && !(ptrd->Flags & DART_TAKEN)) {
 			xt0 = ptrd->PosX + ptrd->XMin;
 			xt1 = ptrd->PosX + ptrd->XMax;
 			yt0 = ptrd->PosY + ptrd->YMin;

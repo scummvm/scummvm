@@ -141,9 +141,9 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 73:
-						if (!_G(gameState).R9Gitter) {
+						if (!_G(gameState).R9Grid) {
 							_G(gameState)._personHide[P_CHEWY] = true;
-							startSetAILWait(5, 1, ANI_FRONT);
+							startDetailWait(5, 1, ANI_FRONT);
 							_G(gameState)._personHide[P_CHEWY] = false;
 						} else {
 							retValue = false;
@@ -251,7 +251,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 142:
-						retValue = Room17::energie_hebel();
+						retValue = Room17::energy_lever();
 						break;
 
 					case 146:
@@ -278,7 +278,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 161:
 					case 162:
 					case 163:
-						Room24::use_hebel(txtNr);
+						Room24::use_lever(txtNr);
 						break;
 
 					case 165:
@@ -635,11 +635,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 463:
-						retValue = Room77::proc1();
+						retValue = Room77::procOpenBoatHoleWithCorkscrew();
 						break;
 
 					case 464:
-						retValue = Room77::proc2();
+						retValue = Room77::procPlugBoatHoleWithRubber();
 						break;
 
 					case 467:
@@ -1050,7 +1050,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 				case TXT_MARK_USE:
 					switch (txtNr) {
 					case 90:
-						_G(atds)->set_ats_str(90, TXT_MARK_USE, _G(gameState).R13Band);
+						_G(atds)->set_all_ats_str(90, TXT_MARK_USE, _G(gameState).R13Band);
 						break;
 
 					case 124:
@@ -1072,7 +1072,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 					case 267:
 						if (!_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo)
-							_G(atds)->set_ats_str(267, 1, ATS_DATA);
+							_G(atds)->set_all_ats_str(267, 1, ATS_DATA);
 						break;
 
 					case 283:
@@ -1198,7 +1198,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		case 20:
 			if (blkNr == 0 && strEndNr == 1) {
 				_G(gameState)._personHide[P_CHEWY] = true;
-				startSetAILWait(28, 3, ANI_FRONT);
+				startDetailWait(28, 3, ANI_FRONT);
 				_G(gameState)._personHide[P_CHEWY] = false;
 			}
 			break;
@@ -1217,14 +1217,15 @@ void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		_G(flags).AutoAniPlay = false;
 		break;
 
-	case 5:
+	case 5:  // R11_BORK_DIA
+		aadWait(-1);
 		autoMove(6, P_CHEWY);
 		break;
 
 	case 22:
 		if (strEndNr == 1) {
 			_G(det)->del_static_ani(3);
-			startSetAILWait(5, 1, ANI_FRONT);
+			startDetailWait(5, 1, ANI_FRONT);
 			_G(det)->set_static_ani(3, -1);
 			startAadWait(456);
 		}
@@ -1238,6 +1239,7 @@ void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr) {
 #define R14_HERMIT_DIA 10000
 #define R8_NIMOYANER1_DIA 10001
 #define R8_NIMOYANER2_DIA 10002
+#define R11_TERMINAL_DIA 10003
 #define R12_BORK_DIA 10004
 #define R11_BORK_DIA 10005
 #define R8_NIMOYANER3_DIA 10006
@@ -1283,6 +1285,14 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case 30000:
 	case 25:
 	case 34:
+	case 37:   // R17: energy_lever()
+	case 38:   // R17: energy_lever()
+	case 60:   // R17: get_oel()
+	case 62:   // R29: use_pumpe()
+	case 111:  // R12: use_linke_rohr()
+	case 114:  // R12: Chewy-as-Bork with terminal
+	case 206:  // R40: move_train(), before the train passes
+	case 207:  // R40: move_train(), after the train passes
 	case 252:
 	case 253:
 	case 259:
@@ -1324,7 +1334,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 				break;
 
 			case CHEWY_BORK:
-				aniNr = 68;
+				aniNr = CH_BORK_TALK;
 				break;
 
 			case CHEWY_PUMPKIN:
@@ -1368,9 +1378,9 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 		break;
 
 	case 61:
-	case R14_HERMIT_DIA:
 	case R8_NIMOYANER1_DIA:
 	case R8_NIMOYANER2_DIA:
+	case R11_TERMINAL_DIA:
 		if (personNr <= P_CHEWY) {
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -1384,7 +1394,13 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 	case R11_BORK_DIA:
 		oldFormat = true;
-		if (personNr == 1) {
+		if (personNr == P_CHEWY) {
+			if (mode == AAD_STR_START) {
+				start_spz(CH_BORK_TALK, 255, ANI_FRONT, P_CHEWY);
+			} else {
+				stop_spz();
+			}
+		} else if (personNr == 1) {
 			if (mode == AAD_STR_START) {
 				_G(talk_start_ani) = 9;
 				_G(talk_hide_static) = 8;
@@ -1421,6 +1437,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 	case 24:
 	case 26:
+	case R14_HERMIT_DIA:
 		oldFormat = true;
 		switch (personNr) {
 		case 0:
@@ -1569,11 +1586,30 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 			}
 			}
 			break;
+		case P_3:         // Howard in dialog with Chewy, Holly, and Molly
+			if (mode == AAD_STR_START) {
+				switch (_G(gameState).mi[P_HOWARD]) {
+				case 2:
+					start_spz(50, 255, ANI_FRONT, P_HOWARD);
+					break;
+				case 3:
+					start_spz(57, 255, ANI_FRONT, P_HOWARD);
+					break;
+				default:
+					start_spz(HO_TALK_L, 255, ANI_FRONT, P_HOWARD);
+					break;
+				}
+			} else {
+				stop_spz();
+			}
+			break;
+
 		default:
 			break;
 		}
 		break;
 
+	case 145:  // R37: talkWithRooster()
 	case 176:
 	case 177:
 	case 178:
@@ -1703,6 +1739,8 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case 398:
 	case 400:
 	case 402:
+	case 609:  // R46: bodo()
+	case 610:  // R46: bodo()
 	case R42_BEAMTER2_DIA:
 	case R42_BEAMTER3_DIA:
 	case R56_SEEMAN_DIA:
@@ -1718,7 +1756,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 					break;
 
 				case CHEWY_BORK:
-					aniNr = 68;
+					aniNr = CH_BORK_TALK;
 					break;
 
 				case CHEWY_PUMPKIN:
@@ -2240,7 +2278,7 @@ void useItemWithInvItem(int16 itemId) {
 
 	case WOOL_INV:
 		remove_inventory(WOOL_INV);
-		_G(atds)->set_ats_str(BOTTLE_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_all_ats_str(BOTTLE_INV, 1, INV_ATS_DATA);
 		_G(gameState).R56WhiskyMix = true;
 		break;
 
@@ -2260,13 +2298,13 @@ void useItemWithInvItem(int16 itemId) {
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		startAadWait(_G(gameState)._personRoomNr[P_CHEWY] + 350);
 		_G(flags).InventMenu = true;
-		_G(atds)->set_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_all_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 88:
 		_G(gameState).changedArtifactOrigin = true;
 		startAadWait(350);
-		_G(atds)->set_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
+		_G(atds)->set_all_ats_str(ARTIFACT_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 102:

@@ -45,7 +45,7 @@
 namespace Gob {
 
 Sound::Sound(GobEngine *vm) : _vm(vm) {
-	_pcspeaker = new PCSpeaker(*_vm->_mixer);
+	_pcspeaker = new PCSpeaker();
 	_blaster = new SoundBlaster(*_vm->_mixer);
 
 	_adlPlayer = nullptr;
@@ -67,8 +67,9 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 		_cdrom = new CDROM;
 	if (_vm->getGameType() == kGameTypeWoodruff)
 		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
-	if ((_vm->getGameType() == kGameTypeUrban) ||
-	    (_vm->getGameType() == kGameTypeAdibou2)) {
+	if (_vm->getGameType() == kGameTypeUrban ||
+	    _vm->getGameType() == kGameTypeAdibou2 ||
+	    _vm->getGameType() == kGameTypeAdi4) {
 		_bgatmos = new BackgroundAtmosphere(*_vm->_mixer);
 		_bgatmos->setShadable(false);
 	}
@@ -337,7 +338,7 @@ void Sound::adlibPlayTrack(const char *trackname) {
 }
 
 void Sound::adlibPlayBgMusic() {
-	if (!_hasAdLib || _hasAdLibBg)
+	if (!_hasAdLib || !_hasAdLibBg) // If one of those is disabled, then stop there 
 		return;
 
 	createADLPlayer();

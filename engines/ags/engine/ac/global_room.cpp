@@ -106,7 +106,7 @@ void NewRoom(int nrnum) {
 	} else if (_G(in_inv_screen)) {
 		_G(inv_screen_newroom) = nrnum;
 		return;
-	} else if ((_G(inside_script) == 0) & (_G(in_graph_script) == 0)) {
+	} else if ((_G(inside_script) == 0) && (_G(in_graph_script) == 0)) {
 		// Compatibility: old games had a *possibly unintentional* effect:
 		// if a character was walking, and a "change room" is called
 		// *NOT* from a script, but by some other trigger,
@@ -148,7 +148,7 @@ void NewRoomNPC(int charid, int nrnum, int newx, int newy) {
 void ResetRoom(int nrnum) {
 	if (nrnum == _G(displayed_room))
 		quit("!ResetRoom: cannot reset current room");
-	if ((nrnum < 0) | (nrnum >= MAX_ROOMS))
+	if ((nrnum < 0) || (nrnum >= MAX_ROOMS))
 		quit("!ResetRoom: invalid room number");
 
 	if (isRoomStatusValid(nrnum)) {

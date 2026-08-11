@@ -110,14 +110,14 @@ void decodeLoaderFlags(uint32 flags) {
 }
 
 Common::String constructPath(const Common::String &prefix, const Common::String &filename, const char *suffix) {
-	Common::String Name = prefix + filename;
-	uint16 len = Name.size();
+	Common::String name = prefix + filename;
+	uint16 len = name.size();
 	if (suffix != nullptr) {
 		uint16 suffixLen = strlen(suffix);
-		Name = Name.substr(0, len - suffixLen) + suffix;
+		name = name.substr(0, len - suffixLen) + suffix;
 		assert(suffixLen == 3);
 	}
-	return Common::String(Name);
+	return Common::String(Common::move(name));
 }
 
 class RoomManagerImplementation : public RoomManager {
@@ -211,7 +211,7 @@ public:
 			return &init._globals._invVars.CameraDummy;
 		//	Cerca tra i personaggi
 		for (uint16 i = 0; i < T3D_MAX_CHARACTERS; i++)
-			if ((Character[i]) && (str.equalsIgnoreCase((char *)init.Obj[i].meshlink[0])))
+			if ((Character[i]) && (str.equalsIgnoreCase(init.Obj[i].getMeshLink(0))))
 				return Character[i]->Mesh;
 		//	Cerca nelle stanze caricate
 		for (uint16 i = 0; i < NumLoadedFiles; i++) {

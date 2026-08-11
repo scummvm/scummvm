@@ -71,26 +71,34 @@ public:
 	virtual bool isEditable() { return _editable; }
 
 	virtual void setColors(uint32 fg, uint32 bg);
+	virtual void setBorderColor(uint32 color) {
+		_borderColor = color;
+		_contentIsDirty = true;
+	}
 
 	virtual void setDimensions(const Common::Rect &r) {
 		_dims = r;
 	}
 
 	Common::Point getAbsolutePos();
+	Common::Rect getAbsoluteDimensions();
 	MacWidget *findEventHandler(Common::Event &event, int dx, int dy);
 
 	void removeWidget(MacWidget *child, bool del = true);
 
-	Graphics::ManagedSurface *getSurface() { return _composeSurface; }
+	virtual Graphics::ManagedSurface *getSurface() final { return _composeSurface; }
+	void setSurface(Graphics::ManagedSurface *srf, DisposeAfterUse::Flag dispose);
 
 protected:
 	uint16 _border;
 	uint16 _gutter;
 	uint16 _shadow;
+	uint32 _borderColor;
 
 	uint32 _fgcolor, _bgcolor;
 
 	Graphics::ManagedSurface *_composeSurface;
+	DisposeAfterUse::Flag _dispose;
 
 	bool _contentIsDirty;
 

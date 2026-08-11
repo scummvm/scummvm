@@ -19,6 +19,8 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
@@ -36,6 +38,11 @@ const DebugChannelDef gDebugChannels[] = {
 	{ kDebugGlobalDetection, "detection", "debug messages for advancedDetector" },
 	{ kDebugLevelMainGUI,    "maingui",   "debug messages for GUI" },
 	{ kDebugLevelMacGUI,     "macgui",    "debug messages for MacGUI" },
+	{ kDebugLevelMacToolbox, "mactoolbox","debug messages for MacToolbox" },
+	{ kDebugLevelGGraphics,  "ggraphics", "debug messages for global graphics" },
+	{ kDebugLevelGVideo,     "gvideo",    "debug messages for global video" },
+	{ kDebugLevelGAudio,     "gaudio",    "debug messages for global audio" },
+	{ kDebugImGui,           "imgui",     "Show ImGui debug window (if available)" },
 	DEBUG_CHANNEL_END
 };
 namespace Common {
@@ -71,8 +78,8 @@ bool DebugManager::addDebugChannel(uint32 channel, const String &name, const Str
 	if (_debugChannels.contains(name))
 		warning("Duplicate declaration of engine debug channel '%s'", name.c_str());
 
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		if (i->_value.channel == channel)
+	for (auto &debugChannel : _debugChannels)
+		if (debugChannel._value.channel == channel)
 			error("Duplicate engine debug channel id '%d' for flag '%s'", channel, name.c_str());
 
 	_debugChannels[name] = DebugChannel(channel, name, description);
@@ -95,9 +102,9 @@ void DebugManager::removeAllDebugChannels() {
 	_debugChannels.clear();
 	addDebugChannels(gDebugChannels);
 
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		if (oldMap.contains(i->_value.channel))
-			_debugChannelsEnabled[i->_value.channel] = oldMap[i->_value.channel];
+	for (auto &debugChannel : _debugChannels)
+		if (oldMap.contains(debugChannel._value.channel))
+			_debugChannelsEnabled[debugChannel._value.channel] = oldMap[debugChannel._value.channel];
 }
 
 bool DebugManager::enableDebugChannel(const String &name) {
@@ -136,21 +143,21 @@ bool DebugManager::disableDebugChannel(uint32 channel) {
 
 DebugManager::DebugChannelList DebugManager::getDebugChannels() {
 	DebugChannelList tmp;
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		tmp.push_back(i->_value);
+	for (auto &debugChannel : _debugChannels)
+		tmp.push_back(debugChannel._value);
 	sort(tmp.begin(), tmp.end(), DebugLevelComperator());
 
 	return tmp;
 }
 
 void DebugManager::enableAllDebugChannels() {
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		enableDebugChannel(i->_value.name);
+	for (auto &debugChannel : _debugChannels)
+		enableDebugChannel(debugChannel._value.name);
 }
 
 void DebugManager::disableAllDebugChannels() {
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
-		disableDebugChannel(i->_value.name);
+	for (auto &debugChannel : _debugChannels)
+		disableDebugChannel(debugChannel._value.name);
 }
 
 bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
@@ -175,21 +182,22 @@ void DebugManager::addDebugChannels(const DebugChannelDef *channels) {
 } // End of namespace Common
 
 bool debugLevelSet(int level) {
-	return level <= gDebugLevel;
+	return level <= gDebugLevel && !gDebugChannelsOnly;
 }
 
-bool debugChannelSet(int level, uint32 debugChannels) {
+bool debugChannelSet(int level, uint32 debugChannel) {
 	if (gDebugLevel != 11 || level == -1)
-		if ((level != -1 && level > gDebugLevel) || !(DebugMan.isDebugChannelEnabled(debugChannels, level == -1)))
+		if ((level != -1 && level > gDebugLevel) || !(DebugMan.isDebugChannelEnabled(debugChannel, level == -1)))
 			return false;
 
 	return true;
 }
 
 
-#ifndef DISABLE_TEXT_CONSOLE
+// Intentionally always compiled to support FORCE_TEXT_CONSOLE
+//#ifndef DISABLE_TEXT_CONSOLE
 
-static void debugHelper(const char *s, va_list va, int level, uint32 debugChannels, bool caret = true) {
+static void debugHelper(const char *s, va_list va, int level, uint32 debugChannel, bool caret = true) {
 	Common::String buf = Common::String::vformat(s, va);
 
 	if (caret)
@@ -197,7 +205,7 @@ static void debugHelper(const char *s, va_list va, int level, uint32 debugChanne
 
 	Common::LogWatcher logWatcher = Common::getLogWatcher();
 	if (logWatcher)
-   		(*logWatcher)(LogMessageType::kDebug, level, debugChannels, buf.c_str());
+		(*logWatcher)(LogMessageType::kDebug, level, debugChannel, buf.c_str());
 
 	if (g_system)
 		g_system->logMessage(LogMessageType::kDebug, buf.c_str());
@@ -250,56 +258,56 @@ void debugN(int level, const char *s, ...) {
 	va_end(va);
 }
 
-void debugC(int level, uint32 debugChannels, const char *s, ...) {
+void debugC(int level, uint32 debugChannel, const char *s, ...) {
 	va_list va;
 
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
-		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannels)))
+		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannel)))
 			return;
 
 	va_start(va, s);
-	debugHelper(s, va, level, debugChannels);
+	debugHelper(s, va, level, debugChannel);
 	va_end(va);
 }
 
-void debugCN(int level, uint32 debugChannels, const char *s, ...) {
+void debugCN(int level, uint32 debugChannel, const char *s, ...) {
 	va_list va;
 
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
-		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannels)))
+		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannel)))
 			return;
 
 	va_start(va, s);
-	debugHelper(s, va, level, debugChannels, false);
+	debugHelper(s, va, level, debugChannel, false);
 	va_end(va);
 }
 
-void debugC(uint32 debugChannels, const char *s, ...) {
+void debugC(uint32 debugChannel, const char *s, ...) {
 	va_list va;
 
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
-		if (!(DebugMan.isDebugChannelEnabled(debugChannels)))
+		if (!(DebugMan.isDebugChannelEnabled(debugChannel)))
 			return;
 
 	va_start(va, s);
-	debugHelper(s, va, 0, debugChannels);
+	debugHelper(s, va, 0, debugChannel);
 	va_end(va);
 }
 
-void debugCN(uint32 debugChannels, const char *s, ...) {
+void debugCN(uint32 debugChannel, const char *s, ...) {
 	va_list va;
 
 	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
-		if (!(DebugMan.isDebugChannelEnabled(debugChannels)))
+		if (!(DebugMan.isDebugChannelEnabled(debugChannel)))
 			return;
 
 	va_start(va, s);
-	debugHelper(s, va, 0, debugChannels, false);
+	debugHelper(s, va, 0, debugChannel, false);
 	va_end(va);
 }
 
-#endif
+//#endif

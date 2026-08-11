@@ -22,8 +22,12 @@
 #ifndef ULTIMA8_USECODE_UCLIST_H
 #define ULTIMA8_USECODE_UCLIST_H
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/array.h"
+
+namespace Common {
+class ReadStream;
+class WriteStream;
+}
 
 namespace Ultima {
 namespace Ultima8 {
@@ -39,7 +43,7 @@ namespace Ultima8 {
 // Question: does subtractList remove _all_ occurrences of elements or only 1?
 
 class UCList {
-	Std::vector<uint8> _elements;
+	Common::Array<uint8> _elements;
 	unsigned int _elementSize;
 	unsigned int _size;
 
@@ -169,7 +173,7 @@ public:
 	bool load(Common::ReadStream *rs, uint32 version);
 
 private:
-	const Std::string &getString(uint32 index) const;
+	const Common::String &getString(uint32 index) const;
 };
 
 } // End of namespace Ultima8

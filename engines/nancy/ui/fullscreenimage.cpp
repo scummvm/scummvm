@@ -28,7 +28,9 @@ namespace Nancy {
 namespace UI {
 
 void FullScreenImage::init(const Common::Path &imageName) {
-	g_nancy->_resource->loadImage(imageName, _drawSurface);
+	if (!g_nancy->_resource->loadImage(imageName, _drawSurface)) {
+		return;
+	}
 
 	Common::Rect srcBounds = Common::Rect(0,0, _drawSurface.w, _drawSurface.h);
 	_screenPosition = srcBounds;

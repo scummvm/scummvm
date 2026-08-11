@@ -45,8 +45,8 @@ ConfigElement Config::getElement(const Common::String &name) const {
 	return ConfigElement(node);
 }
 
-Std::vector<Common::String> Config::getGames() {
-	Std::vector<Common::String> result;
+Common::Array<Common::String> Config::getGames() {
+	Common::Array<Common::String> result;
 	result.push_back("Ultima IV");
 	return result;
 }
@@ -99,7 +99,7 @@ bool ConfigElement::getBool(const Common::String &name) const {
 	return toupper(str[0]) == 'T' || str == "1";
 }
 
-int ConfigElement::getEnum(const Common::String &name, const char *enumValues[]) const {
+int ConfigElement::getEnum(const Common::String &name, const char *const enumValues[]) const {
 	Common::String str = (*_node)[name];
 	if (str.empty())
 		return 0;
@@ -112,13 +112,12 @@ int ConfigElement::getEnum(const Common::String &name, const char *enumValues[])
 	error("invalid enum value for %s: %s", name.c_str(), str.c_str());
 }
 
-Std::vector<ConfigElement> ConfigElement::getChildren() const {
+Common::Array<ConfigElement> ConfigElement::getChildren() const {
 	const Common::Array<Shared::XMLNode *> &children = _node->children();
-	Std::vector<ConfigElement> result;
+	Common::Array<ConfigElement> result;
 
-	for (Common::Array<Shared::XMLNode *>::const_iterator it = children.begin();
-	        it != children.end(); ++it)
-		result.push_back(*it);
+	for (const auto &c : children)
+		result.push_back(c);
 
 	return result;
 }

@@ -31,13 +31,14 @@ namespace Audio {
 
 // Routines to convert 12 bit linear samples to the
 // Dialogic or Oki ADPCM coding format aka VOX.
-// See also <http://www.comptek.ru/telephony/tnotes/tt1-13.html>
+// See also
+//   <https://web.archive.org/web/20050421220515/http://www.comptek.ru/telephony/tnotes/tt1-13.html>
 //
 // IMA ADPCM support is based on
-//   <http://wiki.multimedia.cx/index.php?title=IMA_ADPCM>
+//   <https://wiki.multimedia.cx/index.php?title=IMA_ADPCM>
 //
 // In addition, also MS IMA ADPCM is supported. See
-//   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
+//   <https://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 //
 // XA ADPCM support is based on FFmpeg/libav
 
@@ -476,6 +477,7 @@ int DK3_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 			_stream->skip(2);
 			const uint16 rate = _stream->readUint16LE();
 			assert(rate == getRate());
+			(void)rate;
 			_stream->skip(6);
 
 			// Get predictor for both sum/diff channels
@@ -545,8 +547,8 @@ const int16 Ima_ADPCMStream::_imaTable[89] = {
 	32767
 };
 
-int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
-	int32 E = (2 * (code & 0x7) + 1) * _imaTable[_status.ima_ch[channel].stepIndex] / 8;
+int16 Ima_ADPCMStream::decodeIMA(byte code, int channel, int shift) {
+	int32 E = ((2 * (code & 0x7) + 1) * _imaTable[_status.ima_ch[channel].stepIndex]) >> shift;
 	int32 diff = (code & 0x08) ? -E : E;
 	int32 samp = CLIP<int32>(_status.ima_ch[channel].last + diff, -32768, 32767);
 
@@ -556,6 +558,49 @@ int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
 
 	return samp;
 }
+
+void FOURXM_ADPCMStream::decode() {
+	assert(_channels == 1 || _channels == 2);
+	for (int i = 0; i < _channels; i++)
+		_status.ima_ch[i].last = _stream->readSint16LE();
+	for (int i = 0; i < _channels; i++) {
+		auto stepIndex = _stream->readSint16LE();
+		_status.ima_ch[i].stepIndex = stepIndex;
+		if (stepIndex > 88)
+			error("invalid step index %d", stepIndex);
+	}
+	auto size = _endpos - _stream->pos();
+	_planes.resize(_channels);
+	auto encodedPerChannel = size / _channels;
+	for (int i = 0; i < _channels; ++i) {
+		auto &plane = _planes[i];
+		plane.resize(encodedPerChannel * 2);
+		auto sample = 0;
+		for(auto s = encodedPerChannel; s--; ) {
+			byte data = _stream->readByte();
+			plane[sample++] = decodeIMA(data & 0x0f, i, 4);
+			plane[sample++] = decodeIMA((data >> 4) & 0x0f, i, 4);
+		}
+	}
+}
+
+
+// format is planar, we expect numSamples of L channel + numSamples of R channel to follow.
+int FOURXM_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
+	assert(numSamples % _channels == 0);
+	int samples = 0;
+	while(samples < numSamples) {
+		for(int c = 0; c != _channels; ++c) {
+			auto &plane = _planes[c];
+			if (_samplePos >= plane.size())
+				return samples;
+			buffer[samples++] = plane[_samplePos];
+		}
+		++_samplePos;
+	}
+	return samples;
+}
+
 
 SeekableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, ADPCMType type, int rate, int channels, uint32 blockAlign) {
 	// If size is 0, report the entire size of the stream
@@ -577,6 +622,8 @@ SeekableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispose
 		return new DK3_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
 	case kADPCMXA:
 		return new XA_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign);
+	case kADPCM4XM:
+		return new FOURXM_ADPCMStream(stream, disposeAfterUse, size, rate, channels);
 	default:
 		error("Unsupported ADPCM encoding");
 		break;

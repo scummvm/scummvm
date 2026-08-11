@@ -36,10 +36,8 @@ public:
 	TePng(const Common::String &extn);
 	virtual ~TePng();
 
-	virtual bool load(const Common::FSNode &node) override;
+	virtual bool load(const TetraedgeFSNode &node) override;
 	virtual bool load(Common::SeekableReadStream &stream) override;
-
-	TeImage::Format imageFormat() override;
 
 	// We support "animated" PNGs which contain 8
 	// frames stacked vertically.

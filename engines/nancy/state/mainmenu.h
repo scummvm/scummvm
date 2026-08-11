@@ -22,6 +22,7 @@
 #ifndef NANCY_STATE_MAINMENU_H
 #define NANCY_STATE_MAINMENU_H
 
+#include "common/ptr.h"
 #include "common/singleton.h"
 
 #include "engines/nancy/state/state.h"
@@ -41,7 +42,6 @@ namespace State {
 class MainMenu : public State, public Common::Singleton<MainMenu> {
 public:
 	MainMenu() : _state(kInit), _selected(-1), _menuData(nullptr) {}
-	virtual ~MainMenu();
 
 	// State API
 	void process() override;
@@ -62,7 +62,7 @@ private:
 	State _state;
 	int16 _selected;
 
-	Common::Array<UI::Button *> _buttons;
+	Common::Array<Common::ScopedPtr<UI::Button>> _buttons;
 
 	bool _destroyOnExit = true;
 

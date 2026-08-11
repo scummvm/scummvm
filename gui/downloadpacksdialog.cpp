@@ -19,10 +19,10 @@
  *
  */
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "gui/downloadpacksdialog.h"
 #include "gui/downloaddialog.h"
-#include "backends/networking/curl/session.h"
+#include "backends/networking/http/session.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/util.h"
@@ -88,6 +88,7 @@ void DialogState::downloadList() {
 
 void DialogState::proceedDownload() {
 	startTime = lastUpdate = g_system->getMillis();
+	downloadedSize = 0;
 	g_system->taskStarted(OSystem::kDataPackDownload);
 	takeOneFile();
 }
@@ -475,6 +476,7 @@ void DownloadPacksDialog::clearCache() {
 			// Overwrite previously downloaded pack files with dummy data
 			str->writeByte(0);
 			str->finalize();
+			delete str;
 		}
 		g_state->fileHash.clear();
 

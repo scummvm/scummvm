@@ -108,7 +108,6 @@ enum MD5Properties {
 	kMD5Tail		         = 1 << 1,	// the MD5 is calculated from the tail
 	kMD5MacResFork           = 1 << 2,	// the MD5 is calculated from the Mac Resource fork (no fall back) (head or tail)
 	kMD5MacDataFork	         = 1 << 3,	// the MD5 is calculated from the Mac Data fork (head or tail)
-	kMD5MacResOrDataFork     = kMD5MacResFork | kMD5MacDataFork,	// the MD5 is calculated from the Mac Resource fork falling back to data fork (head or tail). Deprecated.
 	kMD5MacMask              = kMD5MacResFork | kMD5MacDataFork,    // Mask for mac type
 	kMD5Archive              = 1 << 4,	// the desired file is inside an archive
 };
@@ -173,7 +172,7 @@ struct DetectedGame {
 	/**
 	 * A game was detected and is selected in the Mass Add list.
 	 */
-	bool isSelected;
+	bool isSelected = false;
 
 	/**
 	 * An optional list of the files that were used to match the game with the engine's detection tables
@@ -186,6 +185,11 @@ struct DetectedGame {
 	 * @see matchedGame
 	 */
 	bool canBeAdded;
+
+	/**
+	 * The game is an add-on that cannot be run independently.
+	 */
+	bool isAddOn = false;
 
 	Common::String gameId;
 	Common::String preferredTarget;

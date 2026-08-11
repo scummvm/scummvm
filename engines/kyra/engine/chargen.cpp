@@ -164,7 +164,7 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	memset(_chargenMaxStats, 0, sizeof(_chargenMaxStats));
 	memset(_chargenButtonLabels, 0, sizeof(_chargenButtonLabels));
 	memset(_nameLabelsZH, 0, sizeof(_nameLabelsZH));
-	
+
 	int temp;
 	_chargenStrings1 = _vm->staticres()->loadStrings(kEoBBaseChargenStrings1, temp);
 	_chargenStrings2 = _vm->staticres()->loadStrings(kEoBBaseChargenStrings2, temp);
@@ -381,6 +381,7 @@ bool CharacterGenerator::createCustomParty(const uint8 ***faceShapes) {
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
 		int inputFlag = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
@@ -433,6 +434,7 @@ bool CharacterGenerator::createCustomParty(const uint8 ***faceShapes) {
 					loop = true;
 			}
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	return true;
@@ -725,6 +727,7 @@ void CharacterGenerator::createPartyMember() {
 	assert(_vm->_gui);
 
 	for (int i = 0; i != 3 && !_vm->shouldQuit(); i++) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		bool bck = false;
 
 		switch (i) {
@@ -747,6 +750,7 @@ void CharacterGenerator::createPartyMember() {
 
 		if (bck)
 			i -= 2;
+		_vm->delayUntil(frameEnd);
 	};
 
 	if (!_vm->shouldQuit()) {
@@ -754,6 +758,7 @@ void CharacterGenerator::createPartyMember() {
 		statsAndFacesMenu();
 
 		for (_characters[_activeBox].name[0] = 0; _characters[_activeBox].name[0] == 0 && !_vm->shouldQuit();) {
+			uint32 frameEnd = _vm->_system->getMillis() + 8;
 			processFaceMenuSelection(_chargenMinStats[6]);
 			printStats(_activeBox, 0);
 			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
@@ -778,6 +783,7 @@ void CharacterGenerator::createPartyMember() {
 					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlue);
 				}
 			}
+			_vm->delayUntil(frameEnd);
 		}
 	}
 }
@@ -803,11 +809,13 @@ int CharacterGenerator::raceSexMenu() {
 	int16 res = -1;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		res = _vm->_gui->simpleMenu_process(1, _chargenRaceSexStrings, 0, -1, 0);
 		if (_vm->_flags.platform == Common::kPlatformSegaCD)
 			_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
 		_screen->updateScreen();
 		updateMagicShapes();
+		_vm->delayUntil(frameEnd);
 	}
 
 	return res;
@@ -850,6 +858,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 	bool backBtnHiLite = false;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		updateMagicShapes();
 		int in = getInput(0) & 0xFF;
 		Common::Point mp = _vm->getMousePos();
@@ -860,7 +869,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 					      _chargenButtonDefs[41].x + _chargenButtonDefs[41].w, _chargenButtonDefs[41].y + _chargenButtonDefs[41].h)) {
 			if (in == 199 || in == 201) {
 				res = _vm->_keyMap[Common::KEYCODE_ESCAPE];
-			} else { 
+			} else {
 				if (_vm->_flags.lang == Common::ZH_TWN && !backBtnHiLite) {
 					drawButton(5, 1);
 					_vm->_gui->simpleMenu_unselect(2, _chargenClassStrings, 0, itemsMask, 0);
@@ -878,6 +887,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 			}
 			_screen->updateScreen();
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	_vm->removeInputTop();
@@ -924,6 +934,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	bool backBtnHiLite = false;
 
 	while (res == -1 && !_vm->shouldQuit()) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		updateMagicShapes();
 		int in = getInput(0) & 0xFF;
 		Common::Point mp = _vm->getMousePos();
@@ -952,6 +963,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 			}
 			_screen->updateScreen();
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	_vm->removeInputTop();
@@ -1038,10 +1050,18 @@ void CharacterGenerator::generateStats(int index) {
 	c->charismaCur = c->charismaMax = sv[5] & 0xFF;
 	c->armorClass = 10 + _vm->getDexterityArmorClassModifier(sv[3] & 0xFF);
 	c->hitPointsCur = 0;
+	c->hitPointsDividend = 0;
 
 	for (int l = 0; l < 3; l++) {
-		for (int i = 0; i < c->level[l]; i++)
-			c->hitPointsCur += _vm->generateCharacterHitpointsByLevel(index, 1 << l);
+		for (int i = 0; i < c->level[l]; i++) {
+			int hitDieRoll = _vm->rollHitDie(index, l);
+			c->hitPointsDividend += _vm->incrCharacterHitPointsDividendByLevel(index, l, hitDieRoll);
+			if (_vm->_configADDRuleEnhancements) {
+				c->hitPointsCur = c->hitPointsDividend / _vm->_numLevelsPerClass[c->cClass];
+			} else {
+				c->hitPointsCur += _vm->generateCharacterHitpointsByLevel(index, l, hitDieRoll);
+			}
+		}
 	}
 
 	c->hitPointsMax = c->hitPointsCur;
@@ -1104,6 +1124,7 @@ void CharacterGenerator::statsAndFacesMenu() {
 	int in = 0;
 
 	while (!in && !_vm->shouldQuit()) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		updateMagicShapes();
 		in = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
@@ -1133,6 +1154,7 @@ void CharacterGenerator::statsAndFacesMenu() {
 			initButtonsFromList(27, 4);
 			in = 0;
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	_vm->_gui->updateBoxFrameHighLight(6 + _activeBox);
@@ -1171,6 +1193,7 @@ void CharacterGenerator::faceSelectMenu() {
 		int in = 0;
 
 		while (!in && !_vm->shouldQuit()) {
+			uint32 frameEnd = _vm->_system->getMillis() + 8;
 			updateMagicShapes();
 			in = getInput(_vm->_activeButtons);
 			_vm->removeInputTop();
@@ -1193,6 +1216,7 @@ void CharacterGenerator::faceSelectMenu() {
 			} else {
 				in = 0;
 			}
+			_vm->delayUntil(frameEnd);
 		}
 
 		_vm->_gui->updateBoxFrameHighLight(-1);
@@ -1363,7 +1387,7 @@ void CharacterGenerator::processNameInput(int index, int textColor) {
 	} else {
 		_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->printText(_characters[index].name, _chargenNameFieldX[index] + ((60 - _screen->getTextWidth(_characters[index].name)) >> 1), _chargenNameFieldY[index], textColor, 0);
-	}	
+	}
 	_screen->updateScreen();
 	_screen->setFont(of);
 }
@@ -1422,6 +1446,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	}
 
 	for (bool loop = true; loop && !_vm->shouldQuit();) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		uint8 v1 = *s1;
 		updateMagicShapes();
 		int inputFlag = getInput(_vm->_activeButtons);
@@ -1481,8 +1506,10 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 
 		*s1 = v1;
 
-		if (index == 6)
+		if (index == 6) {
 			_characters[_activeBox].hitPointsMax = v1;
+			_characters[_activeBox].hitPointsDividend = c->hitPointsMax * _vm->_numLevelsPerClass[c->cClass];
+		}
 
 		bool hpChanged = false;
 		bool acChanged = false;
@@ -1544,6 +1571,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			}
 			_screen->updateScreen();
 		}
+		_vm->delayUntil(frameEnd);
 	}
 
 	_screen->setFont(of);
@@ -2027,7 +2055,7 @@ private:
 	Screen_EoB *_screen;
 
 	int _highlight;
-	EoBItem *_oldItems;
+	Common::Array<EoBItem> _oldItems;
 
 	const uint16 *_portraitFrames;
 	const uint8 *_convertTable;
@@ -2062,12 +2090,10 @@ TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(
 	_strings2 = _vm->staticres()->loadStrings(kEoB2TransferStrings2, temp);
 	_labels = _vm->staticres()->loadStrings(kEoB2TransferLabels, temp);
 	_highlight = -1;
-	_oldItems = 0;
 }
 
 TransferPartyWiz::~TransferPartyWiz() {
 	_vm->gui()->notifyUpdateSaveSlotsList();
-	delete[] _oldItems;
 }
 
 bool TransferPartyWiz::start() {
@@ -2081,8 +2107,9 @@ bool TransferPartyWiz::start() {
 
 	convertStats();
 
-	_oldItems = new EoBItem[600];
-	memcpy(_oldItems, _vm->_items, sizeof(EoBItem) * 600);
+	_oldItems.clear();
+	for (Common::Array<EoBItem>::const_iterator it = _vm->_items.begin(); it != _vm->_items.end(); ++it)
+		_oldItems.push_back(*it);
 	_vm->loadItemDefs();
 
 	int selection = selectCharactersMenu();
@@ -2156,7 +2183,7 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 	Common::String target = _vm->_gui->transferTargetMenu(eobTargets);
 	_screen->clearPage(0);
 	_screen->copyPage(12, 0);
-	
+
 	if (target.empty())
 		return true;
 
@@ -2209,6 +2236,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 	bool update = false;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
+		uint32 frameEnd = _vm->_system->getMillis() + 8;
 		int inputFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 		_vm->removeInputTop();
 
@@ -2281,6 +2309,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 			_vm->_gui->messageDialog(16, count < 4 ? 69 : 70, _vm->guiSettings()->colors.guiColorLightRed);
 
 		_screen->updateScreen();
+		_vm->delayUntil(frameEnd);
 	}
 
 	_screen->setFont(of);
@@ -2475,8 +2504,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 		break;
 	case 48:
 		if (itm1->value == 5) {
-			memset(itm2, 0, sizeof(EoBItem));
-			itm2->block = -1;
+			*itm2 = EoBItem();
 			return 0;
 		}
 		itm2->value = itm1->value;
@@ -2510,7 +2538,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 		break;
 	}
 
-	for (int i = 1; i < 600; i++) {
+	for (uint i = 1; i < _vm->_items.size(); i++) {
 		if (i == 60 || i == 62 || i == 63 || i == 83)
 			continue;
 		EoBItem *tmp = &_vm->_items[i];
@@ -2523,7 +2551,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 	}
 
 	if (!match) {
-		for (int i = 1; i < 600; i++) {
+		for (uint i = 1; i < _vm->_items.size(); i++) {
 			if (i == 60 || i == 62 || i == 63 || i == 83)
 				continue;
 			EoBItem *tmp = &_vm->_items[i];
@@ -2537,8 +2565,7 @@ Item TransferPartyWiz::convertItem(Item eob1Item) {
 	}
 
 	if (!match) {
-		memset(itm2, 0, sizeof(EoBItem));
-		itm2->block = -1;
+		*itm2 = EoBItem();
 		return 0;
 	}
 

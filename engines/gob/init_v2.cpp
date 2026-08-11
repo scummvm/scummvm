@@ -25,6 +25,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -71,5 +72,25 @@ void Init_v2::initVideo() {
 	_vm->_draw->_cursorHeight      = 16;
 	_vm->_draw->_transparentCursor =  1;
 }
+
+void Init_v2::initGame() {
+	if (_vm->getGameType() == kGameTypeAdibou1) {
+		const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+
+		// Add additional applications directories (e.g. "Read/Count 4-5 years").
+		Common::FSList subdirs;
+		gameDataDir.getChildren(subdirs, Common::FSNode::kListDirectoriesOnly);
+		for (const Common::FSNode &subdirNode : subdirs) {
+			Common::FSDirectory subdir(subdirNode);
+			if (subdir.hasFile("c51.stk") || subdir.hasFile("c61.stk") || subdir.hasFile("l51.stk") || subdir.hasFile("l61.stk")) {
+				debugC(1, kDebugFileIO, "Found Adibou/Adi application subdirectory \"%s\", adding it to the search path", subdir.getFSNode().getName().c_str());
+				SearchMan.addSubDirectoryMatching(gameDataDir, subdir.getFSNode().getName(), 0, 4, true);
+			}
+		}
+	}
+
+	Init::initGame();
+}
+
 
 } // End of namespace Gob

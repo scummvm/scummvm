@@ -20,7 +20,6 @@
  */
 
 #include "tetraedge/te/te_model_vertex_animation.h"
-#include "common/math.h"
 
 namespace Tetraedge {
 

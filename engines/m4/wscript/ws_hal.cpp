@@ -25,7 +25,7 @@
 #include "m4/wscript/wst_regs.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
-#include "m4/dbg/debug.h"
+#include "m4/dbg/dbg_wscript.h"
 #include "m4/graphics/gr_sprite.h"
 #include "m4/graphics/rend.h"
 #include "m4/gui/gui_vmng.h"
@@ -44,11 +44,8 @@ void ws_KillHAL() {
 }
 
 void ws_DumpMachine(machine *m, Common::WriteStream *logFile) {
-	Anim8 *myAnim8;
-	CCB *myCCB;
-	frac16 *myRegs;
 	int32 i;
-	double   tempFloat;
+	double tempFloat;
 
 	if (!m || !logFile)
 		return;
@@ -58,27 +55,27 @@ void ws_DumpMachine(machine *m, Common::WriteStream *logFile) {
 
 	// If we have an anim8 for this machine
 	if (m->myAnim8) {
-		myAnim8 = m->myAnim8;
+		Anim8 *myAnim8 = m->myAnim8;
 
 		// Print out the anim8 hash, and physical address
 		logFile->writeString(Common::String::format("Sequence Hash: %d\n\tAddress: %p\n\n", myAnim8->sequHash, (void *)myAnim8));
 
 		// And if this anim8 has registers
 		if (myAnim8->myRegs) {
-			myRegs = myAnim8->myRegs;
+			frac16 *myRegs = myAnim8->myRegs;
 			logFile->writeString("Registers:\n");
 
 			// Loop through the main set of registers, and dump out the contents
 			for (i = 0; i < IDX_COUNT; i++) {
 				tempFloat = (float)(myRegs[i] >> 16) + (float)((float)(myRegs[i] & 0xffff) / (float)65536);
-				logFile->writeString(Common::String::format("\t%d\t%s:\t\t%.2f\t\t0x%08lx\n", i, myRegLabels[i], tempFloat, myRegs[i]));
+				logFile->writeString(Common::String::format("\t%d\t%s:\t\t%.2f\t\t0x%08" PRIxPTR "\n", i, myRegLabels[i], tempFloat, myRegs[i]));
 			}
 
 			// If the anim8 has extra local regs
 			if (myAnim8->numLocalVars > 0) {
 				for (i = IDX_COUNT; i < IDX_COUNT + myAnim8->numLocalVars; i++) {
 					tempFloat = (float)(myRegs[i] >> 16) + (float)((float)(myRegs[i] & 0xffff) / (float)65536);
-					logFile->writeString(Common::String::format("\t%d\tlocal.%d:\t\t%.2f\t\t0x%08lx\n", i, i - IDX_COUNT, tempFloat, myRegs[i]));
+					logFile->writeString(Common::String::format("\t%d\tlocal.%d:\t\t%.2f\t\t0x%08" PRIxPTR "\n", i, i - IDX_COUNT, tempFloat, myRegs[i]));
 				}
 			}
 			logFile->writeString(Common::String::format("\n"));
@@ -86,7 +83,7 @@ void ws_DumpMachine(machine *m, Common::WriteStream *logFile) {
 
 		// If this anim8 has a CCB
 		if (myAnim8->myCCB) {
-			myCCB = myAnim8->myCCB;
+			CCB *myCCB = myAnim8->myCCB;
 
 			logFile->writeString(Common::String::format("Sprite Series Name: %s\tAddress:%p\tFlags0x%08x\n", myCCB->seriesName, (void *)myCCB, myCCB->flags));
 			logFile->writeString(Common::String::format("\tCurrent Location: (%d, %d), (%d, %d)\n", myCCB->currLocation->x1, myCCB->currLocation->y1,
@@ -99,18 +96,9 @@ void ws_DumpMachine(machine *m, Common::WriteStream *logFile) {
 	}
 }
 
-void ws_Error(machine *m, int32 errorType, trigraph errorCode, const char *errMsg) {
-	Common::OutSaveFile *logFile;
-	char  description[MAX_STRING_SIZE];
-
-	// Find the error description
-	error_look_up(errorCode, description);
-
+void ws_Error(machine *m, const char *errMsg) {
 	// Open the logFile
-	logFile = g_system->getSavefileManager()->openForSaving("ws_mach.log");
-
-	// Give the WS debugger a chance to indicate the error to the apps programmer
-	dbg_WSError(logFile, m, errorType, description, errMsg, _GWS(pcOffsetOld));
+	Common::OutSaveFile *logFile = g_system->getSavefileManager()->openForSaving("ws_mach.log");
 
 	// Dump out the machine to the logFile
 	ws_DumpMachine(m, logFile);
@@ -120,14 +108,14 @@ void ws_Error(machine *m, int32 errorType, trigraph errorCode, const char *errMs
 		f_io_close(logFile);
 
 	// Now we fatal abort
-	error_show(FL, errorCode, errMsg);
+	error_show(FL, errMsg);
 }
 
 void ws_LogErrorMsg(const char *filename, uint32 line, const char *fmt, ...) {
 	va_list	argPtr;
 	va_start(argPtr, fmt);
 
-	Common::String msg = Common::String::vformat(fmt, argPtr);
+	const Common::String msg = Common::String::vformat(fmt, argPtr);
 	va_end(argPtr);
 
 	error("%s", msg.c_str());
@@ -142,16 +130,15 @@ machine *kernel_timer_callback(int32 ticks, int16 trigger, MessageCB callMe) {
 
 static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *screenCodeBuff,
 		uint8 *myPalette, uint8 *ICT) {
-	M4sprite *source;
 
 	// Temporary var to prevent excessive dereferences
-	source = myCCB->source;
+	M4sprite *source = myCCB->source;
 
 	if (!(myCCB->flags & CCB_DISC_STREAM)) {
 		// Make sure the sprite is still in memory
 		if (!source->sourceHandle || !*(source->sourceHandle)) {
 			ws_LogErrorMsg(FL, "Sprite series is no longer in memory.");
-			ws_Error(myAnim8->myMachine, ERR_INTERNAL, 0x02ff, "Error during ws_DoDisplay()");
+			ws_Error(myAnim8->myMachine, "Error during ws_DoDisplay()");
 		}
 
 		// Lock the sprite handle
@@ -191,39 +178,42 @@ static void drawSprite(CCB *myCCB, Anim8 *myAnim8, Buffer *halScrnBuf, Buffer *s
 
 void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff,
 		uint8 *myPalette, uint8 *ICT, bool updateVideo) {
-	CCB *myCCB;
-	ScreenContext *myScreen;
-	RectList *myRect;
-	RectList *drawRectList = nullptr;
-	int32 status, scrnX1, scrnY1;
-	int32 restoreBgndX1, restoreBgndY1, restoreBgndX2, restoreBgndY2;
-	Anim8 *myAnim8;
-	M4Rect *currRect, *newRect;
-	bool greyMode, breakFlag;
 
-	if (((myScreen = vmng_screen_find(_G(gameDrawBuff), &status)) == nullptr) || (status != SCRN_ACTIVE)) {
+	if (!background)
+		error("ws_DoDisplay : background not set");
+
+	CCB *myCCB;
+	RectList *myRect;
+	RectList *drawRectList;
+	int32 status;
+	int32 restoreBgndX1, restoreBgndY1, restoreBgndX2, restoreBgndY2;
+	M4Rect *currRect;
+	bool breakFlag;
+
+	ScreenContext *myScreen = vmng_screen_find(_G(gameDrawBuff), &status);
+	if ((myScreen == nullptr) || (status != SCRN_ACTIVE)) {
 		return;
 	}
 
 	Buffer *halScrnBuf = _G(gameDrawBuff)->get_buffer();
 
-	scrnX1 = myScreen->x1;
-	scrnY1 = myScreen->y1;
+	const int32 scrnX1 = myScreen->x1;
+	const int32 scrnY1 = myScreen->y1;
 
-	greyMode = krn_GetGreyMode();
+	const bool greyMode = krn_GetGreyMode();
 
-	// Intialize the drawRectList to the deadRectList
+	// Initialize the drawRectList to the deadRectList
 	drawRectList = _GWS(deadRectList);
 	_GWS(deadRectList) = nullptr;
 
 	// Now we loop back to front and set up a list of drawing areas
-	myAnim8 = _GWS(myCruncher)->backLayerAnim8;
+	Anim8 *myAnim8 = _GWS(myCruncher)->backLayerAnim8;
 	while (myAnim8) {
 		myCCB = myAnim8->myCCB;
 
 		if (myCCB && myCCB->source && (!(myCCB->flags & CCB_NO_DRAW)) && (myCCB->flags & CCB_REDRAW)) {
 			currRect = myCCB->currLocation;
-			newRect = myCCB->newLocation;
+			M4Rect *newRect = myCCB->newLocation;
 
 			if (!(myCCB->flags & CCB_STREAM) && (!greyMode || !(myCCB->source->encoding & 0x80))) {
 				vmng_AddRectToRectList(&drawRectList, currRect->x1, currRect->y1,
@@ -245,7 +235,7 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff
 
 	// The drawRectList now contains all the areas of the screen that need the background updated
 	// Update the background behind the current rect list - if we are in greyMode, we do this later
-	if (!greyMode && background && background->data) {
+	if (!greyMode && background->data) {
 		myRect = drawRectList;
 
 		while (myRect) {
@@ -316,7 +306,7 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff
 	} while (!breakFlag);
 
 	// Handle update background rect area
-	if (greyMode && background && background->data) {
+	if (greyMode && background->data) {
 		myRect = drawRectList;
 
 		while (myRect) {
@@ -367,13 +357,10 @@ void ws_DoDisplay(Buffer *background, int16 *depth_table, Buffer *screenCodeBuff
 
 void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 		int16 *depth_table, Buffer *screenCodes, uint8 *myPalette, uint8 *ICT) {
-	Anim8 *myAnim8;
-	CCB *myCCB;
-	uint8 myDepth;
 	Buffer drawSpriteBuff;
 	DrawRequest spriteDrawReq;
 
-	if ((!background) || (!background->data))
+	if (!background || !background->data)
 		return;
 
 	term_message("Refresh");
@@ -383,17 +370,16 @@ void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 	gr_buffer_rect_copy(background, halScrnBuf, 0, 0, halScrnBuf->w, halScrnBuf->h);
 
 	// Now draw all the sprites that are not hidden
-	myAnim8 = myCruncher->backLayerAnim8;
+	Anim8 *myAnim8 = myCruncher->backLayerAnim8;
 
 	while (myAnim8) {
-		myCCB = myAnim8->myCCB;
+		CCB *myCCB = myAnim8->myCCB;
 		if (myCCB && (myCCB->source != nullptr) && (!(myCCB->flags & CCB_SKIP)) && (!(myCCB->flags & CCB_HIDE))) {
 			if (!(myCCB->flags & CCB_DISC_STREAM)) {
 				// Make sure the series is still in memory
 				if ((!myCCB->source->sourceHandle) || (!*(myCCB->source->sourceHandle))) {
 					ws_LogErrorMsg(FL, "Sprite series is no longer in memory.");
-					ws_Error(myAnim8->myMachine, ERR_INTERNAL, 0x02ff,
-						"Error discovered during ws_hal_RefreshWoodscriptBuffer()");
+					ws_Error(myAnim8->myMachine, "Error discovered during ws_hal_RefreshWoodscriptBuffer()");
 				}
 
 				// Lock the sprite handle
@@ -413,10 +399,13 @@ void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 				drawSpriteBuff.encoding = (uint8)myCCB->source->encoding;
 			drawSpriteBuff.data = myCCB->source->data;
 
-			if (!depth_table || !screenCodes || !screenCodes->data)
-				myDepth = 0;
-			else
-				myDepth = (uint8)(myCCB->layer >> 8);
+			if (!depth_table || !screenCodes || !screenCodes->data) {
+				spriteDrawReq.srcDepth = 0;
+				spriteDrawReq.depthCode = nullptr;
+			} else {
+				spriteDrawReq.srcDepth = (uint8)(myCCB->layer >> 8);
+				spriteDrawReq.depthCode = screenCodes->data;
+			}
 
 			spriteDrawReq.Src = (Buffer *)&drawSpriteBuff;
 			spriteDrawReq.Dest = halScrnBuf;
@@ -424,8 +413,6 @@ void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 			spriteDrawReq.y = myCCB->currLocation->y1;
 			spriteDrawReq.scaleX = myCCB->scaleX;
 			spriteDrawReq.scaleY = myCCB->scaleY;
-			spriteDrawReq.srcDepth = myDepth;
-			spriteDrawReq.depthCode = screenCodes->data;
 			spriteDrawReq.Pal = myPalette;
 			spriteDrawReq.ICT = ICT;
 
@@ -445,22 +432,19 @@ void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background,
 }
 
 void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs) {
-	frac16 x0, x0mult3, x1mult3, x1mult6, x2mult3, x3;
-	frac16 y0, y0mult3, y1mult3, y1mult6, y2mult3, y3;
+	const frac16 x0 = ctrlPoints[0];
+	const frac16 x0mult3 = (x0 << 1) + x0;
+	const frac16 x1mult3 = (ctrlPoints[2] << 1) + ctrlPoints[2];
+	const frac16 x1mult6 = x1mult3 << 1;
+	const frac16 x2mult3 = (ctrlPoints[4] << 1) + ctrlPoints[4];
+	const frac16 x3 = ctrlPoints[6];
 
-	x0 = ctrlPoints[0];
-	x0mult3 = (x0 << 1) + x0;
-	x1mult3 = (ctrlPoints[2] << 1) + ctrlPoints[2];
-	x1mult6 = x1mult3 << 1;
-	x2mult3 = (ctrlPoints[4] << 1) + ctrlPoints[4];
-	x3 = ctrlPoints[6];
-
-	y0 = ctrlPoints[1];
-	y0mult3 = (y0 << 1) + y0;
-	y1mult3 = (ctrlPoints[3] << 1) + ctrlPoints[3];
-	y1mult6 = y1mult3 << 1;
-	y2mult3 = (ctrlPoints[5] << 1) + ctrlPoints[5];
-	y3 = ctrlPoints[7];
+	const frac16 y0 = ctrlPoints[1];
+	const frac16 y0mult3 = (y0 << 1) + y0;
+	const frac16 y1mult3 = (ctrlPoints[3] << 1) + ctrlPoints[3];
+	const frac16 y1mult6 = y1mult3 << 1;
+	const frac16 y2mult3 = (ctrlPoints[5] << 1) + ctrlPoints[5];
+	const frac16 y3 = ctrlPoints[7];
 
 	coeffs[0] = -(int)x0 + x1mult3 - x2mult3 + x3;
 	coeffs[2] = x0mult3 - x1mult6 + x2mult3;
@@ -471,38 +455,24 @@ void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs) {
 	coeffs[3] = y0mult3 - y1mult6 + y2mult3;
 	coeffs[5] = -(int)y0mult3 + y1mult3;
 	coeffs[7] = y0;
-
-	return;
 }
 
 void GetBezPoint(frac16 *x, frac16 *y, frac16 *coeffs, frac16 tVal) {
-
-	*x = coeffs[6] +
-		MulSF16(tVal, (coeffs[4] +
-			MulSF16(tVal, (coeffs[2] +
-				MulSF16(tVal, coeffs[0])))));
-
-	*y = coeffs[7] +
-		MulSF16(tVal, (coeffs[5] +
-			MulSF16(tVal, (coeffs[3] +
-				MulSF16(tVal, coeffs[1])))));
-
-	return;
+	*x = coeffs[6] + MulSF16(tVal, (coeffs[4] + MulSF16(tVal, (coeffs[2] + MulSF16(tVal, coeffs[0])))));
+	*y = coeffs[7] + MulSF16(tVal, (coeffs[5] + MulSF16(tVal, (coeffs[3] + MulSF16(tVal, coeffs[1])))));
 }
 
-bool InitCCB(CCB *myCCB) {
+void InitCCB(CCB *myCCB) {
 	myCCB->flags = CCB_SKIP;
 	myCCB->source = nullptr;
-	if ((myCCB->currLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "Rectangle")) == nullptr) {
-		return false;
-	}
+	myCCB->currLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "Rectangle");
+
 	myCCB->currLocation->x1 = -1;
 	myCCB->currLocation->y1 = -1;
 	myCCB->currLocation->x2 = -1;
 	myCCB->currLocation->y2 = -1;
-	if ((myCCB->newLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "Rectangle")) == nullptr) {
-		return false;
-	}
+	myCCB->newLocation = (M4Rect *)mem_alloc(sizeof(M4Rect), "Rectangle");
+
 	myCCB->newLocation->x1 = -1;
 	myCCB->newLocation->y1 = -1;
 	myCCB->newLocation->x2 = -1;
@@ -517,12 +487,12 @@ bool InitCCB(CCB *myCCB) {
 	myCCB->myStream = nullptr;
 	myCCB->seriesName = nullptr;
 
-	return true;
 }
 
 void HideCCB(CCB *myCCB) {
 	if (!myCCB)
 		return;
+
 	myCCB->flags |= CCB_HIDE;
 
 	if ((myCCB->flags & CCB_STREAM) && myCCB->maxArea) {
@@ -541,42 +511,10 @@ void ShowCCB(CCB *myCCB) {
 	myCCB->flags &= ~CCB_HIDE;
 }
 
-void MoveCCB(CCB *myCCB, frac16 deltaX, frac16 deltaY) {
-	if (!myCCB || !myCCB->source) {
-		error_show(FL, 'WSIC');
-	}
-
-	myCCB->newLocation->x1 = myCCB->currLocation->x1 + (deltaX >> 16);
-	myCCB->newLocation->y1 = myCCB->currLocation->y1 + (deltaY >> 16);
-	myCCB->newLocation->x2 = myCCB->currLocation->x2 + (deltaX >> 16);
-	myCCB->newLocation->y2 = myCCB->currLocation->y2 + (deltaY >> 16);
-
-	if (myCCB->flags & CCB_STREAM) {
-		if (!myCCB->maxArea) {
-			if ((myCCB->maxArea = (M4Rect *)mem_alloc(sizeof(M4Rect), "Rectangle")) == nullptr) {
-				error_show(FL, 'OOM!');
-			}
-			myCCB->maxArea->x1 = myCCB->newLocation->x1;
-			myCCB->maxArea->y1 = myCCB->newLocation->y1;
-			myCCB->maxArea->x2 = myCCB->newLocation->x2;
-			myCCB->maxArea->y2 = myCCB->newLocation->y2;
-		} else {
-			myCCB->maxArea->x1 = imath_min(myCCB->maxArea->x1, myCCB->newLocation->x1);
-			myCCB->maxArea->y1 = imath_min(myCCB->maxArea->y1, myCCB->newLocation->y1);
-			myCCB->maxArea->x2 = imath_max(myCCB->maxArea->x2, myCCB->newLocation->x2);
-			myCCB->maxArea->y2 = imath_max(myCCB->maxArea->y2, myCCB->newLocation->y2);
-		}
-	}
-
-	if ((myCCB->source->w != 0) && (myCCB->source->h != 0)) {
-		myCCB->flags |= CCB_REDRAW;
-	}
-}
-
 void KillCCB(CCB *myCCB, bool restoreFlag) {
-	if (!myCCB) {
-		error_show(FL, 'WSIC');
-	}
+	if (!myCCB)
+		error_show(FL, "myCCB not set");
+
 	if (restoreFlag && (!(myCCB->flags & CCB_SKIP)) && (!(myCCB->flags & CCB_HIDE))) {
 		if ((myCCB->flags & CCB_STREAM) && myCCB->maxArea) {
 			vmng_AddRectToRectList(&_GWS(deadRectList), myCCB->maxArea->x1, myCCB->maxArea->y1,
@@ -606,29 +544,25 @@ void KillCCB(CCB *myCCB, bool restoreFlag) {
 }
 
 void Cel_msr(Anim8 *myAnim8) {
-	CCB *myCCB;
-	frac16 *myRegs;
-	int32    scaler;
-
 	if (!myAnim8) {
-		error_show(FL, 'WSAI');
+		error_show(FL, "myAnim8 not set");
 	}
 
-	myCCB = myAnim8->myCCB;
-	if ((!myCCB) || (!myCCB->source)) {
-		error_show(FL, 'WSIC');
+	CCB *myCCB = myAnim8->myCCB;
+	if (!myCCB || !myCCB->source) {
+		error_show(FL, "myCCB not set");
 	}
 
 	if ((myCCB->source->w == 0) || (myCCB->source->h == 0)) {
 		return;
 	}
 
-	myRegs = myAnim8->myRegs;
+	frac16 *myRegs = myAnim8->myRegs;
 	if (!myRegs) {
-		error_show(FL, 'WSAI');
+		error_show(FL, "myRegs not set");
 	}
 
-	scaler = FixedMul(myRegs[IDX_S], 100 << 16) >> 16;
+	const int32 scaler = FixedMul(myRegs[IDX_S], 100 << 16) >> 16;
 
 	myCCB->scaleX = myRegs[IDX_W] < 0 ? -scaler : scaler;
 	myCCB->scaleY = scaler;
@@ -637,9 +571,8 @@ void Cel_msr(Anim8 *myAnim8) {
 		myCCB->scaleX, myCCB->scaleY, myCCB->source->w, myCCB->source->h, myCCB->newLocation);
 	if (myCCB->flags & CCB_STREAM) {
 		if (!myCCB->maxArea) {
-			if ((myCCB->maxArea = (M4Rect *)mem_alloc(sizeof(M4Rect), "Rectangle")) == nullptr) {
-				error_show(FL, 'OOM!');
-			}
+			myCCB->maxArea = (M4Rect *)mem_alloc(sizeof(M4Rect), "Rectangle");
+
 			myCCB->maxArea->x1 = myCCB->newLocation->x1;
 			myCCB->maxArea->y1 = myCCB->newLocation->y1;
 			myCCB->maxArea->x2 = myCCB->newLocation->x2;
@@ -659,14 +592,11 @@ void Cel_msr(Anim8 *myAnim8) {
 	myCCB->layer = imath_max(0, myAnim8->myLayer);
 	myCCB->flags &= ~CCB_SKIP;
 	myCCB->flags |= CCB_REDRAW;
-	return;
 }
 
 void ws_OverrideCrunchTime(machine *m) {
-	if ((!m) || (!m->myAnim8)) {
-		return;
-	}
-	m->myAnim8->switchTime = 0;
+	if (m && m->myAnim8)
+		m->myAnim8->switchTime = 0;
 }
 
 } // End of namespace M4

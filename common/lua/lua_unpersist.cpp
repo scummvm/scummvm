@@ -89,7 +89,7 @@ void unpersistLua(lua_State *luaState, Common::ReadStream *readStream) {
 	// Make sure there is enough room on the stack
 	lua_checkstack(luaState, 3);
 
-	// Create a table to hold indexes of everything thats already been read
+	// Create a table to hold indexes of everything that's already been read
 	lua_newtable(luaState);
 	// >>>>> permTbl indexTbl
 

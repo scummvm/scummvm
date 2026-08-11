@@ -69,9 +69,9 @@ static const char *const directoryGlobs[] = {
 };
 }
 
-class HadeschMetaEngineDetection : public AdvancedMetaEngineDetection {
+class HadeschMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	HadeschMetaEngineDetection() : AdvancedMetaEngineDetection(Hadesch::gameDescriptions, sizeof(ADGameDescription), Hadesch::hadeschGames) {
+	HadeschMetaEngineDetection() : AdvancedMetaEngineDetection(Hadesch::gameDescriptions, Hadesch::hadeschGames) {
 		// mac puts wd.pod in Hades - Copy To Hard Drive/Hades Challenge/World. So we need 4 levels
 		_maxScanDepth = 4;
 		_directoryGlobs = Hadesch::directoryGlobs;

@@ -20,6 +20,7 @@
  */
 
 #include "gui/browser.h"
+#include "gui/helpdialog.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
@@ -39,7 +40,8 @@ enum {
 	kChooseCmd = 'Chos',
 	kGoUpCmd = 'GoUp',
 	kHiddenCmd = 'Hidd',
-	kPathEditedCmd = 'Path'
+	kPathEditedCmd = 'Path',
+	kHelpCmd = 'Help',
 };
 
 /* We want to use this as a general directory selector at some point... possible uses
@@ -59,6 +61,7 @@ BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 
 	// Headline - TODO: should be customizable during creation time
 	new StaticTextWidget(this, "Browser.Headline", title);
+	new ButtonWidget(this, "Browser.Help", _("Help"), Common::U32String(), kHelpCmd);
 
 	// Current path - TODO: handle long paths ?
 	_currentPath = new EditTextWidget(this, "Browser.Path", Common::U32String(), Common::U32String(), 0, kPathEditedCmd);
@@ -121,6 +124,11 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kPathEditedCmd:
 		_node = Common::FSNode(Common::Path(Common::convertFromU32String(_currentPath->getEditString()), Common::Path::kNativeSeparator));
 		updateListing();
+		break;
+	case kHelpCmd: {
+		GUI::HelpDialog dlg;
+		dlg.runModal();
+		}
 		break;
 	//Search by text input
 	case kChooseCmd:
@@ -203,18 +211,18 @@ void BrowserDialog::updateListing() {
 	// Populate the ListWidget
 	Common::U32StringArray list;
 	Common::U32String color = ListWidget::getThemeColor(ThemeEngine::kFontColorNormal);
-	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
+	for (auto &node : _nodeContent) {
 		if (_isDirBrowser) {
-			if (i->isDirectory())
+			if (node.isDirectory())
 				color = ListWidget::getThemeColor(ThemeEngine::kFontColorNormal);
 			else
 				color = ListWidget::getThemeColor(ThemeEngine::kFontColorAlternate);
 		}
 
-		if (i->isDirectory())
-			list.push_back(color + ListWidget::escapeString(Common::U32String(i->getName()) + "/"));
+		if (node.isDirectory())
+			list.push_back(color + ListWidget::escapeString(Common::U32String(node.getName()) + "/"));
 		else
-			list.push_back(color + ListWidget::escapeString(Common::U32String(i->getName())));
+			list.push_back(color + ListWidget::escapeString(Common::U32String(node.getName())));
 	}
 
 	_fileList->setList(list);

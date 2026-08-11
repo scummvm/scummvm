@@ -24,6 +24,8 @@
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 extern int parse_mis(const char *);
@@ -279,6 +281,7 @@ void HypnoEngine::runScene(Scene *scene) {
 	_refreshConversation = false;
 	Common::Event event;
 	Common::Point mousePos;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	Common::List<uint32> videosToRemove;
 	bool enableLoopingVideos = true;
 	int32 lastCountdown = 0;
@@ -315,12 +318,15 @@ void HypnoEngine::runScene(Scene *scene) {
 			lastCountdown = _countdown;
 		}
 
+		disableGameKeymaps();
+		keymapper->getKeymap("cutscene")->setEnabled(true);
+
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
 			// Events
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionSkipCutscene) {
 					for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
 						if (it->decoder) {
 							skipVideo(*it);
@@ -384,6 +390,9 @@ void HypnoEngine::runScene(Scene *scene) {
 				break;
 			}
 		}
+
+		keymapper->getKeymap("cutscene")->setEnabled(false);
+		enableGameKeymaps();
 
 		if (_refreshConversation && !_conversation.empty() &&
 			_nextSequentialVideoToPlay.empty() &&
@@ -500,11 +509,6 @@ void HypnoEngine::runScene(Scene *scene) {
 			}
 		}
 
-		if (_music.empty() && !scene->music.empty() && _videosPlaying.empty() && _nextSequentialVideoToPlay.empty()) {
-			_music = scene->music;
-			playSound(_music, 0, scene->musicRate);
-		}
-
 		if (!_videosPlaying.empty() || !_videosLooping.empty() || !_nextSequentialVideoToPlay.empty()) {
 			drawScreen();
 			continue;
@@ -522,6 +526,10 @@ void HypnoEngine::runScene(Scene *scene) {
 			runMenu(stack.back());
 			_nextHotsToAdd = nullptr;
 			drawScreen();
+		}
+
+		if (!isMusicActive() && !scene->music.empty()) {
+			playMusic(scene->music, scene->musicRate);
 		}
 
 		g_system->updateScreen();

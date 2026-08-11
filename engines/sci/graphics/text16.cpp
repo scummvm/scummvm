@@ -242,6 +242,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			if ((*(const byte *)(textPtr + 1)) == 0xA) {
 				curCharCount++; textPtr++;
 			}
+			// 'J'
 			// fall through
 		case 0xA:
 		case 0x9781: // this one is used by SQ4/japanese as line break as well (was added for SCI1/PC98)
@@ -593,11 +594,30 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 
 	maxTextWidth = 0;
 	while (*curTextPos) {
-		// We need to check for Shift-JIS every line
-		//  Police Quest 2 PC-9801 often draws English + Japanese text during the same call
+		//  We need to check for Shift-JIS every line. Police Quest 2 PC-9801 often draws English + Japanese text into the same box.
 		if (g_sci->getLanguage() == Common::JA_JPN) {
-			if (SwitchToFont900OnSjis(curTextPos, languageSplitter))
-				doubleByteMode = true;
+			doubleByteMode = SwitchToFont900OnSjis(curTextPos, languageSplitter) ||
+
+			// Ignore leading space characters for PQ2 PC-9801, so as not to break the Japanese F1 help screen. These text lines
+			// start with a normal (single-byte) space character which is followed by SJIS text.
+			// 
+			// The original PQ 2 PC-9801 interpreter's SJIS text drawing method is less sophisticated than what the other PC-9801
+			// interpreters do. It doesn't even do this font change. It just keeps the English font and uses that to (wrongfully)
+			// measure the width of the Japanese text. This appears to be the main reason why the text layout looks different in
+			// the original and in ScummVM in some places (first obvious example: the copy protection dialogs; also, in the
+			// Japanese F1 help box, the headline is not centered at the exact same position as with the original interpreter).
+			// 
+			// Also, the original PQ 2 PC-9801 interpreter doesn't need to prevent background graphics updates, since the SJIS
+			// text is drawn in PC-9801 text mode and the text mode layer is always displayed on top of the graphics layer, so it
+			// can never get corrupted by graphics updates (with an emulator you can see how even the mouse cursor is drawn under
+			// the Japanese text).
+			// 
+			// In contrast to that, we do the font switching for PQ2 (we could eventually try to aim for a faithful text measuring
+			// and positioning, but it is more complex than just dropping the font switching) and we also need to prevent graphics
+			// updates for SJIS lines, since we don't emulate the PC-9801 text mode layer to that extent (could be done, but I
+			// don't see why we should). So, here we ignore leading space characters and determine the ASCII or SJIS text line type
+			// by the character after that...
+				(g_sci->getGameId() == GID_PQ2 && *curTextPos == ' ' && curTextPos[1] != '\0' && SwitchToFont900OnSjis(curTextPos + 1, languageSplitter));
 		}
 
 		int16 charCount = GetLongest(curTextPos, rect.width(), fontId);
@@ -627,7 +647,7 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 		}
 
 
-		if (g_sci->isLanguageRTL())
+		if (g_sci->isLanguageRTL() && offset > 0)
 			// In the game fonts, characters have spacing on the left, and no spacing on the right,
 			// therefore, when we start drawing from the right, they "start from the border"
 			// e.g., in SQ3 Hebrew user's input prompt.
@@ -646,7 +666,11 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 			curTextLine = textString.c_str();
 		}
 
-		if (show) {
+		// This seems to be the method used by the original (non-PQ2) PC-9801 interpreters. They will set
+		// the `show` argument (only) for the SCI_CONTROLS_TYPE_TEXT, but then there is a separate code
+		// path for the SJIS characters, which will not get the screen surface update (since they get
+		// rendered directly into the video memory). We handle PQ2 the same way as the other PC-9801 targets.
+		if (show && !doubleByteMode) {
 			Show(curTextLine, 0, charCount, fontId, previousPenColor);
 		} else {
 			Draw(curTextLine, 0, charCount, fontId, previousPenColor);
@@ -657,25 +681,6 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 	}
 	SetFont(previousFontId);
 	_ports->penColor(previousPenColor);
-
-	if (doubleByteMode) {
-		// Kanji is written by pc98 rom to screen directly. Because of
-		// GetLongest() behavior (not cutting off the last char, that causes a
-		// new line), results in the script thinking that the text would need
-		// less space. The coordinate adjustment in fontsjis.cpp handles the
-		// incorrect centering because of that and this code actually shows all
-		// of the chars - if we don't do this, the scripts will only show most
-		// of the chars, but the last few pixels won't get shown most of the
-		// time.
-		Common::Rect kanjiRect = rect;
-		_ports->offsetRect(kanjiRect);
-		kanjiRect.left &= 0xFFC;
-		kanjiRect.right = kanjiRect.left + maxTextWidth;
-		kanjiRect.bottom = kanjiRect.top + hline;
-		kanjiRect.left *= 2; kanjiRect.right *= 2;
-		kanjiRect.top *= 2; kanjiRect.bottom *= 2;
-		_screen->copyDisplayRectToScreen(kanjiRect);
-	}
 }
 
 void GfxText16::DrawString(const Common::String &textOrig) {
@@ -856,7 +861,7 @@ void GfxText16::macTextSize(const Common::String &text, GuiResourceId sciFontId,
 	// Default max width is 193, otherwise increment the specified max
 	maxWidth = (maxWidth == 0) ? 193 : (maxWidth + 1);
 
-	// Build lists of lines and widths and calculate the largest line width. 
+	// Build lists of lines and widths and calculate the largest line width.
 	// The Mac interpreter did this by creating a hidden TEdit, settings its width
 	// and text, and then querying TEdit's internal structures to count the lines
 	// and find the largest. This means that Mac's own text wrapping algorithm
@@ -907,7 +912,7 @@ void GfxText16::macTextSize(const Common::String &text, GuiResourceId sciFontId,
 	// Leading can be zero for fonts that have spacing embedded in their glyphs.
 	*textHeight = lineCount * (font->getFontHeight() + font->getFontLeading());
 
-	if (_macFontManager->usesSystemFonts() && 
+	if (_macFontManager->usesSystemFonts() &&
 		_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
 		// QFG1VGA and LSL6 make this adjustment when the large font is used.
 		*textHeight -= (lineCount + 1);

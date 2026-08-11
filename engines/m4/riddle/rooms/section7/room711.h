@@ -33,8 +33,15 @@ public:
 	Room711() : Room() {}
 	~Room711() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _711Rp01Series = 0;
+	int32 _ripSketchingSeries = 0;
 };
 
 } // namespace Rooms

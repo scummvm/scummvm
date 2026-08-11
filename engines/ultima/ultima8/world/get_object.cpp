@@ -19,11 +19,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
+#include "ultima/ultima8/world/get_object.h"
 
+#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/world/world.h"
 
 namespace Ultima {

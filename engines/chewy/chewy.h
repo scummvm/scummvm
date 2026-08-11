@@ -66,6 +66,7 @@ protected:
 	void initialize();
 	void shutdown() {}
 
+	void pauseEngineIntern(bool pause) override;
 public:
 	const ChewyGameDescription *_gameDescription;
 	Common::RandomSource _rnd;
@@ -116,8 +117,6 @@ public:
 	uint getRandomNumber(uint max) {
 		return _rnd.getRandomNumber(max);
 	}
-
-	void playVideo(uint num);
 };
 
 extern ChewyEngine *g_engine;

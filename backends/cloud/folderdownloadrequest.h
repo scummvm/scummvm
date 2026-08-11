@@ -22,7 +22,7 @@
 #ifndef BACKENDS_CLOUD_FOLDERDOWNLOADREQUEST_H
 #define BACKENDS_CLOUD_FOLDERDOWNLOADREQUEST_H
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "backends/cloud/storage.h"
 #include "gui/object.h"
 

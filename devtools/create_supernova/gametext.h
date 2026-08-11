@@ -755,14 +755,14 @@ const char *gameText1[] = {
 	"Neue Alarmzeit (hh:mm) :", // kStringGenericInteract_14
 	"Die Luft hier ist atembar,|du ziehst den Anzug aus.", // kStringGenericInteract_15
 	// 600
-	"Hier drinnen brauchtst du deinen Anzug nicht.", // kStringGenericInteract_16
+	"Hier drinnen brauchst du deinen Anzug nicht.", // kStringGenericInteract_16
 	"Du mu\341t erst den Helm abnehmen.", // kStringGenericInteract_17
 	"Du mu\341t erst den Versorgungsteil abnehmen.", // kStringGenericInteract_18
 	"Du ziehst den Raumanzug aus.", // kStringGenericInteract_19
 	"Du ziehst den Raumanzug an.", // kStringGenericInteract_20
 	// 605
 	"Die Luft hier ist atembar,|du ziehst den Anzug aus.", // kStringGenericInteract_21
-	"Hier drinnen brauchtst du deinen Anzug nicht.", // kStringGenericInteract_22
+	"Hier drinnen brauchst du deinen Anzug nicht.", // kStringGenericInteract_22
 	"Den Helm h\204ttest du|besser angelassen!", // kStringGenericInteract_23
 	"Du ziehst den Helm ab.", // kStringGenericInteract_24
 	"Du ziehst den Helm auf.", // kStringGenericInteract_25

@@ -25,7 +25,6 @@
 
 #include "engines/engine.h"
 
-#include "graphics/maccursor.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/surface.h"
@@ -33,6 +32,7 @@
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
 #include "scumm/macgui/macgui_impl.h"
+#include "scumm/macgui/macgui_colors.h"
 #include "scumm/macgui/macgui_loom.h"
 #include "scumm/music.h"
 #include "scumm/sound.h"
@@ -48,7 +48,7 @@ MacLoomGui::MacLoomGui(ScummEngine *vm, const Common::Path &resourceFile) : MacG
 	// The practice box can be moved, but this is its default position on
 	// a large screen, and it's not saved.
 
-	_practiceBoxPos = Common::Point(215, 376 + 2 * _vm->_screenDrawOffset);
+	_practiceBoxPos = Common::Point(215, 376 + 2 * _vm->_macScreenDrawOffset);
 }
 
 MacLoomGui::~MacLoomGui() {
@@ -108,25 +108,32 @@ bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) co
 }
 
 void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
-	Common::MacResManager resource;
-	Graphics::MacCursor macCursor;
+	setupResourceCursor(1000, width, height, hotspotX, hotspotY, animate);
+}
 
-	resource.open(_resourceFile);
+void MacLoomGui::updateMenus() {
+	bool saveCondition, loadCondition;
 
-	Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), 1000);
+	// TODO: Complete LOOM with the rest of the proper code from disasm,
+	// for now we only have the copy protection code and a best guess in place...
+	//
+	// Details:
+	// VAR(221) & 0x4000:           Copy protection bit (the only thing I could confirm from the disasm)
+	// VAR(VAR_VERB_SCRIPT) == 5:   Best guess... it prevents saving/loading from e.g. difficulty selection screen
+	// _userPut > 0:                Best guess... it prevents saving/loading during cutscenes
 
-	if (macCursor.readFromStream(*curs)) {
-		width = macCursor.getWidth();
-		height = macCursor.getHeight();
-		hotspotX = macCursor.getHotspotX();
-		hotspotY = macCursor.getHotspotY();
-		animate = 0;
+	saveCondition = loadCondition =
+		!(_vm->VAR(221) & 0x4000) &&
+		(_vm->VAR(_vm->VAR_VERB_SCRIPT) == 5) &&
+		(_vm->_userPut > 0);
 
-		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, &macCursor);
-	}
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *gameMenu = menu->getMenuItem(1);
+	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
+	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
 
-	delete curs;
-	resource.close();
+	loadMenu->enabled = _vm->canLoadGameStateCurrently() && loadCondition;
+	saveMenu->enabled = _vm->canSaveGameStateCurrently() && saveCondition;
 }
 
 bool MacLoomGui::handleMenu(int id, Common::String &name) {
@@ -136,16 +143,16 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	switch (id) {
 	case 101:	// Drafts inventory
 		runDraftsInventory();
-		break;
+		return true;
 
 	case 204:	// Options
 		runOptionsDialog();
-		break;
+		return true;
 
 	case 205:	// Quit
 		if (runQuitDialog())
 			_vm->quitGame();
-		break;
+		return true;
 
 	default:
 		warning("Unknown menu command: %d", id);
@@ -156,7 +163,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 }
 
 void MacLoomGui::runAboutDialog() {
-	// The About window is not a a dialog resource. Its size appears to be
+	// The About window is not a dialog resource. Its size appears to be
 	// hard-coded (416x166), and it's drawn centered. The graphics are in
 	// PICT 5000 and 5001.
 
@@ -166,75 +173,75 @@ void MacLoomGui::runAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	MacDialogWindow *window = createWindow(bounds);
+	MacDialogWindow *window = createWindow(bounds, kWindowStyleNormal, kMenuStyleApple);
 	Graphics::Surface *lucasFilm = loadPict(5000);
 	Graphics::Surface *loom = loadPict(5001);
 
-	// TODO: These strings are part of the STRS resource, but I don't know
-	// how to safely read them from there yet. So hard-coded it is for now.
+	const char *subVers = (const char *)_vm->getStringAddress(5);
+	Common::String version = Common::String::format(_strsStrings[kMSIAboutString2].c_str(), subVers, '5', '1', '6');
 
 	const TextLine page1[] = {
-		{ 0, 23, kStyleExtraBold, Graphics::kTextAlignCenter, "PRESENTS" },
+		{ 0, 23, kStyleExtraBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString1].c_str() }, // "PRESENTS"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page2[] = {
-		{ 1, 59, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
-		{ 0, 70, kStyleRegular, Graphics::kTextAlignCenter, "Release Version 1.2  25-JAN-91 Interpreter version 5.1.6" },
+		{ 1, 59, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString3].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
+		{ 0, 70, kStyleRegular, Graphics::kTextAlignCenter, version.c_str() }, // "Release Version 1.2  25-JAN-91 Interpreter version 5.1.6"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page3[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, "Eric Johnston" },
-		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
-		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, "Ron Baldwin" },
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "Macintosh version by"
+		{ 0, 25, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString6].c_str() }, // "Eric Johnston"
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString5].c_str() }, // "Macintosh scripting by"
+		{ 1, 63, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString7].c_str() }, // "Ron Baldwin"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
-		{ 0, 26, kStyleBold, Graphics::kTextAlignCenter, "Original game created by" },
-		{ 1, 40, kStyleHeader, Graphics::kTextAlignCenter, "Brian Moriarty" },
+		{ 0, 26, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString8].c_str() }, // "Original game created by"
+		{ 1, 40, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString9].c_str() }, // "Brian Moriarty"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, "Produced by" },
-		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, "Gregory D. Hammond" },
-		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Macintosh Version Produced by" },
-		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, "David Fox" },
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString10].c_str() }, // "Produced by"
+		{ 0, 25, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString12].c_str() }, // "Gregory D. Hammond"
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString11].c_str() }, // "Macintosh Version Produced by"
+		{ 1, 63, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString13].c_str() }, // "David Fox"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 1, 6, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story System" },
-		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, "created by" },
-		{ 97, 35, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
-		{ 1, 51, kStyleBold, Graphics::kTextAlignCenter, "and" },
-		{ 122, 65, kStyleHeader, Graphics::kTextAlignLeft, "Aric Wilmunder" },
+		{ 1, 6, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString14].c_str() }, // "SCUMM Story System"
+		{1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString15].c_str()}, // "created by"
+		{ 97, 35, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString17].c_str() }, // "Ron Gilbert"
+		{ 1, 51, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString16].c_str() }, // "and"
+		{ 122, 65, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString18].c_str() }, // "Aric Wilmunder"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, "Stumped?  Loom hint books are available!" },
-		{ 76, 33, kStyleRegular, Graphics::kTextAlignLeft, "In the U.S. call" },
-		{ 150, 34, kStyleBold, Graphics::kTextAlignLeft, "1 (800) STAR-WARS" },
-		{ 150, 43, kStyleRegular, Graphics::kTextAlignLeft, "that\xD5s  1 (800) 782-7927" },
-		{ 80, 63, kStyleRegular, Graphics::kTextAlignLeft, "In Canada call" },
-		{ 150, 64, kStyleBold, Graphics::kTextAlignLeft, "1 (800) 828-7927" },
+		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString19].c_str() }, // "Stumped?  Loom hint books are available!"
+		{ 76, 33, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString22].c_str() }, // "In the U.S. call"
+		{ 150, 34, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "1 (800) STAR-WARS"
+		{ 150, 43, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString24].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 80, 63, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString23].c_str() }, // "In Canada call"
+		{ 150, 64, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page8[] = {
-		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, "Need a hint NOW?  Having problems?" },
-		{ 81, 25, kStyleRegular, Graphics::kTextAlignLeft, "For technical support call" },
-		{ 205, 26, kStyleBold, Graphics::kTextAlignLeft, "1 (415) 721-3333" },
-		{ 137, 35, kStyleRegular, Graphics::kTextAlignLeft, "For hints call" },
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString25].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 81, 25, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString28].c_str() }, // "For technical support call"
+		{ 205, 26, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString26].c_str() }, // "1 (415) 721-3333"
+		{ 137, 35, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "For hints call"
 
-		{ 205, 36, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
-		{ 1, 50, kStyleRegular, Graphics::kTextAlignCenter, "The charge for the hint line is 75\xA2 per minute." },
-		{ 1, 60, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
-		{ 1, 70, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
+		{ 205, 36, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString27].c_str() }, // "1 (900) 740-JEDI"
+		{ 1, 50, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString30].c_str() }, // "The charge for the hint line is 75\xA2 per minute."
+		{ 1, 60, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString31].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 1, 70, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString32].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
@@ -302,7 +309,7 @@ void MacLoomGui::runAboutDialog() {
 			if (pattern > 4)
 				darkenOnly = false;
 
-			Graphics::drawRoundRect(r, 7, pattern, true, darkenOnly ? MacDialogWindow::plotPatternDarkenOnly : MacDialogWindow::plotPattern, window);
+			window->drawPatternRoundRect(r, 7, pattern, true, darkenOnly);
 
 			if (!fastForward)
 				window->markRectAsDirty(r);
@@ -414,7 +421,7 @@ void MacLoomGui::runDraftsInventory() {
 	const char *notes = "cdefgabC";
 
 	// ACT 1: Draw the Mac dialog window
-	MacGuiImpl::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252));
+	MacGuiImpl::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252), kWindowStyleNormal, kMenuStyleApple);
 	const Graphics::Font *font = getFont(kSystemFont);
 
 	Graphics::Surface *s = window->innerSurface();
@@ -426,9 +433,9 @@ void MacLoomGui::runDraftsInventory() {
 	int base = 55;
 
 	// TODO: Can these be drawn in different styles? (e.g. Checkerboard)
-	Color unlockedColor = kBlack;
-	Color inactiveColor = kBlack;
-	Color newDraftColor = kBlack;
+	byte unlockedColor = kBlack;
+	byte inactiveColor = kBlack;
+	byte newDraftColor = kBlack;
 
 	for (int i = 0; i < 16; i++) {
 		int draft = _vm->_scummVars[base + i * 2];
@@ -484,130 +491,6 @@ void MacLoomGui::runDraftsInventory() {
 	delete window;
 }
 
-// A standard file picker dialog doesn't really make sense in ScummVM, so we
-// make something that just looks similar to one.
-
-bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
-	Common::Rect bounds(88, 28, 448, 208);
-
-	MacDialogWindow *window = createWindow(bounds);
-
-	window->addButton(Common::Rect(254, 135, 334, 155), "Open", true);
-	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
-	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
-
-	window->drawDottedHLine(253, 91, 334);
-
-	bool availSlots[100];
-	int slotIds[100];
-	Common::StringArray savegameNames;
-	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
-
-	window->addListBox(Common::Rect(14, 13, 217, 159), savegameNames, true);
-
-	window->setDefaultWidget(0);
-
-	// When quitting, the default action is to not open a saved game
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
-	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
-
-		if (clicked == 0 || clicked == 3) {
-			saveSlotToHandle =
-				window->getWidgetValue(3) < ARRAYSIZE(slotIds) ?
-				slotIds[window->getWidgetValue(3)] : -1;
-			ret = true;
-			break;
-		}
-
-		if (clicked == 1)
-			break;
-
-		if (clicked == 2) {
-			if (runOkCancelDialog("Are you sure you want to delete the saved game?"))
-				runOkCancelDialog("Deleting savegames is currently unsupported in ScummVM.");
-		}
-	}
-
-	delete window;
-	return ret;
-}
-
-bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
-	Common::Rect bounds(110, 27, 470, 231);
-
-	MacDialogWindow *window = createWindow(bounds);
-
-	window->addButton(Common::Rect(254, 159, 334, 179), "Save", true);
-	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
-	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", false);
-
-	bool busySlots[100];
-	int slotIds[100];
-	Common::StringArray savegameNames;
-	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
-
-	int firstAvailableSlot = -1;
-	for (int i = 1; i < ARRAYSIZE(busySlots); i++) { // Skip the autosave slot
-		if (!busySlots[i]) {
-			firstAvailableSlot = i;
-			break;
-		}
-	}
-
-	window->addListBox(Common::Rect(14, 9, 217, 139), savegameNames, true, true);
-
-	MacGuiImpl::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
-
-	Graphics::Surface *s = window->innerSurface();
-	const Graphics::Font *font = getFont(kSystemFont);
-
-	s->frameRect(Common::Rect(14, 161, 232, 183), kBlack);
-
-	window->drawDottedHLine(253, 115, 334);
-
-	font->drawString(s, "Save Game File as...", 14, 143, 218, kBlack, Graphics::kTextAlignLeft, 4);
-
-	window->setDefaultWidget(0);
-	editText->selectAll();
-
-	// When quitting, the default action is to not open a saved game
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
-	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
-
-		if (clicked == 0) {
-			ret = true;
-			name = editText->getText();
-			saveSlotToHandle = firstAvailableSlot;
-			break;
-		}
-
-		if (clicked == 1)
-			break;
-
-		if (clicked == -2) {
-			// Cycle through deferred actions
-			for (uint i = 0; i < deferredActionsIds.size(); i++) {
-				// Edit text widget
-				if (deferredActionsIds[i] == 4) {
-					MacGuiImpl::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
-
-					// Disable "Save" button when text is empty
-					window->getWidget(0)->setEnabled(!wid->getText().empty());
-				}
-			}
-		}
-	}
-
-	delete window;
-	return ret;
-}
-
 bool MacLoomGui::runOptionsDialog() {
 	// Widgets:
 	//
@@ -625,13 +508,8 @@ bool MacLoomGui::runOptionsDialog() {
 	// 11 - Text speed slider (manually created)
 	// 12 - Music quality slider (manually created)
 
-	int sound = 1;
-	int music = 1;
-	if (_vm->VAR(167) == 2) {
-		sound = music = 0;
-	} else if (_vm->VAR(167) == 1) {
-		music = 0;
-	}
+	int sound = (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) ? 1 : 0;
+	int music = (!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")) ? 1 : 0;
 
 	int scrolling = _vm->_snapScroll == 0;
 	int fullAnimation = _vm->VAR(_vm->VAR_MACHINE_SPEED) == 1 ? 0 : 1;
@@ -642,93 +520,101 @@ bool MacLoomGui::runOptionsDialog() {
 
 	MacDialogWindow *window = createDialog(1000);
 
-	window->setWidgetValue(2, sound);
-	window->setWidgetValue(3, music);
-	window->setWidgetValue(6, scrolling);
-	window->setWidgetValue(7, fullAnimation);
+	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+
+	MacCheckbox *checkboxSound = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
+	MacCheckbox *checkboxMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 1);
+	MacCheckbox *checkboxScrolling = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 2);
+	MacCheckbox *checkboxFullAnimation = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 3);
+
+	checkboxSound->setValue(sound);
+	checkboxMusic->setValue(music);
+	checkboxScrolling->setValue(scrolling);
+	checkboxFullAnimation->setValue(fullAnimation);
 
 	if (!sound)
-		window->setWidgetEnabled(3, false);
+		checkboxMusic->setEnabled(false);
 
-	window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
-	window->setWidgetValue(11, textSpeed);
+	MacImageSlider *sliderTextSpeed = window->addImageSlider(4, 5, true, 5, 105, 0, 9);
+	sliderTextSpeed->setValue(textSpeed);
 
-	window->addPictureSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
-	window->setWidgetValue(12, musicQualityOption);
+	MacImageSlider *sliderMusicQuality = window->addImageSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
+	sliderMusicQuality->setValue(musicQualityOption);
 
 	// Machine rating
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(53)));
 
-	// When quitting, the default action is not to not apply options
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == 0) {
-			ret = true;
-			break;
-		}
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOk) {
+					// TEXT SPEED
+					_vm->_defaultTextSpeed = CLIP<int>(sliderTextSpeed->getValue(), 0, 9);
+					ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
+					_vm->setTalkSpeed(_vm->_defaultTextSpeed);
 
-		if (clicked == 1)
-			break;
+					// SOUND&MUSIC ACTIVATION
+					// 0 - Sound&Music on
+					// 1 - Sound on, music off
+					// 2 - Sound&Music off
+					int musicVariableValue = 0;
 
-		if (clicked == 2)
-			window->setWidgetEnabled(3, window->getWidgetValue(2) != 0);
-	}
+					if (checkboxSound->getValue() == 0)
+						musicVariableValue = 2;
+					else if (checkboxSound->getValue() == 1 && checkboxMusic->getValue() == 0)
+						musicVariableValue = 1;
 
-	if (ret) {
-		// Update settings
+					_vm->_musicEngine->toggleMusic(musicVariableValue == 0);
+					_vm->_musicEngine->toggleSoundEffects(musicVariableValue < 2);
+					ConfMan.setBool("music_mute", musicVariableValue > 0);
+					ConfMan.setBool("mute", musicVariableValue == 2);
 
-		// TEXT SPEED
-		_vm->_defaultTextSpeed = CLIP<int>(window->getWidgetValue(11), 0, 9);
-		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
-		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
+					// SCROLLING ACTIVATION
+					_vm->_snapScroll = checkboxScrolling->getValue() == 0;
 
-		// SOUND&MUSIC ACTIVATION
-		// 0 - Sound&Music on
-		// 1 - Sound on, music off
-		// 2 - Sound&Music off
-		int musicVariableValue = 0;
+					if (_vm->VAR_CAMERA_FAST_X != 0xFF)
+						_vm->VAR(_vm->VAR_CAMERA_FAST_X) = _vm->_snapScroll;
 
-		if (window->getWidgetValue(2) == 0) {
-			musicVariableValue = 2;
-		} else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0) {
-			musicVariableValue = 1;
-		}
+					// FULL ANIMATION ACTIVATION
+					_vm->VAR(_vm->VAR_MACHINE_SPEED) = checkboxFullAnimation->getValue() == 1 ? 0 : 1;
 
-		_vm->VAR(167) = musicVariableValue;
+					// MUSIC QUALITY SELECTOR
+					musicQuality = musicQuality * 3 + 1 + sliderMusicQuality->getValue();
+					_vm->_musicEngine->setQuality(musicQuality);
+					ConfMan.setInt("mac_snd_quality", musicQuality);
 
-		if (musicVariableValue != 0) {
-			if (_vm->VAR(169) != 0) {
-				_vm->_sound->stopSound(_vm->VAR(169));
-				_vm->VAR(169) = 0;
+					_vm->syncSoundSettings();
+					ConfMan.flushToDisk();
+
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
+
+				break;
+
+			case kDialogValueChange:
+				if (event.widget == checkboxSound) {
+					checkboxMusic->setEnabled(checkboxSound->getValue() != 0);
+				}
+				break;
+
+			default:
+				break;
 			}
 		}
 
-		// SCROLLING ACTIVATION
-		_vm->_snapScroll = window->getWidgetValue(6) == 0;
-
-		if (_vm->VAR_CAMERA_FAST_X != 0xFF)
-			_vm->VAR(_vm->VAR_CAMERA_FAST_X) = _vm->_snapScroll;
-
-		// FULL ANIMATION ACTIVATION
-		_vm->VAR(_vm->VAR_MACHINE_SPEED) = window->getWidgetValue(7) == 1 ? 0 : 1;
-
-		// MUSIC QUALITY SELECTOR
-		musicQuality = musicQuality * 3 + 1 + window->getWidgetValue(12);
-		_vm->_musicEngine->setQuality(musicQuality);
-		ConfMan.setInt("mac_snd_quality", musicQuality);
-
-		debug(6, "MacLoomGui::runOptionsDialog(): music quality: %d - unimplemented!", window->getWidgetValue(12));
-
-		_vm->syncSoundSettings();
-		ConfMan.flushToDisk();
+		window->delayAndUpdate();
 	}
 
 	delete window;
-	return ret;
+	return false;
 }
 
 void MacLoomGui::resetAfterLoad() {
@@ -782,12 +668,11 @@ void MacLoomGui::update(int delta) {
 				debug(1, "MacLoomGui: Creating practice mode box");
 
 				_practiceBox = new Graphics::Surface();
-				_practiceBox->create(w, h, Graphics::PixelFormat
-::createFormatCLUT8());
+				_practiceBox->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
 				_practiceBox->fillRect(Common::Rect(w, h), kBlack);
 
-				Color color = bw ? kWhite : kLightGray;
+				byte color = bw ? kWhite : kLightGray;
 
 				_practiceBox->hLine(2, 1, w - 3, color);
 				_practiceBox->hLine(2, h - 2, w - 3, color);
@@ -804,7 +689,7 @@ void MacLoomGui::update(int delta) {
 				_practiceBox->fillRect(Common::Rect(2, 2, w - 2, h - 2), kBlack);
 
 				const Graphics::Font *font = getFont(kLoomFontLarge);
-				Color colors[] = { kRed, kBrightRed, kBrightYellow, kBrightGreen, kBrightCyan, kCyan, kBrightBlue, kWhite };
+				byte colors[] = { kRed, kBrightRed, kBrightYellow, kBrightGreen, kBrightCyan, kCyan, kBrightBlue, kWhite };
 
 				for (int i = 0; i < 4; i++) {
 					int note = (notes >> (4 * i)) & 0x0F;
@@ -905,8 +790,8 @@ bool MacLoomGui::handleEvent(Common::Event event) {
 			// Also, things get weird if you move the box into the
 			// menu hotzone, so don't allow that.
 
-			int maxY = _surface->h - _practiceBox->h - 2 * _vm->_screenDrawOffset;
-			int minY = 2 * _vm->_screenDrawOffset;
+			int maxY = _surface->h - _practiceBox->h - 2 * _vm->_macScreenDrawOffset;
+			int minY = 2 * _vm->_macScreenDrawOffset;
 
 			if (_vm->isUsingOriginalGUI() && minY < 23)
 				minY = 23;

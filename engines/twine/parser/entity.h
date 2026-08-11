@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "twine/parser/body.h"
 #include "twine/parser/parser.h"
 #include "twine/shared.h"
 
@@ -34,6 +35,7 @@ struct EntityBody {
 	int index; /**< index in file3d.hqr */
 	ActorBoundingBox actorBoundingBox;
 	int hqrBodyIndex; /**< index in body.hqr */
+	BodyData body;
 };
 
 struct EntityAnim {
@@ -43,6 +45,12 @@ struct EntityAnim {
 	struct Action {
 		ActionType type = ActionType::ACTION_NOP;
 		uint8 animFrame = 0;
+		uint8 lastAnimFrame = 0;
+		int8 weight = 0;
+		byte sampleVolume = 0;
+		int16 pointIndex = 0;
+		int16 spriteIndex = 0;
+		uint8 targetActor = 0;
 		int16 sampleIndex = 0;
 		int16 frequency = 0;
 		int16 xAngle = 0;
@@ -55,9 +63,15 @@ struct EntityAnim {
 		int16 distanceY = 0;
 		int16 distanceZ = 0;
 		int16 yHeight = 0;
-		uint8 spriteIndex = 0;
-		uint8 targetActor = 0;
 		int16 repeat = 0;
+		int16 speed = 0;
+		int16 superHitX = 0;
+		int16 superHitY = 0;
+		int16 superHitZ = 0;
+		int16 sizeSuperHit = 0;
+		int16 decal = 0;
+		int32 scale = 0;
+		BoundingBox bbox;
 	};
 
 	Common::Array<Action> _actions;
@@ -71,8 +85,8 @@ private:
 	Common::Array<EntityBody> _bodies;
 	Common::Array<EntityAnim> _animations;
 
-	bool loadBody(Common::SeekableReadStream &stream);
-	bool loadAnim(Common::SeekableReadStream &stream);
+	bool loadBody(Common::SeekableReadStream &stream, bool lba1);
+	bool loadAnim(Common::SeekableReadStream &stream, bool lba1);
 
 protected:
 	void reset() override;
@@ -81,8 +95,23 @@ public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 
 	const Common::Array<EntityAnim::Action> *getActions(AnimationTypes animation) const;
-	const EntityBody *getBody(const int index) const;
+	const EntityBody *getEntityBody(const int index) const;
+	BodyData &getBody(int index);
 	int32 getAnimIndex(AnimationTypes animation) const;
+
+	const Common::Array<EntityBody> &getBodies() const {
+		return _bodies;
+	}
+	const Common::Array<EntityAnim> &getAnimations() const {
+		return _animations;
+	}
+
+	Common::Array<EntityBody> &getBodies() {
+		return _bodies;
+	}
+	Common::Array<EntityAnim> &getAnimations() {
+		return _animations;
+	}
 };
 
 } // End of namespace TwinE

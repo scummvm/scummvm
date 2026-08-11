@@ -758,6 +758,12 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 	int hookId = 0;
 	int fadeDelay = 0;
 
+	// This flag is not set in the original,
+	// but since we're not using DirectSound and this is pretty much timing related
+	// please see IMuseDigital::waveOutWrite() for more context...
+	Common::StackLock lock(*_mutex);
+	_waveOutXorTrigger = 1;
+
 	if ((songName != nullptr) && (attribPos != 0)) {
 		if (table->attribPos != 0)
 			attribPos = table->attribPos;

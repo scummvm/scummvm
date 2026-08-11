@@ -50,9 +50,6 @@ namespace Watchmaker {
 t3dV3F LastClickPos;
 uint8 LastFloorHit;
 
-extern t3dV3F HeadAngles;
-extern t3dF32 CamAngleX, CamAngleY;
-
 void doMouseButton(WGame &game) {
 	uint8 cp;
 	Init &init = game.init;
@@ -104,10 +101,8 @@ void doMouseButton(WGame &game) {
 					}
 
 					InvStatus = INV_OFF;
-					CamAngleX = 0.0f;
-					CamAngleY = 0.0f;
-					t3dVectFill(&HeadAngles, 0.0f);
-					GetCameraTarget(init, &t3dCurCamera->Target);
+					game._cameraMan->resetAngle();
+					game._cameraMan->GetCameraTarget(init, &t3dCurCamera->Target);
 
 					if (bFirstPerson)
 						game._renderer->setCurCameraViewport(CAMERA_FOV_1ST, bSuperView);

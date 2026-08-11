@@ -21,41 +21,11 @@
 
 #include "m4/graphics/gr_draw.h"
 #include "m4/graphics/gr_line.h"
-#include "m4/graphics/gr_pal.h"
 
 namespace M4 {
 
 void buffer_put_pixel(Buffer *buf, int32 x, int32 y, byte c) {
 	*(buf->data + x + (y * buf->stride)) = (uint8)c;
-}
-
-byte buffer_get_pixel(Buffer *buf, int32 x, int32 y) {
-	return *(buf->data + x + (y * buf->stride));
-}
-
-void buffer_draw_box(Buffer *buf, int32 x1, int32 y1, int32 x2, int32 y2, byte color) {
-	gr_color_set(color);
-	gr_hline(buf, x1, x2, y1);
-	gr_hline(buf, x1, x2, y2);
-	gr_vline(buf, x1, y1, y2);
-	gr_vline(buf, x2, y1, y2);
-}
-
-void buffer_draw_box_xor(Buffer *buf, int32 x1, int32 y1, int32 x2, int32 y2) {
-	gr_hline_xor(buf, x1, x2, y1);
-	gr_hline_xor(buf, x1, x2, y2);
-	gr_vline_xor(buf, x1, y1 + 1, y2 - 1);
-	gr_vline_xor(buf, x2, y1 + 1, y2 - 1);
-}
-
-int32 buffer_fill(Buffer *target, byte value) {
-	if (!target)
-		return false;
-	if (!target->data)
-		return false;
-
-	memset(target->data, value, target->stride * target->h);
-	return true;
 }
 
 } // namespace M4

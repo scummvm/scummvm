@@ -101,6 +101,7 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_chorusActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Chorus.EnableTabCheckbox", _("Active"), Common::U32String(), kActivateChorusCmd);
 
+	// I18N: N stands for number here
 	_chorusVoiceCountDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.VoiceCountText", _("N:"));
 	_chorusVoiceCountSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.VoiceCountSlider", Common::U32String(), kChorusVoiceCountChangedCmd);
 	// 0-99, Default: 3

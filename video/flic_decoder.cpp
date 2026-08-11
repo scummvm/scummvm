@@ -84,13 +84,12 @@ void FlicDecoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 		((FlicVideoTrack *)track)->copyDirtyRectsToBuffer(dst, pitch);
 }
 
-FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader) {
+FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader) : _palette(256) {
 	_fileStream = stream;
 	_frameCount = frameCount;
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	_palette = new byte[3 * 256]();
 	_dirtyPalette = false;
 
 	_curFrame = -1;
@@ -103,7 +102,6 @@ FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, 
 
 FlicDecoder::FlicVideoTrack::~FlicVideoTrack() {
 	delete _fileStream;
-	delete[] _palette;
 
 	_surface->free();
 	delete _surface;
@@ -257,10 +255,10 @@ void FlicDecoder::FlicVideoTrack::handleFrame() {
 }
 
 void FlicDecoder::FlicVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
-	for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-		for (int y = (*it).top; y < (*it).bottom; ++y) {
-			const int x = (*it).left;
-			memcpy(dst + y * pitch + x, (byte *)_surface->getBasePtr(x, y), (*it).right - x);
+	for (const auto &dirtyRect : _dirtyRects) {
+		for (int y = dirtyRect.top; y < dirtyRect.bottom; ++y) {
+			const int x = dirtyRect.left;
+			memcpy(dst + y * pitch + x, (byte *)_surface->getBasePtr(x, y), dirtyRect.right - x);
 		}
 	}
 
@@ -363,7 +361,10 @@ void FlicDecoder::FlicVideoTrack::unpackPalette(uint8 *data) {
 	if (0 == READ_LE_UINT16(data)) { //special case
 		data += 2;
 		for (int i = 0; i < 256; ++i) {
-			memcpy(_palette + i * 3, data + i * 3, 3);
+			byte r = data[i * 3];
+			byte g = data[i * 3 + 1];
+			byte b = data[i * 3 + 2];
+			_palette.set(i, r, g, b);
 		}
 	} else {
 		uint8 palPos = 0;
@@ -373,7 +374,10 @@ void FlicDecoder::FlicVideoTrack::unpackPalette(uint8 *data) {
 			uint8 change = *data++;
 
 			for (int i = 0; i < change; ++i) {
-				memcpy(_palette + (palPos + i) * 3, data + i * 3, 3);
+				byte r = data[i * 3];
+				byte g = data[i * 3 + 1];
+				byte b = data[i * 3 + 2];
+				_palette.set(palPos + i, r, g, b);
 			}
 
 			palPos += change;

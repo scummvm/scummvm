@@ -40,10 +40,10 @@ Screen::Screen(int width, int height, PixelFormat pixelFormat): ManagedSurface()
 
 void Screen::update() {
 	// Merge the dirty rects
-	mergeDirtyRects();
+	_dirtyRects.merge();
 
 	// Loop through copying dirty areas to the physical screen
-	Common::List<Common::Rect>::iterator i;
+	DirtyRectList::const_iterator i;
 	for (i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
 		const Common::Rect &r = *i;
 		const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
@@ -73,35 +73,6 @@ void Screen::addDirtyRect(const Common::Rect &r) {
 void Screen::makeAllDirty() {
 	_dirtyRects.clear();
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
-}
-
-void Screen::mergeDirtyRects() {
-	Common::List<Common::Rect>::iterator rOuter, rInner;
-
-	// Process the dirty rect list to find any rects to merge
-	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
-		rInner = rOuter;
-		while (++rInner != _dirtyRects.end()) {
-
-			if ((*rOuter).intersects(*rInner)) {
-				// These two rectangles overlap, so merge them
-				unionRectangle(*rOuter, *rOuter, *rInner);
-
-				// remove the inner rect from the list
-				_dirtyRects.erase(rInner);
-
-				// move back to beginning of list
-				rInner = rOuter;
-			}
-		}
-	}
-}
-
-bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2) {
-	destRect = src1;
-	destRect.extend(src2);
-
-	return !destRect.isEmpty();
 }
 
 void Screen::getPalette(byte palette[PALETTE_SIZE]) {

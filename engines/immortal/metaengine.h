@@ -26,7 +26,7 @@
 #include "engines/achievements.h"
 #include "engines/advancedDetector.h"
 
-class ImmortalMetaEngine : public AdvancedMetaEngine {
+class ImmortalMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
 

@@ -19,21 +19,23 @@
  *
  */
 
+#include "ultima/ultima8/kernel/mouse.h"
+
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "graphics/cursorman.h"
 #include "ultima/ultima.h"
-#include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/gfx/palette.h"
 #include "ultima/ultima8/gfx/render_surface.h"
+#include "ultima/ultima8/gfx/shape.h"
+#include "ultima/ultima8/gfx/shape_frame.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/misc/direction_util.h"
-#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/gfx/shape.h"
-#include "ultima/ultima8/gfx/shape_frame.h"
-#include "ultima/ultima8/gfx/palette.h"
+#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -157,9 +159,8 @@ int Mouse::getMouseLength(int mx, int my) const {
 			return 2;
 	}
 
-	Rect dims;
 	RenderSurface *screen = engine->getRenderScreen();
-	screen->GetSurfaceDims(dims);
+	Common::Rect32 dims = screen->getSurfaceDims();
 
 	// Reference point is the center of the screen
 	int dx = abs(mx - dims.width() / 2);
@@ -182,9 +183,8 @@ int Mouse::getMouseLength(int mx, int my) const {
 }
 
 Direction Mouse::getMouseDirectionWorld(int mx, int my) const {
-	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
-	screen->GetSurfaceDims(dims);
+	Common::Rect32 dims = screen->getSurfaceDims();
 
 	// For now, reference point is (near) the center of the screen
 	int dx = mx - dims.width() / 2;
@@ -289,9 +289,8 @@ int Mouse::mouseFrameForDir(Direction mousedir) const {
 }
 
 void Mouse::setMouseCoords(int mx, int my) {
-	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
-	screen->GetSurfaceDims(dims);
+	Common::Rect32 dims = screen->getSurfaceDims();
 
 	if (mx < dims.left)
 		mx = dims.left;
@@ -310,8 +309,8 @@ void Mouse::setMouseCoords(int mx, int my) {
 	Gump *gump = desktopGump->onMouseMotion(mx, my);
 	if (gump && _mouseOverGump != gump->getObjId()) {
 		Gump *oldGump = getGump(_mouseOverGump);
-		Std::list<Gump *> oldgumplist;
-		Std::list<Gump *> newgumplist;
+		Common::List<Gump *> oldgumplist;
+		Common::List<Gump *> newgumplist;
 
 		// create lists of parents of old and new 'mouseover' gumps
 		if (oldGump) {
@@ -326,8 +325,8 @@ void Mouse::setMouseCoords(int mx, int my) {
 			newGump = newGump->GetParent();
 		}
 
-		Std::list<Gump *>::iterator olditer = oldgumplist.begin();
-		Std::list<Gump *>::iterator newiter = newgumplist.begin();
+		auto olditer = oldgumplist.begin();
+		auto newiter = newgumplist.begin();
 
 		// strip common prefix from lists
 		while (olditer != oldgumplist.end() &&

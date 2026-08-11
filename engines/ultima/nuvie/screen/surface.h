@@ -48,7 +48,7 @@ public:
 
 	uint32  colour32[256];          // Palette as 16/32 bit colours
 
-	// Dimentions
+	// Dimensions
 	uint32  w, h;                   // Surface width and height
 	uint32  pitch;                  // Surface pitch
 

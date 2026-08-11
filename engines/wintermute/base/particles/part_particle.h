@@ -28,10 +28,9 @@
 #ifndef WINTERMUTE_PARTPARTICLE_H
 #define WINTERMUTE_PARTPARTICLE_H
 
-
+#include "common/rect.h"
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/math/vector2.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 
 namespace Wintermute {
 
@@ -42,7 +41,9 @@ class BasePersistenceManager;
 class PartParticle : public BaseClass {
 public:
 	enum TParticleState {
-	    PARTICLE_NORMAL, PARTICLE_FADEIN, PARTICLE_FADEOUT
+	    PARTICLE_NORMAL,
+		PARTICLE_FADEIN,
+		PARTICLE_FADEOUT
 	};
 
 	PartParticle(BaseGame *inGame);
@@ -57,10 +58,10 @@ public:
 	int32 _alpha1;
 	int32 _alpha2;
 
-	Rect32 _border;
-	Vector2 _pos;
+	Common::Rect32 _border;
+	DXVector2 _pos;
 	float _posZ;
-	Vector2 _velocity;
+	DXVector2 _velocity;
 	float _scale;
 	BaseSprite *_sprite;
 	uint32 _creationTime;
@@ -71,17 +72,18 @@ public:
 	bool update(PartEmitter *emitter, uint32 currentTime, uint32 timerDelta);
 	bool display(PartEmitter *emitter);
 
-	bool setSprite(const Common::String &filename);
+	bool setSprite(const char *filename);
 
 	bool fadeIn(uint32 currentTime, int fadeTime);
 	bool fadeOut(uint32 currentTime, int fadeTime);
 
-	bool persist(BasePersistenceManager *PersistMgr) override;
+	bool persist(BasePersistenceManager *persistMgr) override;
+
 private:
 	uint32 _fadeStart;
 	int32 _fadeTime;
 	int32 _currentAlpha;
-	int32 _fadeStartAlpha;
+	int32 _fadeStartAlpha{};
 };
 
 } // End of namespace Wintermute

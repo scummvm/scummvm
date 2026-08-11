@@ -100,6 +100,8 @@ public:
 	Surface() : w(0), h(0), pitch(0), pixels(0), format() {
 	}
 
+	Common::Rect getRect() const;
+
 	/**
 	 * Return a pointer to the pixel data.
 	 *
@@ -289,7 +291,7 @@ public:
 	/**
 	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
 	 */
-	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds) const;
+	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds, uint src_w = 0, uint src_h = 0, byte flip = FLIP_NONE) const;
 
 	/**
 	 * Copy a bitmap to the internal buffer of the surface.
@@ -314,7 +316,7 @@ public:
 	 * @param destY       The y coordinate of the destination rectangle.
 	 * @param subRect     The subRect of the surface to be blitted.
 	 */
-	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect);
+	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &subRect);
 
 	/**
 	 * Copy a bitmap to the internal buffer of the surface.
@@ -342,7 +344,7 @@ public:
 	 * @param subRect     The subRect of the surface to be blitted.
 	 * @param key
 	 */
-	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key);
+	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &subRect, uint32 key);
 
 	/**
 	 * Convert the data to another pixel format.
@@ -405,7 +407,7 @@ public:
 	 * @param y1     The y coordinate of the end point.
 	 * @param color  Color of the line.
 	 *
-	 * @note This is just a wrapper around Graphics::drawLine.
+	 * @note This is just a wrapper around Graphics::Primitives.
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color);
 
@@ -420,11 +422,50 @@ public:
 	 * @param penY   Height of the pen (thickness in the y direction).
 	 * @param color  Color of the line.
 	 *
-	 * @note This is just a wrapper around Graphics::drawThickLine.
+	 * @note This is just a wrapper around Graphics::Primitives.
 	 *
 	 * @note The x/y coordinates of the start and end points are the upper leftmost part of the pen.
 	 */
 	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color);
+
+	/**
+	 * Draw a rectangle with rounded corners.
+	 *
+	 * @param r      The rectangle to draw.
+	 * @param arc    The radius of each corner.
+	 * @param color  Color of the rectangle.
+	 * @param filled Whether the rectangle should be filled in.
+	 *
+	 * @note This is just a wrapper around Graphics::Primitives.
+	 */
+	void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled);
+
+	/**
+	 * Draw a filled polygon.
+	 *
+	 * @param polyX   The X coordinates of the points.
+	 * @param polyY   The Y coordinates of the points.
+	 * @param npoints The number of points in the polygon.
+	 * @param bbox    The bounding box of the polygon.
+	 * @param color   Color of the polygon.
+	 *
+	 * @note This is just a wrapper around Graphics::Primitives.
+	 */
+	void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color);
+
+	/**
+	 * Draw an ellipse.
+	 *
+	 * @param x0     The x coordinate of the start corner.
+	 * @param y0     The y coordinate of the start corner.
+	 * @param x1     The x coordinate of the end corner.
+	 * @param y1     The y coordinate of the end corner.
+	 * @param color  Color of the ellipse.
+	 * @param filled Whether the ellipse should be filled in.
+	 *
+	 * @note This is just a wrapper around Graphics::Primitives.
+	 */
+	void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled);
 
 	/**
 	 * Draw a horizontal line.
@@ -490,6 +531,7 @@ public:
 	 * @param gKey  the green component of the color key
 	 * @param bKey  the blue component of the color key
 	 * @param overwriteAlpha if true, all other alpha will be set fully opaque
+	 * @return true if a color key was applied, otherwise false.
 	 */
 	bool applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha = false);
 
@@ -502,6 +544,7 @@ public:
 	 * @param rNew  the red component to replace the color key with
 	 * @param gNew  the green component to replace the color key with
 	 * @param bNew  the blue component to replace the color key with
+	 * @return true if a color key was applied, otherwise false.
 	 */
 	bool applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha,
 	                   uint8 rNew, uint8 gNew, uint8 bNew);
@@ -527,8 +570,9 @@ public:
 	 * @param newWidth   The resulting width.
 	 * @param newHeight  The resulting height.
 	 * @param filtering  Whether or not to use bilinear filtering.
+	 * @param flip       The flipping flags to use (see Graphics::FLIP_FLAGS).
 	 */
-	Graphics::Surface *scale(int16 newWidth, int16 newHeight, bool filtering = false) const;
+	Graphics::Surface *scale(int16 newWidth, int16 newHeight, bool filtering = false, byte flip = 0) const;
 
 	/**
 	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and

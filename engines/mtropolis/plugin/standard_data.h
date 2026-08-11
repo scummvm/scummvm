@@ -141,6 +141,56 @@ protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct FadeModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event; // Probably "Enable When"
+	PlugInTypeTaggedValue unknown2Event; // Probably "Disable When"
+	PlugInTypeTaggedValue unknown3Int;   // Int
+	PlugInTypeTaggedValue unknown4Int;   // Int
+	PlugInTypeTaggedValue unknown5Int;   // Int
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct PrintModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue executeWhen;
+	PlugInTypeTaggedValue unknown1Bool;
+	PlugInTypeTaggedValue unknown2Bool;
+	PlugInTypeTaggedValue unknown3Bool;
+	PlugInTypeTaggedValue filePath;
+	PlugInTypeTaggedValue unknown4Bool;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct NavigateModifier : public PlugInModifierData {
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct OpenTitleModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue executeWhen;
+	PlugInTypeTaggedValue pathOrUrl;
+	PlugInTypeTaggedValue addToReturnList;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct OpenAppModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Null;
+	PlugInTypeTaggedValue unknown2Null;
+	PlugInTypeTaggedValue unknown3Event;
+	PlugInTypeTaggedValue unknown4String;
+	PlugInTypeTaggedValue unknown5Integer;
+	PlugInTypeTaggedValue unknown6Integer;
+	PlugInTypeTaggedValue unknown7Bool;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace Standard
 
 } // End of namespace Data

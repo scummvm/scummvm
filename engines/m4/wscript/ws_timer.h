@@ -23,7 +23,6 @@
 #ifndef M4_WSCRIPT_WS_TIMER_H
 #define M4_WSCRIPT_WS_TIMER_H
 
-#include "m4/m4_types.h"
 #include "m4/wscript/ws_machine.h"
 
 namespace M4 {
@@ -32,8 +31,8 @@ struct WSTimer_Globals {
 	onTimeReq *_firstTimeReq = nullptr;
 };
 
-bool ws_InitWSTimer(void);
-void ws_KillTime(void);
+bool ws_InitWSTimer();
+void ws_KillTime();
 void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcCount);
 void ws_CancelOnTimeReqs(machine *m);
 void ws_CheckTimeReqs(int32 curTime);

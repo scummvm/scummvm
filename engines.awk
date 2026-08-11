@@ -1,4 +1,24 @@
 #!/bin/awk -f
+#
+# engines.awk -- processor for configure.engine directives
+#
+# ScummVM is the legal property of its developers, whose names
+# are too numerous to list here. Please refer to the COPYRIGHT
+# file distributed with this source distribution.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 function get_values(var, arr) {
 	return split(ENVIRON[var], arr, " ")
@@ -16,6 +36,10 @@ function add_to_config_h_if_yes(value, define) {
 		print("/* " define " */") >> config_h
 }
 
+function add_line_to_config_h(line) {
+	print(line) >> config_h
+}
+
 #
 # Feature handling functions
 #
@@ -29,12 +53,24 @@ function get_feature_name(feature) {
 function get_feature_state(feature) {
 	get_values("_feature_" feature "_settings", settings)
 	for (i in settings) {
-		if (ENVIRON[settings[i]] == "yes")
+		if (ENVIRON[settings[i]] == "yes" || ENVIRON[settings[i]] == "auto")
 			return "yes"
 	}
 	return "no"
 }
 
+function have_feature(feature) {
+	if (length(ENVIRON["_feature_" feature "_settings"]) == 0)
+		return "no"
+
+	return "yes"
+}
+
+function disable_feature(feature) {
+	ENVIRON["_feature_" feature "_settings"] = "no"
+
+	_features_disabled = _features_disabled feature " "
+}
 
 #
 # Engine handling functions
@@ -65,6 +101,11 @@ function get_engine_dependencies(engine, deps) {
 	return get_values("_engine_" engine "_deps", deps)
 }
 
+# Get the components
+function get_engine_components(engine, deps) {
+	return get_values("_engine_" engine "_components", components)
+}
+
 # Get the base engine game support description
 function get_engine_base(engine) {
 	return ENVIRON["_engine_" engine "_base"]
@@ -87,6 +128,25 @@ function disable_engine(engine) {
 	ENVIRON["_engine_" engine "_build"] = "no"
 }
 
+function enable_component(comp) {
+	ENVIRON["_component_" comp "_enabled"] = "yes"
+}
+
+function get_component_enabled(comp) {
+	return ENVIRON["_component_" comp "_enabled"]
+}
+
+function get_component_define(comp) {
+	return ENVIRON["_component_" comp "_define"]
+}
+
+function have_component(comp) {
+	if (length(ENVIRON["_component_" comp "_define"]) == 0)
+		return "no"
+
+	return "yes"
+}
+
 function check_engine_deps(engine) {
 	unmet_deps = ""
 
@@ -103,6 +163,25 @@ function check_engine_deps(engine) {
 		if (unmet_deps) {
 			print("WARNING: Disabling engine " get_engine_name(engine) " because the following dependencies are unmet: " unmet_deps)
 			disable_engine(engine)
+		}
+	}
+}
+
+function check_engine_components(engine) {
+	# Check whether the engine is enabled
+	if (get_engine_build(engine) != "no") {
+		# Collect components
+		compcount = get_engine_components(engine, components)
+		for (c = 1; c <= compcount; c++) {
+			if (get_feature_state(components[c]) != "no")
+				enable_component(components[c])
+		}
+
+		# And collect those features that also declared as components
+		depcount = get_engine_dependencies(engine, deps)
+		for (d = 1; d <= depcount; d++) {
+			if (have_component(deps[d]) == "yes")
+				enable_component(deps[d])
 		}
 	}
 }
@@ -234,19 +313,42 @@ function print_engines(headline, engines, count) {
 		print("    " engines[e])
 }
 
+function print_components(headline, components, count) {
+	if (!count)
+		return
+	print("\n" headline)
+	for (c = 1; c <= count; c++)
+		print("    " get_feature_name(components[c]))
+}
+
 BEGIN {
 	config_mk = "config.mk.engines"
 	config_h = "config.h.engines"
-	# Clear previous contents if any
-	printf("") > config_h
-	printf("") > config_mk
+
+	if (_print_enabled_engines == "yes")
+		print_enabled_engines = 1
+	else if (_pass == "pass1")
+		pass = 1
+	else
+		pass = 2
+
+	if (pass == 2) {
+		# Clear previous contents if any
+		printf("") > config_h
+		printf("") > config_mk
+	}
 }
 
 END {
 	engine_count = get_values("_engines", engines)
 	for (e = 1; e <= engine_count; e++) {
 		engine = engines[e]
-		check_engine_deps(engine)
+
+		if (pass == 2)
+			check_engine_deps(engine)
+
+		check_engine_components(engine)
+
 		if (get_engine_sub(engine) == "no") {
 			# It's a main engine
 			if (get_engine_build(engine) == "no") {
@@ -279,13 +381,35 @@ END {
 				isbuilt = "1"
 		}
 
-		# Save the settings
-		defname = "ENABLE_" toupper(engine)
-		if (isbuilt == "no")
-			add_line_to_config_mk("# " defname)
-		else
-			add_line_to_config_mk(defname " = " isbuilt)
+		if (pass == 2) {
+			# Save the settings
+			defname = "ENABLE_" toupper(engine)
+			if (isbuilt == "no")
+				add_line_to_config_mk("# " defname)
+			else
+				add_line_to_config_mk(defname " = " isbuilt)
+		}
 	}
+
+	if (pass == 1) {
+		components_count = get_values("_components", components)
+
+		for (c = 1; c <= components_count; c++) {
+			if (get_component_enabled(components[c]) != "yes") {
+				if (have_feature(components[c])) {
+					if (get_feature_state(components[c]) == "yes" || get_feature_state(components[c]) == "auto") {
+						disable_feature(components[c])
+						print("   Feature " get_feature_name(components[c]) " is disabled as unused by enabled engines")
+					}
+				}
+			}
+		}
+
+		print("_features_disabled=\"" _features_disabled "\"") > "engines.awk.out"
+
+		exit 0
+	}
+
 
 	# Sort engines to place our headline engine at start...
 	# No technical reason, just historical convention
@@ -316,11 +440,57 @@ END {
 		}
 	}
 
+	# Print enabled engines to 'configure.engines' file
+	# It will help external build script to handle multiple builds per engine
+	if (print_enabled_engines) {
+		printf("") > "configure.engines"
+		for (e = 1; e <= engine_count; e++) {
+			engine = sorted_engines[e]
+			if (get_engine_build(engine) != "no" && get_engine_sub(engine) == "no") {
+				line = engine
+				subeng_count = get_engine_subengines(engine, subengines)
+				for (s = 1; s <= subeng_count; s++) {
+					subeng = subengines[s]
+					if (get_engine_build(subeng) != "no") {
+						line = line "," subeng
+					}
+				}
+				print(line) >> "configure.engines"
+			}
+		}
+		exit 0
+	}
+
+	#
+	# Process components
+	#
+	add_line_to_config_h("\n/* components */")
+	add_line_to_config_mk("\n# components")
+	components_count = get_values("_components", components)
+	for (c = 1; c <= components_count; c++) {
+		define = get_component_define(components[c])
+		add_to_config_h_if_yes(get_component_enabled(components[c]), "#define " define)
+
+		if (get_component_enabled(components[c]) == "yes") {
+			add_line_to_config_mk(define "=1")
+			_comp_enabled[++_comp_enabled_count] = components[c]
+		} else {
+			add_line_to_config_mk("# " define)
+			_comp_disabled[++_comp_disabled_count] = components[c]
+		}
+	}
+	add_line_to_config_h("/* end of components */")
+	add_line_to_config_mk("# end of components")
+
+
 	add_to_config_h_if_yes(_tainted_build, "#define TAINTED_BUILD")
 	print_engines("Engines (builtin):", _engines_built_static, _static)
 	print_engines("Engines (plugins):", _engines_built_dynamic, _dynamic)
 	print_engines("Engines Skipped:", _engines_skipped, _skipped)
 	print_engines("WARNING: This ScummVM build contains the following UNSTABLE engines:", _engines_built_wip, _wip)
+
+	print_components("Components Enabled: ", _comp_enabled, _comp_enabled_count)
+	print_components("Components Disabled: ", _comp_disabled, _comp_disabled_count)
 
 	# Ensure engines folder exists prior to trying to generate
 	# files into it (used for out-of-tree-builds)

@@ -61,10 +61,10 @@ public:
 	virtual Datum getProp(const Common::String &propName) = 0;
 	virtual Common::String getPropAt(uint32 index) = 0;
 	virtual uint32 getPropCount() = 0;
-	virtual bool setProp(const Common::String &propName, const Datum &value, bool force = false) = 0;
+	virtual void setProp(const Common::String &propName, const Datum &value, bool force = false) = 0;
 	virtual bool hasField(int field) = 0;
 	virtual Datum getField(int field) = 0;
-	virtual bool setField(int field, const Datum &value) = 0;
+	virtual void setField(int field, const Datum &value) = 0;
 };
 
 template <typename Derived>
@@ -92,14 +92,14 @@ protected:
 	};
 
 public:
-	static void initMethods(MethodProto protos[]) {
+	static void initMethods(const MethodProto protos[]) {
 		if (_methods) {
 			warning("Object::initMethods: Methods already initialized");
 			return;
 		}
 
 		_methods = new SymbolHash;
-		for (MethodProto *mtd = protos; mtd->name; mtd++) {
+		for (const MethodProto *mtd = protos; mtd->name; mtd++) {
 			if (mtd->version > g_lingo->_vm->getVersion())
 				continue;
 
@@ -186,8 +186,8 @@ public:
 	uint32 getPropCount() override {
 		return 0;
 	};
-	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override {
-		return false;
+	void setProp(const Common::String &propName, const Datum &value, bool force = false) override {
+		return;
 	};
 	bool hasField(int field) override {
 		return false;
@@ -195,8 +195,8 @@ public:
 	Datum getField(int field) override {
 		return Datum();
 	};
-	bool setField(int field, const Datum &value) override {
-		return false;
+	void setField(int field, const Datum &value) override {
+		return;
 	};
 
 protected:
@@ -214,6 +214,9 @@ class ScriptContext : public Object<ScriptContext> {
 public:
 	ScriptType _scriptType;
 	int _id;
+	int _scriptId;
+	uint16 _parentNumber;
+	uint16 _castLibHint;
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
 	Common::HashMap<Common::String, Common::Array<uint32>> _functionByteOffsets;
 	SymbolHash _functionHandlers;
@@ -224,17 +227,25 @@ public:
 	Common::SharedPtr<Node> _assemblyAST;	// Optionally contains AST when we compile Lingo
 
 private:
+	friend class Cast;	// clears _cast directly in ~Cast
+
 	DatumHash _properties;
 	Common::Array<Common::String> _propertyNames;
 	bool _onlyInLctxContexts = false;
+	Cast *_cast = nullptr;
 
 public:
-	ScriptContext(Common::String name, ScriptType type = kNoneScript, int id = 0);
+	ScriptContext(Common::String name, ScriptType type = kNoneScript, int id = 0, uint16 castLibHint = 0, uint16 parentNumber = 0, int scriptId = 0);
 	ScriptContext(const ScriptContext &sc);
 	~ScriptContext() override;
 
+	Cast *getCast() const { return _cast; }
+	void setCast(Cast *cast);
+
 	bool isFactory() const { return _objType == kFactoryObj; };
 	void setFactory(bool flag) { _objType = flag ? kFactoryObj : kScriptObj; }
+
+	const Common::Array<Common::String> &getPropertyNames() const { return _propertyNames; }
 
 	void setOnlyInLctxContexts() { _onlyInLctxContexts = true; }
 	bool getOnlyInLctxContexts() { return _onlyInLctxContexts; }
@@ -245,7 +256,7 @@ public:
 	Datum getProp(const Common::String &propName) override;
 	Common::String getPropAt(uint32 index) override;
 	uint32 getPropCount() override;
-	bool setProp(const Common::String &propName, const Datum &value, bool force = false) override;
+	void setProp(const Common::String &propName, const Datum &value, bool force = false) override;
 
 	Symbol define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
 

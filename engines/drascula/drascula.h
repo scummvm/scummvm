@@ -34,6 +34,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/text-to-speech.h"
 
 #include "engines/savestate.h"
 
@@ -54,8 +55,29 @@
  */
 namespace Drascula {
 
-#define DRASCULA_DAT_VER 6
+#define DRASCULA_DAT_VER 7
 #define DATAALIGNMENT 4
+
+enum DRASCULAActions {
+	kActionNone,
+	kActionSkip,
+	kActionLook,
+	kActionPick,
+	kActionOpen,
+	kActionClose,
+	kActionTalk,
+	kActionMove,
+	kActionLoadGame,
+	kActionVerbReset,
+	kActionVolumeControls,
+	kActionSaveGame,
+	kActionSubtitlesEnable,
+	kActionSubtitlesDisable,
+	kActionQuit,
+	kActionEasterEgg,
+	kActionPauseSpeech,
+	kActionConfirmQuit,
+};
 
 enum Languages {
 	kEnglish = 0,
@@ -306,6 +328,7 @@ public:
 #define HALF_PAL		128
 
 #define KEYBUFSIZE		16
+#define ACTIONBUFSIZE	16
 
 static const int interf_x[] = { 1, 65, 129, 193, 1, 65, 129 };
 static const int interf_y[] = { 51, 51, 51, 51, 83, 83, 83 };
@@ -470,6 +493,10 @@ public:
 	int _keyBufferHead;
 	int _keyBufferTail;
 
+	Common::CustomEventType _actionBuffer[ACTIONBUFSIZE];
+	int _actionBufferHead;
+	int _actionBufferTail;
+
 	bool loadDrasculaDat();
 
 	bool runCurrentChapter();
@@ -494,6 +521,9 @@ public:
 	Common::KeyCode getScan();
 	void addKeyToBuffer(Common::KeyState& key);
 	void flushKeyBuffer();
+	Common::CustomEventType getAction();
+	void addActionToBuffer(Common::CustomEventType& action);
+	void flushActionBuffer();
 	void selectVerb(int);
 	int updateVolume(int prevVolume, int prevVolumeY);
 	void volumeControls();
@@ -730,6 +760,8 @@ public:
 	void update_62_pre();
 	void update_102();
 
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action);
+
 private:
 	int _lang;
 
@@ -776,6 +808,8 @@ private:
 	RoomTalkAction *_roomActions;
 	TalkSequenceCommand *_talkSequences;
 	Common::String _saveNames[10];
+	Common::String _previousSaid;
+	Common::CodePage _ttsTextEncoding;
 
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);

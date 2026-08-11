@@ -28,6 +28,9 @@
 #include "engines/wintermute/wintypes.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/dcgf.h"
+
+#include "common/str.h"
 
 namespace Wintermute {
 
@@ -37,9 +40,7 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 
 	_width = _height = 0;
 
-	_filename = "";
-
-	_pixelOpReady = false;
+	_filename = nullptr;
 
 	_ckDefault = true;
 	_ckRed = _ckGreen = _ckBlue = 0;
@@ -52,8 +53,8 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 BaseSurface::~BaseSurface() {
-	if (_pixelOpReady) {
-		endPixelOp();
+	if (_filename) {
+		SAFE_DELETE_ARRAY(_filename);
 	}
 }
 
@@ -64,11 +65,17 @@ bool BaseSurface::restore() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSurface::isTransparentAt(int x, int y) {
-	return false;
+	if (startPixelOp()) {
+		bool retval = isTransparentAtLite(x, y);
+		endPixelOp();
+		return retval;
+	} else {
+		return false;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
-bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
+bool BaseSurface::displayHalfTrans(int x, int y, Common::Rect32 rect) {
 	return STATUS_FAILED;
 }
 
@@ -78,52 +85,33 @@ bool BaseSurface::create(int width, int height) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurface::startPixelOp() {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::endPixelOp() {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::putPixel(int x, int y, byte r, byte g, byte b, int a) {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSurface::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////
-bool BaseSurface::isTransparentAtLite(int x, int y) {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseSurface::invalidate() {
 	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::prepareToDraw() {
-	_lastUsedTime = _gameRef->getLiveTimer()->getTime();
+	_lastUsedTime = _game->_liveTimer;
 
 	if (!_valid) {
-		//_gameRef->LOG(0, "Reviving: %s", _filename);
-		return create(_filename.c_str(), _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
+		//_game->LOG(0, "Reviving: %s", _filename);
+		return create(_filename, _ckDefault, _ckRed, _ckGreen, _ckBlue, _lifeTime, _keepLoaded);
 	} else {
 		return STATUS_OK;
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+void BaseSurface::setFilename(const char *filename) {
+	SAFE_DELETE_ARRAY(_filename);
+	if (!filename) {
+		return;
+	}
+
+	size_t nameSize = strlen(filename) + 1;
+	_filename = new char[nameSize];
+	Common::strcpy_s(_filename, nameSize, filename);
+}
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSurface::setSize(int width, int height) {

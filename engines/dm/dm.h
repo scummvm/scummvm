@@ -57,6 +57,24 @@ class ProjExpl;
 class DialogMan;
 class SoundMan;
 
+enum DMActions {
+	kActionNone,
+	kActionToggleInventoryChampion0,
+	kActionToggleInventoryChampion1,
+	kActionToggleInventoryChampion2,
+	kActionToggleInventoryChampion3,
+	kActionSave,
+	kActionFreezeGame,
+	kActionTurnLeft,
+	kActionMoveForward,
+	kActionTurnRight,
+	kActionMoveLeft,
+	kActionMoveBackward,
+	kActionMoveRight,
+	kActionWakeUp,
+	kActionSelectChoice,
+};
+
 enum Direction {
 	kDMDirNorth = 0,
 	kDMDirEast = 1,
@@ -118,7 +136,7 @@ class Thing {
 public:
 	uint16 _data;
 
-	Thing() : _data(0) {}
+	Thing() : _data(0xFFFF) {}
 	explicit Thing(uint16 d) { set(d); }
 
 	void set(uint16 d) {
@@ -147,10 +165,6 @@ public:
 
 #define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 
-struct SaveGameHeader {
-	byte _version;
-	SaveStateDescriptor _descr;
-};
 
 class DMEngine : public Engine {
 private:
@@ -161,8 +175,9 @@ private:
 	void gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
 	void initConstants();
 	Common::String getSavefileName(uint16 slot);
-	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
-	bool writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error writeCompleteSaveFile(Common::WriteStream *file);
 	void drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 	void fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
 	void processEntrance(); // @ F0441_STARTEND_ProcessEntrance
@@ -176,6 +191,8 @@ public:
 
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::String getSaveStateName(int slot) const override;
 
 	bool isDemo() const;
 
@@ -192,6 +209,7 @@ public:
 	void entranceDrawCredits();
 	void fuseSequence(); // @ F0446_STARTEND_FuseSequence
 	Common::Language getGameLanguage();
+	Common::Platform getPlatform() const { return _gameVersion->_desc.platform; }
 
 	Direction turnDirRight(int16 dir); // @ M17_NEXT
 	Direction turnDirLeft(int16 dir); // @ M19_PREVIOUS
@@ -204,12 +222,11 @@ public:
 	uint16 getMap(int32 mapTime); // @ M29_MAP
 	Thing thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
 	int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2); // @ M38_DISTANCE
-	int32 setMap(int32 mapTime, uint32 map); // @ M31_setMap
+	int32 setMap(int32 &mapTime, uint32 map); // @ M31_setMap
 
 
 private:
 	uint16 _dungeonId; // @ G0526_ui_DungeonID
-	byte *_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 	Common::RandomSource *_rnd;
 
@@ -217,6 +234,7 @@ private:
 	const DMADGameDescription *_gameVersion;
 	bool _canLoadFromGMM;
 public:
+	byte *_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	Console *_console;
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;
@@ -279,7 +297,6 @@ public:
 	Thing _thingParty;				 // @ C0xFFFF_THING_PARTY
 };
 
-WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header, bool skipThumbnail = true);
 
 } // End of namespace DM
 

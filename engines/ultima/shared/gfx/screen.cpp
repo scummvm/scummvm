@@ -36,8 +36,7 @@ void Screen::update() {
 	if (_cursor) {
 		// Check whether the area the cursor occupies will be being updated
 		Common::Rect cursorBounds = _cursor->getBounds();
-		for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
-			const Common::Rect &r = *i;
+		for (const auto &r : _dirtyRects) {
 			if (r.intersects(cursorBounds)) {
 				addDirtyRect(cursorBounds);
 				_drawCursor = true;

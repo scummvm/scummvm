@@ -31,6 +31,7 @@ private:
 	bool loadImageIntoBuffer();
 
 	static void warningFn(png_structp png_ptr, png_const_charp warning_msg);
+	static void errorFn(png_structp png_ptr, png_const_charp warning_msg);
 	static void libReadFunc(png_structp pngPtr, png_bytep data, png_size_t length);
 
 	Common::SeekableReadStream &_file;
@@ -62,6 +63,7 @@ public:
 			_width(0), _height(0), _paletteSize(0),
 			_bitDepth(0), _sizeBy(sizeBy), _pngPtr(0),
 			_infoPtr(0), _colorType(0), _channels(0) {}
+	~PngLoader();
 
 	PngLoader::Status allocate();
 	bool load();

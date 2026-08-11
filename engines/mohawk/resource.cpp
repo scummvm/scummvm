@@ -47,6 +47,7 @@ bool Archive::openFile(const Common::Path &fileName) {
 	}
 
 	if (!openStream(file)) {
+		delete file;
 		close();
 		return false;
 	}
@@ -441,7 +442,7 @@ bool LivingBooksArchive_v1::openStream(Common::SeekableReadStream *stream) {
 
 // DOS Archive (v2) code
 // Partially based on the Prince of Persia Format Specifications
-// See http://sdfg.com.ar/git/?p=fp-git.git;a=blob;f=FP/doc/FormatSpecifications
+// See https://sdfg.com.ar/git/r/fp-git.git/b/master/t/FP/doc/f=FormatSpecifications.html
 // However, I'm keeping with the terminology we've been using with the
 // later archive formats.
 

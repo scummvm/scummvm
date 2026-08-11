@@ -49,7 +49,7 @@ void parse_all_flags() {
 		_G(mem_to_alloc) = ConfMan.getInt("M");
 
 	if (ConfMan.hasKey("R")) {
-		int val = ConfMan.getInt("R");
+		const int val = ConfMan.getInt("R");
 
 		if (!val) {
 			_G(kernel).last_save = -1;
@@ -67,12 +67,11 @@ void parse_all_flags() {
 	}
 
 	if (ConfMan.hasKey("T")) {
-		int room = ConfMan.getInt("T");
+		const int room = ConfMan.getInt("T");
 
 		if (room) {
 			_G(kernel).teleported_in = true;
-			_G(game).new_room = room;
-			_G(game).new_section = (room / 100);
+			_G(game).setRoom(room);
 		}
 	}
 }

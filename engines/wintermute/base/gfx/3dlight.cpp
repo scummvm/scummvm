@@ -34,15 +34,13 @@
 
 #include "graphics/opengl/system_headers.h"
 
-#include "math/glmath.h"
-
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 Light3D::Light3D(BaseGame *inGame) : BaseScriptable(inGame, false, false) {
 	_diffuseColor = BYTETORGBA(255, 255, 255, 255);
-	_position = Math::Vector3d(0, 0, 0);
-	_target = Math::Vector3d(0, 0, 0);
+	_pos = DXVector3(0, 0, 0);
+	_target = DXVector3(0, 0, 0);
 	_isSpotlight = false;
 	_falloff = 0;
 	_active = true;
@@ -57,101 +55,34 @@ Light3D::~Light3D() {
 
 //////////////////////////////////////////////////////////////////////////
 bool Light3D::setLight(int index) {
-	Math::Vector4d diffuse;
-	diffuse.getData()[0] = RGBCOLGetR(_diffuseColor) / 256.0f;
-	diffuse.getData()[1] = RGBCOLGetG(_diffuseColor) / 256.0f;
-	diffuse.getData()[2] = RGBCOLGetB(_diffuseColor) / 256.0f;
-	diffuse.getData()[3] = 1.0f;
+	DXVector4 diffuse;
+	diffuse._x = RGBCOLGetR(_diffuseColor) / 256.0f;
+	diffuse._y = RGBCOLGetG(_diffuseColor) / 256.0f;
+	diffuse._z = RGBCOLGetB(_diffuseColor) / 256.0f;
+	diffuse._w = 1.0f;
 
-	_gameRef->_renderer3D->setLightParameters(index, _position, _target - _position, diffuse, _isSpotlight);
+	DXVector3 dir = _target - _pos;
+	DXVec3Normalize(&dir, &dir);
+	_game->_renderer3D->setLightParameters(index, _pos, dir, diffuse, _isSpotlight);
 
 	if (_active) {
-		_gameRef->_renderer3D->enableLight(index);
-	}
-
-	return true;
-}
-
-bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
-	uint32 wholeChunkSize = fileStream.readUint32LE();
-	int32 end = fileStream.pos() + wholeChunkSize - 6;
-
-	_position.x() = fileStream.readFloatLE();
-	_position.z() = -fileStream.readFloatLE();
-	_position.y() = fileStream.readFloatLE();
-
-	while (fileStream.pos() < end) {
-		uint16 chunkId = fileStream.readUint16LE();
-		uint32 chunkSize = fileStream.readUint32LE();
-
-		switch (chunkId) {
-		case SPOTLIGHT:
-			_target.x() = fileStream.readFloatLE();
-			_target.z() = -fileStream.readFloatLE();
-			_target.y() = fileStream.readFloatLE();
-
-			// this is appearently not used
-			fileStream.readFloatLE();
-
-			_falloff = fileStream.readFloatLE();
-			_isSpotlight = true;
-			break;
-
-		case LIGHT_IS_OFF:
-			_active = false;
-			break;
-
-		case RGB_BYTE: {
-			byte r = fileStream.readByte();
-			byte g = fileStream.readByte();
-			byte b = fileStream.readByte();
-
-			_diffuseColor = r << 16;
-			_diffuseColor |= g << 8;
-			_diffuseColor |= b;
-			_diffuseColor |= 255 << 24;
-			break;
-		}
-
-		case RGB_FLOAT: {
-			float r = fileStream.readFloatLE();
-			float g = fileStream.readFloatLE();
-			float b = fileStream.readFloatLE();
-
-			_diffuseColor = static_cast<int32>(r * 255) << 16;
-			_diffuseColor |= static_cast<int32>(g * 255) << 8;
-			_diffuseColor |= static_cast<int32>(b * 255);
-			_diffuseColor |= 255 << 24;
-			break;
-		}
-
-		case RANGE_END:
-		case 0x4659:
-		case MULTIPLIER:
-		case ROLL:
-		case SPOT_SHADOW_MAP:
-		case SPOT_RAY_TRACE_BIAS:
-		case SPOT_RAY_TRACE:
-		default:
-			fileStream.seek(chunkSize - 6, SEEK_CUR);
-			break;
-		}
+		_game->_renderer3D->lightEnable(index, true);
 	}
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Light3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
-	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
-	*viewMatrix = Math::makeLookAtMatrix(_position, _target, up);
+bool Light3D::getViewMatrix(DXMatrix *viewMatrix) {
+	DXVector3 up = DXVector3(0.0f, 1.0f, 0.0f);
+	DXMatrixLookAtLH(viewMatrix, &_pos, &_target, &up);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool Light3D::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferBool("_active", &_active);
-	persistMgr->transferUint32("_diffuseColor", &_diffuseColor);
+	persistMgr->transferBool(TMEMBER(_active));
+	persistMgr->transferUint32(TMEMBER(_diffuseColor));
 	return true;
 }
 

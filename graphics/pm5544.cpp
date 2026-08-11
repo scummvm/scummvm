@@ -211,6 +211,7 @@ ManagedSurface *renderPM5544(int xres, int yres) {
 
 	int monoradius = monosize * rwidth + gapsize;
 	ManagedSurface *monoscope = new ManagedSurface(xres, yres, PixelFormat::createFormatCLUT8());
+	monoscope->setTransparentColor(TRANSCOLOR);
 
 	// two bottom rows
 	boxColor(monoscope, x1, y2 - rheight + gapsize / 2 + 1, x2, y2 + rheight + gapsize / 2 + 1, YELLOW);
@@ -269,7 +270,7 @@ ManagedSurface *renderPM5544(int xres, int yres) {
 	circleColorNoblend(monoscope, (xres - 1.0) / 2.0, (yres - 1.0) / 2.0, 3, WHITE, false);
 	circleColorNoblend(monoscope, (xres - 1.0) / 2.0, (yres - 1.0) / 2.0, monoradius, TRANSCOLOR, true);
 
-    surface->transBlitFrom(*monoscope, TRANSCOLOR);
+	surface->simpleBlitFrom(*monoscope);
 
 	delete monoscope;
 

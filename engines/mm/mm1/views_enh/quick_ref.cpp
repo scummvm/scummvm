@@ -29,9 +29,9 @@ namespace MM1 {
 namespace ViewsEnh {
 
 #define COLUMN_NUM 5
-#define COLUMN_NAME 30
-#define COLUMN_CLASS 113
-#define COLUMN_LEVEL 157
+#define COLUMN_NAME 22
+#define COLUMN_CLASS 117
+#define COLUMN_LEVEL 162
 #define COLUMN_HP 175
 #define COLUMN_SP 211
 #define COLUMN_AC 245
@@ -81,7 +81,7 @@ void QuickRef::writeCharacterLine(int charNum) {
 	writeChar(COLUMN_NUM, yp, '1' + charNum);
 	writeChar(')');
 
-	writeString(COLUMN_NAME, yp, c._name);
+	writeString(COLUMN_NAME, yp, truncateString(c._name, COLUMN_CLASS - COLUMN_NAME - 3));
 
 	Common::String classStr = STRING[Common::String::format(
 		"stats.classes.%d", c._class)];

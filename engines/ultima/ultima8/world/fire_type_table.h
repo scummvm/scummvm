@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_WORLD_FIRETYPETABLE_H
 #define ULTIMA8_WORLD_FIRETYPETABLE_H
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima8 {
 

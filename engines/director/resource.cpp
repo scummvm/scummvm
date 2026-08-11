@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/file.h"
@@ -28,6 +29,7 @@
 #include "common/bufferedstream.h"
 #include "common/substream.h"
 #include "common/formats/winexe.h"
+#include "director/detection.h"
 #include "director/types.h"
 #include "graphics/wincursor.h"
 
@@ -60,15 +62,19 @@ Common::Error Window::loadInitialMovie() {
 	if (movie.empty())
 		return Common::kPathNotFile;
 
+	if (g_director->getVersion() >= 500) {
+		loadXtrasFromPath();
+	}
 	loadINIStream();
 	Common::Path path = findPath(movie);
-	_mainArchive = g_director->openArchive(path);
+	Common::SharedPtr<Archive> mainArchive = g_director->openArchive(path);
 
-	if (!_mainArchive) {
-		warning("Cannot open main movie");
+	if (!mainArchive) {
+		warning("Window::loadInitialMovie: Cannot open main movie");
 		return Common::kNoGameDataFoundError;
 	}
-	probeResources(_mainArchive);
+	g_director->setMainArchive(mainArchive);
+	probeResources(mainArchive.get());
 
 	// Load multiple-resources based executable file (Projector)
 	Common::String rawEXE = _vm->getRawEXEName();
@@ -100,8 +106,8 @@ Common::Error Window::loadInitialMovie() {
 
 			stream->read(script, size);
 
-			LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
-			mainArchive->addCode(Common::U32String(script, Common::kMacRoman), kMovieScript, 65535);
+			LingoArchive *mainLingoArchive = g_director->getCurrentMovie()->getMainLingoArch();
+			mainLingoArchive->addCode(Common::U32String(script, Common::kMacRoman), kMovieScript, 65535);
 			_currentMovie->processEvent(kEventStartUp);
 
 			free(script);
@@ -111,7 +117,7 @@ Common::Error Window::loadInitialMovie() {
 		}
 	}
 
-	_currentMovie->setArchive(_mainArchive);
+	_currentMovie->setArchive(mainArchive);
 	_currentMovie->getScore()->_skipTransition = true;
 	// XLibs are usually loaded in the initial movie.
 	// These may not be present if a --start-movie is specified, so
@@ -124,7 +130,7 @@ Common::Error Window::loadInitialMovie() {
 
 void Window::probeResources(Archive *archive) {
 	if (archive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
-		warning("Detected Projector file");
+		debugC(2, kDebugLoading, "Window::probeResources: Detected Projector file");
 
 		if (archive->hasResource(MKTAG('v', 'e', 'r', 's'), -1)) {
 			Common::Array<uint16> vers = archive->getResourceIDList(MKTAG('v', 'e', 'r', 's'));
@@ -132,7 +138,7 @@ void Window::probeResources(Archive *archive) {
 				Common::SeekableReadStreamEndian *vvers = archive->getResource(MKTAG('v', 'e', 'r', 's'), iterator);
 				Common::MacResManager::MacVers *v = Common::MacResManager::parseVers(vvers);
 
-				debug(0, "Detected vers %d.%d %s.%d region %d '%s' '%s'", v->majorVer, v->minorVer, v->devStr.c_str(),
+				debugC(2, kDebugLoading, "Window::probeResources: Detected vers %d.%d %s.%d region %d '%s' '%s'", v->majorVer, v->minorVer, v->devStr.c_str(),
 					v->preReleaseVer, v->region, v->str.c_str(), v->msg.c_str());
 
 				delete v;
@@ -140,42 +146,61 @@ void Window::probeResources(Archive *archive) {
 			}
 		}
 
+		// Mac Director will check resource STR# id 200 from the projector
+		// executable, and use the second string in the list.
+		// Usually this is "Shared Cast", but Journeyman Project
+		// has this set to "Mars ESG Upper 03"??
+		if (archive->hasResource(MKTAG('S', 'T', 'R', '#'), 200)) {
+			Common::SeekableReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 200);
+			int num = name->readUint16();
+			if (num < 2) {
+				warning("Window::probeResources: Missing data in the Filenames resource of the Projector file");
+				delete name;
+			} else {
+				_soundsFilenameHint = decodePlatformEncoding(name->readPascalString());
+				_sharedCastFilenameHint = decodePlatformEncoding(name->readPascalString());
+			}
+		}
+
 		if (archive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
-			if (_currentMovie)
-				_currentMovie->setArchive(archive);
+			//if (_currentMovie)
+			//	_currentMovie->setArchive(archive);
 
 			Common::SeekableReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
 			int num = name->readUint16();
 			if (num != 1) {
-				warning("Incorrect number of strings in Projector file");
+				warning("Window::probeResources: Incorrect number of strings in Projector file");
 			}
 
 			if (num == 0)
-				error("No strings in Projector file");
+				error("Window::probeResources: No strings in Projector file");
 
 			Common::String sname = decodePlatformEncoding(name->readPascalString());
 			Common::Path moviePath = findMoviePath(sname);
 			if (!moviePath.empty()) {
 				_nextMovie.movie = moviePath.toString(g_director->_dirSeparator);
-				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
+				warning("Window::probeResources: Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
 
 				if (_currentMovie) {
 					delete _currentMovie;
 					_currentMovie = nullptr;
 				}
 
-				Archive *subMovie = g_director->openArchive(moviePath);
+				Common::SharedPtr<Archive> subMovie = g_director->openArchive(moviePath);
 				if (subMovie) {
-					probeResources(subMovie);
+					probeResources(subMovie.get());
 				}
 			} else {
-				warning("Couldn't find score with name: %s", sname.c_str());
+				warning("Window::probeResources: Couldn't find score with name: %s", sname.c_str());
 			}
 			delete name;
 		}
 	}
 
 	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
+		// Load any fonts from the projector resource fork
+		_vm->_wm->_fontMan->loadFonts(archive->getPathName());
+
 		// On Macintosh, you can add additional chunks to the resource
 		// fork of the file to state which XObject or HyperCard XCMD/XFCNs
 		// need to be loaded in.
@@ -186,7 +211,7 @@ void Window::probeResources(Archive *archive) {
 				Common::Array<uint16> xcod = resFork->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
 				for (auto &iterator : xcod) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), iterator);
-					debug(0, "Detected XObject '%s'", res.name.c_str());
+					debug(0, "Window::probeResources: Detected XObject '%s'", res.name.c_str());
 					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
@@ -194,7 +219,7 @@ void Window::probeResources(Archive *archive) {
 				Common::Array<uint16> xcmd = resFork->getResourceIDList(MKTAG('X', 'C', 'M', 'D'));
 				for (auto &iterator : xcmd) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'C', 'M', 'D'), iterator);
-					debug(0, "Detected XCMD '%s'", res.name.c_str());
+					debug(0, "Window::probeResources: Detected XCMD '%s'", res.name.c_str());
 					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
@@ -202,40 +227,12 @@ void Window::probeResources(Archive *archive) {
 				Common::Array<uint16> xfcn = resFork->getResourceIDList(MKTAG('X', 'F', 'C', 'N'));
 				for (auto &iterator : xfcn) {
 					Resource res = resFork->getResourceDetail(MKTAG('X', 'F', 'C', 'N'), iterator);
-					debug(0, "Detected XFCN '%s'", res.name.c_str());
+					debug(0, "Window::probeResources: Detected XFCN '%s'", res.name.c_str());
 					g_lingo->openXLib(res.name, kXObj, resForkPathName);
 				}
 			}
 		}
 		delete resFork;
-	}
-
-	// Xtras
-	if (g_director->getVersion() >= 500) {
-		Common::Path basePath(g_director->getEXEName(), g_director->_dirSeparator);
-		basePath = basePath.getParent().appendComponent("Xtras");
-		basePath = findPath(basePath, false, false, true);
-		if (!basePath.empty()) {
-			Common::StringArray directory_list = basePath.splitComponents();
-			Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
-			bool escape = false;
-			for (auto &it : directory_list) {
-				d = d.getChild(it);
-				if (!d.exists()) {
-					escape = true;
-					break;
-				}
-			}
-			if (!escape) {
-				debug(0, "Detected Xtras folder");
-				Common::FSList xtras;
-				d.getChildren(xtras, Common::FSNode::kListFilesOnly);
-				for (auto &it : xtras) {
-					debug(0, "Detected Xtra '%s'", it.getName().c_str());
-					g_lingo->openXLib(it.getName(), kXtraObj, basePath.appendComponent(it.getName()));
-				}
-			}
-		}
 	}
 }
 
@@ -247,7 +244,7 @@ void DirectorEngine::addArchiveToOpenList(const Common::Path &path) {
 	_allOpenResFiles.push_front(path);
 }
 
-Archive *DirectorEngine::openArchive(const Common::Path &path) {
+Common::SharedPtr<Archive> DirectorEngine::openArchive(const Common::Path &path) {
 	debug(1, "DirectorEngine::openArchive(\"%s\")", path.toString().c_str());
 
 	// If the archive is already open, don't reopen it;
@@ -272,11 +269,12 @@ Archive *DirectorEngine::openArchive(const Common::Path &path) {
 		}
 	}
 	result->setPathName(path);
-	_allSeenResFiles.setVal(path, result);
+	Common::SharedPtr<Archive> arch(result);
+	_allSeenResFiles.setVal(path, arch);
 
 	addArchiveToOpenList(path);
 
-	return result;
+	return arch;
 }
 
 void Window::loadINIStream() {
@@ -294,7 +292,7 @@ void Window::loadINIStream() {
 		free(script);
 		delete iniStream;
 	} else {
-		warning("No LINGO.INI");
+		debugC(1, kDebugLoading, "Window::loadINIStream: No LINGO.INI");
 	}
 }
 
@@ -317,7 +315,7 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 		result = new RIFFArchive();
 
 		if (!result->openStream(exeStream, 0)) {
-			debugC(5, kDebugLoading, "Window::loadEXE(): Failed to load RIFF from '%s'", movie.toString().c_str());
+			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Failed to load RIFF from '%s'", movie.toString().c_str());
 			delete result;
 			return nullptr;
 		}
@@ -334,6 +332,12 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 		const Common::Array<Common::WinResourceID> versions = exe->getIDList(Common::kWinVersion);
 		for (uint i = 0; i < versions.size(); i++) {
 			Common::WinResources::VersionInfo *info = exe->getVersionResource(versions[i]);
+
+			Common::String gameName = info->hash["FileDescription"];
+			Common::String versionInfo = Common::String::format("v%d.%d.%dr%d", info->fileVersion[0], info->fileVersion[1], info->fileVersion[2], info->fileVersion[3]);
+
+			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Game name from resources: \"%s\"", gameName.c_str());
+			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Executable version: %s", versionInfo.c_str());
 
 			for (Common::WinResources::VersionHash::const_iterator it = info->hash.begin(); it != info->hash.end(); ++it)
 				debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): info <%s>: <%s>", it->_key.c_str(), it->_value.encode().c_str());
@@ -488,7 +492,7 @@ Archive *DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 	/* uint32 rifxOffsetAlt = */ stream->readUint32LE(); // equivalent to rifxOffset
 	uint32 flags = stream->readUint32LE();
 
-	warning("DirectorEngine::loadEXEv4(): PJ93 projector flags: %08x", flags);
+	debugC(1, kDebugLoading, "DirectorEngine::loadEXEv4(): PJ93 projector flags: %08x", flags);
 
 	return loadEXERIFX(stream, rifxOffset);
 }
@@ -513,7 +517,7 @@ Archive *DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 	stream->readUint32LE(); // number of driver files
 	stream->readUint32LE(); // fontMapOffset
 
-	warning("DirectorEngine::loadEXEv5(): PJ95 projector pflags: %08x  flags: %08x", pflags, flags);
+	debugC(1, kDebugLoading, "DirectorEngine::loadEXEv5(): PJ95 projector pflags: %08x  flags: %08x", pflags, flags);
 
 	return loadEXERIFX(stream, rifxOffset);
 }
@@ -591,15 +595,44 @@ Archive *DirectorEngine::loadMac(const Common::Path &movie) {
 	return result;
 }
 
+void Window::loadXtrasFromPath() {
+	// For D5 and above, Xtras are considered plug and play.
+	// According to Director Demystified: it considers an
+	// Xtra installed if it's located in the folder named "Xtras"
+	// that's on the same level (i.e., in the same folder)
+	// as the application itself. Xtras can be buried up to
+	// five layers deep in nested folders within this folder,
+	// and they'll still be recognized.
+	Common::ArchiveMemberList targets;
+	SearchMan.listMatchingMembers(targets, Common::Path("xtras/*"), true);
+	SearchMan.listMatchingMembers(targets, Common::Path("*/xtras/*"), false);
+	for (auto &it : targets) {
+		if (it->isDirectory())
+			continue;
+		debugC(5, kDebugLingoExec, "Window::loadXtrasFromPath(): attempting to open Xtra %s", it->getPathInArchive().toString(g_director->_dirSeparator).c_str());
+		g_lingo->openXLib(it->getFileName(), kXtraObj, it->getPathInArchive());
+	}
+}
+
 void Window::loadStartMovieXLibs() {
 	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() != Common::kPlatformWindows) {
 		g_lingo->openXLib("FPlayXObj", kXObj, Common::Path());
 	}
-	g_lingo->openXLib("SerialPort", kXObj, Common::Path());
+
+	// After D5 we always have list of Xlibs to load
+	if (g_director->getVersion() < 500 && g_director->getPlatform() == Common::kPlatformMacintosh) {
+		// SerialPort is Mac-only
+		g_lingo->openXLib("SerialPort", kXObj, Common::Path());
+	}
 }
 
 ProjectorArchive::ProjectorArchive(Common::Path path)
 	: _path(path), _files() {
+
+	if (path.empty()) {
+		_isLoaded = false;
+		return;
+	}
 
 	// Buffer 100K into memory
 	Common::SeekableReadStream *stream = createBufferedReadStream();
@@ -662,7 +695,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	tag = stream->readUint32BE();
 	found = false;
 
-	// This loop has neglible performance impact due to the stream being buffered.
+	// This loop has negligible performance impact due to the stream being buffered.
 	// Furthermore, comparing 4 bytes at a time should be pretty fast on modern systems.
 	while (!stream->eos()) {
 		if (tag == MKTAG('D', 'i', 'c', 't') || tag == MKTAG('t', 'c', 'i', 'D')) {
@@ -736,13 +769,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		tag = stream->readUint32BE();
 		size = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 
-		// endianness issue, swap size and continue
-		if (size > stream->pos()) {
-			bigEndian = !bigEndian;
-			size = SWAP_BYTES_32(size);
-		}
-
-		Common::Path path = toSafePath(arr[i]);
+		Common::Path path = toSafePath(arr[i]).getLastComponent();
 
 		debugC(1, kDebugLoading, "Entry: %s offset %lX (%ld) tag %s size %d", path.toString().c_str(), long(stream->pos() - 8), long(stream->pos() - 8), tag2str(tag), size);
 

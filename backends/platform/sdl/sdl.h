@@ -32,6 +32,10 @@
 
 #include "common/array.h"
 
+#ifdef USE_OPENGL
+#define USE_MULTIPLE_RENDERERS
+#endif
+
 #ifdef USE_DISCORD
 class DiscordPresence;
 #endif
@@ -52,6 +56,8 @@ public:
 	void init() override;
 
 	bool hasFeature(Feature f) override;
+	void setFeatureState(Feature f, bool enable) override;
+	bool getFeatureState(Feature f) override;
 
 	// Override functions from ModularBackend and OSystem
 	void initBackend() override;
@@ -144,7 +150,6 @@ protected:
 	void detectAntiAliasingSupport();
 
 	OpenGL::ContextType _oglType;
-	bool _supportsFrameBuffer;
 	bool _supportsShaders;
 	Common::Array<uint> _antiAliasLevels;
 #endif
@@ -163,14 +168,23 @@ protected:
 	virtual Common::WriteStream *createLogFile();
 	Backends::Log::Log *_logger;
 
+#ifdef USE_MULTIPLE_RENDERERS
+	enum GraphicsManagerType {
+		GraphicsManagerSurfaceSDL,
 #ifdef USE_OPENGL
+		GraphicsManagerOpenGL,
+#endif
+		GraphicsManagerCount
+	};
+
 	typedef Common::Array<GraphicsMode> GraphicsModeArray;
 	GraphicsModeArray _graphicsModes;
 	Common::Array<int> _graphicsModeIds;
 	int _graphicsMode;
-	int _firstGLMode;
-	int _defaultSDLMode;
-	int _defaultGLMode;
+	int _firstMode[GraphicsManagerCount];
+	int _lastMode[GraphicsManagerCount];
+	int _defaultMode[GraphicsManagerCount];
+	int _supports3D[GraphicsManagerCount];
 
 	/**
 	 * Create the merged graphics modes list.
@@ -182,8 +196,8 @@ protected:
 	 */
 	void clearGraphicsModes();
 
-	enum GraphicsManagerType { GraphicsManagerSDL, GraphicsManagerOpenGL };
-	virtual GraphicsManagerType getDefaultGraphicsManager() const { return GraphicsManagerSDL; }
+	virtual GraphicsManagerType getDefaultGraphicsManager() const;
+	SdlGraphicsManager *createGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, GraphicsManagerType type);
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	int getDefaultGraphicsMode() const override;
 	bool setGraphicsMode(int mode, uint flags) override;
@@ -191,7 +205,7 @@ protected:
 #endif
 
 	virtual uint32 getOSDoubleClickTime() const { return 0; }
-	virtual const char * const *buildHelpDialogData() override;
+	const char * const *buildHelpDialogData() override;
 };
 
 #endif

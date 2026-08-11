@@ -218,7 +218,7 @@ bool continueFunction(LoadedFunction *fun) {
 		param = fun->compiledLines[fun->runThisLine].param;
 		com = fun->compiledLines[fun->runThisLine].theCommand;
 
-		if (debugChannelSet(kSludgeDebugStackMachine, -1)) {
+		if (debugChannelSet(-1, kSludgeDebugStackMachine)) {
 			debugN("  Stack before: ");
 			printStack(fun->stack);
 
@@ -657,7 +657,7 @@ bool continueFunction(LoadedFunction *fun) {
 		}
 
 		if (advanceNow) {
-			if (debugChannelSet(kSludgeDebugStackMachine, -1)) {
+			if (debugChannelSet(-1, kSludgeDebugStackMachine)) {
 				debugN("  Stack after: ");
 
 				printStack(fun->stack);

@@ -613,7 +613,7 @@ MusicEntry *EMISound::initMusicTableDemo(const Common::String &filename) {
 	return musicTable;
 }
 
-void EMISound::initMusicTableRetail(MusicEntry *musicTable, const Common::String filename) {
+void EMISound::initMusicTableRetail(MusicEntry *musicTable, const Common::String &filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 
 	// Remember to check, in case we forgot to copy over those files from the CDs.
@@ -668,7 +668,7 @@ void EMISound::initMusicTable() {
 		_musicTable = initMusicTableDemo("Music/FullMonkeyMap.imt");
 		_musicPrefix = "Music/";
 	} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		STATIC_ASSERT(ARRAYSIZE(emiPS2MusicTable) == 126, emiPS2MusicTable_bad_size);
+		static_assert(ARRAYSIZE(emiPS2MusicTable) == 126, "emiPS2MusicTable bad size");
 		_numMusicStates = 126;
 		_musicTable = new MusicEntry[126];
 		for (int i = 0; i < 126; ++i) {

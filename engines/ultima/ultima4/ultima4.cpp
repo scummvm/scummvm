@@ -46,6 +46,7 @@
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
+#include "ultima/shared/engine/data_archive.h"
 #include "common/debug.h"
 #include "common/system.h"
 
@@ -55,7 +56,7 @@ namespace Ultima4 {
 Ultima4Engine *g_ultima;
 
 Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
+		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima4"), _saveSlotToLoad(-1), _armors(nullptr),
 		_codex(nullptr), _config(nullptr), _context(nullptr), _death(nullptr),
 		_dialogueLoaders(nullptr), _game(nullptr), _items(nullptr), _music(nullptr),
 		_mapLoaders(nullptr), _moongates(nullptr),
@@ -112,8 +113,22 @@ Ultima4Engine::~Ultima4Engine() {
 }
 
 bool Ultima4Engine::initialize() {
-	if (!Shared::UltimaEngine::initialize())
+	Common::Path folder;
+	int reqMajorVersion, reqMinorVersion;
+
+	// Call syncSoundSettings to get default volumes set
+	syncSoundSettings();
+
+	// Check if the game uses data from te ultima.dat archive
+	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
+		return true;
+
+	// Try and set up the data archive
+	Common::U32String errorMsg;
+	if (!Shared::UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
+		GUIErrorMessage(errorMsg);
 		return false;
+	}
 
 	// Initialize the sub-systems
 	_config = new Config();
@@ -198,17 +213,17 @@ void Ultima4Engine::setToJourneyOnwards() {
 	assert(_saveSlotToLoad);
 }
 
-bool Ultima4Engine::canLoadGameStateCurrently(bool isAutosave) {
+bool Ultima4Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game;
 }
 
-bool Ultima4Engine::canSaveGameStateCurrently(bool isAutosave) {
+bool Ultima4Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game
 		&& (g_context->_location->_context & CTX_CAN_SAVE_GAME);
 }
 
 Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::Error result = Shared::UltimaEngine::saveGameState(slot, desc, isAutosave);
+	Common::Error result = Engine::saveGameState(slot, desc, isAutosave);
 	if (!isAutosave && result.getCode() == Common::kNoError) {
 		ConfMan.setInt("last_save", slot);
 		ConfMan.flushToDisk();
@@ -217,6 +232,17 @@ Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc,
 	return result;
 }
 
+bool Ultima4Engine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsChangingOptionsDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+bool Ultima4Engine::isEnhanced() const {
+	return _gameDescription->features & GF_VGA_ENHANCED;
+}
 
 Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) {
 	g_ultima->_saveGame->load(stream);
@@ -230,7 +256,7 @@ Common::Error Ultima4Engine::saveGameStream(Common::WriteStream *stream, bool is
 }
 
 void Ultima4Engine::quitGame() {
-	UltimaEngine::quitGame();
+	Engine::quitGame();
 
 	// Do an event poll to all the quit message to be processed
 	Common::Event e;

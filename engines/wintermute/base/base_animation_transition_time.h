@@ -34,13 +34,13 @@ namespace Wintermute {
 
 class BaseAnimationTransitionTime {
 public:
-	BaseAnimationTransitionTime(const Common::String &from, const Common::String &to, uint32 Time);
+	BaseAnimationTransitionTime(const char *from, const char *to, uint32 Time);
 	BaseAnimationTransitionTime();
 	virtual ~BaseAnimationTransitionTime();
 	bool persist(BasePersistenceManager *persistMgr);
 
-	Common::String _animFrom;
-	Common::String _animTo;
+	char *_animFrom;
+	char *_animTo;
 	uint32 _time;
 };
 

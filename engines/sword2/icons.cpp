@@ -98,7 +98,7 @@ void Mouse::buildMenu() {
 	// far as I can tell, that the new list is ordered in the same way as
 	// the old list, with new objects added to the end of it.
 
-	// Compare new with old. Anything in master thats not in new gets
+	// Compare new with old. Anything in master that's not in new gets
 	// removed from master - if found in new too, remove from temp
 
 	for (i = 0; i < _totalMasters; i++) {

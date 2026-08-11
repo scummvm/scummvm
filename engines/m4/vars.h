@@ -37,7 +37,6 @@
 #include "m4/adv_r/adv_trigger.h"
 #include "m4/adv_r/adv_walk.h"
 #include "m4/adv_r/conv_io.h"
-#include "m4/core/globals.h"
 #include "m4/core/mouse.h"
 #include "m4/fileio/fstream.h"
 #include "m4/fileio/sys_file.h"
@@ -47,13 +46,13 @@
 #include "m4/graphics/rend.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_item.h"
+#include "m4/gui/gui_menu_items.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
 #include "m4/gui/hotkeys.h"
 #include "m4/mem/memman.h"
 #include "m4/mem/res.h"
 #include "m4/platform/events.h"
-#include "m4/platform/timer.h"
 #include "m4/platform/sound/digi.h"
 #include "m4/platform/sound/midi.h"
 #include "m4/wscript/wscript.h"
@@ -116,6 +115,8 @@ public:
 	ADVScale_Globals _scale;
 	ConvDisplayData _cdd;
 	Rend_Globals _rend;
+	GUI::MenuGlobals _menu;
+	bool _menuSystemInitialized = false;
 
 	const bool _cheating_enabled = true;
 
@@ -142,6 +143,7 @@ public:
 	int _global_sound_room = 0;
 	CursorChange _toggle_cursor = CURSCHANGE_NONE;
 	bool _i_just_hyperwalked = false;
+	bool _please_hyperwalk = false;
 	void (*_custom_ascii_converter)(char *string) = nullptr;
 	bool _vmng_Initted = false;
 	ScreenContext *_frontScreen = nullptr;
@@ -186,7 +188,6 @@ public:
 	bool _shut_down_digi_tracks_between_rooms = false;
 	cursor_states _cursor_state = kARROW;
 	int _iPitch = 0;
-	int _click_x = 0, _click_y = 0;
 	bool _hyperwalk = false;
 };
 

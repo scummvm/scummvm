@@ -22,12 +22,12 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SERIALIZER_H
 #define AGS_ENGINE_AC_DYNOBJ_SERIALIZER_H
 
-#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/engine/ac/dynobj/cc_script_object.h"
 
 namespace AGS3 {
 
-struct AGSDeSerializer : ICCObjectReader {
-	void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) override;
+struct AGSDeSerializer : ICCObjectCollectionReader {
+	void Unserialize(int32_t index, const char *objectType, const char *serializedData, int dataSize) override;
 };
 
 } // namespace AGS3

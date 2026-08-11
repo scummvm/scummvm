@@ -30,6 +30,8 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
+#include "graphics/framelimiter.h"
+
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/debugger.h"
@@ -46,15 +48,6 @@
 #include "gui/message.h"
 
 namespace Wintermute {
-
-// Simple constructor for detection - we need to setup the persistence to avoid special-casing in-engine
-// This might not be the prettiest solution
-WintermuteEngine::WintermuteEngine() : Engine(g_system) {
-	_game = new AdGame("");
-	_debugger = nullptr;
-	_dbgController = nullptr;
-	_gameDescription = nullptr;
-}
 
 WintermuteEngine::WintermuteEngine(OSystem *syst, const WMEGameDescription *desc)
 	: Engine(syst), _gameDescription(desc) {
@@ -78,6 +71,7 @@ WintermuteEngine::~WintermuteEngine() {
 	// Dispose your resources here
 	deinit();
 	delete _game;
+	_game = nullptr;
 	//_debugger deleted by Engine
 }
 
@@ -100,10 +94,14 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error WintermuteEngine::run() {
+#if EXTENDED_DEBUGGER_ENABLED
 	// Create debugger console. It requires GFX to be initialized
 	_dbgController = new DebuggerController(this);
+#endif
 	_debugger = new Console(this);
 	setDebugger(_debugger);
+
+	_savingEnabled = true;
 
 //	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
@@ -147,8 +145,6 @@ int WintermuteEngine::init() {
 		if (!(instance.getFlags() & GF_LOWSPEC_ASSETS)) {
 			GUI::MessageDialog dialog(_("This game requires PNG, JPEG and Vorbis support."));
 			dialog.runModal();
-			delete _game;
-			_game = nullptr;
 			return false;
 		}
 	#endif
@@ -158,8 +154,6 @@ int WintermuteEngine::init() {
 		if (BaseEngine::isFoxTailCheck(instance.getTargetExecutable())) {
 			GUI::MessageDialog dialog(_("This game requires the FoxTail subengine, which is not compiled in."));
 			dialog.runModal();
-			delete _game;
-			_game = nullptr;
 			return false;
 		}
 	#endif
@@ -169,8 +163,6 @@ int WintermuteEngine::init() {
 		if (instance.getTargetExecutable() == WME_HEROCRAFT) {
 			GUI::MessageDialog dialog(_("This game requires the HeroCraft subengine, which is not compiled in."));
 			dialog.runModal();
-			delete _game;
-			_game = nullptr;
 			return false;
 		}
 	#endif
@@ -181,9 +173,7 @@ int WintermuteEngine::init() {
 		GUI::MessageDialog dialog(_("This game requires 3D capabilities, which is not compiled in. As such, it"
 			" is likely to be unplayable totally or partially."), _("Start anyway"), _("Cancel"));
 		if (dialog.runModal() != GUI::kMessageOK) {
-			delete _game;
-			_game = nullptr;
-			return false;
+			return 1;
 		}
 	}
 	#endif
@@ -203,11 +193,13 @@ int WintermuteEngine::init() {
 
 	_game->initConfManSettings();
 
+	_game->_accessTTSEnabled = ConfMan.getBool("tts_enabled");
+
 	// load general game settings
 	_game->initialize1();
 
 	// set gameId, for savegame-naming:
-	_game->setGameTargetName(_targetName);
+	_game->_targetName = _targetName;
 
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
@@ -247,11 +239,11 @@ int WintermuteEngine::init() {
 	// load game
 	uint32 dataInitStart = g_system->getMillis();
 
-	if (DID_FAIL(_game->loadGameSettingsFile())) {
+	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
 		_game = nullptr;
-		return false;
+		return 2;
 	}
 
 	_game->_renderer->_ready = true;
@@ -262,24 +254,29 @@ int WintermuteEngine::init() {
 
 	if (ConfMan.hasKey("save_slot")) {
 		int slot = ConfMan.getInt("save_slot");
-		_game->loadGame(slot);
+		if (!_game->loadGame(slot)) {
+			_game->LOG(ret, "Error loading save game file.");
+			delete _game;
+			_game = nullptr;
+			return 2;
+		}
 	}
 
+#if EXTENDED_DEBUGGER_ENABLED
 	_game->_scEngine->attachMonitor(_dbgController);
-
+#endif
+	
 	// all set, ready to go
 	return 0;
 }
 
 int WintermuteEngine::messageLoop() {
 	bool done = false;
+	uint32 maxFPS = ConfMan.getInt("engine_speed");
+	if (maxFPS == 0)
+		maxFPS = 60;
+	Graphics::FrameLimiter limiter(g_system, maxFPS);
 
-	uint32 prevTime = _system->getMillis();
-	uint32 time = _system->getMillis();
-	uint32 diff = 0;
-
-	const uint32 maxFPS = 60;
-	const uint32 frameTime = 2 * (uint32)((1.0 / maxFPS) * 1000);
 	while (!done) {
 		if (!_game) {
 			break;
@@ -296,20 +293,15 @@ int WintermuteEngine::messageLoop() {
 
 			_game->displayDebugInfo();
 
-			time = _system->getMillis();
-			diff = time - prevTime;
-			if (frameTime > diff) { // Avoid overflows
-				_system->delayMillis(frameTime - diff);
-			}
-
 			// ***** flip
-			if (!_game->getSuspendedRendering()) {
+			limiter.delayBeforeSwap();
+			if (!_game->_suspendedRendering) {
 				_game->_renderer->flip();
 			}
-			if (_game->getIsLoading()) {
+			limiter.startFrame();
+			if (_game->_loading) {
 				_game->loadGame(_game->_scheduledLoadSlot);
 			}
-			prevTime = time;
 		}
 		if (shouldQuit()) {
 			break;
@@ -342,11 +334,19 @@ Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &de
 }
 
 bool WintermuteEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return true;
+	return _savingEnabled;
 }
 
 bool WintermuteEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
+}
+
+bool WintermuteEngine::canSaveAutosaveCurrently() {
+	return _savingEnabled;
+}
+
+void WintermuteEngine::savingEnable(bool enable) {
+	_savingEnabled = enable;
 }
 
 bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {

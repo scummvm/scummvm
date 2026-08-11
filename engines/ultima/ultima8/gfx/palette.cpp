@@ -19,8 +19,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/gfx/palette.h"
+
+#include "common/stream.h"
+#include "ultima/ultima8/gfx/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -38,7 +40,7 @@ void Palette::load(Common::ReadStream &rs) {
 
 	// convert from 0-63 to 0-255 _palette
 	for (i = 0; i < 256; i++) {
-		set(i, (raw[i * 3] * 255) / 63, (raw[i * 3 + 1] * 255) / 63, (raw[i * 3 + 2] * 255) / 63);
+		set(i, PALETTE_6BIT_TO_8BIT(raw[i * 3]), PALETTE_6BIT_TO_8BIT(raw[i * 3 + 1]), PALETTE_6BIT_TO_8BIT(raw[i * 3 + 2]));
 	}
 
 	for (i = 0; i < 256; i++)
@@ -77,6 +79,101 @@ void Palette::transformRGB(int &r_, int &g_, int &b_) const {
 	b_ = (r * _matrix[8] + g * _matrix[9] + b * _matrix[10] + 255 * _matrix[11]) / 2048;
 	if (b_ < 0) b_ = 0;
 	if (b_ > 0xFF) b_ = 0xFF;
+}
+
+void Palette::updateNativeMap(const Graphics::PixelFormat &format, int maxindex) {
+	if (maxindex == 0)
+		maxindex = size();
+
+	for (int i = 0; i < maxindex; i++) {
+		int32 r, g, b;
+		byte sr, sg, sb;
+
+		// Normal palette
+		get(i, sr, sg, sb);
+		if (format.isCLUT8()) {
+			_native_untransformed[i] = i;
+		} else {
+			_native_untransformed[i] = format.RGBToColor(sr, sg, sb);
+		}
+
+		r = _matrix[0] * sr +
+			_matrix[1] * sg +
+			_matrix[2] * sb +
+			_matrix[3] * 255;
+		if (r < 0)
+			r = 0;
+		if (r > 0x7F800)
+			r = 0x7F800;
+		r = r >> 11;
+
+		g = _matrix[4] * sr +
+			_matrix[5] * sg +
+			_matrix[6] * sb +
+			_matrix[7] * 255;
+		if (g < 0)
+			g = 0;
+		if (g > 0x7F800)
+			g = 0x7F800;
+		g = g >> 11;
+
+		b = _matrix[8] * sr +
+			_matrix[9] * sg +
+			_matrix[10] * sb +
+			_matrix[11] * 255;
+		if (b < 0)
+			b = 0;
+		if (b > 0x7F800)
+			b = 0x7F800;
+		b = b >> 11;
+
+		// Transformed normal palette
+		if (format.isCLUT8()) {
+			_native[i] = findBestColor(static_cast<uint8>(r),
+									   static_cast<uint8>(g),
+									   static_cast<uint8>(b));
+		} else {
+			_native[i] = format.RGBToColor(static_cast<uint8>(r),
+										   static_cast<uint8>(g),
+										   static_cast<uint8>(b));
+		}
+
+		// Transformed XFORM palette (Uses the TEX32 format)
+		if (TEX32_A(_xform_untransformed[i])) {
+			r = _matrix[0] * TEX32_R(_xform_untransformed[i]) +
+				_matrix[1] * TEX32_G(_xform_untransformed[i]) +
+				_matrix[2] * TEX32_B(_xform_untransformed[i]) +
+				_matrix[3] * 255;
+			if (r < 0)
+				r = 0;
+			if (r > 0x7F800)
+				r = 0x7F800;
+
+			g = _matrix[4] * TEX32_R(_xform_untransformed[i]) +
+				_matrix[5] * TEX32_G(_xform_untransformed[i]) +
+				_matrix[6] * TEX32_B(_xform_untransformed[i]) +
+				_matrix[7] * 255;
+			if (g < 0)
+				g = 0;
+			if (g > 0x7F800)
+				g = 0x7F800;
+
+			b = _matrix[8] * TEX32_R(_xform_untransformed[i]) +
+				_matrix[9] * TEX32_G(_xform_untransformed[i]) +
+				_matrix[10] * TEX32_B(_xform_untransformed[i]) +
+				_matrix[11] * 255;
+			if (b < 0)
+				b = 0;
+			if (b > 0x7F800)
+				b = 0x7F800;
+
+			_xform[i] = TEX32_PACK_RGBA(static_cast<uint8>(r >> 11),
+										static_cast<uint8>(g >> 11),
+										static_cast<uint8>(b >> 11),
+										TEX32_A(_xform_untransformed[i]));
+		} else
+			_xform[i] = 0;
+	}
 }
 
 } // End of namespace Ultima8

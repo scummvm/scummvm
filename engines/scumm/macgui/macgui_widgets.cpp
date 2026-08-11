@@ -39,6 +39,9 @@ namespace Scumm {
 // ---------------------------------------------------------------------------
 
 MacGuiImpl::MacWidget::MacWidget(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacGuiObject(bounds, enabled), _window(window), _text(text) {
+	_black = _window->_gui->getBlack();
+	_white = _window->_gui->getWhite();
+
 	// Widgets are clipped to the inner surface of the dialog. If a widget
 	// is clipped out of existence, make it invisible to avoid crashes.
 
@@ -76,13 +79,18 @@ void MacGuiImpl::MacWidget::setValue(int value) {
 	setRedraw();
 }
 
-void MacGuiImpl::MacWidget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
+void MacGuiImpl::MacWidget::drawBitmap(Common::Rect r, const uint16 *bitmap, uint32 color) const {
 	_window->_gui->drawBitmap(_window->innerSurface(), r, bitmap, color);
 }
 
-int MacGuiImpl::MacWidget::drawText(Common::String text, int x, int y, int w, Color fg, Color bg, Graphics::TextAlign align, bool wordWrap, int deltax) const {
+int MacGuiImpl::MacWidget::drawText(Common::String text, int x, int y, int w, uint32 fg, uint32 bg, Graphics::TextAlign align, bool wordWrap, int deltax) const {
 	if (text.empty())
 		return 0;
+
+	if (fg == 0 && bg == 0) {
+		fg = _black;
+		bg = _white;
+	}
 
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
@@ -154,14 +162,14 @@ void MacGuiImpl::MacButton::draw(bool drawFocused) {
 	CornerLine frameCorner[] = { { 5, 1 }, { 3, 3 }, { 2, 4 }, { 1, 5 }, { 1, 3 }, { 0, 4 }, { 0, -1 } };
 
 	Graphics::Surface *s = _window->innerSurface();
-	Color fg, bg;
+	uint32 fg, bg;
 
 	if (drawFocused || (_window->getFocusedWidget() == this && _bounds.contains(_window->getMousePos()))) {
-		fg = kWhite;
-		bg = kBlack;
+		fg = _white;
+		bg = _black;
 	} else {
-		fg = kBlack;
-		bg = kWhite;
+		fg = _black;
+		bg = _white;
 	}
 
 	int x0 = _bounds.left;
@@ -181,10 +189,10 @@ void MacGuiImpl::MacButton::draw(bool drawFocused) {
 		cornerSize = 2;
 	}
 
-	s->hLine(x0 + cornerSize, y0, x1 - cornerSize, kBlack);
-	s->hLine(x0 + cornerSize, y1, x1 - cornerSize, kBlack);
-	s->vLine(x0, y0 + cornerSize, y1 - cornerSize, kBlack);
-	s->vLine(x1, y0 + cornerSize, y1 - cornerSize, kBlack);
+	s->hLine(x0 + cornerSize, y0, x1 - cornerSize, _black);
+	s->hLine(x0 + cornerSize, y1, x1 - cornerSize, _black);
+	s->vLine(x0, y0 + cornerSize, y1 - cornerSize, _black);
+	s->vLine(x1, y0 + cornerSize, y1 - cornerSize, _black);
 
 	// The way the corners are rounded, we can fill this entire rectangle
 	// in one go.
@@ -235,12 +243,12 @@ void MacGuiImpl::MacButton::hLine(int x0, int y0, int x1, bool enabled) {
 
 		for (int x = x0; x <= x1; x++) {
 			if (((x + y0) % 2) == 0)
-				s->setPixel(x, y0, kBlack);
+				s->setPixel(x, y0, _black);
 			else
-				s->setPixel(x, y0, kWhite);
+				s->setPixel(x, y0, _white);
 		}
 	} else
-		s->hLine(x0, y0, x1, kBlack);
+		s->hLine(x0, y0, x1, _black);
 }
 
 void MacGuiImpl::MacButton::vLine(int x0, int y0, int y1, bool enabled) {
@@ -252,12 +260,12 @@ void MacGuiImpl::MacButton::vLine(int x0, int y0, int y1, bool enabled) {
 
 		for (int y = y0; y <= y1; y++) {
 			if (((x0 + y) % 2) == 0)
-				s->setPixel(x0, y, kBlack);
+				s->setPixel(x0, y, _black);
 			else
-				s->setPixel(x0, y, kWhite);
+				s->setPixel(x0, y, _white);
 		}
 	} else
-		s->vLine(x0, y0, y1, kBlack);
+		s->vLine(x0, y0, y1, _black);
 }
 
 void MacGuiImpl::MacButton::drawCorners(Common::Rect r, CornerLine *corner, bool enabled) {
@@ -307,10 +315,11 @@ void MacGuiImpl::MacCheckbox::draw(bool drawFocused) {
 	debug(1, "MacGuiImpl::MacCheckbox: Drawing checkbox %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	Graphics::Surface *s = _window->innerSurface();
+
 	Common::Rect box(_hitBounds.left + 2, _hitBounds.top + 2, _hitBounds.left + 14, _hitBounds.top + 14);
 
 	if (_fullRedraw) {
-		_window->innerSurface()->fillRect(_bounds, kWhite);
+		_window->innerSurface()->fillRect(_bounds, _white);
 
 		int x = _hitBounds.left + 18;
 		int y = _hitBounds.top;
@@ -320,17 +329,17 @@ void MacGuiImpl::MacCheckbox::draw(bool drawFocused) {
 	} else
 		_window->markRectAsDirty(box);
 
-	s->fillRect(box, kBlack);
+	s->fillRect(box, _black);
 	if (drawFocused || (_window->getFocusedWidget() == this && _hitBounds.contains(_window->getMousePos()))) {
 		box.grow(-2);
 	} else {
 		box.grow(-1);
 	}
-	s->fillRect(box, kWhite);
+	s->fillRect(box, _white);
 
 	if (_value && _enabled) {
-		s->drawLine(box.left, box.top, box.right - 1, box.bottom - 1, kBlack);
-		s->drawLine(box.left, box.bottom - 1, box.right - 1, box.top, kBlack);
+		s->drawLine(box.left, box.top, box.right - 1, box.bottom - 1, _black);
+		s->drawLine(box.left, box.bottom - 1, box.right - 1, box.top, _black);
 	}
 
 	_redraw = false;
@@ -355,7 +364,7 @@ void MacGuiImpl::MacStaticText::draw(bool drawFocused) {
 	debug(1, "MacGuiImpl::MacStaticText: Drawing text %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	_window->innerSurface()->fillRect(_bounds, _bg);
-	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), _fg, _bg, Graphics::kTextAlignLeft, _wordWrap, 1);
+	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), _fg, _bg, _alignment, _wordWrap, 1);
 	_window->markRectAsDirty(_bounds);
 
 	_redraw = false;
@@ -392,7 +401,7 @@ MacGuiImpl::MacEditText::MacEditText(MacGuiImpl::MacDialogWindow *window, Common
 }
 
 bool MacGuiImpl::MacEditText::findWidget(int x, int y) const {
-	// Once we start dragging the handle, any mouse position is considered
+	// Once we start drag-selecting, any mouse position is considered
 	// within the widget.
 
 	if (_window->getFocusedWidget() == this)
@@ -503,7 +512,7 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 	if (_redraw || _fullRedraw) {
 		Graphics::Surface *s = _window->innerSurface();
 
-		s->fillRect(_bounds, kWhite);
+		s->fillRect(_bounds, _white);
 
 		int selectStart = -1;
 		int selectEnd = -1;
@@ -526,7 +535,7 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 		bool lastCharSelected = false;
 
 		for (int i = 0; i < (int)_text.size() && x < _textSurface.w; i++) {
-			Color color = kBlack;
+			uint32 color = _black;
 			int charWidth = _font->getCharWidth((byte)_text[i]);
 
 			if (x + charWidth >= 0) {
@@ -535,8 +544,8 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 						firstCharSelected = true;
 					lastCharSelected = true;
 
-					_textSurface.fillRect(Common::Rect(x, 0, x + charWidth, _textSurface.h), kBlack);
-					color = kWhite;
+					_textSurface.fillRect(Common::Rect(x, 0, x + charWidth, _textSurface.h), _black);
+					color = _white;
 				} else
 					lastCharSelected = false;
 
@@ -548,10 +557,10 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 		}
 
 		if (firstCharSelected)
-			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), kBlack);
+			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), _black);
 
 		if (lastCharSelected && _bounds.left + x + 1 < _bounds.right)
-			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), kBlack);
+			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), _black);
 
 		_window->markRectAsDirty(_bounds);
 	}
@@ -572,14 +581,14 @@ void MacGuiImpl::MacEditText::draw(bool drawFocused) {
 				// Erase the old caret. Not needed if the whole
 				// widget was just redrawn.
 
-				_textSurface.vLine(_caretX, 0, _bounds.bottom - 1, kWhite);
+				_textSurface.vLine(_caretX, 0, _bounds.bottom - 1, _white);
 				if (!_redraw && !_fullRedraw)
 					_window->markRectAsDirty(Common::Rect(_bounds.left + _caretX + 1, _bounds.top, _bounds.left + _caretX + 2, _bounds.bottom));
 			}
 
 			// Draw the new caret
 
-			_textSurface.vLine(caretX, 0, _bounds.bottom - 1, _caretVisible ? kBlack : kWhite);
+			_textSurface.vLine(caretX, 0, _bounds.bottom - 1, _caretVisible ? _black : _white);
 
 			if (!_redraw && !_fullRedraw)
 				_window->markRectAsDirty(Common::Rect(_bounds.left + caretX + 1, _bounds.top, _bounds.left + caretX + 2, _bounds.bottom));
@@ -795,27 +804,33 @@ void MacGuiImpl::MacEditText::handleMouseMove(Common::Event &event) {
 }
 
 // ---------------------------------------------------------------------------
-// Picture widget
+// Image widget
 // ---------------------------------------------------------------------------
 
-MacGuiImpl::MacPicture::MacPicture(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
-	_picture = _window->_gui->loadPict(id);
+MacGuiImpl::MacImage::MacImage(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Graphics::Surface *surface, Graphics::Surface *mask, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
+	_image = surface;
+	_mask = mask;
 }
 
-MacGuiImpl::MacPicture::~MacPicture() {
-	if (_picture) {
-		_picture->free();
-		delete _picture;
+MacGuiImpl::MacImage::~MacImage() {
+	if (_image) {
+		_image->free();
+		delete _image;
+	}
+	if (_mask) {
+		_mask->free();
+		delete _mask;
 	}
 }
 
-void MacGuiImpl::MacPicture::draw(bool drawFocused) {
+void MacGuiImpl::MacImage::draw(bool drawFocused) {
 	if (!_redraw && !_fullRedraw)
 		return;
 
-	debug(1, "MacGuiImpl::MacPicture: Drawing picture %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+	debug(1, "MacGuiImpl::MacImage: Drawing picture %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
-	_window->drawSprite(_picture, _bounds.left, _bounds.top);
+	if (_image)
+		_window->drawSprite(this, _bounds.left, _bounds.top);
 
 	_redraw = false;
 	_fullRedraw = false;
@@ -823,16 +838,33 @@ void MacGuiImpl::MacPicture::draw(bool drawFocused) {
 
 // ---------------------------------------------------------------------------
 // Slider base class
+//
+// The idea here is that _maxPos and _minPos correspond to _maxValue and
+// _minValue respectively. The position can be calculated from the value and
+// vice versa.
+//
+// For more exact positioning, where you have to match it exactly to a visible
+// ruler, you can use addStop() to override the calculated values.
 // ---------------------------------------------------------------------------
 
 void MacGuiImpl::MacSliderBase::setValue(int value) {
-	_value = CLIP(value, _minValue, _maxValue);
+	int newValue = CLIP(value, _minValue, _maxValue);
+	MacWidget::setValue(newValue);
 	_handlePos = calculatePosFromValue();
 }
 
 int MacGuiImpl::MacSliderBase::calculateValueFromPos() const {
+	return calculateValueFromPos(_handlePos);
+}
+
+int MacGuiImpl::MacSliderBase::calculateValueFromPos(int pos) const {
+	int value;
+
+	if (_posToValue.tryGetVal(pos, value))
+		return value;
+
+	int posOffset = pos - _minPos;
 	int posRange = _maxPos - _minPos;
-	int posOffset = _handlePos - _minPos;
 
 	int valueRange = _maxValue - _minValue;
 	int valueOffset = (posRange / 2 + valueRange * posOffset) / posRange;
@@ -841,8 +873,17 @@ int MacGuiImpl::MacSliderBase::calculateValueFromPos() const {
 }
 
 int MacGuiImpl::MacSliderBase::calculatePosFromValue() const {
+	return calculatePosFromValue(_value);
+}
+
+int MacGuiImpl::MacSliderBase::calculatePosFromValue(int value) const {
+	int pos;
+
+	if (_valueToPos.tryGetVal(value, pos))
+		return pos;
+
 	int valueRange = _maxValue - _minValue;
-	int valueOffset = _value - _minValue;
+	int valueOffset = value - _minValue;
 
 	int posRange = _maxPos - _minPos;
 	int posOffset = (valueRange / 2 + posRange * valueOffset) / valueRange;
@@ -901,9 +942,9 @@ Common::Rect MacGuiImpl::MacSlider::getHandleRect(int value) {
 }
 
 void MacGuiImpl::MacSlider::fill(Common::Rect r, bool inverted) {
-	Color pattern[2][4] = {
-		{ kBlack, kWhite, kWhite, kWhite },
-		{ kWhite, kWhite, kBlack, kWhite }
+	uint32 pattern[2][4] = {
+		{ _white, _white, _black, _white },
+		{ _black, _white, _white, _white }
 	};
 
 	Graphics::Surface *s = _window->innerSurface();
@@ -915,10 +956,10 @@ void MacGuiImpl::MacSlider::fill(Common::Rect r, bool inverted) {
 				// slider handle while dragging. I think this matches the
 				// original behavior, though I'm not quite sure.
 
-				bool srcPixel = s->getPixel(x, y) == kBlack;
-				bool dstPixel = pattern[y % 2][x % 4] == kWhite;
+				bool srcPixel = s->getPixel(x, y) == _black;
+				bool dstPixel = pattern[y % 2][x % 4] == _white;
 
-				Color color = (srcPixel ^ dstPixel) ? kBlack : kWhite;
+				uint32 color = (srcPixel ^ dstPixel) ? _black : _white;
 
 				s->setPixel(x, y, color);
 			} else
@@ -940,9 +981,9 @@ void MacGuiImpl::MacSlider::draw(bool drawFocused) {
 
 		Graphics::Surface *s = _window->innerSurface();
 
-		s->frameRect(_bounds, kBlack);
-		s->hLine(_bounds.left + 1, _bounds.top + 15, _bounds.right - 2, kBlack);
-		s->hLine(_bounds.left + 1, _bounds.bottom - 16, _bounds.right - 2, kBlack);
+		s->frameRect(_bounds, _black);
+		s->hLine(_bounds.left + 1, _bounds.top + 15, _bounds.right - 2, _black);
+		s->hLine(_bounds.left + 1, _bounds.bottom - 16, _bounds.right - 2, _black);
 
 		drawUpArrow(false);
 		drawDownArrow(false);
@@ -955,7 +996,7 @@ void MacGuiImpl::MacSlider::draw(bool drawFocused) {
 			Common::Rect handleRect = getHandleRect(_value);
 			drawHandle(handleRect);
 		} else
-			s->fillRect(fillRect, kWhite);
+			s->fillRect(fillRect, _white);
 
 		_window->markRectAsDirty(_bounds);
 	}
@@ -1005,8 +1046,8 @@ void MacGuiImpl::MacSlider::drawArrow(Common::Rect r, const uint16 *bitmap, bool
 
 	r.grow(-1);
 
-	s->fillRect(r, kWhite);
-	drawBitmap(Common::Rect(r.left + 1, r.top + 2, r.right - 1, r.top + 12), bitmap, kBlack);
+	s->fillRect(r, _white);
+	drawBitmap(Common::Rect(r.left + 1, r.top + 2, r.right - 1, r.top + 12), bitmap, _black);
 
 	if (markAsDirty)
 		_window->markRectAsDirty(r);
@@ -1023,9 +1064,9 @@ void MacGuiImpl::MacSlider::drawHandle(Common::Rect r) {
 
 	Graphics::Surface *s = _window->innerSurface();
 
-	s->frameRect(r, kBlack);
+	s->frameRect(r, _black);
 	r.grow(-1);
-	s->fillRect(r, kWhite);
+	s->fillRect(r, _white);
 }
 
 void MacGuiImpl::MacSlider::redrawHandle(int oldValue, int newValue) {
@@ -1152,7 +1193,7 @@ void MacGuiImpl::MacSlider::handleMouseMove(Common::Event &event) {
 		int y1 = _handlePos + 16;
 
 		// Drawing a solid rectangle would be easier, and probably look
-		// better. But it seems the orginal Mac widget would draw the
+		// better. But it seems the original Mac widget would draw the
 		// frame as an inverted slider background, even when drawing it
 		// on top of the slider handle.
 
@@ -1252,12 +1293,38 @@ void MacGuiImpl::MacSlider::handleWheelDown() {
 }
 
 // ---------------------------------------------------------------------------
-// Picture slider widget. This is the custom slider widget used for the Loom
+// Image slider widget. This is the custom slider widget used for the Loom
 // and Indy 3 options dialogs. It consists of a background image and a slider
 // drag handle.
+//
+// In addition to the min and max value positions, this one also maintains a
+// _minX and _maxX position to which the handle can be dragged. This is only
+// used for the older games.
 // ---------------------------------------------------------------------------
 
-bool MacGuiImpl::MacPictureSlider::findWidget(int x, int y) const {
+MacGuiImpl::MacImageSlider::MacImageSlider(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, MacImage *handle, bool enabled, int minX, int maxX, int minValue, int maxValue)
+	: MacSliderBase(window, bounds, minValue, maxValue, minX, maxX, enabled), _handle(handle), _minX(minX), _maxX(maxX) {
+	_background = new Graphics::Surface();
+	_background->copyFrom(window->innerSurface()->getSubArea(bounds));
+	_freeBackground = true;
+}
+
+MacGuiImpl::MacImageSlider::~MacImageSlider() {
+	if (_freeBackground && _background) {
+		_background->free();
+		delete _background;
+	}
+}
+
+void MacGuiImpl::MacImageSlider::setValue(int value) {
+	int newValue = CLIP(value, _minValue, _maxValue);
+	MacWidget::setValue(newValue);
+	eraseHandle();
+	_handlePos = calculatePosFromValue();
+	drawHandle();
+}
+
+bool MacGuiImpl::MacImageSlider::findWidget(int x, int y) const {
 	// Once we start dragging the handle, any mouse position is considered
 	// within the widget.
 
@@ -1267,14 +1334,14 @@ bool MacGuiImpl::MacPictureSlider::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
-void MacGuiImpl::MacPictureSlider::draw(bool drawFocused) {
+void MacGuiImpl::MacImageSlider::draw(bool drawFocused) {
 	if (!_redraw && !_fullRedraw)
 		return;
 
-	debug(1, "MacGuiImpl::MacPictureSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+	debug(1, "MacGuiImpl::MacImageSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	if (_fullRedraw) {
-		_window->drawSprite(_background->getPicture(), _bounds.left, _bounds.top);
+		_window->drawSprite(_background, _bounds.left, _bounds.top);
 		drawHandle();
 	}
 
@@ -1282,25 +1349,25 @@ void MacGuiImpl::MacPictureSlider::draw(bool drawFocused) {
 	_fullRedraw = false;
 }
 
-void MacGuiImpl::MacPictureSlider::eraseHandle() {
+void MacGuiImpl::MacImageSlider::eraseHandle() {
+	if (_handlePos == -1)
+		return;
+
 	Common::Rect r = _handle->getBounds();
 	int y = r.top - _bounds.top;
 	int w = r.width();
 	int h = r.height();
 
-	Graphics::Surface *background = _background->getPicture();
-	Graphics::Surface sprite = background->getSubArea(Common::Rect(_handlePos, y, _handlePos + w, y + h));
+	Graphics::Surface sprite = _background->getSubArea(Common::Rect(_handlePos, y, _handlePos + w, y + h));
 	_window->drawSprite(&sprite, _bounds.left + _handlePos, r.top);
 }
 
-void MacGuiImpl::MacPictureSlider::drawHandle() {
-	Graphics::Surface *sprite = _handle->getPicture();
+void MacGuiImpl::MacImageSlider::drawHandle() {
 	Common::Rect r = _handle->getBounds();
-
-	_window->drawSprite(sprite, _bounds.left + _handlePos, r.top);
+	_window->drawSprite(_handle, _bounds.left + _handlePos, r.top);
 }
 
-void MacGuiImpl::MacPictureSlider::handleMouseDown(Common::Event &event) {
+void MacGuiImpl::MacImageSlider::handleMouseDown(Common::Event &event) {
 	int mouseX = event.mouse.x;
 	int handleWidth = _handle->getBounds().width();
 
@@ -1312,7 +1379,7 @@ void MacGuiImpl::MacPictureSlider::handleMouseDown(Common::Event &event) {
 	handleMouseMove(event);
 }
 
-bool MacGuiImpl::MacPictureSlider::handleMouseUp(Common::Event &event) {
+bool MacGuiImpl::MacImageSlider::handleMouseUp(Common::Event &event) {
 	// Erase the drag rect, since the handle might not end up in
 	// the exact same spot.
 	int newValue = calculateValueFromPos();
@@ -1327,8 +1394,16 @@ bool MacGuiImpl::MacPictureSlider::handleMouseUp(Common::Event &event) {
 	return false;
 }
 
-void MacGuiImpl::MacPictureSlider::handleMouseMove(Common::Event &event) {
-	int newPos = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
+void MacGuiImpl::MacImageSlider::handleMouseMove(Common::Event &event) {
+	int newPos;
+
+	if (_snapWhileDragging) {
+		// Even when overriding the stops, the calculated one should
+		// be close enough here.
+		int newValue = calculateValueFromPos(CLIP<int>(event.mouse.x - _bounds.left - _handle->getImage()->w / 2, _minX, _maxX));
+		newPos = calculatePosFromValue(newValue);
+	} else
+		newPos = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
 
 	if (newPos != _handlePos) {
 		eraseHandle();
@@ -1337,7 +1412,7 @@ void MacGuiImpl::MacPictureSlider::handleMouseMove(Common::Event &event) {
 	}
 }
 
-void MacGuiImpl::MacPictureSlider::handleWheelUp() {
+void MacGuiImpl::MacImageSlider::handleWheelUp() {
 	int newValue = MAX(_minValue, _value + 1);
 
 	if (_value != newValue) {
@@ -1347,7 +1422,7 @@ void MacGuiImpl::MacPictureSlider::handleWheelUp() {
 	}
 }
 
-void MacGuiImpl::MacPictureSlider::handleWheelDown() {
+void MacGuiImpl::MacImageSlider::handleWheelDown() {
 	int newValue = MIN(_maxValue, _value - 1);
 
 	if (_value != newValue) {
@@ -1408,9 +1483,9 @@ void MacGuiImpl::MacListBox::updateTexts() {
 		_textWidgets[i]->setText(_texts[i + offset]);
 
 		if (_textWidgets[i]->isEnabled() && (int)i + offset == _value)
-			_textWidgets[i]->setColor(kWhite, kBlack);
+			_textWidgets[i]->setColor(_white, _black);
 		else
-			_textWidgets[i]->setColor(kBlack, kWhite);
+			_textWidgets[i]->setColor(_black, _white);
 	}
 }
 
@@ -1427,9 +1502,9 @@ void MacGuiImpl::MacListBox::draw(bool drawFocused) {
 
 	Graphics::Surface *s = _window->innerSurface();
 
-	s->hLine(_bounds.left, _bounds.top, _bounds.right - 17, kBlack);
-	s->hLine(_bounds.left, _bounds.bottom - 1, _bounds.right - 17, kBlack);
-	s->vLine(_bounds.left, _bounds.top + 1, _bounds.bottom - 2, kBlack);
+	s->hLine(_bounds.left, _bounds.top, _bounds.right - 17, _black);
+	s->hLine(_bounds.left, _bounds.bottom - 1, _bounds.right - 17, _black);
+	s->vLine(_bounds.left, _bounds.top + 1, _bounds.bottom - 2, _black);
 
 	_redraw = false;
 	_fullRedraw = false;
@@ -1574,6 +1649,228 @@ bool MacGuiImpl::MacListBox::handleKeyDown(Common::Event &event) {
 	}
 
 	return false;
+}
+
+// ---------------------------------------------------------------------------
+// Pop-up menu widget
+// ---------------------------------------------------------------------------
+
+MacGuiImpl::MacPopUpMenu::MacPopUpMenu(MacGuiImpl::MacDialogWindow *window, Common::Rect bounds, Common::String text, int textWidth, Common::StringArray texts, bool enabled) : MacWidget(window, bounds, text, enabled), _textWidth(textWidth), _texts(texts) {
+	_enhUIUX = g_engine->enhancementEnabled(kEnhUIUX);
+	_floating = false;
+	_black = _window->_gui->getBlack();
+	_white = _window->_gui->getWhite();
+
+	_popUpBounds.left = _bounds.left + _textWidth;
+	_popUpBounds.right = _bounds.right;
+}
+
+MacGuiImpl::MacPopUpMenu::~MacPopUpMenu() {
+	_texts.clear();
+	_popUpBackground.free();
+}
+
+void MacGuiImpl::MacPopUpMenu::close() {
+	if (_menuVisible)
+		_window->drawSprite(&_popUpBackground, _popUpBounds.left, _popUpBounds.top);
+
+	_menuVisible = false;
+	_floating = false;
+
+	setRedraw();
+}
+
+bool MacGuiImpl::MacPopUpMenu::findWidget(int x, int y) const {
+	// Once we have opened the drop down list, any mouse position is
+	// considered within the widget.
+
+	if (_window->getFocusedWidget() == this)
+		return true;
+
+	return _bounds.contains(x, y);
+}
+
+void MacGuiImpl::MacPopUpMenu::draw(bool drawFocused) {
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGuiImpl::MacPopUpMenu: Drawing list box (_fullRedraw = %d, drawFocused = %d)", _fullRedraw, drawFocused);
+
+	// I don't know how Mac originally drew disabled drop downs lists, or
+	// if that was even a thing. For our purposes, the text is still
+	// relevant. We just need to make it obvious that you can't change it
+	// in any way.
+
+	uint32 fg, bg;
+
+	if (_menuVisible) {
+		fg = _white;
+		bg = _black;
+	} else {
+		fg = _black;
+		bg = _white;
+	}
+
+	Graphics::Surface *s = _window->innerSurface();
+	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
+
+	s->fillRect(Common::Rect(_bounds.left, _bounds.top + 1, _bounds.left + _textWidth, _bounds.bottom - 3), bg);
+	font->drawString(s, _text, _bounds.left, _bounds.top + 1, _textWidth, fg, Graphics::kTextAlignLeft, 4);
+
+	if (_menuVisible) {
+		Common::Rect r = _popUpBounds;
+		r.bottom--;
+		r.right--;
+
+		s->fillRect(r, _white);
+		s->frameRect(r, _black);
+		s->hLine(r.left + 3, r.bottom, r.right, _black);
+		s->vLine(r.right, r.top + 3, r.bottom - 1, _black);
+
+		Common::Rect textRect(r.left + 1, r.top + 1, r.right - 1, r.top + 17);
+
+		for (int i = 0; i < (int)_texts.size(); i++) {
+			if (i == _selected) {
+				fg = _white;
+				bg = _black;
+			} else {
+				fg = _black;
+				bg = _white;
+			}
+
+			s->fillRect(textRect, bg);
+
+			font->drawString(s, _texts[i], textRect.left, textRect.top, textRect.width(), fg, Graphics::kTextAlignLeft, 14);
+
+			if (i == _value)
+				font->drawString(s, "\x12", textRect.left + 2, textRect.top, 10, fg);
+
+			textRect.translate(0, 16);
+		}
+	} else {
+		Common::Rect r(_bounds.left + _textWidth, _bounds.top, _bounds.right - 1, _bounds.bottom - 2);
+
+		s->fillRect(r, _white);
+		s->frameRect(r, _black);
+		s->hLine(r.left + 3, r.bottom, r.right, _black);
+		s->vLine(r.right, r.top + 3, r.bottom - 1, _black);
+
+		font->drawString(s, _texts[_value], r.left, r.top + 1, r.width() - 20, _black, Graphics::kTextAlignLeft, 15);
+
+		const uint16 arrowDownIcon[16] = {
+			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x3FF8, 0x1FF0, 0x0FE0,
+			0x07C0, 0x0380, 0x0100, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+		};
+
+		const uint16 disabledArrowDownIcon[16] = {
+			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2AA8, 0x1550, 0x0AA0,
+			0x0540, 0x0280, 0x0100, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+		};
+
+		Common::Rect iconRect(16, 16);
+		iconRect.moveTo(r.right - 19, r.top + 1);
+
+		drawBitmap(iconRect, _enabled ? arrowDownIcon : disabledArrowDownIcon, _black);
+	}
+
+	_redraw = false;
+	_fullRedraw = false;
+
+	_window->markRectAsDirty(_bounds);
+	if (_menuVisible)
+		_window->markRectAsDirty(_popUpBounds);
+}
+
+void MacGuiImpl::MacPopUpMenu::handleMouseDown(Common::Event &event) {
+	if (_floating) {
+		if (!_popUpBounds.contains(event.mouse.x, event.mouse.y))
+			close();
+		return;
+	}
+
+	_popUpBounds.top = _bounds.top - 16 * _value;
+	_popUpBounds.bottom = _bounds.bottom - 1 + 16 * (_texts.size() - _value - 1);
+
+	Graphics::Surface background = _window->innerSurface()->getSubArea(_popUpBounds);
+
+	_popUpBackground.free();
+	_popUpBackground.copyFrom(background);
+
+	_menuVisible = true;
+	_floating = false;
+	_selected = _value;
+}
+
+bool MacGuiImpl::MacPopUpMenu::handleMouseUp(Common::Event &event) {
+	if (_selected != -1) {
+		if (_enhUIUX) {
+			if (!_floating && _selected == getValue()) {
+				_floating = true;
+				return false;
+			}
+		}
+
+		int selected = _selected;
+
+		for (int i = 0; i < 6; i++) {
+			if (_selected == selected)
+				_selected = -1;
+			else
+				_selected = selected;
+
+			// It is a bit wasteful to redraw the entire widget
+			// just for this. It's also a lot easier.
+
+			setRedraw();
+			_window->update();
+
+			for (int j = 0; j < 3; j++) {
+				Common::Event e;
+				while (_window->_system->getEventManager()->pollEvent(e))
+					;
+				_window->_system->delayMillis(10);
+				_window->_system->updateScreen();
+			}
+		}
+
+		setValue(selected);
+	}
+
+	close();
+	return false;
+}
+
+void MacGuiImpl::MacPopUpMenu::handleMouseMove(Common::Event &event) {
+	if (!_menuVisible)
+		return;
+
+	Common::Rect menuBounds(_popUpBounds.left + 1, _popUpBounds.top + 1, _popUpBounds.right - 2, _popUpBounds.bottom - 2);
+
+	int selected = -1;
+
+	if (menuBounds.contains(event.mouse.x, event.mouse.y)) {
+		selected = (event.mouse.y - menuBounds.top) / 16;
+
+		int maxValue = _texts.size() - 1;
+
+		if (selected > maxValue) {
+			warning("MacGuiImpl::MacPopUpMenu::handleMouseMove: Max selection value exceeded");
+			selected = -1;
+		}
+	}
+
+	if (selected != _selected) {
+		_selected = selected;
+		setRedraw();
+	}
+}
+
+void MacGuiImpl::MacPopUpMenu::loseFocus() {
+	close();
+}
+
+bool MacGuiImpl::MacPopUpMenu::keepFocus(int x, int y) {
+	return _floating && _popUpBounds.contains(x, y);
 }
 
 } // End of namespace Scumm

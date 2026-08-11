@@ -30,24 +30,29 @@ namespace Access {
 namespace Martian {
 
 class MartianEngine;
+class MartianDuct;
 
 class MartianScripts : public Scripts {
 private:
 	MartianEngine *_game;
+	MartianDuct *_duct;
 
 	void cmdSpecial0();
-	void cmdSpecial1(int param1);
+	void cmdSpecial1(int param1, int param2);
+	void cmdSpecial2();
 	void cmdSpecial3();
+	void cmdSpecial4();
 	void doIntro(int param1);
 	void cmdSpecial6();
 	void cmdSpecial7();
 
 protected:
-	void executeSpecial(int commandIndex, int param1, int param2) override;
+	bool executeSpecial(int commandIndex, int param1, int param2) override;
 	void executeCommand(int commandIndex) override;
 
 public:
 	MartianScripts(AccessEngine *vm);
+	~MartianScripts();
 };
 
 } // End of namespace Martian

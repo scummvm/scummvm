@@ -61,8 +61,8 @@ void HandlerMgr::onLeftClickMessage(Actor *actor) {
 void HandlerMgr::onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr) {
 	HandlerUseClick *handler = findSuitableHandlerUseClick(actor, item->getName());
 	assert(handler);
-	if (!handler->getRecepient().empty())
-		mgr->setItemOwner(handler->getRecepient(), item);
+	if (!handler->getRecipient().empty())
+		mgr->setItemOwner(handler->getRecipient(), item);
 	handler->handle(actor);
 }
 

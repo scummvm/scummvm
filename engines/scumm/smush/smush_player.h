@@ -23,6 +23,9 @@
 #define SCUMM_SMUSH_PLAYER_H
 
 #include "common/util.h"
+#include "common/list.h"
+#include "common/rect.h"
+#include "scumm/charset_v7.h"
 
 namespace Audio {
 class SoundHandle;
@@ -74,22 +77,48 @@ namespace Scumm {
 #define TRK_USERID_SFX    3
 
 #define SMUSH_CODEC_RLE          1
+#define SMUSH_CODEC_RA1_SCATTER  2    // RA1: Scatter/point draw (starfield)
 #define SMUSH_CODEC_RLE_ALT      3
+#define SMUSH_CODEC_RA1_DELTA    4    // RA1: Delta block codec (skip on idx 0x80)
+#define SMUSH_CODEC_RA1_BLOCK    5    // RA1: Block-based frame codec (no skip)
 #define SMUSH_CODEC_UNCOMPRESSED 20
+#define SMUSH_CODEC_LINE_UPDATE  21   // RA2: Skip/copy with literal pixels
+#define SMUSH_CODEC_SKIP_RLE     23   // RA1: additive line-update overlay; RA2: skip/copy with embedded RLE
 #define SMUSH_CODEC_DELTA_BLOCKS 37
+#define SMUSH_CODEC_LINE_UPDATE2 44   // RA2: Variant of codec 21
+
+#define SMUSH_CODEC_SEGACD_RLE     31   // RA1 Sega CD: transparent 4bpp line RLE
+#define SMUSH_CODEC_SEGACD_OPAQUE  32   // RA1 Sega CD: opaque 4bpp line RLE
+#define SMUSH_CODEC_SEGACD_BLOCK33 33   // RA1 Sega CD: codec 4 with Sega glyph table
+#define SMUSH_CODEC_SEGACD_BLOCK34 34   // RA1 Sega CD: codec 5 with Sega glyph table and no skip glyph
+#define SMUSH_CODEC_RA2_BOMP     45   // RA2: BOMP RLE with variable header
 #define SMUSH_CODEC_DELTA_GLYPHS 47
 
 class ScummEngine_v7;
 class SmushFont;
+class SmushMultiFont;
 class SmushMixer;
-class StringResource;
+class StringResource {
+public:
+	virtual ~StringResource() {}
+	virtual const char *get(int id) = 0;
+};
 class SmushDeltaBlocksDecoder;
 class SmushDeltaGlyphsDecoder;
 class IMuseDigital;
 class Insane;
+class RebelAudio;
+class SmushPlayerRebel1;
+class SmushPlayerRebel2;
 
 class SmushPlayer {
 	friend class Insane;
+	friend class InsaneRebel1;
+	friend class InsaneRebel2;
+	friend class RebelAudio;
+	friend class SmushPlayerRebel1;
+	friend class SmushPlayerRebel2;
+	friend class SmushMultiFont;
 private:
 	struct SmushAudioDispatch {
 		uint8 *headerPtr;
@@ -130,8 +159,10 @@ private:
 	Insane *_insane;
 	int32 _nbframes;
 	int16 _deltaPal[0x300];
+	int32 _shiftedDeltaPal[0x300];
 	byte _pal[0x300];
 	SmushFont *_sf[5];
+	SmushMultiFont *_multiFont;  // Multi-font renderer for inline font switching
 	StringResource *_strings;
 	SmushDeltaBlocksDecoder *_deltaBlocksCodec;
 	SmushDeltaGlyphsDecoder *_deltaGlyphsCodec;
@@ -139,6 +170,33 @@ private:
 	uint32 _baseSize;
 	byte *_frameBuffer;
 	byte *_specialBuffer;
+	int _specialBufferSize;
+
+	// RA1/RA2: Raw FOBJ data stored by STOR chunk for later re-decoding by FTCH.
+	byte *_storedFobjData;
+	int32 _storedFobjDataSize;
+	int _storedFobjCodec;
+	uint16 _storedFobjParm2;
+	int _storedFobjLeft;
+	int _storedFobjTop;
+	int _storedFobjWidth;
+	int _storedFobjHeight;
+
+	// RA1/RA2: Most recently decoded FOBJ in the current frame, used by GOST
+	// chunks to re-render the same sprite payload at a different position.
+	byte *_lastFobjData;
+	int32 _lastFobjDataSize;
+	int _lastFobjCodec;
+	int _lastFobjLeft;
+	int _lastFobjTop;
+	int _lastFobjWidth;
+	int _lastFobjHeight;
+	bool _hasFrameFobjForGost;
+
+	// RA2: Global FOBJ position offsets.
+	// Set by InsaneRebel2 during IACT opcode 6 processing, reset in procPostRendering.
+	int16 _fobjOffsetX;
+	int16 _fobjOffsetY;
 
 	Common::String _seekFile;
 	uint32 _startFrame;
@@ -148,6 +206,10 @@ private:
 
 	bool _skipNext;
 	uint32 _frame;
+	uint32 _fastForwardFromFrame;
+	uint32 _fastForwardToFrame;
+	bool _preserveVideoStateOnNextPlay;
+	bool _preserveGameVideoStateOnRelease;
 
 	Audio::SoundHandle *_IACTchannel;
 	Audio::QueuingAudioStream *_IACTstream;
@@ -193,7 +255,7 @@ private:
 
 public:
 	SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *_imuseDigital, Insane *insane);
-	~SmushPlayer();
+	virtual ~SmushPlayer();
 
 	void pause();
 	void unpause();
@@ -207,6 +269,21 @@ public:
 	bool isAudioCallbackEnabled();
 	byte *getVideoPalette();
 	void setCurVideoFlags(int16 flags);
+	SmushMultiFont *getMultiFont() const { return _multiFont; }
+	void ensureMultiFont();
+	bool isFastForwardingCurrentFrame() const;
+	void setPreserveVideoStateOnNextPlay(bool preserve) { _preserveVideoStateOnNextPlay = preserve; }
+	void setPreserveGameVideoStateOnRelease(bool preserve) { _preserveGameVideoStateOnRelease = preserve; }
+	void setFastForwardFromFrame(uint32 frame) { _fastForwardFromFrame = frame; }
+	void setFastForwardToFrame(uint32 frame) { _fastForwardToFrame = frame; }
+
+	// Masked regions - areas where video should not update (e.g., destroyed enemies)
+	// The Insane class can add/remove regions, and decodeFrameObject will restore
+	// these areas from the previous frame after decoding
+	void addMaskedRegion(const Common::Rect &rect);
+	void removeMaskedRegion(const Common::Rect &rect);
+	void clearMaskedRegions();
+	Common::List<Common::Rect> _maskedRegions;
 
 
 protected:
@@ -217,13 +294,52 @@ protected:
 	uint32 _pauseStartTime;
 	uint32 _pauseTime;
 	int16 _curVideoFlags = 0;
+	int _scrollX;
+	int _scrollY;
 
 	void insanity(bool);
 	void setPalette(const byte *palette);
 	void setPaletteValue(int n, byte r, byte g, byte b);
 	void setDirtyColors(int min, int max);
+	void setScrollOffset(int x, int y);
 	void seekSan(const char *file, int32 pos, int32 contFrame);
 	const char *getString(int id);
+	virtual void initGamePlayerFields() {}
+	virtual void destroyGamePlayerFields() {}
+	virtual void resetGameVideoState() {}
+	virtual void initGameVideoState() {}
+	virtual void releaseGameVideoState() {}
+	virtual bool shouldPreserveFrameBuffer() const { return false; }
+	virtual bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) { return false; }
+	virtual bool handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) { return false; }
+	virtual bool handleGameTextRendering(const char *str, int fontId, int color, int pos_x, int pos_y, int left, int top, int width, int height, TextStyleFlags flg) { return false; }
+	virtual bool shouldAlwaysShowSubtitles() const { return false; }
+	virtual SmushFont *getGameFont(int font) { return nullptr; }
+	virtual void adjustGamePalette() {}
+	virtual bool shouldLoadAnimHeaderPalette() const { return true; }
+	virtual bool handleGameAnimHeader(byte *headerContent) { return false; }
+	virtual bool handleGameSetupStrings() { return false; }
+	virtual void handleGameParseNextFrame() {}
+	virtual bool shouldRouteAllIACTs() const { return false; }
+	virtual bool handleGameFrameBufferSelect(int codec, int width, int height) { return false; }
+	virtual bool handleGameDimensionOverride(int codec, int width, int height) { return false; }
+	virtual int handleGameFrameObjectPitch(int pitch) { return pitch; }
+	virtual bool handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) { return false; }
+	virtual bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param = 0, uint16 parm2 = 0) { return false; }
+	virtual bool handleGameStoreFrame() { return false; }
+	virtual void handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {}
+	virtual void handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) {}
+	virtual void handleGameFrameObjectDecoded(int codec, int left, int top, int width, int height) {}
+	virtual void handleGameFrameStart() {}
+	virtual bool handleGameSkipChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) { return false; }
+	virtual void handleGameGost(int32 subSize, Common::SeekableReadStream &b) {}
+	virtual void handleGameProcessAudio(int16 feedSize) {}
+	virtual bool isInsaneGame() const { return false; }
+	virtual void handleGameLoad(int32 subSize, Common::SeekableReadStream &b) {}
+	virtual void handleFrameObject(int32 subSize, Common::SeekableReadStream &b);
+	virtual void handleFrame(int32 frameSize, Common::SeekableReadStream &b);
+	virtual void handleGameUpdateScreen(const byte *
+		src, int srcPitch, int width, int height);
 
 private:
 	SmushFont *getFont(int font);
@@ -234,12 +350,10 @@ private:
 	void tryCmpFile(const char *filename);
 
 	bool readString(const char *file);
-	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height);
+	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize = 0, uint8 ra1Param = 0, uint16 ra1Parm2 = 0);
 	void handleAnimHeader(int32 subSize, Common::SeekableReadStream &);
-	void handleFrame(int32 frameSize, Common::SeekableReadStream &);
 	void handleNewPalette(int32 subSize, Common::SeekableReadStream &);
 	void handleZlibFrameObject(int32 subSize, Common::SeekableReadStream &b);
-	void handleFrameObject(int32 subSize, Common::SeekableReadStream &);
 	void handleSAUDChunk(uint8 *srcBuf, uint32 size, int groupId, int vol, int pan, int16 flags, int trkId, int index, int maxFrames);
 	void handleStore(int32 subSize, Common::SeekableReadStream &);
 	void handleFetch(int32 subSize, Common::SeekableReadStream &);
@@ -247,6 +361,11 @@ private:
 	void handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &);
 	void handleDeltaPalette(int32 subSize, Common::SeekableReadStream &);
 	void readPalette(byte *, Common::SeekableReadStream &);
+
+	// Shared RA1/RA2 helpers (access _storedFobj*/_lastFobj* on base)
+	void adjustFrameCoords(int &left, int &top, int &width, int &height, int pitch, int *srcSkipY = nullptr);
+	void rememberLastFobj(int codec, const byte *data, int32 dataSize,
+						  int left, int top, int width, int height);
 
 	void initAudio(int samplerate, int32 maxChunkSize);
 	void terminateAudio();

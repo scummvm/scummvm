@@ -56,10 +56,10 @@ void TextMan::printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 de
 
 	uint16 destPixelWidth = destByteWidth * 2;
 
-	uint16 textLength = strlen(text);
+	size_t textLength = strlen(text);
 	uint16 nextX = destX;
 	uint16 nextY = destY;
-	byte *srcBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxFont);
+	byte *srcBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(_vm->_displayMan->getGraphicIndex(kDMGraphicIdxFont));
 
 	byte *tmp = _vm->_displayMan->_tmpBitmap;
 	for (uint16 i = 0; i < (kDMFontLetterWidth + 1) * kDMFontLetterHeight * 128; ++i)
@@ -107,7 +107,6 @@ void TextMan::printLineFeed() {
 
 void TextMan::printMessage(Color color, const char *string, bool printWithScroll) {
 	uint16 characterIndex;
-	Common::String wrkString;
 
 	while (*string) {
 		if (*string == '\n') { /* New line */
@@ -122,12 +121,12 @@ void TextMan::printMessage(Color color, const char *string, bool printWithScroll
 				printString(color, " "); // I'm not sure if this is like the original
 			}
 		} else {
+			Common::String wrkString;
 			characterIndex = 0;
 			do {
 				wrkString += *string++;
 				characterIndex++;
 			} while (*string && (*string != ' ') && (*string != '\n')); /* End of string, space or New line */
-			wrkString += '\0';
 			if (_messageAreaCursorColumn + characterIndex > 53) {
 				_messageAreaCursorColumn = 2;
 				createNewRow();
@@ -138,6 +137,9 @@ void TextMan::printMessage(Color color, const char *string, bool printWithScroll
 }
 
 void TextMan::createNewRow() {
+	while (_isScrolling)
+		_vm->delay(10);
+
 	if (_messageAreaCursorRow == 3) {
 		isTextScrolling(&_textScroller, true);
 		memset(_bitmapMessageAreaNewRow, kDMColorBlack, 320 * 7);
@@ -153,7 +155,7 @@ void TextMan::createNewRow() {
 }
 
 void TextMan::printString(Color color, const char* string) {
-	int16 stringLength = strlen(string);
+	size_t stringLength = strlen(string);
 	if (isTextScrolling(&_textScroller, false))
 		printToLogicalScreen(_messageAreaCursorColumn * 6, (_messageAreaCursorRow * 7 - 1) + 177, color, kDMColorBlack, string);
 	else {

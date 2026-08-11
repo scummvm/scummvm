@@ -1,4 +1,5 @@
-engines/agos/saveload.cpp
 engines/agos/animation.cpp
+engines/agos/dialogs.cpp
 engines/agos/metaengine.cpp
 engines/agos/midi.cpp
+engines/agos/saveload.cpp

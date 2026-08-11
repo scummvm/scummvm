@@ -39,17 +39,14 @@ private:
 	bool _antOutFlag;
 	const byte *_icon;
 
-	void roomSet();
 protected:
-	void loadRoom(int roomNumber) override;
-
 	void reloadRoom() override;
 
 	void reloadRoom1() override;
 
 	void setupRoom() override;
 
-	void mainAreaClick() override;
+	void mainAreaLClick() override;
 
 	void clearRoom() override;
 

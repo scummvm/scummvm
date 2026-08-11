@@ -22,7 +22,9 @@
 #include "m4/burger/rooms/section5/room503.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_hotspot.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -259,7 +261,7 @@ const seriesPlayBreak Room503::PLAY23[] = {
 };
 
 const seriesPlayBreak Room503::PLAY24[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -277,14 +279,17 @@ Room503::Room503() : Section5Room() {
 	_state4 = 0;
 	_state5 = 0;
 	_state6 = 0;
+
+	for (int i = 0; i < 5; ++i)
+		_array1[i] = _array2[i] = -1;
 }
 
 void Room503::init() {
 	Section5Room::init();
 	_flag5 = false;
 
-	for (_val2 = 0; _val2 < 5; ++_val2)
-		_array1[_val2] = _array2[_val2] = -1;
+	for (_ctr = 0; _ctr < 5; ++_ctr)
+		_array1[_ctr] = _array2[_ctr] = -1;
 
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
@@ -370,8 +375,8 @@ void Room503::daemon() {
 		if (_flag5) {
 			kernel_trigger_dispatch_now(1);
 		} else {
-			for (_val2 = 0; _val2 < 5; ++_val2) {
-				_array1[_val2] = _array2[_val2];
+			for (_ctr = 0; _ctr < 5; ++_ctr) {
+				_array1[_ctr] = _array2[_ctr];
 			}
 
 			kernel_trigger_dispatch_now(2);
@@ -381,10 +386,10 @@ void Room503::daemon() {
 	case 2:
 		_flag5 = true;
 
-		for (_val2 = 0; _val2 < 5; ++_val2) {
-			if (_array1[_val2] != -1) {
-				kernel_trigger_dispatch_now(_array1[_val2]);
-				_array1[_val2] = -1;
+		for (_ctr = 0; _ctr < 5; ++_ctr) {
+			if (_array1[_ctr] != -1) {
+				kernel_trigger_dispatch_now(_array1[_ctr]);
+				_array1[_ctr] = -1;
 			}
 		}
 
@@ -688,7 +693,7 @@ void Room503::daemon() {
 			if (_G(player).walker_visible && player_commands_allowed()) {
 				intr_cancel_sentence();
 				player_set_commands_allowed(false);
-				ws_walk(260, 300, 0, 17, 2, true);
+				ws_walk(260, 300, nullptr, 17, 2, true);
 			} else {
 				kernel_timing_trigger(15, 16);
 			}
@@ -734,6 +739,9 @@ void Room503::daemon() {
 			terminateMachineAndNull(_series3);
 			_val9 = 33;
 			_series3 = series_play("503bk15", 0xa00, 1, 23, 6, 0, 100, 0, -2, 0, 2);
+			break;
+
+		default:
 			break;
 		}
 		break;
@@ -824,7 +832,7 @@ void Room503::daemon() {
 
 		case 6:
 			ws_unhide_walker();
-			ws_walk(260, 300, 0, -1, 2);
+			ws_walk(260, 300, nullptr, -1, 2);
 			kernel_timing_trigger(imath_ranged_rand(180, 360), 19);
 			break;
 
@@ -882,10 +890,10 @@ void Room503::pre_parser() {
 	} else {
 		if (_flag1) {
 			player_update_info();
-			HotSpotRec *hotspot = hotspot_which(_G(click_x), _G(click_y));
+			HotSpotRec *hotspot = hotspot_which(_G(player).click_x, _G(player).click_y);
 
-			if (_G(click_x) > 272 && _G(click_y) < 300 && player_said("FLOOR")) {
-				ws_walk(_G(click_x), 301, nullptr, -1, 1);
+			if (_G(player).click_x > 272 && _G(player).click_y < 300 && player_said("FLOOR")) {
+				ws_walk(_G(player).click_x, 301, nullptr, -1, 1);
 			} else if (hotspot->feet_x > 272 && hotspot->feet_y < 300) {
 				player_hotspot_walk_override(hotspot->feet_x, 301, 1);
 			}
@@ -904,10 +912,10 @@ void Room503::pre_parser() {
 
 void Room503::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool borkFlag = player_said("BORK") && _G(flags)[kBORK_STATE] == 12;
-	bool microwaveFlag = player_said("MICROWAVE");
-	bool ovenFlag = player_said("OVEN") && _G(flags)[kBORK_STATE] == 16;
-	bool prunesFlag = player_said("PRUNES") && _G(flags)[kBORK_STATE] == 16;
+	const bool borkFlag = player_said("BORK") && _G(flags)[kBORK_STATE] == 12;
+	const bool microwaveFlag = player_said("MICROWAVE");
+	const bool ovenFlag = player_said("OVEN") && _G(flags)[kBORK_STATE] == 16;
+	const bool prunesFlag = player_said("PRUNES") && _G(flags)[kBORK_STATE] == 16;
 
 	if (borkFlag && player_said("LOOK AT")) {
 		wilbur_speech("503w005");

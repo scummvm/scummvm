@@ -614,7 +614,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			assert(hotspot);
 
 			// Special post-load handling
-			if (res->loadOffset == 3) hotspot->setPersistant(true);
+			if (res->loadOffset == 3) hotspot->setPersistent(true);
 			if (res->loadOffset == 5) hotspot->handleTalkDialog();
 			if (hotspotId == CASTLE_SKORL_ID) {
 				// The Castle skorl has a default room #99, so it needs to be adjusted dynamically

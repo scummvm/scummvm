@@ -47,6 +47,7 @@
 
 #include "director/director.h"
 #include "director/debugger.h"
+#include "director/cast.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
@@ -59,7 +60,7 @@
 
 namespace Director {
 
-static struct FuncDescr {
+static const struct FuncDescr {
 	const inst func;
 	const char *name;
 	const char *args;
@@ -173,7 +174,7 @@ static struct FuncDescr {
 
 void Lingo::initFuncs() {
 	Symbol sym;
-	for (FuncDescr *fnc = funcDescr; fnc->name; fnc++) {
+	for (const FuncDescr *fnc = funcDescr; fnc->name; fnc++) {
 		sym.u.func = fnc->func;
 		_functions[(void *)sym.u.s] = new FuncDesc(fnc->name, fnc->args);
 	}
@@ -185,7 +186,7 @@ void Lingo::cleanupFuncs() {
 }
 
 void Lingo::push(Datum d) {
-	_stack.push_back(d);
+	_state->stack.push_back(d);
 }
 
 Datum Lingo::getVoid() {
@@ -201,18 +202,18 @@ void Lingo::pushVoid() {
 }
 
 Datum Lingo::pop() {
-	assert (_stack.size() != 0);
+	assert (_state->stack.size() != 0);
 
-	Datum ret = _stack.back();
-	_stack.pop_back();
+	Datum ret = _state->stack.back();
+	_state->stack.pop_back();
 
 	return ret;
 }
 
 Datum Lingo::peek(uint offset) {
-	assert (_stack.size() > offset);
+	assert (_state->stack.size() > offset);
 
-	Datum ret = _stack[_stack.size() - 1 - offset];
+	Datum ret = _state->stack[_state->stack.size() - 1 - offset];
 
 	return ret;
 }
@@ -226,7 +227,7 @@ void Lingo::switchStateFromWindow() {
 	_state = window->getLingoState();
 }
 
-void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount) {
+void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount, int nargs) {
 	Common::Array<CFrame *> &callstack = _state->callstack;
 
 	debugC(5, kDebugLingoExec, "Pushing frame %d", callstack.size() + 1);
@@ -240,7 +241,10 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	fp->sp = funcSym;
 	fp->allowRetVal = allowRetVal;
 	fp->defaultRetVal = defaultRetVal;
-	fp->paramCount = paramCount;
+	fp->paramCount = paramCount;  // number of args, excluding nulls for missing named args
+	for (int i = 0; i < nargs; i++) { // number of args on the stack
+		fp->paramList.insert_at(0, pop());
+	}
 
 	_state->script = funcSym.u.defn;
 
@@ -255,6 +259,18 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 		_state->context->incRefCount();
 	}
 
+	// Run the handler in the window that owns its script (MIAW scoping); mirrors c_tell()
+	if (funcSym.ctx && funcSym.ctx->getCast() && funcSym.ctx->getCast()->getMovie()) {
+		Window *targetWindow = funcSym.ctx->getCast()->getMovie()->getWindow();
+		Window *currentWindow = _vm->getCurrentWindow();
+		if (targetWindow && targetWindow != currentWindow) {
+			fp->retWindow = currentWindow;
+			currentWindow->incRefCount();
+			currentWindow->moveLingoState(targetWindow);
+			_vm->setCurrentWindow(targetWindow);
+		}
+	}
+
 	DatumHash *localvars = new DatumHash;
 	if (funcSym.anonymous && _state->localVars) {
 		// Execute anonymous functions within the current var frame.
@@ -264,25 +280,20 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	}
 
 	if (funcSym.argNames) {
-		int symNArgs = funcSym.nargs;
-		if ((int)funcSym.argNames->size() < symNArgs) {
-			int dropSize = symNArgs - funcSym.argNames->size();
-			warning("%d arg names defined for %d args! Dropping the last %d values", funcSym.argNames->size(), symNArgs, dropSize);
-			for (int i = 0; i < dropSize; i++) {
-				pop();
-				symNArgs -= 1;
-			}
-		} else if ((int)funcSym.argNames->size() > symNArgs) {
-			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), symNArgs, funcSym.argNames->size() - symNArgs);
+		if (funcSym.argNames->size() > fp->paramList.size()) {
+			debugC(1, kDebugLingoExec, "%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), fp->paramList.size(), funcSym.argNames->size() - fp->paramList.size());
 		}
-		for (int i = symNArgs - 1; i >= 0; i--) {
+		for (int i = (int)funcSym.argNames->size() - 1; i >= 0; i--) {
 			Common::String name = (*funcSym.argNames)[i];
 			if (!localvars->contains(name)) {
-				Datum value = pop();
-				(*localvars)[name] = value;
+				if (i < (int)fp->paramList.size()) {
+					Datum value = fp->paramList[i];
+					(*localvars)[name] = value;
+				} else {
+					(*localvars)[name] = Datum();
+				}
 			} else {
 				warning("Argument %s already defined", name.c_str());
-				pop();
 			}
 		}
 	}
@@ -298,7 +309,7 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	}
 	_state->localVars = localvars;
 
-	fp->stackSizeBefore = _stack.size();
+	fp->stackSizeBefore = _state->stack.size();
 
 	callstack.push_back(fp);
 
@@ -316,12 +327,14 @@ void Lingo::popContext(bool aborting) {
 	CFrame *fp = callstack.back();
 	callstack.pop_back();
 
-	if (_stack.size() == fp->stackSizeBefore + 1) {
+	if (_state->stack.size() == fp->stackSizeBefore + 1) {
 		if (!fp->allowRetVal) {
-			debugC(5, kDebugLingoExec, "dropping return value");
-			pop();
+			debugC(5, kDebugLingoExec, "dropping return value, storing as the result");
+			Datum res = pop();
+			if (res.type != VOID)
+				g_lingo->_theResult = res;
 		}
-	} else if (_stack.size() == fp->stackSizeBefore) {
+	} else if (_state->stack.size() == fp->stackSizeBefore) {
 		if (fp->allowRetVal) {
 			// Don't warn about missing return value if there's an explicit, non-VOID default,
 			// e.g. for factories' mNew method.
@@ -330,18 +343,18 @@ void Lingo::popContext(bool aborting) {
 			}
 			push(fp->defaultRetVal);
 		}
-	} else if (_stack.size() > fp->stackSizeBefore) {
+	} else if (_state->stack.size() > fp->stackSizeBefore) {
 		if (aborting) {
 			// Since we're aborting execution, we should expect that some extra
 			// values are left on the stack.
-			while (_stack.size() > fp->stackSizeBefore) {
+			while (_state->stack.size() > fp->stackSizeBefore) {
 				pop();
 			}
 		} else {
-			error("handler %s returned extra %d values", fp->sp.name->c_str(), _stack.size() - fp->stackSizeBefore);
+			error("handler %s returned extra %d values", fp->sp.name->c_str(), _state->stack.size() - fp->stackSizeBefore);
 		}
 	} else {
-		error("handler %s popped extra %d values", fp->sp.name->c_str(), fp->stackSizeBefore - _stack.size());
+		error("handler %s popped extra %d values", fp->sp.name->c_str(), fp->stackSizeBefore - _state->stack.size());
 	}
 
 	_state->context->decRefCount();
@@ -364,7 +377,19 @@ void Lingo::popContext(bool aborting) {
 		printCallStack(_state->pc);
 	}
 
+	// Undo the pushContext window switch.
+	Window *retWindow = fp->retWindow;
+
 	delete fp;
+
+	if (retWindow) {
+		// If the window was closed while the handler ran, don't switch back.
+		if (_vm->getCurrentWindow() != retWindow && _vm->isWindowRegistered(retWindow)) {
+			_vm->getCurrentWindow()->moveLingoState(retWindow);
+			_vm->setCurrentWindow(retWindow);
+		}
+		retWindow->decRefCount();
+	}
 
 	g_debugger->popContextHook();
 }
@@ -380,6 +405,15 @@ void Lingo::freezePlayState() {
 	window->freezeLingoPlayState();
 	switchStateFromWindow();
 }
+
+void Lingo::requeuePlayState() {
+	Window *window = _vm->getCurrentWindow();
+	if (window->requeueLingoPlayState()) {
+		window->thawLingoState();
+		switchStateFromWindow();
+	}
+}
+
 
 void LC::c_constpush() {
 	Common::String name(g_lingo->readString());
@@ -687,26 +721,47 @@ static DatumType getArrayAlignedType(Datum &d1, Datum &d2) {
 Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) {
 	// At least one of d1 and d2 must be an array
 	uint arraySize;
+
 	if (d1.isArray() && d2.isArray()) {
 		arraySize = MIN(d1.u.farr->arr.size(), d2.u.farr->arr.size());
-	} else if (d1.isArray()) {
+	} else if (d1.type == PARRAY && d2.type == PARRAY) {
+		arraySize = MIN(d1.u.parr->arr.size(), d2.u.parr->arr.size());
+	// if d1 and d2 are different arrays, result is [x+d2 for x in d1], with type of d1
+	} else if (d1.isArray() && d2.type == PARRAY) {
 		arraySize = d1.u.farr->arr.size();
+	} else if (d1.type == PARRAY && d2.isArray()) {
+		arraySize = d1.u.parr->arr.size();
+	} else if (d1.isArray() || d1.type == PARRAY) {
+		arraySize = d1.type == PARRAY ? d1.u.parr->arr.size() : d1.u.farr->arr.size();
 	} else {
-		arraySize = d2.u.farr->arr.size();
+		arraySize = d2.type == PARRAY ? d2.u.parr->arr.size() : d2.u.farr->arr.size();
 	}
 	Datum res;
-	res.type = getArrayAlignedType(d1, d2);
-	res.u.farr = new FArray(arraySize);
+	if (d1.type == PARRAY) {
+		res.type = PARRAY;
+		res.u.parr = new PArray(arraySize);
+	} else {
+		res.type = getArrayAlignedType(d1, d2);
+		res.u.farr = new FArray(arraySize);
+	}
 	Datum a = d1;
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {
 		if (d1.isArray()) {
 			a = d1.u.farr->arr[i];
+		} else if (d1.type == PARRAY) {
+			a = d1.u.parr->arr[i].v;
 		}
 		if (d2.isArray()) {
 			b = d2.u.farr->arr[i];
+		} else if (d2.type == PARRAY) {
+			b = d2.u.parr->arr[i].v;
 		}
-		res.u.farr->arr[i] = mapFunc(a, b);
+		if (res.type == PARRAY) {
+			res.u.parr->arr[i] = PCell(d1.u.parr->arr[i].p, mapFunc(a, b));
+		} else {
+			res.u.farr->arr[i] = mapFunc(a, b);
+		}
 	}
 	return res;
 }
@@ -717,7 +772,7 @@ Datum LC::addData(Datum &d1, Datum &d2) {
 		return Datum(0);
 	}
 
-	if (d1.isArray() || d2.isArray()) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::mapBinaryOp(LC::addData, d1, d2);
 	}
 
@@ -729,7 +784,8 @@ Datum LC::addData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() + d2.asInt());
 	} else {
-		g_lingo->lingoError("LC::addData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
+		res = Datum(d1.asInt() + d2.asInt());
+		warning("LC::addData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -746,7 +802,7 @@ Datum LC::subData(Datum &d1, Datum &d2) {
 		return Datum(0);
 	}
 
-	if (d1.isArray() || d2.isArray()) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::mapBinaryOp(LC::subData, d1, d2);
 	}
 
@@ -758,7 +814,8 @@ Datum LC::subData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() - d2.asInt());
 	} else {
-		g_lingo->lingoError("LC::subData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
+		res = Datum(d1.asInt() - d2.asInt());
+		warning("LC::subData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -775,7 +832,7 @@ Datum LC::mulData(Datum &d1, Datum &d2) {
 		return Datum(0);
 	}
 
-	if (d1.isArray() || d2.isArray()) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::mapBinaryOp(LC::mulData, d1, d2);
 	}
 
@@ -787,7 +844,8 @@ Datum LC::mulData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() * d2.asInt());
 	} else {
-		g_lingo->lingoError("LC::mulData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
+		res = Datum(d1.asInt() * d2.asInt());
+		warning("LC::mulData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -804,13 +862,13 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 		return Datum(0);
 	}
 
-	if (d1.isArray() || d2.isArray()) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::mapBinaryOp(LC::divData, d1, d2);
 	}
 
 	if ((d2.type == INT && d2.u.i == 0) ||
 			(d2.type == FLOAT && d2.u.f == 0.0)) {
-		warning("LC::divData(): division by zero");
+		g_lingo->lingoError("LC::divData(): division by zero");
 		d2 = Datum(1);
 	}
 
@@ -825,7 +883,12 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() / d2.asInt());
 	} else {
-		g_lingo->lingoError("LC::divData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
+		int denom = d2.asInt();
+		if (denom == 0) {
+			g_lingo->lingoError("LC::divData(): division by zero");
+		}
+		res = Datum(d1.asInt() / d2.asInt());
+		warning("LC::divData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 
 	return res;
@@ -845,8 +908,8 @@ Datum LC::modData(Datum &d1, Datum &d2) {
 	int i1 = d1.asInt();
 	int i2 = d2.asInt();
 	if (i2 == 0) {
-		g_lingo->lingoError("LC::modData(): division by zero");
-		i2 = 1;
+		warning("LC::modData(): division by zero");
+		return Datum(0);
 	}
 
 	Datum res(i1 % i2);
@@ -879,7 +942,8 @@ Datum LC::negateData(Datum &d) {
 	} else if (d.type == VOID) {
 		res = Datum(0);
 	} else {
-		g_lingo->lingoError("LC::negateData(): not supported for type %s", d.type2str());
+		warning("LC::negateData(): not supported for type %s", d.type2str());
+		res = Datum(-d.asInt());
 	}
 
 	return res;
@@ -953,17 +1017,40 @@ void LC::c_intersects() {
 	Datum d1 = g_lingo->pop();
 
 	Score *score = g_director->getCurrentMovie()->getScore();
-	Channel *sprite1 = score->getChannelById(d1.asInt());
-	Channel *sprite2 = score->getChannelById(d2.asInt());
+	Channel *sprite1 = nullptr;
+	Channel *sprite2 = nullptr;
+	if (d1.type == SPRITEREF) {
+		sprite1 = score->getChannelById(d1.u.i);
+	} else {
+		sprite1 = score->getChannelById(d1.asInt());
+	}
+	if (d2.type == SPRITEREF) {
+		sprite2 = score->getChannelById(d2.u.i);
+	} else {
+		sprite2 = score->getChannelById(d2.asInt());
+	}
 
 	if (!sprite1 || !sprite2) {
 		g_lingo->push(Datum(0));
 		return;
 	}
 
+	// tested in D6:
+	// both sprites matte: do a matte-on-matte intersection
+	// just S1 matte: do a box-on-box intersection
+	// just S2 matte: do a box-on-matte intersection
+	// neither sprite matte: do a box-on-box intersection
+	// If the cast member is not a bitmap, always treat it as a bounding box collision,
+	// even if the ink type is matte and there's visibly no overlap (e.g a kCastShape circle).
+
+	bool s1IsBitmap = sprite1->_sprite->_cast && sprite1->_sprite->_cast->_type == kCastBitmap;
+	bool s2IsBitmap = sprite2->_sprite->_cast && sprite2->_sprite->_cast->_type == kCastBitmap;
+
 	// don't regard quick draw shape as matte type
-	if ((!sprite1->_sprite->isQDShape() && sprite1->_sprite->_ink == kInkTypeMatte) && (!sprite2->_sprite->isQDShape() && sprite2->_sprite->_ink == kInkTypeMatte)) {
+	if ((s1IsBitmap && sprite1->_sprite->_ink == kInkTypeMatte) && (s2IsBitmap && sprite2->_sprite->_ink == kInkTypeMatte)) {
 		g_lingo->push(Datum(sprite2->isMatteIntersect(sprite1)));
+	} else if ((s2IsBitmap && sprite2->_sprite->_ink == kInkTypeMatte)) {
+		g_lingo->push(Datum(sprite2->isMatteBoxIntersect(sprite1)));
 	} else {
 		g_lingo->push(Datum(sprite2->getBbox().intersects(sprite1->getBbox())));
 	}
@@ -974,8 +1061,18 @@ void LC::c_within() {
 	Datum d1 = g_lingo->pop();
 
 	Score *score = g_director->getCurrentMovie()->getScore();
-	Channel *sprite1 = score->getChannelById(d1.asInt());
-	Channel *sprite2 = score->getChannelById(d2.asInt());
+	Channel *sprite1 = nullptr;
+	Channel *sprite2 = nullptr;
+	if (d1.type == SPRITEREF) {
+		sprite1 = score->getChannelById(d1.u.i);
+	} else {
+		sprite1 = score->getChannelById(d1.asInt());
+	}
+	if (d2.type == SPRITEREF) {
+		sprite2 = score->getChannelById(d2.u.i);
+	} else {
+		sprite2 = score->getChannelById(d2.asInt());
+	}
 
 	if (!sprite1 || !sprite2) {
 		g_lingo->push(Datum(0));
@@ -1115,6 +1212,9 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 	Datum res;
 	res.u.cref = new ChunkReference(src, type, startChunk, endChunk, exprStartIdx, exprEndIdx);
 	res.type = CHUNKREF;
+	if (debugChannelSet(5, kDebugLingoExec)) {
+		debugC(5, kDebugLingoExec, "LC::chunkRef: type: %d, startChunk: %d, endChunk: %d, exprStartIdx: %d, exprEndIdx: %d -> %s", type, startChunk, endChunk, exprStartIdx, exprEndIdx, res.asString(true).c_str());
+	}
 	return res;
 }
 
@@ -1271,6 +1371,13 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 	// At least one of d1 and d2 must be an array
 	bool d1isArr = d1.isArray() || d1.type == PARRAY;
 	bool d2isArr = d2.isArray() || d2.type == PARRAY;
+	// In D6 and higher, direct relational comparison no longer does partial array or
+	// element-to-array coercion. However, location mode still needs
+	// scalar-to-element checks while scanning array entries.
+	if ((g_director->getVersion() >= 600) && !location && (!(d1isArr && d2isArr))) {
+		return Datum(0);
+	}
+
 	uint32 d1size = d1.isArray() ? d1.u.farr->arr.size() : d1.type == PARRAY ? d1.u.parr->arr.size() : 0;
 	uint32 d2size = d2.isArray() ? d2.u.farr->arr.size() : d2.type == PARRAY ? d2.u.parr->arr.size() : 0;
 	// The calling convention of this checking function is a bit weird:
@@ -1485,28 +1592,35 @@ void LC::c_whencode() {
 void LC::c_tell() {
 	// swap out current window
 	Datum window = g_lingo->pop();
-	g_lingo->push(g_director->getCurrentWindow());
+	Window *currentWindow = g_director->getCurrentWindow();
+	g_lingo->push(currentWindow);
 	if (window.type != OBJECT || window.u.obj->getObjType() != kWindowObj) {
 		warning("LC::c_tell(): wrong argument type: %s", window.type2str());
 		return;
 	}
 	Window *w = static_cast<Window *>(window.u.obj);
-	w->ensureMovieIsLoaded();
-	if (w->getCurrentMovie() == nullptr) {
-		warning("LC::c_tell(): window has no movie");
-		return;
+	if (currentWindow != w) {
+		w->ensureMovieIsLoaded();
+		if (w->getCurrentMovie() == nullptr) {
+			warning("LC::c_tell(): window has no movie");
+			return;
+		}
 	}
+	currentWindow->moveLingoState(w);
 	g_director->setCurrentWindow(w);
 
 }
 
 void LC::c_telldone() {
 	Datum returnWindow = g_lingo->pop();
+	Window *currentWindow = g_director->getCurrentWindow();
 	if (returnWindow.type != OBJECT || returnWindow.u.obj->getObjType() != kWindowObj) {
 		warning("LC::c_telldone(): wrong return window type: %s", returnWindow.type2str());
 		return;
 	}
-	g_director->setCurrentWindow(static_cast<Window *>(returnWindow.u.obj));
+	Window *w = static_cast<Window *>(returnWindow.u.obj);
+	currentWindow->moveLingoState(w);
+	g_director->setCurrentWindow(w);
 }
 
 
@@ -1537,7 +1651,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	Symbol funcSym;
 
 	if (nargs > 0) {
-		Datum firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs];
+		Datum firstArg = g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs];
 
 		// Factory/XObject method call
 		if (firstArg.isVarRef()) { // first arg could be method name
@@ -1552,14 +1666,14 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 				}
 				funcSym = target->getMethod(*firstArg.u.s);
 				if (funcSym.type != VOIDSYM) {
-					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target; // Set first arg to target
+					g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs] = funcSym.target; // Set first arg to target
 					call(funcSym, nargs, allowRetVal);
 				} else {
 					g_lingo->lingoError("Object <%s> has no method '%s'", obj.asString(true).c_str(), firstArg.u.s->c_str());
 				}
 				return;
 			}
-			firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs] = firstArg.eval();
+			firstArg = g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs] = firstArg.eval();
 		}
 
 		// Script/Xtra method call
@@ -1571,30 +1685,25 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 			}
 			funcSym = target->getMethod(name);
 			if (funcSym.type != VOIDSYM) {
-				g_lingo->_stack[g_lingo->_stack.size() - nargs] = target; // Set first arg to target
+				g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs] = target; // Set first arg to target
 				call(funcSym, nargs, allowRetVal);
 				return;
 			}
 		}
 	}
 
-	// Fallback for the edge case where a local factory method is called,
-	// but with an invalid first argument.
-	// If there is a current me object, and it has a function handler
-	// with a matching name, then the first argument will be replaced with the me object.
-	// If there are no arguments at all, one will be added.
+	// If we're calling from within a me object, and it has a function handler with a
+	// matching name, include the me object in the CFrame (so we still get property lookups).
+	// Doesn't matter that the first arg isn't the me object (which would have been caught
+	// by the Factory/XObject code above).
+	//
+	// If the method is called from outside and without the object as the first arg,
+	// it will still work using the normal getHandler lookup.
+	// However properties will return garbage (the number 3??).
 	if (g_lingo->_state->me.type == OBJECT) {
 		AbstractObject *target = g_lingo->_state->me.u.obj;
 		funcSym = target->getMethod(name);
 		if (funcSym.type != VOIDSYM) {
-			if (nargs == 0) {
-				debugC(3, kDebugLingoExec, "Factory method call detected with missing first arg");
-				g_lingo->_stack.push_back(Datum());
-				nargs = 1;
-			} else {
-				debugC(3, kDebugLingoExec, "Factory method call detected with invalid first arg: <%s>", g_lingo->_stack[g_lingo->_stack.size() - nargs].asString(true).c_str());
-			}
-			g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target; // Set first arg to target
 			call(funcSym, nargs, allowRetVal);
 			return;
 		}
@@ -1648,7 +1757,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 			if (g_lingo->_theEntities.contains(*funcSym.name) && nargs == 0) {
 				warning("Calling builtin '%s' as a function", funcSym.name->c_str());
 
-				TheEntity *entity = g_lingo->_theEntities[*funcSym.name];
+				const TheEntity *entity = g_lingo->_theEntities[*funcSym.name];
 				Datum id;
 				id.u.i = 0;
 				id.type = VOID;
@@ -1675,7 +1784,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 
 	if (funcSym.type != HANDLER && target.type != VOID) {
 		// Drop the target argument (only needed for user-defined methods)
-		g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
+		g_lingo->_state->stack.remove_at(g_lingo->_state->stack.size() - nargs);
 		nargs--;
 	}
 
@@ -1683,17 +1792,9 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		if (funcSym.type == HANDLER || funcSym.type == HBLTIN) {
 			// Lingo supports providing a different number of arguments than expected,
 			// and several games rely on this behaviour.
-			if (funcSym.maxArgs < nargs) {
-				debugC(kDebugLingoExec, 1, "Incorrect number of arguments for handler '%s' (%d, expected %d to %d). Dropping extra %d",
-							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, nargs - funcSym.maxArgs);
-				while (nargs > funcSym.maxArgs) {
-					g_lingo->pop();
-					nargs--;
-				}
-			}
 			if (funcSym.nargs > nargs) {
-				debugC(kDebugLingoExec, 1, "Incorrect number of arguments for handler '%s' (%d, expected %d to %d). Adding extra %d voids",
-							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, funcSym.nargs - nargs);
+				debugC(1, kDebugLingoExec, "Incorrect number of arguments for handler '%s' of type %s (%d, expected %d to %d). Adding extra %d voids",
+							funcSym.name->c_str(), symbolType2str(funcSym.type), nargs, funcSym.nargs, funcSym.maxArgs, funcSym.nargs - nargs);
 				while (nargs < funcSym.nargs) {
 					Datum d;
 					d.u.s = nullptr;
@@ -1719,7 +1820,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 
 	if (funcSym.type != HANDLER) {
 		g_debugger->builtinHook(funcSym);
-		uint stackSizeBefore = g_lingo->_stack.size() - nargs;
+		uint stackSizeBefore = g_lingo->_state->stack.size() - nargs;
 
 		if (target.type != VOID) {
 			// Only need to update the me obj
@@ -1734,27 +1835,26 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 			(*funcSym.u.bltin)(nargs);
 			g_lingo->_state->me = retMe;
 		} else {
+			// sendSprite/sendAllSprites/call/send can be used both as a command and
+			// as a function (returning the handler's result).
+			if (funcSym.name && (funcSym.name->equalsIgnoreCase("sendSprite") ||
+					funcSym.name->equalsIgnoreCase("sendAllSprites") ||
+					funcSym.name->equalsIgnoreCase("call") ||
+					funcSym.name->equalsIgnoreCase("send")))
+				g_lingo->push(Datum(allowRetVal));
+
 			(*funcSym.u.bltin)(nargs);
 		}
 
-		uint stackSize = g_lingo->_stack.size();
+		uint stackSize = g_lingo->_state->stack.size();
 
 		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_value) {
 			if (stackSize == stackSizeBefore + 1) {
-				// Set "the result" to return value!, when a method
-				// this is for handling result after execution!
-				Datum top = g_lingo->peek(0);
-				if (top.type == INT)
-					g_lingo->_theResult = top;
-
 				if (!allowRetVal) {
 					Datum extra = g_lingo->pop();
 					warning("Builtin '%s' dropping return value: %s", funcSym.name->c_str(), extra.asString(true).c_str());
 				}
 			} else if (stackSize == stackSizeBefore) {
-				// No value, hence "the result" is VOID
-				g_lingo->_theResult = g_lingo->getVoid();
-
 				if (allowRetVal)
 					error("Builtin '%s' did not return value", funcSym.name->c_str());
 			} else if (stackSize > stackSizeBefore) {
@@ -1771,10 +1871,29 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		defaultRetVal = funcSym.target; // return me
 	}
 
-	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal, paramCount);
+	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal, paramCount, nargs);
 }
 
 void LC::c_procret() {
+	// Equivalent of Lingo's "exit" command.
+	// If we hit this instruction, wipe whatever new is on the Lingo stack,
+	// as we could e.g. be in a loop.
+	// Returning a value must be done by calling LB::b_return().
+	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
+	CFrame *fp = callstack.back();
+	int extra = g_lingo->_state->stack.size() - fp->stackSizeBefore;
+	if (extra > 0) {
+		debugC(5, kDebugLingoExec, "c_procret: dropping %d items", extra);
+		g_lingo->dropStack(extra);
+	} else if (extra < 0) {
+		error("c_procret: handler %s has a stack delta size of %d", fp->sp.name->c_str(), extra);
+	}
+
+	procret();
+}
+
+void LC::procret() {
+	// Lingo stack must be empty or have one value
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 
 	if (callstack.size() == 0) {
@@ -1792,16 +1911,22 @@ void LC::c_procret() {
 	}
 }
 
+
 void LC::c_delete() {
 	Datum d = g_lingo->pop();
 
 	Datum field;
 	int start, end;
 	if (d.type == CHUNKREF) {
+		// bail out if the chunk is invalid
+		if (d.u.cref->start == -1)
+			return;
 		start = d.u.cref->start;
 		end = d.u.cref->end;
 		field = d.u.cref->source;
 		while (field.type == CHUNKREF) {
+			if (field.u.cref->start == -1)
+				return;
 			start += field.u.cref->start;
 			end += field.u.cref->start;
 			field = field.u.cref->source;
@@ -1833,12 +1958,19 @@ void LC::c_delete() {
 			break;
 		case kChunkItem:
 		case kChunkLine:
-			// when deleting the first item, include the delimiter after the item
-			// deleting another item, remove the delimiter in front
-			if (start == 0) {
-				end++;
-			} else {
-				start--;
+			{
+				Common::u32char_type_t split = (d.u.cref->type == kChunkItem) ? g_lingo->_itemDelimiter : '\r';
+				bool isFirstItem = (start == 0) || ((start > 0) && (text[start-1] != split));
+				bool isLastItem = (end == ((int)text.size())) || ((end < ((int)text.size())) && (text[end] != split));
+				if (isFirstItem && isLastItem) {
+					// if the target is a whole line, change nothing
+				} else if (isFirstItem) {
+					// when deleting the first item, include the delimiter after the item
+					end++;
+				} else {
+					// deleting another item, remove the delimiter in front
+					start--;
+				}
 			}
 			break;
 		}
@@ -1903,7 +2035,7 @@ void LC::c_fieldref() {
 	if (g_director->getVersion() >= 500)
 		castLib = g_lingo->pop();
 	Datum member = g_lingo->pop();
-	Datum res = member.asMemberID(kCastTypeAny, castLib.asInt());
+	Datum res = g_lingo->toCastMemberID(member, castLib);
 	res.type = FIELDREF;
 	g_lingo->push(res);
 }

@@ -95,8 +95,8 @@ bool Introduction::interruptableDelay(uint32 milliseconds) {
 	Events &events = Events::getReference();
 
 	if (events.interruptableDelay(milliseconds)) {
-		if (events.type() == Common::EVENT_KEYDOWN)
-			return events.event().kbd.keycode == 27;
+		if (events.type() == Common::EVENT_CUSTOM_ENGINE_ACTION_START) 
+			return events.event().customType == kActionEscape;
 		else if (LureEngine::getReference().shouldQuit())
 			return true;
 		else if (events.type() == Common::EVENT_LBUTTONDOWN)

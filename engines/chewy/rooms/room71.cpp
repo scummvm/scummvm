@@ -208,7 +208,7 @@ void Room71::proc2() {
 	_G(det)->startDetail(5, 255, false);
 	auto_scroll(160, 0);
 	_G(det)->hideStaticSpr(5);
-	startSetAILWait(1, 1, ANI_FRONT);
+	startDetailWait(1, 1, ANI_FRONT);
 	_G(det)->startDetail(2, 255, false);
 	_G(det)->stopDetail(5);
 	_G(det)->showStaticSpr(8);
@@ -251,7 +251,7 @@ void Room71::proc4() {
 void Room71::proc5(int16 val) {
 	_state = 1 + (_G(gameState).flags28_4 ? 1 : 0);
 	_G(det)->hideStaticSpr(2);
-	startSetAILWait(val, 5, ANI_FRONT);
+	startDetailWait(val, 5, ANI_FRONT);
 	_G(det)->showStaticSpr(2);
 	_state = 0;
 }

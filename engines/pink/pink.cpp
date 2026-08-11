@@ -164,8 +164,8 @@ Common::Error Pink::PinkEngine::run() {
 				if (isPeril())
 					_actor->onRightButtonClick(event.mouse);
 				break;
-			case Common::EVENT_KEYDOWN:
-				_actor->onKeyboardButtonClick(event.kbd.keycode);
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_actor->onActionClick(event.customType);
 				break;
 			default:
 				break;
@@ -186,7 +186,7 @@ void PinkEngine::load(Archive &archive) {
 	_modules.deserialize(archive);
 }
 
-void PinkEngine::initModule(const Common::String moduleName, const Common::String pageName, Archive *saveFile) {
+void PinkEngine::initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile) {
 	if (_module)
 		removeModule();
 

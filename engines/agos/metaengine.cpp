@@ -30,98 +30,29 @@
 #include "backends/keymapper/standard-actions.h"
 
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 
 #include "agos/intern.h"
 #include "agos/agos.h"
 #include "agos/detection.h"
-#include "agos/obsolete.h"
+#include "agos/dialogs.h"
 
-namespace AGOS {
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_OPL3_MODE,
-		{
-			_s("AdLib OPL3 mode"),
-			_s("When AdLib is selected, OPL3 features will be used. Depending on the game, this will prevent cut-off notes, add extra notes or instruments and/or add stereo."),
-			"opl3_mode",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_DOS_TEMPOS,
-		{
-			_s("Use DOS version music tempos"),
-			_s("Selecting this option will play the music using the tempos used by the DOS version of the game. Otherwise, the faster tempos of the Windows version will be used."),
-			"dos_music_tempos",
-			true,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_WINDOWS_TEMPOS,
-		{
-			_s("Use DOS version music tempos"),
-			_s("Selecting this option will play the music using the tempos used by the DOS version of the game. Otherwise, the faster tempos of the Windows version will be used."),
-			"dos_music_tempos",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_PREFER_DIGITAL_SFX,
-		{
-			_s("Prefer digital sound effects"),
-			_s("Prefer digital sound effects instead of synthesized ones"),
-			"prefer_digitalsfx",
-			true,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_DISABLE_FADE_EFFECTS,
-		{
-			_s("Disable fade-out effects"),
-			_s("Don't fade every screen to black when leaving a room."),
-			"disable_fade_effects",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
-} // End of namespace AGOS
-
-class AgosMetaEngine : public AdvancedMetaEngine {
+class AgosMetaEngine : public AdvancedMetaEngine<AGOS::AGOSGameDescription> {
 public:
 	const char *getName() const override {
 		return "agos";
 	}
 
-	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
-		return AGOS::optionsList;
-	}
-
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) override {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const AGOS::AGOSGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	void registerDefaultSettings(const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -135,9 +66,7 @@ bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-Common::Error AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)desc;
-
+Common::Error AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const AGOS::AGOSGameDescription *gd) const {
 	switch (gd->gameType) {
 	case AGOS::GType_PN:
 		*engine = new AGOS::AGOSEngine_PN(syst, gd);
@@ -192,14 +121,14 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &file : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+		int slotNum = atoi(file.c_str() + file.size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::InSaveFile *in = saveFileMan->openForLoading(file);
 			if (in) {
-				saveDesc = file->c_str();
+				saveDesc = file.c_str();
 				saveList.push_back(SaveStateDescriptor(this, slotNum, saveDesc));
 				delete in;
 			}
@@ -218,19 +147,21 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	using namespace AGOS;
 
 	Common::String gameId = ConfMan.get("gameid", target);
-	
+
+	// I18N: "AGOS main" refers to the main keymappings for the agos engine.
+	// It is never disabled and it is not game specific
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "agos-main", _("AGOS main"));
-	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game Keymappings"));
-	Keymap *yesNoKeymap = new Keymap(Keymap::kKeymapTypeGame, "game-Yes/No", _("Yes/No Keymapping"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *yesNoKeymap = new Keymap(Keymap::kKeymapTypeGame, "game-Yes/No", _("Yes/No keymappings"));
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -260,17 +191,17 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("PLUS");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MUTEMSC", _("Toggle Music on/off"));
+	act = new Action("MUTEMSC", _("Toggle music"));
 	act->setCustomEngineActionEvent(kActionToggleMusic);
 	act->addDefaultInputMapping("m");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SNDEFFECT", _("Toggle Sound effect on/off"));
+	act = new Action("SNDEFFECT", _("Toggle sound effects"));
 	act->setCustomEngineActionEvent(kActionToggleSoundEffects);
 	act->addDefaultInputMapping("s");
 	gameKeyMap->addAction(act);
 
-	act = new Action("FSTMODE", _("Toggle Fast mode on/off"));
+	act = new Action("FSTMODE", _("Toggle fast mode"));
 	act->setCustomEngineActionEvent(kActionToggleFastMode);
 	act->addDefaultInputMapping("C+f");
 	gameKeyMap->addAction(act);
@@ -284,27 +215,35 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 			gameId == "dimp") {
 		act = new Action("WLKFORWARD", _("Walk forward")); // KEYCODE_UP
 		act->setCustomEngineActionEvent(kActionWalkForward);
-		act->addDefaultInputMapping("UP"); 
-		act->addDefaultInputMapping("JOY_UP"); 
+		act->addDefaultInputMapping("UP");
+		act->addDefaultInputMapping("JOY_UP");
 		gameKeyMap->addAction(act);
 
 		act = new Action("TRNBACK", _("Turn backward")); // KEYCODE_DOWN
 		act->setCustomEngineActionEvent(kActionTurnBack);
-		act->addDefaultInputMapping("DOWN"); 
-		act->addDefaultInputMapping("JOY_DOWN"); 
+		act->addDefaultInputMapping("DOWN");
+		act->addDefaultInputMapping("JOY_DOWN");
 		gameKeyMap->addAction(act);
 
 		act = new Action("TRNLEFT", _("Turn left")); // KEYCODE_LEFT
 		act->setCustomEngineActionEvent(kActionTurnLeft);
-		act->addDefaultInputMapping("LEFT"); 
-		act->addDefaultInputMapping("JOY_LEFT"); 
+		act->addDefaultInputMapping("LEFT");
+		act->addDefaultInputMapping("JOY_LEFT");
 		gameKeyMap->addAction(act);
 
 		act = new Action("TRNRIGHT", _("Turn right")); // KEYCODE_RIGHT
 		act->setCustomEngineActionEvent(kActionTurnRight);
-		act->addDefaultInputMapping("RIGHT"); 
-		act->addDefaultInputMapping("JOY_RIGHT"); 
+		act->addDefaultInputMapping("RIGHT");
+		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
+
+		if (gameId == "waxworks") {
+			act = new Action("TOGGLEFIGHTMODE", _("Toggle fight mode")); // KEYCODE_F
+			act->setCustomEngineActionEvent(kActionToggleFightMode);
+			act->addDefaultInputMapping("f");
+			act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+			gameKeyMap->addAction(act);
+		}
 	}
 
 	if (gameId == "simon1" || gameId == "simon2") {
@@ -326,11 +265,11 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 		act = new Action("SHOWOBJINTERACT", _("Show objects to interact"));
 		act->setCustomEngineActionEvent(kActionShowObjects);
 		act->addDefaultInputMapping("F10");
-		act->addDefaultInputMapping("JOY_UP"); 
+		act->addDefaultInputMapping("JOY_UP");
 		gameKeyMap->addAction(act);
 
 		if (gameId == "simon2") {
-			act = new Action("BACKGRNDSND", _("Toggle background sounds On/Off"));
+			act = new Action("BACKGRNDSND", _("Toggle background sounds"));
 			act->setCustomEngineActionEvent(kActionToggleBackgroundSound);
 			act->addDefaultInputMapping("b");
 			gameKeyMap->addAction(act);
@@ -345,7 +284,7 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_X");
 		gameKeyMap->addAction(act);
 
-		act = new Action("TOGGLEHITBOX", _("Toggle hitbox names on/off"));
+		act = new Action("TOGGLEHITBOX", _("Toggle hitbox names"));
 		act->setCustomEngineActionEvent(kActionToggleHitboxName);
 		act->addDefaultInputMapping("F9");
 		gameKeyMap->addAction(act);
@@ -355,31 +294,32 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 		act = new Action("TOGGLESUB", _("Switches between speech only and combined speech and subtitles"));
 		act->setCustomEngineActionEvent(kActionToggleSubtitle);
 		act->addDefaultInputMapping("t");
-		act->addDefaultInputMapping("JOY_LEFT"); 
+		act->addDefaultInputMapping("JOY_LEFT");
 		gameKeyMap->addAction(act);
 
 		act = new Action("TOGGLESPEECH", _("Switches between subtitles only and combined speech and subtitles"));
 		act->setCustomEngineActionEvent(kActionToggleSpeech);
 		act->addDefaultInputMapping("v");
-		act->addDefaultInputMapping("JOY_RIGHT"); 
+		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 	}
 
 	if (gameId == "swampy" ||
 			gameId == "puzzle" ||
 			gameId == "jumble") {
+		// I18N: Swampy Adventures is the name of the game
 		act = new Action("HIGHSPEED", _("High speed mode on/off in Swampy Adventures"));
 		act->setCustomEngineActionEvent(kActionSpeed_GTYPEPP);
 		act->addDefaultInputMapping("F12");
 		gameKeyMap->addAction(act);
 	}
 
-	act = new Action("KEYYES", _("Press Yes Key"));
+	act = new Action("KEYYES", _("Press \"Yes\" key"));
 	act->setCustomEngineActionEvent(kActionKeyYes);
 	act->addDefaultInputMapping("JOY_A");
 	yesNoKeymap->addAction(act);
 
-	act = new Action("KEYNO", _("Press No Key"));
+	act = new Action("KEYNO", _("Press \"No\" key"));
 	act->setCustomEngineActionEvent(kActionKeyNo);
 	act->addDefaultInputMapping("JOY_B");
 	yesNoKeymap->addAction(act);
@@ -391,6 +331,22 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 
 	yesNoKeymap->setEnabled(false);
 	return keymaps;
+}
+
+void AgosMetaEngine::registerDefaultSettings(const Common::String &target) const {
+	for (const ADExtraGuiOptionsMap *entry = AGOS::optionsList; entry->guioFlag; ++entry)
+		ConfMan.registerDefault(entry->option.configOption, entry->option.defaultState);
+
+	for (const AGOS::PopUpOptionsMap *entry = AGOS::popUpOptionsList; entry->guioFlag; ++entry)
+		ConfMan.registerDefault(entry->configOption, entry->defaultState);
+
+	// DOS music tempos should default to true for DOS, false for Windows and Acorn
+	bool isDos = ConfMan.get("gameid", target) == "simon1" && ConfMan.get("platform", target) == "pc";
+	ConfMan.registerDefault("dos_music_tempos", isDos);
+}
+
+GUI::OptionsContainerWidget *AgosMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new AGOS::OptionsWidget(boss, name, target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGOS)
@@ -415,6 +371,13 @@ uint32 AGOSEngine::getFeatures() const {
 
 const char *AGOSEngine::getExtra() const {
 	return _gameDescription->desc.extra;
+}
+
+// The Mac release of Simon 2 uses identical data to the Amiga release with update 5.
+// It is still distinct from the Original Amiga release (simon2.german is different)
+bool AGOSEngine::isSimon2MacAmiga() const {
+	return getGameType() == GType_SIMON2 &&
+		getPlatform() == Common::kPlatformUnknown;
 }
 
 Common::Language AGOSEngine::getLanguage() const {

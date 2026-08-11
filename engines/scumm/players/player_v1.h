@@ -47,8 +47,6 @@ protected:
 	void generateSpkSamples(int16 *data, uint len) override;
 	void generatePCjrSamples(int16 *data, uint len) override;
 
-	void restartSound();
-
 	void set_mplex(uint mplex);
 	void parseSpeakerChunk();
 	void nextSpeakerCmd();
@@ -78,7 +76,6 @@ private:
 	uint  _mplex_step;
 	uint  _mplex;
 	uint  _repeat_ctr;
-	uint  _freq_current;
 	int   _forced_level;
 	uint16 _random_lsr;
 	uint  *_value_ptr;

@@ -222,7 +222,7 @@ void *GfxCompImage::getCurrentCompImage() {
 	}
 }
 
-// waring! : the number of images has has to be == to the inital number
+// warning! : the number of images has has to be == to the initial number
 void GfxCompImage::setImages(void **images) {
 	if (images) {
 		_compImages = images;

@@ -23,22 +23,21 @@
 #include "m4/core/errors.h"
 #include "m4/vars.h"
 #include "m4/m4.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 
 #define _GT(X) _G(triggers)._##X
 
 int32 kernel_trigger_create(int32 trigger_num) {
-	int32 new_trigger;
-
 	if (trigger_num < 0)
 		return (trigger_num);
 
 	if (trigger_num > 0xffff) {		// If room changed, this is an invalid trigger 
-		error_show(FL, 'BADT', "bad trigger. %d > 0xffff", trigger_num);
+		error_show(FL, "bad trigger. %d > 0xffff", trigger_num);
 	}
 
-	new_trigger = trigger_num + (_G(game).room_id << 16) + (_G(kernel).trigger_mode << 28);
+	const int32 new_trigger = trigger_num + (_G(game).room_id << 16) + (_G(kernel).trigger_mode << 28);
 
 	return new_trigger;
 }
@@ -46,8 +45,8 @@ int32 kernel_trigger_create(int32 trigger_num) {
 bool kernel_trigger_dispatch_now(int32 trigger_num) {
 	if (g_engine->getGameType() == GType_Riddle)
 		return kernel_trigger_dispatchx(trigger_num);
-	else
-		return kernel_trigger_dispatchx(kernel_trigger_create(trigger_num));
+
+	return kernel_trigger_dispatchx(kernel_trigger_create(trigger_num));
 }
 
 void cisco_dispatch_triggers() {
@@ -66,8 +65,8 @@ bool kernel_trigger_dispatchx(int32 trigger_num) {
 	if (_G(between_rooms))
 		return true;
 
-	KernelTriggerType old_trigger_mode = _G(kernel).trigger_mode;
-	int32 old_trigger = _G(kernel).trigger;
+	const KernelTriggerType old_trigger_mode = _G(kernel).trigger_mode;
+	const int32 old_trigger = _G(kernel).trigger;
 	bool result = false;
 
 	if (trigger_num < 0)
@@ -99,7 +98,7 @@ bool kernel_trigger_dispatchx(int32 trigger_num) {
 		g_engine->room_parser();
 
 		if (_G(player).command_ready) {
-			g_engine->parser_code();
+			g_engine->global_parser();
 		}
 		result = true;
 		break;
@@ -136,7 +135,7 @@ void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name) {
 	_G(globals)[GLB_TEMP_2] = kernel_trigger_create(trigger);
 
 	if (name) {
-		Common::String machName = Common::String::format("timer - %s", name);
+		const Common::String machName = Common::String::format("timer - %s", name);
 		TriggerMachineByHash(2, nullptr, -1, -1, timer_callback, false, machName.c_str());
 
 	} else {
@@ -144,17 +143,24 @@ void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name) {
 	}
 }
 
+void kernel_timing_trigger(int32 ticks, int16 trigger,
+		KernelTriggerType preMode, KernelTriggerType postMode) {
+	_G(kernel).trigger_mode = preMode;
+	kernel_timing_trigger(ticks, trigger, nullptr);
+	_G(kernel).trigger_mode = postMode;
+}
+
 void kernel_timing_trigger_daemon(int32 ticks, int16 trigger) {
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_timing_trigger(ticks, trigger);
+	kernel_timing_trigger(ticks, trigger, nullptr);
 	_G(kernel).trigger_mode = oldMode;
 }
 
 void kernel_service_timing_trigger_q() {
 	// Dispatch pending timing triggers
 	int32 iter = 0;
-	int32 now = timer_read_60();
+	const int32 now = timer_read_60();
 
 	while (iter < _GT(time_q_end) && _GT(time_q)[iter] <= now)
 	{
@@ -165,7 +171,7 @@ void kernel_service_timing_trigger_q() {
 		return;
 
 	// Remove dispatched triggers from the q
-	int32 total = iter;
+	const int32 total = iter;
 	int32 dispatched = iter;
 	iter = 0;
 	while (dispatched < _GT(time_q_end)) {

@@ -2178,7 +2178,7 @@ uint8 ArmorProto::adjustDamage(uint8 damage) {
 	//  Apply damage divider
 	if (damageDivider != 0) damage /= damageDivider;
 
-	//  Apply damage absorbtion
+	//  Apply damage absorption
 	if (damageAbsorbtion < damage)
 		damage -= damageAbsorbtion;
 	else

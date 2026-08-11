@@ -48,7 +48,6 @@ public:
 
 private:
 	bool render();
-	uint32 _color;
 	bool initMask() override;
 	GLuint _shadowVolumeVertexBuffer;
 	GLuint _shadowMaskVertexBuffer;

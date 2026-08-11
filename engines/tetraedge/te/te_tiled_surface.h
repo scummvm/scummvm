@@ -45,7 +45,7 @@ public:
 	void draw() override;
 	virtual void entry() {};
 	byte isLoaded();
-	bool load(const Common::FSNode &node);
+	bool load(const TetraedgeFSNode &node);
 	bool load(const TeImage &image);
 	bool load(const TeIntrusivePtr<Te3DTexture> &texture);
 
@@ -104,7 +104,7 @@ private:
 
 	bool _shouldDraw;
 
-	TeImage::Format _imgFormat;
+	Graphics::PixelFormat _imgFormat;
 
 	Common::Path _loadedPath;
 

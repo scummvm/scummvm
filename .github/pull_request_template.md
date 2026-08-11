@@ -2,9 +2,17 @@
 <!---
 Thank you for contributing to ScummVM. Please read the following carefully before submitting your Pull Request.
 
-Make sure your individual commits follow the guidelines found in the ScummVM Wiki: https://wiki.scummvm.org/index.php?title=Commit_Guidelines. If they're not please edit them before submitting the Pull Request.
+ATTENTION TO AI USERS:
+
+EVERY WORD of your code, comments, commit log messages, PR description, must be re-read by a human and checked for sanity, correctness and common sense. At any sight of AI slop, including lengthy LLM-oriented explanations, your PR will be closed.
+
+On top of that, we created AI-specific guidelines https://github.com/scummvm/scummvm/blob/master/AI-GUIDELINES.md
+
+Make sure your individual commits follow the guidelines found in the ScummVM Wiki: https://wiki.scummvm.org/index.php?title=Commit_Guidelines. If they're not, please edit them before submitting the Pull Request.
 
 Proper documentation must also be included for common code and changes impacting user facing elements.
+
+We require linear history, so no merge commits are allowed.
 
 Commits and Pull Requests should use the following template:
 

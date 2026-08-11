@@ -113,14 +113,27 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
+	// Lost Eden PC-9821 version
+	// English with JP/EN subtitles
+	// PC-9801-86/PC-9821A or PC-9821X/N/C audio
+	{
+		"losteden",
+		nullptr,
+		AD_ENTRY1s("EDEN.DAT", "5f8817a58e6a7729bcd5ebeabe17640e", 450052416),
+		Common::EN_ANY,
+		Common::kPlatformPC98,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
 } // End of namespace Cryo
 
-class CryoMetaEngineDetection : public AdvancedMetaEngineDetection {
+class CryoMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	CryoMetaEngineDetection() : AdvancedMetaEngineDetection(Cryo::gameDescriptions, sizeof(ADGameDescription), cryoGames) {
+	CryoMetaEngineDetection() : AdvancedMetaEngineDetection(Cryo::gameDescriptions, cryoGames) {
 	}
 
 	const char *getName() const override {

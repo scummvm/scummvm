@@ -1232,7 +1232,7 @@ TELLHack:  /* This is used to restart the noun/prep/object scan
 		return parseerr(230, "I don't understand '$word$' as a verb.", ip);
 
 	/* Now we need to find noun, obj, and prep (if they all exist) */
-	/* standard grammer:  verb noun prep obj */
+	/* standard grammar:  verb noun prep obj */
 	prep = 0;
 	np = ++ip; /* ip now points just _after_ verb */
 	lnoun = parse_noun((verbflag[vnum] & VERB_MULTI) != 0, 0);
@@ -1604,7 +1604,7 @@ void menu_cmd(void) {
 }
 
 
-/* Grammer structures:
+/* Grammar structures:
  sverb, dverb                     (n,s,e,w,...,q,l,....)
  overb noun              (close,examine,read,eat,drink,pull,light,ext)
  averb noun|ALL          (drop,get,wear,remove)

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="SplashTheme_v30" parent="SplashTheme_v21">
+		<item name="android:windowLayoutInDisplayCutoutMode">always</item>
+	</style>
+
+	<style name="ShortcutCreatorTheme_v30" parent="ShortcutCreatorTheme_v21">
+		<item name="android:windowLayoutInDisplayCutoutMode">always</item>
+	</style>
+</resources>

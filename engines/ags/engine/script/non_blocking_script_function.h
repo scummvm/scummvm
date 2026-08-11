@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_SCRIPT_NON_BLOCKING_SCRIPT_FUNCTION_H
 #define AGS_ENGINE_SCRIPT_NON_BLOCKING_SCRIPT_FUNCTION_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/script/runtime_script_value.h"
 

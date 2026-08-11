@@ -37,7 +37,7 @@
 		"bargon",
 		"",
 		AD_ENTRY1s("intro.stk", "da3c54be18ab73fbdb32db24624a9c23", 3181825),
-		EN_ANY,
+		EN_GRB,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)

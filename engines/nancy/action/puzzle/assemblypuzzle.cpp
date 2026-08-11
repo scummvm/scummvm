@@ -118,6 +118,9 @@ void AssemblyPuzzle::readData(Common::SeekableReadStream &stream) {
 void AssemblyPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
+		_puzzleState = (AssemblyPuzzleData *)NancySceneState.getPuzzleData(AssemblyPuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 
@@ -134,8 +137,7 @@ void AssemblyPuzzle::execute() {
 
 		g_nancy->_sound->loadSound(_solveSound);
 		g_nancy->_sound->playSound(_solveSound);
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(_solveText);
+		showSubtitle(_solveText);
 		NancySceneState.setEventFlag(_solveScene._flag);
 		_completed = true;
 

@@ -33,8 +33,14 @@
 #include "common/rational.h"
 #include "common/rect.h"
 
+#include "graphics/pixelformat.h"
+
 namespace Common {
 class SeekableReadStream;
+}
+
+namespace Image {
+class ImageDecoder;
 }
 
 namespace Gob {
@@ -99,8 +105,8 @@ private:
 
 class Surface {
 public:
-	Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem = 0);
-	Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem);
+	Surface(uint16 width, uint16 height, uint8 bpp, byte *vidMem = nullptr, const uint32 *highColorMap = nullptr, bool ownHighColorMap = false);
+	Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem, const uint32 *highColorMap = nullptr, bool ownHighColorMap = false);
 	~Surface();
 
 	uint16 getWidth () const;
@@ -127,28 +133,44 @@ public:
 	void blitScaled(const Surface &from, int16 x, int16 y, Common::Rational scale, int32 transp = -1);
 	void blitScaled(const Surface &from, Common::Rational scale, int32 transp = -1);
 
-	void fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 color);
-	void fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 fillColor, uint32 backgroundColor);
-	Common::Rect fillAreaAtPoint(int16 left, int16 top, uint32 fillColor);
+	void blitShaded(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
+					int16 x, int16 y, uint8 strength, int32 transp, Graphics::PixelFormat pixelFormat);
+
+	void fillRectRaw(int16 left, int16 top, int16 right, int16 bottom, uint32 color);
+	void fillRect(int16 left, int16 top, int16 right, int16 bottom, uint8 colorIndex);
+	void fillArea(int16 left, int16 top, int16 right, int16 bottom, uint8 fillColorIndex, uint8 backgroundColorIndex);
+	Common::Rect fillAreaAtPoint(int16 left, int16 top, uint8 fillColorIndex);
 	void fill(uint32 color);
 	void clear();
 
 	void shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
-			uint32 color, uint8 strength);
+			uint8 colorIndex, uint8 strength);
 
 	void recolor(uint8 from, uint8 to);
 
-	void putPixel(uint16 x, uint16 y, uint32 color);
-	void drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 color);
-	void drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color);
-	void drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int16 pattern = 0);
+	void putPixelRaw(uint16 x, uint16 y, uint32 color);
+	void putPixel(uint16 x, uint16 y, uint8 colorIndex);
+	void drawLineRaw(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint32 colorIndex);
+	void drawLine(uint16 x0, uint16 y0, uint16 x1, uint16 y1, uint8 colorIndex);
+	void drawRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint8 colorIndex);
+	void drawCircle(uint16 x0, uint16 y0, uint16 radius, uint8 colorIndex, int16 pattern = 0);
 
 	void blitToScreen(uint16 left, uint16 top, uint16 right, uint16 bottom, uint16 x, uint16 y) const;
 
-	bool loadImage(Common::SeekableReadStream &stream);
-	bool loadImage(Common::SeekableReadStream &stream, ImageType type);
+	bool loadImage(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
+				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadImage(Common::SeekableReadStream &stream, ImageType type, int16 left, int16 top, int16 right, int16 bottom,
+				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+
+	uint32 getColorFromIndex(uint8 index) const;
 
 	static ImageType identifyImage(Common::SeekableReadStream &stream);
+	static bool getImageInfo(Common::SeekableReadStream &stream, uint32 &width, uint32 &height, uint32 &bpp);
+	static void computeHighColorMap(uint32 *highColorMap, const byte *palette,
+									const Graphics::PixelFormat &format,
+									bool useSpecialBlackWhiteValues,
+									int16 startColor = 0, int16 colorCount = 256,
+									int16 startColorSrc = -1);
 
 private:
 	uint16 _width;
@@ -158,14 +180,20 @@ private:
 	bool  _ownVidMem;
 	byte *_vidMem;
 
+	bool _ownHighColorMap;
+	const uint32 *_highColorMap;
+
 	static bool clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom, int16 &x, int16 &y,
 	                         uint16 dWidth, uint16 dHeight, uint16 sWidth, uint16 sHeight);
 
-	bool loadTGA (Common::SeekableReadStream &stream);
-	bool loadIFF (Common::SeekableReadStream &stream);
-	bool loadBRC (Common::SeekableReadStream &stream);
-	bool loadBMP (Common::SeekableReadStream &stream);
-	bool loadJPEG(Common::SeekableReadStream &stream);
+	bool loadImage(Image::ImageDecoder &decoder, Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom,
+				   int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+
+	bool loadTGA (Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadIFF (Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadBRC (Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadBMP (Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
+	bool loadJPEG(Common::SeekableReadStream &stream, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp, Graphics::PixelFormat format);
 };
 
 typedef Common::SharedPtr<Surface> SurfacePtr;

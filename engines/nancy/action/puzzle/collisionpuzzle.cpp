@@ -45,7 +45,7 @@ void CollisionPuzzle::init() {
 	_image.setTransparentColor(_drawSurface.getTransparentColor());
 
 	if (_puzzleType == kCollision) {
-		_pieces.resize(_pieceSrcs.size(), Piece());
+		_pieces.resize(_pieceSrcs.size());
 		for (uint i = 0; i < _pieceSrcs.size(); ++i) {
 			_pieces[i]._drawSurface.create(_image, _pieceSrcs[i]);
 			Common::Rect pos = getScreenPosition(_startLocations[i]);
@@ -91,23 +91,29 @@ void CollisionPuzzle::init() {
 					continue;
 				}
 
+				// Start the solve piece in the slot two cells left of the grid
+				int pieceX = (int)x;
+				if (id == 6 && _tileMoveSolveStartsInSlot) {
+					pieceX -= 2;
+				}
+
 				newPiece._drawSurface.create(_image, _pieceSrcs[id - 1]);
-				Common::Rect pos = getScreenPosition(Common::Point(x, y));
+				Common::Rect pos = getScreenPosition(Common::Point(pieceX, y));
 				if (_lineWidth == 6) {
 					pos.translate(-1, 0); // Improvement
 				}
 				pos.setWidth(newPiece._drawSurface.w);
 				pos.setHeight(newPiece._drawSurface.h);
 				newPiece.moveTo(pos);
-				newPiece._gridPos = Common::Point(x, y);
+				newPiece._gridPos = Common::Point(pieceX, y);
 				newPiece.setVisible(true);
 				newPiece.setTransparent(true);
 
 				if (id == 6) {
 					// The solve piece is pushed to the front
-					_pieces.insert_at(0, newPiece);
+					_pieces.emplace(_pieces.begin(), Common::move(newPiece));
 				} else {
-					_pieces.push_back(newPiece);
+					_pieces.push_back(Common::move(newPiece));
 				}
 			}
 		}
@@ -187,16 +193,42 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 	uint16 numPieces = 0;
 
-	uint16 width = stream.readUint16LE();
-	uint16 height = stream.readUint16LE();
+	// Nancy 11 raised the Collision piece limit from 5 to 10 and added a leading flag
+	const bool collisionNancy11 = (_puzzleType == kCollision && g_nancy->getGameType() >= kGameTypeNancy11);
+	if (collisionNancy11) {
+		stream.skip(1); // pieces are randomized when this is 0
+	}
+
+	// Nancy 10+ TileMove (and Nancy 11+ Collision) store rows then cols (was width then height for square grids)
+	uint16 width, height;
+	if ((_puzzleType == kTileMove && g_nancy->getGameType() >= kGameTypeNancy10) || collisionNancy11) {
+		height = stream.readUint16LE();
+		width = stream.readUint16LE();
+	} else {
+		width = stream.readUint16LE();
+		height = stream.readUint16LE();
+	}
 
 	if (_puzzleType == kCollision) {
 		numPieces = stream.readUint16LE();
 	} else {
 		_tileMoveExitPos.y = stream.readUint16LE();
 		_tileMoveExitPos.x = stream.readUint16LE();
-		_tileMoveExitSize = stream.readUint16LE();
+		_tileMoveExitIndex = stream.readUint16LE();
 		numPieces = 6;
+
+		// Nancy 12: when set, the solve piece starts in the slot left of the grid
+		if (g_nancy->getGameType() >= kGameTypeNancy12) {
+			_tileMoveSolveStartsInSlot = stream.readByte() == 1;
+		}
+	}
+
+	// Nancy 12 enlarged the Collision grid from 8x8 to 12x12; TileMove went 8 to 11 in Nancy 10
+	uint maxGridSize = 8;
+	if (_puzzleType == kTileMove && g_nancy->getGameType() >= kGameTypeNancy10) {
+		maxGridSize = 11;
+	} else if (_puzzleType == kCollision && g_nancy->getGameType() >= kGameTypeNancy12) {
+		maxGridSize = 12;
 	}
 
 	_grid.resize(height, Common::Array<uint16>(width));
@@ -204,20 +236,33 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 		for (uint x = 0; x < width; ++x) {
 			_grid[y][x] = stream.readUint16LE();
 		}
-		stream.skip((8 - width) * 2);
+		stream.skip((maxGridSize - width) * 2);
 	}
-	stream.skip((8 - height) * 8 * 2);
+	stream.skip((maxGridSize - height) * maxGridSize * 2);
+
+	// Earlier Collision puzzles store wall/block markers as 6-10, which Nancy 11 reuses for
+	// home IDs. Shift them up to the internal 16-20 range.
+	if (_puzzleType == kCollision && g_nancy->getGameType() < kGameTypeNancy11) {
+		for (uint y = 0; y < height; ++y) {
+			for (uint x = 0; x < width; ++x) {
+				if (_grid[y][x] >= 6 && _grid[y][x] <= 10)
+					_grid[y][x] += 10;
+			}
+		}
+	}
 
 	if (_puzzleType == kCollision) {
+		const uint maxPieces = collisionNancy11 ? 10 : 5;
+
 		_startLocations.resize(numPieces);
 		for (uint i = 0; i < numPieces; ++i) {
 			_startLocations[i].x = stream.readUint16LE();
 			_startLocations[i].y = stream.readUint16LE();
 		}
-		stream.skip((5 - numPieces) * 4);
+		stream.skip((maxPieces - numPieces) * 4);
 
-		readRectArray(stream, _pieceSrcs, numPieces, 5);
-		readRectArray(stream, _homeSrcs, numPieces, 5);
+		readRectArray(stream, _pieceSrcs, numPieces, maxPieces);
+		readRectArray(stream, _homeSrcs, numPieces, maxPieces);
 
 		readRect(stream, _verticalWallSrc);
 		readRect(stream, _horizontalWallSrc);
@@ -240,15 +285,21 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	if (g_nancy->getGameType() <= kGameTypeNancy7) {
 		stream.skip(3);
+	} else if (_puzzleType == kCollision && g_nancy->getGameType() >= kGameTypeNancy10) {
+		stream.skip(3);
 	} else if (_puzzleType == kTileMove) {
 		uint16 numTimerGraphics = stream.readUint16LE();
 		_timerTime = stream.readUint32LE();
-		readRectArray(stream, _timerSrcs, numTimerGraphics, 10);
-		_timerFlagIds.resize(numTimerGraphics);
-		for (uint i = 0; i < numTimerGraphics; ++i) {
-			_timerFlagIds[i] = stream.readSint16LE();
+		if (numTimerGraphics) {
+			readRectArray(stream, _timerSrcs, numTimerGraphics, 10);
+			_timerFlagIds.resize(numTimerGraphics);
+			for (uint i = 0; i < numTimerGraphics; ++i) {
+				_timerFlagIds[i] = stream.readSint16LE();
+			}
+			stream.skip((10 - numTimerGraphics) * 2);
+		} else {
+			stream.skip(10 * 16 + 10 * 2);	// 10x16-byte rects + 10x2-byte flag IDs
 		}
-		stream.skip((10 - numTimerGraphics) * 2);
 		readRect(stream, _timerDest);
 	}
 
@@ -277,6 +328,7 @@ void CollisionPuzzle::execute() {
 		g_nancy->_sound->loadSound(_wallHitSound);
 		g_nancy->_sound->loadSound(_homeSound);
 		NancySceneState.setNoHeldItem();
+		_puzzleStartTime = g_nancy->getTotalPlayTime();
 		_state = kRun;
 		// fall through
 	case kRun :
@@ -299,13 +351,36 @@ void CollisionPuzzle::execute() {
 					return;
 				}
 			}
+		} else if (_tileMoveExitIndex == 20 && g_nancy->getGameType() >= kGameTypeNancy10) {
+			// Stair-slider sentinel: solves when the exit cell is uncovered
+			bool exitCovered = false;
+			for (uint i = 0; i < _pieces.size(); ++i) {
+				Common::Rect r(_pieces[i]._gridPos.x, _pieces[i]._gridPos.y,
+								_pieces[i]._gridPos.x + _pieces[i]._w,
+								_pieces[i]._gridPos.y + _pieces[i]._h);
+				if (r.contains(_tileMoveExitPos)) {
+					exitCovered = true;
+					break;
+				}
+			}
+			if (exitCovered) {
+				return;
+			}
 		} else {
 			// Check if either:
 			// - the solve tile is over the exit or;
 			// - the solve tile is outside the bounds of the grid (and is thus inside the exit)
 			Common::Point pos = _pieces[0]._gridPos;
 			Common::Rect posRect(pos.x, pos.y, pos.x + _pieces[0]._w, pos.y + _pieces[0]._h);
-			Common::Rect gridRect(_grid.size(), _grid[0].size());
+			int16 w = g_nancy->getGameType() <= kGameTypeNancy9 ? _grid.size() : _grid[0].size();
+			int16 h = g_nancy->getGameType() <= kGameTypeNancy9 ? _grid[0].size() : _grid.size();
+			Common::Rect gridRect(w, h);
+
+			// The left start slot is outside the grid too, but isn't the exit
+			if (_tileMoveSolveStartsInSlot && pos.x < 0) {
+				return;
+			}
+
 			if (!posRect.contains(_tileMoveExitPos) && gridRect.contains(pos)) {
 				return;
 			}
@@ -452,14 +527,16 @@ Common::Point CollisionPuzzle::movePiece(uint pieceID, WallType direction) {
 		}
 	}
 
-	// Move result outside of grid when the exit is at an edge, and the moved piece is on top of the exit
-	if (_puzzleType == kTileMove && pieceID == 0) {
+	// Move result outside of grid when the exit is at an edge, and the moved piece is on top of the exit.
+	// Stair-slider puzzles solve by uncovering the exit cell instead, so their solve piece stays in the grid.
+	const bool isStairSlider = _tileMoveExitIndex == 20 && g_nancy->getGameType() >= kGameTypeNancy10;
+	if (_puzzleType == kTileMove && pieceID == 0 && !isStairSlider) {
 		Common::Rect compareRect(newPos.x, newPos.y, newPos.x + _pieces[pieceID]._w, newPos.y + _pieces[pieceID]._h);
 		if (compareRect.contains(_tileMoveExitPos)) {
 			if (horizontal && (_tileMoveExitPos.x == 0 || _tileMoveExitPos.x == (int)_grid[0].size() - 1)) {
-				newPos.x += inc * _tileMoveExitSize;
+				newPos.x += inc * _tileMoveExitIndex;
 			} else if (!horizontal && (_tileMoveExitPos.y == 0 || _tileMoveExitPos.y == (int)_grid.size() - 1)) {
-				newPos.y += inc * _tileMoveExitSize;
+				newPos.y += inc * _tileMoveExitIndex;
 			}
 		}
 	}
@@ -476,7 +553,8 @@ Common::Rect CollisionPuzzle::getScreenPosition(Common::Point gridPos) {
 	dest.bottom -= 1;
 
 	if (_puzzleType == kTileMove) {
-		dest.setWidth(dest.width() / 2);
+		// The cell width is that of a 1-wide piece; halving the 2-wide sprite rounds up
+		dest.setWidth(_pieceSrcs[1].width() - 1);
 	}
 
 	dest.moveTo(_gridPos);
@@ -590,6 +668,15 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	// Nancy 10 gave both puzzle variants dedicated slide-arrow cursors (system cursor types 23-26);
+	// earlier games reuse the generic scene-movement arrows.
+	const bool useSlideCursors =
+		g_nancy->getGameType() >= kGameTypeNancy10 && g_nancy->getGameType() <= kGameTypeNancy12;
+	const CursorManager::CursorType leftCursor = useSlideCursors ? CursorManager::kNewPuzzleSlideLeft : CursorManager::kMoveLeft;
+	const CursorManager::CursorType rightCursor = useSlideCursors ? CursorManager::kNewPuzzleSlideRight : CursorManager::kMoveRight;
+	const CursorManager::CursorType upCursor = useSlideCursors ? CursorManager::kNewPuzzleSlideUp : CursorManager::kMoveUp;
+	const CursorManager::CursorType downCursor = useSlideCursors ? CursorManager::kNewPuzzleSlideDown : CursorManager::kMoveDown;
+
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Common::Point checkPos;
 		Common::Rect left, right, up, down;
@@ -628,7 +715,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			if (left.contains(input.mousePos)) {
 				checkPos = movePiece(i, kWallLeft);
 				if (checkPos != _pieces[i]._gridPos) {
-					g_nancy->_cursor->setCursorType(CursorManager::kMoveLeft);
+					g_nancy->_cursor->setCursorType(leftCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_lastPosition = _pieces[i]._gridPos;
@@ -646,7 +733,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			if (right.contains(input.mousePos)) {
 				checkPos = movePiece(i, kWallRight);
 				if (checkPos != _pieces[i]._gridPos) {
-					g_nancy->_cursor->setCursorType(CursorManager::kMoveRight);
+					g_nancy->_cursor->setCursorType(rightCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_lastPosition = _pieces[i]._gridPos;
@@ -664,7 +751,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			if (up.contains(input.mousePos)) {
 				checkPos = movePiece(i, kWallUp);
 				if (checkPos != _pieces[i]._gridPos) {
-					g_nancy->_cursor->setCursorType(CursorManager::kMoveUp);
+					g_nancy->_cursor->setCursorType(upCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_lastPosition = _pieces[i]._gridPos;
@@ -682,7 +769,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			if (down.contains(input.mousePos)) {
 				checkPos = movePiece(i, kWallDown);
 				if (checkPos != _pieces[i]._gridPos) {
-					g_nancy->_cursor->setCursorType(CursorManager::kMoveDown);
+					g_nancy->_cursor->setCursorType(downCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_lastPosition = _pieces[i]._gridPos;

@@ -39,9 +39,9 @@ static const DebugChannelDef debugFlagList[] = {
 
 #include "voyeur/detection_tables.h"
 
-class VoyeurMetaEngineDetection : public AdvancedMetaEngineDetection {
+class VoyeurMetaEngineDetection : public AdvancedMetaEngineDetection<Voyeur::VoyeurGameDescription> {
 public:
-	VoyeurMetaEngineDetection() : AdvancedMetaEngineDetection(Voyeur::gameDescriptions, sizeof(Voyeur::VoyeurGameDescription), voyeurGames) {
+	VoyeurMetaEngineDetection() : AdvancedMetaEngineDetection(Voyeur::gameDescriptions, voyeurGames) {
 		_maxScanDepth = 3;
 	}
 

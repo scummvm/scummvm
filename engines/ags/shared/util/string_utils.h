@@ -71,6 +71,9 @@ String          ReadString(Stream *in);
 void            ReadString(char *cstr, Stream *in, size_t buf_limit);
 void            ReadString(char **cstr, Stream *in);
 void            ReadString(String &s, Stream *in);
+// Read a string and trailing padding, aligning total read data to int32
+// this is a special case used strictly for legacy save format
+String          ReadStringAligned(Stream *in);
 void            SkipString(Stream *in);
 void            WriteString(const String &s, Stream *out);
 void            WriteString(const char *cstr, Stream *out);

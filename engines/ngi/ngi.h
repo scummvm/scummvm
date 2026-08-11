@@ -30,7 +30,7 @@
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #include "engines/engine.h"
 #include "ngi/console.h"
@@ -42,17 +42,31 @@ class SoundHandle;
 namespace NGI {
 
 enum {
-	kDebugPathfinding	= 1 << 0,
-	kDebugDrawing		= 1 << 1,
-	kDebugLoading		= 1 << 2,
-	kDebugAnimation		= 1 << 3,
-	kDebugMemory		= 1 << 4,
-	kDebugEvents		= 1 << 5,
-	kDebugBehavior		= 1 << 6,
-	kDebugInventory		= 1 << 7,
-	kDebugSceneLogic	= 1 << 8,
-	kDebugInteractions	= 1 << 9,
-	kDebugXML			= 1 << 10
+	kDebugPathfinding = 1,
+	kDebugDrawing,
+	kDebugLoading,
+	kDebugAnimation,
+	kDebugMemory,
+	kDebugEvents,
+	kDebugBehavior,
+	kDebugInventory,
+	kDebugSceneLogic,
+	kDebugInteractions,
+	kDebugXML,
+};
+
+enum NGIActions {
+	kActionNone,
+	kActionPause,
+	kActionStopSounds,
+	kActionToggleMute,
+	kActionMapOpen,
+	kActionMapClose,
+	kActionHelp,
+	kActionInventory,
+	kActionSkipIntro,
+	kActionSkipCredits,
+	kActionCloseDialog,
 };
 
 #define MAXGAMEOBJH 10000
@@ -140,8 +154,7 @@ public:
 
 	void updateEvents();
 
-	Graphics::Surface _backgroundSurface;
-	Graphics::PixelFormat _origFormat;
+	Graphics::ManagedSurface _backgroundSurface;
 
 	Common::ScopedPtr<GameLoader> _gameLoader;
 	GameProject *_gameProject;

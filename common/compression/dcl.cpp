@@ -348,7 +348,7 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 	byte dictionaryType = getByteLSB();
 
 	if (mode != DCL_BINARY_MODE && mode != DCL_ASCII_MODE) {
-		warning("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01", mode);
+		warning("DCL-IMPLODE: Error: Encountered mode %02x, expected 00 or 01", mode);
 		return false;
 	}
 
@@ -366,7 +366,7 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 		dictionarySize = 4096;
 		break;
 	default:
-		warning("DCL-INFLATE: Error: unsupported dictionary type %02x", dictionaryType);
+		warning("DCL-IMPLODE: Error: unsupported dictionary type %02x", dictionaryType);
 		return false;
 	}
 	dictionaryMask = dictionarySize - 1;
@@ -397,14 +397,14 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 
 			if (_targetFixedSize) {
 				if (tokenLength + _bytesWritten > _targetSize) {
-					warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes (declared unpacked size is %d bytes, current is %d + %d bytes)",
+					warning("DCL-IMPLODE Error: Write out of bounds while copying %d bytes (declared unpacked size is %d bytes, current is %d + %d bytes)",
 							tokenLength, _targetSize, _bytesWritten, tokenLength);
 					return false;
 				}
 			}
 
 			if (_bytesWritten < tokenOffset) {
-				warning("DCL-INFLATE Error: Attempt to copy from before beginning of input stream (declared unpacked size is %d bytes, current is %d bytes)",
+				warning("DCL-IMPLODE Error: Attempt to copy from before beginning of input stream (declared unpacked size is %d bytes, current is %d bytes)",
 						_targetSize, _bytesWritten);
 				return false;
 			}
@@ -449,7 +449,7 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 
 	if (_targetFixedSize) {
 		if (_bytesWritten != _targetSize)
-			warning("DCL-INFLATE Error: Inconsistent bytes written (%d) and target buffer size (%d)", _bytesWritten, _targetSize);
+			warning("DCL-IMPLODE Error: Inconsistent bytes written (%d) and target buffer size (%d)", _bytesWritten, _targetSize);
 		return _bytesWritten == _targetSize;
 	}
 	return true; // For targets featuring dynamic size we always succeed

@@ -42,16 +42,14 @@ System::System(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
 	tick();
 }
 
-void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
-	if (mask & kEventKeyb) {
-		if (keyCode == Common::KEYCODE_ESCAPE) {
-			// The original was calling keyClick()
-			// The sound is uselessly annoying and noisy, so it has been removed
-			_vm->killText();
-			if (_vm->_gamePhase == kPhaseIntro) {
-				_vm->_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
-				return;
-			}
+void System::touch(uint16 mask, V2D pos) {
+	if (mask & kEventEsc) {
+		// The original was calling keyClick()
+		// The sound is uselessly annoying and noisy, so it has been removed
+		_vm->killText();
+		if (_vm->_gamePhase == kPhaseIntro) {
+			_vm->_commandHandler->addCommand(kCmdClear, -1, 0, nullptr);
+			return;
 		}
 	} else {
 		if (_vm->_gamePhase != kPhaseInGame)
@@ -169,7 +167,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 	ID id;
 
 	char tmpStr[kLineMax + 1];
-	STATIC_ASSERT(sizeof(tmpStr) >= kPathMax, mergeExt_expects_kPathMax_buffer);
+	static_assert(sizeof(tmpStr) >= kPathMax, "mergeExt expects kPathMax buffer");
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) { // sprite description file exist
@@ -844,7 +842,7 @@ void CGE2Engine::switchHero(int sex) {
 		_commandHandler->addCommand(kCmdSeq, -1, 1, face);
 }
 
-void Sprite::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
+void Sprite::touch(uint16 mask, V2D pos) {
 	if ((mask & kEventAttn) != 0)
 		return;
 

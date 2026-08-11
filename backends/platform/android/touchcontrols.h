@@ -24,10 +24,15 @@
 
 #include "common/events.h"
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 class TouchControlsDrawer {
 public:
+	virtual void touchControlInitSurface(const Graphics::ManagedSurface &surf) = 0;
 	virtual void touchControlNotifyChanged() = 0;
-	virtual void touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) = 0;
+	virtual void touchControlDraw(uint8 alpha, int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) = 0;
 
 protected:
 	~TouchControlsDrawer() {}
@@ -44,81 +49,126 @@ public:
 	};
 
 	TouchControls();
+	~TouchControls();
 
-	void init(TouchControlsDrawer *drawer, int width, int height);
+	void init(float scale);
+	void setDrawer(TouchControlsDrawer *drawer, int width, int height);
+	void beforeDraw();
 	void draw();
 	void update(Action action, int ptr, int x, int y);
 
 private:
 	TouchControlsDrawer *_drawer;
 
-	int _screen_width, _screen_height;
+	unsigned int _screen_width, _screen_height;
+	unsigned int _scale, _scale2;
 
-	enum Function {
-		kFunctionNone = -1,
-		kFunctionJoystick = 0,
-		kFunctionCenter = 1,
-		kFunctionRight = 2,
-		kFunctionMax = 2
+	Graphics::ManagedSurface *_svg;
+
+	unsigned int _zombieCount;
+
+	enum State {
+		kFunctionInactive = 0,
+		kFunctionActive = 1,
+		kFunctionZombie = 2
 	};
-	Function getFunction(int x, int y);
 
-	struct Pointer {
-		Pointer() : id(-1), startX(-1), startY(-1),
+	struct Function {
+		virtual bool isInside(int, int) = 0;
+		virtual void touch(int, int, Action) = 0;
+		virtual void draw(uint8 alpha) = 0;
+		virtual void resetState() {}
+
+		Function(const TouchControls *parent_) :
+			parent(parent_), pointerId(-1),
+			startX(-1), startY(-1),
 			currentX(-1), currentY(-1),
-			function(kFunctionNone), active(false) {}
+			lastActivable(0), status(kFunctionInactive) {}
+		virtual ~Function() {}
+
 		void reset() {
-			id = -1;
+			pointerId = -1;
 			startX = startY = currentX = currentY = -1;
-			function = kFunctionNone;
-			active = false;
+			lastActivable = 0;
+			status = kFunctionInactive;
+			resetState();
 		}
 
-		int id;
+		const TouchControls *parent;
+
+		int pointerId;
 		uint16 startX, startY;
 		uint16 currentX, currentY;
-		Function function;
-		bool active;
+		uint32 lastActivable;
+		State status;
+	};
+	Function *getFunctionFromPointerId(int ptr);
+	Function *getZombieFunctionFromPos(int x, int y);
+
+	enum FunctionId {
+		kFunctionNone = -1,
+		kFunctionLeft = 0,
+		kFunctionRight = 1,
+		kFunctionCenter = 2,
+		kFunctionCount = 3
+	};
+	FunctionId getFunctionId(int x, int y);
+
+	Function *_functions[kFunctionCount];
+
+	static void buttonDown(Common::JoystickButton jb);
+	static void buttonUp(Common::JoystickButton jb);
+	static void buttonPress(Common::JoystickButton jb);
+
+	/**
+	 * Draws a part of the joystick surface on the screen
+	 *
+	 * @param x     The left coordinate in fixed-point screen pixels
+	 * @param y     The top coordinate in fixed-point screen pixels
+	 * @param offX  The left offset in SVG pixels
+	 * @param offY  The top offset in SVG pixels
+	 * @param clip  The clipping rectangle in source surface in SVG pixels
+	 */
+	void drawSurface(uint8 alpha, int x, int y, int offX, int offY, const Common::Rect &clip) const;
+
+
+	// Functions implementations
+	struct FunctionLeft : Function {
+		FunctionLeft(const TouchControls *parent) :
+			Function(parent), mask(0) {}
+		void resetState() override { mask = 0; }
+
+		bool isInside(int, int) override;
+		void touch(int, int, Action) override;
+		void draw(uint8 alpha) override;
+
+		uint32 mask;
+		void maskToLeftButtons(uint32 oldMask, uint32 newMask);
 	};
 
-	enum { kNumPointers = 5 };
-	Pointer _pointers[kNumPointers];
+	struct FunctionRight : Function {
+		FunctionRight(const TouchControls *parent) :
+			Function(parent), button(0) {}
+		void resetState() override { button = 0; }
 
-	Pointer *getPointerFromId(int ptr, bool createNotFound);
-	Pointer *findPointerFromFunction(Function function);
+		bool isInside(int, int) override;
+		void touch(int, int, Action) override;
+		void draw(uint8 alpha) override;
 
-	struct FunctionState {
-		FunctionState() : main(Common::JOYSTICK_BUTTON_INVALID),
-			modifier(Common::JOYSTICK_BUTTON_INVALID) {}
-		void reset() {
-			main = Common::JOYSTICK_BUTTON_INVALID;
-			modifier = Common::JOYSTICK_BUTTON_INVALID;
-			clip = Common::Rect();
-		}
-
-		Common::JoystickButton main;
-		Common::JoystickButton modifier;
-		Common::Rect clip;
+		uint32 button;
 	};
 
-	FunctionState _functionStates[kFunctionMax + 1];
+	struct FunctionCenter : Function {
+		FunctionCenter(const TouchControls *parent) :
+			Function(parent), button(0) {}
+		void resetState() override { button = 0; }
 
-	void buttonDown(Common::JoystickButton jb);
-	void buttonUp(Common::JoystickButton jb);
-	void buttonPress(Common::JoystickButton jb);
+		bool isInside(int, int) override;
+		void touch(int, int, Action) override;
+		void draw(uint8 alpha) override;
 
-	/* Functions implementations */
-	struct FunctionBehavior {
-		void (*touchToState)(int, int, TouchControls::FunctionState &);
-		bool pressOnRelease;
-		float xRatio;
-		float yRatio;
+		uint32 button;
 	};
-	static FunctionBehavior functionBehaviors[TouchControls::kFunctionMax + 1];
-
-	static void touchToJoystickState(int dX, int dY, FunctionState &state);
-	static void touchToCenterState(int dX, int dY, FunctionState &state);
-	static void touchToRightState(int dX, int dY, FunctionState &state);
 };
 
 #endif

@@ -26,8 +26,8 @@
 
 namespace TeenAgent {
 
-void Dialog::show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
-	uint16 addr = _vm->res->getDialogAddr(dialogNum);
+void Dialog::show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2) {
+	uint32 addr = _vm->res->getDialogAddr(dialogNum);
 	// WORKAROUND: For Dialog 163, The usage of this in the engine overlaps the previous dialog i.e. the
 	// starting offset used is two bytes early, thus implicitly changing the first command of this dialog
 	// from NEW_LINE to CHANGE_CHARACTER.
@@ -36,14 +36,17 @@ void Dialog::show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 anim
 	// Similar issue occurs with Dialog 0 which is used from dialogue stack at 0x0001, rather than start of 0x0000
 	if (dialogNum == 163)
 		addr -= 2;
-	show(scene, addr, animation1, animation2, color1, color2, slot1, slot2);
+	show(scene, addr, animation1, animation2, character1ID, character2ID, slot1, slot2);
 }
 
-void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
+void Dialog::show(Scene *scene, uint32 addr, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2) {
 	debugC(0, kDebugDialog, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	int n = 0;
+	uint16 voiceId = 0;
 	Common::String message;
-	byte color = color1;
+	byte color = characterDialogData[character1ID].textColor;
+	byte color1 = color;
+	byte color2 = characterDialogData[character2ID].textColor;
 
 	if (animation1 != 0) {
 		SceneEvent e1(SceneEvent::kPlayAnimation);
@@ -58,6 +61,10 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 		e2.slot = 0xc0 | slot2; //looped, paused
 		scene->push(e2);
 	}
+
+	// Number of ANIM_WAIT (0xff) bytes.
+	// Used to correctly find voice index.
+	uint numOfAnimWaits = 0;
 
 	while (n < 4) {
 		byte c = _vm->res->eseg.get_byte(addr++);
@@ -97,16 +104,23 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 				}
 
 				message.trim();
+				voiceId = _vm->res->getVoiceIndex(addr - message.size() - numOfAnimWaits - 2); // -2 for '\n'
 				if (!message.empty()) {
 					SceneEvent em(SceneEvent::kMessage);
 					em.message = message;
 					em.color = color;
-					if (color == color1)
+					if (color == color1) {
 						em.slot = slot1;
-					if (color == color2)
+						em.characterID = character1ID;
+					}
+					if (color == color2) {
 						em.slot = slot2;
+						em.characterID = character2ID;
+					}
+					em.voiceId = voiceId;
 					scene->push(em);
 					message.clear();
+					numOfAnimWaits = 0;
 				}
 				break;
 
@@ -121,6 +135,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 			break;
 
 		case 0xff:
+			numOfAnimWaits++;
 			//FIXME : wait for the next cycle of the animation
 			break;
 
@@ -135,7 +150,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 	scene->push(ec);
 }
 
-uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
+uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2) {
 	debugC(0, kDebugDialog, "Dialog::pop(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	uint16 next;
 	do {
@@ -145,7 +160,11 @@ uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animatio
 	uint16 next2 = _vm->res->dseg.get_word(addr);
 	if (next2 != 0xffff)
 		_vm->res->dseg.set_word(addr - 2, 0);
-	show(scene, next, animation1, animation2, color1, color2, slot1, slot2);
+
+	// Dialog addresses popped from stack are relative
+	// to dialog start offset. So we add that offset first
+	uint32 dialogAddr = _vm->res->getDialogStartPos() + next;
+	show(scene, dialogAddr, animation1, animation2, character1ID, character2ID, slot1, slot2);
 	return next;
 }
 

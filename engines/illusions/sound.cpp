@@ -470,8 +470,7 @@ void SoundMan::stopSound(uint32 soundEffectId) {
 }
 
 void SoundMan::stopLoopingSounds() {
-	for (SoundListIterator it = _sounds.begin(); it != _sounds.end(); ++it) {
-		Sound *sound = *it;
+	for (auto &sound : _sounds) {
 		if (sound->isPlaying() && sound->isLooping()) {
 			sound->stop();
 		}
@@ -491,9 +490,9 @@ void SoundMan::unloadSounds(uint32 soundGroupId) {
 }
 
 Sound *SoundMan::getSound(uint32 soundEffectId) {
-	for (SoundListIterator it = _sounds.begin(); it != _sounds.end(); ++it) {
-		if ((*it)->_soundEffectId == soundEffectId)
-			return *it;
+	for (auto &sound : _sounds) {
+		if (sound->_soundEffectId == soundEffectId)
+			return sound;
 	}
 	return nullptr;
 }

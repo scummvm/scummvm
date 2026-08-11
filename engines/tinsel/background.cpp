@@ -29,6 +29,7 @@
 #include "tinsel/object.h"
 #include "tinsel/pid.h"	// process identifiers
 #include "tinsel/tinsel.h"
+#include "tinsel/noir/spriter.h"
 
 namespace Tinsel {
 
@@ -39,10 +40,16 @@ Background::Background(Font* font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0)
 	}
 }
 
+Background::~Background() {
+	ResetBackground();
+}
+
 /**
  * Called to initialize a background.
  */
 void Background::InitBackground() {
+	ResetBackground();
+
 	// set current background
 	_pCurBgnd = new BACKGND();
 	_pCurBgnd->rgbSkyColor = BLACK;
@@ -218,12 +225,10 @@ void Background::DrawBackgnd() {
 
 	// redraw all playfields within the clipping rectangles
 	const RectList &clipRects = GetClipRects();
-	for (RectList::const_iterator r = clipRects.begin(); r != clipRects.end(); ++r) {
-		// clear the clip rectangle on the virtual screen
-		// for each background playfield
-		for (unsigned int i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
-			Common::Rect rcPlayClip;	// clip rect for this playfield
 
+	// Noir 3D model's cliprect is updated for rendering.
+	if (TinselVersion == 3) {
+		for (unsigned int i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
 			// get pointer to correct playfield
 			pPlay = &_pCurBgnd->fieldArray[i];
 
@@ -231,9 +236,42 @@ void Background::DrawBackgnd() {
 			ptWin.x = fracToInt(pPlay->fieldX);
 			ptWin.y = fracToInt(pPlay->fieldY);
 
-			if (IntersectRectangle(rcPlayClip, pPlay->rcClip, *r))
-				// redraw all objects within this clipping rect
-				UpdateClipRect(&pPlay->pDispList, &ptWin,	&rcPlayClip);
+			for (OBJECT* pObj = pPlay->pDispList; pObj != NULL; pObj = pObj->pNext) {
+				if (pObj->flags & DMA_3D) {
+					_vm->_spriter->Draw(0, 0, 0, 0, 0);
+					// TODO: fix clip rect after the Spriter updates them
+					//AddClipRect(SpriterGetModelRect());
+					//AddClipRect(SpriterGetShadowRect());
+					//MergeClipRect();
+				} else {
+					for (RectList::const_iterator r = clipRects.begin(); r != clipRects.end(); ++r)	{
+						Common::Rect rcPlayClip;	// clip rect for this playfield
+						if (IntersectRectangle(rcPlayClip, pPlay->rcClip, *r)) {
+							// redraw all objects within this clipping rect
+							UpdateClipRectSingle(pObj, &ptWin, &rcPlayClip);
+						}
+					}
+				}
+			}
+		}
+	} else {
+		for (RectList::const_iterator r = clipRects.begin(); r != clipRects.end(); ++r) {
+			// clear the clip rectangle on the virtual screen
+			// for each background playfield
+			for (unsigned int i = 0; i < _pCurBgnd->fieldArray.size(); i++) {
+				Common::Rect rcPlayClip;	// clip rect for this playfield
+
+				// get pointer to correct playfield
+				pPlay = &_pCurBgnd->fieldArray[i];
+
+				// convert fixed point window pos to a int
+				ptWin.x = fracToInt(pPlay->fieldX);
+				ptWin.y = fracToInt(pPlay->fieldY);
+
+				if (IntersectRectangle(rcPlayClip, pPlay->rcClip, *r))
+					// redraw all objects within this clipping rect
+					UpdateClipRect(&pPlay->pDispList, &ptWin,	&rcPlayClip);
+			}
 		}
 	}
 

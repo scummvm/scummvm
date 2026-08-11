@@ -44,6 +44,7 @@ public:
 	virtual ~Prisoner() {}
 
 	void draw() override;
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void timeout() override;
 };

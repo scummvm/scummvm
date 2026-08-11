@@ -24,11 +24,11 @@
 
 #include "engines/advancedDetector.h"
 
-class TwpMetaEngine : public AdvancedMetaEngine {
+class TwpMetaEngine : public AdvancedMetaEngine<Twp::TwpGameDescription> {
 public:
 	const char *getName() const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Twp::TwpGameDescription *desc) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.

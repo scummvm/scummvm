@@ -21,7 +21,7 @@
 
 /*
  * The code in this file is based on information found at
- * https://www.co-bw.com/Audio_AIFF.htm
+ * https://web.archive.org/web/20070409184854/http://www.borg.com/~jglatt/tech/aiff.htm
  *
  * Also partially based on libav's aiffdec.c
  */

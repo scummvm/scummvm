@@ -52,7 +52,7 @@ public:
 	virtual ~TeFont3();
 
 	bool load(const Common::Path &path);
-	bool load(const Common::FSNode &node);
+	bool load(const TetraedgeFSNode &node);
 	void unload();
 
 private:
@@ -62,7 +62,7 @@ private:
 	}
 
 	Graphics::Font *getAtSize(uint size) override;
-	Common::File _fontFile;
+	Common::ScopedPtr<Common::SeekableReadStream> _fontFile;
 	Common::HashMap<uint, Graphics::Font *> _fonts;
 	Common::Path _loadedPath;
 	Common::HashMap<uint, TeIntrusivePtr<Te3DTexture>> _fontSizeData;

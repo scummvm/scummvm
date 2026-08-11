@@ -38,63 +38,55 @@ class UIButton;
 class BaseViewport;
 class UIWindow : public UIObject {
 public:
-	bool getWindowObjects(BaseArray<UIObject *> &Objects, bool InteractiveOnly);
+	BaseObject *getPrevAccessObject(BaseObject *currObject);
+	BaseObject *getNextAccessObject(BaseObject *currObject);
+	bool getWindowObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
+	bool _pauseMusic;
 	void cleanup();
 	void makeFreezable(bool freezable) override;
-
-	bool handleMouseWheel(int32 delta) override;
-
-	bool close();
-	bool goSystemExclusive();
-	bool goExclusive();
-	bool moveFocus(bool forward = true);
-	bool handleMouse(TMouseEvent Event, TMouseButton Button) override;
-	DECLARE_PERSISTENT(UIWindow, UIObject)
-	bool showWidget(const char *name, bool visible = true);
-	bool enableWidget(const char *name, bool enable = true);
-
-	bool display(int offsetX = 0, int offsetY = 0) override;
-	UIWindow(BaseGame *inGame);
-	~UIWindow() override;
-	bool handleKeypress(Common::Event *event, bool printable = false) override;
-	BaseArray<UIObject *> _widgets;
-
-	bool loadFile(const char *filename);
-	bool loadBuffer(char *buffer, bool complete = true);
-
-	bool listen(BaseScriptHolder *param1, uint32 param2) override;
-	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
-
-	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
-	bool scSetProperty(const char *name, ScValue *value) override;
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	const char *scToString() override;
-
-	bool getInGame() const;
-	TWindowMode getMode() const;
-
-private:
-	bool _pauseMusic;
 	BaseViewport *_viewport;
 	bool _clipContents;
 	bool _inGame;
 	bool _isMenu;
 	bool _fadeBackground;
-	TWindowMode _mode;
-	Point32 _dragFrom;
-	bool _dragging;
-	bool _transparent;
 	uint32 _fadeColor;
+	bool handleMouseWheel(int32 delta) override;
 	UIWindow *_shieldWindow;
 	UIButton *_shieldButton;
-	Rect32 _titleRect;
-	Rect32 _dragRect;
+	bool close();
+	bool goSystemExclusive();
+	bool goExclusive();
+	TWindowMode _mode;
+	bool moveFocus(bool forward = true);
+	bool handleMouse(TMouseEvent event, TMouseButton button) override;
+	Common::Point32 _dragFrom;
+	bool _dragging;
+	DECLARE_PERSISTENT(UIWindow, UIObject)
+	bool _transparent;
+	bool showWidget(const char *name, bool visible = true);
+	bool enableWidget(const char *name, bool enable = true);
+	Common::Rect32 _titleRect;
+	Common::Rect32 _dragRect;
+	bool display(int offsetX = 0, int offsetY = 0) override;
+	UIWindow(BaseGame *inGame);
+	~UIWindow() override;
+	bool handleKeypress(Common::Event *event, bool printable = false) override;
+	BaseArray<UIObject *> _widgets;
+	TTextAlign _titleAlign;
+	bool loadFile(const char *filename);
+	bool loadBuffer(char *buffer, bool complete = true);
 	UITiledImage *_backInactive;
 	BaseFont *_fontInactive;
 	BaseSprite *_imageInactive;
-	TTextAlign _titleAlign;
+	bool listen(BaseScriptHolder *param1, uint32 param2) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+
+	// scripting interface
+	ScValue *scGetProperty(const char *name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 };
 
 } // End of namespace Wintermute

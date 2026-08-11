@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section6/room609.h"
 #include "m4/burger/rooms/section6/section6.h"
 #include "m4/burger/vars.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -61,7 +62,7 @@ void Room609::daemon() {
 		break;
 
 	case 6010:
-		_G(game).new_room = 612;
+		_G(game).setRoom(612);
 		break;
 
 	default:

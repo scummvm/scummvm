@@ -25,7 +25,7 @@
 #include "backends/keymapper/keymapper.h"
 #include "engines/advancedDetector.h"
 
-class CrabMetaEngine : public AdvancedMetaEngine {
+class CrabMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
 

@@ -41,7 +41,7 @@ public:
 	bool _mirrorX;
 	bool _mirrorY;
 	bool _decoration;
-	bool setSurface(const Common::String &filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
+	bool setSurface(const char *filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
 	bool setSurfaceSimple();
 	DECLARE_PERSISTENT(BaseSubFrame, BaseScriptable)
 	void setDefaultRect();
@@ -53,27 +53,20 @@ public:
 	~BaseSubFrame() override;
 	bool loadBuffer(char *buffer, int lifeTime, bool keepLoaded);
 	bool draw(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL);
-	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
-	const char* getSurfaceFilename();
+	bool getBoundingRect(Common::Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 
 	int32 _hotspotX;
 	int32 _hotspotY;
 	uint32 _alpha;
-	// These two setters and getters are rather usefull, as they allow _rect to be lazily defined
-	// Thus we don't need to load the actual graphics before the rect is actually needed.
-	Rect32 getRect();
-	void setRect(Rect32 rect);
-private:
-	bool _wantsDefaultRect;
-	Rect32 _rect;
-	char *_surfaceFilename;
-public:
-	bool _cKDefault;
-	byte _cKRed;
-	byte _cKGreen;
-	byte _cKBlue;
+	Common::Rect32 _rect;
+
+	bool _ckDefault;
+	byte _ckRed;
+	byte _ckGreen;
+	byte _ckBlue;
 	int32 _lifeTime;
 	bool _keepLoaded;
+	char *_surfaceFilename;
 
 	bool _2DOnly;
 	bool _3DOnly;
@@ -81,11 +74,19 @@ public:
 	BaseSurface *_surface;
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
+
 	Common::String debuggerToString() const override;
+
+	bool startPixelOperations();
+	bool endPixelOperations();
+	uint32 getPixel(int32 x, int32 y);
+	bool putPixel(int32 x, int32 y, uint32 pixel);
+	int32 getWidth();
+	int32 getHeight();
 
 };
 

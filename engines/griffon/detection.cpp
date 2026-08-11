@@ -53,9 +53,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 }
 
-class GriffonMetaEngineDetection: public AdvancedMetaEngineDetection {
+class GriffonMetaEngineDetection: public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	GriffonMetaEngineDetection() : AdvancedMetaEngineDetection(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
+	GriffonMetaEngineDetection() : AdvancedMetaEngineDetection(Griffon::gameDescriptions, griffonGames) {
 	}
 
 	const char *getName() const override {

@@ -21,18 +21,20 @@
 
 #include "audio/fmopl.h"
 
-#include "audio/mixer.h"
 #ifdef USE_RETROWAVE
-#include "audio/rwopl3.h"
+	#include "audio/rwopl3.h"
 #endif
+
+#ifdef USE_NFM
+	#include "audio/nfmopl.h"
+#endif
+
 #include "audio/softsynth/opl/dosbox.h"
 #include "audio/softsynth/opl/mame.h"
 #include "audio/softsynth/opl/nuked.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/textconsole.h"
-#include "common/timer.h"
 #include "common/translation.h"
 
 namespace OPL {
@@ -41,33 +43,58 @@ namespace OPL {
 
 #ifdef USE_ALSA
 namespace ALSA {
-	OPL *create(Config::OplType type);
+OPL *create(Config::OplType type);
 } // End of namespace ALSA
 #endif // USE_ALSA
 
 #ifdef ENABLE_OPL2LPT
 namespace OPL2LPT {
-	OPL *create(Config::OplType type);
+OPL *create(Config::OplType type);
 } // End of namespace OPL2LPT
 #endif // ENABLE_OPL2LPT
 
 #ifdef USE_RETROWAVE
 namespace RetroWaveOPL3 {
-	OPL *create(Config::OplType type);
+OPL *create(Config::OplType type);
 } // End of namespace RetroWaveOPL3
 #endif // ENABLE_RETROWAVE_OPL3
+
+#ifdef USE_NFM
+namespace NfmOPL {
+namespace RealChip {
+OPL *create(Config::OplType type, enum NfmOPL::OplDevice dt);
+} // End of namespace RealChip
+
+namespace EmulatedChip {
+OPL *create(Config::OplType type, enum NfmOPL::OplDevice dt);
+} // End of namespace EmulatedChip
+} // End of namespace NfmOPL
+#endif
 
 // Config implementation
 
 enum OplEmulator {
-	kAuto = 0,
-	kMame = 1,
-	kDOSBox = 2,
-	kALSA = 3,
-	kNuked = 4,
-	kOPL2LPT = 5,
-	kOPL3LPT = 6,
-	kRWOPL3 = 7
+	kNull = 0,
+	kAuto = 1,
+	kMame = 2,
+	kDOSBox = 3,
+	kALSA = 4,
+	kNuked = 5,
+	kOPL2LPT = 6,
+	kOPL3LPT = 7,
+	kRWOPL3 = 8
+#ifdef USE_NFM
+	,kNfmNokturnFM2 = 9,
+	kNfmNokturnFM3 = 10,
+	kNfmRWOpl3Express = 11,
+	kNfmOPL2LPT = 12,
+	kNfmOPL3LPT = 13,
+	kNfmCeOPL2AudioBoard = 14,
+	kNfmCeOPL3Duo = 15,
+	kNfmStBusIsaVmeSb = 16,
+	kNfmNatfeatsNull = 17,
+	kNfmNukedOpl3 = 18
+#endif
 };
 
 OPL::OPL() {
@@ -82,7 +109,10 @@ OPL::OPL() {
 
 const Config::EmulatorDescription Config::_drivers[] = {
 	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+	{ "null", _s("None"), kNull, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+#ifndef DISABLE_MAME_OPL
 	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 },
+#endif
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
@@ -98,6 +128,18 @@ const Config::EmulatorDescription Config::_drivers[] = {
 #endif
 #ifdef USE_RETROWAVE
 	{"rwopl3", _s("RetroWave OPL3"), kRWOPL3, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+#endif
+#ifdef USE_NFM
+	{"nfm_nokturnfm2", _s("[nFM] NokturnFM2 (OPL2)"), kNfmNokturnFM2, kFlagOpl2 },
+	{"nfm_nokturnfm3", _s("[nFM] NokturnFM3 (OPL3)"), kNfmNokturnFM3, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_rwopl3", _s("[nFM] RetroWave USB OPL3 Express (OPL3)"), kNfmRWOpl3Express, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_opl2lpt", _s("[nFM] Serdaco OPL2LPT (OPL2)"), kNfmOPL2LPT, kFlagOpl2 },
+	{"nfm_opl3lpt", _s("[nFM] Serdaco OPL3LPT (OPL3)"), kNfmOPL3LPT, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_ce_opl2ab", _s("[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"), kNfmCeOPL2AudioBoard, kFlagOpl2 },
+	{"nfm_ce_opl3duo", _s("[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"), kNfmCeOPL3Duo, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_ce_stbus_isa_vme", _s("[nFM] ST Bus ISA / VME SoundBlaster"), kNfmStBusIsaVmeSb, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_natfeats_null", _s("[nFM] NatFeats / NULL"), kNfmNatfeatsNull, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_nuked_opl3", _s("[nFM] Nuked-OPL3 softsynth (OPL3)"), kNfmNukedOpl3, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 #endif
 	{ nullptr, nullptr, 0, 0 }
 };
@@ -167,7 +209,7 @@ Config::DriverId Config::detect(OplType type) {
 	// Detect the first matching emulator
 	drv = -1;
 
-	for (int i = 1; _drivers[i].name; ++i) {
+	for (int i = 2; _drivers[i].name; ++i) {
 		if (_drivers[i].flags & flags) {
 			drv = _drivers[i].id;
 			break;
@@ -202,12 +244,14 @@ OPL *Config::create(DriverId driver, OplType type) {
 	}
 
 	switch (driver) {
+#ifndef DISABLE_MAME_OPL
 	case kMame:
 		if (type == kOpl2)
 			return new MAME::OPL();
 		else
 			warning("MAME OPL emulator only supports OPL2 emulation");
 		return nullptr;
+#endif
 
 #ifndef DISABLE_DOSBOX_OPL
 	case kDOSBox:
@@ -231,7 +275,7 @@ OPL *Config::create(DriverId driver, OplType type) {
 		}
 
 		warning("OPL2LPT only supprts OPL2");
-		return 0;
+		return nullptr;
 	case kOPL3LPT:
 		return OPL2LPT::create(type);
 #endif
@@ -241,22 +285,58 @@ OPL *Config::create(DriverId driver, OplType type) {
 		return RetroWaveOPL3::create(type);
 #endif
 
+#ifdef USE_NFM
+	case kNfmNokturnFM2: {
+		if (type == kOpl2) {
+			return NfmOPL::RealChip::create(type, NfmOPL::dtNokturnFM2);
+		}
+		warning("NokturnFM2 supports only OPL2");
+		return nullptr;
+	};
+
+	case kNfmNokturnFM3:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtNokturnFM3);
+
+	case kNfmRWOpl3Express:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtRWOpl3Express);
+
+	case kNfmOPL2LPT: {
+		if (type == kOpl2) {
+			return NfmOPL::RealChip::create(type, NfmOPL::dtOPL2LPT);
+		}
+		warning("OPL2LPT supports only OPL2");
+		return nullptr;
+	};
+
+	case kNfmOPL3LPT:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtOPL3LPT);
+
+	case kNfmCeOPL2AudioBoard: {
+		if (type == kOpl2) {
+			return NfmOPL::RealChip::create(type, NfmOPL::dtOPL2AudioBoard);
+		}
+
+		warning("OPL2 Audio Board supports only OPL2");
+		return nullptr;
+	};
+
+	case kNfmCeOPL3Duo:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtOPL3Duo);
+	case kNfmStBusIsaVmeSb:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtStBusIsaVmeSb);
+	case kNfmNatfeatsNull:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtNatfeatsOpl);
+	case kNfmNukedOpl3:
+		return NfmOPL::EmulatedChip::create(type, NfmOPL::dtNukedOpl3);
+#endif
+
+	case kNull:
+		return new NullOPL();
+
 	default:
 		warning("Unsupported OPL emulator %d", driver);
-		// TODO: Maybe we should add some dummy emulator too, which just outputs
-		// silence as sound?
 		return nullptr;
 	}
-}
-
-void OPL::start(TimerCallback *callback, int timerFrequency) {
-	_callback.reset(callback);
-	startCallbacks(timerFrequency);
-}
-
-void OPL::stop() {
-	stopCallbacks();
-	_callback.reset();
 }
 
 void OPL::initDualOpl2OnOpl3(Config::OplType oplType) {
@@ -281,9 +361,9 @@ bool OPL::emulateDualOpl2OnOpl3(int r, int v, Config::OplType oplType) {
 	// Prevent writes to the following registers of the second set:
 	// - 01 - Test register. Setting any bit here will disable output.
 	// - 04 - Connection select. This is used to enable 4 operator instruments,
-	//		  which are not used for dual OPL2.
+	//        which are not used for dual OPL2.
 	// - 05 - New. Only allow writes which set bit 0 to 1, which enables OPL3
-	//		  features.
+	//        features.
 	if (r == 0x101 || r == 0x104 || (r == 0x105 && ((v & 1) == 0)))
 		return false;
 
@@ -344,132 +424,5 @@ bool OPL::emulateDualOpl2OnOpl3(int r, int v, Config::OplType oplType) {
 }
 
 bool OPL::_hasInstance = false;
-
-RealOPL::RealOPL() : _baseFreq(0), _remainingTicks(0) {
-}
-
-RealOPL::~RealOPL() {
-	// Stop callbacks, just in case. If it's still playing at this
-	// point, there's probably a bigger issue, though. The subclass
-	// needs to call stop() or the pointer can still use be used in
-	// the mixer thread at the same time.
-	stop();
-}
-
-void RealOPL::setCallbackFrequency(int timerFrequency) {
-	stopCallbacks();
-	startCallbacks(timerFrequency);
-}
-
-void RealOPL::startCallbacks(int timerFrequency) {
-	_baseFreq = timerFrequency;
-	assert(_baseFreq > 0);
-
-	// We can't request more a timer faster than 100Hz. We'll handle this by calling
-	// the proc multiple times in onTimer() later on.
-	if (timerFrequency > kMaxFreq)
-		timerFrequency = kMaxFreq;
-
-	_remainingTicks = 0;
-	g_system->getTimerManager()->installTimerProc(timerProc, 1000000 / timerFrequency, this, "RealOPL");
-}
-
-void RealOPL::stopCallbacks() {
-	g_system->getTimerManager()->removeTimerProc(timerProc);
-	_baseFreq = 0;
-	_remainingTicks = 0;
-}
-
-void RealOPL::timerProc(void *refCon) {
-	static_cast<RealOPL *>(refCon)->onTimer();
-}
-
-void RealOPL::onTimer() {
-	uint callbacks = 1;
-
-	if (_baseFreq > kMaxFreq) {
-		// We run faster than our max, so run the callback multiple
-		// times to approximate the actual timer callback frequency.
-		uint totalTicks = _baseFreq + _remainingTicks;
-		callbacks = totalTicks / kMaxFreq;
-		_remainingTicks = totalTicks % kMaxFreq;
-	}
-
-	// Call the callback multiple times. The if is on the inside of the
-	// loop in case the callback removes itself.
-	for (uint i = 0; i < callbacks; i++)
-		if (_callback && _callback->isValid())
-			(*_callback)();
-}
-
-EmulatedOPL::EmulatedOPL() :
-	_nextTick(0),
-	_samplesPerTick(0),
-	_baseFreq(0),
-	_handle(new Audio::SoundHandle()) {
-}
-
-EmulatedOPL::~EmulatedOPL() {
-	// Stop callbacks, just in case. If it's still playing at this
-	// point, there's probably a bigger issue, though. The subclass
-	// needs to call stop() or the pointer can still use be used in
-	// the mixer thread at the same time.
-	stop();
-
-	delete _handle;
-}
-
-int EmulatedOPL::readBuffer(int16 *buffer, const int numSamples) {
-	const int stereoFactor = isStereo() ? 2 : 1;
-	int len = numSamples / stereoFactor;
-	int step;
-
-	do {
-		step = len;
-		if (step > (_nextTick >> FIXP_SHIFT))
-			step = (_nextTick >> FIXP_SHIFT);
-
-		generateSamples(buffer, step * stereoFactor);
-
-		_nextTick -= step << FIXP_SHIFT;
-		if (!(_nextTick >> FIXP_SHIFT)) {
-			if (_callback && _callback->isValid())
-				(*_callback)();
-
-			_nextTick += _samplesPerTick;
-		}
-
-		buffer += step * stereoFactor;
-		len -= step;
-	} while (len);
-
-	return numSamples;
-}
-
-int EmulatedOPL::getRate() const {
-	return g_system->getMixer()->getOutputRate();
-}
-
-void EmulatedOPL::startCallbacks(int timerFrequency) {
-	setCallbackFrequency(timerFrequency);
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-}
-
-void EmulatedOPL::stopCallbacks() {
-	g_system->getMixer()->stopHandle(*_handle);
-}
-
-void EmulatedOPL::setCallbackFrequency(int timerFrequency) {
-	_baseFreq = timerFrequency;
-	assert(_baseFreq != 0);
-
-	int d = getRate() / _baseFreq;
-	int r = getRate() % _baseFreq;
-
-	// This is equivalent to (getRate() << FIXP_SHIFT) / BASE_FREQ
-	// but less prone to arithmetic overflow.
-
-	_samplesPerTick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
-}
 
 } // End of namespace OPL

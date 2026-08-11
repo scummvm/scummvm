@@ -156,7 +156,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 		_kirkActor->triggerActionWhenAnimFinished = true;
 		_kirkActor->finishedAnimActionParam = 0xff;
 		_awayMission.disableInput = true;
-		_sound->playSoundEffectIndex(0x09);
+		_sound->playSoundEffectIndex(kSfxTransporterMaterialize);
 		_warpHotspotsActive = false;
 		break;
 	case 5: // Crew spawns in directly at a position.
@@ -536,7 +536,7 @@ void StarTrekEngine::addAction(const Action &action) {
 }
 
 void StarTrekEngine::addAction(int8 type, byte b1, byte b2, byte b3) {
-	const Action a = {type, b1, b2, b3};
+	const Action a = {type, b1, b2, b3, 0};
 	addAction(a);
 }
 

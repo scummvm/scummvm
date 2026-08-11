@@ -21,7 +21,7 @@
 
 #include "ags/engine/gui/new_control.h"
 #include "ags/engine/gui/gui_dialog.h"
-#include "ags/engine/gui/gui_dialog_internal_defs.h"
+#include "ags/engine/gui/gui_dialog_defines.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -53,7 +53,7 @@ int NewControl::mouseisinarea(int mx, int my) {
 	if (_G(topwindowhandle) != wlevel)
 		return 0;
 
-	if ((mx > x) &(mx < x + wid) &(my > y) &(my < y + hit))
+	if ((mx > x) && (mx < x + wid) && (my > y) && (my < y + hit))
 		return 1;
 
 	return 0;

@@ -31,15 +31,31 @@
 #include "common/algorithm.h"
 #include "common/translation.h"
 
+#include <AvailabilityMacros.h>
 #include <AppKit/NSNibDeclarations.h>
 #include <AppKit/NSOpenPanel.h>
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSButton.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSURL.h>
+#include <Foundation/NSThread.h>
 #include <Foundation/NSAutoreleasePool.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+// From the 10.6 SDK:
+// "This method was published in 10.6, but has existed since 10.4."
+//
+// This means that the feature works on 10.4/10.5 as well, but their SDK
+// headers didn't expose it at all. I've checked that it does work at runtime,
+// but we stil keep some respondsToSelector safety calls below, in case its
+// symbols were only added in some later 10.4 update or something.
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
+@interface NSSavePanel(Undocumented)
+- (BOOL)showsHiddenFiles;
+- (void)setShowsHiddenFiles:(BOOL)flag;
+@end
+#endif
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 101400
 
     #ifndef NSControlStateValueOff
       #define NSControlStateValueOff NSOffState
@@ -83,7 +99,9 @@
 	_panel = panel;
 
 	NSButton *showHiddenFilesButton = 0;
-	if ([panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
+	// note: still doing some respondsToSelector tests, because on Tiger/Leopard
+	// the API was undocumented.
+	if ([panel respondsToSelector:@selector(showsHiddenFiles)] && [panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
 		showHiddenFilesButton = [[NSButton alloc] init];
 		[showHiddenFilesButton setButtonType:NSButtonTypeSwitch];
 

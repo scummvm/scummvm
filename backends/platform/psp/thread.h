@@ -52,7 +52,7 @@ public:
 	PspSemaphore(int initialValue, int maxValue=255);
 	~PspSemaphore();
 	bool take() { return takeWithTimeOut(0); }
-	bool takeWithTimeOut(uint32 timeOut);
+	bool takeWithTimeOut(uint timeOut);
 	bool give(int num=1);
 	bool pollForValue(int value);	// check for a certain value
 	int numOfWaitingThreads();

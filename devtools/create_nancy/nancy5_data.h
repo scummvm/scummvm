@@ -35,9 +35,9 @@ const GameConstants _nancy5Constants ={
 	32												// wonGameFlagID
 };
 
-const Common::Array<Common::Language> _nancy5LanguagesOrder = {
-	Common::Language::EN_ANY,
-	Common::Language::RU_RUS
+const Common::Array<GameLanguage> _nancy5LanguagesOrder = {
+	GameLanguage::kEnglish,
+	GameLanguage::kRussian
 };
 
 const Common::Array<Common::Array<ConditionalDialogue>> _nancy5ConditionalDialogue = {

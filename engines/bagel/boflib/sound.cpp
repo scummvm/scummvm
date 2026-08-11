@@ -27,12 +27,13 @@
 #include "audio/decoders/wave.h"
 
 #include "bagel/bagel.h"
-#include "bagel/boflib/app.h"
-#include "bagel/boflib/event_loop.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/string_functions.h"
+#include "bagel/boflib/event_loop.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
+#include "bagel/music.h"
+//#include "bagel/spacebar/boflib/app.h"
 
 namespace Bagel {
 
@@ -40,23 +41,41 @@ namespace Bagel {
 #define MEMORY_MARGIN       100000L
 
 char    CBofSound::_szDrivePath[MAX_DIRPATH];
-CBofSound  *CBofSound::_pSoundChain = nullptr;  // Pointer to chain of linked Sounds
+CBofSound *CBofSound::_pSoundChain = nullptr;   // Pointer to chain of linked Sounds
 int     CBofSound::_nCount = 0;                 // Count of currently active Sounds
-int     CBofSound::_nWavCount = 0;              // Available wave sound devices
-int     CBofSound::_nMidiCount = 0;             // Available midi sound devices
-bool    CBofSound::_bSoundAvailable = false;    // Whether wave sound is available
-bool    CBofSound::_bMidiAvailable = false;     // Whether midi sound is available
-bool    CBofSound::_bWaveVolume = false;        // Whether wave volume can be set
-bool    CBofSound::_bMidiVolume = false;        // Whether midi volume can be set
-CBofWindow   *CBofSound::_pMainWnd = nullptr;   // Window for message processing
+int     CBofSound::_nWavCount = 1;              // Available wave sound devices
+int     CBofSound::_nMidiCount = 1;             // Available midi sound devices
+void *CBofSound::_pMainWnd = nullptr;         // Window for message processing
 
 bool    CBofSound::_bInit = false;
 
 CQueue *CBofSound::_cQueue[NUM_QUEUES];
 int CBofSound::_nSlotVol[NUM_QUEUES];
 
+CBofSound::CBofSound() {
+	_wLoops = 1;
+	addToSoundChain();
+}
 
-CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
+CBofSound::CBofSound(void *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
+	_wLoops = (uint16)nLoops;
+	initialize(pWnd, pszPathName, wFlags);
+	addToSoundChain();
+}
+
+void CBofSound::addToSoundChain() {
+	// Insert this sound into the sound list
+	if (_pSoundChain != nullptr) {
+		_pSoundChain->Insert(this);
+
+		// _pSoundchain must always be the head of the list
+		assert(_pSoundChain == _pSoundChain->getHead());
+	} else {
+		_pSoundChain = this;
+	}
+}
+
+void CBofSound::initialize(void *pWnd, const char *pszPathName, uint16 wFlags) {
 	// Validate input
 	assert(pszPathName != nullptr);
 	assert(strlen(pszPathName) < MAX_FNAME);
@@ -71,8 +90,6 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 		if (_pMainWnd == nullptr)
 			_pMainWnd = pWnd;
 	}
-
-	_wLoops = (uint16)nLoops;
 
 	_bPlaying = false;                 // Not yet playing
 	_bStarted = false;
@@ -97,19 +114,27 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 	}
 
 	if (_wFlags & SOUND_MIDI) {
-		_chType = SOUND_TYPE_XM;
+		_chType = g_engine->isSpaceBar() ?
+			SOUND_TYPE_XM : SOUND_TYPE_SMF;
 	} else {
 		_chType = SOUND_TYPE_WAV;
 	}
 
-	if (pszPathName != nullptr) {
+	if (pszPathName != nullptr && (_wFlags & SND_MEMORY)) {
+		// In-memory wave sound
+		_pFileBuf = (byte *)const_cast<char *>(pszPathName);
+		_iFileSize = 999999;
 
+	} else if (pszPathName != nullptr) {
 		if ((_szDrivePath[0] != '\0') && (*pszPathName == '.'))
 			pszPathName++;
+		else if (!strncmp(pszPathName, ".\\", 2))
+			pszPathName += 2;
 
 		char szTempPath[MAX_DIRPATH];
 		snprintf(szTempPath, MAX_DIRPATH, "%s%s", _szDrivePath, pszPathName);
 		strreplaceStr(szTempPath, "\\\\", "\\");
+		strreplaceStr(szTempPath, "\\", "/");
 
 		// Continue as long as this file exists
 		if (fileExists(szTempPath)) {
@@ -133,16 +158,6 @@ CBofSound::CBofSound(CBofWindow *pWnd, const char *pszPathName, uint16 wFlags, c
 		} else {
 			reportError(ERR_FFIND, szTempPath);
 		}
-	}
-
-	// Insert this sound into the sound list
-	if (_pSoundChain != nullptr) {
-		_pSoundChain->Insert(this);
-
-		// _pSoundchain must always be the head of the list
-		assert(_pSoundChain == _pSoundChain->getHead());
-	} else {
-		_pSoundChain = this;
 	}
 }
 
@@ -188,11 +203,15 @@ void CBofSound::setVolume(int nVolume) {
 	assert(nVolume >= VOLUME_INDEX_MIN && nVolume <= VOLUME_INDEX_MAX);
 
 	_nVol = CLIP(nVolume, VOLUME_INDEX_MIN, VOLUME_INDEX_MAX);
-	g_system->getMixer()->setChannelVolume(_handle, VOLUME_SVM(_nVol));
 
-	// TODO: MIDI volume
+	Audio::Mixer *mixer = g_system->getMixer();
+	byte vol = VOLUME_SVM(_nVol);
+	mixer->setChannelVolume(_handle, vol);
+
+	mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
+	mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+	g_engine->_midi->setVolume(vol);
 }
-
 
 void CBofSound::setVolume(int nMidiVolume, int nWaveVolume) {
 	assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
@@ -212,8 +231,8 @@ void CBofSound::setVolume(int nMidiVolume, int nWaveVolume) {
 bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 	assert(isValidObject(this));
 
-	// Assume failure
-	bool bSuccess = false;
+	// Assume success
+	bool bSuccess = true;
 
 	if (_errCode == ERR_NONE) {
 		// We must be attached to a valid window
@@ -257,6 +276,8 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 		}
 
 		if (_wFlags & SOUND_MIDI) {
+			if (_wFlags & SOUND_LOOP)
+				_wLoops = 0;
 
 			g_engine->_midi->play(this);
 			_bPlaying = true;
@@ -307,6 +328,7 @@ bool CBofSound::midiLoopPlaySegment(uint32 dwLoopFrom, uint32 dwLoopTo, uint32 d
 	assert(isValidObject(this));
 
 	_wFlags |= SOUND_LOOP;
+	_wLoops = 0;
 	_dwRePlayStart = dwLoopFrom;
 	_dwRePlayEnd = dwLoopTo;
 	_bExtensionsUsed = true;
@@ -364,15 +386,15 @@ bool CBofSound::pause() {
 bool CBofSound::resumeSounds() {
 	bool bSuccess = true;
 
-	CBofSound *pSound = _pSoundChain;					// Thumb through all the sounds
+	CBofSound *pSound = _pSoundChain;                   // Thumb through all the sounds
 	while (pSound != nullptr) {
 		if (pSound->_bPaused) {
 			// If one is paused
-			bool bStatus = pSound->resume();		// ... try to get it going again
+			bool bStatus = pSound->resume();        // ... try to get it going again
 			if (bStatus)
-				pSound->_bPaused = false;	// success
+				pSound->_bPaused = false;   // success
 			else
-				bSuccess = false;			// failure
+				bSuccess = false;           // failure
 		}
 
 		pSound = (CBofSound *)pSound->getNext();
@@ -404,11 +426,11 @@ bool CBofSound::resume() {
 
 
 void CBofSound::stopSounds() {
-	CBofSound *pSound = _pSoundChain;	// Thumb through all the sounds
+	CBofSound *pSound = _pSoundChain;   // Thumb through all the sounds
 	while (pSound != nullptr) {
-		if (pSound->playing()) {		// If one is playing
-			pSound->_bPaused = false;	// ... its no longer paused
-			pSound->stop();	// Stop it
+		if (pSound->playing()) {        // If one is playing
+			pSound->_bPaused = false;   // ... its no longer paused
+			pSound->stop(); // Stop it
 		}
 
 		pSound = (CBofSound *)pSound->getNext();
@@ -417,7 +439,7 @@ void CBofSound::stopSounds() {
 
 
 void CBofSound::stopWaveSounds() {
-	CBofSound *pSound = _pSoundChain;			// Find this Sound is the queue
+	CBofSound *pSound = _pSoundChain;           // Find this Sound is the queue
 	while (pSound != nullptr) {
 		CBofSound *pNextSound = (CBofSound *)pSound->getNext();
 
@@ -433,7 +455,7 @@ void CBofSound::stopWaveSounds() {
 
 
 void CBofSound::stopMidiSounds() {
-	CBofSound *pSound = _pSoundChain;			// Find this Sound is the queue
+	CBofSound *pSound = _pSoundChain;           // Find this Sound is the queue
 	while (pSound != nullptr) {
 		CBofSound *pNextSound = (CBofSound *)pSound->getNext();
 
@@ -600,15 +622,17 @@ void CBofSound::waitMidiSounds() {
 
 
 bool CBofSound::handleMessages() {
-	Common::Event e;
-	while (g_system->getEventManager()->pollEvent(e)) {
+	if (g_engine->isSpaceBar()) {
+		Common::Event e;
+		while (g_system->getEventManager()->pollEvent(e)) {
+		}
+
+		g_system->delayMillis(10);
+	} else {
+		AfxGetApp()->pause();
 	}
 
-	g_system->delayMillis(10);
-	if (g_engine->shouldQuit())
-		return true;
-
-	return false;
+	return g_engine->shouldQuit();
 }
 
 
@@ -631,18 +655,29 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 	if (pszSoundFile != nullptr) {
 		nFlags |= SOUND_AUTODELETE;
 
-		if (!fileExists(pszSoundFile)) {
+		if (nFlags & SND_MEMORY) {
+			// Hardcoded for wave files
+			nFlags |= SOUND_WAVE;
+
+		} else if (!fileExists(pszSoundFile)) {
 			logWarning(buildString("Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
 
-		CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
+		// WORKAROUND: Hodj may not specify sound type
+		if (!(nFlags & (SOUND_WAVE | SOUND_MIDI))) {
+			Common::String name(pszSoundFile);
+			if (name.hasSuffixIgnoreCase(".wav"))
+				nFlags |= SOUND_WAVE;
+			else if (name.hasSuffixIgnoreCase(".mid"))
+				nFlags |= SOUND_MIDI;
+		}
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::audioTask();
 		CBofSound::stopWaveSounds();
 
-		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
+		CBofSound *pSound = new CBofSound(/*pWnd*/nullptr, pszSoundFile, (uint16)nFlags);
 		if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 			pSound->setQSlot(iQSlot);
 		}
@@ -674,12 +709,12 @@ bool BofPlaySoundEx(const char *pszSoundFile, uint32 nFlags, int iQSlot, bool bW
 			return false;
 		}
 
-		CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
+		//CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::audioTask();
 
-		CBofSound *pSound = new CBofSound(pWnd, pszSoundFile, (uint16)nFlags);
+		CBofSound *pSound = new CBofSound(/*pWnd*/nullptr, pszSoundFile, (uint16)nFlags);
 		if ((nFlags & SOUND_QUEUE) == SOUND_QUEUE) {
 			pSound->setQSlot(iQSlot);
 		}
@@ -725,7 +760,8 @@ bool CBofSound::loadSound() {
 bool CBofSound::releaseSound() {
 	assert(isValidObject(this));
 
-	free(_pFileBuf);
+	if (!(_wFlags & SND_MEMORY))
+		free(_pFileBuf);
 	_pFileBuf = nullptr;
 
 	return true;
@@ -737,7 +773,7 @@ bool CBofSound::soundsPlayingNotOver() {
 	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	CSound *pSound = _pSoundChain;
+	CBofSound *pSound = _pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->playing() &&
 		        (pSound->_wFlags & SOUND_WAVE || pSound->_wFlags & SOUND_MIX) &&
@@ -758,7 +794,7 @@ bool CBofSound::waveSoundPlaying() {
 	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	CSound *pSound = _pSoundChain;
+	CBofSound *pSound = _pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->playing() && (pSound->_wFlags & SOUND_WAVE || pSound->_wFlags & SOUND_MIX)) {
 			bPlaying = true;
@@ -777,7 +813,7 @@ bool CBofSound::midiSoundPlaying() {
 	bool bPlaying = false;
 
 	// Walk through sound list, and check for sounds that need attention
-	CSound *pSound = _pSoundChain;
+	CBofSound *pSound = _pSoundChain;
 	while (pSound != nullptr) {
 		if (pSound->playing() && (pSound->_wFlags & SOUND_MIDI)) {
 			bPlaying = true;
@@ -913,6 +949,11 @@ void CBofSound::setQVol(int nSlot, int nVol) {
 		}
 		pSound = pSound->getNext();
 	}
+}
+
+bool MessageBeep(int uType) {
+	warning("TODO: beep");
+	return true;
 }
 
 } // namespace Bagel

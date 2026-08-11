@@ -79,7 +79,7 @@ void _game_session::Render_speech(text_sprite *bloc) {
 	surface_manager->Unlock_surface(bloc->GetSurface());
 }
 
-// These functions set pallete entry 1, which controls the main colour for speech text.  These are
+// These functions set palette entry 1, which controls the main colour for speech text.  These are
 // used by the Remora to display its text in different colours.
 void SetTextColour(uint8 r, uint8 g, uint8 b) {
 	static _rgb sTempSpeechColour;

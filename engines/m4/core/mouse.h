@@ -37,8 +37,6 @@ struct MouseDriverInfo {
 	byte MouseIRQ = 0;
 };
 
-int mouse_init();
-void mouse_uninstall();
 byte *GetMousePicture();
 
 } // namespace M4

@@ -25,18 +25,6 @@
 
 namespace M4 {
 
-uint32 timer_read() {
-	return g_system->getMillis() * 60 / 1000;
-}
-
-uint32 timer_read_dos() {
-	return g_system->getMillis() * 60 / 1000;
-}
-
-uint32 timer_read_600() {
-	return g_system->getMillis() * 600 / 1000;
-}
-
 uint32 timer_read_60() {
 	return g_system->getMillis() * 60 / 1000;
 }

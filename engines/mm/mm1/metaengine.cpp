@@ -22,6 +22,7 @@
 #include "mm/mm1/metaengine.h"
 #include "mm/mm1/mm1.h"
 #include "common/translation.h"
+#include "backends/keymapper/keymap.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/standard-actions.h"
 
@@ -47,16 +48,20 @@ static const KeybindingRecord MENU_KEYS[] = {
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr },
 	// I18N: Return key
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", nullptr },
+	// I18N: N key for No
+	{ KEYBIND_KEY_N, "KEY_N", _s("No"), "n", nullptr },
+	// I18N: Y key for Yes
+	{ KEYBIND_KEY_Y, "KEY_Y", _s("Yes"), "y", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord PARTY_KEYS[] = {
-	{ KEYBIND_VIEW_PARTY1, "PARTY1", _s("View Party Member 1"), "1", nullptr },
-	{ KEYBIND_VIEW_PARTY2, "PARTY2", _s("View Party Member 2"), "2", nullptr },
-	{ KEYBIND_VIEW_PARTY3, "PARTY3", _s("View Party Member 3"), "3", nullptr },
-	{ KEYBIND_VIEW_PARTY4, "PARTY4", _s("View Party Member 4"), "4", nullptr },
-	{ KEYBIND_VIEW_PARTY5, "PARTY5", _s("View Party Member 5"), "5", nullptr },
-	{ KEYBIND_VIEW_PARTY6, "PARTY6", _s("View Party Member 6"), "6", nullptr },
+	{ KEYBIND_VIEW_PARTY1, "PARTY1", _s("View party member 1"), "1", nullptr },
+	{ KEYBIND_VIEW_PARTY2, "PARTY2", _s("View party member 2"), "2", nullptr },
+	{ KEYBIND_VIEW_PARTY3, "PARTY3", _s("View party member 3"), "3", nullptr },
+	{ KEYBIND_VIEW_PARTY4, "PARTY4", _s("View party member 4"), "4", nullptr },
+	{ KEYBIND_VIEW_PARTY5, "PARTY5", _s("View party member 5"), "5", nullptr },
+	{ KEYBIND_VIEW_PARTY6, "PARTY6", _s("View party member 6"), "6", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -72,7 +77,7 @@ static const KeybindingRecord COMBAT_KEYS[] = {
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_COMBAT_FIGHT, "COMBAT_FIGHT", _s("Fight"), "f", nullptr },
 	// I18N: Combat command in Might & Magic 1
-	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick Reference"), "q", nullptr },
+	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick reference"), "q", nullptr },
 	// I18N: Combat command in Might & Magic 1
 	{ KEYBIND_COMBAT_RETREAT, "COMBAT_RETREAT", _s("Retreat"), "r", nullptr },
 	// I18N: Combat command in Might & Magic 1
@@ -94,15 +99,15 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_FORWARDS, "FORWARDS", _s("Forwards"), "UP", nullptr },
 	// I18N: Party arrangement command in Might & Magic 1
 	{ KEYBIND_BACKWARDS, "BACKWARDS", _s("Backwards"), "DOWN", nullptr },
-	{ KEYBIND_TURN_LEFT, "TURN_LEFT", _s("Turn Left"), "LEFT", nullptr },
-	{ KEYBIND_TURN_RIGHT, "TURN_RIGHT", _s("Turn Right"), "RIGHT", nullptr },
-	{ KEYBIND_STRAFE_LEFT, "STRAFE_LEFT", _s("Strafe Left"), "C+LEFT", nullptr },
-	{ KEYBIND_STRAFE_RIGHT, "STRAFE_RIGHT", _s("Strafe Right"), "C+RIGHT", nullptr },
+	{ KEYBIND_TURN_LEFT, "TURN_LEFT", _s("Turn left"), "LEFT", nullptr },
+	{ KEYBIND_TURN_RIGHT, "TURN_RIGHT", _s("Turn right"), "RIGHT", nullptr },
+	{ KEYBIND_STRAFE_LEFT, "STRAFE_LEFT", _s("Strafe left"), "C+LEFT", nullptr },
+	{ KEYBIND_STRAFE_RIGHT, "STRAFE_RIGHT", _s("Strafe right"), "C+RIGHT", nullptr },
 
-	{ KEYBIND_SPELL, "CAST", _s("Cast Spell"), "c", nullptr },
-	{ KEYBIND_MAP, "MAP", _s("Show Map"), "m", nullptr },
-	{ KEYBIND_MINIMAP, "MINIMAP", _s("Toggle Minimap"), "=", nullptr },
-	{ KEYBIND_ORDER, "ORDER", _s("Reorder Party"), "o", nullptr },
+	{ KEYBIND_SPELL, "CAST", _s("Cast spell"), "c", nullptr },
+	{ KEYBIND_MAP, "MAP", _s("Show map"), "m", nullptr },
+	{ KEYBIND_MINIMAP, "MINIMAP", _s("Toggle minimap"), "=", nullptr },
+	{ KEYBIND_ORDER, "ORDER", _s("Reorder party"), "o", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
 	{ KEYBIND_PROTECT, "PROTECT", _s("Protect"), "p", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
@@ -113,15 +118,31 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_BASH, "BASH", _s("Bash"), "b", nullptr },
 	// I18N: Action of hero party in Might & Magic 1
 	{ KEYBIND_UNLOCK, "UNLOCK", _s("Unlock"), "u", nullptr },
-	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick Reference"), "q", nullptr },
+	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick reference"), "q", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
+#if 0
 static const KeybindingRecord CHEAT_KEYS[] = {
 	{ KEYBIND_CHEAT_GOTO, "CHEAT-GOTO", _s("Goto location"), "A+g", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
+#endif
+
+static const char *const kMenuKeymapId = "mm1_menu";
+static const char *const kMinimalKeymapId = "mm1_minimal";
+static const char *const kPartyKeymapId = "mm1_party";
+static const char *const kNormalKeymapId = "mm1_normal";
+static const char *const kCombatKeymapId = "mm1_combat";
+static const char *const kCheatsKeymapId = "mm1_cheats";
+
+static Common::Keymap *g_menuKeymap = nullptr;
+static Common::Keymap *g_minimalKeymap = nullptr;
+static Common::Keymap *g_partyKeymap = nullptr;
+static Common::Keymap *g_normalKeymap = nullptr;
+static Common::Keymap *g_combatKeymap = nullptr;
+static Common::Keymap *g_cheatsKeymap = nullptr;
 
 struct KeysRecord {
 	const char *_id;
@@ -129,54 +150,45 @@ struct KeysRecord {
 	const KeybindingRecord *_keys;
 };
 
-static const KeysRecord MENU_RECORDS[] = {
-	{ "mm1", _s("Might and Magic 1 - Menus"), MENU_KEYS },
+static const KeysRecord ALL_RECORDS[] = {
+	{ kMenuKeymapId,    _s("Might and Magic 1 - Menus"), MENU_KEYS },
+	{ kMinimalKeymapId, _s("Might and Magic 1 - Minimal Keys"), MINIMAL_KEYS },
+	{ kNormalKeymapId,  _s("Might and Magic 1 - Main"), NORMAL_KEYS },
+	{ kPartyKeymapId,   _s("Might and Magic 1 - Party"), PARTY_KEYS },
+	{ kCombatKeymapId,  _s("Might and Magic 1 - Combat"), COMBAT_KEYS },
+#if 0
+	{ kCheatsKeymapId,  _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
+#endif
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord MINIMAL_RECORDS[] = {
-	{ "mm1_minimal", _s("Might and Magic 1 - Minimal Keys"), MINIMAL_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
+static void initKeymapPointers() {
+	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 
-static const KeysRecord PARTY_MENU_RECORDS[] = {
-	{ "mm1", _s("Might and Magic 1 - Menus"), MENU_KEYS },
-	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
+	if (!g_menuKeymap)
+		g_menuKeymap = mapper->getKeymap(kMenuKeymapId);
+	if (!g_minimalKeymap)
+		g_minimalKeymap = mapper->getKeymap(kMinimalKeymapId);
+	if (!g_partyKeymap)
+		g_partyKeymap = mapper->getKeymap(kPartyKeymapId);
+	if (!g_normalKeymap)
+		g_normalKeymap = mapper->getKeymap(kNormalKeymapId);
+	if (!g_combatKeymap)
+		g_combatKeymap = mapper->getKeymap(kCombatKeymapId);
+	if (!g_cheatsKeymap)
+		g_cheatsKeymap = mapper->getKeymap(kCheatsKeymapId);
+}
 
-static const KeysRecord COMBAT_MENU_RECORDS[] = {
-	{ "mm1_combat", _s("Might and Magic 1 - Combat"), COMBAT_KEYS },
-	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
-static const KeysRecord NORMAL_RECORDS[] = {
-	{ "mm1", _s("Might and Magic 1"), NORMAL_KEYS },
-	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
-	{ "mm1_cheats", _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
-static const KeysRecord *MODE_RECORDS[6] = {
-	MENU_RECORDS,
-	MINIMAL_RECORDS,
-	PARTY_MENU_RECORDS,
-	NORMAL_RECORDS,
-	COMBAT_MENU_RECORDS,
-	nullptr		// TODO: combat keybindings
-};
-
-Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
+Common::KeymapArray MetaEngine::initKeymaps() {
 	Common::KeymapArray keymapArray;
 	Common::Keymap *keyMap;
 	Common::Action *act;
-	const KeysRecord *recPtr = MODE_RECORDS[mode];
 
-	for (int kCtr = 0; recPtr->_id; ++recPtr, ++kCtr) {
+	for (const KeysRecord *recPtr = ALL_RECORDS; recPtr->_id; ++recPtr) {
 		// Core keymaps
 		keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
 			recPtr->_id, recPtr->_desc);
+		keyMap->setEnabled(false);
 		keymapArray.push_back(keyMap);
 
 		for (const KeybindingRecord *r = recPtr->_keys; r->_id; ++r) {
@@ -201,18 +213,54 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 	return keymapArray;
 }
 
+static bool isKeymapEnabledForMode(const Common::Keymap *keymap, KeybindingMode mode) {
+	if (keymap == g_menuKeymap)
+		return mode == KBMODE_MENUS || mode == KBMODE_PARTY_MENUS;
+	if (keymap == g_minimalKeymap)
+		return mode == KBMODE_MINIMAL;
+	if (keymap == g_partyKeymap)
+		return mode == KBMODE_PARTY_MENUS || mode == KBMODE_NORMAL || mode == KBMODE_COMBAT;
+	if (keymap == g_normalKeymap)
+		return mode == KBMODE_NORMAL;
+	if (keymap == g_combatKeymap)
+		return mode == KBMODE_COMBAT;
+	if (keymap == g_cheatsKeymap)
+		return mode == KBMODE_NORMAL;
+
+	return false;
+}
+
 void MetaEngine::setKeybindingMode(KeybindingMode mode) {
-	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
-	mapper->cleanupGameKeymaps();
+	initKeymapPointers();
 
-	Common::KeymapArray arr = initKeymaps(mode);
+	Common::Keymap *allKeymaps[] = {
+		g_menuKeymap,
+		g_minimalKeymap,
+		g_partyKeymap,
+		g_normalKeymap,
+		g_combatKeymap,
+		g_cheatsKeymap
+	};
 
-	for (uint idx = 0; idx < arr.size(); ++idx)
-		mapper->addGameKeymap(arr[idx]);
+	for (Common::Keymap *keymap : allKeymaps) {
+		if (keymap)
+			keymap->setEnabled(isKeymapEnabledForMode(keymap, mode));
+	}
 }
 
 void MetaEngine::executeAction(KeybindingAction keyAction) {
 	g_engine->send(ActionMessage(keyAction));
+}
+
+Common::KeyState MetaEngine::getActionKeyState(KeybindingAction keyAction) {
+	switch (keyAction) {
+	case KEYBIND_KEY_N:
+		return Common::KeyState(Common::KEYCODE_n, 'n');
+	case KEYBIND_KEY_Y:
+		return Common::KeyState(Common::KEYCODE_y, 'y');
+	default:
+		return Common::KeyState(Common::KEYCODE_INVALID, 0);
+	}
 }
 
 } // End of namespace MM1

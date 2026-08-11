@@ -22,10 +22,11 @@
 #include "common/events.h"
 #include "bagel/boflib/event_loop.h"
 #include "bagel/bagel.h"
+#include "bagel/spacebar/baglib/master_win.h"
 
 namespace Bagel {
 
-EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60),
+EventLoop::EventLoop(Mode mode) : _limiter(g_system, 60, false),
 	_mode(mode) {
 }
 
@@ -35,16 +36,16 @@ bool EventLoop::frame() {
 	// Handle pending events
 	while (g_system->getEventManager()->pollEvent(e)) {
 		if (g_engine->shouldQuit() || (e.type == Common::EVENT_LBUTTONDOWN) ||
-			(e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE))
+		        (e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE))
 			return true;
 	}
 
 	_limiter.delayBeforeSwap();
 
 	// Update the screen
-	if (_mode == FORCE_REPAINT)
-		CBagMasterWin::forcePaintScreen();
-	g_engine->_screen->update();
+	if (_mode == FORCE_REPAINT && g_engine->isSpaceBar())
+		SpaceBar::CBagMasterWin::forcePaintScreen();
+	g_engine->getScreen()->update();
 
 	_limiter.startFrame();
 

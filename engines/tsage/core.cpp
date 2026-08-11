@@ -42,7 +42,7 @@ namespace TsAGE {
 
 /*--------------------------------------------------------------------------*/
 
-InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description) :
+InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String &description) :
 		_sceneNumber(sceneNumber), _rlbNum(rlbNum), _cursorNum(cursorNum), _cursorId(cursorId),
 		_description(description) {
 	_displayResNum = 3;
@@ -335,7 +335,7 @@ void ObjectMover::dispatch() {
 	}
 
 	_sceneObject->_regionIndex = _sceneObject->checkRegion(currPos);
-	if (!_sceneObject->_regionIndex) {
+	if (_sceneObject->_regionIndex == 0) {
 		_sceneObject->setPosition(currPos, yDiff);
 		_sceneObject->getHorizBounds();
 
@@ -1213,7 +1213,7 @@ void PaletteRotation::remove() {
 
 void PaletteRotation::set(ScenePalette *palette, int start, int end, int rotationMode, int duration, Action *action) {
 	_duration = duration;
-	_step = false;
+	_step = 0;
 	_action = action;
 	_scenePalette = palette;
 
@@ -1259,12 +1259,22 @@ void PaletteFader::synchronize(Serializer &s) {
 }
 
 void PaletteFader::signal() {
-	_percent -= _step;
-	if (_percent > 0) {
-		_scenePalette->fade((byte *)_palette, true /* 256 */, _percent);
-	} else {
-		remove();
+	// FIXME: HACK to slow down fading process and mimic the original behavior
+	// This hack is in the same spirit as the one in SceneObjectList::draw() for slowing down the scroller
+	int count = (_step & 0x7F00) >> 8;
+
+	if (count++ == 0) {
+		_percent -= _step;
+		if (_percent > 0) {
+			_scenePalette->fade((byte *)_palette, true /* 256 */, _percent);
+		} else {
+			remove();
+		}
 	}
+
+	if (count == 2)
+		count = 0;
+	_step = (count << 8) | (_step & 0xFF);
 }
 
 void PaletteFader::remove() {
@@ -1597,10 +1607,13 @@ bool SceneItem::startAction(CursorType action, Event &event) {
 }
 
 void SceneItem::doAction(int action) {
+#ifdef ENABLE_RINGWORLD2
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		Event dummyEvent;
 		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display((CursorType)action, dummyEvent);
-	} else {
+	} else
+#endif
+	{
 		const char *msg = NULL;
 
 		if (g_vm->getLanguage() == Common::ES_ESP) {
@@ -1763,7 +1776,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 				// Set secondary fg color
 				int v = va_arg(va, int);
 				g_globals->_sceneText._color3 = v;
-				g_globals->gfxManager()._font._colors.foreground = v;
+				g_globals->gfxManager()._font._colors2.foreground = v;
 				break;
 			}
 			case SET_POS_MODE:
@@ -1834,7 +1847,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 
 		// Keep event on-screen until a mouse or keypress
 		while (!g_vm->shouldQuit() && !g_globals->_events.getEvent(event,
-				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
+				EVENT_BUTTON_DOWN | EVENT_KEYPRESS | EVENT_CUSTOM_ACTIONSTART)) {
 			GLOBALS._screen.update();
 			g_system->delayMillis(10);
 
@@ -1921,11 +1934,14 @@ void SceneHotspot::synchronize(Serializer &s) {
 
 bool SceneHotspot::startAction(CursorType action, Event &event) {
 	switch (g_vm->getGameID()) {
+#ifdef ENABLE_BLUEFORCE
 	case GType_BlueForce: {
 		BlueForce::SceneExt *scene = (BlueForce::SceneExt *)BF_GLOBALS._sceneManager._scene;
 		assert(scene);
 		return scene->display(action);
 	}
+#endif
+#ifdef ENABLE_RINGWORLD2
 	case GType_Ringworld2: {
 		switch (action) {
 		case CURSOR_LOOK:
@@ -1952,6 +1968,7 @@ bool SceneHotspot::startAction(CursorType action, Event &event) {
 
 		return ((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->display(action, event);
 	}
+#endif
 	default:
 		return SceneItem::startAction(action, event);
 	}
@@ -1963,6 +1980,8 @@ void SceneHotspot::doAction(int action) {
 		if (g_vm->getGameID() == GType_BlueForce)
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				SceneItem::display(ESP_LOOK_SCENE_HOTSPOT);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				SceneItem::display(RUS_LOOK_SCENE_HOTSPOT);
 			} else {
 				SceneItem::display(LOOK_SCENE_HOTSPOT);
 			}
@@ -1973,6 +1992,8 @@ void SceneHotspot::doAction(int action) {
 		if (g_vm->getGameID() == GType_BlueForce)
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				SceneItem::display(ESP_USE_SCENE_HOTSPOT);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				SceneItem::display(RUS_USE_SCENE_HOTSPOT);
 			} else {
 				SceneItem::display(USE_SCENE_HOTSPOT);
 			}
@@ -1983,6 +2004,8 @@ void SceneHotspot::doAction(int action) {
 		if (g_vm->getGameID() == GType_BlueForce)
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				SceneItem::display(ESP_TALK_SCENE_HOTSPOT);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				SceneItem::display(RUS_TALK_SCENE_HOTSPOT);
 			} else {
 				SceneItem::display(TALK_SCENE_HOTSPOT);
 			}
@@ -1995,6 +2018,8 @@ void SceneHotspot::doAction(int action) {
 		if (g_vm->getGameID() == GType_BlueForce)
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				SceneItem::display(ESP_DEFAULT_SCENE_HOTSPOT);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				SceneItem::display(RUS_DEFAULT_SCENE_HOTSPOT);
 			} else {
 				SceneItem::display(DEFAULT_SCENE_HOTSPOT);
 			}
@@ -2879,6 +2904,7 @@ void SceneObject::draw() {
 	GfxSurface frame = getFrame();
 	Region *priorityRegion = scene->_priorities.find(_priority);
 
+#ifdef ENABLE_RINGWORLD2
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		switch (_effect) {
 		case EFFECT_SHADOW_MAP: {
@@ -2893,6 +2919,7 @@ void SceneObject::draw() {
 			break;
 		}
 	}
+#endif
 
 	GLOBALS.gfxManager().copyFrom(frame, destRect, priorityRegion);
 }
@@ -3003,10 +3030,12 @@ void BackgroundSceneObject::setup2(int visage, int stripFrameNum, int frameNum, 
 void BackgroundSceneObject::copySceneToBackground() {
 	GLOBALS._sceneManager._scene->_backSurface.copyFrom(g_globals->gfxManager().getSurface(), 0, 0);
 
+#ifdef ENABLE_RINGWORLD2
 	// WORKAROUND: Since savegames don't store the active screen data, once we copy the
 	// foreground objects to the background, we have to prevent the scene being saved.
 	if (g_vm->getGameID() == GType_Ringworld2)
 		((Ringworld2::SceneExt *)GLOBALS._sceneManager._scene)->_preventSaving = true;
+#endif
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3015,16 +3044,35 @@ void SceneObjectList::draw() {
 	Common::Array<SceneObject *> objList;
 	int paneNum = 0;
 
+	// This code ensures that palette entry 0 is set to the black color
+	// and entry 255 is set to the white.
+	// This fixes a graphical artifact glitch in BlueForce intro scene 210 (Credits - Car Training)
+	// where the car would leave black spots on the screen. The bug was caused by the earlier scene (160)
+	// which uses a fader. Faders leave the game palette in a state that simply loading another palette does not fix.
+	BF_GLOBALS._scenePalette.setEntry(0, 0, 0, 0); // Black
+	BF_GLOBALS._scenePalette.setPalette(0, 1);
+
+	BF_GLOBALS._scenePalette.setEntry(255, 0xff, 0xff, 0xff);  // White
+	BF_GLOBALS._scenePalette.setPalette(255, 1);
+
+	g_globals->_sceneManager._scene->_sceneBounds.left &= ~3;
+	g_globals->_sceneManager._scene->_sceneBounds.right &= ~3;
+	g_globals->_sceneOffset.x &= ~3;
+
 	if (_objList.size() == 0) {
 		// Alternate draw mode
 
-		if (g_globals->_paneRefreshFlag[paneNum] == 1) {
+		if (g_globals->_paneRefreshFlag[paneNum] != 0) {
 			// Load the background
-			g_globals->_sceneManager._scene->refreshBackground(0, 0);
+			if (g_globals->_sceneManager._loadMode == 1) {
+				g_globals->_sceneManager._scene->refreshBackground(0, 0);
+				g_globals->_sceneManager._loadMode = 0;
+			}
 
 			Rect tempRect = g_globals->_sceneManager._scene->_sceneBounds;
 			tempRect.translate(-g_globals->_sceneOffset.x, -g_globals->_sceneOffset.y);
 			ScenePalette::changeBackground(tempRect, g_globals->_sceneManager._fadeMode);
+			g_globals->_paneRefreshFlag[paneNum] = 0;
 		} else {
 			g_globals->_paneRegions[CURRENT_PANENUM].draw();
 		}
@@ -3064,9 +3112,18 @@ void SceneObjectList::draw() {
 		}
 
 		if (g_globals->_sceneManager._sceneLoadCount > 0) {
-			--g_globals->_sceneManager._sceneLoadCount;
-			g_globals->_sceneManager._scene->loadBackground(g_globals->_sceneManager._sceneBgOffset.x,
-				g_globals->_sceneManager._sceneBgOffset.y);
+			// HACK Checking the value of g_globals->_paneRefreshFlag[1] is done so that
+			// the _sceneBounds are not updated faster than the scroller is "moving" resulting in stutters while scrolling
+			// The g_globals->_paneRefreshFlag[1] is unused by ScummVM otherwise, so it's safe to make use of it here.
+			// However, there's a broader issue with the engine doing things faster than it should eg. for fading as well,
+			// and resolving that issue could render this hack unnecessary.
+			if (g_globals->_paneRefreshFlag[1] <= 0) {
+				--g_globals->_sceneManager._sceneLoadCount;
+				g_globals->_sceneManager._scene->loadBackground(g_globals->_sceneManager._sceneBgOffset.x,
+					g_globals->_sceneManager._sceneBgOffset.y);
+			} else {
+				--g_globals->_paneRefreshFlag[1];
+			}
 		}
 
 		// Set up the flag mask. Currently, paneNum is always set to 0, so the check is meaningless
@@ -3100,7 +3157,7 @@ void SceneObjectList::draw() {
 		checkIntersection(objList, objList.size(), CURRENT_PANENUM);
 		sortList(objList);
 
-		if (g_globals->_paneRefreshFlag[paneNum] == 1) {
+		if (g_globals->_sceneManager._loadMode == 1) {
 			// Load the background
 			g_globals->_sceneManager._scene->refreshBackground(0, 0);
 		}
@@ -3169,6 +3226,7 @@ void SceneObjectList::draw() {
 					redrawFlag = true;
 				}
 			}
+			g_globals->_sceneManager._loadMode = 0;
 		}
 	}
 }
@@ -3536,6 +3594,9 @@ void Player::enableControl() {
 	case GType_BlueForce:
 	case GType_Ringworld2:
 		cursor = g_globals->_events.getCursor();
+		// Avoid keeping a CURSOR_NONE cursor (which is an issue mainly when jumping to scenes via debugger)
+		if (cursor == CURSOR_NONE)
+			g_globals->_events.setCursor(CURSOR_WALK);
 		g_globals->_events.setCursor(cursor);
 
 		if (g_vm->getGameID() == GType_BlueForce && T2_GLOBALS._uiElements._active)
@@ -4419,49 +4480,58 @@ void SceneHandler::process(Event &event) {
 	if (!event.handled) {
 		g_globals->_game->processEvent(event);
 
-		if (event.eventType == EVENT_KEYPRESS)
+		if (event.eventType == EVENT_KEYPRESS || event.eventType == EVENT_CUSTOM_ACTIONSTART)
 			g_globals->_events.setCursorFromFlag();
 	}
 
-	// Check for displaying right-click dialog
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
-			g_globals->_player._uiEnabled &&
-			((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330))) {
-		g_globals->_game->rightClick();
+	if (!event.handled) {
+		// Check for displaying right-click dialog
+		if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
+				g_globals->_player._uiEnabled &&
+				((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330)) &&
+				((g_vm->getGameID() != GType_BlueForce) || (R2_GLOBALS._sceneManager._sceneNumber != 100))) {
+			if (g_vm->getGameID() == GType_BlueForce || g_vm->getGameID() == GType_Ringworld2) {
+				// Disable the "?" UI element when showing the right-click popup menu
+				T2_GLOBALS._uiElements._question.setEnabled(false);
+			}
+			g_globals->_game->rightClick();
 
-		event.handled = true;
-		return;
+			event.handled = true;
+			return;
+		}
 	}
 
-	// If there is an active scene, pass the event to it
-	if (g_globals->_sceneManager._scene)
-		g_globals->_sceneManager._scene->process(event);
+	if (!event.handled) {
+		// If there is an active scene, pass the event to it
+		if (g_globals->_sceneManager._scene)
+			g_globals->_sceneManager._scene->process(event);
+	}
 
 	if (!event.handled) {
 		// Separate check for F5 - Save key
-		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_F5)) {
+		if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionSaveGame)) {
 			// F5 - Save
 			g_globals->_game->saveGame();
 			event.handled = true;
 			g_globals->_events.setCursorFromFlag();
 		}
 
-		if ((event.eventType == EVENT_KEYPRESS) && g_globals->_player._enabled) {
+		if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && g_globals->_player._enabled) {
 			// Keyboard shortcuts for different actions
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_w:
+			switch (event.customType) {
+			case kActionWalk:
 				g_globals->_events.setCursor(GLOBALS._player._canWalk ? CURSOR_WALK : CURSOR_USE);
 				event.handled = true;
 				break;
-			case Common::KEYCODE_l:
+			case kActionLook:
 				g_globals->_events.setCursor(CURSOR_LOOK);
 				event.handled = true;
 				break;
-			case Common::KEYCODE_u:
+			case kActionUse:
 				g_globals->_events.setCursor(CURSOR_USE);
 				event.handled = true;
 				break;
-			case Common::KEYCODE_t:
+			case kActionTalk:
 				g_globals->_events.setCursor(CURSOR_TALK);
 				event.handled = true;
 				break;

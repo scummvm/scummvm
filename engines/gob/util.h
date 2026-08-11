@@ -124,6 +124,7 @@ public:
 	void waitMouseDown();
 	void waitMouseRelease(char drawMouse);
 	void forceMouseUp(bool onlyWhenSynced = false);
+	void forceMouseButtonsSync();
 
 	void clearPalette();
 	int16 getFrameRate();

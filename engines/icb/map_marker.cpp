@@ -36,7 +36,7 @@ _map_marker *_marker::Create_new_marker(const char *name) {
 	Zdebug("marker %d", num_markers);
 
 	if (num_markers == MAX_markers)
-		Fatal_error("no room left for more map markers"); // shouldnt happen
+		Fatal_error("no room left for more map markers"); // shouldn't happen
 
 	// set markers name
 	strncpy(marks[num_markers].name, name, MARKER_NAME_LEN);

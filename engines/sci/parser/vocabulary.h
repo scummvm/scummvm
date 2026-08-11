@@ -67,8 +67,7 @@ enum {
 	VOCAB_CLASS_NOUN = 0x10,
 	VOCAB_CLASS_INDICATIVE_VERB = 0x20,
 	VOCAB_CLASS_ADVERB = 0x40,
-	VOCAB_CLASS_IMPERATIVE_VERB = 0x80,
-	VOCAB_CLASS_NUMBER = 0x001
+	VOCAB_CLASS_IMPERATIVE_VERB = 0x80
 };
 
 enum {
@@ -158,6 +157,7 @@ struct AltInput {
 	const char *_input;
 	const char *_replacement;
 	uint32 _inputLength;
+	uint32 _replacementLength;
 	bool _prefix;
 };
 

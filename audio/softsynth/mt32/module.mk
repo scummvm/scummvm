@@ -32,3 +32,6 @@ MODULE_OBJS := \
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Force rebuild when configuration changed
+$(MODULE_OBJS-$(MODULE)): %.o: config.mk

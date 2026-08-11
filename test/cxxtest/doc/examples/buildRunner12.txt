@@ -1,0 +1,2 @@
+Parsing file MyTestSuite4.h done.
+Running cxxtest tests (1 test).OK!

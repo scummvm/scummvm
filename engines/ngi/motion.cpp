@@ -370,6 +370,8 @@ void MctlLadder::attachObject(StaticANIObject *obj) {
 			_aniHandler.attachObject(obj->_id);
 			_ladmovements.push_back(movement);
 		} else {
+			delete movement->movVars;
+			delete[] movement->staticIds;
 			delete movement;
 		}
 	}
@@ -385,6 +387,8 @@ int MctlLadder::findObjectPos(StaticANIObject *obj) {
 
 bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement) {
 	debugC(4, kDebugPathfinding, "MctlLadder::initMovement(*%d, ...)", ani->_id);
+	movement->movVars = nullptr;
+	movement->staticIds = nullptr;
 
 	GameVar *v = g_nmi->getGameLoaderGameVar()->getSubVarByName(ani->getName());
 

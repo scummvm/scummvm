@@ -57,8 +57,8 @@ bool FMTOWNSImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 		setFromRawData(raw);
 
 		U4PaletteLoader pal;
-		_palette = pal.loadEgaPalette();
-		_paletteColorCount = 16;
+		_palette.resize(16, false);
+		_palette.set(pal.loadEgaPalette(), 0, 16);
 	}
 
 

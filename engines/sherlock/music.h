@@ -44,15 +44,15 @@ protected:
 
 	uint8 _beats;
 	uint8 _lastEvent;
-	byte *_data;
-	byte *_trackEnd;
+	const byte *_data;
+	const byte *_trackEnd;
 
 public:
-	bool loadMusic(byte *musData, uint32 musSize) override;
+	bool loadMusic(const byte *musData, uint32 musSize) override;
 	void unloadMusic() override;
 
 private:
-	byte  *_musData;
+	const byte  *_musData;
 	uint32 _musDataSize;
 };
 
@@ -64,7 +64,7 @@ private:
 	MidiDriver *_midiDriver;
 	Audio::SoundHandle _digitalMusicHandle;
 	MusicType _musicType;
-	byte *_midiMusicData;
+	const byte *_midiMusicData;
 
 	/**
 	 * Play the specified music resource

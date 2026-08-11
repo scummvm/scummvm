@@ -47,6 +47,8 @@ MidiDriver_Multisource::ControllerDefaults::ControllerDefaults() :
 		panning(-1),
 		expression(-1),
 		sustain(-1),
+		reverb(-1),
+		chorus(-1),
 		rpn(-1),
 		pitchBendSensitivity(-1) {
 	Common::fill(program, program + ARRAYSIZE(program), -1);
@@ -216,6 +218,9 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type) {
 	case CONTROLLER_DEFAULT_EXPRESSION:
 		setControllerDefault(type, MIDI_EXPRESSION_DEFAULT);
 		break;
+	case CONTROLLER_DEFAULT_REVERB:
+		setControllerDefault(type, GM_REVERB_DEFAULT);
+		break;
 	case CONTROLLER_DEFAULT_RPN:
 		setControllerDefault(type, MIDI_RPN_NULL);
 		break;
@@ -228,6 +233,7 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type) {
 	case CONTROLLER_DEFAULT_CHANNEL_PRESSURE:
 	case CONTROLLER_DEFAULT_MODULATION:
 	case CONTROLLER_DEFAULT_SUSTAIN:
+	case CONTROLLER_DEFAULT_CHORUS:
 	default:
 		setControllerDefault(type, 0);
 		break;
@@ -268,6 +274,12 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type, in
 	case CONTROLLER_DEFAULT_SUSTAIN:
 		_controllerDefaults.sustain = value;
 		break;
+	case CONTROLLER_DEFAULT_REVERB:
+		_controllerDefaults.reverb = value;
+		break;
+	case CONTROLLER_DEFAULT_CHORUS:
+		_controllerDefaults.chorus = value;
+		break;
 	case CONTROLLER_DEFAULT_RPN:
 		_controllerDefaults.rpn = value;
 		break;
@@ -280,7 +292,7 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type, in
 	}
 }
 
-void MidiDriver_Multisource::setControllerDefaults(ControllerDefaultType type, int16 *value) {
+void MidiDriver_Multisource::setControllerDefaults(ControllerDefaultType type, const int16 *value) {
 	// Set the specified default values on _controllerDefaults on the field
 	// corresponding to the specified controller.
 	switch (type) {

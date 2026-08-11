@@ -218,7 +218,10 @@ KyraEngine_MR::~KyraEngine_MR() {
 Common::Error KyraEngine_MR::init() {
 	_screen = new Screen_MR(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+
+	Common::Error err = _screen->setResolution();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	setDebugger(new Debugger_v2(this));
 
@@ -1267,7 +1270,7 @@ int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 
 	uint32 size = 0;
 	Common::String nBuf = file;
-	nBuf += _languageExtension[_lang];
+	nBuf += _languageExtension[_scriptLang];
 	buffer = _res->fileData(nBuf.c_str(), &size);
 
 	return buffer ? size : 0;

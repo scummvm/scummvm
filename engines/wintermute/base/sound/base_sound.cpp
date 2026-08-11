@@ -29,16 +29,18 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSound, false)
 
+//////////////////////////////////////////////////////////////////////////
 BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 	_sound = nullptr;
-	_soundFilename = "";
+	_soundFilename = nullptr;
 
-	_soundType = Audio::Mixer::kSFXSoundType;
+	_soundType = TSoundType::SOUND_SFX;
 	_soundStreamed = false;
 	_soundLooping = false;
 	_soundPlaying = false;
@@ -52,23 +54,29 @@ BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
 BaseSound::~BaseSound() {
 	if (_sound) {
-		_gameRef->_soundMgr->removeSound(_sound);
+		_game->_soundMgr->removeSound(_sound);
 	}
 	_sound = nullptr;
+
+	SAFE_DELETE_ARRAY(_soundFilename);
 }
 
-bool BaseSound::setSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
+//////////////////////////////////////////////////////////////////////////
+bool BaseSound::setSound(const char *filename, TSoundType type, bool streamed, uint32 initialPrivateVolume) {
 	if (_sound) {
-		_gameRef->_soundMgr->removeSound(_sound);
+		_game->_soundMgr->removeSound(_sound);
 		_sound = nullptr;
 	}
-	_soundFilename = Common::String(); // Set empty
+	SAFE_DELETE_ARRAY(_soundFilename);
 
-	_sound = _gameRef->_soundMgr->addSound(filename, type, streamed);
+	_sound = _game->_soundMgr->addSound(filename, type, streamed, initialPrivateVolume);
 	if (_sound) {
-		_soundFilename = filename;
+		size_t nameSize = strlen(filename) + 1;
+		_soundFilename = new char[nameSize];
+		Common::strcpy_s(_soundFilename, nameSize, filename);
 
 		_soundType = type;
 		_soundStreamed = streamed;
@@ -79,16 +87,17 @@ bool BaseSound::setSound(const Common::String &filename, Audio::Mixer::SoundType
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setSoundSimple() {
-	_sound = _gameRef->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
+	_sound = _game->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
 	if (_sound) {
 		if (_soundPosition) {
 			_sound->setPosition(_soundPosition);
 		}
-		_sound->setLooping(_soundLooping);
+		_sound->_looping = _soundLooping;
 		_sound->setPrivateVolume(_soundPrivateVolume);
-		_sound->setLoopStart(_soundLoopStart);
-		_sound->setFreezePaused(_soundFreezePaused);
+		_sound->_loopStart = _soundLoopStart;
+		_sound->_freezePaused = _soundFreezePaused;
 		if (_soundPlaying) {
 			return _sound->resume();
 		} else {
@@ -99,6 +108,7 @@ bool BaseSound::setSoundSimple() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 uint32 BaseSound::getLength() {
 	if (_sound) {
 		return _sound->getLength();
@@ -107,6 +117,7 @@ uint32 BaseSound::getLength() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::play(bool looping) {
 	if (_sound) {
 		_soundPaused = false;
@@ -116,6 +127,7 @@ bool BaseSound::play(bool looping) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::stop() {
 	if (_sound) {
 		_soundPaused = false;
@@ -125,11 +137,12 @@ bool BaseSound::stop() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::pause(bool freezePaused) {
 	if (_sound) {
 		_soundPaused = true;
 		if (freezePaused) {
-			_sound->setFreezePaused(true);
+			_sound->_freezePaused = true;
 		}
 		return _sound->pause();
 	} else {
@@ -137,6 +150,7 @@ bool BaseSound::pause(bool freezePaused) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::resume() {
 	if (_sound && _soundPaused) {
 		_soundPaused = false;
@@ -146,16 +160,17 @@ bool BaseSound::resume() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->getIsSaving() && _sound) {
 		_soundPlaying = _sound->isPlaying();
-		_soundLooping = _sound->isLooping();
-		_soundPrivateVolume = _sound->getPrivateVolume();
+		_soundLooping = _sound->_looping;
+		_soundPrivateVolume = _sound->_privateVolume;
 		if (_soundPlaying) {
 			_soundPosition = _sound->getPosition();
 		}
-		_soundLoopStart = _sound->getLoopStart();
-		_soundFreezePaused = _sound->isFreezePaused();
+		_soundLoopStart = _sound->_loopStart;
+		_soundFreezePaused = _sound->_freezePaused;
 	}
 
 	if (persistMgr->getIsSaving()) {
@@ -163,9 +178,9 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 		_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 	}
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
-	persistMgr->transferString(TMEMBER(_soundFilename));
+	persistMgr->transferCharPtr(TMEMBER(_soundFilename));
 	persistMgr->transferBool(TMEMBER(_soundLooping));
 	persistMgr->transferBool(TMEMBER(_soundPaused));
 	persistMgr->transferBool(TMEMBER(_soundFreezePaused));
@@ -179,14 +194,17 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::isPlaying() {
 	return _sound && _sound->isPlaying();
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::isPaused() {
 	return _sound && _soundPaused;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPositionTime(uint32 time) {
 	if (!_sound) {
 		return STATUS_FAILED;
@@ -199,6 +217,7 @@ bool BaseSound::setPositionTime(uint32 time) {
 	return ret;
 }
 
+//////////////////////////////////////////////////////////////////////////
 uint32 BaseSound::getPositionTime() {
 	if (!_sound) {
 		return 0;
@@ -211,14 +230,7 @@ uint32 BaseSound::getPositionTime() {
 	}
 }
 
-bool BaseSound::setVolumePercent(int percent) {
-	if (!_sound) {
-		return STATUS_FAILED;
-	} else {
-		return _sound->setPrivateVolume(percent * 255 / 100);
-	}
-}
-
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setVolume(int volume) {
 	if (!_sound) {
 		return STATUS_FAILED;
@@ -227,31 +239,26 @@ bool BaseSound::setVolume(int volume) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPrivateVolume(int volume) {
 	if (!_sound) {
 		return STATUS_FAILED;
 	} else {
-		_sound->setPrivateVolume(volume);
+		_sound->_privateVolume = volume;
 		return STATUS_OK;
 	}
 }
 
-int BaseSound::getVolumePercent() {
-	if (!_sound) {
-		return 0;
-	} else {
-		return _sound->getPrivateVolume() * 100 / 255;
-	}
-}
-
+//////////////////////////////////////////////////////////////////////////
 int BaseSound::getVolume() {
 	if (!_sound) {
 		return 0;
 	} else {
-		return _sound->getPrivateVolume();
+		return _sound->_privateVolume;
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setLoopStart(uint32 pos) {
 	if (!_sound) {
 		return STATUS_FAILED;
@@ -261,6 +268,7 @@ bool BaseSound::setLoopStart(uint32 pos) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPan(float pan) {
 	if (_sound) {
 		return _sound->setPan(pan);
@@ -269,6 +277,7 @@ bool BaseSound::setPan(float pan) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	if (!_sound) {
 		return STATUS_OK;

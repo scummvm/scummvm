@@ -60,7 +60,12 @@ AtariEventSource::AtariEventSource() {
 	_scancodeToKeycode[0x0e] = Common::KEYCODE_BACKSPACE;
 	_scancodeToKeycode[0x0f] = Common::KEYCODE_TAB;
 	_scancodeToKeycode[0x1c] = Common::KEYCODE_RETURN;
+	_scancodeToKeycode[0x1d] = Common::KEYCODE_LCTRL;	// Eiffel doesn't recognise RCTRL
+	_scancodeToKeycode[0x2a] = Common::KEYCODE_LSHIFT;
+	_scancodeToKeycode[0x36] = Common::KEYCODE_RSHIFT;
+	_scancodeToKeycode[0x38] = Common::KEYCODE_LALT;	// Eiffel doesn't recognise RALT
 	_scancodeToKeycode[0x39] = Common::KEYCODE_SPACE;
+	_scancodeToKeycode[0x3a] = Common::KEYCODE_CAPSLOCK;
 	_scancodeToKeycode[0x3b] = Common::KEYCODE_F1;
 	_scancodeToKeycode[0x3c] = Common::KEYCODE_F2;
 	_scancodeToKeycode[0x3d] = Common::KEYCODE_F3;
@@ -75,19 +80,24 @@ AtariEventSource::AtariEventSource() {
 	_scancodeToKeycode[0x46] = Common::KEYCODE_PAGEDOWN;	// Eiffel only
 	_scancodeToKeycode[0x47] = Common::KEYCODE_HOME;
 	_scancodeToKeycode[0x48] = Common::KEYCODE_UP;
+	_scancodeToKeycode[0x49] = Common::KEYCODE_PRINT;	// Eiffel only
 	_scancodeToKeycode[0x4a] = Common::KEYCODE_KP_MINUS;
 	_scancodeToKeycode[0x4b] = Common::KEYCODE_LEFT;
-	_scancodeToKeycode[0x4c] = Common::KEYCODE_LMETA;
+	_scancodeToKeycode[0x4c] = Common::KEYCODE_SCROLLOCK;	// Eiffel only (on Milan: AltGr!)
 	_scancodeToKeycode[0x4d] = Common::KEYCODE_RIGHT;
 	_scancodeToKeycode[0x4e] = Common::KEYCODE_KP_PLUS;
 	_scancodeToKeycode[0x4f] = Common::KEYCODE_PAUSE;	// Eiffel only
 	_scancodeToKeycode[0x50] = Common::KEYCODE_DOWN;
 	_scancodeToKeycode[0x52] = Common::KEYCODE_INSERT;
 	_scancodeToKeycode[0x53] = Common::KEYCODE_DELETE;
+	_scancodeToKeycode[0x54] = Common::KEYCODE_NUMLOCK;	// Eiffel only
 	_scancodeToKeycode[0x55] = Common::KEYCODE_END;	// Eiffel only
+	_scancodeToKeycode[0x56] = Common::KEYCODE_LMETA;	// Eiffel only
+	_scancodeToKeycode[0x57] = Common::KEYCODE_RMETA;	// Eiffel only
+	_scancodeToKeycode[0x58] = Common::KEYCODE_MENU;	// Eiffel only
 	_scancodeToKeycode[0x5b] = Common::KEYCODE_TILDE;	// Eiffel only
-	_scancodeToKeycode[0x61] = Common::KEYCODE_F12;	// UNDO
-	_scancodeToKeycode[0x62] = Common::KEYCODE_F11;	// HELP
+	_scancodeToKeycode[0x61] = Common::KEYCODE_F12;	// UNDO (there's also Common::KEYCODE_UNDO available...)
+	_scancodeToKeycode[0x62] = Common::KEYCODE_F11;	// HELP (there's also Common::KEYCODE_HELP available...)
 	_scancodeToKeycode[0x63] = Common::KEYCODE_LEFTPAREN;	// KEYPAD (
 	_scancodeToKeycode[0x64] = Common::KEYCODE_RIGHTPAREN;	// KEYPAD )
 	_scancodeToKeycode[0x65] = Common::KEYCODE_KP_DIVIDE;	// KEYPAD /
@@ -176,6 +186,27 @@ bool AtariEventSource::pollEvent(Common::Event &event) {
 
 		if (scancode == 0x3a && pressed)
 			_capslockActive = !_capslockActive;
+
+		if (scancode == 0x4c && pressed)
+			_scrolllockActive = !_scrolllockActive;
+
+		if (scancode == 0x54 && pressed)
+			_numlockActive = !_numlockActive;
+
+		// Eiffel only
+		if (scancode == 0x37) {
+			if (pressed) {
+				_mmbDown = true;
+				event.type = Common::EVENT_MBUTTONDOWN;
+				event.mouse = _graphicsManager->getMousePosition();
+				return true;
+			} else if (_mmbDown) {
+				_mmbDown = false;
+				event.type = Common::EVENT_MBUTTONUP;
+				event.mouse = _graphicsManager->getMousePosition();
+				return true;
+			}
+		}
 
 		// Eiffel only
 		if (scancode == 0x59) {
@@ -269,6 +300,8 @@ bool AtariEventSource::pollEvent(Common::Event &event) {
 		event.kbd.flags |= _altActive ? Common::KBD_ALT : 0;
 		event.kbd.flags |= (_lshiftActive || _rshiftActive) ? Common::KBD_SHIFT : 0;
 		event.kbd.flags |= _capslockActive ? Common::KBD_CAPS : 0;
+		event.kbd.flags |= _scrolllockActive ? Common::KBD_SCRL : 0;
+		event.kbd.flags |= _numlockActive ? Common::KBD_NUM : 0;
 
 		return true;
 	}

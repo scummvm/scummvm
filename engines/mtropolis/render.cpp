@@ -430,7 +430,7 @@ static void runDissolveTransition(Graphics::ManagedSurface &surface, const Graph
 	}
 }
 
-static void safeCopyRectToSurface(Graphics::ManagedSurface &surface, const Graphics::ManagedSurface &srcSurface, int destX, int destY, const Common::Rect subRect) {
+static void safeCopyRectToSurface(Graphics::ManagedSurface &surface, const Graphics::ManagedSurface &srcSurface, int destX, int destY, const Common::Rect &subRect) {
 	if (subRect.width() == 0 || subRect.height() == 0)
 		return;
 

@@ -43,14 +43,16 @@ enum {
  */
 class MessageDialog : public Dialog {
 public:
+	MessageDialog(const Common::U32String &message);
+	MessageDialog(const Common::String &message);
 	MessageDialog(const Common::U32String &message,
-				  const Common::U32String &defaultButton = Common::U32String("OK"),
+				  const Common::U32String &defaultButton,
 				  const Common::U32String &altButton = Common::U32String(),
 				  Graphics::TextAlign alignment = Graphics::kTextAlignCenter,
 				  const char *url = nullptr,
 				  const Common::U32String &extraMessage = Common::U32String());
 	MessageDialog(const Common::String &message,
-				  const Common::String &defaultButton = "OK",
+				  const Common::String &defaultButton,
 				  const Common::String &altButton = Common::String(),
 				  Graphics::TextAlign alignment = Graphics::kTextAlignCenter,
 				  const char *url = nullptr);
@@ -98,8 +100,10 @@ protected:
 class CountdownMessageDialog : public MessageDialog {
 public:
 	CountdownMessageDialog(const Common::U32String &message,
+				  uint32 duration);
+	CountdownMessageDialog(const Common::U32String &message,
 				  uint32 duration,
-				  const Common::U32String &defaultButton = Common::U32String("OK"),
+				  const Common::U32String &defaultButton,
 				  const Common::U32String &altButton = Common::U32String(),
 				  Graphics::TextAlign alignment = Graphics::kTextAlignCenter,
 				  const Common::U32String &countdownMessage = Common::U32String(""));
@@ -119,8 +123,10 @@ protected:
  */
 class MessageDialogWithURL : public MessageDialog {
 public:
-	MessageDialogWithURL(const Common::U32String &message, const char *url, const Common::U32String &defaultButton = Common::U32String("OK"), Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
-	MessageDialogWithURL(const Common::String &message, const char *url, const char *defaultButton = "OK", Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
+	MessageDialogWithURL(const Common::U32String &message, const char *url);
+	MessageDialogWithURL(const Common::String &message, const char *url);
+	MessageDialogWithURL(const Common::U32String &message, const char *url, const Common::U32String &defaultButton, Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
+	MessageDialogWithURL(const Common::String &message, const char *url, const char *defaultButton, Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
 };
 
 

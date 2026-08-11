@@ -43,6 +43,8 @@ namespace Sci {
 #define GAMEOPTION_PALETTE_MODS             GUIO_GAMEOPTIONS15
 #define GAMEOPTION_SQ1_BEARDED_MUSICIANS    GUIO_GAMEOPTIONS16
 #define GAMEOPTION_TTS                      GUIO_GAMEOPTIONS17
+#define GAMEOPTION_ENABLE_GMM_SAVE          GUIO_GAMEOPTIONS18
+#define GAMEOPTION_GK1_ENABLE_AUDIO_POPFIX	GUIO_GAMEOPTIONS19
 
 enum SciGameId {
 	GID_ALL,
@@ -113,6 +115,7 @@ enum SciGameId {
 	GID_QFG4DEMO,	// We have a separate ID for QFG4 demo, because it's actually a completely different game (SCI1.1 vs SCI2/SCI2.1)
 	GID_RAMA,
 	GID_REALM,
+	GID_SHIELD,
 	GID_SHIVERS,
 	//GID_SHIVERS2,	// Not SCI
 	GID_SLATER,

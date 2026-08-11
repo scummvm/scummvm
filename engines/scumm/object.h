@@ -58,14 +58,7 @@ enum ObjectStateV2 {
 	kObjectStatePickupable = 1,
 	kObjectStateUntouchable = 2,
 	kObjectStateLocked = 4,
-
-	// FIXME: Not quite sure how to name state 8. It seems to mark some kind
-	// of "activation state" for the given object. E.g. is a door open?
-	// Is a drawer extended? In addition it is used to toggle the look
-	// of objects that the user can "pick up" (i.e. it is set in
-	// o2_pickupObject together with kObjectStateUntouchable). So in a sense,
-	// it can also mean "invisible" in some situations.
-	kObjectState_08 = 8
+	kObjectStateIntrinsic = 8 // Some kind of general ON/OFF property for an object
 };
 
 struct ObjectData {

@@ -34,8 +34,8 @@ UpdateFunctions::UpdateFunctions() {
 
 UpdateFunctions::~UpdateFunctions() {
 	// Free update functions
-	for (UpdateFunctionListIterator it = _updateFunctions.begin(); it != _updateFunctions.end(); ++it) {
-		delete *it;
+	for (auto *updateFunction : _updateFunctions) {
+		delete updateFunction;
 	}
 }
 
@@ -73,9 +73,9 @@ void UpdateFunctions::update() {
 }
 
 void UpdateFunctions::terminateByScene(uint32 sceneId) {
-	for (UpdateFunctionListIterator it = _updateFunctions.begin(); it != _updateFunctions.end(); ++it) {
-		if ((*it)->_sceneId == sceneId)
-			(*it)->terminate();
+	for (auto &updateFunction : _updateFunctions) {
+		if (updateFunction->_sceneId == sceneId)
+			updateFunction->terminate();
 	}
 }
 

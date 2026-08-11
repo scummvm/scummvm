@@ -68,7 +68,7 @@ struct OplInstrumentOperatorDefinition {
 	 *
 	 * @return True if this operator is empty; false otherwise.
 	 */
-	bool isEmpty();
+	bool isEmpty() const;
 };
 
 /**
@@ -116,17 +116,23 @@ struct OplInstrumentDefinition {
 	OplInstrumentRhythmType rhythmType;
 
 	/**
+	 * Number of semitones the notes played by this instrument should be
+	 * transposed up or down.
+	 */
+	int8 transpose;
+
+	/**
 	 * Check if this instrument definition contains any data.
 	 *
 	 * @return True if this instrument is empty; false otherwise.
 	 */
-	bool isEmpty();
+	bool isEmpty() const;
 	/**
 	 * Returns the number of operators used by this instrument definition.
 	 *
 	 * @return The number of operators (2 or 4).
 	 */
-	uint8 getNumberOfOperators();
+	uint8 getNumberOfOperators() const;
 	/**
 	 * Returns the definition data for the operator with the specified number.
 	 * Specify 0 or 1 for 2 operator instruments or 0-3 for 4 operator
@@ -135,7 +141,7 @@ struct OplInstrumentDefinition {
 	 * @param operatorNum The operator for which the data should be returned.
 	 * @return Pointer to the definition data for the specified operator.
 	 */
-	OplInstrumentOperatorDefinition &getOperatorDefinition(uint8 operatorNum);
+	const OplInstrumentOperatorDefinition &getOperatorDefinition(uint8 operatorNum) const;
 };
 
 #include "common/pack-start.h" // START STRUCT PACKING
@@ -173,7 +179,7 @@ struct AdLibBnkInstrumentOperatorDefinition {
 	 * @param waveformSelect The value of the waveform select parameter for
 	 * this operator.
 	 */
-	void toOplInstrumentOperatorDefinition(OplInstrumentOperatorDefinition &operatorDef, uint8 waveformSelect);
+	void toOplInstrumentOperatorDefinition(OplInstrumentOperatorDefinition &operatorDef, uint8 waveformSelect) const;
 } PACKED_STRUCT;
 
 /**
@@ -209,7 +215,46 @@ struct AdLibBnkInstrumentDefinition {
 	 * @param instrumentDef The instrument definition to which the data should
 	 * be copied.
 	 */
-	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef);
+	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) const;
+} PACKED_STRUCT;
+
+/**
+ * Instrument definition for an OPL2 chip in the format used by the IBK
+ * instrument bank file format. This format is also used by the SBI and CMF
+ * file formats.
+ */
+struct AdLibIbkInstrumentDefinition {
+	uint8 o0FreqMultMisc;
+	uint8 o1FreqMultMisc;
+	uint8 o0Level;
+	uint8 o1Level;
+	uint8 o0DecayAttack;
+	uint8 o1DecayAttack;
+	uint8 o0ReleaseSustain;
+	uint8 o1ReleaseSustain;
+	uint8 o0WaveformSelect;
+	uint8 o1WaveformSelect;
+	uint8 connectionFeedback;
+	/**
+	 * Rhythm note type. 0: melodic, 6: bass drum, 7: snare drum, 8: tom tom, 9: cymbal, 10: hi hat
+	 */
+	uint8 rhythmType;
+	/**
+	 * Number of semitones to transpose a note using this instrument.
+	 */
+	int8 transpose;
+	uint8 rhythmNote;
+	uint8 padding1;
+	uint8 padding2;
+
+	/**
+	 * Copies the data in this AdLib BNK instrument definition to the specified
+	 * OplInstrumentDefinition struct.
+	 *
+	 * @param instrumentDef The instrument definition to which the data should
+	 * be copied.
+	 */
+	void toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) const;
 } PACKED_STRUCT;
 
 #include "common/pack-end.h" // END STRUCT PACKING
@@ -296,7 +341,28 @@ public:
 		 * write the instrument only once for many notes and allows parameters
 		 * of the instrument to be changed for the following notes.
 		 */
-		INSTRUMENT_WRITE_MODE_PROGRAM_CHANGE
+		INSTRUMENT_WRITE_MODE_PROGRAM_CHANGE,
+		/**
+		 * Will write the instrument definition on the first note played with
+		 * a new instrument on a channel.
+		 */
+		INSTRUMENT_WRITE_MODE_FIRST_NOTE_ON
+	};
+
+	enum RhythmInstrumentMode {
+		/**
+		 * If rhythm mode is active, any note played on the MIDI rhythm channel 
+		 * 10 will be played as an OPL rhythm note. The instrument returned by
+		 * determineInstrument is expected to be a rhythm instrument.
+		 */
+		RHYTHM_INSTRUMENT_MODE_CHANNEL_10,
+		/**
+		 * If rhythm mode is active, any note for which determineInstrument
+		 * returns a rhythm instrument will be played as an OPL rhythm note.
+		 * This will disable the behavior of MIDI channel 10 as the rhythm
+		 * channel entirely and treat it as a melodic channel.
+		 */
+		RHYTHM_INSTRUMENT_MODE_RHYTHM_TYPE
 	};
 
 	/**
@@ -422,7 +488,7 @@ public:
 	static const uint8 OPL_MASK_LEVEL = 0x3F;
 	static const uint8 OPL_MASK_FNUMHIGH_BLOCK = 0x1F;
 	static const uint8 OPL_MASK_KEYON = 0x20;
-	static const uint8 OPL_MASK_PANNING = 0x30;
+	static const uint8 OPL_MASK_PANNING = 0xF0;
 
 	/**
 	 * Settings for the panning bits in the OPL Cx registers.
@@ -434,11 +500,11 @@ public:
 	/**
 	 * The default melodic instrument definitions.
 	 */
-	static OplInstrumentDefinition OPL_INSTRUMENT_BANK[];
+	static const OplInstrumentDefinition OPL_INSTRUMENT_BANK[];
 	/**
 	 * The default rhythm instrument definitions.
 	 */
-	static OplInstrumentDefinition OPL_RHYTHM_BANK[];
+	static const OplInstrumentDefinition OPL_RHYTHM_BANK[];
 
 protected:
 	/**
@@ -555,9 +621,14 @@ protected:
 		 */
 		uint8 instrumentId;
 		/**
+		 * The ID of the instrument that was last written to the OPL channel,
+		 * or -1 if no instrument was written yet.
+		 */
+		int16 lastWrittenInstrumentId;
+		/**
 		 * Pointer to the instrument definition used to play the note.
 		 */
-		OplInstrumentDefinition *instrumentDef;
+		const OplInstrumentDefinition *instrumentDef;
 
 		/**
 		 * True if this OPL channel has been allocated to a MIDI channel.
@@ -586,7 +657,7 @@ protected:
 		/**
 		 * Pointer to the instrument definition.
 		 */
-		OplInstrumentDefinition *instrumentDef;
+		const OplInstrumentDefinition *instrumentDef;
 		/**
 		 * Unique identifer for this instrument (@see ActiveNote.instrumentId).
 		 */
@@ -643,7 +714,7 @@ public:
 	using MidiDriver_Multisource::send;
 	void send(int8 source, uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 	void stopAllNotes(bool stopSustainedNotes = false) override;
 
 	void stopAllNotes(uint8 source, uint8 channel) override;
@@ -900,12 +971,12 @@ protected:
 	 * 
 	 * @param channel The MIDI channel on which the note is played.
 	 * @param source The source playing the note.
-	 * @param instrumentId The ID of the instrument playing the note. Not used
+	 * @param instrumentInfo Data of the instrument playing the note. Not used
 	 * by the static channel allocation mode.
 	 * @return The number of the allocated OPL channel; 0xFF if allocation
 	 * failed (not possible using the dynamic channel allocation mode).
 	 */
-	virtual uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId);
+	virtual uint8 allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo);
 	/**
 	 * Determines which melodic channels are available based on the OPL chip
 	 * type and rhythm mode setting and sets _melodicChannels and
@@ -931,7 +1002,8 @@ protected:
 	 * @param channel The MIDI channel on which the note is played.
 	 * @param source The source playing the note.
 	 * @param note The MIDI note which is played.
-	 * @return The F-num and block to play the note on the OPL chip.
+	 * @return The F-num and block to play the note on the OPL chip, or 0xFFFF
+	 * if the frequency cannot be calculated and the note should not be played.
 	 */
 	virtual uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note);
 	/**
@@ -971,7 +1043,7 @@ protected:
 	 * instruments.
 	 * @return The calculated operator volume (level).
 	 */
-	virtual uint8 calculateVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
+	virtual uint8 calculateVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
 	/**
 	 * Calculates the unscaled volume for the specified operator of a note on
 	 * the specified MIDI channel and source, using the specified MIDI velocity
@@ -993,7 +1065,17 @@ protected:
 	 * instruments.
 	 * @return The calculated unscaled operator volume (level).
 	 */
-	virtual uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
+	virtual uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
+	/**
+	 * Determines if volume settings should be applied to the operator level.
+	 * This depends on the type of the operator (carrier or modulator), which
+	 * depends on the type of connection specified in the instrument.
+	 * 
+	 * @param instrumentDef The instrument definition
+	 * @param operatorNum The number of the operator (0-1 or 0-3)
+	 * @return True if volume should be applied, false otherwise
+	 */
+	virtual bool isVolumeApplicableToOperator(const OplInstrumentDefinition &instrumentDef, uint8 operatorNum);
 	/**
 	 * Determines the panning that should be applied to notes played on the
 	 * specified MIDI channel and source.
@@ -1148,8 +1230,15 @@ protected:
 	ChannelAllocationMode _allocationMode;
 	// Controls when the instrument definitions are written.
 	InstrumentWriteMode _instrumentWriteMode;
+	// In instrument write mode First Note On or Program Change, this flag controls if the Cx register,
+	// which is shared between rhythm mode instrument definitions (except bass drum), is rewritten
+	// before each note on.
+	bool _rhythmModeRewriteSharedRegister;
 	// Controls response to rhythm note off events when rhythm mode is active.
 	bool _rhythmModeIgnoreNoteOffs;
+	// Controls how rhythm notes are played in OPL rhythm mode and whether MIDI
+	// channel 10 is treated as the rhythm channel or as a melodic channel.
+	RhythmInstrumentMode _rhythmInstrumentMode;
 
 	// The default MIDI channel volume (set when opening the driver).
 	uint8 _defaultChannelVolume;
@@ -1163,9 +1252,9 @@ protected:
 	bool _rhythmMode;
 
 	// Pointer to the melodic instrument definitions.
-	OplInstrumentDefinition *_instrumentBank;
+	const OplInstrumentDefinition *_instrumentBank;
 	// Pointer to the rhythm instrument definitions.
-	OplInstrumentDefinition *_rhythmBank;
+	const OplInstrumentDefinition *_rhythmBank;
 	// The MIDI note value of the first rhythm instrument in the bank.
 	uint8 _rhythmBankFirstNote;
 	// The MIDI note value of the last rhythm instrument in the bank.

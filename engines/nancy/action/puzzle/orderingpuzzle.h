@@ -38,7 +38,7 @@ namespace Action {
 //		- KeypadPuzzleTerse: Same as above, but data format is shorter, and supports up to 100 buttons
 class OrderingPuzzle : public RenderActionRecord {
 public:
-	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
+	enum SolveState { kNotSolved, kPlaySound, kWaitForSound, kStageBlink };
 	enum PuzzleType { kOrdering, kPiano, kOrderItems, kKeypad, kKeypadTerse };
 	OrderingPuzzle(PuzzleType type) : RenderActionRecord(7), _puzzleType(type) {}
 	virtual ~OrderingPuzzle() {}
@@ -49,14 +49,19 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-protected:
-	Common::String getRecordTypeName() const override;
 	bool isViewportRelative() const override { return true; }
 
+protected:
+	Common::String getRecordTypeName() const override;
+
+	void setHoverCursor(int16 cursorID, CursorManager::CursorType defaultCursor);
 	void pushDown(uint id);
 	void setToSecondState(uint id);
 	void popUp(uint id);
 	void clearAllElements();
+	void drawStageDisplay();
+	bool enteredKeysMatchStage() const;
+	bool enteredKeysMatchDangerRecipe() const;
 
 	Common::Path _imageName;
 	bool _hasSecondState = false;
@@ -72,24 +77,57 @@ protected:
 	Common::Array<Common::Rect> _hotspots;
 	Common::Array<uint16> _correctSequence;
 
+	// Nancy 11 multi-stage keypad: a series of codes that must be entered in turn. Stage 0 is
+	// _correctSequence above; the rest are stored here. The puzzle stays in one scene across all
+	// stages, so the same record instance tracks the current stage.
+	uint16 _numStages = 0;
+	Common::Array<Common::Array<uint16> > _stageSequences;
+	Common::Array<bool> _stageCheckOrder;
+	int _currentStage = 0;
+
+	// Nancy 11 recipe keypad (the alchemy keypad) display: each solved stage adds its small symbol
+	// to a vertical list, and the current stage's symbol is shown large. Both are sprites in the
+	// puzzle image, indexed by stage.
+	Common::Array<Common::Rect> _mixedListSrcs;
+	Common::Array<Common::Rect> _mixedListDests;
+	Common::Array<Common::Rect> _currentRecipeSrcs;
+	Common::Array<Common::Rect> _currentRecipeDests;
+	bool _stageDisplayBlink = false;
+	bool _stageSymbolVisible = true;
+	Time _stageBlinkEndTime;
+	Time _stageBlinkNextToggle;
+
+	// Lethal ingredient combinations: entering one and pressing the cauldron mixes a deadly potion
+	// and jumps to _deathScene (the explosion).
+	Common::Array<Common::Array<uint16> > _dangerRecipes;
+	SceneChangeWithFlag _deathScene;
+	bool _stageDeath = false;
+
+	// Nancy 12 keypads pick their hover cursors from the action record data.
+	// Both are raw Nancy 10+ system cursor types; -1 means the puzzle uses the
+	// engine defaults instead.
+	int16 _buttonCursorID = -1;
+	int16 _exitCursorID = -1;
+
 	uint16 _specialCursor1Id = CursorManager::kHotspot;
 	Common::Rect _specialCursor1Dest;
 	uint16 _specialCursor2Id = CursorManager::kHotspot;
 	Common::Rect _specialCursor2Dest;
 
 	Common::Array<Common::String> _pianoSoundNames; // nancy8 and up
+	Common::Array<Common::String> _pianoReleaseSoundNames; // nancy11 and up (second, interleaved, sound name per key)
 
 	uint16 _state2InvItem = 0;
 	Common::Array<Common::Rect> _overlaySrcs;
 	Common::Array<Common::Rect> _overlayDests;
 
-	Nancy::SoundDescription _pushDownSound;
-	Nancy::SoundDescription _itemSound;
-	Nancy::SoundDescription _popUpSound;
+	SoundDescription _pushDownSound;
+	SoundDescription _itemSound;
+	SoundDescription _popUpSound;
 
 	SceneChangeWithFlag _solveExitScene;
 	uint16 _solveSoundDelay = 0;
-	Nancy::SoundDescription _solveSound;
+	SoundDescription _solveSound;
 	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
 

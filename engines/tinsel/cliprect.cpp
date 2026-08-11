@@ -197,116 +197,127 @@ void MergeClipRect() {
 }
 
 /**
+ * Redraws single objects within this clipping rectangle.
+ * @param pObjList		Object list to draw
+ * @param pWin			Window top left position
+ * @param pClip			Pointer to clip rectangle
+ */
+void UpdateClipRectSingle(OBJECT *pObj, Common::Point *pWin, Common::Rect *pClip) {
+	int x, y, right, bottom;	// object corners
+	int hclip, vclip;			// total size of object clipping
+	DRAWOBJECT currentObj;		// filled in to draw the current object in list
+
+	// Initialize the fields of the drawing object to empty
+	memset(&currentObj, 0, sizeof(DRAWOBJECT));
+
+	if (pObj->flags & DMA_ABS) {
+		// object position is absolute
+		x = fracToInt(pObj->xPos);
+		y = fracToInt(pObj->yPos);
+	} else {
+		// object position is relative to window
+		x = fracToInt(pObj->xPos) - pWin->x;
+		y = fracToInt(pObj->yPos) - pWin->y;
+	}
+
+	// calc object right
+	right = x + pObj->width;
+	if (right < 0)
+		// totally clipped if negative
+		return;
+
+	// calc object bottom
+	bottom = y + pObj->height;
+	if (bottom < 0)
+		// totally clipped if negative
+		return;
+
+	// bottom clip = low right y - clip low right y
+	currentObj.botClip = bottom - pClip->bottom;
+	if (currentObj.botClip < 0) {
+		// negative - object is not clipped
+		currentObj.botClip = 0;
+	}
+
+	// right clip = low right x - clip low right x
+	currentObj.rightClip = right - pClip->right;
+	if (currentObj.rightClip < 0) {
+		// negative - object is not clipped
+		currentObj.rightClip = 0;
+	}
+
+	// top clip = clip top left y - top left y
+	currentObj.topClip = pClip->top - y;
+	if (currentObj.topClip < 0) {
+		// negative - object is not clipped
+		currentObj.topClip = 0;
+	} else {	// clipped - adjust start position to top of clip rect
+		y = pClip->top;
+	}
+
+	// left clip = clip top left x - top left x
+	currentObj.leftClip = pClip->left - x;
+	if (currentObj.leftClip < 0) {
+		// negative - object is not clipped
+		currentObj.leftClip = 0;
+	} else {
+		// NOTE: This else statement is disabled in tinsel v1
+		// clipped - adjust start position to left of clip rect
+		x = pClip->left;
+	}
+
+	// calc object total horizontal clipping
+	hclip = currentObj.leftClip + currentObj.rightClip;
+
+	// calc object total vertical clipping
+	vclip = currentObj.topClip + currentObj.botClip;
+
+	if (hclip + vclip != 0) {
+		// object is clipped in some way
+
+		if (pObj->width <= hclip)
+			// object totally clipped horizontally - ignore
+			return;
+
+		if (pObj->height <= vclip)
+			// object totally clipped vertically - ignore
+			return;
+
+		// set clip bit in object flags
+		currentObj.flags = pObj->flags | DMA_CLIP;
+	} else {	// object is not clipped - copy flags
+		currentObj.flags = pObj->flags;
+	}
+
+	// copy object properties to local object
+	currentObj.width          = pObj->width;
+	currentObj.height         = pObj->height;
+	currentObj.xPos           = (short)x;
+	currentObj.yPos           = (short)y;
+	if (TinselVersion != 3) {
+		currentObj.pPal       = pObj->pPal;
+	} else {
+		currentObj.isRLE      = pObj->isRLE;
+		currentObj.colorFlags = pObj->colorFlags;
+	}
+	currentObj.constant       = pObj->constant;
+	currentObj.hBits          = pObj->hBits;
+
+	// draw the object
+	DrawObject(&currentObj);
+}
+
+/**
  * Redraws all objects within this clipping rectangle.
  * @param pObjList		Object list to draw
  * @param pWin			Window top left position
  * @param pClip			Pointer to clip rectangle
  */
 void UpdateClipRect(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip) {
-	int x, y, right, bottom;	// object corners
-	int hclip, vclip;			// total size of object clipping
-	DRAWOBJECT currentObj;		// filled in to draw the current object in list
 	OBJECT *pObj;				// object list iterator
 
-	// Initialize the fields of the drawing object to empty
-	memset(&currentObj, 0, sizeof(DRAWOBJECT));
-
 	for (pObj = *pObjList; pObj != NULL; pObj = pObj->pNext) {
-		if (pObj->flags & DMA_ABS) {
-			// object position is absolute
-			x = fracToInt(pObj->xPos);
-			y = fracToInt(pObj->yPos);
-		} else {
-			// object position is relative to window
-			x = fracToInt(pObj->xPos) - pWin->x;
-			y = fracToInt(pObj->yPos) - pWin->y;
-		}
-
-		// calc object right
-		right = x + pObj->width;
-		if (right < 0)
-			// totally clipped if negative
-			continue;
-
-		// calc object bottom
-		bottom = y + pObj->height;
-		if (bottom < 0)
-			// totally clipped if negative
-			continue;
-
-		// bottom clip = low right y - clip low right y
-		currentObj.botClip = bottom - pClip->bottom;
-		if (currentObj.botClip < 0) {
-			// negative - object is not clipped
-			currentObj.botClip = 0;
-		}
-
-		// right clip = low right x - clip low right x
-		currentObj.rightClip = right - pClip->right;
-		if (currentObj.rightClip < 0) {
-			// negative - object is not clipped
-			currentObj.rightClip = 0;
-		}
-
-		// top clip = clip top left y - top left y
-		currentObj.topClip = pClip->top - y;
-		if (currentObj.topClip < 0) {
-			// negative - object is not clipped
-			currentObj.topClip = 0;
-		} else {	// clipped - adjust start position to top of clip rect
-			y = pClip->top;
-		}
-
-		// left clip = clip top left x - top left x
-		currentObj.leftClip = pClip->left - x;
-		if (currentObj.leftClip < 0) {
-			// negative - object is not clipped
-			currentObj.leftClip = 0;
-		} else {
-			// NOTE: This else statement is disabled in tinsel v1
-			// clipped - adjust start position to left of clip rect
-			x = pClip->left;
-		}
-
-		// calc object total horizontal clipping
-		hclip = currentObj.leftClip + currentObj.rightClip;
-
-		// calc object total vertical clipping
-		vclip = currentObj.topClip + currentObj.botClip;
-
-		if (hclip + vclip != 0) {
-			// object is clipped in some way
-
-			if (pObj->width <= hclip)
-				// object totally clipped horizontally - ignore
-				continue;
-
-			if (pObj->height <= vclip)
-				// object totally clipped vertically - ignore
-				continue;
-
-			// set clip bit in objects flags
-			currentObj.flags = pObj->flags | DMA_CLIP;
-		} else {	// object is not clipped - copy flags
-			currentObj.flags = pObj->flags;
-		}
-
-		// copy objects properties to local object
-		currentObj.width          = pObj->width;
-		currentObj.height         = pObj->height;
-		currentObj.xPos           = (short)x;
-		currentObj.yPos           = (short)y;
-		if (TinselVersion != 3) {
-			currentObj.pPal       = pObj->pPal;
-		} else {
-			currentObj.isRLE      = pObj->isRLE;
-			currentObj.colorFlags = pObj->colorFlags;
-		}
-		currentObj.constant       = pObj->constant;
-		currentObj.hBits          = pObj->hBits;
-
-		// draw the object
-		DrawObject(&currentObj);
+		UpdateClipRectSingle(pObj, pWin, pClip);
 	}
 }
 

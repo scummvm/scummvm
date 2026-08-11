@@ -567,9 +567,9 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		return false;
 	}
 
-	for (Common::Array<TalkDialogEntry*>::iterator it = _dialogEntries.begin(); it != _dialogEntries.end(); it++) {
+	for (auto &currentEntry : _dialogEntries) {
 		TalkDialogEntry *entry = (TalkDialogEntry *)malloc(sizeof(TalkDialogEntry));
-		memcpy(entry, *it, sizeof(TalkDialogEntry));
+		memcpy(entry, currentEntry, sizeof(TalkDialogEntry));
 		dialogEntries.push_back(entry);
 	}
 
@@ -577,8 +577,8 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	do {
 		_vm->clearAllText();
 		int numActiveDialogEntries = 0;
-		for (Common::Array<TalkDialogEntry*>::iterator it = dialogEntries.begin(); it != dialogEntries.end(); it++) {
-			if (!((*it)->flags & 1)) {
+		for (auto &currentEntry : dialogEntries) {
+			if (!(currentEntry->flags & 1)) {
 				numActiveDialogEntries++;
 			}
 		}
@@ -852,8 +852,8 @@ void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDi
 		_vm->setFlags(ENGINE_FLAG_100);
 	}
 
-	for (Common::Array<TalkDialogEntry*>::iterator it = dialogEntries.begin(); it != dialogEntries.end(); it++) {
-		delete *it;
+	for (auto *entry : dialogEntries) {
+		delete entry;
 	}
 	dialogEntries.clear();
 	_vm->_fontManager->clearText();
@@ -1119,8 +1119,8 @@ uint32 Talk::truncateDialogText(uint16 *srcText, uint16 *destText, uint32 srcLen
 }
 
 void Talk::clearDialogEntries() {
-	for (Common::Array<TalkDialogEntry*>::iterator it = _dialogEntries.begin(); it != _dialogEntries.end(); it++) {
-		delete *it;
+	for (auto *entry : _dialogEntries) {
+		delete entry;
 	}
 	_dialogEntries.clear();
 }

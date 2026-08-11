@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.scummvm.scummvm;
 
 // Based on code from: https://stackoverflow.com/a/11024200
@@ -33,6 +54,7 @@ public class Version implements Comparable<Version> {
 	// Here a version is considered "dirty" if it contains other characters in the description string than the expected digits (and dots) of a "clean" proper version
 	// eg. 2.3.0pre or 2.3.0git or 2.3.0git9272-gc71ac4748b are dirty
 	//     2.3.0 is NOT dirty
+	@SuppressWarnings("unused")
 	public boolean isDirty() {
 		return (versionOnlyDigits.compareTo(versionDescription) != 0);
 	}

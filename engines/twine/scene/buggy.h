@@ -41,27 +41,27 @@ private:
 public:
 #define MAX_BUGGYS 2
 	struct S_ONE_WHEEL {
-		int32 Angle;
-		int32 X;
-		int32 Y;
-		int32 Z;
+		int32 Angle = 0;
+		int32 X = 0;
+		int32 Y = 0;
+		int32 Z = 0;
 	};
 
-	typedef struct {
-		int32 X;
-		int32 Y;
-		int32 Z;
-		int32 Cube;
-		int32 Beta;
-		int32 Alpha;
-		int32 Gamma;
+	struct S_BUGGY {
+		int32 X = 0;
+		int32 Y = 0;
+		int32 Z = 0;
+		int32 Cube = 0;
+		int32 Beta = 0;
+		int32 Alpha = 0;
+		int32 Gamma = 0;
 		S_ONE_WHEEL Wheel[4];
-		int32 BetaWheel;
-		int32 SpeedInc;
-		int32 SpeedRot;
-		int32 Speed;
-		int32 LastTimer;
-	} S_BUGGY;
+		int32 BetaWheel = 0;
+		int32 SpeedInc = 0;
+		int32 SpeedRot = 0;
+		int32 Speed = 0;
+		int32 LastTimer = 0;
+	};
 
 	// TODO: rename and hide
 	S_BUGGY ListBuggy[MAX_BUGGYS];

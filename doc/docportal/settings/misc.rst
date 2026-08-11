@@ -24,9 +24,30 @@ Autosave
 .. _seed:
 
 Random seed
-	Every time you start ScummVM, a random seed is generated. Use this option to set a fixed seed, which ensures that random events in games play out the same way every time. 
+	Every time you start ScummVM, a random seed is generated. Use this option to set a fixed seed, which ensures that random events in games play out the same way every time.
 
 	*random_seed*
+
+.. _enablehotspots:
+
+Enable hotspot display
+	Enables visual markers and labels for interactive objects in supported games. When enabled, pressing the hotspot key (default 'h') displays markers at clickable locations.
+
+	*enable_hotspots*
+
+.. _hotspotmarker:
+
+Hotspot marker
+	Selects the visual style for hotspot markers. Options include Point (circular marker), Square (rectangular outline), or Crosshair (crosshair symbol).
+
+	*hotspot_marker*
+
+.. _showhotspottext:
+
+Show hotspot labels
+	When enabled, displays text labels next to hotspot markers showing the name of the interactive object.
+
+	*show_hotspot_text*
 
 .. _discord:
 

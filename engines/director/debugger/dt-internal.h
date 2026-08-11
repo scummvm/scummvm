@@ -22,25 +22,25 @@
 #ifndef DIRECTOR_DEBUGER_DT_INTERNAL_H
 #define DIRECTOR_DEBUGER_DT_INTERNAL_H
 
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
+#endif
 
 #include "graphics/surface.h"
 
 #include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_fonts.h"
-
-#include "director/debugger/imgui_memory_editor.h"
+#include "backends/imgui/components/imgui_logger.h"
+#include "backends/imgui/components/imgui_memory_editor.h"
 
 #include "director/types.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingodec/ast.h"
 #include "director/lingo/lingodec/handler.h"
 
 namespace Director {
-
 namespace DT {
-
-class ImGuiLogger;
 
 #define kMaxColumnsInTable 512
 
@@ -57,12 +57,14 @@ typedef struct ImGuiScriptCodeLine {
 
 typedef struct ImGuiScript {
 	bool score = false;
+	bool showByteCode = false;
 	CastMemberID id;
 	ScriptType type;
 	Common::String handlerId;
 	Common::String handlerName;
 	Common::String moviePath;
 	Common::Array<uint32> byteOffsets;
+	uint pc = 0;
 
 	bool isMethod = false;
 	bool isGenericEvent = false;
@@ -73,6 +75,7 @@ typedef struct ImGuiScript {
 	Common::Array<LingoDec::Bytecode> bytecodeArray;
 	Common::Array<uint> startOffsets;
 	Common::SharedPtr<Node> oldAst;
+	Common::String rawText;
 
 	bool operator==(const ImGuiScript &c) const {
 		return moviePath == c.moviePath && score == c.score && id == c.id && handlerId == c.handlerId;
@@ -84,10 +87,10 @@ typedef struct ImGuiScript {
 
 typedef struct ImGuiWindows {
 	bool controlPanel = true;
-	bool callStack = false;
 	bool vars = false;
 	bool channels = false;
 	bool cast = false;
+	bool castDetails = false;
 	bool funcList = false;
 	bool score = false;
 	bool bpList = false;
@@ -95,59 +98,201 @@ typedef struct ImGuiWindows {
 	bool logger = false;
 	bool archive = false;
 	bool watchedVars = false;
+	bool executionContext = false;
+	bool scripts = false;
+	bool search = false;
+	bool imageViewer = false;
+	bool windows = false;
+	bool help = false;
 } ImGuiWindows;
 
+// Rebindable debugger actions. Keep in sync with kShortcutDefs (dt-help.cpp).
+enum DebuggerAction {
+	kActContinue = 0,
+	kActStepOver,
+	kActStepInto,
+	kActStepOut,
+	kActQuickOpen,
+	kActPickFromStage,
+	kActToggleControlPanel,
+	kActToggleCast,
+	kActToggleScore,
+	kActToggleMouseIgnore,
+	kActCount
+};
+
+typedef struct ShortcutDef {
+	const char *id;    // stable key for save/load
+	const char *label; // display name
+	const char *help;  // what it does
+	ImGuiKeyChord defaultChord;
+} ShortcutDef;
+
+
+enum SearchMode {
+	kSearchAll = 0,
+	kSearchHandlers,
+	kSearchVariables,
+	kSearchBody,
+};
+
+typedef struct ScriptData {
+	Common::Array<ImGuiScript> _scripts;
+	uint _current = 0;
+	bool _showByteCode = false;
+	bool _showScript = false;
+	bool _scrollToCurrent = false; // pending scroll to the current script, consumed on render
+} ScriptData;
+
+typedef struct WindowFlag {
+	const char *name;
+	bool *flag;
+} WindowFlag;
+
+enum ThemeID {
+	kThemeDark = 0,
+	kThemeLight,
+	kThemeCount
+};
+
+struct DebuggerTheme {
+	ImU32 tableLightColor;
+	ImU32 tableDarkColor;
+	ImU32 borderColor;
+	ImU32 sidebarTextColor;
+	ImU32 gridTextColor;
+	ImU32 playhead_color;
+	ImU32 current_statement_bg;
+	ImU32 channel_toggle;
+	ImU32 channel_hide_bg;
+	ImU32 channelSelectedCol;
+	ImU32 channelHoveredCol;
+	ImU32 contColors[6];
+
+	// Breakpoints
+	ImVec4 bp_color_disabled;
+	ImVec4 bp_color_enabled;
+	ImVec4 bp_color_hover;
+
+	// Syntax Highlighting
+	ImVec4 current_statement;
+	ImVec4 line_color;
+	ImVec4 call_color;
+	ImVec4 builtin_color;
+	ImVec4 var_color;
+	ImVec4 literal_color;
+	ImVec4 comment_color;
+	ImVec4 type_color;
+	ImVec4 keyword_color;
+	ImVec4 the_color;
+
+	// Variable / Script References
+	ImVec4 script_ref;
+	ImVec4 var_ref;
+	ImVec4 var_ref_changed;
+	ImVec4 var_ref_out_of_scope;
+
+	// Control Panel
+	ImVec4 cp_color;
+	ImVec4 cp_color_red;
+	ImVec4 cp_active_color;
+	ImVec4 cp_bgcolor;
+	ImVec4 cp_playing_color;
+	ImVec4 cp_path_color;
+
+	// Logger
+	ImVec4 logger_error_b;
+	ImVec4 logger_warning_b;
+	ImVec4 logger_info_b;
+	ImVec4 logger_debug_b;
+	ImVec4 logger_error;
+	ImVec4 logger_warning;
+	ImVec4 logger_info;
+	ImVec4 logger_debug;
+};
+
+struct QuickOpenItem {
+	Common::String label;
+	bool isHandler = false;
+	CastMemberID id;
+	ScriptType scriptType = kScoreScript;
+	Common::String handlerId;
+	Common::String handlerName;
+};
+
+struct CastRowEntry {
+	const Cast *cast = nullptr;
+	CastMember *member = nullptr;
+	int id = 0;
+	Common::String name;
+};
+
 typedef struct ImGuiState {
+
+	struct WatchLogEntry {
+		Common::String varName;
+		Common::String value;
+		Common::String scriptRef;
+	};
+
+	struct ScoreConfig {
+		float _sidebarWidth = 60.0f;
+		float _cellWidth = 14.0f;
+		float _cellHeight = 22.0f;
+		int _visibleFrames = 60;
+		int _visibleChannels = 20;
+		float _tableWidth = _cellWidth * _visibleFrames;
+		float _tableHeight = _cellHeight * _visibleChannels;
+		float _rulerHeight = 30.0f;
+		float _rulerWidth = _cellWidth * _visibleFrames;
+		float _sidebar1Height = _cellHeight * 6;
+		float _labelBarHeight = _cellHeight;
+		float _cellHeightExtended = 5 * _cellHeight;
+	} _scoreCfg;
+
+	struct ScoreState {
+		int xSliderValue = 1; // first visible frame, 1 indexed
+		int channelScrollOffset = 1; // first visible channel, 1 indexed
+	} _scoreState;
+
 	struct {
-		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
+		Common::HashMap<CastMember *, ImGuiImage> _textures;
 		bool _listView = true;
+		bool _showGridNumbers = false;
 		int _thumbnailSize = 64;
 		ImGuiTextFilter _nameFilter;
-		int _typeFilter = 0x7FFF;
+		int _typeFilter = 0xFFFF;
 	} _cast;
+
 	struct {
-		Common::Array<ImGuiScript> _scripts;
-		uint _current = 0;
 		ImGuiTextFilter _nameFilter;
-		bool _showByteCode = false;
-		bool _showScript = false;
+		bool _showScriptContexts = true;
+		Common::HashMap<Window *, ScriptData> _windowScriptData;
 	} _functions;
 	struct {
+		// stored as an ID: raw CastMember pointers dangle on movie switch
+		CastMemberID _castMemberID;
+		// name of the window whose movie owns the member
+		Common::String _window;
+		Common::HashMap<CastMemberID, int> _filmLoopCurrentFrame;
+	} _castDetails;
+
+	struct {
+		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
+		bool _hostExecutionContext = false; // true while the Execution Context window is rendering scripts
+		bool _scrollToPC = false;
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
-		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
+		Common::String _highlightQuery; // lowercased, empty disables highlight
+		bool _suppressHighlight = false; // used to disable highlighting in Execution Context
 	} _dbg;
 
 	struct {
-		ImVec4 _bp_color_disabled = ImVec4(0.9f, 0.08f, 0.0f, 0.0f);
-		ImVec4 _bp_color_enabled = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
-		ImVec4 _bp_color_hover = ImVec4(0.42f, 0.17f, 0.13f, 1.0f);
-
-		ImVec4 _current_statement = ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0xFF));
-		ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
-		ImVec4 _call_color = ImColor(IM_COL32(0xFF, 0xC5, 0x5C, 0xFF));
-		ImVec4 _builtin_color = ImColor(IM_COL32(0x60, 0x7C, 0xFF, 0xFF));
-		ImVec4 _var_color = ImColor(IM_COL32(0x4B, 0xCD, 0x5E, 0xFF));
-		ImVec4 _literal_color = ImColor(IM_COL32(0xFF, 0x9F, 0xDA, 0x9E));
-		ImVec4 _comment_color = ImColor(IM_COL32(0xFF, 0xA5, 0x9D, 0x95));
-		ImVec4 _type_color = ImColor(IM_COL32(0x13, 0xC5, 0xF9, 0xFF));
-		ImVec4 _keyword_color = ImColor(IM_COL32(0xC1, 0xC1, 0xC1, 0xFF));
-		ImVec4 _the_color = ImColor(IM_COL32(0xFF, 0x49, 0xEF, 0xFF));
-
-		ImVec4 _script_ref = ImColor(IM_COL32(0x7f, 0x7f, 0xff, 0xfff));
-		ImVec4 _var_ref = ImColor(IM_COL32(0xe6, 0xe6, 0x00, 0xff));
-		ImVec4 _var_ref_changed = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
-
-		ImVec4 _logger_error_b = ImVec4(1.f, 0.f, 0.f, 1.f);
-		ImVec4 _logger_warning_b = ImVec4(1.f, 1.f, 0.f, 1.f);
-		ImVec4 _logger_info_b = ImVec4(1.f, 1.f, 1.f, 1.f);
-		ImVec4 _logger_debug_b = ImVec4(0.8f, 0.8f, 0.8f, 1.f);
-
-		ImVec4 _logger_error = ImVec4(1.0f, 0.4f, 0.4f, 1.0f);
-		ImVec4 _logger_warning = ImVec4(1.0f, 1.0f, 0.4f, 1.0f);
-		ImVec4 _logger_info = ImVec4(1.0f, 0.8f, 0.6f, 1.0f);
-		ImVec4 _logger_debug = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
-	} _colors;
+		char input[256] = {};
+		bool dirty = false;
+		int mode = kSearchAll;
+		Common::Array<ImGuiScript> results;
+	} _search;
 
 	struct {
 		DatumHash _locals;
@@ -157,24 +302,79 @@ typedef struct ImGuiState {
 		DatumHash _prevGlobals;
 
 		uint32 _lastTimeRefreshed = 0;
+		ImGuiTextFilter _nameFilter;
 	} _vars;
+
+	struct {
+		ImGuiImage image;
+		Common::String text;      // empty = no text panel
+		Common::String title;     // optional title
+
+		// cached normalized text
+		Common::String cachedRaw;
+		Common::String cachedNormalized;
+
+		// reusable buffer
+		char *buffer = nullptr;
+		size_t bufferSize = 0;
+
+	} _imageViewerState;
 
 	ImGuiWindows _w;
 	ImGuiWindows _savedW;
 	bool _wasHidden = false;
 
-	Common::List<CastMemberID> _scriptCasts;
+	ScriptData _openScripts;
+	bool _showCompleteScript = true;
+
+	// Quick-open (command palette): jump to a cast member or handler by name.
+	bool _quickOpen = false;
+	char _quickOpenInput[256] = {};
+
+	// Pick-from-stage: next stage click selects the sprite under the cursor.
+	bool _pickMode = false;
+
+	// Rebindable shortcut chords, indexed by DebuggerAction; -1 = not capturing.
+	ImGuiKeyChord _shortcuts[kActCount] = {};
+	int _shortcutCapture = -1;
+	ImGuiKeyChord _shortcutPending = ImGuiKey_None; // chord being held during a rebind
+
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
 	struct {
 		int frame = -1;
 		int channel = -1;
+		bool isMainChannel = false;
 	} _selectedScoreCast;
 
+	struct {
+		int frame = -1;
+		int channel = -1;
+	} _hoveredScoreCast;
+
+	Common::Array<Common::Array<Common::Pair<uint, uint>>> _continuationData;
+	Common::String _loadedContinuationData;
+
+	// archive paths of every window's movie, to detect movie switches
+	Common::String _movieSignature;
+
+	Common::Array<WatchLogEntry> _watchLog;
+
+	Common::String _scoreWindow;
+	Common::String _channelsWindow;
+	Common::String _castWindow;
+	Common::String _functionsWindow;
+	Common::String _executionContextWindow;
 	int _scoreMode = 0;
 	int _scoreFrameOffset = 1;
+	int _scorePageSlider = 0;
+	int _selectedChannel = -1;
+	bool _scrollToChannel = false;
 
 	ImFont *_tinyFont = nullptr;
+
+	int _activeThemeID = kThemeLight;
+	const DebuggerTheme *theme = nullptr;
 
 	struct {
 		Common::Path path;
@@ -187,69 +387,103 @@ typedef struct ImGuiState {
 		MemoryEditor memEdit;
 	} _archive;
 
-	ImGuiLogger *_logger = nullptr;
+	ImGuiEx::ImGuiLogger *_logger = nullptr;
+	bool _ignoreMouse = false;
+	bool _enableMultiViewport = true;
+
+	Window *_windowToRedraw = nullptr;
+
+	// Cached UI lists. Kept in the state (not file-static) so their Common::Strings
+	// free in onImGuiCleanup while g_system is alive, not at process exit.
+	Common::Array<CastRowEntry> _castRows;
+	Common::String _castRowsKey;
+	Common::Array<QuickOpenItem> _quickOpenItems;
+	bool _quickOpenGathered = false;
 } ImGuiState;
 
-// dt-logger.cpp
-class ImGuiLogger {
-	char _inputBuf[256];
-	ImVector<char *> _items;
-	ImVector<char *> _history;
-	int _historyPos; // -1: new line, 0.._history.Size-1 browsing history.
-	ImGuiTextFilter _filter;
-	bool _autoScroll;
-	bool _scrollToBottom;
-	bool _showError = true;
-	bool _showWarn = true;
-	bool _showInfo = true;
-	bool _showdebug = true;
-
-public:
-	ImGuiLogger();
-	~ImGuiLogger();
-	void clear();
-	void addLog(const char *fmt, ...) IM_FMTARGS(2);
-	void draw(const char *title, bool *p_open);
-};
-
 // debugtools.cpp
-bool toggleButton(const char *label, bool *p_value, bool inverse = false);
+const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Common::String &handlerId);
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
+ScriptContext *getScriptContext(CastMemberID id);
+ScriptContext *getScriptContext(uint32 nameIndex, CastMemberID castId, Common::String handler);
+ScriptContext *resolveHandlerContext(int32 nameIndex, const CastMemberID &refId, const Common::String &handlerName);
+int getCastLibIDForContext(const ScriptContext *ctx);
+ImGuiScript buildImGuiHandlerScript(ScriptContext *ctx, int castLibID, const Common::String &handlerName, const Common::String &moviePath);
+void maybeHighlightLastItem(const Common::String &text);
+void addToOpenHandlers(ImGuiScript handler);
 void setScriptToDisplay(const ImGuiScript &script);
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc);
 void displayScriptRef(CastMemberID &scriptId);
 ImGuiImage getImageID(CastMember *castMember);
+ImGuiImage getShapeID(CastMember *castMember);
+ImGuiImage getTextID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
+void showImageWrappedBorder(const ImGuiImage &image, const char *name, float size);
 ImVec4 convertColor(uint32 color);
-void displayVariable(const Common::String &name, bool changed);
+void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
+ImColor brightenColor(const ImColor &color, float factor);
+Window *windowListCombo(Common::String *target);
+Common::String movieId(const Movie *m);
+Window *findWindowByName(const Common::String &name);
+bool selectableViewButton(const char *label, bool selected);
+Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript);
+void setTheme(int themeIndex);
+void openImageViewer(ImGuiImage image, const Common::String &text = "", const Common::String &title = "");
 
-void showCast();        // dt-cast.cpp
-void showControlPanel(); // dt-controlpanel.cpp
+// helper to draw thin rectangles for table grid
+inline void addThinRect(ImDrawList *dl, ImVec2 min, ImVec2 max, ImU32 col, float thickness = 0.1f) {
+	dl->AddLine(ImVec2(min.x, min.y), ImVec2(max.x, min.y), col, thickness); // top
+	dl->AddLine(ImVec2(max.x, min.y), ImVec2(max.x, max.y), col, thickness); // right
+	dl->AddLine(ImVec2(max.x, max.y), ImVec2(min.x, max.y), col, thickness); // bottom
+	dl->AddLine(ImVec2(min.x, max.y), ImVec2(min.x, min.y), col, thickness); // left
+}
+
+void showCast();		// dt-cast.cpp
+void showImageViewer();	// dt-castdetails.cpp
+void showCastDetails();	// dt-castdetails.cpp
+void showControlPanel();// dt-controlpanel.cpp
+void handleDebuggerShortcuts();	// dt-controlpanel.cpp
+
+// dt-help.cpp
+extern const ShortcutDef kShortcutDefs[kActCount];
+void initShortcuts();       // load defaults into _state->_shortcuts
+void resetShortcuts();      // restore defaults
+void showHelp();            // the Help window (shortcuts + tips)
+bool actionTriggered(DebuggerAction act);   // Shortcut() honouring the current binding
 
 // dt-lists.cpp
-void showCallStack();
 void showVars();
 void showWatchedVars();
 void showBreakpointList();
 void showArchive();
+void showWindows();
 
 // dt-score.cpp
 void showScore();
 void showChannels();
 
-void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
-void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
+void renderOldScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);	// dt-script-d2.cpp
+void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);	   // dt-script-d4.cpp
 
 // dt-scripts.cpp
 void showFuncList();
-void showScriptCasts();
-void showScripts();
+void showExecutionContext();
+void showScriptsWindow();
+void showQuickOpen();
+
+// dt-save-state.cpp
+void saveCurrentState();
+void loadSavedState();
+Common::Array<WindowFlag> getWindowFlags();
+
+// dt-search.cpp
+void showSearchBar();
 
 extern ImGuiState *_state;
 
-}
+} // End of namespace DT
 
-};
+} // End of namespace Director
 
 #endif

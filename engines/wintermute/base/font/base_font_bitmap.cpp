@@ -37,6 +37,8 @@
 #include "engines/wintermute/base/base_frame.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -61,10 +63,8 @@ BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 BaseFontBitmap::~BaseFontBitmap() {
-	delete _subframe;
-	delete _sprite;
-	_subframe = nullptr;
-	_sprite = nullptr;
+	SAFE_DELETE(_subframe);
+	SAFE_DELETE(_sprite);
 }
 
 
@@ -84,14 +84,14 @@ int BaseFontBitmap::getTextHeight(const byte *text, int width) {
 int BaseFontBitmap::getTextWidth(const byte *text, int maxLength) {
 	AnsiString str;
 
-	if (_gameRef->_textEncoding == TEXT_UTF8) {
+	if (_game->_textEncoding == TEXT_UTF8) {
 		WideString wstr = StringUtil::utf8ToWide(Utf8String((const char *)text));
 		str = StringUtil::wideToAnsi(wstr);
 	} else {
 		str = AnsiString((const char *)text);
 	}
 
-	if (maxLength >= 0 && str.size() > (uint32)maxLength) {
+	if (maxLength >= 0 && (int)str.size() > maxLength) {
 		str = Common::String(str.c_str(), (uint32)maxLength);
 	}
 	//str.substr(0, maxLength); // TODO: Remove
@@ -117,7 +117,7 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 
 	AnsiString str;
 
-	if (_gameRef->_textEncoding == TEXT_UTF8) {
+	if (_game->_textEncoding == TEXT_UTF8) {
 		WideString wstr = StringUtil::utf8ToWide(Utf8String((const char *)text));
 		str = StringUtil::wideToAnsi(wstr);
 	} else {
@@ -146,13 +146,13 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 #endif
 
 	if (draw) {
-		_gameRef->_renderer->startSpriteBatch();
+		_game->_renderer->startSpriteBatch();
 	}
 
 	while (!done) {
-		if (maxHeight > 0 && (numLines + 1)*_tileHeight > maxHeight) {
+		if (maxHeight > 0 && (numLines + 1) * _tileHeight > maxHeight) {
 			if (draw) {
-				_gameRef->_renderer->endSpriteBatch();
+				_game->_renderer->endSpriteBatch();
 			}
 			return numLines * _tileHeight;
 		}
@@ -192,7 +192,7 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 			if (end < 0) {
 				done = true;
 			}
-			int startX;
+			int startX = x;
 			switch (align) {
 			case TAL_CENTER:
 				startX = x + (width - realLength) / 2;
@@ -204,7 +204,6 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 				startX = x;
 				break;
 			default:
-				error("BaseFontBitmap::TextHeightDraw - Unhandled enum");
 				break;
 			}
 			for (i = start; i < end + 1; i++) {
@@ -233,7 +232,7 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 	}
 
 	if (draw) {
-		_gameRef->_renderer->endSpriteBatch();
+		_game->_renderer->endSpriteBatch();
 	}
 
 	return numLines * _tileHeight;
@@ -251,7 +250,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 	row = c / _numColumns;
 	col = c % _numColumns;
 
-	Rect32 rect;
+	Common::Rect32 rect;
 	/* l t r b */
 	int tileWidth;
 	if (_wholeCell) {
@@ -260,12 +259,12 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 		tileWidth = _widths[c];
 	}
 
-	rect.setRect(col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1) * _tileHeight);
+	BasePlatform::setRect(&rect, col * _tileWidth, row * _tileHeight, col * _tileWidth + tileWidth, (row + 1) * _tileHeight);
 	bool handled = false;
 	if (_sprite) {
 		_sprite->getCurrentFrame();
-		if (_sprite->_currentFrame >= 0 && _sprite->_currentFrame < (int32)_sprite->_frames.size() && _sprite->_frames[_sprite->_currentFrame]) {
-			if (_sprite->_frames[_sprite->_currentFrame]->_subframes.size() > 0) {
+		if (_sprite->_currentFrame >= 0 && _sprite->_currentFrame < _sprite->_frames.getSize() && _sprite->_frames[_sprite->_currentFrame]) {
+			if (_sprite->_frames[_sprite->_currentFrame]->_subframes.getSize() > 0) {
 				_sprite->_frames[_sprite->_currentFrame]->_subframes[0]->_surface->displayTrans(x, y, rect);
 			}
 			handled = true;
@@ -278,19 +277,19 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////
-bool BaseFontBitmap::loadFile(const Common::String &filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+bool BaseFontBitmap::loadFile(const char *filename) {
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename.c_str());
+		_game->LOG(0, "BaseFontBitmap::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
 	bool ret;
 
-	setFilename(filename.c_str());
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer))) {
-		_gameRef->LOG(0, "Error parsing FONT file '%s'", filename.c_str());
+		_game->LOG(0, "Error parsing FONT file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -346,10 +345,10 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_FONT) {
-		_gameRef->LOG(0, "'FONT' keyword expected.");
+		_game->LOG(0, "'FONT' keyword expected.");
 		return STATUS_FAILED;
 	}
 	buffer = params;
@@ -451,21 +450,20 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in FONT definition");
+		_game->LOG(0, "Syntax error in FONT definition");
 		return STATUS_FAILED;
 	}
 
 	if (spriteFile != nullptr) {
-		delete _sprite;
-		_sprite = new BaseSprite(_gameRef, this);
+		SAFE_DELETE(_sprite);
+		_sprite = new BaseSprite(_game, this);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(spriteFile))) {
-			delete _sprite;
-			_sprite = nullptr;
+			SAFE_DELETE(_sprite);
 		}
 	}
 
 	if (surfaceFile != nullptr && !_sprite) {
-		_subframe = new BaseSubFrame(_gameRef);
+		_subframe = new BaseSubFrame(_game);
 		if (customTrans) {
 			_subframe->setSurface(surfaceFile, false, r, g, b);
 		} else {
@@ -480,7 +478,7 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 
 	if (((_subframe == nullptr || _subframe->_surface == nullptr) && _sprite == nullptr) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
-		_gameRef->LOG(0, "Incomplete font definition");
+		_game->LOG(0, "Incomplete font definition");
 		return STATUS_FAILED;
 	}
 
@@ -510,7 +508,7 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 			_widths[spaceChar] = spaceWidth;
 		} else {
 			if (_widths[spaceChar] == expandWidth || _widths[spaceChar] == 0) {
-				_widths[spaceChar] = (_widths[(uint)'m'] + _widths[(uint)'i']) / 2;
+				_widths[spaceChar] = (_widths[(uint32)'m'] + _widths[(uint32)'i']) / 2;
 			}
 		}
 	} else {
@@ -573,8 +571,8 @@ bool BaseFontBitmap::getWidths() {
 	BaseSurface *surf = nullptr;
 
 	if (_sprite) {
-		if (_widthsFrame >= 0 && _widthsFrame < (int32)_sprite->_frames.size()) {
-			if (_sprite->_frames[_widthsFrame] && (int32)_sprite->_frames[_widthsFrame]->_subframes.size() > 0) {
+		if (_widthsFrame >= 0 && _widthsFrame < _sprite->_frames.getSize()) {
+			if (_sprite->_frames[_widthsFrame] && _sprite->_frames[_widthsFrame]->_subframes.getSize() > 0) {
 				surf = _sprite->_frames[_widthsFrame]->_subframes[0]->_surface;
 			}
 		}
@@ -613,10 +611,10 @@ bool BaseFontBitmap::getWidths() {
 	}
 	surf->endPixelOp();
 	/*
-	_gameRef->LOG(0, "----- %s ------", _filename);
+	_game->LOG(0, "----- %s ------", _filename);
 	for(int j=0; j<16; j++)
 	{
-	_gameRef->LOG(0, "%02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d", _widths[j*16+0], _widths[j*16+1], _widths[j*16+2], _widths[j*16+3], _widths[j*16+4], _widths[j*16+5], _widths[j*16+6], _widths[j*16+7], _widths[j*16+8], _widths[j*16+9], _widths[j*16+10], _widths[j*16+11], _widths[j*16+12], _widths[j*16+13], _widths[j*16+14], _widths[j*16+15]);
+		_game->LOG(0, "%02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d", _widths[j*16+0], _widths[j*16+1], _widths[j*16+2], _widths[j*16+3], _widths[j*16+4], _widths[j*16+5], _widths[j*16+6], _widths[j*16+7], _widths[j*16+8], _widths[j*16+9], _widths[j*16+10], _widths[j*16+11], _widths[j*16+12], _widths[j*16+13], _widths[j*16+14], _widths[j*16+15]);
 	}
 	*/
 	return STATUS_OK;

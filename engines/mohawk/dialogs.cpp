@@ -361,10 +361,10 @@ RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &na
 	transitionModeCaption->setAlign(Graphics::kTextAlignRight);
 
 	_transitionModePopUp = new GUI::PopUpWidget(widgetsBoss(), "RivenOptionsDialog.Transistions");
-	_transitionModePopUp->appendEntry(_("Disabled"), kRivenTransitionModeDisabled);
-	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
-	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
-	_transitionModePopUp->appendEntry(_("Best"), kRivenTransitionModeBest);
+	_transitionModePopUp->appendEntry(_c("Disabled", "riven-transition"), kRivenTransitionModeDisabled);
+	_transitionModePopUp->appendEntry(_c("Fastest", "riven-transition"), kRivenTransitionModeFastest);
+	_transitionModePopUp->appendEntry(_c("Normal", "riven-transition"), kRivenTransitionModeNormal);
+	_transitionModePopUp->appendEntry(_c("Best", "riven-transition"), kRivenTransitionModeBest);
 
 	// Only the 25th anniversary edition is multi-language
 	// Only allow changing the language at run-time, so that there is only one
@@ -448,5 +448,34 @@ bool RivenOptionsWidget::save() {
 }
 
 #endif
+
+MohawkDefaultOptionsWidget::MohawkDefaultOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+	OptionsContainerWidget(boss, name, "MohawkEngineOptionsDialog", domain) {
+
+	_audioPopFixCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MohawkEngineOptionsDialog.AudioDiscontinuityFix",
+		_("Fix audio pops/clicks"),
+		_("Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."));
+}
+
+MohawkDefaultOptionsWidget::~MohawkDefaultOptionsWidget() {
+}
+
+void MohawkDefaultOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("AudioDiscontinuityFix", "Checkbox")
+		.closeLayout()
+	.closeDialog();
+}
+
+void MohawkDefaultOptionsWidget::load() {
+	_audioPopFixCheckbox->setState(ConfMan.getBool("fix_audio_pops", _domain));
+}
+
+bool MohawkDefaultOptionsWidget::save() {
+	ConfMan.setBool("fix_audio_pops", _audioPopFixCheckbox->getState(), _domain);
+	return true;
+}
 
 } // End of namespace Mohawk

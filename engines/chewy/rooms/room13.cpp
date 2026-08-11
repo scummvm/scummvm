@@ -82,7 +82,7 @@ void Room13::entry() {
 			_G(gameState).R13Band = false;
 		}
 
-		if (_G(gameState).R21GitterMuell)
+		if (_G(gameState).R21GarbageGrid)
 			_G(det)->hideStaticSpr(6);
 	}
 }
@@ -129,7 +129,7 @@ void Room13::talk_bork() {
 		_G(flags).NoScroll = true;
 		auto_scroll(41, 0);
 
-		start_spz(68, 255, false, P_CHEWY);
+		start_spz(CH_BORK_TALK, 255, false, P_CHEWY);
 		startAadWait(248);
 		flic_cut(FCUT_013);
 		load_chewy_taf(CHEWY_NORMAL);
@@ -164,7 +164,7 @@ void Room13::jmp_band() {
 			_G(gameState).R13Band = true;
 			autoMove(3, P_CHEWY);
 			_G(gameState)._personHide[P_CHEWY] = true;
-			startSetAILWait(8, 1, ANI_FRONT);
+			startDetailWait(8, 1, ANI_FRONT);
 			_G(gameState)._personHide[P_CHEWY] = false;
 			setPersonPos(292, 98, P_CHEWY, P_RIGHT);
 
@@ -208,7 +208,7 @@ void Room13::jmp_floor() {
 		_G(gameState).R13Band = false;
 		autoMove(5, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(7, 1, ANI_FRONT);
+		startDetailWait(7, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		setPersonPos(176, 138, P_CHEWY, P_LEFT);
 	}
@@ -226,7 +226,7 @@ int16 Room13::monitor_button() {
 			action_flag = true;
 			autoMove(8, P_CHEWY);
 			_G(gameState)._personHide[P_CHEWY] = true;
-			startSetAILWait(6, 1, ANI_FRONT);
+			startDetailWait(6, 1, ANI_FRONT);
 			_G(gameState)._personHide[P_CHEWY] = false;
 
 			if (_G(gameState).R13MonitorStatus)

@@ -22,18 +22,18 @@
 #ifndef WORLD_ACTORS_TREASUREINFO_H
 #define WORLD_ACTORS_TREASUREINFO_H
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/array.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 struct TreasureInfo {
-	Std::string _special;
+	Common::String _special;
 	double _chance;
 	int _map;
-	Std::vector<uint32> _shapes;
-	Std::vector<uint32> _frames;
+	Common::Array<uint32> _shapes;
+	Common::Array<uint32> _frames;
 	unsigned int _minCount, _maxCount;
 
 	TreasureInfo() : _chance(1), _map(0), _minCount(1), _maxCount(1) {}

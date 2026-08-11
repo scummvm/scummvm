@@ -188,10 +188,10 @@ public:
 	void processEventLight(TimelineEvent *event); // @ F0257_TIMELINE_ProcessEvent70_Light
 	void refreshAllChampionStatusBoxes(); // @ F0260_TIMELINE_RefreshAllChampionStatusBoxes
 	void processEventViAltarRebirth(TimelineEvent *event); // @ F0255_TIMELINE_ProcessEvent13_ViAltarRebirth
-	void saveEventsPart(Common::OutSaveFile *file);
-	void saveTimelinePart(Common::OutSaveFile *file);
-	void loadEventsPart(Common::InSaveFile *file);
-	void loadTimelinePart(Common::InSaveFile *file);
+	void saveEventsPart(Common::WriteStream *file);
+	void saveTimelinePart(Common::WriteStream *file);
+	void loadEventsPart(Common::SeekableReadStream *file);
+	void loadTimelinePart(Common::SeekableReadStream *file);
 
 	signed char _actionDefense[44]; // @ G0495_ac_Graphic560_ActionDefense
 

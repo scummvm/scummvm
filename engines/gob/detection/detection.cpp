@@ -51,12 +51,17 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-class GobMetaEngineDetection : public AdvancedMetaEngineDetection {
+class GobMetaEngineDetection : public AdvancedMetaEngineDetection<Gob::GOBGameDescription> {
 public:
 	GobMetaEngineDetection();
 
 	PlainGameDescriptor findGame(const char *gameId) const override {
 		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
+	}
+
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngineDetection::identifyGame(game, descriptor);
 	}
 
 	const char *getName() const override {
@@ -80,9 +85,9 @@ private:
 };
 
 GobMetaEngineDetection::GobMetaEngineDetection() :
-	AdvancedMetaEngineDetection(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
+	AdvancedMetaEngineDetection(Gob::gameDescriptions, gobGames) {
 
-	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
+	_guiOptions = GUIO2(GUIO_NOLAUNCHLOAD, GAMEOPTION_TTS);
 }
 
 ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {

@@ -20,6 +20,7 @@
  */
 
 #include "common/archive.h"
+#include "common/config-manager.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
@@ -108,6 +109,12 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 		_missingVoice = true;	// Insert END tag if needed
 		_textSlots[slot]._time = 1; // Set phrase time to none
 		_mainHero->_talkTime = 1;
+
+		// Speak missing voice clips like objects
+		if (_textSlots[slot]._str && (ConfMan.getBool("tts_enabled_missing_voice") || ConfMan.getBool("tts_enabled_speech"))) {
+			sayText(_textSlots[slot]._str, false);
+		}
+
 		return false;
 	}
 

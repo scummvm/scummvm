@@ -173,6 +173,10 @@ void OSystem_OP::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	if (engineNode.exists() && engineNode.isDirectory()) {
 		s.add("__OP_ENGDATA__", new Common::FSDirectory(enginedataPath), priority);
 	}
+
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 void OSystem_OP::quit() {

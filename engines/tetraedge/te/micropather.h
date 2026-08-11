@@ -58,8 +58,8 @@ distribution.
 
 #include "common/array.h"
 #include "common/util.h"
-#include "common/math.h"
 #include "common/types.h"
+#include "math/utils.h"
 
 
 /** @mainpage MicroPather
@@ -151,6 +151,12 @@ namespace micropather
 	class PathNode
 	{
 	public:
+		PathNode() = default;
+		PathNode(const PathNode &) = delete;
+		PathNode(PathNode &&) = delete;
+		PathNode &operator=(const PathNode &) = delete;
+		PathNode &operator=(PathNode &&) = delete;
+
 		void Init(	unsigned _frame,
 					void* _state,
 					float _costFromStart,
@@ -209,10 +215,6 @@ namespace micropather
 			else
 				totalCost = FLT_MAX;
 		}
-
-	private:
-
-		void operator=( const PathNode& );
 	};
 
 
@@ -292,7 +294,8 @@ namespace micropather
 
 	/* Used to cache results of paths. Much, much faster
 	   to return an existing solution than to calculate
-	   a new one. A post on this is here: http://grinninglizard.com/altera/programming/a-path-caching-2/
+	   a new one. A post on this is here:
+	   https://web.archive.org/web/20170714084918/http://grinninglizard.com/altera/programming/a-path-caching-2/
 	*/
 	class PathCache
 	{

@@ -133,7 +133,7 @@ void SoundPC98_Darkmoon::loadSoundFile(const Common::Path &name) {
 	uint16 instrOffs = READ_LE_UINT16(_soundData);
 	if (instrOffs >= 20600)
 		error("SoundPC98_Darkmoon::loadSoundFile(): Failed to load sound file '%s'", path.toString().c_str());
-	
+
 	_driver->loadFMInstruments(_soundData + instrOffs);
 	_driver->reset();
 }

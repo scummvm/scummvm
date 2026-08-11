@@ -215,11 +215,12 @@ AbstractFSNode *KolibriOSFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *KolibriOSFilesystemNode::createReadStream() {
-	return PosixIoStream::makeFromPath(getPath(), false);
+	return PosixIoStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 }
 
-Common::SeekableWriteStream *KolibriOSFilesystemNode::createWriteStream() {
-	return PosixIoStream::makeFromPath(getPath(), true);
+Common::SeekableWriteStream *KolibriOSFilesystemNode::createWriteStream(bool atomic) {
+	return PosixIoStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 }
 
 bool KolibriOSFilesystemNode::createDirectory() {

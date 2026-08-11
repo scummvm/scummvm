@@ -192,6 +192,9 @@ void SoundEqualizerPuzzle::readData(Common::SeekableReadStream &stream) {
 void SoundEqualizerPuzzle::execute() {
 	switch(_state) {
 	case kBegin:
+		_puzzleState = (SoundEqualizerPuzzleData *)NancySceneState.getPuzzleData(SoundEqualizerPuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 
@@ -277,7 +280,7 @@ void SoundEqualizerPuzzle::updateSlider(uint sliderID) {
 			if (sliderVal * 100 >= _solveMinVolume && sliderVal * 100 <= _solveMaxVolume) {
 				g_nancy->_sound->setVolume(_sounds[sliderID - 3], _maxVolume[sliderID - 3]);
 
-				// Since the rate for the "solve" sound never actualy changes,
+				// Since the rate for the "solve" sound never actually changes,
 				// we only need the volume to be correct.
 				NancySceneState.setEventFlag(_solveFlag);
 			} else {

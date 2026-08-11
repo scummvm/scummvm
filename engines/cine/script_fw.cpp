@@ -1353,11 +1353,9 @@ int FWScript::o1_endGlobalScript() {
 
 	debugC(5, kCineDebugScript, "Line: %d: stopGlobalScript(%d)", _line, scriptIdx);
 
-	ScriptList::iterator it = g_cine->_globalScripts.begin();
-
-	for (; it != g_cine->_globalScripts.end(); ++it) {
-		if ((*it)->_index == scriptIdx) {
-			(*it)->_index = -1;
+	for (auto &script : g_cine->_globalScripts) {
+		if (script->_index == scriptIdx) {
+			script->_index = -1;
 		}
 	}
 
@@ -1380,7 +1378,7 @@ int FWScript::o1_loadBg() {
 
 	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
 		char buffer[20];
-		removeExtention(buffer, param, sizeof(buffer));
+		removeExtension(buffer, param, sizeof(buffer));
 		g_sound->setBgMusic(atoi(buffer + 1));
 	}
 

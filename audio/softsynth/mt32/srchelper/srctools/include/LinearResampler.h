@@ -28,8 +28,8 @@ public:
 	LinearResampler(double sourceSampleRate, double targetSampleRate);
 	~LinearResampler() {}
 
-	unsigned int estimateInLength(const unsigned int outLength) const;
-	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength);
+	unsigned int estimateInLength(const unsigned int outLength) const override;
+	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength) override;
 
 private:
 	const double inputToOutputRatio;

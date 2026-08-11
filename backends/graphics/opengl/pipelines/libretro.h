@@ -60,6 +60,7 @@ public:
 
 	/* Called by OpenGLGraphicsManager */
 	void enableLinearFiltering(bool enabled) { _linearFiltering = enabled; }
+	void setRotation(Common::RotationMode rotation) { if (_rotation != rotation) { _rotation = rotation; setPipelineState(); } }
 	/* Called by OpenGLGraphicsManager to setup the internal objects sizes */
 	void setDisplaySizes(uint inputWidth, uint inputHeight, const Common::Rect &outputRect);
 	/* Called by OpenGLGraphicsManager to indicate that next draws need to be scaled. */
@@ -77,7 +78,7 @@ public:
 private:
 	void activateInternal() override;
 	void deactivateInternal() override;
-	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
+	void drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
 
 	bool loadTextures(Common::SearchSet &archSet);
 	bool loadPasses(Common::SearchSet &archSet);
@@ -85,7 +86,7 @@ private:
 	void setPipelineState();
 	bool setupFBOs();
 	void setupPassUniforms(const uint id);
-	void setShaderTexUniforms(const Common::String &prefix, Shader *shader, const GLTexture &texture);
+	void setShaderTexUniforms(const Common::String &prefix, Shader *shader, const Texture &texture);
 
 	/* Pipelines used to draw all layers
 	 * First before the scaler then after it to draw on screen
@@ -101,6 +102,7 @@ private:
 	Common::Rect _outputRect;
 
 	bool _linearFiltering;
+	Common::RotationMode _rotation;
 
 	/* Determines if preset depends on frameCount or from previous frames */
 	bool _isAnimated;
@@ -109,17 +111,17 @@ private:
 	Common::Array<LibRetroTextureTarget> _inputTargets;
 	uint _currentTarget;
 
-	struct Texture {
-		Texture() : textureData(nullptr), glTexture(nullptr) {}
-		Texture(Graphics::Surface *tD, GLTexture *glTex) : textureData(tD), glTexture(glTex) {}
+	struct LibRetroTexture {
+		LibRetroTexture() : textureData(nullptr), glTexture(nullptr) {}
+		LibRetroTexture(Graphics::Surface *tD, Texture *glTex) : textureData(tD), glTexture(glTex) {}
 
 		Common::String id;
 		Graphics::Surface *textureData;
-		GLTexture *glTexture;
+		Texture *glTexture;
 	};
-	Texture loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet);
+	LibRetroTexture loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet);
 
-	typedef Common::Array<Texture> TextureArray;
+	typedef Common::Array<LibRetroTexture> TextureArray;
 	TextureArray _textures;
 
 	struct Pass {
@@ -242,7 +244,7 @@ private:
 		/**
 		 * Input texture of the pass.
 		 */
-		const GLTexture *inputTexture;
+		const Texture *inputTexture;
 
 		/**
 		 * Vertex coordinates used for drawing.

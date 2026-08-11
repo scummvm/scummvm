@@ -5,12 +5,7 @@
 # Change this line if you want a different compiler
 CXXC = c++ -Wall -W -Werror -I. -I..
 
-# If you want to use python, specify USE_PYTHON=1 on the command line
-ifdef USE_PYTHON
-	TESTGEN = ../cxxtestgen.py
-else
-	TESTGEN = ../cxxtestgen.pl
-endif
+TESTGEN = ../bin/cxxtestgen
 
 # For the X11 GUI
 X11_FLAGS = -I/usr/X11R6/include -L/usr/X11R6/lib -lX11

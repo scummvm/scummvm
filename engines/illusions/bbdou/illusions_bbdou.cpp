@@ -26,6 +26,7 @@
 #include "illusions/bbdou/menusystem_bbdou.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
+#include "illusions/console.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
 #include "illusions/fileresourcereader.h"
@@ -154,6 +155,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
 	_resSys->addResourceLoader(0x00170000, new SpecialCodeLoader(this));
 
+	setDebugger(new Console(this));
+
 	_screen = new Screen16Bit(this, 640, 480);
 	_screenPalette = new NullScreenPalette();
 	_screenText = new ScreenText(this);
@@ -226,6 +229,10 @@ Common::Error IllusionsEngine_BBDOU::run() {
 		updateEvents();
 	}
 
+	unloadSpecialCode(0);
+
+	_resSys->unloadAllResources();
+
 	delete _stack;
 	delete _scriptOpcodes;
 
@@ -245,6 +252,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _actorInstances;
 	delete _input;
 	delete _screenText;
+	delete _screenPalette;
 	delete _screen;
 	delete _resSys;
 	delete _resReader;
@@ -264,24 +272,23 @@ bool IllusionsEngine_BBDOU::hasFeature(EngineFeature f) const {
 
 void IllusionsEngine_BBDOU::initInput() {
 	_input->setInputEvent(kEventLeftClick, 0x01)
-		.addMouseButton(MOUSE_LEFT_BUTTON)
-		.addKey(Common::KEYCODE_RETURN);
+		.addMouseButton(MOUSE_LEFT_BUTTON);
 	_input->setInputEvent(kEventRightClick, 0x02)
 		.addMouseButton(MOUSE_RIGHT_BUTTON);
 	_input->setInputEvent(kEventInventory, 0x04)
 		.addMouseButton(MOUSE_RIGHT_BUTTON)
-		.addKey(Common::KEYCODE_TAB);
+		.addKey(kActionInventory);
 	_input->setInputEvent(kEventAbort, 0x08)
-		.addKey(Common::KEYCODE_ESCAPE);
+		.addKey(kActionAbort);
 	_input->setInputEvent(kEventSkip, 0x10)
-		.addKey(Common::KEYCODE_SPACE);
+		.addKey(kActionSkip);
 	_input->setInputEvent(kEventF1, 0x20)
-		.addKey(Common::KEYCODE_F1);
+		.addKey(kActionCheatMode);
 	_input->setInputEvent(kEventUp, 0x40)
-		.addKey(Common::KEYCODE_UP);
+		.addKey(kActionCursorUp);
 	_input->setInputEvent(kEventDown, 0x80)
 		.addMouseButton(MOUSE_RIGHT_BUTTON)
-		.addKey(Common::KEYCODE_DOWN);
+		.addKey(kActionCursorDown);
 }
 
 #define UPDATEFUNCTION(priority, sceneId, callback) \

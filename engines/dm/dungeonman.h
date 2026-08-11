@@ -333,10 +333,10 @@ public:
 }; // @ CREATURE_INFO
 
 class Door {
+public:
 	Thing _nextThing;
 	uint16 _attributes;
-public:
-	explicit Door(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	Door() : _nextThing(0xFFFF), _attributes(0) {}
 	Thing getNextThing() { return _nextThing; }
 	bool isMeleeDestructible() { return (_attributes >> 8) & 1; }
 	bool isMagicDestructible() { return (_attributes >> 7) & 1; }
@@ -347,26 +347,26 @@ public:
 }; // @ DOOR
 
 class Teleporter {
+public:
 	Thing _nextThing;
 	uint16 _attributes;
 	uint16 _destMapIndex;
-public:
-	explicit Teleporter(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]), _destMapIndex(rawDat[2]) {}
+	Teleporter() : _nextThing(0xFFFF), _attributes(0), _destMapIndex(0) {}
 	Thing getNextThing() { return _nextThing; }
 	bool isAudible() { return (_attributes >> 15) & 1; }
-	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 1); }
+	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 3); }
 	bool getAbsoluteRotation() { return (_attributes >> 12) & 1; }
-	Direction getRotation() { return (Direction)((_attributes >> 10) & 1); }
-	byte getTargetMapY() { return (_attributes >> 5) & 0xF; }
-	byte getTargetMapX() { return _attributes & 0xF; }
+	Direction getRotation() { return (Direction)((_attributes >> 10) & 3); }
+	byte getTargetMapY() { return (_attributes >> 5) & 0x1F; }
+	byte getTargetMapX() { return _attributes & 0x1F; }
 	uint16 getTargetMapIndex() { return _destMapIndex >> 8; }
 }; // @ TELEPORTER
 
 class TextString {
+public:
 	Thing _nextThing;
 	uint16 _textDataRef;
-public:
-	explicit TextString(uint16 *rawDat) : _nextThing(rawDat[0]), _textDataRef(rawDat[1]) {}
+	TextString() : _nextThing(0xFFFF), _textDataRef(0) {}
 
 	Thing getNextThing() { return _nextThing; }
 	uint16 getWordOffset() { return _textDataRef >> 3; }
@@ -375,12 +375,12 @@ public:
 }; // @ TEXTSTRING
 
 class Sensor {
+public:
 	Thing _nextThing;
 	uint16 _datAndType;
 	uint16 _attributes; // A
 	uint16 _action; // B
-public:
-	explicit Sensor(uint16 *rawDat) : _nextThing(rawDat[0]), _datAndType(rawDat[1]), _attributes(rawDat[2]), _action(rawDat[3]) {}
+	Sensor() : _nextThing(0xFFFF), _datAndType(0), _attributes(0), _action(0) {}
 
 	Thing getNextThing() { return _nextThing; }
 	void setNextThing(Thing thing) { _nextThing = thing; }
@@ -388,7 +388,7 @@ public:
 	uint16 getData() { return (_datAndType >> 7) & 0x1FF; } // @ M40_DATA
 	static uint16 getDataMask1(uint16 data) { return (data >> 7) & 0xF; } // @ M42_MASK1
 	static uint16 getDataMask2(uint16 data) { return (data >> 11) & 0xF; } // @ M43_MASK2
-	void setData(uint16 dat) { _datAndType = dat; } // @ M41_SET_DATA
+	void setData(uint16 dat) { _datAndType = (_datAndType & 0x7F) | (dat << 7); } // @ M41_SET_DATA
 	void setTypeDisabled() { _datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
 
 	bool getAttrOnlyOnce() { return (_attributes >> 2) & 1; }
@@ -413,10 +413,10 @@ public:
 }; // @ SENSOR
 
 class Weapon {
+public:
 	Thing _nextThing;
 	uint16 _desc;
-public:
-	explicit Weapon(uint16 *rawDat) : _nextThing(rawDat[0]), _desc(rawDat[1]) {}
+	Weapon() : _nextThing(0xFFFF), _desc(0) {}
 
 	WeaponType getType() { return (WeaponType)(_desc & 0x7F); }
 	void setType(uint16 val) { _desc = (_desc & ~0x7F) | (val & 0x7F); }
@@ -440,10 +440,10 @@ public:
 }; // @ WEAPON
 
 class Armour {
+public:
 	Thing _nextThing;
 	uint16 _attributes;
-public:
-	explicit Armour(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	Armour() : _nextThing(0xFFFF), _attributes(0) {}
 
 	ArmourType getType() { return (ArmourType)(_attributes & 0x7F); }
 	Thing getNextThing() { return _nextThing; }
@@ -452,13 +452,15 @@ public:
 	uint16 getDoNotDiscard() { return (_attributes >> 7) & 1; }
 	uint16 getChargeCount() { return (_attributes >> 9) & 0xF; }
 	void setChargeCount(uint16 val) { _attributes = (_attributes & ~(0xF << 9)) | ((val & 0xF) << 9); }
+	void setType(uint16 val) { _attributes = (_attributes & ~0x7F) | (val & 0x7F); }
+	void setCursed(uint16 val) { _attributes = (_attributes & ~(1 << 8)) | ((val & 1) << 8); }
 }; // @ ARMOUR
 
 class Scroll {
+public:
 	Thing _nextThing;
 	uint16 _attributes;
-public:
-	explicit Scroll(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	Scroll() : _nextThing(0xFFFF), _attributes(0) {}
 	void set(Thing next, uint16 attribs) {
 		_nextThing = next;
 		_attributes = attribs;
@@ -478,7 +480,7 @@ class Potion {
 public:
 	Thing _nextThing;
 	uint16 _attributes;
-	explicit Potion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	Potion() : _nextThing(0xFFFF), _attributes(0) {}
 
 	PotionType getType() { return (PotionType)((_attributes >> 8) & 0x7F); }
 	void setType(PotionType val) { _attributes = (_attributes & ~(0x7F << 8)) | ((val & 0x7F) << 8); }
@@ -489,11 +491,11 @@ public:
 }; // @ POTION
 
 class Container {
+public:
 	Thing _nextThing;
 	Thing _slot;
 	uint16 _type;
-public:
-	explicit Container(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _type(rawDat[2]) {}
+	Container() : _nextThing(0xFFFF), _slot(0xFFFF), _type(0) {}
 
 	uint16 getType() { return (_type >> 1) & 0x3; }
 	Thing &getSlot() { return _slot; }
@@ -501,10 +503,10 @@ public:
 }; // @ CONTAINER
 
 class Junk {
+public:
 	Thing _nextThing;
 	uint16 _attributes;
-public:
-	explicit Junk(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	Junk() : _nextThing(0xFFFF), _attributes(0) {}
 
 	JunkType getType() { return (JunkType)(_attributes & 0x7F); }
 	void setType(uint16 val) { _attributes = (_attributes & ~0x7F) | (val & 0x7F); }
@@ -515,6 +517,7 @@ public:
 
 	Thing getNextThing() { return _nextThing; }
 	void setNextThing(Thing thing) { _nextThing = thing; }
+	void setCursed(uint16 val) { _attributes = (_attributes & ~(1 << 8)) | ((val & 1) << 8); }
 }; // @ JUNK
 
 class Projectile {
@@ -524,16 +527,15 @@ public:
 	uint16 _kineticEnergy;
 	uint16 _attack;
 	uint16 _eventIndex;
-	explicit Projectile(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _kineticEnergy(rawDat[2]),
-		_attack(rawDat[3]), _eventIndex(rawDat[4]) {}
+	Projectile() : _nextThing(0xFFFF), _slot(0xFFFF), _kineticEnergy(0), _attack(0), _eventIndex(0) {}
 
 }; // @ PROJECTILE
 
 class Explosion {
+public:
 	Thing _nextThing;
 	uint16 _attributes;
-public:
-	explicit Explosion(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]) {}
+	Explosion() : _nextThing(0xFFFF), _attributes(0) {}
 
 	Thing getNextThing() { return _nextThing; }
 	Thing setNextThing(Thing val) { return _nextThing = val; }
@@ -628,11 +630,40 @@ public:
 	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 	Thing getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
 	Thing getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
-	uint16 *getThingData(Thing thing); // @ F0156_DUNGEON_GetThingData
-	uint16 *getSquareFirstThingData(int16 mapX, int16 mapY); // @ F0157_DUNGEON_GetSquareFirstThingData
+	Door *getDoor(Thing thing);
+	Teleporter *getTeleporter(Thing thing);
+	TextString *getTextString(Thing thing);
+	Sensor *getSensor(Thing thing);
+	Group *getGroup(Thing thing);
+	Weapon *getWeapon(Thing thing);
+	Armour *getArmour(Thing thing);
+	Scroll *getScroll(Thing thing);
+	Potion *getPotion(Thing thing);
+	Container *getContainer(Thing thing);
+	Junk *getJunk(Thing thing);
+	Projectile *getProjectile(Thing thing);
+	Explosion *getExplosion(Thing thing);
+
+	Door *getDoor(uint16 index);
+	Teleporter *getTeleporter(uint16 index);
+	TextString *getTextString(uint16 index);
+	Sensor *getSensor(uint16 index);
+	Group *getGroup(uint16 index);
+	Weapon *getWeapon(uint16 index);
+	Armour *getArmour(uint16 index);
+	Scroll *getScroll(uint16 index);
+	Potion *getPotion(uint16 index);
+	Container *getContainer(uint16 index);
+	Junk *getJunk(uint16 index);
+	Projectile *getProjectile(uint16 index);
+	Explosion *getExplosion(uint16 index);
+
+	void duplicateThing(Thing thing);
+	Thing *getNextThingPtr(Thing thing);
+	void resetThing(Thing thing);
 
 	// TODO: this does stuff other than load the file!
-	void loadDungeonFile(Common::InSaveFile *file);	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
+	void loadDungeonFile(Common::SeekableReadStream *file);	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 	void setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
 
 	bool isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
@@ -641,7 +672,7 @@ public:
 		return Square(getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
 	} // @ F0153_DUNGEON_GetRelativeSquareType
 	void setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
-	void decodeText(char *destString, size_t maxSize, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
+	void decodeText(char *destString, size_t maxSize, Thing thing, int16 type); // F0168_DUNGEON_DecodeText
 	Thing getUnusedThing(uint16 thingType); // @ F0166_DUNGEON_GetUnusedThing
 
 	uint16 getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight
@@ -671,7 +702,20 @@ public:
 	uint16 *_dungeonColumnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
 	Thing *_squareFirstThings; // @ G0283_pT_SquareFirstThings
 	uint16 *_dungeonTextData; // @ G0260_pui_DungeonTextData
-	uint16 *_thingData[16]; // @ G0284_apuc_ThingData
+	// @ G0284_apuc_ThingData
+	Common::Array<Door> _doors;
+	Common::Array<Teleporter> _teleporters;
+	Common::Array<TextString> _textStrings;
+	Common::Array<Sensor> _sensors;
+	Common::Array<Group> _groups;
+	Common::Array<Weapon> _weapons;
+	Common::Array<Armour> _armours;
+	Common::Array<Scroll> _scrolls;
+	Common::Array<Potion> _potions;
+	Common::Array<Container> _containers;
+	Common::Array<Junk> _junks;
+	Common::Array<Projectile> _projectiles;
+	Common::Array<Explosion> _explosions;
 	byte ***_dungeonMapData; // @ G0279_pppuc_DungeonMapData
 
 	Direction _partyDir; // @ G0308_i_PartyDirection

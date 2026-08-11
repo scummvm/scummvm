@@ -22,7 +22,9 @@
 #include "m4/burger/rooms/section1/room138.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -49,39 +51,39 @@ static const char *SAID[][4] = {
 };
 
 static const seriesPlayBreak PLAY1[] = {
-	{ 0,  3, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 4,  4, 0, 1, 255,  8, 0, 0, 0, 0 },
-	{ 5, -1, 0, 1, 255, 10, 0, 0, 0, 0 },
+	{ 0,  3, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 4,  4, nullptr, 1, 255,  8, 0, 0, nullptr, 0 },
+	{ 5, -1, nullptr, 1, 255, 10, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 static const seriesPlayBreak PLAY2[] = {
-	{  0, 11, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{ 12, 12, "138_003", 1, 255, -1, 0, 0, 0, 0 },
-	{ 12, 12, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{ 12, 12, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{ 12, 12, nullptr,   1, 255,  5, 0, 0, 0, 0 },
-	{ 12, 12, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{ 11,  0, nullptr,   1, 255, -1, 0, 0, 0, 0 },
+	{  0, 11, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, 12, "138_003", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, 12, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, 12, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, 12, nullptr,   1, 255,  5, 0, 0, nullptr, 0 },
+	{ 12, 12, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 11,  0, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 static const seriesPlayBreak PLAY3[] = {
-	{  6, 8, nullptr,   1, 255, 12,    0, 0, 0, 0 },
-	{  7, 6, "138_006", 1, 255, -1,    0, 0, 0, 0 },
-	{  7, 8, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  8, 6, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  6, 7, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  6, 7, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  7, 6, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  6, 8, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  8, 6, nullptr,   1, 255, -1, 2048, 0, 0, 0 },
+	{  6, 8, nullptr,   1, 255, 12,    0, 0, nullptr, 0 },
+	{  7, 6, "138_006", 1, 255, -1,    0, 0, nullptr, 0 },
+	{  7, 8, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  8, 6, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  6, 7, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  6, 7, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  7, 6, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  6, 8, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  8, 6, nullptr,   1, 255, -1, 2048, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 static const seriesPlayBreak PLAY4[] = {
-	{ 25, 5, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{  4, 0, 0, 1, 255, 11, 0, 0, 0, 0 },
+	{ 25, 5, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{  4, 0, nullptr, 1, 255, 11, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -132,7 +134,7 @@ void Room138::init() {
 	_deputyMode = 18;
 	_deputyShould = 18;
 	kernel_trigger_dispatch_now(1);
-	_val4 = -1;
+	_val4_frameNumber = -1;
 	_sherrifMode = 26;
 	_sherrifShould = 26;
 	kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
@@ -153,7 +155,6 @@ void Room138::init() {
 }
 
 void Room138::daemon() {
-	int frame;
 
 	switch (_G(kernel).trigger) {
 	case kCHANGE_DEPUTY_ANIMATION:
@@ -224,37 +225,37 @@ void Room138::daemon() {
 			case 26:
 			case 33:
 			case 36:
-				if (_sherrifShould == 33 && _val4 == 22) {
+				if (_sherrifShould == 33 && _val4_frameNumber == 22) {
 					freeAssets();
 					term_message("xxx");
 					_sherrifShould = 34;
 					series_play("138cp06", 0x100, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 18);
 					digi_play("138_005", 2);
 
-				} else if (_sherrifShould == 36 && _val4 == 22) {
+				} else if (_sherrifShould == 36 && _val4_frameNumber == 22) {
 					_sherrifShould = 26;
 					series_play("138cp02", 0x100, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 30);
 					randomDigi();
 
-				} else if (_val4 == 22 && !inv_object_is_here("keys") &&
+				} else if (_val4_frameNumber == 22 && !inv_object_is_here("keys") &&
 					imath_ranged_rand(1, 2) == 1) {
 					term_message(".........................");
 					_sherrifShould = 37;
 					series_play("138cp02", 0x100, 2, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 25, 30);
 
-				} else if (_val4 == 22 && imath_ranged_rand(1, 6) != 1) {
+				} else if (_val4_frameNumber == 22 && imath_ranged_rand(1, 6) != 1) {
 					series_play("138cp01", 0x100, 0, kCHANGE_SHERRIF_ANIMATION, 60, 0, 100, 0, 0, 0, 0);
 
 				} else {
 					_flag1 = false;
 
-					switch (++_val4) {
+					switch (++_val4_frameNumber) {
 					case 13:
 						digi_play("137_022", 2);
 						break;
 
 					case 23:
-						_val4 = 0;
+						_val4_frameNumber = 0;
 						digi_play(imath_ranged_rand(1, 2) == 1 ? "137_020" : "137_021", 2);
 						break;
 
@@ -262,7 +263,7 @@ void Room138::daemon() {
 						break;
 					}
 
-					series_play("138cp01", 0x100, 0, kCHANGE_SHERRIF_ANIMATION, 7, 0, 100, 0, 0, _val4, _val4);
+					series_play("138cp01", 0x100, 0, kCHANGE_SHERRIF_ANIMATION, 7, 0, 100, 0, 0, _val4_frameNumber, _val4_frameNumber);
 				}
 				break;
 
@@ -331,6 +332,9 @@ void Room138::daemon() {
 			} else {
 				series_play("138cp06", 0x100, 0, kCHANGE_SHERRIF_ANIMATION, 10, 0, 100, 0, 0, 27, 27);
 			}
+			break;
+
+		default:
 			break;
 
 		}
@@ -530,7 +534,7 @@ void Room138::daemon() {
 		case 15:
 			if (_wilburShould == 15) {
 				loadSeries();
-				frame = imath_ranged_rand(0, 4);
+				const int frame = imath_ranged_rand(0, 4);
 				series_play("138wi02", 0xa00, 0, kCHANGE_WILBUR_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 
 			} else {

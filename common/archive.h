@@ -140,6 +140,8 @@ private:
  */
 class Archive {
 public:
+	Archive() : _mapsAreReady(false) { }
+
 	virtual ~Archive() { }
 
 	/**
@@ -211,6 +213,22 @@ public:
 	 * Returns the separator used by internal paths in the archive
 	 */
 	virtual char getPathSeparator() const;
+
+	enum ListMode {
+		kListFilesOnly = 1,
+		kListDirectoriesOnly = 2,
+		kListAll = 3
+	};
+
+	virtual bool getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode = kListDirectoriesOnly, bool hidden = true) const;
+
+private:
+	void prepareMaps() const;
+
+	mutable bool _mapsAreReady;
+	typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> SubfileSet;
+	typedef HashMap<Path, SubfileSet, Path::IgnoreCase_Hash, Path::IgnoreCase_EqualTo> AllfileMap;
+	mutable AllfileMap _directoryMap, _fileMap;
 };
 
 class MemcachingCaseInsensitiveArchive;
@@ -269,8 +287,8 @@ private:
 class MemcachingCaseInsensitiveArchive : public Archive {
 public:
 	MemcachingCaseInsensitiveArchive(uint32 maxStronglyCachedSize = 512) : _maxStronglyCachedSize(maxStronglyCachedSize) {}
-	SeekableReadStream *createReadStreamForMember(const Path &path) const;
-	SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, Common::AltStreamType altStreamType) const;
+	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+	SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, Common::AltStreamType altStreamType) const override;
 
 	virtual Path translatePath(const Path &path) const {
 		return path.normalize();
@@ -333,6 +351,8 @@ public:
 	SearchSet() : _ignoreClashes(false) { }
 	virtual ~SearchSet() { clear(); }
 
+	char getPathSeparator() const override { return '/'; }
+
 	/**
 	 * Add a new archive to the searchable set.
 	 */
@@ -390,7 +410,7 @@ public:
 	 *
 	 * In this example, the code first tries to search for all directories matching
 	 * "game" in the path "directory" first and search through all of the matches for
-	 * "itedata". If "ingoreCase" is set to true, the code does a case insensitive
+	 * "itedata". If "ignoreCase" is set to true, the code does a case insensitive
 	 * match, otherwise it is doing a case sensitive match.
 	 *
 	 * This method also works with tokens. For a list of available tokens,
@@ -455,6 +475,8 @@ public:
 	 * in @ref FSDirectory documentation.
 	 */
 	void setIgnoreClashes(bool ignoreClashes) { _ignoreClashes = ignoreClashes; }
+
+	bool getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode = kListDirectoriesOnly, bool hidden = true) const override;
 };
 
 
@@ -465,7 +487,7 @@ public:
 	 * Reset the Search Manager to the default list of search paths (system
 	 * specific dirs + current dir).
 	 */
-	virtual void clear();
+	void clear() override;
 
 private:
 	friend class Singleton<SingletonBaseType>;

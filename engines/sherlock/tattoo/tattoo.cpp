@@ -29,6 +29,8 @@
 #include "sherlock/tattoo/widget_base.h"
 #include "sherlock/people.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -59,6 +61,9 @@ void TattooEngine::initialize() {
 	_flags.resize(3200);
 	_flags[1] = _flags[4] = _flags[76] = true;
 	_runningProlog = true;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo-prolog")->setEnabled(true);
 
 	// Add some more files to the cache
 	_res->addToCache("walk.lib");
@@ -141,7 +146,7 @@ void TattooEngine::startScene() {
 void TattooEngine::loadInitialPalette() {
 	byte palette[768];
 	Common::SeekableReadStream *stream = _res->load("room.pal");
-	stream->read(palette, PALETTE_SIZE);
+	stream->read(palette, Graphics::PALETTE_SIZE);
 	_screen->translatePalette(palette);
 	_screen->setPalette(palette);
 

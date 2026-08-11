@@ -406,7 +406,7 @@ public:
 	void setLooking(bool lookingMode) { _lookingMode = lookingMode; }
 
 	/**
-	 * Makes the actor move forward, the lenght of the movement based
+	 * Makes the actor move forward, the length of the movement based
 	 * on the walk rate.
 	 * If it is following boxes it will not go into not walkable areas.
 	 *
@@ -534,6 +534,7 @@ public:
 
 	bool isAttached() const { return _attachedActor != 0; }
 	Math::Vector3d getWorldPos() const;
+	Grim::Joint *getAttachedJoint(Actor *parent) const;
 	void attachToActor(Actor *other, const char *joint);
 	void detach();
 	Math::Quaternion getRotationQuat() const;

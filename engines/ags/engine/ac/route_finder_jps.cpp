@@ -26,11 +26,13 @@
 //
 //=============================================================================
 
-#include "ags/lib/std/queue.h"
-#include "ags/lib/std/vector.h"
-#include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/functional.h"
-#include "ags/lib/std/xutility.h"
+#include "common/std/queue.h"
+#include "common/std/vector.h"
+#include "common/std/algorithm.h"
+#include "common/std/functional.h"
+#include "common/std/xutility.h"
+
+#include "ags/lib/std.h"
 
 namespace AGS3 {
 
@@ -243,7 +245,7 @@ bool Navigation::Reachable(int x0, int y0, int x1, int y1) const {
 
 // A* using jump point search (JPS)
 // reference: Online Graph Pruning for Pathfinding on Grid Maps
-// http://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf
+// https://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf
 void Navigation::AddPruned(int *buf, int &bcount, int x, int y) const {
 	assert(buf && bcount < 8);
 

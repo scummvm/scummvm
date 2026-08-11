@@ -31,22 +31,12 @@ InvPal::InvPal(const char *filename) {
 	if (!filename)
 		return;
 
-	SysFile ipl5(filename, BINARY);
+	SysFile ipl5(filename);
 
 	if (!ipl5.exists())
 		return;
 
 	handle = NewHandle(32768, "5 bit ict");
-
-	if (!handle) {
-		MakeMem(32768, "5 bit ict");
-		handle = NewHandle(32768, "5 bit ict");
-		if (!handle) {
-			ipl5.close();
-			error_show(FL, 'OOM!', "5 bit ict");
-			return;
-		}
-	}
 
 	ipl5.read(handle, 32768);
 }

@@ -457,7 +457,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 			TraceOperation("*", *)DoBinaryOperation((stack[stackPointer - 2] * stack[stackPointer - 1]));
 		} break;
 
-		case OP_DEVIDE: { //  34              // '/'
+		case OP_DIVIDE: { //  34              // '/'
 			ScriptTrace("/");
 			TraceOperation("/", / ) DoBinaryOperation((stack[stackPointer - 2] / stack[stackPointer - 1]));
 		} break;

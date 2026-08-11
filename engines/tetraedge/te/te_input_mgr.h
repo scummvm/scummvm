@@ -41,6 +41,8 @@ public:
 	TeSignal1Param<const Common::Point &> _mouseLUpSignal;
 	TeSignal1Param<const Common::Point &> _mouseRDownSignal;
 	TeSignal1Param<const Common::Point &> _mouseRUpSignal;
+	TeSignal1Param<const Common::CustomEventType &> _customActionStartSignal;
+	TeSignal1Param<const Common::CustomEventType &> _customActionEndSignal;
 
 	const Common::Point &lastMousePos() {
 		return _lastMousePos;

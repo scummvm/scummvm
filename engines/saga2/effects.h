@@ -54,7 +54,7 @@ class GameObject;
 //       Drains : mana drains, money drains, food drains
 //       Special : must be handled manually
 //   C TAG effects : There aren't many of these
-//   D Global Effects : Effects that have signifigant effect on the game engine
+//   D Global Effects : Effects that have significant effect on the game engine
 //
 
 enum effectTypes {

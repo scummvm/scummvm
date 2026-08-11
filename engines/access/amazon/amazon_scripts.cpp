@@ -248,8 +248,7 @@ void AmazonScripts::loadBackground(int param1, int param2) {
 }
 
 void AmazonScripts::loadNSound(int param1, int param2) {
-	Resource *sound = _vm->_files->loadFile(param1, param2);
-	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
+	_vm->_sound->loadAndAddSound(param1, param2);
 }
 
 void AmazonScripts::setInactive() {
@@ -318,7 +317,7 @@ void AmazonScripts::plotInactive() {
 	_vm->_images.addToList(_game->_inactive);
 }
 
-void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
+bool AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 0:
 		warning("TODO: DEMO - RESETAN");
@@ -374,6 +373,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	default:
 		warning("Unexpected Special code %d - Skipped", commandIndex);
 	}
+	return false;
 }
 
 typedef void(AmazonScripts::*AmazonScriptMethodPtr)();
@@ -393,7 +393,7 @@ void AmazonScripts::executeCommand(int commandIndex) {
 }
 
 void AmazonScripts::cmdHelp_v2() {
-	Common::String helpMessage = readString();
+	Common::String helpMessage = _data->readString();
 
 	if (_game->_helpLevel == 0) {
 		_game->_timers.saveTimers();
@@ -459,7 +459,7 @@ void AmazonScripts::cmdHelp_v2() {
 			break;
 		} else {
 			// More button selected
-			if ((_game->_moreHelp == 0) || (choice != 0))
+			if (_game->_moreHelp == 0)
 				continue;
 			++_game->_helpLevel;
 			_game->_useItem = 1;

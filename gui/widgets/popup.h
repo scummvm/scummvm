@@ -109,7 +109,7 @@ public:
 
 	void open() override;
 	void reflowLayout() override;
-	void drawDialog(DrawLayer layerToDraw) override;
+	void drawDialog(DrawLayer layerToDraw, bool resetClipping = true) override;
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;	// Scroll through entries with scroll wheel

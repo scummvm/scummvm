@@ -19,101 +19,154 @@
  *
  */
 
+/*
+ * This file is based on WME.
+ * http://dead-code.org/redir.php?target=wme
+ * Copyright (c) 2003-2013 Jan Nedoma and contributors
+ */
+
 #include "common/file.h"
 
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/3dloader_3ds.h"
 #include "engines/wintermute/base/gfx/3dmesh.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
-Mesh3DS::Mesh3DS() : _vertexData(nullptr), _vertexCount(0), _indexData(nullptr), _indexCount(0) {
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+Mesh3DS::Mesh3DS(BaseGame *inGame) : BaseNamedObject(inGame) {
+	_vertices = nullptr;
+	_faces = nullptr;
+	_numFaces = _numVertices = 0;
+	_visible = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
 Mesh3DS::~Mesh3DS() {
-	delete[] _vertexData;
-	delete[] _indexData;
+	cleanup();
 }
 
-bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
-	uint32 wholeChunkSize = fileStream.readUint32LE();
-	int32 end = fileStream.pos() + wholeChunkSize - 6;
+//////////////////////////////////////////////////////////////////////////
+void Mesh3DS::cleanup() {
+	SAFE_DELETE_ARRAY(_vertices);
+	_numVertices = 0;
 
-	while (fileStream.pos() < end) {
-		uint16 chunkId = fileStream.readUint16LE();
-		uint32 chunkSize = fileStream.readUint32LE();
+	SAFE_DELETE_ARRAY(_faces);
+	_numFaces = 0;
 
-		switch (chunkId) {
-		case VERTICES:
-			_vertexCount = fileStream.readUint16LE();
-			_vertexData = new GeometryVertex[_vertexCount]();
+	_vb.free();
+}
 
-			for (int i = 0; i < _vertexCount; ++i) {
-				// note that .3ds has a right handed coordinate system
-				// with the z axis pointing upwards
-				_vertexData[i].x = fileStream.readFloatLE();
-				_vertexData[i].z = -fileStream.readFloatLE();
-				_vertexData[i].y = fileStream.readFloatLE();
-			}
-			break;
 
-		case FACES: {
-			uint16 faceCount = fileStream.readUint16LE();
-			_indexCount = 3 * faceCount;
-			_indexData = new uint16[_indexCount];
+//////////////////////////////////////////////////////////////////////////
+bool Mesh3DS::createVertexBuffer() {
+	_vb.free();
 
-			for (int i = 0; i < faceCount; ++i) {
-				_indexData[i * 3 + 0] = fileStream.readUint16LE();
-				_indexData[i * 3 + 1] = fileStream.readUint16LE();
-				_indexData[i * 3 + 2] = fileStream.readUint16LE();
-				// not used appearently
-				fileStream.readUint16LE();
-			}
-			break;
-		}
-		case FACES_MATERIAL:
-		case MAPPING_COORDS:
-		case LOCAL_COORDS:
-		case SMOOTHING_GROUPS:
-		default:
-			fileStream.seek(chunkSize - 6, SEEK_CUR);
-			break;
+	if (_numFaces == 0)
+		return true;
+
+	int vbSize = _numFaces * sizeof(Mesh3DSVertex) * 3;
+	_vb = DXBuffer(vbSize);
+	if (_vb.ptr() == nullptr) {
+		_game->LOG(0, "Error creating vertex buffer.");
+		return false;
+	} else
+		return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool Mesh3DS::fillVertexBuffer(uint32 color) {
+	_vb.free();
+
+	if (_numFaces == 0)
+		return true;
+
+	int vbSize = _numFaces * sizeof(Mesh3DSVertex) * 3;
+	_vb = DXBuffer(vbSize);
+	if (_vb.ptr() == nullptr) {
+		_game->LOG(0, "Error creating vertex buffer.");
+		return false;
+	}
+
+	Mesh3DSVertex *verts = (Mesh3DSVertex *)_vb.ptr();
+
+	for (int i = 0; i < _numFaces; i++) {
+		for (int j = 0; j < 3; j++) {
+			int outVert = i * 3 + j;
+			int vertex = _faces[i]._vertices[j];
+
+			verts[outVert]._x  = _vertices[vertex]._pos._x;
+			verts[outVert]._y  = _vertices[vertex]._pos._y;
+			verts[outVert]._z  = _vertices[vertex]._pos._z;
+
+			verts[outVert]._nx = _faces[i]._normals[j]._x;
+			verts[outVert]._ny = _faces[i]._normals[j]._y;
+			verts[outVert]._nz = _faces[i]._normals[j]._z;
+
+			verts[outVert]._r = RGBCOLGetR(color) / 255.0f;
+			verts[outVert]._g = RGBCOLGetG(color) / 255.0f;
+			verts[outVert]._b = RGBCOLGetB(color) / 255.0f;
+			verts[outVert]._a = RGBCOLGetA(color) / 255.0f;
 		}
 	}
+
+	fillVertexBuffer();
 
 	return true;
 }
 
-void Mesh3DS::dumpVertexCoordinates(const char *filename) {
-	Common::DumpFile dump;
-	dump.open(filename);
 
-	for (uint16 *index = _indexData; index < _indexData + _indexCount; ++index) {
-		float x = _vertexData[*index].x;
-		float y = _vertexData[*index].y;
-		float z = _vertexData[*index].z;
-
-		dump.writeString(Common::String::format("%u ", *index));
-		dump.writeString(Common::String::format("%g ", x));
-		dump.writeString(Common::String::format("%g ", y));
-		dump.writeString(Common::String::format("%g\n", z));
+//////////////////////////////////////////////////////////////////////////
+void Mesh3DS::computeNormals() {
+	DXVector3 *normals = new DXVector3[_numVertices];
+	for (uint32 i = 0; i < _numVertices; i++) {
+		normals[i]._x = 0.0f;
+		normals[i]._y = 0.0f;
+		normals[i]._z = 0.0f;
 	}
+
+	for (uint32 i = 0; i < _numFaces; i++) {
+		uint16 a = _faces[i]._vertices[0];
+		uint16 b = _faces[i]._vertices[1];
+		uint16 c = _faces[i]._vertices[2];
+
+		DXVector3 *v1 = &_vertices[a]._pos;
+		DXVector3 *v2 = &_vertices[b]._pos;
+		DXVector3 *v3 = &_vertices[c]._pos;
+
+		DXVector3 edge1 = *v2 - *v1;
+		DXVector3 edge2 = *v3 - *v2;
+		DXVector3 normal;
+		DXVec3Cross(&normal, &edge1, &edge2);
+		DXVec3Normalize(&normal, &normal);
+
+		normals[a] += normal;
+		normals[b] += normal;
+		normals[c] += normal;
+	}
+
+	// Assign the newly computed normals back to the vertices
+	for (uint32 i = 0; i < _numFaces; i++) {
+		for (uint32 j = 0; j < 3; j++) {
+			DXVec3Normalize(&_faces[i]._normals[j], &normals[_faces[i]._vertices[j]]);
+			//_faces[i]._normals[j] = normals[_faces[i]._vertices[j]];
+		}
+	}
+
+	delete[] normals;
 }
 
-int Mesh3DS::faceCount() {
-	// .3ds files have only triangles anyways
-	return _indexCount / 3;
-}
-
-uint16 *Mesh3DS::getFace(int index) {
-	return _indexData + 3 * index;
-}
-
-float *Mesh3DS::getVertexPosition(int index) {
-	return reinterpret_cast<float *>(&((_vertexData + index)->x));
-}
-
-int Wintermute::Mesh3DS::vertexCount() {
-	return _vertexCount;
+//////////////////////////////////////////////////////////////////////////
+bool Mesh3DS::persist(BasePersistenceManager *persistMgr) {
+	persistMgr->transferBool(TMEMBER(_visible));
+	return true;
 }
 
 } // namespace Wintermute

@@ -22,7 +22,7 @@
 #ifndef GUI_CLOUDCONNECTIONWIZARD_H
 #define GUI_CLOUDCONNECTIONWIZARD_H
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "common/str.h"
 #include "common/ustr.h"
 #include "gui/dialog.h"
@@ -55,6 +55,7 @@ class CloudConnectionWizard : public Dialog {
 	Networking::ErrorCallback _callback;
 	bool _connecting;
 	Common::U32String _errorMessage;
+	uint32 _selectedStorageIndex;
 
 	// common and generic widgets
 	StaticTextWidget *_headlineLabel;
@@ -123,10 +124,15 @@ class CloudConnectionWizard : public Dialog {
 	void manualModeConnect();
 	void manualModeStorageConnectionCallback(const Networking::ErrorResponse &response);
 
+#ifdef EMSCRIPTEN
+	void emscriptenCloudConnectionCallback(const Common::String *message);
+#endif
+
 public:
 	CloudConnectionWizard();
 	~CloudConnectionWizard() override;
 
+	int runStorageModal(uint32 selectedStorageIndex);
 	void open() override;
 	void close() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;

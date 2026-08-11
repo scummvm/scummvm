@@ -22,7 +22,7 @@
 #ifndef NUVIE_FILES_U6_LZW_H
 #define NUVIE_FILES_U6_LZW_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Nuvie {

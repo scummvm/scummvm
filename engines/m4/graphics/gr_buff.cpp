@@ -24,7 +24,6 @@
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/core/errors.h"
 #include "m4/mem/memman.h"
-#include "m4/core/term.h"
 
 namespace M4 {
 
@@ -66,15 +65,6 @@ void GrBuff::release() {
 
 void GrBuff::alloc_pixmap() {
 	pixmap = NewHandle(pitch * height, "pixmap");
-	if (!pixmap) {
-		term_message("GrBuff::alloc_pixmap(): Trying to free up %d bytes", pitch * height);
-		if (MakeMem(pitch * height, "pixmap")) {
-			pixmap = NewHandle(pitch * height, "pixmap");
-			if (!pixmap)
-				error_show(FL, 15, "pixmap h:%d w:%d bytes:%d", height, pitch, pitch * height);
-		} else
-			error_show(FL, 1, "GrBuff::alloc_pixmap() x, y: %d %d", pitch, height);
-	}
 	HLock(pixmap);
 	memset(*pixmap, __BLACK, pitch * height);
 	HUnLock(pixmap);
@@ -115,14 +105,12 @@ int32 gr_buffer_free(Buffer *buf) {
 		return true;
 	}
 
-	error_show(FL, 'BUF!');
-	return false;
+	error_show(FL, "buffer_free");
 }
 
 byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
 	if (!buf || !buf->data || y < 0 || x < 0) {
-		error_show(FL, 'BUF!', "buffer_pointer x,y = %d,%d", x, y);
-		return 0;
+		error_show(FL, "buffer_pointer x,y = %d,%d", x, y);
 	}
 
 	return (byte *)(buf->data + x + (y * buf->stride));
@@ -130,35 +118,27 @@ byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
 
 const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y) {
 	if (!buf || !buf->data || y < 0 || x < 0) {
-		error_show(FL, 'BUF!', "buffer_pointer x,y = %d,%d", x, y);
-		return 0;
+		error_show(FL, "buffer_pointer x,y = %d,%d", x, y);
 	}
 
 	return (byte *)(buf->data + x + (y * buf->stride));
 }
 
-int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
+void gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
 	if (buf->data)
-		error_show(FL, 'BUFR', "buffer_init %s", name);
+		error_show(FL, "buffer_init %s", name);
 
 	buf->w = w;
 	buf->h = h;
 	buf->stride = w;
-
 	buf->data = (uint8 *)mem_alloc(buf->stride * h, name);
-	if (buf->data == nullptr)
-		error_show(FL, 'OOM!', "buffer: %s - w:%d h:%d bytes:%d", name, buf->stride, h, buf->stride * h);
-
-	memset(buf->data, 0, buf->stride * h);
-
-	return (true);
 }
 
 bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
                            int32 dx, int32 dy, int32 w, int32 h) {
 	// stupid check for no data
 	if (!from || !to || !from->data || !to->data)
-		error_show(FL, 'BUF!', "buff_rect_copy2");
+		error_show(FL, "buff_rect_copy2");
 
 	// CKB: if height is greater than source height, truncate!
 	if (h > from->h)
@@ -198,13 +178,11 @@ bool gr_buffer_rect_copy(Buffer *from, Buffer *to, int32 x, int32 y, int32 w, in
 }
 
 int32 gr_buffer_rect_fill(Buffer *target, int32 x1, int32 y1, int32 w, int32 h) {
-	int32 i;
-	uint8 *start;
-	byte color = gr_color_get_current();
+	const byte color = gr_color_get_current();
 
 	// if no data, bad.
 	if (!target || !target->data)
-		error_show(FL, 'BUF!', "buffer_rect_fill");
+		error_show(FL, "buffer_rect_fill");
 
 	// if nothing to fill, we're done
 	if ((w < 1) || (h < 1) || (x1 > target->w) || (y1 > target->h))
@@ -219,8 +197,8 @@ int32 gr_buffer_rect_fill(Buffer *target, int32 x1, int32 y1, int32 w, int32 h) 
 	if ((w < 1) || (h < 1))
 		return true;
 
-	start = target->data + y1 * target->stride + x1;
-	for (i = 0; i < h; i++, start += target->stride)
+	uint8 *start = target->data + y1 * target->stride + x1;
+	for (int32 i = 0; i < h; i++, start += target->stride)
 		memset(start, color, w);
 
 	return true;

@@ -33,12 +33,11 @@
 
 namespace Image {
 
-TGADecoder::TGADecoder() {
+TGADecoder::TGADecoder() : _colorMap(0) {
 	_colorMapSize = 0;
 	_colorMapOrigin = 0;
 	_colorMapLength = 0;
 	_colorMapEntryLength = 0;
-	_colorMap = NULL;
 }
 
 TGADecoder::~TGADecoder() {
@@ -47,7 +46,7 @@ TGADecoder::~TGADecoder() {
 
 void TGADecoder::destroy() {
 	_surface.free();
-	delete[] _colorMap;
+	_colorMap.clear();
 }
 
 bool TGADecoder::loadStream(Common::SeekableReadStream &tga) {
@@ -146,12 +145,12 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 		}
 	} else if (imageType == TYPE_TRUECOLOR || imageType == TYPE_RLE_TRUECOLOR) {
 		if (pixelDepth == 24) {
-			_format = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+			_format = Graphics::PixelFormat::createFormatBGR24();
 		} else if (pixelDepth == 32) {
 			// HACK: According to the spec, attributeBits should determine the amount
 			// of alpha-bits, however, as the game files that use this decoder seems
 			// to ignore that fact, we force the amount to 8 for 32bpp files for now.
-			_format = Graphics::PixelFormat(4, 8, 8, 8, /* attributeBits */ 8, 16, 8, 0, 24);
+			_format = Graphics::PixelFormat::createFormatBGRA32(/* attributeBits */);
 		} else if (pixelDepth == 16) {
 			// 16bpp TGA is ARGB1555
 			_format = Graphics::PixelFormat(2, 5, 5, 5, attributeBits, 10, 5, 0, 15);
@@ -161,7 +160,7 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 		}
 	} else if (imageType == TYPE_BW || imageType == TYPE_RLE_BW) {
 		if (pixelDepth == 8) {
-			_format = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
+			_format = Graphics::PixelFormat::createFormatBGR24();
 		} else {
 			warning("Unsupported pixel depth: %d, %d", imageType, pixelDepth);
 			return false;
@@ -182,41 +181,32 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 }
 
 bool TGADecoder::readColorMap(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth) {
-	_colorMap = new byte[3 * _colorMapLength];
-	for (int i = 0; i < _colorMapLength * 3; i += 3) {
+	_colorMap.resize(_colorMapLength, false);
+	for (int i = 0; i < _colorMapLength; i++) {
 		byte r, g, b;
 		if (_colorMapEntryLength == 32) {
-			byte a;
-			Graphics::PixelFormat format(4, 8, 8, 8, 0, 16, 8, 0, 24);
-			uint32 color = tga.readUint32LE();
-			format.colorToARGB(color, a, r, g, b);
-		} else if (_colorMapEntryLength == 24) {
-			r = tga.readByte();
-			g = tga.readByte();
 			b = tga.readByte();
+			g = tga.readByte();
+			r = tga.readByte();
+			tga.readByte(); // for alpha
+		} else if (_colorMapEntryLength == 24) {
+			b = tga.readByte();
+			g = tga.readByte();
+			r = tga.readByte();
 		} else if (_colorMapEntryLength == 16) {
-			byte a;
-			Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 15);
+			static const Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
 			uint16 color = tga.readUint16LE();
-			format.colorToARGB(color, a, r, g, b);
+			format.colorToRGB(color, r, g, b);
 		} else {
 			warning("Unsupported image type: %d", imageType);
 			r = g = b = 0;
 		}
-#ifdef SCUMM_LITTLE_ENDIAN
-		_colorMap[i] = r;
-		_colorMap[i + 1] = g;
-		_colorMap[i + 2] = b;
-#else
-		_colorMap[i] = b;
-		_colorMap[i + 1] = g;
-		_colorMap[i + 2] = r;
-#endif
+		_colorMap.set(i, r, g, b);
 	}
 	return true;
 }
 
-// Additional information found from http://paulbourke.net/dataformats/tga/
+// Additional information found from https://paulbourke.net/dataformats/tga/
 // With some details from the link referenced in the header.
 bool TGADecoder::readData(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth) {
 	// TrueColor
@@ -243,9 +233,7 @@ bool TGADecoder::readData(Common::SeekableReadStream &tga, byte imageType, byte 
 				} else {
 					dst = (uint32 *)_surface.getBasePtr(0, i);
 				}
-				for (int j = 0; j < _surface.w; j++) {
-					*dst++ = tga.readUint32LE();
-				}
+				tga.read(dst, _surface.w * 4);
 			}
 		} else if (pixelDepth == 24) {
 			for (int i = 0; i < _surface.h; i++) {
@@ -255,20 +243,7 @@ bool TGADecoder::readData(Common::SeekableReadStream &tga, byte imageType, byte 
 				} else {
 					dst = (byte *)_surface.getBasePtr(0, i);
 				}
-				for (int j = 0; j < _surface.w; j++) {
-					byte r = tga.readByte();
-					byte g = tga.readByte();
-					byte b = tga.readByte();
-#ifdef SCUMM_LITTLE_ENDIAN
-					*dst++ = r;
-					*dst++ = g;
-					*dst++ = b;
-#else
-					*dst++ = b;
-					*dst++ = g;
-					*dst++ = r;
-#endif
-				}
+				tga.read(dst, _surface.w * 3);
 			}
 		}
 		// Black/White
@@ -280,7 +255,6 @@ bool TGADecoder::readData(Common::SeekableReadStream &tga, byte imageType, byte 
 
 		while (count-- > 0) {
 			byte g = tga.readByte();
-			*data++ = g;
 			*data++ = g;
 			*data++ = g;
 			*data++ = g;
@@ -301,10 +275,7 @@ bool TGADecoder::readDataColorMapped(Common::SeekableReadStream &tga, byte image
 				} else {
 					dst = (byte *)_surface.getBasePtr(0, i);
 				}
-				for (int j = 0; j < _surface.w; j++) {
-					byte index = tga.readByte();
-					*dst++ = index;
-				}
+				tga.read(dst, _surface.w);
 			}
 		} else if (indexDepth == 16) {
 			warning("16 bit indexes not supported");
@@ -331,26 +302,25 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 			// RLE-packet
 			if (type == 1) {
 				if (pixelDepth == 32 && imageType == TYPE_RLE_TRUECOLOR) {
-					uint32 color = tga.readUint32LE();
+					byte b = tga.readByte();
+					byte g = tga.readByte();
+					byte r = tga.readByte();
+					byte a = tga.readByte();
 					while (rleCount-- > 0) {
-						*((uint32 *)data) = color;
-						data += 4;
+						*data++ = b;
+						*data++ = g;
+						*data++ = r;
+						*data++ = a;
 						count--;
 					}
 				} else if (pixelDepth == 24 && imageType == TYPE_RLE_TRUECOLOR) {
-					byte r = tga.readByte();
-					byte g = tga.readByte();
 					byte b = tga.readByte();
+					byte g = tga.readByte();
+					byte r = tga.readByte();
 					while (rleCount-- > 0) {
-#ifdef SCUMM_LITTLE_ENDIAN
-						*data++ = r;
-						*data++ = g;
-						*data++ = b;
-#else
 						*data++ = b;
 						*data++ = g;
 						*data++ = r;
-#endif
 						count--;
 					}
 				} else if (pixelDepth == 16 && imageType == TYPE_RLE_TRUECOLOR) {
@@ -363,7 +333,6 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 				} else if (pixelDepth == 8 && imageType == TYPE_RLE_BW) {
 					byte color = tga.readByte();
 					while (rleCount-- > 0) {
-						*data++ = color;
 						*data++ = color;
 						*data++ = color;
 						*data++ = color;
@@ -382,28 +351,13 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 				// Raw-packet
 			} else if (type == 0) {
 				if (pixelDepth == 32 && imageType == TYPE_RLE_TRUECOLOR) {
-					while (rleCount-- > 0) {
-						uint32 color = tga.readUint32LE();
-						*((uint32 *)data) = color;
-						data += 4;
-						count--;
-					}
+					tga.read(data, rleCount * 4);
+					data += rleCount * 4;
+					count -= rleCount;
 				} else if (pixelDepth == 24 && imageType == TYPE_RLE_TRUECOLOR) {
-					while (rleCount-- > 0) {
-						byte r = tga.readByte();
-						byte g = tga.readByte();
-						byte b = tga.readByte();
-#ifdef SCUMM_LITTLE_ENDIAN
-						*data++ = r;
-						*data++ = g;
-						*data++ = b;
-#else
-						*data++ = b;
-						*data++ = g;
-						*data++ = r;
-#endif
-						count--;
-					}
+					tga.read(data, rleCount * 3);
+					data += rleCount * 3;
+					count -= rleCount;
 				} else if (pixelDepth == 16 && imageType == TYPE_RLE_TRUECOLOR) {
 					while (rleCount-- > 0) {
 						*((uint16 *)data) = tga.readUint16LE();
@@ -416,15 +370,12 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 						*data++ = color;
 						*data++ = color;
 						*data++ = color;
-						*data++ = color;
 						count--;
 					}
 				} else if (pixelDepth == 8 && imageType == TYPE_RLE_CMAP) {
-					while (rleCount-- > 0) {
-						byte index = tga.readByte();
-						*data++ = index;
-						count--;
-					}
+					tga.read(data, rleCount);
+					data += rleCount;
+					count -= rleCount;
 				} else {
 					warning("Unhandled pixel-depth for image-type 10");
 					return false;

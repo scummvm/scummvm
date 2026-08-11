@@ -57,6 +57,7 @@ namespace AGS3 {
 31:  v3.4.1.5 - removed room object and hotspot name length limits
 32:  v3.5.0 - 64-bit file offsets
 33:  v3.5.0.8 - deprecated room resolution, added mask resolution
+Since then format value is defined as AGS version represented as NN,NN,NN,NN.
 */
 enum RoomFileVersion {
 	kRoomVersion_Undefined = 0,

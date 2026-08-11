@@ -33,8 +33,19 @@ public:
 	Room818() : Room() {}
 	~Room818() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _dword1A18DC = 0;
+
+	int32 _818All1Series = 0;
+
+	machine *_xMach = nullptr;
+
 };
 
 } // namespace Rooms

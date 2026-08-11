@@ -85,7 +85,7 @@ typedef struct {
 	int32 search;
 } mem_offset;
 
-// Put the res_man params in a structure to prevent passing lots of the same arguements
+// Put the res_man params in a structure to prevent passing lots of the same arguments
 // from function to function
 typedef struct RMParams {
 	uint32 url_hash;

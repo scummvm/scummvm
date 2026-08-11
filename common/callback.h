@@ -96,7 +96,7 @@ protected:
 public:
 	Callback(T *object, TMethod method): _object(object), _method(method) {}
 	virtual ~Callback() {}
-	void operator()(S data) { (_object->*_method)(data); } /*!< Type of the object passed to the operator. */
+	void operator()(S data) override { (_object->*_method)(data); } /*!< Type of the object passed to the operator. */
 };
 
 /**
@@ -139,7 +139,7 @@ public:
 	CallbackBridge(T *object, TCallbackMethod method, BaseCallback<OS> *outerCallback):
 		_object(object), _method(method), _outerCallback(outerCallback) {}
 	virtual ~CallbackBridge() {}
-	void operator()(S data) { (_object->*_method)(_outerCallback, data); } /*!< Type of the object passed to the operator. */
+	void operator()(S data) override { (_object->*_method)(_outerCallback, data); } /*!< Type of the object passed to the operator. */
 };
 
 /** @} */

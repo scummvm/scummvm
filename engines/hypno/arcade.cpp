@@ -19,12 +19,16 @@
  *
  */
 
-#include "common/tokenizer.h"
+#include "common/config-manager.h"
 #include "common/events.h"
+#include "common/tokenizer.h"
 #include "graphics/cursorman.h"
+#include "graphics/framelimiter.h"
 
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
+
+#include "backends/keymapper/keymapper.h"
 
 namespace Hypno {
 
@@ -179,6 +183,126 @@ void HypnoEngine::runAfterArcade(ArcadeShooting *arc) {}
 
 void HypnoEngine::pressedKey(const int keycode) {}
 
+void HypnoEngine::resetGamepadAim(const Common::Rect &mouseBox) {
+	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	_gamepadAimPosition.x = CLIP<int>(mousePos.x, mouseBox.left, mouseBox.right - 1);
+	_gamepadAimPosition.y = CLIP<int>(mousePos.y, mouseBox.top, mouseBox.bottom - 1);
+	_gamepadAxisX = 0;
+	_gamepadAxisY = 0;
+	_gamepadAimActive = false;
+	_gamepadAimLeft = false;
+	_gamepadAimDown = false;
+	_gamepadAimRight = false;
+	_gamepadAimUp = false;
+}
+
+void HypnoEngine::setGamepadAimActive(bool active) {
+	_gamepadAimActive = active;
+}
+
+bool HypnoEngine::isGamepadAimActive() const {
+	return _gamepadAimActive;
+}
+
+bool HypnoEngine::handleGamepadAimAction(const int action, bool pressed) {
+	switch (action) {
+	case kActionAimLeft:
+		_gamepadAimLeft = pressed;
+		break;
+	case kActionAimDown:
+		_gamepadAimDown = pressed;
+		break;
+	case kActionAimRight:
+		_gamepadAimRight = pressed;
+		break;
+	case kActionAimUp:
+		_gamepadAimUp = pressed;
+		break;
+	default:
+		return false;
+	}
+
+	if (pressed)
+		_gamepadAimActive = true;
+	return true;
+}
+
+bool HypnoEngine::handleGamepadAxisAction(const int action, int16 position) {
+	const int16 axisPosition = (position == Common::JOYAXIS_MIN) ? Common::JOYAXIS_MAX : position;
+
+	switch (action) {
+	case kActionAimLeft:
+		if (position == 0 && _gamepadAxisX > 0)
+			return true;
+		_gamepadAxisX = -axisPosition;
+		break;
+	case kActionAimDown:
+		if (position == 0 && _gamepadAxisY < 0)
+			return true;
+		_gamepadAxisY = axisPosition;
+		break;
+	case kActionAimRight:
+		if (position == 0 && _gamepadAxisX < 0)
+			return true;
+		_gamepadAxisX = axisPosition;
+		break;
+	case kActionAimUp:
+		if (position == 0 && _gamepadAxisY > 0)
+			return true;
+		_gamepadAxisY = -axisPosition;
+		break;
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+bool HypnoEngine::updateGamepadAim(const Common::Rect &mouseBox) {
+	const int dpadX = (_gamepadAimRight ? 1 : 0) - (_gamepadAimLeft ? 1 : 0);
+	const int dpadY = (_gamepadAimDown ? 1 : 0) - (_gamepadAimUp ? 1 : 0);
+
+	int deltaX = 0;
+	int deltaY = 0;
+
+	if (dpadX || dpadY) {
+		const int kDigitalStep = 4;
+		deltaX = dpadX * kDigitalStep;
+		deltaY = dpadY * kDigitalStep;
+	} else {
+		const int deadZone = MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000;
+		const int16 axisX = (ABS((int)_gamepadAxisX) <= deadZone) ? 0 : _gamepadAxisX;
+		const int16 axisY = (ABS((int)_gamepadAxisY) <= deadZone) ? 0 : _gamepadAxisY;
+		if (axisX || axisY) {
+			const int kAnalogMaxStep = 8;
+			deltaX = (int)axisX * kAnalogMaxStep / Common::JOYAXIS_MAX;
+			deltaY = (int)axisY * kAnalogMaxStep / Common::JOYAXIS_MAX;
+			if (axisX && deltaX == 0)
+				deltaX = (axisX > 0) ? 1 : -1;
+			if (axisY && deltaY == 0)
+				deltaY = (axisY > 0) ? 1 : -1;
+		}
+	}
+
+	if (deltaX == 0 && deltaY == 0)
+		return false;
+
+	if (!_gamepadAimActive) {
+		Common::Point mousePos = g_system->getEventManager()->getMousePos();
+		_gamepadAimPosition.x = CLIP<int>(mousePos.x, mouseBox.left, mouseBox.right - 1);
+		_gamepadAimPosition.y = CLIP<int>(mousePos.y, mouseBox.top, mouseBox.bottom - 1);
+	}
+
+	_gamepadAimActive = true;
+	Common::Point oldPos = _gamepadAimPosition;
+	_gamepadAimPosition.x = CLIP<int>(_gamepadAimPosition.x + deltaX, mouseBox.left, mouseBox.right - 1);
+	_gamepadAimPosition.y = CLIP<int>(_gamepadAimPosition.y + deltaY, mouseBox.top, mouseBox.bottom - 1);
+
+	if (oldPos.x != _gamepadAimPosition.x || oldPos.y != _gamepadAimPosition.y)
+		g_system->warpMouse(_gamepadAimPosition.x, _gamepadAimPosition.y);
+	return true;
+}
+
 void HypnoEngine::initSegment(ArcadeShooting *arc) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::findNextSegment(ArcadeShooting *arc) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
@@ -230,8 +354,17 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		error("Invalid or missing mouse box");
 
 	Common::Point offset;
-	_background = new MVideo(arc->backgroundVideo, offset, false, false, false);
+	Common::Point anchor = arc->anchor;
+	anchor.x = 0;	// This is almost always zero, except when the screen starts at the middle
+					// We don't really need it
+	anchor.y = MAX(0, anchor.y - arc->mouseBox.bottom);
 
+	// Correct mouseBox
+	arc->mouseBox.moveTo(anchor.x, anchor.y);
+	_background = new MVideo(arc->backgroundVideo, anchor, false, false, false);
+
+	resetGamepadAim(arc->mouseBox);
+	mousePos = getPlayerPosition(false);
 	drawCursorArcade(mousePos);
 	playVideo(*_background);
 
@@ -271,9 +404,43 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_objMissesAllowed[0] = arc->objMissesAllowed[0];
 	_objMissesAllowed[1] = arc->objMissesAllowed[1];
 
+	bool vsync = g_system->getFeatureState(OSystem::kFeatureVSync);
+	// Disable vsync for arcade sequences, since these require a fixed frame rate
+	g_system->beginGFXTransaction();
+	g_system->setFeatureState(OSystem::kFeatureVSync, false);
+	g_system->endGFXTransaction();
+
 	debugC(1, kHypnoDebugArcade, "Using frame delay: %d", arc->frameDelay);
+	Graphics::FrameLimiter limiter(g_system, 1000.0 / arc->frameDelay);
+	limiter.startFrame();
 
 	Common::Event event;
+	auto handlePointerMotion = [&]() {
+		drawCursorArcade(mousePos);
+		if (mousePos.x >= arc->mouseBox.right - 1) {
+			g_system->warpMouse(arc->mouseBox.right - 1, mousePos.y);
+		} else if (mousePos.y < arc->mouseBox.top) { // Usually top is zero
+			g_system->warpMouse(mousePos.x, arc->mouseBox.top + 1);
+		} else if (mousePos.y >= arc->mouseBox.bottom - 1) {
+			g_system->warpMouse(mousePos.x, arc->mouseBox.bottom - 1);
+		} else if (mousePos.x <= 40 && offset.x < 0) {
+			for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+				if (it->video && it->video->decoder)
+					it->video->position.x = it->video->position.x + 1;
+			}
+			offset.x = offset.x + 1;
+			needsUpdate = true;
+		} else if (mousePos.x >= 280 && offset.x > 320 - _background->decoder->getWidth()) {
+			for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+				if (it->video && it->video->decoder)
+					it->video->position.x = it->video->position.x - 1;
+			}
+			offset.x = offset.x - 1;
+			needsUpdate = true;
+		}
+		_background->position.x = offset.x;
+	};
+
 	while (!shouldQuit()) {
 		if (_timerStarted) {
 			if (_countdown <= 0) {
@@ -285,58 +452,73 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		}
 		needsUpdate = _background->decoder->needsUpdate();
 		while (g_system->getEventManager()->pollEvent(event)) {
-			mousePos = getPlayerPosition(false);
-
 			// Events
 			switch (event.type) {
 
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
-
-			case Common::EVENT_KEYDOWN:
-				pressedKey(event.kbd.keycode);
-				if (event.kbd.keycode == Common::KEYCODE_LCTRL)
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				mousePos = getPlayerPosition(false);
+				if (handleGamepadAimAction(event.customType, true)) {
+					needsUpdate = true;
+				} else if (event.customType == kActionPrimaryShoot) {
 					if (clickedPrimaryShoot(mousePos))
 						shootingPrimary = true;
+				} else if (event.customType == kActionSecondaryShoot) {
+					setRButtonUp(false);
+					if (clickedSecondaryShoot(mousePos))
+						shootingSecondary = true;
+				} else {
+					pressedKey(event.customType);
+				}
+				break;
+
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+				if (handleGamepadAimAction(event.customType, false)) {
+					needsUpdate = true;
+				} else if (event.customType == kActionSecondaryShoot) {
+					setRButtonUp(true);
+					shootingSecondary = false;
+				}
+				break;
+
+			case Common::EVENT_CUSTOM_BACKEND_ACTION_AXIS:
+				if (handleGamepadAxisAction(event.customType, event.joystick.position))
+					needsUpdate = true;
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				mousePos = getPlayerPosition(false);
+				pressedKey(event.kbd.keycode);
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
+				setGamepadAimActive(false);
+				mousePos = g_system->getEventManager()->getMousePos();
 				if (clickedPrimaryShoot(mousePos))
 					shootingPrimary = true;
 				break;
 
 			case Common::EVENT_RBUTTONDOWN:
+				setGamepadAimActive(false);
+				setRButtonUp(false);
+				mousePos = g_system->getEventManager()->getMousePos();
 				if (clickedSecondaryShoot(mousePos))
 					shootingSecondary = true;
 				break;
 
 			case Common::EVENT_RBUTTONUP:
+				setRButtonUp(true);
 				shootingSecondary = false;
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				drawCursorArcade(mousePos);
-				if (mousePos.x >= arc->mouseBox.right-1) {
-					g_system->warpMouse(arc->mouseBox.right-1, mousePos.y);
-				} else if (mousePos.y >= arc->mouseBox.bottom-1) {
-					g_system->warpMouse(mousePos.x, arc->mouseBox.bottom-1);
-				} else if (mousePos.x <= 40 && offset.x < 0) {
-					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
-						if (it->video && it->video->decoder)
-							it->video->position.x = it->video->position.x + 1;
-					}
-					offset.x = offset.x + 1;
-					needsUpdate = true;
-				} else if (mousePos.x >= 280 && offset.x > 320 - _background->decoder->getWidth()) {
-					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
-						if (it->video && it->video->decoder)
-							it->video->position.x = it->video->position.x - 1;
-					}
-					offset.x = offset.x - 1;
-					needsUpdate = true;
-				}
-				_background->position = offset;
+				setGamepadAimActive(false);
+				mousePos = g_system->getEventManager()->getMousePos();
+				_gamepadAimPosition.x = CLIP<int>(mousePos.x, arc->mouseBox.left, arc->mouseBox.right - 1);
+				_gamepadAimPosition.y = CLIP<int>(mousePos.y, arc->mouseBox.top, arc->mouseBox.bottom - 1);
+				handlePointerMotion();
 				break;
 
 			default:
@@ -344,8 +526,14 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			}
 		}
 
+		if (updateGamepadAim(arc->mouseBox)) {
+			mousePos = getPlayerPosition(false);
+			handlePointerMotion();
+			needsUpdate = true;
+		}
+
 		if (needsUpdate) {
-			getPlayerPosition(true);
+			mousePos = getPlayerPosition(true);
 			if (_background->decoder->getCurFrame() > firstFrame)
 				drawScreen();
 			updateScreen(*_background);
@@ -502,7 +690,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				} else if (frame > 0 && frame >= (int)(it->lastFrame)) {
 					skipVideo(*it->video);
 					shootsToRemove.push_back(i);
-				} else if (it->video->decoder->needsUpdate() && needsUpdate) {
+				} else if (it->video->decoder->needsUpdate() || needsUpdate) {
 					updateScreen(*it->video);
 				}
 			} else if (!it->video && it->bodyFrames.size() > 0) {
@@ -527,11 +715,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			}
 		}
 
-		if (_music.empty() && !arc->music.empty()) {
-			_music = _soundPath + arc->music;
-			_musicRate = arc->musicRate;
-			_musicStereo = arc->musicStereo;
-			playSound(_music, 0, _musicRate, _musicStereo); // music loop forever
+		if (!isMusicActive() && !arc->music.empty()) {
+			playMusic(_soundPath + arc->music, arc->musicRate, arc->musicStereo);
 		}
 
 		if (needsUpdate) {
@@ -546,8 +731,15 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			drawAmmo();
 		}
 
-		g_system->delayMillis(arc->frameDelay);
+		limiter.delayBeforeSwap();
+		drawScreen();
+		limiter.startFrame();
 	}
+
+	g_system->beginGFXTransaction();
+	// Restore vsync state
+	g_system->setFeatureState(OSystem::kFeatureVSync, vsync);
+	g_system->endGFXTransaction();
 
 	// Deallocate shoots
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
@@ -579,7 +771,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_timerStarted = false;
 	removeTimers();
 	stopSound();
-	_music.clear();
+	stopMusic();
 }
 
 Common::Point HypnoEngine::computeTargetPosition(const Common::Point &mousePos) {
@@ -587,6 +779,8 @@ Common::Point HypnoEngine::computeTargetPosition(const Common::Point &mousePos) 
 }
 
 Common::Point HypnoEngine::getPlayerPosition(bool needsUpdate) {
+	if (_gamepadAimActive)
+		return _gamepadAimPosition;
 	return g_system->getEventManager()->getMousePos();
 }
 
@@ -622,7 +816,6 @@ void HypnoEngine::drawCursorArcade(const Common::Point &mousePos) {
 	else
 		changeCursor("arcade");
 
-	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
 }
 
 bool HypnoEngine::clickedPrimaryShoot(const Common::Point &mousePos) { return true; }
@@ -691,8 +884,6 @@ bool HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool
 				_background->decoder->pauseVideo(false);
 				updateScreen(*_background);
 				drawScreen();
-				if (!_music.empty())
-					playSound(_music, 0, _musicRate, _musicStereo); // restore music
 			} else if (_objIdx == 1 && !arc->hitBoss2Video.empty()) {
 				_background->decoder->pauseVideo(true);
 				MVideo video(arc->hitBoss2Video, Common::Point(0, 0), false, true, false);
@@ -703,8 +894,6 @@ bool HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool
 				updateScreen(*_background);
 				drawScreen();
 				drawCursorArcade(mousePos);
-				if (!_music.empty())
-					playSound(_music, 0, _musicRate, _musicStereo); // restore music
 			}
 			byte p[3] = {0x00, 0x00, 0x00}; // Always black?
 			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
@@ -718,6 +907,12 @@ bool HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool
 	if (secondary) {
 		if (_background->decoder->getCurFrame() % 2 == 0)
 			drawShoot(mousePos);
+
+		if (checkRButtonUp()) {
+			setRButtonUp(false);
+			return false;
+		}
+
 		return clickedSecondaryShoot(mousePos);
 	} else {
 		drawShoot(mousePos);
@@ -786,5 +981,22 @@ bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return false;
 }
 
-} // End of namespace Hypno
+bool HypnoEngine::checkRButtonUp() {
+	return false;
+}
 
+void HypnoEngine::setRButtonUp(const bool val) {
+	return;
+}
+
+void HypnoEngine::disableGameKeymaps() {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+}
+
+void HypnoEngine::enableGameKeymaps() {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+}
+
+} // End of namespace Hypno

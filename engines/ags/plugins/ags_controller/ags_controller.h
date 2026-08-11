@@ -53,7 +53,7 @@ protected:
 	void ClickMouse(ScriptMethodParams &params);
 public:
 	AGSController() : PluginBase() {}
-	virtual ~AGSController() {}
+	virtual ~AGSController();
 
 	const char *AGS_GetPluginName() override;
 	void AGS_EngineStartup(IAGSEngine *engine) override;

@@ -36,8 +36,6 @@
 #include "hdb/mpc.h"
 #include "hdb/window.h"
 
-#include "audio/mididrv.h"
-
 #define CHEAT_PATCHES 0
 
 namespace HDB {
@@ -60,7 +58,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 		_progressY = _screenHeight - 64;
 	}
 
-	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_dataFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_systemInit = false;
 
 	_fileMan = nullptr;
@@ -179,9 +177,18 @@ bool HDBGame::init() {
 	_lua->init();
 	_menu->init();
 
-	// Query the selected music device (defaults to MT_AUTO device).
-	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto"));
-	_noMusicDriver = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+	// Get the selected "music device" (defaults to MT_AUTO device)
+	// as set from Audio > Music Device dropdown setting, which commonly is for MIDI driver selection.
+	// Since this engine does not use MIDI, but the setting is still available from the "Global Options... > Audio"
+	// and the specific game options (Game Options... > Audio), we respect only the option "No Music" to avoid end user confusion.
+	// All other options for this dropdown will result in music playing and are treated as irrelevant.
+	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	_noMusicDriver = (selDevStr.compareToIgnoreCase(Common::String("null")) == 0);
+
+	if (_noMusicDriver) {
+		warning("AUDIO: MUSIC IS FORCED TO OFF (BY THE MIDI DRIVER SETTING - music_driver was set to \"null\")");
+	}
+
 	syncSoundSettings();
 
 	_debugLogo = _gfx->loadIcon("icon_debug_logo");
@@ -859,7 +866,7 @@ void HDBGame::checkProgress() {
 
 void HDBGame::drawLoadingScreen() {
 	if (g_hdb->isPPC())
-		_gfx->fillScreen(0);
+		_gfx->fillScreen();
 	else
 		_loadingScreenGfx->draw(0, 0);
 }
@@ -915,12 +922,16 @@ void HDBGame::setInMapName(const char *name) {
 
 Common::Error HDBGame::run() {
 
+	// Initializes Graphics
+	initGraphics(_screenWidth, _screenHeight, nullptr);
+	_screenFormat = _system->getScreenFormat();
+
+	if (_screenFormat.isCLUT8())
+		return Common::kUnsupportedColorMode;
+
 	// Initialize System
 	if (!_systemInit)
 		init();
-
-	// Initializes Graphics
-	initGraphics(_screenWidth, _screenHeight, &_format);
 
 	start();
 

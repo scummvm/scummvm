@@ -31,9 +31,8 @@ namespace Sci {
 #define SCI_PATTERN_CODE_PENSIZE 0x07
 
 enum {
-	SCI_PICTURE_TYPE_REGULAR		= 0,
-	SCI_PICTURE_TYPE_SCI11		= 1,
-	SCI_PICTURE_TYPE_SCI32		= 2
+	SCI_PICTURE_TYPE_REGULAR = 0,
+	SCI_PICTURE_TYPE_SCI11   = 1
 };
 
 class GfxPorts;
@@ -57,9 +56,6 @@ public:
 
 private:
 	void initData(GuiResourceId resourceId);
-#if 0
-	void reset();
-#endif
 	void drawSci11Vga();
 	void drawCelData(const SciSpan<const byte> &inbuffer, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY, bool isEGA);
 	void drawVectorData(const SciSpan<const byte> &data);
@@ -69,10 +65,11 @@ private:
 	void vectorGetRelCoords(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y);
 	void vectorGetRelCoordsMed(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y);
 	void vectorGetPatternTexture(const SciSpan<const byte> &data, uint &curPos, int16 pattern_Code, int16 &pattern_Texture);
-	void vectorFloodFill(int16 x, int16 y, byte color, byte prio, byte control);
+	void vectorFloodFill(int16 x, int16 y, byte color, byte prio, byte control, bool isEGA);
 	void vectorPattern(int16 x, int16 y, byte pic_color, byte pic_priority, byte pic_control, byte code, byte texture);
 	void vectorPatternBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control);
 	void vectorPatternTexturedBox(Common::Rect box, Common::Rect clipBox, byte color, byte prio, byte control, byte texture);
+	void vectorPatternBoxPixel(int16 x, int16 y, Common::Rect clipBox, byte drawMask, byte color, byte prio, byte control);
 	void vectorPatternCircle(Common::Rect box, Common::Rect clipBox, byte size, byte color, byte prio, byte control);
 	void vectorPatternTexturedCircle(Common::Rect box, Common::Rect clipBox, byte size, byte color, byte prio, byte control, byte texture);
 

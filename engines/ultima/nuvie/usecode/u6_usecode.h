@@ -216,7 +216,7 @@ protected:
 	void extinguish_torch(Obj *obj);
 	void light_torch(Obj *obj);
 	bool process_effects(Obj *container_obj, Actor *actor) override;
-	sint16 parseLatLongString(U6UseCodeLatLonEnum mode, Std::string *input);
+	sint16 parseLatLongString(U6UseCodeLatLonEnum mode, Common::String *input);
 
 	inline bool use_find_water(uint16 *x, uint16 *y, uint8 *z);
 	inline bool lock_pick_dex_check();

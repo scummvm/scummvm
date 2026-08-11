@@ -178,7 +178,7 @@ static SQInteger actorColor(HSQUIRRELVM v) {
 }
 
 // Sets the actor's costume to the (JSON) filename animation file.
-// If the actor is expected to preform the standard walk, talk, stand, reach animations, they need to exist in the file.
+// If the actor is expected to perform the standard walk, talk, stand, reach animations, they need to exist in the file.
 // If a sheet is given, this is a sprite sheet containing all the images needed for the animation.
 static SQInteger actorCostume(HSQUIRRELVM v) {
 	Common::SharedPtr<Object> actor = sqactor(v, 2);
@@ -512,7 +512,7 @@ static SQInteger actorPosY(HSQUIRRELVM v) {
 // Plays the specified animation from the player's costume JSON filename.
 // If YES loop the animation. Default is NO.
 static SQInteger actorPlayAnimation(HSQUIRRELVM v) {
-	Common::SharedPtr<Object> actor = sqactor(v, 2);
+	Common::SharedPtr<Object> actor = sqobj(v, 2);
 	if (!actor)
 		return sq_throwerror(v, "failed to get actor");
 	Common::String animation;
@@ -867,9 +867,8 @@ static SQInteger sayOrMumbleLine(HSQUIRRELVM v) {
 		for (int i = 0; i < numIds; i++) {
 			if (sq_gettype(v, index + i) != OT_NULL) {
 				Common::String text;
-				if (SQ_FAILED(sqget(v, index + i, text)))
-					return sq_throwerror(v, "failed to get text");
-				texts.push_back(text);
+				if (SQ_SUCCEEDED(sqget(v, index + i, text)))
+					texts.push_back(text);
 			}
 		}
 	}

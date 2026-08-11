@@ -56,7 +56,8 @@ void Module::init(bool isLoadingSave, const Common::String &pageName) {
 	// 1 0 - from save
 	if (!pageName.empty())
 		_page = findPage(pageName);
-	else if (!_page)
+
+	if (!_page)
 		_page = _pages[0];
 
 	_page->init(isLoadingSave);

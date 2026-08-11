@@ -34,7 +34,7 @@ namespace Nancy {
 namespace Action {
 
 SetPlayerClock::~SetPlayerClock() {
-	Nancy::UI::Clock *clock = NancySceneState.getClock();
+	UI::Clock *clock = NancySceneState.getClock();
 	if (clock) {
 		clock->lockClock(false);
 	}
@@ -82,6 +82,10 @@ void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip(2);
 
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		stream.skip(2);
+	}
+
 	_buttonSound.readNormal(stream);
 	_alarmSetScene.readData(stream);
 	_alarmSoundDelay = stream.readUint16LE();
@@ -99,7 +103,7 @@ void SetPlayerClock::execute() {
 
 		_alarmHours = NancySceneState.getPlayerTime().getHours();
 
-		Nancy::UI::Clock *clock = NancySceneState.getClock();
+		UI::Clock *clock = NancySceneState.getClock();
 		if (clock) {
 			clock->lockClock(true);
 		}

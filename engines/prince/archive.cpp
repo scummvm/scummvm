@@ -138,8 +138,8 @@ bool PtcArchive::hasFile(const Common::Path &path) const {
 int PtcArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int matches = 0;
 
-	for (FileMap::const_iterator it = _items.begin(); it != _items.end(); ++it) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(it->_key, *this)));
+	for (const auto &item : _items) {
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(item._key, *this)));
 		matches++;
 	}
 

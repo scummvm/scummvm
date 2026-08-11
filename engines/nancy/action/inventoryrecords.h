@@ -54,7 +54,7 @@ protected:
 };
 
 // Displays a static image inside the viewport. The static image corresponds to an
-// inventory item, and is only displayed if the item is not in the player's possesion.
+// inventory item, and is only displayed if the item is not in the player's possession.
 // On click, it hides the image and adds the item to the inventory.
 class ShowInventoryItem : public RenderActionRecord {
 public:
@@ -73,10 +73,11 @@ public:
 	int16 _drawnFrameID = -1;
 	Graphics::ManagedSurface _fullSurface;
 
-protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return "ShowInventoryItem"; }
 	bool isViewportRelative() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "ShowInventoryItem"; }
 };
 
 // When clicking an ActionRecord hotspot with a kItem dependency, the engine

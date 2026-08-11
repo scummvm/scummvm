@@ -34,21 +34,20 @@
 namespace Wintermute {
 
 class UIText : public UIObject {
-private:
-	bool sizeToFit();
-	TTextAlign _textAlign;
-	TVerticalAlign _verticalAlign;
 public:
+	bool sizeToFit();
 	bool display(int offsetX, int offsetY) override;
 	DECLARE_PERSISTENT(UIText, UIObject)
 	UIText(BaseGame *inGame = nullptr);
 	~UIText() override;
+	TTextAlign _textAlign;
+	TVerticalAlign _verticalAlign;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;

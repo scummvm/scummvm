@@ -57,6 +57,8 @@ void BulPuzzle::init() {
 }
 
 void BulPuzzle::updateGraphics() {
+	doAiTurn();
+
 	bool isPlayer = _turn / _numRolls == 0;
 
 	if (_currentAction == kCapture && g_nancy->getTotalPlayTime() > _nextMoveTime) {
@@ -177,6 +179,10 @@ void BulPuzzle::updateGraphics() {
 					// This was the last move, go to next turn
 					g_nancy->_sound->playSound(_moveSound);
 					_currentAction = kNone;
+					// The voiced "move" line plays at the end of a player's turn (its second roll)
+					if (g_nancy->getGameType() >= kGameTypeNancy11 && (_turn == 1 || _turn == 3)) {
+						playVoiceLine(_turn / _numRolls, 3);
+					}
 					_turn = _turn + 1 > 3 ? 0 : _turn + 1;
 					_changeLight = true;
 				}
@@ -195,6 +201,10 @@ void BulPuzzle::updateGraphics() {
 			return;
 		case kPass:
 			_currentAction = kNone;
+			// The voiced "transition" line plays when a player passes their turn
+			if (g_nancy->getGameType() >= kGameTypeNancy11 && (_turn == 1 || _turn == 3)) {
+				playVoiceLine(_turn / _numRolls, 1);
+			}
 			_turn = (_turn + 1 > _numRolls * 2) ? 0 : _turn + 1;
 
 			return;
@@ -213,6 +223,13 @@ void BulPuzzle::readData(Common::SeekableReadStream &stream) {
 	_numCells = stream.readUint16LE();
 	_numPieces = stream.readUint16LE();
 	_numRolls = stream.readUint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		// A game mode (0 = play against the computer) and the computer's pass strategy
+		_playAgainstComputer = stream.readByte() == 0;
+		_aiPassStrategy = stream.readByte() != 0;
+	}
+
 	_playerStart = stream.readUint16LE();
 	_enemyStart = stream.readUint16LE();
 
@@ -256,21 +273,92 @@ void BulPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _enemyLightSrc);
 	readRect(stream, _passButtonDisabledSrc);
 
-	_moveSound.readNormal(stream);
-	_enemyCapturedSound.readNormal(stream);
-	_playerCapturedSound.readNormal(stream);
-	_rollSound.readNormal(stream);
-	_passSound.readNormal(stream);
-	_resetSound.readNormal(stream);
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		// Nancy 11 keeps four fixed sounds, then per-event random voice-clip tables, then the scenes.
+		_moveSound.readNormal(stream);
+		_rollSound.readNormal(stream);
+		_passSound.readNormal(stream);
+		_resetSound.readNormal(stream);
 
-	_solveScene.readData(stream);
-	_solveSoundDelay = stream.readUint16LE();
-	_solveSound.readNormal(stream);
+		// Captures are unused here and win/loss is voiced from the tables below, so the
+		// capture/solve/lose SoundDescriptions keep their default "NO SOUND".
 
-	_exitScene.readData(stream);
-	_loseSoundDelay = stream.readUint16LE();
-	_loseSound.readNormal(stream);
+		// Two per-player blocks: a 6-byte header (channel + two unused shorts) then seven tables
+		static const int tableSizes[7] = { 1, 1, 4, 4, 4, 4, 4 };
+		for (int pl = 0; pl < 2; ++pl) {
+			_voiceChannel[pl] = stream.readUint16LE();
+			stream.skip(4);
+			for (int t = 0; t < 7; ++t) {
+				for (int e = 0; e < tableSizes[t]; ++e) {
+					Common::String name;
+					readFilename(stream, name);
+					if (!name.empty() && name != "NO SOUND")
+						_voiceLines[pl][t].push_back(name);
+				}
+			}
+		}
+
+		// Winning and losing use the same scene, told apart by which flag is set: the first flag
+		// is the win flag, the second the loss flag. The event flags store a value, not on/off.
+		_solveScene._sceneChange.readData(stream);
+		_solveScene._sceneChange.continueSceneSound = stream.readUint16LE();
+		_exitScene._sceneChange = _solveScene._sceneChange; // losing reuses the winning scene
+		_solveScene._flag.label = stream.readSint16LE();
+		_solveScene._flag.flag = stream.readByte();
+		_exitScene._flag.label = stream.readSint16LE();
+		_exitScene._flag.flag = stream.readByte();
+
+		// Giving up via the exit hotspot changes to its own scene
+		_giveUpScene._sceneChange.readData(stream);
+		_giveUpScene._sceneChange.continueSceneSound = stream.readUint16LE();
+		_giveUpScene._flag.label = stream.readSint16LE();
+		_giveUpScene._flag.flag = stream.readByte();
+	} else {
+		_moveSound.readNormal(stream);
+		_enemyCapturedSound.readNormal(stream);
+		_playerCapturedSound.readNormal(stream);
+		_rollSound.readNormal(stream);
+		_passSound.readNormal(stream);
+		_resetSound.readNormal(stream);
+
+		_solveScene.readData(stream);
+		_solveSoundDelay = stream.readUint16LE();
+		_solveSound.readNormal(stream);
+
+		_exitScene.readData(stream);
+		_loseSoundDelay = stream.readUint16LE();
+		_loseSound.readNormal(stream);
+	}
+
 	readRect(stream, _exitHotspot);
+}
+
+Common::String BulPuzzle::pickVoiceLine(int player, int table) {
+	if (player < 0 || player > 1 || table < 0 || table > 6) {
+		return Common::String();
+	}
+
+	const Common::Array<Common::String> &lines = _voiceLines[player][table];
+	if (lines.empty()) {
+		return Common::String();
+	}
+
+	return lines[g_nancy->_randomSource->getRandomNumber(lines.size() - 1)];
+}
+
+void BulPuzzle::playVoiceLine(int player, int table) {
+	Common::String line = pickVoiceLine(player, table);
+	if (line.empty()) {
+		return;
+	}
+
+	g_nancy->_sound->stopSound(_voiceSound);
+	_voiceSound.name = line;
+	_voiceSound.channelID = _voiceChannel[player];
+	_voiceSound.numLoops = 1;
+	_voiceSound.volume = _moveSound.volume;
+	g_nancy->_sound->loadSound(_voiceSound);
+	g_nancy->_sound->playSound(_voiceSound);
 }
 
 void BulPuzzle::execute() {
@@ -284,36 +372,72 @@ void BulPuzzle::execute() {
 		g_nancy->_sound->loadSound(_passSound);
 		g_nancy->_sound->loadSound(_moveSound);
 
+		if (g_nancy->getGameType() >= kGameTypeNancy11) {
+			_prevSide = (_numRolls > 0 && _turn >= _numRolls) ? 1 : 0;
+			playVoiceLine(1, 0); // opponent's opening line
+		}
+
 		_state = kRun;
 		// fall through
-	case kRun:
+	case kRun: {
+		const bool isNancy11 = g_nancy->getGameType() >= kGameTypeNancy11;
+
+		// Voice the start of a turn when control changes hands
+		if (isNancy11 && _numRolls > 0) {
+			int side = (_turn >= _numRolls) ? 1 : 0;
+			if (side != _prevSide) {
+				_prevSide = side;
+				playVoiceLine(side, 2);
+			}
+		}
+
 		if (_playerPieces == 0) {
 			_state = kActionTrigger;
+			if (isNancy11) {
+				Common::String line = pickVoiceLine(1, 5); // opponent's victory line
+				if (!line.empty()) {
+					_loseSound.name = line;
+					_loseSound.channelID = _voiceChannel[1];
+					_loseSound.numLoops = 1;
+					_loseSound.volume = _moveSound.volume;
+				}
+			}
 			_nextMoveTime = g_nancy->getTotalPlayTime() + _loseSoundDelay * 1000;
 		}
 
 		if (_enemyPieces == 0) {
 			_playerWon = true;
 			_state = kActionTrigger;
+			if (isNancy11) {
+				Common::String line = pickVoiceLine(0, 5); // player's victory line
+				if (!line.empty()) {
+					_solveSound.name = line;
+					_solveSound.channelID = _voiceChannel[0];
+					_solveSound.numLoops = 1;
+					_solveSound.volume = _moveSound.volume;
+				}
+			}
 			_nextMoveTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 1000;
 		}
 
 		if (_state == kRun) {
 			break;
 		}
-
+	}
 		// fall through
-	case kActionTrigger:
+	case kActionTrigger: {
 		SoundDescription &sound = _playerWon ? _solveSound : _loseSound;
 
-		if (g_nancy->getTotalPlayTime() >= _nextMoveTime) {
+		if (_nextMoveTime != 0 && g_nancy->getTotalPlayTime() >= _nextMoveTime) {
 			_nextMoveTime = 0;
 			g_nancy->_sound->loadSound(sound);
 			g_nancy->_sound->playSound(sound);
 		}
 
 		if (_nextMoveTime == 0 && !g_nancy->_sound->isSoundPlaying(sound)) {
-			if (_playerWon) {
+			if (g_nancy->getGameType() >= kGameTypeNancy11 && _gaveUp) {
+				_giveUpScene.execute();
+			} else if (_playerWon) {
 				_solveScene.execute();
 			} else {
 				_exitScene.execute();
@@ -322,6 +446,48 @@ void BulPuzzle::execute() {
 
 		break;
 	}
+	}
+}
+
+void BulPuzzle::doAiTurn() {
+	if (!_playAgainstComputer || _turn / _numRolls == 0) {
+		// Not the computer opponent's turn
+		return;
+	}
+
+	// Wait until the board is idle before the computer acts. Note _nextMoveTime is deliberately
+	// not checked: it keeps a stale value after a move completes, so the same conditions the
+	// player's canClick uses (no action in flight, move sound finished) apply here too.
+	if (_currentAction != kNone || _pushedButton || _changeLight ||
+		g_nancy->_sound->isSoundPlaying(_moveSound)) {
+		return;
+	}
+
+	// The computer always rolls on its first turn; on its second it may pass
+	bool pass = false;
+	if (_turn % _numRolls) {
+		if (_aiPassStrategy) {
+			int diff = _enemyPos - _playerPos;
+			pass = diff >= 6 || (diff < 0 && diff + _numCells > 5);
+		} else {
+			pass = g_nancy->_randomSource->getRandomBit();
+		}
+	}
+
+	// Push the button on the computer's behalf, mirroring a player click
+	if (pass) {
+		_drawSurface.blitFrom(_image, _passButtonSrc, _passButtonDest);
+		g_nancy->_sound->playSound(_passSound);
+		_currentAction = kPass;
+	} else {
+		_drawSurface.blitFrom(_image, _rollButtonSrc, _rollButtonDest);
+		g_nancy->_sound->playSound(_rollSound);
+		_currentAction = kRoll;
+	}
+
+	_needsRedraw = true;
+	_pushedButton = true;
+	_nextMoveTime = g_nancy->getTotalPlayTime() + 250;
 }
 
 void BulPuzzle::handleInput(NancyInput &input) {
@@ -331,6 +497,7 @@ void BulPuzzle::handleInput(NancyInput &input) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 			_nextMoveTime = 0;
+			_gaveUp = true;
 		}
 
 		return;
@@ -342,7 +509,10 @@ void BulPuzzle::handleInput(NancyInput &input) {
 
 	bool canClick = _currentAction == kNone && !g_nancy->_sound->isSoundPlaying(_moveSound);
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_rollButtonDest).contains(input.mousePos)) {
+	// The player cannot use the roll/pass buttons during the computer opponent's turn
+	bool isPcTurn = _playAgainstComputer && _turn / _numRolls != 0;
+
+	if (!isPcTurn && NancySceneState.getViewport().convertViewportToScreen(_rollButtonDest).contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
@@ -357,7 +527,7 @@ void BulPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if ((_turn % _numRolls) && NancySceneState.getViewport().convertViewportToScreen(_passButtonDest).contains(input.mousePos)) {
+	if (!isPcTurn && (_turn % _numRolls) && NancySceneState.getViewport().convertViewportToScreen(_passButtonDest).contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {

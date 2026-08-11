@@ -27,6 +27,8 @@
 #include "sherlock/events.h"
 #include "sherlock/people.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -77,6 +79,9 @@ bool TattooScene::loadScene(const Common::Path &filename) {
 		vm._runningProlog = false;
 		events.showCursor();
 		talk._talkToAbort = false;
+
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->getKeymap("tattoo-prolog")->setEnabled(false);
 	}
 
 	// Check if it's a scene we need to keep track of how many times we've visited
@@ -142,14 +147,14 @@ void TattooScene::drawAllShapes() {
 			if (obj._quickDraw && obj._scaleVal == SCALE_THRESHOLD)
 				screen._backBuffer1.SHblitFrom(*obj._imageFrame, obj._position);
 			else
-				screen._backBuffer1.SHtransBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, 0, obj._scaleVal);
+				screen._backBuffer1.SHtransBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, obj._scaleVal);
 		}
 	}
 
 	// Draw the animation if it is behind the person
 	if (_activeCAnim.active() && _activeCAnim._zPlacement == BEHIND)
 		screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
-			(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+			(_activeCAnim._flags & 4) >> 1, _activeCAnim._scaleVal);
 
 	screen.resetDisplayBounds();
 
@@ -196,11 +201,11 @@ void TattooScene::drawAllShapes() {
 				screen._backBuffer1.SHblitFrom(*se._shape->_imageFrame, se._shape->_position);
 			else
 				screen._backBuffer1.SHtransBlitFrom(*se._shape->_imageFrame, se._shape->_position,
-					se._shape->_flags & OBJ_FLIPPED, 0, se._shape->_scaleVal);
+					se._shape->_flags & OBJ_FLIPPED, se._shape->_scaleVal);
 		} else if (se._isAnimation) {
 			// It's an active animation
 			screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
-				(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+				(_activeCAnim._flags & 4) >> 1, _activeCAnim._scaleVal);
 		} else {
 			// Drawing person
 			TattooPerson &p = *se._person;
@@ -212,7 +217,7 @@ void TattooScene::drawAllShapes() {
 			if (p._tempScaleVal == SCALE_THRESHOLD) {
 				p._tempX += adjust.x;
 				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
-					- p.frameHeight() - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
+					- p.frameHeight() - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, p._tempScaleVal);
 			} else {
 				if (adjust.x) {
 					if (!p._tempScaleVal)
@@ -242,7 +247,7 @@ void TattooScene::drawAllShapes() {
 				}
 
 				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
-					- p._imageFrame->sDrawYSize(p._tempScaleVal) - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
+					- p._imageFrame->sDrawYSize(p._tempScaleVal) - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, p._tempScaleVal);
 			}
 		}
 	}
@@ -256,13 +261,13 @@ void TattooScene::drawAllShapes() {
 			if (obj._quickDraw && obj._scaleVal == SCALE_THRESHOLD)
 				screen._backBuffer1.SHblitFrom(*obj._imageFrame, obj._position);
 			else
-				screen._backBuffer1.SHtransBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, 0, obj._scaleVal);
+				screen._backBuffer1.SHtransBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, obj._scaleVal);
 		}
 	}
 
 	// Draw the canimation if it is set as FORWARD
 	if (_activeCAnim.active() && _activeCAnim._zPlacement == FORWARD)
-		screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position, (_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+		screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position, (_activeCAnim._flags & 4) >> 1, _activeCAnim._scaleVal);
 
 	// Draw all NO_SHAPE shapes which have their flag bits clear
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -683,12 +688,12 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 		// Draw the frame
 		doBgAnim();
 
-		// Check for Escape key being pressed to abort animation
+		// Check for skip prolog action being pressed to abort animation
 		events.pollEvents();
-		if (events.kbHit()) {
-			Common::KeyState keyState = events.getKey();
+		if (events.actionHit()) {
+			Common::CustomEventType action = events.getAction();
 
-			if (keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog) {
+			if (action == kActionTattooSkipProlog && vm._runningProlog) {
 				_vm->setFlags(-76);
 				_vm->setFlags(396);
 				_goToScene = STARTING_GAME_SCENE;
@@ -823,6 +828,9 @@ void TattooScene::synchronize(Serializer &s) {
 		// In case we were showing the intro prologue or the ending credits, stop them
 		vm._runningProlog = false;
 		ui._creditsWidget.close();
+
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->getKeymap("tattoo-prolog")->setEnabled(false);
 	}
 }
 

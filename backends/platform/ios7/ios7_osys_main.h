@@ -50,7 +50,7 @@ struct AQCallbackStruct {
 	AudioStreamBasicDescription dataFormat;
 };
 
-class OSystem_iOS7 : public ModularGraphicsBackend, public EventsBaseBackend {
+class OSystem_iOS7 : virtual public BaseBackend, public ModularGraphicsBackend, Common::EventSource {
 protected:
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;
@@ -96,8 +96,6 @@ public:
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
 
-	bool setGraphicsMode(int mode, uint flags) override;
-
 	TouchMode getCurrentTouchMode() const { return _currentTouchMode; };
 	void setCurrentTouchMode(TouchMode mode) { _currentTouchMode = mode; };
 
@@ -119,6 +117,7 @@ public:
 #endif
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
+	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
 #endif
 
 public:
@@ -159,11 +158,11 @@ public:
 	void virtualController(bool connect);
 	bool isiOSAppOnMac() const;
 
-	virtual Common::Path getDefaultLogFileName() override { return Common::Path("/scummvm.log"); }
+	Common::Path getDefaultLogFileName() override { return Common::Path("/scummvm.log"); }
 
-	virtual GUI::OptionsContainerWidget* buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
-	virtual void applyBackendSettings() override;
-	virtual void registerDefaultSettings(const Common::String &target) const override;
+	GUI::OptionsContainerWidget* buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	void applyBackendSettings() override;
+	void registerDefaultSettings(const Common::String &target) const override;
 
 protected:
 	void updateOutputSurface();

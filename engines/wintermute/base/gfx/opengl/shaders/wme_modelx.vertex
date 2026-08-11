@@ -6,11 +6,20 @@ uniform highp mat4 modelMatrix;
 uniform highp mat4 viewMatrix;
 uniform highp mat4 projMatrix;
 uniform highp mat4 normalMatrix;
+uniform highp mat4 d3dProjMatrix;
 
 uniform vec4 ambientLight;
-
 uniform vec4 diffuse;
 uniform vec4 ambient;
+uniform vec4 shadowLightPos;
+
+uniform int effectId;
+uniform UBOOL effectSecondPass;
+uniform float borderWidth;
+
+uniform float fogStart;
+uniform float fogEnd;
+varying float fogFactor;
 
 struct Light {
 	vec4 _position;
@@ -27,49 +36,73 @@ out vec4 Color;
 out vec3 Normal;
 
 void main() {
-	vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
-	gl_Position = projMatrix * viewCoords;
+	if (effectId == 0) {
+		Texcoord = texcoord;
+		Color = diffuse;
 
-	Texcoord = texcoord;
-	Color = diffuse;
+		vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
+		gl_Position = projMatrix * viewCoords;
 
-	vec3 light = vec3(0.0, 0.0, 0.0);
-	vec3 normalEye = normalize((normalMatrix * vec4(normal, 0.0)).xyz);
+		vec3 light = vec3(0.0, 0.0, 0.0);
+		vec3 normalEye = normalize((normalMatrix * vec4(normal, 0.0)).xyz);
 
-	for (int i = 0; i < maxLights; ++i) {
-		if (lights[i].enabled < 0.0) {
-			continue;
-		}
+		float fogCoord = abs(viewCoords.z);
+		fogFactor = clamp((fogEnd - fogCoord) / (fogEnd - fogStart), 0.0, 1.0);
 
-		float intensity = 1.0;
-		vec4 lightPosition = viewMatrix * lights[i]._position;
-		vec3 vertexToLight = lightPosition.xyz - viewCoords.xyz;
-		float dist = length(vertexToLight);
+		for (int i = 0; i < maxLights; ++i) {
+			if (lights[i].enabled < 0.0) {
+				continue;
+			}
 
-		if (lights[i]._direction.w < 0.0) { // Spotlight
-			vec4 lightDirection = viewMatrix * vec4(lights[i]._direction.xyz, 0.0);
-			// See DirectX spotlight documentation
-			float cosAngle = -dot(normalize(vertexToLight), normalize(lightDirection.xyz)); // rho
-			float cosPenumbra = 0.968912; // cos(1 / 4)
-			float cosUmbra = 0.877582; // cos(1 / 2)
+			float intensity = 1.0;
+			vec4 lightPosition = viewMatrix * lights[i]._position;
+			vec3 vertexToLight = lightPosition.xyz - viewCoords.xyz;
 
-			if (cosAngle <= cosPenumbra) {
-				if (cosAngle < cosUmbra || cosPenumbra == cosUmbra) {
-					intensity = 0.0;
-				} else {
-					intensity *= (cosAngle - cosUmbra) / (cosPenumbra - cosUmbra);
+			if (lights[i]._direction.w < 0.0) { // Spotlight
+				vec4 lightDirection = viewMatrix * vec4(lights[i]._direction.xyz, 0.0);
+				// See DirectX spotlight documentation
+				float cosAngle = -dot(normalize(vertexToLight), normalize(lightDirection.xyz)); // rho
+				float cosPenumbra = 0.968912; // cos(1 / 4)
+				float cosUmbra = 0.877582; // cos(1 / 2)
+
+				if (cosAngle <= cosPenumbra) {
+					if (cosAngle < cosUmbra || cosPenumbra == cosUmbra) {
+						intensity = 0.0;
+					} else {
+						intensity *= (cosAngle - cosUmbra) / (cosPenumbra - cosUmbra);
+					}
 				}
 			}
+
+			intensity *= max(0.0, dot(normalEye, normalize(vertexToLight)));
+			light += lights[i]._color.rgb * intensity;
 		}
 
-		intensity *= max(0.0, dot(normalEye, normalize(vertexToLight)));
-		light.rgb += lights[i]._color.rgb * intensity;
+		Color.rgb *= light;
+		Color.rgb += ambient.rgb * ambientLight.rgb;
+
+		Color.rgb = clamp(Color.rgb, 0.0, 1.0);
+	} else if (effectId == 1) {
+		Texcoord = texcoord;
+		Color = vec4(0.0, 0.0, 0.0, 1.0);
+
+		vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
+		vec4 pos = projMatrix * viewCoords;
+
+		if (!UBOOL_TEST(effectSecondPass)) {
+			vec3 nrm = (viewMatrix * modelMatrix * vec4(normal, 0.0)).xyz;
+			pos.xy += nrm.xy * pos.w * borderWidth * 0.001;
+		}
+
+		gl_Position = pos;
+	} else if (effectId == 2) {
+		Texcoord = texcoord;
+
+		vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
+		gl_Position = projMatrix * viewCoords;
+
+		vec4 lightDir = vec4((viewMatrix * shadowLightPos).xyz, 0.0) - d3dProjMatrix * viewCoords;
+		lightDir /= length(lightDir);
+		Color = vec4(dot(normal, lightDir.xyz));
 	}
-
-	Color.rgba *= vec4(light.rgb, 1.0);
-	Color.rgba += vec4(ambient.rgb * ambientLight.rgb, 1.0);
-
-	Color.r = min(Color.r, 1.0);
-	Color.g = min(Color.g, 1.0);
-	Color.b = min(Color.b, 1.0);
 }

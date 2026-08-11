@@ -39,6 +39,31 @@ class SeekableReadStream;
  */
 namespace Queen {
 
+enum QUEENActions {
+	kActionNone,
+	kActionFastMode,
+	kActionSkipText,
+	kActionScrollUp,
+	kActionScrollDown,
+	kActionInvSlot1,
+	kActionInvSlot2,
+	kActionInvSlot3,
+	kActionInvSlot4,
+	kActionSkipCutaway,
+	kActionJournal,
+	kActionSave,
+	kActionLoad,
+	kActionOpen,
+	kActionClose,
+	kActionMove,
+	kActionGive,
+	kActionLook,
+	kActionPickUp,
+	kActionTalk,
+	kActionUse,
+	kActionCloseJournal,
+};
+
 struct GameStateHeader {
 	uint32 version;
 	uint32 flags;

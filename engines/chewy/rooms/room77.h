@@ -29,8 +29,8 @@ class Room77 {
 public:
 	static void entry();
 	static void xit();
-	static int proc1();
-	static int proc2();
+	static int procOpenBoatHoleWithCorkscrew();
+	static int procPlugBoatHoleWithRubber();
 };
 
 } // namespace Rooms

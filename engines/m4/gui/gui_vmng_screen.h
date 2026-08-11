@@ -29,40 +29,12 @@
 namespace M4 {
 
 /**
- * Record the (global) coordinates of the window which was created for scrnContent.
- * @param scrnContent	The window identifier
- * @param x1			Window top-left X
- * @param y1			Window top-left Y
- * @param x2			Window bottom-right X
- * @param y2			Window bottom-right Y
- */
-bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, int32 *y2);
-
-/**
  * Change which procedure will be called when a portion of the window
  * needs to be redrawn.
  * @param scrnContent	The window identifier
  * @param  redraw		The new refresh function pointer
  */
 bool vmng_SetScreenRefresh(void *scrnContent, RefreshFunc redraw);
-
-/**
- * Add a "hot key" to a window.
- * @paramscrnContent	The window identifier
- * @param myKey			The "key" which, when pressed, will cause the callback function
- * to be executed.
- * @param callback		The function to be executed when "myKey" is pressed
- */
-bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback);
-
-/**
- * Remove a hot key
- * @param scrnContent	The window identifier
- * @param myKey			The "hot key" to be removed.
- * @returns		False if either the window or the "hot key" could not be found,
- * TRUE if successful
- */
-bool RemoveScreenHotkey(void *scrnContent, int32 myKey);
 
 /**
  * Obvious shell to MoveScreen
@@ -73,6 +45,7 @@ bool MoveScreenAbs(ScreenContext *myScreen, int32 parmX, int32 parmY);
  * Obvious shell to MoveScreen
  */
 bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY);
+bool MoveScreenDelta(int32 parmX, int32 parmY);
 
 /**
  * Resize the windows width and/or height
@@ -96,11 +69,6 @@ void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 update
  * A shell to RestoreScreens
  */
 void RestoreScreensInContext(int32 x1, int32 y1, int32 x2, int32 y2, ScreenContext *myScreen);
-
-/**
- * Capture a screenshot to a bitmap.
- */
-void Screen2BuffC(int8 *Buff);
 
 } // End of namespace M4
 

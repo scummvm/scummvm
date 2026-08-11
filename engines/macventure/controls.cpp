@@ -62,7 +62,7 @@ void CommandButton::draw(Graphics::ManagedSurface &surface) const {
 	}
 }
 
-bool CommandButton::isInsideBounds(const Common::Point point) const {
+bool CommandButton::isInsideBounds(const Common::Point &point) const {
 	return _data.bounds.contains(point);
 }
 

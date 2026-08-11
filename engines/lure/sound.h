@@ -83,8 +83,8 @@ public:
 	// MidiDriver_BASE interface implementation
 	void send(uint32 b) override;
 	void send(int8 source, uint32 b) override;
-	void metaEvent(byte type, byte *data, uint16 length) override;
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(byte type, const byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 
 	void onTimer();
 
@@ -176,7 +176,7 @@ public:
 	void channelAftertouch(uint8 channel, uint8 pressure, uint8 source) override;
 	// The MIDI data uses three custom sequencer meta events; the most important
 	// one sets the instrument definition for a channel.
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 
 protected:
 	InstrumentInfo determineInstrument(uint8 channel, uint8 source, uint8 note)	override;
@@ -184,7 +184,7 @@ protected:
 	// Returns the number of semitones in bits 8+ and an 8 bit fraction of a
 	// semitone.
 	int32 calculatePitchBend(uint8 channel, uint8 source, uint16 oplFrequency) override;
-	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
+	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
 
 	// Stores the instrument definitions set by sequencer meta events.
 	OplInstrumentDefinition _instrumentDefs[LURE_MAX_SOURCES][MIDI_CHANNEL_COUNT];

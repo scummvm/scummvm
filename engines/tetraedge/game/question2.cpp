@@ -74,7 +74,10 @@ void Question2::load() {
 	setSizeType(RELATIVE_TO_PARENT);
 	const TeVector3f32 usersz = userSize();
 	setSize(TeVector3f32(1.0, 1.0, usersz.z()));
-	_gui.load("menus/answer.lua");
+	if (!g_engine->gameIsAmerzone())
+		_gui.load("menus/answer.lua");
+	else
+		_gui.load("GUI/answer.lua");
 
 	TeButtonLayout *backgroundButton = _gui.buttonLayout("background");
 	if (backgroundButton) {
@@ -105,7 +108,7 @@ void Question2::pushAnswer(const Common::String &name, const Common::String &loc
 	float xpos;
 	blayout->setSizeType(RELATIVE_TO_PARENT);
 	blayout->setPositionType(RELATIVE_TO_PARENT);
-	if (!path.baseName().contains("Cal_FIN.lua")) {
+	if (!path.baseName().contains("Cal_FIN.lua") && !path.baseName().contains("Cal_FIN.data")) {
 		blayout->setSize(TeVector3f32(0.45f, 0.065f, 1.0f));
 		xpos = 0.3f;
 	} else {

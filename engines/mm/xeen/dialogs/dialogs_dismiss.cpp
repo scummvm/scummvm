@@ -43,6 +43,7 @@ void Dismiss::execute() {
 	Window &w = windows[31];
 	w.open();
 
+	bool ttsVoiceText = true;
 	bool breakFlag = false;
 	while (!_vm->shouldExit() && !breakFlag) {
 		do {
@@ -51,9 +52,10 @@ void Dismiss::execute() {
 
 			w.frame();
 			w.fill();
-			w.writeString(Res.DISMISS_WHOM);
+			w.writeString(Res.DISMISS_WHOM, ttsVoiceText);
 			_iconSprites.draw(w, 0, Common::Point(225, 120));
 			w.update();
+			ttsVoiceText = false;
 
 			do {
 				events.pollEventsAndWait();

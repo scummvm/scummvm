@@ -146,15 +146,14 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		}
 
 		const MainActor *av = getMainActor();
-		Std::string name;
+		Common::String name;
 		if (av)
 			name = av->getName();
 
 		if (!name.empty()) {
-			Rect rect;
 			Gump *widget = new TextWidget(0, 0, name, true, 6);
 			widget->InitGump(this, false);
-			widget->GetDims(rect);
+			Common::Rect32 rect = widget->getDims();
 			widget->Move(90 - rect.width() / 2, _dims.height() - 40);
 		}
 	} else {
@@ -163,8 +162,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		widget->InitGump(this, false);
 		widget->Move(_dims.width() / 2 + 6, 10);
 
-		Rect textdims;
-		widget->GetDims(textdims);
+		Common::Rect32 textdims = widget->getDims();
 
 		widget = new EditWidget(0, 0, "", true, 6, 110, 40, 15); // CONSTANTS!
 		widget->InitGump(this, true);
@@ -207,7 +205,7 @@ bool MenuGump::OnKeyDown(int key, int mod) {
 void MenuGump::ChildNotify(Gump *child, uint32 message) {
 	EditWidget *editwidget = dynamic_cast<EditWidget *>(child);
 	if (editwidget && message == EditWidget::EDIT_ENTER) {
-		Std::string name = editwidget->getText();
+		Common::String name = editwidget->getText();
 		if (!name.empty()) {
 			MainActor *av = getMainActor();
 			av->setName(name);

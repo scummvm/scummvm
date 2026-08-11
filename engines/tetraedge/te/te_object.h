@@ -22,7 +22,7 @@
 #ifndef TETRAEDGE_TE_TE_OBJECT_H
 #define TETRAEDGE_TE_TE_OBJECT_H
 
-#include <common/array.h>
+#include "common/array.h"
 
 namespace Tetraedge {
 

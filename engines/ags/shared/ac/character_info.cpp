@@ -30,7 +30,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_ver) {
+void CharacterInfo::ReadBaseFields(Stream *in) {
 	defview = in->ReadInt32();
 	talkview = in->ReadInt32();
 	view = in->ReadInt32();
@@ -74,17 +74,9 @@ void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_
 	in->ReadArrayOfInt16(inv, MAX_INV);
 	actx = in->ReadInt16();
 	acty = in->ReadInt16();
-	StrUtil::ReadCStrCount(name, in, MAX_CHAR_NAME_LEN);
-	StrUtil::ReadCStrCount(scrname, in, MAX_SCRIPT_NAME_LEN);
-	on = in->ReadInt8();
-
-	if ((data_ver > kGameVersion_Undefined && data_ver < kGameVersion_360_16) ||
-		((data_ver == kGameVersion_Undefined) && save_ver >= 0 && save_ver < 2)) {
-		idle_anim_speed = animspeed + 5;
-	}
 }
 
-void CharacterInfo::WriteToFile(Stream *out) {
+void CharacterInfo::WriteBaseFields(Stream *out) const {
 	out->WriteInt32(defview);
 	out->WriteInt32(talkview);
 	out->WriteInt32(view);
@@ -128,8 +120,55 @@ void CharacterInfo::WriteToFile(Stream *out) {
 	out->WriteArrayOfInt16(inv, MAX_INV);
 	out->WriteInt16(actx);
 	out->WriteInt16(acty);
-	out->Write(name, 40);
-	out->Write(scrname, MAX_SCRIPT_NAME_LEN);
+}
+
+void CharacterInfo::ReadFromFile(Stream *in, CharacterInfo2 &chinfo2, GameDataVersion data_ver) {
+	ReadBaseFields(in);
+	StrUtil::ReadCStrCount(name, in, LEGACY_MAX_CHAR_NAME_LEN);
+	StrUtil::ReadCStrCount(scrname, in, LEGACY_MAX_SCRIPT_NAME_LEN);
+	on = in->ReadInt8();
+	in->ReadInt8(); // alignment padding to int32
+
+	// Upgrade data
+	if (data_ver < kGameVersion_360_16) {
+		idle_anim_speed = animspeed + 5;
+	}
+	// Assign unrestricted names from legacy fields
+	chinfo2.name_new = name;
+	chinfo2.scrname_new = scrname;
+}
+
+void CharacterInfo::WriteToFile(Stream *out) const {
+	WriteBaseFields(out);
+	out->Write(name, LEGACY_MAX_CHAR_NAME_LEN);
+	out->Write(scrname, LEGACY_MAX_SCRIPT_NAME_LEN);
+	out->WriteInt8(on);
+	out->WriteInt8(0); // alignment padding to int32
+}
+
+void CharacterInfo::ReadFromSavegame(Stream *in, CharacterInfo2 &chinfo2, CharacterSvgVersion save_ver) {
+	ReadBaseFields(in);
+	if (save_ver < kCharSvgVersion_36115) { // Fixed-size name and scriptname
+		chinfo2.name_new.ReadCount(in, LEGACY_MAX_CHAR_NAME_LEN);
+		in->Seek(LEGACY_MAX_SCRIPT_NAME_LEN); // skip legacy scriptname
+											  // (don't overwrite static data from save!)
+	} else {
+		chinfo2.name_new = StrUtil::ReadString(in);
+	}
+	on = in->ReadInt8();
+
+	//
+	// Upgrade restored data
+	if (save_ver < kCharSvgVersion_36025) {
+		idle_anim_speed = animspeed + 5;
+	}
+	// Fill legacy name fields, for compatibility with old scripts and plugins
+	snprintf(name, LEGACY_MAX_CHAR_NAME_LEN, "%s", chinfo2.name_new.GetCStr());
+}
+
+void CharacterInfo::WriteToSavegame(Stream *out, const CharacterInfo2 &chinfo2) const {
+	WriteBaseFields(out);
+	StrUtil::WriteString(chinfo2.name_new, out); // kCharSvgVersion_36115
 	out->WriteInt8(on);
 }
 

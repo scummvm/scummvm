@@ -28,10 +28,15 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
+#include "common/translation.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "engines/util.h"
+
+#if defined(USE_TINYGL)
+#include "graphics/tinygl/tinygl.h"
+#endif
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
@@ -52,6 +57,8 @@
 #include "tinsel/object.h"
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
+#include "tinsel/psx_archive.h"
+#include "tinsel/psx_japan_font.h"
 #include "tinsel/savescn.h"
 #include "tinsel/scn.h"
 #include "tinsel/sound.h"
@@ -61,6 +68,7 @@
 #include "tinsel/tinsel.h"
 #include "tinsel/noir/notebook.h"
 #include "tinsel/noir/sysreel.h"
+#include "tinsel/noir/spriter.h"
 
 namespace Tinsel {
 
@@ -170,50 +178,76 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 					ProcessButEvent(PLR_DRAG2_END);
 			}
 			continue;
-
-		case Common::KEYCODE_LCTRL:
-		case Common::KEYCODE_RCTRL:
-			if (evt.type == Common::EVENT_KEYDOWN) {
-				ProcessKeyEvent(PLR_LOOK);
-			} else {
-				// Control key release
-			}
-			continue;
-
 		default:
 			break;
 		}
 
 		// At this point only key down events need processing
-		if (evt.type == Common::EVENT_KEYUP)
+		if (evt.type == Common::EVENT_KEYUP || evt.customType == Common::EVENT_CUSTOM_ENGINE_ACTION_END)
 			continue;
 
 		if (_vm->_keyHandler != NULL)
 			// Keyboard is hooked, so pass it on to that handler first
-			if (!_vm->_keyHandler(evt.kbd))
+			if (!_vm->_keyHandler(evt.kbd, evt.customType))
 				continue;
 
-		switch (evt.kbd.keycode) {
+		switch (evt.customType) {
 		/*** SPACE = WALKTO ***/
-		case Common::KEYCODE_SPACE:
+		case kActionWalkTo:
 			ProcessKeyEvent(PLR_WALKTO);
 			continue;
 
 		/*** RETURN = ACTION ***/
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
+		case kActionAction:
 			ProcessKeyEvent(PLR_ACTION);
 			continue;
 
 		/*** l = LOOK ***/
-		case Common::KEYCODE_l:		// LOOK
+		case kActionLook:		// LOOK
 			ProcessKeyEvent(PLR_LOOK);
 			continue;
 
-		case Common::KEYCODE_ESCAPE:
+		case kActionEscape:
 			ProcessKeyEvent(PLR_ESCAPE);
 			continue;
+		case kActionOptionsDialog:
+			// Options dialog
+			ProcessKeyEvent(PLR_MENU);
+			continue;
+		case kActionInventory:
+			ProcessKeyEvent(PLR_INVENTORY);
+			continue;
+		case kActionNotebook:
+			ProcessKeyEvent(PLR_NOTEBOOK);
+			continue;
+		case kActionSave:
+			// Save game
+			ProcessKeyEvent(PLR_SAVE);
+			continue;
+		case kActionLoad:
+			// Load game
+			ProcessKeyEvent(PLR_LOAD);
+			continue;
+		case kActionQuit:
+			ProcessKeyEvent(PLR_QUIT);
+			continue;
+		case kActionPageUp:
+			ProcessKeyEvent(PLR_PGUP);
+			continue;
+		case kActionPageDown:
+			ProcessKeyEvent(PLR_PGDN);
+			continue;
+		case kActionHome:
+			ProcessKeyEvent(PLR_HOME);
+			continue;
+		case kActionEnd:
+			ProcessKeyEvent(PLR_END);
+			continue;
+		default:
+			break;
+		}
 
+		switch (evt.kbd.keycode) {
 #ifdef SLOW_RINCE_DOWN
 		case '>':
 			AddInterlude(1);
@@ -222,55 +256,13 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			AddInterlude(-1);
 			continue;
 #endif
-
-		case Common::KEYCODE_1:
-		case Common::KEYCODE_F1:
-			// Options dialog
-			ProcessKeyEvent(PLR_MENU);
-			continue;
-		case Common::KEYCODE_F2:
-			ProcessKeyEvent(PLR_INVENTORY);
-			continue;
-		case Common::KEYCODE_F3:
-			ProcessKeyEvent(PLR_NOTEBOOK);
-			continue;
-		case Common::KEYCODE_5:
-		case Common::KEYCODE_F5:
-			// Save game
-			ProcessKeyEvent(PLR_SAVE);
-			continue;
-		case Common::KEYCODE_7:
-		case Common::KEYCODE_F7:
-			// Load game
-			ProcessKeyEvent(PLR_LOAD);
-			continue;
 		case Common::KEYCODE_m:
 			// Debug facility - scene hopper
 			if (TinselVersion >= 2) {
-			 if (evt.kbd.hasFlags(Common::KBD_ALT))
-				ProcessKeyEvent(PLR_JUMP);
+				if (evt.kbd.hasFlags(Common::KBD_ALT))
+					ProcessKeyEvent(PLR_JUMP);
 			}
 			break;
-		case Common::KEYCODE_q:
-			if ((evt.kbd.hasFlags(Common::KBD_CTRL)) || (evt.kbd.hasFlags(Common::KBD_ALT)))
-				ProcessKeyEvent(PLR_QUIT);
-			continue;
-		case Common::KEYCODE_PAGEUP:
-		case Common::KEYCODE_KP9:
-			ProcessKeyEvent(PLR_PGUP);
-			continue;
-		case Common::KEYCODE_PAGEDOWN:
-		case Common::KEYCODE_KP3:
-			ProcessKeyEvent(PLR_PGDN);
-			continue;
-		case Common::KEYCODE_HOME:
-		case Common::KEYCODE_KP7:
-			ProcessKeyEvent(PLR_HOME);
-			continue;
-		case Common::KEYCODE_END:
-		case Common::KEYCODE_KP1:
-			ProcessKeyEvent(PLR_END);
-			continue;
 		default:
 			ProcessKeyEvent(PLR_NOEVENT);
 			break;
@@ -535,6 +527,13 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 		g_NextScene.trans = g_HookScene.trans;
 
 		g_HookScene.scene = 0;
+	}
+
+	// Skip DW1 introduction if Escape was pressed by switching to title screen
+	if (WasDw1IntroSkipped()) {
+		g_NextScene.scene = _vm->_handle->GetDw1TitleSceneHandle();
+		g_NextScene.entry = 1;
+		g_NextScene.trans = TRANS_DEF;
 	}
 
 	// Workaround for "Missing Red Dragon in square" bug in Discworld 1 PSX, act IV.
@@ -914,7 +913,8 @@ const char *const TinselEngine::_sceneFiles[] = {
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
-		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
+		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0),
+		_memoryManagerInitialized(false) {
 	_vm = this;
 
 	_gameId = 0;
@@ -942,6 +942,9 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 TinselEngine::~TinselEngine() {
 	_system->getAudioCDManager()->stop();
+	delete _spriter;
+	delete _systemReel;
+	delete _notebook;
 	delete _cursor;
 	delete _bg;
 	delete _font;
@@ -963,7 +966,9 @@ TinselEngine::~TinselEngine() {
 	delete _actor;
 	delete _config;
 
-	MemoryDeinit();
+	if (_memoryManagerInitialized) {
+		MemoryDeinit();
+	}
 
 	// Reset global vars
 	ResetVarsDrives();	// drives.cpp
@@ -987,6 +992,10 @@ TinselEngine::~TinselEngine() {
 	RebootTimers();       // timers.cpp
 	ResetVarsTinlib();	// tinlib.cpp
 	ResetVarsTinsel();	// tinsel.cpp
+
+	ClosePsxJapanFont();
+
+	CoroScheduler.destroy();
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
@@ -997,6 +1006,9 @@ void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 	if (TinselV1PSX) {
 		// Add subfolders needed for PSX versions of Discworld 1
 		SearchMan.addDirectory(gamePath, 0, 3, true);
+
+		// Add PSX archive if it exists (German, Japanese)
+		addPsxArchive("discwld.lfi", "discwld.lfd");
 	} else {
 		// Add DW2 subfolder to search path in case user is running directly from the CDs
 		SearchMan.addSubDirectoryMatching(gamePath, "dw2");
@@ -1037,7 +1049,17 @@ Common::Error TinselEngine::run() {
 
 		initGraphics(width, height, &noirFormat);
 
-		_screenSurface.create(width, 432, noirFormat);
+#if defined(USE_TINYGL)
+		// TODO: Find minimal viable drawcall memory
+		constexpr uint32 drawCallMemory = 1024 * 1024;
+		TinyGL::createContext(width, 432, noirFormat, 256, false, false, drawCallMemory);
+		TinyGL::getSurfaceRef(_screenSurface);
+
+		_spriter = new Spriter();
+		_spriter->Init(width, 432);
+#else
+		return Common::Error(Common::kUnsupportedGameidError, _s("Discworld Noir needs ScummVM with TinyGL enabled"));
+#endif
 	} else if (getGameID() == GID_DW2) {
 		if (ConfMan.getBool("crop_black_bars"))
 			initGraphics(640, 432);
@@ -1057,6 +1079,7 @@ Common::Error TinselEngine::run() {
 
 	// init memory manager
 	MemoryInit();
+	_memoryManagerInitialized = true;
 
 	// load user configuration
 	_vm->_config->readFromDisk();
@@ -1087,6 +1110,11 @@ Common::Error TinselEngine::run() {
 
 	// Actors, globals and inventory icons
 	LoadBasicChunks();
+
+	// External font
+	if (TinselV1PSXJapan) {
+		OpenPsxJapanFont();
+	}
 
 	// Continuous game processes
 	CreateConstProcesses();
@@ -1151,7 +1179,6 @@ Common::Error TinselEngine::run() {
 	_vm->_config->writeToDisk();
 
 	EndScene();
-	_bg->ResetBackground();
 
 	return Common::kNoError;
 }
@@ -1213,9 +1240,9 @@ bool TinselEngine::pollEvent() {
 
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		ProcessKeyEvent(event);
 		break;
-
 	default:
 		break;
 	}
@@ -1324,28 +1351,24 @@ void TinselEngine::ChopDrivers() {
 void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
 	// Check for movement keys
 	int idx = 0;
-	switch (event.kbd.keycode) {
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
+	switch (event.customType) {
+	case kActionMoveUp:
 		idx = MSK_UP;
 		break;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
+	case kActionMoveDown:
 		idx = MSK_DOWN;
 		break;
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
+	case kActionMoveLeft:
 		idx = MSK_LEFT;
 		break;
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
+	case kActionMoveRight:
 		idx = MSK_RIGHT;
 		break;
 	default:
 		break;
 	}
 	if (idx != 0) {
-		if (event.type == Common::EVENT_KEYDOWN)
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)
 			_dosPlayerDir |= idx;
 		else
 			_dosPlayerDir &= ~idx;
@@ -1429,6 +1452,15 @@ const char *TinselEngine::getSceneFile(LANGUAGE lang) {
 		lang = TXT_ENGLISH; // fallback to ENGLISH.SCN if <LANG>.IDX is not found
 
 	return _sceneFiles[lang];
+}
+
+void TinselEngine::addPsxArchive(const char *indexFileName, const char *dataFileName) {
+	PsxArchive *psxArchive = new PsxArchive();
+	if (psxArchive->open(indexFileName, dataFileName, TinselVersion)) {
+		SearchMan.add(dataFileName, psxArchive);
+	} else {
+		delete psxArchive;
+	}
 }
 
 } // End of namespace Tinsel

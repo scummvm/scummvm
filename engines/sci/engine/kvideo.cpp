@@ -19,12 +19,12 @@
  *
  */
 
-#include "engines/util.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/drivers/gfxdriver.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/screen.h"
 #include "sci/util.h"
 #include "common/events.h"
@@ -87,9 +87,9 @@ void playVideo(Video::VideoDecoder &videoDecoder) {
 					const SciSpan<const byte> input((const byte *)frame->getPixels(), frame->w * frame->h * bytesPerPixel);
 					// TODO: Probably should do aspect ratio correction in KQ6
 					g_sci->_gfxScreen->scale2x(input, *scaleBuffer, videoDecoder.getWidth(), videoDecoder.getHeight(), bytesPerPixel);
-					g_sci->_gfxScreen->copyVideoFrameToScreen(scaleBuffer->getUnsafeDataAt(0, pitch * height), pitch, rect, bytesPerPixel == 1);
+					g_sci->_gfxScreen->copyVideoFrameToScreen(scaleBuffer->getUnsafeDataAt(0, pitch * height), pitch, rect);
 				} else {
-					g_sci->_gfxScreen->copyVideoFrameToScreen((const byte *)frame->getPixels(), frame->pitch, rect, bytesPerPixel == 1);
+					g_sci->_gfxScreen->copyVideoFrameToScreen((const byte *)frame->getPixels(), frame->pitch, rect);
 				}
 
 				if (videoDecoder.hasDirtyPalette()) {
@@ -112,7 +112,6 @@ void playVideo(Video::VideoDecoder &videoDecoder) {
 		g_system->delayMillis(10);
 	}
 }
-
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	reg_t retval = s->r_acc;
 
@@ -122,42 +121,44 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	if (reshowCursor)
 		g_sci->_gfxCursor->kernelHide();
 
-	uint16 screenWidth = g_system->getWidth();
-	uint16 screenHeight = g_system->getHeight();
-
 	Common::ScopedPtr<Video::VideoDecoder> videoDecoder;
 
 	bool switchedGraphicsMode = false;
+	bool syncLastFrame = true;
 
 	if (argv[0].isPointer()) {
 		Common::Path filename(s->_segMan->getString(argv[0]));
 
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-			// Mac QuickTime
-			// The only argument is the string for the video
-
-			// Switch to 16bpp graphics for Cinepak
-			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				const Common::List<Graphics::PixelFormat> supportedFormats = g_system->getSupportedFormats();
-				Common::List<Graphics::PixelFormat>::const_iterator it;
-				for (it = supportedFormats.begin(); it != supportedFormats.end(); ++it) {
-					if (it->bytesPerPixel == 2) {
-						const Graphics::PixelFormat format = *it;
-						initGraphics(screenWidth, screenHeight, &format);
-						switchedGraphicsMode = true;
-						break;
-					}
-				}
-			}
-
-			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
+			// Mac QuickTime: the only argument is the string for the video
+			videoDecoder.reset(new Video::QuickTimeDecoder());
+			if (!videoDecoder->loadFile(filename)) {
+				warning("Could not open '%s'", filename.toString().c_str());
 				return NULL_REG;
 			}
 
-			videoDecoder.reset(new Video::QuickTimeDecoder());
-			if (!videoDecoder->loadFile(filename))
-				error("Could not open '%s'", filename.toString().c_str());
+			// Try and select an optimal pixel format
+			videoDecoder->setOutputPixelFormats(g_system->getSupportedFormats());
+			Graphics::PixelFormat format = videoDecoder->getPixelFormat();
+
+			// Init the screen again with an RGB source format.
+			// This is needed so that the GFX driver is aware that we'll be
+			// sending RGB instead of paletted graphics.
+			if (!format.isCLUT8() && !g_sci->_gfxScreen->gfxDriver()->initScreen(&format)) {
+				// We got an indexed screen format, so dither the QuickTime video.
+				// TODO: Allow dithering to be configured separately
+				uint8 palette[256 * 3];
+				g_sci->_gfxScreen->grabPalette(palette, 0, 256);
+				videoDecoder->setDitheringPalette(palette);
+			}
+
+			// Switch back to the normal screen format, once the QT video is done playing.
+			// This ensures that the source graphics are in paletted format, but the screen
+			// can be either in paletted or RGB format, if the user has checked the RGB
+			// mode checkbox.
+			switchedGraphicsMode = true;
+			// Never sync the last frame for QT movies
+			syncLastFrame = false;
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
@@ -172,17 +173,31 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	} else {
 		// Windows AVI: Only used by KQ6 CD for the Sierra logo and intro cartoon.
 		// The first parameter is a subop. Some of the subops set the accumulator.
-		// The interpreter implements subops 0-6. KQ6 only calls 0, 1, 2, 3, 6.
-		// Subop 0 plays the AVI; it is the only one that needs to be implemented.
-
+		// The interpreter implements subops 0-6. KQ6 only calls 0, 1, 2, 6.
+		// Subop 0: Open movie file
+		// Subop 1: Setup movie playback rectangle
+		// Subop 2: Play movie
+		// Subop 6: Close movie file
+		// We just play it on opcode 0, since the config parameters that are passed
+		// to opcodes 1 and 2 aren't properly used anyway (the video will be centered,
+		// regardless of any x, y, width and height settings).
+		// Using any other opcode than 0 would also require unblocking the engine
+		// after the movie playback like this (with <pauseToken> being the second
+		// argument passed to opcode 2):
+		// invokeSelector(s, <pauseToken>, g_sci->getKernel()->findSelector("cue"), argc, argv);
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
+			// For KQ6, this changes the vertical 200/440 upscaling to 200/400, since this is the expected behavior. Also,
+			// the calculation of the scaled x/y coordinates works slightly differently compared to the normal gfx rendering.
+			g_sci->_gfxScreen->gfxDriver()->setFlags(GfxDriver::kMovieMode);
 			videoDecoder.reset(new Video::AVIDecoder());
+			videoDecoder->setSoundType(Audio::Mixer::kSFXSoundType);
 			if (!videoDecoder->loadFile(filename.c_str())) {
 				warning("Failed to open movie file %s", filename.c_str());
 				videoDecoder.reset();
 			}
+			syncLastFrame = false;
 			retval = TRUE_REG;
 			break;
 		}
@@ -192,18 +207,21 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
-		bool is8bit = videoDecoder->getPixelFormat().bytesPerPixel == 1;
+		if (videoDecoder->getPixelFormat().bytesPerPixel > 1)
+			syncLastFrame = false;
 
 		playVideo(*videoDecoder);
 
-		// HACK: Switch back to 8bpp if we played a true color video.
-		// We also won't be copying the screen to the SCI screen...
+		// Switch back to 8bpp if we played a true color video.
+		// We also won't be copying the screen to the SCI screen.
 		if (switchedGraphicsMode)
-			initGraphics(screenWidth, screenHeight);
-		else if (is8bit) {
+			g_sci->_gfxScreen->gfxDriver()->initScreen();
+		else if (syncLastFrame) {
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 			g_sci->_gfxPalette16->kernelSyncScreenPalette();
 		}
+
+		g_sci->_gfxScreen->gfxDriver()->clearFlags(GfxDriver::kMovieMode);
 	}
 
 	if (reshowCursor)

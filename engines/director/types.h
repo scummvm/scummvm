@@ -36,6 +36,7 @@ enum {
 };
 
 #define kQuirksCacheArchive "quirks"
+#define kSavedFilesArchive "saved"
 
 enum MovieFlag {
 	kMovieFlagRemapPalettesWhenNeeded =  (1 << 6),
@@ -56,8 +57,10 @@ enum CastType {
 	kCastMovie = 9,
 	kCastDigitalVideo = 10,
 	kCastLingoScript = 11,
-	kCastRTE = 12,
-	kCastTransition = 14,
+	kCastRichText = 12,
+	kCastOLE = 13,
+	kCastTransition = 14,		// D5
+	kCastXtra = 15,
 };
 
 enum ScriptType {
@@ -135,15 +138,6 @@ enum TextFlag {
 	kTextFlagDoNotWrap	= (1 << 2)
 };
 
-enum SizeType {
-	kSizeNone,
-	kSizeSmallest,
-	kSizeSmall,
-	kSizeMedium,
-	kSizeLarge,
-	kSizeLargest
-};
-
 enum ButtonType {
 	kTypeButton,
 	kTypeCheckBox,
@@ -201,17 +195,18 @@ enum InkType {
 	kInkTypeDark
 };
 
+// ID matches up to the fake cast member ID used by EventScript
 enum LEvent {
-	kEventPrepareMovie,
+	kEventPrepareMovie = 0, // 0
 	kEventStartMovie,
 	kEventStepMovie,
 	kEventStopMovie,
 
-	kEventNew,
+	kEventNew, // 4
 	kEventBeginSprite,
 	kEventEndSprite,
 
-	kEventNone,
+	kEventNone, // 7
 	kEventGeneric,
 	kEventEnterFrame,
 	kEventPrepareFrame,
@@ -220,14 +215,15 @@ enum LEvent {
 	kEventExitFrame,
 	kEventTimeout,
 
-	kEventActivateWindow,
+	kEventActivateWindow, // 15
 	kEventDeactivateWindow,
 	kEventMoveWindow,
 	kEventResizeWindow,
 	kEventOpenWindow,
 	kEventCloseWindow,
+	kEventZoomWindow,
 
-	kEventKeyUp,
+	kEventKeyUp, // 22
 	kEventKeyDown,
 	kEventMouseUp,
 	kEventMouseDown,
@@ -238,9 +234,15 @@ enum LEvent {
 	kEventMouseUpOutSide,
 	kEventMouseWithin,
 
-	kEventStartUp,
+	kEventStartUp, // 32
 
-	kEventMenuCallback
+	kEventMenuCallback, // 33
+
+	kEventGetBehaviorDescription,
+	kEventGetPropertyDescriptionList,
+	kEventRunPropertyDialog,
+
+	kEventCuePassed,
 };
 
 enum TransitionType {
@@ -313,6 +315,8 @@ enum PaletteType {
 	kClutVivid = -5,
 	kClutNTSC = -6,
 	kClutMetallic = -7,
+	kClutWeb216 = -8,		// D7
+	kClutVGA = -9,			// D7
 	kClutSystemWin = -101,
 	kClutSystemWinD5 = -102
 };
@@ -355,6 +359,10 @@ enum ChunkType {
 };
 
 enum FileVer {
+	kFileVer010 = 0x100,
+	kFileVer020 = 0x200,
+	kFileVer100 = 0x3ff,
+	kFileVer200 = 0x400,
 	kFileVer300 = 0x404,
 	kFileVer310 = 0x405,
 	kFileVer400 = 0x45B,
@@ -375,12 +383,14 @@ enum DatumType {
 	ARGCNORET,
 	ARRAY,
 	CASTREF,
+	CASTLIBREF,
 	CHUNKREF,
 	FIELDREF,
 	FLOAT,
 	GLOBALREF,
 	INT,
 	LOCALREF,
+	MEDIA,
 	MENUREF,
 	OBJECT,
 	PARRAY,
@@ -388,6 +398,7 @@ enum DatumType {
 	POINT,
 	PROPREF,
 	RECT,
+	SPRITEREF,
 	STRING,
 	SYMBOL,
 	VARREF,
@@ -430,13 +441,27 @@ struct CastMemberID {
 	Common::String asString() const;
 
 	uint hash() const { return ((castLib & 0xffff) << 16) + (member & 0xffff); }
+
+	CastMemberID fromMultiplex(int multiplexID) {
+		if (multiplexID < 0)
+			return CastMemberID(multiplexID, -1);
+		return CastMemberID(multiplexID % 0x20000, 1 + (multiplexID >> 17));
+	}
+
+	int toMultiplex() {
+		if (castLib < 0)
+			return member;
+		return (member % 0x20000) + ((castLib - 1) << 17);
+	}
 };
 
 enum CompareResult {
-	kCompareLess	= 1 << 0,
-	kCompareEqual	= 1 << 1,
-	kCompareGreater = 1 << 2,
-	kCompareError	= 1 << 3,
+	kCompareLess	        = 1 << 0,
+	kCompareEqual           = 1 << 1,
+	kCompareGreater         = 1 << 2,
+	kCompareLessEqual       = 1 << 3,
+	kCompareGreaterEqual    = 1 << 4,
+	kCompareError			= 1 << 5,
 };
 
 enum DebugDrawModes {
@@ -453,6 +478,20 @@ const char *scriptType2str(ScriptType scr);
 const char *castType2str(CastType type);
 const char *spriteType2str(SpriteType type);
 const char *inkType2str(InkType type);
+const char *symbolType2str(SymbolType type);
+const char *leventType2str(LEvent type);
+const char *eventHandlerSourceType2str(EventHandlerSourceType type);
+Common::String objectType2str(int fl);
+Common::String paletteType2str(PaletteType value);
+Common::String textAlignType2str(TextAlignType value);
+Common::String shapeType2str(ShapeType value);
+Common::String textType2str(TextType value);
+
+enum CollisionTest {
+	kCollisionNo = 0,
+	kCollisionYes,
+	kCollisionHole,
+};
 
 } // End of namespace Director
 
@@ -464,6 +503,14 @@ struct Hash<Director::CastMemberID> {
 		return id.hash();
 	}
 };
+
+template<>
+struct Hash<Director::LEvent> {
+	uint operator()(const Director::LEvent &event) const {
+		return event;
+	}
+};
+
 
 } // End of namespace Common
 

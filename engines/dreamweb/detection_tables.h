@@ -44,7 +44,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			GF_INSTALLER,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -62,7 +62,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			0,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -76,7 +76,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -91,13 +91,13 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			{
 				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
 				{"dreamweb.r02", 0, "28458718167a040d7e988cf7d2298eae", 210466},
-				{"dreamweb.exe", 0, "dd1c7793b151489e67b83cd1ecab51cd", -1},
+				{"dreamweb.exe", 0, "dd1c7793b151489e67b83cd1ecab51cd", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_GRB,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -111,7 +111,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -125,7 +125,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -140,7 +140,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -154,7 +154,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			0,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -168,7 +168,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -182,7 +182,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			0,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -196,7 +196,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -211,7 +211,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -225,7 +225,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			0,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -243,7 +243,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -262,7 +262,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::CS_CZE,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 
@@ -280,7 +280,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_COPY_PROTECTION)
 		},
 	},
 

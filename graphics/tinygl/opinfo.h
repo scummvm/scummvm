@@ -48,6 +48,7 @@ ADD_OP(Translate, 3, "%f %f %f")
 ADD_OP(Scale, 3, "%f %f %f")
 ADD_OP(Ortho, 6, "%f %f %f %f %f %f")
 
+ADD_OP(Scissor, 4, "%d %d %d %d")
 ADD_OP(Viewport, 4, "%d %d %d %d")
 ADD_OP(Frustum, 6, "%f %f %f %f %f %f")
 
@@ -85,6 +86,7 @@ ADD_OP(StencilFunc, 3, "%C %d %d")
 ADD_OP(StencilOp, 3, "%C %C %C")
 
 ADD_OP(PolygonStipple, 128, "%d")
+ADD_OP(StippleColor, 3, "%f %f %f")
 
 ADD_OP(Fog, 5, "%d %f %f %f %f")
 

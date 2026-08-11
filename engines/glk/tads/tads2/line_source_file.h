@@ -125,7 +125,7 @@ void linfseek(lindef *lin, uchar *pos);
 /* read */
 int linfread(lindef *lin, uchar *buf, uint siz);
 
-/* add a signed delta to a seek positon */
+/* add a signed delta to a seek position */
 void linfpadd(lindef *lin, uchar *pos, long delta);
 
 /* query whether at top of file */

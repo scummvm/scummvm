@@ -39,11 +39,15 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_access_mgr.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/util.h"
 #include "common/keyboard.h"
 
@@ -82,20 +86,19 @@ UIEdit::UIEdit(BaseGame *inGame) : UIObject(inGame) {
 UIEdit::~UIEdit() {
 	if (!_sharedFonts) {
 		if (_fontSelected) {
-			_gameRef->_fontStorage->removeFont(_fontSelected);
+			_game->_fontStorage->removeFont(_fontSelected);
 		}
 	}
 
-	delete[] _cursorChar;
-	_cursorChar = nullptr;
+	SAFE_DELETE_ARRAY(_cursorChar);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UIEdit::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIEdit::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -104,7 +107,7 @@ bool UIEdit::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing EDIT file '%s'", filename);
+		_game->LOG(0, "Error parsing EDIT file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -166,11 +169,11 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd = 2;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_EDIT) {
-			_gameRef->LOG(0, "'EDIT' keyword expected.");
+			_game->LOG(0, "'EDIT' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -189,30 +192,28 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete _back;
-			_back = new UITiledImage(_gameRef);
+			SAFE_DELETE(_back);
+			_back = new UITiledImage(_game);
 			if (!_back || DID_FAIL(_back->loadFile(params))) {
-				delete _back;
-				_back = nullptr;
+				SAFE_DELETE(_back);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete _image;
-			_image = new BaseSprite(_gameRef);
+			SAFE_DELETE(_image);
+			_image = new BaseSprite(_game);
 			if (!_image || DID_FAIL(_image->loadFile(params))) {
-				delete _image;
-				_image = nullptr;
+				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_FONT:
 			if (_font) {
-				_gameRef->_fontStorage->removeFont(_font);
+				_game->_fontStorage->removeFont(_font);
 			}
-			_font = _gameRef->_fontStorage->addFont(params);
+			_font = _game->_fontStorage->addFont(params);
 			if (!_font) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -220,9 +221,9 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT_SELECTED:
 			if (_fontSelected) {
-				_gameRef->_fontStorage->removeFont(_fontSelected);
+				_game->_fontStorage->removeFont(_fontSelected);
 			}
-			_fontSelected = _gameRef->_fontStorage->addFont(params);
+			_fontSelected = _game->_fontStorage->addFont(params);
 			if (!_fontSelected) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -230,7 +231,7 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_TEXT:
 			setText(params);
-			_gameRef->expandStringByStringTable(&_text);
+			_game->_stringTable->expand(&_text);
 			break;
 
 		case TOKEN_X:
@@ -258,11 +259,10 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
-			_cursor = new BaseSprite(_gameRef);
+			SAFE_DELETE(_cursor);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -300,11 +300,11 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in EDIT definition");
+		_game->LOG(0, "Syntax error in EDIT definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading EDIT definition");
+		_game->LOG(0, "Error loading EDIT definition");
 		return STATUS_FAILED;
 	}
 
@@ -318,33 +318,33 @@ bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "EDIT\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->getFilename()) {
-		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->getFilename());
+	if (_back && _back->_filename && _back->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
 	}
 
-	if (_image && _image->getFilename()) {
-		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getFilename());
+	if (_image && _image->_filename && _image->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 	}
 
-	if (_font && _font->getFilename()) {
-		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	if (_font && _font->_filename && _font->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
-	if (_fontSelected && _fontSelected->getFilename()) {
-		buffer->putTextIndent(indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->getFilename());
+	if (_fontSelected && _fontSelected->_filename && _fontSelected->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->_filename);
 	}
 
-	if (_cursor && _cursor->getFilename()) {
-		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	if (_cursor && _cursor->_filename && _cursor->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_text) {
+	if (_text && _text[0]) {
 		buffer->putTextIndent(indent + 2, "TEXT=\"%s\"\n", _text);
 	}
 
@@ -363,7 +363,7 @@ bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "PARENT_NOTIFY=%s\n", _parentNotify ? "TRUE" : "FALSE");
 
 	// scripts
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -387,9 +387,9 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 
 		if (_fontSelected) {
-			_gameRef->_fontStorage->removeFont(_fontSelected);
+			_game->_fontStorage->removeFont(_fontSelected);
 		}
-		_fontSelected = _gameRef->_fontStorage->addFont(stack->pop()->getString());
+		_fontSelected = _game->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontSelected != nullptr);
 
 		return STATUS_OK;
@@ -400,13 +400,13 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIEdit::scGetProperty(const Common::String &name) {
+ScValue *UIEdit::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("editor");
 		return _scValue;
 	}
@@ -414,7 +414,7 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelStart
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SelStart") {
+	else if (strcmp(name, "SelStart") == 0) {
 		_scValue->setInt(_selStart);
 		return _scValue;
 	}
@@ -422,7 +422,7 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelEnd
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SelEnd") {
+	else if (strcmp(name, "SelEnd") == 0) {
 		_scValue->setInt(_selEnd);
 		return _scValue;
 	}
@@ -430,7 +430,7 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorBlinkRate
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "CursorBlinkRate") {
+	else if (strcmp(name, "CursorBlinkRate") == 0) {
 		_scValue->setInt(_cursorBlinkRate);
 		return _scValue;
 	}
@@ -438,7 +438,7 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorChar
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "CursorChar") {
+	else if (strcmp(name, "CursorChar") == 0) {
 		_scValue->setString(_cursorChar);
 		return _scValue;
 	}
@@ -446,7 +446,7 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// FrameWidth
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "FrameWidth") {
+	else if (strcmp(name, "FrameWidth") == 0) {
 		_scValue->setInt(_frameWidth);
 		return _scValue;
 	}
@@ -454,7 +454,7 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxLength
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MaxLength") {
+	else if (strcmp(name, "MaxLength") == 0) {
 		_scValue->setInt(_maxLength);
 		return _scValue;
 	}
@@ -462,8 +462,8 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Text") {
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+	else if (strcmp(name, "Text") == 0) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::ansiToWide(_text);
 			_scValue->setString(StringUtil::wideToUtf8(wstr).c_str());
 		} else {
@@ -484,7 +484,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	if (strcmp(name, "SelStart") == 0) {
 		_selStart = value->getInt();
 		_selStart = MAX<int32>(_selStart, 0);
-		_selStart = (int)MIN((size_t)_selStart, strlen(_text));
+		_selStart = MIN(_selStart, (int32)strlen(_text));
 		return STATUS_OK;
 	}
 
@@ -494,7 +494,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "SelEnd") == 0) {
 		_selEnd = value->getInt();
 		_selEnd = MAX<int32>(_selEnd, 0);
-		_selEnd = (int)MIN((size_t)_selEnd, strlen(_text));
+		_selEnd = MIN(_selEnd, (int32)strlen(_text));
 		return STATUS_OK;
 	}
 
@@ -534,7 +534,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::utf8ToWide(value->getString());
 			setText(StringUtil::wideToAnsi(wstr).c_str());
 		} else {
@@ -558,7 +558,7 @@ void UIEdit::setCursorChar(const char *character) {
 	if (!character) {
 		return;
 	}
-	delete[] _cursorChar;
+	SAFE_DELETE_ARRAY(_cursorChar);
 	size_t cursorCharSize = strlen(character) + 1;
 	_cursorChar = new char [cursorCharSize];
 	Common::strcpy_s(_cursorChar, cursorCharSize, character);
@@ -573,8 +573,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 
 
 	// hack!
-	TTextEncoding OrigEncoding = _gameRef->_textEncoding;
-	_gameRef->_textEncoding = TEXT_ANSI;
+	TTextEncoding OrigEncoding = _game->_textEncoding;
+	_game->_textEncoding = TEXT_ANSI;
 
 	if (_back) {
 		_back->display(offsetX + _posX, offsetY + _posY, _width, _height);
@@ -590,7 +590,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	if (_font) {
 		font = _font;
 	} else {
-		font = _gameRef->getSystemFont();
+		font = _game->_systemFont;
 	}
 
 	if (_fontSelected) {
@@ -604,10 +604,10 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	_selStart = MAX<int32>(_selStart, 0);
 	_selEnd   = MAX<int32>(_selEnd, 0);
 
-	_selStart = (int)MIN((size_t)_selStart, strlen(_text));
-	_selEnd   = (int)MIN((size_t)_selEnd,   strlen(_text));
+	_selStart = MIN(_selStart, (int32)strlen(_text));
+	_selEnd   = MIN(_selEnd, (int32)strlen(_text));
 
-	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
+	//int cursorWidth = font->getCharWidth(_cursorChar[0]);
 	int cursorWidth = font->getTextWidth((byte *)_cursorChar);
 
 	int32 s1, s2;
@@ -628,11 +628,10 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		curFirst = true;
 	} else {
 		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX<int32>(0, _selStart - _scrollOffset)) +
-				sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
-
-				> _width - cursorWidth - 2 * _frameWidth) {
+		       sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
+		       > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
-			if (_scrollOffset >= (int)strlen(_text)) {
+			if (_scrollOffset >= (int32)strlen(_text)) {
 				break;
 			}
 		}
@@ -657,7 +656,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		width = _posX + _width + offsetX - _frameWidth;
 		height = MAX(font->getLetterHeight(), sfont->getLetterHeight());
 
-		if (_gameRef->_textRTL) {
+		if (_game->_textRTL) {
 			xxx += alignOffset;
 		}
 
@@ -676,8 +675,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		// cursor
 		if (focused && curFirst) {
 			if (count) {
-				if (g_system->getMillis() - _lastBlinkTime >= _cursorBlinkRate) {
-					_lastBlinkTime = g_system->getMillis();
+				if (BasePlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = BasePlatform::getTime();
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible) {
@@ -702,8 +701,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		// cursor
 		if (focused && !curFirst) {
 			if (count) {
-				if (g_system->getMillis() - _lastBlinkTime >= _cursorBlinkRate) {
-					_lastBlinkTime = g_system->getMillis();
+				if (BasePlatform::getTime() - _lastBlinkTime >= _cursorBlinkRate) {
+					_lastBlinkTime = BasePlatform::getTime();
 					_cursorVisible = !_cursorVisible;
 				}
 				if (_cursorVisible) {
@@ -727,10 +726,15 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_game->_renderer->_rectList.add(new BaseActiveRect(_game, this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
+	if (_game->_accessMgr->getActiveObject() == this) {
+		Common::Rect32 rc;
+		BasePlatform::setRect(&rc, offsetX + _posX, offsetY + _posY, offsetX + _posX + _width, offsetY + _posY + _height);
+		_game->_accessMgr->setHintRect(&rc, true);
+	}
 
-	_gameRef->_textEncoding = OrigEncoding;
+	_game->_textEncoding = OrigEncoding;
 
 	return STATUS_OK;
 }
@@ -759,9 +763,9 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	case Common::KEYCODE_RIGHT:
 	case Common::KEYCODE_DOWN:
 		if (event->kbd.keycode == Common::KEYCODE_HOME) {
-			_selEnd = _gameRef->_textRTL ? strlen(_text) : 0;
+			_selEnd = _game->_textRTL ? strlen(_text) : 0;
 		} else if (event->kbd.keycode == Common::KEYCODE_END) {
-			_selEnd = _gameRef->_textRTL ? 0 : strlen(_text);
+			_selEnd = _game->_textRTL ? 0 : strlen(_text);
 		} else if (event->kbd.keycode == Common::KEYCODE_LEFT ||
 				   event->kbd.keycode == Common::KEYCODE_UP) {
 			_selEnd--;
@@ -777,7 +781,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	// Delete right
 	case Common::KEYCODE_DELETE:
 		if (_selStart == _selEnd) {
-			if (_gameRef->_textRTL) {
+			if (_game->_textRTL) {
 				deleteChars(_selStart - 1, _selStart);
 				_selEnd--;
 				if (_selEnd < 0) {
@@ -798,7 +802,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	// Delete left
 	case Common::KEYCODE_BACKSPACE:
 		if (_selStart == _selEnd) {
-			if (_gameRef->_textRTL) {
+			if (_game->_textRTL) {
 				deleteChars(_selStart, _selStart + 1);
 			} else {
 				deleteChars(_selStart - 1, _selStart);
@@ -834,7 +838,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 		wstr += (char)event->kbd.ascii;
 		_selEnd += insertChars(_selEnd, (const byte *)StringUtil::wideToAnsi(wstr).c_str(), 1);
 
-		if (_gameRef->_textRTL) {
+		if (_game->_textRTL) {
 			_selEnd = _selStart;
 		} else {
 			_selStart = _selEnd;
@@ -855,7 +859,7 @@ int UIEdit::deleteChars(int start, int end) {
 	}
 
 	start = MAX(start, (int)0);
-	end = MIN((size_t)end, strlen(_text));
+	end = MIN(end, (int)strlen(_text));
 
 	char *str = new char[strlen(_text) - (end - start) + 1];
 	if (str) {
@@ -864,11 +868,11 @@ int UIEdit::deleteChars(int start, int end) {
 		}
 		memcpy(str + MAX(0, start), _text + end, strlen(_text) - end + 1);
 
-		delete[] _text;
+		SAFE_DELETE_ARRAY(_text);
 		_text = str;
 	}
 	if (_parentNotify && _parent) {
-		_parent->applyEvent(getName());
+		_parent->applyEvent(_name);
 	}
 
 	return end - start;
@@ -882,7 +886,7 @@ int UIEdit::insertChars(int pos, const byte *chars, int num) {
 	}
 
 	pos = MAX(pos, (int)0);
-	pos = MIN((size_t)pos, strlen(_text));
+	pos = MIN(pos, (int)strlen(_text));
 
 	char *str = new char[strlen(_text) + num + 1];
 	if (str) {
@@ -893,11 +897,11 @@ int UIEdit::insertChars(int pos, const byte *chars, int num) {
 
 		memcpy(str + pos, chars, num);
 
-		delete[] _text;
+		SAFE_DELETE_ARRAY(_text);
 		_text = str;
 	}
 	if (_parentNotify && _parent) {
-		_parent->applyEvent(getName());
+		_parent->applyEvent(_name);
 	}
 
 	return num;

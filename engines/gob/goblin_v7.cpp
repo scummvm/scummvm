@@ -71,66 +71,68 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	while (true) {
 		// obj->animVariables[1]: number of fields per state
 		// obj->animVariables[2]: max number of states
-		if (animState <= 0 || animState > obj->animVariables[2]) {
+		if (animState <= 0 || animState > (int16) obj->animVariables->at(2)) {
 			obj->pAnimData->animType = 11;
 			return;
-		} else {
-			int16 *animVariablesForState = obj->animVariables + animState * obj->animVariables[1];
-			if (animVariablesForState[0] == 0) {
-				newXCorrection = animVariablesForState[1];
-				newYCorrection = animVariablesForState[2];
-			} else {
-				if (animVariablesForState[0] == -2) {
-					// Reflexion relative to Y axis:
-					// Some videos exist only for "west" directions (W, NW, SW, N S),
-					// "east" directions (E, NE, SE) are then obtained by symmetry
-					switch (animState) {
-					case 1:
-						animState = 5;
-						break;
-					case 2:
-						animState = 4;
-						break;
-					case 4:
-						animState = 2;
-						break;
-					case 5:
-						animState = 1;
-						break;
-					case 6:
-						animState = 8;
-						break;
-					case 8:
-						animState = 6;
-						break;
-					case 31:
-					case 32:
-					case 33:
-					case 34:
-					case 35:
-					case 36:
-					case 37:
-						animState -= 10;
-						break;
-					default: // 3, 7, 9-30, > 36
-						obj->pAnimData->animType = 11;
-						return;
-					}
-
-					obj->pAnimData->layer |= 0x80;
-					newXCorrection = animVariablesForState[1];
-					newYCorrection = animVariablesForState[2];
-				} else if (animVariablesForState[0] == -1) {
-					obj->pAnimData->animType = 11;
-					return;
-				} else {
-					animState = animVariablesForState[0];
-					continue;
-				}
-			}
 		}
 
-		break;
+		int32 newOffset = animState * (int16) obj->animVariables->at(1);
+		VariableReferenceArray animVariablesForState = obj->animVariables->arrayAt(newOffset);
+		if (animVariablesForState.at(0) == 0) {
+			newXCorrection = (int16) animVariablesForState.at(1);
+			newYCorrection = (int16) animVariablesForState.at(2);
+			break;
+		}
+
+		if ((int16) animVariablesForState.at(0) == -2) {
+			// Reflexion relative to Y axis:
+			// Some videos exist only for "west" directions (W, NW, SW, N S),
+			// "east" directions (E, NE, SE) are then obtained by symmetry
+			switch (animState) {
+			case 1:
+				animState = 5;
+				break;
+			case 2:
+				animState = 4;
+				break;
+			case 4:
+				animState = 2;
+				break;
+			case 5:
+				animState = 1;
+				break;
+			case 6:
+				animState = 8;
+				break;
+			case 8:
+				animState = 6;
+				break;
+			case 31:
+			case 32:
+			case 33:
+			case 34:
+			case 35:
+			case 36:
+			case 37:
+				animState -= 10;
+				break;
+			default: // 3, 7, 9-30, > 36
+				obj->pAnimData->animType = 11;
+				return;
+			}
+
+			obj->pAnimData->layer |= 0x80;
+			newXCorrection = (int16) animVariablesForState.at(1);
+			newYCorrection = (int16) animVariablesForState.at(2);
+			break;
+		}
+
+		if ((int16) animVariablesForState.at(0) == -1) {
+			obj->pAnimData->animType = 11;
+			return;
+		}
+
+		animState = (int16) animVariablesForState.at(0);
 	}
 
 	if (obj->pAnimData->stateType == 1) {

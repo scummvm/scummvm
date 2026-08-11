@@ -24,7 +24,6 @@
 #include "engines/myst3/state.h"
 
 #include "common/config-manager.h"
-#include "common/math.h"
 
 #include "math/ray.h"
 

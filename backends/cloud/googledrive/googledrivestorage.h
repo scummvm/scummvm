@@ -23,7 +23,7 @@
 #define BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVESTORAGE_H
 
 #include "backends/cloud/id/idstorage.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Cloud {
 namespace GoogleDrive {

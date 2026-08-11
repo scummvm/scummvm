@@ -120,6 +120,20 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		_modifierState = event.kbd.flags;
 		break;
 
+	case Common::EVENT_HOTSPOTS_SHOW:
+		if (g_engine && ConfMan.getBool("enable_hotspots")) {
+			g_engine->showHotspots(true);
+		}
+		forwardEvent = false;
+		break;
+
+	case Common::EVENT_HOTSPOTS_HIDE:
+		if (g_engine && ConfMan.getBool("enable_hotspots")) {
+			g_engine->showHotspots(false);
+		}
+		forwardEvent = false;
+		break;
+
 	case Common::EVENT_MOUSEMOVE:
 		_mousePos = event.mouse;
 		break;

@@ -47,11 +47,13 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "common/config-manager.h"
 #include "common/stream.h"
 #include "common/system.h"
 
 #include "wage/wage.h"
 #include "wage/entities.h"
+#include "wage/gui.h"
 #include "wage/sound.h"
 #include "wage/world.h"
 
@@ -62,6 +64,8 @@ static const int8 deltas[] = { 0,-49,-36,-25,-16,-9,-4,-1,0,1,4,9,16,25,36,49 };
 Sound::Sound(Common::String name, Common::SeekableReadStream *data) : _name(name) {
 	_size = data->size() - 20;
 	_data = (byte *)calloc(2 * _size, 1);
+
+	debugC(1, kDebugSound, "Sound::Sound: loading sound '%s', size %d", name.c_str(), _size);
 
 	data->skip(20); // Skip header
 
@@ -79,29 +83,42 @@ Sound::~Sound() {
 	free(_data);
 }
 
-void WageEngine::playSound(Common::String soundName) {
+void WageEngine::playSound(Common::String soundName, bool blocking) {
 	soundName.toLowercase();
 
 	if (!_world->_sounds.contains(soundName)) {
-		warning("playSound: Sound '%s' does not exist", soundName.c_str());
+		if (!soundName.empty())
+			warning("playSound: Sound '%s' does not exist", soundName.c_str());
+
 		return;
 	}
 
+	debugC(1, kDebugSound, "WageEngine::playSound: playing sound '%s'%s", soundName.c_str(), blocking ? " blocking" : "");
+
 	Sound *s = _world->_sounds[soundName];
 
-	Audio::AudioStream *stream = Audio::makeRawStream(s->_data, s->_size, 11000, Audio::FLAG_UNSIGNED);
+	Audio::AudioStream *stream = Audio::makeRawStream(s->_data, 2 * s->_size, 11000, Audio::FLAG_UNSIGNED);
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream,
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream,
 		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
-	while (_mixer->isSoundHandleActive(_soundHandle) && !_shouldQuit) {
+	while (_mixer->isSoundHandleActive(_soundHandle) && !_shouldQuit && blocking) {
 		Common::Event event;
 
 		if (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-				if (saveDialog())
+				if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {
+					if (!_shouldQuit) {
+						g_system->getEventManager()->resetQuit();
+						if (_gui->saveDialog()) {
+							_shouldQuit = true;
+							g_system->getEventManager()->pushEvent(event);
+						}
+					}
+				} else {
 					_shouldQuit = true;
+				}
 				break;
 			default:
 				break;
@@ -113,41 +130,74 @@ void WageEngine::playSound(Common::String soundName) {
 	}
 }
 
+void WageEngine::playStartupSound(byte *stream, uint32 size, int divisor) {
+	Audio::AudioStream *audioStream = Audio::makeRawStream(
+		stream,
+		size,
+		22254 / divisor,  // 22254 is default Macintosh frequency
+		Audio::FLAG_UNSIGNED,
+		DisposeAfterUse::YES
+	);
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream,
+		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+}
+
 static void soundTimer(void *refCon) {
 	Scene *scene = (Scene *)refCon;
 	WageEngine *engine = (WageEngine *)g_engine;
+
+	if (!engine)
+		return;
 
 	g_system->getTimerManager()->removeTimerProc(&soundTimer);
 
 	if (engine->_world->_player->_currentScene != scene)
 		return;
 
-	if (engine->_soundQueue.empty()) {
-		if (scene->_soundType == Scene::PERIODIC && 0) {
+	if (engine->_soundQueue.empty() && engine->_soundToPlay.empty()) {
+		if (scene->_soundType == Scene::PERIODIC) {
 			engine->_soundToPlay = scene->_soundName; // We cannot play sound here because that goes recursively
 
 			uint32 nextRun = 60000 / scene->_soundFrequency;
 			g_system->getTimerManager()->installTimerProc(&soundTimer, nextRun * 1000, scene, "WageEngine::soundTimer");
-		} else if (scene->_soundType == Scene::RANDOM || 1) {
-			for (int i = 0; i < scene->_soundFrequency * 5; i++)
-				engine->_soundQueue.push_back(g_system->getMillis() + engine->_rnd->getRandomNumber(60000));
+
+			debugC(1, kDebugSound, "soundTimer: enqueuing next periodic sound in %d ms (%s)", nextRun, scene->_soundName.c_str());
+		} else if (scene->_soundType == Scene::RANDOM) {
+			for (int i = 0; i < scene->_soundFrequency; i++) {
+				uint32 nextRun = g_system->getMillis() + engine->_rnd->getRandomNumber(60000);
+				engine->_soundQueue.push_back(nextRun);
+
+				debugC(1, kDebugSound, "soundTimer: enqueuing next random sound in %d ms (%s)", nextRun, scene->_soundName.c_str());
+			}
 
 			Common::sort(engine->_soundQueue.begin(), engine->_soundQueue.end());
 
-			int nextRun = engine->_soundQueue.front();
+			int nextRun = engine->_soundQueue.front() - g_system->getMillis();
 			engine->_soundQueue.pop_front();
 
-			g_system->getTimerManager()->installTimerProc(&soundTimer, (nextRun - g_system->getMillis()) * 1000, scene, "WageEngine::soundTimer");
+			if (nextRun < 0)
+				nextRun = 1;
+
+			g_system->getTimerManager()->installTimerProc(&soundTimer, nextRun * 1000, scene, "WageEngine::soundTimer");
 		} else {
 			warning("updateSoundTimerForScene: Unknown sound type %d", scene->_soundType);
 		}
 	} else {
+		// Do not play sound if another is still playing
+		if (!engine->_soundToPlay.empty()) {
+			g_system->getTimerManager()->installTimerProc(&soundTimer, g_system->getMillis() + 100, scene, "WageEngine::soundTimer");
+			return;
+		}
+
 		int nextRun = engine->_soundQueue.front();
 		engine->_soundQueue.pop_front();
 
 		g_system->getTimerManager()->installTimerProc(&soundTimer, (nextRun - g_system->getMillis()) * 1000, scene, "WageEngine::soundTimer");
 
 		engine->_soundToPlay = scene->_soundName; // We cannot play sound here because that goes recursively
+
+		debugC(1, kDebugSound, "soundTimer: preparing next sound in %d ms (%s)", nextRun - g_system->getMillis(), scene->_soundName.c_str());
 	}
 }
 

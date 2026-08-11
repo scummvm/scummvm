@@ -27,6 +27,9 @@
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif // USE_SDL_NET
 
+#ifdef EMSCRIPTEN
+#include "backends/platform/sdl/emscripten/emscripten.h"
+#endif
 #include "common/formats/json.h"
 #include "common/file.h"
 #include "common/memstream.h"
@@ -77,7 +80,11 @@ CloudConnectionWizard::CloudConnectionWizard() :
 	_manualModeButton = nullptr;
 	_codeBox = nullptr;
 
+#ifdef USE_SDL_NET
 	showStep(Step::MODE_SELECT);
+#else 
+	showStep(Step::MANUAL_MODE_STEP_1);
+#endif
 
 	_callback = new Common::Callback<CloudConnectionWizard, const Networking::ErrorResponse &>(this, &CloudConnectionWizard::storageConnectionCallback);
 }
@@ -89,6 +96,17 @@ CloudConnectionWizard::~CloudConnectionWizard() {
 
 	delete _callback;
 }
+
+#ifdef EMSCRIPTEN
+// allow browser to pass in JSON tokens
+void CloudConnectionWizard::emscriptenCloudConnectionCallback(const Common::String *message ){
+	showStep(Step::MANUAL_MODE_STEP_2);
+	if (!message->empty()) {
+		_codeBox->setEditString(*message);
+	}
+	manualModeConnect();
+}
+#endif 
 
 void CloudConnectionWizard::showStep(Step newStep) {
 	if (newStep == _currentStep)
@@ -314,9 +332,15 @@ void CloudConnectionWizard::hideStepQuickModeSuccess() {
 // manual mode
 
 void CloudConnectionWizard::showStepManualMode1() {
+#ifdef EMSCRIPTEN
+	OSystem_Emscripten *emscripten_g_system = dynamic_cast<OSystem_Emscripten*>(g_system);
+	emscripten_g_system->setCloudConnectionCallback(new Common::Callback<CloudConnectionWizard, const Common::String *>(this, &CloudConnectionWizard::emscriptenCloudConnectionCallback));
+#endif
 	_headlineLabel->setLabel(_("Manual Mode: Step 1"));
 	showContainer("ConnectionWizard_ManualModeStep1");
+#ifdef USE_SDL_NET
 	showBackButton();
+#endif
 	showNextButton();
 
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line1", _("Open this link in your browser:"));
@@ -358,12 +382,19 @@ void CloudConnectionWizard::showStepManualMode2() {
 
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line1", _("Copy the JSON code from the browser here and press Next:"));
 	_codeBox = new EditTextWidget(_container, "ConnectionWizard_ManualModeStep2.CodeBox", Common::U32String(), Common::U32String(), 0, 0, ThemeEngine::kFontStyleConsole);
+#ifndef EMSCRIPTEN
 	_button0 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep2.PasteButton", _("Paste"), _("Paste code from clipboard"), kCloudConnectionWizardPasteCodeCmd);
 	_button1 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep2.LoadButton", _("Load"), _("Load code from file"), kCloudConnectionWizardLoadCodeCmd);
+#endif
 	_label1 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line2", Common::U32String());
+
 }
 
 void CloudConnectionWizard::hideStepManualMode2() {
+#ifdef EMSCRIPTEN
+	OSystem_Emscripten *emscripten_g_system = dynamic_cast<OSystem_Emscripten*>(g_system);
+	emscripten_g_system->setCloudConnectionCallback(nullptr);
+#endif
 	hideContainer();
 	_closeButton->setEnabled(true);
 	hideBackButton();
@@ -518,10 +549,7 @@ void CloudConnectionWizard::manualModeConnect() {
 	}
 
 	// parse JSON and display message if failed
-	Common::MemoryWriteStreamDynamic jsonStream(DisposeAfterUse::YES);
-	jsonStream.write(code.c_str(), code.size());
-	char *contents = Common::JSON::untaintContents(jsonStream);
-	Common::JSONValue *json = Common::JSON::parse(contents);
+	Common::JSONValue *json = Common::JSON::parse(code);
 
 	// pass JSON to the manager
 	_connecting = true;
@@ -574,6 +602,11 @@ void CloudConnectionWizard::manualModeStorageConnectionCallback(const Networking
 
 // public
 
+int CloudConnectionWizard::runStorageModal(uint32 selectedStorageIndex) {
+	_selectedStorageIndex = selectedStorageIndex;
+	return Dialog::runModal();
+}
+
 void CloudConnectionWizard::open() {
 	Dialog::open();
 #ifdef USE_SDL_NET
@@ -610,12 +643,31 @@ void CloudConnectionWizard::handleCommand(CommandSender *sender, uint32 cmd, uin
 #endif // USE_SDL_NET
 		break;
 
-	case kCloudConnectionWizardOpenUrlStorageCmd:
-		if (!g_system->openUrl("https://cloud.scummvm.org/")) {
+	case kCloudConnectionWizardOpenUrlStorageCmd: {
+		Common::String url = "https://cloud.scummvm.org/";
+		switch (_selectedStorageIndex) {
+		case Cloud::kStorageDropboxId:
+			url += "dropbox/271?refresh_token=true";
+			break;
+		case Cloud::kStorageOneDriveId:
+			url += "onedrive/271";
+			break;
+		case Cloud::kStorageGoogleDriveId:
+			url += "gdrive/271";
+			break;
+		case Cloud::kStorageBoxId:
+			url += "box/271";
+			break;
+		default:
+			break;
+		}
+
+		if (!g_system->openUrl(url)) {
 			MessageDialog alert(_("Failed to open URL!\nPlease navigate to this page manually."));
 			alert.runModal();
 		}
 		break;
+	}
 
 	case kCloudConnectionWizardPasteCodeCmd:
 		if (g_system->hasTextInClipboard()) {

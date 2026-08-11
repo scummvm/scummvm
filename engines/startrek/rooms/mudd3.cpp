@@ -36,52 +36,52 @@
 namespace StarTrek {
 
 extern const RoomAction mudd3ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::mudd3Tick1 },
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0},    &Room::mudd3UseCommunicator },
-	{ {ACTION_LOOK, 0x20, 0, 0},              &Room::mudd3LookAtScreen },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::mudd3UseSTricorderOnScreen },
-	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0},     &Room::mudd3UseKirkOnScreen },
-	{ {ACTION_USE, OBJECT_SPOCK, 0x21, 0},    &Room::mudd3UseSpockOnSphere },
-	{ {ACTION_TIMER_EXPIRED, 3, 0, 0},        &Room::mudd3Timer3Expired },
-	{ {ACTION_USE, OBJECT_MCCOY, 0x21, 0},    &Room::mudd3UseMccoyOnSphere },
-	{ {ACTION_USE, OBJECT_REDSHIRT, 0x21, 0}, &Room::mudd3UseRedshirtOnSphere },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0}, &Room::mudd3UseMTricorderOnSphere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::mudd3UseSTricorderOnSphere },
-	{ {ACTION_FINISHED_WALKING, 2, 0, 0},     &Room::mudd3ReadyToHookUpTricorders },
-	{ {ACTION_TIMER_EXPIRED, 1, 0, 0},        &Room::mudd3Timer1Expired },
-	{ {ACTION_TIMER_EXPIRED, 2, 0, 0},        &Room::mudd3Timer2Expired },
-	{ {ACTION_TIMER_EXPIRED, 4, 0, 0},        &Room::mudd3Timer4Expired },
-	{ {ACTION_USE, OBJECT_IDISKS, 0x21, 0},   &Room::mudd3UseMemoryDiskOnSphere },
+	{ {ACTION_TICK, 1, 0, 0, 0}, &Room::mudd3Tick1 },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0, 0},    &Room::mudd3UseCommunicator },
+	{ {ACTION_LOOK, 0x20, 0, 0, 0},              &Room::mudd3LookAtScreen },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0, 0}, &Room::mudd3UseSTricorderOnScreen },
+	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0, 0},     &Room::mudd3UseKirkOnScreen },
+	{ {ACTION_USE, OBJECT_SPOCK, 0x21, 0, 0},    &Room::mudd3UseSpockOnSphere },
+	{ {ACTION_TIMER_EXPIRED, 3, 0, 0, 0},        &Room::mudd3Timer3Expired },
+	{ {ACTION_USE, OBJECT_MCCOY, 0x21, 0, 0},    &Room::mudd3UseMccoyOnSphere },
+	{ {ACTION_USE, OBJECT_REDSHIRT, 0x21, 0, 0}, &Room::mudd3UseRedshirtOnSphere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0, 0}, &Room::mudd3UseMTricorderOnSphere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0, 0}, &Room::mudd3UseSTricorderOnSphere },
+	{ {ACTION_FINISHED_WALKING, 2, 0, 0, 0},     &Room::mudd3ReadyToHookUpTricorders },
+	{ {ACTION_TIMER_EXPIRED, 1, 0, 0, 0},        &Room::mudd3Timer1Expired },
+	{ {ACTION_TIMER_EXPIRED, 2, 0, 0, 0},        &Room::mudd3Timer2Expired },
+	{ {ACTION_TIMER_EXPIRED, 4, 0, 0, 0},        &Room::mudd3Timer4Expired },
+	{ {ACTION_USE, OBJECT_IDISKS, 0x21, 0, 0},   &Room::mudd3UseMemoryDiskOnSphere },
 
 	// Common code (next 4 lines)
-	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0}, &Room::muddaUseDegrimer },
-	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0}, &Room::muddaUseLenseOnDegrimer },
-	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0}, &Room::muddaUseAlienDevice },
-	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::muddaFiredAlienDevice },
+	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0, 0}, &Room::muddaUseDegrimer },
+	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0, 0}, &Room::muddaUseLenseOnDegrimer },
+	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0, 0}, &Room::muddaUseAlienDevice },
+	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0, 0}, &Room::muddaFiredAlienDevice },
 
-	{ {ACTION_GET, 13, 0, 0}, &Room::mudd3GetRepairTool },
-	{ {ACTION_FINISHED_WALKING, 3, 0, 0},   &Room::mudd3ReachedRepairTool },
-	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::mudd3PickedUpRepairTool },
-	{ {ACTION_LOOK, 0x21, 0, 0},            &Room::mudd3LookAtSphere },
-	{ {ACTION_WALK, 0x22, 0, 0},            &Room::mudd3WalkToNorthDoor },
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0},    &Room::mudd3TouchedHotspot0 },
-	{ {ACTION_WALK, 0x23, 0, 0},            &Room::mudd3WalkToEastDoor },
-	{ {ACTION_TOUCHED_HOTSPOT, 1, 0, 0},    &Room::mudd3TouchedHotspot1 },
-	{ {ACTION_LOOK, OBJECT_KIRK,     0, 0}, &Room::mudd3LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,    0, 0}, &Room::mudd3LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,    0, 0}, &Room::mudd3LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::mudd3LookAtRedshirt },
-	{ {ACTION_LOOK, 8,               0, 0}, &Room::mudd3LookAtMudd },
-	{ {ACTION_TALK, OBJECT_KIRK,     0, 0}, &Room::mudd3TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0}, &Room::mudd3TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0}, &Room::mudd3TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::mudd3TalkToRedshirt },
-	{ {ACTION_TALK, 8,               0, 0}, &Room::mudd3TalkToMudd },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  0xff, 0}, &Room::mudd3UseMedkit },
+	{ {ACTION_GET, 13, 0, 0, 0}, &Room::mudd3GetRepairTool },
+	{ {ACTION_FINISHED_WALKING, 3, 0, 0, 0},   &Room::mudd3ReachedRepairTool },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0, 0}, &Room::mudd3PickedUpRepairTool },
+	{ {ACTION_LOOK, 0x21, 0, 0, 0},            &Room::mudd3LookAtSphere },
+	{ {ACTION_WALK, 0x22, 0, 0, 0},            &Room::mudd3WalkToNorthDoor },
+	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0, 0},    &Room::mudd3TouchedHotspot0 },
+	{ {ACTION_WALK, 0x23, 0, 0, 0},            &Room::mudd3WalkToEastDoor },
+	{ {ACTION_TOUCHED_HOTSPOT, 1, 0, 0, 0},    &Room::mudd3TouchedHotspot1 },
+	{ {ACTION_LOOK, OBJECT_KIRK,     0, 0, 0}, &Room::mudd3LookAtKirk },
+	{ {ACTION_LOOK, OBJECT_SPOCK,    0, 0, 0}, &Room::mudd3LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_MCCOY,    0, 0, 0}, &Room::mudd3LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::mudd3LookAtRedshirt },
+	{ {ACTION_LOOK, 8,               0, 0, 0}, &Room::mudd3LookAtMudd },
+	{ {ACTION_TALK, OBJECT_KIRK,     0, 0, 0}, &Room::mudd3TalkToKirk },
+	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0, 0}, &Room::mudd3TalkToSpock },
+	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0, 0}, &Room::mudd3TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::mudd3TalkToRedshirt },
+	{ {ACTION_TALK, 8,               0, 0, 0}, &Room::mudd3TalkToMudd },
+	{ {ACTION_USE, OBJECT_IMEDKIT,  0xff, 0, 0}, &Room::mudd3UseMedkit },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_TICK, 0xff, 0xff, 0xff, 0},           &Room::muddaTick },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum mudd3TextIds {
@@ -231,7 +231,7 @@ void Room::mudd3Tick1() {
 	if (!_awayMission->mudd.muddVisitedDatabaseRoom && _awayMission->mudd.translatedAlienLanguage && !_awayMission->mudd.muddUnavailable) {
 		_awayMission->mudd.muddVisitedDatabaseRoom = true;
 		loadActorAnim(OBJECT_MUDD, "s4lbhs", 0xa2, 0x9f);
-		playMidiMusicTracks(3);
+		playMidiMusicTracks(MIDITRACK_3);
 		_awayMission->mudd.muddInDatabaseRoom = true;
 		_awayMission->timers[2] = 10;
 	}
@@ -450,7 +450,7 @@ void Room::mudd3Timer2Expired() {
 		showText(TX_SPEAKER_MUDD, TX_MUD3_064);
 		_awayMission->timers[4] = 98;
 		_awayMission->disableInput = 2;
-		playMidiMusicTracks(26);
+		playMidiMusicTracks(MIDITRACK_26);
 		loadActorAnim(OBJECT_MUDD, "s4lbhb", 0xa2, 0x9f);
 	}
 }

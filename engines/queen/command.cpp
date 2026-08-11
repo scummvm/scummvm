@@ -267,7 +267,7 @@ void Command::executeCurrentAction() {
 
 		if (cond == -1 && i == comMax) {
 			// only exit on a condition fail if at last command
-			// Joe hasnt spoken, so do normal LOOK command
+			// Joe hasn't spoken, so do normal LOOK command
 			break;
 		} else if (cond == -2 && i == comMax) {
 			// only exit on a condition fail if at last command

@@ -22,7 +22,7 @@
 #ifndef NUVIE_SOUND_MIXER_DECODER_PC_SPEAKER_STREAM_H
 #define NUVIE_SOUND_MIXER_DECODER_PC_SPEAKER_STREAM_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/sound/decoder/pc_speaker.h"
 #include "audio/audiostream.h"
 

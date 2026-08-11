@@ -393,7 +393,7 @@ void CGameObject::loadMovie(const CString &name, bool pendingFlag) {
 }
 
 void CGameObject::loadImage(const CString &name, bool pendingFlag) {
-	// Get a refernce to the game and screen managers
+	// Get a reference to the game and screen managers
 	CGameManager *gameManager = getGameManager();
 	CScreenManager *screenManager;
 

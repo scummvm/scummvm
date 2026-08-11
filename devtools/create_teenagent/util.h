@@ -31,7 +31,6 @@
 #include <process.h>
 #endif
 
-
 /* File I/O */
 uint8 readByte(FILE *fp);
 uint16 readUint16BE(FILE *fp);
@@ -44,11 +43,6 @@ void writeUint16LE(FILE *fp, uint16 value);
 void writeUint32BE(FILE *fp, uint32 value);
 void writeUint32LE(FILE *fp, uint32 value);
 uint32 fileSize(FILE *fp);
-
-/* Misc stuff */
-void NORETURN_PRE error(const char *s, ...) NORETURN_POST;
-void warning(const char *s, ...);
-void debug(int level, const char *s, ...);
 
 using namespace Common;
 

@@ -21,7 +21,10 @@
 
 #include "m4/burger/rooms/section8/room801.h"
 #include "m4/burger/rooms/section8/section8.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -139,7 +142,7 @@ void Room801::init() {
 	_wilburMode = 10;
 	digi_preload("800_001");
 
-	if (_G(flags)[GLB_TEMP_5] == 1) {
+	if (_G(flags)[V011] == 1) {
 		term_message(HEADER);
 		term_message("Toxic wax in hair");
 
@@ -307,9 +310,9 @@ void Room801::daemon() {
 	case 14:
 		// Conversation handler
 		if (conv_sound_to_play()) {
-			int who = conv_whos_talking();
-			int node = conv_current_node();
-			int entry = conv_current_entry();
+			const int who = conv_whos_talking();
+			const int node = conv_current_node();
+			const int entry = conv_current_entry();
 
 			if (who <= 0) {
 				if ((node == 3 && entry == 0) || (node == 4 && entry == 0) ||
@@ -430,7 +433,7 @@ void Room801::daemon() {
 		break;
 
 	case 23:
-		if (_G(flags)[GLB_TEMP_5] == 1) {
+		if (_G(flags)[V011] == 1) {
 			kernel_trigger_dispatch_now(24);
 		} else if (_G(flags)[kNEURO_TEST_COUNTER] <= 2) {
 			digi_unload("804_003");
@@ -440,7 +443,7 @@ void Room801::daemon() {
 			digi_play_loop("807_003", 2, 255, -1, 807);
 			digi_play_loop("807_001", 3, 255, -1, 807);
 
-			_G(game).new_room = 802;
+			_G(game).setRoom(802);
 		} else {
 			kernel_trigger_dispatch_now(k10027);
 		}
@@ -515,7 +518,7 @@ void Room801::daemon() {
 
 	case 36:
 		_G(flags)[kFirstTestPassed] = 1;
-		adv_kill_digi_between_rooms(1);
+		adv_kill_digi_between_rooms(true);
 		kernel_trigger_dispatch_now(k10027);
 		break;
 
@@ -542,7 +545,7 @@ void Room801::daemon() {
 		break;
 
 	case 42:
-		if (_G(flags)[GLB_TEMP_5] != 1)
+		if (_G(flags)[V011] != 1)
 			digi_play("806w001", 1, 128);
 		break;
 

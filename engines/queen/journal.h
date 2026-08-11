@@ -154,6 +154,7 @@ private:
 	void handleMouseWheel(int inc);
 	void handleMouseDown(int x, int y);
 	void handleKeyDown(uint16 ascii, int keycode);
+	void handleAction(Common::CustomEventType action);
 
 	void drawPanelText(int y, const char *text);
 	void drawCheckBox(bool active, int bobNum, int16 x, int16 y, int frameNum);

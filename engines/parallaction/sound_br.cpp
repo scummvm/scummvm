@@ -70,9 +70,9 @@ namespace Parallaction {
 class MidiParser_MSC : public MidiParser {
 protected:
 	void parseNextEvent(EventInfo &info) override;
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 
-	uint8  read1(byte *&data) {
+	uint8  read1(const byte *&data) {
 		return *data++;
 	}
 
@@ -82,7 +82,7 @@ protected:
 	bool byte_11C5A;
 	uint8 _beats;
 	uint8 _lastEvent;
-	byte *_trackEnd;
+	const byte *_trackEnd;
 
 public:
 	MidiParser_MSC() : byte_11C5A(false), _beats(0), _lastEvent(0), _trackEnd(nullptr) {
@@ -90,23 +90,28 @@ public:
 };
 
 void MidiParser_MSC::parseMetaEvent(EventInfo &info) {
-	uint8 type = read1(_position._playPos);
-	uint8 len = read1(_position._playPos);
+	const byte *playPos = _position._subtracks[0]._playPos;
+
+	uint8 type = read1(playPos);
+	uint8 len = read1(playPos);
 	info.ext.type = type;
 	info.length = len;
 	info.ext.data = nullptr;
 
 	if (type == 0x51) {
-		info.ext.data = _position._playPos;
+		info.ext.data = playPos;
 	} else {
 		warning("unknown meta event 0x%02X", type);
 		info.ext.type = 0;
 	}
 
-	_position._playPos += len;
+	playPos += len;
+
+	_position._subtracks[0]._playPos = playPos;
 }
 
 void MidiParser_MSC::parseMidiEvent(EventInfo &info) {
+	const byte *playPos = _position._subtracks[0]._playPos;
 	uint8 type = info.command();
 
 	switch (type) {
@@ -115,13 +120,13 @@ void MidiParser_MSC::parseMidiEvent(EventInfo &info) {
 	case 0xA:
 	case 0xB:
 	case 0xE:
-		info.basic.param1 = read1(_position._playPos);
-		info.basic.param2 = read1(_position._playPos);
+		info.basic.param1 = read1(playPos);
+		info.basic.param2 = read1(playPos);
 		break;
 
 	case 0xC:
 	case 0xD:
-		info.basic.param1 = read1(_position._playPos);
+		info.basic.param1 = read1(playPos);
 		info.basic.param2 = 0;
 		break;
 
@@ -130,13 +135,15 @@ void MidiParser_MSC::parseMidiEvent(EventInfo &info) {
 	}
 
 	//if ((type == 0xB) && (info.basic.param1 == 64)) info.basic.param2 = 127;
-
+	_position._subtracks[0]._playPos = playPos;
 }
 
 void MidiParser_MSC::parseNextEvent(EventInfo &info) {
-	info.start = _position._playPos;
+	const byte *playPos = _position._subtracks[0]._playPos;
 
-	if (_position._playPos >= _trackEnd) {
+	info.start = playPos;
+
+	if (playPos >= _trackEnd) {
 		// fake an end-of-track meta event
 		info.delta = 0;
 		info.event = 0xFF;
@@ -146,28 +153,29 @@ void MidiParser_MSC::parseNextEvent(EventInfo &info) {
 	}
 
 	info.length = 0;
-	info.delta = readVLQ(_position._playPos);
-	info.event = read1(_position._playPos);
+	info.delta = readVLQ(playPos);
+	info.event = read1(playPos);
 
 	if (info.event == 0xFF) {
+		_position._subtracks[0]._playPos = playPos;
 		parseMetaEvent(info);
 		return;
 	}
 
 	if (info.event < 0x80) {
-		_position._playPos--;
+		playPos--;
 		info.event = _lastEvent;
 	}
 
+	_position._subtracks[0]._playPos = playPos;
 	parseMidiEvent(info);
 	_lastEvent = info.event;
-
 }
 
-bool MidiParser_MSC::loadMusic(byte *data, uint32 size) {
+bool MidiParser_MSC::loadMusic(const byte *data, uint32 size) {
 	unloadMusic();
 
-	byte *pos = data;
+	const byte *pos = data;
 
 	if (memcmp("MSCt", pos, 4)) {
 		warning("Expected header not found in music file");
@@ -186,7 +194,8 @@ bool MidiParser_MSC::loadMusic(byte *data, uint32 size) {
 	_trackEnd = data + size;
 
 	_numTracks = 1;
-	_tracks[0] = pos;
+	_numSubtracks[0] = 1;
+	_tracks[0][0] = pos;
 
 	setTempo(500000);
 	setTrack(0);

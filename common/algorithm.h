@@ -95,6 +95,63 @@ Out copy_if(In first, In last, Out dst, Op op) {
  */
 
 /**
+ * @name Move templates
+ * @{
+ */
+
+/**
+ * Move data from the range [first, last) to [dst, dst + (last - first)).
+ *
+ * The function requires the range [dst, dst + (last - first)) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ */
+template<class In, class Out>
+Out move(In first, In last, Out dst) {
+	while (first != last)
+		*dst++ = Common::move(*first++);
+	return dst;
+}
+
+/**
+ * Move data from the range [first, last) to [dst - (last - first), dst).
+ *
+ * The function requires the range [dst - (last - first), dst) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ *
+ * Unlike move, move_backward moves the data from the end to the beginning.
+ */
+template<class In, class Out>
+Out move_backward(In first, In last, Out dst) {
+	while (first != last)
+		*--dst = Common::move(*--last);
+	return dst;
+}
+
+/**
+ * Move data from the range [first, last) to [dst, dst + (last - first)).
+ *
+ * The function requires the range [dst, dst + (last - first)) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ *
+ * Unlike move or move_backward, it does not move all data. It only moves
+ * a data element when operator() of the op parameter returns true for the
+ * passed data element.
+ */
+template<class In, class Out, class Op>
+Out move_if(In first, In last, Out dst, Op op) {
+	while (first != last) {
+		if (op(*first))
+			*dst++ = Common::move(*first);
+		++first;
+	}
+	return dst;
+}
+
+/**
+ * @}
+ */
+
+/**
  * @name Fill templates
  * @{
  */
@@ -199,6 +256,12 @@ Op for_each(In first, In last, Op f) {
 	return f;
 }
 
+template<typename T>
+void reverse(T first, T last) {
+  for (; first != last && first != --last; ++first)
+    SWAP(*first, *last);
+}
+
 /**
  * @}
  */
@@ -273,7 +336,7 @@ T sortPartition(T first, T last, T pivot, StrictWeakOrdering &comp) {
  * equal keys, but stable sorting algorithms never do so.
  *
  * For more information, see:
- * http://en.wikipedia.org/wiki/Sorting_algorithm#Stability
+ * https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
  *
  * @note Currently, this implementation is unstable.
  *
@@ -393,7 +456,7 @@ void replace(It begin, It end, const Dat &original, const Dat &replaced) {
 /**
  * Removes all elements that are equal to value from the range [first, last).
  * This function is the equivalent of std::remove.
- * 
+ *
  * @param[in] first Iterator to the first position to be examined.
  * @param[in] last  Iterator to the last position.
  * @param[in] val   Value to be removed.

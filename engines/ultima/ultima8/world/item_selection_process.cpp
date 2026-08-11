@@ -73,7 +73,7 @@ bool ItemSelectionProcess::selectNextItem(bool grab) {
 	currentmap->areaSearch(&uclist, script, sizeof(script),
 						   mainactor, 0x200, false);
 
-	Std::vector<Item *> candidates;
+	Common::Array<Item *> candidates;
 
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		ObjId itemid = uclist.getuint16(i);
@@ -130,10 +130,8 @@ bool ItemSelectionProcess::selectNextItem(bool grab) {
 	if (_selectedItem) {
 		// Pick the next item
 		int offset = 0;
-		for (Std::vector<Item *>::const_iterator iter = candidates.begin();
-			 iter != candidates.end();
-			 offset++, iter++) {
-			ObjId num = (*iter)->getObjId();
+		for (const auto *c : candidates) {
+			ObjId num = c->getObjId();
 			if (_selectedItem == num) {
 				offset++;
 				break;
@@ -219,7 +217,7 @@ bool ItemSelectionProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_ax = rs->readSint32LE();
 	_ay = rs->readSint32LE();
 	_az = rs->readSint32LE();
-	_type = 1; // should be persistant but older savegames may not know that.
+	_type = 1; // should be persistent but older savegames may not know that.
 	return true;
 }
 

@@ -387,9 +387,14 @@ void GameManager2::updateEvents() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_keyPressed = true;
+			_action = event.customType;
+			processInput(event.customType);
+			break;
 		case Common::EVENT_KEYDOWN:
 			_keyPressed = true;
-			processInput(event.kbd);
+			_key = event.kbd;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			// fallthrough

@@ -63,7 +63,7 @@ char *qasgets(char *buf, int bufl) {
 	/* keep going until we find something we like */
 	for (;;)
 	{
-		char c;
+		int c;
 
 		/*
 		 *   Read the next character of input.  If it's not a newline,
@@ -104,7 +104,7 @@ char *qasgets(char *buf, int bufl) {
 				/* return the command */
 				return buf;
 			}
-		} else if ((int)c == EOF) {
+		} else if (c == EOF) {
 			/* end of file - close the script and return eof */
 			qasclose();
 			return nullptr;

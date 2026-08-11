@@ -46,6 +46,8 @@ enum CryOmni3DGameFeatures {
 };
 
 struct CryOmni3DGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	uint8 gameType;

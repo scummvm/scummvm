@@ -25,9 +25,16 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+/*
+ * qsort code originated from Wine sources.
+ * Copyright 2000 Jon Griffiths
+ * Copyright 2014 Piotr Caban
+ */
+
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -43,22 +50,9 @@ void BaseUtils::swap(int *a, int *b) {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseUtils::normalizeAngle(float angle) {
-	float origAngle = angle;
-
-	// The original WME engine checked against 360 here, which is an off-by one
-	// error, as when normalizing an angle, we expect the number to be between 0
-	// and 359 (since 360 is 0). This check has been fixed in ScummVM to 359. If
-	// the resulting angle is negative, it will be corrected in the while loop
-	// below.
-	while (angle > 359) {
+	while (angle > 360) {
 		angle -= 360;
 	}
-
-	// Report cases where the above off-by-one error might occur
-	if (origAngle > 360 && angle < 0) {
-		warning("BaseUtils::normalizeAngle: off-by-one error detected while normalizing angle %f to %f", origAngle, angle);
-	}
-
 	while (angle < 0) {
 		angle += 360;
 	}
@@ -85,13 +79,13 @@ void BaseUtils::createPath(const char *path, bool pathOnly) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseUtils::debugMessage(const char *text) {
-	//MessageBox(hWnd, Text, "WME", MB_OK|MB_ICONINFORMATION);
+	//MessageBox(hWnd, text, "WME", MB_OK|MB_ICONINFORMATION);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 char *BaseUtils::setString(char **string, const char *value) {
-	delete[] *string;
+	SAFE_DELETE_ARRAY(*string);
 	size_t stringSize = strlen(value) + 1;
 	*string = new char[stringSize];
 	Common::strcpy_s(*string, stringSize, value);
@@ -149,6 +143,65 @@ float BaseUtils::randomAngle(float from, float to) {
 		to += 360;
 	}
 	return normalizeAngle(randomFloat(from, to));
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseUtils::matchesPattern(const char *pattern, const char *string) {
+	char stringc, patternc;
+
+	for (;; ++string) {
+		stringc = toupper(*string);
+		patternc = toupper(*pattern++);
+
+		switch (patternc) {
+		case 0:
+			return (stringc == 0);
+
+		case '?':
+			if (stringc == 0) {
+				return false;
+			}
+			break;
+
+		case '*':
+			if (!*pattern) {
+				return true;
+			}
+
+			if (*pattern == '.') {
+				char *dot;
+				if (pattern[1] == '*' && pattern[2] == 0) {
+					return true;
+				}
+				dot = const_cast<char *>(strchr(string, '.'));
+				if (pattern[1] == 0)
+					return (dot == nullptr || dot[1] == 0);
+				if (dot != nullptr) {
+					string = dot;
+					if (strpbrk(pattern, "*?[") == nullptr && strchr(string + 1, '.') == nullptr) {
+						return (scumm_stricmp(pattern + 1, string + 1) == 0);
+					}
+				}
+			}
+
+			while (*string) {
+				if (BaseUtils::matchesPattern(pattern, string++)) {
+					return true;
+				}
+			}
+			return false;
+
+		default:
+			if (patternc != stringc) {
+				if (patternc == '.' && stringc == 0) {
+					return (BaseUtils::matchesPattern(pattern, string));
+				} else {
+					return false;
+				}
+			}
+			break;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -212,7 +265,7 @@ void BaseUtils::RGBtoHSL(uint32 rgbColor, byte *outH, byte *outS, byte *outL) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseUtils::HSLtoRGB(byte  InH, byte InS, byte InL) {
+uint32 BaseUtils::HSLtoRGB(byte InH, byte InS, byte InL) {
 	float H = InH / 255.0f;
 	float S = InS / 255.0f;
 	float L = InL / 255.0f;
@@ -261,6 +314,118 @@ float BaseUtils::Hue2RGB(float v1, float v2, float vH) {
 		return (v1 + (v2 - v1) * ((2.0f / 3.0f) - vH) * 6.0f);
 	}
 	return (v1);
+}
+
+static inline void swapBytes(byte *l, byte *r, uint32 size) {
+	byte tmp;
+
+	while (size--) {
+		tmp = *l;
+		*l++ = *r;
+		*r++ = tmp;
+	}
+}
+
+static void smallSort(void *base, uint32 num, uint32 size,
+	              int32 (*compare)(const void *, const void *)) {
+	byte *max, *p = nullptr;
+
+	for (uint32 e = num; e > 1; e--) {
+		max = (byte *)base;
+		for (uint32 i = 1; i < e; i++) {
+			p = (byte *)base + i * size;
+			if (compare(p, max) > 0)
+				max = p;
+		}
+
+		if (p != max)
+			swapBytes(p, max, size);
+	}
+}
+
+static void quickSort(void *base, uint32 num, uint32 size,
+	              int32 (*compare)(const void *, const void *)) {
+	uint32 stackLo[8 * sizeof(uint32)], stackHi[8 * sizeof(uint32)];
+	uint32 beg, end, lo, hi, med;
+	int32 stackPos;
+
+	stackPos = 0;
+	stackLo[stackPos] = 0;
+	stackHi[stackPos] = num - 1;
+
+#define X(i) ((byte *)base + size * (i))
+	while (stackPos >= 0) {
+		beg = stackLo[stackPos];
+		end = stackHi[stackPos--];
+
+		if (end - beg < 8) {
+			smallSort(X(beg), end - beg + 1, size, compare);
+			continue;
+		}
+
+		lo = beg;
+		hi = end;
+		med = lo + (hi - lo + 1) / 2;
+		if (compare(X(lo), X(med)) > 0)
+			swapBytes(X(lo), X(med), size);
+		if (compare(X(lo), X(hi)) > 0)
+			swapBytes(X(lo), X(hi), size);
+		if (compare(X(med), X(hi)) > 0)
+			swapBytes(X(med), X(hi), size);
+
+		lo++;
+		hi--;
+		while (1) {
+			while (lo <= hi) {
+				if (lo != med && compare(X(lo), X(med)) > 0)
+					break;
+				lo++;
+			}
+
+			while (med != hi) {
+				if (compare(X(hi), X(med)) <= 0)
+					break;
+				hi--;
+			}
+
+			
+			if (hi < lo)
+				break;
+
+			swapBytes(X(lo), X(hi), size);
+			if (hi == med)
+				med = lo;
+			lo++;
+			hi--;
+		}
+
+		while (hi > beg) {
+			if (hi != med && compare(X(hi), X(med)) != 0)
+				break;
+			hi--;
+		}
+
+		if (hi - beg >= end-lo) {
+			stackLo[++stackPos] = beg;
+			stackHi[stackPos] = hi;
+			stackLo[++stackPos] = lo;
+			stackHi[stackPos] = end;
+		} else {
+			stackLo[++stackPos] = lo;
+			stackHi[stackPos] = end;
+			stackLo[++stackPos] = beg;
+			stackHi[stackPos] = hi;
+		}
+	}
+#undef X
+}
+
+void qsort_msvc(void *base, uint32 num, uint32 size,
+	        int32 (*compare)(const void *, const void *)) {
+	if (base == nullptr || num == 0)
+		return;
+
+	quickSort(base, num, size, compare);
 }
 
 } // End of namespace Wintermute

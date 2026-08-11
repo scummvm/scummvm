@@ -181,7 +181,7 @@ GUI_status CheatsDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) 
 		Game *game = Game::get_game();
 		Configuration *config = game->get_config();
 
-		Std::string key = config_get_game_key(config);
+		Common::String key = config_get_game_key(config);
 		key.append("/show_eggs");
 		config->set(key, egg_button->GetSelection() ? "yes" : "no");
 		game->get_obj_manager()->set_show_eggs(egg_button->GetSelection());

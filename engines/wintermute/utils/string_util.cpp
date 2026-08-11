@@ -43,8 +43,8 @@ bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
 	WideString str1lc = str1;
 	WideString str2lc = str2;
 
-	ToLowerCase(str1lc);
-	ToLowerCase(str2lc);
+	toLowerCase(str1lc);
+	toLowerCase(str2lc);
 
 	return (str1lc == str2lc);
 }*/
@@ -116,7 +116,7 @@ Common::CodePage StringUtil::mapCodePage(TTextCharset charset) {
 		case Common::NL_NLD:
 		case Common::PT_BRA:
 		case Common::PT_PRT:
-		case Common::SE_SWE:
+		case Common::SV_SWE:
 		case Common::UNK_LANG:
 			return Common::kWindows1252;
 

@@ -28,49 +28,45 @@
 namespace M4 {
 namespace Riddle {
 
-// Starting hashes for walker machines/sequences/etc
-#define WALKER_HASH 8			  // machine/data starting hash for wilbur
-#define WALKER_SERIES_HASH 0
-#define NUM_WALKER_SERIES  8
-#define SHADOW_SERIES_HASH 8
-#define NUM_SHADOW_SERIES  5
+#define WALKER_HASH 8			  // Machine/data starting hash for Ripley
+
+const int16 RIPLEY_SERIES_DIRS[] = {
+	0, 1, 2, 3, 4, -4
+};
+const int16 RIPLEY_SHADOWS_DIRS[6] = {
+	10, 11, 12, 13, 14, -1
+};
 
 static const char *RIPLEY_SERIES[5] = {
 	"test1", "test2", "test3", "test4", "test5"
-};
-static const int16 RIPLEY_SERIES_DIRS[] = {
-	0, 1, 2, 3, 4, -4
 };
 
 static const char *RIPLEY_SHADOWS[5] = {
 	"ripsh1", "ripsh2", "ripsh3", "ripsh4", "ripsh5"
 };
-static const int16 RIPLEY_SHADOWS_DIRS[6] = {
-	10, 11, 12, 13, 14, -1
-};
 
-static const char *SAFARI_SERIES[4] = {
+static const char *SAFARI_SERIES[5] = {
 	"rip safari walker position 1",
 	"rip safari walker position 2",
 	"rip safari walker position 3",
-	"rip safari walker position 4"
+	"rip safari walker position 4",
+	"rip safari walker position 5"
 };
 static const int16 SAFARI_SERIES_DIRS[] = {
 	0, 1, 2, 3, 4, -4
 };
 
-static const char *SAFARI_SHADOWS[8] = {
+static const char *SAFARI_SHADOWS[5] = {
 	"safari shadow 1", "safari shadow 2", "safari shadow 3",
-	"safari shadow 4", "safari shadow 5", "trek feng walker pos 3",
-	"trek feng walker pos 4", "trek feng walker pos 5"
+	"safari shadow 4", "safari shadow 5"
 };
 static const int16 SAFARI_SHADOWS_DIRS[6] = {
 	10, 11, 12, 13, 14, -1
 };
 
 void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
-	int32 triggerType = _G(globals)[GLB_TEMP_1] >> 16;
-	//int32 subVal = _G(globals)[GLB_TEMP_3] >> 16;
+	const int triggerType = _G(globals)[GLB_TEMP_1] >> 16;
+	const int subVal = _G(globals)[GLB_TEMP_2] >> 16;
 
 	switch (triggerType) {
 	case 0:
@@ -82,10 +78,15 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 		break;
 
 	case 2:
-		if (walker_has_walk_finished(sender))
-			sendWSMessage(0x30000, 0, nullptr, 0, nullptr, 1);
-		else
+		if (!walker_has_walk_finished(sender))
+			return;
+
+		if (subVal) {
+			sendWSMessage(0x30000, 0, sender, 0, nullptr, 1);
+			return;
+		} else {
 			_G(player).waiting_for_walk = false;
+		}
 		break;
 
 	case 3:
@@ -97,64 +98,55 @@ void Walker::player_walker_callback(frac16 myMessage, machine *sender) {
 		kernel_trigger_dispatchx(myMessage);
 }
 
-bool Walker::walk_load_walker_and_shadow_series() {
+void Walker::walk_load_walker_and_shadow_series() {
 	switch (_G(player).walker_type) {
 	case 0:
-		return ws_walk_load_walker_series(RIPLEY_SERIES_DIRS, RIPLEY_SERIES, true) &&
-			ws_walk_load_shadow_series(RIPLEY_SHADOWS_DIRS, RIPLEY_SHADOWS);
+		ws_walk_load_walker_series(RIPLEY_SERIES_DIRS, RIPLEY_SERIES, false);
+		ws_walk_load_shadow_series(RIPLEY_SHADOWS_DIRS, RIPLEY_SHADOWS);
+		break;
+
 	case 1:
-		return ws_walk_load_walker_series(SAFARI_SERIES_DIRS, SAFARI_SERIES, true) &&
-			ws_walk_load_shadow_series(SAFARI_SHADOWS_DIRS, SAFARI_SHADOWS);
+		ws_walk_load_walker_series(SAFARI_SERIES_DIRS, SAFARI_SERIES, false);
+		ws_walk_load_shadow_series(SAFARI_SHADOWS_DIRS, SAFARI_SHADOWS);
+		break;
+		
 	default:
-		return false;
+		error_show(FL, "walk_load_walker_and_shadow_series");
 	}
 }
 
 machine *Walker::walk_initialize_walker() {
-	machine *m;
-	int32 s;
+	_G(player).walker_visible = true;
 
-	if (!_G(player).walker_in_this_scene) {
-		_G(player).walker_visible = false;
-		m = nullptr;
+	// Default walker
+	_G(player).walker_type = WALKER_PLAYER;
+	_G(player).shadow_type = SHADOW_PLAYER;
 
-	} else {
-		_G(player).walker_visible = true;
+	_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
+	_G(globals)[GLB_TEMP_2] = *RIPLEY_SERIES_DIRS << 24;	// Starting series hash of default walker
+	_G(globals)[GLB_TEMP_3] = *RIPLEY_SHADOWS_DIRS << 24;	// Starting series hash of default walker shadows
 
-		// Wilbur walker
-		_G(player).walker_type = WALKER_PLAYER;
-		_G(player).shadow_type = SHADOW_PLAYER;
+	// initialize with bogus data (this is for the real walker)
+	const int32 s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
+	_G(globals)[GLB_TEMP_4] = 320 << 16;
+	_G(globals)[GLB_TEMP_5] = 400 << 16;
+	_G(globals)[GLB_TEMP_6] = s;
+	_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
 
-		_G(globals)[GLB_TEMP_1] = _G(player).walker_type << 16;
-		_G(globals)[GLB_TEMP_2] = WALKER_SERIES_HASH << 24;  // starting series hash of default walker	        GAMECTRL loads shadows starting @ 0
-		_G(globals)[GLB_TEMP_3] = SHADOW_SERIES_HASH << 24;  // starting series hash of default walker shadows. GAMECTRL loads shadows starting @ 10
+	machine *m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "PLAYER WALKER");
 
-		// initialize with bogus data (this is for the real walker)
-		s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
-		_G(globals)[GLB_TEMP_4] = 320 << 16;
-		_G(globals)[GLB_TEMP_5] = 400 << 16;
-		_G(globals)[GLB_TEMP_6] = s;
-		_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
+	// We need to all init sequences to happen immediately (init coordinates)
+	cycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
+		nullptr, (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
 
-		m = TriggerMachineByHash(WALKER_HASH, nullptr, _G(player).walker_type + WALKER_HASH, 0, player_walker_callback, false, "PLAYER WALKER");
-
-		// we need to all init sequences to happen immediately (init coordinates)
-		cycleEngines(nullptr, &(_G(currentSceneDef).depth_table[0]),
-			nullptr, (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), true);
-
-		_G(inverse_pal)->release();
-	}
+	_G(inverse_pal)->release();
 
 	return m;
 }
 
-void Walker::reset_walker_sprites() {
-	error("TODO: reset_walker_sprites");
-}
-
 void Walker::unloadSprites() {
 	if (_G(player).walker_in_this_scene) {
-		term_message("Unloading Wilbur walker...");
+		term_message("Unloading Ripley walker...");
 		player_update_info();
 
 		// Send message for the unload
@@ -169,6 +161,20 @@ void Walker::unloadSprites() {
 	}
 }
 
+bool Walker::ripley_said(const char *const list[][2]) {
+	if (!list)
+		return false;
+
+	for (int index = 0; list[index][0]; ++index) {
+		if (player_said(list[index][0])) {
+			digi_play(list[index][1], 1);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void enable_player() {
 	player_set_commands_allowed(true);
 	ws_unhide_walker(_G(my_walker));
@@ -177,25 +183,6 @@ void enable_player() {
 void disable_player() {
 	player_set_commands_allowed(false);
 	ws_hide_walker(_G(my_walker));
-}
-
-void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger) {
-#ifdef TODO
-	_G(player_facing_x) = facing_x;
-	_G(player_facing_y) = facing_y;
-	_G(player_trigger) = trigger;
-	player_hotspot_walk_override(x, y, -1, gSET_FACING);
-#else
-	error("TODO: player_walk_to");
-#endif
-}
-
-void player_walk_to(int32 x, int32 y, int trigger) {
-#ifdef TODO
-	player_walk_to(x, y, _G(hotspot_x), _G(hotspot_y), trigger);
-#else
-	error("TODO: player_walk_to");
-#endif
 }
 
 } // namespace Riddle

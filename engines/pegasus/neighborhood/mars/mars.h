@@ -194,7 +194,7 @@ protected:
 	void startUpFromSpaceChase();
 	void transportOutFromSpaceChase(bool);
 	void spaceChaseClick(const Input &, const HotSpotID);
-	void updateCursor(const Common::Point, const Hotspot *) override;
+	void updateCursor(const Common::Point &, const Hotspot *) override;
 	void playSpaceAmbient();
 
 	Common::Path getSoundSpotsName() override;

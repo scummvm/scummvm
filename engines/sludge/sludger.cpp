@@ -247,7 +247,7 @@ bool initSludge(const Common::String &filename) {
 		debugC(2, kSludgeDebugDataLoad, "There is an icon - read it!");
 
 		// read game icon
-		Graphics::Surface gameIcon;
+		Graphics::ManagedSurface gameIcon;
 		if (!ImgLoader::loadImage(-1, "icon", fp, &gameIcon, false)) {
 			delete fp;
 			return false;
@@ -259,7 +259,7 @@ bool initSludge(const Common::String &filename) {
 		debugC(2, kSludgeDebugDataLoad, "There is a logo - read it!");
 
 		// read game logo
-		Graphics::Surface gameLogo;
+		Graphics::ManagedSurface gameLogo;
 		if (!ImgLoader::loadImage(-1, "logo", fp, &gameLogo)) {
 			delete fp;
 			return false;

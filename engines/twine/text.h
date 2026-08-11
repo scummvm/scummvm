@@ -31,7 +31,11 @@ namespace TwinE {
 
 class TextEntry;
 
+// MAX_CAR
 #define TEXT_MAX_FADE_IN_CHR 32
+#define INTER_LINE      38
+#define INTER_SPACE     7
+#define INTER_LEAVE     2
 
 enum class ProgressiveTextState {
 	End = 0,				/**< Text has reached its end and we are waiting for user input */
@@ -60,55 +64,58 @@ private:
 	 * @param color character color
 	 */
 	void drawCharacterShadow(int32 x, int32 y, uint16 character, int32 color, Common::Rect& dirtyRect);
-	void initProgressiveTextBuffer();
+	void initEndPage();
 	struct WordSize {
-		int32 inChar = 0;
-		int32 inPixel = 0;
+		int32 lenWord = 0;
+		int32 sizeWord = 0;
 	};
 	struct LineCharacter {
 		int16 chr = 0;
-		int16 x = 0;
+		int16 width = 0;
 	};
-	WordSize getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize);
+	WordSize getNextWord(const char *completeText, char *wordBuf, int32 wordBufSize);
 	uint16 getNextChar(const char *&dialogue);
-	void processTextLine();
-	void appendProgressiveTextBuffer(const char *s, int &x, uint &i);
+	void getNextLine();
+	void appendText(const char *s, uint &i);
 	// draw next page arrow polygon
 	void renderContinueReadingTriangle();
 	/**
 	 * @see fadeInCharacters
 	 */
-	void fillFadeInBuffer(int16 baseX, int16 y, const LineCharacter &chr);
+	void pushChar(int16 baseX, int16 y, const LineCharacter &chr); // PushCar
 	/**
 	 * Blend in characters for a text scrolling in
 	 *
-	 * @see fillFadeInBuffer
-	 * @param counter The amount of characters to handle - max 32
+	 * @see pushChar()
 	 */
 	void fadeInCharacters(int32 counter, int32 fontColor);
 
 	TextBankId _currentBankIdx = TextBankId::None;
 
-	LineCharacter _progressiveTextBuffer[256];
-	const char *_currentTextPosition = nullptr;
+	LineCharacter _bufLine[256];
+	const char *_ptDial = nullptr;
 
-	int32 _dialTextBaseXPos = 0;
-	int32 _dialTextYPos = 0;
+	int32 _xDial = 0;
+	int32 _yDial = 0;
 
 	/** Current position of in the buffer of characters that are currently faded in */
-	const LineCharacter *_progressiveTextBufferPtr = nullptr;
+	const LineCharacter *_ptLine = nullptr;
 
-	int32 _dialTextBoxCurrentLine = 0;
-	struct BlendInCharacter {
+	int32 _nbLineDial = 0;
+	struct BlendInCharacter { // T_STACKCAR
 		int16 chr = 0;
 		int16 x = 0;
 		int16 y = 0;
 	};
-	BlendInCharacter _fadeInCharacters[TEXT_MAX_FADE_IN_CHR];
-	int32 _fadeInCharactersPos = 0;
+	BlendInCharacter _stackChar[TEXT_MAX_FADE_IN_CHR]; // StackCar
+	int32 _nbChar = 0; // NbCar
+	int32 _sizeLine = 0;
+	int32 _nbSpace = 0;
+	int32 _nbBigSpace = 0;
+	int32 _sizeSpace = 0;
 
 	/** Current dialogue text pointer */
-	const char *_currDialTextPtr = nullptr;
+	const char *_ptText = nullptr;
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
 
@@ -117,46 +124,48 @@ private:
 	TextId _currMenuTextIndex = TextId::kNone;
 
 	/** Pixel size between dialogue text */
-	int32 _dialSpaceBetween = 0;
+	int32 _interLeave = 0;
 	/** Pixel size of the space character - recalculated per per line */
-	int32 _dialCharSpace = 0;
+	int32 _interSpace = 0;
 	/** Dialogue text color */
 	int32 _dialTextColor = 0;
 
 	/** Dialogue text start color for cross coloring dialogues */
-	int32 _dialTextStartColor = 0;
+	int32 _maxDegrade = 0;
 	/** Dialogue text stop color for cross coloring dialogues */
-	int32 _dialTextStopColor = 0;
+	int32 _minDegrade = 0;
 	/**
 	 * Dialogue text step size for cross coloring dialogues
 	 *
 	 * The speed in which the color reaches it's destination color while fading in.
 	 */
-	int32 _dialTextStepSize = 0;
+	int32 _stepDegrade = 0;
 	/** Dialogue text buffer size for cross coloring dialogues */
-	int32 _dialTextBufferSize = 0;
+	int32 _nbDegrade = 0;
 
-	Common::Rect _dialTextBox { 0, 0, 0, 0};
-
-	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
-	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
+	int32 _maxLineDial = 0;
+	int32 _dialMaxSize = 0;
 
 	bool _isShiftJIS = false;
 	bool _isVisualRTL = false;
 
-	bool displayText(TextId index, bool showText, bool playVox, bool loop);
 public:
 	Text(TwinEEngine *engine);
 	~Text();
 
-	static const int32 lineHeight = 38;
+	// Dial_X1, Dial_Y1
+	Common::Rect _dialTextBox { 0, 0, 0, 0};
+	bool displayText(TextId index, bool showText, bool playVox, bool loop); // MyDial
 
-	// TODO: refactor all this variables and related functions
-	bool _hasValidTextHandle = false;
+	static const int32 lineHeight = INTER_LINE;
+
+	bool _flagRunningDial = false;
+	bool _flagEndDial = false;
+	bool _flagEnd3Line = false;
 	// renders a triangle if the next side of the text can get activated
 	bool _renderTextTriangle = false;
-	bool _drawTextBoxBackground = false;
-	bool _hasHiddenVox = false; // printTextVar5
+	bool _flagMessageShade = false;
+	bool _hasHiddenVox = false;
 	int32 _voxHiddenIndex = 0;
 	// ---
 
@@ -176,7 +185,7 @@ public:
 	inline TextBankId textBank() const {
 		return _currentBankIdx;
 	}
-
+	void closeDial();
 	/**
 	 * Display a certain dialogue text in the screen
 	 * @param x X coordinate in screen
@@ -191,26 +200,26 @@ public:
 	 * Gets dialogue text width size
 	 * @param dialogue ascii text to display
 	 */
-	int32 getTextSize(const char *dialogue);
+	int32 sizeFont(const char *dialogue);
 	int32 getCharWidth(uint16 chr) const;
 	int32 getCharHeight(uint16 chr) const;
 
-	void initDialogueBox();
-	void initInventoryDialogueBox();
+	void initDialWindow();
+	void secondInitDialWindow();
 
-	void initText(TextId index);
+	void commonOpenDial(TextId index);
 	void initLine();
 	void initInventoryText(InventoryItems index);
 	void initItemFoundText(InventoryItems index);
 	void fadeInRemainingChars();
-	ProgressiveTextState updateProgressiveText();
+	ProgressiveTextState nextDialChar();
 
 	/**
 	 * Set font type parameters
-	 * @param spaceBetween number in pixels of space between characters
-	 * @param charSpace number in pixels of the character space
+	 * @param interLeave number in pixels of space between characters
+	 * @param interSpace number in pixels of the character space
 	 */
-	void setFontParameters(int32 spaceBetween, int32 charSpace);
+	void setFont(int32 interLeave, int32 interSpace);
 
 	/**
 	 * Set the font cross color

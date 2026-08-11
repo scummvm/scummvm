@@ -40,18 +40,18 @@ public:
 	int getBaseline() override;
 	int getBaselineSkip() override;
 
-	void getStringSize(const Std::string &text,
+	void getStringSize(const Common::String &text,
 		int32 &width, int32 &height) override;
-	void getTextSize(const Std::string &text, int32 &resultwidth,
+	void getTextSize(const Common::String &text, int32 &resultwidth,
 		int32 &resultheight, unsigned int &remaining, int32 width = 0,
 		int32 height = 0, TextAlign align = TEXT_LEFT,
 		bool u8specials = false, bool pagebreaks = false) override;
 
-	RenderedText *renderText(const Std::string &text,
+	RenderedText *renderText(const Common::String &text,
 		unsigned int &remaining, int32 width = 0, int32 height = 0,
 		TextAlign align = TEXT_LEFT, bool u8specials = false,
 		bool pagebreaks = false,
-		Std::string::size_type cursor = Std::string::npos) override;
+		Common::String::size_type cursor = Common::String::npos) override;
 
 protected:
 

@@ -60,7 +60,8 @@ enum GameType {
 	kGameTypeOnceUponATime, // Need more inspection to see if Baba Yaga or Abracadabra
 	//kGameTypeAJWorld -> Deprecated, duplicated with kGameTypeAdibou1
 	kGameTypeCrousti = 24, // Explicit value needed to not invalidate save games after removing kGameTypeAJWorld
-	kGameTypeDynastyWood
+	kGameTypeDynastyWood,
+	kGameTypeAdi1
 };
 
 enum Features {
@@ -89,7 +90,24 @@ struct GOBGameDescription {
 	const char *startStkBase;
 	const char *startTotBase;
 	uint32 demoIndex;
+
+	uint32 sizeBuffer() const {
+		uint32 ret = desc.sizeBuffer();
+		ret += ADDynamicDescription::strSizeBuffer(startStkBase);
+		ret += ADDynamicDescription::strSizeBuffer(startTotBase);
+		return ret;
+	}
+
+	void *toBuffer(void *buffer) {
+		buffer = desc.toBuffer(buffer);
+		buffer = ADDynamicDescription::strToBuffer(buffer, startStkBase);
+		buffer = ADDynamicDescription::strToBuffer(buffer, startTotBase);
+		return buffer;
+	}
 };
+
+#define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS				GUIO_GAMEOPTIONS2
 
 } // End of namespace Gob
 

@@ -65,12 +65,17 @@ namespace Voyeur {
 #define MANSION_SCROLL_INC_Y 4
 
 enum VoyeurDebugChannels {
-	kDebugScripts	= 1 << 0
+	kDebugScripts = 1,
 };
 
 enum VoyeurArea { AREA_NONE, AREA_APARTMENT, AREA_INTERFACE, AREA_ROOM, AREA_EVIDENCE };
 
 struct VoyeurGameDescription;
+
+enum VOYEURAction {
+	kActionNone,
+	kActionSkip,
+};
 
 class VoyeurEngine : public Engine {
 private:

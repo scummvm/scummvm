@@ -40,7 +40,7 @@ public:
 	AdGeomExt(BaseGame *inGame);
 	virtual ~AdGeomExt();
 	bool loadFile(char *filename);
-	bool loadBuffer(byte *buffer);
+	bool loadBuffer(char *buffer);
 	bool addStandardNodes();
 	AdGeomExtNode *matchName(const char *name);
 

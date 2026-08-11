@@ -79,7 +79,7 @@ private:
 public:
 	/* Takes 1 argument, a string with Quest markup
 	 * Will output it to the user interface
-	 * If the with_newline flag is set, it will print a newline afterwords
+	 * If the with_newline flag is set, it will print a newline afterwards
 	 *     unless the string ends in "|xn"
 	 */
 	GeasResult print_formatted(String s, bool with_newline = true);

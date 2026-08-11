@@ -39,36 +39,9 @@ class PartEmitter : public BaseObject {
 public:
 	DECLARE_PERSISTENT(PartEmitter, BaseObject)
 
-	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
+	PartEmitter(BaseGame *inGame, BaseScriptHolder *owner);
 	~PartEmitter() override;
 
-	int32 _fadeOutTime;
-
-	bool start();
-
-	bool update() override;
-	bool display() override { return display(nullptr); } // To avoid shadowing the inherited display-function.
-	bool display(BaseRegion *region);
-
-	bool sortParticlesByZ();
-	bool addSprite(const char *filename);
-	bool removeSprite(const char *filename);
-	bool setBorder(int x, int y, int width, int height);
-	bool setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom);
-
-	bool addForce(const Common::String &name, PartForce::TForceType type, int posX, int posY, float angle, float strength);
-	bool removeForce(const Common::String &name);
-
-	BaseArray<PartForce *> _forces;
-
-	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
-	bool scSetProperty(const char *name, ScValue *value) override;
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	const char *scToString() override;
-
-
-private:
 	int32 _width;
 	int32 _height;
 
@@ -108,13 +81,14 @@ private:
 	int32 _maxBatches;
 	int32 _batchesGenerated;
 
-	Rect32 _border;
+	Common::Rect32 _border;
 	int32 _borderThicknessLeft;
 	int32 _borderThicknessRight;
 	int32 _borderThicknessTop;
 	int32 _borderThicknessBottom;
 
 	int32 _fadeInTime;
+	int32 _fadeOutTime;
 
 	int32 _alpha1;
 	int32 _alpha2;
@@ -125,8 +99,32 @@ private:
 	char *_emitEvent;
 	BaseScriptHolder *_owner;
 
-	PartForce *addForceByName(const Common::String &name);
-	bool static compareZ(const PartParticle *p1, const PartParticle *p2);
+	bool start();
+
+	bool update() override;
+	bool display() override { return display(nullptr); } // To avoid shadowing the inherited display-function.
+	bool display(BaseRegion *region);
+
+	bool sortParticlesByZ();
+	bool addSprite(const char *filename);
+	bool removeSprite(const char *filename);
+	bool setBorder(int x, int y, int width, int height);
+	bool setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom);
+
+	bool addForce(const char *name, PartForce::TForceType type, int posX, int posY, float angle, float strength);
+	bool removeForce(const char *name);
+
+	BaseArray<PartForce *> _forces;
+
+	// scripting interface
+	ScValue *scGetProperty(const char *name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
+
+private:
+	PartForce *addForceByName(const char *name);
+	static int32 compareZ(const void *obj1, const void *obj2);
 	bool initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta);
 	bool updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;

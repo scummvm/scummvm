@@ -37,7 +37,6 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/mididrv.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -66,12 +65,16 @@ SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 
 	_maxHandleId = 1;
 
+	// Get the selected "music device" (defaults to MT_AUTO device)
+	// as set from Audio > Music Device dropdown setting, which commonly is for MIDI driver selection.
+	// Since this engine does not use MIDI, but the setting is still available from the "Global Options... > Audio"
+	// and the specific game options (Game Options... > Audio), we respect only the option "No Music" to avoid end user confusion.
+	// All other options for this dropdown will result in music playing and are treated as irrelevant.
 	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
-	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
-	_noMusic = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+	_noMusic = (selDevStr.compareToIgnoreCase(Common::String("null")) == 0);
 
 	if (_noMusic) {
-		warning("AUDIO: MUSIC IS FORCED TO OFF");
+		warning("AUDIO: MUSIC IS FORCED TO OFF (BY THE MIDI DRIVER SETTING - music_driver was set to \"null\")");
 		ConfMan.setInt("music_volume", 0);
 	}
 }
@@ -206,7 +209,7 @@ Audio::Mixer::SoundType getType(SoundEngine::SOUND_TYPES type) {
 }
 
 bool SoundEngine::playSound(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer) {
-	debugC(1, kDebugSound, "SoundEngine::playSound(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
+	debugC(1, kDebugSound, "SoundEngine::playSound(filename='%s', type=%d, volume=%f, pan=%f, loop=%d, loopStart=%d, loopEnd=%d, layer=%d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
 	playSoundEx(fileName, type, volume, pan, loop, loopStart, loopEnd, layer);
 
@@ -217,10 +220,6 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 	if (type == MUSIC && _noMusic)
 		return 0;
 
-#ifdef USE_VORBIS
-	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
-	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
-#endif
 	uint id = handleId;
 	SndHandle *handle;
 
@@ -238,10 +237,20 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 	handle->loopEnd = loopEnd;
 	handle->layer = layer;
 
-	debugC(1, kDebugSound, "SoundEngine::playSoundEx(%s, %d, %f, %f, %d, %d, %d, %d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
+	debugC(1, kDebugSound, "SoundEngine::playSoundEx(fileName='%s', type=%d, volume=%f, pan=%f, loop=%d, loopStart=%d, loopEnd=%d, layer=%d)", fileName.c_str(), type, volume, pan, loop, loopStart, loopEnd, layer);
 
 #ifdef USE_VORBIS
-	_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
+	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
+
+	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
+
+	if (loop) {
+		Audio::AudioStream *audio = new Audio::LoopingAudioStream(stream, 0, DisposeAfterUse::YES);
+
+		_mixer->playStream(getType(type), &(handle->handle), audio, -1, (byte)(volume * 255), (int8)(pan * 127));
+	} else {
+		_mixer->playStream(getType(type), &(handle->handle), stream, -1, (byte)(volume * 255), (int8)(pan * 127));
+	}
 #endif
 
 	return id;

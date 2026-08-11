@@ -30,8 +30,8 @@
 #ifndef AGS_SHARED_GAME_ROOM_FILE_H
 #define AGS_SHARED_GAME_ROOM_FILE_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/memory.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/game/room_version.h"
 #include "ags/shared/util/error.h"

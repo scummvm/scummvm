@@ -62,7 +62,7 @@ TabWidget::TabWidget(GuiObject *boss, const Common::String &name, ThemeEngine::T
 }
 
 void TabWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE);
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_WANT_TICKLE);
 	_type = kTabWidget;
 	_activeTab = -1;
 	_firstVisibleTab = 0;
@@ -173,6 +173,10 @@ void TabWidget::removeTab(int tabID) {
 
 	// Finally trigger a redraw
 	g_gui.scheduleTopDialogRedraw();
+}
+
+int TabWidget::getTabCount() {
+	return (int)_tabs.size();
 }
 
 void TabWidget::setActiveTab(int tabID) {
@@ -293,6 +297,15 @@ void TabWidget::handleMouseWheel(int x, int y, int direction) {
 		adjustTabs(kTabForwards);
 	} else {
 		adjustTabs(kTabBackwards);
+	}
+}
+
+void TabWidget::handleTickle() {
+	Widget *w = _firstWidget;
+	while (w) {
+		if (w->getFlags() & WIDGET_WANT_TICKLE)
+			w->handleTickle();
+		w = w->next();
 	}
 }
 

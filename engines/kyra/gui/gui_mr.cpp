@@ -238,7 +238,7 @@ void KyraEngine_MR::showInventory() {
 		_screen->copyRegion(0, 0, 0, y, 320, height, 2, 0, Screen::CR_NO_P_CHECK);
 		if (times++ == 0)
 			_screen->updateScreen();
-	
+
 		if (_inventoryScrollSpeed == 1 && times == 3) {
 			while (waitTill > _system->getMillis())
 				_system->delayMillis(10);
@@ -1523,6 +1523,8 @@ int GUI_MR::changeLanguage(Button *caller) {
 	if (!_vm->queryGameFlag(0x1B2)) {
 		++_vm->_lang;
 		_vm->_lang %= _vm->_numLang;
+		// This fan MR translation use Chinese style script file extensions...
+		_vm->_scriptLang = (_vm->_flags.fanLang == Common::CS_CZE && _vm->_lang == 1) ? 3 : _vm->_lang;
 		setupOptionsButtons();
 		renewHighlight(_gameOptions);
 	}

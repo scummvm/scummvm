@@ -36,9 +36,9 @@ public:
 
 	virtual void addAnimation(AnimationPtr animation);
 
-	virtual void update(Drawable* drawable, long currentTime);
+	void update(Drawable* drawable, long currentTime) override;
 
-	virtual void start(long currentTime);
+	void start(long currentTime) override;
 
 private:
 	uint16 _index;

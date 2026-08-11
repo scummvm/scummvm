@@ -67,13 +67,13 @@ void Weapons::loadConf() {
 	_confLoaded = true;
 	const Config *config = Config::getInstance();
 
-	Std::vector<ConfigElement> weaponConfs = config->getElement("weapons").getChildren();
-	for (Std::vector<ConfigElement>::iterator i = weaponConfs.begin(); i != weaponConfs.end(); i++) {
-		if (i->getName() != "weapon")
+	Common::Array<ConfigElement> weaponConfs = config->getElement("weapons").getChildren();
+	for (const auto &i : weaponConfs) {
+		if (i.getName() != "weapon")
 			continue;
 
 		WeaponType weaponType = static_cast<WeaponType>(size());
-		push_back(new Weapon(weaponType, *i));
+		push_back(new Weapon(weaponType, i));
 	}
 }
 
@@ -117,7 +117,7 @@ Weapon::Weapon(WeaponType weaponType, const ConfigElement &conf)
 	_range = atoi(range.c_str());
 
 	/* Load weapon attributes */
-	for (unsigned at = 0; at < sizeof(booleanAttributes) / sizeof(booleanAttributes[0]); at++) {
+	for (unsigned at = 0; at < ARRAYSIZE(booleanAttributes); at++) {
 		if (conf.getBool(booleanAttributes[at].name)) {
 			_flags |= booleanAttributes[at].flag;
 		}
@@ -136,24 +136,24 @@ Weapon::Weapon(WeaponType weaponType, const ConfigElement &conf)
 		_leaveTile = conf.getString("leavetile");
 	}
 
-	Std::vector<ConfigElement> contraintConfs = conf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = contraintConfs.begin(); i != contraintConfs.end(); i++) {
+	Common::Array<ConfigElement> contraintConfs = conf.getChildren();
+	for (const auto &i : contraintConfs) {
 		byte mask = 0;
 
-		if (i->getName() != "constraint")
+		if (i.getName() != "constraint")
 			continue;
 
 		for (int cl = 0; cl < 8; cl++) {
-			if (scumm_stricmp(i->getString("class").c_str(), getClassName(static_cast<ClassType>(cl))) == 0)
+			if (scumm_stricmp(i.getString("class").c_str(), getClassName(static_cast<ClassType>(cl))) == 0)
 				mask = (1 << cl);
 		}
-		if (mask == 0 && scumm_stricmp(i->getString("class").c_str(), "all") == 0)
+		if (mask == 0 && scumm_stricmp(i.getString("class").c_str(), "all") == 0)
 			mask = 0xFF;
 		if (mask == 0) {
 			error("malformed weapons.xml file: constraint has unknown class %s",
-			           i->getString("class").c_str());
+			           i.getString("class").c_str());
 		}
-		if (i->getBool("canuse"))
+		if (i.getBool("canuse"))
 			_canUse |= mask;
 		else
 			_canUse &= ~mask;

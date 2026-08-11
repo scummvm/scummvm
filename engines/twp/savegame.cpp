@@ -32,7 +32,6 @@
 #include "twp/room.h"
 #include "twp/savegame.h"
 #include "twp/squtil.h"
-#include "twp/time.h"
 
 namespace Twp {
 
@@ -455,6 +454,8 @@ bool SaveGameManager::loadGame(Common::SeekableReadStream &stream) {
 		return false;
 	}
 	g_twp->_time = (float)gameTime;
+	// reset _nextHoldToMoveTime because it's based on time
+	g_twp->_nextHoldToMoveTime = 0.f;
 	g_twp->setTotalPlayTime(gameTime * 1000);
 	g_twp->_inputState.setState((InputStateFlag)json["inputState"]->asIntegerNumber());
 	if (SQ_FAILED(loadObjects(json["objects"]->asObject()))) {
@@ -1088,7 +1089,7 @@ static Common::JSONValue *createSaveGame() {
 	json["objects"] = createJObjects();
 	json["rooms"] = createJRooms();
 	json["savebuild"] = new Common::JSONValue(958LL);
-	json["savetime"] = new Common::JSONValue((long long)getTime());
+	json["savetime"] = new Common::JSONValue((long long)Common::DateTime::getTime());
 	json["selectedActor"] = new Common::JSONValue(g_twp->_actor ? g_twp->_actor->_key : "");
 	json["version"] = new Common::JSONValue((long long int)2);
 	return new Common::JSONValue(json);

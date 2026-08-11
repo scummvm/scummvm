@@ -348,7 +348,7 @@ bool cGameEnemyState_Worm_Hunt::OnHearNoise(const cVector3f &avPosition, float a
 			// Check if a node is found near the sound.
 			cAINode *pNode = mpMover->GetAINodeAtPosInRange(avPosition, 0.0f, 5.0f, true, 0.1f);
 			if (pNode) {
-				// Update last player postion.
+				// Update last player position.
 				mbLostPlayer = false;
 				mfUpdatePathCount = 0;
 				mpEnemy->SetLastPlayerPos(pNode->GetPosition());
@@ -472,7 +472,7 @@ cGameEnemy_Worm::cGameEnemy_Worm(cInit *apInit, const tString &asName, TiXmlElem
 	// Internal variables
 	mvLastForward = cVector3f(0, 0, 1);
 
-	mlMaxSegmentPostions = 20;
+	mlMaxSegmentPositions = 20;
 	mfTurnSpeed = cMath::ToRad(160.0f);
 }
 
@@ -563,7 +563,7 @@ void cGameEnemy_Worm_MeshCallback::AfterAnimationUpdate(cMeshEntity *apMeshEntit
 
 		////////////////////////////////////////
 		// Set world matrix of bone
-		mtxTrans.SetTranslation(pSegment->mvPostion);
+		mtxTrans.SetTranslation(pSegment->mvPosition);
 		pSegment->mpBone->SetWorldMatrix(mtxTrans);
 	}
 }
@@ -675,7 +675,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 	} else
 		mlstRootPositions.push_back(pCharBody->GetPosition());
 
-	if ((int)mlstRootPositions.size() > mlMaxSegmentPostions)
+	if ((int)mlstRootPositions.size() > mlMaxSegmentPositions)
 		mlstRootPositions.pop_front();
 
 	// Get smooth position
@@ -736,28 +736,28 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 		cWormTailSegment *pSegment = mvTailSegments[i];
 
 		//////////////////////////////////
-		// Change postion of segment
+		// Change position of segment
 
-		// Get add newer pos and smooth all the previuos
-		cVector3f vPrevPos = pSegment->mvPostion;
+		// Get add newer pos and smooth all the previous
+		cVector3f vPrevPos = pSegment->mvPosition;
 		pSegment->mlstPositions.push_back(vSegBackPos);
-		if ((int)pSegment->mlstPositions.size() > mlMaxSegmentPostions) {
+		if ((int)pSegment->mlstPositions.size() > mlMaxSegmentPositions) {
 			pSegment->mlstPositions.pop_front();
 		}
-		pSegment->mvPostion = 0;
+		pSegment->mvPosition = 0;
 		Common::List<cVector3f>::iterator posIt2 = pSegment->mlstPositions.begin();
 		for (; posIt2 != pSegment->mlstPositions.end(); ++posIt2) {
-			pSegment->mvPostion += *posIt2;
+			pSegment->mvPosition += *posIt2;
 		}
-		pSegment->mvPostion = pSegment->mvPostion / (float)pSegment->mlstPositions.size();
+		pSegment->mvPosition = pSegment->mvPosition / (float)pSegment->mlstPositions.size();
 
 		/////////////////////////////////////////////
 		// Get the movement vector
-		cVector3f vSegMovement = pSegment->mvPostion - vPrevPos;
+		cVector3f vSegMovement = pSegment->mvPosition - vPrevPos;
 
 		/////////////////////////////////////////////
 		// Update body position
-		pSegment->mpBody->SetPosition(pSegment->mvPostion);
+		pSegment->mpBody->SetPosition(pSegment->mvPosition);
 
 		//////////////////////////////////////////////
 		// Get the direction vector of the segment
@@ -796,7 +796,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 		////////////////////////////////////////
 		// Set the New back pos
 		if (i < mvTailSegments.size() - 1) {
-			vSegBackPos = pSegment->mvPostion +
+			vSegBackPos = pSegment->mvPosition +
 						  pSegment->mvForward * -mvTailSegments[i + 1]->mfDistToFront;
 		}
 	}
@@ -822,10 +822,10 @@ void cGameEnemy_Worm::ExtraPostSceneDraw() {
 	for (size_t i = 0; i < mvTailSegments.size(); ++i) {
 		cWormTailSegment *pSegment = mvTailSegments[i];
 
-		pLowLevelGfx->DrawSphere(pSegment->mvPostion, 0.3f, cColor(1, 1));
+		pLowLevelGfx->DrawSphere(pSegment->mvPosition, 0.3f, cColor(1, 1));
 
-		pLowLevelGfx->DrawLine(pSegment->mvPostion,
-							   pSegment->mvPostion + pSegment->mvForward * 0.5f,
+		pLowLevelGfx->DrawLine(pSegment->mvPosition,
+							   pSegment->mvPosition + pSegment->mvForward * 0.5f,
 							   cColor(1, 0, 1, 1));
 
 		cVector3f vForward = cMath::MatrixMul(cMatrixf::Identity, pSegment->mvForward);
@@ -922,7 +922,7 @@ void cGameEnemy_Worm::SetupTail() {
 		pSegment->mpBone->SetActive(false);
 
 		// Start Position,forward and rotation
-		pSegment->mvPostion = pSegment->mpBone->GetWorldPosition();
+		pSegment->mvPosition = pSegment->mpBone->GetWorldPosition();
 
 		pSegment->mvForward = mpMover->GetCharBody()->GetForward();
 		pSegment->mvUp = mpMover->GetCharBody()->GetUp();
@@ -938,7 +938,7 @@ void cGameEnemy_Worm::SetupTail() {
 		iCollideShape *pShape = pPhysicsWorld->CreateSphereShape(pCharBody->GetSize().x / 2.0f, NULL);
 		pSegment->mpBody = pPhysicsWorld->CreateBody("Tail0" + cString::ToString(i + 1), pShape);
 		pSegment->mpBody->SetMass(0);
-		pSegment->mpBody->SetPosition(pSegment->mvPostion);
+		pSegment->mpBody->SetPosition(pSegment->mvPosition);
 		pSegment->mpBody->SetIsCharacter(true);
 		pSegment->mpBody->SetActive(IsActive());
 

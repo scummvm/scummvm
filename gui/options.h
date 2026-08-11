@@ -32,7 +32,7 @@
 #include "gui/fluidsynth-dialog.h"
 #endif
 
-#ifdef USE_LIBCURL
+#ifdef USE_CLOUD
 #include "backends/cloud/storage.h"
 #endif
 
@@ -170,6 +170,8 @@ private:
 	PopUpWidget *_antiAliasPopUp;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
+	StaticTextWidget *_rotationModePopUpDesc;
+	PopUpWidget *_rotationModePopUp;
 
 	//
 	// Audio controls
@@ -315,6 +317,7 @@ protected:
 	CheckboxWidget *_guiReturnToLauncherAtExit;
 	CheckboxWidget *_guiConfirmExit;
 	CheckboxWidget *_guiDisableBDFScaling;
+	CheckboxWidget *_guiKineticScrolling;
 
 	void addGUIControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
@@ -337,7 +340,6 @@ protected:
 	void addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	//
 	// Cloud controls
 	//
@@ -370,7 +372,6 @@ protected:
 
 	void storageSavesSyncedCallback(const Cloud::Storage::BoolResponse &response);
 	void storageErrorCallback(const Networking::ErrorResponse &response);
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 #ifdef USE_SDL_NET

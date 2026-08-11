@@ -23,9 +23,8 @@
 #define ZVISION_RLF_DECODER_H
 
 #include "common/file.h"
-#include "video/video_decoder.h"
-
 #include "graphics/surface.h"
+#include "video/video_decoder.h"
 
 namespace ZVision {
 

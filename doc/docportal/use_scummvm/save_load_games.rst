@@ -28,7 +28,7 @@ In tile view, click on the **New Save** tile. Enter a description for the game, 
 
 .. figure:: ../images/Launcher/save_game_grid_desc.png
 
-	Save game decription, grid view.
+	Save game description, grid view.
 
 In list view, click on a slot to save the game to that slot. Enter a description for the game, then click **Save**.
 
@@ -47,6 +47,8 @@ Location of saved game files
 
 The save directory can be changed with the savepath setting in the :doc:`Paths tab <../settings/paths>`. It can also be changed in the :doc:`configuration file <../advanced_topics/configuration_file>`.
 
+.. _savelocation:
+
 Default saved game paths are shown below.
 
 .. tab-set::
@@ -58,7 +60,7 @@ Default saved game paths are shown below.
 
     .. tab-item:: macOS
 
-        ``~/Documents/ScummVM Savegames/``
+        ``~/Library/Application Support/ScummVM/Savegames/`` (with versions of ScummVM prior to 2.9 it was in ``~/Documents/ScummVM Savegames/``).
 
 
     .. tab-item:: Linux/Unix
@@ -81,7 +83,7 @@ There are two views: list view and tile view. Click the list and tile icons at t
 
 In list view, the pane on the left shows a list of your saved games. Click on a saved game to highlight it.  In the pane on the right you can see timestamps, screenshots and playtime for that saved game.
 
-Once you have highlighted the game you want to play, click **Load**.
+Once you have highlighted the game you want to play, click **Restore**.
 
 To delete a saved game, highlight the saved game and click **Delete**.
 
@@ -94,7 +96,3 @@ In grid view, each tile shows a screenshot of the saved state, as well as a desc
 .. figure:: ../images/Launcher/load_game_grid.png
 
   Loading a game, grid view.
-
-
-.. _savelocation:
-

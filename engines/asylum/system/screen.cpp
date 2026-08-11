@@ -703,16 +703,14 @@ void Screen::drawGraphicsInQueue() {
 	// Sort by priority first
 	Common::sort(_queueItems.begin(), _queueItems.end(), &Screen::graphicQueueItemComparator);
 
-	for (Common::Array<GraphicQueueItem>::const_iterator i = _queueItems.begin(); i != _queueItems.end(); i++) {
-		const GraphicQueueItem *item = i;
-
-		if (item->type == kGraphicItemNormal) {
-			if (item->transTableNum <= 0 || Config.performance <= 1)
-				draw(item->resourceId, item->frameIndex, item->source, item->flags);
+	for (const auto &item : _queueItems) {
+		if (item.type == kGraphicItemNormal) {
+			if (item.transTableNum <= 0 || Config.performance <= 1)
+				draw(item.resourceId, item.frameIndex, item.source, item.flags);
 			else
-				drawTransparent(item->resourceId, item->frameIndex, item->source, item->flags, (uint32)(item->transTableNum - 1));
-		} else if (item->type == kGraphicItemMasked) {
-			draw(item->resourceId, item->frameIndex, item->source, item->flags, item->resourceIdDestination, item->destination);
+				drawTransparent(item.resourceId, item.frameIndex, item.source, item.flags, (uint32)(item.transTableNum - 1));
+		} else if (item.type == kGraphicItemMasked) {
+			draw(item.resourceId, item.frameIndex, item.source, item.flags, item.resourceIdDestination, item.destination);
 		}
 	}
 }

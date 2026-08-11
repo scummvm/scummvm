@@ -150,7 +150,7 @@ bool Room::actionHasCode(const Action &action) {
 }
 
 bool Room::actionHasCode(int8 type, byte b1, byte b2, byte b3) {
-	const Action a = {type, b1, b2, b3};
+	const Action a = {type, b1, b2, b3, 0};
 	return actionHasCode(a);
 }
 
@@ -170,7 +170,7 @@ bool Room::handleAction(const Action &action) {
 }
 
 bool Room::handleAction(int8 type, byte b1, byte b2, byte b3) {
-	const Action a = {type, b1, b2, b3};
+	const Action a = {type, b1, b2, b3, 0};
 	return handleAction(a);
 }
 
@@ -191,7 +191,7 @@ bool Room::handleActionWithBitmask(const Action &action) {
 }
 
 bool Room::handleActionWithBitmask(int8 type, byte b1, byte b2, byte b3) {
-	Action a = {type, b1, b2, b3};
+	Action a = {type, b1, b2, b3, 0};
 	return handleActionWithBitmask(a);
 }
 
@@ -510,12 +510,12 @@ int16 Room::getRandomWordInRange(int start, int end) {
 	return _vm->getRandomWord() % (end - start + 1) + start;
 }
 
-void Room::playSoundEffectIndex(int soundEffect) {
+void Room::playSoundEffectIndex(SoundEffects soundEffect) {
 	_vm->_sound->playSoundEffectIndex(soundEffect);
 }
 
-void Room::playMidiMusicTracks(int startTrack, int loopTrack) {
-	_vm->_sound->playMidiMusicTracks(startTrack, loopTrack);
+void Room::playMidiMusicTracks(MidiTracks startTrack, MidiLoopType loopType) {
+	_vm->_sound->playMidiMusicTracks(startTrack, loopType);
 }
 
 void Room::endMission(int16 score, int16 arg1, int16 arg2) {
@@ -532,7 +532,7 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 	_vm->_mccoyActor->animationString.clear();
 	_vm->_redshirtActor->animationString.clear();
 
-	playSoundEffectIndex(8);
+	playSoundEffectIndex(kSfxTransporterDematerialize);
 
 	while (_vm->_kirkActor->spriteDrawn)
 		_vm->handleAwayMissionEvents();

@@ -20,14 +20,16 @@
  */
 
 #include "twine/scene/scene.h"
+#include "twine/scene/rain.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/stream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
+#include "engines/enhancements.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
-#include "twine/debugger/debug_grid.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/holomap.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
@@ -50,71 +52,71 @@ Scene::~Scene() {
 
 void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 	if (staticFlags & 0x1) {
-		act->_staticFlags.bComputeCollisionWithObj = 1;
+		act->_flags.bComputeCollisionWithObj = 1;
 	}
 	if (staticFlags & 0x2) {
-		act->_staticFlags.bComputeCollisionWithBricks = 1;
+		act->_flags.bComputeCollisionWithBricks = 1;
 	}
 	if (staticFlags & 0x4) {
-		act->_staticFlags.bIsZonable = 1;
+		act->_flags.bCheckZone = 1;
 	}
 	if (staticFlags & 0x8) {
-		act->_staticFlags.bUsesClipping = 1;
+		act->_flags.bSpriteClip = 1;
 	}
 	if (staticFlags & 0x10) {
-		act->_staticFlags.bCanBePushed = 1;
+		act->_flags.bCanBePushed = 1;
 	}
 	if (staticFlags & 0x20) {
-		act->_staticFlags.bComputeLowCollision = 1;
+		act->_flags.bComputeLowCollision = 1;
 	}
 	if (staticFlags & 0x40) {
-		act->_staticFlags.bCanDrown = 1;
+		act->_flags.bCanDrown = 1;
 	}
 	if (staticFlags & 0x80) {
-		act->_staticFlags.bComputeCollisionWithFloor = 1;
+		act->_flags.bComputeCollisionWithFloor = 1;
 	}
 
 	if (staticFlags & 0x100) {
-		act->_staticFlags.bUnk0100 = 1;
+		act->_flags.bUnk0100 = 1;
 	}
 	if (staticFlags & 0x200) {
-		act->_staticFlags.bIsHidden = 1;
+		act->_flags.bIsInvisible = 1;
 	}
 	if (staticFlags & 0x400) {
-		act->_staticFlags.bIsSpriteActor = 1;
+		act->_flags.bSprite3D = 1;
 	}
 	if (staticFlags & 0x800) {
-		act->_staticFlags.bCanFall = 1;
+		act->_flags.bObjFallable = 1;
 	}
 	if (staticFlags & 0x1000) {
-		act->_staticFlags.bDoesntCastShadow = 1;
+		act->_flags.bNoShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
-		act->_staticFlags.bIsBackgrounded = 1;
+		act->_flags.bIsBackgrounded = 1;
 	}
 	if (staticFlags & 0x4000) {
-		act->_staticFlags.bIsCarrierActor = 1;
+		act->_flags.bIsCarrierActor = 1;
 	}
 	if (staticFlags & 0x8000) {
-		act->_staticFlags.bUseMiniZv = 1;
+		act->_flags.bUseMiniZv = 1;
 	}
 	if (staticFlags & 0x10000) {
-		act->_staticFlags.bHasInvalidPosition = 1;
+		act->_flags.bHasInvalidPosition = 1;
 	}
 	if (staticFlags & 0x20000) {
-		act->_staticFlags.bNoElectricShock = 1;
+		act->_flags.bNoElectricShock = 1;
 	}
 	if (staticFlags & 0x40000) {
-		act->_staticFlags.bHasSpriteAnim3D = 1;
+		act->_flags.bHasSpriteAnim3D = 1;
 	}
 	if (staticFlags & 0x80000) {
-		act->_staticFlags.bNoPreClipping = 1;
+		act->_flags.bNoPreClipping = 1;
 	}
 	if (staticFlags & 0x100000) {
-		act->_staticFlags.bHasZBuffer = 1;
+		act->_flags.bHasZBuffer = 1;
 	}
 	if (staticFlags & 0x200000) {
-		act->_staticFlags.bHasZBufferInWater = 1;
+		act->_flags.bHasZBufferInWater = 1;
 	}
 }
 
@@ -179,6 +181,17 @@ bool Scene::loadSceneCubeXY(int numcube, int32 *cubex, int32 *cubey) {
 	return false;
 }
 
+void Scene::loadModel(ActorStruct &actor, int32 modelIndex, bool lba1) {
+	actor._body = modelIndex;
+	if (!actor._flags.bSprite3D) {
+		debug(1, "Init actor with model %i", modelIndex);
+		_engine->_resources->loadEntityData(actor._entityData, modelIndex);
+		actor._entityDataPtr = &actor._entityData;
+	} else {
+		actor._entityDataPtr = nullptr;
+	}
+}
+
 bool Scene::loadSceneLBA2() {
 	Common::MemoryReadStream stream(_currentScene, _currentSceneSize);
 	_island = stream.readByte();
@@ -191,8 +204,8 @@ bool Scene::loadSceneLBA2() {
 
 	/*uint8 n =*/ stream.readByte();
 
-	_alphaLight = ClampAngle((int16)stream.readUint16LE());
-	_betaLight = ClampAngle((int16)stream.readUint16LE());
+	_alphaLight = ClampAngle(stream.readSint16LE());
+	_betaLight = ClampAngle(stream.readSint16LE());
 	debug(2, "Using %i and %i as light vectors", _alphaLight, _betaLight);
 
 	for (int i = 0; i < 4; ++i) {
@@ -206,7 +219,7 @@ bool Scene::loadSceneLBA2() {
 	_sampleMinDelay = stream.readUint16LE();
 	_sampleMinDelayRnd = stream.readUint16LE();
 
-	_sceneMusic = stream.readByte();
+	_cubeJingle = stream.readByte();
 
 	// load hero properties
 	_sceneHeroPos.x = stream.readSint16LE();
@@ -221,8 +234,6 @@ bool Scene::loadSceneLBA2() {
 	_sceneHero->_lifeScript = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_lifeScriptSize);
 
-	/*uint32 checksum =*/ stream.readUint32LE();
-
 	_nbObjets = (int16)stream.readUint16LE();
 	int cnt = 1;
 	for (int32 a = 1; a < _nbObjets; a++, cnt++) {
@@ -230,20 +241,20 @@ bool Scene::loadSceneLBA2() {
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint32LE());
 
-		act->loadModel((int16)stream.readUint16LE(), false);
+		loadModel(*act, (int16)stream.readUint16LE(), false);
 
-		act->_genBody = (BodyType)stream.readSint16LE();
-		act->_genAnim = (AnimationTypes)stream.readByte();
+		act->_genBody = (BodyType)stream.readByte();
+		act->_genAnim = (AnimationTypes)stream.readSint16LE();
 		act->_sprite = (int16)stream.readUint16LE();
-		act->_pos.x = (int16)stream.readUint16LE();
-		act->_pos.y = (int16)stream.readUint16LE();
-		act->_pos.z = (int16)stream.readUint16LE();
+		act->_posObj.x = (int16)stream.readUint16LE();
+		act->_posObj.y = (int16)stream.readUint16LE();
+		act->_posObj.z = (int16)stream.readUint16LE();
 		act->_oldPos = act->posObj();
-		act->_strengthOfHit = stream.readByte();
+		act->_hitForce = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_beta = (int16)stream.readUint16LE();
-		act->_speed = (int16)stream.readUint16LE();
-		act->_controlMode = (ControlMode)stream.readByte();
+		act->_srot = (int16)stream.readUint16LE();
+		act->_move = (ControlMode)stream.readByte(); // move
 		act->_cropLeft = stream.readSint16LE();
 		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
 		act->_cropTop = stream.readSint16LE();
@@ -252,7 +263,7 @@ bool Scene::loadSceneLBA2() {
 		act->_followedActor = act->_cropBottom; // TODO: is this needed? and valid?
 		act->_bonusAmount = stream.readSint16LE();
 		act->_talkColor = stream.readByte();
-		if (act->_staticFlags.bHasSpriteAnim3D) {
+		if (act->_flags.bHasSpriteAnim3D) {
 			/*act->spriteAnim3DNumber = */stream.readSint32LE();
 			/*act->spriteSizeHit = */stream.readSint16LE();
 			/*act->cropBottom = act->spriteSizeHit;*/
@@ -268,11 +279,13 @@ bool Scene::loadSceneLBA2() {
 		act->_lifeScript = _currentScene + stream.pos();
 		stream.skip(act->_lifeScriptSize);
 
-		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
+		if (_engine->_debugState->_onlyLoadActor != -1 && _engine->_debugState->_onlyLoadActor != cnt) {
 			_nbObjets--;
 			a--;
 		}
 	}
+
+	/* uint32 checksum = */stream.readUint32LE();
 
 	_sceneNumZones = (int16)stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumZones; i++) {
@@ -306,7 +319,7 @@ bool Scene::loadSceneLBA2() {
 		point->z = stream.readSint32LE();
 	}
 
-	uint16 sceneNumPatches = stream.readUint16LE();
+	uint16 sceneNumPatches = stream.readUint32LE();
 	for (uint16 i = 0; i < sceneNumPatches; i++) {
 		/*size = */stream.readUint16LE();
 		/*offset = */stream.readUint16LE();
@@ -339,7 +352,7 @@ bool Scene::loadSceneLBA1() {
 	_sampleMinDelay = stream.readUint16LE();
 	_sampleMinDelayRnd = stream.readUint16LE();
 
-	_sceneMusic = stream.readByte();
+	_cubeJingle = stream.readByte();
 
 	// load hero properties
 	_sceneHeroPos.x = (int16)stream.readUint16LE();
@@ -362,21 +375,21 @@ bool Scene::loadSceneLBA1() {
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint16LE());
 
-		act->loadModel(stream.readUint16LE(), true);
+		loadModel(*act, stream.readUint16LE(), true);
 
 		act->_genBody = (BodyType)stream.readByte();
 		act->_genAnim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
-		act->_pos.x = (int16)stream.readUint16LE();
-		act->_pos.y = (int16)stream.readUint16LE();
-		act->_pos.z = (int16)stream.readUint16LE();
+		act->_posObj.x = (int16)stream.readUint16LE();
+		act->_posObj.y = (int16)stream.readUint16LE();
+		act->_posObj.z = (int16)stream.readUint16LE();
 		act->_oldPos = act->posObj();
-		act->_strengthOfHit = stream.readByte();
+		act->_hitForce = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_bonusParameter.givenNothing = 0;
 		act->_beta = (int16)stream.readUint16LE();
-		act->_speed = (int16)stream.readUint16LE();
-		act->_controlMode = (ControlMode)stream.readUint16LE();
+		act->_srot = (int16)stream.readUint16LE();
+		act->_move = (ControlMode)stream.readUint16LE();
 		act->_cropLeft = stream.readSint16LE();
 		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
 		act->_cropTop = stream.readSint16LE();
@@ -396,7 +409,7 @@ bool Scene::loadSceneLBA1() {
 		act->_lifeScript = _currentScene + stream.pos();
 		stream.skip(act->_lifeScriptSize);
 
-		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
+		if (_engine->_debugState->_onlyLoadActor != -1 && _engine->_debugState->_onlyLoadActor != cnt) {
 			_nbObjets--;
 			a--;
 		}
@@ -430,43 +443,40 @@ bool Scene::loadSceneLBA1() {
 		point->z = stream.readSint16LE();
 	}
 
-	if (_enableEnhancements) {
-		switch (_currentSceneIdx) {
-		case LBA1SceneId::Hamalayi_Mountains_landing_place:
-			_sceneActors[21]._pos.x = _sceneActors[21]._oldPos.x = 6656 + 256;
-			_sceneActors[21]._pos.z = _sceneActors[21]._oldPos.z = 768;
-			break;
-		case LBA1SceneId::Principal_Island_outside_the_fortress:
-			_sceneActors[29]._pos.z = _sceneActors[29]._oldPos.z = 1795;
+	if (_engine->isLBA1()) {
+		if (_engine->enhancementEnabled(kEnhMinorBugFixes)) {
+			if (_numCube == LBA1SceneId::Hamalayi_Mountains_landing_place) {
+				// move the mine a little bit, as it's too close to the change cube zone
+				_sceneActors[21]._posObj.x = _sceneActors[21]._oldPos.x = 6656 + 256;
+				_sceneActors[21]._posObj.z = _sceneActors[21]._oldPos.z = 768;
+			}
 #if 0
-			_sceneZones[15].mins.x = 1104;
-			_sceneZones[15].mins.z = 8448;
-			_sceneZones[15].maxs.x = 4336;
-			_sceneZones[15].maxs.z = 11488;
-			_sceneZones[16].mins.x = 21104;
-			_sceneZones[16].mins.z = 4608;
-			_sceneZones[16].maxs.x = 23824;
-			_sceneZones[16].maxs.z = 8080;
-			_sceneZones[22].mins.x = 6144;
-			_sceneZones[22].mins.z = 6144;
-			_sceneZones[22].maxs.x = 8865;
-			_sceneZones[22].maxs.z = 6881;
+			else if (_numCube == LBA1SceneId::Tippet_Island_Secret_passage_scene_1) {
+				_sceneZones[6].maxs.z = 3616;
+			}
 #endif
-			break;
-		case LBA1SceneId::Tippet_Island_Secret_passage_scene_1:
-			_sceneZones[6].maxs.z = 3616;
-			break;
-		case LBA1SceneId::Principal_Island_inside_the_fortress:
-			_sceneZones[11].type = (ZoneType)50;
-			break;
+		}
+		if (_engine->enhancementEnabled(kEnhGameBreakingBugFixes)) {
+			if (_numCube == LBA1SceneId::Principal_Island_outside_the_fortress) {
+				// https://bugs.scummvm.org/ticket/13818
+				_sceneActors[29]._posObj.z = _sceneActors[29]._oldPos.z = 1795;
+			} else if (_numCube == LBA1SceneId::Principal_Island_inside_the_fortress) {
+				// https://bugs.scummvm.org/ticket/13819
+				// Set this zone to something invalid to fix a getting-stuck-bug
+				// the original value was ZoneType::kGrid (3)
+				_sceneZones[11].type = ZoneType::kFunFrockFix;
+			}
 		}
 	}
 
 	return true;
 }
 
-bool Scene::initScene(int32 index) {
+bool Scene::loadScene(int32 index) {
 	// load scene from file
+	if (_engine->isLBA2()) {
+		index++;
+	}
 	_currentSceneSize = HQR::getAllocEntry(&_currentScene, Resources::HQR_SCENE_FILE, index);
 	if (_currentSceneSize == 0) {
 		return false;
@@ -475,32 +485,34 @@ bool Scene::initScene(int32 index) {
 	if (_engine->isLBA1()) {
 		return loadSceneLBA1();
 	} else if (_engine->isLBA2()) {
+		_engine->_rain->InitRain();
 		return loadSceneLBA2();
 	}
 
 	return false;
 }
 
-void Scene::resetScene() {
-	_engine->_extra->resetExtras();
+void Scene::clearScene() {
+	_engine->_extra->clearExtra();
 
+	// ClearFlagsCube
 	for (int32 i = 0; i < ARRAYSIZE(_listFlagCube); i++) {
 		_listFlagCube[i] = 0;
 	}
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
-		_engine->_redraw->overlayList[i].info0 = -1;
+		_engine->_redraw->overlayList[i].num = -1;
 	}
 
-	_engine->_screens->setNormalPal();
+	_engine->_screens->_flagPalettePcx = false;
 }
 
 void Scene::reloadCurrentScene() {
-	_needChangeScene = _currentSceneIdx;
+	_newCube = _numCube;
 }
 
 void Scene::dumpSceneScript(const char *type, int actorIdx, const uint8* script, int size) const {
-	Common::String fname = Common::String::format("./dumps/%i-%i.%s", _currentSceneIdx, actorIdx, type);
+	Common::String fname = Common::String::format("./dumps/%i-%i.%s", _numCube, actorIdx, type);
 	Common::DumpFile out;
 	if (!out.open(fname.c_str(), true)) {
 		warning("Scene::dumpSceneScript(): Can not open dump file %s", fname.c_str());
@@ -519,11 +531,10 @@ void Scene::dumpSceneScripts() const {
 	}
 }
 
-// ChangeCube
-void Scene::changeScene() {
+void Scene::changeCube() {
 	if (_engine->isLBA1()) {
-		if (_enableEnhancements) {
-			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor) {
+		if (_engine->enhancementEnabled(kEnhMinorBugFixes)) {
+			if (_numCube == LBA1SceneId::Citadel_Island_Harbor && _newCube == LBA1SceneId::Principal_Island_Harbor) {
 				if (_sceneNumZones >= 15 && _sceneNumTracks >= 8) {
 					const ZoneStruct *zone = &_sceneZones[15];
 					const IVec3 &track = _sceneTracks[8];
@@ -531,116 +542,133 @@ void Scene::changeScene() {
 					pos.x = zone->infoData.ChangeScene.x - zone->mins.x + track.x;
 					pos.y = zone->infoData.ChangeScene.y - zone->mins.y + track.y;
 					pos.z = zone->infoData.ChangeScene.z - zone->mins.z + track.z;
-					_engine->_scene->_heroPositionType = ScenePositionType::kZone;
-					debug(3, "Using zone position %i:%i:%i", pos.x, pos.y, pos.z);
+					_engine->_scene->_flagChgCube = ScenePositionType::kZone;
+					debug(2, "Using zone position %i:%i:%i", pos.x, pos.y, pos.z);
 				}
 			}
 		}
 
 		// change twinsen house destroyed hard-coded
-		if (_needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
-			_needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
+		if (_newCube == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
+			_newCube = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
 		}
 	}
 
 	// local backup previous scene
-	_previousSceneIdx = _currentSceneIdx;
-	_currentSceneIdx = _needChangeScene;
+	_oldcube = _numCube;
+	_numCube = _newCube;
 
-	if (_engine->isLBA1() && _currentSceneIdx >= LBA1SceneId::Citadel_Island_Prison && _currentSceneIdx < LBA1SceneId::SceneIdMax) {
-		snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i %s", _currentSceneIdx, _engine->_holomap->getLocationName(_currentSceneIdx));
-	} else {
-		snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i", _currentSceneIdx);
-	}
-	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->_sceneName, _previousSceneIdx);
+	snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i %s", _numCube, _engine->_holomap->getLocationName(_numCube));
+	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->_sceneName, _oldcube);
 
 	if (_engine->isLBA1()) {
-		if (_needChangeScene == LBA1SceneId::Polar_Island_end_scene) {
+		if (_newCube == LBA1SceneId::Polar_Island_end_scene) {
 			_engine->unlockAchievement("LBA_ACH_001");
 			// if you finish the game in less than 4 hours
 			if (_engine->getTotalPlayTime() <= 1000 * 60 * 60 * 4) {
 				_engine->unlockAchievement("LBA_ACH_005");
 			}
-		} else if (_needChangeScene == LBA1SceneId::Brundle_Island_Secret_room) {
+		} else if (_newCube == LBA1SceneId::Brundle_Island_Secret_room) {
 			_engine->unlockAchievement("LBA_ACH_006");
 		}
 	}
 
 	_engine->_sound->stopSamples();
 
-	resetScene();
+	clearScene();
 	_engine->_actor->loadHeroEntities();
 
-	_sceneHero->_controlMode = ControlMode::kManual;
+	_sceneHero->_move = ControlMode::kManual;
 	_sceneHero->_zoneSce = -1;
 	_sceneHero->_offsetLife = 0;
 	_sceneHero->_offsetTrack = -1;
 	_sceneHero->_labelTrack = -1;
 
-	initScene(_needChangeScene);
+	loadScene(_newCube);
 	if (ConfMan.getBool("dump_scripts")) {
 		dumpSceneScripts();
 	}
 
-	if (_holomapTrajectory != -1) {
+	if (_numHolomapTraj != -1) {
 		_engine->testRestoreModeSVGA(false);
-		_engine->_holomap->drawHolomapTrajectory(_holomapTrajectory);
-		_holomapTrajectory = -1;
+		_engine->_screens->setBlackPal();
+		_engine->_holomap->holoTraj(_numHolomapTraj);
+		_numHolomapTraj = -1;
+		_engine->_screens->_flagFade = true;
+	} else {
+		// TODO lbawin can do a fade here (if activated)
+		// _engine->_screens->_flagFade = true;
+
 	}
 
-	if (_needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_1 || _needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_2) {
+	if (_newCube == LBA1SceneId::Citadel_Island_end_sequence_1 || _newCube == LBA1SceneId::Citadel_Island_end_sequence_2) {
 		_sceneTextBank = TextBankId::Tippet_Island;
 	}
 
 	_engine->_text->initSceneTextBank();
-	_engine->_grid->initGrid(_needChangeScene);
 
-	if (_heroPositionType == ScenePositionType::kZone) {
-		_newHeroPos = _zoneHeroPos;
-	} else if (_heroPositionType == ScenePositionType::kScene || _heroPositionType == ScenePositionType::kNoPosition) {
-		_newHeroPos = _sceneHeroPos;
+	if (_cubeJingle != 255) {
+		// _engine->_music->fadeMusicMidi(1);
 	}
 
-	_sceneHero->_pos = _newHeroPos;
-	_startYFalling = _newHeroPos.y;
+	_engine->_grid->initGrid(_newCube);
+
+	// LBA2: load per-island palette from XPL data
+	if (_engine->isLBA2()) {
+		_engine->_screens->choicePalette();
+	}
+
+	if (_flagChgCube == ScenePositionType::kZone) {
+		_sceneStart = _zoneHeroPos;
+	} else if (_flagChgCube == ScenePositionType::kScene || _flagChgCube == ScenePositionType::kNoPosition) {
+		_sceneStart = _sceneHeroPos;
+	}
+
+	_sceneHero->_posObj = _sceneStart;
+	_startYFalling = _sceneStart.y;
 
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
-	if (_previousSceneIdx != SCENE_CEILING_GRID_FADE_1 && _previousSceneIdx != _needChangeScene) {
+	if (_oldcube != SCENE_CEILING_GRID_FADE_1 && _oldcube != _newCube) {
 		_engine->_actor->_previousHeroBehaviour = _engine->_actor->_heroBehaviour;
 		_engine->_actor->_previousHeroAngle = _sceneHero->_beta;
 		_engine->autoSave();
 	}
 
-	_engine->_actor->restartHeroScene();
+	_engine->_actor->restartPerso();
 
+	// StartInitAllObjs
 	for (int32 a = 1; a < _nbObjets; a++) {
 		_engine->_actor->startInitObj(a);
 	}
 
-	_engine->_gameState->_inventoryNumKeys = 0;
-	_engine->_disableScreenRecenter = false;
-
-	ActorStruct *followedActor = getActor(_currentlyFollowedActor);
-	_engine->_grid->centerOnActor(followedActor);
-
+	_engine->_gameState->_nbLittleKeys = 0;
 	_engine->_gameState->_magicBall = -1;
 	_engine->_movements->_lastJoyFlag = true;
-	_engine->_grid->_useCellingGrid = -1;
-	_engine->_grid->_cellingGridIdx = -1;
-	_engine->_screens->_fadePalette = false;
+	_engine->_grid->_zoneGrm = -1;
+	_engine->_grid->_indexGrm = -1;
+	_engine->_redraw->_firstTime = true;
+	_engine->_cameraZone = false;
+	_newCube = SCENE_CEILING_GRID_FADE_1;
+	_flagChgCube = ScenePositionType::kNoPosition;
+	_flagRenderGrid = true;
+
+	_samplePlayed = 2 * 4 * 8;
+	_timerNextAmbiance = 0;
+
+	ActorStruct *followedActor = getActor(_numObjFollow);
+	_engine->_grid->centerOnActor(followedActor);
+
+	_engine->_screens->_flagFade = true;
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
-	_needChangeScene = SCENE_CEILING_GRID_FADE_1;
-	_enableGridTileRendering = true;
-	_heroPositionType = ScenePositionType::kNoPosition;
 	_zoneHeroPos = IVec3();
-	_sampleAmbienceTime = 0;
 
-	if (_sceneMusic != -1) {
-		debug(2, "Scene %i music track id: %i", _currentSceneIdx, _sceneMusic);
-		_engine->_music->playTrackMusic(_sceneMusic);
+	debug(2, "Scene %i music track id: %i", _numCube, _cubeJingle);
+	if (_cubeJingle != 255) {
+		_engine->_music->playMusic(_cubeJingle);
 	}
+
 	_engine->_gameState->handleLateGameItems();
 }
 
@@ -673,15 +701,21 @@ void Scene::initSceneVars() {
 }
 
 void Scene::playSceneMusic() {
-	if (_currentSceneIdx == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasArrivedHamalayi()) {
-		_engine->_music->playTrackMusic(8);
-	} else {
-		_engine->_music->playMidiMusic(_sceneMusic);
+	if (_engine->isLBA1()) {
+		if (_numCube == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasArrivedHamalayi()) {
+			if (_engine->isCDROM()) {
+				_engine->_music->playCdTrack(8);
+			} else {
+				_engine->_music->playMusic(_cubeJingle);
+			}
+			return;
+		}
 	}
+	_engine->_music->playMidiFile(_cubeJingle);
 }
 
 void Scene::processEnvironmentSound() {
-	if (_engine->timerRef < _sampleAmbienceTime) {
+	if (_engine->timerRef < _timerNextAmbiance) {
 		return;
 	}
 	int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
@@ -696,10 +730,11 @@ void Scene::processEnvironmentSound() {
 
 			const int16 sampleIdx = _sampleAmbiance[currentAmb];
 			if (sampleIdx != -1) {
-				/*int16 decal = _sampleRound[currentAmb];*/
+				int16 decal = _sampleRound[currentAmb];
 				int16 repeat = _sampleRepeat[currentAmb];
 
-				_engine->_sound->playSample(sampleIdx, repeat, 110, -1, 110);
+				const uint16 pitchbend = 0x1000 + _engine->getRandomNumber(decal) - (decal / 2);
+				_engine->_sound->mixSample(sampleIdx, pitchbend, repeat, 110, 110);
 				break;
 			}
 		}
@@ -709,7 +744,7 @@ void Scene::processEnvironmentSound() {
 	}
 
 	// compute next ambiance timer
-	_sampleAmbienceTime = _engine->timerRef + _engine->toSeconds(_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay);
+	_timerNextAmbiance = _engine->timerRef + _engine->toSeconds(_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay);
 }
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {
@@ -725,7 +760,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	const int32 amount = zone->infoData.Bonus.amount;
 	const int32 x = (zone->maxs.x + zone->mins.x) / 2;
 	const int32 z = (zone->maxs.z + zone->mins.z) / 2;
-	const int32 angle = _engine->_movements->getAngle(x, z, _sceneHero->_pos.x, _sceneHero->_pos.z);
+	const int32 angle = _engine->_movements->getAngle(x, z, _sceneHero->_posObj.x, _sceneHero->_posObj.z);
 	const int32 index = _engine->_extra->addExtraBonus(x, zone->maxs.y, z, LBAAngles::ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
@@ -737,12 +772,12 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 void Scene::checkZoneSce(int32 actorIdx) {
 	ActorStruct *actor = &_sceneActors[actorIdx];
 
-	int32 currentX = actor->_pos.x;
-	int32 currentY = actor->_pos.y;
-	int32 currentZ = actor->_pos.z;
+	int32 currentX = actor->_posObj.x;
+	int32 currentY = actor->_posObj.y;
+	int32 currentZ = actor->_posObj.z;
 
 	actor->_zoneSce = -1;
-	bool tmpCellingGrid = false;
+	bool flaggrm = false;
 
 	if (IS_HERO(actorIdx)) {
 		_flagClimbing = false;
@@ -757,23 +792,26 @@ void Scene::checkZoneSce(int32 actorIdx) {
 		    (currentZ >= zone->mins.z && currentZ <= zone->maxs.z)) {
 			switch (zone->type) {
 			default:
-				error("lba2 zone types not yet implemented");
+				warning("lba2 zone types not yet implemented");
+				break;
+			case ZoneType::kFunFrockFix:
+				break;
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->_lifePoint > 0) {
-					_needChangeScene = zone->num;
-					_zoneHeroPos.x = actor->_pos.x - zone->mins.x + zone->infoData.ChangeScene.x;
-					_zoneHeroPos.y = actor->_pos.y - zone->mins.y + zone->infoData.ChangeScene.y;
-					_zoneHeroPos.z = actor->_pos.z - zone->mins.z + zone->infoData.ChangeScene.z;
-					_heroPositionType = ScenePositionType::kZone;
+					_newCube = zone->num;
+					_zoneHeroPos.x = actor->_posObj.x - zone->mins.x + zone->infoData.ChangeScene.x;
+					_zoneHeroPos.y = actor->_posObj.y - zone->mins.y + zone->infoData.ChangeScene.y;
+					_zoneHeroPos.z = actor->_posObj.z - zone->mins.z + zone->infoData.ChangeScene.z;
+					_flagChgCube = ScenePositionType::kZone;
 				}
 				break;
 			case ZoneType::kCamera:
-				if (_currentlyFollowedActor == actorIdx && !_engine->_debugGrid->_useFreeCamera) {
-					_engine->_disableScreenRecenter = true;
-					if (_engine->_grid->_newCamera.x != zone->infoData.CameraView.x || _engine->_grid->_newCamera.y != zone->infoData.CameraView.y || _engine->_grid->_newCamera.z != zone->infoData.CameraView.z) {
-						_engine->_grid->_newCamera.x = zone->infoData.CameraView.x;
-						_engine->_grid->_newCamera.y = zone->infoData.CameraView.y;
-						_engine->_grid->_newCamera.z = zone->infoData.CameraView.z;
+				if (_numObjFollow == actorIdx && !_engine->_debugState->_useFreeCamera) {
+					_engine->_cameraZone = true;
+					if (_engine->_grid->_startCube.x != zone->infoData.CameraView.x || _engine->_grid->_startCube.y != zone->infoData.CameraView.y || _engine->_grid->_startCube.z != zone->infoData.CameraView.z) {
+						_engine->_grid->_startCube.x = zone->infoData.CameraView.x;
+						_engine->_grid->_startCube.y = zone->infoData.CameraView.y;
+						_engine->_grid->_startCube.z = zone->infoData.CameraView.z;
 						_engine->_redraw->_firstTime = true;
 					}
 				}
@@ -782,34 +820,36 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				actor->_zoneSce = zone->num;
 				break;
 			case ZoneType::kGrid:
-				if (_currentlyFollowedActor == actorIdx) {
-					tmpCellingGrid = true;
-					if (_engine->_grid->_useCellingGrid != zone->num) {
-						if (zone->num != -1) {
+				if (_numObjFollow == actorIdx) {
+					flaggrm = true;
+					if (_engine->_grid->_zoneGrm != zone->num) {
+						if (_engine->_grid->_zoneGrm != -1) {
 							_engine->_grid->copyMapToCube();
 						}
 
-						_engine->_grid->_useCellingGrid = zone->num;
-						_engine->_grid->_cellingGridIdx = z;
-						ScopedEngineFreeze freeze(_engine);
-						_engine->_grid->initCellingGrid(_engine->_grid->_useCellingGrid);
+						_engine->_grid->_zoneGrm = zone->num;
+						_engine->_grid->_indexGrm = z;
+						_engine->saveTimer(false);
+						_engine->_grid->initCellingGrid(_engine->_grid->_zoneGrm);
+						_engine->restoreTimer();
 					}
 				}
 				break;
 			case ZoneType::kObject:
-				if (IS_HERO(actorIdx) && _engine->_movements->shouldExecuteAction()) {
+				if (IS_HERO(actorIdx) && _engine->_movements->actionNormal()) {
 					_engine->_animations->initAnim(AnimationTypes::kAction, AnimType::kAnimationThen, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 					processZoneExtraBonus(zone);
 				}
 				break;
 			case ZoneType::kText:
-				if (IS_HERO(actorIdx) && _engine->_movements->shouldExecuteAction()) {
-					ScopedEngineFreeze scopedFreeze(_engine);
+				if (IS_HERO(actorIdx) && _engine->_movements->actionNormal()) {
+					_engine->saveTimer(false);
 					_engine->testRestoreModeSVGA(true);
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					_talkingActor = actorIdx;
 					_engine->_text->drawTextProgressive((TextId)zone->num);
-					_engine->_redraw->redrawEngineActions(true);
+					_engine->restoreTimer();
+					_engine->_redraw->drawScene(true);
 				}
 				break;
 			case ZoneType::kLadder:
@@ -819,12 +859,12 @@ void Scene::checkZoneSce(int32 actorIdx) {
 					destPos.y += actor->_processActor.z;
 
 					if (destPos.x >= 0 && destPos.y >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.y <= SCENE_SIZE_MAX) {
-						if (_engine->_grid->worldColBrick(destPos.x, actor->_pos.y + SIZE_BRICK_Y, destPos.y) != ShapeType::kNone) {
+						if (_engine->_grid->worldColBrick(destPos.x, actor->_posObj.y + SIZE_BRICK_Y, destPos.y) != ShapeType::kNone) {
 							_flagClimbing = true;
-							if (actor->_pos.y >= (zone->mins.y + zone->maxs.y) / 2) {
+							if (actor->_posObj.y >= (zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
-								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder
+								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, actorIdx); // go up in ladder
 							}
 						}
 					}
@@ -834,9 +874,9 @@ void Scene::checkZoneSce(int32 actorIdx) {
 		}
 	}
 
-	if (!tmpCellingGrid && actorIdx == _currentlyFollowedActor && _engine->_grid->_useCellingGrid != -1) {
-		_engine->_grid->_useCellingGrid = -1;
-		_engine->_grid->_cellingGridIdx = -1;
+	if (!flaggrm && actorIdx == _numObjFollow && _engine->_grid->_zoneGrm != -1) {
+		_engine->_grid->_zoneGrm = -1;
+		_engine->_grid->_indexGrm = -1;
 		_engine->_grid->copyMapToCube();
 		_engine->_redraw->_firstTime = true;
 	}

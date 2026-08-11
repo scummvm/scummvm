@@ -23,7 +23,7 @@
 #define NUVIE_CORE_TILE_MANAGER_H
 
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Nuvie {

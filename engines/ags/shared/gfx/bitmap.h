@@ -88,6 +88,13 @@ Bitmap *LoadFromFile(PACKFILE *pf);
 // Stretches bitmap to the requested size. The new bitmap will have same
 // colour depth. Returns original bitmap if no changes are necessary.
 Bitmap *AdjustBitmapSize(Bitmap *src, int width, int height);
+// Makes the given bitmap opaque (full alpha), while keeping pixel RGB unchanged.
+void    MakeOpaque(Bitmap *bmp);
+// Makes the given bitmap opaque (full alpha), while keeping pixel RGB unchanged.
+// Skips mask color (leaves it with zero alpha).
+void    MakeOpaqueSkipMask(Bitmap *bmp);
+// Replaces fully transparent (alpha = 0) pixels with standard mask color.
+void    ReplaceAlphaWithRGBMask(Bitmap *bmp);
 // Copy transparency mask and/or alpha channel from one bitmap into another.
 // Destination and mask bitmaps must be of the same pixel format.
 // Transparency is merged, meaning that fully transparent pixels on

@@ -142,7 +142,8 @@ MODULE_OBJS := \
 	te/te_xml_parser.o \
 	te/te_zlib_jpeg.o \
 	te/te_xml_gui.o \
-	metaengine.o
+	metaengine.o \
+	obb_archive.o
 
 ifdef USE_TINYGL
 MODULE_OBJS += \

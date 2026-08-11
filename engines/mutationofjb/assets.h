@@ -55,7 +55,7 @@ public:
 	/**
 	 * Access to inventory definitions.
 	 *
-	 * @return Inventory item definiton list.
+	 * @return Inventory item definition list.
 	 */
 	InventoryItemDefinitionList &getInventoryItemDefList();
 

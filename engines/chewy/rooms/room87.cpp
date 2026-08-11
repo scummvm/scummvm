@@ -135,7 +135,7 @@ int Room87::proc2(int16 txt_nr) {
 		autoMove(movNr, P_CHEWY);
 		delInventory(_G(cur)->getInventoryCursor());
 		start_spz_wait(14, 1, false, P_CHEWY);
-		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(txt_nr, 1, ATS_DATA);
 		_G(det)->showStaticSpr(movNr);
 		if (_G(gameState).flags32_4 && _G(gameState).flags32_8)
 			_G(atds)->delControlBit(502, ATS_ACTIVE_BIT);

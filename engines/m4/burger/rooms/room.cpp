@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/room.h"
 #include "m4/burger/vars.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -46,9 +47,9 @@ HotSpotRec *Room::custom_hotspot_which(int32 x, int32 y) {
 		return nullptr;
 
 	player_update_info();
-	int y2 = _G(player_info).y - (_G(player_info).scale * 75 / 100);
-	int y1 = _G(player_info).y - (_G(player_info).scale * 150 / 100);
-	int xSize = _G(player_info).scale * 22 / 100;
+	const int y2 = _G(player_info).y - (_G(player_info).scale * 75 / 100);
+	const int y1 = _G(player_info).y - (_G(player_info).scale * 150 / 100);
+	const int xSize = _G(player_info).scale * 22 / 100;
 
 	if (y > y2 || y <= y1 || imath_abs(x - _G(player_info).x) >= xSize)
 		return nullptr;

@@ -30,18 +30,6 @@
 
 namespace Agi {
 
-class MIDISound : public AgiSound {
-public:
-	MIDISound(uint8 *data, uint32 len, int resnum);
-	~MIDISound() override { free(_data); }
-	uint16 type() override { return _type; }
-	uint8 *_data; ///< Raw sound resource data
-	uint32 _len;  ///< Length of the raw sound resource
-
-protected:
-	uint16 _type; ///< Sound resource type
-};
-
 class SoundGenMIDI : public SoundGen, public Audio::MidiPlayer {
 public:
 	SoundGenMIDI(AgiBase *vm, Audio::Mixer *pMixer);

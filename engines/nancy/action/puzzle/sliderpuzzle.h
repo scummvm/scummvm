@@ -63,9 +63,10 @@ public:
 	SolveState _solveState = kNotSolved;
 	Graphics::ManagedSurface _image;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "SliderPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawTile(int tileID, uint posX, uint posY);
 	void undrawTile(uint posX, uint posY);

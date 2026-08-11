@@ -63,9 +63,9 @@ void Te3DTextureOpenGL::copyCurrentRender(uint xoffset, uint yoffset, uint x, ui
 
 void Te3DTextureOpenGL::writeTo(Graphics::Surface &surf) {
 	Graphics::Surface fullTex;
-	fullTex.create(_texWidth, _texHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	fullTex.create(_texWidth, _texHeight, Graphics::PixelFormat::createFormatRGBA32());
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, fullTex.getPixels());
-	surf.create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	surf.create(_width, _height, fullTex.format);
 	surf.copyRectToSurface(fullTex, 0, 0, Common::Rect(_width, _height));
 	fullTex.free();
 }
@@ -74,7 +74,7 @@ void Te3DTextureOpenGL::create() {
 	_flipY = false;
 	_leftBorder = _btmBorder = _texWidth = _texHeight = 0;
 	_rightBorder = _topBorder = _width = _height = 0;
-	_format = TeImage::INVALID;
+	_hasAlpha = false;
 	_loaded = false;
 	if (!_createdTexture)
 		glGenTextures(1, &_glTexture);
@@ -115,7 +115,7 @@ bool Te3DTextureOpenGL::load(const TeImage &img) {
 
 	_width = img.w;
 	_height = img.h;
-	_format = img.teFormat();
+	_hasAlpha = img.format.aBits() > 0;
 
 	// TODO? set some other fields from the image here.
 	// For now just set defaults as these never get used in games.
@@ -138,12 +138,7 @@ bool Te3DTextureOpenGL::load(const TeImage &img) {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	const void *imgdata = img.getPixels();
-	if (_format == TeImage::RGB8) {
-		if (_alphaOnly)
-			warning("Te3DTexture::load can't load RGB as alpha-only");
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, _texWidth, _texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.pitch / 3, img.h, GL_RGB, GL_UNSIGNED_BYTE, imgdata);
-	} else if (_format == TeImage::RGBA8) {
+	if (img.format == Graphics::PixelFormat::createFormatRGBA32()) {
 		Graphics::Surface surf;
 		if (_alphaOnly) {
 			surf.copyFrom(img);
@@ -183,7 +178,7 @@ bool Te3DTextureOpenGL::load(const TeImage &img) {
 		if (_alphaOnly)
 			surf.free();
 	} else {
-		warning("Te3DTexture::load can't send image format %d to GL.", _format);
+		warning("Te3DTexture::load can't send image format %s to GL.", img.format.toString().c_str());
 	}
 
 	_matrix.setToIdentity();
@@ -231,14 +226,7 @@ void Te3DTextureOpenGL::update(const TeImage &img, uint xoff, uint yoff) {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	const void *imgdata = img.getPixels();
-	if (_format == TeImage::RGB8) {
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, GL_RGB, GL_UNSIGNED_BYTE, imgdata);
-	} else if (_format == TeImage::RGBA8) {
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, GL_RGBA, GL_UNSIGNED_BYTE, imgdata);
-	} else {
-		warning("Te3DTexture::update can't send image format %d to GL.", _format);
-	}
-	return;
+	glTexSubImage2D(GL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, GL_RGBA, GL_UNSIGNED_BYTE, imgdata);
 }
 
 } // end namespace Tetraedge

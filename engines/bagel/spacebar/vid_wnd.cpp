@@ -21,8 +21,8 @@
 
 #include "bagel/spacebar/vid_wnd.h"
 #include "bagel/spacebar/main_window.h"
-#include "bagel/baglib/bagel.h"
-#include "bagel/baglib/master_win.h"
+#include "bagel/spacebar/baglib/bagel.h"
+#include "bagel/spacebar/baglib/master_win.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/stdinc.h"
 
@@ -304,7 +304,8 @@ void SBarVidBut::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
 			vidWnd->setPlayMode(1);
 			vidWnd->setInc(PLAY_INC);
 		}
-		} break;
+	}
+	break;
 
 	case VID_FF_BUT: {
 		SBarVidWnd *vidWnd = (SBarVidWnd *)pInfo;
@@ -312,8 +313,8 @@ void SBarVidBut::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
 			vidWnd->setPlayMode(2);
 			vidWnd->setInc(FF_INC);
 		}
-		}
-		break;
+	}
+	break;
 
 	case VID_REW_BUT: {
 		SBarVidWnd *vidWnd = (SBarVidWnd *)pInfo;
@@ -321,15 +322,15 @@ void SBarVidBut::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *pInfo) {
 			vidWnd->setPlayMode(3);
 			vidWnd->setInc(REW_INC);
 		}
-		}
-		break;
+	}
+	break;
 
 	case VID_STOP_BUT: {
 		SBarVidWnd *vidWnd = (SBarVidWnd *)pInfo;
 		vidWnd->setPlayMode(0);
 		vidWnd->setInc(0);
-		}
-		break;
+	}
+	break;
 
 	default:
 		break;

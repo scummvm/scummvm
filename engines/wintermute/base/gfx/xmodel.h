@@ -30,14 +30,13 @@
 
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/gfx/xmath.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
+#include "engines/wintermute/base/gfx/3deffect_params.h"
 #include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
-
-#include "math/matrix4.h"
-#include "math/vector3d.h"
-#include "math/vector4d.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -47,67 +46,94 @@ class FrameNode;
 class Material;
 class ShadowVolume;
 class XFileData;
-
-struct MaterialReference {
-	Common::String _name;
-	Material *_material;
-};
+class Effect3D;
+class Effect3DParams;
 
 #define X_NUM_ANIMATION_CHANNELS 10
 
 class XModel : public BaseObject {
 private:
-	// the D3DX effect stuff is missing here
-	// at the moment I am not aware of whether this is used
-	// in Alpha Polaris or any other WME game
-	// if it is, then this would mean a decent amount of work
-	// since we would need to parse and emulate D3DX effects in OpenGL
 	class XModelMatSprite {
 	public:
 		char *_matName;
+		char *_effectFile;
 		BaseSprite *_sprite;
 		VideoTheoraPlayer *_theora;
+		Effect3D *_effect;
+		Effect3DParams *_effectParams;
 
 		XModelMatSprite() {
 			_matName = nullptr;
 			_sprite = nullptr;
 			_theora = nullptr;
+			_effect = nullptr;
+			_effectFile = nullptr;
+			_effectParams = nullptr;
 		}
 
 		XModelMatSprite(const char *matName, BaseSprite *sprite) {
 			_theora = nullptr;
 			_matName = nullptr;
+			_effect = nullptr;
 			BaseUtils::setString(&_matName, matName);
 			_sprite = sprite;
+			_effectFile = nullptr;
+			_effectParams = nullptr;
 		}
 
 		XModelMatSprite(const char *matName, VideoTheoraPlayer *theora) {
 			_sprite = nullptr;
 			_matName = nullptr;
+			_effect = nullptr;
 			BaseUtils::setString(&_matName, matName);
 			_theora = theora;
+			_effectFile = nullptr;
+			_effectParams = nullptr;
+		}
+
+		XModelMatSprite(const char *matName, Effect3D *effect) {
+			_sprite = nullptr;
+			_matName = nullptr;
+			_theora = nullptr;
+			BaseUtils::setString(&_matName, matName);
+			_effect = effect;
+			_effectFile = nullptr;
+			_effectParams = new Effect3DParams();
 		}
 
 		~XModelMatSprite() {
-			delete[] _matName;
-			delete _sprite;
-			delete _theora;
+			SAFE_DELETE_ARRAY(_matName);
+			SAFE_DELETE_ARRAY(_effectFile);
+			SAFE_DELETE(_sprite);
+			SAFE_DELETE(_theora);
+			SAFE_DELETE(_effect);
+			SAFE_DELETE(_effectParams);
 		}
 
 		bool setSprite(BaseSprite *sprite) {
-			delete _theora;
-			_theora = nullptr;
-			delete _sprite;
+			SAFE_DELETE(_theora);
+			SAFE_DELETE(_sprite);
 			_sprite = sprite;
 
 			return true;
 		}
 
 		bool setTheora(VideoTheoraPlayer *theora) {
-			delete _theora;
-			delete _sprite;
-			_sprite = nullptr;
+			SAFE_DELETE(_theora);
+			SAFE_DELETE(_sprite);
 			_theora = theora;
+
+			return true;
+		}
+
+		bool setEffect(Effect3D *effect) {
+			SAFE_DELETE(_effect);
+			_effect = effect;
+
+			if (!_effectParams)
+				_effectParams = new Effect3DParams();
+			else
+				_effectParams->clear();
 
 			return true;
 		}
@@ -118,15 +144,42 @@ private:
 
 			persistMgr->transferPtr(TMEMBER(_theora));
 
+			if (persistMgr->getIsSaving()) {
+				char *effectFileName = nullptr;
+				if (_effect)
+					BaseUtils::setString(&effectFileName, _effect->getFileName());
+				else
+					effectFileName = nullptr;
+
+				persistMgr->transferCharPtr(TMEMBER(effectFileName));
+				SAFE_DELETE_ARRAY(effectFileName);
+			} else {
+				persistMgr->transferCharPtr(TMEMBER(_effectFile));
+			}
+
+			if (persistMgr->getIsSaving()) {
+				bool hasParams = _effectParams != nullptr;
+				persistMgr->transferBool(TMEMBER(hasParams));
+
+				if (hasParams)
+					_effectParams->persist(persistMgr);
+			} else {
+				bool hasParams;
+				persistMgr->transferBool(TMEMBER(hasParams));
+
+				if (hasParams) {
+					_effectParams = new Effect3DParams();
+					_effectParams->persist(persistMgr);
+				} else
+					_effectParams = nullptr;
+			}
+
 			return true;
 		}
 	};
 
 public:
-	// default ticks per second for .X models seems to be 4800
-	// not sure if this is truly documented anywhere, though
-	// on the other hand, wme chooses the same value,
-	// so should be fine for our purposes
+
 	const static int kDefaultTicksPerSecond = 4800;
 
 	DECLARE_PERSISTENT(XModel, BaseObject)
@@ -134,19 +187,22 @@ public:
 	XModel(BaseGame *inGame, BaseObject *owner);
 	virtual ~XModel();
 
-	XModel *_parentModel;
+	XModel *_parentModel{};
 
-	bool loadFromFile(const Common::String &filename, XModel *parentModel = nullptr);
-	bool mergeFromFile(const Common::String &filename);
+	bool loadFromFile(const char *filename, XModel *parentModel = nullptr);
+	bool mergeFromFile(const char *filename);
+
+	bool loadAnimationSet(const char *filename, XFileData *xobj);
+	bool loadAnimation(const char *filename, XFileData *xobj, AnimationSet *parentAnimSet = nullptr);
 
 	bool update() override;
 	bool render();
-	bool renderFlatShadowModel();
+	bool renderFlatShadowModel(uint32 shadowColor);
 	bool reset();
 
-	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
+	bool updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
 
-	bool playAnim(int channel, const Common::String &anim, uint32 transitionTime = 0, bool forceReset = false, uint32 stopTransitionTime = 0);
+	bool playAnim(int channel, const char *anim, uint32 transitionTime = 0, bool forceReset = false, uint32 stopTransitionTime = 0);
 	bool isAnimPending(char *animName = nullptr);
 	bool isAnimPending(int channel, const char *animName = nullptr);
 
@@ -155,25 +211,25 @@ public:
 	static bool loadName(BaseNamedObject *obj, XFileData *data);
 	static bool loadName(Common::String &targetStr, XFileData *data);
 
-	bool loadAnimationSet(const Common::String &filename, XFileData *xobj);
-	bool loadAnimation(const Common::String &filename, XFileData *xobj, AnimationSet *parentAnimSet = nullptr);
+	Common::Rect32 _boundingRect;
+	BaseObject *_owner{};
 
-	Math::Matrix4 _lastWorldMat;
-	Rect32 _boundingRect;
-	BaseObject *_owner;
-
-	bool parseAnim(byte *buffer);
-	bool parseEvent(AnimationSet *anim, byte *buffer);
-	AnimationSet *getAnimationSetByName(const Common::String &name);
+	bool parseAnim(char *buffer);
+	bool parseEvent(AnimationSet *anim, char *buffer);
+	AnimationSet *getAnimationSetByName(const char *name);
 
 	bool stopAnim(int channel, uint32 transitionTime);
 	bool stopAnim(uint32 transitionTime);
 
-	Math::Matrix4 *getBoneMatrix(const char *boneName);
+	DXMatrix *getBoneMatrix(const char *boneName);
 	FrameNode *getRootFrame();
 
 	bool setMaterialSprite(const char *materialName, const char *spriteFilename);
 	bool setMaterialTheora(const char *materialName, const char *theoraFilename);
+	bool setMaterialEffect(const char *materialName, const char *effectFilename);
+	bool removeMaterialEffect(const char *materialName);
+	bool setMaterialEffectParam(const char *materialName, const char *paramName, ScValue *val);
+	bool setMaterialEffectParam(const char *materialName, const char *paramName, DXVector4 val);
 	bool initializeSimple();
 
 	bool invalidateDeviceObjects() override;
@@ -181,7 +237,7 @@ public:
 
 	bool unloadAnimation(const char *animName);
 
-	uint32 _ticksPerSecond;
+	uint32 _ticksPerSecond{};
 
 	BaseArray<AnimationSet *> _animationSets;
 
@@ -190,23 +246,22 @@ private:
 	bool findBones(bool animOnly = false, XModel *parentModel = nullptr);
 
 	void updateBoundingRect();
-	void static inline updateRect(Rect32 *rc, int32 x, int32 y);
-	Rect32 _drawingViewport;
-	Math::Matrix4 _lastViewMat;
-	Math::Matrix4 _lastProjMat;
-	int32 _lastOffsetX;
-	int32 _lastOffsetY;
+	void static inline updateRect(Common::Rect32 *rc, DXVector3 *vec);
+	DXViewport _drawingViewport{};
+	DXMatrix _lastWorldMat;
+	DXMatrix _lastViewMat;
+	DXMatrix _lastProjMat;
+	int32 _lastOffsetX{};
+	int32 _lastOffsetY{};
 
-	Math::Vector3d _BBoxStart;
-	Math::Vector3d _BBoxEnd;
-
-	Common::Array<MaterialReference> _materialReferences;
+	DXVector3 _BBoxStart;
+	DXVector3 _BBoxEnd;
 
 protected:
 	BaseArray<const char*> _mergedModels;
-	AnimationChannel *_channels[X_NUM_ANIMATION_CHANNELS];
+	AnimationChannel *_channels[X_NUM_ANIMATION_CHANNELS]{};
 
-	FrameNode *_rootFrame;
+	FrameNode *_rootFrame{};
 
 	BaseArray<XModelMatSprite *> _matSprites;
 };

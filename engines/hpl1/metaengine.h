@@ -24,7 +24,7 @@
 
 #include "engines/advancedDetector.h"
 
-class Hpl1MetaEngine : public AdvancedMetaEngine {
+class Hpl1MetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
 

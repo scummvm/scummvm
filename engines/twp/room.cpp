@@ -52,9 +52,6 @@ static Direction parseUseDir(const Common::String &s) {
 }
 
 static Math::Vector2d parseParallax(const Common::JSONValue &v) {
-	if (v.isIntegerNumber()) {
-		return {(float)v.asIntegerNumber(), 1};
-	}
 	if (v.isNumber()) {
 		return {(float)v.asNumber(), 1};
 	}

@@ -55,13 +55,13 @@ namespace SciSpanInternal {
 	class SciSpanIterator : public Common::SpanInternal::SpanIterator<Span, IsConst> {
 		typedef typename Common::SpanInternal::SpanIterator<Span, IsConst> super_type;
 		typedef typename Span::value_type span_value_type;
-		typedef typename Common::Conditional<IsConst, const Span, Span>::type span_type;
+		typedef typename Common::conditional<IsConst, const Span, Span>::type span_type;
 
 	public:
 		typedef typename Span::difference_type difference_type;
-		typedef typename Common::RemoveConst<span_value_type>::type value_type;
-		typedef typename Common::Conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
-		typedef typename Common::Conditional<IsConst, const span_value_type, span_value_type>::type &reference;
+		typedef typename Common::remove_const<span_value_type>::type value_type;
+		typedef typename Common::conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
+		typedef typename Common::conditional<IsConst, const span_value_type, span_value_type>::type &reference;
 
 		inline SciSpanIterator() : super_type() {}
 
@@ -210,7 +210,7 @@ public:
 // SpanOwner, since this will result in the wrong pointer to memory to be
 // deleted
 private:
-	typedef typename Common::RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename Common::remove_const<Derived<ValueType> >::type mutable_derived_type;
 
 public:
 	inline const_reference operator*() const {
@@ -252,9 +252,9 @@ class SciSpan : public SciSpanImpl<ValueType, SciSpan> {
 	typedef SciSpanImpl<ValueType, ::Sci::SciSpan> super_type;
 
 public:
-	COMMON_SPAN_TYPEDEFS
+	COMMON_SPAN_TYPEDEFS;
 
-	inline SciSpan() : super_type() {}
+	inline SciSpan() = default;
 
 	inline SciSpan(const pointer data_,
 				   const size_type size_,

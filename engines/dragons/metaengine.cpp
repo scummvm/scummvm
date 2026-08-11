@@ -28,20 +28,19 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 #include "base/plugins.h"
-#include "graphics/thumbnail.h"
 
-class DragonsMetaEngine : public AdvancedMetaEngine {
+class DragonsMetaEngine : public AdvancedMetaEngine<Dragons::DragonsGameDescription> {
 public:
 	const char *getName() const override {
 		return "dragons";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Dragons::DragonsGameDescription *desc) const override;
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
@@ -56,9 +55,9 @@ bool DragonsMetaEngine::hasFeature(MetaEngineFeature f) const {
 			(f == kSavesSupportCreationDate);
 }
 
-void DragonsMetaEngine::removeSaveState(const char *target, int slot) const {
+bool DragonsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 int DragonsMetaEngine::getMaximumSaveSlot() const {
@@ -70,14 +69,14 @@ SaveStateList DragonsMetaEngine::listSaves(const char *target) const {
 	Dragons::SaveHeader header;
 	Common::String pattern = target;
 	pattern += ".###";
-	Common::StringArray filenames;
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern.c_str());
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+
+	for (const auto &filename : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+		int slotNum = atoi(filename.c_str() + filename.size() - 3);
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(filename.c_str());
 			if (in) {
 				if (Dragons::DragonsEngine::readSaveHeader(in, header) == Dragons::kRSHENoError) {
 					saveList.push_back(SaveStateDescriptor(this, slotNum, header.description));
@@ -110,13 +109,12 @@ SaveStateDescriptor DragonsMetaEngine::querySaveMetaInfos(const char *target, in
 	return SaveStateDescriptor();
 }
 
-Common::Error DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Dragons::DragonsGameDescription *gd = (const Dragons::DragonsGameDescription *)desc;
+Common::Error DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const Dragons::DragonsGameDescription *gd) const {
 	const char* urlForRequiredDataFiles = "https://wiki.scummvm.org/index.php?title=Blazing_Dragons#Required_data_files";
 
 	switch (gd->gameId) {
 	case Dragons::kGameIdDragons:
-		*engine = new Dragons::DragonsEngine(syst, desc);
+		*engine = new Dragons::DragonsEngine(syst, gd);
 		break;
 	case Dragons::kGameIdDragonsBadExtraction:
 		GUIErrorMessageWithURL(Common::U32String::format(_("Error: It appears that the game data files were extracted incorrectly.\n\nYou should only extract STR and XA files using the special method. The rest should be copied normally from your game CD.\n\n See %s"), urlForRequiredDataFiles), urlForRequiredDataFiles);
@@ -140,7 +138,7 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("CHANGECOMMAND", _("Change Command"));
+	act = new Action("CHANGECOMMAND", _("Change command"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionChangeCommand);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -205,24 +203,24 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("L1", _("Left Shoulder"));
+	act = new Action("L1", _("Left shoulder"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionL1);
 	act->addDefaultInputMapping("o");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("R1", _("Right Shoulder"));
+	act = new Action("R1", _("Right shoulder"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionR1);
 	act->addDefaultInputMapping("p");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("DEBUGGFX", _("Debug Graphics"));
+	act = new Action("DEBUGGFX", _("Debug graphics"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionDebugGfx);
 	act->addDefaultInputMapping("TAB");
 	engineKeyMap->addAction(act);
 
-	act = new Action("QUIT", _("Quit Game"));
+	act = new Action("QUIT", _("Quit game"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionQuit);
 	act->addDefaultInputMapping("C+q");
 	engineKeyMap->addAction(act);

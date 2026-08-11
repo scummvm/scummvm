@@ -82,8 +82,11 @@
 #include "engines/wintermute/base/scriptables/script_ext_string.h"
 #include "engines/wintermute/ext/wme_3fstatistics.h"
 #include "engines/wintermute/ext/wme_commandlinehelper.h"
+#include "engines/wintermute/ext/wme_displacement.h"
 #include "engines/wintermute/ext/wme_steam.h"
 #include "engines/wintermute/ext/wme_galaxy.h"
+#include "engines/wintermute/ext/wme_protection.h"
+#include "engines/wintermute/ext/wme_vlink.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_edit.h"
 #include "engines/wintermute/ui/ui_entity.h"
@@ -101,6 +104,8 @@
 #include "engines/wintermute/ad/ad_path_point3d.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/ext/wme_blackandwhite.h"
+#include "engines/wintermute/ext/wme_shadowmanager.h"
 #endif
 
 // SystemClass adds these objects to the registry, thus they aren't as leaked as they look
@@ -174,6 +179,8 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(SXSteamAPI, false)
 	REGISTER_CLASS(SXWMEGalaxyAPI, false)
 	REGISTER_CLASS(SXCommandLineHelper, false)
+	REGISTER_CLASS(SXDisplacement, false)
+	REGISTER_CLASS(SXProtection, false)
 
 	REGISTER_CLASS(UIButton, false)
 	REGISTER_CLASS(UIEdit, false)
@@ -194,6 +201,9 @@ void SystemClassRegistry::register3DClasses() {
 	REGISTER_CLASS(AdPathPoint3D, false)
 	REGISTER_CLASS(AdSceneGeometry, false)
 	REGISTER_CLASS(XModel, false)
+	REGISTER_CLASS(SXBlackAndWhite, false)
+	REGISTER_CLASS(SXShadowManager, false)
+	REGISTER_CLASS(SXVlink, false)
 }
 #endif
 

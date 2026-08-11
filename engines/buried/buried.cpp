@@ -315,8 +315,8 @@ void BuriedEngine::removeVideo(VideoWindow *window) {
 }
 
 void BuriedEngine::updateVideos() {
-	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ++it)
-		(*it)->updateVideo();
+	for (auto &video : _videos)
+		video->updateVideo();
 }
 
 void BuriedEngine::postMessageToWindow(Window *dest, Message *message) {
@@ -332,13 +332,13 @@ void BuriedEngine::processAudioVideoSkipMessages(VideoWindow *video, int soundId
 	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
 		MessageType messageType = it->message->getMessageType();
 
-		if (messageType == kMessageTypeKeyUp) {
-			Common::KeyState keyState = ((KeyUpMessage *)it->message)->getKeyState();
+		if (messageType == kMessageTypeActionEnd) {
+			Common::CustomEventType action = ((ActionEndMessage *)it->message)->getAction();
 
 			// Send any skip keyup events to the audio/video players
-			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+			if (action == kActionSkip) {
 				if (video)
-					video->onKeyUp(keyState, ((KeyUpMessage *)it->message)->getFlags());
+					video->onActionEnd(action, ((ActionEndMessage *)it->message)->getFlags());
 
 				if (soundId >= 0)
 					_sound->stopSound(soundId);
@@ -348,12 +348,12 @@ void BuriedEngine::processAudioVideoSkipMessages(VideoWindow *video, int soundId
 			} else {
 				++it;
 			}
-		} else if (messageType == kMessageTypeKeyDown) {
-			Common::KeyState keyState = ((KeyDownMessage *)it->message)->getKeyState();
+		} else if (messageType == kMessageTypeActionStart) {
+			Common::CustomEventType action = ((ActionStartMessage *)it->message)->getAction();
 
 			// Erase any skip video keydown events from the queue, to avoid
 			// interpreting them as game quit events after the video ends
-			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+			if (action == kActionSkip) {
 				delete it->message;
 				it = _messageQueue.erase(it);
 			} else {
@@ -380,15 +380,15 @@ void BuriedEngine::sendAllMessages() {
 		// Generate a timer message
 		bool ranTimer = false;
 
-		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); ++it) {
+		for (auto &timer : _timers) {
 			uint32 time = g_system->getMillis();
 
-			if (time >= it->_value.nextTrigger) {
+			if (time >= timer._value.nextTrigger) {
 				// Adjust the trigger to be what the next one would be, after
 				// all the current triggers would be called.
-				uint32 triggerCount = (time - it->_value.nextTrigger + it->_value.period) / it->_value.period;
-				it->_value.nextTrigger += triggerCount * it->_value.period;
-				it->_value.owner->sendMessage(new TimerMessage(it->_key));
+				uint32 triggerCount = (time - timer._value.nextTrigger + timer._value.period) / timer._value.period;
+				timer._value.nextTrigger += triggerCount * timer._value.period;
+				timer._value.owner->sendMessage(new TimerMessage(timer._key));
 				ranTimer = true;
 				break;
 			}
@@ -419,6 +419,10 @@ void BuriedEngine::removeMouseMessages(Window *window) {
 	removeMessages(window, kMessageTypeMouseBegin, kMessageTypeMouseEnd);
 }
 
+void BuriedEngine::removeActionMessages(Window *window) {
+	removeMessages(window, kMessageTypeActionRangeBegin, kMessageTypeActionRangeEnd);
+}
+
 void BuriedEngine::removeAllMessages(Window *window) {
 	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
 		if (it->dest == window) {
@@ -434,8 +438,8 @@ bool BuriedEngine::hasMessage(Window *window, int messageBegin, int messageEnd) 
 	// Implementation note: This doesn't currently handle timers, but would on real Windows.
 	// Buried doesn't check for timer messages being present, so it's skipped.
 
-	for (MessageQueue::const_iterator it = _messageQueue.begin(); it != _messageQueue.end(); ++it)
-		if ((!window || it->dest == window) && it->message->getMessageType() >= messageBegin && it->message->getMessageType() <= messageEnd)
+	for (const auto &curMessage : _messageQueue)
+		if ((!window || curMessage.dest == window) && curMessage.message->getMessageType() >= messageBegin && curMessage.message->getMessageType() <= messageEnd)
 			return true;
 
 	return false;
@@ -477,13 +481,17 @@ void BuriedEngine::pollForEvents() {
 			window->postMessage(new SetCursorMessage(kMessageTypeMouseMove));
 			break;
 		}
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (_focusedWindow)
+				_focusedWindow->postMessage(new ActionEndMessage(event.customType, 0));
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (_focusedWindow)
+				_focusedWindow->postMessage(new ActionStartMessage(event.customType, 0));
+			break;
 		case Common::EVENT_KEYUP:
 			if (_focusedWindow)
 				_focusedWindow->postMessage(new KeyUpMessage(event.kbd, 0));
-			break;
-		case Common::EVENT_KEYDOWN:
-			if (_focusedWindow)
-				_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
 			break;
 		case Common::EVENT_LBUTTONDOWN: {
 			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
@@ -567,20 +575,20 @@ void BuriedEngine::pauseEngineIntern(bool pause) {
 	if (pause) {
 		_sound->pause(true);
 
-		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ++it)
-			(*it)->pauseVideo();
+		for (auto &video : _videos)
+			video->pauseVideo();
 
 		_pauseStartTime = g_system->getMillis();
 	} else {
 		_sound->pause(false);
 
-		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ++it)
-			(*it)->resumeVideo();
+		for (auto &video : _videos)
+			video->resumeVideo();
 
 		uint32 timeDiff = g_system->getMillis() - _pauseStartTime;
 
-		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); ++it)
-			it->_value.nextTrigger += timeDiff;
+		for (auto &timer : _timers)
+			timer._value.nextTrigger += timeDiff;
 	}
 }
 
@@ -610,8 +618,8 @@ void BuriedEngine::showPoints() {
 	AgentEvaluation *agentEvaluation = new AgentEvaluation(this, sceneView->getGlobalFlags(), -1);
 
 	GUI::MessageDialog dialog(
-		agentEvaluation->_scoringTextDescriptionsWithScores,
-		"OK",
+		Common::U32String(agentEvaluation->_scoringTextDescriptionsWithScores),
+		_("OK"),
 		Common::U32String(),
 		Graphics::kTextAlignLeft
 	);
@@ -640,6 +648,14 @@ void BuriedEngine::handleRestoreDialog() {
 
 	if (loadGameDialog())
 		bioChipWindow->destroyBioChipViewWindow();
+}
+
+void BuriedEngine::enableCutsceneKeymap(bool enable) {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("cutscene")->setEnabled(enable);
+	keymapper->getKeymap("buried-default")->setEnabled(!enable);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(!enable);
+	keymapper->getKeymap("inventory")->setEnabled(!enable);
 }
 
 } // End of namespace Buried

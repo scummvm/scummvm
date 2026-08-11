@@ -57,7 +57,7 @@ class  IMuseSysex_Scumm;
 #define TRIGGER_ID 0
 #define COMMAND_ID 1
 
-#define MDPG_TAG "MDpg"
+#define MUS_REDUCTION_TIMER_TICKS 16667 // 60 Hz
 
 
 ////////////////////////////////////////
@@ -302,7 +302,7 @@ public:
 	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
 	uint16 sysExNoDelay(const byte *msg, uint16 length) override;
-	void metaEvent(byte type, byte *data, uint16 length) override;
+	void metaEvent(byte type, const byte *data, uint16 length) override;
 };
 
 
@@ -363,7 +363,7 @@ struct Part : public Common::Serializable {
 	void init(bool useNativeMT32);
 	void setup(Player *player);
 	void uninit();
-	void off();
+	void off(bool releaseChannel);
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
 	void load_global_instrument(byte b);
@@ -416,6 +416,7 @@ class IMuseInternal : public IMuse {
 #endif
 
 protected:
+	ScummEngine *_vm;
 	const bool _native_mt32;
 	const bool _newSystem;
 	const bool _dynamicChanAllocation;
@@ -445,13 +446,16 @@ protected:
 	int  _player_limit;       // Limits how many simultaneous music tracks are played
 	bool _recycle_players;    // Can we stop a player in order to start another one?
 
+	int _musicVolumeReductionTimer = 0; // 60 Hz
+
 	uint _queue_end, _queue_pos, _queue_sound;
 	byte _queue_adding;
 
 	byte _queue_marker;
 	byte _queue_cleared;
 	byte _master_volume; // Master volume. 0-255
-	byte _music_volume; // Global music volume. 0-255
+	byte _music_volume; // Music volume which can be reduced during speech. 0-255
+	byte _music_volume_eff; // Global effective music volume. 0-255
 
 	uint16 _trigger_count;
 	ImTrigger _snm_triggers[16]; // Sam & Max triggers
@@ -528,6 +532,7 @@ protected:
 	int set_volchan_entry(uint a, uint b);
 	int set_channel_volume(uint chan, uint vol);
 	void update_volumes();
+	void musicVolumeReduction(MidiDriver *midi);
 
 	int set_volchan(int sound, int volchan);
 
@@ -570,11 +575,22 @@ public:
 
 	// MusicEngine interface
 	void setMusicVolume(int vol) override;
+	void setSfxVolume(int vol) override;
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
 	int getSoundStatus(int sound) const override;
 	int getMusicTimer() override;
+
+protected:
+	// Our normal volume control is high-level, i. e. it uses the imuse engine to generate the proper volume values and send these to the midi driver.
+	// For older titles (like MI2 and INDY4) who never had music and sfx volume controls in the original interpreters, this works well only if the
+	// engine can somehow distinguish between music and sound effects. It works for targets/platforms where this can be done by resource type, where
+	// the sfx resources aren't even played through the imuse engine. The imuse engine can then just assume that everything it plays is music. For
+	// MI2/INDY4 Macintosh it won't work like this, because both music and sound effects have the same resource type and are played through the imuse
+	// engine. For these targets it works better to pass the volume values on to the driver where other methods of distinction may be available.
+	// This isn't needed for SCUMM6, since these games don't have MIDI sound effects.
+	const bool _lowLevelVolumeControl;
 
 public:
 	// Factory function

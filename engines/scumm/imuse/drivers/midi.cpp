@@ -28,7 +28,8 @@
 // dynamic allocation (instead of playing on fixed channels).
 //#define FORCE_NEWSTYLE_CHANNEL_ALLOCATION
 
-namespace Scumm {
+namespace IMSMidi {
+using namespace Scumm;
 
 /*******************************
 *		General Midi driver
@@ -379,15 +380,25 @@ void IMuseChannel_Midi::sendNoteOn(byte note, byte velocity) {
 	sendMidi(0x90, note, velocity);
 }
 
-IMuseDriver_GMidi::IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGSMode, bool newSystem) : MidiDriver(), _drv(nullptr), _gsMode(rolandGSMode),
-	_imsParts(nullptr), _newSystem(newSystem), _numChannels(16), _notesPlaying(nullptr), _notesSustained(nullptr), _idleChain(nullptr), _activeChain(nullptr), _numVoices(12) {
+} // End of namespace IMSMidi
+
+namespace Scumm {
+using namespace IMSMidi;
+
+IMuseDriver_GMidi::IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGSMode, bool newSystem) : MidiDriver(), _drv(nullptr), _gsMode(rolandGSMode), _noProgramTracking(false),
+	_imsParts(nullptr), _newSystem(newSystem), _numChannels(16), _notesPlaying(nullptr), _notesSustained(nullptr), _midiRegState(nullptr), _idleChain(nullptr), _activeChain(nullptr), _numVoices(12) {
 	_drv = MidiDriver::createMidi(dev);
 	assert(_drv);
+	_midiRegState = new byte[160];
+	assert(_midiRegState);
+	memset(_midiRegState, 0xFF, 160);
 }
 
 IMuseDriver_GMidi::~IMuseDriver_GMidi() {
 	close();
 	delete _drv;
+	delete[] _midiRegState;
+	_midiRegState = nullptr;
 }
 
 int IMuseDriver_GMidi::open() {
@@ -633,6 +644,63 @@ void IMuseDriver_GMidi::deinitDevice() {
 	}
 }
 
+bool IMuseDriver_GMidi::trackMidiState(uint32 b) {
+	// The purpose of this function is to reduce the amount of data sent to hardware devices and
+	// thus avoid possible lag. It tracks certain midi messages with a table and allows skipping of
+	// messages which just repeat the already present device state.
+
+	byte evt = ((b & 0xF0) - 0xB0) >> 4;
+	if (evt > 3) // Only track the state of program change, control change and pitch bend events
+		return true;
+
+	// Skip program change tracking for old MT-32 tracks, since their sysex based program changing
+	// method requires resending the program change message, even with the same program.
+	if (evt == 1 && _noProgramTracking)
+		return true;
+
+	byte part = b & 0x0F;
+	b >>= 8; // Switch to para 1
+
+	assert(_midiRegState);
+	byte *var = &_midiRegState[part];
+
+	switch (evt) {
+	case 0: { // Control Change
+		// Only track the state of these controllers. The first entry is an invalid placeholder,
+		// since the first part of the reg state table is reserved for the program change state.
+		static const byte regOrder[] = { 0xFF, 0, 1, 7, 10, 64, 91, 93 };
+		int srchReslt = Common::find(regOrder, &regOrder[ARRAYSIZE(regOrder)], b & 0xFF) - regOrder;
+		if (srchReslt > 0 && srchReslt < ARRAYSIZE(regOrder))
+			var += (srchReslt * 0x10);
+		else
+			return true;
+		b >>= 8; // Switch to para 2
+	}
+	// fall through
+	case 1: // Program change
+		if (*var == (b & 0xFF))
+			return false;
+		else
+			*var = b & 0xFF;
+		break;
+	case 3: // Pitch bend
+		var += (0x80 + part);
+		if (*reinterpret_cast<uint16*>(var) == (b & 0xFFFF))
+			return false;
+		else
+			*reinterpret_cast<uint16*>(var) = b & 0xFFFF;
+		break;
+	default:
+		break;
+	}
+
+	return true;
+}
+
+} // End of namespace Scumm
+
+namespace IMSMidi {
+
 /**************************
 *		MT-32 driver
 ***************************/
@@ -768,8 +836,8 @@ void IMuseChannel_MT32::effectLevel(byte value) {
 }
 
 void IMuseChannel_MT32::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize)  {
-	if (type != 'ROL ') {
-		warning("IMuseChannel_MT32: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
+	if (type != MKTAG('R','O','L',' ')) {
+		warning("IMuseChannel_MT32: Receiving '%s' instrument data. Probably loading a savegame with that sound setting", tag2str(type));
 		return;
 	}
 
@@ -846,6 +914,10 @@ void IMuseChannel_MT32::sendSysexTimbreData(const byte *data, uint32 dataSize) c
 	_mt32Drv->sendMT32Sysex(_sysexTimbreAddrBase, data, dataSize);
 }
 
+} // End of namespace IMSMidi
+
+namespace Scumm {
+
 IMuseDriver_MT32::IMuseDriver_MT32(MidiDriver::DeviceHandle dev, bool newSystem) : IMuseDriver_GMidi(dev, false, newSystem), _programsMapping(nullptr), _hwRealChain(nullptr) {
 #ifdef FORCE_NEWSTYLE_CHANNEL_ALLOCATION
 	_numChannels = 16;
@@ -859,6 +931,8 @@ IMuseDriver_MT32::IMuseDriver_MT32(MidiDriver::DeviceHandle dev, bool newSystem)
 
 	if (_newSystem)
 		_programsMapping = MidiDriver::_gmToMt32;
+	else
+		_noProgramTracking = true;
 }
 
 void IMuseDriver_MT32::initDevice() {
@@ -868,7 +942,7 @@ void IMuseDriver_MT32::initDevice() {
 	for (int i = (20 - (int)infoStr.size()) >> 1; i > 0; --i)
 		infoStr = ' ' + infoStr + ' ';
 	sendMT32Sysex(0x80000, (const byte*)infoStr.c_str(), MIN<uint32>(infoStr.size(), 20));
-	
+
 	// Reset the MT-32
 	sendMT32Sysex(0x1FC000, 0, 0);
 

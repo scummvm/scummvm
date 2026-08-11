@@ -273,22 +273,20 @@ bool AnimationTracker::step() {
 		int32 dims[3] = { xd, yd, zd };
 
 		// Do the sweep test
-		Std::list<CurrentMap::SweepItem> collisions;
-		Std::list<CurrentMap::SweepItem>::const_iterator it;
+		Common::List<CurrentMap::SweepItem> collisions;
 		cm->sweepTest(start, end, dims, a->getShapeInfo()->_flags, _actor,
 		              false, &collisions);
 
-
-		for (it = collisions.begin(); it != collisions.end(); it++) {
+		for (const auto &collision : collisions) {
 			// hit something, can't move
-			if (!it->_touching && it->_blocking) {
+			if (!collision._touching && collision._blocking) {
 #ifdef WATCHACTOR
 				if (a->getObjId() == watchactor) {
 					debugC(kDebugActor, "AnimationTracker: did sweepTest for large step; collision at time %d", it->_hitTime);
 				}
 #endif
 				_blocked = true;
-				_curr = it->GetInterpolatedCoords(end, start);
+				_curr = collision.GetInterpolatedCoords(end, start);
 				return false;
 			}
 		}

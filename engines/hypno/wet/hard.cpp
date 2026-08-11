@@ -27,6 +27,8 @@
 
 #include "hypno/hypno.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 void WetEngine::endCredits(Code *code) {
@@ -84,7 +86,14 @@ void WetEngine::runLevelMenu(Code *code) {
 	loadPalette((byte *) &lime, 192+currentLevel, 1);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
+	// TODO: Should this be played as music instead?
 	playSound("sound/bub01.raw", 0, 22050);
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(false);
+	keymapper->getKeymap("menu")->setEnabled(true);
+
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
@@ -94,18 +103,18 @@ void WetEngine::runLevelMenu(Code *code) {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_DOWN && currentLevel < _lastLevel) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionDown && currentLevel < _lastLevel) {
 					playSound("sound/m_hilite.raw", 1, 11025);
 					currentLevel++;
-				} else if (event.kbd.keycode == Common::KEYCODE_UP && currentLevel > 0) {
+				} else if (event.customType == kActionUp && currentLevel > 0) {
 					playSound("sound/m_hilite.raw", 1, 11025);
 					currentLevel--;
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ) {
+				} else if (event.customType == kActionSelect ) {
 					playSound("sound/m_choice.raw", 1, 11025);
 					_nextLevel = Common::String::format("c%d", _ids[currentLevel]);
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				} else if (event.customType == kActionPause) {
 					openMainMenuDialog();
 				}
 
@@ -127,6 +136,11 @@ void WetEngine::runLevelMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+
+	keymapper->getKeymap("menu")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(true);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+
 	menu->free();
 	delete menu;
 }
@@ -146,7 +160,13 @@ void WetEngine::runMainMenu(Code *code) {
 	drawImage(surName, subName.left, subName.top, true);
 	drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 	_name.clear();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("pause")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(false);
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	bool cont = true;
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -213,6 +233,10 @@ void WetEngine::runMainMenu(Code *code) {
 	bool found = loadProfile(_name);
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("pause")->setEnabled(true);
+	keymapper->getKeymap("direction")->setEnabled(true);
+
 	if (found || _name.empty()) {
 		menu->free();
 		delete menu;
@@ -251,6 +275,12 @@ void WetEngine::runMainMenu(Code *code) {
 	drawString("scifi08.fgx", _name, 140, 50, 170, c);
 
 	cont = true;
+
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("pause")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(false);
+	keymapper->getKeymap("menu")->setEnabled(true);
+
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
@@ -261,7 +291,7 @@ void WetEngine::runMainMenu(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				if (!g_system->hasFeature(OSystem::kFeatureTouchscreen))
 					event.mouse = Common::Point(0, 0);
 
@@ -275,13 +305,13 @@ void WetEngine::runMainMenu(Code *code) {
 					}
 				} else if (idx == 1 && subWet.contains(event.mouse)) {
 					//  Nothing
-				} else if ((subWet.contains(event.mouse) || subDamp.contains(event.mouse) || event.kbd.keycode == Common::KEYCODE_LEFT) && idx > 0) {
+				} else if ((subWet.contains(event.mouse) || subDamp.contains(event.mouse) || event.customType == kActionLeft) && idx > 0) {
 					playSound("sound/no_rapid.raw", 1, 11025);
 					idx--;
-				} else if ((subWet.contains(event.mouse) || subSoaked.contains(event.mouse) || event.kbd.keycode == Common::KEYCODE_RIGHT) && idx < 2) {
+				} else if ((subWet.contains(event.mouse) || subSoaked.contains(event.mouse) || event.customType == kActionRight) && idx < 2) {
 					playSound("sound/no_rapid.raw", 1, 11025);
 					idx++;
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN)
+				} else if (event.customType == kActionSelect)
 					cont = false;
 
 				drawImage(*menu, 0, 0, false);
@@ -307,6 +337,12 @@ void WetEngine::runMainMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+
+	keymapper->getKeymap("menu")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(true);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("pause")->setEnabled(true);
+
 	_name.toLowercase(); // make sure it is lowercase when we finish
 	_difficulty = difficulties[idx];
 	_nextLevel = code->levelIfWin;
@@ -323,7 +359,7 @@ void WetEngine::showDemoScore() {
 	dialog.runModal();
 }
 
-Common::String WetEngine::getLocalizedString(const Common::String name) {
+Common::String WetEngine::getLocalizedString(const Common::String &name) {
 	if (name == "name") {
 		switch (_language) {
 		case Common::FR_FRA:
@@ -341,8 +377,10 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 			return "ENERGIE";
 		case Common::ES_ESP:
 			return "ENERGIA";
+		case Common::KO_KOR:
+			return "\xb5\x41\x90\xe1\xbb\xa1"; // 에너지 (energy)
 		default:
-			return "HEALTH";
+			return "ENERGY";
 		}
 	} else if (name == "objectives") {
 		switch (_language) {
@@ -350,6 +388,8 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 			return "OBJ.";
 		case Common::ES_ESP:
 			return "O. M.";
+		case Common::KO_KOR:
+			return "\xa1\xa2\xce\x61"; // 목표 (objective)
 		default:
 			return "M. O.";
 		}
@@ -357,6 +397,8 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 		switch (_language) {
 		case Common::ES_ESP:
 			return "PUNTOS";
+		case Common::KO_KOR:
+			return "\xb8\xf1\xae\x81"; // 점수 (score) 
 		default:
 			return "SCORE";
 		}
@@ -366,6 +408,8 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 			return "VERROUILLAGE";
 		case Common::ES_ESP:
 			return "BLANCO FIJADO";
+		case Common::KO_KOR:
+			return "\xa1\xa2\xce\x61\xa2\x89\x20\xcd\xa1\xc0\x62"; // 목표물 포착 (target acquired)
 		default:
 			return "TARGET ACQUIRED";
 		}
@@ -375,8 +419,75 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 			return "DIRECTION ?";
 		case Common::ES_ESP:
 			return "ELIGE DIRECCION";
+		case Common::KO_KOR:
+			return "\xa4\x77\xd0\xb7\x20\xac\xe5\xc8\x82"; // 방향 선택 (choose direction)
 		default:
 			return "CHOOSE DIRECTION";
+		}
+	} else if (name == "shotsFired") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xa2\x81\x8b\xa1\x20\xa4\x69\xac\x61"; // 무기 발사
+		default:
+			return "SHOTS FIRED";
+		}
+	} else if (name == "enemyTargets") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xb8\xe2\xb7\x81\x20\xa1\xa2\xce\x61\xa2\x89"; // 적의 목표물
+		default:
+			return "ENEMY TARGETS";
+		}
+	} else if (name == "targetsDestroyed") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xa1\xa2\xce\x61\xa2\x89\x20\xb9\x41\x88\xe1"; // 목표물 제거
+		default:
+			return "TARGETS DESTROYED";
+		}
+	} else if (name == "targetsMissed") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\x91\xbd\xc3\xa5\x20\xa1\xa2\xce\x61\xa2\x89"; // 놓친 목표물
+		default:
+			return "TARGETS MISSED";
+		}
+	} else if (name == "killRatio") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xa1\x77\xba\x97\xb7\x49"; // 명중율
+		default:
+			return "KILL RATIO";
+		}
+	} else if (name == "accuracy") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xb8\xf7\xd1\xc2\x95\xa1"; // 정확도
+		default:
+			return "ACCURACY";
+		}
+	} else if (name == "bonus") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xc2\x81\x88\x61\xb8\xf1\xae\x81"; // 추가점수
+		default:
+			return "BONUS";
+		}
+	} else if (name == "points") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xb8\xf1"; // 점
+		default:
+			return "pts";
+		}
+	} else if (name == "extraLife") {
+		return "EXTRA LIFE";
+	} else if (name == "lives") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xac\x97\x20\xa1\x77"; // 생 명
+		default:
+			return "Lives";
 		}
 	} else
 		error("Invalid string name to localize: %s", name.c_str());

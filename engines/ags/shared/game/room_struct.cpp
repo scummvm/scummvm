@@ -165,7 +165,7 @@ void RoomStruct::InitDefaults() {
 		Hotspots[i] = RoomHotspot();
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i)
 		Regions[i] = RoomRegion();
-	for (size_t i = 0; i <= (size_t)MAX_WALK_AREAS; ++i)
+	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS; ++i)
 		WalkAreas[i] = WalkArea();
 	for (size_t i = 0; i < (size_t)MAX_WALK_BEHINDS; ++i)
 		WalkBehinds[i] = WalkBehind();

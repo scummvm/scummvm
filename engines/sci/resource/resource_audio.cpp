@@ -700,42 +700,22 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 	return 0;
 }
 
-void ResourceManager::setAudioLanguage(int language) {
+bool ResourceManager::setAudioLanguage(int language) {
 	if (_audioMapSCI1) {
 		if (_audioMapSCI1->_volumeNumber == language) {
 			// This language is already loaded
-			return;
+			return true;
 		}
 
-		// We already have a map loaded, so we unload it first
-		if (readAudioMapSCI1(_audioMapSCI1, true) != SCI_ERROR_NONE) {
-			_hasBadResources = true;
-		}
-
-		// Remove all volumes that use this map from the source list
-		Common::List<ResourceSource *>::iterator it = _sources.begin();
-		while (it != _sources.end()) {
-			ResourceSource *src = *it;
-			if (src->findVolume(_audioMapSCI1, src->_volumeNumber)) {
-				it = _sources.erase(it);
-				delete src;
-			} else {
-				++it;
-			}
-		}
-
-		// Remove the map itself from the source list
-		_sources.remove(_audioMapSCI1);
-		delete _audioMapSCI1;
-
-		_audioMapSCI1 = nullptr;
+		// We already have a map loaded, so we unload it and its sources
+		unloadAudioLanguage();
 	}
 
 	Common::Path filename(Common::String::format("AUDIO%03d", language));
 	Common::Path fullname = filename.append(".MAP");
 	if (!Common::File::exists(fullname)) {
 		warning("No audio map found for language %i", language);
-		return;
+		return false;
 	}
 
 	_audioMapSCI1 = addSource(new ExtAudioMapResourceSource(fullname, language));
@@ -752,6 +732,36 @@ void ResourceManager::setAudioLanguage(int language) {
 	}
 
 	scanNewSources();
+	return true;
+}
+
+void ResourceManager::unloadAudioLanguage() {
+	if (_audioMapSCI1 == nullptr) {
+		return;
+	}
+
+	// Unload the map
+	if (readAudioMapSCI1(_audioMapSCI1, true) != SCI_ERROR_NONE) {
+		_hasBadResources = true;
+	}
+
+	// Remove all volumes that use this map from the source list
+	Common::List<ResourceSource *>::iterator it = _sources.begin();
+	while (it != _sources.end()) {
+		ResourceSource *src = *it;
+		if (src->findVolume(_audioMapSCI1, src->_volumeNumber)) {
+			it = _sources.erase(it);
+			delete src;
+		} else {
+			++it;
+		}
+	}
+
+	// Remove the map itself from the source list
+	_sources.remove(_audioMapSCI1);
+	delete _audioMapSCI1;
+
+	_audioMapSCI1 = nullptr;
 }
 
 int ResourceManager::getAudioLanguage() const {
@@ -849,17 +859,36 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			}
 		}
 	} else if (_soundVersion >= SCI_VERSION_1_EARLY && _soundVersion <= SCI_VERSION_2_1_MIDDLE) {
-		SciSpan<const byte> data = *_resource;
-		// Count # of tracks
-		_trackCount = 0;
-		while ((*data++) != 0xFF) {
+		// Count the tracks by parsing the SCI1 sound header.
+		// Must detect if the header is truncated or does not exist, because
+		// some games with SCI1 sounds accidentally include a few SCI0 sounds.
+		// Example: KQ1 Amiga sound 92 when guessing the gnome's name incorrectly.
+		size_t headerPos = 0;
+		bool isHeaderComplete = false;
+		while (headerPos < _resource->size()) {
+			if (_resource->getUint8At(headerPos++) == 0xff) {
+				isHeaderComplete = true;
+				break;
+			}
+			while (headerPos < _resource->size()) {
+				if (_resource->getUint8At(headerPos++) == 0xff) {
+					break;
+				}
+				headerPos += 5;
+			}
 			_trackCount++;
-			while (*data != 0xFF)
-				data += 6;
-			++data;
 		}
+		if (!isHeaderComplete || _trackCount == 0) {
+			warning("Invalid header in sound resource %d", resourceNr);
+			// unload resource so that exists() returns false and the sound is not used
+			_trackCount = 0;
+			resMan->unlockResource(_resource);
+			_resource = nullptr;
+			return;
+		}
+
 		_tracks = new Track[_trackCount];
-		data = *_resource;
+		SciSpan<const byte> data = *_resource;
 
 		for (int trackNr = 0; trackNr < _trackCount; trackNr++) {
 			// Track info starts with track type:BYTE
@@ -1280,9 +1309,8 @@ void ResourceManager::changeMacAudioDirectory(const Common::Path &path_) {
 		const Common::ArchiveMemberPtr &file = *it;
 		assert(file);
 
-		const Common::Path fileName = file->getPathInArchive();
 		ResourceId resource36 = convertPatchNameBase36(kResourceTypeAudio36, file->getFileName());
-		processWavePatch(resource36, path.join(fileName));
+		processWavePatch(resource36, file->getPathInArchive());
 	}
 }
 

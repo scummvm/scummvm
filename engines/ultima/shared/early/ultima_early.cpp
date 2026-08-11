@@ -29,8 +29,6 @@
 #include "gui/saveload.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game.h"
-#include "ultima/shared/engine/ultima.h"
-#include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/core/mouse_cursor.h"
@@ -47,7 +45,7 @@ Shared::UltimaEarlyEngine *g_vm;
 namespace Shared {
 
 UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc) :
-		UltimaEngine(syst, gameDesc), _game(nullptr) {
+		Engine(syst), _gameDescription(gameDesc), _game(nullptr), _randomSource("Ultima") {
 	g_vm = this;
 	_mouseCursor = nullptr;
 	_screen = nullptr;
@@ -61,8 +59,8 @@ UltimaEarlyEngine::~UltimaEarlyEngine() {
 }
 
 bool UltimaEarlyEngine::initialize() {
-	if (!UltimaEngine::initialize())
-		return false;
+	// Call syncSoundSettings to get default volumes set
+	syncSoundSettings();
 
 	// Set up the resources datafile
 	Resources *res = new Resources();
@@ -72,7 +70,6 @@ bool UltimaEarlyEngine::initialize() {
 	}
 	SearchMan.add("ultima", res);
 
-	setDebugger(new Debugger());
 	_events = new EventsManager(this);
 	_screen = new Gfx::Screen();
 
@@ -94,10 +91,6 @@ bool UltimaEarlyEngine::initialize() {
 	return true;
 }
 
-void UltimaEarlyEngine::deinitialize() {
-	UltimaEngine::deinitialize();
-}
-
 Common::Error UltimaEarlyEngine::run() {
 	// Initialize the engine and play the game
 	if (initialize())
@@ -108,6 +101,14 @@ Common::Error UltimaEarlyEngine::run() {
 	return Common::kNoError;
 }
 
+bool UltimaEarlyEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsChangingOptionsDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
 void UltimaEarlyEngine::playGame() {
 	while (!shouldQuit()) {
 		_events->pollEventsAndWait();
@@ -116,6 +117,14 @@ void UltimaEarlyEngine::playGame() {
 
 Graphics::Screen *UltimaEarlyEngine::getScreen() const {
 	return _screen;
+}
+
+GameId UltimaEarlyEngine::getGameId() const {
+	return _gameDescription->gameId;
+}
+
+bool UltimaEarlyEngine::isEnhanced() const {
+	return _gameDescription->features & GF_VGA_ENHANCED;
 }
 
 Game *UltimaEarlyEngine::createGame() const {
@@ -143,19 +152,12 @@ Common::Error UltimaEarlyEngine::saveGameStream(Common::WriteStream *stream, boo
 	return Common::kNoError;
 }
 
-bool UltimaEarlyEngine::canLoadGameStateCurrently(bool isAutosave) {
-	return _game->canLoadGameStateCurrently();
+bool UltimaEarlyEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return _game->canLoadGameStateCurrently(msg);
 }
 
-bool UltimaEarlyEngine::canSaveGameStateCurrently(bool isAutosave) {
-	return _game->canSaveGameStateCurrently();
-}
-
-bool UltimaEarlyEngine::isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion) {
-	folder = "ultima1";
-	majorVersion = 1;
-	minorVersion = 0;
-	return true;
+bool UltimaEarlyEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return _game->canSaveGameStateCurrently(msg);
 }
 
 } // End of namespace Shared

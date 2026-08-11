@@ -28,7 +28,7 @@
 
 namespace Tetraedge {
 
-TeMeshTinyGL::TeMeshTinyGL() : _glMeshMode(TGL_POINTS), _gltexEnvMode(TGL_DECAL) {
+TeMeshTinyGL::TeMeshTinyGL() : _glMeshMode(TGL_POINTS), _gltexEnvMode(TGL_MODULATE) {
 }
 
 void TeMeshTinyGL::draw() {
@@ -99,8 +99,7 @@ void TeMeshTinyGL::draw() {
 	if (!_colors.empty())
 		tglColorPointer(4, TGL_UNSIGNED_BYTE, sizeof(TeColor), _colors.data());
 
-	// TODO: not supported in TGL
-	//tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, _gltexEnvMode);
+	tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, _gltexEnvMode);
 	if (renderer->scissorEnabled()) {
 		tglEnable(TGL_SCISSOR_TEST);
 		// TODO: Scissor not supported by TGL
@@ -141,8 +140,7 @@ void TeMeshTinyGL::draw() {
 	if (!renderer->scissorEnabled())
 		tglDisable(TGL_SCISSOR_TEST);
 
-	// TODO: GL_MODULATE not supported in TGL
-	//tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_DECAL);
+	tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_MODULATE);
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 	tglDisableClientState(TGL_NORMAL_ARRAY);
 	tglDisableClientState(TGL_COLOR_ARRAY);

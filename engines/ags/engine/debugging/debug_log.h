@@ -36,8 +36,6 @@ void init_debug(const AGS::Shared::ConfigTree &cfg, bool stderr_only);
 void apply_debug_config(const AGS::Shared::ConfigTree &cfg);
 void shutdown_debug();
 
-void debug_set_console(bool enable);
-
 // prints debug messages of given type tagged with kDbgGroup_Game,
 // prepending it with current room number and script position info
 void debug_script_print(AGS::Shared::MessageType mt, const char *msg, ...);

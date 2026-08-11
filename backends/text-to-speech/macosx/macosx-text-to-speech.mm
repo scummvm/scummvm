@@ -25,12 +25,22 @@
 #include "backends/text-to-speech/macosx/macosx-text-to-speech.h"
 
 #if defined(USE_TTS) && defined(MACOSX)
+
 #include "common/translation.h"
+#include "backends/platform/sdl/macosx/macosx-compat.h"
+
 #include <AppKit/NSSpeechSynthesizer.h>
+#include <Foundation/NSArray.h>
+#include <Foundation/NSDictionary.h>
+#include <Foundation/NSEnumerator.h>
 #include <Foundation/NSString.h>
 #include <CoreFoundation/CFString.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
+@interface MacOSXTextToSpeechManagerDelegate : NSObject {
+#else
 @interface MacOSXTextToSpeechManagerDelegate : NSObject<NSSpeechSynthesizerDelegate> {
+#endif
 	MacOSXTextToSpeechManager *_ttsManager;
 	BOOL _ignoreNextFinishedSpeaking;
 }
@@ -82,6 +92,9 @@ MacOSXTextToSpeechManager::~MacOSXTextToSpeechManager() {
 
 bool MacOSXTextToSpeechManager::say(const Common::U32String &text, Action action) {
 	Common::String textToSpeak = text.encode();
+	// NSSpeechSynthesizer does not like text that ends with a space and hangs.
+	// Trim the text to speak to ensure this does not happen.
+	textToSpeak.trim();
 	if (isSpeaking()) {
 		// Interruptions are done on word boundaries for nice transitions.
 		// Should we interrupt immediately?
@@ -117,7 +130,12 @@ bool MacOSXTextToSpeechManager::startNextSpeech() {
 	if (_messageQueue.empty())
 		return false;
 
-	Common::String textToSpeak = _messageQueue.pop();
+	Common::String textToSpeak;
+	do {
+		textToSpeak = _messageQueue.pop();
+	} while (textToSpeak.empty() && !_messageQueue.empty());
+	if (textToSpeak.empty())
+		return false;
 
 	// Get current encoding
 	CFStringEncoding stringEncoding = kCFStringEncodingUTF8;
@@ -137,7 +155,7 @@ bool MacOSXTextToSpeechManager::stop() {
 		_currentSpeech.clear(); // so that it immediately reports that it is no longer speaking
 		// Stop as soon as possible
 		// Also tell the MacOSXTextToSpeechManagerDelegate to ignore the next finishedSpeaking as
-		// it has already been handled, but we might have started another speach by the time we
+		// it has already been handled, but we might have started another speech by the time we
 		// receive it, and we don't want to stop that one.
 		[synthesizerDelegate ignoreNextFinishedSpeaking:YES];
 		[synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
@@ -261,8 +279,11 @@ void MacOSXTextToSpeechManager::updateVoices() {
 	Common::String lang = getLanguage();
 	NSArray *voices = [NSSpeechSynthesizer availableVoices];
 	NSString *defaultVoice = [NSSpeechSynthesizer defaultVoice];
+	NSEnumerator *voiceEnum = [voices objectEnumerator];
+	NSString *voiceId;
 	int voiceIndex = 0;
-	for (NSString *voiceId in voices) {
+
+	while ((voiceId = [voiceEnum nextObject])) {
 		NSDictionary *voiceAttr = [NSSpeechSynthesizer attributesForVoice:voiceId];
 		Common::String voiceLocale([[voiceAttr objectForKey:NSVoiceLocaleIdentifier] UTF8String]);
 		if (voiceLocale.hasPrefix(lang)) {

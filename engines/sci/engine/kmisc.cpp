@@ -35,7 +35,9 @@
 #endif
 #include "sci/engine/savegame.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/drivers/gfxdriver.h"
+#include "sci/graphics/palette16.h"
+#include "sci/graphics/screen.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
@@ -110,8 +112,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 
 	uint32 neededSleep = g_sci->_speedThrottleDelay; // 30 ms (kSpeedThrottleDefaultDelay)
 
-	// WORKAROUNDS for scripts that are polling too quickly in scenes that
-	// are not animating much
+	// WORKAROUNDS for scripts that require specific speed throttling behavior
 	switch (g_sci->getGameId()) {
 	case GID_CASTLEBRAIN:
 		// In Castle of Dr. Brain, memory color matching puzzle in the first
@@ -135,6 +136,40 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		if (s->currentRoomNumber() == 27) {
 			s->_throttleTrigger = true;
 			neededSleep = 60;
+		}
+		break;
+	case GID_SQ5:
+		switch (s->currentRoomNumber()) {
+		case 104:
+			// Introduction: star field. Requires extra speed throttling to achieve
+			// comet animations and intended timing. Comets and fast stars move at
+			// unthrottled speed, but the comet's animation cycle speed is based on
+			// clock time and unsynchronized with movement. On a 386/33, the comets
+			// animate and become streaks, but even a 486/50 is too fast for this.
+			// The comets move so fast that they reach their destination before they
+			// can animate beyond their initial 1x1 pixel cel. Bug #15622
+			s->_throttleTrigger = true;
+			neededSleep = 90;
+			break;
+		case 110: {
+			// Introduction: exiting the simulator. Requires extra speed throttling to
+			// achieve intended timing. All actors in this room have unthrottled speed.
+			// This may have been to compensate for the interpreter lag when animating
+			// so many actors. Without that lag, and the CPU this scene was timed for,
+			// everything moves and animates too fast. However, we must not apply extra
+			// throttling to the second half of this scene, or else ego will walk slowly.
+			// The original interpreter did not lag here, because it removed the earlier
+			// actors from the cast. We detect this by querying the cast size. Bug #15610
+			const reg_t cast = s->variables[VAR_GLOBAL][kGlobalVarCast];
+			const uint16 castSize = readSelectorValue(s->_segMan, cast, SELECTOR(size));
+			if (castSize != 5) { // only throttle before ego begins walking
+				s->_throttleTrigger = true;
+				neededSleep = 90;
+			}
+			break;
+		}
+		default:
+			break;
 		}
 		break;
 
@@ -771,7 +806,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	enum Operation {
 		kPlatformUnknown        = 0,
 		kPlatformGetPlatform    = 4,
-		kPlatformUnknown5       = 5,
+		kPlatformIsSmallWindow  = 5,
 		kPlatformIsHiRes        = 6,
 		kPlatformWin311OrHigher = 7
 	};
@@ -785,9 +820,9 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	// treat DOS with hires graphics as Windows so that hires graphics are enabled
+	// treat KQ6 DOS with hires graphics as Windows so that hires graphics are enabled
 	bool isWindows = (g_sci->getPlatform() == Common::kPlatformWindows) ||
-		             (g_sci->getPlatform() == Common::kPlatformDOS && g_sci->forceHiresGraphics());
+	                 (g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformDOS && g_sci->useHiresGraphics());
 
 	uint16 operation = argv[0].toUint16();
 	switch (operation) {
@@ -803,9 +838,8 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, kSciPlatformMacintosh);
 		else
 			return make_reg(0, kSciPlatformDOS);
-	case kPlatformUnknown5:
-		// This case needs to return the opposite of case 6 to get hires graphics
-		return make_reg(0, !isWindows);
+	case kPlatformIsSmallWindow:
+		return make_reg(0, !g_sci->_gfxScreen->gfxDriver()->supportsHiResGraphics());
 	case kPlatformIsHiRes:
 	case kPlatformWin311OrHigher:
 		return make_reg(0, isWindows);
@@ -890,9 +924,6 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 
 	switch (operation) {
 	case 0:	// load DLL
-		if (dllName == "PENGIN16.DLL")
-			showScummVMDialog(_("The Poker logic is hardcoded in an external DLL, and is not implemented yet. There exists some dummy logic for now, where opponent actions are chosen randomly"));
-
 		// This is originally a call to LoadLibrary() and to the Watcom function GetIndirectFunctionHandle
 		return make_reg(0, 1000);	// fake ID for loaded DLL, normally returned from Windows LoadLibrary()
 	case 1: // free DLL

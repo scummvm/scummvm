@@ -29,10 +29,6 @@ namespace Supernova {
 class SupernovaEngine;
 class GameManager;
 
-enum {
-	kDebugGeneral = 1 << 0
-};
-
 class Console : public GUI::Debugger {
 public:
 	Console(Supernova::SupernovaEngine *vm, Supernova::GameManager *gm);

@@ -58,7 +58,6 @@
 #include "graphics/surface.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/gui/gui_dialog.h"
-#include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/mem/memman.h"
 #include "m4/mem/mem.h"
@@ -69,27 +68,21 @@ namespace M4 {
 bool vmng_init() {
 	if (_G(vmng_Initted))
 		return false;
+
 	_G(vmng_Initted) = true;
 
 	_G(frontScreen) = nullptr;
 	_G(backScreen) = nullptr;
 	_G(inactiveScreens) = nullptr;
 
-	if (!mem_register_stash_type(&_G(memtypeSCRN), sizeof(ScreenContext), 32, "+SCRN")) {
-		return false;
-	}
-	if (!mem_register_stash_type(&_G(memtypeMATTE), sizeof(matte), 32, "+guiMATTE")) {
-		return false;
-	}
-	if (!mem_register_stash_type(&_G(memtypeRECT), sizeof(RectList), 256, "+guiRecList")) {
-		return false;
-	}
+	mem_register_stash_type(&_G(memtypeSCRN), sizeof(ScreenContext), 32, "+SCRN");
+	mem_register_stash_type(&_G(memtypeMATTE), sizeof(matte), 32, "+guiMATTE");
+	mem_register_stash_type(&_G(memtypeRECT), sizeof(RectList), 256, "+guiRecList");
 
 	return true;
 }
 
 void vmng_shutdown() {
-	ScreenContext *myScreen;
 	Hotkey *myHotkeys, *tempHotkey;
 
 	if (!_G(vmng_Initted))
@@ -97,7 +90,7 @@ void vmng_shutdown() {
 	_G(vmng_Initted) = false;
 
 	// First, destroy all active windows
-	myScreen = _G(frontScreen);
+	ScreenContext *myScreen = _G(frontScreen);
 	while (myScreen) {
 		_G(frontScreen) = _G(frontScreen)->behind;
 		if (myScreen->scrnType == SCRN_DLG) {
@@ -132,7 +125,6 @@ void vmng_shutdown() {
 		while (tempHotkey) {
 			myHotkeys = myHotkeys->next;
 			mem_free(tempHotkey);
-			//mem_free_to_stash((void*)tempHotkey, memtypeHOTKEY);
 			tempHotkey = myHotkeys;
 		}
 
@@ -172,12 +164,12 @@ ScreenContext *vmng_screen_create(int32 x1, int32 y1, int32 x2, int32 y2, int32 
 }
 
 void vmng_screen_dispose(void *scrnContent) {
-	ScreenContext *myScreen;
-	Hotkey *myHotkeys, *tempHotkey;
-	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == nullptr) return;
+	ScreenContext *myScreen = ExtractScreen(scrnContent, SCRN_ANY);
+	if (myScreen == nullptr)
+		return;
 	RestoreScreens(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
-	myHotkeys = myScreen->scrnHotkeys;
-	tempHotkey = myHotkeys;
+	Hotkey *myHotkeys = myScreen->scrnHotkeys;
+	Hotkey *tempHotkey = myHotkeys;
 	while (tempHotkey) {
 		myHotkeys = myHotkeys->next;
 		mem_free(tempHotkey);
@@ -198,8 +190,8 @@ void vmng_screen_hide(void *scrnContent) {
 }
 
 void vmng_screen_show(void *scrnContent) {
-	ScreenContext *myScreen, *tempScreen;
-	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == nullptr)
+	ScreenContext *myScreen = ExtractScreen(scrnContent, SCRN_ANY);
+	if (myScreen == nullptr)
 		return;
 
 	if (!_G(frontScreen)) {
@@ -209,7 +201,7 @@ void vmng_screen_show(void *scrnContent) {
 		_G(backScreen) = myScreen;
 
 	} else {
-		tempScreen = _G(frontScreen);
+		ScreenContext *tempScreen = _G(frontScreen);
 		while (tempScreen &&
 			((tempScreen->scrnFlags & SF_LAYER) > (myScreen->scrnFlags & SF_LAYER))) {
 			tempScreen = tempScreen->behind;
@@ -236,13 +228,12 @@ void vmng_screen_show(void *scrnContent) {
 }
 
 ScreenContext *vmng_screen_find(void *scrnContent, int32 *status) {
-	ScreenContext *myScreen;
 	int32 myStatus = SCRN_ACTIVE;
 
 	if (!_G(vmng_Initted))
 		return nullptr;
 
-	myScreen = _G(frontScreen);
+	ScreenContext *myScreen = _G(frontScreen);
 
 	while (myScreen && (myScreen->scrnContent != scrnContent))
 		myScreen = myScreen->behind;
@@ -318,7 +309,8 @@ ScreenContext *ExtractScreen(void *scrnContent, int32 status) {
 			} else {
 				tempScreen = myScreen->infront;
 				tempScreen->behind = myScreen->behind;
-				if (tempScreen->behind) tempScreen->behind->infront = tempScreen;
+				if (tempScreen->behind)
+					tempScreen->behind->infront = tempScreen;
 			}
 		}
 	}

@@ -65,7 +65,7 @@ inline void outputConfigurationType(const BuildSetup &setup, std::ostream &proje
 	}
 	project << "\t\t<PlatformToolset>" << (config == "LLVM" ? msvc.toolsetLLVM : msvc.toolsetMSVC ) << "</PlatformToolset>\n";
 	project << "\t\t<CharacterSet>" << (setup.useWindowsUnicode ? "Unicode" : "NotSet") << "</CharacterSet>\n";
-	if (msvc.version >= 16 && config == "Analysis") {
+	if (msvc.version >= 16 && config == "ASan") {
 		project << "\t\t<EnableASAN>true</EnableASAN>\n";
 	}	
 	project << "\t</PropertyGroup>\n";
@@ -93,11 +93,11 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	        << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	        << "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputConfiguration(project, "Debug", *arch);
-		outputConfiguration(project, "Analysis", *arch);
-		outputConfiguration(project, "LLVM", *arch);
-		outputConfiguration(project, "Release", *arch);
+	for (const auto arch : _archs) {
+		outputConfiguration(project, "Debug", arch);
+		outputConfiguration(project, "ASan", arch);
+		outputConfiguration(project, "LLVM", arch);
+		outputConfiguration(project, "Release", arch);
 	}
 	project << "\t</ItemGroup>\n";
 
@@ -112,39 +112,39 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputConfigurationType(setup, project, name, "Release", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "Analysis", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "LLVM", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "Debug", *arch, _msvcVersion);
+	for (const auto arch : _archs) {
+		outputConfigurationType(setup, project, name, "Release", arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "ASan", arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "LLVM", arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "Debug", arch, _msvcVersion);
 	}
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	        << "\t<ImportGroup Label=\"ExtensionSettings\">\n"
 	        << "\t</ImportGroup>\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputProperties(setup, project, "Release", *arch);
-		outputProperties(setup, project, "Analysis", *arch);
-		outputProperties(setup, project, "LLVM", *arch);
-		outputProperties(setup, project, "Debug", *arch);
+	for (const auto arch : _archs) {
+		outputProperties(setup, project, "Release", arch);
+		outputProperties(setup, project, "ASan", arch);
+		outputProperties(setup, project, "LLVM", arch);
+		outputProperties(setup, project, "Debug", arch);
 	}
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
-	// Project-specific settings (analysis uses debug properties)
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+	// Project-specific settings (asan uses debug properties)
+	for (const auto arch : _archs) {
 		BuildSetup archsetup = setup;
-		std::map<MSVC_Architecture, StringList>::const_iterator disabled_features_it = _arch_disabled_features.find(*arch);
+		const auto disabled_features_it = _arch_disabled_features.find(arch);
 		if (disabled_features_it != _arch_disabled_features.end()) {
-			for (StringList::const_iterator j = disabled_features_it->second.begin(); j != disabled_features_it->second.end(); ++j) {
-				archsetup = removeFeatureFromSetup(archsetup, *j);
+			for (const auto &j : disabled_features_it->second) {
+				archsetup = removeFeatureFromSetup(archsetup, j);
 			}
 		}
-		outputProjectSettings(project, name, archsetup, false, *arch, "Debug");
-		outputProjectSettings(project, name, archsetup, false, *arch, "Analysis");
-		outputProjectSettings(project, name, archsetup, false, *arch, "LLVM");
-		outputProjectSettings(project, name, archsetup, true, *arch, "Release");
+		outputProjectSettings(project, name, archsetup, false, arch, "Debug");
+		outputProjectSettings(project, name, archsetup, false, arch, "ASan");
+		outputProjectSettings(project, name, archsetup, false, arch, "LLVM");
+		outputProjectSettings(project, name, archsetup, true, arch, "Release");
 	}
 
 	// Files
@@ -167,7 +167,9 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Output auto-generated test runner
 	if (setup.tests) {
 		project << "\t<ItemGroup>\n";
-		project << "\t\t<ClCompile Include=\"test_runner.cpp\" />\n";
+		project << "\t\t<ClCompile Include=\"test/runner/test_runner.cpp\" />\n";
+		project << "\t\t<ClCompile Include=\"" << setup.srcDir << "/test/system/null_osystem.cpp\" />\n";
+		project << "\t\t<ClCompile Remove=\"" << setup.srcDir << "/backends/base-backend.cpp\" />\n"; // symbols are already defined in null_osystem.cpp
 		project << "\t</ItemGroup>\n";
 	}
 
@@ -186,6 +188,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		// We override the normal target to ignore the exit code (this allows us to have a clean output and not message about the command exit code)
 		project << "\t\t<Target Name=\"PostBuildEvent\">\n"
 		        << "\t\t\t<Message Text=\"Description: Run tests\" />\n"
+		        << "\t\t\t<Copy SourceFiles=\"" + setup.filePrefix + "/dists/engine-data/encoding.dat\" DestinationFolder=\"$(ProjectDir)test/engine-data\" SkipUnchangedFiles=\"true\" />\n"
 		        << "\t\t\t<Exec Command=\"$(TargetPath)\"  IgnoreExitCode=\"true\" />\n"
 		        << "\t\t</Target>\n";
 	}
@@ -221,8 +224,8 @@ void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::stri
 
 	// Output the list of filters
 	filters << "\t<ItemGroup>\n";
-	for (std::list<std::string>::iterator filter = _filters.begin(); filter != _filters.end(); ++filter) {
-		filters << "\t\t<Filter Include=\"" << *filter << "\">\n"
+	for (const auto &filter : _filters) {
+		filters << "\t\t<Filter Include=\"" << filter << "\">\n"
 		        << "\t\t\t<UniqueIdentifier>" << createUUID() << "</UniqueIdentifier>\n"
 		        << "\t\t</Filter>\n";
 	}
@@ -241,13 +244,13 @@ void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::stri
 void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &files, const std::string &action) {
 	if (!files.empty()) {
 		filters << "\t<ItemGroup>\n";
-		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
-			if ((*entry).filter != "") {
-				filters << "\t\t<" << action << " Include=\"" << (*entry).path << "\">\n"
-				        << "\t\t\t<Filter>" << (*entry).filter << "</Filter>\n"
+		for (const auto &entry : files) {
+			if (!entry.filter.empty()) {
+				filters << "\t\t<" << action << " Include=\"" << entry.path << "\">\n"
+				        << "\t\t\t<Filter>" << entry.filter << "</Filter>\n"
 				        << "\t\t</" << action << ">\n";
 			} else {
-				filters << "\t\t<" << action << " Include=\"" << (*entry).path << "\" />\n";
+				filters << "\t\t<" << action << " Include=\"" << entry.path << "\" />\n";
 			}
 		}
 		filters << "\t</ItemGroup>\n";
@@ -257,9 +260,9 @@ void MSBuildProvider::outputFilter(std::ostream &filters, const FileEntries &fil
 void MSBuildProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
 	output << "\t<ItemGroup>\n";
 
-	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-		output << "\t<ProjectReference Include=\"" << i->first << ".vcxproj\">\n"
-		       << "\t\t<Project>{" << i->second << "}</Project>\n"
+	for (const auto &i : _engineUuidMap) {
+		output << "\t<ProjectReference Include=\"" << i.first << ".vcxproj\">\n"
+		       << "\t\t<Project>{" << i.second << "}</Project>\n"
 		       << "\t</ProjectReference>\n";
 	}
 
@@ -278,8 +281,8 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 
 	std::string warnings = "";
 	if (warningsIterator != _projectWarnings.end())
-		for (StringList::const_iterator i = warningsIterator->second.begin(); i != warningsIterator->second.end(); ++i)
-			warnings += *i + ';';
+		for (const auto &i : warningsIterator->second)
+			warnings += i + ';';
 
 	project << "\t<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << configuration << "|" << getMSVCConfigName(arch) << "'\">\n"
 	        << "\t\t<ClCompile>\n";
@@ -305,9 +308,9 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		std::string libraries = outputLibraryDependencies(setup, isRelease);
 
 		// MSBuild uses ; for separators instead of spaces
-		for (std::string::iterator i = libraries.begin(); i != libraries.end(); ++i) {
-			if (*i == ' ') {
-				*i = ';';
+		for (char &library : libraries) {
+			if (library == ' ') {
+				library = ';';
 			}
 		}
 
@@ -319,7 +322,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 			project << "\t\t<PreBuildEvent>\n"
 			        << "\t\t\t<Message>Generate revision</Message>\n"
-			        << "\t\t\t<Command>" << getPreBuildEvent() << "</Command>\n"
+			        << "\t\t\t<Command>" << getPreBuildEvent(setup) << "</Command>\n"
 			        << "\t\t</PreBuildEvent>\n";
 
 			// Copy data files to the build folder
@@ -341,49 +344,34 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix) {
 
 	std::string warnings;
-	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
-		warnings += *i + ';';
+	for (const auto &globalWarning : _globalWarnings)
+		warnings += globalWarning + ';';
 
 	std::string warningsAsErrors;
-	for (StringList::const_iterator i = _globalErrors.begin(); i != _globalErrors.end(); ++i)
-		warningsAsErrors += "/we\"" + (*i) + "\" ";
+	for (const auto &globalError : _globalErrors)
+		warningsAsErrors += "/we\"" + globalError + "\" ";
 
 	std::string definesList;
-	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
-		definesList += *i + ';';
+	for (const auto &define : defines)
+		definesList += define + ';';
 
 	// Add define to include revision header
 	if (setup.runBuildEvents)
 		definesList += REVISION_DEFINE ";";
 
-	std::string includeDirsList;
-	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
-		includeDirsList += convertPathToWin(*i) + ';';
+	std::string includeSDL = setup.getSDLName();
 
-	std::string libraryDirsList;
-	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
-		libraryDirsList += convertPathToWin(*i) + ';';
-
-	std::string includeSDL = (setup.useSDL2 ? "SDL2" : "SDL");
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 			   << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 			   << "\t<PropertyGroup>\n"
-			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n";
+			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
+			   << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
+			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n";
 
-	std::string libsPath;
-	if (setup.libsDir.empty())
-		libsPath = "$(" LIBS_DEFINE ")";
-	else
-		libsPath = convertPathToWin(setup.libsDir);
+	if (_msvcVersion.version >= 17 && setup.useVcpkg)
+		properties << "\t\t<VcpkgEnableManifest>true</VcpkgEnableManifest>\n";
 
-	if (!setup.useVcpkg) {
-		properties << "\t\t<ExecutablePath>" << libsPath << "\\bin;" << libsPath << "\\bin\\" << getMSVCArchName(arch) << ";" << libsPath << "\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
-				   << "\t\t<LibraryPath>" << libraryDirsList << libsPath << "\\lib\\" << getMSVCArchName(arch) << ";" << libsPath << "\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);" << libsPath << "\\lib;" << libsPath << "\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
-				   << "\t\t<IncludePath>" << includeDirsList << libsPath << "\\include;" << libsPath << "\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
-	}
-	properties << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
-			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
-			   << "\t</PropertyGroup>\n"
+	properties << "\t</PropertyGroup>\n"
 			   << "\t<ItemDefinitionGroup>\n"
 			   << "\t\t<ClCompile>\n"
 			   << "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
@@ -405,6 +393,10 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 #else
 	properties << "\t\t\t<RuntimeTypeInfo>false</RuntimeTypeInfo>\n";
 #endif
+
+	// Print a bit more context for warnings, like modern GCC/Clang do
+	if (_msvcVersion.version >= 15)
+		properties << "\t\t\t<DiagnosticsFormat>Caret</DiagnosticsFormat>\n";
 
 	properties << "\t\t\t<WarningLevel>Level4</WarningLevel>\n"
 	           << "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
@@ -444,6 +436,24 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 		return;
 	}
 
+	std::string includeDirsList;
+	for (const auto &includeDir : setup.includeDirs)
+		includeDirsList += convertPathToWin(includeDir) + ';';
+
+	std::string includeSDL = setup.getSDLName();
+
+	std::string libraryDirsList;
+	for (const auto &libraryDir : setup.libraryDirs)
+		libraryDirsList += convertPathToWin(libraryDir) + ';';
+
+	std::string libsPath;
+	if (setup.libsDir.empty())
+		libsPath = "$(" LIBS_DEFINE ")";
+	else
+		libsPath = convertPathToWin(setup.libsDir);
+
+	std::string cfgPath = (isRelease ? "Release" : "Debug");
+
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	           << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           << "\t<ImportGroup Label=\"PropertySheets\">\n"
@@ -451,12 +461,16 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	           << "\t</ImportGroup>\n"
 	           << "\t<PropertyGroup>\n"
 	           << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << configuration << getMSVCArchName(arch) << "</_PropertySheetDisplayName>\n"
-			   << "\t\t<LinkIncremental>" << ((isRelease || configuration == "Analysis") ? "false" : "true") << "</LinkIncremental>\n"
+			   << "\t\t<LinkIncremental>" << ((isRelease || configuration == "ASan") ? "false" : "true") << "</LinkIncremental>\n"
 	           << "\t\t<GenerateManifest>false</GenerateManifest>\n";
 
-	if (setup.useVcpkg) {
+	if (!setup.useVcpkg) {
+		properties << "\t\t<ExecutablePath>" << libsPath << "\\bin;" << libsPath << "\\bin\\" << getMSVCArchName(arch) << ";" << libsPath << "\\" << cfgPath << "\\bin;$(ExecutablePath)</ExecutablePath>\n"
+				   << "\t\t<LibraryPath>" << libraryDirsList << libsPath << "\\lib\\" << getMSVCArchName(arch) << ";" << libsPath << "\\lib\\" << getMSVCArchName(arch) << "\\" << cfgPath << ";" << libsPath << "\\lib;" << libsPath << "\\" << cfgPath << "\\lib;$(LibraryPath)</LibraryPath>\n"
+				   << "\t\t<IncludePath>" << includeDirsList << libsPath << "\\include;" << libsPath << "\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
+	} else {
 		properties << "\t\t<VcpkgTriplet>" << getMSVCArchName(arch) << "-windows</VcpkgTriplet>\n";
-		properties << "\t\t<VcpkgConfiguration>" << (isRelease ? "Release" : "Debug") << "</VcpkgConfiguration>\n";
+		properties << "\t\t<VcpkgConfiguration>" << cfgPath << "</VcpkgConfiguration>\n";
 	}
 
 	properties << "\t</PropertyGroup>\n"
@@ -483,17 +497,18 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	} else {
 		properties << "\t\t\t<Optimization>Disabled</Optimization>\n"
 		           << "\t\t\t<PreprocessorDefinitions>WIN32;" << (configuration == "LLVM" ? "_CRT_SECURE_NO_WARNINGS;" : "") << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-		           << "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
 		           << "\t\t\t<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n"
 		           << "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
 				   << "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
+		if (configuration != "ASan") {
+			properties << "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n";
+		}
 		// Since MSVC 2015 Edit and Continue is supported for x86 and x86-64, but not for ARM.
-		if (configuration != "Analysis" && (arch == ARCH_X86 || (arch == ARCH_AMD64 && _version >= 14))) {
+		if (configuration != "ASan" && (arch == ARCH_X86 || (arch == ARCH_AMD64 && _version >= 14))) {
 			properties << "\t\t\t<DebugInformationFormat>EditAndContinue</DebugInformationFormat>\n";
 		} else {
 			properties << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 		}
-		properties << "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
 
 		if (configuration == "LLVM") {
 			properties << "\t\t\t<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types -Qunused-arguments %(AdditionalOptions)</AdditionalOptions>\n";
@@ -562,9 +577,7 @@ void MSBuildProvider::insertPathIntoDirectory(FileNode &dir, const std::string &
 }
 
 void MSBuildProvider::createFileNodesFromPCHList(FileNode &dir, const std::string &pathBase, const StringList &pchCompileFiles) {
-	for (StringList::const_iterator it = pchCompileFiles.begin(), itEnd = pchCompileFiles.end(); it != itEnd; ++it) {
-		const std::string &pchPath = *it;
-
+	for (const auto &pchPath : pchCompileFiles) {
 		if (pchPath.size() > pathBase.size() && pchPath.substr(0, pathBase.size()) == pathBase) {
 			std::string internalPath = pchPath.substr(pathBase.size());
 
@@ -610,24 +623,24 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ostream &
 		_filters.pop_back(); // remove last empty filter
 
 		// Combine lists, removing duplicates
-		for (StringList::const_iterator it = backupFilters.begin(), itEnd = backupFilters.end(); it != itEnd; ++it) {
-			if (std::find(_filters.begin(), _filters.end(), *it) != _filters.end())
-				_filters.push_back(*it);
+		for (const auto &backupFilter : backupFilters) {
+			if (std::find(_filters.begin(), _filters.end(), backupFilter) != _filters.end())
+				_filters.push_back(backupFilter);
 		}
 	}
 
 	// Output asm files
 	if (!_asmFiles.empty()) {
 		projectFile << "\t<ItemGroup>\n";
-		for (std::list<FileEntry>::const_iterator entry = _asmFiles.begin(); entry != _asmFiles.end(); ++entry) {
+		for (const auto &_asmFile : _asmFiles) {
 
-			projectFile << "\t\t<CustomBuild Include=\"" << (*entry).path << "\">\n"
+			projectFile << "\t\t<CustomBuild Include=\"" << _asmFile.path << "\">\n"
 			            << "\t\t\t<FileType>Document</FileType>\n";
 
-			outputNasmCommand(projectFile, "Debug", (*entry).prefix);
-			outputNasmCommand(projectFile, "Analysis", (*entry).prefix);
-			outputNasmCommand(projectFile, "Release", (*entry).prefix);
-			outputNasmCommand(projectFile, "LLVM", (*entry).prefix);
+			outputNasmCommand(projectFile, "Debug", _asmFile.prefix);
+			outputNasmCommand(projectFile, "ASan", _asmFile.prefix);
+			outputNasmCommand(projectFile, "Release", _asmFile.prefix);
+			outputNasmCommand(projectFile, "LLVM", _asmFile.prefix);
 
 			projectFile << "\t\t</CustomBuild>\n";
 		}
@@ -638,8 +651,8 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ostream &
 void MSBuildProvider::outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action) {
 	if (!files.empty()) {
 		projectFile << "\t<ItemGroup>\n";
-		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
-			projectFile << "\t\t<" << action << " Include=\"" << (*entry).path << "\" />\n";
+		for (const auto &file : files) {
+			projectFile << "\t\t<" << action << " Include=\"" << file.path << "\" />\n";
 		}
 		projectFile << "\t</ItemGroup>\n";
 	}
@@ -658,17 +671,15 @@ void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::s
 		pchIncludeRootWin = convertPathToWin(pchIncludeRoot);
 
 		// Convert PCH paths to Win
-		for (StringList::const_iterator entry = pchDirs.begin(), end = pchDirs.end(); entry != end; ++entry) {
-			std::string convertedPath = convertPathToWin(*entry);
+		for (const auto &pchDir : pchDirs) {
+			std::string convertedPath = convertPathToWin(pchDir);
 			if (convertedPath.size() < pchIncludeRootWin.size() || convertedPath.substr(0, pchIncludeRootWin.size()) != pchIncludeRootWin) {
 				error("PCH path '" + convertedPath + "' wasn't located under PCH include root '" + pchIncludeRootWin + "'");
 			}
 
-			pchDirsWin.push_back(convertPathToWin(*entry));
+			pchDirsWin.push_back(convertPathToWin(pchDir));
 		}
-		for (StringList::const_iterator entry = pchExclude.begin(), end = pchExclude.end(); entry != end; ++entry) {
-			const std::string path = *entry;
-
+		for (const auto &path : pchExclude) {
 			if (path.size() >= 2 && path[path.size() - 1] == 'o' && path[path.size() - 2] == '.')
 				pchExcludeWin.push_back(convertPathToWin(path.substr(0, path.size() - 2)));
 		}
@@ -678,12 +689,12 @@ void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::s
 
 	if (!files.empty()) {
 		projectFile << "\t<ItemGroup>\n";
-		for (FileEntries::const_iterator entry = files.begin(), end = files.end(); entry != end; ++entry) {
+		for (const auto &file : files) {
 			std::string pchIncludePath, pchFilePath, pchFileName;
 
 			bool fileHasPCH = false;
 			if (hasPCH)
-				fileHasPCH = calculatePchPaths(entry->path, pchIncludeRootWin, pchDirsWin, pchExcludeWin, '\\', pchIncludePath, pchFilePath, pchFileName);
+				fileHasPCH = calculatePchPaths(file.path, pchIncludeRootWin, pchDirsWin, pchExcludeWin, '\\', pchIncludePath, pchFilePath, pchFileName);
 
 			if (fileHasPCH) {
 				std::string pchOutputFileName = "$(IntDir)dists\\msvc\\%(RelativeDir)" + pchFileName.substr(0, pchFileName.size() - 2) + ".pch";
@@ -692,21 +703,21 @@ void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::s
 				pchInfo.file = pchIncludePath;
 				pchInfo.outputFile = pchOutputFileName;
 
-				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n";
+				projectFile << "\t\t<ClCompile Include=\"" << file.path << "\">\n";
 				projectFile << "\t\t\t<PrecompiledHeader>Use</PrecompiledHeader>\n";
 				projectFile << "\t\t\t<PrecompiledHeaderFile>" << pchIncludePath << "</PrecompiledHeaderFile>\n";
 				projectFile << "\t\t\t<PrecompiledHeaderOutputFile>" << pchOutputFileName << "</PrecompiledHeaderOutputFile>\n";
 				projectFile << "\t\t</ClCompile>\n";
 			} else {
-				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\" />\n";
+				projectFile << "\t\t<ClCompile Include=\"" << file.path << "\" />\n";
 			}
 		}
 
 		// Flush PCH files
-		for (std::map<std::string, PCHInfo>::const_iterator pchIt = pchMap.begin(), pchItEnd = pchMap.end(); pchIt != pchItEnd; ++pchIt) {
-			const PCHInfo &pchInfo = pchIt->second;
+		for (const auto &pchIt : pchMap) {
+			const PCHInfo &pchInfo = pchIt.second;
 
-			const std::string &filePath = pchIt->first;
+			const std::string &filePath = pchIt.first;
 			assert(filePath.size() >= 2 && filePath.substr(filePath.size() - 2) == ".h");
 
 			std::string cppFilePath = filePath.substr(0, filePath.size() - 2) + ".cpp";
@@ -766,9 +777,7 @@ void MSBuildProvider::outputCompileFiles(std::ostream &projectFile, const std::s
 }
 
 void MSBuildProvider::computeFileList(const FileNode &dir, const std::string &objPrefix, const std::string &filePrefix) {
-	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
-		const FileNode *node = *i;
-
+	for (const auto *node : dir.children) {
 		if (!node->children.empty()) {
 			// Update filter
 			std::string _currentFilter = _filters.back();

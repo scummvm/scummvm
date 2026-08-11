@@ -64,7 +64,7 @@ public:
 	bool isHighlighted() const;
 	bool isSelected() const;
 	bool isVisible() const;
-	const Std::set<int> &getShortcutKeys() const;
+	bool hasShortcutKey(int key) const;
 	bool getClosesMenu() const;
 
 	void setId(int id);
@@ -85,7 +85,7 @@ protected:
 	bool _selected;
 	bool _visible;
 	int _scOffset;
-	Std::set<int> _shortcutKeys;
+	Common::Array<int> _shortcutKeys;
 	bool _closesMenu;
 };
 
@@ -113,14 +113,14 @@ protected:
  */
 class StringMenuItem : public MenuItem {
 public:
-	StringMenuItem(const Common::String &text, short xp, short yp, int shortcutKey, Common::String *val, const Std::vector<Common::String> &validSettings);
+	StringMenuItem(const Common::String &text, short xp, short yp, int shortcutKey, Common::String *val, const Common::Array<Common::String> &validSettings);
 
 	void activate(MenuEvent &event) override;
 	Common::String getText() const override;
 
 protected:
 	Common::String *_val;
-	Std::vector<Common::String> _validSettings;
+	Common::Array<Common::String> _validSettings;
 };
 
 /**

@@ -32,6 +32,7 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "backends/base-backend.h"
+#include "graphics/blit.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "audio/mixer_intern.h"
@@ -51,18 +52,19 @@ extern void wii_memstats(void);
 }
 #endif
 
-class OSystem_Wii final : public EventsBaseBackend, public PaletteManager {
+class OSystem_Wii final : virtual public BaseBackend, public Common::EventSource, public PaletteManager {
 private:
 	s64 _startup_time;
 
-	bool _cursorDontScale;
+	float _cursorScaleX;
+	float _cursorScaleY;
 	bool _cursorPaletteDisabled;
 	u16 *_cursorPalette;
 	bool _cursorPaletteDirty;
 
 	bool _gameRunning;
 	u16 _gameWidth, _gameHeight;
-	u8 *_gamePixels;
+	u8 *_gamePixels, *_gamePixelsTexture;
 	Graphics::Surface _surface;
 	gfx_screen_coords_t _coordsGame;
 	gfx_tex_t _texGame;
@@ -77,6 +79,7 @@ private:
 	bool _overlayDirty;
 	bool _overlayInGUI;
 
+	Graphics::FastBlitFunc _blitFunc;
 	u32 _lastScreenUpdate;
 	u16 _currentWidth, _currentHeight;
 	f32 _currentXScale, _currentYScale;
@@ -86,11 +89,9 @@ private:
 	bool _bilinearFilter;
 	const Graphics::PixelFormat _pfRGB565;
 	const Graphics::PixelFormat _pfRGB3444;
-#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _pfGame;
 	Graphics::PixelFormat _pfGameTexture;
 	Graphics::PixelFormat _pfCursor;
-#endif
 
 	bool _consoleVisible;
 	bool _optionsDlgActive;
@@ -182,8 +183,8 @@ public:
 	void grabOverlay(Graphics::Surface &surface) override;
 	virtual void copyRectToOverlay(const void *buf, int pitch,
 									int x, int y, int w, int h) override;
-	int16 getOverlayWidth() override;
-	int16 getOverlayHeight() override;
+	int16 getOverlayWidth() const override;
+	int16 getOverlayHeight() const override;
 	Graphics::PixelFormat getOverlayFormat() const override;
 
 	bool showMouse(bool visible) override;
@@ -191,8 +192,8 @@ public:
 	void warpMouse(int x, int y) override;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 								int hotspotY, uint32 keycolor,
-								bool dontScale,
-								const Graphics::PixelFormat *format, const byte *mask) override;
+								const Graphics::PixelFormat *format, const byte *mask,
+								frac_t scaleX, frac_t scaleY) override;
 
 	bool pollEvent(Common::Event &event) override;
 	uint32 getMillis(bool skipRecord = false) override;

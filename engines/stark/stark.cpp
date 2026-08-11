@@ -185,24 +185,25 @@ void StarkEngine::processEvents() {
 
 		if (isPaused()) {
 			// Only pressing key P to resume the game is allowed when the game is paused
-			if (e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_p) {
+			if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && e.customType == kActionPause) {
 				_gamePauseToken.clear();
 			}
 			continue;
 		}
 
-		if (e.type == Common::EVENT_KEYDOWN) {
+		if (e.type == Common::EVENT_KEYDOWN || e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 			if (e.kbdRepeat) {
 				continue;
 			}
 
-			if (e.kbd.keycode == Common::KEYCODE_p) {
+			if (e.customType == kActionPause) {
 				if (StarkUserInterface->isInGameScreen()) {
 					_gamePauseToken = pauseEngine();
 					debug("The game is paused");
 				}
 			} else {
 				StarkUserInterface->handleKeyPress(e.kbd);
+				StarkUserInterface->handleActions(e.customType);
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
@@ -300,10 +301,12 @@ void StarkEngine::checkRecommendedDatafiles() {
 	}
 
 	bool missingFiles = false;
+	const char *url = "https://www.scummvm.org/demos/#other";
 	if (!fontsDir.isDirectory()) {
 		message += "\n\n";
 		message += _("The 'fonts' folder is required to experience the text style as it was designed. "
-				"The Steam release is known to be missing it. You can get the fonts from the demo version of the game.");
+					 "The Steam release is known to be missing it.");
+
 		missingFiles = true;
 	}
 
@@ -326,9 +329,10 @@ void StarkEngine::checkRecommendedDatafiles() {
 	}
 
 	if (missingFiles) {
+		message += _("\n\nYou can download the missing files from the demo version from the ScummVM website.");
 		warning("%s", message.c_str());
 
-		GUI::MessageDialog dialog(message);
+		GUI::MessageDialogWithURL dialog(message, url);
 		dialog.runModal();
 	}
 }

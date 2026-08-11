@@ -94,8 +94,7 @@ private:
 	HugoEngine *_vm;
 	Audio::SoundHandle _soundHandle;
 	MidiPlayer *_midiPlayer;
-	Audio::PCSpeaker *_speakerStream;
-	Audio::SoundHandle _speakerHandle;
+	Audio::PCSpeaker *_speaker;
 
 	void stopSound();
 	void stopMusic();

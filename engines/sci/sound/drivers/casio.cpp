@@ -397,7 +397,7 @@ MidiPlayer_Casio::~MidiPlayer_Casio() {
 
 int MidiPlayer_Casio::open(ResourceManager* resMan) {
 	if (_version < SCI_VERSION_0_LATE || _version > SCI_VERSION_01) {
-		warning("CASIO: Unsupported SCI version.");
+		warning("CASIO: Unsupported SCI version");
 		return -1;
 	}
 

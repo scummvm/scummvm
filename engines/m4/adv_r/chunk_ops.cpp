@@ -28,8 +28,7 @@
 namespace M4 {
 
 int32 conv_ops_text_strlen(char *s) {
-	int32 len = 0;
-	len = strlen(s) + 1;	// Added +1 for null char.
+	int32 len = strlen(s) + 1;	// Added +1 for null char.
 
 	if ((len % 4) == 0)
 		return len;
@@ -39,31 +38,28 @@ int32 conv_ops_text_strlen(char *s) {
 }
 
 void conv_ops_unknown_chunk(int32 tag, const char *s) {
-	char *tag_name = nullptr;
+	char *tag_name = (char *)&tag;
 
-	tag_name = (char *)&tag;
-
-	error_show(FL, 'PARS', "'%s' What type is this chunk: %c%c%c%c ?", s, tag_name[3], tag_name[2], tag_name[1], tag_name[0]);
+	error_show(FL, "'%s' What type is this chunk: %c%c%c%c ?", s, tag_name[3], tag_name[2], tag_name[1], tag_name[0]);
 }
 
 /*
  * Find an entry and auto-advance the pointer past it.
  */
 char *conv_ops_get_entry(int32 i, int32 *next, int32 *tag, Conv *c) {
-	int32 num_blocks = 0;
+	int32 num_blocks;
 	int32 j = 0, k = 0;
 	lnode_chunk *L;
 	node_chunk *N;
 	text_chunk *T;
 	w_reply_chunk *W;
 	conv_chunk *CC;
-	char *outChunk = nullptr;
 
 	if ((i + c->myCNode) > c->chunkSize) {
-		error_show(FL, 'PARS', "Conv pointer skipped past chunk EOF. Please check script and make sure HAG is up to date");
+		error_show(FL, "Conv pointer skipped past chunk EOF. Please check script and make sure HAG is up to date");
 	}
 
-	outChunk = &(c->conv[c->myCNode]);
+	char *outChunk = &(c->conv[c->myCNode]);
 	*tag = *(int32 *)&outChunk[i];
 
 	if (_GC(swap))
@@ -137,17 +133,6 @@ char *conv_ops_get_entry(int32 i, int32 *next, int32 *tag, Conv *c) {
 		break;
 
 	case WEIGHT_REPLY_CHUNK:
-		W = (w_reply_chunk *)&outChunk[i];
-		k = sizeof(w_reply_chunk);
-
-		if (_GC(swap)) {
-			j = convert_intel32(W->num_replies) * (2 * sizeof(int32)); //was +=
-			j = convert_intel32(j);
-		} else {
-			j = W->num_replies * (2 * sizeof(int32)); //was +=
-		}
-		break;
-
 	case WEIGHT_PREPLY_CHUNK:
 		W = (w_reply_chunk *)&outChunk[i];
 		k = sizeof(w_reply_chunk);
@@ -187,7 +172,7 @@ char *conv_ops_get_entry(int32 i, int32 *next, int32 *tag, Conv *c) {
 		break;
 
 	default:
-		error_show(FL, 'PARS', "Tag: %d (%x) Node: %d (%x hex)", *tag, *tag, c->myCNode, c->myCNode);
+		error_show(FL, "Tag: %d (%x) Node: %d (%x hex)", *tag, *tag, c->myCNode, c->myCNode);
 		break;
 	}
 
@@ -209,13 +194,8 @@ static void swap_assign(assign_chunk *a) {
 }
 
 assign_chunk *get_asgn(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	assign_chunk *a = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	a = (assign_chunk *)&s[cSize];
-
-	return a;
+	char *s = &(c->conv[c->myCNode]);
+	return (assign_chunk *)&s[cSize];
 }
 
 static void swap_c_asgn(c_assign_chunk *c) {
@@ -231,13 +211,8 @@ static void swap_c_asgn(c_assign_chunk *c) {
 }
 
 c_assign_chunk *get_c_asgn(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	c_assign_chunk *c_a = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	c_a = (c_assign_chunk *)&s[cSize];
-
-	return c_a;
+	char *s = &(c->conv[c->myCNode]);
+	return (c_assign_chunk *)&s[cSize];
 }
 
 static void swap_conv(conv_chunk *c) {
@@ -246,13 +221,8 @@ static void swap_conv(conv_chunk *c) {
 }
 
 conv_chunk *get_conv(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	conv_chunk *c_v = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	c_v = (conv_chunk *)&s[cSize];
-
-	return c_v;
+	char *s = &(c->conv[c->myCNode]);
+	return (conv_chunk *)&s[cSize];
 }
 
 static void swap_decl(decl_chunk *d) {
@@ -262,13 +232,7 @@ static void swap_decl(decl_chunk *d) {
 }
 
 decl_chunk *get_decl(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	decl_chunk *d = nullptr;
-
-	s = c->conv;
-	d = (decl_chunk *)&s[cSize];
-
-	return d;
+	return (decl_chunk *)&c->conv[cSize];
 }
 
 static void swap_fall(fall_chunk *l) {
@@ -278,66 +242,45 @@ static void swap_fall(fall_chunk *l) {
 }
 
 fall_chunk *get_fall(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	fall_chunk *f = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	f = (fall_chunk *)&s[cSize];
-
-	return f;
+	char *s = &(c->conv[c->myCNode]);
+	return (fall_chunk *)&s[cSize];
 }
 
 static void swap_lnode(lnode_chunk *l) {
-	int i = 0;
-	int32 *L = nullptr;
-
 	l->tag = convert_intel32(l->tag);
 	l->hash = convert_intel32(l->hash);
 	l->size = convert_intel32(l->size);
 	l->entry_num = convert_intel32(l->entry_num);
 	l->num_entries = convert_intel32(l->num_entries);
 
-	L = (int32 *)l;
+	int32 *L = (int32 *)l;
 	L += 5;
-	for (i = 0; i < l->num_entries; i++) {
+	for (int i = 0; i < l->num_entries; i++) {
 		L[i] = convert_intel32(L[i]);
 	}
 }
 
 lnode_chunk *get_lnode(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	lnode_chunk *l = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	l = (lnode_chunk *)&s[cSize];
-
-	return l;
+	char *s = &(c->conv[c->myCNode]);
+	return (lnode_chunk *)&s[cSize];
 }
 
 static void swap_node(node_chunk *n) {
-	int i = 0;
-	int32 *L = nullptr;
-
 	n->tag = convert_intel32(n->tag);
 	n->hash = convert_intel32(n->hash);
 	n->size = convert_intel32(n->size);
 	n->num_entries = convert_intel32(n->num_entries);
 
-	L = (int32 *)(n + 1);
+	int32 *L = (int32 *)(n + 1);
 
-	for (i = 0; i < n->num_entries; i++) {
+	for (int i = 0; i < n->num_entries; i++) {
 		L[i] = convert_intel32(L[i]);
 	}
 }
 
 node_chunk *get_node(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	node_chunk *n = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	n = (node_chunk *)&s[cSize];
-
-	return n;
+	char *s = &(c->conv[c->myCNode]);
+	return (node_chunk *)&s[cSize];
 }
 
 static void swap_entry(entry_chunk *e) {
@@ -347,23 +290,13 @@ static void swap_entry(entry_chunk *e) {
 }
 
 entry_chunk *get_entry(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	entry_chunk *e = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	e = (entry_chunk *)&s[cSize];
-
-	return e;
+	char *s = &(c->conv[c->myCNode]);
+	return (entry_chunk *)&s[cSize];
 }
 
 entry_chunk *get_hash_entry(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	entry_chunk *e = nullptr;
-
-	s = &(c->conv[0]);
-	e = (entry_chunk *)&s[cSize];
-
-	return e;
+	char *s = &(c->conv[0]);
+	return (entry_chunk *)&s[cSize];
 }
 
 static void swap_text(text_chunk *t) {
@@ -372,13 +305,8 @@ static void swap_text(text_chunk *t) {
 }
 
 text_chunk *get_text(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	text_chunk *t = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	t = (text_chunk *)&s[cSize];
-
-	return t;
+	char *s = &(c->conv[c->myCNode]);
+	return (text_chunk *)&s[cSize];
 }
 
 static void swap_mesg(mesg_chunk *m) {
@@ -387,13 +315,8 @@ static void swap_mesg(mesg_chunk *m) {
 }
 
 mesg_chunk *get_mesg(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	mesg_chunk *m = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	m = (mesg_chunk *)&s[cSize];
-
-	return m;
+	char *s = &(c->conv[c->myCNode]);
+	return (mesg_chunk *)&s[cSize];
 }
 
 static void swap_reply(reply_chunk *r) {
@@ -402,13 +325,8 @@ static void swap_reply(reply_chunk *r) {
 }
 
 reply_chunk *get_reply(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	reply_chunk *r = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	r = (reply_chunk *)&s[cSize];
-
-	return r;
+	char *s = &(c->conv[c->myCNode]);
+	return (reply_chunk *)&s[cSize];
 }
 
 static void swap_c_reply(c_reply_chunk *c) {
@@ -420,13 +338,8 @@ static void swap_c_reply(c_reply_chunk *c) {
 }
 
 c_reply_chunk *get_c_reply(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	c_reply_chunk *c_r = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	c_r = (c_reply_chunk *)&s[cSize];
-
-	return c_r;
+	char *s = &(c->conv[c->myCNode]);
+	return (c_reply_chunk *)&s[cSize];
 }
 
 static void swap_w_reply(w_reply_chunk *c) {
@@ -435,13 +348,8 @@ static void swap_w_reply(w_reply_chunk *c) {
 }
 
 w_reply_chunk *get_w_reply(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	w_reply_chunk *w = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	w = (w_reply_chunk *)&s[cSize];
-
-	return w;
+	char *s = &(c->conv[c->myCNode]);
+	return (w_reply_chunk *)&s[cSize];
 }
 
 static void swap_w_entry(w_entry_chunk *w) {
@@ -450,14 +358,8 @@ static void swap_w_entry(w_entry_chunk *w) {
 }
 
 w_entry_chunk *get_w_entry(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	w_entry_chunk *w = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	w = (w_entry_chunk *)&s[cSize];
-
-	//swap_w_entry( w );
-	return w;
+	char *s = &(c->conv[c->myCNode]);
+	return (w_entry_chunk *)&s[cSize];
 }
 
 static void swap_goto(goto_chunk *g) {
@@ -466,13 +368,8 @@ static void swap_goto(goto_chunk *g) {
 }
 
 goto_chunk *get_goto(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	goto_chunk *g = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	g = (goto_chunk *)&s[cSize];
-
-	return g;
+	char *s = &(c->conv[c->myCNode]);
+	return (goto_chunk *)&s[cSize];
 }
 
 static void swap_c_goto(c_goto_chunk *c) {
@@ -484,13 +381,8 @@ static void swap_c_goto(c_goto_chunk *c) {
 }
 
 c_goto_chunk *get_c_goto(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	c_goto_chunk *cg = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	cg = (c_goto_chunk *)&s[cSize];
-
-	return cg;
+	char *s = &(c->conv[c->myCNode]);
+	return (c_goto_chunk *)&s[cSize];
 }
 
 static void swap_misc(misc_chunk *m) {
@@ -499,13 +391,8 @@ static void swap_misc(misc_chunk *m) {
 }
 
 misc_chunk *get_misc(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	misc_chunk *m = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	m = (misc_chunk *)&s[cSize];
-
-	return m;
+	char *s = &(c->conv[c->myCNode]);
+	return (misc_chunk *)&s[cSize];
 }
 
 static void swap_c_misc(c_misc_chunk *c) {
@@ -519,32 +406,18 @@ static void swap_c_misc(c_misc_chunk *c) {
 }
 
 c_misc_chunk *get_c_misc(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	c_misc_chunk *cm = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	cm = (c_misc_chunk *)&s[cSize];
-
-	return cm;
+	char *s = &(c->conv[c->myCNode]);
+	return (c_misc_chunk *)&s[cSize];
 }
 
 int32 get_long(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	int32 *l = nullptr;
-
-	s = &(c->conv[c->myCNode]);
-	l = (int32 *)&s[cSize];
-
+	char *s = &(c->conv[c->myCNode]);
+	int32 *l = (int32 *)&s[cSize];
 	return *l;
 }
 
 char *get_string(Conv *c, int32 cSize) {
-	char *s = nullptr;
-	char *c_s = nullptr;
-
-	s = c->conv;
-	c_s = (char *)&s[cSize];
-	return c_s;
+	return &c->conv[cSize];
 }
 
 int conv_ops_cond_successful(int32 l_op, int32 op, int32 r_op) {
@@ -576,7 +449,11 @@ int conv_ops_cond_successful(int32 l_op, int32 op, int32 r_op) {
 
 	case OROR:
 		return l_op || r_op;
+
+	default:
+		break;
 	}
+	
 	return 0;
 }
 
@@ -603,7 +480,7 @@ int32 conv_ops_process_asgn(int32 val, int32 oprtr, int32 opnd) {
 		break;
 
 	default:
-		error_show(FL, 'PARS', "Operator must be a +,-,*,/,=, Please check tag type: %d in token header file", oprtr);
+		error_show(FL, "Operator must be a +,-,*,/,=, Please check tag type: %d in token header file", oprtr);
 		break;
 	}
 	return val;
@@ -611,35 +488,12 @@ int32 conv_ops_process_asgn(int32 val, int32 oprtr, int32 opnd) {
 
 void conv_swap_words(Conv *c) {
 	int32 ent = 0, tag = 0, next;
-	int32 ent_old = 0;
-	int32 tempEnt = 0;
-	int x = 0;
-
-	conv_chunk *conv = nullptr;
-	decl_chunk *decl = nullptr;
-	node_chunk *node = nullptr;
-	fall_chunk *fall = nullptr;
-	lnode_chunk *lnode = nullptr;
-	entry_chunk *entry = nullptr;
-
-	text_chunk *text = nullptr;
-	mesg_chunk *mesg = nullptr;
-	reply_chunk *reply = nullptr;
-	c_reply_chunk *c_reply = nullptr;
-	goto_chunk *go = nullptr;
-	c_goto_chunk *c_goto = nullptr;
-	c_assign_chunk *c_asgn = nullptr;
-	w_reply_chunk *w_reply = nullptr;
-	w_entry_chunk *w_entry = nullptr;
-	misc_chunk *misc = nullptr;
-	c_misc_chunk *c_misc = nullptr;
-	assign_chunk *asgn = nullptr;
 
 	if (!c)
 		return;
 
 	c->myCNode = 0;
-	ent_old = c->myCNode;
+	const int32 ent_old = c->myCNode;
 	c->myCNode = 0;
 
 	_GC(swap) = true;
@@ -648,108 +502,124 @@ void conv_swap_words(Conv *c) {
 		conv_ops_get_entry(ent, &next, &tag, c);
 
 		switch (tag) {
-		case C_ASGN_CHUNK:
-			c_asgn = get_c_asgn(c, ent);
+		case C_ASGN_CHUNK: {
+			c_assign_chunk *c_asgn = get_c_asgn(c, ent);
 			swap_c_asgn(c_asgn);
+			}
 			break;
 
-		case ASGN_CHUNK:
-			asgn = get_asgn(c, ent);
+		case ASGN_CHUNK: {
+			assign_chunk *asgn = get_asgn(c, ent);
 			swap_assign(asgn);
+			}
 			break;
 
 		case HIDE_CHUNK:
 		case DSTR_CHUNK:
-		case UHID_CHUNK:
-			misc = get_misc(c, ent);
+		case UHID_CHUNK: {
+			misc_chunk *misc = get_misc(c, ent);
 			swap_misc(misc);
+			}
 			break;
 
 		case CHDE_CHUNK:
 		case CUHD_CHUNK:
-		case CDST_CHUNK:
-			c_misc = get_c_misc(c, ent);
+		case CDST_CHUNK: {
+			c_misc_chunk *c_misc = get_c_misc(c, ent);
 			swap_c_misc(c_misc);
-			break;
-
-		case CONV_CHUNK:
-			conv = get_conv(c, ent);
-			swap_conv(conv);
-			break;
-
-		case DECL_CHUNK:
-			decl = get_decl(c, ent);
-			swap_decl(decl);
-			break;
-
-		case FALL_CHUNK:
-			fall = get_fall(c, ent);
-			swap_fall(fall);
-			break;
-
-		case LNODE_CHUNK:
-			lnode = get_lnode(c, ent);
-			swap_lnode(lnode);
-			break;
-
-		case NODE_CHUNK:
-			node = get_node(c, ent);
-			swap_node(node);
-			break;
-
-		case ENTRY_CHUNK:
-			entry = get_entry(c, ent);
-			swap_entry(entry);
-			break;
-
-		case TEXT_CHUNK:
-			text = get_text(c, ent);
-			swap_text(text);
-			break;
-
-		case REPLY_CHUNK:
-			reply = get_reply(c, ent);
-			swap_reply(reply);
-			break;
-
-		case WEIGHT_REPLY_CHUNK:
-		case WEIGHT_PREPLY_CHUNK:
-			w_reply = get_w_reply(c, ent);
-			swap_w_reply(w_reply);
-
-			tempEnt = ent + sizeof(w_reply_chunk);
-
-			for (x = 0; x < w_reply->num_replies; x++) {
-				w_entry = get_w_entry(c, tempEnt);
-				swap_w_entry(w_entry);
-				tempEnt += sizeof(w_entry_chunk);
 			}
 			break;
 
-		case COND_REPLY_CHUNK:
-			c_reply = get_c_reply(c, ent);
-			swap_c_reply(c_reply);
+		case CONV_CHUNK: {
+			conv_chunk *conv = get_conv(c, ent);
+			swap_conv(conv);
+			}
 			break;
 
-		case MESSAGE_CHUNK:
-			mesg = get_mesg(c, ent);
+		case DECL_CHUNK: {
+			decl_chunk *decl = get_decl(c, ent);
+			swap_decl(decl);
+			}
+			break;
+
+		case FALL_CHUNK: {
+			fall_chunk *fall = get_fall(c, ent);
+			swap_fall(fall);
+			}
+			break;
+
+		case LNODE_CHUNK: {
+			lnode_chunk *lnode = get_lnode(c, ent);
+			swap_lnode(lnode);
+			}
+			break;
+
+		case NODE_CHUNK: {
+			node_chunk *node = get_node(c, ent);
+			swap_node(node);
+			}
+			break;
+
+		case ENTRY_CHUNK: {
+			entry_chunk *entry = get_entry(c, ent);
+			swap_entry(entry);
+			}
+			break;
+
+		case TEXT_CHUNK: {
+			text_chunk *text = get_text(c, ent);
+			swap_text(text);
+			}
+			break;
+
+		case REPLY_CHUNK: {
+			reply_chunk *reply = get_reply(c, ent);
+			swap_reply(reply);
+			}
+			break;
+
+		case WEIGHT_REPLY_CHUNK:
+		case WEIGHT_PREPLY_CHUNK: {
+			w_reply_chunk *w_reply = get_w_reply(c, ent);
+			swap_w_reply(w_reply);
+
+			int32 tempEnt = ent + sizeof(w_reply_chunk);
+
+			for (int x = 0; x < w_reply->num_replies; x++) {
+				w_entry_chunk *w_entry = get_w_entry(c, tempEnt);
+				swap_w_entry(w_entry);
+				tempEnt += sizeof(w_entry_chunk);
+			}
+			}
+			break;
+
+		case COND_REPLY_CHUNK: {
+			c_reply_chunk *c_reply = get_c_reply(c, ent);
+			swap_c_reply(c_reply);
+			}
+			break;
+
+		case MESSAGE_CHUNK: {
+			mesg_chunk *mesg = get_mesg(c, ent);
 			swap_mesg(mesg);
+			}
 			break;
 
 		case GOTO_CHUNK:
-		case EXIT_GOTO_CHUNK:
-			go = get_goto(c, ent);
+		case EXIT_GOTO_CHUNK: {
+			goto_chunk *go = get_goto(c, ent);
 			swap_goto(go);
+			}
 			break;
 
 		case COND_GOTO_CHUNK:
-		case COND_EXIT_GOTO_CHUNK:
-			c_goto = get_c_goto(c, ent);
+		case COND_EXIT_GOTO_CHUNK: {
+			c_goto_chunk *c_goto = get_c_goto(c, ent);
 			swap_c_goto(c_goto);
+			}
 			break;
 
 		default:
-			ent = 0;
 			break;
 		}
 

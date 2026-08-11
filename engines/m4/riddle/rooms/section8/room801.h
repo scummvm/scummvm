@@ -33,8 +33,65 @@ public:
 	Room801() : Room() {}
 	~Room801() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
+
+private:
+	void room801_conv801a();
+
+	int32 _cellarDoorClosedSeries = 0;
+	int32 _cellarDoorOpenSeries = 0;
+	int32 _farmerDisplacementSeries = 0;
+	int32 _farmerEarthquakeGestureSeries = 0;
+	int32 _farmerGiveTakeBowSeries = 0;
+	int32 _farmerLooksToZeroSeries = 0;
+	int32 _farmerTalkLoopSeries = 0;
+	int32 _meiLookToZeroSeries = 0;
+	int32 _meiPrattleLoopSeries = 0;
+	int32 _mtcsh1Series = 0;
+	int32 _planeShadowSeries = 0;
+	int32 _ripClosesCellarSeries = 0;
+	int32 _ripEntersRootCellarSeries = 0;
+	int32 _ripKneelPotterySeries = 0;
+	int32 _ripLooksLRDownSeries = 0;
+	int32 _ripLooksToZeroSeries = 0;
+	int32 _farmerShould = 0;
+	int32 _ripReturnsFromRootCellarSeries = 0;
+	int32 _ripTrekHandOnChinSeries = 0;
+	int32 _ripTrekHandsBehBackSeries = 0;
+	int32 _ripTrekHandsHipPos5Series = 0;
+	int32 _ripTrekHatTipPos5Series = 0;
+	int32 _ripTrekHeadTurnSeries = 0;
+	int32 _ripTrekNodPos4Series = 0;
+	int32 _rptmr15Series = 0;
+	int32 _shovelSeries = 0;
+
+	int32 _counter = 0;
+	int32 _ripleyShould = 0;
+	int32 _meiShould = 0;
+	int32 _ripleyMode = 0;
+	int32 _meiMode = 0;
+	int32 _farmerMode = 0;
+
+	bool _unkFlag1 = false;
+	bool _unkFlag2 = false;
+	bool _unkFlag3 = false;
+	bool _cellarOpenFl = false;
+
+	machine *_cellarDoorClosedMach = nullptr;
+	machine *_cellarDoorOpenMach = nullptr;
+	machine *_farmerDisplacementMach = nullptr;
+	machine *_farmerShadowMach = nullptr;
+	machine *_mcTrekMach = nullptr;
+	machine *_planeShadowMach = nullptr;
+	machine *_ripAnimationMach = nullptr;
+	machine *_safariShadow5Mach = nullptr;
+	machine *_safariShadow5Mach2 = nullptr;
+	machine *_shovelMach = nullptr;
 };
 
 } // namespace Rooms

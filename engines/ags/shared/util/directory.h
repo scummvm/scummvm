@@ -30,7 +30,7 @@
 
 #include "common/fs.h"
 #include "common/stack.h"
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string.h"
 

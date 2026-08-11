@@ -111,7 +111,7 @@ class cEngineSound_SaveData : public iSerializable {
 	tString msName;
 	bool mbActive;
 	bool mbStopped;
-	bool _fading;
+	bool _fadingOut;
 	float _fadeSpeed;
 };
 

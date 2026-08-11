@@ -1021,6 +1021,9 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 
 int GUI_HoF::changeLanguage(Button *caller) {
 	updateMenuButton(caller);
+	// Korean fan translation: language is fixed to Korean, do not cycle.
+	if (_vm->gameFlags().fanLang == Common::KO_KOR)
+		return 0;
 	++_vm->_lang;
 	_vm->_lang %= _vm->_numLang;
 	setupOptionsButtons();
@@ -1050,6 +1053,11 @@ void GUI_HoF::setupOptionsButtons() {
 
 	case 2:
 		_gameOptions.item[1].itemId = 33;
+		break;
+
+	case 5:
+		// Korean fan translation: string 51 in OPTIONS.KOR = "한국어"
+		_gameOptions.item[1].itemId = 51;
 		break;
 
 	default:

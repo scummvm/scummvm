@@ -27,28 +27,45 @@
 #include "common/timer.h"
 #include "common/mutex.h"
 
-struct TimerSlot;
+
+struct TimerSlot {
+	Common::TimerManager::TimerProc callback;
+	void *refCon;
+	Common::String id;
+	uint32 interval;	// in microseconds
+
+	uint32 nextFireTime;	// in milliseconds
+	uint32 nextFireTimeMicro;	// microseconds part of nextFire
+
+	TimerSlot *next;
+
+	TimerSlot() : callback(nullptr), refCon(nullptr), interval(0), nextFireTime(0), nextFireTimeMicro(0), next(nullptr) {}
+};
+
+void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot);
 
 class DefaultTimerManager : public Common::TimerManager {
 private:
 	typedef Common::HashMap<Common::String, TimerProc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TimerSlotMap;
 
-	Common::Mutex _mutex;
-	TimerSlot *_head;
 	TimerSlotMap _callbacks;
 
 	uint32 _timerCallbackNext;
 
+protected:
+	Common::Mutex _mutex;
+	TimerSlot *_head;
+
 public:
 	DefaultTimerManager();
 	virtual ~DefaultTimerManager();
-	virtual bool installTimerProc(TimerProc proc, int32 interval, void *refCon, const Common::String &id);
-	virtual void removeTimerProc(TimerProc proc);
+	bool installTimerProc(TimerProc proc, int32 interval, void *refCon, const Common::String &id) override;
+	void removeTimerProc(TimerProc proc) override;
 
 	/**
 	 * Timer callback, to be invoked at regular time intervals by the backend.
 	 */
-	void handler();
+	virtual void handler();
 
 	/*
 	 * Ensure that the callback is called at regular time intervals.

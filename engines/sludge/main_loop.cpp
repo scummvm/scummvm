@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "sludge/event.h"
@@ -47,6 +48,10 @@ int main_loop(Common::String filename) {
 
 	g_sludge->_evtMan->startGame();
 	g_sludge->_timer->init();
+
+	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	if (saveSlot != -1)
+		g_sludge->loadNow = g_sludge->getSaveStateName(saveSlot);
 
 	while (!g_sludge->_evtMan->quit()) {
 		g_sludge->_evtMan->checkInput();

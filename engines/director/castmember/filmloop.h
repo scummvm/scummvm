@@ -22,6 +22,7 @@
 #ifndef DIRECTOR_CASTMEMBER_FILMLOOP_H
 #define DIRECTOR_CASTMEMBER_FILMLOOP_H
 
+#include "director/director.h"
 #include "director/castmember/castmember.h"
 
 namespace Director {
@@ -38,10 +39,14 @@ public:
 	FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMember &source);
 	~FilmLoopCastMember();
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new FilmLoopCastMember(cast, castId, *this)); }
+
 	bool isModified() override;
 	//Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
-	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel);
+	virtual Common::Array<Channel> *getSubChannels(Common::Rect &bbox, uint frame);
+	virtual CastMemberID getSubChannelSound1(uint frame);
+	virtual CastMemberID getSubChannelSound2(uint frame);
 
 	void loadFilmLoopDataD2(Common::SeekableReadStreamEndian &stream);
 	void loadFilmLoopDataD4(Common::SeekableReadStreamEndian &stream);
@@ -56,13 +61,23 @@ public:
 	Common::Point getRegistrationOffset() override;
 	Common::Point getRegistrationOffset(int16 currentWidth, int16 currentHeight) override;
 
+	uint32 getCastDataSize() override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
+
+	void writeSCVWResource(Common::SeekableWriteStream *writeStream, uint32 offset);
+	uint32 getSCVWResourceSize();
+
+	// raw CASt flag word; MovieCastMember reads its enableScripts bit (0x10)
+	uint32 _flags;
 	bool _enableSound;
 	bool _looping;
 	bool _crop;
 	bool _center;
 
-	Common::Array<FilmLoopFrame> _frames;
 	Common::Array<Channel> _subchannels;
+
+	Score *_score;
 };
 
 } // End of namespace Director

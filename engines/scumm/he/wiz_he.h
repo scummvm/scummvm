@@ -66,7 +66,7 @@ namespace Scumm {
 		(wizComp) == kWCTTRLE16Bpp
 
 #define NATIVE_WIZ_TYPE(wizComp)                   \
-	(wizComp) == NATIVE_WIZ_COMP_NONE_16BPP || \
+		(wizComp) == NATIVE_WIZ_COMP_NONE_16BPP || \
 		(wizComp) == NATIVE_WIZ_COMP_TRLE_16BPP    \
 
 #define WIZ_16BPP(wizComp)                       \
@@ -631,13 +631,13 @@ public:
 		NUM_IMAGES   = 255
 	};
 
-	WizBufferElement _wizBuffer[NUM_IMAGES];
-	uint16 _wizBufferIndex;
-	WizPolygon _polygons[NUM_POLYGONS];
+	WizBufferElement _wizBuffer[NUM_IMAGES] = {};
+	uint16 _wizBufferIndex = 0;
+	WizPolygon _polygons[NUM_POLYGONS] = {};
 
 	// For collision
-	WizRawPixel _compareBufferA[640];
-	WizRawPixel _compareBufferB[640];
+	WizRawPixel _compareBufferA[640] = {};
+	WizRawPixel _compareBufferB[640] = {};
 
 	Wiz(ScummEngine_v71he *vm);
 	~Wiz() {
@@ -847,6 +847,7 @@ public:
 	void pgSimpleBlitMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, const byte *mixColorTable);
 	void pgSimpleBlitTransparentMixColors(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor, const byte *mixColorTable);
 	void pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpleBitmap *sourceBM, Common::Rect *sourceRect, WizRawPixel transparentColor);
+	void pgArbitraryTransparentBlitPrim(WizRawPixel8 *dstPtr, int dstStride, WizRawPixel8 *srcPtr, int srcStride, int copyWidth, int copyHeight, int transparentColor);
 
 	void pgDrawWarpDrawLetter(WizRawPixel *bitmapBuffer, int bitmapWidth, int bitmapHeight, const byte *charData, int x1, int y1, int width, int height, byte *colorLookupTable);
 	void pgDraw8BppFormatImage(WizRawPixel *bufferPtr, const byte *rawData, int bufferWidth, int bufferHeight, int x, int y, int width, int height, Common::Rect *clipRectPtr, int32 wizFlags, const byte *extraTable, int transparentColor, const WizRawPixel *conversionTable);
@@ -968,7 +969,7 @@ public:
 
 	// TRLE
 	int _trlePutSize = 0;
-	byte _trleBuf[(128 * 2) * sizeof(WizRawPixel)];
+	byte _trleBuf[(128 * 2) * sizeof(WizRawPixel)] = {};
 
 	byte *trlePutDump(byte *dest, int nn);
 	byte *trlePutRun(byte *dest, int nn, int cc, int tcolor);
@@ -977,8 +978,8 @@ public:
 
 	// TRLE FLIP
 	bool _initializeAlphaTable = true;
-	float _alphaTable[256];
-	int _precomputed16bppTable[WIZ_QUANTIZED_ALPHA_COUNT][WIZ_COLOR16_COMPONENT_COUNT][WIZ_COLOR16_COMPONENT_COUNT];
+	float _alphaTable[256] = {};
+	int _precomputed16bppTable[WIZ_QUANTIZED_ALPHA_COUNT][WIZ_COLOR16_COMPONENT_COUNT][WIZ_COLOR16_COMPONENT_COUNT] = { {}, {}, {} };
 
 	void trleFLIPDecompressImage(
 		WizRawPixel *bufferPtr, const byte *compData, int bufferWidth, int bufferHeight,

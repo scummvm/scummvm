@@ -33,8 +33,45 @@ public:
 	Room805() : Room() {}
 	~Room805() override {}
 
+	void preload() override;
 	void init() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _lastRnd = 1;
+	int32 _meiHandsBehindBack = 0;
+	int32 _meiSpookedPos2 = 0;
+	int32 _meiTalkPos3 = 0;
+	int32 _meiTrekTalkerSeries = 0;
+	int32 _ripHeadTurnPos3 = 0;
+	int32 _ripLookDownPos3 = 0;
+	int32 _ripLooksUpSeries = 0;
+	int32 _ripLowReachPos2 = 0;
+	int32 _ripMedHiReachPos2 = 0;
+	int32 _ripMedHiReachPos3 = 0;
+	int32 _ripPos3LookAround = 0;
+	int32 _ripSiftsDirtSeries = 0;
+	int32 _ripTalkerPos3 = 0;
+
+	bool _unkFlag1 = false;
+
+	machine *_chariotRestMach = nullptr;
+	machine *_fallenBeamOnFloorMach = nullptr;
+	machine *_farSoldiersShieldMach = nullptr;
+	machine *_jadeDoorsOpenMach = nullptr;
+	machine *_mcMach = nullptr;
+	machine *_nearSoldiersShieldMach = nullptr;
+	machine *_ripChariotInMach = nullptr;
+	machine *_ripSiftsDirtMach = nullptr;
+
+	void initSub2();
+	void initHotspots();
+	void daemonSub1();
+	void daemonSub2(const char *seriesName1, const char *seriesName2);
+	void daemonSub3(const char *seriesName1, const char *seriesName2);
+	void daemonSub4(const char *seriesName1);
+	void parserSub1(const char *name, uint channel, int32 vol, int32 trigger, int32 room_num);
 };
 
 } // namespace Rooms

@@ -20,16 +20,15 @@
  */
 
 #include "ultima/ultima8/gumps/minimap_gump.h"
-#include "ultima/ultima8/world/minimap.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/gfx/palette.h"
 #include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gfx/render_surface.h"
-#include "ultima/ultima8/gfx/texture.h"
-#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/minimap.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -50,9 +49,8 @@ MiniMapGump::MiniMapGump() : ResizableGump(), _minimaps(), _ax(0), _ay(0) {
 }
 
 MiniMapGump::~MiniMapGump(void) {
-	Common::HashMap<uint32, MiniMap *>::iterator iter;
-	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
-		delete iter->_value;
+	for (auto &i : _minimaps) {
+		delete i._value;
 	}
 }
 
@@ -102,11 +100,20 @@ void MiniMapGump::generate() {
 }
 
 void MiniMapGump::clear() {
-	Common::HashMap<uint32, MiniMap *>::iterator iter;
-	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
-		delete iter->_value;
+	for (auto &i : _minimaps) {
+		delete i._value;
 	}
 	_minimaps.clear();
+}
+
+bool MiniMapGump::dump(const Common::Path &filename) const {
+	World *world = World::get_instance();
+	CurrentMap *currentmap = world->getCurrentMap();
+
+	uint32 mapNum = currentmap->getNum();
+
+	MiniMap *minimap = _minimaps[mapNum];
+	return minimap ? minimap->dump(filename) : false;	
 }
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -121,7 +128,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	surf->frameRect(_dims, color);
 
 	// Dimensions minus border
-	Rect dims = _dims;
+	Common::Rect32 dims = _dims;
 	dims.grow(-1);
 
 	// Fill the background
@@ -143,27 +150,27 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		_minimaps[mapNum] = minimap;
 	}
 
-	Graphics::ManagedSurface ms(minimap->getSurface(), DisposeAfterUse::NO);
+	const Graphics::Surface *ms = minimap->getSurface();
 	Common::Rect r(sx, sy, sx + dims.width(), sy + dims.height());
 
 	if (r.left < 0) {
 		dx -= r.left;
 		r.left = 0;
 	}
-	if (r.right > ms.w) {
-		r.right = ms.w;
+	if (r.right > ms->w) {
+		r.right = ms->w;
 	}
 
 	if (r.top < 0) {
 		dy -= r.top;
 		r.top = 0;
 	}
-	if (r.bottom > ms.h) {
-		r.bottom = ms.h;
+	if (r.bottom > ms->h) {
+		r.bottom = ms->h;
 	}
 
 	if (!r.isEmpty()) {
-		surf->CrossKeyBlitMap(ms, r, dx, dy, map, KEY_COLOR);
+		surf->CrossKeyBlitMap(*ms, r, dx, dy, map, KEY_COLOR);
 	}
 
 	int32 ax = _ax - sx;
@@ -198,10 +205,9 @@ void MiniMapGump::saveData(Common::WriteStream *ws) {
 	Gump::saveData(ws);
 
 	ws->writeUint32LE(static_cast<uint32>(_minimaps.size()));
-	Common::HashMap<uint32, MiniMap *>::const_iterator iter;
-	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
-		const MiniMap *minimap = iter->_value;
-		ws->writeUint32LE(iter->_key);
+	for (const auto &i : _minimaps) {
+		const MiniMap *minimap = i._value;
+		ws->writeUint32LE(i._key);
 		minimap->save(ws);
 	}
 }

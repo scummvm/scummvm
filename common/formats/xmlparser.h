@@ -76,7 +76,7 @@ class SeekableReadStream;
 	struct CustomXMLKeyLayout : public XMLKeyLayout {\
 		typedef bool (parserName::*ParserCallback)(ParserNode *node);\
 		ParserCallback callback;\
-		bool doCallback(XMLParser *parent, ParserNode *node) {return ((kLocalParserName *)parent->*callback)(node);} };\
+		bool doCallback(XMLParser *parent, ParserNode *node) override {return ((kLocalParserName *)parent->*callback)(node);} };\
 	void buildLayout() override { \
 		Common::Stack<XMLKeyLayout *> layout; \
 		CustomXMLKeyLayout *lay = 0; \
@@ -185,7 +185,7 @@ public:
 	 */
 	bool loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Flag disposable = DisposeAfterUse::NO);
 
-	bool loadStream(SeekableReadStream *stream);
+	bool loadStream(SeekableReadStream *stream, const String &name = "File Stream");
 
 	void close();
 

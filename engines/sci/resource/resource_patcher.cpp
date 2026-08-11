@@ -21,6 +21,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "sci/sci.h"
 #include "sci/engine/workarounds.h" // for SciMedia
 #include "sci/resource/resource.h"
@@ -30,16 +31,12 @@ namespace Sci {
 
 // Start of internal resource patcher macros. Please do not use these directly
 // in resource patches.
-// NOTE: The following breaks in non-C++11 compilers. It can be used to simplify the
-// _BYTEOP(), and consequently the REPLACE() and INSERT() macros below.
-//using int_c_array = int[];
-//#define _NUMARGS(...) (sizeof(int_c_array{ __VA_ARGS__ }) / sizeof(int))
 #ifdef SCUMM_LITTLE_ENDIAN
 #define _PACKINT32(n) (((uint32)n) & 0xFF), (((uint32)n) >> 8 & 0xFF), (((uint32)n) >> 16 & 0xFF), (((uint32)n) >> 24 & 0xFF)
 #else
 #define _PACKINT32(n) (((uint32)n) >> 24 & 0xFF), (((uint32)n) >> 16 & 0xFF), (((uint32)n) >> 8 & 0xFF), (((uint32)n) & 0xFF)
 #endif
-#define _BYTEOP(op, numBytes, ...) op, _PACKINT32(numBytes), __VA_ARGS__
+#define _BYTEOP(op, ...) op, _PACKINT32(NUMARGS(__VA_ARGS__)), __VA_ARGS__
 #define _NUMBEROP(op, type, value) op, sizeof(type), _PACKINT32(value)
 #define _FILLOP(op, numBytes, value) op, _PACKINT32(numBytes), value
 // End of internal resource patcher macros
@@ -52,12 +49,12 @@ namespace Sci {
 /**
  * Replaces data at the current position.
  */
-#define REPLACE(numBytes, ...) _BYTEOP(kReplaceBytes, numBytes, __VA_ARGS__)
+#define REPLACE(...) _BYTEOP(kReplaceBytes, __VA_ARGS__)
 
 /**
  * Inserts new data at the current position.
  */
-#define INSERT(numBytes, ...) _BYTEOP(kInsertBytes, numBytes, __VA_ARGS__)
+#define INSERT(...) _BYTEOP(kInsertBytes, __VA_ARGS__)
 
 /**
  * Replaces a number of the given type at the current position with the given
@@ -107,9 +104,9 @@ namespace Sci {
 //  See also: script patch laurabow2CDPatchFixMuseumActorLoops
 static const byte lauraBow2CdView828[] = {
 	SKIP(0x02),
-	REPLACE(1, 0x05), // view header: 5 loops instead of 9
+	REPLACE(0x05), // view header: 5 loops instead of 9
 	SKIP(0x51),
-	REPLACE(1, 0x08), // loop 4: 8 cels instead of 1
+	REPLACE(0x08), // loop 4: 8 cels instead of 1
 	SKIP(0x09),
 	REPLACE_NUMBER(uint32, 0x01c2), // loop 4: offset to loop 8 cel data
 	END
@@ -125,27 +122,9 @@ static const byte lauraBow2CdView828[] = {
 //  Sound 205 is the engine noise that plays when summoning a taxi.
 static const byte lsl1RussianSound205[] = {
 	SKIP(0x31),
-	REPLACE(1, 0xFF),
+	REPLACE(0xFF),
 	SKIP(0x29),
-	REPLACE(1, 0xFF),
-	END
-};
-
-
-#pragma mark -
-#pragma mark Leisure Suit Larry 2 and 3
-
-// LSL2 and LSL3 Polish contain several corrupt fonts. In each of these, the
-//  offset for the final font entry (127) points beyond the end of the file.
-//  This would have been a problem for Sierra's intepreter except that it
-//  only parses characters when they're drawn and these games don't use
-//  character 127, which is blank in the Polish fonts that aren't corrupt.
-//  We parse and cache all characters up front so this is a problem for us.
-//  We fix it here by patching the character count in the header from 128 down
-//  to 127 so that the corrupt entries aren't processed. Bug #10509
-static const byte lsl2Lsl3PolishFont[] = {
-	SKIP(0x02),
-	REPLACE(1, 0x7F),
+	REPLACE(0xFF),
 	END
 };
 
@@ -172,7 +151,7 @@ static const byte phant1View64001Palette[] = {
 static const byte pq4EnhancedAudioToggleView[] = {
 	INSERT_NUMBER(uint16,  16), // header size
 	INSERT_NUMBER(uint8,    1), // loop count
-	INSERT(2, 0x00, 0x01),      // unused
+	INSERT(0x00, 0x01),         // unused
 	INSERT_NUMBER(uint8,    0), // resolution flag
 	INSERT_NUMBER(uint16,   0), // unused
 	INSERT_NUMBER(uint32,  70), // palette offset
@@ -214,7 +193,7 @@ static const byte pq4EnhancedAudioToggleView[] = {
 	INSERT_NUMBER(uint8,    1), // used
 	INSERT_NUMBER(uint8,    0), // shared used
 	INSERT_NUMBER(uint32,   0), // version
-	INSERT(152,                 // color data
+	INSERT(                     // color data
 	0x01, 0x00, 0x00, 0x00, 0x01, 0x1B, 0x1B, 0x1B, 0x01, 0x2B,
 	0x2F, 0x2B, 0x01, 0x33, 0x33, 0x33, 0x01, 0x37, 0x3B, 0x37,
 	0x01, 0x47, 0x47, 0x47, 0x01, 0x4B, 0x4B, 0x4B, 0x01, 0x53,
@@ -235,7 +214,7 @@ static const byte pq4EnhancedAudioToggleView[] = {
 	INSERT_FILL(0x00, 872),     // unused color entries
 
 	// pixel data
-	INSERT(1955,
+	INSERT(
 	0x07, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a,
 	0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a,
 	0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a,
@@ -512,10 +491,6 @@ static const byte torinPassageRussianPic61101[] = {
 static const GameResourcePatch resourcePatches[] = {
 	{ GID_LAURABOW2,      SCI_MEDIA_CD,     Common::UNK_LANG, kResourceTypeView,      828, lauraBow2CdView828,         false },
 	{ GID_LSL1,           SCI_MEDIA_ALL,    Common::RU_RUS,   kResourceTypeSound,     205, lsl1RussianSound205,        false },
-	{ GID_LSL2,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL2,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        7, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL3,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL3,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        9, lsl2Lsl3PolishFont,         false },
 	{ GID_PHANTASMAGORIA, SCI_MEDIA_ALL,    Common::UNK_LANG, kResourceTypeView,    64001, phant1View64001Palette,     false },
 	{ GID_PQ4,            SCI_MEDIA_CD,     Common::EN_ANY,   kResourceTypeView,    10988, pq4EnhancedAudioToggleView, true  },
 	{ GID_QFG1VGA,        SCI_MEDIA_ALL,    Common::UNK_LANG, kResourceTypePalette,   904, qfg1vgaPalette904,          false },
@@ -758,7 +733,7 @@ ResourcePatcher::PatchSizes ResourcePatcher::calculatePatchSizes(const byte *pat
 		}
 	}
 
-	return PatchSizes(dataSize, deltaSize);
+	return { dataSize, deltaSize };
 }
 
 int32 ResourcePatcher::readBlockSize(const byte * &patchData) const {

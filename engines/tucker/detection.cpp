@@ -115,9 +115,9 @@ static const ADGameDescription tuckerDemoGameDescription = {
 	GUIO1(GUIO_NOMIDI)
 };
 
-class TuckerMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TuckerMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	TuckerMetaEngineDetection() : AdvancedMetaEngineDetection(tuckerGameDescriptions, sizeof(ADGameDescription), tuckerGames) {
+	TuckerMetaEngineDetection() : AdvancedMetaEngineDetection(tuckerGameDescriptions, tuckerGames) {
 		_md5Bytes = 512;
 	}
 

@@ -32,7 +32,6 @@ class Room104 : public Room {
 private:
 	int _stolieSleepCtr = 0;
 	int _stolieShould = 14;
-	int _val3 = 0;
 	bool _flag1 = false;
 	Series _series1;
 

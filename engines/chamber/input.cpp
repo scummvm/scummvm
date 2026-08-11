@@ -33,6 +33,8 @@
 #include "chamber/timer.h"
 #include "chamber/ifgm.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Chamber {
 
 byte have_mouse = 0;
@@ -50,8 +52,8 @@ byte buttons_repeat = 0;
 byte buttons;
 byte right_button;
 byte key_direction_old;
-byte accell_countdown;
-uint16 accelleration = 1;
+byte accel_countdown;
+uint16 acceleration = 1;
 byte mouseButtons = 0;
 
 void pollDiscrete(void);
@@ -59,10 +61,17 @@ void pollDiscrete(void);
 byte ChamberEngine::readKeyboardChar() {
 	Common::Event event;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	while (true) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
+				g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+				keymapper->getKeymap("chamber-default")->setEnabled(true);
+				keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 				return event.kbd.ascii;
 
 			case Common::EVENT_RETURN_TO_LAUNCHER:
@@ -101,23 +110,23 @@ byte pollMouse(void) {
 byte pollKeyboard(void) {
 	byte direction = key_direction;
 	if (direction && direction == key_direction_old) {
-		if (++accell_countdown == 10) {
-			accelleration++;
-			accell_countdown = 0;
+		if (++accel_countdown == 10) {
+			acceleration++;
+			accel_countdown = 0;
 		}
 	} else {
-		accelleration = 1;
-		accell_countdown = 0;
+		acceleration = 1;
+		accel_countdown = 0;
 	}
 	key_direction_old = direction;
 
 	if (direction & 0x0F) {
 		if (direction == 1) {
-			cursor_x += accelleration;
+			cursor_x += acceleration;
 			if (cursor_x >= 304) /*TODO: >*/
 				cursor_x = 304;
 		} else {
-			cursor_x -= accelleration;
+			cursor_x -= acceleration;
 			if ((int16)cursor_x < 0)
 				cursor_x = 0;
 		}
@@ -125,11 +134,11 @@ byte pollKeyboard(void) {
 
 	if (direction & 0xF0) {
 		if (direction == 0x10) {
-			cursor_y += accelleration;
+			cursor_y += acceleration;
 			if (cursor_y >= 184) /*TODO: >*/
 				cursor_y = 184;
 		} else {
-			cursor_y -= accelleration;
+			cursor_y -= acceleration;
 			if ((int8)cursor_y < 0)
 				cursor_y = 0;
 		}
@@ -156,13 +165,18 @@ int16 askQuitGame(void) {
 
 	Common::Event event;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("chamber-default")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("quit-dialog")->setEnabled(true);
+
 	while (quit == -1) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_y)
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionYes)
 					quit = 1;
-				else if (event.kbd.keycode == Common::KEYCODE_n)
+				else if (event.customType == kActionNo)
 					quit = 0;
 				break;
 
@@ -175,7 +189,11 @@ int16 askQuitGame(void) {
 			}
 		}
 	}
-	cga_CopyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, CalcXY_p(draw_x, draw_y));
+	g_vm->_renderer->copyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, g_vm->_renderer->calcXY_p(draw_x, draw_y));
+
+	keymapper->getKeymap("quit-dialog")->setEnabled(false);
+	keymapper->getKeymap("chamber-default")->setEnabled(true);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	return quit;
 }
@@ -184,14 +202,27 @@ void pollInputButtonsOnly() {
 	pollInput();
 }
 
+/* In Hercules mode the picture is drawn double-width at a (40, 74) offset on a
+   720x348 surface, so raw event coordinates must be shifted and halved back
+   into the game's native 320x200 space. */
+static void setCursorFromMouse(const Common::Point &mouse) {
+	if (g_vm->_renderMode == Common::kRenderHercG || g_vm->_renderMode == Common::kRenderHercA) {
+		cursor_x = CLIP<int16>((mouse.x - 40) / 2, 0, 319);
+		cursor_y = CLIP<int16>(mouse.y - 74, 0, 199);
+	} else {
+		cursor_x = mouse.x;
+		cursor_y = mouse.y;
+	}
+}
+
 void pollInput(void) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_SPACE)
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kActionInteract)
 				mouseButtons |= 1;
-			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			else if (event.customType == kActionQuit) {
 				if (g_vm->getLanguage() == Common::EN_USA) {
 					if (askQuitGame() != 0)
 						g_vm->_shouldQuit = true;
@@ -199,8 +230,8 @@ void pollInput(void) {
 			}
 			break;
 
-		case Common::EVENT_KEYUP:
-			if (event.kbd.keycode == Common::KEYCODE_SPACE)
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == kActionInteract)
 				mouseButtons &= ~1;
 			break;
 
@@ -210,11 +241,11 @@ void pollInput(void) {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			cursor_x = event.mouse.x;
-			cursor_y = event.mouse.y;
+			setCursorFromMouse(event.mouse);
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
+			setCursorFromMouse(event.mouse);
 			mouseButtons |= 1;
 			break;
 
@@ -223,6 +254,7 @@ void pollInput(void) {
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
+			setCursorFromMouse(event.mouse);
 			mouseButtons |= 2;
 			break;
 
@@ -236,6 +268,11 @@ void pollInput(void) {
 	}
 
 	setInputButtons(mouseButtons);
+}
+
+void clearButtons(void) {
+	mouseButtons = 0;
+	setInputButtons(0);
 }
 
 void processInput(void) {

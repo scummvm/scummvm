@@ -154,19 +154,20 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 	return false;
 }
 
-bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
+bool CStarView::ActionMsg(CActionMsg *msg, CErrorCode *errorCode) {
 	FPose pose;
 	int lockLevel = _starField ? _starField->getMatchedIndex() : -1;
+	Common::CustomEventType action = msg->_action;
 
-	switch (tolower(key)) {
-	case Common::KEYCODE_TAB:
+	switch (action) {
+	case kActionStarMapToggle:
 		if (_starField) {
 			toggleHomePhoto();
 			return true;
 		}
 		break;
 
-	case Common::KEYCODE_l: {
+	case kActionStarMapLock: {
 		CPetControl *pet = _owner->getPetControl();
 		if (pet && pet->_remoteTarget) {
 			CPETStarFieldLockMsg lockMsg(1);
@@ -175,7 +176,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		return true;
 	}
 
-	case Common::KEYCODE_d: {
+	case kActionStarMapUnlock: {
 		CPetControl *pet = _owner->getPetControl();
 		if (pet && pet->_remoteTarget) {
 			CPETStarFieldLockMsg lockMsg(0);
@@ -184,7 +185,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		return true;
 	}
 
-	case Common::KEYCODE_z:
+	case kActionStarMapLeft:
 		if (lockLevel == -1) {
 			pose.setRotationMatrix(Y_AXIS, -1.0);
 			_camera.changeOrientation(pose);
@@ -193,7 +194,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
-	case Common::KEYCODE_SEMICOLON:
+	case kActionStarMapForward:
 		if (lockLevel == -1) {
 			_camera.accelerate();
 			errorCode->set();
@@ -201,7 +202,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
-	case Common::KEYCODE_PERIOD:
+	case kActionStarMapBackward:
 		if (lockLevel == -1) {
 			_camera.deccelerate();
 			errorCode->set();
@@ -209,7 +210,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
-	case Common::KEYCODE_SPACE:
+	case kActionStarMapStop:
 		if (lockLevel == -1) {
 			_camera.stop();
 			errorCode->set();
@@ -217,7 +218,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
-	case Common::KEYCODE_x:
+	case kActionStarMapRight:
 		if (lockLevel == -1) {
 			pose.setRotationMatrix(Y_AXIS, 1.0);
 			_camera.changeOrientation(pose);
@@ -226,7 +227,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
-	case Common::KEYCODE_QUOTE:
+	case kActionStarMapUp:
 		if (lockLevel == -1) {
 			pose.setRotationMatrix(X_AXIS, 1.0);
 			_camera.changeOrientation(pose);
@@ -235,7 +236,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
-	case Common::KEYCODE_SLASH:
+	case kActionStarMapDown:
 		if (lockLevel == -1) {
 			pose.setRotationMatrix(X_AXIS, -1.0);
 			_camera.changeOrientation(pose);
@@ -246,13 +247,13 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	// New for ScummVM to show the boundaries sphere code the original implemented,
 	// but wasn't actually hooked up to any player action
-	case Common::KEYCODE_b:
+	case kActionStarMapBoundaries:
 		viewBoundaries();
 		return true;
 
 	// New for ScummVM to show the constellations sphere code the original implemented,
 	// but wasn't actually hooked up to any player action
-	case Common::KEYCODE_c:
+	case kActionStarMapConstellations:
 		viewConstellations();
 		return true;
 

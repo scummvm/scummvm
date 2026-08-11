@@ -168,17 +168,17 @@ public:
 	MacFONTFont(const MacFONTdata &data);
 	virtual ~MacFONTFont();
 
-	virtual int getFontHeight() const { return _data._fRectHeight + getFontLeading(); }
-	virtual int getFontAscent() const { return _data._ascent; }
-	virtual int getFontDescent() const { return _data._descent; }
-	virtual int getFontLeading() const { return _data._leading; }
-	virtual int getMaxCharWidth() const { return _data._maxWidth; }
-	virtual int getCharWidth(uint32 chr) const;
-	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getFontHeight() const override { return _data._fRectHeight + getFontLeading(); }
+	int getFontAscent() const override { return _data._ascent; }
+	int getFontDescent() const override { return _data._descent; }
+	int getFontLeading() const override { return _data._leading; }
+	int getMaxCharWidth() const override { return _data._maxWidth; }
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 	bool loadFont(Common::SeekableReadStream &stream, MacFontFamily *family = nullptr, int size = 12, int style = 0);
 
-	virtual int getKerningOffset(uint32 left, uint32 right) const;
+	int getKerningOffset(uint32 left, uint32 right) const override;
 
 	int getFontSize() const { return _data._size; }
 

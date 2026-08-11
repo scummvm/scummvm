@@ -34,11 +34,11 @@ Section2::Section2() : Rooms::Section() {
 void Section2::daemon() {
 	switch (_G(kernel).trigger) {
 	case 2001:
-		_G(game).new_room = 204;
+		_G(game).setRoom(204);
 		break;
 
 	case 2002:
-		_G(game).new_room = 207;
+		_G(game).setRoom(207);
 		break;
 
 	default:

@@ -29,12 +29,12 @@ namespace Access {
 
 FileIdent::FileIdent() {
 	_fileNum = -1;
-	_subfile = 0;
+	_subFile = 0;
 }
 
 void FileIdent::load(Common::SeekableReadStream &s) {
 	_fileNum = s.readSint16LE();
-	_subfile = s.readUint16LE();
+	_subFile = s.readUint16LE();
 }
 
 /*------------------------------------------------------------------------*/
@@ -46,7 +46,7 @@ CellIdent::	CellIdent() {
 CellIdent::CellIdent(int cell, int fileNum, int subfile) {
 	_cell = cell;
 	_fileNum = fileNum;
-	_subfile = subfile;
+	_subFile = subfile;
 }
 
 /*------------------------------------------------------------------------*/
@@ -68,7 +68,7 @@ Resource::Resource(byte *p, int size) {
 	_stream = new Common::MemoryReadStream(p, size);
 }
 
-byte *Resource::data() {
+const byte *Resource::data() {
 	if (_data == nullptr) {
 		_data = new byte[_size];
 		int pos = _stream->pos();
@@ -80,10 +80,13 @@ byte *Resource::data() {
 	return _data;
 }
 
+ const char *Resource::getFileName() const {
+		return _file.getName();
+}
+
 /*------------------------------------------------------------------------*/
 
 FileManager::FileManager(AccessEngine *vm) : _vm(vm) {
-	_fileNumber = -1;
 	_setPaletteFlag = true;
 }
 
@@ -91,19 +94,32 @@ FileManager::~FileManager() {
 }
 
 Resource *FileManager::loadFile(int fileNum, int subfile) {
-	Resource *res = new Resource();
-	setAppended(res, fileNum);
-	gotoAppended(res, subfile);
+	Resource *res = nullptr;
+	const Common::Path &filepath = _vm->_res->FILENAMES[fileNum];
 
-	handleFile(res);
+	// Noctropolis remastered has music in OGG or MID format broken
+	// out into the individual files.
+	if (_vm->getGameID() == kGameNoctropolis && fileNum == 98 && !SearchMan.hasFile(filepath)) {
+		Common::Path path = Common::Path(Common::String::format("MUSIC/M%02d.mid", subfile));
+		// TODO: Also check for OGG file here.  Make it a configuration
+		// variable - originally hidef_music, default true.
+		if (SearchMan.hasFile(path))
+			res = loadRawFile(path);
+	} else {
+		res = new Resource();
+		setAppended(res, filepath);
+		gotoAppended(res, subfile);
+		handleFile(res);
+	}
+
 	return res;
 }
 
 Resource *FileManager::loadFile(const FileIdent &fileIdent) {
-	return loadFile(fileIdent._fileNum, fileIdent._subfile);
+	return loadFile(fileIdent._fileNum, fileIdent._subFile);
 }
 
-Resource *FileManager::loadFile(const Common::Path &filename) {
+Resource *FileManager::loadRawFile(const Common::Path &filename) {
 	Resource *res = new Resource();
 
 	// Open the file
@@ -123,7 +139,7 @@ bool FileManager::existFile(const Common::Path &filename) {
 
 void FileManager::openFile(Resource *res, const Common::Path &filename) {
 	// Open up the file
-	_fileNumber = -1;
+	_indexedFilename.clear();
 	if (!res->_file.open(filename))
 		error("Could not open file - %s", filename.toString().c_str());
 }
@@ -163,7 +179,7 @@ void FileManager::loadScreen(int fileNum, int subfile) {
 }
 
 void FileManager::loadScreen(const Common::Path &filename) {
-	Resource *res = loadFile(filename);
+	Resource *res = loadRawFile(filename);
 	handleScreen(_vm->_screen, res);
 	delete res;
 }
@@ -194,22 +210,25 @@ void FileManager::handleFile(Resource *res) {
 	}
 }
 
-void FileManager::setAppended(Resource *res, int fileNum) {
+void FileManager::setAppended(Resource *res, const Common::Path &fileName) {
 	// Open the file for access
-	if (!res->_file.open(_vm->_res->FILENAMES[fileNum]))
-		error("Could not open file %s", _vm->_res->FILENAMES[fileNum].toString().c_str());
+	if (!res->_file.open(fileName))
+		error("Could not open file %s", fileName.toString().c_str());
 
 	// If a different file has been opened then previously, load its index
-	if (_fileNumber != fileNum) {
-		_fileNumber = fileNum;
-
-		// Read in the file index
-		int count = res->_file.readUint16LE();
-		assert(count <= 100);
-		_fileIndex.resize(count);
-		for (int i = 0; i < count; ++i)
-			_fileIndex[i] = res->_file.readUint32LE();
+	if (_indexedFilename != fileName) {
+		_indexedFilename = fileName;
+		readIndex(res);
 	}
+}
+
+void FileManager::readIndex(Resource *res) {
+	// Read in the file index
+	int count = res->_file.readUint16LE();
+	assert(count <= 200);
+	_fileIndex.resize(count);
+	for (int i = 0; i < count; ++i)
+		_fileIndex[i] = res->_file.readUint32LE();
 }
 
 void FileManager::gotoAppended(Resource *res, int subfile) {

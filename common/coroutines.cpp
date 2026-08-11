@@ -61,10 +61,9 @@ static void displayCoroStats() {
 	// Loop over s_coroFuncs and print info about active coros
 	if (!s_coroFuncs)
 		return;
-	for (CoroHashMap::const_iterator it = s_coroFuncs->begin();
-	        it != s_coroFuncs->end(); ++it) {
-		if (it->_value != 0)
-			debug("  %3d x %s", it->_value, it->_key.c_str());
+	for (const auto &func : s_coroFuncs) {
+		if (func._value != 0)
+			debug("  %3d x %s", func._value, func._key.c_str());
 	}
 }
 
@@ -130,9 +129,8 @@ CoroutineScheduler::~CoroutineScheduler() {
 	active = nullptr;
 
 	// Clear the event list
-	Common::List<EVENT *>::iterator i;
-	for (i = _events.begin(); i != _events.end(); ++i)
-		delete *i;
+	for (auto *event : _events)
+		delete event;
 }
 
 void CoroutineScheduler::reset() {
@@ -205,9 +203,8 @@ void CoroutineScheduler::checkStack() {
 	// Make sure all processes are accounted for
 	for (int idx = 0; idx < CORO_NUM_PROCESS; idx++) {
 		bool found = false;
-		for (Common::List<PROCESS *>::iterator i = pList.begin(); i != pList.end(); ++i) {
-			PROCESS *pTemp = *i;
-			if (*i == &processList[idx]) {
+		for (auto &process : pList) {
+			if (process == &processList[idx]) {
 				found = true;
 				break;
 			}
@@ -247,11 +244,9 @@ void CoroutineScheduler::schedule() {
 	}
 
 	// Disable any events that were pulsed
-	Common::List<EVENT *>::iterator i;
-	for (i = _events.begin(); i != _events.end(); ++i) {
-		EVENT *evt = *i;
-		if (evt->pulsing) {
-			evt->pulsing = evt->signalled = false;
+	for (auto &event : _events) {
+		if (event->pulsing) {
+			event->pulsing = event->signalled = false;
 		}
 	}
 }
@@ -671,11 +666,9 @@ PROCESS *CoroutineScheduler::getProcess(uint32 pid) {
 }
 
 EVENT *CoroutineScheduler::getEvent(uint32 pid) {
-	Common::List<EVENT *>::iterator i;
-	for (i = _events.begin(); i != _events.end(); ++i) {
-		EVENT *evt = *i;
-		if (evt->pid == pid)
-			return evt;
+	for (auto &event : _events) {
+		if (event->pid == pid)
+			return event;
 	}
 
 	return nullptr;

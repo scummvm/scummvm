@@ -37,7 +37,7 @@ namespace DM {
 	class CreatureInfo;
 
 /* Creature types */
-enum CreatureType {
+enum CreatureType : uint16 {
 	kDMCreatureTypeGiantScorpion = 0, // @ C00_CREATURE_GIANT_SCORPION_SCORPION
 	kDMCreatureTypeSwampSlime = 1, // @ C01_CREATURE_SWAMP_SLIME_SLIME_DEVIL
 	kDMCreatureTypeGiggler = 2, // @ C02_CREATURE_GIGGLER
@@ -111,7 +111,7 @@ enum aspectMask {
 class ActiveGroup {
 public:
 	int16 _groupThingIndex;
-	Direction _directions;
+	uint16 _directions;
 	byte _cells;
 	byte _lastMoveTime;
 	byte _delayFleeingFromTarget;
@@ -132,13 +132,8 @@ public:
 	uint16 _cells;
 	uint16 _health[4];
 	uint16 _flags;
-public:
-	explicit Group(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _cells(rawDat[3]), _flags(rawDat[8]) {
-		_type = (CreatureType)rawDat[2];
-		_health[0] = rawDat[4];
-		_health[1] = rawDat[5];
-		_health[2] = rawDat[6];
-		_health[3] = rawDat[7];
+	Group() : _nextThing(0xFFFF), _slot(0xFFFF), _type((CreatureType)0), _cells(0), _flags(0) {
+		_health[0] = _health[1] = _health[2] = _health[3] = 0;
 	}
 
 	uint16 &getActiveGroupIndex() { return _cells; }
@@ -218,7 +213,7 @@ public:
 										   bool isAttacking); // @ F0179_GROUP_GetCreatureAspectUpdateTime
 	void setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures); // @ F0205_GROUP_SetDirection
 	void addGroupEvent(TimelineEvent *event, uint32 time); // @ F0208_GROUP_AddEvent
-	int16 getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX); // @ F0201_GROUP_GetSmelledPartyPrimaryDirectionOrdinal
+	int16 getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapX, int16 mapY); // @ F0201_GROUP_GetSmelledPartyPrimaryDirectionOrdinal
 	bool isSmellPartyBlocked(uint16 mapX, uint16 mapY); // @ F0198_GROUP_IsSmellPartyBlocked
 	int16 getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY,
 												  bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0203_GROUP_GetFirstPossibleMovementDirectionOrdinal
@@ -247,8 +242,8 @@ public:
 	uint16 isLordChaosOnSquare(int16 mapX, int16 mapY); // @ F0222_GROUP_IsLordChaosOnSquare
 	bool isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare
 	void fuseAction(uint16 mapX, uint16 mapY); // @ F0225_GROUP_FuseAction
-	void saveActiveGroupPart(Common::OutSaveFile *file);
-	void loadActiveGroupPart(Common::InSaveFile *file);
+	void saveActiveGroupPart(Common::WriteStream *file);
+	void loadActiveGroupPart(Common::SeekableReadStream *file);
 };
 }
 

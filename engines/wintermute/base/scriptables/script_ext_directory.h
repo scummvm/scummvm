@@ -36,10 +36,10 @@ namespace Wintermute {
 class SXDirectory : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(SXDirectory, BaseScriptable)
+	ScValue *scGetProperty(const char *name) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	SXDirectory(BaseGame *inGame);
 	~SXDirectory() override;
-	ScValue *scGetProperty(const Common::String &name) override;
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 };
 
 } // End of namespace Wintermute

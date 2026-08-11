@@ -492,6 +492,9 @@ protected:
 	void o6_setBoxSet();
 	void o6_shuffle();
 
+	/* V6 Enhancements */
+	void o6_animateActorApplyEnhancements(int &act, int &anim);
+
 	byte VAR_VIDEONAME;
 	byte VAR_RANDOM_NR;
 	byte VAR_STRING2DRAW;

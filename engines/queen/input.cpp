@@ -29,58 +29,23 @@
 
 namespace Queen {
 
-const char *const Input::_commandKeys[] = {
-	"ocmglptu", // English
-	"osbgpnre", // German
-	"ofdnepau", // French
-	"acsdgpqu", // Italian
-	"ocmglptu", // Hebrew
-	"acodmthu"  // Spanish
-};
-
-const Verb Input::_verbKeys[] = {
-	VERB_OPEN,
-	VERB_CLOSE,
-	VERB_MOVE,
-	VERB_GIVE,
-	VERB_LOOK_AT,
-	VERB_PICK_UP,
-	VERB_TALK_TO,
-	VERB_USE
+const verbAction Input::_verbActions[] = {
+	{ VERB_OPEN, kActionOpen },
+	{ VERB_CLOSE, kActionClose },
+	{ VERB_MOVE, kActionMove },
+	{ VERB_GIVE, kActionGive },
+	{ VERB_LOOK_AT, kActionLook },
+	{ VERB_PICK_UP, kActionPickUp },
+	{ VERB_TALK_TO, kActionTalk },
+	{ VERB_USE, kActionUse }
 };
 
 Input::Input(Common::Language language, OSystem *system) :
 	_system(system), _eventMan(system->getEventManager()), _fastMode(false),
 	_keyVerb(VERB_NONE), _cutawayRunning(false), _canQuit(false),
 	_cutawayQuit(false), _dialogueRunning(false), _talkQuit(false),
-	_quickSave(false), _quickLoad(false), _inKey(Common::KEYCODE_INVALID),
+	_quickSave(false), _quickLoad(false), _inKey(kActionNone),
 	_mouseButton(0), _idleTime(0) {
-
-	switch (language) {
-	case Common::EN_ANY:
-	case Common::EL_GRC:
-	case Common::RU_RUS:
-		_currentCommandKeys = _commandKeys[0];
-		break;
-	case Common::DE_DEU:
-		_currentCommandKeys = _commandKeys[1];
-		break;
-	case Common::FR_FRA:
-		_currentCommandKeys = _commandKeys[2];
-		break;
-	case Common::IT_ITA:
-		_currentCommandKeys = _commandKeys[3];
-		break;
-	case Common::HE_ISR:
-		_currentCommandKeys = _commandKeys[4];
-		break;
-	case Common::ES_ESP:
-		_currentCommandKeys = _commandKeys[5];
-		break;
-	default:
-		error("Unknown language");
-		break;
-	}
 }
 
 void Input::delay(uint amount) {
@@ -96,13 +61,11 @@ void Input::delay(uint amount) {
 		while (_eventMan->pollEvent(event)) {
 			_idleTime = 0;
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-					if (event.kbd.keycode == Common::KEYCODE_f) {
-						_fastMode = !_fastMode;
-					}
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionFastMode) {
+					_fastMode = !_fastMode;
 				} else {
-					_inKey = event.kbd.keycode;
+					_inKey = event.customType;
 				}
 				break;
 
@@ -144,28 +107,28 @@ void Input::checkKeys() {
 		debug(6, "[Input::checkKeys] _inKey = %i", _inKey);
 
 	switch (_inKey) {
-	case Common::KEYCODE_SPACE:
+	case kActionSkipText:
 		_keyVerb = VERB_SKIP_TEXT;
 		break;
-	case Common::KEYCODE_COMMA:
+	case kActionScrollUp:
 		_keyVerb = VERB_SCROLL_UP;
 		break;
-	case Common::KEYCODE_PERIOD:
+	case kActionScrollDown:
 		_keyVerb = VERB_SCROLL_DOWN;
 		break;
-	case Common::KEYCODE_1:
+	case kActionInvSlot1:
 		_keyVerb = VERB_DIGIT_1;
 		break;
-	case Common::KEYCODE_2:
+	case kActionInvSlot2:
 		_keyVerb = VERB_DIGIT_2;
 		break;
-	case Common::KEYCODE_3:
+	case kActionInvSlot3:
 		_keyVerb = VERB_DIGIT_3;
 		break;
-	case Common::KEYCODE_4:
+	case kActionInvSlot4:
 		_keyVerb = VERB_DIGIT_4;
 		break;
-	case Common::KEYCODE_ESCAPE: // skip cutaway / dialogue
+	case kActionSkipCutaway: // skip cutaway / dialogue
 		if (_canQuit) {
 			if (_cutawayRunning) {
 				debug(6, "[Input::checkKeys] Setting _cutawayQuit to true");
@@ -175,8 +138,7 @@ void Input::checkKeys() {
 				_talkQuit = true;
 		}
 		break;
-	case Common::KEYCODE_F1: // use Journal
-	case Common::KEYCODE_F5:
+	case kActionJournal: // use Journal
 		if (_cutawayRunning) {
 			if (_canQuit) {
 				_keyVerb = VERB_USE_JOURNAL;
@@ -188,23 +150,23 @@ void Input::checkKeys() {
 				_talkQuit = true;
 		}
 		break;
-	case Common::KEYCODE_F11: // quicksave
+	case kActionSave: // quicksave
 		_quickSave = true;
 		break;
-	case Common::KEYCODE_F12: // quickload
+	case kActionLoad: // quickload
 		_quickLoad = true;
 		break;
 	default:
-		for (int i = 0; i < ARRAYSIZE(_verbKeys); ++i) {
-			if (_inKey == _currentCommandKeys[i]) {
-				_keyVerb = _verbKeys[i];
+		for (int i = 0; i < ARRAYSIZE(_verbActions); ++i) {
+			if (_inKey == _verbActions[i]._action) {
+				_keyVerb = _verbActions[i]._verb;
 				break;
 			}
 		}
 		break;
 	}
 
-	_inKey = Common::KEYCODE_INVALID;	// reset
+	_inKey = kActionNone;	// reset
 }
 
 Common::Point Input::getMousePos() const {

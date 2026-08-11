@@ -111,6 +111,7 @@
 class MidiDriver_MT32GM : public MidiDriver_Multisource {
 public:
 	static const byte MT32_DEFAULT_INSTRUMENTS[8];
+	static const int16 MT32_DEFAULT_INSTRUMENTS_CONTROLLER_DEFAULTS[16];
 	static const byte MT32_DEFAULT_PANNING[8];
 	static const uint8 MT32_DEFAULT_CHANNEL_VOLUME = 102;
 	static const uint8 GM_DEFAULT_CHANNEL_VOLUME = 100;
@@ -296,7 +297,8 @@ public:
 	 * not sent before this time has passed.
 	 */
 	uint16 sysExMT32(const byte *msg, uint16 length, const uint32 targetAddress, bool queue = false, bool delay = true, int8 source = -1);
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	uint16 sysExMT32(const byte *msg, uint16 length, bool queue = false, bool delay = true, int8 source = -1);
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 
 	void stopAllNotes(bool stopSustainedNotes = false) override;
 	/**

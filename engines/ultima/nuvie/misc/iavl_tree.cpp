@@ -283,7 +283,7 @@ iAVLNode *iAVLCloseSearchNode(iAVLTree const *avltree, iAVLKey key) {
 /*
  * iAVLRebalanceNode:
  * Rebalances the AVL tree if one side becomes too heavy.  This function
- * assumes that both subtrees are AVL trees with consistant data.  This
+ * assumes that both subtrees are AVL trees with consistent data.  This
  * function has the additional side effect of recalculating the depth of
  * the tree at this node.  It should be noted that at the return of this
  * function, if a rebalance takes place, the top of this subtree is no

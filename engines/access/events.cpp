@@ -28,9 +28,7 @@
 #include "access/events.h"
 #include "access/player.h"
 #include "access/amazon/amazon_resources.h"
-
-#define CURSOR_WIDTH 16
-#define CURSOR_HEIGHT 16
+#include "access/noctropolis/noctropolis_game.h"
 
 namespace Access {
 
@@ -47,6 +45,8 @@ EventsManager::EventsManager(AccessEngine *vm) : _vm(vm) {
 	_vbCount = 0;
 	_keyCode = Common::KEYCODE_INVALID;
 	_priorTimerTime = 0;
+	_action = kActionNone;
+	_interfaceOff = false;
 }
 
 EventsManager::~EventsManager() {
@@ -72,36 +72,43 @@ void EventsManager::setCursor(CursorType cursorId) {
 		CursorMan.replaceCursor(_invCursor, _invCursor.w / 2, _invCursor.h / 2, 0);
 	} else {
 		// Get a pointer to the mouse data to use, and get the cursor hotspot
-		const byte *srcP = &_vm->_res->CURSORS[cursorId][0];
-		int hotspotX = (int16)READ_LE_UINT16(srcP);
-		int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
+		const byte *srcP = _vm->_res->getCursor(cursorId);
+		const int width = _vm->_res->getCursorWidth(cursorId);
+		const int height = _vm->_res->getCursorHeight(cursorId);
+		const int hotspotX = (int16)READ_LE_UINT16(srcP);
+		const int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
 		srcP += 4;
 
 		// Create a surface to build up the cursor on
 		Graphics::Surface cursorSurface;
-		cursorSurface.create(CURSOR_WIDTH, CURSOR_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+		cursorSurface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		byte *destP = (byte *)cursorSurface.getPixels();
-		Common::fill(destP, destP + CURSOR_WIDTH * CURSOR_HEIGHT, 0);
 
-		// Loop to build up the cursor
-		for (int y = 0; y < CURSOR_HEIGHT; ++y) {
-			destP = (byte *)cursorSurface.getBasePtr(0, y);
-			int width = CURSOR_WIDTH;
-			int skip = *srcP++;
-			int plot = *srcP++;
-			if (skip >= width)
-				break;
+		if (_vm->getGameID() != kGameNoctropolis) {
+			Common::fill(destP, destP + width * height, 0);
+			// Loop to build up the cursor
+			for (int y = 0; y < height; ++y) {
+				destP = (byte *)cursorSurface.getBasePtr(0, y);
+				int w = width;
+				int skip = *srcP++;
+				int plot = *srcP++;
+				if (skip >= width)
+					break;
 
-			// Skip over pixels
-			destP += skip;
-			width -= skip;
+				// Skip over pixels
+				destP += skip;
+				w -= skip;
 
-			// Write out the pixels to plot
-			while (plot > 0 && width > 0) {
-				*destP++ = *srcP++;
-				--plot;
-				--width;
+				// Write out the pixels to plot
+				while (plot > 0 && w > 0) {
+					*destP++ = *srcP++;
+					--plot;
+					--w;
+				}
 			}
+		} else {
+			// Simple bitmaps in Noctropolis.
+			memcpy(destP, srcP, width * height);
 		}
 
 		// Set the cursor
@@ -129,6 +136,12 @@ bool EventsManager::isCursorVisible() {
 	return CursorMan.isVisible();
 }
 
+void EventsManager::delayUntilNextFrame() {
+	while (!checkForNextFrameCounter())
+		delay();
+	nextFrame();
+}
+
 void EventsManager::pollEvents(bool skipTimers) {
 	if (checkForNextFrameCounter()) {
 		nextFrame();
@@ -147,7 +160,12 @@ void EventsManager::pollEvents(bool skipTimers) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
-
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			actionControl(event.customType, true);
+			return;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			actionControl(event.customType, false);
+			return;
 		case Common::EVENT_KEYDOWN:
 			// Check for debugger
 			keyControl(event.kbd.keycode, true);
@@ -202,34 +220,53 @@ void EventsManager::keyControl(Common::KeyCode keycode, bool isKeyDown) {
 	}
 
 	_keyCode = keycode;
+}
 
-	switch (keycode) {
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
+uint32 EventsManager::getDoubleClickTime() const {
+	uint32 timeout = g_system->getDoubleClickTime();
+	return timeout > 0 ? timeout : 400;
+}
+
+void EventsManager::actionControl(Common::CustomEventType action, bool isKeyDown) {
+	Player &player = *_vm->_player;
+
+	if (!isKeyDown) {
+		if (player._move != NONE) {
+			_action = kActionNone;
+			player._move = NONE;
+		}
+		return;
+	}
+
+	// Ignore all actions except skip when the inteface is locked.
+	if (_interfaceOff && action != kActionSkip)
+		return;
+
+	_action = action;
+
+	switch (action) {
+	case kActionMoveUp:
 		player._move = UP;
 		break;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
+	case kActionMoveDown:
 		player._move = DOWN;
 		break;
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
+	case kActionMoveLeft:
 		player._move = LEFT;
 		break;
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
+	case kActionMoveRight:
 		player._move = RIGHT;
 		break;
-	case Common::KEYCODE_KP7:
+	case kActionMoveUpLeft:
 		player._move = UPLEFT;
 		break;
-	case Common::KEYCODE_KP9:
+	case kActionMoveUpRight:
 		player._move = UPRIGHT;
 		break;
-	case Common::KEYCODE_KP1:
+	case kActionMoveDownLeft:
 		player._move = DOWNLEFT;
 		break;
-	case Common::KEYCODE_KP3:
+	case kActionMoveDownRight:
 		player._move = DOWNRIGHT;
 		break;
 	default:
@@ -275,28 +312,33 @@ void EventsManager::nextFrame() {
 void EventsManager::nextTimer() {
 	_vm->_animation->updateTimers();
 	_vm->_timers.updateTimers();
+	_vm->_player->updateTimers();
+	if (_vm->getGameID() == kGameNoctropolis)
+		((Noctropolis::NoctropolisEngine *)_vm)->_stil->updateTimers();
 }
 
 void EventsManager::delay(int time) {
 	g_system->delayMillis(time);
 }
 
-void EventsManager::zeroKeys() {
+void EventsManager::zeroKeysActions() {
 	_keyCode = Common::KEYCODE_INVALID;
+	_action = kActionNone;
 }
 
-bool EventsManager::getKey(Common::KeyState &key) {
-	if (_keyCode == Common::KEYCODE_INVALID) {
+bool EventsManager::getAction(Common::CustomEventType &action) {
+	if (_action == kActionNone) {
 		return false;
 	} else {
-		key = _keyCode;
-		_keyCode = Common::KEYCODE_INVALID;
+		action = _action;
+		_action = kActionNone;
 		return true;
 	}
 }
 
-bool EventsManager::isKeyPending() const {
-	return _keyCode != Common::KEYCODE_INVALID;
+
+bool EventsManager::isKeyActionPending() const {
+	return (_keyCode != Common::KEYCODE_INVALID || _action != kActionNone);
 }
 
 void EventsManager::debounceLeft() {
@@ -305,13 +347,19 @@ void EventsManager::debounceLeft() {
 	}
 }
 
-void EventsManager::clearEvents() {
-	_leftButton = _rightButton = false;
-	zeroKeys();
+void EventsManager::debounceRight() {
+	while (_rightButton && !_vm->shouldQuit()) {
+		pollEventsAndWait();
+	}
 }
 
-void EventsManager::waitKeyMouse() {
-	while (!_vm->shouldQuit() && !isKeyMousePressed()) {
+void EventsManager::clearEvents() {
+	_leftButton = _rightButton = false;
+	zeroKeysActions();
+}
+
+void EventsManager::waitKeyActionMouse() {
+	while (!_vm->shouldQuit() && !isKeyActionMousePressed()) {
 		pollEvents(true);
 		delay();
 	}
@@ -328,7 +376,7 @@ Common::Point EventsManager::calcRawMouse() {
 	return pt;
 }
 
-int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
+int EventsManager::checkMouseBox1(const Common::Array<Common::Rect> &rects) {
 	for (uint16 i = 0; i < rects.size(); ++i) {
 		if (rects[i].left == -1)
 			return -1;
@@ -341,20 +389,37 @@ int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
 	return -1;
 }
 
-bool EventsManager::isKeyMousePressed() {
-	bool result = _leftButton || _rightButton || isKeyPending();
+bool EventsManager::isKeyActionMousePressed() {
+	bool result = _leftButton || _rightButton || isKeyActionPending();
 	debounceLeft();
-	zeroKeys();
+	zeroKeysActions();
 
 	return result;
 }
 
 void EventsManager::centerMousePos() {
-	_mousePos = Common::Point(160, 100);
+	_mousePos = Common::Point(_vm->getScreenWidth() / 2, _vm->getScreenHeight() / 2);
 }
 
 void EventsManager::restrictMouse() {
 	// No implementation in ScummVM
 }
+
+/*static*/
+int16 EventsManager::clipMouseCenter(int16 mousePos, int16 length, int16 maxLength, int16 &warpMousePos) {
+	int16 basePos;
+	if (mousePos - (length / 2) < 0) {
+		basePos = 0;
+		warpMousePos = length / 2;
+	} else if (mousePos + length >= maxLength) {
+		basePos = maxLength - length;
+		warpMousePos = maxLength - (length / 2);
+	} else {
+		basePos = mousePos - (length / 2);
+		warpMousePos = mousePos;
+	}
+	return basePos;
+}
+
 
 } // End of namespace Access

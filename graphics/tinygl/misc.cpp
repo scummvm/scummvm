@@ -64,6 +64,13 @@ void GLContext::glopViewport(GLParam *p) {
 	}
 }
 
+void GLContext::glopScissor(GLParam *p) {
+	scissor[0] = p[1].i;
+	scissor[1] = p[2].i;
+	scissor[2] = p[3].i;
+	scissor[3] = p[4].i;
+}
+
 void GLContext::glopEnableDisable(GLParam *p) {
 	int code = p[1].i;
 	int v = p[2].i;
@@ -99,6 +106,9 @@ void GLContext::glopEnableDisable(GLParam *p) {
 	case TGL_STENCIL_TEST:
 		stencil_test_enabled = v != 0;
 		break;
+	case TGL_SCISSOR_TEST:
+		scissor_test_enabled = v != 0;
+		break;
 	case TGL_BLEND:
 		blending_enabled = v != 0;
 		break;
@@ -119,6 +129,9 @@ void GLContext::glopEnableDisable(GLParam *p) {
 			offset_states |= TGL_OFFSET_LINE;
 		else
 			offset_states &= ~TGL_OFFSET_LINE;
+		break;
+	case TGL_TWO_COLOR_STIPPLE:
+		two_color_stipple_enabled = v != 0;
 		break;
 	default:
 		if (code >= TGL_LIGHT0 && code < TGL_LIGHT0 + T_MAX_LIGHTS) {
@@ -155,8 +168,8 @@ void GLContext::glopStencilFunc(GLParam *p) {
 	else if (ref > 255)
 		ref = 255;
 	stencil_test_func = func;
-	stencil_ref_val = ref;
-	stencil_mask = mask;
+	stencil_ref_val = (byte)ref;
+	stencil_mask = (byte)mask;
 }
 
 void GLContext::glopStencilOp(GLParam *p) {
@@ -208,6 +221,13 @@ void GLContext::glopPolygonStipple(GLParam *p) {
 	for (int i = 0; i < 128; i++) {
 		polygon_stipple_pattern[i] = p[i + 1].ui;
 	}
+}
+
+void GLContext::glopStippleColor(GLParam *p) {
+	int r = (int)p[1].f;
+	int g = (int)p[2].f;
+	int b = (int)p[3].f;
+	stippleColor = r << 16 | g << 8 | b;
 }
 
 void GLContext::glopPolygonOffset(GLParam *p) {

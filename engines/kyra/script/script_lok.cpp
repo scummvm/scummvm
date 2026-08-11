@@ -1042,7 +1042,7 @@ int KyraEngine_LoK::o1_specialEventDisplayBrynnsNote(EMCState *script) {
 	_screen->savePageToDisk("HIDPAGE.TMP", 2);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 	if (_flags.isTalkie) {
-		if (_flags.lang == Common::EN_ANY || _flags.lang == Common::IT_ITA)
+		if (_flags.lang == Common::EN_ANY || _flags.lang == Common::IT_ITA || _flags.lang == Common::CS_CZE)
 			_screen->loadBitmap("NOTEENG.CPS", 3, 3, nullptr);
 		else if (_flags.lang == Common::FR_FRA)
 			_screen->loadBitmap("NOTEFRE.CPS", 3, 3, nullptr);

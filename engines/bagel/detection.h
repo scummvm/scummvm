@@ -27,7 +27,7 @@
 namespace Bagel {
 
 enum BagelDebugChannels {
-	kDebugUnused = 1
+	kDebugRandom = 1
 };
 
 extern const PlainGameDescriptor bagelGames[];
@@ -38,7 +38,7 @@ extern const ADGameDescription gameDescriptions[];
 
 } // End of namespace Bagel
 
-class BagelMetaEngineDetection : public AdvancedMetaEngineDetection {
+class BagelMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

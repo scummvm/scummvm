@@ -23,6 +23,8 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "engines/metaengine.h"
+
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
@@ -194,22 +196,28 @@ static int stringCompareToIgnoreCase(const Common::String &s1, const Common::Str
 
 bool StackHandler::getSavedGamesStack(const Common::String &ext) {
 	// Make pattern
-	uint len = ext.size();
-	Common::String pattern = "*";
-	pattern += ext;
+	//uint len = realExtension.size();
 
 	// Get all saved files
-	Common::StringArray sa = g_system->getSavefileManager()->listSavefiles(pattern);
+	SaveStateList sa = g_sludge->getMetaEngine()->listSaves(g_sludge->getTargetName().c_str());
+	Common::StringArray realNames;
 
-	Common::sort(sa.begin(), sa.end(), stringCompareToIgnoreCase);
+	g_sludge->_saveNameToSlot.clear();
+
+	for (auto &savestate : sa) {
+		Common::String name = savestate.getDescription();
+		realNames.push_back(name);
+		g_sludge->_saveNameToSlot[name] = savestate.getSaveSlot();
+	}
+
+	Common::sort(realNames.begin(), realNames.end(), stringCompareToIgnoreCase);
 
 
 	// Save file names to stacks
 	Variable newName;
 	newName.varType = SVT_NULL;
 
-	for (Common::StringArray::iterator it = sa.begin(); it != sa.end(); ++it) {
-		(*it).erase((*it).size() - len, len);
+	for (Common::StringArray::iterator it = realNames.begin(); it != realNames.end(); ++it) {
 		newName.makeTextVar((*it));
 		if (!addVarToStack(newName, first))
 			return false;

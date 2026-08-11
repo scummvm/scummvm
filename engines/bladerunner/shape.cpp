@@ -64,7 +64,7 @@ Shape::~Shape() {
 void Shape::drawFilledTriangleAux(Graphics::Surface &surface, const int &dst_x, const int &dst_y, int x1, int y1, int x2, int y2, int x3, int y3, uint32 colorRGB) const {
 	// Code used is based on the Bresenham-like algorithm as described in:
 	// https://mcejp.github.io/2020/11/06/bresenham.html
-	// http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
+	// https://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
 
 	const Vector2 triangleV1 = Vector2(x1, y1);
 	const Vector2 triangleV2 = Vector2(x2, y2); // (V2, V3) should be the flat side, so either x2 == x3 or y2 == y3
@@ -301,7 +301,7 @@ void Shape::draw(Graphics::Surface &surface, int x, int y, uint16 drawModeBitFla
 		uint16 shpColor = 0;
 		uint32 surfaceColorRGBPrev = 0;
 		uint32 newSurfaceColorRGB = 0;
-		uint8 a, r, g, b;
+		uint8 r, g, b;
 		uint8 rPrev, gPrev, bPrev;
 		uint16 rgb16bitPrev = 0;
 		uint16 rgb16bitAdd = 0;
@@ -310,9 +310,7 @@ void Shape::draw(Graphics::Surface &surface, int x, int y, uint16 drawModeBitFla
 				shpColor = READ_LE_UINT16(src_p);
 				src_p += 2;
 
-				getGameDataColor(shpColor, a, r, g, b);
-
-				if (!a) {
+				if (getGameDataColor(shpColor, r, g, b)) {
 					// Ignore the alpha in the output as it is inversed in the input
 					void *dstPtr = surface.getBasePtr(CLIP(dst_x + xi, 0, surface.w - 1), CLIP(dst_y + yi, 0, surface.h - 1));
 					if (drawModeBitFlags & Mouse::MouseDrawFlags::SPECIAL) {
@@ -345,7 +343,7 @@ void Shape::draw(Graphics::Surface &surface, int x, int y, uint16 drawModeBitFla
 								                | ((uint16)(bPrev >> 3)));
 								rgb16bitAdd = (((uint16)rgb16bitPrev >> 1) & 0xFBEF)
 								             + ((shpColor >> 1) & 0xFBEF);
-								getGameDataColor(rgb16bitAdd, a, r, g, b);
+								getGameDataColor(rgb16bitAdd, r, g, b);
 								newSurfaceColorRGB = surface.format.RGBToColor(r, g, b);
 							}
 						}

@@ -175,12 +175,8 @@ Common::String md5PropToCachePrefix(MD5Properties flags) {
 	}
 
 	switch (flags & kMD5MacMask) {
-	case kMD5MacDataFork: 
+	case kMD5MacDataFork:
 		res += 'd';
-		break;
-
-	case kMD5MacResOrDataFork:
-		res += 'm';
 		break;
 
 	case kMD5MacResFork:
@@ -242,9 +238,14 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 		report += game.preferredTarget;
 
 		// Consolidate matched files across all engines and detection entries
-		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
-			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(it->_value.md5prop).c_str(), it->_key.punycodeEncode().toString('/').c_str());
-			matchedFiles.setVal(key, it->_value);
+		for (const auto &file : game.matchedFiles) {
+			Common::Path filename = file._key;
+			// Avoid double encoding of punycoded files
+			if (!filename.punycodeIsEncoded()) {
+				filename = filename.punycodeEncode();
+			}
+			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(file._value.md5prop).c_str(), filename.toString('/').c_str());
+			matchedFiles.setVal(key, file._value);
 		}
 	}
 
@@ -255,8 +256,8 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 	report += Common::U32String("\n\n");
 
 	Common::StringArray filenames;
-	for (CachedPropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file) {
-		filenames.push_back(file->_key);
+	for (const auto &file : matchedFiles) {
+		filenames.push_back(file._key);
 	}
 	Common::sort(filenames.begin(), filenames.end());
 	for (uint i = 0; i < filenames.size(); ++i) {
@@ -275,7 +276,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 		// Skip the md5 prefix and since we could have full paths, take it into account
 		Common::Path filepath(strchr(filenames[i].c_str(), ':') + 1);
 		report += Common::String::format("  {\"%s\", 0, \"%s%s\", %lld},\n",
-			filepath.punycodeEncode().toString().c_str(),
+			filepath.toString().c_str(),
 			md5Prefix.c_str(), file.md5.c_str(), (long long)file.size);
 	}
 

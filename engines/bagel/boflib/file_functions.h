@@ -23,6 +23,9 @@
 #ifndef BAGEL_BOFLIB_FILE_FUNCTIONS_H
 #define BAGEL_BOFLIB_FILE_FUNCTIONS_H
 
+#include "common/scummsys.h"
+#include "bagel/boflib/string.h"
+
 namespace Bagel {
 
 /**
@@ -50,6 +53,8 @@ extern char *fileGetFullPath(char *pszDstBuf, const char *pszSrcBuf);
  * aliases at the start of the directory name
  */
 extern const char *formPath(const char *dir, const char *pszFile);
+
+extern void fixPathName(CBofString &s);
 
 } // namespace Bagel
 

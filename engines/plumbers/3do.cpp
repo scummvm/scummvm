@@ -483,14 +483,18 @@ void PlumbersGame3DO::postSceneBitmaps() {
 	_mouseHiLite = getMouseHiLite();
 }
 
-void PlumbersGame3DO::startGraphics() {
+Common::Error PlumbersGame3DO::startGraphics() {
 	_image = new Image::Cel3DODecoder();
 	_ctrlHelpImage = new Image::Cel3DODecoder();
 	_screenW = 320;
 	_screenH = 240;
+	// TODO: Let the backend select the pixel format
 	_targetFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	initGraphics(_screenW, _screenH, &_targetFormat);
+	if (g_system->getScreenFormat() != _targetFormat)
+		return Common::kUnsupportedColorMode;
+	return Common::kNoError;
 }
 
 void PlumbersGame3DO::blitImage() {

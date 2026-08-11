@@ -820,7 +820,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 	        || (_curMouseState.right && !_rightDrag))      // or right button hit
 	        && _activePanel != nullptr) {           // and a panel is active
 		//  Then we have a button hit event. If the button hit
-		//  is occuring outside the panel, then it should be
+		//  is occurring outside the panel, then it should be
 		//  de_selected.
 
 		if (_activePanel->_extent.ptInside(_pickPos) == false)

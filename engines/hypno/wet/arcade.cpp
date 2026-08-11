@@ -26,6 +26,8 @@
 #include "gui/message.h"
 #include "graphics/cursorman.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 void WetEngine::initSegment(ArcadeShooting *arc) {
@@ -216,6 +218,17 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 						_segmentOffset = 8;
 						_segmentRepetition = 0;
 						_segmentShootSequenceOffset = 8;
+
+						MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
+						disableCursor();
+						runIntro(video);
+						loadPalette(_currentPalette);
+						_background->decoder->pauseVideo(false);
+						drawPlayer();
+						updateScreen(*_background);
+						drawScreen();
+						// TODO: there is still a annoying delay here that shows a screen with light blue background
+
 					} else if (_arcadeMode == "Y3")
 						_skipLevel = true;
 				} else {
@@ -377,8 +390,6 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 			updateScreen(*_background);
 			drawScreen();
 			drawCursorArcade(g_system->getEventManager()->getMousePos());
-			if (!_music.empty())
-				playSound(_music, 0, _musicRate); // restore music
 		} else
 			error ("Invalid transition at %d", ttime);
 
@@ -388,6 +399,18 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 	return false;
 }
 
+
+// Fixed columns instead of the original "%-20s = ...": that padding counts
+// bytes, so a Korean label (2 bytes, 9px per glyph) drifts the '=' column.
+// Korean labels use the 9px G9A font, spaces included; values stay scifi08.
+void WetEngine::drawStatLine(const Common::String &name, const Common::String &value, int y, uint32 color) {
+	const int labelX = 60;
+	const int valueX = labelX + 21 * 7;
+	const bool korean = (_language == Common::KO_KOR);
+
+	drawString(korean ? "g9a.syf" : "scifi08.fgx", getLocalizedString(name), labelX, korean ? y - 1 : y, 0, color);
+	drawString("scifi08.fgx", value, valueX, y, 0, color);
+}
 
 void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
@@ -425,15 +448,22 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		Common::Event event;
 		while (!shouldQuit() && !skip) {
 
+			const Common::String pts = getLocalizedString("points");
+
 			drawImage(*frame, 0, 0, false);
-			drawString("scifi08.fgx", Common::String::format("Lives : %d", _lives), 36, 2, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "SHOTS FIRED", _stats.shootsFired), 60, 46, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "ENEMY TARGETS", _stats.enemyTargets), 60, 56, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS DESTROYED", _stats.targetsDestroyed), 60, 66, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS MISSED", _stats.targetsMissed), 60, 76, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "KILL RATIO", killRatio()), 60, 86, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ACCURACY", accuracyRatio()), 60, 96, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ENERGY", _health), 60, 106, 0, c);
+			if (_language == Common::KO_KOR) {
+				drawString("g9a.syf", getLocalizedString("lives"), 36, 1, 0, c);
+				drawString("scifi08.fgx", Common::String::format(": %d", _lives), 36 + 3 * 9, 2, 0, c);
+			} else {
+				drawString("scifi08.fgx", Common::String::format("%s : %d", getLocalizedString("lives").c_str(), _lives), 36, 2, 0, c);
+			}
+			drawStatLine("shotsFired", Common::String::format("= %7d", _stats.shootsFired), 46, c);
+			drawStatLine("enemyTargets", Common::String::format("= %7d", _stats.enemyTargets), 56, c);
+			drawStatLine("targetsDestroyed", Common::String::format("= %7d", _stats.targetsDestroyed), 66, c);
+			drawStatLine("targetsMissed", Common::String::format("= %7d", _stats.targetsMissed), 76, c);
+			drawStatLine("killRatio", Common::String::format("= %5d %%", killRatio()), 86, c);
+			drawStatLine("accuracy", Common::String::format("= %5d %%", accuracyRatio()), 96, c);
+			drawStatLine("health", Common::String::format("= %5d %%", _health), 106, c);
 
 			while (g_system->getEventManager()->pollEvent(event)) {
 				// Events
@@ -446,8 +476,8 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 				case Common::EVENT_LBUTTONDOWN:
 				case Common::EVENT_KEYDOWN:
 					bonusCounter = _bonus;
-					drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "BONUS", _bonus), 60, 116, 0, c);
-					drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "SCORE", _score), 60, 126, 0, c);
+					drawStatLine("bonus", Common::String::format("= %3d %s", _bonus, pts.c_str()), 116, c);
+					drawStatLine("score", Common::String::format("= %3d %s", _score, pts.c_str()), 126, c);
 					skip = true;
 					break;
 				default:
@@ -458,13 +488,13 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 			if (bonusCounter < _bonus) {
 				bonusCounter++;
 				scoreCounter++;
-				drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "BONUS", bonusCounter), 60, 116, 0, c);
-				drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "SCORE", scoreCounter), 60, 126, 0, c);
+				drawStatLine("bonus", Common::String::format("= %3d %s", bonusCounter, pts.c_str()), 116, c);
+				drawStatLine("score", Common::String::format("= %3d %s", scoreCounter, pts.c_str()), 126, c);
 			}
 
 			extraLife |= checkScoreMilestones(scoreCounter); // This increase the number of lives, if necessary
 			if (extraLife) {
-				drawString("scifi08.fgx", "EXTRA LIFE", 164, 140, 0, kHypnoColorRed);
+				drawString("scifi08.fgx", getLocalizedString("extraLife"), 164, 140, 0, kHypnoColorRed);
 			}
 
 			drawScreen();
@@ -640,6 +670,24 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		_playerFrames = decodeFrames(arc->player);
 	}
 
+	if (_variant == "EarlyDemo" && (arc->id == 31 || arc->id == 41)) {
+		int cutX = 36;
+		for (int i = 0; i < int(_playerFrames.size()); i++) {
+			Graphics::Surface *frame = _playerFrames[i];
+			Graphics::Surface *newFrame = new Graphics::Surface();
+			newFrame->create(320, 200, frame->format);
+			newFrame->fillRect(Common::Rect(0, 0, 320, 200), frame->format.ARGBToColor(0, 0, 0, 0));
+			newFrame->copyRectToSurfaceWithKey(*frame, 0, 0, Common::Rect(0, 0, 320, cutX), 0);
+			newFrame->copyRectToSurfaceWithKey(*frame, 0, 200 - (frame->h - cutX - 1), Common::Rect(0, cutX, 320, frame->h - 1), 0);
+
+			frame->free();
+			delete frame;
+			_playerFrames[i] = newFrame;
+		}
+
+	}
+
+
 	if (arc->mode == "Y4" || arc->mode == "Y5")  { // These images are flipped, for some reason
 		for (Frames::iterator it = _playerFrames.begin(); it != _playerFrames.end(); ++it) {
 			for (int i = 0 ; i < (*it)->w ; i++)
@@ -701,7 +749,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 }
 
 void WetEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_c) {
+	if (keycode == kActionCredits) {
 		_background->decoder->pauseVideo(true);
 		showCredits();
 		loadPalette(_currentPalette);
@@ -709,35 +757,31 @@ void WetEngine::pressedKey(const int keycode) {
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();
-		if (!_music.empty())
-			playSound(_music, 0, _musicRate); // restore music
-	} else if (keycode == Common::KEYCODE_s) { // Added for testing
-		if (_cheatsEnabled) {
-			_skipLevel = true;
-		}
-	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+	} else if (keycode == kActionSkipLevel) { // Added for testing
+		_skipLevel = true;
+	} else if (keycode == kActionKillPlayer) { // Added for testing
 		_health = 0;
-	} else if (keycode == Common::KEYCODE_ESCAPE) {
+	} else if (keycode == kActionPause) {
 		openMainMenuDialog();
-	} else if (keycode == Common::KEYCODE_LEFT) {
+	} else if (keycode == kActionLeft) {
 		if (_arcadeMode == "YT" && _c33PlayerPosition.x > 0) {
 			_c33UseMouse = false;
 			if (_c33PlayerDirection.size() < 3)
 				_c33PlayerDirection.push_back(kPlayerLeft);
 		}
-	} else if (keycode == Common::KEYCODE_DOWN) {
+	} else if (keycode == kActionDown) {
 		if (_arcadeMode == "YT" && _c33PlayerPosition.y < 130) { // Viewport value minus 30
 			_c33UseMouse = false;
 			if (_c33PlayerDirection.size() < 3)
 				_c33PlayerDirection.push_back(kPlayerBottom);
 		}
-	} else if (keycode == Common::KEYCODE_RIGHT) {
+	} else if (keycode == kActionRight) {
 		if (_arcadeMode == "YT" && _c33PlayerPosition.x < _screenW) {
 			_c33UseMouse = false;
 			if (_c33PlayerDirection.size() < 3)
 				_c33PlayerDirection.push_back(kPlayerRight);
 		}
-	} else if (keycode == Common::KEYCODE_UP) {
+	} else if (keycode == kActionUp) {
 		if (_arcadeMode == "YT" && _c33PlayerPosition.y > 0) {
 			_c33UseMouse = false;
 			if (_c33PlayerDirection.size() < 3)
@@ -747,9 +791,12 @@ void WetEngine::pressedKey(const int keycode) {
 }
 
 Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
-	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	Common::Point mousePos = HypnoEngine::getPlayerPosition(false);
 	if (_arcadeMode == "YT") {
 		if (needsUpdate) {
+			if (isGamepadAimActive() && _c33PlayerDirection.empty())
+				_c33UseMouse = true;
+
 			if (!_c33UseMouse) {
 				disableCursor();
 				if (_c33PlayerDirection.size() == 0)
@@ -780,7 +827,7 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 					diff.x = (diff.x / abs(diff.x)) * 10;
 
 				if (abs(diff.y) >= 10)
-					diff.y = (diff.x / abs(diff.x)) * 10;
+					diff.y = (diff.y / abs(diff.y)) * 10;
 
 				_c33PlayerPosition = _c33PlayerPosition + diff;
 
@@ -794,6 +841,8 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 					drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
 			}
 		}
+		_c33PlayerPosition.x = CLIP<int>(_c33PlayerPosition.x, 0, _screenW - 1);
+		_c33PlayerPosition.y = CLIP<int>(_c33PlayerPosition.y, 0, _screenH - 1);
 		uint32 c = _compositeSurface->getPixel(_c33PlayerPosition.x, _c33PlayerPosition.y);
 		if (c >= 225 && c <= 231) {
 			if (!_infiniteHealthCheat)
@@ -802,7 +851,7 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 		}
 		return _c33PlayerPosition;
 	}
-	return mousePos;
+	return HypnoEngine::getPlayerPosition(needsUpdate);
 }
 
 void WetEngine::drawCursorArcade(const Common::Point &mousePos) {
@@ -875,8 +924,6 @@ void WetEngine::missNoTarget(ArcadeShooting *arc) {
 			_background->decoder->pauseVideo(false);
 			updateScreen(*_background);
 			drawScreen();
-			if (!_music.empty())
-				playSound(_music, 0, _musicRate); // restore music
 			break;
 		} else if (it->name == "SP_BOSS2" && !arc->missBoss2Video.empty()) {
 			_background->decoder->pauseVideo(true);
@@ -888,8 +935,6 @@ void WetEngine::missNoTarget(ArcadeShooting *arc) {
 			_background->decoder->pauseVideo(false);
 			updateScreen(*_background);
 			drawScreen();
-			if (!_music.empty())
-				playSound(_music, 0, _musicRate); // restore music
 			break;
 		}
 	}
@@ -1053,7 +1098,7 @@ void WetEngine::drawPlayer() {
 
 	int offset = 0;
 	// Ugly, but seems to be necessary
-	if (_levelId == 31)
+	if (_levelId == 31 && _variant != "EarlyDemo")
 		offset = 2;
 	else if (_levelId == 52)
 		offset = 2;
@@ -1090,6 +1135,11 @@ void WetEngine::drawHealth() {
 
 			scoreFormat = _scoreString + " %04d";
 			moFormat = _objString + "   %d/%d";
+		}
+
+		if (_language == Common::KO_KOR) {
+			sp.y -= 1;
+			op.y -= 1;
 		}
 
 		drawString("block05.fgx", Common::String::format(scoreFormat.c_str(), s), sp.x, sp.y, 72, c);
@@ -1145,6 +1195,28 @@ byte *WetEngine::getTargetColor(Common::String name, int levelId) {
 	if (entry->targetColor < 0)
 		error ("No target color specified for level %d", levelId);
 	return getPalette(entry->targetColor);
+}
+
+bool WetEngine::checkRButtonUp() {
+	return _rButtonUp;
+}
+
+void WetEngine::setRButtonUp(const bool val) {
+	_rButtonUp = val;
+}
+
+void WetEngine::disableGameKeymaps() {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("pause")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(false);
+}
+
+void WetEngine::enableGameKeymaps() {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("pause")->setEnabled(true);
+	keymapper->getKeymap("direction")->setEnabled(true);
 }
 
 } // End of namespace Hypno

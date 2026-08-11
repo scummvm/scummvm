@@ -29,7 +29,6 @@
 #define WINTERMUTE_PLATFORMSDL_H
 
 #include "engines/wintermute/dctypes.h"
-#include "engines/wintermute/math/rect32.h"
 #include "common/events.h"
 
 namespace Wintermute {
@@ -45,21 +44,26 @@ public:
 	static AnsiString getPlatformName();
 
 	// Win32 API bindings
-	static bool getCursorPos(Point32 *lpPoint);
+	static uint32 getTime();
+	static bool getCursorPos(Common::Point32 *lpPoint);
 	static bool setCursorPos(int x, int y);
 
-	static bool ptInRect(Rect32 *lprc, Point32 p);
-	static bool setRect(Rect32 *lprc, int left, int top, int right, int bottom);
-	static bool intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2);
-	static bool unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2);
-	static bool copyRect(Rect32 *lprcDst, Rect32 *lprcSrc);
+	static bool setRectEmpty(Common::Rect32 *lprc);
+	static bool isRectEmpty(const Common::Rect32 *lprc);
+	static bool ptInRect(Common::Rect32 *lprc, Common::Point32 p);
+	static bool setRect(Common::Rect32 *lprc, int32 left, int32 top, int32 right, int32 bottom);
+	static bool intersectRect(Common::Rect32 *lprcDst, const Common::Rect32 *lprcSrc1, const Common::Rect32 *lprcSrc2);
+	static bool unionRect(Common::Rect32 *lprcDst, const Common::Rect32 *lprcSrc1, const Common::Rect32 *lprcSrc2);
+	static bool copyRect(Common::Rect32 *lprcDst, const Common::Rect32 *lprcSrc);
+	static bool equalRect(const Common::Rect32 *lprc1, const Common::Rect32 *lprc2);
+	static bool offsetRect(Common::Rect32 *lprc, int32 x, int32 y);
 
 	// string functions
 	static char *wintermute_strlwr(char *string);
 
 private:
 	// Set by initialize on game-startup, the object referred to is also deleted by deinit in WintermuteEngine
-	static BaseGame *_gameRef;
+	static BaseGame *_game;
 	static WintermuteEngine *_engineRef;
 };
 

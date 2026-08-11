@@ -39,7 +39,7 @@ class Image;
 
 struct Button {
 	uint16 _x, _y, _buttonId;
-	Common::KeyCode _keyEquiv; // the key which activates this button
+	Common::CustomEventType _actionEquiv; // the action which activates this button
 	bool _isEnabled;
 	Image *_image, *_altImage;
 };
@@ -57,7 +57,7 @@ public:
 	Interface(LabEngine *vm);
 
 	void attachButtonList(ButtonList *buttonList);
-	Button *createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage);
+	Button *createButton(uint16 x, uint16 y, uint16 id, Common::CustomEventType action, Image *image, Image *altImage);
 	void toggleButton(Button *button, uint16 penColor, bool enable);
 
 	/**
@@ -77,7 +77,7 @@ public:
 	* Checks whether or not the coords fall within one of the buttons in a list
 	* of buttons.
 	*/
-	Button *checkNumButtonHit(Common::KeyCode key);
+	Button *checkNumButtonHit(Common::CustomEventType action);
 
 	void handlePressedButton();
 

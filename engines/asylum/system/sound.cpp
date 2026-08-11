@@ -266,14 +266,14 @@ void Sound::stop(ResourceId resourceId) {
 }
 
 void Sound::stopAll(ResourceId resourceId) {
-	for (Common::Array<SoundQueueItem>::iterator it = _soundQueue.begin(); it != _soundQueue.end(); it++)
-		if (it->resourceId == resourceId)
-			_mixer->stopHandle(it->handle);
+	for (auto &sound : _soundQueue)
+		if (sound.resourceId == resourceId)
+			_mixer->stopHandle(sound.handle);
 }
 
 void Sound::stopAll() {
-	for (Common::Array<SoundQueueItem>::iterator it = _soundQueue.begin(); it != _soundQueue.end(); it++)
-		_mixer->stopHandle(it->handle);
+	for (auto &sound : _soundQueue)
+		_mixer->stopHandle(sound.handle);
 }
 
 void Sound::stopMusic() {

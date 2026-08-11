@@ -28,7 +28,9 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
+#include "gob/global.h"
 #include "gob/video.h"
+#include "gob/draw.h"
 
 namespace Gob {
 
@@ -58,7 +60,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		return 0;
 
 	if (sprBuf[2] == 2) {
-		Surface sourceDesc(srcWidth, srcHeight, 1, sprBuf + 3);
+		Surface sourceDesc(srcWidth, srcHeight, 1, sprBuf + 3, _vm->_global->_pPaletteDesc->highColorMap);
 		destDesc.blit(sourceDesc, 0, 0, srcWidth - 1, srcHeight - 1, x, y, (transp == 0) ? -1 : 0);
 		return 1;
 	} else if (sprBuf[2] == 1) {
@@ -97,8 +99,12 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			if ((cmdVar & 1) != 0) {
 				temp = *srcPtr++;
 
-				if ((temp != 0) || (transp == 0))
-					destPtr.set(temp);
+				if ((temp != 0) || (transp == 0)) {
+					if (destDesc.getBPP() == 1)
+						destPtr.set(temp);
+					else
+						destPtr.set(_vm->_global->_pPaletteDesc->highColorMap[temp]);
+				}
 
 				++destPtr;
 				curWidth++;
@@ -131,8 +137,12 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 				for (counter2 = 0; counter2 < strLen; counter2++) {
 					temp = memBuffer[(offset + counter2) % 4096];
 
-					if ((temp != 0) || (transp == 0))
-						destPtr.set(temp);
+					if ((temp != 0) || (transp == 0)) {
+						if (destDesc.getBPP() == 1)
+							destPtr.set(temp);
+						else
+							destPtr.set(_vm->_global->_pPaletteDesc->highColorMap[temp]);
+					}
 
 					++destPtr;
 					curWidth++;

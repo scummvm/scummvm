@@ -81,6 +81,7 @@ class Font;
 class Background {
 public:
 	Background(Font* font);
+	~Background();
 
 	void InitBackground();
 
@@ -92,7 +93,6 @@ public:
 	void DropBackground();
 
 	void ResetBackground() {
-		_pCurBgnd->fieldArray.clear();
 		delete _pCurBgnd;
 		_pCurBgnd = nullptr;
 	}

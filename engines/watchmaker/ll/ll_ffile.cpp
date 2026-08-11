@@ -77,7 +77,7 @@ Common::SharedPtr<Common::SeekableReadStream> FastFile::resolve(const char *file
 	if (index == -1) {
 		return nullptr;
 	}
-	auto entry = _files[index];
+	const auto &entry = _files[index];
 	int size = 0;
 	if (index == _numFiles - 1) {
 		size = _totalSize - entry.offset;

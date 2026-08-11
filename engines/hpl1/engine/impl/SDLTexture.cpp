@@ -33,38 +33,10 @@
 #include "hpl1/debug.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include "hpl1/opengl.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 namespace hpl {
-
-static void getSettings(Bitmap2D *apSrc, int &alChannels, GLint &internalFormat, GLenum &format) {
-	alChannels = apSrc->getNumChannels();
-	tString sType = cString::ToLowerCase(apSrc->getType());
-	const Common::String bmpFormat = apSrc->format().toString();
-
-	if (alChannels == 4) {
-		internalFormat = GL_RGBA;
-		if (bmpFormat.contains("BGRA")) {
-			format = GL_BGRA;
-		} else {
-			format = GL_RGBA;
-		}
-	}
-	if (alChannels == 3) {
-		internalFormat = GL_RGB;
-		if (bmpFormat.contains("BGR")) {
-			format = GL_BGR;
-		} else {
-			format = GL_RGB;
-		}
-	}
-	if (alChannels == 1) {
-		format = GL_RED;
-		internalFormat = GL_RED;
-	}
-}
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
@@ -168,10 +140,9 @@ bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps) {
 
 		GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
 
-		int lChannels;
-		GLenum format;
-		GLint internalFormat;
-		getSettings(pSrc, lChannels, internalFormat, format);
+		int lChannels = 4;
+		GLenum format = GL_RGBA;
+		GLint internalFormat = GL_RGBA;
 
 		glTexImage2D(target, 0, internalFormat, pSrc->getWidth(), pSrc->getHeight(),
 					 0, format, GL_UNSIGNED_BYTE, pSrc->getRawData());
@@ -264,17 +235,6 @@ bool cSDLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, co
 	PostCreation(GLTarget);
 
 	return true;
-}
-
-//-----------------------------------------------------------------------
-
-void cSDLTexture::SetPixels2D(int alLevel, const cVector2l &avOffset, const cVector2l &avSize,
-							  eColorDataFormat aDataFormat, void *apPixelData) {
-	if (mTarget != eTextureTarget_2D && mTarget != eTextureTarget_Rect)
-		return;
-
-	GL_CHECK(glTexSubImage2D(TextureTargetToGL(mTarget), alLevel, avOffset.x, avOffset.y, avSize.x, avSize.y,
-							 ColorFormatToGL(aDataFormat), GL_UNSIGNED_BYTE, apPixelData));
 }
 
 //-----------------------------------------------------------------------
@@ -515,10 +475,9 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 	if ((!cMath::IsPow2(_height) || !cMath::IsPow2(_width)) && mTarget != eTextureTarget_Rect)
 		Hpl1::logWarning(Hpl1::kDebugTextures, "Texture '%s' does not have a pow2 size", msName.c_str());
 
-	int lChannels = 0;
-	GLint internalFormat = 0;
-	GLenum format = 0;
-	getSettings(pBitmapSrc, lChannels, internalFormat, format);
+	int lChannels = 4;
+	GLint internalFormat = GL_RGBA;
+	GLenum format = GL_RGBA;
 
 	_bpp = lChannels * 8;
 
@@ -654,4 +613,4 @@ GLenum cSDLTexture::GetGLWrap(eTextureWrap aMode) {
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL

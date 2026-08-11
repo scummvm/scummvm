@@ -22,13 +22,12 @@
 #ifndef AGS_ENGINE_SCRIPT_CC_SYSTEM_IMPORTS_H
 #define AGS_ENGINE_SCRIPT_CC_SYSTEM_IMPORTS_H
 
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 #include "ags/engine/script/cc_instance.h"    // ccInstance
 
 namespace AGS3 {
 
-struct ICCDynamicObject;
-struct ICCStaticObject;
+struct IScriptObject;
 
 using AGS::Shared::String;
 

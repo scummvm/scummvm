@@ -69,6 +69,7 @@ bool tolua_toboolean(lua_State *L, int narg, bool def);
 
 void tolua_pushboolean(lua_State *L, bool val);
 void tolua_pushnumber(lua_State *L, double val);
+void tolua_pushstring(lua_State *L, const char *val);
 
 } // end namespace ToLua
 

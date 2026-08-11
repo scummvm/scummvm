@@ -22,7 +22,8 @@
 #ifndef MADE_DETECTION_TABLES_H
 #define MADE_DETECTION_TABLES_H
 
-#include "engines/advancedDetector.h"
+#include "made/detection.h"
+
 #include "common/translation.h"
 
 namespace Made {
@@ -524,10 +525,12 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// The Manhole Sega TeraDrive
+		// The Manhole DOS/V
+		// Platform: IBM PS-55, Sega TeraDrive or DOS/V-compatibles
+		// MADE v2.00a JAPAN PC - Copyright (c) 1990, MEDIAGENIC
 		{
 			"manhole",
-			"TeraDrive",
+			"DOS-V",
 			AD_ENTRY1s("manhole.dat", "14522ee9139ca0823ac0cc15805e1fcc", 112303),
 			Common::JA_JPN,
 			Common::kPlatformDOS,
@@ -613,14 +616,15 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Rodney's Funscreen
+		// MS-DOS, Win16 and Tandy VIS all share the same resource but a different player.
 		{
 			"rodney",
 			"",
-			AD_ENTRY1("rodneys.dat", "a79887dbaa47689facd7c6f09258ba5a"),
+			AD_ENTRY1s("rodneys.dat", "a79887dbaa47689facd7c6f09258ba5a", 92990),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_WINDOWS_CURSORS)
 		},
 		GID_RODNEY,
 		0,

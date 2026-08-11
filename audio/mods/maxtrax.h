@@ -50,7 +50,7 @@ public:
 	void setSignalCallback(void (*callback) (int));
 
 protected:
-	void interrupt();
+	void interrupt() override;
 
 private:
 	enum { kNumPatches = 64, kNumVoices = 4, kNumChannels = 16, kNumExtraChannels = 1 };
@@ -209,6 +209,7 @@ private:
 	uint16 calcNote(const VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void killVoice(byte num);
+	void freeResources(bool loadScores, bool loadSamples);
 
 	static void outPutEvent(const Event &ev, int num = -1);
 	static void outPutScore(const Score &sc, int num = -1);

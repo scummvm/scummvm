@@ -22,6 +22,8 @@
 #include "m4/burger/rooms/section5/room506.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -118,6 +120,9 @@ int32 Room506::_state2;
 Room506::Room506() : Section5Room() {
 	_state1 = 0;
 	_state2 = 0;
+
+	for (int i = 0; i < 5; ++i)
+		_triggers[i] = -1;
 }
 
 void Room506::init() {

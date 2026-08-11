@@ -22,8 +22,8 @@
 #ifndef ULTIMA8_GAMES_GAMEDATA_H
 #define ULTIMA8_GAMES_GAMEDATA_H
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/array.h"
+#include "common/str.h"
 #include "ultima/ultima8/gfx/frame_id.h"
 
 namespace Ultima {
@@ -104,7 +104,7 @@ public:
 
 	const WeaselDat *getWeaselDat(uint16 level) const;
 
-	Std::string translate(const Std::string &text);
+	Common::String translate(const Common::String &text);
 	FrameID translate(FrameID frame);
 
 	enum ShapeFlexId {
@@ -120,18 +120,18 @@ private:
 	RawArchive *_fixed;
 	MainShapeArchive *_mainShapes;
 	Usecode *_mainUsecode;
-	Std::vector<MapGlob *> _globs;
+	Common::Array<MapGlob *> _globs;
 	FontShapeArchive *_fonts;
 	GumpShapeArchive *_gumps;
 	Shape *_mouse;
 	MusicFlex *_music;
 	WpnOvlayDat *_weaponOverlay;
-	Std::vector<NPCDat *> _npcTable;
-	Std::vector<CombatDat *> _combatData;
-	Std::vector<WeaselDat *> _weaselData;
+	Common::Array<NPCDat *> _npcTable;
+	Common::Array<CombatDat *> _combatData;
+	Common::Array<WeaselDat *> _weaselData;
 
 	SoundFlex *_soundFlex;
-	Std::vector<SpeechFlex **> _speech;
+	Common::Array<SpeechFlex **> _speech;
 	GameInfo *_gameInfo;
 
 	static GameData *_gameData;

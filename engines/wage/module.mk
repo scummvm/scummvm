@@ -16,6 +16,11 @@ MODULE_OBJS := \
 	wage.o \
 	world.o
 
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugtools.o
+endif
+
 MODULE_DIRS += \
 	engines/wage
 

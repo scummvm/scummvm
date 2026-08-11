@@ -43,10 +43,23 @@ struct keyCodeMapping {
 
 class BaseKeyboardState : public BaseScriptable {
 public:
+	uint32 _currentKeyData;
+	uint32 _currentCharCode;
+	bool _currentPrintable;
+
+	bool _currentShift;
+	bool _currentAlt;
+	bool _currentControl;
 	DECLARE_PERSISTENT(BaseKeyboardState, BaseScriptable)
 	BaseKeyboardState(BaseGame *inGame);
 	~BaseKeyboardState() override;
 	bool readKey(Common::Event *event);
+
+	// scripting interface
+	ScValue *scGetProperty(const char *name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 	void handleKeyPress(Common::Event *event);
 	void handleKeyRelease(Common::Event *event);
@@ -55,22 +68,8 @@ public:
 	static bool isAltDown();
 	bool isCurrentPrintable() const;
 
-	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
-	bool scSetProperty(const char *name, ScValue *value) override;
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	const char *scToString() override;
-
 private:
 	void init();
-
-	bool _currentPrintable;
-	uint32 _currentKeyData;
-	uint32 _currentCharCode;
-
-	bool _currentShift;
-	bool _currentAlt;
-	bool _currentControl;
 
 	uint8 *_keyStates;
 

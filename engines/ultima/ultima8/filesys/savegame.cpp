@@ -80,8 +80,8 @@ bool FileEntryArchive::hasFile(const Common::Path &path) const {
 
 int FileEntryArchive::listMembers(Common::ArchiveMemberList &list) const {
 	list.clear();
-	for (IndexMap::const_iterator it = _index.begin(); it != _index.end(); ++it)
-		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(it->_key, *this)));
+	for (const auto &member : _index)
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(member._key, *this)));
 
 	return list.size();
 }
@@ -207,7 +207,7 @@ bool SavegameWriter::finish() {
 	return true;
 }
 
-bool SavegameWriter::writeFile(const Std::string &name, const uint8 *data, uint32 size) {
+bool SavegameWriter::writeFile(const Common::String &name, const uint8 *data, uint32 size) {
 	assert(name.size() <= 11);
 	_index.push_back(FileEntry());
 
@@ -219,7 +219,7 @@ bool SavegameWriter::writeFile(const Std::string &name, const uint8 *data, uint3
 	return true;
 }
 
-bool SavegameWriter::writeFile(const Std::string &name, Common::MemoryWriteStreamDynamic *buf) {
+bool SavegameWriter::writeFile(const Common::String &name, Common::MemoryWriteStreamDynamic *buf) {
 	return writeFile(name, buf->getData(), buf->pos());
 }
 

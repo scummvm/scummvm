@@ -26,7 +26,7 @@
 
 #ifdef USE_ENET
 #include "scumm/he/net/net_main.h"
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 #include "scumm/he/net/net_lobby.h"
 #endif
 #include "scumm/he/net/net_defines.h"
@@ -91,7 +91,7 @@ int LogicHEfootball::versionID() {
 
 int LogicHEfootball::startOfFrame() {
 #ifdef USE_ENET
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	// Football 2002 does not have lobby support, so
 	// _lobby is not defined.
 	if (_vm->_lobby)
@@ -104,7 +104,7 @@ int LogicHEfootball::startOfFrame() {
 
 
 int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	if (op > 2120 && op < 3003 && op != OP_NET_CHECK_INTERNET_STATUS &&
 		_vm->_lobby)
 		return _vm->_lobby->dispatch(op, numArgs, args);
@@ -166,7 +166,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 	case OP_NET_QUERY_SESSIONS:
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		if (_vm->_lobby->_sessionId) {
 			_vm->_net->querySessions();
 			// Only proceed if we've found the session
@@ -177,7 +177,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 	case OP_NET_JOIN_SESSION:
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		if (_vm->_lobby->_sessionId) {
 			res = _vm->_net->joinSessionById(_vm->_lobby->_sessionId);
 			if (res) {
@@ -211,7 +211,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 #endif // USE_ENET
 
 	case OP_NET_CHECK_INTERNET_STATUS:
-#if defined(USE_ENET) && defined(USE_LIBCURL)
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
 		// We can only use the lobby system if both
 		// libcurl (for lobby communication) and
 		// ENet (for gameplay communication) is enabled.
@@ -445,7 +445,9 @@ private:
 	int32 _maxX;
 	int32 _minX;
 
+#ifdef USE_ENET
 	int _requestedSessionIndex = -2;
+#endif
 };
 
 int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
@@ -623,7 +625,7 @@ int LogicHEfootball2002::getPlaybookFiles(int32 *args) {
 	// Get the pattern and then skip over the directory prefix ("*\" or "*:")
 	// Also prepend the target name
 	Common::String targetName = _vm->getTargetName();
-	Common::String basePattern = ((const char *)_vm->getStringAddress(args[0] & ~0x33539000) + 2);
+	Common::String basePattern = ((const char *)_vm->getStringAddress(args[0] & ~MAGIC_ARRAY_NUMBER) + 2);
 	Common::String pattern = targetName + '-' + basePattern;
 
 	// Prepare a buffer to hold the file names

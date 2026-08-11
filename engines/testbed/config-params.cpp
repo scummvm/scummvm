@@ -46,15 +46,22 @@ void ConfigParams::initLogging(const Common::Path &dirname, const char *filename
 	setLogDirectory(dirname);
 	setLogFilename(filename);
 	if (enable) {
-		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream();
+		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream(false);
 	} else {
 		_ws = 0;
 	}
 }
 
 void ConfigParams::initLogging(bool enable) {
-	// Default Log Directory is game-data directory and filename is 'testbed.log'.
-	initLogging(ConfMan.getPath("path"), "testbed.log", enable);
+	Common::Path logPath = ConfMan.getPath("path");
+	Common::FSNode logDir(logPath);
+	if (logDir.isWritable()) {
+		// Default Log Directory is game-data directory and filename is 'testbed.log'.
+		initLogging(ConfMan.getPath("path"), "testbed.log", enable);
+	} else {
+		// redirect to savepath if game-data directory is not writable.
+		initLogging(ConfMan.getPath("savepath"), "testbed.log", enable);
+	}
 }
 
 bool ConfigParams::isRerunRequired() {

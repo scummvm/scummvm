@@ -85,6 +85,8 @@ enum InventoryConstants {
   kStatusChangeTimeout = 500
 };
 
+static const int kCreditsMapID = 46;
+
 class GameObject {
 public:
 	int _absNum;
@@ -300,7 +302,7 @@ public:
 	void inventoryDraw();
 	void inventoryDone();
 	void inventoryReload();
-	void inventorySwitch(int keycode);
+	void inventorySwitch(int action);
 
 	void dialogueMenu(int dialogueID);
 	int dialogueDraw();

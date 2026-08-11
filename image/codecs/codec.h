@@ -25,6 +25,8 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 
+#include "image/codec-options.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -89,7 +91,7 @@ public:
 	 * Select the preferred format to use, for codecs where this is faster than converting
 	 * the image afterwards. Returns true if supported, and false otherwise.
 	 */
-	virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return false; }
+	virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return format == getPixelFormat(); }
 
 	/**
 	 * Can this codec's frames contain a palette?
@@ -117,9 +119,14 @@ public:
 	virtual void setDither(DitherType type, const byte *palette) {}
 
 	/**
-	 * Create a dither table, as used by QuickTime codecs.
+	 * Set the decoding accuracy of the codec, if supported
 	 */
-	static byte *createQuickTimeDitherTable(const byte *palette, uint colorCount);
+	virtual void setCodecAccuracy(CodecAccuracy accuracy) {}
+
+	/**
+	 * Get the preferred default pixel format for use with YUV codecs
+	 */
+	static Graphics::PixelFormat getDefaultYUVFormat();
 };
 
 /**

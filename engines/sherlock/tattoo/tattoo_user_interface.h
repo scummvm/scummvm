@@ -64,8 +64,8 @@ private:
 	WidgetQuit _quitWidget;
 	WidgetList _fixedWidgets;
 	WidgetList _widgets;
-	byte _lookupTable[PALETTE_COUNT];
-	byte _lookupTable1[PALETTE_COUNT];
+	byte _lookupTable[Graphics::PALETTE_COUNT];
+	byte _lookupTable1[Graphics::PALETTE_COUNT];
 private:
 	/**
 	 * Handle any input when we're in standard mode (with no windows open)
@@ -100,6 +100,7 @@ public:
 	bool _personFound;
 	int _activeObj;
 	Common::KeyState _keyState;
+	Common::CustomEventType _action;
 	Common::Point _lookPos;
 	ScrollHighlight _scrollHighlight;
 	Common::SeekableReadStream *_mask, *_mask1;
@@ -177,7 +178,7 @@ public:
 	/**
 	 * Makes a greyscale translation table for each palette entry in the table
 	 */
-	void setupBGArea(const byte cMap[PALETTE_SIZE]);
+	void setupBGArea(const byte cMap[Graphics::PALETTE_SIZE]);
 
 	/**
 	 * Erase any background as needed before drawing frame

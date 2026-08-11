@@ -40,6 +40,7 @@
 
 #include "gob/gob.h"
 #include "gob/global.h"
+#include "gob/hotspots.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/game.h"
@@ -140,6 +141,10 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
 			muteMusic ? 0 : ConfMan.getInt("music_volume"));
 
 	_copyProtection = ConfMan.getBool("copy_protection");
+
+#ifdef USE_TTS
+	_weenVoiceNotepad = true;
+#endif
 
 	_console = new GobConsole(this);
 	setDebugger(_console);
@@ -243,6 +248,19 @@ bool GobEngine::isDemo() const {
 	return (isSCNDemo() || isBATDemo());
 }
 
+const char *GobEngine::getGameVersion() const {
+	// Making sure that we return a set of predetermined versions
+	const Common::String extra = _extra;
+	if (extra.hasSuffix("1.01"))
+		return "1.01";
+	else if (extra.hasSuffix("1.02"))
+		return "1.02";
+	else if (extra.hasSuffix("1.07"))
+		return "1.07";
+	else
+		return "1.00";
+}
+
 bool GobEngine::hasResourceSizeWorkaround() const {
 	return _resourceSizeWorkaround;
 }
@@ -255,20 +273,15 @@ const Graphics::PixelFormat &GobEngine::getPixelFormat() const {
 	return _pixelFormat;
 }
 
-void GobEngine::setTrueColor(bool trueColor) {
+void GobEngine::setTrueColor(bool trueColor, bool convertAllSurfaces, Graphics::PixelFormat *trueColorFormat) {
 	if (isTrueColor() == trueColor)
 		return;
 
 	_features = (_features & ~kFeaturesTrueColor) | (trueColor ? kFeaturesTrueColor : 0);
 
-	_video->setSize();
+	_video->setSize(trueColorFormat);
 
 	_pixelFormat = g_system->getScreenFormat();
-
-	Common::Array<SurfacePtr>::iterator surf;
-	for (surf = _draw->_spritesArray.begin(); surf != _draw->_spritesArray.end(); ++surf)
-		if (*surf)
-			(*surf)->setBPP(_pixelFormat.bytesPerPixel);
 
 	if (_draw->_backSurface)
 		_draw->_backSurface->setBPP(_pixelFormat.bytesPerPixel);
@@ -280,7 +293,13 @@ void GobEngine::setTrueColor(bool trueColor) {
 		_draw->_cursorSpritesBack->setBPP(_pixelFormat.bytesPerPixel);
 	if (_draw->_scummvmCursor)
 		_draw->_scummvmCursor->setBPP(_pixelFormat.bytesPerPixel);
-	SurfacePtr _scummvmCursor;
+
+	if (convertAllSurfaces) {
+		Common::Array<SurfacePtr>::iterator surf;
+		for (surf = _draw->_spritesArray.begin(); surf != _draw->_spritesArray.end(); ++surf)
+			if (*surf)
+				(*surf)->setBPP(_pixelFormat.bytesPerPixel);
+	}
 }
 
 Common::Error GobEngine::run() {
@@ -370,6 +389,35 @@ Common::Error GobEngine::run() {
 	}
 	_global->_languageWanted = _global->_language;
 
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+	}
+
+	switch (_language) {
+	case Common::HU_HUN:
+		_ttsEncoding = Common::CodePage::kWindows1250;
+		break;
+	case Common::KO_KOR:
+		_ttsEncoding = Common::CodePage::kWindows949;
+		break;
+	case Common::HE_ISR:
+		_ttsEncoding = Common::CodePage::kDos862;
+		break;
+	case Common::JA_JPN:
+		_ttsEncoding = Common::CodePage::kWindows932;
+		break;
+	case Common::RU_RUS:
+		_ttsEncoding = Common::CodePage::kWindows1251;
+		break;
+	default:
+		_ttsEncoding = Common::CodePage::kDos850;
+		break;
+	}
+#endif
+
 	_init->initGame();
 
 	return Common::kNoError;
@@ -413,10 +461,33 @@ void GobEngine::pauseGame() {
 	pauseEngineIntern(false);
 }
 
+#ifdef USE_TTS
+
+void GobEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+	if (text.empty()) {
+		return;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(text, action, _ttsEncoding);
+	}
+}
+
+void GobEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+		_game->_hotspots->clearPreviousSaid();
+	}
+}
+
+#endif
+
 Common::Error GobEngine::initGameParts() {
 	_resourceSizeWorkaround = false;
 
-	// just detect some devices some of which will be always there if the music is not disabled
+	// Just detect some devices some of which will be always there if the music is not disabled
 	_noMusic = MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB)) == MT_NULL ? true : false;
 
 	_endiannessMethod = kEndiannessMethodSystem;
@@ -574,17 +645,6 @@ Common::Error GobEngine::initGameParts() {
 		break;
 
 	case kGameTypeDynasty:
-		_init     = new Init_v3(this);
-		_video    = new Video_v2(this);
-		_inter    = new Inter_v5(this);
-		_mult     = new Mult_v2(this);
-		_draw     = new Draw_v2(this);
-		_map      = new Map_v2(this);
-		_goblin   = new Goblin_v4(this);
-		_scenery  = new Scenery_v2(this);
-		_saveLoad = new SaveLoad(this);
-		break;
-
 	case kGameTypeDynastyWood:
 		_init     = new Init_v3(this);
 		_video    = new Video_v2(this);

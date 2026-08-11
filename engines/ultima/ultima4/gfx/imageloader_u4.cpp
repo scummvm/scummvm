@@ -27,6 +27,7 @@
 
 #include "common/file.h"
 #include "graphics/surface.h"
+#include "graphics/palette.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -62,14 +63,14 @@ bool U4RawImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	U4PaletteLoader paletteLoader;
 	if (_bpp == 8) {
-		_palette = paletteLoader.loadVgaPalette();
-		_paletteColorCount = 256;
+		_palette.resize(256, false);
+		_palette.set(paletteLoader.loadVgaPalette(), 0, 256);
 	} else if (_bpp == 4) {
-		_palette = paletteLoader.loadEgaPalette();
-		_paletteColorCount = 16;
+		_palette.resize(16, false);
+		_palette.set(paletteLoader.loadEgaPalette(), 0, 16);
 	} else if (_bpp == 1) {
-		_palette = paletteLoader.loadBWPalette();
-		_paletteColorCount = 2;
+		_palette.resize(2, false);
+		_palette.set(paletteLoader.loadBWPalette(), 0, 2);
 	}
 
 	setFromRawData(raw);
@@ -109,14 +110,14 @@ bool U4RleImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	U4PaletteLoader paletteLoader;
 	if (_bpp == 8) {
-		_palette = paletteLoader.loadVgaPalette();
-		_paletteColorCount = 256;
+		_palette.resize(256, false);
+		_palette.set(paletteLoader.loadVgaPalette(), 0, 256);
 	} else if (_bpp == 4) {
-		_palette = paletteLoader.loadEgaPalette();
-		_paletteColorCount = 16;
+		_palette.resize(16, false);
+		_palette.set(paletteLoader.loadEgaPalette(), 0, 16);
 	} else if (_bpp == 1) {
-		_palette = paletteLoader.loadBWPalette();
-		_paletteColorCount = 2;
+		_palette.resize(2, false);
+		_palette.set(paletteLoader.loadBWPalette(), 0, 2);
 	}
 
 	setFromRawData(raw);
@@ -156,14 +157,14 @@ bool U4LzwImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	U4PaletteLoader paletteLoader;
 	if (_bpp == 8) {
-		_palette = paletteLoader.loadVgaPalette();
-		_paletteColorCount = 256;
+		_palette.resize(256, false);
+		_palette.set(paletteLoader.loadVgaPalette(), 0, 256);
 	} else if (_bpp == 4) {
-		_palette = paletteLoader.loadEgaPalette();
-		_paletteColorCount = 16;
+		_palette.resize(16, false);
+		_palette.set(paletteLoader.loadEgaPalette(), 0, 16);
 	} else if (_bpp == 1) {
-		_palette = paletteLoader.loadBWPalette();
-		_paletteColorCount = 2;
+		_palette.resize(2, false);
+		_palette.set(paletteLoader.loadBWPalette(), 0, 2);
 	}
 
 	setFromRawData(raw);
@@ -191,15 +192,15 @@ const byte *U4PaletteLoader::loadEgaPalette() {
 
 		_egaPalette = new byte[16 * 3];
 
-		Std::vector<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
-		for (Std::vector<ConfigElement>::iterator i = paletteConf.begin(); i != paletteConf.end(); i++) {
+		Common::Array<ConfigElement> paletteConf = config->getElement("egaPalette").getChildren();
+		for (const auto &i : paletteConf) {
 
-			if (i->getName() != "color")
+			if (i.getName() != "color")
 				continue;
 
-			_egaPalette[index++] = i->getInt("red");
-			_egaPalette[index++] = i->getInt("green");
-			_egaPalette[index++] = i->getInt("blue");
+			_egaPalette[index++] = i.getInt("red");
+			_egaPalette[index++] = i.getInt("green");
+			_egaPalette[index++] = i.getInt("blue");
 		}
 	}
 	return _egaPalette;
@@ -218,7 +219,7 @@ const byte *U4PaletteLoader::loadVgaPalette() {
 		pal.read(_vgaPalette, 256 * 3);
 
 		for (int i = 0; i < 256 * 3; i++) {
-			_vgaPalette[i] = _vgaPalette[i] * 255 / 63;
+			_vgaPalette[i] = PALETTE_6BIT_TO_8BIT(_vgaPalette[i]);
 		}
 	}
 

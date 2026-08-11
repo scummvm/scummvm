@@ -23,6 +23,7 @@
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/castmember/transition.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -31,6 +32,7 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Common::Se
 	_type = kCastTransition;
 
 	_transType = kTransNone;
+	_transTime = 0;
 	_durationMillis = 0;
 	_chunkSize = 0;
 	_area = false;
@@ -38,16 +40,16 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Common::Se
 	if (debugChannelSet(5, kDebugLoading)) {
 		stream.hexdump(stream.size());
 	}
-	if (_cast->_version < kFileVer600) {
-		stream.readByte();
+	if (_cast->_version < kFileVer1100) {
+		_transTime = stream.readByte();
 		_chunkSize = stream.readByte();
 		_transType = static_cast<TransitionType>(stream.readByte());
 		_flags = stream.readByte();
 		_area = !(_flags & 1);
 		_durationMillis = stream.readUint16BE();
-		debugC(5, kDebugLoading, "TransitionCastMember::TransitionCastMember(): transType: %d, durationMillis: %d, flags: %d, chunkSize: %d", _transType, _durationMillis, _flags, _chunkSize);
+		debugC(3, kDebugLoading, "  TransitionCastMember: transTime: %d, transType: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transTime, _transType, _durationMillis, _flags, _chunkSize, _area);
 	} else {
-		warning("STUB: TransitionCastMember::TransitionCastMember(): Transitions not yet supported for version %d", _cast->_version);
+		warning("STUB: TransitionCastMember::TransitionCastMember(): Transitions not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
 }
 
@@ -56,14 +58,103 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Transition
 	_transType = source._transType;
 	_loaded = source._loaded;
 
+	_transTime = source._transTime;
 	_durationMillis = source._durationMillis;
 	_flags = source._flags;
 	_chunkSize = source._chunkSize;
 	_area = source._area;
 }
 
+bool TransitionCastMember::hasField(int field) {
+	switch (field) {
+	case kTheChangeArea:
+	case kTheChunkSize:
+	case kTheDuration:
+	case kTheTransitionType:
+		return true;
+	default:
+		break;
+	}
+	return CastMember::hasField(field);
+}
+
+Datum TransitionCastMember::getField(int field) {
+	Datum d;
+
+	switch (field) {
+	case kTheChangeArea:
+		d = Datum((int)_area);
+		break;
+	case kTheChunkSize:
+		d = Datum(_chunkSize);
+		break;
+	case kTheDuration:
+		d = Datum(_durationMillis);
+		break;
+	case kTheTransitionType:
+		d = Datum((int)_transType);
+		break;
+	default:
+		d = CastMember::getField(field);
+		break;
+	}
+
+	return d;
+}
+
+void TransitionCastMember::setField(int field, const Datum &d) {
+	switch (field) {
+	case kTheChangeArea:
+		_area = (bool)d.asInt();
+		return;
+	case kTheChunkSize:
+		_chunkSize = d.asInt();
+		return;
+	case kTheDuration:
+		_durationMillis = d.asInt();
+		return;
+	case kTheTransitionType:
+		_transType = (TransitionType)d.asInt();
+		return;
+	default:
+		break;
+	}
+
+	CastMember::setField(field, d);
+}
+
 Common::String TransitionCastMember::formatInfo() {
-	return Common::String::format("transType: %d, durationMillis: %d, flags: %d, chunkSize: %d", _transType, _durationMillis, _flags, _chunkSize);
+	return Common::String::format("transType: %d, transTime: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _transTime, _durationMillis, _flags, _chunkSize, _area);
+}
+
+bool TransitionCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer500 && _cast->_version < kFileVer1100;
+}
+
+uint32 TransitionCastMember::getCastDataSize() {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
+		// Ignored 1 byte
+		// _chunkSize 1 byte
+		// _transType 1 byte
+		// _flags 1 byte
+		// _durationMillis 2 bytes
+		return 6;
+	} else {
+		warning("TransitionCastMember()::getCastDataSize(): CastMember version invalid or not handled");
+		return 0;
+	}
+}
+
+void TransitionCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer1100) {
+		writeStream->writeByte(_transTime);
+		writeStream->writeByte(_chunkSize);
+		writeStream->writeByte((uint8)_transType);
+		writeStream->writeByte(_flags);
+		writeStream->writeUint16BE(_durationMillis);
+	} else {
+		warning("TransitionCastMember()::writeCastData(): CastMember version invalid or not handled");
+	}
 }
 
 } // End of namespace Director

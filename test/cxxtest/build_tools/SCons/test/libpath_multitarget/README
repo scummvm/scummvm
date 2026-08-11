@@ -1,0 +1,3 @@
+Test whether we can run program that depends on (shared) libraries that we know
+but they are outside of standard load path. Test whether multiple test runners
+do not alter each other.

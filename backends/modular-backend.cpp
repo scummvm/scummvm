@@ -52,11 +52,6 @@ bool ModularGraphicsBackend::getFeatureState(Feature f) {
 	return _graphicsManager->getFeatureState(f);
 }
 
-GraphicsManager *ModularGraphicsBackend::getGraphicsManager() {
-	assert(_graphicsManager);
-	return (GraphicsManager *)_graphicsManager;
-}
-
 const OSystem::GraphicsMode *ModularGraphicsBackend::getSupportedGraphicsModes() const {
 	return _graphicsManager->getSupportedGraphicsModes();
 }
@@ -76,6 +71,12 @@ int ModularGraphicsBackend::getGraphicsMode() const {
 #if defined(USE_IMGUI)
 void ModularGraphicsBackend::setImGuiCallbacks(const ImGuiCallbacks &callbacks) {
 	_graphicsManager->setImGuiCallbacks(callbacks);
+}
+void *ModularGraphicsBackend::getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) {
+	return _graphicsManager->getImGuiTexture(image, palette, palCount);
+}
+void ModularGraphicsBackend::freeImGuiTexture(void *texture) {
+	_graphicsManager->freeImGuiTexture(texture);
 }
 #endif
 
@@ -97,6 +98,10 @@ bool ModularGraphicsBackend::setStretchMode(int mode) {
 
 int ModularGraphicsBackend::getStretchMode() const {
 	return _graphicsManager->getStretchMode();
+}
+
+bool ModularGraphicsBackend::setRotationMode(Common::RotationMode rotation) {
+	return _graphicsManager->setRotationMode(rotation);
 }
 
 uint ModularGraphicsBackend::getDefaultScaler() const {
@@ -197,6 +202,10 @@ void ModularGraphicsBackend::updateScreen() {
 #endif
 }
 
+void ModularGraphicsBackend::presentBuffer() {
+	_graphicsManager->presentBuffer();
+}
+
 void ModularGraphicsBackend::setShakePos(int shakeXOffset, int shakeYOffset) {
 	_graphicsManager->setShakePos(shakeXOffset, shakeYOffset);
 }
@@ -236,12 +245,16 @@ void ModularGraphicsBackend::copyRectToOverlay(const void *buf, int pitch, int x
 	_graphicsManager->copyRectToOverlay(buf, pitch, x, y, w, h);
 }
 
-int16 ModularGraphicsBackend::getOverlayHeight() {
+int16 ModularGraphicsBackend::getOverlayHeight() const {
 	return _graphicsManager->getOverlayHeight();
 }
 
-int16 ModularGraphicsBackend::getOverlayWidth() {
+int16 ModularGraphicsBackend::getOverlayWidth() const {
 	return _graphicsManager->getOverlayWidth();
+}
+
+Common::Rect ModularGraphicsBackend::getSafeOverlayArea(int16 *width, int16 *height) const {
+	return _graphicsManager->getSafeOverlayArea(width, height);
 }
 
 float ModularGraphicsBackend::getHiDPIScreenFactor() const {
@@ -270,8 +283,8 @@ void ModularGraphicsBackend::warpMouse(int x, int y) {
 	_graphicsManager->warpMouse(x, y);
 }
 
-void ModularGraphicsBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
-	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
+void ModularGraphicsBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
+	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, format, mask, scaleX, scaleY);
 }
 
 void ModularGraphicsBackend::setCursorPalette(const byte *colors, uint start, uint num) {

@@ -40,7 +40,7 @@
 #include "asylum/asylum.h"
 #include "asylum/shared.h"
 
-class AsylumMetaEngine : public AdvancedMetaEngine {
+class AsylumMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "asylum";
@@ -156,13 +156,13 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -223,7 +223,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
-	act = new Action("ANIMATE", _("Toggle animation on/off"));
+	act = new Action("ANIMATE", _("Toggle animation"));
 	act->setCustomEngineActionEvent(kAsylumActionAnimate);
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("JOY_A");
@@ -235,6 +235,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	resviewerKeyMap->addAction(act);
 
+	// I18N: Switch to previous image in internal game resource viewer
 	act = new Action("PREVRESOURCE", _("Previous resource"));
 	act->setCustomEngineActionEvent(kAsylumActionPreviousResource);
 	act->addDefaultInputMapping("BACKSPACE");
@@ -242,6 +243,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
+	// I18N: Switch to next image in internal game resource viewer
 	act = new Action("NEXTRESOURCE", _("Next resource"));
 	act->setCustomEngineActionEvent(kAsylumActionNextResource);
 	act->addDefaultInputMapping("SPACE");
@@ -249,6 +251,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
+	// I18N: Switch to previous palette in internal game resource viewer
 	act = new Action("PREVPALETTE", _("Previous palette"));
 	act->setCustomEngineActionEvent(kAsylumActionPreviousPalette);
 	act->addDefaultInputMapping("PAGEUP");
@@ -256,6 +259,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
+	// I18N: Switch to next palette in internal game resource viewer
 	act = new Action("NEXTPALETTE", _("Next palette"));
 	act->setCustomEngineActionEvent(kAsylumActionNextPalette);
 	act->addDefaultInputMapping("PAGEDOWN");

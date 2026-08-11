@@ -20,17 +20,53 @@
  */
 
 #include "m4/riddle/rooms/section6/room625.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/riddle/riddle.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
 void Room625::init() {
+	switch (_G(game).previous_room) {
+	case KERNEL_RESTORING_GAME:
+		digi_preload("950_s28c");
+		break;
+
+	case 624:
+		ws_demand_location(_G(my_walker), -30, 310, 3);
+		ws_walk(_G(my_walker), 30, 310, nullptr, 1, 3);
+		player_set_commands_allowed(false);
+		break;
+
+	default:
+		digi_preload("950_28c");
+		ws_demand_location(_G(my_walker), -30, 310, 3);
+		ws_walk(_G(my_walker), 30, 310, nullptr, 1, 3);
+		player_set_commands_allowed(false);
+		break;
+	}
+
+	digi_play_loop("950_s28c", 3);
 }
 
-void Room625::daemon() {
+void Room625::parser() {
+	Maze::parser();
+
+	if (player_said("journal", "STARFISH")) {
+		if (_G(flags)[V208]) {
+			digi_play("203r54", 1);
+		} else {
+			if (_G(kernel).trigger == 6)
+				_G(flags)[V208] = 1;
+			sketchInJournal(nullptr);
+		}
+
+		_G(player).command_ready = false;
+	} else {
+		checkExitLeft(624);
+	}
 }
 
 } // namespace Rooms

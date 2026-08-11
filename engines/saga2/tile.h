@@ -37,7 +37,7 @@
 namespace Saga2 {
 
 /* ===================================================================== *
-   Tile ID's and asociated functions
+   Tile ID's and associated functions
  * ===================================================================== */
 
 class   TileBank;
@@ -298,7 +298,7 @@ typedef TileRef *TileRefPtr, **TileRefHandle;
 void drawMainDisplay();
 
 /* ===================================================================== *
-   TileCycleData: This structure is used to define continously cycling
+   TileCycleData: This structure is used to define continuously cycling
    tiles such as waves on the ocean or a flickering torch.
  * ===================================================================== */
 

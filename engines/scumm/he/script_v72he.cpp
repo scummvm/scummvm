@@ -29,6 +29,7 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
+#include "scumm/he/font_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/localizer.h"
 #include "scumm/object.h"
@@ -101,14 +102,14 @@ void ScummEngine_v72he::setupOpcodes() {
 
 static const int arrayDataSizes[] = { 0, 1, 4, 8, 8, 16, 32 };
 
-byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim2end,
-											int dim1start, int dim1end, bool newArray, int *newid) {
-	int id;
+byte *ScummEngine_v72he::defineArray(int array, int type, int downMin, int downMax,
+											int acrossMin, int acrossMax, bool newArray, int *newid) {
+	int arrayPtr;
 	int size;
 	ArrayHeader *ah;
 
-	assert(dim2start >= 0 && dim2start <= dim2end);
-	assert(dim1start >= 0 && dim1start <= dim1end);
+	assert(downMin >= 0 && downMin <= downMax);
+	assert(acrossMin >= 0 && acrossMin <= acrossMax);
 	assert(0 <= type && type <= 6);
 
 
@@ -118,45 +119,37 @@ byte *ScummEngine_v72he::defineArray(int array, int type, int dim2start, int dim
 	if (!newArray)
 		nukeArray(array);
 
-	id = findFreeArrayId();
+	arrayPtr = findFreeArrayId();
 
-	if (newid != NULL)
-		*newid = id;
+	if (newid)
+		*newid = arrayPtr;
 
-	debug(9, "defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", id, dim2start, dim2end, dim1start, dim1end);
+	debug(9, "defineArray (array %d, downMin %d, downMax %d acrossMin %d acrossMax %d", arrayPtr, downMin, downMax, acrossMin, acrossMax);
 
 	if (!newArray && (array & 0x80000000)) {
 		error("Can't define bit variable as array pointer");
 	}
 
-	size = arrayDataSizes[type];
-
-	if (_game.heversion >= 80)
-		id |= 0x33539000;
-
 	if (!newArray)
-		writeVar(array, id);
+		writeVar(array, (_game.heversion >= 80 ? (arrayPtr | MAGIC_ARRAY_NUMBER) : arrayPtr));
 
-	if (_game.heversion >= 80)
-		id &= ~0x33539000;
+	size = ((downMax - downMin + 1) * (acrossMax - acrossMin + 1) * arrayDataSizes[type]) / 8;
 
-	size *= dim2end - dim2start + 1;
-	size *= dim1end - dim1start + 1;
-	size >>= 3;
-
-	ah = (ArrayHeader *)_res->createResource(rtString, id, size + sizeof(ArrayHeader));
+	ah = (ArrayHeader *)_res->createResource(rtString,
+		(_game.heversion >= 80 ? (arrayPtr & ~MAGIC_ARRAY_NUMBER) : arrayPtr),
+		size + sizeof(ArrayHeader));
 
 	ah->type = TO_LE_32(type);
-	ah->dim1start = TO_LE_32(dim1start);
-	ah->dim1end = TO_LE_32(dim1end);
-	ah->dim2start = TO_LE_32(dim2start);
-	ah->dim2end = TO_LE_32(dim2end);
+	ah->acrossMin = TO_LE_32(acrossMin);
+	ah->acrossMax = TO_LE_32(acrossMax);
+	ah->downMin = TO_LE_32(downMin);
+	ah->downMax = TO_LE_32(downMax);
 
 	return ah->data;
 }
 
 int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
-	debug(9, "readArray (array %d, idx2 %d, idx1 %d)", readVar(array), idx2, idx1);
+	debug(9, "readArray (array %d, down %d, aMin %d)", readVar(array), idx2, idx1);
 
 	if (readVar(array) == 0)
 		error("readArray: Reference to zeroed array pointer");
@@ -166,24 +159,24 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 	if (!ah)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
-	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) ||
-		idx1 < (int)FROM_LE_32(ah->dim1start) || idx1 > (int)FROM_LE_32(ah->dim1end)) {
+	if (idx2 < (int)FROM_LE_32(ah->downMin) || idx2 > (int)FROM_LE_32(ah->downMax) ||
+		idx1 < (int)FROM_LE_32(ah->acrossMin) || idx1 > (int)FROM_LE_32(ah->acrossMax)) {
 		error("readArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
-			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
-			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
+			  array, idx1, idx2, FROM_LE_32(ah->acrossMin), FROM_LE_32(ah->acrossMax),
+			  FROM_LE_32(ah->downMin), FROM_LE_32(ah->downMax));
 	}
 
-#if defined(USE_ENET) && defined(USE_LIBCURL)
-	if (ConfMan.getBool("enable_competitive_mods")) {
+#if defined(USE_ENET) && defined(USE_BASIC_NET)
+	if (_enableHECompetitiveOnlineMods) {
 		// Mod for Backyard Baseball 2001 online competitive play: allow baserunners to be
 		// turned around while they're jogging to the next base on a pop-up.
 		// The game checks if the runner is forced to the next base (i.e. there's a runner on the base behind them),
 		// and if they are then basepath clicks to turn them around have no effect.
 		// Here we return 0 (false) under certain conditions, so these clicks now have the desired effect.
 		if (_game.id == GID_BASEBALL2001 &&
-			_currentRoom == 3 && vm.slot[_currentScript].number == 2076 &&  // This is the script that handles basepath clicks
+			_currentRoom == 3 && currentScriptSlotIs(2076) &&  // This is the script that handles basepath clicks
 			readVar(399) == 1 &&  // This checks that we're playing online
-			readVar(0x8000 + 11) == 1 &&  // The ball is a pop-up
+			readVar(ROOM_VAL(11)) == 1 &&  // The ball is a pop-up
 			readVar(291) < 2 &&  // Less than two outs
 			// This is the array of baserunner status info, and the value in position 8 specifies whether the runner is forced
 			array == 295 && idx1 == 8) {
@@ -198,8 +191,8 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 	}
 #endif
 
-	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(idx2 - FROM_LE_32(ah->dim2start)) + (idx1 - FROM_LE_32(ah->dim1start));
+	const int offset = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
+		(idx2 - FROM_LE_32(ah->downMin)) + (idx1 - FROM_LE_32(ah->acrossMin));
 
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
@@ -220,7 +213,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 }
 
 void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
-	debug(9, "writeArray (array %d, idx2 %d, idx1 %d, value %d)", readVar(array), idx2, idx1, value);
+	debug(9, "writeArray (array %d, down %d, aMin %d, value %d)", readVar(array), idx2, idx1, value);
 
 	if (readVar(array) == 0)
 		error("writeArray: Reference to zeroed array pointer");
@@ -230,15 +223,15 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 	if (!ah)
 		error("writeArray: Invalid array (%d) reference", readVar(array));
 
-	if (idx2 < (int)FROM_LE_32(ah->dim2start) || idx2 > (int)FROM_LE_32(ah->dim2end) ||
-		idx1 < (int)FROM_LE_32(ah->dim1start) || idx1 > (int)FROM_LE_32(ah->dim1end)) {
+	if (idx2 < (int)FROM_LE_32(ah->downMin) || idx2 > (int)FROM_LE_32(ah->downMax) ||
+		idx1 < (int)FROM_LE_32(ah->acrossMin) || idx1 > (int)FROM_LE_32(ah->acrossMax)) {
 		error("writeArray: array %d out of bounds: [%d, %d] exceeds [%d..%d, %d..%d]",
-			  array, idx1, idx2, FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end),
-			  FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end));
+			  array, idx1, idx2, FROM_LE_32(ah->acrossMin), FROM_LE_32(ah->acrossMax),
+			  FROM_LE_32(ah->downMin), FROM_LE_32(ah->downMax));
 	}
 
-	const int offset = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(idx2 - FROM_LE_32(ah->dim2start)) - FROM_LE_32(ah->dim1start) + idx1;
+	const int offset = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
+		(idx2 - FROM_LE_32(ah->downMin)) - FROM_LE_32(ah->acrossMin) + idx1;
 
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
@@ -296,6 +289,68 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 			defineArray(num, kBitArray, 0, a, 0, b);
 		else
 			defineArray(num, kDwordArray, 0, a, 0, b);
+	}
+}
+
+void ScummEngine_v72he::arrayBlockOperation(
+	int dstVariable, int dstDownMin, int dstDownMax, int dstAcrossMin, int dstAcrossMax,
+	int a2Variable, int a2DownMin, int a2DownMax, int a2AcrossMin, int a2AcrossMax,
+	int a1Variable, int a1DownMin, int a1DownMax, int a1AcrossMin, int a1AcrossMax,
+	int (*op)(int a2, int a1)) {
+	int downCount, acrossCount;
+	int dstD, dstA, a1D, a1A, a2D, a2A;
+	int dstDIndex, dstAIndex;
+	int a1DIndex, a1AIndex;
+	int a2DIndex, a2AIndex;
+
+	checkArrayLimits(dstVariable, dstDownMin, dstDownMax, dstAcrossMin, dstAcrossMax);
+	checkArrayLimits(a2Variable, a2DownMin, a2DownMax, a2AcrossMin, a2AcrossMax);
+	checkArrayLimits(a1Variable, a1DownMin, a1DownMax, a1AcrossMin, a1AcrossMax);
+
+	dstD = ((dstDownMax - dstDownMin) + 1);
+	dstA = ((dstAcrossMax - dstAcrossMin) + 1);
+	a1D = ((a1DownMax - a1DownMin) + 1);
+	a1A = ((a1AcrossMax - a1AcrossMin) + 1);
+	a2D = ((a2DownMax - a2DownMin) + 1);
+	a2A = ((a2AcrossMax - a2AcrossMin) + 1);
+
+	if (((dstD != a1D) || (a1D != a2D)) || ((dstA != a1A) || (a1A != a2A))) {
+
+		debug("ScummEngine_v72he::arrayBlockOperation(): "
+			"{%8d}[ %4d to %4d ][ %4d to %4d ] = "
+			"({%8d}[ %4d to %4d ][ %4d to %4d ] <?> "
+			"{%8d}[ %4d to %4d ][ %4d to %4d ] <?>)\n",
+			dstVariable, dstDownMin, dstDownMax, dstAcrossMin, dstAcrossMax,
+			a2Variable, a2DownMin, a2DownMax, a2AcrossMin, a2AcrossMax,
+			a1Variable, a1DownMin, a1DownMax, a1AcrossMin, a1AcrossMax);
+
+		error("Invalid ranges for array block math operation");
+	}
+
+	acrossCount = dstA;
+	downCount = dstD;
+
+	dstDIndex = dstDownMin;
+	a1DIndex = a1DownMin;
+	a2DIndex = a2DownMin;
+
+	for (int downCounter = 0; downCounter < downCount; downCounter++) {
+		dstAIndex = dstAcrossMin;
+		a1AIndex = a1AcrossMin;
+		a2AIndex = a2AcrossMin;
+
+		for (int acrossCounter = 0; acrossCounter < acrossCount; acrossCounter++) {
+			writeArray(dstVariable, dstDIndex, dstAIndex,
+				(*op)(readArray(a2Variable, a2DIndex, a2AIndex), readArray(a1Variable, a1DIndex, a1AIndex)));
+
+			dstAIndex++;
+			a1AIndex++;
+			a2AIndex++;
+		}
+
+		dstDIndex++;
+		a1DIndex++;
+		a2DIndex++;
 	}
 }
 
@@ -584,7 +639,7 @@ void ScummEngine_v72he::o72_startScript() {
 			return;
 	}
 
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
 void ScummEngine_v72he::o72_startObject() {
@@ -596,7 +651,7 @@ void ScummEngine_v72he::o72_startObject() {
 	entryp = pop();
 	script = pop();
 	flags = fetchScriptByte();
-	runObjectScript(script, entryp, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+	runObjectScript(script, entryp, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
 void ScummEngine_v72he::o72_drawObject() {
@@ -648,7 +703,7 @@ void ScummEngine_v72he::o72_printWizImage() {
 
 void ScummEngine_v72he::o72_getArrayDimSize() {
 	byte subOp = fetchScriptByte();
-	int32 val1, val2;
+	int32 maxValue, minValue;
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(fetchScriptWord()));
 	if (!ah) {
 		push(0);
@@ -658,26 +713,26 @@ void ScummEngine_v72he::o72_getArrayDimSize() {
 	switch (subOp) {
 	case SO_NONE:
 	case SO_NIBBLE:
-		val1 = FROM_LE_32(ah->dim1end);
-		val2 = FROM_LE_32(ah->dim1start);
-		push(val1 - val2 + 1);
+		maxValue = FROM_LE_32(ah->acrossMax);
+		minValue = FROM_LE_32(ah->acrossMin);
+		push(maxValue - minValue + 1);
 		break;
 	case SO_BIT:
-		val1 = FROM_LE_32(ah->dim2end);
-		val2 = FROM_LE_32(ah->dim2start);
-		push(val1 - val2 + 1);
+		maxValue = FROM_LE_32(ah->downMax);
+		minValue = FROM_LE_32(ah->downMin);
+		push(maxValue - minValue + 1);
 		break;
 	case SO_BYTE:
-		push(FROM_LE_32(ah->dim1start));
+		push(FROM_LE_32(ah->acrossMin));
 		break;
 	case SO_INT:
-		push(FROM_LE_32(ah->dim1end));
+		push(FROM_LE_32(ah->acrossMax));
 		break;
 	case SO_DWORD:
-		push(FROM_LE_32(ah->dim2start));
+		push(FROM_LE_32(ah->downMin));
 		break;
 	case SO_STRING:
-		push(FROM_LE_32(ah->dim2end));
+		push(FROM_LE_32(ah->downMax));
 		break;
 	default:
 		error("o72_getArrayDimSize: default case %d", subOp);
@@ -1142,13 +1197,31 @@ void ScummEngine_v72he::o72_findObject() {
 	push(r);
 }
 
+static int arrayBlockSubOp(int a2, int a1) {
+	return (a2 - a1);
+}
+
+static int arrayBlockAddOp(int a2, int a1) {
+	return (a2 + a1);
+}
+
+static int arrayBlockBANDOp(int a2, int a1) {
+	return (a2 & a1);
+}
+
+static int arrayBlockBOROp(int a2, int a1) {
+	return (a2 | a1);
+}
+
+static int arrayBlockBXOROp(int a2, int a1) {
+	return (a2 ^ a1);
+}
+
 void ScummEngine_v72he::o72_arrayOps() {
 	byte *data;
 	byte string[1024];
-	int dim1end, dim1start, dim2end, dim2start;
+	int acrossMax, acrossMin, downMax, downMin;
 	int id, len, b, c, list[128];
-	int offs, tmp, tmp2;
-	uint tmp3, type;
 
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
@@ -1163,150 +1236,185 @@ void ScummEngine_v72he::o72_arrayOps() {
 		break;
 
 	case SO_COMPLEX_ARRAY_ASSIGNMENT:
-		len = getStackList(list, ARRAYSIZE(list));
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
-		id = readVar(array);
-		if (id == 0) {
-			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
-		}
-		checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
+		{
+			len = getStackList(list, ARRAYSIZE(list));
+			acrossMax = pop();
+			acrossMin = pop();
+			downMax = pop();
+			downMin = pop();
+			id = readVar(array);
 
-		tmp2 = 0;
-		while (dim2start <= dim2end) {
-			tmp = dim1start;
-			while (tmp <= dim1end) {
-				writeArray(array, dim2start, tmp, list[tmp2++]);
-				if (tmp2 == len)
-					tmp2 = 0;
-				tmp++;
+			if (id == 0) {
+				defineArray(array, kDwordArray, downMin, downMax, acrossMin, acrossMax);
 			}
-			dim2start++;
+
+			checkArrayLimits(array, downMin, downMax, acrossMin, acrossMax);
+
+			int *currPtr = list;
+			int countDown = len;
+
+			for (int downCounter = downMin; downCounter <= downMax; downCounter++) {
+				for (int acrossCounter = acrossMin; acrossCounter <= acrossMax; acrossCounter++) {
+					writeArray(array, downCounter, acrossCounter, *currPtr++);
+
+					if (!--countDown) {
+						countDown = len;
+						currPtr = list;
+					}
+				}
+			}
 		}
+
 		break;
 	case SO_COMPLEX_ARRAY_COPY_OPERATION:
 		{
-			int a2_dim1end = pop();
-			int a2_dim1start = pop();
-			int a2_dim2end = pop();
-			int a2_dim2start = pop();
-			int array2 = fetchScriptWord();
-			int a1_dim1end = pop();
-			int a1_dim1start = pop();
-			int a1_dim2end = pop();
-			int a1_dim2start = pop();
-			if (a1_dim1end - a1_dim1start != a2_dim1end - a2_dim1start || a2_dim2end - a2_dim2start != a1_dim2end - a1_dim2start) {
-				error("Source and dest ranges size are mismatched");
+			int srcAcrossMax = pop();
+			int srcAcrossMin = pop();
+			int srcDownMax = pop();
+			int srcDownMin = pop();
+			int srcVariable = fetchScriptWord();
+			int dstAcrossMax = pop();
+			int dstAcrossMin = pop();
+			int dstDownMax = pop();
+			int dstDownMin = pop();
+
+			if (dstAcrossMax - dstAcrossMin != srcAcrossMax - srcAcrossMin || srcDownMax - srcDownMin != dstDownMax - dstDownMin) {
+				error("Source and dest ranges dataOffsetPtr are mismatched");
 			}
-			copyArray(array, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
+
+			copyArray(array, dstDownMin, dstDownMax, dstAcrossMin, dstAcrossMax, srcVariable, srcDownMin, srcDownMax, srcAcrossMin, srcAcrossMax);
 		}
+
 		break;
 	case SO_RANGE_ARRAY_ASSIGNMENT:
-		b = pop();
-		c = pop();
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
-		id = readVar(array);
-		if (id == 0) {
-			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
-		}
-		checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
+		{
+			int rangeEnd = pop();
+			int rangeStart = pop();
+			acrossMax = pop();
+			acrossMin = pop();
+			downMax = pop();
+			downMin = pop();
+			id = readVar(array);
 
-		offs = (b >= c) ? 1 : -1;
-		tmp2 = c;
-		tmp3 = ABS(c - b) + 1;
-		while (dim2start <= dim2end) {
-			tmp = dim1start;
-			while (tmp <= dim1end) {
-				writeArray(array, dim2start, tmp, tmp2);
-				if (--tmp3 == 0) {
-					tmp2 = c;
-					tmp3 = ABS(c - b) + 1;
-				} else {
-					tmp2 += offs;
-				}
-				tmp++;
+			if (id == 0) {
+				defineArray(array, kDwordArray, downMin, downMax, acrossMin, acrossMax);
 			}
-			dim2start++;
-		}
-		break;
-	case SO_COMPLEX_ARRAY_MATH_OPERATION:
-			{
-				// Used by script 84 (Send end of play info) in Backyard Football during online play.
-				int array2 = fetchScriptWord();
-				int array1 = fetchScriptWord();
-				type = pop();
-				int a1_dim1end = pop();
-				int a1_dim1start = pop();
-				int a1_dim2end = pop();
-				int a1_dim2start = pop();
-				int a2_dim1end = pop();
-				int a2_dim1start = pop();
-				int a2_dim2end = pop();
-				int a2_dim2start = pop();
-				dim1end = pop();
-				dim1start = pop();
-				dim2end = pop();
-				dim2start = pop();
 
-				debug(0, "Complex: %d = %d[%d to %d][%d to %d] %c %d[%d to %d][%d to %d]", array,
-					array1, a1_dim1start, a1_dim2end, a1_dim1start, a1_dim2end,
-					" +-&|^"[type],
-					array2, a2_dim1start, a2_dim2end, a2_dim1start, a2_dim2end);
+			checkArrayLimits(array, downMin, downMax, acrossMin, acrossMax);
 
-				int a12_num = a1_dim2end - a1_dim2start + 1;
-				int a11_num = a1_dim1end - a1_dim1start + 1;
-				int a22_num = a2_dim2end - a2_dim2start + 1;
-				int a21_num = a2_dim1end - a2_dim1start + 1;
-				int d12_num = dim2end - dim2start + 1;
-				int d11_num = dim1end - dim1start + 1;
+			int value = rangeStart;
+			int count = ABS(rangeStart - rangeEnd) + 1;
+			int stepValue = (rangeStart <= rangeEnd) ? 1 : -1;
+			int countDown = count;
 
-				id = readVar(array);
-				if (id == 0) {
-					defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
-				}
-				if (a12_num != a22_num || a12_num != d12_num || a11_num != a21_num || a11_num != d11_num) {
-					error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
-				}
+			for (int downCounter = downMin; downCounter <= downMax; downCounter++) {
+				for (int acrossCounter = acrossMin; acrossCounter <= acrossMax; acrossCounter++) {
+					writeArray(array, downCounter, acrossCounter, value);
 
-				for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start, ++dim2start) {
-					int a2dim1 = a2_dim1start;
-					int a1dim1 = a1_dim1start;
-					int dim1 = dim1start;
-					for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1, ++dim1) {
-						int val1 = readArray(array1, a1_dim2start, a1dim1);
-						int val2 = readArray(array2, a2_dim2start, a2dim1);
-						int res;
-
-						switch (type) {
-						case 1: // Addition
-							res = val2 + val1;
-							break;
-						case 2: // Subtraction
-							res = val2 - val1;
-							break;
-						case 3: // Binary AND
-							res = val2 & val1;
-							break;
-						case 4: // Binary OR
-							res = val2 | val1;
-							break;
-						case 5: // Binary XOR
-							res = val2 ^ val1;
-							break;
-						default:
-							error("o72_arrayOps: case 138 unknown type %d)", type);
-						}
-						writeArray(array, dim2start, dim1, res);
+					if (!--countDown) {
+						value = rangeStart;
+						countDown = count;
+					} else {
+						value += stepValue;
 					}
 				}
+			}
+		}
+
+		break;
+	case SO_COMPLEX_ARRAY_MATH_OPERATION:
+		{
+			// Used by script 84 (Send end of play info) in Backyard Football during online play.
+			int a2Variable = fetchScriptWord();
+			int a1Variable = fetchScriptWord();
+			int mathOperationType = pop();
+
+			int a1AcrossMax = pop();
+			int a1AcrossMin = pop();
+			int a1DownMax = pop();
+			int a1DownMin = pop();
+
+			int a2AcrossMax = pop();
+			int a2AcrossMin = pop();
+			int a2DownMax = pop();
+			int a2DownMin = pop();
+
+			acrossMax = pop();
+			acrossMin = pop();
+			downMax = pop();
+			downMin = pop();
+
+			debug(0, "Complex: %d = %d[%d to %d][%d to %d] %c %d[%d to %d][%d to %d]", array,
+				a1Variable, a1AcrossMin, a1DownMax, a1AcrossMin, a1DownMax,
+				" +-&|^"[mathOperationType],
+				a2Variable, a2AcrossMin, a2DownMax, a2AcrossMin, a2DownMax);
+
+			int dstD = downMax - downMin + 1;
+			int dstA = acrossMax - acrossMin + 1;
+
+			int a1D = a1DownMax - a1DownMin + 1;
+			int a1A = a1AcrossMax - a1AcrossMin + 1;
+			int a2D = a2DownMax - a2DownMin + 1;
+			int a2A = a2AcrossMax - a2AcrossMin + 1;
+
+			id = readVar(array);
+			if (id == 0) {
+				defineArray(array, kDwordArray, downMin, downMax, acrossMin, acrossMax);
+			}
+
+			if (a1D != a2D || a1D != dstD || a1A != a2A || a1A != dstA) {
+				error("Operation dataOffsetPtr mismatch (%d vs %d)(%d vs %d)", a1D, a2D, a1A, a2A);
+			}
+
+			switch (mathOperationType) {
+			case 1: // Addition
+				arrayBlockOperation(
+					array, downMin, downMax, acrossMin, acrossMax,
+					a2Variable, a2DownMin, a2DownMax, a2AcrossMin, a2AcrossMax,
+					a1Variable, a1DownMin, a1DownMax, a1AcrossMin, a1AcrossMax,
+					arrayBlockAddOp);
+				break;
+
+			case 2: // Subtraction
+				arrayBlockOperation(
+					array, downMin, downMax, acrossMin, acrossMax,
+					a2Variable, a2DownMin, a2DownMax, a2AcrossMin, a2AcrossMax,
+					a1Variable, a1DownMin, a1DownMax, a1AcrossMin, a1AcrossMax,
+					arrayBlockSubOp);
+				break;
+
+			case 3: // Binary AND
+				arrayBlockOperation(
+					array, downMin, downMax, acrossMin, acrossMax,
+					a2Variable, a2DownMin, a2DownMax, a2AcrossMin, a2AcrossMax,
+					a1Variable, a1DownMin, a1DownMax, a1AcrossMin, a1AcrossMax,
+					arrayBlockBANDOp);
+				break;
+
+			case 4: // Binary OR
+				arrayBlockOperation(
+					array, downMin, downMax, acrossMin, acrossMax,
+					a2Variable, a2DownMin, a2DownMax, a2AcrossMin, a2AcrossMax,
+					a1Variable, a1DownMin, a1DownMax, a1AcrossMin, a1AcrossMax,
+					arrayBlockBOROp);
+				break;
+
+			case 5: // Binary BXOR
+				arrayBlockOperation(
+					array, downMin, downMax, acrossMin, acrossMax,
+					a2Variable, a2DownMin, a2DownMax, a2AcrossMin, a2AcrossMax,
+					a1Variable, a1DownMin, a1DownMax, a1AcrossMin, a1AcrossMax,
+					arrayBlockBXOROp);
+				break;
+
+			default:
+				error("Invalid array math operation (%d)", mathOperationType);
 				break;
 			}
-	case SO_FORMATTED_STRING: // SO_FORMATTED_STRING
+
+			break;
+		}
+	case SO_FORMATTED_STRING:
 		decodeScriptString(string);
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
@@ -1440,7 +1548,7 @@ void ScummEngine_v72he::o72_dimArray() {
 
 
 void ScummEngine_v72he::o72_dim2dimArray() {
-	int data, dim1end, dim2end;
+	int data, acrossMax, downMax;
 
 	byte subOp = fetchScriptByte();
 
@@ -1467,9 +1575,9 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 		error("o72_dim2dimArray: default case %d", subOp);
 	}
 
-	dim1end = pop();
-	dim2end = pop();
-	defineArray(fetchScriptWord(), data, 0, dim2end, 0, dim1end);
+	acrossMax = pop();
+	downMax = pop();
+	defineArray(fetchScriptWord(), data, 0, downMax, 0, acrossMax);
 }
 
 void ScummEngine_v72he::o72_traceStatus() {
@@ -1538,7 +1646,7 @@ void ScummEngine_v72he::o72_jumpToScript() {
 	script = pop();
 	flags = fetchScriptByte();
 	stopObjectCode();
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
 void ScummEngine_v72he::o72_openFile() {
@@ -1588,10 +1696,16 @@ int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
 	byte *data = defineArray(0, kByteArray, 0, 0, 0, size);
 
 	if (slot != -1) {
+		assert(_hInFileTable[slot]);
 		_hInFileTable[slot]->read(data, size + 1);
 	}
 
-	return readVar(0);
+	int returnValue = readVar(0);
+
+	if (_game.heversion >= 80)
+		returnValue |= MAGIC_ARRAY_NUMBER;
+
+	return returnValue;
 }
 
 void ScummEngine_v72he::o72_readFile() {
@@ -1602,28 +1716,43 @@ void ScummEngine_v72he::o72_readFile() {
 	switch (subOp) {
 	case SO_BYTE:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readByte();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readByte();
+		}
+
 		push(val);
 		break;
 	case SO_INT:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readUint16LE();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readUint16LE();
+		}
+
 		push(val);
 		break;
 	case SO_DWORD:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readUint32LE();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readUint32LE();
+		}
+
 		push(val);
 		break;
 	case SO_ARRAY:
 		fetchScriptByte();
 		size = pop();
 		slot = pop();
-		assert(_hInFileTable[slot]);
 		val = readFileToArray(slot, size);
+
 		push(val);
 		break;
 	default:
@@ -1633,10 +1762,11 @@ void ScummEngine_v72he::o72_readFile() {
 
 void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resID);
-	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+	int32 size = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
+		(FROM_LE_32(ah->downMax) - FROM_LE_32(ah->downMin) + 1);
 
 	if (slot != -1) {
+		assert(_hOutFileTable[slot]);
 		_hOutFileTable[slot]->write(ah->data, size);
 	}
 }
@@ -1647,7 +1777,7 @@ void ScummEngine_v72he::getStringFromArray(int arrayNumber, char *buffer, int ma
 
 	// this function makes a C-string out of <arrayNumber> contents
 
-	VAR(0) = arrayNumber; // it was 0 in original code, but I've seen ScummVM Moonbase code which uses VAR_U32_ARRAY_UNK
+	VAR(0) = arrayNumber; // it was 0 in original code, but I've seen ScummVM Moonbase code which uses VAR_U32_RESERVED
 
 	int i, ch;
 	for (i = 0; i < maxLength; ++i) {
@@ -1666,7 +1796,16 @@ void ScummEngine_v72he::o72_writeFile() {
 	int slot = pop();
 	byte subOp = fetchScriptByte();
 
-	assert(_hOutFileTable[slot]);
+	// The original doesn't make assumptions of any
+	// kind when the slot is -1 (which is a possible
+	// value from the scripts) and does NOPs instead...
+	if (slot != -1)
+		assert(_hOutFileTable[slot]);
+
+	// Arrays will handle the -1 value by themselves...
+	if (slot == -1 && subOp != SO_ARRAY)
+		return;
+
 	switch (subOp) {
 	case SO_BYTE:
 		_hOutFileTable[slot]->writeByte(resID);
@@ -1762,7 +1901,7 @@ void ScummEngine_v72he::o72_getPixel() {
 void ScummEngine_v72he::o72_pickVarRandom() {
 	int num;
 	int args[100];
-	int32 dim1end;
+	int32 acrossMax;
 
 	num = getStackList(args, ARRAYSIZE(args));
 	int value = fetchScriptWord();
@@ -1785,11 +1924,11 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 	num = readArray(value, 0, 0);
 
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
-	dim1end = FROM_LE_32(ah->dim1end);
+	acrossMax = FROM_LE_32(ah->acrossMax);
 
-	if (dim1end < num) {
+	if (acrossMax < num) {
 		int32 var_2 = readArray(value, 0, num - 1);
-		shuffleArray(value, 1, dim1end);
+		shuffleArray(value, 1, acrossMax);
 		if (readArray(value, 0, 1) == var_2) {
 			num = 2;
 		} else {
@@ -1826,134 +1965,167 @@ void ScummEngine_v72he::o72_redimArray() {
 void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end,
 								   int newDim1start, int newDim1end, int type) {
 	int newSize, oldSize;
-
-	if (readVar(arrayId) == 0)
+	int rawArray = readVar(arrayId);
+	if (rawArray == 0)
 		error("redimArray: Reference to zeroed array pointer");
 
-	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(arrayId));
+	if (_game.heversion >= 80) {
+		if ((rawArray & MAGIC_ARRAY_NUMBER) != MAGIC_ARRAY_NUMBER) {
+			error("redimArray: Illegal array pointer not having magic number (%d,%d)", arrayId, rawArray);
+		}
+
+		rawArray &= ~MAGIC_ARRAY_NUMBER;
+	}
+
+	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, rawArray);
 
 	if (!ah)
-		error("redimArray: Invalid array (%d) reference", readVar(arrayId));
+		error("redimArray: Invalid array (%d) reference", rawArray);
 
-	newSize = arrayDataSizes[type];
-	oldSize = arrayDataSizes[FROM_LE_32(ah->type)];
+	newSize = arrayDataSizes[type] / 8;
+	oldSize = arrayDataSizes[FROM_LE_32(ah->type)] / 8;
 
 	newSize *= (newDim1end - newDim1start + 1) * (newDim2end - newDim2start + 1);
-	oldSize *= (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
-
-	newSize >>= 3;
-	oldSize >>= 3;
+	oldSize *= (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
+		(FROM_LE_32(ah->downMax) - FROM_LE_32(ah->downMin) + 1);
 
 	if (newSize != oldSize)
-		error("redimArray: array %d redim mismatch", readVar(arrayId));
+		error("redimArray: array %d redim mismatch", rawArray);
 
 	ah->type = TO_LE_32(type);
-	ah->dim1start = TO_LE_32(newDim1start);
-	ah->dim1end = TO_LE_32(newDim1end);
-	ah->dim2start = TO_LE_32(newDim2start);
-	ah->dim2end = TO_LE_32(newDim2end);
+	ah->acrossMin = TO_LE_32(newDim1start);
+	ah->acrossMax = TO_LE_32(newDim1end);
+	ah->downMin = TO_LE_32(newDim2start);
+	ah->downMax = TO_LE_32(newDim2end);
 }
 
-void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end) {
-	if (dim1end < dim1start) {
-		error("Across max %d smaller than min %d", dim1end, dim1start);
+void ScummEngine_v72he::checkArrayLimits(int array, int downMin, int downMax, int acrossMin, int acrossMax) {
+	if (acrossMax < acrossMin) {
+		error("Across max %d smaller than min %d", acrossMax, acrossMin);
 	}
-	if (dim2end < dim2start) {
-		error("Down max %d smaller than min %d", dim2end, dim2start);
+
+	if (downMax < downMin) {
+		error("Down max %d smaller than min %d", downMax, downMin);
 	}
+
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
-	if ((int)FROM_LE_32(ah->dim2start) > dim2start || (int)FROM_LE_32(ah->dim2end) < dim2end || (int)FROM_LE_32(ah->dim1start) > dim1start || (int)FROM_LE_32(ah->dim1end) < dim1end) {
-		error("Invalid array access (%d,%d,%d,%d) limit (%d,%d,%d,%d)", dim2start, dim2end, dim1start, dim1end, FROM_LE_32(ah->dim2start), FROM_LE_32(ah->dim2end), FROM_LE_32(ah->dim1start), FROM_LE_32(ah->dim1end));
+	if ((int)FROM_LE_32(ah->downMin) > downMin || (int)FROM_LE_32(ah->downMax) < downMax || (int)FROM_LE_32(ah->acrossMin) > acrossMin || (int)FROM_LE_32(ah->acrossMax) < acrossMax) {
+		error("Invalid array access (%d,%d,%d,%d) limit (%d,%d,%d,%d)", downMin, downMax, acrossMin, acrossMax, FROM_LE_32(ah->downMin), FROM_LE_32(ah->downMax), FROM_LE_32(ah->acrossMin), FROM_LE_32(ah->acrossMax));
 	}
 }
 
-void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
-				int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end)
-{
-	byte *dst, *src;
-	int dstPitch, srcPitch;
-	int rowSize;
-	checkArrayLimits(array1, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end);
-	checkArrayLimits(array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
-	int a12_num = a1_dim2end - a1_dim2start + 1;
-	int a11_num = a1_dim1end - a1_dim1start + 1;
-	int a22_num = a2_dim2end - a2_dim2start + 1;
-	int a21_num = a2_dim1end - a2_dim1start + 1;
-	if (a22_num != a12_num || a21_num != a11_num) {
-		error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
+void ScummEngine_v72he::copyArray(int dstVariable, int dstDownMin, int dstDownMax, int dstAcrossMin, int dstAcrossMax,
+								  int srcVariable, int srcDownMin, int srcDownMax, int srcAcrossMin, int srcAcrossMax) {
+	byte *dstPtr, *srcPtr;
+	int dstOffset, srcOffset;
+	int dataSize;
+
+	checkArrayLimits(dstVariable, dstDownMin, dstDownMax, dstAcrossMin, dstAcrossMax);
+	checkArrayLimits(srcVariable, srcDownMin, srcDownMax, srcAcrossMin, srcAcrossMax);
+
+	int dstDownCount = dstDownMax - dstDownMin + 1;
+	int dstAcrossCount = dstAcrossMax - dstAcrossMin + 1;
+	int srcDownCount = srcDownMax - srcDownMin + 1;
+	int srcAcrossCount = srcAcrossMax - srcAcrossMin + 1;
+
+	if (srcDownCount != dstDownCount || srcAcrossCount != dstAcrossCount) {
+		error("Operation size mismatch (%d vs %d)(%d vs %d)", dstDownCount, srcDownCount, dstAcrossCount, srcAcrossCount);
 	}
 
-	if (array1 != array2) {
-		ArrayHeader *ah1 = (ArrayHeader *)getResourceAddress(rtString, readVar(array1));
-		assert(ah1);
-		ArrayHeader *ah2 = (ArrayHeader *)getResourceAddress(rtString, readVar(array2));
-		assert(ah2);
-		if (FROM_LE_32(ah1->type) == FROM_LE_32(ah2->type)) {
-			copyArrayHelper(ah1, a1_dim2start, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
-			copyArrayHelper(ah2, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
-			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start) {
-				memcpy(dst, src, rowSize);
-				dst += dstPitch;
-				src += srcPitch;
+	if (dstVariable != srcVariable) {
+		ArrayHeader *dstArray = (ArrayHeader *)getResourceAddress(rtString, readVar(dstVariable));
+		assert(dstArray);
+		ArrayHeader *srcArray = (ArrayHeader *)getResourceAddress(rtString, readVar(srcVariable));
+		assert(srcArray);
+
+		if (FROM_LE_32(dstArray->type) == FROM_LE_32(srcArray->type)) {
+			getArrayDataPtrAndDataSize(dstArray, dstDownMin, dstAcrossMin, dstAcrossMax, &dstPtr, &dstOffset, &dataSize);
+			getArrayDataPtrAndDataSize(srcArray, srcDownMin, srcAcrossMin, srcAcrossMax, &srcPtr, &srcOffset, &dataSize);
+
+			for (int dstDownCounter = dstDownMin; dstDownCounter <= dstDownMax; dstDownCounter++) {
+				memcpy(dstPtr, srcPtr, dataSize);
+				dstPtr += dstOffset;
+				srcPtr += srcOffset;
 			}
 		} else {
-			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start) {
-				int a2dim1 = a2_dim1start;
-				int a1dim1 = a1_dim1start;
-				for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1) {
-					int val = readArray(array2, a2_dim2start, a2dim1);
-					writeArray(array1, a1_dim2start, a1dim1, val);
+			int srcDownIndex = srcDownMin;
+
+			for (int dstDownCounter = dstDownMin; dstDownCounter <= dstDownMax; dstDownCounter++) {
+				int srcAcrossIndex = srcAcrossMin;
+
+				for (int dstAcrossCounter = dstAcrossMin; dstAcrossCounter <= dstAcrossMax; dstAcrossCounter++) {
+					writeArray(dstVariable, dstDownCounter, dstAcrossCounter,
+						readArray(srcVariable, srcDownIndex, srcAcrossIndex++));
 				}
+
+				srcDownIndex++;
 			}
 		}
 	} else {
-		if (a2_dim2start != a1_dim2start || a2_dim1start != a1_dim1start) {
-			ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array1));
-			assert(ah);
-			if (a2_dim2start > a1_dim2start) {
-				copyArrayHelper(ah, a1_dim2start, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
-				copyArrayHelper(ah, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
-			} else {
-				// start at the end, so we copy backwards (in case the indices overlap)
-				copyArrayHelper(ah, a1_dim2end, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
-				copyArrayHelper(ah, a2_dim2end, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
-				dstPitch = -dstPitch;
-				srcPitch = -srcPitch;
+		if (srcDownMin != dstDownMin || srcAcrossMin != dstAcrossMin) {
+			int dstArray = readVar(dstVariable);
+
+			ArrayHeader *dstArrayPtr = (ArrayHeader *)getResourceAddress(rtString, dstArray & ~MAGIC_ARRAY_NUMBER);
+			ArrayHeader *srcArrayPtr = dstArrayPtr;
+
+			if (!dstArrayPtr) {
+				error("Missing array (%d,%d,4) reference", (dstArray & ~MAGIC_ARRAY_NUMBER), dstArray);
 			}
-			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start) {
-				memcpy(dst, src, rowSize);
-				dst += dstPitch;
-				src += srcPitch;
+
+			bool useMemcpy = false;
+			if ((dstDownMin < srcDownMin) || _game.heversion > 99) {
+				useMemcpy = true;
+
+				getArrayDataPtrAndDataSize(dstArrayPtr, dstDownMin, dstAcrossMin, dstAcrossMax, &dstPtr, &dstOffset, &dataSize);
+				getArrayDataPtrAndDataSize(srcArrayPtr, srcDownMin, srcAcrossMin, srcAcrossMax, &srcPtr, &srcOffset, &dataSize);
+			} else {
+				getArrayDataPtrAndDataSize(dstArrayPtr, dstDownMax, dstAcrossMin, dstAcrossMax, &dstPtr, &dstOffset, &dataSize);
+				getArrayDataPtrAndDataSize(srcArrayPtr, srcDownMax, srcAcrossMin, srcAcrossMax, &srcPtr, &srcOffset, &dataSize);
+
+				useMemcpy = (dstAcrossMin <= srcAcrossMin);
+			}
+
+			if (useMemcpy) {
+				for (int dstDownCounter = dstDownMin; dstDownCounter <= dstDownMax; dstDownCounter++) {
+					memcpy(dstPtr, srcPtr, dataSize);
+					dstPtr += dstOffset;
+					srcPtr += srcOffset;
+				}
+			} else {
+				for (int dstDownCounter = dstDownMin; dstDownCounter <= dstDownMax; dstDownCounter++) {
+					memmove(dstPtr, srcPtr, dataSize);
+					dstPtr += dstOffset;
+					srcPtr += srcOffset;
+				}
 			}
 		}
 	}
 }
 
-void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num) {
-	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;
-	const int offset = pitch * (idx2 - FROM_LE_32(ah->dim2start)) + idx1 - FROM_LE_32(ah->dim1start);
+void ScummEngine_v72he::getArrayDataPtrAndDataSize(ArrayHeader *headerPtr, int down, int aMin, int aMax, byte **ptrPtr, int *dataOffsetPtr, int *dataSizePtr) {
+	const int acrossCount = FROM_LE_32(headerPtr->acrossMax) - FROM_LE_32(headerPtr->acrossMin) + 1;
+	const int index = acrossCount * (down - FROM_LE_32(headerPtr->downMin)) + aMin - FROM_LE_32(headerPtr->acrossMin);
 
-	switch (FROM_LE_32(ah->type)) {
+	switch (FROM_LE_32(headerPtr->type)) {
 	case kByteArray:
 	case kStringArray:
-		*num = len1 - idx1 + 1;
-		*size = pitch;
-		*data = ah->data + offset;
+		*dataSizePtr = aMax - aMin + 1;
+		*dataOffsetPtr = acrossCount;
+		*ptrPtr = headerPtr->data + index;
 		break;
 	case kIntArray:
-		*num = (len1 - idx1) * 2 + 2;
-		*size = pitch * 2;
-		*data = ah->data + offset * 2;
+		*dataSizePtr = (aMax - aMin) * 2 + 2;
+		*dataOffsetPtr = acrossCount * 2;
+		*ptrPtr = headerPtr->data + index * 2;
 		break;
 	case kDwordArray:
-		*num = (len1 - idx1) * 4 + 4;
-		*size = pitch * 4;
-		*data = ah->data + offset * 4;
+		*dataSizePtr = (aMax - aMin) * 4 + 4;
+		*dataOffsetPtr = acrossCount * 4;
+		*ptrPtr = headerPtr->data + index * 4;
 		break;
 	default:
-		error("Invalid array type %d", FROM_LE_32(ah->type));
+		error("Invalid array type %d", FROM_LE_32(headerPtr->type));
 	}
 }
 
@@ -1968,7 +2140,7 @@ void ScummEngine_v72he::o72_readINI() {
 	case ScummEngine_v100he::SO_DWORD: // HE 100
 	case SO_DWORD: // number
 		if (!strcmp((char *)option, "DisablePrinting") || !strcmp((char *)option, "NoPrinting")) {
-			push(1);
+			push(0);
 		} else if (!strcmp((char *)option, "DisableMaiaUpdates")) {
 			// WORKAROUND: Override the update checks.
 			// This gets checked in Baseball 2001 and will check for
@@ -1996,6 +2168,44 @@ void ScummEngine_v72he::o72_readINI() {
 				push(4);
 			else
 				push(2);
+		} else if (_game.heversion >= 99 && !strcmp((char *)option, "NoFontsInstalled")) {
+			// The three FunShop came with these six exact optional TrueType fonts:
+			// Augie, Dot2Dot, Frosty, Goo Puff, Smilage and Zodiastic.
+			//
+			// These fonts are an optional choice from the installer, and if not installed,
+			// this NoFontsInstalled flag will be set to 1.
+			//
+			// In our case, some users might not have a suitable Windows OS to run the
+			// InstallShield installers, and they might just take the plain data files
+			// from the CD. So let's check for exactly those fonts in our HEFont class
+			// and set this flag accordingly.
+			//
+			// The perceived effect of this is that without these fonts, premade printing
+			// models won't be available, instead of crashing the engine. ;-)
+#ifdef USE_FREETYPE2
+			static const char *funShopFonts[] = {
+				"Augie",
+				"Dot2Dot",
+				"Frosty",
+				"Goo Puff",
+				"Smilage",
+				"Zodiastic"
+			};
+
+			((ScummEngine_v99he *)this)->_heFont->enumInit();
+
+			bool allFontsFound = true;
+			for (int i = 0; i < ARRAYSIZE(funShopFonts); i++) {
+				if (((ScummEngine_v99he *)this)->_heFont->enumFind(funShopFonts[i]) == -1) {
+					allFontsFound = false;
+					break;
+				}
+			}
+
+			push(allFontsFound ? 0 : 1);
+#else
+			push(0);
+#endif
 		} else {
 			push(ConfMan.getInt((char *)option));
 		}
@@ -2011,7 +2221,7 @@ void ScummEngine_v72he::o72_readINI() {
 		} else if (!strcmp((char *)option, "GameResourcePath") || !strcmp((char *)option, "SaveGamePath")) {
 			// We set SaveGamePath in order to detect where it used
 			// in convertFilePath and to avoid warning about invalid
-			// path in Macintosh verisons.
+			// path in Macintosh versions.
 			data = defineArray(0, kStringArray, 0, 0, 0, 2);
 			if (_game.platform == Common::kPlatformMacintosh)
 				memcpy(data, (const char *)"*:", 2);

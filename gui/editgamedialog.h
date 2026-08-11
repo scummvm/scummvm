@@ -62,6 +62,7 @@ public:
 
 	void open() override;
 	void apply() override;
+	void close() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 protected:
@@ -89,6 +90,11 @@ protected:
 	CheckboxWidget *_globalMIDIOverride;
 	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
+
+	CheckboxWidget *_enableHotspotsCheckbox;
+	StaticTextWidget *_hotspotMarkerPopUpDesc;
+	PopUpWidget *_hotspotMarkerPopUp;
+	CheckboxWidget *_showHotspotTextCheckbox;
 
 	ScrollContainerWidget *_gameContainer;
 	OptionsContainerWidget *_engineOptions;

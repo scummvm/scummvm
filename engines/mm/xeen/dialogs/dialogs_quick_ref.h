@@ -37,6 +37,10 @@ private:
 	const char *getDaysPlurals(int val);
 
 	void execute();
+
+#ifdef USE_TTS
+	void speakText(const Common::String &text, uint partySize) const;
+#endif
 public:
 	static void show(XeenEngine *vm);
 };

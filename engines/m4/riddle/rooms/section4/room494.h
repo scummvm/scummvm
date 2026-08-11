@@ -31,8 +31,10 @@ namespace Rooms {
 class Room494 : public Room {
 private:
 	static void escapeFn(void *, void *);
+	static void loadFn(void *, void *);
 	int getSelectedButton() const;
 	void restoreHotkeys();
+	void setupInventory();
 
 private:
 	int _menuButtons = 0;
@@ -40,7 +42,7 @@ private:
 	int _selectedBtn1 = -1;
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
-	machine *_buttons[6];
+	machine *_buttons[6] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	HotkeyCB _hotkeyEscape = nullptr;
 	HotkeyCB _hotkeySave = nullptr;
 	HotkeyCB _hotkeyLoad = nullptr;

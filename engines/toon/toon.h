@@ -72,23 +72,36 @@ struct ADGameDescription;
  */
 namespace Toon {
 
+enum TOONAction {
+	kActionNone,
+	kActionEscape,
+	kActionStopCurrentVoice,
+	kActionSaveGame,
+	kActionLoadGame,
+	kActionSubtitles,
+	kActionMuteMusic,
+	kActionSpeechMute,
+	kActionSFXMute,
+	kActionShowOptions
+};
+
 enum ToonGameType {
 	GType_TOON = 1
 };
 
 enum ToonDebugChannels {
-	kDebugAnim      = 1 <<  0,
-	kDebugCharacter = 1 <<  1,
-	kDebugAudio     = 1 <<  2,
-	kDebugHotspot   = 1 <<  3,
-	kDebugFont      = 1 <<  4,
-	kDebugPath      = 1 <<  5,
-	kDebugMovie     = 1 <<  6,
-	kDebugPicture   = 1 <<  7,
-	kDebugResource  = 1 <<  8,
-	kDebugState     = 1 <<  9,
-	kDebugTools     = 1 << 10,
-	kDebugText      = 1 << 11
+	kDebugAnim = 1,
+	kDebugCharacter,
+	kDebugAudio,
+	kDebugHotspot,
+	kDebugFont,
+	kDebugPath,
+	kDebugMovie,
+	kDebugPicture,
+	kDebugResource,
+	kDebugState,
+	kDebugTools,
+	kDebugText,
 };
 
 class Picture;

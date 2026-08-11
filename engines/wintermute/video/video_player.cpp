@@ -27,6 +27,13 @@
 
 
 #include "engines/wintermute/video/video_player.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -42,19 +49,21 @@ VideoPlayer::VideoPlayer(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::setDefaults() {
 	_playing = false;
-	_videoEndTime = 0;
-	_soundAvailable = false;
-	_startTime = 0;
-	_totalVideoTime = 0;
+
+	_aviDecoder = nullptr;
+
 	_playPosX = _playPosY = 0;
 	_playZoom = 0.0f;
 
-	_filename = nullptr;
+	_texture = nullptr;
+	_videoFrameReady = false;
+	_playbackStarted = false;
+	_freezeGame = false;
 
-	_slowRendering = false;
+	_filename.clear();
 
-	_currentSubtitle = 0;
-	_showSubtitle = false;
+	_subtitler = nullptr;
+	_foundSubtitles = false;
 
 	return STATUS_OK;
 }
@@ -66,43 +75,189 @@ VideoPlayer::~VideoPlayer() {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::cleanup() {
-	return 0;
+	_playing = false;
+
+	SAFE_DELETE(_subtitler);
+	if (_aviDecoder) {
+		_aviDecoder->close();
+	}
+	SAFE_DELETE(_aviDecoder);
+	SAFE_DELETE(_texture);
+
+	return setDefaults();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool VideoPlayer::initialize(const char *inFilename, const char *subtitleFile) {
-	warning("VideoPlayer: %s %s - Not implemented yet", inFilename, subtitleFile);
+bool VideoPlayer::initialize(const Common::String &filename, const Common::String &subtitleFile) {
+	cleanup();
+
+	if (BaseEngine::instance().getGameId() == "sof1" ||
+	    BaseEngine::instance().getGameId() == "sof2") {
+		warning("PlayVideo: %s - Xvid support not implemented yet", filename.c_str());
+		return STATUS_FAILED;
+	}
+
+	_filename = filename;
+
+	// Load a file, but avoid having the File-manager handle the disposal of it.
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
+	if (!file) {
+		return STATUS_FAILED;
+	}
+
+	_aviDecoder = new Video::AVIDecoder();
+	_aviDecoder->loadStream(file);
+
+	_subtitler = new VideoSubtitler(_game);
+	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
+
+	if (!_aviDecoder->isVideoLoaded()) {
+		// W/A: Missing DX50 decoder support for 'Looky' game.
+		if (BaseEngine::instance().getGameId() == "looky")
+			return STATUS_OK;
+		return STATUS_FAILED;
+	}
+
+	// Additional setup.
+	_texture = _game->_renderer->createSurface();
+	_texture->create(_aviDecoder->getWidth(), _aviDecoder->getHeight());
+	_playZoom = 100;
+
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::update() {
-	return 0;
+	if (!isPlaying()) {
+		return STATUS_OK;
+	}
+
+	if (_playbackStarted) {
+		return STATUS_OK;
+	}
+
+	if (_playbackStarted && !_freezeGame && _game->_state == GAME_FROZEN) {
+		return STATUS_OK;
+	}
+
+	if (_subtitler && _foundSubtitles && _game->_subtitles) {
+		_subtitler->update(_aviDecoder->getCurFrame());
+	}
+
+	if (_aviDecoder->endOfVideo()) {
+		_playbackStarted = false;
+		if (_freezeGame) {
+			stop();
+			return STATUS_OK;
+		}
+	}
+	if (!_aviDecoder->endOfVideo() && _aviDecoder->getTimeToNextFrame() == 0) {
+		const Graphics::Surface *decodedFrame = _aviDecoder->decodeNextFrame();
+		if (decodedFrame && _texture) {
+			_texture->putSurface(*decodedFrame, false);
+			_videoFrameReady = true;
+		}
+	}
+
+	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::display() {
-	return 0;
+	Common::Rect32 rc;
+	bool res;
+
+	if (_texture && _videoFrameReady) {
+		BasePlatform::setRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
+		if (_playZoom == 100.0f) {
+			res = _texture->display(_playPosX, _playPosY, rc);
+		} else {
+			res = _texture->displayTransZoom(_playPosX, _playPosY, rc, _playZoom, _playZoom);
+		}
+	} else {
+		res = STATUS_FAILED;
+	}
+
+	if (_subtitler && _foundSubtitles && _game->_subtitles) {
+		_subtitler->display();
+	}
+	return res;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::play(TVideoPlayback type, int x, int y, bool freezeMusic) {
+	if (!_aviDecoder)
+		return STATUS_FAILED;
+
+	if (!_playbackStarted && freezeMusic) {
+		_game->freeze(freezeMusic);
+		_freezeGame = freezeMusic;
+	}
+
+	_playbackStarted = false;
+	float width, height;
+	if (_aviDecoder) {
+		if (_subtitler && _foundSubtitles && _game->_subtitles) {
+			_subtitler->update(_aviDecoder->getFrameCount());
+			_subtitler->display();
+		}
+		_playPosX = x;
+		_playPosY = y;
+
+		width = (float)_aviDecoder->getWidth();
+		height = (float)_aviDecoder->getHeight();
+	} else {
+		width = (float)_game->_renderer->getWidth();
+		height = (float)_game->_renderer->getHeight();
+	}
+
+	switch (type) {
+		case VID_PLAY_POS:
+			_playZoom = 100.0f;
+			_playPosX = x;
+			_playPosY = y;
+			break;
+
+		case VID_PLAY_STRETCH: {
+			float zoomX = (float)((float)_game->_renderer->getWidth() / width * 100);
+			float zoomY = (float)((float)_game->_renderer->getHeight() / height * 100);
+			_playZoom = MIN(zoomX, zoomY);
+			_playPosX = (int)((_game->_renderer->getWidth() - width * (_playZoom / 100)) / 2);
+			_playPosX = (int)((_game->_renderer->getHeight() - height * (_playZoom / 100)) / 2);
+		}
+			break;
+
+		case VID_PLAY_CENTER:
+			_playZoom = 100.0f;
+			_playPosX = (int)((_game->_renderer->getWidth() - width) / 2);
+			_playPosY = (int)((_game->_renderer->getHeight() - height) / 2);
+			break;
+
+		default:
+			break;
+	}
+
+	if (_aviDecoder)
+		_aviDecoder->start();
+
+	_playing = true;
+
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::stop() {
+	if (_freezeGame)
+		_game->unfreeze();
+
+	cleanup();
+
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::isPlaying() {
 	return _playing;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool VideoPlayer::loadSubtitles(const char *filename, const char *subtitleFile) {
-	return STATUS_OK;
 }
 
 } // End of namespace Wintermute

@@ -90,7 +90,7 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-struct Dialogs {
+struct Dialogs : public ViewsBase {
 private:
 	Views::AreYouReady _areYouReady;
 	Views::Bash _bash;
@@ -163,6 +163,7 @@ private:
 	Views::Spells::Teleport _telportSpell;
 public:
 	Dialogs() {}
+	~Dialogs() override {}
 };
 
 } // namespace Views

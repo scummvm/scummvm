@@ -95,7 +95,7 @@ World::~World() {
 		delete _orderedScenes[i];
 
 	for (uint i = 0; i < _patterns->size(); i++)
-		free(_patterns->operator[](i));
+		free(const_cast<byte *>(_patterns->operator[](i)));
 
 	delete _patterns;
 
@@ -140,7 +140,12 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if ((resArray = resMan->getResIDArray(MKTAG('V','E','R','S'))).size() == 0)
 		return false;
 
-	_name = resMan->getBaseFileName().toString();
+	Common::String origName = resMan->getOriginalFileName();
+	if (!origName.empty()) {
+		_name = origName;
+	} else {
+		_name = resMan->getBaseFileName().toString();
+	}
 
 	if (resArray.size() > 1)
 		warning("Too many VERS resources");
@@ -184,7 +189,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	} else {
 		_saveBeforeQuitMessage = new Common::String("Save changes before quiting?");
 	}
-	if ((message = loadStringFromDITL(resMan, 2490, 3)) != NULL) {
+	if ((message = loadStringFromDITL(resMan, 2490, 3)) != NULL && !message->empty()) {
 		message->trim();
 		debug(2, "_saveBeforeCloseMessage: %s", message->c_str());
 		_saveBeforeCloseMessage = message;
@@ -336,7 +341,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 			res->skip(8); // Skip 8 more bytes
 
-			debug(3, "Loading 29 patterns for Enhanced Scepters at %ld", res->pos());
+			debug(3, "Loading 29 patterns for Enhanced Scepters at %" PRId64, res->pos());
 
 			for (int i = 0; i < 29; i++) {
 				byte *pattern = (byte *)malloc(8);
@@ -357,6 +362,22 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		for (uint i = 0; i < string.size() && string[i] != ';'; i++) // Read token
 			_aboutMenuItemName += string[i];
 
+		_aboutMenuItemName.trim();
+
+		debugC(1, kDebugLoading, "MENU: About: %s", toPrintable(_aboutMenuItemName).c_str());
+
+		delete menu;
+		delete res;
+	}
+	res = resMan->getResource(MKTAG('M', 'E', 'N', 'U'), 2002);
+	if (res != NULL) {
+		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
+		if (menu->size() >= 2) {
+			_fileMenuName = menu->operator[](0);
+			_fileMenu = menu->operator[](1);
+			debugC(1, kDebugLoading, "MENU: File name: %s", toPrintable(_fileMenuName).c_str());
+			debugC(1, kDebugLoading, "MENU: File menu: %s", toPrintable(_fileMenu).c_str());
+		}
 		delete menu;
 		delete res;
 	}
@@ -364,7 +385,11 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if (res != NULL) {
 		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_commandsMenuName = menu->operator[](0);
-		_commandsMenu = menu->operator[](1);
+		_commandsMenuDefault = menu->operator[](1);
+		_commandsMenu = _commandsMenuDefault;
+		debugC(1, kDebugLoading, "MENU: Commands name: %s", toPrintable(_commandsMenuName).c_str());
+		debugC(1, kDebugLoading, "MENU: Commands menu: %s", toPrintable(_commandsMenu).c_str());
+
 		delete menu;
 		delete res;
 	}
@@ -374,6 +399,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		_weaponsMenuName = menu->operator[](0);
 		delete menu;
 		delete res;
+
+		debugC(1, kDebugLoading, "MENU: Weapons name: %s", toPrintable(_weaponsMenuName).c_str());
 	}
 	// TODO: Read Apple menu and get the name of that menu item..
 
@@ -404,6 +431,11 @@ void World::loadExternalSounds(const Common::Path &fname) {
 	resArray = resMan.getResIDArray(MKTAG('A','S','N','D'));
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan.getResource(MKTAG('A','S','N','D'), *iter);
+
+		if (!res) {
+			warning("Cannot load sound resource %d from file <%s>", *iter, fname.toString().c_str());
+			continue;
+		}
 		addSound(new Sound(resMan.getResName(MKTAG('A','S','N','D'), *iter), res));
 	}
 }
@@ -438,7 +470,7 @@ void World::move(Obj *obj, Chr *chr) {
 		return;
 
 	Designed *from = obj->removeFromCharOrScene();
-	obj->_currentOwner = chr;
+	obj->setCurrentOwner(chr);
 	chr->_inventory.push_back(obj);
 
 	Common::sort(chr->_inventory.begin(), chr->_inventory.end(), invComparator);
@@ -460,7 +492,7 @@ void World::move(Obj *obj, Scene *scene, bool skipSort) {
 		return;
 
 	Designed *from = obj->removeFromCharOrScene();
-	obj->_currentScene = scene;
+	obj->setCurrentScene(scene);
 	scene->_objs.push_back(obj);
 
 	if (!skipSort)
@@ -545,8 +577,12 @@ const char *World::getAboutMenuItemName() {
 			strncat(menu, str, (pos - str));
 			strncat(menu, _name.c_str(), 255);
 			strncat(menu, pos + 1, 255);
+		} else {
+			Common::strlcpy(menu, _aboutMenuItemName.c_str(), 256);
 		}
 	}
+
+	debugC(1, kDebugLoading, "MENU: About cleansed: %s", Common::toPrintable(menu).c_str());
 
 	return menu;
 }

@@ -114,7 +114,7 @@ Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(Shared::Maps::MapBase
 	if (destTile._isWall || destTile._isSecretDoor || destTile._isBeams)
 		return NO;
 
-	// Can't move to directly adjoining doorway cells (they'd be in parralel to each other, not connected)
+	// Can't move to directly adjoining doorway cells (they'd be in parallel to each other, not connected)
 	if (destTile._isDoor && currTile._isDoor)
 		return NO;
 

@@ -31,6 +31,8 @@
 #include "graphics/korfont.h"
 #include "graphics/pixelformat.h"
 
+#include "common/rendermode.h"
+
 namespace Sci {
 
 enum {
@@ -41,21 +43,21 @@ enum {
 enum GfxScreenUpscaledMode {
 	GFX_SCREEN_UPSCALED_DISABLED	= 0,
 	GFX_SCREEN_UPSCALED_480x300     = 1,
-	GFX_SCREEN_UPSCALED_640x400		= 2,
-	GFX_SCREEN_UPSCALED_640x440		= 3
+	GFX_SCREEN_UPSCALED_640x400		= 2
 };
 
 enum GfxScreenMasks {
 	GFX_SCREEN_MASK_VISUAL		= 1,
 	GFX_SCREEN_MASK_PRIORITY	= 2,
 	GFX_SCREEN_MASK_CONTROL		= 4,
-	GFX_SCREEN_MASK_DISPLAY		= 8, // not official sierra sci, only used internally
 	GFX_SCREEN_MASK_ALL			= GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY|GFX_SCREEN_MASK_CONTROL
 };
 
 enum {
 	DITHERED_BG_COLORS_SIZE = 256
 };
+
+class GfxDriver;
 
 /**
  * Screen class, actually creates 3 (4) screens internally:
@@ -67,7 +69,7 @@ enum {
  */
 class GfxScreen {
 public:
-	GfxScreen(ResourceManager *resMan);
+	GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode);
 	~GfxScreen();
 
 	uint16 getWidth() { return _width; }
@@ -83,7 +85,7 @@ public:
 	void copyToScreen();
 	void kernelSyncWithFramebuffer();
 	void copyRectToScreen(const Common::Rect &rect);
-	void copyDisplayRectToScreen(const Common::Rect &rect);
+	void copyHiResRectToScreen(const byte *srcBuffer, int pitch, int x, int y, int w, int h, const byte *colorMap);
 	void copyRectToScreen(const Common::Rect &rect, int16 x, int16 y);
 
 	// functions to manipulate a backup copy of the screen (for transitions)
@@ -92,7 +94,7 @@ public:
 	void bakDiscard();
 
 	// video frame displaying
-	void copyVideoFrameToScreen(const byte *buffer, int pitch, const Common::Rect &rect, bool is8bit);
+	void copyVideoFrameToScreen(const byte *buffer, int pitch, const Common::Rect &rect);
 
 	// Vector drawing
 private:
@@ -157,6 +159,8 @@ public:
 	void setPaletteMods(const PaletteMod *mods, unsigned int count);
 	bool paletteModsEnabled() const { return _paletteModsEnabled; }
 
+	GfxDriver *gfxDriver() const { return _gfxDrv; }
+
 private:
 	uint16 _width;
 	uint16 _height;
@@ -166,8 +170,6 @@ private:
 	uint16 _displayWidth;
 	uint16 _displayHeight;
 	uint _displayPixels;
-
-	Graphics::PixelFormat _format;
 
 	byte _colorWhite;
 	byte _colorDefaultVectorData;
@@ -200,9 +202,11 @@ private:
 	byte *_displayScreen;
 	Graphics::Surface _displayScreenSurface;
 
-	// Screens for RGB mode support
-	byte *_displayedScreen;
-	byte *_rgbScreen;
+	/**
+	 * Support for CGA and Hercules and other graphic modes that the original
+	 * interpreters allowed. It also performs the rgb rendering if needed.
+	 */
+	GfxDriver *_gfxDrv;
 
 	// For RGB per-view/pic palette mods
 	byte *_paletteMapScreen;
@@ -212,10 +216,7 @@ private:
 
 	byte *_backupScreen; // for bak* functions
 
-	void convertToRGB(const Common::Rect &rect);
-	void displayRectRGB(const Common::Rect &rect, int x, int y);
 	void displayRect(const Common::Rect &rect, int x, int y);
-	byte *_palette;
 
 	ResourceManager *_resMan;
 
@@ -230,6 +231,11 @@ private:
 	 * is used.
 	 */
 	GfxScreenUpscaledMode _upscaledHires;
+
+	/**
+	 * This buffer is used to draw a single hires font glyph.
+	 */
+	byte *_hiresGlyphBuffer;
 
 	/**
 	 * This here holds a translation for vertical+horizontal coordinates between native
@@ -267,7 +273,6 @@ public:
 				break;
 
 			case GFX_SCREEN_UPSCALED_640x400:
-			case GFX_SCREEN_UPSCALED_640x440:
 				putScaledPixelOnDisplay(x, y, color);
 				break;
 			default:
@@ -312,8 +317,7 @@ public:
 	void vectorPutPixel(int16 x, int16 y, byte drawMask, byte color, byte priority, byte control) {
 		switch (_upscaledHires) {
 		case GFX_SCREEN_UPSCALED_640x400:
-		case GFX_SCREEN_UPSCALED_640x440:
-			// For regular upscaled modes forward to the regular putPixel
+		// For regular upscaled modes forward to the regular putPixel
 			putPixel(x, y, drawMask, color, priority, control);
 			return;
 			break;
@@ -364,18 +368,6 @@ public:
 			_displayScreen[displayOffset + _displayWidth + 1] = color;
 			break;
 
-		case GFX_SCREEN_UPSCALED_640x440: {
-			int16 startY = (y * 11) / 5;
-			int16 endY = ((y + 1) * 11) / 5;
-			displayOffset = (startY * _displayWidth) + x * 2;
-
-			for (int16 curY = startY; curY < endY; curY++) {
-				_displayScreen[displayOffset] = color;
-				_displayScreen[displayOffset + 1] = color;
-				displayOffset += _displayWidth;
-			}
-			break;
-		}
 		default:
 			break;
 		}
@@ -404,8 +396,7 @@ public:
 			case GFX_SCREEN_UPSCALED_DISABLED:
 				_displayScreen[offset] = color;
 				break;
-			case GFX_SCREEN_UPSCALED_640x400:
-			case GFX_SCREEN_UPSCALED_640x440: {
+			case GFX_SCREEN_UPSCALED_640x400: {
 				// to 1-> 4 pixels upscaling for all of those, so that fonts won't look weird
 				int displayOffset = (_upscaledHeightMapping[startingY] + y * 2) * _displayWidth + x * 2;
 				_displayScreen[displayOffset] = color;

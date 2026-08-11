@@ -94,7 +94,7 @@ void Room6::init_robo() {
 void Room6::bola_button() {
 	if (!_G(gameState).R6BolaBecher) {
 		_G(det)->hideStaticSpr(0);
-		startSetAILWait(0, 1, ANI_FRONT);
+		startDetailWait(0, 1, ANI_FRONT);
 		if (_G(gameState).R6BolaOk) {
 			_G(gameState).R6BolaBecher = true;
 			_G(det)->showStaticSpr(0);

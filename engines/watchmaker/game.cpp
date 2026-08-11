@@ -20,13 +20,17 @@
  */
 
 #include "watchmaker/game.h"
-#include "watchmaker/windows_hacks.h"
-#include "watchmaker/classes/do_system.h"
+
+#include "watchmaker/3d/animation.h"
 #include "watchmaker/3d/geometry.h"
 #include "watchmaker/3d/loader.h"
 #include "watchmaker/3d/math/llmath.h"
-#include "watchmaker/3d/animation.h"
+#include "watchmaker/classes/do_camera.h"
+#include "watchmaker/classes/do_keyboard.h"
+#include "watchmaker/classes/do_player.h"
+#include "watchmaker/classes/do_system.h"
 #include "watchmaker/define.h"
+#include "watchmaker/init/nl_init.h"
 #include "watchmaker/ll/ll_anim.h"
 #include "watchmaker/ll/ll_diary.h"
 #include "watchmaker/ll/ll_mesh.h"
@@ -34,13 +38,11 @@
 #include "watchmaker/ll/ll_regen.h"
 #include "watchmaker/ll/ll_system.h"
 #include "watchmaker/ll/ll_util.h"
-#include "watchmaker/walk/act.h"
-#include "watchmaker/classes/do_player.h"
-#include "watchmaker/classes/do_keyboard.h"
-#include "watchmaker/classes/do_camera.h"
-#include "watchmaker/walk/ball.h"
-#include "watchmaker/sdl_wrapper.h"
 #include "watchmaker/renderer.h"
+#include "watchmaker/sdl_wrapper.h"
+#include "watchmaker/walk/act.h"
+#include "watchmaker/walk/ball.h"
+#include "watchmaker/windows_hacks.h"
 
 namespace Watchmaker {
 
@@ -183,7 +185,8 @@ WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
 	_vm = this;
 	_meshModifiers = new MeshModifiers();
 	_roomManager = RoomManager::create(this);
-	configLoaderFlags(); // TODO: This should probably happen before the constructor
+	_cameraMan = new CameraMan();
+	configLoaderFlags(false); // TODO: This should probably happen before the constructor
 
 	// if LoaderFlags & T3D_DEBUGMODE
 	// ...
@@ -191,12 +194,12 @@ WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
 
 	gameOptions.load(workDirs);
 
-	// if (LoaderFlags & T3D_DEBUGMODE) {
-	// ...
-	// } else
-
-	warning("Currently doing an unneccessary copy here");
-	loadAll(workDirs, init);
+	if (LoaderFlags & T3D_DEBUGMODE) {
+		InitStructures(*this);
+	} else {
+		warning("Currently doing an unnecessary copy here");
+		loadAll(workDirs, init);
+	}
 
 	sdl = new sdl_wrapper();
 
@@ -212,6 +215,7 @@ WGame::~WGame() {
 	delete _meshModifiers;
 	delete _roomManager;
 	delete _rnd;
+	delete _cameraMan;
 	_vm = nullptr;
 }
 
@@ -470,7 +474,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 	t3dStartTime();
 
 	if (!t3dCurRoom->CameraTable.empty())
-		if (!(t3dCurCamera = PickCamera(t3dCurRoom, 0)))
+		if (!(t3dCurCamera = _cameraMan->PickCamera(t3dCurRoom, 0)))
 			t3dCurCamera = &t3dCurRoom->CameraTable[0];
 	if (t3dCurCamera)
 		init._globals._invVars.t3dIconCamera = *t3dCurCamera;
@@ -479,7 +483,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 
 	Player->Pos.y = Player->Mesh->Trasl.y = CurFloorY;
 
-	GetCameraTarget(init, &t3dCurCamera->Target);
+	_cameraMan->GetCameraTarget(init, &t3dCurCamera->Target);
 	_renderer->setCurCameraViewport(t3dCurCamera->Fov, bSuperView);
 
 	mPosx = windowInfo.width / 2;

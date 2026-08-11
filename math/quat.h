@@ -19,7 +19,7 @@
  *
  */
 
-// Quaternion-math borrowed from plib http://plib.sourceforge.net/index.html
+// Quaternion-math borrowed from plib https://plib.sourceforge.net/index.html
 // Which is covered by LGPL2
 // And has this additional copyright note:
 /*

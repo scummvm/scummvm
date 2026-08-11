@@ -27,9 +27,6 @@ KattonGenerator::KattonGenerator(int seed) {
 	_seed = seed;
 }
 
-KattonGenerator::~KattonGenerator() {
-}
-
 int KattonGenerator::getRandomNumber() {
 	// This is the exact linear congruential generator
 	// algorithm used on MSVCRT (Windows Visual C++ Runtime), with

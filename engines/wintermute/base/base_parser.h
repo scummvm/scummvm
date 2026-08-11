@@ -30,8 +30,7 @@
 
 
 #define TOKEN_DEF_START         \
-	enum                  \
-	{                 \
+	enum {                      \
 		TOKEN_NONE = 0,
 #define TOKEN_DEF(name)         \
 	TOKEN_ ## name,
@@ -52,10 +51,11 @@
 #define PARSERR_TOKENNOTFOUND   -1
 
 #include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/base/base.h"
 
 namespace Wintermute {
 
-class BaseParser {
+class BaseParser : public BaseClass {
 public:
 	struct TokenDesc {
 		int32 id;
@@ -64,21 +64,20 @@ public:
 
 public:
 	int32 scanStr(const char *in, const char *format, ...);
-	int32 getCommand(char **buf, const TokenDesc *tokens, char **params);
-	BaseParser();
-	virtual ~BaseParser();
-private:
 	char *getLastOffender();
 	void skipToken(char **buf, char *tok, char *msg = nullptr);
 	int32 getTokenInt(char **buf);
 	float getTokenFloat(char **buf);
-	Common::String getToken(char **buf);
+	char *getToken(char **buf);
 	char *getAssignmentText(char **buf);
 	char *getSubText(char **buf, char open, char close);
 	void skipCharacters(char **buf, const char *toSkip);
+	int32 getCommand(char **buf, const TokenDesc *tokens, char **params);
 	int32 getObject(char **buf, const TokenDesc *tokens, char **name, char **data);
 	int32 _parserLine = 0;
 	char _lastOffender[255];
+	BaseParser(BaseGame *inGame = nullptr);
+	virtual ~BaseParser();
 	char *_whiteSpace;
 };
 

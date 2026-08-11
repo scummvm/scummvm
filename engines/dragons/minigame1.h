@@ -21,8 +21,6 @@
 #ifndef DRAGONS_MINIGAME1_H
 #define DRAGONS_MINIGAME1_H
 
-#include "common/system.h"
-
 namespace Dragons {
 
 class DragonsEngine;

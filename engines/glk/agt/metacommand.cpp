@@ -193,13 +193,13 @@ static rbool argfix(int argtype, int *arg, int optype, rbool *special) {
 /* These are handled in the order ARG2 then ARG1 so that
    top-of-stack references will pop the stack in that order
    (so that the push-order will corrospond to the argument order) */
-/* <grammer_arg> is true if "bad" argument is NOUN/OBJECT/etc. and
+/* <grammar_arg> is true if "bad" argument is NOUN/OBJECT/etc. and
    is 0. */
 static int argok(const opdef *opdata, int *arg1, int *arg2, int optype,
-				 rbool *grammer_arg) {
-	if ((opdata->argnum) > 1 && !argfix(opdata->arg2, arg2, optype % 4, grammer_arg))
+				 rbool *grammar_arg) {
+	if ((opdata->argnum) > 1 && !argfix(opdata->arg2, arg2, optype % 4, grammar_arg))
 		return 0;
-	if ((opdata->argnum) > 0 && !argfix(opdata->arg1, arg1, optype / 4, grammer_arg))
+	if ((opdata->argnum) > 0 && !argfix(opdata->arg1, arg1, optype / 4, grammar_arg))
 		return 0;
 	return 1;
 }
@@ -333,32 +333,32 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 /* decode_args checks and decodes the arguments to metacommand tokens */
 /* Returns false on an error */
 static rbool decode_args(int ip_, op_rec *oprec) {
-	rbool grammer_arg; /* Have NOUN/OBJECT that is 0 and so failed argok tests */
+	rbool grammar_arg; /* Have NOUN/OBJECT that is 0 and so failed argok tests */
 
 	if (oprec->errmsg != nullptr) {
 		if (!PURE_ERROR)
 			writeln(oprec->errmsg);
 		return 0;
 	}
-	if (DEBUG_AGT_CMD && !supress_debug) {
+	if (DEBUG_AGT_CMD && !suppress_debug) {
 		if (oprec->negate) { /* Output NOT */
 			debug_cmd_out(ip_, 108, 0, 0, 0);
 			ip_++;
 		}
 	}
 
-	if (DEBUG_AGT_CMD && !supress_debug)
+	if (DEBUG_AGT_CMD && !suppress_debug)
 		debug_cmd_out(ip_, oprec->op, oprec->arg1, oprec->arg2, oprec->optype);
 
 	/* This checks and translates the arguments */
 	if (!argok(oprec->opdata, &(oprec->arg1), &(oprec->arg2),
-	           oprec->optype, &grammer_arg)) {
+	           oprec->optype, &grammar_arg)) {
 		/* Don't report errors for null NOUN/OBJECT/ACTOR arguments
 		   used in conditional tokens */
-		if (grammer_arg && oprec->op <= MAX_COND)
+		if (grammar_arg && oprec->op <= MAX_COND)
 			return 0;
 		if (!PURE_ERROR) {
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("\n");
 			writeln("GAME ERROR: Invalid argument to metacommand token.");
 		}
 		return 0;
@@ -389,7 +389,7 @@ static rbool decode_args(int ip_, op_rec *oprec) {
 	run_metacommand hits Return. It sets restart_state and
 	  returns 5 to its parent.
 	scan_metacommand then runs pop_subcall_grammar and restores
-	  the original scanning grammer. It subtracts one from cnum
+	  the original scanning grammar. It subtracts one from cnum
 	  so the original cnum will be rerun.
 	run_metacommand sees that restart_state is set and pops the
 	  rest of the information (cnum and ip) off of the stack.
@@ -520,7 +520,7 @@ static int run_metacommand(int cnum, int *redir_offset)
 	if (restart)  /* finish up Return from subroutine */
 		pop_subcall(&cnum, &ip_, &fail_addr);
 
-	if (DEBUG_AGT_CMD && !supress_debug) {
+	if (DEBUG_AGT_CMD && !suppress_debug) {
 		debug_head(cnum);
 		if (restart) debugout("   (Resuming after subroutine)\n");
 	}
@@ -587,7 +587,7 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 		/* -------- Commands that need to be handled specially -------------- */
 		if (currop.op == 109) { /* OR */
-			if (DEBUG_AGT_CMD && !supress_debug) debug_newline(op, 0);
+			if (DEBUG_AGT_CMD && !suppress_debug) debug_newline(op, 0);
 			continue; /* OR: skip further processing */
 		}
 
@@ -597,25 +597,25 @@ static int run_metacommand(int cnum, int *redir_offset)
 				return 2;
 			}
 			subcall_arg = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("--> Call\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("--> Call\n");
 			return 4;
 		}
 
 		if (currop.op == 1038) { /* Return */
 			restart = 1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("--> Return\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("--> Return\n");
 			return 5;
 		}
 
 		if (currop.op == 1149) { /* Goto */
 			ip_ = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("\n");
 			continue;
 		}
 
 		if (currop.op == 1150) { /* OnFailGoto */
 			fail_addr = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("\n");
 			continue;
 		}
 
@@ -624,24 +624,24 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 		/* ---------- Disambiguation Success -------------- */
 		if (do_disambig && currop.disambig) {
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("==> ACTION\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("==> ACTION\n");
 			return -2;
 		}
 
 		/* ---------- Run normal metacommands -------------- */
 		switch (r = exec_instr(&currop)) {
 		case 0:  /* Normal action token or successful conditional token */
-			if (DEBUG_AGT_CMD && !supress_debug) debug_newline(op, 0);
+			if (DEBUG_AGT_CMD && !suppress_debug) debug_newline(op, 0);
 			continue;
 		case 1: /* Conditional token: fail */
-			if (DEBUG_AGT_CMD && !supress_debug) {
+			if (DEBUG_AGT_CMD && !suppress_debug) {
 				if (orflag) debugout("  (-->FAIL)\n");
 				else debugout("--->FAIL\n");
 			}
 			fail = 1;
 			continue;
 		default: /* Return explicit value */
-			if (DEBUG_AGT_CMD && !supress_debug) {
+			if (DEBUG_AGT_CMD && !suppress_debug) {
 				if (r == 103) debugout("-->Redirect\n");
 				else debugout("==> END\n");
 			}
@@ -1018,7 +1018,7 @@ int scan_metacommand(integer m_actor, int vcode,
 	if (m_actor == -ext_code[weverybody]) m_actor = 2;
 
 
-	if (DEBUG_AGT_CMD && DEBUG_SCAN && !supress_debug) scan_dbg(vcode);
+	if (DEBUG_AGT_CMD && DEBUG_SCAN && !suppress_debug) scan_dbg(vcode);
 
 	m_verb = syntbl[auxsyn[vcode]];
 	if (m_actor == 0) {
@@ -1062,14 +1062,14 @@ int scan_metacommand(integer m_actor, int vcode,
 					rfree(substack);
 					return 2;
 				}
-				if (DEBUG_AGT_CMD && !supress_debug) {
+				if (DEBUG_AGT_CMD && !suppress_debug) {
 					debugout("   ==>");
 					debug_head(i);
 				}
 
 				/* REDIRECT :If we do a redirect from a broader grammar to a
-				   narrower grammer, it will be noted so that certain types
-				   of grammer checking can be disabled. */
+				   narrower grammar, it will be noted so that certain types
+				   of grammar checking can be disabled. */
 				if (redir_flag != nullptr) {
 					if (*redir_flag < 2
 					        && redir_narrows_grammar(&command[oldi], &command[i]))

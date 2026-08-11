@@ -34,18 +34,53 @@
 #include "common/translation.h"
 #endif
 
+#if defined(USE_IMGUI) && defined(ENABLE_EVENTRECORDER)
+#include "gui/EventRecorder.h"
+#endif
+
 #ifdef EMSCRIPTEN
 #include "backends/platform/sdl/emscripten/emscripten.h"
 #endif
+
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(3, 0, 0)
+#include "backends/imgui/backends/imgui_impl_sdl3.h"
+#ifdef USE_OPENGL
+#include "backends/imgui/backends/imgui_impl_opengl3.h"
+#endif
+#ifdef USE_IMGUI_SDLRENDERER3
+#include "backends/imgui/backends/imgui_impl_sdlrenderer3.h"
+#endif
+#elif defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#include "backends/imgui/backends/imgui_impl_sdl2.h"
+#ifdef USE_OPENGL
+#include "backends/imgui/backends/imgui_impl_opengl3.h"
+#endif
+#ifdef USE_IMGUI_SDLRENDERER2
+#include "backends/imgui/backends/imgui_impl_sdlrenderer2.h"
+#endif
+#endif
+
+
+static void getMouseState(int *x, int *y) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	float fx, fy;
+	SDL_GetMouseState(&fx, &fy);
+	*x = static_cast<int>(fx);
+	*y = static_cast<int>(fy);
+#else
+	SDL_GetMouseState(x, y);
+#endif
+}
+
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
 	: _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	, _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0), _lastFlags(0)
+	, _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0)
 #endif
 {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
 
-	SDL_GetMouseState(&_cursorX, &_cursorY);
+	getMouseState(&_cursorX, &_cursorY);
 }
 
 void SdlGraphicsManager::activateManager() {
@@ -73,6 +108,7 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
 	state.vsync         = getFeatureState(OSystem::kFeatureVSync);
+	state.rotation      = _rotationMode;
 #ifdef USE_RGB_COLOR
 	state.pixelFormat   = getScreenFormat();
 #endif
@@ -98,6 +134,7 @@ bool SdlGraphicsManager::setState(const State &state) {
 		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
 		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
 		setFeatureState(OSystem::kFeatureVSync, state.vsync);
+		setRotationMode(state.rotation);
 
 	if (endGFXTransaction() != OSystem::kTransactionSuccess) {
 		return false;
@@ -147,10 +184,14 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const bool useDefault = defaultGraphicsModeConfig();
 
+	// This gets called from engine before they call initGraphics(), which means we cannot use getScaleFactor()
+	// because the scale factor in the backend has not yet been updated to use the game settings. So directly
+	// read the game settings. This may be -1, which means we want to use the default. Fortunately runGame()
+	// in main.cpp sets the gaphics mode (OpenGL or SurfaceSDL) before starting the engine. So we already have
+	// the correct graphics manager and we can call getDefaultScaleFactor() here.
 	int scale = ConfMan.getInt("scale_factor");
 	if (scale == -1) {
-		warning("Unknown scaler; defaulting to 1");
-		scale = 1;
+		scale = getDefaultScaleFactor();
 	}
 
 	int16 bestWidth = 0, bestHeight = 0;
@@ -197,7 +238,7 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 		// area, so we need to ask SDL where the system's mouse cursor is
 		// instead
 		int x, y;
-		SDL_GetMouseState(&x, &y);
+		getMouseState(&x, &y);
 		if (!_activeArea.drawRect.contains(Common::Point(x, y))) {
 			showCursor = true;
 		}
@@ -212,9 +253,6 @@ bool SdlGraphicsManager::lockMouse(bool lock) {
 }
 
 bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
-	mouse.x = CLIP<int16>(mouse.x, 0, _windowWidth - 1);
-	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);
-
 	bool showCursor = false;
 	// Currently on macOS we need to scale the events for HiDPI screen, but on
 	// Windows we do not. We can find out if we need to do it by querying the
@@ -270,7 +308,15 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 }
 
 void SdlGraphicsManager::showSystemMouseCursor(bool visible) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	if (visible) {
+		SDL_ShowCursor();
+	} else {
+		SDL_HideCursor();
+	}
+#else
 	SDL_ShowCursor(visible ? SDL_ENABLE : SDL_DISABLE);
+#endif
 }
 
 void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
@@ -304,14 +350,18 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	// size or pixel format of the internal game surface (since a user may have
 	// resized the game window), or when the launcher is visible (since a user
 	// may change the scaler, which should reset the window size)
-	if (!_window->getSDLWindow() || _lastFlags != flags || _overlayVisible || _allowWindowSizeReset) {
+	if (!_window->getSDLWindow() || _window->getWindowFlags() != flags || _overlayVisible || _allowWindowSizeReset) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		const bool fullscreen = (flags & (SDL_WINDOW_FULLSCREEN)) != 0;
+#else
 		const bool fullscreen = (flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP)) != 0;
+#endif
 		const bool maximized = (flags & SDL_WINDOW_MAXIMIZED);
 		if (!fullscreen && !maximized) {
-			if (_hintedWidth) {
+			if (_hintedWidth > width) {
 				width = _hintedWidth;
 			}
-			if (_hintedHeight) {
+			if (_hintedHeight > height) {
 				height = _hintedHeight;
 			}
 		}
@@ -319,8 +369,15 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 		if (!_window->createOrUpdateWindow(width, height, flags)) {
 			return false;
 		}
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (fullscreen) {
+			if (!SDL_SetWindowFullscreenMode(_window->getSDLWindow(), NULL))
+				return false;
+			if (!SDL_SyncWindow(_window->getSDLWindow()))
+				return false;
+		}
+#endif
 
-		_lastFlags = flags;
 		_allowWindowSizeReset = false;
 	}
 
@@ -394,6 +451,10 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		getWindow()->grabMouse(!getWindow()->mouseIsGrabbed());
 		return true;
 
+	case kActionToggleResizableWindow:
+		getWindow()->setResizable(!getWindow()->resizable());
+		return true;
+
 	case kActionToggleFullscreen:
 		toggleFullScreen();
 		return true;
@@ -408,20 +469,14 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 }
 
 void SdlGraphicsManager::toggleFullScreen() {
-	/* Don't use g_system for kFeatureOpenGLForGame as it's always supported
-	 * We want to check if we are a 3D graphics manager */
-	bool is3D = hasFeature(OSystem::kFeatureOpenGLForGame);
-
 	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode) ||
-	   (!g_system->hasFeature(OSystem::kFeatureFullscreenToggleKeepsContext) && is3D)) {
+	   !canSwitchFullscreen()) {
 		return;
 	}
 
-	if (!is3D)
-		beginGFXTransaction();
+	beginGFXTransaction();
 	setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
-	if (!is3D)
-		endGFXTransaction();
+	endGFXTransaction();
 #ifdef USE_OSD
 	if (getFeatureState(OSystem::kFeatureFullscreenMode))
 		displayMessageOnOSD(_("Fullscreen mode"));
@@ -447,6 +502,11 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	act = new Action("CAPT", _("Toggle mouse capture"));
 	act->addDefaultInputMapping("C+m");
 	act->setCustomBackendActionEvent(kActionToggleMouseCapture);
+	keymap->addAction(act);
+
+	act = new Action("RSZW", _("Toggle resizable window"));
+	act->addDefaultInputMapping("C+r");
+	act->setCustomBackendActionEvent(kActionToggleResizableWindow);
 	keymap->addAction(act);
 
 	act = new Action("SCRS", _("Save screenshot"));
@@ -501,3 +561,226 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 
 	return keymap;
 }
+
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+void SdlGraphicsManager::setImGuiCallbacks(const ImGuiCallbacks &callbacks) {
+	if (_imGuiInited) {
+		if (_imGuiCallbacks.cleanup) {
+			_imGuiCallbacks.cleanup();
+		}
+		_imGuiInited = false;
+	}
+
+	_imGuiCallbacks = callbacks;
+
+	if (!_imGuiReady) {
+		return;
+	}
+
+	if (_imGuiCallbacks.init) {
+		_imGuiCallbacks.init();
+	}
+	_imGuiInited = true;
+
+	updateScreen();
+}
+
+void SdlGraphicsManager::initImGui(SDL_Renderer *renderer, void *glContext) {
+	assert(!_imGuiReady);
+	_imGuiInited = false;
+
+	IMGUI_CHECKVERSION();
+	if (!ImGui::CreateContext()) {
+		return;
+	}
+	ImGuiIO &io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	ImGui::StyleColorsDark();
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.WindowRounding = 0.0f;
+	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	io.IniFilename = nullptr;
+
+	_imGuiSDLRenderer = nullptr;
+#ifdef USE_OPENGL
+	if (!_imGuiReady && glContext) {
+		// Only OpenGL and GLES2 are supported, not GLES
+		if ((OpenGLContext.type != OpenGL::kContextGL) &&
+			(OpenGLContext.type != OpenGL::kContextGLES2)) {
+			ImGui::DestroyContext();
+			return;
+		}
+
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (!ImGui_ImplSDL3_InitForOpenGL(_window->getSDLWindow(), glContext)) {
+#else
+		if (!ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), glContext)) {
+#endif
+			ImGui::DestroyContext();
+			return;
+		}
+
+		const char *glslVersion;
+		if (OpenGLContext.type == OpenGL::kContextGLES2) {
+			glslVersion = "#version 100";
+		} else {
+			glslVersion = "#version 110";
+		}
+		if (!ImGui_ImplOpenGL3_Init(glslVersion)) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+			ImGui_ImplSDL3_Shutdown();
+#else
+			ImGui_ImplSDL2_Shutdown();
+#endif
+			ImGui::DestroyContext();
+			return;
+		}
+
+		_imGuiReady = true;
+	}
+#endif
+#ifdef USE_IMGUI_SDLRENDERER3
+	if (!_imGuiReady && renderer) {
+		if (!ImGui_ImplSDL3_InitForSDLRenderer(_window->getSDLWindow(), renderer)) {
+			ImGui::DestroyContext();
+			return;
+		}
+
+		if (!ImGui_ImplSDLRenderer3_Init(renderer)) {
+			ImGui_ImplSDL3_Shutdown();
+			ImGui::DestroyContext();
+			return;
+		}
+
+		_imGuiReady = true;
+		_imGuiSDLRenderer = renderer;
+	}
+#elif defined(USE_IMGUI_SDLRENDERER2)
+	if (!_imGuiReady && renderer) {
+		if (!ImGui_ImplSDL2_InitForSDLRenderer(_window->getSDLWindow(), renderer)) {
+			ImGui::DestroyContext();
+			return;
+		}
+
+		if (!ImGui_ImplSDLRenderer2_Init(renderer)) {
+			ImGui_ImplSDL2_Shutdown();
+			ImGui::DestroyContext();
+			return;
+		}
+
+		_imGuiReady = true;
+		_imGuiSDLRenderer = renderer;
+	}
+#endif
+	if (!_imGuiReady) {
+		warning("No ImGui renderer has been found");
+		ImGui::DestroyContext();
+		return;
+	}
+
+	if (_imGuiCallbacks.init) {
+		_imGuiCallbacks.init();
+	}
+	_imGuiInited = true;
+}
+
+void SdlGraphicsManager::renderImGui() {
+	if (!_imGuiReady || !_imGuiCallbacks.render) {
+		return;
+	}
+
+	if (!_imGuiInited) {
+		if (_imGuiCallbacks.init) {
+			_imGuiCallbacks.init();
+		}
+		_imGuiInited = true;
+	}
+
+#ifdef USE_IMGUI_SDLRENDERER3
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer3_NewFrame();
+	} else {
+#elif defined(USE_IMGUI_SDLRENDERER2)
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer2_NewFrame();
+	} else {
+#endif
+#ifdef USE_OPENGL
+		ImGui_ImplOpenGL3_NewFrame();
+#endif
+#if defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3)
+	}
+#endif
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	ImGui_ImplSDL3_NewFrame();
+#else
+	ImGui_ImplSDL2_NewFrame();
+#endif
+
+	ImGui::NewFrame();
+	_imGuiCallbacks.render();
+#if defined(USE_IMGUI) && defined(ENABLE_EVENTRECORDER)
+	g_eventRec.showImGui();
+#endif
+	ImGui::Render();
+#ifdef USE_IMGUI_SDLRENDERER3
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), _imGuiSDLRenderer);
+	} else {
+#elif defined(USE_IMGUI_SDLRENDERER2)
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), _imGuiSDLRenderer);
+	} else {
+#endif
+#ifdef USE_OPENGL
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+#endif
+#if defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3)
+	}
+#endif
+}
+
+void SdlGraphicsManager::destroyImGui() {
+	if (!_imGuiReady) {
+		return;
+	}
+
+	if (_imGuiCallbacks.cleanup) {
+		_imGuiCallbacks.cleanup();
+	}
+
+	_imGuiInited = false;
+	_imGuiReady = false;
+
+#ifdef USE_IMGUI_SDLRENDERER3
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer3_Shutdown();
+	} else {
+#elif defined(USE_IMGUI_SDLRENDERER2)
+	if (_imGuiSDLRenderer) {
+		ImGui_ImplSDLRenderer2_Shutdown();
+	} else {
+#endif
+#ifdef USE_OPENGL
+		ImGui_ImplOpenGL3_Shutdown();
+#endif
+#if defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3)
+	}
+#endif
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	ImGui_ImplSDL3_Shutdown();
+#else
+	ImGui_ImplSDL2_Shutdown();
+#endif
+	ImGui::DestroyContext();
+}
+#endif

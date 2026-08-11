@@ -194,6 +194,7 @@ bool Blorb::readRIdx(Common::SeekableReadStream &stream, Common::Array<ChunkEntr
 	uint chunkLen = stream.readUint32BE();
 	uint count = stream.readUint32BE();
 	assert(count == (chunkLen - 4) / 12);
+	(void)chunkLen;
 
 	// First read in the resource index
 	for (uint idx = 0; idx < count; ++idx) {

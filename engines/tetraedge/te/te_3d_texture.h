@@ -45,14 +45,13 @@ public:
 	virtual void destroy() = 0;
 	virtual void forceTexData(uint gltexture, uint xsize, uint ysize) = 0;
 
-	TeImage::Format getFormat() const { return _format; }
-	bool hasAlpha() const;
+	bool hasAlpha() const { return _hasAlpha; }
 
-	bool load(const Common::FSNode &path);
+	bool load(const TetraedgeFSNode &path);
 	virtual bool load(const TeImage &img) = 0;
 	// The original passes a GL enum param, but it's only ever GL_INVALID or GL_ALPHA.
 	// Simplify to avoid leaking gl types.
-	static TeIntrusivePtr<Te3DTexture> load2(const Common::FSNode &node, bool alphaOnly);
+	static TeIntrusivePtr<Te3DTexture> load2(const TetraedgeFSNode &node, bool alphaOnly);
 
 	static TeVector2s32 optimisedSize(const TeVector2s32 &size);
 
@@ -71,11 +70,11 @@ public:
 protected:
 	uint _width;
 	uint _height;
-	TeImage::Format _format;
 	bool _createdTexture;
 	bool _loaded;
 	TeMatrix4x4 _matrix;
 
+	bool _hasAlpha;
 	bool _alphaOnly;
 
 	uint _texWidth;

@@ -32,8 +32,9 @@
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/opengl.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 #include "graphics/opengl/shader.h"
 
@@ -72,5 +73,5 @@ private:
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL
 #endif // HPL_CGPROGRAM_H

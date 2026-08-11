@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -23,11 +22,13 @@
 #ifndef M4_RIDDLE_WALKER_H
 #define M4_RIDDLE_WALKER_H
 
-#include "common/array.h"
 #include "m4/adv_r/adv_walk.h"
 
 namespace M4 {
 namespace Riddle {
+
+extern const int16 RIPLEY_SERIES_DIRS[];
+extern const int16 RIPLEY_SHADOWS_DIRS[6];
 
 // These are the walker types
 enum {
@@ -42,27 +43,24 @@ enum {
 };
 
 class Walker : public M4::Walker {
-private:
-	/**
-	 * This is called when PLAYER walker code sends system message back to C (used by MAIN PLAYER WALKER ONLY)
-	 */
-	static void player_walker_callback(frac16 myMessage, machine *sender);
-
 public:
 	~Walker() override {}
 
-	bool walk_load_walker_and_shadow_series() override;
+	/**
+	 * This is called when PLAYER walker code sends system message back to C
+	 */
+	static void player_walker_callback(frac16 myMessage, machine *sender);
+
+	void walk_load_walker_and_shadow_series() override;
 	machine *walk_initialize_walker() override;
 
-	void reset_walker_sprites();
 	static void unloadSprites();
+
+	bool ripley_said(const char *const list[][2]);
 };
 
 void enable_player();
 void disable_player();
-void wilbur_abduct(int trigger);
-void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger = -1);
-void player_walk_to(int32 x, int32 y, int trigger = -1);
 
 } // namespace Riddle
 } // namespace M4

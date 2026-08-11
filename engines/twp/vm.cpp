@@ -54,17 +54,17 @@ static SQInteger aux_printerror(HSQUIRRELVM v) {
 	if (SQ_FAILED(sq_getstring(v, 2, &error))) {
 		error = "unknown";
 	}
-	pf(v, _SC("\nAn error occured in the script: %s\n"), error);
+	pf(v, _SC("\nAn error occurred in the script: %s\n"), error);
 	sqstd_printcallstack(v);
 
 	return 0;
 }
 
 static void printfunc(HSQUIRRELVM, const SQChar *s, ...) {
-	char buf[1024 * 1024];
+	char buf[100 * 1024];
 	va_list vl;
 	va_start(vl, s);
-	vsnprintf(buf, 1024 * 1024, s, vl);
+	vsnprintf(buf, 100 * 1024, s, vl);
 	va_end(vl);
 
 	debug("TWP: %s", buf);

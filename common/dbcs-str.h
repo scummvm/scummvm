@@ -51,10 +51,6 @@ public:
 	/** Construct a new string containing exactly @p len characters read from address @p str. */
 	DBCSString(const value_type *str, uint32 len) : BaseString<uint16>(str, len) {}
 
-	explicit DBCSString(const uint32 *str) : BaseString<uint16>((const value_type *) str) {}
-	DBCSString(const uint32 *str, uint32 len) : BaseString<uint16>((const value_type *) str, len) {}
-	DBCSString(const uint32 *beginP, const uint32 *endP) : BaseString<uint16>((const value_type *) beginP, (const value_type *) endP) {}
-
 	/** Construct a new string containing the characters between @p beginP (including) and @p endP (excluding). */
 	DBCSString(const value_type *beginP, const value_type *endP) : BaseString<uint16>(beginP, endP) {}
 
@@ -77,7 +73,10 @@ public:
 	explicit DBCSString(const String &str);
 
 	/** Construct a string consisting of the given character. */
-	explicit DBCSString(value_type c);
+	explicit constexpr DBCSString(value_type c) : BaseString<uint16>(c) {}
+
+	/** Construct a string consisting of n copies of the given character. */
+	DBCSString(size_t n, value_type c) : BaseString<uint16>(n, c) {}
 
 	/** Assign a given string to this string. */
 	DBCSString &operator=(const DBCSString &str);
@@ -105,21 +104,6 @@ public:
 
 	/** @overload */
 	DBCSString &operator+=(value_type c);
-
-	using BaseString<value_type>::operator==;
-	using BaseString<value_type>::operator!=;
-
-	/** Check whether this string is identical to string @p x. */
-	bool operator==(const String &x) const;
-
-	/** @overload */
-	bool operator==(const char *x) const;
-
-	/** Check whether this string is different than string @p x. */
-	bool operator!=(const String &x) const;
-
-	/** @overload */
-	bool operator!=(const char *x) const;
 
 	/** Convert the string to the standard String represantation. */
 	String convertToString() const;

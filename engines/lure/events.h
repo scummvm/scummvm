@@ -71,6 +71,7 @@ public:
 
 	Common::Event event() { return _event; }
 	Common::EventType type() { return _event.type; }
+	Common::CustomEventType customType() { return _event.customType; };
 };
 
 } // End of namespace Lure

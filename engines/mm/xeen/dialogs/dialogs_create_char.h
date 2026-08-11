@@ -112,6 +112,17 @@ private:
 	 * well as a list of classes that the attributes meet the requirements for
 	 */
 	void rollAttributes();
+
+#ifdef USE_TTS
+	/**
+	 * Voices text with TTS and sets up buttons
+	 * @param text					Text for voicing and buttons. Each section should be separated by a newline
+	 * @param hasAttributeLabels	Whether this text has attribute labels in it
+	 * @param classSelected			Whether a class is selected
+	 * @param selectedClass			Class selected by the player
+	 */
+	void speakText(const Common::String &text, bool hasAttributeLabels, bool classSelected, int selectedClass);
+#endif
 public:
 	/**
 	 * Shows the Create Character dialog

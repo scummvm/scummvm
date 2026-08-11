@@ -41,6 +41,8 @@ enum GameFeature {
 };
 
 struct MightAndMagicGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameID;
@@ -50,6 +52,8 @@ struct MightAndMagicGameDescription {
 #define GAMEOPTION_SHOW_ITEM_COSTS	GUIO_GAMEOPTIONS1
 #define GAMEOPTION_DURABLE_ARMOR	GUIO_GAMEOPTIONS2
 #define GAMEOPTION_SHOW_HP_SP_BARS	GUIO_GAMEOPTIONS3
+#define GAMEOPTION_COPY_PROTECTION      GUIO_GAMEOPTIONS4
+#define GAMEOPTION_TTS				GUIO_GAMEOPTIONS5
 
 } // namespace MM
 

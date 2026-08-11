@@ -34,10 +34,19 @@ Sensor::Sensor(
 	uint8 flags_,
 	FCLInstructionVector condition_,
 	Common::String conditionSource_) {
+	_type = kSensorType;
 	_objectID = objectID_;
 	_origin = origin_;
 	_rotation = rotation_;
-	_size = Math::Vector3d(3, 3, 3);
+
+	if (axis_ == 0x01 || axis_ == 0x02)
+		_size = Math::Vector3d(0, 3, 3);
+	else if (axis_ == 0x04 || axis_ == 0x08)
+		_size = Math::Vector3d(3, 0, 3);
+	else if (axis_ == 0x10 || axis_ == 0x20)
+		_size = Math::Vector3d(3, 3, 0);
+	else
+		_size = Math::Vector3d(3, 3, 3);
 	_colours = new Common::Array<uint8>;
 	for (int i = 0; i < 6; i++)
 		_colours->push_back(color_);
@@ -45,9 +54,21 @@ Sensor::Sensor(
 	_firingRange = firingRange_;
 	_axis = axis_;
 	_flags = flags_;
+
+	if (isInitiallyInvisible())
+		makeInvisible();
+	else
+		makeVisible();
+
 	_conditionSource = conditionSource_;
 	_condition = condition_;
 	_isShooting = false;
+}
+
+void Sensor::scale(int factor) {
+	_origin = _origin / factor;
+	_size = _size / factor;
+	_firingRange = _firingRange / factor;
 }
 
 Object *Sensor::duplicate() {
@@ -56,8 +77,7 @@ Object *Sensor::duplicate() {
 }
 
 void Sensor::draw(Freescape::Renderer *gfx, float offset) {
-	Math::Vector3d origin(_origin.x() - 1, _origin.y() - 1, _origin.z() - 1);
-	gfx->renderCube(_origin, _size, _colours, nullptr);
+	gfx->renderCube(_origin, _size, _colours, nullptr, offset);
 }
 
 bool Sensor::playerDetected(const Math::Vector3d &position, Area *area) {
@@ -86,7 +106,8 @@ bool Sensor::playerDetected(const Math::Vector3d &position, Area *area) {
 	}
 
 	if (detected) {
-		detected = ABS(diff.x() + ABS(diff.y())) + ABS(diff.z()) <= _firingRange;
+		float distance = ABS(diff.x()) + ABS(diff.y()) + ABS(diff.z());
+		detected = distance < _firingRange;
 	}
 
 	return detected;

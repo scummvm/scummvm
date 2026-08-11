@@ -22,7 +22,10 @@
 #ifndef SHERLOCK_SETTINGS_H
 #define SHERLOCK_SETTINGS_H
 
+#include "common/events.h"
 #include "common/scummsys.h"
+
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
@@ -35,30 +38,30 @@ private:
 	SherlockEngine *_vm;
 
 	Settings(SherlockEngine *vm) : _vm(vm) {
-		_hotkeyExit = 0;
-		_hotkeyMusic = 0;
-		_hotkeyPortraits = 0;
-		_hotkeyNewFontStyle = 0;
-		_hotkeySoundEffects = 0;
-		_hotkeyWindows = 0;
-		_hotkeyAutoHelp = 0;
-		_hotkeyVoices = 0;
-		_hotkeyFade = 0;
+		_actionExit = kActionNone;
+		_actionMusic = kActionNone;
+		_actionPortraits = kActionNone;
+		_actionNewFontStyle = kActionNone;
+		_actionSoundEffects = kActionNone;
+		_actionWindows = kActionNone;
+		_actionAutoHelp = kActionNone;
+		_actionVoices = kActionNone;
+		_actionFade = kActionNone;
 
-		memset(_hotkeysIndexed, 0, sizeof(_hotkeysIndexed));
+		memset(_actionsIndexed, kActionNone, sizeof(_actionsIndexed));
 	}
 
-	byte _hotkeyExit;
-	byte _hotkeyMusic;
-	byte _hotkeyPortraits;
-	byte _hotkeyNewFontStyle;
-	byte _hotkeySoundEffects;
-	byte _hotkeyWindows;
-	byte _hotkeyAutoHelp;
-	byte _hotkeyVoices;
-	byte _hotkeyFade;
+	Common::CustomEventType _actionExit;
+	Common::CustomEventType _actionMusic;
+	Common::CustomEventType _actionPortraits;
+	Common::CustomEventType _actionNewFontStyle;
+	Common::CustomEventType _actionSoundEffects;
+	Common::CustomEventType _actionWindows;
+	Common::CustomEventType _actionAutoHelp;
+	Common::CustomEventType _actionVoices;
+	Common::CustomEventType _actionFade;
 
-	byte _hotkeysIndexed[12];
+	Common::CustomEventType _actionsIndexed[12];
 
 	/**
 	 * Draws the interface for the settings window
@@ -68,7 +71,7 @@ private:
 	/**
 	 * Draws the buttons for the settings dialog
 	 */
-	int drawButtons(const Common::Point &pt, int key);
+	int drawButtons(const Common::Point &pt, Common::CustomEventType action);
 
 	Common::Rect getButtonRect(int num) const;
 	Common::Point getButtonTextPoint(int num) const;

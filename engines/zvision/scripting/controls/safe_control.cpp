@@ -19,21 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/scripting/controls/safe_control.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "common/stream.h"
 #include "common/file.h"
-#include "common/tokenizer.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/tokenizer.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/safe_control.h"
 
 namespace ZVision {
 
@@ -67,17 +64,16 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 			int width;
 			int height;
 
-			sscanf(values.c_str(), "%d %d %d %d", &x, &y, &width, &height);
-
-			_rectangle = Common::Rect(x, y, width, height);
+			if (sscanf(values.c_str(), "%d %d %d %d", &x, &y, &width, &height) == 4)
+				_rectangle = Common::Rect(x, y, width, height);
 		} else if (param.matchString("num_states", true)) {
 			_statesCount = atoi(values.c_str());
 		} else if (param.matchString("center", true)) {
 			int x;
 			int y;
 
-			sscanf(values.c_str(), "%d %d", &x, &y);
-			_center = Common::Point(x, y);
+			if (sscanf(values.c_str(), "%d %d", &x, &y) == 2)
+				_center = Common::Point(x, y);
 		} else if (param.matchString("dial_inner_radius", true)) {
 			_innerRaduis = atoi(values.c_str());
 			_innerRadiusSqr = _innerRaduis * _innerRaduis;

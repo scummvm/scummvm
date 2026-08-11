@@ -354,7 +354,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	virtual void drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color);
+	void drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) override;
 
 	/**
 	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991
@@ -365,7 +365,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawCircleAlg()
 	 */
-	virtual void drawCircleAlg(int x, int y, int r, PixelType color, VectorRenderer::FillMode fill_m);
+	void drawCircleAlg(int x, int y, int r, PixelType color, VectorRenderer::FillMode fill_m) override;
 
 	/**
 	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991,
@@ -374,19 +374,19 @@ protected:
 	 *
 	 * @see VectorRenderer::drawRoundedAlg()
 	 */
-	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
+	void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) override;
 
-	virtual void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m, uint8 alpha_t, uint8 alpha_l, uint8 alpha_r, uint8 alpha_b);
+	void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m, uint8 alpha_t, uint8 alpha_l, uint8 alpha_r, uint8 alpha_b) override;
 
-	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
+	void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) override;
 
-	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset, uint32 shadowIntensity) {
+	void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset, uint32 shadowIntensity) override {
 		Base::drawRoundedSquareShadow(x, y, r, w, h, offset, shadowIntensity);
 	}
 
-	virtual void drawTabAlg(int x, int y, int w, int h, int r,
+	void drawTabAlg(int x, int y, int w, int h, int r,
 	    PixelType color, VectorRenderer::FillMode fill_m,
-	    int baseLeft, int baseRight, bool vFlip);
+	    int baseLeft, int baseRight, bool vFlip) override;
 };
 #endif
 /** @} */

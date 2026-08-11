@@ -29,9 +29,20 @@
 namespace Access {
 
 enum CursorType {
+	// These names are for Amazon - Noctropolis uses a different order.
 	CURSOR_NONE = -1,
-	CURSOR_ARROW = 0, CURSOR_CROSSHAIRS, CURSOR_2, CURSOR_3, CURSOR_LOOK,
-	CURSOR_USE, CURSOR_TAKE, CURSOR_CLIMB, CURSOR_TALK, CURSOR_HELP,
+	CURSOR_ARROW = 0,
+	CURSOR_CROSSHAIRS = 1,
+	CURSOR_2 = 2,
+	CURSOR_3 = 3,
+	CURSOR_LOOK = 4,
+	CURSOR_USE = 5,
+	CURSOR_TAKE = 6,
+	CURSOR_CLIMB = 7,
+	CURSOR_TALK = 8,
+	CURSOR_HELP = 9,
+	CURSOR_NOCT_EXIT = 9,
+	CURSOR_DARK_ANKH = 10,
 	CURSOR_INVENTORY = 99
 };
 
@@ -48,6 +59,7 @@ private:
 	uint32 _priorFrameTime;
 	uint32 _priorTimerTime;
 	Common::KeyCode _keyCode;
+	Common::CustomEventType _action;
 
 	Graphics::Surface _invCursor;
 	bool checkForNextFrameCounter();
@@ -55,6 +67,8 @@ private:
 	void nextFrame();
 	void nextTimer();
 	void keyControl(Common::KeyCode keycode, bool isKeyDown);
+	void actionControl(Common::CustomEventType action, bool isKeyDown);
+
 public:
 	CursorType _cursorId;
 	CursorType _normalMouse;
@@ -65,6 +79,7 @@ public:
 	int _mouseCol, _mouseRow;
 	bool _cursorExitFlag;
 	int _vbCount;
+	bool _interfaceOff;
 public:
 	/**
 	 * Constructor
@@ -79,7 +94,7 @@ public:
 	/**
 	 * Return frame counter
 	 */
-	uint32 getFrameCounter() { return _frameCounter; }
+	uint32 getFrameCounter() const { return _frameCounter; }
 
 	/**
 	 * Sets the cursor and reset the normal cursor
@@ -125,30 +140,45 @@ public:
 
 	void pollEventsAndWait();
 
-	void zeroKeys();
+	void zeroKeysActions();
 
-	bool getKey(Common::KeyState &key);
+	bool getAction(Common::CustomEventType &action);
 
-	bool isKeyPending() const;
+	Common::CustomEventType peekAction() const { return _action; }
+
+	Common::KeyCode peekKeyCode() const { return _keyCode; }
+
+	bool isKeyActionPending() const;
 
 	void delay(int time = 5);
 
+	void delayUntilNextFrame();
+
 	void debounceLeft();
+
+	void debounceRight();
 
 	void clearEvents();
 
-	void waitKeyMouse();
+	void waitKeyActionMouse();
 
-	Common::Point &getMousePos() { return _mousePos; }
+	const Common::Point &getMousePos() const { return _mousePos; }
 
 	Common::Point calcRawMouse();
 
-	int checkMouseBox1(Common::Array<Common::Rect> &rects);
+	int checkMouseBox1(const Common::Array<Common::Rect> &rects);
 
-	bool isKeyMousePressed();
+	bool isKeyActionMousePressed();
 
 	void centerMousePos();
 	void restrictMouse();
+
+	static int16 clipMouseCenter(int16 mousePos, int16 length, int16 maxLength, int16 &warpMousePos);
+
+	/* get ms delay before considering something a double-click */
+	uint32 getDoubleClickTime() const;
+
+	uint32 getPriorFrameTime() const { return _priorFrameTime; }
 };
 
 } // End of namespace Access

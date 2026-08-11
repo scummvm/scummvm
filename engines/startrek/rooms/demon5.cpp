@@ -24,59 +24,59 @@
 namespace StarTrek {
 
 extern const RoomAction demon5ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::demon5Tick1 },
-	{ {ACTION_WALK, 0x22, 0, 0}, &Room::demon5WalkToDoor },
-	{ {ACTION_WALK, 12, 0, 0}, &Room::demon5WalkToDoor },
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::demon5TouchedDoorOpenTrigger },
-	{ {ACTION_FINISHED_WALKING, 1, 0, 0}, &Room::demon5DoorOpenedOrReachedDoor },
-	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::demon5DoorOpenedOrReachedDoor },
+	{ {ACTION_TICK, 1, 0, 0, 0}, &Room::demon5Tick1 },
+	{ {ACTION_WALK, 0x22, 0, 0, 0}, &Room::demon5WalkToDoor },
+	{ {ACTION_WALK, 12, 0, 0, 0}, &Room::demon5WalkToDoor },
+	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0, 0}, &Room::demon5TouchedDoorOpenTrigger },
+	{ {ACTION_FINISHED_WALKING, 1, 0, 0, 0}, &Room::demon5DoorOpenedOrReachedDoor },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0, 0}, &Room::demon5DoorOpenedOrReachedDoor },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::demon5UseSTricorderOnCrate },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::demon5UsePhaserOnAnything },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::demon5UsePhaserOnAnything },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0, 0}, &Room::demon5UseSTricorderOnCrate },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0, 0}, &Room::demon5UsePhaserOnAnything },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0, 0}, &Room::demon5UsePhaserOnAnything },
 
-	{ {ACTION_USE, OBJECT_IHAND, 11, 0}, &Room::demon5UseHandOnStephen },
-	{ {ACTION_USE, OBJECT_IBERRY, 11, 0}, &Room::demon5UseBerryOnStephen },
-	{ {ACTION_USE, OBJECT_IDETOXIN, 9, 0}, &Room::demon5UseHypoDytoxinOnChub },
-	{ {ACTION_FINISHED_WALKING, 2, 0, 0}, &Room::demon5MccoyReachedChub },
-	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::demon5MccoyHealedChub },
+	{ {ACTION_USE, OBJECT_IHAND, 11, 0, 0}, &Room::demon5UseHandOnStephen },
+	{ {ACTION_USE, OBJECT_IBERRY, 11, 0, 0}, &Room::demon5UseBerryOnStephen },
+	{ {ACTION_USE, OBJECT_IDETOXIN, 9, 0, 0}, &Room::demon5UseHypoDytoxinOnChub },
+	{ {ACTION_FINISHED_WALKING, 2, 0, 0, 0}, &Room::demon5MccoyReachedChub },
+	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0, 0}, &Room::demon5MccoyHealedChub },
 
-	{ {ACTION_USE, OBJECT_IDETOXIN, 0xff, 0}, &Room::demon5UseHypoDytoxinOnAnything },
-	{ {ACTION_USE, OBJECT_IBERRY, 9, 0}, &Room::demon5UseBerryOnChub },
+	{ {ACTION_USE, OBJECT_IDETOXIN, 0xff, 0, 0}, &Room::demon5UseHypoDytoxinOnAnything },
+	{ {ACTION_USE, OBJECT_IBERRY, 9, 0, 0}, &Room::demon5UseBerryOnChub },
 
-	{ {ACTION_LOOK, 8, 0, 0}, &Room::demon5LookAtRoberts },
-	{ {ACTION_LOOK, 10, 0, 0}, &Room::demon5LookAtGrisnash },
-	{ {ACTION_LOOK, 11, 0, 0}, &Room::demon5LookAtStephen },
+	{ {ACTION_LOOK, 8, 0, 0, 0}, &Room::demon5LookAtRoberts },
+	{ {ACTION_LOOK, 10, 0, 0, 0}, &Room::demon5LookAtGrisnash },
+	{ {ACTION_LOOK, 11, 0, 0, 0}, &Room::demon5LookAtStephen },
 
-	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::demon5LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::demon5LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::demon5LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::demon5LookAtRedshirt },
+	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0, 0}, &Room::demon5LookAtKirk },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0, 0}, &Room::demon5LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0, 0}, &Room::demon5LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::demon5LookAtRedshirt },
 
-	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::demon5LookAtMountain },
-	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::demon5LookAtCrate },
-	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::demon5LookAnywhere },
-	{ {ACTION_LOOK, 9, 0, 0}, &Room::demon5LookAtChub },
+	{ {ACTION_LOOK, 0x20, 0, 0, 0}, &Room::demon5LookAtMountain },
+	{ {ACTION_LOOK, 0x21, 0, 0, 0}, &Room::demon5LookAtCrate },
+	{ {ACTION_LOOK, 0xff, 0, 0, 0}, &Room::demon5LookAnywhere },
+	{ {ACTION_LOOK, 9, 0, 0, 0}, &Room::demon5LookAtChub },
 
-	{ {ACTION_TALK, 8, 0, 0}, &Room::demon5TalkToRoberts },
-	{ {ACTION_TALK, 9, 0, 0}, &Room::demon5TalkToChub },
-	{ {ACTION_TALK, 10, 0, 0}, &Room::demon5TalkToGrisnash },
-	{ {ACTION_TALK, 11, 0, 0}, &Room::demon5TalkToStephen },
+	{ {ACTION_TALK, 8, 0, 0, 0}, &Room::demon5TalkToRoberts },
+	{ {ACTION_TALK, 9, 0, 0, 0}, &Room::demon5TalkToChub },
+	{ {ACTION_TALK, 10, 0, 0, 0}, &Room::demon5TalkToGrisnash },
+	{ {ACTION_TALK, 11, 0, 0, 0}, &Room::demon5TalkToStephen },
 
-	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::demon5TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::demon5TalkToSpock },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::demon5TalkToRedshirt },
-	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::demon5TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0, 0}, &Room::demon5TalkToKirk },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0, 0}, &Room::demon5TalkToSpock },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::demon5TalkToRedshirt },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0, 0}, &Room::demon5TalkToMccoy },
 
-	{ {ACTION_USE, OBJECT_IMTRICOR, 8, 0}, &Room::demon5UseMTricorderOnRoberts },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  9, 0}, &Room::demon5UseMTricorderOnChub },
-	{ {ACTION_USE, OBJECT_MCCOY,    9, 0}, &Room::demon5UseMTricorderOnChub },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 9, 0}, &Room::demon5UseMTricorderOnChub },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 10, 0}, &Room::demon5UseMTricorderOnGrisnash },
-	{ {ACTION_USE, OBJECT_IMTRICOR, 11, 0}, &Room::demon5UseMTricorderOnStephen },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 8, 0, 0}, &Room::demon5UseMTricorderOnRoberts },
+	{ {ACTION_USE, OBJECT_IMEDKIT,  9, 0, 0}, &Room::demon5UseMTricorderOnChub },
+	{ {ACTION_USE, OBJECT_MCCOY,    9, 0, 0}, &Room::demon5UseMTricorderOnChub },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 9, 0, 0}, &Room::demon5UseMTricorderOnChub },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 10, 0, 0}, &Room::demon5UseMTricorderOnGrisnash },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 11, 0, 0}, &Room::demon5UseMTricorderOnStephen },
 
-	{ {ACTION_GET, 0x21, 0, 0}, &Room::demon5GetCrate },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_GET, 0x21, 0, 0, 0}, &Room::demon5GetCrate },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum demon5TextIds {
@@ -199,7 +199,7 @@ void Room::demon5TouchedDoorOpenTrigger() {
 	if (!_roomVar.demon.movingToDoor)
 		return;
 	loadActorAnim(12, "s0r6d1", 0xa0, 0x92, 1);
-	playSoundEffectIndex(0x05);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::demon5DoorOpenedOrReachedDoor() {
@@ -212,7 +212,7 @@ void Room::demon5DoorOpenedOrReachedDoor() {
 
 void Room::demon5UseSTricorderOnCrate() {
 	loadActorAnim(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM5_006);
 }
 
@@ -413,7 +413,7 @@ void Room::demon5UseMTricorderOnRoberts() {
 	if (_roomVar.demon.scannedRoberts)
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM5_015);
 
 	_roomVar.demon.scannedRoberts = true;
@@ -423,7 +423,7 @@ void Room::demon5UseMTricorderOnRoberts() {
 
 void Room::demon5UseMTricorderOnChub() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (_awayMission->demon.curedChub) {
 		if (_roomVar.demon.scannedChub)
@@ -449,7 +449,7 @@ void Room::demon5UseMTricorderOnGrisnash() {
 	if (_roomVar.demon.scannedGrisnash)
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM5_013);
 
 	_roomVar.demon.scannedGrisnash = true;
@@ -461,7 +461,7 @@ void Room::demon5UseMTricorderOnStephen() {
 	if (_roomVar.demon.scannedStephen)
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscanw", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM5_014);
 
 	_roomVar.demon.scannedStephen = true;

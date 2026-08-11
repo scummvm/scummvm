@@ -167,7 +167,7 @@ bool cInit::Init(tString saveToLoad) {
 	mbLogResources = false;
 	mbDebugInteraction = false;
 
-	mbSubtitles = ConfMan.getBool("subtitles");
+	mbSubtitles = getBoolConfig("game_subtitles", true);
 	mbSimpleWeaponSwing = getBoolConfig("simple_weapon_swing", false);
 	mbDisablePersonalNotes = getBoolConfig("disable_personal_notes", false);
 	mbAllowQuickSave = getBoolConfig("allow_quick_save", false);
@@ -555,6 +555,7 @@ void cInit::Exit() {
 
 	ConfMan.set("global_script", msGlobalScriptFile);
 
+	ConfMan.setBool("game_subtitles", mbSubtitles);
 	ConfMan.setBool("simple_weapon_swing", mbSimpleWeaponSwing);
 	ConfMan.setBool("disable_personal_notes", mbDisablePersonalNotes);
 	ConfMan.setBool("allow_quick_save", mbAllowQuickSave);

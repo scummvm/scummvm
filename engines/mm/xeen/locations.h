@@ -55,6 +55,10 @@ protected:
 	uint _farewellTime;
 	int _drawCtr1, _drawCtr2;
 	bool _exitToUi;
+	bool _ttsVoiceText;
+#ifdef USE_TTS
+	bool _resetText;
+#endif
 protected:
 	/**
 	 * Draw the window
@@ -79,6 +83,10 @@ protected:
 	virtual Character *doOptions(Character *c) {
 		return c;
 	}
+
+#ifdef USE_TTS
+	virtual void speakTextAndButtons(const Common::String &text) { }
+#endif
 
 	/**
 	 * Handle any farewell
@@ -111,6 +119,21 @@ private:
 	 * Handles deposits or withdrawls fro the bank
 	 */
 	void depositWithdrawl(PartyBank whereId);
+
+#ifdef USE_TTS
+	/**
+	 * Voices text with TTS and sets up button texts
+	 * @param text	All text, with each section separated by newlines
+	 */
+	void speakTextAndButtons(const Common::String &text) override;
+
+	/**
+	 * Voices text with TTS and sets up button texts for the deposit/withdrawal menu
+	 * @param text				All text, with each section separated by newlines
+	 * @param oldButtonTexts	Array to put old button texts in
+	 */
+	void speakDepositWithdrawalText(const Common::String &text, Common::String oldButtonTexts[]);
+#endif
 protected:
 	/**
 	 * Generates the display text for the location, for a given character
@@ -133,6 +156,14 @@ public:
 };
 
 class BlacksmithLocation : public BaseLocation {
+private:
+#ifdef USE_TTS
+	/**
+	 * Voices text with TTS and sets up button texts
+	 * @param text	Text for voicing and button texts. Each section should be separated by a newline
+	 */
+	void speakTextAndButtons(const Common::String &text) override;
+#endif
 protected:
 	/**
 	* Generates the display text for the location, for a given character
@@ -155,6 +186,14 @@ public:
 };
 
 class GuildLocation : public BaseLocation {
+private:
+#ifdef USE_TTS
+	/**
+	 * Voices text with TTS and sets up button texts
+	 * @param text	Text for voicing and button texts. Each section should be separated by a newline
+	 */
+	void speakTextAndButtons(const Common::String &text) override;
+#endif
 protected:
 	/**
 	 * Generates the display text for the location, for a given character
@@ -172,6 +211,20 @@ public:
 };
 
 class TavernLocation : public BaseLocation {
+private:
+#ifdef USE_TTS
+	/**
+	 * Voices text with TTS and sets up button texts
+	 * @param text	Text for voicing and button texts. Each section should be separated by a newline
+	 */
+	void speakTextAndButtons(const Common::String &text) override;
+
+	/**
+	 * Voices "drunk" and similar notification texts with TTS
+	 * @param text	Text for voicing. Each section should be separated by a newline
+	 */
+	void speakNotificationText(const Common::String &text) const;
+#endif
 private:
 	int _v21;
 	uint _v22;
@@ -200,6 +253,14 @@ public:
 
 class TempleLocation : public BaseLocation {
 private:
+#ifdef USE_TTS
+	/**
+	 * Voices text with TTS and sets up button texts
+	 * @param text	Text for voicing and button texts. Each section should be separated by a newline
+	 */
+	void speakTextAndButtons(const Common::String &text) override;
+#endif
+private:
 	int _currentCharLevel;
 	int _donation;
 	int _healCost;
@@ -226,6 +287,14 @@ public:
 };
 
 class TrainingLocation : public BaseLocation {
+private:
+#ifdef USE_TTS
+	/**
+	 * Voices text with TTS and sets up button texts
+	 * @param text	Text for voicing and button texts. Each section should be separated by a newline
+	 */
+	void speakTextAndButtons(const Common::String &text) override;
+#endif
 private:
 	int _charIndex;
 	bool _charsTrained[MAX_ACTIVE_PARTY];
@@ -373,6 +442,10 @@ private:
 		const Common::String &text, int confirm);
 
 	void loadButtons();
+
+#ifdef USE_TTS
+	void speakText(const Common::String &text, const Common::String &name, bool voiceName) const;
+#endif
 public:
 	static bool showMessage(int portrait, const Common::String &name,
 		const Common::String &text, int confirm);

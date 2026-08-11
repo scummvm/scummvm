@@ -15,7 +15,7 @@ namespace LingoDec {
 namespace StandardNames {
 /* StandardNames */
 
-const char *opcodeNamesS[] = {
+const char *const opcodeNamesS[] = {
 	// single-byte
 	"unk00",
 	"ret",			// kOpRet			0x01
@@ -53,7 +53,7 @@ const char *opcodeNamesS[] = {
 	"swap",			// kOpSwap			0x21
 };
 
-const char *opcodeNamesM[] = {
+const char *const opcodeNamesM[] = {
 	// multi-byte
 	"unk40",
 	"pushint8",			// kOpPushInt8			0x41
@@ -109,7 +109,7 @@ const char *opcodeNamesM[] = {
 	"newobj",			// kOpNewObj			0x73
 };
 
-const char *binaryOpNames[] = {
+const char *const binaryOpNames[] = {
 	"unk00",
 	"unk01",
 	"unk02",
@@ -135,7 +135,7 @@ const char *binaryOpNames[] = {
 	"starts",	// kOpContains0Str	0x16
 };
 
-const char *chunkTypeNames[] = {
+const char *const chunkTypeNames[] = {
 	"unk00",
 	"char", // kChunkChar   0x01
 	"word", // kChunkWord   0x02
@@ -143,14 +143,14 @@ const char *chunkTypeNames[] = {
 	"line", // kChunkLine   0x04
 };
 
-const char *putTypeNames[] = {
+const char *const putTypeNames[] = {
 	"unk00",
 	"into",		// kPutInto		0x01
 	"after",	// kPutAfter	0x02
 	"before",	// kPutBefore	0x03
 };
 
-const char *moviePropertyNames[] = {
+const char *const moviePropertyNames[] = {
 	"floatPrecision",	// 0x00
 	"mouseDownScript",	// 0x01
 	"mouseUpScript",	// 0x02
@@ -165,7 +165,7 @@ const char *moviePropertyNames[] = {
 	"long date",		// 0x0b
 };
 
-const char *whenEventNames[] = {
+const char *const whenEventNames[] = {
 	"unk00",
 	"mouseDown",// 0x01
 	"mouseUp",	// 0x02
@@ -174,13 +174,13 @@ const char *whenEventNames[] = {
 	"timeOut",	// 0x05
 };
 
-const char *menuPropertyNames[] = {
+const char *const menuPropertyNames[] = {
 	"unk00",
 	"name",					// 0x01
 	"number of menuItems",	// 0x02
 };
 
-const char *menuItemPropertyNames[] = {
+const char *const menuItemPropertyNames[] = {
 	"unk00",
 	"name",		// 0x01
 	"checkMark",// 0x02
@@ -188,12 +188,12 @@ const char *menuItemPropertyNames[] = {
 	"script",	// 0x04
 };
 
-const char *soundPropertyNames[] = {
+const char *const soundPropertyNames[] = {
 	"unk00",
 	"volume", // 0x01
 };
 
-const char *spritePropertyNames[] = {
+const char *const spritePropertyNames[] = {
 	"unk00",
 	"type",					// 0x01
 	"backColor",			// 0x02
@@ -239,7 +239,7 @@ const char *spritePropertyNames[] = {
 	"name",					// 0x2a
 };
 
-const char *animationPropertyNames[] = {
+const char *const animationPropertyNames[] = {
 	"unk00",
 	"beepOn", 					// 0x01
 	"buttonStyle", 				// 0x02
@@ -285,7 +285,7 @@ const char *animationPropertyNames[] = {
 	"soundMixMedia",			// 0x28
 };
 
-const char *animation2PropertyNames[] = {
+const char *const animation2PropertyNames[] = {
 	"unk00",
 	"perFrameHook", 		// 0x01
 	"number of castMembers",// 0x02
@@ -294,7 +294,7 @@ const char *animation2PropertyNames[] = {
 	"number of xtras", 		// 0x05
 };
 
-const char *memberPropertyNames[] = {
+const char *const memberPropertyNames[] = {
 	"unk00",
 	"name",			// 0x01
 	"text",			// 0x02

@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/game/combat.h"
+#include "mm/mm1/game/spell_casting.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
@@ -59,7 +60,6 @@ void Combat::clear() {
 	_destAC = 0;
 	_numberOfTimes = 0;
 	_attackerLevel = 0;
-	_advanceIndex = 0;
 	_handicapThreshold = _handicapParty = 0;
 	_handicapMonsters = _handicapDelta = 0;
 	_handicap = HANDICAP_EVEN;
@@ -67,7 +67,6 @@ void Combat::clear() {
 	_monsterIndex = _currentChar = 0;
 	_attackersCount = 0;
 	_totalExperience = 0;
-	_advanceIndex = 0;
 	_monstersResistSpells = _monstersRegenerate = false;
 	_attackAttr1.clear();
 	_attackAttr2.clear();
@@ -484,12 +483,11 @@ bool Combat::moveMonsters() {
 		return false;
 
 	bool hasAdvance = false;
-	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
-		_advanceIndex = i;
-
+	// _remainingMonsters[0] can't advance to [-1]
+	for (uint i = 1; i < _remainingMonsters.size(); ++i) {
 		if (!(_remainingMonsters[i]->_status & ~MONFLAG_SILENCED) &&
 			_remainingMonsters[i]->_counterFlags & COUNTER_ADVANCES) {
-			monsterAdvances();
+			monsterAdvances(i);
 			hasAdvance = true;
 		}
 	}
@@ -497,13 +495,12 @@ bool Combat::moveMonsters() {
 	return hasAdvance;
 }
 
-void Combat::monsterAdvances() {
+void Combat::monsterAdvances(uint index) {
 	// TODO: I can't understand the advancement logic at all.
 	// So for now, I'm simply moving the monster forward one slot
-	assert(_advanceIndex > 0);
-	Monster *mon = _remainingMonsters.remove_at(_advanceIndex);
-	_remainingMonsters.insert_at(_advanceIndex - 1, mon);
-	_monsterP = _remainingMonsters[_advanceIndex - 1];
+	Monster *mon = _remainingMonsters.remove_at(index--);
+	_remainingMonsters.insert_at(index, mon);
+	_monsterP = _remainingMonsters[index];
 
 	setMode(MONSTER_ADVANCES);
 }
@@ -676,7 +673,7 @@ void Combat::checkMonsterActions() {
 	_monsterP->_counterFlags--;
 
 	// Pick a random character to shoot at
-	int charNum = getRandomNumber(g_globals->_party.size()) - 1;
+	int charNum = CLIP<int>(getRandomNumber(g_globals->_party.size()) - 1, 0, (int)g_globals->_party.size() - 1);
 	Character &c = g_globals->_party[charNum];
 	g_globals->_currCharacter = &c;
 
@@ -903,6 +900,7 @@ void Combat::updateMonsterStatus() {
 	if (val <= 0) {
 		_monsterP->_hp = 0;
 		_monsterP->_status = MONFLAG_DEAD;
+		Sound::sound2(SOUND_9);
 
 	} else {
 		_monsterP->_hp = val;
@@ -947,7 +945,7 @@ void Combat::iterateMonsters1Inner() {
 		}
 	}
 
-	byte idx = g_globals->_spellsState._resistenceIndex;
+	byte idx = g_globals->_spellsState._resistanceIndex;
 	if (affects && idx) {
 		if (--idx >= 8)
 			idx = 0;
@@ -1027,7 +1025,7 @@ void Combat::iterateMonsters2Inner() {
 				_damage >>= 1;
 		}
 
-		byte idx = g_globals->_spellsState._resistenceIndex;
+		byte idx = g_globals->_spellsState._resistanceIndex;
 		if (idx) {
 			if (--idx >= 8)
 				idx = 0;
@@ -1110,9 +1108,9 @@ void Combat::resetDestMonster() {
 
 void Combat::spellFailed() {
 	g_globals->_combatParty[_currentChar]->_checked = true;
+	Sound::sound(SOUND_2);
 
-	SoundMessage msg(10, 2, Common::String::format("*** %s ***",
-		STRING["spells.failed"].c_str()));
+	SoundMessage msg(10, 2, SpellCasting::spellResultMessage(STRING["spells.failed"]));
 	msg._delaySeconds = 3;
 	displaySpellResult(msg);
 }
@@ -1168,7 +1166,7 @@ void Combat::summonLightning() {
 
 		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
-		ss._resistenceIndex++;
+		ss._resistanceIndex++;
 		ss._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 		handlePartyDamage();
 
@@ -1186,7 +1184,7 @@ void Combat::summonLightning() {
 void Combat::summonLightning2() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1 = 1;
-	ss._resistenceIndex = 2;
+	ss._resistanceIndex = 2;
 	ss._resistanceTypeOrTargetCount = RESISTANCE_ELECTRICITY;
 	ss._damage = getRandomNumber(29) + 3;
 
@@ -1196,7 +1194,7 @@ void Combat::summonLightning2() {
 void Combat::fireball2() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1 = 1;
-	ss._resistenceIndex = 1;
+	ss._resistanceIndex = 1;
 	ss._resistanceTypeOrTargetCount = 5;
 	ss._damage = 0;
 
@@ -1216,7 +1214,7 @@ void Combat::paralyze() {
 	g_globals->_combat->resetDestMonster();
 
 	ss._mmVal1++;
-	ss._resistenceIndex = 6;
+	ss._resistanceIndex = 6;
 	ss._resistanceTypeOrTargetCount = _attackersCount;
 	ss._damage = BAD_CONDITION;
 
@@ -1326,7 +1324,7 @@ void Combat::fireball() {
 
 		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
-		ss._resistenceIndex++;
+		ss._resistanceIndex++;
 		ss._resistanceTypeOrTargetCount++;
 		handlePartyDamage();
 
@@ -1345,7 +1343,7 @@ void Combat::lightningBolt() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
 	ss._resistanceTypeOrTargetCount = 3;
-	ss._resistenceIndex = 2;
+	ss._resistanceIndex = 2;
 
 	levelAdjust();
 }
@@ -1382,7 +1380,7 @@ bool Combat::web() {
 		return false;
 
 	ss._mmVal1++;
-	ss._resistenceIndex = 0;
+	ss._resistanceIndex = 0;
 	ss._resistanceTypeOrTargetCount = 5;
 	ss._damage = UNCONSCIOUS;
 
@@ -1400,7 +1398,7 @@ bool Combat::acidRain() {
 	monsterIndexOf();
 
 	ss._mmVal1 = 1;
-	ss._resistenceIndex = 3;
+	ss._resistanceIndex = 3;
 	ss._resistanceTypeOrTargetCount = 15;
 	ss._damage = 0;
 

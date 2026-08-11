@@ -22,7 +22,10 @@
 #include "m4/burger/rooms/section1/room143.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/burger.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -152,7 +155,7 @@ void Room143::init() {
 	case 142:
 		player_set_commands_allowed(false);
 		ws_demand_location(148, 247, 3);
-		ws_walk(249, 252, 0, 13, 4);
+		ws_walk(249, 252, nullptr, 13, 4);
 		break;
 
 	default:
@@ -1095,7 +1098,7 @@ void Room143::daemon() {
 
 			player_update_info();
 			if (_G(player_info).y < 304) {
-				ws_walk(220, 304, 0, -1, 2);
+				ws_walk(220, 304, nullptr, -1, 2);
 				_G(flags)[kDisableFootsteps] = 1;
 			}
 
@@ -1139,7 +1142,7 @@ void Room143::daemon() {
 			Section1::walk();
 
 			if (_G(player_info).y < 300)
-				ws_walk(213, 287, 0, -1, 2);
+				ws_walk(213, 287, nullptr, -1, 2);
 
 			showEmptyPlates();
 			_burlShould = 45;
@@ -1161,8 +1164,8 @@ void Room143::pre_parser() {
 }
 
 void Room143::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool money = player_said("money ");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool money = player_said("money ");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("conv35")) {
@@ -1310,9 +1313,9 @@ void Room143::parser() {
 void Room143::conv35() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	switch (_G(kernel).trigger) {
 	case 9:
@@ -1432,7 +1435,7 @@ void Room143::conv35() {
 void Room143::conv30() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 
 	if (_G(kernel).trigger == 9) {
 		if (who <= 0) {

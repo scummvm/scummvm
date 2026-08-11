@@ -23,12 +23,12 @@
 #define STARK_DEBUG_H
 
 enum {
-	kDebugArchive   = 1 << 0,
-	kDebugXMG       = 1 << 1,
-	kDebugXRC       = 1 << 2,
-	kDebugModding   = 1 << 3,
-	kDebugAnimation = 1 << 4,
-	kDebugUnknown   = 1 << 5
+	kDebugArchive = 1,
+	kDebugXMG,
+	kDebugXRC,
+	kDebugModding,
+	kDebugAnimation,
+	kDebugUnknown,
 };
 
 #endif // STARK_DEBUG_H

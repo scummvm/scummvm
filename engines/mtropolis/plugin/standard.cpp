@@ -22,6 +22,16 @@
 #include "common/random.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/macresman.h"
+#include "common/translation.h"
+
+#include "gui/dialog.h"
+#include "gui/imagealbum-dialog.h"
+
+#include "graphics/palette.h"
+
+#include "image/bmp.h"
+#include "image/pict.h"
 
 #include "mtropolis/miniscript.h"
 #include "mtropolis/plugin/standard.h"
@@ -237,7 +247,7 @@ MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false), _cueS
 }
 
 MediaCueMessengerModifier::MediaCueMessengerModifier(const MediaCueMessengerModifier &other)
-	: _cueSourceType(other._cueSourceType), _cueSourceModifier(other._cueSourceModifier), _enableWhen(other._enableWhen), _disableWhen(other._disableWhen), _mediaCue(other._mediaCue), _isActive(other._isActive) {
+	: Modifier(other), _cueSourceType(other._cueSourceType), _cueSourceModifier(other._cueSourceModifier), _enableWhen(other._enableWhen), _disableWhen(other._disableWhen), _mediaCue(other._mediaCue), _isActive(other._isActive) {
 	_cueSource.destruct<uint64, &CueSourceUnion::asUnset>();
 
 	switch (_cueSourceType) {
@@ -262,8 +272,11 @@ MediaCueMessengerModifier::MediaCueMessengerModifier(const MediaCueMessengerModi
 	}
 }
 
-
 MediaCueMessengerModifier::~MediaCueMessengerModifier() {
+	destructCueSource();
+}
+
+void MediaCueMessengerModifier::destructCueSource() {
 	switch (_cueSourceType) {
 	case kCueSourceInteger:
 		_cueSource.destruct<int32, &CueSourceUnion::asInt>();
@@ -316,30 +329,40 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext &context,
 	if (!_mediaCue.send.load(data.sendEvent, messageFlags, data.with, data.destination))
 		return false;
 
+	destructCueSource();
+
 	switch (data.executeAt.type) {
 	case Data::PlugInTypeTaggedValue::kInteger:
+		_cueSource.construct<int32, &CueSourceUnion::asInt>(data.executeAt.value.asInt);
 		_cueSourceType = kCueSourceInteger;
-		_cueSource.asInt = data.executeAt.value.asInt;
 		break;
-	case Data::PlugInTypeTaggedValue::kIntegerRange:
-		_cueSourceType = kCueSourceIntegerRange;
-		if (!_cueSource.asIntRange.load(data.executeAt.value.asIntRange))
-			return false;
-		break;
+	case Data::PlugInTypeTaggedValue::kIntegerRange: {
+			IntRange intRange;
+			if (!intRange.load(data.executeAt.value.asIntRange))
+				return false;
+
+			_cueSource.construct<IntRange, &CueSourceUnion::asIntRange>(intRange);
+			_cueSourceType = kCueSourceIntegerRange;
+		} break;
 	case Data::PlugInTypeTaggedValue::kVariableReference:
+		_cueSource.construct<uint32, &CueSourceUnion::asVarRefGUID>(data.executeAt.value.asVarRefGUID);
 		_cueSourceType = kCueSourceVariableReference;
-		_cueSource.asVarRefGUID = data.executeAt.value.asVarRefGUID;
 		break;
-	case Data::PlugInTypeTaggedValue::kLabel:
-		_cueSourceType = kCueSourceLabel;
-		if (!_cueSource.asLabel.load(data.executeAt.value.asLabel))
-			return false;
-		break;
+	case Data::PlugInTypeTaggedValue::kLabel: {
+			Label label;
+			if (!label.load(data.executeAt.value.asLabel))
+				return false;
+
+			_cueSource.construct<Label, &CueSourceUnion::asLabel>(label);
+			_cueSourceType = kCueSourceLabel;
+		} break;
 	case Data::PlugInTypeTaggedValue::kString:
+		_cueSource.construct<Common::String, &CueSourceUnion::asString>(data.executeAt.value.asString);
 		_cueSourceType = kCueSourceString;
-		_cueSource.asString = data.executeAt.value.asString;
 		break;
 	default:
+		_cueSource.construct<uint64, &CueSourceUnion::asUnset>(0);
+		_cueSourceType = kCueSourceInvalid;
 		return false;
 	}
 
@@ -637,7 +660,7 @@ void ObjectReferenceVariableModifier::resolve(Runtime *runtime) {
 	if (storage->_objectPath[0] == '/')
 		resolveAbsolutePath(runtime);
 	else if (storage->_objectPath[0] == '.')
-		resolveRelativePath(this, storage->_objectPath, 0);
+		resolveRelativePath(runtime, this, storage->_objectPath, 0);
 	else
 		warning("Object reference variable had an unknown path format");
 
@@ -648,7 +671,7 @@ void ObjectReferenceVariableModifier::resolve(Runtime *runtime) {
 	}
 }
 
-void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, const Common::String &path, size_t startPos) {
+void ObjectReferenceVariableModifier::resolveRelativePath(Runtime *runtime, RuntimeObject *obj, const Common::String &path, size_t startPos) {
 	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
 
 	bool haveNextLevel = true;
@@ -681,6 +704,10 @@ void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, co
 
 		if (obj->isStructural()) {
 			Structural *structural = static_cast<Structural *>(obj);
+
+			if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded)
+				runtime->hotLoadScene(structural);
+
 			modifierChildren = &structural->getModifiers();
 			structuralChildren = &structural->getChildren();
 		} else if (obj->isModifier()) {
@@ -769,7 +796,7 @@ void ObjectReferenceVariableModifier::resolveAbsolutePath(Runtime *runtime) {
 	if (storage->_objectPath[prefixEnd] != '/')
 		return;
 
-	return resolveRelativePath(project, storage->_objectPath, prefixEnd + 1);
+	return resolveRelativePath(runtime, project, storage->_objectPath, prefixEnd + 1);
 }
 
 bool ObjectReferenceVariableModifier::computeObjectPath(RuntimeObject *obj, Common::String &outPath) {
@@ -1172,11 +1199,6 @@ MiniscriptInstructionOutcome ListVariableModifier::scriptSetCount(MiniscriptThre
 
 	size_t newSize = asInteger;
 	if (newSize > storage->_list->getSize()) {
-		if (storage->_list->getSize() == 0) {
-			thread->error("Restoring an empty list by setting its count isn't implemented");
-			return kMiniscriptInstructionOutcomeFailed;
-		}
-
 		storage->_list->expandToMinimumSize(newSize);
 	} else if (newSize < storage->_list->getSize()) {
 		storage->_list->truncateToSize(newSize);
@@ -1402,6 +1424,45 @@ bool SysInfoModifier::readAttribute(MiniscriptThread *thread, DynamicValue &resu
 	} else if (attrib == "currentram") {
 		result.setInt(256 * 1024 * 1024);
 		return true;
+	} else if (attrib == "architecture") {
+		ProjectPlatform platform = thread->getRuntime()->getProject()->getPlatform();
+
+		if (platform == kProjectPlatformWindows)
+			result.setString("80x86");
+		else if (platform == kProjectPlatformMacintosh)
+			result.setString("PowerPC"); // MC680x0 for 68k
+		else {
+			thread->error("Couldn't resolve architecture");
+			return false;
+		}
+
+		return true;
+	} else if (attrib == "sysversion") {
+		ProjectPlatform platform = thread->getRuntime()->getProject()->getPlatform();
+
+		if (platform == kProjectPlatformMacintosh)
+			result.setString("9.0.4");
+		else if (platform == kProjectPlatformWindows)
+			result.setString("4.0");	// Windows version?  MindGym checks for < 4
+		else {
+			thread->error("Couldn't resolve architecture");
+			return false;
+		}
+
+		return true;
+	} else if (attrib == "processor" || attrib == "nativecpu") {
+		ProjectPlatform platform = thread->getRuntime()->getProject()->getPlatform();
+
+		if (platform == kProjectPlatformMacintosh)
+			result.setString("604");		// PowerPC 604
+		else if (platform == kProjectPlatformWindows)
+			result.setString("Pentium");
+		else {
+			thread->error("Couldn't resolve architecture");
+			return false;
+		}
+
+		return true;
 	}
 
 	return false;
@@ -1451,6 +1512,332 @@ const char *PanningModifier::getDefaultName() const {
 	return "Panning Modifier"; // ???
 }
 
+FadeModifier::FadeModifier() {
+}
+
+FadeModifier::~FadeModifier() {
+}
+
+bool FadeModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::FadeModifier &data) {
+	return true;
+}
+
+void FadeModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> FadeModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new FadeModifier(*this));
+}
+
+const char *FadeModifier::getDefaultName() const {
+	return "Fade Modifier"; // ???
+}
+
+class PrintModifierImageSupplier : public GUI::ImageAlbumImageSupplier {
+public:
+	PrintModifierImageSupplier(const Common::String &inputPath, bool isMacVersion);
+
+	bool loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, GUI::ImageAlbumImageMetadata &outMetadata) override;
+	void releaseImageSlot(uint slot) override;
+	uint getNumSlots() const override;
+	Common::U32String getDefaultFileNameForSlot(uint slot) const override;
+	bool getFileFormatForImageSlot(uint slot, Common::FormatInfo::FormatID &outFormat) const override;
+	Common::SeekableReadStream *createReadStreamForSlot(uint slot) override;
+
+private:
+	Common::String _path;
+
+	Common::SharedPtr<Image::ImageDecoder> _decoder;
+	bool _isMacVersion;
+};
+
+PrintModifierImageSupplier::PrintModifierImageSupplier(const Common::String &inputPath, bool isMacVersion) : _path(inputPath), _isMacVersion(isMacVersion) {
+	if (isMacVersion)
+		_decoder.reset(new Image::PICTDecoder());
+	else
+		_decoder.reset(new Image::BitmapDecoder());
+}
+
+bool PrintModifierImageSupplier::loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, GUI::ImageAlbumImageMetadata &outMetadata) {
+	Common::ScopedPtr<Common::SeekableReadStream> dataStream(createReadStreamForSlot(slot));
+
+	if (!dataStream)
+		return false;
+
+	if (!_decoder->loadStream(*dataStream)) {
+		warning("Failed to decode print file");
+		return false;
+	}
+
+	dataStream.reset();
+
+	outSurface = _decoder->getSurface();
+	outHasPalette = _decoder->hasPalette();
+
+	if (_decoder->hasPalette())
+		outPalette.set(_decoder->getPalette(), 0, _decoder->getPalette().size());
+
+	outMetadata = GUI::ImageAlbumImageMetadata();
+	outMetadata._orientation = GUI::kImageAlbumImageOrientationLandscape;
+	outMetadata._viewTransformation = GUI::kImageAlbumViewTransformationRotate90CW;
+
+	return true;
+}
+
+void PrintModifierImageSupplier::releaseImageSlot(uint slot) {
+	_decoder->destroy();
+}
+
+uint PrintModifierImageSupplier::getNumSlots() const {
+	return 1;
+}
+
+Common::U32String PrintModifierImageSupplier::getDefaultFileNameForSlot(uint slot) const {
+	Common::String filename = _path;
+
+	size_t lastColonPos = filename.findLastOf(':');
+
+	if (lastColonPos != Common::String::npos)
+		filename = filename.substr(lastColonPos + 1);
+
+	size_t lastDotPos = filename.findLastOf('.');
+	if (lastDotPos != Common::String::npos)
+		filename = filename.substr(0, lastDotPos);
+
+	if (_isMacVersion)
+		filename += Common::U32String(".pict");
+	else
+		filename += Common::U32String(".bmp");
+
+	return filename.decode(Common::kASCII);
+}
+
+bool PrintModifierImageSupplier::getFileFormatForImageSlot(uint slot, Common::FormatInfo::FormatID &outFormat) const {
+	if (slot != 0)
+		return false;
+
+	if (_isMacVersion)
+		outFormat = Common::FormatInfo::kPICT;
+	else
+		outFormat = Common::FormatInfo::kBMP;
+
+	return true;
+}
+
+Common::SeekableReadStream *PrintModifierImageSupplier::createReadStreamForSlot(uint slot) {
+	if (slot != 0)
+		return nullptr;
+
+	size_t lastColonPos = _path.findLastOf(':');
+	Common::String filename;
+
+	if (lastColonPos == Common::String::npos)
+		filename = _path;
+	else
+		filename = _path.substr(lastColonPos + 1);
+
+	Common::Path path(Common::String("MPZ_MTI/") + filename);
+
+	if (_isMacVersion) {
+		// Color images have res fork data so we must load from the data fork
+		return Common::MacResManager::openFileOrDataFork(path);
+	} else {
+		// Win versions are just files
+		Common::File *f = new Common::File();
+
+		if (!f->open(path)) {
+			delete f;
+			return nullptr;
+		}
+		return f;
+	}
+}
+
+PrintModifier::PrintModifier() {
+}
+
+PrintModifier::~PrintModifier() {
+}
+
+bool PrintModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState PrintModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+		PrintModifierImageSupplier imageSupplier(_filePath, runtime->getProject()->getPlatform() == kProjectPlatformMacintosh);
+
+		Common::ScopedPtr<GUI::Dialog> dialog(GUI::createImageAlbumDialog(_("Image Viewer"), &imageSupplier, 0));
+		dialog->runModal();
+	}
+
+	return kVThreadReturn;
+}
+
+void PrintModifier::disable(Runtime *runtime) {
+}
+
+MiniscriptInstructionOutcome PrintModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "showdialog") {
+		// This is only ever set to "false"
+		DynamicValueWriteDiscardHelper::create(writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "filepath") {
+		DynamicValueWriteStringHelper::create(&_filePath, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttribute(thread, writeProxy, attrib);
+}
+
+bool PrintModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::PrintModifier &data) {
+	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	if (data.filePath.type != Data::PlugInTypeTaggedValue::kString)
+		return false;
+
+	_filePath = data.filePath.value.asString;
+
+	if (!_executeWhen.load(data.executeWhen.value.asEvent))
+		return false;
+
+	return true;
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void PrintModifier::debugInspect(IDebugInspectionReport *report) const {
+}
+#endif
+
+Common::SharedPtr<Modifier> PrintModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new PrintModifier(*this));
+}
+
+const char *PrintModifier::getDefaultName() const {
+	return "Print Modifier";
+}
+
+NavigateModifier::NavigateModifier() {
+}
+
+NavigateModifier::~NavigateModifier() {
+}
+
+bool NavigateModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::NavigateModifier &data) {
+	return true;
+}
+
+bool NavigateModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState NavigateModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void NavigateModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void NavigateModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> NavigateModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new NavigateModifier(*this));
+}
+
+const char *NavigateModifier::getDefaultName() const {
+	return "Navigate Modifier"; // ???
+}
+
+OpenTitleModifier::OpenTitleModifier()
+	/*: _addToReturnList(false) */ {
+}
+
+OpenTitleModifier::~OpenTitleModifier() {
+}
+
+bool OpenTitleModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::OpenTitleModifier &data) {
+	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent || data.pathOrUrl.type != Data::PlugInTypeTaggedValue::kString || data.addToReturnList.type != Data::PlugInTypeTaggedValue::kInteger)
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen.value.asEvent))
+		return false;
+
+	_pathOrUrl = data.pathOrUrl.value.asString;
+
+	//_addToReturnList = static_cast<bool>(data.addToReturnList.value.asInt);
+
+	return true;
+}
+
+bool OpenTitleModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState OpenTitleModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (Debugger *debugger = runtime->debugGetDebugger())
+		debugger->notify(kDebugSeverityWarning, "Open Title modifier was executed, which isn't implemented yet");
+#endif
+	return kVThreadReturn;
+}
+
+void OpenTitleModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void OpenTitleModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> OpenTitleModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new OpenTitleModifier(*this));
+}
+
+const char *OpenTitleModifier::getDefaultName() const {
+	return "Open Title Modifier"; // ???
+}
+
+OpenAppModifier::OpenAppModifier() {
+}
+
+OpenAppModifier::~OpenAppModifier() {
+}
+
+bool OpenAppModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::OpenAppModifier &data) {
+	return true;
+}
+
+bool OpenAppModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState OpenAppModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void OpenAppModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void OpenAppModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> OpenAppModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new OpenAppModifier(*this));
+}
+
+const char *OpenAppModifier::getDefaultName() const {
+	return "Open App Modifier"; // ???
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -1461,7 +1848,12 @@ StandardPlugIn::StandardPlugIn()
 	, _objRefVarModifierFactory(this)
 	, _listVarModifierFactory(this)
 	, _sysInfoModifierFactory(this)
-	, _panningModifierFactory(this) {
+	, _panningModifierFactory(this)
+	, _fadeModifierFactory(this)
+	, _printModifierFactory(this)
+	, _navigateModifierFactory(this)
+	, _openTitleModifierFactory(this)
+	, _openAppModifierFactory(this) {
 }
 
 StandardPlugIn::~StandardPlugIn() {
@@ -1474,8 +1866,13 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("ObjRefP", &_objRefVarModifierFactory);
 	registrar->registerPlugInModifier("ListMod", &_listVarModifierFactory);
 	registrar->registerPlugInModifier("SysInfo", &_sysInfoModifierFactory);
+	registrar->registerPlugInModifier("Print", &_printModifierFactory);
 
 	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
+	registrar->registerPlugInModifier("fade", &_fadeModifierFactory);
+	registrar->registerPlugInModifier("Navigate", &_navigateModifierFactory);
+	registrar->registerPlugInModifier("OpenTitle", &_openTitleModifierFactory);
+	registrar->registerPlugInModifier("openApp", &_openAppModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {
@@ -1494,6 +1891,6 @@ Common::SharedPtr<PlugIn> createStandard() {
 	return Common::SharedPtr<PlugIn>(new Standard::StandardPlugIn());
 }
 
-} // End of namespace MTropolis
+} // End of namespace PlugIns
 
 } // End of namespace MTropolis

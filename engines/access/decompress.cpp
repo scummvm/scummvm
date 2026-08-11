@@ -27,7 +27,7 @@
 
 namespace Access {
 
-void LzwDecompressor::decompress(byte *source, byte *dest) {
+void LzwDecompressor::decompress(const byte *source, byte *dest) {
 
 	_source = source;
 
@@ -131,7 +131,7 @@ uint16 LzwDecompressor::getCode() {
 	return result;
 }
 
-uint32 decompressDBE(byte *source, byte **dest) {
+uint32 decompressDBE(const byte *source, byte **dest) {
 
 	uint32 destSize = READ_LE_UINT32(source + 4);
 	*dest = new byte[destSize];

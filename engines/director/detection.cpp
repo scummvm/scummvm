@@ -25,9 +25,9 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/formats/winexe.h"
 
-#include "director/detection.h"
 #include "director/director.h"
 
 #include "director/detection_tables.h"
@@ -48,6 +48,22 @@ static const struct CustomTarget {
 	{"d4-win", "win", "400" },
 	{"d5-mac", "mac", "500" },
 	{"d5-win", "win", "500" },
+	{"d6-mac", "mac", "600" },
+	{"d6-win", "win", "600" },
+	{"d65-mac", "mac", "650" },
+	{"d65-win", "win", "650" },
+	{"d7-mac", "mac", "700" },
+	{"d7-win", "win", "700" },
+	{"d8-mac", "mac", "800" },
+	{"d8-win", "win", "800" },
+	{"d9-mac", "mac", "900" },
+	{"d9-win", "win", "900" },
+	{"d10-mac", "mac", "1000" },
+	{"d10-win", "win", "1000" },
+	{"d11-mac", "mac", "1100" },
+	{"d11-win", "win", "1100" },
+	{"d12-mac", "mac", "1200" },
+	{"d12-win", "win", "1200" },
 	{"director-movie", "win", "400" },
 	{ nullptr, nullptr, nullptr }
 };
@@ -76,21 +92,29 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugText, "text", "Text rendering"},
 	{Director::kDebugXObj, "xobj", "XObjects"},
 	{Director::kDebugLingoThe, "lingothe", "Lingo \"the\" entities"},
-	{Director::kDebugImGui, "imgui", "Show ImGui debug window (if available)"},
 	{Director::kDebugPaused, "paused", "Pause first movie right after start"},
 	{Director::kDebugPauseOnLoad, "pauseonload", "Pause every movie right after loading"},
+	{Director::kDebugSaving, "saving", "Show Debug output while saving movies"},
+	{Director::kDebugPaths, "paths", "Show path resolving"},
 	DEBUG_CHANNEL_END
 };
 
-class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection {
+class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection<Director::DirectorGameDescription> {
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _customTarget;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _fallback_blacklisted_names;
 
 public:
-	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
+	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, directorGames) {
 		_maxScanDepth = 5;
 		_directoryGlobs = Director::directoryGlobs;
-		_flags = kADFlagMatchFullPaths | kADFlagCanPlayUnknownVariants;
+		_flags = kADFlagMatchFullPaths | kADFlagCanPlayUnknownVariants | kADFlagUseExtraAsHint;
+
+		_fallback_blacklisted_names["Macromedia Projector"] = true;
+		_fallback_blacklisted_names["Projector Skeleton"] = true;
+		_fallback_blacklisted_names["Director Player"] = true;
+		_fallback_blacklisted_names["Projector"] = true;
+		_fallback_blacklisted_names[""] = true;
 
 		// initialize customTarget hashmap here
 		for (int i = 0; customTargetList[i].name != nullptr; i++)
@@ -114,6 +138,8 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const override;
+
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
 };
 
 static Director::DirectorGameDescription s_fallbackDesc = {
@@ -130,6 +156,7 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 	0
 };
 
+static char s_fallbacGameIdBuffer[256];
 static char s_fallbackFileNameBuffer[51];
 static char s_fallbackExtraBuf[256];
 
@@ -275,17 +302,36 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 		desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
 		Common::String extra;
+		Common::String sanitizedName;
 		Common::WinResources *exe = Common::WinResources::createFromEXE(&f);
 		if (exe) {
 			Common::WinResources::VersionInfo *versionInfo = exe->getVersionResource(1);
 			if (versionInfo) {
-				extra = Common::String::format("v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
+				Common::String internalName = versionInfo->hash["InternalName"].encode();
+				Common::String fileDescription = versionInfo->hash["FileDescription"].encode();
+
+				warning("Director fallback detection int name: %s", internalName.c_str());
+				warning("Director fallback detection file name: %s", fileDescription.c_str());
+				warning("Director fallback detection version: v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
+
+				if (!_fallback_blacklisted_names.contains(fileDescription)) {
+					if (extraInfo != nullptr) {
+						*extraInfo = new ADDetectedGameExtraInfo;
+						(*extraInfo)->gameName = fileDescription;
+
+						sanitizedName = AdvancedMetaEngineDetectionBase::sanitizeName(fileDescription.c_str(), fileDescription.size());
+						Common::strlcpy(s_fallbacGameIdBuffer, sanitizedName.c_str(), sizeof(s_fallbacGameIdBuffer) - 1);
+						desc->desc.gameId = s_fallbacGameIdBuffer;
+
+						extra = Common::String::format("v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
+					}
+				}
 				delete versionInfo;
 			}
 			delete exe;
 		}
 		if (extra.empty()) {
-			extra = Common::String::format("v%d.%02d", desc->version / 100, desc->version % 100);
+			extra = Common::String::format("D%d.%02d", desc->version / 100, desc->version % 100);
 		}
 		Common::strlcpy(s_fallbackExtraBuf, extra.c_str(), sizeof(s_fallbackExtraBuf) - 1);
 		desc->desc.extra = s_fallbackExtraBuf;
@@ -306,10 +352,99 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 
 	// Now, if we have --start-movie supplied, let's consider that
 	// the developer knows what they're doing and report Director game
-	if (ConfMan.hasKey("start_movie"))
-		return ADDetectedGame(&desc->desc);
+	if (ConfMan.hasKey("start_movie")) {
+		// Check if the start movie is in MacBinary format
+
+		if (ConfMan.get("start_movie").hasSuffixIgnoreCase(".exe")) {
+			warning("Director fallback detection: Start movie has .exe extension, reporting as Windows Director game");
+			desc->desc.platform = Common::kPlatformWindows;
+			return ADDetectedGame(&desc->desc);
+		}
+
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			Common::String fileName = file->getName();
+
+			if (!fileName.equalsIgnoreCase(ConfMan.get("start_movie")))
+				continue;
+
+			Common::File f;
+			if (!f.open(*file))
+				continue;
+
+			if (Common::MacResManager::isMacBinary(f)) {
+				warning("Director fallback detection: Start movie is in MacBinary format, reporting as Mac Director game");
+				desc->desc.platform = Common::kPlatformMacintosh;
+
+				f.seek(0);
+
+				Common::MacFinderInfo info;
+				Common::MacFinderExtendedInfo fxinfo;
+				if (Common::MacResManager::getFinderInfoFromMacBinary(&f, info, fxinfo)) {
+					switch (info.type) {
+					case MKTAG('V', 'W', 'S', 'C'):	// VideoWorks II movies ("scenes")
+						desc->version = 10;
+						break;
+					case MKTAG('V', 'W', 'Z', 'P'):	// VideoWorks + Director Overview ("Zorro")
+						desc->version = 20;
+						break;
+					case MKTAG('V', 'W', 'P', 'R'):	// "VideoWorks Pro" = Director 1.0 / 2.0
+						desc->version = 100;
+						break;
+					case MKTAG('V', 'W', 'M', 'D'):	// Director 3.0
+						desc->version = 300;
+						break;
+					default:
+						warning("Director fallback detection: Start movie has unrecognized Finder type %s, cannot determine version", tag2str(info.type));
+						break;
+					}
+
+					warning("Director fallback detection: Start movie Finder info type %s, version guessed as %d", tag2str(info.type), desc->version);
+				}
+			} else {
+				f.seek(0);
+				uint32 initialTag = f.readUint32BE();
+
+				if (ConfMan.get("start_movie").hasSuffixIgnoreCase(".mmm")) {
+					desc->version = 200;
+				} else {
+					desc->version = 400; // We start from 400, and then the VWCF file will tell us the actual version
+				}
+
+				// Non-MacBinary files start from D3
+				switch (initialTag) {
+				case MKTAG('R', 'I', 'F', 'F'):
+				case MKTAG('R', 'I', 'F', 'X'):
+					desc->desc.platform = Common::kPlatformMacintosh;
+					break;
+				case MKTAG('X', 'F', 'I', 'R'):
+				case MKTAG('F', 'F', 'I', 'R'):
+					desc->desc.platform = Common::kPlatformWindows;
+					break;
+				default:
+					warning("Director fallback detection: Start movie does not have a valid RIFF tag, cannot determine platform");
+					return ADDetectedGame();
+				}
+			}
+
+			return ADDetectedGame(&desc->desc);
+		}
+
+		warning("Director fallback detection: Failed to open start movie at %s", ConfMan.get("start_movie").c_str());
+	}
 
 	return ADDetectedGame();
+}
+
+DetectedGame DirectorMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
+	DetectedGame game = AdvancedMetaEngineDetectionBase::toDetectedGame(adGame, extraInfo);
+	const Director::DirectorGameDescription *desc = reinterpret_cast<const Director::DirectorGameDescription *>(adGame.desc);
+
+	if (desc->desc.platform == Common::kPlatformMacintosh || desc->desc.platform == Common::kPlatformPippin)
+		game.appendGUIOptions(Common::getGameGUIOptionsDescription(GAMEOPTION_GAMMA_CORRECTION));
+	if (!(desc->desc.flags & Director::GF_TRUECOLOR))
+		game.appendGUIOptions(Common::getGameGUIOptionsDescription(GAMEOPTION_TRUE_COLOR));
+
+	return game;
 }
 
 REGISTER_PLUGIN_STATIC(DIRECTOR_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, DirectorMetaEngineDetection);

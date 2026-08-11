@@ -26,8 +26,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::vector;
-
 SeekPath::SeekPath() {
 
 }
@@ -69,7 +67,7 @@ bool SeekPath::get_obstacle_tracer(const MapCoord &start, sint32 xdir, sint32 yd
 }
 
 /* Returns true if an opening is found along the original line. */
-bool SeekPath::trace_check_obstacle(bool &turned, MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Std::vector<MapCoord> *scan) {
+bool SeekPath::trace_check_obstacle(bool &turned, MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Common::Array<MapCoord> *scan) {
 	MapCoord obstacle(line.x + xdir, line.y + ydir, line.z);
 	if (check_loc(obstacle)) { // no obstacle here; able to move closer
 		if (scan->empty() || scan->back() != line)
@@ -91,7 +89,7 @@ bool SeekPath::trace_check_obstacle(bool &turned, MapCoord &line, sint32 &deltax
 	return false;
 }
 
-void SeekPath::trace_around_corner(MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Std::vector<MapCoord> *scan) {
+void SeekPath::trace_around_corner(MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Common::Array<MapCoord> *scan) {
 	line.x -= deltax;
 	line.y -= deltay; // step back
 	if (scan->empty() || scan->back() != line)
@@ -107,7 +105,7 @@ void SeekPath::trace_around_corner(MapCoord &line, sint32 &deltax, sint32 &delta
    looking for openings towards 'xdir' and 'ydir'. The scan can bend 90 degrees
    to get around walls. Returns true if something that looks like an opening
    has been found. Trace nodes are placed at turns and where the scan ends. */
-bool SeekPath::trace_obstacle(MapCoord line, sint32 deltax, sint32 deltay, sint32 xdir, sint32 ydir, Std::vector<MapCoord> *scan) {
+bool SeekPath::trace_obstacle(MapCoord line, sint32 deltax, sint32 deltay, sint32 xdir, sint32 ydir, Common::Array<MapCoord> *scan) {
 	const uint32 scan_max = 8; // number of squares to check before giving up
 	bool bend = false; // true if the scanning line is rotated 90 degrees
 	uint32 s = 0;
@@ -128,7 +126,7 @@ bool SeekPath::trace_obstacle(MapCoord line, sint32 deltax, sint32 deltay, sint3
 }
 
 // choose which set of nodes traced around an obstacle should be used for a path
-Std::vector<MapCoord> *SeekPath::get_best_scan(const MapCoord &start, const MapCoord &goal) {
+Common::Array<MapCoord> *SeekPath::get_best_scan(const MapCoord &start, const MapCoord &goal) {
 	if (A_scan.empty() && B_scan.empty())
 		return 0;
 	if (A_scan.empty())
@@ -142,7 +140,7 @@ Std::vector<MapCoord> *SeekPath::get_best_scan(const MapCoord &start, const MapC
 
 // copy A or B nodes to the path
 void SeekPath::create_path(const MapCoord &start, const MapCoord &goal) {
-	vector<MapCoord> *nodes = get_best_scan(start, goal); // points to line A or B
+	Common::Array<MapCoord> *nodes = get_best_scan(start, goal); // points to line A or B
 	MapCoord prev_node(start);
 
 	// these nodes are only at certain locations in the path, so all steps in

@@ -32,32 +32,33 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExt::AdGeomExt(BaseGame *in_gameRef) : BaseClass(in_gameRef) {
+AdGeomExt::AdGeomExt(BaseGame *in_game) : BaseClass(in_game) {
 }
 
 //////////////////////////////////////////////////////////////////////////
 AdGeomExt::~AdGeomExt() {
-	for (uint i = 0; i < _nodes.size(); i++) {
-		delete _nodes[i];
+	for (int32 i = 0; i < _nodes.getSize(); i++) {
+		SAFE_DELETE(_nodes[i]);
 	}
-	_nodes.clear();
+	_nodes.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGeomExt::loadFile(char *filename) {
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdGeomExt::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdGeomExt::LoadFile failed for file '%s'", filename);
 		return false;
 	}
 
 	bool ret = loadBuffer(buffer);
 	if (!ret) {
-		_gameRef->LOG(0, "Error parsing geometry description file '%s'", filename);
+		_game->LOG(0, "Error parsing geometry description file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -70,35 +71,32 @@ TOKEN_DEF_START
 	TOKEN_DEF(NODE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExt::loadBuffer(byte *buffer) {
+bool AdGeomExt::loadBuffer(char *buffer) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE(GEOMETRY)
 		TOKEN_TABLE(NODE)
 	TOKEN_TABLE_END
 
-	byte *params;
+	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
-	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GEOMETRY) {
-		_gameRef->LOG(0, "'GEOMETRY' keyword expected.");
+	if (parser.getCommand(&buffer, commands, &params) != TOKEN_GEOMETRY) {
+		_game->LOG(0, "'GEOMETRY' keyword expected.");
 		return false;
 	}
 
 	buffer = params;
 
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NODE: {
-			AdGeomExtNode *node = new AdGeomExtNode(_gameRef);
+			AdGeomExtNode *node = new AdGeomExtNode(_game);
 
 			if (node && node->loadBuffer(params, false)) {
 				_nodes.add(node);
 			} else {
-				if (node) {
-					delete node;
-				}
-
+				SAFE_DELETE(node);
 				cmd = PARSERR_GENERIC;
 				}
 			}
@@ -107,11 +105,11 @@ bool AdGeomExt::loadBuffer(byte *buffer) {
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in geometry description file");
+		_game->LOG(0, "Syntax error in geometry description file");
 		return false;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading geometry description");
+		_game->LOG(0, "Error loading geometry description");
 		return false;
 	}
 
@@ -123,15 +121,15 @@ bool AdGeomExt::loadBuffer(byte *buffer) {
 bool AdGeomExt::addStandardNodes() {
 	AdGeomExtNode *node;
 
-	node = new AdGeomExtNode(_gameRef);
+	node = new AdGeomExtNode(_game);
 	node->setupNode("walk_*", GEOM_WALKPLANE, true);
 	_nodes.add(node);
 
-	node = new AdGeomExtNode(_gameRef);
+	node = new AdGeomExtNode(_game);
 	node->setupNode("blk_*", GEOM_BLOCKED, false);
 	_nodes.add(node);
 
-	node = new AdGeomExtNode(_gameRef);
+	node = new AdGeomExtNode(_game);
 	node->setupNode("wpt_*", GEOM_WAYPOINT, false);
 	_nodes.add(node);
 
@@ -144,7 +142,7 @@ AdGeomExtNode *AdGeomExt::matchName(const char *name) {
 		return nullptr;
 	}
 
-	for (uint i = 0; i < _nodes.size(); i++) {
+	for (int32 i = 0; i < _nodes.getSize(); i++) {
 		if (_nodes[i]->matchesName(name)) {
 			return _nodes[i];
 		}

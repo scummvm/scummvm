@@ -73,15 +73,17 @@ ScummVM relies heavily on Asyncify (see note above), and this comes with a quite
 *   Look into Stack Switching (emscripten-core/emscripten#16779) or multithreading as an alternative to Asyncify.
 
 ### Storage Integration
-*   BrowserFS seems abandoned and never did a stable 2.0.0 release. It's worth replacing it.  
-    * `scummvm_fs.js` is an early prototype for a custom FS which can be adopted for ScummVM specific needs, i.e.
+*  Settings can be persisted locally and assets can be loaded over HTTP, but more improvements could be possible:
+      * Use Range-Requests to download only parts of a file when not the whole file is not needed
       * Download all game assets in background once the game has started
       * Persist last game and last plugin for offline use
       * Pre-load assets asynchronously (not blocking) - i.e. rest of the data of a game which has been launched
       * Loading indicators (doesn't work with the current synchronous/blocking filesystem)
-*   Add support for save games (and game data?) on personal cloud storage (Dropbox, Google Drive).
-
 Emscripten is currently re-doing their filesystem code, which could help address some of the above issues ( emscripten-core/emscripten#15041 ).
+* Locally persisted file system for saved games and settings using the Browser IndexedDB. (using [Emscripten IDBFS](https://emscripten.org/docs/api_reference/Filesystem-API.html#filesystem-api-idbfs))
+* Cloud storage (Dropbox, Google Drive etc.) is exposed as a special folder on the file system. Only read access is implemented, but saved games can be synchronized via the regular cloud sync feature
+* Screenshots and Logfiles are automatically downloaded after creation
+* All other data is stored in memory and removed on reload (incl. temporarily stored logfiles and screenshots)
 
 ### UI Integration
 *   Build a nice webpage around the canvas.

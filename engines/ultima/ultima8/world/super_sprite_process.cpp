@@ -22,18 +22,16 @@
 #include "ultima/ultima8/world/super_sprite_process.h"
 
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/misc/direction_util.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/fire_type.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -324,7 +322,7 @@ void SuperSpriteProcess::hitAndFinish() {
 	int32 dims[3] = {1, 1, 1};
 	// will never get a collision if not stepping at all..
 	bool collision = !(xstep || ystep || zstep);
-	Std::list<CurrentMap::SweepItem> hits;
+	Common::List<CurrentMap::SweepItem> hits;
 
 	while (!collision) {
 		CurrentMap *map = World::get_instance()->getCurrentMap();
@@ -448,7 +446,7 @@ bool SuperSpriteProcess::areaSearch() {
 		start = item->getLocation();
 	}
 
-	Std::list<CurrentMap::SweepItem> hits;
+	Common::List<CurrentMap::SweepItem> hits;
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
 							   _source, true, &hits);
 

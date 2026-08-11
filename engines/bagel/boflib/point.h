@@ -23,13 +23,11 @@
 #ifndef BAGEL_BOFLIB_POINT_H
 #define BAGEL_BOFLIB_POINT_H
 
-#include "common/rect.h"
+#include "bagel/afxwin.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/object.h"
 
 namespace Bagel {
-
-typedef Common::Point POINT;
 
 class CBofPoint : public StPoint, public CBofObject {
 public:
@@ -39,9 +37,12 @@ public:
 	CBofPoint(StPoint stPoint);
 	CBofPoint(const CBofPoint &cPoint);
 	CBofPoint(const StSize &stSize);
+	CBofPoint(const Common::Point &pt);
 
 	CBofPoint(const POINT &stPoint) {
 		setWinPoint(&stPoint);
+	}
+	virtual ~CBofPoint() {
 	}
 
 	void setWinPoint(const POINT *pPoint);
@@ -101,6 +102,11 @@ inline CBofPoint::CBofPoint(const StSize &stSize) {
 inline CBofPoint::CBofPoint(const CBofPoint &cPoint) {
 	x = cPoint.x;
 	y = cPoint.y;
+}
+
+inline CBofPoint::CBofPoint(const Common::Point &pt) {
+	x = pt.x;
+	y = pt.y;
 }
 
 inline void CBofPoint::setWinPoint(const POINT *pPoint) {
@@ -242,8 +248,6 @@ inline CBofPoint CBofPoint::operator-() const {
 
 	return CBofPoint(-x, -y);
 }
-
-#define CPoint CBofPoint
 
 } // namespace Bagel
 

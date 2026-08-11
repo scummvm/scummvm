@@ -74,7 +74,7 @@ void PlayMusic(char IDstr[]);
 void PlayLongSound(char IDstr[]);
 
 //-----------------------------------------------------------------------
-//	general maintainence
+//	general maintenance
 
 bool initAudio();
 void startAudio();

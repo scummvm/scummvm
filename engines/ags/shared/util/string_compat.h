@@ -31,6 +31,7 @@ char *ags_strupr(char *s);
 int ags_stricmp(const char *, const char *);
 int ags_strnicmp(const char *, const char *, size_t);
 char *ags_strdup(const char *s);
+int ags_strncpy_s(char *dest, size_t dest_sz, const char *src, size_t count);
 
 } // namespace AGS3
 

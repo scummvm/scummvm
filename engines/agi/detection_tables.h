@@ -23,12 +23,15 @@
 
 namespace Agi {
 
-#define GAMEOPTIONS_DEFAULT                   GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
-#define GAMEOPTIONS_AMIGA                     GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
-#define GAMEOPTIONS_APPLE2GS                  GUIO5(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW, GAMEOPTION_APPLE2GS_ADD_SPEED_MENU)
-#define GAMEOPTIONS_VGA                       GUIO5(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GUIO_RENDERVGA)
-#define GAMEOPTIONS_FANMADE_MOUSE             GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
-#define GAMEOPTIONS_FANMADE_MOUSE_VGA         GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GUIO_RENDERVGA)
+#define GAMEOPTIONS_DEFAULT                   GUIO6(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_MOUSE,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GAMEOPTION_TTS)
+#define GAMEOPTIONS_DEFAULT_CP                GUIO7(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_MOUSE,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GAMEOPTION_COPY_PROTECTION,GAMEOPTION_TTS)
+#define GAMEOPTIONS_AMIGA                     GUIO6(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GAMEOPTION_TTS)
+#define GAMEOPTIONS_AMIGA_CP                  GUIO7(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GAMEOPTION_COPY_PROTECTION,GAMEOPTION_TTS)
+#define GAMEOPTIONS_APPLE2GS                  GUIO7(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_MOUSE,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW, GAMEOPTION_APPLE2GS_ADD_SPEED_MENU,GAMEOPTION_TTS)
+#define GAMEOPTIONS_APPLE2GS_CP               GUIO8(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_MOUSE,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW, GAMEOPTION_APPLE2GS_ADD_SPEED_MENU, GAMEOPTION_COPY_PROTECTION,GAMEOPTION_TTS)
+#define GAMEOPTIONS_VGA                       GUIO7(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_MOUSE,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GUIO_RENDERVGA,GAMEOPTION_TTS)
+#define GAMEOPTIONS_FANMADE_MOUSE             GUIO6(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GAMEOPTION_PCJR_SN76496_16BIT,GAMEOPTION_TTS)
+#define GAMEOPTIONS_FANMADE_MOUSE_VGA         GUIO7(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_ENABLE_PREDICTIVE_FOR_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW,GAMEOPTION_PCJR_SN76496_16BIT,GUIO_RENDERVGA,GAMEOPTION_TTS)
 
 #define GAME_LVFPN(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
 		{ \
@@ -62,22 +65,6 @@ namespace Agi {
 		ver \
 	}
 
-#define GAME_LVFPN_PIRATED(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
-		{ \
-			id, \
-			extra, \
-			AD_ENTRY1s(fname,md5,size), \
-			lang, \
-			platform, \
-			ADGF_PIRATED, \
-			guioptions \
-		}, \
-		gid, \
-		interp, \
-		features, \
-		ver \
-	}
-
 #define GAME_LVFPNF(id,name,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
 		{ \
 			id, \
@@ -94,14 +81,14 @@ namespace Agi {
 		ver \
 	}
 
-#define GAME_LVFPNU(id,msg,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
+#define GAME_LVFPN_FLAGS(id,msg,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions,flags) { \
 		{ \
 			id, \
 			msg, \
 			AD_ENTRY1s(fname,md5,size), \
 			lang, \
 			platform, \
-			ADGF_UNSUPPORTED, \
+			flags, \
 			guioptions \
 		}, \
 		gid, \
@@ -110,14 +97,14 @@ namespace Agi {
 		ver \
 	}
 
-#define GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,lang,ver,features,gid,platform,interp,guioptions) { \
+#define GAME_LVFPN2_FLAGS(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,lang,ver,features,gid,platform,interp,guioptions,flags) { \
 		{ \
 			id, \
 			msg, \
 			AD_ENTRY2s(fname_1,md5_1,size_1,fname_2,md5_2,size_2), \
 			lang, \
 			platform, \
-			ADGF_UNSUPPORTED, \
+			flags, \
 			guioptions \
 		}, \
 		gid, \
@@ -126,40 +113,48 @@ namespace Agi {
 		ver \
 	}
 
-#define BOOTER1_U(id,msg,fname,md5,size,ver,gid) GAME_LVFPNU(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT)
-#define BOOTER2(id,extra,fname,md5,size,ver,gid) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
-#define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
-#define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
-#define GAME3_PIRATED(id,extra,fname,md5,ver,gid) GAME_LVFPN_PIRATED(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
+#define A2(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformApple2,GType_A2,GAMEOPTIONS_DEFAULT,ADGF_UNSTABLE)
+#define A2_CP(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformApple2,GType_A2,GAMEOPTIONS_DEFAULT_CP,ADGF_UNSTABLE)
+#define A2_GAL(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformApple2,GType_GAL,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
+#define BOOTER(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT)
+#define BOOTER_UNSTABLE(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT,ADGF_UNSTABLE)
+#define BOOTER_GAL(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_GAL,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
+#define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
+#define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
+#define GAME3_CP(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT_CP)
+#define GAME3_PIRATED(id,extra,fname,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT,ADGF_PIRATED)
 
-#define GAME_P(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
-#define GAME_PO(id,extra,md5,ver,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2,guioptions)
+#define GAME_P(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
+#define GAME_P_CP(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT_CP)
+#define GAME_PO(id,extra,md5,ver,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,platform,GType_V2,guioptions)
 
-#define GAME_FP(id,extra,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
-#define GAME_FPO(id,extra,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2,guioptions)
+#define GAME_FP(id,extra,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,flags,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
+#define GAME_FPO(id,extra,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,flags,gid,platform,GType_V2,guioptions)
 #define GAME_F(id,extra,md5,ver,flags,gid) GAME_FP(id,extra,md5,ver,flags,gid,Common::kPlatformDOS)
 #define GAME_FO(id,extra,md5,ver,flags,gid,guioptions) GAME_FPO(id,extra,md5,ver,flags,gid,Common::kPlatformDOS,guioptions)
 #define GAME_FSO(id,extra,fname,md5,size,ver,flags,gid,guioptions) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,Common::kPlatformDOS,GType_V2,guioptions)
 
 #define GAME_PS(id,extra,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
+#define GAME_PS_CP(id,extra,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT_CP)
 
 #define GAME_LPS(id,extra,md5,size,lang,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,lang,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
 
 #define GAME_LFPS(id,extra,md5,size,lang,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,lang,ver,flags,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
 
-#define GAME3_P(id,extra,fname,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
-#define GAME3_PO(id,extra,fname,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
+#define GAME3_P(id,extra,fname,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
+#define GAME3_P_CP(id,extra,fname,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT_CP)
+#define GAME3_PO(id,extra,fname,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
 
 #define GAMEpre_P(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
-#define GAMEpre_PU(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
+#define GAMEpre_PU(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2_FLAGS(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
 #define GAMEpre_PO(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform,guioptions) GAME_LVFPN2(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,guioptions)
 #define GAMEpre_PS(id,extra,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
-#define GAMEpre_PSU(id,msg,fname,md5,size,ver,gid,platform) GAME_LVFPNU(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
+#define GAMEpre_PSU(id,msg,fname,md5,size,ver,gid,platform) GAME_LVFPN_FLAGS(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
 
 #define GAME3_PS(id,extra,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
 #define GAME3_PSO(id,extra,fname,md5,size,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
 
-#define FANMADE_ILVFO(id,name,md5,lang,ver,features,guioptions) GAME_LVFPNF(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformDOS,GType_V2,guioptions)
+#define FANMADE_ILVFO(id,name,md5,lang,ver,features,guioptions) GAME_LVFPNF(id,name,"logdir",md5,AD_NO_SIZE,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformDOS,GType_V2,guioptions)
 
 #define FANMADE_ISVPO(id,name,md5,size,ver,platform,guioptions) GAME_LVFPNF(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2,guioptions)
 #define FANMADE_SVP(name,md5,size,ver,platform) FANMADE_ISVPO("agi-fanmade",name,md5,size,ver,platform,GAMEOPTIONS_DEFAULT)
@@ -176,7 +171,7 @@ namespace Agi {
 #define FANMADE_L(name,md5,lang) FANMADE_LF(name,md5,lang,0)
 #define FANMADE_I(id,name,md5) FANMADE_IF(id,name,md5,0)
 #define FANMADE_O(name,md5,guioptions) FANMADE_FO(name,md5,0,guioptions)
-#define FANMADE_P(name,md5,platform) FANMADE_SVP(name,md5,-1,0x2917,platform)
+#define FANMADE_P(name,md5,platform) FANMADE_SVP(name,md5,AD_NO_SIZE,0x2917,platform)
 #define FANMADE_S(name,fname,md5,size) GAME_LVFPNF("agi-fanmade",name,fname,md5,size,Common::EN_ANY,0x2917,GF_FANMADE,GID_FANMADE,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
 
 #define FANMADE(name,md5) FANMADE_F(name,md5,0)
@@ -186,8 +181,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	// AGI Demo 1 (PC) 05/87 [AGI 2.425]
 	GAME("agidemo", "Demo 1 1987-05-20", "9c4a5b09cc3564bc48b4766e679ea332", 0x2440, GID_AGIDEMO),
 
+	// AGI Demo (Apple II) 1987 (A2 Int. 0.048)
+	A2("agidemo", "Demo 1987", "1abef8018f42dc21a59e03f3d227024f", 0x2917, GID_AGIDEMO),
+
 	// AGI Demo 2 (IIgs) 1.0C (Censored)
-	GAME_P("agidemo", "Demo 2 1987-11-24 1.0C", "580ffdc569ff158f56fb92761604f70e", 0x2917, GID_AGIDEMO, Common::kPlatformApple2GS),
+	GAME_P("agidemo", "Demo 2 1987-11-24 1.0C", "580ffdc569ff158f56fb92761604f70e", 0x2440, GID_AGIDEMO, Common::kPlatformApple2GS),
 
 	// AGI Demo 2 (PC 3.5") 11/87 [AGI 2.915]
 	GAME("agidemo", "Demo 2 1987-11-24 3.5\"", "e8ebeb0bbe978172fe166f91f51598c7", 0x2917, GID_AGIDEMO),
@@ -207,71 +205,22 @@ static const AGIGameDescription gameDescriptions[] = {
 	// AGI Demo for Kings Quest III and Space Quest I
 	GAME("agidemo", "Demo Kings Quest III and Space Quest I", "502e6bf96827b6c4d3e67c9cdccd1033", 0x2272, GID_AGIDEMO),
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1J [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1J",
-			{
-				{ "bc-d1.img", BooterDisk1, "1d29a82b41c9c7491e2b68d16864bd11", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// Black Cauldron (PC 5.25" booter) 1.1J [AGI 1.12]
+	BOOTER_UNSTABLE("bc", "1.1J 5.25\" Booter", "0f69951170868481acebf831dd743b21", 0x1120, GID_BC),
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1K [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1K",
-			{
-				{ "bc-d1.img", BooterDisk1, "98a51d3a372baa9df288b6c0f0232567", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// Black Cauldron (PC 5.25" booter) 1.1K [AGI 1.12]
+	// This also matches against Tandy version 01.00.00. The game resources are identical
+	// except for the copyright/version text on the title screen and three pics.
+	BOOTER_UNSTABLE("bc", "1.1K 3.5\" Booter", "297a586027a5eba60219b339ebe53443", 0x1120, GID_BC),
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1M [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1M",
-			{
-				{ "bc-d1.img", BooterDisk1, "edc0e5befbe5e44bb109cdf9137ee12d", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// Black Cauldron (PC 5.25" booter) 1.1M [AGI 1.12]
+	BOOTER_UNSTABLE("bc", "1.1M 3.5\" Booter", "29bc82f2acfd0c7deeb7941cafd745d2", 0x1120, GID_BC),
 
 	// Black Cauldron (Amiga) 2.00 6/14/87
 	GAME_PO("bc", "2.00 1987-06-14", "7b01694af21213b4727bb94476f64eb5", 0x2440, GID_BC, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+
+	// Black Cauldron (Apple II) 1.1H [AGI 1.20]
+	A2("bc", "1.1H", "80c7d0af6c89bf28ae44d2aa5ca83dc1", 0x1120, GID_BC),
 
 	// Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
 	GAME3_PO("bc", "1.0O 1989-02-24 (CE)", "bcdir", "dc09d30b147242692f4f85b9811962db", 0x3149, 0, GID_BC, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
@@ -297,14 +246,22 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Unofficial port by Guillaume Major
 	GAME_PS("bc", "updated", "c4e1937f74e8100cd0152b904434d8b4", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
 
-	// Donald Duck's Playground (PC Booter) 1.0Q
-	BOOTER2("ddp", "Booter 1.0Q", "ddp.img", "f323f10abf8140ffb2668b09af2e7b87", 368640, 0x2001, GID_DDP),
+	// Donald Duck's Playground (PC 5.25" Booter) 1.0Q 06/09/1986
+	BOOTER("ddp", "1.0Q 1986-06-09 5.25\" Booter", "f0f35d60e3e3303480a6bd109d54248d", 0x2001, GID_DDP),
 
-	// Donald Duck's Playground (Amiga) 1.0C
+	// Donald Duck's Playground (ST) 1.0A 08/08/86
+	GAME_P("ddp", "1.0A 1986-08-08", "64388812e25dbd75f7af1103bc348596", 0x2272, GID_DDP, Common::kPlatformAtariST),
+
+	// Donald Duck's Playground (Amiga) 1.0C 04/27/1987
 	GAME_PO("ddp", "1.0C 1987-04-27", "550971d196f65190a5c760d2479406ef", 0x2272, GID_DDP, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
-	// Donald Duck's Playground (ST) 1.0A 8/8/86
-	GAME("ddp", "1.0A 1986-08-08", "64388812e25dbd75f7af1103bc348596", 0x2272, GID_DDP),
+	// Donald Duck's Playground ("DOS") 1.0C
+	// This version is hosted on Al Lowe's website but it is really the Amiga
+	// resource files packaged with a DOS interpreter they were not designed for.
+	GAME_PS("ddp", "1.0C", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformDOS),
+
+	// Donald Duck's Playground (DOS) 1.50 06/22/1987
+	GAME("ddp", "1.50 1987-06-22", "268074cc8cb75aa2227c4398886d7acd", 0x2272, GID_DDP),
 
 	{
 		// Donald Duck's Playground (CoCo)
@@ -323,33 +280,33 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2001 // unknown
 	},
 
-	// reported by Filippos (thebluegr) in bugreport #3048
-	GAME_PS("ddp", "1.0C 1986-06-09", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformDOS),
-
 	// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89  # 2.316
-	GAME3_PSO("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAME3_PSO("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA_CP),
+
+	// Gold Rush! (Apple II) 1.0M 11/16/1989 (A2 Int. 0.144)
+	A2_CP("goldrush", "1.0M 1989-11-16", "a0bf4d801eaf1af4728ea85d6dedf8a6", 0x3149, GID_GOLDRUSH),
 
 	// Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
-	GAME3_PO("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, GF_2GSOLDSOUND, GID_GOLDRUSH, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
+	GAME3_PO("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, GF_2GSOLDSOUND, GID_GOLDRUSH, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS_CP),
 
 	// Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
-	GAME3_P("goldrush", "1.01 1989-01-13 aka 2.01 1988-12-22", "grdir", "4dd4d50480a3d6c206fa227ce8142735", 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAtariST),
+	GAME3_P_CP("goldrush", "1.01 1989-01-13 aka 2.01 1988-12-22", "grdir", "4dd4d50480a3d6c206fa227ce8142735", 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAtariST),
 
 	// Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
-	GAME3("goldrush", "2.01 1988-12-22 5.25\"", "grdir", "db733d199238d4009a9e95f11ece34e9", 0x3149, GID_GOLDRUSH),
+	GAME3_CP("goldrush", "2.01 1988-12-22 5.25\"", "grdir", "db733d199238d4009a9e95f11ece34e9", 0x3149, GID_GOLDRUSH),
 
 	// Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149]
-	GAME3("goldrush", "2.01 1988-12-22 3.5\"", "grdir", "6a285235745f69b4b421403659497216", 0x3149, GID_GOLDRUSH),
+	GAME3_CP("goldrush", "2.01 1988-12-22 3.5\"", "grdir", "6a285235745f69b4b421403659497216", 0x3149, GID_GOLDRUSH),
 
 	// Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149] with fanmade Spanish translation
-	GAME_LVFPN("goldrush", "2.01 1988-12-22 3.5\"", "grdir", "64ef3b1949c262b92694381cb36d79b9", 3080, Common::ES_ESP, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("goldrush", "2.01 1988-12-22 3.5\"", "grdir", "64ef3b1949c262b92694381cb36d79b9", 3080, Common::ES_ESP, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT_CP),
 
 	// Gold Rush!  2.01 12/22/88 - pirated copy, according to https://bugs.scummvm.org/ticket/3220
 	GAME3_PIRATED("goldrush", "2.01 1988-12-22", "grdir", "3ae052117feb483f01a9017025fbb366", 2399, GID_GOLDRUSH),
 	GAME3_PIRATED("goldrush", "2.01 1988-12-22", "grdir", "1ef85c37fcf7224f9731f20f169c8c53", 2399, GID_GOLDRUSH),
 
 	// Gold Rush! (PC 3.5", bought from The Software Farm) 3.0 1998-12-22 [AGI 3.002.149]
-	GAME3("goldrush", "3.0 1998-12-22 3.5\"", "grdir", "6882b6090473209da4cd78bb59f78dbe", 0x3149, GID_GOLDRUSH),
+	GAME3_CP("goldrush", "3.0 1998-12-22 3.5\"", "grdir", "6882b6090473209da4cd78bb59f78dbe", 0x3149, GID_GOLDRUSH),
 
 	{
 		// Gold Rush! (Mac) 2.01 12/22/88 [AGI 3.002.149]
@@ -361,7 +318,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
+			GAMEOPTIONS_DEFAULT_CP
 		},
 		GID_GOLDRUSH,
 		GType_V3,
@@ -371,11 +328,11 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Gold Rush! (CoCo3 720k) [AGI 2.023]
 	// Unofficial port by Guillaume Major
-	GAME_PS("goldrush", "", "0a41b65efc0cd6c4271e957e6ffbbd8e", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
+	GAME_PS_CP("goldrush", "", "0a41b65efc0cd6c4271e957e6ffbbd8e", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
 
 	// Gold Rush! (CoCo3 360k/720k) [AGI 2.072]
 	// Unofficial port by Guillaume Major
-	GAME_PS("goldrush", "updated", "c49bf56bf91e31a4601a604e51ef8bfb", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
+	GAME_PS_CP("goldrush", "updated", "c49bf56bf91e31a4601a604e51ef8bfb", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
 
 	// King's Quest 1 (DOS) 1.0U [AGI 2.272]
 	GAME("kq1", "1.0U 1986", "f3464778c9ae1a9e1fbed566f917b3d7", 0x2272, GID_KQ1),
@@ -392,13 +349,22 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 1 (Mac) 2.0C 3/26/87
 	GAME_P("kq1", "2.0C 1987-03-26", "d4c4739d4ac63f7dbd29255425077d48", 0x2440, GID_KQ1, Common::kPlatformMacintosh),
 
-	// King's Quest 1 (IBM PCjr) 1.00 1502265 5/10/84
-	BOOTER1_U("kq1", "Early King\'s Quest releases are not currently supported.",
-		"kq1.img", "127675735f9d2c148738c1e96ea9d2cf", 368640, 0x1120, GID_KQ1),
+	// King's Quest 1 (Apple II)
+	A2_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "a59f92b2d6e4fd245a8d51acdc58fc6d", 0x1000, GID_KQ1),
 
-	// King's Quest 1 (Tandy 1000) 01.01.00 5/24/84
-	BOOTER1_U("kq1", "Early King\'s Quest releases are not currently supported.",
-		"kq1.img", "0a22131d0eaf66d955afecfdc83ef9d6", 368640, 0x1120, GID_KQ1),
+	// King's Quest 1 (IBM PCjr) 1984-05-10
+	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "0d1cca805d08438a1dc83431b7348fe3", 0x1000, GID_KQ1),
+
+	// King's Quest 1 (IBM PC CGA) 1984-05-30
+	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "6ba3a845502508c99a6cb2eed92f030d", 0x1000, GID_KQ1),
+
+	// King's Quest 1 (IBM PC CGA+RGB) 1984-08-16
+	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "f44abc925bbfee1fede7ba42708a6d00", 0x1000, GID_KQ1),
+
+	// King's Quest 1 (Tandy 1000) 01.01.00 1985-05-24
+	// King's Quest 1 (Tandy 1000 + IBM PCjr) 1985-09-04
+	// These versions have identical resources and resource directories
+	BOOTER_GAL("kq1", "Early King\'s Quest releases are not currently supported.", "5be8342f00f7d951d0a4ee2e5c9f5b31", 0x1000, GID_KQ1),
 
 	// King's Quest 1 (PC 5.25"/3.5") 2.0F [AGI 2.917]
 	GAME("kq1", "2.0F 1987-05-05 5.25\"/3.5\"", "10ad66e2ecbd66951534a50aedcd0128", 0x2917, GID_KQ1),
@@ -418,6 +384,16 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 1 (Russian)
 	GAME_LPS("kq1", "", "973f5830ed5e1c919354dfbcd5036c53", 315, Common::RU_RUS, 0x2440, GID_KQ1, Common::kPlatformDOS),
 
+	// King's Quest 1 (Hebrew) [DOS 2.0F 1987]
+	// Fan made translation by SegMash, based on the English GoG version
+	GAME_LPS("kq1", "", "28954efaa2dd118cb3a6b672e03d806b", 315, Common::HE_ISR, 0x2917, GID_KQ1, Common::kPlatformDOS),
+
+	// King's Quest 2 (Apple II) 1.0G [AGI 1.08]
+	A2("kq2", "1.0G", "8e8d562e50233c939112c89bba55d249", 0x1120, GID_KQ2),
+
+	// King's Quest 2 (Apple II) 1.0H [AGI 1.10]
+	A2("kq2", "1.0H", "3a25cb0a87316f449d559ceb93d349e9", 0x1120, GID_KQ2),
+
 	// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
 	GAME_PO("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
@@ -427,47 +403,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (Mac) 2.0R 3/23/88
 	GAME_P("kq2", "2.0R 1988-03-23", "cbdb0083317c8e7cfb7ac35da4bc7fdc", 0x2440, GID_KQ2, Common::kPlatformMacintosh),
 
-	{
-		// King's Quest 2 (PC booter) 1.0W
-		{
-			"kq2",
-			"Early King\'s Quest releases are not currently supported.",
-			{
-				{ "kq2-d1.img", BooterDisk1, "68302776c012f5036ceb66e36920d353", 368640},
-				{ "kq2-d2.img", BooterDisk2, "5fa6d8222608aee556627c67cb5fb4d4", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_KQ2,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// King's Quest 2 (Tandy 5.25" booter) 01.00.00 [AGI 1.12]
+	BOOTER_UNSTABLE("kq2", "01.00.00 5.25\" Booter", "59119ff7a21965c0fb5f001f0d049765", 0x1120, GID_KQ2),
 
-	{
-		// King's Quest 2 (PC booter) 1.1H
-		{
-			"kq2",
-			"Early King\'s Quest releases are not currently supported.",
-			{
-				{ "kq2-d1.img", BooterDisk1, "c7216589aca72348bc063950cb80b266", 368640},
-				{ "kq2-d2.img", BooterDisk2, "9d29b6d41740945dce569cb59b2a6c5f", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_KQ2,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// King's Quest 2 (PC 5.25" booter) 1.0W [AGI 1.12]
+	BOOTER_UNSTABLE("kq2", "1.0W 5.25\" Booter", "0b4172d13b0fb7e5b83244a964e52ece", 0x1120, GID_KQ2),
+
+	// King's Quest 2 (PC 5.25" booter) 1.1H [AGI 1.12]
+	BOOTER_UNSTABLE("kq2", "1.1H 5.25\" Booter", "4924e12c90f883b81db426e11e091beb", 0x1120, GID_KQ2),
 
 	// King's Quest 2 (PC) 2.1 [AGI 2.411]; entry from DAGII, but missing from Sarien?
 	// XXX: any major differences from 2.411 to 2.440?
@@ -499,6 +442,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Unofficial port by Guillaume Major
 	GAME_PS("kq2", "", "bdb10876cd4cb20eabd88778c40b4075", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
+	// King's Quest 2 (Hebrew) [2.1 1987-04-10/DOS]
+	// Fan made translation by SegMash, based on the English GoG version
+	GAME_LPS("kq2", "", "34e9abb9f1ce54db4e1abcc37b53b198", 543, Common::HE_ISR, 0x2917, GID_KQ2, Common::kPlatformDOS),
+
 	// King's Quest 3 (Amiga) 1.01 11/8/86
 	GAME_PO("kq3", "1.01 1986-11-08", "8ab343306df0e2d98f136be4e8cfd0ef", 0x2440, GID_KQ3, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
@@ -507,6 +454,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 3 (Mac) 2.14 3/15/88
 	GAME_P("kq3", "2.14 1988-03-15", "7639c0da5ce94848227d409351fabda2", 0x2440, GID_KQ3, Common::kPlatformMacintosh),
+
+	// King's Quest 3 (Apple II) 2.0A 3/13/88 (A2 Int. 0.101)
+	A2("kq3", "2.0A 1988-03-13", "6d3982705071a59b65fe0953333074f0", 0x2440, GID_KQ3),
 
 	// King's Quest 3 (IIgs) 2.0A 8/28/88 (CE)
 	GAME_PO("kq3", "2.0A 1988-08-28 (CE)", "ac30b7ca5a089b5e642fbcdcbe872c12", 0x2917, GID_KQ3, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
@@ -537,9 +487,13 @@ static const AGIGameDescription gameDescriptions[] = {
 	// TRAC #13494
 	GAME_LPS("kq3", "2.14 1988-03-15 3.5\"", "87956c92d23f53d81bf2ee9e08fdc64c", 390, Common::ES_ESP, 0x2936, GID_KQ3, Common::kPlatformDOS),
 
-	// King's Quest 3 (CoCo3 158k/360k) 1.0C [AGI 2.023]
+	// King's Quest 3 (CoCo3 158k/360k) 1.0C 6/27/88 [AGI 2.023]
 	// Official port by Sierra
 	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
+
+	// King's Quest 3 (Hebrew) [2.14 1988-03-15 3.5"/DOS]
+	// Fan made translation by SegMash, based on the English GoG version
+	GAME_LPS("kq3", "", "e8b8d392396e2b165957752f5784a279", 390, Common::HE_ISR, 0x2917, GID_KQ3, Common::kPlatformDOS),
 
 	// King's Quest 4 (PC 5.25") 2.0 7/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.0 1988-07-27", "kq4dir", "f50f7f997208ca0e35b2650baec43a2d", 0x3086, GID_KQ4),
@@ -559,6 +513,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 4 (PC 3.5") 2.3 9/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.3 1988-09-27 3.5\"", "kq4dir", "82a0d39af891042e99ac1bd6e0b29046", 0x3086, GID_KQ4),
+
+	// King's Quest 4 (Apple II) 1.0W 3/16/89 (A2 Int. 0.144)
+	A2("kq4", "1.0W 1989-03-16", "e5c6f8f0b5db09b00477012fc57fe775", 0x3086, GID_KQ4),
 
 	// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
 	GAME3_PO("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
@@ -596,6 +553,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Leisure Suit Larry 1 (Amiga) 1.05 6/26/87    # x.yyy
 	GAME_PO("lsl1", "1.05 1987-06-26", "3f5d26d8834ca49c147fb60936869d56", 0x2440, GID_LSL1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
+	// Leisure Suit Larry 1 (Apple II) 1.0L (A2 Int. 0.080)
+	A2("lsl1", "1.0L", "d1d4204485c2735f343ab54ff609631f", 0x2440, GID_LSL1),
+
+	// Leisure Suit Larry 1 (Apple II) 1.0M (A2 Int. 0.080)
+	A2("lsl1", "1.0M", "cf5452e0e36d0c0bd86dea9ad630e001", 0x2440, GID_LSL1),
+
 	// Leisure Suit Larry 1 (IIgs) 1.0E
 	GAME_PO("lsl1", "1.0E 1987", "5f9e1dd68d626c6d303131c119582ad4", 0x2440, GID_LSL1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
@@ -608,6 +571,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Manhunter NY (ST) 1.03 10/20/88
 	GAME3_P("mh1", "1.03 1988-10-20", "mhdir", "f2d58056ad802452d60776ee920a52a6", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
+
+	// Manhunter NY (Apple II) 1.0I 4/19/90 (AGI Int. 1.050)
+	A2("mh1", "1.0I 1990-04-19", "a197817633e17cec3407ea194da4a372", 0x3149, GID_MH1),
 
 	// Manhunter NY (IIgs) 2.0E 10/05/88 (CE)
 	GAME3_P("mh1", "2.0E 1988-10-05 (CE)", "mhdir", "2f1509f76f24e6e7d213f2dadebbf156", 0x3149, 0, GID_MH1, Common::kPlatformApple2GS),
@@ -703,6 +669,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Files are timestamped 1986-12-10, but this is a 1989 AGI 3 interpreter.
 	GAME3_PSO("mixedup", "1.1", "dirs", "5c1295fe6daaf95831195ba12894dbd9", 2021, 0x3149, 0, GID_MIXEDUP, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
+	// Mixed Up Mother Goose (Apple II) 1.0I (A2 Int. 0.100)
+	A2("mixedup", "1.0I", "ba33c035fa9f9bfb5655f59e677cabed", 0x2917, GID_MIXEDUP),
+
 	// Mixed Up Mother Goose (IIgs)
 	GAME_PO("mixedup", "1987", "3541954a7303467c6df87665312ffb6a", 0x2917, GID_MIXEDUP, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
@@ -718,6 +687,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Police Quest 1 (Mac) 2.0G 12/3/87
 	GAME_P("pq1", "2.0G 1987-12-03", "805750b66c1c5b88a214e67bfdca17a1", 0x2440, GID_PQ1, Common::kPlatformMacintosh),
+
+	// Police Quest 1 (Apple II) 1.0I 11/23/88 (A2 Int. 0.099)
+	A2("pq1", "1.0I 1988-11-23", "581e54c4d89bd53e775482cee9cd3ea0", 0x2440, GID_PQ1),
 
 	// Police Quest 1 (IIgs) 2.0B-88421
 	GAME_PO("pq1", "2.0B 1988-04-21", "e7c175918372336461e3811d594f482f", 0x2917, GID_PQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
@@ -745,7 +717,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("pq1", "2.0G 1987-12-03", "d194e5d88363095f55d5096b8e32fbbb", 0x2917, GID_PQ1),
 
 	// Police Quest 1 (PC) 2.0G 12/3/87; with Hebrew translation
-	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", -1, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", AD_NO_SIZE, Common::HE_ISR, 0x2917, 0, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Police Quest 1 (PC) 2.0G 12/3/87; with Spanish translation (TRAC #14369)
 	GAME_LPS("pq1", "2.0G 1987-12-03", "5d151f2f4c4e0675534d49b13529da3f", 360, Common::ES_ESP, 0x2917, GID_PQ1, Common::kPlatformDOS),
@@ -776,6 +748,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Space Quest 1 (Mac) 1.5D
 	GAME_P("sq1", "1.5D 1987-04-02", "ce88419aadd073d1c6682d859b3d8aa2", 0x2440, GID_SQ1, Common::kPlatformMacintosh),
 
+	// Space Quest 1 (Apple II) 1.0P (A2 Int. 0.073)
+	// also matches:
+	// Space Quest 1 (Apple II) 1.0Q (A2 Int. 0.073)
+	A2("sq1", "1.0P", "2a738214e1d89bb7f810bcceb32828a0", 0x2272, GID_SQ1),
+
 	// Space Quest 1 (IIgs) 2.2
 	GAME_PO("sq1", "2.2 1987", "64b9b3d04c1066d36e6a6e56187a83f7", 0x2917, GID_SQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
@@ -789,7 +766,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "5d67630aba008ec5f7f9a6d0a00582f4", 0x2440, GID_SQ1),
 
 	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.917]; French Translation
-	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "3f1730f3c9d4622a986f735af0f8734a", 12665, Common::FR_FRA, 0x2917, GF_EXTCHAR, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "3f1730f3c9d4622a986f735af0f8734a", 12665, Common::FR_FRA, 0x2917, 0, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
+	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.917]; French Translation Expanded
+	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "fb7b9aefb8eea1d7ad8e1d7bc10d9739", 19571, Common::FR_FRA, 0x2917, 0, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
+	// Space Quest 1 (Hebrew) 2.2
+	// Based on English version from GOG - Patch Version 1
+	GAME_LPS("sq1", "", "dcae53e681922497e2dd88624aae44bb", 372, Common::HE_ISR, 0x2917, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
 	// Unofficial port by Guillaume Major
@@ -803,15 +787,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Unofficial port by Guillaume Major
 	GAME_PS("sq1", "updated", "7fa54e6bb7ffeb4cf20eca39d86f5fb2", 387, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
 
+	// Space Quest 2 (Apple II) 2.0A (A2 Int. 0.089)
+	A2("sq2", "2.0A", "5b15026eee7a3a9e36e645feb026d931", 0x2917, GID_SQ2),
+
+	// Space Quest 2 (Apple II) 2.0F (A2 Int. 0.099)
+	A2("sq2", "2.0F", "5ca2c0e49918acb2517742922717201c", 0x2917, GID_SQ2),
+
 	// Space Quest 2 (IIgs) 2.0A 7/25/88 (CE)
-	// We have to see this as AGI < 2.936, because otherwise a set.pri.base call would somewhat break
-	// priority in SQ2, when entering Vohaul's vault.
-	// The Apple IIgs AGI included with SQ2 is the same as the one included with KQ3.
-	// We currently consider KQ3 IIgs to be a 2.917-equivalent.
-	// The SQ2 IIgs AGI definitely has 177 kernel functions, but it seems that Sierra shuffled the last few around / added a few extras at the end.
-	// For KQ3 set.pri.base is called with parameters that seem to be sound resources, which means
-	// set.pri.base was possibly discard.sound. For KQ4 onwards it seems this was cleaned up.
-	GAME_PO("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2917, GID_SQ2, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
+	GAME_PO("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2936, GID_SQ2, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	{
 		// Space Quest 2 (Amiga) 2.0F
@@ -872,6 +855,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Space Quest 2 (Russian)
 	GAME_LPS("sq2", "", "ba21c8934caf28e3ba45ce7d1cd6b041", 423, Common::RU_RUS, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
+	// Space Quest 2 (PC 3.5" / 5.25") 2.0F [AGI 2.936]; French Translation
+	GAME_LVFPN("sq2", "2.0F", "words.tok.extended", "b2efb603df643d8d93db0c6d51a54b5a", 19142, Common::FR_FRA, 0x2936, 0, GID_SQ2, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
 	// Space Quest 2 (CoCo3 360k) [AGI 2.023]
 	// Unofficial port by Guillaume Major
 	GAME_PS("sq2", "", "12973d39b892dc9d280257fd271e9597", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
@@ -879,6 +865,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Space Quest 2 (CoCo3 360k) [AGI 2.072]
 	// Unofficial port by Guillaume Major
 	GAME_PS("sq2", "updated", "d24f19b047e65e1763eff4b46f3d50df", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
+
+	// Space Quest 2 (Hebrew) 2.0F
+	// Based on English version from GOG
+	GAME_LPS("sq2", "", "5f73ab13808a260d777d0002c70b967c", 423, Common::HE_ISR, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Troll's Tale (PC Booter)
 	GAMEpre_PS("troll", "", "troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320, 0x0000, GID_TROLL, Common::kPlatformDOS),
@@ -915,8 +905,14 @@ static const AGIGameDescription gameDescriptions[] = {
 		"wintitle.pic", "cc8d2ae52e18700843f466a23d62c773", 6144,
 		"room62",		"813de04fd57063a402272c603be1188a", 1338, 0x0000, GID_WINNIE, Common::kPlatformCoCo),
 
+	// Xmas Card 1986 (PC) [AGI 2.230]
+	// Includes a scene of Tandy presents being unwrapped.
+	// Does not include demo scenes for AGI games.
+	// Only known game with this interpreter, uses a unique view format.
+	GAME("xmascard", "1986-10-13 [version 1]", "b77b968a84e8cb70a6c9972879f485f4", 0x2230, GID_XMASCARD),
+
 	// Xmas Card 1986 (PC) [AGI 2.272]
-	GAME("xmascard", "1986-11-13 [version 1]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),
+	GAME("xmascard", "1986-11-13 [version 2]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),
 
 	// Xmas Card 1986 (CoCo3 360k) [AGI 2.072]
 	// Appears to be an unofficial port
@@ -1004,7 +1000,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Fro Quest", "17c4e9dd6a7b6cdf2e7a799fa294bf8e"),
 	FANMADE("Gennadi Tahab Autot - Mission Pack 1 - Kuressaare", "bfa5fe71978e6ccf3d4eedd430124015"),
 
-	GAME_LVFPNF("agi-fanmade", "Get Outta Space Quest", "logdir", "aaea5b4a348acb669d13b0e6f22d4dc9", -1,
+	GAME_LVFPNF("agi-fanmade", "Get Outta Space Quest", "logdir", "aaea5b4a348acb669d13b0e6f22d4dc9", AD_NO_SIZE,
 	            Common::EN_ANY, 0x2440, GF_FANMADE, GID_GETOUTTASQ, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
@@ -1012,7 +1008,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Good Man (demo v4.0)", "d36f5d98cfcfd28cf7d4103906c59a77"),
 	FANMADE("Good Man (demo v4.0T)", "8184f70a5a33d4f407dfc8e9ddab99e9"),
 
-	GAME_LVFPNF("agi-fanmade", "Groza [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1,
+	GAME_LVFPNF("agi-fanmade", "Groza [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", AD_NO_SIZE,
 	            Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT), // Гроза
 
 	FANMADE_FO("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
@@ -1040,6 +1036,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_L("Jõulumaa (v0.05)", "53982ecbfb907e41392b3961ad1c3475", Common::ET_EST),
 	FANMADE("Kings Quest 2  - Breast Intentions (v2.0 Mar 26)", "a25d7379d281b1b296d4785df90a8e78"),
 	FANMADE("Kings Quest 2  - Breast Intentions (v2.0 Aug 16)", "6b4f796d0421d2e12e501b511962e03a"),
+	FANMADE("King's Quest VI AGI Demake (2024-08-30)", "f7f498943de42913604da34cb9f5e0d1"),
 	FANMADE("Lasse Holm: The Quest for Revenge (v1.0)", "f9fbcc8a4ef510bfbb92423296ff4abb"),
 	FANMADE("Lawman for Hire", "c78b28bfd3767dd455b992cd8b7854fa"),
 	FANMADE("Lefty Goes on Vacation (Not in The Right Place)", "ccdc49a33870310b01f2c48b8a1f3c34"),

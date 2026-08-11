@@ -25,10 +25,9 @@
 #include "ultima/ultima8/gfx/gump_shape_archive.h"
 #include "ultima/ultima8/gfx/palette.h"
 #include "ultima/ultima8/gfx/palette_manager.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/gfx/render_surface.h"
-#include "ultima/ultima8/gfx/texture.h"
 #include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -92,8 +91,8 @@ void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
 	for (int i = 0; i < 3; ++i) {
-		Rect hprect(hpx + i, bary - hpheight + 1, hpx + i + 1, bary + 1);
-		Rect manarect(manax + i, bary - manaheight + 1, manax + i + 1, bary + 1);
+		Common::Rect32 hprect(hpx + i, bary - hpheight + 1, hpx + i + 1, bary + 1);
+		Common::Rect32 manarect(manax + i, bary - manaheight + 1, manax + i + 1, bary + 1);
 		surf->fillRect(hprect, pal->_native[hpcolour[i]]);
 		surf->fillRect(manarect, pal->_native[manacolour[i]]);
 	}

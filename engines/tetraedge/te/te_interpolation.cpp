@@ -37,12 +37,12 @@ void TeInterpolation::load(Common::ReadStream &stream) {
 		_array[i] = stream.readFloatLE();
 }
 
-void TeInterpolation::load(Common::FSNode &node) {
-	Common::File f;
-	if (!f.open(node))
-		error("Couldn't open %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+void TeInterpolation::load(TetraedgeFSNode &node) {
+	Common::ScopedPtr<Common::SeekableReadStream> f(node.createReadStream());
+	if (!f)
+		error("Couldn't open %s", node.toString().c_str());
 
-	load(f);
+	load(*f);
 }
 
 

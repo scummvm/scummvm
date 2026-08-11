@@ -23,6 +23,7 @@
 #define M4_RIDDLE_ROOMS_SECTION9_ROOM907_H
 
 #include "m4/core/rooms.h"
+#include "m4/wscript/ws_machine.h"
 
 namespace M4 {
 namespace Riddle {
@@ -36,6 +37,11 @@ public:
 	void preload() override;
 	void init() override;
 	void daemon() override;
+
+private:
+	static void escapePressed(void *, void *);
+	machine * _roomStates_tt = nullptr;
+	bool _buttonDown = false;
 };
 
 } // namespace Rooms

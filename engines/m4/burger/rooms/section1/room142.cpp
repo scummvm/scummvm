@@ -23,7 +23,9 @@
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -127,7 +129,7 @@ const seriesPlayBreak Room142::PLAY9[] = {
 };
 
 const seriesPlayBreak Room142::PLAY10[] = {
-	{ 3, 0, "142_002", 1, 255, -1, 0, 0, 0, 0 },
+	{ 3, 0, "142_002", 1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -138,7 +140,7 @@ const seriesPlayBreak Room142::PLAY11[] = {
 };
 
 const seriesPlayBreak Room142::PLAY12[] = {
-	{ 0, -1, "142_005", 1, 255, -1, 0, 0, 0, 0 },
+	{ 0, -1, "142_005", 1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -152,7 +154,7 @@ const seriesPlayBreak Room142::PLAY13[] = {
 };
 
 const seriesPlayBreak Room142::PLAY14[] = {
-	{ 0, 19, "142_007", 2, 255, -1, 0, 0, 0, 0 },
+	{ 0, 19, "142_007", 2, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -182,27 +184,27 @@ void Room142::init() {
 
 	case 101:
 		ws_demand_location(120, 400, 2);
-		ws_walk(120, 344, 0, -1, -1);
+		ws_walk(120, 344, nullptr, -1, -1);
 		break;
 
 	case 139:
 		ws_demand_location(-40, 375, 2);
-		ws_walk(25, 344, 0, -1, -1);
+		ws_walk(25, 344, nullptr, -1, -1);
 		break;
 
 	case 143:
 		ws_demand_location(350, 270, 8);
-		ws_walk(297, 275, 0, -1, -1);
+		ws_walk(297, 275, nullptr, -1, -1);
 		break;
 
 	case 145:
 		ws_demand_location(293, 275, 7);
-		ws_walk(282, 280, 0, -1, -1);
+		ws_walk(282, 280, nullptr, -1, -1);
 		break;
 
 	case 170:
 		ws_demand_location(680, 325, 9);
-		ws_walk(613, 331, 0, -1, -1);
+		ws_walk(613, 331, nullptr, -1, -1);
 		break;
 
 	default:
@@ -634,7 +636,7 @@ void Room142::pre_parser() {
 		if (_G(flags)[V000] == 1003 &&
 			_G(player).walk_x >= 230 && _G(player).walk_x <= 294 &&
 			_G(player).walk_y >= 250 && _G(player).walk_y <= 277) {
-			player_hotspot_walk_override(_G(click_x), 278);
+			player_hotspot_walk_override(_G(player).click_x, 278);
 		} else if (player_said_any("GEAR", "LOOK AT")) {
 			if (player_said("MAIN STREET")) {
 				player_hotspot_walk_override(_G(player).walk_x, 400);

@@ -35,7 +35,7 @@
 #ifndef AGS_SHARED_UTIL_MEMORY_STREAM_H
 #define AGS_SHARED_UTIL_MEMORY_STREAM_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/util/data_stream.h"
 #include "ags/shared/util/string.h"
 
@@ -75,7 +75,7 @@ public:
 	size_t  Write(const void *buffer, size_t size) override;
 	int32_t WriteByte(uint8_t b) override;
 
-	bool    Seek(soff_t offset, StreamSeek origin) override;
+	soff_t  Seek(soff_t offset, StreamSeek origin) override;
 
 protected:
 	const uint8_t           *_cbuf = nullptr; // readonly buffer ptr

@@ -39,10 +39,14 @@ private:
 	bool cmd_cross_clue(int argc, const char **argv);
 	bool cmd_list_clues(int argc, const char **argv);
 	bool cmd_item(int argc, const char **argv);
+	bool cmd_scenes(int argc, const char **argv);
 	bool cmd_scene(int argc, const char **argv);
 	bool cmd_music(int argc, const char **argv);
 	bool cmd_sound(int argc, const char **argv);
 	bool cmd_string(int argc, const char **argv);
+	bool cmd_globals(int argc, const char **argv);
+	bool cmd_global(int argc, const char **argv);
+	bool cmd_psxdump(int argc, const char **argv);
 };
 
 } // End of namespace Tinsel

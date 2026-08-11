@@ -44,6 +44,7 @@ bool Parser::loadFromHQR(const char *name, int index, bool lba1) {
 		delete stream;
 		return false;
 	}
+	_hqrIndex = index;
 	delete stream;
 	return true;
 }

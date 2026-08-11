@@ -109,9 +109,9 @@ static const char * const directoryGlobs[] = {
 	nullptr
 };
 
-class IllusionsMetaEngineDetection : public AdvancedMetaEngineDetection {
+class IllusionsMetaEngineDetection : public AdvancedMetaEngineDetection<Illusions::IllusionsGameDescription> {
 public:
-	IllusionsMetaEngineDetection() : AdvancedMetaEngineDetection(Illusions::gameDescriptions, sizeof(Illusions::IllusionsGameDescription), illusionsGames) {
+	IllusionsMetaEngineDetection() : AdvancedMetaEngineDetection(Illusions::gameDescriptions, illusionsGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

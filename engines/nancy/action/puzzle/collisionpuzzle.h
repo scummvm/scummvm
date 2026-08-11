@@ -49,25 +49,28 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
-	// numbers 1-5 are home IDs, 0 is empty cell
-	enum WallType { kWallLeft = 6, kWallUp = 7, kWallDown = 8, kWallRight = 9, kBlock = 10 };
+	// 0 is an empty cell, positive numbers are home IDs. Wall/block markers use Nancy 11's
+	// values (16-20); earlier games store 6-10 and are remapped to these on load.
+	enum WallType { kWallLeft = 16, kWallUp = 17, kWallDown = 18, kWallRight = 19, kBlock = 20 };
 
 	class Piece : public RenderObject {
 	public:
 		Piece() : RenderObject(9) {}
 		virtual ~Piece() {}
 
+		Piece(Piece &&) = default;
+
 		Common::Point _gridPos;
 		uint _w = 1;
 		uint _h = 1;
 
-	protected:
 		bool isViewportRelative() const override { return true; }
 	};
 
-	Common::String getRecordTypeName() const override { return _puzzleType == kCollision ? "CollisionPuzzle" : "TileMovePuzzle"; };
-	bool isViewportRelative() const override { return true; }
+	Common::String getRecordTypeName() const override { return _puzzleType == kCollision ? "CollisionPuzzle" : "TileMovePuzzle"; }
 
 	Common::Point movePiece(uint pieceID, WallType direction);
 	Common::Rect getScreenPosition(Common::Point gridPos);
@@ -86,7 +89,8 @@ protected:
 	Common::Rect _blockSrc;
 
 	Common::Point _tileMoveExitPos = Common::Point(-1, -1);
-	uint _tileMoveExitSize = 0;
+	uint _tileMoveExitIndex = 0;
+	bool _tileMoveSolveStartsInSlot = false;
 
 	bool _usesExitButton = false;
 	Common::Rect _exitButtonSrc;

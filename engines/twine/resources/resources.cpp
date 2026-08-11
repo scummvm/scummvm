@@ -23,11 +23,15 @@
 #include "common/file.h"
 #include "common/tokenizer.h"
 #include "common/util.h"
+#include "graphics/palette.h"
 #include "twine/audio/sound.h"
+#include "twine/parser/anim3ds.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 
@@ -45,18 +49,41 @@ Resources::~Resources() {
 }
 
 void Resources::initPalettes() {
-	uint8 *mainPalette = nullptr;
-	const int32 size = HQR::getAllocEntry(&mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
-	if (size == 0) {
+	if (!HQR::getPaletteEntry(_engine->_screens->_ptrPal, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL)) {
 		error("Failed to load main palette");
 	}
-	_engine->_screens->convertPalToRGBA(mainPalette, _engine->_screens->_mainPaletteRGBA);
+	_engine->setPalette(_engine->_screens->_ptrPal);
+}
 
-	memcpy(_engine->_screens->_palette, mainPalette, NUMOFCOLORS * 3);
+void Resources::preloadAnim3DS() {
+	const int index = HQR::numEntries(Resources::HQR_ANIM3DS_FILE) - 1;
+	_anim3DSData.loadFromHQR(Resources::HQR_ANIM3DS_FILE, index, _engine->isLBA1());
+}
 
-	_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_paletteRGBA);
-	_engine->setPalette(_engine->_screens->_paletteRGBA);
-	free(mainPalette);
+void Resources::loadEntityData(EntityData &entityData, int32 &index) {
+	if (_engine->isLBA1()) {
+		TwineResource modelRes(Resources::HQR_FILE3D_FILE, index);
+		if (!entityData.loadFromHQR(modelRes, _engine->isLBA1())) {
+			error("Failed to load actor 3d data for index: %i", index);
+		}
+	} else {
+		// TODO: don't allocate each time
+		TwineResource modelRes(Resources::HQR_RESS_FILE, 44);
+		uint8 *file3dBuf = nullptr;
+		const int32 holomapImageSize = HQR::getAllocEntry(&file3dBuf, modelRes);
+		if (!entityData.loadFromBuffer((uint8 *)(file3dBuf + *(((uint32 *)file3dBuf) + (index))), holomapImageSize, _engine->isLBA1())) {
+			delete file3dBuf;
+			error("Failed to load actor 3d data for index: %i", index);
+		}
+		delete file3dBuf;
+	}
+}
+
+const T_ANIM_3DS *Resources::getAnim(int index) const {
+	if (index < 0 || index >= (int)_anim3DSData.getAnims().size()) {
+		return nullptr;
+	}
+	return &_anim3DSData.getAnims()[index];
 }
 
 void Resources::preloadSprites() {
@@ -65,7 +92,7 @@ void Resources::preloadSprites() {
 	if (numEntries > maxSprites) {
 		error("Max allowed sprites exceeded: %i/%i", numEntries, maxSprites);
 	}
-	debug("preload %i sprites", numEntries);
+	debugC(1, TwinE::kDebugResources, "preload %i sprites", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		_spriteSizeTable[i] = HQR::getAllocEntry(&_spriteTable[i], Resources::HQR_SPRITES_FILE, i);
 		if (!_spriteData[i].loadFromBuffer(_spriteTable[i], _spriteSizeTable[i], _engine->isLBA1())) {
@@ -80,7 +107,7 @@ void Resources::preloadAnimations() {
 	if (numEntries > maxAnims) {
 		error("Max allowed animations exceeded: %i/%i", numEntries, maxAnims);
 	}
-	debug("preload %i animations", numEntries);
+	debugC(1, TwinE::kDebugResources, "preload %i animations", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		_animData[i].loadFromHQR(Resources::HQR_ANIM_FILE, i, _engine->isLBA1());
 	}
@@ -103,7 +130,7 @@ void Resources::preloadSamples() {
 	if (numEntries > maxSamples) {
 		error("Max allowed samples exceeded: %i/%i", numEntries, maxSamples);
 	}
-	debug("preload %i samples", numEntries);
+	debugC(1, TwinE::kDebugResources, "preload %i samples", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		if (_engine->isLBA1() && isLba1BlankSampleEntry(i)) {
 			_samplesSizeTable[i] = 0;
@@ -117,18 +144,30 @@ void Resources::preloadSamples() {
 		}
 		// Fix incorrect sample files first byte
 		if (*_samplesTable[i] != 'C') {
-			debug("Sample %i has incorrect magic id (size: %u)", i, _samplesSizeTable[i]);
+			debugC(1, TwinE::kDebugResources, "Sample %i has incorrect magic id (size: %u)", i, _samplesSizeTable[i]);
 			*_samplesTable[i] = 'C';
 		}
 	}
 }
 
 void Resources::preloadInventoryItems() {
-	const int32 numEntries = HQR::numEntries(Resources::HQR_INVOBJ_FILE);
-	if (numEntries > NUM_INVENTORY_ITEMS) {
-		error("Max allowed inventory items exceeded: %i/%i", numEntries, NUM_INVENTORY_ITEMS);
+	if (!_engine->isLBA1()) {
+		// lba2 has this data in code
+		return;
 	}
-	debug("preload %i inventory items", numEntries);
+	int32 numEntries = HQR::numEntries(Resources::HQR_INVOBJ_FILE);
+	if (_engine->isPreview()) {
+		if (numEntries != 32) {
+			error("Unexpected inventory items for lba1 preview version: %i/32", numEntries);
+		}
+		// TODO: this is obviously a hack
+		numEntries = NUM_INVENTORY_ITEMS;
+	} else {
+		if (numEntries > NUM_INVENTORY_ITEMS) {
+			error("Max allowed inventory items exceeded: %i/%i", numEntries, NUM_INVENTORY_ITEMS);
+		}
+	}
+	debugC(1, TwinE::kDebugResources, "preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		_inventoryTable[i].loadFromHQR(Resources::HQR_INVOBJ_FILE, i, _engine->isLBA1());
 	}
@@ -151,7 +190,7 @@ void Resources::initResources() {
 		f24.read(_sjisFontPtr, kMinSjisSize);
 	}
 
-	_engine->_text->setFontParameters(2, 8);
+	_engine->_text->setFont(INTER_LEAVE, INTER_SPACE);
 	_engine->_text->setFontColor(COLOR_14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
@@ -169,7 +208,9 @@ void Resources::initResources() {
 		}
 
 		if (!_holomapPointModelPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL), _engine->isLBA1())) {
-			error("Failed to load holomap point model");
+			if (!_engine->isPreview()) {
+				error("Failed to load holomap point model");
+			}
 		}
 
 		if (!_holomapArrowPtr.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL), _engine->isLBA1())) {
@@ -181,9 +222,13 @@ void Resources::initResources() {
 		}
 
 		if (!_trajectories.loadFromHQR(TwineResource(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM), _engine->isLBA1())) {
-			error("Failed to parse trajectory data");
+			if (!_engine->isPreview()) {
+				error("Failed to parse trajectory data");
+			}
 		}
-		debug("preload %i trajectories", (int)_trajectories.getTrajectories().size());
+		debugC(1, TwinE::kDebugResources, "preload %i trajectories", (int)_trajectories.getTrajectories().size());
+	} else if (_engine->isLBA2()) {
+		preloadAnim3DS();
 	}
 
 	preloadSprites();
@@ -191,39 +236,35 @@ void Resources::initResources() {
 	preloadSamples();
 	preloadInventoryItems();
 
-	const int32 bodyCount = HQR::numEntries(Resources::HQR_BODY_FILE);
-	const int32 maxBodies = _engine->isLBA1() ? 200 : NUM_BODIES;
-	if (bodyCount > maxBodies) {
-		error("Max body count exceeded: %i", bodyCount);
-	}
-	for (int32 i = 0; i < bodyCount; ++i) {
-		if (!_bodyData[i].loadFromHQR(TwineResource(Resources::HQR_BODY_FILE, i), _engine->isLBA1())) {
-			error("HQR ERROR: Parsing body entity for model %i failed", i);
-		}
-	}
-
 	loadMovieInfo();
 
-	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
-	for (int32 i = 0; i < textEntryCount / 2; ++i) {
-		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile._languageId, _engine->isLBA1(), textEntryCount)) {
-			error("HQR ERROR: Parsing textbank %i failed", i);
+	if (!_engine->isPreview()) {
+		// TODO: where is the text in the preview version?
+		const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
+		for (int32 i = 0; i < textEntryCount / 2; ++i) {
+			if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile._languageId, _engine->isLBA1(), textEntryCount)) {
+				error("HQR ERROR: Parsing textbank %i failed for language %i (%i entries)", i, _engine->_cfgfile._languageId, textEntryCount);
+			}
 		}
+		debugC(1, TwinE::kDebugResources, "Loaded %i text banks", textEntryCount / 2);
 	}
-	debug("Loaded %i text banks", textEntryCount / 2);
 }
 
 const TextEntry *Resources::getText(TextBankId textBankId, TextId index) const {
 	return _textData.getText(textBankId, index);
 }
 
-const Trajectory *Resources::getTrajectory(int index) const {
+const Trajectory *Resources::giveTrajPtr(int index) const {
 	return _trajectories.getTrajectory(index);
 }
 
 int Resources::findSmkMovieIndex(const char *name) const {
 	Common::String smkName = name;
 	smkName.toLowercase();
+	if (!_movieInfo.contains(smkName)) {
+		warning("Movie '%s' not found in movie info", smkName.c_str());
+		return -1;
+	}
 	const Common::Array<int32> &info = getMovieInfo(smkName);
 	return info[0];
 }
@@ -232,7 +273,11 @@ void Resources::loadMovieInfo() {
 	uint8 *content = nullptr;
 	int32 size;
 	if (_engine->isLBA1()) {
-		size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+		if (_engine->isPreview()) {
+			size = 0;
+		} else {
+			size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, RESSHQR_FLAINFO);
+		}
 	} else {
 		size = HQR::getAllocEntry(&content, Resources::HQR_RESS_FILE, 48);
 	}
@@ -241,7 +286,7 @@ void Resources::loadMovieInfo() {
 	}
 	const Common::String str((const char *)content, size);
 	free(content);
-	debug(3, "movie info:\n%s", str.c_str());
+	debugC(2, TwinE::kDebugResources, "movie info:\n%s", str.c_str());
 	Common::StringTokenizer tok(str, "\r\n");
 	int videoIndex = 0;
 	while (!tok.empty()) {
@@ -267,7 +312,7 @@ void Resources::loadMovieInfo() {
 				line = line.substr(0, line.size() - 4);
 			}
 			_movieInfo.setVal(line, info);
-			debug(4, "movie name %s mapped to hqr index %i", line.c_str(), videoIndex);
+			debugC(1, TwinE::kDebugResources, "movie name %s mapped to hqr index %i", line.c_str(), videoIndex);
 			++videoIndex;
 		}
 	}

@@ -46,6 +46,11 @@ void Prisoner::draw() {
 	writeString(STRING["maps.prisoners.options3"]);
 }
 
+bool Prisoner::msgFocus(const FocusMessage &msg) {
+	Sound::sound2(SOUND_2);
+	return TextView::msgFocus(msg);
+}
+
 bool Prisoner::msgKeypress(const KeypressMessage &msg) {
 	if (endDelay())
 		return true;

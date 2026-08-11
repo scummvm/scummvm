@@ -361,6 +361,8 @@ bool DemoDebugger::Cmd_MoveObject(int argc, const char **argv) {
 	return true;
 }
 
+#ifdef ENABLE_RINGWORLD
+
 /*
  * This command lists the objects available, and their ID
  */
@@ -531,6 +533,10 @@ bool RingworldDebugger::Cmd_MoveObject(int argc, const char **argv) {
 	return true;
 }
 
+#endif
+
+#ifdef ENABLE_BLUEFORCE
+
 /*
  * This command lists the objects available, and their ID
  */
@@ -628,6 +634,10 @@ bool BlueForceDebugger::Cmd_MoveObject(int argc, const char **argv) {
 
 	return true;
 }
+
+#endif
+
+#ifdef ENABLE_RINGWORLD2
 
 /*
  * This command lists the objects available, and their ID
@@ -730,4 +740,7 @@ bool Ringworld2Debugger::Cmd_SetOutpostAlphaDebug(int argc, const char **argv) {
 	R2_GLOBALS._debugCardGame = true;
 	return true;
 }
+
+#endif
+
 } // End of namespace TsAGE

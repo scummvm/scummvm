@@ -1,0 +1,2632 @@
+<!-- Creator     : groff version 1.23.0 -->
+<!-- CreationDate: Sun Mar  2 21:34:04 2025 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>PYCDLIB-GENISOIMAGE</title>
+
+</head>
+<body>
+
+<h1 align="center">PYCDLIB-GENISOIMAGE</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#HFS OPTIONS">HFS OPTIONS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+<a href="#AUTHOR">AUTHOR</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em">pycdlib-genisoimage
+- tool to master ISOs using pycdlib</p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>pycdlib-genisoimage
+[options] [-o filename] pathspec [pathspec ...]</b></p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>pycdlib-genisoimage</b>
+is a pre-mastering program to generate ISO9660/Joliet/HFS
+hybrid filesystems. It is meant to be 100% flag-compatible
+with the original <b>genisoimage</b> program so that it can
+be dropped into existing scripts with no changes. Please see
+the man page for <b>genisoimage</b> for more detailed
+explanation of the options to this program. There are a few
+differences to note between this program and the original
+<b>genisoimage.</b> First, not all of the options are
+implemented in this program. This means that
+<b>pycdlib-genisoimage</b> will silently ignore some flags;
+for the most common usage of this program, this will not
+matter. However, if you are trying to do something odd and
+specific, it may not work. The flags that this applies to
+are noted in the OPTIONS below. In some cases these flags
+can be implemented with a bit of work, and in some cases the
+flags can never be implemented due to the design of pycdlib.
+If in doubt, please ask on
+https://github.com/clalancette/pycdlib/issues. Second,
+<b>pycdlib-genisoimage</b> does not output all of the same
+messages to standard out/standard error that
+<b>genisoimage</b> does. Any program that relies on parsing
+the output of <b>genisoimage</b> will probably not work.
+Third, <b>pycdlib-genisoimage</b> will not always generate
+ISOs that are 100% the same as the <b>genisoimage</b>
+counterparts. This is for a variety of reasons, ranging from
+bug fixing to simple differences in implementations. In
+almost all cases this does not matter, but please keep it in
+mind when using this program instead of
+<b>genisoimage.</b></p>
+
+<h2>OPTIONS
+<a name="OPTIONS"></a>
+</h2>
+
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;abstract</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">Specifies the abstract
+filename. There is space for 37 characters.</p>
+
+<p style="margin-left:9%;"><b>&minus;A</b>
+<i>application_id</i> <b><br>
+&minus;appid</b> <i>application_id</i></p>
+
+<p style="margin-left:18%;">Specifies a text string that
+will be written into the volume header. This should describe
+the application that will be on the disc. There is space for
+128 characters.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;allow&minus;limited&minus;size</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) When processing files larger than 2GiB
+which cannot be easily represented in ISO9660, add them with
+a shrunk visible file size to ISO9660 and with the correct
+visible file size to the UDF system. The result is an
+inconsistent filesystem and users need to make sure that
+they really use UDF rather than ISO9660 driver to read a
+such disk. Implies enabling <b>&minus;udf.</b></p>
+
+
+<p style="margin-left:9%;"><b>&minus;allow&minus;leading&minus;dots</b></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;ldots</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Allow ISO9660
+filenames to begin with a period. Usually, a leading dot is
+replaced with an underscore in order to maintain MS-DOS
+compatibility.</p> </td></tr>
+</table>
+
+<p style="margin-left:18%;">This violates the ISO9660
+standard, but it happens to work on many systems. Use with
+caution.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;allow&minus;lowercase</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) This options allows lowercase
+characters to appear in ISO9660 filenames. <br>
+This violates the ISO9660 standard, but it happens to work
+on some systems. Use with caution.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;allow&minus;multidot</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) This options allows more than one dot
+to appear in ISO9660 filenames. A leading dot is not
+affected by this option, it may be allowed separately using
+<b>&minus;allow&minus;leading&minus;dots</b>. <br>
+This violates the ISO9660 standard, but it happens to work
+on many systems. Use with caution.</p>
+
+<p style="margin-left:9%;"><b>&minus;biblio</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">Specifies the bibliographic
+filename. There is space for 37 characters.</p>
+
+<p style="margin-left:9%;"><b>&minus;cache&minus;inodes
+<br>
+&minus;no&minus;cache&minus;inodes</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Enable or disable caching inode and
+device numbers to find hard links to files. If
+<b>pycdlib-genisoimage</b> finds a hard link (a file with
+multiple names), the file will also be hard-linked on the
+CD, so the file contents only appear once. This helps to
+save space. <b>&minus;cache&minus;inodes</b> is default on
+Unix-like operating systems, but
+<b>&minus;no&minus;cache&minus;inodes</b> is default on some
+other systems such as Cygwin, because it is not safe to
+assume that inode numbers are unique on those systems. (Some
+versions of Cygwin create fake inode numbers using a weak
+hashing algorithm, which may produce duplicates.) If two
+files have the same inode number but are not hard links to
+the same file, <b>pycdlib-genisoimage
+&minus;cache&minus;inodes</b> will not behave correctly.
+<b>&minus;no&minus;cache&minus;inodes</b> is safe in all
+situations, but in that case <b>pycdlib-genisoimage</b>
+cannot detect hard links, so the resulting CD image may be
+larger than necessary.</p>
+
+<p style="margin-left:9%;"><b>&minus;alpha&minus;boot</b>
+<i>alpha_boot_image</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies the path and filename of the
+boot image to be used when making an Alpha/SRM bootable CD.
+The pathname must be relative to the source path specified
+to <b>pycdlib-genisoimage</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hppa&minus;bootloader</b>
+<i>hppa_bootloader_image</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies the path and filename of the
+boot image to be used when making an HPPA bootable CD. The
+pathname must be relative to the source path specified to
+<b>pycdlib-genisoimage</b>. Other options are required, at
+the very least a kernel filename and a boot command
+line.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hppa&minus;cmdline</b>
+<i>hppa_boot_command_line</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies the command line to be passed
+to the HPPA boot loader when making a bootable CD. Separate
+the parameters with spaces or commas. More options must be
+passed to <b>pycdlib-genisoimage,</b> at the very least a
+kernel filename and the boot loader filename.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hppa&minus;kernel&minus;32</b>
+<i>hppa_kernel_32</i> <b><br>
+&minus;hppa&minus;kernel&minus;64</b>
+<i>hppa_kernel_64</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies the path and filename of the
+32-bit and/or 64-bit kernel images to be used when making an
+HPPA bootable CD. The pathnames must be relative to the
+source path specified to <b>pycdlib-genisoimage</b>. Other
+options are required, at the very least the boot loader
+filename and the boot command line.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hppa&minus;ramdisk</b>
+<i>hppa_ramdisk_image</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies the path and filename of the
+ramdisk image to be used when making an HPPA bootable CD.
+The pathname must be relative to the source path specified
+to <b>pycdlib-genisoimage</b>. This parameter is optional.
+Other options are required, at the very least a kernel
+filename and the boot command line.</p>
+
+<p style="margin-left:9%;"><b>&minus;mips&minus;boot</b>
+<i>mips_boot_image</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies the path and filename of the
+boot image to be used when making an SGI/big-endian MIPS
+bootable CD. The pathname must be relative to the source
+path specified to <b>pycdlib-genisoimage</b>. This option
+may be specified several times, to store up to 15 boot
+images.</p>
+
+<p style="margin-left:9%;"><b>&minus;mipsel&minus;boot</b>
+<i>mipsel_boot_image</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies the path and filename of the
+boot image to be used when making an DEC/little-endian MIPS
+bootable CD. The pathname must be relative to the source
+path specified to <b>pycdlib-genisoimage</b>.</p>
+
+<p style="margin-left:9%;"><b>&minus;B</b>
+<i>img_sun4,img_sun4c,img_sun4m,img_sun4d,img_sun4e</i>
+<b><br>
+&minus;sparc&minus;boot</b>
+<i>img_sun4,img_sun4c,img_sun4m,img_sun4d,img_sun4e</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies a comma-separated list of
+boot images that are needed to make a bootable CD for SPARC
+systems. Partition 0 is used for the ISO9660 image, the
+first image file is mapped to partition 1. The
+comma-separated list may have up to 7 fields, including
+empty fields. This option is required to make a bootable CD
+for Sun SPARC systems. If <b>&minus;B</b> or
+<b>&minus;sparc&minus;boot</b> has been specified, the first
+sector of the resulting image will contain a Sun disk label.
+This disk label specifies slice 0 for the ISO9660 image and
+slices 1 to 7 for the boot images that have been specified
+with this option. Byte offsets 512 to 8191 within each of
+the additional boot images must contain a primary boot that
+works for the appropriate SPARC architecture. The rest of
+each of the images usually contains a UFS filesystem used
+for the primary kernel boot stage.</p>
+
+<p style="margin-left:18%; margin-top: 1em">The implemented
+boot method is the one found with SunOS 4.x and SunOS 5.x.
+However, it does not depend on SunOS internals but only on
+properties of the Open Boot prom, so it should be usable for
+any OS for SPARC systems. For more information also see the
+<b>NOTES</b> section below.</p>
+
+<p style="margin-left:18%; margin-top: 1em">If the special
+filename <b>...</b> is used, the actual and all following
+boot partitions are mapped to the previous partition. If
+<b>pycdlib-genisoimage</b> is called with <b>&minus;G</b>
+<i>image</i> <b>&minus;B</b> <i>...</i> all boot partitions
+are mapped to the partition that contains the ISO9660
+filesystem image and the generic boot image that is located
+in the first 16 sectors of the disc is used for all
+architectures.</p>
+
+<p style="margin-left:9%;"><b>&minus;G</b>
+<i>generic_boot_image</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies the path and filename of the
+generic boot image to be used when making a generic bootable
+CD. The boot image will be placed on the first 16 sectors of
+the CD, before the ISO9660 primary volume descriptor. If
+this option is used together with
+<b>&minus;sparc&minus;boot</b>, the Sun disk label will
+overlay the first 512 bytes of the generic boot image.</p>
+
+<p style="margin-left:9%;"><b>&minus;b</b>
+<i>eltorito_boot_image</i> <b><br>
+&minus;eltorito&minus;boot</b>
+<i>eltorito_boot_image</i></p>
+
+<p style="margin-left:18%;">Specifies the path and filename
+of the boot image to be used when making an El Torito
+bootable CD for x86 PCs. The pathname must be relative to
+the source path specified to <b>pycdlib-genisoimage</b>.
+This option is required to make an El Torito bootable CD.
+The boot image must be exactly 1200 kB, 1440 kB or 2880 kB,
+and <b>pycdlib-genisoimage</b> will use this size when
+creating the output ISO9660 filesystem. The PC BIOS will use
+the image to emulate a floppy disk, so the first 512-byte
+sector should contain PC boot code. This will work, for
+example, if the boot image is a LILO-based boot floppy.</p>
+
+<p style="margin-left:18%; margin-top: 1em">If the boot
+image is not an image of a floppy, you need to add either
+<b>&minus;hard&minus;disk&minus;boot</b> or
+<b>&minus;no&minus;emul&minus;boot</b>. If the system should
+not boot off the emulated disk, use
+<b>&minus;no&minus;boot</b>.</p>
+
+<p style="margin-left:18%; margin-top: 1em">If
+<b>&minus;sort</b> has not been specified, the boot images
+are sorted with low priority (+2) to the beginning of the
+medium. If you don&rsquo;t like this, you need to specify a
+sort weight of 0 for the boot images.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;eltorito&minus;alt&minus;boot</b></p>
+
+<p style="margin-left:18%;">Start with a new set of El
+Torito boot parameters. Up to 63 El Torito boot entries may
+be stored on a single CD.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hard&minus;disk&minus;boot</b></p>
+
+<p style="margin-left:18%;">Specifies that the boot image
+used to create El Torito bootable CDs is a hard disk image.
+The image must begin with a master boot record that contains
+a single partition.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;eltorito&minus;platform</b>
+<i>id</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set the &quot;El Torito&quot; platform
+id for a boot record or a section of boot records. The
+<i>id</i> parameter may be either:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="18%"></td>
+<td width="4%">
+
+
+<p><b>x86</b></p></td>
+<td width="5%"></td>
+<td width="73%">
+
+
+<p>This is the default <i>platform id</i> value and
+specifies entries for the PC platform. If no
+<b>&minus;eltorito&minus;platform</b> option appears before
+the first <b>&minus;eltorito&minus;boot</b> option, the
+default boot entry becomes an entry for the x86 PC
+platform.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="18%"></td>
+<td width="4%">
+
+
+<p><b>PPC</b></p></td>
+<td width="5%"></td>
+<td width="73%">
+
+
+<p>Boot entries for the Power PC platform.</p></td></tr>
+<tr valign="top" align="left">
+<td width="18%"></td>
+<td width="4%">
+
+
+<p><b>Mac</b></p></td>
+<td width="5%"></td>
+<td width="73%">
+
+
+<p>Boot entries for the Apple Mac platform.</p></td></tr>
+<tr valign="top" align="left">
+<td width="18%"></td>
+<td width="4%">
+
+
+<p><b>efi</b></p></td>
+<td width="5%"></td>
+<td width="73%">
+
+
+<p>Boot entries for EFI based PCs.</p></td></tr>
+<tr valign="top" align="left">
+<td width="18%"></td>
+<td width="4%">
+
+
+<p><b>#</b></p></td>
+<td width="5%"></td>
+<td width="73%">
+
+
+<p>A numeric value specifying any platform id.</p></td></tr>
+</table>
+
+<p style="margin-left:18%; margin-top: 1em">If the option
+<b>&minus;eltorito&minus;platform</b> appears before the
+first <b>&minus;eltorito&minus;boot</b> option, it sets the
+<i>platform id</i> for the default boot entry.</p>
+
+<p style="margin-left:18%; margin-top: 1em">If the option
+<b>&minus;eltorito&minus;platform</b> appears after an
+<b>&minus;eltorito&minus;boot</b> option and sets the
+<i>platform id</i> to a value different from the previous
+value, it starts a new set of boot entries.</p>
+
+<p style="margin-left:18%; margin-top: 1em">The second boot
+entry and any new <i>platform id</i> creates a new section
+header and reduces the number of boot entries per CD by
+one.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;ignore&minus;error</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Ignore errors.
+<b>pycdlib-genisoimage</b> by default aborts on several
+errors, such as read errors. With this option in effect,
+<b>pycdlib-genisoimage</b> tries to continue. Use with
+care.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;no&minus;emul&minus;boot</b></p>
+
+<p style="margin-left:18%;">Specifies that the boot image
+used to create El Torito bootable CDs is a &quot;no
+emulation&quot; image. The system will load and execute this
+image without performing any disk emulation.</p>
+
+<p style="margin-left:9%;"><b>&minus;no&minus;boot</b></p>
+
+<p style="margin-left:18%;">Specifies that the created El
+Torito CD should be marked as not bootable. The system will
+provide an emulated drive for the image, but will boot off a
+standard boot device.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;boot&minus;load&minus;seg</b>
+<i>segment_address</i></p>
+
+<p style="margin-left:18%;">Specifies the load segment
+address of the boot image for no-emulation El Torito
+CDs.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;boot&minus;load&minus;size</b>
+<i>load_sectors</i></p>
+
+<p style="margin-left:18%;">Specifies the number of
+&quot;virtual&quot; (512-byte) sectors to load in
+no-emulation mode. The default is to load the entire boot
+file. Some BIOSes may have problems if this is not a
+multiple of 4.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;boot&minus;info&minus;table</b></p>
+
+<p style="margin-left:18%;">Specifies that a 56-byte table
+with information of the CD-ROM layout will be patched in at
+offset 8 in the boot file.</p>
+
+<p style="margin-left:9%;"><b>&minus;C</b>
+<i>last_sess_start,next_sess_start</i> <b><br>
+&minus;cdrecord&minus;params</b>
+<i>last_sess_start,next_sess_start</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) This option is needed to create a CD
+Extra or the image of a second session or a higher-level
+session for a multisession disc. <b>&minus;C</b> takes two
+numbers separated by a comma. The first is the first sector
+in the last session of the disc that should be appended to.
+The second number is the starting sector number of the new
+session. The correct numbers may be retrieved by calling
+<b>wodim &minus;msinfo ...</b> If <b>&minus;C</b> is used in
+conjunction with <b>&minus;M</b>, <b>pycdlib-genisoimage</b>
+will create a filesystem image that is intended to be a
+continuation of the previous session. If <b>&minus;C</b> is
+used without <b>&minus;M</b>, <b>pycdlib-genisoimage</b>
+will create a filesystem image that is intended to be used
+for a second session on a CD Extra. This is a multisession
+CD that holds audio data in the first session and an ISO9660
+filesystem in the second session.</p>
+
+<p style="margin-left:9%;"><b>&minus;c</b>
+<i>boot_catalog</i> <b><br>
+&minus;eltorito&minus;catalog</b> <i>boot_catalog</i></p>
+
+<p style="margin-left:18%;">Specifies the path and filename
+of the boot catalog, which is required for an El Torito
+bootable CD. The pathname must be relative to the source
+path specified to <b>pycdlib-genisoimage</b>. This file will
+be inserted into the output tree and not created in the
+source filesystem, so be sure the specified filename does
+not conflict with an existing file, or it will be excluded.
+Usually a name like <i>boot.catalog</i> is chosen.</p>
+
+<p style="margin-left:18%; margin-top: 1em">If
+<b>&minus;sort</b> has not been specified, the boot catalog
+sorted with low priority (+1) to the beginning of the
+medium. If you don&rsquo;t like this, you need to specify a
+sort weight of 0 for the boot catalog.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;check&minus;oldnames</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Check all filenames imported from the
+old session for compliance with the ISO9660 file naming
+rules. Without this option, only names longer than 31
+characters are checked, as these files are a serious
+violation of the ISO9660 standard.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;check&minus;session</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Check all old sessions for compliance
+with actual <b>pycdlib-genisoimage</b> ISO9660 file naming
+rules. This is a high-level option that combines
+<b>&minus;M</b> <i>file</i> <b>&minus;C 0,0
+&minus;check&minus;oldnames</b>. For the parameter
+<i>file</i>, see the description of <b>&minus;M</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;checksum_algorithm_iso</b>
+<i>alg1,alg2,...</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify the checksum types desired for
+the output image.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;checksum_algorithm_template</b>
+<i>alg1,alg2,...</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify the checksum types desired for
+the output jigdo template.</p>
+
+<p style="margin-left:9%;"><b>&minus;copyright</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">Specifies copyright
+information, typically a filename on the disc. There is
+space for 37 characters.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;d</b></p></td>
+<td width="88%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;omit&minus;period</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Do not append a period to files that do
+not have one. <br>
+This violates the ISO9660 standard, but it happens to work
+on many systems. Use with caution.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;D</b></p></td>
+<td width="88%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;disable&minus;deep&minus;relocation</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Do not use deep directory relocation,
+and instead just pack them in the way we see them. <br>
+If ISO9660:1999 has not been selected, this violates the
+ISO9660 standard, but it happens to work on many systems.
+Use with caution.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;data&minus;change&minus;warn</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) If the size of a file changes while the
+file is being archived, treat this condition as a warning
+only that does not cause <b>pycdlib-genisoimage</b> to
+abort.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;debug</b></p></td>
+<td width="1%"></td>
+<td width="69%">
+
+
+<p>(not supported by pycdlib-genisoimage) Set debug
+flag.</p> </td>
+<td width="13%">
+</td></tr>
+</table>
+
+<p style="margin-left:9%;"><b>&minus;dir&minus;mode</b>
+<i>mode</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Overrides the mode of directories used
+to create the image to <i>mode</i>, specified as 4 digits of
+permission bits as in <b>chmod</b>(1). This option
+automatically enables Rock Ridge extensions.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;dvd&minus;video</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Generate a DVD-Video compliant UDF
+filesystem. This is done by sorting the order of the content
+of the appropriate files and by adding padding between the
+files if needed. Note that the sorting only works if the
+DVD-Video filenames include uppercase characters only.</p>
+
+<p style="margin-left:18%; margin-top: 1em">Note that in
+order to get a DVD-Video compliant filesystem image, you
+need to prepare a DVD-Video compliant directory tree. This
+requires a directory <b>VIDEO_TS</b> (all caps) in the root
+directory of the resulting DVD, and usually another
+directory <b>AUDIO_TS</b>. <b>VIDEO_TS</b> needs to include
+all needed files (filenames must be all caps) for a
+compliant DVD-Video filesystem.</p>
+
+<p style="margin-left:9%;"><b>&minus;e</b>
+<i>efi_boot_file</i> <b><br>
+&minus;efi&minus;boot</b> <i>efi_boot_file</i></p>
+
+<p style="margin-left:18%;">Set EFI boot image name.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;f</b></p></td>
+<td width="88%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;follow&minus;links</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Follow symbolic links when generating
+the filesystem. When this option is not in use, symbolic
+links will be entered using Rock Ridge if enabled, otherwise
+they will be ignored.</p>
+
+<p style="margin-left:9%;"><b>&minus;file&minus;mode</b>
+<i>mode</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Overrides the mode of regular files
+used to create the image to <i>mode</i>, specified as 4
+digits of permission bits as in <b>chmod</b>(1). This option
+automatically enables Rock Ridge extensions.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="6%">
+
+
+<p><b>&minus;find</b></p></td>
+<td width="3%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) This option acts
+a separator. If it is used, all <b>pycdlib-genisoimage</b>
+options must be to the left of the <b>&minus;find</b>
+option. To the right of the <b>&minus;find</b> option,
+<b>pycdlib-genisoimage</b> accepts the <b>find</b> command
+line syntax only.</p></td></tr>
+</table>
+
+<p style="margin-left:18%; margin-top: 1em">The <b>find</b>
+expression acts as a filter between the source of file names
+and the consumer, which is archiving engine. If the
+<b>find</b> expression evaluated as TRUE, then the related
+file is selected for processing, otherwise it is omited.</p>
+
+<p style="margin-left:18%; margin-top: 1em">In order to
+make the evaluation of the <b>find</b> expression more
+convenient, <b>pycdlib-genisoimage</b> implements additional
+<b>find primaries</b> that have side effects on the file
+meta data. <b>pycdlib-genisoimage</b> implements the
+following additional <b>find</b> primaries:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="18%"></td>
+<td width="6%">
+
+
+<p style="margin-top: 1em"><b>&minus;help</b></p></td>
+<td width="3%"></td>
+<td width="45%">
+
+
+<p style="margin-top: 1em">Lists the available
+<b>find</b>(1) syntax.</p></td>
+<td width="28%">
+</td></tr>
+</table>
+
+<p style="margin-left:18%;"><b>&minus;chgrp</b>
+<i>gname</i></p>
+
+<p style="margin-left:27%;">The primary always evaluates as
+true; it sets the group of the file to <i>gname</i>.</p>
+
+<p style="margin-left:18%;"><b>&minus;chmod</b>
+<i>mode</i></p>
+
+<p style="margin-left:27%;">The primary always evaluates as
+true; it sets the permissions of the file to <i>mode</i>.
+Octal and symbolic permissions are accepted for <i>mode</i>
+as with <b>chmod</b>(1).</p>
+
+<p style="margin-left:18%;"><b>&minus;chown</b>
+<i>uname</i></p>
+
+<p style="margin-left:27%;">The primary always evaluates as
+true; it sets the owner of the file to <i>uname</i>.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="18%"></td>
+<td width="8%">
+
+
+<p><b>&minus;false</b></p></td>
+<td width="1%"></td>
+<td width="73%">
+
+
+<p>The primary always evaluates as false; it allows to make
+the result of the full expression different from the result
+of a part of the expression.</p></td></tr>
+<tr valign="top" align="left">
+<td width="18%"></td>
+<td width="8%">
+
+
+<p><b>&minus;true</b></p></td>
+<td width="1%"></td>
+<td width="73%">
+
+
+<p>The primary always evaluates as true; it allows to make
+the result of the full expression different from the result
+of a part of the expression.</p></td></tr>
+</table>
+
+<p style="margin-left:18%; margin-top: 1em">The command
+line:</p>
+
+
+<p style="margin-left:18%; margin-top: 1em"><b>pycdlib-genisoimage
+-o o.iso -find . ( -type d -ls -o false ) -o ! -type
+d</b></p>
+
+<p style="margin-left:18%; margin-top: 1em">lists all
+directories and puts all non-directories to the image
+<b>o.iso</b>.</p>
+
+<p style="margin-left:18%; margin-top: 1em">The command
+line:</p>
+
+
+<p style="margin-left:18%; margin-top: 1em"><b>pycdlib-genisoimage
+-o o.iso -find . ( -type d -chown root -o true )</b></p>
+
+<p style="margin-left:18%; margin-top: 1em">archives all
+directories so they appear to be owned by root in the
+archive, all non-directories are archived as they are in the
+file system.</p>
+
+<p style="margin-left:18%; margin-top: 1em">Note that the
+<b>&minus;ls</b>, <b>&minus;exec</b> and the
+<b>&minus;ok</b> primary cannot be used if <b>stdin</b> or
+stdout has not been redirected.</p>
+
+<p style="margin-left:9%;"><b>&minus;gid</b> <i>gid</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Overrides the group ID read from the
+source files to the value of <i>gid</i>. Specifying this
+option automatically enables Rock Ridge extensions.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="5%">
+
+
+<p><b>&minus;gui</b></p></td>
+<td width="4%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Switch the
+behaviour for a GUI. This currently makes the output more
+verbose but may have other effects in the future.</p></td></tr>
+</table>
+
+
+<p style="margin-left:9%;"><b>&minus;graft&minus;points</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Allow use of graft points for
+filenames. If this option is used, all filenames are checked
+for graft points. The filename is divided at the first
+unescaped equal sign. All occurrences of &lsquo;\&rsquo; and
+&lsquo;=&rsquo; characters must be escaped with
+&lsquo;\&rsquo; if <b>&minus;graft&minus;points</b> has been
+specified.</p>
+
+<p style="margin-left:9%;"><b>&minus;hide</b>
+<i>glob</i></p>
+
+<p style="margin-left:18%;">Hide any files matching
+<i>glob</i>, a shell wildcard pattern, from being seen in
+the ISO9660 or Rock Ridge directory. <i>glob</i> may match
+any part of the filename or path. If <i>glob</i> matches a
+directory, the contents of that directory will be hidden. In
+order to match a directory name, make sure the pathname does
+not include a trailing &lsquo;/&rsquo; character. All the
+hidden files will still be written to the output CD image
+file. See also <b>&minus;hide&minus;joliet</b>, and
+<i>README.hide</i>. This option may be used multiple
+times.</p>
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;list</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">A file containing a list of
+shell wildcards to be hidden. See <b>&minus;hide</b>.</p>
+
+<p style="margin-left:9%;"><b>&minus;hidden</b>
+<i>glob</i></p>
+
+<p style="margin-left:18%;">Add the hidden (existence)
+ISO9660 directory attribute for files and directories
+matching <i>glob</i>, a shell wildcard pattern. This
+attribute will prevent the files from being shown by some
+MS-DOS and Windows commands. <i>glob</i> may match any part
+of the filename or path. In order to match a directory name,
+make sure the pathname does not include a trailing
+&lsquo;/&rsquo; character. This option may be used multiple
+times.</p>
+
+<p style="margin-left:9%;"><b>&minus;hidden&minus;list</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">A file containing a list of
+shell wildcards to get the hidden attribute. See
+<b>&minus;hidden</b>.</p>
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;joliet</b>
+<i>glob</i></p>
+
+<p style="margin-left:18%;">Hide files and directories
+matching <i>glob</i>, a shell wildcard pattern, from being
+seen in the Joliet directory. <i>glob</i> may match any part
+of the filename or path. If <i>glob</i> matches a directory,
+the contents of that directory will be hidden. In order to
+match a directory name, make sure the pathname does not
+include a trailing &lsquo;/&rsquo; character. All the hidden
+files will still be written to the output CD image file.
+This option is usually used with <b>&minus;hide</b>. See
+also <i>README.hide</i>. This option may be used multiple
+times.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;joliet&minus;list</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">A file containing a list of
+shell wildcards to be hidden from the Joliet tree. See
+<b>&minus;hide&minus;joliet</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;joliet&minus;trans&minus;tbl</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Hide the <i>TRANS.TBL</i> files from
+the Joliet tree. These files usually don&rsquo;t make sense
+in the Joliet world as they list the real name and the
+ISO9660 name which may both be different from the Joliet
+name.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;rr&minus;moved</b></p>
+
+<p style="margin-left:18%;">Rename the directory
+<i>RR_MOVED</i> to <i>.rr_moved</i> in the Rock Ridge tree.
+It seems to be impossible to completely hide the
+<i>RR_MOVED</i> directory from the Rock Ridge tree. This
+option only makes the visible tree less confusing for people
+who don&rsquo;t know what this directory is for. If you need
+to have no <i>RR_MOVED</i> directory at all, you should use
+<b>&minus;D</b>. Note that if <b>&minus;D</b> has been
+specified, the resulting filesystem is not ISO9660 level-1
+compliant and will not be readable on MS-DOS. See also the
+<b>NOTES</b> section.</p>
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;udf</b>
+<i>glob</i></p>
+
+<p style="margin-left:18%;">Hide <i>glob</i> from being
+seen on the UDF directory. <i>glob</i> is a shell
+wild-card-style pattern that must match any part of the
+filename or path. Multiple globs may be hidden. If
+<i>glob</i> matches a directory, then the contents of that
+directory will be hidden. In order to match a directory
+name, make sure the pathname does not include a trailing
+&rsquo;/&rsquo; character. All the hidden files will still
+be written to the output CD image file. Should be used with
+the <b>&minus;hide</b> option.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;udf&minus;list</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">A file containing a list of
+<i>globs</i> to be hidden as above.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;input&minus;charset</b>
+<i>charset</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Input charset that defines the
+characters used in local filenames. To get a list of valid
+charset names, call <b>pycdlib-genisoimage
+&minus;input&minus;charset help</b>. To get a 1:1 mapping,
+you may use <b>default</b> as charset name. The default
+initial values are <i>cp437</i> on DOS-based systems and
+<i>iso8859-1</i> on all other systems.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;output&minus;charset</b>
+<i>charset</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Output charset that defines the
+characters that will be used in Rock Ridge filenames.
+Defaults to the input charset. See <b>CHARACTER SETS</b>
+section below for more details.</p>
+
+<p style="margin-left:9%;"><b>&minus;iso&minus;level</b>
+<i>level</i></p>
+
+<p style="margin-left:18%;">Set the ISO9660 conformance
+level. Valid numbers are 1 to 4.</p>
+
+<p style="margin-left:18%; margin-top: 1em">With level 1,
+files may only consist of one section and filenames are
+restricted to 8.3 characters.</p>
+
+<p style="margin-left:18%; margin-top: 1em">With level 2,
+files may only consist of one section.</p>
+
+<p style="margin-left:18%; margin-top: 1em">With level 3,
+no restrictions (other than ISO-9660:1988) do apply.</p>
+
+<p style="margin-left:18%; margin-top: 1em">With all
+ISO9660 levels from 1 to 3, all filenames are restricted to
+uppercase letters, numbers and underscores (_). Filenames
+are limited to 31 characters, directory nesting is limited
+to 8 levels, and pathnames are limited to 255
+characters.</p>
+
+<p style="margin-left:18%; margin-top: 1em">Level 4
+officially does not exist but <b>pycdlib-genisoimage</b>
+maps it to ISO-9660:1999, which is ISO9660 version 2.</p>
+
+<p style="margin-left:18%; margin-top: 1em">With level 4,
+an enhanced volume descriptor with version number and file
+structure version number set to 2 is emitted. Directory
+nesting is not limited to 8 levels, there is no need for a
+file to contain a dot and the dot has no special meaning,
+filenames do not have version numbers, and filenames can be
+up to 207 characters long, or 197 characters if Rock Ridge
+is used.</p>
+
+<p style="margin-left:18%; margin-top: 1em">When creating
+Version 2 images, <b>pycdlib-genisoimage</b> emits an
+enhanced volume descriptor, similar but not identical to a
+primary volume descriptor. Be careful not to use broken
+software to make ISO9660 images bootable by assuming a
+second PVD copy and patching this putative PVD copy into an
+El Torito VD.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;J</b></p></td>
+<td width="6%"></td>
+<td width="82%">
+
+
+<p>Generate Joliet directory records in addition to regular
+ISO9660 filenames. This is primarily useful when the discs
+are to be used on Windows machines. Joliet filenames are
+specified in Unicode and each path component can be up to 64
+Unicode characters long. Note that Joliet is not a standard
+&mdash; only Microsoft Windows and Linux systems can read
+Joliet extensions. For greater portability, consider using
+both Joliet and Rock Ridge extensions.</p></td></tr>
+</table>
+
+
+<p style="margin-left:9%;"><b>&minus;joliet&minus;long</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Allow Joliet filenames to be up to 103
+Unicode characters, instead of 64. This breaks the Joliet
+specification, but appears to work. Use with caution.</p>
+
+<p style="margin-left:9%;"><b>&minus;jcharset</b>
+<i>charset</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) A combination of <b>&minus;J
+&minus;input&minus;charset</b> <i>charset</i>.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;l</b></p></td>
+<td width="88%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;full&minus;iso9660&minus;filenames</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Allow full 31-character filenames.
+Normally the ISO9660 filename will be in an 8.3 format which
+is compatible with MS-DOS, even though the ISO9660 standard
+allows filenames of up to 31 characters. If you use this
+option, the disc may be difficult to use on a MS-DOS system,
+but will work on most other systems. Use with caution.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;L</b></p></td>
+<td width="6%"></td>
+<td width="63%">
+
+
+<p>Outdated option; use
+<b>&minus;allow&minus;leading&minus;dots</b> instead.</p></td>
+<td width="19%">
+</td></tr>
+</table>
+
+<p style="margin-left:9%;"><b>&minus;jigdo&minus;jigdo</b>
+<i>jigdo_file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Produce a <b>jigdo</b> <i>.jigdo</i>
+metadata file as well as the filesystem image.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;jigdo&minus;template</b>
+<i>template_file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Produce a <b>jigdo</b> <i>.template</i>
+file as well as the filesystem image.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;jigdo&minus;min&minus;file&minus;size</b>
+<i>size</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify the minimum size for a file to
+be listed in the <i>.jigdo</i> file. Default (and minimum
+allowed) is 1KB.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;jigdo&minus;force&minus;md5</b>
+<i>path</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify a file pattern where files
+<i>must</i> be contained in the externally-supplied MD5 list
+as supplied by <b>&minus;md5&minus;list</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;jigdo&minus;exclude</b>
+<i>path</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify a file pattern where files will
+not be listed in the <i>.jigdo</i> file.</p>
+
+<p style="margin-left:9%;"><b>&minus;jigdo&minus;map</b>
+<i>path</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify a pattern mapping for the jigdo
+file (e.g. <i>Debian=/mirror/debian</i>).</p>
+
+<p style="margin-left:9%;"><b>&minus;md5&minus;list</b>
+<i>md5_file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify a file containing the MD5sums,
+sizes and pathnames of the files to be included in the
+<i>.jigdo</i> file.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;jigdo&minus;template&minus;compress</b>
+<i>algorithm</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify a compression algorithm to use
+for template date. gzip and bzip2 are currently supported,
+and gzip is the default.</p>
+
+<p style="margin-left:9%;"><b>&minus;log&minus;file</b>
+<i>log_file</i></p>
+
+<p style="margin-left:18%;">Redirect all error, warning and
+informational messages to <i>log_file</i> instead of the
+standard error.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;long&minus;rr&minus;time</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Use the long ISO-9660 time format for
+the file time stamps used in Rock Ridge. This time format
+allows to represent year 0 .. year 9999 with a granularity
+of 10ms.</p>
+
+<p style="margin-left:18%; margin-top: 1em">The short
+ISO-9660 time format only allows to represent year 1900 ..
+year 2155 with a granularity of 1s.</p>
+
+<p style="margin-left:9%;"><b>&minus;m</b> <i>glob</i></p>
+
+<p style="margin-left:18%;">Exclude files matching
+<i>glob</i>, a shell wildcard pattern, from being written to
+CD-ROM. <i>glob</i> may match either the filename component
+or the full pathname. This option may be used multiple
+times. For example:</p>
+
+
+<p style="margin-left:18%; margin-top: 1em">pycdlib-genisoimage
+&minus;o rom &minus;m '*.o' &minus;m core &minus;m
+foobar</p>
+
+<p style="margin-left:18%; margin-top: 1em">would exclude
+all files ending in &lsquo;.o&rsquo;, or called <i>core</i>
+or <i>foobar</i> from the image. Note that if you had a
+directory called <i>foobar</i>, it too (and of course all
+its descendants) would be excluded.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;exclude&minus;list</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">A file containing a list of
+shell wildcards to be excluded. See <b>&minus;m</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;max&minus;iso9660&minus;filenames</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Allow ISO9660 filenames to be up to 37
+characters long. This option enables <b>&minus;N</b> as the
+extra name space is taken from the space reserved for file
+version numbers. <br>
+This violates the ISO9660 standard, but it happens to work
+on many systems. Although a conforming application needs to
+provide a buffer space of at least 37 characters, discs
+created with this option may cause a buffer overflow in the
+reading operating system. Use with extreme care.</p>
+
+<p style="margin-left:9%;"><b>&minus;M</b> <i>path</i>
+<b><br>
+&minus;M</b> <i>device</i> <b><br>
+&minus;dev</b> <i>device</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies path to existing ISO9660
+image to be merged. The alternate form takes a SCSI device
+specifier that uses the same syntax as the <b>dev=</b>
+parameter of <b>wodim</b>. The output of
+<b>pycdlib-genisoimage</b> will be a new session which
+should get written to the end of the image specified in
+<b>&minus;M</b>. Typically this requires multisession
+capability for the CD recorder used to write the image. This
+option may only be used in conjunction with
+<b>&minus;C</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;modification&minus;date</b>
+<i>date-spec</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set the <b>modification date</b> in the
+primary volume descriptor (PVD) to a value different from
+the current time. This allows e.g. to set up an intentional
+UUID for <b>grub</b>.</p>
+
+<p style="margin-left:18%; margin-top: 1em">The format of
+<i>date-spec</i> is:</p>
+
+
+<p style="margin-left:18%; margin-top: 1em"><i>yyyy</i>[<i>mm</i>[<i>dd</i>[<i>hh</i>[<i>mm</i>[<i>ss</i>]]]]][.<i>hh</i>][+-<i>ghgm</i>]</p>
+
+<p style="margin-left:18%; margin-top: 1em">The fields are
+<b>year</b>, <b>month</b>, <b>day of month</b>, <b>hour</b>,
+<b>minute</b>, <b>second</b>, <b>hundreds of a second</b>,
+<b>GMT offset in hours and minutes</b>. The time is
+interpreted as local time.</p>
+
+<p style="margin-left:18%; margin-top: 1em">Year and the
+GMT offset are four digit fields, all other fields take two
+digits. The GMT offset may be between -12 and +13 hours in
+15 minute steps. Locations east to Greenwich have positive
+values. The value is the sum of the time zone offset and the
+effects from daylight saving time. Omited values are
+replaced by the minimal possible values. If the GMT offset
+is omited, it is computed from the local time value that has
+been supplied.</p>
+
+<p style="margin-left:18%; margin-top: 1em">Between year
+and month as well as between month and day of month, a
+separator chosen from &rsquo;/&rsquo; and &rsquo;-&rsquo;
+may appear. In this case, the year may be a two digit number
+with values 69..99 representing 1969..1999 and values 00..68
+representing 2000..2068. Between date and time spec, an
+optional space is permitted. Between hours and minutes as
+well as between minutes and seconds, an optional
+&rsquo;:&rsquo; separator is permitted. This allows
+<b>pycdlib-genisoimage</b> to parse the popular POSIX date
+format created by:</p>
+
+<p style="margin-left:18%; margin-top: 1em"><b>date
+&quot;+%Y-%m-%d %H:%M:%S %z&quot;</b></p>
+
+<p style="margin-left:18%; margin-top: 1em">Note that the
+possible range for <i>date-spec</i> for 32 bit programs is
+limited to values up to 2038 Jan 19 04:14:07 GMT.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;N</b></p></td>
+<td width="88%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;omit&minus;version&minus;number</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Omit version numbers from ISO9660
+filenames. <br>
+This violates the ISO9660 standard, but no one really uses
+the version numbers anyway. Use with caution.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;new&minus;dir&minus;mode</b>
+<i>mode</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify the mode, a 4-digit number as
+used in <b>chmod</b>(1), to use when creating new
+directories in the filesystem image. The default is
+0555.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;nobak</b></p></td>
+<td width="83%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;no&minus;bak</b></p>
+
+<p style="margin-left:18%;">Exclude backup files files on
+the ISO9660 filesystem; that is, filenames that contain the
+characters &lsquo;&#732;&rsquo; or &lsquo;#&rsquo; or end in
+<i>.bak</i>. These are typically backup files for Unix text
+editors.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;no&minus;limit&minus;pathtables</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) A ISO-9660 filesystem contains path
+tables that contain a list of directories. This list may
+contain many directories but only 65535 of them may be
+parent directories. When
+<b>&minus;no&minus;limit&minus;pathtables</b> is in use,
+further parent directories will be folded to the root
+directory and the resulting filesystem will no longer be
+usable on <b>DOS</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;no&minus;long&minus;rr&minus;time</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Use the short ISO-9660 time format for
+the file time stamps used in Rock Ridge. This time format
+allows to represent year 1990 .. year 2155 with a
+granularity of one second.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;force&minus;rr</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Do not use the automatic Rock Ridge
+attributes recognition for previous sessions. This can work
+around problems with images created by, e.g., NERO Burning
+ROM.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;no&minus;rr</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Do not use the
+Rock Ridge attributes from previous sessions. This may help
+to avoid problems when <b>pycdlib-genisoimage</b> finds
+illegal Rock Ridge signatures on an old session.</p></td></tr>
+</table>
+
+
+<p style="margin-left:9%;"><b>&minus;no&minus;split&minus;symlink&minus;components</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Don&rsquo;t split the symlink
+components, but begin a new Continuation Area (CE) instead.
+This may waste some space, but the SunOS 4.1.4 cdrom driver
+has a bug in reading split symlink components.</p>
+
+<p style="margin-left:18%; margin-top: 1em">It is
+questionable whether this option is useful nowadays.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;no&minus;split&minus;symlink&minus;fields</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Don&rsquo;t split the symlink fields,
+but begin a new Continuation Area (CE) instead. This may
+waste some space, but the SunOS 4.1.4 and Solaris 2.5.1
+cdrom driver have a bug in reading split symlink fields (a
+&lsquo;/&rsquo; can be dropped).</p>
+
+<p style="margin-left:18%; margin-top: 1em">It is
+questionable whether this option is useful nowadays.</p>
+
+<p style="margin-left:9%;"><b>&minus;o</b>
+<i>filename</i></p>
+
+<p style="margin-left:18%;">Specify the output file for the
+the ISO9660 filesystem image. This can be a disk file, a
+tape drive, or it can correspond directly to the device name
+of the optical disc writer. If not specified, stdout is
+used. Note that the output can also be a block device for a
+regular disk partition, in which case the ISO9660 filesystem
+can be mounted normally to verify that it was generated
+correctly.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="5%">
+
+
+<p><b>&minus;pad</b></p></td>
+<td width="4%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Pad the end of
+the whole image by 150 sectors (300 kB). This option is
+enabled by default. If used in combination with
+<b>&minus;B</b>, padding is inserted between the ISO9660
+partition and the boot partitions, such that the first boot
+partition starts on a sector number that is a multiple of
+16.</p> </td></tr>
+</table>
+
+<p style="margin-left:18%; margin-top: 1em">The padding is
+needed as many operating systems (e.g. Linux) implement
+read-ahead bugs in their filesystem I/O. These bugs result
+in read errors on files that are located near the end of a
+track, particularly if the disc is written in Track At Once
+mode, or where a CD audio track follows the data track.</p>
+
+<p style="margin-left:9%;"><b>&minus;no&minus;pad</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Do not pad the end by 150 sectors (300
+kB) and do not make the the boot partitions start on a
+multiple of 16 sectors.</p>
+
+<p style="margin-left:9%;"><b>&minus;path&minus;list</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">A file containing a list of
+<i>pathspec</i> directories and filenames to be added to the
+ISO9660 filesystem. This list of pathspecs are processed
+after any that appear on the command line. If the argument
+is <i>&minus;</i>, the list is read from the standard
+input.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;P</b></p></td>
+<td width="6%"></td>
+<td width="51%">
+
+
+<p>Outdated option; use <b>&minus;publisher</b>
+instead.</p> </td>
+<td width="31%">
+</td></tr>
+</table>
+
+<p style="margin-left:9%;"><b>&minus;publisher</b>
+<i>publisher_id</i></p>
+
+<p style="margin-left:18%;">Specifies a text string that
+will be written into the volume header. This should describe
+the publisher of the CD-ROM, usually with a mailing address
+and phone number. There is space for 128 characters.</p>
+
+<p style="margin-left:9%;"><b>&minus;p</b>
+<i>preparer_id</i> <b><br>
+&minus;preparer</b> <i>preparer_id</i></p>
+
+<p style="margin-left:18%;">Specifies a text string that
+will be written into the volume header. This should describe
+the preparer of the CD-ROM, usually with a mailing address
+and phone number. There is space on the disc for 128
+characters of information. The related Joliet entry is
+limited to 64 characters.</p>
+
+<p style="margin-left:9%;"><b>&minus;posix&minus;H</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Follow all symbolic links encountered
+on command line when generating the filesystem.</p>
+
+<p style="margin-left:9%;"><b>&minus;posix&minus;L</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Follow all symbolic links when
+generating the filesystem. When this option is not in use,
+symbolic links will be entered using Rock Ridge if enabled,
+otherwise the file will be ignored.</p>
+
+<p style="margin-left:9%;"><b>&minus;posix&minus;P</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Do not follow symbolic links when
+generating the filesystem (this is the default). If
+<b>&minus;posix&minus;P</b> is specified after
+<b>&minus;posix&minus;H</b> or <b>&minus;posix&minus;L</b>,
+the effect of these options will be reset.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;print&minus;size</b></p>
+
+<p style="margin-left:18%;">Print estimated filesystem size
+in multiples of the sector size (2048 bytes) and exit. This
+option is needed for Disk At Once mode and with some CD-R
+drives when piping directly into <b>wodim</b>, cases where
+<b>wodim</b> needs to know the size of the filesystem image
+in advance. Old versions of <b>mkisofs</b> wrote this
+information (among other information) to <i>stderr</i>. As
+this turns out to be hard to parse, the number without any
+other information is now printed on <i>stdout</i> too. If
+you like to write a simple shell script, redirect
+<i>stderr</i> and catch the number from <i>stdout</i>. This
+may be done with:</p>
+
+<p style="margin-left:18%; margin-top: 1em">cdblocks=`
+pycdlib-genisoimage &minus;print&minus;size &minus;quiet ...
+` <br>
+pycdlib-genisoimage ... | wodim ... tsize=${cdblocks}s
+&minus;</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;quiet</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+
+
+<p>This makes <b>pycdlib-genisoimage</b> even less verbose.
+No progress output will be provided.</p></td></tr>
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;R</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;rock</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+
+
+<p>Generate SUSP and RR records using the Rock Ridge
+protocol to further describe the files on the ISO9660
+filesystem.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;r</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;rational&minus;rock</b></p>
+
+<p style="margin-left:18%;">This is like the &minus;R
+option, but file ownership and modes are set to more useful
+values. The uid and gid are set to zero, because they are
+usually only useful on the author&rsquo;s system, and not
+useful to the client. All the file read bits are set true,
+so that files and directories are globally readable on the
+client. If any execute bit is set for a file, set all of the
+execute bits, so that executables are globally executable on
+the client. If any search bit is set for a directory, set
+all of the search bits, so that directories are globally
+searchable on the client. All write bits are cleared,
+because the filesystem will be mounted read-only in any
+case. If any of the special mode bits are set, clear them,
+because file locks are not useful on a read-only filesystem,
+and set-id bits are not desirable for uid 0 or gid 0. When
+used on Win32, the execute bit is set on <i>all</i> files.
+This is a result of the lack of file permissions on Win32
+and the Cygwin POSIX emulation layer. See also
+<b>&minus;uid</b>, <b>&minus;gid</b>,
+<b>&minus;dir&minus;mode</b>, <b>&minus;file&minus;mode</b>
+and <b>&minus;new&minus;dir&minus;mode</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;relaxed&minus;filenames</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Allows ISO9660 filenames to include all
+7-bit ASCII characters except lowercase letters. <br>
+This violates the ISO9660 standard, but it happens to work
+on many systems. Use with caution.</p>
+
+<p style="margin-left:9%;"><b>&minus;root</b>
+<i>dir</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Moves all files and directories into
+<i>dir</i> in the image. This is essentially the same as
+using <b>&minus;graft&minus;points</b> and adding <i>dir</i>
+in front of every pathspec, but is easier to use. <i>dir</i>
+may actually be several levels deep. It is created with the
+same permissions as other graft points.</p>
+
+<p style="margin-left:9%;"><b>&minus;rrip110</b></p>
+
+<p style="margin-left:18%;">Create ISO-9660 file system
+images that follow the old Rrip Version-1.10 standard from
+1993. This option may be needed if you know of systems that
+do not implement the Rrip protocol correctly and like the
+file system to be read by such a system. Currently no such
+system is known.</p>
+
+<p style="margin-left:18%; margin-top: 1em">If a file
+system has been created with <b>&minus;rrip110</b>, the Rock
+Ridge attributes do not include inode number
+information.</p>
+
+<p style="margin-left:9%;"><b>&minus;rrip112</b></p>
+
+<p style="margin-left:18%;">Create ISO-9660 file system
+images that follow the new Rrip Version-1.12 standard from
+1994.</p>
+
+<p style="margin-left:9%;"><b>&minus;old-root</b>
+<i>dir</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) This option is necessary when writing a
+multisession image and the previous (or even older) session
+was written with <b>-root</b> <i>dir</i>. Using a directory
+name not found in the previous session causes
+<b>pycdlib-genisoimage</b> to abort with an error. Without
+this option, <b>pycdlib-genisoimage</b> would not be able to
+find unmodified files and would be forced to write their
+data into the image once more. <b>&minus;root</b> and
+<b>&minus;old-root</b> are meant to be used together to do
+incremental backups. The initial session would e.g. use:
+<b>pycdlib-genisoimage &minus;root backup_1</b> <i>dirs</i>.
+The next incremental backup with <b>pycdlib-genisoimage
+&minus;root backup_2 &minus;old-root backup_1</b>
+<i>dirs</i> would take another snapshot of these
+directories. The first snapshot would be found in
+<b>backup_1</b>, the second one in <b>backup_2</b>, but only
+modified or new files need to be written into the second
+session. Without these options, new files would be added and
+old ones would be preserved. But old ones would be
+overwritten if the file was modified. Recovering the files
+by copying the whole directory back from CD would also
+restore files that were deleted intentionally. Accessing
+several older versions of a file requires support by the
+operating system to choose which sessions are to be
+mounted.</p>
+
+<p style="margin-left:9%;"><b>&minus;s</b> <i>sector
+type</i> <b><br>
+&minus;sectype</b> <i>sector type</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set output sector type to e.g.
+data/xa1/raw.</p>
+
+<p style="margin-left:9%;"><b>&minus;sort</b>
+<i>sort_file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Sort file locations on the media.
+Sorting is controlled by a file that contains pairs of
+filenames and sorting offset weighting. If the weighting is
+higher, the file will be located closer to the beginning of
+the media, if the weighting is lower, the file will be
+located closer to the end of the media. There must be only
+one space or tabs character between the filename and the
+weight and the weight must be the last characters on a line.
+The filename is taken to include all the characters up to,
+but not including the last space or tab character on a line.
+This is to allow for space characters to be in, or at the
+end of a filename. This option does <b>not</b> sort the
+order of the filenames that appear in the ISO9660 directory.
+It sorts the order in which the file data is written to the
+CD image, which is useful in order to optimize the data
+layout on a CD. See <b>README.sort</b> for more details.</p>
+
+<p style="margin-left:9%;"><b>&minus;sparc&minus;boot</b>
+<i>img_sun4,img_sun4c,img_sun4m,img_sun4d,img_sun4e</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) See <b>&minus;B</b> above.</p>
+
+<p style="margin-left:9%;"><b>&minus;sparc&minus;label</b>
+<i>label</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set the Sun disk label name for the Sun
+disk label that is created with
+<b>&minus;sparc-boot</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;split&minus;output</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Split the output image into several
+files of approximately 1 GB each. This helps to create
+DVD-sized ISO9660 images on operating systems without large
+file support. <b>wodim</b> will concatenate more than one
+file into a single track if writing to a DVD. To make
+<b>&minus;split&minus;output</b> work, <b>&minus;o</b>
+<i>filename</i> must be specified. The resulting output
+images will be named: <i>filename_00</i>,
+<i>filename_01</i>, <i>filename_02</i>....</p>
+
+
+<p style="margin-left:9%;"><b>&minus;stream&minus;media&minus;size</b>
+<i>#</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Select streaming operation and set the
+media size to # sectors. This allows you to pipe the output
+of the <b>tar</b>(1) program into <b>pycdlib-genisoimage</b>
+and to create an ISO9660 filesystem without the need of an
+intermediate tar archive file. If this option has been
+specified, <b>pycdlib-genisoimage</b> reads from
+<i>stdin</i> and creates a file with the name
+<i>STREAM.IMG</i>. The maximum size of the file (with
+padding) is 200 sectors less than the specified media size.
+If <b>&minus;no&minus;pad</b> has been specified, the file
+size is 50 sectors less than the specified media size. If
+the file is smaller, <b>pycdlib-genisoimage</b> will write
+padding. This may take awhile.</p>
+
+<p style="margin-left:18%; margin-top: 1em">The option
+<b>&minus;stream&minus;media&minus;size</b> creates simple
+ISO9660 filesystems only and may not used together with
+multisession or hybrid filesystem options.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;stream&minus;file&minus;name</b>
+<i>name</i></p>
+
+<p style="margin-left:18%;">Reserved for future use.</p>
+
+<p style="margin-left:9%;"><b>&minus;sunx86&minus;boot</b>
+<i>UFS_img,,,AUX1_img</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specifies a comma-separated list of
+filesystem images that are needed to make a bootable CD for
+Solaris x86 systems.</p>
+
+<p style="margin-left:18%; margin-top: 1em">Note that
+partition 1 is used for the ISO9660 image and that partition
+2 is the whole disk, so partition 1 and 2 may not be used by
+external partition data. The first image file is mapped to
+partition 0. There may be empty fields in the
+comma-separated list, and list entries for partition 1 and 2
+must be empty. The maximum number of supported partitions is
+8 (although the Solaris x86 partition table could support up
+to 16 partitions), so it is impossible to specify more than
+6 partition images. This option is required to make a
+bootable CD for Solaris x86 systems.</p>
+
+<p style="margin-left:18%; margin-top: 1em">If
+<b>&minus;sunx86&minus;boot</b> has been specified, the
+first sector of the resulting image will contain a PC fdisk
+label with a Solaris type 0x82 fdisk partition that starts
+at offset 512 and spans the whole CD. In addition, for the
+Solaris type 0x82 fdisk partition, there is a SVr4 disk
+label at offset 1024 in the first sector of the CD. This
+disk label specifies slice 0 for the first (usually UFS
+type) filesystem image that is used to boot the PC and slice
+1 for the ISO9660 image. Slice 2 spans the whole CD slice 3
+... slice 7 may be used for additional filesystem images
+that have been specified with this option.</p>
+
+<p style="margin-left:18%; margin-top: 1em">A Solaris x86
+boot CD uses a 1024 byte sized primary boot that uses the
+<b>El-Torito no-emulation</b> boot mode and a secondary
+generic boot that is in CD sectors 1..15. For this reason,
+both <b>-b</b> <i>bootimage</i>
+<b>&minus;no&minus;emul&minus;boot</b> and <b>&minus;G</b>
+<i>genboot</i> must be specified.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;sunx86&minus;label</b>
+<i>label</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set the SVr4 disk label name for the
+SVr4 disk label that is created with
+<b>&minus;sunx86-boot</b>.</p>
+
+<p style="margin-left:9%;"><b>&minus;sysid</b>
+<i>ID</i></p>
+
+<p style="margin-left:18%;">Specifies the system ID. There
+is space for 32 characters.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;T</b></p></td>
+<td width="88%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;translation&minus;table</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Generate a file <i>TRANS.TBL</i> in
+each directory on the CD-ROM, which can be used on
+non-Rock&nbsp;Ridge-capable systems to help establish the
+correct filenames. There is also information present in the
+file that indicates the major and minor numbers for block
+and character devices, and each symlink has the name of the
+link file given.</p>
+
+<p style="margin-left:9%;"><b>&minus;table&minus;name</b>
+<i>table_name</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Alternative translation table filename
+(see above). Implies <b>&minus;T</b>. If you are creating a
+multisession image you must use the same name as in the
+previous session.</p>
+
+<p style="margin-left:9%;"><b>&minus;ucs&minus;level</b>
+<i>level</i></p>
+
+<p style="margin-left:18%;">Set Unicode conformance level
+in the Joliet SVD. The default level is 3. It may be set to
+1..3 using this option.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="5%">
+
+
+<p><b>&minus;UDF</b></p></td>
+<td width="4%"></td>
+<td width="82%">
+
+
+<p>Include a <b>UDF</b> hybrid in the generated filesystem
+image. As <b>pycdlib-genisoimage</b> always creates a
+ISO-9660 filesystem, it is not possible to create UDF only
+images. Note that <b>UDF</b> wastes the space from sector
+&#732;20 to sector 256 at the beginning of the disk in
+addition to the space needed for real <b>UDF</b> data
+structures.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="5%">
+
+
+<p><b>&minus;udf</b></p></td>
+<td width="4%"></td>
+<td width="82%">
+
+
+<p>Rationalized UDF with user and group set to 0 and with
+simplified permissions. See <b>&minus;r</b> option for more
+information.</p> </td></tr>
+</table>
+
+
+<p style="margin-left:9%;"><b>&minus;udf&minus;symlinks</b></p>
+
+<p style="margin-left:18%;">Support symlinks in <b>UDF</b>
+filesystems. This is the default.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;no&minus;udf&minus;symlinks</b></p>
+
+<p style="margin-left:18%;">Do not support symlinks in
+<b>UDF</b> filesystems.</p>
+
+<p style="margin-left:9%;"><b>&minus;uid</b> <i>uid</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Overrides the uid read from the source
+files to the value of <i>uid</i>. Specifying this option
+automatically enables Rock Ridge extensions.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;use&minus;fileversion</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) The option
+<b>&minus;use&minus;fileversion</b> allows
+<b>pycdlib-genisoimage</b> to use file version numbers from
+the filesystem. If the option is not specified,
+<b>pycdlib-genisoimage</b> creates a version number of 1 for
+all files. File versions are strings in the range <i>;1</i>
+to <i>;32767</i> This option is the default on VMS.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;U</b></p></td>
+<td width="88%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;untranslated&minus;filenames</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Allows &quot;untranslated&quot;
+filenames, completely violating the ISO9660 standards
+described above. Enables the following flags: <b>&minus;d
+&minus;l &minus;N &minus;allow&minus;leading&minus;dots
+&minus;relaxed&minus;filenames &minus;allow&minus;lowercase
+&minus;allow&minus;multidot
+&minus;no&minus;iso&minus;translate</b>. Allows more than
+one &lsquo;.&rsquo; character in the filename, as well as
+mixed-case filenames. This is useful on HP-UX, where the
+built-in <i>cdfs</i> filesystem does not recognize any
+extensions. Use with extreme caution.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;no&minus;iso&minus;translate</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Do not translate the characters
+&lsquo;#&rsquo; and &lsquo;&#732;&rsquo; which are invalid
+for ISO9660 filenames. Although invalid, these characters
+are often used by Microsoft systems. <br>
+This violates the ISO9660 standard, but it happens to work
+on many systems. Use with caution.</p>
+
+<p style="margin-left:9%;"><b>&minus;V</b> <i>volid</i></p>
+
+<p style="margin-left:18%;">Specifies the volume ID (volume
+name or label) to be written into the master block. There is
+space for 32 characters. The volume ID is used as the mount
+point by the Solaris volume manager and as a label assigned
+to a disc on various other platforms such as Windows and
+Apple Mac OS.</p>
+
+<p style="margin-left:9%;"><b>&minus;volset</b>
+<i>ID</i></p>
+
+<p style="margin-left:18%;">Specifies the volume set ID.
+There is space for 128 characters.</p>
+
+<p style="margin-left:9%;"><b>&minus;volset&minus;size</b>
+<i>#</i></p>
+
+<p style="margin-left:18%;">Sets the volume set size to #.
+The volume set size is the number of CDs that are in a CD
+volume set. A volume set is a collection of one or more
+volumes, on which a set of files is recorded.</p>
+
+<p style="margin-left:18%; margin-top: 1em">Volume Sets are
+not intended to be used to create a set numbered CDs that
+are part of e.g. a Operation System installation set of CDs.
+Volume Sets are rather used to record a big directory tree
+that would not fit on a single volume. Each volume of a
+Volume Set contains a description of all the directories and
+files that are recorded on the volumes where the sequence
+numbers are less than, or equal to, the assigned Volume Set
+Size of the current volume.</p>
+
+
+<p style="margin-left:18%; margin-top: 1em"><b>pycdlib-genisoimage</b>
+currently does not support a <b>&minus;volset&minus;size</b>
+that is larger than 1.</p>
+
+<p style="margin-left:18%; margin-top: 1em">The option
+<b>&minus;volset&minus;size</b> must be specified before
+<b>&minus;volset&minus;seqno</b> on each command line.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;volset&minus;seqno</b>
+<i>#</i></p>
+
+<p style="margin-left:18%;">Sets the volume set sequence
+number to #. The volume set sequence number is the index
+number of the current CD in a CD set. The option
+<b>&minus;volset&minus;size</b> must be specified before
+<b>&minus;volset&minus;seqno</b> on each command line.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="3%">
+
+
+<p><b>&minus;v</b></p></td>
+<td width="88%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;verbose</b></p>
+
+<p style="margin-left:18%;">Verbose execution. If given
+twice on the command line, extra debug information will be
+printed.</p>
+
+<p style="margin-left:9%;"><b>&minus;x</b> <i>glob</i></p>
+
+<p style="margin-left:18%;">Identical to <b>&minus;m</b>
+<i>glob</i>.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="4%">
+
+
+<p><b>&minus;XA</b></p></td>
+<td width="5%"></td>
+<td width="60%">
+
+
+<p>Generate XA directory attruibutes.</p></td>
+<td width="22%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="4%">
+
+
+<p><b>&minus;xa</b></p></td>
+<td width="5%"></td>
+<td width="60%">
+
+
+<p>Generate rationalized XA directory attruibutes.</p></td>
+<td width="22%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="4%">
+
+
+<p><b>&minus;z</b></p></td>
+<td width="5%"></td>
+<td width="60%"></td>
+<td width="22%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;transparent&minus;compression</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Generate special <i>RRIP</i> records
+for transparently compressed files. This is only of use and
+interest for hosts that support transparent decompression,
+such as Linux 2.4.14 or later. You must specify
+<b>&minus;R</b> or <b>&minus;r</b> to enable Rock Ridge, and
+generate compressed files using the <b>mkzftree</b> utility
+before running <b>pycdlib-genisoimage</b>. Note that
+transparent compression is a nonstandard Rock Ridge
+extension. The resulting disks are only transparently
+readable if used on Linux. On other operating systems you
+will need to call <b>mkzftree</b> by hand to decompress the
+files.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;scan&minus;for&minus;duplicates</b></p>
+
+<p style="margin-left:18%;">Keep a running list of file
+hashes, attempting to link as many files together as
+possible. This results in the smallest possible ISO image,
+but may be very slow, particular with large files.</p>
+
+<h2>HFS OPTIONS
+<a name="HFS OPTIONS"></a>
+</h2>
+
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="5%">
+
+
+<p style="margin-top: 1em"><b>&minus;hfs</b></p></td>
+<td width="4%"></td>
+<td width="82%">
+
+
+<p style="margin-top: 1em">(not supported by
+pycdlib-genisoimage) Create an ISO9660/HFS hybrid CD. This
+option should be used in conjunction with the
+<b>&minus;map</b>, <b>&minus;magic</b> and/or the various
+<i>double dash</i> options given below.</p></td></tr>
+</table>
+
+<p style="margin-left:9%;"><b>&minus;no&minus;hfs</b></p>
+
+<p style="margin-left:18%;">Do not create an ISO-9660/HFS
+hybrid CD even though other options may imply to do so.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;apple</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Create an ISO9660
+CD with Apple&rsquo;s extensions. Similar to
+<b>&minus;hfs</b>, except that the Apple Extensions to
+ISO9660 are added instead of creating an HFS hybrid volume.
+Former <b>pycdlib-genisoimage</b> versions did include Rock
+Ridge attributes by default if <b>&minus;apple</b> was
+specified. This versions of <b>pycdlib-genisoimage</b> does
+not do this anymore. If you like to have Rock Ridge
+attributes, you need to specify this separately.</p></td></tr>
+</table>
+
+<p style="margin-left:9%;"><b>&minus;map</b>
+<i>mapping_file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Use the <i>mapping_file</i> to set the
+CREATOR and TYPE information for a file based on the
+filename&rsquo;s extension. A filename is mapped only if it
+is not one of the know Apple/Unix file formats.</p>
+
+<p style="margin-left:9%;"><b>&minus;magic</b>
+<i>magic_file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) The CREATOR and TYPE information is set
+by using a file&rsquo;s <i>magic number</i> (usually the
+first few bytes of a file). The <i>magic_file</i> is only
+used if a file is not one of the known Apple/Unix file
+formats, or the filename extension has not been mapped using
+<b>&minus;map</b>.</p>
+
+<p style="margin-left:9%;"><b>&minus;hfs&minus;creator</b>
+<i>creator</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set the default CREATOR for all files.
+Must be exactly 4 characters.</p>
+
+<p style="margin-left:9%;"><b>&minus;hfs&minus;type</b>
+<i>type</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set the default TYPE for all files.
+Must be exactly 4 characters.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;probe</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Search the
+contents of files for all the known Apple/Unix file formats.
+However, the only way to check for <i>MacBinary</i> and
+<i>AppleSingle</i> files is to open and read them, so this
+option may increase processing time. It is better to use one
+or more <i>double dash</i> options given below if the
+Apple/Unix formats in use are known.</p></td></tr>
+</table>
+
+
+<p style="margin-left:9%;"><b>&minus;no&minus;desktop</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Do not create (empty) Desktop files.
+New HFS Desktop files will be created when the CD is used on
+a Macintosh (and stored in the System Folder). By default,
+empty Desktop files are added to the HFS volume.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;mac&minus;name</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Use the HFS filename as the starting
+point for the ISO9660, Joliet and Rock Ridge filenames.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;boot&minus;hfs&minus;file</b>
+<i>driver_file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Installs the <i>driver_file</i> that
+<i>may</i> make the CD bootable on a Macintosh.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="6%">
+
+
+<p><b>&minus;part</b></p></td>
+<td width="3%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Generate an HFS
+partition table. By default, no partition table is
+generated, but some older Macintosh CD-ROM drivers need an
+HFS partition table on the CD-ROM to be able to recognize a
+hybrid CD-ROM.</p></td></tr>
+</table>
+
+<p style="margin-left:9%;"><b>&minus;auto</b>
+<i>AutoStart_file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Make the HFS CD use the QuickTime 2.0
+Autostart feature to launch an application or document. The
+given filename must be the name of a document or application
+located at the top level of the CD. The filename must be
+less than 12 characters. (Alpha).</p>
+
+
+<p style="margin-left:9%;"><b>&minus;cluster&minus;size</b>
+<i>size</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set the size in bytes of the cluster or
+allocation units of PC Exchange files. Implies
+<b>&minus;&minus;exchange</b>.</p>
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;hfs</b>
+<i>glob</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Hide <i>glob</i>, a shell wildcard
+pattern, from the HFS volume. The file or directory will
+still exist in the ISO9660 and/or Joliet directory.
+<i>glob</i> may match any part of the filename. Multiple
+globs may be excluded. Example:</p>
+
+
+<p style="margin-left:18%; margin-top: 1em">pycdlib-genisoimage
+&minus;o rom &minus;hfs &minus;hide&minus;hfs '*.o'
+&minus;hide&minus;hfs foobar</p>
+
+<p style="margin-left:18%; margin-top: 1em">would exclude
+all files ending in &lsquo;.o&rsquo; or called <i>foobar</i>
+from the HFS volume. Note that if you had a directory called
+<i>foobar</i>, it too (and of course all its descendants)
+would be excluded. The <i>glob</i> can also be a path name
+relative to the source directories given on the command
+line. Example:</p>
+
+
+<p style="margin-left:18%; margin-top: 1em">pycdlib-genisoimage
+&minus;o rom &minus;hfs &minus;hide&minus;hfs src/html
+src</p>
+
+<p style="margin-left:18%; margin-top: 1em">would exclude
+just the file or directory called <i>html</i> from the
+<i>src</i> directory. Any other file or directory called
+<i>html</i> in the tree will not be excluded. Should be used
+with <b>&minus;hide</b> and/or
+<b>&minus;hide&minus;joliet</b>. In order to match a
+directory name, make sure the pattern does not include a
+trailing &lsquo;/&rsquo; character. See <i>README.hide</i>
+for more details.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hide&minus;hfs&minus;list</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Specify a file containing a list of
+wildcard patterns to be hidden as in
+<b>&minus;hide&minus;hfs</b>.</p>
+
+<p style="margin-left:9%;"><b>&minus;hfs&minus;volid</b>
+<i>hfs_volid</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Volume name for the HFS partition. This
+is the name that is assigned to the disc on a Macintosh and
+replaces the <i>volid</i> used with <b>&minus;V</b>.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;icon&minus;position</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Use the icon position information, if
+it exists, from the Apple/Unix file. The icons will appear
+in the same position as they would on a Macintosh desktop.
+Folder location and size on screen, its scroll positions,
+folder View (view as Icons, Small Icons, etc.) are also
+preserved. (Alpha).</p>
+
+<p style="margin-left:9%;"><b>&minus;root&minus;info</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Set the location, size on screen,
+scroll positions, folder View etc. for the root folder of an
+HFS volume. See <i>README.rootinfo</i> for more information.
+(Alpha)</p>
+
+<p style="margin-left:9%;"><b>&minus;prep&minus;boot</b>
+<i>file</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) PReP boot image file. Up to 4 are
+allowed. See <i>README.prep_boot</i> for more information.
+(Alpha)</p>
+
+
+<p style="margin-left:9%;"><b>&minus;chrp&minus;boot</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Add CHRP boot header.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;input&minus;hfs&minus;charset</b>
+<i>charset</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Input charset that defines the
+characters used in HFS filenames when used with
+<b>&minus;mac&minus;name</b>. The default charset is
+<i>cp10000</i> (Mac Roman).</p>
+
+
+<p style="margin-left:9%;"><b>&minus;output&minus;hfs&minus;charset</b>
+<i>charset</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Output charset that defines the
+characters that will be used in the HFS filenames. Defaults
+to the input charset.</p>
+
+
+<p style="margin-left:9%;"><b>&minus;hfs&minus;unlock</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) By default, <b>pycdlib-genisoimage</b>
+will create an HFS volume that is locked. This option leaves
+the volume unlocked so that other applications (e.g.
+<b>hfsutils</b>) can modify the volume.</p>
+
+<p style="margin-left:9%;"><b>&minus;hfs&minus;bless</b>
+<i>folder_name</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) &quot;Bless&quot; the given directory
+(folder). This is usually the <i>System Folder</i> and is
+used in creating HFS bootable CDs. The name of the directory
+must be the whole path name as <b>pycdlib-genisoimage</b>
+sees it. E.g., if the given pathspec is <i>./cddata</i> and
+the required folder is called <i>System Folder</i>, the
+whole path name is <i>&quot;/cddata/System Folder&quot;</i>
+(remember to use quotes if the name contains spaces).</p>
+
+<p style="margin-left:9%;"><b>&minus;hfs&minus;parms</b>
+<i>parameters</i></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Override certain parameters used to
+create the HFS filesystem. Unlikely to be used in normal
+circumstances.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="6%">
+
+
+<p><b>&minus;&minus;cap</b></p></td>
+<td width="3%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Look for AUFS CAP
+Macintosh files. Search for CAP Apple/Unix file formats
+only. Searching for the other possible Apple/Unix file
+formats is disabled, unless other <i>double dash</i> options
+are given.</p></td></tr>
+</table>
+
+
+<p style="margin-left:9%;"><b>&minus;&minus;netatalk</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for NETATALK Macintosh files</p>
+
+<p style="margin-left:9%;"><b>&minus;&minus;double</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for AppleDouble Macintosh
+files</p>
+
+
+<p style="margin-left:9%;"><b>&minus;&minus;ethershare</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for Helios EtherShare Macintosh
+files</p>
+
+<p style="margin-left:9%;"><b>&minus;&minus;ushare</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for IPT UShare Macintosh files</p>
+
+
+<p style="margin-left:9%;"><b>&minus;&minus;exchange</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for PC Exchange Macintosh
+files</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="6%">
+
+
+<p><b>&minus;&minus;sgi</b></p></td>
+<td width="3%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Look for SGI
+Macintosh files</p></td></tr>
+</table>
+
+<p style="margin-left:9%;"><b>&minus;&minus;xinet</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for XINET Macintosh files</p>
+
+<p style="margin-left:9%;"><b>&minus;&minus;macbin</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for MacBinary Macintosh files</p>
+
+<p style="margin-left:9%;"><b>&minus;&minus;single</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for AppleSingle Macintosh
+files</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;&minus;dave</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Look for Thursby
+Software Systems DAVE Macintosh files</p></td></tr>
+<tr valign="top" align="left">
+<td width="9%"></td>
+<td width="8%">
+
+
+<p><b>&minus;&minus;sfm</b></p></td>
+<td width="1%"></td>
+<td width="82%">
+
+
+<p>(not supported by pycdlib-genisoimage) Look for
+Microsoft&rsquo;s Services for Macintosh files (NT only)
+(Alpha)</p> </td></tr>
+</table>
+
+
+<p style="margin-left:9%;"><b>&minus;&minus;osx&minus;double</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for Mac OS X AppleDouble Macintosh
+files</p>
+
+
+<p style="margin-left:9%;"><b>&minus;&minus;osx&minus;hfs</b></p>
+
+<p style="margin-left:18%;">(not supported by
+pycdlib-genisoimage) Look for Mac OS X HFS Macintosh
+files</p>
+
+<h2>SEE ALSO
+<a name="SEE ALSO"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">genisoimage(1),
+pycdlib-explorer(1), pycdlib-extract-files(1)</p>
+
+<h2>AUTHOR
+<a name="AUTHOR"></a>
+</h2>
+
+
+<p style="margin-left:9%; margin-top: 1em">Chris Lalancette
+&lt;clalancette@gmail.com&gt;</p>
+<hr>
+</body>
+</html>

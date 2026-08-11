@@ -20,6 +20,7 @@
  */
 
 #include "graphics/image-archive.h"
+#include "common/stream.h"
 #include "graphics/surface.h"
 
 #include "common/archive.h"
@@ -37,8 +38,11 @@ ImageArchive::~ImageArchive() {
 
 void ImageArchive::reset() {
 #ifdef USE_PNG
-	for (auto &i : _imageCache)
+	for (auto &i : _imageCache) {
+		if (i._value)
+			i._value->free();
 		delete i._value;
+	}
 	_imageCache.clear();
 #endif
 }
@@ -80,22 +84,35 @@ const Surface *ImageArchive::getImageSurface(const Common::Path &fname, int w, i
 	}
 
 	Image::PNGDecoder decoder;
-	if (!decoder.loadStream(*stream)) {
+
+	bool result = decoder.loadStream(*stream);
+	delete stream;
+
+	if (!result) {
 		warning("ImageArchive::getImageSurface(): Cannot load file %s", fname.toString().c_str());
 
 		return _imageCache[fname];
 	}
 
 	if (_imageCache.contains(fname)) {
+		// Surface was created by scale(), it needs to be freed explicitly
+		_imageCache[fname]->free();
 		delete _imageCache[fname];
 		_imageCache.erase(fname);
 	}
 
 	const Graphics::Surface *surf = decoder.getSurface();
-	_imageCache[fname] = surf->scale(w ? w : surf->w, h ? h : surf->h, true);
+
+	// Disable filtering when surface dimensions are not changed to improve performance, unless filtering is manually disable
+	if (w && h) {
+		_imageCache[fname] = surf->scale(w, h, _filtering);
+	}
+	else {
+		_imageCache[fname] = surf->scale(surf->w, surf->h, false);
+	}
+
 	return _imageCache[fname];
 #endif // USE_PNG
 }
 
 } // End of namespace Graphics
-

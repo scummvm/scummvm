@@ -32,7 +32,7 @@
 #include <Cocoa/Cocoa.h>
 #include <AppKit/NSWorkspace.h>
 
-#if defined(MAC_OS_X_VERSION_10_12) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12
+#if defined(MAC_OS_X_VERSION_10_12_2) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12_2
 
 @interface ScummVMlTouchbarDelegate : NSResponder <NSTouchBarDelegate>
 @end
@@ -52,7 +52,7 @@ NSButton *tbButton;
 		[tbButton setAction:@selector(actionKey:)];
 		[tbButton setTarget:self];
 
-		[self setButton:nullptr];
+		[self setButton:nil];
 	}
 	return self;
 }
@@ -76,7 +76,7 @@ NSButton *tbButton;
 }
 
 - (void)setButton : (const char *)title {
-	NSString *ns_title = nullptr;
+	NSString *ns_title = nil;
 	if (title) {
 		ns_title = [NSString stringWithUTF8String:title];
 	} else {
@@ -98,7 +98,7 @@ NSButton *tbButton;
 
 @end
 
-static ScummVMlTouchbarDelegate *g_tb_delegate = nullptr;
+static ScummVMlTouchbarDelegate *g_tb_delegate = nil;
 
 void macOSTouchbarUpdate(const char *message) {
 	[g_tb_delegate setButton:message];
@@ -106,6 +106,9 @@ void macOSTouchbarUpdate(const char *message) {
 
 void macOSTouchbarCreate() {
 	if (g_tb_delegate)
+		return;
+
+	if (NSAppKitVersionNumber < NSAppKitVersionNumber10_12_2)
 		return;
 
 	NSApplication *app = [NSApplication sharedApplication];

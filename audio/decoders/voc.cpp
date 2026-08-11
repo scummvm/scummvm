@@ -121,7 +121,7 @@ void VocStream::updateBlockIfNeeded() {
 				return;
 
 			// Skip all none sample blocks for now
-			if (_curBlock->code != 1 && _curBlock->code != 9)
+			if (_curBlock->code != 1 && _curBlock->code != 2 && _curBlock->code != 9)
 				continue;
 
 			_stream->seek(_curBlock->sampleBlock.offset, SEEK_SET);
@@ -198,7 +198,7 @@ bool VocStream::seek(const Timestamp &where) {
 
 	for (_curBlock = _blocks.begin(); _curBlock != _blocks.end(); ++_curBlock) {
 		// Skip all none sample blocks for now
-		if (_curBlock->code != 1 && _curBlock->code != 9)
+		if (_curBlock->code != 1 && _curBlock->code != 2 && _curBlock->code != 9)
 			continue;
 
 		uint32 nextBlockSample = curSample + _curBlock->sampleBlock.samples;
@@ -231,6 +231,7 @@ bool VocStream::seek(const Timestamp &where) {
 
 void VocStream::preProcess() {
 	Block block;
+	int lastSampleRate = 0;
 
 	// Scan through the file and collect all blocks
 	while (true) {
@@ -238,7 +239,7 @@ void VocStream::preProcess() {
 		block.length = 0;
 
 		// If we hit EOS here we found the end of the VOC file.
-		// According to http://wiki.multimedia.cx/index.php?title=Creative_Voice
+		// According to https://wiki.multimedia.cx/index.php?title=Creative_Voice
 		// there is no need for an "Terminator" block to be present.
 		// In case we hit a "Terminator" block we also break here.
 		if (_stream->eos() || block.code == 0)
@@ -265,6 +266,7 @@ void VocStream::preProcess() {
 		}
 
 		uint32 skip = 0;
+		bool storeBlock = true;
 
 		switch (block.code) {
 		// Sound data
@@ -341,6 +343,21 @@ void VocStream::preProcess() {
 			// Check whether we found a new highest rate
 			if (_rate < block.sampleBlock.rate)
 				_rate = block.sampleBlock.rate;
+			lastSampleRate = block.sampleBlock.rate;
+			break;
+
+		// Sound data continuation
+		case 2:
+			if (lastSampleRate == 0) {
+				warning("VOC file contains continuation block before sound data");
+				skip = block.length;
+				storeBlock = false;
+				break;
+			}
+
+			block.sampleBlock.offset = _stream->pos();
+			block.sampleBlock.rate = lastSampleRate;
+			block.sampleBlock.samples = skip = block.length;
 			break;
 
 		// Silence
@@ -423,7 +440,8 @@ void VocStream::preProcess() {
 		if (skip)
 			_stream->skip(skip);
 
-		_blocks.push_back(block);
+		if (storeBlock)
+			_blocks.push_back(block);
 	}
 
 	// Since we determined the sample rate we need for playback now, we will
@@ -431,25 +449,25 @@ void VocStream::preProcess() {
 	_length = Timestamp(0, _rate);
 
 	// Calculate the total play time and do some more sanity checks
-	for (BlockList::const_iterator i = _blocks.begin(), end = _blocks.end(); i != end; ++i) {
+	for (const auto &curBlock : _blocks) {
 		// Check whether we found a block 8 which survived, this is not
 		// allowed to happen!
-		if (i->code == 8) {
+		if (curBlock.code == 8) {
 			warning("VOC file contains unused block 8");
 			return;
 		}
 
 		// For now only use blocks with actual samples
-		if (i->code != 1 && i->code != 9)
+		if (curBlock.code != 1 && curBlock.code != 2 && curBlock.code != 9)
 			continue;
 
 		// Check the sample rate
-		if (i->sampleBlock.rate != _rate) {
-			warning("VOC file contains chunks with different sample rates (%d != %d)", _rate, i->sampleBlock.rate);
+		if (curBlock.sampleBlock.rate != _rate) {
+			warning("VOC file contains chunks with different sample rates (%d != %d)", _rate, curBlock.sampleBlock.rate);
 			return;
 		}
 
-		_length = _length.addFrames(i->sampleBlock.samples);
+		_length = _length.addFrames(curBlock.sampleBlock.samples);
 	}
 
 	// Set the current block to the first block in the stream

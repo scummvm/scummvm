@@ -42,7 +42,7 @@ dgCollisionMesh::dgCollisionConvexPolygon::dgCollisionConvexPolygon(dgMemoryAllo
 	m_isEdgeIntersection = false;
 
 	m_rtti |= dgCollisionConvexPolygon_RTTI;
-	for (unsigned i = 0; i < (sizeof(m_localPoly) / sizeof(m_localPoly[0])); i++)
+	for (unsigned i = 0; i < (ARRAYSIZE(m_localPoly)); i++)
 		m_localPoly[i] = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	m_normal = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	//  m_aabbP0 = dgVector (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
@@ -248,7 +248,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::QuickTestContinue(const dgCol
 	dgInt32 ret;
 	dgFloat32 val1;
 
-	NEWTON_ASSERT(m_count < dgInt32(sizeof(m_localPoly) / sizeof(m_localPoly[0])));
+	NEWTON_ASSERT(m_count < dgInt32(ARRAYSIZE(m_localPoly)));
 	m_localPoly[0] = dgVector(&m_vertex[m_index[0] * m_stride]);
 	m_localPoly[1] = dgVector(&m_vertex[m_index[1] * m_stride]);
 	m_localPoly[2] = dgVector(&m_vertex[m_index[2] * m_stride]);
@@ -278,7 +278,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::QuickTestSimd(const dgCollisi
 	simd_type normal1;
 	dgVector rotatedNormal;
 
-	NEWTON_ASSERT(m_count < dgInt32(sizeof(m_localPoly) / sizeof(m_localPoly[0])));
+	NEWTON_ASSERT(m_count < dgInt32(ARRAYSIZE(m_localPoly)));
 
 	m_localPoly[0] = dgVector(&m_vertex[m_index[0] * m_stride]);
 	m_localPoly[1] = dgVector(&m_vertex[m_index[1] * m_stride]);
@@ -328,7 +328,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::QuickTestSimd(const dgCollisi
 }
 
 dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::QuickTest(const dgCollisionConvex *const hull, const dgMatrix &matrix) {
-	NEWTON_ASSERT(m_count < dgInt32(sizeof(m_localPoly) / sizeof(m_localPoly[0])));
+	NEWTON_ASSERT(m_count < dgInt32(ARRAYSIZE(m_localPoly)));
 
 	m_localPoly[0] = dgVector(&m_vertex[m_index[0] * m_stride]);
 	m_localPoly[1] = dgVector(&m_vertex[m_index[1] * m_stride]);
@@ -458,8 +458,8 @@ void dgCollisionMesh::dgCollisionConvexPolygon::BeamClippingSimd(const dgCollisi
 
 void dgCollisionMesh::dgCollisionConvexPolygon::BeamClipping(const dgCollisionConvex *const hull, const dgMatrix &matrix, dgFloat32 dist) {
 	dgPlane planes[4];
-	dgVector points[sizeof(m_localPoly) / sizeof(m_localPoly[0]) + 8];
-	DG_CLIPPED_FACE_EDGE clippedFace[sizeof(m_localPoly) / sizeof(m_localPoly[0]) + 8];
+	dgVector points[ARRAYSIZE(m_localPoly) + 8];
+	DG_CLIPPED_FACE_EDGE clippedFace[ARRAYSIZE(m_localPoly) + 8];
 
 	dgVector origin(matrix.UnrotateVector(matrix.m_posit.Scale(dgFloat32(-1.0f))));
 	dgVector dir(m_localPoly[1] - m_localPoly[0]);
@@ -1089,7 +1089,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::CalculatePlaneIntersectionSim
 		}
 	}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	if (count > 1) {
 		dgInt32 j;
 		j = count - 1;
@@ -1134,7 +1134,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::CalculatePlaneIntersection(co
 			count++;
 		}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 		dgInt32 j = count - 1;
 		for (dgInt32 i = 0; i < count; i++) {
 			dgVector error(contactsOut[i] - contactsOut[j]);
@@ -1241,7 +1241,7 @@ dgInt32 dgCollisionMesh::dgCollisionConvexPolygon::CalculatePlaneIntersection(co
 		}
 	}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	if (count > 1) {
 		dgInt32 j = count - 1;
 		for (dgInt32 i = 0; i < count; i++) {

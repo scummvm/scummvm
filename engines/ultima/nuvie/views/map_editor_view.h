@@ -46,8 +46,8 @@ public:
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
 	void Display(bool full_redraw) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override;
 
 	void close_view() override;

@@ -672,9 +672,15 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		dataType = kIntType;
 		break;
 	case TGL_SCISSOR_BOX:
-		// fall through
+		data->_int4[0] = scissor[0];
+		data->_int4[1] = scissor[1];
+		data->_int4[2] = scissor[2];
+		data->_int4[3] = scissor[3];
+		dataType = kInt4Type;
+		break;
 	case TGL_SCISSOR_TEST:
-		error("gl_get_pname: TGL_SCISSOR_x option not implemented");
+		data->_int = (TGLint)scissor_test_enabled;
+		dataType = kIntType;
 		break;
 	case TGL_SELECTION_BUFFER_SIZE:
 		error("gl_get_pname: TGL_SELECTION_BUFFER_SIZE option not implemented");
@@ -716,7 +722,8 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		dataType = kIntType;
 		break;
 	case TGL_STENCIL_VALUE_MASK:
-		error("gl_get_pname: TGL_SCISSOR_BOX option not implemented");
+		data->_int = (TGLint)stencil_mask;
+		dataType = kIntType;
 		break;
 	case TGL_STENCIL_WRITEMASK:
 		data->_int = (TGLint)stencil_write_mask;

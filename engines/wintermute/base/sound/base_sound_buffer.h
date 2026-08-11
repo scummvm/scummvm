@@ -40,7 +40,6 @@ class SoundHandle;
 
 namespace Wintermute {
 
-class BaseFile;
 class BaseSoundBuffer : public BaseClass {
 public:
 
@@ -67,34 +66,26 @@ public:
 	bool setPan(float pan);
 	bool setPrivateVolume(int colume);
 	bool setVolume(int colume);
-	void updateVolume();
 
-	void setType(Audio::Mixer::SoundType Type);
-	Audio::Mixer::SoundType getType() const;
+	void setType(TSoundType type);
 
-	bool loadFromFile(const Common::String &filename, bool forceReload = false);
+	bool loadFromFile(const char *filename, bool forceReload = false);
 	void setStreaming(bool streamed, uint32 numBlocks = 0, uint32 blockSize = 0);
 	bool applyFX(TSFXType type, float param1, float param2, float param3, float param4);
-	int32 getPrivateVolume() const;
-	void setFreezePaused(bool freezePaused);
-	bool isFreezePaused() const;
-	bool isLooping() const;
-	//HSTREAM _stream;
-	//HSYNC _sync;
 
-private:
-	Audio::Mixer::SoundType _type;
+	bool _freezePaused;
+	uint32 _loopStart;
+	TSoundType _type;
+	bool _looping;
+	char *_filename;
+	bool _streamed;
+	int32 _privateVolume;
+
 	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle *_handle;
-	bool _freezePaused;
-	bool _looping;
-	int32 _privateVolume;
-	uint32 _loopStart;
-	uint32 _startPos;
-	Common::String _filename;
-	bool _streamed;
-	Common::SeekableReadStream *_file;
+
 	int32 _volume;
+	uint32 _startPos;
 	int8 _pan;
 };
 

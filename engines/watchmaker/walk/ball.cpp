@@ -195,7 +195,7 @@ void UpdateBall(WGame &game, struct SPhys *p) {
 		t3dVectCopy(&end, &Palla50->Mesh->Trasl);
 		end.y = -130000.0f;
 		for (i = 0; i < 6; i++)
-			if ((m = LinkMeshToStr(init, (const char *)init.Obj[oNEXTPORTAL].meshlink[i])) && (t3dVectMeshInters(m, start, end, &tmp)))
+			if ((m = LinkMeshToStr(init, init.Obj[oNEXTPORTAL].getMeshLink(i))) && (t3dVectMeshInters(m, start, end, &tmp)))
 				break;
 		if (tmp.y < 0.0f) tmp.y = 0.0f;
 		if ((Palla50->Mesh->Trasl.y < (tmp.y + 0.01f)) && (p->MVt > 0.1)) {
@@ -469,7 +469,7 @@ void ProcessGopherCamera(WGame &game) {
 		zero *= (EYES_HEIGHT * 2.0f);
 		zero.y = CHEST_HEIGHT;
 
-		GetCameraTarget(game.init, &t3dCurCamera->Target);
+		game._cameraMan->GetCameraTarget(game.init, &t3dCurCamera->Target);
 		t3dCurCamera->Target.y = LastFloorY + CHEST_HEIGHT;
 		t3dVectAdd(&t3dCurCamera->Source,  &t3dCurCamera->Target, &zero);
 		Palla50->Flags |= T3D_CHARACTER_HIDE;
@@ -558,7 +558,7 @@ void ProcessGopherCamera(WGame &game) {
 	}
 	dist = t3dVectDistance(&t3dCurCamera->Source, &OldBallCameraSource);
 	if ((dist < HALF_STEP * 30.0f) && OldBallCameraSource.z) {
-		ClipGolfCameraMove(&t3dCurCamera->Source, &OldBallCameraSource, &t3dCurCamera->Target);
+		game._cameraMan->ClipGolfCameraMove(&t3dCurCamera->Source, &OldBallCameraSource, &t3dCurCamera->Target);
 		t3dVectSub(&tmp, &t3dCurCamera->Source, &t3dCurCamera->Target);
 		t3dVectNormalize(&tmp);
 		tmp *= dist2;

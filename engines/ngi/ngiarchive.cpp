@@ -32,21 +32,21 @@
 
 namespace NGI {
 
-NGIArchive::NGIArchive(const Common::Path &filename) : _ngiFilename(filename) {
-	Common::File ngiFile;
-
-	if (!ngiFile.open(_ngiFilename)) {
+NGIArchive::NGIArchive(const Common::Path &filename) : _ngiFile(new Common::File()) {
+	if (!_ngiFile->open(filename)) {
 		warning("NGIArchive::NGIArchive(): Could not find the archive file");
+		delete _ngiFile;
+		_ngiFile = nullptr;
 		return;
 	}
 
-	ngiFile.seek(4, SEEK_SET);
+	_ngiFile->seek(4, SEEK_SET);
 
-	unsigned int count = ngiFile.readUint16LE(); // How many entries?
+	unsigned int count = _ngiFile->readUint16LE(); // How many entries?
 
-	ngiFile.seek(20, SEEK_SET);
+	_ngiFile->seek(20, SEEK_SET);
 
-	unsigned int key = ngiFile.readUint16LE();
+	unsigned int key = _ngiFile->readUint16LE();
 
 	byte key1, key2;
 
@@ -55,11 +55,11 @@ NGIArchive::NGIArchive(const Common::Path &filename) : _ngiFilename(filename) {
 
 	int fatSize = count * 32;
 
-	ngiFile.seek(32, SEEK_SET);
+	_ngiFile->seek(32, SEEK_SET);
 
 	byte *fat = (byte *)calloc(fatSize, 1);
 
-	ngiFile.read(fat, fatSize);
+	_ngiFile->read(fat, fatSize);
 
 	for (int i = 0; i < fatSize; i++) {
 		key1 = (key1 << 1) ^ key2;
@@ -97,6 +97,8 @@ NGIArchive::NGIArchive(const Common::Path &filename) : _ngiFilename(filename) {
 NGIArchive::~NGIArchive() {
 	debugC(0, kDebugLoading, "NGIArchive Destructor Called");
 	g_nmi->_currArchive = nullptr;
+
+	delete _ngiFile;
 }
 
 bool NGIArchive::hasFile(const Common::Path &path) const {
@@ -123,20 +125,18 @@ const Common::ArchiveMemberPtr NGIArchive::getMember(const Common::Path &path) c
 }
 
 Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::Path &path) const {
-	if (!_headers.contains(path)) {
+	if (!_ngiFile || !_headers.contains(path)) {
 		return nullptr;
 	}
 
 	NgiHeader *hdr = _headers[path].get();
 
-	Common::File archiveFile;
-	archiveFile.open(_ngiFilename);
-	archiveFile.seek(hdr->pos, SEEK_SET);
+	_ngiFile->seek(hdr->pos, SEEK_SET);
 
 	byte *data = (byte *)malloc(hdr->size);
 	assert(data);
 
-	int32 len = archiveFile.read(data, hdr->size);
+	int32 len = _ngiFile->read(data, hdr->size);
 	assert(len == hdr->size);
 
 	return new Common::MemoryReadStream(data, hdr->size, DisposeAfterUse::YES);

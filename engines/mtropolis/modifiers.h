@@ -48,6 +48,7 @@ public:
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+	void removeModifier(const Modifier *modifier) override;
 
 	IModifierContainer *getMessagePropagationContainer() override;
 	IModifierContainer *getChildContainer() override;
@@ -193,6 +194,10 @@ public:
 	const char *debugGetTypeName() const override { return "Save And Restore Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
+
+protected:
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -702,21 +707,15 @@ public:
 #endif
 
 private:
-	struct EvaluateAndSendTaskData {
-		EvaluateAndSendTaskData() : runtime(nullptr) {}
-
-		Common::SharedPtr<MiniscriptThread> thread;
-		Common::WeakPtr<RuntimeObject> triggerSource;
-		Runtime *runtime;
-		DynamicValue incomingData;
+	struct RunEvaluateAndSendCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(IfMessengerModifier *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
-
-	VThreadState evaluateAndSendTask(const EvaluateAndSendTaskData &taskData);
 
 	Event _when;
 	MessengerSendSpec _sendSpec;
@@ -1148,6 +1147,7 @@ private:
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+	void removeModifier(const Modifier *modifier) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;

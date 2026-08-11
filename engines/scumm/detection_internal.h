@@ -35,7 +35,7 @@
 #include "scumm/file_nes.h"
 
 // Includes some shared functionalities, which is required by multiple TU's.
-// Mark it as static in the header, so visibility for function is limited by the TU, and we can use it whereever required.
+// Mark it as static in the header, so visibility for function is limited by the TU, and we can use it wherever required.
 // This is being done, because it's necessary in detection, creating an instance, as well as in initiliasing the ScummEngine.
 #include "scumm/detection_steam.h"
 
@@ -237,6 +237,36 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, co
 		if (searchFSNode(fslist, "korean.trs", langFile)) {
 			debugC(0, kDebugGlobalDetection, "Korean fan translation detected");
 			return Common::KO_KOR;
+		}
+
+		if (id == GID_REBEL2) {
+			Common::FSNode systmDir;
+			Common::FSList systmList;
+			Common::File trs;
+			if (searchFSNode(fslist, "SYSTM", systmDir)
+				&& systmDir.isDirectory()
+				&& systmDir.getChildren(systmList, Common::FSNode::kListFilesOnly)
+				&& searchFSNode(systmList, "GAME.TRS", langFile)
+				&& trs.open(langFile)) {
+				switch (trs.size()) {
+				case 46294:	// ed4b2312e8f60ad3fdd9d02db38da9a9
+					return Common::JA_JPN;
+				case 46746:	// d9aced0c3fcb8f6a0045dcd4cbf12590
+					return Common::EN_ANY;
+				case 48097:	// 66353d7250f680b28992459c355caa17
+					return Common::IT_ITA;
+				case 49750:	// a4d2d985548cdd29523db5b117ca1b3d
+					return Common::ES_ESP;
+				case 50094:	// 004fb2fd15f84a1f81cc362d73811c9c
+					return Common::DE_DEU;
+				case 58883:	// efffbf955884a87a3be6b8459ba559de
+					return Common::PT_BRA;
+				case 60976:	// c53823d48beca122c45a83d35027a0e7
+					return Common::FR_FRA;
+				default:
+					break;
+				}
+			}
 		}
 
 		return originalLanguage;
@@ -459,6 +489,20 @@ static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist
 	}
 }
 
+static bool computeRebel1MacResourceForkMD5(const DetectorDesc &desc, const Common::String &baseFile,
+		Common::String &md5, int64 &size) {
+	Common::SearchSet directory;
+	directory.addDirectory(desc.node.getParent());
+	Common::MacResManager macResMan;
+
+	if (!macResMan.open(Common::Path(baseFile), directory) || !macResMan.hasResFork())
+		return false;
+
+	md5 = macResMan.computeResForkMD5AsString(kMD5FileSizeLimit);
+	size = macResMan.getResForkDataSize();
+	return !md5.empty();
+}
+
 static void detectGames(const Common::FSList &fslist, Common::List<DetectorResult> &results, const char *gameid) {
 	DescMap fileMD5Map;
 	DetectorResult dr;
@@ -478,10 +522,15 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		// exist in the directory we are looking at, we can skip to the next
 		// one immediately.
 		Common::String file(generateFilenameForDetection(gfp->pattern, gfp->genMethod, gfp->platform));
+		const Common::String baseFile = file;
 		Common::Platform platform = gfp->platform;
+		const bool isRebel1Mac = !scumm_stricmp(gfp->gameid, "rebel1") && platform == Common::kPlatformMacintosh;
 		if (!fileMD5Map.contains(file)) {
 			if (fileMD5Map.contains(file + ".bin") && (platform == Common::Platform::kPlatformMacintosh || platform == Common::Platform::kPlatformUnknown)) {
 				file += ".bin";
+				platform = Common::Platform::kPlatformMacintosh;
+			} else if (isRebel1Mac && fileMD5Map.contains(file + ".rsrc")) {
+				file += ".rsrc";
 				platform = Common::Platform::kPlatformMacintosh;
 			} else
 				continue;
@@ -526,13 +575,14 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			Common::String md5str;
 			if (tmp)
 				md5str = computeStreamMD5AsString(*tmp, kMD5FileSizeLimit);
-			if (!md5str.empty()) {
-				int filesize = tmp->size();
+			if (tmp && !md5str.empty()) {
+				int64 filesize = tmp->size();
 
 				d.md5 = md5str;
 				d.md5Entry = findInMD5Table(md5str.c_str());
 
 				if (!d.md5Entry && (platform == Common::Platform::kPlatformMacintosh || platform == Common::Platform::kPlatformUnknown)) {
+					tmp->seek(0);
 					Common::SeekableReadStream *dataStream = Common::MacResManager::openDataForkFromMacBinary(tmp);
 					if (dataStream) {
 						Common::String dataMD5 = computeStreamMD5AsString(*dataStream, kMD5FileSizeLimit);
@@ -545,6 +595,20 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 						}
 						delete dataStream;
 					}
+
+					if (!d.md5Entry && isRebel1Mac) {
+						Common::String resourceMD5;
+						int64 resourceSize;
+						if (computeRebel1MacResourceForkMD5(d, baseFile, resourceMD5, resourceSize)) {
+							const MD5Table *resourceMD5Entry = findInMD5Table(resourceMD5.c_str());
+							if (resourceMD5Entry) {
+								d.md5 = resourceMD5;
+								d.md5Entry = resourceMD5Entry;
+								filesize = resourceSize;
+								platform = Common::Platform::kPlatformMacintosh;
+							}
+						}
+					}
 				}
 
 				dr.md5 = d.md5;
@@ -554,8 +618,8 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 					computeGameSettingsFromMD5(fslist, gfp, d.md5Entry, dr);
 
 					// Print some debug info.
-					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
-						file.c_str(), md5str.c_str(), filesize);
+					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %" PRId64 "\n",
+						file.c_str(), d.md5.c_str(), filesize);
 
 					// Sanity check: We *should* have found a matching gameid/variant at this point.
 					// If not, we may have #ifdef'ed the entry out in our detection_tables.h, because we
@@ -623,7 +687,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 			// Detect if there are speech files in this unknown game.
 			if (detectSpeech(fslist, g)) {
-				if (strchr(dr.game.guioptions, GUIO_NOSPEECH[0]) != NULL) {
+				if (strstr(dr.game.guioptions, GUIO_NOSPEECH) != NULL) {
 					if (g->id == GID_MONKEY || g->id == GID_MONKEY2)
 						// TODO: This may need to be updated if something important gets added
 						// in the top detection table for these game ids.
@@ -862,14 +926,20 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 static Common::String customizeGuiOptions(const DetectorResult &res) {
 	Common::String guiOptions = res.game.guioptions;
 
-	int midiflags = res.game.midi;
-	// These games often have no detection entries of their own and therefore come with all the DOS audio options.
-	// We clear them here to avoid confusion and add the appropriate default sound option below. The games from
-	// version 5 onwards seem to have correct sound options in the detection tables.
-	if (res.game.version < 5 && (res.game.platform == Common::kPlatformAmiga || (res.game.platform == Common::kPlatformMacintosh && strncmp(res.extra, "Steam", 6)) || res.game.platform == Common::kPlatformC64))
-		midiflags = MDT_NONE;
-
 	static const uint mtypes[] = {MT_PCSPK, MT_CMS, MT_PCJR, MT_ADLIB, MT_C64, MT_AMIGA, MT_APPLEIIGS, MT_TOWNS, MT_PC98, MT_SEGACD, 0, 0, 0, 0, MT_MACINTOSH};
+	int midiflags = res.game.midi;
+
+	// These games often have no detection entries of their own and therefore come with all the DOS audio options.
+	// We clear them here to avoid confusion and add the appropriate default sound option below.
+	if (res.game.platform == Common::kPlatformAmiga || (res.game.platform == Common::kPlatformMacintosh && strncmp(res.extra, "Steam", 6)) || res.game.platform == Common::kPlatformC64) {
+		midiflags = MDT_NONE;
+		// Remove invalid types from options string
+		for (int i = 0; i < ARRAYSIZE(mtypes); ++i) {
+			if (!mtypes[i])
+				continue;
+			Common::replace(guiOptions, MidiDriver::musicType2GUIO(mtypes[i]), Common::String());
+		}
+	}
 
 	for (int i = 0; i < ARRAYSIZE(mtypes); ++i) {
 		if (mtypes[i] && (midiflags & (1 << i)))
@@ -886,12 +956,10 @@ static Common::String customizeGuiOptions(const DetectorResult &res) {
 	static const char *const rmodes[] = { GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGABW, GUIO_RENDERCGACOMP, GUIO_RENDERCGA };
 	if (res.game.platform == Common::kPlatformAmiga) {
 		for (int i = 0; i < ARRAYSIZE(rmodes); ++i) {
-			uint pos = guiOptions.findFirstOf(rmodes[i][0]);
-			if (pos != Common::String::npos)
-				guiOptions.erase(pos, 1);
+			Common::replace(guiOptions, rmodes[i], Common::String());
 		}
 	}
-	
+
 	Common::String defaultRenderOption = "";
 	Common::String defaultSoundOption = "";
 

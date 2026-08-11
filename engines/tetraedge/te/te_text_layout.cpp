@@ -87,7 +87,13 @@ void TeTextLayout::setText(const Common::String &val) {
 			break;
 		const Common::String *replacement = loc->text(replaced.substr(bstart + 2, bend - bstart - 2));
 		if (replacement) {
-			replaced.replace(bstart, bend - bstart + 1, *replacement);
+			/* Workaround: Syberia 2 on Switch has strings
+			   <Forward> and <Backwards> via replacement
+			   in xml embed in lua. Escape < and >. */
+			Common::String escaped = *replacement;
+			Common::replace(escaped, "<", "&lt;");
+			Common::replace(escaped, ">", "&gt;");
+			replaced.replace(bstart, bend - bstart + 1, escaped);
 		}
 		bstart = replaced.find("$(", bstart + 1);
 	}
@@ -120,13 +126,12 @@ void TeTextLayout::setText(const Common::String &val) {
 
 	if (!parser.fontFile().empty()) {
 		Common::Path fontPath(parser.fontFile());
-		Common::FSNode fontNode = g_engine->getCore()->findFile(fontPath);
+		TetraedgeFSNode fontNode = g_engine->getCore()->findFile(fontPath);
 		TeIntrusivePtr<TeIFont> font;
 		if (parser.fontFile().hasSuffixIgnoreCase(".ttf"))
 			font = g_engine->getResourceManager()->getResource<TeFont3>(fontNode).get();
 		else
 			font = g_engine->getResourceManager()->getResource<TeFont2>(fontNode).get();
-		//font->load(fontPath); // lazy load this later.
 		_base.setFont(0, font);
 	}
 	if (parser.style().size())

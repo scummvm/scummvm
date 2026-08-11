@@ -1,0 +1,46 @@
+Usage: cxxtestgen [options] [<filename> ...]
+
+The 'cxxtestgen' command processes C++ header files to perform test discovery,
+and then it creates files for the 'CxxTest' test runner.
+
+Options:
+  -h, --help            show this help message and exit
+  --version             Write the CxxTest version.
+  -o NAME, --output=NAME
+                        Write output to file NAME.
+  -w WORLD, --world=WORLD
+                        The label of the tests, used to name the XML results.
+  --include=HEADER      Include file HEADER in the test runner before other
+                        headers.
+  --abort-on-fail       Abort tests on failed asserts (like xUnit).
+  --main=MAIN           Specify an alternative name for the main() function.
+  --headers=HEADER_FILENAME
+                        Specify a filename that contains a list of header
+                        files that are processed to generate a test runner.
+  --runner=CLASS        Create a test runner that processes test events using
+                        the class CxxTest::CLASS.
+  --gui=CLASS           Create a GUI test runner that processes test events
+                        using the class CxxTest::CLASS. (deprecated)
+  --error-printer       Create a test runner using the ErrorPrinter class, and
+                        allow the use of the standard library.
+  --xunit-printer       Create a test runner using the XUnitPrinter class.
+  --xunit-file=XUNIT_FILE
+                        The file to which the XML summary is written for test
+                        runners using the XUnitPrinter class.  The default XML
+                        filename is TEST-<world>.xml, where <world> is the
+                        value of the --world option.  (default: cxxtest)
+  --have-std            Use the standard library (even if not found in tests).
+  --no-std              Do not use standard library (even if found in tests).
+  --have-eh             Use exception handling (even if not found in tests).
+  --no-eh               Do not use exception handling (even if found in
+                        tests).
+  --longlong=TYPE       Use TYPE as for long long integers.  (default: not
+                        supported)
+  --no-static-init      Do not rely on static initialization in the test
+                        runner.
+  --template=TEMPLATE   Generate the test runner using file TEMPLATE to define
+                        a template.
+  --root                Write the main() function and global data for a test
+                        runner.
+  --part                Write the tester classes for a test runner.
+  -f, --fog-parser      Use new FOG C++ parser (disabled)

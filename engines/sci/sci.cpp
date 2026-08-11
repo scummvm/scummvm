@@ -54,6 +54,7 @@
 #include "sci/graphics/controls16.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/macfont.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/menu.h"
@@ -61,7 +62,7 @@
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
@@ -135,7 +136,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_console(nullptr),
 	_tts(nullptr),
 	_rng("sci"),
-	_forceHiresGraphics(false),
+	_useHiresGraphics(false),
 	_inErrorString(false) {
 
 	assert(g_sci == nullptr);
@@ -185,6 +186,12 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	// The installer would copy these patches to the root game directory.
 	if (_gameId == GID_LSL5) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "bonus"); // resource patches
+	}
+
+	// Behind the Developer's Shield is an alternate set of articles and
+	// artwork bundled with Inside the Chest.
+	if (_gameId == GID_SHIELD) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "shield", -1);
 	}
 
 	switch (desc->language) {
@@ -311,16 +318,25 @@ Common::Error SciEngine::run() {
 		// so read the user option now.
 		// We need to do this, because the option's default is "true", but we don't want "true"
 		// for any game that does not have this option.
-		_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+		_useHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
 	} else if (hasMacFonts()) {
 		// Default to using hires Mac fonts if GUI option isn't present, as it was added later.
-		_forceHiresGraphics = true;
+		_useHiresGraphics = true;
 	}
 
 	if (getSciVersion() < SCI_VERSION_2) {
+		bool undither = ConfMan.getBool("disable_dithering");
+		Common::RenderMode renderMode = SciGfxDriver::getRenderMode();
+
+		// Disable undithering for CGA, Hercules and other unsuitable video modes. For all other modes,
+		// the render mode should have been changed to kRenderDefault inside SciGfxDriver::getRenderMode()
+		// if undithering is selected.
+		if (renderMode != Common::kRenderDefault)
+			undither = false;
+
 		// Initialize the game screen
-		_gfxScreen = new GfxScreen(_resMan);
-		_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
+		_gfxScreen = new GfxScreen(_resMan, renderMode);
+		_gfxScreen->enableUndithering(undither);
 	}
 
 	_kernel = new Kernel(_resMan, segMan);
@@ -359,7 +375,7 @@ Common::Error SciEngine::run() {
 	// we try to find the super class address of the game object, we can't do that earlier
 	const Object *gameObject = segMan->getObject(_gameObjectAddress);
 	if (!gameObject) {
-		warning("Could not get game object, aborting...");
+		warning("Could not get game object, aborting");
 		return Common::kUnknownError;
 	}
 
@@ -442,10 +458,6 @@ Common::Error SciEngine::run() {
 		warning("Fan made script patch detected");
 	}
 
-	if (getGameId() == GID_GK2 && ConfMan.getBool("subtitles") && !_resMan->testResource(ResourceId(kResourceTypeSync, 10))) {
-		suggestDownloadGK2SubTitlesPatch();
-	}
-
 	runGame();
 
 	ConfMan.flushToDisk();
@@ -507,42 +519,12 @@ bool SciEngine::gameHasFanMadePatch() {
 	return false;
 }
 
-void SciEngine::suggestDownloadGK2SubTitlesPatch() {
-	Common::U32String altButton;
-	Common::U32String downloadMessage;
-
-	if (_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		altButton = _("Download patch");
-		downloadMessage = _("(or click 'Download patch' button. But note - it only downloads, you will have to continue from there)\n");
-	}
-	else {
-		altButton = "";
-		downloadMessage = "";
-	}
-
-	int result = showScummVMDialog(_("GK2 has a fan made subtitles, available thanks to the good persons at SierraHelp.\n\n"
-		"Installation:\n"
-		"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n" +
-		downloadMessage +
-		"- extract zip file\n"
-		"- no need to run the .exe file\n"
-		"- extract the .exe file with a file archiver, like 7-zip\n"
-		"- create a PATCHES subdirectory inside your GK2 directory\n"
-		"- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
-		"- replace files with similar names\n"
-		"- restart the game\n"), altButton, false);
-	if (result) {
-		char url[] = "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip";
-		_system->openUrl(url);
-	}
-}
-
 bool SciEngine::initGame() {
 	// Script 0 needs to be allocated here before anything else!
 	int script0Segment = _gamestate->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
 	DataStack *stack = _gamestate->_segMan->allocateStack(VM_STACK_SIZE);
 
-	_gamestate->_msgState = new MessageState(_gamestate->_segMan);
+	_gamestate->initMessageState();
 	_gamestate->gcCountDown = GC_INTERVAL - 1;
 
 	// Script 0 should always be at segment 1
@@ -869,8 +851,8 @@ bool SciEngine::isCD() const {
 	return _gameDescription->flags & ADGF_CD;
 }
 
-bool SciEngine::forceHiresGraphics() const {
-	return _forceHiresGraphics;
+bool SciEngine::useHiresGraphics() const {
+	return _useHiresGraphics;
 }
 
 bool SciEngine::isBE() const{

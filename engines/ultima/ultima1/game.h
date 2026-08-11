@@ -71,7 +71,7 @@ public:
 	/**
 	 * Returns true if the game can currently be saved
 	 */
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Give some treasure

@@ -227,6 +227,16 @@ public:
 	int getMouseY();
 
 	/**
+	 * Sets the X position of the cursor in pixels
+	 */
+	void setMouseX(int posX);
+
+	/**
+	 * Sets the Y position of the cursor in pixels
+	 */
+	void setMouseY(int posY);
+
+	/**
 	 * Returns true if a given key was pressed
 	 * @param KeyCode       The key code to be checked
 	 * @return              Returns true if the given key is done, otherwise false.

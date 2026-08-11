@@ -243,6 +243,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 				Operand *op = readOperand();
 				// TODO check op type is string.
 				_handled = true;
+				debugC(2, kDebugSound, "** Script sound '%s'", op->toString().c_str());
 				_engine->playSound(op->toString());
 				delete op;
 				byte d = _data->readByte();
@@ -307,10 +308,12 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 		} else {
 			Chr *player = _world->_player;
 			ObjArray *weapons = player->getWeapons(true);
-			for (ObjArray::const_iterator weapon = weapons->begin(); weapon != weapons->end(); ++weapon) {
-				if (_engine->tryAttack(*weapon, input)) {
-					_handled = _engine->handleAttack(*weapon);
-					break;
+			if (weapons) {
+				for (const auto &weapon : *weapons) {
+					if (_engine->tryAttack(weapon, input)) {
+						_handled = _engine->handleAttack(weapon);
+						break;
+					}
 				}
 			}
 
@@ -497,8 +500,9 @@ Script::Operand *Script::readStringOperand() {
 
 	while (true) {
 		byte c = _data->readByte();
-		if (c >= 0x20 && c < 0x80)
-			*str += c;
+
+		if (c < 0x80)
+			*str += (c < 0x20 ? ' ' : c);
 		else
 			break;
 		if ((c < '0' || c > '9') && !(c == '-' && str->empty()))
@@ -653,6 +657,40 @@ enum {
 	kMoveChrScene
 };
 
+#define defEnum(x) #x
+
+static const char *compList[] = {
+	defEnum(kCompEqNumNum),
+	defEnum(kCompEqObjScene),
+	defEnum(kCompEqChrScene),
+	defEnum(kCompEqObjChr),
+	defEnum(kCompEqChrChr),
+	defEnum(kCompEqSceneScene),
+	defEnum(kCompEqStringTextInput),
+	defEnum(kCompEqTextInputString),
+	defEnum(kCompEqNumberTextInput),
+	defEnum(kCompEqTextInputNumber),
+	defEnum(kCompLtNumNum),
+	defEnum(kCompLtStringTextInput),
+	defEnum(kCompLtTextInputString),
+	defEnum(kCompLtObjChr),
+	defEnum(kCompLtChrObj),
+	defEnum(kCompLtObjScene),
+	defEnum(kCompGtNumNum),
+	defEnum(kCompGtStringString),
+	defEnum(kCompGtChrScene),
+	defEnum(kMoveObjChr),
+	defEnum(kMoveObjScene),
+	defEnum(kMoveChrScene),
+};
+
+Common::String comp2str(int fl) {
+	if (fl >= ARRAYSIZE(compList) || fl < 0)
+		return Common::String::format("<%d>", fl);
+
+	return compList[fl];
+}
+
 static const char *typeNames[] = {
 	"OBJ",
 	"CHR",
@@ -713,23 +751,47 @@ struct Comparator {
 };
 
 bool Script::compare(Operand *o1, Operand *o2, int comparator) {
+	if (o1 == NULL) {
+		debug(1, "%s() o1 is null", __func__);
+		return false;
+	}
+	if (o2 == NULL) {
+		debug(1, "%s() o2 is null", __func__);
+		return false;
+	}
+
+	debug(9, "     comparator %s with %s with %s", typeNames[o1->_type], typeNames[o2->_type], comp2str(comparator).c_str());
+
 	switch(comparator) {
 	case kCompEqNumNum:
 		return o1->_value.number == o2->_value.number;
 	case kCompEqObjScene:
-		for (ObjList::const_iterator it = o2->_value.scene->_objs.begin(); it != o2->_value.scene->_objs.end(); ++it)
-			if (*it == o1->_value.obj)
-				return true;
+		if (o2->_value.scene == NULL) {
+			debug(1, "%s() o2->_value.scene is null", __func__);
+			return false;
+		} else {
+			for (const auto &obj : o2->_value.scene->_objs)
+				if (obj == o1->_value.obj)
+					return true;
+		}
 		return false;
 	case kCompEqChrScene:
-		for (ChrList::const_iterator it = o2->_value.scene->_chrs.begin(); it != o2->_value.scene->_chrs.end(); ++it)
-			if (*it == o1->_value.chr)
-				return true;
+		if (o2->_value.scene == NULL) {
+			debug(1, "%s() o2->_value.scene is null", __func__);
+		} else {
+			for (const auto &chr : o2->_value.scene->_chrs)
+				if (chr == o1->_value.chr)
+					return true;
+		}
 		return false;
 	case kCompEqObjChr:
-		for (ObjArray::const_iterator it = o2->_value.chr->_inventory.begin(); it != o2->_value.chr->_inventory.end(); ++it)
-			if (*it == o1->_value.obj)
-				return true;
+		if (o2->_value.chr == NULL) {
+			debug(1, "%s() o2->_value.chr is null", __func__);
+		} else {
+			for (const auto &obj : o2->_value.chr->_inventory)
+				if (obj == o1->_value.obj)
+					return true;
+		}
 		return false;
 	case kCompEqChrChr:
 		return o1->_value.chr == o2->_value.chr;
@@ -774,11 +836,21 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kCompLtTextInputString:
 		return !compare(o2, o1, kCompEqStringTextInput);
 	case kCompLtObjChr:
-		return o1->_value.obj->_currentOwner != o2->_value.chr;
+		if (o1->_value.obj == NULL) {
+			debug(1, "%s() o1->_value.obj is null", __func__);
+		} else {
+			return o1->_value.obj->_currentOwner != o2->_value.chr;
+		}
+		break;
 	case kCompLtChrObj:
 		return compare(o2, o1, kCompLtObjChr);
 	case kCompLtObjScene:
-		return o1->_value.obj->_currentScene != o2->_value.scene;
+		if (o1->_value.obj == NULL) {
+			debug(1, "%s() o1->_value.obj is null", __func__);
+		} else {
+			return o1->_value.obj->_currentScene != o2->_value.scene;
+		}
+		break;
 	case kCompGtNumNum:
 		return o1->_value.number > o2->_value.number;
 	case kCompGtStringString:
@@ -786,16 +858,25 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kCompGtChrScene:
 		return (o1->_value.chr != NULL && o1->_value.chr->_currentScene != o2->_value.scene);
 	case kMoveObjChr:
-		if (o1->_value.obj->_currentOwner != o2->_value.chr) {
-			_world->move(o1->_value.obj, o2->_value.chr);
-			_handled = true;  // TODO: Is this correct?
+		if (o1->_value.obj == NULL) {
+			debug(1, "%s() o1->_value.obj is null", __func__);
+		} else {
+			if (o1->_value.obj->_currentOwner != o2->_value.chr) {
+				_world->move(o1->_value.obj, o2->_value.chr);
+				_handled = true;  // TODO: Is this correct?
+			}
 		}
 		break;
 	case kMoveObjScene:
-		if (o1->_value.obj->_currentScene != o2->_value.scene) {
-			_world->move(o1->_value.obj, o2->_value.scene);
-			// Note: This shouldn't call setHandled() - see
-			// Sultan's Palace 'Food and Drink' scene.
+		if (o1->_value.obj == NULL) {
+			debug(1, "%s() o1->_value.obj is null", __func__);
+			return false;
+		} else {
+			if (o1->_value.obj->_currentScene != o2->_value.scene) {
+				_world->move(o1->_value.obj, o2->_value.scene);
+				// Note: This shouldn't call setHandled() - see
+				// Sultan's Palace 'Food and Drink' scene.
+			}
 		}
 		break;
 	case kMoveChrScene:
@@ -823,6 +904,7 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 
 	// Now, try partial matches.
 	Operand *c1, *c2;
+	debug(8, "   no direct comparators, trying partial matches");
 	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
 		if (comparators[cmp].op != op[0])
 			continue;
@@ -841,6 +923,7 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 	}
 
 	// Now, try double conversion.
+	debug(8, "   no direct comparators, trying double conversion");
 	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
 		if (comparators[cmp].op != op[0])
 			continue;
@@ -1198,7 +1281,7 @@ void Script::convertToText() {
 	ScriptText *scr = new ScriptText;
 	scr->offset = _data->pos();
 
-	while(true) {
+	while (true) {
 		int c = _data->readByte();
 
 		if (_data->eos())
@@ -1218,7 +1301,13 @@ void Script::convertToText() {
 					warning("convertToText: Unknown code 0x%02x at %d", c, (int)_data->pos());
 					c = ' ';
 				}
+
+				if (_data->eos())
+					break;
 			} while (c < 0x80);
+
+			if (_data->eos())
+				break;
 
 			_data->seek(-1, SEEK_CUR);
 		} else if (c == 0xff) {

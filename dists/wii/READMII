@@ -103,6 +103,6 @@ DISPLAY SETUP
 
 THANKS
 
-  shagkur and WinterMute, for devkitppc/libogc and the coorperation
+  shagkur and WinterMute, for devkitppc/libogc and the cooperation
   svpe, for fixing the libfat feof/thread bugs on the last minute
   para, for making wiiuse available in libogc

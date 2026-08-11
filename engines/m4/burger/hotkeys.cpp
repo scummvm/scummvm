@@ -114,8 +114,7 @@ void Hotkeys::escape_key_pressed(void *, void *) {
 			_G(kernel).going = false;
 		} else {
 			// In-game, so go back to demo menu screen
-			_G(game).new_section = 9;
-			_G(game).new_room = 901;
+			_G(game).setRoom(901);
 		}
 		break;
 
@@ -127,8 +126,7 @@ void Hotkeys::escape_key_pressed(void *, void *) {
 		case 951:
 		case 971:
 			// Switch to main menu
-			_G(game).new_section = 9;
-			_G(game).new_room = 903;
+			_G(game).setRoom(903);
 			break;
 
 		case 903:

@@ -30,6 +30,15 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+//#define MM1_NEW_GFX
+
+#ifdef MM1_NEW_GFX
+constexpr int TEXT_COLOR = 9;
+#else
+constexpr int TEXT_COLOR = 0xff;
+#endif
+
+
 class TextView : public UIElement {
 private:
 	XeenFont *getFont() const;
@@ -79,6 +88,11 @@ protected:
 	 * Gets the string width
 	 */
 	size_t getStringWidth(const Common::String &str);
+
+	/**
+	 * Truncates a string to fit in the given pixel width
+	 */
+	Common::String truncateString(const Common::String &str, int maxWidth);
 
 	/**
 	 * Move the text position to the next line

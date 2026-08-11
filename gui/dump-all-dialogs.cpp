@@ -43,6 +43,8 @@
 #include "gui/themebrowser.h"
 #include "gui/massadd.h"
 #include "gui/options.h"
+#include "gui/widgets/tab.h"
+#include "gui/launcher.h"
 
 #include "image/png.h"
 
@@ -70,6 +72,22 @@ void handleSimpleDialog(GUI::Dialog &dialog, const Common::String &filename,Grap
 	dialog.close();
 }
 
+void loopThroughTabs(GUI::Dialog &dialog, const Common::String &lang, Graphics::Surface surf, const Common::String name) {
+	dialog.open();
+	GUI::Widget *widget = nullptr;
+	widget = dialog.findWidget((uint32)kTabWidget);
+
+	if (widget) {
+		TabWidget *tabWidget = (TabWidget *)widget;
+		for (int tabNo = 0; tabNo < tabWidget->getTabCount(); tabNo++) {
+			Common::String suffix = Common::String::format("-%d-%dx%d-%s.png", tabNo + 1, g_system->getOverlayWidth(), g_system->getOverlayHeight(), lang.c_str());
+			tabWidget->setActiveTab(tabNo);
+			handleSimpleDialog(dialog, name + suffix, surf);
+		}
+	}
+	dialog.close();
+}
+
 void dumpDialogs(const Common::String &message, const Common::String &lang) {
 #ifdef USE_TRANSLATION
 	// Update GUI language
@@ -90,7 +108,7 @@ void dumpDialogs(const Common::String &message, const Common::String &lang) {
 	GUI::AboutDialog aboutDialog;
 	handleSimpleDialog(aboutDialog, "aboutDialog" + suffix, surf);
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	// CloudConnectingWizard
 	GUI::CloudConnectionWizard cloudConnectingWizard;
 	handleSimpleDialog(cloudConnectingWizard, "cloudConnectingWizard" + suffix, surf);
@@ -98,7 +116,9 @@ void dumpDialogs(const Common::String &message, const Common::String &lang) {
 	// RemoteBrowserDialog
 	GUI::RemoteBrowserDialog remoteBrowserDialog(_("Select directory with game data"));
 	handleSimpleDialog(remoteBrowserDialog, "remoteBrowserDialog" + suffix, surf);
+#endif
 
+#ifdef USE_HTTP
 	// DownloadIconPacksDialog
 	GUI::DownloadPacksDialog downloadIconPacksDialog(_("icon packs"), "LIST", "gui-icons*.dat");
 	handleSimpleDialog(downloadIconPacksDialog, "downloadIconPacksDialog" + suffix, surf);
@@ -130,6 +150,11 @@ void dumpDialogs(const Common::String &message, const Common::String &lang) {
 	GUI::MassAddDialog massAddDialog(Common::FSNode("."));
 	handleSimpleDialog(massAddDialog, "massAddDialog-" + suffix, surf);
 
+	// GlobalOptionsDialog
+	LauncherSimple launcherDialog("Launcher");
+	GUI::GlobalOptionsDialog globalOptionsDialog(&launcherDialog);
+	loopThroughTabs(globalOptionsDialog, lang, surf, "GlobalOptionDialog");
+
 	// LauncherDialog
 #if 0
 	GUI::LauncherChooser chooser;
@@ -156,7 +181,7 @@ void dumpAllDialogs(const Common::String &message) {
 					   0};
 
 	// HACK: Pass info to backend to force window resize
-	ConfMan.setBool("force_resize", true, Common::ConfigManager::kApplicationDomain);
+	ConfMan.setBool("dumper_force_resize", true, Common::ConfigManager::kApplicationDomain);
 	Common::FSNode dumpDir("snapshots");
 
 	if (!dumpDir.isDirectory())
@@ -195,7 +220,10 @@ void dumpAllDialogs(const Common::String &message) {
 	// Clean up the temporary flag.
 	// Since we are still within the same method where we added,
 	// there is no need to flush config to the disk
-	ConfMan.removeKey("force_resize", Common::ConfigManager::kApplicationDomain);
+	ConfMan.removeKey("dumper_force_resize", Common::ConfigManager::kApplicationDomain);
+	ConfMan.flushToDisk();
+
+	warning("ALL DIALOGS DUMPED");
 }
 
 } // End of namespace GUI

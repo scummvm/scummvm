@@ -32,17 +32,26 @@
 
 class SDLPlugin : public DynamicPlugin {
 protected:
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_SharedObject *_dlHandle;
+#else
 	void *_dlHandle;
+#endif
 
 	virtual VoidFunc findSymbol(const char *symbol) {
-		void *func = SDL_LoadFunction(_dlHandle, symbol);
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_FunctionPointer func;
+#else
+		void *func ;
+#endif
+		func = SDL_LoadFunction(_dlHandle, symbol);
 		if (!func)
 			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.toString(Common::Path::kNativeSeparator).c_str(), SDL_GetError());
 
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
 		// and data pointers, but dlsym always returns a void pointer. For details,
-		// see e.g. <http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
+		// see e.g. <https://web.archive.org/web/20061205092618/http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
 		assert(sizeof(VoidFunc) == sizeof(func));
 		VoidFunc tmp;
 		memcpy(&tmp, &func, sizeof(VoidFunc));

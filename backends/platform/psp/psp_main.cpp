@@ -44,13 +44,13 @@
 
 #include <psppower.h>
 
-#include <common/system.h>
-#include <engines/engine.h>
-#include <base/main.h>
-#include <base/plugins.h>
+#include "common/system.h"
+#include "engines/engine.h"
+#include "base/main.h"
+#include "base/plugins.h"
+
 #include "backends/platform/psp/powerman.h"
 #include "backends/platform/psp/thread.h"
-
 #include "backends/plugins/psp/psp-provider.h"
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"

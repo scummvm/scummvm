@@ -108,6 +108,8 @@ Common::CodePage Settings::getTextCodePage() const {
 		return Common::kWindows1250;
 	case Common::RU_RUS:
 		return Common::kWindows1251;
+	case Common::HE_ISR:
+		return Common::kWindows1255;
 	default:
 		return Common::kWindows1252;
 	}

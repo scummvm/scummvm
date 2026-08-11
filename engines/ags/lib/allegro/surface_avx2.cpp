@@ -19,7 +19,6 @@
  *
  */
 
-#include <immintrin.h>
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
@@ -27,6 +26,15 @@
 #include "ags/globals.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
+
+#include <immintrin.h>
+
+#if defined(__clang__)
+#pragma clang attribute push (__attribute__((target("avx2"))), apply_to=function)
+#elif defined(__GNUC__)
+#pragma GCC push_options
+#pragma GCC target("avx2")
+#endif
 
 namespace AGS3 {
 
@@ -190,7 +198,7 @@ static inline __m256i blendTintSpriteSIMD(__m256i srcCols, __m256i destCols, __m
 	// srcCols[2] = A | R | G | B
 	// srcCols[3] = A | R | G | B
 	//  ->
-	// to 4 float32x4_t's each being a seperate channel with each lane
+	// to 4 float32x4_t's each being a separate channel with each lane
 	// corresponding to their respective srcCols lane
 	// dda = { A[0], A[1], A[2], A[3] }
 	// ddr = { R[0], R[1], R[2], R[3] }
@@ -1003,3 +1011,9 @@ template void BITMAP::drawAVX2<false>(DrawInnerArgs &);
 template void BITMAP::drawAVX2<true>(DrawInnerArgs &);
 
 } // namespace AGS3
+
+#if defined(__clang__)
+#pragma clang attribute pop
+#elif defined(__GNUC__)
+#pragma GCC pop_options
+#endif

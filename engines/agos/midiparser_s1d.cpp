@@ -33,12 +33,12 @@ namespace AGOS {
  */
 class MidiParser_S1D : public MidiParser {
 private:
-	byte *_data;
+	const byte *_data;
 	bool _noDelta;
 
 	struct Loop {
 		uint16 timer;
-		byte *start, *end;
+		const byte *start, *end;
 		bool noDelta;
 	} _loops[16];
 
@@ -57,7 +57,7 @@ private:
 	// be played. If false, all notes of a chord will be sent to the driver.
 	bool _monophonicChords;
 
-	uint32 readVLQ2(byte *&data);
+	uint32 readVLQ2(const byte *&data);
 protected:
 	void parseNextEvent(EventInfo &info) override;
 	bool processEvent(const EventInfo &info, bool fireEvents = true) override;
@@ -71,11 +71,11 @@ protected:
 		Common::fill(_lastPlayedNoteTime, _lastPlayedNoteTime + ARRAYSIZE(_lastPlayedNoteTime), 0);
 	}
 
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 };
 
-uint32 MidiParser_S1D::readVLQ2(byte *&data) {
+uint32 MidiParser_S1D::readVLQ2(const byte *&data) {
 	uint32 delta = 0;
 
 	// LE format VLQ, which is 2 bytes long at max.
@@ -89,13 +89,14 @@ uint32 MidiParser_S1D::readVLQ2(byte *&data) {
 }
 
 void MidiParser_S1D::parseNextEvent(EventInfo &info) {
-	info.start = _position._playPos;
+	const byte *playPos = _position._subtracks[0]._playPos;
+	info.start = playPos;
 	info.length = 0;
-	info.delta = _noDelta ? 0 : readVLQ2(_position._playPos);
+	info.delta = _noDelta ? 0 : readVLQ2(playPos);
 	info.noop = false;
 	_noDelta = false;
 
-	info.event = *_position._playPos++;
+	info.event = *playPos++;
 	if (!(info.event & 0x80)) {
 		_noDelta = true;
 		info.event |= 0x80;
@@ -109,13 +110,13 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 	} else {
 		switch (info.command()) {
 		case 0x8: // note off
-			info.basic.param1 = *_position._playPos++;
+			info.basic.param1 = *playPos++;
 			info.basic.param2 = 0;
 			break;
 
 		case 0x9: // note on
-			info.basic.param1 = *_position._playPos++;
-			info.basic.param2 = *_position._playPos++;
+			info.basic.param1 = *playPos++;
+			info.basic.param2 = *playPos++;
 			// Rewrite note on events with velocity 0 as note off events.
 			// This is the actual meaning of this, but theoretically this
 			// should not need to be rewritten, since all MIDI devices should
@@ -131,24 +132,24 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			// In case the stop mode(?) is set to 0x80 this will stop the
 			// track over here.
 
-			const int16 loopIterations = int8(*_position._playPos++);
+			const int16 loopIterations = int8(*playPos++);
 			if (!loopIterations) {
-				_loops[info.channel()].start = _position._playPos;
+				_loops[info.channel()].start = playPos;
 				_loops[info.channel()].noDelta = _noDelta;
 			} else {
 				if (!_loops[info.channel()].timer) {
 					if (_loops[info.channel()].start) {
 						_loops[info.channel()].timer = uint16(loopIterations);
-						_loops[info.channel()].end = _position._playPos;
+						_loops[info.channel()].end = playPos;
 
 						// Go to the start of the loop
-						_position._playPos = _loops[info.channel()].start;
+						playPos = _loops[info.channel()].start;
 						_noDelta = _loops[info.channel()].noDelta;
 						info.loop = true;
 					}
 				} else {
 					if (_loops[info.channel()].timer) {
-						_position._playPos = _loops[info.channel()].start;
+						playPos = _loops[info.channel()].start;
 						_noDelta = _loops[info.channel()].noDelta;
 						info.loop = true;
 					}
@@ -168,13 +169,13 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			break;
 
 		case 0xC: // program change
-			info.basic.param1 = *_position._playPos++;
+			info.basic.param1 = *playPos++;
 			info.basic.param2 = 0;
 			break;
 
 		case 0xD: // jump to loop end
 			if (_loops[info.channel()].end)
-				_position._playPos = _loops[info.channel()].end;
+				playPos = _loops[info.channel()].end;
 
 			// Event has been fully processed here.
 			info.noop = true;
@@ -190,6 +191,8 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			break;
 		}
 	}
+
+	_position._subtracks[0]._playPos = playPos;
 }
 
 bool MidiParser_S1D::processEvent(const EventInfo &info, bool fireEvents) {
@@ -217,14 +220,14 @@ bool MidiParser_S1D::processEvent(const EventInfo &info, bool fireEvents) {
 	return MidiParser::processEvent(info, fireEvents);
 }
 
-bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
+bool MidiParser_S1D::loadMusic(const byte *data, uint32 size) {
 	unloadMusic();
 
 	if (!size)
 		return false;
 
 	// The original actually just ignores the first two bytes.
-	byte *pos = data + 2;
+	const byte *pos = data + 2;
 	if (*pos == 0xFC) {
 		// SysEx found right at the start
 		// this seems to happen since Elvira 2, we ignore it
@@ -260,8 +263,9 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 
 	// And now we're at the actual data. Only one track.
 	_numTracks = 1;
+	_numSubtracks[0] = 1;
 	_data = pos;
-	_tracks[0] = pos;
+	_tracks[0][0] = pos;
 
 	// Note that we assume the original data passed in
 	// will persist beyond this call, i.e. we do NOT

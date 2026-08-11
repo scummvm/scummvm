@@ -89,12 +89,17 @@ void Events::pollEvents() {
 			_mousePos = event.mouse;
 			eventTarget()->mouseWheel(_mousePos, event.type == Common::EVENT_WHEELUP);
 			return;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			handleKbdSpecial(event.customType);
+			eventTarget()->actionStart(event.customType);
+			return;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			handleKbdSpecial(kActionNone);
+			return;
 		case Common::EVENT_KEYDOWN:
-			handleKbdSpecial(event.kbd);
 			eventTarget()->keyDown(event.kbd);
 			return;
 		case Common::EVENT_KEYUP:
-			handleKbdSpecial(event.kbd);
 			eventTarget()->keyUp(event.kbd);
 			return;
 		default:
@@ -187,13 +192,8 @@ void Events::setMousePos(const Common::Point &pt) {
 	eventTarget()->mouseMove(_mousePos);
 }
 
-void Events::handleKbdSpecial(Common::KeyState keyState) {
-	if (keyState.flags & Common::KBD_CTRL)
-		_specialButtons |= MK_CONTROL;
-	else
-		_specialButtons &= ~MK_CONTROL;
-
-	if (keyState.flags & Common::KBD_SHIFT)
+void Events::handleKbdSpecial(Common::CustomEventType action) {
+	if (action == kActionShift)
 		_specialButtons |= MK_SHIFT;
 	else
 		_specialButtons &= ~MK_SHIFT;

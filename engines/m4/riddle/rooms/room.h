@@ -27,22 +27,56 @@
 #include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/adv_r/adv_hotspot.h"
+#include "m4/riddle/triggers.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room : public M4::Room {
-protected:
-	static void intrMsgNull(frac16 myMessage, machine *sender) {}
-	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender);
+#define HAS(ITEM) (player_said(ITEM) && inv_player_has(ITEM))
+#define HERE(ITEM) (player_said(ITEM) && inv_object_is_here(ITEM))
 
+class Room : public M4::Room {
+private:
+	static int _ripSketching;
+
+protected:
 	void restoreAutosave();
-	int _roomVal1 = 0;
+
+	/**
+	 * Checks various game flags for updates
+	 * @param flag		If set, does extra checks
+	 * @return	A count of the flag changes done
+	 */
+	int checkFlags(bool flag);
+
+	void setFlag45();
+
+	/**
+	 * Get the number of key items placed in room 305 (display room)
+	 */
+	int getNumKeyItemsPlaced() const;
+
+	bool setItemsPlacedFlags();
+	const char *getItemsPlacedDigi() const;
+
+	/**
+	 * Sets all the hotspots to be inactive
+	 */
+	void disableHotspots();
+
+	/**
+	 * Sets all the hotspots to be active
+	 */
+	void enableHotspots();
+
+	bool checkStrings() const;
 
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
+
+	void preload() override;
 };
 
 } // namespace Rooms

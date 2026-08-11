@@ -1,4 +1,4 @@
 # This file is included from the main "configure" script
-# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
 add_engine groovie "Groovie" yes "groovie2" "7th Guest" "highres"
-add_engine groovie2 "Groovie 2 games" yes "" "" "jpeg 16bit"
+add_engine groovie2 "Groovie 2 games" yes "" "" "jpeg 16bit" "midi mpeg2"

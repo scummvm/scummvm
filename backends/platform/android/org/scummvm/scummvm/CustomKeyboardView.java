@@ -48,12 +48,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.collection.ArraySet;
-import androidx.core.content.res.ResourcesCompat;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -203,7 +202,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 	private int mDownKey = NOT_A_KEY;
 
 	// New auxiliary set to keep track of any keys that were not released at the time of closing the keyboard
-	private ArraySet<Integer> mKeysDownCodesSet;
+	private HashSet<Integer> mKeysDownCodesSet;
 
 	private long mLastKeyTime;
 	private long mCurrentKeyTime;
@@ -227,7 +226,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 	private float mOldPointerY;
 
 	// @UnsupportedAppUsage
-	// https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/annotation/UnsupportedAppUsage.java
+	// https://android.googlesource.com/platform/prebuilts/fullsdk/sources/android-29/+/refs/heads/main/android/annotation/UnsupportedAppUsage.java
 	// Indicates that a class member, that is not part of the SDK, is used by apps.
 	// Since the member is not part of the SDK, such use is not supported.
 	//
@@ -347,7 +346,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 			int attr = a.getIndex(i);
 
 			// resolve: "resource IDs will be non-final in Android Gradle Plugin version 5.0, avoid using them in switch case statements"
-			// We converted the switch statement to if/else as suggested here: http://tools.android.com/tips/non-constant-fields
+			// We converted the switch statement to if/else as suggested here:
+			// https://web.archive.org/web/20210128075908/http://tools.android.com/tips/non-constant-fields
 			if (attr == R.styleable.CustomKeyboardView_keyBackground) {
 				mKeyBackground = a.getDrawable(attr);
 			} else if (attr == R.styleable.CustomKeyboardView_verticalCorrection) {
@@ -421,12 +421,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 		mMiniKeyboardCache = new HashMap<>();
 
 		if (mKeyBackground == null) {
-//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//				mKeyBackground = context.getResources().getDrawable(R.drawable.btn_keyboard_key, context.getTheme());
-//			} else {
-//				mKeyBackground = context.getResources().getDrawable(R.drawable.btn_keyboard_key);
-//			}
-			mKeyBackground = ResourcesCompat.getDrawable(context.getResources(), R.drawable.btn_keyboard_key, context.getTheme());
+			mKeyBackground = CompatHelpers.DrawableCompat.getDrawable(context, R.drawable.btn_keyboard_key);
 		}
 
 		mKeyBackground.getPadding(mPadding);
@@ -438,7 +433,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 		mAccessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
 		mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-		mKeysDownCodesSet = new ArraySet<>();
+		mKeysDownCodesSet = new HashSet<>();
 
 		resetMultiTap();
 	}
@@ -1234,7 +1229,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 				}
 				mMiniKeyboard.setKeyboard(keyboard);
 				mMiniKeyboard.setPopupParent(this);
-		                mMiniKeyboardContainer.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
+				mMiniKeyboardContainer.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
 				mMiniKeyboardCache.put(popupKey, mMiniKeyboardContainer);
 			} else {
 				mMiniKeyboard = (CustomKeyboardView) mMiniKeyboardContainer.findViewById(R.id.ScummVMKeyboardView);

@@ -22,11 +22,11 @@
 #ifndef ZVISION_LEVER_CONTROL_H
 #define ZVISION_LEVER_CONTROL_H
 
-#include "zvision/scripting/control.h"
-
 #include "common/list.h"
 #include "common/path.h"
 #include "common/rect.h"
+#include "math/vector2d.h"
+#include "zvision/scripting/control.h"
 
 namespace Video {
 	class VideoDecoder;
@@ -42,22 +42,19 @@ public:
 
 private:
 
-	struct Direction {
-		Direction(uint a, uint t) : angle(a), toFrame(t) {}
+	struct PathSegment {
+		PathSegment(uint a, uint t) : angle(Math::deg2rad<float>(a)), toFrame(t), direction(cos(angle), -sin(angle)) {}
 
-		uint angle;
+		float angle;	// Radians
 		uint toFrame;
+		Math::Vector2d direction;	// NB unit vector upon initialisation
+		float distance = 1.0f;
 	};
 
 	struct FrameInfo {
 		Common::Rect hotspot;
-		Common::List<Direction> directions;
+		Common::List<PathSegment> paths;
 		Common::List<uint> returnRoute;
-	};
-
-	enum {
-		ANGLE_DELTA = 30, // How far off a mouse angle can be and still be considered valid. This is in both directions, so the total buffer zone is (2 * ANGLE_DELTA)
-		ANIMATION_FRAME_TIME = 30 // In millis
 	};
 
 private:
@@ -75,9 +72,10 @@ private:
 	uint _lastRenderedFrame;
 	bool _mouseIsCaptured;
 	bool _isReturning;
-	Common::Point _lastMousePos;
+	Common::Point _gripOffset;
 	Common::List<uint>::iterator _returnRoutesCurrentProgress;
 	uint _returnRoutesCurrentFrame;
+	const uint8 _returnFramePeriod = 60;	// milliseconds
 	uint32 _accumulatedTime;
 
 public:
@@ -88,32 +86,9 @@ public:
 
 private:
 	void parseLevFile(const Common::Path &fileName);
-	/**
-	 * Calculates the angle a vector makes with the negative y-axis
-	 *
-	 *                 90
-	 *  pointTwo *     ^
-	 *            \    |
-	 *             \   |
-	 *              \  |
-	 *               \ |
-	 *        angle ( \|pointOne
-	 * 180 <-----------*-----------> 0
-	 *                 |
-	 *                 |
-	 *                 |
-	 *                 |
-	 *                 |
-	 *                 ^
-	 *                270
-	 *
-	 * @param pointOne    The origin of the vector
-	 * @param pointTwo    The end of the vector
-	 * @return            The angle the vector makes with the negative y-axis
-	 */
-	static int calculateVectorAngle(const Common::Point &pointOne, const Common::Point &pointTwo);
 	void renderFrame(uint frameNumber);
 	void getLevParams(const Common::String &inputStr, Common::String &parameter, Common::String &values);
+	uint getNextFrame(Common::Point &deltaPos);
 };
 
 } // End of namespace ZVision

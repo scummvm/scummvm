@@ -29,7 +29,7 @@
 
 #include "gui/object.h"
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 
 namespace GUI {
 class LauncherDialog;

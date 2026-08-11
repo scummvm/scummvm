@@ -40,7 +40,7 @@
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/menu.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
 #include "sci/parser/vocabulary.h"
@@ -132,7 +132,7 @@ struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, t
 			syncWithSerializer(s, *entry.data);
 		} else if (s.isLoading()) {
 			if (s.getVersion() < 37) {
-				typename T::value_type dummy;
+				typename T::value_type dummy{};
 				syncWithSerializer(s, dummy);
 			}
 			entry.data = nullptr;
@@ -1380,7 +1380,7 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 			// will result in some graphics being incorrect (lowres).
 			// That's why we are setting the global after restoring a saved game depending on hires/lowres state.
 			// The CD demo of KQ6 does the same and uses the exact same global.
-			if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
+			if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->useHiresGraphics())) {
 				s->variables[VAR_GLOBAL][0xA9].setOffset(1);
 			} else {
 				s->variables[VAR_GLOBAL][0xA9].setOffset(0);
@@ -1525,8 +1525,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	g_sci->_soundCmd->reconstructPlayList();
 
 	// Message state:
-	delete s->_msgState;
-	s->_msgState = new MessageState(s->_segMan);
+	s->initMessageState();
 
 	// System strings:
 	s->_segMan->initSysStrings();

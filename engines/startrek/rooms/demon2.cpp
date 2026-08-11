@@ -24,46 +24,46 @@
 namespace StarTrek {
 
 extern const RoomAction demon2ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::demon2Tick1 },
-	{ {ACTION_WALK, 0x27, 0, 0}, &Room::demon2WalkToCave },
-	{ {ACTION_FINISHED_WALKING, 2, 0, 0}, &Room::demon2ReachedCave },
-	{ {ACTION_TOUCHED_WARP, 1, 0, 0}, &Room::demon2TouchedWarp1 },
+	{ {ACTION_TICK, 1, 0, 0, 0}, &Room::demon2Tick1 },
+	{ {ACTION_WALK, 0x27, 0, 0, 0}, &Room::demon2WalkToCave },
+	{ {ACTION_FINISHED_WALKING, 2, 0, 0, 0}, &Room::demon2ReachedCave },
+	{ {ACTION_TOUCHED_WARP, 1, 0, 0, 0}, &Room::demon2TouchedWarp1 },
 
-	{ {ACTION_LOOK, 0x27, 0, 0}, &Room::demon2LookAtCave },
-	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::demon2LookAtCave },
-	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::demon2LookAtMountain },
-	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::demon2LookAtMountain },
-	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::demon2LookAtBerries },
-	{ {ACTION_LOOK, 0x24, 0, 0}, &Room::demon2LookAtFern },
-	{ {ACTION_LOOK, 0x25, 0, 0}, &Room::demon2LookAtMoss },
-	{ {ACTION_LOOK, 0x26, 0, 0}, &Room::demon2LookAtLights },
-	{ {ACTION_LOOK, 0xff, 0, 0},   &Room::demon2LookAtAnything },
+	{ {ACTION_LOOK, 0x27, 0, 0, 0}, &Room::demon2LookAtCave },
+	{ {ACTION_LOOK, 0x20, 0, 0, 0}, &Room::demon2LookAtCave },
+	{ {ACTION_LOOK, 0x21, 0, 0, 0}, &Room::demon2LookAtMountain },
+	{ {ACTION_LOOK, 0x22, 0, 0, 0}, &Room::demon2LookAtMountain },
+	{ {ACTION_LOOK, 0x23, 0, 0, 0}, &Room::demon2LookAtBerries },
+	{ {ACTION_LOOK, 0x24, 0, 0, 0}, &Room::demon2LookAtFern },
+	{ {ACTION_LOOK, 0x25, 0, 0, 0}, &Room::demon2LookAtMoss },
+	{ {ACTION_LOOK, 0x26, 0, 0, 0}, &Room::demon2LookAtLights },
+	{ {ACTION_LOOK, 0xff, 0, 0, 0},   &Room::demon2LookAtAnything },
 
-	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::demon2LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::demon2LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::demon2LookAtMcCoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::demon2LookAtRedshirt },
+	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0, 0}, &Room::demon2LookAtKirk },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0, 0}, &Room::demon2LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0, 0}, &Room::demon2LookAtMcCoy },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::demon2LookAtRedshirt },
 
-	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::demon2TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::demon2TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::demon2TalkToMcCoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::demon2TalkToRedshirt },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0, 0}, &Room::demon2TalkToKirk },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0, 0}, &Room::demon2TalkToSpock },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0, 0}, &Room::demon2TalkToMcCoy },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::demon2TalkToRedshirt },
 
-	{ {ACTION_USE, OBJECT_IPHASERK, 0x23, 0}, &Room::demon2UsePhaserOnBerries },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0x23, 0}, &Room::demon2UsePhaserOnBerries },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0x23, 0, 0}, &Room::demon2UsePhaserOnBerries },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0x23, 0, 0}, &Room::demon2UsePhaserOnBerries },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x23, 0}, &Room::demon2UseSTricorderOnBerries },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x25, 0}, &Room::demon2UseSTricorderOnMoss },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x24, 0}, &Room::demon2UseSTricorderOnFern },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::demon2UseSTricorderOnCave },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::demon2UseSTricorderOnCave },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0}, &Room::demon2UseSTricorderOnCave },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x23, 0, 0}, &Room::demon2UseSTricorderOnBerries },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x25, 0, 0}, &Room::demon2UseSTricorderOnMoss },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x24, 0, 0}, &Room::demon2UseSTricorderOnFern },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0, 0}, &Room::demon2UseSTricorderOnCave },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0, 0}, &Room::demon2UseSTricorderOnCave },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0, 0}, &Room::demon2UseSTricorderOnCave },
 
-	{ {ACTION_USE, OBJECT_IMTRICOR, 0x23, 0}, &Room::demon2UseMTricorderOnBerries },
-	{ {ACTION_GET, 0x23, 0, 0}, &Room::demon2GetBerries },
-	{ {ACTION_FINISHED_WALKING, 1, 0, 0}, &Room::demon2ReachedBerries },
-	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::demon2PickedUpBerries },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0x23, 0, 0}, &Room::demon2UseMTricorderOnBerries },
+	{ {ACTION_GET, 0x23, 0, 0, 0}, &Room::demon2GetBerries },
+	{ {ACTION_FINISHED_WALKING, 1, 0, 0, 0}, &Room::demon2ReachedBerries },
+	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0, 0}, &Room::demon2PickedUpBerries },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum demon2TextIds {
@@ -212,25 +212,25 @@ void Room::demon2UsePhaserOnBerries() {
 
 void Room::demon2UseSTricorderOnBerries() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM2_008);
 }
 
 void Room::demon2UseSTricorderOnMoss() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM2_007);
 }
 
 void Room::demon2UseSTricorderOnFern() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM2_006);
 }
 
 void Room::demon2UseSTricorderOnCave() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	// NOTE: audio file for this is empty.
 	showText(TX_SPEAKER_SPOCK, TX_DEM2_005);
@@ -238,7 +238,7 @@ void Room::demon2UseSTricorderOnCave() {
 
 void Room::demon2UseMTricorderOnBerries() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (_awayMission->demon.curedChub)
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_013);

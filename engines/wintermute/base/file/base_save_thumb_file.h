@@ -28,23 +28,12 @@
 #ifndef WINTERMUTE_BASE_SAVETHUMBFILE_H
 #define WINTERMUTE_BASE_SAVETHUMBFILE_H
 
-
-#include "engines/wintermute/base/file/base_file.h"
+#include "common/str.h"
+#include "common/stream.h"
 
 namespace Wintermute {
 
-//TODO: Get rid of this
-class BaseSaveThumbFile : public BaseFile {
-public:
-	BaseSaveThumbFile();
-	~BaseSaveThumbFile() override;
-	bool seek(uint32 pos, int whence = SEEK_SET) override;
-	bool read(void *buffer, uint32 size) override;
-	bool close() override;
-	bool open(const Common::String &filename) override;
-private:
-	byte *_data;
-};
+Common::SeekableReadStream *openThumbFile(const Common::String &filename);
 
 } // End of namespace Wintermute
 

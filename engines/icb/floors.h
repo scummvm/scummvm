@@ -64,7 +64,7 @@ public:
 
 	PXreal Floor_safe_gravitise_y(PXreal fY);
 
-	void Allign_with_floor(_mega *mega);
+	void Align_with_floor(_mega *mega);
 	PXreal Return_true_y(PXreal y);
 	bool8 On_a_floor(_mega *mega);
 
@@ -92,7 +92,7 @@ inline PXreal _floor_world::Fetch_floors_volume_height(uint32 num) { return floo
 
 inline PXreal _floor_world::Fetch_height(uint32 height) {
 	if (height >= total_heights) {
-		Fatal_error("cant get %d height of %d", height, total_heights);
+		Fatal_error("can't get %d height of %d", height, total_heights);
 	}
 
 	return (heights[height]);
@@ -103,12 +103,12 @@ inline int32 _floor_world::Fetch_total_heights() { return (total_heights); }
 inline uint32 _floor_world::Fetch_total_floors() { return (total_floors); }
 
 inline _floor *_floor_world::Fetch_named_floor(const char *name) {
-	// return a pointer to a named floor to an external routine - most likely a fn_funtion
+	// return a pointer to a named floor to an external routine - most likely a fn_function
 	return ((_floor *)LinkedDataObject::Fetch_item_by_name(floors, name));
 }
 
 inline _floor *_floor_world::Fetch_floor_number(uint32 num) {
-	// return a pointer to a named floor to an external routine - most likely a fn_funtion
+	// return a pointer to a named floor to an external routine - most likely a fn_function
 	return ((_floor *)LinkedDataObject::Fetch_item_by_number(floors, num));
 }
 

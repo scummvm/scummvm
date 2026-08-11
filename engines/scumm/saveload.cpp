@@ -42,9 +42,15 @@
 #include "scumm/he/sprite_he.h"
 #include "scumm/verbs.h"
 
+#ifdef ENABLE_SCUMM_7_8
+#include "scumm/insane/rebel1/rebel.h"
+#include "scumm/insane/rebel2/rebel.h"
+#endif
+
 #include "backends/audiocd/audiocd.h"
 
 #include "graphics/thumbnail.h"
+#include "gui/message.h"
 
 namespace Scumm {
 
@@ -52,7 +58,7 @@ struct SaveGameHeader {
 	uint32 type;
 	uint32 size;
 	uint32 ver;
-	char name[32];
+	char name[32] = {};
 };
 
 struct SaveInfoSection {
@@ -69,12 +75,26 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 119
+#define CURRENT_VER 124
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
 
 Common::Error ScummEngine::loadGameState(int slot) {
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1) {
+		InsaneRebel1 *rebel = (InsaneRebel1 *)((ScummEngine_v7 *)this)->getInsane();
+		if (rebel)
+			return rebel->loadGameState(slot);
+	}
+
+	if (_game.id == GID_REBEL2) {
+		InsaneRebel2 *rebel = (InsaneRebel2 *)((ScummEngine_v7 *)this)->getInsane();
+		if (rebel)
+			return rebel->loadGameState(slot);
+	}
+#endif
+
 	requestLoad(slot);
 	return Common::kNoError;
 }
@@ -82,6 +102,11 @@ Common::Error ScummEngine::loadGameState(int slot) {
 bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (!_setupIsComplete)
 		return false;
+
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1 || _game.id == GID_REBEL2)
+		return true;
+#endif
 
 	// FIXME: For now always allow loading in V0-V3 games
 	// FIXME: Actually, we might wish to support loading in more places.
@@ -131,16 +156,24 @@ bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 		}
 
 		// Also deny persistence operations while the script opening the save menu is running...
-		isOriginalMenuActive = _currentRoom == saveRoom || vm.slot[_currentScript].number == saveMenuScript;
+		isOriginalMenuActive = _currentRoom == saveRoom || currentScriptSlotIs(saveMenuScript);
 	}
 
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0) && !isOriginalMenuActive;
 }
 
 Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	// Disable autosaving if the original GUI is in place
-	if (isAutosave && isUsingOriginalGUI())
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1) {
+		InsaneRebel1 *rebel = (InsaneRebel1 *)((ScummEngine_v7 *)this)->getInsane();
+		if (rebel)
+			return rebel->saveGameState(slot, desc, isAutosave);
+	}
+
+	// RA2 writes the active pilot itself, and pilot slots must stay contiguous.
+	if (_game.id == GID_REBEL2)
 		return Common::kNoError;
+#endif
 
 	requestSave(slot, desc);
 	return Common::kNoError;
@@ -149,6 +182,19 @@ Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, b
 bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!_setupIsComplete)
 		return false;
+
+#ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1)
+		return true;
+
+	// No save interface: progress is written as levels are completed.
+	if (_game.id == GID_REBEL2) {
+		if (msg)
+			*msg = _("This game does not support saving from the menu. Progress is saved automatically when a level is completed");
+
+		return false;
+	}
+#endif
 
 	// Disallow saving in v0-v3 games when a 'prequel' to a cutscene is shown.
 	// This is a blank screen with text, and while this is shown, saving should
@@ -210,7 +256,7 @@ bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 		}
 
 		// Also deny persistence operations while the script opening the save menu is running...
-		isOriginalMenuActive = _currentRoom == saveRoom || (_currentScript != 0xFF && vm.slot[_currentScript].number == saveMenuScript);
+		isOriginalMenuActive = _currentRoom == saveRoom || currentScriptSlotIs(saveMenuScript);
 	}
 
 	// SCUMM v4+ doesn't allow saving in room 0 or if
@@ -313,6 +359,8 @@ void ScummEngine::copyHeapSaveGameToFile(int slot, const char *saveName) {
 
 		delete saveFile;
 	}
+
+	delete heapSaveFile;
 
 	if (saveFailed)
 		debug(1, "State save as '%s' FAILED", fileName.c_str());
@@ -523,12 +571,21 @@ uint32 *ScummEngine_v8::fetchScummVMSaveStateThumbnail(int slotId, bool isHeapSa
 			// Now take the pixels from the surface, extract the RGB components, process them
 			// with the brightness parameter, and store them in an appropriate structure
 			// which the SCUMM graphics pipeline can use...
-			byte r, g, b;
+			byte r = 0, g = 0, b = 0;
+			byte bpp = thumbnailSurface->format.bpp();
 			uint32 *processedThumbnail = new uint32[thumbnailSurface->w * thumbnailSurface->h];
 			for (int i = 0; i < thumbnailSurface->h; i++) {
 				for (int j = 0; j < thumbnailSurface->w; j++) {
-					uint32 *ptr = (uint32 *)thumbnailSurface->getBasePtr(j, i);
-					thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+					if (bpp == 32) {
+						uint32 *ptr = (uint32 *)thumbnailSurface->getBasePtr(j, i);
+						thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+					} else if (bpp == 16) {
+						uint16 *ptr = (uint16 *)thumbnailSurface->getBasePtr(j, i);
+						thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+					} else if (bpp == 8) {
+						uint8 *ptr = (uint8 *)thumbnailSurface->getBasePtr(j, i);
+						thumbnailSurface->format.colorToRGB(*ptr, r, g, b);
+					}
 
 					processedThumbnail[i * thumbnailSurface->w + j] = getPaletteColorFromRGB(
 						_currentPalette,
@@ -558,7 +615,7 @@ Common::SeekableWriteStream *ScummEngine::openSaveFileForWriting(int slot, bool 
 	return _saveFileMan->openForSaving(fileName);
 }
 
-bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
+bool ScummEngine::saveState(Common::SeekableWriteStream *out, bool writeHeader) {
 	SaveGameHeader hdr;
 
 	if (writeHeader) {
@@ -574,7 +631,7 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 #endif
 	saveInfos(out);
 
-	Common::Serializer ser(nullptr, out);
+	Serializer ser(nullptr, out);
 	ser.setVersion(CURRENT_VER);
 	saveLoadWithSerializer(ser);
 	return true;
@@ -594,7 +651,7 @@ bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 
 	_pauseSoundsDuringSave = true;
 
-	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
+	Common::SeekableWriteStream *out = openSaveFileForWriting(slot, compat, filename);
 	if (!out) {
 		saveFailed = true;
 	} else {
@@ -741,7 +798,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	memset(_newNames, 0, sizeof(_newNames[0]) * _numNewNames);
 
 	// Because old savegames won't fill the entire gfxUsageBits[] array,
-	// clear it here just to be sure it won't hold any unforseen garbage.
+	// clear it here just to be sure it won't hold any unforeseen garbage.
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
 	// Nuke all resources
@@ -756,13 +813,10 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	if (_game.features & GF_OLD_BUNDLE)
 		loadCharset(0); // FIXME - HACK ?
 
-	// Save this for later
-	bool currentSessionUsesCorrection = _useMacScreenCorrectHeight;
-
 	//
 	// Now do the actual loading
 	//
-	Common::Serializer ser(in, nullptr);
+	Serializer ser(in, nullptr);
 	ser.setVersion(hdr.ver);
 	saveLoadWithSerializer(ser);
 	delete in;
@@ -878,17 +932,8 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	updateDirtyScreen(kMainVirtScreen);
 	updatePalette();
 
-	if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
-		sb -= 20 * 2;
-		sh -= 20 * 2;
-	} else if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
-		sb += 20 * 2;
-		sh += 20 * 2;
-	}
-
 	initScreens(sb, sh);
 
-	_useMacScreenCorrectHeight = currentSessionUsesCorrection;
 	_completeScreenRedraw = true;
 
 	// Reset charset mask
@@ -1350,7 +1395,6 @@ bool ScummEngine::changeSavegameName(int slot, char *newName) {
 
 void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	int i;
-	int var120Backup;
 	int var98Backup;
 	uint8 md5Backup[16];
 
@@ -1435,27 +1479,16 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(camera._movingToActor, VER(8));
 	s.syncAsByte(_cameraIsFrozen, VER(108));
 
-	// For Mac versions...
-	bool currentSessionUsesCorrection = _useMacScreenCorrectHeight;
-
-	s.syncAsUint16LE(_screenDrawOffset, VER(112));
+	// Old stuff for Mac versions, see below...
+	s.skip(2, VER(112), VER(121)); // Old _screenDrawOffset
 	s.syncAsByte(_useMacScreenCorrectHeight, VER(112));
 
-	// If this is an older version without Mac screen
-	// offset correction, bring it up to date...
+	// Post-load fix for some savegame versions which offset the engine elements
+	// instead of offsetting the final screen texture and the mouse coordinates...
 	if (s.isLoading()) {
-		if (s.getVersion() < VER(112)) {
-			// We assume _useMacScreenCorrectHeight == false
-			camera._cur.y += _screenDrawOffset;
-			camera._last.y += _screenDrawOffset;
-		} else {
-			if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
-				camera._cur.y -= _screenDrawOffset;
-				camera._last.y -= _screenDrawOffset;
-			} else if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
-				camera._cur.y += _screenDrawOffset;
-				camera._last.y += _screenDrawOffset;
-			}
+		if (_game.version == 3 && _game.platform == Common::kPlatformMacintosh && s.getVersion() >= VER(112) && s.getVersion() < VER(121)) {
+			camera._cur.y -= 20;
+			camera._last.y -= 20;
 		}
 	}
 
@@ -1508,9 +1541,9 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 				for (i = 0; i < 4096; ++i) {
 					*pos = SWAP_BYTES_16(*pos);
 					pos++;
+				}
 			}
 		}
-	}
 	} else {
 		s.syncBytes(_grabbedCursor, 8192, VER(20));
 	}
@@ -1543,6 +1576,11 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 				_cursor.hotspotX = _cursor.hotspotY = 0;
 			}
 		}
+	} else if ((_cursor.width <= 0 || _cursor.width > 640 || _cursor.height <= 0 || _cursor.height > 480) && _game.platform == Common::kPlatformMacintosh) {
+		_cursor.width = 11;
+		_cursor.height = 16;
+		_cursor.hotspotX = 1;
+		_cursor.hotspotY = 1;
 	}
 
 	s.syncAsByte(_cursor.animate, VER(20));
@@ -1550,7 +1588,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	// Don't restore the mouse position when using
 	// the original GUI, since the originals didn't
-	if (isUsingOriginalGUI()) {
+	if (s.isLoading() && isUsingOriginalGUI()) {
 		s.skip(2);
 		s.skip(2);
 	} else {
@@ -1609,19 +1647,12 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(_screenB, VER(8));
 	s.syncAsUint16LE(_screenH, VER(8));
 
-	// Other screen offset corrections for Mac games savestates...
+	// Post-load fix for some savegame versions which offset the engine elements
+	// instead of offsetting the final screen texture and the mouse coordinates...
 	if (s.isLoading()) {
-		if (s.getVersion() < VER(112)) {
-			_screenB += _screenDrawOffset;
-			_screenH += _screenDrawOffset;
-		} else {
-			if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
-				_screenB -= _screenDrawOffset;
-				_screenH -= _screenDrawOffset;
-			} else if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
-				_screenB += _screenDrawOffset;
-				_screenH += _screenDrawOffset;
-			}
+		if (_game.version == 3 && _game.platform == Common::kPlatformMacintosh && s.getVersion() >= VER(112) && s.getVersion() < VER(121)) {
+			_screenB -= 20;
+			_screenH -= 20;
 		}
 	}
 
@@ -1675,6 +1706,9 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			x += (kHercWidth - _screenWidth * 2) / 2;
 			y = y * 7 / 4;
 		} else if (_textSurfaceMultiplier == 2 || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
+			x *= 2;
+			y *= 2;
+		} else if (_macScreen) {
 			x *= 2;
 			y *= 2;
 		}
@@ -1749,7 +1783,8 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	// Save/load misc stuff
 	//
 	s.syncArray(_verbs, _numVerbs, (_game.version < 7 && _language != Common::HE_ISR) ? syncWithSerializerDef : syncWithSerializerV7orISR);
-	s.syncArray(vm.nest, 16, syncWithSerializer);
+	s.syncArray(vm.nest, 16, syncWithSerializer, VER(0), VER(119));
+	s.syncArray(vm.nest, kMaxScriptNestingHE, syncWithSerializer, VER(120));
 	s.syncArray(_sentence, 6, syncWithSerializer);
 	s.syncArray(_string, 6, syncWithSerializer);
 	s.syncArray(_colorCycle, 16, syncWithSerializer);
@@ -1919,7 +1954,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 
 	// Before version 109, palette cycling for v4 games was handled in a different
-	// way (which is, by retrofitting v5 code, which caused a class of bugs like #10854).
+	// way (which, by retrofitting v5 code, caused a class of bugs like #10854).
 	// The proper v4 code has now been implemented from disasm (specifically, only the
 	// LOOM CD and MI1 VGA executables have said code).
 	//
@@ -1944,10 +1979,19 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	//
 	// Save/load script variables
 	//
-	var120Backup = _scummVars[120];
+
+	// From disasm...
+	int32 dottVarsBackup[5];
+	if (_game.id == GID_TENTACLE) {
+		for (int j = 0; j < 5; j++)
+			dottVarsBackup[j] = _scummVars[120 + j];
+	}
+
 	var98Backup = _scummVars[98];
 
 	s.syncArray(_roomVars, _numRoomVariables, Common::Serializer::Sint32LE, VER(38));
+
+	int currentSoundCard = VAR_SOUNDCARD != 0xFF ? VAR(VAR_SOUNDCARD) : -1;
 
 	// The variables grew from 16 to 32 bit.
 	if (s.getVersion() < VER(15))
@@ -1955,8 +1999,32 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	else
 		s.syncArray(_scummVars, _numVariables, Common::Serializer::Sint32LE);
 
-	if (_game.id == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
-		_scummVars[120] = var120Backup;
+	if (_game.platform == Common::kPlatformDOS && s.isLoading() && VAR_SOUNDCARD != 0xFF && (_game.heversion < 70 && _game.version <= 6)) {
+		if (currentSoundCard != VAR(VAR_SOUNDCARD)) {
+			const char *soundCards[] = {
+				"PC Speaker", "IBM PCjr/Tandy", "Creative Music System", "AdLib", "Roland MT-32/CM-32L"
+			};
+
+			GUI::MessageDialog dialog(
+				Common::U32String::format(_("Warning: incompatible sound settings detected between the current configuration and this saved game.\n\n"
+					"Current music device: %s (id %d)\nSave file music device: %s (id %d)\n\n"
+					"Loading will be attempted, but the game may behave incorrectly or crash.\n"
+					"Please change the audio configuration accordingly in order to properly load this save file."),
+					currentSoundCard < ARRAYSIZE(soundCards) ? soundCards[currentSoundCard] : "invalid", currentSoundCard,
+					VAR(VAR_SOUNDCARD) < ARRAYSIZE(soundCards) ? soundCards[VAR(VAR_SOUNDCARD)] : "invalid", VAR(VAR_SOUNDCARD))
+			);
+			runDialog(dialog);
+		}
+	}
+
+	// This is again from disasm...
+	if (_game.id == GID_TENTACLE) {
+		for (int j = 0; j < 5; j++)
+			_scummVars[120 + j] = dottVarsBackup[j];
+
+		_scummVars[70] = 1;
+	}
+
 	if (_game.id == GID_INDY4)
 		_scummVars[98] = var98Backup;
 
@@ -2027,37 +2095,83 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		syncWithSerializer(s, info);
 
 		if (s.isLoading() && info.playing) {
-			if (info.numLoops < 0 && _game.platform != Common::kPlatformFMTowns) {
-				// If we are loading, and the music being loaded was supposed to loop
-				// forever, then resume playing it. This helps a lot when the audio CD
-				// is used to provide ambient music (see bug #1150).
-				// FM-Towns versions handle this in Player_Towns_v1::restoreAfterLoad().
-				_sound->playCDTrackInternal(info.track, info.numLoops, info.start, info.duration);
-			} else if (_game.id == GID_LOOM && info.start != 0 && info.duration != 0) {
-				// Reload audio for LOOM CD/Steam. We move the offset forward by a little bit
-				// to restore the correct sync.
-				int startOffset = (int)(VAR(VAR_MUSIC_TIMER) * 1.25);
-
-				_sound->_cdMusicTimer = VAR(VAR_MUSIC_TIMER);
-				_sound->playCDTrackInternal(info.track, info.numLoops, info.start + startOffset, info.duration - VAR(VAR_MUSIC_TIMER));
-			}
+			_sound->restoreCDAudioAfterLoad(info);
 		}
 	}
 
+	// The following code tries to cope with the unfortunate fact that savegames
+	// vary in size/content depending on the sound setting. And historically, until
+	// version 124, it was not even possible to make a definite assumption about the
+	// size of the sound data block. Loading savegames that were made with a different
+	// sound setting than the current one would lead to a crash or to a corrupted
+	// engine state. Now, the engine should recover in most cases, but some issues
+	// still have to be addressed.
+	// TODO: identify the device for the saved sound data blocks (preferably even the
+	// old ones which are prone to have an unreliable VAR_SOUNDCARD value) and/or reset
+	// the sound state, so that even changes from AdLib to MT-32 or vice versa could
+	// eventually work.
+	Serializer *pSer = static_cast<Serializer*>(&s);
 
-	//
-	// Save/load the iMuse status
-	//
-	if (_imuse && (_saveSound || !_saveTemporaryState)) {
-		_imuse->saveLoadIMuse(s, this);
+	int32 sndDataBlockSize = 0;
+	if (s.isLoading()) {
+		if (s.getVersion() > VER(123))
+			s.syncAsSint32BE(sndDataBlockSize);
+		else if (_game.version < 7 && _game.heversion == 0)
+			sndDataBlockSize = checkSoundEngineSaveDataSize(*pSer);
 	}
 
+	int64 before = pSer->pos();
 
-	//
-	// Save/load music engine status
-	//
-	if (_musicEngine) {
-		_musicEngine->saveLoadWithSerializer(s);
+	// Unfortunately, it is not totally easy to write the size of the sound engine data before that data,
+	// because we cannot seek around in the compressed write stream. So, we write to a temp stream, first.
+	Common::MemoryWriteStreamDynamic *ws = nullptr;
+	if (s.isSaving()) {
+		ws = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+		pSer = new Serializer(nullptr, ws);
+		pSer->setVersion(s.getVersion());
+	}
+
+	// This sndDataBlockSize check catches e. g. MI1 saves with a CMS setting when trying to load with AdLib or MT-32.
+	// But it only works because CMS really saves nothing. If it were just a smaller data block, it would still load
+	// garbage data (and crash or corrupt the game state).
+	if (s.isSaving() || sndDataBlockSize > 0) {
+		//
+		// Save/load the iMuse status
+		if (_imuse && (_saveSound || !_saveTemporaryState))
+			_imuse->saveLoadIMuse(*pSer, this);
+		//
+		// Save/load music engine status
+		if (_musicEngine)
+			_musicEngine->saveLoadWithSerializer(*pSer);
+	}
+
+	if (s.isSaving()) {
+		// Write the sound data size, then the actual data from the temp stream.
+		ws->finalize();
+		sndDataBlockSize = ws->size();
+		s.syncAsSint32BE(sndDataBlockSize);
+		s.syncBytes(ws->getData(), sndDataBlockSize);
+		delete pSer;
+		delete ws;
+	} else {
+		// Check if the sound engine read the expected number of bytes from the save file.
+		// If not, then the sound device selection was probably changed after the save was made.
+		int64 now = pSer->pos();
+		if (s.err() || (before + sndDataBlockSize != now)) {
+			static const char wmsg1[] = "more than the %d bytes contained in the savegame";
+			static const char wmsg2[] = "%d bytes, savegame has %d bytes";
+			// For SegaCD, we don't need a warning, since nothing can glitch there. We have to compensate
+			// for the fact that there are old savegames that have an unused imuse state inside of them.
+			// But fixing that will not lead to glitches or other surprises.
+			if (_game.platform == Common::kPlatformSegaCD) {
+				Common::String msg = s.err() ? Common::String::format(wmsg1, sndDataBlockSize) : Common::String::format(wmsg2, (int)(now - before), sndDataBlockSize);
+				warning("Savegame sound data mismatch (sound engine tried to read %s). \r\nAdjusting file read position. Sound might start up with glitches...", msg.c_str());
+			}
+			// This will save the day in cases that are the opposite from the ones mentioned above:
+			// When loading a MI1 savegame that was made with a MT-32 or AdLib setting in a CMS setup,
+			// we skip the sound data block here.
+			pSer->seek(before + sndDataBlockSize);
+		}
 	}
 
 	// At least from now on, VAR_SOUNDCARD will have a reliable value.
@@ -2150,6 +2264,12 @@ void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading() && _game.platform == Common::kPlatformMacintosh) {
 		if ((_game.id == GID_LOOM && !_macCursorFile.empty()) || _macGui) {
+			setBuiltinCursor(0);
+		}
+
+		// Also reset Mac cursors if the original GUI isn't enabled for games
+		// which replace cursors that override the default cursor palette - bug #15520.
+		if (_game.version == 5 && !_macGui) {
 			setBuiltinCursor(0);
 		}
 	}
@@ -2303,8 +2423,6 @@ void ScummEngine_v100he::saveLoadWithSerializer(Common::Serializer &s) {
 #endif
 
 void ScummEngine::loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx) {
-	uint32 size;
-
 	if (type == rtSound && ser.getVersion() >= VER(23)) {
 		// Save/load only a list of resource numbers that need to be reloaded.
 		uint16 tmp;
@@ -2312,6 +2430,7 @@ void ScummEngine::loadResourceOLD(Common::Serializer &ser, ResType type, ResId i
 		if (tmp)
 			ensureResourceLoaded(rtSound, idx);
 	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
+		uint32 size = 0;
 		ser.syncAsUint32LE(size);
 		if (size) {
 			_res->createResource(type, idx, size);
@@ -2355,7 +2474,7 @@ void ScummEngine::saveResource(Common::Serializer &ser, ResType type, ResId idx)
 void ScummEngine::loadResource(Common::Serializer &ser, ResType type, ResId idx) {
 	if (_game.heversion >= 60 && ser.getVersion() <= VER(65) &&
 		((type == rtSound && idx == 1) || (type == rtSpoolBuffer))) {
-		uint32 size;
+		uint32 size = 0;
 		ser.syncAsUint32LE(size);
 		assert(size);
 		_res->createResource(type, idx, size);
@@ -2367,7 +2486,7 @@ void ScummEngine::loadResource(Common::Serializer &ser, ResType type, ResId idx)
 
 		ensureResourceLoaded(rtSound, idx);
 	} else if (_res->_types[type]._mode == kDynamicResTypeMode) {
-		uint32 size;
+		uint32 size = 0;
 		ser.syncAsUint32LE(size);
 		assert(size);
 		byte *ptr = _res->createResource(type, idx, size);
@@ -2380,6 +2499,82 @@ void ScummEngine::loadResource(Common::Serializer &ser, ResType type, ResId idx)
 			ser.syncAsUint16LE(_newNames[idx]);
 		}
 	}
+}
+
+int ScummEngine::checkSoundEngineSaveDataSize(Serializer &s) {
+	if (!s.isLoading())
+		return 0;
+
+	uint8 d8 = 0;
+	uint32 d32 = 0;
+	int64 start = s.pos();
+	// We just perform the steps we would do in the actual sync function, but on dummy vars.
+	s.syncAsByte(d8, VER(73), VER(73));
+	s.syncAsSint32LE(d32, VER(74));
+	s.syncAsByte(d8, VER(73));
+	if (s.getVersion() == VER(72))
+		s.syncAsByte(d8);
+	int64 diff = s.pos() - start;
+	s.seek(start);
+
+	return s.size() - diff - start;
+}
+
+int ScummEngine_v0::checkSoundEngineSaveDataSize(Serializer &s) {
+	if (!s.isLoading())
+		return 0;
+
+	uint8 d8 = 0;
+	uint16 d16 = 0;
+	// We just perform the steps we would do in the actual sync function, but on dummy vars.
+	int64 start = s.pos();
+	s.syncAsByte(d8, VER(78));
+	s.syncAsByte(d8, VER(78));
+	s.syncAsByte(d8, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsByte(d8, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsUint16LE(d16, VER(92));
+	s.syncAsByte(d8, VER(92));
+	int64 diff = s.pos() - start;
+	s.seek(start);
+
+	return ScummEngine_v2::checkSoundEngineSaveDataSize(s) - diff;
+}
+
+int ScummEngine_v2::checkSoundEngineSaveDataSize(Serializer &s) {
+	if (!s.isLoading())
+		return 0;
+
+	uint8 d8 = 0;
+	uint16 d16 = 0;
+	// We just perform the steps we would do in the actual sync function, but on dummy vars.
+	int64 start = s.pos();
+	s.syncAsUint16LE(d16, VER(79));
+	s.syncAsByte(d8, VER(99));
+	s.syncAsByte(d8, VER(99));
+	int64 diff = s.pos() - start;
+	s.seek(start);
+
+	return ScummEngine::checkSoundEngineSaveDataSize(s) - diff;
+}
+
+int ScummEngine_v5::checkSoundEngineSaveDataSize(Serializer &s) {
+	if (!s.isLoading())
+		return 0;
+
+	uint8 d[8] = { 0 };
+	int64 start = s.pos();
+	// We just perform the steps we would do in the actual sync function. I doesn't
+	// matter if we fill in a bit garbage data here, since it will be overwritten later.
+	sync2DArray(s, _cursorImages, 4, 16, Common::Serializer::Uint16LE, VER(44));
+	s.syncBytes(d, 8, VER(44));
+	int64 diff = s.pos() - start;
+	s.seek(start);
+
+	return ScummEngine::checkSoundEngineSaveDataSize(s) - diff;
 }
 
 } // End of namespace Scumm

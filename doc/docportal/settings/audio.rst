@@ -300,7 +300,7 @@ MT-32 Device
 .. _nativemt32:
 
 **True Roland MT-32 (disable GM emulation)**
-	Tells ScummVM that the MIDI device is an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500 or other MT-32 device. Note that this cannot be used in conjuntion with the Roland GS device option.
+	Tells ScummVM that the MIDI device is an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500 or other MT-32 device. Note that this cannot be used in conjunction with the Roland GS device option.
 
 	*native_mt32*
 

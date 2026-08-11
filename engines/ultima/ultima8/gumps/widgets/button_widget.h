@@ -22,9 +22,8 @@
 #ifndef ULTIMA8_GUMPS_WIDGETS_BUTTONWIDGET_H
 #define ULTIMA8_GUMPS_WIDGETS_BUTTONWIDGET_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/gfx/frame_id.h"
+#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
@@ -36,7 +35,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ButtonWidget();
-	ButtonWidget(int x, int y, Std::string txt, bool gamefont, int font,
+	ButtonWidget(int x, int y, Common::String txt, bool gamefont, int font,
 	             uint32 mouseOverBlendCol = 0, int width = 0, int height = 0,
 	             int32 layer = LAYER_NORMAL);
 	ButtonWidget(int x, int y, FrameID frame_up, FrameID frame_down,

@@ -105,11 +105,11 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
 Keyboard and mouse support
 ****************************
 
-Real bluetooth mice and keyboards work on the Vita and are supported by ScummVM. Go to **Settings > Devices** on the Vita home screen to pair your devices.
+Real Bluetooth mice and keyboards work on the Vita and are supported by ScummVM. Go to **Settings > Devices** on the Vita home screen to pair your devices.
 
 .. note::
 
-    Not all bluetooth keyboards or mice pair successfully with the Vita. The ScummVM team tested the Jelly Bean BT keyboard and mouse combo (ASIN:B06Y56BBYP) and with the standalone Jelly Comb Bluetooth Wireless Mouse (ASIN:B075HBDWCF).
+    Not all Bluetooth keyboards and mice pair successfully with the Vita. The ScummVM team tested the Jelly Bean BT keyboard and mouse combo (ASIN:B06Y56BBYP) and the standalone Jelly Comb Bluetooth Wireless Mouse (ASIN:B075HBDWCF).
 
 Touch support
 ****************
@@ -197,3 +197,4 @@ Known Issues
 ===============
 
 - MT-32 emulation is not available on the PS Vita.
+- ScummVM crashes when using the PS button or when suspending the console. Install the `FdFix plugin <https://github.com/TheOfficialFloW/FdFix>`_ to fix this.

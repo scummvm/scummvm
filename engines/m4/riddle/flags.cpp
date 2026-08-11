@@ -21,9 +21,6 @@
 
 #include "m4/riddle/flags.h"
 #include "m4/riddle/vars.h"
-#include "m4/core/term.h"
-#include "m4/adv_r/adv.h"
-#include "m4/adv_r/adv_inv.h"
 
 namespace M4 {
 namespace Riddle {
@@ -37,11 +34,11 @@ Flags::Flags() {
 void Flags::sync(Common::Serializer &s) {
 	size_t count = size();
 	for (uint i = 0; i < count; ++i)
-		s.syncAsSint32LE((*this)[i]);
+		s.syncAsSint32LE(_flags[i]);
 }
 
 void Flags::reset() {
-	Common::fill(&(*this)[0], &(*this)[0] + FLAGS_COUNT, 0);
+	Common::fill(_flags, _flags + FLAGS_COUNT, 0);
 	_flags[V071] = 2;
 	_flags[V088] = 1;
 	_flags[V086] = 2;

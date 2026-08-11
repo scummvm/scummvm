@@ -20,21 +20,21 @@ namespace LingoDec {
 /* StandardNames */
 
 namespace StandardNames {
-extern const char *opcodeNamesS[];
-extern const char *opcodeNamesM[];
-extern const char *binaryOpNames[];
-extern const char *chunkTypeNames[];
-extern const char *putTypeNames[];
+extern const char *const opcodeNamesS[];
+extern const char *const opcodeNamesM[];
+extern const char *const binaryOpNames[];
+extern const char *const chunkTypeNames[];
+extern const char *const putTypeNames[];
 
-extern const char *moviePropertyNames[];
-extern const char *whenEventNames[];
-extern const char *menuPropertyNames[];
-extern const char *menuItemPropertyNames[];
-extern const char *soundPropertyNames[];
-extern const char *spritePropertyNames[];
-extern const char *animationPropertyNames[];
-extern const char *animation2PropertyNames[];
-extern const char *memberPropertyNames[];
+extern const char *const moviePropertyNames[];
+extern const char *const whenEventNames[];
+extern const char *const menuPropertyNames[];
+extern const char *const menuItemPropertyNames[];
+extern const char *const soundPropertyNames[];
+extern const char *const spritePropertyNames[];
+extern const char *const animationPropertyNames[];
+extern const char *const animation2PropertyNames[];
+extern const char *const memberPropertyNames[];
 
 Common::String getOpcodeName(byte id);
 }
@@ -42,12 +42,12 @@ Common::String getOpcodeName(byte id);
 /* ScriptNames */
 
 struct ScriptNames {
-	int32 unknown0;
-	int32 unknown1;
-	uint32 len1;
-	uint32 len2;
-	uint16 namesOffset;
-	uint16 namesCount;
+	int32 unknown0 = 0;
+	int32 unknown1 = 0;
+	uint32 len1 = 0;
+	uint32 len2 = 0;
+	uint16 namesOffset = 0;
+	uint16 namesCount = 0;
 	Common::Array<Common::String> names;
 
 	unsigned int version;

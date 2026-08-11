@@ -26,7 +26,7 @@
 #include "common/savefile.h"
 #include "common/bufferedstream.h"
 #include "graphics/thumbnail.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 
 #define RECORD_VERSION 1
@@ -58,6 +58,9 @@ PlaybackFile::~PlaybackFile() {
 
 bool PlaybackFile::openWrite(const String &fileName) {
 	close();
+	if (fileName.contains("/")) {
+		error("Filename may not contain a path");
+	}
 	_header.fileName = fileName;
 	_writeStream = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving(fileName), 128 * 1024);
 	_headerDumped = false;
@@ -104,8 +107,8 @@ void PlaybackFile::close() {
 		delete _screenshotsFile;
 		_screenshotsFile = NULL;
 	}
-	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
-		free(i->_value.buffer);
+	for (auto &saveFile : _header.saveFiles) {
+		free(saveFile._value.buffer);
 	}
 	_header.saveFiles.clear();
 	_mode = kClosed;
@@ -452,7 +455,11 @@ void PlaybackFile::readEventsToBuffer(uint32 size) {
 	_eventsSize = size;
 }
 
-void PlaybackFile::saveScreenShot(Graphics::Surface &screen, byte md5[16]) {
+void PlaybackFile::saveScreenShot(const Graphics::ManagedSurface &screen, const byte md5[16]) {
+	saveScreenShot(screen.rawSurface(), md5);
+}
+
+void PlaybackFile::saveScreenShot(const Graphics::Surface &screen, const byte md5[16]) {
 	dumpRecordsToFile();
 	_writeStream->writeUint32BE(kMD5Tag);
 	_writeStream->writeUint32BE(16);
@@ -525,37 +532,37 @@ void PlaybackFile::writeHeaderSection() {
 
 void PlaybackFile::writeGameHash() {
 	uint32 hashSectionSize = 0;
-	for (StringMap::iterator i = _header.hashRecords.begin(); i != _header.hashRecords.end(); ++i) {
-		hashSectionSize = hashSectionSize + i->_key.size() + i->_value.size() + 8;
+	for (auto &record : _header.hashRecords) {
+		hashSectionSize = hashSectionSize + record._key.size() + record._value.size() + 8;
 	}
 	if (_header.hashRecords.size() == 0) {
 		return;
 	}
 	_writeStream->writeUint32BE(kHashSectionTag);
 	_writeStream->writeUint32BE(hashSectionSize);
-	for (StringMap::iterator i = _header.hashRecords.begin(); i != _header.hashRecords.end(); ++i) {
+	for (auto &record : _header.hashRecords) {
 		_writeStream->writeUint32BE(kHashRecordTag);
-		_writeStream->writeUint32BE(i->_key.size() + i->_value.size());
-		_writeStream->writeString(i->_key);
-		_writeStream->writeString(i->_value);
+		_writeStream->writeUint32BE(record._key.size() + record._value.size());
+		_writeStream->writeString(record._key);
+		_writeStream->writeString(record._value);
 	}
 }
 
 void PlaybackFile::writeRandomRecords() {
 	uint32 randomSectionSize = 0;
-	for (RandomSeedsDictionary::iterator i = _header.randomSourceRecords.begin(); i != _header.randomSourceRecords.end(); ++i) {
-		randomSectionSize = randomSectionSize + i->_key.size() + 12;
+	for (auto &record : _header.randomSourceRecords) {
+		randomSectionSize = randomSectionSize + record._key.size() + 12;
 	}
 	if (_header.randomSourceRecords.size() == 0) {
 		return;
 	}
 	_writeStream->writeUint32BE(kRandomSectionTag);
 	_writeStream->writeUint32BE(randomSectionSize);
-	for (RandomSeedsDictionary::iterator i = _header.randomSourceRecords.begin(); i != _header.randomSourceRecords.end(); ++i) {
+	for (auto &record : _header.randomSourceRecords) {
 		_writeStream->writeUint32BE(kRandomRecordTag);
-		_writeStream->writeUint32BE(i->_key.size() + 4);
-		_writeStream->writeString(i->_key);
-		_writeStream->writeUint32BE(i->_value);
+		_writeStream->writeUint32BE(record._key.size() + 4);
+		_writeStream->writeString(record._key);
+		_writeStream->writeUint32BE(record._value);
 	}
 }
 
@@ -641,19 +648,19 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 void PlaybackFile::writeGameSettings() {
 	_writeStream->writeUint32BE(kSettingsSectionTag);
 	uint32 settingsSectionSize = 0;
-	for (StringMap::iterator i = _header.settingsRecords.begin(); i != _header.settingsRecords.end(); ++i) {
-		settingsSectionSize += i->_key.size() + i->_value.size() + 24;
+	for (auto &record : _header.settingsRecords) {
+		settingsSectionSize += record._key.size() + record._value.size() + 24;
 	}
 	_writeStream->writeUint32BE(settingsSectionSize);
-	for (StringMap::iterator i = _header.settingsRecords.begin(); i != _header.settingsRecords.end(); ++i) {
+	for (auto &record : _header.settingsRecords) {
 		_writeStream->writeUint32BE(kSettingsRecordTag);
-		_writeStream->writeUint32BE(i->_key.size() + i->_value.size() + 16);
+		_writeStream->writeUint32BE(record._key.size() + record._value.size() + 16);
 		_writeStream->writeUint32BE(kSettingsRecordKeyTag);
-		_writeStream->writeUint32BE(i->_key.size());
-		_writeStream->writeString(i->_key);
+		_writeStream->writeUint32BE(record._key.size());
+		_writeStream->writeString(record._key);
 		_writeStream->writeUint32BE(kSettingsRecordValueTag);
-		_writeStream->writeUint32BE(i->_value.size());
-		_writeStream->writeString(i->_value);
+		_writeStream->writeUint32BE(record._value.size());
+		_writeStream->writeString(record._value);
 	}
 }
 
@@ -686,7 +693,7 @@ bool PlaybackFile::skipToNextScreenshot() {
 	return false;
 }
 
-Graphics::Surface *PlaybackFile::getScreenShot(int number) {
+Graphics::ManagedSurface *PlaybackFile::getScreenShot(int number) {
 	if (_mode != kRead) {
 		return NULL;
 	}
@@ -696,7 +703,7 @@ Graphics::Surface *PlaybackFile::getScreenShot(int number) {
 		if (screenCount == number) {
 			screenCount++;
 			_readStream->seek(-4, SEEK_CUR);
-			Graphics::Surface *thumbnail = nullptr;
+			Graphics::ManagedSurface *thumbnail = nullptr;
 			return Graphics::loadThumbnail(*_readStream, thumbnail) ? thumbnail : NULL;
 		} else {
 			uint32 size = _readStream->readUint32BE();
@@ -764,23 +771,23 @@ void PlaybackFile::addSaveFile(const String &fileName, InSaveFile *saveStream) {
 
 void PlaybackFile::writeSaveFilesSection() {
 	uint size = 0;
-	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
-		size += i->_value.size + i->_key.size() + 24;
+	for (auto &saveFile :_header.saveFiles) {
+		size += saveFile._value.size + saveFile._key.size() + 24;
 	}
 	if (size == 0) {
 		return;
 	}
 	_writeStream->writeSint32BE(kSaveTag);
 	_writeStream->writeSint32BE(size);
-	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
+	for (auto &saveFile : _header.saveFiles) {
 		_writeStream->writeSint32BE(kSaveRecordTag);
-		_writeStream->writeSint32BE(i->_key.size() + i->_value.size + 16);
+		_writeStream->writeSint32BE(saveFile._key.size() + saveFile._value.size + 16);
 		_writeStream->writeSint32BE(kSaveRecordNameTag);
-		_writeStream->writeSint32BE(i->_key.size());
-		_writeStream->writeString(i->_key);
+		_writeStream->writeSint32BE(saveFile._key.size());
+		_writeStream->writeString(saveFile._key);
 		_writeStream->writeSint32BE(kSaveRecordBufferTag);
-		_writeStream->writeSint32BE(i->_value.size);
-		_writeStream->write(i->_value.buffer, i->_value.size);
+		_writeStream->writeSint32BE(saveFile._value.size);
+		_writeStream->write(saveFile._value.buffer, saveFile._value.size);
 	}
 }
 

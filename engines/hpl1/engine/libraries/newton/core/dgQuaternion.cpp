@@ -68,7 +68,7 @@ dgQuaternion::dgQuaternion(const dgMatrix &matrix) {
 		ptr[k] = (matrix[i][k] + matrix[k][i]) * trace;
 	}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	dgMatrix tmp(*this, matrix.m_posit);
 	dgMatrix unitMatrix(tmp * matrix.Inverse());
 	for (dgInt32 di = 0; di < 4; di++) {
@@ -88,7 +88,7 @@ dgQuaternion::dgQuaternion(const dgVector &unitAxis, dgFloat32 Angle) {
 	m_q0 = dgCos(Angle);
 	sinAng = dgSin(Angle);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	if (dgAbsf(Angle) > dgFloat32(dgEPSILON / 10.0f)) {
 		NEWTON_ASSERT(
 		    dgAbsf(dgFloat32(1.0f) - unitAxis % unitAxis) < dgFloat32(dgEPSILON * 10.0f));

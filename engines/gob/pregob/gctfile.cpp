@@ -56,20 +56,20 @@ void GCTFile::load(Common::SeekableReadStream &gct) {
 	const uint16 itemCount = gct.readUint16LE();
 	_items.resize(itemCount);
 
-	for (Items::iterator i = _items.begin(); i != _items.end(); ++i) {
+	for (auto &item : _items) {
 		const uint16 selector  = gct.readUint16LE();
 		const uint16 lineCount = gct.readUint16LE();
 
-		i->selector = selector;
-		i->lines.resize(lineCount);
+		item.selector = selector;
+		item.lines.resize(lineCount);
 	}
 
 	// Read all item lines
-	for (Items::iterator i = _items.begin(); i != _items.end(); ++i) {
-		for (Lines::iterator l = i->lines.begin(); l != i->lines.end(); ++l) {
+	for (auto &item : _items) {
+		for (auto &line : item.lines) {
 			const uint16 lineSize = gct.readUint16LE();
 
-			readLine(gct, *l, lineSize);
+			readLine(gct, line, lineSize);
 		}
 	}
 
@@ -177,13 +177,13 @@ Common::String GCTFile::getLineText(const Line &line) const {
 	Common::String text;
 
 	// Go over all chunks in this line
-	for (Chunks::const_iterator c = line.chunks.begin(); c != line.chunks.end(); ++c) {
+	for (const auto &chunk : line.chunks) {
 		// A chunk is either a direct string, or a reference to another item
 
-		if        (c->type == kChunkTypeItem) {
+		if (chunk.type == kChunkTypeItem) {
 			Common::List<Common::String> lines;
 
-			getItemText(c->item, lines);
+			getItemText(chunk.item, lines);
 			if (lines.empty())
 				continue;
 
@@ -191,8 +191,8 @@ Common::String GCTFile::getLineText(const Line &line) const {
 				warning("GCTFile::getLineText(): Referenced item has multiple lines");
 
 			text += lines.front();
-		} else if (c->type == kChunkTypeString)
-			text += c->text;
+		} else if (chunk.type == kChunkTypeString)
+			text += chunk.text;
 	}
 
 	return text;

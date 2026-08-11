@@ -53,6 +53,17 @@ class RewindableAudioStream;
  */
 namespace Tucker {
 
+enum TUCKERAction {
+	kActionNone,
+	kActionSkipSpeech,
+	kActionFastMode,
+	kActionPause,
+	kActionTogglePanelStyle,
+	kActionToggleTextSpeech,
+	kActionHelp,
+	kActionEscape
+};
+
 enum CursorStyle {
 	kCursorNormal     = 0,
 	kCursorTalk       = 1,

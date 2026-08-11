@@ -202,6 +202,8 @@ public:
 
 class ProgramExec_ns : public ProgramExec {
 protected:
+	int _currentCredit;
+
 	Parallaction_ns *_vm;
 
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(invalid);

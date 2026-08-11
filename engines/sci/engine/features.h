@@ -272,6 +272,8 @@ public:
 	 */
 	PseudoMouseAbilityType detectPseudoMouseAbility();
 
+	bool useAudioPopfix() const { return _useAudioPopfix; }
+
 	bool useEarlyGetLongestTextCalculations() const;
 
 	/**
@@ -326,6 +328,8 @@ private:
 	bool _useWindowsCursors;
 
 	PseudoMouseAbilityType _pseudoMouseAbility;
+
+	bool _useAudioPopfix;
 
 	SegManager *_segMan;
 	Kernel *_kernel;

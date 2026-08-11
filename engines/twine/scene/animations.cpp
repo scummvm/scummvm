@@ -20,12 +20,9 @@
  */
 
 #include "twine/scene/animations.h"
-#include "common/endian.h"
-#include "common/memstream.h"
-#include "common/stream.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/parser/anim.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/renderer.h"
@@ -62,9 +59,9 @@ int32 Animations::searchAnim(AnimationTypes animIdx, int32 actorIdx) {
 
 int16 Animations::patchInterAngle(int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) const {
 	const int16 lastAngle = ClampAngle(lastAngle1);
-	const int16 newAngle = ClampAngle(newAngle1);
+	const int16 nextAngle = ClampAngle(newAngle1);
 
-	int16 angleDiff = newAngle - lastAngle;
+	int16 angleDiff = nextAngle - lastAngle;
 
 	int16 computedAngle;
 	if (angleDiff) {
@@ -95,43 +92,56 @@ int16 Animations::patchInterStep(int32 deltaTime, int32 keyFrameLength, int16 ne
 	return computedPos;
 }
 
-bool Animations::doSetInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr) {
-	if (!bodyData.isAnimated()) {
+bool Animations::doSetInterAnimObjet(int32 framedest, const AnimData &animData, BodyData &pBody, AnimTimerDataStruct *ptranimdest, bool global) {
+	if (!pBody.isAnimated()) {
 		return false;
 	}
-	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
+	const KeyFrame *keyFrame = animData.getKeyframe(framedest);
 
-	_currentStep.x = keyFrame->x;
-	_currentStep.y = keyFrame->y;
-	_currentStep.z = keyFrame->z;
-
-	_animMasterRot = keyFrame->animMasterRot;
-	_animStepBeta = ToAngle(keyFrame->animStepBeta);
-
-	const int16 numBones = bodyData.getNumBones();
+	const int16 numBones = pBody.getNumBones();
 
 	int32 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
 		numOfBonesInAnim = numBones;
 	}
-	const int32 keyFrameLength = keyFrame->length;
+	const int32 timeDest = keyFrame->length;
 
-	const KeyFrame *lastKeyFramePtr = animTimerDataPtr->ptr;
-	int32 remainingFrameTime = animTimerDataPtr->time;
+	const KeyFrame *lastKeyFramePtr = ptranimdest->ptr;
+	int32 remainingFrameTime = ptranimdest->time;
 	if (lastKeyFramePtr == nullptr) {
 		lastKeyFramePtr = keyFrame;
-		remainingFrameTime = keyFrameLength;
+		remainingFrameTime = timeDest;
 	}
-	const int32 deltaTime = _engine->timerRef - remainingFrameTime;
-	if (deltaTime >= keyFrameLength) {
-		copyKeyFrameToState(keyFrame, bodyData, numOfBonesInAnim);
-		animTimerDataPtr->ptr = keyFrame;
-		animTimerDataPtr->time = _engine->timerRef;
+	const int32 time = _engine->timerRef - remainingFrameTime;
+	if (time >= timeDest) {
+		ptranimdest->ptr = keyFrame;
+
+		if (global) {
+			ptranimdest->time = _engine->timerRef;
+
+			_animStep.x = keyFrame->x;
+			_animStep.y = keyFrame->y;
+			_animStep.z = keyFrame->z;
+			_animMasterRot = keyFrame->animMasterRot;
+			_animStepAlpha = ToAngle(keyFrame->animStepAlpha);
+			_animStepBeta = ToAngle(keyFrame->animStepBeta);
+			_animStepGamma = ToAngle(keyFrame->animStepGamma);
+		}
+
+		copyKeyFrameToState(keyFrame, pBody, numOfBonesInAnim);
+
 		return true;
 	}
 
-	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
-
+	if (global) {
+		_animStep.x = keyFrame->x;
+		_animStep.y = keyFrame->y;
+		_animStep.z = keyFrame->z;
+		_animMasterRot = keyFrame->animMasterRot;
+		_animStepAlpha = (keyFrame->animStepAlpha * time) / timeDest;
+		_animStepBeta = (keyFrame->animStepBeta * time) / timeDest;
+		_animStepGamma = (keyFrame->animStepGamma * time) / timeDest;
+	}
 	if (numOfBonesInAnim <= 1) {
 		return false;
 	}
@@ -139,22 +149,22 @@ bool Animations::doSetInterAnimObjet(int32 keyframeIdx, const AnimData &animData
 	int16 boneIdx = 1;
 	int16 tmpNumOfPoints = MIN<int16>(lastKeyFramePtr->boneframes.size() - 1, numOfBonesInAnim - 1);
 	do {
-		BoneFrame *boneState = bodyData.getBoneState(boneIdx);
+		BoneFrame *boneState = pBody.getBoneState(boneIdx);
 		const BoneFrame &boneFrame = keyFrame->boneframes[boneIdx];
 		const BoneFrame &lastBoneFrame = lastKeyFramePtr->boneframes[boneIdx];
 
 		boneState->type = boneFrame.type;
 		switch (boneFrame.type) {
 		case BoneType::TYPE_ROTATE:
-			boneState->x = patchInterAngle(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			boneState->y = patchInterAngle(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			boneState->z = patchInterAngle(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+			boneState->x = patchInterAngle(time, timeDest, boneFrame.x, lastBoneFrame.x);
+			boneState->y = patchInterAngle(time, timeDest, boneFrame.y, lastBoneFrame.y);
+			boneState->z = patchInterAngle(time, timeDest, boneFrame.z, lastBoneFrame.z);
 			break;
 		case BoneType::TYPE_TRANSLATE:
 		case BoneType::TYPE_ZOOM:
-			boneState->x = patchInterStep(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			boneState->y = patchInterStep(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			boneState->z = patchInterStep(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+			boneState->x = patchInterStep(time, timeDest, boneFrame.x, lastBoneFrame.x);
+			boneState->y = patchInterStep(time, timeDest, boneFrame.y, lastBoneFrame.y);
+			boneState->z = patchInterStep(time, timeDest, boneFrame.z, lastBoneFrame.z);
 			break;
 		default:
 			error("Unsupported animation rotation mode %d", boneFrame.type);
@@ -178,9 +188,9 @@ void Animations::setAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyD
 
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 
-	_currentStep.x = keyFrame->x;
-	_currentStep.y = keyFrame->y;
-	_currentStep.z = keyFrame->z;
+	_animStep.x = keyFrame->x;
+	_animStep.y = keyFrame->y;
+	_animStep.z = keyFrame->z;
 
 	_animMasterRot = keyFrame->animMasterRot;
 	_animStepBeta = ToAngle(keyFrame->animStepBeta);
@@ -231,32 +241,35 @@ void Animations::copyKeyFrameToState(const KeyFrame *keyframe, BodyData &bodyDat
 
 bool Animations::setInterDepObjet(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr) {
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
-	const int32 keyFrameLength = keyFrame->length;
+	const int32 timeDest = keyFrame->length;
 
 	int32 remainingFrameTime = animTimerDataPtr->time;
 	if (animTimerDataPtr->ptr == nullptr) {
-		remainingFrameTime = keyFrameLength;
+		remainingFrameTime = timeDest;
 	}
 
-	const int32 deltaTime = _engine->timerRef - remainingFrameTime;
-
-	_currentStep.x = keyFrame->x;
-	_currentStep.y = keyFrame->y;
-	_currentStep.z = keyFrame->z;
+	const int32 time = _engine->timerRef - remainingFrameTime;
 
 	_animMasterRot = keyFrame->animMasterRot;
-	_animStepBeta = ToAngle(keyFrame->animStepBeta);
 
-	if (deltaTime >= keyFrameLength) {
+	if (time >= timeDest) {
+		_animStep.x = keyFrame->x;
+		_animStep.y = keyFrame->y;
+		_animStep.z = keyFrame->z;
+		_animStepAlpha = ToAngle(keyFrame->animStepAlpha);
+		_animStepBeta = ToAngle(keyFrame->animStepBeta);
+		_animStepGamma = ToAngle(keyFrame->animStepGamma);
 		animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
 		animTimerDataPtr->time = _engine->timerRef;
 		return true; // finished animation
 	}
 
-	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
-	_currentStep.x = (_currentStep.x * deltaTime) / keyFrameLength;
-	_currentStep.y = (_currentStep.y * deltaTime) / keyFrameLength;
-	_currentStep.z = (_currentStep.z * deltaTime) / keyFrameLength;
+	_animStep.x = (keyFrame->x * time) / timeDest;
+	_animStep.y = (keyFrame->y * time) / timeDest;
+	_animStep.z = (keyFrame->z * time) / timeDest;
+	_animStepAlpha = ToAngle((keyFrame->animStepAlpha * time) / timeDest);
+	_animStepBeta = ToAngle((keyFrame->animStepBeta * time) / timeDest);
+	_animStepGamma = ToAngle((keyFrame->animStepGamma * time) / timeDest);
 
 	return false;
 }
@@ -272,42 +285,48 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		return;
 	}
 	for (const EntityAnim::Action &action : *actions) {
+		debugC(1, TwinE::kDebugAnimation, "Execute animation action %d for actor %d", (int)action.type, actorIdx);
 		switch (action.type) {
 		case ActionType::ACTION_HITTING:
 			if (action.animFrame - 1 == actor->_frame) {
-				actor->_strengthOfHit = action.strength;
+				actor->_hitForce = action.strength;
 				actor->_workFlags.bIsHitting = 1;
 			}
 			break;
 		case ActionType::ACTION_SAMPLE:
+			if (action.animFrame == actor->_frame) {
+				_engine->_sound->mixSample3D(action.sampleIndex, 0x1000, 1, actor->posObj(), actorIdx);
+			}
+			break;
 		case ActionType::ACTION_SAMPLE_FREQ:
 			if (action.animFrame == actor->_frame) {
-				_engine->_sound->playSample(action.sampleIndex, 1, actor->posObj(), actorIdx);
+				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(action.frequency) - (action.frequency / 2);
+				_engine->_sound->mixSample3D(action.sampleIndex, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_THROW_EXTRA_BONUS:
 			if (action.animFrame == actor->_frame) {
-				_engine->_extra->throwExtra(actorIdx, actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.spriteIndex, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
+				_engine->_extra->throwExtra(actorIdx, actor->_posObj.x, actor->_posObj.y + action.yHeight, actor->_posObj.z, action.spriteIndex, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
 		case ActionType::ACTION_THROW_MAGIC_BALL:
 			if (_engine->_gameState->_magicBall == -1 && action.animFrame == actor->_frame) {
-				_engine->_extra->addExtraThrowMagicball(actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle);
+				_engine->_extra->addExtraThrowMagicball(actor->_posObj.x, actor->_posObj.y + action.yHeight, actor->_posObj.z, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle);
 			}
 			break;
 		case ActionType::ACTION_SAMPLE_REPEAT:
 			if (action.animFrame == actor->_frame) {
-				_engine->_sound->playSample(action.sampleIndex, action.repeat, actor->posObj(), actorIdx);
+				_engine->_sound->mixSample3D(action.sampleIndex, 0x1000, action.repeat, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_THROW_SEARCH:
 			if (action.animFrame == actor->_frame) {
-				_engine->_extra->addExtraAiming(actorIdx, actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.spriteIndex, action.targetActor, action.finalAngle, action.strength);
+				_engine->_extra->addExtraAiming(actorIdx, actor->_posObj.x, actor->_posObj.y + action.yHeight, actor->_posObj.z, action.spriteIndex, action.targetActor, action.finalAngle, action.strength);
 			}
 			break;
 		case ActionType::ACTION_THROW_ALPHA:
 			if (action.animFrame == actor->_frame) {
-				_engine->_extra->throwExtra(actorIdx, actor->_pos.x, actor->_pos.y + action.yHeight, actor->_pos.z, action.spriteIndex, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
+				_engine->_extra->throwExtra(actorIdx, actor->_posObj.x, actor->_posObj.y + action.yHeight, actor->_posObj.z, action.spriteIndex, action.xAngle, actor->_beta + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
 		case ActionType::ACTION_SAMPLE_STOP:
@@ -318,18 +337,20 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_LEFT_STEP:
 			if (action.animFrame == actor->_frame && (actor->_brickSound & 0xF0U) != 0xF0U) {
 				const int16 sampleIdx = (actor->_brickSound & 0x0FU) + Samples::WalkFloorBegin;
-				_engine->_sound->playSample(sampleIdx, 1, actor->posObj(), actorIdx);
+				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(1000) - 500;
+				_engine->_sound->mixSample3D(sampleIdx, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_RIGHT_STEP:
 			if (action.animFrame == actor->_frame && (actor->_brickSound & 0xF0U) != 0xF0U) {
 				const int16 sampleIdx = (actor->_brickSound & 0x0FU) + Samples::WalkFloorRightBegin;
-				_engine->_sound->playSample(sampleIdx, 1, actor->posObj(), actorIdx);
+				const uint16 pitchBend = 0x1000 + _engine->getRandomNumber(1000) - 500;
+				_engine->_sound->mixSample3D(sampleIdx, pitchBend, 1, actor->posObj(), actorIdx);
 			}
 			break;
 		case ActionType::ACTION_HERO_HITTING:
 			if (action.animFrame - 1 == actor->_frame) {
-				actor->_strengthOfHit = magicLevelStrengthOfHit[_engine->_gameState->_magicLevelIdx];
+				actor->_hitForce = magicLevelStrengthOfHit[_engine->_gameState->_magicLevelIdx];
 				actor->_workFlags.bIsHitting = 1;
 			}
 			break;
@@ -337,9 +358,9 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 			if (action.animFrame == actor->_frame) {
 				const IVec2 &destPos = _engine->_renderer->rotate(action.distanceX, action.distanceZ, actor->_beta);
 
-				const int32 throwX = destPos.x + actor->_pos.x;
-				const int32 throwY = action.distanceY + actor->_pos.y;
-				const int32 throwZ = destPos.y + actor->_pos.z;
+				const int32 throwX = destPos.x + actor->_posObj.x;
+				const int32 throwY = action.distanceY + actor->_posObj.y;
+				const int32 throwZ = destPos.y + actor->_posObj.z;
 
 				_engine->_extra->throwExtra(actorIdx, throwX, throwY, throwZ, action.spriteIndex,
 				                               action.xAngle, action.yAngle + actor->_beta, action.xRotPoint, action.extraAngle, action.strength);
@@ -348,13 +369,13 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_THROW_3D_ALPHA:
 			if (action.animFrame == actor->_frame) {
 				const int32 distance = getDistance2D(actor->posObj(), _engine->_scene->_sceneHero->posObj());
-				const int32 newAngle = _engine->_movements->getAngle(actor->_pos.y, 0, _engine->_scene->_sceneHero->_pos.y, distance);
+				const int32 newAngle = _engine->_movements->getAngle(actor->_posObj.y, 0, _engine->_scene->_sceneHero->_posObj.y, distance);
 
 				const IVec2 &destPos = _engine->_renderer->rotate(action.distanceX, action.distanceZ, actor->_beta);
 
-				const int32 throwX = destPos.x + actor->_pos.x;
-				const int32 throwY = action.distanceY + actor->_pos.y;
-				const int32 throwZ = destPos.y + actor->_pos.z;
+				const int32 throwX = destPos.x + actor->_posObj.x;
+				const int32 throwY = action.distanceY + actor->_posObj.y;
+				const int32 throwZ = destPos.y + actor->_posObj.z;
 
 				_engine->_extra->throwExtra(actorIdx, throwX, throwY, throwZ, action.spriteIndex,
 				                               action.xAngle + newAngle, action.yAngle + actor->_beta, action.xRotPoint, action.extraAngle, action.strength);
@@ -363,9 +384,9 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_THROW_3D_SEARCH:
 			if (action.animFrame == actor->_frame) {
 				const IVec2 &destPos = _engine->_renderer->rotate(action.distanceX, action.distanceZ, actor->_beta);
-				const int32 x = actor->_pos.x + destPos.x;
-				const int32 y = actor->_pos.y + action.distanceY;
-				const int32 z = actor->_pos.z + destPos.y;
+				const int32 x = actor->_posObj.x + destPos.x;
+				const int32 y = actor->_posObj.y + action.distanceY;
+				const int32 z = actor->_posObj.z + destPos.y;
 				_engine->_extra->addExtraAiming(actorIdx, x, y, z, action.spriteIndex,
 				                                action.targetActor, action.finalAngle, action.strength);
 			}
@@ -373,9 +394,9 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_THROW_3D_MAGIC:
 			if (_engine->_gameState->_magicBall == -1 && action.animFrame == actor->_frame) {
 				const IVec2 &destPos = _engine->_renderer->rotate(action.distanceX, action.distanceZ, actor->_beta);
-				const int32 x = actor->_pos.x + destPos.x;
-				const int32 y = actor->_pos.y + action.distanceY;
-				const int32 z = actor->_pos.z + destPos.y;
+				const int32 x = actor->_posObj.x + destPos.x;
+				const int32 y = actor->_posObj.y + action.distanceY;
+				const int32 z = actor->_posObj.z + destPos.y;
 				_engine->_extra->addExtraThrowMagicball(x, y, z, action.xAngle, actor->_beta, action.yAngle, action.finalAngle);
 			}
 			break;
@@ -386,25 +407,25 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 	}
 }
 
-bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes genNextAnim, int32 actorIdx) {
+bool Animations::initAnim(AnimationTypes genNewAnim, AnimType flag, AnimationTypes genNextAnim, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->_body == -1) {
 		return false;
 	}
 
-	if (actor->_staticFlags.bIsSpriteActor) {
+	if (actor->_flags.bSprite3D) {
 		return false;
 	}
 
-	if (newAnim == actor->_genAnim && actor->_anim != -1) {
+	if (genNewAnim == actor->_genAnim && actor->_anim != -1) {
 		return true;
 	}
 
-	if (genNextAnim == AnimationTypes::kAnimInvalid && actor->_flagAnim != AnimType::kAnimationAllThen) {
+	if (genNextAnim == AnimationTypes::kNoAnim && actor->_flagAnim != AnimType::kAnimationAllThen) {
 		genNextAnim = actor->_genAnim;
 	}
 
-	int32 newanim = searchAnim(newAnim, actorIdx);
+	int32 newanim = searchAnim(genNewAnim, actorIdx);
 
 	if (newanim == -1) {
 		newanim = searchAnim(AnimationTypes::kStanding, actorIdx);
@@ -414,7 +435,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 	}
 
 	if (flag != AnimType::kAnimationSet && actor->_flagAnim == AnimType::kAnimationAllThen) {
-		actor->_nextGenAnim = newAnim;
+		actor->_nextGenAnim = genNewAnim;
 		return false;
 	}
 
@@ -432,16 +453,17 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 		flag = AnimType::kAnimationAllThen;
 	}
 
+	BodyData &bodyData = actor->_entityDataPtr->getBody(actor->_body);
 	if (actor->_anim == -1) {
 		// if no previous animation
-		setAnimObjet(0, _engine->_resources->_animData[newanim], _engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
+		setAnimObjet(0, _engine->_resources->_animData[newanim], bodyData, &bodyData._animTimerData);
 	} else {
 		// interpolation between animations
-		stockInterAnim(_engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
+		stockInterAnim(bodyData, &bodyData._animTimerData);
 	}
 
 	actor->_anim = newanim;
-	actor->_genAnim = newAnim;
+	actor->_genAnim = genNewAnim;
 	actor->_nextGenAnim = genNextAnim;
 	actor->_ptrAnimAction = _currentActorAnimExtraPtr;
 
@@ -457,6 +479,8 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 	actor->_animStepBeta = LBAAngles::ANGLE_0;
 	actor->_animStep = IVec3();
 
+	debugC(1, TwinE::kDebugAnimation, "Change animation for actor %d to %d", actorIdx, newanim);
+
 	return true;
 }
 
@@ -470,15 +494,15 @@ void Animations::doAnim(int32 actorIdx) {
 	const IVec3 &oldPos = actor->_oldPos;
 
 	IVec3 &processActor = actor->_processActor;
-	if (actor->_staticFlags.bIsSpriteActor) {
-		if (actor->_strengthOfHit) {
+	if (actor->_flags.bSprite3D) {
+		if (actor->_hitForce) {
 			actor->_workFlags.bIsHitting = 1;
 		}
 
 		processActor = actor->posObj();
 
 		if (!actor->_workFlags.bIsFalling) {
-			if (actor->_speed) {
+			if (actor->_srot) {
 				int32 xAxisRotation = actor->realAngle.getRealValueFromTime(_engine->timerRef);
 				if (!xAxisRotation) {
 					if (actor->realAngle.endValue > 0) {
@@ -490,14 +514,14 @@ void Animations::doAnim(int32 actorIdx) {
 
 				const IVec2 xRotPos = _engine->_renderer->rotate(xAxisRotation, 0, actor->_spriteActorRotation);
 
-				processActor.y = actor->_pos.y - xRotPos.y;
+				processActor.y = actor->_posObj.y - xRotPos.y;
 
 				const IVec2 destPos = _engine->_renderer->rotate(0, xRotPos.x, actor->_beta);
 
-				processActor.x = actor->_pos.x + destPos.x;
-				processActor.z = actor->_pos.z + destPos.y;
+				processActor.x = actor->_posObj.x + destPos.x;
+				processActor.z = actor->_posObj.z + destPos.y;
 
-				_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, actor->_speed, LBAAngles::ANGLE_17, &actor->realAngle);
+				_engine->_movements->initRealValue(LBAAngles::ANGLE_0, actor->_srot, LBAAngles::ANGLE_17, &actor->realAngle);
 
 				if (actor->_workFlags.bIsSpriteMoving) {
 					if (actor->_doorWidth) { // open door
@@ -513,7 +537,7 @@ void Animations::doAnim(int32 actorIdx) {
 							}
 
 							actor->_workFlags.bIsSpriteMoving = 0;
-							actor->_speed = 0;
+							actor->_srot = 0;
 						}
 					} else { // close door
 						bool updatePos = false;
@@ -540,16 +564,16 @@ void Animations::doAnim(int32 actorIdx) {
 							processActor = actor->_animStep;
 
 							actor->_workFlags.bIsSpriteMoving = 0;
-							actor->_speed = 0;
+							actor->_srot = 0;
 						}
 					}
 				}
 			}
 
-			if (actor->_staticFlags.bCanBePushed) {
+			if (actor->_flags.bCanBePushed) {
 				processActor += actor->_animStep;
 
-				if (actor->_staticFlags.bUseMiniZv) {
+				if (actor->_flags.bUseMiniZv) {
 					processActor.x = ((processActor.x / (SIZE_BRICK_XZ / 4)) * (SIZE_BRICK_XZ / 4));
 					processActor.z = ((processActor.z / (SIZE_BRICK_XZ / 4)) * (SIZE_BRICK_XZ / 4));
 				}
@@ -562,8 +586,9 @@ void Animations::doAnim(int32 actorIdx) {
 			const AnimData &animData = _engine->_resources->_animData[actor->_anim];
 
 			bool keyFramePassed = false;
-			if (_engine->_resources->_bodyData[actor->_body].isAnimated()) {
-				keyFramePassed = setInterDepObjet(actor->_frame, animData, &actor->_animTimerData);
+			BodyData &bodyData = actor->_entityDataPtr->getBody(actor->_body);
+			if (bodyData.isAnimated()) {
+				keyFramePassed = setInterDepObjet(actor->_frame, animData, &bodyData._animTimerData);
 			}
 
 			if (_animMasterRot) {
@@ -575,14 +600,14 @@ void Animations::doAnim(int32 actorIdx) {
 			actor->_beta = ClampAngle(actor->_beta + _animStepBeta - actor->_animStepBeta);
 			actor->_animStepBeta = _animStepBeta;
 
-			const IVec2 &destPos = _engine->_renderer->rotate(_currentStep.x, _currentStep.z, actor->_beta);
+			const IVec2 &destPos = _engine->_renderer->rotate(_animStep.x, _animStep.z, actor->_beta);
 
-			_currentStep.x = destPos.x;
-			_currentStep.z = destPos.y;
+			_animStep.x = destPos.x;
+			_animStep.z = destPos.y;
 
-			processActor = actor->posObj() + _currentStep - actor->_animStep;
+			processActor = actor->posObj() + _animStep - actor->_animStep;
 
-			actor->_animStep = _currentStep;
+			actor->_animStep = _animStep;
 
 			actor->_workFlags.bAnimEnded = 0;
 			actor->_workFlags.bAnimNewFrame = 0;
@@ -595,7 +620,7 @@ void Animations::doAnim(int32 actorIdx) {
 				processAnimActions(actorIdx);
 
 				int16 numKeyframe = actor->_frame;
-				if (numKeyframe == (int16)animData.getNumKeyframes()) {
+				if (numKeyframe == (int16)animData.getNbFramesAnim()) {
 					actor->_workFlags.bIsHitting = 0;
 
 					if (actor->_flagAnim == AnimType::kAnimationTypeRepeat) {
@@ -613,7 +638,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 						actor->_flagAnim = AnimType::kAnimationTypeRepeat;
 						actor->_frame = 0;
-						actor->_strengthOfHit = 0;
+						actor->_hitForce = 0;
 					}
 
 					processAnimActions(actorIdx);
@@ -648,19 +673,19 @@ void Animations::doAnim(int32 actorIdx) {
 
 	// actor collisions with bricks
 	uint32 col1 = 0; 	/** Cause damage in current processed actor */
-	if (actor->_staticFlags.bComputeCollisionWithBricks) {
+	if (actor->_flags.bComputeCollisionWithBricks) {
 		ShapeType col = _engine->_grid->worldColBrick(oldPos);
 
 		if (col != ShapeType::kNone) {
 			if (col == ShapeType::kSolid) {
 				processActor.y = (processActor.y / SIZE_BRICK_Y) * SIZE_BRICK_Y + SIZE_BRICK_Y; // go upper
-				actor->_pos.y = processActor.y;
+				actor->_posObj.y = processActor.y;
 			} else {
 				collision->reajustPos(processActor, col);
 			}
 		}
 
-		if (actor->_staticFlags.bComputeCollisionWithObj) {
+		if (actor->_flags.bComputeCollisionWithObj) {
 			collision->checkObjCol(actorIdx);
 		}
 
@@ -670,26 +695,18 @@ void Animations::doAnim(int32 actorIdx) {
 
 		collision->setCollisionPos(processActor);
 
-		if (IS_HERO(actorIdx) && !actor->_staticFlags.bComputeLowCollision) {
+		if (IS_HERO(actorIdx) && !actor->_flags.bComputeLowCollision) {
 			// check hero collisions with bricks
 			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
 			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
 			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
 			col1 |= collision->doCornerReajustTwinkel(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		} else {
-			// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
-			// remove processActorSave
-			const IVec3 processActorSave = processActor;
-
 			// check other actors collisions with bricks
 			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
 			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
 			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
 			col1 |= collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
-			// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
-			if (actorIdx == 1 && _engine->_scene->_currentSceneIdx == LBA1SceneId::Hamalayi_Mountains_2nd_fighting_scene) {
-				processActor = processActorSave;
-			}
 		}
 
 		// process wall hit while running
@@ -701,7 +718,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 			if (destPos.x >= 0 && destPos.y >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.y <= SCENE_SIZE_MAX) {
 				if (_engine->_grid->worldColBrick(destPos.x, processActor.y + SIZE_BRICK_Y, destPos.y) != ShapeType::kNone && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
-					_engine->_extra->initSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
+					_engine->_extra->initSpecial(actor->_posObj.x, actor->_posObj.y + 1000, actor->_posObj.z, ExtraSpecialType::kHitStars);
 					initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 
 					if (IS_HERO(actorIdx)) {
@@ -723,7 +740,7 @@ void Animations::doAnim(int32 actorIdx) {
 					processActor.y = (collision->_collision.y * SIZE_BRICK_Y) + SIZE_BRICK_Y;
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
-						_engine->_extra->initSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
+						_engine->_extra->initSpecial(actor->_posObj.x, actor->_posObj.y + 1000, actor->_posObj.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 						_engine->_movements->_lastJoyFlag = true;
 						actor->addLife(-1);
@@ -748,9 +765,12 @@ void Animations::doAnim(int32 actorIdx) {
 				collision->reajustPos(processActor, col);
 			}
 
+			if (actor->_workFlags.bIsFalling) {
+				debugC(1, TwinE::kDebugCollision, "Actor %d reset falling", actorIdx);
+			}
 			actor->_workFlags.bIsFalling = 0;
 		} else {
-			if (actor->_staticFlags.bCanFall && actor->_carryBy == -1) {
+			if (actor->_flags.bObjFallable && actor->_carryBy == -1) {
 				col = _engine->_grid->worldColBrick(processActor.x, processActor.y - 1, processActor.z);
 
 				if (col != ShapeType::kNone) {
@@ -761,6 +781,7 @@ void Animations::doAnim(int32 actorIdx) {
 					collision->reajustPos(processActor, col);
 				} else {
 					if (!actor->_workFlags.bIsRotationByAnim) {
+						debugC(1, TwinE::kDebugCollision, "Actor %d is falling", actorIdx);
 						actor->_workFlags.bIsFalling = 1;
 
 						if (IS_HERO(actorIdx) && _engine->_scene->_startYFalling == 0) {
@@ -776,10 +797,10 @@ void Animations::doAnim(int32 actorIdx) {
 							if (fallHeight <= (2 * SIZE_BRICK_Y) && actor->_genAnim == AnimationTypes::kForward) {
 								actor->_workFlags.bWasWalkingBeforeFalling = 1;
 							} else {
-								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
+								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, actorIdx);
 							}
 						} else {
-							initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
+							initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kNoAnim, actorIdx);
 						}
 					}
 				}
@@ -791,7 +812,7 @@ void Animations::doAnim(int32 actorIdx) {
 			actor->setLife(0);
 		}
 	} else {
-		if (actor->_staticFlags.bComputeCollisionWithObj) {
+		if (actor->_flags.bComputeCollisionWithObj) {
 			collision->checkObjCol(actorIdx);
 		}
 	}
@@ -821,7 +842,7 @@ void Animations::doAnim(int32 actorIdx) {
 		processActor.z = SCENE_SIZE_MAX;
 	}
 
-	actor->_pos = processActor;
+	actor->_posObj = processActor;
 }
 
 } // namespace TwinE

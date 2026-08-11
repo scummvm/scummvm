@@ -115,7 +115,7 @@ class text_sprite {
 	uint32 spriteHeight; // height of text sprite
 	uint32 size;         // in bytes (= width * height * bit_depth)      NOT SURE WE NEED THIS FOR ANYTHING
 	uint32 surfaceId; // The surface we want to eventually draw this sprite on
-	_lineInfo lineInfo; // infomation about the lines in the text_block
+	_lineInfo lineInfo; // information about the lines in the text_block
 	_TSparams params;
 
 	// private functions:
@@ -163,10 +163,10 @@ public:
 		return size; // get byte-length of text sprite data
 	}
 	_lineInfo *GetLineInfo(void) {
-		return &lineInfo; // infomation about the lines in the text_block
+		return &lineInfo; // information about the lines in the text_block
 	}
 	_TSparams *GetParams(void) {
-		return &params; // infomation about the lines in the text_block
+		return &params; // information about the lines in the text_block
 	}
 	void SetSurface(uint32 sid) { surfaceId = sid; }
 	uint32 GetSurface() const { return surfaceId; }

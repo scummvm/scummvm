@@ -26,6 +26,12 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kInfoTimeCount = 3;
+
+#endif
+
 void InfoDialog::show(XeenEngine *vm) {
 	InfoDialog *dlg = new InfoDialog(vm);
 	dlg->execute();
@@ -64,21 +70,54 @@ void InfoDialog::execute() {
 	Window &w = windows[28];
 	w.setBounds(Common::Rect(88, 20, 248, 112 + (_lines.empty() ? 0 : _lines.size() * 9 + 13)));
 	w.open();
-	w.writeString(details);
+	Common::String ttsMessage;
+	w.writeString(details, false, &ttsMessage);
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+	speakText(ttsMessage);
+#endif
 
 	do {
 		events.updateGameCounter();
 		intf.draw3d(false, false);
 		w.frame();
-		w.writeString(details);
+		w.writeString(details, false);
 		w.update();
 
 		events.wait(1);
 	} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
+
 	events.clearEvents();
 	w.close();
 }
+
+#ifdef USE_TTS
+
+void InfoDialog::speakText(const Common::String &text) const {
+	uint index = 0;
+
+	_vm->sayText(getNextTextSection(text, index, kInfoTimeCount));
+
+	Common::String timeInfo[kInfoTimeCount];
+	// Time, day, and year headers
+	for (uint i = 0; i < kInfoTimeCount; ++i) {
+		timeInfo[i] = getNextTextSection(text, index);
+	}
+
+	// Time, day, and year numbers
+	for (uint i = 0; i < kInfoTimeCount; ++i) {
+		_vm->sayText(timeInfo[i] + ": " + getNextTextSection(text, index));
+	}
+
+	// Any remaining lines
+	_vm->sayText(text.substr(index));
+}
+
+#endif
 
 void InfoDialog::protectionText() {
 	Party &party = *_vm->_party;
@@ -90,24 +129,24 @@ void InfoDialog::protectionText() {
 		_lines.push_back(Common::String::format(Res.LIGHT_COUNT_TEXT, party._lightCount));
 	}
 
-	if (party._fireResistence) {
-		_lines.push_back(Common::String::format(Res.FIRE_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._fireResistence));
+	if (party._fireResistance) {
+		_lines.push_back(Common::String::format(Res.FIRE_RESISTANCE_TEXT,
+			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._fireResistance));
 	}
 
-	if (party._electricityResistence) {
-		_lines.push_back(Common::String::format(Res.ELECRICITY_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._electricityResistence));
+	if (party._electricityResistance) {
+		_lines.push_back(Common::String::format(Res.ELECRICITY_RESISTANCE_TEXT,
+			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._electricityResistance));
 	}
 
-	if (party._coldResistence) {
-		_lines.push_back(Common::String::format(Res.COLD_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._coldResistence));
+	if (party._coldResistance) {
+		_lines.push_back(Common::String::format(Res.COLD_RESISTANCE_TEXT,
+			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._coldResistance));
 	}
 
-	if (party._poisonResistence) {
-		_lines.push_back(Common::String::format(Res.POISON_RESISTENCE_TEXT,
-			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._poisonResistence));
+	if (party._poisonResistance) {
+		_lines.push_back(Common::String::format(Res.POISON_RESISTANCE_TEXT,
+			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._poisonResistance));
 	}
 
 	if (party._clairvoyanceActive) {

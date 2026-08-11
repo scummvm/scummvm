@@ -28,12 +28,10 @@
 
 namespace Freescape {
 
-class TinyGLTexture : public Texture {
+class TinyGL2DTexture : public Texture {
 public:
-	TinyGLTexture(const Graphics::Surface *surface);
-	virtual ~TinyGLTexture();
-
-	const static Graphics::PixelFormat getRGBAPixelFormat();
+	TinyGL2DTexture(const Graphics::Surface *surface);
+	virtual ~TinyGL2DTexture();
 
 	TinyGL::BlitImage *getBlitTexture() const;
 
@@ -45,6 +43,24 @@ public:
 
 private:
 	TinyGL::BlitImage *_blitImage;
+};
+
+
+class TinyGL3DTexture : public Texture {
+public:
+	TinyGL3DTexture(const Graphics::Surface *surface);
+	TinyGL3DTexture(byte *stipple, uint32 color1, uint32 color2);
+	virtual ~TinyGL3DTexture();
+
+	void update(const Graphics::Surface *surface) override;
+	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
+
+	TGLuint _id;
+	TGLuint _internalFormat;
+	TGLuint _sourceFormat;
+	uint32 _internalWidth;
+	uint32 _internalHeight;
+	bool _upsideDown;
 };
 
 } // End of namespace Freescape

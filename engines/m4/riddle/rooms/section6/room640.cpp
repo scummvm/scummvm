@@ -20,17 +20,55 @@
  */
 
 #include "m4/riddle/rooms/section6/room640.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
 void Room640::init() {
+	switch (_G(game).previous_room) {
+	case KERNEL_RESTORING_GAME:
+		digi_preload("950_s28c");
+		break;
+
+	case 607:
+		ws_demand_location(_G(my_walker), -30, 295, 3);
+		ws_walk(_G(my_walker), 32, 295, nullptr, 1, 3);
+		player_set_commands_allowed(false);
+		break;
+
+	case 634:
+		ws_demand_location(_G(my_walker), 303, 347, 1);
+		break;
+
+	case 641:
+		ws_demand_location(_G(my_walker), 670, 335, 9);
+		ws_walk(_G(my_walker), 591, 335, nullptr, 1, 9);
+		player_set_commands_allowed(false);
+		break;
+
+	case 646:
+		ws_demand_location(_G(my_walker), 290, 277, 5);
+		break;
+
+	default:
+		digi_preload("950_s28c");
+		ws_demand_location(_G(my_walker), 303, 347, 1);
+		break;
+	}
+
+	digi_play_loop("950_s28c", 3);
 }
 
-void Room640::daemon() {
+void Room640::parser() {
+	Maze::parser();
+
+	checkExitLeft(607);
+	checkExitRight(641);
+	checkExitUp(646);
+	checkExitDown(634);
 }
 
 } // namespace Rooms

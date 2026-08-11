@@ -146,7 +146,19 @@ Common::String ScummEngine_v60he::convertSavePath(const byte *src) {
 	debug(2, "convertSavePath in: '%s'", (const char *)src);
 
 	// Strip us down to only the file
-	Common::String filePath = convertFilePath(src).baseName();
+	Common::Path path = convertFilePath(src);
+	Common::String filePath = path.baseName();
+
+	// Cheese Chase uses save file names that clash with the built-in
+	// levels, so keep last two components. The first of them seems to tie
+	// the custom level sets to a specific player anyway, so this is a
+	// win-win.
+	if (strcmp(_game.gameid, "chase") == 0 && (filePath.hasSuffixIgnoreCase(".map") || filePath.hasSuffixIgnoreCase(".obj"))) {
+		Common::StringArray components = convertFilePath(src).splitComponents();
+		int size = components.size();
+		if (size >= 2 && components[size - 2].size() == 3)
+			filePath = components[size - 2] + '-' + components[size - 1];
+	}
 
 	// Prepend the target name
 	filePath = _targetName + '-' + filePath;
@@ -213,8 +225,9 @@ Common::SeekableReadStream *ScummEngine_v60he::openSaveFileForReading(const byte
 }
 
 Common::SeekableWriteStream *ScummEngine_v60he::openSaveFileForWriting(const byte *fileName) {
-	// HACK: Disable compression for Moonbase.  Fixes custom map saving.
-	return _saveFileMan->openForSaving(convertSavePath(fileName), _game.id != GID_MOONBASE);
+	// HACK: Disable compression for games which need seeking operations
+	bool gameCanCompress = _game.id != GID_MOONBASE && _game.id != GID_FUNSHOP;
+	return _saveFileMan->openForSaving(convertSavePath(fileName), gameCanCompress);
 }
 
 void ScummEngine_v60he::deleteSaveFile(const byte *fileName) {
@@ -1035,7 +1048,7 @@ void ScummEngine_v60he::o60_soundOps() {
 
 void ScummEngine_v60he::localizeArray(int slot, byte scriptSlot) {
 	if (_game.heversion >= 80)
-		slot &= ~0x33539000;
+		slot &= ~MAGIC_ARRAY_NUMBER;
 
 	if (slot >= _numArray)
 		error("o60_localizeArrayToScript(%d): array slot out of range", slot);
@@ -1089,8 +1102,19 @@ void ScummEngine_v60he::o60_readFilePos() {
 		return;
 	}
 
-	assert(_hInFileTable[slot]);
-	push(_hInFileTable[slot]->pos());
+	// The original uses standard file handles, and not
+	// double in/out handles, so a script can open a file
+	// (as out file) and call this function to perform a ftell().
+	// This causes crashes in at least Backyard Basketball.
+	// 
+	// Let's try imitating that...
+	if (_hInFileTable[slot]) {
+		push(_hInFileTable[slot]->pos());
+	} else if (_hOutFileTable[slot]) {
+		push(_hOutFileTable[slot]->pos());
+	} else {
+		push(0);
+	}
 }
 
 void ScummEngine_v60he::o60_redimArray() {

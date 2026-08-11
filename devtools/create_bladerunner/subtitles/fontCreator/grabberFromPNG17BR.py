@@ -312,8 +312,8 @@ class grabberFromPNG:
 				#	self.listOfOutOfOrderGlyphs.append((u'\xf1', u'\xa5'))   # spanish n (senor)
 				#	self.listOfOutOfOrderGlyphs.append((u'\xe2', u'\xa6'))   # a for (liver) pate
 				#	self.listOfOutOfOrderGlyphs.append((u'\xe9', u'\xa7'))   # e for (liver) pate
-				#elif self.originalFontName == 'TAHOMA': # treat TAHOMA18 and TAHOMA24 similarily here
-				if self.originalFontName == 'TAHOMA': # treat TAHOMA18 and TAHOMA24 similarily here
+				#elif self.originalFontName == 'TAHOMA': # treat TAHOMA18 and TAHOMA24 similarly here
+				if self.originalFontName == 'TAHOMA': # treat TAHOMA18 and TAHOMA24 similarly here
 					self.listOfOutOfOrderGlyphs.append((u'\xe9', u'\u0192')) 	# french e punctuated
 					self.listOfOutOfOrderGlyphs.append((u'\xfc', u'\u2013')) 	# u umlaut
 			if gTraceModeEnabled:

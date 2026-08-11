@@ -34,8 +34,9 @@ struct NancyInput;
 namespace UI {
 
 class Scrollbar;
+class ScrollTextBox;
 
-class Textbox : public Nancy::RenderObject, public Misc::HypertextParser {
+class Textbox : public RenderObject, public Misc::HypertextParser {
 public:
 	Textbox();
 	virtual ~Textbox();
@@ -48,8 +49,17 @@ public:
 	void drawTextbox();
 	void clear() override;
 
+	bool hasBeenDrawn() const;
+
 	void addTextLine(const Common::String &text, uint32 autoClearTime = 0);
 	void setOverrideFont(const uint fontID);
+
+	// Nancy 10 only: picks the full, taskbar-covering box (AR 74) over the strip
+	// (AR 75). No effect on Nancy 1-9 (no such mode) or Nancy 11+ (a single box).
+	void setFullMode(bool open);
+	// True while the text box visually covers the taskbar buttons, so Scene can
+	// skip taskbar input. Always false before Nancy 10, whose box sits clear of them.
+	bool coversTaskbar() const;
 
 private:
 	uint16 getInnerHeight() const;
@@ -57,6 +67,10 @@ private:
 
 	RenderObject _highlightRObj;
 	Scrollbar *_scrollbar;
+
+	// Nancy 10+ overlay popup the public API forwards to (UICO/SCTB-driven).
+	// The legacy members above are unused in that mode.
+	ScrollTextBox *_scrollTextBox;
 
 	float _scrollbarPos;
 

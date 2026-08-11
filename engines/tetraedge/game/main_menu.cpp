@@ -60,7 +60,7 @@ void MainMenu::enter() {
 
 	TeSpriteLayout &appSpriteLayout = app->appSpriteLayout();
 	appSpriteLayout.setVisible(true);
-	if (!appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer.running()) {
+	if (!appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer.running() && g_engine->gameType() == TetraedgeEngine::kSyberia) {
 		appSpriteLayout.load("menus/menu.ogv");
 		appSpriteLayout._tiledSurfacePtr->_frameAnim.setLoopCount(-1);
 		appSpriteLayout._tiledSurfacePtr->play();
@@ -295,7 +295,10 @@ bool MainMenu::onNewGameButtonValidated() {
 bool MainMenu::onNewGameConfirmed() {
 	// Note: Original game deletes saves here.  Don't do that..
 	_confirmingTuto = true;
-	_tutoConfirm.enter("menus/confirm/confirmTuto.lua", "");
+	if (!g_engine->gameIsAmerzone())
+		_tutoConfirm.enter("menus/confirm/confirmTuto.lua", "");
+	else
+		_tutoConfirm.enter("GUI/ConfirmNewGame.lua", "");
 	onContinueGameButtonValidated();
 	return false;
 }

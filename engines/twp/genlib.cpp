@@ -460,7 +460,7 @@ static SQInteger getPrivatePref(HSQUIRRELVM v) {
 }
 
 static SQInteger incutscene(HSQUIRRELVM v) {
-	sqpush(v, g_twp->_cutscene.id != 0);
+	sqpush(v, g_twp->_cutscene != nullptr);
 	return 1;
 }
 

@@ -109,7 +109,11 @@ private:
 		HASHMAP_LOADFACTOR_NUMERATOR = 2,
 		HASHMAP_LOADFACTOR_DENOMINATOR = 3,
 
+#ifdef REDUCE_MEMORY_USAGE
+		HASHMAP_MEMORYPOOL_SIZE = 0
+#else
 		HASHMAP_MEMORYPOOL_SIZE = HASHMAP_MIN_CAPACITY * HASHMAP_LOADFACTOR_NUMERATOR / HASHMAP_LOADFACTOR_DENOMINATOR
+#endif
 	};
 
 #ifdef USE_HASHMAP_MEMORY_POOL
@@ -451,7 +455,7 @@ template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(size_type newCapacity) {
 	assert(newCapacity > _mask + 1);
 
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 	const size_type old_size = _size;
 #endif
 	const size_type old_mask = _mask;
@@ -484,9 +488,11 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(size_type newCapacity
 		_size++;
 	}
 
+#ifndef RELEASE_BUILD
 	// Perform a sanity check: Old number of elements should match the new one!
 	// This check will fail if some previous operation corrupted this hashmap.
 	assert(_size == old_size);
+#endif
 
 	delete[] old_storage;
 

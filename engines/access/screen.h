@@ -49,9 +49,9 @@ struct ScreenSave {
 class Screen : public BaseSurface {
 private:
 	AccessEngine *_vm;
-	byte _tempPalette[PALETTE_SIZE];
-	byte _rawPalette[PALETTE_SIZE];
-	byte _savedPalettes[2][PALETTE_SIZE];
+	byte _tempPalette[Graphics::PALETTE_SIZE];
+	byte _rawPalette[Graphics::PALETTE_SIZE];
+	byte _savedPalettes[2][Graphics::PALETTE_SIZE];
 	int _savedPaletteCount;
 	int _vesaCurrentWin;
 	int _currentPanel;
@@ -62,16 +62,16 @@ private:
 	int _startCycle;
 	int _cycleStart;
 	int _endCycle;
-	Common::List<Common::Rect> _dirtyRects;
 
 	void updatePalette();
 public:
 	int _vesaMode;
 	int _startColor, _numColors;
 	Common::Point _bufferStart;
-	int _windowXAdd, _windowYAdd;
+	int _windowXAdd, _windowYAdd; // the offset between the screen and the 2 buffers
 	int _screenYOff;
-	byte _manPal[0x60];
+	byte _manPal[0x84];
+	byte _stilPal[99]; // only used in Noctropolis
 	byte _scaleTable1[256];
 	byte _scaleTable2[256];
 	int _vWindowWidth;
@@ -87,7 +87,7 @@ public:
 	 */
 	void update() override;
 
-	void copyBlock(BaseSurface *src, const Common::Rect &bounds) override;
+	void copyBlock(const BaseSurface *src, const Common::Rect &bounds) override;
 
 	void restoreBlock() override;
 
@@ -115,9 +115,24 @@ public:
 	 */
 	void forceFadeIn();
 
+	/**
+	 * Fade to white
+	 */
+	void forceFadeWhite();
+
 	void fadeOut() { forceFadeOut(); }
 	void fadeIn() { forceFadeIn(); }
 	void clearScreen();
+
+	/**
+	 * Fade out, clear the screen, then restore the palette (Noctropolis)
+	 */
+	void fadeOutThenClearAndSetPal();
+
+	/**
+	 * Save the current "raw" palette into the effect (temp) palette
+	 */
+	void copyRawPalToTempPal();
 
 	/**
 	 * Set the initial palette
@@ -130,13 +145,25 @@ public:
 	void setIconPalette();
 
 	/**
-	 * Set Tex palette (Martian Memorandum)
+	 * Set player palette (Martian Memorandum and Noctropolis)
 	 */
 	void setManPalette();
 
-	void loadPalette(int fileNum, int subfile);
+	/**
+	 * Set Stiletto palette (Noctropolis)
+	 */
+	void setStilPalette();
+
+	/**
+	 * Dim the palette a bit
+     */
+	void setDarkPalette(int16 mulValue, uint firstIndex, uint count);
+
+	void loadPalette(int fileNum, int subfile, int srcOffset = 0);
 
 	void setPalette();
+
+	void setRawPalette(const Graphics::Palette &p);
 
 	void loadRawPalette(Common::SeekableReadStream *stream);
 
@@ -146,7 +173,7 @@ public:
 
 	void getPalette(byte *pal);
 
-	void flashPalette(int count);
+	void flashPalette(int step);
 
 	/**
 	 * Copy a buffer to the screen
@@ -172,6 +199,12 @@ public:
 	void cyclePaletteForward();
 
 	void cyclePaletteBackwards();
+
+	/**
+	 * Clear colour 0 in the palette back to black
+	 * (workaround for Noctropolis)
+	 */
+	void clearColor0();
 };
 
 } // End of namespace Access

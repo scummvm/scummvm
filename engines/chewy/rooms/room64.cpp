@@ -89,7 +89,7 @@ void Room64::calc_monitor() {
 		break;
 	}
 
-	_G(atds)->set_ats_str(373, str_nr, ATS_DATA);
+	_G(atds)->set_all_ats_str(373, str_nr, ATS_DATA);
 	switch (_G(gameState).R64Moni2Ani) {
 	case 0:
 		str_nr = 1;
@@ -103,7 +103,7 @@ void Room64::calc_monitor() {
 	default:
 		break;
 	}
-	_G(atds)->set_ats_str(374, str_nr, ATS_DATA);
+	_G(atds)->set_all_ats_str(374, str_nr, ATS_DATA);
 }
 
 void Room64::setup_func() {

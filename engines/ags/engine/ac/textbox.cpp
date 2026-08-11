@@ -121,7 +121,7 @@ RuntimeScriptValue Sc_TextBox_SetShowBorder(void *self, const RuntimeScriptValue
 
 // const char* (GUITextBox *texbox)
 RuntimeScriptValue Sc_TextBox_GetText_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(GUITextBox, const char, _GP(myScriptStringImpl), TextBox_GetText_New);
+	API_OBJCALL_OBJ(GUITextBox, const char, _GP(myScriptStringImpl), TextBox_GetText_New);
 }
 
 // int (GUITextBox *guit)
@@ -136,16 +136,20 @@ RuntimeScriptValue Sc_TextBox_SetTextColor(void *self, const RuntimeScriptValue 
 
 
 void RegisterTextBoxAPI() {
-	ccAddExternalObjectFunction("TextBox::GetText^1", Sc_TextBox_GetText);
-	ccAddExternalObjectFunction("TextBox::SetText^1", Sc_TextBox_SetText);
-	ccAddExternalObjectFunction("TextBox::get_Font", Sc_TextBox_GetFont);
-	ccAddExternalObjectFunction("TextBox::set_Font", Sc_TextBox_SetFont);
-	ccAddExternalObjectFunction("TextBox::get_ShowBorder", Sc_TextBox_GetShowBorder);
-	ccAddExternalObjectFunction("TextBox::set_ShowBorder", Sc_TextBox_SetShowBorder);
-	ccAddExternalObjectFunction("TextBox::get_Text", Sc_TextBox_GetText_New);
-	ccAddExternalObjectFunction("TextBox::set_Text", Sc_TextBox_SetText);
-	ccAddExternalObjectFunction("TextBox::get_TextColor", Sc_TextBox_GetTextColor);
-	ccAddExternalObjectFunction("TextBox::set_TextColor", Sc_TextBox_SetTextColor);
+	ScFnRegister textbox_api[] = {
+		{"TextBox::GetText^1", API_FN_PAIR(TextBox_GetText)},
+		{"TextBox::SetText^1", API_FN_PAIR(TextBox_SetText)},
+		{"TextBox::get_Font", API_FN_PAIR(TextBox_GetFont)},
+		{"TextBox::set_Font", API_FN_PAIR(TextBox_SetFont)},
+		{"TextBox::get_ShowBorder", API_FN_PAIR(TextBox_GetShowBorder)},
+		{"TextBox::set_ShowBorder", API_FN_PAIR(TextBox_SetShowBorder)},
+		{"TextBox::get_Text", API_FN_PAIR(TextBox_GetText_New)},
+		{"TextBox::set_Text", API_FN_PAIR(TextBox_SetText)},
+		{"TextBox::get_TextColor", API_FN_PAIR(TextBox_GetTextColor)},
+		{"TextBox::set_TextColor", API_FN_PAIR(TextBox_SetTextColor)},
+	};
+
+	ccAddExternalFunctions361(textbox_api);
 }
 
 } // namespace AGS3

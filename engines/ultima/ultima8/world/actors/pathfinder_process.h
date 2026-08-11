@@ -52,11 +52,11 @@ protected:
 	ObjId _targetItem;
 	bool _hitMode;
 
-	Std::vector<PathfindingAction> _path;
+	Common::Array<PathfindingAction> _path;
 	unsigned int _currentStep;
 
 public:
-	static const uint16 PATHFINDER_PROC_TYPE;
+	static const uint16 PATHFINDER_PROC_TYPE = 0x204;
 };
 
 } // End of namespace Ultima8

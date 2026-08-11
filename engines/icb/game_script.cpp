@@ -190,7 +190,7 @@ void _game_script::Process_game_script() {
 		}
 		break;
 
-	case 'L': // load a mission, but dont play it
+	case 'L': // load a mission, but don't play it
 		pc += 2;
 
 		Fetch_next_param(p1);

@@ -22,7 +22,9 @@
 #include "tinsel/tinsel.h"
 #include "tinsel/debugger.h"
 #include "tinsel/dialogs.h"
+#include "tinsel/handle.h"
 #include "tinsel/pcode.h"
+#include "tinsel/psx_archive.h"
 #include "tinsel/scene.h"
 #include "tinsel/sound.h"
 #include "tinsel/music.h"
@@ -69,10 +71,15 @@ Console::Console() : GUI::Debugger() {
 		registerCmd("list_clues",		WRAP_METHOD(Console, cmd_list_clues));
 	}
 	registerCmd("item",		WRAP_METHOD(Console, cmd_item));
+	registerCmd("scenes",		WRAP_METHOD(Console, cmd_scenes));
 	registerCmd("scene",		WRAP_METHOD(Console, cmd_scene));
 	registerCmd("music",		WRAP_METHOD(Console, cmd_music));
 	registerCmd("sound",		WRAP_METHOD(Console, cmd_sound));
 	registerCmd("string",		WRAP_METHOD(Console, cmd_string));
+	registerCmd("globals",		WRAP_METHOD(Console, cmd_globals));
+	registerCmd("global",		WRAP_METHOD(Console, cmd_global));
+	registerCmd("g",		WRAP_METHOD(Console, cmd_global)); // alias
+	registerCmd("psxdump",		WRAP_METHOD(Console, cmd_psxdump));
 }
 
 Console::~Console() {
@@ -90,23 +97,63 @@ bool Console::cmd_item(int argc, const char **argv) {
 	return false;
 }
 
+bool Console::cmd_scenes(int argc, const char **argv) {
+	Common::String filter;
+	if (argc >= 2) {
+		filter = argv[1];
+	}
+
+	for (int i = 0; i < _vm->_handle->GetSceneCount(); i++) {
+		Common::String name = _vm->_handle->GetSceneName(i);
+		if (!name.empty()) {
+			if (filter.empty() || name.hasPrefixIgnoreCase(filter)) {
+				debugPrintf("scene %d: %s\n", i, name.c_str());
+			}
+		}
+	}
+	return true;
+}
+
 bool Console::cmd_scene(int argc, const char **argv) {
 	if (argc < 1 || argc > 3) {
-		debugPrintf("%s [scene_number [entry number]]\n", argv[0]);
+		debugPrintf("%s [scene [entry number]]\n", argv[0]);
 		debugPrintf("If no parameters are given, prints the current scene.\n");
 		debugPrintf("Otherwise changes to the specified scene number. Entry number defaults to 1 if none provided\n");
 		return true;
 	}
 
 	if (argc == 1) {
-		debugPrintf("Current scene is %d\n", GetSceneHandle() >> SCNHANDLE_SHIFT);
+		int index = GetSceneHandle() >> SCNHANDLE_SHIFT;
+		Common::String name = _vm->_handle->GetSceneName(index);
+		debugPrintf("Current scene is %d: %s\n", index, name.c_str());
 		return true;
 	}
 
-	uint32 sceneNumber = (uint32)strToInt(argv[1]) << SCNHANDLE_SHIFT;
-	int entryNumber = (argc >= 3) ? strToInt(argv[2]) : 1;
+	// lookup scene by name first, then by number
+	uint32 sceneNumber = 0;
+	for (int i = 1; i < _vm->_handle->GetSceneCount(); i++) {
+		Common::String name = _vm->_handle->GetSceneName(i);
+		if (name.hasPrefixIgnoreCase(argv[1])) {
+			sceneNumber = i;
+			break;
+		}
+	}
+	if (sceneNumber == 0) {
+		sceneNumber = (uint32)strToInt(argv[1]);
+	}
+	if (!(1 <= sceneNumber && sceneNumber < (uint32)_vm->_handle->GetSceneCount())) {
+		debugPrintf("Invalid scene: %s\n", argv[1]);
+		return true;
+	}
 
-	SetNewScene(sceneNumber, entryNumber, TRANS_CUT);
+	int entryNumber = (argc >= 3) ? strToInt(argv[2]) : 1;
+	if (entryNumber < 1) {
+		debugPrintf("Invalid entry: %s\n", argv[2]);
+		return true;
+	}
+
+	EndDw1Intro();
+	SetNewScene(sceneNumber << SCNHANDLE_SHIFT, entryNumber, TRANS_CUT);
 	return false;
 }
 
@@ -163,6 +210,75 @@ bool Console::cmd_string(int argc, const char **argv) {
 	int id = strToInt(argv[1]);
 	LoadStringRes(id, tmp, TBUFSZ);
 	debugPrintf("%s\n", tmp);
+
+	return true;
+}
+
+bool Console::cmd_globals(int argc, const char **argv) {
+	for (int i = 0; i < GetGlobalCount(); i++) {
+		int value = GetGlobal(i);
+		debugPrintf("global %d == %08x (%d)\n", i, value, value);
+	}
+	return true;
+}
+
+bool Console::cmd_global(int argc, const char **argv) {
+	if (!(2 <= argc && argc <= 3)) {
+		debugPrintf("Print or set global variable\n");
+		debugPrintf("usage: %s <global> [new-value]\n", argv[0]);
+		return true;
+	}
+
+	int global = strToInt(argv[1]);
+	if (!(0 <= global && global < GetGlobalCount())) {
+		debugPrintf("maximum global: %d\n", GetGlobalCount() - 1);
+		return true;
+	}
+
+	if (argc == 3) {
+		int newValue = strToInt(argv[2]);
+		SetGlobal(global, newValue);
+	}
+
+	int value = GetGlobal(global);
+	debugPrintf("global %d == %08x (%d)\n", global, value, value);
+	return true;
+}
+
+bool Console::cmd_psxdump(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Dumps PSX resource files to disk\n");
+		debugPrintf("usage: %s <file>\n", argv[0]);
+		debugPrintf("       <file> may be '*' to dump all files\n");
+		return true;
+	}
+
+	if (!TinselV1PSX) {
+		return true;
+	}
+
+	PsxArchive psxArchive;
+	if (!psxArchive.open("discwld.lfi", "discwld.lfd", TinselVersion)) {
+		return true;
+	}
+
+	bool dumpAll = !strcmp(argv[1], "*");
+	Common::ArchiveMemberList members;
+	psxArchive.listMembers(members);
+	Common::sort(members.begin(), members.end(), Common::ArchiveMemberListComparator());
+	for (auto &member : members) {
+		if (dumpAll || member->getName().equalsIgnoreCase(argv[1])) {
+			Common::Path path = member->getPathInArchive();
+			Common::ScopedPtr<Common::SeekableReadStream> resource(psxArchive.createReadStreamForMember(path));
+			if (resource) {
+				Common::DumpFile dumpFile;
+				if (dumpFile.open(member->getPathInArchive())) {
+					debugPrintf("Writing %s to disk\n", member->getName().c_str());
+					dumpFile.writeStream(resource.get());
+				}
+			}
+		}
+	}
 
 	return true;
 }

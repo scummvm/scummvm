@@ -17,6 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 #include "scumm/he/mixer_he.h"
@@ -206,9 +211,9 @@ bool HEMixer::audioOverrideExists(int soundId, bool justGetInfo, int *duration, 
 #endif
 	};
 
-	STATIC_ASSERT(
+	static_assert(
 		ARRAYSIZE(formats) == ARRAYSIZE(formatDecoders),
-		formats_formatDecoders_must_have_same_size);
+		"formats and formatDecoders arrays must have same size");
 
 	const char *type;
 	if (soundId == HSND_TALKIE_SLOT) {
@@ -536,7 +541,7 @@ bool HEMixer::mixerStartChannel(
 	}
 
 	bool hasCallbackData = false;
-	if (flags & CHANNEL_CALLBACK_EARLY) {
+	if ((flags & CHANNEL_CALLBACK_EARLY) && !(flags & CHANNEL_LOOPING)) {
 		va_start(params, flags);
 		_mixerChannels[channel].endSampleAdjustment = va_arg(params, int);
 		va_end(params);
@@ -582,12 +587,15 @@ bool HEMixer::mixerStartChannel(
 		// sounds might have early callbacks, so we still have to copy
 		// data over, instead of using the original buffer.
 		if (!(_mixerChannels[channel].flags & CHANNEL_LOOPING)) {
-			data = (byte *)malloc(_mixerChannels[channel].sampleLen);
+			const int rampUpSampleCount = !is3DOMusic ? 64 : 128;
+			int samplesSize = _mixerChannels[channel].sampleLen;
+
+			data = (byte *)malloc(samplesSize);
 
 			if (!data)
 				return false;
 
-			memcpy(data, ptr, _mixerChannels[channel].sampleLen);
+			memcpy(data, ptr, samplesSize);
 
 			// Residual early callback data
 			if (hasCallbackData) {
@@ -599,16 +607,16 @@ bool HEMixer::mixerStartChannel(
 
 			// Fade-in to avoid possible sound popping...
 			byte *dataTmp = data;
-			int rampUpSampleCount = 64;
-			if (!is3DOMusic) {
+
+			// Do the fade-in only if there's enough samples to do so...
+			if (!is3DOMusic && samplesSize >= rampUpSampleCount) {
 				for (int i = 0; i < rampUpSampleCount; i++) {
 					*dataTmp = 128 + (((*dataTmp - 128) * i) / rampUpSampleCount);
 					dataTmp++;
 				}
-			} else {
+			} else if (samplesSize >= rampUpSampleCount) {
 				// We can't just ramp volume as done above, we have to take
 				// into account the fact that 3DO music is 8-bit -> signed <-
-				rampUpSampleCount = 128;
 				for (int i = 0; i < rampUpSampleCount; i++) {
 					int8 signedSample = (int8)(*dataTmp);
 					signedSample = (signedSample * i) / rampUpSampleCount;

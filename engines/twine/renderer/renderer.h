@@ -52,6 +52,9 @@
 #define MAT_GOURAUD 9
 #define MAT_DITHER 10
 
+#define TYPE_3D 0
+#define TYPE_ISO 1
+
 namespace TwinE {
 
 class BodyData;
@@ -142,7 +145,7 @@ private:
 	};
 
 	struct ModelData {
-		I16Vec3 computedPoints[800];
+		I16Vec3 computedPoints[800]; // List_Anim_Point
 		I16Vec3 flattenPoints[800];
 		int16 normalTable[500]{0};
 	};
@@ -168,17 +171,17 @@ private:
 	 */
 	IVec3 rot(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z);
 
-	IVec3 _cameraPos;
-	IVec3 _projectionCenter{320, 200, 0};
+	IVec3 _cameraPos; // CameraX, CameraY, CameraZ
+	IVec3 _projectionCenter{320, 200, 0}; // XCentre, YCentre, IsoScale
 
 	int32 _kFactor = 128;
 	int32 _lFactorX = 1024;
 	int32 _lFactorY = 840;
 
-	IMatrix3x3 _matrixWorld;
+	IMatrix3x3 _matrixWorld; // LMatriceWorld
 	IMatrix3x3 _matricesTable[30 + 1];
 	IVec3 _normalLight; // NormalXLight, NormalYLight, NormalZLight
-	IVec3 _cameraRot;
+	IVec3 _cameraRot; // CameraXr, CameraYr, CameraZr
 
 	RenderCommand _renderCmds[1000];
 	/**
@@ -198,7 +201,7 @@ private:
 	int16* _tabx0 = nullptr; // also _tabCoulG
 	int16* _tabx1 = nullptr; // also _tabCoulD
 
-	bool _isUsingIsoProjection = false;
+	bool _typeProj = TYPE_3D;
 
 	void svgaPolyCopper(int16 vtop, int16 vbottom, uint16 color) const;
 	void svgaPolyBopper(int16 vtop, int16 vbottom, uint16 color) const;
@@ -223,6 +226,7 @@ private:
 	void fillHolomapTriangle(int16 *pDest, int32 x1, int32 y1, int32 x2, int32 y2);
 	void fillHolomapTriangles(const ComputedVertex &vertex1, const ComputedVertex &vertex2, const ComputedVertex &texCoord1, const ComputedVertex &texCoord2, int32 &top, int32 &bottom);
 
+	// ClipGauche, ClipDroite, ClipHaut, ClipBas
 	int16 leftClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
 	int16 rightClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
 	int16 topClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
@@ -262,8 +266,8 @@ public:
 
 	void setFollowCamera(int32 transPosX, int32 transPosY, int32 transPosZ, int32 cameraAlpha, int32 cameraBeta, int32 cameraGamma, int32 cameraZoom);
 	void setPosCamera(int32 x, int32 y, int32 z);
-	IVec3 setAngleCamera(int32 x, int32 y, int32 z);
-	IVec3 setInverseAngleCamera(int32 x, int32 y, int32 z);
+	IVec3 setAngleCamera(int32 alpha, int32 beta, int32 gamma);
+	IVec3 setInverseAngleCamera(int32 alpha, int32 beta, int32 gamma);
 
 	inline IVec3 setBaseRotation(const IVec3 &rot) {
 		return setAngleCamera(rot.x, rot.y, rot.z);
@@ -281,11 +285,11 @@ public:
 	/**
 	 * @param angle A value of @c -1 means that the model is automatically rotated
 	 */
-	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const BodyData &bodyData, ActorMoveStruct &move);
+	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const BodyData &bodyData, RealValue &move);
 	/**
 	 * @param angle A value of @c -1 means that the model is automatically rotated
 	 */
-	void drawObj3D(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, ActorMoveStruct &move);
+	void drawObj3D(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, RealValue &move);
 
 	/**
 	 * @brief Render an inventory item
@@ -293,6 +297,22 @@ public:
 	void draw3dObject(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 cameraZoom);
 
 	void asmTexturedTriangleNoClip(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], const uint8 *holomapImage, uint32 holomapImageSize);
+
+	inline IVec3 getCameraPosition() const {
+		return _cameraPos;
+	}
+
+	inline IVec3 getCameraRotation() const {
+		return _cameraRot;
+	}
+
+	inline int32 getLFactorX() const {
+		return _lFactorX;
+	}
+
+	inline int32 getLFactorY() const {
+		return _lFactorY;
+	}
 };
 
 inline void Renderer::setCameraRotation(int32 x, int32 y, int32 z) {

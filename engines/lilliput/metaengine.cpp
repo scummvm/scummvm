@@ -43,19 +43,19 @@ const char *LilliputEngine::getGameId() const {
 
 namespace Lilliput {
 
-class LilliputMetaEngine : public AdvancedMetaEngine {
+class LilliputMetaEngine : public AdvancedMetaEngine<LilliputGameDescription> {
 public:
 	const char *getName() const override {
 		return "lilliput";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const LilliputGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
 			target = getName();
@@ -66,9 +66,9 @@ public:
 	}
 };
 
-Common::Error LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	*engine = new LilliputEngine(syst, (const LilliputGameDescription *)gd);
-	((LilliputEngine *)*engine)->initGame((const LilliputGameDescription *)gd);
+Common::Error LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const LilliputGameDescription *gd) const {
+	*engine = new LilliputEngine(syst,gd);
+	((LilliputEngine *)*engine)->initGame(gd);
 	return Common::kNoError;
 }
 
@@ -96,15 +96,16 @@ SaveStateList LilliputMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	char slot[3];
-	int slotNum = 0;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		slot[0] = filename->c_str()[filename->size() - 6];
-		slot[1] = filename->c_str()[filename->size() - 5];
+	int slotNum;
+
+	for (const auto &filename : filenames) {
+		slot[0] = filename.c_str()[filename.size() - 6];
+		slot[1] = filename.c_str()[filename.size() - 5];
 		slot[2] = '\0';
 		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
 		slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
+			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
 			if (file) {
 				int saveVersion = file->readByte();
 
@@ -182,8 +183,8 @@ SaveStateDescriptor LilliputMetaEngine::querySaveMetaInfos(const char *target, i
 	return SaveStateDescriptor();
 }
 
-void LilliputMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+bool LilliputMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 } // End of namespace Lilliput

@@ -45,20 +45,20 @@ static const Common::HardwareInputTableEntry switchJoystickButtons[] = {
 	{ "JOY_RIGHT_STICK",    Common::JOYSTICK_BUTTON_RIGHT_STICK,    _s("R3")          },
 	{ "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
 	{ "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
-	{ "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
-	{ "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
-	{ "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
-	{ "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
+	{ "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad up")    },
+	{ "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad down")  },
+	{ "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad left")  },
+	{ "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad right") },
 	{ nullptr,              0,                                      nullptr           }
 };
 
 static const Common::AxisTableEntry switchJoystickAxes[] = {
 	{ "JOY_LEFT_TRIGGER",  Common::JOYSTICK_AXIS_LEFT_TRIGGER,  Common::kAxisTypeHalf, _s("ZL")            },
 	{ "JOY_RIGHT_TRIGGER", Common::JOYSTICK_AXIS_RIGHT_TRIGGER, Common::kAxisTypeHalf, _s("ZR")            },
-	{ "JOY_LEFT_STICK_X",  Common::JOYSTICK_AXIS_LEFT_STICK_X,  Common::kAxisTypeFull, _s("Left Stick X")  },
-	{ "JOY_LEFT_STICK_Y",  Common::JOYSTICK_AXIS_LEFT_STICK_Y,  Common::kAxisTypeFull, _s("Left Stick Y")  },
-	{ "JOY_RIGHT_STICK_X", Common::JOYSTICK_AXIS_RIGHT_STICK_X, Common::kAxisTypeFull, _s("Right Stick X") },
-	{ "JOY_RIGHT_STICK_Y", Common::JOYSTICK_AXIS_RIGHT_STICK_Y, Common::kAxisTypeFull, _s("Right Stick Y") },
+	{ "JOY_LEFT_STICK_X",  Common::JOYSTICK_AXIS_LEFT_STICK_X,  Common::kAxisTypeFull, _s("Left stick X")  },
+	{ "JOY_LEFT_STICK_Y",  Common::JOYSTICK_AXIS_LEFT_STICK_Y,  Common::kAxisTypeFull, _s("Left stick Y")  },
+	{ "JOY_RIGHT_STICK_X", Common::JOYSTICK_AXIS_RIGHT_STICK_X, Common::kAxisTypeFull, _s("Right stick X") },
+	{ "JOY_RIGHT_STICK_Y", Common::JOYSTICK_AXIS_RIGHT_STICK_Y, Common::kAxisTypeFull, _s("Right stick Y") },
 	{ nullptr,             0,                                   Common::kAxisTypeFull, nullptr             }
 };
 
@@ -82,7 +82,6 @@ void OSystem_Switch::initBackend() {
 	ConfMan.registerDefault("filtering", true);
 	ConfMan.registerDefault("output_rate", 48000);
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
-	ConfMan.registerDefault("gm_device", "null");
 
 	ConfMan.setBool("fullscreen", true);
 	ConfMan.setInt("joystick_num", 0);
@@ -122,28 +121,6 @@ bool OSystem_Switch::hasFeature(Feature f) {
 		return false;
 	return (f == kFeatureTouchpadMode ||
 		OSystem_SDL::hasFeature(f));
-}
-
-void OSystem_Switch::setFeatureState(Feature f, bool enable) {
-	switch (f) {
-	case kFeatureTouchpadMode:
-		ConfMan.setBool("touchpad_mouse_mode", enable);
-		break;
-	default:
-		OSystem_SDL::setFeatureState(f, enable);
-		break;
-	}
-}
-
-bool OSystem_Switch::getFeatureState(Feature f) {
-	switch (f) {
-	case kFeatureTouchpadMode:
-		return ConfMan.getBool("touchpad_mouse_mode");
-		break;
-	default:
-		return OSystem_SDL::getFeatureState(f);
-		break;
-	}
 }
 
 void OSystem_Switch::logMessage(LogMessageType::Type type, const char *message) {

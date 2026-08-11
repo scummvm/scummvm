@@ -39,6 +39,8 @@
 namespace Scumm {
 
 void ScummEngine::initBanners() {
+	memset(_bannerColors, 0, sizeof(_bannerColors));
+
 	setPalColor(7, 0x5A, 0x5A, 0x5A);
 	setPalColor(8, 0x46, 0x46, 0x46);
 	setPalColor(15, 0x8C, 0x8C, 0x8C);
@@ -90,6 +92,14 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 
 	_messageBannerActive = true;
 
+	int oldScreenTop = _screenTop;
+
+	// There are a few instances in a non-zero _screenTop is not being reset
+	// before starting a SMUSH movie (e.g. the very last video in The Dig);
+	// let's set it to zero now and restore it at the very end...
+	if (isSmushActive())
+		_screenTop = 0;
+
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)localizedMsg, sizeof(localizedMsg));
 	ptrToBreak = strstr(localizedMsg, "\\n");
@@ -112,7 +122,7 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// Backup the text surface...
 	if (_game.version < 7 && !_mainMenuIsActive && _game.platform != Common::kPlatformFMTowns) {
 		saveSurfacesPreGUI();
-		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
+		if (_currentRoom != 0 && _charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
 			restoreCharsetBg();
 	}
 
@@ -285,6 +295,9 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// will stay on screen until an input has been received or until the time-out.
 	Common::KeyState ks = Common::KEYCODE_INVALID;
 	bool leftBtnPressed = false, rightBtnPressed = false;
+#ifdef USE_TTS
+	sayText(bannerMsg);
+#endif
 	if (waitTime) {
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
 		clearBanner();
@@ -312,11 +325,44 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 
 	_messageBannerActive = false;
 
+	if (isSmushActive())
+		_screenTop = oldScreenTop;
+
 	return ks;
+}
+
+bool ScummEngine::showBannerAndPauseForTextInput(int bannerId, const char *prompt, Common::String &input, uint maxLength) {
+	const Common::String promptString(prompt);
+
+	input.clear();
+
+	while (true) {
+		const Common::String bannerText = promptString + input;
+		Common::KeyState ks = showBannerAndPause(bannerId, -1, "%s", bannerText.c_str());
+
+		if (ks.keycode == Common::KEYCODE_ESCAPE)
+			return false;
+
+		if (ks.keycode == Common::KEYCODE_RETURN)
+			return !input.empty();
+
+		if (ks.keycode == Common::KEYCODE_BACKSPACE || ks.keycode == Common::KEYCODE_DELETE) {
+			if (!input.empty())
+				input.deleteLastChar();
+			continue;
+		}
+
+		if (ks.ascii >= 32 && ks.ascii < 127 && input.size() < maxLength)
+			input += (char)ks.ascii;
+	}
 }
 
 Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, int32 waitTime, bool drawOnSentenceLine) {
 	Common::Rect sentenceline;
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+
+	_messageBannerActive = true;
 
 	// Pause the engine
 	PauseToken pt = pauseEngine();
@@ -325,14 +371,14 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 		setSnailCursor();
 
 		_string[2].charset = 1;
-		_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
-		_string[2].xpos = 0;
-		_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+		_string[2].ypos = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
+		_string[2].xpos = 0 + pixelXOffset;
+		_string[2].right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 		if (_game.platform == Common::kPlatformNES) {
 			_string[2].xpos = 16;
 			_string[2].color = 0;
-		} else if (_game.platform == Common::kPlatformC64) {
-			_string[2].color = 16;
+		} else if (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS) {
+			_string[2].color = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 16;
 		} else {
 			_string[2].color = 13;
 		}
@@ -365,18 +411,18 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 			sentenceline.left = 16;
 			sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
 		} else {
-			sentenceline.top = _virtscr[kVerbVirtScreen].topline;
-			sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
-			sentenceline.left = 0;
-			sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+			sentenceline.top = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
+			sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8 + pixelYOffset;
+			sentenceline.left = 0 + pixelXOffset;
+			sentenceline.right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 		}
 		restoreBackground(sentenceline);
 		drawString(2, (byte *)string);
 		drawDirtyScreenParts();
 	} else {
-		_string[0].xpos = 0;
+		_string[0].xpos = 0 + pixelXOffset;
 		_string[0].ypos = 0;
-		_string[0].right = _screenWidth - 1;
+		_string[0].right = _screenWidth - 1 + pixelXOffset;
 		_string[0].center = false;
 		_string[0].overhead = false;
 
@@ -401,7 +447,9 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 	if (waitTime) {
 		ScummEngine::drawDirtyScreenParts();
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
-		stopTalk();
+
+		if (!drawOnSentenceLine)
+			stopTalk();
 	}
 
 	if (drawOnSentenceLine) {
@@ -417,6 +465,8 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 	// Finally, resume the engine, clear the input state, and restore the charset.
 	pt.clear();
 	clearClickedStatus();
+
+	_messageBannerActive = false;
 
 	return ks;
 }
@@ -445,7 +495,7 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Backup the text surface...
 	if (!_mainMenuIsActive) {
 		saveSurfacesPreGUI();
-		if (_charset->_textScreenID == kMainVirtScreen && _game.id != GID_LOOM) {
+		if (_currentRoom != 0 && _charset->_textScreenID == kMainVirtScreen && _game.id != GID_LOOM) {
 			restoreCharsetBg();
 		}
 	}
@@ -513,6 +563,10 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 		updateDirtyScreen(kBannerVirtScreen);
 	}
 
+#ifdef USE_TTS
+	sayText(bannerMsg);
+#endif
+
 	// Wait until the engine receives a new Keyboard or Mouse input,
 	// unless we have specified a positive waitTime: in that case, the banner
 	// will stay on screen until an input has been received or until the time-out.
@@ -528,6 +582,7 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 			_virtscr[kBannerVirtScreen].setDirtyRange(0, _virtscr[kBannerVirtScreen].h);
 			updateDirtyScreen(kBannerVirtScreen);
 			_virtscr[kMainVirtScreen].setDirtyRange(startingPointY - _virtscr[kMainVirtScreen].topline, startingPointY - _virtscr[kMainVirtScreen].topline + _virtscr[kBannerVirtScreen].h);
+			updateDirtyScreen(kMainVirtScreen);
 		}
 	}
 
@@ -851,6 +906,10 @@ void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 			_messageBannerActive = true;
 			_comiQuitMenuIsOpen = true;
 
+			int oldScreenTop = _screenTop;
+			if (isSmushActive())
+				_screenTop = 0;
+
 			// Force the cursor to be ON...
 			int8 oldCursorState = _cursor.state;
 			_cursor.state = 1;
@@ -1037,6 +1096,9 @@ void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 
 			_comiQuitMenuIsOpen = false;
 			_messageBannerActive = false;
+
+			if (isSmushActive())
+				_screenTop = oldScreenTop;
 		} else {
 			ScummEngine::queryQuit(returnToLauncher);
 		}
@@ -1297,7 +1359,7 @@ void ScummEngine_v7::toggleVoiceMode() {
 void ScummEngine_v7::handleLoadDuringSmush() {
 	// Notify the SMUSH player that we want to load a game...
 	_saveLoadFlag = 2;
-	_saveLoadSlot = _mainMenuSavegameLabel - 1 + _curDisplayedSaveSlotPage * 9;
+	_saveLoadSlot = _mainMenuSavegameLabel + _curDisplayedSaveSlotPage * 9;
 
 	// Force screen to black to avoid glitches...
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
@@ -1668,7 +1730,7 @@ void ScummEngine::setUpDraftsInventory() {
 	}
 }
 
-static const char *loomDraftsNames[7][18] = {
+static const char *const loomDraftsNames[7][18] = {
 	// ENGLISH
 	{
 		"Drafts",
@@ -1791,7 +1853,7 @@ void ScummEngine::drawDraftsInventory() {
 		namesWidth, notesWidth;
 
 	char notesBuf[6];
-	const char **names;
+	const char *const *names;
 	const char *notes = "cdefgabC";
 
 	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
@@ -1924,9 +1986,15 @@ void ScummEngine::drawDraftsInventory() {
 			// Draw the titles of the drafts...
 			if (draft & 0x2000) {
 				drawGUIText(names[i + 1], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+#ifdef USE_TTS
+				sayText(names[i + 1]);
+#endif
 			} else {
 				// Draw "Unknown:" as the title of the draft
 				drawGUIText(names[17], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+#ifdef USE_TTS
+				sayText(names[17]);
+#endif
 			}
 
 			notesWidth = getGUIStringWidth(notesBuf);
@@ -1950,6 +2018,9 @@ void ScummEngine::drawDraftsInventory() {
 			// Draw the notes of the draft... notice how we are subtracting
 			// notesWidth: we are forcing the text aligning on the left.
 			drawGUIText(notesBuf, nullptr, xPos - notesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
+#ifdef USE_TTS
+			sayText(notesBuf);
+#endif
 		} else {
 			// Hebrew language, let's swap the layout!
 
@@ -1966,6 +2037,9 @@ void ScummEngine::drawDraftsInventory() {
 			// Draw the notes of the drafts...
 			drawGUIText(notesBuf, nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
 			namesWidth = getGUIStringWidth(names[i + 1]);
+#ifdef USE_TTS
+			sayText(notesBuf);
+#endif
 
 			// Text position adjustments for the titles...
 			// (Objective: Leave three pixels to the right)
@@ -1979,10 +2053,16 @@ void ScummEngine::drawDraftsInventory() {
 			if (draft & 0x2000) {
 				namesWidth = getGUIStringWidth(names[i + 1]);
 				drawGUIText(names[i + 1], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+#ifdef USE_TTS
+				sayText(names[i + 1]);
+#endif
 			} else {
 				// Draw "Unknown:" as the title of the draft
 				namesWidth = getGUIStringWidth(names[17]);
 				drawGUIText(names[17], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+#ifdef USE_TTS
+				sayText(names[17]);
+#endif
 			}
 		}
 	}
@@ -2009,6 +2089,9 @@ void ScummEngine::setMusicVolume(int volume) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume * 2);
 	ConfMan.setInt("music_volume", volume * 2);
 	ConfMan.flushToDisk();
+
+	if (_game.version < 7)
+		ScummEngine::syncSoundSettings(); // Immediately update volume for old iMUSE and sound systems
 }
 
 void ScummEngine::setSpeechVolume(int volume) {
@@ -2017,6 +2100,9 @@ void ScummEngine::setSpeechVolume(int volume) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
 	ConfMan.setInt("speech_volume", volume * 2);
 	ConfMan.flushToDisk();
+
+	if (_game.version < 7)
+		ScummEngine::syncSoundSettings(); // Immediately update volume for old iMUSE and sound systems
 }
 
 void ScummEngine::setSFXVolume(int volume) {
@@ -2025,6 +2111,9 @@ void ScummEngine::setSFXVolume(int volume) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume * 2);
 	ConfMan.setInt("sfx_volume", volume * 2);
 	ConfMan.flushToDisk();
+
+	if (_game.version < 7)
+		ScummEngine::syncSoundSettings(); // Immediately update volume for old iMUSE and sound systems
 }
 
 int ScummEngine::getMusicVolume() {
@@ -2098,7 +2187,9 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 				event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 				getEventManager()->pushEvent(event);
 			} else {
-				quitGame();
+				Common::Event event;
+				event.type = Common::EVENT_QUIT;
+				getEventManager()->pushEvent(event);
 			}
 		}
 	}
@@ -2143,6 +2234,10 @@ void ScummEngine::queryRestart() {
 			case GID_LOOM:
 				fadeOutType = _game.version == 4 ? 134 : -1;
 				break;
+			case GID_MONKEY_EGA:
+			case GID_MONKEY_VGA:
+				fadeOutType = 128;
+				break;
 			case GID_MONKEY:
 			case GID_MONKEY2:
 			case GID_INDY4:
@@ -2153,9 +2248,6 @@ void ScummEngine::queryRestart() {
 			case GID_FT:
 			case GID_DIG:
 				fadeOutType = -1;
-				break;
-			case GID_MONKEY_EGA:
-				fadeOutType = 128;
 				break;
 			default:
 				fadeOutType = 129;
@@ -2187,18 +2279,18 @@ void ScummEngine::fillSavegameLabels() {
 
 	_savegameNames.clear();
 
-	for (int i = 0; i < 9; i++) {
+	for (int i = GUI_CTRL_FIRST_SG; i <= GUI_CTRL_LAST_SG; i++) {
 		curSaveSlot = i + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
-		if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM)) {
+		if (_game.version > 4 || isLoomVga) {
 			if (availSaves[curSaveSlot]) {
 				if (getSavegameName(curSaveSlot, name)) {
-					_savegameNames.push_back(Common::String::format("%2d. %s", curSaveSlot + 1, name.c_str()));
+					_savegameNames.push_back(Common::String::format("%2d. %s", curSaveSlot, name.c_str()));
 				} else {
 					// The original printed "WARNING... old savegame", but we do support old savegames :-)
-					_savegameNames.push_back(Common::String::format("%2d. WARNING: wrong save version", curSaveSlot + 1));
+					_savegameNames.push_back(Common::String::format("%2d. WARNING: wrong save version", curSaveSlot));
 				}
 			} else {
-				_savegameNames.push_back(Common::String::format("%2d. ", curSaveSlot + 1));
+				_savegameNames.push_back(Common::String::format("%2d. ", curSaveSlot));
 			}
 		} else {
 			if (availSaves[curSaveSlot]) {
@@ -2224,7 +2316,7 @@ bool ScummEngine::canWriteGame(int slotId) {
 		return true;
 
 	listSavegames(saveList, ARRAYSIZE(saveList));
-	if (saveList[slotId - 1]) {
+	if (saveList[slotId]) {
 		convertMessageToString((const byte *)getGUIString(gsReplacePrompt), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
 
 		// Fallback to a hardcoded string
@@ -2252,7 +2344,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 	bool hasLoadedState = false;
 	int firstChar = (_game.version == 4 && _game.id != GID_LOOM) ? 0 : 4;
 	bool opResult = true;
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	beginTextInput();
 
 	while (!shouldQuit()) {
 		waitForTimer(1);
@@ -2263,7 +2355,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 			clearClickedStatus();
 			opResult = executeMainMenuOperation(GUI_CTRL_OK_BUTTON, -1, -1, hasLoadedState);
 
-			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+			endTextInput();
 			return opResult;
 		} else if (leftMsClicked) {
 			clearClickedStatus();
@@ -2294,7 +2386,7 @@ bool ScummEngine::userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicke
 		clearClickedStatus();
 	}
 
-	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	endTextInput();
 	return false;
 }
 
@@ -2375,8 +2467,13 @@ void ScummEngine::showMainMenu() {
 		runScript(VAR(VAR_PRE_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 	int oldSaveSound = _saveSound;
+	int oldScreenTop = _screenTop;
 
 	_saveSound = 1;
+
+	if (isSmushActive())
+		_screenTop = 0;
+
 	_shakeTempSavedState = _shakeEnabled;
 	setShake(0);
 
@@ -2552,6 +2649,9 @@ void ScummEngine::showMainMenu() {
 
 	_saveSound = oldSaveSound;
 
+	if (isSmushActive())
+		_screenTop = oldScreenTop;
+
 	_mainMenuIsActive = false;
 
 	if (_game.version > 6)
@@ -2562,7 +2662,7 @@ void ScummEngine::showMainMenu() {
 		!(_game.platform == Common::kPlatformSegaCD && hasLoadedState)) {
 		restoreCursorPostMenu();
 	} else if (_saveLoadFlag == 2) {
-		_cursor.state = 0;
+		_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 	}
 
 	// Run the exit savescreen script, if available
@@ -2812,7 +2912,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 					// Temporarily restore the shake effect to save it...
 					setShake(_shakeTempSavedState);
 
-					if (saveState(curSlot - 1, false, dummyString)) {
+					if (saveState(curSlot, false, dummyString)) {
 						setShake(0);
 						saveCursorPreMenu();
 						_saveScriptParam = GAME_PROPER_SAVE;
@@ -2853,6 +2953,13 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 				formattedString = Common::String::format(saveScreenTitle, _savegameNames[_mainMenuSavegameLabel - 1].substr(labelSkip).c_str());
 
 				if (_savegameNames[_mainMenuSavegameLabel - 1].size() == labelSkip) {
+					if (_game.version == 4 && _game.id != GID_LOOM) {
+						convertMessageToString((const byte *)getGUIString(gsGameNotLoaded), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
+						drawMainMenuTitle(saveScreenTitle);		
+						ScummEngine::drawDirtyScreenParts();
+						_system->updateScreen();
+						waitForTimer(300);
+					}
 					drawMainMenuControls();
 					ScummEngine::drawDirtyScreenParts();
 					break;
@@ -2874,7 +2981,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 				}
 
 				curSlot = _mainMenuSavegameLabel + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
-				if (loadState(curSlot - 1, false)) {
+				if (loadState(curSlot, false)) {
 					hasLoadedState = true;
 
 #ifdef ENABLE_SCUMM_7_8
@@ -4203,10 +4310,13 @@ void ScummEngine::drawMainMenuControls() {
 
 		// Savegame names
 		for (int i = GUI_CTRL_FIRST_SG; i <= GUI_CTRL_LAST_SG; i++) {
-			if ((_game.version == 4 && _game.id != GID_LOOM) && _mainMenuSavegameLabel == 0 && i == 1)
+			if ((_game.version == 4 && _game.id != GID_LOOM) && _mainMenuSavegameLabel == 0 && i == 1) {
 				drawInternalGUIControl(i, 1);
-			else
+				if (_menuPage == GUI_PAGE_LOAD)
+					_mainMenuSavegameLabel = 1;
+			} else {
 				drawInternalGUIControl(i, 0);
+			}
 		}
 
 		if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM)) {
@@ -4380,28 +4490,54 @@ void ScummEngine::updateMainMenuControls() {
 		if (_game.id == GID_FT) {
 			convertMessageToString((const byte *)getGUIString(gsSpooledMusic), (byte *)msg, sizeof(msg));
 			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 19, textColor, false);
+#ifdef USE_TTS
+			_internalGUIControls[GUI_CTRL_SPOOLED_MUSIC_CHECKBOX].alternateTTSLabel = (const char *)msg;
+			_internalGUIControls[GUI_CTRL_SPOOLED_MUSIC_CHECKBOX].alternateTTSLabel += ": " + _internalGUIControls[GUI_CTRL_SPOOLED_MUSIC_CHECKBOX].label;
+#endif
 
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
 			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 33, textColor, false);
+#ifdef USE_TTS
+			_internalGUIControls[GUI_CTRL_MUSIC_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
 			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 47, textColor, false);
+#ifdef USE_TTS
+			_internalGUIControls[GUI_CTRL_SFX_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 		} else {
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
 			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 25, textColor, false);
+#ifdef USE_TTS
+			_internalGUIControls[GUI_CTRL_MUSIC_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
 			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 43, textColor, false);
+#ifdef USE_TTS
+			_internalGUIControls[GUI_CTRL_SPEECH_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 		}
 
 		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 61, textColor, false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_SFX_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 88, textColor, false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_DISPLAY_TEXT_CHECKBOX].alternateTTSLabel = (const char *)msg;
+		_internalGUIControls[GUI_CTRL_DISPLAY_TEXT_CHECKBOX].alternateTTSLabel += ": " + _internalGUIControls[GUI_CTRL_DISPLAY_TEXT_CHECKBOX].label;
+#endif
 
 		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 102, textColor, false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 		drawLine(23, yCntr - calculatedHeight - yOffset + 77, 204, yCntr - calculatedHeight - yOffset + 77, getBannerColor(17));
 		drawLine(23, yCntr - calculatedHeight - yOffset + 78, 204, yCntr - calculatedHeight - yOffset + 78, getBannerColor(4));
@@ -4415,18 +4551,34 @@ void ScummEngine::updateMainMenuControls() {
 	} else {
 		convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, 33, yConstantV6 - 36, textColor, false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_MUSIC_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 		convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, 33, yConstantV6 - 22, textColor, false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_SPEECH_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, 33, yConstantV6 - 8, textColor, false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_SFX_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, 33, yConstantV6 + 19, textColor, false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_DISPLAY_TEXT_CHECKBOX].alternateTTSLabel = (const char *)msg;
+		_internalGUIControls[GUI_CTRL_DISPLAY_TEXT_CHECKBOX].alternateTTSLabel += ": " + _internalGUIControls[GUI_CTRL_DISPLAY_TEXT_CHECKBOX].label;
+#endif
 
 		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, 33, yConstantV6 + 34, textColor, false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 		drawLine(27, yConstantV6 + 8,  201, yConstantV6 + 8,  getBannerColor(17));
 		drawLine(27, yConstantV6 + 9,  201, yConstantV6 + 9,  getBannerColor(4));
@@ -4456,6 +4608,9 @@ void ScummEngine::updateMainMenuControlsSegaCD() {
 
 		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, isJap ? 118 : 167, yConstant, getBannerColor(2), false);
+#ifdef USE_TTS
+		_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].alternateTTSLabel = (const char *)msg;
+#endif
 
 		convertMessageToString((const byte *)getGUIString(gsSlowFast), (byte *)msg, sizeof(msg));
 		drawGUIText(msg, nullptr, isJap ? 151 : 158, yConstant + 37, getBannerColor(2), false);
@@ -4539,6 +4694,9 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 		drawGUIText(title, nullptr, 160, yConstantV6 - 56, stringColor, true);
 	}
 
+#ifdef USE_TTS
+	sayText(title, Common::TextToSpeechManager::INTERRUPT);
+#endif
 	ScummEngine::drawDirtyScreenParts();
 	_system->updateScreen();
 }

@@ -41,7 +41,7 @@ typedef struct astar_node_s {
 /* Provides A* search and cost methods for PathFinder and subclasses.
  */class AStarPath: public Path {
 protected:
-	Std::list<astar_node *> open_nodes, closed_nodes; // nodes seen
+	Common::List<astar_node *> open_nodes, closed_nodes; // nodes seen
 	astar_node *final_node; // last node in path search, used by create_path()
 	/* Forms a usable path from results of a search. */
 	void create_path();

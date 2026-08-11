@@ -1,0 +1,40 @@
+#!/bin/bash
+
+export PATH=$WORKSPACE/vpython/bin:$PATH
+g++ --version
+
+# Setup virtual Python environment
+\rm -Rf vpython
+python cxxtest/admin/virtualenv.py vpython
+#vpy/scripts/vpy_install
+vpython/bin/easy_install nose
+vpython/bin/easy_install unittest2
+vpython/bin/easy_install ply
+vpython/bin/easy_install ordereddict
+vpython/bin/easy_install gcovr
+vpython/bin/easy_install pyutilib.th
+cd cxxtest/python
+../../vpython/bin/python setup.py install
+
+# Cleanup test directory
+cd ../test
+make clean
+cd ../..
+
+# Run tests
+#export CXXTEST_GCOV_FLAGS='-fprofile-arcs -ftest-coverage'
+vpython/bin/nosetests --verbosity=2 --with-xunit --xunit-file=$WORKSPACE/TEST-cxxtest.xml -w $WORKSPACE/cxxtest/test
+
+# Generate code coverage
+#cd cxxtest
+#../vpython/bin/gcovr -v -r $WORKSPACE/cxxtest -x -o $WORKSPACE/cxxtest/test/coverage.xml --gcov-filter '.*#test#(\.\.|\^)#cxxtest#.*gcov'
+
+echo "DONE"
+
+# Cleanup old gcov files
+cd $WORKSPACE
+#\rm -f *.gcov cxxtest/*.gcov doc/*.gcov doc/examples/*.gcov
+#\rm -f *.gcno cxxtest/*.gcno doc/*.gcno doc/examples/*.gcno
+#\rm -f *.gcda cxxtest/*.gcda doc/*.gcda doc/examples/*.gcda
+cd $WORKSPACE/cxxtest/test
+make clean

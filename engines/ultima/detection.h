@@ -63,6 +63,8 @@ enum UltimaGameFlags {
 };
 
 struct UltimaGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	GameId gameId;
 	uint32 features;
@@ -82,7 +84,7 @@ struct UltimaGameDescription {
 
 } // End of namespace Ultima
 
-class UltimaMetaEngineDetection : public AdvancedMetaEngineDetection {
+class UltimaMetaEngineDetection : public AdvancedMetaEngineDetection<Ultima::UltimaGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

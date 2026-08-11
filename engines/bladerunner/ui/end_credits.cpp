@@ -99,7 +99,7 @@ void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr
 	if (_vm->_language == Common::ES_ESP && _vm->_spanishCreditsCorrection) {
 		// Corrections in credited names according to
 		// https://www.doblajevideojuegos.es/fichajuego/blade-runner
-		// Move 280-283 two lines above to accomodate new addition (Early Q actor)
+		// Move 280-283 two lines above to accommodate new addition (Early Q actor)
 		switch (textResourceId) {
 		case 278:
 			textStr = "Voces"; // moved two lines above

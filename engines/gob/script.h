@@ -86,7 +86,7 @@ public:
 	void  skipExpr(char stopToken);
 
 	// Higher-level expression parsing functions
-	char  evalExpr(int16 *pRes);
+	char  evalExpr(int32 *pRes);
 	bool  evalBool();
 	int32 evalInt();
 
@@ -141,6 +141,8 @@ public:
 	uint16 getFunctionOffset (uint8 function) const;
 
 	static uint32 getVariablesCount(const char *fileName, GobEngine *vm);
+
+	int32 _currentOpcodePos = 0; // for debugging purposes only
 
 private:
 	struct CallEntry {

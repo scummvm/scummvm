@@ -23,40 +23,36 @@
 #define AUDIO_SOFTSYNTH_PCSPK_H
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/mutex.h"
 #include "common/queue.h"
 
 namespace Audio {
 
-class PCSpeaker : public AudioStream {
+#define PCSPK_DEFAULT_VOLUME 20
+
+class PCSpeakerStream;
+
+class PCSpeaker {
 public:
 	enum WaveForm {
 		kWaveFormSquare = 0,
-		kWaveFormSine,
-		kWaveFormSaw,
-		kWaveFormTriangle,
 		kWaveFormSilence
 	};
 
-protected:
-	// PC speaker instruction: play this waveform at frequency x for y microseconds.
-	struct Command {
-		WaveForm waveForm;
-		float frequency;
-		uint32 length;
-
-		Command(WaveForm waveForm, float frequency, uint32 length);
-	};
-
 public:
-	PCSpeaker(int rate = 44100);
+	PCSpeaker();
 	~PCSpeaker();
+
+	bool init();
+	void quit();
 
 	/** Play a note for length ms.
 	 *
 	 *  If length is negative, play until told to stop.
 	 */
-	void play(WaveForm wave, int freq, int32 length);
+	void play(WaveForm wave, int freq, int32 length, byte volume = PCSPK_DEFAULT_VOLUME);
+
 	/**
 	 * Queue the specified playback instruction. It will be executed when all
 	 * previously queued instructions have finished. Use this method for
@@ -70,33 +66,84 @@ public:
 	 * Use isPlaying to check if all queued instructions have finished playing.
 	 * This will return true even if the current instruction is "playing"
 	 * silence.
-	 * 
+	 *
 	 * @param wave The waveform to use. For PC speaker, use square wave or
 	 * silence.
 	 * @param freq The frequency (in Hertz) to play.
 	 * @param lengthus The length in microseconds for which to play the
 	 * waveform.
 	 */
-	void playQueue(WaveForm wave, float freq, uint32 lengthus);
+	void playQueue(WaveForm wave, float freq, uint32 lengthus, byte volume = PCSPK_DEFAULT_VOLUME);
 	/** Stop the currently playing note after delay ms. */
 	void stop(int32 delay = 0);
-	/** Adjust the volume. */
-	void setVolume(byte volume);
 
 	bool isPlaying() const;
 
-	int readBuffer(int16 *buffer, const int numSamples);
+private:
+	PCSpeakerStream *_speakerStream;
+	SoundHandle _speakerHandle;
+};
 
-	bool isStereo() const	{ return false; }
-	bool endOfData() const	{ return false; }
-	bool endOfStream() const { return false; }
-	int getRate() const	{ return _rate; }
+
+class PCSpeakerStream : public AudioStream {
+protected:
+	// PC speaker instruction: play this waveform at frequency x for y microseconds.
+	struct Command {
+		PCSpeaker::WaveForm waveForm;
+		float frequency;
+		uint32 length;
+		byte volume;
+
+		Command(PCSpeaker::WaveForm waveForm, float frequency, uint32 length, byte volume = PCSPK_DEFAULT_VOLUME);
+	};
+
+public:
+	PCSpeakerStream(int rate = 44100);
+	~PCSpeakerStream();
+
+	/** Play a note for length ms.
+	 *
+	 *  If length is negative, play until told to stop.
+	 */
+	void play(PCSpeaker::WaveForm wave, int freq, int32 length, byte volume = PCSPK_DEFAULT_VOLUME);
+	/**
+	 * Queue the specified playback instruction. It will be executed when all
+	 * previously queued instructions have finished. Use this method for
+	 * playback of effects which require timing precision of less than a
+	 * millisecond.
+	 *
+	 * Calling this method will terminate any waveform started with the play
+	 * method. Calling the play method will terminate the active queued
+	 * instruction and clear the instruction queue.
+	 *
+	 * Use isPlaying to check if all queued instructions have finished playing.
+	 * This will return true even if the current instruction is "playing"
+	 * silence.
+	 *
+	 * @param wave The waveform to use. For PC speaker, use square wave or
+	 * silence.
+	 * @param freq The frequency (in Hertz) to play.
+	 * @param lengthus The length in microseconds for which to play the
+	 * waveform.
+	 */
+	void playQueue(PCSpeaker::WaveForm wave, float freq, uint32 lengthus, byte volume = PCSPK_DEFAULT_VOLUME);
+	/** Stop the currently playing note after delay ms. */
+	void stop(int32 delay = 0);
+
+	bool isPlaying() const;
+
+	int readBuffer(int16 *buffer, const int numSamples) override;
+
+	bool isStereo() const override    { return false; }
+	bool endOfData() const override   { return false; }
+	bool endOfStream() const override { return false; }
+	int getRate() const override      { return _rate; }
 
 protected:
 	Common::Mutex _mutex;
 
 	int _rate;
-	WaveForm _wave;
+	PCSpeaker::WaveForm _wave;
 	bool _playForever;
 	uint32 _oscLength;
 	uint32 _oscSamples;

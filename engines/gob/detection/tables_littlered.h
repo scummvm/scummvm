@@ -139,7 +139,7 @@
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
-{ // Included in a German version of Adi 2
+{ // Included in a German version of Adi 2 - Supplied by BJNFNE
 	{
 		"littlered",
 		"v1.1",

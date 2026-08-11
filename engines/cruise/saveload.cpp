@@ -149,7 +149,7 @@ static void syncBackgroundTable(Common::Serializer &s) {
 			warning("Saving a background resource that has too long a name");
 
 		s.syncBytes((byte *)backgroundTable[i].name, 9);
-		s.syncBytes((byte *)backgroundTable[i].extention, 6);
+		s.syncBytes((byte *)backgroundTable[i].extension, 6);
 	}
 }
 

@@ -67,10 +67,6 @@ public:
 	/** Construct a new string containing exactly @p len characters read from address @p str. */
 	U32String(const value_type *str, uint32 len) : BaseString<u32char_type_t>(str, len) {}
 
-	explicit U32String(const uint32 *str) : BaseString<u32char_type_t>((const value_type *) str) {}
-	U32String(const uint32 *str, uint32 len) : BaseString<u32char_type_t>((const value_type *) str, len) {}
-	U32String(const uint32 *beginP, const uint32 *endP) : BaseString<u32char_type_t>((const value_type *) beginP, (const value_type *) endP) {}
-
 	/** Construct a new string containing the characters between @p beginP (including) and @p endP (excluding). */
 	U32String(const value_type *beginP, const value_type *endP) : BaseString<u32char_type_t>(beginP, endP) {}
 
@@ -93,7 +89,10 @@ public:
 	U32String(const String &str, CodePage page = kUtf8);
 
 	/** Construct a string consisting of the given character. */
-	explicit U32String(value_type c);
+	explicit constexpr U32String(value_type c) : BaseString<u32char_type_t>(c) {}
+
+	/** Construct a string consisting of n copies of the given character. */
+	U32String(size_t n, value_type c) : BaseString<u32char_type_t>(n, c) {}
 
 	/** Assign a given string to this string. */
 	U32String &operator=(const U32String &str);
@@ -121,21 +120,6 @@ public:
 
 	/** @overload */
 	U32String &operator+=(value_type c);
-
-	using BaseString<value_type>::operator==;
-	using BaseString<value_type>::operator!=;
-
-	/** Check whether this string is identical to string @p x. */
-	bool operator==(const String &x) const;
-
-	/** @overload */
-	bool operator==(const char *x) const;
-
-	/** Check whether this string is different than string @p x. */
-	bool operator!=(const String &x) const;
-
-	/** @overload */
-	bool operator!=(const char *x) const;
 
 	/** Convert the string to the given @p page encoding and return the result as a new String. */
 	String encode(CodePage page = kUtf8) const;
@@ -165,10 +149,6 @@ public:
 	/** Return a substring of this string */
 	U32String substr(size_t pos = 0, size_t len = npos) const;
 
-	const uint32 *u32_str() const {   /*!< Return the string as a UTF-32 pointer. */
-		return (const uint32 *) _str;
-	}
-
 	/** Decode a big endian UTF-16 string into a U32String. */
 	static Common::U32String decodeUTF16BE(const uint16 *start, uint len);
 
@@ -186,6 +166,9 @@ public:
 
 	/** Transform a U32String into UTF-16 representation (native encoding). The result must be freed. */
 	uint16 *encodeUTF16Native(uint *len = nullptr) const;
+
+	/** Transform Traditional Chinese string into Simplified. */
+	U32String transcodeChineseT2S() const;
 
 private:
 	static U32String formatInternal(const U32String *fmt, ...);

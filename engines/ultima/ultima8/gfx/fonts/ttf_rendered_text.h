@@ -22,9 +22,8 @@
 #ifndef ULTIMA8_GFX_FONTS_SHAPERENDEREDTEXT_H
 #define ULTIMA8_GFX_FONTS_SHAPERENDEREDTEXT_H
 
-#include "ultima/ultima8/gfx/fonts/rendered_text.h"
-#include "ultima/ultima8/gfx/fonts/font.h"
 #include "graphics/managed_surface.h"
+#include "ultima/ultima8/gfx/fonts/rendered_text.h"
 
 namespace Ultima {
 namespace Ultima8 {

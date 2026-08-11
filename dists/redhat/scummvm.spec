@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 2.9.0git
+Version		: 2026.3.1git
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -86,7 +86,7 @@ fi
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc AUTHORS README.md NEWS.md COPYING LICENSES/COPYING.Apache LICENSES/COPYING.BSD LICENSES/COPYING.BSL LICENSES/COPYING.LGPL LICENSES/COPYING.FREEFONT LICENSES/COPYING.OFL LICENSES/COPYING.ISC LICENSES/COPYING.LUA LICENSES/COPYING.MIT LICENSES/COPYING.MKV LICENSES/COPYING.MPL LICENSES/COPYING.TINYGL LICENSES/COPYING.GLAD LICENSES/CatharonLicense.txt COPYRIGHT
+%doc AUTHORS README.md NEWS.md COPYING LICENSES/COPYING.Apache LICENSES/COPYING.BSD LICENSES/COPYING.BSL LICENSES/COPYING.LGPL LICENSES/COPYING.OFL LICENSES/COPYING.ISC LICENSES/COPYING.LUA LICENSES/COPYING.MIT LICENSES/COPYING.MKV LICENSES/COPYING.MPL LICENSES/COPYING.TINYGL LICENSES/COPYING.GLAD LICENSES/CatharonLicense.txt COPYRIGHT
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/org.scummvm.scummvm.xpm

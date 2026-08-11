@@ -22,6 +22,10 @@
 #ifndef COMMON_CONSOLE_H
 #define COMMON_CONSOLE_H
 
+#ifdef FORCE_TEXT_CONSOLE
+#undef DISABLE_TEXT_CONSOLE
+#endif
+
 #include "common/scummsys.h"
 
 namespace Common {
@@ -84,7 +88,7 @@ void NORETURN_PRE error(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) NORETUR
 
 #ifdef DISABLE_TEXT_CONSOLE
 
-inline void GCC_PRINTF(1, 2) warning(MSVC_PRINTF const char *s, ...) {}
+static inline void GCC_PRINTF(1, 2) warning(MSVC_PRINTF const char *s, ...) {}
 
 #else
 
@@ -98,5 +102,17 @@ void warning(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2);
 
 #endif
 /** @} */
+
+/**
+ * Test the given expression and call error() with the file, line, and expression
+ * if it is false.
+ *
+ * Unlike assert(), scumm_assert() is not disabled when NDEBUG is defined. Also
+ * the message is visible to the user (or at least logged) on all platforms.
+ */
+#define scumm_assert(expr) \
+	if (expr) {} \
+	else \
+		error("Assertion \"%s\" failed: file \"%s\", line %d", #expr, __FILE__, __LINE__)
 
 #endif

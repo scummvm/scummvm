@@ -24,7 +24,6 @@
 #define M4_BURGER_INVENTORY_H
 
 #include "common/array.h"
-#include "m4/m4_types.h"
 #include "m4/adv_r/adv_inv.h"
 
 namespace M4 {

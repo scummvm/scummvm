@@ -148,30 +148,27 @@ public:
 
 class IIgsMidi : public AgiSound {
 public:
-	IIgsMidi(uint8 *data, uint32 len, int resnum);
-	~IIgsMidi() override { if (_data != NULL) free(_data); }
-	uint16 type() override { return _type; }
+	IIgsMidi(byte resourceNr, byte *data, uint32 length, uint16 type);
 	virtual const uint8 *getPtr() { return _ptr; }
 	virtual void setPtr(const uint8 *ptr) { _ptr = ptr; }
 	virtual void rewind() { _ptr = _data + 2; _ticks = 0; }
 protected:
-	uint8 *_data; ///< Raw sound resource data
 	const uint8 *_ptr; ///< Pointer to the current position in the MIDI data
-	uint32 _len; ///< Length of the raw sound resource
-	uint16 _type; ///< Sound resource type
 public:
 	uint _ticks; ///< MIDI song position in ticks (1/60ths of a second)
 };
 
 class IIgsSample : public AgiSound {
 public:
-	IIgsSample(uint8 *data, uint32 len, int16 resourceNr);
+	IIgsSample(byte resourceNr, byte *data, uint32 length, uint16 type);
 	~IIgsSample() override { delete[] _sample; }
 	uint16 type() override { return _header.type; }
 	const IIgsSampleHeader &getHeader() const { return _header; }
+	bool isValid() override { return _isValid; }
 protected:
 	IIgsSampleHeader _header;   ///< Apple IIGS AGI sample header
 	int8 *_sample;              ///< Sample data (8-bit signed format)
+	bool _isValid;
 };
 
 /** Apple IIGS MIDI program change to instrument number mapping. */

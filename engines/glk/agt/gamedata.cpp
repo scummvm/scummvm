@@ -744,7 +744,7 @@ slist add_multi_word(word w) {
 }
 
 
-/* Check verb vp for multiwords and enter any found in the auxilary
+/* Check verb vp for multiwords and enter any found in the auxiliary
    combination list */
 static void verb_multiword(int vp) {
 	int i;
@@ -944,7 +944,7 @@ word add_dict(const char *str) {
 }
 
 /* Adds w to dynamically grown synonym list */
-/* If no_syn is set, then *don't* add a synonym: return immediatly */
+/* If no_syn is set, then *don't* add a synonym: return immediately */
 /*  (This is done by agt2agx to avoid creating the auxsyn lists,  */
 /*   since those should be created when the interpreter loads the */
 /*   game file and not before) */
@@ -1276,7 +1276,7 @@ void sort_cmd(void) {
 	for (i = 0; i < TOTAL_VERB; i++)
 		if (verbptr[i] == last_cmd) /* No occurrences of this verb */
 			verbend[i] = last_cmd;
-		else verbend[i]++; /* Point *after* last occurance */
+		else verbend[i]++; /* Point *after* last occurrence */
 
 	for (i = 0; i < TOTAL_VERB; i++) {
 		int j;

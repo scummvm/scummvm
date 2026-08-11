@@ -34,8 +34,6 @@
 #include "common/system.h"
 #include "common/util.h"
 
-#include "gui/saveload-dialog.h"
-
 #include "engines/engine.h"
 
 #include "math/cosinetables.h"
@@ -120,11 +118,11 @@ const int MAX_BAN_FILES = 16;
 
 
 enum kDebugLevels {
-	kDebugSound =     1 << 0,
-	kDebugGraphics =  1 << 1,
-	kDebugSavegame =  1 << 2,
-	kDebugSpace =     1 << 3,
-	kDebugGeneral =   1 << 4
+	kDebugSound = 1,
+	kDebugGraphics,
+	kDebugSavegame,
+	kDebugSpace,
+	kDebugGeneral,
 };
 
 enum GameMode {

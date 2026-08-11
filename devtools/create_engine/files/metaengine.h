@@ -24,7 +24,7 @@
 
 #include "engines/advancedDetector.h"
 
-class XyzzyMetaEngine : public AdvancedMetaEngine {
+class XyzzyMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
 

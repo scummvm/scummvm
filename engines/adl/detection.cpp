@@ -37,8 +37,8 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-#define DEFAULT_OPTIONS GUIO5(GAMEOPTION_NTSC, GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_MONO_TEXT, GAMEOPTION_SCANLINES, GUIO_NOMIDI)
-#define MH_OPTIONS GUIO5(GAMEOPTION_NTSC, GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_MONO_TEXT, GAMEOPTION_SCANLINES, GUIO_NOMIDI)
+#define DEFAULT_OPTIONS GUIO7(GAMEOPTION_NTSC, GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_MONO_TEXT, GAMEOPTION_SCANLINES, GAMEOPTION_APPLE2E_CURSOR, GUIO_NOMIDI, GAMEOPTION_TTS)
+#define MH_OPTIONS GUIO7(GAMEOPTION_NTSC, GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_MONO_TEXT, GAMEOPTION_SCANLINES, GAMEOPTION_APPLE2E_CURSOR, GUIO_NOMIDI, GAMEOPTION_TTS)
 
 static const PlainGameDescriptor adlGames[] = {
 	{ "hires0", "Hi-Res Adventure #0: Mission Asteroid" },
@@ -378,9 +378,35 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		GAME_TYPE_HIRES4,
 		GAME_VER_NONE
 	},
-	{ // Hi-Res Adventure #5: Time Zone - Apple II - Version 1.1 - Roberta Williams Anthology
+	{ // Hi-Res Adventure #5: Time Zone - Apple II - On-Line Systems - Version 1.1
 		{
-			"hires5", "",
+			"hires5", "On-Line Systems",
+			{
+				{"tzone1a", 2, "6c1f4c9f774dbd9697e3b5b1fe2fb858", 143360},
+				{"tzone1b", 3, "4eaf8d790e3f93097cca9ddbe863df50", 143360},
+				{"tzone2c", 4, "e3aa4f56e727339b1ec00978ce9d435b", 143360},
+				{"tzone2d", 5, "77b8219a380410015c986fa192d4c3bf", 143360},
+				{"tzone3e", 6, "f7acc03edd8d8aecb90711cd5f9e5593", 143360},
+				{"tzone3f", 7, "ed74c056976ecea2eab07448c8a72eb8", 143360},
+				{"tzone4g", 8, "de7bda8a641169fc2dedd8a7b0b7e7de", 143360},
+				{"tzone4h", 9, "21cf76d97505ff09fff5d5e4711bc47c", 143360},
+				{"tzone5i", 10, "d665df374e594cd0978b73c3490e5de2", 143360},
+				{"tzone5j", 11, "5095be23d13201d0897b9169c4e473df", 143360},
+				{"tzone6k", 12, "bef044503f21af5f0a4088e99aa778b1", 143360},
+				{"tzone6l", 13, "84801b7c2ab6c09e62a2a0809b94d16a", 143360},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES5,
+		GAME_VER_NONE
+	},
+	{ // Hi-Res Adventure #5: Time Zone - Apple II - Roberta Williams Anthology - Version 1.1
+		{
+			"hires5", "Sierra On-Line",
 			{
 				{ "tzone1a", 2, "731844b1d19c2801e3a5bc61d109af54", 143360 },
 				{ "tzone1b", 3, "4eaf8d790e3f93097cca9ddbe863df50", 143360 },
@@ -443,9 +469,9 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE, GAME_VER_NONE }
 };
 
-class AdlMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AdlMetaEngineDetection : public AdvancedMetaEngineDetection<AdlGameDescription> {
 public:
-	AdlMetaEngineDetection() : AdvancedMetaEngineDetection(gameFileDescriptions, sizeof(AdlGameDescription), adlGames) { }
+	AdlMetaEngineDetection() : AdvancedMetaEngineDetection(gameFileDescriptions, adlGames) { }
 
 	const char *getEngineName() const override {
 		return "ADL";
@@ -553,7 +579,7 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 				continue;
 			}
 
-			if (fDesc.fileSize != -1 && fDesc.fileSize != filesProps[fileName].size) {
+			if (fDesc.fileSize != AD_NO_SIZE && fDesc.fileSize != filesProps[fileName].size) {
 				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping");
 				game.hasUnknownFiles = true;
 				continue;

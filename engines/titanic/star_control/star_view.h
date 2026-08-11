@@ -22,6 +22,7 @@
 #ifndef TITANIC_STAR_VIEW_H
 #define TITANIC_STAR_VIEW_H
 
+#include "titanic/messages/messages.h"
 #include "titanic/star_control/camera.h"
 #include "titanic/star_control/surface_fader.h"
 #include "titanic/star_control/viewport.h"
@@ -120,9 +121,9 @@ public:
 	bool MouseMoveMsg(int unused, const Point &pt);
 
 	/**
-	 * Handles keyboard messages
+	 * Handles action messages
 	 */
-	bool KeyCharMsg(int key, CErrorCode *errorCode);
+	bool ActionMsg(CActionMsg *msg, CErrorCode *errorCode);
 
 	/**
 	 * Returns true if a star destination can be set

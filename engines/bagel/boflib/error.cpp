@@ -97,7 +97,7 @@ void CBofError::fatalError(ErrorCode errCode, const char *format, ...) {
 		va_end(argptr);
 	}
 
-	error("%s - %s", g_errList[errCode] , buf.c_str());
+	error("%s - %s", g_errList[errCode], buf.c_str());
 }
 
 } // namespace Bagel

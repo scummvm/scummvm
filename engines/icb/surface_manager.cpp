@@ -47,7 +47,7 @@ namespace ICB {
 
 uint32 working_buffer_id;
 uint32 bg_buffer_id;
-uint32 effect_time; // Time spent doing postprocessing effects (fades ect)
+uint32 effect_time; // Time spent doing postprocessing effects (fades etc)
 uint32 flipTime;
 
 _surface::~_surface() {
@@ -364,7 +364,7 @@ static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int32 srcP
 }
 
 static void copyRectToSurface(Graphics::Surface *dstSurface, Graphics::Surface *srcSurface,
-							  int32 destX, int32 destY, const Common::Rect subRect,
+							  int32 destX, int32 destY, const Common::Rect &subRect,
 							  bool8 colorKeyEnable, uint32 colorKey) {
 	assert(srcSurface->format == dstSurface->format);
 	assert(srcSurface->format.bytesPerPixel == 4);

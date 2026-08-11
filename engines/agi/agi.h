@@ -32,6 +32,7 @@
 #include "common/stack.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 
@@ -61,12 +62,6 @@ class RandomSource;
  * - Troll's Tale (Pre-AGI)
  */
 namespace Agi {
-
-typedef signed int Err;
-
-//
-// Version and other definitions
-//
 
 #define TITLE       "AGI engine"
 
@@ -103,16 +98,13 @@ typedef signed int Err;
 
 #define CMD_BSIZE 12
 
-enum {
-	NO_GAMEDIR = 0,
-	GAMEDIR
-};
-
 enum AgiGameType {
 	GType_PreAGI = 0,
-	GType_V1 = 1,
-	GType_V2 = 2,
-	GType_V3 = 3
+	GType_V1     = 1,
+	GType_V2     = 2,
+	GType_V3     = 3,
+	GType_A2     = 4,
+	GType_GAL    = 5
 };
 
 enum AgiGameFeatures {
@@ -120,13 +112,7 @@ enum AgiGameFeatures {
 	GF_AGDS        = (1 << 1), // marks games created with AGDS - all using AGI version 2.440
 	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
 	GF_FANMADE     = (1 << 3), // marks fanmade games
-	GF_2GSOLDSOUND = (1 << 5),
-	GF_EXTCHAR     = (1 << 6)  // use WORDS.TOK.EXTENDED
-};
-
-enum BooterDisks {
-	BooterDisk1 = 0,
-	BooterDisk2 = 1
+	GF_2GSOLDSOUND = (1 << 5)
 };
 
 enum AgiGameID {
@@ -155,32 +141,27 @@ enum AgiGameID {
 
 enum AGIErrors {
 	errOK = 0,
-	errDoNothing,
-	errBadCLISwitch,
-	errInvalidAGIFile,
+	errFilesNotFound,
 	errBadFileOpen,
 	errNotEnoughMemory,
 	errBadResource,
-	errUnknownAGIVersion,
-	errNoLoopsInView,
-	errViewDataError,
-	errNoGameList,
 	errIOError,
 
 	errUnk = 127
 };
 
 enum kDebugLevels {
-	kDebugLevelMain =      1 << 0,
-	kDebugLevelResources = 1 << 1,
-	kDebugLevelSprites =   1 << 2,
-	kDebugLevelInventory = 1 << 3,
-	kDebugLevelInput =     1 << 4,
-	kDebugLevelMenu =      1 << 5,
-	kDebugLevelScripts =   1 << 6,
-	kDebugLevelSound =     1 << 7,
-	kDebugLevelText =      1 << 8,
-	kDebugLevelSavegame =  1 << 9
+	kDebugLevelMain = 1,
+	kDebugLevelResources,
+	kDebugLevelSprites,
+	kDebugLevelPictures,
+	kDebugLevelInventory,
+	kDebugLevelInput,
+	kDebugLevelMenu,
+	kDebugLevelScripts,
+	kDebugLevelSound,
+	kDebugLevelText,
+	kDebugLevelSavegame,
 };
 
 /**
@@ -282,6 +263,7 @@ enum AgiMonitorType {
  */
 enum AgiComputerType {
 	kAgiComputerPC = 0,
+	kAgiComputerApple2 = 3,
 	kAgiComputerAtariST = 4,
 	kAgiComputerAmiga = 5,
 	kAgiComputerApple2GS = 7
@@ -336,14 +318,14 @@ struct AgiDir {
 
 	// 0 = not in mem, can be freed
 	// 1 = in mem, can be released
-	// 2 = not in mem, cant be released
-	// 3 = in mem, cant be released
+	// 2 = not in mem, can't be released
+	// 3 = in mem, can't be released
 	// 0x40 = was compressed
 	uint8 flags;
 
 	void reset() {
-		volume = 0;
-		offset = 0;
+		volume = 0xff;
+		offset = _EMPTY;
 		len = 0;
 		clen = 0;
 		flags = 0;
@@ -379,6 +361,8 @@ enum CycleInnerLoopType {
 
 typedef Common::Array<int16> SavedGameSlotIdArray;
 
+struct AgiAppleIIgsDelayOverwriteGameEntry;
+
 /**
  * AGI game structure.
  * This structure contains all global data of an AGI game executed
@@ -392,7 +376,6 @@ struct AgiGame {
 	int adjMouseX;  /**< last given adj.ego.move.to.x.y-command's 1st parameter */
 	int adjMouseY;  /**< last given adj.ego.move.to.x.y-command's 2nd parameter */
 
-	char name[8];   /**< lead in id (e.g. `GR' for goldrush) */
 	char id[8];     /**< game id */
 	uint32 crc;     /**< game CRC */
 
@@ -452,6 +435,7 @@ struct AgiGame {
 	Common::Rect mouseFence;        /**< rectangle set by fence.mouse command */
 	bool mouseEnabled;              /**< if mouse is supposed to be active */
 	bool mouseHidden;               /**< if mouse is currently hidden */
+	bool predictiveDlgOnMouseClick; /**< if predictive dialog is enabled for mouse clicks */
 
 	// IF condition handling
 	bool testResult;
@@ -471,12 +455,16 @@ struct AgiGame {
 
 	bool automaticRestoreGame;
 
+	byte speedLevel; /**< Current game speed for certain platforms/versions */
+
 	uint16 appleIIgsSpeedControllerSlot;
-	int appleIIgsSpeedLevel;
 
 	const char *getString(int number);
 	void setString(int number, const char *str);
-	void setAppleIIgsSpeedLevel(int appleIIgsSpeedLevel);
+	/**
+	 * Sets the speed level and displays a message box.
+	 */
+	void setSpeedLevel(byte s);
 
 	AgiGame() {
 		_vm = nullptr;
@@ -484,7 +472,6 @@ struct AgiGame {
 		adjMouseX = 0;
 		adjMouseY = 0;
 
-		memset(name, 0, sizeof(name));
 		memset(id, 0, sizeof(id));
 		crc = 0;
 		memset(flags, 0, sizeof(flags));
@@ -537,6 +524,7 @@ struct AgiGame {
 		// mouseFence cleared by Common::Rect constructor
 		mouseEnabled = false;
 		mouseHidden = false;
+		predictiveDlgOnMouseClick = false;
 
 		testResult = false;
 
@@ -548,91 +536,13 @@ struct AgiGame {
 
 		automaticRestoreGame = false;
 
+		speedLevel = 2; // normal speed
+
 		appleIIgsSpeedControllerSlot = 0xffff;	// we didn't add yet speed menu
-		appleIIgsSpeedLevel = 2;  // normal speed
 	}
 };
 
-class AgiLoader {
-public:
-
-	AgiLoader() {}
-	virtual ~AgiLoader() {}
-
-	virtual int init() = 0;
-	virtual int detectGame() = 0;
-	virtual int loadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual void unloadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual int loadObjects(const char *fname) = 0;
-	virtual int loadWords(const char *fname) = 0;
-};
-
-class AgiLoader_v1 : public AgiLoader {
-private:
-	AgiEngine *_vm;
-	Common::Path _filenameDisk0;
-	Common::Path _filenameDisk1;
-
-	int loadDir_DDP(AgiDir *agid, int offset, int max);
-	int loadDir_BC(AgiDir *agid, int offset, int max);
-	uint8 *loadVolRes(AgiDir *agid);
-
-public:
-	AgiLoader_v1(AgiEngine *vm);
-
-	int init() override;
-	int detectGame() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
-};
-
-class AgiLoader_v2 : public AgiLoader {
-private:
-	AgiEngine *_vm;
-	bool _hasV3VolumeFormat;
-
-	int loadDir(AgiDir *agid, const char *fname);
-	uint8 *loadVolRes(AgiDir *agid);
-	bool detectV3VolumeFormat();
-
-public:
-
-	AgiLoader_v2(AgiEngine *vm) {
-		_vm = vm;
-		_hasV3VolumeFormat = false;
-	}
-
-	int init() override;
-	int detectGame() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
-};
-
-class AgiLoader_v3 : public AgiLoader {
-private:
-	AgiEngine *_vm;
-
-	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
-	uint8 *loadVolRes(AgiDir *agid);
-
-public:
-
-	AgiLoader_v3(AgiEngine *vm) {
-		_vm = vm;
-	}
-
-	int init() override;
-	int detectGame() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
-};
-
+class AgiLoader;
 class GfxFont;
 class GfxMgr;
 class SpritesMgr;
@@ -718,6 +628,8 @@ public:
 	bool getFlag(int16 flagNr);
 	void setFlag(int16 flagNr, bool newState);
 	void flipFlag(int16 flagNr);
+	/** Sets a flag in AGIv2+, sets a variable in AGIv1 */
+	void setFlagOrVar(int16 flagNr, bool newState);
 
 	const AGIGameDescription *_gameDescription;
 
@@ -843,6 +755,16 @@ public:
 
 	Common::Stack<ImageStackElement> _imageStack;
 
+#ifdef USE_TTS
+	int16 _previousDisplayRow;
+	Common::String _combinedText;
+	Common::String _previousSaid;
+	bool _queueNextText;
+	bool _voiceClock;
+	bool _replaceDisplayNewlines;
+	Common::CodePage _ttsEncoding;
+#endif
+
 	void clearImageStack() override;
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 	                          int16 p4, int16 p5, int16 p6, int16 p7) override;
@@ -854,9 +776,12 @@ public:
 
 	int agiInit();
 	void agiDeinit();
-	int agiLoadResource(int16 resourceType, int16 resourceNr);
-	void agiUnloadResource(int16 resourceType, int16 resourceNr);
-	void agiUnloadResources();
+	int loadResource(int16 resourceType, int16 resourceNr);
+	void unloadResource(int16 resourceType, int16 resourceNr);
+	/**
+	 * Unload all resources except Logic 0
+	 */
+	void unloadResources();
 
 	int getKeypress() override;
 	bool isKeypress() override;
@@ -871,6 +796,12 @@ private:
 public:
 	void syncSoundSettings() override;
 
+#ifdef USE_TTS
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::QUEUE, 
+				 bool checkPreviousSaid = true);
+	void stopTextToSpeech(bool clearPreviousSaid = true);
+#endif
+
 public:
 	void decrypt(uint8 *mem, int len);
 	uint16 processAGIEvents();
@@ -879,7 +810,7 @@ public:
 	void newRoom(int16 newRoomNr);
 	void resetControllers();
 	void interpretCycle();
-	int playGame();
+	void playGame();
 
 	void allowSynthetic(bool);
 	void processScummVMEvents();
@@ -887,16 +818,18 @@ public:
 
 	const Common::String getTargetName() const { return _targetName; }
 
+private:
+	byte getAppleIIgsTimeDelay(const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite, byte &newTimeDelay) const;
+
 	// Objects
 public:
 	int loadObjects(const char *fname);
-	int loadObjects(Common::File &fp);
+	int loadObjects(Common::SeekableReadStream &fp, int flen);
 	const char *objectName(uint16 objectNr);
 	int objectGetLocation(uint16 objectNr);
 	void objectSetLocation(uint16 objectNr, int location);
 private:
 	int decodeObjects(uint8 *mem, uint32 flen);
-	int readObjects(Common::File &fp, int flen);
 
 	// Logic
 public:
@@ -934,6 +867,10 @@ public:
 	bool testController(uint8 cont);
 	bool testCompareStrings(uint8 s1, uint8 s2);
 
+	// Picture
+private:
+	void unloadPicture(int16 picNr);
+
 	// View
 private:
 	void updateView(ScreenObjEntry *screenObj);
@@ -952,8 +889,8 @@ public:
 	int decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr);
 
 private:
-	void unpackViewCelData(AgiViewCel *celData, byte *compressedData, uint16 compressedSize);
-	void unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedData, uint16 compressedSize);
+	void unpackViewCelData(AgiViewCel *celData, byte *compressedData, uint16 compressedSize, int16 viewNr);
+	void unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedData, uint16 compressedSize, int16 viewNr);
 
 public:
 	bool isEgoView(const ScreenObjEntry *screenObj);
@@ -979,6 +916,8 @@ public:
 	void fixPosition(ScreenObjEntry *screenObj);
 	void updatePosition();
 	int getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize);
+	byte egoNearWater(byte limit);
+	int16 nearWater(ScreenObjEntry &screenObj, byte direction, int16 x, int16 y, byte limit);
 
 	bool _keyHoldMode;
 	Common::KeyCode _keyHoldModeLastKey;
@@ -993,6 +932,7 @@ public:
 
 	int waitKey();
 	int waitAnyKey();
+	void waitAnyKeyOrFinishedSound();
 
 	void nonBlockingText_IsShown();
 	void nonBlockingText_Forget();
@@ -1032,6 +972,10 @@ private:
 
 public:
 	const AgiOpCodeEntry *getOpCodesTable() { return _opCodes; }
+
+private:
+	void goldRushClockTimeWorkaround_OnReadVar();
+	void goldRushClockTimeWorkaround_OnWriteVar(byte oldValue);
 };
 
 } // End of namespace Agi

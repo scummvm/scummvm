@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "base/plugins.h"
 
 #include "engines/metaengine.h"
@@ -36,7 +38,7 @@
 #include "scumm/detection_tables.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
-#include "scumm/scumm.h"
+#include "scumm/scumm-md5.h"
 
 #pragma mark -
 #pragma mark --- Detection code ---
@@ -83,6 +85,7 @@ public:
 
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 
 	uint getMD5Bytes() const override {
@@ -95,15 +98,101 @@ public:
 		return entries;
 	}
 
-	void dumpDetectionEntries() const override final {}
+	void dumpDetectionEntries() const override final;
+
+	GameFilenamePattern matchGameFilenamePattern(const MD5Table *entry) const;
 };
 
 PlainGameList ScummMetaEngineDetection::getSupportedGames() const {
 	return PlainGameList(gameDescriptions);
 }
 
+GameFilenamePattern ScummMetaEngineDetection::matchGameFilenamePattern(const MD5Table *entry) const {
+	GameFilenamePattern bestMatch = GameFilenamePattern();
+
+	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {
+		if (!scumm_stricmp(gfp->gameid, entry->gameid)) {
+			if (gfp->platform == UNK || entry->platform == UNK || gfp->platform == entry->platform) {
+				bestMatch = *gfp;
+
+				if (gfp->language == UNK_LANG || entry->language == UNK_LANG || gfp->language == entry->language) {
+					if (!gfp->variant || !entry->variant || !scumm_stricmp(gfp->variant, entry->variant))
+						return *gfp;
+				}
+			}
+		}
+	}
+
+	return bestMatch;
+}
+
+#if 0
+struct EntryPos {
+	const char *gameid;
+	int id;
+
+	EntryPos(const char *strId, int intId) : gameid(strId), id(intId) {}
+};
+
+static int compareTreeNodes(const void *a, const void *b) {
+	return scumm_stricmp(((const EntryPos *)a)->gameid, ((const EntryPos *)b)->gameid);
+}
+#endif
+
+ void ScummMetaEngineDetection::dumpDetectionEntries() const {
+#if 0
+	// Sort all entries by gameid, as they are sorted by md5
+	Common::SortedArray<EntryPos *> gameIDs(compareTreeNodes);
+	for (int i = 0; md5table[i].gameid != 0; ++i)
+		gameIDs.insert(new EntryPos(md5table[i].gameid , i));
+
+	for (auto &iter : gameIDs) {
+		const MD5Table *entry = &md5table[iter->id];
+		PlainGameDescriptor pd = findGame(entry->gameid);
+		const char *title = pd.description;
+
+		printf("game (\n");
+		printf("\tname \"%s\"\n", escapeString(entry->gameid).c_str());
+		printf("\ttitle \"%s\"\n", escapeString(title).c_str());
+		printf("\textra \"%s\"\n", escapeString(entry->extra).c_str());
+		printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(entry->language)).c_str());
+		printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(entry->platform)).c_str());
+		printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
+		printf("\tengine \"%s\"\n", escapeString("scumm").c_str());
+
+		// Match the appropriate file name for the current game variant.
+		GameFilenamePattern gameEntry = matchGameFilenamePattern(entry);
+		Common::String fileName;
+
+		if (gameEntry.gameid) {
+			fileName = generateFilenameForDetection(gameEntry.pattern, gameEntry.genMethod, gameEntry.platform);
+		} else {
+			warning("dumpDetectionEntries(): no game entry found for '%s'", entry->gameid);
+			fileName = entry->gameid;
+		}
+
+		printf("\trom ( name \"%s\" size %lld md5-%d %s )\n",
+			escapeString(fileName.c_str()).c_str(),
+			static_cast<long long int>(entry->filesize),
+			getMD5Bytes(),
+			entry->md5);
+
+		printf(")\n\n"); // Closing for 'game ('
+	}
+
+	for (auto &iter : gameIDs)
+		delete iter;
+#endif
+}
+
 PlainGameDescriptor ScummMetaEngineDetection::findGame(const char *gameid) const {
 	return Engines::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
+}
+
+Common::Error ScummMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
+	*descriptor = nullptr;
+	game = DetectedGame(getName(), findGame(ConfMan.get("gameid").c_str()));
+	return game.gameId.empty() ? Common::kUnknownError : Common::kNoError;
 }
 
 static Common::String generatePreferredTarget(const DetectorResult &x) {
@@ -150,6 +239,12 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 
 		game.setGUIOptions(customizeGuiOptions(*x));
 		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
+		game.appendGUIOptions(getGameGUIOptionsDescriptionPlatform(x->game.platform));
+
+		if (x->game.features & GF_UNSTABLE)
+			game.gameSupportLevel = kUnstableGame;
+		else if (x->game.features & GF_TESTING)
+			game.gameSupportLevel = kTestingGame;
 
 		detectedGames.push_back(game);
 	}

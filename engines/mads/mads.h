@@ -19,36 +19,22 @@
  *
  */
 
-#ifndef MADS_MADS_H
-#define MADS_MADS_H
+#ifndef MADS_ENGINE_H
+#define MADS_ENGINE_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/error.h"
+#include "audio/mixer.h"
+#include "common/events.h"
+#include "common/serializer.h"
+#include "common/stack.h"
 #include "common/random.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "graphics/surface.h"
-#include "mads/conversations.h"
-#include "mads/debugger.h"
-#include "mads/dialogs.h"
-#include "mads/events.h"
-#include "mads/font.h"
-#include "mads/game.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
-#include "mads/resources.h"
-#include "mads/sound.h"
 #include "mads/detection.h"
+#include "graphics/screen.h"
+#include "mads/core/sound_manager.h"
+#include "mads/core/game.h"
+#include "mads/core/speech.h"
 
-/**
- * This is the namespace of the MADS engine.
- *
- * Status of this engine: In Development
- *
- * Games using this engine:
- * - Rex Nebular and the Cosmic Gender Bender
- */
 namespace MADS {
 
 #define DEBUG_BASIC 1
@@ -56,56 +42,73 @@ namespace MADS {
 #define DEBUG_DETAILED 3
 
 enum MADSDebugChannels {
-	kDebugPath      = 1 << 0,
-	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2
+	kDebugPath = 1,
+	kDebugScripts,
+	kDebugGraphics,
+	kDebugConversations
 };
 
-enum ScreenFade {
-	SCREEN_FADE_SMOOTH = 0,
-	SCREEN_FADE_MEDIUM = 1,
-	SCREEN_FADE_FAST = 2
+enum MADSActions {
+	kActionNone,
+	kActionEscape,
+	kActionGameMenu,
+	kActionSave,
+	kActionRestore,
+	kActionScrollUp,
+	kActionScrollDown,
+	kActionStartGame,
+	kActionResumeGame,
+	kActionShowIntro,
+	kActionCredits,
+	kActionQuotes,
+	kActionRestartAnimation
 };
 
+typedef void (*TimerFunction)();
 
 class MADSEngine : public Engine {
 private:
+	uint16 _shakeRandom = 0x4D2;
+
+	void initGlobals();
+	void syncGame(Common::Serializer &s);
+	bool isSpecialKey(Common::KeyCode key) const;
+	void updateScreen();
+
+protected:
 	const MADSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	Graphics::Screen *_screen = nullptr;
+	Common::Stack<Common::KeyState> _keyEvents;
+	uint32 _nextFrameTime = 0;
+	Common::Point _mousePos;
+	int _mouseButtons = 0;
+	Audio::SoundHandle _speechHandle;
+	TimerFunction _timerFunction = nullptr;
+	uint32 _nextTimerTime = 0;
+	Graphics::Surface _savegameThumbnail;
 
-	/**
-	 * Handles basic initialisation
-	 */
-	void initialize();
+	virtual Common::Point screenToGame(const Common::Point &point) const;
+	virtual Common::Point gameToScreen(const Common::Point &point) const;
+	virtual void presentScreen(int shakeOffset);
 
-	void loadOptions();
-protected:
-	// Engine APIs
-	Common::Error run() override;
+	virtual bool handleMacEvent(Common::Event &event) { return false; }
+
 	bool hasFeature(EngineFeature f) const override;
+
+	void pollEvents();
+	void checkForTimerFunction();
+
 public:
-	Debugger *_debugger;
-	Dialogs *_dialogs;
-	EventsManager *_events;
-	Font *_font;
-	Game *_game;
-	GameConversations * _gameConv;
-	Palette *_palette;
-	Resources *_resources;
-	Screen *_screen;
-	SoundManager *_sound;
-	AudioPlayer *_audio;
-	bool _easyMouse;
-	bool _invObjectsAnimated;
-	bool _textWindowStill;
-	ScreenFade _screenFade;
-	bool _musicFlag;
-	bool _soundFlag;
-	bool _dithering;
-	bool _disableFastwalk;
+	MADS::SoundManager *_soundManager = nullptr;
+	bool _musicFlag = true;
+	bool _soundFlag = true;
+	bool &_speechFlag = speech_on;
+
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	~MADSEngine() override;
+	void initializePath(const Common::FSNode &gamePath) override;
 
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -114,38 +117,92 @@ public:
 	uint32 getGameID() const;
 	uint32 getGameFeatures() const;
 	bool isDemo() const;
+	bool isCDROM() const;
 
+	void readConfigFile();
 	int getRandomNumber(int maxNumber);
 	int getRandomNumber(int minNumber, int maxNumber);
 
-	/**
-	* Returns true if it is currently okay to restore a game
-	*/
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Graphics::Screen *getScreen() const {
+		return _screen;
+	}
+
+	bool hasPendingKey();
+	int getKey();
+	void flushKeys();
+
+	int getMouseState(int &x, int &y);
+	void warpMouse(int x, int y);
+	void updateDisplay();
+
+	const Graphics::Surface &getSavegameThumbnail() const {
+		return _savegameThumbnail;
+	}
+	void setSavegameThumbnail();
+	void clearSavegameThumbnail();
 
 	/**
-	* Returns true if it is currently okay to save the game
-	*/
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
-
-	/**
-	 * Handles loading a game via the GMM
+	 * Get the elapsed time in milliseconds
 	 */
-	Common::Error loadGameState(int slot) override;
+	uint32 getMillis();
+
+	/* Callback routines in game-specific MAIN module */
+	int main_cheating_key(int mykey) const {
+		return mykey;
+	}
+	int main_normal_key(int mykey) const {
+		return mykey;
+	}
+	virtual int main_copy_verify() {
+		return COPY_SUCCEED;
+	}
+
+	bool canLoadGameStateCurrently(Common::U32String *msg) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg) override {
+		return canLoadGameStateCurrently(msg);
+	}
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	virtual void syncRoom(Common::Serializer &s) = 0;
+	SaveStateList listSaves() const;
+
+	virtual void global_init_code() = 0;
+	virtual void section_music(int section_num) = 0;
+	virtual void global_section_constructor() = 0;
+	virtual void global_daemon_code() = 0;
+	virtual void global_pre_parser_code() = 0;
+	virtual void global_parser_code() = 0;
+	virtual void global_error_code() = 0;
+	virtual void global_room_init() = 0;
+	virtual void global_sound_driver() = 0;
+	virtual void global_game_main_loop() {}
+	virtual void global_verb_filter() {}
+
+	// Optional Macintosh presentation hooks. Defaults preserve the shared
+	// MADS rendering path used by DOS releases.
+	virtual bool hasInterfaceAnimations() const { return true; }
+	virtual bool drawPopup() { return false; }
+	virtual void onPopupDestroyed() {}
+	virtual bool getInterfaceSentenceColors(byte &, byte &) const {
+		return false;
+	}
+
+	virtual void player_keep_walking();
+
+	void playSpeech(Audio::AudioStream *stream);
+	void stopSpeech();
+	bool isSpeechPlaying() const;
 
 	/**
-	 * Handles saving the game via the GMM
+	 * Sets the timer function to call at 60Hz
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-
-	/**
-	 * Handles updating sound settings after they're changed in the GMM dialog
-	 */
-	void syncSoundSettings() override;
-
-	void saveOptions();
+	void setTimerFunction(TimerFunction fn) {
+		_timerFunction = fn;
+	}
 };
 
-} // End of namespace MADS
+extern MADSEngine *g_engine;
 
-#endif /* MADS_MADS_H */
+} // namespace MADS
+
+#endif

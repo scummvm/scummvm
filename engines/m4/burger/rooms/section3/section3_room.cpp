@@ -49,13 +49,13 @@ void Section3Room::setupDigi() {
 
 void Section3Room::set_palette_brightness(int start, int finish, int percent) {
 	if (finish < start || finish > 255 || start < 0)
-		error_show(FL, 'Burg', "set_palette_brightness index error");
+		error_show(FL, "set_palette_brightness index error");
 
 	RGB8 *pal = &_G(master_palette)[start];
 	for (int index = start; index < finish; ++index, ++pal) {
-		int r = (double)pal->r * (double)percent / (double)100;
-		int g = (double)pal->g * (double)percent / (double)100;
-		int b = (double)pal->b * (double)percent / (double)100;
+		const int r = (double)pal->r * (double)percent / (double)100;
+		const int g = (double)pal->g * (double)percent / (double)100;
+		const int b = (double)pal->b * (double)percent / (double)100;
 
 		pal->r = CLIP(r, 0, 255);
 		pal->g = CLIP(g, 0, 255);

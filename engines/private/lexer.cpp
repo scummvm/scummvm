@@ -1,6 +1,45 @@
-#line 1 "engines/private/lexer.cpp"
+#line 2 "engines/private/lexer.cpp"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#line 3 "engines/private/lexer.cpp"
+#define YY_NO_UNISTD_H
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
+#define FORBIDDEN_SYMBOL_EXCEPTION_fread
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_getc
+
+#include "private/private.h"
+#include "private/grammar.h"
+#include "private/tokens.h"
+
+using namespace Private;
+using namespace Gen;
+using namespace Settings;
+
+#line 43 "engines/private/lexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -773,48 +812,8 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "engines/private/lexer.l"
-/* ScummVM - Graphic Adventure Engine
- *
- * ScummVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
- * file distributed with this source distribution.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+
 #define YY_NO_INPUT 1
-#line 31 "engines/private/lexer.l"
-#define YY_NO_UNISTD_H
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit
-#define FORBIDDEN_SYMBOL_EXCEPTION_getc
-
-#include "private/private.h"
-#include "private/grammar.h"
-#include "private/tokens.h"
-
-using namespace Private;
-using namespace Gen;
-using namespace Settings;
-
-#line 817 "engines/private/lexer.cpp"
 #line 818 "engines/private/lexer.cpp"
 
 #define INITIAL 0
@@ -1183,7 +1182,7 @@ return RANDOMTOK;
 case 20:
 YY_RULE_SETUP
 #line 72 "engines/private/lexer.l"
-PRIVATE_lval.s = scumm_strdup(PRIVATE_text); return NAME;
+PRIVATE_lval.s = g_private->maps.string(PRIVATE_text); return NAME;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
@@ -1193,7 +1192,7 @@ PRIVATE_lval.sym = g_private->maps.constant(NUM, atoi(PRIVATE_text), NULL); retu
 case 22:
 YY_RULE_SETUP
 #line 74 "engines/private/lexer.l"
-PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, scumm_strdup(PRIVATE_text)); return STRING;
+PRIVATE_lval.sym = g_private->maps.constant(STRING, 0, PRIVATE_text); return STRING;
 	YY_BREAK
 case 23:
 /* rule 23 can match eol */
@@ -2198,6 +2197,7 @@ int parse(const char *code) {
 	yy_switch_to_buffer(bp);
 	PRIVATE_parse();
 	yy_delete_buffer(bp);
+	yylex_destroy();
 	return 0;
 }
 

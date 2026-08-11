@@ -23,9 +23,9 @@
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/dropbox/dropboxtokenrefresher.h"
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/formats/json.h"
 
 namespace Cloud {
@@ -54,7 +54,7 @@ void DropboxCreateDirectoryRequest::start() {
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxCreateDirectoryRequest, const Networking::JsonResponse &>(this, &DropboxCreateDirectoryRequest::responseCallback);
 	Networking::ErrorCallback errorResponseCallback = new Common::Callback<DropboxCreateDirectoryRequest, const Networking::ErrorResponse &>(this, &DropboxCreateDirectoryRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, innerCallback, errorResponseCallback, DROPBOX_API_CREATE_FOLDER);
+	Networking::HttpJsonRequest *request = new DropboxTokenRefresher(_storage, innerCallback, errorResponseCallback, DROPBOX_API_CREATE_FOLDER);
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
 
@@ -76,7 +76,7 @@ void DropboxCreateDirectoryRequest::responseCallback(const Networking::JsonRespo
 	if (response.request) _date = response.request->date();
 
 	Networking::ErrorResponse error(this, "DropboxCreateDirectoryRequest::responseCallback: unknown error");
-	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
+	const Networking::HttpJsonRequest *rq = (const Networking::HttpJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
@@ -97,7 +97,7 @@ void DropboxCreateDirectoryRequest::responseCallback(const Networking::JsonRespo
 	if (info.contains("id")) {
 		finishCreation(true);
 	} else {
-		if (Networking::CurlJsonRequest::jsonContainsString(info, "error_summary", "DropboxCreateDirectoryRequest")) {
+		if (Networking::HttpJsonRequest::jsonContainsString(info, "error_summary", "DropboxCreateDirectoryRequest")) {
 			Common::String summary = info.getVal("error_summary")->asString();
 			if (summary.contains("path") && summary.contains("conflict") && summary.contains("folder")) {
 				// existing directory - not an error for CreateDirectoryRequest

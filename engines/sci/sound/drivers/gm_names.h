@@ -166,7 +166,7 @@ static const char *const GmPercussionNames[] = {
 	/*10*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*20*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*30*/  0, 0, 0, 0, 0,
-	// The preceeding percussions are not covered by the GM standard
+	// The preceding percussions are not covered by the GM standard
 	/*35*/  "Acoustic Bass Drum",
 	/*36*/  "Bass Drum 1",
 	/*37*/  "Side Stick",

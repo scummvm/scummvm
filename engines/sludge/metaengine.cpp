@@ -23,6 +23,7 @@
 
 #include "sludge/sludge.h"
 #include "sludge/detection.h"
+#include "sludge/keymapper_tables.h"
 
 namespace Sludge {
 
@@ -36,17 +37,30 @@ const char *SludgeEngine::getGameFile() const {
 
 } // End of namespace Sludge
 
-class SludgeMetaEngine : public AdvancedMetaEngine {
+class SludgeMetaEngine : public AdvancedMetaEngine<Sludge::SludgeGameDescription> {
 public:
 	const char *getName() const override {
 		return "sludge";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		*engine = new Sludge::SludgeEngine(syst, (const Sludge::SludgeGameDescription *)desc);
+	bool hasFeature(MetaEngineFeature f) const override;
+
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Sludge::SludgeGameDescription *desc) const override {
+		*engine = new Sludge::SludgeEngine(syst, desc);
 		return Common::kNoError;
 	}
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+
+bool SludgeMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return checkExtendedSaves(f) || (f == kSupportsLoadingDuringStartup);
+}
+
+Common::KeymapArray SludgeMetaEngine::initKeymaps(const char *target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+	return Sludge::getSludgeKeymaps(target, gameId);
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(SLUDGE)
 	REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);

@@ -22,19 +22,18 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION8_ROOM834_H
 #define M4_RIDDLE_ROOMS_SECTION8_ROOM834_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section8/section8_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room834 : public Room {
+class Room834 : public Section8Room {
 public:
-	Room834() : Room() {}
+	Room834() : Section8Room() {}
 	~Room834() override {}
 
 	void init() override;
-	void daemon() override;
 };
 
 } // namespace Rooms

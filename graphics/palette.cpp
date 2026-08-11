@@ -31,14 +31,23 @@ static const byte EGA_PALETTE[16][3] = {
 	{ 0xff, 0xff, 0xff }
 };
 
+// Amber
+const byte HGC_A_PALETTE[] = {
+	0x00, 0x00, 0x00,	0xAE, 0x69, 0x38
+};
 
-Palette::Palette(uint size) : _data(nullptr), _size(size) {
+// Green
+const byte HGC_G_PALETTE[] = {
+	0x00, 0x00, 0x00,	0x00, 0xFF, 0x00
+};
+
+Palette::Palette(uint size) : _data(nullptr), _size(size), _disposeAfterUse(DisposeAfterUse::YES) {
 	if (_size > 0) {
 		_data = new byte[_size * 3]();
 	}
 }
 
-Palette::Palette(const byte *data, uint size) : _data(nullptr), _size(0) {
+Palette::Palette(const byte *data, uint size) : _data(nullptr), _size(0), _disposeAfterUse(DisposeAfterUse::YES) {
 	if (data && size > 0) {
 		_size = size;
 		_data = new byte[_size * 3]();
@@ -46,7 +55,10 @@ Palette::Palette(const byte *data, uint size) : _data(nullptr), _size(0) {
 	}
 }
 
-Palette::Palette(const Palette &p) : _data(nullptr), _size(p._size) {
+Palette::Palette(byte *data, uint size, DisposeAfterUse::Flag disposeAfterUse) : _data(data), _size(size), _disposeAfterUse(disposeAfterUse) {
+}
+
+Palette::Palette(const Palette &p) : _data(nullptr), _size(p._size), _disposeAfterUse(DisposeAfterUse::YES) {
 	if (_size > 0) {
 		_data = new byte[_size * 3]();
 		memcpy(_data, p._data, _size * 3);
@@ -54,21 +66,23 @@ Palette::Palette(const Palette &p) : _data(nullptr), _size(p._size) {
 }
 
 Palette::~Palette() {
-	delete[] _data;
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete[] _data;
 }
 
-Palette Palette::createEGAPalette() {
-	return Palette(&EGA_PALETTE[0][0], 16);
+const Palette Palette::createEGAPalette() {
+	return Palette(const_cast<byte *>(&EGA_PALETTE[0][0]), 16, DisposeAfterUse::NO);
 }
-
 
 Palette &Palette::operator=(const Palette &rhs) {
-	delete[] _data;
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete[] _data;
 	_data = nullptr;
 	_size = rhs._size;
 
 	if (_size > 0) {
 		_data = new byte[_size * 3]();
+		_disposeAfterUse = DisposeAfterUse::YES;
 		memcpy(_data, rhs._data, _size * 3);
 	}
 
@@ -83,15 +97,55 @@ bool Palette::contains(const Palette& p) const {
 	return p._size <= _size && !memcmp(_data, p._data, p._size * 3);
 }
 
-byte Palette::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) const {
+void Palette::clear() {
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete[] _data;
+	_data = nullptr;
+	_size = 0;
+}
+
+void Palette::resize(uint newSize, bool preserve) {
+	if (newSize > _size) {
+		byte *newData = new byte[newSize * 3]();
+		if (_size > 0 && preserve)
+			memcpy(newData, _data, _size * 3);
+
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			delete[] _data;
+		_data = newData;
+		_disposeAfterUse = DisposeAfterUse::YES;
+	}
+	_size = newSize;
+}
+
+byte Palette::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod method) const {
 	uint bestColor = 0;
 	uint32 min = 0xFFFFFFFF;
 
-	if (useNaiveAlg) {
+	switch (method)
+	{
+	case kColorDistanceEuclidean:
+		for (int i = 0; i < _size; i++) {
+			int r = _data[3 * i + 0] - cr;
+			int g = _data[3 * i + 1] - cg;
+			int b = _data[3 * i + 2] - cb;
+			if (r == 0 && g == 0 && b == 0)
+				return i;
+
+			uint32 distSquared =  r * r + g * g + b * b;
+			if (distSquared < min) {
+				bestColor = i;
+				min = distSquared;
+			}
+		}
+	break;
+	case kColorDistanceNaive:
 		for (uint i = 0; i < _size; i++) {
 			int r = _data[3 * i + 0] - cr;
 			int g = _data[3 * i + 1] - cg;
 			int b = _data[3 * i + 2] - cb;
+			if (r == 0 && g == 0 && b == 0)
+				return i;
 
 			uint32 distWeighted = 3 * r * r + 5 * g * g + 2 * b * b;
 			if (distWeighted < min) {
@@ -99,27 +153,28 @@ byte Palette::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) const {
 				min = distWeighted;
 			}
 		}
-	} else {
+		break;
+	case kColorDistanceRedmean:
 		for (uint i = 0; i < _size; ++i) {
-			int rmean = (_data[3 * i + 0] + cr) / 2;
 			int r = _data[3 * i + 0] - cr;
 			int g = _data[3 * i + 1] - cg;
 			int b = _data[3 * i + 2] - cb;
+			if (r == 0 && g == 0 && b == 0)
+				return i;
 
+			int rmean = (_data[3 * i + 0] + cr) / 2;
 			uint32 distSquared = (((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8);
 			if (distSquared < min) {
 				bestColor = i;
 				min = distSquared;
 			}
 		}
+		break;
+	default:
+		break;
 	}
 
 	return bestColor;
-}
-
-void Palette::clear() {
-	if (_size > 0)
-		memset(_data, 0, _size);
 }
 
 void Palette::set(const byte *colors, uint start, uint num) {
@@ -164,7 +219,7 @@ bool PaletteLookup::setPalette(const byte *palette, uint len)  {
 	return true;
 }
 
-byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
+byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, ColorDistanceMethod method) {
 	if (_paletteSize == 0) {
 		warning("PaletteLookup::findBestColor(): Palette was not set");
 		return 0;
@@ -175,13 +230,13 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 	if (_colorHash.contains(color))
 		return _colorHash[color];
 
-	uint bestColor = _palette.findBestColor(cr, cg, cb, useNaiveAlg);
+	uint bestColor = _palette.findBestColor(cr, cg, cb, method);
 	_colorHash[color] = bestColor;
 
 	return bestColor;
 }
 
-uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, bool useNaiveAlg) {
+uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, ColorDistanceMethod method) {
 	if (len <= _paletteSize && memcmp(_palette.data(), srcPalette, len * 3) == 0)
 		return nullptr;
 
@@ -191,7 +246,7 @@ uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, bool useNaive
 		byte g = *srcPalette++;
 		byte b = *srcPalette++;
 
-		map[i] = findBestColor(r, g, b, useNaiveAlg);
+		map[i] = findBestColor(r, g, b, method);
 	}
 	return map;
 }

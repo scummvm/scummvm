@@ -434,7 +434,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::enterNewEdit(const Timestamp &p
 	// I really hope I never need to implement this :P
 	// But, I'll throw in this error just to make sure I catch anything with this...
 	if (_parentTrack->editList[_curEdit].mediaRate != 1)
-		error("Unhandled QuickTime audio rate change");
+		warning("QuickTimeAudioDecoder: Unhandled QuickTime audio rate change");
 
 	// Reinitialize the codec
 	((AudioSampleDesc *)_parentTrack->sampleDescs[0])->initCodec();
@@ -570,7 +570,7 @@ bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
 	if (_codecTag == MKTAG('t', 'w', 'o', 's') || _codecTag == MKTAG('r', 'a', 'w', ' ') || _codecTag == MKTAG('i', 'm', 'a', '4'))
 		return true;
 
-#ifdef AUDIO_QDM2_H
+#ifdef USE_QDM2
 	if (_codecTag == MKTAG('Q', 'D', 'M', '2'))
 		return true;
 #endif
@@ -634,7 +634,7 @@ void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
 
 	switch (_codecTag) {
 	case MKTAG('Q', 'D', 'M', '2'):
-#ifdef AUDIO_QDM2_H
+#ifdef USE_QDM2
 		_codec = makeQDM2Decoder(_extraData);
 #endif
 		break;

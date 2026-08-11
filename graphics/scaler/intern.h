@@ -310,7 +310,7 @@ static inline uint32 interpolate32_1_1_1_1(uint32 p1, uint32 p2, uint32 p3, uint
 
 /**
  * Interpolate two 16 bit pixels with weights 1 and 1, i.e., (p1+p2)/2.
- * See <http://www.slack.net/~ant/info/rgb_mixing.html> for details on how this works.
+ * See <https://www.slack.net/~ant/info/rgb_mixing.html> for details on how this works.
  */
 template<typename ColorMask>
 static inline unsigned interpolate16_1_1(unsigned p1, unsigned p2) {

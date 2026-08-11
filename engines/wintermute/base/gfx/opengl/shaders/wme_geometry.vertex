@@ -1,9 +1,8 @@
 in vec3 position;
+in vec4 color;
 
 uniform highp mat4 viewMatrix;
 uniform highp mat4 projMatrix;
-
-uniform vec4 color;
 
 out vec4 Color;
 

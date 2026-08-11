@@ -30,16 +30,30 @@ class AudioDecoder;
 
 class SoundCastMember : public CastMember {
 public:
+	SoundCastMember(Cast *cast, uint16 castId);
 	SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	SoundCastMember(Cast *cast, uint16 castId, SoundCastMember &source);
 	~SoundCastMember();
+
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new SoundCastMember(cast, castId, *this)); }
 
 	void load() override;
 	void unload() override;
 	Common::String formatInfo() override;
 
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	void setField(int field, const Datum &value) override;
+
+	uint32 getCastDataSize() override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
+
 	bool _looping;
 	AudioDecoder *_audio;
+
+	Common::Array<int32> _cuePoints;
+	Common::StringArray _cuePointNames;
 };
 
 } // End of namespace Director

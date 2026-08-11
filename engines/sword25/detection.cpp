@@ -34,6 +34,7 @@ static const PlainGameDescriptor sword25Game[] = {
 static const DebugChannelDef debugFlagList[] = {
 	{Sword25::kDebugScript, "Script", "Script debug level"},
 	{Sword25::kDebugSound, "Sound", "Sound debug level"},
+	{Sword25::kDebugInternalDebugger, "Internaldebugger", "Internal debugger level"}, 
 	DEBUG_CHANNEL_END
 };
 
@@ -42,9 +43,9 @@ static const char *const directoryGlobs[] = {
 	0
 };
 
-class Sword25MetaEngineDetection : public AdvancedMetaEngineDetection {
+class Sword25MetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	Sword25MetaEngineDetection() : AdvancedMetaEngineDetection(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
+	Sword25MetaEngineDetection() : AdvancedMetaEngineDetection(Sword25::gameDescriptions, sword25Game) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ENGLISH_SPEECH);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

@@ -38,7 +38,7 @@ void PlaySecondaryVideo::init() {
 		_decoder.close();
 	}
 
-	if (!_decoder.loadFile(_filename.append(".avf"))) {
+	if (!_decoder.loadFile(_filename)) {
 		error("Couldn't load video file %s", _filename.toString().c_str());
 	}
 
@@ -63,7 +63,7 @@ void PlaySecondaryVideo::updateGraphics() {
 		return;
 	}
 
-	if (_isInFrame && _decoder.isPlaying() ? _decoder.needsUpdate() || _decoder.atEnd() : true) {
+	if (_isInFrame && _decoder.isPlaying() ? _decoder.needsUpdate() || _decoder.endOfVideo() : true) {
 		int lastAnimationFrame = -1;
 		switch (_hoverState) {
 		case kNoHover:
@@ -105,10 +105,17 @@ void PlaySecondaryVideo::updateGraphics() {
 			if (_decoder.needsUpdate()) {
 				GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, !_paletteFilename.empty(), _videoFormat == kSmallVideoFormat);
 				_needsRedraw = true;
+
+				for (const FlagAtFrame &f : _frameFlags) {
+					if (f.flagDesc.label != -1 &&
+							_decoder.getCurFrame() == f.frameID) {
+						NancySceneState.setEventFlag(f.flagDesc);
+					}
+				}
 			}
 
 			if (lastAnimationFrame > -1 &&
-					(_decoder.atEnd() ||
+					(_decoder.endOfVideo() ||
 					 _decoder.getCurFrame() == lastAnimationFrame)) {
 				if (_hoverState == kNoHover) {
 					_decoder.seekToFrame(_loopFirstFrame);
@@ -155,6 +162,9 @@ void PlaySecondaryVideo::handleInput(NancyInput &input) {
 }
 
 void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
+	uint16 numFrameEvents = 0;
+	uint16 numVideoDescs = 0;
+
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
 
@@ -176,14 +186,35 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE(_onHoverEndLastFrame);
 
 	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
-	ser.skip(1, kGameTypeNancy1);
 
-	uint16 numVideoDescs = 0;
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		ser.skip(1, kGameTypeNancy1);
+	} else {
+		byte pushSceneByte = 0;
+		ser.syncAsByte(pushSceneByte);
+		_pushSceneOnTrigger = (pushSceneByte == 1);
+		ser.syncAsUint16LE(numFrameEvents);
+	}
+
 	ser.syncAsUint16LE(numVideoDescs);
+
+	_frameFlags.resize(numFrameEvents);
+	for (uint i = 0; i < numFrameEvents; ++i) {
+		ser.syncAsSint16LE(_frameFlags[i].frameID);
+		ser.syncAsSint16LE(_frameFlags[i].flagDesc.label);
+		ser.syncAsUint16LE(_frameFlags[i].flagDesc.flag);
+	}
+
 	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {
-		_videoDescs[i].readData(stream);
+		_videoDescs[i].readData(stream, true);
 	}
+
+	// Nancy 10+ stores the record's dependency block right after the video
+	// descs (one 16-byte entry per dependency). We deliberately leave it in
+	// the stream so the generic dependency parser in ActionManager picks it
+	// up; characters whose availability is gated by an event flag carry a
+	// kEvent dependency here.
 }
 
 void PlaySecondaryVideo::execute() {
@@ -232,7 +263,8 @@ void PlaySecondaryVideo::execute() {
 		break;
 	}
 	case kActionTrigger:
-		NancySceneState.pushScene();
+		if (g_nancy->getGameType() < kGameTypeNancy10 || _pushSceneOnTrigger)
+			NancySceneState.pushScene();
 		NancySceneState.changeScene(_sceneChange);
 		finishExecution();
 		break;

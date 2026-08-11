@@ -22,7 +22,6 @@
 #include "ags/shared/core/platform.h"
 #if AGS_PLATFORM_OS_WINDOWS
 #define NOMINMAX
-//include <windows.h>
 #endif
 #include "ags/lib/allegro/file.h"
 #include "ags/shared/util/path.h"
@@ -81,11 +80,7 @@ int ComparePaths(const String &path1, const String &path2) {
 	fixed_path2.TrimRight('/');
 
 	int cmp_result =
-#if defined AGS_CASE_SENSITIVE_FILESYSTEM
-	    fixed_path1.Compare(fixed_path2);
-#else
 	    fixed_path1.CompareNoCase(fixed_path2);
-#endif // AGS_CASE_SENSITIVE_FILESYSTEM
 	return cmp_result;
 }
 
@@ -191,6 +186,15 @@ String MakeRelativePath(const String &base, const String &path) {
 	String rel_path = make_relative_filename(relative, can_parent, can_path, sizeof(relative));
 	FixupPath(rel_path);
 	return rel_path;
+}
+
+String &AppendPath(String &path, const String &child) {
+	if (path.IsEmpty())
+		path = child;
+	else if (!child.IsEmpty())
+		path.AppendFmt("/%s", child.GetCStr());
+	FixupPath(path);
+	return path;
 }
 
 String ConcatPaths(const String &parent, const String &child) {

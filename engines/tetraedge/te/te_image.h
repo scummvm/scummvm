@@ -35,6 +35,8 @@
 #include "tetraedge/te/te_vector2s32.h"
 #include "tetraedge/te/te_resource.h"
 
+#include "tetraedge/tetraedge.h"
+
 namespace Tetraedge {
 
 class TeImage : public TeResource, public Graphics::ManagedSurface {
@@ -46,12 +48,6 @@ public:
 		destroy();
 	};
 
-	enum Format {
-		RGB8 = 5,
-		RGBA8 = 6,
-		// GREY8 = 0xd,
-		INVALID = 0xe
-	};
 	enum SaveType {
 		PNG
 	};
@@ -60,11 +56,11 @@ public:
 			  const TeVector2s32 &vec3) const;
 	uint64 countPixelsOfColor(const TeColor &col) const;
 	// void create(); // never used?
-	void createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &palette, Format newformat) {
+	void createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &palette, const Graphics::PixelFormat &newformat) {
 		createImg(xsize, ysize, palette, newformat, xsize, ysize);
 	}
 	void createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
-				Format format, uint bufxsize, uint bufysize);
+				const Graphics::PixelFormat &format, uint bufxsize, uint bufysize);
 	void deserialize(Common::ReadStream &stream);
 	void destroy();
 	void drawPlot(int x, int y, const TeColor &col) {
@@ -75,17 +71,13 @@ public:
 	void fill(byte r, byte g, byte b, byte a);
 	void getBuff(uint x, uint y, byte *pout, uint w, uint h);
 	bool isExtensionSupported(const Common::Path &path);
-	bool load(const Common::FSNode &node);
+	bool load(const TetraedgeFSNode &node);
 	bool load(Common::SeekableReadStream &stream, const Common::String &type);
 	bool save(const Common::Path &path, enum SaveType type);
 	int serialize(Common::WriteStream &stream);
 	TeVector2s32 bufSize() const {
 		return TeVector2s32(pitch / format.bytesPerPixel, h);
 	}
-	Format teFormat() const { return _teFormat; }
-
-private:
-	Format _teFormat;
 };
 
 } // end namespace Tetraedge

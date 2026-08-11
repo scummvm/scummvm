@@ -45,34 +45,31 @@ namespace Common {
  * @todo Adjust all error codes to comply with these conventions.
  */
 enum ErrorCode {
-	kNoError = 0,				///< No error occurred.
-	kNoGameDataFoundError,		///< Engine initialization: No game data was found in the specified location.
-	kUnsupportedGameidError,	///< Engine initialization: Game ID not supported by this (Meta)Engine.
-	kUnsupportedColorMode,		///< Engine initialization: Engine does not support backend's color mode.
-	kAudioDeviceInitFailed,		///< Engine initialization: Audio device initialization failed.
+	kNoError = 0,					///< No error occurred.
 
-	kReadPermissionDenied,		///< Unable to read data due to missing read permission.
-	kWritePermissionDenied,		///< Unable to write data due to missing write permission.
+	kNoGameDataFoundError,			///< Engine initialization: No game data was found in the specified location.
+	kUnsupportedGameidError,		///< Engine initialization: Game ID not supported by this (Meta)Engine.
+	kUnsupportedColorMode,			///< Engine initialization: Engine does not support backend's color mode.
+	kAudioDeviceInitFailed,			///< Engine initialization: Audio device initialization failed.
 
-	kPathDoesNotExist,			///< The specified path does not exist.
-	kPathNotDirectory,			///< The specified path does not point to a directory.
-	kPathNotFile,				///< The specified path does not point to a file.
+	kReadPermissionDenied,			///< Unable to read data due to missing read permission.
+	kWritePermissionDenied,			///< Unable to write data due to missing write permission.
 
-	kCreatingFileFailed,		///< Failed creating a (savestate) file.
-	kReadingFailed,				///< Failed to read a file (permission denied?).
-	kWritingFailed,				///< Failure to write data - disk full?
+	kPathDoesNotExist,				///< The specified path does not exist.
+	kPathNotDirectory,				///< The specified path does not point to a directory.
+	kPathNotFile,					///< The specified path does not point to a file.
 
-	/** Failed to find a MetaEnginePlugin. This should never happen, because all MetaEngines must always
-	 * be built into the executable, regardless if the engine plugins are present or not.
-	 */
-	kMetaEnginePluginNotFound,
+	kCreatingFileFailed,			///< Failed creating a (savestate) file.
+	kReadingFailed,					///< Failed to read a file (permission denied?).
+	kWritingFailed,					///< Failure to write data - disk full?
 
-	kEnginePluginNotFound,		///< Failed to find an Engine plugin to handle target.
+	kMetaEnginePluginNotFound,		///< Failed to find a MetaEnginePlugin.
+	kEnginePluginNotFound,			///< Failed to find an Engine plugin to handle target.
 	kEnginePluginNotSupportSaves,	///< The plugin does not support listing save states.
 
-	kUserCanceled,			///< User has canceled the launching of the game.
+	kUserCanceled,					///< User has canceled the launching of the game.
 
-	kUnknownError				///< Catch-all error, used if no other error code matches.
+	kUnknownError					///< Catch-all error, used if no other error code matches.
 };
 
 /**

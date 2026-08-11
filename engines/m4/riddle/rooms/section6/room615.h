@@ -29,10 +29,34 @@ namespace Riddle {
 namespace Rooms {
 
 class Room615 : public Room {
+private:
+	int _ripTalking = 0;
+	int _ripTalk = 0;
+	int _loop0 = 0;
+	int _loop1 = 0;
+	int _loop2 = 0;
+	int _loop3 = 0;
+	int _loop4 = 0;
+	int _loop5 = 0;
+	int _loop6 = 0;
+	int _loop7 = 0;
+	int _ear2 = 0;
+	machine *_untie = nullptr;
+	machine *_pu = nullptr;
+	machine *_tt = nullptr;
+	machine *_ripTalker = nullptr;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 90;
+
+	bool _flag1 = false;
+	int _ctr1 = 0;
+
 public:
 	Room615() : Room() {}
 	~Room615() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

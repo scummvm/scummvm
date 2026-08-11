@@ -31,6 +31,10 @@
 #include "common/translation.h"
 #include "graphics/thumbnail.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "saga/animation.h"
 #include "saga/displayinfo.h"
 #include "saga/events.h"
@@ -40,6 +44,21 @@
 #include "saga/detection.h"
 
 namespace Saga {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 bool SagaEngine::isBigEndian() const { return (isMacResources() || (getPlatform() == Common::kPlatformAmiga)) && getGameId() == GID_ITE; }
 bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
@@ -71,20 +90,26 @@ const ADGameFileDescription *SagaEngine::getArchivesDescriptions() const {
 
 } // End of namespace Saga
 
-class SagaMetaEngine : public AdvancedMetaEngine {
+class SagaMetaEngine : public AdvancedMetaEngine<Saga::SAGAGameDescription> {
 public:
 	const char *getName() const override {
 		return "saga";
 	}
 
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Saga::optionsList;
+	}
+
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Saga::SAGAGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -105,9 +130,7 @@ bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)desc;
-
+Common::Error SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Saga::SAGAGameDescription *gd) const {
 	switch (gd->gameId) {
 	case Saga::GID_IHNM:
 #ifndef ENABLE_IHNM
@@ -133,12 +156,12 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	int slotNum = 0;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &file : filenames) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(file->c_str() + file->size() - 2);
+		slotNum = atoi(file.c_str() + file.size() - 2);
 
 		if (slotNum >= 0 && slotNum < MAX_SAVES) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::InSaveFile *in = saveFileMan->openForLoading(file);
 			if (in) {
 				for (int i = 0; i < 3; i++)
 					in->readUint32BE();
@@ -156,11 +179,11 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 
 int SagaMetaEngine::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
 
-void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
+bool SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += Common::String::format(".s%02d", slot);
 
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -235,6 +258,242 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Saga;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, engineKeyMapId, _("Default game keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, gameKeyMapId, _("Game keymappings"));
+	Keymap *optionKeyMap = new Keymap(Keymap::kKeymapTypeGame, optionKeyMapId, _("Option panel keymappings"));
+	Keymap *saveKeyMap = new Keymap(Keymap::kKeymapTypeGame, saveKeyMapId, _("Save panel keymappings"));
+	Keymap *loadKeyMap = new Keymap(Keymap::kKeymapTypeGame, loadKeyMapId, _("Load panel keymappings"));
+	Keymap *quitKeyMap = new Keymap(Keymap::kKeymapTypeGame, quitKeyMapId, _("Quit panel keymappings"));
+	Keymap *converseKeyMap = new Keymap(Keymap::kKeymapTypeGame, converseKeyMapId, _("Converse panel keymappings"));
+
+	Action *act;
+
+	{
+		act = new Action(kStandardActionLeftClick, _("Left click"));
+		act->setLeftClickEvent();
+		act->addDefaultInputMapping("MOUSE_LEFT");
+		act->addDefaultInputMapping("JOY_A");
+		engineKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
+		act->addDefaultInputMapping("MOUSE_MIDDLE");
+		act->setMiddleClickEvent();
+		engineKeyMap->addAction(act);
+
+		act = new Action(kStandardActionRightClick, _("Right click"));
+		act->setRightClickEvent();
+		act->addDefaultInputMapping("MOUSE_RIGHT");
+		act->addDefaultInputMapping("JOY_B");
+		engineKeyMap->addAction(act);
+
+		// I18N: the boss key is a feature,
+		// that allows players to quickly switch to a fake screen that looks like a business application,
+		// typically to avoid detection if someone, like a boss, walks by while they are playing.
+		act = new Action("BOSSKEY", _("Boss key"));
+		act->setCustomEngineActionEvent(kActionBossKey);
+		act->addDefaultInputMapping("F9");
+		engineKeyMap->addAction(act);
+
+		act = new Action("SHOWOPTION", _("Show options"));
+		act->setCustomEngineActionEvent(kActionOptions);
+		act->addDefaultInputMapping("F5");
+		act->addDefaultInputMapping("C+o");
+		engineKeyMap->addAction(act);
+	}
+
+	{
+		act = new Action("EXITCONVO", _("Exit conversation"));
+		act->setCustomEngineActionEvent(kActionConverseExit);
+		act->addDefaultInputMapping("x");
+		converseKeyMap->addAction(act);
+
+		act = new Action("UPCONVO", _("Conversation position - Up"));
+		act->setCustomEngineActionEvent(kActionConversePosUp);
+		act->addDefaultInputMapping("u");
+		converseKeyMap->addAction(act);
+
+		act = new Action("DOWNCONVO", _("Conversation position - Down"));
+		act->setCustomEngineActionEvent(kActionConversePosDown);
+		act->addDefaultInputMapping("d");
+		converseKeyMap->addAction(act);
+	}
+
+	{
+		act = new Action("ESCAPE", _("Escape"));
+		act->setCustomEngineActionEvent(kActionEscape);
+		act->addDefaultInputMapping("ESCAPE");
+		gameKeyMap->addAction(act);
+
+		act = new Action("PAUSE", _("Pause game"));
+		act->setCustomEngineActionEvent(kActionPause);
+		act->addDefaultInputMapping("z");
+		act->addDefaultInputMapping("PAUSE");
+		gameKeyMap->addAction(act);
+
+		act = new Action("ABRTSPEECH", _("Abort speech"));
+		act->setCustomEngineActionEvent(kActionAbortSpeech);
+		act->addDefaultInputMapping("SPACE");
+		gameKeyMap->addAction(act);
+
+		act = new Action("SHOWDILOG", _("Show dialog"));
+		act->setCustomEngineActionEvent(kActionShowDialogue);
+		act->addDefaultInputMapping("r");
+		gameKeyMap->addAction(act);
+
+		act = new Action("WALK", _("Walk to"));
+		act->setCustomEngineActionEvent(kActionWalkTo);
+		act->addDefaultInputMapping("w");
+		gameKeyMap->addAction(act);
+
+		act = new Action("LOOK", _("Look at"));
+		act->setCustomEngineActionEvent(kActionLookAt);
+		act->addDefaultInputMapping("l");
+		gameKeyMap->addAction(act);
+
+		act = new Action("PICKUP", _("Pick up"));
+		act->setCustomEngineActionEvent(kActionPickUp);
+		act->addDefaultInputMapping("p");
+		gameKeyMap->addAction(act);
+
+		act = new Action("TALK", _("Talk to"));
+		act->setCustomEngineActionEvent(kActionTalkTo);
+		act->addDefaultInputMapping("t");
+		gameKeyMap->addAction(act);
+
+		act = new Action("OPEN", _("Open"));
+		act->setCustomEngineActionEvent(kActionOpen);
+		act->addDefaultInputMapping("o");
+		gameKeyMap->addAction(act);
+
+		act = new Action("CLOSE", _("Close"));
+		act->setCustomEngineActionEvent(kActionClose);
+		act->addDefaultInputMapping("c");
+		gameKeyMap->addAction(act);
+
+		act = new Action("USE", _("Use"));
+		act->setCustomEngineActionEvent(kActionUse);
+		act->addDefaultInputMapping("u");
+		gameKeyMap->addAction(act);
+
+		act = new Action("GIVE", _("Give"));
+		act->setCustomEngineActionEvent(kActionGive);
+		act->addDefaultInputMapping("g");
+		gameKeyMap->addAction(act);
+
+		act = new Action("PUSH", _("Push"));
+		act->setCustomEngineActionEvent(kActionPush);
+		act->addDefaultInputMapping("p");
+		gameKeyMap->addAction(act);
+
+		act = new Action("TAKE", _("Take"));
+		act->setCustomEngineActionEvent(kActionTake);
+		act->addDefaultInputMapping("k");
+		gameKeyMap->addAction(act);
+
+		// I18N: It is a verb for gulping, not a bird
+		act = new Action("SWALLOW", _("Swallow"));
+		act->setCustomEngineActionEvent(kActionSwallow);
+		act->addDefaultInputMapping("s");
+		gameKeyMap->addAction(act);
+	}
+
+	{
+		act = new Action("READSPEED", _("Reading speed"));
+		act->setCustomEngineActionEvent(kActionOptionReadingSpeed);
+		act->addDefaultInputMapping("r");
+		optionKeyMap->addAction(act);
+
+		act = new Action("MUSIC", _("Change music"));
+		act->setCustomEngineActionEvent(kActionOptionMusic);
+		act->addDefaultInputMapping("m");
+		optionKeyMap->addAction(act);
+
+		act = new Action("SOUND", _("Change sound"));
+		act->setCustomEngineActionEvent(kActionOptionSound);
+		act->addDefaultInputMapping("n");
+		optionKeyMap->addAction(act);
+
+		act = new Action("VOICES", _("Change voices"));
+		act->setCustomEngineActionEvent(kActionOptionVoices);
+		act->addDefaultInputMapping("v");
+		optionKeyMap->addAction(act);
+
+		act = new Action("CONTGAME", _("Continue game"));
+		act->setCustomEngineActionEvent(kActionOptionContinue);
+		act->addDefaultInputMapping("c");
+		optionKeyMap->addAction(act);
+
+		act = new Action("LOAD", _("Load game"));
+		act->setCustomEngineActionEvent(kActionOptionLoad);
+		act->addDefaultInputMapping("l");
+		optionKeyMap->addAction(act);
+
+		act = new Action("QUITGAME", _("Quit game"));
+		act->setCustomEngineActionEvent(kActionOptionQuitGame);
+		act->addDefaultInputMapping("q");
+		optionKeyMap->addAction(act);
+
+		act = new Action("SAVEGAME", _("Save game"));
+		act->setCustomEngineActionEvent(kActionOptionSaveGame);
+		act->addDefaultInputMapping("s");
+		optionKeyMap->addAction(act);
+	}
+
+	{
+		act = new Action("QUIT", _("Quit"));
+		act->setCustomEngineActionEvent(kActionOptionQuit);
+		act->addDefaultInputMapping("q");
+		quitKeyMap->addAction(act);
+
+		act = new Action("CNCLQUIT", _("Cancel quit"));
+		act->setCustomEngineActionEvent(kActionOptionCancel);
+		act->addDefaultInputMapping("c");
+		quitKeyMap->addAction(act);
+
+		act = new Action("OKAY", _("Okay"));
+		act->setCustomEngineActionEvent(kActionOptionOkay);
+		act->addDefaultInputMapping("o");
+		loadKeyMap->addAction(act);
+
+		act = new Action("CNCLLOAD", _("Cancel load"));
+		act->setCustomEngineActionEvent(kActionOptionCancel);
+		act->addDefaultInputMapping("c");
+		loadKeyMap->addAction(act);
+
+		act = new Action("SAVE", _("Save"));
+		act->setCustomEngineActionEvent(kActionOptionSave);
+		act->addDefaultInputMapping("s");
+		saveKeyMap->addAction(act);
+
+		act = new Action("CNCLSAVE", _("Cancel save"));
+		act->setCustomEngineActionEvent(kActionOptionCancel);
+		act->addDefaultInputMapping("c");
+		saveKeyMap->addAction(act);
+	}
+
+	KeymapArray keymaps(7);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+	keymaps[2] = optionKeyMap;
+	keymaps[3] = saveKeyMap;
+	keymaps[4] = loadKeyMap;
+	keymaps[5] = quitKeyMap;
+	keymaps[6] = converseKeyMap;
+
+	gameKeyMap->setEnabled(false);
+	optionKeyMap->setEnabled(false);
+	saveKeyMap->setEnabled(false);
+	loadKeyMap->setEnabled(false);
+	quitKeyMap->setEnabled(false);
+	converseKeyMap->setEnabled(false);
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SAGA)

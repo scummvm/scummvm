@@ -237,8 +237,8 @@ bool Console::cmdGlobalFlagsInfo(int argc, const char **argv) {
 	// 09: Unknown
 	// 10: Unknown
 	// 11: Unknown
-	// 12: Unknown
-	// 13: Unknown
+	// 12: Nimdok looked at mirror
+	// 13: Nimdok ordered the golem to destroy the Lost Tribe
 	// 14: Unknown
 	// 15: Unknown
 	// 16: Used in the final chapter. If it's 0 when a character dies, the "bad" ending for that character is shown

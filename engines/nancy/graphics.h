@@ -30,12 +30,10 @@
 
 namespace Nancy {
 
-class NancyEngine;
 class RenderObject;
 
 // Graphics class that handles multilayered surface rendering with minimal redraw
 class GraphicsManager {
-	friend class NancyEngine;
 public:
 	GraphicsManager();
 
@@ -54,7 +52,7 @@ public:
 	const Font *getFont(uint id) const { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 	const Graphics::Screen *getScreen() { return &_screen; }
 
-	const Graphics::PixelFormat &getInputPixelFormat();
+	const Graphics::PixelFormat &getInputPixelFormat(uint bpp = 0);
 	const Graphics::PixelFormat &getScreenPixelFormat();
 	const Graphics::PixelFormat &getTransparentPixelFormat();
 	uint32 getTransColor() { return _transColor; }
@@ -70,7 +68,9 @@ public:
 	static void copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip = false, bool doubleSize = false);
 
 	static void rotateBlit(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest, byte rotation);
-	static void crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, const Common::Rect rect, Graphics::ManagedSurface &inResult);
+	static void crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, const Common::Rect &rect, Graphics::ManagedSurface &inResult);
+
+	bool getIsSuppressed() const { return _isSuppressed; }
 
 	// Debug
 	void debugDrawToScreen(const Graphics::ManagedSurface &surf);
@@ -85,8 +85,8 @@ private:
 
 	Common::SortedArray<RenderObject *> _objects;
 
-	Graphics::PixelFormat _inputPixelFormat;
-	Graphics::PixelFormat _screenPixelFormat;
+	Graphics::PixelFormat _inputPixelFormat16, _inputPixelFormat24, _inputPixelFormat32;
+	Graphics::PixelFormat _screenPixelFormat16, _screenPixelFormat32;
 	Graphics::PixelFormat _clut8Format;
 	Graphics::PixelFormat _transparentPixelFormat;
 

@@ -23,34 +23,32 @@
 #define FREESCAPE_SOUND_H
 
 #include "audio/softsynth/pcspk.h"
-#include "common/array.h"
 
 namespace Freescape {
 
-struct soundFx {
-	int size;
-	float sampleRate;
-	byte *data;
-};
-
-struct soundUnitZX {
-	uint16 freqTimesSeconds;
-	uint16 tStates;
-	float multiplier;
-};
-
-struct soundSpeakerFx {
-	uint16 frequencyStart;
-	uint8 frequencyDuration;
-	uint8 frequencyStepsNumber;
-	uint16 frequencyStep;
-	uint8 repetitions;
-	Common::Array<struct soundSpeakerFx *>additionalSteps;
-};
-
-class SizedPCSpeaker : public Audio::PCSpeaker {
+// TODO: Migrate to Audio::PCSpeaker
+class SizedPCSpeaker : public Audio::PCSpeakerStream {
 public:
 	bool endOfStream() const override { return !isPlaying(); }
+};
+
+class Sound {
+public:
+	enum Type {
+		kTypeNormal,
+		kTypeMovement
+	};
+
+	virtual ~Sound() {}
+
+	virtual void playSound(int index, Type type) = 0;
+	virtual void stopSound(Type type) = 0;
+	virtual bool isPlayingSound(Type type) const = 0;
+
+	// Whether the given sound index actually exists. Used to skip undefined
+	// sounds without disturbing the sound currently playing, matching the
+	// original engines where an unknown index leaves the active sound untouched.
+	virtual bool isSoundAvailable(int index) const { return true; }
 };
 
 } // End of namespace Freescape

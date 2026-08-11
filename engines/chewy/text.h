@@ -106,7 +106,7 @@ public:
 	void setControlBit(int16 txtNr, int16 bitIdx);
 	void delControlBit(int16 txtNr, int16 bitIdx);
 
-	void setTextId(uint16 entry, uint8 subEntry, uint8 strNr, uint8 type);
+	void setSubtextNum(uint16 entry, int8 txtMode, uint8 strNr, uint8 bufferType);
 
 private:
 	int16 _lastSpeechId = -1;
@@ -115,7 +115,7 @@ private:
 	uint8 _inventoryUseStrings[INV_USE_ATS_MAX * 3] = { 0 };
 
 	uint8 *getBuffer(uint8 type);
-	uint8 getTextId(uint16 entry, uint8 subEntry, uint8 type);
+	uint8 getSubtextNum(uint16 entry, int8 txtMode, uint8 bufferType);
 };
 
 } // namespace Chewy

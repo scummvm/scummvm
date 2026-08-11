@@ -276,9 +276,14 @@ public:
 	 * referred by this node. This assumes that the node actually refers
 	 * to a readable file. If this is not the case, 0 is returned.
 	 *
+	 * When an atomic write stream is requested, the backend will write
+	 * the data in a temporary file before moving it to its final destination.
+	 *
+	 * @param atomic Request for an atomic file write when closing.
+	 *
 	 * @return Pointer to the stream object, 0 in case of a failure.
 	 */
-	SeekableWriteStream *createWriteStream() const;
+	SeekableWriteStream *createWriteStream(bool atomic = true) const;
 
 	/**
 	 * Create a directory referred by this node. This assumes that this
@@ -346,7 +351,9 @@ class FSDirectory : public Archive {
 	// Caches are case insensitive, clashes are dealt with when creating
 	// Key is stored in lowercase.
 	typedef HashMap<Path, FSNode, Path::IgnoreCaseAndMac_Hash, Path::IgnoreCaseAndMac_EqualTo> NodeCache;
+	typedef HashMap<Path, Array<String>, Path::IgnoreCaseAndMac_Hash, Path::IgnoreCaseAndMac_EqualTo> NodeMapCache;
 	mutable NodeCache	_fileCache, _subDirCache;
+	mutable NodeMapCache	_fileMapCache, _dirMapCache;
 	mutable bool _cached;
 
 	// look for a match
@@ -437,6 +444,8 @@ public:
 	 * for success.
 	 */
 	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+
+	bool getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode = kListDirectoriesOnly, bool hidden = true) const override;
 
 	/**
 	 * Open an alternate stream for a specified file. A full match of relative path and file name is needed

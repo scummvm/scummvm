@@ -39,16 +39,14 @@ public:
 	TeCore();
 
 	void addLoc(TeILoc *loc);
-	//void args(int argc, char **argv); // Probably not needed
 	void create();
-	TeICodec *createVideoCodec(const Common::Path &path);
+	TeICodec *createVideoCodec(const TetraedgeFSNode &node, const Common::Path &origPath);
 	TeICodec *createVideoCodec(const Common::String &extn);
 	const Common::String &fileFlagSystemFlag(const Common::String &name) const;
 	bool fileFlagSystemFlagsContains(const Common::String &name) const;
 	Common::Array<Common::String> fileFlagSystemPossibleFlags();
 	bool fileFlagSystemPossibleFlagsContains(const Common::String &name) const;
 	void fileFlagSystemSetFlag(const Common::String &name, const Common::String &val);
-	void fileFlagSystemSetPossibleFlags(const Common::String &name, const Common::Array<Common::String> &vals);
 
 	const Common::String &language() const;
 	void language(const Common::String &val);
@@ -56,13 +54,12 @@ public:
 	TeILoc *loc() { return _loc; }
 
 	bool onActivityTrackingAlarm();
-	void enableActivityTracking(bool enable);
-	void setActivityTrackingFolder(const Common::Path &path);
 
 	// Note: this is not in the original, but it's not clear how the original
 	// adds things like "PC-MacOSX" to the path, and there is not clear logic
 	// to them, so here we are.
-	Common::FSNode findFile(const Common::Path &path) const;
+	TetraedgeFSNode findFile(const Common::Path &path, bool quiet = false) const;
+	TetraedgeFSNode getFSNode(const Common::Path &path) const;
 
 	bool _coreNotReady;
 
@@ -70,6 +67,7 @@ private:
 	TeILoc *_loc;
 
 	Common::HashMap<Common::String, Common::String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> _fileSystemFlags;
+	Common::FSDirectory _resourcesRoot;
 
 	TeTimer _activityTrackingTimer;
 };

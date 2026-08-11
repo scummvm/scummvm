@@ -22,9 +22,11 @@
 #ifndef AGS_ENGINE_AC_TIMER_H
 #define AGS_ENGINE_AC_TIMER_H
 
-#include "ags/lib/std/type_traits.h"
-#include "ags/lib/std/chrono.h"
-#include "ags/lib/std/xtr1common.h"
+#include "common/std/type_traits.h"
+#include "common/std/chrono.h"
+#include "common/std/xtr1common.h"
+
+#include "ags/lib/std.h"
 
 namespace AGS3 {
 
@@ -34,6 +36,11 @@ using AGS_Clock = std::conditional <
                   std::chrono::high_resolution_clock::is_steady,
                   std::chrono::high_resolution_clock, std::chrono::steady_clock
                   >::type;
+
+template<typename TDur>
+inline int64_t ToMilliseconds(TDur dur) {
+	return std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+}
 
 // Sleeps for time remaining until the next game frame, updates next frame timestamp
 extern void WaitForNextFrame();

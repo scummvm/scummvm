@@ -176,8 +176,11 @@ bool Resources::load(const Common::String &fileName) {
 		_extResourceTable = nullptr;
 	}
 
-	if (!hasTOTRes && !hasEXTRes)
+	if (!hasTOTRes && !hasEXTRes
+			&& _vm->getGameType() != kGameTypeAdibou2  // Some "library" TOT files used in Adibou2 have no embed resources, nor external ones.
+			&& _vm->getGameType() != kGameTypeAdi4)  {
 		return false;
+	}
 
 	if (!loadTOTTextTable(_fileBase)) {
 		unload();
@@ -514,6 +517,15 @@ byte *Resources::loadTOTLocTexts(const Common::String &fileBase, int32 &size) {
 			if (!locTextFile.empty())
 				_vm->_global->_language = kLanguageBritish;
 
+		}
+
+		// The .ALL suffix, normally for German, is also used for Italian in Adibou2
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+			if (_vm->_global->_languageWanted == kLanguageItalian) {
+				locTextFile = getLocTextFile(fileBase, kLanguageGerman);
+				if (!locTextFile.empty())
+					_vm->_global->_language = kLanguageItalian;
+			}
 		}
 
 		if (locTextFile.empty()) {

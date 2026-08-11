@@ -23,12 +23,95 @@
 
 namespace Freescape {
 
+void FreescapeEngine::waitInLoop(int maxWait) {
+	long int startTick = _ticks;
+	_inWaitLoop = true;
+	while (_ticks <= startTick + maxWait) {
+		Common::Event event;
+		while (_eventManager->pollEvent(event)) {
+			if (_ticks > startTick + maxWait)
+				break;
+
+			Common::Point mousePos;
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				_inWaitLoop = false;
+				quitGame();
+				return;
+
+			case Common::EVENT_MOUSEMOVE:
+				if (_hasFallen || _playerWasCrushed || _gameStateControl != kFreescapeGameStatePlaying)
+					break;
+				if (isCastle() && (isSpectrum() || isCPC()) && getGameBit(31)) // Game is finished
+					break;
+				if (isDriller() && _gameStateVars[32] == 18) // Game is finished
+					break;
+				mousePos = event.mouse;
+
+				if (_demoMode)
+					break;
+
+				if (_shootMode) {
+					;
+					break;
+				} else {
+					// Mouse pointer is locked into the the middle of the screen
+					// since we only need the relative movements. This will not affect any touchscreen device
+					// so on-screen controls are still accesible
+					mousePos.x = g_system->getWidth() * (_viewArea.left + _viewArea.width() / 2) / _screenW;
+					mousePos.y = g_system->getHeight() * (_viewArea.top + _viewArea.height() / 2) / _screenW;
+					if (_invertY)
+						event.relMouse.y = -event.relMouse.y;
+
+					g_system->warpMouse(mousePos.x, mousePos.y);
+					_eventManager->purgeMouseEvents();
+				}
+
+				rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity, 0);
+				break;
+
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				_gfx->clear(0, 0, 0, true);
+				break;
+			default:
+				break;
+			}
+		}
+		// This is a simplified version of the draw frame code
+		// that we used only for this loop in order to only allow the player to look around
+		_gfx->clear(0, 0, 0, true);
+		int farClipPlane = _farClipPlane;
+		if (_currentArea->isOutside())
+			farClipPlane *= 100;
+
+		const float fov = 75.0f;
+		float aspectRatio = isCastle() ? 1.6 : 2.18;
+		_gfx->updateProjectionMatrix(fov, aspectRatio, _nearClipPlane, farClipPlane);
+		_gfx->positionCamera(_position, _position + _cameraFront, _roll);
+
+		drawBackground();
+		_currentArea->draw(_gfx, _ticks / 10, _position, _cameraFront, true, fov, aspectRatio, _nearClipPlane, farClipPlane);
+		drawBorder();
+		drawUI();
+
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(15); // try to target ~60 FPS
+	}
+	_inWaitLoop = false;
+	_gfx->clear(0, 0, 0, true);
+	_eventManager->purgeMouseEvents();
+	_eventManager->purgeKeyboardEvents();
+}
+
 void FreescapeEngine::titleScreen() {
 	if (!_title)
 		return;
 
 	int maxWait = 60 * 6;
-	for (int i = 0; i < maxWait; i++ ) {
+	for (int i = 0; i < maxWait; i++) {
 		Common::Event event;
 		while (_eventManager->pollEvent(event)) {
 			switch (event.type) {
@@ -41,20 +124,20 @@ void FreescapeEngine::titleScreen() {
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
-					i = maxWait;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case kActionSkip:
+					maxWait = -1;
 					break;
 				default:
 					break;
 				}
-			break;
+				break;
 			case Common::EVENT_RBUTTONDOWN:
-				// fallthrough
+			// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
-				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
-					i = maxWait;
+				if (isTouchscreenActive())
+					maxWait = -1;
 				break;
 			default:
 				break;
@@ -69,29 +152,28 @@ void FreescapeEngine::titleScreen() {
 	_gfx->clear(0, 0, 0, true);
 }
 
-Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Common::String> &lines) {
-	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-	surface->fillRect(_fullscreenViewArea, color);
+Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Common::String> &lines, Graphics::Surface *surface) {
+	if (!_fontLoaded)
+		return surface;
 
-	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	surface->fillRect(_viewArea, black);
+	uint32 color = 0;
+	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
 	switch (_renderMode) {
-		case Common::kRenderCGA:
-			color = 1;
-			break;
-		case Common::kRenderZX:
-			color = 6;
-			break;
-		case Common::kRenderCPC:
-			color = _gfx->_underFireBackgroundColor;
-			if (color == uint32(-1))
-				color = 14;
-			break;
-		default:
+	case Common::kRenderCGA:
+	case Common::kRenderHercG:
+		color = 1;
+		break;
+	case Common::kRenderZX:
+		color = isCastle() ? 7 : 6;
+		break;
+	case Common::kRenderCPC:
+		color = _gfx->_underFireBackgroundColor;
+		if (color == uint32(-1))
 			color = 14;
+		break;
+	default:
+		color = 14;
 	}
 	uint8 r, g, b;
 
@@ -104,12 +186,12 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	int x = isCastle() ? 45 : 55;
-	int y = isEclipse() || isCastle() ? 40 : 32;
+	int x = _viewArea.left + 3;
+	int y = _viewArea.top + 3;
 
 	for (int i = 0; i < int(lines.size()); i++) {
-		drawStringInSurface(lines[i], x, y, front, black, surface);
-		y = y + 9;
+		drawStringInSurface(lines[i], x, y, front, back, surface);
+		y = y + (isCastle() ? 12 : 9);
 	}
 	return surface;
 }
@@ -122,144 +204,151 @@ void FreescapeEngine::borderScreen() {
 		if (isAmiga() || isAtariST())
 			return; // TODO: add animation
 
-		drawBorderScreenAndWait(nullptr);
+		drawBorderScreenAndWait(nullptr, 6 * 60);
+		// Modify and reload the border
+		_border->fillRect(_viewArea, _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0, 0, 0));
+		delete _borderTexture;
+		_borderTexture = nullptr;
+		loadBorder();
 
 		if (isDemo())
 			return;
 	}
 
-	if (isDOS() || isSpectrum()) {
+	if (isDOS() || isSpectrum() || isCPC()) {
 		Common::Array<Common::String> lines;
-		if (isDOS())
-			lines.push_back("    CONFIGURATION MENU  ");
-		else
-			lines.push_back("    CONTROL  OPTIONS  ");
+		int pad = 25;
+		if (isDOS()) {
+			if (isDOS() && !isCastle())
+				pad = 30;
+
+			lines.push_back(centerAndPadString("CONFIGURATION MENU", pad));
+			lines.push_back("");
+			lines.push_back(centerAndPadString("1: KEYBOARD ONLY   ", pad));
+			lines.push_back(centerAndPadString("2: IBM JOYSTICK    ", pad));
+			lines.push_back(centerAndPadString("3: AMSTRAD JOYSTICK", pad));
+			if (isCastleMaster2()) {
+				// Castle Master 2 also offers mouse control here
+				lines.push_back(centerAndPadString("4: SERIAL MOUSE    ", pad));
+				lines.push_back(centerAndPadString("5: AMSTRAD MOUSE   ", pad));
+			} else
+				lines.push_back("");
+			lines.push_back("");
+			lines.push_back(centerAndPadString("SPACEBAR:  BEGIN MISSION", pad));
+			lines.push_back("");
+			lines.push_back(centerAndPadString(isCastleMaster2() ? "COPYRIGHT 1990 INCENTIVE" : "COPYRIGHT 1988 INCENTIVE", pad));
+		} else if (isSpectrum() || isCPC()) {
+			if (isCastle())
+				pad = 22;
+
+			if (_language == Common::ES_ESP) {
+				assert(isCastle());
+				lines.push_back(centerAndPadString("MENU DE OPCIONES", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1 TECLADO          ", pad));
+				lines.push_back(centerAndPadString("2 JOYSTICK SINCLAIR", pad));
+				lines.push_back(centerAndPadString("3 JOYSTICK KEMSTON ", pad));
+				lines.push_back(centerAndPadString("4 JOYSTICK CURSOR  ", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("ENTER: EMPEZAR MISION", pad));
+				lines.push_back(centerAndPadString("(c) 1990 INCENTIVE", pad));
+			} else if (isCastle() && _language == Common::FR_FRA) {
+				lines.push_back(centerAndPadString("MENU CONFIGURATION", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1 CLAVIER          ", pad));
+				lines.push_back(centerAndPadString("2 JOYSTICK SINCLAIR", pad));
+				lines.push_back(centerAndPadString("3 JOYSTICK KEMSTON ", pad));
+				lines.push_back(centerAndPadString("4 JOYSTICK CURSEUR ", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("RETURN: DEBUT MISSION", pad));
+				lines.push_back(centerAndPadString("(c) 1990 INCENTIVE", pad));
+			} else if (isCastle() && _language == Common::DE_DEU) {
+				lines.push_back(centerAndPadString("AUSWAHL-MENUE", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1 TASTATUR         ", pad));
+				lines.push_back(centerAndPadString("2 SINCLAIR JOYSTICK", pad));
+				lines.push_back(centerAndPadString("3 KEMSTON JOYSTICK ", pad));
+				lines.push_back(centerAndPadString("4 CURSOR JOYSTICK  ", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("RETURN: MISSION START", pad));
+				lines.push_back(centerAndPadString("(c) 1990 INCENTIVE", pad));
+			} else {
+				lines.push_back(centerAndPadString("CONTROL OPTIONS", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1 KEYBOARD         ", pad));
+				lines.push_back(centerAndPadString("2 SINCLAIR JOYSTICK", pad));
+				lines.push_back(centerAndPadString("3 KEMSTON JOYSTICK ", pad));
+				lines.push_back(centerAndPadString("4 CURSOR JOYSTICK  ", pad));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("ENTER: BEGIN MISSION", pad));
+				if (!isCastle())
+					lines.push_back("");;
+				lines.push_back(centerAndPadString("(c) 1990 INCENTIVE", pad));
+			}
+		}
+
 		lines.push_back("");
-		lines.push_back("   1: KEYBOARD ONLY   ");
-		lines.push_back("   2: IBM JOYSTICK    ");
-		lines.push_back("   3: AMSTRAD JOYSTICK");
-		lines.push_back("");
-		lines.push_back(" SPACEBAR:  BEGIN MISSION");
-		lines.push_back("");
-		lines.push_back(" COPYRIGHT 1988 INCENTIVE");
-		lines.push_back("");
-		Graphics::Surface *surface = drawStringsInSurface(lines);
-		drawBorderScreenAndWait(surface);
+
+		uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+		Graphics::Surface *surface = new Graphics::Surface();
+		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+		surface->fillRect(_fullscreenViewArea, color);
+
+		surface = drawStringsInSurface(lines, surface);
+		drawBorderScreenAndWait(surface, 6 * 60);
 		surface->free();
 		delete surface;
 	}
 }
 
-void FreescapeEngine::drawFullscreenMessage(Common::String message, uint32 front, Graphics::Surface *surface) {
-	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
-
-	surface->fillRect(_fullscreenViewArea, color);
-	surface->fillRect(_viewArea, black);
-	int x = 0;
-	int y = 0;
+void FreescapeEngine::drawFullscreenMessageAndWait(Common::String message) {
 	int letterPerLine = 0;
 	int numberOfLines = 0;
 
 	if (isDOS()) {
-		x = 50;
-		y = 32;
 		letterPerLine = 28;
 		numberOfLines = 10;
 	} else if (isSpectrum() || isCPC()) {
-		x = 60;
-		y = 40;
 		letterPerLine = 24;
 		numberOfLines = 12;
 	} else if (isAtariST()) {
-		x = 33;
-		y = 40;
 		letterPerLine = 32;
 		numberOfLines = 10;
 	}
 
+	Common::Array<Common::String> lines;
 	for (int i = 0; i < numberOfLines; i++) {
-		Common::String line = message.substr(letterPerLine * i, letterPerLine);
-		//debug("'%s' %d", line.c_str(), line.size());
-		drawStringInSurface(line, x, y, front, black, surface);
-		y = y + 8;
+		lines.push_back(message.substr(letterPerLine * i, letterPerLine));
 	}
-	drawFullscreenSurface(surface);
-}
 
-void FreescapeEngine::drawFullscreenMessageAndWait(Common::String message) {
-	_savedScreen = _gfx->getScreenshot();
-	uint32 color = 0;
-	switch (_renderMode) {
-		case Common::kRenderCPC:
-			color = 14;
-			break;
-		case Common::kRenderCGA:
-			color = 1;
-			break;
-		case Common::kRenderZX:
-			color = 6;
-			break;
-		default:
-			color = 14;
-	}
-	uint8 r, g, b;
-	_gfx->readFromPalette(color, r, g, b);
-	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
+	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	surface->fillRect(_fullscreenViewArea, color);
 
-	Common::Event event;
-	bool cont = true;
-	while (!shouldQuit() && cont) {
-		while (_eventManager->pollEvent(event)) {
-
-			// Events
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_SPACE) {
-					cont = false;
-				}
-				break;
-			case Common::EVENT_SCREEN_CHANGED:
-				_gfx->computeScreenViewport();
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				// fallthrough
-			case Common::EVENT_LBUTTONDOWN:
-				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
-					cont = false;
-				break;
-			default:
-				break;
-			}
-		}
-		_gfx->clear(0, 0, 0, true);
-		drawBorder();
-		if (_currentArea)
-			drawUI();
-		drawFullscreenMessage(message, front, surface);
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(15); // try to target ~60 FPS
-	}
-
-	_savedScreen->free();
-	delete _savedScreen;
+	surface = drawStringsInSurface(lines, surface);
+	drawBorderScreenAndWait(surface);
 	surface->free();
 	delete surface;
 }
 
+void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int maxWait) {
+	PauseToken pauseToken = pauseEngine();
+	Graphics::Surface *compositedSurface = nullptr;
+	if (surface)
+		compositedSurface = new Graphics::Surface();
 
-void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface) {
-	int maxWait = 6 * 60;
-	for (int i = 0; i < maxWait; i++ ) {
+	for (int i = 0; i < maxWait; i++) {
 		Common::Event event;
 		while (_eventManager->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
+				if (compositedSurface) {
+					compositedSurface->free();
+					delete compositedSurface;
+				}
+				pauseToken.clear();
 				quitGame();
 				return;
 
@@ -267,24 +356,30 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface) {
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
 				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case kActionSkip:
+					maxWait = -1;
+					break;
+				default:
+					break;
+				}
+				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
-					i = maxWait;
-					break;
 				case Common::KEYCODE_d:
 					_demoMode = true;
-					i = maxWait;
+					maxWait = -1;
 					break;
 				default:
 					break;
 				}
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				// fallthrough
+			// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
-				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
-					i = maxWait;
+				if (isTouchscreenActive())
+					maxWait = -1;
 				break;
 			default:
 				break;
@@ -293,13 +388,22 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface) {
 
 		_gfx->clear(0, 0, 0, true);
 		drawBorder();
-		if (surface)
-			drawFullscreenSurface(surface);
+		if (surface) {
+			compositedSurface->copyFrom(*surface);
+			if (_currentArea)
+				drawPlatformUI(compositedSurface);
+			drawFullscreenSurface(compositedSurface);
+		}
 		_gfx->flipBuffer();
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS
 	}
-
+	if (compositedSurface) {
+		compositedSurface->free();
+		delete compositedSurface;
+	}
+	pauseToken.clear();
+	playSound(_soundIndexMenu, false);
 	_gfx->clear(0, 0, 0, true);
 }
 
@@ -314,16 +418,7 @@ void FreescapeEngine::drawFullscreenSurface(Graphics::Surface *surface) {
 	_gfx->setViewport(_viewArea);
 }
 
-void FreescapeEngine::drawUI() {
-	Graphics::Surface *surface = nullptr;
-	if (_border) { // This can be removed when all the borders are loaded
-		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
-		surface = new Graphics::Surface();
-		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-		surface->fillRect(_fullscreenViewArea, gray);
-	} else
-		return;
-
+void FreescapeEngine::drawPlatformUI(Graphics::Surface *surface) {
 	if (isDOS())
 		drawDOSUI(surface);
 	else if (isC64())
@@ -334,6 +429,19 @@ void FreescapeEngine::drawUI() {
 		drawCPCUI(surface);
 	else if (isAmiga() || isAtariST())
 		drawAmigaAtariSTUI(surface);
+}
+
+void FreescapeEngine::drawUI() {
+	Graphics::Surface *surface = nullptr;
+	if (_border) { // This can be removed when all the borders are loaded
+		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
+		surface = new Graphics::Surface();
+		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+		surface->fillRect(_fullscreenViewArea, gray);
+	} else
+		return;
+
+	drawPlatformUI(surface);
 
 	drawFullscreenSurface(surface);
 

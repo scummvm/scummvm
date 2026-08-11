@@ -30,6 +30,7 @@
 
 enum NancyFlag : byte { kFalse = 1, kTrue = 2 };
 enum ConditionType : byte { kEv = 0, kIn = 1, kDi = 2 };
+enum GameLanguage : byte { kEnglish = 0, kRussian = 1, kGerman = 2, kFrench = 3 };
 
 struct GameConstants {
 	uint16 numItems;

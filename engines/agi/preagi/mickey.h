@@ -99,6 +99,8 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 
 #define IDI_MSA_PIC_WIDTH   140
 #define IDI_MSA_PIC_HEIGHT  159
+#define IDI_MSA_PIC_X0      10
+#define IDI_MSA_PIC_Y0      0
 
 // pictures
 
@@ -616,6 +618,7 @@ const int IDO_MSA_NEXT_PIECE[IDI_MSA_MAX_PLANET][5] = {
 
 #define IDO_MSA_PRESS_1_TO_9                    0x7530
 #define IDO_MSA_PRESS_YES_OR_NO                 0x480D
+#define IDO_MSA_MICKEY_HAS_PRESSED              0x5D90
 #define IDO_MSA_TOO_MANY_BUTTONS_PRESSED        0x5DF7
 
 #define IDO_MSA_XL30_SPEAKING                   0x4725
@@ -674,6 +677,7 @@ struct MSA_GAME {
 };
 
 class PreAgiEngine;
+class PictureMgr_Mickey_Winnie;
 
 class MickeyEngine : public PreAgiEngine {
 public:
@@ -689,8 +693,11 @@ public:
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 
 protected:
+	PictureMgr_Mickey_Winnie *_picture;
+
 	MSA_GAME _gameStateMickey;
 	bool _clickToMove;
+	bool _isGameOver;
 
 	int getDat(int);
 	void readExe(int, uint8 *, long);
@@ -713,11 +720,11 @@ protected:
 	void patchMenu(MSA_MENU *);
 	void printDatString(int);
 	void printDatMessage(int);
-	void playNote(MSA_SND_NOTE);
-	void playSound(ENUM_MSA_SOUND);
+	bool playNote(MSA_SND_NOTE note, WaitOptions options);
+	bool playSound(ENUM_MSA_SOUND iSound, WaitOptions options = kWaitProcessEvents);
 	void drawRoomAnimation();
 	void drawRoom();
-	void drawLogo();
+	bool drawLogo();
 	void animate();
 	void printRoomDesc();
 	bool loadGame();
@@ -752,6 +759,8 @@ protected:
 			return false;
 		}
 	}
+
+	bool isCrystalOnCurrentPlanet() const;
 };
 
 } // End of namespace Agi

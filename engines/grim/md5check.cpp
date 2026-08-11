@@ -244,7 +244,8 @@ const char *emi_artAll[] = {
 	"f2ec4854639cd25792dd3e88fb08a1e6", // spanish patched
 	"e0fbba846efca842553bb1a726a25dcf", // french patched
 	"b9838ab13a672a42b1fbc8893b94ca26", // italian patched
-	"52111c719bcccacd4b4b8548007edd9c" 	// Russian version
+	"52111c719bcccacd4b4b8548007edd9c",	// Russian version
+	"64724042aae852d30c1cce393a328c4f",	// Polish fanmade
 };
 const char *emi_artJam[] = {
 	"e5ff286dbf7b23d1ad41dd8defe48291", // english patched
@@ -284,7 +285,7 @@ const char *emi_lip[] = {
 };
 const char *emi_local[] = {
 	"c3b694d941c05264e8c37dc2be75ca1c", // english patched
-	"6bd6582e9ab602c1f86c8593563cc9e5"	// Russian version
+	"6bd6582e9ab602c1f86c8593563cc9e5",	// Russian version
 };
 const char *emi_patch[] = {
 	"067100a100b3ca9283b796480aa39b52", // english patched
@@ -415,6 +416,7 @@ const char *emid_voice[] = {
 const char *emi_installer[] = {
 	"93a639e3221405862dc46e9706216c00", // German (EFMI Installer)
 	"a42f8aa079a6d23c285fceba191e67a4", // English (Monkey Island 4 Installer)
+	"d54924078bdfc4c449761500873f279c", // French (Installation de Monkey Island 4)
 };
 
 bool MD5Check::_initted = false;
@@ -486,7 +488,8 @@ void MD5Check::init() {
 			if (g_grim->getGameLanguage() != Common::EN_ANY 
 				&& g_grim->getGameLanguage() != Common::ZH_CHN 
 				&& g_grim->getGameLanguage() != Common::RU_RUS
-				&& g_grim->getGameLanguage() != Common::KO_KOR) {
+				&& g_grim->getGameLanguage() != Common::KO_KOR
+				&& g_grim->getGameLanguage() != Common::PL_POL) {
 				MD5SUM("local.lab", local)
 			}
 			if (g_grim->getGameLanguage() == Common::ZH_CHN) {
@@ -518,6 +521,9 @@ void MD5Check::init() {
 				if (g_grim->getGameLanguage() == Common::DE_DEU) {
 					// Known to be the correct filename for german
 					MD5SUM("EFMI Installer", emi_installer)
+				} else if (g_grim->getGameLanguage() == Common::FR_FRA) {
+					// Known to be the correct filename for French
+					MD5SUM("Installation de Monkey Island 4", emi_installer)
 				} else {
 					// Known to be the correct filename for english
 					MD5SUM("Monkey Island 4 Installer", emi_installer)
@@ -529,9 +535,10 @@ void MD5Check::init() {
 			MD5SUM("artMel.m4b", emi_artMel)
 			MD5SUM("artMon.m4b", emi_artMon)
 			MD5SUM("lip.m4b", emi_lip)
-			// At least in the English version, this appears to be part of the
-			// installer.
-			if (g_grim->getGameLanguage() != Common::EN_ANY) {
+			// At least in the English and French versions, this appears to be
+			// part of the installer.
+			if (g_grim->getGameLanguage() != Common::EN_ANY
+				&& g_grim->getGameLanguage() != Common::FR_FRA) {
 				MD5SUM("local.m4b", emi_local)
 			}
 			MD5SUM("sfx.m4b", emi_sfx)

@@ -20,18 +20,18 @@
  */
 
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
-#include "ultima/ultima8/gfx/fonts/rendered_text.h"
-#include "ultima/ultima8/gfx/render_surface.h"
-#include "ultima/ultima8/gfx/fonts/font_manager.h"
-#include "common/system.h"
+
 #include "common/events.h"
+#include "common/system.h"
+#include "ultima/ultima8/gfx/fonts/font_manager.h"
+#include "ultima/ultima8/gfx/fonts/rendered_text.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget)
 
-EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont, int font,
+EditWidget::EditWidget(int x, int y, Common::String txt, bool gamefont, int font,
 					   int w, int h, unsigned int maxlength, bool multiline)
 	: Gump(x, y, w, h), _text(txt), _gameFont(gamefont), _fontNum(font),
 	  _maxLength(maxlength), _multiLine(multiline),
@@ -53,7 +53,7 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	_dims.moveTo(0, -font->getBaseline());
 
 	if (_gameFont && getFont()->isHighRes()) {
-		Rect rect(_dims);
+		Common::Rect32 rect(_dims);
 		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
 		_dims.moveTo(0, rect.top);
 	}
@@ -66,7 +66,7 @@ Font *EditWidget::getFont() const {
 		return FontManager::get_instance()->getTTFont(_fontNum);
 }
 
-void EditWidget::setText(const Std::string &t) {
+void EditWidget::setText(const Common::String &t) {
 	_text = t;
 	_cursor = _text.size();
 	delete _cachedText;
@@ -78,7 +78,7 @@ void EditWidget::ensureCursorVisible() {
 	_cursorChanged = g_system->getMillis();
 }
 
-bool EditWidget::textFits(Std::string &t) {
+bool EditWidget::textFits(Common::String &t) {
 	Font *font = getFont();
 
 	unsigned int remaining;
@@ -87,7 +87,7 @@ bool EditWidget::textFits(Std::string &t) {
 	int32 max_width = _multiLine ? _dims.width() : 0;
 	int32 max_height = _dims.height();
 	if (_gameFont && font->isHighRes()) {
-		Rect rect(0, 0, max_width, max_height);
+		Common::Rect32 rect(0, 0, max_width, max_height);
 		GumpRectToScreenSpace(rect, ROUND_INSIDE);
 
 		max_width = rect.width();
@@ -99,7 +99,7 @@ bool EditWidget::textFits(Std::string &t) {
 	                  Font::TEXT_LEFT, false);
 
 	if (_gameFont && font->isHighRes()) {
-		Rect rect(0, 0, width, height);
+		Common::Rect32 rect(0, 0, width, height);
 		ScreenSpaceToGumpRect(rect, ROUND_OUTSIDE);
 
 		width = rect.width();
@@ -136,7 +136,7 @@ void EditWidget::renderText() {
 		int32 max_width = _multiLine ? _dims.width() : 0;
 		int32 max_height = _dims.height();
 		if (_gameFont && font->isHighRes()) {
-			Rect rect(0, 0, max_width, max_height);
+			Common::Rect32 rect(0, 0, max_width, max_height);
 			GumpRectToScreenSpace(rect, ROUND_INSIDE);
 
 			max_width = rect.width();
@@ -148,11 +148,11 @@ void EditWidget::renderText() {
 		                               max_width, max_height,
 		                               Font::TEXT_LEFT,
 		                               false, false,
-		                               cv ? _cursor : Std::string::npos);
+		                               cv ? _cursor : Common::String::npos);
 
 		// Trim text to fit
-		if (remaining < _text.length()) {
-			_text.resize(remaining);
+		if (remaining < _text.size()) {
+			_text.erase(remaining);
 			_cursor = _text.size();
 		}
 	}
@@ -182,7 +182,7 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	_cachedText->draw(surf, x, y, true);
 
-	Rect rect(_dims);
+	Common::Rect32 rect(_dims);
 	GumpRectToScreenSpace(rect, ROUND_OUTSIDE);
 }
 
@@ -252,8 +252,8 @@ bool EditWidget::OnTextInput(int unicode) {
 		c = reverse_encoding[unicode];
 	if (!c) return true;
 
-	Std::string newtext = _text;
-	newtext.insert(_cursor, 1, c);
+	Common::String newtext = _text;
+	newtext.insertChar(c, _cursor);
 
 	if (textFits(newtext)) {
 		_text = newtext;

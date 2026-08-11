@@ -213,13 +213,13 @@ bool SXDate::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXDate::scGetProperty(const Common::String &name) {
+ScValue *SXDate::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("date");
 		return _scValue;
 	} else {
@@ -234,7 +234,7 @@ bool SXDate::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Name")==0) {
+	if (strcmp(name, "Name") == 0) {
 	    setName(value->getString());
 	    return STATUS_OK;
 	}
@@ -274,9 +274,9 @@ bool SXDate::persist(BasePersistenceManager *persistMgr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int SXDate::scCompare(BaseScriptable *Value) {
+int SXDate::scCompare(BaseScriptable *value) {
 	TimeDate time1 = _tm;
-	TimeDate time2 = ((SXDate *)Value)->_tm;
+	TimeDate time2 = ((SXDate *)value)->_tm;
 
 	if (time1.tm_year < time2.tm_year) {
 		return -1;

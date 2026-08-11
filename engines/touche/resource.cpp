@@ -82,6 +82,7 @@ void ToucheEngine::res_openDataFile() {
 }
 
 void ToucheEngine::res_closeDataFile() {
+	res_stopSpeech(); // stop any pending speech before closing the underlying streams
 	_fData.close();
 	_fSpeech[0].close();
 	_fSpeech[1].close();

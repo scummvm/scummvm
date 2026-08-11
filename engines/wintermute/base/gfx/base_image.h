@@ -48,6 +48,7 @@ public:
 	BaseImage();
 	~BaseImage();
 
+	bool getImageInfo(const Common::String &filename, int32 &width, int32 &height);
 	bool loadFile(const Common::String &filename);
 	const Graphics::Surface *getSurface() const {
 		return _surface;
@@ -55,19 +56,25 @@ public:
 	const byte *getPalette() const {
 		return _palette;
 	}
-	byte getAlphaAt(int x, int y) const;
+	uint16 getPaletteCount() const {
+		return _paletteCount;
+	}
 	bool writeBMPToStream(Common::WriteStream *stream) const;
-	bool resize(int newWidth, int newHeight);
-	bool saveBMPFile(const Common::String &filename) const;
-	bool copyFrom(BaseImage *origImage, int newWidth = 0, int newHeight = 0);
-	void copyFrom(const Graphics::Surface *surface);
+	bool saveBMPFile(const char *filename) const;
+	void copyFrom(const Graphics::Surface *surface, int newWidth = 0, int newHeight = 0, byte flip = 0);
 private:
 	Common::String _filename;
 	Image::ImageDecoder *_decoder;
 	const Graphics::Surface *_surface;
 	Graphics::Surface *_deletableSurface;
 	const byte *_palette;
+	uint16 _paletteCount;
 	BaseFileManager *_fileManager;
+	
+	bool getImageInfoBMP(const Common::String &filename, int32 &width, int32 &height);
+	bool getImageInfoTGA(const Common::String &filename, int32 &width, int32 &height);
+	bool getImageInfoPNG(const Common::String &filename, int32 &width, int32 &height);
+	bool getImageInfoJPG(const Common::String &filename, int32 &width, int32 &height);
 };
 
 } // End of namespace Wintermute

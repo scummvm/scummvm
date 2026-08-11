@@ -67,8 +67,8 @@ bool GameLoader::readSavegame(const char *fname) {
 	Common::Array<byte> map(800);
 	saveFile->read(map.data(), 800);
 
-	FullpipeSavegameHeader header2;
-	if (NGI::readSavegameHeader(saveFile.get(), header2)) {
+	ExtendedSavegameHeader header2;
+	if (MetaEngine::readSavegameHeader(saveFile.get(), &header2)) {
 		g_nmi->setTotalPlayTime(header2.playtime * 1000);
 	}
 
@@ -167,80 +167,6 @@ bool GameLoader::readSavegame(const char *fname) {
 
 		ex->postMessage();
 	}
-
-	return true;
-}
-
-void parseSavegameHeader(NGI::FullpipeSavegameHeader &header, SaveStateDescriptor &desc) {
-	int day = (header.date >> 24) & 0xFF;
-	int month = (header.date >> 16) & 0xFF;
-	int year = header.date & 0xFFFF;
-	desc.setSaveDate(year, month, day);
-	int hour = (header.time >> 8) & 0xFF;
-	int minutes = header.time & 0xFF;
-	desc.setSaveTime(hour, minutes);
-	desc.setPlayTime(header.playtime * 1000);
-
-	desc.setDescription(header.description);
-}
-
-void fillDummyHeader(NGI::FullpipeSavegameHeader &header) {
-	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
-	header.date = (20 << 24) | (9 << 16) | 2016;
-	header.time = (9 << 8) | 56;
-	header.playtime = 0;
-}
-
-WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header, bool skipThumbnail) {
-	uint oldPos = in->pos();
-
-	in->seek(-4, SEEK_END);
-
-	int headerOffset = in->readUint32LE();
-
-	// Sanity check
-	if (headerOffset >= in->pos() || headerOffset == 0) {
-		in->seek(oldPos, SEEK_SET); // Rewind the file
-		fillDummyHeader(header);
-		return false;
-	}
-
-	in->seek(headerOffset, SEEK_SET);
-
-	in->read(header.id, 6);
-
-	// Validate the header Id
-	if (strcmp(header.id, "SVMCR")) {
-		in->seek(oldPos, SEEK_SET); // Rewind the file
-		fillDummyHeader(header);
-		return false;
-	}
-
-	header.version = in->readByte();
-	header.date = in->readUint32LE();
-	header.time = in->readUint16LE();
-	header.playtime = in->readUint32LE();
-
-	if (header.version > 1)
-		header.description = in->readPascalString();
-
-	// Generate savename
-	SaveStateDescriptor desc;
-
-	parseSavegameHeader(header, desc);
-
-	header.saveName = Common::String::format("%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
-
-	if (header.description.empty())
-		header.description = header.saveName;
-
-	// Get the thumbnail
-	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
-		in->seek(oldPos, SEEK_SET); // Rewind the file
-		return false;
-	}
-
-	in->seek(oldPos, SEEK_SET); // Rewind the file
 
 	return true;
 }

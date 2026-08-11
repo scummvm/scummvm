@@ -63,7 +63,6 @@ const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
-#ifdef USE_RGB_COLOR
 	{
 		GAMEOPTION_HQ_VIDEO,
 		{
@@ -75,7 +74,6 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
-#endif
 
 	{
 		GAMEOPTION_LARRYSCALE,
@@ -229,6 +227,30 @@ const ADExtraGuiOptionsMap optionsList[] = {
 		}
  	},
 #endif
+
+	{
+		GAMEOPTION_ENABLE_GMM_SAVE,
+		{
+			_s("Enable saving via the GMM"),
+			_s("Allows saving via the GMM. WARNING: saves created via the GMM may be corrupted and unusable. Use at your own risk!"),
+			"gmm_save_enabled",
+			false,
+			0,
+			0
+		}
+ 	},
+
+	{
+		GAMEOPTION_GK1_ENABLE_AUDIO_POPFIX,
+		{
+			_s("Repair speech audio"),
+			_s("Detect and attempt to repair overflows in DPCM8 audio, which cause noticeable pops and crackles."),
+			"audio_popfix_enabled",
+			true,
+			0,
+			0
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

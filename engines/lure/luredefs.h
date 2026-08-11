@@ -30,19 +30,19 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 31
+#define LURE_DAT_MINOR 32
 #define LURE_MIN_SAVEGAME_MINOR 25
 #define LURE_SAVEGAME_MINOR 33
 
 #define LURE_DEBUG 1
 
 enum {
-	kLureDebugScripts = 1 << 0,
-	kLureDebugAnimations = 1 << 1,
-	kLureDebugHotspots = 1 << 2,
-	kLureDebugFights = 1 << 3,
-	kLureDebugSounds = 1 << 4,
-	kLureDebugStrings = 1 << 5
+	kLureDebugScripts = 1,
+	kLureDebugAnimations,
+	kLureDebugHotspots,
+	kLureDebugFights,
+	kLureDebugSounds,
+	kLureDebugStrings,
 };
 
 #define ERROR_BASIC 1

@@ -47,9 +47,9 @@ public:
 	~BaseScriptable() override;
 
 	// high level scripting interface
-	virtual bool canHandleMethod(const char *eventMethod) const;
+	virtual bool canHandleMethod(const char *eventMethod);
 	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual ScValue *scGetProperty(const Common::String &name);
+	virtual ScValue *scGetProperty(const char *name);
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	virtual const char *scToString();
 	virtual void *scToMemBuffer();
@@ -62,10 +62,11 @@ public:
 	virtual void scSetBool(bool val);
 	virtual int scCompare(BaseScriptable *val);
 	virtual void scDebuggerDesc(char *buf, int bufSize);
-	virtual Common::String debuggerToString() const;
 	int32 _refCount;
 	ScValue *_scValue;
 	ScValue *_scProp;
+
+	virtual Common::String debuggerToString() const;
 };
 
 // Implemented in their respective .cpp-files

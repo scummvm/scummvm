@@ -66,6 +66,8 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 		stream.read(buf, fieldSize);
 		buf[fieldSize - 1] = '\0';
 		_names[i] = buf;
+		if (strlen(buf) > _maxNameLength)
+			_maxNameLength = strlen(buf);
 	}
 	s.skip((5 - numNames) * fieldSize, kGameTypeNancy4);
 
@@ -75,6 +77,8 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 		stream.read(buf, fieldSize);
 		buf[19] = '\0';
 		_passwords[i] = buf;
+		if (strlen(buf) > _maxPassLength)
+			_maxPassLength = strlen(buf);
 	}
 	s.skip((5 - numPasswords) * fieldSize, kGameTypeNancy4);
 
@@ -114,8 +118,15 @@ void PasswordPuzzle::execute() {
 
 				bool solvedCurrentInput = false;
 				if (correctAnswers.size()) {
+					// The original accepts the input if a correct answer appears
+					// as a case-insensitive substring of what the player typed
+					// (e.g. answer "Xoc" is matched by typing "Lady Xoc").
+					Common::String inputLower = activeField;
+					inputLower.toLowercase();
 					for (uint i = 0; i < correctAnswers.size(); ++i) {
-						if (activeField.equalsIgnoreCase(correctAnswers[i])) {
+						Common::String answerLower = correctAnswers[i];
+						answerLower.toLowercase();
+						if (inputLower.contains(answerLower)) {
 							solvedCurrentInput = true;
 							break;
 						}
@@ -207,6 +218,10 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
 		Common::KeyState &key = input.otherKbdInput[i];
 		Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
+		uint maxStringLength = _maxStringLength;
+		if (g_nancy->getGameType() >= kGameTypeNancy8)
+			maxStringLength = _passwordFieldIsActive ? _maxPassLength : _maxNameLength;
+
 		if (key.keycode == Common::KEYCODE_BACKSPACE) {
 			if (activeField.size() && activeField.lastChar() == '-' ? activeField.size() > 1 : true) {
 				if (activeField.lastChar() == '-') {
@@ -221,13 +236,13 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 			_playerHasHitReturn = true;
 		} else if (Common::isAlnum(key.ascii) || Common::isSpace(key.ascii)) {
 			if (activeField.size() && activeField.lastChar() == '-') {
-				if (activeField.size() <= _maxStringLength + 1) {
+				if (activeField.size() < maxStringLength + 1) {
 					activeField.deleteLastChar();
 					activeField += key.ascii;
 					activeField += '-';
 				}
 			} else {
-				if (activeField.size() <= _maxStringLength) {
+				if (activeField.size() < maxStringLength) {
 					activeField += key.ascii;
 				}
 			}

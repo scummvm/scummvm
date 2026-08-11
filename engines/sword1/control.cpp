@@ -29,6 +29,8 @@
 #include "common/translation.h"
 #include "common/memstream.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "graphics/thumbnail.h"
 #include "gui/message.h"
 
@@ -242,6 +244,7 @@ void Control::getPlayerOptions() {
 	_vm->waitForFade();
 	_sound->clearAllFx();
 	_keyPressed.reset();
+	_customType = kActionNone;
 
 	while (SwordEngine::_systemVars.snrStatus != SNR_BLANK && !Engine::shouldQuit()) {
 		delay(DEFAULT_FRAME_TIME / 2);
@@ -254,6 +257,7 @@ void Control::getPlayerOptions() {
 	}
 
 	_keyPressed.reset();
+	_customType = kActionNone;
 
 	saveRestoreScreen();
 
@@ -1408,9 +1412,9 @@ int16 Control::readFileDescriptions() {
 
 	int16 totalFiles = 0;
 	int slotNum = 0;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &filename : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(file->c_str() + file->size() - 3);
+		slotNum = atoi(filename.c_str() + filename.size() - 3);
 
 		while (totalFiles < slotNum) {
 			Common::strcpy_s((char *)_fileDescriptions[totalFiles], 1, "");
@@ -1418,7 +1422,7 @@ int16 Control::readFileDescriptions() {
 		}
 
 		if (slotNum >= 0 && slotNum < MAXSAVEGAMES) {
-			Common::InSaveFile *in = _saveFileMan->openForLoading(*file);
+			Common::InSaveFile *in = _saveFileMan->openForLoading(filename);
 			if (in) {
 				in->readUint32LE(); // header
 				in->read(saveName, 40);
@@ -1474,9 +1478,12 @@ bool Control::driveSpaceAvailable() {
 
 	outf->finalize();
 
-	if (outf->err())
+	if (outf->err()) {
+		delete outf;
 		return false;
+	}
 
+	delete outf;
 	return true;
 }
 
@@ -1502,10 +1509,10 @@ void Control::editDescription() {
 	char string[40];
 	int32 len;
 	int32 index;
-
 	if (_keyPressed.keycode) {
 		uint16 ch = _keyPressed.ascii;
 		_keyPressed.reset();
+		_customType = kActionNone;
 
 		index = _editingDescription + _firstDescription - 1;
 		len = Common::strnlen((char *)_fileDescriptions[index], sizeof(_fileDescriptions[index]));
@@ -1566,6 +1573,7 @@ void Control::restoreSelected() {
 	if (_keyPressed.keycode) {
 		char ch = _keyPressed.ascii;
 		_keyPressed.reset();
+		_customType = kActionNone;
 
 		if ((ch == ESCAPE) || (ch == CR)) {
 			if (ch == ESCAPE) {
@@ -1602,6 +1610,9 @@ bool Control::saveGame() {
 }
 
 void Control::initialiseSave() {
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+
 	uint8 *src, *dst;
 	int32 size;
 	FrameHeader *f;
@@ -1976,6 +1987,9 @@ void Control::removeSave() {
 	}
 
 	_sound->setVolumes();
+
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 }
 
 bool Control::restoreGame() {
@@ -2637,12 +2651,16 @@ void Control::delay(uint32 msecs) {
 	uint32 now = _system->getMillis();
 	uint32 endTime = now + msecs;
 	_keyPressed.reset();
+	_customType = kActionNone;
 	_mouseState = 0;
 
 	do {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_customType = event.customType;
+				return;
 			case Common::EVENT_KEYDOWN:
 				_keyPressed = event.kbd;
 				// we skip the rest of the delay and return immediately
@@ -2772,7 +2790,7 @@ void Control::drawPsxComponent(int componentType, uint8 *src, uint8 *dst, FrameH
 	free(initialPtr);
 }
 
-int Control::displayMessage(const char *altButton, const char *message, ...) {
+int Control::displayMessage(const char *message, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -2780,7 +2798,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	vsnprintf(buf, STRINGBUFLEN, message, va);
 	va_end(va);
 
-	GUI::MessageDialog dialog(buf, "OK", altButton);
+	GUI::MessageDialog dialog(buf);
 	int result = dialog.runModal();
 	_mouse->setPointer(MSE_POINTER, 0);
 	return result;
@@ -2842,7 +2860,7 @@ void Control::saveGameToFile(uint8 slot) {
 	outf = _saveFileMan->openForSaving(fName);
 	if (!outf) {
 		// Display an error message and do nothing
-		displayMessage(0, "Unable to create file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
+		displayMessage("Unable to create file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		return;
 	}
 
@@ -2890,7 +2908,7 @@ void Control::saveGameToFile(uint8 slot) {
 		outf->writeUint32LE(playerRaw[cnt2]);
 	outf->finalize();
 	if (outf->err())
-		displayMessage(0, "Couldn't write to file '%s'. Device full? (%s)", fName, _saveFileMan->popErrorDesc().c_str());
+		displayMessage("Couldn't write to file '%s'. Device full? (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 	delete outf;
 }
 
@@ -2902,14 +2920,14 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	inf = _saveFileMan->openForLoading(fName);
 	if (!inf) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Can't open file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
+		displayMessage("Can't open file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		return false;
 	}
 
 	uint saveHeader = inf->readUint32LE();
 	if (saveHeader != SAVEGAME_HEADER) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Saved game '%s' is corrupt", fName);
+		displayMessage("Saved game '%s' is corrupt", fName);
 		return false;
 	}
 
@@ -2955,7 +2973,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		playerBuf[cnt2] = inf->readUint32LE();
 
 	if (inf->err() || inf->eos()) {
-		displayMessage(0, "Can't read from file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
+		displayMessage("Can't read from file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		delete inf;
 		free(_restoreBuf);
 		_restoreBuf = nullptr;
@@ -3338,7 +3356,7 @@ const uint8 Control::_polishTranslationLanguageStrings[20][43] = {
 	"Nowa gra",                                    // "Restart",
 	"Start",                                       // "Start",
 	"Wyjd\xBC",                                    // "Quit",
-	"Pr\xEA""dko\xB6\xE6",                         // "Speed", the double pair of "" is to avoid escaping the d after \xEA
+	("Pr\xEA""dko\xB6\xE6"),                       // "Speed", the double pair of "" is to avoid escaping the d after \xEA
 	"G\xB3o\xB6no\xB6\xE6",                        // "Volume",
 	"Napisy",                                      // "Text",
 	"Gotowe",                                      // "Done",
@@ -3607,10 +3625,11 @@ void Control::psxEndCredits() {
 	}
 
 	_keyPressed.reset();
+	_customType = kActionNone;
 
 	while (allSet && creditsHeight[PSX_NUM_CREDITS - 1] > -120 &&
 		!Engine::shouldQuit() &&
-		_keyPressed.keycode != Common::KEYCODE_ESCAPE) {
+		_customType != kActionEscape) {
 		memset(creditsScreenBuf, 0, SCREEN_WIDTH * SCREEN_FULL_DEPTH);
 
 		for (int i = 0; i < PSX_NUM_CREDITS; i++) {
@@ -3719,6 +3738,7 @@ void Control::psxEndCredits() {
 	free(creditsScreenBuf);
 
 	_keyPressed.reset();
+	_customType = kActionNone;
 }
 
 } // End of namespace Sword1

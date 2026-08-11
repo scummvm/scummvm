@@ -128,7 +128,7 @@ public:
 	Common::SeekableReadStream *getResource(uint16 id, bool suppressErrors = false);
 	Common::SeekableReadStream *getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors = false);
 	uint32 getResourceStart(ResourceType resType, uint16 resNum, uint16 rlbNum, ResourceEntry &entry);
-	void getPalette(byte palette[PALETTE_SIZE], int paletteNum);
+	void getPalette(byte palette[Graphics::PALETTE_SIZE], int paletteNum);
 };
 
 } // end of namespace TsAGE

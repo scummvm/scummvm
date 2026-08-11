@@ -29,17 +29,33 @@
 #include "audio/fmopl.h"
 #include "common/mutex.h"
 
+#if defined(__clang__) && defined(__has_warning)
+#  if __has_warning("-Wnewline-eof")
+#    define COMPILER_HAS_NEWLINE_EOF_WARNING
+#  endif
+#endif
+
+#ifdef COMPILER_HAS_NEWLINE_EOF_WARNING
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnewline-eof"
+#endif
+
 #include <RetroWaveLib/RetroWave.h>
+
+#ifdef COMPILER_HAS_NEWLINE_EOF_WARNING
+#pragma GCC diagnostic pop
+#endif
 
 namespace OPL {
 namespace RetroWaveOPL3 {
 
-class OPL : public ::OPL::RealOPL {
+class OPL : public ::OPL::OPL, public Audio::RealChip {
 private:
 	enum RWConnType {
 		RWCONNTYPE_POSIX_SERIAL,
 		RWCONNTYPE_WIN32_SERIAL,
-		RWCONNTYPE_LINUX_SPI
+		RWCONNTYPE_LINUX_SPI,
+		RWCONNTYPE_WEB_SERIAL
 	};
 
 	Config::OplType _type;
@@ -60,7 +76,6 @@ public:
 	void reset() override;
 
 	void write(int portAddress, int value) override;
-	byte read(int portAddress) override;
 
 	void writeReg(int reg, int value) override;
 

@@ -25,7 +25,6 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/math.h"
 #include "common/ptr.h"
 #include "common/random.h"
 #include "common/savefile.h"
@@ -43,6 +42,8 @@
 #include "image/ani.h"
 #include "image/bmp.h"
 #include "image/icocur.h"
+
+#include "math/utils.h"
 
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
@@ -158,7 +159,7 @@ Common::SharedPtr<Graphics::Surface> AD2044Graphics::loadGraphic(const Common::S
 
 	const Graphics::Surface *bmpSurf = decoder.getSurface();
 
-	Common::SharedPtr<Graphics::Surface> surf(bmpSurf->convertTo(_pixFmt, decoder.getPalette(), decoder.getPaletteColorCount()), Graphics::SurfaceDeleter());
+	Common::SharedPtr<Graphics::Surface> surf(bmpSurf->convertTo(_pixFmt, decoder.getPalette().data(), decoder.getPalette().size()), Graphics::SurfaceDeleter());
 	return surf;
 }
 
@@ -179,7 +180,7 @@ public:
 
 	void commitRect(const Common::Rect &rect) const override;
 	bool popOSEvent(OSEvent &evt) const override;
-	Graphics::Surface *getUIGraphic(uint index) const override;
+	Graphics::ManagedSurface *getUIGraphic(uint index) const override;
 	Graphics::ManagedSurface *getMenuSurface() const override;
 	bool hasDefaultSave() const override;
 	bool hasAnySave() const override;
@@ -212,7 +213,7 @@ bool RuntimeMenuInterface::popOSEvent(OSEvent &evt) const {
 	return _runtime->popOSEvent(evt);
 }
 
-Graphics::Surface *RuntimeMenuInterface::getUIGraphic(uint index) const {
+Graphics::ManagedSurface *RuntimeMenuInterface::getUIGraphic(uint index) const {
 	if (index >= _runtime->_uiGraphics.size())
 		return nullptr;
 	return _runtime->_uiGraphics[index].get();
@@ -552,7 +553,7 @@ ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc
 	panInteractionID(0), clickInteractionID(0), fpsOverride(0), lastHighlightedItem(0), animChangeFrameOffset(0), animChangeNumFrames(0) {
 }
 
-OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)), keymappedEvent(kKeymappedEventNone), timestamp(0) {
+OSEvent::OSEvent() : type(kOSEventTypeInvalid), keymappedEvent(kKeymappedEventNone), timestamp(0) {
 }
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
@@ -1467,8 +1468,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, MidiDriver *midiDrv, cons
 	: _system(system), _mixer(mixer), _midiDrv(midiDrv), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _disc(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
 	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false), _havePendingPostSwapScreenReset(false),
-	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _lowQualityGraphicsMode(false),
-	  _musicTrack(0), _musicActive(true), _musicMute(false), _musicMuteDisabled(false),
+	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _preloadSounds(false),
+	  _lowQualityGraphicsMode(false), _musicTrack(0), _musicActive(true), _musicMute(false), _musicMuteDisabled(false),
 	  _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _loadedAnimationHasSound(false),
@@ -1498,23 +1499,6 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, MidiDriver *midiDrv, cons
 		_panCursors[i] = 0;
 
 	_rng.reset(new Common::RandomSource("vcruise"));
-
-#ifdef USE_FREETYPE2
-	if (_gameID == GID_AD2044) {
-		Common::File f;
-		if (f.open("gfx/AD2044.TTF"))
-			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, 16, Graphics::kTTFSizeModeCharacter, 108, 72, Graphics::kTTFRenderModeLight));
-	} else
-		_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
-
-	_subtitleFont = _subtitleFontKeepalive.get();
-#endif
-
-	if (!_subtitleFont)
-		_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
-
-	if (!_subtitleFont)
-		warning("Couldn't load subtitle font, subtitles will be disabled");
 
 	_menuInterface.reset(new RuntimeMenuInterface(this));
 
@@ -1668,6 +1652,10 @@ void Runtime::setFastAnimationMode(bool fastAnimationMode) {
 	_fastAnimationMode = fastAnimationMode;
 }
 
+void Runtime::setPreloadSounds(bool preloadSounds) {
+	_preloadSounds = preloadSounds;
+}
+
 void Runtime::setLowQualityGraphicsMode(bool lowQualityGraphicsMode) {
 	_lowQualityGraphicsMode = lowQualityGraphicsMode;
 }
@@ -1751,7 +1739,7 @@ bool Runtime::runFrame() {
 bool Runtime::bootGame(bool newGame) {
 	assert(_gameState == kGameStateBoot);
 
-	if (!ConfMan.hasKey("vcruise_increase_drag_distance") || ConfMan.hasKey("vcruise_increase_drag_distance"))
+	if (!ConfMan.hasKey("vcruise_increase_drag_distance") || ConfMan.getBool("vcruise_increase_drag_distance"))
 		_lmbDragTolerance = 3;
 
 	if (ConfMan.hasKey("vcruise_mute_music") && ConfMan.getBool("vcruise_mute_music"))
@@ -1811,10 +1799,10 @@ bool Runtime::bootGame(bool newGame) {
 		error("Don't have a start config for this game");
 
 	if (_gameID != GID_AD2044) {
-		_trayBackgroundGraphic = loadGraphic("Pocket", "", true);
-		_trayHighlightGraphic = loadGraphic("Select", "", true);
-		_trayCompassGraphic = loadGraphic("Select_1", "", true);
-		_trayCornerGraphic = loadGraphic("Select_2", "", true);
+		_trayBackgroundGraphic = loadGraphic("Pocket", true);
+		_trayHighlightGraphic = loadGraphic("Select", true);
+		_trayCompassGraphic = loadGraphic("Select_1", true);
+		_trayCornerGraphic = loadGraphic("Select_2", true);
 	}
 
 	if (_gameID == GID_AD2044)
@@ -1847,7 +1835,7 @@ bool Runtime::bootGame(bool newGame) {
 			Common::IT_ITA,
 		};
 
-		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
+		uint langCount = ARRAYSIZE(langIndexes);
 
 		for (uint li = 0; li < langCount; li++) {
 			if (langIndexes[li] == _defaultLanguage)
@@ -1888,7 +1876,7 @@ bool Runtime::bootGame(bool newGame) {
 			Common::CS_CZE,
 		};
 
-		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
+		uint langCount = ARRAYSIZE(langIndexes);
 
 		for (uint li = 0; li < langCount; li++) {
 			if (langIndexes[li] == _defaultLanguage)
@@ -1950,15 +1938,55 @@ bool Runtime::bootGame(bool newGame) {
 	else
 		warning("Localization data failed to load!  Text and subtitles will be disabled.");
 
+
+#ifdef USE_FREETYPE2
+	if (_gameID == GID_AD2044) {
+		Common::File *f = new Common::File();
+		if (f->open("gfx/AD2044.TTF"))
+			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, DisposeAfterUse::YES, 16, Graphics::kTTFSizeModeCharacter, 108, 72, Graphics::kTTFRenderModeLight));
+		else
+			delete f;
+	} else {
+		Common::String fontFile;
+		switch (_charSet) {
+		case kCharSetGreek:
+		case kCharSetLatin:
+		case kCharSetCyrillic:
+		default:
+			fontFile = "NotoSans-Regular.ttf";
+			break;
+		case kCharSetChineseSimplified:
+			fontFile = "NotoSansSC-Regular.otf";
+			break;
+		case kCharSetChineseTraditional:
+			fontFile = "NotoSansTC-Regular.otf";
+			break;
+		case kCharSetJapanese:
+			fontFile = "NotoSansJP-Regular.otf";
+			break;
+		}
+
+		_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive(fontFile, 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
+	}
+
+	_subtitleFont = _subtitleFontKeepalive.get();
+#endif
+
+	if (!_subtitleFont)
+		_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+
+	if (!_subtitleFont)
+		warning("Couldn't load subtitle font, subtitles will be disabled");
+
 	if (_gameID != GID_AD2044) {
 		_uiGraphics.resize(24);
 		for (uint i = 0; i < _uiGraphics.size(); i++) {
 			if (_gameID == GID_REAH) {
-				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(_languageIndex * 100u + i)), "", false);
+				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(_languageIndex * 100u + i)), false);
 				if (_languageIndex != 0 && !_uiGraphics[i])
-					_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), "", false);
+					_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), false);
 			} else if (_gameID == GID_SCHIZM) {
-				_uiGraphics[i] = loadGraphic(Common::String::format("Data%03u", i), "", false);
+				_uiGraphics[i] = loadGraphic(Common::String::format("Data%03u", i), false);
 			}
 		}
 	}
@@ -2355,7 +2383,7 @@ bool Runtime::runWaitForAnimation() {
 	// Still waiting, check events
 	OSEvent evt;
 	while (popOSEvent(evt)) {
-		if (evt.type == kOSEventTypeKeyDown && evt.keyCode == Common::KEYCODE_ESCAPE) {
+		if (evt.type == kOSEventTypeKeymappedEvent && evt.keymappedEvent == kKeymappedEventEscape) {
 			if (_escOn) {
 				// Terminate the animation
 				if (_animDecoderState == kAnimDecoderStatePlaying) {
@@ -2697,7 +2725,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 
 		if (copyRect.isValidRect() || !copyRect.isEmpty()) {
 			Graphics::Palette p(_animDecoder->getPalette(), 256);
-			_gameSection.surf->blitFrom(*surface, copyRect, copyRect, &p);
+			_gameSection.surf->simpleBlitFrom(*surface, copyRect, copyRect.origin(), Graphics::FLIP_NONE, false, 255, &p);
 			drawSectionToScreen(_gameSection, copyRect);
 		}
 
@@ -2722,7 +2750,7 @@ void Runtime::drawSectionToScreen(const RenderSection &section, const Common::Re
 	const RenderSection *sourceSection = &section;
 
 	if (_debugMode && (&_gameSection == &section)) {
-		_gameDebugBackBuffer.surf->blitFrom(*sourceSection->surf, rect, rect);
+		_gameDebugBackBuffer.surf->simpleBlitFrom(*sourceSection->surf, rect, rect.origin());
 		commitSectionToScreen(_gameDebugBackBuffer, rect);
 	} else
 		commitSectionToScreen(*sourceSection, rect);
@@ -3492,12 +3520,37 @@ SoundCache *Runtime::loadCache(SoundInstance &sound) {
 		return nullptr;
 	}
 
+	if (_preloadSounds) {
+		if (stream->size() > static_cast<int64>(0xffffffffu)) {
+			warning("Sound stream is too large");
+			delete stream;
+			return nullptr;
+		}
+
+		uint32 streamSize = static_cast<uint32>(stream->size());
+
+		byte *streamContents = new byte[streamSize];
+
+		if (stream->read(streamContents, streamSize) != streamSize) {
+			warning("Couldn't preload sound contents for sound '%s'", sound.name.c_str());
+			delete[] streamContents;
+			delete stream;
+			return nullptr;
+		}
+
+		Common::MemoryReadStream *memStream = new Common::MemoryReadStream(streamContents, streamSize);
+		delete stream;
+
+		stream = memStream;
+	}
+
 	Common::SharedPtr<SoundLoopInfo> loopInfo;
 
 	if (_gameID == GID_SCHIZM) {
 		loopInfo = SoundLoopInfo::readFromWaveFile(*stream);
 		if (!stream->seek(0)) {
 			warning("Couldn't reset stream to 0 after reading sample table for sound '%s'", sound.name.c_str());
+			delete stream;
 			return nullptr;
 		}
 	}
@@ -3701,7 +3754,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 			_placedItemBackBufferSection.init(renderRect, _placedItemBackBufferSection.pixFmt);
 
 			if (!_placedItemRect.isEmpty())
-				_placedItemBackBufferSection.surf->blitFrom(*_gameSection.surf, _placedItemRect, Common::Point(0, 0));
+				_placedItemBackBufferSection.surf->simpleBlitFrom(*_gameSection.surf, _placedItemRect, Common::Point(0, 0));
 
 			updatePlacedItemCache();
 
@@ -4592,6 +4645,10 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 		if (aviFile->open(aviFileName)) {
 			_animDecoder.reset(new Video::AVIDecoder());
+
+			if (ConfMan.hasKey("vcruise_fast_video_decoder") && ConfMan.getBool("vcruise_fast_video_decoder"))
+				_animDecoder->setVideoCodecAccuracy(Image::CodecAccuracy::Fast);
+
 			if (!_animDecoder->loadStream(aviFile)) {
 				warning("Animation file %i could not be loaded", animFile);
 				return;
@@ -5100,7 +5157,7 @@ bool Runtime::computeEffectiveVolumeAndBalance(SoundInstance &snd) {
 	uint effectiveVolume = applyVolumeScale(snd.volume);
 	int32 effectiveBalance = applyBalanceScale(snd.balance);
 
-	double radians = Common::deg2rad<double>(_listenerAngle);
+	double radians = Math::deg2rad<double>(_listenerAngle);
 	int32 cosAngle = static_cast<int32>(cos(radians) * (1 << 15));
 	int32 sinAngle = static_cast<int32>(sin(radians) * (1 << 15));
 
@@ -5616,7 +5673,8 @@ void Runtime::inventoryAddItem(uint item) {
 	getFileNamesForItemGraphic(item, itemFileName, alphaFileName);
 
 	_inventory[firstOpenSlot].itemID = item;
-	_inventory[firstOpenSlot].graphic = loadGraphic(itemFileName, alphaFileName, false);
+	_inventory[firstOpenSlot].graphic = loadGraphic(itemFileName, false);
+	_inventory[firstOpenSlot].mask = loadGraphic(alphaFileName, false);
 
 	drawInventory(firstOpenSlot);
 }
@@ -5629,6 +5687,7 @@ void Runtime::inventoryRemoveItem(uint itemID) {
 			item.highlighted = false;
 			item.itemID = 0;
 			item.graphic.reset();
+			item.mask.reset();
 			drawInventory(slot);
 			break;
 		}
@@ -5637,7 +5696,7 @@ void Runtime::inventoryRemoveItem(uint itemID) {
 
 void Runtime::clearScreen() {
 	if (_gameID == GID_AD2044) {
-		_fullscreenMenuSection.surf->blitFrom(*_backgroundGraphic);
+		_fullscreenMenuSection.surf->simpleBlitFrom(*_backgroundGraphic);
 		commitSectionToScreen(_fullscreenMenuSection, _fullscreenMenuSection.rect);
 	} else
 		_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
@@ -5660,7 +5719,7 @@ void Runtime::clearTray() {
 	if (_gameID == GID_AD2044) {
 		trayRect = _traySection.rect;
 		trayRect.translate(-trayRect.left, -trayRect.top);
-		_traySection.surf->blitFrom(*_backgroundGraphic, _traySection.rect, trayRect);
+		_traySection.surf->simpleBlitFrom(*_backgroundGraphic, _traySection.rect, trayRect.origin());
 	} else {
 		uint32 blackColor = _traySection.surf->format.RGBToColor(0, 0, 0);
 		trayRect = Common::Rect(0, 0, _traySection.surf->w, _traySection.surf->h);
@@ -5706,7 +5765,7 @@ void Runtime::clearSubtitleSection() {
 	if (_gameID == GID_AD2044) {
 		stRect = _subtitleSection.rect;
 		stRect.translate(-stRect.left, -stRect.top);
-		_subtitleSection.surf->blitFrom(*_backgroundGraphic, _subtitleSection.rect, stRect);
+		_subtitleSection.surf->simpleBlitFrom(*_backgroundGraphic, _subtitleSection.rect, stRect.origin());
 	}
 
 	this->commitSectionToScreen(_subtitleSection, stRect);
@@ -5765,11 +5824,12 @@ void Runtime::drawInventory(uint slot) {
 	const bool highlighted = _inventory[slot].highlighted;
 
 	if (highlighted)
-		_traySection.surf->blitFrom(*_trayHighlightGraphic, sliceRect, sliceRect);
+		_traySection.surf->simpleBlitFrom(*_trayHighlightGraphic, sliceRect, sliceRect.origin());
 	else
 		_traySection.surf->fillRect(sliceRect, 0);
 
-	const Graphics::Surface *surf = _inventory[slot].graphic.get();
+	const Graphics::ManagedSurface *surf = _inventory[slot].graphic.get();
+	const Graphics::ManagedSurface *mask = _inventory[slot].mask.get();
 
 	// TODO: Highlighted items
 	if (surf) {
@@ -5780,10 +5840,15 @@ void Runtime::drawInventory(uint slot) {
 		const uint itemLeftY = slotStartX + (slotWidth - itemWidth) / 2u;
 
 		if (highlighted) {
+			// TODO: Use simpleBlitFrom here as well?
+			assert(!mask);
+
 			uint32 blackColor = surf->format.ARGBToColor(255, 0, 0, 0);
 			_traySection.surf->transBlitFrom(*surf, Common::Point(itemLeftY, itemTopY), blackColor);
-		} else
-			_traySection.surf->blitFrom(*surf, Common::Point(itemLeftY, itemTopY));
+		} else if (mask)
+			_traySection.surf->maskBlitFrom(*surf, *mask, Common::Point(itemLeftY, itemTopY));
+		else
+			_traySection.surf->simpleBlitFrom(*surf, Common::Point(itemLeftY, itemTopY));
 	}
 
 	commitSectionToScreen(_traySection, sliceRect);
@@ -5837,7 +5902,7 @@ void Runtime::drawCompass() {
 
 	compassRect.translate(horizOffset, vertOffset);
 
-	_traySection.surf->blitFrom(*_trayCompassGraphic, Common::Point(compassRect.left, compassRect.top));
+	_traySection.surf->simpleBlitFrom(*_trayCompassGraphic, Common::Point(compassRect.left, compassRect.top));
 
 	const uint32 blackColor = _traySection.surf->format.ARGBToColor(255, 0, 0, 0);
 
@@ -5855,16 +5920,16 @@ void Runtime::drawCompass() {
 	if (_gameID == GID_REAH) {
 
 		if (haveLocation)
-			_traySection.surf->blitFrom(*_trayCornerGraphic, Common::Point(lowerRightRect.left, lowerRightRect.top));
+			_traySection.surf->simpleBlitFrom(*_trayCornerGraphic, Common::Point(lowerRightRect.left, lowerRightRect.top));
 		else
-			_traySection.surf->blitFrom(*_trayBackgroundGraphic, lowerRightRect, Common::Point(lowerRightRect.left, lowerRightRect.top));
+			_traySection.surf->simpleBlitFrom(*_trayBackgroundGraphic, lowerRightRect, Common::Point(lowerRightRect.left, lowerRightRect.top));
 	} else if (_gameID == GID_SCHIZM) {
 		Common::Rect graphicRect = Common::Rect(0u + _hero * 176u, 0, 0u + _hero * 176u + 88, 88);
 
 		if (!haveLocation)
 			graphicRect.translate(88, 0);
 
-		_traySection.surf->blitFrom(*_trayCornerGraphic, graphicRect, Common::Point(lowerRightRect.left, lowerRightRect.top));
+		_traySection.surf->simpleBlitFrom(*_trayCornerGraphic, graphicRect, Common::Point(lowerRightRect.left, lowerRightRect.top));
 	}
 
 	commitSectionToScreen(_traySection, compassRect);
@@ -5948,7 +6013,8 @@ void Runtime::updatePlacedItemCache() {
 
 			_inventoryPlacedItemCache.itemID = itemID;
 			getFileNamesForItemGraphic(itemID, itemFileName, alphaFileName);
-			_inventoryPlacedItemCache.graphic = loadGraphic(itemFileName, alphaFileName, false);
+			_inventoryPlacedItemCache.graphic = loadGraphic(itemFileName, false);
+			_inventoryPlacedItemCache.mask = loadGraphic(alphaFileName, false);
 		}
 	} else {
 		_inventoryPlacedItemCache = InventoryItem();
@@ -5956,34 +6022,47 @@ void Runtime::updatePlacedItemCache() {
 }
 
 void Runtime::drawPlacedItemGraphic() {
-	const Graphics::Surface *surf = _inventoryPlacedItemCache.graphic.get();
+	const Graphics::ManagedSurface *surf = _inventoryPlacedItemCache.graphic.get();
+	const Graphics::ManagedSurface *mask = _inventoryPlacedItemCache.mask.get();
+
 	if (surf) {
 		Common::Point drawPos((_placedItemRect.left + _placedItemRect.right - surf->w) / 2, (_placedItemRect.top + _placedItemRect.bottom - surf->h) / 2);
 
-		_gameSection.surf->blitFrom(*surf, drawPos);
+		if (mask) {
+			_gameSection.surf->maskBlitFrom(*surf, *mask, drawPos);
+		} else {
+			_gameSection.surf->simpleBlitFrom(*surf, drawPos);
+		}
 		drawSectionToScreen(_gameSection, _placedItemRect);
 	}
 }
 
 void Runtime::clearPlacedItemGraphic() {
 	if (!_placedItemRect.isEmpty()) {
-		_gameSection.surf->blitFrom(*_placedItemBackBufferSection.surf, Common::Point(_placedItemRect.left, _placedItemRect.top));
+		_gameSection.surf->simpleBlitFrom(*_placedItemBackBufferSection.surf, Common::Point(_placedItemRect.left, _placedItemRect.top));
 		drawSectionToScreen(_gameSection, _placedItemRect);
 	}
 }
 
 void Runtime::drawActiveItemGraphic() {
-	if (_inventoryActiveItem.graphic) {
+	const Graphics::ManagedSurface *surf = _inventoryActiveItem.graphic.get();
+	const Graphics::ManagedSurface *mask = _inventoryActiveItem.mask.get();
+
+	if (surf) {
 		Common::Rect itemRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ActiveItemRender);
 
-		_fullscreenMenuSection.surf->blitFrom(*_inventoryActiveItem.graphic, Common::Point(itemRect.left, itemRect.top));
+		if (mask)
+			_fullscreenMenuSection.surf->maskBlitFrom(*surf, *mask, Common::Point(itemRect.left, itemRect.top));
+		else
+			_fullscreenMenuSection.surf->simpleBlitFrom(*surf, Common::Point(itemRect.left, itemRect.top));
+
 		drawSectionToScreen(_fullscreenMenuSection, itemRect);
 	}
 
 	if (g_ad2044ItemInfos[_inventoryActiveItem.itemID].canBeExamined && _hero == 0) {
 		Common::Rect examineRect = AD2044Interface::getRectForUI(AD2044InterfaceRectID::ExamineButton);
 
-		_fullscreenMenuSection.surf->blitFrom(*_ad2044Graphics->examine, Common::Point(examineRect.left, examineRect.top));
+		_fullscreenMenuSection.surf->simpleBlitFrom(*_ad2044Graphics->examine, Common::Point(examineRect.left, examineRect.top));
 		drawSectionToScreen(_fullscreenMenuSection, examineRect);
 	}
 }
@@ -5995,16 +6074,23 @@ void Runtime::clearActiveItemGraphic() {
 	};
 
 	for (const Common::Rect &rectToClear : rectsToClear) {
-		_fullscreenMenuSection.surf->blitFrom(*_backgroundGraphic, rectToClear, rectToClear);
+		_fullscreenMenuSection.surf->simpleBlitFrom(*_backgroundGraphic, rectToClear, rectToClear.origin());
 		drawSectionToScreen(_fullscreenMenuSection, rectToClear);
 	}
 }
 
 void Runtime::drawInventoryItemGraphic(uint slot) {
-	if (_inventory[slot].graphic) {
+	const Graphics::ManagedSurface *surf = _inventory[slot].graphic.get();
+	const Graphics::ManagedSurface *mask = _inventory[slot].mask.get();
+
+	if (surf) {
 		Common::Rect rect = AD2044Interface::getRectForUI(static_cast<AD2044InterfaceRectID>(static_cast<uint>(AD2044InterfaceRectID::InventoryRender0) + slot));
 
-		_fullscreenMenuSection.surf->blitFrom(*_inventory[slot].graphic, Common::Point(rect.left, rect.top));
+		if (mask)
+			_fullscreenMenuSection.surf->maskBlitFrom(*surf, *mask, Common::Point(rect.left, rect.top));
+		else
+			_fullscreenMenuSection.surf->simpleBlitFrom(*surf, Common::Point(rect.left, rect.top));
+
 		drawSectionToScreen(_fullscreenMenuSection, rect);
 	}
 }
@@ -6012,7 +6098,7 @@ void Runtime::drawInventoryItemGraphic(uint slot) {
 void Runtime::clearInventoryItemGraphic(uint slot) {
 	Common::Rect rect = AD2044Interface::getRectForUI(static_cast<AD2044InterfaceRectID>(static_cast<uint>(AD2044InterfaceRectID::InventoryRender0) + slot));
 
-	_fullscreenMenuSection.surf->blitFrom(*_backgroundGraphic, rect, rect);
+	_fullscreenMenuSection.surf->simpleBlitFrom(*_backgroundGraphic, rect, rect.origin());
 	drawSectionToScreen(_fullscreenMenuSection, rect);
 }
 
@@ -6094,42 +6180,21 @@ void Runtime::getFileNamesForItemGraphic(uint itemID, Common::String &outFileNam
 		error("Unknown game, can't format inventory item");
 }
 
-Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &graphicName, const Common::String &alphaName, bool required) {
+Common::SharedPtr<Graphics::ManagedSurface> Runtime::loadGraphic(const Common::String &graphicName, bool required) {
+	if (graphicName.empty())
+		return nullptr;
+
 	Common::Path filePath((_gameID == GID_AD2044) ? "rze/" : "Gfx/");
 
 	filePath.appendInPlace(graphicName);
 	filePath.appendInPlace((_gameID == GID_AD2044) ? ".BMP" : ".bmp");
 
-	Common::SharedPtr<Graphics::Surface> surf = loadGraphicFromPath(filePath, required);
-
-	if (surf && !alphaName.empty()) {
-		Common::SharedPtr<Graphics::Surface> alphaSurf = loadGraphic(alphaName, "", required);
-		if (alphaSurf) {
-			if (surf->w != alphaSurf->w || surf->h != alphaSurf->h)
-				error("Mismatched graphic sizes");
-
-			int h = surf->h;
-			int w = surf->w;
-			for (int y = 0; y < h; y++) {
-				for (int x = 0; x < w; x++) {
-					uint32 alphaSurfPixel = alphaSurf->getPixel(x, y);
-
-					uint8 r = 0;
-					uint8 g = 0;
-					uint8 b = 0;
-					uint8 a = 0;
-					alphaSurf->format.colorToARGB(alphaSurfPixel, a, r, g, b);
-					if (r < 128)
-						surf->setPixel(x, y, 0);
-				}
-			}
-		}
-	}
+	Common::SharedPtr<Graphics::ManagedSurface> surf = loadGraphicFromPath(filePath, required);
 
 	return surf;
 }
 
-Common::SharedPtr<Graphics::Surface> Runtime::loadGraphicFromPath(const Common::Path &filePath, bool required) {
+Common::SharedPtr<Graphics::ManagedSurface> Runtime::loadGraphicFromPath(const Common::Path &filePath, bool required) {
 	Common::File f;
 	if (!f.open(filePath)) {
 		warning("Couldn't open BMP file '%s'", filePath.toString(Common::Path::kNativeSeparator).c_str());
@@ -6146,9 +6211,14 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphicFromPath(const Common::
 		return nullptr;
 	}
 
-	Common::SharedPtr<Graphics::Surface> surf(new Graphics::Surface(), Graphics::SurfaceDeleter());
-	surf->copyFrom(*bmpDecoder.getSurface());
-	surf = Common::SharedPtr<Graphics::Surface>(surf->convertTo(Graphics::createPixelFormat<8888>(), bmpDecoder.getPalette(), bmpDecoder.getPaletteColorCount()), Graphics::SurfaceDeleter());
+	// Preserve the palette if it has one, otherwise convert it to the current screen format.
+	Common::SharedPtr<Graphics::ManagedSurface> surf(new Graphics::ManagedSurface());
+	if (bmpDecoder.hasPalette()) {
+		surf->copyFrom(*bmpDecoder.getSurface());
+		surf->setPalette(bmpDecoder.getPalette().data(), 0, bmpDecoder.getPalette().size());
+	} else {
+		surf->convertFrom(*bmpDecoder.getSurface(), _system->getScreenFormat());
+	}
 
 	return surf;
 }
@@ -6534,7 +6604,7 @@ void Runtime::drawInGameMenuButton(uint element) {
 
 	Common::Rect buttonSrcRect = Common::Rect(buttonTopLeftPoint.x, buttonTopLeftPoint.y, buttonTopLeftPoint.x + 128, buttonTopLeftPoint.y + _menuSection.rect.height());
 
-	_menuSection.surf->blitFrom(*_uiGraphics[4], buttonSrcRect, buttonDestRect);
+	_menuSection.surf->simpleBlitFrom(*_uiGraphics[4], buttonSrcRect, buttonDestRect.origin());
 
 	if (_gameID == GID_SCHIZM) {
 		int labelNumber = static_cast<int>(element) + 1 + buttonState * 5;
@@ -6560,6 +6630,8 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 #ifdef USE_FREETYPE2
 	const char *fontFile = nullptr;
 
+	const char *jpnFontName = "\x82\x6c\x82\x72\x20\x96\xbe\x92\xa9";
+
 	if (textStyle == "Verdana") {
 		switch (_charSet) {
 		case kCharSetGreek:
@@ -6569,13 +6641,13 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 			fontFile = "NotoSans-Bold.ttf";
 			break;
 		case kCharSetChineseSimplified:
-			fontFile = "NotoSansSC-Bold.ttf";
+			fontFile = "NotoSansSC-Bold.otf";
 			break;
 		case kCharSetChineseTraditional:
-			fontFile = "NotoSansTC-Bold.ttf";
+			fontFile = "NotoSansTC-Bold.otf";
 			break;
 		case kCharSetJapanese:
-			fontFile = "NotoSansJP-Bold.ttf";
+			fontFile = "NotoSansJP-Bold.otf";
 			break;
 		}
 	} else if (textStyle == "Arial") {
@@ -6587,15 +6659,17 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 			fontFile = "LiberationSans-Bold.ttf";
 			break;
 		case kCharSetChineseSimplified:
-			fontFile = "NotoSansSC-Bold.ttf";
+			fontFile = "NotoSansSC-Bold.otf";
 			break;
 		case kCharSetChineseTraditional:
-			fontFile = "NotoSansTC-Bold.ttf";
+			fontFile = "NotoSansTC-Bold.otf";
 			break;
 		case kCharSetJapanese:
-			fontFile = "NotoSansJP-Bold.ttf";
+			fontFile = "NotoSansJP-Bold.otf";
 			break;
 		}
+	} else if (textStyle == jpnFontName) {
+		fontFile = "NotoSansJP-Bold.otf";
 	}
 
 	if (fontFile) {
@@ -6822,14 +6896,6 @@ void Runtime::onMouseMove(int16 x, int16 y) {
 	queueOSEvent(evt);
 }
 
-void Runtime::onKeyDown(Common::KeyCode keyCode) {
-	OSEvent evt;
-	evt.type = kOSEventTypeKeyDown;
-	evt.keyCode = keyCode;
-
-	queueOSEvent(evt);
-}
-
 void Runtime::onKeymappedEvent(KeymappedEvent kme) {
 	OSEvent evt;
 	evt.type = kOSEventTypeKeymappedEvent;
@@ -7026,15 +7092,18 @@ void Runtime::restoreSaveGameSnapshot() {
 				Common::String itemFileName;
 				Common::String alphaFileName;
 				getFileNamesForItemGraphic(invItem.itemID, itemFileName, alphaFileName);
-				invItem.graphic = loadGraphic(itemFileName, alphaFileName, false);
+				invItem.graphic = loadGraphic(itemFileName, false);
+				invItem.mask = loadGraphic(alphaFileName, false);
 			}
 		}
 
 		for (uint page = 0; page < kNumInventoryPages; page++) {
 			for (uint slot = 0; slot < kNumInventorySlots; slot++) {
 				InventoryItem &invItem = _inventoryPages[page][slot];
-				if (!invItem.itemID)
+				if (!invItem.itemID) {
 					invItem.graphic.reset();
+					invItem.mask.reset();
+				}
 			}
 		}
 
@@ -7043,9 +7112,11 @@ void Runtime::restoreSaveGameSnapshot() {
 			Common::String itemFileName;
 			Common::String alphaFileName;
 			getFileNamesForItemGraphic(_inventoryActiveItem.itemID, itemFileName, alphaFileName);
-			_inventoryActiveItem.graphic = loadGraphic(itemFileName, alphaFileName, false);
+			_inventoryActiveItem.graphic = loadGraphic(itemFileName, false);
+			_inventoryActiveItem.mask = loadGraphic(alphaFileName, false);
 		} else {
 			_inventoryActiveItem.graphic.reset();
+			_inventoryActiveItem.mask.reset();
 		}
 
 		_inventoryPlacedItemCache = InventoryItem();
@@ -7072,9 +7143,11 @@ void Runtime::restoreSaveGameSnapshot() {
 				Common::String itemFileName;
 				Common::String alphaFileName;
 				getFileNamesForItemGraphic(saveItem.itemID, itemFileName, alphaFileName);
-				_inventory[i].graphic = loadGraphic(itemFileName, alphaFileName, false);
+				_inventory[i].graphic = loadGraphic(itemFileName, false);
+				_inventory[i].mask = loadGraphic(alphaFileName, false);
 			} else {
 				_inventory[i].graphic.reset();
+				_inventory[i].mask.reset();
 			}
 		}
 	}

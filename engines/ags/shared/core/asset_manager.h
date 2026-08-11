@@ -40,8 +40,8 @@
 #define AGS_SHARED_CORE_ASSET_MANAGER_H
 
 #include "common/stream.h"
-#include "ags/lib/std/functional.h"
-#include "ags/lib/std/memory.h"
+#include "common/std/functional.h"
+#include "common/std/memory.h"
 #include "ags/shared/core/asset.h"
 #include "ags/shared/util/file.h" // TODO: extract filestream mode constants or introduce generic ones
 
@@ -146,13 +146,10 @@ private:
 	std::vector<AssetLibEx *> _libs;
 	std::vector<AssetLibEx *> _activeLibs;
 
-	struct LibsByPriority {
-		AssetSearchPriority Priority = kAssetPriorityDir;
-
-		bool operator()(const AssetLibInfo *x, const AssetLibInfo *y) const;
-	} _libsByPriority;
+	AssetSearchPriority _libsPriority = kAssetPriorityDir;
+	// Sorting function, depends on priority setting
+	bool (*_libsSorter)(const AssetLibInfo *, const AssetLibInfo *);
 };
-
 
 String GetAssetErrorText(AssetError err);
 

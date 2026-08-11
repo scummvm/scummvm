@@ -27,6 +27,12 @@
 namespace MM {
 namespace Xeen {
 
+enum AwardsButtonTTSTextIndex {
+	kAwardsUp = 0,
+	kAwardsDown = 1,
+	kAwardsExit = 2
+};
+
 void Awards::show(XeenEngine *vm, const Character *ch) {
 	Awards *dlg = new Awards(vm);
 	dlg->execute(ch);
@@ -51,8 +57,12 @@ void Awards::execute(const Character *ch) {
 		windows[30].open();
 	}
 
-	windows[29].writeString(Res.AWARDS_TEXT);
+	Common::String buttonText;
+	windows[29].writeString(Res.AWARDS_TEXT, false, &buttonText);
 	drawButtons(&windows[0]);
+#ifdef USE_TTS
+	setButtonTexts(buttonText);
+#endif
 
 	while (!_vm->shouldExit()) {
 		// Build up a list of awards the character has
@@ -94,6 +104,9 @@ void Awards::execute(const Character *ch) {
 			awards[topIndex + 8].c_str()
 		);
 		windows[30].writeString(msg);
+#ifdef USE_TTS
+		_vm->sayText(buttonText);
+#endif
 		windows[24].update();
 
 		// Wait for keypress
@@ -123,9 +136,9 @@ void Awards::execute(const Character *ch) {
 
 void Awards::addButtons() {
 	_iconSprites.load("award.icn");
-	addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_u, &_iconSprites);
-	addButton(Common::Rect(250, 109, 274, 129), Common::KEYCODE_d, &_iconSprites);
-	addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
+	addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_u, &_iconSprites, kAwardsUp);
+	addButton(Common::Rect(250, 109, 274, 129), Common::KEYCODE_d, &_iconSprites, kAwardsDown);
+	addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites, kAwardsExit);
 }
 
 } // End of namespace Xeen

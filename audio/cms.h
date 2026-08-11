@@ -22,11 +22,7 @@
 #ifndef AUDIO_CMS_H
 #define AUDIO_CMS_H
 
-#include "common/func.h"
-#include "common/ptr.h"
-
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
+#include "audio/chip.h"
 
 namespace CMS {
 
@@ -40,12 +36,7 @@ public:
 	static CMS *create();
 };
 
-/**
- * The type of the CMS timer callback functor.
- */
-typedef Common::Functor0<void> TimerCallback;
-
-class CMS {
+class CMS : virtual public Audio::Chip {
 private:
 	static bool _hasInstance;
 
@@ -87,85 +78,8 @@ public:
 	 */
 	virtual void writeReg(int r, int v) = 0;
 
-	/**
-	 * Start the CMS with callbacks.
-	 */
-	void start(TimerCallback *callback, int timerFrequency = DEFAULT_CALLBACK_FREQUENCY);
-
-	/**
-	 * Stop the CMS
-	 */
-	void stop();
-
-	/**
-	 * Change the callback frequency. This must only be called from a
-	 * timer proc.
-	 */
-	virtual void setCallbackFrequency(int timerFrequency) = 0;
-
-protected:
-	/**
-	 * Start the callbacks.
-	 */
-	virtual void startCallbacks(int timerFrequency) = 0;
-
-	/**
-	 * Stop the callbacks.
-	 */
-	virtual void stopCallbacks() = 0;
-
-	/**
-	 * The functor for callbacks.
-	 */
-	Common::ScopedPtr<TimerCallback> _callback;
-};
-
-/**
- * A CMS that represents an emulated CMS.
- *
- * This will send callbacks based on the number of samples
- * decoded in readBuffer().
- */
-class EmulatedCMS : public CMS, protected Audio::AudioStream {
-protected:
-	static const int FIXP_SHIFT = 16;
-
-public:
-	EmulatedCMS();
-	virtual ~EmulatedCMS();
-
-	// CMS API
-	void setCallbackFrequency(int timerFrequency) override;
-
-	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	int getRate() const override;
-	bool endOfData() const override;
-	bool isStereo() const override;
-
-protected:
-	// CMS API
-	void startCallbacks(int timerFrequency) override;
-	void stopCallbacks() override;
-
-	/**
-	 * Read up to 'length' samples.
-	 *
-	 * Data will be in native endianess, 16 bit per sample, signed. buffer will
-	 * be filled with interleaved left and right channel samples, starting with
-	 * a left sample. The requested number of samples is stereo samples, so if
-	 * you request 2 samples, you will get a total of two left channel and two
-	 * right channel samples.
-	 */
-	virtual void generateSamples(int16 *buffer, int numSamples) = 0;
-
-private:
-	int _baseFreq;
-
-	int _nextTick;
-	int _samplesPerTick;
-
-	Audio::SoundHandle *_handle;
+	using Audio::Chip::start;
+	void start(TimerCallback *callback) { start(callback, DEFAULT_CALLBACK_FREQUENCY); }
 };
 
 } // End of namespace CMS

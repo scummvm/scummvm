@@ -39,7 +39,7 @@ static void getRangeIntersection(float start1, float end1, float start2, float e
 }
 
 TeTiledSurface::TeTiledSurface() : _shouldDraw(true), _codec(nullptr), _colorKeyActive(false), _colorKeyTolerence(0),
-_bottomCrop(0), _topCrop(0), _leftCrop(0), _rightCrop(0), _imgFormat(TeImage::INVALID) {
+_bottomCrop(0), _topCrop(0), _leftCrop(0), _rightCrop(0), _imgFormat() {
 	_frameAnim.frameChangedSignal().add(this, &TeTiledSurface::onFrameAnimCurrentFrameChanged);
 }
 
@@ -60,7 +60,7 @@ byte TeTiledSurface::isLoaded() {
 	return _tiledTexture && _tiledTexture->isLoaded();
 }
 
-bool TeTiledSurface::load(const Common::FSNode &node) {
+bool TeTiledSurface::load(const TetraedgeFSNode &node) {
 	unload();
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();
@@ -76,7 +76,7 @@ bool TeTiledSurface::load(const Common::FSNode &node) {
 
 	if (!texture) {
 		TeCore *core = g_engine->getCore();
-		_codec = core->createVideoCodec(Common::Path(_loadedPath));
+		_codec = core->createVideoCodec(node, _loadedPath);
 		if (!_codec)
 			return false;
 
@@ -85,9 +85,9 @@ bool TeTiledSurface::load(const Common::FSNode &node) {
 		if (_codec->load(node)) {
 			texture->setAccessName(ttPath);
 			resmgr->addResource(texture.get());
-			_imgFormat = _codec->imageFormat();
+			_imgFormat = _codec->pixelFormat();
 
-			if (_imgFormat == TeImage::INVALID) {
+			if (_imgFormat == Graphics::PixelFormat()) {
 				warning("TeTiledSurface::load: Wrong image format on file %s", _loadedPath.toString(Common::Path::kNativeSeparator).c_str());
 				delete _codec;
 				_codec = nullptr;
@@ -159,7 +159,7 @@ bool TeTiledSurface::onFrameAnimCurrentFrameChanged() {
 	if (!_codec)
 		return false;
 
-	if (_imgFormat == TeImage::INVALID) {
+	if (_imgFormat == Graphics::PixelFormat()) {
 		warning("TeTiledSurface::load: Wrong image format on file %s", _loadedPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}

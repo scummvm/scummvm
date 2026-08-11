@@ -35,20 +35,25 @@ class SeekableWriteStream;
 
 namespace Scumm {
 
+#define MAGIC_ARRAY_NUMBER 0x33539000
+
 class ActorHE;
 class ResExtractor;
 #ifdef ENABLE_HE
+class HEFont;
 class LogicHE;
 class MoviePlayer;
 class Sprite;
 class CUP_Player;
 
 class Moonbase;
+class Basketball;
 #endif
 
 class ScummEngine_v60he : public ScummEngine_v6 {
 #ifdef ENABLE_HE
 	friend class Moonbase;
+	friend class Basketball;
 #endif
 protected:
 	enum SubOpType {
@@ -82,6 +87,7 @@ public:
 #ifdef ENABLE_HE
 public:
 	Moonbase *_moonbase;
+	Basketball *_basketball;
 #endif
 
 public:
@@ -273,7 +279,7 @@ protected:
 
 #ifdef USE_ENET
 class Net;
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 class Lobby;
 #endif
 #endif
@@ -281,6 +287,7 @@ class Lobby;
 class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
 	friend class Gdi;
+	friend class HEFont;
 
 protected:
 	enum SubOpType {
@@ -377,27 +384,30 @@ protected:
 		SO_RANGE_ARRAY_ASSIGNMENT = 128,
 		SO_COMPLEX_ARRAY_MATH_OPERATION = 138,
 		SO_FORMATTED_STRING = 194,
+		SO_REC = 195,
+		SO_BAK = 199,
+		SO_BAKREC = 200,
 		SO_UNDIM_ARRAY = 204,
 	};
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 	struct ArrayHeader {
-		int32 type;      //0
-		int32 dim1start; //4
-		int32 dim1end;   //8
-		int32 dim2start; //0C
-		int32 dim2end;   //10
-		byte data[1];    //14
+		int32 type;
+		int32 acrossMin;
+		int32 acrossMax;
+		int32 downMin;
+		int32 downMax;
+		byte data[1];
 	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 	int _stringLength = 1;
-	byte _stringBuffer[4096];
+	byte _stringBuffer[4096] = {};
 
-	WizImageCommand _wizImageCommand;
-	FloodFillCommand _floodFillCommand;
+	WizImageCommand _wizImageCommand = {};
+	FloodFillCommand _floodFillCommand = {};
 
 public:
 	ScummEngine_v72he(OSystem *syst, const DetectorResult &dr);
@@ -421,17 +431,22 @@ protected:
 	void redrawBGAreas() override;
 	void checkExecVerbs() override;
 
-	byte *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end, bool newArray = false, int *newid = NULL);
+	byte *defineArray(int array, int type, int downMin, int downMax, int acrossMin, int acrossMax, bool newArray = false, int *newid = NULL);
 	int readArray(int array, int idx2, int idx1) override;
 	void writeArray(int array, int idx2, int idx1, int value) override;
 	void redimArray(int arrayId, int newDim2start, int newDim2end,
 					int newDim1start, int newDim1end, int type);
-	void checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end);
+	void checkArrayLimits(int array, int downMin, int downMax, int acrossMin, int acrossMax);
 	void copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
 					int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end);
-	void copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num);
+	void getArrayDataPtrAndDataSize(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int32 resID);
+	void arrayBlockOperation(
+		int dstVariable, int dstDownMin, int dstDownMax, int dstAcrossMin, int dstAcrossMax,
+		int a2Variable, int a2DownMin, int a2DownMax, int a2AcrossMin, int a2AcrossMax,
+		int a1Variable, int a1DownMin, int a1DownMax, int a1AcrossMin, int a1AcrossMax,
+		int (*op)(int a2, int a1));
 
 	void decodeParseString(int a, int b) override;
 	void decodeScriptString(byte *dst, bool scriptString = false);
@@ -572,11 +587,12 @@ class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class LogicHE;
 #ifdef USE_ENET
 	friend class Net;
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	friend class Lobby;
 #endif
 #endif
 	friend class Moonbase;
+	friend class Basketball;
 	friend class MoviePlayer;
 	friend class Sprite;
 	friend class Wiz;
@@ -639,11 +655,8 @@ protected:
 		SO_FONT_RENDER = 143,
 		SO_CLOSE = 165,
 		SO_RENDER_ELLIPSE = 189,
-		SO_REC = 195,
 		SO_FONT_END = 196,
-		SO_ACTOR_VARIABLE = 198,
-		SO_BAK = 199,
-		SO_BAKREC = 200
+		SO_ACTOR_VARIABLE = 198
 	};
 
 	struct VideoParameters {
@@ -671,7 +684,7 @@ protected:
 #ifdef USE_ENET
 public:
 	Net *_net;
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 	Lobby *_lobby;
 #endif
 #endif
@@ -709,8 +722,8 @@ protected:
 	bool heAuxProcessFileRelativeBlock(HEAnimAuxData *auxInfoPtr, const byte *dataBlockPtr);
 	bool heAuxProcessDisplacedBlock(HEAnimAuxData *auxInfoPtr, const byte *displacedBlockPtr);
 
-	void getArrayDim(int array, int *dim2start, int *dim2end, int *dim1start, int *dim1end);
-	void sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder);
+	void getArrayDim(int array, int *downMin, int *downMax, int *acrossMin, int *acrossMax);
+	void sortArray(int array, int downMin, int downMax, int acrossMin, int acrossMax, int sortOrder);
 
 public:
 	int getGroupSpriteArray(int spriteGroupId);
@@ -789,11 +802,11 @@ protected:
 	byte VAR_NUM_SPRITE_GROUPS;
 	byte VAR_NUM_SPRITES;
 	byte VAR_NUM_PALETTES;
-	byte VAR_NUM_UNK;
+	byte VAR_NUM_WINDOWS;
 	byte VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS;
 
 	byte VAR_U32_VERSION;
-	byte VAR_U32_ARRAY_UNK;
+	byte VAR_U32_RESERVED;
 
 #ifdef USE_ENET
 	byte VAR_REMOTE_START_SCRIPT = 98;
@@ -815,8 +828,13 @@ protected:
 };
 
 class ScummEngine_v99he : public ScummEngine_v95he {
+friend class ScummEngine_v72he;
+friend class ScummEngine_v90he;
+friend class Wiz;
+
 public:
-	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v95he(syst, dr) {}
+	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr);
+	~ScummEngine_v99he() override;
 
 	void resetScumm() override;
 
@@ -832,11 +850,15 @@ protected:
 	void setPaletteFromPtr(const byte *ptr, int numcolor = -1) override;
 	void setPalColor(int index, int r, int g, int b) override;
 	void updatePalette() override;
+
+	HEFont *_heFont = nullptr;
 };
 
 class ScummEngine_v100he : public ScummEngine_v99he {
 friend class AI;
 friend class Moonbase;
+friend class LogicHEBasketball;
+friend class Basketball;
 
 // The following engine versions use sub opcodes from this version
 friend class ScummEngine_v71he;
@@ -1116,6 +1138,8 @@ protected:
 	byte VAR_U32_USER_VAR_D;
 	byte VAR_U32_USER_VAR_E;
 	byte VAR_U32_USER_VAR_F;
+	byte VAR_U32_USER_VAR_G;
+	byte VAR_U32_USER_VAR_H;
 
 	byte VAR_REMOTE_START_SCRIPT;
 	byte VAR_NETWORK_AVAILABLE;

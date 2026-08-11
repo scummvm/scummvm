@@ -28,13 +28,22 @@ namespace Freescape {
 
 void DrillerEngine::initZX() {
 	_viewArea = Common::Rect(56, 20, 264, 124);
+	_soundIndexShoot = 1;
+	_soundIndexCollide = 2;
+	_soundIndexStepUp = 3;
+	_soundIndexStepDown = 3;
+	_soundIndexMenu = 6;
+	_soundIndexAreaChange = 10;
+	_soundIndexHit = 7;
+	_soundIndexFallen = 9;
+	_soundIndexMissionComplete = 13;
 }
 
 void DrillerEngine::loadAssetsZXFullGame() {
 	Common::File file;
 	file.open("driller.zx.title");
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find driller.zx.title");
 
@@ -42,7 +51,7 @@ void DrillerEngine::loadAssetsZXFullGame() {
 
 	file.open("driller.zx.border");
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find driller.zx.border");
 	file.close();
@@ -58,11 +67,11 @@ void DrillerEngine::loadAssetsZXFullGame() {
 		loadMessagesFixedSize(&file, 0x20e4, 14, 20);
 
 	if (_variant & GF_ZX_RETAIL)
-		loadFonts(&file, 0x62ca, _font);
+		loadFonts(&file, 0x62ca);
 	else if (_variant & GF_ZX_BUDGET)
-		loadFonts(&file, 0x5aa8, _font);
+		loadFonts(&file, 0x5aa8);
 	else if (_variant & GF_ZX_DISC)
-		loadFonts(&file, 0x63f0, _font);
+		loadFonts(&file, 0x63f0);
 
 	if (_variant & GF_ZX_DISC)
 		loadGlobalObjects(&file, 0x1d13, 8);
@@ -78,6 +87,8 @@ void DrillerEngine::loadAssetsZXFullGame() {
 
 	else
 		error("Unknown ZX spectrum variant");
+
+	_sound = loadSpeakerFxDrillerZX();
 }
 
 void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
@@ -98,15 +109,15 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 174, 188, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 149, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 157, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 165, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 151, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 151, 157, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 151, 165, front, back, surface);
 	if (_playerHeightNumber >= 0)
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 72, 165, front, back, surface);
 	else
 		drawStringInSurface(Common::String::format("%s", "J"), 72, 165, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 62, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 63, 149, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 63, 157, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 215, 133, white, back, surface);
 
@@ -114,13 +125,13 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 185, 12, front, back, surface);
 	drawStringInSurface(Common::String::format("%02d", minutes), 207, 12, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 230, 12, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 231, 12, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 167, 181, back, front, surface);
+		drawStringInSurface(message, 168, 181, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -131,7 +142,7 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 167, 181, front, back, surface);
+		drawStringInSurface(message, 168, 181, front, back, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
@@ -151,6 +162,9 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 		Common::Rect shieldBar(106 - shield, 181, 106, 187);
 		surface->fillRect(shieldBar, front);
 	}
+
+	drawCompass(surface, 103, 160, compassYaw() - 30, 10, 75, front);
+	drawCompass(surface, 220 - 3, 160, _pitch - 30, 10, 60, front);
 }
 
 } // End of namespace Freescape

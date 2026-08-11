@@ -20,6 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORCE_TEXT_CONSOLE
 
 #include "common/textconsole.h"
 #include "common/system.h"
@@ -53,7 +54,8 @@ void setErrorHandler(ErrorHandler handler) {
 } // End of namespace Common
 
 
-#ifndef DISABLE_TEXT_CONSOLE
+// Intentionally always compiled to support FORCE_TEXT_CONSOLE
+//#ifndef DISABLE_TEXT_CONSOLE
 
 void warning(const char *s, ...) {
 	Common::String output;
@@ -74,7 +76,7 @@ void warning(const char *s, ...) {
 	// any OSystem yet.
 }
 
-#endif
+//#endif
 
 void NORETURN_PRE error(const char *s, ...) {
 	// We don't use String::vformat here, as that require

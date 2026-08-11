@@ -28,6 +28,7 @@
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "backends/events/default/default-events.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 #include "backends/mutex/wii/wii-mutex.h"
 #include "backends/saves/default/default-saves.h"
@@ -40,7 +41,8 @@ OSystem_Wii::OSystem_Wii() :
 	_startup_time(0),
 
 	_overlayInGUI(false),
-	_cursorDontScale(true),
+	_cursorScaleX(0),
+	_cursorScaleY(0),
 	_cursorPaletteDisabled(true),
 	_cursorPalette(NULL),
 	_cursorPaletteDirty(false),
@@ -49,6 +51,7 @@ OSystem_Wii::OSystem_Wii() :
 	_gameWidth(0),
 	_gameHeight(0),
 	_gamePixels(NULL),
+	_gamePixelsTexture(NULL),
 	_gameDirty(false),
 
 	_overlayVisible(true),
@@ -58,6 +61,7 @@ OSystem_Wii::OSystem_Wii() :
 	_overlayPixels(NULL),
 	_overlayDirty(false),
 
+	_blitFunc(NULL),
 	_lastScreenUpdate(0),
 	_currentWidth(0),
 	_currentHeight(0),
@@ -69,11 +73,9 @@ OSystem_Wii::OSystem_Wii() :
 	_bilinearFilter(false),
 	_pfRGB565(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
 	_pfRGB3444(Graphics::PixelFormat(2, 4, 4, 4, 3, 8, 4, 0, 12)),
-#ifdef USE_RGB_COLOR
 	_pfGame(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfGameTexture(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfCursor(Graphics::PixelFormat::createFormatCLUT8()),
-#endif
 
 	_optionsDlgActive(false),
 	_consoleVisible(false),
@@ -134,6 +136,7 @@ void OSystem_Wii::initBackend() {
 	if (!getcwd(buf, MAXPATHLEN))
 		Common::strcpy_s(buf, "/");
 
+	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager(buf);
 	_timerManager = new DefaultTimerManager();
 
@@ -141,7 +144,7 @@ void OSystem_Wii::initBackend() {
 	initSfx();
 	initEvents();
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 void OSystem_Wii::quit() {
@@ -343,7 +346,7 @@ Common::String OSystem_Wii::getSystemLanguage() const {
 	} else {
 		// This will only happen when new languages are added to the API.
 		warning("WII: Unknown system language: %d", langID);
-		return EventsBaseBackend::getSystemLanguage();
+		return BaseBackend::getSystemLanguage();
 	}
 }
 #endif // !GAMECUBE

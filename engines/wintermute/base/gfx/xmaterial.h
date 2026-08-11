@@ -29,77 +29,44 @@
 #define WINTERMUTE_XMATERIAL_H
 
 #include "engines/wintermute/base/base_named_object.h"
+#include "engines/wintermute/base/gfx/xskinmesh.h"
 
 namespace Wintermute {
 
+class Effect3D;
+class Effect3DParams;
 class BaseSprite;
 class BaseSurface;
 class VideoTheoraPlayer;
 class XFileData;
-
-struct ColorValue {
-	float &r() {
-		return data[0];
-	}
-
-	float r() const {
-		return data[0];
-	}
-
-	float &g() {
-		return data[1];
-	}
-
-	float g() const {
-		return data[1];
-	}
-
-	float &b() {
-		return data[2];
-	}
-
-	float b() const {
-		return data[2];
-	}
-
-	float &a() {
-		return data[3];
-	}
-
-	float a() const {
-		return data[3];
-	}
-
-	float data[4];
-};
 
 class Material : public BaseNamedObject {
 public:
 	Material(BaseGame *inGame);
 	virtual ~Material();
 
-	ColorValue _diffuse;
-	ColorValue _ambient;
-	ColorValue _specular;
-	ColorValue _emissive;
-	float _shininess;
+	DXMaterial _material;
 
-	bool setTexture(const Common::String &filename, bool adoptName = false);
+	bool setTexture(const char *filename, bool adoptName = false);
 	bool setSprite(BaseSprite *sprite, bool adoptName = false);
 	bool setTheora(VideoTheoraPlayer *theora, bool adoptName = false);
 	BaseSurface *getSurface();
+	bool setEffect(Effect3D *effect, Effect3DParams *params, bool adoptName = false);
 
-	bool loadFromX(XFileData *xobj, const Common::String &filename);
+	Effect3D *getEffect() { return _effect; }
+	Effect3DParams *getEffectParams() { return _params; }
 
 	bool invalidateDeviceObjects();
 	bool restoreDeviceObjects();
 
 private:
-	Common::String _textureFilename;
+	char *_textureFilename;
 	BaseSurface *_surface;
 	bool _ownedSurface;
 	BaseSprite *_sprite;
 	VideoTheoraPlayer *_theora;
+	Effect3D *_effect;
+	Effect3DParams *_params;
 };
 
 } // namespace Wintermute

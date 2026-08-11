@@ -111,11 +111,24 @@ void SceneScriptAR01::InitializeScene() {
 	        && Game_Flag_Query(kFlagHC01toAR01)
 	) {
 		Scene_Loop_Set_Default(kAR01LoopMainLoop);
+	// TODO: Query check not required as kAR01LoopMainLoopNoSpinner loop is set in the default else branch.
+	// The duplicate branches here reflect duplication in the original code.
+	// However, only the default/final else branch is indeed required to preserve the original logic.
+	// Originally:
+	// "!Game_Flag_Query(kFlagSpinnerAtAR01) &&  Game_Flag_Query(kFlagHC01toAR01)"
+	// corresponds to the case of "No spinner at AR01 and coming from HC01" (which can happen)
+	// The final else branch covered the case of "No spinner at AR01 and not coming from HC01 nor coming from AR02",
+	// which is practically impossible in normal gameplay, and only possible by debugging/hacking,
+	// yet good to have as "default" branch.
+	// Both branches set the same default loop (kAR01LoopMainLoopNoSpinner).
+	// Merging the two branches into one eventual else covers both of these cases.
+#if 0
 	} else if (!Game_Flag_Query(kFlagSpinnerAtAR01)
 	        &&  Game_Flag_Query(kFlagHC01toAR01)
 	) {
 		Scene_Loop_Set_Default(kAR01LoopMainLoopNoSpinner);
-	} else { // bug? branch content is equal to previous branch
+#endif
+	} else {
 		Scene_Loop_Set_Default(kAR01LoopMainLoopNoSpinner);
 	}
 }

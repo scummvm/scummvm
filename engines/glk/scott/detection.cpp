@@ -36,6 +36,7 @@
 #include "glk/blorb.h"
 #include "glk/scott/detection.h"
 #include "glk/scott/detection_tables.h"
+#include "glk/scott/zx_spectrum.h"
 
 namespace Glk {
 namespace Scott {
@@ -43,6 +44,10 @@ namespace Scott {
 void ScottMetaEngine::getSupportedGames(PlainGameList &games) {
 	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd)
 		games.push_back(*pd);
+}
+
+const GlkDetectionEntry* ScottMetaEngine::getDetectionEntries() {
+	return SCOTT_GAMES;
 }
 
 GameDescriptor ScottMetaEngine::findGame(const char *gameId) {
@@ -55,7 +60,7 @@ GameDescriptor ScottMetaEngine::findGame(const char *gameId) {
 }
 
 bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = {".z80", ".saga", ".dat", ".D64", ".T64", "fiad", nullptr};
+	const char *const EXTENSIONS[] = {".z80", ".tap", ".tzx", ".saga", ".dat", ".D64", ".T64", "fiad", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -74,12 +79,21 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (!gameFile.open(*file))
 			continue;
 		Common::String md5;
-		if (filename.hasSuffixIgnoreCase(".D64"))
-			md5 = Common::computeStreamMD5AsString(gameFile);
-		else
-			md5 = Common::computeStreamMD5AsString(gameFile, 5000);
-
 		size_t filesize = (size_t)gameFile.size();
+		if (filename.hasSuffixIgnoreCase(".tap") || filename.hasSuffixIgnoreCase(".tzx")) {
+			uint32 codeSize = 0;
+			md5 = computeZXSpectrumTapeCodeMD5(gameFile, &codeSize);
+			filesize = codeSize;
+			if (md5.empty()) {
+				gameFile.close();
+				continue;
+			}
+		} else if (filename.hasSuffixIgnoreCase(".D64")) {
+			md5 = Common::computeStreamMD5AsString(gameFile);
+		} else {
+			md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+		}
+
 		gameFile.seek(0);
 		isBlorb = Blorb::isBlorb(gameFile, ID_SAAI);
 		gameFile.close();
@@ -96,6 +110,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 			// ignore possible variants for common extensions to prevent flooding in mass-add
 			if (!isBlorb && (filename.hasSuffixIgnoreCase(".z80") || filename.hasSuffixIgnoreCase(".dat") ||
+				filename.hasSuffixIgnoreCase(".tap") || filename.hasSuffixIgnoreCase(".tzx") ||
 				filename.hasSuffixIgnoreCase(".d64") || filename.hasSuffixIgnoreCase(".t64")))
 				continue;
 

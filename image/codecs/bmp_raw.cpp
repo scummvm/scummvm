@@ -129,17 +129,10 @@ Graphics::PixelFormat BitmapRawDecoder::getPixelFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();
 	case 16:
 		return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-#ifdef SCUMM_LITTLE_ENDIAN
 	case 24:
-		return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+		return Graphics::PixelFormat::createFormatBGR24();
 	case 32:
-		return Graphics::PixelFormat(4, 8, 8, 8, _ignoreAlpha ? 0 : 8, 16, 8, 0, 24);
-#else
-	case 24:
-		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-	case 32:
-		return Graphics::PixelFormat(4, 8, 8, 8, _ignoreAlpha ? 0 : 8, 8, 16, 24, 0);
-#endif
+		return Graphics::PixelFormat::createFormatBGRA32(!_ignoreAlpha);
 	default:
 		break;
 	}

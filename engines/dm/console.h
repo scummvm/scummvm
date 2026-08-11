@@ -43,6 +43,7 @@ private:
 	bool Cmd_map(int argc, const char **argv);
 	bool Cmd_listItems(int argc, const char **argv);
 	bool Cmd_gimme(int argc, const char **argv);
+	bool Cmd_nuke(int argc, const char **argv);
 
 	const char *debugGetDirectionName(int16 dir);
 

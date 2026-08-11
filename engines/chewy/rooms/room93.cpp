@@ -34,28 +34,28 @@ void Room93::entry() {
 
 	_G(gameState).scrollx = 0;
 	hide_person();
-	startSetAILWait(3, 0, ANI_GO);
+	startDetailWait(3, 0, ANI_GO);
 	_G(det)->set_static_ani(0, -1);
 	startAadWait(616);
 	_G(det)->del_static_ani(0);
-	startSetAILWait(3, 1, ANI_FRONT);
+	startDetailWait(3, 1, ANI_FRONT);
 	_G(det)->set_static_ani(1, -1);
 	startDialogCloseupWait(27);
 
 	if (!_G(gameState).flags37_40) {
 		_G(det)->del_static_ani(1);
 		hideCur();
-		startSetAILWait(3, 1, ANI_GO);
+		startDetailWait(3, 1, ANI_GO);
 		_G(det)->set_static_ani(0, -1);
 		startAadWait(549);
 		_G(det)->del_static_ani(0);
-		startSetAILWait(3, 1, ANI_FRONT);
-		startSetAILWait(6, 1, ANI_FRONT);
+		startDetailWait(3, 1, ANI_FRONT);
+		startDetailWait(6, 1, ANI_FRONT);
 		_G(det)->set_static_ani(7, -1);
 		startAadWait(550);
 		_G(det)->del_static_ani(7);
-		startSetAILWait(6, 1, ANI_GO);
-		startSetAILWait(2, 1, ANI_FRONT);
+		startDetailWait(6, 1, ANI_GO);
+		startDetailWait(2, 1, ANI_FRONT);
 		setupScreen(DO_SETUP);
 		showCur();
 	}

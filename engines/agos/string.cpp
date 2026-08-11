@@ -135,6 +135,12 @@ const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 		Common::strlcpy((char *)dst, (const char *)stringPtr, 180);
 	}
 
+	if (_useSimon2LanguageOverlay && *dst) {
+		Common::String translated = translateLanguageOverlay((const char *)dst);
+		if (translated != (const char *)dst)
+			Common::strlcpy((char *)dst, translated.c_str(), 180);
+	}
+
 	// WORKAROUND bug #2780: The French version of Simon 1 and the
 	// Polish version of Simon 2 used excess spaces, at the end of many
 	// messages, so we strip off those excess spaces.
@@ -546,8 +552,8 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		stopAnimate(vgaSpriteId + 199);
 	else
 		stopAnimateSimon2(2, vgaSpriteId);
-
-	if (getPlatform() == Common::kPlatformAmiga) {
+	// Simon II Amiga is built upon the Windows release so should draw subtitles the same way.
+	if (getPlatform() == Common::kPlatformAmiga  && getGameType() != GType_SIMON2) {
 		color = color * 3 + 1;
 		renderStringAmiga(vgaSpriteId, color, width, height, convertedString);
 	} else {

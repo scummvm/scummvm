@@ -45,7 +45,9 @@ struct Script {
 
 	/* 38 */ uint32 scriptFlags;
 	/* 42 */ int16 unk42;
-	/* 44 */ int32 castID;
+	/* 44 */ int16 unk43;
+	// This castID is not reliable
+	/* 46 */ int16 castID;
 	/* 48 */ int16 factoryNameID;
 	/* 50 */ uint16 handlerVectorsCount;
 	/* 52 */ uint32 handlerVectorsOffset;

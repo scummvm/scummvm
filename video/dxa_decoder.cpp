@@ -73,13 +73,12 @@ void DXADecoder::readSoundData(Common::SeekableReadStream *stream) {
 	}
 }
 
-DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) {
+DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) : _palette(256) {
 	_fileStream = stream;
 	_curFrame = -1;
 	_frameStartOffset = 0;
 	_decompBuffer = 0;
 	_inBuffer = 0;
-	memset(_palette, 0, 256 * 3);
 
 	uint8 flags = _fileStream->readByte();
 	_frameCount = _fileStream->readUint16BE();
@@ -109,7 +108,7 @@ DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) {
 	_surface = new Graphics::Surface();
 	_surface->format = Graphics::PixelFormat::createFormatCLUT8();
 
-	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d", flags, getFrameCount(), getWidth(), getHeight(), getFrameRate().toInt());
+	debugC(2, kDebugLevelGVideo, "flags 0x0%x framesCount %d width %d height %d rate %d", flags, getFrameCount(), getWidth(), getHeight(), getFrameRate().toInt());
 
 	_frameSize = _width * _height;
 	_decompBufferSize = _frameSize;
@@ -403,6 +402,14 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 
 						uint8 *b1 = (uint8 *)_frameBuffer2 + (sx+mx) + (sy+my) * _width;
 						for (int yc = 0; yc < BLOCKH / 2; yc++) {
+							if (sy + yc + my >= _curHeight) {
+								warning("DXA decode13: Motion vector (%d, %d) out of bounds (y direction)", mx, my);
+								break;
+							}
+							if (sx + BLOCKW / 2 + mx > _width) {
+								warning("DXA decode13: Motion vector (%d, %d) out of bounds (x direction)", mx, my);
+								break;
+							}
 							memcpy(b2, b1, BLOCKW / 2);
 							b1 += _width;
 							b2 += _width;
@@ -465,7 +472,13 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 const Graphics::Surface *DXADecoder::DXAVideoTrack::decodeNextFrame() {
 	uint32 tag = _fileStream->readUint32BE();
 	if (tag == MKTAG('C','M','A','P')) {
-		_fileStream->read(_palette, 256 * 3);
+		for (int i = 0; i < 256; i++) {
+			byte r = _fileStream->readByte();
+			byte g = _fileStream->readByte();
+			byte b = _fileStream->readByte();
+			_palette.set(i, r, g, b);
+		}
+
 		_dirtyPalette = true;
 	}
 

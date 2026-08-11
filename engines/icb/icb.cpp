@@ -122,7 +122,7 @@ Common::KeymapArray IcbEngine::initKeymapsIcb(const char *target) {
 	engineKeyMap->addAction(act);
 
 	// I18N: Action in In Cold Blood
-	act = new Action("BSID", _("Side Step"));
+	act = new Action("BSID", _("Side step"));
 	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 	engineKeyMap->addAction(act);
@@ -188,7 +188,7 @@ Common::KeymapArray IcbEngine::initKeymapsEldorado(const char *target) {
 	engineKeyMap->addAction(act);
 
 	// I18N: Action in In Cold Blood
-	act = new Action("BSID", _("Side Step"));
+	act = new Action("BSID", _("Side step"));
 	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 	engineKeyMap->addAction(act);

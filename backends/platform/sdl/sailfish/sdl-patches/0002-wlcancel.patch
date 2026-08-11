@@ -1,0 +1,49 @@
+commit 7dd1cdd4656e0bdbf0f851392f644b2a05c32d64
+Author: Vladimir Serbinenko <phcoder@gmail.com>
+Date:   Thu Sep 26 17:19:14 2024 +0300
+
+    Handle wayland touch cancel message
+    
+    Suppose host has some three-finger gesture. Then we get the following sequence
+    of events:
+    DOWN-DOWN-DOWN-MOTION-CANCEL
+    
+    Note that there is no UP in this sequence. So if we don't handle CANCEL then
+    we end up thinking that fingers are still touching the screen. Ideally we
+    should inform the application that cancel has happened as not to trigger
+    spurious taps but still this is way better than being stuck with phantom
+    finger touch.
+
+diff --git a/src/video/wayland/SDL_waylandevents.c b/src/video/wayland/SDL_waylandevents.c
+index 65838f480..236dc3232 100644
+--- a/src/video/wayland/SDL_waylandevents.c
++++ b/src/video/wayland/SDL_waylandevents.c
+@@ -932,6 +932,28 @@ static void touch_handler_frame(void *data, struct wl_touch *touch)
+ 
+ static void touch_handler_cancel(void *data, struct wl_touch *touch)
+ {
++	struct SDL_WaylandTouchPoint *tp;
++	while ((tp = touch_points.head)) {
++		wl_fixed_t fx = 0, fy = 0;
++		struct wl_surface *surface = NULL;
++		int id = tp->id;
++
++		touch_del(id, &fx, &fy, &surface);
++
++		if (surface) {
++			SDL_WindowData *window_data = (SDL_WindowData *)wl_surface_get_user_data(surface);
++
++			if (window_data) {
++				const double dblx = wl_fixed_to_double(fx) * window_data->pointer_scale_x;
++				const double dbly = wl_fixed_to_double(fy) * window_data->pointer_scale_y;
++				const float x = dblx / window_data->sdlwindow->w;
++				const float y = dbly / window_data->sdlwindow->h;
++
++				SDL_SendTouch((SDL_TouchID)(intptr_t)touch, (SDL_FingerID)id,
++					      window_data->sdlwindow, SDL_FALSE, x, y, 1.0f);
++			}
++		}
++	}
+ }
+ 
+ static const struct wl_touch_listener touch_listener = {

@@ -183,6 +183,10 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			uint32 offset, length, compLength, flags;/*, timeDate1, timeDate2;*/
 
 			nameLength = stream->readByte();
+			if (stream->eos()) {
+				debugC(kWintermuteDebugFileAccess, "  Warning: end of package file '%s'.", filename.c_str());
+				break;
+			}
 			name = new char[nameLength];
 			stream->read(name, nameLength);
 
@@ -195,6 +199,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			debugC(kWintermuteDebugFileAccess, "Package contains %s", name);
 
 			Common::Path path(name, '\\');
+
 			delete[] name;
 			name = nullptr;
 

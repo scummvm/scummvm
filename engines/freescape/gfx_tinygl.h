@@ -23,8 +23,10 @@
 #define FREESCAPE_GFX_TINYGL_H
 
 #include "math/vector3d.h"
+#include "common/hashmap.h"
 
 #include "freescape/gfx.h"
+#include "freescape/gfx_tinygl_texture.h"
 
 namespace Freescape {
 
@@ -39,41 +41,84 @@ public:
 		TGLfloat z;
 	};
 
+	Vertex *_verts;
 	void copyToVertexArray(uint idx, const Math::Vector3d &src) {
 		assert(idx < kVertexArraySize);
-		_verts[idx].x = src.x(); _verts[idx].y = src.y(); _verts[idx].z = src.z();
+		_verts[idx].x = src.x();
+		_verts[idx].y = src.y();
+		_verts[idx].z = src.z();
 	}
 
-	Vertex *_verts;
+	struct Coord {
+		TGLfloat x;
+		TGLfloat y;
+	};
+
+	Coord *_texCoord;
+
+	void copyToTexCoordArray(uint idx, float x, float y) {
+		assert(idx < kVertexArraySize);
+		_texCoord[idx].x = x;
+		_texCoord[idx].y = y;
+	}
+
+	bool _stippleEnabled;
+	TinyGL3DTexture *_stippleTexture;
+	Common::HashMap<uint64, TinyGL3DTexture *> _stippleTextureCache;
+	uint32 _lastColorSet0;
+	uint32 _lastColorSet1;
 
 	virtual void init() override;
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) override;
 	virtual void setViewport(const Common::Rect &rect) override;
-	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) override;
-	virtual void updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) override;
+	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float rollAngle = 0.0f) override;
+	virtual void updateProjectionMatrix(float fov, float aspectRatio, float nearClipPlane, float farClipPlane) override;
 
 	virtual void useColor(uint8 r, uint8 g, uint8 b) override;
 	virtual void polygonOffset(bool enabled) override;
-	virtual void depthTesting(bool enabled) override;
+	virtual void enableCulling(bool enabled) override;
 	virtual void setStippleData(byte *data) override;
 	virtual void useStipple(bool enabled) override;
 
-	TGLubyte *_variableStippleArray;
-
-	Texture *createTexture(const Graphics::Surface *surface) override;
+	Texture *createTexture(const Graphics::Surface *surface, bool is3D = false) override;
 	void freeTexture(Texture *texture) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) override;
+	void drawSkybox(Texture *texture, Math::Vector3d camera) override;
+	void drawThunder(Texture *texture, Math::Vector3d camera, float size) override;
 
-	virtual void renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewPort) override;
-	virtual void renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewPort) override;
-	virtual void renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewPort) override;
-	virtual void renderCrossair(const Common::Point crossairPosition) override;
+	virtual void renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect &viewPort) override;
+	virtual void renderPlayerShootBall(byte color, const Common::Point &position, int frame, const Common::Rect &viewPort) override;
+	virtual void renderPlayerShootRay(byte color, const Common::Point &position, const Common::Rect &viewPort) override;
+	virtual void renderCrossair(const Common::Point &crossairPosition) override;
 
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) override;
 
+	void drawCelestialBody(Math::Vector3d position, float radius, byte color) override;
+
 	virtual void flipBuffer() override;
 	virtual void drawFloor(uint8 color) override;
+	virtual void fillViewportStippled(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, byte *stipple) override;
 	virtual Graphics::Surface *getScreenshot() override;
+
+	byte _defaultStippleArray[128] = {
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+	};
+
 };
 
 } // End of namespace Freescape

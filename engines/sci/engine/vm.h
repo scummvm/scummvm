@@ -145,6 +145,7 @@ enum GlobalVar {
 	kGlobalVarCurrentRoom    = 2,
 	kGlobalVarSpeed          = 3,  // SCI16
 	kGlobalVarQuit           = 4,
+	kGlobalVarCast           = 5,
 	kGlobalVarSounds         = 8,
 	kGlobalVarPlanes         = 10, // SCI32
 	kGlobalVarCurrentRoomNo  = 11,

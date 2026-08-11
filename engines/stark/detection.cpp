@@ -269,7 +269,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"tlj", "Demo",
 		AD_ENTRY2s("x.xarc",		"97abc1bb9239dee4c208e533f3c97e1c", 98,
 				   "chapters.ini",	"f6a2007300209492b7b90b4c0467832d", 462),
-		Common::SE_SWE,
+		Common::SV_SWE,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
 		GUIO_NONE
@@ -281,7 +281,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"tlj", "4 CD",
 		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"f6a2007300209492b7b90b4c0467832d", 462),
-		Common::SE_SWE,
+		Common::SV_SWE,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO_NONE
@@ -293,7 +293,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"tlj", "DVD",
 		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"f6a2007300209492b7b90b4c0467832d", 462),
-		Common::SE_SWE,
+		Common::SV_SWE,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO_NONE
@@ -316,7 +316,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Provided by Faalargon, Bugreport #11883 (#1440 in Residualvm)
 	// Folder structure is completely different. Unsupported for now
 	{
-		"tlj", _s("Missing game code"), // Reason for being unsupported
+		"tlj", MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 		AD_ENTRY2s("x.xarc",		"6c6c388f757adcc49e7f33b0b2cccf96", 2904,
 				   "chapters.ini",	"6ee43a176a5eb94153c2d813261c3226", 252),
 		Common::PL_POL,
@@ -398,12 +398,24 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO_NONE
 	},
 
+	// The Longest Journey
+	// Hebrew fan-made
+	{
+		"tlj", "Fanmade",
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
+				   "chapters.ini",	"53c9b6087044be0ba05f8d7b39c8ae48", 367),
+		Common::HE_ISR,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
 	AD_TABLE_END_MARKER
 };
 
-class StarkMetaEngineDetection : public AdvancedMetaEngineDetection {
+class StarkMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	StarkMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), starkGames) {
+	StarkMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, starkGames) {
 		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 

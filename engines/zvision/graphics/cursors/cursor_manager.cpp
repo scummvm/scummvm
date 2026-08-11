@@ -20,15 +20,11 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "zvision/zvision.h"
-
 #include "common/system.h"
-
-#include "graphics/pixelformat.h"
 #include "graphics/cursorman.h"
+#include "graphics/pixelformat.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 
 namespace ZVision {
 
@@ -44,7 +40,7 @@ const char *CursorManager::_zNemCursorFileNames[NUM_CURSORS] = { "00act", "arrow
 																 "hright", "hup", "00idle", "left", "right", "ssurr", "stilt", "turn", "up"
 															   };
 
-CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat pixelFormat)
+CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat &pixelFormat)
 	: _engine(engine),
 	  _pixelFormat(pixelFormat),
 	  _cursorIsPushed(false),
@@ -110,7 +106,7 @@ void CursorManager::initialize() {
 }
 
 void CursorManager::changeCursor(const ZorkCursor &cursor) {
-	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), false, &_pixelFormat);
+	CursorMan.replaceCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(), cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor(), &_pixelFormat);
 }
 
 void CursorManager::cursorDown(bool pushed) {

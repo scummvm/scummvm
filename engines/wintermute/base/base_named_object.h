@@ -35,14 +35,13 @@ namespace Wintermute {
 
 class BaseNamedObject : public BaseClass {
 public:
-	char *_name;
 
 	BaseNamedObject(BaseGame *inGame);
 	BaseNamedObject();
 	~BaseNamedObject() override;
 	BaseNamedObject(TDynamicConstructor, TDynamicConstructor);
 
-	const char *getName() const { return _name; }
+	char *_name;
 	void setName(const char *name);
 };
 

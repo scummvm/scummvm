@@ -184,7 +184,6 @@ private:
 
 	ScriptDialect _dialect;
 	uint _loadAsRoom;
-	uint _fileRoom;
 
 	const char *_scrToken;
 	const char *_eroomToken;
@@ -228,7 +227,7 @@ private:
 };
 
 ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::Path &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs)
-	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _loadAsRoom(loadAsRoom), _fileRoom(fileRoom), _gs(gs),
+	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _loadAsRoom(loadAsRoom), _gs(gs),
 	  _scrToken(nullptr), _eroomToken(nullptr) {
 }
 

@@ -87,7 +87,7 @@ void BuriedEngine::checkForOriginalSavedGames() {
 		return;
 
 	// Convert every save slot we find with the original naming scheme
-	for (Common::StringArray::const_iterator file = fileNames.begin(); file != fileNames.end(); ++file) {
+	for (auto &file : fileNames) {
 		int slotNum = 1;
 		if (newFileNames.size() > 0) {
 			Common::String lastFile = newFileNames.back();
@@ -96,7 +96,7 @@ void BuriedEngine::checkForOriginalSavedGames() {
 		}
 
 		Common::String newFile = getMetaEngine()->getSavegameFile(slotNum);
-		convertSavedGame(*file, newFile);
+		convertSavedGame(file, newFile);
 		newFileNames.push_back(newFile);
 	}
 }

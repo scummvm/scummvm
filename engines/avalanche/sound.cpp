@@ -29,13 +29,12 @@ namespace Avalanche {
 
 SoundHandler::SoundHandler(AvalancheEngine *vm) : _vm(vm) {
 	_soundFl = true;
-	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, true);
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 }
 
 SoundHandler::~SoundHandler() {
-	_vm->_mixer->stopHandle(_speakerHandle);
+	delete _speaker;
 }
 
 /**
@@ -70,7 +69,7 @@ void SoundHandler::playNote(int freq, int length) {
 		return;
 
 	// Start a note playing (we will stop it when the timer expires).
-	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, freq, length);
+	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, freq, length);
 }
 
 void SoundHandler::click() {

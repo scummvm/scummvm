@@ -266,7 +266,6 @@ void Player_Towns_v1::stopSound(int sound) {
 	if (sound == 0 || sound == _cdaCurrentSound) {
 		_cdaCurrentSound = 0;
 		_vm->_sound->stopCD();
-		_vm->_sound->stopCDTimer();
 	}
 
 	if (sound != 0 && sound == _eupCurrentSound) {
@@ -281,7 +280,6 @@ void Player_Towns_v1::stopSound(int sound) {
 void Player_Towns_v1::stopAllSounds() {
 	_cdaCurrentSound = 0;
 	_vm->_sound->stopCD();
-	_vm->_sound->stopCDTimer();
 
 	_eupCurrentSound = 0;
 	_eupLooping = false;
@@ -397,7 +395,7 @@ void Player_Towns_v1::restoreAfterLoad() {
 			ptr += 2;
 
 		// WORKAROUND for bug #1873 INDY3 FMTOWNS: Music in Venice is distorted
-		// The resource for sound 40 accidently sets the sound type to 255 instead of 1.
+		// The resource for sound 40 accidentally sets the sound type to 255 instead of 1.
 		if (ptr[7] == 1 || (_vm->_game.id == GID_INDY3 && _eupCurrentSound == 40)) {
 			setSoundVolume(_eupCurrentSound, _eupVolLeft, _eupVolRight);
 			playEuphonyTrack(_eupCurrentSound, ptr);

@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "graphics/palette.h"
 
 namespace TwinE {
 
@@ -65,7 +66,8 @@ private:
 	int32 _fadeOut = 0;
 	/** Auxiliar FLA fade out variable to count frames between the fade */
 	int32 _fadeOutFrames = 0;
-	bool _flaPaletteVar = false;
+	bool _flagFirst = false;
+	Graphics::Palette _paletteOrg{0};
 
 	/** FLA movie file buffer */
 	uint8 _flaBuffer[FLASCREEN_WIDTH * FLASCREEN_HEIGHT] {0};
@@ -85,9 +87,11 @@ private:
 	 * to fullscreen or preserve it and use top and button black bars
 	 */
 	void scaleFla2x();
-	void processFrame();
+	void drawNextFrameFla();
 
+#ifdef USE_GIF
 	void prepareGIF(int index);
+#endif
 	void playGIFMovie(const char *flaName);
 
 	bool playSmkMovie(const char *name, int index);

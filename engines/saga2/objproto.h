@@ -415,7 +415,7 @@ public:
 		kObjAsMousePtr
 	};
 
-	//  Memeber functions
+	//  Member functions
 
 	//  A constructor which takes the data loaded from the file
 	//  and loads it into the various fields...

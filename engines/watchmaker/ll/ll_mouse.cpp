@@ -34,51 +34,6 @@ int32 mPosy = 0, mPosx = 0, mMoveX = 0, mMoveY = 0, mMove = 0, mCounter = 0, mHo
 uint8 bLPressed = 0, bRPressed = 0, mHide = 1, bSkipped = 0;
 uint8 bLPressedPrev = 0, bRPressedPrev = 0;
 
-void MoveHeadAngles(t3dF32 diffx, t3dF32 diffy) {
-	t3dF32 s;
-
-	if (((diffx == 0) && (diffy == 0)) || (bLPressed) || (bRPressed) || (bDialogActive)) return;
-
-	if (diffx < -10) diffx = -10;
-	else if (diffx > 10) diffx = 10;
-	if (diffy < -10) diffy = -10;
-	else if (diffy > 10) diffy = 10;
-
-	s = (t3dF32)bFirstPerson + 1.0f;
-	if (diffx > 0) {
-		if ((HeadAngles.x + diffx) >= MAX_HEAD_ANGLE_X * s) {
-			diffx = MAX_HEAD_ANGLE_X * s - HeadAngles.x;
-			HeadAngles.x = MAX_HEAD_ANGLE_X * s;
-		} else
-			HeadAngles.x += diffx;
-	} else {
-		if ((HeadAngles.x + diffx) < -MAX_HEAD_ANGLE_X * s) {
-			diffx = -MAX_HEAD_ANGLE_X * s - HeadAngles.x;
-			HeadAngles.x = -MAX_HEAD_ANGLE_X * s;
-		} else
-			HeadAngles.x += diffx;
-	}
-
-	if (diffy > 0) {
-		if ((HeadAngles.y + diffy) >= MAX_HEAD_ANGLE_Y * s) {
-			diffy = MAX_HEAD_ANGLE_Y * s - HeadAngles.y;
-			HeadAngles.y = MAX_HEAD_ANGLE_Y * s;
-		} else
-			HeadAngles.y += diffy;
-	} else {
-		if ((HeadAngles.y + diffy) < -MAX_HEAD_ANGLE_Y * s) {
-			diffy = -MAX_HEAD_ANGLE_Y * s - HeadAngles.y;
-			HeadAngles.y = -MAX_HEAD_ANGLE_Y * s;
-		} else
-			HeadAngles.y += diffy;
-	}
-
-	CamAngleX = ((t3dF32)diffy / 180.0f * T3D_PI);
-	CamAngleY = ((t3dF32)diffx / 180.0f * T3D_PI);
-	if (bFirstPerson && !bLockCamera && ((CamAngleX != 0.0f) || (CamAngleY != 0.0f)))
-		t3dRotateMoveCamera(t3dCurCamera, CamAngleX, CamAngleY, 0.0f);
-}
-
 /* -----------------08/05/98 11.47-------------------
  *                  ProcessMouse
  * --------------------------------------------------*/
@@ -96,8 +51,8 @@ void ProcessMouse(WGame &game) {
 
 	diffx = 0.0f;
 	diffy = 0.0f;
-	CamAngleX = 0.0f;
-	CamAngleY = 0.0f;
+	game._cameraMan->CamAngleX = 0.0f;
+	game._cameraMan->CamAngleY = 0.0f;
 	fittedx = 0;
 	fittedy = 0;
 
@@ -138,7 +93,7 @@ void ProcessMouse(WGame &game) {
 	if (mPosy > (int32)windowInfo.height) mPosy = windowInfo.height - 1;
 	else if (mPosy <= 0) mPosy = 1;
 
-	MoveHeadAngles(diffx, diffy);
+	game._cameraMan->MoveHeadAngles(diffx, diffy);
 }
 /* -----------------19/10/98 15.18-------------------
  *      DInputMouseGetCoords

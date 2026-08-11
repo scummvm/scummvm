@@ -30,6 +30,10 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "hopkins/detection.h"
 
 #define MAX_SAVES 99
@@ -86,7 +90,7 @@ const Common::String &HopkinsEngine::getTargetName() const {
 
 } // End of namespace Hopkins
 
-class HopkinsMetaEngine : public AdvancedMetaEngine {
+class HopkinsMetaEngine : public AdvancedMetaEngine<Hopkins::HopkinsGameDescription> {
 public:
 	const char *getName() const override {
 		return "hopkins";
@@ -97,12 +101,14 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Hopkins::HopkinsGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool HopkinsMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -122,28 +128,26 @@ bool Hopkins::HopkinsEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error HopkinsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Hopkins::HopkinsEngine(syst, (const Hopkins::HopkinsGameDescription *)desc);
+Common::Error HopkinsMetaEngine::createInstance(OSystem *syst, Engine **engine, const Hopkins::HopkinsGameDescription *desc) const {
+	*engine = new Hopkins::HopkinsEngine(syst,desc);
 	return Common::kNoError;
 }
 
 SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = Common::String::format("%s.0##", target);
-
-	filenames = saveFileMan->listSavefiles(pattern);
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 
 	Hopkins::hopkinsSavegameHeader header;
-
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
+
+	for (const auto &filename : filenames) {
+		const char *ext = strrchr(filename.c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
 
 		if (slot >= 0 && slot < MAX_SAVES) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 
 			if (in) {
 				if (Hopkins::SaveLoadManager::readSavegameHeader(in, header)) {
@@ -164,9 +168,9 @@ int HopkinsMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void HopkinsMetaEngine::removeSaveState(const char *target, int slot) const {
+bool HopkinsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor HopkinsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -193,6 +197,68 @@ SaveStateDescriptor HopkinsMetaEngine::querySaveMetaInfos(const char *target, in
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray HopkinsMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Hopkins;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "hopkins-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Exit / Skip"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_BACK");
+	gameKeyMap->addAction(act);
+
+	act = new Action("INVENTORY", _("Open inventory"));
+	act->setCustomEngineActionEvent(kActionInventory);
+	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("TAB");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SAVE", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("F7");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("OPTIONS", _("Options menu"));
+	act->setCustomEngineActionEvent(kActionOptions);
+	act->addDefaultInputMapping("o");
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeyMap->addAction(act);
+
+
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(HOPKINS)

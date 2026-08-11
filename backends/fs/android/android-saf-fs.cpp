@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h> and abort()
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_abort
@@ -44,6 +42,7 @@
 
 // Allow calling of close system call
 #include <unistd.h>
+#include <errno.h> // For remove error codes
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
@@ -56,6 +55,12 @@
 #include "common/debug.h"
 #include "common/translation.h"
 #include "common/util.h"
+
+jclass AndroidSAFFilesystemNode::_CLS_SAFFSTree = nullptr;
+
+jmethodID AndroidSAFFilesystemNode::_MID_addNodeRef = 0;
+jmethodID AndroidSAFFilesystemNode::_MID_decNodeRef = 0;
+jmethodID AndroidSAFFilesystemNode::_MID_refToNode = 0;
 
 jmethodID AndroidSAFFilesystemNode::_MID_getTreeId = 0;
 jmethodID AndroidSAFFilesystemNode::_MID_pathToNode = 0;
@@ -70,6 +75,8 @@ jmethodID AndroidSAFFilesystemNode::_MID_removeTree = 0;
 
 jfieldID AndroidSAFFilesystemNode::_FID__treeName = 0;
 jfieldID AndroidSAFFilesystemNode::_FID__root = 0;
+
+jmethodID AndroidSAFFilesystemNode::_MID_addRef = 0;
 
 jfieldID AndroidSAFFilesystemNode::_FID__parent = 0;
 jfieldID AndroidSAFFilesystemNode::_FID__path = 0;
@@ -87,46 +94,171 @@ void AndroidSAFFilesystemNode::initJNI() {
 
 	JNIEnv *env = JNI::getEnv();
 
-#define FIND_METHOD(prefix, name, signature) do {                           \
-    _MID_ ## prefix ## name = env->GetMethodID(cls, #name, signature);      \
-        if (_MID_ ## prefix ## name == 0)                                   \
-            error("Can't find method ID " #name);                           \
+	// We can't call error here as the backend is not built yet
+#define FIND_STATIC_METHOD(prefix, name, signature) do {                     \
+    _MID_ ## prefix ## name = env->GetStaticMethodID(cls, #name, signature); \
+        if (_MID_ ## prefix ## name == 0) {                                  \
+            LOGE("Can't find method ID " #name);                             \
+            abort();                                                         \
+        }                                                                    \
     } while (0)
-#define FIND_FIELD(prefix, name, signature) do {                            \
-    _FID_ ## prefix ## name = env->GetFieldID(cls, #name, signature);       \
-        if (_FID_ ## prefix ## name == 0)                                   \
-            error("Can't find field ID " #name);                            \
+#define FIND_METHOD(prefix, name, signature) do {                            \
+    _MID_ ## prefix ## name = env->GetMethodID(cls, #name, signature);       \
+        if (_MID_ ## prefix ## name == 0) {                                  \
+            LOGE("Can't find method ID " #name);                             \
+            abort();                                                         \
+        }                                                                    \
+    } while (0)
+#define FIND_FIELD(prefix, name, signature) do {                             \
+    _FID_ ## prefix ## name = env->GetFieldID(cls, #name, signature);        \
+        if (_FID_ ## prefix ## name == 0) {                                  \
+            LOGE("Can't find field ID " #name);                              \
+            abort();                                                         \
+        }                                                                    \
     } while (0)
 #define SAFFSNodeSig "Lorg/scummvm/scummvm/SAFFSTree$SAFFSNode;"
 
 	jclass cls = env->FindClass("org/scummvm/scummvm/SAFFSTree");
+	_CLS_SAFFSTree = (jclass)env->NewGlobalRef(cls);
+
+	FIND_STATIC_METHOD(, addNodeRef, "(J)V");
+	FIND_STATIC_METHOD(, decNodeRef, "(J)V");
+	FIND_STATIC_METHOD(, refToNode, "(J)" SAFFSNodeSig);
 
 	FIND_METHOD(, getTreeId, "()Ljava/lang/String;");
-	FIND_METHOD(, pathToNode, "(Ljava/lang/String;)" SAFFSNodeSig);
-	FIND_METHOD(, getChildren, "(" SAFFSNodeSig ")[" SAFFSNodeSig);
-	FIND_METHOD(, getChild, "(" SAFFSNodeSig "Ljava/lang/String;)" SAFFSNodeSig);
-	FIND_METHOD(, createDirectory, "(" SAFFSNodeSig "Ljava/lang/String;)" SAFFSNodeSig);
-	FIND_METHOD(, createFile, "(" SAFFSNodeSig "Ljava/lang/String;)" SAFFSNodeSig);
-	FIND_METHOD(, createReadStream, "(" SAFFSNodeSig ")I");
-	FIND_METHOD(, createWriteStream, "(" SAFFSNodeSig ")I");
-	FIND_METHOD(, removeNode, "(" SAFFSNodeSig ")Z");
+	FIND_METHOD(, pathToNode, "(Ljava/lang/String;Z)" SAFFSNodeSig);
+	FIND_METHOD(, getChildren, "(J)[" SAFFSNodeSig);
+	FIND_METHOD(, getChild, "(JLjava/lang/String;)" SAFFSNodeSig);
+	FIND_METHOD(, createDirectory, "(JLjava/lang/String;)" SAFFSNodeSig);
+	FIND_METHOD(, createFile, "(JLjava/lang/String;)" SAFFSNodeSig);
+	FIND_METHOD(, createReadStream, "(J)I");
+	FIND_METHOD(, createWriteStream, "(J)I");
+	FIND_METHOD(, removeNode, "(J)I");
 	FIND_METHOD(, removeTree, "()V");
 
 	FIND_FIELD(, _treeName, "Ljava/lang/String;");
 	FIND_FIELD(, _root, SAFFSNodeSig);
 
+	env->DeleteLocalRef(cls);
 	cls = env->FindClass("org/scummvm/scummvm/SAFFSTree$SAFFSNode");
+
+	FIND_METHOD(, addRef, "()J");
 
 	FIND_FIELD(, _parent, SAFFSNodeSig);
 	FIND_FIELD(, _path, "Ljava/lang/String;");
 	FIND_FIELD(, _documentId, "Ljava/lang/String;");
 	FIND_FIELD(, _flags, "I");
 
+	env->DeleteLocalRef(cls);
 #undef SAFFSNodeSig
 #undef FIND_FIELD
 #undef FIND_METHOD
+#undef FIND_STATIC_METHOD
 
 	_JNIinit = true;
+}
+
+void AndroidSAFFilesystemNode::GlobalRef::Deleter::operator()(_jobject *obj) {
+			JNIEnv *env = JNI::getEnv();
+			env->DeleteGlobalRef((jobject)obj);
+}
+
+void AndroidSAFFilesystemNode::NodeRef::reset() {
+	if (_ref == 0) {
+		return;
+	}
+
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallStaticVoidMethod(_CLS_SAFFSTree, _MID_decNodeRef, _ref);
+	if (env->ExceptionCheck()) {
+		LOGE("SAFFSTree::decNodeRef failed");
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+	_ref = 0;
+}
+
+void AndroidSAFFilesystemNode::NodeRef::reset(const NodeRef &r) {
+	if (_ref == 0 && r._ref == 0) {
+		return;
+	}
+
+	JNIEnv *env = JNI::getEnv();
+
+	if (_ref) {
+		env->CallStaticVoidMethod(_CLS_SAFFSTree, _MID_decNodeRef, _ref);
+		if (env->ExceptionCheck()) {
+			LOGE("SAFFSTree::decNodeRef failed");
+			env->ExceptionDescribe();
+			env->ExceptionClear();
+		}
+	}
+
+	_ref = r._ref;
+	if (!_ref) {
+		return;
+	}
+
+	env->CallStaticVoidMethod(_CLS_SAFFSTree, _MID_addNodeRef, _ref);
+	if (env->ExceptionCheck()) {
+		LOGE("SAFFSTree::addNodeRef failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+		_ref = 0;
+		abort();
+	}
+}
+
+void AndroidSAFFilesystemNode::NodeRef::reset(JNIEnv *env, jobject node) {
+	if (_ref == 0 && node == nullptr) {
+		return;
+	}
+
+	if (_ref) {
+		env->CallStaticVoidMethod(_CLS_SAFFSTree, _MID_decNodeRef, _ref);
+		if (env->ExceptionCheck()) {
+			LOGE("SAFFSTree::decNodeRef failed");
+			env->ExceptionDescribe();
+			env->ExceptionClear();
+		}
+	}
+
+	if (node == nullptr) {
+		_ref = 0;
+		return;
+	}
+
+	_ref = env->CallLongMethod(node, _MID_addRef);
+	if (env->ExceptionCheck()) {
+		LOGE("SAFFSNode::addRef failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+		_ref = 0;
+		abort();
+	}
+
+	assert(_ref != 0);
+}
+
+jobject AndroidSAFFilesystemNode::NodeRef::localRef(JNIEnv *env) const {
+	if (_ref == 0) {
+		return nullptr;
+	}
+
+	jobject localRef = env->CallStaticObjectMethod(_CLS_SAFFSTree, _MID_refToNode, _ref);
+	if (env->ExceptionCheck()) {
+		LOGE("SAFFSTree::refToNode failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return nullptr;
+	}
+
+	return localRef;
 }
 
 AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::String &path) {
@@ -156,7 +288,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 
 	jstring pathObj = env->NewStringUTF(realPath.c_str());
 
-	jobject node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj);
+	jobject node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj, false);
 
 	env->DeleteLocalRef(pathObj);
 
@@ -171,7 +303,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 	}
 
 	if (node) {
-		AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(safTree, node);
+		AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(GlobalRef(env, safTree), node);
 
 		env->DeleteLocalRef(node);
 		env->DeleteLocalRef(safTree);
@@ -201,7 +333,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 
 	pathObj = env->NewStringUTF(realPath.c_str());
 
-	node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj);
+	node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj, false);
 
 	env->DeleteLocalRef(pathObj);
 
@@ -216,7 +348,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 	}
 
 	if (node) {
-		AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(safTree, node);
+		AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(GlobalRef(env, safTree), node);
 		env->DeleteLocalRef(node);
 		env->DeleteLocalRef(safTree);
 
@@ -241,7 +373,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromTree(jobject safTree
 		return nullptr;
 	}
 
-	AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(safTree, node);
+	AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(GlobalRef(env, safTree), node);
 
 	env->DeleteLocalRef(node);
 	env->DeleteLocalRef(safTree);
@@ -249,65 +381,41 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromTree(jobject safTree
 	return ret;
 }
 
-AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(jobject safTree, jobject safNode) :
-	_flags(0), _safParent(nullptr) {
+AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const GlobalRef &safTree, jobject safNode) :
+	_flags(0) {
 
 	JNIEnv *env = JNI::getEnv();
 
-	_safTree = env->NewGlobalRef(safTree);
-	assert(_safTree);
-	_safNode = env->NewGlobalRef(safNode);
-	assert(_safNode);
+	_safTree = safTree;
+	assert(_safTree != nullptr);
 
-	cacheData();
+	_safNode.reset(env, safNode);
+	cacheData(env, safNode);
 }
 
-AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(jobject safTree, jobject safParent,
-        const Common::String &path, const Common::String &name) :
-	_safNode(nullptr), _flags(0), _safParent(nullptr) {
+AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const GlobalRef &safTree, jobject safParent,
+        const Common::String &path, const Common::String &name) : _flags(0) {
 
 	JNIEnv *env = JNI::getEnv();
 
-	_safTree = env->NewGlobalRef(safTree);
-	assert(_safTree);
-	_safParent = env->NewGlobalRef(safParent);
-	assert(_safParent);
+	_safTree = safTree;
+	_safParent.reset(env, safParent);
 
 	// In this case _path is the parent
 	_path = path;
 	_newName = name;
 }
 
-// We need the custom copy constructor because of the reference
-AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const AndroidSAFFilesystemNode &node)
-	: AbstractFSNode(), _safNode(nullptr), _safParent(nullptr) {
+AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const GlobalRef &safTree,
+		const NodeRef &safParent, const Common::String &path,
+		const Common::String &name) : _flags(0) {
 
-	JNIEnv *env = JNI::getEnv();
+	_safTree = safTree;
+	_safParent = safParent;
 
-	_safTree = env->NewGlobalRef(node._safTree);
-	assert(_safTree);
-
-	if (node._safNode) {
-		_safNode = env->NewGlobalRef(node._safNode);
-		assert(_safNode);
-	}
-
-	if (node._safParent) {
-		_safParent = env->NewGlobalRef(node._safParent);
-		assert(_safParent);
-	}
-
-	_path = node._path;
-	_flags = node._flags;
-	_newName = node._newName;
-}
-
-AndroidSAFFilesystemNode::~AndroidSAFFilesystemNode() {
-	JNIEnv *env = JNI::getEnv();
-
-	env->DeleteGlobalRef(_safTree);
-	env->DeleteGlobalRef(_safNode);
-	env->DeleteGlobalRef(_safParent);
+	// In this case _path is the parent
+	_path = path;
+	_newName = name;
 }
 
 Common::String AndroidSAFFilesystemNode::getName() const {
@@ -322,7 +430,7 @@ Common::String AndroidSAFFilesystemNode::getName() const {
 Common::String AndroidSAFFilesystemNode::getPath() const {
 	assert(_safTree != nullptr);
 
-	if (_safNode != nullptr) {
+	if (_safNode) {
 		return _path;
 	}
 
@@ -332,7 +440,7 @@ Common::String AndroidSAFFilesystemNode::getPath() const {
 
 AbstractFSNode *AndroidSAFFilesystemNode::getChild(const Common::String &n) const {
 	assert(_safTree != nullptr);
-	assert(_safNode != nullptr);
+	assert(_safNode);
 
 	// Make sure the string contains no slashes
 	assert(!n.contains('/'));
@@ -341,7 +449,7 @@ AbstractFSNode *AndroidSAFFilesystemNode::getChild(const Common::String &n) cons
 
 	jstring name = env->NewStringUTF(n.c_str());
 
-	jobject child = env->CallObjectMethod(_safTree, _MID_getChild, _safNode, name);
+	jobject child = env->CallObjectMethod(_safTree, _MID_getChild, _safNode.get(), name);
 
 	env->DeleteLocalRef(name);
 
@@ -375,7 +483,7 @@ bool AndroidSAFFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode
 	JNIEnv *env = JNI::getEnv();
 
 	jobjectArray array =
-	    (jobjectArray)env->CallObjectMethod(_safTree, _MID_getChildren, _safNode);
+	    (jobjectArray)env->CallObjectMethod(_safTree, _MID_getChildren, _safNode.get());
 
 	if (env->ExceptionCheck()) {
 		LOGE("SAFFSTree::getChildren failed");
@@ -412,11 +520,17 @@ AbstractFSNode *AndroidSAFFilesystemNode::getParent() const {
 	assert(_safTree != nullptr);
 	// No need to check for _safNode: if node doesn't exist yet parent is its parent
 
-	if (_safParent) {
-		return new AndroidSAFFilesystemNode(_safTree, _safParent);
+	JNIEnv *env = JNI::getEnv();
+	if (!_safParent) {
+		return AndroidFilesystemFactory::instance().makeRootFileNode();
 	}
 
-	return AndroidFilesystemFactory::instance().makeRootFileNode();
+	jobject parent = _safParent.localRef(env);
+	assert(parent);
+
+	AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(_safTree, parent);
+	env->DeleteLocalRef(parent);
+	return ret;
 }
 
 Common::SeekableReadStream *AndroidSAFFilesystemNode::createReadStream() {
@@ -428,7 +542,7 @@ Common::SeekableReadStream *AndroidSAFFilesystemNode::createReadStream() {
 
 	JNIEnv *env = JNI::getEnv();
 
-	jint fd = env->CallIntMethod(_safTree, _MID_createReadStream, _safNode);
+	jint fd = env->CallIntMethod(_safTree, _MID_createReadStream, _safNode.get());
 
 	if (env->ExceptionCheck()) {
 		LOGE("SAFFSTree::createReadStream failed");
@@ -452,7 +566,7 @@ Common::SeekableReadStream *AndroidSAFFilesystemNode::createReadStream() {
 	return new PosixIoStream(f);
 }
 
-Common::SeekableWriteStream *AndroidSAFFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *AndroidSAFFilesystemNode::createWriteStream(bool atomic) {
 	assert(_safTree != nullptr);
 
 	JNIEnv *env = JNI::getEnv();
@@ -461,7 +575,8 @@ Common::SeekableWriteStream *AndroidSAFFilesystemNode::createWriteStream() {
 		assert(_safParent);
 		jstring name = env->NewStringUTF(_newName.c_str());
 
-		jobject child = env->CallObjectMethod(_safTree, _MID_createFile, _safParent, name);
+		// TODO: Add atomic support if possible
+		jobject child = env->CallObjectMethod(_safTree, _MID_createFile, _safParent.get(), name);
 
 		env->DeleteLocalRef(name);
 
@@ -478,15 +593,13 @@ Common::SeekableWriteStream *AndroidSAFFilesystemNode::createWriteStream() {
 			return nullptr;
 		}
 
-		_safNode = env->NewGlobalRef(child);
-		assert(_safNode);
+		_safNode.reset(env, child);
+		cacheData(env, child);
 
 		env->DeleteLocalRef(child);
-
-		cacheData();
 	}
 
-	jint fd = env->CallIntMethod(_safTree, _MID_createWriteStream, _safNode);
+	jint fd = env->CallIntMethod(_safTree, _MID_createWriteStream, _safNode.get());
 	if (env->ExceptionCheck()) {
 		LOGE("SAFFSTree::createWriteStream failed");
 
@@ -522,7 +635,7 @@ bool AndroidSAFFilesystemNode::createDirectory() {
 
 	jstring name = env->NewStringUTF(_newName.c_str());
 
-	jobject child = env->CallObjectMethod(_safTree, _MID_createDirectory, _safParent, name);
+	jobject child = env->CallObjectMethod(_safTree, _MID_createDirectory, _safParent.get(), name);
 
 	env->DeleteLocalRef(name);
 
@@ -539,36 +652,35 @@ bool AndroidSAFFilesystemNode::createDirectory() {
 		return false;
 	}
 
-	_safNode = env->NewGlobalRef(child);
-	assert(_safNode);
+	_safNode.reset(env, child);
+
+	cacheData(env, child);
 
 	env->DeleteLocalRef(child);
-
-	cacheData();
 
 	return true;
 }
 
-bool AndroidSAFFilesystemNode::remove() {
+int AndroidSAFFilesystemNode::remove() {
 	assert(_safTree != nullptr);
 
 	if (!_safNode) {
-		return false;
+		return ENOENT;
 	}
 
 	if (!_safParent) {
 		// It's the root of the tree: we can't delete it
-		return false;
+		return EPERM;
 	}
 
 	if (isDirectory()) {
 		// Don't delete folders (yet?)
-		return false;
+		return EPERM;
 	}
 
 	JNIEnv *env = JNI::getEnv();
 
-	bool result = env->CallBooleanMethod(_safTree, _MID_removeNode, _safNode);
+	jint result = env->CallIntMethod(_safTree, _MID_removeNode, _safNode.get());
 
 	if (env->ExceptionCheck()) {
 		LOGE("SAFFSTree::removeNode failed");
@@ -576,18 +688,23 @@ bool AndroidSAFFilesystemNode::remove() {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 
-		return false;
+		return EIO;
 	}
 
-	if (!result) {
-		return false;
+	if (result) {
+		return result;
 	}
 
-	env->DeleteGlobalRef(_safNode);
-	_safNode = nullptr;
+	_safNode.reset();
 
 	// Create the parent node to fetch informations needed to make us a non-existent node
-	AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(_safTree, _safParent);
+
+	jobject jparent = _safParent.localRef(env);
+	if (!jparent)
+		return EIO;
+
+	AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(_safTree, jparent);
+	env->DeleteLocalRef(jparent);
 
 	size_t pos = _path.findLastOf('/');
 	if (pos == Common::String::npos) {
@@ -599,11 +716,11 @@ bool AndroidSAFFilesystemNode::remove() {
 
 	delete parent;
 
-	return true;
+	return 0;
 }
 
 void AndroidSAFFilesystemNode::removeTree() {
-	assert(_safParent == nullptr);
+	assert(!_safParent);
 
 	JNIEnv *env = JNI::getEnv();
 
@@ -617,22 +734,13 @@ void AndroidSAFFilesystemNode::removeTree() {
 	}
 }
 
-void AndroidSAFFilesystemNode::cacheData() {
-	JNIEnv *env = JNI::getEnv();
+void AndroidSAFFilesystemNode::cacheData(JNIEnv *env, jobject node) {
+	_flags = env->GetIntField(node, _FID__flags);
 
-	_flags = env->GetIntField(_safNode, _FID__flags);
+	jobject safParent = env->GetObjectField(node, _FID__parent);
+	_safParent.reset(env, safParent);
 
-	jobject safParent = env->GetObjectField(_safNode, _FID__parent);
-	if (safParent) {
-		if (_safParent) {
-			env->DeleteGlobalRef(_safParent);
-		}
-		_safParent = env->NewGlobalRef(safParent);
-		assert(_safParent);
-		env->DeleteLocalRef(safParent);
-	}
-
-	if (_safParent == nullptr) {
+	if (!_safParent) {
 		jstring nameObj = (jstring)env->GetObjectField(_safTree, _FID__treeName);
 		const char *nameP = env->GetStringUTFChars(nameObj, 0);
 		if (nameP != 0) {
@@ -644,7 +752,7 @@ void AndroidSAFFilesystemNode::cacheData() {
 
 	Common::String workingPath;
 
-	jstring pathObj = (jstring)env->GetObjectField(_safNode, _FID__path);
+	jstring pathObj = (jstring)env->GetObjectField(node, _FID__path);
 	const char *path = env->GetStringUTFChars(pathObj, 0);
 	if (path == nullptr) {
 		env->DeleteLocalRef(pathObj);
@@ -801,6 +909,10 @@ bool AddSAFFakeNode::isWritable() const {
 	return _proxied->isWritable();
 }
 
+int AddSAFFakeNode::remove() {
+	return EPERM;
+}
+
 void AddSAFFakeNode::makeProxySAF() const {
 	assert(!_fromPath);
 
@@ -809,12 +921,10 @@ void AddSAFFakeNode::makeProxySAF() const {
 	}
 
 	// I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
-	jobject saftree = JNI::getNewSAFTree(true, true, "", _("Choose a new folder"));
+	jobject saftree = JNI::getNewSAFTree(true, "", _("Choose a new folder"));
 	if (!saftree) {
 		return;
 	}
 
 	_proxied = AndroidSAFFilesystemNode::makeFromTree(saftree);
 }
-
-#endif

@@ -43,7 +43,7 @@ struct AkosOffset;
 
 class AkosCostumeLoader : public BaseCostumeLoader {
 protected:
-	const byte *_akos;
+	const byte *_akos = nullptr;
 
 public:
 	AkosCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
@@ -64,10 +64,8 @@ protected:
 
 class AkosRenderer : public BaseCostumeRenderer {
 protected:
-	uint16 _codec;
+	uint16 _codec = 0;
 
-	// actor _palette
-	uint16 _palette[256];
 	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource
@@ -97,7 +95,7 @@ protected:
 
 
 public:
-	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm) {
+	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm, true) {
 		_useBompPalette = false;
 		_akhd = nullptr;
 		_akpl = nullptr;
@@ -108,12 +106,11 @@ public:
 		_akct = nullptr;
 		_rgbs = nullptr;
 		_xmap = nullptr;
-		_actorHitMode = false;
 	}
 
-	bool _actorHitMode;
-	int16 _actorHitX, _actorHitY;
-	bool _actorHitResult;
+	bool _actorHitMode = false;
+	int16 _actorHitX = 0, _actorHitY = 0;
+	bool _actorHitResult = false;
 
 	void setPalette(uint16 *_palette) override;
 	void setFacing(const Actor *a) override;
@@ -123,7 +120,6 @@ protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
 	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
-	void byleRLEDecode(ByleRLEData &v1);
 	byte paintCelCDATRLE(int xMoveCur, int yMoveCur);
 	byte paintCelMajMin(int xMoveCur, int yMoveCur);
 	byte paintCelTRLE(int actor, int drawToBack, int celX, int celY, int celWidth, int celHeight, byte tcolor, const byte *shadowTablePtr, int32 specialRenderFlags);
@@ -136,9 +132,11 @@ protected:
 		int32 specialRenderFlags);
 #endif
 
+private:
 	void majMinCodecDecompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numSkipBefore, int32 numSkipAfter, byte transparency, int maskLeft, int maskTop, int zBuf);
 
 	void markRectAsDirty(Common::Rect rect);
+	void markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) override;
 };
 
 enum AkosSequenceCodes {

@@ -229,7 +229,7 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize)
 uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	Common::MemoryReadStream readS(buffer, size);
 
-	// Calc checksum & check that aginst the value stored in the header
+	// Calc checksum & check that against the value stored in the header
 
 	if (readS.readUint32LE() != calcChecksum(buffer + 4, size - 4)) {
 		free(buffer);

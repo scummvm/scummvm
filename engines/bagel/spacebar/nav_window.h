@@ -23,11 +23,11 @@
 #ifndef BAGEL_SPACEBAR_NAV_WINDOW_H
 #define BAGEL_SPACEBAR_NAV_WINDOW_H
 
-#include "bagel/boflib/gui/window.h"
-#include "bagel/baglib/storage_dev_win.h"
-#include "bagel/boflib/gui/text_box.h"
-#include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/gfx/sprite.h"
+#include "bagel/spacebar/boflib/gui/window.h"
+#include "bagel/spacebar/baglib/storage_dev_win.h"
+#include "bagel/spacebar/boflib/gui/text_box.h"
+#include "bagel/spacebar/boflib/gui/button.h"
+#include "bagel/spacebar/boflib/gfx/sprite.h"
 #include "bagel/boflib/sound.h"
 
 namespace Bagel {

@@ -22,8 +22,8 @@
 #include "common/config-manager.h"
 #include "m4/riddle/rooms/section9/room901.h"
 #include "m4/riddle/hotkeys.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/platform/keys.h"
 
@@ -53,16 +53,16 @@ void Room901::init() {
 		_G(flags)[V001] = 1;
 	}
 
+	mouse_hide();
 	player_set_commands_allowed(false);
 
 	if (_G(game).previous_room == 494) {
 		digi_play_loop("wind", 1, 255, -1, 901);
 		kernel_timing_trigger(1, 10);
+		interface_hide();
 		AddSystemHotkey(KEY_ESCAPE, escapePressed);
 		_G(kernel).call_daemon_every_loop = true;
-
 	} else {
-		mouse_hide();
 		kernel_timing_trigger(1, 5);
 		interface_hide();
 		AddSystemHotkey(KEY_ESCAPE, escapePressed);
@@ -120,7 +120,7 @@ void Room901::daemon() {
 		_btnPressed = true;
 	} else if (_btnPressed) {
 		_btnPressed = false;
-		mouseReleased = false;
+		mouseReleased = true;
 	}
 
 	if (mouseReleased)

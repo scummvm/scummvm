@@ -222,13 +222,15 @@ Resource::~Resource() {
 void Resource::unalloc() {
 	delete[] _data;
 	_data = nullptr;
+	delete[] _header;
+	_header = nullptr;
 	_status = kResStatusNoMalloc;
 }
 
 void Resource::writeToStream(Common::WriteStream *stream) const {
 	if (_headerSize == 0) {
 		// create patch file header
-		stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it wont accept the patch file
+		stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it won't accept the patch file
 		stream->writeByte(_headerSize);
 	} else {
 		// use existing patch file header
@@ -519,6 +521,7 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 		resource->_data = ptr;
 
 		const byte *const bufferEnd = resource->data() + uncompressedSize;
+		(void)bufferEnd;
 
 		while (stream->pos() < stream->size()) {
 			byte code = stream->readByte();
@@ -969,7 +972,7 @@ void ChunkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	byte *ptr = new byte[entry.length];
 	res->_data = ptr;
 	res->_size = entry.length;
-	res->_header = 0;
+	res->_header = nullptr;
 	res->_headerSize = 0;
 	res->_status = kResStatusAllocated;
 
@@ -2240,6 +2243,12 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 		}
 
 		res->_status = kResStatusNoMalloc;
+		if (res->_source != nullptr && res->_source->getSourceType() == kSourcePatch) {
+			// This resource has already been loaded from another patch file.
+			// Sometimes a patch appears in a game's root and in "PATCHES".
+			// Delete the previous source before replacing it.
+			delete res->_source;
+		}
 		res->_source = src;
 		res->_headerSize = 0;
 		res->_fileOffset = offset;

@@ -26,6 +26,7 @@
 
 #include "engines/advancedDetector.h"
 #include "teenagent/teenagent.h"
+#include "teenagent/detection.h"
 
 static const DebugChannelDef debugFlagList[] = {
 	{TeenAgent::kDebugActor, "Actor", "Enable Actor Debug"},
@@ -67,7 +68,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 	},
 	{
 		"teenagent",
@@ -88,7 +89,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 	},
 	{ // Russian fan translation
 		"teenagent",
@@ -110,11 +111,11 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 	},
 	{ // Czech Floppy
 		"teenagent",
-		_s("Missing game code"), // Reason for being unsupported
+		"",
 		{
 			{"off.res",     0, "c5263a726d038bb6780a40eb3b83cc87", 2720432},
 			{"on.res",      0, "a0d5e5bbf6fab4bdc7f4094ed85f9639", 153907},
@@ -130,10 +131,10 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		},
 		Common::CS_CZE,
 		Common::kPlatformDOS,
-		ADGF_UNSUPPORTED,
-		GUIO1(GUIO_NOMIDI)
+		ADGF_NO_FLAGS,
+		GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 	},
-	{ // Czech CD
+	{ // Polish CD
 		"teenagent",
 		"CD",
 		{
@@ -149,10 +150,31 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"sdr.res",     0, "d0b1398c78dc82571ddef5877c9a3a06", 14993},
 			AD_LISTEND
 		},
-		Common::CS_CZE,
+		Common::PL_POL,
 		Common::kPlatformDOS,
 		ADGF_CD,
-		GUIO1(GUIO_NOMIDI)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS_OBJECTS)
+	},
+	{ // Polish Floppy
+		"teenagent",
+		"",
+		{
+			{"off.res",     0, "aaac839a6ef639d68ebc97bc42faa42d", 2720432},
+			{"on.res",      0, "a0d5e5bbf6fab4bdc7f4094ed85f9639", 153907},
+			{"ons.res",     0, "a7e2e8def1f0fb46644c20686af0d91a", 173077},
+			{"varia.res",   0, "b786c48e160e1981b496a30acd3deff9", 216683},
+			{"lan_000.res", 0, "06e409b0a43ff0ced014b93fb8f5dd5b", 535599},
+			{"lan_500.res", 0, "c098cc17cc27a1cad4319fb6789aa5a7", 9538457},
+			{"sam_sam.res", 0, "547a48cc1be9cf30744de8b0b47838f2", 769552},
+			{"voices.res",  0, "955aa04517a2b0499adf17d9b7c6f4a1", 19376128},
+			{"cdlogo.res",  0, "6bf95a48f366bdf8af3a198c7b723c77", 64768},
+			{"sdr.res",     0, "d0b1398c78dc82571ddef5877c9a3a06", 14993},
+			AD_LISTEND
+		},
+		Common::PL_POL,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS_OBJECTS)
 	},
 	{ // Demo
 		"teenagent",
@@ -173,7 +195,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 	},
 	{ // Demo alt
 		"teenagent",
@@ -194,7 +216,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 	},
 
 	AD_TABLE_END_MARKER,
@@ -202,9 +224,9 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 
 
 
-class TeenAgentMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TeenAgentMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	TeenAgentMetaEngineDetection() : AdvancedMetaEngineDetection(teenAgentGameDescriptions, sizeof(ADGameDescription), teenAgentGames) {
+	TeenAgentMetaEngineDetection() : AdvancedMetaEngineDetection(teenAgentGameDescriptions, teenAgentGames) {
 	}
 
 	const char *getName() const override {

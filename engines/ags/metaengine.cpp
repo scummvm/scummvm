@@ -38,9 +38,7 @@ const char *AGSMetaEngine::getName() const {
 	return "ags";
 }
 
-Common::Error AGSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const AGS::AGSGameDescription *gd = (const AGS::AGSGameDescription *)desc;
-
+Common::Error AGSMetaEngine::createInstance(OSystem *syst, Engine **engine, const AGS::AGSGameDescription *gd) const {
 	*engine = new AGS::AGSEngine(syst, gd);
 	return Common::kNoError;
 }
@@ -128,18 +126,16 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 				Image::BitmapDecoder decoder;
 				if (decoder.loadStream(thumbStream)) {
 					const Graphics::Surface *src = decoder.getSurface();
+					const Graphics::Palette &pal = decoder.getPalette();
 					Graphics::Surface *dest;
 
 					if (src->w == 160 && src->h == 100) {
-						dest = new Graphics::Surface();
-						dest->copyFrom(*src);
+						dest = src->convertTo(g_system->getOverlayFormat(), pal.data(), pal.size());
 					} else {
-						Graphics::ManagedSurface temp(160, 100, src->format);
-						temp.blitFrom(*src, Common::Rect(0, 0, src->w, src->h),
-							Common::Rect(0, 0, 160, 100));
-
-						dest = new Graphics::Surface();
-						dest->copyFrom(temp);
+						Graphics::Surface *temp = src->convertTo(g_system->getOverlayFormat(), pal.data(), pal.size());
+						dest = temp->scale(160, 100);
+						temp->free();
+						delete temp;
 					}
 
 					desc.setThumbnail(dest);
@@ -153,8 +149,8 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-void AGSMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+bool AGSMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 int AGSMetaEngine::getAutosaveSlot() const {
@@ -166,6 +162,22 @@ int AGSMetaEngine::getAutosaveSlot() const {
 
 const Common::AchievementDescriptionList* AGSMetaEngine::getAchievementDescriptionList() const {
 	return AGS::achievementDescriptionList;
+}
+
+Common::StringArray AGSMetaEngine::getGameTranslations(const Common::String &domain) {
+	Common::Path path = ConfMan.getPath("path", domain);
+	Common::FSDirectory dir(path);
+	Common::ArchiveMemberList traFileList;
+	dir.listMatchingMembers(traFileList, "*.tra");
+	Common::StringArray traFileNames;
+
+	for (Common::ArchiveMemberList::iterator iter = traFileList.begin(); iter != traFileList.end(); ++iter) {
+		Common::String traFileName = (*iter)->getName();
+		traFileName.erase(traFileName.size() - 4); // remove .tra extension
+		traFileNames.push_back(traFileName);
+	}
+
+	return traFileNames;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGS)

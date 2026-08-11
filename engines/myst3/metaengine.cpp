@@ -49,7 +49,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class Myst3MetaEngine : public AdvancedMetaEngine {
+class Myst3MetaEngine : public AdvancedMetaEngine<Myst3GameDescription> {
 public:
 	const char *getName() const override {
 		return "myst3";
@@ -75,7 +75,9 @@ public:
 
 		SaveStateList saveList;
 		for (uint32 i = 0; i < filenames.size(); i++)
-			saveList.push_back(SaveStateDescriptor(this, i, filenames[i]));
+			// Since slots are ignored when saving, we always return slot 0
+			// as an unused slot to optimise the autosave process
+			saveList.push_back(SaveStateDescriptor(this, i + 1, filenames[i]));
 
 		return saveList;
 	}
@@ -104,7 +106,7 @@ public:
 		// Open save
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(saveInfos.getDescription());
 		if (!saveFile) {
-			warning("Unable to open file %s for reading, slot %d", saveInfos.getDescription().encode().c_str(), slot);
+			warning("Unable to open file %s for reading, slot %d", saveInfos.getDescription().c_str(), slot);
 			return SaveStateDescriptor();
 		}
 
@@ -141,22 +143,22 @@ public:
 		return saveInfos;
 	}
 
-	void removeSaveState(const char *target, int slot) const override {
+	bool removeSaveState(const char *target, int slot) const override {
 		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
-		g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription());
+		return g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription());
 	}
 
 	int getMaximumSaveSlot() const override {
 		return 999;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Myst3GameDescription *desc) const override;
 
 	// TODO: Add getSavegameFile()
 };
 
-Common::Error Myst3MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Myst3Engine(syst, (const Myst3GameDescription *)desc);
+Common::Error Myst3MetaEngine::createInstance(OSystem *syst, Engine **engine, const Myst3GameDescription *desc) const {
+	*engine = new Myst3Engine(syst,desc);
 	return Common::kNoError;
 }
 
@@ -169,7 +171,11 @@ Common::Language Myst3Engine::getGameLanguage() const {
 }
 
 uint32 Myst3Engine::getGameLocalizationType() const {
-	return _gameDescription->localizationType;
+	return _gameDescription->flags & kGameLocalizationTypeMask;
+}
+
+uint32 Myst3Engine::getGameLayoutType() const {
+	return _gameDescription->flags & kGameLayoutTypeMask;
 }
 
 } // End of namespace Myst3

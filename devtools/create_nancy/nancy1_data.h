@@ -39,9 +39,9 @@ const Common::Array<uint16> _nancy1MapAccessSceneIDs = {
 	9, 10, 11, 666, 888, 1200, 1250, 1666
 };
 
-const Common::Array<Common::Language> _nancy1LanguagesOrder = {
-	Common::Language::EN_ANY,
-	Common::Language::RU_RUS
+const Common::Array<GameLanguage> _nancy1LanguagesOrder = {
+	GameLanguage::kEnglish,
+	GameLanguage::kRussian
 };
 
 const Common::Array<Common::Array<ConditionalDialogue>> _nancy1ConditionalDialogue = {
@@ -84,7 +84,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy1ConditionalDialog
 		{ { kEv, 0x1E, kFalse }, { kEv, 0x63, kTrue }, { kEv, 0x78, kFalse } } }
 },
 {	// Connie, 10 responses
-	{	26, 233, "CIC1", 
+	{	26, 233, "CIC1",
 		{ { kEv, 0x1D, kTrue }, { kEv, 0x18, kFalse } } },
 	{	25, 234, "CIC2",
 		{ { kEv, 0x1F, kTrue }, { kEv, 0x19, kFalse } } },
@@ -97,7 +97,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy1ConditionalDialog
 	{	21, 238, "CIC6",
 		{ { kEv, 2, kTrue }, { kEv, 3, kTrue }, { kEv, 0x17, kFalse } } },
 	{	13, 239, "DIC5",
-		{ { kEv, 0x64, kTrue }, { kEv, 0x16, kFalse } } },		  
+		{ { kEv, 0x64, kTrue }, { kEv, 0x16, kFalse } } },
 	{	20, 240, "CIC8",
 		{ { kEv, 0x5, kTrue }, { kEv, 0x14, kFalse } } },
 	{	19, 245, "CIC9",

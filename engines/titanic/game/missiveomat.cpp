@@ -21,9 +21,12 @@
 
 #include "titanic/game/missiveomat.h"
 #include "titanic/core/room_item.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
+
+#include "backends/keymapper/keymapper.h"
 
 namespace Titanic {
 
@@ -78,6 +81,16 @@ void CMissiveOMat::load(SimpleFile *file) {
 bool CMissiveOMat::EnterViewMsg(CEnterViewMsg *msg) {
 	CMissiveOMatActionMsg actionMsg(MESSAGE_STARTUP);
 	actionMsg.execute(this);
+	
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("pet")->setEnabled(false);
+	keymapper->getKeymap("movement")->setEnabled(false);
+	if (getPetControl()->_currentArea == PET_REAL_LIFE) {
+		keymapper->getKeymap("real-life")->setEnabled(false);
+	} else {
+		keymapper->getKeymap("inv-shortcut")->setEnabled(false);
+	}
+
 	return true;
 }
 
@@ -356,6 +369,15 @@ bool CMissiveOMat::LeaveViewMsg(CLeaveViewMsg *msg) {
 	editMsg._mode = EDIT_HIDE_CURSOR;
 	editMsg.execute("MissiveOMat Login Control");
 	petShowCursor();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("pet")->setEnabled(true);
+	keymapper->getKeymap("movement")->setEnabled(true);
+	if (getPetControl()->_currentArea == PET_REAL_LIFE) {
+		keymapper->getKeymap("real-life")->setEnabled(true);
+	} else {
+		keymapper->getKeymap("inv-shortcut")->setEnabled(true);
+	}
 
 	return true;
 }

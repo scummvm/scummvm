@@ -59,7 +59,7 @@ void Parser_v1w::lineHandler() {
 
 	// Toggle God Mode
 	if (!strncmp(_vm->_line, "PPG", 3)) {
-		_vm->_sound->playSound(!_vm->_soundTest, kSoundPriorityHigh);
+		_vm->_sound->playSound(_vm->_soundTest, kSoundPriorityHigh);
 		gameStatus._godModeFl = !gameStatus._godModeFl;
 		return;
 	}
@@ -114,8 +114,7 @@ void Parser_v1w::lineHandler() {
 	// Special meta commands
 	// EXIT/QUIT
 	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
-		if (Utils::yesNoBox(_vm->_text->getTextParser(kTBExit_1d)))
-			_vm->endGame();
+		endGamePrompt();
 		return;
 	}
 
@@ -177,7 +176,7 @@ void Parser_v1w::lineHandler() {
 
 	// If a not-near comment was generated, print it
 	if (*farComment != '\0') {
-		Utils::notifyBox(farComment);
+		_vm->notifyBox(farComment);
 		return;
 	}
 
@@ -185,16 +184,16 @@ void Parser_v1w::lineHandler() {
 	const char *verb = findVerb();
 	const char *noun = findNoun();
 	if (verb == _vm->_text->getVerb(_vm->_look, 0) && _vm->_maze._enabledFl) {
-		Utils::notifyBox(_vm->_text->getTextParser(kTBMaze));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBMaze));
 		_vm->_object->showTakeables();
 	} else if (verb && noun) {                      // A combination I didn't think of
-		Utils::notifyBox(_vm->_text->getTextParser(kTBNoPoint));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBNoPoint));
 	} else if (noun) {
-		Utils::notifyBox(_vm->_text->getTextParser(kTBNoun));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBNoun));
 	} else if (verb) {
-		Utils::notifyBox(_vm->_text->getTextParser(kTBVerb));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBVerb));
 	} else {
-		Utils::notifyBox(_vm->_text->getTextParser(kTBEh));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBEh));
 	}
 }
 

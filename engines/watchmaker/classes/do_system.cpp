@@ -532,7 +532,7 @@ void ProcessTime(WGame &game) {
 			ProcessCharacters(game);
 			ProcessAnims(game);
 			if (!bGolfActive)
-				ProcessCamera(game);
+				game._cameraMan->ProcessCamera(game);
 			else
 				ProcessGopherCamera(game);
 		}

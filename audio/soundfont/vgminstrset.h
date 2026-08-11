@@ -49,7 +49,7 @@ public:
 				Common::String name = "VGMInstrSet", VGMSampColl *theSampColl = NULL);
 	virtual ~VGMInstrSet(void);
 
-	virtual bool Load();
+	bool Load() override;
 	virtual bool GetHeaderInfo();
 	virtual bool GetInstrPointers();
 	virtual bool LoadInstrs();

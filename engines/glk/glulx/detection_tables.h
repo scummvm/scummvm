@@ -1008,6 +1008,18 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	// Spring Thing 2024 - New Game Plus
 	{ "stc24_timemachi24",  "The Time Machine (by Bill Maya)" },                                        //      Entrant
 
+	// Spring Thing 2025 - Main Festival
+	{ "stc25_cutsky",       "Cut the Sky" },                                                            // Best in Show
+	{ "stc25_espresso",     "Espresso Moka" },                                                          //      Entrant
+	{ "stc25_hellride",     "Hell Ride" },                                                              //      Entrant
+	{ "stc25_retool",       "Retool Looter" },                                                          //      Entrant
+	{ "stc25_terranova",    "Terra Nova" },                                                             //      Entrant
+
+	// Spring Thing 2025 - Back Garden
+	{ "stc25_anpama",       "anpa ma" },                                                                //      Entrant
+	{ "stc25_marbles",      "Marbles, D, and the Sinister Spotlight" },                                 //      Entrant
+	{ "stc25_portrait",     "Portrait with Wolf" },                                                     //      Entrant
+
 	// Text Adventure Literacy Jam 2024
 	{ "luluasteroid",       "Lulu and the Asteroid of 100% Guaranteed Doom" },                          //      Entrant
 	{ "thewolf",            "The Wolf" },                                                               //      Entrant
@@ -2258,6 +2270,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if23_seasieve", "231010", "2cfded6774246ec58552290eed968f64", 3606616),
 	DT_ENTRY1("if23_citimakane", "23????", "07152db6c2d5b508638e55d95f3cb8a8", 1624512),
 	DT_ENTRY1("if23_eateldritch", "231020", "dc4e9b2eb5da3841022e3d2cd3431042", 4090574),
+	DT_ENTRY1("if23_eateldritch", "240109", "2e5f36ed9fadb2fc73e59d16a00f40a6", 4090574),
 	DT_ENTRY1("if23_oneking", "231027", "7cb26e63f109bbecf353a2bbfd482131", 996352),
 	DT_ENTRY1("if23_gesture", "230930", "ab2b8220c0ce90096c0713b9a573cb1d", 2871814),
 	DT_ENTRY1("if23_ribald", "231002", "8982312266fc875dda47c67128f89d41", 1059740),
@@ -2662,6 +2675,18 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	// Spring Thing 2024 - New Game Plus
 	DT_ENTRY1("stc24_timemachi24", "240329", "d8442e3f28c2812f611ee91dc2434f27", 23123096),
 
+	// Spring Thing 2025 - Main Festival
+	DT_ENTRY1("stc25_cutsky", "250502", "c963db666f36f5a33a166c37bd0e60bb", 1717218),
+	DT_ENTRY1("stc25_espresso", "250420", "20c8042a1e2c6ad5e9829001b0b463d1", 1334456),
+	DT_ENTRY1("stc25_hellride", "250512", "678833dc752453a409100194ce1833c7", 33177990),
+	DT_ENTRY1("stc25_retool", "25????", "2c5c997e7482a1fc4cc32a62a7f66588", 3896676),
+	DT_ENTRY1("stc25_terranova", "250328", "eaa465356be3549446c14588a58060a0", 1150370),
+
+	// Spring Thing 2025 - Back Garden
+	DT_ENTRY1("stc25_anpama", "250329", "322a3fb78e2751c6779acbff74a7655c", 1352138),
+	DT_ENTRY1("stc25_marbles", "250403", "16d9711703ffef410c2991e069dfd589", 10341546),
+	DT_ENTRY1("stc25_portrait", "250424", "3e84f0ced2640e4862c2503f30aa4e4b", 8076938),
+
 	// Text Adventure Literacy Jam 2024
 	DT_ENTRY1("luluasteroid", "240430", "2edb05f1d13150655941fb255f5921e0", 23246980),
 	DT_ENTRY1("thewolf", "240430", "30f2253cc9ccdb7d0ccff86a7f5e743b", 684594),
@@ -2749,6 +2774,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240329", "e2bfc2c311f85396fd76af2a10613fd1", 1506992),
 	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240415", "d0ca22538b7e06b7d100fdab0693124f", 1551536),
 	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240511", "0816b685a42260ead843db9933939ed9", 1572784),
+	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "24????", "4f2a48b82d89f23bd467bc7ac018c50d", 1599152),
+	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240630", "1af2ab312d088b387048d9edd3779e08", 1452042),
 	DT_ENTRYL1("tgp_zuschauer", Common::DE_DEU, "240401", "f16bf2cf4ae27bf035cd221c0b3ec3fc", 1851170),
 
 	// Italian games
@@ -3036,8 +3063,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("ph10_transcorrupt", Common::ES_ESP, "110711/ulx", "df157d801a60682fb8488c6d5ac4dfad", 1074688),
 
 	// Swedish games
-	DT_ENTRYL1("drakmagi_glulx", Common::SE_SWE, "080419", "93db2e43fafb22b9e4d10f7d6f3a5136", 203630),
-	DT_ENTRYL1("vanyar_glulx", Common::SE_SWE, "030613", "4a80396f31f9cced2b6689341ac5d2cc", 278780),
+	DT_ENTRYL1("drakmagi_glulx", Common::SV_SWE, "080419", "93db2e43fafb22b9e4d10f7d6f3a5136", 203630),
+	DT_ENTRYL1("vanyar_glulx", Common::SV_SWE, "030613", "4a80396f31f9cced2b6689341ac5d2cc", 278780),
 
 	// Russian games
 	DT_ENTRYL1("devours_glulx", Common::RU_RUS, "220224", "65a51e53c1498823024dcec286971f19", 365312),

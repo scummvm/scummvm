@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/unicode-bidi.h"
+
 #include "prince/prince.h"
 
 #include "prince/graphics.h"
@@ -332,6 +334,7 @@ void PrinceEngine::inventoryLeftMouseButton() {
 	if (!_mouseFlag) {
 		_textSlots[0]._time = 0;
 		_textSlots[0]._str = nullptr;
+		stopTextToSpeech();
 		stopSample(28);
 	}
 
@@ -502,6 +505,7 @@ void PrinceEngine::checkOptions() {
 		}
 		_graph->drawAsShadowSurface(_graph->_frontScreen, _optionsX, _optionsY, _optionsPic, _graph->_shadowTable50);
 
+		int previousOption = _optionEnabled;
 		_optionEnabled = -1;
 		int optionsYCord = mousePos.y - (_optionsY + 16);
 		if (optionsYCord >= 0) {
@@ -513,11 +517,6 @@ void PrinceEngine::checkOptions() {
 		int optionsColor;
 		int textY = _optionsY + 16;
 		for (int i = 0; i < _optionsNumber; i++) {
-			if (i != _optionEnabled) {
-				optionsColor = _optionsColor1;
-			} else {
-				optionsColor = _optionsColor2;
-			}
 			Common::String optText;
 			switch(getLanguage()) {
 			case Common::PL_POL:
@@ -539,10 +538,27 @@ void PrinceEngine::checkOptions() {
 					optText = optionsTextRU[i];
 				}
 				break;
+			case Common::HE_ISR:
+				optText = optionsTextHE[i];
+				break;
 			default:
 				break;
 			};
+
+			if (i != _optionEnabled) {
+				optionsColor = _optionsColor1;
+			} else {
+				optionsColor = _optionsColor2;
+
+				if (_optionEnabled != previousOption) {
+					setTTSVoice(kHeroTextColor);
+					sayText(optText, false);
+				}
+			}
+			
 			uint16 textW = getTextWidth(optText.c_str());
+			if (getLanguage() == Common::HE_ISR)
+				optText = Common::convertBiDiString(optText, Common::kWindows1255);
 			uint16 textX = _optionsX + _optionsWidth / 2 - textW / 2;
 			_font->drawString(_graph->_frontScreen, optText, textX, textY, textW, optionsColor);
 			textY += _optionsStep;
@@ -561,6 +577,7 @@ void PrinceEngine::checkInvOptions() {
 		}
 		_graph->drawAsShadowSurface(_graph->_screenForInventory, _optionsX, _optionsY, _optionsPicInInventory, _graph->_shadowTable50);
 
+		int previousOption = _optionEnabled;
 		_optionEnabled = -1;
 		int optionsYCord = mousePos.y - (_optionsY + 16);
 		if (optionsYCord >= 0) {
@@ -572,11 +589,6 @@ void PrinceEngine::checkInvOptions() {
 		int optionsColor;
 		int textY = _optionsY + 16;
 		for (int i = 0; i < _invOptionsNumber; i++) {
-			if (i != _optionEnabled) {
-				optionsColor = _optionsColor1;
-			} else {
-				optionsColor = _optionsColor2;
-			}
 			Common::String invText;
 			switch(getLanguage()) {
 			case Common::PL_POL:
@@ -598,11 +610,28 @@ void PrinceEngine::checkInvOptions() {
 					invText = invOptionsTextRU[i];
 				}
 				break;
+			case Common::HE_ISR:
+				invText = invOptionsTextHE[i];
+				break;
 			default:
 				error("Unknown game language %d", getLanguage());
 				break;
 			};
+
+			if (i != _optionEnabled) {
+				optionsColor = _optionsColor1;
+			} else {
+				optionsColor = _optionsColor2;
+
+				if (_optionEnabled != previousOption) {
+					setTTSVoice(kHeroTextColor);
+					sayText(invText, false);
+				}
+			}
+
 			uint16 textW = getTextWidth(invText.c_str());
+			if (getLanguage() == Common::HE_ISR)
+				invText = Common::convertBiDiString(invText, Common::kWindows1255);
 			uint16 textX = _optionsX + _invOptionsWidth / 2 - textW / 2;
 			_font->drawString(_graph->_screenForInventory, invText, textX, textY, _graph->_screenForInventory->w, optionsColor);
 			textY += _invOptionsStep;
@@ -661,7 +690,7 @@ void PrinceEngine::displayInventory() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				keyHandler(event);
 				break;
 			case Common::EVENT_LBUTTONDOWN:

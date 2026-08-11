@@ -396,8 +396,8 @@ public:
 	PSXSampColl(VGMInstrSet *instrset, uint32 offset, uint32 length,
 				const Common::Array<SizeOffsetPair> &vagLocations);
 
-	virtual bool
-	GetSampleInfo();  // retrieve sample info, including pointers to data, # channels, rate, etc.
+	// retrieve sample info, including pointers to data, # channels, rate, etc.
+	bool GetSampleInfo() override;
 
 protected:
 	Common::Array<SizeOffsetPair> _vagLocations;

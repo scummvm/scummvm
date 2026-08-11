@@ -91,7 +91,7 @@ public:
 
 	void setPal();
 	void funTouch();
-	void touch(uint16 mask, int x, int y, Common::KeyCode keyCode) override;
+	void touch(uint16 mask, int x, int y) override;
 	void tick() override;
 private:
 	CGEEngine *_vm;
@@ -100,7 +100,7 @@ private:
 class Square : public Sprite {
 public:
 	Square(CGEEngine *vm);
-	void touch(uint16 mask, int x, int y, Common::KeyCode keyCode) override;
+	void touch(uint16 mask, int x, int y) override;
 private:
 	CGEEngine *_vm;
 };

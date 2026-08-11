@@ -327,7 +327,7 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::Path &file, byte *
 	Common::copy((const byte *)s->getPixels(), (const byte *)s->getBasePtr(0, s->h), surface);
 
 	// Copy out the palette
-	const byte *palSrc = pcxDecoder.getPalette();
+	const byte *palSrc = pcxDecoder.getPalette().data();
 	Common::copy((const byte *)palSrc, (const byte *)palSrc + PALETTE_BLOCK_SIZE, palette);
 
 	f.close();

@@ -41,9 +41,9 @@ static const DebugChannelDef debugFlagList[] = {
 
 #include "petka/detection_tables.h"
 
-class PetkaMetaEngineDetection : public AdvancedMetaEngineDetection {
+class PetkaMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	PetkaMetaEngineDetection() : AdvancedMetaEngineDetection(Petka::gameDescriptions, sizeof(ADGameDescription), petkaGames) {
+	PetkaMetaEngineDetection() : AdvancedMetaEngineDetection(Petka::gameDescriptions, petkaGames) {
 		_gameIds = petkaGames;
 		_maxScanDepth = 2;
 	}

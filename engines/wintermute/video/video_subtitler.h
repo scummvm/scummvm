@@ -37,14 +37,14 @@ class VideoSubtitler : public BaseClass {
 public:
 	VideoSubtitler(BaseGame *inGame);
 	~VideoSubtitler() override;
+
+	bool _showSubtitle;
+	uint32 _currentSubtitle;
 	bool loadSubtitles(const Common::String &filename, const Common::String &subtitleFile);
 	void display();
 	void update(uint32 frame);
-private:
-	Common::Array<SubtitleCard> _subtitles;
 	int32 _lastSample;
-	bool _showSubtitle;
-	uint32 _currentSubtitle;
+	Common::Array<SubtitleCard> _subtitles;
 };
 
 } // End of namespace Wintermute

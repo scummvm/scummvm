@@ -33,7 +33,7 @@ AStarPath::AStarPath() : final_node(0) {
 void AStarPath::create_path() {
 	astar_node *i = final_node; // iterator through steps, from back
 	delete_path();
-	Std::vector<astar_node *> reverse_list;
+	Common::Array<astar_node *> reverse_list;
 	while (i) {
 		reverse_list.push_back(i);
 		i = i->parent;
@@ -149,13 +149,13 @@ sint32 AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
 /* Return an item in the list of closed nodes whose location matches `ncmp'.
  */
 astar_node *AStarPath::find_closed_node(astar_node *ncmp) {
-	for (astar_node *n : open_nodes)
+	for (astar_node *n : closed_nodes)
 		if (n->loc == ncmp->loc)
 			return n;
 	return nullptr;
 }
 
-/* Return an item in the list of closed nodes whose location matches `ncmp'.
+/* Return an item in the list of open nodes whose location matches `ncmp'.
  */
 astar_node *AStarPath::find_open_node(astar_node *ncmp) {
 	for (astar_node *n : open_nodes)
@@ -172,7 +172,7 @@ void AStarPath::push_open_node(astar_node *node) {
 		return;
 	}
 
-	Std::list<astar_node *>::iterator n = open_nodes.begin();
+	Common::List<astar_node *>::iterator n = open_nodes.begin();
 	// get to end of list or to a node with equal or greater score
 	while (n != open_nodes.end() && (*n++)->score < node->score);
 	open_nodes.insert(n, node); // and add before that location
@@ -191,7 +191,7 @@ astar_node *AStarPath::pop_open_node() {
  * remove it from the list.
  */
 void AStarPath::remove_closed_node(astar_node *ncmp) {
-	Std::list<astar_node *>::iterator n;
+	Common::List<astar_node *>::iterator n;
 	for (n = closed_nodes.begin(); n != closed_nodes.end(); n++)
 		if ((*n)->loc == ncmp->loc) {
 			closed_nodes.erase(n);

@@ -156,6 +156,8 @@ struct Item {
 	char name[16];
 };
 
+class PictureMgr_Troll;
+
 class TrollEngine : public PreAgiEngine {
 public:
 	TrollEngine(OSystem *syst, const AGIGameDescription *gameDesc);
@@ -164,6 +166,8 @@ public:
 	Common::Error go() override;
 
 private:
+	PictureMgr_Troll *_picture;
+
 	int _roomPicture;
 	int _treasuresLeft;
 	int _currentRoom;
@@ -214,7 +218,7 @@ private:
 	int _options[IDI_TRO_NUM_OPTIONS];
 	Item _items[IDI_TRO_MAX_TREASURE];
 	int _roomConnects[IDI_TRO_NUM_OPTIONS];
-	int _nonTrollRooms[IDO_TRO_NONTROLLROOMS];
+	int _nonTrollRooms[IDI_TRO_NUM_NONTROLL];
 
 	int _tunes[6];
 };

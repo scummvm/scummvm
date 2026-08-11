@@ -105,7 +105,7 @@ void dgBody::SetMassMatrix(dgFloat32 mass, dgFloat32 Ix, dgFloat32 Iy,
 		masterList.RotateToEnd(m_masterNode);
 	}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	dgBodyMasterList &me = *m_world;
 	dgBodyMasterList::dgListNode *refNode;
 	for (refNode = me.GetFirst(); refNode; refNode = refNode->GetNext()) {
@@ -572,7 +572,7 @@ void dgBody::IntegrateVelocity(dgFloat32 timestep) {
 
 	m_matrix.m_posit = m_globalCentreOfMass - m_matrix.RotateVector(m_localCentreOfMass);
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			NEWTON_ASSERT(dgCheckFloat(m_matrix[i][j]));

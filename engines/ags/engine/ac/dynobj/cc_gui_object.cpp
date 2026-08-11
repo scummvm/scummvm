@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/dynobj/cc_gui_object.h"
 #include "ags/engine/ac/dynobj/script_gui.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_object.h"
 #include "ags/shared/util/stream.h"
@@ -35,14 +36,14 @@ const char *CCGUIObject::GetType() {
 	return "GUIObject";
 }
 
-size_t CCGUIObject::CalcSerializeSize() {
+size_t CCGUIObject::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t) * 2;
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-void CCGUIObject::Serialize(const char *address, Stream *out) {
-	const GUIObject *guio = (const GUIObject *)address;
+void CCGUIObject::Serialize(const void *address, Stream *out) {
+	const GUIObject *guio = static_cast<const GUIObject *>(address);
 	out->WriteInt32(guio->ParentId);
 	out->WriteInt32(guio->Id);
 }

@@ -187,27 +187,27 @@ void GUI_Button:: Display(bool full_redraw) {
 }
 
 /* Mouse hits activate us */
-GUI_status GUI_Button:: MouseDown(int x, int y, Shared::MouseButton btn) {
+GUI_status GUI_Button:: MouseDown(int x, int y, Events::MouseButton btn) {
 //	if(btn == SDL_BUTTON_WHEELUP || btn == SDL_BUTTON_WHEELDOWN)
 //	  return GUI_PASS;
-	if (enabled && (btn == Shared::BUTTON_LEFT || btn == Shared::BUTTON_RIGHT)) {
+	if (enabled && (btn == Events::BUTTON_LEFT || btn == Events::BUTTON_RIGHT)) {
 		pressed[0] = 1;
 		Redraw();
 	}
 	return GUI_YUM;
 }
 
-GUI_status GUI_Button::MouseUp(int x, int y, Shared::MouseButton btn) {
+GUI_status GUI_Button::MouseUp(int x, int y, Events::MouseButton btn) {
 //	if (btn==SDL_BUTTON_WHEELUP || btn==SDL_BUTTON_WHEELDOWN)
 //		return GUI_PASS;
-	if ((btn == Shared::BUTTON_LEFT || btn == Shared::BUTTON_RIGHT) && (pressed[0])) {
+	if ((btn == Events::BUTTON_LEFT || btn == Events::BUTTON_RIGHT) && (pressed[0])) {
 		pressed[0] = 0;
 		return Activate_button(x, y, btn);
 	}
 	return GUI_YUM;
 }
 
-GUI_status GUI_Button::Activate_button(int x, int y, Shared::MouseButton btn) {
+GUI_status GUI_Button::Activate_button(int x, int y, Events::MouseButton btn) {
 	if (x >= 0 && y >= 0) {
 		if (callback_object && callback_object->callback(BUTTON_CB, this, widget_data) == GUI_QUIT)
 			return GUI_QUIT;

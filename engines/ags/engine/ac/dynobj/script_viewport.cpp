@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_viewport.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/util/bbop.h"
 #include "ags/shared/util/stream.h"
@@ -36,18 +37,18 @@ const char *ScriptViewport::GetType() {
 	return "Viewport2";
 }
 
-int ScriptViewport::Dispose(const char *address, bool force) {
+int ScriptViewport::Dispose(void * /*address*/, bool force) {
 	// Note that ScriptViewport is a reference to actual Viewport object,
 	// and this deletes the reference, while viewport may remain in GameState.
 	delete this;
 	return 1;
 }
 
-size_t ScriptViewport::CalcSerializeSize() {
+size_t ScriptViewport::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
-void ScriptViewport::Serialize(const char *address, Stream *out) {
+void ScriptViewport::Serialize(const void * /*address*/, Stream *out) {
 	out->WriteInt32(_id);
 }
 

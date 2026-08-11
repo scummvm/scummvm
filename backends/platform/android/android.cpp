@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv(a)
 
 // Allow use of stuff in <time.h>
@@ -49,6 +47,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/system_properties.h>
+#include <errno.h> // For remove error codes
 #include <time.h>
 #include <unistd.h>
 #include <dlfcn.h>
@@ -64,10 +63,12 @@
 #include "backends/fs/posix/posix-iostream.h"
 
 #include "backends/graphics/android/android-graphics.h"
-#include "backends/graphics3d/android/android-graphics3d.h"
+
+#include "backends/mixer/android/android-mixer.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/events/default/default-events.h"
+#include "backends/mixer/mixer.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -76,14 +77,14 @@
 #include "backends/keymapper/keymapper-defaults.h"
 #include "backends/keymapper/standard-actions.h"
 
-#include "common/util.h"
-#include "common/textconsole.h"
-#include "common/rect.h"
-#include "common/queue.h"
-#include "common/mutex.h"
-#include "common/events.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/mutex.h"
+#include "common/queue.h"
+#include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/util.h"
+
 #include "graphics/cursorman.h"
 
 const char *android_log_tag = "ScummVM";
@@ -103,6 +104,16 @@ extern "C" {
 								"Assertion failure: '%s' in %s:%d (%s)",
 								 expr, file, line, func);
 	}
+}
+
+static bool androidErrorHandler(const char *msg) {
+	if (g_system) {
+		g_system->quit();
+	}
+	__android_log_assert(nullptr, android_log_tag,
+	                     "ERROR: %s", msg);
+	// If we end up here, we failed to handle the error
+	return false;
 }
 
 #ifdef ANDROID_DEBUG_GL
@@ -140,12 +151,12 @@ class AndroidSaveFileManager : public DefaultSaveFileManager {
 public:
 	AndroidSaveFileManager(const Common::Path &defaultSavepath) : DefaultSaveFileManager(defaultSavepath) {}
 
-	bool removeSavefile(const Common::String &filename) override {
-		Common::String path = getSavePath().join(filename).toString(Common::Path::kNativeSeparator);
+	Common::ErrorCode removeFile(const Common::FSNode &fileNode) override {
+		Common::String path(fileNode.getPath().toString(Common::Path::kNativeSeparator));
 		AbstractFSNode *node = AndroidFilesystemFactory::instance().makeFileNodePath(path);
 
 		if (!node) {
-			return false;
+			return Common::kPathDoesNotExist;
 		}
 
 		AndroidFSNode *anode = dynamic_cast<AndroidFSNode *>(node);
@@ -154,26 +165,29 @@ public:
 			// This should never happen
 			warning("Invalid node received");
 			delete node;
-			return false;
+			return Common::kUnknownError;
 		}
 
-		bool ret = anode->remove();
-
+		int err = anode->remove();
 		delete anode;
 
-		if (!ret) {
-			setError(Common::kUnknownError, Common::String::format("Couldn't delete the save file: %s", path.c_str()));
+		switch (err) {
+		case 0:
+			return Common::kNoError;
+		case EACCES:
+			return Common::kWritePermissionDenied;
+		case ENOENT:
+			return Common::kPathDoesNotExist;
+		default:
+			return Common::kUnknownError;
 		}
-		return ret;
 	}
 };
 
-OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
-	_audio_sample_rate(audio_sample_rate),
-	_audio_buffer_size(audio_buffer_size),
+OSystem_Android::OSystem_Android() :
 	_screen_changeid(0),
-	_mixer(0),
-	_event_queue_lock(0),
+	_virtkeybd_on(false),
+	_event_queue_lock(nullptr),
 	_touch_pt_down(),
 	_touch_pt_scroll(),
 	_touch_pt_dt(),
@@ -213,6 +227,8 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	// though getting it via JNI is maybe the most reliable option (?)
 	// Also __system_property_get which is used by getSystemProperty() is being deprecated in recent NDKs
 
+	Common::setErrorHandler(androidErrorHandler);
+
 	int sdkVersion = JNI::getAndroidSDKVersionId();
 
 	_systemSDKdetectedStr = Common::String::format("SDK Version: %d\n", sdkVersion) ;
@@ -227,22 +243,10 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 
 OSystem_Android::~OSystem_Android() {
 	ENTER();
-	// _audiocdManager should be deleted before _mixer!
-	// It is normally deleted in proper order in the OSystem destructor.
-	// However, currently _mixer is deleted here (OSystem_Android)
-	// and in the ModularBackend destructor,
-	// hence unless _audiocdManager is deleted here first,
-	// it will cause a crash for the Android app (arm64 v8a) upon exit
-	// -- when the audio cd manager was actually used eg. audio cd test of the testbed
-	// FIXME: A more proper fix would probably be to:
-	//        - delete _mixer in the base class (OSystem) after _audiocdManager (this is already the current behavior)
-	//	      - remove its deletion from OSystem_Android and ModularBackend (this is what needs to be fixed).
-	delete _audiocdManager;
-	_audiocdManager = 0;
-	delete _mixer;
-	_mixer = 0;
+
 	_fsFactory = 0;
 	AndroidFilesystemFactory::destroy();
+
 	delete _timerManager;
 	_timerManager = 0;
 
@@ -283,131 +287,6 @@ void *OSystem_Android::timerThreadFunc(void *arg) {
 		timer->handler();
 		nanosleep(&tv, 0);
 	}
-
-	JNI::detachThread();
-
-	return 0;
-}
-
-void *OSystem_Android::audioThreadFunc(void *arg) {
-	JNI::attachThread();
-
-	OSystem_Android *system = (OSystem_Android *)arg;
-	Audio::MixerImpl *mixer = system->_mixer;
-
-	uint buf_size = system->_audio_buffer_size;
-
-	JNIEnv *env = JNI::getEnv();
-
-	jbyteArray bufa = env->NewByteArray(buf_size);
-
-	bool paused = true;
-
-	int offset, left, written, i;
-
-	struct timespec tv_delay;
-	tv_delay.tv_sec = 0;
-	tv_delay.tv_nsec = 20 * 1000 * 1000;
-
-	uint msecs_full = buf_size * 1000 / (mixer->getOutputRate() * 2 * 2);
-
-	struct timespec tv_full;
-	tv_full.tv_sec = 0;
-	tv_full.tv_nsec = msecs_full * 1000 * 1000;
-
-	uint silence_count = 33;
-
-	while (!system->_audio_thread_exit) {
-		if (JNI::pause) {
-			JNI::setAudioStop();
-
-			paused = true;
-			silence_count = 33;
-
-			LOGD("audio thread going to sleep");
-			sem_wait(&JNI::pause_sem);
-			LOGD("audio thread woke up");
-		}
-
-		byte *buf = (byte *)env->GetPrimitiveArrayCritical(bufa, 0);
-		assert(buf);
-
-		int samples = mixer->mixCallback(buf, buf_size);
-
-		bool silence = samples < 1;
-
-		// looks stupid, and it is, but currently there's no way to detect
-		// silence-only buffers from the mixer
-		if (!silence) {
-			silence = true;
-
-			for (i = 0; i < samples; i += 2)
-				// SID streams constant crap
-				if (READ_UINT16(buf + i) > 32) {
-					silence = false;
-					break;
-				}
-		}
-
-		env->ReleasePrimitiveArrayCritical(bufa, buf, 0);
-
-		if (silence) {
-			if (!paused)
-				silence_count++;
-
-			// only pause after a while to prevent toggle mania
-			if (silence_count > 32) {
-				if (!paused) {
-					LOGD("AudioTrack pause");
-
-					JNI::setAudioPause();
-					paused = true;
-				}
-
-				nanosleep(&tv_full, 0);
-
-				continue;
-			}
-		}
-
-		if (paused) {
-			LOGD("AudioTrack play");
-
-			JNI::setAudioPlay();
-			paused = false;
-
-			silence_count = 0;
-		}
-
-		offset = 0;
-		left = buf_size;
-		written = 0;
-
-		while (left > 0) {
-			written = JNI::writeAudio(env, bufa, offset, left);
-
-			if (written < 0) {
-				LOGE("AudioTrack error: %d", written);
-				break;
-			}
-
-			// buffer full
-			if (written < left)
-				nanosleep(&tv_delay, 0);
-
-			offset += written;
-			left -= written;
-		}
-
-		if (written < 0)
-			break;
-
-		// prepare the next buffer, and run into the blocking AudioTrack.write
-	}
-
-	JNI::setAudioStop();
-
-	env->DeleteLocalRef(bufa);
 
 	JNI::detachThread();
 
@@ -545,17 +424,15 @@ void OSystem_Android::initBackend() {
 
 	gettimeofday(&_startTime, 0);
 
-	// The division by four happens because the Mixer stores the size in frame units
-	// instead of bytes; this means that, since we have audio in stereo (2 channels)
-	// with a word size of 16 bit (2 bytes), we have to divide the effective size by 4.
-	_mixer = new Audio::MixerImpl(_audio_sample_rate, true, _audio_buffer_size / 4);
-	_mixer->setReady(true);
-
 	_timer_thread_exit = false;
 	pthread_create(&_timer_thread, 0, timerThreadFunc, this);
 
-	_audio_thread_exit = false;
-	pthread_create(&_audio_thread, 0, audioThreadFunc, this);
+	_mixerManager = AndroidMixerManager::make();
+	_mixerManager->init();
+
+	JNI::DPIValues dpi;
+	JNI::getDPI(dpi);
+	_touchControls.init(dpi[2]);
 
 	_graphicsManager = new AndroidGraphicsManager();
 
@@ -574,6 +451,7 @@ void OSystem_Android::initBackend() {
 void OSystem_Android::engineInit() {
 	_engineRunning = true;
 	updateOnScreenControls();
+	dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->applyTouchSettings();
 
 	JNI::setCurrentGame(ConfMan.getActiveDomainName());
 }
@@ -582,6 +460,53 @@ void OSystem_Android::engineDone() {
 	_engineRunning = false;
 	updateOnScreenControls();
 	JNI::setCurrentGame("");
+}
+
+void OSystem_Android::updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &settings, Common::StringArray& additionalArgs) {
+	// We only try to detect bundled games only on an app version update
+	if (!JNI::assets_updated) {
+		return;
+	}
+
+	Common::Path gamesPath(JNI::getScummVMAssetsPath(), Common::Path::kNativeSeparator);
+	gamesPath.joinInPlace("games");
+
+	// We need to init the ConfMan ourselves to cleanup outdated games
+	Common::SeekableReadStream *configStream = createConfigReadStream();
+	if (configStream) {
+		// The configuration file exists, we can load it and clean it
+		delete configStream;
+		ConfMan.loadDefaultConfigFile(Common::Path());
+
+		for (Common::ConfigManager::DomainMap::iterator it = ConfMan.beginGameDomains(), end = ConfMan.endGameDomains(); it != end; ++it) {
+			if (!it->_value.contains("path")) {
+				continue;
+			}
+			Common::Path path = Common::Path::fromConfig(it->_value.getVal("path"));
+			if (!path.isRelativeTo(gamesPath)) {
+				continue;
+			}
+			if (Common::FSNode(path).isDirectory()) {
+				continue;
+			}
+			LOGI("Cleanup up: %s, %s not found", it->_key.c_str(), path.toString().c_str());
+			// path is inside our assets games directory and doesn't exist anymore: cleanup
+			ConfMan.removeGameDomain(it->_key);
+		}
+		ConfMan.flushToDisk();
+	}
+
+	Common::FSNode node(gamesPath);
+	if (!node.exists() || !node.isDirectory() ) {
+		return;
+	}
+
+	// As this detection happens only once per version upgrade, ignore command and override it
+	LOGD("Searching games");
+	command = "add";
+	settings["path"] = gamesPath.toConfig();
+	settings["recursive"] = "true";
+	settings["exit"] = "false";
 }
 
 void OSystem_Android::updateOnScreenControls() {
@@ -657,11 +582,6 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureTouchscreen) {
 		return true;
 	}
-	/* Even if we are using the 2D graphics manager,
-	 * we are at one initGraphics3d call of supporting GLES2 */
-	if (f == kFeatureOpenGLForGame) return true;
-	/* GLES2 always supports shaders */
-	if (f == kFeatureShadersForGame) return true;
 
 	if (f == kFeatureCpuNEON) {
 #if defined(__aarch64__)
@@ -733,6 +653,17 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	}
 }
 
+void OSystem_Android::setPause(bool value) {
+	if (g_engine) {
+		LOGD("pauseEngine: %d", value);
+
+		if (value)
+			_pauseToken = g_engine->pauseEngine();
+		else if (_pauseToken.isActive())
+			_pauseToken.clear();
+	}
+}
+
 // TODO Re-eval if we need this here
 Common::HardwareInputSet *OSystem_Android::getHardwareInputSet() {
 	using namespace Common;
@@ -765,8 +696,16 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	//      The engines use those as much as possible when defining keymaps.
 	//      Then, the backends can override the default bindings to make use of the platform specific keys.
 	//
+	// Also Note: Using setDefaultBinding() will override any default/fallback keymap(s) for an action.
+	//            (for default see the ones in MetaEngine::initKeymaps() and DefaultEventManager::getGlobalKeymap())
+	//            Using addDefaultBinding() after a setDefaultBinding() here will (as expected) add another keymap to the action,
+	//            and all keymaps for the action will be listed in this method.
+	//            Using addDefaultBinding() without setDefaultBinding() will add another keymap to the action,
+	//            in addition to the existing default/fallback ones (ie. not all keymaps for the action are listed here).
 	//
-	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
+	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, Common::kStandardActionOpenMainMenu, "MENU");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, Common::kStandardActionOpenMainMenu, "JOY_START");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, Common::kStandardActionOpenMainMenu, "C+F5");
 	//
 	// We want the AC_BACK key to be the default (until overridden explicitly by the user or a game engine)
 	// mapped key for the standard SKIP action.
@@ -782,10 +721,12 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	// [kStandardActionsKeymapName is defined  as (constant char*) in ./backends/keymapper/keymap, and utilised in getActionDefaultMappings()]
 	// ["If no keymap-specific default mapping was found, look for a standard action binding"]
 	keymapperDefaultBindings->setDefaultBinding(Common::kStandardActionsKeymapName, Common::kStandardActionSkip, "AC_BACK");
+	keymapperDefaultBindings->addDefaultBinding(Common::kStandardActionsKeymapName, Common::kStandardActionSkip, "JOY_Y");
 
 	// The "CLOS" action ID is not a typo.
 	// See: backends/keymapper/remap-widget.cpp:	kCloseCmd        = 'CLOS'
 	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGuiKeymapName, "CLOS", "JOY_Y");
 
 	// By default DPAD directions will be used for virtual mouse in GUI context
 	// If the user wants to remap them, they will be able to navigate to Global Options -> Keymaps and do so.
@@ -835,23 +776,20 @@ Common::MutexInternal *OSystem_Android::createMutex() {
 void OSystem_Android::quit() {
 	ENTER();
 
-	_audio_thread_exit = true;
+	AndroidMixerManager *mixerManager = dynamic_cast<AndroidMixerManager *>(_mixerManager);
+
+	mixerManager->signalQuit();
 	_timer_thread_exit = true;
 
 	JNI::wakeupForQuit();
 	JNI::setReadyForEvents(false);
 
-	pthread_join(_audio_thread, 0);
+	mixerManager->quit();
 	pthread_join(_timer_thread, 0);
 }
 
 void OSystem_Android::setWindowCaption(const Common::U32String &caption) {
 	JNI::setWindowCaption(caption);
-}
-
-Audio::Mixer *OSystem_Android::getMixer() {
-	assert(_mixer);
-	return _mixer;
 }
 
 void OSystem_Android::getTimeAndDate(TimeDate &td, bool skipRecord) const {
@@ -933,96 +871,36 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	return Common::String(value, len);
 }
 
-const OSystem::GraphicsMode *OSystem_Android::getSupportedGraphicsModes() const {
-	// We only support one mode
-	static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-		{ "default", "Default", 0 },
-		{ 0, 0, 0 },
-	};
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+Common::Array<uint> OSystem_Android::getSupportedAntiAliasingLevels() const {
+	Common::Array<uint> levels;
 
-	return s_supportedGraphicsModes;
-}
-
-int OSystem_Android::getDefaultGraphicsMode() const {
-	// We only support one mode
-	return 0;
-}
-
-bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
-	bool render3d = flags & OSystem::kGfxModeRender3d;
-
-	// Very hacky way to set up the old graphics manager state, in case we
-	// switch from SDL->OpenGL or OpenGL->SDL.
-	//
-	// This is a probably temporary workaround to fix bugs like #5799
-	// "SDL/OpenGL: Crash when switching renderer backend".
-	//
-	// It's also used to restore state from 3D to 2D GFX manager
-	AndroidCommonGraphics *androidGraphicsManager = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager);
-	AndroidCommonGraphics::State gfxManagerState = androidGraphicsManager->getState();
-	bool supports3D = _graphicsManager->hasFeature(kFeatureOpenGLForGame);
-
-	bool switchedManager = false;
-
-	// If the new mode and the current mode are not from the same graphics
-	// manager, delete and create the new mode graphics manager
-	debug(5, "requesting 3D: %d, supporting 3D: %d", render3d, supports3D);
-	if (render3d && !supports3D) {
-		debug(5, "switching to 3D graphics");
-		delete _graphicsManager;
-		_graphicsManager = nullptr;
-		AndroidGraphics3dManager *manager = new AndroidGraphics3dManager();
-		_graphicsManager = manager;
-		androidGraphicsManager = manager;
-		switchedManager = true;
-	} else if (!render3d && supports3D) {
-		debug(5, "switching to 2D graphics");
-		delete _graphicsManager;
-		_graphicsManager = nullptr;
-		AndroidGraphicsManager *manager = new AndroidGraphicsManager();
-		_graphicsManager = manager;
-		androidGraphicsManager = manager;
-		switchedManager = true;
+	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
+		return levels;
 	}
 
-	androidGraphicsManager->syncVirtkeyboardState(_virtkeybd_on);
+	GLint numLevels = 0;
+	GLint *glLevels;
 
-	if (switchedManager) {
-		// Setup the graphics mode and size first
-		// This is needed so that we can check the supported pixel formats when
-		// restoring the state.
-		_graphicsManager->beginGFXTransaction();
-		if (!_graphicsManager->setGraphicsMode(mode, flags))
-			return false;
-		_graphicsManager->initSize(gfxManagerState.screenWidth, gfxManagerState.screenHeight);
-		_graphicsManager->endGFXTransaction();
-
-		// This failing will probably have bad consequences...
-		if (!androidGraphicsManager->setState(gfxManagerState)) {
-			return false;
-		}
-
-		// Next setup the cursor again
-		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
-		CursorMan.popCursor();
-
-		// Next setup cursor palette if needed
-		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
-			CursorMan.pushCursorPalette(0, 0, 0);
-			CursorMan.popCursorPalette();
-		}
-
-		_graphicsManager->beginGFXTransaction();
-		return true;
-	} else {
-		return _graphicsManager->setGraphicsMode(mode, flags);
+	// We take the format used by Renderer3D
+	glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_NUM_SAMPLE_COUNTS, 1, &numLevels);
+	if (numLevels == 0) {
+		return levels;
 	}
-}
 
-int OSystem_Android::getGraphicsMode() const {
-	// We only support one mode
-	return 0;
+	glLevels = new GLint[numLevels];
+	glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_SAMPLES, numLevels, glLevels);
+
+	// SDL returns values in ascending order while glGetInternalformativ returns them in descending order.
+	// Revert our result to match SDL
+	for(numLevels--; numLevels >= 0; numLevels--) {
+		levels.push_back(glLevels[numLevels]);
+	}
+
+	delete glLevels;
+	return levels;
 }
+#endif
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 void *OSystem_Android::getOpenGLProcAddress(const char *name) const {
@@ -1116,7 +994,7 @@ _s(
 "To open the virtual keyboard, long press on the controller icon at the top right of the screen, or tap on any editable text field. To hide the virtual keyboard, tap the controller icon again, or tap outside the text field.\n"
 "\n"
 "\n"
-"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 	),
 
@@ -1129,21 +1007,21 @@ _s(
 "\n"
 "2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder which has the **<Add a new folder>** option. \n"
 "\n"
-"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser root\"){w=70%}\n"
+"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser root\"){w=70%,maxw=50em}\n"
 "\n"
 "3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder containing all your game folders. For example, **SD Card > ScummVMgames**. \n"
 "\n"
 "4. Select **Use this folder**. \n"
 "\n"
-"  ![OS selectable folder](fs-folder.png \"OS selectable folder\"){w=70%}\n"
+"  ![OS selectable folder](fs-folder.png \"OS selectable folder\"){w=70%,maxw=50em}\n"
 "\n"
 "5. Select **ALLOW** to give ScummVM permission to access the folder. \n"
 "\n"
-"  ![OS access permission dialog](fs-permission.png \"OS access permission\"){w=70%}\n"
+"  ![OS access permission dialog](fs-permission.png \"OS access permission\"){w=70%,maxw=50em}\n"
 "\n"
 "6. In the ScummVM file browser, double-tap to browse through your added folder. Add a game by selecting the sub-folder containing the game files, then tap **Choose**. \n"
 "\n"
-"  ![SAF folder added](browser-folder-in-list.png \"SAF folder added\"){w=70%}\n"
+"  ![SAF folder added](browser-folder-in-list.png \"SAF folder added\"){w=70%,maxw=50em}\n"
 "\n"
 "Step 2 and 3 are done only once. To add more games, repeat Steps 1 and 6. \n"
 "\n"
@@ -1156,5 +1034,3 @@ _s(
 const char * const *OSystem_Android::buildHelpDialogData() {
 	return helpTabs;
 }
-
-#endif

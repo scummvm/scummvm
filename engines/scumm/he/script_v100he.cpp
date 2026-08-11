@@ -27,6 +27,7 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/he/animation_he.h"
+#include "scumm/he/font_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -551,7 +552,7 @@ void ScummEngine_v100he::o100_actorOps() {
 void ScummEngine_v100he::o100_arrayOps() {
 	byte *data;
 	byte string[1024];
-	int dim1end, dim1start, dim2end, dim2start;
+	int acrossMax, acrossMin, downMax, downMin;
 	int id, len, b, c, list[128];
 	int offs, tmp, tmp2;
 	uint tmp3, type;
@@ -597,26 +598,26 @@ void ScummEngine_v100he::o100_arrayOps() {
 		break;
 	case SO_COMPLEX_ARRAY_ASSIGNMENT:
 		len = getStackList(list, ARRAYSIZE(list));
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
+		acrossMax = pop();
+		acrossMin = pop();
+		downMax = pop();
+		downMin = pop();
 		id = readVar(array);
 		if (id == 0) {
-			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
+			defineArray(array, kDwordArray, downMin, downMax, acrossMin, acrossMax);
 		}
-		checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
+		checkArrayLimits(array, downMin, downMax, acrossMin, acrossMax);
 
 		tmp2 = 0;
-		while (dim2start <= dim2end) {
-			tmp = dim1start;
-			while (tmp <= dim1end) {
-				writeArray(array, dim2start, tmp, list[tmp2++]);
+		while (downMin <= downMax) {
+			tmp = acrossMin;
+			while (tmp <= acrossMax) {
+				writeArray(array, downMin, tmp, list[tmp2++]);
 				if (tmp2 == len)
 					tmp2 = 0;
 				tmp++;
 			}
-			dim2start++;
+			downMin++;
 		}
 		break;
 	case SO_COMPLEX_ARRAY_COPY_OPERATION:
@@ -650,10 +651,10 @@ void ScummEngine_v100he::o100_arrayOps() {
 			int a2_dim1start = pop();
 			int a2_dim2end = pop();
 			int a2_dim2start = pop();
-			dim1end = pop();
-			dim1start = pop();
-			dim2end = pop();
-			dim2start = pop();
+			acrossMax = pop();
+			acrossMin = pop();
+			downMax = pop();
+			downMin = pop();
 
 			debug(0, "Complex: %d = %d[%d to %d][%d to %d] %c %d[%d to %d][%d to %d]", array,
 				array1, a1_dim1start, a1_dim2end, a1_dim1start, a1_dim2end,
@@ -664,21 +665,21 @@ void ScummEngine_v100he::o100_arrayOps() {
 			int a11_num = a1_dim1end - a1_dim1start + 1;
 			int a22_num = a2_dim2end - a2_dim2start + 1;
 			int a21_num = a2_dim1end - a2_dim1start + 1;
-			int d12_num = dim2end - dim2start + 1;
-			int d11_num = dim1end - dim1start + 1;
+			int d12_num = downMax - downMin + 1;
+			int d11_num = acrossMax - acrossMin + 1;
 
 			id = readVar(array);
 			if (id == 0) {
-				defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
+				defineArray(array, kDwordArray, downMin, downMax, acrossMin, acrossMax);
 			}
 			if (a12_num != a22_num || a12_num != d12_num || a11_num != a21_num || a11_num != d11_num) {
 				error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
 			}
 
-			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start, ++dim2start) {
+			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start, ++downMin) {
 				int a2dim1 = a2_dim1start;
 				int a1dim1 = a1_dim1start;
-				int dim1 = dim1start;
+				int dim1 = acrossMin;
 				for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1, ++dim1) {
 					int val1 = readArray(array1, a1_dim2start, a1dim1);
 					int val2 = readArray(array2, a2_dim2start, a2dim1);
@@ -703,7 +704,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 					default:
 						error("o100_arrayOps: case 132 unknown type %d)", type);
 					}
-					writeArray(array, dim2start, dim1, res);
+					writeArray(array, downMin, dim1, res);
 				}
 			}
 			break;
@@ -711,23 +712,23 @@ void ScummEngine_v100he::o100_arrayOps() {
 	case SO_RANGE_ARRAY_ASSIGNMENT:
 		b = pop();
 		c = pop();
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
+		acrossMax = pop();
+		acrossMin = pop();
+		downMax = pop();
+		downMin = pop();
 		id = readVar(array);
 		if (id == 0) {
-			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
+			defineArray(array, kDwordArray, downMin, downMax, acrossMin, acrossMax);
 		}
-		checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
+		checkArrayLimits(array, downMin, downMax, acrossMin, acrossMax);
 
 		offs = (b >= c) ? 1 : -1;
 		tmp2 = c;
 		tmp3 = ABS(c - b) + 1;
-		while (dim2start <= dim2end) {
-			tmp = dim1start;
-			while (tmp <= dim1end) {
-				writeArray(array, dim2start, tmp, tmp2);
+		while (downMin <= downMax) {
+			tmp = acrossMin;
+			while (tmp <= acrossMax) {
+				writeArray(array, downMin, tmp, tmp2);
 				if (--tmp3 == 0) {
 					tmp2 = c;
 					tmp3 = ABS(c - b) + 1;
@@ -736,7 +737,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 				}
 				tmp++;
 			}
-			dim2start++;
+			downMin++;
 		}
 		break;
 	default:
@@ -777,7 +778,7 @@ void ScummEngine_v100he::o100_createSound() {
 }
 
 void ScummEngine_v100he::o100_dim2dimArray() {
-	int data, dim1end, dim2end;
+	int data, acrossMax, downMax;
 
 	byte subOp = fetchScriptByte();
 
@@ -804,9 +805,9 @@ void ScummEngine_v100he::o100_dim2dimArray() {
 		error("o100_dim2dimArray: default case %d", subOp);
 	}
 
-	dim1end = pop();
-	dim2end = pop();
-	defineArray(fetchScriptWord(), data, 0, dim2end, 0, dim1end);
+	acrossMax = pop();
+	downMax = pop();
+	defineArray(fetchScriptWord(), data, 0, downMax, 0, acrossMax);
 }
 
 void ScummEngine_v100he::o100_dimArray() {
@@ -1420,7 +1421,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 }
 
 void ScummEngine_v100he::o100_dim2dim2Array() {
-	int data, dim1start, dim1end, dim2start, dim2end;
+	int data, acrossMin, acrossMax, downMin, downMax;
 
 	byte subOp = fetchScriptByte();
 
@@ -1448,18 +1449,18 @@ void ScummEngine_v100he::o100_dim2dim2Array() {
 	}
 
 	if (pop() == 2) {
-		dim1end = pop();
-		dim1start = pop();
-		dim2end = pop();
-		dim2start = pop();
+		acrossMax = pop();
+		acrossMin = pop();
+		downMax = pop();
+		downMin = pop();
 	} else {
-		dim2end = pop();
-		dim2start = pop();
-		dim1end = pop();
-		dim1start = pop();
+		downMax = pop();
+		downMin = pop();
+		acrossMax = pop();
+		acrossMin = pop();
 	}
 
-	defineArray(fetchScriptWord(), data, dim2start, dim2end, dim1start, dim1end);
+	defineArray(fetchScriptWord(), data, downMin, downMax, acrossMin, acrossMax);
 }
 
 void ScummEngine_v100he::o100_redim2dimArray() {
@@ -2400,7 +2401,16 @@ void ScummEngine_v100he::o100_writeFile() {
 
 	byte subOp = fetchScriptByte();
 
-	assert(_hOutFileTable[slot]);
+	// The original doesn't make assumptions of any
+	// kind when the slot is -1 (which is a possible
+	// value from the scripts) and does NOPs instead...
+	if (slot != -1)
+		assert(_hOutFileTable[slot]);
+
+	// Arrays will handle the -1 value by themselves...
+	if (slot == -1 && subOp != SO_ARRAY)
+		return;
+
 	switch (subOp) {
 	case SO_ARRAY:
 		fetchScriptByte();
@@ -2619,6 +2629,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 void ScummEngine_v100he::o100_getWizData() {
 	byte filename[4096];
 	int resId, state, type;
+	int fontImageNum, fontProperty;
 	Common::Rect clipRect;
 	int32 w, h;
 	int32 x, y;
@@ -2678,11 +2689,28 @@ void ScummEngine_v100he::o100_getWizData() {
 		push(y);
 		break;
 	case SO_FONT_START:
-		pop();
+		// I don't think any HE100 games use this, since all FunShop games are HE99, but still...
+		fontProperty = pop();
 		copyScriptString(filename, sizeof(filename));
-		pop();
-		push(0);
-		debug(0, "o100_getWizData() case 111 unhandled");
+		fontImageNum = pop();
+
+		if (fontImageNum) {
+			switch (fontProperty) {
+			case 2: // PFONT_EXTENT_X
+				push(_heFont->getStringWidth(fontImageNum, Common::String((char *)filename).c_str()));
+				break;
+
+			case 3: // PFONT_EXTENT_Y
+				push(_heFont->getStringHeight(fontImageNum, Common::String((char *)filename).c_str()));
+				break;
+			default:
+				// No default case in the original...
+				break;
+			}
+		} else {
+			push(0);
+		}
+
 		break;
 	case SO_HISTOGRAM:
 		clipRect.bottom = pop();
@@ -2777,20 +2805,35 @@ void ScummEngine_v100he::o100_readFile() {
 		break;
 	case SO_INT:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readUint16LE();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readUint16LE();
+		}
+
 		push(val);
 		break;
 	case SO_DWORD:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readUint32LE();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readUint32LE();
+		}
+
 		push(val);
 		break;
 	case SO_BYTE:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readByte();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readByte();
+		}
+
 		push(val);
 		break;
 	default:

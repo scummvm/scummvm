@@ -64,7 +64,7 @@ void CastSpell::draw() {
 
 	const Character &c = *g_globals->_currCharacter;
 	writeString(0, 0, STRING["enhdialogs.cast_spell.title"], ALIGN_MIDDLE);
-	writeString(0, 20, c._name, ALIGN_MIDDLE);
+	writeString(0, 16, c._name, ALIGN_MIDDLE);
 	writeString(0, 40, STRING["enhdialogs.cast_spell.spell_ready"]);
 
 	setTextColor(37);
@@ -171,6 +171,10 @@ void CastSpell::charSwitched(Character *priorChar) {
 void CastSpell::castSpell(Character *target) {
 	if (_spellIndex == -1)
 		return;
+
+	Character &c = *g_globals->_currCharacter;
+	c._sp._current = MAX((int)c._sp._current - _requiredSp, 0);
+	c._gems = MAX((int)c._gems - _requiredGems, 0);
 
 	if (!isMagicAllowed()) {
 		g_events->send(InfoMessage(STRING["spells.magic_doesnt_work"]));

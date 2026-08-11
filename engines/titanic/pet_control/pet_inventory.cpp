@@ -97,8 +97,8 @@ bool CPetInventory::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 	return _items.MouseDoubleClickMsg(msg->_mousePos);
 }
 
-bool CPetInventory::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	return _items.VirtualKeyCharMsg(msg);
+bool CPetInventory::ActionMsg(CActionMsg *msg) {
+	return _items.ActionMsg(msg);
 }
 
 bool CPetInventory::MouseWheelMsg(CMouseWheelMsg *msg) {

@@ -33,6 +33,7 @@ enum scriptVariableOffsets {
 	RESULT = 0,
 	SCREEN = 1,
 	LOGIC_LIST_NO = 2,
+	SAFE_LOGIC_LIST = 3,
 	MOUSE_LIST_NO = 6,
 	DRAW_LIST_NO = 8,
 	CUR_ID = 12,
@@ -58,10 +59,12 @@ enum scriptVariableOffsets {
 	GRID_3_ID = 47,
 	THE_CHOSEN_ONE = 51,
 	TEXT1 = 53,
+	FIRST_ICON = 99,
 	MENU_LENGTH = 100,
 	SCROLL_OFFSET = 101,
 	MENU = 102,
 	OBJECT_HELD = 103,
+	ICON_LIT = 104,
 	LAMB_GREET = 109,
 	RND = 115,
 	CUR_SECTION = 143,
@@ -153,11 +156,20 @@ public:
 	void initScreen0();
 	void parseSaveData(uint32 *data);
 
+	void startInventory(uint32 highlightedId = 0);
+
+	uint32 *giveInvList() {
+		return &_objectList[0];
+	}
+
+	void killInventory();
+
 private:
 	void setupLogicTable();
 	void setupMcodeTable();
 	const LogicTable *_logicTable;
 	const McodeTable *_mcodeTable;
+	bool _liveInv;
 
 protected:
 	void push(uint32);

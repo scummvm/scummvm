@@ -24,6 +24,8 @@
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -67,6 +69,10 @@ void WidgetPassword::show() {
 	// Show the dialog
 	ui._menuMode = PASSWORD_MODE;
 	summonWindow();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-password")->setEnabled(true);
 }
 
 void WidgetPassword::handleEvents() {
@@ -74,10 +80,11 @@ void WidgetPassword::handleEvents() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 	const Common::KeyCode &keycode = ui._keyState.keycode;
+	Common::CustomEventType action = ui._action;
 	char currentChar = (_index == (int)_password.size()) ? ' ' : _password[_index];
 	int width = _surface.charWidth(currentChar);
 
-	if (!keycode) {
+	if (!keycode && !action) {
 		// Nothing entered, so keep blinking the cursor
 		if (--_blinkCounter < 0) {
 			_blinkCounter = 3;
@@ -110,29 +117,29 @@ void WidgetPassword::handleEvents() {
 		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _bounds.width() - 9, _cursorPos.y +
 			_surface.fontHeight() - 1), TRANSPARENCY);
 		_surface.writeString(_password.c_str() + _index, _cursorPos, COMMAND_HIGHLIGHTED);
-	} else if ((keycode == Common::KEYCODE_LEFT && _index > 0)
-			|| (keycode == Common::KEYCODE_RIGHT && _index < (int)_password.size() && _cursorPos.x < (_bounds.width() - _surface.widestChar() - 3))
-			|| (keycode == Common::KEYCODE_HOME && _index > 0)
-			|| (keycode == Common::KEYCODE_END)) {
+	} else if ((action == kActionTattooPasswordLeft && _index > 0)
+			|| (action == kActionTattooPasswordRight && _index < (int)_password.size() && _cursorPos.x < (_bounds.width() - _surface.widestChar() - 3))
+			|| (action == kActionTattooPasswordStart && _index > 0)
+			|| (action == kActionTattooPasswordEnd)) {
 		// Restore character the cursor was previously over
 		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _cursorPos.x + width, _cursorPos.y + _surface.fontHeight()), TRANSPARENCY);
 		if (currentChar != ' ')
 			_surface.writeString(Common::String::format("%c", _password[_index]), _cursorPos, COMMAND_HIGHLIGHTED);
 
-		switch (keycode) {
-		case Common::KEYCODE_LEFT:
+		switch (action) {
+		case kActionTattooPasswordLeft:
 			_cursorPos.x -= _surface.charWidth(_password[_index - 1]);
 			--_index;
 			break;
-		case Common::KEYCODE_RIGHT:
+		case kActionTattooPasswordRight:
 			_cursorPos.x += _surface.charWidth(_password[_index]);
 			++_index;
 			break;
-		case Common::KEYCODE_HOME:
+		case kActionTattooPasswordStart:
 			_cursorPos.x = _surface.widestChar();
 			_index = 0;
 			break;
-		case Common::KEYCODE_END:
+		case kActionTattooPasswordEnd:
 			_cursorPos.x = _surface.stringWidth(_password) + _surface.widestChar();
 			_index = _password.size();
 
@@ -144,7 +151,7 @@ void WidgetPassword::handleEvents() {
 		default:
 			break;
 		}
-	} else if (keycode == Common::KEYCODE_INSERT) {
+	} else if (action == kActionTattooPasswordToggleInsertMode) {
 		_insert = !_insert;
 		_cursorColor = _insert ? 192 : 200;
 	} else if (keycode == Common::KEYCODE_DELETE) {
@@ -186,6 +193,10 @@ void WidgetPassword::handleEvents() {
 
 void WidgetPassword::close() {
 	Talk &talk = *_vm->_talk;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo-password")->setEnabled(false);
+	keymapper->getKeymap("tattoo")->setEnabled(true);
 
 	banishWindow();
 	if (talk._talkToAbort)

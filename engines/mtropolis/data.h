@@ -403,6 +403,15 @@ struct Label {
 	uint32 labelID;
 };
 
+struct UniversalTime {
+	bool load(DataReader &reader);
+
+	int32 value;
+	int32 scale;
+	int32 base;
+};
+
+
 // mTropolis uses two separate type-tagged value formats.
 //
 // InternalTypeTaggedValue is used by internal modifiers for messenger payloads and set modifiers
@@ -459,6 +468,7 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 	enum TypeCode {
 		kNull = 0x00,
 		kInteger = 0x01,
+		kUniversalTime = 0x09,
 		kPoint = 0xa,
 		kIntegerRange = 0xb,
 		kFloat = 0xf,
@@ -466,6 +476,7 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 		kEvent = 0x17,
 		kLabel = 0x64,
 		kString = 0x66,
+		kRGBColor = 0x6c,
 		kIncomingData = 0x6e,
 		kVariableReference = 0x73,	// Has extra data
 	};
@@ -476,6 +487,8 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 
 		int32 asInt;
 		Point asPoint;
+		UniversalTime asUniversalTime;
+		ColorRGB16 asColor;
 		IntRange asIntRange;
 		XPFloatPOD asFloat;
 		uint16 asBoolean;

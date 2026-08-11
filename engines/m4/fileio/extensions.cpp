@@ -23,20 +23,12 @@
 
 namespace M4 {
 
-Common::String f_extension_add(const Common::String &name, const Common::String &ext) {
-	size_t dot = name.findFirstOf('.');
-	if (dot == Common::String::npos)
-		return name + "." + ext;
-	else
-		return name;
-}
-
 Common::String f_extension_new(const Common::String &name, const Common::String &ext) {
-	size_t dot = name.findFirstOf('.');
+	const size_t dot = name.findFirstOf('.');
 	if (dot != Common::String::npos)
 		return Common::String(name.c_str(), name.c_str() + dot + 1) + ext;
-	else
-		return name + "." + ext;
+
+	return name + "." + ext;
 }
 
 } // namespace M4

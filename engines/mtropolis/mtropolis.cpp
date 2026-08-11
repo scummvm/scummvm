@@ -110,8 +110,7 @@ Common::Error MTropolisEngine::run() {
 		GUI::MessageDialog dialog(
 			_("This game requires MPEG video support for some\n"
 			  "content but MPEG video support was not compiled in.\n"
-			  "The game will still play, but MPEG videos will not work."),
-			_("OK"));
+			  "The game will still play, but MPEG videos will not work."));
 		dialog.runModal();
 	}
 #endif
@@ -120,8 +119,7 @@ Common::Error MTropolisEngine::run() {
 		GUI::MessageDialog dialog(
 			_("This game requires MPEG audio support for some\n"
 			  "content but MPEG audio support was not compiled in.\n"
-			  "The game will still play, but some audio will not work."),
-			_("OK"));
+			  "The game will still play, but some audio will not work."));
 		dialog.runModal();
 	}
 #endif

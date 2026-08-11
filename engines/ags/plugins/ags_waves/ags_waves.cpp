@@ -22,6 +22,7 @@
 #include "ags/plugins/ags_waves/ags_waves.h"
 #include "ags/plugins/serializer.h"
 #include "ags/ags.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -47,21 +48,26 @@ void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 	Character_GetY = _engine->GetScriptFunctionAddress("Character::get_Y");
 	Character_ID = _engine->GetScriptFunctionAddress("Character::ID");
 
+	// Newer versions (after the 2025/04 update) no longer use the plugin to play sounds, so these
+	// bindings are not needed
+	if (_G(loaded_game_file_version) < 3060021) {
+		SCRIPT_METHOD(SFX_Play, AGSWaves::SFX_Play);
+		SCRIPT_METHOD(SFX_SetVolume, AGSWaves::SFX_SetVolume);
+		SCRIPT_METHOD(SFX_GetVolume, AGSWaves::SFX_GetVolume);
+		SCRIPT_METHOD(Music_Play, AGSWaves::Music_Play);
+		SCRIPT_METHOD(Music_GetVolume, AGSWaves::Music_GetVolume);
+		SCRIPT_METHOD(Music_SetVolume, AGSWaves::Music_SetVolume);
+		SCRIPT_METHOD(SFX_Stop, AGSWaves::SFX_Stop);
+		SCRIPT_METHOD(SFX_SetPosition, AGSWaves::SFX_SetPosition);
+		SCRIPT_METHOD(SFX_SetGlobalVolume, AGSWaves::SFX_SetGlobalVolume);
+		SCRIPT_METHOD(Load_SFX, AGSWaves::Load_SFX);
+		SCRIPT_METHOD(Audio_Apply_Filter, AGSWaves::Audio_Apply_Filter);
+		SCRIPT_METHOD(Audio_Remove_Filter, AGSWaves::Audio_Remove_Filter);
+		SCRIPT_METHOD(SFX_AllowOverlap, AGSWaves::SFX_AllowOverlap);
+		SCRIPT_METHOD(SFX_Filter, AGSWaves::SFX_Filter);
+	}
+
 	SCRIPT_METHOD(DrawScreenEffect, AGSWaves::DrawScreenEffect);
-	SCRIPT_METHOD(SFX_Play, AGSWaves::SFX_Play);
-	SCRIPT_METHOD(SFX_SetVolume, AGSWaves::SFX_SetVolume);
-	SCRIPT_METHOD(SFX_GetVolume, AGSWaves::SFX_GetVolume);
-	SCRIPT_METHOD(Music_Play, AGSWaves::Music_Play);
-	SCRIPT_METHOD(Music_GetVolume, AGSWaves::Music_GetVolume);
-	SCRIPT_METHOD(Music_SetVolume, AGSWaves::Music_SetVolume);
-	SCRIPT_METHOD(SFX_Stop, AGSWaves::SFX_Stop);
-	SCRIPT_METHOD(SFX_SetPosition, AGSWaves::SFX_SetPosition);
-	SCRIPT_METHOD(SFX_SetGlobalVolume, AGSWaves::SFX_SetGlobalVolume);
-	SCRIPT_METHOD(Load_SFX, AGSWaves::Load_SFX);
-	SCRIPT_METHOD(Audio_Apply_Filter, AGSWaves::Audio_Apply_Filter);
-	SCRIPT_METHOD(Audio_Remove_Filter, AGSWaves::Audio_Remove_Filter);
-	SCRIPT_METHOD(SFX_AllowOverlap, AGSWaves::SFX_AllowOverlap);
-	SCRIPT_METHOD(SFX_Filter, AGSWaves::SFX_Filter);
 	SCRIPT_METHOD(DrawBlur, AGSWaves::DrawBlur);
 	SCRIPT_METHOD(DrawTunnel, AGSWaves::DrawTunnel);
 	SCRIPT_METHOD(DrawCylinder, AGSWaves::DrawCylinder);

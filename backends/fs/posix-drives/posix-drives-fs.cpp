@@ -69,7 +69,7 @@ void DrivePOSIXFilesystemNode::configureStream(StdioStream *stream) {
 }
 
 Common::SeekableReadStream *DrivePOSIXFilesystemNode::createReadStream() {
-	PosixIoStream *readStream = PosixIoStream::makeFromPath(getPath(), false);
+	StdioStream *readStream = PosixIoStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 
 	configureStream(readStream);
 
@@ -81,8 +81,9 @@ Common::SeekableReadStream *DrivePOSIXFilesystemNode::createReadStream() {
 	return readStream;
 }
 
-Common::SeekableWriteStream *DrivePOSIXFilesystemNode::createWriteStream() {
-	PosixIoStream *writeStream = PosixIoStream::makeFromPath(getPath(), true);
+Common::SeekableWriteStream *DrivePOSIXFilesystemNode::createWriteStream(bool atomic) {
+	StdioStream *writeStream = PosixIoStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 
 	configureStream(writeStream);
 

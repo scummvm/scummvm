@@ -59,7 +59,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *
 	}
 
 	_splayer = nullptr;
-	_isEarlyDiMUSE = (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO));
+	_isEarlyDiMUSE = (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO) || _vm->_game.id == GID_REBEL2);
 
 	if (_isEarlyDiMUSE) {
 		memset(_ftCrossfadeBuffer, 0, sizeof(_ftCrossfadeBuffer));
@@ -94,9 +94,9 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *
 
 	_emptyMarker[0] = '\0';
 	_internalMixer = new IMuseDigiInternalMixer(mixer, _internalSampleRate, _isEarlyDiMUSE, _lowLatencyMode);
-	_groupsHandler = new IMuseDigiGroupsHandler(this);
-	_fadesHandler = new IMuseDigiFadesHandler(this);
-	_triggersHandler = new IMuseDigiTriggersHandler(this);
+	_groupsHandler = new IMuseDigiGroupsHandler(this, mutex);
+	_fadesHandler = new IMuseDigiFadesHandler(this, mutex);
+	_triggersHandler = new IMuseDigiTriggersHandler(this, mutex);
 	_filesHandler = new IMuseDigiFilesHandler(this, scumm);
 
 	diMUSEInitialize();
@@ -356,6 +356,28 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 		_curMusicCue = 0;
 	} else {
 		diMUSESaveLoad(s);
+
+		// WORKAROUND: There has been a small wave of corrupted savegames which
+		// were seemingly connected to ticket #15215:
+		// "SCUMM: DIG: Error box 29 is out of bounds in ScummVM 2.8.1"
+		//
+		// In affected savegames, the _attributes array from the iMUSE system
+		// seems to contain byteswapped 32-bit values in a few of the slots,
+		// suggesting some kind of data corruption happening behind the scenes.
+		//
+		// While the issue was solved in eefca8b ("SCUMM: (DIG) - fix setActorWalkSpeed"),
+		// there is no guarantee that a previous savegame won't be affected and won't cause
+		// a chain reaction in playDigMusic(), causing an out of bounds array read.
+		//
+		// This is a pretty reliable way to detect if the savegame was corrupted.
+ 		if (_vm->_game.id == GID_DIG && s.isLoading()) {
+			for (int i = 0; i < ARRAYSIZE(_attributes); i++) {
+				if (_attributes[i] > 32) { // Theoretically I haven't seen attribute values go beyond 5...
+					debug(2, "IMuseDigital::saveLoadEarly(): Patching corrupted DIG savegame, found invalid attribute %d at index %d. It will be zero-ed.", _attributes[i], i);
+					_attributes[i] = 0; // Bummer... still better than crashing the game though ;-)
+				}
+			}
+		}
 
 		if (s.isLoading() && _vm->isUsingOriginalGUI()) {
 			diMUSESetMusicGroupVol(diMUSEGetMusicGroupVol());

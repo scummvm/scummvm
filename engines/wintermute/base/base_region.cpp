@@ -30,11 +30,13 @@
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -47,7 +49,7 @@ BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_lastMimicScale = -1;
 	_lastMimicX = _lastMimicY = INT_MIN_VALUE;
 
-	_rect.setEmpty();
+	BasePlatform::setRectEmpty(&_rect);
 }
 
 
@@ -59,12 +61,12 @@ BaseRegion::~BaseRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegion::cleanup() {
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.clear();
+	_points.removeAll();
 
-	_rect.setEmpty();
+	BasePlatform::setRectEmpty(&_rect);
 	_editorSelectedPoint = -1;
 }
 
@@ -77,15 +79,15 @@ bool BaseRegion::createRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::pointInRegion(int x, int y) {
-	if (_points.size() < 3) {
+	if (_points.getSize() < 3) {
 		return false;
 	}
 
-	Point32 pt;
+	Common::Point32 pt;
 	pt.x = x;
 	pt.y = y;
 
-	Rect32 rect;
+	Common::Rect32 rect;
 	rect.left = x - 1;
 	rect.right = x + 2;
 	rect.top = y - 1;
@@ -101,9 +103,9 @@ bool BaseRegion::pointInRegion(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		BaseEngine::LOG(0, "BaseRegion::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "BaseRegion::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -112,7 +114,7 @@ bool BaseRegion::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		BaseEngine::LOG(0, "Error parsing REGION file '%s'", filename);
+		_game->LOG(0, "Error parsing REGION file '%s'", filename);
 	}
 
 
@@ -149,20 +151,20 @@ bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_REGION) {
-			BaseEngine::LOG(0, "'REGION' keyword expected.");
+			_game->LOG(0, "'REGION' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.clear();
+	_points.removeAll();
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -208,7 +210,7 @@ bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		BaseEngine::LOG(0, "Syntax error in REGION definition");
+		_game->LOG(0, "Syntax error in REGION definition");
 		return STATUS_FAILED;
 	}
 
@@ -248,8 +250,8 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		if (index >= 0 && index < (int32)_points.size()) {
-			_points.insert_at(index, new BasePoint(x, y));
+		if (index >= 0 && index < _points.getSize()) {
+			_points.insertAt(index, new BasePoint(x, y));
 			createRegion();
 
 			stack->pushBool(true);
@@ -269,7 +271,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		if (index >= 0 && index < (int32)_points.size()) {
+		if (index >= 0 && index < _points.getSize()) {
 			_points[index]->x = x;
 			_points[index]->y = y;
 			createRegion();
@@ -289,11 +291,9 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
 
-		if (index >= 0 && index < (int32)_points.size()) {
-			delete _points[index];
-			_points[index] = nullptr;
-
-			_points.remove_at(index);
+		if (index >= 0 && index < _points.getSize()) {
+			SAFE_DELETE(_points[index]);
+			_points.removeAt(index);
 			createRegion();
 
 			stack->pushBool(true);
@@ -311,7 +311,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
 
-		if (index >= 0 && index < (int32)_points.size()) {
+		if (index >= 0 && index < _points.getSize()) {
 			ScValue *val = stack->getPushValue();
 			if (val) {
 				val->setProperty("X", _points[index]->x);
@@ -329,13 +329,13 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseRegion::scGetProperty(const Common::String &name) {
+ScValue *BaseRegion::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("region");
 		return _scValue;
 	}
@@ -343,15 +343,15 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Name") {
-		_scValue->setString(getName());
+	else if (strcmp(name, "Name") == 0) {
+		_scValue->setString(_name);
 		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Active") {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->setBool(_active);
 		return _scValue;
 	}
@@ -359,8 +359,8 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumPoints
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumPoints") {
-		_scValue->setInt(_points.size());
+	else if (strcmp(name, "NumPoints") == 0) {
+		_scValue->setInt(_points.getSize());
 		return _scValue;
 	} else {
 		return BaseObject::scGetProperty(name);
@@ -404,16 +404,16 @@ bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *n
 		buffer->putTextIndent(indent, "%s {\n", nameOverride);
 	}
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
@@ -439,6 +439,11 @@ bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_lastMimicY));
 	_points.persist(persistMgr);
 
+	// initialise to default
+	if (!persistMgr->getIsSaving()) {
+		BasePlatform::setRectEmpty(&_rect);
+	}
+
 	return STATUS_OK;
 }
 
@@ -449,7 +454,7 @@ typedef struct {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::ptInPolygon(int32 x, int32 y) {
-	if (_points.size() < 3) {
+	if (_points.getSize() < 3) {
 		return false;
 	}
 
@@ -463,9 +468,9 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 	p1.x = (double)_points[0]->x;
 	p1.y = (double)_points[0]->y;
 
-	for (uint32 i = 1; i <= _points.size(); i++) {
-		p2.x = (double)_points[i % _points.size()]->x;
-		p2.y = (double)_points[i % _points.size()]->y;
+	for (int32 i = 1; i <= _points.getSize(); i++) {
+		p2.x = (double)_points[i % _points.getSize()]->x;
+		p2.y = (double)_points[i % _points.getSize()]->y;
 
 		if (p.y > MIN(p1.y, p2.y)) {
 			if (p.y <= MAX(p1.y, p2.y)) {
@@ -491,20 +496,20 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::getBoundingRect(Rect32 *rect) {
-	if (_points.size() == 0) {
-		rect->setEmpty();
+bool BaseRegion::getBoundingRect(Common::Rect32 *rect) {
+	if (_points.getSize() == 0) {
+		BasePlatform::setRectEmpty(rect);
 	} else {
 		int32 minX = INT_MAX_VALUE, minY = INT_MAX_VALUE, maxX = INT_MIN_VALUE, maxY = INT_MIN_VALUE;
 
-		for (uint32 i = 0; i < _points.size(); i++) {
+		for (int32 i = 0; i < _points.getSize(); i++) {
 			minX = MIN(minX, _points[i]->x);
 			minY = MIN(minY, _points[i]->y);
 
 			maxX = MAX(maxX, _points[i]->x);
 			maxY = MAX(maxY, _points[i]->y);
 		}
-		rect->setRect(minX, minY, maxX, maxY);
+		BasePlatform::setRect(rect, minX, minY, maxX, maxY);
 	}
 	return STATUS_OK;
 }
@@ -518,7 +523,7 @@ bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 
 	cleanup();
 
-	for (uint32 i = 0; i < region->_points.size(); i++) {
+	for (int32 i = 0; i < region->_points.getSize(); i++) {
 		int xVal, yVal;
 
 		xVal = (int)((float)region->_points[i]->x * scale / 100.0f);
@@ -535,6 +540,6 @@ bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 }
 
 Common::String BaseRegion::debuggerToString() const {
-	return Common::String::format("%p: Region \"%s\": Rect (top, right, bottom, left): (%d, %d, %d, %d), active: %d ", (const void *)this, getName(), _rect.top, _rect.right, _rect.bottom, _rect.left, _active);
+	return Common::String::format("%p: Region \"%s\": Rect (top, right, bottom, left): (%d, %d, %d, %d), active: %d ", (const void *)this, _name, _rect.top, _rect.right, _rect.bottom, _rect.left, _active);
 }
 } // End of namespace Wintermute

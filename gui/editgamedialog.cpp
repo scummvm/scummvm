@@ -22,6 +22,7 @@
 #include "gui/editgamedialog.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "graphics/hotspot_renderer.h"
 
 #include "common/config-manager.h"
 #include "common/gui_options.h"
@@ -42,7 +43,7 @@
 #include "gui/widgets/popup.h"
 #include "gui/widgets/scrollcontainer.h"
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
 #endif
 
@@ -79,7 +80,8 @@ enum {
 	kCmdSavePathClear = 'PSAC',
 	kCmdCheckIntegrity = 'PCHI',
 
-	kGraphicsTabContainerReflowCmd = 'gtcr'
+	kGraphicsTabContainerReflowCmd = 'gtcr',
+	kEnableHotspotsCmd = 'enhs',
 };
 
 class DomainEditTextWidget : public EditTextWidget {
@@ -101,16 +103,17 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	const Plugin *metaEnginePlugin = nullptr;
 	const Plugin *enginePlugin = nullptr;
-	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &metaEnginePlugin);
-	if (!metaEnginePlugin) {
-		warning("MetaEnginePlugin for target \"%s\" not found!", domain.c_str());
-	} else {
-		enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
-		if (!enginePlugin) {
-			warning("Engine Plugin for target \"%s\" not found! Game specific settings might be missing.", domain.c_str());
-		}
+	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain);
+
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
+	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
+	PluginMan.unloadDetectionPlugin();
+#endif
+
+	enginePlugin = PluginMan.findEnginePlugin(qgd.engineId);
+	if (!enginePlugin) {
+		warning("Engine Plugin for target \"%s\" not found! Game specific settings might be missing.", domain.c_str());
 	}
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
@@ -284,7 +287,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	// GUI: Check integrity button
 	if (ConfMan.hasKey("enable_integrity_checking", Common::ConfigManager::kApplicationDomain))
 		new ButtonWidget(tab, "GameOptions_Paths.Checkintegrity", _("Check Integrity"), _("Perform integrity check for all game files"), kCmdCheckIntegrity);
@@ -316,7 +319,46 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
 	//
-	// 9) The Achievements & The Statistics tabs
+	// 9) The Misc tab
+	//
+	tab->addTab(g_gui.useLowResGUI() ? _c("Misc", "lowres") : _("Misc"), "GameOptions_Misc");
+
+	ScrollContainerWidget *miscContainer = new ScrollContainerWidget(tab,
+			"GameOptions_Misc.Container", "GameOptions_Misc_Container");
+	miscContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+	miscContainer->setTarget(this);
+
+	bool hotspotsEnabled = ConfMan.getBool("enable_hotspots", _domain);
+	_enableHotspotsCheckbox = new CheckboxWidget(miscContainer, "GameOptions_Misc_Container.EnableHotspots",
+		_("Enable hotspot display"),
+		_("Enable visual markers and labels for interactive objects"),
+		kEnableHotspotsCmd
+	);
+
+	_hotspotMarkerPopUpDesc = new StaticTextWidget(miscContainer,
+			"GameOptions_Misc_Container.HotspotMarkerPopupDesc", _("Hotspot marker:"));
+	_hotspotMarkerPopUp = new PopUpWidget(miscContainer, "GameOptions_Misc_Container.HotspotMarkerPopup");
+	_hotspotMarkerPopUp->appendEntry(_("Point"), Graphics::kMarkerPoint);
+	_hotspotMarkerPopUp->appendEntry(_("Square"), Graphics::kMarkerSquare);
+	_hotspotMarkerPopUp->appendEntry(_("Crosshair"), Graphics::kMarkerCrosshair);
+	_hotspotMarkerPopUp->setSelectedTag(ConfMan.getInt("hotspot_marker", _domain));
+	_hotspotMarkerPopUp->setEnabled(hotspotsEnabled);
+	_hotspotMarkerPopUpDesc->setEnabled(hotspotsEnabled);
+
+	bool showHotspotText = ConfMan.getBool("show_hotspot_text", _domain);
+	if (!ConfMan.hasKey("show_hotspot_text", _domain))
+		showHotspotText = true;
+	_showHotspotTextCheckbox = new CheckboxWidget(miscContainer, "GameOptions_Misc_Container.ShowHotspotText",
+		_("Show hotspot labels"),
+		_("Display text labels next to hotspot markers")
+	);
+	_showHotspotTextCheckbox->setState(showHotspotText);
+	_showHotspotTextCheckbox->setEnabled(hotspotsEnabled);
+
+	_enableHotspotsCheckbox->setState(hotspotsEnabled);
+
+	//
+	// 10) The Achievements & The Statistics tabs
 	//
 	if (enginePlugin) {
 		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
@@ -380,7 +422,8 @@ void EditGameDialog::addGameControls(GuiObject *boss, const Common::String &pref
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
 	for (; p->code; ++p) {
-		_platformPopUp->appendEntry(p->description, p->id);
+		if (checkGameGUIOptionPlatform(p->id, _guioptionsString))
+			_platformPopUp->appendEntry(p->description, p->id);
 	}
 }
 
@@ -392,13 +435,13 @@ void EditGameDialog::setupGraphicsTab() {
 void EditGameDialog::open() {
 	OptionsDialog::open();
 
-	int sel, i;
 	bool e;
 
 	// En-/disable dialog items depending on whether overrides are active or not.
 
 	e = ConfMan.hasKey("gfx_mode", _domain) ||
 		ConfMan.hasKey("render_mode", _domain) ||
+		ConfMan.hasKey("rotation_mode", _domain) ||
 		ConfMan.hasKey("stretch_mode", _domain) ||
 		ConfMan.hasKey("scaler", _domain) ||
 		ConfMan.hasKey("scale_factor", _domain) ||
@@ -460,14 +503,34 @@ void EditGameDialog::open() {
 		_engineOptions->load();
 	}
 
-	const Common::PlatformDescription *p = Common::g_platforms;
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
-	sel = 0;
-	for (i = 0; p->code; ++p, ++i) {
-		if (platform == p->id)
-			sel = i + 2;
+
+	if (ConfMan.hasKey("platform", _domain)) {
+		_platformPopUp->setSelectedTag(platform);
+	} else {
+		_platformPopUp->setSelectedTag((uint32)Common::kPlatformUnknown);
 	}
-	_platformPopUp->setSelected(sel);
+
+	// First entry is <default>
+	// Second entry is ""
+	// So from third entry onwards are actual platforms - same logic as for language
+	if (_platformPopUp->numEntries() <= 3) {
+		_platformPopUpDesc->setEnabled(false);
+		_platformPopUp->setEnabled(false);
+	}
+}
+
+void EditGameDialog::close() {
+	OptionsDialog::close();
+
+	// Cleanup engine widgets before unloading its plugin
+	if (_engineOptions) {
+		// Remove the widget from the container before deleting the widget
+		_gameContainer->removeWidget(_engineOptions);
+		delete _engineOptions;
+	}
+
+	PluginMan.loadDetectionPlugin(); // only for uncached manager
 }
 
 void EditGameDialog::apply() {
@@ -507,11 +570,23 @@ void EditGameDialog::apply() {
 		_engineOptions->save();
 	}
 
+	ConfMan.setBool("enable_hotspots", _enableHotspotsCheckbox->getState(), _domain);
+	ConfMan.setInt("hotspot_marker", _hotspotMarkerPopUp->getSelectedTag(), _domain);
+	ConfMan.setBool("show_hotspot_text", _showHotspotTextCheckbox->getState(), _domain);
+
 	OptionsDialog::apply();
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	case kEnableHotspotsCmd: {
+		bool enabled = _enableHotspotsCheckbox->getState();
+		_hotspotMarkerPopUpDesc->setEnabled(enabled);
+		_hotspotMarkerPopUp->setEnabled(enabled);
+		_showHotspotTextCheckbox->setEnabled(enabled);
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	}
 	case kCmdGlobalGraphicsOverride:
 		setGraphicSettingsState(data != 0);
 		g_gui.scheduleTopDialogRedraw();
@@ -604,7 +679,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				error.runModal();
 				return;
 			}
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#if defined(USE_CLOUD)
 			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();
 #endif
@@ -622,9 +697,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_savePathWidget->setLabel(Common::Path());
 		break;
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	case kCmdCheckIntegrity: {
-		IntegrityDialog wizard("http://gamesdb.sev.zone/endpoints/validate.php", _domain);
+		IntegrityDialog wizard("http://gamesdb.sev.zone/validate", _domain);
 		wizard.runModal();
 		break;
 	}

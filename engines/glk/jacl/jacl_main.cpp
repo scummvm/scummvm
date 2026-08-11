@@ -205,7 +205,7 @@ void glk_main() {
 	//promptwin = g_vm->glk_window_open(mainwin, winmethod_Below | winmethod_Fixed,
 	//    3, wintype_TextBuffer, 0);
 
-	/* SET THIS TO DETERMINE THE SYTEM OF INPUT TO USE */
+	/* SET THIS TO DETERMINE THE SYSTEM OF INPUT TO USE */
 	//inputwin = promptwin;
 	inputwin = mainwin;
 
@@ -340,7 +340,7 @@ void glk_main() {
 
 				case evtype_SoundNotify:
 					/* A SOUND HAS FINISHED PLAYING CALL +sound_finished
-					 * WITH THE RESOUCE NUMBER AS THE FIRST ARGUMENT
+					 * WITH THE RESOURCE NUMBER AS THE FIRST ARGUMENT
 					 * AND THE CHANNEL NUMBER AS THE SECOND ARGUMENT */
 					Common::sprintf_s(temp_buffer, "+sound_finished<%d<%d", (int) ev.val1, (int) ev.val2 - 1);
 					execute(temp_buffer);

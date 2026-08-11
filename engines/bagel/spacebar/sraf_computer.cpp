@@ -22,20 +22,20 @@
 #include "bagel/spacebar/sraf_computer.h"
 #include "bagel/spacebar/sraf_msg.h"
 #include "bagel/spacebar/sraf_file.h"
-#include "bagel/boflib/app.h"
-#include "bagel/baglib/bagel.h"
+#include "bagel/spacebar/boflib/app.h"
+#include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/baglib/link_object.h"
+#include "bagel/spacebar/baglib/link_object.h"
 #include "bagel/bagel.h"
 #include "bagel/boflib/file_functions.h"
-#include "bagel/boflib/std_keys.h"
+#include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
 #define SRAF_DIR         "$SBARDIR\\SRAFFA\\CLOSEUP\\COMPUTER\\"
-#define SRAF_MALE_DIR    "$SBARDIR\\SRAFFA\\CHAR\\GMALE\\"
-#define SRAF_FEMALE_DIR  "$SBARDIR\\SRAFFA\\CHAR\\GFEMALE\\"
+#define SRAF_MALE_DIR    "$SBARDIR\\SRAFFA\\char\\GMALE\\"
+#define SRAF_FEMALE_DIR  "$SBARDIR\\SRAFFA\\char\\GFEMALE\\"
 #define SRAF_AUDIO_DIR   "$SBARDIR\\SRAFFA\\AUDIO\\EVENTS\\"
 #define SRAF_TIMEOUT     "SFTIMOUT.WAV"
 
@@ -434,7 +434,7 @@ static AUDIOITEM g_audioTracks[NUM_MUSICAL_SCORES] = {
 	{ "Mixed Selections",         " ",              " ",          nullptr,        nullptr },
 };
 static AUDIOITEM g_chickenDance = \
-	{ "Chicken Dance",            "Unknown Origin", "Mars",       "CHIKDANC.MID", nullptr };
+{ "Chicken Dance",            "Unknown Origin", "Mars",       "CHIKDANC.MID", nullptr };
 // Pointers to the g_audioTracks entries. For the Mac, The Womp Song
 // is replaced with the Chicken Dance
 static AUDIOITEM *g_stAudioSetting[NUM_MUSICAL_SCORES] = {
@@ -468,12 +468,12 @@ static CODEWORDITEM g_stCodeWords[NUM_CODE_WORDS] = {
 };
 
 static bool gTextScreenFrontmost = false;
-static int gDispatchCurState = 0;	// Retain current state of dispatch negotiating team screen
-static int gTurncountLineNo = 0;	// Keep track of turncount line number
+static int gDispatchCurState = 0;   // Retain current state of dispatch negotiating team screen
+static int gTurncountLineNo = 0;    // Keep track of turncount line number
 // Member static initializations
 
 bool SrafComputer::_bSwonzaEnlightened = false;
-SrafComputer *SrafComputer::_pHead = nullptr;	// Only sraffan computer
+SrafComputer *SrafComputer::_pHead = nullptr;   // Only sraffan computer
 int SrafComputer::_nStartingTime = 0;
 bool SrafComputer::_bRandomAudio = false;
 int SrafComputer::_nRandomTime = 0;
@@ -499,8 +499,8 @@ SrafComputer::SrafComputer() :
 	gStafferDisplay(0, 0, 640 - 1, 480 - 1), gSrafTextWindow(0, 440, 640 - 1, 480 - 1) {
 	int i;
 
-	_cTextColor = CTEXT_WHITE;			// Start out with white as our text color
-	_cTextHiliteColor = RGB(255, 255, 255);	// and some other color as our hilite
+	_cTextColor = CTEXT_WHITE;          // Start out with white as our text color
+	_cTextHiliteColor = RGB(255, 255, 255); // and some other color as our hilite
 	_cTextLineColor = CTEXT_YELLOW;
 
 	// Computer starts as off and at the main screen
@@ -995,10 +995,10 @@ ErrorCode SrafComputer::detach() {
 }
 
 
-void SrafComputer::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+void SrafComputer::onLButtonUp(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void *) {
 }
 
-void SrafComputer::onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*xPoint*/, void *) {
+void SrafComputer::onLButtonDown(uint32 /*nFlags*/, CBofPoint */*xPoint*/, void *) {
 }
 
 void SrafComputer::onKeyHit(uint32 lKey, uint32 nRepCount) {
@@ -1131,7 +1131,7 @@ ErrorCode SrafComputer::createListBox() {
 
 void SrafComputer::deleteListBox() {
 	if (_pLBox) {
-		_pLBox->deleteAll();	// Clears all in the text box
+		_pLBox->deleteAll();    // Clears all in the text box
 	}
 }
 
@@ -2355,7 +2355,7 @@ void SrafComputer::activateCodeWords() {
 	sStr = " ";
 	_pLBox->addToTail(sStr, false);
 
-	sStr = "CODE WORD PAIR: (,)";
+	sStr = "CODE uint16 PAIR: (,)";
 	_pLBox->addToTail(sStr, false);
 
 	// Show list box
@@ -2608,7 +2608,7 @@ void SrafComputer::onListDealSummary() {
 }
 
 void SrafComputer::onListBuyerBids() {
-	CBofPoint   cPoint = getPrevMouseDown();	// Already in local coords
+	CBofPoint   cPoint = getPrevMouseDown();    // Already in local coords
 	int         index = _nSelection - 1;
 
 	// Make sure that this is not out of range.
@@ -2644,7 +2644,7 @@ void SrafComputer::onListBuyerBids() {
 		if (g_stBuyerBids[index]._bAccept) {
 			_pLBox->setTextLineColor(_nSelection, _cTextLineColor);
 		} else {
-			_pLBox->setTextLineColor(_nSelection, (RGBCOLOR) - 1); // Restore default
+			_pLBox->setTextLineColor(_nSelection, (COLORREF) - 1); // Restore default
 		}
 
 		_pLBox->repaintItem(_nSelection);
@@ -2698,7 +2698,7 @@ void SrafComputer::onListStaffBios() {
 }
 
 void SrafComputer::onListDispatchTeam() {
-	CBofPoint   cPoint = getPrevMouseDown();	// Already in local coords
+	CBofPoint   cPoint = getPrevMouseDown();    // Already in local coords
 	CBofRect    cMeetWithRect(0,
 	                          0,
 	                          (kTeamMemberColumn - kStandardIndentation) * kBuyerBidsPointWidth,
@@ -2919,13 +2919,13 @@ void SrafComputer::onListDispatchTeam() {
 		nElementIndex = _nSelection - 2; // two header lines before data starts
 		if (nElementIndex >= 0 && nElementIndex < NUM_STAFFERS) {
 			CBofRect cStaffNames(cTeamMembersRect.left + kStandardIndentation * kBuyerBidsPointWidth,
-			                        cTeamMembersRect.top,
-			                        cTeamMembersRect.left + (kStandardIndentation + kMaxStafferNameLen) * kBuyerBidsPointWidth + 60,
-			                        cTeamMembersRect.bottom);
+			                     cTeamMembersRect.top,
+			                     cTeamMembersRect.left + (kStandardIndentation + kMaxStafferNameLen) * kBuyerBidsPointWidth + 60,
+			                     cTeamMembersRect.bottom);
 			CBofRect cStaffInclude((kTeamIncludeColumn - kStandardIndentation) * kBuyerBidsPointWidth,
-			                          cTeamMembersRect.top,
-			                          cTeamMembersRect.right,
-			                          cTeamMembersRect.bottom);
+			                       cTeamMembersRect.top,
+			                       cTeamMembersRect.right,
+			                       cTeamMembersRect.bottom);
 
 			//  If in the staff names column, then show the biography
 			if (cStaffNames.ptInRect(cPoint)) {
@@ -3171,7 +3171,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 
 	// - Pnurth must be teamed up with Lentil, Vargas or Churg (still learning)
 	if ((bDone == false)  && (teamListItem._nFlags & mPnurth81) &&
-		        !((teamListItem._nFlags & mLentil24) || (teamListItem._nFlags & mVargas20) || (teamListItem._nFlags & mChurg53))) {
+	        !((teamListItem._nFlags & mLentil24) || (teamListItem._nFlags & mVargas20) || (teamListItem._nFlags & mChurg53))) {
 		bDone = true;
 		if (teamListItem._nFlags & mStafferMale) {
 			if (nTeamMembers == 1) {
@@ -3269,7 +3269,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 				nRequiredStrength = SINJIN11_REQUIRED_TEAM_STRENGTH;
 				nTalkedUpAmount1 = kSinjinTalkedUpAmount;
 				nMineralID1 = kSinjinMineralID;
-				// fallthrough
+			// fallthrough
 
 			case GUNG14:
 				// This guy can be talked up by a good negotiating team to (8gZ)
@@ -3278,7 +3278,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 					nTalkedUpAmount1 = kGungTalkedUpAmount;
 					nMineralID1 = kGungMineralID;
 				}
-				// fallthrough
+			// fallthrough
 
 			case GILD13:
 				// Gild can be talked up on zinc from 6 to 11 and on
@@ -3290,7 +3290,7 @@ bool SrafComputer::reportMeetingStatus(int nTeamNumber) {
 					nTalkedUpAmount2 = kGildTalkedUpAmount2;
 					nMineralID2 = kGildMineralID2;
 				}
-				// fallthrough
+			// fallthrough
 
 			case DORK44: {
 				// Negotiating team must be at least half female.
@@ -3577,7 +3577,7 @@ void SrafComputer::onListCodeWords() {
 			*_pszGroup2Word = pszWord;
 		}
 
-		sStr = "CODE WORD PAIR: (";
+		sStr = "CODE uint16 PAIR: (";
 		if (_pszGroup1Word) {
 			sStr += *_pszGroup1Word;
 		}
@@ -4473,8 +4473,8 @@ CBofBitmap *SrafComputer::getComputerBackdrop() {
 // hand corner of the screen.
 
 SrafTextScreen::SrafTextScreen(const CBofString &str, bool isText) :
-		gCompDisplay(40, 40, 600, 440), gTextWindow(0, 0, 640 - 1, 480 - 1),
-		gStafferDisplay(0, 0, 640 - 1, 480 - 1), gSrafTextWindow(0, 440, 640 - 1, 480 - 1) {
+	gCompDisplay(40, 40, 600, 440), gTextWindow(0, 0, 640 - 1, 480 - 1),
+	gStafferDisplay(0, 0, 640 - 1, 480 - 1), gSrafTextWindow(0, 440, 640 - 1, 480 - 1) {
 	if (isText) {
 		_text = str;
 
@@ -4520,12 +4520,12 @@ int SrafTextScreen::createTextScreen(CBofWindow *pParent) {
 	_pOKButton->loadBitmaps(pUp, pDown, pFocus, pDis);
 
 	_pOKButton->create(g_stButtons[DONE_BUTTON]._pszName,
-	                    g_stButtons[DONE_BUTTON]._nLeft,
-	                    g_stButtons[DONE_BUTTON]._nTop,
-	                    g_stButtons[DONE_BUTTON]._nWidth,
-	                    g_stButtons[DONE_BUTTON]._nHeight,
-	                    this,
-	                    g_stButtons[DONE_BUTTON]._nID);
+	                   g_stButtons[DONE_BUTTON]._nLeft,
+	                   g_stButtons[DONE_BUTTON]._nTop,
+	                   g_stButtons[DONE_BUTTON]._nWidth,
+	                   g_stButtons[DONE_BUTTON]._nHeight,
+	                   this,
+	                   g_stButtons[DONE_BUTTON]._nID);
 
 	//  Create our text box.
 	cRect.setRect(gCompDisplay.left, gCompDisplay.top, gCompDisplay.right, gCompDisplay.bottom);

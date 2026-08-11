@@ -32,7 +32,7 @@ extern const ADGameDescription GAME_DESCRIPTIONS[];
 
 } // namespace Hpl1
 
-class Hpl1MetaEngineDetection : public AdvancedMetaEngineDetection {
+class Hpl1MetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

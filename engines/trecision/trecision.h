@@ -23,6 +23,7 @@
 #define TRECISION_TRECISION_H
 
 #include "common/str-array.h"
+#include "common/events.h"
 #include "common/keyboard.h"
 #include "common/str.h"
 #include "common/serializer.h"
@@ -82,6 +83,18 @@ enum TrecisionMessageIds {
 	kMessageGoto2 = 26
 };
 
+enum TRECISIONAction {
+	kActionNone,
+	kActionSkipVideo,
+	kActionFastWalk,
+	kActionPause,
+	kActionQuit,
+	kActionSystemMenu,
+	kActionSave,
+	kActionLoad,
+	kActionYes
+};
+
 typedef Common::List<Common::Rect>::iterator DirtyRectsIterator;
 
 struct ElevatorAction {
@@ -135,6 +148,7 @@ class TrecisionEngine : public Engine {
 	// Utils
 	char *getNextSentence();
 	uint16 getKey();
+	uint16 getAction();
 	void processTime();
 	void processMouse();
 	static bool isBetween(int a, int x, int b);
@@ -294,6 +308,8 @@ public:
 	Common::Point _mousePos;
 	bool _mouseMoved, _mouseLeftBtn, _mouseRightBtn;
 	Common::KeyCode _curKey;
+	Common::CustomEventType _curAction;
+	bool _joyButtonUp = false;
 
 	bool _flagScriptActive;
 	SScriptFrame _scriptFrame[MAXSCRIPTFRAME];

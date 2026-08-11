@@ -49,13 +49,12 @@ public:
 	bool parseEditorProperty(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
 	BaseClass();
-	BaseClass(BaseGame *GameOwner);
+	BaseGame *_game;
+	BaseClass(BaseGame *gameOwner);
 	virtual ~BaseClass();
-	BaseGame *_gameRef;
 
 	virtual const char *getClassName() { return ""; }
 	virtual bool persist(BasePersistenceManager *persistMgr) { return true; }
-protected:
 	Common::HashMap<Common::String, Common::String> _editorProps;
 	Common::HashMap<Common::String, Common::String>::iterator _editorPropsIter;
 };

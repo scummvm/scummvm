@@ -80,7 +80,7 @@ bool File::open(SeekableReadStream *stream, const String &name) {
 		_handle = stream;
 		_name = name;
 	} else {
-		debug(2, "File::open: opening '%s' failed", name.c_str());
+		debug(8, "File::open: opening '%s' failed", name.c_str());
 	}
 	return _handle != nullptr;
 }
@@ -166,8 +166,8 @@ bool DumpFile::open(const Path &filename, bool createPath) {
 			StringArray components = dirname.splitComponents();
 
 			Common::Path subpath;
-			for (StringArray::iterator it = components.begin(); it != components.end(); ++it) {
-				subpath.appendInPlace(*it, Common::Path::kNoSeparator);
+			for (auto &component : components) {
+				subpath.appendInPlace(component, Common::Path::kNoSeparator);
 				// Add a trailing path separator
 				subpath.appendInPlace("/");
 				node = g_system->getFilesystemFactory()->makeFileNodePath(subpath.toString(Common::Path::kNativeSeparator));

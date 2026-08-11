@@ -27,9 +27,12 @@ namespace Bagel {
 
 class CBofObject {
 public:
+	virtual ~CBofObject() {}
 	static bool isValidObject(const CBofObject *pObject) {
 		return true;
 	}
+
+	virtual void DeleteObject() {}
 };
 
 } // namespace Bagel

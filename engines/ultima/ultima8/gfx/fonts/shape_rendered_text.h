@@ -32,7 +32,7 @@ class ShapeFont;
 
 class ShapeRenderedText : public RenderedText {
 public:
-	ShapeRenderedText(const Std::list<PositionedText> &lines,
+	ShapeRenderedText(const Common::List<PositionedText> &lines,
 	                  int width, int height, int vlead, ShapeFont *font);
 	~ShapeRenderedText() override;
 
@@ -40,7 +40,7 @@ public:
 	void drawBlended(RenderSurface *surface, int x, int y, uint32 col, bool destmasked = false) override;
 
 protected:
-	Std::list<PositionedText> _lines;
+	Common::List<PositionedText> _lines;
 	ShapeFont *_font;
 };
 

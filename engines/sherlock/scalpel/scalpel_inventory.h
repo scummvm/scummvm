@@ -24,6 +24,8 @@
 
 #include "sherlock/inventory.h"
 
+#include "common/events.h"
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -38,12 +40,7 @@ public:
 	Common::String _fixedTextUse;
 	Common::String _fixedTextGive;
 
-	byte _hotkeyExit;
-	byte _hotkeyLook;
-	byte _hotkeyUse;
-	byte _hotkeyGive;
-
-	byte _hotkeysIndexed[8];
+	Common::CustomEventType _actionsIndexed[8];
 
 	/**
 	 * Put the game into inventory mode and open the interface window.
@@ -78,9 +75,9 @@ public:
 	void loadInv() override;
 
 	/**
-	 * Identifies a button number according to the key, that the user pressed
+	 * Identifies a button number according to the action, that the user pressed
 	 */
-	int identifyUserButton(int key);
+	int identifyUserButton(Common::CustomEventType action);
 };
 
 } // End of namespace Scalpel

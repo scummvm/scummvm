@@ -32,6 +32,8 @@
 
 #include "audio/decoders/raw.h"
 
+#include "graphics/blit.h"
+
 #include "common/array.h"
 #include "common/util.h"
 #include "common/memstream.h"
@@ -148,17 +150,32 @@ VQADecoder::VQADecoder() {
 }
 
 VQADecoder::~VQADecoder() {
+	close();
+}
+
+void VQADecoder::close() {
 	for (uint i = _codebooks.size(); i != 0; --i) {
 		delete[] _codebooks[i - 1].data;
 	}
+	_codebooks.clear();
+
 	delete _audioTrack;
+	_audioTrack = nullptr;
+
 	delete _videoTrack;
+	_videoTrack = nullptr;
+
 	delete[] _frameInfo;
+	_frameInfo = nullptr;
+
+	_loopInfo.close();
+
 	deleteVQPTable();
 }
 
 bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
-	// close();
+	close();
+
 	_s = s;
 
 	IFFChunkHeader chd;
@@ -693,9 +710,9 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_offsetX   = header->offsetX;
 	_offsetY   = header->offsetY;
 
-	_maxVPTRSize = header->maxVPTRSize;
-	_maxCBFZSize = header->maxCBFZSize;
-	_maxZBUFChunkSize = vqaDecoder->_maxZBUFChunkSize;
+	_maxVPTRSize = roundup(header->maxVPTRSize);
+	_maxCBFZSize = roundup(header->maxCBFZSize);
+	_maxZBUFChunkSize = roundup(vqaDecoder->_maxZBUFChunkSize);
 
 	_codebook = nullptr;
 	_cbfz     = nullptr;
@@ -706,7 +723,7 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_curFrame = -1;
 
 	_zbufChunkSize = 0;
-	_zbufChunk     = new uint8[roundup(_maxZBUFChunkSize)];
+	_zbufChunk     = new uint8[_maxZBUFChunkSize];
 
 	_viewDataSize = 0;
 	_viewData     = nullptr;
@@ -728,6 +745,8 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_codebookInfoNext         = nullptr; // stores the decompressed codebook parts and it's swapped with the active codebook
 	_countOfCBPsToCBF         = 0;
 	_accumulatedCBPZsizeToCBF = 0;
+
+	_blitFunc = Graphics::getFastBlitFunc(screenPixelFormat(), gameDataPixelFormat());
 }
 
 VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
@@ -818,22 +837,61 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 		return true;
 	}
 
-	uint32 codebookSize = 2 * _maxBlocks * _blockW * _blockH;
+	uint32 codebookSize;
 	if (_vqaDecoder->_oldV2VQA) {
 		codebookSize = _maxBlocks * _cbParts;
+	} else {
+		uint bpp = screenPixelFormat().bytesPerPixel;
+		assert(bpp >= 2);
+		codebookSize = _maxBlocks * _blockW * _blockH * (bpp + 1);
 	}
 
 	// This is released in VQADecoder::~VQADecoder()
 	codebookInfo.data = new uint8[roundup(codebookSize)];
 
 	if (!_cbfz) {
-		_cbfz = new uint8[roundup(_maxCBFZSize)];
+		_cbfz = new uint8[_maxCBFZSize];
 	}
 
 	s->read(_cbfz, roundup(size));
 
 	uint32 bytesDecomprsd = decompress_lcw(_cbfz, size, codebookInfo.data, codebookSize);
 	codebookInfo.size = bytesDecomprsd;
+
+	if (!_vqaDecoder->_oldV2VQA) {
+		// Alpha component is inversed, set srcFormat to XRGB1555 to ignore it
+		// Instead we manually transform alpha values into a mask
+		const Graphics::PixelFormat  srcFormat = gameDataPixelFormat();
+		const Graphics::PixelFormat &dstFormat = screenPixelFormat();
+		uint bpp = dstFormat.bytesPerPixel;
+
+		uint16 *block_src = (uint16 *)codebookInfo.data;
+		uint8 *mask_src = (uint8 *)codebookInfo.data + (bpp * _maxBlocks * _blockW * _blockH);
+
+		for (uint x = 0; x < static_cast<uint>(_maxBlocks * _blockW * _blockH); ++x) {
+#ifdef SCUMM_BIG_ENDIAN
+			// Swap bytes to big endian as the source is little endian
+			block_src[x] = SWAP_BYTES_16(block_src[x]);
+#endif
+			// Extract and invert alpha value
+			// TODO: Can this be skipped if the mask is never used?
+			mask_src[x] = (block_src[x] >> 15) ^ 0x01;
+		}
+
+		// Convert pixel data in place
+		if (_blitFunc) {
+			_blitFunc((byte *)block_src, (const byte *)block_src,
+				_blockW * _blockH * _maxBlocks * bpp,
+				_blockW * _blockH * _maxBlocks * 2,
+				_blockW * _blockH * _maxBlocks, 1);
+		} else if (dstFormat != srcFormat) {
+			Graphics::crossBlit((byte *)block_src, (const byte *)block_src,
+				_blockW * _blockH * _maxBlocks * bpp,
+				_blockW * _blockH * _maxBlocks * 2,
+				_blockW * _blockH * _maxBlocks, 1, dstFormat, srcFormat);
+		}
+	}
+
 	return true;
 }
 
@@ -854,7 +912,7 @@ bool VQADecoder::VQAVideoTrack::readCBPZ(Common::SeekableReadStream* s, uint32 s
 	}
 
 	if (!_cbfzNext) {
-		_cbfzNext = new uint8[roundup(_maxCBFZSize)];
+		_cbfzNext = new uint8[_maxCBFZSize];
 		_codebookInfoNext = new CodebookInfo();
 		_codebookInfoNext->frame = 0;
 		_codebookInfoNext->data = new uint8[roundup(_cbParts * _maxBlocks)];
@@ -866,20 +924,21 @@ bool VQADecoder::VQAVideoTrack::readCBPZ(Common::SeekableReadStream* s, uint32 s
 	s->read(_cbfzNext + _accumulatedCBPZsizeToCBF, roundup(size));
 
 	_accumulatedCBPZsizeToCBF += size;
-	assert(_accumulatedCBPZsizeToCBF <= roundup(_maxCBFZSize));
+	assert(_accumulatedCBPZsizeToCBF <= _maxCBFZSize);
 	++_countOfCBPsToCBF;
 	return true;
 }
 
 bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 size) {
-	if (size > _maxZBUFChunkSize) {
+	uint32 roundedSize = roundup(size);
+	if (roundedSize > _maxZBUFChunkSize) {
 		warning("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
-		s->skip(roundup(size));
+		s->skip(roundedSize);
 		return false;
 	}
 
 	_zbufChunkSize = size;
-	s->read(_zbufChunk, roundup(size));
+	s->read(_zbufChunk, roundedSize);
 
 	return true;
 }
@@ -1003,7 +1062,7 @@ bool VQADecoder::VQAVideoTrack::readCPL0(Common::SeekableReadStream *s, uint32 s
 	}
 
 	// Add a new palette ONLY if the previous is not identical.
-	// This accomodates the VQA reel for Lands of Lore 2.
+	// This accommodates the VQA reel for Lands of Lore 2.
 	if (_currentPaletteId == -1) {
 		_cpalPointerSize = size;
 		s->read(_cpalPointer, roundup(size));
@@ -1044,7 +1103,7 @@ bool VQADecoder::VQAVideoTrack::readVPTZ(Common::SeekableReadStream* s, uint32 s
 		return false;
 
 	if (!_vptz) {
-		_vptz = new uint8[roundup(_maxVPTRSize)];
+		_vptz = new uint8[_maxVPTRSize];
 	}
 
 	s->read(_vptz, roundup(size));
@@ -1067,7 +1126,7 @@ bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 s
 		return false;
 
 	if (!_vpointer) {
-		_vpointer = new uint8[roundup(_maxVPTRSize)];
+		_vpointer = new uint8[_maxVPTRSize];
 	}
 
 	_vpointerSize = size;
@@ -1079,39 +1138,29 @@ bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 s
 }
 
 void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha) {
-	const uint8 *const block_src = &_codebook[2 * srcBlock * _blockW * _blockH];
+	uint bpp = screenPixelFormat().bytesPerPixel;
+
+	const uint8 *const block_src = &_codebook[bpp *  srcBlock  * _blockW * _blockH];
+	const uint8 *const mask_base = &_codebook[bpp * _maxBlocks * _blockW * _blockH];
+	const uint8 *const mask_src = &mask_base[srcBlock * _blockW * _blockH];
 
 	uint16 blocks_per_line = _width / _blockW;
 
 	uint32 intermDiv = 0;
 	uint32 dst_x = 0;
 	uint32 dst_y = 0;
-	uint16 vqaColor = 0;
-	uint8 a, r, g, b;
 
 	for (uint i = count; i != 0; --i) {
-		// aux variable to avoid duplicate division and a modulo operation
 		intermDiv = (dstBlock + count - i) / blocks_per_line; // start of current blocks line
 		dst_x = ((dstBlock + count - i) - intermDiv * blocks_per_line) * _blockW + _offsetX;
 		dst_y = intermDiv * _blockH + _offsetY;
 
-		const uint8 *src_p = block_src;
-
-		for (uint y = _blockH; y != 0; --y) {
-			for (uint x = _blockW; x != 0; --x) {
-				vqaColor = READ_LE_UINT16(src_p);
-				src_p += 2;
-
-				getGameDataColor(vqaColor, a, r, g, b);
-
-				if (!(alpha && a)) {
-					// CLIP() is too slow and it is not needed.
-					// void* dstPtr = surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)));
-					void* dstPtr = surface->getBasePtr(dst_x + _blockW - x, dst_y + _blockH - y);
-					// Ignore the alpha in the output as it is inversed in the input
-					drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
-				}
-			}
+		uint8* dstPtr = (uint8 *)surface->getBasePtr(dst_x, dst_y);
+		if (alpha) {
+			// Use mask to blit
+			Graphics::maskBlit(dstPtr, block_src, mask_src, surface->pitch, _blockW * bpp, _blockW, _blockW, _blockH, bpp);
+		} else {
+			Graphics::copyBlit(dstPtr, block_src, surface->pitch, _blockW * bpp, _blockW, _blockH, bpp);
 		}
 	}
 }

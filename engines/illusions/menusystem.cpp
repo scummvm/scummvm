@@ -28,14 +28,13 @@
 #include "illusions/thread.h"
 #include "illusions/time.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "gui/saveload.h"
 
 namespace Illusions {
 
 // MenuItem
 
-MenuItem::MenuItem(const Common::String text, BaseMenuAction *action)
+MenuItem::MenuItem(const Common::String &text, BaseMenuAction *action)
 	: _text(text), _action(action) {
 }
 
@@ -58,12 +57,12 @@ BaseMenu::BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte backgroundCol
 }
 
 BaseMenu::~BaseMenu() {
-	for (MenuItems::iterator it = _menuItems.begin(); it != _menuItems.end(); ++it) {
-		delete *it;
+	for (auto *menuItem : _menuItems) {
+		delete menuItem;
 	}
 }
 
-void BaseMenu::addText(const Common::String text) {
+void BaseMenu::addText(const Common::String &text) {
 	_text.push_back(text);
 }
 
@@ -676,7 +675,7 @@ void MenuActionLoadGame::execute() {
 	Common::String desc;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	dialog = new GUI::SaveLoadChooser(false);
 	slot = dialog->runModalWithCurrentTarget();
 
 	delete dialog;
@@ -699,7 +698,7 @@ void MenuActionSaveGame::execute() {
 	Common::String desc;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	dialog = new GUI::SaveLoadChooser(true);
 	slot = dialog->runModalWithCurrentTarget();
 	desc = dialog->getResultString();
 

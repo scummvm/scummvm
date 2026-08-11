@@ -66,7 +66,7 @@ _TSrtn text_sprite::GetRenderCoords(const int32 pinX,           // screen x-coor
 
 	case PIN_AT_CENTRE_OF_BASE:               // this one is used for SPEECH TEXT to keep it centred above the talker's head
 		renderX = pinX - spriteWidth / 2; // subtract half the sprite-width from the pin x-coordinate
-		renderY = pinY - spriteHeight;    // substract the sprite-height from the pin y-coordinate
+		renderY = pinY - spriteHeight;    // subtract the sprite-height from the pin y-coordinate
 		break;
 
 	case PIN_AT_CENTRE_OF_LEFT:

@@ -34,7 +34,7 @@ enum stimuliTypes {
 	kSenseNothing = 0,                   // no stimuli
 
 	//  Situations
-	kSenseTimePassed,                    // time passes with no occurance
+	kSenseTimePassed,                    // time passes with no occurrence
 	kSenseProximity,                     // sense proximity of protagonist
 
 	//  Idea icons from protagonist

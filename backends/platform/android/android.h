@@ -22,24 +22,22 @@
 #ifndef _ANDROID_H_
 #define _ANDROID_H_
 
-#if defined(__ANDROID__)
+#include <android/log.h>
 
 #include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/mutex.h"
 #include "common/ustr.h"
-#include "audio/mixer_intern.h"
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/log/log.h"
 #include "backends/platform/android/touchcontrols.h"
+#include "engines/engine.h"
 
 #include <pthread.h>
-
-#include <android/log.h>
 
 // toggles start
 //#define ANDROID_DEBUG_ENTER
@@ -98,12 +96,15 @@ extern void checkGlError(const char *expr, const char *file, int line);
 
 void *androidGLgetProcAddress(const char *name);
 
-class OSystem_Android : public ModularGraphicsBackend, Common::EventSource {
+class OSystem_Android : public ModularGraphicsBackend, public ModularMixerBackend, Common::EventSource {
 private:
 	static const int kQueuedInputEventDelay = 50;
 
 	struct EventWithDelay : public Common::Event {
-		/** The time which the delay starts counting from */
+		/** An original timestamp that identifies this event and the delayed ones connected to it that will follow */
+		uint32 originTimeMillis;
+
+		/** The time which the delay starts counting from. It can be set to be later than originTimeMillis */
 		uint32 referTimeMillis;
 
 		/** The delay for the event to be handled */
@@ -115,20 +116,17 @@ private:
 		/** A status flag indicating whether the "connected" event was handled */
 		bool connectedTypeExecuted;
 
-		EventWithDelay() : referTimeMillis(0), delayMillis(0), connectedType(Common::EVENT_INVALID), connectedTypeExecuted(false) {
+		EventWithDelay() : originTimeMillis(0), referTimeMillis(0), delayMillis(0), connectedType(Common::EVENT_INVALID), connectedTypeExecuted(false) {
 		}
 
 		void reset() {
+			originTimeMillis = 0;
 			referTimeMillis = 0;
 			delayMillis = 0;
 			connectedType = Common::EVENT_INVALID;
 			connectedTypeExecuted = false;
 		}
 	};
-
-	// passed from the dark side
-	int _audio_sample_rate;
-	int _audio_buffer_size;
 
 	int _screen_changeid;
 
@@ -137,13 +135,11 @@ private:
 	bool _timer_thread_exit;
 	pthread_t _timer_thread;
 
-	bool _audio_thread_exit;
-	pthread_t _audio_thread;
-
 	bool _virtkeybd_on;
 
-	Audio::MixerImpl *_mixer;
 	timeval _startTime;
+
+	PauseToken _pauseToken;
 
 	Common::Queue<Common::Event> _event_queue;
 	EventWithDelay _delayedMouseBtnUpEvent;
@@ -180,7 +176,7 @@ private:
 #endif
 
 	static void *timerThreadFunc(void *arg);
-	static void *audioThreadFunc(void *arg);
+	void initAudio();
 	Common::String getSystemProperty(const char *name) const;
 
 	Common::WriteStream *createLogFileForAppending();
@@ -206,16 +202,20 @@ public:
 		SHOW_ON_SCREEN_ALL = 0xffffffff,
 	};
 
-	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
+	OSystem_Android();
 	virtual ~OSystem_Android();
 
 	void initBackend() override;
 	void engineInit() override;
 	void engineDone() override;
 
+	void updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &startSettings, Common::StringArray& additionalArgs) override;
+
 	bool hasFeature(OSystem::Feature f) override;
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) override;
+
+	void setPause(bool pause);
 
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 	void pushEvent(const Common::Event &event);
@@ -250,7 +250,6 @@ public:
 
 	void setWindowCaption(const Common::U32String &caption) override;
 
-	Audio::Mixer *getMixer() override;
 	void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
@@ -261,12 +260,10 @@ public:
 	bool isConnectionLimited() override;
 	Common::String getSystemLanguage() const override;
 
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	int getDefaultGraphicsMode() const override;
-	bool setGraphicsMode(int mode, uint flags) override;
-	int getGraphicsMode() const override;
-
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
+	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
+#endif
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	void *getOpenGLProcAddress(const char *name) const override;
 #endif
@@ -275,8 +272,7 @@ public:
 	bool isRunningInMainThread() { return pthread_self() == _main_thread; }
 #endif
 
-	virtual const char * const *buildHelpDialogData() override;
+	const char * const *buildHelpDialogData() override;
 };
 
-#endif
 #endif

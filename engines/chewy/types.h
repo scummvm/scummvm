@@ -47,10 +47,10 @@ struct GameFlags {
 	bool R6DoorLeftB : 1;
 	bool R6DoorRightB : 1;
 	bool R7DoorRight : 1;
-	bool R7Hebel : 1;
+	bool R7Lever : 1;
 
-	bool R7SeilLeft : 1;
-	bool R7SeilOk : 1;
+	bool R7RopeLeft : 1;
+	bool R7RopeOk : 1;
 	bool R7RHaken : 1;
 	bool R7BorkFlug : 1;
 	bool R7ChewyFlug : 1;
@@ -61,7 +61,7 @@ struct GameFlags {
 	bool R8Kohle : 1;
 	bool R8Abkuehlen : 1;
 	bool R8GipsWurf : 1;
-	bool R9Gitter : 1;
+	bool R9Grid : 1;
 	bool R9Surimy : 1;
 	bool R10Surimy : 1;
 	bool R10SurimyOk : 1;
@@ -92,13 +92,13 @@ struct GameFlags {
 	bool R14Sicherung : 1;
 	bool R14Waffe : 1;
 	bool R16F5Exit : 1;
-	bool R17GitterWeg : 1;
+	bool R17GridWeg : 1;
 
-	bool R17Seil : 1;
-	bool R17HebelOk : 1;
+	bool R17Rope : 1;
+	bool R17LeverOk : 1;
 	bool R17EnergyOut : 1;
-	bool R17DoorKommand : 1;
-	bool R18DoorBruecke : 1;
+	bool R17DoorCommand : 1;
+	bool R18DoorBridge : 1;
 	bool R18CartridgeInSlot : 1;
 	bool R18CartTerminal : 1;
 	bool R18CartSave : 1;
@@ -110,12 +110,12 @@ struct GameFlags {
 	bool R18FirstEntry : 1;
 	bool R18Grid : 1;
 	bool R21Salto : 1;
-	bool R21GitterEnergie : 1;
+	bool R21EnergyGrid : 1;
 
-	bool R21GitterMuell : 1;
-	bool R21Hebel1 : 1;
-	bool R21Hebel2 : 1;
-	bool R21Hebel3 : 1;
+	bool R21GarbageGrid : 1;
+	bool R21Lever1 : 1;
+	bool R21Lever2 : 1;
+	bool R21Lever3 : 1;
 	bool R21Laser1Weg : 1;
 	bool R21Laser2Weg : 1;
 	bool R21Gang : 1;
@@ -438,8 +438,8 @@ struct GameState : public GameFlags {
 	int16 R23GliderExit = 0;
 
 	uint8 R24Lever[3] = { 0 };
-	uint8 R24HebelDir[3] = { 0 };
-	uint8 R24KristallLast[3] = { 0 };
+	uint8 R24LeverDir[3] = { 0 };
+	uint8 R24CrystalLast[3] = { 0 };
 	uint8 R25SurimyGo = 0;
 	uint8 R27HowardGed = 0;
 	uint8 R28PumpTxt1 = 0;

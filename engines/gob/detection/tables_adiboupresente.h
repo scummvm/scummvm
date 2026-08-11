@@ -31,38 +31,38 @@
 #ifndef GOB_DETECTION_TABLES_ADIBOUPRESENTE_H
 #define GOB_DETECTION_TABLES_ADIBOUPRESENTE_H
 
-//#include "common/translation.h"  // Make release checker happy
-
 // -- French: Adibou présente Dessin --
 
 {
-	{
+	{ // Supplied by BJNFNE
 		"adiboudessin",
-		_s("Missing game code"), // Adibou présente Dessin 1.00 (Engine: DEV7 version 1.1.0.0)
-		AD_ENTRY1s("adibou.stk", "14e3f8e9c237d4236d93e08c60b784bc", 217172),
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou présente Dessin 1.00 (Engine: DEV7 version 1.10a)
+		AD_ENTRY2s("adibou.stk", "14e3f8e9c237d4236d93e08c60b781bc", 217172,
+				   "PD47F100.CD1", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"adibou.stk", "main.obc", 0
 },
 
 // -- French: Adibou présente Cuisine --
 
 {
-	{
+	{ // Supplied by BJNFNE
 		"adiboucuisine",
-		_s("Missing game code"), // Adibou présente Cuisine 1.00 (Engine: DEV7 version 1.0.0.0)
-		AD_ENTRY1s("adibou.stk", "cb2d576f6d546485af7693d4eaf1142b", 174027),
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou présente Cuisine 1.00 (Engine: DEV7 version 1.0.0.0)
+		AD_ENTRY2s("adibou.stk", "cb2d576f6d546485af7693d4eaf1142b", 174027,
+				   "PC47F100.CD1", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"adibou.stk", "main.obc", 0
 },
 
 // -- French: Adibou présente Magie --
@@ -70,16 +70,16 @@
 {
 	{
 		"adiboumagie",
-		_s("Missing game code"), // Adibou présente Magie 1.00 (Engine: DEV7 version 1.0.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou présente Magie 1.00 (Engine: DEV7 version 1.0.0.0)
 		AD_ENTRY2s("adibou.stk", "977d2449d398f3df23238d718fca35b5", 61097,
-				   "magic.stk", "9776765dead3e338a32c43bf344b5819", 302664),
+				   "Pm47f100.cd1", "3389dae361af79b04c9c8e7057f60cc6", 1),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"adibou.stk", "main.obc", 0
 },
 
 #endif // GOB_DETECTION_TABLES_ADIBOUPRESENTE_H

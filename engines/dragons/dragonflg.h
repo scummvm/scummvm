@@ -22,7 +22,6 @@
 #define DRAGONS_DRAGONFLG_H
 
 #include "common/stream.h"
-#include "common/system.h"
 
 namespace Dragons {
 

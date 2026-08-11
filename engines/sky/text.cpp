@@ -104,7 +104,7 @@ void Text::fnSetFont(uint32 fontNr) {
 void Text::fnTextModule(uint32 textInfoId, uint32 textNo) {
 	fnSetFont(1);
 	uint16* msgData = (uint16 *)_skyCompact->fetchCpt(textInfoId);
-	DisplayedText textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
+	DisplayedText textId = lowTextManager(textNo, msgData[1], msgData[2], 209, Graphics::kTextAlignStart);
 	Logic::_scriptVariables[RESULT] = textId.compactNum;
 	Compact *textCompact = _skyCompact->fetchCpt(textId.compactNum);
 	textCompact->xcood = msgData[3];
@@ -193,7 +193,7 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 	Compact *ptrComp = _skyCompact->fetchCpt(pointedId);
-	DisplayedText text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, false);
+	DisplayedText text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, Graphics::kTextAlignLeft);
 	Logic::_scriptVariables[CURSOR_ID] = text.compactNum;
 	if (Logic::_scriptVariables[MENU]) {
 		_mouseOfsY = TOP_LEFT_Y - 2;
@@ -244,14 +244,14 @@ char Text::getTextChar(uint8 **data, uint32 *bitPos) {
 	}
 }
 
-DisplayedText Text::displayText(uint32 textNum, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
+DisplayedText Text::displayText(uint32 textNum, uint8 *dest, Graphics::TextAlign align, uint16 pixelWidth, uint8 color) {
 	//Render text into buffer *dest
 	getText(textNum);
-	return displayText(_textBuffer, sizeof(_textBuffer), dest, center, pixelWidth, color);
+	return displayText(_textBuffer, sizeof(_textBuffer), dest, align, pixelWidth, color);
 }
 
 // TODO: Don't use caller-supplied buffer for editing operations
-DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
+DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, Graphics::TextAlign align, uint16 pixelWidth, uint8 color) {
 	//Render text pointed to by *textPtr in buffer *dest
 	uint32 centerTable[10];
 	uint16 lineWidth = 0;
@@ -286,7 +286,7 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 			curPos++;
 			lineWidth += Graphics::Big5Font::kChineseTraditionalWidth;
 		} else {
-			if ((_curCharSet == 1) && (textChar >= 0x80))
+			if ((_curCharSet == 1) && (textChar >= 0x80) && !SkyEngine::_systemVars->textDirRTL)
 				textChar = 0x20;
 
 			textChar -= 0x20;
@@ -356,12 +356,19 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 	byte *prevDest = curDest;
 	uint32 *centerTblPtr = centerTable;
 
+	align = Graphics::convertTextAlignH(align, _vm->_systemVars->textDirRTL);
+
 	do {
+		Common::String line("");
+
 		byte *lineEnd = curDest + pixelWidth;
-		if (center) {
+		if (align == Graphics::kTextAlignCenter) {
 			uint32 width = (pixelWidth - *centerTblPtr) >> 1;
 			centerTblPtr++;
 			curDest += width;
+		} else if (align == Graphics::kTextAlignRight) {
+			curDest += pixelWidth - *centerTblPtr - 1;
+			centerTblPtr++;
 		}
 
 		textChar = (uint8)*curPos++;
@@ -379,8 +386,18 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 				textChar = '?';
 			}
 
-			makeGameCharacter(textChar - 0x20, _characterSet, curDest, color, pixelWidth);
+			line += textChar - 0x20;
 			textChar = *curPos++;
+		}
+
+		if (_vm->_systemVars->textDirRTL) {
+			for (int i = line.size() - 1; i >= 0; --i) {
+				makeGameCharacter(line[i], _characterSet, curDest, color, pixelWidth);
+			}
+		} else {
+			for (auto &c : line) {
+				makeGameCharacter(c, _characterSet, curDest, color, pixelWidth);
+			}
 		}
 
 		prevDest = curDest = prevDest + dtLineSize;	//start of last line + start of next
@@ -431,9 +448,9 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 	dest = startPos + charWidth + _dtCharSpacing * 2 - 1;
 }
 
-DisplayedText Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool center) {
+DisplayedText Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, Graphics::TextAlign align) {
 	getText(textNum);
-	DisplayedText textInfo = displayText(_textBuffer, sizeof(_textBuffer), NULL, center, width, color);
+	DisplayedText textInfo = displayText(_textBuffer, sizeof(_textBuffer), NULL, align, width, color);
 
 	uint32 compactNum = FIRST_TEXT_COMPACT;
 	Compact *cpt = _skyCompact->fetchCpt(compactNum);

@@ -157,7 +157,7 @@ inline String Path::unescape(char dstSeparator, const char *begin, const char *e
 			dst += ESCAPE;
 #ifndef RELEASE_BUILD
 			if (!_shownSeparatorCollisionWarning && dstSeparator == ESCAPE) {
-				warning("Collision while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
+				warning("Collision 1 while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
 				_shownSeparatorCollisionWarning = true;
 			}
 #endif
@@ -166,7 +166,7 @@ inline String Path::unescape(char dstSeparator, const char *begin, const char *e
 			dst += SEPARATOR;
 #ifndef RELEASE_BUILD
 			if (!_shownSeparatorCollisionWarning && dstSeparator == SEPARATOR) {
-				warning("Collision while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
+				warning("Collision 2 while unescaping in path part \"%s\" with separator %c", begin, dstSeparator);
 				_shownSeparatorCollisionWarning = true;
 			}
 #endif
@@ -298,7 +298,7 @@ String Path::toString(char separator) const {
 		// Path was not escaped, replace all SEPARATOR by the real separator
 #ifndef RELEASE_BUILD
 		if (!_shownSeparatorCollisionWarning && strchr(_str.c_str(), separator)) {
-			warning("Collision while unescaping path \"%s\" with separator %c", _str.c_str(), separator);
+			warning("Collision 3 while unescaping path \"%s\" with separator %c", _str.c_str(), separator);
 			_shownSeparatorCollisionWarning = true;
 		}
 #endif
@@ -384,6 +384,7 @@ String Path::baseName() const {
 		return String();
 	}
 
+	bool escaped = isEscaped();
 	size_t last = _str.size();
 	if (isSeparatorTerminated()) {
 		last--;
@@ -396,13 +397,38 @@ String Path::baseName() const {
 
 	if (separatorPos != String::npos) {
 		begin += separatorPos + 1;
-	} else if (isEscaped()) {
+	} else if (escaped) {
 		// unescape uses the real start, not the escape marker
 		begin++;
 	}
 	end += last;
 
+	if (!escaped) {
+		return String(begin, end);
+	}
+
 	return unescape(kNoSeparator, begin, end);
+}
+
+int Path::numComponents() const {
+	if (_str.empty())
+		return 0;
+
+	const char *str = _str.c_str();
+
+	if (isEscaped())
+		str++;
+
+	int num = 1;
+
+	const char *sep = strchr(str, SEPARATOR);
+	while (sep) {
+		str = sep + 1;
+		sep = strchr(str, SEPARATOR);
+		num++;
+	}
+
+	return num;
 }
 
 Path &Path::appendInPlace(const Path &x) {
@@ -589,6 +615,53 @@ Path &Path::removeTrailingSeparators() {
 	return *this;
 }
 
+Path &Path::removeExtension(const char *ext) {
+	if (_str.empty()) {
+		return *this;
+	}
+
+	// Find the last separator
+	size_t last = _str.size() - 1;
+	if (isSeparatorTerminated()) {
+		last--;
+	}
+
+	size_t sepPos = findLastSeparator(last);
+	const char *begin;
+	if (sepPos == String::npos) {
+		// No separator found, we are a single component
+		begin = _str.c_str();
+	} else {
+		// We have a separator, so we can find the last component
+		begin = _str.c_str() + sepPos + 1;
+	}
+
+	const char *end = _str.c_str() + _str.size();
+	String component(begin, end);
+
+	// If the last component is shorter than the extension,
+	// or it is punycode encoded, we do not change the path
+	if ((ext && component.size() < strlen(ext)) || punycode_hasprefix(component))
+		return *this;
+
+	if (!ext) {
+		// Remove the last extension, if any
+		size_t dotPos = component.findLastOf('.');
+		if (dotPos == String::npos) {
+			return *this; // No change
+		}
+
+		_str.chop(end - begin - dotPos);
+
+		return *this;
+	} else if (component.hasSuffix(ext)) {
+		// Remove the given extension, if it matches
+		_str.chop(strlen(ext));
+	}
+
+	return *this;
+}
+
 const char *Path::getSuffix(const Common::Path &other) const {
 	if (other.empty()) {
 		// Other is empty, return full string
@@ -763,9 +836,8 @@ Path Path::normalize() const {
 			// Well, we don't start with ESCAPE so there is still a chance we get unescaped
 			needUnescape = true;
 
-			StringArray::const_iterator it;
-			for (it = comps.begin(); it != comps.end(); it++) {
-				if (!canUnescape(false, false, it->c_str())) {
+			for (const auto &comp : comps) {
+				if (!canUnescape(false, false, comp.c_str())) {
 					// Nope we can't get unescaped
 					needUnescape = false;
 					break;
@@ -789,18 +861,18 @@ Path Path::normalize() const {
 
 	// Finally, assemble all components back into a path
 	bool addSep = hasLeadingSeparator;
-	for (StringArray::const_iterator it = comps.begin(); it != comps.end(); it++) {
+	for (const auto &comp : comps) {
 		if (addSep) {
 			result._str += SEPARATOR;
 		}
 		addSep = true;
 
 		if (needEscape) {
-			escape(result._str, kNoSeparator, it->c_str(), it->c_str() + it->size());
+			escape(result._str, kNoSeparator, comp.c_str(), comp.c_str() + comp.size());
 		} else if (needUnescape) {
-			result._str += unescape(kNoSeparator, it->c_str(), it->c_str() + it->size());
+			result._str += unescape(kNoSeparator, comp.c_str(), comp.c_str() + comp.size());
 		} else {
-			result._str += *it;
+			result._str += comp;
 		}
 	}
 
@@ -1004,6 +1076,30 @@ Path Path::punycodeEncode() const {
 		}, tmp);
 }
 
+bool Path::punycodeNeedsEncode() const {
+	bool tmp = false;
+	return reduceComponents<bool &>(
+		[](bool &result, const String &in, bool last) -> bool & {
+			// If we already need encode, we still need it
+			if (result) return result;
+
+			result = punycode_needEncode(in);
+			return result;
+		}, tmp);
+}
+
+bool Path::punycodeIsEncoded() const {
+	bool tmp = false;
+	return reduceComponents<bool &>(
+		[](bool &result, const String &in, bool last) -> bool & {
+			// If we already are encoded, we still are
+			if (result) return result;
+
+			result = punycode_hasprefix(in);
+			return result;
+		}, tmp);
+}
+
 // For a path component creates a string with following property:
 // if 2 files have the same case-insensitive
 // identifier string then and only then we treat them as
@@ -1116,7 +1212,71 @@ Path Path::fromConfig(const String &value) {
 #endif
 
 	// If the path is not punyencoded this will be a no-op
-	return Path(value, '/').punycodeDecode();
+	Path tmp;
+	return Path(value, '/').reduceComponents<Path &>(
+		[](Path &path, const String &in, bool last) -> Path & {
+			// We encode the result as Latin-1: every byte has its own value
+			// This avoids error for non UTF-8 paths
+			String out = punycode_hasprefix(in) ?
+				     punycode_decodefilename(in).encode(kISO8859_1) :
+				     in;
+			path.appendInPlace(out, kNoSeparator);
+			if (!last) {
+				path._str += SEPARATOR;
+			}
+			return path;
+		}, tmp);
+}
+
+String Path::toConfig() const {
+#if defined(WIN32) && defined(UNICODE)
+	if (!isEscaped()) {
+		// If we are escaped, we have forbidden characters (slash or pipe) which must be encoded
+		// This can't happen on real Win32 paths
+		// With UNICODE every path is encoded by the backend to UTF-8 strings all the configuration
+		// Except for (strange) cases where we would like to store paths containing backslashes,
+		// there is no need for escaping
+		if (strchr(_str.c_str(), Path::kNativeSeparator) == nullptr) {
+			return toString(Path::kNativeSeparator);
+		}
+	}
+#elif defined(__3DS__) || defined(__amigaos4__) || defined(__MINT__) || defined(__DS__) || defined(__MORPHOS__) || defined(NINTENDO_SWITCH) || defined(__PSP__) || defined(PSP2) || defined(RISCOS) || defined(__WII__) || defined(WIN32)
+	// For all platforms making use of : as a drive separator, avoid useless punycoding
+	if (!isEscaped()) {
+		// If we are escaped, we have forbidden characters which must be encoded
+		// Try to replace all : by SEPARATOR and check if we need puny encoding: if we don't, we are safe
+		Path tmp(*this);
+		tmp._str.replace(':', SEPARATOR);
+#if defined(RISCOS)
+		// RiscOS uses these characters everywhere
+		tmp._str.replace('$', SEPARATOR);
+		tmp._str.replace('<', SEPARATOR);
+		tmp._str.replace('>', SEPARATOR);
+		// We can get ending dots when we replace $ (.$ suffix)
+		tmp._str.replace('.', SEPARATOR);
+#endif
+#if defined(WIN32)
+		// WIN32 can also make use of ? in Win32 devices namespace
+		tmp._str.replace('?', SEPARATOR);
+#endif
+		if (!tmp.punycodeNeedsEncode()) {
+			return toString(Path::kNativeSeparator);
+		}
+	}
+#endif
+
+	String tmp;
+	return reduceComponents<String &>(
+		[](String &path, const String &in, bool last) -> String & {
+			// We decode the result as Latin-1: every byte has its own value
+			// This avoids error for non UTF-8 paths
+			Common::String out = punycode_encodefilename(in.decode(kISO8859_1));
+			path += out;
+			if (!last) {
+				path += '/';
+			}
+			return path;
+		}, tmp);
 }
 
 Path Path::fromCommandLine(const String &value) {

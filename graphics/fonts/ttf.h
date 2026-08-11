@@ -57,7 +57,13 @@ enum TTFRenderMode {
 	 * Render fully monochrome. This makes glyph pixels either be fully opaque
 	 * or fully transparent.
 	 */
-	kTTFRenderModeMonochrome
+	kTTFRenderModeMonochrome,
+
+	/**
+	 * Standard render mode, but uses strong grid-fitting.
+	 * Equivalent of FreeType2's FT_RENDER_MODE_NORMAL with FT_LOAD_TARGET_MONO
+	 */
+	kTTFRenderModeNormalWithGridFitting
 };
 
 /**
@@ -98,7 +104,7 @@ enum TTFSizeMode {
  *                   supported.
  * @return 0 in case loading fails, otherwise a pointer to the Font object.
  */
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false);
+Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false);
 
 /**
  * Loads a TTF font file from the common fonts archive.

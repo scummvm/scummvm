@@ -38,6 +38,9 @@ SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd)
 	_font = nullptr;
 }
 
+SpiderEngine::~SpiderEngine() {
+}
+
 void SpiderEngine::loadAssets() {
 	if (!isDemo())
 		loadAssetsFullGame();
@@ -1155,31 +1158,8 @@ Common::String SpiderEngine::findNextLevel(const Transition *trans) {
 	return trans->nextLevel;
 }
 
-void SpiderEngine::loadFonts() {
-	Common::File file;
-
-	if (!file.open("block05.fgx"))
-		error("Cannot open font");
-
-	byte *font = (byte *)malloc(file.size());
-	file.read(font, file.size());
-
-	_font05.set_size(file.size()*8);
-	_font05.set_bits((byte *)font);
-
-	file.close();
-	free(font);
-	if (!file.open("scifi08.fgx"))
-		error("Cannot open font");
-
-	font = (byte *)malloc(file.size());
-	file.read(font, file.size());
-
-	_font08.set_size(file.size()*8);
-	_font08.set_bits((byte *)font);
-
-	free(font);
-
+void SpiderEngine::loadFonts(const Common::String &prefix) {
+	HypnoEngine::loadFonts(prefix);
 	// Additional fonts
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 }
@@ -1225,6 +1205,7 @@ void SpiderEngine::loadGame(const Common::String &nextLevel, int score, int puzz
 
 	// We don't want to continue with any sound from a previous game
 	stopSound();
+	stopMusic();
 	_sceneState["GS_PUZZLELEVEL"] = puzzleDifficulty;
 	_sceneState["GS_COMBATLEVEL"] = combatDifficulty;
 	_score = score;

@@ -96,9 +96,28 @@ inline uint32 getFreePhysMem() {
  */
 void encrypt(void *pBuf, int32 lSize, const char *pszPassword = nullptr);
 #define decrypt encrypt
+#define Decrypt encrypt
 
 extern void encryptPartial(void *, int32, int32, const char *pPassword = nullptr);
 #define decryptPartial encryptPartial
+
+/**
+ * Return a true / false based on the probability given
+ * @param nProbability  The probability of returning a true
+ * @returns     True/false result
+**/
+extern bool ProbableTrue(int nProbability);
+
+extern void ErrorLog(const char *logFile, const char *format, ...);
+
+extern int          StrFreqMatch(const char *, const char *);
+extern bool         StrCompare(const char *, const char *, unsigned int);
+extern int          StrCharCount(const char *, char);
+extern char *StriStr(char *, const char *);
+extern void         StrUprStr(char *, const char *);
+extern void         StrCpyStripChar(char *, const char *, char);
+extern char *StrStripChar(char *, char);
+extern char *StrReplaceChar(char *, char, char);
 
 } // namespace Bagel
 

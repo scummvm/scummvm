@@ -67,10 +67,11 @@ static void(*_on_switchout_callback)(void) = nullptr;
 KeyInput ags_keycode_from_scummvm(const Common::Event &event, bool old_keyhandle) {
 	KeyInput ki;
 
+	snprintf(ki.Text, KeyInput::UTF8_ARR_SIZE, "%c", event.kbd.ascii);
 	ki.UChar = event.kbd.ascii;
 	ki.Key = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod, old_keyhandle);
 	ki.CompatKey = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod, true);
-	if (ki.CompatKey == eAGSKeyCodeNone)
+	if (!old_keyhandle && ki.CompatKey == eAGSKeyCodeNone)
 		ki.CompatKey = ki.Key;
 	return ki;
 }
@@ -87,7 +88,7 @@ int ags_iskeydown(eAGSKeyCode ags_key) {
 	return ::AGS::g_events->isKeyPressed(ags_key, _GP(game).options[OPT_KEYHANDLEAPI] == 0);
 }
 
-void ags_simulate_keypress(eAGSKeyCode ags_key) {
+void ags_simulate_keypress(eAGSKeyCode ags_key, bool old_keyhandle) {
 	Common::KeyCode keycode[3];
 	if (!::AGS::EventsManager::ags_key_to_scancode(ags_key, keycode))
 		return;
@@ -165,7 +166,7 @@ static void on_mouse_wheel(const Common::Event &event) {
 static eAGSMouseButton mgetbutton() {
 	const int butis = mouse_button_poll();
 
-	if ((butis > 0) & (_G(butwas) > 0))
+	if ((butis > 0) && (_G(butwas) > 0))
 		return kMouseNone;  // don't allow holding button down
 
 	_G(butwas) = butis;
@@ -183,9 +184,9 @@ bool ags_misbuttondown(eAGSMouseButton but) {
 }
 
 eAGSMouseButton ags_mgetbutton() {
-	if (_G(pluginSimulatedClick) > kMouseNone) {
-		eAGSMouseButton mbut = _G(pluginSimulatedClick);
-		_G(pluginSimulatedClick) = kMouseNone;
+	if (_G(simulatedClick) > kMouseNone) {
+		eAGSMouseButton mbut = _G(simulatedClick);
+		_G(simulatedClick) = kMouseNone;
 		return mbut;
 	}
 	return mgetbutton();

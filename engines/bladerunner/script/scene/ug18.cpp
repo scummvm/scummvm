@@ -232,10 +232,13 @@ void SceneScriptUG18::SceneFrameAdvanced(int frame) {
 		   || frame ==  240 //  end of main loop no trains
 		) {
 			if (Global_Variable_Query(kVariableUG18CountUpForNextTrainAction) < kUG18TrainsCountUpTargetRegular) {
+				// FIXME: bug? No difference in branches due to identical values of constants i.e. 4 seconds.
 				if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
 					Global_Variable_Increment(kVariableUG18CountUpForNextTrainAction, kUG18TrainsSecondsOfLoopNoTrains); // add seconds
+					debug(11, "kUG18TrainsSecondsOfLoopNoTrains: %d", kUG18TrainsSecondsOfLoopNoTrains);
 				} else {
 					Global_Variable_Increment(kVariableUG18CountUpForNextTrainAction, kUG18TrainsSecondsOfLoopWithTrains); // add seconds
+					debug(11, "kUG18TrainsSecondsOfLoopWithTrains: %d", kUG18TrainsSecondsOfLoopWithTrains);
 				}
 			} else {
 				if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {

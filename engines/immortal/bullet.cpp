@@ -19,7 +19,7 @@
  *
  */
 
-/* [Alternate Name: Projectile Proccessing]
+/* [Alternate Name: Projectile Processing]
  * --- What is a Bullet ---
  */
 

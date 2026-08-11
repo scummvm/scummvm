@@ -12,25 +12,25 @@ class U8UCListTestSuite : public CxxTest::TestSuite {
 	void test_static_list() {
 		Ultima::Ultima8::UCList l(2);
 
-		TS_ASSERT_EQUALS(l.getSize(), 0);
-		TS_ASSERT_EQUALS(l.getElementSize(), 2);
+		TS_ASSERT_EQUALS(l.getSize(), 0u);
+		TS_ASSERT_EQUALS(l.getElementSize(), 2u);
 
 		uint16 test = 0xBEEF;
 		l.append((uint8*)&test);
-		TS_ASSERT_EQUALS(l.getSize(), 1);
+		TS_ASSERT_EQUALS(l.getSize(), 1u);
 
 		uint16 test2 = 0xF00D;
 		l.append((uint8*)&test2);
-		TS_ASSERT_EQUALS(l.getSize(), 2);
+		TS_ASSERT_EQUALS(l.getSize(), 2u);
 		TS_ASSERT(l.inList((uint8*)&test));
 
 		l.remove((uint8*)&test);
 		TS_ASSERT(!l.inList((uint8*)&test));
 		TS_ASSERT(l.inList((uint8*)&test2));
-		TS_ASSERT_EQUALS(l.getSize(), 1);
+		TS_ASSERT_EQUALS(l.getSize(), 1u);
 
 		l.free();
-		TS_ASSERT_EQUALS(l.getSize(), 0);
+		TS_ASSERT_EQUALS(l.getSize(), 0u);
 	}
 
 };

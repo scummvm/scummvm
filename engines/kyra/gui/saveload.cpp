@@ -28,7 +28,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#define CURRENT_SAVE_VERSION 21
+#define CURRENT_SAVE_VERSION 24
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -250,7 +250,7 @@ Common::OutSaveFile *KyraEngine_v1::openSaveForWriting(const char *filename, con
 	out->writeSint32BE(td.tm_hour);
 	out->writeSint32BE(td.tm_mday);
 	out->writeSint32BE(td.tm_mon);
-	out->writeSint32BE(td.tm_year);		
+	out->writeSint32BE(td.tm_year);
 	out->writeSint32BE(td.tm_wday);
 
 	out->writeUint32BE(_totalPlaySecs);

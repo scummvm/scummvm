@@ -22,6 +22,9 @@
 #ifndef PSP_DEF_DISPLAY_CLIENT_H
 #define PSP_DEF_DISPLAY_CLIENT_H
 
+#include "graphics/blit.h"
+#include "graphics/dirtyrects.h"
+
 /**
  *	Default display client that is useful for most purposes.
  */
@@ -77,25 +80,30 @@ public:
  */
 class Screen : public DefaultDisplayClient {
 public:
-	Screen() : _shakeXOffset(0), _shakeYOffset(0) {
-		memset(&_pixelFormat, 0, sizeof(_pixelFormat));
-		memset(&_frameBuffer, 0, sizeof(_frameBuffer));
-	}
+	Screen() : _shakeXOffset(0), _shakeYOffset(0), _convert(false), _blitFunc(nullptr) {}
+	~Screen() { deallocate(); }
 
 	void init();
 	bool allocate();
+	void deallocate();
 	void setShakePos(int shakeXOffset, int shakeYOffset);
 	void setScummvmPixelFormat(const Graphics::PixelFormat *format);
-	const Graphics::PixelFormat &getScummvmPixelFormat() const { return _pixelFormat; }
+	const Graphics::PixelFormat &getScummvmPixelFormat() const { return _srcFormat; }
 	Graphics::Surface *lockAndGetForEditing();
-	void unlock() { setDirty(); } // set dirty here because of changes
+	void unlock();
+	void copyFromRect(const byte *buf, int pitch, int destX, int destY, int recWidth, int recHeight);
 	void setSize(uint32 width, uint32 height);
+	void render();
 
 private:
 	uint32 _shakeXOffset;
 	uint32 _shakeYOffset;
-	Graphics::PixelFormat _pixelFormat;
+	bool _convert;
+	Graphics::PixelFormat _srcFormat;
+	Graphics::PixelFormat _dstFormat;
 	Graphics::Surface _frameBuffer;
+	Graphics::FastBlitFunc _blitFunc;
+	Graphics::DirtyRectList _dirtyRects;
 };
 
 #endif /* PSP_DEF_DISPLAY_CLIENT_H */

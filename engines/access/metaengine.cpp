@@ -30,15 +30,23 @@
 #include "access/access.h"
 #include "access/amazon/amazon_game.h"
 #include "access/martian/martian_game.h"
+#include "access/noctropolis/noctropolis_game.h"
 
 #include "access/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
+#include "common/translation.h"
+
 #define MAX_SAVES 99
+#define GAMEOPTION_OGG_MUSIC GUIO_GAMEOPTIONS1
 
 namespace Access {
 
-uint32 AccessEngine::getGameID() const {
-	return _gameDescription->gameID;
+AccessGameType AccessEngine::getGameID() const {
+	return (AccessGameType)(_gameDescription->gameID);
 }
 
 uint32 AccessEngine::getGameFeatures() const {
@@ -58,7 +66,7 @@ bool AccessEngine::isDemo() const {
 }
 
 Common::Language AccessEngine::getLanguage() const {
-	return _gameDescription->desc.language;
+	return _lang;
 }
 
 Common::Platform AccessEngine::getPlatform() const {
@@ -67,7 +75,23 @@ Common::Platform AccessEngine::getPlatform() const {
 
 } // End of namespace Access
 
-class AccessMetaEngine : public AdvancedMetaEngine {
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_OGG_MUSIC,
+		{
+			_s("Use 'high definition' OGG music"),
+			_s("Use the OGG audio from the re-release instead of original MIDI tracks"),
+			"ogg_music",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+
+class AccessMetaEngine : public AdvancedMetaEngine<Access::AccessGameDescription> {
 public:
 	const char *getName() const override {
 		return "access";
@@ -75,22 +99,22 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Access::AccessGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
+	}
+
 };
 
 bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return checkExtendedSaves(f) ||
+		   (f == kSupportsLoadingDuringStartup);
 }
 
 bool Access::AccessEngine::hasFeature(EngineFeature f) const {
@@ -100,14 +124,16 @@ bool Access::AccessEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Access::AccessGameDescription *gd = (const Access::AccessGameDescription *)desc;
+Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const Access::AccessGameDescription *gd) const {
 	switch (gd->gameID) {
-	case Access::GType_Amazon:
+	case Access::kGameAmazon:
 		*engine = new Access::Amazon::AmazonEngine(syst, gd);
 		break;
-	case Access::GType_MartianMemorandum:
+	case Access::kGameMartianMemorandum:
 		*engine = new Access::Martian::MartianEngine(syst, gd);
+		break;
+	case Access::kGameNoctropolis:
+		*engine = new Access::Noctropolis::NoctropolisEngine(syst, gd);
 		break;
 	default:
 		return Common::kUnsupportedGameidError;
@@ -117,25 +143,27 @@ Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 
 SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = Common::String::format("%s.0##", target);
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 	Access::AccessSavegameHeader header;
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
+
+	for (const auto &filename : filenames) {
+		const char *ext = strrchr(filename.c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
 
 		if (slot >= 0 && slot < MAX_SAVES) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 
 			if (in) {
 				if (Access::AccessEngine::readSavegameHeader(in, header))
 					saveList.push_back(SaveStateDescriptor(this, slot, header._saveName));
-
+				else {
+					ExtendedSavegameHeader eHeader;
+					if (MetaEngine::readSavegameHeader(in, &eHeader))
+						saveList.push_back(SaveStateDescriptor(this, slot, eHeader.description));
+				}
 				delete in;
 			}
 		}
@@ -146,39 +174,221 @@ SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int AccessMetaEngine::getMaximumSaveSlot() const {
-	return MAX_SAVES;
-}
-
-void AccessMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
-}
-
 SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (f) {
-		Access::AccessSavegameHeader header;
-		if (!Access::AccessEngine::readSavegameHeader(f, header, false)) {
+
+		ExtendedSavegameHeader eHeader;
+		if (MetaEngine::readSavegameHeader(f, &eHeader, false)) {
 			delete f;
-			return SaveStateDescriptor();
+
+			SaveStateDescriptor desc(this, slot, eHeader.description);
+			desc.setThumbnail(eHeader.thumbnail);
+
+			uint16 year;
+			uint8 month;
+			uint8 day;
+
+			decodeSavegameDate(&eHeader, year, month, day);
+			desc.setSaveDate(year,month,day);
+
+			uint8 hour;
+			uint8 minute;
+
+			decodeSavegameTime(&eHeader, hour, minute);
+			desc.setSaveTime(hour, minute);
+
+			desc.setPlayTime(eHeader.playtime);
+			return desc;
+		}
+
+		Access::AccessSavegameHeader header;
+		if (Access::AccessEngine::readSavegameHeader(f, header, false)) {
+			delete f;
+			SaveStateDescriptor desc(this, slot, header._saveName);
+			desc.setThumbnail(header._thumbnail);
+			desc.setSaveDate(header._year, header._month, header._day);
+			desc.setSaveTime(header._hour, header._minute);
+
+			return desc;
 		}
 
 		delete f;
 
-		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, header._saveName);
-		desc.setThumbnail(header._thumbnail);
-		desc.setSaveDate(header._year, header._month, header._day);
-		desc.setSaveTime(header._hour, header._minute);
-		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
-
-		return desc;
+		return SaveStateDescriptor();
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray AccessMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Access;
+
+	// Get the game ID for the target
+	const Common::String currDomain = ConfMan.getActiveDomainName();
+	ConfMan.setActiveDomain(target);
+	const Common::String gameId = ConfMan.get("gameid");
+	ConfMan.setActiveDomain(currDomain);
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "access-default", _("Default keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Move / Interact / Skip"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Skip"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip movie"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("UP", _("Move up"));
+	act->setCustomEngineActionEvent(kActionMoveUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("KP8");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action("DOWN", _("Move down"));
+	act->setCustomEngineActionEvent(kActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("KP2");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LEFT", _("Move left"));
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("KP4");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("RIGHT", _("Move right"));
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("KP6");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("UPLEFT", _("Move up-left"));
+	act->setCustomEngineActionEvent(kActionMoveUpLeft);
+	act->addDefaultInputMapping("KP7");
+	engineKeyMap->addAction(act);
+
+	act = new Action("UPRIGHT", _("Move up-right"));
+	act->setCustomEngineActionEvent(kActionMoveUpRight);
+	act->addDefaultInputMapping("KP9");
+	engineKeyMap->addAction(act);
+
+	act = new Action("DOWNLEFT", _("Move down-left"));
+	act->setCustomEngineActionEvent(kActionMoveDownLeft);
+	act->addDefaultInputMapping("KP1");
+	engineKeyMap->addAction(act);
+
+	act = new Action("DOWNRIGHT", _("Move down-right"));
+	act->setCustomEngineActionEvent(kActionMoveDownRight);
+	act->addDefaultInputMapping("KP3");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LOOK", _("Look"));
+	act->setCustomEngineActionEvent(kActionLook);
+	act->addDefaultInputMapping("F1");
+	if (strcmp(target, "amazon") == 0)
+		act->addDefaultInputMapping("F2");
+	engineKeyMap->addAction(act);
+
+	if (gameId.equals("martian")) {
+		act = new Action("OPEN", _("Open"));
+		act->setCustomEngineActionEvent(kActionOpen);
+		act->addDefaultInputMapping("F2");
+		engineKeyMap->addAction(act);
+
+		act = new Action("MOVE", _("Move"));
+		act->setCustomEngineActionEvent(kActionMove);
+		act->addDefaultInputMapping("F3");
+		engineKeyMap->addAction(act);
+
+		act = new Action("GET", _("Get"));
+		act->setCustomEngineActionEvent(kActionTake);
+		act->addDefaultInputMapping("F4");
+		engineKeyMap->addAction(act);
+
+		act = new Action("USE", _("Use"));
+		act->setCustomEngineActionEvent(kActionUse);
+		act->addDefaultInputMapping("F5");
+		engineKeyMap->addAction(act);
+
+		act = new Action("GOTO", _("Goto"));
+		act->setCustomEngineActionEvent(kActionWalk);
+		act->addDefaultInputMapping("F6");
+		engineKeyMap->addAction(act);
+
+		act = new Action("TALK", _("Talk"));
+		act->setCustomEngineActionEvent(kActionTalk);
+		act->addDefaultInputMapping("F7");
+		engineKeyMap->addAction(act);
+
+		act = new Action("TRAVEL", _("Travel"));
+		act->setCustomEngineActionEvent(kActionTravel);
+		act->addDefaultInputMapping("F8");
+		engineKeyMap->addAction(act);
+	} else {
+		// Amazon keymaps
+		act = new Action("USE", _("Use"));
+		act->setCustomEngineActionEvent(kActionUse);
+		act->addDefaultInputMapping("F3");
+		engineKeyMap->addAction(act);
+
+		act = new Action("TAKE", _("Take"));
+		act->setCustomEngineActionEvent(kActionTake);
+		act->addDefaultInputMapping("F4");
+		engineKeyMap->addAction(act);
+
+		act = new Action("INVENTORY", _("Inventory"));
+		act->setCustomEngineActionEvent(kActionInventory);
+		act->addDefaultInputMapping("F5");
+		engineKeyMap->addAction(act);
+
+		act = new Action("CLIMB", _("Climb"));
+		act->setCustomEngineActionEvent(kActionClimb);
+		act->addDefaultInputMapping("F6");
+		engineKeyMap->addAction(act);
+
+		act = new Action("TALK", _("Talk"));
+		act->setCustomEngineActionEvent(kActionTalk);
+		act->addDefaultInputMapping("F7");
+		engineKeyMap->addAction(act);
+
+		act = new Action("WALK", _("Walk"));
+		act->setCustomEngineActionEvent(kActionWalk);
+		act->addDefaultInputMapping("F8");
+		engineKeyMap->addAction(act);
+	}
+
+	act = new Action("HELP", _("Help"));
+	act->setCustomEngineActionEvent(kActionHelp);
+	act->addDefaultInputMapping("F9");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SAVELOAD", _("Open save/load menu"));
+	act->setCustomEngineActionEvent(kActionSaveLoad);
+	act->addDefaultInputMapping("F10");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ACCESS)

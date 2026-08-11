@@ -36,7 +36,8 @@ enum {
 
 GfxCursor32::GfxCursor32() :
 	_hideCount(0),
-	_position(0, 0),
+	_width(0),
+	_height(0),
 	_needsPaint(false) {
 }
 
@@ -60,7 +61,7 @@ void GfxCursor32::hide() {
 		return;
 	}
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 	if (!_cursorBack.rect.isEmpty()) {
 		drawToScreen(_cursorBack);
 	}
@@ -139,14 +140,14 @@ void GfxCursor32::unhide() {
 		return;
 	}
 
-	g_system->showMouse(true);
+	CursorMan.showMouse(true);
 	_cursor.rect.moveTo(_position.x - _hotSpot.x, _position.y - _hotSpot.y);
 	revealCursor();
 }
 
 void GfxCursor32::show() {
 	if (_hideCount) {
-		g_system->showMouse(true);
+		CursorMan.showMouse(true);
 		_hideCount = 0;
 		_cursor.rect.moveTo(_position.x - _hotSpot.x, _position.y - _hotSpot.y);
 		revealCursor();

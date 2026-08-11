@@ -135,9 +135,6 @@ void GraphicsManager::kill() {
 	if (_backdropSurface.getPixels())
 		_backdropSurface.free();
 
-	if (_origBackdropSurface.getPixels())
-		_origBackdropSurface.free();
-
 	if (_transitionTexture) {
 		_transitionTexture->free();
 		delete _transitionTexture;

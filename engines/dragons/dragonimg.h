@@ -21,8 +21,6 @@
 #ifndef DRAGONS_DRAGONImg_H
 #define DRAGONS_DRAGONImg_H
 
-#include "common/system.h"
-
 namespace Dragons {
 
 struct Img {

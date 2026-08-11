@@ -41,18 +41,17 @@ void Room42::entry() {
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (!_G(flags).LoadGame) {
-			_G(det)->stopDetail(0);
-			_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
-			_G(det)->set_static_ani(8, -1);
 			_G(gameState).R42StationEmployeeAway = true;
-			_G(det)->stopSound(0);
-
-			_G(SetUpScreenFunc) = setup_func;
 
 			setPersonPos(80, 43, P_HOWARD, P_LEFT);
-			_G(atds)->set_ats_str(263, 1, ATS_DATA);
-			_G(atds)->set_ats_str(264, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(263, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(264, 1, ATS_DATA);
 		}
+
+		_G(det)->stopDetail(0);
+		_G(det)->stopSound(0);
+		_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
+		_G(det)->set_static_ani(8, -1);
 
 		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(gameState).R42LetterOk)
 			startAadWait(302);
@@ -64,7 +63,7 @@ void Room42::entry() {
 
 void Room42::xit() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 42) {
-		_G(atds)->set_ats_str(264, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(264, 1, ATS_DATA);
 		stop_spz();
 		_G(gameState).R42HoToBeamter = false;
 		_G(gameState)._personRoomNr[P_HOWARD] = 40;
@@ -80,13 +79,13 @@ void Room42::getPumpkin(int16 aad_nr) {
 	hideCur();
 	autoMove(1, P_CHEWY);
 	_G(gameState)._personHide[P_CHEWY] = true;
-	startSetAILWait(7, 1, ANI_BACK);
+	startDetailWait(7, 1, ANI_BACK);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 	startAadWait(aad_nr);
 
 	_G(gameState)._personHide[P_CHEWY] = true;
-	startSetAILWait(7, 1, ANI_FRONT);
+	startDetailWait(7, 1, ANI_FRONT);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	showCur();
 }
@@ -105,11 +104,11 @@ int16 Room42::useMailBag() {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(10, 1, ANI_FRONT);
+		startDetailWait(10, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		startAadWait(187);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(9, 1, ANI_FRONT);
+		startDetailWait(9, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		new_invent_2_cur(BMARKE_INV);
 		startAadWait(181);
@@ -121,12 +120,12 @@ int16 Room42::useMailBag() {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(10, 1, ANI_FRONT);
+		startDetailWait(10, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		delInventory(_G(cur)->getInventoryCursor());
 		startAadWait(183);
 		_G(obj)->calc_rsi_flip_flop(SIB_BKASTEN_R28);
-		_G(atds)->set_ats_str(206, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(206, 1, ATS_DATA);
 		_G(gameState).R28LetterBox = true;
 		_G(gameState).R40TrainMove = true;
 		_G(gameState).R28PostCar = true;
@@ -145,7 +144,7 @@ int16 Room42::useStationEmployee() {
 
 	if (_G(menu_item) == CUR_HOWARD) {
 		action_flag = true;
-		_G(atds)->set_ats_str(264, 2, ATS_DATA);
+		_G(atds)->set_all_ats_str(264, 2, ATS_DATA);
 		hideCur();
 		autoMove(4, P_CHEWY);
 		startAadWait(184);
@@ -189,16 +188,16 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 
 		switch (str_end_nr) {
 		case 1:
-			startSetAILWait(3, 4, ANI_FRONT);
+			startDetailWait(3, 4, ANI_FRONT);
 			break;
 
 		case 2:
 			_G(det)->playSound(4, 0);
-			startSetAILWait(4, 13, ANI_FRONT);
+			startDetailWait(4, 13, ANI_FRONT);
 			break;
 
 		case 3:
-			startSetAILWait(5, 2, ANI_FRONT);
+			startDetailWait(5, 2, ANI_FRONT);
 			break;
 
 		default:
@@ -212,7 +211,7 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 
 		_G(det)->stopDetail(0);
 		_G(det)->stopSound(0);
-		startSetAILWait(1, 1, ANI_FRONT);
+		startDetailWait(1, 1, ANI_FRONT);
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 
 		while (_G(atds)->aadGetStatus() != -1) {

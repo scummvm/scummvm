@@ -63,8 +63,26 @@ class CreateCharacters : public ScrollView {
 		void loadPortrait();
 	};
 
+	class NameEntry : public TextEntry {
+	private:
+		CreateCharacters *_owner;
+		Common::Rect _confirmBounds;
+		Common::Rect _cancelBounds;
+		bool _confirmHover = false;
+		bool _cancelHover = false;
+	public:
+		NameEntry(CreateCharacters *owner) : _owner(owner) {}
+
+		void addConfirmIcons();
+
+		void draw() override;
+		bool msgMouseDown(const MouseDownMessage &msg) override;
+		bool msgMouseUp(const MouseUpMessage &msg) override;
+		bool msgMouseMove(const MouseMoveMessage &msg) override;
+	};
+
 private:
-	TextEntry _textEntry;
+	NameEntry _textEntry;
 	static void abortFunc();
 	static void enterFunc(const Common::String &name);
 	Shared::Xeen::SpriteResource _icons;
@@ -80,7 +98,7 @@ private:
 	/**
 	 * Add a selection entry
 	 */
-	void addSelection(int yStart, int num);
+	int addSelection(int yStart, int num, const Common::String &text);
 
 	/**
 	 * Display the available classes
@@ -123,6 +141,21 @@ private:
 	void printSummary();
 
 	/**
+	 * Gets a random suggested name for the selected class and sex
+	 */
+	Common::String getSuggestedName();
+
+	/**
+	 * Accepts the name currently in the text entry
+	 */
+	void acceptName();
+
+	/**
+	 * Cancels the current name entry
+	 */
+	void abortName();
+
+	/**
 	 * Sets a new state
 	 */
 	void setState(State state);
@@ -135,6 +168,7 @@ public:
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
 };
 
 } // namespace ViewsEnh

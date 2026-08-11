@@ -279,7 +279,7 @@ int32 Router::getRoute() {
 			extractRoute();
 
 			// route.X,route.Y and route.Dir now hold all the
-			// route infomation with the target dir or route
+			// route information with the target dir or route
 			// continuation
 		}
 	}

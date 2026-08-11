@@ -40,7 +40,7 @@ public:
 	DynamicPlugin(const Common::Path &filename) :
 		_filename(filename) {}
 
-	virtual bool loadPlugin() {
+	bool loadPlugin() override {
 		// Validate the plugin API version
 		IntFunc verFunc = (IntFunc)findSymbol("PLUGIN_getVersion");
 		if (!verFunc) {
@@ -96,11 +96,12 @@ public:
 		return true;
 	}
 
-	virtual void unloadPlugin() {
+	void unloadPlugin() override {
 		delete _pluginObject;
+		_pluginObject = nullptr;
 	}
 
-	virtual Common::Path getFileName() const override {
+	Common::Path getFileName() const override {
 		return _filename;
 	}
 };

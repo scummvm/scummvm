@@ -66,7 +66,7 @@ void AdlEngine_v2::mapExeStrings(const Common::StringArray &strings) {
 
 void AdlEngine_v2::insertDisk(byte volume) {
 	delete _disk;
-	_disk = new DiskImage();
+	_disk = new Common::DiskImage();
 
 	if (!_disk->open(getDiskImageName(volume)))
 		error("Failed to open disk volume %d", volume);
@@ -164,7 +164,7 @@ void AdlEngine_v2::handleTextOverflow() {
 
 Common::String AdlEngine_v2::loadMessage(uint idx) const {
 	if (_messages[idx]) {
-		StreamPtr strStream(_messages[idx]->createReadStream());
+		Common::StreamPtr strStream(_messages[idx]->createReadStream());
 		return readString(*strStream, 0xff);
 	}
 
@@ -216,7 +216,7 @@ void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
 		return;
 	}
 
-	StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
+	Common::StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
 	stream->readByte(); // Skip clear opcode
 	_graphics->drawPic(*stream, pos);
 }
@@ -231,7 +231,7 @@ void AdlEngine_v2::loadRoom(byte roomNr) {
 	}
 
 	Room &room = getRoom(roomNr);
-	StreamPtr stream(room.data->createReadStream());
+	Common::StreamPtr stream(room.data->createReadStream());
 
 	uint16 descOffset = stream->readUint16LE();
 	uint16 commandOffset = stream->readUint16LE();
@@ -281,9 +281,8 @@ void AdlEngine_v2::showRoom() {
 		_itemRemoved = false;
 		_itemsOnScreen = 0;
 
-		Common::List<Item>::iterator item;
-		for (item = _state.items.begin(); item != _state.items.end(); ++item)
-			item->isOnScreen = false;
+		for (auto &item : _state.items)
+			item.isOnScreen = false;
 	}
 
 	if (!_state.isDark)
@@ -295,31 +294,33 @@ void AdlEngine_v2::showRoom() {
 
 // TODO: Merge this into AdlEngine?
 void AdlEngine_v2::takeItem(byte noun) {
-	Common::List<Item>::iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun == noun && item->room == _state.room && item->region == _state.region) {
-			if (item->state == IDI_ITEM_DOESNT_MOVE) {
+	for (auto &item : _state.items) {
+		if (item.noun == noun && item.room == _state.room && item.region == _state.region) {
+			if (item.state == IDI_ITEM_DOESNT_MOVE) {
 				printMessage(_messageIds.itemDoesntMove);
 				return;
 			}
 
-			if (item->state == IDI_ITEM_DROPPED) {
-				item->room = IDI_ANY;
-				_itemRemoved = true;
-				return;
+			bool itemIsHere = false;
+
+			if (item.state == IDI_ITEM_DROPPED) {
+				itemIsHere = true;
+			} else {
+				for (const auto &pic : item.roomPictures) {
+					if (pic == getCurRoom().curPicture || pic == IDI_ANY) {
+						itemIsHere = true;
+						break;
+					}
+				}
 			}
 
-			Common::Array<byte>::const_iterator pic;
-			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-				if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
-					if (!isInventoryFull()) {
-						item->room = IDI_ANY;
-						_itemRemoved = true;
-						item->state = IDI_ITEM_DROPPED;
-					}
-					return;
+			if (itemIsHere) {
+				if (!isInventoryFull()) {
+					item.room = IDI_ANY;
+					_itemRemoved = true;
+					item.state = IDI_ITEM_DROPPED;
 				}
+				return;
 			}
 		}
 	}
@@ -328,22 +329,18 @@ void AdlEngine_v2::takeItem(byte noun) {
 }
 
 void AdlEngine_v2::drawItems() {
-	Common::List<Item>::iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+	for (auto &item : _state.items) {
 		// Skip items not in this room
-		if (item->region == _state.region && item->room == _state.room && !item->isOnScreen) {
-			if (item->state == IDI_ITEM_DROPPED) {
+		if (item.region == _state.region && item.room == _state.room && !item.isOnScreen) {
+			if (item.state == IDI_ITEM_DROPPED) {
 				// Draw dropped item if in normal view
 				if (getCurRoom().picture == getCurRoom().curPicture && _itemsOnScreen < _itemOffsets.size())
-					drawItem(*item, _itemOffsets[_itemsOnScreen++]);
+					drawItem(item, _itemOffsets[_itemsOnScreen++]);
 			} else {
 				// Draw fixed item if current view is in the pic list
-				Common::Array<byte>::const_iterator pic;
-
-				for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-					if (*pic == _state.curPicture || *pic == IDI_ANY) {
-						drawItem(*item, item->position);
+				for (const auto &pic : item.roomPictures) {
+					if (pic == _state.curPicture || pic == IDI_ANY) {
+						drawItem(item, item.position);
 						break;
 					}
 				}
@@ -352,7 +349,7 @@ void AdlEngine_v2::drawItems() {
 	}
 }
 
-DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
+Common::DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 	byte track = f.readByte();
 	byte sector = f.readByte();
 	byte offset = f.readByte();
@@ -362,7 +359,7 @@ DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 		error("Error reading DataBlockPtr");
 
 	if (track == 0 && sector == 0 && offset == 0 && size == 0)
-		return DataBlockPtr();
+		return Common::DataBlockPtr();
 
 	adjustDataBlockPtr(track, sector, offset, size);
 
@@ -469,10 +466,8 @@ int AdlEngine_v2::o_isRandomGT(ScriptEnv &e) {
 int AdlEngine_v2::o_isNounNotInRoom(ScriptEnv &e) {
 	OP_DEBUG_1("\t&& NO_SUCH_ITEMS_IN_ROOM(%s)", itemRoomStr(e.arg(1)).c_str());
 
-	Common::List<Item>::const_iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item)
-		if (item->noun == e.getNoun() && (item->room == roomArg(e.arg(1))))
+	for (const auto &item : _state.items)
+		if (item.noun == e.getNoun() && (item.room == roomArg(e.arg(1))))
 			return -1;
 
 	return 1;
@@ -481,10 +476,8 @@ int AdlEngine_v2::o_isNounNotInRoom(ScriptEnv &e) {
 int AdlEngine_v2::o_isCarryingSomething(ScriptEnv &e) {
 	OP_DEBUG_0("\t&& IS_CARRYING_SOMETHING()");
 
-	Common::List<Item>::const_iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item)
-		if (item->room == IDI_ANY)
+	for (const auto &item : _state.items)
+		if (item.room == IDI_ANY)
 			return 0;
 	return -1;
 }
@@ -531,13 +524,11 @@ int AdlEngine_v2::o_moveAllItems(ScriptEnv &e) {
 
 	byte room2 = roomArg(e.arg(2));
 
-	Common::List<Item>::iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item)
-		if (item->room == room1) {
-			item->room = room2;
+	for (auto &item : _state.items)
+		if (item.room == room1) {
+			item.room = room2;
 			if (room1 == IDI_ANY)
-				item->state = IDI_ITEM_DROPPED;
+				item.state = IDI_ITEM_DROPPED;
 		}
 
 	return 2;

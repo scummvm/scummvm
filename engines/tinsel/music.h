@@ -40,6 +40,10 @@ public:
 		_midiBuffer.size = 0;
 	}
 
+	~Music() {
+		DeleteMidiBuffer();
+	}
+
 	bool PlayMidiSequence(		// Plays the specified MIDI sequence through the sound driver
 		uint32 dwFileOffset,		// handle of MIDI sequence data
 		bool bLoop);			// Whether to loop the sequence
@@ -178,6 +182,7 @@ protected:
 	SCNHANDLE _hScript;
 	SCNHANDLE _hSegment;
 	Common::Path _filename;
+	Common::File _file;
 
 	uint8 _volume;
 

@@ -150,7 +150,7 @@ int find_nearest_walkable_area(Bitmap *tempw, int fromX, int fromY, int toX, int
 	return 0;
 }
 
-static int walk_area_granularity[MAX_WALK_AREAS + 1];
+static int walk_area_granularity[MAX_WALK_AREAS];
 static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss, const PathfinderConfig &pfc) {
 	_G(wallscreen) = wss;
 	suggestx = -1;
@@ -169,8 +169,8 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 	int dd, ff;
 	// initialize array for finding widths of walkable areas
 	int thisar, inarow = 0, lastarea = 0;
-	int walk_area_times[MAX_WALK_AREAS + 1];
-	for (dd = 0; dd <= MAX_WALK_AREAS; dd++) {
+	int walk_area_times[MAX_WALK_AREAS];
+	for (dd = 0; dd < MAX_WALK_AREAS; dd++) {
 		walk_area_times[dd] = 0;
 		walk_area_granularity[dd] = 0;
 	}
@@ -182,7 +182,7 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 			// count how high the area is at this point
 			if ((thisar == lastarea) && (thisar > 0))
 				inarow++;
-			else if (lastarea > MAX_WALK_AREAS)
+			else if (lastarea >= MAX_WALK_AREAS)
 				quit("!Calculate_Route: invalid colours in walkable area mask");
 			else if (lastarea != 0) {
 				walk_area_granularity[lastarea] += inarow;
@@ -212,7 +212,7 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 	}
 
 	// find the average "width" of a path in this walkable area
-	for (dd = 1; dd <= MAX_WALK_AREAS; dd++) {
+	for (dd = 1; dd < MAX_WALK_AREAS; dd++) {
 		if (walk_area_times[dd] == 0) {
 			walk_area_granularity[dd] = pfc.MaxGranularity;
 			continue;
@@ -647,6 +647,11 @@ inline fixed input_speed_to_fixed(int speed_val) {
 	}
 }
 
+void set_route_move_speed(int speed_x, int speed_y) {
+	_G(move_speed_x) = input_speed_to_fixed(speed_x);
+	_G(move_speed_y) = input_speed_to_fixed(speed_y);
+}
+
 // Calculates the X and Y per game loop, for this stage of the movelist
 void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed move_speed_y) {
 	assert(mlsp != nullptr);
@@ -658,10 +663,10 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 		return;
 	}
 
-	short ourx = (mlsp->pos[aaa] >> 16) & 0x000ffff;
-	short oury = (mlsp->pos[aaa] & 0x000ffff);
-	short destx = ((mlsp->pos[aaa + 1] >> 16) & 0x000ffff);
-	short desty = (mlsp->pos[aaa + 1] & 0x000ffff);
+	short ourx = mlsp->pos[aaa].X;
+	short oury = mlsp->pos[aaa].Y;
+	short destx = mlsp->pos[aaa + 1].X;
+	short desty = mlsp->pos[aaa + 1].Y;
 
 	// Special case for vertical and horizontal movements
 	if (ourx == destx) {
@@ -728,11 +733,9 @@ void calculate_move_stage(MoveList *mlsp, int aaa, fixed move_speed_x, fixed mov
 #endif
 }
 
-#define MAKE_INTCOORD(x,y) (((unsigned short)x << 16) | ((unsigned short)y))
-
-int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
+int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int move_speed_y, Bitmap *onscreen, int move_id, int nocross, int ignore_walls) {
 	assert(onscreen != nullptr);
-	assert((int)_GP(mls).size() > movlst);
+	assert((int)_GP(mls).size() > move_id);
 	assert(pathbackx != nullptr);
 	assert(pathbacky != nullptr);
 
@@ -786,14 +789,16 @@ int find_route(short srcx, short srcy, short xx, short yy, int move_speed_x, int
 	}
 
 	if (pathbackstage >= 0) {
-		int nearestpos = 0, nearestindx;
-		int reallyneed[MAXNEEDSTAGES], numstages = 0;
-		reallyneed[numstages] = MAKE_INTCOORD(srcx, srcy);
+		Point nearestpos;
+		int nearestindx;
+		Point reallyneed[MAXNEEDSTAGES];
+		int numstages = 0;
+		reallyneed[numstages] = {srcx, srcy};
 		numstages++;
 		nearestindx = -1;
 
 stage_again:
-		nearestpos = 0;
+		nearestpos = {};
 		aaa = 1;
 		// find the furthest point that can be seen from this stage
 		for (aaa = pathbackstage - 1; aaa >= 0; aaa--) {
@@ -801,26 +806,26 @@ stage_again:
 			AGS::Shared::Debug::Printf("stage %2d: %2d,%2d\n", aaa, pathbackx[aaa], pathbacky[aaa]);
 #endif
 			if (can_see_from(srcx, srcy, pathbackx[aaa], pathbacky[aaa])) {
-				nearestpos = MAKE_INTCOORD(pathbackx[aaa], pathbacky[aaa]);
+				nearestpos = {pathbackx[aaa], pathbacky[aaa]};
 				nearestindx = aaa;
 			}
 		}
 
-		if ((nearestpos == 0) && (can_see_from(srcx, srcy, xx, yy) == 0) &&
+		if ((nearestpos.Equals(0,0)) && (can_see_from(srcx, srcy, xx, yy) == 0) &&
 		        (srcx >= 0) && (srcy >= 0) && (srcx < _G(wallscreen)->GetWidth()) && (srcy < _G(wallscreen)->GetHeight()) && (pathbackstage > 0)) {
 			// If we couldn't see anything, we're stuck in a corner so advance
 			// to the next square anyway (but only if they're on the screen)
 			nearestindx = pathbackstage - 1;
-			nearestpos = MAKE_INTCOORD(pathbackx[nearestindx], pathbacky[nearestindx]);
+			nearestpos = {pathbackx[nearestindx], pathbacky[nearestindx]};
 		}
 
-		if (nearestpos > 0) {
+		if ((nearestpos.X + nearestpos.Y) > 0) { // NOTE: we only deal with positive coordinates here
 			reallyneed[numstages] = nearestpos;
 			numstages++;
 			if (numstages >= MAXNEEDSTAGES - 1)
 				quit("too many stages for auto-walk");
-			srcx = (nearestpos >> 16) & 0x000ffff;
-			srcy = nearestpos & 0x000ffff;
+			srcx = nearestpos.X;
+			srcy = nearestpos.Y;
 #ifdef DEBUG_PATHFINDER
 			AGS::Shared::Debug::Printf("Added: %d, %d pbs:%d", srcx, srcy, pathbackstage);
 #endif
@@ -830,13 +835,13 @@ stage_again:
 		}
 
 		if (finalpartx >= 0) {
-			reallyneed[numstages] = MAKE_INTCOORD(finalpartx, finalparty);
+			reallyneed[numstages] = {finalpartx, finalparty};
 			numstages++;
 		}
 
 		// Make sure the end co-ord is in there
-		if (reallyneed[numstages - 1] != MAKE_INTCOORD(xx, yy)) {
-			reallyneed[numstages] = MAKE_INTCOORD(xx, yy);
+		if (reallyneed[numstages - 1] != Point(xx, yy)) {
+			reallyneed[numstages] = {xx, yy};
 			numstages++;
 		}
 
@@ -846,9 +851,9 @@ stage_again:
 #ifdef DEBUG_PATHFINDER
 		AGS::Shared::Debug::Printf("Route from %d,%d to %d,%d - %d stage, %d stages", orisrcx, orisrcy, xx, yy, pathbackstage, numstages);
 #endif
-		int mlist = movlst;
-		_GP(mls)[mlist].numstage = numstages;
-		memcpy(&_GP(mls)[mlist].pos[0], &reallyneed[0], sizeof(int) * numstages);
+		MoveList mlist;
+		mlist.numstage = numstages;
+		memcpy(&mlist.pos[0], &reallyneed[0], sizeof(Point) * numstages);
 #ifdef DEBUG_PATHFINDER
 		AGS::Shared::Debug::Printf("stages: %d\n", numstages);
 #endif
@@ -856,21 +861,16 @@ stage_again:
 		const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 		const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
 		for (aaa = 0; aaa < numstages - 1; aaa++) {
-			calculate_move_stage(&_GP(mls)[mlist], aaa, fix_speed_x, fix_speed_y);
+			calculate_move_stage(&mlist, aaa, fix_speed_x, fix_speed_y);
 		}
 
-		_GP(mls)[mlist].fromx = orisrcx;
-		_GP(mls)[mlist].fromy = orisrcy;
-		_GP(mls)[mlist].onstage = 0;
-		_GP(mls)[mlist].onpart = 0;
-		_GP(mls)[mlist].doneflag = 0;
-		_GP(mls)[mlist].lastx = -1;
-		_GP(mls)[mlist].lasty = -1;
+		mlist.from = {orisrcx, orisrcy};
+		_GP(mls)[move_id] = mlist;
 #ifdef DEBUG_PATHFINDER
 		// getch();
 #endif
 
-		return mlist;
+		return move_id;
 	} else {
 		return 0;
 	}
@@ -886,11 +886,9 @@ bool add_waypoint_direct(MoveList *mlsp, short x, short y, int move_speed_x, int
 
 	const fixed fix_speed_x = input_speed_to_fixed(move_speed_x);
 	const fixed fix_speed_y = input_speed_to_fixed(move_speed_y);
-	mlsp->pos[mlsp->numstage] = MAKE_INTCOORD(x, y);
+	mlsp->pos[mlsp->numstage] = {x, y};
 	calculate_move_stage(mlsp, mlsp->numstage - 1, fix_speed_x, fix_speed_y);
 	mlsp->numstage++;
-	mlsp->lastx = x;
-	mlsp->lasty = y;
 	return true;
 }
 

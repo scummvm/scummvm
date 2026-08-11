@@ -24,9 +24,200 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
+#include "common/config-manager.h"
 #include "common/textconsole.h"
 
 namespace Parallaction {
+
+#ifdef USE_TTS
+
+// Transcribed for TTS; only English is translated in-game
+static const char *openingCreditsSecondLine[] = {
+	"Grafica Totale: Max M.",		// Italian
+	"Graphiques Totaux: Max M.",	// French
+	"Total Graphics: Max M.",		// English
+	"Gesamtgrafik: Max M."			// German
+};
+
+static const char *openingCreditsThirdLine[] = {
+	"Design del Gioco: Mr. Tzutzumi",	// Italian
+	"Conception de Jeux: Mr. Tzutzumi",	// French
+	"Game Design: Mr. Tzutzumi",		// English
+	"Spieldesign: Mr. Tzutzumi"			// German
+};
+
+// Transcribed for TTS; only Italian is translated in-game
+static const char *endCreditsItalian[] = {
+	"La Cassiera",
+	"La Segretaria",
+	"Il Taxista",
+	"Il Giornalaio",
+	"Passante",
+	"Il Segretario",
+	"L'Uccello",
+	"L'Inserviente",
+	"Il Priore",
+	"Il Suicida",
+	"Il Direttore",
+	"Passante",
+	"Fratello Shinpui",
+	"Apollo il Gorilla",
+	"Il Portiere",
+	"Il Guru",
+	"Fratello Baka",
+	"Josko il Barman",
+	"Figaro L' Estetista",
+	"Il Guardiano del Museo",
+	"Passante",
+	"Il Losco Max",
+	"Mister Y",
+	"Il Punk",
+	"Passante",
+	"Il Signor Bemutsu",
+	"L' Annunciatore",
+	"La Punkina",
+	"L' Imperatore",
+	"Il Dottor Ki",
+	"Il Cuoco",
+	"Il Punk",
+	"Passante",
+	"Il Losco Figuro",
+	"Chan L'Onesto",
+	"",
+	"La Geisha",
+	"Kos 'O Professore",
+	"Il Giocatore di Pacinko"
+};
+
+static const char *endCreditsFrench[] = {
+	"La Cassi\350re",
+	"La Secr\351taire",
+	"Le Chaffeur de Taxi",
+	"Le Marchand de Journaux",
+	"La Pi\351tonne",
+	"Le Secr\351taire",
+	"La Corneille",
+	"Le Oshiya",
+	"Le Prieur",
+	"Le Candidat au Suicide",
+	"Le Directeur",
+	"La Pi\351tonne",
+	"Fr\350re Shinpui",
+	"Apollo le Garde du Corps",
+	"Le Concierge",
+	"Le Guru",
+	"Fr\350re Baka",
+	"Josko le Barman",
+	"Figaro L'esth\351ticien",
+	"Le Gardien du Mus\351e",
+	"La Pi\351tonne",
+	"Le Ombrag\351e Max",
+	"Monsieur Y",
+	"Le Punk",
+	"La Pi\351tonne",
+	"Monsieur Bemutsu",
+	"Le Annonceur",
+	"Le Punk",
+	"L'Empereur",
+	"Le Docteur Ki",
+	"Le Chef",
+	"Le Punk",
+	"Le Pi\351ton",
+	"Le Louche Personnage",
+	"Honest Chan",
+	"",
+	"La Geisha",
+	"Professeur Kos",
+	"Le Joueur de Pachinko"
+};
+
+static const char *endCreditsEnglish[] = {
+	"Cashier",
+	"Secretary",
+	"Taxi-driver",
+	"Newspaper Seller",
+	"Pedestrian",
+	"Secretary",
+	"Grackle",
+	"Oshiya",
+	"Prior",
+	"Suicidal Man",
+	"Governor",
+	"Pedestrian",
+	"Brother Shinpui",
+	"Apollo the Bodyguard",
+	"Door-keeper",
+	"Guru",
+	"Brother Baka",
+	"Josko the Barman",
+	"Figaro the Beautician",
+	"Museum Custodian",
+	"Pedestrian",
+	"Sullen Max",
+	"Mister Y",
+	"Punk",
+	"Pedestrian",
+	"Mister Bemutsu",
+	"Announcer",
+	"Punk",
+	"Emperor",
+	"Doctor Ki",
+	"Cook",
+	"Punk",
+	"Pedestrian",
+	"Shady Type",
+	"Honest Chan",
+	"",
+	"Geisha",
+	"Professor Kos",
+	"Pachinko Player"
+};
+
+static const char *endCreditsGerman[] = {
+	"Die Kassiererin",
+	"Die Sekret\344rin",
+	"Der Taxifahrer",
+	"Der Zeitungsverk\344ufer",
+	"Die Passantin",
+	"Der Sekret\344r",
+	"Des Grakula",
+	"Der Oshiya",
+	"Der Prior",
+	"Der Selbstm\366rder",
+	"Der Direktor",
+	"Die Passantin",
+	"Bruder Shinpui",
+	"Apollo der Bodyguard",
+	"Der Portier",
+	"Der Guru",
+	"Bruder Baka",
+	"Josko der Barman",
+	"Figaro, der Kosmetiker",
+	"Der Museumsw\344rter",
+	"Die Passantin",
+	"Schattig Max",
+	"Herr Y",
+	"Der Punker",
+	"Die Passantin",
+	"Herr Bemutsu",
+	"Der Ansager",
+	"Der Punker",
+	"Der Kaiser",
+	"Doktor Ki",
+	"Der Koch",
+	"Der Punker",
+	"Der Passant",
+	"Der Dunkler Typ",
+	"Honest Chan",
+	"",
+	"Die Geisha",
+	"Professor Kos",
+	"Der Pachinko-Spieler"
+};
+
+static const int kNumberOfCredits = ARRAYSIZE(endCreditsItalian);
+
+#endif
 
 #define INST_ON							1
 #define INST_OFF						2
@@ -68,6 +259,16 @@ DECLARE_INSTRUCTION_OPCODE(on) {
 
 	inst->_a->_flags |= kFlagsActive;
 	inst->_a->_flags &= ~kFlagsRemove;
+
+#ifdef USE_TTS
+	if (scumm_stricmp(inst->_a->_name, "telo3") == 0) {
+		_vm->setTTSVoice(kNarratorVoiceID);
+		_vm->sayText(openingCreditsSecondLine[_vm->getInternLanguage()], Common::TextToSpeechManager::INTERRUPT);
+	} else if (scumm_stricmp(inst->_a->_name, "game") == 0) {
+		_vm->setTTSVoice(kNarratorVoiceID);
+		_vm->sayText(openingCreditsThirdLine[_vm->getInternLanguage()], Common::TextToSpeechManager::INTERRUPT);
+	}
+#endif
 }
 
 
@@ -85,6 +286,21 @@ DECLARE_INSTRUCTION_OPCODE(loop) {
 
 
 DECLARE_INSTRUCTION_OPCODE(endloop) {
+	if (ctxt._program->_loopStart == 11 && scumm_stricmp(_vm->_location._name, "test") == 0) {
+		// Delay moving on from test results until TTS is done or the player clicks, 
+		// so the TTS system can speak them fully
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+			ctxt._program->_loopCounter = 2;
+			int event = _vm->_input->getLastButtonEvent();
+
+			if (event == kMouseLeftUp) {
+				ttsMan->stop();
+				ctxt._program->_loopCounter = 0;
+			}
+		}
+	}
+
 	if (--ctxt._program->_loopCounter > 0) {
 		ctxt._ip = ctxt._program->_loopStart;
 	}
@@ -104,6 +320,33 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 	int16 lvalue = inst->_opA.getValue();
 
 	if (inst->_index == INST_INC) {
+#ifdef USE_TTS
+		if (_vm->_endCredits && ctxt._anim->_name[0] == 's' && _currentCredit < kNumberOfCredits) {
+			const char **credits;
+
+			switch (_vm->getInternLanguage()) {
+			case kItalian:
+				credits = endCreditsItalian;
+				break;
+			case kFrench:
+				credits = endCreditsFrench;
+				break;
+			case kEnglish:
+				credits = endCreditsEnglish;
+				break;
+			case kGerman:
+				credits = endCreditsGerman;
+				break;
+			default:
+				credits = endCreditsItalian;
+				break;
+			}
+
+			_vm->sayText(credits[_currentCredit], Common::TextToSpeechManager::QUEUE);
+			_currentCredit++;
+		}
+#endif
+
 		lvalue += _si;
 	} else {
 		lvalue -= _si;
@@ -314,6 +557,8 @@ CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : CommandExec(vm), _vm(vm) {
 }
 
 ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
+	_currentCredit = 0;
+
 	_instructionNames = _instructionNamesRes_ns;
 
 	ProgramOpcodeSet *table = nullptr;

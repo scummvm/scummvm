@@ -366,8 +366,8 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 				leftFace[leftCount] = p1;
 				leftCount++;
 			}
-			NEWTON_ASSERT(leftCount < dgInt32((sizeof(leftFace) / sizeof(leftFace[0])) - 1));
-			NEWTON_ASSERT(rightCount < dgInt32((sizeof(rightFace) / sizeof(rightFace[0])) - 1));
+			NEWTON_ASSERT(leftCount < dgInt32((ARRAYSIZE(leftFace)) - 1));
+			NEWTON_ASSERT(rightCount < dgInt32((ARRAYSIZE(rightFace)) - 1));
 
 			i0 = i1;
 			i1++;
@@ -494,7 +494,7 @@ void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
 						faces[stack] = backOut;
 						pool[stack] = root->m_back;
 						stack++;
-						NEWTON_ASSERT(stack < dgInt32(sizeof(pool) / sizeof(pool[0])));
+						NEWTON_ASSERT(stack < dgInt32(ARRAYSIZE(pool)));
 					}
 				}
 
@@ -508,7 +508,7 @@ void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
 						faces[stack] = frontOut;
 						pool[stack] = root->m_front;
 						stack++;
-						NEWTON_ASSERT(stack < dgInt32(sizeof(pool) / sizeof(pool[0])));
+						NEWTON_ASSERT(stack < dgInt32(ARRAYSIZE(pool)));
 					}
 				}
 			}

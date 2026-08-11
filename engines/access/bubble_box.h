@@ -35,7 +35,16 @@ namespace Access {
 
 class AccessEngine;
 
-enum BoxType { TYPE_0 = 0, TYPE_1 = 1, TYPE_2 = 2, TYPE_3 = 3, kBoxTypeFileDialog = 4 };
+enum BoxType {
+	TYPE_0 = 0,
+	TYPE_1 = 1,
+	TYPE_2 = 2,
+	TYPE_3 = 3,
+	kBoxTypeFileDialog = 4,
+	kTextBoxNoctPlain = 1,
+	kTextBoxNoctCaption = 2,
+	kTextBoxNoctCenter = 4,
+};
 
 class BubbleBox : public Manager {
 private:
@@ -55,13 +64,14 @@ private:
 	 */
 	void printBubble_v1(const Common::String &msg);
 	void printBubble_v2(const Common::String &msg);
+	void printBubble_v3(const Common::String &msg);
 
 public:
 	BoxType _type;
 	Common::Rect _bounds;
 	Common::StringArray _nameIndex;
-	Common::String _bubbleTitle;
-	Common::String _bubbleDisplStr;
+	Common::String _bubbleTitle; // the active default "script" title
+	Common::String _bubbleDisplStr; // the title that will be drawn on the next bubble
 	Common::String _tempList[60];
 	int _tempListIdx[60];
 	int _btnId1;
@@ -74,7 +84,7 @@ public:
 	Common::Rect _btnDownPos;
 	Common::Array<Common::Rect> _bubbles;
 public:
-	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title);
+	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, const char *title);
 
 	void load(Common::SeekableReadStream *stream);
 
@@ -89,6 +99,11 @@ public:
 	void calcBubble(const Common::String &msg);
 
 	/**
+	 * Noctropolis version of bubble calculation
+	 */
+	//void calcBubble_v3(const Common::String &msg);
+
+	/**
 	 * Prints a text bubble and it's contents
 	 */
 	void printBubble(const Common::String &msg);
@@ -99,10 +114,11 @@ public:
 	 */
 	void drawBubble(int index);
 
-	void doBox(int item, int box);
+	void doBox_v2(int item, int box);
+	void doBox_v3(int item, int box);
 
 	int doBox_v1(int item, int box, int &btnSelected);
-	void getList(const char *const data[], int *flags);
+	void getList(const char *const data[], const byte *flags);
 	void setCursorPos(int posX, int posY);
 	void printString(Common::String msg);
 };

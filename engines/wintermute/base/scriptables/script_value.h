@@ -41,8 +41,8 @@ class BaseScriptable;
 
 class ScValue : public BaseClass {
 public:
-	static int compare(ScValue *val1, ScValue *val2);
-	static int compareStrict(ScValue *val1, ScValue *val2);
+	static int compare(ScValue *val1, ScValue *val2, bool enableFloatCompareWA);
+	static int compareStrict(ScValue *val1, ScValue *val2, bool enableFloatCompareWA);
 	TValType getTypeTolerant();
 	void cleanup(bool ignoreNatives = false);
 	DECLARE_PERSISTENT(ScValue, BaseClass)
@@ -63,7 +63,7 @@ public:
 	BaseScriptable *getNative();
 	bool deleteProp(const char *name);
 	void deleteProps();
-	void CleanProps(bool includingNatives);
+	void cleanProps(bool includingNatives);
 	void setBool(bool val);
 	void setInt(int val);
 	void setFloat(double val);
@@ -84,18 +84,16 @@ public:
 	ScValue *getProp(const char *name);
 	BaseScriptable *_valNative;
 	ScValue *_valRef;
-private:
 	bool _valBool;
 	int32 _valInt;
 	double _valFloat;
 	char *_valString;
-public:
 	TValType _type;
 	ScValue(BaseGame *inGame);
-	ScValue(BaseGame *inGame, bool Val);
-	ScValue(BaseGame *inGame, int32 Val);
-	ScValue(BaseGame *inGame, double Val);
-	ScValue(BaseGame *inGame, const char *Val);
+	ScValue(BaseGame *inGame, bool val);
+	ScValue(BaseGame *inGame, int32 val);
+	ScValue(BaseGame *inGame, double val);
+	ScValue(BaseGame *inGame, const char *val);
 	~ScValue() override;
 	Common::HashMap<Common::String, ScValue *> _valObject;
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;

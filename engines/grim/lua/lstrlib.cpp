@@ -93,7 +93,7 @@ static void push_captures(Capture *cap) {
 	for (int i = 0; i < cap->level; i++) {
 		int l = cap->capture[i].len;
 		char *buff = luaL_openspace(l+1);
-		if (l == -1)
+		if (l < 0)
 			lua_error("unfinished capture");
 		strncpy(buff, cap->capture[i].init, l);
 		buff[l] = 0;
@@ -443,7 +443,7 @@ static void str_format() {
 				initf += 2;  // skip the 'n$'
 			}
 			arg++;
-			strncpy(form+1, initf, strfrmt - initf + 1); // +1 to include convertion
+			strncpy(form+1, initf, strfrmt - initf + 1); // +1 to include conversion
 			form[strfrmt-initf + 2] = 0;
 			buff = luaL_openspace(1000);  // to store the formatted value
 			switch (*strfrmt++) {
@@ -497,7 +497,7 @@ static struct luaL_reg strlib[] = {
 ** Open string library
 */
 void strlib_open() {
-	luaL_openlib(strlib, (sizeof(strlib) / sizeof(strlib[0])));
+	luaL_openlib(strlib, ARRAYSIZE(strlib));
 }
 
 } // end of namespace Grim

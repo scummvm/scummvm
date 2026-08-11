@@ -48,8 +48,6 @@ class DraggableView;
 class SunMoonRibbon;
 class MDSkyStripWidget;
 
-using Std::list;
-
 typedef enum { CURSOR_HEAD, CURSOR_NECK, CURSOR_CHEST, CURSOR_RIGHT_HAND, CURSOR_LEFT_HAND, CURSOR_RIGHT_RING, CURSOR_LEFT_RING, CURSOR_FEET,
 			   CURSOR_LEFT, CURSOR_RIGHT, CURSOR_COMBAT, CURSOR_CHECK, CURSOR_HEART, CURSOR_PARTY, CURSOR_INVENTORY
 			 } gumpCursorPos;
@@ -74,9 +72,9 @@ protected:
 
 	View *current_view;
 
-	Std::list<DraggableView *> container_gumps;
-	Std::list<DraggableView *> doll_gumps;
-	Std::list<DraggableView *> gumps;
+	Common::List<DraggableView *> container_gumps;
+	Common::List<DraggableView *> doll_gumps;
+	Common::List<DraggableView *> gumps;
 
 	uint8 doll_next_party_member;
 

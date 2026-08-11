@@ -217,8 +217,11 @@ int DarkMoonEngine::mainMenuLoop() {
 		_gui->simpleMenu_setup(6, 0, _mainMenuStrings, -1, 0, 0, _configRenderMode == Common::kRenderCGA ? 1 : guiSettings()->colors.guiColorWhite, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.guiColorBlack);
 		_screen->updateScreen();
 
-		while (sel == -1 && !shouldQuit())
+		while (sel == -1 && !shouldQuit()) {
+			uint32 frameEnd = _system->getMillis() + 8;
 			sel = _gui->simpleMenu_process(6, _mainMenuStrings, 0, -1, 0);
+			delayUntil(frameEnd);
+		}
 	} while ((sel < 0 || sel > 5) && !shouldQuit());
 
 	if (_flags.platform == Common::kPlatformFMTowns && sel == 2) {
@@ -235,8 +238,11 @@ void DarkMoonEngine::townsUtilitiesMenu() {
 	do {
 		_gui->simpleMenu_setup(8, 0, _utilMenuStrings, -1, 0, 0, _configRenderMode == Common::kRenderCGA ? 1 : guiSettings()->colors.guiColorWhite, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.guiColorBlack);
 		_screen->updateScreen();
-		while (sel == -1 && !shouldQuit())
+		while (sel == -1 && !shouldQuit()) {
+			uint32 frameEnd = _system->getMillis() + 8;
 			sel = _gui->simpleMenu_process(8, _utilMenuStrings, 0, -1, 0);
+			delayUntil(frameEnd);
+		}
 		if (sel == 0) {
 			_config2431 ^= true;
 			sel = -1;
@@ -1596,7 +1602,7 @@ int DarkmoonSequenceHelper::hScroll(bool restart) {
 	}
 
 	_hScrollResumeTimeStamp = ct;
-	
+
 	if (state != _hScrollState) {
 		_screen->copyRegion(9, 8, 8, 8, 303, 128, 0, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(state, 0, 311, 8, 1, 128, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1838,7 +1844,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 		if (_vm->_flags.platform != Common::kPlatformAmiga && _vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) {
 			uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
 			for (int i = 0; i < 7; i++)
-				_screen->createFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
+				_screen->createColorFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
 			delete[] pal;
 		}
 	}

@@ -124,17 +124,17 @@ class FontKoreanBase : public FontKorean {
 public:
 	FontKoreanBase();
 
-	virtual void setDrawingMode(DrawingMode mode);
+	void setDrawingMode(DrawingMode mode) override;
 
-	virtual void toggleFlippedMode(bool enable);
+	void toggleFlippedMode(bool enable) override;
 
-	virtual uint getFontHeight() const;
+	uint getFontHeight() const override;
 
-	virtual uint getMaxFontWidth() const;
+	uint getMaxFontWidth() const override;
 
-	virtual uint getCharWidth(uint16 ch) const;
+	uint getCharWidth(uint16 ch) const override;
 
-	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const;
+	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const override;
 private:
 	template<typename Color>
 	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
@@ -171,7 +171,7 @@ public:
 	/**
 	 * Load the font data from "KOREAN.FNT".
 	 */
-	bool loadData(const char *fontFile);
+	bool loadData(const char *fontFile) override;
 private:
 	uint8 *_fontData16x16;
 	uint _fontData16x16Size;
@@ -182,9 +182,9 @@ private:
 	uint8 *_fontData8x8;
 	uint _fontData8x8Size;
 
-	virtual const uint8 *getCharData(uint16 c) const;
+	const uint8 *getCharData(uint16 c) const override;
 
-	bool hasFeature(int feat) const;
+	bool hasFeature(int feat) const override;
 
 	const uint8 *getCharDataPCE(uint16 c) const;
 	const uint8 *getCharDataDefault(uint16 c) const;
@@ -204,7 +204,7 @@ public:
 	/**
 	 * Loads the ROM data from "KOREAN#.FNT".
 	 */
-	bool loadData(const char *fontFile);
+	bool loadData(const char *fontFile) override;
 private:
 	enum {
 		eFontNumChars = 256,
@@ -221,9 +221,9 @@ private:
 	uint _englishFontDataSize;
 
 
-	virtual const uint8 *getCharData(uint16 c) const;
+	const uint8 *getCharData(uint16 c) const override;
 
-	bool hasFeature(int feat) const;
+	bool hasFeature(int feat) const override;
 
 	bool englishLoadData(const char *fontFile);
 };

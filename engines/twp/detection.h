@@ -38,7 +38,6 @@ enum TwpDebugChannels {
 	kDebugActScript,
 	kDebugSndScript,
 	kDebugGame,
-	kDebugConsole,
 	kDebugSave
 };
 
@@ -56,6 +55,8 @@ enum LanguageSupported {
 
 extern const PlainGameDescriptor twpGames[];
 struct TwpGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	GameXorKey xorKey;
 	LanguageSupported languageSupported;
@@ -65,7 +66,7 @@ extern const TwpGameDescription gameDescriptions[];
 
 } // End of namespace Twp
 
-class TwpMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TwpMetaEngineDetection : public AdvancedMetaEngineDetection<Twp::TwpGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

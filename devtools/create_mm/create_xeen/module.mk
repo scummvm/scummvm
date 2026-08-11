@@ -1,4 +1,4 @@
-MODULE := devtools/create_mm
+MODULE := devtools/create_mm/create_xeen
 
 MODULE_OBJS := \
 	create_xeen.o \
@@ -12,7 +12,7 @@ MODULE_OBJS := \
 	swords.o
 
 # Set the name of the executable
-TOOL_EXECUTABLE := create_mm
+TOOL_EXECUTABLE := create_xeen
 
 # Include common rules
 include $(srcdir)/rules.mk

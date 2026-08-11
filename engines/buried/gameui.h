@@ -56,6 +56,7 @@ public:
 	void onPaint();
 	void onEnable(bool enable);
 	void onKeyUp(const Common::KeyState &key, uint flags);
+	void onActionEnd(const Common::CustomEventType &action, uint flags);
 
 	NavArrowWindow *_navArrowWindow;
 	LiveTextWindow *_liveTextWindow;

@@ -33,8 +33,28 @@ public:
 	Room810() : Room() {}
 	~Room810() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	bool _alreadyPlayedVideo04aFl = false;
+
+	int32 _810BlockSlidesOutSeries = 0;
+	int32 _810FireFlickerSeries = 0;
+	int32 _810LitUrnSeries = 0;
+	int32 _810MercSeries = 0;
+	int32 _ripleyTakesJadeSealFromTombSeries = 0;
+	int32 _ripPos3LookAroundSeries = 0;
+	int32 _ripTrekHandTalkPos3Series = 0;
+
+	machine *_810MercMach = nullptr;
+	machine *_810SealMach = nullptr;
+	machine *_blockSlidesOutMach = nullptr;
+	machine *_ripLooksAroundAndNodsMach = nullptr;
+	machine *_safariShadow3Mach = nullptr;
 };
 
 } // namespace Rooms

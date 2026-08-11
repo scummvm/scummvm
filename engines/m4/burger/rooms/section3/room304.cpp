@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/section3/room304.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Burger {
@@ -88,7 +89,7 @@ const seriesPlayBreak Room304::PLAY5[] = {
 };
 
 const char *Room304::getDigi() {
-	return _G(flags)[130] ? "304_003" : "300_005";
+	return _G(flags)[V130] ? "304_003" : "300_005";
 }
 
 void Room304::init() {

@@ -22,6 +22,8 @@
 #include "audio/cms.h"
 #include "audio/softsynth/cms.h"
 
+#include "common/textconsole.h"
+
 namespace CMS {
 
 CMS *Config::create() {
@@ -39,92 +41,6 @@ CMS::CMS() {
 
 CMS::~CMS() {
 	_hasInstance = false;
-}
-
-void CMS::start(TimerCallback *callback, int timerFrequency) {
-	_callback.reset(callback);
-	startCallbacks(timerFrequency);
-}
-
-void CMS::stop() {
-	stopCallbacks();
-	_callback.reset();
-}
-
-EmulatedCMS::EmulatedCMS() :
-	_nextTick(0),
-	_samplesPerTick(0),
-	_baseFreq(0),
-	_handle(new Audio::SoundHandle()) { }
-
-EmulatedCMS::~EmulatedCMS() {
-	// Stop callbacks, just in case. If it's still playing at this
-	// point, there's probably a bigger issue, though. The subclass
-	// needs to call stop() or the pointer can still use be used in
-	// the mixer thread at the same time.
-	stop();
-
-	delete _handle;
-}
-
-int EmulatedCMS::readBuffer(int16 *buffer, const int numSamples) {
-	int len = numSamples / 2;
-	int step;
-
-	do {
-		step = len;
-		if (step > (_nextTick >> FIXP_SHIFT))
-			step = (_nextTick >> FIXP_SHIFT);
-
-		generateSamples(buffer, step);
-
-		_nextTick -= step << FIXP_SHIFT;
-		if (!(_nextTick >> FIXP_SHIFT)) {
-			if (_callback && _callback->isValid())
-				(*_callback)();
-
-			_nextTick += _samplesPerTick;
-		}
-
-		buffer += step * 2;
-		len -= step;
-	} while (len);
-
-	return numSamples;
-}
-
-int EmulatedCMS::getRate() const {
-	return g_system->getMixer()->getOutputRate();
-}
-
-bool EmulatedCMS::endOfData() const {
-	return false;
-}
-
-bool EmulatedCMS::isStereo() const {
-	return true;
-}
-
-void EmulatedCMS::startCallbacks(int timerFrequency) {
-	setCallbackFrequency(timerFrequency);
-	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-}
-
-void EmulatedCMS::stopCallbacks() {
-	g_system->getMixer()->stopHandle(*_handle);
-}
-
-void EmulatedCMS::setCallbackFrequency(int timerFrequency) {
-	_baseFreq = timerFrequency;
-	assert(_baseFreq != 0);
-
-	int d = getRate() / _baseFreq;
-	int r = getRate() % _baseFreq;
-
-	// This is equivalent to (getRate() << FIXP_SHIFT) / BASE_FREQ
-	// but less prone to arithmetic overflow.
-
-	_samplesPerTick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
 }
 
 } // End of namespace CMS

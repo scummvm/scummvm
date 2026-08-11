@@ -537,6 +537,10 @@ bool AIScriptGenericWalkerA::preparePath() {
 		isInside = true;
 		if (Random_Query(0, 1)) {
 			AI_Movement_Track_Append(kActorGenwalkerA, 164, 0);
+			// Original code does indeed have duplication of branches here
+			// TODO This could possible indicate intent of different movement tracks for the actor
+			// based on repeated "coin flips", but as it was the code block for each branch was identical.
+#if 0
 			if (Random_Query(0, 1)) {
 				AI_Movement_Track_Append(kActorGenwalkerA, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerA, 162, 0);
@@ -544,11 +548,19 @@ bool AIScriptGenericWalkerA::preparePath() {
 				AI_Movement_Track_Append(kActorGenwalkerA, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerA, 162, 0);
 			} else {
+#endif
 				AI_Movement_Track_Append(kActorGenwalkerA, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerA, 162, 0);
-			}
+			//}
 		} else {
 			AI_Movement_Track_Append(kActorGenwalkerA, 162, 0);
+			// Original code matches the if/else blocks here
+			// Intent seems to be that if the first coin flip fails (0) then a second one is made
+			// and based on that the actors facing is set or remains unchanged.
+			// The movement track is the same in both cases.
+			// Better to preserve the likely effective duplication here
+			// TODO Check if there's an observable difference between these branches
+			// and whether kActorGenwalkerB and kActorGenwalkerC need to also have this behaviour.
 			if (Random_Query(0, 1)) {
 				AI_Movement_Track_Append(kActorGenwalkerA, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerA, 164, 0);

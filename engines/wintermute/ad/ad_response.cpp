@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -41,25 +42,21 @@ AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 	_textOrig = nullptr;
 	_icon = _iconHover = _iconPressed = nullptr;
 	_font = nullptr;
-	_iD = 0;
+	_id = 0;
 	_responseType = RESPONSE_ALWAYS;
+	_responseVisitedType = RESPONSE_VISITED_NONE;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdResponse::~AdResponse() {
-	delete[] _text;
-	delete[] _textOrig;
-	delete _icon;
-	delete _iconHover;
-	delete _iconPressed;
-	_text = nullptr;
-	_textOrig = nullptr;
-	_icon = nullptr;
-	_iconHover = nullptr;
-	_iconPressed = nullptr;
+	SAFE_DELETE_ARRAY(_text);
+	SAFE_DELETE_ARRAY(_textOrig);
+	SAFE_DELETE(_icon);
+	SAFE_DELETE(_iconHover);
+	SAFE_DELETE(_iconPressed);
 	if (_font) {
-		_gameRef->_fontStorage->removeFont(_font);
+		_game->_fontStorage->removeFont(_font);
 	}
 }
 
@@ -73,12 +70,11 @@ void AdResponse::setText(const char *text) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIcon(const char *filename) {
-	delete _icon;
-	_icon = new BaseSprite(_gameRef);
+	SAFE_DELETE(_icon);
+	_icon = new BaseSprite(_game);
 	if (!_icon || DID_FAIL(_icon->loadFile(filename))) {
-		_gameRef->LOG(0, "AdResponse::setIcon failed for file '%s'", filename);
-		delete _icon;
-		_icon = nullptr;
+		_game->LOG(0, "AdResponse::setIcon failed for file '%s'", filename);
+		SAFE_DELETE(_icon);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -87,11 +83,11 @@ bool AdResponse::setIcon(const char *filename) {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setFont(const char *filename) {
 	if (_font) {
-		_gameRef->_fontStorage->removeFont(_font);
+		_game->_fontStorage->removeFont(_font);
 	}
-	_font = _gameRef->_fontStorage->addFont(filename);
+	_font = _game->_fontStorage->addFont(filename);
 	if (!_font) {
-		_gameRef->LOG(0, "AdResponse::setFont failed for file '%s'", filename);
+		_game->LOG(0, "AdResponse::setFont failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -99,12 +95,11 @@ bool AdResponse::setFont(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconHover(const char *filename) {
-	delete _iconHover;
-	_iconHover = new BaseSprite(_gameRef);
+	SAFE_DELETE(_iconHover);
+	_iconHover = new BaseSprite(_game);
 	if (!_iconHover || DID_FAIL(_iconHover->loadFile(filename))) {
-		_gameRef->LOG(0, "AdResponse::setIconHover failed for file '%s'", filename);
-		delete _iconHover;
-		_iconHover = nullptr;
+		_game->LOG(0, "AdResponse::setIconHover failed for file '%s'", filename);
+		SAFE_DELETE(_iconHover);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -113,12 +108,11 @@ bool AdResponse::setIconHover(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconPressed(const char *filename) {
-	delete _iconPressed;
-	_iconPressed = new BaseSprite(_gameRef);
+	SAFE_DELETE(_iconPressed);
+	_iconPressed = new BaseSprite(_game);
 	if (!_iconPressed || DID_FAIL(_iconPressed->loadFile(filename))) {
-		_gameRef->LOG(0, "AdResponse::setIconPressed failed for file '%s'", filename);
-		delete _iconPressed;
-		_iconPressed = nullptr;
+		_game->LOG(0, "AdResponse::setIconPressed failed for file '%s'", filename);
+		SAFE_DELETE(_iconPressed);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -133,45 +127,20 @@ bool AdResponse::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_icon));
 	persistMgr->transferPtr(TMEMBER_PTR(_iconHover));
 	persistMgr->transferPtr(TMEMBER_PTR(_iconPressed));
-	persistMgr->transferSint32(TMEMBER(_iD));
+	persistMgr->transferSint32(TMEMBER(_id));
 	persistMgr->transferCharPtr(TMEMBER(_text));
 	persistMgr->transferCharPtr(TMEMBER(_textOrig));
 	persistMgr->transferSint32(TMEMBER_INT(_responseType));
 	persistMgr->transferPtr(TMEMBER_PTR(_font));
+	if (persistMgr->checkVersion(1, 11, 1)) {
+		persistMgr->transferSint32(TMEMBER_INT(_responseVisitedType));
+	} else {
+		if (!persistMgr->getIsSaving()) {
+			_responseVisitedType = RESPONSE_VISITED_NONE;
+		}
+	}
 
 	return STATUS_OK;
-}
-
-void AdResponse::setID(int32 id) {
-	_iD = id;
-}
-
-BaseSprite *AdResponse::getIcon() const {
-	return _icon;
-}
-
-BaseSprite *AdResponse::getIconHover() const {
-	return _iconHover;
-}
-
-BaseSprite *AdResponse::getIconPressed() const {
-	return _iconPressed;
-}
-
-BaseFont *AdResponse::getFont() const {
-	return _font;
-}
-
-int32 AdResponse::getID() const {
-	return _iD;
-}
-
-const char *AdResponse::getText() const {
-	return _text;
-}
-
-const char *AdResponse::getTextOrig() const {
-	return _textOrig;
 }
 
 } // End of namespace Wintermute

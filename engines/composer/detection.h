@@ -38,6 +38,8 @@ enum GameFileTypes {
 };
 
 struct ComposerGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameType;

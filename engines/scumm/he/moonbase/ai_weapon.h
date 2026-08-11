@@ -25,11 +25,10 @@
 namespace Scumm {
 
 class Weapon {
-private:
-	int _typeID;
-	float _damage;
-	int _radius;
-	int _cost;
+	int _typeID = 0;
+	float _damage = 0.0f;
+	int _radius = 0;
+	int _cost = 0;
 
 public:
 	Weapon() {}

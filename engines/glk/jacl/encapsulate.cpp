@@ -155,7 +155,7 @@ command_encapsulate() {
 		case ',':
 			text_buffer[index] = 0;
 			// SET THIS WORD TO POINT TO A STRING CONSTANT OF 'comma' AS THE
-			// COMMA ITSELF WILL BE NULLED OUT TO TERMINATE THE PRECEEDING
+			// COMMA ITSELF WILL BE NULLED OUT TO TERMINATE THE PRECEDING
 			// WORD IN THE COMMAND.
 			word[position] = comma;
 			if (position < MAX_WORDS)
@@ -165,7 +165,7 @@ command_encapsulate() {
 		case '.':
 			text_buffer[index] = 0;
 			// SET THIS WORD TO POINT TO A STRING CONSTANT OF 'comma' AS THE
-			// COMMA ITSELF WILL BE NULLED OUT TO TERMINATE THE PRECEEDING
+			// COMMA ITSELF WILL BE NULLED OUT TO TERMINATE THE PRECEDING
 			// WORD IN THE COMMAND
 			word[position] = then;
 			if (position < MAX_WORDS)

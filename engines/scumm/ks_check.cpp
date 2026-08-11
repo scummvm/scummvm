@@ -24,7 +24,7 @@
 namespace Scumm {
 
 // Korean CP949 final consonant table
-static byte jongsungTable[2350] = {
+static const byte jongsungTable[2350] = {
 	 0,  1,  4,  7,  8,  9, 10, 16, 17, 18, 19, 20, 21, 22, 23, 25,
 	26, 27,  0,  1,  4,  8, 16, 17, 19, 20, 21,  0,  1,  4,  8, 19,
 	21,  0,  4,  8,  0,  1,  4,  7,  8, 10, 16, 17, 19, 20, 21, 22,

@@ -29,6 +29,7 @@
 #define AGS_SHARED_CORE_TYPES_H
 
 #include "common/scummsys.h"
+#include "ags/lib/std.h"
 
 namespace AGS3 {
 
@@ -65,6 +66,7 @@ typedef int64 int64_t;
 
 typedef int64 soff_t;       // Stream offset type
 typedef int64 intptr_t;
+typedef uint64 uintptr_t;
 
 // fixed point type
 #define fixed_t int32_t
@@ -103,28 +105,28 @@ enum {
 };
 
 /**
- * Basic union that can be either a number or a pointer. Helps avoid some
+ * Basic class that can hold either a number or a pointer. Helps avoid some
  * of the more nasty casts the codebase does, which was causing issues
  * on 64-bit systems
  */
-union NumberPtr {
-	int32 _value;
-	void *_ptr;
-	const void *_constPtr;
+class NumberPtr {
+	intptr_t _value;
 
-	NumberPtr() : _ptr(nullptr) {
+public:
+	NumberPtr() : _value(0) {
 	}
-	NumberPtr(int value) {
-		_ptr = nullptr;
-		_value = value;
+	NumberPtr(int value) : _value(value) {
 	}
-	NumberPtr(void *ptr) : _ptr(ptr) {
+	NumberPtr(void *ptr) : _value((intptr_t)ptr) {
 	}
-	NumberPtr(const void *ptr) : _constPtr(ptr) {
+	NumberPtr(const void *ptr) : _value((intptr_t)ptr) {
 	}
-	operator int() const {
-		return _value;
+	operator int32_t() const {
+		return (int32_t)_value;
 	}
+	intptr_t full() const { return _value; }
+	void *ptr() const { return (void *)_value; }
+	const void *cptr() const { return (const void *)_value; }
 };
 
 } // namespace AGS3

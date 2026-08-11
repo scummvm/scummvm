@@ -46,8 +46,8 @@
 #ifndef AGS_SHARED_DEBUGGING_DEBUG_MANAGER_H
 #define AGS_SHARED_DEBUGGING_DEBUG_MANAGER_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/map.h"
+#include "common/std/memory.h"
+#include "common/std/map.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/debugging/output_handler.h"
 #include "ags/shared/util/string.h"

@@ -19,11 +19,16 @@
  *
  */
 
+#include "common/scummsys.h"	// for USE_HNM
+
+#ifdef USE_HNM
+
 #ifndef VIDEO_HNM_DECODER_H
 #define VIDEO_HNM_DECODER_H
 
 #include "audio/audiostream.h"
 #include "common/rational.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
 
@@ -92,10 +97,10 @@ private:
 		uint16 getHeight() const override { return _surface.h; }
 		Graphics::PixelFormat getPixelFormat() const override { return _surface.format; }
 		const Graphics::Surface *decodeNextFrame() override { return &_surface; }
-		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette.data(); }
 		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
-		virtual void newFrame(uint32 frameDelay) override;
+		void newFrame(uint32 frameDelay) override;
 
 	protected:
 		HNM45VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
@@ -108,7 +113,7 @@ private:
 
 		Graphics::Surface _surface;
 
-		byte _palette[256 * 3];
+		Graphics::Palette _palette;
 		mutable bool _dirtyPalette;
 
 		byte *_frameBufferC;
@@ -165,7 +170,7 @@ private:
 		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override;
 		const Graphics::Surface *decodeNextFrame() override { return _surface; }
 
-		virtual void newFrame(uint32 frameDelay) override;
+		void newFrame(uint32 frameDelay) override;
 		/** Decode a video chunk. */
 		void decodeChunk(byte *data, uint32 size,
 		                 uint16 chunkType, uint16 flags) override;
@@ -229,5 +234,7 @@ private:
 };
 
 } // End of namespace Video
+
+#endif
 
 #endif

@@ -178,8 +178,17 @@ GeometricObject::GeometricObject(
 			_ordinates->push_back(_origin.y() + _size.y());
 			_ordinates->push_back(_origin.z() + _size.z());
 		}
-	} else if (isPyramid(_type))
-		assert(_size.x() > 0 && _size.y() > 0 && _size.z() > 0);
+	} else if (isPyramid(_type)) {
+		// A pyramid flat along one axis has its base and apex faces in the same
+		// plane, and is drawn flat (Castle Master 2 object 191). Two flat axes
+		// would leave nothing to draw, and means a misparsed object.
+		int flatAxes = 0;
+		for (int i = 0; i < 3; i++) {
+			if (_size.getValue(i) == 0)
+				flatAxes++;
+		}
+		assert(flatAxes <= 1);
+	}
 
 	computeBoundingBox();
 }
@@ -268,11 +277,18 @@ Object *GeometricObject::duplicate() {
 	);
 
 	copy->_cyclingColors = _cyclingColors;
+	copy->_loadIndex = _loadIndex;
 	return copy;
 }
 
 void GeometricObject::computeBoundingBox() {
 	_boundingBox = Math::AABB();
+	_occlusionBox = Math::AABB();
+
+	// These are used for the rendered, they should NOT be refined or it will break the sorting algorithm
+	_occlusionBox.expand(_origin);
+	_occlusionBox.expand(_origin + _size);
+
 	Math::Vector3d v;
 	switch (_type) {
 	default:
@@ -416,6 +432,30 @@ GeometricObject::~GeometricObject() {
 	delete _initialOrdinates;
 }
 
+// This function returns when the object is a line, but it is not a straight line
+bool GeometricObject::isLineButNotStraight() {
+	if (_type != kLineType)
+		return false;
+
+	if (!_ordinates)
+		return false;
+
+	if (_ordinates->size() != 6)
+		return false;
+
+	// At least two coordinates should be the same to be a straight line
+	if ((*_ordinates)[0] == (*_ordinates)[3] && (*_ordinates)[1] == (*_ordinates)[4])
+		return false;
+
+	if ((*_ordinates)[0] == (*_ordinates)[3] && (*_ordinates)[2] == (*_ordinates)[5])
+		return false;
+
+	if ((*_ordinates)[1] == (*_ordinates)[4] && (*_ordinates)[2] == (*_ordinates)[5])
+		return false;
+
+	return true;
+}
+
 bool GeometricObject::isDrawable() { return true; }
 bool GeometricObject::isPlanar() {
 	ObjectType t = this->getType();
@@ -431,10 +471,12 @@ bool GeometricObject::collides(const Math::AABB &boundingBox_) {
 
 void GeometricObject::draw(Renderer *gfx, float offset) {
 	if (_cyclingColors) {
+		assert(_colours);
 		if (g_system->getMillis() % 10 == 0)
 			for (uint i = 0; i < _colours->size(); i++) {
 				(*_colours)[i] = ((*_colours)[i] + 1) % 0xf;
-				(*_ecolours)[i] = ((*_ecolours)[i] + 1) % 0xf;
+				if (_ecolours)
+					(*_ecolours)[i] = ((*_ecolours)[i] + 1) % 0xf;
 			}
 	}
 
@@ -450,6 +492,27 @@ void GeometricObject::draw(Renderer *gfx, float offset) {
 
 		gfx->renderPolygon(_origin, _size, _ordinates, _colours, _ecolours, offset);
 	}
+}
+
+void GeometricObject::setColor(uint idx, int color) {
+	assert(_colours);
+	assert(idx < _colours->size());
+	(*_colours)[idx] = color;
+}
+
+bool GeometricObject::isFullyTransparent() const {
+	if (!_colours || _colours->size() == 0)
+		return false;
+
+	for (uint i = 0; i < _colours->size(); i++) {
+		if ((*_colours)[i] != 0)
+			return false;
+
+		if (_ecolours && i < _ecolours->size() && (*_ecolours)[i] != 0)
+			return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Freescape

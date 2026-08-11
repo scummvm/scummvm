@@ -281,11 +281,12 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 
 	// check for no weapon being set
 	if (custom == FALSE8 /*__NONE*/) {
-// custom must be in the current weapon set - bah, shouldnt have done it like this - its daft
-		// rav (or equiverlant always come from pcp directory...
+		// custom must be in the current weapon set - bah, shouldn't have done it like this - it's daft
+		
+		// rav (or equivalent) always come from pcp directory...
 		len = Common::sprintf_s(custom_image_path_rav, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
 
-		// rai (or equiverlant always come from base path...
+		// rai (or equivalent) always come from base path...
 		len = Common::sprintf_s(custom_image_path_rai, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
 
 		// pose mesh name
@@ -293,7 +294,8 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 
 		custom_pose_hash = HashString(custom_pose_name);
 	} else {
-// we have specified a custom type - i.e. the anim is not part of the current weapon set, but instead sits parallel to weapon directory
+		// we have specified a custom type - i.e. the anim is not part of the current weapon set, but
+		// instead sits parallel to weapon directory
 		len = Common::sprintf_s(custom_image_path_rav, "%s\\", MS->Fetch_cur_megas_custom_text());
 		len = Common::sprintf_s(custom_image_path_rai, "%s\\", MS->Fetch_cur_megas_custom_text());
 		len = Common::sprintf_s(custom_pose_name, "%s\\pose.rap", MS->Fetch_cur_megas_custom_text());
@@ -358,7 +360,7 @@ bool8 _game_session::Start_generic_ascii_anim(const char *ascii_name) {
 	// search for named anim and setup if found
 	uint32 k;
 
-	// search for the named generic anim - cant use __ANIM_NAME from script unfortunately
+	// search for the named generic anim - can't use __ANIM_NAME from script unfortunately
 	for (k = 0; k < __TOTAL_ANIMS; k++) {
 		// we must search the table
 
@@ -387,17 +389,17 @@ __mega_set_names _game_session::Fetch_generic_anim_from_ascii(const char *ascii_
 	// pass name of a generic anim and return the type
 	uint32 k;
 
-	// search for the named generic anim - cant use __ANIM_NAME from script unfortunately
+	// search for the named generic anim - can't use __ANIM_NAME from script unfortunately
 	for (k = 0; k < __TOTAL_ANIMS; k++) {
 		if (!strcmp(const_cast<char *>(ascii_name), master_anim_name_table[k].name)) {
 			// found!
 			if (I->IsAnimTable(L->cur_anim_type) == (int8)-1)
-				Fatal_error("Fetch_generic_anim_from_ascii cant find on drive %s", ascii_name);
+				Fatal_error("Fetch_generic_anim_from_ascii can't find on drive %s", ascii_name);
 			return (master_anim_name_table[k].ref);
 		}
 	}
 
-	Fatal_error("Fetch_generic_anim_from_ascii cant find %s", ascii_name);
+	Fatal_error("Fetch_generic_anim_from_ascii can't find %s", ascii_name);
 	return __NON_GENERIC;
 }
 

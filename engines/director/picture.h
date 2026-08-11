@@ -32,11 +32,15 @@ namespace Director {
 
 struct Picture {
 	Graphics::Surface _surface;
-	byte *_palette = nullptr;
+	byte _palette[256*3];
 	int _paletteColors = 0;
 
 	int getPaletteSize() const {
 		return _paletteColors * 3;
+	}
+
+	int getPaletteCount() const {
+		return _paletteColors;
 	}
 
 	Picture() {}

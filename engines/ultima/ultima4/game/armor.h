@@ -24,7 +24,7 @@
 
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -60,7 +60,7 @@ private:
 	//unsigned short _mask;
 };
 
-class Armors : public Std::vector<Armor *> {
+class Armors : public Common::Array<Armor *> {
 private:
 	void loadConf();
 	bool _confLoaded;

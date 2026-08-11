@@ -22,6 +22,8 @@
 #include "m4/burger/rooms/section6/room603.h"
 #include "m4/burger/rooms/section6/section6.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -318,19 +320,19 @@ void Room603::daemon() {
 		break;
 
 	case 6002:
-		_G(game).new_room = 602;
+		_G(game).setRoom(602);
 		break;
 
 	case 6004:
-		_G(game).new_room = 604;
+		_G(game).setRoom(604);
 		break;
 
 	case 6005:
-		_G(game).new_room = 605;
+		_G(game).setRoom(605);
 		break;
 
 	case 6010:
-		_G(game).new_room = 612;
+		_G(game).setRoom(612);
 		break;
 
 	case 6011:

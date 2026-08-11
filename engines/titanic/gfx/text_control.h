@@ -262,7 +262,7 @@ public:
 	int getNPCNum(uint ident, uint startIndex);
 
 	/**
-	 * Replaces any occurances of line colors that appear in the
+	 * Replaces any occurrences of line colors that appear in the
 	 * first list with the entry at the same index in the dest list
 	 */
 	void remapColors(uint count, uint *srcColors, uint *destColors);

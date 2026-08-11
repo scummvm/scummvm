@@ -39,6 +39,8 @@ int toSimpleDir(int dirtype, int dir);
 
 void assertRange(int min, int value, int max, const char *desc);
 
+void *reallocateArray(void *buffer, size_t count, size_t size);
+
 } // End of namespace Scumm
 
 #endif

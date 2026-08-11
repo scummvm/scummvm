@@ -25,6 +25,7 @@
  *
  */
 
+#include "graphics/blit.h"
 
 #include "video/coktel_decoder.h"
 
@@ -45,24 +46,32 @@ VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFront
 	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
 	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
 	noBlock(false), loop(false), fade(false), waitEndFrame(true),
-	hasSound(false), canceled(false) {
+	hasSound(false), canceled(false), noWaitSound(false), slot(-1), reuseSlotWitSameFilename(false) {
 
 }
 
 
-VideoPlayer::Video::Video() : decoder(0), live(false) {
+VideoPlayer::Video::Video() : decoder(nullptr), doubleVideoDestX(0), doubleVideoDestY(0), doubleVideo(false), live(false), autoUpdate(false), highColorMap(nullptr) {
 }
 
 bool VideoPlayer::Video::isEmpty() const {
-	return decoder == 0;
+	return decoder == nullptr;
 }
 
 void VideoPlayer::Video::close() {
 	delete decoder;
 
-	decoder = 0;
+	decoder = nullptr;
 	fileName.clear();
 	surface.reset();
+	tmpSurfDouble.reset();
+	doubleVideoDestX = 0;
+	doubleVideoDestY = 0;
+	doubleVideo = false;
+
+	tmpSurfBppConversion.reset();
+	delete highColorMap;
+	highColorMap = nullptr;
 
 	live = false;
 }
@@ -71,7 +80,7 @@ void VideoPlayer::Video::close() {
 const char *const VideoPlayer::_extensions[] = { "IMD", "IMD", "VMD", "RMD", "SMD" };
 
 VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm), _needBlit(false),
-	_noCursorSwitch(false), _woodruffCohCottWorkaround(false) {
+	_noCursorSwitch(false), _woodruffCohCottWorkaround(false), _lastLiveVideosLoopCall(0) {
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -98,23 +107,69 @@ void VideoPlayer::evaluateFlags(Properties &properties) {
 }
 
 int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties &properties) {
-	int slot = 0;
+	int slot = kPrimaryVideoSlot;
 
-	Video *video = 0;
-	if (!primary) {
-		slot = getNextFreeSlot();
-		if (slot < 0) {
-			warning("VideoPlayer::openVideo(): Can't open video \"%s\": No free slot", file.c_str());
-			return -1;
+	Video *video = nullptr;
+	if (properties.reuseSlotWitSameFilename) {
+		// Check whether a slot is already open for this file
+		for (int i = 0; i < kVideoSlotCount; i++) {
+			if (_videoSlots[i].isEmpty())
+				continue;
+
+			if (_videoSlots[i].fileName.equalsIgnoreCase(file)) {
+				slot = i;
+				video = &_videoSlots[i];
+				break;
+			}
 		}
 
-		video = &_videoSlots[slot];
-	} else
-		video = &_videoSlots[0];
+		if (video == nullptr) {
+			if (properties.slot >= 0 && properties.slot < kVideoSlotCount) {
+				if (properties.slot >= kLiveVideoSlotCount)
+					warning("VideoPlayer::openVideo(): explicit slot index %d is"
+							" beyond reserved spots for live videos (0 - %d)",
+							properties.slot, kLiveVideoSlotCount - 1);
+				slot = properties.slot;
+			} else if (primary) {
+				slot = kPrimaryVideoSlot;
+			} else {
+				if (properties.slot >= 0)
+					warning("VideoPlayer::openVideo(): explicit slot number %d is "
+							"beyond maximum slot index %d, will be ignored",
+							properties.slot, kVideoSlotCount - 1);
+
+				slot = getNextFreeSlot();
+				if (slot < 0) {
+					warning("VideoPlayer::openVideo(): Can't open video \"%s\": No free slot", file.c_str());
+					return -1;
+				}
+			}
+
+			video = &_videoSlots[slot];
+		}
+	} else {
+		if (!primary) {
+			slot = getNextFreeSlot();
+			if (slot < 0) {
+				warning("VideoPlayer::openVideo(): Can't open video \"%s\": No free slot", file.c_str());
+				return -1;
+			}
+
+			video = &_videoSlots[slot];
+		} else
+			video = &_videoSlots[kPrimaryVideoSlot];
+	}
 
 	// Different video already in the slot => close that video
 	if (!video->isEmpty() && (video->fileName.compareToIgnoreCase(file) != 0))
 		video->close();
+
+	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) &&
+		(file.empty() || file.equalsIgnoreCase("RIEN"))) {
+		// An empty filename means that we just need to close any existing video in the slot
+		// "RIEN" (French for "nothing") is an alias for that
+		return -1;
+	}
 
 	// No video => load the requested file
 	if (video->isEmpty()) {
@@ -122,30 +177,52 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		if (!(video->decoder = openVideo(file, properties)))
 			return -1;
 
+		if (!(properties.flags & kFlagNoVideo) && !video->decoder->hasVideo()
+				&& (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)) // TODO: May be needed by other games
+			_vm->_draw->blitInvalidated();
+
 		if (video->decoder->hasVideo() && !(properties.flags & kFlagNoVideo) &&
 		    (video->decoder->isPaletted() != !_vm->isTrueColor())) {
-			if (!properties.switchColorMode)
-				return -1;
+			if (properties.switchColorMode) {
+				_vm->setTrueColor(!video->decoder->isPaletted(), true);
 
-			_vm->setTrueColor(!video->decoder->isPaletted());
-
-			video->decoder->colorModeChanged();
+				video->decoder->colorModeChanged();
+			} else {
+				if (!video->decoder->isPaletted()) // Paletted to high color is supported
+					return -1;
+			}
 		}
 
 		// Set the filename
 		video->fileName = file;
 
+		video->autoUpdate = (properties.flags & kFlagNoVideo) ||
+							(!(properties.flags & 0x200) && !(properties.flags & kFlagOtherSurface));
+
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
+			_noCursorSwitch = true; // For Adibou2, we always want to see the cursor while a video is playing.
+		else
+			_noCursorSwitch = false;
+
 		// WORKAROUND: In some rare cases, the cursor should still be
 		// displayed while a video is playing.
-		_noCursorSwitch = false;
+		Common::String videoFile = file;
+		videoFile.toUppercase();
+		if (videoFile.hasSuffix(".IMD"))
+			videoFile = videoFile.substr(0, videoFile.find('.'));
+
 		if (primary && (_vm->getGameType() == kGameTypeLostInTime)) {
-			if (!file.compareToIgnoreCase("PORTA03") ||
-			    !file.compareToIgnoreCase("PORTA03A") ||
-			    !file.compareToIgnoreCase("CALE1") ||
-			    !file.compareToIgnoreCase("AMIL2") ||
-			    !file.compareToIgnoreCase("AMIL3B") ||
-			    !file.compareToIgnoreCase("DELB"))
-				_noCursorSwitch = true;
+			static const Common::StringArray videosWithCursorLIT = {
+				"PORTA03", "PORTA03A", "CALE1", "AMIL2", "AMIL3B", "DELB", "DELG"
+			};
+			_noCursorSwitch = (Common::find(videosWithCursorLIT.begin(), videosWithCursorLIT.end(), videoFile) != videosWithCursorLIT.end());
+		}
+
+		if (primary && (_vm->getGameType() == kGameTypeGob3)) {
+			static const Common::StringArray videosWithCursorGob3 = {
+				"CAIL1", "CAIL2"
+			};
+			_noCursorSwitch = (Common::find(videosWithCursorGob3.begin(), videosWithCursorGob3.end(), videoFile) != videosWithCursorGob3.end());
 		}
 
 		// WORKAROUND: In Woodruff, Coh Cott vanished in one video on her party.
@@ -157,17 +234,16 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		}
 
 		if (!(properties.flags & kFlagNoVideo) && (properties.sprite >= 0)) {
-			bool ownSurf    = (properties.sprite != Draw::kFrontSurface) && (properties.sprite != Draw::kBackSurface);
+			bool ownSurf    = properties.sprite != Draw::kFrontSurface && properties.sprite != Draw::kBackSurface;
 			bool screenSize = properties.flags & kFlagScreenSurface;
 
 			if (ownSurf) {
-				uint16 height = screenSize ? _vm->_width  : video->decoder->getWidth();
-				uint16 width = screenSize ? _vm->_height : video->decoder->getHeight();
+				uint16 width = screenSize ? _vm->_width  : video->decoder->getWidth();
+				uint16 height = screenSize ? _vm->_height : video->decoder->getHeight();
 
 				if (height > 0 && width > 0) {
 					_vm->_draw->_spritesArray[properties.sprite] =
-						_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
-												  screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+						_vm->_video->initSurfDesc(width, height, 0, 0);
 				} else {
 					warning("VideoPlayer::openVideo() file=%s:"
 							"Invalid surface dimensions (%dx%d)", file.c_str(), width, height);
@@ -175,8 +251,8 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			}
 
 			if (!_vm->_draw->_spritesArray[properties.sprite] &&
-			    (properties.sprite != Draw::kFrontSurface) &&
-			    (properties.sprite != Draw::kBackSurface)) {
+				 properties.sprite != Draw::kFrontSurface &&
+				 properties.sprite != Draw::kBackSurface) {
 				properties.sprite = -1;
 				video->surface.reset();
 				video->decoder->setSurfaceMemory();
@@ -188,10 +264,52 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 				if (properties.sprite == Draw::kBackSurface)
 					video->surface = _vm->_draw->_backSurface;
 
-				video->decoder->setSurfaceMemory(video->surface->getData(),
-						video->surface->getWidth(), video->surface->getHeight(), video->surface->getBPP());
+				video->doubleVideo = (_vm->_draw->_renderFlags & RENDERFLAG_DOUBLEVIDEO) ||
+									 ((properties.flags & kFlagUseBackSurfaceContentOrDoubleVideo) &&
+									  _vm->getGameType() == kGameTypeAdi4); // TODO: May be needed by other games
 
-				if (!ownSurf || (ownSurf && screenSize)) {
+				if (video->doubleVideo) {
+					video->doubleVideo = true;
+					video->tmpSurfDouble = _vm->_video->initSurfDesc(
+						video->decoder->getWidth(), video->decoder->getHeight(), 0, 0);
+				}
+
+				Surface *decodeTarget = video->doubleVideo ? video->tmpSurfDouble.get() : video->surface.get();
+
+				if (video->decoder->isPaletted() && video->surface->getBPP() > 1) {
+					// The decoder will write into the temporary surface used for high color conversion
+					video->tmpSurfBppConversion.reset(new Graphics::Surface());
+					video->tmpSurfBppConversion->create(decodeTarget->getWidth(),
+														decodeTarget->getHeight(),
+														video->decoder->getPixelFormat());
+
+					if (!video->highColorMap)
+						video->highColorMap = new uint32[256];
+
+					bool useSpecialBlackWhiteValues = _vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4;
+					Surface::computeHighColorMap(video->highColorMap,
+												 video->decoder->getPalette(),
+												 _vm->getPixelFormat(),
+												 useSpecialBlackWhiteValues);
+					video->decoder->setSurfaceMemory(video->tmpSurfBppConversion->getPixels(),
+													 video->tmpSurfBppConversion->w,
+													 video->tmpSurfBppConversion->h,
+													 video->tmpSurfBppConversion->format.bytesPerPixel);
+				} else if (video->doubleVideo) {
+					// The decoder will write into the temporary surface used for doubling pixels
+					video->decoder->setSurfaceMemory(video->tmpSurfDouble->getData(),
+													 video->tmpSurfDouble->getWidth(),
+													 video->tmpSurfDouble->getHeight(),
+													 video->tmpSurfDouble->getBPP());
+				} else {
+					// The decoder will write into the target surface
+					video->decoder->setSurfaceMemory(video->surface->getData(),
+													 video->surface->getWidth(),
+													 video->surface->getHeight(),
+													 video->surface->getBPP());
+				}
+
+				if (!ownSurf || screenSize) {
 					if ((properties.x >= 0) || (properties.y >= 0)) {
 						properties.x = (properties.x < 0) ? 0xFFFF : properties.x;
 						properties.y = (properties.y < 0) ? 0xFFFF : properties.y;
@@ -209,10 +327,16 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		}
 	}
 
-	video->decoder->setXY(properties.x, properties.y);
+	if (video->doubleVideo) {
+		video->doubleVideoDestX = (properties.x > 0) ? properties.x : 0;
+		video->doubleVideoDestY = (properties.y > 0) ? properties.y : 0;
+		video->decoder->setXY(0, 0);
+	} else {
+		video->decoder->setXY(properties.x, properties.y);
+	}
 
 	if (primary)
-		_needBlit = (properties.flags & kFlagUseBackSurfaceContent) && (properties.sprite == Draw::kFrontSurface);
+		_needBlit = (properties.flags & kFlagUseBackSurfaceContentOrDoubleVideo) && (properties.sprite == Draw::kFrontSurface);
 
 	properties.hasSound = video->decoder->hasSound();
 
@@ -233,7 +357,7 @@ bool VideoPlayer::closeVideo(int slot) {
 	return true;
 }
 
-void VideoPlayer::closeLiveSound() {
+void VideoPlayer::closeLiveVideos() {
 	for (int i = 1; i < kVideoSlotCount; i++) {
 		Video *video = getVideoBySlot(i);
 		if (!video)
@@ -298,6 +422,15 @@ void VideoPlayer::waitSoundEnd(int slot) {
 		_vm->_util->longDelay(1);
 }
 
+bool VideoPlayer::lastFrameReached(Video &video, Properties &properties) {
+	if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+		return properties.startFrame >= properties.lastFrame;
+	} else {
+		return (properties.startFrame == properties.lastFrame ||
+				properties.startFrame >= (int32)(video.decoder->getFrameCount() - 1));
+	}
+}
+
 bool VideoPlayer::play(int slot, Properties &properties) {
 	Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -335,24 +468,47 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 		video->live       = true;
 		video->properties = properties;
 
-		updateLive(slot, true);
-		return true;
+		if (_vm->getGameType() != kGameTypeAdibou2 &&
+				_vm->getGameType() != kGameTypeAdi4) {
+			updateVideo(slot, true);
+			return true;
+		}
 	}
 
-	if ((_vm->getGameType() != kGameTypeUrban) && (_vm->getGameType() != kGameTypeBambou))
+	if (_vm->getGameType() != kGameTypeUrban &&
+			_vm->getGameType() != kGameTypeBambou &&
+			_vm->getGameType() != kGameTypeAdibou2 &&
+			_vm->getGameType() != kGameTypeAdi4)
 		// NOTE: For testing (and comfort?) purposes, we enable aborting of all videos.
-		//       Except for Urban Runner and Bambou, where it leads to glitches
+		//       Except for Urban Runner, Bambou and Adibou2 where it leads to glitches
 		properties.breakKey = kShortKeyEscape;
 
-	if (_vm->_draw->_renderFlags & RENDERFLAG_DOUBLEVIDEO)
-		video->decoder->setDouble(true);
+	while (!lastFrameReached(*video, properties)) {
 
-	while ((properties.startFrame != properties.lastFrame) &&
-	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
+		if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) && video->live) {
+			properties.startFrame = video->decoder->getCurFrame() +
+									video->decoder->getNbFramesPastEnd();
+		}
 
-		playFrame(slot, properties);
-		if (properties.canceled)
+		_vm->_draw->updateAnimatedCursor();
+
+		bool playFrameResult = playFrame(slot, properties);
+		if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) &&
+				!playFrameResult) {
+			_vm->_util->processInput();
+			_vm->_video->retrace();
+			_vm->_util->delay(5);
+			continue;
+		}
+
+			if (properties.canceled)
 			break;
+
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+			WRITE_VAR(11, properties.startFrame + 1);
+			if (slot >= 0 && slot < kVideoSlotWithCurFrameVarCount)
+				WRITE_VAR(53 + slot, properties.startFrame + 1);
+		}
 
 		properties.startFrame += backwards ? -1 : 1;
 
@@ -366,9 +522,6 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 		if (!_noCursorSwitch && properties.waitEndFrame)
 			waitEndFrame(slot);
 	}
-
-	if (_vm->_draw->_renderFlags & RENDERFLAG_DOUBLEVIDEO)
-		video->decoder->setDouble(false);
 
 	evalBgShading(*video);
 
@@ -408,14 +561,56 @@ bool VideoPlayer::isSoundPlaying() const {
 	return video && video->decoder && video->decoder->isSoundPlaying();
 }
 
-void VideoPlayer::updateLive(bool force) {
-	for (int i = 0; i < kVideoSlotCount; i++)
-		updateLive(i, force);
+void VideoPlayer::liveVideosLoop() {
+	if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
+		return;
+
+	uint32 timeKey = _vm->_util->getTimeKey();
+	if (timeKey - _lastLiveVideosLoopCall < 2)
+		return;
+
+	_vm->_draw->updateAnimatedCursor();
+
+	_lastLiveVideosLoopCall = timeKey;
+
+	for (int slot = 0; slot < kLiveVideoSlotCount; slot++) {
+		Video *video = getVideoBySlot(slot);
+		if (video && video->live) {
+			video->properties.startFrame = video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd();
+			playFrame(slot, video->properties);
+		}
+	}
 }
 
-void VideoPlayer::updateLive(int slot, bool force) {
+void VideoPlayer::updateVideos(bool force, int exceptSlot) {
+	liveVideosLoop();
+
+	int nbrOfSlots = (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) ?
+					 kLiveVideoSlotCount : kVideoSlotCount;
+
+	for (int i = 0; i < nbrOfSlots; i++) {
+		if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) &&
+				i >= 0 &&
+				i < kVideoSlotWithCurFrameVarCount) {
+			WRITE_VAR(53 + i, (uint32)-1);
+
+			Video *video = getVideoBySlot(i);
+			if (video) {
+				WRITE_VAR(53 + i, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd());
+			}
+		}
+
+		if (i != exceptSlot)
+			updateVideo(i, force);
+	}
+}
+
+void VideoPlayer::updateVideo(int slot, bool force) {
 	Video *video = getVideoBySlot(slot);
-	if (!video || !video->live)
+	if (!video)
+		return;
+
+	if (!video->live && _vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
 		return;
 
 	int nbrOfLiveVideos = 0;
@@ -425,12 +620,22 @@ void VideoPlayer::updateLive(int slot, bool force) {
 			++nbrOfLiveVideos;
 	}
 
+	if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+		if ((video->decoder->hasVideoData() && !video->autoUpdate) || !video->properties.noWaitSound)
+			return;
+
+		video->properties.startFrame = video->decoder->getCurFrame();
+	}
+
 	if (video->properties.startFrame >= (int32)(video->decoder->getFrameCount() - 1)) {
 		// Video ended
 
 		if (!video->properties.loop) {
-			if (!(video->properties.flags & kFlagNoVideo) || nbrOfLiveVideos == 1)
-				WRITE_VAR_OFFSET(212, (uint32)-1);
+			if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4) {
+				if (!(video->properties.flags & kFlagNoVideo) || nbrOfLiveVideos == 1)
+					WRITE_VAR(53, (uint32)-1);
+			}
+
 			_vm->_vidPlayer->closeVideo(slot);
 			return;
 		} else {
@@ -439,20 +644,31 @@ void VideoPlayer::updateLive(int slot, bool force) {
 		}
 	}
 
-	if (video->properties.startFrame == video->properties.lastFrame)
+	if (video->properties.startFrame == video->properties.lastFrame &&
+			_vm->getGameType() != kGameTypeAdibou2 &&
+			_vm->getGameType() != kGameTypeAdi4)
 		// Current video sequence ended
 		return;
 
 	if (!force && (video->decoder->getTimeToNextFrame() > 0))
 		return;
 
-	if (!(video->properties.flags & kFlagNoVideo) || nbrOfLiveVideos == 1)
-		WRITE_VAR_OFFSET(212, video->properties.startFrame + 1);
+	if (_vm->getGameType() != kGameTypeAdibou2 &&
+			_vm->getGameType() != kGameTypeAdi4 &&
+			(!(video->properties.flags & kFlagNoVideo) || nbrOfLiveVideos == 1))
+		WRITE_VAR(53, video->properties.startFrame + 1);
 
 	bool backwards = video->properties.startFrame > video->properties.lastFrame;
 	playFrame(slot, video->properties);
 
-	video->properties.startFrame += backwards ? -1 : 1;
+	if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
+		video->properties.startFrame = video->decoder->getCurFrame();
+	else
+		video->properties.startFrame += backwards ? -1 : 1;
+
+	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
+			&& slot < kVideoSlotWithCurFrameVarCount)
+		WRITE_VAR(53 + slot, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd());
 
 	if (video->properties.fade) {
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
@@ -465,9 +681,16 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 	if (!video)
 		return false;
 
-	bool primary = slot == 0;
+	bool primary = slot == 0 ||
+				   ((_vm->getGameType() == kGameTypeAdibou2 ||
+				   	_vm->getGameType() == kGameTypeAdi4) &&
+					slot < kLiveVideoSlotCount);
 
 	if (video->decoder->getCurFrame() != properties.startFrame) {
+		if (video->live &&
+				(_vm->getGameType() == kGameTypeAdibou2 ||
+				 _vm->getGameType() == kGameTypeAdi4))
+			return true;
 
 		if (properties.startFrame != -1) {
 			// Seek into the middle of the video
@@ -496,6 +719,10 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 	}
 
+	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) &&
+			video->decoder->getTimeToNextFrame() > 0)
+		return false;
+
 	if (video->decoder->getCurFrame() > properties.startFrame)
 		// If the video is already beyond the wanted frame, skip
 		return true;
@@ -523,8 +750,37 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 	}
 
 	const Graphics::Surface *surface = video->decoder->decodeNextFrame();
+	if (surface != nullptr && surface->w > 0 && surface->h > 0 && video->decoder->isPaletted() && video->surface && video->surface->getBPP() > 1) {
+		// High color conversion from paletted
+		Surface *bppTarget = (video->doubleVideo && video->tmpSurfDouble) ?
+			video->tmpSurfDouble.get() : video->surface.get();
+		int16 x = 0;
+		int16 y = 0;
+		int16 width = 0;
+		int16 height = 0;
+		if (video->decoder->getFrameCoords(video->decoder->getCurFrame(), x, y, width, height)
+				&& x >= 0 && y >= 0 && width > 0 && height > 0) {
+			Graphics::crossBlitMap(bppTarget->getData(x, y), static_cast<const byte *>(surface->getBasePtr(x, y)),
+								   bppTarget->getWidth() * bppTarget->getBPP(),
+								   surface->pitch,
+								   width, height,
+								   bppTarget->getBPP(), video->highColorMap);
+		}
+	}
 
-	WRITE_VAR(11, video->decoder->getCurFrame());
+	if (video->doubleVideo && video->tmpSurfDouble && video->surface) {
+		// Double the video
+		const Common::List<Common::Rect> &rects = video->decoder->getDirtyRects();
+		for (Common::List<Common::Rect>::const_iterator rect = rects.begin(); rect != rects.end(); ++rect) {
+			video->surface->blitScaled(*video->tmpSurfDouble,
+				rect->left, rect->top, rect->right - 1, rect->bottom - 1,
+				video->doubleVideoDestX + rect->left * 2,
+				video->doubleVideoDestY + rect->top * 2, 2);
+		}
+	}
+
+	if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
+		WRITE_VAR(11, video->decoder->getCurFrame());
 
 	uint32 ignoreBorder = 0;
 	if (_woodruffCohCottWorkaround && (properties.startFrame == 31)) {
@@ -563,15 +819,32 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 
 		if (video->surface == _vm->_draw->_backSurface) {
 
-			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
-				_vm->_draw->invalidateRect(rect->left + ignoreBorder, rect->top, rect->right - 1, rect->bottom - 1);
+			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect) {
+				if (video->doubleVideo) {
+					_vm->_draw->invalidateRect(
+						video->doubleVideoDestX + (rect->left + ignoreBorder) * 2,
+						video->doubleVideoDestY + rect->top * 2,
+						video->doubleVideoDestX + rect->right * 2 - 1,
+						video->doubleVideoDestY + rect->bottom * 2 - 1);
+				} else {
+					_vm->_draw->invalidateRect(rect->left + ignoreBorder, rect->top, rect->right - 1, rect->bottom - 1);
+				}
+			}
 			if (!video->live)
 				_vm->_draw->blitInvalidated();
 
 		} else if (video->surface == _vm->_draw->_frontSurface) {
-			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
-				_vm->_video->dirtyRectsAdd(rect->left + ignoreBorder, rect->top, rect->right - 1, rect->bottom - 1);
-
+			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect) {
+				if (video->doubleVideo) {
+					_vm->_video->dirtyRectsAdd(
+						video->doubleVideoDestX + (rect->left + ignoreBorder) * 2,
+						video->doubleVideoDestY + rect->top * 2,
+						video->doubleVideoDestX + rect->right * 2 - 1,
+						video->doubleVideoDestY + rect->bottom * 2 - 1);
+				} else {
+					_vm->_video->dirtyRectsAdd(rect->left + ignoreBorder, rect->top, rect->right - 1, rect->bottom - 1);
+				}
+			}
 		}
 
 		if (!video->live && ((video->decoder->getCurFrame() - 1) == properties.startFrame))
@@ -586,7 +859,13 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
 	}
 
-	if (primary && properties.waitEndFrame)
+	bool needCheckAbort = false;
+	if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
+		needCheckAbort = properties.breakKey != 0;
+	else
+		needCheckAbort = primary && properties.waitEndFrame;
+
+	if (needCheckAbort)
 		checkAbort(*video, properties);
 
 	if ((video->decoder->getCurFrame() - 1) < properties.startFrame)
@@ -610,28 +889,64 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 		_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
 
-		_vm->_inter->storeKey(_vm->_util->checkKey());
+		int16 key = _vm->_util->checkKey();
+		_vm->_inter->storeKey(key);
 
 		// Check for that specific key
 		bool pressedBreak = (VAR(0) == (unsigned)properties.breakKey);
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+			if (pressedBreak ||
+				_vm->_game->_mouseButtons == properties.breakKey) {
+				properties.canceled = true;
+#ifdef USE_TTS
+				_vm->stopTextToSpeech();
+#endif
+				return;
+			}
 
-		// Mouse buttons
-		if (properties.breakKey < 4)
-			if (_vm->_game->_mouseButtons & properties.breakKey)
-				pressedBreak = true;
+			if (properties.breakKey == 4) {
+				if (_vm->_game->_mouseButtons == kMouseButtonsRight || key == kKeyEscape) {
+					properties.canceled = true;
+#ifdef USE_TTS
+					_vm->stopTextToSpeech();
+#endif
+					return;
+				}
 
-		// Any key
-		if (properties.breakKey == 4)
-			if (VAR(0) != 0)
-				pressedBreak = true;
+				if (key != kKeyNone ||
+					(_vm->_game->_mouseButtons == kMouseButtonsLeft &&
+					 _vm->_draw->_cursorIndex != -1)) {
+					_vm->_game->_hasForwardedEventsFromVideo = true;
+					_vm->_game->_forwardedKeyFromVideo = key;
+					_vm->_game->_forwardedMouseButtonsFromVideo = _vm->_game->_mouseButtons;
+					properties.canceled = true;
+#ifdef USE_TTS
+					_vm->stopTextToSpeech();
+#endif
+					return;
+				}
+			}
+		} else {
+			// Mouse buttons
+			if (properties.breakKey < 4)
+				if (_vm->_game->_mouseButtons & properties.breakKey)
+					pressedBreak = true;
 
-		if (pressedBreak) {
-			video.decoder->disableSound();
+			// Any key
+			if (properties.breakKey == 4)
+				if (VAR(0) != 0)
+					pressedBreak = true;
 
-			// Seek to the last frame. Some scripts depend on that.
-			video.decoder->seek(properties.endFrame + 1, SEEK_SET, true);
+			if (pressedBreak) {
+				video.decoder->disableSound();
 
-			properties.canceled = true;
+				// Seek to the last frame. Some scripts depend on that.
+				video.decoder->seek(properties.endFrame + 1, SEEK_SET, true);
+				properties.canceled = true;
+#ifdef USE_TTS
+				_vm->stopTextToSpeech();
+#endif
+			}
 		}
 	}
 }
@@ -703,6 +1018,31 @@ uint32 VideoPlayer::getFlags(int slot) const {
 
 	return video->decoder->getFlags();
 }
+
+uint16 VideoPlayer::getSoundFlags(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return 0;
+
+	return video->decoder->getSoundFlags();
+}
+
+uint32 VideoPlayer::getVideoBufferSize(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return 0;
+
+	return video->decoder->getVideoBufferSize();
+}
+
+bool VideoPlayer::hasVideo(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return false;
+
+	return video->decoder->hasVideo();
+}
+
 const Common::List<Common::Rect> *VideoPlayer::getDirtyRects(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -725,6 +1065,14 @@ Common::SeekableReadStream *VideoPlayer::getEmbeddedFile(const Common::String &f
 		return 0;
 
 	return video->decoder->getEmbeddedFile(fileName);
+}
+
+bool VideoPlayer::getFrameCoords(int slot, int16 frame, int16 &x, int16 &y, int16 &width, int16 &height) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return false;
+
+	return video->decoder->getFrameCoords(frame, x, y, width, height);
 }
 
 int32 VideoPlayer::getSubtitleIndex(int slot) const {
@@ -751,8 +1099,11 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, uint16 varX, uint16
 		width  = video.decoder->getWidth();
 		height = video.decoder->getHeight();
 
-		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
-			video.decoder->getFrameCoords(1, x, y, width, height);
+		if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4) {
+			// Note: not found in Adibou2/Adi4 disasm, and cause video gltiches
+			if (VAR_OFFSET(varX) == 0xFFFFFFFF)
+				video.decoder->getFrameCoords(1, x, y, width, height);
+		}
 
 		WRITE_VAR_OFFSET(varX     , x);
 		WRITE_VAR_OFFSET(varY     , y);
@@ -787,9 +1138,12 @@ bool VideoPlayer::copyFrame(int slot, Surface &dest,
 	// is only used read-only in this case (as far as I can tell). Not casting
 	// the const qualifier away will lead to an additional allocation and copy
 	// of the frame data which is undesirable.
-	Surface src(surface->w, surface->h, surface->format.bytesPerPixel, (byte *)const_cast<void *>(surface->getPixels()));
+	const Surface src(surface->w, surface->h, surface->format.bytesPerPixel,
+					  static_cast<byte*>(const_cast<void*>(surface->getPixels())),
+					  video->highColorMap);
 
 	dest.blit(src, left, top, left + width - 1, top + height - 1, x, y, transp, yAxisReflection);
+
 	return true;
 }
 
@@ -814,8 +1168,8 @@ VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) {
 }
 
 int VideoPlayer::getNextFreeSlot() {
-	// Starting with 1, since 0 is reserved for the "primary" video
-	for (int i = 1; i < kVideoSlotCount; i++)
+	// index 0 is reserved for "primary" videos, 1..kLiveVideoSlotCount for "live" videos, so start at kLiveVideoSlotCount + 1
+	for (int i = kLiveVideoSlotCount + 1; i < kVideoSlotCount; i++)
 		if (_videoSlots[i].isEmpty())
 			return i;
 
@@ -962,11 +1316,17 @@ void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) 
 	if (palEnd < 0)
 		palEnd = 255;
 
-	palStart =  palStart      * 3;
-	palEnd   = (palEnd   + 1) * 3;
-
-	for (int i = palStart; i < palEnd; i++)
+	for (int i = palStart * 3; i < (palEnd + 1) * 3; i++)
 		((char *)(_vm->_global->_pPaletteDesc->vgaPal))[i] = video.decoder->getPalette()[i] >> 2;
+
+	bool useSpecialBlackWhiteValues = _vm->getGameType() == kGameTypeAdibou2 ||
+									  _vm->getGameType() == kGameTypeAdi4;
+
+	Surface::computeHighColorMap(_vm->_global->_pPaletteDesc->highColorMap,
+								 video.decoder->getPalette(),
+								 _vm->getPixelFormat(),
+								 useSpecialBlackWhiteValues,
+								 palStart, palEnd - palStart + 1);
 }
 
 } // End of namespace Gob

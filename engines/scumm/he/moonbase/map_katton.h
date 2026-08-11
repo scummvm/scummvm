@@ -34,18 +34,18 @@ namespace Scumm {
 class KattonGenerator {
 public:
 	KattonGenerator(int seed);
-	~KattonGenerator();
+	~KattonGenerator() = default;
 
 	MapFile *generateMap(int water, int tileSet, int mapSize, int energy, int terrain);
 
 private:
-	int _seed;
+	int _seed = 0;
 
-	int _size; // 32, 40, 48, or 56
-	int _tileset;
-	int _startloc[20][2];
-	int _board[MAX_TILE_COUNT][MAX_TILE_COUNT];
-	int _special[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	int _size = 0; // 32, 40, 48, or 56
+	int _tileset = 0;
+	int _startloc[20][2] = { {}, {} };
+	int _board[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
+	int _special[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
 
 	int getRandomNumber();
 
@@ -63,7 +63,7 @@ private:
 	int findcoord(int value, int move);
 	int replacenum(int replacee, int replacer);
 	int fattenone(int x, int y, int howfat, int middle, int ignorer, int replacer);
-	// howfat: postive 1-5 for distance, -100 to 0 for random 3 spread from 2 to 5.
+	// howfat: positive 1-5 for distance, -100 to 0 for random 3 spread from 2 to 5.
 	int fattenall(int howfat, int middle, int ignorer, int replacer);
 	int findstartloc();
 	int whatheightstartloc(int x, int y);

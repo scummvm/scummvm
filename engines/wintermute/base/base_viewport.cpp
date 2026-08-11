@@ -27,8 +27,10 @@
 
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 
@@ -36,7 +38,7 @@ IMPLEMENT_PERSISTENT(BaseViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
 BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
-	_rect.setEmpty();
+	BasePlatform::setRectEmpty(&_rect);
 	_mainObject = nullptr;
 	_offsetX = _offsetY = 0;
 }
@@ -51,7 +53,7 @@ BaseViewport::~BaseViewport() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
 	persistMgr->transferSint32(TMEMBER(_offsetX));
@@ -67,11 +69,11 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 	if (!noCheck) {
 		left = MAX<int32>(left, 0);
 		top = MAX<int32>(top, 0);
-		right = MIN(right, BaseEngine::instance().getRenderer()->getWidth());
-		bottom = MIN(bottom, BaseEngine::instance().getRenderer()->getHeight());
+		right = MIN(right, _game->_renderer->getWidth());
+		bottom = MIN(bottom, _game->_renderer->getHeight());
 	}
 
-	_rect.setRect(left, top, right, bottom);
+	BasePlatform::setRect(&_rect, left, top, right, bottom);
 	_offsetX = left;
 	_offsetY = top;
 	return STATUS_OK;
@@ -79,19 +81,19 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 
 
 //////////////////////////////////////////////////////////////////////////
-Rect32 *BaseViewport::getRect() {
+Common::Rect32 *BaseViewport::getRect() {
 	return &_rect;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseViewport::getWidth() const {
+int BaseViewport::getWidth() {
 	return _rect.right - _rect.left;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseViewport::getHeight() const {
+int BaseViewport::getHeight() {
 	return _rect.bottom - _rect.top;
 }
 

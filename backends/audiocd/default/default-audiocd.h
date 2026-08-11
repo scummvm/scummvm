@@ -37,20 +37,20 @@ public:
 	DefaultAudioCDManager();
 	virtual ~DefaultAudioCDManager();
 
-	virtual bool open();
-	virtual void close();
-	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
-		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
-	virtual bool playAbsolute(int startFrame, int numLoops, int duration, bool onlyEmulate = false,
-		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType, const char *cuesheet = "disc.cue");
-	virtual void stop();
-	virtual bool isPlaying() const;
-	virtual void setVolume(byte volume);
-	virtual void setBalance(int8 balance);
-	virtual void update();
-	virtual Status getStatus() const; // Subclasses should override for better status results
-	virtual bool existExtractedCDAudioFiles(uint track);
-	virtual bool isDataAndCDAudioReadFromSameCD() { return false; }
+	bool open() override;
+	void close() override;
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType) override;
+	bool playAbsolute(int startFrame, int numLoops, int duration, bool onlyEmulate = false,
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType, const char *cuesheet = "disc.cue") override;
+	void stop() override;
+	bool isPlaying() const override;
+	void setVolume(byte volume) override;
+	void setBalance(int8 balance) override;
+	void update() override;
+	Status getStatus() const override; // Subclasses should override for better status results
+	bool existExtractedCDAudioFiles(uint track) override;
+	bool isDataAndCDAudioReadFromSameCD() override { return false; }
 
 private:
 	void fillPotentialTrackNames(Common::Array<Common::String> &trackNames, int track) const;

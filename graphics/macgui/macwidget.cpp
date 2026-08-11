@@ -44,9 +44,12 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
 	_composeSurface->clear(_bgcolor);
+	_dispose = DisposeAfterUse::YES;
 
 	_active = false;
 	_editable = false;
+
+	_borderColor = 0xff;
 }
 
 MacWidget::~MacWidget() {
@@ -56,7 +59,7 @@ MacWidget::~MacWidget() {
 	if (_wm)
 		_wm->clearWidgetRefs(this);
 
-	if (_composeSurface) {
+	if (_composeSurface && (_dispose == DisposeAfterUse::YES)) {
 		_composeSurface->free();
 		delete _composeSurface;
 	}
@@ -152,10 +155,32 @@ MacWidget *MacWidget::findEventHandler(Common::Event &event, int dx, int dy) {
 }
 
 Common::Point MacWidget::getAbsolutePos() {
-	if (!_parent)
-		return Common::Point(0, 0);
+	Common::Point absPoint = Common::Point(0, 0);
+	MacWidget *currentParent = _parent;
+	while (currentParent != nullptr) {
+		absPoint = Common::Point(currentParent->_dims.left, currentParent->_dims.top) + absPoint;
+		currentParent = currentParent->_parent;
+	}
 
-	return Common::Point(_parent->_dims.left, _parent->_dims.top) + _parent->getAbsolutePos();
+	return absPoint;
+}
+
+Common::Rect MacWidget::getAbsoluteDimensions() {
+	Common::Point absPos = getAbsolutePos();
+	Common::Rect dims = getDimensions();
+
+	dims.translate(absPos.x, absPos.y);
+
+	return dims;
+}
+
+void MacWidget::setSurface(Graphics::ManagedSurface *srf, DisposeAfterUse::Flag dispose) {
+	if (_composeSurface && (_dispose == DisposeAfterUse::YES)) {
+		_composeSurface->free();
+		delete _composeSurface;
+	}
+	_composeSurface = srf;
+	_dispose = dispose;
 }
 
 } // End of namespace Graphics

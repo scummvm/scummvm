@@ -120,7 +120,7 @@ void dgConvexHull4dTetraherum::Init(const dgHullVector *const points,
 		m_faces[i].m_twin = NULL;
 	}
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	dgBigVector p1p0(points[v1].Sub4(points[v0]));
 	dgBigVector p2p0(points[v2].Sub4(points[v0]));
 	dgBigVector p3p0(points[v3].Sub4(points[v0]));

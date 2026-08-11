@@ -53,7 +53,7 @@ public:
 	void invokeCallbackFunctions(lua_State *L, uint objectHandle);
 
 protected:
-	virtual int preFunctionInvokation(lua_State *L) {
+	virtual int preFunctionInvocation(lua_State *L) {
 		return 0;
 	}
 

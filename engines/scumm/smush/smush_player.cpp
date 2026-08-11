@@ -28,6 +28,7 @@
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/macgamma.h"
 #include "graphics/paletteman.h"
 
 #include "scumm/file.h"
@@ -35,9 +36,11 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
+#include "scumm/macgui/macgui.h"
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
+#include "scumm/smush/rebel/smush_multi_font.h"
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/insane.h"
@@ -49,13 +52,14 @@
 #include "audio/decoders/vorbis.h"
 
 #include "common/compression/deflate.h"
+#include "common/memstream.h"
 
 namespace Scumm {
 
 static const int MAX_STRINGS = 200;
 static const int ETRS_HEADER_LENGTH = 16;
 
-class StringResource {
+class StringResourceImpl : public StringResource {
 private:
 
 	struct {
@@ -69,7 +73,7 @@ private:
 
 public:
 
-	StringResource() :
+	StringResourceImpl() :
 		_nbStrings(0),
 		_lastId(-1),
 		_lastString(nullptr) {
@@ -78,7 +82,7 @@ public:
 			_strings[i].string = nullptr;
 		}
 	}
-	~StringResource() {
+	~StringResourceImpl() override {
 		for (int32 i = 0; i < _nbStrings; i++) {
 			delete[] _strings[i].string;
 		}
@@ -161,7 +165,7 @@ public:
 		return true;
 	}
 
-	const char *get(int id) {
+	const char *get(int id) override {
 		if (id == _lastId) {
 			return _lastString;
 		}
@@ -182,17 +186,20 @@ public:
 
 static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_encoded) {
 	debugC(DEBUG_SMUSH, "trying to read text resources from %s", file);
-	ScummFile theFile(vm);
+	ScummFile *theFile = vm->instantiateScummFile();
 
-	vm->openFile(theFile, file);
-	if (!theFile.isOpen()) {
+	vm->openFile(*theFile, file);
+	if (!theFile->isOpen()) {
+		delete theFile;
 		return 0;
 	}
-	int32 length = theFile.size();
+	int32 length = theFile->size();
 	char *filebuffer = new char [length + 1];
 	assert(filebuffer);
-	theFile.read(filebuffer, length);
+	theFile->read(filebuffer, length);
 	filebuffer[length] = 0;
+	theFile->close();
+	delete theFile;
 
 	if (is_encoded && READ_BE_UINT32(filebuffer) == MKTAG('E','T','R','S')) {
 		assert(length > ETRS_HEADER_LENGTH);
@@ -202,7 +209,7 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 		}
 		filebuffer[length] = '\0';
 	}
-	StringResource *sr = new StringResource;
+	StringResourceImpl *sr = new StringResourceImpl;
 	assert(sr);
 	sr->init(filebuffer, length);
 	delete[] filebuffer;
@@ -226,18 +233,45 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_sf[2] = nullptr;
 	_sf[3] = nullptr;
 	_sf[4] = nullptr;
+	_multiFont = nullptr;
 	_base = nullptr;
 	_frameBuffer = nullptr;
 	_specialBuffer = nullptr;
+	_specialBufferSize = 0;
+	_storedFobjData = nullptr;
+	_storedFobjDataSize = 0;
+	_storedFobjCodec = 0;
+	_storedFobjParm2 = 0;
+	_storedFobjLeft = 0;
+	_storedFobjTop = 0;
+	_storedFobjWidth = 0;
+	_storedFobjHeight = 0;
+	_lastFobjData = nullptr;
+	_lastFobjDataSize = 0;
+	_lastFobjCodec = 0;
+	_lastFobjLeft = 0;
+	_lastFobjTop = 0;
+	_lastFobjWidth = 0;
+	_lastFobjHeight = 0;
+	_hasFrameFobjForGost = false;
+	_fobjOffsetX = 0;
+	_fobjOffsetY = 0;
+	_skipNext = false;
+	_storeFrame = false;
 
 	_seekPos = -1;
 
-	_skipNext = false;
 	_dst = nullptr;
-	_storeFrame = false;
 	_compressedFileMode = false;
 	_width = 0;
 	_height = 0;
+	_scrollX = 0;
+	_scrollY = 0;
+	_fastForwardFromFrame = 0;
+	_fastForwardToFrame = 0;
+	_preserveVideoStateOnNextPlay = false;
+	_preserveGameVideoStateOnRelease = false;
+
 	_IACTpos = 0;
 	_speed = -1;
 	_insanity = false;
@@ -247,6 +281,10 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_paused = false;
 	_pauseStartTime = 0;
 	_pauseTime = 0;
+
+	memset(_pal, 0, sizeof(_pal));
+	memset(_deltaPal, 0, sizeof(_deltaPal));
+	memset(_shiftedDeltaPal, 0, sizeof(_shiftedDeltaPal));
 
 	for (int i = 0; i < 4; i++)
 		_iactTable[i] = 0;
@@ -262,13 +300,28 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_smushAudioInitialized = false;
 	_smushAudioCallbackEnabled = false;
 
-	initAudio(_imuseDigital->getSampleRate(), 200000);
+	if (_imuseDigital) {
+		initAudio(_imuseDigital->getSampleRate(), 200000);
+	} else {
+		initAudio(11025, 200000);
+	}
 }
 
 SmushPlayer::~SmushPlayer() {
 	delete _IACTchannel;
 	delete _compressedFileSoundHandle;
 	terminateAudio();
+
+	free(_frameBuffer);
+	_frameBuffer = nullptr;
+	free(_specialBuffer);
+	_specialBuffer = nullptr;
+	free(_storedFobjData);
+	_storedFobjData = nullptr;
+	free(_lastFobjData);
+	_lastFobjData = nullptr;
+	delete _multiFont;
+	_multiFont = nullptr;
 }
 
 void SmushPlayer::init(int32 speed) {
@@ -277,12 +330,28 @@ void SmushPlayer::init(int32 speed) {
 	_frame = 0;
 	_speed = speed;
 	_endOfFile = false;
+	_storeFrame = false;
+	_fobjOffsetX = 0;
+	_fobjOffsetY = 0;
+	_scrollX = 0;
+	_scrollY = 0;
+	_fastForwardFromFrame = 0;
+	_fastForwardToFrame = 0;
+	const bool preserveVideoState = _preserveVideoStateOnNextPlay;
+	_preserveVideoStateOnNextPlay = false;
+	if (!preserveVideoState) {
+		resetGameVideoState();
+	}
 
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
 
 	_vm->setDirtyColors(0, 255);
 	_dst = vs->getPixels(0, 0);
+
+	// Game-specific per-video init that needs _dst to be set
+	// (e.g. RA2 palette re-push + buffer clear/preserve).
+	initGameVideoState();
 
 	// HACK HACK HACK: This is an *evil* trick, beware!
 	// We do this to fix bug #1792. A proper solution would change all the
@@ -298,6 +367,12 @@ void SmushPlayer::init(int32 speed) {
 	_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
 	_vm->_mixer->stopHandle(*_IACTchannel);
 	_IACTpos = 0;
+}
+
+bool SmushPlayer::isFastForwardingCurrentFrame() const {
+	return (_fastForwardToFrame > _fastForwardFromFrame &&
+		_frame >= _fastForwardFromFrame &&
+		_frame < _fastForwardToFrame);
 }
 
 void SmushPlayer::release() {
@@ -317,8 +392,14 @@ void SmushPlayer::release() {
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
 
-	free(_frameBuffer);
-	_frameBuffer = nullptr;
+	const bool preserveGameVideoState = _preserveGameVideoStateOnRelease;
+	_preserveGameVideoStateOnRelease = false;
+	if (!preserveGameVideoState)
+		releaseGameVideoState();
+	if (!shouldPreserveFrameBuffer()) {
+		free(_frameBuffer);
+		_frameBuffer = nullptr;
+	}
 
 	_IACTstream = nullptr;
 
@@ -337,14 +418,17 @@ void SmushPlayer::release() {
 }
 
 void SmushPlayer::handleStore(int32 subSize, Common::SeekableReadStream &b) {
-	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore() frame=%d", _frame);
 	assert(subSize >= 4);
 	_storeFrame = true;
 }
 
 void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
-	assert(subSize >= 6);
+
+	// Game-specific FTCH handling (RA1 re-decodes stored FOBJ, RA2 does offset-aware re-decode)
+	if (handleGameFetch(subSize, b))
+		return;
 
 	if (_frameBuffer != nullptr) {
 		memcpy(_dst, _frameBuffer, _width * _height);
@@ -360,8 +444,15 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	int unknown = b.readSint16LE();
 	int userId = b.readUint16LE();
 
-	if ((code != 8) && (flags != 46)) {
-		_vm->_insane->procIACT(_dst, 0, 0, 0, b, 0, 0, code, flags, unknown, userId);
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleIACT: code=%d flags=%d unknown=%d userId=%d subSize=%d",
+		code, flags, unknown, userId, subSize);
+
+	// Route to procIACT for non-audio IACTs and ALL RA2 IACTs
+	// (RA2 audio uses PSAD chunks, not IACT)
+	bool isAudioIACT = (code == 8) && (flags == 46);
+
+	if (!isAudioIACT || shouldRouteAllIACTs()) {
+		_vm->_insane->procIACT(_dst, 0, 0, 0, b, subSize - 8, 0, code, flags, unknown, userId);
 		return;
 	}
 
@@ -543,6 +634,11 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 }
 
 void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
+	// RA1 TEXT chunks have a different format: 2 × BE32 header + text data.
+	// Route to dedicated handler.
+	if (handleGameTextResource(subType, subSize, b))
+		return;
+
 	int pos_x = b.readSint16LE();
 	int pos_y = b.readSint16LE();
 	int flags = b.readSint16LE();
@@ -560,9 +656,18 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		b.read(string, subSize - 16);
 	} else {
 		int string_id = b.readUint16LE();
-		if (!_strings)
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: TRES string_id=%d pos=(%d,%d) flags=0x%x clip=(%d,%d,%d,%d) _strings=%p",
+			  string_id, pos_x, pos_y, flags, left, top, width, height, (void*)_strings);
+		if (!_strings) {
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: _strings is null, cannot look up string");
 			return;
+		}
 		str = _strings->get(string_id);
+		if (!str) {
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: String ID %d not found", string_id);
+			return;
+		}
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleTextResource: Found string: \"%s\"", str);
 	}
 
 	// if subtitles disabled and bit 3 is set, then do not draw
@@ -570,7 +675,11 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// Query ConfMan here. However it may be slower, but
 	// player may want to switch the subtitles on or off during the
 	// playback. This fixes bug #2812
-	if ((!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
+	//
+	// RA2: The original game always shows subtitle text during cinematics
+	// (there is no subtitle toggle in the retail options menu). Skip
+	// this check so TRES text is always rendered.
+	if (!shouldAlwaysShowSubtitles() && (!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
 		return;
 
 	bool isCJKComi = (_vm->_game.id == GID_CMI && _vm->_useCJKMode);
@@ -621,14 +730,6 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		color = 255;
 	}
 
-	SmushFont *sf = getFont(fontId);
-	assert(sf != nullptr);
-
-	// The hack that used to be here to prevent bug #2220 is no longer necessary and
-	// has been removed. The font renderer can handle all ^codes it encounters (font
-	// changes on the fly will be ignored for Smush texts, since our code design does
-	// not permit it and the feature isn't used anyway).
-
 	if (_vm->_language == Common::HE_ISR && !(flags & kStyleAlignCenter)) {
 		flags |= kStyleAlignRight;
 		pos_x = _width - 1 - pos_x;
@@ -646,23 +747,35 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// bit 7 - skip ^ codes (COMI)     0x80        (should be irrelevant for Smush, we strip these commands anyway)
 	// bit 8 - no vertical fix (COMI)  0x100       (COMI handles this in the printing method, but I haven't seen a case where it is used)
 
-	if (flg & kStyleWordWrap) {
-		// COMI has to do it all a bit different, of course. SCUMM7 games immediately render the text from here and actually use the clipping data
-		// provided by the text resource. COMI does not render directly, but enqueues a blast string (which is then drawn through the usual main
-		// loop routines). During that process the rect data will get dumped and replaced with the following default values. It's hard to tell
-		// whether this is on purpose or not (the text looks not necessarily better or worse, just different), so we follow the original...
-		if (_vm->_game.id == GID_CMI) {
-			left = top = 10;
-			width = _width - 20;
-			height = _height - 20;
-		}
-		Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
-		sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flg);
+	if (handleGameTextRendering(str, fontId, color, pos_x, pos_y, left, top, width, height, flg)) {
+		// Handled by game-specific renderer
 	} else {
-		// Similiar to the wrapped text, COMI will pass on rect coords here, which will later be lost. Unlike with the wrapped text, it will
-		// finally use the full screen dimenstions. SCUMM7 renders directly from here (see comment above), but also with the full screen.
-		Common::Rect clipRect(0, 0, _width, _height);
-		sf->drawString(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		SmushFont *sf = getFont(fontId);
+		assert(sf != nullptr);
+
+		// The hack that used to be here to prevent bug #2220 is no longer necessary and
+		// has been removed. The font renderer can handle all ^codes it encounters (font
+		// changes on the fly will be ignored for Smush texts, since our code design does
+		// not permit it and the feature isn't used anyway).
+
+		if (flg & kStyleWordWrap) {
+			// COMI has to do it all a bit different, of course. SCUMM7 games immediately render the text from here and actually use the clipping data
+			// provided by the text resource. COMI does not render directly, but enqueues a blast string (which is then drawn through the usual main
+			// loop routines). During that process the rect data will get dumped and replaced with the following default values. It's hard to tell
+			// whether this is on purpose or not (the text looks not necessarily better or worse, just different), so we follow the original...
+			if (_vm->_game.id == GID_CMI) {
+				left = top = 10;
+				width = _width - 20;
+				height = _height - 20;
+			}
+			Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
+			sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		} else {
+			// Similar to the wrapped text, COMI will pass on rect coords here, which will later be lost. Unlike with the wrapped text, it will
+			// finally use the full screen dimenstions. SCUMM7 renders directly from here (see comment above), but also with the full screen.
+			Common::Rect clipRect(0, 0, _width, _height);
+			sf->drawString(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		}
 	}
 
 	free(string);
@@ -699,36 +812,33 @@ void SmushPlayer::readPalette(byte *out, Common::SeekableReadStream &in) {
 	in.read(out, 0x300);
 }
 
-static byte delta_color(byte org_color, int16 delta_color) {
-	int t = (org_color * 129 + delta_color) / 128;
-	return CLIP(t, 0, 255);
-}
-
 void SmushPlayer::handleDeltaPalette(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleDeltaPalette()");
 
-	if (subSize == 0x300 * 3 + 4) {
+	b.readUint16LE();
+	uint16 xpalCommand = b.readUint16LE();
 
+	if (xpalCommand == 256) {
 		b.readUint16LE();
-		b.readUint16LE();
+		for (int i = 0; i < 768; ++i) {
+			_shiftedDeltaPal[i] += _deltaPal[i];
 
-		for (int i = 0; i < 0x300; i++) {
-			_deltaPal[i] = b.readUint16LE();
+			_pal[i] = CLIP<int32>(_shiftedDeltaPal[i] >> 7, 0, 255);
 		}
-		readPalette(_pal, b);
-		setDirtyColors(0, 255);
-	} else if (subSize == 6) {
 
-		b.readUint16LE();
-		b.readUint16LE();
-		b.readUint16LE();
+		adjustGamePalette();
 
-		for (int i = 0; i < 0x300; i++) {
-			_pal[i] = delta_color(_pal[i], _deltaPal[i]);
-		}
 		setDirtyColors(0, 255);
 	} else {
-		error("SmushPlayer::handleDeltaPalette() Wrong size for DeltaPalette");
+		for (int j = 0; j < 768; ++j) {
+			_shiftedDeltaPal[j] = _pal[j] << 7;
+			_deltaPal[j] = b.readUint16LE();
+		}
+
+		if (xpalCommand == 512)
+			readPalette(_pal, b);
+
+		setDirtyColors(0, 255);
 	}
 }
 
@@ -740,6 +850,8 @@ void SmushPlayer::handleNewPalette(int32 subSize, Common::SeekableReadStream &b)
 		return;
 
 	readPalette(_pal, b);
+	adjustGamePalette();
+
 	setDirtyColors(0, 255);
 }
 
@@ -750,11 +862,19 @@ byte *SmushPlayer::getVideoPalette() {
 void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
-void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height) {
+void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize, uint8 ra1Param, uint16 ra1Parm2) {
 	if ((height == 242) && (width == 384)) {
-		if (_specialBuffer == 0)
-			_specialBuffer = (byte *)malloc(242 * 384);
+		int bufSize = 242 * 384;
+		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+			free(_specialBuffer);
+			// Cleared: an unhandled codec leaves the buffer untouched, and it is
+			// still copied out below when _storeFrame is set.
+			_specialBuffer = (byte *)calloc(bufSize, 1);
+			_specialBufferSize = bufSize;
+		}
 		_dst = _specialBuffer;
+	} else if (handleGameFrameBufferSelect(codec, width, height)) {
+		// Game-specific buffer selection handled
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
@@ -766,37 +886,75 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if ((height == 242) && (width == 384)) {
 		_width = width;
 		_height = height;
+	} else if (handleGameDimensionOverride(codec, width, height)) {
+		// Game-specific dimension handling
 	} else {
 		_width = _vm->_screenWidth;
 		_height = _vm->_screenHeight;
 	}
 
-	switch (codec) {
-	case SMUSH_CODEC_RLE:
-	case SMUSH_CODEC_RLE_ALT:
-		smushDecodeRLE(_dst, src, left, top, width, height, _vm->_screenWidth);
-		break;
-	case SMUSH_CODEC_DELTA_BLOCKS:
-		if (!_deltaBlocksCodec)
-			_deltaBlocksCodec = new SmushDeltaBlocksDecoder(width, height);
-		if (_deltaBlocksCodec)
-			_deltaBlocksCodec->decode(_dst, src);
-		break;
-	case SMUSH_CODEC_DELTA_GLYPHS:
-		if (!_deltaGlyphsCodec)
-			_deltaGlyphsCodec = new SmushDeltaGlyphsDecoder(width, height);
-		if (_deltaGlyphsCodec)
-			_deltaGlyphsCodec->decode(_dst, src);
-		break;
-	case SMUSH_CODEC_UNCOMPRESSED:
-		// Used by Full Throttle Classic (from Remastered)
-		smushDecodeUncompressed(_dst, src, left, top, width, height, _vm->_screenWidth);
-		break;
-	default:
-		error("Invalid codec for frame object : %d", codec);
+	int pitch = _vm->_screenWidth;
+	if (_dst == _specialBuffer)
+		pitch = _width;
+	pitch = handleGameFrameObjectPitch(pitch);
+
+	// Save original FOBJ position and dimensions before clipping. Codec 37/47
+	// (delta block/glyph) decode the full frame starting at (0,0). Codec 2
+	// (scatter draw) needs the original start position for accumulation.
+	int origWidth = width;
+	int origHeight = height;
+
+	int srcSkipY = 0;
+	if (handleGameAdjustCoords(codec, left, top, width, height, pitch, &srcSkipY)) {
+		if (width <= 0 || height <= 0)
+			return;
 	}
 
-	if (_storeFrame) {
+	// For RLE codecs, skip source rows that were clipped from the top.
+	// Each RLE row has a 2-byte size prefix, so we can advance past them.
+	const uint8 *adjustedSrc = src;
+	for (int i = 0; i < srcSkipY; i++) {
+		adjustedSrc += READ_LE_UINT16(adjustedSrc) + 2;
+	}
+
+	// Try game-specific codec handler first (pass adjustedSrc for row-skip-aware codecs)
+	if (!handleGameCodecDecode(codec, adjustedSrc, left, top, width, height, pitch, dataSize, ra1Param, ra1Parm2)) {
+		// Standard SCUMM codec dispatch
+		switch (codec) {
+		case SMUSH_CODEC_RLE:
+			smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
+			break;
+		case SMUSH_CODEC_RLE_ALT:
+			smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
+			break;
+		case SMUSH_CODEC_DELTA_BLOCKS:
+			if (!_deltaBlocksCodec)
+				_deltaBlocksCodec = new SmushDeltaBlocksDecoder(origWidth, origHeight);
+			if (_deltaBlocksCodec)
+				_deltaBlocksCodec->decode(_dst, src);
+			break;
+		case SMUSH_CODEC_DELTA_GLYPHS:
+			if (!_deltaGlyphsCodec)
+				_deltaGlyphsCodec = new SmushDeltaGlyphsDecoder(origWidth, origHeight);
+			if (_deltaGlyphsCodec)
+				_deltaGlyphsCodec->decode(_dst, src);
+			break;
+		case SMUSH_CODEC_UNCOMPRESSED:
+			smushDecodeUncompressed(_dst, src, left, top, width, height, pitch);
+			break;
+		default:
+			if (isInsaneGame()) {
+				debugC(DEBUG_SMUSH, "SmushPlayer::decodeFrameObject: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
+					codec, left, top, width, height);
+			} else {
+				error("Invalid codec for frame object : %d", codec);
+			}
+		}
+	}
+
+	handleGameFrameObjectDecoded(codec, left, top, width, height);
+
+	if (_storeFrame && !handleGameStoreFrame()) {
 		if (_frameBuffer == nullptr) {
 			_frameBuffer = (byte *)malloc(_width * _height);
 		}
@@ -824,12 +982,13 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	byte *ptr = fobjBuffer;
 	int codec = READ_LE_UINT16(ptr); ptr += 2;
-	int left = READ_LE_UINT16(ptr); ptr += 2;
-	int top = READ_LE_UINT16(ptr); ptr += 2;
+	int left = (int16)READ_LE_UINT16(ptr); ptr += 2;
+	int top = (int16)READ_LE_UINT16(ptr); ptr += 2;
 	int width = READ_LE_UINT16(ptr); ptr += 2;
 	int height = READ_LE_UINT16(ptr); ptr += 2;
 
-	decodeFrameObject(codec, fobjBuffer + 14, left, top, width, height);
+	int fobjDataSize = (int)decompressedSize - 14;
+	decodeFrameObject(codec, fobjBuffer + 14, left, top, width, height, fobjDataSize);
 
 	free(fobjBuffer);
 }
@@ -837,25 +996,33 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	assert(subSize >= 14);
 	if (_skipNext) {
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: SKIPPING due to _skipNext, frame=%d", _frame);
 		_skipNext = false;
 		return;
 	}
 
 	int codec = b.readUint16LE();
-	int left = b.readUint16LE();
-	int top = b.readUint16LE();
+	int left = (int)b.readSint16LE();
+	int top = (int)b.readSint16LE();
 	int width = b.readUint16LE();
 	int height = b.readUint16LE();
 
-	b.readUint16LE();
-	b.readUint16LE();
+	b.readUint16LE(); // objectId (RA1 uses this)
+	b.readUint16LE(); // parm2 (RA1 uses this)
+
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
+		_frame, codec, left, top, width, height, subSize - 14);
+
+	handleGameFrameObjectPre(codec, left, top, width, height, subSize - 14);
 
 	int32 chunk_size = subSize - 14;
 	byte *chunk_buffer = (byte *)malloc(chunk_size);
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
 
-	decodeFrameObject(codec, chunk_buffer, left, top, width, height);
+	handleGameFrameObjectPost(codec, chunk_buffer, chunk_size, left, top, width, height);
+
+	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size);
 
 	free(chunk_buffer);
 }
@@ -864,15 +1031,32 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	uint8 *audioChunk = nullptr;
 	_skipNext = false;
+	handleGameFrameStart();
 
 	if (_insanity) {
-		_vm->_insane->procPreRendering();
+		_vm->_insane->procPreRendering(_dst);
 	}
 
 	while (frameSize > 0) {
-		const uint32 subType = b.readUint32BE();
-		const int32 subSize = b.readUint32BE();
-		const int32 subOffset = b.pos();
+		if (frameSize < 8) {
+			b.skip(frameSize);
+			break;
+		}
+
+		uint32 subType = b.readUint32BE();
+		int32 subSize = b.readUint32BE();
+		int32 subOffset = b.pos();
+
+		if (handleGameSkipChunk(subType, subSize, b)) {
+			frameSize -= subSize + 8;
+			b.seek(subOffset + subSize, SEEK_SET);
+			if (subSize & 1) {
+				b.skip(1);
+				frameSize--;
+			}
+			continue;
+		}
+
 		switch (subType) {
 		case MKTAG('N','P','A','L'):
 			handleNewPalette(subSize, b);
@@ -884,7 +1068,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleZlibFrameObject(subSize, b);
 			break;
 		case MKTAG('P','S','A','D'):
-			if (!_compressedFileMode) {
+			if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
 				b.seek(-8, SEEK_CUR);
 				b.read(audioChunk, subSize + 8);
@@ -892,7 +1076,6 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 				free(audioChunk);
 				audioChunk = nullptr;
 			}
-
 			break;
 		case MKTAG('T','R','E','S'):
 			handleTextResource(subType, subSize, b);
@@ -915,8 +1098,19 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		case MKTAG('T','E','X','T'):
 			handleTextResource(subType, subSize, b);
 			break;
+		case MKTAG('L','O','A','D'):
+			handleGameLoad(subSize, b);
+			break;
+		case MKTAG('G','O','S','T'):
+			handleGameGost(subSize, b);
+			break;
 		default:
-			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
+			if (isInsaneGame()) {
+				debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: skipping unknown chunk %s (%d bytes) frame=%d",
+					tag2str(subType), subSize, _frame);
+			} else {
+				error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
+			}
 		}
 
 		frameSize -= subSize + 8;
@@ -966,10 +1160,16 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			}
 		}
 
-		if (!_skipPalette) {
+		if (!_skipPalette && shouldLoadAnimHeaderPalette()) {
 			byte *palettePtr = &headerContent[6];
 			memcpy(_pal, palettePtr, sizeof(_pal));
+			adjustGamePalette();
 			setDirtyColors(0, 255);
+		}
+
+		if (!handleGameAnimHeader(headerContent)) {
+			_width = READ_LE_UINT16(&headerContent[4]);
+			_height = READ_LE_UINT16(&headerContent[6]);
 		}
 
 		free(headerContent);
@@ -978,8 +1178,10 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 
 void SmushPlayer::setupAnim(const char *file) {
 	if (_insanity) {
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)))
-			readString("mineroad.trs");
+		if (!handleGameSetupStrings()) {
+			if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)))
+				readString("mineroad.trs");
+		}
 	} else
 		readString(file);
 }
@@ -993,6 +1195,9 @@ SmushFont *SmushPlayer::getFont(int font) {
 
 	if (_sf[font])
 		return _sf[font];
+
+	if (SmushFont *gameFont = getGameFont(font))
+		return gameFont;
 
 	if (_vm->_game.id == GID_FT) {
 		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
@@ -1010,6 +1215,7 @@ SmushFont *SmushPlayer::getFont(int font) {
 	} else {
 		int numFonts = (_vm->_game.id == GID_CMI && !(_vm->_game.features & GF_DEMO)) ? 5 : 4;
 		assert(font >= 0 && font < numFonts);
+		(void)numFonts;
 		Common::sprintf_s(file_font, "font%d.nut", font);
 		_sf[font] = new SmushFont(_vm, file_font, _vm->_game.id == GID_DIG && font != 0);
 	}
@@ -1024,8 +1230,8 @@ void SmushPlayer::parseNextFrame() {
 		if (_seekFile.size() > 0) {
 			delete _base;
 
-			ScummFile *tmp = new ScummFile(_vm);
-			if (!g_scumm->openFile(*tmp, Common::Path(_seekFile)))
+			ScummFile *tmp = _vm->instantiateScummFile();
+			if (!_vm->openFile(*tmp, Common::Path(_seekFile)))
 				error("SmushPlayer: Unable to open file %s", _seekFile.c_str());
 			_base = tmp;
 			_base->readUint32BE();
@@ -1037,6 +1243,7 @@ void SmushPlayer::parseNextFrame() {
 				const uint32 subType = _base->readUint32BE();
 				const int32 subSize = _base->readUint32BE();
 				const int32 subOffset = _base->pos();
+				(void)subType;
 				assert(subType == MKTAG('A','H','D','R'));
 				handleAnimHeader(subSize, *_base);
 				_base->seek(subOffset + subSize, SEEK_SET);
@@ -1091,7 +1298,11 @@ void SmushPlayer::parseNextFrame() {
 	if (_insanity)
 		_vm->_sound->processSound();
 
-	_vm->_imuseDigital->flushTracks();
+	if (_vm->_imuseDigital)
+		_vm->_imuseDigital->flushTracks();
+
+	if (!_imuseDigital)
+		handleGameParseNextFrame();
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -1125,6 +1336,14 @@ void SmushPlayer::updateScreen() {
 	_updateNeeded = true;
 	end_time = _vm->_system->getMillis();
 	debugC(DEBUG_SMUSH, "Smush stats: updateScreen( %03d )", end_time - start_time);
+}
+
+void SmushPlayer::handleGameUpdateScreen(const byte *src, int srcPitch, int width, int height) {
+	if (_vm->_macScreen) {
+		_vm->mac_drawBufferToScreen(src, srcPitch, 0, 0, width, height);
+	} else {
+		_vm->_system->copyRectToScreen(src, srcPitch, 0, 0, width, height);
+	}
 }
 
 void SmushPlayer::insanity(bool flag) {
@@ -1191,13 +1410,15 @@ void SmushPlayer::unpause() {
 
 void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 startFrame) {
 	// Verify the specified file exists
-	ScummFile f(_vm);
-	_vm->openFile(f, filename);
-	if (!f.isOpen()) {
+	ScummFile *file = _vm->instantiateScummFile();
+
+	_vm->openFile(*file, filename);
+	if (!file->isOpen()) {
 		warning("SmushPlayer::play() File not found %s", filename);
 		return;
 	}
-	f.close();
+	file->close();
+	delete file;
 
 	_updateNeeded = false;
 	_warpNeeded = false;
@@ -1206,15 +1427,23 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 	// Hide mouse
 	bool oldMouseState = CursorMan.showMouse(false);
+	if (isInsaneGame())
+		insanity(true);
 
 	// Load the video
 	_seekFile = filename;
 	_seekPos = offset;
 	_seekFrame = startFrame;
 	_base = 0;
+	const uint32 fastForwardFromFrame = _fastForwardFromFrame;
+	const uint32 fastForwardToFrame = _fastForwardToFrame;
 
 	setupAnim(filename);
 	init(speed);
+	// Callers configure RA1 pre-roll before play(); preserve that target across
+	// init() so the playback loop can rebuild state up to the requested frame.
+	_fastForwardFromFrame = fastForwardFromFrame;
+	_fastForwardToFrame = fastForwardToFrame;
 
 	_startTime = _vm->_system->getMillis();
 	_startFrame = startFrame;
@@ -1225,91 +1454,152 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 	// This piece of code is used to ensure there are
 	// no audio hiccups while loading the SMUSH video;
 	// Each version of the engine does it in its own way.
-	if (_imuseDigital->isFTSoundEngine()) {
-		_imuseDigital->fillStreamsWhileMusicCritical(20);
-	} else {
-		_imuseDigital->floodMusicBuffer();
+	// Rebel Assault 2 doesn't use iMUSE for audio.
+	if (_imuseDigital) {
+		if (_imuseDigital->isFTSoundEngine()) {
+			_imuseDigital->fillStreamsWhileMusicCritical(20);
+		} else {
+			_imuseDigital->floodMusicBuffer();
+		}
 	}
 
 	int skipped = 0;
 
 	for (;;) {
-		uint32 now, elapsed;
 		bool skipFrame = false;
 
-		if (_insanity) {
-			// Seeking makes a mess of trying to sync the audio to
-			// the sound. Synt to time instead.
-			now = _vm->_system->getMillis() - _pauseTime;
-			elapsed = now - _startTime;
-		} else if (_vm->_mixer->isSoundHandleActive(*_compressedFileSoundHandle)) {
-			// Compressed SMUSH files.
-			elapsed = _vm->_mixer->getSoundElapsedTime(*_compressedFileSoundHandle);
-		} else if (_vm->_mixer->isSoundHandleActive(*_IACTchannel)) {
-			// Curse of Monkey Island SMUSH files.
-			elapsed = _vm->_mixer->getSoundElapsedTime(*_IACTchannel);
-		} else {
-			// For other SMUSH files, we don't necessarily have any
-			// one channel to sync against, so we have to use
-			// elapsed real time.
-			now = _vm->_system->getMillis() - _pauseTime;
-			elapsed = now - _startTime;
-		}
+		// RA1 pre-roll: process the configured hidden frame window rapidly
+		// without display/audio. Route splices can leave the first frames visible
+		// and only suppress the middle span before the resume target.
+		bool fastForwarding = isFastForwardingCurrentFrame();
 
-		if (elapsed >= ((_frame - _startFrame) * 1000) / _speed) {
-			if (elapsed >= ((_frame + 1) * 1000) / _speed)
-				skipFrame = true;
-			else
-				skipFrame = false;
+		if (fastForwarding) {
+			// Process frame immediately without timing
 			timerCallback();
+			_updateNeeded = false;
+		} else if (!_paused) {
+			uint32 now, elapsed;
+
+			if (_insanity) {
+				// Seeking makes a mess of trying to sync the audio to
+				// the sound. Sync to time instead.
+				now = _vm->_system->getMillis() - _pauseTime;
+				elapsed = now - _startTime;
+			} else if (_vm->_mixer->isSoundHandleActive(*_compressedFileSoundHandle)) {
+				// Compressed SMUSH files.
+				elapsed = _vm->_mixer->getSoundElapsedTime(*_compressedFileSoundHandle);
+			} else if (_vm->_mixer->isSoundHandleActive(*_IACTchannel)) {
+				// Curse of Monkey Island SMUSH files.
+				elapsed = _vm->_mixer->getSoundElapsedTime(*_IACTchannel);
+			} else {
+				// For other SMUSH files, we don't necessarily have any
+				// one channel to sync against, so we have to use
+				// elapsed real time.
+				now = _vm->_system->getMillis() - _pauseTime;
+				elapsed = now - _startTime;
+			}
+
+			if (elapsed >= ((_frame - _startFrame) * 1000) / _speed) {
+				if (elapsed >= ((_frame + 1) * 1000) / _speed)
+					skipFrame = true;
+				else
+					skipFrame = false;
+				timerCallback();
+			}
+
+			_vm->scummLoop_handleSound();
+
+			if (_warpNeeded) {
+				_vm->_system->warpMouse(_vm->_macScreen ? _warpX * 2 : _warpX, _vm->_macScreen ? (_warpY * 2 + 2 * _vm->_macScreenDrawOffset) : _warpY);
+				_warpNeeded = false;
+			}
 		}
 
-		_vm->scummLoop_handleSound();
-
-		if (_warpNeeded) {
-			_vm->_system->warpMouse(_warpX, _warpY);
-			_warpNeeded = false;
+		// When fast-forwarding completes, reset timing so playback
+		// starts from the correct point without trying to catch up.
+		if (_fastForwardToFrame > _fastForwardFromFrame && _frame >= _fastForwardToFrame) {
+			_startFrame = _frame;
+			_startTime = _vm->_system->getMillis();
+			_fastForwardFromFrame = 0;
+			_fastForwardToFrame = 0;
 		}
-		_vm->parseEvents();
-		_vm->processInput();
-		if (_palDirtyMax >= _palDirtyMin) {
-			_vm->_system->getPaletteManager()->setPalette(_pal + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
 
-			_palDirtyMax = -1;
-			_palDirtyMin = 256;
-			skipFrame = false;
+		if (!fastForwarding) {
+			_vm->parseEvents();
+			_vm->processInput();
 		}
-		if (skipFrame) {
-			if (++skipped > 10) {
+
+		if (!_paused && !fastForwarding) {
+			if (_palDirtyMax >= _palDirtyMin) {
+				// Apply gamma correction for Mac versions
+				if (_vm->_macScreen) {
+					byte palette[768];
+					memcpy(palette, _pal, 768);
+
+					if (_vm->_useGammaCorrection) {
+						for (int i = 0; i < ARRAYSIZE(palette); i++) {
+							palette[i] = Graphics::macGammaCorrectionLookUp[_pal[i]];
+						}
+					}
+
+					_vm->_system->getPaletteManager()->setPalette(palette + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+				} else {
+					_vm->_system->getPaletteManager()->setPalette(_pal + _palDirtyMin * 3, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+				}
+
+				_palDirtyMax = -1;
+				_palDirtyMin = 256;
 				skipFrame = false;
-				skipped = 0;
 			}
-		} else
-			skipped = 0;
-		if (_updateNeeded) {
-			if (!skipFrame) {
-				// WORKAROUND for bug #2415: "FT DEMO: assertion triggered
-				// when playing movie". Some frames there are 384 x 224
-				int w = MIN(_width, _vm->_screenWidth);
-				int h = MIN(_height, _vm->_screenHeight);
+			if (skipFrame) {
+				if (++skipped > 10) {
+					skipFrame = false;
+					skipped = 0;
+				}
+			} else
+				skipped = 0;
+			if (_updateNeeded) {
+				if (!skipFrame) {
+					// WORKAROUND for bug #2415: "FT DEMO: assertion triggered
+					// when playing movie". Some frames there are 384 x 224
+					int frameWidth;
+					int frameHeight;
+					const byte *dst;
 
-				_vm->_system->copyRectToScreen(_dst, _width, 0, 0, w, h);
-				_vm->_system->updateScreen();
-				_updateNeeded = false;
+					frameWidth = MIN(_width, _vm->_screenWidth);
+					frameHeight = MIN(_height, _vm->_screenHeight);
+					dst = _dst + _scrollY * _width + _scrollX;
+
+					handleGameUpdateScreen(dst, _width, frameWidth, frameHeight);
+
+					_vm->_system->updateScreen();
+					_updateNeeded = false;
+				}
 			}
 		}
+
 		if (_endOfFile)
 			break;
+
 		if (_vm->shouldQuit() || _vm->_saveLoadFlag || _vm->_smushVideoShouldFinish) {
 			_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
 			_vm->_mixer->stopHandle(*_IACTchannel);
 			_IACTpos = 0;
 
 			resetAudioTracks(); // For DIG demo
-			_imuseDigital->stopSMUSHAudio(); // For DIG & COMI
+			if (_imuseDigital)
+				_imuseDigital->stopSMUSHAudio(); // For DIG & COMI
+
 			break;
 		}
-		_vm->_system->delayMillis(10);
+
+		if (_vm->_macGui) {
+			_vm->_macGui->updateWindowManager();
+			_vm->_system->updateScreen();
+		}
+
+		if (!fastForwarding)
+			_vm->_system->delayMillis(10);
 	}
 
 	release();
@@ -1321,7 +1611,8 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 void SmushPlayer::initAudio(int samplerate, int32 maxChunkSize) {
 	int32 maxSizes[SMUSH_MAX_TRACKS] = {100000, 100000, 100000, 400000};
 
-	_imuseDigital->setSmushPlayer(this);
+	if (_imuseDigital)
+		_imuseDigital->setSmushPlayer(this);
 
 	// DIG demo uses this audio system but doesn't use INSANE
 	if (_insane)
@@ -1330,6 +1621,23 @@ void SmushPlayer::initAudio(int samplerate, int32 maxChunkSize) {
 	setGainReductionParams(114, 2048);
 
 	memset(_smushAudioTable, 0, sizeof(_smushAudioTable));
+
+	// Initialize dispatch structures to safe defaults
+	for (int i = 0; i < SMUSH_MAX_TRACKS; i++) {
+		_smushDispatch[i].headerPtr = nullptr;
+		_smushDispatch[i].dataBuf = nullptr;
+		_smushDispatch[i].dataSize = 0;
+		_smushDispatch[i].audioRemaining = 0;
+		_smushDispatch[i].currentOffset = 0;
+		_smushDispatch[i].sampleRate = 0;
+		_smushDispatch[i].state = TRK_STATE_INACTIVE;
+		_smushDispatch[i].fadeSampleRate = 0;
+		_smushDispatch[i].fadeVolume = 0;
+		_smushDispatch[i].fadeRemaining = 0;
+		_smushDispatch[i].volumeStep = 0;
+		_smushDispatch[i].elapsedAudio = 0;
+		_smushDispatch[i].audioLength = 0;
+	}
 
 	for (int i = 0; i < SMUSH_MAX_TRACKS; i++) {
 		_smushTrackVols[i] = 127;
@@ -1376,6 +1684,9 @@ int SmushPlayer::addAudioTrack(int32 trackBlockSize, int32 maxBlockSize) {
 	_smushTracks[id].groupId = GRP_MASTER;
 	_smushTracks[id].blockSize = trackBlockSize;
 	_smushTracks[id].parsedChunks = 0;
+	_smushTracks[id].dataBuf = nullptr;
+	_smushTracks[id].subChunkPtr = nullptr;
+	_smushTracks[id].dataSize = 0;
 
 	_smushTracks[id].fadeBuf = (uint8 *)malloc(SMUSH_FADE_SIZE);
 	if (!_smushTracks[id].fadeBuf)
@@ -1596,6 +1907,11 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 
 	bool isPlayableTrack;
 	bool speechIsPlaying = false;
+
+	if (!_imuseDigital) {
+		handleGameProcessAudio(feedSize);
+		return;
+	}
 
 	int engineBaseFeedSize = _imuseDigital->getFeedSize();
 
@@ -2026,6 +2342,9 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 }
 
 void SmushPlayer::sendAudioToDiMUSE(uint8 *mixBuf, int32 mixStartingPoint, int32 mixFeedSize, int32 mixInFrameCount, int volume, int pan) {
+	if (!_imuseDigital)
+		return;
+
 	int clampedVol, clampedPan;
 	bool is11025Hz = false;
 

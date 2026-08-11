@@ -3525,7 +3525,7 @@ void FullTSA::doSolve() {
 	}
 }
 
-void FullTSA::updateCursor(const Common::Point where, const Hotspot *cursorSpot) {
+void FullTSA::updateCursor(const Common::Point &where, const Hotspot *cursorSpot) {
 	if (cursorSpot) {
 		switch (cursorSpot->getObjectID()) {
 		case kTSA0BEastMonitorSpotID:

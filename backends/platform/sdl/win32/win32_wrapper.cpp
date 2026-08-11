@@ -40,6 +40,7 @@
 #include <shlobj.h>
 #include <tchar.h>
 
+#include "common/ptr.h"
 #include "common/scummsys.h"
 #include "common/textconsole.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
@@ -139,6 +140,33 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion) {
 	conditionMask = VerSetConditionMaskFunc(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
 
 	return VerifyVersionInfoFunc(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
+}
+
+// for using ScopedPtr with malloc/free
+template <typename T>
+struct Freer {
+	inline void operator()(T *object) {
+		free(object);
+	}
+};
+
+bool moveFile(const Common::String &src, const Common::String &dst) {
+	Common::ScopedPtr<TCHAR, Freer<TCHAR>> tSrc(stringToTchar(src));
+	Common::ScopedPtr<TCHAR, Freer<TCHAR>> tDst(stringToTchar(dst));
+
+	if (MoveFileEx(tSrc.get(), tDst.get(), MOVEFILE_REPLACE_EXISTING)) {
+		return true;
+	}
+
+	// MoveFileEx may not be supported on the platform (Win9x)
+	if (GetLastError() == ERROR_CALL_NOT_IMPLEMENTED) {
+		// Fall back to deleting the destination before using MoveFile.
+		// MoveFile requires that the destination not already exist.
+		DeleteFile(tDst.get());
+		return MoveFile(tSrc.get(), tDst.get());
+	}
+
+	return false;
 }
 
 bool isDriveCD(char driveLetter) {

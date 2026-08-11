@@ -33,7 +33,7 @@
 
 namespace Wintermute {
 
-class BasePoint: public BaseClass {
+class BasePoint : public BaseClass {
 public:
 	DECLARE_PERSISTENT(BasePoint, BaseClass)
 	BasePoint();
@@ -41,7 +41,6 @@ public:
 	int32 y;
 	int32 x;
 	~BasePoint() override;
-
 };
 
 } // End of namespace Wintermute

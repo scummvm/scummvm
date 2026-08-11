@@ -26,6 +26,8 @@
 
 #include "math/matrix4.h"
 
+#include "common/rotationmode.h"
+
 namespace OpenGL {
 
 class Pipeline;
@@ -62,7 +64,7 @@ public:
 		 * Newly drawn pixels mix with the framebuffer based on their alpha value
 		 * for transparency.
 		 *
-		 * Requires the image data being drawn to have its color values pre-multipled
+		 * Requires the image data being drawn to have its color values pre-multiplied
 		 * with the alpha value.
 		 */
 		kBlendModePremultipliedTransparency,
@@ -190,7 +192,7 @@ protected:
 };
 
 #if !USE_FORCED_GLES
-class GLTexture;
+class Texture;
 
 /**
  * Render to texture framebuffer implementation.
@@ -221,13 +223,13 @@ public:
 	/**
 	 * Query pointer to underlying GL texture.
 	 */
-	GLTexture *getTexture() const { return _texture; }
+	Texture *getTexture() const { return _texture; }
 
 protected:
 	void activateInternal() override;
 
 private:
-	GLTexture *_texture;
+	Texture *_texture;
 	GLuint _glFBO;
 	bool _needUpdate;
 };

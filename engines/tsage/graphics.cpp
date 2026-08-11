@@ -355,7 +355,7 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 
 	// Wait for a mouse or keypress
 	Event event;
-	while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit())
+	while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_CUSTOM_ACTIONSTART | EVENT_KEYPRESS) && !g_vm->shouldQuit())
 		;
 
 	// Restore the display area
@@ -363,7 +363,7 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 	delete savedArea;
 
 	gfxManager.deactivate();
-	return (event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN);
+	return (event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionReturn);
 }
 
 /**
@@ -396,25 +396,36 @@ void GfxSurface::loadScreenSection(Graphics::ManagedSurface &dest, int xHalf, in
 /**
  * Returns an array indicating which pixels of a source image horizontally or vertically get
  * included in a scaled image
+ * If reverse is true, then the scanning of the line of pixels is done from end to start
+ * otherwise the scanning is done from start to end.
  */
-static int *scaleLine(int size, int srcSize) {
+static int *scaleLine(int size, int srcSize, bool reverse) {
 	const int PRECISION_FACTOR = 1000;
 	int scale = PRECISION_FACTOR * size / srcSize;
 	assert(scale >= 0);
 	int *v = new int[size];
 	Common::fill(v, &v[size], -1);
 
-	int distCtr = PRECISION_FACTOR / 2;
+	int distCtr = PRECISION_FACTOR;
 	int *destP = v;
-	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
-		distCtr += scale;
-		while (distCtr > PRECISION_FACTOR) {
-			assert(destP < &v[size]);
-			*destP++ = distIndex;
-			distCtr -= PRECISION_FACTOR;
+	if (reverse) {
+		destP += size - 1;
+		for (int srcIndex = srcSize - 1; srcIndex >= 0 && destP >= v; --srcIndex) {
+			distCtr += scale;
+			while (distCtr >= PRECISION_FACTOR && destP >= v) {
+				*destP-- = srcIndex; // Include this pixel
+				distCtr -= PRECISION_FACTOR;
+			}
+		}
+	} else {
+		for (int srcIndex = 0; srcIndex < srcSize && destP < &v[size]; ++srcIndex) {
+			distCtr += scale;
+			while (distCtr >= PRECISION_FACTOR && destP < &v[size]) {
+				*destP++ = srcIndex; // Include this pixel
+				distCtr -= PRECISION_FACTOR;
+			}
 		}
 	}
-
 	return v;
 }
 
@@ -432,8 +443,8 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
 	Graphics::Surface srcImage = src.lockSurface();
 	Graphics::Surface destImage = s.lockSurface();
 
-	int *horizUsage = scaleLine(xSize, srcImage.w);
-	int *vertUsage = scaleLine(ySize, srcImage.h);
+	int *horizUsage = scaleLine(xSize, srcImage.w, false);
+	int *vertUsage = scaleLine(ySize, srcImage.h, true);
 
 	// Loop to create scaled version
 	for (int yp = 0; yp < ySize; ++yp) {
@@ -467,7 +478,7 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
 }
 
 /**
- * Copys an area from one GfxSurface to another.
+ * Copies an area from one GfxSurface to another.
  *
  */
 void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
@@ -475,6 +486,11 @@ void GfxSurface::copyFrom(GfxSurface &src, Rect srcBounds, Rect destBounds,
 	GfxSurface srcImage;
 	if (srcBounds.isEmpty())
 		return;
+
+	// Show an error if the source surface has no pixel data to copy (otherwise the app would crash with segmentation fault)
+	if (src.getPixels() == nullptr) {
+		error("GfxSurface::copyFrom() - source surface has no pixel data to copy to destination");
+	}
 
 	if (srcBounds == src.getBounds())
 		srcImage = src;
@@ -608,7 +624,7 @@ void GfxElement::highlight() {
 	GfxManager &gfxManager = g_globals->gfxManager();
 	Graphics::Surface surface = gfxManager.lockSurface();
 
-	// Scan through the contents of the element, switching any occurances of the foreground
+	// Scan through the contents of the element, switching any occurrences of the foreground
 	// color with the background color and vice versa
 	Rect tempRect(_bounds);
 	tempRect.collapse(g_globals->_gfxEdgeAdjust - 1, g_globals->_gfxEdgeAdjust - 1);
@@ -1069,11 +1085,11 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 				breakFlag = true;
 				break;
 			} else if (!event.handled) {
-				if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+				if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 					selectedButton = NULL;
 					breakFlag = true;
 					break;
-				} else if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN)) {
+				} else if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionReturn)) {
 					selectedButton = defaultButton;
 					breakFlag = true;
 					break;
@@ -1275,7 +1291,7 @@ void GfxFont::setFontNumber(uint32 fontNumber) {
 		_fontData = g_resourceManager->getResource(RES_FONT, _fontNumber, 0);
 
 	// Since some TsAGE game versions don't have a valid character count at offset 4, use the offset of the
-	// first charactre data to calculate the number of characters in the offset table preceeding it
+	// first character data to calculate the number of characters in the offset table preceding it
 	_numChars = (READ_LE_UINT32(_fontData + 12) - 12) / 4;
 	assert(_numChars <= 256);
 

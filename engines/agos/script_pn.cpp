@@ -24,6 +24,7 @@
 #include "agos/vga.h"
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/textconsole.h"
 
 namespace AGOS {
@@ -265,7 +266,11 @@ void AGOSEngine_PN::opn_opcode15() {
 
 	pcf((unsigned char)254);
 	_curWindow = x;
-	_xofs = (8 * _windowArray[_curWindow]->textLength) / 6 + 1;
+	WindowBlock *window = _windowArray[_curWindow];
+	if (isPnAmigaTextWindow(window))
+		_xofs = window->textColumn;
+	else
+		_xofs = (8 * window->textLength) / 6 + 1;
 	setScriptReturn(true);
 }
 
@@ -500,6 +505,10 @@ void AGOSEngine_PN::opn_opcode37() {
 	_inputReady = true;
 	interact(_inputline, 49);
 
+	Common::String typed(_inputline);
+	typed.trim();
+	_pendingWaitCommandDelay = typed.equalsIgnoreCase("wait");
+
 	if ((_inpp = strchr(_inputline,'\n')) != nullptr)
 		*_inpp = '\0';
 	_inpp = _inputline;
@@ -620,7 +629,25 @@ void AGOSEngine_PN::opn_opcode52() {
 	if (mode == 1) {
 		setWindowImage(mode, varval(), true);
 	} else {
-		setWindowImageEx(mode, varval());
+		int32 image = varval();
+		setWindowImageEx(mode, image);
+
+		// Handle drawing the "time passes" screen via the normal image path. 
+		// without this, the script advances immediately and the screen is replacee 
+		// as soon as it becomes visible.
+		if (mode == 0 && image == 48 && _procnum == 192) {
+			// If a palette update is still pending, make it visible now 
+			// so the "time passes" screen uses the correct colors.
+			if (_paletteFlag == 2) {
+				_paletteFlag = 1;
+			}
+
+			displayScreen();
+			_displayFlag = 0;
+			_system->updateScreen();
+			_pendingWaitCommandDelay = false;
+			_system->delayMillis(2000);
+		}
 	}
 
 	setScriptReturn(true);
@@ -705,6 +732,12 @@ void AGOSEngine_PN::opn_opcode63() {
 
 int AGOSEngine_PN::inventoryOn(int val) {
 	writeVariable(210, val);
+
+	if (getPlatform() == Common::kPlatformAtariST || getPlatform() == Common::kPlatformAmiga) {
+		saveInventoryPalette();
+		applyInventoryPalette();
+	}
+
 	if (_videoLockOut & 0x10) {
 		iconPage();
 	} else {
@@ -726,9 +759,13 @@ int AGOSEngine_PN::inventoryOn(int val) {
 
 int AGOSEngine_PN::inventoryOff() {
 	if (_videoLockOut & 0x10) {
-		_windowArray[2]->textColor = 15;
+		_windowArray[2]->textColor = isPnAmiga() ? 14 : 15;
 
 		restoreBlock(48, 2, 272, 130);
+
+		if (getPlatform() == Common::kPlatformAtariST || getPlatform() == Common::kPlatformAmiga) {
+			restoreInventoryPalette();
+		}
 
 		_hitAreaList = _hitAreas;
 		_videoLockOut &= ~0x10;

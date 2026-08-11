@@ -60,13 +60,13 @@ HiResBaseEngine::HiResBaseEngine(OSystem *syst, const AdlGameDescription *gd, co
 void HiResBaseEngine::init() {
 	_graphics = new GraphicsMan_v2<Display_A2>(*static_cast<Display_A2 *>(_display));
 
-	_disk = new DiskImage();
+	_disk = new Common::DiskImage();
 	if (!_disk->open(getDiskImageName(0)))
 		error("Failed to open disk image '%s'", getDiskImageName(0).toString(Common::Path::kNativeSeparator).c_str());
 
 	_disk->setSectorLimit(13);
 
-	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 4));
+	Common::StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 4));
 	loadMessages(*stream, _numMsgs);
 
 	stream.reset(_disk->createReadStream(0x19, 0x0, 0x00, 25, 13));
@@ -114,7 +114,7 @@ void HiResBaseEngine::init() {
 void HiResBaseEngine::initGameState() {
 	_state.vars.resize(40);
 
-	StreamPtr stream(_disk->createReadStream(0x21, 0x5, 0x0e, 7));
+	Common::StreamPtr stream(_disk->createReadStream(0x21, 0x5, 0x0e, 7));
 	loadRooms(*stream, _numRooms);
 
 	stream.reset(_disk->createReadStream(0x21, 0x0, 0x00, 2));
@@ -145,7 +145,7 @@ void HiRes2Engine::runIntro() {
 	if (_disk->getSectorsPerTrack() != 16)
 		return;
 
-	StreamPtr stream(_disk->createReadStream(0x00, 0xd, 0x17, 1));
+	Common::StreamPtr stream(_disk->createReadStream(0x00, 0xd, 0x17, 1));
 
 	_display->setMode(Display::kModeText);
 

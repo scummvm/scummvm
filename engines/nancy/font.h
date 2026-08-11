@@ -39,16 +39,27 @@ public:
 	Font() = default;
 	~Font() = default;
 
+	Font(Font &&) = default;
+
 	void read(Common::SeekableReadStream &stream);
 
 	int getFontHeight() const override { return _fontHeight - 1; }
+
+	// The vertical advance between text lines (height of the first glyph).
+	int getLineHeight() const;
+
 	int getMaxCharWidth() const override { return _maxCharWidth; }
 	int getCharWidth(uint32 chr) const override;
-	int getKerningOffset(uint32 left, uint32 right) const override { return 1; }
+	int getKerningOffset(uint32 left, uint32 right) const override { return 0; }
 
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 	const Graphics::ManagedSurface &getImageSurface() const { return _image; }
+
+	// Samples an opaque pixel from a solid glyph rendered in the given color
+	// variant, so callers can match the exact text color. Used to draw
+	// underlines (the <u> markup toggle), for which the atlas has no glyph.
+	uint32 getColorPixel(uint color) const;
 
 	// Custom word wrapping function to fix an edge case with overflowing whitespaces
 	void wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0) const;
@@ -63,25 +74,25 @@ private:
 	uint16 _spaceWidth = 0;
 
 	// Specific offsets into the _characterRects array
-	uint16 _uppercaseOffset			= 0;
-	uint16 _lowercaseOffset			= 0;
-	uint16 _digitOffset				= 0;
-	uint16 _periodOffset			= 0;
-	uint16 _commaOffset				= 0;
-	uint16 _equalitySignOffset		= 0;
-	uint16 _colonOffset				= 0;
-	uint16 _dashOffset				= 0;
-	uint16 _questionMarkOffset		= 0;
-	uint16 _exclamationMarkOffset	= 0;
-	uint16 _percentOffset			= 0;
-	uint16 _ampersandOffset			= 0;
-	uint16 _asteriskOffset			= 0;
-	uint16 _leftBracketOffset		= 0;
-	uint16 _rightBracketOffset		= 0;
-	uint16 _plusOffset				= 0;
-	uint16 _apostropheOffset		= 0;
-	uint16 _semicolonOffset			= 0;
-	uint16 _slashOffset				= 0;
+	uint16 _uppercaseOffset					= 0;
+	uint16 _lowercaseOffset					= 0;
+	uint16 _digitOffset						= 0;
+	uint16 _periodOffset					= 0;
+	uint16 _commaOffset						= 0;
+	uint16 _equalitySignOffset				= 0;
+	uint16 _colonOffset						= 0;
+	uint16 _dashOffset						= 0;
+	uint16 _questionMarkOffset				= 0;
+	uint16 _exclamationMarkOffset			= 0;
+	uint16 _percentOffset					= 0;
+	uint16 _ampersandOffset					= 0;
+	uint16 _asteriskOffset					= 0;
+	uint16 _leftBracketOffset				= 0;
+	uint16 _rightBracketOffset				= 0;
+	uint16 _plusOffset						= 0;
+	uint16 _apostropheOffset				= 0;
+	uint16 _semicolonOffset					= 0;
+	uint16 _slashOffset						= 0;
 
 	// Specific offsets for Cyrillic characters. Introduced in nancy5, only used in Russian variants
 	// The original data references the letters one by one, out of order. We only keep the two offsets below
@@ -116,6 +127,24 @@ private:
 	int16 _oWithAcuteOffset					= -1;
 	int16 _uWithAcuteOffset					= -1;
 	int16 _eszettOffset						= -1;
+
+	// Even more specific offsets for extended ASCII characters. Introduced in nancy10
+	int16 _uppercaseAWithDotOffset			= -1;
+	int16 _aWithDotOffset					= -1;
+	int16 _underscoreOffset					= -1;
+	int16 _hashOffset						= -1;
+	int16 _dollarOffset						= -1;
+	int16 _lessThanOffset					= -1;
+	int16 _greaterThanOffset				= -1;
+	int16 _leftCurlyBracketOffset			= -1;
+	int16 _rightCurlyBracketOffset			= -1;
+	int16 _euroOffset						= -1;
+
+	// Specific offsets in French variant of nancy12
+	int16 _uppercaseCWithCedillaOffset		= -1;
+	int16 _uWithCircumflexOffset			= -1;
+	int16 _oeLigatureOffset					= -1;
+	int16 _iWithDiaeresisOffset				= -1;
 
 	Common::Array<Common::Rect> _characterRects;
 

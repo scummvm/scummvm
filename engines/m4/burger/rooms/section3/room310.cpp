@@ -21,6 +21,8 @@
 
 #include "m4/burger/rooms/section3/room310.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -299,7 +301,7 @@ void Room310::pre_parser() {
 		player_hotspot_walk_override(293, 288, 3, kCHANGE_WILBUR_ANIMATION);
 		_G(player).command_ready = false;
 	} else if (!_G(flags)[kTrufflesRanAway]) {
-		HotSpotRec *hotspot = hotspot_which(_G(click_x), _G(click_y));
+		HotSpotRec *hotspot = hotspot_which(_G(player).click_x, _G(player).click_y);
 		assert(hotspot);
 
 		if (hotspot->feet_x > 360 && hotspot->feet_x < 515 &&

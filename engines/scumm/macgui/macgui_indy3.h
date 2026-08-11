@@ -28,7 +28,11 @@
 
 #include "graphics/surface.h"
 
+#include "scumm/macgui/macgui_colors.h"
+
 namespace Scumm {
+
+#define INDY3_INVENTORY_SLOT_SIZE	6
 
 class MacGuiImpl;
 
@@ -42,18 +46,19 @@ public:
 	MacIndy3Gui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacIndy3Gui();
 
-	const Common::String name() const { return "Indy"; }
+	const Common::String name() const override { return "Indy"; }
+	int getNumColors() const override { return 16; }
 
 	Graphics::Surface _textArea;
 
-	const Graphics::Font *getFontByScummId(int32 id);
+	const Graphics::Font *getFontByScummId(int32 id) override;
 
-	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
+	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) override;
 
-	Graphics::Surface *textArea() { return &_textArea; }
-	void clearTextArea() { _textArea.fillRect(Common::Rect(_textArea.w, _textArea.h), kBlack); }
-	void initTextAreaForActor(Actor *a, byte color);
-	void printCharToTextArea(int chr, int x, int y, int color);
+	Graphics::Surface *textArea() override { return &_textArea; }
+	void clearTextArea() override { _textArea.fillRect(Common::Rect(_textArea.w, _textArea.h), kBlack); }
+	void initTextAreaForActor(Actor *a, byte color) override;
+	void printCharToTextArea(int chr, int x, int y, int color) override;
 
 	// There is a distinction between the GUI being allowed and being
 	// active. Allowed means that it's allowed to draw verbs, but not that
@@ -65,22 +70,23 @@ public:
 	// it's not drawing verbs, so the SCUMM engine is allowed to draw in
 	// the verb area to clear the power meters and text.
 
-	bool isVerbGuiActive() const;
+	bool isVerbGuiActive() const override;
 
-	void reset();
-	void resetAfterLoad();
-	void update(int delta);
-	bool handleEvent(Common::Event event);
+	void reset() override;
+	void resetAfterLoad() override;
+	void update(int delta) override;
+	bool handleEvent(Common::Event event) override;
 
 protected:
-	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
 
-	bool handleMenu(int id, Common::String &name);
+	void updateMenus() override;
+	bool handleMenu(int id, Common::String &name) override;
 
-	void runAboutDialog();
-	bool runOpenDialog(int &saveSlotToHandle);
-	bool runSaveDialog(int &saveSlotToHandle, Common::String &name);
-	bool runOptionsDialog();
+	void runAboutDialog() override;
+	bool runOpenDialog(int &saveSlotToHandle) override;
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &saveName) override;
+	bool runOptionsDialog() override;
 	bool runIqPointsDialog();
 
 private:
@@ -144,9 +150,9 @@ private:
 
 		// Primitives
 		void fill(Common::Rect r);
-		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
+		void drawBitmap(Common::Rect r, const uint16 *bitmap, byte color) const;
 		void drawShadowBox(Common::Rect r) const;
-		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor);
+		void drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor);
 
 		void markScreenAsDirty(Common::Rect r) const;
 	};
@@ -165,12 +171,12 @@ private:
 		void threaten() { _kill = true; }
 		bool isDying() const { return _kill; }
 
-		void reset();
+		void reset() override;
 
 		virtual void updateVerb(int verbslot);
 
-		void draw();
-		void undraw();
+		void draw() override;
+		void undraw() override;
 	};
 
 	class Button : public VerbWidget {
@@ -180,13 +186,13 @@ private:
 	public:
 		Button(int x, int y, int width, int height);
 
-		bool handleEvent(Common::Event &event);
+		bool handleEvent(Common::Event &event) override;
 
-		void reset();
-		void timeOut();
-		void updateVerb(int verbslot);
+		void reset() override;
+		void timeOut() override;
+		void updateVerb(int verbslot) override;
 
-		void draw();
+		void draw() override;
 	};
 
 	class Inventory : public VerbWidget {
@@ -203,11 +209,11 @@ private:
 			void scroll(ScrollDirection dir);
 			int getHandlePosition();
 
-			void reset();
+			void reset() override;
 
-			bool handleEvent(Common::Event &event);
+			bool handleEvent(Common::Event &event) override;
 
-			void draw();
+			void draw() override;
 		};
 
 		class ScrollButton : public Widget {
@@ -216,11 +222,11 @@ private:
 
 			ScrollButton(int x, int y, int width, int height, ScrollDirection direction);
 
-			bool handleEvent(Common::Event &event);
-			bool handleMouseHeld(Common::Point &pressed, Common::Point &held);
-			void timeOut();
+			bool handleEvent(Common::Event &event) override;
+			bool handleMouseHeld(Common::Point &pressed, Common::Point &held) override;
+			void timeOut() override;
 
-			void draw();
+			void draw() override;
 		};
 
 		class Slot : public Widget {
@@ -239,15 +245,15 @@ private:
 			void setObject(int n);
 			int getObject() const { return _obj; }
 
-			void reset();
+			void reset() override;
 
-			bool handleEvent(Common::Event &event);
-			void timeOut();
+			bool handleEvent(Common::Event &event) override;
+			void timeOut() override;
 
-			void draw();
+			void draw() override;
 		};
 
-		Slot *_slots[6];
+		Slot *_slots[INDY3_INVENTORY_SLOT_SIZE];
 		ScrollBar *_scrollBar;
 		ScrollButton *_scrollButtons[2];
 
@@ -258,16 +264,16 @@ private:
 		Inventory(int x, int y, int width, int height);
 		~Inventory();
 
-		void setRedraw(bool redraw);
+		void setRedraw(bool redraw) override;
 
-		void reset();
+		void reset() override;
 
-		bool handleEvent(Common::Event &event);
-		bool handleMouseHeld(Common::Point &pressed, Common::Point &held);
-		void updateTimer(int delta);
-		void updateVerb(int verbslot);
+		bool handleEvent(Common::Event &event) override;
+		bool handleMouseHeld(Common::Point &pressed, Common::Point &held) override;
+		void updateTimer(int delta) override;
+		void updateVerb(int verbslot) override;
 
-		void draw();
+		void draw() override;
 	};
 
 	Common::HashMap<int, VerbWidget *> _widgets;

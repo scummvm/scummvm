@@ -44,18 +44,18 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 
 	// So that the objects follow their tracks without being interrupted
 	// by the buggy (too bad, it will be pushed)
-	ptrobj->_staticFlags.bCanBePushed = true;
-	ptrobj->_staticFlags.bCanDrown = true;
+	ptrobj->_flags.bCanBePushed = true;
+	ptrobj->_flags.bCanDrown = true;
 
 	if (flaginit == 2               // we force the repositioning of the buggy
 		|| (flaginit && !NumBuggy)) // first initialization
 									// because the empty buggy cannot be Twinsen
 	{
-		ptb->Cube = _engine->_scene->_currentSceneIdx; // Port-Ludo (Desert)
+		ptb->Cube = _engine->_scene->_numCube; // Port-Ludo (Desert)
 
-		ptb->X = ptrobj->_pos.x;
-		ptb->Y = ptrobj->_pos.y;
-		ptb->Z = ptrobj->_pos.z;
+		ptb->X = ptrobj->_posObj.x;
+		ptb->Y = ptrobj->_posObj.y;
+		ptb->Z = ptrobj->_posObj.z;
 
 		ptb->Beta = ptrobj->_beta;
 
@@ -63,13 +63,13 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 
 		NumBuggy = (uint8)(numobj | BUGGY_PRESENT);
 	} else if (NumBuggy) {
-		if (_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_controlMode != ControlMode::kBuggyManual && _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_controlMode != ControlMode::kBuggy) {
+		if (_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_move != ControlMode::kBuggyManual && _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_move != ControlMode::kBuggy) {
 			int32 x, y;
 
-			if (_engine->_scene->_currentSceneIdx == ptb->Cube) {
-				ptrobj->_pos.x = ptb->X;
-				ptrobj->_pos.y = ptb->Y;
-				ptrobj->_pos.z = ptb->Z;
+			if (_engine->_scene->_numCube == ptb->Cube) {
+				ptrobj->_posObj.x = ptb->X;
+				ptrobj->_posObj.y = ptb->Y;
+				ptrobj->_posObj.z = ptb->Z;
 
 				ptrobj->_beta = ptb->Beta;
 
@@ -78,16 +78,16 @@ void Buggy::initBuggy(uint8 numobj, uint32 flaginit) {
 				x -= _engine->_scene->_currentCubeX;
 				y -= _engine->_scene->_currentCubeY;
 
-				ptrobj->_pos.x = ptb->X + x * 32768;
-				ptrobj->_pos.y = ptb->Y;
-				ptrobj->_pos.z = ptb->Z + y * 32768;
+				ptrobj->_posObj.x = ptb->X + x * 32768;
+				ptrobj->_posObj.y = ptb->Y;
+				ptrobj->_posObj.z = ptb->Z + y * 32768;
 
 				ptrobj->_beta = ptb->Beta;
 
-				ptrobj->_staticFlags.bDoesntCastShadow = 1;
-				ptrobj->_staticFlags.bIsBackgrounded = 1;
-				ptrobj->_staticFlags.bNoElectricShock = 1;
-				ptrobj->_staticFlags.bHasZBuffer = 1;
+				ptrobj->_flags.bNoShadow = 1;
+				ptrobj->_flags.bIsBackgrounded = 1;
+				ptrobj->_flags.bNoElectricShock = 1;
+				ptrobj->_flags.bHasZBuffer = 1;
 
 				_engine->_actor->initBody(BodyType::btNormal, numobj);
 			} else {
@@ -113,31 +113,30 @@ void Buggy::resetBuggy() {
 }
 
 void Buggy::takeBuggy() {
-#if 0
 	int32 sample;
 	ActorStruct *ptrobj = _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
 	S_BUGGY *ptb = &ListBuggy[0];
 
 	ptb->SpeedRot = 1024;
-	ptb->LastTimer = TimerRefHR;
+	// TODO: ptb->LastTimer = TimerRefHR;
 
 	// TODO: ObjectClear(&ptrobj);
 
 	// Shielding in case the Buggy moved (being pushed, for example).
-	ptb->X = _engine->_scene->getActor(NUM_BUGGY)->_pos.x;
-	ptb->Y = _engine->_scene->getActor(NUM_BUGGY)->_pos.y;
-	ptb->Z = _engine->_scene->getActor(NUM_BUGGY)->_pos.z;
+	ptb->X = _engine->_scene->getActor(NUM_BUGGY)->_posObj.x;
+	ptb->Y = _engine->_scene->getActor(NUM_BUGGY)->_posObj.y;
+	ptb->Z = _engine->_scene->getActor(NUM_BUGGY)->_posObj.z;
 
-	ptrobj->_pos.x = ptb->X;
-	ptrobj->_pos.y = ptb->Y;
-	ptrobj->_pos.z = ptb->Z;
+	ptrobj->_posObj.x = ptb->X;
+	ptrobj->_posObj.y = ptb->Y;
+	ptrobj->_posObj.z = ptb->Z;
 	ptrobj->_beta = ptb->Beta;
 	_engine->_movements->clearRealAngle(ptrobj); // To avoid crushing the beta.
 
 	ptrobj->_workFlags.bMANUAL_INTER_FRAME = true;
-	ptrobj->_staticFlags.bHasZBuffer = true;
+	ptrobj->_flags.bHasZBuffer = true;
 
-	_engine->_actor->setBehaviour(HeroBehaviourType::kBUGGY);
+	// TODO: _engine->_actor->setBehaviour(HeroBehaviourType::kBUGGY);
 
 	// Switch Buggy Scenario to NoBody.
 	_engine->_actor->initBody(BodyType::btNone, NUM_BUGGY);
@@ -155,14 +154,13 @@ void Buggy::takeBuggy() {
 
 	ptrobj->SampleVolume = 20;
 
-	ParmSampleVolume = ptrobj->SampleVolume;
+	// TODO: ParmSampleVolume = ptrobj->SampleVolume;
 
 	Gear = 0;
 	TimerGear = 0;
 
-	ptrobj->SampleAlways = _engine->_sound->playSample(SAMPLE_BUGGY, 4096, 0, 0,
-										   ptrobj->_pos.x, ptrobj->_pos.y, ptrobj->_pos.z);
-#endif
+	// TODO: ptrobj->SampleAlways = _engine->_sound->playSample(SAMPLE_BUGGY, 4096, 0, 0,
+	//    ptrobj->_posObj.x, ptrobj->_posObj.y, ptrobj->_posObj.z);
 }
 
 #if 0
@@ -188,16 +186,16 @@ void Buggy::leaveBuggy(HeroBehaviourType behaviour) {
 		ptrobj->SampleAlways = 0;
 	}
 
-	ptb->X = ptrobj->_pos.x;
-	ptb->Y = ptrobj->_pos.y;
-	ptb->Z = ptrobj->_pos.z;
+	ptb->X = ptrobj->_posObj.x;
+	ptb->Y = ptrobj->_posObj.y;
+	ptb->Z = ptrobj->_posObj.z;
 	ptb->Beta = ptrobj->_beta;
-	ptb->Cube = _engine->_scene->_currentSceneIdx;
+	ptb->Cube = _engine->_scene->_numCube;
 
 	// TODO: ObjectClear(ptrobj);
 
 	ptrobj->_workFlags.bMANUAL_INTER_FRAME = 0;
-	ptrobj->_staticFlags.bHasZBuffer = 0;
+	ptrobj->_flags.bHasZBuffer = 0;
 
 	_engine->_actor->initBody(BodyType::btTunic, OWN_ACTOR_SCENE_INDEX);
 
@@ -207,9 +205,9 @@ void Buggy::leaveBuggy(HeroBehaviourType behaviour) {
 
 	ptrobj = _engine->_scene->getActor(NUM_BUGGY);
 
-	ptrobj->_pos.x = ptb->X;
-	ptrobj->_pos.y = ptb->Y;
-	ptrobj->_pos.z = ptb->Z;
+	ptrobj->_posObj.x = ptb->X;
+	ptrobj->_posObj.y = ptb->Y;
+	ptrobj->_posObj.z = ptb->Z;
 	ptrobj->_beta = ptb->Beta;
 
 	ptrobj->_brickSound = _engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->_brickSound;
@@ -221,6 +219,105 @@ void Buggy::leaveBuggy(HeroBehaviourType behaviour) {
 	// Search for a free position for Twinsen nearby.
 	_engine->_actor->posObjectAroundAnother(NUM_BUGGY, OWN_ACTOR_SCENE_INDEX);
 }
+
+#if 0
+
+struct T_HALF_POLY {
+	uint32 Bank : 4;       // coul bank poly
+	uint32 TexFlag : 2;    // flag texture 00 rien 01 triste 10 flat 11 gouraud
+	uint32 PolyFlag : 2;   // flag poly 00 rien 01 flat 10 gouraud 11 dither
+	uint32 SampleStep : 4; // sample pas twinsen
+	uint32 CodeJeu : 4;    // code jeu
+	uint32 Sens : 1;       // sens diagonale
+	uint32 Col : 1;
+	uint32 Dummy : 1;
+	uint32 IndexTex : 13; // index texture 8192
+}; // 1 long
+
+struct T_HALF_TEX {
+	uint16 Tx0;
+	uint16 Ty0;
+	uint16 Tx1;
+	uint16 Ty1;
+	uint16 Tx2;
+	uint16 Ty2;
+}; // 2 Longs
+
+int32 CalculAltitudeObjet(int32 x, int32 z, int32 cj) {
+	int32 y0, y1, y2, y3;
+	int32 dx, dz;
+	int32 dz0, dz1;
+
+	dx = x >> 9; // div512
+	dz = z >> 9; // div512
+
+	if ((dx < 0) || (dx > 63))
+		return -1;
+	if ((dz < 0) || (dz > 63))
+		return -1;
+
+	x &= 511;
+	z &= 511;
+
+	dz0 = dz * 65;
+	dz1 = dz0 + 65;
+
+	//---------------------------------------------------------------
+	if (cj == -1) {
+		T_HALF_POLY *mappoly = &MapPolyGround[dz * 64 * 2 + dx * 2];
+
+		if (mappoly->Sens == 0) // poly séparé par ligne reliant point 0 et 2
+		{
+			if (x >= z) // poly de droite
+			{
+				mappoly++;
+			}
+		} else // poly séparé par ligne reliant point 1 et 3
+		{
+			if (511 - x <= z) // poly de droite
+			{
+				mappoly++;
+			}
+		}
+
+		cj = (uint8)mappoly->CodeJeu;
+	}
+	//--------------------------------------------------------------
+
+	y0 = MapSommetY[dz0 + dx];
+	y1 = MapSommetY[dz1 + dx];
+	y2 = MapSommetY[dz1 + (dx + 1)];
+	y3 = MapSommetY[dz0 + (dx + 1)];
+
+	if (cj == CJ_FOOT_WATER OR cj == CJ_WATER) {
+		uint8 *i = &MapIntensity[dz0 + dx];
+
+		y0 += (i[0] >> 4) * -200;
+		y1 += (i[65] >> 4) * -200;
+		y2 += (i[65 + 1] >> 4) * -200;
+		y3 += (i[1] >> 4) * -200;
+	}
+	if (MapPolyGround[dz * 64 * 2 + dx * 2].Sens == 0) // poly séparé par ligne reliant point 0 et 2
+	{
+		if (x < z) // poly de gauche
+		{
+			return (y0 + ((y1 - y0) * z + (y2 - y1) * x) / 512);
+		} else // poly de droite
+		{
+			return (y0 + ((y3 - y0) * x + (y2 - y3) * z) / 512);
+		}
+	} else // poly séparé par ligne reliant point 1 et 3
+	{
+		if (511 - x > z) // poly de gauche
+		{
+			return (y0 + ((y3 - y0) * x + (y1 - y0) * z) / 512);
+		} else // poly de droite
+		{
+			return (y1 + ((y2 - y1) * x + (y3 - y2) * (511 - z)) / 512);
+		}
+	}
+}
+#endif
 
 void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 #if 0
@@ -236,16 +333,16 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// Trick to avoid crushing the groups in AffOneObject().
 	ObjectSetInterFrame(ptb3d);
 
-	if (ptrobj->_workFlags.bIsFalling || ptrobj->_workFlags.bUnk1000) {
+	if (ptrobj->_workFlags.bIsFalling || ptrobj->_workFlags.bANIM_MASTER_GRAVITY) {
 		return;
 	}
 
 	LongRotate(0, ptb->SpeedInc * 1024, ptb3d->Beta);
-	Nxw = ptb3d->X + X0 / 1024;
-	Nzw = ptb3d->Z + Z0 / 1024;
+	ptrobj->_processActor.x = ptb3d->X + X0 / 1024;
+	ptrobj->_processActor.z = ptb3d->Z + Z0 / 1024;
 
 	// Ideal altitude
-	yw = CalculAltitudeObjet(Nxw, Nzw, -1); // Ground Y for XZ
+	yw = CalculAltitudeObjet(ptrobj->_processActor.x, ptrobj->_processActor.z, -1); // Ground Y for XZ
 
 	// test altitude #2: Forbidden triangles
 
@@ -259,8 +356,8 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// front right wheel
 
 	LongRotate(-400, 400, ptb3d->Beta);
-	x = Nxw + X0;
-	z = Nzw + Z0;
+	x = ptrobj->_processActor.x + X0;
+	z = ptrobj->_processActor.z + Z0;
 	y = yw;
 
 	if (x >= 0 && x < 32768 && z >= 0 && z < 32768) {
@@ -283,8 +380,8 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// front left wheel
 
 	LongRotate(400, 400, ptb3d->Beta);
-	x = Nxw + X0;
-	z = Nzw + Z0;
+	x = ptrobj->_processActor.x + X0;
+	z = ptrobj->_processActor.z + Z0;
 	y = yw;
 
 	if (x >= 0 && x < 32768 && z >= 0 && z < 32768) {
@@ -307,8 +404,8 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// back left wheel
 
 	LongRotate(400, -350, ptb3d->Beta);
-	x = Nxw + X0;
-	z = Nzw + Z0;
+	x = ptrobj->_processActor.x + X0;
+	z = ptrobj->_processActor.z + Z0;
 	y = yw;
 
 	if (x >= 0 && x < 32768 && z >= 0 && z < 32768) {
@@ -331,8 +428,8 @@ void Buggy::doAnimBuggy(ActorStruct *ptrobj) {
 	// back right wheel
 
 	LongRotate(-400, -350, ptb3d->Beta);
-	x = Nxw + X0;
-	z = Nzw + Z0;
+	x = ptrobj->_processActor.x + X0;
+	z = ptrobj->_processActor.z + Z0;
 	y = yw;
 
 	if (x >= 0 && x < 32768 && z >= 0 && z < 32768) {
@@ -434,7 +531,7 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 			_engine->_actor->initBody(BodyType::btMageTir, OWN_ACTOR_SCENE_INDEX);
 		}
 
-		_engine->_animations->initAnim(GEN_ANIM_LANCE, AnimType::kAnimationTypeRepeat, OWN_ACTOR_SCENE_INDEX);
+		_engine->_animations->initAnim(AnimationTypes::kThrowBall, AnimType::kAnimationTypeRepeat, OWN_ACTOR_SCENE_INDEX);
 
 		/* control direction pendant Aiming */
 		if (!ptrobj->_workFlags.bIsRotationByAnim) {
@@ -455,7 +552,7 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 		}
 	}
 
-	if (!flagattack && !ptrobj->_workFlags.bIsFalling && !ptrobj->_workFlags.bUnk1000) {
+	if (!flagattack && !ptrobj->_workFlags.bIsFalling && !ptrobj->_workFlags.bANIM_MASTER_GRAVITY) {
 		_engine->_movements->clearRealAngle(ptrobj);
 
 		if (_engine->_movements->_lastJoyFlag && (((Input & I_JOY) != LastMyJoy) || ((Input & I_FIRE) != LastMyFire))) {
@@ -487,7 +584,7 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 		}
 	}
 
-	if (!ptrobj->_workFlags.bIsFalling && !ptrobj->_workFlags.bUnk1000) {
+	if (!ptrobj->_workFlags.bIsFalling && !ptrobj->_workFlags.bANIM_MASTER_GRAVITY) {
 		// check speed command
 		if ((Input & I_UP) // accelerating
 			&& !flagattack) {
@@ -559,7 +656,7 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 			rotlevel = 0;
 		}
 
-		if (ptrobj->_staticFlags & SKATING) {
+		if (ptrobj->_staticFlags.bSKATING) {
 			ptb->Speed = 3000;
 			speedinc = ptb->Speed * deltatimer / 1000;
 		} else {
@@ -587,17 +684,17 @@ void Buggy::moveBuggy(ActorStruct *ptrobj) {
 
 		switch (Gear) {
 		case -1:
-			pitch = _engine->_collision->boundRuleThree(3000, MAX_SAMPLE_PITCH2, MAX_SPEED, ABS(ptb->Speed));
+			pitch = boundRuleThree(3000, MAX_SAMPLE_PITCH2, MAX_SPEED, ABS(ptb->Speed));
 			break;
 
 		case 0:
-			pitch = _engine->_collision->boundRuleThree(3000, MAX_SAMPLE_PITCH, MAX_SPEED, ABS(ptb->Speed));
+			pitch = boundRuleThree(3000, MAX_SAMPLE_PITCH, MAX_SPEED, ABS(ptb->Speed));
 			if (pitch >= MAX_SAMPLE_PITCH)
 				TimerGear = 1;
 			break;
 
 		case 1:
-			pitch = _engine->_collision->boundRuleThree(MAX_SAMPLE_PITCH2, MIN_SAMPLE_PITCH2, TEMPO_GEAR, TimerGear - TimerRefHR);
+			pitch = boundRuleThree(MAX_SAMPLE_PITCH2, MIN_SAMPLE_PITCH2, TEMPO_GEAR, TimerGear - TimerRefHR);
 			break;
 
 		default:

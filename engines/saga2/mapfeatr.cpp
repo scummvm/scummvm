@@ -50,7 +50,7 @@ namespace Saga2 {
         new CStaticMapFeature(TilePoint(u,v,0),0,n,STARGATE_COLOR))
 
 /* ===================================================================== *
-   Map feature list maintainence
+   Map feature list maintenance
  * ===================================================================== */
 
 // ------------------------------------------------------------------------

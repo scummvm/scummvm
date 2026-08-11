@@ -853,6 +853,8 @@ void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
 	_hScript = hScript;
 	_hSegment = hSegment;
 	_filename = fileName;
+	_file.close();
+	_file.open(fileName);
 
 	// Start scene with music not dimmed
 	_dimmed = false;
@@ -968,9 +970,8 @@ void PCMMusicPlayer::fadeOutIteration() {
 	_vm->_mixer->setChannelVolume(_handle, _fadeOutVolume);
 }
 
-Common::MemoryReadStream *readSampleData(const Common::Path &filename, uint32 sampleOffset, uint32 sampleLength) {
-	Common::File file;
-	if (!file.open(filename))
+Common::MemoryReadStream *readSampleData(const Common::Path &filename, Common::File &file, uint32 sampleOffset, uint32 sampleLength) {
+	if (!file.isOpen())
 		error(CANNOT_FIND_FILE, filename.toString().c_str());
 
 	file.seek(sampleOffset);
@@ -1009,7 +1010,7 @@ void PCMMusicPlayer::loadADPCMMusicFromSegment(int segmentNum) {
 			"offset %d (script %d.%d)",
 			sampleCLength, sampleOffset, _scriptNum, _scriptIndex - 1);
 
-	Common::SeekableReadStream *sampleStream = readSampleData(_filename, sampleOffset, sampleCLength);
+	Common::SeekableReadStream *sampleStream = readSampleData(_filename, _file, sampleOffset, sampleCLength);
 
 	delete _curChunk;
 	_curChunk = new Tinsel8_ADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength, 22050, 1, 32);
@@ -1024,7 +1025,7 @@ void PCMMusicPlayer::loadMP3MusicFromSegment(int segmentNum) {
 #ifdef USE_MAD
 	MusicSegmentNoir *musicSegments = (MusicSegmentNoir *)_vm->_handle->LockMem(_hSegment);
 
-	Common::SeekableReadStream *sampleStream = readSampleData(_filename, musicSegments[segmentNum].sampleOffset,
+	Common::SeekableReadStream *sampleStream = readSampleData(_filename, _file, musicSegments[segmentNum].sampleOffset,
 			musicSegments[segmentNum].sampleLength);
 
 	delete _curChunk;

@@ -23,10 +23,12 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
 #include "wage/wage.h"
+#include "wage/detection.h"
 
 namespace Wage {
 
@@ -40,11 +42,37 @@ const char *WageEngine::getGameFile() const {
 
 } // End of namespace Wage
 
-class WageMetaEngine : public AdvancedMetaEngine {
+#ifdef USE_TTS
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+	
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+#endif
+
+class WageMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "wage";
 	}
+
+#ifdef USE_TTS
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
+	}
+#endif
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
@@ -61,7 +89,8 @@ bool Wage::WageEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsQuitDialogOverride);
 }
 
 Common::Error WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

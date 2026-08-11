@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/section9/room971.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/m4.h"
 
 namespace M4 {
@@ -45,12 +46,12 @@ const seriesStreamBreak Room971::SERIES2[] = {
 };
 
 const seriesStreamBreak Room971::SERIES3[] = {
-	{   0, "972birds", 3,  80, -1, 1024, 0, 0 },
-	{   1, "972d001",  1, 255, -1,    0, 0, 0 },
-	{  35, "971slam",  2,  80, -1,    0, 0, 0 },
-	{  53, "972run_1", 2, 100, -1,    0, 0, 0 },
-	{ 110, "972dream", 2, 150, -1,    0, 0, 0 },
-	{ 129, nullptr,    0,   0, 56,    0, 0, 0 },
+	{   0, "972birds", 3,  80, -1, 1024, nullptr, 0 },
+	{   1, "972d001",  1, 255, -1,    0, nullptr, 0 },
+	{  35, "971slam",  2,  80, -1,    0, nullptr, 0 },
+	{  53, "972run_1", 2, 100, -1,    0, nullptr, 0 },
+	{ 110, "972dream", 2, 150, -1,    0, nullptr, 0 },
+	{ 129, nullptr,    0,   0, 56,    0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -132,8 +133,8 @@ const seriesStreamBreak Room971::SERIES12[] = {
 };
 
 const seriesStreamBreak Room971::SERIES13[] = {
-	{  0, "984ambi", 3, 60, -1, 1024, 0, 0 },
-	{ 10, "984d001", 1, 255, -1,   0, 0, 0 },
+	{  0, "984ambi", 3, 60, -1, 1024, nullptr, 0 },
+	{ 10, "984d001", 1, 255, -1,   0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -489,12 +490,12 @@ void Room971::daemon() {
 			break;
 
 		case INTERACTIVE_DEMO:
-			_G(game).new_room = 901;
+			_G(game).setRoom(901);
 			player_set_commands_allowed(false);
 			break;
 
 		case WHOLE_GAME:
-			_G(game).new_room = 903;
+			_G(game).setRoom(903);
 			player_set_commands_allowed(false);
 			break;
 

@@ -114,7 +114,6 @@ private:
 	int8 *_wavetableData;
 	InstData *_wavetablePtrs;
 
-	void updateProc();
 	void updateMusicIndy();
 	void updateMusicLoom();
 	void updateSounds();

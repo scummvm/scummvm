@@ -260,6 +260,9 @@ bool SystemUI::askForCommand(Common::String &commandText) {
 	bool previousEditState = _text->inputGetEditStatus();
 	byte previousEditCursor = _text->inputGetCursorChar();
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	_text->drawMessageBox(_textEnterCommand, 0, 36, true);
 
 	_text->inputEditOn();
@@ -284,7 +287,7 @@ bool SystemUI::askForCommand(Common::String &commandText) {
 		_text->inputEditOff();
 	}
 
-	_text->closeWindow();
+	_text->closeWindow(false);
 
 	if (!_text->stringWasEntered()) {
 		// User cancelled? exit now
@@ -454,6 +457,9 @@ int16 SystemUI::askForSavedGameSlot(const char *slotListText) {
 	_text->drawMessageBox(slotListText, messageBoxHeight, 34, true);
 
 	drawSavedGameSlots();
+#ifdef USE_TTS
+	_vm->_queueNextText = true;
+#endif
 	drawSavedGameSlotSelector(true);
 
 	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT);
@@ -605,8 +611,7 @@ void SystemUI::createSavedGameDisplayText(char *destDisplayText, const char *act
 void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot) {
 	SavedGameSlotIdArray slotIdArray;
 	int16 lastSlotId = -1;
-	int16 curSlotId = 0;
-	int16 loopSlotId = 0;
+	int16 loopSlotId;
 	SystemUISavedGameEntry savedGameEntry;
 	Common::String saveDescription;
 	uint32         saveDate = 0;
@@ -623,12 +628,7 @@ void SystemUI::readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot)
 	slotIdArray = _vm->getSavegameSlotIds();
 	slotIdArray.push_back(SYSTEMUI_SAVEDGAME_MAXIMUM_SLOTS); // so that the loop will process all slots
 
-	SavedGameSlotIdArray::iterator it;
-	SavedGameSlotIdArray::iterator end = slotIdArray.end();
-
-	for (it = slotIdArray.begin(); it != end; ++it) {
-		curSlotId = *it;
-
+	for (auto &curSlotId : slotIdArray) {
 		assert(curSlotId > lastSlotId); // safety check
 
 		if (curSlotId == 0) {
@@ -789,6 +789,15 @@ void SystemUI::drawSavedGameSlotSelector(bool active) {
 	}
 	if (active) {
 		_text->displayTextInsideWindow(arrow, windowRow, column);
+
+#ifdef USE_TTS
+		if (_vm->_queueNextText) {
+			_vm->sayText(_savedGameArray[_savedGameSelectedSlotNr].displayText, Common::TextToSpeechManager::QUEUE);
+			_vm->_queueNextText = false;
+		} else {
+			_vm->sayText(_savedGameArray[_savedGameSelectedSlotNr].displayText, Common::TextToSpeechManager::INTERRUPT);
+		}
+#endif
 	} else {
 		_text->displayTextInsideWindow(" ", windowRow, column);
 	}

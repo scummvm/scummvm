@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * String resource managment routines
+ * String resource management routines
  */
 
 #ifndef TINSEL_STRRES_H

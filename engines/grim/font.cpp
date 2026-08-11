@@ -300,9 +300,11 @@ int BitmapFont::getKernedStringLength(const Common::String &text) const {
 
 int BitmapFont::getBitmapStringLength(const Common::String &text) const {
 	int result = 0;
-	for (uint32 i = 0; i < text.size(); ) {
-		uint32 ch = getNextChar(text, i);
-		result += getCharKernedWidth(ch) + getCharStartingCol(ch);
+	const uint size = text.size();
+	for (uint32 i = 0; i < size; ) {
+		const uint32 ch = getNextChar(text, i);
+		result += getCharStartingCol(ch);
+		result += (i >= size) ? getCharBitmapWidth(ch) : getCharKernedWidth(ch);
 	}
 	return result;
 }
@@ -378,7 +380,6 @@ void FontTTF::restoreState(SaveGame *state) {
 		stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 		loadTTF(fname, stream, size);
 	}
-	delete stream;
 }
 
 void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLine,
@@ -420,15 +421,30 @@ void FontTTF::loadTTF(const Common::String &filename, Common::SeekableReadStream
 	_filename = filename;
 	_size = size;
 #ifdef USE_FREETYPE2
-	_font = Graphics::loadTTFFont(*data, size);
+	_font = Graphics::loadTTFFont(data, DisposeAfterUse::YES, size);
 #else
 	_font = nullptr;
 #endif
+	_isUnicode = false;
+}
+
+void FontTTF::loadTTFFromArchive(const Common::String &filename, int size) {
+	_filename = filename;
+	_size = size;
+#ifdef USE_FREETYPE2
+	_font = Graphics::loadTTFFontFromArchive(filename, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight);
+#else
+	_font = nullptr;
+#endif
+	_isUnicode = true;
 }
 
 int FontTTF::getKernedStringLength(const Common::String &text) const {
 	if (g_grim->getGameLanguage() == Common::KO_KOR) {
 		return _font->getStringWidth(convertToU32String(text.c_str(), Common::kWindows949));
+	}
+	if (_isUnicode) {
+		return _font->getStringWidth(text.decode(Common::CodePage::kUtf8));
 	}
 	return _font->getStringWidth(text);
 }
@@ -442,7 +458,13 @@ void FontTTF::render(Graphics::Surface &surface, const Common::String &currentLi
 		surface.create(width, height, pixelFormat);
 		surface.fillRect(Common::Rect(0, 0, width, height), colorKey);
 		_font->drawString(&surface, u32CurrentLine, 0, 0, width, 0xFFFFFFFF);
+	} else if (_isUnicode) {
+		Common::Rect bbox = _font->getBoundingBox(currentLine.decode(Common::CodePage::kUtf8));
 
+		surface.create(bbox.right, bbox.bottom, pixelFormat);
+		surface.fillRect(Common::Rect(0, 0, bbox.right, bbox.bottom), colorKey);
+
+		_font->drawString(&surface, currentLine.decode(Common::CodePage::kUtf8), 0, 0, bbox.right, 0xFFFFFFFF);
 	} else {
 		Common::Rect bbox = _font->getBoundingBox(currentLine);
 

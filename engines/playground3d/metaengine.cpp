@@ -23,11 +23,15 @@
 
 #include "common/system.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "engines/advancedDetector.h"
 
 #include "playground3d/playground3d.h"
 
-class Playground3dMetaEngine : public AdvancedMetaEngine {
+class Playground3dMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "playground3d";
@@ -40,6 +44,34 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override {
 		return false;
+	}
+
+	Common::KeymapArray initKeymaps(const char *target) const override {
+		Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "playground3d", Common::U32String("Default keymappings"));
+
+		Common::Action *act;
+
+		// We intentionally do not translate these
+		act = new Common::Action(Common::kStandardActionLeftClick, Common::U32String("Switch test"));
+		act->setCustomEngineActionEvent(Playground3d::kActionSwitchTest);
+		act->addDefaultInputMapping("MOUSE_LEFT");
+		act->addDefaultInputMapping("JOY_A");
+		keymap->addAction(act);
+
+		act = new Common::Action("FOG", Common::U32String("Enable / Disable fog"));
+		act->setCustomEngineActionEvent(Playground3d::kActionEnableFog);
+		act->addDefaultInputMapping("f");
+		act->addDefaultInputMapping("JOY_X");
+		keymap->addAction(act);
+
+		act = new Common::Action("SCISSOR", Common::U32String("Enable / Disable scissor"));
+		act->setCustomEngineActionEvent(Playground3d::kActionEnableScissor);
+		act->addDefaultInputMapping("s");
+		act->addDefaultInputMapping("JOY_Y");
+		keymap->addAction(act);
+
+		Common::KeymapArray keymaps = { keymap };
+		return keymaps;
 	}
 };
 

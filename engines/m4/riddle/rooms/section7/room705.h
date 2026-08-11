@@ -33,8 +33,39 @@ public:
 	Room705() : Room() {}
 	~Room705() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	void conv705a();
+	void conv705b();
+	void playCheckBrochureAnim(int32 trigger, const char *digiName);
+	void useWheelOnLeftNiche(int32 trigger, int val1);
+	void useWheelOnRightNiche(int32 trigger, int val1);
+
+	int32 _field60_mode = 0;
+	int32 _field64_should = 0;
+
+	int32 _705Eye1aSeries = 0;
+	int32 _705Eye4aSeries = 0;
+	int32 _705Monk1Series = 0;
+	int32 _705Monk2Series = 0;
+	int32 _705Monk3Series = 0;
+	int32 _705Monk4Series = 0;
+	int32 _705RipGoesUpStairsSeries = 0;
+	int32 _ripChecksBrochureSeries = 0;
+	int32 _ripGoesDownStairsSeries = 0;
+	int32 _ripLooksDownSeries = 0;
+	int32 _ripTrekMedReachPos1Series = 0;
+
+	machine *_leftWheelMach = nullptr;
+	machine *_monkMach = nullptr;
+	machine *_rightWheelMach = nullptr;
+	machine *_ripStairsMach = nullptr;
+
 };
 
 } // namespace Rooms

@@ -21,15 +21,20 @@
 
 #include "twine/parser/entity.h"
 #include "common/stream.h"
+#include "twine/resources/resources.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
-bool EntityData::loadBody(Common::SeekableReadStream &stream) {
+bool EntityData::loadBody(Common::SeekableReadStream &stream, bool lba1) {
 	EntityBody body;
 	body.index = stream.readByte();
-	const int32 pos = stream.pos();
+	const int64 pos = stream.pos();
 	uint8 size = stream.readByte();
 	body.hqrBodyIndex = (int16)stream.readUint16LE();
+	if (!body.body.loadFromHQR(TwineResource(Resources::HQR_BODY_FILE, body.hqrBodyIndex), lba1)) {
+		error("Failed to load body with index: %i", body.hqrBodyIndex);
+	}
 	const uint8 numActions = stream.readByte();
 	for (uint8 i = 0U; i < numActions; ++i) {
 		if ((ActionType)stream.readByte() == ActionType::ACTION_ZV) {
@@ -47,10 +52,14 @@ bool EntityData::loadBody(Common::SeekableReadStream &stream) {
 	return !stream.err();
 }
 
-bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
+bool EntityData::loadAnim(Common::SeekableReadStream &stream, bool lba1) {
 	EntityAnim anim;
-	anim.animation = (AnimationTypes)stream.readByte();
-	const int32 pos = stream.pos();
+	if (lba1) {
+		anim.animation = (AnimationTypes)stream.readByte();
+	} else {
+		anim.animation = (AnimationTypes)stream.readUint16LE();
+	}
+	const int64 pos = stream.pos();
 	uint8 size = stream.readByte();
 	anim.animIndex = stream.readSint16LE();
 	const uint8 numActions = stream.readByte();
@@ -82,6 +91,11 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 			action.animFrame = stream.readByte();
 			action.sampleIndex = stream.readSint16LE();
 			action.repeat = stream.readSint16LE();
+			if (!lba1) {
+				action.decal = stream.readSint16LE();
+				action.sampleVolume = stream.readByte();
+				action.frequency = stream.readSint16LE();
+			}
 			break;
 		case ActionType::ACTION_THROW_SEARCH:
 			action.animFrame = stream.readByte();
@@ -99,6 +113,7 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 			action.xAngle = ToAngle(stream.readSint16LE());
 			action.yAngle = ToAngle(stream.readSint16LE());
 			action.xRotPoint = stream.readSint16LE();
+			// TODO: does lba2 need a scaling here for xRotPoint?
 			action.extraAngle = ToAngle(stream.readByte());
 			action.strength = stream.readByte();
 			break;
@@ -109,8 +124,12 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 			break;
 		case ActionType::ACTION_SAMPLE_STOP:
 			action.animFrame = stream.readByte();
-			action.sampleIndex = stream.readByte();
-			stream.skip(1);
+			if (lba1) {
+				action.sampleIndex = stream.readByte();
+				stream.skip(1);
+			} else {
+				action.sampleIndex = stream.readUint16LE();
+			}
 			break;
 		case ActionType::ACTION_THROW_3D:
 		case ActionType::ACTION_THROW_3D_ALPHA:
@@ -148,6 +167,106 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 		default:
 			break;
 		}
+		if (!lba1) {
+			switch (action.type) {
+			case ActionType::ACTION_ZV:
+				action.animFrame = stream.readByte();
+				action.bbox.mins.x = stream.readSint16LE();
+				action.bbox.mins.y = stream.readSint16LE();
+				action.bbox.mins.z = stream.readSint16LE();
+				action.bbox.maxs.x = stream.readSint16LE();
+				action.bbox.maxs.y = stream.readSint16LE();
+				action.bbox.maxs.z = stream.readSint16LE();
+				break;
+			case ActionType::ACTION_SUPER_HIT:
+				action.animFrame = stream.readByte();
+				action.strength = stream.readByte();
+				action.superHitX = stream.readSint16LE();
+				action.superHitY = stream.readSint16LE();
+				action.superHitZ = stream.readSint16LE();
+				action.sizeSuperHit = stream.readSint16LE();
+				break;
+			case ActionType::ACTION_THROW_OBJ_3D:
+				action.animFrame = stream.readByte();
+				action.distanceX = stream.readSint16LE();
+				action.distanceY = stream.readSint16LE();
+				action.distanceZ = stream.readSint16LE();
+				action.spriteIndex = stream.readByte();
+				action.xAngle = ToAngle(stream.readSint16LE());
+				action.yAngle = ToAngle(stream.readSint16LE());
+				action.xRotPoint = stream.readSint16LE();
+				action.extraAngle = ToAngle(stream.readByte());
+				action.strength = stream.readByte();
+				break;
+			case ActionType::ACTION_NEW_SAMPLE:
+				action.animFrame = stream.readByte();
+				action.sampleIndex = stream.readSint16LE();
+				action.decal = stream.readSint16LE();
+				action.sampleVolume = stream.readByte();
+				action.frequency = stream.readSint16LE();
+				break;
+			case ActionType::ACTION_THROW_DART:
+				action.animFrame = stream.readByte();
+				action.distanceY = stream.readSint16LE();
+				action.xAngle = ToAngle(stream.readSint16LE());
+				action.speed = stream.readSint16LE();
+				action.weight = stream.readSByte();
+				break;
+			case ActionType::ACTION_SHIELD:
+				action.animFrame = stream.readByte();
+				action.lastAnimFrame = stream.readByte();
+				break;
+			case ActionType::ACTION_FLOW_3D:
+			case ActionType::ACTION_THROW_3D_CONQUE:
+				action.animFrame = stream.readByte();
+				action.xAngle = ToAngle(stream.readSint16LE());
+				action.yHeight = stream.readSint16LE();
+				action.yAngle = ToAngle(stream.readSint16LE());
+				action.spriteIndex = stream.readByte();
+				break;
+			case ActionType::ACTION_IMPACT:
+			case ActionType::ACTION_RENVOYABLE:
+				action.animFrame = stream.readByte();
+				action.strength = stream.readSint16LE();
+				break;
+			case ActionType::ACTION_SCALE:
+				action.animFrame = stream.readByte();
+				action.scale = stream.readSint32LE();
+				break;
+			case ActionType::ACTION_IMPACT_3D:
+				action.animFrame = stream.readByte();
+				action.xAngle = ToAngle(stream.readSint16LE());
+				action.yHeight = stream.readSint16LE();
+				action.yAngle = ToAngle(stream.readSint16LE());
+				action.spriteIndex = stream.readSint16LE();
+				break;
+			case ActionType::ACTION_THROW_MAGIC_EXTRA:
+				action.animFrame = stream.readByte();
+				action.pointIndex = stream.readSint16LE();
+				action.spriteIndex = stream.readByte();
+				action.xAngle = ToAngle(stream.readSint16LE());
+				action.speed = stream.readSint16LE();
+				action.weight = stream.readSByte();
+				break;
+			case ActionType::ACTION_ZV_ANIMIT:
+			case ActionType::ACTION_RENVOIE:
+			case ActionType::ACTION_TRANSPARENT:
+			case ActionType::ACTION_SAMPLE_MAGIC:
+			case ActionType::ACTION_LEFT_JUMP:
+			case ActionType::ACTION_RIGHT_JUMP:
+			case ActionType::ACTION_THROW_FOUDRE:
+				action.animFrame = stream.readByte();
+				/* empty */
+				break;
+			case ActionType::ACTION_PATH:
+			case ActionType::ACTION_FLOW:
+			default:
+				break;
+			}
+		}
+		if (action.type > ActionType::ACTION_THROW_FOUDRE) {
+			error("Unknown action type %d", (int)action.type);
+		}
 		anim._actions.push_back(action);
 	}
 	_animations.push_back(anim);
@@ -165,11 +284,11 @@ bool EntityData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	do {
 		const uint8 opcode = stream.readByte();
 		if (opcode == 1) {
-			if (!loadBody(stream)) {
+			if (!loadBody(stream, lba1)) {
 				return false;
 			}
 		} else if (opcode == 3) {
-			if (!loadAnim(stream)) {
+			if (!loadAnim(stream, lba1)) {
 				return false;
 			}
 		} else if (opcode == 0xFF) {
@@ -180,8 +299,8 @@ bool EntityData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	return true;
 }
 
-const Common::Array<EntityAnim::Action>* EntityData::getActions(AnimationTypes animation) const {
-	for (const EntityAnim& anim : _animations) {
+const Common::Array<EntityAnim::Action> *EntityData::getActions(AnimationTypes animation) const {
+	for (const EntityAnim &anim : _animations) {
 		if (anim.animation == animation) {
 			if (anim._actions.empty()) {
 				return nullptr;
@@ -192,8 +311,17 @@ const Common::Array<EntityAnim::Action>* EntityData::getActions(AnimationTypes a
 	return nullptr;
 }
 
-const EntityBody* EntityData::getBody(const int index) const {
-	for (const EntityBody& body : _bodies) {
+BodyData &EntityData::getBody(int index) {
+	for (EntityBody &body : _bodies) {
+		if (body.index == index) {
+			return body.body;
+		}
+	}
+	error("Could not find body for index: %i", index);
+}
+
+const EntityBody *EntityData::getEntityBody(const int index) const {
+	for (const EntityBody &body : _bodies) {
 		if (body.index == index) {
 			return &body;
 		}
@@ -202,7 +330,7 @@ const EntityBody* EntityData::getBody(const int index) const {
 }
 
 int32 EntityData::getAnimIndex(AnimationTypes animation) const {
-	for (const EntityAnim& anim : _animations) {
+	for (const EntityAnim &anim : _animations) {
 		if (anim.animation == animation) {
 			return anim.animIndex;
 		}

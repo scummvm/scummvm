@@ -46,9 +46,6 @@ struct DependencyRecord;
 
 // The class that handles ActionRecords and their execution
 class ActionManager {
-	friend class Nancy::State::Scene;
-	friend class Nancy::NancyConsole;
-
 public:
 	static const byte kCursInvHolding			= 0;
 	static const byte kCursInvNotHolding		= 1;
@@ -65,22 +62,24 @@ public:
 	void addNewActionRecord(Common::SeekableReadStream &inputData);
 	Common::Array<ActionRecord *> &getActionRecords() { return _records; }
 	ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
-	void clearActionRecords();
+	void clearActionRecords(bool nextIsNoArt = false);
 
 	void onPause(bool pause);
 
 	void synchronize(Common::Serializer &serializer);
 
+	static ActionRecord *createAndLoadNewRecord(Common::SeekableReadStream &inputData);
+
+	Common::Array<ActionRecord *> _records;
+
 protected:
 	static ActionRecord *createActionRecord(uint16 type, Common::SeekableReadStream *recordStream = nullptr);
-	static ActionRecord *createAndLoadNewRecord(Common::SeekableReadStream &inputData);
 
 	void synchronizeMovieWithSound();
 
 	void debugDrawHotspots();
 
-	Common::Array<ActionRecord *> _records;
-	bool _recordsWereExecuted = false; // Used for kDefaultAR dependency
+	bool _previousRecordWasExecuted = false;
 	Common::Array<ActionRecord *> _activatedRecordsThisFrame;
 };
 

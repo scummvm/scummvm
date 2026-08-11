@@ -20,8 +20,9 @@
  */
 
 #include "common/translation.h"
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
-#include "graphics/thumbnail.h"
+#include "backends/keymapper/standard-actions.h"
 #include "graphics/scaler.h"
 
 
@@ -33,7 +34,7 @@
 #include "freescape/detection.h"
 
 
-static const ADExtraGuiOptionsMap optionsList[] = {
+const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_PRERECORDED_SOUNDS,
 		{
@@ -60,7 +61,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_AUTOMATIC_DRILLING,
 		{
 			_s("Automatic drilling"),
-			_s("Allow to succefully drill in any part of the area in Driller"),
+			_s("Allow to successfully drill in any part of the area in Driller"),
 			"automatic_drilling",
 			false,
 			0,
@@ -122,10 +123,68 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_TRAVEL_ROCK,
+		{
+			_s("Enable rock travel"),
+			_s("Enable traveling using a rock shoot at start"),
+			"rock_travel",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_MODERN_MOVEMENT,
+		{
+			_s("Smoother movement"),
+			_s("Use smoother movements instead of discrete steps"),
+			"smooth_movement",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_WASD_CONTROLS,
+		{
+			// I18N: Use modern FPS-style controls: WASD for movement, Shift to run
+			_s("WASD controls"),
+			_s("Use WASD keys for movement and Shift to run"),
+			"wasd_controls",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_OPL_MUSIC,
+		{
+			// I18N: Enable background music using AdLib/OPL2 FM synthesis
+			_s("Backported music from C64 releases (AdLib)"),
+			_s("Enable background music ported from the C64 version using AdLib FM synthesis"),
+			"opl_music",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_AY_MUSIC,
+		{
+			// I18N: Enable background music using AY chip emulation
+			_s("Backported music from C64 releases"),
+			_s("Enable background music ported from the C64 version"),
+			"ay_music",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class FreescapeMetaEngine : public AdvancedMetaEngine {
+class FreescapeMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "freescape";
@@ -147,7 +206,7 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 		*engine = (Engine *)new Freescape::DarkEngine(syst, gd);
 	} else if (Common::String(gd->gameId) == "totaleclipse" || Common::String(gd->gameId) == "totaleclipse2") {
 		*engine = (Engine *)new Freescape::EclipseEngine(syst, gd);
-	} else if (Common::String(gd->gameId) == "castlemaster") {
+	} else if (Common::String(gd->gameId) == "castlemaster" || Common::String(gd->gameId) == "castlemaster2") {
 		*engine = (Engine *)new Freescape::CastleEngine(syst, gd);
 	} else
 		*engine = new Freescape::FreescapeEngine(syst, gd);
@@ -156,17 +215,26 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 }
 
 Common::KeymapArray FreescapeMetaEngine::initKeymaps(const char *target) const {
-	Freescape::FreescapeEngine *engine = (Freescape::FreescapeEngine *)g_engine;
+	using namespace Freescape;
+
+	FreescapeEngine *engine = (Freescape::FreescapeEngine *)g_engine;
 	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "freescape", "Freescape game");
+	Common::Keymap *infoScreenKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "infoscreen-keymap", "Information screen keymapping");
+
 	if (engine)
-		engine->initKeymaps(engineKeyMap, target);
-	return Common::Keymap::arrayOf(engineKeyMap);
+		engine->initKeymaps(engineKeyMap, infoScreenKeyMap, target);
+
+	Common::KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = infoScreenKeyMap;
+
+	return keymaps;
 }
 
 void FreescapeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	Freescape::FreescapeEngine *engine = (Freescape::FreescapeEngine *)g_engine;
 	assert(engine->_savedScreen);
-	Graphics::Surface *scaledSavedScreen = scale(*engine->_savedScreen, kThumbnailWidth, kThumbnailHeight2);
+	Graphics::Surface *scaledSavedScreen = engine->_savedScreen->scale(kThumbnailWidth, kThumbnailHeight2);
 	assert(scaledSavedScreen);
 	thumb.copyFrom(*scaledSavedScreen);
 

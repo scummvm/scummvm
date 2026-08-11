@@ -27,6 +27,7 @@
 #include "m4/core/imath.h"
 #include "m4/fileio/extensions.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Sound {
@@ -48,8 +49,10 @@ void Digi::loadFootstepSounds(const char **names) {
 void Digi::unload_sounds() {
 	_mixer->stopAll();
 
-	for (auto it = _sounds.begin(); it != _sounds.end(); ++it)
+	for (auto it = _sounds.begin(); it != _sounds.end(); ++it) {
+		rtoss(it->_value._filename);
 		free(it->_value._data);
+	}
 
 	_sounds.clear();
 }
@@ -116,6 +119,9 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 	// Assure no prior sound for the channel is playing
 	stop(channel);
 
+	if (!loop)
+		g_engine->drawSubtitle(name);
+
 	// Load in the new sound
 	preload(name, false, room_num);
 	DigiEntry &entry = _sounds[name];
@@ -127,7 +133,7 @@ int32 Digi::play(const Common::String &name, uint channel, int32 vol, int32 trig
 				DisposeAfterUse::NO),
 			loop ? 0 : 1);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &c._soundHandle, stream,
-		-1);
+		-1, vol);
 
 	if (trigger < 0 || trigger > 32767)
 		trigger = -1;
@@ -152,30 +158,17 @@ void Digi::playFootsteps() {
 	}
 }
 
-Common::String Digi::expand_name_2_RAW(const Common::String &name, int32 room_num) {
-	Common::String tempName = f_extension_new(name, "RAW");
-
-	if (!_G(kernel).hag_mode) {
-		if (room_num == -1)
-			room_num = extract_room_num(name);
-
-		return Common::String::format("%d\\%s", room_num, tempName.c_str());
-
-	} else {
-		return tempName;
-	}
-}
-
 void Digi::stop(uint channel, bool calledFromUnload) {
 	assert(channel < 4);
 
 	Channel &c = _channels[channel];
 	if (!c._name.empty()) {
-		Common::String name = c._name;
+		const Common::String name = c._name;
 
 		_mixer->stopHandle(c._soundHandle);
 		c._trigger = -1;
 		c._name.clear();
+		g_engine->clearSubtitle();
 
 		if (!calledFromUnload) {
 			digi_unload(name);
@@ -184,7 +177,7 @@ void Digi::stop(uint channel, bool calledFromUnload) {
 }
 
 void Digi::flush_mem() {
-	// No implementation
+	unload_sounds();
 }
 
 void Digi::read_another_chunk() {
@@ -195,7 +188,7 @@ void Digi::read_another_chunk() {
 
 		// Check if the channel has a sound playing that finished
 		if (c._trigger != -1 && !_mixer->isSoundHandleActive(c._soundHandle)) {
-			int trigger = c._trigger;
+			const int trigger = c._trigger;
 			c._trigger = -1;
 			stop(channel);
 
@@ -213,19 +206,11 @@ void Digi::change_volume(int channel, int vol) {
 	_mixer->setChannelVolume(_channels[channel]._soundHandle, vol);
 }
 
-void Digi::set_overall_volume(int vol) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
-}
-
-int Digi::get_overall_volume() {
-	return _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-}
-
 int32 Digi::ticks_to_play(const char *name, int roomNum) {
 	// Get the file and retrieve it's size
-	Common::String filename = expand_name_2_RAW(name, roomNum);
+	const Common::String filename = expand_name_2_RAW(name, roomNum);
 	SysFile sf(filename);
-	double size = sf.size();
+	const double size = sf.size();
 	sf.close();
 
 	term_message("  digi_ticks_to_play");
@@ -233,6 +218,13 @@ int32 Digi::ticks_to_play(const char *name, int roomNum) {
 	term_message("  size = %f, room = %d", size, roomNum);
 
 	return (int32)floor(size * 0.000090702946 * 60.0);
+}
+
+void Digi::change_panning(int val1, int val2) {
+	if (_G(game).room_id != _panningTodoRoom) {
+		_panningTodoRoom = _G(game).room_id;
+		warning("TODO: digi_change_panning");
+	}
 }
 
 } // namespace Sound
@@ -269,16 +261,12 @@ void digi_change_volume(int channel, int vol) {
 	_G(digi).change_volume(channel, vol);
 }
 
-void digi_set_overall_volume(int vol) {
-	_G(digi).set_overall_volume(vol);
-}
-
-int digi_get_overall_volume() {
-	return _G(digi).get_overall_volume();
-}
-
 int32 digi_ticks_to_play(const char *name, int roomNum) {
 	return _G(digi).ticks_to_play(name, roomNum);
+}
+
+void digi_change_panning(int val1, int val2) {
+	_G(digi).change_panning(val1, val2);
 }
 
 } // namespace M4

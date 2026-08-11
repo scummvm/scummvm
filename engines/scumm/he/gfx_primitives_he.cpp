@@ -22,7 +22,6 @@
 #ifdef ENABLE_HE
 
 #include "common/system.h"
-#include "common/math.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/wiz_he.h"
 
@@ -33,7 +32,7 @@ int Wiz::pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValu
 		return defaultValue;
 	} else {
 		if (_uses16BitColor) {
-			return *(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x);
+			return FROM_LE_16(*(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x));
 		} else {
 			return *(((WizRawPixel8 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x);
 		}
@@ -43,7 +42,7 @@ int Wiz::pgReadPixel(const WizSimpleBitmap *srcBM, int x, int y, int defaultValu
 void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value) {
 	if ((x >= 0) && (y >= 0) && (x < srcBM->bitmapWidth) && (y < srcBM->bitmapHeight)) {
 		if (_uses16BitColor) {
-			*(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = FROM_LE_16(value);
 		} else {
 			*(((WizRawPixel8 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = value;
 		}
@@ -53,7 +52,7 @@ void Wiz::pgWritePixel(WizSimpleBitmap *srcBM, int x, int y, WizRawPixel value) 
 void Wiz::pgClippedWritePixel(WizSimpleBitmap *srcBM, int x, int y, const Common::Rect *clipRectPtr, WizRawPixel value) {
 	if ((x >= clipRectPtr->left) && (y >= clipRectPtr->top) && (x <= clipRectPtr->right) && (y <= clipRectPtr->bottom)) {
 		if (_uses16BitColor) {
-			*(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = value;
+			*(((WizRawPixel16 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = FROM_LE_16(value);
 		} else {
 			*(((WizRawPixel8 *)srcBM->bufferPtr()) + y * srcBM->bitmapWidth + x) = value;
 		}
@@ -251,6 +250,8 @@ void Wiz::pgClippedThickLineDraw(WizSimpleBitmap *destBM, int asx, int asy, int 
 			pgClippedWritePixel(destBM, iCurX, iCurY, clipRectPtr, value);
 		}
 	}
+
+	delete[] aScanLines;
 }
 
 int convertToFixed(int iNumber) {
@@ -666,7 +667,7 @@ void Wiz::pgSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRect, WizSimpl
 				s8 += sw;
 			} else {
 				for (int i = cw; --i >= 0;) {
-					*d16++ = *s16--;
+					*d16++ = FROM_LE_16(*s16--);
 				}
 
 				d16 += dw;
@@ -953,40 +954,42 @@ void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRec
 
 	// Left or right?
 	if (sourceRect->left <= sourceRect->right) {
-		soff = sw - cw;
-		doff = dw - cw;
+		if (!_uses16BitColor && _vm->_game.heversion >= 98 && ((sw >= 0) && ((cw % 4) == 0))) {
+			pgArbitraryTransparentBlitPrim(d8, dw, s8, sw, cw, ch, transparentColor);
+		} else {
+			soff = sw - cw;
+			doff = dw - cw;
 
-		while (--ch >= 0) {
-			if (!_uses16BitColor) {
-				for (int x = cw; --x >= 0;) {
-					value = *s8++;
+			while (--ch >= 0) {
+				if (!_uses16BitColor) {
+					for (int x = cw; --x >= 0;) {
+						value = *s8++;
 
-					if (value != tColor) {
-						*d8++ = (WizRawPixel8)value;
-					} else {
-						d8++;
+						if (value != tColor) {
+							*d8++ = (WizRawPixel8)value;
+						} else {
+							d8++;
+						}
 					}
-				}
 
-				s8 += soff;
-				d8 += doff;
-			} else {
-				for (int x = cw; --x >= 0;) {
-					value = *s16++;
+					s8 += soff;
+					d8 += doff;
+				} else {
+					for (int x = cw; --x >= 0;) {
+						value = FROM_LE_16(*s16++);
 
-					if (value != tColor) {
-						*d16++ = (WizRawPixel16)value;
-					} else {
-						d16++;
+						if (value != tColor) {
+							*d16++ = (WizRawPixel16)value;
+						} else {
+							d16++;
+						}
 					}
-				}
 
-				s16 += soff;
-				d16 += doff;
+					s16 += soff;
+					d16 += doff;
+				}
 			}
-
 		}
-
 	} else {
 		soff = sw + cw;
 		doff = dw - cw;
@@ -1007,7 +1010,7 @@ void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRec
 				d8 += doff;
 			} else {
 				for (int x = cw; --x >= 0;) {
-					value = *s16--;
+					value = FROM_LE_16(*s16--);
 
 					if (value != tColor) {
 						*d16++ = (WizRawPixel16)value;
@@ -1019,6 +1022,91 @@ void Wiz::pgTransparentSimpleBlit(WizSimpleBitmap *destBM, Common::Rect *destRec
 				s16 += soff;
 				d16 += doff;
 			}
+		}
+	}
+}
+
+void Wiz::pgArbitraryTransparentBlitPrim(WizRawPixel8 *dstPtr, int dstStride, WizRawPixel8 *srcPtr, int srcStride, int copyWidth, int copyHeight, int transparentColor) {
+	// Originally from ASM code...
+
+	// Fix the stride for this copy amount...
+	dstStride -= copyWidth;
+	srcStride -= copyWidth;
+
+	// Check to see if there is an odd amount...
+	if ((copyWidth & 3) == 0) {
+		// Width count / 4
+		int groupsOf4 = copyWidth >> 2;
+		if (groupsOf4 == 0)
+			return; // No actual data to transfer...
+
+		for (int y = 0; y < copyHeight; y++) {
+			// Cross off a group of 4 pixels...
+			for (int x = 0; x < groupsOf4; x++) {
+				WizRawPixel8 p0 = srcPtr[0];
+				if (p0 != transparentColor)
+					dstPtr[0] = p0;
+
+				WizRawPixel8 p1 = srcPtr[1];
+				if (p1 != transparentColor)
+					dstPtr[1] = p1;
+
+				WizRawPixel8 p2 = srcPtr[2];
+				if (p2 != transparentColor)
+					dstPtr[2] = p2;
+
+				WizRawPixel8 p3 = srcPtr[3];
+				if (p3 != transparentColor)
+					dstPtr[3] = p3;
+
+				dstPtr += 4;
+				srcPtr += 4;
+			}
+
+			dstPtr += dstStride;
+			srcPtr += srcStride;
+		}
+	} else {
+		// Adjust the counter for the odd copy amount...
+		int oddPixels = copyWidth & 3;
+		int groupsOf4 = copyWidth >> 2;
+
+		if (groupsOf4 == 0)
+			return; // No actual data to transfer...
+
+		for (int y = 0; y < copyHeight; y++) {
+			// Cross off a group of 4 pixels...
+			for (int x = 0; x < groupsOf4; x++) {
+				WizRawPixel8 p0 = srcPtr[0];
+				if (p0 != transparentColor)
+					dstPtr[0] = p0;
+
+				WizRawPixel8 p1 = srcPtr[1];
+				if (p1 != transparentColor)
+					dstPtr[1] = p1;
+
+				WizRawPixel8 p2 = srcPtr[2];
+				if (p2 != transparentColor)
+					dstPtr[2] = p2;
+
+				WizRawPixel8 p3 = srcPtr[3];
+				if (p3 != transparentColor)
+					dstPtr[3] = p3;
+
+				dstPtr += 4;
+				srcPtr += 4;
+			}
+
+			// Get leftover count...
+			for (int x = 0; x < oddPixels; x++) {
+				WizRawPixel8 p = *srcPtr++;
+				if (p != transparentColor)
+					*dstPtr = p;
+				dstPtr++;
+			}
+
+			dstPtr += dstStride;
+			srcPtr += srcStride;
 		}
 	}
 }
@@ -1290,7 +1378,7 @@ void Wiz::pgForwardRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcPtr
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		while (size-- > 0) {
-			*dst16++ = *src16++;
+			*dst16++ = FROM_LE_16(*src16++);
 		}
 	}
 }
@@ -1320,7 +1408,7 @@ void Wiz::pgTransparentForwardRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPi
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		while (size-- > 0) {
-			WizRawPixel16 srcColor = *src16++;
+			WizRawPixel16 srcColor = FROM_LE_16(*src16++);
 
 			if (transparentColor != srcColor) {
 				*dst16++ = srcColor;
@@ -1356,7 +1444,7 @@ void Wiz::pgTransparentBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRaw
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		while (size-- > 0) {
-			WizRawPixel16 srcColor = *src16++;
+			WizRawPixel16 srcColor = FROM_LE_16(*src16++);
 
 			if (transparentColor != srcColor) {
 				*dst16-- = srcColor;
@@ -1380,7 +1468,7 @@ void Wiz::pgBackwardsRemapPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *srcP
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		while (size-- > 0) {
-			*dst16-- = *src16++;
+			*dst16-- = FROM_LE_16(*src16++);
 		}
 	}
 }
@@ -1400,14 +1488,14 @@ void Wiz::pgForwardMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *sr
 
 		while (size-- > 0) {
 			if (_vm->_game.heversion >= 99) {
-				WizRawPixel16 srcColor = *src16++;
+				WizRawPixel16 srcColor = FROM_LE_16(*src16++);
 				WizRawPixel16 dstColor = *dst16;
 
 				*dst16++ = WIZRAWPIXEL_50_50_MIX(
 					WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
 					WIZRAWPIXEL_50_50_PREMIX_COLOR(dstColor));
 			} else {
-				*dst16++ = (*src16++);
+				*dst16++ = FROM_LE_16(*src16++);
 			}
 		}
 	}
@@ -1428,14 +1516,14 @@ void Wiz::pgBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const WizRawPixel *
 
 		while (size-- > 0) {
 			if (_vm->_game.heversion >= 99) {
-				WizRawPixel16 srcColor = *src16++;
+				WizRawPixel16 srcColor = FROM_LE_16(*src16++);
 				WizRawPixel16 dstColor = *dst16;
 
 				*dst16-- = WIZRAWPIXEL_50_50_MIX(
 					WIZRAWPIXEL_50_50_PREMIX_COLOR(srcColor),
 					WIZRAWPIXEL_50_50_PREMIX_COLOR(dstColor));
 			} else {
-				*dst16-- = (*src16++);
+				*dst16-- = FROM_LE_16(*src16++);
 			}
 		}
 	}
@@ -1466,7 +1554,7 @@ void Wiz::pgTransparentForwardMixColorsPixelCopy(WizRawPixel *dstPtr, const WizR
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		while (size-- > 0) {
-			WizRawPixel16 srcColor = *src16++;
+			WizRawPixel16 srcColor = FROM_LE_16(*src16++);
 
 			if (transparentColor != srcColor) {
 				WizRawPixel16 dstColor = *dst16;
@@ -1506,7 +1594,7 @@ void Wiz::pgTransparentBackwardsMixColorsPixelCopy(WizRawPixel *dstPtr, const Wi
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		while (size-- > 0) {
-			WizRawPixel16 srcColor = *src16++;
+			WizRawPixel16 srcColor = FROM_LE_16(*src16++);
 
 			if (transparentColor != srcColor) {
 				WizRawPixel16 dstColor = *dst16;
@@ -1535,7 +1623,7 @@ static void pgBlitForwardSrcArbitraryDstPixelTransfer(Wiz *wiz, WizRawPixel *dst
 		const WizRawPixel16 *src16 = (const WizRawPixel16 *)srcPtr;
 
 		for (int i = 0; i < count; i++) {
-			*dst16 = *src16++;
+			*dst16 = FROM_LE_16(*src16++);
 			dst16 += dstStep;
 		}
 	}
@@ -1566,7 +1654,7 @@ static void pgBlitForwardSrcArbitraryDstTransparentPixelTransfer(Wiz *wiz, WizRa
 		transparentColor = *((const WizRawPixel16 *)userParam);
 
 		for (int i = 0; i < count; i++) {
-			color = *src16++;
+			color = FROM_LE_16(*src16++);
 
 			if (transparentColor != color) {
 				*dst16 = color;
@@ -2009,7 +2097,7 @@ void Wiz::rawPixelMemset(void *dstPtr, int value, size_t count) {
 	if (_uses16BitColor) {
 		WizRawPixel16 *dst16Bit = (WizRawPixel16 *)dstPtr;
 		for (size_t i = 0; i < count; i++)
-			WRITE_LE_UINT16(&dst16Bit[i], value);
+			WRITE_UINT16(&dst16Bit[i], value);
 	} else {
 		WizRawPixel8 *dst8Bit = (WizRawPixel8 *)dstPtr;
 		memset(dst8Bit, value, count);
@@ -2018,7 +2106,7 @@ void Wiz::rawPixelMemset(void *dstPtr, int value, size_t count) {
 
 WizRawPixel Wiz::convert8BppToRawPixel(WizRawPixel value, const WizRawPixel *conversionTable) {
 	if (_uses16BitColor) {
-		return *(((const WizRawPixel16 *)conversionTable) + value);
+		return FROM_LE_16(*(((const WizRawPixel16 *)conversionTable) + value));
 	} else {
 		return value;
 	}
@@ -2039,7 +2127,7 @@ bool Wiz::compareDoPixelStreamsOverlap(const WizRawPixel *a, const WizRawPixel *
 		}
 	} else {
 		for (int i = 0; i < width; i++) {
-			if ((*a16++ != (WizRawPixel16)transparentColor) && (*b16++ != (WizRawPixel16)transparentColor)) {
+			if ((FROM_LE_16(*a16++) != (WizRawPixel16)transparentColor) && (FROM_LE_16(*b16++) != (WizRawPixel16)transparentColor)) {
 				return true;
 			}
 		}

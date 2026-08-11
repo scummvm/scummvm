@@ -66,7 +66,7 @@ class GraphicsMan;
 class ScriptEnv;
 
 enum kDebugChannels {
-	kDebugChannelScript = 1 << 0
+	kDebugChannelScript = 1,
 };
 
 enum ADLAction {
@@ -107,13 +107,13 @@ struct Room {
 
 	byte description;
 	byte connections[IDI_DIR_TOTAL];
-	DataBlockPtr data;
+	Common::DataBlockPtr data;
 	byte picture;
 	byte curPicture;
 	bool isFirstTime;
 };
 
-typedef Common::HashMap<byte, DataBlockPtr> PictureMap;
+typedef Common::HashMap<byte, Common::DataBlockPtr> PictureMap;
 
 typedef Common::Array<byte> Script;
 
@@ -274,7 +274,7 @@ protected:
 	virtual void gameLoop();
 	virtual void loadState(Common::ReadStream &stream);
 	virtual void saveState(Common::WriteStream &stream);
-	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
+	Common::String readString(Common::ReadStream &stream, byte until = 0, const char *key = "") const;
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 	void extractExeStrings(Common::ReadStream &stream, uint16 printAddr, Common::StringArray &strings) const;
 
@@ -297,6 +297,7 @@ protected:
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 	void removeCommand(Commands &commands, uint idx);
 	Command &getCommand(Commands &commands, uint idx);
+	void removeMessage(uint idx);
 	void checkInput(byte verb, byte noun);
 	virtual bool isInputValid(byte verb, byte noun, bool &is_any);
 	virtual bool isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any);
@@ -309,6 +310,8 @@ protected:
 	virtual byte roomArg(byte room) const;
 	virtual void advanceClock() { }
 	void loadDroppedItemOffsets(Common::ReadStream &stream, byte count);
+
+	void stopTextToSpeech() const;
 
 	// Opcodes
 	typedef Common::SharedPtr<Common::Functor1<ScriptEnv &, int> > Opcode;
@@ -400,7 +403,7 @@ protected:
 	// Opcodes
 	Common::Array<Opcode> _condOpcodes, _actOpcodes;
 	// Message strings in data file
-	Common::Array<DataBlockPtr> _messages;
+	Common::Array<Common::DataBlockPtr> _messages;
 	// Picture data
 	PictureMap _pictures;
 	// Dropped item screen offsets

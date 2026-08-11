@@ -236,3 +236,16 @@ That depends on a few factors. Firstly, it has to fit within the scope of ScummV
 ScummVM developers are all volunteers who work on ScummVM in their spare time, solely for fun, and not for profit. Reverse engineering a completely new game without the source code is a long and difficult process. Even with source it can be tedious and time consuming.
 
 Unless you work for a company interested in providing us with source code for one of their classic titles, or want to do the work yourself, please do not ask us to add support for a new game.
+
+3.1.3. Will ScummVM be officially released for consoles? (eg PlayStation, Xbox, Switch, ...)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Unfortunately no, because of licensing issues. There are two important facts at play here:
+
+1. Each console has an associated developer kit (including platform documentation and an SDK) that developers must use to implement games.
+   That developer kit is provided to developers under strict non-disclosure agreements.
+2. By contrast, the ScummVM source code is licensed under the GPL v3 (see section 1.1.2 of this FAQ).
+   The GPL requires that any code integrated with a release of ScummVM (the aforementioned SDK) be made available upon request.
+
+From these facts it follows that anyone releasing a port of ScummVM to a console must either release parts of the SDK upon request (and breach the developer kit NDA) or refuse to release the modified source code and NDA'd parts of the developer kit (and breach the GPL).
+
+Note that "homebrew" SDKs are not affected by this problem as they themselves are released under a free license.

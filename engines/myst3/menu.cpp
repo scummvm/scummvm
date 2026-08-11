@@ -83,10 +83,14 @@ Common::Rect Dialog::getPosition() const {
 	} else {
 		viewport = _vm->_gfx->viewport();
 	}
+	float scale = MIN(
+		viewport.width()  / (float) Renderer::kOriginalWidth,
+		viewport.height() / (float) Renderer::kOriginalHeight
+	);
 
-	Common::Rect screenRect = Common::Rect(_texture->width, _texture->height);
-	screenRect.translate((viewport.width() - _texture->width) / 2,
-			(viewport.height() - _texture->height) / 2);
+	Common::Rect screenRect = Common::Rect(_texture->width * scale, _texture->height * scale);
+	screenRect.translate((viewport.width() - _texture->width * scale) / 2,
+	                     (viewport.height() - _texture->height * scale) / 2);
 	return screenRect;
 }
 
@@ -107,13 +111,24 @@ void ButtonsDialog::loadButtons() {
 	if (!buttonsDesc.isValid())
 		error("Unable to load dialog buttons description");
 
+	Common::Rect viewport;
+	if (_scaled) {
+		viewport = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
+	} else {
+		viewport = _vm->_gfx->viewport();
+	}
+	float scale = MIN(
+		viewport.width()  / (float) Renderer::kOriginalWidth,
+		viewport.height() / (float) Renderer::kOriginalHeight
+	);
+
 	for (uint i = 0; i < 3; i++) {
 		uint32 left = buttonsDesc.getMiscData(i * 4);
 		uint32 top = buttonsDesc.getMiscData(i * 4 + 1);
 		uint32 width = buttonsDesc.getMiscData(i * 4 + 2);
 		uint32 height = buttonsDesc.getMiscData(i * 4 + 3);
-		_buttons[i] = Common::Rect(width, height);
-		_buttons[i].translate(left, top);
+		_buttons[i] = Common::Rect(width * scale, height * scale);
+		_buttons[i].translate(left * scale, top * scale);
 	}
 }
 

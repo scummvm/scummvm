@@ -76,6 +76,8 @@ static const int DRAW_DEPTH_ONLY = 0;
 static const int DRAW_FLAT = 1;
 static const int DRAW_SMOOTH = 2;
 
+struct GLTextureEnv; // defined in zdirtyrect.h
+
 struct Buffer {
 	byte *pbuf;
 	uint *zbuf;
@@ -298,34 +300,35 @@ private:
 
 	FORCEINLINE void stencilOp(bool stencilTestResult, bool depthTestResult, byte *sDst) {
 		int op = !stencilTestResult ? _stencilSfail : !depthTestResult ? _stencilDpfail : _stencilDppass;
-		byte value = *sDst;
+		byte oldValue = *sDst;
+		byte newValue = oldValue;
 		switch (op) {
 		case TGL_KEEP:
 			return;
 		case TGL_ZERO:
-			value = 0;
+			newValue = 0;
 			break;
 		case TGL_REPLACE:
-			value = _stencilRefVal;
+			newValue = _stencilRefVal;
 			break;
 		case TGL_INCR:
-			if (value < 255)
-				value++;
+			if (newValue < 255)
+				newValue++;
 			break;
 		case TGL_INCR_WRAP:
-			value++;
+			newValue++;
 			break;
 		case TGL_DECR:
-			if (value > 0)
-				value--;
+			if (newValue > 0)
+				newValue--;
 			break;
 		case TGL_DECR_WRAP:
-			value--;
+			newValue--;
 			break;
 		case TGL_INVERT:
-			value = ~value;
+			newValue = ~newValue;
 		}
-		*sDst = value & _stencilWriteMask;
+		*sDst = (newValue & _stencilWriteMask) | (oldValue & ~_stencilWriteMask);
 	}
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled>
@@ -356,22 +359,31 @@ private:
 		}
 	}
 
-	template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
+	template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 	void putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
 	                       int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
 	                       int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
-	                       uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx);
+	                       uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx,
+						   bool kStippleEnabled);
 
-	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
+	enum class ColorMode {
+		NoInterpolation,
+		Default, // GL_TEXTURE_ENV_MODE == GL_MODULATE
+		CustomTexEnv
+	};
+
+	template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
 	void putPixelTexture(int fbOffset, const TexelBuffer *texture,
+						 FrameBuffer::ColorMode colorMode,
 	                     uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
 	                     int x, int y, uint &z, int &t, int &s,
 	                     uint &r, uint &g, uint &b, uint &a,
 	                     int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
 	                     uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx);
 
-	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool StippleEnabled, bool kDepthTestEnabled>
-	void putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx);
+	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kDepthTestEnabled>
+	void putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx,
+					   bool stippleEnabled);
 
 
 	template <bool kEnableAlphaTest>
@@ -419,7 +431,7 @@ private:
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc, uint z) {
-		writePixel<kEnableAlphaTest, kBlendingEnabled, false, false>(pixel, aSrc, rSrc, gSrc, bSrc, z, 0.0f, 0, 0, 0);
+		writePixel<kEnableAlphaTest, kBlendingEnabled, kDepthWrite, false>(pixel, aSrc, rSrc, gSrc, bSrc, z, 0.0f, 0, 0, 0);
 	}
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite, bool kFogMode>
@@ -569,13 +581,32 @@ public:
 	void clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 	                 bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue);
 
-	void setScissorRectangle(const Common::Rect &rect) {
-		_clipRectangle = rect;
-		_enableScissor = true;
+	const Common::Rect &getClippingRectangle() const {
+		return _clipRectangle;
 	}
 
-	void resetScissorRectangle() {
-		_enableScissor = false;
+	void setupScissor(bool enable, const int (&scissor)[4], const Common::Rect *clippingRectangle) {
+		_clippingEnabled = enable || clippingRectangle;
+
+		if (enable && clippingRectangle) {
+			_clipRectangle = clippingRectangle->findIntersectingRect(Common::Rect(
+					scissor[0],
+					// all viewport calculations are already flipped upside down
+					_pbufHeight - scissor[1] - scissor[3],
+					scissor[0] + scissor[2],
+					_pbufHeight - scissor[1]));
+		} else if (enable) {
+			_clipRectangle = Common::Rect(
+					scissor[0],
+					// all viewport calculations are already flipped upside down
+					_pbufHeight - scissor[1] - scissor[3],
+					scissor[0] + scissor[2],
+					_pbufHeight - scissor[1]);
+		} else if (clippingRectangle) {
+			_clipRectangle = *clippingRectangle;
+		} else {
+			_clipRectangle = Common::Rect(0, 0, _pbufWidth, _pbufHeight);
+		}
 	}
 
 	void enableBlending(bool enable) {
@@ -624,7 +655,15 @@ public:
 		_polygonStipplePattern = stipple;
 	}
 
-	void setStencilTestFunc(int stencilFunc, int stencilValue, uint stencilMask) {
+	void enableTwoColorStipple(bool enable) {
+		_twoColorStippleEnabled = enable;
+	}
+
+	void setStippleColor(int r, int g, int b) {
+		_stippleColor = RGB_TO_PIXEL(r, g, b);
+	}
+
+	void setStencilTestFunc(int stencilFunc, byte stencilValue, byte stencilMask) {
 		_stencilTestFunc = stencilFunc;
 		_stencilRefVal = stencilValue;
 		_stencilMask = stencilMask;
@@ -652,6 +691,10 @@ public:
 		_currentTexture = texture;
 		_wrapS = wraps;
 		_wrapT = wrapt;
+	}
+
+	void setTextureEnvironment(const GLTextureEnv *texEnv) {
+		_textureEnv = texEnv;
 	}
 
 	void setTextureSizeAndMask(int textureSize, int textureSizeMask) {
@@ -682,43 +725,52 @@ private:
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-	          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
-	          bool kBlendingEnabled, bool kStencilEnabled, bool kStippleEnabled, bool kDepthTestEnabled>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
+			  bool kBlendingEnabled, bool kStencilEnabled, bool kDepthTestEnabled>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+					  FrameBuffer::ColorMode kColorMode, bool kInterpZ,
+					  bool kInterpST, bool kInterpSTZ, bool stippleEnable);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-	          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
-	          bool kBlendingEnabled, bool kStencilEnabled, bool kStippleEnabled>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor,
+			  bool kEnableBlending, bool kStencilEnabled>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+					  FrameBuffer::ColorMode colorMode, bool interpZ,
+					  bool interpST, bool interpSTZ);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-	          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
-	          bool kBlendingEnabled, bool kStencilEnabled>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor,
+	          bool kBlendingEnabled>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+					  FrameBuffer::ColorMode kColorMode, bool kInterpZ,
+					  bool kInterpST, bool kInterpSTZ);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+					  FrameBuffer::ColorMode kColorMode, bool kInterpZ,
+					  bool kInterpST, bool kInterpSTZ);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest, bool kEnableScissor>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode, bool kDepthWrite, bool kFogMode, bool kEnableAlphaTest>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+					  FrameBuffer::ColorMode kColorMode, bool kInterpZ,
+					  bool kInterpST, bool kInterpSTZ);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode, bool kDepthWrite, bool kFogMode>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+					  FrameBuffer::ColorMode kColorMode, bool kInterpZ,
+					  bool kInterpST, bool kInterpSTZ);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-	          bool kDepthWrite, bool kFogMode>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode, bool kDepthWrite>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+					  FrameBuffer::ColorMode kColorMode, bool kInterpZ,
+					  bool kInterpST, bool kInterpSTZ);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
-	          bool kDepthWrite>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+					  FrameBuffer::ColorMode kColorMode, bool kInterpZ,
+					  bool kInterpST, bool kInterpSTZ);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	template <bool kSmoothMode, bool kDepthWrite>
+	void fillTriangleTextureMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2,
+									bool kInterpZ, bool kInterpST, bool kInterpSTZ);
 
 public:
 
@@ -754,6 +806,16 @@ private:
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
 	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
+	void applyTextureEnvironment(
+		int internalformat,
+		uint previousA, uint previousR, uint previousG, uint previousB,
+		byte &texA, byte &texR, byte &texG, byte &texB);
+
+	// the same as GL_TEXTURE_ENV_MODE == GL_MODULATE as fast-path for the default mode
+	void applyModulation(
+		uint previousA, uint previousR, uint previousG, uint previousB,
+		byte &texA, byte &texR, byte &texG, byte &texB);
+
 	Buffer _offscreenBuffer;
 	byte *_pbuf;
 	int _pbufWidth;
@@ -770,9 +832,10 @@ private:
 	int _textureSizeMask;
 
 	Common::Rect _clipRectangle;
-	bool _enableScissor;
+	bool _clippingEnabled;
 
 	const TexelBuffer *_currentTexture;
+	const GLTextureEnv *_textureEnv;
 	uint _wrapS, _wrapT;
 	bool _blendingEnabled;
 	int _sourceBlendingFactor;
@@ -784,14 +847,16 @@ private:
 	bool _depthWrite;
 	bool _stencilTestEnabled;
 	int _stencilTestFunc;
-	int _stencilRefVal;
-	uint _stencilMask;
-	uint _stencilWriteMask;
+	byte _stencilRefVal;
+	byte _stencilMask;
+	byte _stencilWriteMask;
 	int _stencilSfail;
 	int _stencilDpfail;
 	int _stencilDppass;
 
 	bool _polygonStippleEnabled;
+	bool _twoColorStippleEnabled;
+	uint32 _stippleColor;
 	const byte *_polygonStipplePattern;
 	int _depthFunc;
 	int _offsetStates;

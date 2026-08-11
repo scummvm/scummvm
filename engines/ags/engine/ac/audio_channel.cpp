@@ -303,27 +303,31 @@ RuntimeScriptValue Sc_AudioChannel_GetIsPaused(void *self, const RuntimeScriptVa
 }
 
 void RegisterAudioChannelAPI() {
-	ccAddExternalObjectFunction("AudioChannel::Pause^0", Sc_AudioChannel_Pause);
-	ccAddExternalObjectFunction("AudioChannel::Resume^0", Sc_AudioChannel_Resume);
-	ccAddExternalObjectFunction("AudioChannel::Seek^1", Sc_AudioChannel_Seek);
-	ccAddExternalObjectFunction("AudioChannel::SeekMs^1", Sc_AudioChannel_SeekMs);
-	ccAddExternalObjectFunction("AudioChannel::SetRoomLocation^2", Sc_AudioChannel_SetRoomLocation);
-	ccAddExternalObjectFunction("AudioChannel::Stop^0", Sc_AudioChannel_Stop);
-	ccAddExternalObjectFunction("AudioChannel::get_ID", Sc_AudioChannel_GetID);
-	ccAddExternalObjectFunction("AudioChannel::get_IsPaused", Sc_AudioChannel_GetIsPaused);
-	ccAddExternalObjectFunction("AudioChannel::get_IsPlaying", Sc_AudioChannel_GetIsPlaying);
-	ccAddExternalObjectFunction("AudioChannel::get_LengthMs", Sc_AudioChannel_GetLengthMs);
-	ccAddExternalObjectFunction("AudioChannel::get_Panning", Sc_AudioChannel_GetPanning);
-	ccAddExternalObjectFunction("AudioChannel::set_Panning", Sc_AudioChannel_SetPanning);
-	ccAddExternalObjectFunction("AudioChannel::get_PlayingClip", Sc_AudioChannel_GetPlayingClip);
-	ccAddExternalObjectFunction("AudioChannel::get_Position", Sc_AudioChannel_GetPosition);
-	ccAddExternalObjectFunction("AudioChannel::get_PositionMs", Sc_AudioChannel_GetPositionMs);
-	ccAddExternalObjectFunction("AudioChannel::get_Volume", Sc_AudioChannel_GetVolume);
-	ccAddExternalObjectFunction("AudioChannel::set_Volume", Sc_AudioChannel_SetVolume);
-	ccAddExternalObjectFunction("AudioChannel::get_Speed", Sc_AudioChannel_GetSpeed);
-	ccAddExternalObjectFunction("AudioChannel::set_Speed", Sc_AudioChannel_SetSpeed);
-	// For compatibility with  Ahmet Kamil's (aka Gord10) custom engine
-	ccAddExternalObjectFunction("AudioChannel::SetSpeed^1", Sc_AudioChannel_SetSpeed);
+	ScFnRegister audiochan_api[] = {
+		{"AudioChannel::Pause^0", API_FN_PAIR(AudioChannel_Pause)},
+		{"AudioChannel::Resume^0", API_FN_PAIR(AudioChannel_Resume)},
+		{"AudioChannel::Seek^1", API_FN_PAIR(AudioChannel_Seek)},
+		{"AudioChannel::SeekMs^1", API_FN_PAIR(AudioChannel_SeekMs)},
+		{"AudioChannel::SetRoomLocation^2", API_FN_PAIR(AudioChannel_SetRoomLocation)},
+		{"AudioChannel::Stop^0", API_FN_PAIR(AudioChannel_Stop)},
+		{"AudioChannel::get_ID", API_FN_PAIR(AudioChannel_GetID)},
+		{"AudioChannel::get_IsPaused", API_FN_PAIR(AudioChannel_GetIsPaused)},
+		{"AudioChannel::get_IsPlaying", API_FN_PAIR(AudioChannel_GetIsPlaying)},
+		{"AudioChannel::get_LengthMs", API_FN_PAIR(AudioChannel_GetLengthMs)},
+		{"AudioChannel::get_Panning", API_FN_PAIR(AudioChannel_GetPanning)},
+		{"AudioChannel::set_Panning", API_FN_PAIR(AudioChannel_SetPanning)},
+		{"AudioChannel::get_PlayingClip", API_FN_PAIR(AudioChannel_GetPlayingClip)},
+		{"AudioChannel::get_Position", API_FN_PAIR(AudioChannel_GetPosition)},
+		{"AudioChannel::get_PositionMs", API_FN_PAIR(AudioChannel_GetPositionMs)},
+		{"AudioChannel::get_Volume", API_FN_PAIR(AudioChannel_GetVolume)},
+		{"AudioChannel::set_Volume", API_FN_PAIR(AudioChannel_SetVolume)},
+		{"AudioChannel::get_Speed", API_FN_PAIR(AudioChannel_GetSpeed)},
+		{"AudioChannel::set_Speed", API_FN_PAIR(AudioChannel_SetSpeed)},
+		// For compatibility with  Ahmet Kamil's (aka Gord10) custom engine
+		{"AudioChannel::SetSpeed^1", API_FN_PAIR(AudioChannel_SetSpeed)},
+	};
+
+	ccAddExternalFunctions361(audiochan_api);
 }
 
 } // namespace AGS3

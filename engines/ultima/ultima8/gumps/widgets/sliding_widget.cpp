@@ -30,7 +30,7 @@ SlidingWidget::SlidingWidget()
 	: Gump(), _dragBounds() {
 }
 
-SlidingWidget::SlidingWidget(int x, int y, FrameID frame, const Rect &dragBounds)
+SlidingWidget::SlidingWidget(int x, int y, FrameID frame, const Common::Rect32 &dragBounds)
 	: Gump(x, y, 5, 5, 0, FLAG_DRAGGABLE), _dragBounds(dragBounds) {
 	SetShape(frame, true);
 	if (_dragBounds.width() < _dims.width())

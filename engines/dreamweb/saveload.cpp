@@ -26,7 +26,6 @@
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
 
@@ -166,7 +165,7 @@ void DreamWebEngine::doLoad(int savegameId) {
 			}
 
 			// Open dialog to get savegameId
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
 		}
@@ -258,7 +257,7 @@ void DreamWebEngine::saveGame() {
 			g_system->delayMillis(10);
 		}
 
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		int savegameId = dialog->runModalWithCurrentTarget();
 		Common::String game_description = dialog->getResultString();
 		if (game_description.empty())
@@ -689,12 +688,12 @@ void DreamWebEngine::loadPosition(unsigned int slot) {
 	}
 	// ...and check if the frames overlap.
 	Common::sort(flist.begin(), flist.end(), Common::Less<FrameExtent>());
-	Common::List<FrameExtent>::const_iterator iter;
 	uint16 curEnd = 0;
-	for (iter = flist.begin(); iter != flist.end(); ++iter) {
-		if (iter->start < curEnd)
+
+	for (auto &frame : flist) {
+		if (frame.start < curEnd)
 			error("exFrames data corruption in savegame");
-		curEnd = iter->start + iter->length;
+		curEnd = frame.start + frame.length;
 	}
 	if (curEnd > _vars._exFramePos) {
 		if (curEnd > kExframeslen)

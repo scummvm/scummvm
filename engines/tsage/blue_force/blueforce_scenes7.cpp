@@ -141,12 +141,17 @@ bool Scene710::Object5::startAction(CursorType action, Event &event) {
 }
 
 void Scene710::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(710);
 	_sceneBounds.moveTo(320, 0);
+	loadScene(710);
+	// Fix for scrolling while talking to Laura, which causes the talking head portraits
+	// and the spoken text to also scroll right (with the text overlapping on itself).
+	// This is like this in the disasm, so presumably this was an intentional "hack" to address the bug.
+	BF_GLOBALS._sceneManager._scrollerRect.setRect(40, 0, 280, 200);
 
 	BF_GLOBALS._sound1.fadeSound(14);
 	_soundExt1.fadeSound(48);
+
+	SceneExt::postInit();
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.hide();

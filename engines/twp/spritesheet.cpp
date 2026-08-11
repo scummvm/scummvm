@@ -48,7 +48,7 @@ static void parseFrame(const Common::String &key, const Common::JSONObject &valu
 }
 
 void SpriteSheet::parseSpriteSheet(const Common::String &contents) {
-	Common::ScopedPtr<Common::JSONValue> json(Common::JSON::parse(contents.c_str()));
+	Common::ScopedPtr<Common::JSONValue> json(Common::JSON::parse(contents));
 	const Common::JSONObject &obj = json->asObject()["frames"]->asObject();
 	for (auto it = obj.begin(); it != obj.end(); it++) {
 		parseFrame(it->_key, it->_value->asObject(), _frameTable[it->_key]);

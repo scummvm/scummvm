@@ -19,12 +19,16 @@
  *
  */
 
+#include "common/random.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/datarecords.h"
 
 #include "engines/nancy/state/scene.h"
+
+#include "engines/nancy/ui/taskbar.h"
 
 namespace Nancy {
 namespace Action {
@@ -86,7 +90,7 @@ void TableIndexSetValueHS::execute() {
 		// Check for correctness...
 
 		// ...of current index only...
-		if (playerTable->singleValues[_tableIndex] == tabl->correctIDs[_tableIndex]) {
+		if (playerTable->singleValues[_tableIndex - 1] == tabl->correctIDs[_tableIndex - 1]) {
 			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_true);
 		} else {
 			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_false);
@@ -123,8 +127,7 @@ void SetValue::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
 
-	// nancy8 has 20 single & 20 combo values, later games have 30/10
-	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+	uint numSingleValues = playerTable->getNumSingleValues();
 
 	if (_index < numSingleValues) {
 		// Single values
@@ -162,8 +165,7 @@ void SetValueCombo::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
 
-	// nancy8 has 20 single & 20 combo values, later games have 30/10
-	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+	uint numSingleValues = playerTable->getNumSingleValues();
 
 	playerTable->setComboValue(_valueIndex - numSingleValues, 0);
 
@@ -176,14 +178,14 @@ void SetValueCombo::execute() {
 			} else {
 				if (_indices[i] < numSingleValues) {
 					// Add a single value
-					if (playerTable->singleValues[_indices[i]] != kNoTableValue) {
-						valueToAdd = playerTable->singleValues[_indices[i]];
+					if (playerTable->getSingleValue(_indices[i]) != kNoTableValue) {
+						valueToAdd = playerTable->getSingleValue(_indices[i]);
 						valueToAdd = valueToAdd * ((float)_percentages[i] / 100.f);
 					}
 				} else {
 					// Add another combo value
-					if (playerTable->comboValues[_indices[i] - numSingleValues] != kNoTableValue) {
-						valueToAdd = playerTable->comboValues[_indices[i] - numSingleValues];
+					if (playerTable->getComboValue(_indices[i] - numSingleValues) != (float)kNoTableValue) {
+						valueToAdd = playerTable->getComboValue(_indices[i] - numSingleValues);
 						valueToAdd = valueToAdd * ((float)_percentages[i] / 100.f);
 					}
 				}
@@ -214,18 +216,20 @@ static const byte kTestAllSingle			= 1;
 static const byte kTestSome					= 2;
 static const byte kTestActualValue			= 3;
 
-static const byte kTestEqualTo				= 0;
-static const byte kTestLessThan				= 1;
-static const byte kTestGreaterThan			= 2;
-static const byte kTestGreaterThanOrEqual	= 3;
-static const byte kTestLessThanOrEqual		= 4;
+static const byte kTestEqualTo                      = 0;
+static const byte kTestLessThan                     = 1;
+static const byte kTestGreaterThan                  = 2;
+static const byte kTestGreaterThanOrEqual           = 3;
+static const byte kTestLessThanOrEqual              = 4;
+static const byte kTestPercentEqualTo               = 5;
+static const byte kTestPercentGreaterThanOrEqual    = 6;
+static const byte kTestPercentLessThanOrEqual       = 7;
 
 void ValueTest::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
 
-	// nancy8 has 20 single & 20 combo values, later games have 30/10
-	uint numSingleValues = g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+	uint numSingleValues = playerTable->getNumSingleValues();
 
 	float testedValue;
 	if (_valueIndex < numSingleValues) {
@@ -260,6 +264,7 @@ void ValueTest::execute() {
 	}
 
 	bool satisfied = false;
+
 	for (uint i = 0; i < testedIndices.size(); ++i) {
 		if (testedIndices[i] == kNoTableIndex) {
 			continue;
@@ -268,6 +273,8 @@ void ValueTest::execute() {
 		float otherValue = 0;
 		if (_testType == kTestActualValue) {
 			otherValue = testedIndices[i];
+			if (_condition >= kTestPercentEqualTo)
+				otherValue = ((float)_indicesToTest[0] * (float)_indicesToTest[1]) / 100.0f;
 		} else {
 			if (testedIndices[i] < numSingleValues) {
 				// Test against single value
@@ -284,34 +291,22 @@ void ValueTest::execute() {
 
 		switch (_condition) {
 		case kTestEqualTo:
-			if (testedValue == otherValue) {
-				satisfied = true;
-			}
-
+		case kTestPercentEqualTo:
+			satisfied = (testedValue == otherValue);
 			break;
 		case kTestLessThan:
-			if (testedValue < otherValue) {
-				satisfied = true;
-			}
-
+			satisfied = (testedValue < otherValue);
 			break;
 		case kTestGreaterThan:
-			if (testedValue > otherValue) {
-				satisfied = true;
-			}
-
+			satisfied = (testedValue > otherValue);
 			break;
 		case kTestGreaterThanOrEqual:
-			if (testedValue >= otherValue) {
-				satisfied = true;
-			}
-
+		case kTestPercentGreaterThanOrEqual:
+			satisfied = (testedValue >= otherValue);
 			break;
 		case kTestLessThanOrEqual:
-			if (testedValue <= otherValue) {
-				satisfied = true;
-			}
-
+		case kTestPercentLessThanOrEqual:
+			satisfied = (testedValue <= otherValue);
 			break;
 		}
 
@@ -361,6 +356,18 @@ void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
 	}
 }
 
+bool EventFlagsMultiHS::cursorSetFromScript() const {
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && NancySceneState.getHeldItem() >= 0)
+		return false;
+	return _isCursor;
+}
+
+CursorManager::CursorType EventFlagsMultiHS::getHoverCursor() const {
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && NancySceneState.getHeldItem() >= 0)
+		return CursorManager::kHotspot;
+	return _hoverCursor;
+}
+
 void EventFlagsMultiHS::execute() {
 	switch (_state) {
 	case kBegin:
@@ -379,15 +386,39 @@ void EventFlagsMultiHS::execute() {
 
 		break;
 	case kActionTrigger:
-		if (_hoverCursor != CursorManager::kCustom1 && _hoverCursor != CursorManager::kCustom2) {
+		// Swallow clicks if the cursor is in the puzzle-drag range
+		if (g_nancy->getGameType() <= kGameTypeNancy9 && (_hoverCursor == CursorManager::kCustom1 || _hoverCursor == CursorManager::kCustom2)) {
+			_state = kRun;
+		} else if (g_nancy->getGameType() >= kGameTypeNancy10 &&
+				(int)_hoverCursor >= (g_nancy->getGameType() >= kGameTypeNancy12 ?
+					CursorManager::kNewUseHand : CursorManager::kNewUseHand - 1)) {
+			// The puzzle-drag cursor range starts one slot earlier before Nancy12
+			_state = kRun;
+		} else {
 			_hasHotspot = false;
 			EventFlags::execute();
 			finishExecution();
-			break;
-		} else {
-			_state = kRun;
 		}
+
+		break;
 	}
+}
+
+void RandomizeEventFlags::readData(Common::SeekableReadStream &stream) {
+	uint16 numFlags = stream.readUint16LE();
+	_flagLabels.resize(numFlags);
+	for (uint i = 0; i < numFlags; ++i) {
+		_flagLabels[i] = stream.readSint16LE();
+	}
+}
+
+void RandomizeEventFlags::execute() {
+	for (uint i = 0; i < _flagLabels.size(); ++i) {
+		NancySceneState.setEventFlag(_flagLabels[i],
+			g_nancy->_randomSource->getRandomBit() ? g_nancy->_true : g_nancy->_false);
+	}
+
+	_isDone = true;
 }
 
 void DifficultyLevel::readData(Common::SeekableReadStream &stream) {
@@ -407,13 +438,19 @@ void ModifyListEntry::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _stringID);
 	_mark = stream.readUint16LE();
 
-	if (g_nancy->getGameType() >= kGameTypeNancy9 && _mark >= 10) {
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		// Nancy 10+: the trailing sceneID is always present
+		_sceneID = stream.readUint16LE();
+		if (_mark < 10 && _mark != 7)
+			_sceneID = kNoScene;
+	} else if (g_nancy->getGameType() >= kGameTypeNancy9 && _mark >= 10) {
+		// Nancy 9: the trailing sceneID is only present when mark >= 10.
 		_sceneID = stream.readUint16LE();
 	}
 }
 
 void ModifyListEntry::execute() {
-	JournalData *journalData = (Nancy::JournalData *)NancySceneState.getPuzzleData(Nancy::JournalData::getTag());
+	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
 	assert(journalData);
 
 	Common::Array<JournalData::Entry> &array = journalData->journalEntries[_surfaceID];
@@ -432,6 +469,21 @@ void ModifyListEntry::execute() {
 			array.push_back(JournalData::Entry(_stringID, _mark, _sceneID));
 		}
 
+		if (found && g_nancy->getGameType() == kGameTypeNancy9 && NancySceneState.getSceneInfo().sceneID == 2491) {
+			// WORKAROUND: We did not persist the sceneID information for journal entries in
+			// nancy9 saved games earlier than version 4, due to an oversight when the sceneID
+			// field was added. This means that for the search functionality in the laptop
+			// (which is the only place where the sceneID field is used in nancy9), the sceneID
+			// values won't be correctly initialized on save/load in older saved games.
+			// Fortunately, these are always initialized by the game scripts, so we can use
+			// those script values instead. This code will ensure that the sceneID values are
+			// obtained from the game scripts in that scene when they're missing, so the search
+			// functionality will work correctly.
+			if (_stringID.hasPrefix("S0") && found->mark == _mark && _mark >= 10 &&
+				found->sceneID == kNoScene && _sceneID != kNoScene) {
+				found->sceneID = _sceneID;
+			}
+		}
 		break;
 	case kDelete:
 		if (found) {
@@ -445,6 +497,24 @@ void ModifyListEntry::execute() {
 		}
 
 		break;
+	}
+
+	// Nancy 10+: if the notebook popup is currently visible, refresh the
+	// rendered list, so the new/changed entry shows up.
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && NancySceneState.getNotebookPopup().isVisible()) {
+		NancySceneState.getNotebookPopup().refreshContent();
+	}
+
+	// Nancy 10+: raise the notebook notification badge on the taskbar when
+	// a new entry is added to one of the tracked lists.
+	if (_type == kAdd && g_nancy->getGameType() >= kGameTypeNancy10) {
+		if (UI::Taskbar *taskbar = NancySceneState.getTaskbar()) {
+			if (_surfaceID == 4) {
+				taskbar->setNotification(kTaskButtonNotebook, 0);
+			} else if (_surfaceID == 3) {
+				taskbar->setNotification(kTaskButtonNotebook, 1);
+			}
+		}
 	}
 
 	finishExecution();

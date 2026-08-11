@@ -29,7 +29,7 @@ Frustum::Frustum() {
 void Frustum::setup(const Math::Matrix4 &matrix) {
 	// Based on "Fast Extraction of Viewing Frustum Planes from the
 	// World-View-Projection matrix" by Gil Gribb and Klaus Hartmann.
-	// http://www.cs.otago.ac.nz/postgrads/alexis/planeExtraction.pdf
+	// https://web.archive.org/web/20140211075800/http://www.cs.otago.ac.nz/postgrads/alexis/planeExtraction.pdf
 
 	_planes[0]._normal.x() = matrix.getValue(3, 0) + matrix.getValue(0, 0);
 	_planes[0]._normal.y() = matrix.getValue(3, 1) + matrix.getValue(0, 1);

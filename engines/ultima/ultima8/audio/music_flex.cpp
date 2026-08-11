@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/misc/debugger.h"
 
 #include "ultima/ultima8/audio/music_flex.h"
@@ -109,7 +109,7 @@ void MusicFlex::loadSongInfo() {
 		error("Unable to load song info from sound/music.flx");
 	}
 	Common::MemoryReadStream ds(buf, size);
-	Std::string line;
+	Common::String line;
 
 	// Read first section till we hit a #
 	for (;;) {
@@ -118,12 +118,12 @@ void MusicFlex::loadSongInfo() {
 		// We have hit the end of the section
 		if (line.at(0) == '#') break;
 
-		Std::string::size_type  begIdx, endIdx;
+		Common::String::size_type  begIdx, endIdx;
 
 		// Find the first not space, which will get us the name
 		begIdx = line.findFirstNotOf(' ');
 		endIdx = line.findFirstOf(' ', begIdx);
-		Std::string name = line.substr(begIdx, endIdx - begIdx);
+		Common::String name = line.substr(begIdx, endIdx - begIdx);
 
 		// Now find the first not space after the name, which will get us the num
 		begIdx = line.findFirstNotOf(' ', endIdx);
@@ -178,17 +178,17 @@ void MusicFlex::loadSongInfo() {
 		// We have hit the end of the section
 		if (line.at(0) == '#') break;
 
-		Std::string::size_type  begIdx, endIdx;
+		Common::String::size_type  begIdx, endIdx;
 
 		// Get 'from' name
 		begIdx = line.findFirstNotOf(' ');
 		endIdx = line.findFirstOf(' ', begIdx);
-		Std::string from = line.substr(begIdx, endIdx - begIdx);
+		Common::String from = line.substr(begIdx, endIdx - begIdx);
 
 		// Get 'to' name
 		begIdx = line.findFirstNotOf(' ', endIdx);
 		endIdx = line.findFirstOf(' ', begIdx);
-		Std::string to = line.substr(begIdx, endIdx - begIdx);
+		Common::String to = line.substr(begIdx, endIdx - begIdx);
 
 		// Find index of from name
 		int fi;
@@ -217,10 +217,10 @@ void MusicFlex::loadSongInfo() {
 			begIdx = line.findFirstNotOf(' ', endIdx);
 			endIdx = line.findFirstOf(' ', begIdx);
 
-			if (begIdx == Std::string::npos)
+			if (begIdx == Common::String::npos)
 				error("Invalid Section 4 song _info data. Unable to read _transitions for all measures");
 
-			Std::string trans = line.substr(begIdx, endIdx - begIdx);
+			Common::String trans = line.substr(begIdx, endIdx - begIdx);
 			const char *str = trans.c_str();
 
 			int num = 0;

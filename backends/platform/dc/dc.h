@@ -27,6 +27,7 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
 #include "audio/mixer_intern.h"
+#include "common/events.h"
 #include "common/language.h"
 #include "common/platform.h"
 #ifdef DYNAMIC_MODULES
@@ -68,7 +69,7 @@ public:
 	void stop() override;
 };
 
-class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public PaletteManager, public FilesystemFactory
+class OSystem_Dreamcast : virtual public BaseBackend, public Common::EventSource, private DCHardware, public PaletteManager, public FilesystemFactory
 #ifdef DYNAMIC_MODULES
   , public FilePluginProvider
 #endif
@@ -126,7 +127,7 @@ public:
   void warpMouse(int x, int y);
 
   // Set the bitmap that's used when drawing the cursor.
-  void setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask);
+  void setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY);
 
   // Replace the specified range of cursor the palette with new colors.
   void setCursorPalette(const byte *colors, uint start, uint num);
@@ -151,8 +152,8 @@ public:
   void quit();
 
   // Overlay
-  int16 getOverlayHeight();
-  int16 getOverlayWidth();
+  int16 getOverlayHeight() const;
+  int16 getOverlayWidth() const;
   bool isOverlayVisible() const { return _overlay_visible; }
   void showOverlay(bool inGUI);
   void hideOverlay();

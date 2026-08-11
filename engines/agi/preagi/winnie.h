@@ -32,10 +32,12 @@ namespace Agi {
 #define IDS_WTP_ROOM_AMIGA      "rooms/room.%d"
 #define IDS_WTP_ROOM_C64        "room%02d"
 #define IDS_WTP_ROOM_APPLE      "room%d.obj"
+#define IDS_WTP_ROOM_COCO       "room%02d"
 #define IDS_WTP_OBJ_DOS         "obj.%02d"
 #define IDS_WTP_OBJ_AMIGA       "objects/object.%d"
 #define IDS_WTP_OBJ_C64         "object%02d"
 #define IDS_WTP_OBJ_APPLE       "object%d.obj"
+#define IDS_WTP_OBJ_COCO        "obj%02d"
 #define IDS_WTP_SND_DOS         "snd.%02d"
 #define IDS_WTP_SND_AMIGA       "Sounds"
 #define IDS_WTP_SND_C64         "sound.obj"
@@ -89,6 +91,14 @@ namespace Agi {
 #define IDS_WTP_HELP_1_C64          "<F3> takes you back to the playroom (if you get lost, or want to save the game).<F5> turns the sound off and on.        <F7> shows what you're carrying."
 #define IDS_WTP_WRONG_PLACE_C64 "\nOk, but this is not the right place."
 
+// Amiga strings
+
+// original strings from the executable and edited versions for our four-line interface
+#define IDS_WTP_AMIGA_HELP_0          "Use the mouse to select your choice from\nthe bottom of the screen or the menu.\n\nTo use the keyboard instead of the\nmouse, press the NUMBER or first LETTER\nof what you want."
+#define IDS_WTP_AMIGA_HELP_1          "From the keyboard you can also press:\n  'l' to look at the scene you're in.\n  'o' to look at an object in the room.\n  'c' to see what you're carrying and\n        how you're doing.\n  CTRL-S to turn the sound on or off."
+#define IDS_WTP_AMIGA_HELP_EDITED_0   "Use the mouse to select your choice fromthe bottom of the screen or the menu.\nTo use the keyboard instead of the\nmouse, press the NUMBER or first LETTER."
+#define IDS_WTP_AMIGA_HELP_EDITED_1   "From the keyboard you can also press:\n  <C> to see what you're carrying and\n      how you're doing.\n  <CTRL-S> to turn the sound on or off."
+
 // maximum values
 
 #define IDI_WTP_MAX_OBJ_MISSING 10
@@ -109,6 +119,8 @@ namespace Agi {
 #define IDI_WTP_MAX_OPTION              3
 #define IDI_WTP_MAX_DIR                 4
 #define IDI_WTP_MAX_MOVES_UNTIL_WIND    150
+
+#define IDI_WTP_TIMER_INTERVAL          (10 * 60 * 1000) // 10 minutes on DOS
 
 // positions
 
@@ -158,7 +170,8 @@ enum {
 	IDI_WTP_SEL_DROP,
 	IDI_WTP_SEL_REAL_OPT_1,
 	IDI_WTP_SEL_REAL_OPT_2,
-	IDI_WTP_SEL_REAL_OPT_3
+	IDI_WTP_SEL_REAL_OPT_3,
+	IDI_WTP_SEL_TIMER_EVENT
 };
 
 #define IDI_WTP_SEL_LAST    IDI_WTP_SEL_REAL_OPT_3
@@ -227,7 +240,8 @@ enum {
 enum {
 	IDI_WTP_PAR_OK = 0,
 	IDI_WTP_PAR_GOTO,
-	IDI_WTP_PAR_BACK
+	IDI_WTP_PAR_BACK,
+	IDI_WTP_PAR_RELOAD
 };
 
 // room file option block
@@ -279,6 +293,7 @@ struct WTP_SAVE_GAME {
 };
 
 class PreAgiEngine;
+class PictureMgr_Mickey_Winnie;
 
 class WinnieEngine : public PreAgiEngine {
 public:
@@ -291,12 +306,15 @@ public:
 	void debugCurRoom();
 
 private:
+	PictureMgr_Mickey_Winnie *_picture;
+
 	WTP_SAVE_GAME _gameStateWinnie;
 	int _room;
 	int _mist;
 	bool _doWind;
-	bool _winnieEvent;
-	int _tiggerMist;
+	bool _tiggerOrMist;
+	bool _timerEnabled;
+	uint32 _timerStart;
 
 	int _roomOffset;
 	int _objOffset;
@@ -315,7 +333,6 @@ private:
 	void drawRoomPic();
 	int parser(int, int, uint8 *);
 	int getObjInRoom(int);
-	bool getSelOkBack();
 	void getMenuSel(char *, int *, int[]);
 	void keyHelp();
 	void clrMenuSel(int *, int[]);
@@ -327,7 +344,7 @@ private:
 	void printObjStr(int, int);
 	uint32 readObj(int, uint8 *);
 	void takeObj(int);
-	void dropObj(int);
+	bool dropObj(int);
 	bool isRightObj(int, int, int *);
 	void drawObjPic(int, int, int);
 	void getMenuMouseSel(int *, int[], int, int);
@@ -338,13 +355,16 @@ private:
 	void loadGame();
 	void dropObjRnd();
 	void setTakeDrop(int[]);
-	void makeSel(int *, int[]);
+	bool makeSel(int *, int[]);
 
 	void wind();
 	void mist();
 	void tigger();
+	void startTimer();
+	void stopTimer();
 
 	void showOwlHelp();
+	void showAmigaHelp();
 	bool playSound(ENUM_WTP_SOUND);
 
 	void printStrWinnie(char *szMsg);

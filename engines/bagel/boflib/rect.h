@@ -24,6 +24,7 @@
 #define BAGEL_BOFLIB_RECT_H
 
 #include "common/rect.h"
+#include "bagel/afxwin.h"
 #include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/object.h"
 #include "bagel/boflib/point.h"
@@ -31,10 +32,7 @@
 
 namespace Bagel {
 
-typedef Common::Rect RECT;
-
 class CBofRect : public CBofObject {
-
 public:
 	// Constructors
 	CBofRect();
@@ -42,6 +40,8 @@ public:
 	CBofRect(const CBofRect &srcRect);
 	CBofRect(const CBofPoint &point, const CBofSize &size);
 	CBofRect(const CBofPoint &pttopLeft, const CBofPoint &ptBottomRight);
+	virtual ~CBofRect() {
+	}
 
 	// Attributes
 	int width() const;
@@ -77,9 +77,16 @@ public:
 	void operator=(const RECT &srcRect) {
 		setWinRect(&srcRect);
 	}
+	void operator=(const Common::Rect &srcRect) {
+		const RECT r = { srcRect.left, srcRect.top, srcRect.right, srcRect.bottom };
+		setWinRect(&r);
+	}
 
 	operator const RECT() {
 		return getWinRect();
+	}
+	operator const Common::Rect() {
+		return Common::Rect(left, top, right, bottom);
 	}
 
 	void offsetRect(int x, int y);
@@ -442,8 +449,6 @@ inline CBofRect CBofRect::operator|(const CBofRect &rect2) {
 
 	return rect;
 }
-
-#define CRect CBofRect
 
 } // namespace Bagel
 

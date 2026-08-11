@@ -57,28 +57,28 @@ namespace Scumm {
 class SpiffGenerator {
 public:
 	SpiffGenerator(int seed);
-	~SpiffGenerator();
+	~SpiffGenerator() = default;
 
 	MapFile *generateMap(int water, int tileset, int mapSize, int energy, int terrain);
 
 private:
-	int _seed;
+	int _seed = 0;
 
-	int _numPoolsG; // per quadrant
-	int _energyAmountG; // 2048 = min energy on small map, 51200 = max energy on max map, etc.
-	int _cliffAmountG; // amount of cliffs, 10 is min, 70 is max
-	int _waterAmountG; // 0 is min, 30 is max
-	int _totalMapSizeG;
+	int _numPoolsG = 0; // per quadrant
+	int _energyAmountG = 0; // 2048 = min energy on small map, 51200 = max energy on max map, etc.
+	int _cliffAmountG = 0;  // amount of cliffs, 10 is min, 70 is max
+	int _waterAmountG = 0;  // 0 is min, 30 is max
+	int _totalMapSizeG = 0;
 
-	int _terrainSeedFlagG; // disables kElevHigh or kElevLow terrain for the initial elevation when appropriate
-	int _islandsFlagG; // enables islands
-	int _advancedMirrorOK_G; // low terrain roughness can leave too abrupt changes at the edge, so set false to disable some mirroring types
-	int _mirrorTypeG; // what mirroring is used
+	int _terrainSeedFlagG = 0; // disables kElevHigh or kElevLow terrain for the initial elevation when appropriate
+	int _islandsFlagG = 0;     // enables islands
+	int _advancedMirrorOK_G = 0; // low terrain roughness can leave too abrupt changes at the edge, so set false to disable some mirroring types
+	int _mirrorTypeG = 0;        // what mirroring is used
 
-	int _mapCornerMaxG; // size of random section
-	int _mapMiddleMaxG;
-	int _mapCorner[MAXSIZE+1][MAXSIZE+1];
-	int _mapMiddle[MAXSIZE][MAXSIZE];
+	int _mapCornerMaxG = 0; // size of random section
+	int _mapMiddleMaxG = 0;
+	int _mapCorner[MAXSIZE+1][MAXSIZE+1] = { {}, {} };
+	int _mapMiddle[MAXSIZE][MAXSIZE] = { {}, {} };
 
 	float getRandomFloat();
 	int spiffRand(int min, int max);

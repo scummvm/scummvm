@@ -23,8 +23,9 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/drivers/gfxdriver.h"
 #include "sci/graphics/maciconbar.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/screen.h"
 
 #include "common/memstream.h"
@@ -43,7 +44,7 @@ GfxMacIconBar::GfxMacIconBar(ResourceManager *resMan, EventManager *eventMan, Se
 
 	_inventoryIcon = nullptr;
 	_allDisabled = true;
-	
+
 	_isUpscaled = (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400);
 }
 
@@ -199,15 +200,15 @@ void GfxMacIconBar::drawImage(Graphics::Surface *surface, const Common::Rect &re
 			upscaleSurface.init(dstRect.width(), dstRect.height(), dstRect.width(), _upscaleBuffer->getUnsafeDataAt(0, upscaleSize), surface->format);
 			drawDisabledPattern(upscaleSurface, dstRect);
 		}
-		g_system->copyRectToScreen(_upscaleBuffer->getUnsafeDataAt(0, upscaleSize), dstRect.width(), dstRect.left, dstRect.top, dstRect.width(), dstRect.height());
+		_screen->gfxDriver()->copyRectToScreen(_upscaleBuffer->getUnsafeDataAt(0, upscaleSize), 0, 0, dstRect.width(), dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), nullptr, nullptr);
 	} else {
 		if (!enable) {
 			Graphics::Surface disableSurface;
 			disableSurface.copyFrom(*surface);
 			drawDisabledPattern(disableSurface, rect);
-			g_system->copyRectToScreen(disableSurface.getPixels(), disableSurface.pitch, rect.left, rect.top, rect.width(), rect.height());
+			_screen->gfxDriver()->copyRectToScreen((const byte*)disableSurface.getPixels(), 0, 0, disableSurface.pitch, rect.left, rect.top, rect.width(), rect.height(), nullptr, nullptr);
 		} else {
-			g_system->copyRectToScreen(surface->getPixels(), surface->pitch, rect.left, rect.top, rect.width(), rect.height());
+			_screen->gfxDriver()->copyRectToScreen((const byte*)surface->getPixels(), 0, 0, surface->pitch, rect.left, rect.top, rect.width(), rect.height(), nullptr, nullptr);
 		}
 	}
 }
@@ -262,7 +263,7 @@ Graphics::Surface *GfxMacIconBar::loadPict(ResourceId id) {
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*pictDecoder.getSurface());
-	remapColors(surface, pictDecoder.getPalette());
+	remapColors(surface, pictDecoder.getPalette().data());
 
 	return surface;
 }

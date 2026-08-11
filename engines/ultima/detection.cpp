@@ -27,29 +27,6 @@
 #include "ultima/detection_tables.h"
 #include "ultima/ultima.h"
 
-namespace Ultima {
-
-static const PlainGameDescriptor ULTIMA_GAMES[] = {
-#ifndef RELEASE_BUILD
-	{ "ultima1", "Ultima I: The First Age of Darkness" }, 
-#endif
-	{ "ultima4", "Ultima IV: Quest of the Avatar" },
-	{ "ultima4_enh", "Ultima IV: Quest of the Avatar - Enhanced" },
-	{ "ultima6", "Ultima VI: The False Prophet" },
-	{ "ultima6_enh", "Ultima VI: The False Prophet - Enhanced" },
-	{ "ultima8", "Ultima VIII: Pagan" },
-	{ "remorse", "Crusader: No Remorse" },
-	{ "regret", "Crusader: No Regret" },
-
-	{ "martiandreams", "Worlds of Ultima: Martian Dreams" },
-	{ "martiandreams_enh", "Worlds of Ultima: Martian Dreams - Enhanced" },
-	{ "thesavageempire", "Worlds of Ultima: The Savage Empire" },
-	{ "thesavageempire_enh", "Worlds of Ultima: The Savage Empire - Enhanced" },
-	{ 0, 0 }
-};
-
-} // End of namespace Ultima
-
 const DebugChannelDef UltimaMetaEngineDetection::debugFlagList[] = {
 	{Ultima::kDebugPath, "Path", "Pathfinding debug level"},
 	{Ultima::kDebugGraphics, "Graphics", "Graphics debug level"},
@@ -61,10 +38,11 @@ const DebugChannelDef UltimaMetaEngineDetection::debugFlagList[] = {
 };
 
 UltimaMetaEngineDetection::UltimaMetaEngineDetection() : AdvancedMetaEngineDetection(Ultima::GAME_DESCRIPTIONS,
-	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
+	        Ultima::ULTIMA_GAMES) {
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;
+	_flags = kADFlagMatchFullPaths;
 }
 
 REGISTER_PLUGIN_STATIC(ULTIMA_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, UltimaMetaEngineDetection);

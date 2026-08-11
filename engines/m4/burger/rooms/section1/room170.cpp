@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section1/room170.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 
 namespace M4 {
@@ -81,7 +82,7 @@ void Room170::init() {
 
 	case 142:
 		ws_demand_location(-40, 375, 2);
-		ws_walk(25, 350, 0, 1);
+		ws_walk(25, 350, nullptr, 1);
 		break;
 
 	case 171:

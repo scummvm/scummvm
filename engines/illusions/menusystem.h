@@ -42,7 +42,7 @@ const uint kMenuTextSize = 4096;
 
 class MenuItem {
 public:
-	MenuItem(const Common::String text, BaseMenuAction *action);
+	MenuItem(const Common::String &text, BaseMenuAction *action);
 	~MenuItem();
 	void executeAction(const Common::Point &point);
 	const Common::String& getText() const { return _text; }
@@ -59,7 +59,7 @@ public:
 	BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte backgroundColor, byte borderColor, byte textColor, byte fieldE,
 		uint defaultMenuItemIndex);
 	virtual ~BaseMenu();
-	void addText(const Common::String text);
+	void addText(const Common::String &text);
 	void addMenuItem(MenuItem *menuItem);
 	uint getHeaderLinesCount();
 	const Common::String& getHeaderLine(uint index);

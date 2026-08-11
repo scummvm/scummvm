@@ -35,7 +35,7 @@ namespace ICB {
 
 void _marker::___init() {
 	// read in the session markers file - this is the engine written file not the max Nico file
-	// read data into a structure as it needs to be modifiable and saveable which isnt possible with res_man files
+	// read data into a structure as it needs to be modifiable and saveable which isn't possible with res_man files
 	int32 len;
 
 	Zdebug("\n\n\n-------------*** Init marker file ***-------------");

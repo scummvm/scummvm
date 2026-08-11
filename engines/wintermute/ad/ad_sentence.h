@@ -31,7 +31,6 @@
 
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 #include "common/rect.h"
 
@@ -50,13 +49,13 @@ public:
 	bool setupTalkFile(const char *soundFilename);
 	DECLARE_PERSISTENT(AdSentence, BaseClass)
 	bool finish();
-	void setSound(BaseSound *Sound);
+	void setSound(BaseSound *sound);
 	bool _soundStarted;
 	BaseSound *_sound;
 	TTextAlign _align;
 	bool display();
 	int32 _width;
-	Point32 _pos;
+	Common::Point32 _pos;
 	BaseFont *_font;
 	char *getNextStance();
 	char *getCurrentStance();
@@ -70,13 +69,11 @@ public:
 	AdSentence(BaseGame *inGame);
 	~AdSentence() override;
 	AdTalkDef *_talkDef;
-
 	bool canSkip();
 
 private:
 	char *_tempStance;
 	char *getStance(int stance);
-
 };
 
 } // End of namespace Wintermute

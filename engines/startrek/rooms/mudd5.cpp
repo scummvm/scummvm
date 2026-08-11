@@ -37,50 +37,50 @@ const int16 GENERATOR_Y = 0xb0;
 namespace StarTrek {
 
 extern const RoomAction mudd5ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::mudd5Tick1 },
-	{ {ACTION_TIMER_EXPIRED, 1, 0, 0},        &Room::mudd5Timer1Expired },
-	{ {ACTION_TIMER_EXPIRED, 2, 0, 0},        &Room::mudd5Timer2Expired },
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0},      &Room::mudd5UseCommunicator },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0},   &Room::mudd5UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::mudd5UseSTricorderOnEngine },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0}, &Room::mudd5UseSTricorderOnCrane },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::mudd5UseSTricorderOnHatch },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 9,    0}, &Room::mudd5UseSTricorderOnLifeSupportGenerator },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0x20, 0}, &Room::mudd5UseStunPhaserOnHatch },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0x20, 0}, &Room::mudd5UseKillPhaserOnHatch },
-	{ {ACTION_USE, 0xff,            9,    0}, &Room::mudd5UseAnythingOnLifeSupportGenerator },
-	{ {ACTION_USE, OBJECT_IDOOVER,  9,    0}, &Room::mudd5UseDooverOnLifeSupportGenerator },
-	{ {ACTION_FINISHED_WALKING, 2, 0, 0},     &Room::mudd5KirkReachedLifeSupportGenerator },
-	{ {ACTION_TIMER_EXPIRED, 4, 0, 0},        &Room::mudd5KirkTimer4Expired },
-	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0},   &Room::mudd5KirkRepairedLifeSupportGenerator },
-	{ {ACTION_TIMER_EXPIRED, 3, 0, 0},        &Room::mudd5KirkTimer3Expired },
+	{ {ACTION_TICK, 1, 0, 0, 0}, &Room::mudd5Tick1 },
+	{ {ACTION_TIMER_EXPIRED, 1, 0, 0, 0},        &Room::mudd5Timer1Expired },
+	{ {ACTION_TIMER_EXPIRED, 2, 0, 0, 0},        &Room::mudd5Timer2Expired },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0, 0},      &Room::mudd5UseCommunicator },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0, 0},   &Room::mudd5UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0, 0}, &Room::mudd5UseSTricorderOnEngine },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0, 0}, &Room::mudd5UseSTricorderOnCrane },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0, 0}, &Room::mudd5UseSTricorderOnHatch },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 9,    0, 0}, &Room::mudd5UseSTricorderOnLifeSupportGenerator },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0x20, 0, 0}, &Room::mudd5UseStunPhaserOnHatch },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0x20, 0, 0}, &Room::mudd5UseKillPhaserOnHatch },
+	{ {ACTION_USE, 0xff,            9,    0, 0}, &Room::mudd5UseAnythingOnLifeSupportGenerator },
+	{ {ACTION_USE, OBJECT_IDOOVER,  9,    0, 0}, &Room::mudd5UseDooverOnLifeSupportGenerator },
+	{ {ACTION_FINISHED_WALKING, 2, 0, 0, 0},     &Room::mudd5KirkReachedLifeSupportGenerator },
+	{ {ACTION_TIMER_EXPIRED, 4, 0, 0, 0},        &Room::mudd5KirkTimer4Expired },
+	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0, 0},   &Room::mudd5KirkRepairedLifeSupportGenerator },
+	{ {ACTION_TIMER_EXPIRED, 3, 0, 0, 0},        &Room::mudd5KirkTimer3Expired },
 
 	// Common code (next 4 lines)
-	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0}, &Room::muddaUseLenseOnDegrimer },
-	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0}, &Room::muddaUseAlienDevice },
-	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::muddaFiredAlienDevice },
-	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0}, &Room::muddaUseDegrimer },
+	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0, 0}, &Room::muddaUseLenseOnDegrimer },
+	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0, 0}, &Room::muddaUseAlienDevice },
+	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0, 0}, &Room::muddaFiredAlienDevice },
+	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0, 0}, &Room::muddaUseDegrimer },
 
-	{ {ACTION_LOOK, 0x20, 0, 0},         &Room::mudd5LookAtHatch },
-	{ {ACTION_LOOK, 9,    0, 0},         &Room::mudd5LookAtLifeSupportGenerator },
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::mudd5TouchedHotspot0 },
-	{ {ACTION_WALK, 0x22, 0, 0},         &Room::mudd5WalkToDoor },
-	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0},     &Room::mudd5LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0},    &Room::mudd5LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0},    &Room::mudd5LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::mudd5LookAtRedshirt },
-	{ {ACTION_LOOK, 0x22, 0, 0},            &Room::mudd5LookAtDoor },
-	{ {ACTION_LOOK, 0x23, 0, 0},            &Room::mudd5LookAtCrane },
-	{ {ACTION_LOOK, 0x21, 0, 0},            &Room::mudd5LookAtEngine },
-	{ {ACTION_TALK, OBJECT_KIRK, 0, 0},     &Room::mudd5TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0},    &Room::mudd5TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0},    &Room::mudd5TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::mudd5TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},  &Room::mudd5UseMedkit },
+	{ {ACTION_LOOK, 0x20, 0, 0, 0},         &Room::mudd5LookAtHatch },
+	{ {ACTION_LOOK, 9,    0, 0, 0},         &Room::mudd5LookAtLifeSupportGenerator },
+	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0, 0}, &Room::mudd5TouchedHotspot0 },
+	{ {ACTION_WALK, 0x22, 0, 0, 0},         &Room::mudd5WalkToDoor },
+	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0, 0},     &Room::mudd5LookAtKirk },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0, 0},    &Room::mudd5LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0, 0},    &Room::mudd5LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::mudd5LookAtRedshirt },
+	{ {ACTION_LOOK, 0x22, 0, 0, 0},            &Room::mudd5LookAtDoor },
+	{ {ACTION_LOOK, 0x23, 0, 0, 0},            &Room::mudd5LookAtCrane },
+	{ {ACTION_LOOK, 0x21, 0, 0, 0},            &Room::mudd5LookAtEngine },
+	{ {ACTION_TALK, OBJECT_KIRK, 0, 0, 0},     &Room::mudd5TalkToKirk },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0, 0},    &Room::mudd5TalkToSpock },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0, 0},    &Room::mudd5TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::mudd5TalkToRedshirt },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0, 0},  &Room::mudd5UseMedkit },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_TICK, 0xff, 0xff, 0xff, 0},           &Room::muddaTick },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum mudd5TextIds {
@@ -172,7 +172,7 @@ void Room::mudd5Tick1() {
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
 	if (_awayMission->mudd.lifeSupportMalfunctioning) {
-		playMidiMusicTracks(19);
+		playMidiMusicTracks(MIDITRACK_19);
 		loadActorAnim(OBJECT_LIFE_SUPPORT_GENERATOR, "s4epls", GENERATOR_X, GENERATOR_Y);
 	} else {
 		loadActorAnim(OBJECT_LIFE_SUPPORT_GENERATOR, "s4eplo", GENERATOR_X, GENERATOR_Y);
@@ -182,7 +182,7 @@ void Room::mudd5Tick1() {
 			_awayMission->mudd.muddUnavailable = true;
 			_awayMission->mudd.numTimesEnteredRoom5 = 1;
 			_awayMission->disableInput = 2;
-			playMidiMusicTracks(3);
+			playMidiMusicTracks(MIDITRACK_3);
 			loadActorAnim(OBJECT_MUDD, "s4ephh", 0x0e, 0xa7);
 			_awayMission->timers[1] = 112;
 			_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
@@ -209,7 +209,7 @@ void Room::mudd5Timer1Expired() { // Mudd enters room through hatch
 void Room::mudd5Timer2Expired() { // Life-support generator starts acting up
 	_awayMission->disableInput = false;
 	_awayMission->mudd.lifeSupportMalfunctioning = true;
-	playMidiMusicTracks(19);
+	playMidiMusicTracks(MIDITRACK_19);
 	loadActorAnim(OBJECT_LIFE_SUPPORT_GENERATOR, "s4epls", GENERATOR_X, GENERATOR_Y);
 }
 
@@ -273,7 +273,7 @@ void Room::mudd5KirkReachedLifeSupportGenerator() {
 }
 
 void Room::mudd5KirkTimer4Expired() {
-	playMidiMusicTracks(-1);
+	playMidiMusicTracks(MIDITRACK_NONE);
 	loadActorAnim2(OBJECT_LIFE_SUPPORT_GENERATOR, "s4eplo");
 	_awayMission->mudd.repairedLifeSupportGenerator = true;
 	_awayMission->mudd.missionScore += 2;
@@ -285,7 +285,7 @@ void Room::mudd5KirkRepairedLifeSupportGenerator() {
 
 	_awayMission->mudd.lifeSupportMalfunctioning = false;
 	_awayMission->mudd.muddUnavailable = false;
-	playMidiMusicTracks(3);
+	playMidiMusicTracks(MIDITRACK_3);
 	loadActorAnim(OBJECT_MUDD, "s4ephh", 0x0e, 0xa7);
 	_awayMission->disableInput = true;
 

@@ -4,13 +4,17 @@ MODULE_OBJS := \
 	big5.o \
 	blit/blit.o \
 	blit/blit-alpha.o \
+	blit/blit-fast.o \
 	blit/blit-generic.o \
 	blit/blit-scale.o \
+	color_quantizer.o \
 	cursorman.o \
+	dirtyrects.o \
 	font.o \
 	fontman.o \
 	fonts/amigafont.o \
 	fonts/bdf.o \
+	fonts/bgifont.o \
 	fonts/consolefont.o \
 	fonts/dosfont.o \
 	fonts/freetype.o \
@@ -20,6 +24,7 @@ MODULE_OBJS := \
 	fonts/ttf.o \
 	fonts/winfont.o \
 	framelimiter.o \
+	hotspot_renderer.o \
 	image-archive.o \
 	korfont.o \
 	larryScale.o \
@@ -43,10 +48,12 @@ MODULE_OBJS := \
 	opengl/context.o \
 	opengl/debug.o \
 	opengl/shader.o \
+	opengl/texture.o \
 	palette.o \
 	pixelformat.o \
 	pm5544.o \
 	primitives.o \
+	riscoscursor.o \
 	renderer.o \
 	scalerplugin.o \
 	scaler/downscaler.o \
@@ -67,6 +74,72 @@ MODULE_OBJS := \
 ifdef USE_ARM_SCALER_ASM
 MODULE_OBJS += \
 	scaler/downscalerARM.o
+endif
+
+ifdef USE_MACTOOLBOX
+MODULE_OBJS += \
+	mactoolbox/siphash/halfsip.o \
+	mactoolbox/toolbox_fileman.o \
+	mactoolbox/toolbox_menu.o \
+	mactoolbox/toolbox_pict.o \
+	mactoolbox/toolbox_quickdraw.o \
+	mactoolbox/toolbox_resman.o \
+	mactoolbox/toolbox_sound.o \
+	mactoolbox/toolbox_text.o \
+	mactoolbox/toolbox.o \
+	mactoolbox/utils.o
+endif
+
+
+ifdef USE_MFC
+MODULE_OBJS += \
+	mfc/afx.o \
+	mfc/bitmap.o \
+	mfc/bitmap_button.o \
+	mfc/brush.o \
+	mfc/button.o \
+	mfc/cmd_target.o \
+	mfc/dialog.o \
+	mfc/dc.o \
+	mfc/doc_manager.o \
+	mfc/doc_template.o \
+	mfc/document.o \
+	mfc/edit.o \
+	mfc/file.o \
+	mfc/font.o \
+	mfc/frame_wnd.o \
+	mfc/gdi_object.o \
+	mfc/global_functions.o \
+	mfc/ifstream.o \
+	mfc/joystickapi.o \
+	mfc/listbox.o \
+	mfc/menu.o \
+	mfc/object.o \
+	mfc/paint_dc.o \
+	mfc/palette.o \
+	mfc/pen.o \
+	mfc/rgn.o \
+	mfc/scroll_view.o \
+	mfc/scrollbar.o \
+	mfc/single_doc_template.o \
+	mfc/static.o \
+	mfc/string.o \
+	mfc/view.o \
+	mfc/win_app.o \
+	mfc/win_thread.o \
+	mfc/wingdi.o \
+	mfc/wnd.o \
+	mfc/gfx/blitter.o \
+	mfc/gfx/surface.o \
+	mfc/gfx/cursor.o \
+	mfc/gfx/dialog_template.o \
+	mfc/gfx/fonts.o \
+	mfc/gfx/palette_map.o \
+	mfc/gfx/text_render.o \
+	mfc/libs/event_loop.o \
+	mfc/libs/events.o \
+	mfc/libs/resources.o \
+	mfc/libs/settings.o
 endif
 
 ifdef USE_TINYGL
@@ -137,7 +210,7 @@ endif
 
 endif
 
-ifdef ATARI
+ifeq ($(BACKEND),atari)
 MODULE_OBJS += \
 	blit/blit-atari.o
 endif

@@ -65,7 +65,6 @@ static bool checkTryMedia(BaseScummFile *handle);
 /* Open a room */
 void ScummEngine::openRoom(const int room) {
 	bool result;
-	byte encByte = 0;
 
 	debugC(DEBUG_GENERAL, "openRoom(%d)", room);
 	assert(room >= 0);
@@ -102,22 +101,11 @@ void ScummEngine::openRoom(const int room) {
 
 		Common::Path filename(generateFilename(room));
 
-		// Determine the encryption, if any.
-		if (_game.features & GF_USE_KEY) {
-			if (_game.version <= 3)
-				encByte = 0xFF;
-			else if ((_game.version == 4) && (room == 0 || room >= 900))
-				encByte = 0;
-			else
-				encByte = 0x69;
-		} else
-			encByte = 0;
-
 		if (room > 0 && (_game.version == 8))
 			VAR(VAR_CURRENTDISK) = diskNumber;
 
 		// Try to open the file
-		result = openResourceFile(filename, encByte);
+		result = openResourceFile(filename, getEncByte(room));
 
 		if (result) {
 			if (room == 0)
@@ -138,7 +126,7 @@ void ScummEngine::openRoom(const int room) {
 	do {
 		char buf[16];
 		snprintf(buf, sizeof(buf), "%.3d.lfl", room);
-		encByte = 0;
+		byte encByte = 0;
 		if (openResourceFile(buf, encByte))
 			break;
 		askForDisk(buf, diskNumber);
@@ -182,6 +170,10 @@ void ScummEngine::readRoomsOffsets() {
 	}
 }
 
+ScummFile *ScummEngine::instantiateScummFile(bool indexPAKFiles) {
+	return !(_game.features & GF_DOUBLEFINE_PAK) ? new ScummFile(this) : new ScummPAKFile(this, indexPAKFiles);
+}
+
 bool ScummEngine::openFile(BaseScummFile &file, const Common::Path &filename, bool resourceFile) {
 	bool result = false;
 
@@ -198,7 +190,25 @@ bool ScummEngine::openFile(BaseScummFile &file, const Common::Path &filename, bo
 		result = file.open(filename);
 	}
 
+	if (!result && _game.id == GID_REBEL1 && _game.platform == Common::kPlatformMacintosh) {
+		file.close();
+		result = file.open(filename.append(";1"));
+	}
+
 	return result;
+}
+
+byte ScummEngine::getEncByte(int room) {
+	// Determine the encryption, if any.
+	if (_game.features & GF_USE_KEY) {
+		if (_game.version <= 3)
+			return 0xFF;
+		else if ((_game.version == 4) && (room == 0 || room >= 900))
+			return 0;
+		else
+			return 0x69;
+	} else
+		return 0;
 }
 
 bool ScummEngine::openResourceFile(const Common::Path &filename, byte encByte) {
@@ -227,7 +237,7 @@ void ScummEngine::askForDisk(const Common::Path &filename, int disknum) {
 				ConfMan.getPath("path").toString(Common::Path::kNativeSeparator).c_str());
 #endif
 
-		result = displayMessage("Quit", "%s", buf);
+		result = displayMessageOKQuit("%s", buf);
 		if (!result) {
 			error("Cannot find file: '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
 		}
@@ -289,7 +299,7 @@ void ScummEngine::readIndexFile() {
 	}
 
 	if (checkTryMedia(_fileHandle)) {
-		displayMessage(nullptr, "You're trying to run game encrypted by ActiveMark. This is not supported.");
+		displayMessage("You're trying to run game encrypted by ActiveMark. This is not supported.");
 		quitGame();
 
 		return;
@@ -386,13 +396,13 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	case MKTAG('D','L','F','L'):
 		i = _fileHandle->readUint16LE();
 		_fileHandle->seek(-2, SEEK_CUR);
-		_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
+		_heV7RoomOffsets = (byte *)reallocateArray(_heV7RoomOffsets, 2 + (i * 4), 1);
 		_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)) );
 		break;
 
 	case MKTAG('D','I','S','K'):
 		i = _fileHandle->readUint16LE();
-		_heV7DiskOffsets = (byte *)calloc(i, 1);
+		_heV7DiskOffsets = (byte *)reallocateArray(_heV7DiskOffsets, i, 1);
 		_fileHandle->read(_heV7DiskOffsets, i);
 		break;
 
@@ -566,7 +576,7 @@ void ScummEngine::loadCharset(int no) {
 
 	debugC(DEBUG_GENERAL, "loadCharset(%d)", no);
 
-	/* FIXME - hack around crash in Indy4 (occurs if you try to load after dieing) */
+	/* FIXME - hack around crash in Indy4 (occurs if you try to load after dying) */
 	if (_game.id == GID_INDY4 && no == 0)
 		no = 1;
 
@@ -639,6 +649,34 @@ void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
 		VAR(VAR_ROOM_FLAG) = 1;
 }
 
+void ScummEngine::scriptOverride(ResId room, int script) {
+	if (_game.id != GID_BASEBALL2001)
+		return;
+
+	Common::String scriptName;
+
+	if (script == -1)
+		scriptName = Common::String::format("entry-%d.scr", room);
+	else if (script == -2)
+		scriptName = Common::String::format("exit-%d.scr", room);
+	else
+		scriptName = Common::String::format("room-%d-%d.scr", room, script);
+
+	Common::Path resFilename = Common::Path(scriptName);
+	if (Common::File::exists(resFilename)) {
+		Common::File resFile;
+		if (resFile.open(resFilename)) {
+			int size = resFile.size();
+
+			byte *data1 = (byte *)malloc(size);
+			resFile.read(data1, size);
+			debug(1, "scriptOverride(): script loaded from file %s", resFilename.toString().c_str());
+
+			_scriptOverrides[room * 100000 + script] = data1;
+		}
+	}
+}
+
 int ScummEngine::loadResource(ResType type, ResId idx) {
 	int roomNr;
 	uint32 fileOffs;
@@ -658,6 +696,20 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 
 	if (roomNr == 0)
 		roomNr = _roomResource;
+
+	if (_game.id == GID_BASEBALL2001) {
+		Common::Path resFilename = Common::Path(Common::String::format("room-%d-%d.scr", roomNr, idx));
+		if (Common::File::exists(resFilename)) {
+			Common::File resFile;
+			if (resFile.open(resFilename)) {
+				size = resFile.size();
+				resFile.read(_res->createResource(type, idx, size), size);
+				debug(1, "loadResource(%s,%d): resource loaded from file %s", nameOfResType(type), idx, resFilename.toString().c_str());
+
+				return 1;
+			}
+		}
+	}
 
 	fileOffs = getResourceRoomOffset(type, idx);
 	if (fileOffs == RES_INVALID_OFFSET)
@@ -755,6 +807,7 @@ int ScummEngine::getResourceSize(ResType type, ResId idx) {
 	Common::StackLock lock(_resourceAccessMutex);
 	byte *ptr = getResourceAddress(type, idx);
 	assert(ptr);
+	(void)ptr;
 	return _res->_types[type][idx]._size;
 }
 
@@ -763,7 +816,7 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 	byte *ptr;
 
 	if (_game.heversion >= 80 && type == rtString)
-		idx &= ~0x33539000;
+		idx &= ~MAGIC_ARRAY_NUMBER;
 
 	if (!_res->validateResource("getResourceAddress", type, idx))
 		return nullptr;
@@ -813,7 +866,10 @@ void ResourceManager::increaseResourceCounters() {
 	for (ResType type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
 		ResId idx = _types[type].size();
 		while (idx-- > 0) {
+			_mutex->lock();
 			byte counter = _types[type][idx].getResourceCounter();
+			_mutex->unlock();
+
 			if (counter && counter < RF_USAGE_MAX) {
 				setResourceCounter(type, idx, counter + 1);
 			}
@@ -822,6 +878,7 @@ void ResourceManager::increaseResourceCounters() {
 }
 
 void ResourceManager::setResourceCounter(ResType type, ResId idx, byte counter) {
+	Common::StackLock lock(*_mutex);
 	_types[type][idx].setResourceCounter(counter);
 }
 
@@ -833,9 +890,6 @@ void ResourceManager::Resource::setResourceCounter(byte counter) {
 byte ResourceManager::Resource::getResourceCounter() const {
 	return _flags & RF_USAGE;
 }
-
-/* 2 bytes safety area to make "precaching" of bytes in the gdi drawer easier */
-#define SAFETY_AREA 2
 
 byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", nameOfResType(type), idx, size);
@@ -852,16 +906,36 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 		// cases. For instance, Zak tries to reload the intro music
 		// while it's playing. See bug #2115.
 
-		if (_types[type][idx]._address && (type == rtSound || type == rtScript || type == rtCostume))
+		if (_types[type][idx]._address && (type == rtSound || type == rtScript || type == rtCostume)) {
+			_vm->_insideCreateResource--;
 			return _types[type][idx]._address;
+		}
 	}
 
-	nukeResource(type, idx);
+	// HE70+ reuses the resource without deallocating it if it has the same size.
+	//
+	// Not replicating this behavior this can creare very rare gfx corruption issues, e.g.
+	// #13864 ("SCUMM/HE: Blue's Treasure Hunt - Missing Backgrounds during some animations"),
+	// in which a WIZ transparent (color 5) image is prepared for it to serve as a canvas for
+	// some Smacker videos, only for the former to be nuked and replaced with an all 0 (black)
+	// empty image.
+	//
+	// This is just one of the many differences of our system versus the HE resource allocation system...
+	// The whole thing should probably be rewritten at some point to match the source code. ;-)
+	if (_vm->_game.heversion >= 70 && _types[type][idx]._address && _types[type][idx]._size == size) {
+		increaseResourceCounters();
+		setResourceCounter(type, idx, 1);
+		_vm->_insideCreateResource--;
+		return _types[type][idx]._address;
+	} else {
+		nukeResource(type, idx);
+	}
 
 	expireResources(size);
 
 	byte *ptr = new byte[size + SAFETY_AREA]();
 	if (ptr == nullptr) {
+		_vm->_insideCreateResource--;
 		error("createResource(%s,%d): Out of memory while allocating %d", nameOfResType(type), idx, size);
 	}
 
@@ -907,6 +981,7 @@ ResourceManager::ResTypeData::~ResTypeData() {
 }
 
 ResourceManager::ResourceManager(ScummEngine *vm) : _vm(vm) {
+	_mutex = &vm->_resourceAccessMutex;
 	_allocatedSize = 0;
 	_maxHeapThreshold = 0;
 	_minHeapThreshold = 0;
@@ -933,6 +1008,7 @@ bool ResourceManager::validateResource(const char *str, ResType type, ResId idx)
 }
 
 void ResourceManager::nukeResource(ResType type, ResId idx) {
+	Common::StackLock lock(*_mutex);
 	byte *ptr = _types[type][idx]._address;
 	if (ptr != nullptr) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", nameOfResType(type), idx);
@@ -967,18 +1043,21 @@ int ScummEngine::getResourceDataSize(const byte *ptr) const {
 }
 
 void ResourceManager::lock(ResType type, ResId idx) {
+	Common::StackLock lock(*_mutex);
 	if (!validateResource("Locking", type, idx))
 		return;
 	_types[type][idx].lock();
 }
 
 void ResourceManager::unlock(ResType type, ResId idx) {
+	Common::StackLock lock(*_mutex);
 	if (!validateResource("Unlocking", type, idx))
 		return;
 	_types[type][idx].unlock();
 }
 
 bool ResourceManager::isLocked(ResType type, ResId idx) const {
+	Common::StackLock lock(*_mutex);
 	if (!validateResource("isLocked", type, idx))
 		return false;
 	return _types[type][idx].isLocked();
@@ -1200,7 +1279,7 @@ void ResourceManager::resourceStats() {
 		}
 	}
 
-	debug(1, "Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
+	debug("Total allocated size=%d, locked=%d(%d)", _allocatedSize, lockedSize, lockedNum);
 }
 
 void ScummEngine_v5::readMAXS(int blockSize) {
@@ -1227,7 +1306,7 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 	_numFlObject = 50;
 
 	if (_shadowPaletteSize)
-		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+		_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);
 }
 
 #ifdef ENABLE_SCUMM_7_8
@@ -1252,11 +1331,11 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 	_numArray = _fileHandle->readUint32LE();         // 200
 	_numVerbs = _fileHandle->readUint32LE();         // 50
 
-	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+	_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 	_numGlobalScripts = 2000;
 
 	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+	_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
@@ -1278,7 +1357,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 	_numCharsets = _fileHandle->readUint16LE();
 	_numCostumes = _fileHandle->readUint16LE();
 
-	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+	_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 
 	if ((_game.id == GID_FT) && (_game.features & GF_DEMO) &&
 		(_game.platform == Common::kPlatformDOS))
@@ -1287,7 +1366,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 		_numGlobalScripts = 2000;
 
 	_shadowPaletteSize = NUM_SHADOW_PALETTE * 256;
-	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+	_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);
 }
 #endif
 
@@ -1314,12 +1393,12 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 		_numGlobalScripts = 200;
 
 		if (_game.heversion >= 70) {
-			_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+			_objectRoomTable = (byte *)reallocateArray(_objectRoomTable, _numGlobalObjects, 1);
 		}
 
 		if (_game.heversion <= 70) {
 			_shadowPaletteSize = 256;
-			_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+			_shadowPalette = (byte *)reallocateArray(_shadowPalette, _shadowPaletteSize, 1);
 		}
 	} else
 		error("readMAXS(%d) failed to read MAXS data", blockSize);
@@ -1399,19 +1478,19 @@ void ScummEngine::allocateArrays() {
 	// Note: Buffers are now allocated in scummMain to allow for
 	//     early GUI init.
 
-	_objectOwnerTable = (byte *)calloc(_numGlobalObjects, 1);
-	_objectStateTable = (byte *)calloc(_numGlobalObjects, 1);
-	_classData = (uint32 *)calloc(_numGlobalObjects, sizeof(uint32));
-	_newNames = (uint16 *)calloc(_numNewNames, sizeof(uint16));
+	_objectOwnerTable = (byte *)reallocateArray(_objectOwnerTable, _numGlobalObjects, 1);
+	_objectStateTable = (byte *)reallocateArray(_objectStateTable, _numGlobalObjects, 1);
+	_classData = (uint32 *)reallocateArray(_classData, _numGlobalObjects, sizeof(uint32));
+	_newNames = (uint16 *)reallocateArray(_newNames, _numNewNames, sizeof(uint16));
 
-	_inventory = (uint16 *)calloc(_numInventory, sizeof(uint16));
-	_verbs = (VerbSlot *)calloc(_numVerbs, sizeof(VerbSlot));
-	_objs = (ObjectData *)calloc(_numLocalObjects, sizeof(ObjectData));
-	_roomVars = (int32 *)calloc(_numRoomVariables, sizeof(int32));
-	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
-	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
+	_inventory = (uint16 *)reallocateArray(_inventory, _numInventory, sizeof(uint16));
+	_verbs = (VerbSlot *)reallocateArray(_verbs, _numVerbs, sizeof(VerbSlot));
+	_objs = (ObjectData *)reallocateArray(_objs, _numLocalObjects, sizeof(ObjectData));
+	_roomVars = (int32 *)reallocateArray(_roomVars, _numRoomVariables, sizeof(int32));
+	_scummVars = (int32 *)reallocateArray(_scummVars, _numVariables, sizeof(int32));
+	_bitVars = (byte *)reallocateArray(_bitVars, _numBitVariables >> 3, 1);
 	if (_game.heversion >= 60) {
-		_arraySlot = (byte *)calloc(_numArray, 1);
+		_arraySlot = (byte *)reallocateArray(_arraySlot, _numArray, 1);
 	}
 
 	_res->allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKTAG('A','K','O','S') : MKTAG('C','O','S','T'),
@@ -1439,7 +1518,7 @@ void ScummEngine_v70he::allocateArrays() {
 	ScummEngine::allocateArrays();
 
 	_res->allocResTypeData(rtSpoolBuffer, 0, 9, kStaticResTypeMode);
-	_heV7RoomIntOffsets = (uint32 *)calloc(_numRooms, sizeof(uint32));
+	_heV7RoomIntOffsets = (uint32 *)reallocateArray(_heV7RoomIntOffsets, _numRooms, sizeof(uint32));
 }
 
 
@@ -1688,6 +1767,52 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 
 	int size = getResourceSize(type, idx);
 
+	// WORKAROUND: Maniac Mansion (NES) logo scroll gets stuck because ScummVM uses a 256px wide view.
+	// The original expects a 224px wide screen, so the camera never reaches the script's wait threshold.
+	// Patch script 120 at runtime by locating the camera-wait loop and changing its compare.
+
+	if (_game.id == GID_MANIAC &&
+		_game.platform == Common::kPlatformNES) {
+
+		if (type == rtScript && idx == 120) {
+			byte *scriptRes = getResourceAddress(type, idx);
+			const uint32 scriptResSize = (size > 0) ? (uint32)size : 0;
+
+			if (scriptRes && scriptResSize >= 8) {
+				byte *code = scriptRes + 8;
+				const uint32 codeSize = scriptResSize - 8;
+
+				const byte logoCamWaitPrefix[] = {
+					0x32, 0x0A,
+					0x12, 0x46,
+					0x80,
+					0x38, 0x02
+				};
+
+				const uint32 prefixSize = (uint32)sizeof(logoCamWaitPrefix);
+
+				if (codeSize >= prefixSize + 5) {
+					for (uint32 i = 0; i + prefixSize + 5 <= codeSize; ++i) {
+						if (memcmp(code + i, logoCamWaitPrefix, prefixSize) == 0) {
+							const uint32 immOff = i + 7;
+							const uint32 tailOff = i + 8;
+
+							if (code[tailOff + 0] == 0x00 &&
+								code[tailOff + 1] == 0xF9 &&
+								code[tailOff + 2] == 0xFF &&
+								code[tailOff + 3] == 0x62) {
+
+								code[immOff] = 0x2C;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
 	// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
 	// if we trim to 200 pixels, we can show only 6 items
 	// therefore we patch the inventory script (20)
@@ -1770,19 +1895,31 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 
 	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && enhancementEnabled(kEnhRestoredContent)) {
 		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
-	} else
+	} else if (_game.id == GID_MANIAC && _game.version == 2 && _game.platform == Common::kPlatformDOS &&
+			   type == rtScript && idx == 44 && size == 199 && enhancementEnabled(kEnhMinorBugFixes)) {
+		// WORKAROUND: There is a cracked version of Maniac Mansion v2 that
+		// attempts to remove the security door copy protection. With it, any
+		// code is accepted as long as you get the last digit wrong.
+		// Unfortunately, it changes a script that is used by all keypads in the
+		// game, which means some puzzles are completely nerfed.
+		//
+		// Even worse, this is the version that GOG and Steam are selling. No,
+		// seriously! I've reported this as a bug, but it remains unclear
+		// whether or not they will fix it.
+		//
+		// Please note, this fix was posthumously made optional using the kEnhMinorBugFixes
+		// enhancement class, since this is still (somehow...) an official release, and this
+		// represents an external bug fix on the data files. As of why this was made optional:
+		// there was an interest within the speedrunning community (see #14815).
+		//
+		// Quoting from the ticket:
+		// "The speedruns for the PC version of Maniac Mansion are separated into two categories:
+		// one that makes use of the broken lab door and one that does not. All of the runs, that
+		// make use of it are from within the first two years after the digital release of the game.
+		// I'm pretty sure, no one understood what was going on, they just recognized the door being
+		// broken from runs of the NES game (this is me guessing). You could say the category is
+		// "grandfathered in". Still, it is the most popular and shortest category for Maniac Mansion."
 
-	// WORKAROUND: There is a cracked version of Maniac Mansion v2 that
-	// attempts to remove the security door copy protection. With it, any
-	// code is accepted as long as you get the last digit wrong.
-	// Unfortunately, it changes a script that is used by all keypads in the
-	// game, which means some puzzles are completely nerfed.
-	//
-	// Even worse, this is the version that GOG and Steam are selling. No,
-	// seriously! I've reported this as a bug, but it remains unclear
-	// whether or not they will fix it.
-
-	if (_game.id == GID_MANIAC && _game.version == 2 && _game.platform == Common::kPlatformDOS && type == rtScript && idx == 44 && size == 199) {
 		byte *data = getResourceAddress(type, idx);
 
 		if (data[184] == 0) {

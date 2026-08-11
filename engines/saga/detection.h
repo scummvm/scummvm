@@ -118,7 +118,25 @@ struct SAGAGameDescription {
 	GameIntroList introList;
 	// Only used if GF_INSTALLER is set
 	ADGameFileDescription filesInArchive[5];
+
+	uint32 sizeBuffer() const {
+		uint32 ret = desc.sizeBuffer();
+		for(int i = 0; i < ARRAYSIZE(filesInArchive); i++) {
+			ret += filesInArchive[i].sizeBuffer();
+		}
+		return ret;
+	}
+
+	void *toBuffer(void *buffer) {
+		buffer = desc.toBuffer(buffer);
+		for(int i = 0; i < ARRAYSIZE(filesInArchive); i++) {
+			buffer = filesInArchive[i].toBuffer(buffer);
+		}
+		return buffer;
+	}
 };
+
+#define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS1
 
 } // End of namespace Saga
 

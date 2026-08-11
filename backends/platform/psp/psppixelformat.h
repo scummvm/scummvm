@@ -38,7 +38,6 @@ struct PSPPixelFormat {
 		Type_5551,
 		Type_5650,
 		Type_8888,
-		Type_8888_RGBA,
 		Type_Palette_8bit,
 		Type_Palette_4bit,
 		Type_Unknown
@@ -46,16 +45,14 @@ struct PSPPixelFormat {
 
 	Type format;
 	uint32 bitsPerPixel;					///< Must match bpp of selected type
-	bool swapRB;							///< Swap red and blue values when reading and writing
 
-	PSPPixelFormat() : format(Type_Unknown), bitsPerPixel(0), swapRB(false) {}
-	void set(Type type, bool swap = false);
+	PSPPixelFormat() : format(Type_Unknown), bitsPerPixel(0) {}
+	void set(Type type);
 	static void convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
 	        PSPPixelFormat::Type &bufferType,
 	        PSPPixelFormat::Type &paletteType,
-	        bool &swapRedBlue);
-	static Graphics::PixelFormat convertToScummvmPixelFormat(PSPPixelFormat::Type type);
-	uint32 convertTo32BitColor(uint32 color) const;
+		bool &fakeAlpha);
+	static Graphics::PixelFormat convertToScummvmPixelFormat(PSPPixelFormat::Type type, bool fakeAlpha = false);
 
 	inline uint32 rgbaToColor(uint32 r, uint32 g, uint32 b, uint32 a) const {
 		uint32 color;
@@ -71,7 +68,6 @@ struct PSPPixelFormat {
 			color = (((b >> 3) << 11) | ((g >> 2) << 5) | ((r >> 3) << 0));
 			break;
 		case Type_8888:
-		case Type_8888_RGBA:
 			color = (((b >> 0) << 16) | ((g >> 0) << 8) | ((r >> 0) << 0) | ((a >> 0) << 24));
 			break;
 		default:
@@ -112,7 +108,6 @@ struct PSPPixelFormat {
 			r = r << 3 | r >> 2;
 			break;
 		case Type_8888:
-		case Type_8888_RGBA:
 			a = (color >> 24) & 0xFF;
 			b = (color >> 16) & 0xFF;
 			g = (color >> 8)  & 0xFF;
@@ -133,7 +128,6 @@ struct PSPPixelFormat {
 			color = (color & 0x7FFF) | (((uint32)alpha >> 7) << 15);
 			break;
 		case Type_8888:
-		case Type_8888_RGBA:
 			color = (color & 0x00FFFFFF) | ((uint32)alpha << 24);
 			break;
 		case Type_5650:
@@ -161,60 +155,6 @@ struct PSPPixelFormat {
 			break;
 		}
 		return pixels;
-	}
-
-	inline uint16 swapRedBlue16(uint16 color) const {
-		uint16 output;
-
-		switch (format) {
-		case Type_4444:
-			output = (color & 0xf0f0) | ((color & 0x000f) << 8)  | ((color & 0x0f00) >> 8);
-			break;
-		case Type_5551:
-			output = (color & 0x83e0) | ((color & 0x001f) << 10) | ((color & 0x7c00) >> 10);
-			break;
-		case Type_5650:
-			output = (color & 0x07e0) | ((color & 0x001f) << 11) | ((color & 0xf800) >> 11);
-			break;
-		default:
-			PSP_ERROR("invalid format[%u] for swapping\n", format);
-			output = 0;
-			break;
-		}
-		return output;
-	}
-
-	inline uint32 swapRedBlue32(uint32 color) const {
-		uint32 output;
-
-		switch (format) {
-		case Type_4444:
-			output = (color & 0xf0f0f0f0) |
-			         ((color & 0x000f000f) << 8)  | ((color & 0x0f000f00) >> 8);
-			break;
-		case Type_5551:
-			output = (color & 0x83e083e0) |
-			         ((color & 0x001f001f) << 10) | ((color & 0x7c007c00) >> 10);
-			break;
-		case Type_5650:
-			output = (color & 0x07e007e0) |
-			         ((color & 0x001f001f) << 11) | ((color & 0xf800f800) >> 11);
-			break;
-		case Type_8888:
-			output = (color & 0xff00ff00) |
-			         ((color & 0x000000ff) << 16) | ((color & 0x00ff0000) >> 16);
-			break;
-		case Type_8888_RGBA:
-			output = ((color & 0x000000ff) << 24) | ((color & 0x0000ff00) << 8) |
-			         ((color & 0x00ff0000) >> 8) | ((color & 0xff000000) >> 24);
-			break;
-		default:
-			PSP_ERROR("invalid format[%u] for swapping\n", format);
-			output = 0;
-			break;
-		}
-
-		return output;
 	}
 
 	// Return whatever color we point at

@@ -117,8 +117,8 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 				if (downloadedClues) {
 					Actor_Says(kActorAnsweringMachine, 360, kAnimationModeTalk);  // new clues added
 				} else if (!uploadedClues && !downloadedClues) {
-					// Play the "No clues transfered" if overall no clues were exchanged
-					Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transfered
+					// Play the "No clues transferred" if overall no clues were exchanged
+					Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transferred
 				}
 			}
 			return true;

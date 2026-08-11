@@ -2,7 +2,7 @@
 
 printf "Creating border/sounds file...\n"
 
-zip -r freescape.zip version *.bmp *.wav
+zip -r freescape.zip version *.bmp
 mv freescape.zip freescape.dat
 
 echo done

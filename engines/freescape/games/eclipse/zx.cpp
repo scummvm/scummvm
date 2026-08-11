@@ -19,9 +19,11 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/eclipse/ay.music.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/language/8bitDetokeniser.h"
 
@@ -29,61 +31,108 @@ namespace Freescape {
 
 void EclipseEngine::initZX() {
 	_viewArea = Common::Rect(56, 36, 265, 139);
-	_maxEnergy = 63;
-	_maxShield = 63;
+	_maxEnergy = 25;
+	_maxShield = 50;
+
+	_soundIndexShoot = 5;
+	_soundIndexCollide = -1; // Scripted
+	_soundIndexStepDown = 12;
+	_soundIndexStepUp = 12;
+	_soundIndexMenu = -1;
+	_soundIndexStart = 7;
+	_soundIndexAreaChange = 7;
+
+	_soundIndexStartFalling = 6;
+	_soundIndexEndFalling = 5;
+
+	_soundIndexNoShield = 8;
+	_soundIndexNoEnergy = -1;
+	_soundIndexFallen = 8;
+	_soundIndexTimeout = 8;
+	_soundIndexForceEndGame = 8;
+	_soundIndexCrushed = 8;
+	_soundIndexMissionComplete = 16;
+}
+
+void EclipseEngine::loadHeartFramesZX(Common::SeekableReadStream *file, int restOffset, int beatOffset) {
+	// ZX monochrome heart sprites with 2-byte header (height, width_bytes).
+	// Stores into _eclipseSprites[0] (beat) and [1] (rest), matching Atari convention.
+	// Uses FreescapeEngine::loadFrame for the monochrome pixel decoding.
+	//
+	// The two frames have opposite bit polarity:
+	// - BEAT: "1" bits = heart shape (ink/yellow), "0" = background (paper/red)
+	// - REST: "1" bits = background (paper/red), "0" = small heart outline (ink/yellow)
+	// So front/back colors are swapped between frames.
+	int offsets[2] = { beatOffset, restOffset };
+
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xd8, 0xd8, 0x00);
+	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xd8, 0x00, 0x00);
+	uint32 frontColors[2] = { red, red };
+	uint32 backColors[2] = { yellow, yellow };
+
+	for (int f = 0; f < 2; f++) {
+		file->seek(offsets[f]);
+		int height = file->readByte();
+		int widthBytes = file->readByte();
+
+		auto *surf = new Graphics::ManagedSurface();
+		surf->create(widthBytes * 8, height, _gfx->_texturePixelFormat);
+		surf->fillRect(Common::Rect(0, 0, widthBytes * 8, height), backColors[f]);
+
+		loadFrame(file, surf, widthBytes, height, frontColors[f]);
+		_eclipseSprites.push_back(surf);
+	}
 }
 
 void EclipseEngine::loadAssetsZXFullGame() {
 	Common::File file;
-	bool isTotalEclipse2 = _targetName.hasPrefix("totaleclipse2");
+	const char *prefix = isEclipse2() ? "totaleclipse2" : "totaleclipse";
+	Common::Path titleFile(Common::String::format("%s.zx.title", prefix));
+	Common::Path borderFile(Common::String::format("%s.zx.border", prefix));
+	Common::Path dataFile(Common::String::format("%s.zx.data", prefix));
 
-	file.open("totaleclipse.zx.title");
+	file.open(titleFile);
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
-		error("Unable to find totaleclipse.zx.title");
+		error("Unable to find %s", titleFile.toString().c_str());
 
 	file.close();
-	file.open("totaleclipse.zx.border");
+	file.open(borderFile);
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
-		error("Unable to find totaleclipse.zx.border");
+		error("Unable to find %s", borderFile.toString().c_str());
 	file.close();
 
-	file.open("totaleclipse.zx.data");
+	file.open(dataFile);
 	if (!file.isOpen())
-		error("Failed to open totaleclipse.zx.data");
+		error("Failed to open %s", dataFile.toString().c_str());
 
-	if (isTotalEclipse2) {
+	if (isEclipse2()) {
 		loadMessagesFixedSize(&file, 0x2ac, 16, 30);
-		loadFonts(&file, 0x61c3, _font);
-		loadSpeakerFxZX(&file, 0x8c6, 0x91a);
+		loadFonts(&file, 0x61c3);
+		_sound = loadSpeakerFxZX(&file, 0x8c6, 0x91a, 25);
 		load8bitBinary(&file, 0x63bb, 4);
 	} else {
 		loadMessagesFixedSize(&file, 0x2ac, 16, 23);
-		loadFonts(&file, 0x6163, _font);
-		loadSpeakerFxZX(&file, 0x816, 0x86a);
+		loadFonts(&file, 0x6163);
+		_sound = loadSpeakerFxZX(&file, 0x816, 0x86a, 25);
 		load8bitBinary(&file, 0x635b, 4);
-	}
+		loadHeartFramesZX(&file, 0x0D62, 0x0D7C);
 
-	for (auto &it : _areaMap) {
-		it._value->addStructure(_areaMap[255]);
-
-		if (isTotalEclipse2 && it._value->getAreaID() == 1)
-			continue;
-
-		if (isEclipse2() && it._value->getAreaID() == _startArea)
-			continue;
-
-		for (int16 id = 183; id < 207; id++)
-			it._value->addObjectFromArea(id, _areaMap[255]);
+		// These paper colors are also invalid, but to signal the use of a special effect (only in zx release)
+		_areaMap[42]->_paperColor = 0;
+		_areaMap[42]->_underFireBackgroundColor = 0;
 	}
 
 	_indicators.push_back(loadBundledImage("eclipse_ankh_indicator"));
 
 	for (auto &it : _indicators)
 		it->convertToInPlace(_gfx->_texturePixelFormat);
+
+	if (ConfMan.getBool("ay_music"))
+		_playerMusic = new EclipseAYMusicPlayer(_mixer);
 }
 
 void EclipseEngine::loadAssetsZXDemo() {
@@ -91,14 +140,14 @@ void EclipseEngine::loadAssetsZXDemo() {
 
 	file.open("totaleclipse.zx.title");
 	if (file.isOpen()) {
-		_title = loadAndCenterScrImage(&file);
+		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find totaleclipse.zx.title");
 
 	file.close();
 	file.open("totaleclipse.zx.border");
 	if (file.isOpen()) {
-		_border = loadAndCenterScrImage(&file);
+		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find totaleclipse.zx.border");
 	file.close();
@@ -108,30 +157,27 @@ void EclipseEngine::loadAssetsZXDemo() {
 		error("Failed to open totaleclipse.zx.data");
 
 	if (_variant & GF_ZX_DEMO_MICROHOBBY) {
+		_sound = loadSpeakerFxZX(&file, 0x798, 0x7ec, 21);
 		loadMessagesFixedSize(&file, 0x2ac, 16, 23);
 		loadMessagesFixedSize(&file, 0x56e6, 264, 1);
-		loadFonts(&file, 0x5f7b, _font);
+		loadFonts(&file, 0x5f7b);
 		load8bitBinary(&file, 0x6173, 4);
 	} else if (_variant & GF_ZX_DEMO_CRASH) {
-		loadSpeakerFxZX(&file, 0x65c, 0x6b0);
+		_sound = loadSpeakerFxZX(&file, 0x65c, 0x6b0, 25);
 		loadMessagesFixedSize(&file, 0x364, 16, 9);
 		loadMessagesFixedSize(&file, 0x5901, 264, 5);
-		loadFonts(&file, 0x6589, _font);
+		loadFonts(&file, 0x6589);
 		load8bitBinary(&file, 0x6781, 4);
 	} else
 		error("Unknown ZX Spectrum demo variant");
-
-	for (auto &it : _areaMap) {
-		it._value->_name = "  NOW TRAINING  ";
-		it._value->addStructure(_areaMap[255]);
-		for (int16 id = 183; id < 207; id++)
-			it._value->addObjectFromArea(id, _areaMap[255]);
-	}
 
 	_indicators.push_back(loadBundledImage("eclipse_ankh_indicator"));
 
 	for (auto &it : _indicators)
 		it->convertToInPlace(_gfx->_texturePixelFormat);
+
+	if (ConfMan.getBool("ay_music"))
+		_playerMusic = new EclipseAYMusicPlayer(_mixer);
 }
 
 void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
@@ -152,11 +198,16 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(7, r, g, b);
 	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
+	_gfx->readFromPalette(5, r, g, b);
+	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
 	_gfx->readFromPalette(2, r, g, b);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
+
 	int score = _gameStateVars[k8bitVariableScore];
 	int shield = _gameStateVars[k8bitVariableShield] * 100 / _maxShield;
+	int energy = _gameStateVars[k8bitVariableEnergy];
 	shield = shield < 0 ? 0 : shield;
 
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0);
@@ -171,8 +222,7 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	} else if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentArea->_name, 102, 141, back, yellow, surface);
 
-	Common::String scoreStr = Common::String::format("%07d", score);
-	drawStringInSurface(scoreStr, 133, 11, back, gray, surface, 'Z' - '0' + 1);
+	drawScoreString(score, 135, 11, back, gray, surface);
 
 	Common::String shieldStr = Common::String::format("%d", shield);
 
@@ -182,17 +232,32 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	else if (shield < 100)
 		x = 175;
 
+	if (energy < 0)
+		energy = 0;
+
 	drawStringInSurface(shieldStr, x, 161, back, red, surface);
 
-	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 141, back, yellow, surface, 'Z' - '$' + 1);
-	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 141, back, yellow, surface, 'Z' - '$' + 1);
-	drawStringInSurface(Common::String('7' - _playerHeightNumber), 240, 141, back, yellow, surface, 'Z' - '$' + 1);
+	Common::Rect jarBackground(120, 162, 144, 192 - 4);
+	surface->fillRect(jarBackground, back);
+
+	Common::Rect jarWater(120, 192 - energy - 4, 144, 192 - 4);
+	surface->fillRect(jarWater, blue);
+
+	drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), 79, 141, back, yellow, surface);
+	drawStringInSurface(shiftStr("3", 'Z' - '$' + 1 - _playerStepIndex), 63, 141, back, yellow, surface);
+	drawStringInSurface(shiftStr("7", 'Z' - '$' + 1 - _playerHeightNumber), 240, 141, back, yellow, surface);
 
 	if (_shootingFrames > 0) {
-		drawStringInSurface("4", 232, 141, back, yellow, surface, 'Z' - '$' + 1);
-		drawStringInSurface("<", 240, 141, back, yellow, surface, 'Z' - '$' + 1);
+		drawStringInSurface(shiftStr("4", 'Z' - '$' + 1), 232, 141, back, yellow, surface);
+		drawStringInSurface(shiftStr("<", 'Z' - '$' + 1) , 240, 141, back, yellow, surface);
 	}
 	drawAnalogClock(surface, 89, 172, back, back, gray);
+
+	surface->fillRect(Common::Rect(227, 168, 235, 187), gray);
+	drawCompass(surface, 231, 177, _yaw, 10, back);
+
+	drawHeartIndicator(surface, 176, 167);
+
 	drawIndicator(surface, 65, 7, 8);
 	drawEclipseIndicator(surface, 215, 3, front, gray);
 }

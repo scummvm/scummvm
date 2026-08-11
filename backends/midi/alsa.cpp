@@ -339,17 +339,17 @@ int AlsaDevice::getClient() {
 
 class AlsaMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "ALSA";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "alsa";
 	}
 
 	AlsaDevices getAlsaDevices() const;
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 
 private:
 	static int parse_addr(const char *arg, int *client, int *port);
@@ -424,8 +424,8 @@ MusicDevices AlsaMusicPlugin::getDevices() const {
 
 	// Add the remaining devices in the order they were found.
 
-	for (d = alsaDevices.begin(); d != alsaDevices.end(); ++d)
-		devices.push_back(MusicDevice(this, d->getName(), d->getType()));
+	for (auto &device : alsaDevices)
+		devices.push_back(MusicDevice(this, device.getName(), device.getType()));
 
 	return devices;
 }
@@ -461,12 +461,12 @@ Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDrive
 	if (!found && dev) {
 		AlsaDevices alsaDevices = getAlsaDevices();
 
-		for (AlsaDevices::iterator d = alsaDevices.begin(); d != alsaDevices.end(); ++d) {
-			MusicDevice device(this, d->getName(), d->getType());
+		for (auto &d : alsaDevices) {
+			MusicDevice device(this, d.getName(), d.getType());
 
 			if (device.getCompleteId().equals(MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId))) {
 				found = true;
-				seq_client = d->getClient();
+				seq_client = d.getClient();
 				seq_port = -1;
 				break;
 			}

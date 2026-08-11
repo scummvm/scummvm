@@ -79,15 +79,24 @@ class Page;
 class LeadActor;
 
 enum {
-	kPinkDebugGeneral = 1 << 0,
-	kPinkDebugLoadingResources = 1 << 1,
-	kPinkDebugLoadingObjects = 1 << 2,
-	kPinkDebugScripts = 1 << 3,
-	kPinkDebugActions = 1 << 4
+	kPinkDebugGeneral = 1,
+	kPinkDebugLoadingResources,
+	kPinkDebugLoadingObjects,
+	kPinkDebugScripts,
+	kPinkDebugActions,
 };
 
 enum {
 	GF_COMPRESSED = 1 << 0,
+};
+
+enum PINKActions {
+	kActionNone,
+	kActionSkipWalk,
+	kActionSkipWalkAndCancelInteraction,
+	kActionSkipSequence,
+	kActionSkipSubSequence,
+	kActionRestartSequence,
 };
 
 extern Graphics::PaletteLookup *g_paletteLookup;
@@ -148,7 +157,7 @@ private:
 
 	bool loadCursors();
 
-	void initModule(const Common::String moduleName, const Common::String pageName, Archive *saveFile);
+	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
 	void addModule(const Common::String &moduleName);
 	void removeModule();
 

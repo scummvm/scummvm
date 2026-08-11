@@ -28,6 +28,8 @@
 #include "titanic/game_state.h"
 #include "titanic/titanic.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
@@ -39,7 +41,7 @@ BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
 	ON_MESSAGE(MouseDoubleClickMsg)
 	ON_MESSAGE(MouseWheelMsg)
 	ON_MESSAGE(KeyCharMsg)
-	ON_MESSAGE(VirtualKeyCharMsg)
+	ON_MESSAGE(ActionMsg)
 	ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
@@ -73,6 +75,7 @@ void CPetControl::save(SimpleFile *file, int indent) {
 void CPetControl::load(SimpleFile *file) {
 	int val = file->readNumber();
 	isValid();
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	if (!val) {
 		_currentArea = (PetArea)file->readNumber();
@@ -80,6 +83,11 @@ void CPetControl::load(SimpleFile *file) {
 		_remoteTargetName = file->readString();
 
 		loadAreas(file, 0);
+
+		if (_currentArea == PET_REAL_LIFE) {
+			keymapper->getKeymap("inv-shortcut")->setEnabled(false);
+			keymapper->getKeymap("real-life")->setEnabled(true);
+		}
 	}
 
 	CGameObject::load(file);
@@ -219,6 +227,15 @@ PetArea CPetControl::setArea(PetArea newArea, bool forceChange) {
 	if ((!forceChange && newArea == _currentArea) || !isAreaUnlocked())
 		return _currentArea;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	if (newArea == PET_REAL_LIFE) {
+		keymapper->getKeymap("inv-shortcut")->setEnabled(false);
+		keymapper->getKeymap("real-life")->setEnabled(true);
+	} else {
+		keymapper->getKeymap("real-life")->setEnabled(false);
+		keymapper->getKeymap("inv-shortcut")->setEnabled(true);
+	}
+
 	// Signal the currently active area that it's being left
 	_sections[_currentArea]->leave();
 
@@ -337,55 +354,40 @@ bool CPetControl::KeyCharMsg(CKeyCharMsg *msg) {
 	makeDirty();
 	bool result = _sections[_currentArea]->KeyCharMsg(msg);
 
-	if (!result) {
-		switch (msg->_key) {
-		case Common::KEYCODE_TAB:
-			if (isAreaUnlocked()) {
-				setArea(PET_INVENTORY);
-				result = true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
 	return result;
 }
 
-bool CPetControl::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
+bool CPetControl::ActionMsg(CActionMsg *msg) {
 	if (isInputLocked())
 		return false;
 
-	bool result = _sections[_currentArea]->VirtualKeyCharMsg(msg);
+	bool result = _sections[_currentArea]->ActionMsg(msg);
 
 	if (!result) {
-		switch (msg->_keyState.keycode) {
-		case Common::KEYCODE_F1:
+		switch (msg->_action) {
+		case kActionPETConversation:
 			result = true;
 			setArea(PET_CONVERSATION);
 			break;
-		case Common::KEYCODE_F2:
-			setArea(PET_INVENTORY);
+		case kActionPETInventory:
 			result = true;
+			setArea(PET_INVENTORY);
 			break;
-		case Common::KEYCODE_F3:
+		case kActionPETRemote:
 			result = true;
 			setArea(PET_REMOTE);
 			break;
-		case Common::KEYCODE_F4:
+		case kActionPETRooms:
 			result = true;
 			setArea(PET_ROOMS);
 			break;
-		case Common::KEYCODE_F6:
+		case kActionPETRealLife:
 			result = true;
 			setArea(PET_REAL_LIFE);
 			break;
-		case Common::KEYCODE_F8:
-			if (g_vm->isGerman()) {
-				result = true;
-				setArea(PET_TRANSLATION);
-			}
+		case kActionPETTranslation:
+			result = true;
+			setArea(PET_TRANSLATION);
 			break;
 		default:
 			break;

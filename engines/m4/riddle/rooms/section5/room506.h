@@ -29,12 +29,33 @@ namespace Riddle {
 namespace Rooms {
 
 class Room506 : public Room {
+private:
+	RGB8 _palette[59] = {};
+	bool _flag1 = false;
+	bool _darkPaletteSet = false;
+	bool _lightPaletteSet = false;
+	bool _towerFlag = false;
+	int _destX = 0, _destY = 0;
+	int _destFacing = 0;
+	machine *_ripley = nullptr;
+	machine *_dome = nullptr;
+	machine *_skullSparkle = nullptr;
+	machine *_domeRotation = nullptr;
+	int _ripLowReach = 0;
+
+	void restorePalette();
+	void setDarkPalette();
+	void saveWalk();
+
 public:
-	Room506() : Room() {}
+	Room506();
 	~Room506() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

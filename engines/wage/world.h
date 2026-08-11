@@ -105,7 +105,10 @@ public:
 	Common::String _aboutMenuItemName;
 	Common::String _commandsMenuName;
 	Common::String _commandsMenu;
+	Common::String _commandsMenuDefault;
 	Common::String _weaponsMenuName;
+	Common::String _fileMenuName;
+	Common::String _fileMenu;
 
 	void addScene(Scene *room) {
 		if (!room->_name.empty()) {

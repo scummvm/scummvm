@@ -27,6 +27,7 @@
 #include "m4/riddle/rooms/section9/room902.h"
 #include "m4/riddle/rooms/section9/room903.h"
 #include "m4/riddle/rooms/section9/room905.h"
+#include "m4/riddle/rooms/section9/room906.h"
 #include "m4/riddle/rooms/section9/room907.h"
 #include "m4/riddle/rooms/section9/room908.h"
 #include "m4/riddle/rooms/section9/room917.h"
@@ -43,6 +44,7 @@ private:
 	Room902 _room902;
 	Room903 _room903;
 	Room905 _room905;
+	Room906 _room906;
 	Room907 _room907;
 	Room908 _room908;
 	Room917 _room917;

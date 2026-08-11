@@ -47,7 +47,7 @@ public:
 	/**
 	 * Gets and processes SDL events.
 	 */
-	virtual bool pollEvent(Common::Event &event);
+	bool pollEvent(Common::Event &event) override;
 
 	/**
 	 * Emulates a mouse movement that would normally be caused by a mouse warp
@@ -73,7 +73,10 @@ protected:
 	/** Joystick */
 	SDL_Joystick *_joystick;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	/** Game controller */
+	SDL_Gamepad *_controller;
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 	/** Game controller */
 	SDL_GameController *_controller;
 #endif
@@ -143,6 +146,11 @@ protected:
 	virtual int mapSDLControllerButtonToOSystem(Uint8 sdlButton);
 	virtual bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp);
 	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);
+
+	virtual bool isTouchPortTouchpadMode(SDL_TouchID port);
+	virtual bool isTouchPortActive(SDL_TouchID port);
+	virtual Common::Point getTouchscreenSize();
+	virtual void convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY);
 #endif
 
 	//@}
@@ -181,15 +189,17 @@ protected:
 	bool handleResizeEvent(Common::Event &event, int w, int h);
 
 	/**
-	 * Extracts unicode information for the specific key sym.
+	 * Extracts unicode information for the specific key.
 	 * May only be used for key down events.
 	 */
-	uint32 obtainUnicode(const SDL_Keysym keySym);
+	uint32 obtainUnicode(const SDL_KeyboardEvent &key);
 
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 	/**
 	 * Extracts the keycode for the specified key sym.
 	 */
 	SDL_Keycode obtainKeycode(const SDL_Keysym keySym);
+#endif
 
 	/**
 	 * Whether _fakeMouseMove contains an event we need to send.
@@ -202,6 +212,20 @@ protected:
 	 * window is not focused).
 	 */
 	Common::Event _fakeMouseMove;
+
+	/**
+	 * WORKAROUND: Whether stale mouse positions on macOS 26 are corrected in
+	 * handleMouseMotion(). Enabled by default; the testbed engine disables it
+	 * at runtime, through OSystem::kFeatureStaleMousePositionWorkaround, to
+	 * check whether the underlying bug still occurs.
+	 */
+	bool _staleMousePositionWorkaround = true;
+
+public:
+	void setStaleMousePositionWorkaround(bool enable) { _staleMousePositionWorkaround = enable; }
+	bool getStaleMousePositionWorkaround() const { return _staleMousePositionWorkaround; }
+
+protected:
 
 	uint8 _lastHatPosition;
 
@@ -216,6 +240,62 @@ protected:
 	 * KEYDOWN event.
 	 */
 	Common::Event _fakeKeyUp;
+
+	/**
+	 * Whether and how many times _fakeMouseScroll contains an event we need to send .
+	 */
+	int _queuedFakeMouseScroll;
+
+	/**
+	 * A fake mouse scroll event sent when the graphics manager is told to warp
+	 * the mouse but the system mouse is unable to be warped (e.g. because the
+	 * window is not focused).
+	 */
+	Common::Event _fakeMouseScroll;
+
+	enum {
+		MAX_NUM_FINGERS = 3, // number of fingers to track per panel
+		MAX_TAP_TIME = 250, // taps longer than this will not result in mouse click events
+		MAX_TAP_MOTION_DISTANCE = 10, // max distance finger motion in Vita screen pixels to be considered a tap
+		SIMULATED_CLICK_DURATION = 50, // time in ms how long simulated mouse clicks should be
+		FINGER_SUBPIXEL_MULTIPLIER = 16 // multiplier for sub-pixel resolution
+	};
+
+	struct TouchFinger {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_FingerID id = 0; // 0: no touch
+#else 
+		int id = -1; // -1: no touch
+#endif
+		uint32 timeLastDown = 0;
+		int lastX = 0; // last known screen coordinates
+		int lastY = 0; // last known screen coordinates
+		float lastDownX = 0; // SDL touch coordinates when last pressed down
+		float lastDownY = 0; // SDL touch coordinates when last pressed down
+	};
+
+	enum DraggingType {
+		DRAG_NONE = 0,
+		DRAG_TWO_FINGER,
+		DRAG_THREE_FINGER,
+	};
+
+	struct TouchPanelState {
+		TouchFinger _finger[MAX_NUM_FINGERS]; // keep track of finger status
+		DraggingType _multiFingerDragging = DRAG_NONE; // keep track whether we are currently drag-and-dropping
+		unsigned int _simulatedClickStartTime[2] = {0, 0}; // initiation time of last simulated left or right click (zero if no click)
+		int _hiresDX = 0; // keep track of slow, sub-pixel, finger motion across multiple frames
+		int _hiresDY = 0;
+		bool _tapMade = false;
+	};
+
+	Common::HashMap<unsigned long, TouchPanelState> _touchPanels;
+
+private:
+	void preprocessFingerDown(SDL_Event *event);
+	bool preprocessFingerUp(SDL_Event *event, Common::Event *ev);
+	void preprocessFingerMotion(SDL_Event *event);
+	void finishSimulatedMouseClicks(void);
 #endif
 };
 

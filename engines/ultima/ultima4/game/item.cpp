@@ -420,10 +420,10 @@ void Items::useStone(int item) {
 	MapCoords coords;
 	byte stone = static_cast<byte>(item);
 
-	static byte truth   = STONE_WHITE | STONE_PURPLE | STONE_GREEN  | STONE_BLUE;
-	static byte love    = STONE_WHITE | STONE_YELLOW | STONE_GREEN  | STONE_ORANGE;
-	static byte courage = STONE_WHITE | STONE_RED    | STONE_PURPLE | STONE_ORANGE;
-	static byte *attr   = nullptr;
+	static const byte truth   = STONE_WHITE | STONE_PURPLE | STONE_GREEN  | STONE_BLUE;
+	static const byte love    = STONE_WHITE | STONE_YELLOW | STONE_GREEN  | STONE_ORANGE;
+	static const byte courage = STONE_WHITE | STONE_RED    | STONE_PURPLE | STONE_ORANGE;
+	static const byte *attr   = nullptr;
 
 	g_context->_location->getCurrentPosition(&coords);
 

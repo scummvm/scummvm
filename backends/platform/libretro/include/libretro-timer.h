@@ -35,7 +35,7 @@ public:
 	LibretroTimerManager(uint32 refresh_rate);
 	~LibretroTimerManager(void) {};
 	void switchThread(uint8 caller = 0);
-	void checkThread(uint8 caller = 0);
+	bool checkThread(uint8 caller = 0);
 	uint32 timeToNextSwitch(void);
 	uint32 spentOnMainThread(void);
 	uint8 getThreadSwitchCaller(void);

@@ -40,6 +40,11 @@ BaseScriptable *makeSXWMEGalaxyAPI(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSX3fStatistics(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXCommandLineHelper(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXSample(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXVlink(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXBlackAndWhite(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXShadowManager(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXDisplacement(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXProtection(BaseGame *inGame, ScStack *stack);
 
 bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
@@ -103,6 +108,68 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 		stack->pushNULL();
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Displacement plugin (from wme_displacement.dll for "Beyond the Threshold" game)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Displacement") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXDisplacement(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Protection class for "Susan Rose: Mysterious Child" game)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Protection") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXProtection(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// BinkVideo player (from wme_vlink.dll of "Sunrise" game)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "BinkVideo") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXVlink(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// BlackAndWhite (from wme_blackandwhite.dll of "Stroke of Fate" duology games)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "BlackAndWhite") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXBlackAndWhite(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ShadowManager (from wme_shadows.dll of "Stroke of Fate" duology games)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ShadowManager") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXShadowManager(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
 
 	return STATUS_FAILED;
 }

@@ -38,8 +38,8 @@ static const PlainGameDescriptor avalancheGames[] = {
 	{nullptr, nullptr}
 };
 
-static const ADGameDescription gameDescriptions[] = {
-	{
+static const AvalancheGameDescription gameDescriptions[] = {
+	{{
 		"avalanche", nullptr,
 		AD_ENTRY2s("avalot.sez",	"de10eb353228013da3d3297784f81ff9", 48763,
 				   "mainmenu.avd",	"89f31211af579a872045b175cc264298", 18880),
@@ -47,14 +47,14 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
-	},
+	}},
 
-	AD_TABLE_END_MARKER
+	{AD_TABLE_END_MARKER}
 };
 
-class AvalancheMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AvalancheMetaEngineDetection : public AdvancedMetaEngineDetection<AvalancheGameDescription> {
 public:
-	AvalancheMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
+	AvalancheMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, avalancheGames) {
 	}
 
 	const char *getName() const override {

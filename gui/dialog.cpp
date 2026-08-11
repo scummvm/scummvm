@@ -119,7 +119,10 @@ void Dialog::reflowLayout() {
 }
 
 void Dialog::lostFocus() {
-	_dragWidget = nullptr;
+	if (_dragWidget) {
+		_dragWidget->lostFocus();
+		_dragWidget = nullptr;
+	}
 
 	if (_tickleWidget) {
 		_tickleWidget->lostFocus();
@@ -163,14 +166,28 @@ void Dialog::markWidgetsAsDirty() {
 	}
 }
 
-void Dialog::drawDialog(DrawLayer layerToDraw) {
+Common::Rect Dialog::getMaxDirtyRect() const {
+	int16 x = _x;
+	if (g_gui.useRTL()) {
+		x = g_system->getOverlayWidth() - _x - _w;
+	}
+	return g_gui.theme()->getDialogDirtyRect(Common::Rect(x, _y, x + _w, _y + _h), _backgroundType);
+}
+
+void Dialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
 
 	if (!isVisible())
 		return;
 
-	g_gui.theme()->disableClipRect();
+	if (resetClipping) {
+		g_gui.theme()->disableClipRect();
+	}
 	g_gui.theme()->_layerToDraw = layerToDraw;
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _backgroundType);
+	int16 x = _x;
+	if (g_gui.useRTL()) {
+		x = g_system->getOverlayWidth() - _x - _w;
+	}
+	g_gui.theme()->drawDialogBackground(Common::Rect(x, _y, x + _w, _y + _h), _backgroundType);
 
 	markWidgetsAsDirty();
 
@@ -254,8 +271,21 @@ void Dialog::handleMouseWheel(int x, int y, int direction) {
 	Widget *w = findWidget(x, y);
 	if (!w)
 		w = _focusedWidget;
-	if (w)
+	if (w) {
 		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
+		// Find the scrollable ancestor to set as the tickle target
+		Widget *scrollable = w;
+		while (scrollable) {
+			if (scrollable->hasVisibleScrollBar()) {
+				setTickleWidget(scrollable);
+				break;
+			}
+			if (scrollable->_boss == this)		
+				break;
+
+			scrollable = static_cast<Widget *>(scrollable->_boss);
+		}
+	}
 
 	_handlingMouseWheel = false;
 }
@@ -403,6 +433,10 @@ Widget *Dialog::findWidget(int x, int y) {
 
 Widget *Dialog::findWidget(const char *name) {
 	return Widget::findWidgetInChain(_firstWidget, name);
+}
+
+Widget *Dialog::findWidget(uint32 type) {
+	return Widget::findWidgetInChain(_firstWidget, type);
 }
 
 void Dialog::removeWidget(Widget *del) {

@@ -32,10 +32,10 @@ typedef int8 sint8;
 typedef int16 sint16;
 typedef int32 sint32;
 
-#define USE_BUTTON Shared::BUTTON_LEFT
-#define WALK_BUTTON Shared::BUTTON_RIGHT
-#define ACTION_BUTTON Shared::BUTTON_RIGHT
-#define DRAG_BUTTON Shared::BUTTON_LEFT
+#define USE_BUTTON Events::BUTTON_LEFT
+#define WALK_BUTTON Events::BUTTON_RIGHT
+#define ACTION_BUTTON Events::BUTTON_RIGHT
+#define DRAG_BUTTON Events::BUTTON_LEFT
 
 typedef uint8 nuvie_game_t; // Game type (1=u6,2=md,4=se)
 

@@ -109,6 +109,7 @@ void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int 
 	unsigned char *save_buf = NULL;
 	unsigned char *save_unp = NULL;
 	unsigned int cur_unpacked_data_size = 0x00;
+	unsigned int cur_index = 0x00;
 
 	save_buf = buf;
 	save_unp = unpacked_data;
@@ -127,8 +128,7 @@ void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int 
 			memset(unpacked_data, fillbyte, count);
 			unpacked_data += count;
 			cur_unpacked_data_size += count;
-		}
-		else if ((opcode & 0xFE) == 0xB2) {
+		} else if ((opcode & 0xFE) == 0xB2) {
 			if ((cur_unpacked_data_size + count) > *unpacked_data_size) {
 				debug("overflow");
 			}
@@ -136,23 +136,23 @@ void unpack_data(unsigned char *unpacked_data, unsigned char *buf, unsigned int 
 			unpacked_data += count;
 			cur_unpacked_data_size += count;
 			buf += count;
-		}
-		else {
+		} else {
 			debug("unknown opcode");
 		}
 		if ((opcode & 1) == 1) {
 			break;
 		}
-		if (buf - save_buf >= packed_data_len) {
+		if ((unsigned int)(buf - save_buf) >= packed_data_len) {
 			break;
 		}
 	}
-	if (buf - save_buf < packed_data_len) {
-		if ((packed_data_len - (buf - save_buf)) > (*unpacked_data_size - (unpacked_data - save_unp))) {
+	cur_index = (unsigned int)(buf - save_buf);
+	if (cur_index < packed_data_len) {
+		if ((packed_data_len - cur_index) > (*unpacked_data_size - (unpacked_data - save_unp))) {
 			debug("Data left are too large!");
 		}
-		memcpy(unpacked_data, buf, packed_data_len - (buf - save_buf));
-		cur_unpacked_data_size += packed_data_len - (buf - save_buf);
+		memcpy(unpacked_data, buf, packed_data_len - cur_index);
+		cur_unpacked_data_size += packed_data_len - cur_index;
 	}
 	*unpacked_data_size = cur_unpacked_data_size;
 }
@@ -176,28 +176,29 @@ unsigned char *create_reloc_table(struct memstream *ms, struct dos_header *dh, s
 	}
 
 	reloc_length = (unsigned int)(eh->exepack_size - ((reloc - (ms->buf + exepack_offset)) & 0xFFFFFFFF) + strlen("Packed file is corrupt"));
-	nb_reloc = (reloc_length - 16 * sizeof (unsigned short)) / 2;
+	nb_reloc = (reloc_length - 16 * sizeof(unsigned short)) / 2;
 	*reloc_table_size = nb_reloc * 2 * sizeof(unsigned short);
-	buf_reloc = (unsigned char*)malloc(sizeof (char) * *reloc_table_size);
+	buf_reloc = (unsigned char*)malloc(sizeof(char) * *reloc_table_size);
 	assert(buf_reloc);
 	reloc += strlen("Packed file is corrupt");
 	msseek(ms, (reloc - ms->buf) & 0xFFFFFFFF);
 	for (i = 0; i < 16; i++) {
-		if (msread(ms, &count, sizeof (unsigned short)) != sizeof (unsigned short)) {
+		if (msread(ms, &count, sizeof(unsigned short)) != sizeof(unsigned short)) {
 			debug("msread failed");
 		}
 		for (j = 0; j < count; j++) {
-			if (msread(ms, &entry, sizeof (unsigned short)) != sizeof (unsigned short)) {
+			if (msread(ms, &entry, sizeof(unsigned short)) != sizeof(unsigned short)) {
 				debug("msread failed");
 			}
-			if (reloc_position >= *reloc_table_size) {
-				debug("overflow");
+			// The relocation counts are read from the (untrusted) packed file,
+			// so their sum can exceed the header-derived table size. Stop before
+			// writing past the end of buf_reloc rather than overflowing it.
+			if (reloc_position + 2 * sizeof(unsigned short) > *reloc_table_size) {
+				debug("relocation table overflow, truncating");
+				break;
 			}
 			*(unsigned short*)(buf_reloc + reloc_position) = entry;
 			reloc_position += 2;
-			if (reloc_position >= *reloc_table_size) {
-				debug("overflow");
-			}
 			*(unsigned short*)(buf_reloc + reloc_position) = (i * 0x1000) & 0xFFFF;
 			reloc_position += 2;
 		}
@@ -209,7 +210,7 @@ unsigned char *create_reloc_table(struct memstream *ms, struct dos_header *dh, s
 Common::MemoryReadStream *writeExe(struct dos_header *dh, unsigned char *unpacked_data, unsigned int unpacked_data_size, unsigned char *reloc, size_t reloc_size, size_t padding) {
 	Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::NO);
 
-	buf.write(dh, sizeof (struct dos_header));
+	buf.write(dh, sizeof(struct dos_header));
 	buf.write(reloc, reloc_size);
 	for (size_t i = 0; i < padding; i++) {
 		buf.write("\x00", 1);
@@ -224,8 +225,8 @@ Common::MemoryReadStream *craftexec(struct dos_header *dh, struct exepack_header
 	int total_length;
 	int padding_length;
 
-	memset(&dhead, 0, sizeof (struct dos_header));
-	header_size = sizeof (struct dos_header) + reloc_size;
+	memset(&dhead, 0, sizeof(struct dos_header));
+	header_size = sizeof(struct dos_header) + reloc_size;
 	dhead.e_magic = DOS_SIGNATURE;
 	dhead.e_cparhdr = (header_size / 16) & 0xFFFF;
 	dhead.e_cparhdr = (dhead.e_cparhdr / 32 + 1) * 32;
@@ -237,8 +238,8 @@ Common::MemoryReadStream *craftexec(struct dos_header *dh, struct exepack_header
 	dhead.e_cs = eh->real_cs;
 	dhead.e_minalloc = dh->e_minalloc;
 	dhead.e_maxalloc = 0xFFFF;
-	dhead.e_lfarlc = sizeof (struct dos_header);
-	dhead.e_crlc = (reloc_size / (2 * sizeof (unsigned short))) & 0xFFFF;
+	dhead.e_lfarlc = sizeof(struct dos_header);
+	dhead.e_crlc = (reloc_size / (2 * sizeof(unsigned short))) & 0xFFFF;
 	dhead.e_cblp = total_length % 512;
 	dhead.e_cp = (total_length / 512 + 1) & 0xFFFF;
 	//print_dos_header(&dhead);
@@ -257,13 +258,13 @@ Common::MemoryReadStream *unpack(struct memstream *ms) {
 	unsigned int reloc_size;
 	unsigned char *reloc = NULL;
 
-	if (msread(ms, &dh, sizeof (struct dos_header)) != sizeof (struct dos_header)) {
+	if (msread(ms, &dh, sizeof(struct dos_header)) != sizeof(struct dos_header)) {
 		return nullptr;
 	}
 	//print_dos_header(&dh);
 	exepack_offset = (dh.e_cparhdr + dh.e_cs) * 16;
 	msseek(ms, exepack_offset);
-	if (msread(ms, &eh, sizeof (struct exepack_header)) != sizeof (struct exepack_header)) {
+	if (msread(ms, &eh, sizeof(struct exepack_header)) != sizeof(struct exepack_header)) {
 		return nullptr;
 	}
 	//print_exepack_header(&eh);
@@ -274,9 +275,9 @@ Common::MemoryReadStream *unpack(struct memstream *ms) {
 	debug("Header exepack = %X\n", exepack_offset);
 	//print_exepack_header(&eh);
 	unpacked_data_size = eh.dest_len * 16;
-	unpacked_data = (unsigned char*)malloc(sizeof (char) * unpacked_data_size);
+	unpacked_data = (unsigned char*)malloc(sizeof(char) * unpacked_data_size);
 	assert(unpacked_data);
-	memset(unpacked_data, 0x00, sizeof (char) * unpacked_data_size);
+	memset(unpacked_data, 0x00, sizeof(char) * unpacked_data_size);
 	packed_data_start = dh.e_cparhdr * 16;
 	packed_data_end = exepack_offset;
 	packed_data_len = packed_data_end - packed_data_start;
@@ -321,7 +322,7 @@ void *memmem(void *l, size_t l_len, const void *s, size_t s_len) {
 void msopen(Common::File &file, struct memstream *ms) {
 	assert(ms);
 
-	ms->buf = (unsigned char*)malloc(sizeof (char) * file.size());
+	ms->buf = (unsigned char*)malloc(sizeof(char) * file.size());
 	assert(ms->buf);
 
 	assert(file.read(ms->buf, file.size()) == file.size());
@@ -340,8 +341,7 @@ unsigned int msread(struct memstream *ms, void *buf, unsigned int count) {
 	}
 	if (count < (ms->length - ms->pos)) {
 		length = count;
-	}
-	else {
+	} else {
 		length = ms->length - ms->pos;
 	}
 	if (length > 0) {
@@ -390,7 +390,7 @@ int test_dos_header(struct memstream *ms) {
 	if (ms == NULL) {
 		return 0;
 	}
-	if (msread(ms, &dh, sizeof (struct dos_header)) != sizeof (struct dos_header)) {
+	if (msread(ms, &dh, sizeof(struct dos_header)) != sizeof(struct dos_header)) {
 		return 0;
 	}
 	msseek(ms, 0x00);

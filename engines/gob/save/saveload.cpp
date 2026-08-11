@@ -58,9 +58,9 @@ Common::String SaveLoad::replacePathSeparators(const char *path, char newSeparat
 	return result;
 }
 
-Common::List<Common::String> SaveLoad::getFilesMatchingPattern(const char *pattern) const {
+Common::List<Common::Path> SaveLoad::getFilesMatchingPattern(const Common::Path &pattern) const {
 	warning("SaveLoad::getFilesMatchingPattern not implemented");
-	return Common::List<Common::String>();
+	return Common::List<Common::Path>();
 }
 
 int32 SaveLoad::getSize(const char *fileName) {

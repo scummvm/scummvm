@@ -25,7 +25,9 @@
 #include "common/memstream.h"
 #include "common/punycode.h"
 #include "common/str-array.h"
+#include "common/system.h"
 #include "common/tokenizer.h"
+#include "common/util.h"
 #include "common/xpfloat.h"
 #include "common/compression/deflate.h"
 
@@ -39,7 +41,7 @@
 
 namespace Director {
 
-static struct MacKeyCodeMapping {
+static const struct MacKeyCodeMapping {
 	Common::KeyCode scummvm;
 	int mac;
 } MackeyCodeMappings[] = {
@@ -167,7 +169,7 @@ static struct MacKeyCodeMapping {
 	{ Common::KEYCODE_INVALID,		0 }
 };
 
-static struct WinKeyCodeMapping {
+static const struct WinKeyCodeMapping {
 	Common::KeyCode scummvm;
 	int win;
 } WinkeyCodeMappings[] = {
@@ -282,10 +284,10 @@ void DirectorEngine::loadKeyCodes() {
 	if ((g_director->getPlatform() == Common::kPlatformWindows) && (g_director->getVersion() < 400)) {
 		// Allegedly this keykode list applies for the Windows version of D3.
 		// D4 and D5 for Windows are both confirmed to use the Mac keycode table.
-		for (WinKeyCodeMapping *k = WinkeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
+		for (const WinKeyCodeMapping *k = WinkeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
 			_KeyCodes[k->scummvm] = k->win;
 	} else {
-		for (MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
+		for (const MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
 			_KeyCodes[k->scummvm] = k->mac;
 	}
 }
@@ -421,8 +423,8 @@ Common::String CastMemberID::asString() const {
 	return res;
 }
 
-int recLevel = 0;
-const char *tabs[] = {	"",
+const int recLevel = 0;
+const char *const tabs[] = {	"",
 						"  ",
 						"    ",
 						"      ",
@@ -446,8 +448,11 @@ const char *recIndent() {
 
 bool isAbsolutePath(const Common::String &path) {
 	// Starts with Mac directory notation for the game root
-	if (path.hasPrefix(Common::String("@") + g_director->_dirSeparator))
+	if (path.hasPrefix(Common::String("@:")) ||
+		path.hasPrefix(Common::String("@\\")) ||
+		path.hasPrefix(Common::String("@/"))) {
 		return true;
+	}
 	// Starts with a Windows drive letter
 	if (path.size() >= 3
 			&& Common::isAlpha(path[0])
@@ -471,6 +476,12 @@ bool isPathWithRelativeMarkers(const Common::String &path) {
 Common::String rectifyRelativePath(const Common::String &path, const Common::Path &base) {
 	Common::StringArray components = base.splitComponents();
 	uint32 idx = 0;
+
+	// If a path is provided that begins with @, it will be relative to the top level, not the base.
+	if ((path.size() > 0) && (path[0] == '@')) {
+		idx++;
+		components.clear();
+	}
 
 	while (idx < path.size()) {
 		uint32 start = idx;
@@ -501,7 +512,7 @@ Common::String rectifyRelativePath(const Common::String &path, const Common::Pat
 		}
 	}
 	Common::String result = "@:" + Common::Path::joinComponents(components).toString(g_director->_dirSeparator);
-	debug(9, "rectifyRelativePath(): '%s' + '%s' => '%s'", base.toString(g_director->_dirSeparator).c_str(), path.c_str(), result.c_str());
+	debugC(1, kDebugPaths, "rectifyRelativePath(): '%s' + '%s' => '%s'", base.toString(g_director->_dirSeparator).c_str(), path.c_str(), result.c_str());
 	warning("rectifyRelativePath(): '%s' + '%s' => '%s'", base.toString(g_director->_dirSeparator).c_str(), path.c_str(), result.c_str());
 	return result;
 }
@@ -530,7 +541,8 @@ Common::String convertPath(const Common::String &path) {
 	if (path.empty())
 		return path;
 
-	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')) {
+	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')
+			&& (g_director->getVersion() >= 500 && !path.contains('/'))) {
 		return path;
 	}
 
@@ -539,7 +551,9 @@ Common::String convertPath(const Common::String &path) {
 
 	if (path.hasPrefix("::")) { // Parent directory
 		idx = 2;
-	} else if (path.hasPrefix(Common::String("@") + g_director->_dirSeparator)) { // Root of the game
+	} else if (path.hasPrefix(Common::String("@:")) ||
+				path.hasPrefix(Common::String("@\\")) ||
+				path.hasPrefix(Common::String("@/"))) { // Root of the game
 		idx = 2;
 	} else if (path.size() >= 3
 					&& Common::isAlpha(path[0])
@@ -551,7 +565,7 @@ Common::String convertPath(const Common::String &path) {
 	}
 
 	while (idx < path.size()) {
-		if (path[idx] == ':' || path[idx] == '\\')
+		if (path[idx] == ':' || path[idx] == '\\' || (g_director->getVersion() >= 500 && path[idx] == '/'))
 			res += g_director->_dirSeparator;
 		else
 			res += path[idx];
@@ -622,6 +636,7 @@ Common::String convert83Path(const Common::String &path) {
 Common::Path resolveFSPath(const Common::String &path, const Common::Path &base, bool directory) {
 	// Path is the raw input from Director. Scrub it to be a clean relative path.
 	Common::String converted = convertPath(path);
+	debugC(2, kDebugPaths, "  convertPath(): '%s' => '%s'", path.c_str(), converted.c_str());
 
 	// Absolute path to the game directory
 	Common::Path gamePath = Common::Path(g_director->getGameDataDir()->getPath());
@@ -680,28 +695,18 @@ Common::Path resolveFSPath(const Common::String &path, const Common::Path &base,
 	}
 
 	if (exists) {
-		debugN(9, "%s", recIndent());
-		debug(9, "resolveFSPath(): Found filesystem match for %s -> %s", path.c_str(), newPath.toString().c_str());
+		debugCN(1, kDebugPaths, "%s", recIndent());
+		debugC(1, kDebugPaths, "resolveFSPath(): Found filesystem match for %s -> %s", path.c_str(), newPath.toString().c_str());
 		return newPath;
 	}
 
 	return Common::Path();
 }
 
-Common::Path resolvePath(const Common::String &path, const Common::Path &base, bool directory, const char **exts) {
+Common::Path resolvePathInner(const Common::String &path, const Common::Path &base, bool directory) {
 	Common::Path result = resolveFSPath(path, base, directory);
 	if (!result.empty()) {
 		return result;
-	} else if (result.empty() && !directory && exts) {
-		Common::String fileBase = path;
-		if (hasExtension(fileBase))
-			fileBase = fileBase.substr(0, fileBase.size() - 4);
-		for (int i = 0; exts[i]; i++) {
-			Common::String fileExt = fileBase + exts[i];
-			result = resolveFSPath(fileExt, base, directory);
-			if (!result.empty())
-				return result;
-		}
 	}
 
 	// No filesystem match, check caches
@@ -712,14 +717,14 @@ Common::Path resolvePath(const Common::String &path, const Common::Path &base, b
 	if (!directory) {
 		// Check SearchMan
 		if (SearchMan.hasFile(newPath)) {
-			debugN(9, "%s", recIndent());
-			debug(9, "resolvePath(): Found SearchMan match for %s -> %s", path.c_str(), newPath.toString().c_str());
+			debugCN(1, kDebugPaths, "%s", recIndent());
+			debugC(1, kDebugPaths, "resolvePathInner(): Found SearchMan match for %s -> %s", path.c_str(), newPath.toString().c_str());
 			return newPath;
 		}
 		// Check MacResArchive
 		if (Common::MacResManager::exists(newPath)) {
-			debugN(9, "%s", recIndent());
-			debug(9, "resolvePath(): Found MacResManager match for %s -> %s", path.c_str(), newPath.toString().c_str());
+			debugCN(1, kDebugPaths, "%s", recIndent());
+			debugC(1, kDebugPaths, "resolvePathInner(): Found MacResManager match for %s -> %s", path.c_str(), newPath.toString().c_str());
 			return newPath;
 		}
 	} else {
@@ -747,21 +752,38 @@ Common::Path resolvePath(const Common::String &path, const Common::Path &base, b
 				}
 			}
 			if (match) {
-				debugN(9, "%s", recIndent());
-				debug(9, "resolvePath(): Found SearchMan match for %s -> %s", path.c_str(), testParent.toString().c_str());
+				debugCN(1, kDebugPaths, "%s", recIndent());
+				debugC(1, kDebugPaths, "resolvePathInner(): Found SearchMan match for %s -> %s", path.c_str(), testParent.toString().c_str());
 				return testParent;
 			}
 
 		}
 	}
 
-	debugN(9, "%s", recIndent());
-	debug(9, "resolvePath(): No match found for %s", path.c_str());
+	debugCN(1, kDebugPaths, "%s", recIndent());
+	debugC(1, kDebugPaths, "resolvePathInner(): No match found for %s", path.c_str());
 	return Common::Path();
+}
+
+Common::Path resolvePath(const Common::String &path, const Common::Path &base, bool directory, const char **exts) {
+	Common::Path result = resolvePathInner(path, base, directory);
+	if (result.empty() && !directory && exts) {
+		Common::String fileBase = path;
+		if (hasExtension(fileBase))
+			fileBase = fileBase.substr(0, fileBase.size() - 4);
+		for (int i = 0; exts[i]; i++) {
+			Common::String fileExt = fileBase + exts[i];
+			result = resolvePathInner(fileExt, base, directory);
+			if (!result.empty())
+				break;
+		}
+	}
+	return result;
 }
 
 Common::Path resolvePartialPath(const Common::String &path, const Common::Path &base, bool directory, const char **exts) {
 	Common::String converted = convertPath(path);
+	debugC(2, kDebugPaths, "  convertPath(): '%s' => '%s'", path.c_str(), converted.c_str());
 	Common::Path result;
 
 	Common::StringArray baseTokens = base.splitComponents();
@@ -834,12 +856,12 @@ Common::Path resolvePartialPathWithFuzz(const Common::String &path, const Common
 Common::Path findAbsolutePath(const Common::String &path, bool directory, const char **exts) {
 	Common::Path result, base;
 	if (isAbsolutePath(path)) {
-		debugN(9, "%s", recIndent());
-		debug(9, "findAbsolutePath(): searching absolute path");
+		debugCN(1, kDebugPaths, "%s", recIndent());
+		debugC(1, kDebugPaths, "findAbsolutePath(): searching absolute path");
 		result = resolvePathWithFuzz(path, base, directory, exts);
 		if (!result.empty()) {
-			debugN(9, "%s", recIndent());
-			debug(9, "findAbsolutePath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+			debugCN(1, kDebugPaths, "%s", recIndent());
+			debugC(1, kDebugPaths, "findAbsolutePath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
 		}
 	}
 	return result;
@@ -849,12 +871,12 @@ Common::Path findPath(const Common::Path &path, bool currentFolder, bool searchP
 	return findPath(path.toString(g_director->_dirSeparator), currentFolder, searchPaths, directory, exts);
 }
 
-Common::Path findPath(const Common::String &path, bool currentFolder, bool searchPaths, bool directory, const char **exts) {
+Common::Path findPath(const Common::String &path, bool currentFolder, bool searchPaths, bool directory, const char **exts, Common::String currentPath_) {
 	Common::Path result, base;
-	debugN(9, "%s", recIndent());
-	debug(9, "findPath(): beginning search for \"%s\"", path.c_str());
+	debugCN(1, kDebugPaths, "%s", recIndent());
+	debugC(1, kDebugPaths, "findPath(): beginning search for \"%s\"", path.c_str());
 
-	Common::String currentPath = g_director->getCurrentPath();
+	Common::String currentPath = currentPath_.empty() ? g_director->getCurrentPath() : currentPath_;
 	Common::Path current = resolvePath(currentPath, base, true, exts);
 
 	Common::String testPath = path;
@@ -870,25 +892,25 @@ Common::Path findPath(const Common::String &path, bool currentFolder, bool searc
 	}
 
 	if (currentFolder) {
-		debugN(9, "%s", recIndent());
-		debug(9, "findPath(): searching current folder %s", current.toString().c_str());
+		debugCN(1, kDebugPaths, "%s", recIndent());
+		debugC(1, kDebugPaths, "findPath(): searching current folder %s", current.toString().c_str());
 		base = current;
 		result = resolvePartialPathWithFuzz(testPath, base, directory, exts);
 		if (!result.empty()) {
-			debugN(9, "%s", recIndent());
-			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
+			debugCN(1, kDebugPaths, "%s", recIndent());
+			debugC(1, kDebugPaths, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
 			return result;
 		}
 	}
 
 	// Fall back to checking the game root path
-	debugN(9, "%s", recIndent());
-	debug(9, "findPath(): searching game root path");
+	debugCN(1, kDebugPaths, "%s", recIndent());
+	debugC(1, kDebugPaths, "findPath(): searching game root path");
 	base = Common::Path();
 	result = resolvePartialPathWithFuzz(testPath, base, directory, exts);
 	if (!result.empty()) {
-		debugN(9, "%s", recIndent());
-		debug(9, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
+		debugCN(1, kDebugPaths, "%s", recIndent());
+		debugC(1, kDebugPaths, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
 		return result;
 	}
 
@@ -908,30 +930,31 @@ Common::Path findPath(const Common::String &path, bool currentFolder, bool searc
 			base = Common::Path();
 			base = resolvePathWithFuzz(searchIn, base, true, exts);
 			if (base.empty()) {
-				debugN(9, "%s", recIndent());
-				debug(9, "findPath(): couldn't resolve search path folder %s, skipping", searchIn.c_str());
+				debugCN(1, kDebugPaths, "%s", recIndent());
+				debugC(1, kDebugPaths, "findPath(): couldn't resolve search path folder %s, skipping", searchIn.c_str());
 				continue;
 			}
-			debugN(9, "%s", recIndent());
-			debug(9, "findPath(): searching search path folder %s", searchIn.c_str());
+			debugCN(1, kDebugPaths, "%s", recIndent());
+			debugC(1, kDebugPaths, "findPath(): searching search path folder %s", searchIn.c_str());
 			result = resolvePartialPathWithFuzz(testPath, base, directory, exts);
 			if (!result.empty()) {
-				debugN(9, "%s", recIndent());
-				debug(9, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
+				debugCN(1, kDebugPaths, "%s", recIndent());
+				debugC(1, kDebugPaths, "findPath(): resolved \"%s\" -> \"%s\"", testPath.c_str(), result.toString().c_str());
 				return result;
 			}
 		}
 	}
 
 	// Return empty path
-	debug(9, "findPath(): failed to resolve \"%s\"", path.c_str());
+	debugC(1, kDebugPaths, "findPath(): failed to resolve \"%s\"", path.c_str());
 	return Common::Path();
 }
 
-Common::Path findMoviePath(const Common::String &path, bool currentFolder, bool searchPaths) {
+Common::Path findMoviePath(const Common::String &path, bool currentFolder, bool searchPaths, Common::String currentPath) {
 	const char *extsD3[] = { ".MMM", nullptr };
 	const char *extsD4[] = { ".DIR", ".DXR", ".EXE", nullptr };
 	const char *extsD5[] = { ".DIR", ".DXR", ".CST", ".CXT", ".EXE", nullptr };
+	const char *extsD6[] = { ".DIR", ".DXR", ".CST", ".CXT", ".EXE", ".DCR", ".DCT", ".CCT", nullptr };
 
 	const char **exts = nullptr;
 	if (g_director->getVersion() < 400) {
@@ -941,11 +964,10 @@ Common::Path findMoviePath(const Common::String &path, bool currentFolder, bool 
 	} else if (g_director->getVersion() >= 500 && g_director->getVersion() < 600) {
 		exts = extsD5;
 	} else {
-		warning("findMoviePath(): file extensions not yet supported for version %d, falling back to D5", g_director->getVersion());
-		exts = extsD5;
+		exts = extsD6;
 	}
 
-	Common::Path result = findPath(path, currentFolder, searchPaths, false, exts);
+	Common::Path result = findPath(path, currentFolder, searchPaths, false, exts, currentPath);
 	return result;
 }
 
@@ -956,10 +978,7 @@ Common::Path findXLibPath(const Common::String &path, bool currentFolder, bool s
 	const char **exts = nullptr;
 	if (g_director->getVersion() < 500) {
 		exts = extsD3;
-	} else if (g_director->getVersion() < 600) {
-		exts = extsD5;
 	} else {
-		warning("findXLibPath(): file extensions not yet supported for version %d, falling back to D5", g_director->getVersion());
 		exts = extsD5;
 	}
 
@@ -980,6 +999,14 @@ Common::String getFileNameFromModal(bool save, const Common::String &suggested, 
 	if (ext) {
 		mask += ".";
 		mask += ext;
+
+		/*
+		 The file browser dialog and the save system forces a .txt file extension.
+		 To support other file extensions we need to add .txt to the end if the file extension is different.
+		*/
+		if (strncmp(ext, "txt", 3) != 0) {
+			mask += ".txt";
+		}
 	}
 	GUI::FileBrowserDialog browser(title.c_str(), "txt", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
 	if (browser.runModal() <= 0) {
@@ -1146,22 +1173,25 @@ Common::Path dumpScriptName(const char *prefix, int type, int id, const char *ex
 
 	switch (type) {
 	case kNoneScript:
-		typeName = "unknown";
+		typeName = "UnknownScript";
 		break;
 	case kMovieScript:
-		typeName = "movie";
+		typeName = "MovieScript";
 		break;
 	case kCastScript:
-		typeName = "cast";
+		typeName = "CastScript";
 		break;
 	case kEventScript:
-		typeName = "event";
+		typeName = "EventScript";
 		break;
 	case kScoreScript:
-		typeName = "score";
+		if (g_director->getVersion() >= 600)
+			typeName = "BehaviorScript";
+		else
+			typeName = "ScoreScript";
 		break;
 	case kParentScript:
-		typeName = "parent";
+		typeName = "ParentScript";
 		break;
 	default:
 		error("dumpScriptName(): Incorrect call (type %d)", type);
@@ -1175,8 +1205,27 @@ Common::Path dumpFactoryName(const char *prefix, const char *name, const char *e
 	return Common::Path(Common::String::format("./dumps/%s-factory-%s.%s", prefix, name, ext), '/');
 }
 
-void RandomState::setSeed(int seed) {
-	init(32);
+// Seconds between the classic Mac OS epoch and the Unix epoch.
+static const uint32 kMacEpochOffset = 2082844800U;
+
+uint32 macTimeSeed() {
+	// Director seeds its RNG with the local wall-clock time in seconds since
+	// the classic Mac OS epoch.
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+
+	return (uint32)(Common::DateTime::dateTimeToInt64(td) + kMacEpochOffset);
+}
+
+void RandomState::setSeed(uint32 seed, bool runInit) {
+	if (runInit)
+		init(32);
+
+	// If we a GUI override, use that instead of the provided seed
+	if (ConfMan.hasKey("random_seed")) {
+		debugC(1, kDebugLingoExec, "Random seed is requested to be set to %d, but overridden by config to %d", seed, ConfMan.getInt("random_seed"));
+		seed = ConfMan.getInt("random_seed");
+	}
 
 	_seed = seed ? seed : 1;
 }
@@ -1210,7 +1259,7 @@ void RandomState::init(int len) {
 		_len = (1 << len) - 1;
 	}
 
-	_seed = 1;
+	setSeed(macTimeSeed(), false);
 	_mask = masks[len - 2];
 }
 
@@ -1246,17 +1295,20 @@ uint32 readVarInt(Common::SeekableReadStream &stream) {
 	return val;
 }
 
-Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian) {
+Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, uint32 len, uint32 *outLen, bool bigEndian) {
+	unsigned long outLenUL = static_cast<unsigned long>(*outLen);
+
 	byte *in = (byte *)malloc(len);
 	byte *out = (byte *)malloc(*outLen);
 	stream.read(in, len);
 
-	if (!Common::inflateZlib(out, outLen, in, len)) {
+	if (!Common::inflateZlib(out, &outLenUL, in, len)) {
 		free(in);
 		free(out);
 		return nullptr;
 	}
 
+	*outLen = static_cast<uint32>(outLenUL);
 	free(in);
 	return new Common::MemoryReadStreamEndian(out, *outLen, bigEndian, DisposeAfterUse::YES);
 }
@@ -1288,7 +1340,9 @@ uint16 humanVersion(uint16 ver) {
 		return 310;
 	if (ver >= kFileVer300)
 		return 300;
-	return 200;
+	if (ver >= kFileVer200)
+		return 200;
+	return 100;
 }
 
 Common::Platform platformFromID(uint16 id) {
@@ -1424,7 +1478,6 @@ const byte orderTableD2mac[256] = {
 // ��������������������������������
 // ������Ӭԭծ������ܦݠ���������.
 
-
 const byte orderTableD4Jmac[256] = {
 	0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b,
 	0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b,
@@ -1479,10 +1532,10 @@ const byte orderTableD4win[256] = {
 //
 // Director 6.0 Win, cp1252 encoding
 //
-// ............................����
-// �'-­–—  .....!"#$%&()*,./:;?@[\]
-// ^ˆ_`{|}~¡¦¨¯´¸¿˜‘’‚“”„‹›+<=>±«»×
-// ÷¢£¤¥§©¬®°µ¶·†‡•…‰€0¼½¾1¹2²3³456
+// ............................'-–
+// —  .....!"#$%&()*,./:;?@[\]ˆ._`{
+// |}~¡¦¨¯´¸¿˜‘’‚“”„‹›¢£¤¥€+<=>±«»×
+// ÷§©¬®°µ¶·…†‡•‰�����0¼½¾1¹2²3³456
 // 789aAªáÁàÀâÂäÄãÃåÅæÆbBcCçÇdDðÐeE
 // éÉèÈêÊëËfFƒgGhHiIíÍìÌîÎïÏjJkKlLm
 // MnNñÑoOºóÓòÒôÔöÖõÕøØœŒpPqQrRsSšŠ
@@ -1507,6 +1560,36 @@ const byte orderTableD6win[256] = {
 	0x9c, 0xc3, 0xca, 0xc8, 0xcc, 0xd0, 0xce, 0x60, 0xd2, 0xea, 0xe8, 0xec, 0xee, 0xf8, 0xe3, 0xfa,
 };
 
+//
+// Director 7.0 Win, cp1252 encoding
+//
+// ............................'-–
+// —  .....!"#$%&()*,./:;?@[\]ˆ._`{
+// |}~¡¦¨¯´¸¿˜‘’‚“”„‹›¢£¤¥€+<=>±«»×
+// ÷§©¬®°µ¶·…†‡•‰�����0¼½¾1¹2²3³456
+// 789aAªáÁàÀâÂäÄãÃåÅæÆbBcCçÇdDðÐeE
+// éÉèÈêÊëËfFƒgGhHiIíÍìÌîÎïÏjJkKlLm
+// MnNñÑoOºóÓòÒôÔöÖõÕøØœŒpPqQrRsSšŠ
+// ßtTþÞ™uUúÚùÙûÛüÜvVwWxXyYýÝ.ŸzZžŽ
+
+const byte orderTableD7win[256] = {
+	0x00, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x23, 0x24, 0x25, 0x26, 0x27, 0x0a, 0x0b,
+	0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b,
+	0x21, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x1d, 0x2e, 0x2f, 0x30, 0x4d, 0x31, 0x1e, 0x32, 0x33,
+	0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x34, 0x35, 0x4e, 0x4f, 0x50, 0x36,
+	0x37, 0x6d, 0x6f, 0x71, 0x73, 0x75, 0x77, 0x79, 0x7b, 0x7d, 0x7f, 0x81, 0x83, 0x85, 0x87, 0x8a,
+	0x8c, 0x8e, 0x90, 0x92, 0x94, 0x97, 0x99, 0x9b, 0x9d, 0x9f, 0xa1, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
+	0x3d, 0x6c, 0x6e, 0x70, 0x72, 0x74, 0x76, 0x78, 0x7a, 0x7c, 0x7e, 0x80, 0x82, 0x84, 0x86, 0x89,
+	0x8b, 0x8d, 0x8f, 0x91, 0x93, 0x96, 0x98, 0x9a, 0x9c, 0x9e, 0xa0, 0x3e, 0x3f, 0x40, 0x41, 0x1c,
+	0xb1, 0xab, 0x45, 0xaa, 0x48, 0x5c, 0x5d, 0x5e, 0x4c, 0x60, 0xcf, 0x49, 0xd5, 0xcb, 0xe1, 0xef,
+	0xb0, 0x43, 0x44, 0x46, 0x47, 0x5f, 0x1f, 0x20, 0x61, 0x95, 0xce, 0x4a, 0xd4, 0xca, 0xe0, 0xee,
+	0x22, 0xe5, 0xe4, 0xc7, 0x4b, 0xad, 0x42, 0x54, 0xb5, 0x55, 0xb7, 0x52, 0x56, 0x00, 0x57, 0xc5,
+	0x58, 0x51, 0xc3, 0xc2, 0xac, 0x59, 0x5a, 0x5b, 0xb4, 0x88, 0xb6, 0x53, 0xc6, 0xbd, 0xbc, 0xc4,
+	0xa3, 0xa5, 0xa7, 0xa9, 0xaf, 0xb3, 0xb9, 0xbb, 0xbf, 0xc1, 0xc9, 0xcd, 0xd1, 0xd3, 0xd7, 0xd9,
+	0xdb, 0xdd, 0xdf, 0xe3, 0xe7, 0xe9, 0xeb, 0xed, 0xf1, 0xf3, 0xf5, 0xf7, 0xf9, 0xfb, 0xfd, 0xff,
+	0xa2, 0xa4, 0xa6, 0xa8, 0xae, 0xb2, 0xb8, 0xba, 0xbe, 0xc0, 0xc8, 0xcc, 0xd0, 0xd2, 0xd6, 0xd8,
+	0xda, 0xdc, 0xde, 0xe2, 0xe6, 0xe8, 0xea, 0xec, 0xf0, 0xf2, 0xf4, 0xf6, 0xf8, 0xfa, 0xfc, 0xfe,
+};
 
 //
 // Director 8.5 Mac, MacRoman encoding
@@ -1571,6 +1654,140 @@ const byte orderTableD8win[256] = {
 	0x9c, 0xc3, 0xca, 0xc8, 0xcc, 0xd0, 0xce, 0x60, 0xd2, 0xea, 0xe8, 0xec, 0xee, 0xf8, 0xe3, 0xfa,
 };
 
+/////////////////////////////////////////////////////////////
+// String comparison equality tables
+//
+// Director is using its way to compare if two characters are equal
+// It is declared as case-insensitive but the reality is more complex.
+//
+// The tables below contain the first instance of the letter that is
+// comparable in the given position.
+//
+// e.g. for D5 win character 159 and 255 are equal. Item 159 is equal to 159 and item
+// 255 is equal to 159 as well.
+//
+// The tools to recreate these tables is available in the director tests repository
+//	https://github.com/scummvm/director-tests/tree/master/stringequality
+
+//
+// Director 4 Win, cp1252 encoding
+// D4 win: does lowercase comparison and discards diacritics.
+//
+
+const byte equalityTableD4win[256] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+	0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f,
+	0x60, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f,
+	0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x53, 0x8b, 0x4f, 0x8d, 0x8e, 0x8f,
+	0x90, 0x27, 0x27, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x53, 0x9b, 0x4f, 0x9d, 0x9e, 0x59,
+	0x20, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0x22, 0xac, 0xad, 0xae, 0xaf,
+	0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0x22, 0xbc, 0xbd, 0xbe, 0xbf,
+	0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x43, 0x45, 0x45, 0x45, 0x45, 0x49, 0x49, 0x49, 0x49,
+	0x44, 0x4e, 0x4f, 0x4f, 0x4f, 0x4f, 0x4f, 0xd7, 0x4f, 0x55, 0x55, 0x55, 0x55, 0x59, 0xde, 0x53,
+	0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x43, 0x45, 0x45, 0x45, 0x45, 0x49, 0x49, 0x49, 0x49,
+	0x44, 0x4e, 0x4f, 0x4f, 0x4f, 0x4f, 0x4f, 0xf7, 0x4f, 0x55, 0x55, 0x55, 0x55, 0x59, 0xde, 0x59
+};
+
+//
+// Director 5 Win, cp1252 encoding
+//
+
+const byte equalityTableD5win[256] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+	0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f,
+	0x60, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f,
+	0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
+	0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x8a, 0x9b, 0x8c, 0x9d, 0x9e, 0x9f,
+	0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf,
+	0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbe, 0xbf,
+	0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf,
+	0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf,
+	0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf,
+	0xd0, 0x98, 0x9c, 0x9e, 0x9d, 0xd5, 0xd6, 0xf7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0x9f
+};
+
+
+//
+// Director 6, 7, 8 Win, cp1252 encoding
+//
+
+const byte equalityTableD6win[256] = {
+	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
+	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+	0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f,
+	0x60, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f,
+	0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
+	0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x8a, 0x9b, 0x8c, 0x9d, 0x9e, 0x9f,
+	0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf,
+	0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbe, 0xbf,
+	0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf,
+	0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf,
+	0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf,
+	0xd0, 0x98, 0x8c, 0x9e, 0x9d, 0xd5, 0xd6, 0xf7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0x9f
+};
+
+//
+// Director 3, 4, 5 Mac MacRoman
+//
+
+const byte equalityTableD3mac[256] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+	0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f,
+	0x60, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f,
+	0x41, 0x41, 0x43, 0x45, 0x4e, 0x4f, 0x55, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x43, 0x45, 0x45,
+	0x45, 0x45, 0x49, 0x49, 0x49, 0x49, 0x4e, 0x4f, 0x4f, 0x4f, 0x4f, 0x4f, 0x55, 0x55, 0x55, 0x55,
+	0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0x4f,
+	0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xae, 0x4f,
+	0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0x22, 0x22, 0xc9, 0x20, 0x41, 0x41, 0x4f, 0xce, 0xce,
+	0xd0, 0xd1, 0x22, 0x22, 0x27, 0x27, 0xd6, 0xd7, 0x59, 0x59, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf,
+	0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0x41, 0x45, 0x41, 0x45, 0x45, 0x49, 0x49, 0x49, 0x49, 0x4f, 0x4f,
+	0xf0, 0x4f, 0x55, 0x55, 0x55, 0x49, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
+};
+
+//
+// Director 3, 4, 5 Mac MacJapanese
+//
+
+const byte equalityTableD3macJa[256] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+	0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f,
+	0x60, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f,
+	0x80, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81,
+	0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81,
+	0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf,
+	0xb0, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbe, 0xbf,
+	0xc0, 0xc1, 0xaf, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf,
+	0xd0, 0xd1, 0xd2, 0xd3, 0xac, 0xad, 0xae, 0xd7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf,
+	0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81,
+	0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0xfd, 0xfe, 0xff
+};
+
+
+
 static int getCharOrder(Common::u32char_type_t ch) {
 	int num = charToNum(ch);
 
@@ -1593,6 +1810,9 @@ static int getCharOrder(Common::u32char_type_t ch) {
 	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 700)
 		return orderTableD6win[num];
 
+	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 800)
+		return orderTableD7win[num];
+
 	if (pl == Common::kPlatformMacintosh && lang != Common::JA_JPN && version < 900)
 		return orderTableD8mac[num];
 
@@ -1602,46 +1822,106 @@ static int getCharOrder(Common::u32char_type_t ch) {
 	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version >= 1100)
 		return num;
 
+	warning("BUILDBOT: No char order table for Director version: %d-%s", version, Common::getLanguageCode(lang));
+
 	return num;
 }
 
-int compareStrings(const Common::String &s1, const Common::String &s2) {
+int compareStringOrder(const Common::String &s1, const Common::String &s2) {
 	Common::U32String u32S1 = s1.decode(Common::kUtf8);
 	Common::U32String u32S2 = s2.decode(Common::kUtf8);
 	const Common::u32char_type_t *p1 = u32S1.c_str();
 	const Common::u32char_type_t *p2 = u32S2.c_str();
 
-	uint32 c1, c2;
+	int c1, c2;
 	do {
 		c1 = getCharOrder(*p1);
 		c2 = getCharOrder(*p2);
 		p1++;
 		p2++;
-	} while (c1 == c2 && c1);
+	} while (c1 == c2 && (c1 || c2));
+
 	return c1 - c2;
 }
 
-const char *d_strstr(const char *str, const char *substr) {
-	int len = strlen(substr);
-	const char *ref = substr;
+static int getCharEquality(Common::u32char_type_t ch) {
+	int num = charToNum(ch);
 
-	while (*str && *ref) {
-		uint32 c1 = getCharOrder(*str);
-		uint32 c2 = getCharOrder(*ref);
+	if (num > 255)
+		return num;
+
+	Common::Platform pl = g_director->getPlatform();
+	Common::Language lang = g_director->getLanguage();
+	int version = g_director->getVersion();
+
+	if (pl == Common::kPlatformMacintosh && lang != Common::JA_JPN && version < 600)
+		return equalityTableD3mac[num];
+
+	if (pl == Common::kPlatformMacintosh && lang == Common::JA_JPN && version < 600)
+		return equalityTableD3macJa[num];
+
+	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 500)
+		return equalityTableD4win[num];
+
+	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 600)
+		return equalityTableD5win[num];
+
+	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 900)
+		return equalityTableD6win[num];
+
+	warning("BUILDBOT: No equality table for Director version: %d-%s", version, Common::getLanguageCode(lang));
+	return num;
+}
+
+bool compareStringEquality(const Common::String &s1, const Common::String &s2) {
+	Common::U32String u32S1 = s1.decode(Common::kUtf8);
+	Common::U32String u32S2 = s2.decode(Common::kUtf8);
+	const Common::u32char_type_t *p1 = u32S1.c_str();
+	const Common::u32char_type_t *p2 = u32S2.c_str();
+
+	int c1, c2;
+	do {
+		c1 = getCharEquality(*p1);
+		c2 = getCharEquality(*p2);
+		p1++;
+		p2++;
+	} while (c1 == c2 && (c1 || c2));
+
+	return (c1 == 0) && (c2 == 0);
+}
+
+const char *d_strstr(const char *str, const char *substr) {
+	while (*str && *substr) {
+		uint32 c1 = getCharEquality(*str);
+		uint32 c2 = getCharEquality(*substr);
+
+		if (c1 == c2) {
+			// inner loop, keep track of the starting character
+			const char *baseptr = str;
+			const char *ref = substr;
+			while (*baseptr && *ref) {
+				c1 = getCharEquality(*baseptr);
+				c2 = getCharEquality(*ref);
+
+				// characters equal, increment substring
+				if (c1 == c2) {
+					ref++;
+				} else {
+					break;
+				}
+
+				// reached the end of the substring, success
+				if (!*ref)
+					return str;
+
+				baseptr++;
+			}
+		}
 
 		str++;
-
-		if (c1 == c2)
-			ref++;
-
-		if (!*ref)
-			return (str - len);
-
-		if (len == (ref - substr))
-			ref = substr;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void DirectorEngine::delayMillis(uint32 delay) {
@@ -1663,4 +1943,21 @@ double readAppleFloat80(void *ptr_) {
 	uint64 mantissa = READ_BE_UINT64(&ptr[2]);
 
 	return Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
+}
+
+void hexdumpIfNotZero(byte *data, int len, const char *prefix) {
+	bool nonZero = false;
+	for (int i = 0; i < len; i++) {
+		if (data[i] != 0) {
+			nonZero = true;
+			break;
+		}
+	}
+
+	if (nonZero) {
+		if (prefix)
+			debugN("%s ", prefix);
+
+		Common::hexdump(data, len);
+	}
 }

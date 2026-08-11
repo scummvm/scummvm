@@ -21,8 +21,8 @@
 # $2     [REQ] SCUMMVM_PATH
 # $3     [REQ] NO_WIP [0,1]
 # $4     [REQ] STATIC_LINKING [0,1]
-# $5     [REQ] LITE [0,1]
-# $[...] [OPT] Engines dependencies not available
+# $5     [REQ] LITE [0,1,2]
+# $[...] [OPT] Engines dependencies/components not available
 
 set -e
 
@@ -42,7 +42,7 @@ STATIC_LINKING=$1
 shift
 LITE=$1
 shift
-no_deps=$@
+no_deps_comps=$@
 
 cd "${SCUMMVM_PATH}"
 
@@ -54,12 +54,25 @@ mv configure.bak configure > /dev/null 2>&1
 _parent_engines_list=""
 tot_deps=""
 
+# Separate unavailable dependencies from components
+for item in $no_deps_comps ; do
+	case $item in
+		component_*)
+			append_var no_comps "${item#component_}"
+			;;
+		*)
+			append_var no_deps "${item}"
+			;;
+	esac
+done
+
 # Test NO_WIP
 [ $NO_WIP -ne 1 ] && engine_enable_all
 
 # Test LITE
+[ $LITE -ne 0 ] && engine_disable_all
+
 if [ $LITE -eq 1 ] ; then
-	engine_disable_all
 	for eng in $(cat "${BUILD_PATH}"/lite_engines.list) ; do
 		engine_enable "$eng"
 	done
@@ -77,16 +90,25 @@ for a in $_engines ; do
 	done
 done
 
+# Set all deps to yes then set no for the one in no_deps list. Engines will be disabled in engines.awk if needed
 for dep in $tot_deps ; do
-	eval _$dep=yes
+	set_var _$dep yes
 done
-
 for dep in $no_deps ; do
-	eval _$dep=no
+	set_var _$dep no
+done
+# Disable unavailable components
+for comp in $(get_var _components); do
+	for dep in $no_comps ; do
+		if [ $comp = $dep ] ; then
+			set_var _feature_${comp}_settings no
+			break
+		fi
+	done
 done
 
 # Create needed engines build files
-awk -f "engines.awk" < /dev/null > /dev/null 2>&1
+awk -f "./engines.awk" < /dev/null > /dev/null 2>&1
 
 mkdir -p "engines"
 

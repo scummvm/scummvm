@@ -45,11 +45,9 @@
 #ifndef AGS_SHARED_UTIL_STRING_H
 #define AGS_SHARED_UTIL_STRING_H
 
-//include <stdarg.h>
-
 #include "common/str.h"
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/types.h"
 
@@ -94,7 +92,7 @@ public:
 	// Tells if the string is either empty or has only whitespace characters
 	bool IsNullOrSpace() const;
 
-	// Those getters are for tests only, hence if AGS_PLATFORM_DEBUG
+	// Those getters are for tests only, hence if AGS_PLATFORM_TEST
 #if defined(AGS_PLATFORM_TEST) && AGS_PLATFORM_TEST
 	inline const char *GetBuffer() const {
 		return _buf;
@@ -361,7 +359,7 @@ public:
 	// characters (space, tabs, CRLF) are removed.
 	// Remove heading and trailing characters from the string
 	void    Trim(char c = 0);
-	// Remove heading characters from the string; 
+	// Remove heading characters from the string;
 	void    TrimLeft(char c = 0);
 	// Remove trailing characters from the string
 	void    TrimRight(char c = 0);

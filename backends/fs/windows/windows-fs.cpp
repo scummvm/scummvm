@@ -203,7 +203,7 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 	if (_isPseudoRoot)
 		return nullptr;
 
-	WindowsFilesystemNode *p = new WindowsFilesystemNode();
+	WindowsFilesystemNode *p;
 	if (_path.size() > 3) {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path, '\\');
@@ -214,17 +214,21 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 		p->_isDirectory = true;
 		p->_displayName = lastPathComponent(p->_path, '\\');
 		p->_isPseudoRoot = false;
+	} else {
+		// pseudo root
+		p = new WindowsFilesystemNode();
 	}
 
 	return p;
 }
 
 Common::SeekableReadStream *WindowsFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return StdioStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 }
 
-Common::SeekableWriteStream *WindowsFilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath(), true);
+Common::SeekableWriteStream *WindowsFilesystemNode::createWriteStream(bool atomic) {
+	return StdioStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 }
 
 bool WindowsFilesystemNode::createDirectory() {

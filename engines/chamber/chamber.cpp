@@ -27,11 +27,24 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/rendermode.h"
 #include "common/system.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 
+#include "common/gui_options.h"
+
 #include "chamber/chamber.h"
+#include "chamber/detection.h"
+#include "chamber/renderer.h"
+#include "chamber/amiga.h"
+#include "chamber/script.h"
+#include "chamber/resdata.h"
+#include "chamber/room.h"
+#include "chamber/dialog.h"
+#include "chamber/cga.h"
+#include "chamber/cursor.h"
 
 namespace Chamber {
 
@@ -41,6 +54,8 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst) {
 	g_vm = this;
 	_gameDescription = desc;
+
+	initScriptVars();
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 
@@ -52,20 +67,40 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	_prioritycommand_1 = false;
 	_prioritycommand_2 = false;
 	_pxiData = NULL;
-	_videoMode = Common::kRenderCGA;
+	_speaker = nullptr;
+
+	_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+	if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderHercA)
+		_videoMode = _renderMode;
+	else if (_renderMode == Common::kRenderDefault && ((_gameDescription->flags & GF_SPLASH_PRESEGA) ||
+	         Common::checkGameGUIOption(GUIO_RENDEREGA, Common::parseGameGUIOptions(ConfMan.get("guioptions")))))
+		_videoMode = Common::kRenderEGA;
+	else
+		_videoMode = Common::kRenderCGA;
+
+	if (_renderMode == Common::kRenderHercA)
+		_videoMode = Common::kRenderHercG;
+
+	// Amiga has its own renderer, picked by platform
+	if (_gameDescription->platform == Common::kPlatformAmiga)
+		_videoMode = Common::kRenderAmiga;
+
 	_screenH = _screenW = _screenBits = _screenBPL = _screenPPB = 0;
 	_line_offset = _line_offset2 = _fontHeight = _fontWidth = 0;
 
-
-
-	_speakerHandle = NULL;
-	_speakerStream = NULL;
+	if (_videoMode == Common::kRenderAmiga)
+		_renderer = new AmigaRenderer();
+	else if (_videoMode == Common::kRenderEGA)
+		_renderer = new EGARenderer();
+	else
+		_renderer = new CGARenderer();
 }
 
 ChamberEngine::~ChamberEngine() {
 	// Dispose your resources here
 	delete _rnd;
 	delete[] _pxiData;
+	delete _renderer;
 
 	deinitSound();
 }
@@ -77,22 +112,12 @@ bool ChamberEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error ChamberEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	Common::Serializer s(stream, nullptr);
-	syncGameStream(s);
-	return Common::kNoError;
+int ChamberEngine::getX(int original_x) {
+	return original_x;
 }
 
-Common::Error ChamberEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	Common::Serializer s(nullptr, stream);
-	syncGameStream(s);
-	return Common::kNoError;
-}
-
-void ChamberEngine::syncGameStream(Common::Serializer &s) {
-	// Use methods of Serializer to save/load fields
-	int16 dummy = 0;
-	s.syncAsUint16LE(dummy);
+int ChamberEngine::getY(int original_y) {
+	return original_y;
 }
 
 } // End of namespace Chamber

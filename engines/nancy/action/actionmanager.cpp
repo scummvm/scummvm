@@ -64,7 +64,7 @@ void ActionManager::handleInput(NancyInput &input) {
 			if (!setHoverCursor) {
 				// Hotspots may overlap, but we want the hover cursor for the first one we encounter
 				// This fixes the stairs in nancy3
-				g_nancy->_cursor->setCursorType(rec->getHoverCursor());
+				g_nancy->_cursor->setCursorType(rec->getHoverCursor(), rec->cursorSetFromScript());
 				setHoverCursor = true;
 			}
 
@@ -250,7 +250,7 @@ void ActionManager::processActionRecords() {
 		// Process dependencies every call. We make sure to ignore cursor dependencies,
 		// as they are only handled when calling from handleInput()
 		processDependency(record->_dependencies, *record, record->canHaveHotspot());
-		record->_isActive = record->_dependencies.satisfied;
+		record->_isActive = _previousRecordWasExecuted = record->_dependencies.satisfied;
 
 		if (record->_isActive) {
 			if(record->_state == ActionRecord::kBegin) {
@@ -258,10 +258,9 @@ void ActionManager::processActionRecords() {
 			}
 
 			record->execute();
-			_recordsWereExecuted = true;
 		}
 
-		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState._state == State::Scene::kLoad) {
+		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState.getState() == State::Scene::kLoad) {
 			// changeScene() must have been called, abort any further processing.
 			// Both old and new behavior is needed (nancy3 intro narration, nancy4 garden gate)
 			return;
@@ -294,7 +293,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 					}
 
 					if (!dep.children[j].orFlag) {
-						// orFlag chain ended, no satisfied deoendencies
+						// orFlag chain ended, no satisfied dependencies
 						break;
 					}
 				}
@@ -325,22 +324,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			dep.satisfied = true;
 			break;
 		case DependencyType::kInventory:
-			if (dep.condition == g_nancy->_false) {
-				// Item not in possession or held
-				if (NancySceneState._flags.items[dep.label] == g_nancy->_false &&
-					dep.label != NancySceneState._flags.heldItem) {
-					dep.satisfied = true;
-				} else {
-					dep.satisfied = false;
-				}
-			} else {
-				if (NancySceneState._flags.items[dep.label] == g_nancy->_true ||
-					dep.label == NancySceneState._flags.heldItem) {
-					dep.satisfied = true;
-				} else {
-					dep.satisfied = false;
-				}
-			}
+			dep.satisfied = NancySceneState.hasItem(dep.label) == dep.condition;
 
 			break;
 		case DependencyType::kEvent:
@@ -359,7 +343,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 				// other way around here. So, we need to check for inequality
 				if (!NancySceneState.getLogicCondition(dep.label, dep.condition)) {
 					// Wait for specified time before satisfying dependency condition
-					Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
+					Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState.getLogicConditionTimestamp(dep.label);
 
 					if (elapsed >= dep.timeData) {
 						dep.satisfied = true;
@@ -392,8 +376,8 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			break;
 		case DependencyType::kElapsedPlayerTime: {
 			// We're only interested in the hours and minutes
-			Time playerTime = NancySceneState._timers.playerTime.getHours() * 3600000 +
-								NancySceneState._timers.playerTime.getMinutes() * 60000;
+			Time playerTime = NancySceneState.getPlayerTime().getHours() * 3600000 +
+								NancySceneState.getPlayerTime().getMinutes() * 60000;
 			switch (dep.condition) {
 			case 0:
 				dep.satisfied = dep.timeData < playerTime;
@@ -411,8 +395,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			// Check how many times a scene has been visited.
 			// This dependency type keeps its data in the time variables
 			// Note: nancy7 completely flipped the meaning of 1 and 2
-			int count = NancySceneState._flags.sceneCounts.contains(dep.hours) ?
-				NancySceneState._flags.sceneCounts[dep.hours] : 0;
+			int count = NancySceneState.getSceneCounts(dep.hours);
 			switch (dep.milliseconds) {
 			case 1:
 				if (	(dep.minutes < count && g_nancy->getGameType() <= kGameTypeNancy6) ||
@@ -445,14 +428,43 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			break;
 		}
 		case DependencyType::kElapsedPlayerDay:
+			if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				// Nancy12 repurposed dependency type 10 as a resource check (e.g. the
+				// car's gas gauge): resource value vs. threshold, by condition modifier.
+				int32 resVal = NancySceneState.getUIResource(dep.label);
+				int32 threshold = dep.milliseconds;
+				switch (dep.condition) {
+				case 0:	// equal
+					dep.satisfied = (resVal == threshold);
+					break;
+				case 1:	// resource greater than the threshold
+					dep.satisfied = (resVal > threshold);
+					break;
+				case 2:	// resource greater than or equal to the threshold
+					dep.satisfied = (resVal >= threshold);
+					break;
+				case 3:	// resource less than the threshold
+					dep.satisfied = (resVal < threshold);
+					break;
+				case 4:	// resource less than or equal to the threshold
+					dep.satisfied = (resVal <= threshold);
+					break;
+				default:
+					dep.satisfied = false;
+					break;
+				}
+
+				break;
+			}
+
 			if (record._days == -1) {
-				record._days = NancySceneState._timers.playerTime.getDays();
+				record._days = NancySceneState.getPlayerTime().getDays();
 				dep.satisfied = true;
 				break;
 			}
 
-			if (record._days < NancySceneState._timers.playerTime.getDays()) {
-				record._days = NancySceneState._timers.playerTime.getDays();
+			if (record._days < NancySceneState.getPlayerTime().getDays()) {
+				record._days = NancySceneState.getPlayerTime().getDays();
 
 				// This is not used in nancy3 and up, so it's a safe assumption that we
 				// do not need to check types recursively
@@ -513,23 +525,31 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 			break;
 		case DependencyType::kTimerLessThanDependencyTime:
-			if (NancySceneState._timers.timerTime <= dep.timeData) {
-				dep.satisfied = true;
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				// Nancy11+ checks a software-timer slot (label = slot index)
+				dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label) &&
+					NancySceneState.getSoftwareTimerElapsed(dep.label) <= (uint32)dep.timeData;
 			} else {
-				dep.satisfied = false;
+				dep.satisfied = NancySceneState._timers.timerTime <= dep.timeData;
 			}
 
 			break;
 		case DependencyType::kTimerGreaterThanDependencyTime:
-			if (NancySceneState._timers.timerTime > dep.timeData) {
-				dep.satisfied = true;
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label) &&
+					(uint32)dep.timeData < NancySceneState.getSoftwareTimerElapsed(dep.label);
 			} else {
-				dep.satisfied = false;
+				dep.satisfied = NancySceneState._timers.timerTime > dep.timeData;
 			}
 
 			break;
+		case DependencyType::kTimerIsActive:
+			// Nancy11+ only: satisfied while the software-timer slot is running/counting
+			dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label);
+
+			break;
 		case DependencyType::kDifficultyLevel:
-			if (dep.condition == NancySceneState._difficulty) {
+			if (dep.condition == NancySceneState.getDifficulty()) {
 				dep.satisfied = true;
 			} else {
 				dep.satisfied = false;
@@ -575,13 +595,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 			break;
 		case DependencyType::kDefaultAR:
-			// Only execute if no other AR has executed yet
-			if (_recordsWereExecuted) {
-				dep.satisfied = false;
-			} else {
-				dep.satisfied = true;
-			}
-
+			dep.satisfied = !_previousRecordWasExecuted;
 			break;
 		default:
 			warning("Unimplemented Dependency type %i", (int)dep.type);
@@ -590,12 +604,17 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 	}
 }
 
-void ActionManager::clearActionRecords() {
-	for (auto &r : _records) {
-		delete r;
+void ActionManager::clearActionRecords(bool nextIsNoArt) {
+	for (auto it = _records.begin(); it != _records.end(); ) {
+		if ((*it)->survivesSceneChange(nextIsNoArt)) {
+			++it;
+			continue;
+		}
+		delete *it;
+		it = _records.erase(it);
 	}
-	_records.clear();
-	_recordsWereExecuted = false;
+	_activatedRecordsThisFrame.clear();
+	_previousRecordWasExecuted = false;
 }
 
 void ActionManager::onPause(bool pause) {
@@ -612,8 +631,15 @@ void ActionManager::synchronize(Common::Serializer &ser) {
 		ser.syncAsByte(rec->_isActive);
 		ser.syncAsByte(rec->_isDone);
 
-		// Forcefully re-activate Autotext records, since we need to regenerate the surface
-		if (ser.isLoading() && g_nancy->getGameType() >= kGameTypeNancy6 && rec->_type == 61) {
+		if (ser.isLoading()) {
+			// Records restart fresh on load, just like a normal scene entry: clearing
+			// _isDone lets one-shot records run again -- chained tutorial narration
+			// sounds, conversations, overlays, etc. Anything that must stay "done" is
+			// gated by its own dependencies (event flags, scene counts, inventory),
+			// which are restored separately. Without this, a sound or conversation
+			// that had finished before the save stays silent on load (e.g. the
+			// Nancy 10 movement tutorial). _isActive is recomputed from the record's
+			// dependencies on the next frame.
 			rec->_isDone = false;
 		}
 	}
@@ -666,7 +692,7 @@ void ActionManager::synchronizeMovieWithSound() {
 
 			if (length.msecs() != 0) {
 				// ..and set the movie's playback speed to match
-				movie->_decoder->setRate(Common::Rational(movie->_decoder->getDuration().msecs(), length.msecs()));
+				movie->_decoder.setRate(Common::Rational(movie->_decoder.getDuration().msecs(), length.msecs()));
 			}
 		}
 	}

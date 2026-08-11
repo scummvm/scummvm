@@ -20,12 +20,12 @@
  */
 
 #include "ultima/ultima8/world/sprite_process.h"
-#include "ultima/ultima8/world/coord_utils.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/item.h"
+
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/coord_utils.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/item_factory.h"
 
 namespace Ultima {
 namespace Ultima8 {

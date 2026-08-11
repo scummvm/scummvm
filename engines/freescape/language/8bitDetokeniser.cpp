@@ -22,19 +22,22 @@
 // Based on Phantasma code by Thomas Harte (2013),
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 // which was implemented based on John Elliott's reverse engineering of Driller (2001)
-// http://www.seasip.demon.co.uk/ZX/Driller/
+// https://web.archive.org/web/20200116141513/http://www.seasip.demon.co.uk/ZX/Driller/
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
-uint8 k8bitMaxVariable = 64;
+uint8 k8bitVariableShield = 63;
 
 Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
+
+	if (sizeOfTokenisedContent == 0)
+		error("No tokenised content");
 
 	// on the 8bit platforms, all instructions have a conditional flag;
 	// we'll want to convert them into runs of "if shot? then", "if collided? then" or "if timer? then",
@@ -81,6 +84,7 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 
 			if (bytePointer > 0) {
 				detokenisedStream += "ENDIF\n";
+				assert(conditionalInstructions->size() > 0);
 				// Allocate the next vector of instructions
 				conditionalInstructions = new FCLInstructionVector();
 			}
@@ -326,6 +330,9 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 		case 42: // Not sure about this one
 			detokenisedStream += "AGAIN";
 			currentInstruction = FCLInstruction(Token::AGAIN);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
+			numberOfArguments = 0;
 			break;
 
 		case 12:
@@ -357,7 +364,10 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 			currentInstruction = FCLInstruction(Token::SWAPJET);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
-			bytePointer++;
+			// The 16-bit Amiga/Atari token stream stores SWAPJET without a
+			// padding argument. The 8-bit data has one unused byte here.
+			if (!isAmigaAtari)
+				bytePointer++;
 			numberOfArguments = 0;
 			break;
 
@@ -434,7 +444,7 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 
 		case 47:
 			detokenisedStream += "IFLTE (v";
-			currentInstruction = FCLInstruction(Token::IFGTEQ);
+			currentInstruction = FCLInstruction(Token::IFLTEQ);
 			break;
 
 		case 48:
@@ -469,6 +479,9 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 		// throw in a newline
 		detokenisedStream += "\n";
 	}
+
+	// This fails in Castle Master
+	//assert(conditionalInstructions->size() > 0);
 
 	return detokenisedStream;
 }

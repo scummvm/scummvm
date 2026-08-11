@@ -28,8 +28,6 @@
 
 #include "engines/stark/services/stateprovider.h"
 
-#include "common/math.h"
-
 namespace Stark {
 namespace Resources {
 

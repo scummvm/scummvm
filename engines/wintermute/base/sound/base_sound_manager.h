@@ -41,26 +41,24 @@ public:
 	bool resumeAll();
 	bool pauseAll(bool includingMusic = true);
 	bool cleanup();
-	//DECLARE_PERSISTENT(BaseSoundMgr, BaseClass);
+	//DECLARE_PERSISTENT(BaseSoundMgr, BaseClass)
 	byte getMasterVolumePercent();
 	byte getMasterVolume();
 	bool setMasterVolumePercent(byte percent);
-	byte getVolumePercent(Audio::Mixer::SoundType type);
-	bool setVolumePercent(Audio::Mixer::SoundType type, byte percent);
-	bool setVolume(Audio::Mixer::SoundType type, int volume);
+	byte getVolumePercent(TSoundType type);
+	bool setVolumePercent(TSoundType type, byte percent);
+	bool setVolume(TSoundType type, int volume);
 	int32 _volumeMaster;
 	bool removeSound(BaseSoundBuffer *sound);
-	BaseSoundBuffer *addSound(const Common::String &filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
-	bool addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
+	BaseSoundBuffer *addSound(const char *filename, TSoundType type = TSoundType::SOUND_SFX, bool streamed = false, uint32 initialPrivateVolume = 100);
+	bool addSound(BaseSoundBuffer *sound, TSoundType type = TSoundType::SOUND_SFX);
+	bool initLoop();
 	bool initialize();
 	bool _soundAvailable;
 	BaseSoundMgr(BaseGame *inGame);
 	~BaseSoundMgr() override;
-	Common::Array<BaseSoundBuffer *> _sounds;
+	BaseArray<BaseSoundBuffer *> _sounds;
 	void saveSettings();
-private:
-	int32 _volumeMasterPercent; // Necessary to avoid round-offs.
-	bool setMasterVolume(byte percent);
 };
 
 } // End of namespace Wintermute

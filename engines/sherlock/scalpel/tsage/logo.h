@@ -196,10 +196,10 @@ private:
 	TLib _lib;
 	int _counter, _frameCounter;
 	bool _finished;
-	byte _originalPalette[PALETTE_SIZE];
-	byte _palette1[PALETTE_SIZE];
-	byte _palette2[PALETTE_SIZE];
-	byte _palette3[PALETTE_SIZE];
+	byte _originalPalette[Graphics::PALETTE_SIZE];
+	byte _palette1[Graphics::PALETTE_SIZE];
+	byte _palette2[Graphics::PALETTE_SIZE];
+	byte _palette3[Graphics::PALETTE_SIZE];
 	Object _objects[4];
 	uint _waitFrames;
 	uint32 _waitStartFrame;
@@ -237,7 +237,7 @@ private:
 	/**
 	 * Fade from the current palette to a new one
 	 */
-	void fade(const byte palette[PALETTE_SIZE], int step = 6);
+	void fade(const byte palette[Graphics::PALETTE_SIZE], int step = 6);
 public:
 	static bool show(ScalpelEngine *vm);
 };

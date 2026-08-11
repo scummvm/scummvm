@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/math.h"
 #include "common/savefile.h"
 
 #include "tetraedge/tetraedge.h"
@@ -124,8 +123,7 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	_yAngleMax = _orientationY + 55.0f;
 
 	dotpos = sceneXml.rfind('.');
-	Common::String sceneLua = sceneXml.substr(0, dotpos);
-	sceneLua += ".lua";
+	Common::String sceneLua = sceneXml.substr(0, dotpos) + ".lua";
 	_luaScript.load(core->findFile(zone.getParent().appendComponent(sceneLua)));
 	_luaScript.execute();
 	_luaScript.execute("OnWarpEnter");
@@ -188,7 +186,10 @@ void AmerzoneGame::enter() {
 
 	TeInputMgr *inputMgr = g_engine->getInputMgr();
 	inputMgr->_mouseMoveSignal.add(this, &AmerzoneGame::onMouseMove);
-	inputMgr->_mouseLUpSignal.add(this, &AmerzoneGame::onMouseLeftUp);
+	// Left up should be max priority to make sure drags are always finished even if event
+	// is over button.
+	inputMgr->_mouseLUpSignal.push_back(TeICallback1ParamPtr<const Common::Point &>(new TeCallback1Param<AmerzoneGame,
+			const Common::Point &>(this, &AmerzoneGame::onMouseLeftUp, FLT_MAX)));
 	inputMgr->_mouseLDownSignal.add(this, &AmerzoneGame::onMouseLeftDown);
 
 	_orientationX = 0;

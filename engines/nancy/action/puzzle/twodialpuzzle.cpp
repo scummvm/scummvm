@@ -64,18 +64,55 @@ void TwoDialPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRectArray(stream, _srcs[0], num1, 20);
 	readRectArray(stream, _srcs[1], num2, 20);
 
-	_correctPositions[0] = stream.readUint16LE();
-	_correctPositions[1] = stream.readUint16LE();
+	if (g_nancy->getGameType() < kGameTypeNancy12) {
+		_correctPositions[0] = stream.readUint16LE();
+		_correctPositions[1] = stream.readUint16LE();
+	}
 
 	_rotateSounds[0].readNormal(stream);
 	_rotateSounds[1].readNormal(stream);
 
-	_solveScene.readData(stream);
-	_solveSoundDelay = stream.readUint16LE();
-	_solveSound.readNormal(stream);
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Nancy 12 reworked this puzzle (see execute()): the single correctPositions
+		// pair was replaced by an event-flag-gated solution list at the end. The
+		// solve scene here carries NO sceneID of its own (it is taken from the matched
+		// solution), so it is read manually starting from the frameID.
+		_solveScene._sceneChange.frameID = stream.readUint16LE();
+		_solveScene._sceneChange.verticalOffset = stream.readUint16LE();
+		_solveScene._sceneChange.continueSceneSound = stream.readUint16LE();
+		int32 x = stream.readSint32LE();
+		int32 y = stream.readSint32LE();
+		int32 z = stream.readSint32LE();
+		_solveScene._sceneChange.listenerFrontVector.set(x, y, z);
+		_solveScene._sceneChange.frontVectorFrameID = _solveScene._sceneChange.frameID;
+		stream.skip(2); // shouldStopRendering
+		_solveScene._flag.label = stream.readSint16LE();
+		_solveScene._flag.flag = stream.readByte();
 
-	_exitScene.readData(stream);
-	readRect(stream, _exitHotspot);
+		_solveSoundDelay = stream.readUint16LE();
+		_solveSound.readNormal(stream);
+
+		_exitScene.readData(stream);
+		stream.skip(2); // unknown
+		readRect(stream, _exitHotspot);
+
+		uint16 numSolutions = stream.readUint16LE();
+		_solutions.resize(numSolutions);
+		for (uint i = 0; i < numSolutions; ++i) {
+			_solutions[i].positions[0] = stream.readUint16LE();
+			_solutions[i].positions[1] = stream.readUint16LE();
+			_solutions[i].sceneID = stream.readUint16LE();
+			_solutions[i].condition.label = stream.readSint16LE();
+			_solutions[i].condition.flag = stream.readByte();
+		}
+	} else {
+		_solveScene.readData(stream);
+		_solveSoundDelay = stream.readUint16LE();
+		_solveSound.readNormal(stream);
+
+		_exitScene.readData(stream);
+		readRect(stream, _exitHotspot);
+	}
 }
 
 void TwoDialPuzzle::execute() {
@@ -96,20 +133,20 @@ void TwoDialPuzzle::execute() {
 		_state = kRun;
 		// fall through
 	case kRun:
-		if (g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) || g_nancy->_sound->isSoundPlaying(_rotateSounds[1])) {
-			return;
-		}
-
-		if ((uint)_currentPositions[0] == _correctPositions[0] && (uint)_currentPositions[1] == _correctPositions[1]) {
-			_state = kActionTrigger;
-			_isSolved = true;
-			_solveSoundDelayTime = g_nancy->getTotalPlayTime() + (_solveSoundDelay * 1000);
+		if (g_nancy->getGameType() >= kGameTypeNancy12) {
+			runNancy12();
+		} else {
+			runPreNancy12();
 		}
 
 		break;
 	case kActionTrigger:
 		if (_isSolved) {
-			if (_solveSoundDelayTime != 0) {
+			if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				// The solve sound has already played out during the run phase, and
+				// the matched solution has supplied the scene to change to
+				_solveScene.execute();
+			} else if (_solveSoundDelayTime != 0) {
 				if (g_nancy->getTotalPlayTime() < _solveSoundDelayTime) {
 					return;
 				}
@@ -137,8 +174,79 @@ void TwoDialPuzzle::execute() {
 	}
 }
 
+void TwoDialPuzzle::runPreNancy12() {
+	if (g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) || g_nancy->_sound->isSoundPlaying(_rotateSounds[1])) {
+		return;
+	}
+
+	if ((uint)_currentPositions[0] == _correctPositions[0] && (uint)_currentPositions[1] == _correctPositions[1]) {
+		_state = kActionTrigger;
+		_isSolved = true;
+		_solveSoundDelayTime = g_nancy->getTotalPlayTime() + (_solveSoundDelay * 1000);
+	}
+}
+
+void TwoDialPuzzle::runNancy12() {
+	switch (_solveState) {
+	case kCheckSolutions: {
+		// A combo solves only while one of its solutions is active: the dial
+		// positions match and that solution's condition flag is currently set
+		int16 matched = -1;
+		for (uint i = 0; i < _solutions.size(); ++i) {
+			const DialSolution &sol = _solutions[i];
+			if (sol.sceneID != kNoScene &&
+					_currentPositions[0] == sol.positions[0] &&
+					_currentPositions[1] == sol.positions[1] &&
+					NancySceneState.getEventFlag(sol.condition.label, sol.condition.flag)) {
+				matched = i;
+				break;
+			}
+		}
+
+		if (matched == -1) {
+			_lastMatchedSolution = -1;
+			break;
+		}
+
+		if (matched != _lastMatchedSolution) {
+			// The dials only just landed on this solution; it counts once they
+			// have rested on it for solveSoundDelay milliseconds
+			_lastMatchedSolution = matched;
+			_dwellEndTime = g_nancy->getTotalPlayTime() + _solveSoundDelay;
+			break;
+		}
+
+		if (g_nancy->getTotalPlayTime() > _dwellEndTime) {
+			_solveScene._sceneChange.sceneID = _solutions[matched].sceneID;
+			_isSolved = true;
+			_solveState = kPlaySolveSound;
+		}
+
+		break;
+	}
+	case kPlaySolveSound:
+		g_nancy->_sound->loadSound(_solveSound);
+		g_nancy->_sound->playSound(_solveSound);
+		_solveState = kWaitForSounds;
+		break;
+	case kWaitForSounds:
+		if (_isSolved) {
+			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+				g_nancy->_sound->stopSound(_solveSound);
+				_state = kActionTrigger;
+			}
+		} else if (!g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) &&
+				!g_nancy->_sound->isSoundPlaying(_rotateSounds[1])) {
+			_solveState = kCheckSolutions;
+		}
+
+		break;
+	}
+}
+
 void TwoDialPuzzle::handleInput(NancyInput &input) {
-	bool canClick = (_state == kRun) && !g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) && !g_nancy->_sound->isSoundPlaying(_rotateSounds[1]);
+	bool canClick = (_state == kRun) && !_isSolved &&
+		!g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) && !g_nancy->_sound->isSoundPlaying(_rotateSounds[1]);
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
@@ -164,6 +272,12 @@ void TwoDialPuzzle::handleInput(NancyInput &input) {
 				}
 
 				g_nancy->_sound->playSound(_rotateSounds[i]);
+
+				if (g_nancy->getGameType() >= kGameTypeNancy12) {
+					// A dial in motion suspends the solution check until it stops
+					_solveState = kWaitForSounds;
+				}
+
 				_drawSurface.fillRect(_dests[0].findIntersectingRect(_dests[1]), _drawSurface.getTransparentColor());
 
 				// Blit both dials just in case

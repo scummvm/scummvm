@@ -361,16 +361,22 @@ void sqexec(HSQUIRRELVM v, const char *code, const char *filename) {
 	sq_settop(v, top);
 }
 
-Common::SharedPtr<Thread> sqthread(HSQUIRRELVM v, int i) {
+Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v, int i) {
 	SQInteger id;
 	if (SQ_SUCCEEDED(sqget(v, i, id)))
 		return sqthread(id);
 	return nullptr;
 }
 
-Common::SharedPtr<Thread> sqthread(int id) {
+Common::SharedPtr<ThreadBase> sqthread(int id) {
+	if (g_twp->_cutscene) {
+		if (g_twp->_cutscene->getId() == id) {
+			return g_twp->_cutscene;
+		}
+	}
+
 	for (size_t i = 0; i < g_twp->_threads.size(); i++) {
-		Common::SharedPtr<Thread> t = g_twp->_threads[i];
+		Common::SharedPtr<ThreadBase> t = g_twp->_threads[i];
 		if (t->getId() == id) {
 			return t;
 		}
@@ -400,7 +406,7 @@ Light *sqlight(HSQUIRRELVM v, int i) {
 
 struct GetThread {
 	explicit GetThread(HSQUIRRELVM v) : _v(v) {}
-	bool operator()(Common::SharedPtr<Thread> t) {
+	bool operator()(Common::SharedPtr<ThreadBase> t) {
 		return t->getThread() == _v;
 	}
 
@@ -408,7 +414,13 @@ private:
 	HSQUIRRELVM _v;
 };
 
-Common::SharedPtr<Thread> sqthread(HSQUIRRELVM v) {
+Common::SharedPtr<ThreadBase> sqthread(HSQUIRRELVM v) {
+	if (g_twp->_cutscene) {
+		if (g_twp->_cutscene->getThread() == v) {
+			return g_twp->_cutscene;
+		}
+	}
+
 	auto it = Common::find_if(g_twp->_threads.begin(), g_twp->_threads.end(), GetThread(v));
 	if (it != g_twp->_threads.end())
 		return *it;

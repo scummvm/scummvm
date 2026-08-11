@@ -415,12 +415,9 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_dungeonColumCount = 0;
 	_dungeonMapsFirstColumnIndex = nullptr;
 
-	_dungeonColumCount = 0;
 	_dungeonColumnsCumulativeSquareThingCount = nullptr;
 	_squareFirstThings = nullptr;
 	_dungeonTextData = nullptr;
-	for (uint16 i = 0; i < 16; ++i)
-		_thingData[i] = nullptr;
 
 	_dungeonMapData = nullptr;
 	_partyDir = (Direction)0;
@@ -451,7 +448,7 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_dungeonFileHeader._squareFirstThingCount = 0;
 
 	for (uint16 i = 0; i < 5; ++i)
-		_pileTopObject[i] = Thing(0);
+		_pileTopObject[i] = Thing(0xFFFF);
 	for (uint16 i = 0; i < 2; ++i)
 		_currMapDoorInfo[i].resetToZero();
 	for (uint16 i = 0; i < 16; i++)
@@ -468,8 +465,6 @@ DungeonMan::~DungeonMan() {
 	delete[] _squareFirstThings;
 	delete[] _dungeonTextData;
 	delete[] _dungeonMapData;
-	for (uint16 i = 0; i < 16; ++i)
-		delete[] _thingData[i];
 
 	delete[] _dungeonRawMapData;
 }
@@ -484,11 +479,14 @@ void DungeonMan::decompressDungeonFile() {
 	if (!f.isOpen())
 		error("Unable to open Dungeon.dat file");
 
-	if (f.readUint16BE() == 0x8104) { // if dungeon is compressed
-		_rawDunFileDataSize = f.readUint32BE();
+	bool bigEndian = (_vm->getPlatform() != Common::kPlatformDOS);
+	Common::SeekableReadStreamEndianWrapper safeStream(&f, bigEndian, DisposeAfterUse::NO);
+
+	if (safeStream.readUint16() == 0x8104) { // if dungeon is compressed
+		_rawDunFileDataSize = safeStream.readUint32();
 		delete[] _rawDunFileData;
 		_rawDunFileData = new byte[_rawDunFileDataSize];
-		f.readUint16BE(); // discard
+		safeStream.readUint16(); // discard
 		byte common[4];
 		for (uint16 i = 0; i < 4; ++i)
 			common[i] = f.readByte();
@@ -499,7 +497,7 @@ void DungeonMan::decompressDungeonFile() {
 		// start unpacking
 		uint32 uncompIndex = 0;
 		uint8 bitsUsedInWord = 0;
-		uint16 wordBuff = f.readUint16BE();
+		uint16 wordBuff = safeStream.readUint16();
 		uint8 bitsLeftInByte = 8;
 		byte byteBuff = f.readByte();
 		while (uncompIndex < _rawDunFileDataSize) {
@@ -542,7 +540,7 @@ void DungeonMan::decompressDungeonFile() {
 	f.close();
 }
 
-void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
+void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 	static const byte additionalThingCounts[16] = { // @ G0236_auc_Graphic559_AdditionalThingCounts{
 		0,    /* Door */
 		0,    /* Teleporter */
@@ -566,26 +564,31 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	if (_vm->_gameMode != kDMModeLoadSavedGame)
 		decompressDungeonFile();
 
-	Common::ReadStream *dunDataStream = nullptr;
+	Common::SeekableReadStream *rawDunDataStream = nullptr;
 	if (file) {
 		// if loading a save
-		dunDataStream = file;
+		rawDunDataStream = file;
 	} else {
 		// else read dungeon.dat
 		assert(_rawDunFileData && _rawDunFileDataSize);
-		dunDataStream = new Common::MemoryReadStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);
+		rawDunDataStream = new Common::MemoryReadStream(_rawDunFileData, _rawDunFileDataSize, DisposeAfterUse::NO);
 	}
 
+	bool isSavegame = (file != nullptr);
+	bool bigEndian = isSavegame || (_vm->getPlatform() != Common::kPlatformDOS);
+	Common::SeekableReadStreamEndianWrapper safeStream(rawDunDataStream, bigEndian, isSavegame ? DisposeAfterUse::NO : DisposeAfterUse::YES);
+	Common::SeekableReadStreamEndianWrapper *dunDataStream = &safeStream;
+
 	// initialize _g278_dungeonFileHeader
-	_dungeonFileHeader._ornamentRandomSeed = dunDataStream->readUint16BE();
-	_dungeonFileHeader._rawMapDataSize = dunDataStream->readUint16BE();
+	_dungeonFileHeader._ornamentRandomSeed = dunDataStream->readUint16();
+	_dungeonFileHeader._rawMapDataSize = dunDataStream->readUint16();
 	_dungeonFileHeader._mapCount = dunDataStream->readByte();
 	dunDataStream->readByte(); // discard 1 byte
-	_dungeonFileHeader._textDataWordCount = dunDataStream->readUint16BE();
-	_dungeonFileHeader._partyStartLocation = dunDataStream->readUint16BE();
-	_dungeonFileHeader._squareFirstThingCount = dunDataStream->readUint16BE();
+	_dungeonFileHeader._textDataWordCount = dunDataStream->readUint16();
+	_dungeonFileHeader._partyStartLocation = dunDataStream->readUint16();
+	_dungeonFileHeader._squareFirstThingCount = dunDataStream->readUint16();
 	for (uint16 i = 0; i < kDMThingTypeTotal; ++i)
-		_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16BE();
+		_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16();
 
 	// init party position and mapindex
 	if (_vm->_gameMode != kDMModeLoadSavedGame) {
@@ -603,28 +606,28 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	}
 
 	for (uint16 i = 0; i < _dungeonFileHeader._mapCount; ++i) {
-		_dungeonMaps[i]._rawDunDataOffset = dunDataStream->readUint16BE();
-		dunDataStream->readUint32BE(); // discard 4 bytes
+		_dungeonMaps[i]._rawDunDataOffset = dunDataStream->readUint16();
+		dunDataStream->readUint32(); // discard 4 bytes
 		_dungeonMaps[i]._offsetMapX = dunDataStream->readByte();
 		_dungeonMaps[i]._offsetMapY = dunDataStream->readByte();
 
-		uint16 tmp = dunDataStream->readUint16BE();
+		uint16 tmp = dunDataStream->readUint16();
 		_dungeonMaps[i]._height = tmp >> 11;
 		_dungeonMaps[i]._width = (tmp >> 6) & 0x1F;
 		_dungeonMaps[i]._level = tmp & 0x3F; // Only used in DMII
 
-		tmp = dunDataStream->readUint16BE();
+		tmp = dunDataStream->readUint16();
 		_dungeonMaps[i]._randFloorOrnCount = tmp >> 12;
 		_dungeonMaps[i]._floorOrnCount = (tmp >> 8) & 0xF;
 		_dungeonMaps[i]._randWallOrnCount = (tmp >> 4) & 0xF;
 		_dungeonMaps[i]._wallOrnCount = tmp & 0xF;
 
-		tmp = dunDataStream->readUint16BE();
+		tmp = dunDataStream->readUint16();
 		_dungeonMaps[i]._difficulty = tmp >> 12;
 		_dungeonMaps[i]._creatureTypeCount = (tmp >> 4) & 0xF;
 		_dungeonMaps[i]._doorOrnCount = tmp & 0xF;
 
-		tmp = dunDataStream->readUint16BE();
+		tmp = dunDataStream->readUint16();
 		_dungeonMaps[i]._doorSet1 = (tmp >> 12) & 0xF;
 		_dungeonMaps[i]._doorSet0 = (tmp >> 8) & 0xF;
 		_dungeonMaps[i]._wallSet = (WallSet)((tmp >> 4) & 0xF);
@@ -655,7 +658,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		_dungeonColumnsCumulativeSquareThingCount = new uint16[columCount];
 	}
 	for (uint16 i = 0; i < columCount; ++i)
-		_dungeonColumnsCumulativeSquareThingCount[i] = dunDataStream->readUint16BE();
+		_dungeonColumnsCumulativeSquareThingCount[i] = dunDataStream->readUint16();
 
 	// load square first things
 	if (!_vm->_restartGameRequest) {
@@ -664,7 +667,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	}
 
 	for (uint16 i = 0; i < actualSquareFirstThingCount; ++i)
-		_squareFirstThings[i].set(dunDataStream->readUint16BE());
+		_squareFirstThings[i].set(dunDataStream->readUint16());
 
 	if (_vm->_gameMode != kDMModeLoadSavedGame) {
 		for (uint16 i = 0; i < 300; ++i)
@@ -678,7 +681,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	}
 
 	for (uint16 i = 0; i < _dungeonFileHeader._textDataWordCount; ++i)
-		_dungeonTextData[i] = dunDataStream->readUint16BE();
+		_dungeonTextData[i] = dunDataStream->readUint16();
 
 	if (_vm->_gameMode != kDMModeLoadSavedGame)
 		timeline._eventMaxCount = 100;
@@ -694,26 +697,169 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		if (thingStoreWordCount == 0)
 			continue;
 
-		if (!_vm->_restartGameRequest) {
-			delete[] _thingData[thingType];
-			_thingData[thingType] = new uint16[_dungeonFileHeader._thingCounts[thingType] * thingStoreWordCount];
+		switch (thingType) {
+		case kDMThingTypeDoor:
+			_doors.clear();
+			_doors.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeTeleporter:
+			_teleporters.clear();
+			_teleporters.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMstringTypeText:
+			_textStrings.clear();
+			_textStrings.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeSensor:
+			_sensors.clear();
+			_sensors.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeGroup:
+			_groups.clear();
+			_groups.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeWeapon:
+			_weapons.clear();
+			_weapons.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeArmour:
+			_armours.clear();
+			_armours.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeScroll:
+			_scrolls.clear();
+			_scrolls.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypePotion:
+			_potions.clear();
+			_potions.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeContainer:
+			_containers.clear();
+			_containers.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeJunk:
+			_junks.clear();
+			_junks.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeProjectile:
+			_projectiles.clear();
+			_projectiles.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
+		case kDMThingTypeExplosion:
+			_explosions.clear();
+			_explosions.resize(_dungeonFileHeader._thingCounts[thingType]);
+			break;
 		}
 
-		if ((thingType == kDMThingTypeGroup || thingType == kDMThingTypeProjectile) && !file) { // !file because save files have diff. structure than dungeon.dat
-			for (uint16 i = 0; i < thingCount; ++i) {
-				uint16 *nextSlot = _thingData[thingType] + i *thingStoreWordCount;
-				for (uint16 j = 0; j < thingStoreWordCount; ++j) {
-					if (j == 2 || j == 3)
-						nextSlot[j] = dunDataStream->readByte();
-					else
-						nextSlot[j] = dunDataStream->readUint16BE();
-				}
+		for (uint16 i = 0; i < thingCount; ++i) {
+			switch (thingType) {
+			case kDMThingTypeDoor: {
+				Door &door = _doors[i];
+				door._nextThing = Thing(dunDataStream->readUint16());
+				door._attributes = dunDataStream->readUint16();
+				break;
 			}
-		} else {
-			for (uint16 i = 0; i < thingCount; ++i) {
-				uint16 *nextSlot = _thingData[thingType] + i *thingStoreWordCount;
-				for (uint16 j = 0; j < thingStoreWordCount; ++j)
-					nextSlot[j] = dunDataStream->readUint16BE();
+			case kDMThingTypeTeleporter: {
+				Teleporter &tele = _teleporters[i];
+				tele._nextThing = Thing(dunDataStream->readUint16());
+				tele._attributes = dunDataStream->readUint16();
+				tele._destMapIndex = dunDataStream->readUint16();
+				break;
+			}
+			case kDMstringTypeText: {
+				TextString &text = _textStrings[i];
+				text._nextThing = Thing(dunDataStream->readUint16());
+				text._textDataRef = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypeSensor: {
+				Sensor &sens = _sensors[i];
+				sens._nextThing = Thing(dunDataStream->readUint16());
+				sens._datAndType = dunDataStream->readUint16();
+				sens._attributes = dunDataStream->readUint16();
+				sens._action = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypeGroup: {
+				Group &grp = _groups[i];
+				grp._nextThing = Thing(dunDataStream->readUint16());
+				uint16 slotVal = dunDataStream->readUint16();
+				grp._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
+				if (!file) {
+					grp._type = (CreatureType)dunDataStream->readByte();
+					grp._cells = dunDataStream->readByte();
+				} else {
+					grp._type = (CreatureType)dunDataStream->readUint16();
+					grp._cells = dunDataStream->readUint16();
+				}
+				grp._health[0] = dunDataStream->readUint16();
+				grp._health[1] = dunDataStream->readUint16();
+				grp._health[2] = dunDataStream->readUint16();
+				grp._health[3] = dunDataStream->readUint16();
+				grp._flags = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypeWeapon: {
+				Weapon &weap = _weapons[i];
+				weap._nextThing = Thing(dunDataStream->readUint16());
+				weap._desc = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypeArmour: {
+				Armour &arm = _armours[i];
+				arm._nextThing = Thing(dunDataStream->readUint16());
+				arm._attributes = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypeScroll: {
+				Scroll &scr = _scrolls[i];
+				scr._nextThing = Thing(dunDataStream->readUint16());
+				scr._attributes = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypePotion: {
+				Potion &pot = _potions[i];
+				pot._nextThing = Thing(dunDataStream->readUint16());
+				pot._attributes = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypeContainer: {
+				Container &cont = _containers[i];
+				cont._nextThing = Thing(dunDataStream->readUint16());
+				uint16 slotVal = dunDataStream->readUint16();
+				cont._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
+				cont._type = dunDataStream->readUint16();
+				dunDataStream->readUint16(); // unused 4th word
+				break;
+			}
+			case kDMThingTypeJunk: {
+				Junk &jnk = _junks[i];
+				jnk._nextThing = Thing(dunDataStream->readUint16());
+				jnk._attributes = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypeProjectile: {
+				Projectile &proj = _projectiles[i];
+				proj._nextThing = Thing(dunDataStream->readUint16());
+				uint16 slotVal = dunDataStream->readUint16();
+				proj._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
+				if (!file) {
+					proj._kineticEnergy = dunDataStream->readByte();
+					proj._attack = dunDataStream->readByte();
+				} else {
+					proj._kineticEnergy = dunDataStream->readUint16();
+					proj._attack = dunDataStream->readUint16();
+				}
+				proj._eventIndex = dunDataStream->readUint16();
+				break;
+			}
+			case kDMThingTypeExplosion: {
+				Explosion &expl = _explosions[i];
+				expl._nextThing = Thing(dunDataStream->readUint16());
+				expl._attributes = dunDataStream->readUint16();
+				break;
+			}
 			}
 		}
 
@@ -721,8 +867,50 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			if ((thingType == kDMThingTypeGroup) || thingType >= kDMThingTypeProjectile)
 				timeline._eventMaxCount += _dungeonFileHeader._thingCounts[thingType];
 
-			for (uint16 i = 0; i < additionalThingCounts[thingType]; ++i)
-				(_thingData[thingType] + (thingCount + i) * thingStoreWordCount)[0] = _vm->_thingNone.toUint16();
+			for (uint16 i = 0; i < additionalThingCounts[thingType]; ++i) {
+				uint16 idx = thingCount + i;
+				switch (thingType) {
+				case kDMThingTypeDoor:
+					_doors[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeTeleporter:
+					_teleporters[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMstringTypeText:
+					_textStrings[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeSensor:
+					_sensors[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeGroup:
+					_groups[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeWeapon:
+					_weapons[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeArmour:
+					_armours[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeScroll:
+					_scrolls[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypePotion:
+					_potions[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeContainer:
+					_containers[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeJunk:
+					_junks[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeProjectile:
+					_projectiles[idx]._nextThing = _vm->_thingNone;
+					break;
+				case kDMThingTypeExplosion:
+					_explosions[idx]._nextThing = _vm->_thingNone;
+					break;
+				}
+			}
 		}
 	}
 
@@ -744,16 +932,15 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			_dungeonMapData[i] = colFirstSquares;
 			byte *square = _dungeonRawMapData + _dungeonMaps[i]._rawDunDataOffset;
 			*colFirstSquares++ = square;
-			for (uint16 w = 1; w <= _dungeonMaps[i]._width; ++w) {
+			uint16 mapWidth = _dungeonMaps[i]._width;
+			if (mapWidth > 32)
+				mapWidth = 32;
+			for (uint16 w = 1; w <= mapWidth; ++w) {
 				square += _dungeonMaps[i]._height + 1;
 				*colFirstSquares++ = square;
 			}
 		}
 	}
-
-	if (!file) { // this means that we created a new MemoryReadStream
-		delete dunDataStream;
-	} // the deletion of the function parameter 'file' happens elsewhere
 }
 
 void DungeonMan::setCurrentMap(uint16 mapIndex) {
@@ -831,8 +1018,11 @@ Square DungeonMan::getRelSquare(Direction dir, int16 stepsForward, int16 stepsRi
 }
 
 int16 DungeonMan::getSquareFirstThingIndex(int16 mapX, int16 mapY) {
+	if ((mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight))
+		return -1;
+
 	unsigned char *curSquare = _currMapData[mapX];
-	if ((mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight) || !getFlag(curSquare[mapY], kDMSquareMaskThingListPresent))
+	if (!getFlag(curSquare[mapY], kDMSquareMaskThingListPresent))
 		return -1;
 
 	int16 curMapY = 0;
@@ -905,13 +1095,14 @@ T0172010_ClosedFakeWall:
 			ThingType curThingType = curThing.getType();
 			int16 AL0310_i_SideIndex = _vm->normalizeModulo4(curThing.getCell() - dir);
 			if (AL0310_i_SideIndex) { /* Invisible on the back wall if 0 */
-				Sensor *curSensor = (Sensor *)getThingData(curThing);
 				if (curThingType == kDMstringTypeText) {
-					if (((TextString *)curSensor)->isVisible()) {
+					TextString *curText = getTextString(curThing);
+					if (curText->isVisible()) {
 						aspectArray[AL0310_i_SideIndex + 1] = _currMapInscriptionWallOrnIndex + 1;
 						displMan._inscriptionThing = curThing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on different sides of the wall, the same text is drawn on each affected side */
 					}
 				} else {
+					Sensor *curSensor = getSensor(curThing);
 					aspectArray[AL0310_i_SideIndex + 1] = curSensor->getAttrOrnOrdinal();
 					if (curSensor->getType() == kDMSensorWallChampionPortrait) {
 						displMan._championPortraitOrdinal = _vm->indexToOrdinal(curSensor->getData());
@@ -956,14 +1147,13 @@ T0172010_ClosedFakeWall:
 
 		while ((curThing != _vm->_thingEndOfList) && (curThing.getType() <= kDMThingTypeSensor)) {
 			if (curThing.getType() == kDMThingTypeSensor) {
-				Sensor *curSensor = (Sensor *)getThingData(curThing);
+				Sensor *curSensor = getSensor(curThing);
 				aspectArray[kDMSquareAspectFloorOrn] = curSensor->getAttrOrnOrdinal();
 			}
 			curThing = getNextThing(curThing);
 		}
 
-		AL0307_uc_ScentOrdinal = championMan.getScentOrdinal(mapX, mapY);
-		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= championMan._party._firstScentIndex) && (AL0307_uc_ScentOrdinal < championMan._party._lastScentIndex))
+		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = championMan.getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= championMan._party._firstScentIndex) && (AL0307_uc_ScentOrdinal < championMan._party._lastScentIndex))
 			setFlag(aspectArray[kDMSquareAspectFloorOrn], kDMMaskFootprints);
 
 		break;
@@ -987,8 +1177,7 @@ T0172010_ClosedFakeWall:
 		while ((curThing != _vm->_thingEndOfList) && (curThing.getType() <= kDMThingTypeSensor))
 			curThing = getNextThing(curThing);
 
-		AL0307_uc_ScentOrdinal = championMan.getScentOrdinal(mapX, mapY);
-		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= championMan._party._firstScentIndex) && (AL0307_uc_ScentOrdinal < championMan._party._lastScentIndex))
+		if ((AL0307_uc_ScentOrdinal = championMan.getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= championMan._party._firstScentIndex) && (AL0307_uc_ScentOrdinal < championMan._party._lastScentIndex))
 			setFlag(aspectArray[kDMSquareAspectFloorOrn], kDMMaskFootprints);
 		break;
 	default:
@@ -1013,7 +1202,7 @@ void DungeonMan::setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowe
 }
 
 int16 DungeonMan::getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo) {
-	int16 randomOrnamentIndex = getRandomOrnamentIndex((int16)2000 + (mapX << 5) + mapY, (int16)3000 + (_currMapIndex << (int16)6) + _currMapWidth + _currMapHeight, modulo);
+	int16 randomOrnamentIndex = getRandomOrnamentIndex((int16)2000 + (mapX * 32) + mapY, (int16)3000 + (_currMapIndex * 64) + _currMapWidth + _currMapHeight, modulo);
 
 	if (allowed && (randomOrnamentIndex < count))
 		return _vm->indexToOrdinal(randomOrnamentIndex);
@@ -1034,19 +1223,136 @@ bool DungeonMan::isWallOrnAnAlcove(int16 wallOrnIndex) {
 	return false;
 }
 
-uint16 *DungeonMan::getThingData(Thing thing) {
-	return _thingData[thing.getType()] + thing.getIndex() * _thingDataWordCount[thing.getType()];
+Door *DungeonMan::getDoor(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeDoor);
+	return &(_doors[thing.getIndex()]);
 }
 
-uint16 *DungeonMan::getSquareFirstThingData(int16 mapX, int16 mapY) {
-	return getThingData(getSquareFirstThing(mapX, mapY));
+Teleporter *DungeonMan::getTeleporter(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeTeleporter);
+	return &(_teleporters[thing.getIndex()]);
+}
+
+TextString *DungeonMan::getTextString(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMstringTypeText);
+	return &(_textStrings[thing.getIndex()]);
+}
+
+Sensor *DungeonMan::getSensor(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeSensor);
+	return &(_sensors[thing.getIndex()]);
+}
+
+Group *DungeonMan::getGroup(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeGroup);
+	return &(_groups[thing.getIndex()]);
+}
+
+Weapon *DungeonMan::getWeapon(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeWeapon);
+	return &(_weapons[thing.getIndex()]);
+}
+
+Armour *DungeonMan::getArmour(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeArmour);
+	return &(_armours[thing.getIndex()]);
+}
+
+Scroll *DungeonMan::getScroll(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeScroll);
+	return &(_scrolls[thing.getIndex()]);
+}
+
+Potion *DungeonMan::getPotion(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypePotion);
+	return &(_potions[thing.getIndex()]);
+}
+
+Container *DungeonMan::getContainer(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeContainer);
+	return &(_containers[thing.getIndex()]);
+}
+
+Junk *DungeonMan::getJunk(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeJunk);
+	return &(_junks[thing.getIndex()]);
+}
+
+Projectile *DungeonMan::getProjectile(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeProjectile);
+	return &(_projectiles[thing.getIndex()]);
+}
+
+Explosion *DungeonMan::getExplosion(Thing thing) {
+	if (thing == _vm->_thingNone || thing == _vm->_thingEndOfList)
+		return nullptr;
+	assert(thing.getType() == kDMThingTypeExplosion);
+	return &(_explosions[thing.getIndex()]);
 }
 
 Thing DungeonMan::getNextThing(Thing thing) {
-	return Thing(getThingData(thing)[0]);
+	if (thing == _vm->_thingNone)
+		return _vm->_thingNone;
+	if (thing == _vm->_thingEndOfList)
+		return _vm->_thingEndOfList;
+
+	switch (thing.getType()) {
+	case kDMThingTypeDoor:
+		return _doors[thing.getIndex()]._nextThing;
+	case kDMThingTypeTeleporter:
+		return _teleporters[thing.getIndex()]._nextThing;
+	case kDMstringTypeText:
+		return _textStrings[thing.getIndex()]._nextThing;
+	case kDMThingTypeSensor:
+		return _sensors[thing.getIndex()]._nextThing;
+	case kDMThingTypeGroup:
+		return _groups[thing.getIndex()]._nextThing;
+	case kDMThingTypeWeapon:
+		return _weapons[thing.getIndex()]._nextThing;
+	case kDMThingTypeArmour:
+		return _armours[thing.getIndex()]._nextThing;
+	case kDMThingTypeScroll:
+		return _scrolls[thing.getIndex()]._nextThing;
+	case kDMThingTypePotion:
+		return _potions[thing.getIndex()]._nextThing;
+	case kDMThingTypeContainer:
+		return _containers[thing.getIndex()]._nextThing;
+	case kDMThingTypeJunk:
+		return _junks[thing.getIndex()]._nextThing;
+	case kDMThingTypeProjectile:
+		return _projectiles[thing.getIndex()]._nextThing;
+	case kDMThingTypeExplosion:
+		return _explosions[thing.getIndex()]._nextThing;
+	default:
+		return _vm->_thingNone;
+	}
 }
 
-void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, TextType type) {
+void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, int16 type) {
 	static char messageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
 		{'x',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
 		{'y',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
@@ -1128,9 +1434,9 @@ void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, TextT
 		{0,   0,  0,  0, 0, 0, 0, 0}
 	};
 
-	TextString textString(_thingData[kDMstringTypeText] + thing.getIndex() * _thingDataWordCount[kDMstringTypeText]);
+	TextString &textString = *getTextString(thing.getIndex());
 	if ((textString.isVisible()) || (type & kDMMaskDecodeEvenIfInvisible)) {
-		type = (TextType)(type & ~kDMMaskDecodeEvenIfInvisible);
+		type &= ~kDMMaskDecodeEvenIfInvisible;
 		char sepChar;
 		if (type == kDMTextTypeMessage) {
 			*destString++ = '\n';
@@ -1193,6 +1499,58 @@ void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, TextT
 	*destString = ((type == kDMTextTypeInscription) ? 0x81 : '\0');
 }
 
+Door *DungeonMan::getDoor(uint16 index) {
+	return &(_doors[index]);
+}
+
+Teleporter *DungeonMan::getTeleporter(uint16 index) {
+	return &(_teleporters[index]);
+}
+
+TextString *DungeonMan::getTextString(uint16 index) {
+	return &(_textStrings[index]);
+}
+
+Sensor *DungeonMan::getSensor(uint16 index) {
+	return &(_sensors[index]);
+}
+
+Group *DungeonMan::getGroup(uint16 index) {
+	return &(_groups[index]);
+}
+
+Weapon *DungeonMan::getWeapon(uint16 index) {
+	return &(_weapons[index]);
+}
+
+Armour *DungeonMan::getArmour(uint16 index) {
+	return &(_armours[index]);
+}
+
+Scroll *DungeonMan::getScroll(uint16 index) {
+	return &(_scrolls[index]);
+}
+
+Potion *DungeonMan::getPotion(uint16 index) {
+	return &(_potions[index]);
+}
+
+Container *DungeonMan::getContainer(uint16 index) {
+	return &(_containers[index]);
+}
+
+Junk *DungeonMan::getJunk(uint16 index) {
+	return &(_junks[index]);
+}
+
+Projectile *DungeonMan::getProjectile(uint16 index) {
+	return &(_projectiles[index]);
+}
+
+Explosion *DungeonMan::getExplosion(uint16 index) {
+	return &(_explosions[index]);
+}
+
 Thing DungeonMan::getUnusedThing(uint16 thingType) {
 	int16 thingCount = _dungeonFileHeader._thingCounts[getFlag(thingType, kDMMaskThingType)];
 	if (thingType == (kDMMaskChampionBones | kDMThingTypeJunk)) {
@@ -1200,32 +1558,25 @@ Thing DungeonMan::getUnusedThing(uint16 thingType) {
 	} else if (thingType == kDMThingTypeJunk)
 		thingCount -= 3; /* Always keep 3 unused JUNK things for the bones of dead champions */
 
-	int16 thingIdx = thingCount;
-	int16 thingDataByteCount = _thingDataWordCount[thingType] >> 1;
-	Thing *thingPtr = (Thing *)_thingData[thingType];
-
 	Thing curThing;
-	for (;;) { /*_Infinite loop_*/
-		if (*thingPtr == _vm->_thingNone) { /* If thing data is unused */
-			curThing = Thing((thingType << 10) | (thingCount - thingIdx));
-			break;
-		}
-		if (--thingIdx) { /* If there are thing data left to process */
-			thingPtr += thingDataByteCount; /* Proceed to the next thing data */
-		} else {
-			curThing = getDiscardThing(thingType);
-			if (curThing == _vm->_thingNone)
-				return _vm->_thingNone;
-
-			thingPtr = (Thing *)getThingData(curThing);
+	bool found = false;
+	for (int16 i = 0; i < thingCount; ++i) {
+		curThing = Thing((thingType << 10) | i);
+		Thing *nextPtr = getNextThingPtr(curThing);
+		if (*nextPtr == _vm->_thingNone) {
+			found = true;
 			break;
 		}
 	}
-	for (uint16 i = 0; i < thingDataByteCount; i++) {
-		thingPtr[i].set(0);
+
+	if (!found) {
+		curThing = getDiscardThing(thingType);
+		if (curThing == _vm->_thingNone)
+			return _vm->_thingNone;
 	}
 
-	*thingPtr = _vm->_thingEndOfList;
+	resetThing(curThing);
+	*getNextThingPtr(curThing) = _vm->_thingEndOfList;
 	return curThing;
 }
 
@@ -1261,31 +1612,30 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 	// Initialization is not present in original
 	// Set to 0 by default as it's the default value used for _vm->_none
 	uint16 weight = 0;
-	Junk *junk = (Junk *)getThingData(thing);
-
 	switch (thing.getType()) {
 	case kDMThingTypeWeapon:
-		weight = _weaponInfos[((Weapon *)junk)->getType()]._weight;
+		weight = _weaponInfos[getWeapon(thing)->getType()]._weight;
 		break;
 	case kDMThingTypeArmour:
-		weight = _armourInfos[((Armour *)junk)->getType()]._weight;
+		weight = _armourInfos[getArmour(thing)->getType()]._weight;
 		break;
-	case kDMThingTypeJunk:
-		weight = junkInfo[junk->getType()];
-		if (junk->getType() == kDMJunkTypeWaterskin)
-			weight += junk->getChargeCount() << 1;
-
+	case kDMThingTypeJunk: {
+		Junk *jnk = getJunk(thing);
+		weight = junkInfo[jnk->getType()];
+		if (jnk->getType() == kDMJunkTypeWaterskin)
+			weight += jnk->getChargeCount() << 1;
 		break;
+	}
 	case kDMThingTypeContainer:
 		weight = 50;
-		thing = ((Container *)junk)->getSlot();
+		thing = getContainer(thing)->getSlot();
 		while (thing != _vm->_thingEndOfList) {
 			weight += getObjectWeight(thing);
 			thing = getNextThing(thing);
 		}
 		break;
 	case kDMThingTypePotion:
-		if (((Potion *)junk)->getType() == kDMPotionTypeEmptyFlask)
+		if (getPotion(thing)->getType() == kDMPotionTypeEmptyFlask)
 			weight = 1;
 		else
 			weight = 3;
@@ -1301,20 +1651,19 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 }
 
 int16 DungeonMan::getObjectInfoIndex(Thing thing) {
-	uint16 *rawType = getThingData(thing);
 	switch (thing.getType()) {
 	case kDMThingTypeScroll:
 		return kDMObjectInfoIndexFirstScroll;
 	case kDMThingTypeContainer:
-		return kDMObjectInfoIndexFirstContainer + Container(rawType).getType();
+		return kDMObjectInfoIndexFirstContainer + getContainer(thing)->getType();
 	case kDMThingTypeJunk:
-		return kDMObjectInfoIndexFirstJunk + Junk(rawType).getType();
+		return kDMObjectInfoIndexFirstJunk + getJunk(thing)->getType();
 	case kDMThingTypeWeapon:
-		return kDMObjectInfoIndexFirstWeapon + Weapon(rawType).getType();
+		return kDMObjectInfoIndexFirstWeapon + getWeapon(thing)->getType();
 	case kDMThingTypeArmour:
-		return kDMObjectInfoIndexFirstArmour + Armour(rawType).getType();
+		return kDMObjectInfoIndexFirstArmour + getArmour(thing)->getType();
 	case kDMThingTypePotion:
-		return kDMObjectInfoIndexFirstPotion + Potion(rawType).getType();
+		return kDMObjectInfoIndexFirstPotion + getPotion(thing)->getType();
 	default:
 		return -1;
 	}
@@ -1324,8 +1673,7 @@ void DungeonMan::linkThingToList(Thing thingToLink, Thing thingInList, int16 map
 	if (thingToLink == _vm->_thingEndOfList)
 		return;
 
-	Thing *thingPtr = (Thing *)getThingData(thingToLink);
-	*thingPtr = _vm->_thingEndOfList;
+	*getNextThingPtr(thingToLink) = _vm->_thingEndOfList;
 	/* If mapX >= 0 then the thing is linked to the list of things on the specified square else it is linked at the end of the specified thing list */
 	if (mapX >= 0) {
 		byte *currSquare = &_currMapData[mapX][mapY];
@@ -1358,12 +1706,11 @@ void DungeonMan::linkThingToList(Thing thingToLink, Thing thingInList, int16 map
 	while (nextThing != _vm->_thingEndOfList)
 		nextThing = getNextThing(thingInList = nextThing);
 
-	thingPtr = (Thing *)getThingData(thingInList);
-	*thingPtr = thingToLink;
+	*getNextThingPtr(thingInList) = thingToLink;
 }
 
 WeaponInfo *DungeonMan::getWeaponInfo(Thing thing) {
-	Weapon *weapon = (Weapon *)getThingData(thing);
+	Weapon *weapon = getWeapon(thing);
 	return &_weaponInfos[weapon->getType()];
 }
 
@@ -1387,7 +1734,10 @@ int16 DungeonMan::getProjectileAspect(Thing thing) {
 			return -projAspOrd;
 	}
 
-	return _objectInfos[getObjectInfoIndex(thing)]._objectAspectIndex;
+	int16 infoIndex = getObjectInfoIndex(thing);
+	if (infoIndex < 0 || infoIndex >= 180)
+		return 0;
+	return _objectInfos[infoIndex]._objectAspectIndex;
 }
 
 int16 DungeonMan::getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16 *mapX, int16 *mapY) {
@@ -1461,14 +1811,12 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 					do {
 						ThingType squareThingType = squareThing.getType();
 						if (squareThingType == kDMThingTypeSensor) {
-							Thing *squareThingData = (Thing *)getThingData(squareThing);
-							if (((Sensor *)squareThingData)->getType()) /* If sensor is not disabled */
+							if (getSensor(squareThing)->getType()) /* If sensor is not disabled */
 								break;
 						} else if (squareThingType == thingType) {
-							Thing *squareThingData = (Thing *)getThingData(squareThing);
 							switch (thingType) {
 							case kDMThingTypeGroup:
-								if (((Group *)squareThingData)->getDoNotDiscard())
+								if (getGroup(squareThing)->getDoNotDiscard())
 									continue;
 								// fall through
 							case kDMThingTypeProjectile:
@@ -1478,33 +1826,33 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 									groupMan.groupDelete(currMapX, currMapY);
 								} else {
 									projExpl.projectileDeleteEvent(squareThing);
-									unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
+									unlinkThingFromList(squareThing, Thing(0xFFFF), currMapX, currMapY);
 									projExpl.projectileDelete(squareThing, nullptr, currMapX, currMapY);
 								}
 								break;
 							case kDMThingTypeArmour:
-								if (((Armour *)squareThingData)->getDoNotDiscard())
+								if (getArmour(squareThing)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
 								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kDMMapXNotOnASquare, 0);
 								break;
 							case kDMThingTypeWeapon:
-								if (((Weapon *)squareThingData)->getDoNotDiscard())
+								if (getWeapon(squareThing)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
 								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kDMMapXNotOnASquare, 0);
 								break;
 							case kDMThingTypeJunk:
-								if (((Junk *)squareThingData)->getDoNotDiscard())
+								if (getJunk(squareThing)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
 								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kDMMapXNotOnASquare, 0);
 								break;
 							case kDMThingTypePotion:
-								if (((Potion *)squareThingData)->getDoNotDiscard())
+								if (getPotion(squareThing)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
@@ -1537,7 +1885,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 }
 
 uint16 DungeonMan::getCreatureAttributes(Thing thing) {
-	Group *currGroup = (Group *)getThingData(thing);
+	Group *currGroup = getGroup(thing);
 	return _creatureInfos[currGroup->_type]._attributes;
 }
 
@@ -1550,13 +1898,13 @@ void DungeonMan::setGroupCells(Group *group, uint16 cells, uint16 mapIndex) {
 
 void DungeonMan::setGroupDirections(Group *group, int16 dir, uint16 mapIndex) {
 	if (mapIndex == _partyMapIndex)
-		_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._directions = (Direction)dir;
+		_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._directions = dir;
 	else
 		group->setDir(_vm->normalizeModulo4(dir));
 }
 
 bool DungeonMan::isCreatureAllowedOnMap(Thing thing, uint16 mapIndex) {
-	CreatureType creatureType = ((Group *)getThingData(thing))->_type;
+	CreatureType creatureType = getGroup(thing)->_type;
 	Map *map = &_dungeonMaps[mapIndex];
 	byte *allowedCreatureType = _dungeonMapData[mapIndex][map->_width] + map->_height + 1;
 	for (int16 L0234_i_Counter = map->_creatureTypeCount; L0234_i_Counter > 0; L0234_i_Counter--) {
@@ -1574,12 +1922,11 @@ void DungeonMan::unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int
 	clearFlag(tmp, 0xC000);
 	thingToUnlink = Thing(tmp);
 
-	Thing *thingPtr = nullptr;
+	Thing *thingPtr = getNextThingPtr(thingToUnlink);
 	if (mapX >= 0) {
-		thingPtr = (Thing *)getThingData(thingToUnlink);
 		uint16 firstThingIndex = getSquareFirstThingIndex(mapX, mapY);
 		Thing *currThing = &_squareFirstThings[firstThingIndex]; /* BUG0_01 Coding error without consequence. The engine does not check that there are things at the specified square coordinates. f160_getSquareFirstThingIndex would return -1 for an empty square. No consequence as the function is never called with the coordinates of an empty square (except in the case of BUG0_59) */
-		if ((*thingPtr == _vm->_thingEndOfList) && (((Thing *)currThing)->getTypeAndIndex() == thingToUnlink.toUint16())) { /* If the thing to unlink is the last thing on the square */
+		if ((*thingPtr == _vm->_thingEndOfList) && (currThing->getTypeAndIndex() == thingToUnlink.toUint16())) { /* If the thing to unlink is the last thing on the square */
 			clearFlag(_currMapData[mapX][mapY], kDMSquareMaskThingListPresent);
 			uint16 squareFirstThingIdx = _dungeonFileHeader._squareFirstThingCount - 1;
 			for (uint16 i = 0; i < squareFirstThingIdx - firstThingIndex; ++i)
@@ -1594,7 +1941,7 @@ void DungeonMan::unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int
 			*thingPtr = _vm->_thingEndOfList;
 			return;
 		}
-		if (((Thing *)currThing)->getTypeAndIndex() == thingToUnlink.toUint16()) {
+		if (currThing->getTypeAndIndex() == thingToUnlink.toUint16()) {
 			*currThing = *thingPtr;
 			*thingPtr = _vm->_thingEndOfList;
 			return;
@@ -1611,9 +1958,7 @@ void DungeonMan::unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int
 		}
 		currThing = getNextThing(thingInList = currThing);
 	}
-	thingPtr = (Thing *)getThingData(thingInList);
-	*thingPtr = getNextThing(currThing);
-	thingPtr = (Thing *)getThingData(thingToUnlink);
+	*getNextThingPtr(thingInList) = getNextThing(currThing);
 	*thingPtr = _vm->_thingEndOfList;
 }
 
@@ -1677,10 +2022,13 @@ Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 	if (unusedThing == _vm->_thingNone)
 		return _vm->_thingNone;
 
-	Junk *junkPtr = (Junk *)getThingData(unusedThing);
-	junkPtr->setType(junkType); /* Also works for WEAPON in cases other than Boulder */
-	if ((iconIndex == kDMIconIndiceWeaponTorchUnlit) && ((Weapon *)junkPtr)->isLit()) /* BUG0_65 Torches created by object generator or projectile launcher sensors have no charges. Charges are only defined if the Torch is lit which is not possible at the time it is created */
-		((Weapon *)junkPtr)->setChargeCount(15);
+	if (thingType == kDMThingTypeJunk) {
+		getJunk(unusedThing)->setType(junkType);
+	} else {
+		getWeapon(unusedThing)->setType(junkType);
+		if ((iconIndex == kDMIconIndiceWeaponTorchUnlit) && getWeapon(unusedThing)->isLit()) /* BUG0_65 Torches created by object generator or projectile launcher sensors have no charges. Charges are only defined if the Torch is lit which is not possible at the time it is created */
+			getWeapon(unusedThing)->setChargeCount(15);
+	}
 
 	return unusedThing;
 }
@@ -1691,4 +2039,118 @@ int16 DungeonMan::getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo)
 			  + _dungeonFileHeader._ornamentRandomSeed) & 0xFFFF) >> 2) % modulo; /* Pseudorandom number generator */
 }
 
+void DungeonMan::duplicateThing(Thing thing) {
+	uint16 thingType = thing.getType();
+	uint16 thingIndex = thing.getIndex();
+	switch (thingType) {
+	case kDMThingTypeWeapon:
+		_weapons.push_back(_weapons[thingIndex]);
+		_weapons.back()._nextThing = _vm->_thingEndOfList;
+		break;
+	case kDMThingTypeArmour:
+		_armours.push_back(_armours[thingIndex]);
+		_armours.back()._nextThing = _vm->_thingEndOfList;
+		break;
+	case kDMThingTypeScroll:
+		_scrolls.push_back(_scrolls[thingIndex]);
+		_scrolls.back()._nextThing = _vm->_thingEndOfList;
+		break;
+	case kDMThingTypePotion:
+		_potions.push_back(_potions[thingIndex]);
+		_potions.back()._nextThing = _vm->_thingEndOfList;
+		break;
+	case kDMThingTypeContainer:
+		_containers.push_back(_containers[thingIndex]);
+		_containers.back()._nextThing = _vm->_thingEndOfList;
+		break;
+	case kDMThingTypeJunk:
+		_junks.push_back(_junks[thingIndex]);
+		_junks.back()._nextThing = _vm->_thingEndOfList;
+		break;
+	default:
+		return;
+	}
+	_dungeonFileHeader._thingCounts[thingType]++;
 }
+
+Thing *DungeonMan::getNextThingPtr(Thing thing) {
+	switch (thing.getType()) {
+	case kDMThingTypeDoor:
+		return &_doors[thing.getIndex()]._nextThing;
+	case kDMThingTypeTeleporter:
+		return &_teleporters[thing.getIndex()]._nextThing;
+	case kDMstringTypeText:
+		return &_textStrings[thing.getIndex()]._nextThing;
+	case kDMThingTypeSensor:
+		return &_sensors[thing.getIndex()]._nextThing;
+	case kDMThingTypeGroup:
+		return &_groups[thing.getIndex()]._nextThing;
+	case kDMThingTypeWeapon:
+		return &_weapons[thing.getIndex()]._nextThing;
+	case kDMThingTypeArmour:
+		return &_armours[thing.getIndex()]._nextThing;
+	case kDMThingTypeScroll:
+		return &_scrolls[thing.getIndex()]._nextThing;
+	case kDMThingTypePotion:
+		return &_potions[thing.getIndex()]._nextThing;
+	case kDMThingTypeContainer:
+		return &_containers[thing.getIndex()]._nextThing;
+	case kDMThingTypeJunk:
+		return &_junks[thing.getIndex()]._nextThing;
+	case kDMThingTypeProjectile:
+		return &_projectiles[thing.getIndex()]._nextThing;
+	case kDMThingTypeExplosion:
+		return &_explosions[thing.getIndex()]._nextThing;
+	default:
+		return nullptr;
+	}
+}
+
+void DungeonMan::resetThing(Thing thing) {
+	uint16 index = thing.getIndex();
+	switch (thing.getType()) {
+	case kDMThingTypeDoor:
+		_doors[index] = Door();
+		break;
+	case kDMThingTypeTeleporter:
+		_teleporters[index] = Teleporter();
+		break;
+	case kDMstringTypeText:
+		_textStrings[index] = TextString();
+		break;
+	case kDMThingTypeSensor:
+		_sensors[index] = Sensor();
+		break;
+	case kDMThingTypeGroup:
+		_groups[index] = Group();
+		break;
+	case kDMThingTypeWeapon:
+		_weapons[index] = Weapon();
+		break;
+	case kDMThingTypeArmour:
+		_armours[index] = Armour();
+		break;
+	case kDMThingTypeScroll:
+		_scrolls[index] = Scroll();
+		break;
+	case kDMThingTypePotion:
+		_potions[index] = Potion();
+		break;
+	case kDMThingTypeContainer:
+		_containers[index] = Container();
+		break;
+	case kDMThingTypeJunk:
+		_junks[index] = Junk();
+		break;
+	case kDMThingTypeProjectile:
+		_projectiles[index] = Projectile();
+		break;
+	case kDMThingTypeExplosion:
+		_explosions[index] = Explosion();
+		break;
+	default:
+		break;
+	}
+}
+
+} // namespace DM

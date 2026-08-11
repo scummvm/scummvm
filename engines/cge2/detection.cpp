@@ -94,9 +94,9 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_TABLE_END_MARKER
 };
 
-class CGE2MetaEngineDetection : public AdvancedMetaEngineDetection {
+class CGE2MetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	CGE2MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), CGE2Games) {
+	CGE2MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, CGE2Games) {
 	}
 
 	const char *getName() const override {

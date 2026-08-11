@@ -110,6 +110,11 @@ bool CharacterSettingsXmlParser::parserCallback_position(ParserNode *node) {
 	return true;
 }
 
+bool CharacterSettingsXmlParser::parserCallback_rippleTexture(ParserNode *node) {
+	// Ignored
+	return true;
+}
+
 bool CharacterSettingsXmlParser::parserCallback_face(ParserNode *node) {
 	// Handled in "face" and "eyes" callbacks.
 	return true;

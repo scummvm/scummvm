@@ -40,43 +40,37 @@ Resources::~Resources() {
 
 
 Resources::Entry *Resources::findAndSetResEntry(const Common::String &resourceName) {
-	int orig_hash_val;
 	int hash_val;
 	Entry *res = nullptr;
 
 	Common::String resName = resourceName;
-	resName.toLowercase();
-	hash_val = hash(resName);
+	if (_useLowercase)
+		resName.toLowercase();
+	const int orig_hash_val = hash_val = hash(resName);
 
 	// If empty slot at this hash, then we're done
-	if (!_resources[hash_val].Flags)
-		goto got_one;
+	if (_resources[hash_val].Flags) {
+		// Flags is set, so scan until Flags is clear, or the resource name strings match
+		while ((_resources[hash_val].Flags & FULLY_BUFFERED)
+				&& !resName.equals(_resources[hash_val].name)) {
+			// if we searched every entry to no avail:
+			if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val) {
+				hash_val = orig_hash_val;
+				while (!(_resources[hash_val].Flags & MARKED_PURGE)) {
+					// if we searched every entry to no avail:
+					if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val) {
+						error("Out of resource space");
+					}
+				}
 
-	// Flags is set, so scan until Flags is clear, or the resource name strings match
-	orig_hash_val = hash_val;
-
-	while ((_resources[hash_val].Flags & FULLY_BUFFERED)
-			&& !resName.equalsIgnoreCase(_resources[hash_val].name)) {
-		// if we searched every entry to no avail:
-		if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val)
-			goto test4;
+				res = &_resources[hash_val];
+				delete[] res->RHandle;
+				res->RHandle = nullptr;
+				break;
+			}
+		}
 	}
 
-	goto got_one;
-
-test4:
-	hash_val = orig_hash_val;
-	while (!(_resources[hash_val].Flags & MARKED_PURGE))
-		// if we searched every entry to no avail:
-		if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val) {
-			error("Out of resource space");
-		}
-
-	res = &_resources[hash_val];
-	delete[] res->RHandle;
-	res->RHandle = nullptr;
-
-got_one:
 	res = &_resources[hash_val];
 	res->name = resName;
 	res->Flags = FULLY_BUFFERED;
@@ -97,20 +91,19 @@ int Resources::hash(const Common::String &sym) const {
 }
 
 MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSize) {
-	Entry *resEntry;
-
 	if (resourceSize)
 		*resourceSize = 0;
 
-	if (!(resEntry = findAndSetResEntry(resourceName))) {
-		term_message("rgetting:%s  -> failed!", resourceName.c_str());
+	Entry *resEntry = findAndSetResEntry(resourceName);
+	if (!resEntry) {
+		term_message("rget:%s  -> failed!", resourceName.c_str());
 		return nullptr;
 	}
 
 	// Check if resource is fully buffered
 	// All resources are currently fully buffered!
 	if (!(resEntry->Flags & FULLY_BUFFERED)) {
-		term_message("rgetting:%s  -> failed!", resourceName.c_str());
+		term_message("rget:%s  -> failed!", resourceName.c_str());
 		return nullptr;
 	}
 
@@ -122,7 +115,7 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 
 		HNoPurge(resEntry->RHandle);
 		resEntry->Flags &= ~MARKED_PURGE;
-		term_message("rgetting:%s  -> from memory", resourceName.c_str());
+		term_message("rget:%s  -> from memory", resourceName.c_str());
 		return resEntry->RHandle; 
 	}
 
@@ -136,22 +129,11 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 
 	// Check if resource handle allocated
 	if (!resEntry->RHandle)
-		if (!(resEntry->RHandle = MakeNewHandle(resEntry->BufferSize, resEntry->name.c_str())))
-			error("rgetting: %s  -> failed", resEntry->name.c_str());
+		resEntry->RHandle = MakeNewHandle(resEntry->BufferSize, resEntry->name.c_str());
 
 	// Check if resource handle has valid memory block allocated to	it
 	if (!*resEntry->RHandle)
-		if (!mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->name.c_str())) {
-			if (MakeMem(resEntry->BufferSize, resEntry->name.c_str())) {
-				if (!mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->name.c_str())) {
-					term_message("rgetting:%s  -> failed!", resourceName.c_str());
-					return nullptr;
-				}
-			} else {
-				term_message("rgetting:%s  -> failed!", resourceName.c_str());
-				return nullptr;
-			}
-		}
+		mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->name.c_str());
 
 	if (!do_file(resEntry->RHandle))
 		error("rget: do_file -> %s", resourceName.c_str());
@@ -159,29 +141,33 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 	if (resourceSize)		    // xi change
 		*resourceSize = resEntry->Size;
 
-	term_message("rgetting:%s  -> from disk", resourceName.c_str());
+	term_message("rget:%s  -> from disk", resourceName.c_str());
 	return resEntry->RHandle;
 }
 
 void Resources::rtoss(const Common::String &resourceName) {
-	int hash_val;
 	Entry *resEntry = nullptr;
-	Common::String lowerName;
+	Common::String resName = resourceName;
 
-	lowerName = resourceName;
-	lowerName.toLowercase();
-	hash_val = hash(lowerName);
+	if (_useLowercase)
+		resName.toLowercase();
+	int hash_val = hash(resName);
 
-	/* check if resource is in resource table */
+	// Check if resource is in resource table
 	if (_resources[hash_val].Flags) {
-		while (_resources[hash_val].Flags && !lowerName.equals(_resources[hash_val].name))
-			hash_val = (hash_val + 1) & (HASHSIZE - 1);
-		resEntry = &_resources[hash_val];
+		for (int ctr = 0; ctr <= HASHSIZE && _resources[hash_val].Flags;
+				++ctr, hash_val = (hash_val + 1) % HASHSIZE) {
+			if (resName.equals(_resources[hash_val].name)) {
+				resEntry = &_resources[hash_val];
+				break;
+			}
+		}
 	}
 
 	if (!resEntry)
-		error_show(FL, 'RIOU', "rtoss: %s", resourceName.c_str());
-	else if (!(resEntry->Flags & FULLY_BUFFERED))
+		error_show(FL, "rtoss: %s", resourceName.c_str());
+
+	if (!(resEntry->Flags & FULLY_BUFFERED))
 		return;
 
 	if (!resEntry || !*resEntry->RHandle) {
@@ -190,6 +176,9 @@ void Resources::rtoss(const Common::String &resourceName) {
 	}
 
 	if (resEntry->Flags & MARKED_PURGE)
+		// This is actually okay. In Riddle, for example, "show script"
+		// is assigned to multiple MACH slots, and in ClearWSAssets will
+		// pass it to rtoss for each entry
 		term_message("multiple rtoss: %s", resourceName.c_str());
 	else
 		term_message("rtossing: %s", resourceName.c_str());
@@ -225,6 +214,19 @@ bool Resources::do_file(MemHandle buffer) {
 	_fp = nullptr;
 
 	return result;
+}
+
+void Resources::dumpResources() {
+	if (gDebugLevel >= 2) {
+		debug(2, "List of active resources:");
+		for (int i = 0; i < MAX_RESOURCES; ++i) {
+			Entry &entry = _resources[i];
+			if (entry.Flags != 0 && (entry.Flags & MARKED_PURGE) == 0)
+				debug(2, "#%d - %s", i, entry.name.c_str());
+		}
+
+		debugN(2, "\n");
+	}
 }
 
 MemHandle rget(const Common::String &resourceName, int32 *resourceSize) {

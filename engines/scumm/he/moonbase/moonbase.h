@@ -42,9 +42,6 @@ public:
 	void deallocateArray(int array);
 	int callScummFunction(int scriptNumber, int paramCount,...);
 
-	void blitDistortion(byte *bufferData, const int bufferWidth, const int bufferHeight, const int bufferPitch,
-			const Common::Rect *optionalClippingRect, byte *dataStream, const int x, const int y, byte *altSourceBuffer);
-
 	// FOW Stuff
 	bool isFOW(int resNum, int state, uint32 conditionBits) {
 		return resNum == _fowSentinelImage && state == _fowSentinelState && conditionBits == _fowSentinelConditionBits;

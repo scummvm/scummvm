@@ -29,12 +29,71 @@ namespace Riddle {
 namespace Rooms {
 
 class Room608 : public Room {
+private:
+	int _rp01 = 0;
+	int _rp09 = 0;
+	int _ripHandChin = 0;
+	int _ripLowReach = 0;
+	int _ripLowReach2 = 0;
+	int _ripTalker = 0;
+	int _ripLHandTalk = 0;
+	int _ripHandTalk3 = 0;
+	int _tt01 = 0;
+	int _tt02 = 0;
+	int _tt03 = 0;
+	int _tt05 = 0;
+	int _old1 = 0;
+	int _old2 = 0;
+	int _old5 = 0;
+	int _old8 = 0;
+	int _old5a = 0;
+	int _old5b = 0;
+	int _old5c = 0;
+	int _old5d = 0;
+	int _old5f = 0;
+	int _all5a = 0;
+	int _loop0 = 0;
+	int _loop1 = 0;
+	int _horn = 0;
+	machine *_ripley = nullptr;
+	machine *_shadow = nullptr;
+	machine *_shadow5 = nullptr;
+	machine *_tt = nullptr;
+	machine *_ttShadow = nullptr;
+	machine *_ttTalker = nullptr;
+	machine *_ol = nullptr;
+	machine *_ol2 = nullptr;
+	machine *_stump = nullptr;
+	machine *_lighter = nullptr;
+	machine *_pole = nullptr;
+	machine *_puffin = nullptr;
+	machine *_end1 = nullptr;
+	machine *_end2 = nullptr;
+	int _ripleyShould = 0;
+	int _ripleyMode = 0;
+	int _oldMode = 0;
+	int _oldShould = 0;
+	int _ctr1 = 0;
+
+	void conv608a();
+	bool takeStump1();
+	bool takePuffin();
+	bool stumpHole();
+	bool takeStump2();
+	bool takeLighter();
+	bool hornCordWater();
+	bool lookPuffin();
+	void usePole();
+
 public:
 	Room608() : Room() {}
 	~Room608() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms

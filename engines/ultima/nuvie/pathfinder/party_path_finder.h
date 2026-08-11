@@ -84,7 +84,7 @@ protected:
 	bool leader_moved_diagonally();
 	bool leader_moved();
 
-	Std::vector<MapCoord> get_neighbor_tiles(const MapCoord &center, const MapCoord &target);
+	Common::Array<MapCoord> get_neighbor_tiles(const MapCoord &center, const MapCoord &target);
 
 	// use party
 	struct PartyMember get_member(uint32 p) {

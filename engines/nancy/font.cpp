@@ -51,7 +51,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 	_color1CoordsOffset.y = stream.readUint32LE();
 
 	_spaceWidth = stream.readUint16LE();
-	_charSpace = stream.readSint16LE() - 1; // Account for the added pixel in readRect
+	_charSpace = stream.readSint16LE();
 
 	_uppercaseOffset					= stream.readUint16LE();
 	_lowercaseOffset					= stream.readUint16LE();
@@ -84,35 +84,62 @@ void Font::read(Common::SeekableReadStream &stream) {
 	} else {
 		if (g_nancy->getGameType() >= kGameTypeNancy6) {
 			// Nancy6 added more characters to its fonts
-			_aWithGraveOffset 				= stream.readUint16LE();
-			_cWithCedillaOffset				= stream.readUint16LE();
-			_eWithGraveOffset 				= stream.readUint16LE();
-			_eWithAcuteOffset 				= stream.readUint16LE();
-			_eWithCircumflexOffset			= stream.readUint16LE();
-			_eWithDiaeresisOffset			= stream.readUint16LE();
-			_oWithCircumflexOffset			= stream.readUint16LE();
-			_uppercaseAWithGraveOffset		= stream.readUint16LE();
-			_aWithCircumflexOffset			= stream.readUint16LE();
-			_iWithCircumflexOffset			= stream.readUint16LE();
-			_uWithGraveOffset 				= stream.readUint16LE();
-			_uppercaseAWithDiaeresisOffset	= stream.readUint16LE();
-			_aWithDiaeresisOffset			= stream.readUint16LE();
-			_uppercaseOWithDiaeresisOffset	= stream.readUint16LE();
-			_oWithDiaeresisOffset			= stream.readUint16LE();
-			_uppercaseUWithDiaeresisOffset	= stream.readUint16LE();
-			_uWithDiaeresisOffset			= stream.readUint16LE();
-			_invertedExclamationMarkOffset	= stream.readUint16LE();
-			_invertedQuestionMarkOffset		= stream.readUint16LE();
-			_uppercaseNWithTildeOffset		= stream.readUint16LE();
-			_nWithTildeOffset				= stream.readUint16LE();
-			_uppercaseEWithAcuteOffset		= stream.readUint16LE();
-			_aWithAcuteOffset				= stream.readUint16LE();
-			_iWithAcuteOffset				= stream.readUint16LE();
-			_oWithAcuteOffset				= stream.readUint16LE();
-			_uWithAcuteOffset				= stream.readUint16LE();
-			_eszettOffset					= stream.readUint16LE();
+			_aWithGraveOffset 					= stream.readUint16LE();
+			_cWithCedillaOffset					= stream.readUint16LE();
+			_eWithGraveOffset 					= stream.readUint16LE();
+			_eWithAcuteOffset 					= stream.readUint16LE();
+			_eWithCircumflexOffset				= stream.readUint16LE();
+			_eWithDiaeresisOffset				= stream.readUint16LE();
+			_oWithCircumflexOffset				= stream.readUint16LE();
+			_uppercaseAWithGraveOffset			= stream.readUint16LE();
+			_aWithCircumflexOffset				= stream.readUint16LE();
+			_iWithCircumflexOffset				= stream.readUint16LE();
+			_uWithGraveOffset 					= stream.readUint16LE();
+			if (g_nancy->getGameLanguage() == Common::FR_FRA)
+				_uppercaseCWithCedillaOffset	= stream.readUint16LE();
+			else
+				_uppercaseAWithDiaeresisOffset	= stream.readUint16LE();
+			_aWithDiaeresisOffset				= stream.readUint16LE();
+			if (g_nancy->getGameLanguage() == Common::FR_FRA)
+				_uWithCircumflexOffset			= stream.readUint16LE();
+			else
+				_uppercaseOWithDiaeresisOffset 	= stream.readUint16LE();
+			_oWithDiaeresisOffset				= stream.readUint16LE();
+			_uppercaseUWithDiaeresisOffset		= stream.readUint16LE();
+			_uWithDiaeresisOffset				= stream.readUint16LE();
+			_invertedExclamationMarkOffset		= stream.readUint16LE();
+			_invertedQuestionMarkOffset			= stream.readUint16LE();
+			_uppercaseNWithTildeOffset			= stream.readUint16LE();
+			_nWithTildeOffset					= stream.readUint16LE();
+			_uppercaseEWithAcuteOffset			= stream.readUint16LE();
+			_aWithAcuteOffset					= stream.readUint16LE();
+			_iWithAcuteOffset					= stream.readUint16LE();
+			_oWithAcuteOffset					= stream.readUint16LE();
+			_uWithAcuteOffset					= stream.readUint16LE();
+			_eszettOffset						= stream.readUint16LE();
 
 			numCharacters = 105;
+		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy10) {
+			// Nancy10 added even more characters to its fonts
+			if (g_nancy->getGameLanguage() == Common::FR_FRA) {
+				_oeLigatureOffset			= stream.readUint16LE();
+				_iWithDiaeresisOffset		= stream.readUint16LE();
+			} else {
+				_uppercaseAWithDotOffset	= stream.readUint16LE();
+				_aWithDotOffset				= stream.readUint16LE();
+			}
+			_underscoreOffset				= stream.readUint16LE();
+			_hashOffset						= stream.readUint16LE();
+			_dollarOffset					= stream.readUint16LE();
+			_lessThanOffset					= stream.readUint16LE();
+			_greaterThanOffset				= stream.readUint16LE();
+			_leftCurlyBracketOffset			= stream.readUint16LE();
+			_rightCurlyBracketOffset		= stream.readUint16LE();
+			_euroOffset						= stream.readUint16LE();
+
+			numCharacters = 115;
 		}
 	}
 
@@ -131,7 +158,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy6) {
-		_fontHeight = getCharWidth('o') * 2 - 1;
+		_fontHeight = (getCharWidth('o') - 1) * 2;
 	}
 
 	_textboxData = GetEngineData(TBOX);
@@ -140,6 +167,10 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 int Font::getCharWidth(uint32 chr) const {
 	return getCharacterSourceRect(chr).width() + _charSpace;
+}
+
+int Font::getLineHeight() const {
+	return _characterRects.empty() ? getFontHeight() : _characterRects[0].height();
 }
 
 void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
@@ -165,6 +196,35 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 	dest.format = dst->format;
 
 	dest.blitFrom(_image, srcRect, Common::Point(x, y + yOffset));
+}
+
+uint32 Font::getColorPixel(uint color) const {
+	// The glyphs are pre-colored in the atlas (two color variants selected by
+	// the color-coordinate offsets, mirroring drawChar). Scan a solid glyph for
+	// the first non-transparent pixel to recover the color an underline should
+	// use to match the text.
+	Common::Rect src = getCharacterSourceRect('l');
+	if (color == 0) {
+		src.translate(_color0CoordsOffset.x, _color0CoordsOffset.y);
+	} else if (color == 1) {
+		src.translate(_color1CoordsOffset.x, _color1CoordsOffset.y);
+	}
+
+	const Graphics::Surface &surf = _image.rawSurface();
+	for (int yy = src.top; yy < src.bottom; ++yy) {
+		for (int xx = src.left; xx < src.right; ++xx) {
+			if (xx < 0 || yy < 0 || xx >= surf.w || yy >= surf.h) {
+				continue;
+			}
+			const void *p = surf.getBasePtr(xx, yy);
+			const uint32 px = surf.format.bytesPerPixel == 2 ? *(const uint16 *)p : *(const uint32 *)p;
+			if (px != _transColor) {
+				return px;
+			}
+		}
+	}
+
+	return _transColor;
 }
 
 void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth) const {
@@ -310,6 +370,19 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 					offset = -1;
 				}
 				break;
+			case '\xc7':
+				offset = _uppercaseCWithCedillaOffset;
+				break;
+			case '\xfb':
+				offset = _uWithCircumflexOffset;
+				break;
+			case '\xef':
+				offset = _iWithDiaeresisOffset;
+				break;
+			// TODO: _uppercaseAWithDotOffset
+			// TODO: _aWithDotOffset
+			// TODO: _euroOffset
+			// TODO: _oeLigatureOffset
 			default:
 				offset = -1;
 				break;
@@ -376,6 +449,29 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			break;
 		case '/':
 			offset = _slashOffset;
+			break;
+		// ASCII punctuation whose glyphs were added in nancy10. These are < 128,
+		// so they belong here rather than in the extended-ASCII switch above.
+		case '_':
+			offset = _underscoreOffset;
+			break;
+		case '#':
+			offset = _hashOffset;
+			break;
+		case '$':
+			offset = _dollarOffset;
+			break;
+		case '<':
+			offset = _lessThanOffset;
+			break;
+		case '>':
+			offset = _greaterThanOffset;
+			break;
+		case '{':
+			offset = _leftCurlyBracketOffset;
+			break;
+		case '}':
+			offset = _rightCurlyBracketOffset;
 			break;
 		default:
 			offset = -1;

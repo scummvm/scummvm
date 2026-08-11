@@ -21,7 +21,7 @@
 
 #include "twine/slideshow.h"
 #include "common/file.h"
-#include "common/tokenizer.h"
+#include "graphics/palette.h"
 #include "image/pcx.h"
 #include "twine/movies.h"
 #include "twine/renderer/screens.h"
@@ -37,18 +37,10 @@ private:
 	int _textY = 0;
 	bool _aborted = false;
 	int _lineHeight = 40;
-	uint32 _pal[NUMOFCOLORS]{};
+	Graphics::Palette _pal{0};
 
 	void setPalette(const uint8 *in, int colors) {
-		uint8 *paletteOut = (uint8 *)_pal;
-		for (int i = 0; i < colors; i++) {
-			paletteOut[0] = in[0];
-			paletteOut[1] = in[1];
-			paletteOut[2] = in[2];
-			paletteOut[3] = 0xFF;
-			paletteOut += 4;
-			in += 3;
-		}
+		_pal = Graphics::Palette(in, colors);
 		_engine->setPalette(_pal);
 	}
 
@@ -68,10 +60,10 @@ private:
 		}
 
 		Graphics::ManagedSurface &target = _engine->_frontVideoBuffer;
-		target.blitFrom(src);
+		target.blitFrom(*src);
 
 		if (decoder.hasPalette()) {
-			setPalette(decoder.getPalette(), decoder.getPaletteColorCount());
+			setPalette(decoder.getPalette().data(), decoder.getPalette().size());
 		}
 		return true;
 	}
@@ -85,7 +77,7 @@ private:
 		_engine->_resources->_fontPtr = (uint8 *)malloc(_engine->_resources->_fontBufSize);
 		font.read(_engine->_resources->_fontPtr, _engine->_resources->_fontBufSize);
 
-		_engine->_text->setFontParameters(4, 8);
+		_engine->_text->setFont(4, 8);
 		return true;
 	}
 
@@ -109,9 +101,10 @@ private:
 
 	void scriptText(const Common::String &params) {
 		if (!params.empty()) {
-			_pal[255] = _pal[15] = 0xffffffff;
+			_pal.set(255, 255, 255, 255);
+			_pal.set(15, 255, 255, 255);
 			_engine->setPalette(_pal);
-			const int32 length = _engine->_text->getTextSize(params.c_str());
+			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = 0;
 			_engine->_text->drawText(x, _textY, params.c_str());
 			_engine->_frontVideoBuffer.addDirtyRect(Common::Rect(x, _textY, x + length, _textY + _lineHeight));
@@ -121,9 +114,10 @@ private:
 
 	void scriptRText(const Common::String &params) {
 		if (!params.empty()) {
-			_pal[255] = _pal[15] = 0xffffffff;
+			_pal.set(255, 255, 255, 255);
+			_pal.set(15, 255, 255, 255);
 			_engine->setPalette(_pal);
-			const int32 length = _engine->_text->getTextSize(params.c_str());
+			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = _engine->width() - length;
 			_engine->_text->drawText(x, _textY, params.c_str());
 			_engine->_frontVideoBuffer.update();
@@ -134,9 +128,10 @@ private:
 
 	void scriptTitle(const Common::String &params) {
 		if (!params.empty()) {
-			_pal[255] = _pal[15] = 0xffffffff;
+			_pal.set(255, 255, 255, 255);
+			_pal.set(15, 255, 255, 255);
 			_engine->setPalette(_pal);
-			const int32 length = _engine->_text->getTextSize(params.c_str());
+			const int32 length = _engine->_text->sizeFont(params.c_str());
 			const int x = _engine->width() / 2 - length / 2;
 			_engine->_text->drawText(x, _textY, params.c_str());
 			_engine->_frontVideoBuffer.addDirtyRect(Common::Rect(x, _textY, x + length, _textY + _lineHeight));
@@ -145,11 +140,11 @@ private:
 	}
 
 	void scriptFadeIn() {
-		_engine->_screens->fadeIn(_pal);
+		_engine->_screens->fadeToPal(_pal);
 	}
 
 	void scriptFadeOut() {
-		_engine->_screens->fadeOut(_pal);
+		_engine->_screens->fadeToBlack(_pal);
 	}
 
 	void scriptPCX(const Common::String &params) {

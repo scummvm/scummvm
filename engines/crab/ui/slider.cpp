@@ -111,17 +111,17 @@ void Slider::greyOut() {
 	for (int y = _caption.y; y < _caption.y + h; y++) {
 		uint32 *ptr = (uint32 *)g_engine->_screen->getBasePtr(_caption.x, y);
 		for (int x = 0; x < w; x++, ptr++) {
-			g_engine->_format->colorToARGB(*ptr, a, r, g, b);
+			g_engine->_format.colorToARGB(*ptr, a, r, g, b);
 			if (x >= _knob.x - _caption.x && x <= _knob.w + _knob.x - _caption.x) {
 				r /= 3;
 				g /= 3;
 				b /= 2;
-				*ptr = g_engine->_format->ARGBToColor(a, r, g, b);
+				*ptr = g_engine->_format.ARGBToColor(a, r, g, b);
 			} else if (g > 0x37) {
 				r >>= 1;
 				g >>= 1;
 				b >>= 1;
-				*ptr = g_engine->_format->ARGBToColor(a, r, g, b);
+				*ptr = g_engine->_format.ARGBToColor(a, r, g, b);
 			}
 		}
 	}

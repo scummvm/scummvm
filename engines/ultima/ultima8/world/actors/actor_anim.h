@@ -22,7 +22,7 @@
 #ifndef WORLD_ACTORS_ACTORANIM_H
 #define WORLD_ACTORS_ACTORANIM_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/array.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 
 namespace Ultima {
@@ -44,7 +44,7 @@ public:
 	}
 
 private:
-	Std::vector<AnimAction *> _actions; // list of this actor's actions
+	Common::Array<AnimAction *> _actions; // list of this actor's actions
 	// (0 if actor doesn't have action)
 };
 

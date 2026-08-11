@@ -71,6 +71,7 @@ Context::Context() {
 	_kills = 0;
 	_experience = 0;
 	_frozen = false;
+	_freezeTimer = 0;
 
 	for (int i = 0; i < 26 * 9; i++)
 		 _userVariables[i] = 0;

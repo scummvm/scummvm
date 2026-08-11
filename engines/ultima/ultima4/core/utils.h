@@ -116,7 +116,7 @@ Common::String xu4_to_string(int val);
  * Splits a Common::String into substrings, divided by the charactars in
  * separators.  Multiple adjacent separators are treated as one.
  */
-Std::vector<Common::String> split(const Common::String &s, const Common::String &separators);
+Common::Array<Common::String> split(const Common::String &s, const Common::String &separators);
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

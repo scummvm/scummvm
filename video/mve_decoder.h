@@ -24,6 +24,7 @@
 
 #include "audio/audiostream.h"
 #include "video/video_decoder.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "common/list.h"
 #include "common/rect.h"
@@ -72,7 +73,7 @@ class MveDecoder : public VideoDecoder {
 	bool      _dirtyPalette;
 	uint16    _palStart;
 	uint16    _palCount;
-	byte      _palette[0x300];
+	Graphics::Palette _palette;
 
 	uint16    _skipMapSize;
 	byte     *_skipMap;
@@ -101,22 +102,22 @@ class MveDecoder : public VideoDecoder {
 	public:
 		MveVideoTrack(MveDecoder *decoder);
 
-		bool endOfTrack() const;
+		bool endOfTrack() const override;
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
 
-		Graphics::PixelFormat getPixelFormat() const;
+		Graphics::PixelFormat getPixelFormat() const override;
 
-		int getCurFrame() const;
+		int getCurFrame() const override;
 		// int getFrameCount() const;
 
-		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const;
-		bool hasDirtyPalette() const;
+		const Graphics::Surface *decodeNextFrame() override;
+		const byte *getPalette() const override;
+		bool hasDirtyPalette() const override;
 
 	protected:
-		Common::Rational getFrameRate() const;
+		Common::Rational getFrameRate() const override;
 	};
 
 	class MveAudioTrack : public AudioTrack {
@@ -124,7 +125,7 @@ class MveDecoder : public VideoDecoder {
 	public:
 		MveAudioTrack(MveDecoder *decoder);
 
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 	};
 
 	class MveSkipStream {
@@ -155,7 +156,7 @@ public:
 	MveDecoder();
 	virtual ~MveDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 	void setAudioTrack(int track);
 	void applyPalette(PaletteManager *paletteManager);
 
@@ -164,7 +165,7 @@ public:
 	// void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
 	Common::Rational getFrameRate() { return _frameRate; }
-	void readNextPacket();
+	void readNextPacket() override;
 };
 
 } // End of namespace Video

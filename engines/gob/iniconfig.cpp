@@ -25,11 +25,14 @@
  *
  */
 
+#include "common/memstream.h"
+
 #include "gob/iniconfig.h"
+#include "gob/save/saveload.h"
 
 namespace Gob {
 
-INIConfig::INIConfig() {
+INIConfig::INIConfig(GobEngine *vm) : _vm(vm) {
 }
 
 INIConfig::~INIConfig() {
@@ -37,13 +40,13 @@ INIConfig::~INIConfig() {
 		delete c->_value.config;
 }
 
-bool INIConfig::getValue(Common::String &result, const Common::String &file,
+bool INIConfig::getValue(Common::String &result, const Common::String &file, bool isCd,
 		const Common::String &section, const Common::String &key,
 		const Common::String &def) {
 
 	Config config;
 	if (!getConfig(file, config)) {
-		if (!openConfig(file, config)) {
+		if (!openConfig(file, isCd, config)) {
 			result = def;
 			return false;
 		}
@@ -57,15 +60,24 @@ bool INIConfig::getValue(Common::String &result, const Common::String &file,
 	return true;
 }
 
-bool INIConfig::setValue(const Common::String &file, const Common::String &section,
+bool INIConfig::setValue(const Common::String &file, bool isCd, const Common::String &section,
 		const Common::String &key, const Common::String &value) {
 
 	Config config;
 	if (!getConfig(file, config))
-		if (!createConfig(file, config))
+		if (!createConfig(file, isCd, config))
 			return false;
 
 	config.config->setKey(key, section, value);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
+	if (mode == SaveLoad::kSaveModeSave) {
+		// Sync changes to save file
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		config.config->saveToStream(stream);
+
+		_vm->_saveLoad->saveFromRaw(file.c_str(), stream.getData(), stream.size(), 0);
+	}
+
 	return true;
 }
 
@@ -77,13 +89,43 @@ bool INIConfig::getConfig(const Common::String &file, Config &config) {
 	return true;
 }
 
-bool INIConfig::openConfig(const Common::String &file, Config &config) {
+bool INIConfig::readConfigFromDisk(const Common::String &file, bool isCd, Gob::INIConfig::Config &config) {
+	if (!isCd && _vm->_saveLoad->getSaveMode(file.c_str()) == SaveLoad::kSaveModeSave) {
+		debugC(3, kDebugFileIO, "Loading INI from save file \"%s\"", file.c_str());
+		// Read from save file
+		int size = _vm->_saveLoad->getSize(file.c_str());
+		if (size < 0) {
+			debugC(3, kDebugFileIO, "Failed to get size of save file \"%s\"", file.c_str());
+			return false;
+		}
+
+		byte *data = new byte[size];
+		_vm->_saveLoad->loadToRaw(file.c_str(), data, size, 0);
+		Common::MemoryReadStream stream(data, size, DisposeAfterUse::YES);
+		if (!config.config->loadFromStream(stream)) {
+			debugC(3, kDebugFileIO, "Failed to load INI from save file \"%s\"", file.c_str());
+			return false;
+		}
+	} else {
+		// GOB uses \ as a path separator but
+		// it almost always manipulates base names
+		debugC(3, kDebugFileIO, "Loading INI from plain file \"%s\"", file.c_str());
+
+		if (!config.config->loadFromFile(Common::Path(file, '\\'))) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+bool INIConfig::openConfig(const Common::String &file, bool isCd, Config &config) {
 	config.config  = new Common::INIFile();
+	config.config->allowNonEnglishCharacters();
 	config.created = false;
 
-	// GOB uses \ as a path separator but
-	// it almost always manipulates base names
-	if (!config.config->loadFromFile(Common::Path(file, '\\'))) {
+	if (!readConfigFromDisk(file, isCd, config)) {
 		delete config.config;
 		config.config = nullptr;
 		return false;
@@ -95,9 +137,12 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 	return true;
 }
 
-bool INIConfig::createConfig(const Common::String &file, Config &config) {
+bool INIConfig::createConfig(const Common::String &file, bool isCd, Config &config) {
 	config.config  = new Common::INIFile();
+	config.config->allowNonEnglishCharacters();
 	config.created = true;
+
+	readConfigFromDisk(file, isCd, config); // May return false in case we are dealing with a temporary file
 
 	_configs.setVal(file, config);
 

@@ -147,16 +147,15 @@ void HiRes5Engine::setupOpcodeTables() {
 }
 
 bool HiRes5Engine::isInventoryFull() {
-	Common::List<Item>::const_iterator item;
 	byte weight = 0;
 
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->room == IDI_ANY)
-			weight += item->description;
+	for (const auto &item : _state.items) {
+		if (item.room == IDI_ANY)
+			weight += item.description;
 	}
 
 	if (weight >= 100) {
-		printString(_gameStrings.carryingTooMuch);
+		_display->printString(_gameStrings.carryingTooMuch);
 		inputString();
 		return true;
 	}
@@ -199,15 +198,14 @@ int HiRes5Engine::o_checkItemTimeLimits(ScriptEnv &e) {
 	OP_DEBUG_1("\tCHECK_ITEM_TIME_LIMITS(VARS[%d])", e.arg(1));
 
 	bool lostAnItem = false;
-	Common::List<Item>::iterator item;
 
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		const byte room = item->room;
-		const byte region = item->region;
+	for (auto &item : _state.items) {
+		const byte room = item.room;
+		const byte region = item.region;
 
 		if (room == IDI_ANY || room == IDI_CUR_ROOM || (room == _state.room && region == _state.region)) {
-			if (getVar(e.arg(1)) < _itemTimeLimits[item->id - 1]) {
-				item->room = IDI_VOID_ROOM;
+			if (getVar(e.arg(1)) < _itemTimeLimits[item.id - 1]) {
+				item.room = IDI_VOID_ROOM;
 				lostAnItem = true;
 			}
 		}
@@ -243,7 +241,7 @@ void HiRes5Engine::runIntro() {
 
 	insertDisk(2);
 
-	StreamPtr stream(_disk->createReadStream(0x10, 0x0, 0x00, 31));
+	Common::StreamPtr stream(_disk->createReadStream(0x10, 0x0, 0x00, 31));
 
 	display->setMode(Display::kModeGraphics);
 	display->loadFrameBuffer(*stream);
@@ -274,7 +272,7 @@ void HiRes5Engine::init() {
 
 	insertDisk(2);
 
-	StreamPtr stream(_disk->createReadStream(0x5, 0x0, 0x02));
+	Common::StreamPtr stream(_disk->createReadStream(0x5, 0x0, 0x02));
 	loadRegionLocations(*stream, kRegions);
 
 	stream.reset(_disk->createReadStream(0xd, 0x2, 0x04));
@@ -331,7 +329,7 @@ void HiRes5Engine::initGameState() {
 
 	insertDisk(2);
 
-	StreamPtr stream(_disk->createReadStream(0x5, 0x1, 0x00, 3));
+	Common::StreamPtr stream(_disk->createReadStream(0x5, 0x1, 0x00, 3));
 	loadItems(*stream);
 
 	// A combined total of 1213 rooms
@@ -370,6 +368,21 @@ void HiRes5Engine::applyRegionWorkarounds() {
 		// to dig with. Probably a remnant of an earlier version
 		// of the script.
 		removeCommand(_roomCommands, 0);
+		break;
+	case 32:
+		// This broken message appears right before the game restarts,
+		// and should probably explain that the user fell down some
+		// stairs. We remove the broken message.
+		// TODO: Maybe we could put in a new string?
+		removeMessage(29);
+		break;
+	case 40:
+		// Locking the gate prints a broken message, followed by
+		// "O.K.". Maybe there was supposed to be a more elaborate
+		// message, in the style of the one printed when you unlock
+		// the gate. But "O.K." should be enough, so we remove the
+		// first one.
+		removeMessage(172);
 		break;
 	default:
 		break;

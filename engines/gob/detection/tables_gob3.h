@@ -75,7 +75,7 @@
 	{
 		"gob3",
 		"v1.00",
-		AD_ENTRY1("intro.stk", "1e2f64ec8dfa89f42ee49936a27e66e7"),
+		AD_ENTRY1s("intro.stk", "1e2f64ec8dfa89f42ee49936a27e66e7", 159444),
 		EN_USA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -88,7 +88,7 @@
 	{
 		"gob3",
 		"",
-		AD_ENTRY1("intro.stk", "f6d225b25a180606fa5dbe6405c97380"),
+		AD_ENTRY1s("intro.stk", "f6d225b25a180606fa5dbe6405c97380", 161516),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -152,7 +152,7 @@
 { // Supplied by SiRoCs in bug report #3949
 	{
 		"gob3",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "d3b72938fbbc8159198088811f9e6d19", 160382),
 		ES_ESP,
 		kPlatformDOS,
@@ -180,7 +180,7 @@
 	0, 0, 0
 },
 {
-	{
+	{ // Used by ADI4 unlockable games
 		"gob3",
 		"v1.00",
 		AD_ENTRY2s("intro.stk",   "16b014bf32dbd6ab4c5163c44f56fed1", 445104,
@@ -249,7 +249,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+{ // Found in french ADI 2.5 Anglais Multimedia 5e
 	{
 		"gob3",
 		"v1.00",
@@ -286,7 +286,7 @@
 	{
 		"gob3",
 		"",
-		AD_ENTRY1("intro.stk", "bd679eafde2084d8011f247e51b5a805"),
+		AD_ENTRY1s("intro.stk", "bd679eafde2084d8011f247e51b5a805", 197532),
 		EN_GRB,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
@@ -299,7 +299,7 @@
 	{
 		"gob3",
 		"",
-		AD_ENTRY1("intro.stk", "bd679eafde2084d8011f247e51b5a805"),
+		AD_ENTRY1s("intro.stk", "bd679eafde2084d8011f247e51b5a805", 197532),
 		DE_DEU,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
@@ -341,7 +341,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_CD,
@@ -354,7 +354,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_CD,
@@ -367,7 +367,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_CD,
@@ -380,7 +380,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		IT_ITA,
 		kPlatformDOS,
 		ADGF_CD,
@@ -393,7 +393,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		ES_ESP,
 		kPlatformDOS,
 		ADGF_CD,
@@ -460,7 +460,7 @@
 {
 	{
 		"gob3",
-		"Non-interactive Demo",
+		"Non-interactive Demo (v1.0)",
 		AD_ENTRY1s("intro.stk", "b9b898fccebe02b69c086052d5024a55", 600143),
 		FR_FRA,
 		kPlatformDOS,

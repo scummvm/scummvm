@@ -43,7 +43,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-uint8 walk_frame_tbl[4] = {0, 1, 2, 1};
+extern const uint8 walk_frame_tbl[4] = {0, 1, 2, 1};
 
 class ActorManager;
 
@@ -1654,7 +1654,7 @@ void Actor::subtract_light(uint8 val) {
 //        light -= val;
 //    else
 //        light = 0;
-	for (vector<uint8>::iterator l = light_source.begin(); l != light_source.end(); l++) {
+	for (Common::Array<uint8>::iterator l = light_source.begin(); l != light_source.end(); l++) {
 		if (*l == val) {
 			light_source.erase(l);
 			break;

@@ -32,7 +32,7 @@ namespace Dragons {
 
 MidiMusicPlayer::MidiMusicPlayer(BigfileArchive *bigFileArchive): _midiDataSize(0) {
 	_midiData = nullptr;
-	MidiPlayer::createDriver(MDT_PREFER_FLUID | MDT_MIDI);
+	MidiPlayer::createDriver(MDT_PREFER_FLUID | MDT_SUPPLIED_SOUND_FONT | MDT_MIDI);
 
 	if (_driver->acceptsSoundFontData()) {
 		_driver->setEngineSoundFont(loadSoundFont(bigFileArchive));

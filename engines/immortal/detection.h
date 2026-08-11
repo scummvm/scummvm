@@ -26,16 +26,12 @@
 
 namespace Immortal {
 
-enum ImmortalDebugChannels {
-	kDebugTest = 1 << 0
-};
-
 extern const PlainGameDescriptor immortalGames[];
 extern const ADGameDescription gameDescriptions[];
 
 } // namespace Immortal
 
-class ImmortalMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ImmortalMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

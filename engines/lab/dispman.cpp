@@ -66,12 +66,12 @@ DisplayMan::~DisplayMan() {
 	delete[] _displayBuffer;
 }
 
-void DisplayMan::loadPict(const Common::String filename) {
+void DisplayMan::loadPict(const Common::String &filename) {
 	freePict();
 	_curBitmap = _vm->_resource->openDataFile(filename, MKTAG('D', 'I', 'F', 'F'));
 }
 
-void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
+void DisplayMan::loadBackPict(const Common::String &fileName, uint16 *highPal) {
 	_fadePalette = highPal;
 	_vm->_anim->_noPalChange = true;
 	readPict(fileName);
@@ -85,7 +85,7 @@ void DisplayMan::loadBackPict(const Common::String fileName, uint16 *highPal) {
 	_vm->_anim->_noPalChange = false;
 }
 
-void DisplayMan::readPict(const Common::String filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer) {
+void DisplayMan::readPict(const Common::String &filename, bool playOnce, bool onlyDiffData, byte *memoryBuffer) {
 	_vm->_anim->stopDiff();
 	loadPict(filename);
 	_vm->_anim->setOutputBuffer(memoryBuffer);
@@ -323,16 +323,16 @@ void DisplayMan::setUpScreens() {
 	// It's very convenient to have those shortcut, so I added them
 	// for all versions. (Strangerke)
 	uint16 y = _vm->_utils->vgaScaleY(173) - _vm->_utils->svgaCord(2);
-	moveButtonList->push_back(i->createButton(  1, y, 0, Common::KEYCODE_t,     moveImages[0],  moveImages[1]));
-	moveButtonList->push_back(i->createButton( 33, y, 1, Common::KEYCODE_m,     moveImages[2],  moveImages[3]));
-	moveButtonList->push_back(i->createButton( 65, y, 2, Common::KEYCODE_o,     moveImages[4],  moveImages[5]));
-	moveButtonList->push_back(i->createButton( 97, y, 3, Common::KEYCODE_c,     moveImages[6],  moveImages[7]));
-	moveButtonList->push_back(i->createButton(129, y, 4, Common::KEYCODE_l,     moveImages[8],  moveImages[9]));
-	moveButtonList->push_back(i->createButton(161, y, 5, Common::KEYCODE_i,     moveImages[12], moveImages[13]));
-	moveButtonList->push_back(i->createButton(193, y, 6, Common::KEYCODE_LEFT,  moveImages[14], moveImages[15]));
-	moveButtonList->push_back(i->createButton(225, y, 7, Common::KEYCODE_UP,    moveImages[16], moveImages[17]));
-	moveButtonList->push_back(i->createButton(257, y, 8, Common::KEYCODE_RIGHT, moveImages[18], moveImages[19]));
-	moveButtonList->push_back(i->createButton(289, y, 9, Common::KEYCODE_p,     moveImages[10], moveImages[11]));
+	moveButtonList->push_back(i->createButton(  1, y, 0, kActionTake,     moveImages[0],  moveImages[1]));
+	moveButtonList->push_back(i->createButton( 33, y, 1, kActionMove,     moveImages[2],  moveImages[3]));
+	moveButtonList->push_back(i->createButton( 65, y, 2, kActionOpen,     moveImages[4],  moveImages[5]));
+	moveButtonList->push_back(i->createButton( 97, y, 3, kActionClose,     moveImages[6],  moveImages[7]));
+	moveButtonList->push_back(i->createButton(129, y, 4, kActionLook,     moveImages[8],  moveImages[9]));
+	moveButtonList->push_back(i->createButton(161, y, 5, kActionInv,     moveImages[12], moveImages[13]));
+	moveButtonList->push_back(i->createButton(193, y, 6, kActionLeft,  moveImages[14], moveImages[15]));
+	moveButtonList->push_back(i->createButton(225, y, 7, kActionForward,    moveImages[16], moveImages[17]));
+	moveButtonList->push_back(i->createButton(257, y, 8, kActionRight, moveImages[18], moveImages[19]));
+	moveButtonList->push_back(i->createButton(289, y, 9, kActionMap,     moveImages[10], moveImages[11]));
 
 	// TODO: The INV file is not present in the Amiga version
 	Common::File *invFile = _vm->_resource->openDataFile("P:Inv");
@@ -345,23 +345,23 @@ void DisplayMan::setUpScreens() {
 	}
 
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		invButtonList->push_back(i->createButton( 24, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
-		invButtonList->push_back(i->createButton( 56, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
-		invButtonList->push_back(i->createButton( 94, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
-		invButtonList->push_back(i->createButton(126, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
-		invButtonList->push_back(i->createButton(164, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
-		invButtonList->push_back(i->createButton(196, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
+		invButtonList->push_back(i->createButton( 24, y, 0, kActionMainDisplay, invImages[0],   invImages[1]));
+		invButtonList->push_back(i->createButton( 56, y, 1, kActionSaveLoad,      invImages[2],   invImages[3]));
+		invButtonList->push_back(i->createButton( 94, y, 2, kActionUse,      invImages[4],   invImages[5]));
+		invButtonList->push_back(i->createButton(126, y, 3, kActionInvLook,      moveImages[8],  moveImages[9]));
+		invButtonList->push_back(i->createButton(164, y, 4, kActionPrev,   moveImages[14], moveImages[15]));
+		invButtonList->push_back(i->createButton(196, y, 5, kActionNext,  moveImages[18], moveImages[19]));
 	// The windows version has 2 extra buttons for breadcrumb trail
 	// CHECKME: the game is really hard to play without those, maybe we could add something to enable that.
-		invButtonList->push_back(i->createButton(234, y, 6, Common::KEYCODE_b, invImages[6], invImages[7]));
-		invButtonList->push_back(i->createButton(266, y, 7, Common::KEYCODE_f, invImages[8], invImages[9]));
+		invButtonList->push_back(i->createButton(234, y, 6, kActionDropBreadcrumb, invImages[6], invImages[7]));
+		invButtonList->push_back(i->createButton(266, y, 7, kActionFollowBreadcrumbs, invImages[8], invImages[9]));
 	} else {
-		invButtonList->push_back(i->createButton( 58, y, 0, Common::KEYCODE_ESCAPE, invImages[0],   invImages[1]));
-		invButtonList->push_back(i->createButton( 90, y, 1, Common::KEYCODE_g,      invImages[2],   invImages[3]));
-		invButtonList->push_back(i->createButton(128, y, 2, Common::KEYCODE_u,      invImages[4],   invImages[5]));
-		invButtonList->push_back(i->createButton(160, y, 3, Common::KEYCODE_l,      moveImages[8],  moveImages[9]));
-		invButtonList->push_back(i->createButton(198, y, 4, Common::KEYCODE_LEFT,   moveImages[14], moveImages[15]));
-		invButtonList->push_back(i->createButton(230, y, 5, Common::KEYCODE_RIGHT,  moveImages[18], moveImages[19]));
+		invButtonList->push_back(i->createButton( 58, y, 0, kActionMainDisplay, invImages[0],   invImages[1]));
+		invButtonList->push_back(i->createButton( 90, y, 1, kActionSaveLoad,      invImages[2],   invImages[3]));
+		invButtonList->push_back(i->createButton(128, y, 2, kActionUse,      invImages[4],   invImages[5]));
+		invButtonList->push_back(i->createButton(160, y, 3, kActionInvLook,      moveImages[8],  moveImages[9]));
+		invButtonList->push_back(i->createButton(198, y, 4, kActionPrev,   moveImages[14], moveImages[15]));
+		invButtonList->push_back(i->createButton(230, y, 5, kActionNext,  moveImages[18], moveImages[19]));
 	}
 
 	delete invFile;
@@ -511,7 +511,7 @@ void DisplayMan::freeFont(TextFont **font) {
 	}
 }
 
-uint16 DisplayMan::textLength(TextFont *font, const Common::String text) {
+uint16 DisplayMan::textLength(TextFont *font, const Common::String &text) {
 	uint16 length = 0;
 
 	if (font) {
@@ -528,7 +528,7 @@ uint16 DisplayMan::textHeight(TextFont *tf) {
 	return (tf) ? tf->_height : 0;
 }
 
-void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String text) {
+void DisplayMan::drawText(TextFont *tf, uint16 x, uint16 y, uint16 color, const Common::String &text) {
 	byte *vgaTop = getCurrentDrawingBuffer();
 	int numChars = text.size();
 
@@ -652,7 +652,7 @@ void DisplayMan::copyPage(uint16 width, uint16 height, uint16 nheight, uint16 st
 	}
 }
 
-void DisplayMan::doScrollWipe(const Common::String filename) {
+void DisplayMan::doScrollWipe(const Common::String &filename) {
 	_vm->_event->mouseHide();
 	uint16 width = _vm->_utils->vgaScaleX(320);
 	uint16 height = _vm->_utils->vgaScaleY(149) + _vm->_utils->svgaCord(2);
@@ -731,7 +731,7 @@ void DisplayMan::doScrollBounce() {
 	_vm->_event->mouseShow();
 }
 
-void DisplayMan::doTransWipe(const Common::String filename) {
+void DisplayMan::doTransWipe(const Common::String &filename) {
 	uint16 lastY, linesLast;
 
 	if (_vm->_isHiRes) {
@@ -816,7 +816,7 @@ void DisplayMan::doTransWipe(const Common::String filename) {
 	// bitMapBuffer will be deleted by the Image destructor
 }
 
-void DisplayMan::doTransition(TransitionType transitionType, const Common::String filename) {
+void DisplayMan::doTransition(TransitionType transitionType, const Common::String &filename) {
 	switch (transitionType) {
 	case kTransitionWipe:
 	case kTransitionTransporter:

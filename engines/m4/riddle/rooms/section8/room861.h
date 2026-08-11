@@ -29,10 +29,20 @@ namespace Riddle {
 namespace Rooms {
 
 class Room861 : public Room {
+private:
+	int _all1Series = 0;
+	int _all2Series = 0;
+	int _soldrSeries = 0;
+	machine *_soldrMach = nullptr;
+	machine *_all1Mach = nullptr;
+	machine *_all2Mach = nullptr;
+	machine *_fallMach = nullptr;
+
 public:
 	Room861() : Room() {}
 	~Room861() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

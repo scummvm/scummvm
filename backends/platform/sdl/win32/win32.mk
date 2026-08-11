@@ -10,7 +10,7 @@ clean: clean-win32-resource-embed
 
 .PHONY: clean-win32-resource-embed
 
-define win32-resource-embed-macro=
+define win32-resource-embed-macro
 $(1): configure.stamp $(foreach filename,$($(2)), $(srcdir)/$(filename)) $($(2)_SOURCE)
 	$(QUIET)echo '    GENERATE' $$@
 	$(QUIET)mkdir -p $$(dir $$@)
@@ -44,14 +44,13 @@ win32-data: all
 	mkdir -p $(WIN32PATH)/doc/it
 	mkdir -p $(WIN32PATH)/doc/ko
 	mkdir -p $(WIN32PATH)/doc/no-nb
-	mkdir -p $(WIN32PATH)/doc/se
+	mkdir -p $(WIN32PATH)/doc/sv
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
 	cp $(srcdir)/LICENSES/COPYING.Apache $(WIN32PATH)/COPYING.Apache.txt
 	cp $(srcdir)/LICENSES/COPYING.BSD $(WIN32PATH)/COPYING.BSD.txt
 	cp $(srcdir)/LICENSES/COPYING.BSL $(WIN32PATH)/COPYING.BSL.txt
-	cp $(srcdir)/LICENSES/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
 	cp $(srcdir)/LICENSES/COPYING.GLAD $(WIN32PATH)/COPYING.GLAD.txt
 	cp $(srcdir)/LICENSES/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/LICENSES/COPYING.LUA $(WIN32PATH)/COPYING.LUA.txt
@@ -72,7 +71,7 @@ win32-data: all
 	cp $(srcdir)/doc/no-nb/HurtigStart $(WIN32PATH)/doc/no-nb/HurtigStart.txt
 	cp $(srcdir)/doc/da/HurtigStart $(WIN32PATH)/doc/da/HurtigStart.txt
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
-	cp $(srcdir)/doc/se/Snabbstart $(WIN32PATH)/doc/se/Snabbstart.txt
+	cp $(srcdir)/doc/sv/Snabbstart $(WIN32PATH)/doc/sv/Snabbstart.txt
 ifdef USE_PANDOC
 	cp NEWS$(PANDOCEXT) $(WIN32PATH)/NEWS.txt
 	cp README$(PANDOCEXT) $(WIN32PATH)/README.txt
@@ -83,7 +82,7 @@ else
 	cp $(srcdir)/doc/de/NEUES.md $(WIN32PATH)/doc/de/NEUES.txt
 endif
 	cp $(srcdir)/doc/de/LIESMICH $(WIN32PATH)/doc/de/LIESMICH.txt
-	cp $(srcdir)/doc/se/LasMig $(WIN32PATH)/doc/se/LasMig.txt
+	cp $(srcdir)/doc/sv/LasMig $(WIN32PATH)/doc/sv/LasMig.txt
 	unix2dos $(WIN32PATH)/*.txt
 	unix2dos $(WIN32PATH)/doc/*.txt
 	unix2dos $(WIN32PATH)/doc/cz/*.txt
@@ -93,7 +92,7 @@ endif
 	unix2dos $(WIN32PATH)/doc/fr/*.txt
 	unix2dos $(WIN32PATH)/doc/it/*.txt
 	unix2dos $(WIN32PATH)/doc/no-nb/*.txt
-	unix2dos $(WIN32PATH)/doc/se/*.txt
+	unix2dos $(WIN32PATH)/doc/sv/*.txt
 
 win32dist: win32-data
 	mkdir -p $(WIN32PATH)/graphics

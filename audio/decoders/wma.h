@@ -49,7 +49,7 @@ public:
 	         uint32 bitRate, uint32 blockAlign, Common::SeekableReadStream *extraData = 0);
 	~WMACodec();
 
-	AudioStream *decodeFrame(Common::SeekableReadStream &data);
+	AudioStream *decodeFrame(Common::SeekableReadStream &data) override;
 
 private:
 	static const int kChannelsMax = 2; ///< Max number of channels we support.

@@ -230,7 +230,8 @@ void Inter_v5::o5_istrlen(OpFuncParams &params) {
 		strVar1 = _vm->_game->_script->readVarIndex();
 		strVar2 = _vm->_game->_script->readVarIndex(nullptr, &type);
 
-		len = _vm->_draw->stringLength(GET_VARO_STR(strVar1), READ_VARO_UINT16(strVar2));
+		uint32 fontIndex = readValue(strVar2, type);
+		len = _vm->_draw->stringLength(GET_VARO_STR(strVar1), (uint16)fontIndex);
 
 	} else {
 
@@ -268,7 +269,7 @@ void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 	_vm->_game->_script->readInt16();
 
 	if (params.extraData != 0) {
-		// we need to return 1 for the shooter mission 34. There is only one planet to choose from in the map.
+		// We need to return 1 for the shooter mission 34. There is only one planet to choose from in the map.
 		WRITE_VARO_UINT32(var1,(params.extraData == 34) ? 1 : 2);
 		WRITE_VARO_UINT32(var2,0);
 	} else {

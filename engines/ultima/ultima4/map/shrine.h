@@ -64,7 +64,7 @@ private:
 class Shrines {
 public:
 	int _cycles, _completedCycles;
-	Std::vector<Common::String> _advice;
+	Common::Array<Common::String> _advice;
 public:
 	/**
 	 * Constructor

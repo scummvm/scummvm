@@ -19,13 +19,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
-
 #include "ultima/ultima8/audio/sound_flex.h"
+
+#include "common/debug.h"
+#include "common/memstream.h"
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
-
-#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,11 +44,11 @@ SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nul
 	if (buf[0] == 0xFF) {
 		// Crusader flex has an index in the first object with the format:
 		// [00 or FF] [ 3 bytes, often 'oB0' or 'pB0' ] [ null-terminated name ]
-		// read this data in and work out how to interpet it - probably tells
+		// read this data in and work out how to interpret it - probably tells
 		// some info about how to play back the raw sounds (eg, loop points?)
 		while (!st.eos() && _index.size() < _count) {
 			uint32 data = st.readUint32LE();
-			Std::string str;
+			Common::String str;
 			char c = st.readByte();
 			while (c != 0 && !st.eos()) {
 				str.push_back(c);

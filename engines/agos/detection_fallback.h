@@ -29,10 +29,10 @@ static const AGOSGameDescription fallbackDescs[] = {
 			"simon1",
 			"Floppy",
 			{
-				{ "gamepc",			GAME_BASEFILE,	NULL, -1},
-				{ "icon.dat",		GAME_ICONFILE,	NULL, -1},
-				{ "stripped.txt",	GAME_STRFILE,	NULL, -1},
-				{ "tbllist",		GAME_TBLFILE,	NULL, -1},
+				{ "gamepc",			GAME_BASEFILE,	NULL, AD_NO_SIZE},
+				{ "icon.dat",		GAME_ICONFILE,	NULL, AD_NO_SIZE},
+				{ "stripped.txt",	GAME_STRFILE,	NULL, AD_NO_SIZE},
+				{ "tbllist",		GAME_TBLFILE,	NULL, AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::UNK_LANG,
@@ -52,11 +52,11 @@ static const AGOSGameDescription fallbackDescs[] = {
 			"simon1",
 			"CD",
 			{
-				{ "simon.gme",		GAME_GMEFILE,	NULL, -1},
-				{ "gamepc"	,		GAME_BASEFILE,	NULL, -1},
-				{ "icon.dat",		GAME_ICONFILE,	NULL, -1},
-				{ "stripped.txt",	GAME_STRFILE,	NULL, -1},
-				{ "tbllist",		GAME_TBLFILE,	NULL, -1},
+				{ "simon.gme",		GAME_GMEFILE,	NULL, AD_NO_SIZE},
+				{ "gamepc"	,		GAME_BASEFILE,	NULL, AD_NO_SIZE},
+				{ "icon.dat",		GAME_ICONFILE,	NULL, AD_NO_SIZE},
+				{ "stripped.txt",	GAME_STRFILE,	NULL, AD_NO_SIZE},
+				{ "tbllist",		GAME_TBLFILE,	NULL, AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::UNK_LANG,
@@ -76,11 +76,11 @@ static const AGOSGameDescription fallbackDescs[] = {
 			"simon2",
 			"Floppy",
 			{
-				{ "game32",			GAME_BASEFILE,	NULL, -1},
-				{ "icon.dat",		GAME_ICONFILE,	NULL, -1},
-				{ "simon2.gme",		GAME_GMEFILE,	NULL, -1},
-				{ "stripped.txt",	GAME_STRFILE,	NULL, -1},
-				{ "tbllist",		GAME_TBLFILE,	NULL, -1},
+				{ "game32",			GAME_BASEFILE,	NULL, AD_NO_SIZE},
+				{ "icon.dat",		GAME_ICONFILE,	NULL, AD_NO_SIZE},
+				{ "simon2.gme",		GAME_GMEFILE,	NULL, AD_NO_SIZE},
+				{ "stripped.txt",	GAME_STRFILE,	NULL, AD_NO_SIZE},
+				{ "tbllist",		GAME_TBLFILE,	NULL, AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::UNK_LANG,
@@ -100,11 +100,11 @@ static const AGOSGameDescription fallbackDescs[] = {
 			"simon2",
 			"CD",
 			{
-				{ "gsptr30",		GAME_BASEFILE,	NULL, -1},
-				{ "icon.dat",		GAME_ICONFILE,	NULL, -1},
-				{ "simon2.gme",		GAME_GMEFILE,	NULL, -1},
-				{ "stripped.txt",	GAME_STRFILE,	NULL, -1},
-				{ "tbllist",		GAME_TBLFILE,	NULL, -1},
+				{ "gsptr30",		GAME_BASEFILE,	NULL, AD_NO_SIZE},
+				{ "icon.dat",		GAME_ICONFILE,	NULL, AD_NO_SIZE},
+				{ "simon2.gme",		GAME_GMEFILE,	NULL, AD_NO_SIZE},
+				{ "stripped.txt",	GAME_STRFILE,	NULL, AD_NO_SIZE},
+				{ "tbllist",		GAME_TBLFILE,	NULL, AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::UNK_LANG,
@@ -124,8 +124,8 @@ static const AGOSGameDescription fallbackDescs[] = {
 			"feeble",
 			"CD",
 			{
-				{ "game22",		GAME_BASEFILE,	NULL, -1},
-				{ "tbllist",	GAME_TBLFILE,	NULL, -1},
+				{ "game22",		GAME_BASEFILE,	NULL, AD_NO_SIZE},
+				{ "tbllist",	GAME_TBLFILE,	NULL, AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::UNK_LANG,

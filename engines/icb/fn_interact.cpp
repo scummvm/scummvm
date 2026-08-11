@@ -100,7 +100,7 @@ mcodeFunctionReturnCodes _game_session::fn_clear_interacting(int32 &, int32 *) {
 }
 
 mcodeFunctionReturnCodes _game_session::fn_route_to_generic_prop_interact(int32 &result, int32 *params) {
-	// WALK-TO interact with a prop BUT DOESNT play a generic animation
+	// WALK-TO interact with a prop BUT DOESN'T play a generic animation
 	// will call a trigger script if finds marker and script
 
 	// params        0   name of generic animation
@@ -119,7 +119,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_generic_prop_interact(int32 
 }
 
 mcodeFunctionReturnCodes _game_session::fn_route_to_custom_prop_interact(int32 &result, int32 *params) {
-	// WALK-TO interact with a prop BUT DOESNT play a custom non generic animation
+	// WALK-TO interact with a prop BUT DOESN'T play a custom non generic animation
 	// then return to script
 
 	// params        0   name of custom animation
@@ -278,10 +278,10 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 			// get anim type
 			res = I->Find_anim_type(&anim, anim_name);
 			if (!res)
-				Fatal_error("Core_prop_interact cant indentify animation %s", anim_name);
+				Fatal_error("Core_prop_interact can't indentify animation %s", anim_name);
 
 			if (!I->IsAnimTable(anim))
-				Fatal_error("Core_prop_interact finds [%s] doesnt have a [%s] animation", CGameObject::GetName(object), params[0]);
+				Fatal_error("Core_prop_interact finds [%s] doesn't have a [%s] animation", CGameObject::GetName(object), params[0]);
 		} else {
 			Zdebug("calc *custom* target anim [%s]", anim_name);
 			I->Init_custom_animation(anim_name);
@@ -544,7 +544,7 @@ mcodeFunctionReturnCodes _game_session::fn_unregister_for_auto_interaction(int32
 		}
 	}
 
-	Fatal_error("fn_unregister_for_auto_interaction cant unregister non registered object [%s]", CGameObject::GetName(object));
+	Fatal_error("fn_unregister_for_auto_interaction can't unregister non registered object [%s]", CGameObject::GetName(object));
 
 	return IR_CONT;
 }

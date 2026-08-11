@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_CONVERSE_H
 #define NUVIE_CORE_CONVERSE_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
@@ -46,8 +46,6 @@ class U6Lzw;
 class ConverseInterpret;
 class ConverseSpeech;
 class ConvScript;
-
-using Std::string;
 
 ConverseGumpType get_converse_gump_type_from_config(const Configuration *config);
 
@@ -105,14 +103,14 @@ class Converse {
 	Actor *npc;
 	uint8 npc_num;
 	uint8 script_num; //this could differ from npc_num when talking to guards or wisps etc.
-	Std::string _name, _desc;
+	Common::String _name, _desc;
 
 	bool active; // running npc script? (either paused or unpaused)
 	bool need_input; // waiting for text input
 	bool party_all_the_time; // force NPCs to join player's party?
 
-	string in_str; // last input from player
-	string out_str; // text that is to be printed
+	Common::String in_str; // last input from player
+	Common::String out_str; // text that is to be printed
 	char *allowed_input; // characters requested for single-character input
 
 	char aname[16]; // return from npc_name()
@@ -133,7 +131,7 @@ public:
 	          GameClock *c, Player *p, ViewManager *v, ObjManager *o);
 
 	uint32 get_script_num(uint8 a);
-	void load_conv(const Std::string &convfilename);
+	void load_conv(const Common::String &convfilename);
 	uint32 load_conv(uint8 a);
 	void unload_conv() {
 		delete src;
@@ -162,16 +160,16 @@ public:
 
 	bool input();
 	void print(const char *s = nullptr);
-	const Std::string &get_input() const {
+	const Common::String &get_input() const {
 		return in_str;
 	}
-	const Std::string &get_output() const {
+	const Common::String &get_output() const {
 		return out_str;
 	}
-	void set_input(Std::string s) {
+	void set_input(Common::String s) {
 		in_str = s;
 	}
-	void set_output(Std::string s) {
+	void set_output(Common::String s) {
 		out_str = s;
 	}
 

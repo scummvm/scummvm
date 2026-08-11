@@ -87,28 +87,27 @@ void CharacterBase::printStats() {
 
 void CharacterBase::printSummary() {
 	const Character &c = *g_globals->_currCharacter;
-	writeString(35, LINE1_Y, c._name);
-
-	writeString(120, LINE1_Y, ": ");
-
-	writeString((c._sex == MALE) ? "M " : (c._sex == FEMALE ? "F " : "O "));
-
-	writeString((c._alignment >= GOOD && c._alignment <= EVIL) ?
+	Common::String suffix = Common::String::format(": %s %s ",
+		STRING[Common::String::format("stats.sex.%d", c._sex)].c_str(),
+		((c._alignment >= GOOD && c._alignment <= EVIL) ?
 		STRING[Common::String::format("stats.alignments.%d", c._alignment)] :
-		STRING["stats.none"]
+		STRING["stats.none"]).c_str()
 	);
-	writeChar(' ');
 
 	if (c._race >= HUMAN && c._race <= HALF_ORC)
-		writeString(STRING[Common::String::format("stats.races.%d", c._race)]);
+		suffix += STRING[Common::String::format("stats.races.%d", c._race)];
 	else
-		writeString(STRING["stats.none"]);
-	writeChar(' ');
+		suffix += STRING["stats.none"];
+	suffix += ' ';
 
 	if (c._class >= KNIGHT && c._class <= ROBBER)
-		writeString(STRING[Common::String::format("stats.classes.%d", c._class)]);
+		suffix += STRING[Common::String::format("stats.classes.%d", c._class)];
 	else
-		writeString(STRING["stats.none"]);
+		suffix += STRING["stats.none"];
+
+	writeString(35, LINE1_Y, truncateString(c._name,
+		_innerBounds.width() - 35 - (int)getStringWidth(suffix)));
+	writeString(suffix);
 }
 
 void CharacterBase::printCondition() {

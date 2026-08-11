@@ -120,7 +120,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			{
 				{ "roasted.mpc", 0, "187de6f88f4083808cb66342ab55a7fd", 389904 },
 				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
-				{ "voices.vdb",  0, 0, -1 },	// FIXME
+				{ "voices.vdb",  0, 0, AD_NO_SIZE },	// FIXME
 				AD_LISTEND
 			},
 			Common::DE_DEU,

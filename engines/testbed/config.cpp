@@ -170,7 +170,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	GUI::Dialog::handleCommand(sender, cmd, data);
 }
 
-void TestbedInteractionDialog::addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding) {
+void TestbedInteractionDialog::addText(uint w, uint h, const Common::String &text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding) {
 	if (!xOffset) {
 		xOffset = _xOffset;
 	}
@@ -179,7 +179,7 @@ void TestbedInteractionDialog::addText(uint w, uint h, const Common::String text
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset, uint yPadding) {
+void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String &name, uint32 cmd, uint xOffset, uint yPadding) {
 	if (!xOffset) {
 		xOffset = _xOffset;
 	}
@@ -197,18 +197,12 @@ void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Com
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addButtonXY(uint x, uint /*y*/, uint w, uint h, const Common::String name, uint32 cmd) {
+void TestbedInteractionDialog::addButtonXY(uint x, uint /*y*/, uint w, uint h, const Common::String &name, uint32 cmd) {
 	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, true, name, Common::U32String(), cmd));
 }
 
 void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	GUI::Dialog::handleCommand(sender, cmd, data);
-}
-
-void TestbedConfigManager::initDefaultConfiguration() {
-	// Default Configuration
-	// Add Global configuration Parameters here.
-	_configFileInterface.setKey("isSessionInteractive", "Global", "true");
 }
 
 void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
@@ -242,9 +236,18 @@ Common::WriteStream *TestbedConfigManager::getConfigWriteStream() const {
 void TestbedConfigManager::parseConfigFile() {
 	Common::SeekableReadStream *rs = getConfigReadStream();
 
+	// get interactive mode from global config
+	ConfParams.setSessionAsInteractive(ConfMan.getBool("interactive-mode"));
+	_configFileInterface.setKey("isSessionInteractive", "Global", ConfParams.isSessionInteractive() ? "true" : "false");
+
 	if (!rs) {
 		Testsuite::logPrintf("Info! No config file found, using default configuration.\n");
-		initDefaultConfiguration();
+		return;
+	}
+
+	if (!ConfParams.isSessionInteractive()) {
+		// Non-interactive sessions don't need to go beyond (they run all tests)
+		Testsuite::logPrintf("Info! Non interactive session, skipping config parsing.\n");
 		return;
 	}
 	_configFileInterface.loadFromStream(*rs);

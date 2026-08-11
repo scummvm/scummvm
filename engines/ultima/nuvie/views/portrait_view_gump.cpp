@@ -285,7 +285,7 @@ GUI_status PortraitViewGump::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status PortraitViewGump::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status PortraitViewGump::MouseDown(int x, int y, Events::MouseButton button) {
 	return DraggableView::MouseDown(x, y, button);
 }
 

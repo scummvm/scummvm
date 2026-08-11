@@ -39,35 +39,35 @@ AdWaypointGroup3D::AdWaypointGroup3D(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdWaypointGroup3D::~AdWaypointGroup3D() {
-	for (uint i = 0; i < _points.size(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.clear();
+	_points.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
-	Math::Vector3d min = Math::Vector3d(0, 0, 0);
-	Math::Vector3d max = Math::Vector3d(0, 0, 0);
+	DXVector3 min = DXVector3(0, 0, 0);
+	DXVector3 max = DXVector3(0, 0, 0);
 
-	if (mesh->vertexCount() > 0) {
-		min = max = mesh->getVertexPosition(0);
+	if (mesh->_numVertices > 0) {
+		min = max = mesh->_vertices[0]._pos;
 	}
 
-	for (int i = 0; i < mesh->vertexCount(); i++) {
-		min.x() = MIN(min.x(), mesh->getVertexPosition(i)[0]);
-		min.y() = MIN(min.y(), mesh->getVertexPosition(i)[1]);
-		min.z() = MIN(min.z(), mesh->getVertexPosition(i)[2]);
+	for (int i = 0; i < mesh->_numVertices; i++) {
+		min._x = MIN(min._x, mesh->_vertices[i]._pos._x);
+		min._y = MIN(min._y, mesh->_vertices[i]._pos._y);
+		min._z = MIN(min._z, mesh->_vertices[i]._pos._z);
 
-		max.x() = MAX(max.x(), mesh->getVertexPosition(i)[0]);
-		max.y() = MAX(max.y(), mesh->getVertexPosition(i)[1]);
-		max.z() = MAX(max.z(), mesh->getVertexPosition(i)[2]);
+		max._x = MAX(max._x, mesh->_vertices[i]._pos._x);
+		max._y = MAX(max._y, mesh->_vertices[i]._pos._y);
+		max._z = MAX(max._z, mesh->_vertices[i]._pos._z);
 	}
 
-	Math::Vector3d *vect = new Math::Vector3d;
-	vect->x() = min.x() + (max.x() - min.x()) / 2;
-	vect->y() = min.y() + (max.y() - min.y()) / 2;
-	vect->z() = min.z() + (max.z() - min.z()) / 2;
+	DXVector3 *vect = new DXVector3;
+	vect->_x = min._x + (max._x - min._x) / 2;
+	vect->_y = min._y + (max._y - min._y) / 2;
+	vect->_z = min._z + (max._z - min._z) / 2;
 
 	_points.add(vect);
 

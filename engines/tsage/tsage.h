@@ -25,16 +25,43 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
-#include "tsage/core.h"
 #include "tsage/resources.h"
 #include "tsage/debugger.h"
 #include "tsage/events.h"
-#include "tsage/graphics.h"
 #include "tsage/resources.h"
 #include "tsage/detection.h"
 
 
 namespace TsAGE {
+
+enum TSAGEAction {
+	kActionNone,
+	kActionEscape,
+	kActionReturn,
+	kActionHelp,
+	kActionSoundOptions,
+	kActionQuitGame,
+	kActionRestartGame,
+	kActionSaveGame,
+	kActionRestoreGame,
+	kActionCredits,
+	kActionPauseGame,
+	kActionWalk,
+	kActionLook,
+	kActionUse,
+	kActionTalk,
+	kActionMoveUpCrawlNorth,
+	kActionMoveDownCrawlSouth,
+	kActionMoveLeftCrawlWest,
+	kActionMoveRightCrawlEast,
+	kActionIncreaseSpeed,
+	kActionDecreaseSpeed,
+	kActionMinimumSpeed,
+	kActionMaximumSpeed,
+	kActionLowSpeed,
+	kActionMediumSpeed,
+	kActionDrawCards
+};
 
 enum {
 	kRingDebugScripts = 1 << 0,

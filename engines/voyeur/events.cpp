@@ -184,20 +184,17 @@ void EventsManager::voyeurTimer() {
 	videoTimer();
 
 	// Iterate through the list of registered nodes
-	Common::List<IntNode *>::iterator i;
-	for (i = _intNodes.begin(); i != _intNodes.end(); ++i) {
-		IntNode &node = **i;
-
-		if (node._flags & 1)
+	for (auto &node : _intNodes) {
+		if (node->_flags & 1)
 			continue;
-		if (!(node._flags & 2)) {
-			if (--node._curTime != 0)
+		if (!(node->_flags & 2)) {
+			if (--node->_curTime != 0)
 				continue;
 
-			node._curTime = node._timeReset;
+			node->_curTime = node->_timeReset;
 		}
 
-		(this->*node._intFunc)();
+		(this->*node->_intFunc)();
 	}
 
 }

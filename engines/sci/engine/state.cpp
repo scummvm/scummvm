@@ -176,6 +176,11 @@ void EngineState::initGlobals() {
 	}
 }
 
+void EngineState::initMessageState() {
+	delete _msgState;
+	_msgState = new MessageState(_segMan);
+}
+
 uint16 EngineState::currentRoomNumber() const {
 	return variables[VAR_GLOBAL][kGlobalVarNewRoomNo].toUint16();
 }
@@ -247,9 +252,10 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 	}
 
 	if (foundLanguage == requestedLanguage) {
-		if (curChar2 == 'J') {
+		if (curChar2 == 'J' && g_sci->getGameId() != GID_PQ2) {
 			// Japanese including Kanji, displayed with system font
-			// Convert half-width characters to full-width equivalents
+			// Convert half-width characters to full-width equivalents.
+			// PQ2 does not do this.
 			Common::String fullWidth;
 
 			textPtr += 2; // skip over language splitter
@@ -294,11 +300,7 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 }
 
 kLanguage SciEngine::getSciLanguage() {
-	kLanguage lang = (kLanguage)_resMan->getAudioLanguage();
-	if (lang != K_LANG_NONE)
-		return lang;
-
-	lang = K_LANG_ENGLISH;
+	kLanguage lang = K_LANG_ENGLISH;
 
 	if (SELECTOR(printLang) != -1) {
 		lang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(printLang));

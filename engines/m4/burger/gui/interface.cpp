@@ -23,8 +23,9 @@
 #include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/graphics/graphics.h"
 #include "m4/gui/gui_event.h"
-#include "m4/gui/gui_vmng.h"
+#include "m4/burger/gui/game_menu.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
 #include "m4/adv_r/other.h"
@@ -32,8 +33,6 @@
 namespace M4 {
 namespace Burger {
 namespace GUI {
-
-#define INTERFACE_SPRITES 22
 
 Interface::Interface() : M4::Interface() {
 	_x1 = 0;
@@ -47,7 +46,7 @@ bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 
 	_sprite = series_load("999intr", 22, nullptr);
 	if (_sprite != 22)
-		error_show(FL, 'SLF!');
+		error_show(FL, "interface stuff");
 
 	mouse_set_sprite(arrow);
 
@@ -55,9 +54,9 @@ bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 		_G(gameInterfaceBuff) = new GrBuff(_x2 - _x1, _y2 - _y1);
 		setup();
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 Interface::~Interface() {
@@ -276,7 +275,7 @@ void Interface::refresh_left_arrow() {
 }
 
 void Interface::trackIcons() {
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
+	const KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	switch (_interfaceBox->_highlight_index) {
@@ -362,6 +361,9 @@ void Interface::trackIcons() {
 		}
 		break;
 
+	default:
+		break;
+
 	}
 
 	_G(kernel).trigger_mode = oldMode;
@@ -401,23 +403,22 @@ ControlStatus Interface::trackHotspots(int event, int x, int y) {
 	if (event == 5 && hotspot) {
 		_G(player).walk_x = x;
 		_G(player).walk_y = y;
-		_G(click_x) = x;
-		_G(click_y) = y;
+		_G(player).click_x = x;
+		_G(player).click_y = y;
 
-		if (hotspot) {
-			if (hotspot->feet_x != 0x7fff)
-				_G(player).walk_x = hotspot->feet_x;
-			if (hotspot->feet_y != 0x7fff)
-				_G(player).walk_y = hotspot->feet_y;
-		}
+		if (hotspot->feet_x != 0x7fff)
+			_G(player).walk_x = hotspot->feet_x;
+
+		if (hotspot->feet_y != 0x7fff)
+			_G(player).walk_y = hotspot->feet_y;
 
 		_G(player).walk_facing = hotspot->facing;
 		_hotspot = nullptr;
 
 		return SELECTED;
-	} else {
-		return IN_CONTROL;
 	}
+
+	return IN_CONTROL;
 }
 
 void Interface::dispatch_command() {
@@ -443,8 +444,8 @@ void Interface::dispatch_command() {
 }
 
 void Interface::handleState(ControlStatus status) {
-	int highlight = _inventory->_highlight;
-	int index = _inventory->_scroll + highlight;
+	const int highlight = _inventory->_highlight;
+	const int index = _inventory->_scroll + highlight;
 
 	switch (status) {
 	case NOTHING:

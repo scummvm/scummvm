@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/spells/spell_view.h"
+#include "mm/mm1/game/spell_casting.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
@@ -31,7 +32,7 @@ namespace Spells {
 void SpellView::spellFailed() {
 	// Spell failed
 	clearSurface();
-	writeString(10, 2, STRING["spells.failed"]);
+	writeString(10, 2, Game::SpellCasting::spellResultMessage(STRING["spells.failed"]));
 
 	Sound::sound(SOUND_2);
 	delaySeconds(3);
@@ -39,7 +40,7 @@ void SpellView::spellFailed() {
 
 void SpellView::spellDone() {
 	clearSurface();
-	writeString(14, 2, STRING["spells.done"]);
+	writeString(14, 2, Game::SpellCasting::spellResultMessage(STRING["spells.done"]));
 	g_globals->_party.updateAC();
 
 	Sound::sound(SOUND_2);

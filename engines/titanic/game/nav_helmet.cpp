@@ -24,6 +24,8 @@
 #include "titanic/star_control/star_control.h"
 #include "titanic/translation.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNavHelmet, CGameObject)
@@ -79,6 +81,7 @@ bool CNavHelmet::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 	CPetControl *pet = getPetControl();
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	if (_helmetOn) {
 		_helmetOn = false;
@@ -94,6 +97,11 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 		}
 
 		decTransitions();
+
+		keymapper->getKeymap("star-map")->setEnabled(false);
+		keymapper->getKeymap("pet")->setEnabled(true);
+		keymapper->getKeymap("inv-shortcut")->setEnabled(true);
+		keymapper->getKeymap("movement")->setEnabled(true);
 	} else {
 		incTransitions();
 		_helmetOn = true;
@@ -101,6 +109,11 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 		playMovie(0, 60, MOVIE_NOTIFY_OBJECT);
 		playSound(TRANSLATE("a#48.wav", "a#41.wav"));
 		playSound(TRANSLATE("a#47.wav", "a#40.wav"));
+
+		keymapper->getKeymap("pet")->setEnabled(false);
+		keymapper->getKeymap("inv-shortcut")->setEnabled(false);
+		keymapper->getKeymap("movement")->setEnabled(false);
+		keymapper->getKeymap("star-map")->setEnabled(true);
 	}
 
 	return true;

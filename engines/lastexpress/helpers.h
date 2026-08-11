@@ -22,79 +22,17 @@
 #ifndef LASTEXPRESS_HELPERS_H
 #define LASTEXPRESS_HELPERS_H
 
-//////////////////////////////////////////////////////////////////////////
-// Misc helpers
-//////////////////////////////////////////////////////////////////////////
-
-#define LOW_BYTE(w)           ((unsigned char)(((unsigned long)(w)) & 0xff))
-
 // Misc
-#define getArchiveMember(name) _engine->getResourceManager()->getFileStream(name)
 #define rnd(value) _engine->getRandom().getRandomNumber(value - 1)
 
-// Engine subclasses
-#define getLogic() _engine->getGameLogic()
-#define getMenu() _engine->getGameMenu()
-
 // Logic
-#define getAction() getLogic()->getGameAction()
-#define getBeetle() getLogic()->getGameBeetle()
-#define getFight() getLogic()->getGameFight()
-#define getEntities() getLogic()->getGameEntities()
-#define getSaveLoad() getLogic()->getGameSaveLoad()
-#define isNight() getLogic()->getGameState()->isNightTime()
+#define getCharacter(c) (_engine->_characters->characters[c])
+#define getCharacterCurrentParams(c) (getCharacter(c).callParams[getCharacter(c).currentCall].parameters)
+#define getCharacterParams(c, n) (getCharacter(c).callParams[n].parameters)
 
-// State
-#define getState() getLogic()->getGameState()->getGameState()
-#define getEvent(id) getState()->events[id]
-#define getFlags() getLogic()->getGameState()->getGameFlags()
-#define getInventory() getLogic()->getGameState()->getGameInventory()
-#define getObjects() getLogic()->getGameState()->getGameObjects()
-#define getProgress() getState()->progress
-#define getSavePoints() getLogic()->getGameState()->getGameSavePoints()
-#define getGlobalTimer() getLogic()->getGameState()->getTimer()
-#define setGlobalTimer(timer) getLogic()->getGameState()->setTimer(timer)
-#define setCoords(coords) getLogic()->getGameState()->setCoordinates(coords)
-#define getCoords() getLogic()->getGameState()->getCoordinates()
-#define getFrameCount() _engine->getFrameCounter()
-
-// Scenes
-#define getScenes() _engine->getSceneManager()
-
-// Sound
-#define getSound() _engine->getSoundManager()
-#define getSoundQueue() _engine->getSoundManager()->getQueue()
-
-// Others
-#define getEntityData(entity) getEntities()->getData(entity)
-
-//////////////////////////////////////////////////////////////////////////
-// Graphics
-//////////////////////////////////////////////////////////////////////////
-
-// Sequences
-#define loadSequence(name) Sequence::load(name, getArchiveMember(name))
-#define loadSequence1(name, field30) Sequence::load(name, getArchiveMember(name), field30)
-
-#define clearBg(type) _engine->getGraphicsManager()->clear(type)
-#define showScene(index, type) _engine->getGraphicsManager()->draw(getScenes()->get(index), type);
-
-#define askForRedraw() _engine->getGraphicsManager()->change()
-#define redrawScreen() do { _engine->getGraphicsManager()->update(); _engine->_system->updateScreen(); } while (false)
-
-// Used to delete entity sequences
-#define SAFE_DELETE(_p) do { delete (_p); (_p) = NULL; } while (false)
-
-//////////////////////////////////////////////////////////////////////////
-// Output
-//////////////////////////////////////////////////////////////////////////
-extern const char *g_actionNames[];
-extern const char *g_directionNames[];
-extern const char *g_entityNames[];
-
-#define ACTION_NAME(action) (action > 18 ? Common::String::format("%d", action).c_str() : g_actionNames[action])
-#define DIRECTION_NAME(direction) (direction >= 6 ? "INVALID" : g_directionNames[direction])
-#define ENTITY_NAME(index) (index >= 40 ? "INVALID" : g_entityNames[index])
-
+// Helpers
+#define SAFE_DELETE(_p) do { if (_p) delete (_p); (_p) = nullptr; } while (false)
+#define SAFE_DELETE_ARR(_p) do { if (_p) delete[] (_p); (_p) = nullptr; } while (false)
+#define SAFE_FREE(_p)   do { if (_p) free   (_p); (_p) = nullptr; } while (false)
 
 #endif // LASTEXPRESS_HELPERS_H

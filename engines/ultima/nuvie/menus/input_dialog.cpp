@@ -97,7 +97,7 @@ bool InputDialog::init() {
 
 	Configuration *config = game->get_config();
 	int interface;
-	Std::string interface_str;
+	Common::String interface_str;
 	config->value("config/input/interface", interface_str, "normal"); // get cfg variable because hackmove changes InterfaceType
 	if (interface_str == "ignore_block")
 		interface = 2;
@@ -223,7 +223,7 @@ GUI_status InputDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 		MapWindow *map_window = game->get_map_window();
 		Configuration *config = Game::get_game()->get_config();
 
-		Std::string interface_str;
+		Common::String interface_str;
 		if (interface_button->GetSelection() == 2)
 			interface_str = "ignore_block";
 		else if (interface_button->GetSelection() == 1)

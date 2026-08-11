@@ -29,46 +29,54 @@
 #define WINTERMUTE_BASE_SURFACE_H
 
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
 #include "graphics/surface.h"
 #include "graphics/transform_struct.h"
 
 namespace Wintermute {
 
-class BaseSurface: public BaseClass {
+class BaseSurface : public BaseClass {
 public:
 	virtual bool invalidate();
 	virtual bool prepareToDraw();
+	bool _ckDefault;
+	byte _ckRed;
+	byte _ckGreen;
+	byte _ckBlue;
+
 	uint32 _lastUsedTime;
 	bool _valid;
 	int32 _lifeTime;
+	bool _keepLoaded;
 
-	bool _pixelOpReady;
 	BaseSurface(BaseGame *inGame);
 	~BaseSurface() override;
 
-	virtual bool displayHalfTrans(int x, int y, Rect32 rect);
+	virtual bool displayHalfTrans(int x, int y, Common::Rect32 rect);
 	virtual bool isTransparentAt(int x, int y);
-	virtual bool displayTransRotate(int x, int y, uint32 angle, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
-	virtual bool display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
-	virtual bool displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) = 0;
+	virtual bool displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual bool displayTransZoom(int x, int y, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual bool displayTrans(int x, int y, Common::Rect32 rect, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) = 0;
+	virtual bool display(int x, int y, Common::Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual bool displayTiled(int x, int y, Common::Rect32 rect, int numTimesX, int numTimesY) = 0;
 	virtual bool restore();
-	virtual bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
+	virtual bool create(const char *filename, bool texture2D, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
 	virtual bool create(int width, int height);
+	virtual bool setAlphaImage(const char *filename) {
+		return STATUS_FAILED;
+	}
 	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) {
 		return STATUS_FAILED;
 	}
-	virtual bool putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
-	virtual bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr);
-	virtual bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1);
-	virtual bool startPixelOp();
-	virtual bool endPixelOp();
-	virtual bool isTransparentAtLite(int x, int y);
+	virtual bool startPixelOp() = 0;
+	virtual bool endPixelOp() = 0;
+	virtual bool putPixel(int x, int y, byte r, byte g, byte b, byte a) = 0;
+	virtual bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr) const = 0;
+	virtual bool isTransparentAtLite(int x, int y) const = 0;
+	void setFilename(const char *filename);
 	void setSize(int width, int height);
 
 	int _referenceCount;
+	char *_filename;
 
 	virtual int getWidth() {
 		return _width;
@@ -76,18 +84,10 @@ public:
 	virtual int getHeight() {
 		return _height;
 	}
-	Common::String getFileNameStr() { return _filename; }
-	const char* getFileName() { return _filename.c_str(); }
 	//void SetWidth(int Width) { _width = Width;    }
 	//void SetHeight(int Height){ _height = Height; }
 protected:
-	bool _ckDefault;
-	byte _ckRed;
-	byte _ckGreen;
-	byte _ckBlue;
 
-	bool _keepLoaded;
-	Common::String _filename;
 	int32 _height;
 	int32 _width;
 

@@ -87,12 +87,13 @@ enum {
 	kWMModeManualDrawWidgets	= (1 << 5),
 	kWMModeFullscreen			= (1 << 6),
 	kWMModeButtonDialogStyle	= (1 << 7),
-	kWMMode32bpp				= (1 << 8),
-	kWMNoScummVMWallpaper		= (1 << 9),
-	kWMModeWin95				= (1 << 10),
-	kWMModeForceMacFontsInWin95 = (1 << 11), // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
-	kWMModeNoCursorOverride     = (1 << 12),
-	kWMModeForceMacBorder       = (1 << 13),
+	kWMNoScummVMWallpaper		= (1 << 8),
+	kWMModeWin95				= (1 << 9),
+	kWMModeForceMacFontsInWin95 = (1 << 10), // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
+	kWMModeNoCursorOverride     = (1 << 11),
+	kWMModeForceMacBorder       = (1 << 12),
+	kWMModeForceMacFonts        = (1 << 13), // Enforce Mac fonts even when there are viable TTF substitutions
+	kWMModeNoSystemRedraw       = (1 << 14), // Skip g_system->copyRectToScreen (for 3D game backends)
 };
 
 }
@@ -111,7 +112,7 @@ class MacFont;
 
 class MacFontManager;
 
-typedef Common::Array<byte *> MacPatterns;
+typedef Common::Array<const byte *> MacPatterns;
 
 struct MacPlotData {
 	Graphics::ManagedSurface *surface;
@@ -120,11 +121,13 @@ struct MacPlotData {
 	uint fillType;
 	int fillOriginX;
 	int fillOriginY;
-	int thickness;
+	Common::Point thickness;
 	uint bgColor;
 	bool invert;
 
-	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, int t, uint bg, bool inv = false) :
+	MacPlotData() : surface(nullptr), mask(nullptr), patterns(nullptr), fillType(0), fillOriginX(0), fillOriginY(0), thickness(1, 1), bgColor(0), invert(false) {}
+
+	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, const Common::Point &t, uint bg, bool inv = false) :
 		surface(s), mask(m), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg), invert(inv) {
 	}
 };
@@ -139,19 +142,18 @@ struct ZoomBox {
 	uint32 nextTime;
 };
 
-typedef void (* MacDrawPixPtr)(int, int, int, void *);
-
 /**
  * A manager class to handle window creation, destruction,
  * drawing, moving and event handling.
  */
 class MacWindowManager {
 public:
-	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr, Common::Language language = Common::UNK_LANG);
+	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr, Common::Language language = Common::UNK_LANG,
+	                 const Graphics::PixelFormat &pixelFormat = Graphics::PixelFormat::createFormatCLUT8());
 	~MacWindowManager();
 
-	MacDrawPixPtr getDrawPixel();
-	MacDrawPixPtr getDrawInvertPixel();
+	Primitives &getDrawPrimitives() const { return *_macDrawPrimitives; }
+	Primitives &getDrawInvertPrimitives() const;
 
 	/**
 	 * Mutator to indicate the surface onto which the desktop will be drawn.
@@ -180,8 +182,8 @@ public:
 	 * @return Pointer to the newly created window.
 	 */
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
-	MacTextWindow *addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
-	MacTextWindow *addTextWindow(const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
+	MacTextWindow *addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, int padding = 0);
+	MacTextWindow *addTextWindow(const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, int padding = 0);
 	void resizeScreen(int w, int h);
 
 	/**
@@ -234,6 +236,8 @@ public:
 	 */
 	void setActiveWindow(int id);
 
+	int getActiveWindow() { return _activeWindow; }
+
 	/**
 	 * Return Top Window containing a point
 	 * @param x x coordinate of point
@@ -281,7 +285,11 @@ public:
 	 * @param id The id of the desired window.
 	 * @return Pointer to the requested window, if it exists.
 	 */
-	BaseMacWindow *getWindow(int id) { return _windows[id]; }
+	BaseMacWindow *getWindow(int id) {
+		if (id >= 0 && id < (int)_windows.size())
+			return _windows[id];
+		return nullptr;
+	}
 
 	/**
 	 * Retrieve the patterns used to fill surfaces.
@@ -327,6 +335,8 @@ private:
 
 public:
 	MacCursorType getCursorType() const;
+	static bool getBuiltInCursorData(MacCursorType type, const byte *&data, const byte *&palette,
+		const byte *&mask, int &w, int &h, int &hotspotX, int &hotspotY, int &transColor);
 
 	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
 	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
@@ -342,11 +352,11 @@ public:
 
 	void setEngine(Engine *engine);
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
+	void setEngineActivateMenuCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
-	template <typename T> void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
+	void getPaletteEntry(uint32 color, byte &r, byte &g, byte &b);
 	uint32 findBestColor(byte cr, byte cg, byte cb);
-	uint32 findBestColor(uint32 color);
 	void setDesktopColor(byte, byte, byte);
 
 	byte inverter(byte src);
@@ -363,7 +373,7 @@ public:
 	void cleanupDataBundle();
 	void cleanupDesktopBmp();
 
-	BorderOffsets getBorderOffsets(uint32 windowType);
+	const BorderOffsets &getBorderOffsets(uint32 windowType);
 	Common::SeekableReadStream *getBorderFile(uint32 windowType, uint32 flags);
 	Common::SeekableReadStream *getFile(const Common::Path &filename);
 
@@ -393,6 +403,9 @@ public:
 	int getMenuItemAction(MacMenuItem *menuItem);
 	MacMenu *getMenu();
 	MacMenu *getMenu(int id);
+
+	void sayText(const Common::U32String &text) const;
+	void setTTSEnabled(bool enabled);
 
 public:
 	MacFontManager *_fontMan;
@@ -450,6 +463,9 @@ private:
 
 	bool _inEditableArea;
 
+	Primitives *_macDrawPrimitives;
+	Primitives *_macDrawInvertPrimitives;
+
 	MacPatterns _patterns;
 	MacPatterns _builtinPatterns;
 	byte *_palette;
@@ -461,6 +477,8 @@ private:
 	Engine *_engineP;
 	void *_engineR;
 	void (*_redrawEngineCallback)(void *engine);
+	void *_engineAM;
+	void (*_activateMenuCallback)(void *engine);
 
 	MacCursorType _tempType = kMacCursorArrow;
 	Common::Stack<MacCursorType> _cursorTypeStack;
@@ -479,6 +497,8 @@ private:
 	Common::Archive *_dataBundle;
 
 	Common::U32String _clipboard;
+
+	bool _ttsEnabled;
 };
 
 const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len);

@@ -80,19 +80,17 @@ bool CPetLoadSave::MouseButtonDownMsg(const Point &pt) {
 	return false;
 }
 
-bool CPetLoadSave::KeyCharMsg(int key) {
-	switch (key) {
-	case Common::KEYCODE_TAB:
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
+bool CPetLoadSave::ActionMsg(CActionMsg *msg) {
+	Common::CustomEventType action = msg->_action;
+	switch (action) {
+	case kActionDown:
 		if (_savegameSlotNum != -1) {
 			highlightSlot((_savegameSlotNum + 1) % 5);
 			getPetControl()->makeDirty();
 		}
 		return true;
 
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
+	case kActionUp:
 		if (_savegameSlotNum != -1) {
 			int slotNum = --_savegameSlotNum;
 			highlightSlot((slotNum == -1) ? SAVEGAME_SLOTS_COUNT - 1 : slotNum);
@@ -100,8 +98,7 @@ bool CPetLoadSave::KeyCharMsg(int key) {
 		}
 		return true;
 
-	case Common::KEYCODE_RETURN:
-	case Common::KEYCODE_KP_ENTER:
+	case kActionSelect:
 		execute();
 		return true;
 

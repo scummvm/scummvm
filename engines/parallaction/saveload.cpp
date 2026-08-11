@@ -175,8 +175,8 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	delete f;
 }
 
-int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::U32String &caption, const Common::U32String &button) {
-	GUI::SaveLoadChooser slc(caption, button, saveMode);
+int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode) {
+	GUI::SaveLoadChooser slc(saveMode);
 
 	selectedName.clear();
 
@@ -190,7 +190,7 @@ int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const 
 
 bool SaveLoad::loadGame() {
 	Common::String null;
-	int _di = selectSaveFile(null, false, _("Load file"), _("Load"));
+	int _di = selectSaveFile(null, false);
 	if (_di == -1) {
 		return false;
 	}
@@ -205,7 +205,7 @@ bool SaveLoad::loadGame() {
 
 bool SaveLoad::saveGame() {
 	Common::String saveName;
-	int slot = selectSaveFile(saveName, true, _("Save file"), _("Save"));
+	int slot = selectSaveFile(saveName, true);
 	if (slot == -1) {
 		return false;
 	}

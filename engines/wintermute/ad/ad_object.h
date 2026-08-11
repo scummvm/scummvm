@@ -45,15 +45,25 @@ class PartEmitter;
 
 class AdObject : public BaseObject {
 public:
+	PartEmitter *_partEmitter;
 	virtual PartEmitter *createParticleEmitter(bool followParent = false, int offsetX = 0, int offsetY = 0);
 	virtual bool updatePartEmitter();
+	bool _partFollowParent;
+	int32 _partOffsetX;
+	int32 _partOffsetY;
 
 	bool invalidateCurrRegions();
+	bool _subtitlesModRelative;
+	bool _subtitlesModXCenter;
+	int32 _subtitlesModX;
+	int32 _subtitlesModY;
+	int32 _subtitlesWidth;
 	AdRegion *_stickRegion;
 	bool _sceneIndependent;
-
+	bool _ignoreItems;
 	bool updateBlockRegion();
-
+	bool _forcedTalkAnimUsed;
+	char *_forcedTalkAnimName;
 	bool getExtendedFlag(const char *flagName) override;
 	bool resetSoundPan() override;
 	bool updateSounds() override;
@@ -61,65 +71,52 @@ public:
 	DECLARE_PERSISTENT(AdObject, BaseObject)
 	virtual void talk(const char *text, const char *sound = nullptr, uint32 duration = 0, const char *stances = nullptr, TTextAlign align = TAL_CENTER);
 	int32 getHeight() override;
-
+	AdSentence *_sentence;
 	bool setFont(const char *filename);
 	bool update() override;
 	bool display() override;
-
 	bool _drawn;
 	bool _active;
 	virtual bool playAnim(const char *filename);
-
-	TObjectType getType() const;
+	BaseSprite *_animSprite;
+	BaseSprite *_currentSprite;
+	TObjectState _state;
+	TObjectState _nextState;
+	TObjectType _type;
 	AdObject(BaseGame *inGame);
 	~AdObject() override;
-
+	BaseFont *_font;
+	BaseSprite *_tempSprite2;
+	BaseRegion *_blockRegion;
+	AdWaypointGroup *_wptGroup;
 	BaseRegion *_currentBlockRegion;
 	AdWaypointGroup *_currentWptGroup;
 	AdInventory *getInventory();
 
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+
 	bool afterMove() override;
+	AdRegion *_currentRegions[MAX_NUM_REGIONS];
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
-	bool updateSpriteAttachments();
-	bool displaySpriteAttachments(bool preDisplay);
 
-protected:
-	PartEmitter *_partEmitter;
-	bool _ignoreItems;
-	bool _forcedTalkAnimUsed;
-	char *_forcedTalkAnimName;
-	BaseSprite *_animSprite;
-	BaseSprite *_currentSprite;
-	AdSentence *_sentence;
-	TObjectState _state;
-	TObjectState _nextState;
-	TObjectType _type;
-	BaseFont *_font;
-	BaseSprite *_tempSprite2;
-	BaseRegion *_blockRegion;
-	AdWaypointGroup *_wptGroup;
-	AdObject *_registerAlias;
-	bool getScale(float *scaleX, float *scaleY);
-private:
-	bool _partFollowParent;
-	int32 _partOffsetX;
-	int32 _partOffsetY;
-	bool _subtitlesModRelative;
-	bool _subtitlesModXCenter;
-	int32 _subtitlesModX;
-	int32 _subtitlesModY;
-	int32 _subtitlesWidth;
-	AdRegion *_currentRegions[MAX_NUM_REGIONS];
 	BaseArray<AdObject *> _attachmentsPre;
 	BaseArray<AdObject *> _attachmentsPost;
+
+	bool updateSpriteAttachments();
+	bool displaySpriteAttachments(bool preDisplay);
+	AdObject *_registerAlias;
+
+private:
 	bool displaySpriteAttachment(AdObject *attachment);
 	AdInventory *_inventory;
+
+protected:
+	bool getScale(float *scaleX, float *scaleY);
 };
 
 } // End of namespace Wintermute

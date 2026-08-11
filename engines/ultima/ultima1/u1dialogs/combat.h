@@ -56,7 +56,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Combat(Ultima1Game *game, Shared::Maps::Direction direction, int weaponType, const Common::String weaponName);
+	Combat(Ultima1Game *game, Shared::Maps::Direction direction, int weaponType, const Common::String &weaponName);
 
 	/**
 	 * Draws the visual item on the screen

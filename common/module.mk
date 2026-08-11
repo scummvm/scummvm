@@ -26,10 +26,12 @@ MODULE_OBJS := \
 	osd_message_queue.o \
 	path.o \
 	platform.o \
+	printman.o \
 	punycode.o \
 	random.o \
 	rational.o \
 	rendermode.o \
+	rotationmode.o \
 	str.o \
 	stream.o \
 	streamdebug.o \
@@ -45,7 +47,8 @@ MODULE_OBJS := \
 	ustr.o \
 	util.o \
 	xpfloat.o \
-	zip-set.o
+	zip-set.o \
+	std/std.o
 
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \

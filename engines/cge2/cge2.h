@@ -111,6 +111,15 @@ struct SavegameHeader;
 
 #define kColorNum           6
 
+enum CGEAction {
+	kActionNone,
+	kActionInfo,
+	kActionEscape,
+	kActionSave,
+	kActionLoad,
+	kActionQuit
+};
+
 struct SavegameHeader {
 	uint8 version;
 	Common::String saveName;
@@ -126,7 +135,7 @@ enum GamePhase { kPhaseInGame, kPhaseIntro, kPhaseOver };
 
 // our engine debug channels
 enum {
-	kCGE2DebugOpcode = 1 << 0
+	kCGE2DebugOpcode = 1,
 };
 
 enum CallbackType {

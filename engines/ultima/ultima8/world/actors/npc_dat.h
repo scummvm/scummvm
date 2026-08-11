@@ -22,7 +22,7 @@
 #ifndef WORLD_ACTORS_NPC_DAT_H
 #define WORLD_ACTORS_NPC_DAT_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 
 namespace Ultima {
@@ -32,9 +32,9 @@ class NPCDat {
 public:
 	NPCDat();
 
-	static Std::vector<NPCDat *> load(RawArchive *archive);
+	static Common::Array<NPCDat *> load(RawArchive *archive);
 
-	const Std::string &getName() const {
+	const Common::String &getName() const {
 		return _name;
 	};
 
@@ -69,7 +69,7 @@ public:
 private:
 	NPCDat(Common::SeekableReadStream &datars, Common::SeekableReadStream &namers);
 
-	Std::string _name;
+	Common::String _name;
 	uint16 _minHp;
 	uint16 _maxHp;
 	uint16 _shapeNo;

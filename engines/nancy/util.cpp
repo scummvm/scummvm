@@ -18,8 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "engines/nancy/enginedata.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
+
+#include "engines/nancy/state/scene.h"
+#include "engines/nancy/ui/textbox.h"
+
+#include "common/config-manager.h"
 #include "common/system.h"
 
 namespace Nancy {
@@ -247,6 +253,79 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::Path> &
 	}
 }
 
+void readUIButton(Common::SeekableReadStream &stream, UIButtonRecord &dst) {
+	// Read common fields for both buttons and sliders
+	readFilename(stream, dst.primaryImageName);
+	readFilename(stream, dst.secondaryImageName);
+	dst.id = stream.readUint32LE();
+	for (int i = 0; i < 4; ++i) {
+		readRect(stream, dst.sourceRects[i]);
+	}
+	readRect(stream, dst.srcBackgroundRestore);
+	readRect(stream, dst.destRect);
+	dst.destUsesGameFrameOffset = stream.readUint32LE();
+
+	dst.hoverEnableFlag = stream.readUint32LE();
+	dst.hoverCursorFlag = stream.readUint32LE();
+	dst.secondaryStateField = stream.readUint32LE();
+	dst.initialState = stream.readUint32LE();
+	dst.reservedField = stream.readUint32LE();
+
+	dst.clickSound.readNormal(stream);
+}
+
+void readUIButtonSlot(Common::SeekableReadStream &stream, UIButtonSlot &dst) {
+	dst.enabled = stream.readUint32LE();
+	dst.id = stream.readUint32LE();
+	readUIButton(stream, dst.button);
+}
+
+void readUISlider(Common::SeekableReadStream &stream, UISliderRecord &dst) {
+	// Read common fields for both buttons and sliders
+	readFilename(stream, dst.primaryImageName);
+	readFilename(stream, dst.secondaryImageName);
+	dst.id = stream.readUint32LE();
+	for (int i = 0; i < 4; ++i) {
+		readRect(stream, dst.sourceRects[i]);
+	}
+	readRect(stream, dst.srcBackgroundRestore);
+	readRect(stream, dst.destRect);
+	dst.destUsesGameFrameOffset = stream.readUint32LE();
+
+	dst.unknownA = stream.readUint32LE();
+	dst.isDraggable = stream.readUint32LE();
+	dst.unknownC = stream.readUint32LE();
+	dst.orientation = stream.readUint32LE();
+	dst.positionHint = stream.readUint32LE();
+	dst.secondaryStateField = stream.readUint32LE();
+	dst.initialState = stream.readUint32LE();
+}
+
+// Reads the base header that precedes every Nancy 10 popup-UI
+// chunk (UIIV, UICO, UICL, UINB).
+void readUIPopupHeader(Common::SeekableReadStream &stream, UIPopupHeader &dst) {
+	readFilename(stream, dst.imageName);
+	dst.unknownHeaderField = stream.readUint32LE();
+	dst.linkbackScene = stream.readSint16LE();
+	readRect(stream, dst.normalSrcRect);
+	readRect(stream, dst.maximizedSrcRect);
+	readRect(stream, dst.normalDestRect);
+	readRect(stream, dst.maximizedDestRect);
+	dst.overlayInGameFrame = stream.readUint32LE();
+
+	stream.skip(4);
+
+	for (int i = 0; i < 4; ++i) {
+		dst.sounds[i].readNormal(stream);
+	}
+
+	dst.secondaryButtonEnabled = stream.readUint32LE();
+	readUIButton(stream, dst.secondaryButton);
+
+	dst.sliderEnabled = stream.readUint32LE();
+	readUISlider(stream, dst.slider);
+}
+
 // A text line will often be broken up into chunks separated by nulls, use
 // this function to put it back together as a Common::String
 void assembleTextLine(char *rawCaption, Common::String &output, uint size) {
@@ -267,6 +346,42 @@ void assembleTextLine(char *rawCaption, Common::String &output, uint size) {
 	uint pos = Common::String::npos;
 	while (pos = output.find(">>"), pos != Common::String::npos) {
 		output.replace(pos, 2, ">");
+	}
+}
+
+Common::String resolveSubtitleText(const Common::String &keyOrText, const Common::String &fallback, const char *tableID) {
+	if (!keyOrText.empty()) {
+		const CVTX *table = (const CVTX *)g_nancy->getEngineData(tableID);
+		if (table && table->texts.contains(keyOrText)) {
+			return table->texts[keyOrText];
+		}
+	}
+
+	return fallback;
+}
+
+Common::String readSubtitleText(Common::SeekableReadStream &stream) {
+	char buf[30];
+	stream.read(buf, sizeof(buf));
+	buf[sizeof(buf) - 1] = '\0';
+	Common::String text(buf);
+
+	return resolveSubtitleText(text, text);
+}
+
+void showSubtitle(const Common::String &text, bool forceRedraw, int overrideFontID) {
+	if (text.empty() || !ConfMan.getBool("subtitles")) {
+		return;
+	}
+
+	UI::Textbox &textbox = NancySceneState.getTextbox();
+	textbox.clear();
+	if (overrideFontID >= 0) {
+		textbox.setOverrideFont(overrideFontID);
+	}
+	textbox.addTextLine(text);
+	if (forceRedraw) {
+		textbox.drawTextbox();
 	}
 }
 

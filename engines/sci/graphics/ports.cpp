@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "common/util.h"
 
 #include "sci/console.h"
@@ -126,7 +127,7 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	openPort(_wmgrPort);
 	setPort(_wmgrPort);
 	// SCI0 games till kq4 (.502 - not including) did not adjust against _wmgrPort in kNewWindow
-	//  We leave _wmgrPort top at 0, so the adjustment wont get done
+	//  We leave _wmgrPort top at 0, so the adjustment won't get done
 	if (!_usesOldGfxFunctions) {
 		setOrigin(0, offTop);
 		_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
@@ -249,6 +250,11 @@ void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 	} else {
 		error("kDisposeWindow: used unknown window id %d", windowId);
 	}
+
+	if (windowId == _portIdWithEditText) {
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		_portIdWithEditText = -1;
+	}
 }
 
 int16 GfxPorts::isFrontWindow(Window *pWnd) {
@@ -338,7 +344,7 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 
 	if (r.width() > _screen->getScriptWidth()) {
 		// We get invalid dimensions at least at the end of sq3 (script bug!).
-		// Same happens very often in lsl5, sierra sci didnt fix it but it looked awful.
+		// Same happens very often in lsl5, sierra sci didn't fix it but it looked awful.
 		// Also happens frequently in the demo of GK1.
 		warning("Fixing too large window, left: %d, right: %d", dims.left, dims.right);
 		r.left = 0;
@@ -679,7 +685,7 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 		while (_priorityBands[--y] == _priorityBandCount)
 			_priorityBands[y]--;
 	}
-	// We fill space that is left over with the highest band (hardcoded 200 limit, because this algo isnt meant to be used on hires)
+	// We fill space that is left over with the highest band (hardcoded 200 limit, because this algo isn't meant to be used on hires)
 	for (y = _priorityBottom; y < 200; y++)
 		_priorityBands[y] = _priorityBandCount;
 

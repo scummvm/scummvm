@@ -39,8 +39,8 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 
 	while (g_system->getMillis() < delayCtr) {
 		while (events.pollEvent()) {
-			if ((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) {
-				if (events.event().kbd.keycode == Common::KEYCODE_ESCAPE)
+			if ((events.type() == Common::EVENT_CUSTOM_ENGINE_ACTION_START) && (events.event().customType != kActionNone)) {
+				if (events.event().customType == kActionEscape)
 					return ABORT_END_INTRO;
 				else
 					return ABORT_NEXT_SCENE;

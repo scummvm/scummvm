@@ -59,6 +59,11 @@ class PoolObjectBase;
 	class::static_##func
 
 /**
+ * Patch Lua state after loading a broken Grim save
+ */
+void lua_PatchGrimSave();
+
+/**
  * @brief A list of arguments to be passed to a Lua function.
  *
  * This is a convenience class to pass arguments to a Lua function, using

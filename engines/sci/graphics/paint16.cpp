@@ -33,7 +33,8 @@
 #include "sci/graphics/picture.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/drivers/gfxdriver.h"
+#include "sci/graphics/palette16.h"
 #include "sci/graphics/portrait.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
@@ -45,14 +46,36 @@ namespace Sci {
 GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster16 *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
 	: _resMan(resMan), _segMan(segMan), _cache(cache), _ports(ports),
 	  _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette),
-	  _transitions(transitions), _audio(audio), _EGAdrawingVisualize(false) {
+	  _transitions(transitions), _audio(audio), _EGAdrawingVisualize(false),
+	  _hiresDrawObjs(nullptr), _hiresPortraitWorkaroundFlag(false) {
 
 	// _animate and _text16 will be initialized later on
 	_animate = nullptr;
 	_text16 = nullptr;
 }
 
+// The original KQ6WinCD interpreter saves the hires drawing information in a linked list. This is used to redraw the hires cels after disposing a window.
+struct HiresDrawData {
+	HiresDrawData(HiresDrawData *chain, reg_t hiresHandle, GuiResourceId id, int16 loop, int16 cel, uint16 left, uint16 top, uint16 pal, byte priority, bool needsWorkaround)
+		: handle(hiresHandle), viewId(id), lpNo(loop), celNo(cel), leftPos(left), topPos(top), palNo(pal), prio(priority), waFlag(needsWorkaround), prev(nullptr), next(chain) {
+		if (chain)
+			chain->prev = this;
+	}
+	reg_t handle;
+	GuiResourceId viewId;
+	int16 lpNo, celNo;
+	uint16 leftPos, topPos, palNo;
+	byte prio;
+	bool waFlag;
+	HiresDrawData *prev, *next;
+};
+
 GfxPaint16::~GfxPaint16() {
+	while (_hiresDrawObjs) {
+		HiresDrawData *next = _hiresDrawObjs->next;
+		delete _hiresDrawObjs;
+		_hiresDrawObjs = next;
+	}
 }
 
 void GfxPaint16::init(GfxAnimate *animate, GfxText16 *text16) {
@@ -65,8 +88,6 @@ void GfxPaint16::debugSetEGAdrawingVisualize(bool state) {
 }
 
 void GfxPaint16::drawPicture(GuiResourceId pictureId, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
-	GfxPicture *picture = new GfxPicture(_resMan, _coordAdjuster, _ports, _screen, _palette, pictureId, _EGAdrawingVisualize);
-
 	// Set up custom per-picture palette mod
 	doCustomPicPalette(_screen, pictureId);
 
@@ -74,8 +95,9 @@ void GfxPaint16::drawPicture(GuiResourceId pictureId, bool mirroredFlag, bool ad
 	if (!addToFlag)
 		clearScreen(_screen->getColorWhite());
 
-	picture->draw(mirroredFlag, addToFlag, paletteId);
-	delete picture;
+	// Draw the picture
+	GfxPicture picture(_resMan, _coordAdjuster, _ports, _screen, _palette, pictureId, _EGAdrawingVisualize);
+	picture.draw(mirroredFlag, addToFlag, paletteId);
 
 	// We make a call to SciPalette here, for increasing sys timestamp and also loading targetpalette, if palvary active
 	//  (SCI1.1 only)
@@ -110,12 +132,12 @@ void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo,
 	}
 }
 
-// This version of drawCel is not supposed to call BitsShow()!
+// This version of drawCel is not supposed to call bitsShow()!
 void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, uint16 scaleSignal) {
 	drawCel(_cache->getView(viewId), loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY, scaleSignal);
 }
 
-// This version of drawCel is not supposed to call BitsShow()!
+// This version of drawCel is not supposed to call bitsShow()!
 void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, uint16 scaleSignal) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_ports->_curPort->rect);
@@ -130,59 +152,41 @@ void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common:
 		view->drawScaled(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, scaleX, scaleY, scaleSignal);
 }
 
-// This is used as replacement for drawCelAndShow() when hires-cels are drawn to
-// screen. Hires-cels are available only SCI 1.1+.
-void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t upscaledHiresHandle, uint16 scaleX, uint16 scaleY) {
+// This is used as replacement for drawCelAndShow() when hires cels are drawn to screen. Hires cels are available only in SCI 1.1.
+void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t hiresHandle, bool storeDrawingInfo) {
 	GfxView *view = _cache->getView(viewId);
-	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
-	Common::Point curPortPos;
-	bool upscaledHiresHack = false;
+	if (!view)
+		return;
 
-	if (view) {
-		if ((leftPos == 0) && (topPos == 0)) {
-			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we
-			// need to get coordinates from upscaledHiresHandle. I'm not sure if
-			// this is what we are supposed to do or if there is some other bug
-			// that actually makes coordinates to be 0 in the first place.
-			byte *memoryPtr = nullptr;
-			memoryPtr = _segMan->getHunkPointer(upscaledHiresHandle);
-			if (memoryPtr) {
-				Common::Rect upscaledHiresRect;
-				_screen->bitsGetRect(memoryPtr, &upscaledHiresRect);
-				leftPos = upscaledHiresRect.left;
-				topPos = upscaledHiresRect.top;
-				upscaledHiresHack = true;
-			}
-		}
-
-		celRect.left = leftPos;
-		celRect.top = topPos;
-		celRect.right = celRect.left + view->getWidth(loopNo, celNo);
-		celRect.bottom = celRect.top + view->getHeight(loopNo, celNo);
-		// adjust curPort to upscaled hires
-		clipRect = celRect;
-		curPortRect = _ports->_curPort->rect;
-		view->adjustToUpscaledCoordinates(curPortRect.top, curPortRect.left);
-		view->adjustToUpscaledCoordinates(curPortRect.bottom, curPortRect.right);
-		curPortRect.bottom++;
-		curPortRect.right++;
-		clipRect.clip(curPortRect);
-		if (clipRect.isEmpty()) // nothing to draw
-			return;
-
-		clipRectTranslated = clipRect;
-		if (!upscaledHiresHack) {
-			curPortPos.x = _ports->_curPort->left; curPortPos.y = _ports->_curPort->top;
-			view->adjustToUpscaledCoordinates(curPortPos.y, curPortPos.x);
-			clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
-			clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
-		}
-
-		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, true);
-		if (!_screen->_picNotValidSci11) {
-			_screen->copyDisplayRectToScreen(clipRectTranslated);
-		}
+	byte *memoryPtr = _segMan->getHunkPointer(hiresHandle);
+	if (!memoryPtr) {
+		// The original KQ6WinCD interpreter does not treat this as an error, it just skips the hires drawing. It happens all the time
+		// when attempting to redraw the hires cels from the _hiresDrawObjs chain. We're supposed to just skip the invalidated items.
+		return;
 	}
+
+	Common::Rect picRect;
+	_screen->bitsGetRect(memoryPtr, &picRect);
+	Common::Rect clipRect(makeHiresRect(picRect));
+	Common::Rect celRect(view->getWidth(loopNo, celNo), view->getHeight(loopNo, celNo));
+	celRect.translate(leftPos + clipRect.left, topPos + clipRect.top);
+	clipRect.clip(celRect);
+
+	view->draw(celRect, clipRect, clipRect, loopNo, celNo, priority, paletteNo, true);
+
+	// The original KQ6WinCD interpreter saves the hires drawing information in a linked list. There are two use cases, one is redrawing the
+	// window background when receiving WM_PAINT messages (which is irrelevant for us, since that happens in the backend) and the other is
+	// redrawing the inventory after displaying a text window over it. This only happens in mixed speech+text mode, which does not even exist
+	// in the original. We do have that mode as a ScummVM feature, though. That's why we have that code, to be able to refresh the inventory.
+	// We also check if the portrait is drawn outside the viewport boundaries (happens in the unofficial mixed speech+text mode) and set
+	// a flag to trigger a workaround when restoring the background.
+	if (storeDrawingInfo && !hasHiresDrawObjectAt(leftPos, topPos))
+		_hiresDrawObjs = new HiresDrawData(_hiresDrawObjs, hiresHandle, viewId, loopNo, celNo, leftPos, topPos, paletteNo, priority, picRect.top < _ports->_curPort->top);
+}
+
+void GfxPaint16::redrawHiresCels() {
+	for (HiresDrawData *i = _hiresDrawObjs; i; i = i->next)
+		drawHiresCelAndShow(i->viewId, i->lpNo, i->celNo, i->leftPos, i->topPos, i->prio, i->palNo, i->handle, false);
 }
 
 void GfxPaint16::clearScreen(byte color) {
@@ -199,17 +203,15 @@ void GfxPaint16::invertRect(const Common::Rect &rect) {
 // used in SCI0early exclusively
 void GfxPaint16::invertRectViaXOR(const Common::Rect &rect) {
 	Common::Rect r = rect;
-	int16 x, y;
-	byte curVisual;
 
 	r.clip(_ports->_curPort->rect);
 	if (r.isEmpty()) // nothing to invert
 		return;
 
 	_ports->offsetRect(r);
-	for (y = r.top; y < r.bottom; y++) {
-		for (x = r.left; x < r.right; x++) {
-			curVisual = _screen->getVisual(x, y);
+	for (int16 y = r.top; y < r.bottom; y++) {
+		for (int16 x = r.left; x < r.right; x++) {
+			byte curVisual = _screen->getVisual(x, y);
 			_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, curVisual ^ 0x0f, 0, 0);
 		}
 	}
@@ -232,14 +234,13 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte color,
 	int16 oldPenMode = _ports->_curPort->penMode;
 	_ports->offsetRect(r);
 	int16 x, y;
-	byte curVisual;
 
 	// Doing visual first
 	if (drawFlags & GFX_SCREEN_MASK_VISUAL) {
 		if (oldPenMode == 2) { // invert mode
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
-					curVisual = _screen->getVisual(x, y);
+					byte curVisual = _screen->getVisual(x, y);
 					if (curVisual == color) {
 						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, priority, 0, 0);
 					} else if (curVisual == priority) {
@@ -300,11 +301,26 @@ void GfxPaint16::frameRect(const Common::Rect &rect) {
 
 void GfxPaint16::bitsShow(const Common::Rect &rect) {
 	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
+
+	// WORKAROUND for vertically misplaced hires portraits in mixed speech+text mode in KQ6CD. The original interpreter
+	// did not have that mode, so the devs had no need to fix it. These portraits get drawn above the viewport top, where
+	// the engine would normally be unable to update the screen. We just have to offset the rect first, before clipping it,
+	// to make it work. Another solution would be to improve the script patches that implement the speech/text mode for
+	// better vertical placement of the portrait frames (inside the port rect).
+	bool triggeredWorkaround = false;;
+	if (rect.top < 0 && _hiresPortraitWorkaroundFlag) {
+		_ports->offsetRect(workerRect);
+		triggeredWorkaround = true;
+		_hiresPortraitWorkaroundFlag = false;
+	}
+
 	workerRect.clip(_ports->_curPort->rect);
 	if (workerRect.isEmpty()) // nothing to show
 		return;
 
-	_ports->offsetRect(workerRect);
+	// WORKAROUND, see comment above. Normally, the call to _ports->offsetRect(workerRect) would be unconditional here.
+	if (!triggeredWorkaround)
+		_ports->offsetRect(workerRect);
 
 	// We adjust the left/right coordinates to even coordinates
 	workerRect.left &= 0xFFFE; // round down
@@ -312,47 +328,28 @@ void GfxPaint16::bitsShow(const Common::Rect &rect) {
 
 	_screen->copyRectToScreen(workerRect);
 }
-
-void GfxPaint16::bitsShowHires(const Common::Rect &rect) {
-	_screen->copyDisplayRectToScreen(rect);
-}
-
-reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
-	reg_t memoryId;
-	byte *memoryPtr;
-	int size;
-
+reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask, bool hiresFlag) {
 	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
-	workerRect.clip(_ports->_curPort->rect);
-	if (workerRect.isEmpty()) // nothing to save
-		return NULL_REG;
-
-	if (screenMask == GFX_SCREEN_MASK_DISPLAY) {
-		// The coordinates we are given are actually up-to-including right/bottom - we extend accordingly
-		workerRect.bottom++;
-		workerRect.right++;
-		// Adjust rect to upscaled hires, but dont adjust according to port
-		_screen->adjustToUpscaledCoordinates(workerRect.top, workerRect.left);
-		_screen->adjustToUpscaledCoordinates(workerRect.bottom, workerRect.right);
-	} else {
+	if (!hiresFlag) { // KQ6CD Win only does this if not called from the special kGraph 15 case (= kGraphSaveUpscaledHiresBox)
+		workerRect.clip(_ports->_curPort->rect);
+		if (workerRect.isEmpty()) // nothing to save
+			return NULL_REG;
 		_ports->offsetRect(workerRect);
 	}
 
 	// now actually ask _screen how much space it will need for saving
-	size = _screen->bitsGetDataSize(workerRect, screenMask);
+	int size = _screen->bitsGetDataSize(workerRect, screenMask);
 
-	memoryId = _segMan->allocateHunkEntry("SaveBits()", size);
-	memoryPtr = _segMan->getHunkPointer(memoryId);
+	reg_t memoryId = _segMan->allocateHunkEntry("SaveBits()", size);
+	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
 	if (memoryPtr)
 		_screen->bitsSave(workerRect, screenMask, memoryPtr);
 	return memoryId;
 }
 
 void GfxPaint16::bitsGetRect(reg_t memoryHandle, Common::Rect *destRect) {
-	byte *memoryPtr = nullptr;
-
 	if (!memoryHandle.isNull()) {
-		memoryPtr = _segMan->getHunkPointer(memoryHandle);
+		byte *memoryPtr = _segMan->getHunkPointer(memoryHandle);
 
 		if (memoryPtr) {
 			_screen->bitsGetRect(memoryPtr, destRect);
@@ -361,15 +358,17 @@ void GfxPaint16::bitsGetRect(reg_t memoryHandle, Common::Rect *destRect) {
 }
 
 void GfxPaint16::bitsRestore(reg_t memoryHandle) {
-	byte *memoryPtr = nullptr;
-
 	if (!memoryHandle.isNull()) {
-		memoryPtr = _segMan->getHunkPointer(memoryHandle);
+		byte *memoryPtr = _segMan->getHunkPointer(memoryHandle);
 
 		if (memoryPtr) {
 			_screen->bitsRestore(memoryPtr);
 			bitsFree(memoryHandle);
 		}
+
+		// KQ6WinCD specific
+		if (_screen->gfxDriver()->supportsHiResGraphics())
+			removeHiresDrawObject(memoryHandle);
 	}
 }
 
@@ -401,13 +400,12 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 	_ports->setPort(oldPort);
 }
 
-void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, bool hiresMode, reg_t upscaledHiresHandle) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for
-	// upscaled hires here
-	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
+void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, bool hiresMode, reg_t hiresHandle) {
+	// some calls are hiresMode even under kq6 DOS, that's why we check for hires caps here
+	if (!hiresMode || !_screen->gfxDriver()->supportsHiResGraphics()) {
 		drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, scaleX, scaleY);
 	} else {
-		drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
+		drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, hiresHandle, true);
 	}
 }
 
@@ -436,25 +434,16 @@ void GfxPaint16::kernelGraphDrawLine(Common::Point startPoint, Common::Point end
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }
 
-reg_t GfxPaint16::kernelGraphSaveBox(const Common::Rect &rect, uint16 screenMask) {
-	return bitsSave(rect, screenMask);
-}
-
-reg_t GfxPaint16::kernelGraphSaveUpscaledHiresBox(const Common::Rect &rect) {
-	return bitsSave(rect, GFX_SCREEN_MASK_DISPLAY);
+reg_t GfxPaint16::kernelGraphSaveBox(const Common::Rect &rect, uint16 screenMask, bool hiresFlag) {
+	return bitsSave(rect, screenMask, hiresFlag);
 }
 
 void GfxPaint16::kernelGraphRestoreBox(reg_t handle) {
 	bitsRestore(handle);
 }
 
-void GfxPaint16::kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for
-	// upscaled hires here
-	if ((!hiresMode) || (!_screen->getUpscaledHires()))
-		bitsShow(rect);
-	else
-		bitsShowHires(rect);
+void GfxPaint16::kernelGraphUpdateBox(const Common::Rect &rect) {
+	bitsShow(rect);
 }
 
 void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
@@ -600,9 +589,19 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 		_ports->penColor(colorPen);
 	}
 
-	_text16->Box(text, languageSplitter, false, rect, alignment, -1);
-	if (_screen->_picNotValid == 0 && bRedraw)
+	// To make sure that the hires font used by PQ2 PC-98 and by the Korean fan translations does not get overdrawn we update the
+	// display area before printing the text. The other (non-PQ2) PC-98 versions use a lowres font here, so this fix is only for
+	// PQ2 PC-98 and for the Korean fan translations.
+	bool needCJKFix = (g_sci->getLanguage() == Common::KO_KOR || (g_sci->getPlatform() == Common::kPlatformPC98 && g_sci->getGameId() == GID_PQ2));
+	if (needCJKFix && !_screen->_picNotValid && bRedraw)
 		bitsShow(rect);
+
+	_text16->Box(text, languageSplitter, needCJKFix, rect, alignment, -1);
+
+	// See comment above.
+	if (!needCJKFix && _screen->_picNotValid == 0 && bRedraw)
+		bitsShow(rect);
+
 	// restoring port and cursor pos
 	Port *currport = _ports->getPort();
 	uint16 tTop = currport->curTop;
@@ -640,12 +639,53 @@ void GfxPaint16::kernelPortraitShow(const Common::String &resourceName, Common::
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)
 	position.x += _ports->getPort()->left; position.y += _ports->getPort()->top;
-	_screen->adjustToUpscaledCoordinates(position.y, position.x);
 	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
 	delete myPortrait;
 }
 
 void GfxPaint16::kernelPortraitUnload(uint16 portraitId) {
+}
+
+void GfxPaint16::removeHiresDrawObject(reg_t handle) {
+	for (HiresDrawData *i = _hiresDrawObjs; i; ) {
+		HiresDrawData *next = i->next;
+		if (i->handle != handle) {
+			i = next;
+			continue;
+		}
+
+		// WORKAROUND for vertically misplaced hires portraits in mixed speech+text mode in KQ6CD. If we have
+		// an entry which is flagged as needing a workaround, we set the notification for bitsShow() here.
+		if (i->waFlag)
+			_hiresPortraitWorkaroundFlag = true;
+
+		// Unlink and delete entry
+		if (i->next)
+			i->next->prev = i->prev;
+		if (i->prev)
+			i->prev->next = i->next;
+		else
+			_hiresDrawObjs = i->next;
+		delete i;
+
+		i = next;
+	}
+}
+
+bool GfxPaint16::hasHiresDrawObjectAt(uint16 x, uint16 y) const {
+	for (HiresDrawData *i = _hiresDrawObjs; i; i = i->next) {
+		if (i->leftPos == x && i->topPos == y)
+			return true;
+	}
+	return false;
+}
+
+Common::Rect GfxPaint16::makeHiresRect(Common::Rect &rect) const {
+	Common::Point topLeft(rect.left, rect.top);
+	Common::Point bottomRight(rect.right, rect.bottom);
+	topLeft = _screen->gfxDriver()->getRealCoords(topLeft);
+	bottomRight = _screen->gfxDriver()->getRealCoords(bottomRight);
+	return Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
 }
 
 } // End of namespace Sci

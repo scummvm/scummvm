@@ -360,13 +360,13 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
+ScValue *BaseKeyboardState::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("keyboard");
 		return _scValue;
 	}
@@ -374,7 +374,7 @@ ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Key
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Key") {
+	else if (strcmp(name, "Key") == 0) {
 		if (_currentPrintable) {
 			char key[2];
 			key[0] = (char)_currentCharCode;
@@ -390,7 +390,7 @@ ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Printable
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Printable") {
+	else if (strcmp(name, "Printable") == 0) {
 		_scValue->setBool(_currentPrintable);
 		return _scValue;
 	}
@@ -398,7 +398,7 @@ ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// KeyCode
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "KeyCode") {
+	else if (strcmp(name, "KeyCode") == 0) {
 		_scValue->setInt(_currentCharCode);
 		return _scValue;
 	}
@@ -406,7 +406,7 @@ ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsShift
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "IsShift") {
+	else if (strcmp(name, "IsShift") == 0) {
 		_scValue->setBool(_currentShift);
 		return _scValue;
 	}
@@ -414,7 +414,7 @@ ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsAlt
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "IsAlt") {
+	else if (strcmp(name, "IsAlt") == 0) {
 		_scValue->setBool(_currentAlt);
 		return _scValue;
 	}
@@ -422,7 +422,7 @@ ScValue *BaseKeyboardState::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IsControl
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "IsControl") {
+	else if (strcmp(name, "IsControl") == 0) {
 		_scValue->setBool(_currentControl);
 		return _scValue;
 	} else {

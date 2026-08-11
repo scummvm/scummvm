@@ -120,6 +120,11 @@ class TTSVoice {
 		 */
 		String getDescription() { return _description; };
 
+		/**
+		 * Sets the voice description, in case it has to be changed after creation.
+		 */
+		void setDescription(String description) { _description = description; };
+
 	protected:
 		Gender _gender; ///< Gender of the voice
 		Age _age; ///< Age of the voice
@@ -168,7 +173,7 @@ public:
 	 *		INTERRUPT - interrupts the current speech
 	 *		INTERRUPT_NO_REPEAT - interrupts the speech (deletes the whole queue),
 	 *			if the str is the same as the string currently being said,
-	 *			it lets the current string finish.
+	 *			it lets the current string finish and drops the new request.
 	 *		QUEUE - queues the speech
 	 *		QUEUE_NO_REPEAT - queues the speech only if the str is different than
 	 *			the last string in the queue (or the string, that is currently

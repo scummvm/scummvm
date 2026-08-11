@@ -390,7 +390,7 @@ int EoBInfProcessor::oeob_movePartyOrObject(int8 *data) {
 		for (int i = 0; i < 30; i++) {
 			if (_vm->_monsters[i].block != c)
 				continue;
-			_vm->placeMonster(&_vm->_monsters[i], d, _vm->_monsters[i].pos);
+			_vm->placeMonster(&_vm->_monsters[i], d, _vm->_monsters[i].dir);
 		}
 		debugC(5, kDebugLevelScript, "         - move monsters on block '0x%.04X' to block '0x%.04X'", c, d);
 
@@ -455,7 +455,7 @@ int EoBInfProcessor::oeob_movePartyOrObject(int8 *data) {
 			}
 
 		} else {
-			for (int i = 0; i < 600; i++) {
+			for (uint i = 0; i < _vm->_items.size(); i++) {
 				if (_vm->_items[i].level != e || _vm->_items[i].block != c)
 					continue;
 				_vm->_items[i].level = f;
@@ -755,7 +755,7 @@ int EoBInfProcessor::oeob_eval_v1(int8 *data) {
 	int a = 0;
 	int b = 0;
 	int i = 0;
-	EoBItem *itm = &_vm->_items[_vm->_itemInHand];
+	const EoBItem *itm = &_vm->_items[_vm->_itemInHand];
 	Common::String tempString1;
 	Common::String tempString2;
 
@@ -975,7 +975,7 @@ int EoBInfProcessor::oeob_eval_v2(int8 *data) {
 	int a = 0;
 	int b = 0;
 	int i = 0;
-	EoBItem *itm = (_vm->_itemInHand != -1) ? &_vm->_items[_vm->_itemInHand] : 0;
+	const EoBItem *itm = (_vm->_itemInHand != -1) ? &_vm->_items[_vm->_itemInHand] : 0;
 	Common::String tempString1;
 	Common::String tempString2;
 
@@ -1461,7 +1461,7 @@ int EoBInfProcessor::oeob_changeDirection(int8 *data) {
 
 	} else if (cmd == -11) {
 		for (int i = 0; i < 10; i++) {
-			if (_vm->_flyingObjects[i].enable)
+			if (_vm->_flyingObjects[i].enable && _vm->_flyingObjects[i].curBlock == _lastScriptFunc)
 				_vm->_flyingObjects[i].direction = (_vm->_flyingObjects[i].direction + dir) & 3;
 		}
 	}

@@ -53,7 +53,7 @@ GameplayDialog::GameplayDialog(GUI_CallBack *callback)
 	grab_focus();
 }
 
-int get_selected_game_index(const Std::string configvalue) {
+int get_selected_game_index(const Common::String configvalue) {
 	if (string_i_compare(configvalue, "menuselect")) {
 		return 0;
 	} else if (string_i_compare(configvalue, "ultima6")) {
@@ -88,12 +88,12 @@ bool GameplayDialog::init() {
 	const char *const selected_game_text[] = {"Menu Select", "Ultima VI", "Savage Empire", "Martian Dreams"};
 	const char *const converse_style_text[] = {"Default", "U7 Style", "WOU Style"};
 
-	Std::string selected_game;
+	Common::String selected_game;
 	config->value("config/loadgame", selected_game, "");
 
 	bool is_u6 = (game->get_game_type() == NUVIE_GAME_U6);
 	bool show_stealing, skip_intro, show_console, use_original_cursor, solid_bg;
-	Std::string key = config_get_game_key(config);
+	Common::String key = config_get_game_key(config);
 	config->value(key + "/skip_intro", skip_intro, false);
 	config->value("config/general/show_console", show_console, false);
 	config->value("config/general/enable_cursors", use_original_cursor, false);
@@ -257,7 +257,7 @@ GUI_status GameplayDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 	} else if (caller == save_button) {
 		Game *game  = Game::get_game();
 		Configuration *config = game->get_config();
-		Std::string key = config_get_game_key(config);
+		Common::String key = config_get_game_key(config);
 
 		game->get_party()->set_formation(formation_button->GetSelection());
 		config->set("config/general/party_formation", formation_button->GetSelection() ? "yes" : "no");

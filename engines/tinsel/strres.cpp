@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * String resource managment routines
+ * String resource management routines
  */
 
 #include "tinsel/dw.h"
@@ -98,7 +98,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 		if ((newLang == TXT_ENGLISH) || !f.open(_vm->getTextFile(TXT_ENGLISH))) {
 			char buf[50];
 			Common::sprintf_s(buf, CANNOT_FIND_FILE, _vm->getTextFile(newLang));
-			GUI::MessageDialog dialog(buf, "OK");
+			GUI::MessageDialog dialog(buf);
 			dialog.runModal();
 
 			error(CANNOT_FIND_FILE, _vm->getTextFile(newLang));

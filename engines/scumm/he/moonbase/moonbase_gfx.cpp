@@ -403,7 +403,9 @@ void Wiz::rawMoonbaseBitmapBlit(WizRawBitmap *dstBitmap, Common::Rect *dstRectPt
 		// Left or right?
 		if (srcRect.left <= srcRect.right) {
 			while (--ch >= 0) {
-				memcpy(d, s, ca);
+				for (x = 0; x < ca; x++) {
+					d[x] = FROM_LE_16(s[x]);
+				}
 
 				d += dw;
 				s += sw;
@@ -415,7 +417,7 @@ void Wiz::rawMoonbaseBitmapBlit(WizRawBitmap *dstBitmap, Common::Rect *dstRectPt
 
 			while (--ch >= 0) {
 				for (x = cw; --x >= 0;) {
-					*d++ = *s--;
+					*d++ = FROM_LE_16(*s--);
 				}
 
 				d += dw;
@@ -427,7 +429,7 @@ void Wiz::rawMoonbaseBitmapBlit(WizRawBitmap *dstBitmap, Common::Rect *dstRectPt
 
 static void trleFLIPMoonbaseBackwardsPixelCopy(WizRawPixel16 *dstPtr, WizRawPixel16 *srcPtr, int size) {
 	while (size-- > 0) {
-		*dstPtr-- = *srcPtr++;
+		*dstPtr-- = FROM_LE_16(*srcPtr++);
 	}
 }
 
@@ -443,11 +445,13 @@ static void trleFLIPDecompressMoonbaseLineForward(Wiz *wiz, WizRawPixel16 *destP
 			destPtr += runCount;
 		},
 		{
-			wiz->rawPixelMemset(destPtr, READ_LE_UINT16(dataStream), runCount);
+			wiz->rawPixelMemset(destPtr, FROM_LE_16(*((uint16 *)dataStream)), runCount);
 			destPtr += runCount;
 		},
 		{
-			memcpy(destPtr, dataStream, runCount * sizeof(WizRawPixel16));
+			for (int i = 0; i < runCount; i++) {
+				destPtr[i] = FROM_LE_16(((WizRawPixel16 *)dataStream)[i]);
+			}
 			destPtr += runCount;
 		}
 	);
@@ -466,7 +470,7 @@ static void trleFLIPDecompressMoonbaseLineBackward(Wiz *wiz, WizRawPixel16 *dest
 		},
 		{
 			destPtr -= runCount;
-			wiz->rawPixelMemset(destPtr + 1, READ_LE_UINT16(dataStream), runCount);
+			wiz->rawPixelMemset(destPtr + 1, FROM_LE_16(*((uint16 *)dataStream)), runCount);
 		},
 		{
 			trleFLIPMoonbaseBackwardsPixelCopy(destPtr, (WizRawPixel16 *)dataStream, runCount);
@@ -889,19 +893,19 @@ void Wiz::blitT14CodecImage(byte *dst, int dstw, int dsth, int dstPitch, const C
 				for (int c = 0; c < cnt; c++) {
 					if (pixels >= sx) {
 						if (rawROP == T14_MMX_PREMUL_ALPHA_COPY) { // MMX_PREMUL_ALPHA_COPY
-							WRITE_LE_UINT16(dst1, READ_LE_UINT16(src));
+							WRITE_UINT16(dst1, READ_LE_UINT16(src));
 						} else if (rawROP == T14_MMX_ADDITIVE) { // MMX_ADDITIVE
 							uint16 color = READ_LE_UINT16(src);
-							uint16 orig = READ_LE_UINT16(dst1);
+							uint16 orig = READ_UINT16(dst1);
 
 							uint32 r = MIN<uint32>(0x7c00, (orig & 0x7c00) + (color & 0x7c00));
 							uint32 g = MIN<uint32>(0x03e0, (orig & 0x03e0) + (color & 0x03e0));
 							uint32 b = MIN<uint32>(0x001f, (orig & 0x001f) + (color & 0x001f));
-							WRITE_LE_UINT16(dst1, (r | g | b));
+							WRITE_UINT16(dst1, (r | g | b));
 						} else if (rawROP == T14_MMX_CHEAP_50_50) { // MMX_CHEAP_50_50
 							uint16 color = (READ_LE_UINT16(src) >> 1) & 0x3DEF;
-							uint16 orig = (READ_LE_UINT16(dst1) >> 1) & 0x3DEF;
-							WRITE_LE_UINT16(dst1, (color + orig));
+							uint16 orig = (READ_UINT16(dst1) >> 1) & 0x3DEF;
+							WRITE_UINT16(dst1, (color + orig));
 						}
 						dst1 += 2;
 					}
@@ -925,10 +929,10 @@ void Wiz::blitT14CodecImage(byte *dst, int dstw, int dsth, int dstPitch, const C
 					if (pixels >= sx) {
 						int alpha = code >> 1;
 						uint16 color = READ_LE_UINT16(singlesOffset);
-						uint32 orig = READ_LE_UINT16(dst1);
+						uint32 orig = READ_UINT16(dst1);
 
 						if (!premulAlpha) {
-							WRITE_LE_UINT16(dst1, color); // ENABLE_PREMUL_ALPHA = 0
+							WRITE_UINT16(dst1, color); // ENABLE_PREMUL_ALPHA = 0
 						} else {
 							if (alpha > 32) {
 								alpha -= 32;
@@ -940,12 +944,12 @@ void Wiz::blitT14CodecImage(byte *dst, int dstw, int dsth, int dstPitch, const C
 								uint32 dG = ((((color & 0x3e0) - oG) * alpha) >> 5) + oG;
 								uint32 dB = ((((color & 0x1f) - oB) * alpha) >> 5) + oB;
 
-								WRITE_LE_UINT16(dst1, (dR & 0x7c00) | (dG & 0x3e0) | (dB & 0x1f));
+								WRITE_UINT16(dst1, (dR & 0x7c00) | (dG & 0x3e0) | (dB & 0x1f));
 							} else {
 								uint32 pix = ((orig << 16) | orig) & 0x3e07c1f;
 								pix = (((pix * alpha) & 0xffffffff) >> 5) & 0x3e07c1f;
 								pix = ((pix >> 16) + pix + color) & 0xffff;
-								WRITE_LE_UINT16(dst1, pix);
+								WRITE_UINT16(dst1, pix);
 							}
 						}
 

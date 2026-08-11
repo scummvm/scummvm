@@ -896,7 +896,7 @@ void Scene551::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 550 - Study
+ * Scene 560 - Study
  *
  *--------------------------------------------------------------------------*/
 
@@ -953,7 +953,7 @@ void Scene560::Action2::signal() {
 		break;
 	case 2:
 		scene->_field380 = false;
-		scene->_deskChair.setPosition(Common::Point(81, 149));
+		scene->_deskChair.setPosition(Common::Point(81, 149), 44);
 		scene->_deskChair.setVisage(561);
 		scene->_deskChair.setStrip(3);
 		scene->_deskChair.setFrame(1);
@@ -1137,6 +1137,8 @@ void Scene560::SafeInset::postInit(SceneObjectList *OwnerList) {
 
 void Scene560::SafeInset::remove() {
 	Scene560 *scene = (Scene560 *)BF_GLOBALS._sceneManager._scene;
+
+	scene->_sceneMode = 0;
 
 	_item1.remove();
 	_item2.remove();
@@ -1413,7 +1415,7 @@ void Scene560::postInit(SceneObjectList *OwnerList) {
 	_deskChair.postInit();
 	_deskChair.setVisage(561);
 	_deskChair.setStrip(3);
-	_deskChair.setPosition(Common::Point(81, 149));
+	_deskChair.setPosition(Common::Point(81, 149), 44);
 	_deskChair.fixPriority(151);
 	_deskChair.changeZoom(81);
 
@@ -1571,7 +1573,12 @@ void Scene560::dispatch() {
  *--------------------------------------------------------------------------*/
 
 Scene570::PasswordEntry::PasswordEntry(): EventHandler() {
-	_passwordStr = SCENE570_PASSWORD;
+
+	if (g_vm->getLanguage() == Common::RU_RUS) {
+		_passwordStr = RUS_SCENE570_PASSWORD;
+	} else {
+		_passwordStr = SCENE570_PASSWORD;
+	}
 }
 
 void Scene570::PasswordEntry::synchronize(Serializer &s) {
@@ -1639,6 +1646,20 @@ void Scene570::PasswordEntry::process(Event &event) {
 	case EVENT_BUTTON_DOWN:
 		event.handled = true;
 		break;
+	case EVENT_CUSTOM_ACTIONSTART:
+		// Custom action to submit a password text.
+		// The code handling this custom action is identical
+		// to the code for handling event type EVENT_KEYPRESS
+		// when event.kdb.keycode == Common::KEYCODE_RETURN.
+		if (event.customType == kActionReturn)  {
+			// Finished entering password
+			_passwordText.remove();
+			_entryText.remove();
+
+			checkPassword();
+			remove();
+		}
+		break;
 	default:
 		break;
 	}
@@ -1666,7 +1687,7 @@ void Scene570::PasswordEntry::checkPassword() {
 	// reimplementation in ScummVM, as the project name.
 	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
 
-	if (!_entryBuffer.compareTo("JACKIE") || !_entryBuffer.compareTo("SCUMMVM")) {
+	if (!_entryBuffer.compareTo("JACKIE") || !_entryBuffer.compareTo("SCUMMVM") || !_entryBuffer.compareTo("L;TRB")) { // Third condition for the Russian version
 		// Password was correct
 		T2_GLOBALS._uiElements.addScore(30);
 		BF_GLOBALS._player.disableControl();
@@ -2082,23 +2103,47 @@ void Scene570::signal() {
 		_printerIcon.setDetails(570, 14, 15, -1, 2, (SceneItem *)NULL);
 
 		_iconManager.setup(2);
-		_folder1.setDetails(1, 1, 0, SCENE570_C_DRIVE);
-		_folder2.setDetails(1, 2, 1, SCENE570_RING);
-		_folder3.setDetails(1, 3, 1, SCENE570_PROTO);
-		_folder4.setDetails(1, 4, 1, SCENE570_WACKY);
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			_folder1.setDetails(1, 1, 0, RUS_SCENE570_C_DRIVE);
+			_folder2.setDetails(1, 2, 1, RUS_SCENE570_RING);
+			_folder3.setDetails(1, 3, 1, RUS_SCENE570_PROTO);
+			_folder4.setDetails(1, 4, 1, RUS_SCENE570_WACKY);
 
-		if (!BF_GLOBALS.getFlag(fDecryptedBluePrints))
-			_icon1.setDetails(3, 5, 0, SCENE570_COBB);
-		_icon2.setDetails(2, 7, 0, SCENE570_LETTER);
-		if (BF_GLOBALS.getFlag(fDecryptedBluePrints))
-			_icon3.setDetails(7, 6, 0, SCENE570_COBB);
+			if (!BF_GLOBALS.getFlag(fDecryptedBluePrints))
+				_icon1.setDetails(3, 5, 0, RUS_SCENE570_COBB);
 
-		_icon4.setDetails(6, 8, 1, SCENE570_RINGEXE);
-		_icon5.setDetails(5, 9, 1, SCENE570_RINGDATA);
-		_icon6.setDetails(6, 10, 2, SCENE570_PROTOEXE);
-		_icon7.setDetails(5, 11, 2, SCENE570_PROTODATA);
-		_icon8.setDetails(6, 12, 3, SCENE570_WACKYEXE);
-		_icon9.setDetails(5, 13, 3, SCENE570_WACKYDATA);
+			_icon2.setDetails(2, 7, 0, RUS_SCENE570_LETTER);
+
+			if (BF_GLOBALS.getFlag(fDecryptedBluePrints))
+				_icon3.setDetails(7, 6, 0, RUS_SCENE570_COBB);
+
+			_icon4.setDetails(6, 8, 1, RUS_SCENE570_RINGEXE);
+			_icon5.setDetails(5, 9, 1, RUS_SCENE570_RINGDATA);
+			_icon6.setDetails(6, 10, 2, RUS_SCENE570_PROTOEXE);
+			_icon7.setDetails(5, 11, 2, RUS_SCENE570_PROTODATA);
+			_icon8.setDetails(6, 12, 3, RUS_SCENE570_WACKYEXE);
+			_icon9.setDetails(5, 13, 3, RUS_SCENE570_WACKYDATA);
+		} else {
+			_folder1.setDetails(1, 1, 0, SCENE570_C_DRIVE);
+			_folder2.setDetails(1, 2, 1, SCENE570_RING);
+			_folder3.setDetails(1, 3, 1, SCENE570_PROTO);
+			_folder4.setDetails(1, 4, 1, SCENE570_WACKY);
+
+			if (!BF_GLOBALS.getFlag(fDecryptedBluePrints))
+				_icon1.setDetails(3, 5, 0, SCENE570_COBB);
+
+			_icon2.setDetails(2, 7, 0, SCENE570_LETTER);
+
+			if (BF_GLOBALS.getFlag(fDecryptedBluePrints))
+				_icon3.setDetails(7, 6, 0, SCENE570_COBB);
+
+			_icon4.setDetails(6, 8, 1, SCENE570_RINGEXE);
+			_icon5.setDetails(5, 9, 1, SCENE570_RINGDATA);
+			_icon6.setDetails(6, 10, 2, SCENE570_PROTOEXE);
+			_icon7.setDetails(5, 11, 2, SCENE570_PROTODATA);
+			_icon8.setDetails(6, 12, 3, SCENE570_WACKYEXE);
+			_icon9.setDetails(5, 13, 3, SCENE570_WACKYDATA);
+		}
 
 		_iconManager.refreshList();
 		BF_GLOBALS._player.enableControl();
@@ -2113,7 +2158,11 @@ void Scene570::signal() {
 		_object3.setFrame(1);
 		_object3.fixPriority(1);
 
-		_icon3.setDetails(7, 6, 0, SCENE570_COBB);
+		if (g_vm->getLanguage() == Common::RU_RUS) {
+			_icon3.setDetails(7, 6, 0, RUS_SCENE570_COBB);
+		} else {
+			_icon3.setDetails(7, 6, 0, SCENE570_COBB);
+		}
 		_iconManager.refreshList();
 		T2_GLOBALS._uiElements._active = true;
 		T2_GLOBALS._uiElements.show();
@@ -2506,7 +2555,7 @@ void Scene590::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene590::signal() {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 1:
@@ -2528,7 +2577,7 @@ void Scene590::signal() {
 		ADD_MOVER_NULL(_laura, 0, 170);
 
 		_sceneMode = 1;
-		addFader((byte *)&black, 2, this);
+		addFader(black, 2, this);
 		break;
 	default:
 		BF_GLOBALS._player.enableControl();

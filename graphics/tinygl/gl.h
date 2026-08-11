@@ -97,6 +97,7 @@ enum {
 	TGL_FRONT_FACE                  = 0x0B46,
 	TGL_POLYGON_MODE                = 0x0B40,
 
+	TGL_TWO_COLOR_STIPPLE			= 0x0BFF,
 	// Display Lists
 	TGL_COMPILE                     = 0x1300,
 	TGL_COMPILE_AND_EXECUTE         = 0x1301,
@@ -660,6 +661,24 @@ enum {
 	TGL_ALIASED_POINT_SIZE_RANGE    = 0x846D,
 
 
+	// --- GL 1.3 --- selected
+
+	// Texture environments
+	TGL_COMBINE						= 0x8570,
+	TGL_COMBINE_RGB					= 0x8571,
+	TGL_COMBINE_ALPHA				= 0x8572,
+	TGL_SOURCE0_RGB					= 0x8580,
+	TGL_SOURCE1_RGB					= 0x8581,
+	TGL_SOURCE0_ALPHA				= 0x8588,
+	TGL_SOURCE1_ALPHA				= 0x8589,
+	TGL_OPERAND0_RGB				= 0x8590,
+	TGL_OPERAND1_RGB				= 0x8591,
+	TGL_OPERAND0_ALPHA				= 0x8598,
+	TGL_OPERAND1_ALPHA				= 0x8599,
+	TGL_CONSTANT					= 0x8576,
+	TGL_PRIMARY_COLOR				= 0x8577,
+	TGL_PREVIOUS					= 0x8578,
+
 	// --- GL 1.4 --- selected
 
 	// Texture mapping
@@ -753,6 +772,8 @@ void tglPolygonMode(TGLenum face, TGLenum mode);
 void tglLineStipple(TGLint factor, TGLushort pattern);
 void tglPolygonStipple(const TGLubyte *mask);
 void tglGetPolygonStipple(TGLubyte *mask);
+
+void tglStippleColor(TGLubyte r, TGLubyte g, TGLubyte b);
 
 void tglLineWidth(TGLfloat width);
 void tglPointSize(TGLfloat size);

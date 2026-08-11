@@ -474,9 +474,9 @@ static const QueenGameDescription gameDescriptions[] = {
 
 } // End of namespace Queen
 
-class QueenMetaEngineDetection : public AdvancedMetaEngineDetection {
+class QueenMetaEngineDetection : public AdvancedMetaEngineDetection<Queen::QueenGameDescription> {
 public:
-	QueenMetaEngineDetection() : AdvancedMetaEngineDetection(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames) {
+	QueenMetaEngineDetection() : AdvancedMetaEngineDetection(Queen::gameDescriptions, queenGames) {
 	}
 
 	const char *getName() const override {

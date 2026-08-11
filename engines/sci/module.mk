@@ -2,6 +2,7 @@ MODULE := engines/sci
 
 MODULE_OBJS := \
 	console.o \
+	detection_internal.o \
 	dialogs.o \
 	event.o \
 	metaengine.o \
@@ -53,7 +54,7 @@ MODULE_OBJS := \
 	graphics/maciconbar.o \
 	graphics/menu.o \
 	graphics/paint16.o \
-	graphics/palette.o \
+	graphics/palette16.o \
 	graphics/picture.o \
 	graphics/portrait.o \
 	graphics/ports.o \
@@ -64,6 +65,20 @@ MODULE_OBJS := \
 	graphics/text16.o \
 	graphics/transitions.o \
 	graphics/view.o \
+	graphics/drivers/cga.o \
+	graphics/drivers/cgabw.o \
+	graphics/drivers/common.o \
+	graphics/drivers/default.o \
+	graphics/drivers/ega.o \
+	graphics/drivers/hercules.o \
+	graphics/drivers/init.o \
+	graphics/drivers/pc98_8col_sci0.o \
+	graphics/drivers/pc98_8col_sci1.o \
+	graphics/drivers/pc98_16col.o \
+	graphics/drivers/upscaled.o \
+	graphics/drivers/vgagrey.o \
+	graphics/drivers/win16col.o \
+	graphics/drivers/win256col.o \
 	parser/grammar.o \
 	parser/said.o \
 	parser/vocabulary.o \
@@ -121,3 +136,10 @@ include $(srcdir)/rules.mk
 
 # Detection objects
 DETECT_OBJS += $(MODULE)/detection.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_SCI), STATIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/detection_internal.o
+endif

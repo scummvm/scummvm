@@ -19,10 +19,9 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // For remove()
 #include <stdio.h>
+#include <errno.h>
 
 #include "backends/fs/android/android-fs-factory.h"
 #include "backends/fs/android/android-posix-fs.h"
@@ -36,12 +35,10 @@ AbstractFSNode *AndroidPOSIXFilesystemNode::makeNode(const Common::String &path)
 	return AndroidFilesystemFactory::instance().makeFileNodePath(path);
 }
 
-bool AndroidPOSIXFilesystemNode::remove() {
+int AndroidPOSIXFilesystemNode::remove() {
 	if (::remove(_path.c_str()) != 0)
-		return false;
+		return errno;
 
 	setFlags();
-	return true;
+	return 0;
 }
-
-#endif

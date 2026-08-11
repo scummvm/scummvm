@@ -97,7 +97,7 @@ public:
 
 	void draw() override;
 	void drawOverlay() override;
-	virtual void update();
+	virtual void update(bool pauseAtFirstFrame = false) ;
 
 	void setEndFrameVar(uint16 v) { _endFrameVar = v; }
 	void setNextFrameReadVar(uint16 v) { _nextFrameReadVar = v; }
@@ -107,6 +107,10 @@ public:
 	void setPosVVar(uint16 v) { _posVVar = v; }
 	void setVolumeVar(uint16 v) { _volumeVar = v; }
 	void setStartFrameVar(uint16 v) { _startFrameVar = v; }
+	void setPreloaded(bool b) { _isPreloaded = b; }
+	void setNoFrameSkip(bool b) { _noFrameSkip = b; }
+	void setUnk147(uint16 v) { _unk147 = v; }
+	void setUnk148(uint16 v) { _unk148 = v; }
 	void setCondition(int16 condition) { _condition = condition; }
 	void setConditionBit(int16 cb) { _conditionBit = cb; }
 	void setDisableWhenComplete(bool upd) { _disableWhenComplete = upd; }
@@ -124,6 +128,10 @@ protected:
 	bool _disableWhenComplete;
 	bool _scriptDriven;
 	bool _isLastFrame;
+	bool _isPreloaded;
+	bool   _noFrameSkip;
+	uint16 _unk147;
+	uint16 _unk148;
 
 	int16 _condition;
 	uint16 _conditionBit;
@@ -173,7 +181,7 @@ public:
 	ProjectorMovie(Myst3Engine *vm, uint16 id, Graphics::Surface *background);
 	virtual ~ProjectorMovie();
 
-	void update();
+	void update(bool pauseAtFirstFrame = false);
 
 private:
 	Graphics::Surface *_background;

@@ -187,39 +187,39 @@ static const char *const SRC_LOCATION_NAMES[LOCATION_COUNT] = {
 
 static const char *const SRC_DUNGEON_ITEM_NAMES[2] = { "Chest", "Coffin" };
 
-static const char *SRC_WEAPON_NAMES_UPPERCASE[16] = {
+static const char *const SRC_WEAPON_NAMES_UPPERCASE[16] = {
 	"Hands", "Dagger", "Mace", "Axe", "Rope & Spikes", "Sword", "Great Sword", "Bow & Arrows",
 	"Amulet", "Wand", "Staff", "Triangle", "Pistol", "Light Sword", "Phazor", "Blaster"
 };
 
-static const char *SRC_WEAPON_NAMES_LOWERCASE[16] = {
+static const char *const SRC_WEAPON_NAMES_LOWERCASE[16] = {
 	"hands", "dagger", "mace", "axe", "rope", "sword", "g sword", "bow",
 	"amulet", "wand", "staff", "triangle", "pistol", "L sword", "phazor", "blaster"
 };
 
-static const char *SRC_WEAPON_NAMES_ARTICLE[16] = {
+static const char *const SRC_WEAPON_NAMES_ARTICLE[16] = {
 	"a Hands", "a Dagger", "a Mace", "Axe", "a Rope & Spikes", "a Sword", "a Great Sword", "a Bow & Arrows",
 	"an Amulet", "a Wand", "a Staff", "a Triangle", "a Pistol", "a Light Sword", "a Phazor", "a Blaster"
 };
 
 static const byte SRC_WEAPON_DISTANCES[16] = { 1, 1, 1, 1, 0, 1, 1, 3, 0, 0, 0, 1, 3, 1, 3, 3 };
 
-static const char *SRC_ARMOUR_NAMES[6] = {
+static const char *const SRC_ARMOUR_NAMES[6] = {
 	"Skin", "Leather armor", "Chain mail", "Plate mail", "Vacuum suit", "Reflect suit"
 };
 
-static const char *SRC_SPELL_NAMES[11] = {
+static const char *const SRC_SPELL_NAMES[11] = {
 	"Prayer", "Open", "Unlock", "Magic Missile", "Steal", "Ladder Down", "Ladder Up",
 	"Blink", "Create", "Destroy", "Kill"
 };
 
-static const char *SRC_SPELL_PHRASES[14] = {
+static const char *const SRC_SPELL_PHRASES[14] = {
 	"\"POTENTIS-LAUDIS!\"", "\"APERTUS!\"", "\"PECUNIA!\"", "\"VASTO!\"", "\"NUDO!\"",
 	"\"INFERUS!\"", "\"ASCENDO!\"", "\"DUCIS-EDUCO!\"", "\"STRUXI!\"", "\"DELIO!\"",
 	"\"INTERFICIO!\"", " Shazam!", "\"DELCIO-ERE-UI\" ", "\"INTERFICIO-NUNC!\" "
 };
 
-static const char *SRC_GEM_NAMES[4] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
+static const char *const SRC_GEM_NAMES[4] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
 
 static const byte SRC_LOCATION_X[LOCATION_COUNT] = {
 	39, 66, 25, 46, 52, 18, 70, 64, 126, 128, 148, 115, 150, 121,
@@ -684,16 +684,16 @@ static const char *const SRC_MAGIC_NAMES[8] = {
 	"Psychic Sam's Magical Emporium", nullptr, nullptr, nullptr, "The Unleashed Spell"
 };
 static const char *const SRC_DONT_BUY_SPELLS = "Sorry, we don't buy spells!";
-static const char *SRC_TAVERN_NAMES[8] = {
+static const char *const SRC_TAVERN_NAMES[8] = {
 	"Pub de Varg", "Ye Olde Local Pub", "Dr. Cat's Lair", "Teaser's House", nullptr,
 	"Mary's Midway", "Kurtstable's Korner", "Dav's House-o-Suds"
 };
-static const char *SRC_TAVERN_TEXT[4] = {
+static const char *const SRC_TAVERN_TEXT[4] = {
 	"Thou art broke!\nCome back when thou hast\nsome money to spend.",
 	"We have plenty of booze\nalready!",
 	"The tavern keeper sayeth:\nHere, have a cold one!", "ale"
 };
-static const char *SRC_TAVERN_TIPS[13] = {
+static const char *const SRC_TAVERN_TIPS[13] = {
 	"Thou had best know",
 	"Thou hast been seduced!\nAfter a long night,\nthou art back.",
 	"about space travel!\nThou must destroy at\nleast 20 enemy vessels\nto become an ace!",
@@ -710,11 +710,11 @@ static const char *SRC_TAVERN_TIPS[13] = {
 		"days before Mondain created\nthe evil gem and destroy him!",
 	"wench", "lecher"
 };
-static const char *SRC_TRANSPORTS_NAMES[8] = {
+static const char *const SRC_TRANSPORTS_NAMES[8] = {
 	"Scooter's Super Duper\nTransport, Inc.", nullptr, nullptr, "Quality Transport Ltd.",
 	nullptr, "O.K. New and Used Transport", nullptr, "Sly Sam's Transportation\nSpecialists"
 };
-static const char *SRC_TRANSPORTS_TEXT[2] = {
+static const char *const SRC_TRANSPORTS_TEXT[2] = {
 	"Sorry, we don't deal in\nused stuff.", "Closed for the day."
 
 };

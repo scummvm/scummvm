@@ -47,8 +47,7 @@ void GraphicsManager::transitionCrossFader() {
 	if (_brightnessLevel == 255)
 		return;
 
-	Graphics::ManagedSurface tmp(&_snapshotSurface, DisposeAfterUse::NO);
-	tmp.blendBlitTo(_renderSurface, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 - _brightnessLevel, 0xff, 0xff, 0xff));
+	_renderSurface.blendBlitFrom(_snapshotSurface, Graphics::FLIP_NONE, MS_ARGB(255 - _brightnessLevel, 0xff, 0xff, 0xff));
 }
 
 void GraphicsManager::transitionSnapshotBox() {
@@ -61,7 +60,7 @@ void GraphicsManager::transitionSnapshotBox() {
 	uint32 xScale = (255 - _brightnessLevel) * _winWidth / 255;
 	uint32 yScale = (255 - _brightnessLevel) * _winHeight / 255;
 
-	Graphics::Surface *surf = _snapshotSurface.scale(xScale, yScale);
+	Graphics::ManagedSurface *surf = _snapshotSurface.scale(xScale, yScale);
 
 	_renderSurface.copyRectToSurface(surf->getPixels(), surf->pitch, (_winWidth - xScale) / 2, (_winHeight - yScale) / 2, xScale, yScale);
 
@@ -131,7 +130,7 @@ void GraphicsManager::transitionDisolve() {
 	// The original stretched the texture, we just tile it
 	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h)
 		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w)
-			_transitionTexture->blendBlitTo(_renderSurface, x, y);
+			_renderSurface.blendBlitFrom(*_transitionTexture, Common::Point(x, y));
 }
 
 void GraphicsManager::transitionTV() {
@@ -168,7 +167,7 @@ void GraphicsManager::transitionTV() {
 	// The original stretched the texture, we just tile it
 	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h)
 		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w)
-			_transitionTexture->blendBlitTo(_renderSurface, x, y);
+			_renderSurface.blendBlitFrom(*_transitionTexture, Common::Point(x, y));
 }
 
 void GraphicsManager::transitionBlinds() {
@@ -197,7 +196,7 @@ void GraphicsManager::transitionBlinds() {
 	// The original stretched the texture, we just tile it
 	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h)
 		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w)
-			_transitionTexture->blendBlitTo(_renderSurface, x, y);
+			_renderSurface.blendBlitFrom(*_transitionTexture, Common::Point(x, y));
 }
 
 //----------------------------------------------------

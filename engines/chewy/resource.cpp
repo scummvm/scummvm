@@ -187,6 +187,7 @@ void Resource::initSprite(const Common::Path &filename) {
 
 		cur.pos = _stream.pos();
 		cur.type = kResourceTAF;
+		cur.num = 0;
 
 		_stream.skip(2 + 2 + 2);
 		nextSpriteOffset = _stream.readUint32LE();

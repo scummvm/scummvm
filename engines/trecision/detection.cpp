@@ -36,16 +36,16 @@ namespace Trecision {
 #define AD_NL_ENTRY(md5, size) \
 	{ \
 		{"data.nl", 0, md5, size}, \
-		{"nlanim.cd1", 0, nullptr, -1}, \
-		{"nlanim.cd2", 0, nullptr, -1}, \
-		{"nlanim.cd3", 0, nullptr, -1}, \
+		{"nlanim.cd1", 0, nullptr, AD_NO_SIZE}, \
+		{"nlanim.cd2", 0, nullptr, AD_NO_SIZE}, \
+		{"nlanim.cd3", 0, nullptr, AD_NO_SIZE}, \
 		AD_LISTEND \
 	}
 
 #define AD_NL_DEMO_ENTRY(md5, size) \
 	{ \
 		{"data.nl", 0, md5, size}, \
-		{"nlanim.cd1", 0, nullptr, -1}, \
+		{"nlanim.cd1", 0, nullptr, AD_NO_SIZE}, \
 		AD_LISTEND \
 	}
 
@@ -198,7 +198,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"aot",
-		_s("Missing game code"),
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 		{
 			{"dialogue.dat", 0, "afc71fe29b1be3a9b145b8d61dfa4539", 166155130},
 			{"sentence.dat", 0, "f38afcd22e7de14f9a2343e911eaa126", 75668232},
@@ -219,9 +219,9 @@ static const char *const directoryGlobs[] = {
 	0
 };
 
-class TrecisionMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TrecisionMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	TrecisionMetaEngineDetection() : AdvancedMetaEngineDetection(Trecision::gameDescriptions, sizeof(ADGameDescription), trecisionGames) {
+	TrecisionMetaEngineDetection() : AdvancedMetaEngineDetection(Trecision::gameDescriptions, trecisionGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD);

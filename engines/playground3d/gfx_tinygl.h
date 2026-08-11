@@ -36,7 +36,6 @@ namespace Playground3d {
 class TinyGLRenderer : public Renderer {
 public:
 	TinyGLRenderer(OSystem *_system);
-	virtual ~TinyGLRenderer();
 
 	void init() override;
 	void deinit() override;
@@ -51,11 +50,16 @@ public:
 	void setupViewport(int x, int y, int width, int height) override;
 	void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
 	void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) override;
+	void drawQuadStripTest() override;
 	void dimRegionInOut(float fade) override;
 	void drawInViewport() override;
 	void drawRgbaTexture() override;
 
 	void enableFog(const Math::Vector4d &fogColor) override;
+	void disableFog() override;
+
+	void enableScissor(int x, int y, int width, int height) override;
+	void disableScissor() override;
 
 	void flipBuffer() override;
 

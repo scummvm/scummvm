@@ -86,6 +86,10 @@ typedef enum {
 	RESPONSE_ONCE_GAME
 } TResponseType;
 
+typedef enum {
+	RESPONSE_VISITED_NONE,
+	RESPONSE_VISITED_ONCE
+} TResponseVisitedType;
 
 typedef enum {
 	TALK_SKIP_LEFT = 0,
@@ -94,8 +98,7 @@ typedef enum {
 	TALK_SKIP_NONE = 3
 } TTalkSkipButton;
 
-typedef enum
-{
+typedef enum {
 	VIDEO_SKIP_LEFT = 0,
 	VIDEO_SKIP_RIGHT = 1,
 	VIDEO_SKIP_BOTH = 2,

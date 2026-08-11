@@ -67,7 +67,7 @@ public:
 
 	Common::SeekableReadStream *createReadStream() override;
 	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) override;
-	Common::SeekableWriteStream *createWriteStream() override;
+	Common::SeekableWriteStream *createWriteStream(bool atomic) override;
 	bool createDirectory() override;
 
 protected:

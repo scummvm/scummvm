@@ -68,19 +68,19 @@ bool MetadataParser::parserCallback_company(ParserNode *node) {
 }
 
 bool MetadataParser::closedKeyCallback(ParserNode *node) {
-	if (node->name == "game")
+	if (node->name == "game") {
 		_gameInfo[Common::String::format("%s:%s",
 			node->values["engine_id"].c_str(), node->values["id"].c_str())] = MetadataGame(
 			node->values["id"], node->values["name"], node->values["engine_id"], node->values["company_id"],
 			node->values["moby_id"], node->values["datafiles"], node->values["series_id"], node->values["zoom_id"], node->values["year"]);
-
-	if (node->name == "engine")
+	} else if (node->name == "engine") {
 		_engineInfo[node->values["id"]] = MetadataEngine(node->values["id"], node->values["name"], node->values["alt_name"],
 											true);
-	if (node->name == "serie")
+	} else if (node->name == "serie") {
 		_seriesInfo[node->values["id"]] = MetadataSeries(node->values["id"], node->values["name"]);
-	if (node->name == "company")
+	} else if (node->name == "company") {
 		_companyInfo[node->values["id"]] = MetadataCompany(node->values["id"], node->values["name"], node->values["alt_name"]);
+	}
 	return true;
 }
 

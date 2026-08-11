@@ -181,7 +181,7 @@ protected:
 	/*
 	 * Print a unicode string.
 	 */
-	void print_string_uni(const uint32 *s);
+	void print_string_uni(const Common::U32String &str);
 
 	/**
 	 * Print an unsigned 32bit number in decimal or hex.
@@ -1010,7 +1010,7 @@ protected:
 	void z_or();
 
 	/**
-	 * 16 bit substraction.
+	 * 16 bit subtraction.
 	 *
 	 *	zargs[0] = first value
 	 *	zargs[1] = second value

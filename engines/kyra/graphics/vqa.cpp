@@ -20,7 +20,7 @@
  */
 
 // Player for Kyrandia 3 VQA movies, based on the information found at
-// http://multimedia.cx/VQA_INFO.TXT
+// https://multimedia.cx/VQA_INFO.TXT
 //
 // The benchl.vqa movie (or whatever it is) is not supported. It does not have
 // a FINF chunk.

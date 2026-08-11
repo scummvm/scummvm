@@ -172,7 +172,7 @@ public:
 	// Properties
 	Common::String _name;
 	uint _nRooms;
-	Std::vector<byte> _dataSubTokens;
+	Common::Array<byte> _dataSubTokens;
 	DngRoom *_rooms;
 	CombatMap **_roomMaps;
 	int _currentRoom;

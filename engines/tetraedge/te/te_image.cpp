@@ -22,6 +22,7 @@
 #include "tetraedge/tetraedge.h"
 
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/rect.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_image.h"
@@ -30,10 +31,11 @@
 
 namespace Tetraedge {
 
-TeImage::TeImage() : ManagedSurface(), _teFormat(INVALID) {
+TeImage::TeImage() : ManagedSurface() {
 }
 
-TeImage::TeImage(const TeImage &other) : ManagedSurface(other), _teFormat(INVALID) {
+TeImage::TeImage(const TeImage &other) : ManagedSurface() {
+	copyFrom(other);
 	error("TODO: Implement TeImage::TeImage copy constructor");
 }
 
@@ -52,18 +54,9 @@ void TeImage::create() {
 }*/
 
 void TeImage::createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
-			Format teformat, uint bufxsize, uint bufysize) {
-	_teFormat = teformat;
-#ifdef SCUMM_BIG_ENDIAN
-	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
-									  Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
-									  Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#endif
-
+			const Graphics::PixelFormat &pxformat, uint bufxsize, uint bufysize) {
 	Graphics::ManagedSurface::create(xsize, ysize, pxformat);
-	if (teformat == TeImage::RGBA8)
+	if (pxformat.aBits() > 0)
 		Graphics::ManagedSurface::fillRect(Common::Rect(0, 0, xsize, ysize), 0);
 }
 
@@ -73,7 +66,6 @@ void TeImage::deserialize(Common::ReadStream &stream) {
 
 void TeImage::destroy() {
 	Graphics::ManagedSurface::free();
-	_teFormat = INVALID;
 }
 
 void TeImage::drawPlot(void *outbuf, int x, int y, const TeVector2s32 &bufsize, const TeColor &col) {
@@ -99,20 +91,20 @@ bool TeImage::isExtensionSupported(const Common::Path &path) {
 	error("TODO: Implement TeImage::isExtensionSupported");
 }
 
-bool TeImage::load(const Common::FSNode &node) {
+bool TeImage::load(const TetraedgeFSNode &node) {
 	TeCore *core = g_engine->getCore();
-	TeICodec *codec = core->createVideoCodec(node.getPath());
-	if (!node.isReadable() || !codec->load(node)) {
-		warning("TeImage::load: Failed to load %s.", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+	TeICodec *codec = core->createVideoCodec(node, node.getPath());
+	if (!node.exists() || !codec->load(node)) {
+		warning("TeImage::load: Failed to load %s.", node.toString().c_str());
 		delete codec;
 		return false;
 	}
 
 	Common::SharedPtr<TePalette> nullpal;
-	createImg(codec->width(), codec->height(), nullpal, codec->imageFormat(), codec->width(), codec->height());
+	createImg(codec->width(), codec->height(), nullpal, codec->pixelFormat(), codec->width(), codec->height());
 
 	if (!codec->update(0, *this)) {
-		error("TeImage::load: Failed to update from %s.", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		error("TeImage::load: Failed to update from %s.", node.toString().c_str());
 	}
 	delete codec;
 	return true;
@@ -128,7 +120,7 @@ bool TeImage::load(Common::SeekableReadStream &stream, const Common::String &typ
 	}
 
 	Common::SharedPtr<TePalette> nullpal;
-	createImg(codec->width(), codec->height(), nullpal, codec->imageFormat(), codec->width(), codec->height());
+	createImg(codec->width(), codec->height(), nullpal, codec->pixelFormat(), codec->width(), codec->height());
 
 	if (!codec->update(0, *this)) {
 		error("TeImage::load: Failed to update from stream");

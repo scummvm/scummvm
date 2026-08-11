@@ -28,9 +28,9 @@
 namespace StarTrek {
 
 extern const RoomAction trial4ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::trial4Tick1 },
-	{ {ACTION_TICK, 60, 0, 0}, &Room::trial4Tick60 },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_TICK, 1,  0, 0, 0}, &Room::trial4Tick1 },
+	{ {ACTION_TICK, 60, 0, 0, 0}, &Room::trial4Tick60 },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum trial4TextIds {
@@ -151,7 +151,7 @@ void Room::trial4Tick1() {
 	loadActorAnim2(OBJECT_GUARD, "kgstnd", 0xdc, 0x6a);
 	loadActorAnim2(OBJECT_QUETZECOATL, "qstand", 0x10e, 0xaa);
 
-	playMidiMusicTracks(MIDITRACK_32, -1);
+	playMidiMusicTracks(MIDITRACK_32);
 }
 
 void Room::trial4Tick60() {

@@ -98,17 +98,28 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class NancyMetaEngine : public AdvancedMetaEngine {
+class NancyMetaEngine : public AdvancedMetaEngine<Nancy::NancyGameDescription> {
 public:
 	const char *getName() const override {
 		return "nancy";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Nancy::NancyGameDescription *gd) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
@@ -134,9 +145,9 @@ bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
 		checkExtendedSaves(f);
 }
 
-Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const Nancy::NancyGameDescription *gd) const {
 	if (gd) {
-		*engine = Nancy::NancyEngine::create(((const Nancy::NancyGameDescription *)gd)->gameType, syst, (const Nancy::NancyGameDescription *)gd);
+		*engine = Nancy::NancyEngine::create(gd->gameType, syst, gd);
 	}
 
 	if (gd) {
@@ -187,6 +198,7 @@ void NancyMetaEngine::registerDefaultSettings(const Common::String &target) cons
 	ConfMan.registerDefault("player_speech", true);
 	ConfMan.registerDefault("character_speech", true);
 	ConfMan.registerDefault("nancy_max_saves", 999);
+	ConfMan.registerDefault("originalsaveload", true);
 }
 
 const ADExtraGuiOptionsMap *NancyMetaEngine::getAdvancedExtraGuiOptions() const {

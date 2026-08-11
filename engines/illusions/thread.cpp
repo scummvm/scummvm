@@ -163,9 +163,9 @@ void ThreadList::updateThreads() {
 }
 
 Thread *ThreadList::findThread(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		if ((*it)->_threadId == threadId && !(*it)->_terminated)
-			return (*it);
+	for (auto &thread : _threads) {
+		if (thread->_threadId == threadId && !thread->_terminated)
+			return thread;
 	}
 	return nullptr;
 }
@@ -183,112 +183,98 @@ void ThreadList::notifyId(uint32 threadId) {
 }
 
 void ThreadList::notifyTimerThreads(uint32 callingThreadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_type == kTTTimerThread && thread->_callingThreadId == callingThreadId)
 			thread->notify();
 	}
 }
 
 void ThreadList::suspendTimerThreads(uint32 callingThreadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_type == kTTTimerThread && thread->_callingThreadId == callingThreadId)
 			thread->suspend();
 	}
 }
 
 void ThreadList::terminateThreads(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_threadId != threadId)
 			thread->terminate();
 	}
 }
 
 void ThreadList::terminateActiveThreads(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_pauseCtr <= 0 && thread->_threadId != threadId)
 			thread->terminate();
 	}
 }
 
 void ThreadList::terminateThreadsBySceneId(uint32 sceneId, uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_sceneId == sceneId && thread->_threadId != threadId)
 			thread->terminate();
 	}
 }
 
 void ThreadList::suspendThreadsBySceneId(uint32 sceneId, uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_sceneId == sceneId && thread->_threadId != threadId)
 			thread->suspend();
 	}
 }
 
 void ThreadList::notifyThreads(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_threadId != threadId)
 			thread->notify();
 	}
 }
 
 void ThreadList::notifyThreadsBySceneId(uint32 sceneId, uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_sceneId == sceneId && thread->_threadId != threadId)
 			thread->notify();
 	}
 }
 
 void ThreadList::pauseThreads(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_threadId != threadId)
 			thread->pause();
 	}
 }
 
 void ThreadList::unpauseThreads(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_threadId != threadId)
 			thread->unpause();
 	}
 }
 
 void ThreadList::suspendThreads(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_threadId != threadId)
 			thread->suspend();
 	}
 }
 
 void ThreadList::resumeThreads(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_threadId != threadId)
 			thread->resume();
 	}
 }
 
 void ThreadList::endTalkThreads() {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_type == kTTTalkThread)
 			thread->terminate();
 	}
 }
 
 void ThreadList::endTalkThreadsNoNotify() {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (thread->_type == kTTTalkThread && thread->_callingThreadId == 0)
 			thread->terminate();
 	}
@@ -311,8 +297,7 @@ void ThreadList::killThread(uint32 threadId) {
 	if (!thread)
 		return;
 
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *childThread = *it;
+	for (auto &childThread : _threads) {
 		if (childThread->_callingThreadId == threadId)
 			killThread(childThread->_threadId);
 	}
@@ -334,8 +319,7 @@ uint32 ThreadList::getThreadSceneId(uint32 threadId) {
 
 bool ThreadList::isActiveThread(int msgNum) {
 	// Check if at least one thread returns a non-null value for the message
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
-		Thread *thread = *it;
+	for (auto &thread : _threads) {
 		if (!thread->_terminated && thread->_pauseCtr <= 0 &&
 			thread->sendMessage(msgNum, 0) != 0)
 			return true;

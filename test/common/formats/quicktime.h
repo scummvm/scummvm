@@ -68,7 +68,7 @@ public:
 		Common::MemoryReadStream stream(VALID_MHDR_DATA, sizeof(VALID_MHDR_DATA));
 		bool result = parser.parseStream(&stream, DisposeAfterUse::NO);
 		TS_ASSERT(result);
-		TS_ASSERT_EQUALS(parser.getDuration(), 999*60 + 1);
+		TS_ASSERT_EQUALS(parser.getDuration(), 999u*60 + 1);
 		TS_ASSERT_EQUALS(parser.getScaleFactorX(), Common::Rational(0x10000, 0x8000));
 		TS_ASSERT_EQUALS(parser.getScaleFactorY(), Common::Rational(0x10000, 0xa000));
 	}

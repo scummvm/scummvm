@@ -29,6 +29,8 @@
 #include "engines/wintermute/ad/ad_node_state.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -43,13 +45,12 @@ AdSceneState::AdSceneState(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneState::~AdSceneState() {
-	delete[] _filename;
-	_filename = nullptr;
+	SAFE_DELETE_ARRAY(_filename);
 
-	for (uint32 i = 0; i < _nodeStates.size(); i++) {
+	for (int32 i = 0; i < _nodeStates.getSize(); i++) {
 		delete _nodeStates[i];
 	}
-	_nodeStates.clear();
+	_nodeStates.removeAll();
 }
 
 
@@ -64,26 +65,22 @@ bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void AdSceneState::setFilename(const char *filename) {
-	delete[] _filename;
+	SAFE_DELETE_ARRAY(_filename);
 	size_t filenameSize = strlen(filename) + 1;
 	_filename = new char [filenameSize];
 	Common::strcpy_s(_filename, filenameSize, filename);
 }
 
-const char *AdSceneState::getFilename() const {
-	return _filename;
-}
-
 //////////////////////////////////////////////////////////////////////////
 AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
-	for (uint32 i = 0; i < _nodeStates.size(); i++) {
-		if (scumm_stricmp(_nodeStates[i]->getName(), name) == 0) {
+	for (int32 i = 0; i < _nodeStates.getSize(); i++) {
+		if (scumm_stricmp(_nodeStates[i]->_name, name) == 0) {
 			return _nodeStates[i];
 		}
 	}
 
 	if (saving) {
-		AdNodeState *ret = new AdNodeState(_gameRef);
+		AdNodeState *ret = new AdNodeState(_game);
 		ret->setName(name);
 		_nodeStates.add(ret);
 

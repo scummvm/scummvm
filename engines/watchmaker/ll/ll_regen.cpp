@@ -20,6 +20,7 @@
  */
 
 #include "watchmaker/ll/ll_regen.h"
+#include "watchmaker/classes/do_camera.h"
 #include "watchmaker/render.h"
 #include "watchmaker/struct.h"
 #include "watchmaker/sysdef.h"
@@ -355,7 +356,6 @@ void Add3DStuff(WGame &game) {
 		DebugVideo(*game._renderer, 1, 600 - 20, "%s (%02d/%02d/%4d - %d.%d)", WM_CUR_VERSION, d, m, yy, h, min);
 
 		if (LoaderFlags & T3D_DEBUGMODE) {
-			extern uint8 t3dCurCameraIndex;
 			auto windowInfo = game._renderer->getScreenInfos();
 			if (CurFps > 100.0f) CurFps = 100.0f;
 			if (AvgFps > 100.0f) AvgFps = 100.0f;
@@ -373,7 +373,7 @@ void Add3DStuff(WGame &game) {
 			DebugVideo(*game._renderer, 1, y += 16, "%d,%d: %s (%d %d) %X", game._gameVars.getCurRoomId(), CurObj, ObjectUnderCursor, NextPortalObj, NextPortalAnim, game.init.Obj[CurObj].flags);
 			//      DebugVideo(1,y+=16,"Player: %d %d %d %d",Player->Mesh->BlendPercent,Player->Mesh->CurFrame,Player->Mesh->LastFrame,Player->Walk.CurAction);
 			DebugVideo(*game._renderer, 1, y += 16, "DialogActive: %d   AnimWaitText: %d  PlayerInAnim: %d | %d", bDialogActive, bAnimWaitText, bPlayerInAnim, Player->Mesh->CurFrame);
-			DebugVideo(*game._renderer, 1, y += 16, "CurCamera %d    CurTime %d (%f %f)", t3dCurCameraIndex + 1, t3dCurTime, t3dCurCamera->Source.x, t3dCurCamera->Source.z);
+			DebugVideo(*game._renderer, 1, y += 16, "CurCamera %d    CurTime %d (%f %f)", game._cameraMan->getCurCameraIndex() + 1, t3dCurTime, t3dCurCamera->Source.x, t3dCurCamera->Source.z);
 //			DebugVideo(1,y+=16,"xy(%f %f)",Character[1]->Mesh->Trasl.x,Character[1]->Mesh->Trasl.y);
 //			DebugVideo(1,y+=16,"xy(%f %f)",Character[2]->Dir.x,Character[2]->Dir.y);
 			DebugVideo(*game._renderer, 1, y += 16, "bPlayerSuBasamento %d", bPlayerSuBasamento);

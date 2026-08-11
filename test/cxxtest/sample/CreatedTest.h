@@ -11,19 +11,17 @@
 // As an example, this test suite requires a non-default constructor.
 //
 
-class CreatedTest : public CxxTest::TestSuite
-{
+class CreatedTest : public CxxTest::TestSuite {
     char *_buffer;
 public:
-    CreatedTest( unsigned size ) : _buffer( new char[size] ) {}
+    CreatedTest(unsigned size) : _buffer(new char[size]) {}
     virtual ~CreatedTest() { delete[] _buffer; }
 
-    static CreatedTest *createSuite() { return new CreatedTest( 16 ); }
-    static void destroySuite( CreatedTest *suite ) { delete suite; }
+    static CreatedTest *createSuite() { return new CreatedTest(16); }
+    static void destroySuite(CreatedTest *suite) { delete suite; }
 
-    void test_nothing()
-    {
-        TS_FAIL( "Nothing to test" );
+    void test_nothing() {
+        TS_FAIL("Nothing to test");
     }
 };
 

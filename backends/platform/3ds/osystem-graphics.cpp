@@ -30,30 +30,32 @@
 
 // Used to transfer the final rendered display to the framebuffer
 #define DISPLAY_TRANSFER_FLAGS                                                    \
-		(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                    \
-		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
-		 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                           \
+		(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                   \
+		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB8) | \
+		 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                          \
 		 GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-#define TEXTURE_TRANSFER_FLAGS(fmt)                             \
+#define TEXTURE_TRANSFER_FLAGS(in, out)                             \
 		(GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) |  \
-		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(fmt) | \
-		 GX_TRANSFER_OUT_FORMAT(fmt) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
+		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(in) | \
+		 GX_TRANSFER_OUT_FORMAT(out) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 #define DEFAULT_MODE _modeRGBA8
 
 namespace N3DS {
 /* Group the various enums, values, etc. needed for
  * each graphics mode into instaces of GfxMode3DS */
 static const GfxMode3DS _modeRGBA8 = { Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
-									   GPU_RGBA8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8) };
+									   GPU_RGBA8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8, GX_TRANSFER_FMT_RGBA8) };
+static const GfxMode3DS _modeRGBX8 = { Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
+									   GPU_RGB8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8, GX_TRANSFER_FMT_RGB8) };
 static const GfxMode3DS _modeRGB565 = { Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
-										GPU_RGB565, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565) };
-static const GfxMode3DS _modeRGB555 = { Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
-										GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1) };
+										GPU_RGB565, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565, GX_TRANSFER_FMT_RGB565) };
 static const GfxMode3DS _modeRGB5A1 = { Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
-										GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1) };
-static const GfxMode3DS _modeCLUT8 = _modeRGBA8;
+										GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1, GX_TRANSFER_FMT_RGB5A1) };
+static const GfxMode3DS _modeRGBA4 = { Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
+										GPU_RGBA4, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA4, GX_TRANSFER_FMT_RGBA4) };
+static const GfxMode3DS _modeCLUT8 = _modeRGBX8;
 
-static const GfxMode3DS *gfxModes[] = { &_modeRGBA8, &_modeRGB565, &_modeRGB555, &_modeRGB5A1, &_modeCLUT8 };
+static const GfxMode3DS *gfxModes[] = { &_modeRGBX8, &_modeRGB565, &_modeRGB5A1, &_modeRGBA4, &_modeCLUT8 };
 
 
 void OSystem_3DS::init3DSGraphics() {
@@ -68,19 +70,19 @@ void OSystem_3DS::init3DSGraphics() {
 	int topScreenWidth = gfxIsWide() ? 800 : 400;
 
 	_renderTargetTop =
-	    C3D_RenderTargetCreate(240, topScreenWidth, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	    C3D_RenderTargetCreate(240, topScreenWidth, GPU_RB_RGB8, -1);
 	C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x0000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetTop, GFX_TOP, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
 
 	_renderTargetBottom =
-	    C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	    C3D_RenderTargetCreate(240, 320, GPU_RB_RGB8, -1);
 	C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetBottom, GFX_BOTTOM, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
 
 	// Load and bind simple default shader (shader.v.pica)
-	_dvlb = DVLB_ParseFile((u32*)shader_shbin, shader_shbin_size);
+	_dvlb = DVLB_ParseFile((u32*)const_cast<u8 *>(shader_shbin), shader_shbin_size);
 	shaderProgramInit(&_program);
 	shaderProgramSetVsh(&_program, &_dvlb->DVLE[0]);
 	C3D_BindProgram(&_program);
@@ -103,16 +105,13 @@ void OSystem_3DS::init3DSGraphics() {
 
 	C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_ALL);
 	C3D_CullFace(GPU_CULL_NONE);
+
+	// _overlay initialized in updateSize()
 }
 
 void OSystem_3DS::destroy3DSGraphics() {
 	_gameScreen.free();
-	_gameTopTexture.free();
-	_gameBottomTexture.free();
 	_cursor.free();
-	_cursorTexture.free();
-	_overlay.free();
-	_activityIcon.free();
 
 	shaderProgramFree(&_program);
 	DVLB_Free(_dvlb);
@@ -161,10 +160,10 @@ GraphicsModeID OSystem_3DS::chooseMode(Graphics::PixelFormat *format) {
 	if (format->bytesPerPixel > 2) {
 		return RGBA8;
 	} else if (format->bytesPerPixel > 1) {
-		if (format->gBits() > 5) {
+		if (format->aBits() > 1) {
+			return RGBA4;
+		} else if (format->gBits() > 5) {
 			return RGB565;
-		} else if (format->aBits() == 0) {
-			return RGB555;
 		} else {
 			return RGB5A1;
 		}
@@ -176,8 +175,8 @@ bool OSystem_3DS::setGraphicsMode(GraphicsModeID modeID) {
 	switch (modeID) {
 	case RGBA8:
 	case RGB565:
-	case RGB555:
 	case RGB5A1:
+	case RGBA4:
 	case CLUT8:
 		_gfxState.gfxMode = gfxModes[modeID];
 		return true;
@@ -214,9 +213,14 @@ void OSystem_3DS::initSize(uint width, uint height,
 		_transactionDetails.formatChanged = true;
 	}
 
-	_gameTopTexture.create(width, height, _gfxState.gfxMode);
-	_overlay.create(400, 320, &DEFAULT_MODE);
-	_gameScreen.create(width, height, _pfGame);
+	_gameTopTexture.create(width, height, _gfxState.gfxMode, true);
+
+	if (_pfGame == _gameTopTexture.format)
+		_gameScreen.free();
+	else
+		_gameScreen.create(width, height, _pfGame);
+
+	_blitFunc = Graphics::getFastBlitFunc(_gameTopTexture.format, _pfGame);
 
 	_focusDirty = true;
 	_focusRect = Common::Rect(_gameWidth, _gameHeight);
@@ -225,6 +229,18 @@ void OSystem_3DS::initSize(uint width, uint height,
 }
 
 void OSystem_3DS::updateSize() {
+	// Initialize _overlay here so that it can be reinitialized when _screen is changed.
+
+	// Overlay sprite must have a width matching or exceeding that of the screen to
+	//	which it's set to render, otherwise portions of the screen will not render.
+	// _screen == kScreenTop
+	//	>>> overlay renders to top screen
+	//	>>> top screen is 400 pixels wide
+	// _screen == (kScreenBottom | kScreenBoth)
+	//	>>> overlay renders to bottom screen
+	//	>>> bottom screen is 320 pixels wide
+	_overlay.create(_screen == kScreenTop ? 400 : 320, 240, &DEFAULT_MODE, true);
+
 	if (_stretchToFit) {
 		_gameTopX = _gameTopY = _gameBottomX = _gameBottomY = 0;
 		_gameTopTexture.setScale(400.f / _gameWidth, 240.f / _gameHeight);
@@ -274,9 +290,9 @@ Common::List<Graphics::PixelFormat> OSystem_3DS::getSupportedFormats() const {
 	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)); // GPU_RGBA8
 	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)); // GPU_RGB565
 	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)); // GPU_RGBA5551
+	list.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)); // GPU_RGBA4
 
-	// The following formats require software conversion
-	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)); // RGB555 (needed for FMTOWNS?)
+	// The following format requires software conversion
 	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 	return list;
 }
@@ -341,7 +357,9 @@ void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
 	assert(start + num <= 256);
 	memcpy(_palette + 3 * start, colors, 3 * num);
 	Graphics::convertPaletteToMap(_paletteMap + start, colors, num, _modeCLUT8.surfaceFormat);
-	_gameTextureDirty = true;
+
+	// Palette changes invalidate the entire surface
+	_dirtyRects.emplace_back(getWidth(), getHeight());
 }
 
 void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) const {
@@ -349,66 +367,70 @@ void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) const {
 	memcpy(colors, _palette + 3 * start, 3 * num);
 }
 
-static void copyRect555To5551(const Graphics::Surface &srcSurface, Graphics::Surface &destSurface, uint16 destX, uint16 destY, const Common::Rect &srcRect) {
-	const uint16 *src = (const uint16 *)srcSurface.getBasePtr(srcRect.left, srcRect.top);
-	uint16 *dst = (uint16 *)destSurface.getBasePtr(destX, destY);
-	for (int i = 0; i < srcRect.height(); i++) {
-		for (int j = 0; j < srcRect.width(); j++) {
-			*dst++ = (*src++ << 1) | 1;
-		}
-		src += srcSurface.pitch / 2 - srcRect.width();
-		dst += destSurface.pitch / 2 - srcRect.width();
+void OSystem_3DS::fillScreen(uint32 col) {
+	fillScreen(Common::Rect(getWidth(), getHeight()), col);
+}
+
+void OSystem_3DS::fillScreen(const Common::Rect &r, uint32 col) {
+	if (_pfGame == _gameTopTexture.format) {
+		_gameTopTexture.fillRect(r, col);
+		_gameTopTexture.markDirty();
+		return;
 	}
+
+	_gameScreen.fillRect(r, col);
+	_dirtyRects.push_back(r);
 }
 
 void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
 								   int y, int w, int h) {
-	Common::Rect rect(x, y, x+w, y+h);
-	_gameScreen.copyRectToSurface(buf, pitch, x, y, w, h);
-	Graphics::Surface subSurface = _gameScreen.getSubArea(rect);
-
 	if (_pfGame == _gameTopTexture.format) {
-		_gameTopTexture.copyRectToSurface(subSurface, x, y, Common::Rect(w, h));
-	} else if (_gfxState.gfxMode == &_modeRGB555) {
-		copyRect555To5551(subSurface, _gameTopTexture, x, y, Common::Rect(w, h));
-	} else if (_gfxState.gfxMode == &_modeCLUT8) {
-		byte *dst = (byte *)_gameTopTexture.getBasePtr(x, y);
-		Graphics::crossBlitMap(dst, (const byte *)buf, _gameTopTexture.pitch, pitch,
-			w, h, _gameTopTexture.format.bytesPerPixel, _paletteMap);
-	} else {
-		byte *dst = (byte *)_gameTopTexture.getBasePtr(x, y);
-		Graphics::crossBlit(dst, (const byte *)buf, _gameTopTexture.pitch, pitch,
-			w, h, _gameTopTexture.format, _pfGame);
+		_gameTopTexture.copyRectToSurface(buf, pitch, x, y, w, h);
+		_gameTopTexture.markDirty();
+		return;
 	}
 
-	_gameTopTexture.markDirty();
+	_gameScreen.copyRectToSurface(buf, pitch, x, y, w, h);
+	_dirtyRects.emplace_back(x, y, x + w, y + h);
 }
 
 void OSystem_3DS::flushGameScreen() {
-	if (_pfGame == _gameTopTexture.format) {
-		_gameTopTexture.copyRectToSurface(_gameScreen, 0, 0, Common::Rect(_gameScreen.w, _gameScreen.h));
-	} else if (_gfxState.gfxMode == &_modeRGB555) {
-		copyRect555To5551(_gameScreen, _gameTopTexture, 0, 0, Common::Rect(_gameScreen.w, _gameScreen.h));
-	} else if (_gfxState.gfxMode == &_modeCLUT8) {
-		const byte *src = (const byte *)_gameScreen.getPixels();
-		byte *dst = (byte *)_gameTopTexture.getPixels();
-		Graphics::crossBlitMap(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
-			_gameScreen.w, _gameScreen.h, _gameTopTexture.format.bytesPerPixel, _paletteMap);
-	} else {
-		const byte *src = (const byte *)_gameScreen.getPixels();
-		byte *dst = (byte *)_gameTopTexture.getPixels();
-		Graphics::crossBlit(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
-			_gameScreen.w, _gameScreen.h, _gameTopTexture.format, _pfGame);
+	if (_pfGame == _gameTopTexture.format)
+		return;
+
+	_dirtyRects.merge();
+
+	for (const Common::Rect &r : _dirtyRects) {
+		const byte *src = (const byte *)_gameScreen.getBasePtr(r.left, r.top);
+		byte *dst = (byte *)_gameTopTexture.getBasePtr(r.left, r.top);
+
+		if (_blitFunc) {
+			_blitFunc(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
+				r.width(), r.height());
+		} else if (_gfxState.gfxMode == &_modeCLUT8) {
+			Graphics::crossBlitMap(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
+				r.width(), r.height(), _gameTopTexture.format.bytesPerPixel, _paletteMap);
+		} else {
+			Graphics::crossBlit(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
+				r.width(), r.height(), _gameTopTexture.format, _pfGame);
+		}
 	}
 
 	_gameTopTexture.markDirty();
 }
 
 Graphics::Surface *OSystem_3DS::lockScreen() {
-	return &_gameScreen;
+	if (_pfGame == _gameTopTexture.format)
+		return &_gameTopTexture;
+	else
+		return &_gameScreen;
 }
+
 void OSystem_3DS::unlockScreen() {
-	_gameTextureDirty = true;
+	if (_pfGame == _gameTopTexture.format)
+		_gameTopTexture.markDirty();
+	else
+		_dirtyRects.emplace_back(getWidth(), getHeight());
 }
 
 void OSystem_3DS::updateScreen() {
@@ -416,9 +438,9 @@ void OSystem_3DS::updateScreen() {
 		return;
 	}
 
-	if (_gameTextureDirty) {
+	if (!_dirtyRects.empty()) {
 		flushGameScreen();
-		_gameTextureDirty = false;
+		_dirtyRects.clear();
 	}
 
 // 	updateFocus();
@@ -730,11 +752,11 @@ void OSystem_3DS::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 	}
 }
 
-int16 OSystem_3DS::getOverlayHeight() {
+int16 OSystem_3DS::getOverlayHeight() const {
 	return 240;
 }
 
-int16 OSystem_3DS::getOverlayWidth() {
+int16 OSystem_3DS::getOverlayWidth() const {
 	return _screen == kScreenTop ? 400 : 320;
 }
 
@@ -753,7 +775,6 @@ void OSystem_3DS::warpMouse(int x, int y) {
 		_cursorOverlayY = y;
 	}
 
-	// TODO: adjust for _cursorScalable ?
 	x -= _cursorHotspotX;
 	y -= _cursorHotspotY;
 
@@ -774,9 +795,9 @@ void OSystem_3DS::setCursorDelta(float deltaX, float deltaY) {
 
 void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 								 int hotspotX, int hotspotY,
-								 uint32 keycolor, bool dontScale,
-								 const Graphics::PixelFormat *format, const byte *mask) {
-	_cursorScalable = !dontScale;
+								 uint32 keycolor,
+								 const Graphics::PixelFormat *format, const byte *mask,
+								 frac_t scaleX, frac_t scaleY) {
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
 	_cursorKeyColor = keycolor;

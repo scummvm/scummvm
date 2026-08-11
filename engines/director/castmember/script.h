@@ -31,7 +31,17 @@ public:
 	ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	ScriptCastMember(Cast *cast, uint16 castId, ScriptCastMember &source);
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new ScriptCastMember(cast, castId, *this)); }
+
 	ScriptType _scriptType;
+
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	void setField(int field, const Datum &value) override;
+
+	uint32 getCastDataSize() override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
 
 	Common::String formatInfo() override;
 };

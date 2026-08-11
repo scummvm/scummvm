@@ -22,8 +22,10 @@
 #ifndef ULTIMA8_KERNEL_MOUSE_H
 #define ULTIMA8_KERNEL_MOUSE_H
 
-#include "common/system.h"
 #include "common/rect.h"
+#include "common/stack.h"
+#include "common/scummsys.h"
+
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/direction.h"
 

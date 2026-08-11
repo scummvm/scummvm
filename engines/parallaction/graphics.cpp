@@ -41,41 +41,42 @@ namespace Parallaction {
 
 #define	LABEL_TRANSPARENT_COLOR 0xFF
 
-void halfbritePixel(int x, int y, int color, void *data) {
-	Graphics::Surface *surf = (Graphics::Surface *)data;
-	byte *pixel = (byte *)surf->getBasePtr(x, y);
-	*pixel &= ~0x20;
-}
-
-void drawCircleLine(int xCenter, int yCenter, int x, int y, int color, void (*plotProc)(int, int, int, void *), void *data){
-	Graphics::drawLine(xCenter + x, yCenter + y, xCenter - x, yCenter + y, color, plotProc, data);
-	Graphics::drawLine(xCenter + x, yCenter - y, xCenter - x, yCenter - y, color, plotProc, data);
-	Graphics::drawLine(xCenter + y, yCenter + x, xCenter - y, yCenter + x, color, plotProc, data);
-	Graphics::drawLine(xCenter + y, yCenter - x, xCenter - y, yCenter - x, color, plotProc, data);
-}
-
-void drawCircle(int xCenter, int yCenter, int radius, int color, void (*plotProc)(int, int, int, void *), void *data) {
-	int x = 0;
-	int y = radius;
-	int p = 1 - radius;
-
-	/* Plot first set of points */
-	drawCircleLine(xCenter, yCenter, x, y, color, plotProc, data);
-
-	while (x < y) {
-		x++;
-		if (p < 0)
-			p += 2*x + 1;
-		else {
-			y--;
-			p += 2 * (x-y) + 1;
-		}
-		drawCircleLine(xCenter, yCenter, x, y, color, plotProc, data);
+class HalfbritePrimitives : public Graphics::Primitives {
+public:
+	void drawPoint(int x, int y, uint32 color, void *data) override {
+		Graphics::Surface *surf = (Graphics::Surface *)data;
+		byte *pixel = (byte *)surf->getBasePtr(x, y);
+		*pixel &= ~0x20;
 	}
-}
 
+	void drawCircleLine(int xCenter, int yCenter, int x, int y, int color, void *data) {
+		drawLine(xCenter + x, yCenter + y, xCenter - x, yCenter + y, color, data);
+		drawLine(xCenter + x, yCenter - y, xCenter - x, yCenter - y, color, data);
+		drawLine(xCenter + y, yCenter + x, xCenter - y, yCenter + x, color, data);
+		drawLine(xCenter + y, yCenter - x, xCenter - y, yCenter - x, color, data);
+	}
 
+	void drawCircle(int xCenter, int yCenter, int radius, int color, void *data) {
+		int x = 0;
+		int y = radius;
+		int p = 1 - radius;
 
+		/* Plot first set of points */
+		drawCircleLine(xCenter, yCenter, x, y, color, data);
+
+		while (x < y) {
+			x++;
+			if (p < 0)
+				p += 2*x + 1;
+			else {
+				y--;
+				p += 2 * (x-y) + 1;
+			}
+			drawCircleLine(xCenter, yCenter, x, y, color, data);
+		}
+	}
+
+};
 
 Palette::Palette() {
 
@@ -463,7 +464,7 @@ void Gfx::applyHalfbriteEffect_NS(Graphics::Surface &surf) {
 		}
 	}
 	if (_hbCircleRadius > 0) {
-		drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, &surf);
+		HalfbritePrimitives().drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &surf);
 	}
 }
 
@@ -550,6 +551,7 @@ GfxObj *Gfx::renderFloatingLabel(Font *font, char *text) {
 	GfxObj *obj = new GfxObj(kGfxObjTypeLabel, new SurfaceToFrames(cnv), "floatingLabel");
 	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
 	obj->layer = LAYER_FOREGROUND;
+	obj->_text = text;
 
 	return obj;
 }
@@ -558,6 +560,8 @@ void Gfx::showFloatingLabel(GfxObj *label) {
 	hideFloatingLabel();
 
 	if (label) {
+		_vm->sayText(label->_text, Common::TextToSpeechManager::INTERRUPT);
+
 		label->x = -1000;
 		label->y = -1000;
 		label->setFlags(kGfxObjVisible);
@@ -647,11 +651,13 @@ GfxObj *Gfx::createLabel(Font *font, const char *text, byte color) {
 	GfxObj *obj = new GfxObj(kGfxObjTypeLabel, new SurfaceToFrames(cnv), "label");
 	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
 	obj->layer = LAYER_FOREGROUND;
+	obj->_text = text;
+	obj->_text.replace('@', ' ');
 
 	return obj;
 }
 
-void Gfx::showLabel(GfxObj *label, int16 x, int16 y) {
+void Gfx::showLabel(GfxObj *label, int16 x, int16 y, bool queueTTS, bool voiceText) {
 	if (!label) {
 		return;
 	}
@@ -671,6 +677,20 @@ void Gfx::showLabel(GfxObj *label, int16 x, int16 y) {
 
 	label->x = x;
 	label->y = y;
+
+	if (voiceText) {
+		_vm->setTTSVoice(kNarratorVoiceID);
+
+		Common::TextToSpeechManager::Action action;
+
+		if (queueTTS) {
+			action = Common::TextToSpeechManager::QUEUE;
+		} else {
+			action = Common::TextToSpeechManager::INTERRUPT;
+		}
+
+		_vm->sayText(label->_text, action);
+	}
 
 	_labels.push_back(label);
 }

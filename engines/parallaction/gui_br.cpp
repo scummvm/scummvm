@@ -22,6 +22,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "graphics/cursorman.h"
+
 #include "parallaction/gui.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
@@ -232,7 +234,7 @@ public:
 
 		}
 
-		_vm->_system->showMouse(false);
+		CursorMan.showMouse(false);
 		cleanup();
 
 		return nullptr;

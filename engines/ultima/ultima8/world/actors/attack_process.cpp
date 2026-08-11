@@ -76,8 +76,6 @@ static const int16 REG_SFX_15[] = { 0x1E7, 0x1E8, 0x1E9, 0x1EA, 0x1ED };
 // read from the data array.
 static const int MAGIC_DATA_OFF = 33000;
 
-const uint16 AttackProcess::ATTACK_PROC_TYPE = 0x259;
-
 int16 AttackProcess::_lastAttackSound = -1;
 int16 AttackProcess::_lastLastAttackSound = -1;
 

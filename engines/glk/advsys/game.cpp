@@ -176,7 +176,7 @@ void Game::loadGameData(Common::ReadStream &rs) {
 
 int Game::findWord(const Common::String &word) const {
 	// Limit the word to the maximum allowable size
-	Common::String w(word.c_str(), word.c_str() + WORD_SIZE);
+	Common::String w(word.c_str(), MIN(word.size(), (uint)WORD_SIZE));
 
 	// Iterate over the dictionary for the word
 	for (int idx = 1; idx <= _wordCount; ++idx) {

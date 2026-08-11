@@ -228,7 +228,7 @@ const uint16 dsAddr_oopsMsg = 0x3afd; // "Oops"
 const uint16 dsAddr_foundFoodMsg = 0x3b04; // "People leave food in unbelievable places"
 // Come Here Message : 0x3b2f to 0x3b58
 const uint16 dsAddr_comeHereMsg = 0x3b2f; // "Come here, I've got something for you"
-// Cant Catch Message : 0x3b59 to 0x3b6b
+// Can't Catch Message : 0x3b59 to 0x3b6b
 const uint16 dsAddr_cantCatchMsg = 0x3b59; // "I can't catch it!"
 // Trapped Mouse Message : 0x3b6c to 0x3b82
 const uint16 dsAddr_trappedMouseMsg = 0x3b6c; // "The mouse is trapped!"
@@ -566,7 +566,7 @@ const uint16 dsAddr_mikeScentTestMsg = 0x5138; // "Mike, let's get on with the s
 const uint16 dsAddr_mikeViewTestMsg = 0x5161; // "Mike, run the view test"
 // Cutscene Message #0 : 0x517b to 0x51a6
 const uint16 dsAddr_cutsceneMsg0 = 0x517b; // "A secret diary of ..."
-// Cant Hide Message : 0x51a7 to 0x51ba
+// Can't Hide Message : 0x51a7 to 0x51ba
 const uint16 dsAddr_cantHideMsg = 0x51a7; // "I can't hide here!"
 // John Outside Message : 0x51bb to 0x51e6
 const uint16 dsAddr_johnOutsideMsg = 0x51bb; // "There's John Noty outside! I can't go out!"
@@ -887,11 +887,11 @@ const uint16 dsAddr_inventoryItemDataPtrTable = 0xc4a6;
 const uint16 dsAddr_lansAnimationTablePtr = 0xd89e;
 
 // Spoken With Mansion Guard Flag : 0xda96
-// FIXME - This is probably unecessary as although this location is set, it
+// FIXME - This is probably unnecessary as although this location is set, it
 //         doesn't now appear to be read.
 const uint16 dsAddr_spokenWithMansionGuardFlag = 0xda96; // 1 byte
 // Have Not Spoken With Mansion Guard Flag : 0xda97
-// FIXME - This is probably unecessary as although this location is set, it
+// FIXME - This is probably unnecessary as although this location is set, it
 //         doesn't now appear to be read.
 const uint16 dsAddr_haveNotSpokenWithMansionGuardFlag = 0xda97; // 1 byte
 
@@ -1160,6 +1160,376 @@ const uint16 dsAddr_finalCredits6 = 0xe47c; // "THE END..."
 const uint16 dsAddr_finalCredits7 = 0xe488; // "programming..."
 // 0xe783 to 0xe78f: 13 null bytes at end of dseg data - segment alignment padding?
 
+const byte kNumDialogStacks = 26;
+
+// Values in the enum below should match those defined in the Language enum
+// in create_teenagent.h
+namespace DataLanguage {
+enum : byte {
+	CS_CZE = 3,
+	EN_ANY = 7,
+	PL_POL = 27,
+	RU_RUS = 30,
+};
+}
+
+enum MessageType{
+	kRejectMsg0 = 0,
+	kRejectMsg1,
+	kRejectMsg2,
+	kRejectMsg3,
+	kCoolMsg,
+	kObjErrorMsg,
+	kCarJackMsg,
+	kSpannerMsg,
+	kLastChanceMsg,
+	kGiveUpMsg,
+	kAvoidBeesMsg,
+	kBoatEmptyMsg,
+	kTooHardWoodMsg,
+	kBooMsg,
+	kDontPushLuckMsg,
+	kOrdinaryHaystackMsg,
+	kNeedleHaystackMsg,
+	kNoPotatoMsg,
+	kTrousersMsg,
+	kLifeIsBrutalMsg,
+	kLifeBrutalMsg,
+	kTickledMsg,
+	kItsGoneMsg,
+	kMonstersMsg,
+	kNoHandsMsg,
+	kTotalEmptyMsg,
+	kOneSmallStepMsg,
+	kNoChanceMsg,
+	kDinoBoneMsg,
+	kWallShakenMsg,
+	kKindaDarkMsg,
+	kNotInDarkMsg,
+	kShutValveMsg,
+	kNeedSunglassesMsg,
+	kNotBestPlaceMsg,
+	kNotHereMsg,
+	kCantTalkUnderwaterMsg,
+	kNotSwimmingThereMsg,
+	kTooLittleAirMsg,
+	kHookedAnchorMsg,
+	kSeaweedMsg,
+	kFishBoatMsg,
+	kFishSomethingMsg,
+	kFishDontWorryMsg,
+	kNotRedHerringMsg,
+	kNiceDownMsg,
+	kHeyLetGoMsg,
+	kAaahhhMsg,
+	kOopsMsg,
+	kFoundFoodMsg,
+	kComeHereMsg,
+	kCantCatchMsg,
+	kTrappedMouseMsg,
+	kYikesMsg,
+	kMouseNerveMsg,
+	kDrawersEmptyMsg,
+	kRidBushMsg,
+	kMouseGoneMsg,
+	kNonsenseMsg,
+	kGoodDoggyMsg,
+	kHereBoyMsg,
+	kFriendsNowMsg,
+	kNotThinkRightPlaceMsg,
+	kCutsceneMsgA,
+	kCutsceneMsgB,
+	kFoundCrudeOilMsg,
+	kMyLifeMsg,
+	kConfusionMsg,
+	kGrandpaPromiseMsg,
+	kOhLetsGoMsg,
+	kByeMsg,
+	kNoNeedMsg,
+	kGirlTalkMsg,
+	kDontWorkPurposeMsg,
+	kNutRealMsg,
+	kHenFlyMsg,
+	kFirstTestFailMsg,
+	kRidFrustationsMsg,
+	kRoadNowhereMsg,
+	kOpenBootMsg,
+	kShutTightMsg,
+	kBootEmptyMsg,
+	kClothesDryMsg,
+	kCrowKillMsg,
+	kGetRidOfGuardFirstMsg,
+	kWallTooSmoothMsg,
+	kTooMuchResinToClimbMsg,
+	kOnlyGreenRectMsg,
+	kDontWannaTouchHedgehogMsg,
+	kNotHungryMsg,
+	kNoLongHandsMsg,
+	kTooFarToSwimMsg,
+	kEchoMsg,
+	kLoudEchoMsg,
+	kWhoThereMsg,
+	kLoudWhoThereMsg,
+	kDontCopyMsg,
+	kLoudDontCopyMsg,
+	kThrowRockMsg,
+	kOrIWillMsg,
+	kStillThereMsg,
+	kNoBucketMsg,
+	kDontNeedToOpenMsg,
+	kHmmGrassMsg,
+	kFindNutMsg,
+	kNotHornyMsg,
+	kCantJumpMsg,
+	kDontNeedItMsg,
+	kNotSantaClausMsg,
+	kNoPlasticImitationsMsg,
+	kTooFragileMsg,
+	kKeepItOpenMsg,
+	kNotTakingSocksMsg,
+	kNotTiredMsg,
+	kTooBigMsg,
+	kNoSecretPassageMsg,
+	kNoFruitMsg,
+	kJugMeMsg,
+	kLeaveFlowersAloneMsg,
+	kMirrorMirrorMsg,
+	kThinkTooLongMsg,
+	kHintMaleMsg,
+	kOkWaitMsg,
+	kBusyThinkingMsg,
+	kNoDentistsMsg,
+	kTooHeavyMsg,
+	kWhatGotMsg,
+	kStrawberryJamMsg,
+	kGooseberryJamMsg,
+	kBlackberryJamMsg,
+	kBilberryJamMsg,
+	kGetMeOutJamMsg,
+	kRosemaryJamMsg,
+	kKnowRosemaryMsg,
+	kUnwantedJamsMsg,
+	kTooDarkMsg,
+	kYeowMsg,
+	kYawnMsg,
+	kLaughterMsg,
+	kNoHandsSharpThornsMsg,
+	kNoChainsawFuelMsg,
+	kThornsTooThinMsg,
+	kRockWalkingGeeMsg,
+	kButterflyMsg,
+	kNotSureIfAliveMsg,
+	kUnknownLanguageMsg,
+	kHoleTooNarrowMsg,
+	kBirdAttackMsg,
+	kNoSearchWarrantMsg,
+	kUninterestingHaystackMsg,
+	kMoreComplicatedMsg,
+	kNutRakeMsg,
+	kPaddleBrokenMsg,
+	kBranchNotPaddleMsg,
+	kTrySomewhereElseMsg,
+	kSharpenNotPulverizeMsg,
+	kCantDoTooDarkMsg,
+	kBribeMsg,
+	kBankNoteMsg,
+	kShowHerMoneyMsg,
+	kHundredBucksMsg,
+	kWantBloodMsg,
+	kDontLeaveMansionMsg,
+	kWimpMsg,
+	kStrangeDrawerMsg,
+	kNotOrdinaryDrawersMsg,
+	kDrawerOpenMsg,
+	kBlueInteriorMsg,
+	kRedInteriorMsg,
+	kGreyInteriorMsg,
+	kGreenInteriorMsg,
+	kBrownInteriorMsg,
+	kPinkInteriorMsg,
+	kDictaphoneInsideMsg,
+	kFoundPolaroidMsg,
+	kBookHeldMsg,
+	kSecretCompartmentMsg,
+	kDontMessMsg,
+	kFullAutomaticMsg,
+	kNoMoreSheetsMsg,
+	kNoDepraveMsg,
+	kNoReadAgainMsg,
+	kTvOffMsg,
+	kNotHappenMsg,
+	kTapeStartedMsg,
+	kMuchBetterMsg,
+	kNoSleepMsg,
+	kJustCorkMsg,
+	kEnoughPhotosMsg,
+	kRecordScareMsg,
+	kAlreadyRecordedMsg,
+	kCantRecordNoBatteriesMsg,
+	kNoBatteriesNoFunMsg,
+	kNotRightMomentMsg,
+	kCookAroundMsg,
+	kSameBottleMsg,
+	kBreakFlattenMsg,
+	kWhatInsideMsg,
+	kRestUselessMsg,
+	kTwoBatteriesMsg,
+	kOneTakenMsg,
+	kSlightMadMsg,
+	kPaperBurntMsg,
+	kBurnBabyMsg,
+	kVoilaMsg,
+	kTooHotMsg,
+	kFrozenShelfMsg,
+	kYummyMsg,
+	kDislikeVealMsg,
+	kNoReasonMsg,
+	kFooledOnceMsg,
+	kMikeVoiceTestMsg,
+	kNotMyVoiceMsg,
+	kSingingMsg,
+	kMikeScentTestMsg,
+	kMikeViewTestMsg,
+	kCutsceneMsg0,
+	kCantHideMsg,
+	kJohnOutsideMsg,
+	kWasCloseMsg,
+	kCorkInHoleMsg,
+	kFitsPerfectMsg,
+	kEnoughWaterMsg,
+	kNoHotWaterMsg,
+	kLabelOffMsg,
+	kCorkTooSmallMsg,
+	kNotTryNowMsg,
+	kNoSaladMsg,
+	kNahMsg,
+	kVentFirstMsg,
+	kCatchJohnFirstMsg,
+	kOnlyChilliMsg,
+	kWaterHotMsg,
+	kSinkFullMsg,
+	kNoSockStoreMsg,
+	kShowPapersMsg,
+	kGotPermissionMsg,
+	kSavingFineMsg,
+	kLoveCaptainMsg,
+	kSoccerRulzMsg,
+	kTreeCutMsg,
+	kVisaAcceptedMsg,
+	kOtherGraffitiMsg,
+	kFirstTrialMsg,
+	kLockedMsg,
+	kThanksMsg,
+	kUnkUsageMsg,
+	kIdeaMsg,
+	kCheckWorksMsg,
+	kTimeToCallMsg,
+	kMealFinishedMsg,
+	kBowlWeldedMsg,
+	kGotchaMsg,
+	kNoPocketMsg,
+	kDoesNotWorkMsg,
+	kFnMsg1,
+	kFnMsg2,
+	kFnMsg3,
+	kFnMsg4,
+	kPullObjMsg1,
+	kDontWantToTouchMsg,
+	kFenceBlocksMsg,
+	kNotWantToSleepMsg,
+	kPullObjMsg2,
+	kHelloQMsg,
+	kTotallyAddictedMsg,
+	kWhatAboutMsg,
+	kHotOffMsg,
+	kFullColorMsg,
+	kSpecialEdMsg,
+	kSoldierNewsMsg,
+	kPoleClimbDoneMsg,
+	kVacMsg,
+	kCutsceneMsg1,
+	kCutsceneMsg2,
+	kNowOpenMsg,
+	kCmonBabyMsg,
+	kTalkNotNowMsg,
+	kYeahRightMsg,
+	kBarmanTooCloseMsg,
+	kYuckMsg,
+	kPreferWaterMsg,
+	kTooWeakToClimbMsg,
+	kSpringPrickMsg,
+	kFoodAliveMsg,
+	kDoorClosedMsg,
+	kEmptyMsg,
+	kGeographyClassMsg,
+	kDontNeedMessMsg,
+	kSeenSofterRocksMsg,
+	kTooBluntMsg,
+	kUselessModelsMsg,
+	kBarmanWillNoticeMsg,
+	kTooMuchToDrinkMsg,
+	kNotThiefMsg,
+	kTooManyToSearchMsg,
+	kCaptainWouldNotFitMsg,
+	kChickenNeverMsg,
+	kCantOpenItMsg,
+	kDontNeedThemMsg,
+	kPeepingTomMsg,
+	kBigPocketsMsg,
+	kTroubleWithStairsMsg,
+	k9LivesToReadMsg,
+	kThanksNotTiredMsg,
+	kNoNeedToTurnOnMsg,
+	kWontBearWeightMsg,
+	kNeverLearntMsg,
+	kSoSharpMsg,
+	kCognacMsg,
+	kNoTimeForPleasuresMsg,
+	kNotSocksWithBareHandsMsg,
+	kNotHalloweenMsg,
+	kNotManualMsg,
+	kNothingToPlayMsg,
+	kNotMineMsg,
+	kHeyWtmQMsg,
+	kItsOpenMsg,
+	kOutOfOrderMsg,
+	kCaptainWatchingMsg,
+	kBluntSickleMsg,
+	kFirstBusinessMsg,
+	kNoDiggingKnifeMsg,
+	kNoMessOnTableMsg,
+	kThrowCrumbsToBirdQMsg,
+	kDontWasteCrumbsMsg,
+	kMightSlipFallInMsg,
+	kBookColorMsg0,
+	kBookColorMsg1,
+	kBookColorMsg2,
+	kBookColorMsg3,
+	kBookColorMsg4,
+	kBookColorMsg5,
+
+	kObjCombineErrorMsg,
+};
+
+// Number of resources in teenagent.dat file
+const byte kNumResources = 7;
+
+enum ResourceType {
+	kResDialogStacks = 0,
+	kResDialogs,
+	kResItems,
+	kResCredits,
+	kResSceneObjects,
+	kResMessages,
+	kResCombinations,
+};
+
+struct ResourceInfo {
+	byte _id;
+	uint32 _offset;
+	uint32 _size;
+};
+
 class Resources {
 public:
 	Resources();
@@ -1186,13 +1556,54 @@ public:
 	Font font7, font8;
 
 	//const byte *getDialog(uint16 dialogNum) { return eseg.ptr(dialogOffsets[dialogNum]); }
-	uint16 getDialogAddr(uint16 dialogNum) { return dialogOffsets[dialogNum]; }
+	uint32 getDialogStartPos() { return _dialogsStartOffset; }
+	uint32 getDialogAddr(uint16 dialogNum) { return dialogOffsets[dialogNum]; }
+	uint32 getCreditAddr(uint16 creditNum) { return creditsOffsets[creditNum]; }
+	uint32 getItemAddr(uint16 itemNum) { return itemOffsets[itemNum]; }
+	uint32 getMessageAddr(MessageType msgType) { return messageOffsets[msgType]; }
+	uint32 getCombinationAddr(uint16 msgNum) { return combinationOffsets[msgNum]; }
 
+	uint16 sceneObjectsBlockSize() { return _sceneObjectsBlockSize; }
+	uint32 getSceneObjectsStartPos() { return _sceneObjectsStartOffset; }
+
+	uint16 getVoiceIndex(uint32 addr) {
+		if (_addrToVoiceIndx.contains(addr))
+			return _addrToVoiceIndx[addr];
+		return 0;
+	}
+	void setVoiceIndex(uint32 addr, uint16 index) { _addrToVoiceIndx[addr] = index; }
+
+	// Artificial segment that contains various
+	// string items (messages, dialogs, item names, etc.)
+	// Used to support multiple languages
 	Segment eseg;
-private:
-	void precomputeDialogOffsets();
 
-	Common::Array<uint16> dialogOffsets;
+private:
+	void precomputeAllOffsets(const Common::Array<ResourceInfo> &resourceInfos);
+	void precomputeResourceOffsets(const ResourceInfo &resInfo, Common::Array<uint32> &offsets, uint numTerminators = 2);
+
+	void precomputeDialogOffsets(const ResourceInfo &resInfo);
+	void precomputeCreditsOffsets(const ResourceInfo &resInfo);
+	void precomputeItemOffsets(const ResourceInfo &resInfo);
+	void precomputeMessageOffsets(const ResourceInfo &resInfo);
+	void precomputeCombinationOffsets(const ResourceInfo &resInfo);
+
+	void precomputeVoiceIndices(const Common::Array<ResourceInfo> &resourceInfos);
+	bool isVoiceIndexEmpty(uint16 index);
+
+	void readDialogStacks(byte *src);
+
+	Common::Array<uint32> dialogOffsets;
+	Common::Array<uint32> creditsOffsets, itemOffsets;
+	Common::Array<uint32> messageOffsets;
+	Common::Array<uint32> combinationOffsets;
+
+	uint32 _sceneObjectsStartOffset;
+	uint32 _sceneObjectsBlockSize; // Needed to know how much to write to savefile
+
+	uint32 _dialogsStartOffset;
+
+	Common::HashMap<uint32, uint16> _addrToVoiceIndx;
 };
 
 } // End of namespace TeenAgent

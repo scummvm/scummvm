@@ -24,7 +24,7 @@
 #include "backends/cloud/id/iddownloadrequest.h"
 #include "common/debug.h"
 #include "gui/downloaddialog.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #include "cloudmanager.h"
 
 namespace Cloud {
@@ -138,7 +138,7 @@ void FolderDownloadRequest::downloadNextFile() {
 	}
 	Common::Path localPath(localPathStr);
 	if (!_localDirectoryPath.empty()) {
-		localPath = _localDirectoryPath.append(localPath);
+		localPath = _localDirectoryPath.join(localPath);
 	}
 	debug(9, "FolderDownloadRequest: %s -> %s", remotePath.c_str(), localPath.toString(Common::Path::kNativeSeparator).c_str());
 	_workingRequest = _storage->downloadById(

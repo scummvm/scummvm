@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 #include "common/str.h"
 
@@ -54,46 +55,39 @@ AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdNodeState::~AdNodeState() {
-	delete[] _name;
-	delete[] _filename;
-	delete[] _cursor;
-	_name = nullptr;
-	_filename = nullptr;
-	_cursor = nullptr;
+	SAFE_DELETE_ARRAY(_name);
+	SAFE_DELETE_ARRAY(_filename);
+	SAFE_DELETE_ARRAY(_cursor);
 	for (int i = 0; i < 7; i++) {
-		delete[] _caption[i];
-		_caption[i] = nullptr;
+		SAFE_DELETE_ARRAY(_caption[i]);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setName(const char *name) {
-	delete[] _name;
-	_name = nullptr;
+	SAFE_DELETE_ARRAY(_name);
 	BaseUtils::setString(&_name, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setFilename(const char *filename) {
-	delete[] _filename;
-	_filename = nullptr;
+	SAFE_DELETE_ARRAY(_filename);
 	BaseUtils::setString(&_filename, filename);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCursor(const char *filename) {
-	delete[] _cursor;
-	_cursor = nullptr;
+	SAFE_DELETE_ARRAY(_cursor);
 	BaseUtils::setString(&_cursor, filename);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
 	persistMgr->transferBool(TMEMBER(_active));
 	persistMgr->transferCharPtr(TMEMBER(_name));
@@ -117,11 +111,11 @@ void AdNodeState::setCaption(const char *caption, int caseVal) {
 		return;
 	}
 
-	delete[] _caption[caseVal - 1];
+	SAFE_DELETE_ARRAY(_caption[caseVal - 1]);
 	size_t captionSize = strlen(caption) + 1;
 	_caption[caseVal - 1] = new char[captionSize];
 	Common::strcpy_s(_caption[caseVal - 1], captionSize, caption);
-	_gameRef->expandStringByStringTable(&_caption[caseVal - 1]);
+	_game->_stringTable->expand(&_caption[caseVal - 1]);
 }
 
 
@@ -145,8 +139,8 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 	}
 
 	// HACK!
-	if (this->_gameRef != entity->_gameRef) {
-		this->_gameRef = entity->_gameRef;
+	if (this->_game != entity->_game) {
+		this->_game = entity->_game;
 	}
 
 	if (saving) {
@@ -155,31 +149,31 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 				setCaption(entity->_caption[i], i);
 			}
 		}
-		if (!entity->_region && entity->_sprite && entity->_sprite->getFilename()) {
+		if (!entity->_region && entity->_sprite && entity->_sprite->_filename && entity->_sprite->_filename[0]) {
 			if (includingSprites) {
-				setFilename(entity->_sprite->getFilename());
+				setFilename(entity->_sprite->_filename);
 			} else {
 				setFilename("");
 			}
 		}
-		if (entity->_cursor && entity->_cursor->getFilename()) {
-			setCursor(entity->_cursor->getFilename());
+		if (entity->_cursor && entity->_cursor->_filename && entity->_cursor->_filename[0]) {
+			setCursor(entity->_cursor->_filename);
 		}
 		_alphaColor = entity->_alphaColor;
 		_active = entity->_active;
 	} else {
 		for (int i = 0; i < 7; i++) {
-			if (_caption[i]) {
+			if (_caption[i] && _caption[i][0]) {
 				entity->setCaption(_caption[i], i);
 			}
 		}
-		if (_filename && !entity->_region && includingSprites && strcmp(_filename, "") != 0) {
-			if (!entity->_sprite || !entity->_sprite->getFilename() || scumm_stricmp(entity->_sprite->getFilename(), _filename) != 0) {
+		if (_filename && _filename[0] && !entity->_region && includingSprites) {
+			if (!entity->_sprite || !entity->_sprite->_filename || scumm_stricmp(entity->_sprite->_filename, _filename) != 0) {
 				entity->setSprite(_filename);
 			}
 		}
-		if (_cursor) {
-			if (!entity->_cursor || !entity->_cursor->getFilename() || scumm_stricmp(entity->_cursor->getFilename(), _cursor) != 0) {
+		if (_cursor && _cursor[0]) {
+			if (!entity->_cursor || !entity->_cursor->_filename || scumm_stricmp(entity->_cursor->_filename, _cursor) != 0) {
 				entity->setCursor(_cursor);
 			}
 		}

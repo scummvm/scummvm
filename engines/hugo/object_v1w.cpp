@@ -125,7 +125,7 @@ void ObjectHandler_v1w::updateImages() {
 						obj->_frameTimer = obj->_frameInterval;
 						for (int j = 0; j < obj->_seqNumb; j++) {
 							if (obj->_currImagePtr->_nextSeqPtr == obj->_seqList[j]._seqPtr) {
-								if (obj->_cycleNumb) { // Decr cycleNumb if Non-continous
+								if (obj->_cycleNumb) { // Decr cycleNumb if Non-continuous
 									if (!--obj->_cycleNumb)
 										obj->_cycling = kCycleNotCycling;
 								}
@@ -146,7 +146,7 @@ void ObjectHandler_v1w::updateImages() {
 						obj->_frameTimer = obj->_frameInterval;
 						for (int j = 0; j < obj->_seqNumb; j++) {
 							if (obj->_currImagePtr == obj->_seqList[j]._seqPtr) {
-								if (obj->_cycleNumb){ // Decr cycleNumb if Non-continous
+								if (obj->_cycleNumb){ // Decr cycleNumb if Non-continuous
 									if (!--obj->_cycleNumb)
 										obj->_cycling = kCycleNotCycling;
 								}
@@ -360,8 +360,8 @@ void ObjectHandler_v1w::moveObjects() {
  * the assumption for now that the first obj is always the HERO) to the object
  * number of the swapped image
  */
-void ObjectHandler_v1w::swapImages(int objIndex1, int objIndex2) {
-	debugC(1, kDebugObject, "swapImages(%d, %d)", objIndex1, objIndex2);
+void ObjectHandler_v1w::swapImages(int objIndex1, int objIndex2, bool restoring) {
+	debugC(1, kDebugObject, "swapImages(%d, %d, %d)", objIndex1, objIndex2, restoring);
 
 	saveSeq(&_objects[objIndex1]);
 

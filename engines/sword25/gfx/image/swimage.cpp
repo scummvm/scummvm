@@ -92,7 +92,7 @@ uint SWImage::getPixel(int x, int y) {
 	assert(y >= 0 && y < _image.h);
 
 	byte a, r, g, b;
-	_image.format.colorToARGB(_image.getPixel(0, 0), a, r, g, b);
+	_image.format.colorToARGB(_image.getPixel(x, y), a, r, g, b);
 
 	return BS_ARGB(a, r, g, b);
 }

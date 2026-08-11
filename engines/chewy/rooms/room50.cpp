@@ -111,7 +111,7 @@ void Room50::gedAction(int index) {
 void Room50::stop_cigar() {
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
-	_G(atds)->set_ats_str(328, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(328, 1, ATS_DATA);
 	_G(det)->stopDetail(0);
 	_G(gameState).R50Zigarre = true;
 }
@@ -191,7 +191,7 @@ int16 Room50::use_gum() {
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_wasser = false;
 		stop_page();
-		startSetAILWait(6, 1, ANI_FRONT);
+		startDetailWait(6, 1, ANI_FRONT);
 		_G(det)->set_static_ani(5, -1);
 		autoMove(3, P_CHEWY);
 		_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -202,14 +202,14 @@ int16 Room50::use_gum() {
 		setPersonSpr(P_LEFT, P_HOWARD);
 		delInventory(_G(cur)->getInventoryCursor());
 		hide_person();
-		startSetAILWait(2, 1, ANI_FRONT);
+		startDetailWait(2, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(4);
-		startSetAILWait(2, 1, ANI_BACK);
+		startDetailWait(2, 1, ANI_BACK);
 		show_person();
 		setPersonSpr(P_LEFT, P_CHEWY);
 		startAadWait(275);
 		_G(det)->del_static_ani(5);
-		startSetAILWait(9, 1, ANI_FRONT);
+		startDetailWait(9, 1, ANI_FRONT);
 		_G(det)->del_static_ani(5);
 		_G(det)->set_static_ani(10, -1);
 		startAadWait(277);
@@ -221,8 +221,8 @@ int16 Room50::use_gum() {
 
 		_G(obj)->addInventory(KEY_INV, &_G(room_blk));
 		inventory_2_cur(KEY_INV);
-		_G(atds)->set_ats_str(323, 1, ATS_DATA);
-		_G(atds)->set_ats_str(327, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(323, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(327, 1, ATS_DATA);
 		_G(gameState).room_e_obj[84].Attribut = EXIT_TOP;
 		showCur();
 	}
@@ -238,7 +238,7 @@ void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 	_G(det)->set_static_ani(ani_nr, -1);
 	startAadWait(aad_nr);
 	_G(det)->del_static_ani(ani_nr);
-	startSetAILWait(6, 1, ANI_BACK);
+	startDetailWait(6, 1, ANI_BACK);
 	go_page();
 
 	if (!_G(gameState).R50KeyOK)

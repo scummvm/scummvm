@@ -26,6 +26,8 @@
 #ifndef AUDIO_SOFTSYNTH_OPL_MAME_H
 #define AUDIO_SOFTSYNTH_OPL_MAME_H
 
+#ifndef DISABLE_MAME_OPL
+
 #include "common/scummsys.h"
 #include "common/random.h"
 
@@ -173,28 +175,29 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 FM_OPL *makeAdLibOPL(int rate);
 
 // OPL API implementation
-class OPL : public ::OPL::EmulatedOPL {
+class OPL : public ::OPL::OPL, public Audio::EmulatedChip {
 private:
 	FM_OPL *_opl;
 public:
 	OPL() : _opl(0) {}
 	~OPL();
 
-	bool init();
-	void reset();
+	bool init() override;
+	void reset() override;
 
-	void write(int a, int v);
-	byte read(int a);
+	void write(int a, int v) override;
 
-	void writeReg(int r, int v);
+	void writeReg(int r, int v) override;
 
-	bool isStereo() const { return false; }
+	bool isStereo() const override { return false; }
 
 protected:
-	void generateSamples(int16 *buffer, int length);
+	void generateSamples(int16 *buffer, int length) override;
 };
 
 } // End of namespace MAME
 } // End of namespace OPL
+
+#endif // !DISABLE_MAME_OPL
 
 #endif

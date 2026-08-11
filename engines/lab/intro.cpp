@@ -63,12 +63,12 @@ void Intro::introEatMessages() {
 			return;
 
 		if ((msg->_msgClass == kMessageRightClick)
-		 || ((msg->_msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+		 || ((msg->_msgClass == kMessageAction) && (msg->_code == kActionSkipIntro)))
 			_quitIntro = true;
 	}
 }
 
-void Intro::doPictText(const Common::String filename, bool isScreen) {
+void Intro::doPictText(const Common::String &filename, bool isScreen) {
 	Common::String path = Common::String("Lab:rooms/Intro/") + filename;
 
 	uint timeDelay = (isScreen) ? 35 : 7;
@@ -148,7 +148,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 			uint16 code = msg->_code;
 
 			if ((msgClass == kMessageRightClick) ||
-				((msgClass == kMessageRawKey) && (code == Common::KEYCODE_ESCAPE))) {
+				((msgClass == kMessageAction) && (code == kActionSkipIntro))) {
 				_quitIntro = true;
 
 				if (isScreen)
@@ -191,7 +191,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 	}	// while(1)
 }
 
-void Intro::nReadPict(const Common::String filename, bool playOnce, bool noPalChange, bool doBlack, int wait) {
+void Intro::nReadPict(const Common::String &filename, bool playOnce, bool noPalChange, bool doBlack, int wait) {
 	Common::String finalFileName = Common::String("P:Intro/") + filename;
 
 	_vm->updateEvents();

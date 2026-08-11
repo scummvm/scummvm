@@ -26,6 +26,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/endian.h"
 #include "common/punycode.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
@@ -35,7 +36,7 @@ namespace Scumm {
 #define ASC_DEVICE_RATE		0x56EE8BA3
 #define PCM_BUFFER_SIZE		1024
 
-class MacSndLoader{
+class MacSndLoader {
 protected:
 	MacSndLoader(bool useInstrTag);
 public:
@@ -62,21 +63,7 @@ public:
 protected:
 	bool loadInstruments(const char *const *tryFileNames, uint16 numTryFileNames, uint16 numInstruments);
 
-	struct Instrument {
-	public:
-		Instrument(uint32 id, Common::SeekableReadStream *&in, Common::String &&name);
-		~Instrument() { _res.reset(); }
-		const MacLowLevelPCMDriver::PCMSound *data() const { return &_snd; }
-		uint32 id() const { return _id; }
-
-	private:
-		uint32 _id;
-		Common::SharedPtr<const byte> _res;
-		Common::String _name;
-		MacLowLevelPCMDriver::PCMSound _snd;
-	};
-
-	Common::Array<Common::SharedPtr<Instrument> > _instruments;
+	Common::Array<Common::SharedPtr<MacSndResource> > _instruments;
 
 	byte _sndRes6;
 	byte _isMusic;
@@ -89,8 +76,8 @@ protected:
 	const byte *_chanSndData[5];
 	uint32 _chanNumEvents[5];
 	uint32 _chanCurEvent[5];
-	const Common::SharedPtr<Instrument> *_chanInstr[5];
-	const Common::SharedPtr<Instrument> *_chanInstr2[5];
+	const Common::SharedPtr<MacSndResource> *_chanInstr[5];
+	const Common::SharedPtr<MacSndResource> *_chanInstr2[5];
 
 	const bool _useInstrTag;
 };
@@ -110,10 +97,10 @@ public:
 	bool parseNextEvent(uint16 chan, uint16 &duration, uint8 &note, bool &skip, bool &updateInstr) override;
 	uint16 getChanSetup() const override { return _chanSetup; }
 	bool isMusic() const override { return (_chanSetup == 0); }
-	bool restartSoundAfterLoad() const override { return true; }
+	bool restartSoundAfterLoad() const override { return isMusic(); }
 	bool ignoreMachineRating() const override { return false; }
 private:
-	const Common::SharedPtr<Instrument> *fetchInstrument(uint16 id) const;
+	const Common::SharedPtr<MacSndResource> *fetchInstrument(uint16 id) const;
 };
 
 class MonkeyMacSndLoader final : public MacSndLoader {
@@ -134,30 +121,11 @@ public:
 	bool restartSoundAfterLoad() const override { return _isMusic && _loop; }
 	bool ignoreMachineRating() const override { return true; }
 private:
-	const Common::SharedPtr<Instrument> *fetchInstrument(const byte *data, uint32 dataSize, uint32 tagOrOffset);
+	const Common::SharedPtr<MacSndResource> *fetchInstrument(const byte *data, uint32 dataSize, uint32 tagOrOffset);
 	bool _blockSfx;
 	byte _transpose;
 	const byte _numInstrumentsMax;
 };
-
-MacSndLoader::Instrument::Instrument(uint32 id, Common::SeekableReadStream *&in, Common::String &&name) : _id(id), _name(Common::move(name)) {
-	in->seek(2);
-	uint16 numTypes = in->readUint16BE();
-	in->seek(numTypes * 6 + 4);
-	in->seek(in->readUint16BE() * 8 + numTypes * 6 + 10);
-
-	_snd.len = in->readUint32BE();
-	_snd.rate = in->readUint32BE();
-	_snd.loopst = in->readUint32BE();
-	_snd.loopend = in->readUint32BE();
-	_snd.enc = in->readByte();
-	_snd.baseFreq = in->readByte();
-
-	byte *buff = new byte[_snd.len];
-	if (in->read(buff, _snd.len) != _snd.len)
-		error("MacSndLoader::Instrument::Instrument(): Data error");
-	_snd.data = Common::SharedPtr<const byte>(buff, Common::ArrayDeleter<const byte>());
-}
 
 MacSndLoader::MacSndLoader(bool useInstrTag) : _sndRes6(0), _isMusic(0), _sndRes9(0), _sndRes10(0), _chanSetup(0),
 	_timbre(0), _useInstrTag(useInstrTag), _synth(0), _loop(false) {
@@ -214,7 +182,7 @@ bool MacSndLoader::loadInstruments(const char *const *tryFileNames, uint16 numTr
 		Common::String nm(resMan.getResName(MKTAG('s', 'n', 'd', ' '), ids[i]));
 		memcpy(&tag, nm.c_str(), MIN<uint>(nm.size(), sizeof(tag)));
 		uint32 id = _useInstrTag ? FROM_BE_32(tag) : ids[i];
-		_instruments.push_back(Common::SharedPtr<Instrument>(new Instrument(id, str, Common::move(nm))));
+		_instruments.push_back(Common::SharedPtr<MacSndResource>(new MacSndResource(id, str, Common::move(nm))));
 		delete str;
 	}
 
@@ -225,7 +193,7 @@ bool MacSndLoader::loadInstruments(const char *const *tryFileNames, uint16 numTr
 }
 
 bool LoomMacSndLoader::init() {
-	static const char *execNames[] = {
+	static const char *const execNames[] = {
 		"Loom",
 		"Loom\xaa",
 		"Loom PPC",
@@ -236,7 +204,7 @@ bool LoomMacSndLoader::init() {
 }
 
 bool LoomMacSndLoader::checkResource(const byte *data, uint32 dataSize) const {
-	return (dataSize >= 14 && READ_BE_UINT16(data + 4) == 'so' && !READ_BE_UINT32(data + 10));
+	return (dataSize >= 14 && READ_BE_UINT16(data + 4) == MKTAG16('s','o') && !READ_BE_UINT32(data + 10));
 }
 
 bool LoomMacSndLoader::loadSound(const byte *data, uint32 dataSize) {
@@ -278,9 +246,9 @@ bool LoomMacSndLoader::parseNextEvent(uint16 chan, uint16 &duration, uint8 &note
 	return true;
 }
 
-const Common::SharedPtr<MacSndLoader::Instrument> *LoomMacSndLoader::fetchInstrument(uint16 id) const {
-	Common::Array<Common::SharedPtr<Instrument> >::const_iterator instr = _instruments.end();
-	for (Common::Array<Common::SharedPtr<Instrument> >::const_iterator i = _instruments.begin(); i != _instruments.end(); ++i) {
+const Common::SharedPtr<MacSndResource> *LoomMacSndLoader::fetchInstrument(uint16 id) const {
+	Common::Array<Common::SharedPtr<MacSndResource> >::const_iterator instr = _instruments.end();
+	for (Common::Array<Common::SharedPtr<MacSndResource> >::const_iterator i = _instruments.begin(); i != _instruments.end(); ++i) {
 		if ((*i)->id() == id)
 			return i;
 		else if ((*i)->id() == 0x2D1C)
@@ -290,7 +258,7 @@ const Common::SharedPtr<MacSndLoader::Instrument> *LoomMacSndLoader::fetchInstru
 }
 
 bool MonkeyMacSndLoader::init() {
-	static const char *execNames[] = {
+	static const char *const execNames[] = {
 		"Monkey Island"
 	};
 
@@ -341,7 +309,7 @@ bool MonkeyMacSndLoader::loadSound(const byte *data, uint32 dataSize) {
 		}
 	}
 
-	_blockSfx = (_isMusic && _loop);
+	_blockSfx = _isMusic;
 
 	return true;
 }
@@ -389,10 +357,10 @@ bool MonkeyMacSndLoader::parseNextEvent(uint16 chan, uint16 &duration, uint8 &no
 	return true;
 }
 
-const Common::SharedPtr<MacSndLoader::Instrument> *MonkeyMacSndLoader::fetchInstrument(const byte *data, uint32 dataSize, uint32 tagOrOffset) {
-	Common::Array<Common::SharedPtr<Instrument> >::const_iterator instr = _instruments.end();
+const Common::SharedPtr<MacSndResource> *MonkeyMacSndLoader::fetchInstrument(const byte *data, uint32 dataSize, uint32 tagOrOffset) {
+	Common::Array<Common::SharedPtr<MacSndResource> >::const_iterator instr = _instruments.end();
 	if (tagOrOffset & ~0x7fffff) {
-		for (Common::Array<Common::SharedPtr<Instrument> >::const_iterator i = _instruments.begin(); i != _instruments.end(); ++i) {
+		for (Common::Array<Common::SharedPtr<MacSndResource> >::const_iterator i = _instruments.begin(); i != _instruments.end(); ++i) {
 			if ((*i)->id() == tagOrOffset)
 				return i;
 			else if ((*i)->id() == MKTAG('s', 'i', 'l', 'e'))
@@ -402,7 +370,7 @@ const Common::SharedPtr<MacSndLoader::Instrument> *MonkeyMacSndLoader::fetchInst
 		Common::SeekableReadStream *str = new Common::MemoryReadStream(&data[tagOrOffset + 8], READ_BE_UINT32(data + tagOrOffset + 4), DisposeAfterUse::NO);
 		if (_instruments.size() == _numInstrumentsMax)
 			_instruments.pop_back();
-		_instruments.push_back(Common::SharedPtr<Instrument>(new Instrument(READ_BE_UINT32(&data[tagOrOffset]), str, Common::String())));
+		_instruments.push_back(Common::SharedPtr<MacSndResource>(new MacSndResource(READ_BE_UINT32(&data[tagOrOffset]), str, Common::String())));
 		delete str;
 		instr = _instruments.end() - 1;
 	}
@@ -412,11 +380,12 @@ const Common::SharedPtr<MacSndLoader::Instrument> *MonkeyMacSndLoader::fetchInst
 Common::WeakPtr<LoomMonkeyMacSnd> *LoomMonkeyMacSnd::_inst = nullptr;
 
 LoomMonkeyMacSnd::LoomMonkeyMacSnd(ScummEngine *vm, Audio::Mixer *mixer) : VblTaskClientDriver(), _vm(vm), _mixer(mixer), _curSound(0), _loader(nullptr),
-	_macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback), _songTimer(0), _songTimerInternal(0),
+	_macstr(nullptr), _sdrv(nullptr), _vblTskProc(this, &VblTaskClientDriver::vblCallback), _songTimer(0), _songTimerInternal(0), _disableFlags(0),
 	_machineRating(0), _selectedQuality(2), _effectiveChanConfig(0), _16bit(false), _idRangeMax(200), _sndChannel(0), _chanUse(0), _defaultChanConfig(0),
 	_chanConfigTable(nullptr), _chanPlaying(0), _curChanConfig(0), _curSynthType(0), _curSndType(Audio::Mixer::kPlainSoundType), _mixerThread(false),
 	_restartSound(0), _lastSndType(Audio::Mixer::kPlainSoundType), _chanCbProc(this, &MacLowLevelPCMDriver::CallbackClient::sndChannelCallback),
-	_curSoundSaveVar(0), _saveVersionChange(vm->_game.id == GID_MONKEY ? 115 : 114), _legacySaveUnits(vm->_game.id == GID_MONKEY ? 3 : 5) {
+	_curSoundSaveVar(0), _saveVersionChange(vm->_game.id == GID_MONKEY ? 115 : 114), _legacySaveUnits(vm->_game.id == GID_MONKEY ? 3 : 5),
+	_checkSound(vm->_game.id == GID_MONKEY ? _curSound : _curSoundSaveVar) {
 	assert(_vm);
 	assert(_mixer);
 
@@ -478,8 +447,9 @@ bool LoomMonkeyMacSnd::startDevice(uint32 outputRate, uint32 pcmDeviceRate, uint
 	_effectiveChanConfig = 9;
 	_16bit = internal16Bit;
 
-	_macstr->initDrivers();
 	_macstr->initBuffers(feedBufferSize);
+	_macstr->addVolumeGroup(Audio::Mixer::kMusicSoundType);
+	_macstr->addVolumeGroup(Audio::Mixer::kSFXSoundType);
 	_macstr->setVblCallback(&_vblTskProc);
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _macstr, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
@@ -519,7 +489,8 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 	if (_loader->blocked(ptr, size))
 		return;
 
-	stopActiveSound();
+	if (_curSound)
+		stopActiveSound();
 	if (_chanUse <= 1)
 		disposeAllChannels();
 
@@ -531,8 +502,14 @@ void LoomMonkeyMacSnd::startSound(int id, int jumpToTick) {
 		return;
 	}
 
-	//if (_sndDisableFlags && _loader->isMusic())
-	//	return;
+	if (_disableFlags) {
+		if (_loader->restartSoundAfterLoad()) {
+			_curSoundSaveVar = id;
+			_loader->unblock();
+		}
+		if (_loader->isMusic() || (_disableFlags & 2))
+			return;
+	}
 
 	_effectiveChanConfig = _loader->getChanSetup() ? _loader->getChanSetup() : _defaultChanConfig;
 	_curSndType = _loader->isMusic() ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
@@ -560,6 +537,9 @@ void LoomMonkeyMacSnd::stopSound(int id) {
 
 	Common::StackLock lock(_mixer->mutex());
 
+	if (id == _curSoundSaveVar)
+		_curSoundSaveVar = 0;
+
 	if (id == _curSound)
 		stopActiveSound();
 }
@@ -580,7 +560,7 @@ int LoomMonkeyMacSnd::getSoundStatus(int id) const {
 		return 0;
 	}
 	Common::StackLock lock(_mixer->mutex());
-	return (_curSound == id) ? 1 : 0;
+	return (_checkSound == id) ? 1 : 0;
 }
 
 void LoomMonkeyMacSnd::setQuality(int qual) {
@@ -600,7 +580,7 @@ void LoomMonkeyMacSnd::setQuality(int qual) {
 	int csnd = _curSound;
 	int32 timeStamp = csnd ? _songTimer * 1000 + ((_songTimerInternal * 1000) / 30) : 0;
 	stopActiveSound();
-	
+
 	detectQuality();
 	if (csnd)
 		startSound(csnd, timeStamp);
@@ -641,6 +621,20 @@ void LoomMonkeyMacSnd::restoreAfterLoad() {
 		startSound(sound);
 }
 
+void LoomMonkeyMacSnd::toggleMusic(bool enable) {
+	if ((_disableFlags & 1) == (enable ? 0 : 1))
+		return;
+	_disableFlags ^= 1;
+	updateDisabledState();
+}
+
+void LoomMonkeyMacSnd::toggleSoundEffects(bool enable) {
+	if ((_disableFlags & 2) == (enable ? 0 : 2))
+		return;
+	_disableFlags ^= 2;
+	updateDisabledState();
+}
+
 void LoomMonkeyMacSnd::vblCallback() {
 	if (_songTimerInternal++ == 29) {
 		_songTimerInternal = 0;
@@ -659,7 +653,7 @@ void LoomMonkeyMacSnd::generateData(int8 *dst, uint32 len, Audio::Mixer::SoundTy
 	_sdrv->feed(dst, len, type, expectStereo);
 }
 
-const MacSoundDriver::Status &LoomMonkeyMacSnd::getDriverStatus(uint8, Audio::Mixer::SoundType sndType) const {
+const MacSoundDriver::Status &LoomMonkeyMacSnd::getDriverStatus(Audio::Mixer::SoundType sndType) const {
 	return _sdrv->getStatus(sndType);
 }
 
@@ -689,13 +683,13 @@ void LoomMonkeyMacSnd::sendSoundCommands(int timeStamp) {
 
 	if (_chanUse == 1 && _sndChannel) {
 		while (_loader->parseNextEvent(0, duration, note, skip, updateInstr)) {
-			if (timeStamp > 0) {
-				int ts = timeStamp;
-				timeStamp = MAX<int>(0, timeStamp - duration);
-				duration -= ts;
+			if (timeStamp > 0 && !skip) {
+				timeStamp -= duration;
+				if (timeStamp >= 0)
+					skip = true;
+				else if (timeStamp < 0)
+					duration = -timeStamp;
 			}
-			if (timeStamp)
-				continue;
 
 			if (updateInstr)
 				_sdrv->loadInstrument(_sndChannel, MacLowLevelPCMDriver::kEnqueue, _loader->getInstrData(0));
@@ -726,14 +720,13 @@ void LoomMonkeyMacSnd::sendSoundCommands(int timeStamp) {
 					busy &= ~(1 << i);
 					continue;
 				}
-				if (tmstmp[i] > 0) {
-					int ts = tmstmp[i];
-					tmstmp[i] = MAX<int>(0, tmstmp[i] - duration);
-					duration -= ts;
+				if (tmstmp[i] > 0 && !skip) {
+					tmstmp[i] -= duration;
+					if (tmstmp[i] >= 0)
+						skip = true;
+					else if (tmstmp[i] < 0)
+						duration = -tmstmp[i];
 				}
-
-				if (tmstmp[i])
-					continue;
 
 				if (updateInstr)
 					_sdrv->loadInstrument(_musChannels[i], MacLowLevelPCMDriver::kEnqueue, _loader->getInstrData(i + 1));
@@ -749,7 +742,7 @@ void LoomMonkeyMacSnd::sendSoundCommands(int timeStamp) {
 			}
 		}
 
-		
+
 		for (int i = 0; i < 4; ++i) {
 			if (_chanPlaying & (1 << i)) {
 				_sdrv->quiet(_musChannels[i], MacLowLevelPCMDriver::kEnqueue);
@@ -869,6 +862,17 @@ void LoomMonkeyMacSnd::disposeAllChannels() {
 	}
 
 	_curChanConfig = 0;
+}
+
+void LoomMonkeyMacSnd::updateDisabledState() {
+	if (_disableFlags == 0) {
+		if (_curSoundSaveVar)
+			startSound(_curSoundSaveVar);
+	} else {
+		int sound = _curSoundSaveVar;
+		stopActiveSound();
+		_curSoundSaveVar = sound;
+	}
 }
 
 void LoomMonkeyMacSnd::detectQuality() {

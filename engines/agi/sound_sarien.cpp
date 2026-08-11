@@ -63,6 +63,25 @@ static const int16 waveformMac[WAVEFORM_SIZE] = {
 	-175, -172, -165, -159, -137, -114, -67, -19
 };
 
+/**
+ * AGI sound note structure.
+ */
+struct AgiNote {
+	uint16 duration;    ///< Note duration
+	uint16 freqDiv;     ///< Note frequency divisor (10-bit)
+	uint8  attenuation; ///< Note volume attenuation (4-bit)
+
+	/** Reads an AgiNote through the given pointer. */
+	void read(const uint8 *ptr) {
+		duration = READ_LE_UINT16(ptr);
+		uint16 freqByte0 = *(ptr + 2); // Bits 4-9 of the frequency divisor
+		uint16 freqByte1 = *(ptr + 3); // Bits 0-3 of the frequency divisor
+		// Merge the frequency divisor's bits together into a single variable
+		freqDiv = ((freqByte0 & 0x3F) << 4) | (freqByte1 & 0x0F);
+		attenuation = *(ptr + 4) & 0x0F;
+	}
+};
+
 SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _chn() {
 	_sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
 
@@ -103,15 +122,17 @@ SoundGenSarien::~SoundGenSarien() {
 }
 
 int SoundGenSarien::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock lock(_mutex);
+
 	fillAudio(buffer, numSamples / 2);
 
 	return numSamples;
 }
 
 void SoundGenSarien::play(int resnum) {
-	AgiSoundEmuType type;
+	Common::StackLock lock(_mutex);
 
-	type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
+	AgiSoundEmuType type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
 
 	assert(type == AGI_SOUND_4CHN);
 
@@ -141,6 +162,8 @@ void SoundGenSarien::play(int resnum) {
 }
 
 void SoundGenSarien::stop() {
+	Common::StackLock lock(_mutex);
+
 	_playingSound = -1;
 
 	for (int i = 0; i < NUM_CHANNELS; i++)

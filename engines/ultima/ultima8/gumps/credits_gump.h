@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GUMPS_CREDITSGUMP_H
 #define ULTIMA8_GUMPS_CREDITSGUMP_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/misc/classtype.h"
 
@@ -39,7 +39,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	CreditsGump();
-	CreditsGump(const Std::string &text, int parskip = 24,
+	CreditsGump(const Common::String &text, int parskip = 24,
 	            uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
 	~CreditsGump() override;
 
@@ -47,7 +47,7 @@ public:
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Set a configuration option to true when user watches entire sequence
-	void SetFlagWhenFinished(Std::string configKey) {
+	void SetFlagWhenFinished(Common::String configKey) {
 		_configKey = configKey;
 	}
 
@@ -62,9 +62,9 @@ public:
 
 protected:
 
-	void extractLine(Std::string &text, char &modifier, Std::string &line);
+	void extractLine(Common::String &text, char &modifier, Common::String &line);
 
-	Std::string _text;
+	Common::String _text;
 	int _parSkip;
 
 	enum CreditsState {
@@ -84,7 +84,7 @@ protected:
 	int _currentSurface;
 	int _currentY;
 
-	Std::string _configKey;
+	Common::String _configKey;
 };
 
 } // End of namespace Ultima8

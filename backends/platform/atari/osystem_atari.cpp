@@ -19,6 +19,8 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -37,32 +39,34 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_getchar
 
 #include "backends/platform/atari/osystem_atari.h"
 
-#if defined(ATARI)
-
-#include "backends/audiocd/default/default-audiocd.h"
-#include "common/config-manager.h"
+#include "backends/audiocd/atari/atari-audiocd.h"
 #include "backends/events/atari/atari-events.h"
 #include "backends/events/default/default-events.h"
-#include "backends/graphics/atari/atari-graphics-asm.h"
-#include "backends/graphics/atari/atari-graphics-superblitter.h"
-#include "backends/graphics/atari/atari-graphics-supervidel.h"
-#include "backends/graphics/atari/atari-graphics-videl.h"
 #include "backends/graphics/atari/atari-graphics.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mixer/atari/atari-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
+#ifdef DYNAMIC_MODULES
+#include "backends/plugins/atari/atari-provider.h"
+#endif
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "base/main.h"
-#include "gui/debugger.h"
+#include "common/config-manager.h"
+#include "common/debug.h"
+
+#define INPUT_ACTIVE
 
 /*
  * Include header files needed for the getFilesystemFactory() method.
  */
-#include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/fs/atari/atari-fs-factory.h"
+
+bool g_gameEngineActive = false;
 
 extern "C" void atari_kbdvec(void *);
 extern "C" void atari_mousevec(void *);
@@ -70,31 +74,69 @@ typedef void (*KBDVEC)(void *);
 extern "C" KBDVEC atari_old_kbdvec;
 extern "C" KBDVEC atari_old_mousevec;
 
-extern "C" void atari_200hz_init();
-extern "C" void atari_200hz_shutdown();
-extern "C" volatile uint32 counter_200hz;
-
 extern void nf_init(void);
 extern void nf_print(const char* msg);
 
-static bool s_tt = false;
 static int s_app_id = -1;
+static void (*s_old_procterm)(void) = nullptr;
 
-static bool exit_already_called = false;
+static char s_lastErrorMessage[1024+1];
+
+static volatile uint32 counter_200hz;
+
+static bool s_dtor_already_called = false;
+
+static long atari_200hz_init(void)
+{
+	__asm__ __volatile__(
+	"\tmove		%%sr,-(%%sp)\n"
+	"\tor.w		#0x700,%%sr\n"
+
+	"\tmove.l	0x114.w,old_200hz\n"
+	"\tmove.l	#my_200hz,0x114.w\n"
+
+	"\tmove		(%%sp)+,%%sr\n"
+	"\tjbra		1f\n"
+
+	"\tdc.l		0x58425241\n" /* "XBRA" */
+	"\tdc.l		0x5343554d\n" /* "SCUM" */
+"old_200hz:\n"
+	"\tdc.l		0\n"
+"my_200hz:\n"
+	"\taddq.l	#1,%0\n"
+
+	"\tmove.l	old_200hz(%%pc),-(%%sp)\n"
+	"\trts\n"
+"1:\n"
+	: /* output */
+	: "m"(counter_200hz) /* inputs */
+	: "memory", "cc");
+
+	return 0;
+}
+
+static long atari_200hz_shutdown(void)
+{
+	__asm__ __volatile__(
+	"\tmove		%%sr,-(%%sp)\n"
+	"\tor.w		#0x700,%%sr\n"
+
+	"\tmove.l	old_200hz,0x114.w\n"
+
+	"\tmove		(%%sp)+,%%sr\n"
+	: /* output */
+	: /* inputs */
+	: "memory", "cc");
+
+	return 0;
+}
 
 static void critical_restore() {
-	extern void AtariAudioShutdown();
-	extern void AtariGraphicsShutdown();
+	//debug("critical_restore()");
 
-	AtariAudioShutdown();
-	AtariGraphicsShutdown();
-
-	if (s_tt)
-		Supexec(asm_screen_tt_restore);
-	else
-		Supexec(asm_screen_falcon_restore);
 	Supexec(atari_200hz_shutdown);
 
+#ifdef INPUT_ACTIVE
 	if (atari_old_kbdvec && atari_old_mousevec) {
 		_KBDVECS *kbdvecs = Kbdvbase();
 		((uintptr *)kbdvecs)[-1] = (uintptr)atari_old_kbdvec;
@@ -110,16 +152,30 @@ static void critical_restore() {
 		// ok, restore mouse cursor at least
 		graf_mouse(M_ON, NULL);
 	}
+#endif
+
+	// avoid infinite recursion if either of the shutdown procedures fails
+	(void)Setexc(VEC_PROCTERM, s_old_procterm);
+
+	extern void AtariAudioShutdown();
+	extern void AtariGraphicsShutdown();
+
+	AtariAudioShutdown();
+	AtariGraphicsShutdown();
 }
 
 // called on normal program termination (via exit() or returning from main())
 static void exit_restore() {
-	if (!exit_already_called)
+	// causes a crash upon termination
+	//debug("exit_restore()");
+
+	if (!s_dtor_already_called)
 		g_system->destroy();
+	// else critical_restore() will be called, too
 }
 
 OSystem_Atari::OSystem_Atari() {
-	_fsFactory = new POSIXFilesystemFactory();
+	_fsFactory = new AtariFilesystemFactory();
 
 	nf_init();
 
@@ -141,8 +197,6 @@ OSystem_Atari::OSystem_Atari() {
 		exit(EXIT_FAILURE);
 	}
 
-	s_tt = (vdo == VDO_TT);
-
 	enum {
 		MCH_ST = 0,
 		MCH_STE,
@@ -161,32 +215,30 @@ OSystem_Atari::OSystem_Atari() {
 		exit(EXIT_FAILURE);
 	}
 
+#ifdef INPUT_ACTIVE
 	_KBDVECS *kbdvecs = Kbdvbase();
 	atari_old_kbdvec = (KBDVEC)(((uintptr *)kbdvecs)[-1]);
 	atari_old_mousevec = kbdvecs->mousevec;
 
 	((uintptr *)kbdvecs)[-1] = (uintptr)atari_kbdvec;
 	kbdvecs->mousevec = atari_mousevec;
+#endif
 
 	Supexec(atari_200hz_init);
+	_startTime = counter_200hz;
 	_timerInitialized = true;
-
-	if (s_tt)
-		Supexec(asm_screen_tt_save);
-	else
-		Supexec(asm_screen_falcon_save);
-
-	_videoInitialized = true;
 
 	// protect against sudden exit()
 	atexit(exit_restore);
 	// protect against sudden crash
-	_old_procterm = Setexc(VEC_PROCTERM, -1);
+	s_old_procterm = Setexc(VEC_PROCTERM, -1);
 	(void)Setexc(VEC_PROCTERM, critical_restore);
 }
 
 OSystem_Atari::~OSystem_Atari() {
 	debug("OSystem_Atari::~OSystem_Atari()");
+
+	s_dtor_already_called = true;
 
 	// _audiocdManager needs to be deleted before _mixerManager to avoid a crash.
 	delete _audiocdManager;
@@ -209,16 +261,6 @@ OSystem_Atari::~OSystem_Atari() {
 
 	delete _fsFactory;
 	_fsFactory = nullptr;
-
-	if (_videoInitialized) {
-		if (s_tt)
-			Supexec(asm_screen_tt_restore);
-		else {
-			Supexec(asm_screen_falcon_restore);
-		}
-
-		_videoInitialized = false;
-	}
 
 	if (_timerInitialized) {
 		Supexec(atari_200hz_shutdown);
@@ -244,11 +286,12 @@ OSystem_Atari::~OSystem_Atari() {
 	}
 
 	// graceful exit
-	exit_already_called = true;
-	(void)Setexc(VEC_PROCTERM, _old_procterm);
+	(void)Setexc(VEC_PROCTERM, s_old_procterm);
 }
 
 void OSystem_Atari::initBackend() {
+	debug("OSystem_Atari::initBackend()");
+
 	s_app_id = appl_init();
 	if (s_app_id != -1) {
 		// get the ID of the current physical screen workstation
@@ -273,9 +316,11 @@ void OSystem_Atari::initBackend() {
 		_vdi_width = work_out[0] + 1;
 		_vdi_height = work_out[1] + 1;
 
+#ifdef INPUT_ACTIVE
 		graf_mouse(M_OFF, NULL);
 		// see https://github.com/freemint/freemint/issues/312
 		//wind_update(BEG_UPDATE);
+#endif
 	}
 
 	_timerManager = new DefaultTimerManager();
@@ -285,21 +330,19 @@ void OSystem_Atari::initBackend() {
 	_eventManager = new DefaultEventManager(makeKeyboardRepeatingEventSource(atariEventSource));
 
 	// AtariGraphicsManager needs _eventManager ready
-	AtariGraphicsManager *atariGraphicsManager;
-#ifdef USE_SUPERVIDEL
-	if (hasSuperVidel())
-		atariGraphicsManager = new AtariSuperVidelManager();
-	else
-#endif
-		atariGraphicsManager = new AtariVidelManager();
+	AtariGraphicsManager *atariGraphicsManager = new AtariGraphicsManager();
 	_graphicsManager = atariGraphicsManager;
 
 	atariEventSource->setGraphicsManager(atariGraphicsManager);
 
 #ifdef DISABLE_FANCY_THEMES
+	// On the lite build force "None" as the opl driver, i.e. do not attempt
+	// to emulate anything by default.
+	if (!ConfMan.hasKey("opl_driver")) {
+		ConfMan.set("opl_driver", "null");
+	}
 	// On the lite build force "STMIDI" as the audio driver, i.e. do not attempt
-	// to emulate anything by default. That prevents mixing silence and enable
-	// us to stop DMA playback which takes unnecessary cycles.
+	// to emulate anything by default.
 	if (!ConfMan.hasKey("music_driver")) {
 		ConfMan.set("music_driver", "stmidi");
 	}
@@ -310,14 +353,31 @@ void OSystem_Atari::initBackend() {
 		ConfMan.set("mt32_device", "auto");
 	}
 #endif
+	// This produces hard pause even in most optimised engines
+	// and even on CT60...
+	if (!ConfMan.hasKey("autosave_period")) {
+		ConfMan.setInt("autosave_period", 0);
+	}
 
 	_mixerManager = new AtariMixerManager();
 	// Setup and start mixer
 	_mixerManager->init();
 
-	_startTime = counter_200hz;
+	_audiocdManager = new AtariAudioCDManager();
 
 	BaseBackend::initBackend();
+}
+
+void OSystem_Atari::engineInit() {
+	//debug("engineInit");
+
+	g_gameEngineActive = true;
+}
+
+void OSystem_Atari::engineDone() {
+	//debug("engineDone");
+
+	g_gameEngineActive = false;
 }
 
 Common::MutexInternal *OSystem_Atari::createMutex() {
@@ -369,24 +429,58 @@ Common::HardwareInputSet *OSystem_Atari::getHardwareInputSet() {
 void OSystem_Atari::quit() {
 	debug("OSystem_Atari::quit()");
 
-	g_system->destroy();
+	if (!s_dtor_already_called)
+		destroy();
+
+	exit(0);
+}
+
+void OSystem_Atari::fatalError() {
+	debug("OSystem_Atari::fatalError()");
+
+	if (!s_dtor_already_called)
+		destroy();
+
+	// unlike the crash path via VEC_PROCTERM, give the user a chance to read
+	// the error message on the restored screen (keyboard vectors are restored
+	// by now, too)
+	if (s_lastErrorMessage[0] != '\0') {
+		fprintf(stderr, "%s", s_lastErrorMessage);
+		fprintf(stderr, "Press Enter to exit.\n");
+		fflush(stderr);
+		getchar();
+	}
+
+	exit(1);
 }
 
 void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
-	FILE *output = 0;
-
-	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
-		output = stdout;
-	else
-		output = stderr;
+	extern long nf_stderr_id;
 
 	static char str[1024+1];
-	sprintf(str, "[%08d] %s", getMillis(), message);
+	snprintf(str, sizeof(str), "[%08d] %s", getMillis(), message);
 
-	fputs(str, output);
-	fflush(output);
+	if (type == LogMessageType::kError && !nf_stderr_id) {
+		// remember the message for fatalError(): at this point the screen is
+		// usually still in a game video mode, so it has to be reprinted after
+		// the VDI/GEM state is restored (with nf_stderr it is already visible
+		// on the host console)
+		snprintf(s_lastErrorMessage, sizeof(s_lastErrorMessage), "%s", message);
+	}
 
-	nf_print(str);
+	if (nf_stderr_id) {
+		nf_print(str);
+	} else {
+		FILE *output = 0;
+
+		if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+			output = stdout;
+		else
+			output = stderr;
+
+		fputs(str, output);
+		fflush(output);
+	}
 }
 
 void OSystem_Atari::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -410,6 +504,9 @@ void OSystem_Atari::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 		}
 	}
 #endif
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 Common::Path OSystem_Atari::getDefaultConfigFileName() {
@@ -430,26 +527,18 @@ Common::Path OSystem_Atari::getDefaultConfigFileName() {
 void OSystem_Atari::update() {
 	// avoid a recursion loop if a timer callback decides to call OSystem::delayMillis()
 	static bool inTimer = false;
-	// flag to print the warning only once
-	static bool checkGameDomain = true;
-
-	if (!checkGameDomain) {
-		checkGameDomain = g_system->isOverlayVisible();
-	}
 
 	if (!inTimer) {
 		inTimer = true;
 		((DefaultTimerManager *)_timerManager)->checkTimers();
 		inTimer = false;
-	} else if (checkGameDomain) {
+	} else {
 		const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
-		if (activeDomain) {
-			warning("%s/%s calls update() from timer",
-				activeDomain->getValOrDefault("engineid").c_str(),
-				activeDomain->getValOrDefault("gameid").c_str());
+		assert(activeDomain);
 
-			checkGameDomain = false;
-		}
+		warning("%s/%s calls update() from timer",
+			activeDomain->getValOrDefault("engineid").c_str(),
+			activeDomain->getValOrDefault("gameid").c_str());
 	}
 
 	((AtariMixerManager *)_mixerManager)->update();
@@ -463,11 +552,13 @@ int main(int argc, char *argv[]) {
 	g_system = OSystem_Atari_create();
 	assert(g_system);
 
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new AtariPluginProvider());
+#endif
+
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
 	g_system->destroy();
 
 	return res;
 }
-
-#endif

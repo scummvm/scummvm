@@ -33,7 +33,7 @@
 #include "common/rect.h"
 #include "common/list.h"
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/transform_struct.h"
 
 namespace Wintermute {
@@ -69,16 +69,17 @@ public:
 
 	bool initRenderer(int width, int height, bool windowed) override;
 	bool flip() override;
-	bool indicatorFlip() override;
+	bool indicatorFlip(int32 x, int32 y, int32 width, int32 height) override;
 	bool forcedFlip() override;
-	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
+	bool clear() override;
 	Graphics::PixelFormat getPixelFormat() const override;
-	void fade(uint16 alpha) override;
-	void fadeToColor(byte r, byte g, byte b, byte a) override;
+	bool fade(uint16 alpha) override;
+	bool fadeToColor(byte r, byte g, byte b, byte a) override;
 
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
+	bool fillRect(int x, int y, int w, int h, uint32 color) override;
 
-	BaseImage *takeScreenshot() override;
+	BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) override;
 	void onWindowChange() override;
 	void setWindowed(bool windowed) override;
 
@@ -97,13 +98,10 @@ public:
 	void drawFromQueuedTicket(const RenderQueueIterator &ticket);
 
 	bool setViewport(int left, int top, int right, int bottom) override;
-	bool setViewport(Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
-	Rect32 getViewPort() override;
+	bool setViewport(Common::Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
 	void modTargetRect(Common::Rect *rect);
-	void pointFromScreen(Point32 *point);
-	void pointToScreen(Point32 *point);
-
-	void dumpData(const char *filename) override;
+	void pointFromScreen(Common::Point32 *point);
+	void pointToScreen(Common::Point32 *point);
 
 	float getScaleRatioX() const override {
 		return _ratioX;
@@ -136,8 +134,7 @@ private:
 	bool _needsFlip;
 	RenderQueueIterator _lastFrameIter;
 	Common::Rect _renderRect;
-	Graphics::Surface *_renderSurface;
-	Graphics::Surface *_blankSurface;
+	Graphics::ManagedSurface *_renderSurface;
 
 	int _borderLeft;
 	int _borderTop;

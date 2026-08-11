@@ -30,6 +30,7 @@
 #include "graphics/paletteman.h"
 
 #include "gob/gob.h"
+#include "gob/hotspots.h"
 #include "gob/util.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
@@ -100,7 +101,8 @@ void Util::processInput(bool scroll) {
 	int16 x = 0, y = 0;
 	bool hasMove = false;
 
-	_vm->_vidPlayer->updateLive();
+	if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
+		_vm->_vidPlayer->updateVideos();
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -370,6 +372,10 @@ void Util::setMousePos(int16 x, int16 y) {
 	x = CLIP<int>(x + _vm->_video->_screenDeltaX, 0, _vm->_width - 1);
 	y = CLIP<int>(y + _vm->_video->_screenDeltaY, 0, _vm->_height - 1);
 	g_system->warpMouse(x, y);
+
+#ifdef USE_TTS
+	_vm->_game->_hotspots->voiceHotspotTTSText(x, y);
+#endif
 }
 
 void Util::waitMouseUp() {
@@ -413,6 +419,20 @@ void Util::forceMouseUp(bool onlyWhenSynced) {
 
 	_vm->_game->_mouseButtons = kMouseButtonsNone;
 	_mouseButtons             = kMouseButtonsNone;
+}
+
+// TODO: Consider removing _mouseButtons to use only EventManager's buttonState, making this sync unnecessary.
+void Util::forceMouseButtonsSync() {
+	int backendButtonState = g_system->getEventManager()->getButtonState();
+
+	_mouseButtons = kMouseButtonsNone;
+	if (backendButtonState & Common::EventManager::LBUTTON)
+		_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsLeft));
+
+	if (backendButtonState & Common::EventManager::RBUTTON)
+		_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsRight));
+
+	_vm->_game->_mouseButtons = _mouseButtons;
 }
 
 void Util::clearPalette() {
@@ -468,6 +488,9 @@ void Util::waitEndFrame(bool handleInput) {
 
 		if (handleInput)
 			processInput();
+
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
+			_vm->_vidPlayer->updateVideos();
 
 		_vm->_video->retrace();
 
@@ -688,10 +711,31 @@ void Util::keyDown(const Common::Event &event) {
 		_keyState |= 0x0004;
 	else if (event.kbd.keycode == Common::KEYCODE_LEFT)
 		_keyState |= 0x0008;
+	else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+	         event.kbd.keycode == Common::KEYCODE_KP_ENTER)
+		_keyState |= 0x0010;
 	else if (event.kbd.keycode == Common::KEYCODE_SPACE)
 		_keyState |= 0x0020;
 	else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 		_keyState |= 0x0040;
+	else if (event.kbd.keycode == Common::KEYCODE_LCTRL ||
+	         event.kbd.keycode == Common::KEYCODE_RCTRL)
+		_keyState |= 0x0080;
+	else if (event.kbd.keycode == Common::KEYCODE_LSHIFT)
+		_keyState |= 0x0100;
+	else if (event.kbd.keycode == Common::KEYCODE_RSHIFT)
+		_keyState |= 0x0200;
+	else if (event.kbd.keycode == Common::KEYCODE_LALT ||
+	         event.kbd.keycode == Common::KEYCODE_RALT)
+		_keyState |= 0x0400;
+	else if (event.kbd.keycode == Common::KEYCODE_F1)
+		_keyState |= 0x0800;
+	else if (event.kbd.keycode == Common::KEYCODE_F2)
+		_keyState |= 0x1000;
+	else if (event.kbd.keycode == Common::KEYCODE_F3)
+		_keyState |= 0x2000;
+	else if (event.kbd.keycode == Common::KEYCODE_F4)
+		_keyState |= 0x4000;
 }
 
 void Util::keyUp(const Common::Event &event) {
@@ -703,10 +747,31 @@ void Util::keyUp(const Common::Event &event) {
 		_keyState &= ~0x0004;
 	else if (event.kbd.keycode == Common::KEYCODE_LEFT)
 		_keyState &= ~0x0008;
+	else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+	         event.kbd.keycode == Common::KEYCODE_KP_ENTER)
+		_keyState &= ~0x0010;
 	else if (event.kbd.keycode == Common::KEYCODE_SPACE)
 		_keyState &= ~0x0020;
 	else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 		_keyState &= ~0x0040;
+	else if (event.kbd.keycode == Common::KEYCODE_LCTRL ||
+	         event.kbd.keycode == Common::KEYCODE_RCTRL)
+		_keyState &= ~0x0080;
+	else if (event.kbd.keycode == Common::KEYCODE_LSHIFT)
+		_keyState &= ~0x0100;
+	else if (event.kbd.keycode == Common::KEYCODE_RSHIFT)
+		_keyState &= ~0x0200;
+	else if (event.kbd.keycode == Common::KEYCODE_LALT ||
+	         event.kbd.keycode == Common::KEYCODE_RALT)
+		_keyState &= ~0x0400;
+	else if (event.kbd.keycode == Common::KEYCODE_F1)
+		_keyState &= ~0x0800;
+	else if (event.kbd.keycode == Common::KEYCODE_F2)
+		_keyState &= ~0x1000;
+	else if (event.kbd.keycode == Common::KEYCODE_F3)
+		_keyState &= ~0x2000;
+	else if (event.kbd.keycode == Common::KEYCODE_F4)
+		_keyState &= ~0x4000;
 }
 
 } // End of namespace Gob

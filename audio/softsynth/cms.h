@@ -64,7 +64,7 @@ struct SAA1099 {
 	struct saa1099_noise noise[2];		/* noise generators */
 };
 
-class DOSBoxCMS : public ::CMS::EmulatedCMS {
+class DOSBoxCMS : public ::CMS::CMS, public Audio::EmulatedChip {
 public:
 	DOSBoxCMS(uint32 basePort = 0x220) {
 		memset(_saa1099, 0, sizeof(SAA1099)*2);
@@ -77,6 +77,8 @@ public:
 	void reset() override;
 	void write(int a, int v) override;
 	void writeReg(int r, int v) override;
+
+	bool isStereo() const override { return true; }
 
 protected:
 	void generateSamples(int16 *buffer, int numSamples) override;

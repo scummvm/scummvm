@@ -33,7 +33,7 @@ struct PanelButton {
 	int width;
 	int height;
 	int id;
-	uint16 ascii;
+	uint16 customType;
 	int state;
 	int upSpriteNumber;
 	int downSpriteNumber;
@@ -134,14 +134,14 @@ struct GameDisplayInfo {
 
 // ITE section
 static PanelButton ITE_MainPanelButtons[] = {
-	{kPanelButtonVerb,		52,4,	57,10,	kVerbITEWalkTo,'w',0,	0,1,0},
-	{kPanelButtonVerb,		52,15,	57,10,	kVerbITELookAt,'l',0,	2,3,0},
-	{kPanelButtonVerb,		52,26,	57,10,	kVerbITEPickUp,'p',0,	4,5,0},
-	{kPanelButtonVerb,		52,37,	57,10,	kVerbITETalkTo,'t',0,	0,1,0},
-	{kPanelButtonVerb,		110,4,	56,10,	kVerbITEOpen,'o',0,	6,7,0},
-	{kPanelButtonVerb,		110,15,	56,10,	kVerbITEClose,'c',0,	8,9,0},
-	{kPanelButtonVerb,		110,26,	56,10,	kVerbITEUse,'u',0,		10,11,0},
-	{kPanelButtonVerb,		110,37,	56,10,	kVerbITEGive,'g',0,	12,13,0},
+	{kPanelButtonVerb,		52,  4,	57,10,	kVerbITEWalkTo,	kActionWalkTo,	0,	 0,	 1,	0},
+	{kPanelButtonVerb,		52, 15,	57,10,	kVerbITELookAt,	kActionLookAt,	0,	 2,	 3,	0},
+	{kPanelButtonVerb,		52, 26,	57,10,	kVerbITEPickUp,	kActionPickUp,	0,	 4,	 5,	0},
+	{kPanelButtonVerb,		52, 37,	57,10,	kVerbITETalkTo,	kActionTalkTo,	0,	 0,	 1,	0},
+	{kPanelButtonVerb,		110, 4,	56,10,	kVerbITEOpen,	kActionOpen,	0,	 6,	 7,	0},
+	{kPanelButtonVerb,		110,15,	56,10,	kVerbITEClose,	kActionClose,	0,	 8,	 9,	0},
+	{kPanelButtonVerb,		110,26,	56,10,	kVerbITEUse,	kActionUse,		0,	10,	11,	0},
+	{kPanelButtonVerb,		110,37,	56,10,	kVerbITEGive,	kActionGive,	0,	12,	13,	0},
 	{kPanelButtonArrow,		306,6,	8,5,	-1,'U',0,			0,4,2},
 	{kPanelButtonArrow,		306,41,	8,5,	1,'D',0,			1,5,3},
 
@@ -157,14 +157,14 @@ static PanelButton ITE_MainPanelButtons[] = {
 };
 
 static PanelButton ITE_MainPanelButtons_ZH[] = {
-	{kPanelButtonVerb,		53,0,	34,16,	kVerbITEWalkTo,'w',0,	0,1,0},
-	{kPanelButtonVerb,		53,17,	34,16,	kVerbITELookAt,'l',0,	2,3,0},
-	{kPanelButtonVerb,		53,34,	34,16,	kVerbITEPickUp,'p',0,	4,5,0},
-	{kPanelButtonVerb,		92,0,	34,16,	kVerbITETalkTo,'t',0,	0,1,0},
-	{kPanelButtonVerb,		92,17,	34,16,	kVerbITEOpen,'o',0,	6,7,0},
-	{kPanelButtonVerb,		92,34,	34,16,	kVerbITEClose,'c',0,	8,9,0},
-	{kPanelButtonVerb,		132,0,	34,16,	kVerbITEUse,'u',0,		10,11,0},
-	{kPanelButtonVerb,		132,17,	34,16,	kVerbITEGive,'g',0,	12,13,0},
+	{kPanelButtonVerb,		 53, 0,	34,16,	kVerbITEWalkTo,	kActionWalkTo,	0,	0,1,0},
+	{kPanelButtonVerb,		 53,17,	34,16,	kVerbITELookAt,	kActionLookAt,	0,	2,3,0},
+	{kPanelButtonVerb,		 53,34,	34,16,	kVerbITEPickUp,	kActionPickUp,	0,	4,5,0},
+	{kPanelButtonVerb,		 92, 0,	34,16,	kVerbITETalkTo,	kActionTalkTo,	0,	0,1,0},
+	{kPanelButtonVerb,		 92,17,	34,16,	kVerbITEOpen,	kActionOpen,	0,	6,7,0},
+	{kPanelButtonVerb,		 92,34,	34,16,	kVerbITEClose,	kActionClose,	0,	8,9,0},
+	{kPanelButtonVerb,		132, 0,	34,16,	kVerbITEUse,	kActionUse,		0,	10,11,0},
+	{kPanelButtonVerb,		132,17,	34,16,	kVerbITEGive,	kActionGive,	0,	12,13,0},
 	{kPanelButtonArrow,		306,6,	8,5,	-1,'U',0,			0,4,2},
 	{kPanelButtonArrow,		306,41,	8,5,	1,'D',0,			1,5,3},
 
@@ -190,13 +190,13 @@ static PanelButton ITE_ConversePanelButtons[] = {
 
 static PanelButton ITE_OptionPanelButtons[] = {
 	{kPanelButtonOptionSlider,	284,19, 13,75,	0,'-',0,	0,0,0}, //slider-scroller
-	{kPanelButtonOption,	113,18, 45,17,	kTextReadingSpeed,'r',0,	0,0,0}, //read speed
-	{kPanelButtonOption,	113,37, 45,17,	kTextMusic,'m',0,	0,0,0}, //music
-	{kPanelButtonOption,	113,56, 45,17,	kTextSound,'n',0,	0,0,0}, //sound-noise
-	{kPanelButtonOption,	13,79, 135,17,	kTextQuitGame,'q',0,	0,0,0}, //quit
-	{kPanelButtonOption,	13,98, 135,17,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
-	{kPanelButtonOption,	164,98, 57,17,	kTextLoad,'l',0,	0,0,0}, //load
-	{kPanelButtonOption,	241,98, 57,17,	kTextSave,'s',0,	0,0,0},	//save
+	{kPanelButtonOption,	113,18, 45,17,	kTextReadingSpeed,		kActionOptionReadingSpeed,	0,	0,0,0}, //read speed
+	{kPanelButtonOption,	113,37, 45,17,	kTextMusic,				kActionOptionMusic,			0,	0,0,0}, //music
+	{kPanelButtonOption,	113,56, 45,17,	kTextSound,				kActionOptionSound,			0,	0,0,0}, //sound-noise
+	{kPanelButtonOption,	13,79, 135,17,	kTextQuitGame,			kActionOptionQuitGame,		0,	0,0,0}, //quit
+	{kPanelButtonOption,	13,98, 135,17,	kTextContinuePlaying,	kActionOptionContinue,		0,	0,0,0}, //continue
+	{kPanelButtonOption,	164,98, 57,17,	kTextLoad,				kActionOptionLoad,			0,	0,0,0}, //load
+	{kPanelButtonOption,	241,98, 57,17,	kTextSave,				kActionOptionSaveGame,		0,	0,0,0},	//save
 	{kPanelButtonOptionSaveFiles,	166,20, 112,74,	0,'-',0,	0,0,0},	//savefiles
 
 	{kPanelButtonOptionText,-1,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
@@ -208,13 +208,13 @@ static PanelButton ITE_OptionPanelButtons[] = {
 
 static PanelButton ITE_OptionPanelButtons_ZH[] = {
 	{kPanelButtonOptionSlider,	284,19, 13,75,	0,'-',0,	0,0,0}, //slider-scroller
-	{kPanelButtonOption,	113,18, 45,17,	kTextReadingSpeed,'r',0,	0,0,0}, //read speed
-	{kPanelButtonOption,	113,37, 45,17,	kTextMusic,'m',0,	0,0,0}, //music
-	{kPanelButtonOption,	113,56, 45,17,	kTextSound,'n',0,	0,0,0}, //sound-noise
-	{kPanelButtonOption,	13,79, 135,17,	kTextQuitGame,'q',0,	0,0,0}, //quit
-	{kPanelButtonOption,	13,98, 135,17,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
-	{kPanelButtonOption,	164,98, 57,17,	kTextLoad,'l',0,	0,0,0}, //load
-	{kPanelButtonOption,	241,98, 57,17,	kTextSave,'s',0,	0,0,0},	//save
+	{kPanelButtonOption,	113,18, 45,17,	kTextReadingSpeed,		kActionOptionReadingSpeed,	0,	0,0,0}, //read speed
+	{kPanelButtonOption,	113,37, 45,17,	kTextMusic,				kActionOptionMusic,			0,	0,0,0}, //music
+	{kPanelButtonOption,	113,56, 45,17,	kTextSound,				kActionOptionSound,			0,	0,0,0}, //sound-noise
+	{kPanelButtonOption,	13,79, 135,17,	kTextQuitGame,			kActionOptionQuitGame,		0,	0,0,0}, //quit
+	{kPanelButtonOption,	13,98, 135,17,	kTextContinuePlaying,	kActionOptionContinue,		0,	0,0,0}, //continue
+	{kPanelButtonOption,	164,98, 57,17,	kTextLoad,				kActionOptionLoad,			0,	0,0,0}, //load
+	{kPanelButtonOption,	241,98, 57,17,	kTextSave,				kActionOptionSaveGame,		0,	0,0,0},	//save
 	{kPanelButtonOptionSaveFiles,	166,20, 112,74,	0,'-',0,	0,0,0},	//savefiles
 
 	{kPanelButtonOptionText,9,0, 165,17,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
@@ -225,19 +225,19 @@ static PanelButton ITE_OptionPanelButtons_ZH[] = {
 };
 
 static PanelButton ITE_QuitPanelButtons[] = {
-	{kPanelButtonQuit, 11,17, 60,16, kTextQuit,'q',0, 0,0,0},
-	{kPanelButtonQuit, 121,17, 60,16, kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonQuit, 11,17, 60,16, kTextQuit,kActionOptionQuit,0, 0,0,0},
+	{kPanelButtonQuit, 121,17, 60,16, kTextCancel,kActionOptionCancel,0, 0,0,0},
 	{kPanelButtonQuitText, -1,5, 0,0, kTextQuitTheGameQuestion,'-',0, 0,0,0},
 };
 
 static PanelButton ITE_LoadPanelButtons[] = {
-	{kPanelButtonLoad, 101,19, 60,16, kTextOK,'o',0, 0,0,0},
+	{kPanelButtonLoad, 101,19, 60,16, kTextOK,kActionOptionOkay,0, 0,0,0},
 	{kPanelButtonLoadText, -1,5, 0,0, kTextLoadSuccessful,'-',0, 0,0,0},
 };
 
 static PanelButton ITE_SavePanelButtons[] = {
-	{kPanelButtonSave, 11,37, 60,16, kTextSave,'s',0, 0,0,0},
-	{kPanelButtonSave, 101,37, 60,16, kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonSave, 11,37, 60,16, kTextSave,kActionOptionSave,0, 0,0,0},
+	{kPanelButtonSave, 101,37, 60,16, kTextCancel,kActionOptionCancel,0, 0,0,0},
 	{kPanelButtonSaveEdit, 26,17, 119,17, 0,'-',0, 0,0,0},
 	{kPanelButtonSaveText, -1,5, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };
@@ -390,14 +390,14 @@ static const GameDisplayInfo ITE_DisplayInfo_ZH = {
 #define IHNM_CONVERSE_TEXT_LINES        11
 
 static PanelButton IHNM_MainPanelButtons[] = {
-	{kPanelButtonVerb,		106,12,		114,30,	kVerbIHNMWalk,'w',0,	0,1,0},
-	{kPanelButtonVerb,		106,44,		114,30,	kVerbIHNMLookAt,'l',0,	2,3,0},
-	{kPanelButtonVerb,		106,76,		114,30, kVerbIHNMTake,'k',0,	4,5,0},
-	{kPanelButtonVerb,		106,108,	114,30, kVerbIHNMUse,'u',0,		6,7,0},
-	{kPanelButtonVerb,		223,12,		114,30, kVerbIHNMTalkTo,'t',0,	8,9,0},
-	{kPanelButtonVerb,		223,44,		114,30, kVerbIHNMSwallow,'s',0,	10,11,0},
-	{kPanelButtonVerb,		223,76,		114,30, kVerbIHNMGive,'g',0,	12,13,0},
-	{kPanelButtonVerb,		223,108,	114,30, kVerbIHNMPush,'p',0,	14,15,0},
+	{kPanelButtonVerb,		106,12,		114,30,	kVerbIHNMWalk,		kActionWalkTo,	0,	 0, 1,0},
+	{kPanelButtonVerb,		106,44,		114,30,	kVerbIHNMLookAt,	kActionLookAt,	0,	 2, 3,0},
+	{kPanelButtonVerb,		106,76,		114,30, kVerbIHNMTake,		kActionTake,	0,	 4, 5,0},
+	{kPanelButtonVerb,		106,108,	114,30, kVerbIHNMUse,		kActionUse,		0,	 6, 7,0},
+	{kPanelButtonVerb,		223,12,		114,30, kVerbIHNMTalkTo,	kActionTalkTo,	0,	 8, 9,0},
+	{kPanelButtonVerb,		223,44,		114,30, kVerbIHNMSwallow,	kActionSwallow,	0,	10,11,0},
+	{kPanelButtonVerb,		223,76,		114,30, kVerbIHNMGive,		kActionGive,	0,	12,13,0},
+	{kPanelButtonVerb,		223,108,	114,30, kVerbIHNMPush,		kActionPush,	0,	14,15,0},
 	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			2,3,4},	// TODO: IHNM needs more states hre
 	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			6,7,8},
 
@@ -434,32 +434,32 @@ static PanelButton IHNM_OptionPanelButtons[] = {
 	{kPanelButtonOptionText,11,55,	139,21,	kTextMusic,'-',0, 0,0,0},			// text: music
 	{kPanelButtonOptionText,11,80,	139,21,	kTextSound,'-',0, 0,0,0},			// text: noise
 	{kPanelButtonOptionText,11,105,	139,21,	kTextVoices,'-',0, 0,0,0},			// text: voices
-	{kPanelButtonOption,	154,30, 79,23,	kTextReadingSpeed,'r',0,	0,0,0},	//read speed
-	{kPanelButtonOption,	154,55, 79,23,	kTextMusic,'m',0,	0,0,0},			//music
-	{kPanelButtonOption,	154,80, 79,23,	kTextSound,'n',0,	0,0,0},			//sound-noise
-	{kPanelButtonOption,	154,105,79,23,	kTextVoices,'v',0,	0,0,0},			//voices
-	{kPanelButtonOption,	20,150,	200,25,	kTextQuitGame,'q',0,	0,0,0},		//quit
-	{kPanelButtonOption,	20,178,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
+	{kPanelButtonOption,	154,30, 79,23,	kTextReadingSpeed,kActionOptionReadingSpeed,0,	0,0,0},	//read speed
+	{kPanelButtonOption,	154,55, 79,23,	kTextMusic,kActionOptionMusic,0,	0,0,0},			//music
+	{kPanelButtonOption,	154,80, 79,23,	kTextSound,kActionOptionSound,0,	0,0,0},			//sound-noise
+	{kPanelButtonOption,	154,105,79,23,	kTextVoices,kActionOptionVoices,0,	0,0,0},			//voices
+	{kPanelButtonOption,	20,150,	200,25,	kTextQuitGame,kActionOptionQuitGame,0,	0,0,0},		//quit
+	{kPanelButtonOption,	20,178,	200,25,	kTextContinuePlaying,kActionOptionContinue,0,	0,0,0}, //continue
 	{kPanelButtonOptionSaveFiles,	244,18, 170,138,	0,'-',0,	0,0,0},		//savefiles
-	{kPanelButtonOption,	243,163, 79,23,	kTextLoad,'l',0,	0,0,0},			//load
-	{kPanelButtonOption,	334,163, 79,23,	kTextSave,'s',0,	0,0,0},			//save
+	{kPanelButtonOption,	243,163, 79,23,	kTextLoad,kActionOptionLoad,0,	0,0,0},			//load
+	{kPanelButtonOption,	334,163, 79,23,	kTextSave,kActionOptionSaveGame,0,	0,0,0},			//save
 };
 
 static PanelButton IHNM_QuitPanelButtons[] = {
-	{kPanelButtonQuit,		26,80,	80,25,	kTextQuit,'q',0, 0,0,0},
-	{kPanelButtonQuit,		156,80,	80,25,	kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonQuit,		26,80,	80,25,	kTextQuit,kActionOptionQuit,0, 0,0,0},
+	{kPanelButtonQuit,		156,80,	80,25,	kTextCancel,kActionOptionCancel,0, 0,0,0},
 	{kPanelButtonQuitText,	-1,30,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_LoadPanelButtons[] = {
-	{kPanelButtonLoad,		26,80,	80,25,	kTextOK,'o',0, 0,0,0},
-	{kPanelButtonLoad,		156,80,	80,25,	kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonLoad,		26,80,	80,25,	kTextOK,kActionOptionOkay,0, 0,0,0},
+	{kPanelButtonLoad,		156,80,	80,25,	kTextCancel,kActionOptionCancel,0, 0,0,0},
 	{kPanelButtonLoadText,	-1,30,	0,0,	kTextLoadSavedGame,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_SavePanelButtons[] = {
-	{kPanelButtonSave, 25,79, 80,25, kTextSave,'s',0, 0,0,0},
-	{kPanelButtonSave, 155,79, 80,25, kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonSave, 25,79, 80,25, kTextSave,kActionOptionSave,0, 0,0,0},
+	{kPanelButtonSave, 155,79, 80,25, kTextCancel,kActionOptionCancel,0, 0,0,0},
 	{kPanelButtonSaveEdit, 22,56, 216,17, 0,'-',0, 0,0,0},
 	{kPanelButtonSaveText, -1,30, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };

@@ -50,8 +50,10 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 	if (className == "PaletteFader") return new PaletteFader();
 	if (className == "SceneText") return new SceneText();
 
+#ifdef ENABLE_RINGWORLD2
 	// Return to Ringworld specific classes
 	if (className == "Scene205_Star") return new Ringworld2::Star();
+#endif
 
 	return NULL;
 }
@@ -135,6 +137,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screen),
 	_sceneHandler = nullptr;
 
 	switch (g_vm->getGameID()) {
+#ifdef ENABLE_RINGWORLD
 	case GType_Ringworld:
 		if (!(g_vm->getFeatures() & GF_DEMO)) {
 			_inventory = new Ringworld::RingworldInvObjectList();
@@ -144,18 +147,21 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screen),
 		}
 		_sceneHandler = new SceneHandler();
 		break;
-
+#endif
+#ifdef ENABLE_BLUEFORCE
 	case GType_BlueForce:
 		_game = new BlueForce::BlueForceGame();
 		_inventory = new BlueForce::BlueForceInvObjectList();
 		_sceneHandler = new BlueForce::SceneHandlerExt();
 		break;
-
+#endif
+#ifdef ENABLE_RINGWORLD2
 	case GType_Ringworld2:
 		_inventory = new Ringworld2::Ringworld2InvObjectList();
 		_game = new Ringworld2::Ringworld2Game();
 		_sceneHandler = new Ringworld2::SceneHandlerExt();
 		break;
+#endif
 #ifdef TSAGE_SHERLOCK_ENABLED
 	case GType_Sherlock1:
 		_inventory = nullptr;
@@ -248,6 +254,8 @@ void TsAGE2Globals::synchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
+#ifdef ENABLE_BLUEFORCE
+
 namespace BlueForce {
 
 BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
@@ -282,6 +290,17 @@ BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 	_v4CEC8 = 1;
 	_v4CECA = 0;
 	_v4CECC = 0;
+	// Initialize the _breakerBoxStatusArr (dummy values)
+	// NOTE: BF_GLOBALS reset() is called after the globals constructor in TSageEngine::initialize() for Blue Force
+	// which sets the correct initial values for this array
+	memset(_breakerBoxStatusArr, 0, 18 * sizeof(int8));
+
+	// Register the inner sound objects for each of the global ASoundExt fields.
+	// Normally the ASound constructor would do this, but because they're fields
+	// of the globals, the g_globals reference isn't ready for them to use
+	// NOTE: This change is mirroring the similar change for Ringworld2Globals
+	_sounds.push_back(&_sound1);
+	_sounds.push_back(&_sound3);
 }
 
 void BlueForceGlobals::synchronize(Serializer &s) {
@@ -419,6 +438,10 @@ bool BlueForceGlobals::removeFlag(int flagNum) {
 }
 
 } // end of namespace BlueForce
+
+#endif
+
+#ifdef ENABLE_RINGWORLD2
 
 namespace Ringworld2 {
 
@@ -673,5 +696,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 }
 
 } // end of namespace Ringworld2
+
+#endif
 
 } // end of namespace TsAGE

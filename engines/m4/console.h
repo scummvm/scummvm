@@ -27,7 +27,7 @@
 
 namespace M4 {
 
-class Console : public GUI::Debugger {
+class Console : public ::GUI::Debugger {
 private:
 	bool cmdTeleport(int argc, const char **argv);
 	bool cmdItem(int argc, const char **argv);
@@ -36,6 +36,9 @@ private:
 	bool cmdTrigger(int argc, const char **argv);
 	bool cmdCels(int argc, const char **argv);
 	bool cmdCel(int argc, const char **argv);
+	bool cmdInterface(int argc, const char **argv);
+	bool cmdMusic(int argc, const char **argv);
+	bool cmdHotspots(int argc, const char **argv);
 
 public:
 	Console();

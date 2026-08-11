@@ -23,14 +23,28 @@
 #define GRAPHICS_PALETTE_H
 
 #include "common/hashmap.h"
+#include "common/types.h"
+
+#define PALETTE_6BIT_TO_8BIT(x) ((x) * 255 / 63)
+#define PALETTE_8BIT_TO_6BIT(x) ((x) * 63 / 255)
 
 namespace Graphics {
+
+enum ColorDistanceMethod {
+	kColorDistanceEuclidean, ///< Non-Weighted distance
+	kColorDistanceNaive,	 ///< Weighted red 30%, green 50%, blue 20%
+	kColorDistanceRedmean,	 ///< Common low-cost approximation
+};
 
 /**
  * Constants available for use in paletted code
  */
-#define PALETTE_COUNT 256
-#define PALETTE_SIZE (256 * 3)
+constexpr int PALETTE_COUNT = 256;
+constexpr int PALETTE_SIZE = (256 * 3);
+
+extern const byte HGC_A_PALETTE[6];
+extern const byte HGC_G_PALETTE[6];
+
 
 /**
  * @brief Simple class for handling a palette data.
@@ -42,9 +56,12 @@ namespace Graphics {
  * (transparency) value. Then the second color starts, and so on. So memory
  * looks like this: R1-G1-B1-R2-G2-B2-R3-...
  */
+
+
 class Palette {
 	byte *_data;
 	uint16 _size;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 public:
 	static const uint16 npos = 0xFFFF;
@@ -54,15 +71,24 @@ public:
 	 *
 	 * @param size   the number of palette entries
 	 */
-	Palette(uint size);
+	Palette(uint size = 0);
 
 	/**
-	 * @brief Construct a new Palette object
+	 * @brief Construct a new Palette object with a copy of the palette data
 	 *
 	 * @param data   the palette data, in interleaved RGB format
 	 * @param size   the number of palette entries
 	 */
 	Palette(const byte *data, uint size);
+
+	/**
+	 * @brief Construct a new Palette object taking ownership of the palette data
+	 *
+	 * @param data   the palette data, in interleaved RGB format
+	 * @param size   the number of palette entries
+	 * @param disposeAfterUse    a flag indicating whether to dispose of the palette data
+	 */
+	Palette(byte *data, uint size, DisposeAfterUse::Flag disposeAfterUse);
 
 	Palette(const Palette &p);
 
@@ -71,7 +97,7 @@ public:
 	/**
 	 * Constructs a new palette containing the standarad EGA palette
 	 */
-	static Palette createEGAPalette();
+	static const Palette createEGAPalette();
 
 	Palette &operator=(const Palette &rhs);
 	bool operator==(const Palette &rhs) const { return equals(rhs); }
@@ -83,6 +109,24 @@ public:
 
 	const byte *data() const { return _data; }
 	uint size() const { return _size; }
+	
+	/**
+	 * Clears the palette of all entries and resets the size to zero.
+	 */
+	void clear();
+
+	/**
+	 * Check whether the palette is empty.
+	 */
+	bool empty() const { return _size == 0; }
+
+	/**
+	 * Changes the number of palette entries.
+	 * 
+	 * @param newSize the new number of palette entries
+	 * @param preserve indicates the existing entry values should be preserved
+	 */
+	void resize(uint newSize, bool preserve);
 
 	void set(uint entry, byte r, byte g, byte b) {
 		assert(entry < _size);
@@ -114,13 +158,11 @@ public:
 	/**
 	 * Finds the index of the closest color from the palette.
 	 *
-	 * @param useNaiveAlg            if true, use a simpler algorithm
+	 * @param method           the method used to determine the closest color
 	 *
 	 * @return the palette index
 	 */
-	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false) const;
-
-	void clear();
+	byte findBestColor(byte r, byte g, byte b, ColorDistanceMethod method = kColorDistanceRedmean) const;
 
 	/**
 	 * Replace the specified range of the palette with new colors.
@@ -176,11 +218,11 @@ public:
 	 * @brief This method returns closest color from the palette
 	 *        and it uses cache for faster lookups
 	 *
-	 * @param useNaiveAlg            if true, use a simpler algorithm
+	 * @param method           the method used to determine the closest color
 	 *
 	 * @return the palette index
 	 */
-	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false);
+	byte findBestColor(byte r, byte g, byte b, ColorDistanceMethod method = kColorDistanceRedmean);
 
 	/**
 	 * @brief This method creates a map from the given palette
@@ -188,11 +230,11 @@ public:
 	 *
 	 * @param palette   the palette data, in interleaved RGB format
 	 * @param len       the number of palette entries to be read
-	 * @param useNaiveAlg            if true, use a simpler algorithm
+	 * @param method    the method used to determine the closest color
 	 *
 	 * @return the created map, or nullptr if one isn't needed.
 	 */
-	uint32 *createMap(const byte *srcPalette, uint len, bool useNaiveAlg = false);
+	uint32 *createMap(const byte *srcPalette, uint len, ColorDistanceMethod method = kColorDistanceRedmean);
 
 private:
 	Palette _palette;

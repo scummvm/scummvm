@@ -47,7 +47,7 @@ public:
 
 	void load(const Common::String &name, const int *data);
 
-	int checkItem(int itemId);
+	int checkItem(int itemId) const;
 };
 
 class InventoryManager : public Manager {
@@ -72,7 +72,6 @@ class InventoryManager : public Manager {
 		SavedFields();
 	};
 private:
-	Common::Array<int> _items;
 	Common::Array<Common::Rect> _invCoords;
 	ASurface _savedBuffer1;
 	ASurface _savedScreen;
@@ -82,33 +81,29 @@ private:
 	Common::StringArray _tempLOff;
 	int _boxNum;
 
-	void savedFields();
-
-	void restoreFields();
-
-	void initFields();
-
-	void getList();
-
-	void showAllItems();
-
-	void putInvIcon(int itemIndex, int itemId);
-
-	void chooseItem();
-
-	void freeInvCells();
-
-	int coordIndexOf();
-
-	void saveScreens();
-
-	void restoreScreens();
+	int coordIndexOf() const;
 
 	void outlineIcon(int itemIndex);
 
 	void combineItems();
 
 	void zoomIcon(int zoomItem, int backItem, int zoomBox, bool shrink);
+
+	void putInvIcon(int itemIndex, int itemId);
+
+protected:
+	void initFields();
+	void getList();
+	void saveScreens();
+	void savedFields();
+	void showAllItems();
+	void restoreFields();
+	void chooseItem();
+	void freeInvCells();
+	void restoreScreens();
+
+	Common::Array<int> _items;
+
 public:
 	Common::Array<InventoryEntry> _inv;
 	int _startInvItem;
@@ -116,20 +111,20 @@ public:
 	bool _invChangeFlag;
 	bool _invRefreshFlag;
 	bool _invModeFlag;
-	int _startAboutItem;
-	int _startTravelItem;
+
 public:
 	InventoryManager(AccessEngine *vm);
 
+	virtual ~InventoryManager() {};
+
 	int &operator[](int idx);
 
-	int useItem();
+	int useItem() const;
 	void setUseItem(int itemId);
 
 	void refreshInventory();
 
-	int newDisplayInv();
-	int displayInv();
+	virtual int displayInv() = 0;
 
 	/**
 	* Synchronize savegame data

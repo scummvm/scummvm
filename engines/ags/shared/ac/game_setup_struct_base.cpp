@@ -52,16 +52,9 @@ GameSetupStructBase::GameSetupStructBase()
 	, default_lipsync_frame(0)
 	, invhotdotsprite(0)
 	, dict(nullptr)
-	, globalscript(nullptr)
-	, chars(nullptr)
-	, compiled_script(nullptr)
-	, load_messages(nullptr)
-	, load_dictionary(false)
-	, load_compiled_script(false)
 	, _resolutionType(kGameResolution_Undefined)
 	, _dataUpscaleMult(1)
 	, _screenUpscaleMult(1) {
-	memset(gamename, 0, sizeof(gamename));
 	memset(options, 0, sizeof(options));
 	memset(paluses, 0, sizeof(paluses));
 	memset(defpal, 0, sizeof(defpal));
@@ -76,16 +69,10 @@ void GameSetupStructBase::Free() {
 	for (int i = 0; i < MAXGLOBALMES; ++i) {
 		messages[i].Free();
 	}
-	delete[] load_messages;
-	load_messages = nullptr;
-	delete dict;
-	dict = nullptr;
-	delete globalscript;
-	globalscript = nullptr;
-	delete compiled_script;
-	compiled_script = nullptr;
-	delete[] chars;
-	chars = nullptr;
+	dict.reset();
+	chars.clear();
+
+	numcharacters = 0;
 }
 
 void GameSetupStructBase::SetDefaultResolution(GameResolutionType type) {
@@ -143,8 +130,12 @@ void GameSetupStructBase::OnResolutionSet() {
 	_relativeUIMult = IsLegacyHiRes() ? HIRES_COORD_MULTIPLIER : 1;
 }
 
-void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver) {
-	StrUtil::ReadCStrCount(gamename, in, GAME_NAME_LENGTH);
+void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver, SerializeInfo &info) {
+	// NOTE: historically the struct was saved by dumping whole memory
+	// into the file stream, which added padding from memory alignment;
+	// here we mark the padding bytes, as they do not belong to actual data.
+	gamename.ReadCount(in, LEGACY_GAME_NAME_LENGTH);
+	in->ReadInt16(); // alignment padding to int32 (gamename: 50 -> 52 bytes)
 	in->ReadArrayOfInt32(options, MAX_OPTIONS);
 	if (game_ver < kGameVersion_340_4) { // TODO: this should probably be possible to deduce script API level
 		// using game data version and other options like OPT_STRICTSCRIPTING
@@ -159,14 +150,15 @@ void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver) {
 	playercharacter = in->ReadInt32();
 	totalscore = in->ReadInt32();
 	numinvitems = in->ReadInt16();
+	in->ReadInt16(); // alignment padding to int32
 	numdialog = in->ReadInt32();
 	numdlgmessage = in->ReadInt32();
 	numfonts = in->ReadInt32();
 	color_depth = in->ReadInt32();
 	target_win = in->ReadInt32();
 	dialog_bullet = in->ReadInt32();
-	hotdot = in->ReadInt16();
-	hotdotouter = in->ReadInt16();
+	hotdot = static_cast<uint16_t>(in->ReadInt16());
+	hotdotouter = static_cast<uint16_t>(in->ReadInt16());
 	uniqueid = in->ReadInt32();
 	numgui = in->ReadInt32();
 	numcursors = in->ReadInt32();
@@ -181,19 +173,22 @@ void GameSetupStructBase::ReadFromFile(Stream *in, GameDataVersion game_ver) {
 	default_lipsync_frame = in->ReadInt32();
 	invhotdotsprite = in->ReadInt32();
 	in->ReadArrayOfInt32(reserved, NUM_INTS_RESERVED);
-	load_messages = new int32_t[MAXGLOBALMES];
-	in->ReadArrayOfInt32(load_messages, MAXGLOBALMES);
 
-	// - GameSetupStruct::read_words_dictionary() checks load_dictionary
-	// - load_game_file() checks load_compiled_script
-	load_dictionary = in->ReadInt32() != 0;
-	in->ReadInt32(); // globalscript
-	in->ReadInt32(); // chars
-	load_compiled_script = in->ReadInt32() != 0;
+	info.ExtensionOffset = static_cast<uint32_t>(in->ReadInt32());
+	in->ReadArrayOfInt32(&info.HasMessages.front(), MAXGLOBALMES);
+
+	info.HasWordsDict = in->ReadInt32() != 0;
+	in->ReadInt32(); // globalscript (dummy 32-bit pointer value)
+	in->ReadInt32(); // chars (dummy 32-bit pointer value)
+	info.HasCCScript = in->ReadInt32() != 0;
 }
 
-void GameSetupStructBase::WriteToFile(Stream *out) const {
-	out->Write(gamename, GAME_NAME_LENGTH);
+void GameSetupStructBase::WriteToFile(Stream *out, const SerializeInfo &info) const {
+	// NOTE: historically the struct was saved by dumping whole memory
+	// into the file stream, which added padding from memory alignment;
+	// here we mark the padding bytes, as they do not belong to actual data.
+	gamename.WriteCount(out, LEGACY_GAME_NAME_LENGTH);
+	out->WriteInt16(0); // alignment padding to int32
 	out->WriteArrayOfInt32(options, MAX_OPTIONS);
 	out->Write(&paluses[0], sizeof(paluses));
 	// colors are an array of chars
@@ -203,14 +198,15 @@ void GameSetupStructBase::WriteToFile(Stream *out) const {
 	out->WriteInt32(playercharacter);
 	out->WriteInt32(totalscore);
 	out->WriteInt16(numinvitems);
+	out->WriteInt16(0); // alignment padding to int32
 	out->WriteInt32(numdialog);
 	out->WriteInt32(numdlgmessage);
 	out->WriteInt32(numfonts);
 	out->WriteInt32(color_depth);
 	out->WriteInt32(target_win);
 	out->WriteInt32(dialog_bullet);
-	out->WriteInt16(hotdot);
-	out->WriteInt16(hotdotouter);
+	out->WriteInt16(static_cast<uint16_t>(hotdot));
+	out->WriteInt16(static_cast<uint16_t>(hotdotouter));
 	out->WriteInt32(uniqueid);
 	out->WriteInt32(numgui);
 	out->WriteInt32(numcursors);
@@ -226,9 +222,9 @@ void GameSetupStructBase::WriteToFile(Stream *out) const {
 		out->WriteInt32(!messages[i].IsEmpty() ? 1 : 0);
 	}
 	out->WriteInt32(dict ? 1 : 0);
-	out->WriteInt32(0); // globalscript
-	out->WriteInt32(0); // chars
-	out->WriteInt32(compiled_script ? 1 : 0);
+	out->WriteInt32(0); // globalscript (dummy 32-bit pointer value)
+	out->WriteInt32(0); // chars  (dummy 32-bit pointer value)
+	out->WriteInt32(info.HasCCScript ? 1 : 0);
 }
 
 Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
@@ -266,6 +262,7 @@ const char *GetScriptAPIName(ScriptAPIVersion v) {
 	case kScriptAPI_v351: return "v3.5.1";
 	case kScriptAPI_v360: return "v3.6.0-alpha";
 	case kScriptAPI_v36026: return "v3.6.0-final";
+	case kScriptAPI_v361: return "v3.6.1";
 	default: return "unknown";
 	}
 }

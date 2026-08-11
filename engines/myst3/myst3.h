@@ -44,10 +44,10 @@ namespace Myst3 {
 
 // Engine Debug Flags
 enum {
-	kDebugVariable = (1 << 0),
-	kDebugSaveLoad = (1 << 1),
-	kDebugNode     = (1 << 2),
-	kDebugScript   = (1 << 3)
+	kDebugVariable = 1,
+	kDebugSaveLoad,
+	kDebugNode,
+	kDebugScript,
 };
 
 enum TransitionType {
@@ -115,6 +115,7 @@ public:
 	Common::Platform getPlatform() const;
 	Common::Language getGameLanguage() const;
 	uint32 getGameLocalizationType() const;
+	uint32 getGameLayoutType() const;
 	bool isTextLanguageEnglish() const;
 	bool isWideScreenModEnabled() const;
 
@@ -173,7 +174,7 @@ public:
 	void animateDirectionChange(float pitch, float heading, uint16 scriptTicks);
 	void getMovieLookAt(uint16 id, bool start, float &pitch, float &heading);
 
-	void drawFrame(bool noSwap = false);
+	void drawFrame(bool noSwap = false, bool pausePreloadedScriptMovies = false);
 
 	void processInput(bool interactive);
 	void processEventForKeyboardState(const Common::Event &event);

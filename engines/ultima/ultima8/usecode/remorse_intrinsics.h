@@ -22,6 +22,7 @@
 #ifndef ULTIMA8_USECODE_REMORSEINTRINSICS_H
 #define ULTIMA8_USECODE_REMORSEINTRINSICS_H
 
+#include "ultima/ultima8/gumps/weasel_gump.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/world/item.h"
 
@@ -31,7 +32,7 @@ namespace Ultima8 {
 // Crusader: No Remorse Intrinsics for V1.21
 // Unknown function signatures were generate by the usecode disassembly
 // and looking at handling of SP and retval after function.
-Intrinsic RemorseIntrinsics[] = {
+const Intrinsic RemorseIntrinsics[] = {
 	// 0x000
 	World::I_getAlertActive,
 	Item::I_getFrame, // int Intrinsic001(Item *)
@@ -146,7 +147,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setNpcNum, // void Item::I_setSomething068(Item *, int16 something) , see VALUEBOX:ordinal20
 	Item::I_andStatus, // void Intrinsic069(6 bytes)
 	Item::I_move, // void Intrinsic06A(10 bytes)
-	UCMachine::I_true, // Note: This is actualy "is compiled with VIOLENCE=1" (was set to 0 in germany). For now just always say yes.
+	UCMachine::I_true, // Note: This is actually "is compiled with VIOLENCE=1" (was set to 0 in germany). For now just always say yes.
 	Kernel::I_resetRef, // void Intrinsic06C(4 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic06E(6 bytes)
@@ -369,7 +370,7 @@ Intrinsic RemorseIntrinsics[] = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Intrinsics for the Remorse demo.
-Intrinsic RemorseDemoIntrinsics[] = {
+const Intrinsic RemorseDemoIntrinsics[] = {
 	World::I_getAlertActive,        // Intrinsic000 10d8:0243
 	Item::I_getFrame,               // Intrinsic001 10a0:07b4
 	Item::I_setFrame,               // Intrinsic002 10a0:0810
@@ -704,7 +705,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Intrinsics for the Remorse Spanish version.
-Intrinsic RemorseEsIntrinsics[] = {
+const Intrinsic RemorseEsIntrinsics[] = {
 	ComputerGump::I_readComputer,   // Intrinsic000 13a0:0005
 	Item::I_getMapArray,            // Intrinsic001 10a8:0c78
 	Item::I_getFrame,               // Intrinsic002 10a8:07b4
@@ -1035,7 +1036,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Intrinsics for the Remorse French version.
-Intrinsic RemorseFrIntrinsics[] = {
+const Intrinsic RemorseFrIntrinsics[] = {
 	// 0x000
 	World::I_getAlertActive,        // Intrinsic000 10e0:0243
 	Item::I_getFrame,               // Intrinsic001 10a8:07b4

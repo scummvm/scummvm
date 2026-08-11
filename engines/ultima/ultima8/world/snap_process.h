@@ -23,7 +23,7 @@
 #define ULTIMA8_WORLD_SNAPPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/misc/rect.h"
+#include "common/rect.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -51,13 +51,13 @@ public:
 protected:
 	static SnapProcess *_instance;
 
-	void getSnapEggRange(const Item *egg, Rect &rect) const;
+	void getSnapEggRange(const Item *egg, Common::Rect32 &rect) const;
 	void updateCurrentEgg();
 	bool isNpcInRangeOfCurrentEgg() const;
 
 	ObjId   _currentSnapEgg;
-	Rect	_currentSnapEggRange;
-	Std::list<ObjId> _snapEggs;
+	Common::Rect32 _currentSnapEggRange;
+	Common::List<ObjId> _snapEggs;
 };
 
 } // End of namespace Ultima8

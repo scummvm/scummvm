@@ -98,7 +98,7 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 		// PC 8-bit palettized
 		CursorMan.replaceCursor(src, hotspotX, hotspotY, 0xff);
 	} else if (!_vm->_isScreenDoubled) {
-		CursorMan.replaceCursor(src, hotspotX, hotspotY, 0x0000, false);
+		CursorMan.replaceCursor(src, hotspotX, hotspotY, 0x0000);
 	} else {
 		Graphics::Surface tempSurface;
 		tempSurface.create(2 * src.w, 2 * src.h, src.format);
@@ -115,7 +115,7 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 		}
 
 		// 3DO RGB565
-		CursorMan.replaceCursor(tempSurface, 2 * hotspotX, 2 * hotspotY, 0x0000, false);
+		CursorMan.replaceCursor(tempSurface, 2 * hotspotX, 2 * hotspotY, 0x0000);
 
 		tempSurface.free();
 	}
@@ -199,6 +199,11 @@ void Events::pollEvents() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
 
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_pendingActions.push(event.customType);
+			return;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			return;
 		case Common::EVENT_KEYDOWN:
 			_pendingKeys.push(event.kbd);
 			return;
@@ -277,43 +282,19 @@ bool Events::checkForNextFrameCounter() {
 Common::KeyState Events::getKey() {
 	Common::KeyState keyState = _pendingKeys.pop();
 
-	switch (keyState.keycode) {
-	case Common::KEYCODE_KP1:
-		keyState.keycode = Common::KEYCODE_END;
-		break;
-	case Common::KEYCODE_KP2:
-		keyState.keycode = Common::KEYCODE_DOWN;
-		break;
-	case Common::KEYCODE_KP3:
-		keyState.keycode = Common::KEYCODE_PAGEDOWN;
-		break;
-	case Common::KEYCODE_KP4:
-		keyState.keycode = Common::KEYCODE_LEFT;
-		break;
-	case Common::KEYCODE_KP6:
-		keyState.keycode = Common::KEYCODE_RIGHT;
-		break;
-	case Common::KEYCODE_KP7:
-		keyState.keycode = Common::KEYCODE_HOME;
-		break;
-	case Common::KEYCODE_KP8:
-		keyState.keycode = Common::KEYCODE_UP;
-		break;
-	case Common::KEYCODE_KP9:
-		keyState.keycode = Common::KEYCODE_PAGEUP;
-		break;
-	case Common::KEYCODE_KP_ENTER:
+	if (keyState.keycode == Common::KEYCODE_KP_ENTER)
 		keyState.keycode = Common::KEYCODE_RETURN;
-		break;
-	default:
-		break;
-	}
 
 	return keyState;
 }
 
+Common::CustomEventType Events::getAction() {
+	return _pendingActions.pop();
+}
+
 void Events::clearEvents() {
 	_pendingKeys.clear();
+	_pendingActions.clear();
 	_mouseButtons = 0;
 	_pressed = _released = false;
 	_rightPressed = _rightReleased = false;
@@ -323,6 +304,10 @@ void Events::clearEvents() {
 
 void Events::clearKeyboard() {
 	_pendingKeys.clear();
+}
+
+void Events::clearActions() {
+	_pendingActions.clear();
 }
 
 void Events::wait(int numFrames) {
@@ -350,7 +335,7 @@ bool Events::delay(uint32 time, bool interruptable) {
 		while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
 			pollEventsAndWait();
 
-			if (interruptable && (kbHit() || _mouseButtons)) {
+			if (interruptable && (kbHit() || _mouseButtons || actionHit())) {
 				clearEvents();
 				return false;
 			}
@@ -383,7 +368,7 @@ void Events::setButtonState() {
 
 bool Events::checkInput() {
 	setButtonState();
-	return kbHit() || _pressed || _released || _rightPressed || _rightReleased;
+	return kbHit() || actionHit() || _pressed || _released || _rightPressed || _rightReleased;
 }
 
 void Events::incWaitCounter() {

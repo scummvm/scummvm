@@ -28,13 +28,67 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+struct Maze709Room {
+	byte _left;
+	byte _right;
+	byte _up;
+	byte _down;
+};
+
 class Room709 : public Room {
 public:
-	Room709() : Room() {}
+	Room709();
 	~Room709() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
+
+private:
+	bool _chiselActiveFl = false;
+	bool _incenseBurnerActiveFl = false;
+	bool _pullCenterFl = false;
+	bool _pullLeftFl = false;
+	bool _pullNearFl = false;
+	bool _pullRightFl = false;
+
+	int32 _mazeCurrentIndex = 0;
+
+	int32 _709NearDoorLiteSeries = 0;
+	int32 _709rpro1Series = 0;
+	int32 _709rpro2Series = 0;
+	int32 _709rpro3Series = 0;
+	int32 _709rpro4Series = 0;
+	int32 _mazeCenterDoorLiteSeries = 0;
+	int32 _mazeLeftDoorLiteSeries = 0;
+	int32 _mazeRightDoorLiteSeries = 0;
+	int32 _ripTrekHeadTurnPos1Series = 0;
+	int32 _ripTrekLowReachPos2Series = 0;
+
+	machine *_709ChiselMach = nullptr;
+	machine *_709IncenseHolderMach = nullptr;
+	machine *_709rpro5Mach = nullptr;
+	machine *_709rpro6Mach = nullptr;
+	machine *_709rpro7Mach = nullptr;
+	machine *_709rpro8Mach = nullptr;
+	machine *_ripPullMach = nullptr;
+	machine *_ripPullMach02 = nullptr;
+	machine *_ripPullMach03 = nullptr;
+	machine *_ripPullMach04 = nullptr;
+	machine *_ripPullMach05 = nullptr;
+	machine *_safariShadow1Mach = nullptr;
+
+	void debugRoomChanged();
+	void addMazeCheatHotkeys();
+	void removeMazeCheatHotkeys();
+
+	static const Maze709Room _rooms[100];
+
+	static void clearPressed(void *, void *);
+	static void stayPressed(void *, void *);
 };
 
 } // namespace Rooms

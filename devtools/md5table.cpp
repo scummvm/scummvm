@@ -84,6 +84,7 @@ static const StringMap platformMap[] = {
 	{ "Mac",		"kPlatformMacintosh" },
 	{ "NES",		"kPlatformNES" },
 	{ "PC-Engine",		"kPlatformPCEngine" },
+	{ "PSX",		"kPlatformPSX" },
 	{ "SEGA",		"kPlatformSegaCD" },
 	{ "Windows",		"kPlatformWindows" },
 	{ "Wii",		"kPlatformWii" },
@@ -94,6 +95,8 @@ static const StringMap platformMap[] = {
 	{ nullptr,			"kPlatformUnknown" }
 };
 
+// Note: if renaming any value here, update scumm-md5.txt as well, and run
+// `make md5scumm` again
 static const StringMap langMap[] = {
 	{ "en",		"EN_ANY" },
 	{ "us",		"EN_USA" },
@@ -103,10 +106,10 @@ static const StringMap langMap[] = {
 	{ "it",		"IT_ITA" },
 	{ "br",		"PT_BRA" },
 	{ "es",		"ES_ESP" },
-	{ "jp",		"JA_JPN" },
+	{ "ja",		"JA_JPN" },
 	{ "zh",		"ZH_TWN" },
 	{ "ko",		"KO_KOR" },
-	{ "se",		"SE_SWE" },
+	{ "sv",		"SV_SWE" },
 	{ "en",		"EN_GRB" },
 	{ "he",		"HE_ISR" },
 	{ "ru",		"RU_RUS" },
@@ -114,6 +117,7 @@ static const StringMap langMap[] = {
 	{ "nl",		"NL_NLD" },
 	{ "nb",		"NB_NOR" },
 	{ "pl",		"PL_POL" },
+	{ "ca",		"CA_ESP" },
 
 	{ "All",	"UNK_LANG" },
 	{ "All?",	"UNK_LANG" },
@@ -146,7 +150,7 @@ static const char *c_header =
 	"	const char *gameid;\n"
 	"	const char *variant;\n"
 	"	const char *extra;\n"
-	"	int32 filesize;\n"
+	"	int64 filesize;\n"
 	"	Common::Language language;\n"
 	"	Common::Platform platform;\n"
 	"};\n"

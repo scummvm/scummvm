@@ -49,6 +49,17 @@
 
 namespace Private {
 
+SymbolMaps::~SymbolMaps() {
+	freeSymbolMap(settings);
+	freeSymbolMap(variables);
+	freeSymbolMap(cursors);
+	freeSymbolMap(locations);
+	freeSymbolMap(rects);
+	freeSymbolList(constants);
+	freeSymbolList(names);
+	freeStringMap(strings);
+}
+
 void SymbolMaps::defineSymbol(const char *n, Common::Rect *r) {
 	Common::String s(n);
 	stringToDefine.push(s);
@@ -91,7 +102,7 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 		sp->u.val = d;
 		//debug("installing NAME: %s %d", name->c_str(), d);
 	} else if (t == STRING)
-		sp->u.str = scumm_strdup(s); // FIXME: leaks a string here.
+		sp->u.str = scumm_strdup(s);
 	else if (t == RECT)
 		sp->u.rect = r;
 	else
@@ -100,6 +111,19 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 	symlist->setVal(n, sp);
 	assert(symlist->size() > 0);
 	return sp;
+}
+
+void SymbolMaps::freeSymbolMap(SymbolMap &symbols) {
+	for (SymbolMap::iterator it = symbols.begin(); it != symbols.end(); ++it) {
+		Symbol *s = it->_value;
+		delete s->name;
+		if (s->type == STRING) {
+			free(s->u.str);
+		} else if (s->type == RECT) {
+			delete s->u.rect;
+		}
+		free(s);
+	}
 }
 
 /* lookup some name in some symbol table */
@@ -118,15 +142,14 @@ Symbol *SymbolMaps::lookupLocation(Common::String *n) {
 	return lookup(*n, locations);
 }
 
-/* lookup some name in some symbol table */
 Symbol *SymbolMaps::lookupName(const char *n) {
-
 	Symbol *s = (Symbol *)malloc(sizeof(Symbol));
 	Common::String *name = new Common::String(n);
 	s->name = name;
 	s->type = NAME;
 	s->u.val = 0;
 
+	names.push_back(s);
 	return s;
 }
 
@@ -171,12 +194,40 @@ Symbol *SymbolMaps::constant(int t, int d, const char *s) {
 	if (t == NUM || t == NAME)
 		sp->u.val = d;
 	else if (t == STRING)
-		sp->u.str = s;
+		sp->u.str = scumm_strdup(s);
 	else
 		assert(0);
 
 	constants.push_front(sp);
 	return sp;
+}
+
+void SymbolMaps::freeSymbolList(SymbolList &symbols) {
+	for (SymbolList::iterator it = symbols.begin(); it != symbols.end(); ++it) {
+		Symbol *s = (*it);
+		delete s->name;
+		if (s->type == STRING) {
+			free(s->u.str);
+		}
+		free(s);
+	}
+}
+
+char *SymbolMaps::string(const char *in) {
+	Common::String str(in);
+	char *out;
+	if (!strings.tryGetVal(in, out)) {
+		out = scumm_strdup(in);
+		strings[str] = out;
+	}
+	return out;
+}
+
+void SymbolMaps::freeStringMap(StringMap &strings) {
+	for (StringMap::iterator it = strings.begin(); it != strings.end(); ++it) {
+		char *s = it->_value;
+		free(s);
+	}
 }
 
 } // End of namespace Private

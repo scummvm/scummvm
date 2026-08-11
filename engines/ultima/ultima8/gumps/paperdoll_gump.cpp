@@ -43,7 +43,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump)
 
 
 // lots of CONSTANTS...
-struct equipcoords_struct {
+const struct equipcoords_struct {
 	int x, y;
 } equipcoords[] = {
 	{ 0, 0 },
@@ -55,7 +55,7 @@ struct equipcoords_struct {
 	{ 16, 18 }  // weapon
 };
 
-struct statcords_struct {
+const struct statcords_struct {
 
 	int xd, x, y;
 } statcoords[] = {
@@ -122,11 +122,7 @@ void PaperdollGump::Close(bool no_del) {
 	Container *c = getContainer(_owner);
 	if (!c) return; // Container gone!?
 
-	Std::list<Item *> &contents = c->_contents;
-	Std::list<Item *>::iterator iter = contents.begin();
-	while (iter != contents.end()) {
-		Item *item = *iter;
-		++iter;
+	for (auto *item : c->_contents) {
 		item->leaveFastArea();  // Can destroy the item
 	}
 
@@ -138,7 +134,7 @@ void PaperdollGump::Close(bool no_del) {
 }
 
 void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
-							  Std::string text, int val) {
+							  Common::String text, int val) {
 	assert(n < 7); // constant!
 
 	Font *font, *descfont;
@@ -425,10 +421,8 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 			gump->setRelativePosition(BOTTOM_RIGHT, -5, -5);
 		} else {
 			// check if it is off-screen. If so, move it back
-			Rect rect;
-			desktop->GetDims(rect);
-			Rect sr;
-			statsgump->GetDims(sr);
+			Common::Rect32 rect = desktop->getDims();
+			Common::Rect32 sr = statsgump->getDims();
 			sr.grow(-2);
 			statsgump->GumpRectToScreenSpace(sr);
 			if (!sr.intersects(rect))

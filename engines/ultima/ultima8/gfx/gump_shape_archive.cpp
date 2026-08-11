@@ -19,10 +19,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
-
 #include "ultima/ultima8/gfx/gump_shape_archive.h"
-#include "ultima/ultima8/misc/rect.h"
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -41,11 +39,11 @@ void GumpShapeArchive::loadGumpage(Common::SeekableReadStream *rs) {
 		y1 = static_cast<int16>(rs->readUint16LE());
 		x2 = static_cast<int16>(rs->readUint16LE());
 		y2 = static_cast<int16>(rs->readUint16LE());
-		_gumpItemArea[i] = new Rect(x1, y1, x2, y2);
+		_gumpItemArea[i] = new Common::Rect32(x1, y1, x2, y2);
 	}
 }
 
-Rect *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
+Common::Rect32 *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
 	if (shapenum >= _gumpItemArea.size())
 		return nullptr;
 	return _gumpItemArea[shapenum];

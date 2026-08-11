@@ -1,0 +1,19 @@
+We are pleased to announce the updated release of CxxTest 4.4.  CxxTest is a unit testing framework for C++ that is similar in spirit to JUnit, CppUnit, and xUnit. CxxTest is easy to use because it does not require precompiling a CxxTest testing library, it employs no advanced features of C++ (e.g. RTTI) and it supports a very flexible form of test discovery.
+
+This release includes a variety of bug fixes:
+
+ - Fixed compilation error on Windows (MSVC) in XmlFormatter.h (#86)
+ - Fix to ensure that tearDown() is called (#89)
+ - Add option run test with a user defined command in scons (#91)
+ - Use a Python path relative to the cxxtestgen script (#88)
+ - Add defensive guard in ErrorFormatter.h (#96)
+ - Fixed bug with "None" appearing in CXXTEST_CPPATH (#99)
+ - Added CXXTEST_LIBPATH to properly use shared libraries (#100)
+ - Added guards when XmlFormatter.h data is not initialize (#87)
+
+See the CxxTest Home Page (http://cxxtest.com) for documentation and download instructions.
+
+Enjoy!
+
+    CxxTest Developer Team
+    cxxtest-developers@googlegroups.com

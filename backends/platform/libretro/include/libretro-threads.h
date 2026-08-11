@@ -57,5 +57,11 @@ bool retro_emu_thread_exited(void);
 /* Returns scummvm_main return code or -1 if not available */
 int retro_get_scummvm_res(void);
 
+/* Returns true if the emulation thread was started successfully.
+ *
+ * This function should be called from the main thread.
+ */
+bool retro_emu_thread_started(void);
+
 #endif
 

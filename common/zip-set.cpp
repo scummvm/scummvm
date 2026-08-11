@@ -44,13 +44,13 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 		iconDir->listMatchingMembers(iconFiles, packsMask);
 		sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
 
-		for (ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
-			dat = makeZipArchive((*ic)->createReadStream());
+		for (auto &ic : iconFiles) {
+			dat = makeZipArchive(ic->createReadStream());
 
 			if (dat) {
-				searchSet.add((*ic)->getName(), dat);
+				searchSet.add(ic->getName(), dat);
 				changed = true;
-				debug(2, "generateZipSet: Loaded pack file: %s", (*ic)->getName().c_str());
+				debug(2, "generateZipSet: Loaded pack file: %s", ic->getName().c_str());
 			}
 		}
 

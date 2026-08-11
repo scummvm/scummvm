@@ -40,13 +40,17 @@ extern "C" {
 #include <jpeglib.h>
 #include <jerror.h>
 }
+
+#include <setjmp.h>
 #endif
 
 namespace Image {
 
 JPEGDecoder::JPEGDecoder() :
 		_surface(),
+		_palette(0),
 		_colorSpace(kColorSpaceRGB),
+		_accuracy(CodecAccuracy::Default),
 		_requestedPixelFormat(getByteOrderRgbPixelFormat()) {
 }
 
@@ -55,11 +59,7 @@ JPEGDecoder::~JPEGDecoder() {
 }
 
 Graphics::PixelFormat JPEGDecoder::getByteOrderRgbPixelFormat() const {
-#ifdef SCUMM_BIG_ENDIAN
-	return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
-#else
-	return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-#endif
+	return Graphics::PixelFormat::createFormatRGB24();
 }
 
 const Graphics::Surface *JPEGDecoder::getSurface() const {
@@ -77,8 +77,14 @@ const Graphics::Surface *JPEGDecoder::decodeFrame(Common::SeekableReadStream &st
 	return getSurface();
 }
 
+void JPEGDecoder::setCodecAccuracy(CodecAccuracy accuracy) {
+	_accuracy = accuracy;
+}
+
 Graphics::PixelFormat JPEGDecoder::getPixelFormat() const {
-	return _surface.format;
+	if (_surface.getPixels())
+		return _surface.format;
+	return _requestedPixelFormat;
 }
 
 #ifdef USE_JPEG
@@ -166,9 +172,24 @@ void jpeg_scummvm_src(j_decompress_ptr cinfo, Common::SeekableReadStream *stream
 	source->stream = stream;
 }
 
+struct jpeg_error_mgr_ext : public jpeg_error_mgr {
+	jmp_buf jmp;
+	bool jmp_valid;
+};
+
 void errorExit(j_common_ptr cinfo) {
+	jpeg_error_mgr_ext *err = (jpeg_error_mgr_ext *)cinfo->err;
+
 	char buffer[JMSG_LENGTH_MAX];
 	(*cinfo->err->format_message)(cinfo, buffer);
+
+	if (err->jmp_valid) {
+		/* We will jump back to the loading stream function
+		 * but, before, warn the user */
+		warning("libjpeg: %s", buffer);
+		longjmp(err->jmp, 1);
+	}
+
 	// This function is not allowed to return to the caller, thus we simply
 	// error out with our error handling here.
 	error("libjpeg: %s", buffer);
@@ -186,37 +207,32 @@ J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
 #if defined(JCS_EXTENSIONS) || defined(JCS_ALPHA_EXTENSIONS)
 	struct PixelFormatMapping {
 		Graphics::PixelFormat pixelFormat;
-		J_COLOR_SPACE bigEndianColorSpace;
-		J_COLOR_SPACE littleEndianColorSpace;
+		J_COLOR_SPACE colorSpace;
 	};
 
 	static const PixelFormatMapping mappings[] = {
-#ifdef JCS_EXTENSIONS
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16,  8,  0), JCS_EXT_RGBX, JCS_EXT_XBGR },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  0,  8, 16, 24), JCS_EXT_XBGR, JCS_EXT_RGBX },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 16,  8,  0, 24), JCS_EXT_XRGB, JCS_EXT_BGRX },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  8, 16, 24,  0), JCS_EXT_BGRX, JCS_EXT_XRGB },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0, 16,  8,  0,  0), JCS_EXT_RGB,  JCS_EXT_BGR  },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0,  0,  8, 16,  0), JCS_EXT_BGR,  JCS_EXT_RGB  }
+#ifdef JCS_ALPHA_EXTENSIONS
+		{ Graphics::PixelFormat::createFormatRGBA32(true),  JCS_EXT_RGBA },
+		{ Graphics::PixelFormat::createFormatBGRA32(true),  JCS_EXT_BGRA },
+		{ Graphics::PixelFormat::createFormatARGB32(true),  JCS_EXT_ARGB },
+		{ Graphics::PixelFormat::createFormatABGR32(true),  JCS_EXT_ABGR }
 #endif
 #if defined(JCS_EXTENSIONS) && defined(JCS_ALPHA_EXTENSIONS)
 		,
 #endif
-#ifdef JCS_ALPHA_EXTENSIONS
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), JCS_EXT_RGBA, JCS_EXT_ABGR },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), JCS_EXT_ABGR, JCS_EXT_RGBA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), JCS_EXT_ARGB, JCS_EXT_BGRA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), JCS_EXT_BGRA, JCS_EXT_ARGB }
+#ifdef JCS_EXTENSIONS
+		{ Graphics::PixelFormat::createFormatRGB24(),       JCS_EXT_RGB },
+		{ Graphics::PixelFormat::createFormatBGR24(),       JCS_EXT_BGR },
+		{ Graphics::PixelFormat::createFormatRGBA32(false), JCS_EXT_RGBX },
+		{ Graphics::PixelFormat::createFormatBGRA32(false), JCS_EXT_BGRX },
+		{ Graphics::PixelFormat::createFormatARGB32(false), JCS_EXT_XRGB },
+		{ Graphics::PixelFormat::createFormatABGR32(false), JCS_EXT_XBGR }
 #endif
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(mappings); i++) {
 		if (mappings[i].pixelFormat == format) {
-#ifdef SCUMM_BIG_ENDIAN
-			return mappings[i].bigEndianColorSpace;
-#else
-			return mappings[i].littleEndianColorSpace;
-#endif
+			return mappings[i].colorSpace;
 		}
 	}
 #endif
@@ -233,7 +249,8 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
 	jpeg_decompress_struct cinfo;
-	jpeg_error_mgr jerr;
+	jpeg_error_mgr_ext jerr;
+	jerr.jmp_valid = false;
 
 	// Initialize error handling callbacks
 	cinfo.err = jpeg_std_error(&jerr);
@@ -243,8 +260,20 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// Initialize the decompression structure
 	jpeg_create_decompress(&cinfo);
 
+	if (_accuracy <= CodecAccuracy::Fast)
+		cinfo.dct_method = JDCT_FASTEST;
+	else if (_accuracy >= CodecAccuracy::Accurate)
+		cinfo.dct_method = JDCT_ISLOW;
+
 	// Initialize our buffer handling
 	jpeg_scummvm_src(&cinfo, &stream);
+
+	if (setjmp(jerr.jmp)) {
+		/* File is invalid */
+		jpeg_destroy_decompress(&cinfo);
+		return false;
+	}
+	jerr.jmp_valid = true;
 
 	// Read the file header
 	jpeg_read_header(&cinfo, TRUE);
@@ -279,8 +308,28 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		cinfo.out_color_space = JCS_CMYK;
 	}
 
+	if (setjmp(jerr.jmp)) {
+		/* Output color space seems invalid
+		 * Try again with the most basic one */
+		if (_colorSpace == kColorSpaceRGB && cinfo.num_components == 3) {
+			warning("Falling back to RGB slow path");
+			cinfo.out_color_space = JCS_RGB;
+		}
+		if (setjmp(jerr.jmp)) {
+			/* There is something definitely wrong here */
+			jpeg_destroy_decompress(&cinfo);
+			return false;
+		}
+	}
+
 	// Actually start decompressing the image
 	jpeg_start_decompress(&cinfo);
+
+	if (setjmp(jerr.jmp)) {
+		/* Something went wrong */
+		jpeg_destroy_decompress(&cinfo);
+		return false;
+	}
 
 	// Allocate buffers for the output data
 	switch (_colorSpace) {

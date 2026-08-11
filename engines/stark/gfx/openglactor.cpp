@@ -127,12 +127,12 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(1.0f, 1.0f, 1.0f);
 				else
-					glColor3f(1.0f, 1.0f, 1.0f);
+					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			} else {
 				if (_gfx->computeLightsEnabled())
 					color = Math::Vector3d(material->r, material->g, material->b);
 				else
-					glColor3f(material->r, material->g, material->b);
+					glColor4f(material->r, material->g, material->b, 1.0f);
 			}
 			uint32 index = vertexIndices[i];
 			auto vertex = _faceVBO[index];
@@ -252,6 +252,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 				vertex.r = color.x();
 				vertex.g = color.y();
 				vertex.b = color.z();
+				vertex.a = 1.0f; /* needed for compatibility with OpenGL ES 1.x */
 			}
 
 			_faceVBO[index] = vertex;
@@ -269,7 +270,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			glTexCoordPointer(2, GL_FLOAT, sizeof(ActorVertex), &_faceVBO[0].texS);
 		glNormalPointer(GL_FLOAT, sizeof(ActorVertex), &_faceVBO[0].nx);
 		if (_gfx->computeLightsEnabled())
-			glColorPointer(3, GL_FLOAT, sizeof(ActorVertex), &_faceVBO[0].r);
+			glColorPointer(4, GL_FLOAT, sizeof(ActorVertex), &_faceVBO[0].r);
 
 		glDrawElements(GL_TRIANGLES, numVertexIndices, GL_UNSIGNED_INT, vertexIndices);
 

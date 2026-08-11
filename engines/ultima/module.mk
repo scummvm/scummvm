@@ -4,12 +4,38 @@ MODULE_OBJS := \
 	metaengine.o \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o \
-	shared/core/file.o \
-	shared/engine/ultima.o \
-	shared/engine/data_archive.o \
-	shared/engine/debugger.o \
-	shared/engine/events.o \
-	shared/std/string.o
+	shared/engine/data_archive.o
+
+ifdef ENABLE_AKALABETH
+MODULE_OBJS += \
+	ultima0/ultima0.o \
+	ultima0/console.o \
+	ultima0/events.o \
+	ultima0/messages.o \
+	ultima0/metaengine.o \
+	ultima0/music.o \
+	ultima0/data/data.o \
+	ultima0/data/monster_logic.o \
+	ultima0/gfx/dungeon.o \
+	ultima0/gfx/font.o \
+	ultima0/gfx/gfx_surface.o \
+	ultima0/gfx/map.o \
+	ultima0/gfx/monster.o \
+	ultima0/views/view.o \
+	ultima0/views/acknowledgements.o \
+	ultima0/views/attack.o \
+	ultima0/views/castle.o \
+	ultima0/views/create_character.o \
+	ultima0/views/dead.o \
+	ultima0/views/dungeon.o \
+	ultima0/views/info.o \
+	ultima0/views/intro.o \
+	ultima0/views/startup.o \
+	ultima0/views/status.o \
+	ultima0/views/title.o \
+	ultima0/views/town.o \
+	ultima0/views/world_map.o
+endif
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
@@ -18,6 +44,7 @@ MODULE_OBJS += \
 	shared/actions/pass.o \
 	shared/core/base_object.o \
 	shared/core/character.o \
+	shared/core/file.o \
 	shared/core/lzw.o \
 	shared/core/map.o \
 	shared/core/message_target.o \
@@ -32,6 +59,7 @@ MODULE_OBJS += \
 	shared/early/game.o \
 	shared/early/game_base.o \
 	shared/early/ultima_early.o \
+	shared/engine/events.o \
 	shared/engine/input_handler.o \
 	shared/engine/input_translator.o \
 	shared/engine/messages.o \
@@ -56,9 +84,6 @@ MODULE_OBJS += \
 	shared/maps/map_tile.o \
 	shared/maps/map_widget.o \
 	shared/maps/creature.o \
-	ultima0/core/resources.o \
-	ultima0/game.o \
-	ultima0/resources.o \
 	ultima1/actions/action.o \
 	ultima1/actions/attack.o \
 	ultima1/actions/move.o \
@@ -247,7 +272,6 @@ MODULE_OBJS += \
 	nuvie/core/converse_speech.o \
 	nuvie/core/cursor.o \
 	nuvie/core/debug.o \
-	nuvie/core/debugger.o \
 	nuvie/core/effect.o \
 	nuvie/core/effect_manager.o \
 	nuvie/core/egg_manager.o \
@@ -597,6 +621,12 @@ MODULE_OBJS += \
 	ultima8/world/actors/targeted_anim_process.o \
 	ultima8/world/actors/teleport_to_egg_process.o \
 	ultima8/world/actors/u8_avatar_mover_process.o
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	ultima8/debugtools.o
+endif
+
 endif
 
 # This module can be built as a plugin

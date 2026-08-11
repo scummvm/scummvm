@@ -25,6 +25,11 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "graphics/surface.h"
 
@@ -33,6 +38,23 @@
 #define MAX_SAVES 99
 
 namespace Voyeur {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			// I18N: lockout is code to start the game
+			_s("Enable lockout system"),
+			_s("Require a lockout code to start the game."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 VoyeurEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
@@ -52,18 +74,23 @@ bool VoyeurEngine::getIsDemo() const {
 
 } // End of namespace Voyeur
 
-class VoyeurMetaEngine : public AdvancedMetaEngine {
+class VoyeurMetaEngine : public AdvancedMetaEngine<Voyeur::VoyeurGameDescription> {
 public:
 	const char *getName() const override {
 		return "voyeur";
 	}
 
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Voyeur::optionsList;
+	}
+
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Voyeur::VoyeurGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool VoyeurMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -83,28 +110,26 @@ bool Voyeur::VoyeurEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error VoyeurMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Voyeur::VoyeurEngine(syst, (const Voyeur::VoyeurGameDescription *)desc);
+Common::Error VoyeurMetaEngine::createInstance(OSystem *syst, Engine **engine, const Voyeur::VoyeurGameDescription *desc) const {
+	*engine = new Voyeur::VoyeurEngine(syst,desc);
 	return Common::kNoError;
 }
 
 SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = Common::String::format("%s.0##", target);
-
-	filenames = saveFileMan->listSavefiles(pattern);
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
 	Voyeur::VoyeurSavegameHeader header;
 
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
+	for (const auto &filename : filenames) {
+		const char *ext = strrchr(filename.c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
 
 		if (slot >= 0 && slot <= MAX_SAVES) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 
 			if (in) {
 				if (header.read(in)) {
@@ -124,9 +149,9 @@ int VoyeurMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void VoyeurMetaEngine::removeSaveState(const char *target, int slot) const {
+bool VoyeurMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor VoyeurMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -149,6 +174,85 @@ SaveStateDescriptor VoyeurMetaEngine::querySaveMetaInfos(const char *target, int
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray VoyeurMetaEngine::initKeymaps(const char *target) const {
+
+	using namespace Common;
+	using namespace Voyeur;
+
+	Keymap *engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "voyeur-default", _("Default keymappings"));
+	Keymap *cutsceneKeymap = new Keymap(Keymap::kKeymapTypeGame, "cutscene", _("Cutscene keymappings"));
+	Keymap *roomKeymap = new Keymap(Keymap::kKeymapTypeGame, "room", _("Room keymappings"));
+	Keymap *cameraKeymap = new Keymap(Keymap::kKeymapTypeGame, "camera", _("Camera keymappings"));
+	Keymap *introKeymap = new Keymap(Keymap::kKeymapTypeGame, "intro", _("Intro keymappings"));
+
+	Common::Action *act;
+
+	act = new Common::Action(kStandardActionLeftClick, _("Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Exit"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Skip scene"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_A");
+	cutsceneKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionLeftClick, _("View evidence"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	roomKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Exit / Put away evidence"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	roomKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionLeftClick, _("Enter room"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	cameraKeymap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Exit"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	cameraKeymap->addAction(act);
+
+	act = new Common::Action("SKIP", _("Skip intro"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_A");
+	introKeymap->addAction(act);
+
+	KeymapArray keymaps(5);
+	keymaps[0] = engineKeymap;
+	keymaps[1] = cutsceneKeymap;
+	keymaps[2] = roomKeymap;
+	keymaps[3] = cameraKeymap;
+	keymaps[4] = introKeymap;
+
+	cutsceneKeymap->setEnabled(false);
+	roomKeymap->setEnabled(false);
+	cameraKeymap->setEnabled(false);
+	introKeymap->setEnabled(false);
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(VOYEUR)

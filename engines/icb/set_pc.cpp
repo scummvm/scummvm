@@ -1369,7 +1369,7 @@ void _set::DrawSparkles() {
 	for (uint32 i = 0; i < MS->total_objects; i++) {
 		_logic *L = MS->logic_structs[i];
 
-		// if object visable to camera
+		// if object visible to camera
 		if ((L->sparkleOn) && (MS->Object_visible_to_camera(i))) {
 			PXvector screen;
 			bool8 isShown;

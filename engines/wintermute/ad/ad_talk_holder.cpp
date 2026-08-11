@@ -35,6 +35,8 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -49,18 +51,17 @@ AdTalkHolder::AdTalkHolder(BaseGame *inGame) : AdObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkHolder::~AdTalkHolder() {
-	delete _sprite;
-	_sprite = nullptr;
+	SAFE_DELETE(_sprite);
 
-	for (uint32 i = 0; i < _talkSprites.size(); i++) {
+	for (int32 i = 0; i < _talkSprites.getSize(); i++) {
 		delete _talkSprites[i];
 	}
-	_talkSprites.clear();
+	_talkSprites.removeAll();
 
-	for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
+	for (int32 i = 0; i < _talkSpritesEx.getSize(); i++) {
 		delete _talkSpritesEx[i];
 	}
-	_talkSpritesEx.clear();
+	_talkSpritesEx.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,16 +70,15 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 
 
 	// forced stance?
-	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
+	if (_forcedTalkAnimName && _forcedTalkAnimName[0] && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
-		delete _animSprite;
-		_animSprite = new BaseSprite(_gameRef, this);
+		SAFE_DELETE(_animSprite);
+		_animSprite = new BaseSprite(_game, this);
 		if (_animSprite) {
 			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
-				_gameRef->LOG(res, "AdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", getName(), _forcedTalkAnimName);
-				delete _animSprite;
-				_animSprite = nullptr;
+				_game->LOG(res, "AdTalkHolder::getTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				SAFE_DELETE(_animSprite);
 			} else {
 				return _animSprite;
 			}
@@ -88,16 +88,16 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 
 	if (stance != nullptr) {
 		// search special talk stances
-		for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
-			if (scumm_stricmp(_talkSpritesEx[i]->getName(), stance) == 0) {
+		for (int32 i = 0; i < _talkSpritesEx.getSize(); i++) {
+			if (scumm_stricmp(_talkSpritesEx[i]->_name, stance) == 0) {
 				ret = _talkSpritesEx[i];
 				break;
 			}
 		}
 		if (ret == nullptr) {
 			// serach generic talk stances
-			for (uint32 i = 0; i < _talkSprites.size(); i++) {
-				if (scumm_stricmp(_talkSprites[i]->getName(), stance) == 0) {
+			for (int32 i = 0; i < _talkSprites.getSize(); i++) {
+				if (scumm_stricmp(_talkSprites[i]->_name, stance) == 0) {
 					ret = _talkSprites[i];
 					break;
 				}
@@ -107,11 +107,11 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 
 	// not a valid stance? get a random one
 	if (ret == nullptr) {
-		if (_talkSprites.size() < 1) {
+		if (_talkSprites.getSize() < 1) {
 			ret = _sprite;
 		} else {
 			// TODO: remember last
-			int rnd = BaseEngine::instance().randInt(0, _talkSprites.size() - 1);
+			int rnd = BaseEngine::instance().randInt(0, _talkSprites.getSize() - 1);
 			ret = _talkSprites[rnd];
 		}
 	}
@@ -137,8 +137,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 			setCurrent = true;
 		}
 
-		delete _sprite;
-		_sprite = nullptr;
+		SAFE_DELETE(_sprite);
 
 		if (val->isNULL()) {
 			_sprite = nullptr;
@@ -148,7 +147,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 			stack->pushBool(true);
 		} else {
 			const char *filename = val->getString();
-			BaseSprite *spr = new BaseSprite(_gameRef, this);
+			BaseSprite *spr = new BaseSprite(_game, this);
 			if (!spr || DID_FAIL(spr->loadFile(filename))) {
 				script->runtimeError("SetSprite method failed for file '%s'", filename);
 				stack->pushBool(false);
@@ -169,10 +168,10 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	else if (strcmp(name, "GetSprite") == 0) {
 		stack->correctParams(0);
 
-		if (!_sprite || !_sprite->getFilename()) {
+		if (!_sprite || !_sprite->_filename || !_sprite->_filename[0]) {
 			stack->pushNULL();
 		} else {
-			stack->pushString(_sprite->getFilename());
+			stack->pushString(_sprite->_filename);
 		}
 		return STATUS_OK;
 	}
@@ -199,14 +198,17 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
-		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
 
-		BaseSprite *spr = new BaseSprite(_gameRef, this);
+		BaseSprite *spr = new BaseSprite(_game, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("AddTalkSprite method failed for file '%s'", filename);
 		} else {
-			sprites.add(spr);
+			if (ex) {
+				_talkSpritesEx.add(spr);
+			} else {
+				_talkSprites.add(spr);
+			}
 			stack->pushBool(true);
 		}
 		return STATUS_OK;
@@ -220,22 +222,48 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
-		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
 
-		for (uint32 i = 0; i < sprites.size(); i++) {
-			if (scumm_stricmp(sprites[i]->getFilename(), filename) == 0) {
-				if (_currentSprite == sprites[i]) {
-					_currentSprite = _sprite;
+		bool setCurrent = false;
+		bool setTemp2 = false;
+
+		if (ex) {
+			for (int32 i = 0; i < _talkSpritesEx.getSize(); i++) {
+				if (scumm_stricmp(_talkSpritesEx[i]->_filename, filename) == 0) {
+					if (_currentSprite == _talkSpritesEx[i]) {
+						setCurrent = true;
+					}
+					if (_tempSprite2 == _talkSpritesEx[i]) {
+						setTemp2 = true;
+					}
+					delete _talkSpritesEx[i];
+					_talkSpritesEx.removeAt(i);
+					break;
 				}
-				if (_tempSprite2 == sprites[i]) {
-					_tempSprite2 = _sprite;
+			}
+		} else {
+			for (int32 i = 0; i < _talkSprites.getSize(); i++) {
+				if (scumm_stricmp(_talkSprites[i]->_filename, filename) == 0) {
+					if (_currentSprite == _talkSprites[i]) {
+						setCurrent = true;
+					}
+					if (_tempSprite2 == _talkSprites[i]) {
+						setTemp2 = true;
+					}
+					delete _talkSprites[i];
+					_talkSprites.removeAt(i);
+					break;
 				}
-				delete sprites[i];
-				sprites.remove_at(i);
-				break;
 			}
 		}
+
 		stack->pushBool(true);
+		if (setCurrent) {
+			_currentSprite = _sprite;
+		}
+		if (setTemp2) {
+			_tempSprite2 = _sprite;
+		}
+
 		return STATUS_OK;
 	}
 
@@ -253,9 +281,9 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		BaseScriptable *arr;
 		stack->pushInt(0);
-		arr = makeSXArray(_gameRef, stack);
-		for (uint32 i = 0; i < sprites.size(); i++) {
-			stack->pushString(sprites[i]->getFilename());
+		arr = makeSXArray(_game, stack);
+		for (int32 i = 0; i < sprites.getSize(); i++) {
+			stack->pushString(sprites[i]->_filename);
 			((SXArray *)arr)->push(stack->pop());
 		}
 		stack->pushNative(arr, false);
@@ -271,25 +299,54 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
-		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
+		bool setCurrent = false;
+		bool setTemp2 = false;
 
-		BaseSprite *spr = new BaseSprite(_gameRef, this);
+		BaseSprite *spr = new BaseSprite(_game, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("SetTalkSprite method failed for file '%s'", filename);
 		} else {
-			for (uint32 i = 0; i < sprites.size(); i++) {
-				if (_currentSprite == sprites[i]) {
-					_currentSprite = spr;
+
+			// delete current
+			if (ex) {
+				for (int32 i = 0; i < _talkSpritesEx.getSize(); i++) {
+					if (_talkSpritesEx[i] == _currentSprite) {
+						setCurrent = true;
+					}
+					if (_talkSpritesEx[i] == _tempSprite2) {
+						setTemp2 = true;
+					}
+					delete _talkSpritesEx[i];
 				}
-				if (_tempSprite2 == sprites[i]) {
-					_tempSprite2 = spr;
+				_talkSpritesEx.removeAll();
+			} else {
+				for (int32 i = 0; i < _talkSprites.getSize(); i++) {
+					if (_talkSprites[i] == _currentSprite) {
+						setCurrent = true;
+					}
+					if (_talkSprites[i] == _tempSprite2) {
+						setTemp2 = true;
+					}
+					delete _talkSprites[i];
 				}
-				delete sprites[i];
+				_talkSprites.removeAll();
 			}
-			sprites.clear();
-			sprites.add(spr);
+
+			// set new
+			if (ex) {
+				_talkSpritesEx.add(spr);
+			} else {
+				_talkSprites.add(spr);
+			}
 			stack->pushBool(true);
+
+			if (setCurrent) {
+				_currentSprite = spr;
+			}
+			if (setTemp2) {
+				_tempSprite2 = spr;
+			}
 		}
 		return STATUS_OK;
 	} else {
@@ -299,13 +356,13 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
+ScValue *AdTalkHolder::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("talk-holder");
 		return _scValue;
 	} else {
@@ -321,7 +378,7 @@ bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 	// Item
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Item")==0) {
-	    SetItem(value->getString());
+		setItem(value->getString());
 	    return STATUS_OK;
 	}
 
@@ -337,15 +394,15 @@ const char *AdTalkHolder::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
-	for (uint32 i = 0; i < _talkSprites.size(); i++) {
-		if (_talkSprites[i]->getFilename()) {
-			buffer->putTextIndent(indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->getFilename());
+	for (int32 i = 0; i < _talkSprites.getSize(); i++) {
+		if (_talkSprites[i]->_filename && _talkSprites[i]->_filename[0]) {
+			buffer->putTextIndent(indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->_filename);
 		}
 	}
 
-	for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
-		if (_talkSpritesEx[i]->getFilename()) {
-			buffer->putTextIndent(indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->getFilename());
+	for (int32 i = 0; i < _talkSpritesEx.getSize(); i++) {
+		if (_talkSpritesEx[i]->_filename && _talkSpritesEx[i]->_filename[0]) {
+			buffer->putTextIndent(indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->_filename);
 		}
 	}
 

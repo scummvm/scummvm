@@ -55,6 +55,19 @@ void InteractiveVideo::readData(Common::SeekableReadStream &stream) {
 
 	readFilename(*ivFile, _videoName);
 
+	// WORKAROUND: In Nancy 9, the Feeding Frenzy mini-game plays 6 videos (the whales that pop up)
+	// with a normal arrow cursor. In such cases, the cursor manager reverts to the default arrow
+	// cursor, if an item is held (which, in this case is a fish). We replace these cursors with a
+	// normal one, which allows for the held item to be visible. Making this a workaround for that
+	// scene, since a change in that part of the cursor code would require a full regression test in
+	// all supported games. Fixes bug #16792.
+	const uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
+	if (g_nancy->getGameType() == kGameTypeNancy9 && (sceneId == 2992 || sceneId == 2995 || sceneId == 2996)) {
+		if (_videoName.toString().contains("WhaleFeed") && _cursors[0] == CursorManager::kNormalArrow) {
+			_cursors[0] = CursorManager::kNormal;
+		}
+	}
+
 	uint32 numFrames = ivFile->readUint32LE();
 	_frames.resize(numFrames);
 	for (uint i = 0; i < numFrames; ++i) {
@@ -87,7 +100,7 @@ void InteractiveVideo::execute() {
 
 		break;
 	case kRun:
-		if (_movieAR->_state == kActionTrigger || _movieAR->_isFinished) {
+		if (_movieAR->_state == kActionTrigger || _movieAR->getIsFinished()) {
 			_state = kActionTrigger;
 		}
 
@@ -103,7 +116,7 @@ void InteractiveVideo::handleInput(NancyInput &input) {
 		return;
 	}
 
-	int curFrame = _movieAR->_decoder->getCurFrame();
+	int curFrame = _movieAR->_decoder.getCurFrame();
 	if (curFrame < 0) {
 		return;
 	}
@@ -117,7 +130,7 @@ void InteractiveVideo::handleInput(NancyInput &input) {
 				if (NancySceneState.getViewport().convertViewportToScreen(hotspot.hotspot).contains(input.mousePos)) {
 					// Mouse is in a hotspot, change cursor and set flag if clicked
 					if (hotspot.cursorID >= 0 && _cursors[hotspot.cursorID] >= 0) {
-						g_nancy->_cursor->setCursorType((CursorManager::CursorType)_cursors[hotspot.cursorID]);
+						g_nancy->_cursor->setCursorType((CursorManager::CursorType)_cursors[hotspot.cursorID], true);
 					}
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
@@ -131,7 +144,7 @@ void InteractiveVideo::handleInput(NancyInput &input) {
 			// Mouse is not in a hotspot for the frame, check if we have a default action
 			if (frame.triggerOnNoHotspot) {
 				if (frame.noHSCursorID >= 0 && _cursors[frame.noHSCursorID] >= 0) {
-					g_nancy->_cursor->setCursorType((CursorManager::CursorType)_cursors[frame.noHSCursorID]);
+					g_nancy->_cursor->setCursorType((CursorManager::CursorType)_cursors[frame.noHSCursorID], true);
 				}
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {

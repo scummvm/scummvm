@@ -1,0 +1,40 @@
+.TH PYCDLIB-EXTRACT-FILES 1 "Sep 2018" "pycdlib-extract-files"
+
+.SH NAME
+pycdlib-extract-files - tool to extract files from an ISO using pycdlib
+
+.SH SYNOPSIS
+.B pycdlib-extract-files [OPTIONS] <iso-file>
+
+.SH DESCRIPTION
+This is a tool to extract files from an existing ISO file.  Using this tool,
+the files and directories on an ISO can be extracted to the local filesystem.
+
+.SH OPTIONS
+.TP
+.BI \-path\-type " [auto,iso9660,rockridge,joliet,udf]"
+Specifies the path name convention to use while extracting the files.  If the
+ISO to be extracted doesn't contain the path type specified, an error is thrown.
+If not specified, defaults to auto, which first tries to extract files via the
+UDF path, then the Rock Ridge path, then the Joliet path, and finally falls back
+to the ISO9660 path if all else fails.  Once one path type succeeds, all files
+will be extracted as that path type.
+.TP
+.BI \-start\-path " <pathname>"
+The ISO path to start extracting from, specified in a Unix like path (something
+like "/foo/bar").  If not specified, extraction starts from the root of the ISO
+(equivalent to specifying "/").  The starting path must be a directory on the
+ISO.  If \-path\-type is not specified, the path is an ISO9660 style path.
+If \-path\-type is specified, the start path specified here must be of that
+particular type.
+.TP
+.BI \-extract\-to " <destpath>"
+The local directory to extract the data to.  The "destpath" must exist and
+must be a directory, or an error will be thrown.  If not specified,
+pycdlib\-extract\-files will extract the files to the current directory.
+
+.SH SEE ALSO
+pycdlib-explorer(1), pycdlib-genisoimage(1)
+
+.SH AUTHOR
+Chris Lalancette <clalancette@gmail.com>

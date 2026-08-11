@@ -695,7 +695,7 @@ dgBigVector LineTriangleIntersection(const dgBigVector &p0,
 	dgGoogol sum = t0 + t1 + t2;
 	dgFloat64 den = sum.GetAproximateValue();
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	dgBigVector testpoint(
 	    A.Scale(val0 / den) + B.Scale(val1 / den) + C.Scale(val2 / den));
 	dgFloat64 volume = ((B - A) * (C - A)) % (testpoint - A);

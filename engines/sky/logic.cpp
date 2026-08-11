@@ -171,7 +171,7 @@ void Logic::engine() {
 void Logic::nop() {}
 
 /**
- * This function is basicly a wrapper around the real script engine. It runs
+ * This function is basically a wrapper around the real script engine. It runs
  * the script engine until a script has finished.
  * @see script()
  */
@@ -1751,7 +1751,7 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	while (*p) {
 		uint32 textNum = *p++;
 
-		DisplayedText lowText = _skyText->lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, 0);
+		DisplayedText lowText = _skyText->lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, Graphics::kTextAlignStart);
 
 		uint8 *data = lowText.textData;
 
@@ -1786,6 +1786,8 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 
 	if (p == _scriptVariables + TEXT1)
 		return true;
+
+	_skyMouse->setTextChooserMode();
 
 	_compact->logic = L_CHOOSE; // player frozen until choice made
 	fnAddHuman(0, 0, 0); // bring back mouse
@@ -1873,6 +1875,86 @@ bool Logic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	/// initialize the top menu bar
 	// firstObject is o0 for game menu, k0 for linc
+
+	if (SkyEngine::isIbass()) {
+		Compact *cpt;
+
+		debug(1, "init inv menu %d", firstObject);
+
+		// safety flag
+		_liveInv = true;
+
+		if (firstObject == 2048 || firstObject == 2168 || firstObject == 2288)
+			_skyMouse->setLincInv(true);
+		else
+			_skyMouse->setLincInv(false);
+
+		_skyMouse->incLincMenuRef();
+		_skyScreen->hideInventory();
+		_skyScreen->clearAllInvIcons();
+
+		uint i;
+		firstObject /= 4;
+
+		uint32 menuLength = 0;
+		for (i = firstObject; i < firstObject + ARRAYSIZE(_objectList); i++) {
+			// skip unused linc items
+			if (_scriptVariables[i] == 24581 || _scriptVariables[i] == 24628)
+				continue;
+
+			if (_scriptVariables[i])
+				_objectList[menuLength++] = _scriptVariables[i];
+		}
+		_scriptVariables[MENU_LENGTH] = menuLength;
+
+		debug(1, "Menu length = %d", menuLength);
+
+		uint16 rollingX = TOP_LEFT_X + XWIDTH;
+		int xx = 0;
+		uint16 rollingY = 236;
+
+		int didX = 0, didY = 1;
+
+		for (i = 0; i < menuLength; i++) {
+			if (xx == 8) {
+				rollingX = TOP_LEFT_X + XWIDTH;
+				xx = 0;
+				rollingY += YDEPTH;
+
+				didY++;
+			}
+
+			cpt = _skyCompact->fetchCpt(_objectList[i]);
+			debug(1, "Init i = %d ob = %d fr = %d\n", i, _objectList[i], cpt->frame);
+
+			cpt->status = ST_MOUSE + ST_FOREGROUND + /*ST_LOGIC +*/ ST_RECREATE;
+			cpt->screen = 999;
+
+			cpt->xcood = rollingX;
+			cpt->ycood = rollingY; // 112;
+
+			int frame = cpt->frame;
+
+			// if LINC then check for off frames and mask off :O :O
+			if (_objectList[i] > 20000)
+				if (!(frame & 1))
+					frame--;
+
+			_skyScreen->addInvIcon(frame, rollingX - TOP_LEFT_X, rollingY - TOP_LEFT_Y, (b == _objectList[i]));
+
+			rollingX += XWIDTH;
+
+			xx++;
+
+			if (didY == 1)
+				didX++;
+		}
+
+		_skyMouse->setInvDims(TOP_LEFT_X + XWIDTH, 236, didX * XWIDTH, didY * YDEPTH);
+		_skyScreen->showInventory(XWIDTH, 236 - TOP_LEFT_Y, XWIDTH + 8 * XWIDTH, (236 - TOP_LEFT_Y) + (didY * YDEPTH));
+
+		return true;
+	}
 
 	uint i;
 	firstObject /= 4;
@@ -2367,7 +2449,7 @@ bool Logic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
-	DisplayedText creditText = _skyText->lowTextManager(a, 240, 0, 248, true);
+	DisplayedText creditText = _skyText->lowTextManager(a, 240, 0, 248, Graphics::kTextAlignCenter);
 	Compact *credCompact = _skyCompact->fetchCpt(creditText.compactNum);
 	credCompact->xcood = 168;
 	if ((a == 558) && (c == 215))
@@ -2379,7 +2461,7 @@ bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnLookAt(uint32 a, uint32 b, uint32 c) {
-	DisplayedText textInfo = _skyText->lowTextManager(a, 240, 0, 248, true);
+	DisplayedText textInfo = _skyText->lowTextManager(a, 240, 0, 248, Graphics::kTextAlignCenter);
 	Compact *textCpt = _skyCompact->fetchCpt(textInfo.compactNum);
 	textCpt->xcood = 168;
 	textCpt->ycood = (uint16)c;
@@ -2409,7 +2491,7 @@ bool Logic::fnLincTextModule(uint32 textPos, uint32 textNo, uint32 buttonAction)
 	if (buttonAction < 10)
 		_scriptVariables[LINC_DIGIT_0 + buttonAction] = textNo;
 
-	DisplayedText text = _skyText->lowTextManager(textNo, 220, 0, 215, false);
+	DisplayedText text = _skyText->lowTextManager(textNo, SkyEngine::_systemVars->textDirRTL ? 175 : 220, 0, 215, Graphics::kTextAlignStart);
 
 	Compact *textCpt = _skyCompact->fetchCpt(text.compactNum);
 
@@ -2529,7 +2611,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 		// form the text sprite, if player wants subtitles or
 		// if we couldn't find the speech file
 		DisplayedText textInfo;
-		textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColor, true);
+		textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColor, Graphics::kTextAlignCenter);
 		Compact *textCompact = _skyCompact->fetchCpt(textInfo.compactNum);
 		target->spTextId = textInfo.compactNum;	//So we know what text to kill
 		byte *textGfx = textInfo.textData;

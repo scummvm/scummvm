@@ -71,16 +71,16 @@ public:
 	BinkDecoder();
 	~BinkDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 
 	Common::Rational getFrameRate();
 
 protected:
-	void readNextPacket();
-	bool supportsAudioTrackSwitching() const { return true; }
-	AudioTrack *getAudioTrack(int index);
-	bool seekIntern(const Audio::Timestamp &time);
+	void readNextPacket() override;
+	bool supportsAudioTrackSwitching() const override { return true; }
+	AudioTrack *getAudioTrack(int index) override;
+	bool seekIntern(const Audio::Timestamp &time) override;
 	uint32 findKeyFrame(uint32 frame) const;
 
 private:
@@ -153,7 +153,13 @@ private:
 		uint16 getWidth() const override { return _width; }
 		uint16 getHeight() const  override{ return _height; }
 		Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
-		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _pixelFormat = format; return true; }
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override {
+			if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
+				return false;
+			_pixelFormat = format;
+			return true;
+		}
+
 		int getCurFrame() const override { return _curFrame; }
 		int getFrameCount() const override { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame() override { return _surface; }
@@ -345,13 +351,13 @@ private:
 		/** Decode an audio packet. */
 		void decodePacket();
 
-		bool seek(const Audio::Timestamp &time);
-		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time) override;
+		bool isSeekable() const override { return true; }
 		void skipSamples(const Audio::Timestamp &length);
 		int getRate();
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		AudioInfo *_audioInfo;

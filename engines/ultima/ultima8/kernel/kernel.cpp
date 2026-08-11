@@ -23,16 +23,13 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/set.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 Kernel *Kernel::_kernel = nullptr;
-
-const uint32 Kernel::TICKS_PER_FRAME = 2;
-const uint32 Kernel::TICKS_PER_SECOND = 60;
-const uint32 Kernel::FRAMES_PER_SECOND = Kernel::TICKS_PER_SECOND / Kernel::TICKS_PER_FRAME;
 
 // A special proc type which means "all"
 const uint16 Kernel::PROC_TYPE_ALL = 6;
@@ -62,8 +59,7 @@ Kernel::~Kernel() {
 void Kernel::reset() {
 	debug(1, "Resetting Kernel...");
 
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
+	for (auto *p : _processes) {
 		if (p->_flags & Process::PROC_TERM_DISPOSE && p != _runningProcess) {
 			delete p;
 		} else {
@@ -94,8 +90,8 @@ ProcId Kernel::assignPID(Process *proc) {
 
 ProcId Kernel::addProcess(Process *proc, bool dispose) {
 #if 0
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
-		if (*it == proc)
+	for (const auto *p : _processes) {
+		if (p == proc)
 			return 0;
 	}
 #endif
@@ -116,8 +112,8 @@ ProcId Kernel::addProcess(Process *proc, bool dispose) {
 
 ProcId Kernel::addProcessExec(Process *proc, bool dispose) {
 #if 0
-	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
-		if (*it == proc)
+	for (const auto *p : _processes) {
+		if (p == proc)
 			return 0;
 	}
 #endif
@@ -257,8 +253,7 @@ void Kernel::setNextProcess(Process *proc) {
 }
 
 Process *Kernel::getProcess(ProcId pid) {
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
+	for (auto *p : _processes) {
 		if (p->_pid == pid)
 			return p;
 	}
@@ -273,22 +268,18 @@ void Kernel::kernelStats() {
 void Kernel::processTypes() {
 	g_debugger->debugPrintf("Current process types:\n");
 	Common::HashMap<Common::String, unsigned int> processtypes;
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
+	for (const auto *p : _processes) {
 		processtypes[p->GetClassType()._className]++;
 	}
-	Common::HashMap<Common::String, unsigned int>::const_iterator iter;
-	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {
-		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
+	for (const auto &i : processtypes) {
+		g_debugger->debugPrintf("%s: %u\n", i._key.c_str(), i._value);
 	}
 }
 
 uint32 Kernel::getNumProcesses(ObjId objid, uint16 processtype) {
 	uint32 count = 0;
 
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
-
+	for (const auto *p : _processes) {
 		// Don't count us, we are not really here
 		if (p->is_terminated()) continue;
 
@@ -301,9 +292,7 @@ uint32 Kernel::getNumProcesses(ObjId objid, uint16 processtype) {
 }
 
 Process *Kernel::findProcess(ObjId objid, uint16 processtype) {
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
-
+	for (auto *p : _processes) {
 		// Don't count us, we are not really here
 		if (p->is_terminated()) continue;
 
@@ -318,9 +307,7 @@ Process *Kernel::findProcess(ObjId objid, uint16 processtype) {
 
 
 void Kernel::killProcesses(ObjId objid, uint16 processtype, bool fail) {
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
-
+	for (auto *p : _processes) {
 		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
 		        (processtype == PROC_TYPE_ALL || processtype == p->_type) &&
 		        !(p->_flags & Process::PROC_TERMINATED) &&
@@ -334,9 +321,7 @@ void Kernel::killProcesses(ObjId objid, uint16 processtype, bool fail) {
 }
 
 void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) {
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
-
+	for (auto *p : _processes) {
 		// * If objid is 0, terminate procs for all objects.
 		// * Never terminate procs with objid 0
 		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
@@ -371,9 +356,7 @@ void Kernel::killAllProcessesNotOfTypeExcludeCurrent(uint16 processtype, bool fa
 		}
 	}
 
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
-
+	for (auto *p : _processes) {
 		// Don't kill the running process
 		if (procsToSave.contains(p->_pid))
 			continue;
@@ -390,9 +373,7 @@ void Kernel::killAllProcessesNotOfTypeExcludeCurrent(uint16 processtype, bool fa
 }
 
 bool Kernel::canSave() {
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		Process *p = *it;
-
+	for (const auto *p : _processes) {
 		if (!p->is_terminated() && p->_flags & Process::PROC_PREVENT_SAVE) {
 			return false;
 		}
@@ -405,12 +386,11 @@ void Kernel::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(_tickNum);
 	_pIDs->save(ws);
 	ws->writeUint32LE(_processes.size());
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		const Std::string & classname = (*it)->GetClassType()._className; // virtual
+	for (auto *p : _processes) {
+		const Common::String & classname = p->GetClassType()._className; // virtual
 		assert(classname.size());
 
-		Common::HashMap<Common::String, ProcessLoadFunc>::iterator iter;
-		iter = _processLoaders.find(classname);
+		auto iter = _processLoaders.find(classname);
 
 		if (iter == _processLoaders.end()) {
 			error("Process class cannot save without registered loader: %s", classname.c_str());
@@ -418,7 +398,7 @@ void Kernel::save(Common::WriteStream *ws) {
 
 		ws->writeUint16LE(classname.size());
 		ws->write(classname.c_str(), classname.size());
-		(*it)->saveData(ws);
+		p->saveData(ws);
 	}
 }
 
@@ -436,9 +416,8 @@ bool Kernel::load(Common::ReadStream *rs, uint32 version) {
 	}
 
 	// Integrity check for processes
-	Std::set<ProcId> procs;
-	for (Std::list<Process *>::const_iterator iter = _processes.begin(); iter != _processes.end(); iter++) {
-		const Process *p = *iter;
+	Set<ProcId> procs;
+	for (const auto *p : _processes) {
 		if (!_pIDs->isIDUsed(p->getPid())) {
 			warning("Process id %d exists but not marked used.  Corrupt save?", p->getPid());
 			return false;
@@ -471,11 +450,10 @@ Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 	rs->read(buf, classlen);
 	buf[classlen] = 0;
 
-	Std::string classname = buf;
+	Common::String classname = buf;
 	delete[] buf;
 
-	Common::HashMap<Common::String, ProcessLoadFunc>::iterator iter;
-	iter = _processLoaders.find(classname);
+	const auto iter = _processLoaders.find(classname);
 
 	if (iter == _processLoaders.end()) {
 		warning("Unknown Process class: %s", classname.c_str());

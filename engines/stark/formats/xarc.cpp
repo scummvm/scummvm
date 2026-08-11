@@ -20,7 +20,7 @@
  */
 
 // Based on the Xentax Wiki documentation:
-// http://wiki.xentax.com/index.php?title=The_Longest_Journey_XARC
+// https://web.archive.org/web/20090621212912/http://wiki.xentax.com/index.php?title=The_Longest_Journey_XARC
 
 #include "engines/stark/formats/xarc.h"
 #include "engines/stark/debug.h"

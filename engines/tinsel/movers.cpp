@@ -42,6 +42,7 @@
 #include "tinsel/timers.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
+#include "tinsel/noir/spriter.h"
 
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -235,7 +236,7 @@ void HideMover(MOVER *pMover, int sf) {
 		}
 	}
 
-	if (pMover->actorObj)
+	if (pMover->actorObj && pMover->type == MOVER_2D)
 		MultiSetZPosition(pMover->actorObj, -1);
 }
 
@@ -253,6 +254,8 @@ bool MoverHidden(MOVER *pMover) {
  * To be or not to be? If it be, then it is.
  */
 bool MoverIs(MOVER *pMover) {
+	if (TinselVersion == 3 && pMover->type == MOVER_3D)
+		return pMover->bActive;
 	if (TinselVersion >= 2)
 		return pMover->actorObj ? true : false;
 	else
@@ -871,6 +874,33 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	CORO_END_CODE;
 }
 
+void T3SetMoverStanding(CORO_PARAM, MOVER *pMover, bool bImmediate) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (!MoverIs(pMover)) {
+		CORO_GIVE_WAY;
+	}
+	while (!MoverIs(pMover)) {
+		CORO_SLEEP(1);
+	}
+
+	pMover->targetX = pMover->targetY = -1;
+	pMover->ItargetX = pMover->ItargetY = -1;
+	pMover->UtargetX = pMover->UtargetY = -1;
+
+	if (pMover->type == MOVER_3D) {
+		AnimateObjectFlags(pMover->actorObj, pMover->actorObj->flags | DMA_CHANGED, pMover->actorObj->hImg);
+		_vm->_spriter->SetSequence(0, bImmediate ? 0 : 8);
+		pMover->animSpeed = 0x10000;
+		pMover->nextIdleAnim = DwGetCurrentTime() + 24 + _vm->getRandomNumber(216);
+	}
+
+	CORO_END_CODE;
+}
+
 /**
  * Tinsel 3 Moving actor process
  * - 1 per moving actor in current scene.
@@ -882,13 +912,47 @@ void T3MoverProcess(CORO_PARAM, const void *param) {
 	// Get the co-ordinates - copied to process when it was created
 	const MAINIT *rpos = (const MAINIT *)param;
 	MOVER *pMover = rpos->pMover;
+	MULTI_INIT mi;
 
 	CORO_BEGIN_CODE(_ctx);
 
-	warning("TODO: Finish implementation of T3MoverProcess() for Noir");
-
 	InitMover(pMover);
 	InitialPathChecks(pMover, rpos->X, rpos->Y);
+
+	if (pMover->type == MOVER_3D) {
+		assert(pMover->hModelName != 0);
+
+		pMover->bActive = true;
+
+		mi.hMulFrame = 0;
+		mi.mulID = 0;
+		mi.mulX = 0;
+		mi.mulY = 0;
+		mi.mulZ = 0;
+		mi.otherFlags = 0;
+		mi.mulFlags = DMA_3D;
+
+		pMover->actorObj = MultiInitObject(&mi);
+
+		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
+		MultiSetAniXY(pMover->actorObj,pMover->objX,pMover->objY);
+
+		warning("TODO: Finish implementation of T3MoverProcess() for Noir");
+
+		AnimateObjectFlags(pMover->actorObj, pMover->actorObj->flags | DMA_CHANGED, pMover->actorObj->hImg);
+		_vm->_spriter->SetSequence(0, 4);
+
+		pMover->animSpeed = 0x10000;
+		pMover->nextIdleAnim = 0;
+	}
+
+	// If no path, just use first path in the scene
+	if (pMover->hCpath != NOPOLY)
+		SetMoverZ(pMover, pMover->objY, GetPolyZfactor(pMover->hCpath));
+	else
+		SetMoverZ(pMover, pMover->objY, GetPolyZfactor(FirstPathPoly()));
+
+	CORO_INVOKE_2(T3SetMoverStanding, pMover, true);
 
 	HideMover(pMover);		// Allows a play to come in before this appears
 	pMover->bHidden = false;	// ...but don't stay hidden

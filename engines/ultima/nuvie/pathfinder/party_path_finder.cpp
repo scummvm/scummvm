@@ -32,8 +32,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::vector;
-
 PartyPathFinder::PartyPathFinder(Party *p) : party(p) {
 	assert(p);
 }
@@ -344,14 +342,14 @@ bool PartyPathFinder::try_all_directions(uint32 p, MapCoord target_loc) {
 /* Returns a list(vector) of all locations adjacent to 'center', sorted by their
  * distance to 'target'. (near to far)
  */
-vector<MapCoord>
+Common::Array<MapCoord>
 PartyPathFinder::get_neighbor_tiles(const MapCoord &center, const MapCoord &target) {
 	sint8 rel_x = get_wrapped_rel_dir(target.x, center.x, target.z);
 	sint8 rel_y = get_wrapped_rel_dir(target.y, center.y, target.z);
-	vector<MapCoord> neighbors;
+	Common::Array<MapCoord> neighbors;
 	for (uint32 dir = 0; dir < 8; dir++) {
 		MapCoord this_square = center.abs_coords(rel_x, rel_y); // initial square in first iteration
-		vector<MapCoord>::iterator i = neighbors.begin();
+		Common::Array<MapCoord>::iterator i = neighbors.begin();
 		uint32 sorted = 0;
 		for (; sorted < neighbors.size(); sorted++, i++) {
 			MapCoord check_square = neighbors[sorted];
@@ -390,7 +388,7 @@ bool PartyPathFinder::bump_member(uint32 bumped_member_num, uint32 member_num) {
 	sint8 to_member_y = get_wrapped_rel_dir(member_loc.y, bump_from.y, member_loc.z);
 
 	// sort neighboring squares by distance to target (closest first)
-	vector<MapCoord> neighbors;
+	Common::Array<MapCoord> neighbors;
 	if (bump_target != bump_from)
 		neighbors = get_neighbor_tiles(bump_from, bump_target);
 	else { // sort by distance to leader

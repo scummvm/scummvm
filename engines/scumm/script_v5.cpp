@@ -358,6 +358,10 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xfd, o5_findInventory);
 	OPCODE(0xfe, o5_walkActorTo);
 	OPCODE(0xff, o5_drawBox);
+
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::EN_ANY && enhancementEnabled(kEnhMinorBugFixes)) {
+		OPCODE(0x1a, o5_move_segafix);
+	}
 }
 
 int ScummEngine_v5::getVar() {
@@ -427,7 +431,7 @@ void ScummEngine_v5::o5_actorOps() {
 	// hadn't been implemented", but it appears to work nonetheless, which is what they
 	// also observed when doing the QA for the PC version.
 	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns &&
-		vm.slot[_currentScript].number == 45 && _currentRoom == 45 &&
+		currentScriptSlotIs(45) && _currentRoom == 45 &&
 		(_scriptPointer - _scriptOrgPointer == 0xA9) && enhancementEnabled(kEnhRestoredContent)) {
 		_scriptPointer += 0xCF - 0xA1;
 		writeVar(32811, 0); // clear bit 43
@@ -437,24 +441,9 @@ void ScummEngine_v5::o5_actorOps() {
 	Actor *a = derefActor(act, "o5_actorOps");
 	int i, j;
 
-	// WORKAROUND: There's a continuity error in Monkey 1, in that the Jolly Roger should
-	// only appear in the first scene showing the Sea Monkey in the middle of the sea,
-	// since Guybrush must have picked it for the two other ship cutscenes to happen.
-	//
-	// Some official releases appear to have a fix for this (e.g. the English floppy VGA
-	// version), but most releases don't. The fixed release would check whether the
-	// script describing that "the crew begins to plan their voyage" is running in order
-	// to display the flag, so we just reuse this check. The Ultimate Talkie also fixed
-	// this, but in a different way which doesn't look as portable between releases.
-	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE))) &&
-		_roomResource == 87 && vm.slot[_currentScript].number == 10002 && act == 9 &&
-		enhancementEnabled(kEnhVisualChanges)) {
-		const int scriptNr = (_game.version == 5) ? 122 : 119;
-		if (!isScriptRunning(scriptNr)) {
-			a->putActor(0);
-			stopObjectCode();
-			return;
-		}
+	if (workaroundMonkey1JollyRoger(_opcode, a->_number)) {
+		stopObjectCode();
+		return;
 	}
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
@@ -475,7 +464,9 @@ void ScummEngine_v5::o5_actorOps() {
 			// hard disk, I believe.
 			//
 			// Costume 0 doesn't have any cigar smoke, perhaps to
-			// cut down on disk access.
+			// cut down on disk access -- or, according to Aric
+			// Wilmunder, possibly because it "looked too 'cartoony'
+			// next to the higher-fidelity close-ups."
 			//
 			// But in the VGA CD version, only costume 0 is used
 			// and the close-up is missing the cigar smoke.
@@ -549,16 +540,27 @@ void ScummEngine_v5::o5_actorOps() {
 			// CD animation uses colors 1-3, where the floppy
 			// version uses 2, 3, and 9.
 			//
-			// We don't touch the colours in general - the Special
-			// edition have pretty much made them canon anyway -
-			// but for the Smirk close-up we want the same colors
-			// as the floppy version.
+			// So we have to adjust which colors are remapped. We
+			// also need to make sure they are remapped to the
+			// correct colors, because not only does the GUI occupy
+			// some colors, apparently the FM Towns version has a
+			// different palette altogether. So we look up the
+			// closest available color to the ones we want.
+			//
+			// We could use this to get back the original smoke
+			// colors for other scenes as well, but we currently do
+			// not. The Special Edition kept the new colors too.
 
 			if (_game.id == GID_MONKEY && _currentRoom == 76 && enhancementEnabled(kEnhVisualChanges)) {
 				if (i == 3)
 					i = 1;
 				else if (i == 9)
 					i = 3;
+
+				if (j == 3)
+					j = findClosestPaletteColor(_currentPalette, 256, 0, 171, 171);
+				else if (j == 7)
+					j = findClosestPaletteColor(_currentPalette, 256, 171, 171, 171);
 			}
 
 			// WORKAROUND for original bug. The original interpreter has a color fix for CGA mode which can be seen
@@ -633,6 +635,8 @@ void ScummEngine_v5::o5_actorOps() {
 			error("o5_actorOps: default case %d", _opcode & 0x1F);
 		}
 	}
+
+	workaroundLoomHetchelDoubleHead(a, act);
 }
 
 void ScummEngine_v5::o5_setClass() {
@@ -649,7 +653,7 @@ void ScummEngine_v5::o5_setClass() {
 		// are taken from the Ultimate Talkie Edition.
 		if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformFMTowns &&
 		    _game.platform != Common::kPlatformSegaCD && _roomResource == 59 &&
-			_currentScript != 0xFF && vm.slot [_currentScript].number == 10002 &&
+			currentScriptSlotIs(kScriptNumENCD) &&
 			obj == 915 && cls == 6 && _currentPalette[251 * 3] == 0 &&
 			enhancementEnabled(kEnhVisualChanges) && !(_game.features & GF_ULTIMATE_TALKIE)) {
 			// True as long as Guybrush isn't done with the voodoo recipe on the
@@ -668,7 +672,7 @@ void ScummEngine_v5::o5_setClass() {
 		// door (object 465) of the of the Hostel on Mars), when opening the
 		// Hostel door from the outside.
 		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
-		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
+		    currentScriptSlotIs(205) && _currentRoom == 185 &&
 		    (cls == 0 || cls == 1)) {
 			putState(obj, cls);
 		} else if (cls == 0) {
@@ -689,11 +693,31 @@ void ScummEngine_v5::o5_add() {
 	getResultPos();
 	a = getVarOrDirectWord(PARAM_1);
 
+	// WORKAROUND: In the Sega CD version of MI1, there are some cases
+	// where conversation options are invisible. This is because where it
+	// thinks it's increasing Var[229] by a number of pixels, it's actually
+	// increasing it by a number of lines, pushing the text off-screen.
+	//
+	// We fix this by changing Var[229] += 8 to Var[229] += 1.
+
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::EN_ANY && _resultVarNumber == 229 && a == 8 && enhancementEnabled(kEnhSubFmtCntChanges)) {
+		// Room 35 - Talking to the Men of Low Moral Fiber (pirates),
+		// telling them that the governor has been kidnapped. Two of
+		// the conversation options are off-screen.
+		//
+		// Room 19 - Talking to your crew aboard the ship. The last
+		// conversation option is off-screen.
+
+		if ((currentScriptSlotIs(216) && _currentRoom == 35) ||
+		    (currentScriptSlotIs(204) && _currentRoom == 19))
+			a = 1;
+	}
+
 	// WORKAROUND bug #994: This works around a script bug in LoomCD. To
 	// understand the reasoning behind this, compare script 210 and 218 in
 	// room 20. Apparently they made a mistake when converting the absolute
 	// delays into relative ones.
-	if (_game.id == GID_LOOM && _game.version == 4 && vm.slot[_currentScript].number == 210 && _currentRoom == 20 && _resultVarNumber == 0x4000) {
+	if (_game.id == GID_LOOM && _game.version == 4 && currentScriptSlotIs(210) && _currentRoom == 20 && _resultVarNumber == 0x4000) {
 		switch (a) {
 		// Fix for the Var[250] == 11 case
 		case 138:
@@ -745,7 +769,7 @@ void ScummEngine_v5::o5_add() {
 	// We restore the old behavior by adding 0, not 1, to the second
 	// variable when examining the clock tower.
 
-	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 210 && _currentRoom == 35 && _resultVarNumber == 248 && a == 1 && enhancementEnabled(kEnhRestoredContent)) {
+	if (_game.id == GID_MONKEY && currentScriptSlotIs(210) && _currentRoom == 35 && _resultVarNumber == 248 && a == 1 && enhancementEnabled(kEnhRestoredContent)) {
 		a = 0;
 	}
 
@@ -779,8 +803,8 @@ void ScummEngine_v5::o5_animateActor() {
 	// safety (from where you came). The following hack works around this by
 	// ignoring that particular turn command.
 	if (_game.id == GID_ZAK && _currentRoom == 182 && anim == 246 &&
-			((_game.version < 3 && vm.slot[_currentScript].number == 82)
-			|| (_game.version == 3 && vm.slot[_currentScript].number == 131))) {
+			((_game.version < 3 && currentScriptSlotIs(82))
+			|| (_game.version == 3 && currentScriptSlotIs(131)))) {
 		return;
 	}
 
@@ -798,7 +822,7 @@ void ScummEngine_v5::o5_breakHere() {
 	// least intrusive way of adding the delay. The script calls it a number
 	// of times, but only once from room 69.
 
-	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::EN_ANY && _currentScript != 0xFF && vm.slot [_currentScript].number == 44 && _currentRoom == 69) {
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::EN_ANY && currentScriptSlotIs(44) && _currentRoom == 69) {
 		vm.slot[_currentScript].delay = 120;
 		vm.slot[_currentScript].status = ssPaused;
 	}
@@ -818,23 +842,6 @@ void ScummEngine_v5::o5_chainScript() {
 
 	cur = _currentScript;
 
-	// WORKAROUND bug #812: Work around a bug in script 33 in Indy3.
-	// That script is used for the fist fights in the Zeppelin. It uses
-	// Local[5], even though that is never set to any value. But script 33 is
-	// called via chainScript by script 32, and in there Local[5] is set to
-	// the actor ID of the opposing soldier. So, we copy that value over to
-	// the Local[5] variable of script 33.
-	// FIXME: This workaround is meant for Indy3 EGA/VGA, but we make no
-	// checks to exclude the Mac/FM-TOWNS versions. We need to check whether
-	// those need the same workaround; if they don't, or if they need it in
-	// modified form, adjust this workaround accordingly.
-	// FIXME: Do we still need this workaround, 19 years later? I can't
-	// reproduce the original crash anymore, maybe we handle uninitialized
-	// local values the same way the original interpreter did, now?
-	if (_game.id == GID_INDY3 && cur != 0xFF && vm.slot[cur].number == 32 && script == 33) {
-		vars[5] = vm.localvar[cur][5];
-	}
-
 	assert(cur != 0xFF);
 	vm.slot[cur].number = 0;
 	vm.slot[cur].status = ssDead;
@@ -853,7 +860,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 		verbMouseOver(0);
 		break;
 	case 2:			// SO_CURSOR_OFF
-		_cursor.state = 0;
+		_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 		verbMouseOver(0);
 		break;
 	case 3:			// SO_USERPUT_ON
@@ -868,6 +875,8 @@ void ScummEngine_v5::o5_cursorCommand() {
 		break;
 	case 6:			// SO_CURSOR_SOFT_OFF
 		_cursor.state--;
+		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh && _cursor.state == 0)
+			_cursor.state = 1;
 		verbMouseOver(0);
 		break;
 	case 7:			// SO_USERPUT_SOFT_ON
@@ -936,7 +945,7 @@ void ScummEngine_v5::o5_cutscene() {
 	// from the zeppelin with the biplane is missing the `[1]` parameter
 	// which disables the verb interface. For some reason, this only causes
 	// a problem on the FM-TOWNS version, though... also happens under UNZ.
-	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _currentRoom == 80 && _currentScript != 0xFF && vm.slot[_currentScript].number == 201 && args[0] == 0 && enhancementEnabled(kEnhVisualChanges)) {
+	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _currentRoom == 80 && currentScriptSlotIs(201) && args[0] == 0 && enhancementEnabled(kEnhVisualChanges)) {
 		args[0] = 1;
 	}
 
@@ -944,6 +953,9 @@ void ScummEngine_v5::o5_cutscene() {
 }
 
 void ScummEngine_v5::o5_endCutscene() {
+	if (workaroundMonkey1StorekeeperWaitTablesLine())
+		return;
+
 	endCutscene();
 }
 
@@ -1053,8 +1065,8 @@ void ScummEngine_v5::o5_drawObject() {
 	// face Guybrush even if he's already looking at him.  drawObject() should never
 	// be called if Bit[129] is set in that script, so if it does happen, it means
 	// the check was missing, and so we ignore the next 32 bytes of Dread's reaction.
-	if (_game.id == GID_MONKEY2 && !(_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 22 && _currentScript != 0xFF && vm.slot [_currentScript].number == 201 && obj == 237 &&
-		state == 1 && readVar(0x8000 + 129) == 1 && enhancementEnabled(kEnhMinorBugFixes)) {
+	if (_game.id == GID_MONKEY2 && !(_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 22 && currentScriptSlotIs(201) && obj == 237 &&
+		state == 1 && readVar(ROOM_VAL(129)) == 1 && enhancementEnabled(kEnhMinorBugFixes)) {
 		_scriptPointer += 32;
 		return;
 	}
@@ -1065,7 +1077,7 @@ void ScummEngine_v5::o5_drawObject() {
 	// picked up the real Grail. This was probably done as a way to unconditionally
 	// reset the animation if it's already been played, but we can just do an
 	// unconditional reset of all previous frames instead, restoring the first one.
-	if (_game.id == GID_INDY3 && _roomResource == 87 && _currentScript != 0xFF && vm.slot [_currentScript].number == 200 && obj == 899 && state == 1 && VAR(VAR_TIMER_NEXT) != 12 && enhancementEnabled(kEnhRestoredContent)) {
+	if (_game.id == GID_INDY3 && _roomResource == 87 && currentScriptSlotIs(200) && obj == 899 && state == 1 && VAR(VAR_TIMER_NEXT) != 12 && enhancementEnabled(kEnhRestoredContent)) {
 		i = _numLocalObjects - 1;
 		do {
 			if (_objs[i].obj_nr)
@@ -1080,7 +1092,7 @@ void ScummEngine_v5::o5_drawObject() {
 	// been officially fixed in some '1.2' releases (e.g. French DOS/EGA) and
 	// all later versions; this smaller workaround appears to be enough.
 	if (_game.id == GID_LOOM && _game.version == 3 && !(_game.features & GF_OLD256) && _roomResource == 32 &&
-		vm.slot[_currentScript].number == 10002 && obj == 540 && state == 1 && xpos == 255 && ypos == 255 &&
+		currentScriptSlotIs(kScriptNumENCD) && obj == 540 && state == 1 && xpos == 255 && ypos == 255 &&
 		enhancementEnabled(kEnhMinorBugFixes)) {
 		if (getState(541) == 1) {
 			putState(obj, state);
@@ -1434,16 +1446,26 @@ void ScummEngine_v5::o5_getRandomNr() {
 
 void ScummEngine_v5::o5_isScriptRunning() {
 	getResultPos();
-	setResult(isScriptRunning(getVarOrDirectByte(PARAM_1)));
+	int scriptNr = getVarOrDirectByte(PARAM_1);
+	setResult(isScriptRunning(scriptNr));
 
 	// WORKAROUND bug #346 (also occurs in original): Object stopped with active cutscene
 	// In script 204 room 25 (Cannibal Village) a crash can occur when you are
-	// expected to give something to the cannibals, but instead look at certain
-	// items like the compass or kidnap note. Those inventory items contain little
+	// expected to give something to the cannibals, but instead wait a bit and look at
+	// certain items, like the compass or kidnap note. Those inventory items contain little
 	// cutscenes and are abrubtly stopped by the endcutscene in script 204 at 0x0060.
 	// This patch changes the result of isScriptRunning(164) to also wait for any
 	// inventory scripts that are in a cutscene state, preventing the crash.
-	if (_game.id == GID_MONKEY && _currentScript != 0xFF && vm.slot [_currentScript].number == 204 && _currentRoom == 25) {
+	//
+	// (The original interpreter would print a fatal "Object xxx stopped with active
+	// cutscene/override" error.)
+	//
+	// Note: the SCUMMv4 releases also produce strange animation results in this case, but
+	// (AFAICS) no error. Fixing this would be nice as well (as a `kEnhMinorBugFixes` fix)
+	// but it would require a different workaround in a different place, since the script
+	// is a bit different.
+	if (_game.id == GID_MONKEY && currentScriptSlotIs(204) && _currentRoom == 25 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		ScriptSlot *ss = vm.slot;
 		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 			if (ss->status != ssDead && ss->where == WIO_INVENTORY && ss->cutsceneOverride) {
@@ -1452,6 +1474,8 @@ void ScummEngine_v5::o5_isScriptRunning() {
 			}
 		}
 	}
+
+	(void)workaroundMonkey1JollyRoger(_opcode, scriptNr);
 }
 
 void ScummEngine_v5::o5_getVerbEntrypoint() {
@@ -1476,9 +1500,12 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 		// used to test and set the state of various objects (e.g. the inside
 		// door (object 465) of the of the Hostel on Mars), when opening the
 		// Hostel door from the outside.
+		//
+		// TODO: check the behavior of the original interpreter against ours,
+		// in this particular case.
 		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
-		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
-		    obj == 465 && cls == 0) {
+		    currentScriptSlotIs(205) && _currentRoom == 185 &&
+		    obj == 465 && cls == 0 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 			cond = (getState(obj) == 0);
 		} else {
 			b = getClass(obj, cls);
@@ -1513,6 +1540,27 @@ void ScummEngine_v5::o5_isEqual() {
 	a = readVar(var);
 	b = getVarOrDirectWord(PARAM_1);
 
+	// WORKAROUND: Looking at the map on Hook Isle or in Meathook's house
+	// causes various issues. The CD release prevented this by making
+	// Guybrush say "I don't need to look at a map right now." instead, so
+	// backport this fix to the floppy EGA/VGA releases.
+	//
+	// (It looks like the (or some?) Amiga releases already have this
+	// fix, but the following's written in a way so that it can't hurt.)
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && currentScriptSlotIs(120) && var == VAR_ROOM && b == 29) {
+		// In Meathook's house; check is missing from both EGA and VGA SCUMMv4
+		// releases. It can cause a fatal "ERROR: (63:49:0x14A): Local script 207
+		// is not in room 63!" error, if one looks at the map instead of using
+		// any verb on the parrot, so this requires `kEnhGameBreakingBugFixes`.
+		if (a == 37 && enhancementEnabled(kEnhGameBreakingBugFixes))
+			b = a;
+
+		// Hook Isle Shore; check is missing from EGA SCUMMv4 releases only.
+		// It just causes strange animations, so `kEnhMinorBugFixes` is enough.
+		if (_game.id == GID_MONKEY_EGA && a == 48 && enhancementEnabled(kEnhMinorBugFixes))
+			b = a;
+	}
+
 	// HACK: See bug report #441. The sound effects for Largo's screams
 	// are only played on type 5 soundcards. However, there is at least one
 	// other sound effect (the bartender spitting) which is only played on
@@ -1525,13 +1573,13 @@ void ScummEngine_v5::o5_isEqual() {
 	// pirate hat to the antique dealer on Booty Island, making Guybrush
 	// silent when he asks about these two particular objects.
 	//
-	// Not using `_enableEnhancements`, since this small oversight only
+	// Not using enhancementEnabled, since this small oversight only
 	// exists in this fan-made edition which was made for enhancements.
-	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) && _roomResource == 48 && _currentScript != 0xFF && vm.slot [_currentScript].number == 215 && a == vm.localvar[_currentScript][0]) {
+	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) && _roomResource == 48 && currentScriptSlotIs(215) && a == vm.localvar[_currentScript][0]) {
 		if (a == 550 && b == 530)
-			b = 550;
+			b = a;
 		else if (a == 549 && b == 529)
-			b = 549;
+			b = a;
 	}
 
 	// WORKAROUND: The Ultimate Talkie edition of Monkey Island 2 has no
@@ -1545,14 +1593,14 @@ void ScummEngine_v5::o5_isEqual() {
 	// Try to detect and skip them, which as much care as possible for any
 	// future update or fan translation which would change this.
 	//
-	// Intentionally not using `_enableEnhancements` for this version.
+	// Intentionally not using enhancementEnabled for this version.
 	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) &&
-		_roomResource == 47 && vm.slot[_currentScript].number == 218 &&
+		_roomResource == 47 && currentScriptSlotIs(218) &&
 		var == 0x4000 + 1 && a == vm.localvar[_currentScript][1] &&
 		a == b && (b == 7 || b == 13)) {
 		// No need to skip any line if playing in always-prefer-original-text
 		// mode (Bit[588]) where silent lines are expected, or if speech is muted.
-		if (readVar(0x8000 + 588) == 1 && !ConfMan.getBool("speech_mute")) {
+		if (readVar(ROOM_VAL(588)) == 1 && !ConfMan.getBool("speech_mute")) {
 			// Only skip the line when we can detect one and it has no sound prologue.
 			if (memcmp(_scriptPointer + 2, "\x27\x01\x1D", 3) == 0 && memcmp(_scriptPointer + 5, "\xFF\x0A", 2) != 0) {
 				// Cheat and use the next recorded line, but do it in a way so that it
@@ -1600,11 +1648,11 @@ void ScummEngine_v5::o5_isLessEqual() {
 	// This is broken under UNZ too; the script does an incorrect signed
 	// comparison, possibly with the intent of checking for a gamepad.
 	//
-	// Since the biplane is unplayable without this, we don't check for
-	// `_enableEnhancements`, and always enable this fix.
+	// Since the biplane is unplayable without this, we use
+	// `kEnhGameBreakingBugFixes`.
 	if (_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns) &&
-	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
-	    _currentRoom == 70 && b == -256) {
+	    (currentScriptSlotIs(200) || currentScriptSlotIs(203)) &&
+	    _currentRoom == 70 && b == -256 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		o5_jumpRelative();
 		return;
 	}
@@ -1615,7 +1663,7 @@ void ScummEngine_v5::o5_isLessEqual() {
 	// together that they look like one. This adjusts the timing of the
 	// second one.
 
-	if (_game.id == GID_LOOM && _game.version >= 4 && _language == Common::EN_ANY && vm.slot[_currentScript].number == 95 && var == VAR_MUSIC_TIMER && b == 1708 && enhancementEnabled(kEnhVisualChanges)) {
+	if (_game.id == GID_LOOM && _game.version >= 4 && _language == Common::EN_ANY && currentScriptSlotIs(95) && var == VAR_MUSIC_TIMER && b == 1708 && enhancementEnabled(kEnhVisualChanges)) {
 		b = 1815;
 	}
 
@@ -1643,9 +1691,9 @@ void ScummEngine_v5::o5_notEqualZero() {
 	// otherwise Wally won't be able to read the map, and you'll be completely
 	// stuck on Scabb Island with no way of going back to the Phatt Island
 	// Library, since Dread's ship is gone.
-	if (_game.id == GID_MONKEY2 && ((_roomResource == 22 && vm.slot[_currentScript].number == 202) ||
-		(_roomResource == 2 && vm.slot[_currentScript].number == 10002) ||
-		vm.slot[_currentScript].number == 97) && enhancementEnabled(kEnhGameBreakingBugFixes)) {
+	if (_game.id == GID_MONKEY2 && ((_roomResource == 22 && currentScriptSlotIs(202)) ||
+		(_roomResource == 2 && currentScriptSlotIs(kScriptNumENCD)) ||
+		currentScriptSlotIs(97)) && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		int var = fetchScriptWord();
 		a = readVar(var);
 
@@ -1663,23 +1711,42 @@ void ScummEngine_v5::o5_notEqualZero() {
 		//
 		// Note that fixing this unveils the script error causing the possible
 		// dead-end described above.
-		if (!(_game.features & GF_ULTIMATE_TALKIE) && var == 0x8000 + 70 && a == 0 && getOwner(519) == VAR(VAR_EGO) && enhancementEnabled(kEnhRestoredContent)) {
+		if (!(_game.features & GF_ULTIMATE_TALKIE) && var == ROOM_VAL(70) && a == 0 && getOwner(519) == VAR(VAR_EGO) && enhancementEnabled(kEnhRestoredContent)) {
 			a = 1;
 		}
 
 		// [Back to the previous "dead-end" workaround.]
 		// If you've got the four map pieces and the script is checking this...
-		else if (var == 0x8000 + 69 && a == 1 && getOwner(519) == VAR(VAR_EGO) && readVar(0x8000 + 55) == 1 && readVar(0x8000 + 366) == 1) {
+		else if (var == ROOM_VAL(69) && a == 1 && getOwner(519) == VAR(VAR_EGO) && readVar(ROOM_VAL(55)) == 1 && readVar(ROOM_VAL(366)) == 1) {
 			// ...but you don't have the lens and you never gave it to Wally...
 			// (and you're not playing the Lite mode, where this doesn't matter)
-			if (getOwner(295) != VAR(VAR_EGO) && readVar(0x8000 + 67) != 0 && readVar(0x8000 + 567) == 0) {
+			if (getOwner(295) != VAR(VAR_EGO) && readVar(ROOM_VAL(67)) != 0 && readVar(ROOM_VAL(567)) == 0) {
 				// ...then short-circuit this condition, so that you can still go back
 				// to Phatt Island to pick up the lens, as in the original game.
 				a = 0;
 			}
 		}
 	} else {
-		a = getVar();
+		// WORKAROUND: There is a message for when Guybrush first
+		// enters the hold where he remarks that the whole thing reeks
+		// of monkeys. But the way it's scripted, the message is only
+		// shown if it has already been shown.
+		//
+		// Ron Gilbert commented on this: "Not sure I'd call that a
+		// coding error. The lines were just cut. But what do I know."
+
+		if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && _roomResource == 8 && currentScriptSlotIs(kScriptNumENCD)) {
+			// A local getVar(), where the var number can be examined.
+			// Taking care to limit this to Monkey1, so that the proper getVar()
+			// implementation still gets called for v2 and below.
+			int var = fetchScriptWord();
+			a = readVar(var);
+
+			if (var == ROOM_VAL(321) && enhancementEnabled(kEnhRestoredContent))
+				a = !a;
+		} else {
+			a = getVar();
+		}
 	}
 
 	jumpRelative(a != 0);
@@ -1705,7 +1772,8 @@ void ScummEngine_v5::o5_equalZero() {
 	// If the bit has been set, we simulate a WaitForMessage() instruction
 	// here, so that the script pauses until the "Wow!" message is gone.
 
-	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && vm.slot[_currentScript].number == 109) {
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && currentScriptSlotIs(109) &&
+		enhancementEnabled(kEnhMinorBugFixes)) {
 		int var = fetchScriptWord();
 		a = readVar(var);
 
@@ -1762,7 +1830,7 @@ void ScummEngine_v5::o5_loadRoom() {
 	// you will always get the close-up where he's wearing his own clothes.
 
 	if (_game.id == GID_LOOM && _game.version == 3 && room == 29 &&
-		vm.slot[_currentScript].number == 112 && enhancementEnabled(kEnhVisualChanges)) {
+		currentScriptSlotIs(112) && enhancementEnabled(kEnhVisualChanges)) {
 		Actor *a = derefActorSafe(VAR(VAR_EGO), "o5_loadRoom");
 
 		// Bobbin's normal costume is number 1. If he's wearing anything
@@ -1866,6 +1934,65 @@ void ScummEngine_v5::o5_move() {
 	setResult(getVarOrDirectWord(PARAM_1));
 }
 
+// WORKAROUND: MI1 uses bit flags for some sort of bookkeeping for its
+// conversation trees. These are assigned by "Bit[384 + Var[100]] = 1", or
+// "B.384[V.100] = 1" in NUTCracker syntax.
+//
+// Var[100] is supposed to be a value between 0 and 8, but it's also used for
+// the verb ID, which is between 120 and 128. In other versions, the scripts
+// subtract 120 before setting the bit, the the Sega CD version does not. This
+// means that the Sega version uses bits 504 through 512 instead of bits 384
+// through 392.
+//
+// While most conversations probably only clobber a few of these flags, the
+// following things may be impacted:
+//
+// 504 - Saying "Geeze, what an obvious sales pitch." to Cobb.
+// 505 - Saying "You know, you really should quit smoking." to Smirk.
+// 506 - Something unknown around the line "I give up!  You win!"
+// 507 - unused
+// 508 - Saying "I need a ship." / "Can you guys crew a ship?" to the cannibals.
+// 509 - Saying "Money.  I want money." to the cannibals.
+// 510 - Saying "What's in your standard potion of exorcism?" to the cannibals.
+// 511 - Saying "Where is he hiding it?" to the cannibals.
+// 512 - Saying "How do I get to these catacombs?" to the cannibals.
+//       This is also unavailable if Herman already told you.
+//
+// We're just lucky the bug didn't impact anything more important than this,
+// because the bug is literally in hundreds of places throughout the game. And
+// just to rub it in, the Sega version doesn't even seem to use these flags for
+// the conversation trees.
+//
+// Fortunately, this is the only places in the game where the bit variables are
+// set in this particular fashion, so we can detect and correct for it. Though
+// old savegames will of course still be impacted.
+
+void ScummEngine_v5::o5_move_segafix() {
+	int result;
+
+	// In most cases, this is identical to getResultPos()
+	_resultVarNumber = fetchScriptWord();
+	if (_resultVarNumber & 0x2000) {
+		int a = fetchScriptWord();
+		result = getVarOrDirectWord(PARAM_1);
+
+		if (a & 0x2000) {
+			int var = a & ~0x2000;
+			int value = readVar(var);
+			if (_resultVarNumber == 0xA000 + 384 && var == 100 && value >= 120 && value <= 128 && result == 1) {
+				value -= 120;
+			}
+			_resultVarNumber += value;
+		} else {
+			_resultVarNumber += a & 0xFFF;
+		}
+		_resultVarNumber &= ~0x2000;
+	} else {
+		result = getVarOrDirectWord(PARAM_1);
+	}
+	setResult(result);
+}
+
 void ScummEngine_v5::o5_multiply() {
 	int a;
 	getResultPos();
@@ -1906,6 +2033,28 @@ void ScummEngine_v5::o5_pickupObject() {
 	runInventoryScript(1);
 }
 
+// Inject the speech from the SE version in the classic one, for MI1SE.
+void ScummEngine_v5::injectMISESpeech() {
+	if (_sound->shouldInjectMISEAudio()) {
+		int32 currentScript = vm.slot[_currentScript].number;
+		int32 currentScriptOffset;
+		uint16 localScriptOffset;
+
+		if (currentScript >= _numGlobalScripts) {
+			int16 localScriptNumber = currentScript - _numGlobalScripts;
+			if (localScriptNumber > 56)
+				localScriptOffset = 0;
+			else
+				localScriptOffset = _localScriptOffsets[localScriptNumber];
+		} else {
+			localScriptOffset = 8;
+		}
+
+		currentScriptOffset = vm.slot[_currentScript].offs - localScriptOffset;
+		_sound->setupMISEAudioParams(currentScript, currentScriptOffset);
+	}
+}
+
 void ScummEngine_v5::o5_print() {
 	// WORKAROUND bug #13374: The patched script for the Ultimate Talkie
 	// is missing a WaitForMessage() after Lemonhead says "Oooh, that's
@@ -1914,17 +2063,21 @@ void ScummEngine_v5::o5_print() {
 	//
 	// The workaround is deliberately not marked as an enhancement, since
 	// this version makes so many changes of its own.
-	if (_game.id == GID_MONKEY && (_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 25 && vm.slot[_currentScript].number == 205 && VAR(VAR_HAVE_MSG)) {
+	if (_game.id == GID_MONKEY && (_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 25 && currentScriptSlotIs(205) && VAR(VAR_HAVE_MSG)) {
 		_scriptPointer--;
 		o5_breakHere();
 		return;
 	}
+
+	injectMISESpeech();
 
 	_actorToPrintStrFor = getVarOrDirectByte(PARAM_1);
 	decodeParseString();
 }
 
 void ScummEngine_v5::o5_printEgo() {
+	injectMISESpeech();
+
 	_actorToPrintStrFor = (byte)VAR(VAR_EGO);
 	decodeParseString();
 }
@@ -1947,7 +2100,8 @@ void ScummEngine_v5::o5_putActor() {
 
 	// WORKAROUND: When enabling the cigar smoke in the captain Smirk
 	// close-up, it turns out that the coordinates in the CD
-	// version's script were taken from the EGA version.
+	// version's script were taken from the EGA version. (This alignment
+	// problem was also remembered and mentionned by Aric Wilmunder.)
 	//
 	// The coordinates below are taken from the VGA floppy version. The
 	// "Ultimate Talkie" version also corrects the positions, but uses
@@ -1961,12 +2115,14 @@ void ScummEngine_v5::o5_putActor() {
 		} else if (x == 176 && y == 78) {
 			x = 172;
 		}
-	} else if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && _currentRoom == 42 && vm.slot[_currentScript].number == 201 && act == 6 && x == 136 && y == 0 && enhancementEnabled(kEnhVisualChanges)) {
-		// WORKAROUND: bug #2762: When switching back to Zak after using the blue
-		// crystal on the bird in Lima, the bird will disappear, come back and
-		// disappear again. This is really strange and only happens with the
-		// FM-TOWNS version, which adds an unconditional putActor(6,136,0) sequence
-		// that will always negate the getActorX()/getActorY() checks that follow.
+	}
+
+	// WORKAROUND: bug #2762: When switching back to Zak after using the blue
+	// crystal on the bird in Lima, the bird will disappear, come back and
+	// disappear again. This is really strange and only happens with the
+	// FM-TOWNS version, which adds an unconditional putActor(6,136,0) sequence
+	// that would always negate the getActorX()/getActorY() checks that follow.
+	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && _currentRoom == 42 && currentScriptSlotIs(201) && act == 6 && x == 136 && y == 0 && enhancementEnabled(kEnhVisualChanges)) {
 		return;
 	}
 
@@ -1994,7 +2150,7 @@ void ScummEngine_v5::o5_putActorAtObject() {
 		// is a bug in the original game, and we work around it by
 		// adjusting the elevation immediately.
 
-		if (_game.id == GID_MONKEY2 && a->_number == 1 && vm.slot[_currentScript].number == 58 && enhancementEnabled(kEnhMinorBugFixes)) {
+		if (_game.id == GID_MONKEY2 && a->_number == 1 && currentScriptSlotIs(58) && enhancementEnabled(kEnhMinorBugFixes)) {
 			a->setElevation(99);
 		}
 	}
@@ -2011,6 +2167,29 @@ void ScummEngine_v5::o5_putActorInRoom() {
 	if (a->_visible && _currentRoom != room && getTalkingActor() == a->_number) {
 		stopTalk();
 	}
+
+	// WORKAROUND: The boat wreck in the foreground at the entrance to Woodtick
+	// isn't present in the Macintosh version. The instruction to place the
+	// actor is still there, but places it in room 0. The actor is not
+	// initialized, and the scroll script is never set. (It is however still
+	// cleared when you leave the room, so we don't need to worry about that
+	// part of it.)
+	//
+	// This may have been done for performance reasons, though would the Mac II
+	// really have been that under-powered?
+
+	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh &&
+		_currentRoom == 7 && currentScriptSlotIs(kScriptNumENCD) &&
+		a->_number == 11 && room == 0 && enhancementEnabled(kEnhRestoredContent)) {
+		room = _currentRoom;
+		a->animateActor(250);
+		a->initActor(0);
+		a->setActorCostume(142);
+		a->_ignoreBoxes = 1;
+		a->_forceClip = 0;
+		VAR(VAR_SCROLL_SCRIPT) = 207;
+	}
+
 	a->_room = room;
 	if (!room)
 		a->putActor(0, 0, 0);
@@ -2142,11 +2321,11 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	// TODO: For the following see also Hibernatus' information on bug #7315.
 	case 32:
 		// TODO (apparently never used in FM-TOWNS)
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, _currentScript != 0xFF ? vm.slot [_currentScript].number : -1);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, _currentScript != 0xFF ? vm.slot[_currentScript].number : -1);
 		break;
 	case 33:
 		// TODO (apparently never used in FM-TOWNS)
-		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, _currentScript != 0xFF ? vm.slot [_currentScript].number : -1);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, _currentScript != 0xFF ? vm.slot[_currentScript].number : -1);
 		break;
 	case 35:
 		if (_townsPlayer)
@@ -2215,12 +2394,6 @@ void ScummEngine_v5::o5_roomOps() {
 			b = getVarOrDirectWord(PARAM_2);
 		}
 
-		// Mac version, draw the screens 20 pixels lower to account for the extra 40 pixels
-		if (_game.platform == Common::kPlatformMacintosh && _game.version == 3 && _useMacScreenCorrectHeight) {
-			a += _screenDrawOffset;
-			b += _screenDrawOffset;
-		}
-
 		initScreens(a, b);
 		break;
 	case 4:		// SO_ROOM_PALETTE
@@ -2247,11 +2420,12 @@ void ScummEngine_v5::o5_roomOps() {
 			_opcode = fetchScriptByte();
 			d = getVarOrDirectByte(PARAM_1);
 
-			// WORKAROUND: The CD version of Monkey Island 1 will
-			// set a couple of default colors, presumably for the
-			// GUI to use. But in the close-up of captain Smirk,
-			// we want the original color 3 for the cigar smoke. It
-			// should be ok since there is no GUI in this scene.
+			// WORKAROUND: The CD versions of Monkey Island 1 may
+			// set a few colors, presumably for the GUI. But this is
+			// the close-up of captain Smirk, so it doesn't need all
+			// of those colors. Only the ones used by the dialog
+			// boxes and such. The others we may need for the cigar
+			// smoke.
 
 			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && enhancementEnabled(kEnhVisualChanges)) {
 				// Do nothing
@@ -2291,7 +2465,7 @@ void ScummEngine_v5::o5_roomOps() {
 	case 10:	// SO_ROOM_FADE
 		a = getVarOrDirectWord(PARAM_1);
 		if (a) {
-	#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns) {
 				switch (a) {
 				case 8:
@@ -2439,6 +2613,7 @@ void ScummEngine_v5::o5_roomOps() {
 				assert(ptr);
 				int r = file->read(ptr, len);
 				assert(r == len);
+				(void)r;
 				ptr[len] = '\0';
 				loadPtrToResource(rtString, a, ptr);
 				free(ptr);
@@ -2526,9 +2701,12 @@ void ScummEngine_v5::o5_setObjectName() {
 	// Script 68 contains the code for handling the mugs. The issue occurs when a mug
 	// changes state. It will call setObjectName for the new state which in its turn
 	// restarts objects in inventory. Some objects (kidnap note) can be in a cutscene state
-	// what causes a crash if the object gets restarted. This workaroud waits for cutscenes
+	// what causes a crash if the object gets restarted. This workaround waits for cutscenes
 	// to end, preventing the crash.
-	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 68) {
+	//
+	// (The original interpreter would print a fatal "Object xxx stopped with active
+	// cutscene/override" error.)
+	if (_game.id == GID_MONKEY && currentScriptSlotIs(68) && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		ScriptSlot *ss = vm.slot;
 		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 			if (ss->status != ssDead && ss->where == WIO_INVENTORY && ss->cutsceneOverride) {
@@ -2560,7 +2738,7 @@ void ScummEngine_v5::o5_setState() {
 	// doll on Largo. Script 13-213 triggers the same action without any glitch,
 	// though, since it properly resets the state of the (invisible) laundry claim
 	// ticket part of the door, so we just reuse its setState and setClass calls.
-	if (_game.id == GID_MONKEY2 && _currentRoom == 13 && vm.slot[_currentScript].number == 200 &&
+	if (_game.id == GID_MONKEY2 && _currentRoom == 13 && currentScriptSlotIs(200) &&
 		obj == 108 && state == 1 && getState(100) != 1 && getState(111) != 2 && enhancementEnabled(kEnhMinorBugFixes)) {
 		putState(111, 2);
 		markObjectRectAsDirty(111);
@@ -2618,7 +2796,7 @@ void ScummEngine_v5::o5_startMusic() {
 			// can look at the global script #9 (0x888A in 49.LFL).
 			break;
 		}
-		debugC(DEBUG_GENERAL,"o5_startMusic(%d)", b);
+		debugC(DEBUG_GENERAL, "o5_startMusic(%d)", b);
 		setResult(result);
 	} else {
 		_sound->startSound(getVarOrDirectByte(PARAM_1));
@@ -2650,6 +2828,8 @@ void ScummEngine_v5::o5_startSound() {
 	if (VAR_MUSIC_TIMER != 0xFF)
 		VAR(VAR_MUSIC_TIMER) = 0;
 	_sound->startSound(sound);
+
+	workaroundIndy3TownsMissingLightningCastle(sound);
 }
 
 void ScummEngine_v5::o5_stopMusic() {
@@ -2664,11 +2844,11 @@ void ScummEngine_v5::o5_stopSound() {
 	// they keep playing like they do in the Special Edition. (Though there
 	// the background makes it more obvious.)
 	//
-	// The sound is stopped by the exit script, which always has number
-	// 10001 regardless of which room it is. We figure out which one by
-	// looking at which rooms we're moving between.
+	// The sound is stopped by the exit script kScriptNumEXCD, which always
+	// has the same value regardless of which room it is. We figure out
+	// which one by looking at which rooms we're moving between.
 
-	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && vm.slot[_currentScript].number == 10001 && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76 && enhancementEnabled(kEnhAudioChanges)) {
+	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && currentScriptSlotIs(kScriptNumEXCD) && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76 && enhancementEnabled(kEnhAudioChanges)) {
 		return;
 	}
 
@@ -2676,7 +2856,7 @@ void ScummEngine_v5::o5_stopSound() {
 	// music status variable when you stop it. Wendy's music would then
 	// resume when leaving some rooms (such as room 3 with the chandelier),
 	// even though her CD player was off.
-	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES && sound == 75 && vm.slot[_currentScript].number == 50 && VAR(VAR_EGO) == 6 && VAR(224) == sound && enhancementEnabled(kEnhAudioChanges)) {
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES && sound == 75 && currentScriptSlotIs(50) && VAR(VAR_EGO) == 6 && VAR(224) == sound && enhancementEnabled(kEnhAudioChanges)) {
 		VAR(224) = 0;
 	}
 
@@ -2732,7 +2912,9 @@ void ScummEngine_v5::o5_startScript() {
 
 	// WORKAROUND bug #2198: Script 171 loads a complete room resource,
 	// instead of the actual script, causing invalid opcode cases
-	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
+	//
+	// TODO: what does the original interpreter do in this case?
+	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171 && enhancementEnabled(kEnhGameBreakingBugFixes))
 		return;
 
 	// WORKAROUND bug #5709 (also occurs in original): Some old versions of
@@ -2741,7 +2923,10 @@ void ScummEngine_v5::o5_startScript() {
 	// book or KO the guy. The PC version correctly gives 10 points for puzzle
 	// 29 for KO and 15 for puzzle 30 when giving the book."
 	// This workaround is meant to address that.
-	if (_game.id == GID_INDY3 && _currentScript != 0xFF && vm.slot[_currentScript].number == 106 && script == 125 && VAR(115) != 2) {
+	//
+	// See also the similar ScummEngine_v4::o4_ifState() workaround.
+	if (_game.id == GID_INDY3 && currentScriptSlotIs(106) && script == 125 && VAR(115) != 2 &&
+		enhancementEnabled(kEnhMinorBugFixes)) {
 		// If Var[115] != 2, then:
 		// Correct: startScript(125,[29,10]);
 		// Wrong : startScript(125,[30,15]);
@@ -2789,6 +2974,36 @@ void ScummEngine_v5::o5_startScript() {
 	// Save on IQ increment (= script 125 was executed).
 	if (_game.id == GID_INDY3 && script == 125)
 		((ScummEngine_v4 *)this)->updateIQPoints();
+
+	// WORKAROUND: In the CD version of Monkey Island 1, and the EGA
+	// version before it, there is animated smoke in parts of the lava maze
+	// beneath the monkey head. The VGA floppy version still calls the
+	// script to add the smoke, but the script is empty (the Amiga release
+	// has it, though -- at least the 1.2 release does -- so that's what we
+	// replicate).
+	//
+	// According to Aric Wilmunder, this may have been done to avoid swapping
+	// floppy disks when exploring the maze (since the resource is stored in the
+	// fortune teller's room, and the Hellmaze being large, it was hard for the
+	// memory manager to keep it in memory).
+
+	if (_game.id == GID_MONKEY_VGA && _roomResource == 39 && script == 211 && enhancementEnabled(kEnhRestoredContent)) {
+		Actor *a = derefActorSafe(12, "o5_startScript");
+
+		if (a && (a->_room != _roomResource || a->_costume == 0)) {
+			a->initActor(0);
+			a->setActorCostume(76);
+			a->setPalette(3, 8);
+			a->setPalette(2, 12);
+			a->setPalette(9, 4);
+			putClass(12, 150, true);
+			putClass(12, 149, true);
+			a->animateActor(250);
+			a->_room = _roomResource;
+			a->putActor(data[0], data[1]);
+			a->animateActor(6);
+		}
+	}
 }
 
 void ScummEngine_v5::o5_stopObjectCode() {
@@ -2805,8 +3020,8 @@ void ScummEngine_v5::o5_stopScript() {
 
 	script = getVarOrDirectByte(PARAM_1);
 
-	if (_game.id == GID_INDY4 && script == 164 && _roomResource == 50 && _currentScript != 0xFF &&
-		vm.slot[_currentScript].number == 213 && VAR(VAR_HAVE_MSG) &&
+	if (_game.id == GID_INDY4 && script == 164 && _roomResource == 50 &&
+		currentScriptSlotIs(213) && VAR(VAR_HAVE_MSG) &&
 		getOwner(933) == VAR(VAR_EGO) && getClass(933, 146) && enhancementEnabled(kEnhRestoredContent)) {
 		// WORKAROUND bug #2215: Due to a script bug, a line of text is skipped
 		// which Indy is supposed to speak when he finds Orichalcum in some old
@@ -2826,6 +3041,18 @@ void ScummEngine_v5::o5_stopScript() {
 void ScummEngine_v5::o5_stringOps() {
 	int a, b, c, i;
 	byte *ptr;
+	int len;
+
+	// We do bounds checking on get/set string char to catch misbehaving
+	// scripts. Known cases so far:
+	//
+	// * Fate of Atlantis, the copy protection screen. This will read from
+	//   a negative index if the mouse cursor is moved to the top of the
+	//   screen. Technically we should return 48 (ASCII for "0"), but
+	//   anything outside the 49-56 range is fine. See bug #15884.
+	//
+	// * VGA Loom writes one byte past the end of a string on startup, but
+	//   this is within the "safety area" so it's ok.
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
@@ -2848,9 +3075,15 @@ void ScummEngine_v5::o5_stringOps() {
 		b = getVarOrDirectByte(PARAM_2);
 		c = getVarOrDirectByte(PARAM_3);
 		ptr = getResourceAddress(rtString, a);
+		len = getResourceSize(rtString, a);
 		if (ptr == nullptr)
 			error("String %d does not exist", a);
-		ptr[b] = c;
+		if (b >= 0 && b < len + SAFETY_AREA) {
+			if (b >= len)
+				debug(0, "o5_stringOps: Allowing OOB write string%d[%d] = %d (size %d) (within safety area)", a, b, c, len);
+			ptr[b] = c;
+		} else
+			warning("o5_stringOps: Denying OOB write string-%d[%d] = %d (size %d)", a, b, c, len);
 		break;
 
 	case 4:											/* get string char */
@@ -2858,9 +3091,17 @@ void ScummEngine_v5::o5_stringOps() {
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
 		ptr = getResourceAddress(rtString, a);
+		len = getResourceSize(rtString, a);
 		if (ptr == nullptr)
 			error("String %d does not exist", a);
-		setResult(ptr[b]);
+		if (b >= 0 && b < len + SAFETY_AREA) {
+			if (b >= len)
+				debug(0, "o5_stringOps: Allowing OOB read string-%d[%d] (size %d) (within safety area)", a, b, len);
+			setResult(ptr[b]);
+		} else {
+			warning("o5_stringOps: Denying OOB read string-%d[%d] (size %d)", a, b, len);
+			setResult(0);
+		}
 		break;
 
 	case 5:											/* create empty string */
@@ -2915,6 +3156,15 @@ void ScummEngine_v5::o5_verbOps() {
 			loadPtrToResource(rtVerb, slot, nullptr);
 			if (slot == 0)
 				_res->nukeResource(rtVerb, slot);
+
+#ifdef USE_TTS
+			if (verb == 100 && vs->curmode == 1) {	// Sentence verb
+				_voiceNextString = true;
+			} else {
+				_voiceNextString = false;
+			}
+#endif
+
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;
@@ -2926,7 +3176,7 @@ void ScummEngine_v5::o5_verbOps() {
 			break;
 		case 5:		// SO_VERB_AT
 			vs->curRect.left = getVarOrDirectWord(PARAM_1);
-			vs->curRect.top = getVarOrDirectWord(PARAM_2) + _screenDrawOffset;
+			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			if (_game.platform == Common::kPlatformFMTowns && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 				if (_game.id == GID_ZAK && verb == 116)
 					// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
@@ -3073,7 +3323,7 @@ void ScummEngine_v5::o5_walkActorTo() {
 	// the script which closes the door *before* he starts walking away from
 	// it, as in the other releases. Another v5 bug fixed on SegaCD, though!
 	if (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE) && _game.platform != Common::kPlatformSegaCD &&
-		_currentRoom == 30 && _currentScript != 0xFF && vm.slot[_currentScript].number == 207 && a->_number == 11 &&
+		_currentRoom == 30 && currentScriptSlotIs(207) && a->_number == 11 &&
 		x == 232 && y == 141 && enhancementEnabled(kEnhVisualChanges)) {
 		if (whereIsObject(387) == WIO_ROOM && getState(387) == 1 && getState(437) == 1) {
 			int args[NUM_SCRIPT_LOCAL];
@@ -3090,11 +3340,12 @@ void ScummEngine_v5::o5_walkActorTo() {
 	// This is because the box matrix is initialized too late in the entry
 	// script for that room, so we have to do it a bit earlier.
 	//
-	// Intentionally not using `_enableEnhancements`, since you can get
+	// Intentionally using `kEnhGameBreakingBugFixes`, since you can get
 	// completely stuck.
-	if (_game.id == GID_INDY4 && _currentScript != 0xFF && vm.slot[_currentScript].number == 10002 &&
+	if (_game.id == GID_INDY4 && currentScriptSlotIs(kScriptNumENCD) &&
 		_currentRoom == (_game.platform == Common::kPlatformAmiga ? 58 : 60) &&
-		VAR(224) == 140 && a->_number == VAR(VAR_EGO) && x == 45 && y == 137) {
+		VAR(224) == 140 && a->_number == VAR(VAR_EGO) && x == 45 && y == 137 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		// If the elevator isn't on the current floor yet...
 		if (whereIsObject(829) == WIO_ROOM && getState(829) == 0 && getBoxFlags(7) != 128) {
 			// ...immediately set its box flags so that you can't walk on it
@@ -3223,7 +3474,7 @@ void ScummEngine_v5::decodeParseString() {
 			// with a shadow, but in a Mac emulator the text is
 			// drawn in light gray with a shadow instead. Very
 			// strange.
-			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && _currentScript != 0xFF && vm.slot [_currentScript].number == 134 && color == 0x8F)
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && currentScriptSlotIs(134) && color == 0x8F)
 				color = 0x87;
 
 			// WORKAROUND: In the CD version of MI1, the text in
@@ -3234,16 +3485,21 @@ void ScummEngine_v5::decodeParseString() {
 			//
 			// The SEGA CD version uses the old colors already, and
 			// the FM Towns version makes the text more readable by
-			// giving it a black outline.
+			// giving it a black outline. The Macintosh release only
+			// requires changing the color of the background, not the
+			// text.
+			//
+			// See also the related ScummEngine::startScene() workaround.
 
 			else if (_game.id == GID_MONKEY &&
 					!(_game.features & GF_ULTIMATE_TALKIE) &&
 					_game.platform != Common::kPlatformSegaCD &&
 					_game.platform != Common::kPlatformFMTowns &&
+					_game.platform != Common::kPlatformMacintosh &&
 					_currentRoom == 36 &&
-					vm.slot[_currentScript].number == 201 &&
+					currentScriptSlotIs(201) &&
 					color == 2 &&
-					 enhancementEnabled(kEnhVisualChanges)) {
+					enhancementEnabled(kEnhVisualChanges)) {
 				color = findClosestPaletteColor(_currentPalette, 256, 0, 171, 0);
 			}
 
@@ -3299,7 +3555,7 @@ void ScummEngine_v5::decodeParseString() {
 						}
 
 						// Slightly increase the delay (5 frames = 1/25 of a second).
-						// This noticably improves the experience in Loom CD.
+						// This noticeably improves the experience in Loom CD.
 						delay = (int)(delay * 7.5 + 5);
 
 						_sound->playCDTrack(1, 1, offset, delay);
@@ -3324,33 +3580,36 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 	const int len = resStrLen(_scriptPointer);
 
 	if (_game.id == GID_LOOM && _game.version == 4 && _language == Common::EN_ANY &&
-		_currentScript != 0xFF && vm.slot[_currentScript].number == 95 && enhancementEnabled(kEnhTextLocFixes) &&
+		currentScriptSlotIs(95) && enhancementEnabled(kEnhTextLocFixes) &&
 			strcmp((const char *)_scriptPointer, "I am Choas.") == 0) {
 		// WORKAROUND: This happens when Chaos introduces
 		// herself to bishop Mandible. Of all the places to put
 		// a typo...
 		printString(textSlot, (const byte *)"I am Chaos.");
 	} else if (_game.id == GID_LOOM && _game.version == 4 && _roomResource == 90 &&
-		_currentScript != 0xFF && vm.slot[_currentScript].number == 203 && _string[textSlot].color == 0x0F && enhancementEnabled(kEnhSubFmtCntChanges)) {
+		currentScriptSlotIs(203) && _string[textSlot].color == 0x0F && enhancementEnabled(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: When Mandible speaks with Goodmold, his second
 		// speech line is missing its color parameter.
 		_string[textSlot].color = 0x0A;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _roomResource == 80 &&
-		_currentScript != 0xFF && vm.slot[_currentScript].number == 201 && enhancementEnabled(kEnhSubFmtCntChanges)) {
+		currentScriptSlotIs(201) && enhancementEnabled(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: When Indy and his father escape the zeppelin
 		// with the biplane in the FM-TOWNS version, they share the
 		// same text color. Indeed, they're not given any explicit
 		// color, but for some reason this is only a problem on the
 		// FM-TOWNS. In order to determine who's who, we look for a
 		// `\xFF\x03` wait instruction or the `Junior` word, since
-		// only Henry Sr. uses them in this script.
+		// only Henry Sr. uses them in this script. (The Japanese
+		// FM-TOWNS release tried to fix this with SetPalColor()
+		// calls, but they have no effect -- I haven't checked the
+		// behavior of this particular release in DREAMM, though.)
 		if (strstr((const char *)_scriptPointer, "\xFF\x03") || strstr((const char *)_scriptPointer, "Junior"))
 			_string[textSlot].color = 0x0A;
 		else
 			_string[textSlot].color = 0x0E;
 		printString(textSlot, _scriptPointer);
-	} else if (_game.id == GID_INDY4 && _roomResource == 23 && _currentScript != 0xFF && vm.slot[_currentScript].number == 167 &&
+	} else if (_game.id == GID_INDY4 && _roomResource == 23 && currentScriptSlotIs(167) &&
 		len == 24 && enhancementEnabled(kEnhTextLocFixes) && memcmp(_scriptPointer+16, "pregod", 6) == 0) {
 		// WORKAROUND for bug #2961: At the end of Indy4, if Ubermann is told
 		// to use 20 orichalcum beads, he'll count "pregod8" and "pregod9"
@@ -3367,7 +3626,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 			Common::strlcpy((char *)tmpBuf+16, "^19^", sizeof(tmpBuf) - 16);
 		printString(textSlot, tmpBuf);
 	} else if (_game.id == GID_INDY4 && _language == Common::EN_ANY && _roomResource == 10 &&
-		_currentScript != 0xFF && vm.slot[_currentScript].number == 209 && _actorToPrintStrFor == 4 && len == 81 &&
+		currentScriptSlotIs(209) && _actorToPrintStrFor == 4 && len == 81 &&
 			strcmp(_game.variant, "Floppy") != 0 && enhancementEnabled(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: The English Talkie version of Indy4 changed Kerner's
 		// lines when he uses the phone booth in New York, but the text doesn't
@@ -3384,7 +3643,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		} else {
 			printString(textSlot, _scriptPointer);
 		}
-	} else if (_game.id == GID_INDY4 && _currentScript != 0xFF && vm.slot[_currentScript].number == 161 && _actorToPrintStrFor == 2 &&
+	} else if (_game.id == GID_INDY4 && currentScriptSlotIs(161) && _actorToPrintStrFor == 2 &&
 		_game.platform != Common::kPlatformAmiga && strcmp(_game.variant, "Floppy") != 0 &&
 			enhancementEnabled(kEnhAudioChanges)) {
 		// WORKAROUND: In Indy 4, if one plays as Sophia and looks at Indy, then
@@ -3402,7 +3661,8 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		} else {
 			printString(textSlot, _scriptPointer);
 		}
-	} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && _currentScript != 0xFF && vm.slot[_currentScript].number == 411 &&
+	} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && currentScriptSlotIs(411) &&
+		enhancementEnabled(kEnhTextLocFixes) &&
 		strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
 		// WORKAROUND for bug #4886 (MI1EGA German: Credit text incorrect)
 		// The script contains buggy text.
@@ -3415,8 +3675,8 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		printString(textSlot, (byte *)tmpBuf);
 	} else if (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE) &&
 		_game.platform != Common::kPlatformSegaCD &&
-			_currentScript != 0xFF && ((_roomResource == 78 && vm.slot[_currentScript].number == 201) ||
-			(_roomResource == 45 && vm.slot[_currentScript].number == 200 &&
+			_currentScript != 0xFF && ((_roomResource == 78 && currentScriptSlotIs(201)) ||
+			(_roomResource == 45 && currentScriptSlotIs(200) &&
 			isValidActor(10) && _actors[10]->isInCurrentRoom())) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color != 0x0F &&
 			enhancementEnabled(kEnhSubFmtCntChanges)) {
@@ -3428,8 +3688,8 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		_string[textSlot].color = (_game.platform == Common::kPlatformFMTowns) ? 0x0A : 0xF9;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE) &&
-			_game.platform != Common::kPlatformSegaCD && _currentScript != 0xFF && 
-			(vm.slot[_currentScript].number == 140 || vm.slot[_currentScript].number == 294) &&
+			_game.platform != Common::kPlatformSegaCD && _currentScript != 0xFF &&
+			(currentScriptSlotIs(140) || currentScriptSlotIs(294)) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color == 0x06 &&
 			enhancementEnabled(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: In MI1 CD, the colors when the navigator head speaks are
@@ -3441,7 +3701,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		// different releases and scenes, so we don't know the original intent.
 		_string[textSlot].color = (_game.platform == Common::kPlatformFMTowns) ? 0x0C : 0xEA;
 		printString(textSlot, _scriptPointer);
-	} else if (_game.id == GID_MONKEY && _roomResource == 25 && _currentScript != 0xFF && vm.slot[_currentScript].number == 205) {
+	} else if (_game.id == GID_MONKEY && _roomResource == 25 && currentScriptSlotIs(205)) {
 		printPatchedMI1CannibalString(textSlot, _scriptPointer);
 	} else {
 		printString(textSlot, _scriptPointer);
@@ -3469,6 +3729,10 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 	}
 }
 
+#pragma mark -
+#pragma mark --- Enhancements & workarounds ---
+#pragma mark -
+
 void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr) {
 	const char *msg = (const char *)ptr;
 
@@ -3495,6 +3759,177 @@ void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr
 	}
 
 	printString(textSlot, (const byte *)msg);
+}
+
+void ScummEngine_v5::workaroundIndy3TownsMissingLightningCastle(int sound) {
+	// WORKAROUND: In Indy3 TOWNS, one can hear the thunder sound when arriving
+	// at Castle Brunwald, but the lightning effect on the Castle is missing --
+	// but that's only the case in the _English_ FM-TOWNS release, as the
+	// Japanese release on the same CD does show it (it also has some other
+	// script/resource fixes over the English one). Backport this script fix.
+	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _language != Common::JA_JPN &&
+		_currentRoom == 12 && currentScriptSlotIs(132) &&
+		enhancementEnabled(kEnhVisualChanges)) {
+		// Thunder sound
+		const int expectedSoundId = 58;
+		// Castle Brunwald image
+		const int castleObj = 947;
+		// '0': castle in the dark; '1': castle illuminated by lightning
+		int castleObjState;
+
+		if (sound != expectedSoundId)
+			return;
+
+		// (No reason for this to be missing here, but better safe than sorry)
+		if (whereIsObject(castleObj) != WIO_ROOM)
+			return;
+
+		// Script 12-132 from the Japanese release did it this way:
+		//
+		// setState(947,1);
+		// breakHere();
+		// setState(947,0);
+		// breakHere();
+		//
+		// ...but we can't properly simulate this with breakHere() calls,
+		// here. So, do it a bit differently, by switching the current
+		// state each time a thunder sound is played.
+
+		castleObjState = !getState(castleObj);
+
+		// Since we do things a bit differently, we have to take care not
+		// to stop on an "eternal lightning" effect, once all the thunder
+		// rolls are done. This is controlled by the following variables
+		// in the script, a bit after the current script pointer:
+		//
+		// Local[12]++;
+		// unless (Local[12] > Local[0]) ...
+		if (castleObjState == 1 && vm.localvar[_currentScript][12] + 1 > vm.localvar[_currentScript][0])
+			return;
+
+		// Simulate the full o5_setState() call
+		putState(castleObj, castleObjState);
+		markObjectRectAsDirty(castleObj);
+		if (_bgNeedsRedraw)
+			clearDrawObjectQueue();
+	}
+
+}
+
+void ScummEngine_v5::workaroundLoomHetchelDoubleHead(Actor *a, int act) {
+	// WORKAROUND: In Loom, when Hetchel appears at the forge to help Bobbin, she
+	// may have two heads for some frames, when she's talking as she's flying.
+	//
+	// The problem is known to exist in (at least) the EGA 1.0, 1.1 and Macintosh
+	// releases. The fix is taken from the official French EGA 1.2 release; the
+	// TG16 and all later 256-color releases appear to be fixed by default as well.
+	if (_game.id == GID_LOOM && _game.version == 3 && !(_game.features & GF_OLD256) &&
+		(act == 11 || act == 12) && enhancementEnabled(kEnhMinorBugFixes)) {
+		// Hetchel looks at and then flies to the forge; TalkAnimNr() options were
+		// added to some ActorOps() calls in EGA 1.2 script 34-88.
+		if (currentScriptSlotIs(88) && _roomResource == 34) {
+			if (a->_walkFrame == 6 && a->_standFrame == 6) {
+				a->_talkStartFrame = a->_talkStopFrame = 6;
+			} else if (a->_walkFrame == 2 && a->_standFrame == 3 && act == 11) {
+				a->_talkStartFrame = 4;
+				a->_talkStopFrame = 5;
+			}
+		}
+
+		// Hetchel goes into the forge chimney to get Bobbin's distaff;
+		// TalkAnimNr(6,6) option was added to ActorOps(12) in script 38-087.
+		if (currentScriptSlotIs(87) && _roomResource >= 38 && _roomResource <= 40) {
+			if (a->_walkFrame == 6 && a->_standFrame == 6 && act == 12)
+				a->_talkStartFrame = a->_talkStopFrame = 6;
+		}
+	}
+}
+
+bool ScummEngine_v5::workaroundMonkey1StorekeeperWaitTablesLine() {
+	// WORKAROUND: When Guybrush must get a credit note from the storekeeper,
+	// he may pretend his job's to wait tables at the Scumm Bar. But in this
+	// case, one of the reaction lines from the storekeeper is never displayed,
+	// because of a missing WaitForMessage() call.  And we really don't want
+	// to miss any of his wonderful disparaging comments...
+	//
+	// Fixed in the Ultimate Talkie Edition by LogicDeLuxe.
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE))) &&
+		_roomResource == 30 && currentScriptSlotIs(211) &&
+		enhancementEnabled(kEnhRestoredContent)) {
+		const int questionVarNo = (_game.version == 5) ? 194 : 193;
+
+		// Guybrush must have said he was interested in procuring credit
+		// (Bit[28] && !Bit[320])
+		if (readVar(ROOM_VAL(28)) != 1 || readVar(ROOM_VAL(320)) != 0)
+			return false;
+
+		// The storekeeper must have asked Guybrush about his job (Bit[101]),
+		// and he also has to be the last one speaking (act. 11)
+		if (readVar(ROOM_VAL(101)) != 1 || _actorToPrintStrFor != 11)
+			return false;
+
+		// Guybrush must have said he was "waiting tables" (Var[193] == 121,
+		// or VAR[194] == 121, depending on SCUMM v4/v5)
+		if (VAR(questionVarNo) != 121)
+			return false;
+
+		// The player isn't trying to skip the cutscene
+		if (VAR(VAR_OVERRIDE))
+			return false;
+
+		// All good; simulate missing WaitForMessage()
+		if (VAR(VAR_HAVE_MSG)) {
+			_scriptPointer--;
+			o5_breakHere();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ScummEngine_v5::workaroundMonkey1JollyRoger(byte callerOpcode, int arg) {
+	// WORKAROUND: There's a continuity error in Monkey 1, in that the Jolly Roger should
+	// only appear in the *first* scene showing the Sea Monkey in the middle of the sea,
+	// since Guybrush must have picked it for the two other ship cutscenes to happen.
+	//
+	// Most (all?) releases are impacted by this; the English floppy VGA release made a
+	// change to check whether the script describing that "the crew begins to plan their
+	// voyage" is running before displaying the flag, but it's an incomplete fix, as it'd
+	// also need to remove the flag from the room, once it's been shown for the first time.
+	// We fix both issues.
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE))) &&
+		_roomResource == 87 && currentScriptSlotIs(kScriptNumENCD) &&
+		enhancementEnabled(kEnhVisualChanges)) {
+		// The script that's only run the first time the flag is shown
+		const int defaultExpectedScriptNr = (_game.version == 5) ? 122 : 119;
+		// Jolly Roger actor number
+		const int defaultExpectedActNr = 9;
+		int scriptNr = -1, actNr = -1;
+
+		if (callerOpcode == 0x13) {
+			// called before o5_actorOps is done
+			actNr = arg;
+			scriptNr = defaultExpectedScriptNr;
+		} else if (callerOpcode == 0x68) {
+			// called after o5_isScriptRunning is done
+			scriptNr = arg;
+			actNr = defaultExpectedActNr;
+		}
+
+		// Unmet conditions; abort any workaround attempt
+		if (scriptNr != defaultExpectedScriptNr || actNr != defaultExpectedActNr)
+			return false;
+
+		// Remove the Jolly Roger from the screen, if not right at the start of Part II
+		Actor *a = derefActorSafe(actNr, "workaroundMonkey1JollyRoger");
+		if (a && !isScriptRunning(scriptNr)) {
+			a->putActor(0);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Scumm

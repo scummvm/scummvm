@@ -166,6 +166,46 @@ class PtrTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(a.expired());
 		TS_ASSERT(!a.lock());
 	}
+
+	struct IsDeletedClass {
+		bool isDeleted = false;
+		void operator ()(IsDeletedClass *ptr) {
+			TS_ASSERT(!ptr->isDeleted);
+			ptr->isDeleted = true;
+		}
+	};
+
+	void test_disposable_move_assign() {
+		IsDeletedClass obj1, obj2, obj3, obj4;
+		Common::DisposablePtr<IsDeletedClass, IsDeletedClass> p1(&obj1, DisposeAfterUse::YES);
+
+		// move-assign from YES to YES ptr
+		{
+			Common::DisposablePtr<IsDeletedClass, IsDeletedClass> p2(&obj2, DisposeAfterUse::YES);
+			p1 = Common::move(p2);
+			TS_ASSERT(obj1.isDeleted);
+		}
+		TS_ASSERT(!obj2.isDeleted); // p2 did not delete its old object
+
+		// move-assign from NO to YES ptr
+		{
+			Common::DisposablePtr<IsDeletedClass, IsDeletedClass> p3(&obj3, DisposeAfterUse::NO);
+			p1 = Common::move(p3);
+			TS_ASSERT(obj2.isDeleted);
+		}
+		p1.reset();
+		TS_ASSERT(!obj3.isDeleted); // NO dispose flag was correctly propagated
+
+		// move-assign from YES to NO ptr
+		{
+			Common::DisposablePtr<IsDeletedClass, IsDeletedClass> p4(&obj4, DisposeAfterUse::YES);
+			p1 = Common::move(p4);
+			TS_ASSERT(!obj3.isDeleted); // this was still NO
+			TS_ASSERT(!obj4.isDeleted);
+		}
+		p1.reset();
+		TS_ASSERT(obj4.isDeleted); // YES dispose flag was correctly propagated
+	}
 };
 
 int PtrTestSuite::InstanceCountingClass::count = 0;

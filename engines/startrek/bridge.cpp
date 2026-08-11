@@ -163,7 +163,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showTextboxBridge(kBridgeTalkerSpock, 2);
 		// TODO: sub_2FF19("enterpri") // random number generation
 		// TODO: changeBridgeMode 1
-		_sound->playMidiMusicTracks(2, -1);
+		_sound->playMidiMusicTracks(MIDITRACK_2);
 		_sound->playSoundEffectIndex(kSfxRedAlert);
 
 		// HACK: Play the end of the mock battle sequence, until the 3D code is implemented
@@ -172,7 +172,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 	case kSeqEndMockBattle:
 		if (true) {	// TODO: Check for Enterprise damage
 			// Mock battle won
-			_sound->playMidiMusicTracks(3, -1);
+			_sound->playMidiMusicTracks(MIDITRACK_3);
 			showTextboxBridge(kBridgeTalkerSpock, 4);
 			showTextboxBridge(kBridgeTalkerUhura, 5);
 			// TODO: sub_2f4c3()
@@ -219,7 +219,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_resource->setTxtFileName(_missionName);
 		_sound->loadMusicFile("bridge");
 		showMissionStartEnterpriseFlyby("TUG0\\FLYBY", "hijacked");
-		_sound->playMidiMusicTracks(0, -1);
+		_sound->playMidiMusicTracks(MIDITRACK_0);
 		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 0);
 		showTextboxBridge(kBridgeTalkerKirk, 1);
@@ -238,10 +238,10 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
 		_sound->playSoundEffectIndex(kSfxRedAlert);
 		_enterpriseState.underAttack = true;
-		_sound->playMidiMusicTracks(2, -1);
+		_sound->playMidiMusicTracks(MIDITRACK_2);
 		startBattle("orion"); // Elasi Pirate battle
 		_enterpriseState.underAttack = false;
-		_sound->playMidiMusicTracks(3, -1);
+		_sound->playMidiMusicTracks(MIDITRACK_3);
 		showTextboxBridge(kBridgeTalkerChekov, 14);	// Captain they are fleeing!
 		showTextboxBridge(kBridgeTalkerSpock, 15);	// The enemy ship's initial intercept course...
 		_bridgeSequenceToLoad = kSeqArrivedAtBetaMyamid;
@@ -310,7 +310,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showTextboxBridge(kBridgeTalkerUhura, 6);	// Message from the Romulan ship, Sir
 		showBridgeScreenTalkerWithMessage(9, "Romulan Captain", "romula");
 		showTextboxBridge(kBridgeTalkerSpock, 10);
-		_sound->playMidiMusicTracks(2, -1);
+		_sound->playMidiMusicTracks(MIDITRACK_2);
 		_enterpriseState.underAttack = true;
 		// HACK: Play the end of the Romulan battle sequence, until the 3D code is implemented
 		_bridgeSequenceToLoad = kSeqAfterRomulanBattle;
@@ -368,7 +368,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showTextboxBridge(kBridgeTalkerUhura, 7);
 		showBridgeScreenTalkerWithMessage(14, "Elasi Pirate", "pira");
 		_enterpriseState.underAttack = true;
-		_sound->playMidiMusicTracks(2, -1);
+		_sound->playMidiMusicTracks(MIDITRACK_2);
 		startBattle("orion");	// Pirate Ship 1
 		startBattle("orion");	// Pirate Ship 2
 		_enterpriseState.underAttack = false;
@@ -862,32 +862,32 @@ Common::String StarTrekEngine::getSpeechSampleForNumber(int number) {
 // TODO: one more parameter
 void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId, int missionId) {
 	Common::String performanceDescription;
-	int midiTrack = 0;
+	MidiTracks midiTrack = MIDITRACK_0;
 	int commendationPoints = 0;
 
 	if (score >= 0 && score <= 50) {
 		performanceDescription = "#BRID\\B_199#I'll be frank, Kirk. Starfleet expects more of you than that. Try to do better on your next assignment.";
 		commendationPoints = 0;
-		midiTrack = 13;
+		midiTrack = MIDITRACK_13;
 	} else if (score >= 60 && score <= 70) {
 		performanceDescription = "#BRID\\B_197#A satisfactory performance, Captain, but there's still room for improvement.";
 		commendationPoints = 1;
-		midiTrack = 13;
+		midiTrack = MIDITRACK_13;
 	} else if (score >= 71 && score <= 85) {
 		performanceDescription = "#BRID\\B_214#Well done, Captain. Keep up the good work.";
 		commendationPoints = 2;
-		midiTrack = 11;
+		midiTrack = MIDITRACK_11;
 	} else if (score >= 86 && score <= 99) {
 		performanceDescription = "#BRID\\B_414#The top brass at Starfleet are impressed. Outstanding work, Jim.";
 		commendationPoints = 3;
-		midiTrack = 12;
+		midiTrack = MIDITRACK_12;
 	} else if (score == 100) {
 		performanceDescription = "#BRID\\B_195#A perfect mission, Jim! You are a model for all Starfleet!";
 		commendationPoints = 4;
-		midiTrack = 14;
+		midiTrack = MIDITRACK_14;
 	}
 
-	_sound->playMidiMusicTracks(midiTrack, -1);
+	_sound->playMidiMusicTracks(midiTrack);
 
 	Common::String speechIdPerformance = getSpeechSampleForNumber(score);
 	Common::String speechIdCommendationPoints = getSpeechSampleForNumber(commendationPoints);
@@ -923,9 +923,9 @@ void StarTrekEngine::showBridgeScreenTalkerWithMessage(int textId, Common::Strin
 
 void StarTrekEngine::showBridgeScreenTalkerWithMessages(Common::String texts[], Common::String talkerHeader, Common::String talkerId, bool removeTalker) {
 	if (talkerId == "romula" || talkerId == "pira" || talkerId == "klg1" || talkerId == "klg2" || talkerId == "maddoc")
-		_sound->playMidiMusicTracks(15, -1);
+		_sound->playMidiMusicTracks(MIDITRACK_15);
 	else if (talkerId == "mudd")
-		_sound->playMidiMusicTracks(17, -1);
+		_sound->playMidiMusicTracks(MIDITRACK_17);
 
 	initStarfieldSprite(&_starfieldSprite, new Bitmap(_resource->loadBitmapFile(talkerId)), _starfieldRect);
 	_starfieldSprite.drawMode = 0;

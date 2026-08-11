@@ -30,12 +30,6 @@ namespace Tetraedge {
 TeTiledTexture::TeTiledTexture() : _tileSize(0x800, 0x800), _skipBlank(false) {
 }
 
-uint TeTiledTexture::imageFormat() {
-	if (!_tileArray.empty())
-		return _tileArray[0]._texture->getFormat();
-	return TeImage::INVALID;
-}
-
 bool TeTiledTexture::isLoaded() {
 	return !_tileArray.empty();
 }
@@ -84,7 +78,7 @@ bool TeTiledTexture::load(const TeImage &img) {
 
 			const TeImage *tileimage;
 			if (newTileSize != _totalSize) {
-				TeImage *optimizedimg = optimisedTileImage(imgArray, newTileSize, Common::SharedPtr<TePalette>(), img.teFormat());
+				TeImage *optimizedimg = optimisedTileImage(imgArray, newTileSize, Common::SharedPtr<TePalette>(), img.format);
 				img.copy(*optimizedimg, TeVector2s32(0, 0), TeVector2s32(_tileSize._x * row, _tileSize._y * col), newTileSize);
 				//optimizedimg->_flipY = img._flipY;
 				Common::String accessName = Common::String::format("%s.Tile%dx%d", img.getAccessName().toString('/').c_str(), row, col);
@@ -144,9 +138,9 @@ uint32 TeTiledTexture::numberOfRow() const {
 
 /*static*/
 TeImage *TeTiledTexture::optimisedTileImage(Common::Array<TeImage> &images, const TeVector2s32 &size,
-							const Common::SharedPtr<TePalette> &pal, enum TeImage::Format format) {
+							const Common::SharedPtr<TePalette> &pal, const Graphics::PixelFormat &format) {
 	for (TeImage &image : images) {
-		if (image.w == size._x && image.h == size._y && image.teFormat() == format) {
+		if (image.w == size._x && image.h == size._y && image.format == format) {
 			return &image;
 		}
 	}

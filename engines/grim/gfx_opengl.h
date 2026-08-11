@@ -52,7 +52,7 @@ public:
 
 	void clearScreen() override;
 	void clearDepthBuffer() override;
-	void flipBuffer() override;
+	void flipBuffer(bool opportunistic = false) override;
 
 	bool isHardwareAccelerated() override;
 	bool supportsShaders() override;
@@ -119,6 +119,7 @@ public:
 	void drawPolygon(const PrimitiveObject *primitive) override;
 	void drawDimPlane() override;
 
+	const Graphics::PixelFormat getMovieFormat() const override;
 	void prepareMovieFrame(Graphics::Surface *frame) override;
 	void drawMovieFrame(int offsetX, int offsetY) override;
 	void releaseMovieFrame() override;
@@ -137,9 +138,11 @@ private:
 	int _smushHeight;
 	byte *_storedDisplay;
 	bool _useDepthShader;
+#ifdef GL_ARB_fragment_program
 	GLuint _fragmentProgram;
-	bool _useDimShader;
 	GLuint _dimFragProgram;
+#endif
+	bool _useDimShader;
 	GLint _maxLights;
 	float _alpha;
 	const Actor *_currentActor;

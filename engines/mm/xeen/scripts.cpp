@@ -257,6 +257,9 @@ int Scripts::checkEvents() {
 	} else {
 		Window &w = windows[38];
 		w.open();
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+#endif
 		w.writeString(Res.NOTHING_HERE);
 		w.update();
 
@@ -266,7 +269,9 @@ int Scripts::checkEvents() {
 			events.wait(1);
 		} while (!events.isKeyMousePressed() && !_vm->shouldExit());
 		events.clearEvents();
-
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+#endif
 		w.close();
 	}
 
@@ -1612,8 +1617,8 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		v = ps->_experience;
 		break;
 	case 17:
-		// Party poison resistence
-		v = party._poisonResistence;
+		// Party poison resistance
+		v = party._poisonResistance;
 		break;
 	case 18:
 		// Condition
@@ -1752,52 +1757,52 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		v = ps->_luck._permanent;
 		break;
 	case 52:
-		// Fire resistence (before bonus)
-		v = ps->_fireResistence._permanent;
+		// Fire resistance (before bonus)
+		v = ps->_fireResistance._permanent;
 		break;
 	case 53:
-		// Elecricity resistence (before bonus)
-		v = ps->_electricityResistence._permanent;
+		// Elecricity resistance (before bonus)
+		v = ps->_electricityResistance._permanent;
 		break;
 	case 54:
-		// Cold resistence (before bonus)
-		v = ps->_coldResistence._permanent;
+		// Cold resistance (before bonus)
+		v = ps->_coldResistance._permanent;
 		break;
 	case 55:
-		// Poison resistence (before bonus)
-		v = ps->_poisonResistence._permanent;
+		// Poison resistance (before bonus)
+		v = ps->_poisonResistance._permanent;
 		break;
 	case 56:
 		// Energy reistence (before bonus)
-		v = ps->_energyResistence._permanent;
+		v = ps->_energyResistance._permanent;
 		break;
 	case 57:
-		// Energy resistence (before bonus)
-		v = ps->_magicResistence._permanent;
+		// Energy resistance (before bonus)
+		v = ps->_magicResistance._permanent;
 		break;
 	case 58:
-		// Fire resistence (extra beyond base)
-		v = ps->_fireResistence._temporary;
+		// Fire resistance (extra beyond base)
+		v = ps->_fireResistance._temporary;
 		break;
 	case 59:
-		// Electricity resistence (extra beyond base)
-		v = ps->_electricityResistence._temporary;
+		// Electricity resistance (extra beyond base)
+		v = ps->_electricityResistance._temporary;
 		break;
 	case 60:
-		// Cold resistence (extra beyond base)
-		v = ps->_coldResistence._temporary;
+		// Cold resistance (extra beyond base)
+		v = ps->_coldResistance._temporary;
 		break;
 	case 61:
-		// Poison resistence (extra beyod base)
-		v = ps->_poisonResistence._temporary;
+		// Poison resistance (extra beyond base)
+		v = ps->_poisonResistance._temporary;
 		break;
 	case 62:
-		// Energy resistence (extra beyond base)
-		v = ps->_energyResistence._temporary;
+		// Energy resistance (extra beyond base)
+		v = ps->_energyResistance._temporary;
 		break;
 	case 63:
-		// Magic resistence (extra beyond base)
-		v = ps->_magicResistence._temporary;
+		// Magic resistance (extra beyond base)
+		v = ps->_magicResistance._temporary;
 		break;
 	case 64:
 		// Level (before bonus)
@@ -1815,16 +1820,16 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		v = party._lightCount;
 		break;
 	case 71:
-		// Party magical fire resistence
-		v = party._fireResistence;
+		// Party magical fire resistance
+		v = party._fireResistance;
 		break;
 	case 72:
-		// Party magical electricity resistence
-		v = party._electricityResistence;
+		// Party magical electricity resistance
+		v = party._electricityResistance;
 		break;
 	case 73:
-		// Party magical cold resistence
-		v = party._coldResistence;
+		// Party magical cold resistance
+		v = party._coldResistance;
 		break;
 	case 76:
 		// Day of the year (100 per year)

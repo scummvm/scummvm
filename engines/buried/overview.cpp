@@ -109,6 +109,10 @@ void OverviewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	_vm->_sound->stopInterfaceSound();
 }
 
+void OverviewWindow::onActionEnd(const Common::CustomEventType &action, uint flags) {
+	_vm->_sound->stopInterfaceSound();
+}
+
 void OverviewWindow::onTimer(uint timer) {
 	_vm->_sound->timerCallback();
 

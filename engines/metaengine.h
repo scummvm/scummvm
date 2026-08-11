@@ -72,8 +72,8 @@ struct ExtraGuiOption {
 	const char *tooltip;       /*!< Option tooltip shown when the mouse cursor hovers over it. */
 	const char *configOption;  /*!< confMan key, e.g. "fullscreen". */
 	bool defaultState;         /*!< Default state of the checkbox (checked or not). */
-	byte groupId;        /*!< Id for the checkbox's group, or 0 for no group. */
-	byte groupLeaderId;  /*!< When this checkbox is unchecked, disable all checkboxes in this group. One leader per group. */
+	byte groupId;        /*!< Set to the leader Id (groupLeaderId) for the checkbox's group, or 0 for no group. */
+	byte groupLeaderId;  /*!< Set to a non-zero value only for the leader of the checkbox group. When this leader checkbox is unchecked, disable all checkboxes in this group. One leader per group. */
 };
 
 /**
@@ -124,11 +124,23 @@ struct ExtendedSavegameHeader {
  * To instantiate actual Engine objects, see the class @ref MetaEngine.
  */
 class MetaEngineDetection : public PluginObject {
+protected:
+	/** Internal: Add backslash before double quotes (") and backslashes themselves (\)
+	 *  Used for dumping detection entries.
+	 */
+	static Common::String escapeString(const char *string);
+
 public:
+	/**
+	 * This is the message to use in detection tables when
+	 * the game logic is not implemented
+	 */
+	static const char GAME_NOT_IMPLEMENTED[];
+
 	virtual ~MetaEngineDetection() {}
 
 	/** Get the engine ID. */
-	virtual const char *getName() const = 0;
+	virtual const char *getName() const override = 0;
 
 	/** Get the engine name. */
 	virtual const char *getEngineName() const = 0;
@@ -141,6 +153,9 @@ public:
 
 	/** Query the engine for a PlainGameDescriptor for the specified gameid, if any. */
 	virtual PlainGameDescriptor findGame(const char *gameId) const = 0;
+
+	/** Identify the active game and check its data files. */
+	virtual Common::Error identifyGame(DetectedGame &game, const void **descriptor) = 0;
 
 	/**
 	 * Run the engine's game detector on the given list of files, and return a
@@ -232,7 +247,7 @@ public:
 	 * engineID of "scumm". ScummMetaEngine inherits MetaEngine and provides the name
 	 * "Scumm". This way, an Engine can be easily matched with a MetaEngine.
 	 */
-	virtual const char *getName() const = 0;
+	virtual const char *getName() const override = 0;
 
 	/**
 	 * Instantiate an engine instance based on the settings of
@@ -241,13 +256,30 @@ public:
 	 * The MetaEngine queries the ConfMan singleton for data like the target,
 	 * gameid, path etc.
 	 *
-	 * @param syst    Pointer to the global OSystem object.
-	 * @param engine  Pointer to a pointer that the MetaEngine sets to
-	 *                the newly created Engine, or 0 in case of an error.
+	 * @param syst            Pointer to the global OSystem object.
+	 * @param engine          Pointer to a pointer that the MetaEngine sets to
+	 *                        the newly created Engine, or 0 in case of an error.
+	 * @param gameDescriptor  Detected game as returned by MetaEngineDetection::identifyGame
+	 * @param meDescriptor    Pointer to a meta engine specific descriptor as returned by
+	 *                        MetaEngineDetection::identifyGame
 	 *
 	 * @return A Common::Error describing the error that occurred, or kNoError.
 	 */
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) = 0;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const DetectedGame &gameDescriptor, const void *meDescriptor) = 0;
+
+	/**
+	 * Deinstantiate an engine instance.
+	 * The default implementation merely deletes the engine.
+	 *
+	 * The MetaEngine queries the ConfMan singleton for data like the target,
+	 * gameid, path etc.
+	 *
+	 * @param engine          Pointer to the Engine that MetaEngine created.
+	 * @param gameDescriptor  Detected game as returned by MetaEngineDetection::identifyGame
+	 * @param meDescriptor    Pointer to a meta engine specific descriptor as returned by
+	 *                        MetaEngineDetection::identifyGame
+	 */
+	virtual void deleteInstance(Engine *engine, const DetectedGame &gameDescriptor, const void *meDescriptor);
 
 	/**
 	 * Return a list of all save states associated with the given target.
@@ -319,7 +351,7 @@ public:
 	 * @param target  Name of a config manager target.
 	 * @param slot    Slot number of the save state to be removed.
 	 */
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool removeSaveState(const char *target, int slot) const;
 
 	/**
 	 * Return meta information from the specified save state.
@@ -576,19 +608,15 @@ public:
 	DetectionResults detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0, bool skipIncomplete = false);
 
 	/** Find a plugin by its engine ID. */
-	const Plugin *findPlugin(const Common::String &engineId) const;
+	const Plugin *findDetectionPlugin(const Common::String &engineId) const;
 
 	/**
 	 * Get the list of all plugins for the type specified.
-	 *
-	 * By default, it will get METAENGINES, for now.
-	 * If usage of actual engines never occurs, the default arguments can be skipped,
-	 * and always have it return PLUGIN_TYPE_ENGINE_DETECTION.
 	 */
-	const PluginList &getPlugins(const PluginType fetchPluginType = PLUGIN_TYPE_ENGINE_DETECTION) const;
+	const PluginList &getPlugins(const PluginType fetchPluginType) const;
 
 	/** Find a target. */
-	QualifiedGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;
+	QualifiedGameDescriptor findTarget(const Common::String &target) const;
 
 	/**
 	 * List games matching the specified criteria.
@@ -610,7 +638,7 @@ public:
 	void upgradeTargetIfNecessary(const Common::String &target) const;
 
 	/** Generate valid, non-repeated domainName for game*/
-	Common::String generateUniqueDomain(const Common::String gameId);
+	Common::String generateUniqueDomain(const Common::String &gameId);
 
 private:
 	/** Find a game across all loaded plugins. */

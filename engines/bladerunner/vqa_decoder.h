@@ -31,6 +31,7 @@
 #include "common/stream.h"
 #include "common/types.h"
 
+#include "graphics/blit.h"
 #include "graphics/surface.h"
 
 #include "common/array.h"
@@ -64,6 +65,7 @@ public:
 	~VQADecoder();
 
 	bool loadStream(Common::SeekableReadStream *s);
+	void close();
 
 	void readFrame(int frame, uint readFlags = kVQAReadAll);
 
@@ -135,7 +137,14 @@ public:
 
 		LoopInfo() : loopCount(0), loops(nullptr), flags(0) {}
 		~LoopInfo() {
+			close();
+		}
+
+		void close() {
 			delete[] loops;
+			loops = nullptr;
+			loopCount = 0;
+			flags = 0;
 		}
 	};
 
@@ -270,6 +279,8 @@ public:
 		uint32         _accumulatedCBPZsizeToCBF;
 
 		CodebookInfo  *_codebookInfoNext; // Used to store the decompressed codebook data and swap with the active codebook
+
+		Graphics::FastBlitFunc _blitFunc;
 
 		void VPTRWriteBlock(Graphics::Surface *surface, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(Graphics::Surface *surface);

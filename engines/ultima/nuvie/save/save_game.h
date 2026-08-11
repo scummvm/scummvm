@@ -26,7 +26,7 @@
 #define SAVE_VERSION_MINOR 0
 #define SAVE_VERSION (SAVE_VERSION_MAJOR * 256 + SAVE_VERSION_MINOR)
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 
 namespace Ultima {

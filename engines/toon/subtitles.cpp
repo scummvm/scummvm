@@ -82,7 +82,7 @@ bool SubtitleRenderer::load(const Common::Path &video) {
 	Common::String ext("tss");
 	subfile.replace(subfile.size() - ext.size(), ext.size(), ext);
 
-	Common::ScopedPtr<Common::SeekableReadStream> subsStream(_vm->resources()->openFile(video.getParent().appendComponent(subfile)));
+	Common::ScopedPtr<Common::SeekableReadStream> subsStream(_vm->resources()->openFile(Common::Path(subfile)));
 	if (subsStream == nullptr) {
 		return false;
 	}

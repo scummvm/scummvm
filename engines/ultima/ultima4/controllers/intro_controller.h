@@ -29,7 +29,7 @@
 #include "ultima/ultima4/views/textview.h"
 #include "ultima/ultima4/views/imageview.h"
 #include "ultima/ultima4/views/tileview.h"
-#include "ultima/shared/core/file.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -42,25 +42,25 @@ class Tile;
  */
 class IntroBinData {
 private:
-	// disallow assignments, copy contruction
+	// disallow assignments, copy construction
 	IntroBinData(const IntroBinData &);
 	const IntroBinData &operator=(const IntroBinData &);
-	void openFile(Shared::File &f, const Common::String &name);
+	void openFile(Common::File &f, const Common::String &name);
 public:
 	IntroBinData();
 	~IntroBinData();
 
 	bool load();
 
-	Std::vector<MapTile> _introMap;
+	Common::Array<MapTile> _introMap;
 	byte *_sigData;
 	byte *_scriptTable;
 	Tile **_baseTileTable;
 	byte *_beastie1FrameTable;
 	byte *_beastie2FrameTable;
-	Std::vector<Common::String> _introText;
-	Std::vector<Common::String> _introQuestions;
-	Std::vector<Common::String> _introGypsy;
+	Common::Array<Common::String> _introText;
+	Common::Array<Common::String> _introQuestions;
+	Common::Array<Common::String> _introGypsy;
 };
 
 
@@ -386,7 +386,7 @@ private:
 		int _timeDuration;                   // total animation time
 		Image *_srcImage;                    // storage for the source image
 		Image *_destImage;                   // storage for the animation frame
-		Std::vector <AnimPlot> _plotData;    // plot data
+		Common::Array <AnimPlot> _plotData;    // plot data
 		bool _prescaled;
 	};
 
@@ -416,8 +416,8 @@ private:
 	 */
 	void skipTitles();
 
-	Std::vector<AnimElement> _titles;            // list of title elements
-	Std::vector<AnimElement>::iterator _title;   // current title element
+	Common::Array<AnimElement> _titles;            // list of title elements
+	Common::Array<AnimElement>::iterator _title;   // current title element
 
 	int _transparentIndex;           // palette index for transparency
 	RGBA _transparentColor;     // palette color for transparency

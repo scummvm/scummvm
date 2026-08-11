@@ -26,11 +26,12 @@
  */
 
 #include "engines/wintermute/base/base_scriptable.h"
+#include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 
-#ifndef WINTERMUTE_PLUGINS_H
-#define WINTERMUTE_PLUGINS_H
+#ifndef WINTERMUTE_EXTERNALS_H
+#define WINTERMUTE_EXTERNALS_H
 
 namespace Wintermute {
 
@@ -43,55 +44,49 @@ bool EmulateInstallUtilExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript:
 bool EmulateDLLTestExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 bool EmulateKernel32ExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 bool EmulateHTTPConnectExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
+bool EmulateRoutineExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
+bool EmulateProtectExternalCalls(BaseGame *, ScStack *, ScStack *, ScScript::TExternalFunction *);
 
 bool EmulateExternalCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
 
 	if (strcmp(function->dll_name, "geturl.dll") == 0) {
-		if (!DID_FAIL(EmulateGetURLExternalCalls(inGame, stack, thisStack, function))) {
-			return STATUS_OK;
-		}
+		return EmulateGetURLExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	if (strcmp(function->dll_name, "tools.dll") == 0) {
-		if (!DID_FAIL(EmulateToolsExternalCalls(inGame, stack, thisStack, function))) {
-			return STATUS_OK;
-		}
+		return EmulateToolsExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	if (strcmp(function->dll_name, "img.dll") == 0) {
-		if (!DID_FAIL(EmulateImgExternalCalls(inGame, stack, thisStack, function))) {
-			return STATUS_OK;
-		}
+		return EmulateImgExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	if (strcmp(function->dll_name, "shell32.dll") == 0) {
-		if (!DID_FAIL(EmulateShell32ExternalCalls(inGame, stack, thisStack, function))) {
-			return STATUS_OK;
-		}
+		return EmulateShell32ExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	if (strcmp(function->dll_name, "installutil.dll") == 0) {
-		if (!DID_FAIL(EmulateInstallUtilExternalCalls(inGame, stack, thisStack, function))) {
-			return STATUS_OK;
-		}
+		return EmulateInstallUtilExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	if (strcmp(function->dll_name, "dlltest.dll") == 0) {
-		if (!DID_FAIL(EmulateDLLTestExternalCalls(inGame, stack, thisStack, function))) {
-			return STATUS_OK;
-		}
+		return EmulateDLLTestExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	if (strcmp(function->dll_name, "kernel32.dll") == 0) {
-		if (!DID_FAIL(EmulateKernel32ExternalCalls(inGame, stack, thisStack, function))) {
-			return STATUS_OK;
-		}
+		return EmulateKernel32ExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	if (strcmp(function->dll_name, "httpconnect.dll") == 0) {
-		if (!DID_FAIL(EmulateHTTPConnectExternalCalls(inGame, stack, thisStack, function))) {
-			return STATUS_OK;
-		}
+		return EmulateHTTPConnectExternalCalls(inGame, stack, thisStack, function);
+	}
+
+	if (strcmp(function->dll_name, "routine.dll") == 0) {
+		return EmulateRoutineExternalCalls(inGame, stack, thisStack, function);
+	}
+
+	if (strcmp(function->dll_name, "protect.dll") == 0) {
+		return EmulateProtectExternalCalls(inGame, stack, thisStack, function);
 	}
 
 	warning("External function %s from %s library is not known by ScummVM", function->name, function->dll_name);

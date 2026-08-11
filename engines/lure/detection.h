@@ -34,12 +34,15 @@ enum {
 };
 
 struct LureGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	uint32 features;
 };
 
 #define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
+#define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS2
 
 } // End of namespace Lure
 

@@ -258,6 +258,8 @@ uint8 *DarkMoonEngine::loadFMTownsShape(Common::SeekableReadStream *stream) {
 void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterIndex) {
 	if (_flags.platform == Common::kPlatformAmiga)
 		return;
+	// EOB II FM-TOWNS version will also never arrive here, see DarkMoonEngine::loadMonsterShapes().
+	// So there is no need to worry about how the following code could ever work in hicolor mode.
 
 	int cp = _screen->setCurPage(2);
 	_screen->loadShapeSetBitmap(file, 3, 3);
@@ -441,7 +443,7 @@ void DarkMoonEngine::replaceMonster(int unit, uint16 block, int pos, int dir, in
 		// The boss level and the mindflayer level share the same monster data. If you hang around
 		// long enough in the mindflayer level all 30 monster slots will be used up. When this
 		// happens it will trigger the dragon transformation sequence when Dran is moved around by script.
-		// We avoid removing Dran here by prefering monster slots occupied by monsters from another
+		// We avoid removing Dran here by preferring monster slots occupied by monsters from another
 		// sub level.
 		if (_monsters[i].sub != _currentSub) {
 			index = i;

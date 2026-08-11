@@ -85,6 +85,7 @@ SkyEngine::SkyEngine(OSystem *syst)
 	_systemVars->currentMusic   = 0;
 	_systemVars->pastIntro      = false;
 	_systemVars->paused         = false;
+	_systemVars->textDirRTL     = false;
 
 	memset (_chineseTraditionalOffsets, 0, sizeof(_chineseTraditionalOffsets));
 	_chineseTraditionalBlock = nullptr;
@@ -169,6 +170,10 @@ void SkyEngine::handleKey() {
 			break;
 
 		case kSkyActionOpenControlPanel:
+			if (SkyEngine::isIbass()) {
+				_skyControl->doControlPanel();
+				break;
+			}
 			_skyControl->doControlPanel();
 			break;
 
@@ -211,12 +216,13 @@ Common::Error SkyEngine::go() {
 		// Clear pastIntro here (set to false) explicilty
 		// It should be false already, but better to ensure it
 		_systemVars->pastIntro = false;
-		if (_systemVars->gameVersion > 272) { // don't do intro for floppydemos
+		if (_systemVars->gameVersion > 272 && !SkyEngine::isIbass()) { // don't do intro for floppydemos
 			Intro *skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			bool floppyIntro = ConfMan.getBool("alt_intro");
 			introSkipped = !skyIntro->doIntro(floppyIntro);
 			delete skyIntro;
-		}
+		} else if (SkyEngine::isIbass())
+			introSkipped = true;
 
 		if (!shouldQuit()) {
 			_skyScreen->clearScreen(true);
@@ -237,7 +243,10 @@ Common::Error SkyEngine::go() {
 	uint32 delayCount = _system->getMillis();
 	while (!shouldQuit()) {
 		_skySound->checkFxQueue();
-		_skyMouse->mouseEngine();
+		if (SkyEngine::isIbass())
+			_skyMouse->mouseEngineIBASS();
+		else
+			_skyMouse->mouseEngine();
 		handleKey();
 		if (_systemVars->paused) {
 			do {
@@ -294,7 +303,7 @@ static const struct {
 	uint stringSectionIndexOffset;
 	// Offset to the font
 	uint fontOffset;
-	// Next one isn't strictly necessarry but makes logic simpler
+	// Next one isn't strictly necessary but makes logic simpler
 	// by allowing to read string block into memory as whole
 	// without any parsing. Just has to cover the block containing
 	// the strings. Reading more (up to whole file) is OK.
@@ -344,7 +353,14 @@ bool SkyEngine::loadChineseTraditional() {
 }
 
 Common::Error SkyEngine::init() {
-	initGraphics(320, 200);
+	if (SkyEngine::isIbass()) {
+		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		initGraphics(320, 200, &format);
+	} else {
+		initGraphics(320, 200);
+	}
+
+	debug(1, "%d bytes per pixel", _system->getScreenFormat().bytesPerPixel);
 
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
@@ -384,8 +400,8 @@ Common::Error SkyEngine::init() {
 
 	_skyCompact = new SkyCompact();
 	_skyText = new Text(this, _skyDisk, _skyCompact);
-	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact);
 	_skyScreen = new Screen(_system, _skyDisk, _skyCompact);
+	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact, _skyScreen);
 
 	initVirgin();
 	initItemList();
@@ -398,6 +414,7 @@ Common::Error SkyEngine::init() {
 	assert(shortcutsKeymap);
 
 	_skyControl = new Control(this, _saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _skyCompact, _system, shortcutsKeymap);
+	_skyMouse->useControlInstance(_skyControl);
 	_skyLogic->useControlInstance(_skyControl);
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
@@ -419,7 +436,7 @@ Common::Error SkyEngine::init() {
 	case Common::ES_ESP:
 		_systemVars->language = SKY_SPANISH;
 		break;
-	case Common::SE_SWE:
+	case Common::SV_SWE:
 		_systemVars->language = SKY_SWEDISH;
 		break;
 	case Common::EN_GRB:
@@ -427,6 +444,9 @@ Common::Error SkyEngine::init() {
 		break;
 	case Common::ZH_TWN:
 		_systemVars->language = SKY_CHINESE_TRADITIONAL;
+		break;
+	case Common::HE_ISR:
+		_systemVars->textDirRTL = true;
 		break;
 
 	default:
@@ -578,6 +598,12 @@ bool SkyEngine::isCDVersion() {
 	default:
 		error("Unknown game version %d", _systemVars->gameVersion);
 	}
+}
+
+bool SkyEngine::isIbass() {
+	if (ConfMan.get("gameid") == "ibass")
+		return true;
+	return false;
 }
 
 } // End of namespace Sky

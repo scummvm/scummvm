@@ -133,7 +133,7 @@ void checkForPendingDataLoad();
 
 void hideMouse();
 
-void removeExtention(char *dest, const char *source, size_t sz);
+void removeExtension(char *dest, const char *source, size_t sz);
 
 struct SelectedObjStruct {
 	int16 idx;

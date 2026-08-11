@@ -93,26 +93,30 @@ ImageAsset::ImageAsset(ObjID original, Container *container) {
 	_maskBitHeight = maskBitHeight;
 }
 
+ImageAsset::ImageAsset(Common::SeekableReadStream *stream) {
+	uint imgRowBytes = 0;
+	uint imgBitWidth = 0;
+	uint imgBitHeight = 0;
+	uint maskRowBytes = 0;
+	uint maskBitWidth = 0;
+	uint maskBitHeight = 0;
+
+	decodePPIC(stream, _imgData, imgBitHeight, imgBitWidth, imgRowBytes);
+	_imgRowBytes = imgRowBytes;
+	_imgBitWidth = imgBitWidth;
+	_imgBitHeight = imgBitHeight;
+
+	_maskRowBytes = maskRowBytes;
+	_maskBitWidth = maskBitWidth;
+	_maskBitHeight = maskBitHeight;
+}
+
 ImageAsset::~ImageAsset() {
 	debugC(3, kMVDebugImage, "~ImageAsset(%d)", _id / 2);
 }
 
-void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes) {
-	ObjID realID = id;
-	uint32 size = _container->getItemByteSize(id);
-	if (size < 2) {
-		rowBytes = 0;
-		bitHeight = 0;
-		bitWidth = 0;
-		return;
-	}
-	if (size == 2) {
-		Common::SeekableReadStream *newItemStream = _container->getItem(id);
-		realID = newItemStream->readUint16BE();
-		delete newItemStream;
-	}
-	Common::SeekableReadStream *baseStream = _container->getItem(realID);
-	Common::BitStream32BEMSB stream(baseStream);
+void ImageAsset::decodePPIC(Common::SeekableReadStream *baseStream, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes) {
+	Common::BitStream8MSB stream(baseStream);
 
 	uint8 mode = stream.getBits<3>();
 	int w, h;
@@ -157,16 +161,33 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 	delete baseStream;
 }
 
-void ImageAsset::decodePPIC0(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes) {
+	ObjID realID = id;
+	uint32 size = _container->getItemByteSize(id);
+	if (size < 2) {
+		rowBytes = 0;
+		bitHeight = 0;
+		bitWidth = 0;
+		return;
+	}
+	if (size == 2) {
+		Common::SeekableReadStream *newItemStream = _container->getItem(id);
+		realID = newItemStream->readUint16BE();
+		delete newItemStream;
+	}
+	Common::SeekableReadStream *baseStream = _container->getItem(realID);
+	decodePPIC(baseStream, data, bitHeight, bitWidth, rowBytes);
+}
+
+void ImageAsset::decodePPIC0(Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint words = bitWidth >> 4;
 	uint bytes = bitWidth & 0xF;
 	uint v = 0;
 	uint p = 0;
 	for (uint y = 0; y < bitHeight; y++) {
 		for (uint x = 0; x < words; x++) {
-			v = stream.peekBits<32>();
+			v = stream.peekBits<16>();
 			stream.skip(16);
-			v >>= 16 - (stream.pos() % 8);
 			data[p] = (v >> 8) & 0xff; p++;
 			data[p] = v & 0xff; p++;
 		}
@@ -180,15 +201,15 @@ void ImageAsset::decodePPIC0(Common::BitStream32BEMSB &stream, Common::Array<byt
 
 }
 
-void ImageAsset::decodePPIC1(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodePPIC1(Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	decodeHuffGraphic(PPIC1Huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodePPIC2(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodePPIC2(Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	decodeHuffGraphic(PPIC2Huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodePPIC3(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodePPIC3(Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	// We need to load the huffman from the PPIC itself
 	PPICHuff huff;
 	uint16 v, bits;
@@ -240,7 +261,7 @@ void ImageAsset::decodePPIC3(Common::BitStream32BEMSB &stream, Common::Array<byt
 	decodeHuffGraphic(huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodeHuffGraphic(const PPICHuff &huff, Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodeHuffGraphic(const PPICHuff &huff, Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	byte flags = 0;
 	_walkRepeat = 0;
 	_walkLast = 0;
@@ -335,7 +356,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff &huff, Common::BitStream32BEMS
 	}
 }
 
-byte ImageAsset::walkHuff(const PPICHuff &huff, Common::BitStream32BEMSB &stream) {
+byte ImageAsset::walkHuff(const PPICHuff &huff, Common::BitStream8MSB &stream) {
 	if (_walkRepeat) {
 		_walkRepeat--;
 		_walkLast = ((_walkLast << 8) & 0xFF00) | (_walkLast >> 8);

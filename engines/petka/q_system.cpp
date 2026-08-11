@@ -376,61 +376,56 @@ void QSystem::onEvent(const Common::Event &event) {
 		_currInterface->onRightButtonDown(p);
 		break;
 	}
-	case Common::EVENT_KEYDOWN:
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_1:
-		case Common::KEYCODE_l:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		switch (event.customType) {
+		case kActionCursorLook:
 			setCursorAction(kActionLook);
 			break;
-		case Common::KEYCODE_2:
-		case Common::KEYCODE_w:
+		case kActionCursorWalk:
 			setCursorAction(kActionWalk);
 			break;
-		case Common::KEYCODE_3:
-		case Common::KEYCODE_g:
+		case kActionCursorTake:
 			setCursorAction(kActionTake);
 			break;
-		case Common::KEYCODE_4:
-		case Common::KEYCODE_u:
+		case kActionCursorUse:
 			setCursorAction(kActionUse);
 			break;
-		case Common::KEYCODE_5:
-		case Common::KEYCODE_t:
+		case kActionCursorTalk:
 			setCursorAction(kActionTalk);
 			break;
-		case Common::KEYCODE_6:
-		case Common::KEYCODE_c:
+		case kActionCursorChapayev:
 			setCursorAction(kActionObjUseChapayev);
 			break;
-		case Common::KEYCODE_i:
+		case kActionInventory:
 			toggleCase();
 			break;
-		case Common::KEYCODE_TAB:
-		case Common::KEYCODE_m:
+		case kActionMap:
 			toggleMapInterface();
 			break;
-		case Common::KEYCODE_o:
+		case kActionOptions:
 			togglePanelInterface();
 			break;
-		case Common::KEYCODE_ESCAPE:
+		case kActionPrevInterface:
 			goPrevInterface();
 			break;
-		case Common::KEYCODE_F2: {
+		case kActionSave: {
 			InterfaceSaveLoad::saveScreen();
 			startSaveLoad(kSaveMode);
 			break;
 		}
-		case Common::KEYCODE_F3:
+		case kActionLoad:
 			startSaveLoad(kLoadMode);
-			break;
-		case Common::KEYCODE_r:
-			if (event.kbd.flags & Common::KBD_ALT) {
-				_mainInterface->_dialog.fixCursor(); // Buggy in original
-			}
 			break;
 		default:
 			break;
 		}
+		break;
+	case Common::EVENT_KEYDOWN:
+		if (event.kbd.keycode == Common::KEYCODE_r)
+			if (event.kbd.flags & Common::KBD_ALT) {
+				_mainInterface->_dialog.fixCursor(); // Buggy in original
+			}
+		break;
 	default:
 		break;
 	}

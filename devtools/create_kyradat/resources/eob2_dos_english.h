@@ -655,6 +655,7 @@ static const char *const kEoB2ClericSpellsListDOSEnglish[30] = {
 	"True Seeing",
 	"Harm",
 	"Heal",
+	// FIXME: Spelling incorrect. ressurection should be resurrection. Fixing changes game data and thus may cause issues
 	"Ressurection",
 	"Lay on Hands",
 	"Turn undead"
@@ -721,6 +722,7 @@ static const char *const kEoB2SpellNamesDOSEnglish[68] = {
 	"true seeing",
 	"harm",
 	"heal",
+	// FIXME: Spelling incorrect. ressurection should be resurrection. Fixing changes game data and thus may cause issues
 	"ressurection",
 	"lay on hands",
 	"turn undead",

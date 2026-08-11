@@ -33,13 +33,14 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #endif
 
-#include "common/inttypes.h"
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
 #ifdef USE_OPENMPT
@@ -185,7 +186,7 @@ static long memoryReaderTell(MREADER *reader) {
 namespace Audio {
 class UniversalTrackerMod : public RewindableAudioStream {
 public:
-	UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate);
+	UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 	~UniversalTrackerMod();
 
 	// ImpulseTrackerMod functions
@@ -229,7 +230,7 @@ private:
 	int _sampleRate;
 };
 
-UniversalTrackerMod::UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate) {
+UniversalTrackerMod::UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	if (!stream) {
 		warning("UniversalTrackerMod::UniversalTrackerMod(): Input file/stream is invalid.");
 		return;
@@ -240,7 +241,7 @@ UniversalTrackerMod::UniversalTrackerMod(Common::SeekableReadStream *stream, Dis
 
 	_stream = stream;
 	_dispose = disposeAfterUse;
-	_sampleRate = rate;
+	_sampleRate = g_system->getMixer()->getOutputRate();
 
 	openmpt_stream_callbacks stream_callbacks;
 	stream_callbacks.read = &memoryReaderRead;
@@ -276,7 +277,7 @@ UniversalTrackerMod::~UniversalTrackerMod() {
 namespace Audio {
 class UniversalTrackerMod : public RewindableAudioStream {
 public:
-	UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate);
+	UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 	~UniversalTrackerMod();
 
 	// ImpulseTrackerMod functions
@@ -320,13 +321,13 @@ private:
 	int _sampleRate;
 };
 
-UniversalTrackerMod::UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate) {
+UniversalTrackerMod::UniversalTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	if (!stream) {
 		warning("UniversalTrackerMod::UniversalTrackerMod(): Input file/stream is invalid.");
 		return;
 	}
 
-	_sampleRate = rate;
+	_sampleRate = g_system->getMixer()->getOutputRate();
 
 	MikMod_InitThreads();
 	MikMod_RegisterDriver(&drv_nos);
@@ -382,14 +383,17 @@ UniversalTrackerMod::~UniversalTrackerMod() {
 
 namespace Audio {
 
-RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate) {
+RewindableAudioStream *makeUniversalTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 
 #if !defined(USE_OPENMPT) && !defined(USE_MIKMOD)
 	warning("Modplayer Support not compiled in");
+	if (disposeAfterUse == DisposeAfterUse::YES) {
+		delete stream;
+	}
 	return nullptr;
 #else
 
-	UniversalTrackerMod *impulseTrackerMod = new UniversalTrackerMod(stream, disposeAfterUse, rate);
+	UniversalTrackerMod *impulseTrackerMod = new UniversalTrackerMod(stream, disposeAfterUse);
 
 	if (!impulseTrackerMod->isLoaded()) {
 		delete impulseTrackerMod;

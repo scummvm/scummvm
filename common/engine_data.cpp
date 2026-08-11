@@ -48,7 +48,6 @@ public:
 	}
 	Common::Path getPathInArchive() const override {
 		Common::Path name = _member->getPathInArchive();
-		assert(name.isRelativeTo(_innerfolder));
 		return _publicFolder.join(name.relativeTo(_innerfolder));
 	}
 	Common::U32String getDisplayName() const override {
@@ -183,10 +182,9 @@ int DataArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int result = _zip->listMembers(innerList);
 
 	// Modify the results to change the filename
-	for (Common::ArchiveMemberList::iterator it = innerList.begin();
-		it != innerList.end(); ++it) {
+	for (auto &archive : innerList) {
 		Common::ArchiveMemberPtr member = Common::ArchiveMemberPtr(
-			new DataArchiveMember(*it, _innerfolder, _publicFolder));
+			new DataArchiveMember(archive, _innerfolder, _publicFolder));
 		list.push_back(member);
 	}
 
@@ -237,7 +235,7 @@ Common::FSNode DataArchiveProxy::getNode(const Common::Path &name) const {
 		return node;
 	}
 
-	for(Common::StringArray::const_iterator it = components.begin(); it != components.end() - 1; it++) {
+	for (Common::StringArray::const_iterator it = components.begin(); it != components.end() - 1; it++) {
 		node = node.getChild(*it);
 		if (!node.exists())
 			return node;

@@ -61,7 +61,7 @@ protected:
 	uint _currentTextImage;
 };
 
-#define NancyCreditsState Nancy::State::Credits::instance()
+#define NancyCreditsState State::Credits::instance()
 
 } // End of namespace State
 } // End of namespace Nancy

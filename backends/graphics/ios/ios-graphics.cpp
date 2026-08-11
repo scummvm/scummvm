@@ -25,7 +25,8 @@
 #include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/platform/ios7/ios7_osys_main.h"
 
-iOSGraphicsManager::iOSGraphicsManager() {
+iOSGraphicsManager::iOSGraphicsManager() :
+	_insets{0, 0, 0, 0} {
 	initSurface();
 }
 
@@ -41,15 +42,8 @@ void iOSGraphicsManager::initSurface() {
 
 	notifyContextCreate(OpenGL::kContextGLES2,
 	new OpenGL::RenderbufferTarget(rbo),
-	// Currently iOS runs the ARMs in little-endian mode but prepare if
-	// that is changed in the future.
-#ifdef SCUMM_LITTLE_ENDIAN
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-#else
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#endif
+	OpenGL::Texture::getRGBAPixelFormat(),
+	OpenGL::Texture::getRGBAPixelFormat());
 	handleResize(sys->getScreenWidth(), sys->getScreenHeight());
 
 	_old_touch_mode = kTouchModeTouchpad;
@@ -67,35 +61,13 @@ void iOSGraphicsManager::notifyResize(const int width, const int height) {
 	handleResize(width, height);
 }
 
-iOSCommonGraphics::State iOSGraphicsManager::getState() const {
-	State state;
+bool iOSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) {
+	// As GLES2 provides FBO, OpenGL graphics manager must ask us for a resizable surface
+	assert(resizable);
+	if (antialiasing != 0) {
+		warning("Requesting antialiased video mode while not available");
+	}
 
-	state.screenWidth   = getWidth();
-	state.screenHeight  = getHeight();
-	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
-	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
-#ifdef USE_RGB_COLOR
-	state.pixelFormat   = getScreenFormat();
-#endif
-	return state;
-}
-
-bool iOSGraphicsManager::setState(const iOSCommonGraphics::State &state) {
-	beginGFXTransaction();
-
-#ifdef USE_RGB_COLOR
-	initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
-#else
-	initSize(state.screenWidth, state.screenHeight, nullptr);
-#endif
-	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
-	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
-
-	return endGFXTransaction() == OSystem::kTransactionSuccess;
-}
-
-
-bool iOSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
 	/* The iOS and tvOS video modes are always full screen */
 	return true;
 }

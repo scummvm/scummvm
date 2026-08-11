@@ -78,7 +78,7 @@ void Room31::calc_luke() {
 		for (int16 i = 0; i < 3; i++)
 			_G(det)->showStaticSpr(5 + i);
 
-		_G(atds)->set_ats_str(244, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(244, 1, ATS_DATA);
 		_G(atds)->delControlBit(245, ATS_ACTIVE_BIT);
 		_G(gameState).room_e_obj[75].Attribut = EXIT_BOTTOM;
 
@@ -86,7 +86,7 @@ void Room31::calc_luke() {
 		for (int16 i = 0; i < 3; i++)
 			_G(det)->hideStaticSpr(5 + i);
 
-		_G(atds)->set_ats_str(244, 0, ATS_DATA);
+		_G(atds)->set_all_ats_str(244, 0, ATS_DATA);
 		_G(atds)->setControlBit(245, ATS_ACTIVE_BIT);
 		_G(gameState).room_e_obj[75].Attribut = 255;
 	}
@@ -154,7 +154,7 @@ int16 Room31::use_topf() {
 				delInventory(_G(cur)->getInventoryCursor());
 				ani_nr = CH_TALK3;
 				dia_nr = 150;
-				_G(atds)->set_ats_str(242, 2, ATS_DATA);
+				_G(atds)->set_all_ats_str(242, 2, ATS_DATA);
 
 			} else if (isCurInventory(WATER_FILLED_BOTTLE_INV)) {
 				if (_G(gameState).R31KoernerDa) {
@@ -168,7 +168,7 @@ int16 Room31::use_topf() {
 					inventory_2_cur(EMPTY_MILK_BOTTLE_INV);
 					ani_nr = CH_TALK6;
 					dia_nr = 151;
-					_G(atds)->set_ats_str(242, 3, ATS_DATA);
+					_G(atds)->set_all_ats_str(242, 3, ATS_DATA);
 				} else {
 					ani_nr = CH_TALK5;
 					dia_nr = 152;
@@ -187,7 +187,7 @@ int16 Room31::use_topf() {
 							_G(gameState).R31SurFurz = true;
 							ani_nr = CH_TALK6;
 							dia_nr = 156;
-							_G(atds)->set_ats_str(242, 4, ATS_DATA);
+							_G(atds)->set_all_ats_str(242, 4, ATS_DATA);
 							cur_2_inventory();
 						}
 					} else {

@@ -49,7 +49,6 @@ private:
 	MidiDriver *_midiDrv;
 	Common::SharedPtr<MidiParser> _parser;
 	Common::Array<byte> _data;
-	int _volume;
 };
 
 } // End of namespace VCruise

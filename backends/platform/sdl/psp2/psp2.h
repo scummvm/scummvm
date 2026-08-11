@@ -23,19 +23,15 @@
 #define PLATFORM_SDL_PSP2_H
 
 #include "backends/platform/sdl/sdl.h"
-#ifdef __PSP2_DEBUG__
-#include <psp2shell.h>
-#endif
 
 class OSystem_PSP2 : public OSystem_SDL {
 public:
 	void init() override;
 	void initBackend() override;
 	bool hasFeature(Feature f) override;
-	void setFeatureState(Feature f, bool enable) override;
-	bool getFeatureState(Feature f) override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 
 protected:
 	Common::Path getDefaultConfigFileName() override;

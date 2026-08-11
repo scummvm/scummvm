@@ -49,12 +49,13 @@ public:
 	 * Mixes the channel's samples into the given buffer.
 	 *
 	 * @param data buffer where to mix the data
-	 * @param len  number of sample *pairs*. So a value of
-	 *             10 means that the buffer contains twice 10 sample, each
-	 *             16 bits, for a total of 40 bytes.
+	 * @param len  number of sample *pairs*. So a value of 10
+	 *             in stereo and 16-bit samples means that the
+	 *             buffer contains twice 10 sample, each 16 bits,
+	 *             for a total of 40 bytes.
 	 * @return number of sample pairs processed (which can still be silence!)
 	 */
-	int mix(int16 *data, uint len);
+	int mix(byte *data, uint len);
 
 	/**
 	 * Queries whether the channel is still playing or not.
@@ -98,7 +99,7 @@ public:
 	 *
 	 * @return volume
 	 */
-	byte getVolume();
+	byte getVolume() const;
 
 	/**
 	 * Sets the channel's balance setting.
@@ -112,26 +113,59 @@ public:
 	 *
 	 * @return balance
 	 */
-	int8 getBalance();
+	int8 getBalance() const;
+
+	/**
+	 * Sets the channel's left fader level.
+	 *
+	 * @param faderL The channel's new left fader level, in the range of 0-255.
+	 */
+	void setFaderL(uint8 faderL);
+
+	/**
+	 * Get the channel's left fader level.
+	 *
+	 * @return The channel's left fader level.
+	 */
+	uint8 getFaderL() const;
+
+	/**
+	 * Sets the channel's right fader level.
+	 *
+	 * @param faderL The channel's new right fader level, in the range of 0-255.
+	 */
+	void setFaderR(uint8 faderR);
+
+	/**
+	 * Get the channel's right fader level.
+	 *
+	 * @return The channel's right fader level.
+	 */
+	uint8 getFaderR() const;
+
+	/**
+	 * Queries whether the channel is silent, i.e. will produce no audio output.
+	 */
+	bool isSilent() const { return _volL == 0 && _volR == 0; }
 
 	/**
 	 * Set the channel's sample rate.
-	 * 
+	 *
 	 * @param rate	The new sample rate. Must be less than 131072
-	*/
+	 */
 	void setRate(uint32 rate);
 
 	/**
 	 * Get the channel's sample rate.
-	 * 
+	 *
 	 * @return The current sample rate of the channel.
-	*/
-	uint32 getRate();
+	 */
+	uint32 getRate() const;
 
 	/**
 	 * Reset the sample rate of the channel back to its
 	 * AudioStream's native rate.
-	*/
+	 */
 	void resetRate();
 
 	/**
@@ -143,7 +177,7 @@ public:
 	/**
 	 * Queries how long the channel has been playing.
 	 */
-	Timestamp getElapsedTime();
+	Timestamp getElapsedTime() const;
 
 	/**
 	 * Replaces the channel's stream with a version that loops indefinitely.
@@ -176,6 +210,8 @@ private:
 
 	byte _volume;
 	int8 _balance;
+	uint8 _faderL;
+	uint8 _faderR;
 
 	void updateChannelVolumes();
 	st_volume_t _volL, _volR;
@@ -196,8 +232,9 @@ private:
 #pragma mark --- Mixer ---
 #pragma mark -
 
-MixerImpl::MixerImpl(uint sampleRate, bool stereo, uint outBufSize)
-	: _mutex(), _sampleRate(sampleRate), _stereo(stereo), _outBufSize(outBufSize), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
+MixerImpl::MixerImpl(uint sampleRate, bool stereo, uint outBufSize, uint outBytesPerSample, bool clamp)
+	: _mutex(), _sampleRate(sampleRate), _stereo(stereo), _outBufSize(outBufSize), _outBytesPerSample(outBytesPerSample), _clamp(clamp)
+	, _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
 
@@ -226,6 +263,14 @@ bool MixerImpl::getOutputStereo() const {
 
 uint MixerImpl::getOutputBufSize() const {
 	return _outBufSize;
+}
+
+uint MixerImpl::getOutputBytesPerSample() const {
+	return _outBytesPerSample;
+}
+
+bool MixerImpl::getClamping() const {
+	return _clamp;
 }
 
 void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
@@ -303,24 +348,16 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 
 	Common::StackLock lock(_mutex);
 
-	int16 *buf = (int16 *)samples;
-
 	// Since the mixer callback has been called, the mixer must be ready...
 	_mixerReady = true;
 
-	//  zero the buf
-	memset(buf, 0, len);
+	// we store samples of size defined by the backend
+	const uint bytesPerFrame = _outBytesPerSample * (_stereo ? 2 : 1);
+	assert(len % bytesPerFrame == 0);
+	const uint numFrames = len / bytesPerFrame;
 
-	// we store 16-bit samples
-	if (_stereo) {
-		assert(len % 4 == 0);
-		len >>= 2;
-	} else {
-		assert(len % 2 == 0);
-		len >>= 1;
-	}
-
-	// mix all channels
+	// mix all channels, zeroing the buffer lazily on first non-silent channel
+	bool zeroed = false;
 	int res = 0, tmp;
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i]) {
@@ -328,13 +365,25 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 				delete _channels[i];
 				_channels[i] = nullptr;
 			} else if (!_channels[i]->isPaused()) {
-				tmp = _channels[i]->mix(buf, len);
+				if (!_channels[i]->isSilent() && !zeroed) {
+					memset(samples, 0, len);
+					zeroed = true;
+				}
+				tmp = _channels[i]->mix(samples, numFrames);
 
 				if (tmp > res)
 					res = tmp;
 			}
 		}
 
+	if (!zeroed) {
+		if (_clamp) {
+			memset(samples, 0, len);
+		} else {
+			// optimization: let the caller know that there's nothing to clamp
+			res = 0;
+		}
+	}
 	return res;
 }
 
@@ -395,7 +444,7 @@ void MixerImpl::setChannelVolume(SoundHandle handle, byte volume) {
 	_channels[index]->setVolume(volume);
 }
 
-byte MixerImpl::getChannelVolume(SoundHandle handle) {
+byte MixerImpl::getChannelVolume(SoundHandle handle) const {
 	const int index = handle._val % NUM_CHANNELS;
 	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return 0;
@@ -413,12 +462,48 @@ void MixerImpl::setChannelBalance(SoundHandle handle, int8 balance) {
 	_channels[index]->setBalance(balance);
 }
 
-int8 MixerImpl::getChannelBalance(SoundHandle handle) {
+int8 MixerImpl::getChannelBalance(SoundHandle handle) const {
 	const int index = handle._val % NUM_CHANNELS;
 	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return 0;
 
 	return _channels[index]->getBalance();
+}
+
+void MixerImpl::setChannelFaderL(SoundHandle handle, uint8 faderL) {
+	Common::StackLock lock(_mutex);
+
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return;
+
+	_channels[index]->setFaderL(faderL);
+}
+
+uint8 MixerImpl::getChannelFaderL(SoundHandle handle) const {
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return 0;
+
+	return _channels[index]->getFaderL();
+}
+
+void MixerImpl::setChannelFaderR(SoundHandle handle, uint8 faderR) {
+	Common::StackLock lock(_mutex);
+
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return;
+
+	_channels[index]->setFaderR(faderR);
+}
+
+uint8 MixerImpl::getChannelFaderR(SoundHandle handle) const {
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return 0;
+
+	return _channels[index]->getFaderR();
 }
 
 void MixerImpl::setChannelRate(SoundHandle handle, uint32 rate) {
@@ -431,11 +516,11 @@ void MixerImpl::setChannelRate(SoundHandle handle, uint32 rate) {
 	_channels[index]->setRate(rate);
 }
 
-uint32 MixerImpl::getChannelRate(SoundHandle handle) {
+uint32 MixerImpl::getChannelRate(SoundHandle handle) const {
 	const int index = handle._val % NUM_CHANNELS;
 	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return 0;
-	
+
 	return _channels[index]->getRate();
 }
 
@@ -445,15 +530,15 @@ void MixerImpl::resetChannelRate(SoundHandle handle) {
 	const int index = handle._val % NUM_CHANNELS;
 	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
-	
+
 	_channels[index]->resetRate();
 }
 
-uint32 MixerImpl::getSoundElapsedTime(SoundHandle handle) {
+uint32 MixerImpl::getSoundElapsedTime(SoundHandle handle) const {
 	return getElapsedTime(handle).msecs();
 }
 
-Timestamp MixerImpl::getElapsedTime(SoundHandle handle) {
+Timestamp MixerImpl::getElapsedTime(SoundHandle handle) const {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
@@ -503,7 +588,7 @@ void MixerImpl::pauseHandle(SoundHandle handle, bool paused) {
 	_channels[index]->pause(paused);
 }
 
-bool MixerImpl::isSoundIDActive(int id) {
+bool MixerImpl::isSoundIDActive(int id) const {
 	Common::StackLock lock(_mutex);
 
 #ifdef ENABLE_EVENTRECORDER
@@ -516,7 +601,7 @@ bool MixerImpl::isSoundIDActive(int id) {
 	return false;
 }
 
-int MixerImpl::getSoundID(SoundHandle handle) {
+int MixerImpl::getSoundID(SoundHandle handle) const {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
 	if (_channels[index] && _channels[index]->getHandle()._val == handle._val)
@@ -524,7 +609,7 @@ int MixerImpl::getSoundID(SoundHandle handle) {
 	return 0;
 }
 
-bool MixerImpl::isSoundHandleActive(SoundHandle handle) {
+bool MixerImpl::isSoundHandleActive(SoundHandle handle) const {
 	Common::StackLock lock(_mutex);
 
 #ifdef ENABLE_EVENTRECORDER
@@ -535,7 +620,7 @@ bool MixerImpl::isSoundHandleActive(SoundHandle handle) {
 	return _channels[index] && _channels[index]->getHandle()._val == handle._val;
 }
 
-bool MixerImpl::hasActiveChannelOfType(SoundType type) {
+bool MixerImpl::hasActiveChannelOfType(SoundType type) const {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i] && _channels[i]->getType() == type)
@@ -575,7 +660,7 @@ int MixerImpl::getVolumeForSoundType(SoundType type) const {
 Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *stream,
 				 DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent)
 	: _type(type), _mixer(mixer), _id(id), _permanent(permanent), _volume(Mixer::kMaxChannelVolume),
-	  _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
+	  _balance(0), _faderL(255), _faderR(255), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
 	  _pauseStartTime(0), _pauseTime(0), _converter(nullptr), _volL(0), _volR(0),
 	  _stream(stream, autofreeStream) {
 	assert(mixer);
@@ -594,7 +679,7 @@ void Channel::setVolume(const byte volume) {
 	updateChannelVolumes();
 }
 
-byte Channel::getVolume() {
+byte Channel::getVolume() const {
 	return _volume;
 }
 
@@ -603,8 +688,26 @@ void Channel::setBalance(const int8 balance) {
 	updateChannelVolumes();
 }
 
-int8 Channel::getBalance() {
+int8 Channel::getBalance() const {
 	return _balance;
+}
+
+void Channel::setFaderL(uint8 faderL) {
+	_faderL = faderL;
+	updateChannelVolumes();
+}
+
+uint8 Channel::getFaderL() const {
+	return _faderL;
+}
+
+void Channel::setFaderR(uint8 faderR) {
+	_faderR = faderR;
+	updateChannelVolumes();
+}
+
+uint8 Channel::getFaderR() const {
+	return _faderR;
 }
 
 void Channel::setRate(uint32 rate) {
@@ -612,10 +715,10 @@ void Channel::setRate(uint32 rate) {
 		_converter->setInputRate(rate);
 }
 
-uint32 Channel::getRate() {
+uint32 Channel::getRate() const {
 	if (_converter)
 		return _converter->getInputRate();
-	
+
 	return 0;
 }
 
@@ -647,6 +750,8 @@ void Channel::updateChannelVolumes() {
 			_volL = ((127 - _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
 			_volR = vol / Mixer::kMaxChannelVolume;
 		}
+		_volL = (st_volume_t)((int)_volL * (int)_faderL / 255);
+		_volR = (st_volume_t)((int)_volR * (int)_faderR / 255);
 	} else {
 		_volL = _volR = 0;
 	}
@@ -670,7 +775,7 @@ void Channel::pause(bool paused) {
 	}
 }
 
-Timestamp Channel::getElapsedTime() {
+Timestamp Channel::getElapsedTime() const {
 	const uint32 rate = _mixer->getOutputRate();
 	uint32 delta = 0;
 
@@ -707,7 +812,7 @@ void Channel::loop() {
 	}
 }
 
-int Channel::mix(int16 *data, uint len) {
+int Channel::mix(byte *data, uint len) {
 	assert(_stream);
 	assert(_converter);
 
@@ -716,7 +821,14 @@ int Channel::mix(int16 *data, uint len) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis(true);
 		_pauseTime = 0;
-		res = _converter->convert(*_stream, data, len, _volL, _volR);
+		res = _converter->convert(
+			*_stream,
+			data,
+			_mixer->getOutputBytesPerSample(),
+			len,
+			_volL,
+			_volR,
+			_mixer->getClamping() ? MIX_CLAMPED_ADD : MIX_ADD);
 		_samplesDecoded += res;
 	}
 

@@ -38,6 +38,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override { return (CursorManager::CursorType)_cursorType; }
+	bool cursorSetFromScript() const override { return true; }
 
 protected:
 	Common::String getRecordTypeName() const override { return "TableIndexSetValueHS"; }
@@ -58,6 +59,10 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Value %d -> %d (should set is %d)", _index, _value, _shouldSet);
+	}
+
 protected:
 	Common::String getRecordTypeName() const override { return "SetValue"; }
 
@@ -71,6 +76,10 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Value %d", _valueIndex);
+	}
+
 protected:
 	Common::String getRecordTypeName() const override { return "SetValueCombo"; }
 
@@ -83,6 +92,10 @@ class ValueTest : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
+
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Value %d. Test type %d, condition %d. Set flag %d", _valueIndex, _testType, _condition, _flagToSet);
+	}
 
 protected:
 	Common::String getRecordTypeName() const override { return "ValueTest"; }
@@ -120,16 +133,30 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	CursorManager::CursorType getHoverCursor() const override;
+	bool cursorSetFromScript() const override;
 
 	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
 	Common::Array<HotspotDescription> _hotspots;
 
 	bool _isCursor;
 
-protected:
 	bool canHaveHotspot() const override { return true; }
+
+protected:
 	Common::String getRecordTypeName() const override { return _isCursor ? (_isTerse ? "EventFlagsHSTerse" : "EventFlagsCursorHS") : "EventFlagsMultiHS"; }
+};
+
+// Nancy 11+ AR 96. Sets each of a list of event flags to a random boolean value.
+class RandomizeEventFlags : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::Array<int16> _flagLabels;
+
+protected:
+	Common::String getRecordTypeName() const override { return "RandomizeEventFlags"; }
 };
 
 // Sets the difficulty level for the current save. Only appears at the start of the game.

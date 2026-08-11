@@ -2702,7 +2702,7 @@ void buildRipTables() {
 
 		RipTable    *mtRipTable = mt->ripTable(g_vm->_currentMapNum);
 
-		//  If meta tile aready has a valid object ripping table, simply
+		//  If meta tile already has a valid object ripping table, simply
 		//  recycle it
 		if (mtRipTable && mtRipTable->ripID == rippedRoofID) {
 			//  Null out pointer
@@ -3438,7 +3438,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 			subUVPointRel = relPos.y + (relPos.x >> 1) - h;
 		}
 
-		//  Compute the terrain hieght of the first point
+		//  Compute the terrain height of the first point
 		pointH = ptHeight(subUVPoint, ti->attrs.cornerHeight);
 
 		while (subUVPoint.u < 16 &&
@@ -3597,7 +3597,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 					subUVPointRel = subTileRel.y + (subTileRel.x >> 1);
 				}
 
-				//  Compute the terrain hieght of the first point
+				//  Compute the terrain height of the first point
 				pointH = ptHeight((subTile << 2) + subUVPoint, ti->attrs.cornerHeight);
 
 				while (subUVPoint.u < 4 &&
@@ -4010,7 +4010,7 @@ StaticTilePoint pickTile(Point32 pos,
 							}
 
 							//  If pick point is on vertical surface
-							//  not facing protaganist, reject tile
+							//  not facing protagonist, reject tile
 							if (surface == surfaceVertU &&  pCoords.v < protagPos.v)
 								continue;
 							if (surface == surfaceVertV &&  pCoords.u < protagPos.u)
@@ -4051,7 +4051,7 @@ StaticTilePoint pickTile(Point32 pos,
 		relPos.y += kTileDY;
 
 		//  Compute new altitude range based upon the tile position
-		//  relative to the protaganist's position.
+		//  relative to the protagonist's position.
 		zMin = protagPos.z - kMaxPickHeight - (coords - protagPos).quickHDistance();
 		zMax = protagPos.z + kMaxPickHeight + (coords - protagPos).quickHDistance();
 	}
@@ -4394,7 +4394,7 @@ void updateMainDisplay() {
 	_mCoords.v = trackPos.v >> (kTileUVShift + kPlatShift);
 	_mCoords.z = 0;
 
-	//  If trackPos has crossed a metatile boundry, rebuild object
+	//  If trackPos has crossed a metatile boundary, rebuild object
 	//  ripping tables
 	if (_mCoords != ripTableCoords) buildRipTables();
 

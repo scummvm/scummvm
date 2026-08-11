@@ -28,7 +28,7 @@
 namespace Asylum {
 
 enum AsylumEventType {
-	EVENT_ASYLUM_MIDI     = 953,
+	EVENT_ASYLUM_MIDI     = 1053,
 	EVENT_ASYLUM_CHANGECD = 5120,
 	EVENT_ASYLUM_INIT     = 5122,
 	EVENT_ASYLUM_UPDATE   = 5121,
@@ -37,7 +37,7 @@ enum AsylumEventType {
 	EVENT_ASYLUM_SUBTITLE = 5125,
 	EVENT_ASYLUM_MUSIC    = 5376,
 
-	EVENT_ASYLUM_ACTIVATE = 0xFFF0
+	EVENT_ASYLUM_ACTIVATE = 6000
 };
 
 struct AsylumEvent : public Common::Event {

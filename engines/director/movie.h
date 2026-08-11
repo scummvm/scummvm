@@ -24,12 +24,12 @@
 
 #define DEFAULT_CAST_LIB 1
 #define SHARED_CAST_LIB -1337
-#define CAST_LIB_OFFSET 1023
 
 namespace Common {
 struct Event;
 class ReadStreamEndian;
 class SeekableReadStreamEndian;
+class MemoryWriteStream;
 }
 
 namespace Director {
@@ -72,6 +72,7 @@ struct InfoEntry {
 	}
 
 	Common::String readString(bool pascal = true);
+	void writeString(Common::String string, bool pascal = true);
 };
 
 struct InfoEntries {
@@ -91,23 +92,28 @@ public:
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
 	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version);
+	static void saveInfoEntries(Common::SeekableWriteStream *writeStream, InfoEntries info);
+
+	static void writeRect(Common::WriteStream *writeStream, Common::Rect rect);
 
 	void loadCastLibMapping(Common::SeekableReadStreamEndian &stream);
 	bool loadArchive();
-	void setArchive(Archive *archive);
-	Archive *getArchive() const { return _movieArchive; };
+	void setArchive(Common::SharedPtr<Archive> archive);
+	Common::SharedPtr<Archive> getArchive() const { return _movieArchive; };
 	Common::String getMacName() const { return _macName; }
 	Window *getWindow() const { return _window; }
 	DirectorEngine *getVM() const { return _vm; }
 	Cast *getCast() const { return _casts.getValOrDefault(DEFAULT_CAST_LIB, nullptr); }
 	Cast *getCast(CastMemberID memberID);
+	Cast *getCastByLibResourceID(uint32 libresourceID);
 	Cast *getSharedCast() const { return _sharedCast; }
 	const Common::HashMap<int, Cast *> *getCasts() const { return &_casts; }
 	Score *getScore() const { return _score; }
 
 	void clearSharedCast();
 	void loadSharedCastsFrom(Common::Path &filename);
-	Archive *loadExternalCastFrom(Common::Path &filename);
+	Common::SharedPtr<Archive> loadExternalCastFrom(Common::Path &filename);
+	bool loadCastLibFrom(uint16 libId, Common::Path &filename);
 
 	CastMember *getCastMember(CastMemberID memberID);
 	CastMember *createOrReplaceCastMember(CastMemberID memberID, CastMember *cast);
@@ -115,25 +121,32 @@ public:
 	bool duplicateCastMember(CastMemberID source, CastMemberID target);
 	CastMemberID getCastMemberIDByMember(int memberID);
 	int getCastLibIDByName(const Common::String &name);
+	void setCastLibName(const Common::String &name, int castLib);
 	CastMemberID getCastMemberIDByName(const Common::String &name);
 	CastMemberID getCastMemberIDByNameAndType(const Common::String &name, int castLib, CastType type);
 	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
 	bool isValidCastMember(CastMemberID memberID, CastType type);
 	const Stxt *getStxt(CastMemberID memberID);
+	int getMaxCastID();
+
 
 	LingoArchive *getMainLingoArch();
 	LingoArchive *getSharedLingoArch();
 	ScriptContext *getScriptContext(ScriptType type, CastMemberID id);
-	Symbol getHandler(const Common::String &name);
+	Symbol getHandler(const Common::String &name, uint16 castLibHint = 0);
 
-	// events.cpp
-	bool processEvent(Common::Event &event);
+	// lingo/lingo-events.cpp
+	bool processSysEvent(Common::Event &event);
+	void broadcastEvent(LEvent event);
 
 	// lingo/lingo-events.cpp
 	void setPrimaryEventHandler(LEvent event, const Common::String &code);
 	void resolveScriptEvent(LingoEvent &event);
 	void processEvent(LEvent event, int targetId = 0);
 	void queueInputEvent(LEvent event, int targetId = 0, Common::Point pos = Common::Point(-1, -1));
+	bool processInputEvent(LEvent event, int targetId = 0, Common::Point pos = Common::Point(-1, -1));
+
+	Common::String formatMovieInfo();
 
 private:
 	void loadFileInfo(Common::SeekableReadStreamEndian &stream);
@@ -142,19 +155,26 @@ private:
 	void queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId, int spriteId);
 
 public:
-	Archive *_movieArchive;
+	Common::SharedPtr<Archive> _movieArchive;
 	uint16 _version;
 	Common::Platform _platform;
 	Common::Rect _movieRect;
-	uint16 _currentActiveSpriteId;
-	uint16 _currentMouseSpriteId;
+	uint16 _lastClickedSpriteId;
+	uint16 _currentHoveredSpriteId;
+	uint _currentSpriteNum;
 	CastMemberID _currentMouseDownCastID;
+	CastMemberID _currentMouseDownSpriteScriptID;
+	bool _currentMouseDownSpriteImmediate;
+	CastMemberID _currentKeyDownCastID;
+	CastMemberID _currentKeyDownSpriteScriptID;
+	bool _currentKeyDownSpriteImmediate;
 	uint16 _currentEditableTextChannel;
 	uint32 _lastEventTime;
 	uint32 _lastRollTime;
 	uint32 _lastClickTime;
 	uint32 _lastClickTime2;
 	Common::Point _lastClickPos;
+	Common::Point _lastMousePos;
 	uint32 _lastKeyTime;
 	uint32 _lastTimerReset;
 	uint32 _stageColor;
@@ -171,10 +191,6 @@ public:
 	int _nextEventId;
 	Common::Queue<LingoEvent> _inputEventQueue;
 
-	unsigned char _key;
-	int _keyCode;
-	byte _keyFlags;
-
 	int _selStart;
 	int _selEnd;
 
@@ -182,16 +198,32 @@ public:
 	int _checkBoxAccess;
 
 	uint16 _currentHiliteChannelId;
+	uint16 _lastEnteredChannelId;
 
-	uint _lastTimeOut;
-	uint _timeOutLength;
+	int _lastTimeOut;
+	int _timeOutLength;
 	bool _timeOutKeyDown;
 	bool _timeOutMouse;
 	bool _timeOutPlay;
 
 	bool _isBeepOn;
+	Common::HashMap<LEvent, int> _lastEventId;
 
 	Common::String _script;
+
+	// A flag to disable the event processing in the Movie
+	// This flag will be set when the user's interaction (mouse and key events like mouseUp, keyUp)
+	// shouldn't be recorded as movie event, which may cause undesirable change in the lingo script
+	bool _inGuiMessageBox = false;
+
+	// Set for a movie loaded inside a cast member. It shares the host's
+	// window but never owns the stage, so loadArchive() must not resize
+	// or recolour it.
+	bool _isEmbedded = false;
+
+	// For an embedded movie, the movie that hosts it. Its scripts share the
+	// host's handler scope, so getHandler() falls back to the parent.
+	Movie *_parentMovie = nullptr;
 
 private:
 	Window *_window;

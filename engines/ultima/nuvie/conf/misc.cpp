@@ -24,8 +24,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-Std::string readLine(Common::ReadStream *stream) {
-	Std::string line;
+Common::String readLine(Common::ReadStream *stream) {
+	Common::String line;
 	char c;
 	while (!stream->eos() && (c = stream->readByte()) != '\n')
 		line += c;

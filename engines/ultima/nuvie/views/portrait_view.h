@@ -45,7 +45,7 @@ class PortraitView : public View {
 
 	uint8 cur_actor_num;
 	Portrait *portrait;
-	Std::string *name_string;
+	Common::String *name_string;
 
 	unsigned char *portrait_data;
 	U6Shape *bg_data;

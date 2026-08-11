@@ -89,10 +89,9 @@ uint16 Actor::assignObjId() {
 	if (_objId == 0xFFFF)
 		_objId = ObjectManager::get_instance()->assignActorObjId(this);
 
-	Std::list<Item *>::iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		(*iter)->assignObjId();
-		(*iter)->setParent(_objId);
+	for (auto *i : _contents) {
+		i->assignObjId();
+		i->setParent(_objId);
 	}
 
 	return _objId;
@@ -169,7 +168,7 @@ bool Actor::giveTreasure() {
 		return false;
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
-	const Std::vector<TreasureInfo> &treasure = mi->_treasure;
+	const Common::Array<TreasureInfo> &treasure = mi->_treasure;
 
 	for (unsigned int i = 0; i < treasure.size(); ++i) {
 		const TreasureInfo &ti = treasure[i];
@@ -403,11 +402,11 @@ bool Actor::setEquip(Item *item, bool checkwghtvol) {
 
 	// now check 'equipment slots'
 	// we can have one item of each equipment type, plus one backpack
-	for (Std::list<Item *>::const_iterator iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		if ((*iter)->getObjId() == item->getObjId()) continue;
+	for (const auto *i : _contents) {
+		if (i->getObjId() == item->getObjId()) continue;
 
-		uint32 cet = (*iter)->getShapeInfo()->_equipType;
-		bool cbackpack = ((*iter)->getShape() == BACKPACK_SHAPE);
+		uint32 cet = i->getShapeInfo()->_equipType;
+		bool cbackpack = (i->getShape() == BACKPACK_SHAPE);
 
 		// already have an item with the same equiptype
 		if (cet == equiptype || (cbackpack && backpack)) return false;
@@ -422,14 +421,13 @@ bool Actor::setEquip(Item *item, bool checkwghtvol) {
 }
 
 uint16 Actor::getEquip(uint32 type) const {
-	Std::list<Item *>::const_iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		uint32 cet = (*iter)->getShapeInfo()->_equipType;
-		bool cbackpack = ((*iter)->getShape() == BACKPACK_SHAPE);
+	for (const auto *i : _contents) {
+		uint32 cet = i->getShapeInfo()->_equipType;
+		bool cbackpack = (i->getShape() == BACKPACK_SHAPE);
 
-		if ((*iter)->hasFlags(FLG_EQUIPPED) &&
+		if (i->hasFlags(FLG_EQUIPPED) &&
 		        (cet == type || (cbackpack && type == 7))) { // !! constant
-			return (*iter)->getObjId();
+			return i->getObjId();
 		}
 	}
 
@@ -1326,10 +1324,9 @@ ProcId Actor::dieU8(uint16 damageType) {
 
 	// Kill blue potion use process if running
 	if (_objId == kMainActorId) {
-		ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
-		ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
-		for (; iter != endproc; ++iter) {
-			UCProcess *p = dynamic_cast<UCProcess *>(*iter);
+		auto processes = Kernel::get_instance()->getProcesses();
+		for (auto process : processes) {
+			auto p = dynamic_cast<UCProcess *>(process);
 			if (!p)
 				continue;
 			if (p->getClassId() != 766) // Potion
@@ -1609,13 +1606,14 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 
 void Actor::killAllButCombatProcesses() {
 	// loop over all processes, keeping only the relevant ones
-	ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
-	ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
-	for (; iter != endproc; ++iter) {
-		Process *p = *iter;
-		if (!p) continue;
-		if (p->getItemNum() != _objId) continue;
-		if (p->is_terminated()) continue;
+	auto processes = Kernel::get_instance()->getProcesses();
+	for (auto p : processes) {
+		if (!p)
+			continue;
+		if (p->getItemNum() != _objId)
+			continue;
+		if (p->is_terminated())
+			continue;
 
 		uint16 type = p->getType();
 
@@ -1640,13 +1638,15 @@ ProcId Actor::killAllButFallAnims(bool death) {
 	}
 
 	// loop over all animation processes, keeping only the relevant ones
-	ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
-	ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
-	for (; iter != endproc; ++iter) {
-		ActorAnimProcess *p = dynamic_cast<ActorAnimProcess *>(*iter);
-		if (!p) continue;
-		if (p->getItemNum() != _objId) continue;
-		if (p->is_terminated()) continue;
+	auto processes = Kernel::get_instance()->getProcesses();
+	for (auto process : processes) {
+		auto p = dynamic_cast<ActorAnimProcess *>(process);
+		if (!p)
+			continue;
+		if (p->getItemNum() != _objId)
+			continue;
+		if (p->is_terminated())
+			continue;
 
 		Animation::Sequence action = p->getAction();
 

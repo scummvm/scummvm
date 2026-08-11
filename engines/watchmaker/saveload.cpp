@@ -506,10 +506,8 @@ bool DataLoad(WGame &game, const Common::String &FileName, uint8 slot) {
 			Character[i]->Mesh->Trasl = t3dV3F(*stream);
 			Character[i]->Dir = t3dV3F(*stream);
 			Character[i]->Flags = stream->readByte();
-			Character[i]->Walk.LookX = stream->readFloatLE();
-			Character[i]->Walk.LookZ = stream->readFloatLE();
-			Character[i]->Walk.CurX = stream->readFloatLE();
-			Character[i]->Walk.CurZ = stream->readFloatLE();
+			Character[i]->Walk.Look = PointXZ::readFromStream(*stream);
+			Character[i]->Walk.Cur = PointXZ::readFromStream(*stream);
 			Character[i]->Walk.CurPanel = stream->readSint16LE();
 			Character[i]->Walk.OldPanel = stream->readSint16LE();
 		} else {

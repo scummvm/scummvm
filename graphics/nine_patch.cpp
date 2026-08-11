@@ -285,7 +285,7 @@ void NinePatchBitmap::modifyTitleWidth(int titleWidth) {
 	_h.calcOffsets(_cached_dw, _titleIndex, _titleWidth);
 }
 
-void NinePatchBitmap::blit(Graphics::ManagedSurface &target, int dx, int dy, int dw, int dh, MacWindowManager *wm) {
+void NinePatchBitmap::blit(Graphics::ManagedSurface &target, int dx, int dy, int dw, int dh, MacWindowManager *wm, bool maskOnly, uint32 maskColor) {
 	/* don't draw bitmaps that are smaller than the fixed area */
 	if (dw < _h._fix || dh < _v._fix)
 		return;
@@ -325,7 +325,7 @@ void NinePatchBitmap::blit(Graphics::ManagedSurface &target, int dx, int dy, int
 						byte r = palette[(color * 3) + 0];
 						byte g = palette[(color * 3) + 1];
 						byte b = palette[(color * 3) + 2];
-						*((byte *)target.getBasePtr(i, j)) = wm->findBestColor(r, g, b);
+						*((byte *)target.getBasePtr(i, j)) = maskOnly ? maskColor : wm->findBestColor(r, g, b);
 					}
 				}
 			}
@@ -336,7 +336,7 @@ void NinePatchBitmap::blit(Graphics::ManagedSurface &target, int dx, int dy, int
 					if (color != transColor) {
 						byte a, r, g, b;
 						srf->format.colorToARGB(color, a, r, g, b);
-						*((byte *)target.getBasePtr(i, j)) = wm->findBestColor(r, g, b);
+						*((byte *)target.getBasePtr(i, j)) = maskOnly ? maskColor : wm->findBestColor(r, g, b);
 					}
 				}
 			}

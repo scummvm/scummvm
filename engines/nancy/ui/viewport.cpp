@@ -55,7 +55,7 @@ void Viewport::init() {
 }
 
 void Viewport::handleInput(NancyInput &input) {
-	const Nancy::State::Scene::SceneSummary &summary = NancySceneState.getSceneSummary();
+	const State::Scene::SceneSummary &summary = NancySceneState.getSceneSummary();
 	Time systemTime = g_system->getMillis();
 	byte direction = 0;
 
@@ -184,6 +184,11 @@ void Viewport::handleInput(NancyInput &input) {
 		}
 	}
 
+	// Nancy 11+ StopPlayerScrolling/StartPlayerScrolling can disable viewport movement entirely
+	if (!NancySceneState.getPlayerScrolling()) {
+		direction = 0;
+	}
+
 	// Perform the movement
 	if (direction) {
 		Time movementDelta = NancySceneState.getMovementTimeDelta(direction & kMoveFast);
@@ -217,8 +222,11 @@ void Viewport::loadVideo(const Common::Path &filename, uint frameNr, uint vertic
 		_decoder.close();
 	}
 
-	if (!_decoder.loadFile(filename.append(".avf"))) {
-		error("Couldn't load video file %s", filename.toString().c_str());
+	// Only panorama scenes step through frames, so only they need the frame cache
+	// for fast bidirectional scrubbing; other scenes would just waste memory.
+	const bool isPanorama = panningType == kPan360 || panningType == kPanLeftRight;
+	if (!_decoder.loadFile(filename, isPanorama)) {
+		error("Couldn't load video file %s.avf or %s.bik", filename.toString().c_str(), filename.toString().c_str());
 	}
 
 	_videoFormat = format;
@@ -240,14 +248,23 @@ void Viewport::loadVideo(const Common::Path &filename, uint frameNr, uint vertic
 }
 
 void Viewport::setFrame(uint frameNr) {
-	assert(frameNr < _decoder.getFrameCount());
+	assert(frameNr < (uint)_decoder.getFrameCount());
 
-	const Graphics::Surface *newFrame = _decoder.decodeFrame(frameNr);
-	_decoder.seek(frameNr); // Seek to take advantage of caching
+	// The player returns the frame using the format-appropriate cached path.
+	const Graphics::Surface *newFrame = _decoder.decodeNextFrame(frameNr);
 
 	// Format 1 uses quarter-size images, while format 2 uses full-size ones
 	// Videos in TVD are always upside-down
-	GraphicsManager::copyToManaged(*newFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+	if (newFrame->format != _fullFrame.format && newFrame->format.bytesPerPixel == _fullFrame.format.bytesPerPixel) {
+		// Character closeups are in a different format than the main viewport
+		// in Nancy10+, so convert them before copying to the main surface.
+		Graphics::Surface *converted = newFrame->convertTo(_fullFrame.format);
+		GraphicsManager::copyToManaged(*converted, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+		converted->free();
+		delete converted;
+	} else {
+		GraphicsManager::copyToManaged(*newFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+	}
 
 	_needsRedraw = true;
 	_currentFrame = frameNr;

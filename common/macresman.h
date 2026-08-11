@@ -55,6 +55,7 @@ namespace Common {
 
 typedef Array<uint16> MacResIDArray;
 typedef Array<uint32> MacResTagArray;
+typedef bool (* ProgressUpdateCallback)(void *, int);
 
 /**
  * Class containing the raw data bytes for a Macintosh Finder Info data block.
@@ -95,8 +96,8 @@ struct MacFinderInfo {
 
 	MacFinderInfoData toData() const;
 
-	byte type[4];
-	byte creator[4];
+	uint32 type;
+	uint32 creator;
 	uint16 flags;
 	Common::Point position;
 	int16 windowID;
@@ -166,6 +167,11 @@ public:
 	static SeekableReadStream *openDataForkFromMacBinary(SeekableReadStream *inStream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
 
 	/**
+	 * Write macbinary data to a stream.
+	 */
+	static void writeMacBinary(SeekableWriteStream *outStream, SeekableReadStream *dataFork, SeekableReadStream *resourceFork, const Common::String &name, const MacFinderInfo &info, TimeDate *created = nullptr, TimeDate *modified = nullptr);
+
+	/**
 	 * See if a Mac data/resource fork pair exists.
 	 * @param fileName The base file name of the file
 	 * @return True if either a data fork or resource fork with this name exists
@@ -201,10 +207,24 @@ public:
 	void close();
 
 	/**
-	 * Query whether or not we have a data fork present.
+	 * Query whether or not we have a resource fork present.
 	 * @return True if the resource fork is present
 	 */
 	bool hasResFork() const;
+
+	/**
+	 * Query whether or not we have a resource fork present.
+	 * @return True if the resource fork is present
+	 */
+	bool hasDataFork() const;
+
+	/**
+	 * Query whether the file is one of the Mac formats.
+	 * @return True if the file is in MacBinary format or has a resource fork
+	 */
+	bool isMacFile() const { return _mode != kResForkNone; }
+
+	int getMode() const { return _mode; }
 
 	/**
 	 * Read resource from the MacBinary file
@@ -241,10 +261,38 @@ public:
 	String getResName(uint32 typeID, uint16 resID) const;
 
 	/**
+	 * Get the length in bytes of a given resource
+	 * @param typeID FourCC of the type
+	 * @param resID Resource ID to fetch
+	 * @return The length in bytes of a given resource
+	 */
+	uint32 getResLength(uint32 typeID, uint16 resID);
+
+	/**
+	 * Get the resource ID from a MacBinary file
+	 * @param typeID FourCC of the type
+	 * @param filename file name of the resource
+	 * @return The resource ID for a matching resource
+	 */
+	uint16 getResID(uint32 typeID, const Common::String &filename);
+
+	/**
 	 * Get the size of the data portion of the resource fork
 	 * @return The size of the data portion of the resource fork
 	 */
 	uint32 getResForkDataSize() const;
+
+	uint32 getResForkSize() const {
+		if (!hasResFork())
+			return 0;
+		return _resForkSize;
+	}
+
+	uint32 getDataForkSize() const {
+		if (!hasDataFork())
+			return 0;
+		return _dataLength;
+	}
 
 	/**
 	 * Calculate the MD5 checksum of the resource fork
@@ -252,7 +300,7 @@ public:
 	 * @param tail Calculate length from the tail
 	 * @return The MD5 checksum of the resource fork
 	 */
-	String computeResForkMD5AsString(uint32 length = 0, bool tail = false) const;
+	String computeResForkMD5AsString(uint32 length = 0, bool tail = false, ProgressUpdateCallback progressUpdateCallback = nullptr, void *callbackParameter = nullptr) const;
 
 	/**
 	 * Get the base file name of the data/resource fork pair
@@ -261,6 +309,12 @@ public:
 	Path getBaseFileName() const { return _baseFileName; }
 
 	void setBaseFileName(Common::Path str) { _baseFileName = str; }
+
+	/**
+	 * Get the original Macintosh file name extracted from headers.
+	 * @return The original file name if available, otherwise an empty string.
+	 */
+	String getOriginalFileName() const { return _originalFileName; }
 
 	/**
 	 * Return list of resource IDs with specified type ID
@@ -300,20 +354,32 @@ public:
 	};
 	static MacVers *parseVers(SeekableReadStream *vvers);
 
+	enum {
+		kResForkNone = 0,
+		kResForkRaw,
+		kResForkMacBinary,
+		kResForkAppleDouble
+	} _mode;
+
+	static Path constructAppleDoubleName(const Path &name);
+
 private:
 	SeekableReadStream *_stream;
 	Path _baseFileName;
+	String _originalFileName;
 
 	bool load(SeekableReadStream *stream);
 
 	bool loadFromRawFork(SeekableReadStream *stream);
 	bool loadFromAppleDouble(SeekableReadStream *stream);
 
+public:
 	/**
 	 * Get Finder info from a file in MacBinary format
 	 */
 	static bool getFinderInfoFromMacBinary(SeekableReadStream *stream, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo);
 
+private:
 	/**
 	 * Get Finder info from a file in AppleDouble format
 	 */
@@ -321,7 +387,6 @@ private:
 
 	static bool readAndValidateMacBinaryHeader(SeekableReadStream &stream, byte (&outMacBinaryHeader)[MBI_INFOHDR]);
 
-	static Path constructAppleDoubleName(const Path &name);
 	static Path disassembleAppleDoubleName(const Path &name, bool *isAppleDouble);
 
 	static SeekableReadStream *openAppleDoubleWithAppleOrOSXNaming(Archive& archive, const Path &fileName);
@@ -332,13 +397,6 @@ private:
 	 * @param stream Stream object to check. Will not preserve its position.
 	 */
 	static bool isRawFork(SeekableReadStream &stream);
-
-	enum {
-		kResForkNone = 0,
-		kResForkRaw,
-		kResForkMacBinary,
-		kResForkAppleDouble
-	} _mode;
 
 	void readMap();
 

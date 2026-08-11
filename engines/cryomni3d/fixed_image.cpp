@@ -23,6 +23,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "image/image_decoder.h"
 
@@ -107,8 +108,8 @@ void ZonFixedImage::load(const Common::Path &image, const char *zone) {
 }
 
 void ZonFixedImage::display() const {
-	_engine.setupPalette(_imageDecoder->getPalette(), 0,
-	                     _imageDecoder->getPaletteColorCount());
+	_engine.setupPalette(_imageDecoder->getPalette().data(), 0,
+	                     _imageDecoder->getPalette().size());
 
 	g_system->copyRectToScreen(_imageSurface->getPixels(), _imageSurface->pitch, 0, 0,
 	                           _imageSurface->w, _imageSurface->h);

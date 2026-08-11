@@ -575,8 +575,8 @@ void ResourceReader::tossResourceFromCache(ResourceSlot *slot) {
 
 void ResourceReader::purgeCache() {
 	debug(2, "ResourceReader::purgeCache()");
-	for (ResMap::const_iterator resTypeIter = _resSlots.begin(); resTypeIter != _resSlots.end(); ++resTypeIter) {
-		ResourceSlots *slots = (*resTypeIter)._value;
+	for (const auto &res : _resSlots) {
+		ResourceSlots *slots = res._value;
 		for (ResourceSlots::iterator slotIter = slots->begin(); slotIter != slots->end(); ++slotIter) {
 			ResourceSlot *slot = &(*slotIter);
 			if (slot->refCount <= 0 && slot->res) {

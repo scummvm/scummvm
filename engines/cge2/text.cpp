@@ -121,6 +121,11 @@ void Text::load() {
 }
 
 char *Text::getText(int ref) {
+	// Text 21:24 is missing from the game data, but its text 
+	// would be duplicative of 21:23. So, use that. See bug #14645.
+	if (ref == ((21 << 8) | 24))
+		ref = (21 << 8) | 23;
+
 	int i;
 	for (i = 0; (i < _size) && (_cache[i]._ref != ref); i++)
 		;
@@ -129,7 +134,7 @@ char *Text::getText(int ref) {
 		return _cache[i]._text;
 
 	warning("getText: Unable to find ref %d:%d", ref / 256, ref % 256);
-	return nullptr;
+	return _cache[0]._text;
 }
 
 void Text::say(const char *text, Sprite *spr) {

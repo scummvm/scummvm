@@ -24,27 +24,30 @@
 
 #include "common/scummsys.h"
 
-#define NUM_GAME_FLAGS 255
+// lba1 255 - lba2 256
+#define NUM_GAME_FLAGS 256
+#define NUM_GAME_FLAGS_LBA1 255
 
 /** Number of colors used in the game */
 #define NUMOFCOLORS 256
 
-#define NUM_LOCATIONS 334 /* 150 for lba1 */
+#define MAX_HOLO_POS 150   /* lba1 */
+#define MAX_HOLO_POS_2 334 /* lba2 */
 
 #define NUM_INVENTORY_ITEMS 28
 /**
  * This gameflag indicates that the inventory items are taken from Twinson because he went to jail
  */
-#define GAMEFLAG_INVENTORY_DISABLED 70
+#define GAMEFLAG_INVENTORY_DISABLED 70 // Any prison FLAG_CONSIGNE
 // Hit
 #define GAMEFLAG_VIDEO_BAFFE 200
 // Hit, band-aid
 #define GAMEFLAG_VIDEO_BAFFE2 201
 // Hit, black eye
 #define GAMEFLAG_VIDEO_BAFFE3 202
-// Ferry #1
+// Ferry #1 Citadel Island <-> Principal Island
 #define GAMEFLAG_VIDEO_BATEAU 203
-// Temple of Bu
+// White Leaf Desert, Temple of Bu
 #define GAMEFLAG_VIDEO_TEMPLE 204
 // White Leaf Desert, flute
 #define GAMEFLAG_VIDEO_FLUTE2 205
@@ -54,7 +57,10 @@
 #define GAMEFLAG_VIDEO_NEIGE2 207
 // Hamalayi Mountains, ski lift
 #define GAMEFLAG_VIDEO_SURF 208
-// Ferry #2
+// Twinsen is no longer sick after he bought the catamaran
+// you get this video if you take the ferry after you've
+// bought the catamaran
+// Ferry #2 Citadel Island <-> Principal Island
 #define GAMEFLAG_VIDEO_BATEAU2 209
 // Fortress, Zoe Clone
 #define GAMEFLAG_VIDEO_CAPTURE 210
@@ -77,6 +83,14 @@
 // Twinsun explosion
 #define GAMEFLAG_VIDEO_EXPLODE2 219
 
+#define GAMEFLAG_ESC 249
+
+// lba2 Kashes or Zlitos
+#define GAMEFLAG_MONEY 8
+// FLAG_ARDOISE
+#define GAMEFLAG_ARDOISE 28
+
+// NUM_PERSO
 #define OWN_ACTOR_SCENE_INDEX 0
 #define IS_HERO(x) ((x) == OWN_ACTOR_SCENE_INDEX)
 
@@ -89,7 +103,7 @@ struct I16Vec3 {
 	int16 z = 0;
 };
 #include "common/pack-end.h"
-STATIC_ASSERT(sizeof(I16Vec3) == 6, "Unexpected pointTab size");
+static_assert(sizeof(I16Vec3) == 6, "Unexpected pointTab size");
 
 struct IVec2 {
 	constexpr IVec2() : x(0), y(0) {}
@@ -97,13 +111,13 @@ struct IVec2 {
 	int32 x;
 	int32 y;
 
-	inline IVec2& operator+=(const IVec2 &other) {
+	inline IVec2 &operator+=(const IVec2 &other) {
 		x += other.x;
 		y += other.y;
 		return *this;
 	}
 
-	inline IVec2& operator-=(const IVec2 &other) {
+	inline IVec2 &operator-=(const IVec2 &other) {
 		x -= other.x;
 		y -= other.y;
 		return *this;
@@ -117,21 +131,21 @@ struct IVec3 {
 	int32 y;
 	int32 z;
 
-	inline IVec3 &operator=(const I16Vec3& other) {
+	inline IVec3 &operator=(const I16Vec3 &other) {
 		x = other.x;
 		y = other.y;
 		z = other.z;
 		return *this;
 	}
 
-	inline IVec3& operator+=(const IVec3 &other) {
+	inline IVec3 &operator+=(const IVec3 &other) {
 		x += other.x;
 		y += other.y;
 		z += other.z;
 		return *this;
 	}
 
-	inline IVec3& operator-=(const IVec3 &other) {
+	inline IVec3 &operator-=(const IVec3 &other) {
 		x -= other.x;
 		y -= other.y;
 		z -= other.z;
@@ -179,6 +193,10 @@ int32 getDistance3D(const IVec3 &v1, const IVec3 &v2);
 struct BoundingBox {
 	IVec3 mins;
 	IVec3 maxs;
+
+	bool isValid() const {
+		return mins.x <= maxs.x && mins.y <= maxs.y && mins.z <= maxs.z;
+	}
 };
 
 struct ActorBoundingBox {
@@ -274,51 +292,51 @@ enum class ControlMode {
 
 enum class AnimationTypes {
 	kAnimNone = -1,
-	kStanding = 0,  // GEN_ANIM_RIEN
-	kForward = 1,   // GEN_ANIM_MARCHE
-	kBackward = 2,  // GEN_ANIM_RECULE
-	kTurnLeft = 3,  // GEN_ANIM_GAUCHE
-	kTurnRight = 4, // GEN_ANIM_DROITE
-	kHit = 5,
-	kBigHit = 6,
-	kFall = 7,
-	kLanding = 8,
-	kLandingHit = 9,
-	kLandDeath = 10,
-	kAction = 11,
-	kClimbLadder = 12,
-	kTopLadder = 13,
-	kJump = 14,
-	kThrowBall = 15,
-	kHide = 16,
-	kKick = 17,
-	kRightPunch = 18,
-	kLeftPunch = 19,
-	kFoundItem = 20,
-	kDrawn = 21,
-	kHit2 = 22,
-	kSabreAttack = 23,
-	kPush = 27, // GEN_ANIM_POUSSE
-	kSabreUnknown = 24,
+	kStanding = 0,      // GEN_ANIM_RIEN
+	kForward = 1,       // GEN_ANIM_MARCHE
+	kBackward = 2,      // GEN_ANIM_RECULE
+	kTurnLeft = 3,      // GEN_ANIM_GAUCHE
+	kTurnRight = 4,     // GEN_ANIM_DROITE
+	kHit = 5,           // GEN_ANIM_ENCAISSE
+	kBigHit = 6,        // GEN_ANIM_CHOC
+	kFall = 7,          // GEN_ANIM_TOMBE
+	kLanding = 8,       // GEN_ANIM_RECEPTION
+	kLandingHit = 9,    // GEN_ANIM_RECEPTION_2
+	kLandDeath = 10,    // GEN_ANIM_MORT
+	kAction = 11,       // GEN_ANIM_ACTION
+	kClimbLadder = 12,  // GEN_ANIM_MONTE
+	kTopLadder = 13,    // GEN_ANIM_ECHELLE
+	kJump = 14,         // GEN_ANIM_SAUTE
+	kThrowBall = 15,    // GEN_ANIM_LANCE
+	kHide = 16,         // GEN_ANIM_CACHE
+	kKick = 17,         // GEN_ANIM_COUP_1
+	kRightPunch = 18,   // GEN_ANIM_COUP_2
+	kLeftPunch = 19,    // GEN_ANIM_COUP_3
+	kFoundItem = 20,    // GEN_ANIM_TROUVE
+	kDrawn = 21,        // GEN_ANIM_NOYADE
+	kHit2 = 22,         // GEN_ANIM_CHOC2
+	kSabreAttack = 23,  // GEN_ANIM_SABRE
+	kSabreUnknown = 24, // GEN_ANIM_DEGAINE
+	kPush = 27,         // GEN_ANIM_POUSSE
 	kCarStarting = 303,
 	kCarDriving = 304,
 	kCarDrivingBackwards = 305,
 	kCarStopping = 306,
 	kCarFrozen = 307,
-	kAnimInvalid = 255
+	kNoAnim = 255 // NO_ANIM
 };
 
 enum class AnimType {
 	kAnimationTypeRepeat = 0, // ANIM_REPEAT
-	kAnimationThen = 1,
+	kAnimationThen = 1, // ANIM_THEN
 	// play animation and let animExtra follow as next animation
 	// if there is already a next animation set - replace the value
-	kAnimationAllThen = 2,
+	kAnimationAllThen = 2, // ANIM_ALL_THEN
 	// replace animation and let the current animation follow
-	kAnimationInsert = 3,
+	kAnimationInsert = 3, // ANIM_TEMPO
 	// play animation and let animExtra follow as next animation
 	// but don't take the current state in account
-	kAnimationSet = 4
+	kAnimationSet = 4 // ANIM_FINAL
 };
 
 /** Hero behaviour
@@ -334,11 +352,11 @@ enum class AnimType {
  * @note The values must match the @c TextId indices
  */
 enum class HeroBehaviourType {
-	kNormal = 0,          // C_NORMAL
-	kAthletic = 1,        // C_SPORTIF
-	kAggressive = 2,      // C_AGRESSIF
-	kDiscrete = 3,        // C_DISCRET
-	kProtoPack = 4,       // C_PROTOPACK
+	kNormal = 0,     // C_NORMAL
+	kAthletic = 1,   // C_SPORTIF
+	kAggressive = 2, // C_AGRESSIF
+	kDiscrete = 3,   // C_DISCRET
+	kProtoPack = 4,  // C_PROTOPACK
 #if 0
 	kDOUBLE = 5,          // C_DOUBLE Twinsen + Zoé
 	kCONQUE = 6,          // C_CONQUE Conque
@@ -354,8 +372,8 @@ enum class HeroBehaviourType {
 };
 
 // lba2
-#define CUBE_INTERIEUR	0
-#define	CUBE_EXTERIEUR	1
+#define CUBE_INTERIEUR 0
+#define CUBE_EXTERIEUR 1
 
 /**
  * 0: tunic + medallion
@@ -407,7 +425,8 @@ enum class ZoneType {
 	// lba2
 	kEscalator = 7,
 	kHit = 8,
-	kRail = 9
+	kRail = 9,
+	kFunFrockFix = 50
 };
 
 #define SCENE_CEILING_GRID_FADE_1 (-1)
@@ -586,7 +605,7 @@ enum class TextId : int16 {
 	kVolumeSettings = 30,
 	kDetailsPolygonsHigh = 31,
 	kDetailsShadowHigh = 32,
-	//kSceneryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
+	// kSceneryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
 	kCreateNewPlayer = 40,
 	kCreateSaveGame = 41,
 	kEnterYourName = 42,
@@ -635,7 +654,7 @@ enum class TextId : int16 {
 
 enum InventoryItems {
 	kiHolomap = 0,             // lba1/lba2
-	kiMagicBall = 1,           // lba1/lba2
+	kiMagicBall = 1,           // lba1/lba2 FLAG_BALLE_MAGIQUE
 	kiUseSabre = 2,            // lba1
 	kiDart = 2,                // lba2
 	kiGawleysHorn = 3,         // lba1
@@ -669,7 +688,7 @@ enum InventoryItems {
 
 struct TwineResource {
 	const char *hqr;
-	const int32 index;
+	int32 index;
 
 	constexpr TwineResource(const char *_hqr, int32 _index) : hqr(_hqr), index(_index) {
 	}
@@ -731,6 +750,7 @@ inline int32 NormalizeAngle(int32 angle) {
  * @return The value as it is used at runtime
  */
 inline constexpr int32 ToAngle(int32 angle) {
+	// TODO: lba2 handling of factor 4
 	return angle;
 }
 
@@ -742,8 +762,12 @@ inline constexpr int32 FromAngle(int32 angle) {
 	return angle;
 }
 
-inline double AngleToRadians(int32 angle) {
-	return 2.0 * M_PI * angle / (double)LBAAngles::ANGLE_360;
+inline double AngleToDegree(int32 angle) {
+	return (double)angle / (double)LBAAngles::ANGLE_360 * 360.0;
+}
+
+inline int DegreeToAngle(double degree) {
+	return (int)(degree * (double)LBAAngles::ANGLE_360) / 360.0;
 }
 
 inline int32 ClampAngle(int32 angle) {
@@ -765,12 +789,13 @@ inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 // color 20 - 24 = orange to yellow
 // color 25 orange
 // color 26 - 30 = bright gray or white
-#define COlOR_31 31 // green dark
-#define COlOR_47 47 // green bright
-#define COLOR_48 48 // brown dark
-#define COLOR_63 63 // brown bright
-#define COLOR_64 64 // blue dark
-#define COLOR_68 68 // blue
+#define COlOR_31 31          // green dark
+#define COlOR_47 47          // green bright
+#define COLOR_48 48          // brown dark
+#define COLOR_63 63          // brown bright
+#define COLOR_64 64          // blue dark
+#define COLOR_SELECT_MENU 68 // blue
+// TODO #define COLOR_SELECT_MENU 166 // blue lba2
 #define COLOR_73 73 // blue
 #define COLOR_75 75
 #define COLOR_79 79 // blue bright
@@ -782,10 +807,18 @@ inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 #define COLOR_158 158
 
 enum kDebugLevels {
-	kDebugScripts =   1 << 0,
-	kDebugTime    =   1 << 1
+	kDebugScriptsMove = 1,
+	kDebugScriptsLife,
+	kDebugTimers,
+	kDebugResources,
+	kDebugInput,
+	kDebugMovies,
+	kDebugPalette,
+	kDebugCollision,
+	kDebugAnimation,
+	kDebugHolomap,
 };
 
-}
+} // namespace TwinE
 
 #endif

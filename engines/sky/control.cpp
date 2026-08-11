@@ -70,7 +70,6 @@ bool ConResource::isMouseOver(uint32 mouseX, uint32 mouseY) {
 
 void ConResource::drawToScreen(bool doMask) {
 	uint8 *screenPos = _y * GAME_SCREEN_WIDTH + _x + _screen;
-	uint8 *updatePos = screenPos;
 
 	if (!_spriteData)
 		return;
@@ -91,7 +90,6 @@ void ConResource::drawToScreen(bool doMask) {
 			spriteData += _spriteData->s_width;
 		}
 	}
-	_system->copyRectToScreen(updatePos, GAME_SCREEN_WIDTH, _x, _y, _spriteData->s_width, _spriteData->s_height);
 }
 
 TextResource::TextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen) :
@@ -129,7 +127,6 @@ void TextResource::drawToScreen(bool doMask) {
 			cpHeight = PAN_CHAR_HEIGHT;
 		for (cnty = 0; cnty < cpHeight; cnty++)
 			memcpy(_screen + (cnty + _oldY) * GAME_SCREEN_WIDTH + _oldX, _oldScreen + cnty * PAN_LINE_WIDTH, cpWidth);
-		_system->copyRectToScreen(_screen + _oldY * GAME_SCREEN_WIDTH + _oldX, GAME_SCREEN_WIDTH, _oldX, _oldY, cpWidth, PAN_CHAR_HEIGHT);
 	}
 	if (!_spriteData) {
 		_oldX = GAME_SCREEN_WIDTH;
@@ -153,7 +150,6 @@ void TextResource::drawToScreen(bool doMask) {
 		copyDest += PAN_LINE_WIDTH;
 		screenPos += GAME_SCREEN_WIDTH;
 	}
-	_system->copyRectToScreen(_screen + _y * GAME_SCREEN_WIDTH + _x, GAME_SCREEN_WIDTH, _x, _y, cpWidth, cpHeight);
 }
 
 ControlStatus::ControlStatus(Text *skyText, OSystem *system, uint8 *scrBuf) {
@@ -176,7 +172,7 @@ void ControlStatus::setToText(const char *newText) {
 		_statusText->flushForRedraw();
 		free(_textData);
 	}
-	DisplayedText disText = _skyText->displayText(tmpLine, sizeof(tmpLine), NULL, true, STATUS_WIDTH, 255);
+	DisplayedText disText = _skyText->displayText(tmpLine, sizeof(tmpLine), NULL, Graphics::kTextAlignCenter, STATUS_WIDTH, 255);
 	_textData = (DataFileHeader *)disText.textData;
 	_statusText->setSprite(_textData);
 	_statusText->drawToScreen(WITH_MASK);
@@ -184,7 +180,7 @@ void ControlStatus::setToText(const char *newText) {
 
 void ControlStatus::setToText(uint16 textNum) {
 	free(_textData);
-	DisplayedText disText = _skyText->displayText(textNum, NULL, true, STATUS_WIDTH, 255);
+	DisplayedText disText = _skyText->displayText(textNum, NULL, Graphics::kTextAlignCenter, STATUS_WIDTH, 255);
 	_textData = (DataFileHeader *)disText.textData;
 	_statusText->setSprite(_textData);
 	_statusText->drawToScreen(WITH_MASK);
@@ -359,6 +355,9 @@ void Control::buttonControl(ConResource *pButton) {
 	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS)
 		strncpy(autoSave, "Zarpyzit/ abtocoxpahehie", 50);
 
+	if (Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR)
+		strncpy(autoSave, "\x99\x87\x86\x85\x98 \x99\x8e\x89\x98\x84 \x80\x85\x88\x85\x8e\x88\x89\x9a", 50);
+
 	if (pButton == NULL) {
 		free(_textSprite);
 		_textSprite = NULL;
@@ -373,9 +372,9 @@ void Control::buttonControl(ConResource *pButton) {
 		if (pButton->_text) {
 			DisplayedText textRes;
 			if (pButton->_text == 0xFFFF) // text for autosave button
-				textRes = _skyText->displayText(autoSave, sizeof(autoSave), NULL, false, PAN_LINE_WIDTH, 255);
+				textRes = _skyText->displayText(autoSave, sizeof(autoSave), NULL, Graphics::kTextAlignLeft, PAN_LINE_WIDTH, 255);
 			else
-				textRes = _skyText->displayText(pButton->_text, NULL, false, PAN_LINE_WIDTH, 255);
+				textRes = _skyText->displayText(pButton->_text, NULL, Graphics::kTextAlignLeft, PAN_LINE_WIDTH, 255);
 			_textSprite = (DataFileHeader *)textRes.textData;
 			_text->setSprite(_textSprite);
 		} else
@@ -407,7 +406,6 @@ void Control::drawCross(uint16 x, uint16 y) {
 		crossPos += CROSS_SZ_X;
 	}
 	bufPos = _screenBuf + y * GAME_SCREEN_WIDTH + x;
-	_system->copyRectToScreen(bufPos, GAME_SCREEN_WIDTH, x, y, CROSS_SZ_X, CROSS_SZ_Y);
 	_text->drawToScreen(WITH_MASK);
 }
 
@@ -417,6 +415,7 @@ void Control::animClick(ConResource *pButton) {
 		_text->flushForRedraw();
 		pButton->drawToScreen(NO_MASK);
 		_text->drawToScreen(WITH_MASK);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 		delay(CLICK_DELAY);
 		if (!_controlPanel)
@@ -425,13 +424,13 @@ void Control::animClick(ConResource *pButton) {
 		_text->flushForRedraw();
 		pButton->drawToScreen(NO_MASK);
 		_text->drawToScreen(WITH_MASK);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 	}
 }
 
 void Control::drawMainPanel() {
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	if (_controlPanel)
 		_controlPanel->drawToScreen(NO_MASK);
 	_exitButton->drawToScreen(NO_MASK);
@@ -470,7 +469,7 @@ void Control::doLoadSavePanel() {
 	saveRestorePanel(false);
 
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_skyScreen->renderControlPanel(_screenBuf);
 	_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars->currentPalette));
@@ -516,6 +515,7 @@ void Control::doControlPanel() {
 
 	while (!quitPanel && !Engine::shouldQuit()) {
 		_text->drawToScreen(WITH_MASK);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 		_mouseClicked = false;
 		delay(ANIM_DELAY);
@@ -549,7 +549,7 @@ void Control::doControlPanel() {
 			buttonControl(NULL);
 	}
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_skyScreen->renderControlPanel(_screenBuf);
 	if (!Engine::shouldQuit())
 		_system->updateScreen();
 	_skyScreen->forceRefresh();
@@ -566,6 +566,11 @@ uint16 Control::handleClick(ConResource *pButton) {
 	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
 		strncpy(quitDos, "B[uti b DOC?", 50);
 		strncpy(restart, "Hobaq irpa?", 50);
+	}
+
+	if (Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR) {
+		strncpy(quitDos, "\x89\x96\x89\x80\x84 \x80\x8c SOD?", 50);
+		strncpy(restart, "\x84\x9a\x87\x8c\x84 \x8e\x87\x83\x99?", 50);
 	}
 
 	switch (pButton->_onClick) {
@@ -650,7 +655,7 @@ bool Control::getYesNo(char *text, uint bufSize) {
 
 	_yesNo->drawToScreen(WITH_MASK);
 	if (text) {
-		DisplayedText dlgLtm = _skyText->displayText(text, bufSize, NULL, true, _yesNo->_spriteData->s_width - 8, 37);
+		DisplayedText dlgLtm = _skyText->displayText(text, bufSize, NULL, Graphics::kTextAlignCenter, _yesNo->_spriteData->s_width - 8, 37);
 		dlgTextDat = (DataFileHeader *)dlgLtm.textData;
 		textY = MPNL_Y + 44 + (28 - dlgTextDat->s_height) / 2;
 	} else
@@ -664,6 +669,7 @@ bool Control::getYesNo(char *text, uint bufSize) {
 			mouseType = wantMouse;
 			_skyMouse->spriteMouse(mouseType, 0, 0);
 		}
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 		delay(ANIM_DELAY);
 		if (!_controlPanel) {
@@ -723,6 +729,7 @@ uint16 Control::doMusicSlide() {
 		}
 		buttonControl(_slide2);
 		_text->drawToScreen(WITH_MASK);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 	}
 	return 0;
@@ -754,6 +761,7 @@ uint16 Control::doSpeedSlide() {
 		}
 		buttonControl(_slide);
 		_text->drawToScreen(WITH_MASK);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 	}
 	SkyEngine::_systemVars->gameSpeed = speedDelay;
@@ -773,6 +781,7 @@ void Control::toggleFx(ConResource *pButton) {
 	ConfMan.setBool("sfx_mute", (SkyEngine::_systemVars->systemFlags & SF_FX_OFF) != 0);
 
 	pButton->drawToScreen(WITH_MASK);
+	_skyScreen->renderControlPanel(_screenBuf);
 	_system->updateScreen();
 }
 
@@ -798,6 +807,7 @@ uint16 Control::toggleText() {
 
 	drawTextCross(flags);
 
+	_skyScreen->renderControlPanel(_screenBuf);
 	_system->updateScreen();
 	return TOGGLED;
 }
@@ -817,6 +827,7 @@ void Control::toggleMusic(ConResource *pButton) {
 	ConfMan.setBool("music_mute", (SkyEngine::_systemVars->systemFlags & SF_MUS_OFF) != 0);
 
 	pButton->drawToScreen(WITH_MASK);
+	_skyScreen->renderControlPanel(_screenBuf);
 	_system->updateScreen();
 }
 
@@ -926,6 +937,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		}
 
 		_text->drawToScreen(WITH_MASK);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 		_mouseClicked = false;
 		delay(ANIM_DELAY);
@@ -946,7 +958,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 					saveGameTexts[_selectedGame] = dirtyBufStr;
 					saveDescriptions(saveGameTexts);
 				} else if (clickRes == NO_DISK_SPACE)
-					displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
+					displayMessage("Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 				quitPanel = true;
 			}
 			_mouseClicked = false;
@@ -994,7 +1006,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 							refreshNames = true;
 						}
 						if (clickRes == NO_DISK_SPACE) {
-							displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
+							displayMessage("Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 							quitPanel = true;
 						}
 						if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
@@ -1067,7 +1079,7 @@ void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFil
 	char cursorChar[2] = "-";
 	DisplayedText textSpr;
 	if (!nameSprites[MAX_ON_SCREEN]) {
-		textSpr = _skyText->displayText(cursorChar, sizeof(cursorChar), NULL, false, 15, 0);
+		textSpr = _skyText->displayText(cursorChar, sizeof(cursorChar), NULL, Graphics::kTextAlignLeft, 15, 0);
 		nameSprites[MAX_ON_SCREEN] = (DataFileHeader *)textSpr.textData;
 	}
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
@@ -1075,10 +1087,10 @@ void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFil
 
 		if (firstNum + cnt == selectedGame) {
 			Common::sprintf_s(nameBuf, "%3d: %s", firstNum + cnt + 1, dirtyString.c_str());
-			textSpr = _skyText->displayText(nameBuf, sizeof(nameBuf), NULL, false, PAN_LINE_WIDTH, 0);
+			textSpr = _skyText->displayText(nameBuf, sizeof(nameBuf), NULL, Graphics::kTextAlignStart, PAN_LINE_WIDTH, 0);
 		} else {
 			Common::sprintf_s(nameBuf, "%3d: %s", firstNum + cnt + 1, saveGameNames[firstNum + cnt].c_str());
-			textSpr = _skyText->displayText(nameBuf, sizeof(nameBuf), NULL, false, PAN_LINE_WIDTH, 37);
+			textSpr = _skyText->displayText(nameBuf, sizeof(nameBuf), NULL, Graphics::kTextAlignStart, PAN_LINE_WIDTH, 37);
 		}
 		nameSprites[cnt] = (DataFileHeader *)textSpr.textData;
 		if (firstNum + cnt == selectedGame) {
@@ -1103,7 +1115,6 @@ void Control::showSprites(DataFileHeader **nameSprites, bool allowSave) {
 				drawResource->setXY(GAME_NAME_X + _enteredTextWidth + 1, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT + 4);
 				drawResource->drawToScreen(WITH_MASK);
 			}
-			_system->copyRectToScreen(_screenBuf + (GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT) * GAME_SCREEN_WIDTH + GAME_NAME_X, GAME_SCREEN_WIDTH, GAME_NAME_X, GAME_NAME_Y + cnt * PAN_CHAR_HEIGHT, PAN_LINE_WIDTH, PAN_CHAR_HEIGHT);
 		} else
 			drawResource->drawToScreen(NO_MASK);
 	}
@@ -1145,7 +1156,7 @@ bool Control::isControlPanelOpen() {
 	return _controlPanel;
 }
 
-int Control::displayMessage(const char *altButton, const char *message, ...) {
+int Control::displayMessage(const char *message, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -1153,7 +1164,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	vsnprintf(buf, STRINGBUFLEN, message, va);
 	va_end(va);
 
-	GUI::MessageDialog dialog(buf, "OK", altButton);
+	GUI::MessageDialog dialog(buf);
 	int result = dialog.runModal();
 	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
 	return result;
@@ -1174,7 +1185,7 @@ void Control::saveDescriptions(const Common::StringArray &list) {
 		delete outf;
 	}
 	if (ioFailed)
-		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
+		displayMessage("Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
 }
 
 uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename, bool isAutosave) {
@@ -1377,16 +1388,16 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 	LODSD(srcPos, size);
 	LODSD(srcPos, saveRev);
 	if (saveRev > SAVE_FILE_REVISION) {
-		displayMessage(0, "Unknown save file revision (%d)", saveRev);
+		displayMessage("Unknown save file revision (%d)", saveRev);
 		return RESTORE_FAILED;
 	} else if (saveRev < OLD_SAVEGAME_TYPE) {
-		displayMessage(0, "This saved game version is unsupported.");
+		displayMessage("This saved game version is unsupported.");
 		return RESTORE_FAILED;
 	}
 	LODSD(srcPos, gameVersion);
 	if (gameVersion != SkyEngine::_systemVars->gameVersion) {
 		if ((!SkyEngine::isCDVersion()) || (gameVersion < 365)) { // cd versions are compatible
-			displayMessage(NULL, "This saved game was created by\n"
+			displayMessage("This saved game was created by\n"
 				"Beneath a Steel Sky v0.0%03d\n"
 				"It cannot be loaded by this version (v0.0%3d)",
 				gameVersion, SkyEngine::_systemVars->gameVersion);
@@ -1474,7 +1485,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	*(uint32 *)saveData = TO_LE_32(infSize);
 
 	if (inf->read(saveData+4, infSize-4) != infSize-4) {
-		displayMessage(NULL, "Can't read from file '%s'", filename.c_str());
+		displayMessage("Can't read from file '%s'", filename.c_str());
 		free(saveData);
 		delete inf;
 		return RESTORE_FAILED;
@@ -1500,7 +1511,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 	_savedCharSet = _skyText->giveCurrentCharSet();
 	_skyText->fnSetFont(2);
 
-	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+	_skyScreen->renderControlPanel(_screenBuf);
 	_system->updateScreen();
 
 	if (SkyEngine::_systemVars->gameVersion < 331)
@@ -1524,7 +1535,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars->currentPalette));
 	} else {
 		memset(_screenBuf, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-		_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
+		_skyScreen->renderControlPanel(_screenBuf);
 		_system->updateScreen();
 		_skyScreen->showScreen(_skyScreen->giveCurrent());
 		_skyScreen->setPalette(60111);
@@ -1619,14 +1630,17 @@ void Control::showGameQuitMsg() {
 	screenData = _skyScreen->giveCurrent();
 
 	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
-		_skyText->displayText(_quitTexts[8 * 2 + 0], sizeof(_quitTexts[8 * 2 + 0]), textBuf1, true, 320, 255);
-		_skyText->displayText(_quitTexts[8 * 2 + 1], sizeof(_quitTexts[8 * 2 + 1]), textBuf2, true, 320, 255);
+		_skyText->displayText(_quitTexts[8 * 2 + 0], sizeof(_quitTexts[8 * 2 + 0]), textBuf1, Graphics::kTextAlignCenter, 320, 255);
+		_skyText->displayText(_quitTexts[8 * 2 + 1], sizeof(_quitTexts[8 * 2 + 1]), textBuf2, Graphics::kTextAlignCenter, 320, 255);
 	} else if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL) { // Not translated in original
-		_skyText->displayText(_quitTexts[0], sizeof(_quitTexts[0]), textBuf1, true, 320, 255);
-		_skyText->displayText(_quitTexts[1], sizeof(_quitTexts[1]), textBuf2, true, 320, 255);
+		_skyText->displayText(_quitTexts[0], sizeof(_quitTexts[0]), textBuf1, Graphics::kTextAlignCenter, 320, 255);
+		_skyText->displayText(_quitTexts[1], sizeof(_quitTexts[1]), textBuf2, Graphics::kTextAlignCenter, 320, 255);
+	} else if (Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR) {
+		_skyText->displayText(_quitTexts[SKY_HEBREW * 2 + 0], sizeof(_quitTexts[SKY_HEBREW * 2 + 0]), textBuf1, Graphics::kTextAlignCenter, 320, 255);
+		_skyText->displayText(_quitTexts[SKY_HEBREW * 2 + 1], sizeof(_quitTexts[SKY_HEBREW * 2 + 1]), textBuf2, Graphics::kTextAlignCenter, 320, 255);
 	} else {
-		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 0], sizeof(_quitTexts[SkyEngine::_systemVars->language * 2 + 0]), textBuf1, true, 320, 255);
-		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 1], sizeof(_quitTexts[SkyEngine::_systemVars->language * 2 + 1]), textBuf2, true, 320, 255);
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 0], sizeof(_quitTexts[SkyEngine::_systemVars->language * 2 + 0]), textBuf1, Graphics::kTextAlignCenter, 320, 255);
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 1], sizeof(_quitTexts[SkyEngine::_systemVars->language * 2 + 1]), textBuf2, Graphics::kTextAlignCenter, 320, 255);
 	}
 	uint8 *curLine1 = textBuf1 + sizeof(DataFileHeader);
 	uint8 *curLine2 = textBuf2 + sizeof(DataFileHeader);
@@ -1648,7 +1662,7 @@ void Control::showGameQuitMsg() {
 	free(textBuf2);
 }
 
-char Control::_quitTexts[18][35] = {
+char Control::_quitTexts[20][45] = {
 	"Game over player one",
 	"BE VIGILANT",
 	"Das Spiel ist aus.",
@@ -1666,7 +1680,9 @@ char Control::_quitTexts[18][35] = {
 	"Game over player one",
 	"BE VIGILANT",
 	"Irpa okohseha, irpok 1",
-	"JYD\x96 JDITELEH"
+	"JYD\x96 JDITELEH",
+	"\x84\x8E\x99\x87\x97 \x90\x82\x8e\x98 \x99\x87\x97\x8F \x8E\x91\x94\x98 \x80\x87\x9A",
+	"\x84\x89\x85 \x92\x98\x90\x89\x89\x8D"
 };
 
 uint8 Control::_crossImg[594] = {

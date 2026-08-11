@@ -171,10 +171,6 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 	_fixedTextWindowExit = FIXED(Window_Exit);
 	_fixedTextWindowUp   = FIXED(Window_Up);
 	_fixedTextWindowDown = FIXED(Window_Down);
-
-	_hotkeyWindowExit = toupper(_fixedTextWindowExit[0]);
-	_hotkeyWindowUp   = toupper(_fixedTextWindowUp[0]);
-	_hotkeyWindowDown = toupper(_fixedTextWindowDown[0]);
 }
 
 void ScalpelTalk::talkTo(const Common::String &filename) {
@@ -424,7 +420,7 @@ OpcodeReturn ScalpelTalk::cmdDisplayInfoLine(const byte *&str) {
 }
 
 OpcodeReturn ScalpelTalk::cmdElse(const byte *&str) {
-	// If this is encountered here, it means that a preceeding IF statement was found,
+	// If this is encountered here, it means that a preceding IF statement was found,
 	// and evaluated to true. Now all the statements for the true block are finished,
 	// so skip over the block of code that would have executed if the result was false
 	_wait = 0;

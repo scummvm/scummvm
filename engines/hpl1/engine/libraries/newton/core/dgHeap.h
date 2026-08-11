@@ -231,7 +231,7 @@ template <class OBJECT, class KEY>
 void dgDownHeap<OBJECT, KEY>::Push(OBJECT &obj, KEY key) {
 	dgInt32 i;
 	dgInt32 j;
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 //	NEWTON_ASSERT (m_curCount < m_maxCount);
 	dgInt32 cc = dgHeapBase<OBJECT, KEY>::m_curCount;
 	dgInt32 cm = dgHeapBase<OBJECT, KEY>::m_maxCount;
@@ -401,7 +401,7 @@ void dgUpHeap<OBJECT, KEY>::Push(OBJECT &obj, KEY key) {
 	dgInt32 i;
 	dgInt32 j;
 
-#ifdef _DEBUG
+#if 0 && defined(_DEBUG) // NEWTON_ASSERT is disabled so this whole calculation is useless
 	//  NEWTON_ASSERT (m_curCount < m_maxCount);
 	dgInt32 cc = dgHeapBase<OBJECT, KEY>::m_curCount;
 	dgInt32 cm = dgHeapBase<OBJECT, KEY>::m_maxCount;

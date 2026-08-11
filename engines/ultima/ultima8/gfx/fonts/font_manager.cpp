@@ -19,14 +19,12 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/file.h"
-
-#include "ultima/ultima.h"
-#include "ultima/ultima8/misc/common_types.h"
-
 #include "ultima/ultima8/gfx/fonts/font_manager.h"
 
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "graphics/fonts/ttf.h"
+#include "ultima/ultima.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/gfx/fonts/shape_font.h"
 #include "ultima/ultima8/gfx/fonts/font_shape_archive.h"
@@ -34,8 +32,6 @@
 #include "ultima/ultima8/gfx/fonts/jp_font.h"
 #include "ultima/ultima8/gfx/palette.h"
 #include "ultima/ultima8/gfx/palette_manager.h"
-
-#include "graphics/fonts/ttf.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -69,9 +65,8 @@ void FontManager::resetGameFonts() {
 		delete _ttFonts[i];
 	_ttFonts.clear();
 
-	TTFFonts::iterator iter;
-	for (iter = _ttfFonts.begin(); iter != _ttfFonts.end(); ++iter)
-		delete iter->_value;
+	for (auto &i : _ttfFonts)
+		delete i._value;
 	_ttfFonts.clear();}
 
 Font *FontManager::getGameFont(unsigned int fontnum,
@@ -90,6 +85,7 @@ Font *FontManager::getTTFont(unsigned int fontnum) {
 
 
 Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int pointsize, bool antialiasing) {
+#ifdef USE_FREETYPE2
 	TTFId id;
 	id._filename = filename;
 	id._pointSize = pointsize;
@@ -100,20 +96,21 @@ Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int point
 	if (iter != _ttfFonts.end())
 		return iter->_value;
 
-	Common::File fontids;
-	if (!fontids.open(filename)) {
+	Common::File* fontids = new Common::File();
+	if (!fontids->open(filename)) {
 		warning("Failed to open TTF: %s", filename.toString().c_str());
+		delete fontids;
 		return nullptr;
 	}
 
-#ifdef USE_FREETYPE2
 	// open font using ScummVM TTF API
 	// Note: The RWops and ReadStream will be deleted by the TTF_Font
 	Graphics::TTFRenderMode mode = antialiasing ? Graphics::kTTFRenderModeNormal : Graphics::kTTFRenderModeMonochrome;
-	Graphics::Font *font = Graphics::loadTTFFont(fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, mode, 0, false);
+	Graphics::Font *font = Graphics::loadTTFFont(fontids, DisposeAfterUse::YES, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, mode, 0, false);
 
 	if (!font) {
 		warning("Failed to open TTF: %s", filename.toString().c_str());
+		delete fontids;
 		return nullptr;
 	}
 

@@ -39,6 +39,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -68,7 +69,7 @@ bool UIText::display(int offsetX, int offsetY) {
 
 	BaseFont *font = _font;
 	if (!font) {
-		font = _gameRef->getSystemFont();
+		font = _game->_systemFont;
 	}
 
 	if (_back) {
@@ -78,7 +79,7 @@ bool UIText::display(int offsetX, int offsetY) {
 		_image->draw(offsetX + _posX, offsetY + _posY, nullptr);
 	}
 
-	if (font && _text) {
+	if (font && _text && _text[0]) {
 		int textOffset;
 		switch (_verticalAlign) {
 		case VAL_TOP:
@@ -93,7 +94,7 @@ bool UIText::display(int offsetX, int offsetY) {
 		font->drawText((byte *)_text, offsetX + _posX, offsetY + _posY + textOffset, _width, _textAlign, _height);
 	}
 
-	//_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, NULL, OffsetX + _posX, OffsetY + _posY, _width, _height, 100, 100, false));
+	//_game->_renderer->_rectList.add(new BaseActiveRect(_game,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 	return STATUS_OK;
 }
@@ -102,9 +103,9 @@ bool UIText::display(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIText::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *) _game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UIText::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIText::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -113,7 +114,7 @@ bool UIText::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing STATIC file '%s'", filename);
+		_game->LOG(0, "Error parsing STATIC file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -171,11 +172,11 @@ bool UIText::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd = 2;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_STATIC) {
-			_gameRef->LOG(0, "'STATIC' keyword expected.");
+			_game->LOG(0, "'STATIC' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -198,30 +199,28 @@ bool UIText::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete _back;
-			_back = new UITiledImage(_gameRef);
+			SAFE_DELETE(_back);
+			_back = new UITiledImage(_game);
 			if (!_back || DID_FAIL(_back->loadFile(params))) {
-				delete _back;
-				_back = nullptr;
+				SAFE_DELETE(_back);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete _image;
-			_image = new BaseSprite(_gameRef);
+			SAFE_DELETE(_image);
+			_image = new BaseSprite(_game);
 			if (!_image || DID_FAIL(_image->loadFile(params))) {
-				delete _image;
-				_image = nullptr;
+				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_FONT:
 			if (_font) {
-				_gameRef->_fontStorage->removeFont(_font);
+				_game->_fontStorage->removeFont(_font);
 			}
-			_font = _gameRef->_fontStorage->addFont(params);
+			_font = _game->_fontStorage->addFont(params);
 			if (!_font) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -229,7 +228,7 @@ bool UIText::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_TEXT:
 			setText(params);
-			_gameRef->expandStringByStringTable(&_text);
+			_game->_stringTable->expand(&_text);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
@@ -269,11 +268,10 @@ bool UIText::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
-			_cursor = new BaseSprite(_gameRef);
+			SAFE_DELETE(_cursor);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -303,11 +301,11 @@ bool UIText::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in STATIC definition");
+		_game->LOG(0, "Syntax error in STATIC definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading STATIC definition");
+		_game->LOG(0, "Error loading STATIC definition");
 		return STATUS_FAILED;
 	}
 
@@ -321,28 +319,28 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "STATIC\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->getFilename()) {
-		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->getFilename());
+	if (_back && _back->_filename && _back->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
 	}
 
-	if (_image && _image->getFilename()) {
-		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getFilename());
+	if (_image && _image->_filename && _image->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 	}
 
-	if (_font && _font->getFilename()) {
-		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	if (_font && _font->_filename && _font->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
 
-	if (_cursor && _cursor->getFilename()) {
-		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	if (_cursor && _cursor->_filename && _cursor->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 
-	if (_text) {
+	if (_text && _text[0]) {
 		buffer->putTextIndent(indent + 2, "TEXT=\"%s\"\n", _text);
 	}
 
@@ -357,7 +355,6 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "TEXT_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		error("UIText::SaveAsText - Unhandled enum");
 		break;
 	}
 
@@ -372,7 +369,7 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "VERTICAL_ALIGN=\"%s\"\n", "center");
 		break;
 	default:
-		error("UIText::SaveAsText - Unhandled enum value: NUM_VERTICAL_ALIGN");
+		break;
 	}
 
 	buffer->putTextIndent(indent + 2, "\n");
@@ -389,7 +386,7 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// scripts
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -433,13 +430,13 @@ bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIText::scGetProperty(const Common::String &name) {
+ScValue *UIText::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("static");
 		return _scValue;
 	}
@@ -447,7 +444,7 @@ ScValue *UIText::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TextAlign") {
+	else if (strcmp(name, "TextAlign") == 0) {
 		_scValue->setInt(_textAlign);
 		return _scValue;
 	}
@@ -455,7 +452,7 @@ ScValue *UIText::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// VerticalAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "VerticalAlign") {
+	else if (strcmp(name, "VerticalAlign") == 0) {
 		_scValue->setInt(_verticalAlign);
 		return _scValue;
 	} else {
@@ -514,7 +511,7 @@ bool UIText::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIText::sizeToFit() {
-	if (_font && _text) {
+	if (_font && _text && _text[0]) {
 		_width = _font->getTextWidth((byte *)_text);
 		_height = _font->getTextHeight((byte *)_text, _width);
 	}

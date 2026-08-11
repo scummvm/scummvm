@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/math.h"
 #include "graphics/renderer.h"
 
 #include "tetraedge/tetraedge.h"

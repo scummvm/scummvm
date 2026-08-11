@@ -21,7 +21,7 @@
 
 //=============================================================================
 //
-// Managed object, which size and contents are defined by user script
+// ScriptUserObject is a dynamic (managed) struct manager.
 //
 //=============================================================================
 
@@ -29,52 +29,51 @@
 #define AGS_ENGINE_DYNOBJ__SCRIPTUSERSTRUCT_H
 
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
-struct ScriptUserObject final : ICCDynamicObject {
+struct ScriptUserObject final : AGSCCDynamicObject {
 public:
-	ScriptUserObject();
+	static const char *TypeName;
 
-protected:
-	virtual ~ScriptUserObject();
+	struct Header {
+		uint32_t Size = 0u;
+		// NOTE: we use signed int for Size at the moment, because the managed
+		// object interface's Serialize() function requires the object to return
+		// negative value of size in case the provided buffer was not large
+		// enough. Since this interface is also a part of Plugin API, we would
+		// need more significant change to program before we could use different
+		// approach.
+	};
 
-public:
-	static ScriptUserObject *CreateManaged(size_t size);
-	void Create(const char *data, AGS::Shared::Stream *in, size_t size);
+	ScriptUserObject() = default;
+	~ScriptUserObject() = default;
+
+	inline static const Header &GetHeader(const void *address) {
+		return reinterpret_cast<const Header &>(*(static_cast<const uint8_t *>(address) - MemHeaderSz));
+	}
+
+	// Create managed struct object and return a pointer to the beginning of a buffer
+	static DynObjectRef Create(size_t size);
 
 	// return the type name of the object
 	const char *GetType() override;
-	int Dispose(const char *address, bool force) override;
-	// serialize the object into BUFFER (which is BUFSIZE bytes)
-	// return number of bytes used
-	int Serialize(const char *address, char *buffer, int bufsize) override;
-	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz);
-
-	// Support for reading and writing object values by their relative offset
-	const char *GetFieldPtr(const char *address, intptr_t offset) override;
-	void    Read(const char *address, intptr_t offset, void *dest, int size) override;
-	uint8_t ReadInt8(const char *address, intptr_t offset) override;
-	int16_t ReadInt16(const char *address, intptr_t offset) override;
-	int32_t ReadInt32(const char *address, intptr_t offset) override;
-	float   ReadFloat(const char *address, intptr_t offset) override;
-	void    Write(const char *address, intptr_t offset, void *src, int size) override;
-	void    WriteInt8(const char *address, intptr_t offset, uint8_t val) override;
-	void    WriteInt16(const char *address, intptr_t offset, int16_t val) override;
-	void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
-	void    WriteFloat(const char *address, intptr_t offset, float val) override;
+	int  Dispose(void *address, bool force) override;
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
 private:
-	// NOTE: we use signed int for Size at the moment, because the managed
-	// object interface's Serialize() function requires the object to return
-	// negative value of size in case the provided buffer was not large
-	// enough. Since this interface is also a part of Plugin API, we would
-	// need more significant change to program before we could use different
-	// approach.
-	int32_t  _size;
-	char *_data;
-};
+	// The size of the array's header in memory, prepended to the element data
+	static const size_t MemHeaderSz = sizeof(Header);
+	// The size of the serialized header
+	static const size_t FileHeaderSz = sizeof(uint32_t) * 0; // no header serialized
 
+	// Savegame serialization
+	// Calculate and return required space for serialization, in bytes
+	size_t CalcSerializeSize(const void *address) override;
+	// Write object data into the provided stream
+	void Serialize(const void *address, AGS::Shared::Stream *out) override;
+};
 
 // Helper functions for setting up custom managed structs based on ScriptUserObject.
 namespace ScriptStructHelpers {

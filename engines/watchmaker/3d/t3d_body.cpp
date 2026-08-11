@@ -108,8 +108,9 @@ void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &strea
 
 void t3dLoadMeshes(t3dBODY *b, uint32 numMeshes, t3dMESH *&ReceiveRipples, uint8 &Mirror, Common::SeekableReadStream &stream) {
 	b->MeshTable.clear();
-	for (uint16 mesh = 0; mesh < numMeshes; mesh++) {
-		b->MeshTable.push_back(t3dMESH(b, stream, ReceiveRipples, Mirror));
+	b->MeshTable.reserve(numMeshes);
+	for (uint32 mesh = 0; mesh < numMeshes; mesh++) {
+		b->MeshTable.push_back(Common::move(t3dMESH(b, stream, ReceiveRipples, Mirror)));
 	}
 }
 
@@ -253,14 +254,10 @@ void LoadCameras(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
 }
 
 /* -----------------10/06/99 16.03-------------------
- *                      LoadBounds
+ *                      loadBounds
  * --------------------------------------------------*/
-void LoadBounds(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
-	/*  FILE *f;*/
-	uint16  i, j, npan, nlev;
-	uint8   ver;
-
-	for (i = 0; i < T3D_MAX_LEVELS; i++)
+void loadBounds(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
+	for (int i = 0; i < T3D_MAX_LEVELS; i++)
 		b->Panel[i] = nullptr;
 	b->CurLevel = 0;
 
@@ -269,30 +266,33 @@ void LoadBounds(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
 		warning("File %s not found", pname);
 		return ;
 	}
-	if ((ver = stream->readByte()) != BNDFILEVERSION) {
+	uint8 ver = stream->readByte();
+	if (ver != BNDFILEVERSION) {
 		warning("BND File Version Error: loaded %d.\tRequired %d", ver, BNDFILEVERSION);
-		return ;
+		return;
 	}
-	b->NumLevels = nlev = stream->readSint16LE();
+	uint16 nlev = stream->readSint16LE();
+	b->NumLevels = nlev;
 	if (nlev > T3D_MAX_LEVELS) {
 		warning("Too much Floor Levels in %s: %d instead of %d", pname, b->NumLevels, T3D_MAX_LEVELS);
 		b->NumLevels = nlev = T3D_MAX_LEVELS;
 	}
 
-	for (j = 0; j < nlev; j++) {
-		b->NumPanels[j] = npan = stream->readSint16LE();
+	for (int j = 0; j < nlev; j++) {
+		uint16 npan = stream->readSint16LE();
+		b->NumPanels[j] = npan;
 		b->PanelHeight[j] = stream->readFloatLE() * SCALEFACTOR;
-		b->Panel[j] = new t3dPAN[npan + 4 * T3D_MAX_CHARACTERS];        // lascia anche un po' di spazio per eventuali aggiunte
+		b->Panel[j] = new t3dPAN[npan + 4 * T3D_MAX_CHARACTERS];        // also leave some space for any additions
 
-		for (i = 0; i < npan; i++) {
-			b->Panel[j][i].x1 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].z1 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].x2 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].z2 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].bx1 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].bz1 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].bx2 = stream->readFloatLE() * SCALEFACTOR;
-			b->Panel[j][i].bz2 = stream->readFloatLE() * SCALEFACTOR;
+		for (int i = 0; i < npan; i++) {
+			b->Panel[j][i].a.x = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].a.z = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].b.x = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].b.z = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].backA.x = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].backA.z = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].backB.x = stream->readFloatLE() * SCALEFACTOR;
+			b->Panel[j][i].backB.z = stream->readFloatLE() * SCALEFACTOR;
 			b->Panel[j][i].near1 = stream->readSint16LE();
 			b->Panel[j][i].near2 = stream->readSint16LE();
 		}
@@ -551,15 +551,7 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 	//decodeLoaderFlags(_LoaderFlags);
 	if (!(_LoaderFlags & T3D_NOBOUNDS)) {                                                        // Carica Bounds
 		auto bndName = workdirs.join(workdirs._bndDir, pname, "bnd");
-		/*
-		strcpy(Name, workdirs._bndDir.c_str());
-		strcat(Name, pname);
-		len = strlen(Name);
-		Name[len - 3] = 'b';
-		Name[len - 2] = 'n';
-		Name[len - 1] = 'd';
-		 */
-		LoadBounds(game.workDirs, bndName.c_str(), this);
+		loadBounds(game.workDirs, bndName.c_str(), this);
 	}
 	if (!(_LoaderFlags & T3D_NOCAMERAS)) {                                                       // Carica Camere
 		auto cameraName = constructPath(workdirs._camDir, pname, "cam");

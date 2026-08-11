@@ -62,7 +62,7 @@ void cFileSearcher::AddDirectory(tString asPath, tString asMask) {
 	asPath = cString::ToLowerCase(cString::ReplaceCharTo(asPath, "\\", "/"));
 
 	tStringSetIt it = m_setLoadedDirs.find(asPath);
-	// If the path is not allready added, add it!
+	// If the path is not already added, add it!
 	if (it == m_setLoadedDirs.end()) {
 		m_setLoadedDirs.insert(asPath);
 

@@ -51,7 +51,6 @@ int32 gr_font_write(Buffer *target, const char *out_string, int32 x, int32 y,
 int32 gr_font_string_width(char *out_string, int32 auto_spacing = 1);
 int32 gr_font_string_width(const Common::String &str, int32 auto_spacing = 1);
 
-//Font *gr_font_file_read(const char *fontName);
 Font *gr_font_load(const char *fontName);
 
 void font_set_colors(uint8 alt1, uint8 alt2, uint8 foreground);

@@ -58,7 +58,7 @@ typedef void (Screen::*ViewPortRestorePtr)(ViewPortResource *);
 
 class Screen: public Graphics::Screen {
 public:
-	byte _VGAColors[PALETTE_SIZE];
+	byte _VGAColors[Graphics::PALETTE_SIZE];
 	PictureResource *_backgroundPage;
 	int _SVGAMode;
 	ViewPortListResource *_viewPortListPtr;

@@ -1,4 +1,4 @@
 # This file is included from the main "configure" script
-# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine agos "AGOS" yes "agos2" "AGOS 1 games"
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
+add_engine agos "AGOS" yes "agos2" "AGOS 1 games" "" "midi fmtowns_pc98_audio"
 add_engine agos2 "AGOS 2 games" yes "" "" "highres"

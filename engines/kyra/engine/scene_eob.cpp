@@ -205,26 +205,24 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		setLevelPalettes(_currentLevel);
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
-			uint16 *src = (uint16*)_screen->getPalette(0).getData();
-			_screen->createFadeTable16bit(src, (uint16*)_greenFadingTable, 4, 75);
-			_screen->createFadeTable16bit(src, (uint16*)_blackFadingTable, 12, 200);
-			_screen->createFadeTable16bit(src, (uint16*)_blueFadingTable, 10, 85);
-			_screen->createFadeTable16bit(src, (uint16*)_lightBlueFadingTable, 11, 125);
-			_screen->createFadeTable16bit(src, (uint16*)_greyFadingTable, 0, 85);
+			const uint16 *src = reinterpret_cast<const uint16 *>(_screen->getPalette(0).getData());
+			_screen->createHiColorFadeTable(src, _greenFadingTable, 4, 75);
+			_screen->createHiColorFadeTable(src, _blackFadingTable, 12, 200);
+			_screen->createHiColorFadeTable(src, _blueFadingTable, 10, 85);
+			_screen->createHiColorFadeTable(src, _lightBlueFadingTable, 11, 125);
+			_screen->createHiColorFadeTable(src, _greyFadingTable, 0, 85);
 			_screen->setScreenPalette(_screen->getPalette(0));
 		} else if (_configRenderMode != Common::kRenderCGA && _flags.platform != Common::kPlatformAmiga && _flags.platform != Common::kPlatformSegaCD && !(_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformPC98)) {
 			Palette backupPal(256);
 			backupPal.copy(_screen->getPalette(0), 224, 32, 224);
 			_screen->getPalette(0).fill(224, 32, 0x3F);
 			uint8 *src = _screen->getPalette(0).getData();
-
-			_screen->createFadeTable(src, _greenFadingTable, 4, 75);
-			_screen->createFadeTable(src, _blackFadingTable, 12, 200);
-			_screen->createFadeTable(src, _blueFadingTable, 10, 85);
-			_screen->createFadeTable(src, _lightBlueFadingTable, 11, 125);
-
+			_screen->createColorFadeTable(src, _greenFadingTable, 4, 75);
+			_screen->createColorFadeTable(src, _blackFadingTable, 12, 200);
+			_screen->createColorFadeTable(src, _blueFadingTable, 10, 85);
+			_screen->createColorFadeTable(src, _lightBlueFadingTable, 11, 125);
 			_screen->getPalette(0).copy(backupPal, 224, 32, 224);
-			_screen->createFadeTable(src, _greyFadingTable, 12, 85);
+			_screen->createColorFadeTable(src, _greyFadingTable, 12, 85);
 			_screen->setFadeTable(_greyFadingTable);
 			if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA)
 				_screen->setScreenPalette(_screen->getPalette(0));
@@ -314,7 +312,7 @@ void EoBCoreEngine::addLevelItems() {
 	for (int i = 0; i < 1024; i++)
 		_levelBlockProperties[i].drawObjects = 0;
 
-	for (int i = 0; i < 600; i++) {
+	for (uint i = 0; i < _items.size(); i++) {
 		if (_items[i].level != _currentLevel || _items[i].block <= 0)
 			continue;
 		setItemPosition((Item *)&_levelBlockProperties[_items[i].block & 0x3FF].drawObjects, _items[i].block, i, _items[i].pos);
@@ -466,12 +464,17 @@ void EoBCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
 
 void EoBCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int decIndex, int specialType, int flags) {
 	_wllVmpMap[wallIndex] = vmpIndex;
-	for (int i = 0; i < 6; i++) {
-		for (int ii = 0; ii < 10; ii++) {
-			if (_characters[i].events[ii] == -57)
-				spellCallback_start_trueSeeing();
+
+	if (wallIndex == 46) {
+		// This is not part of the original code. The original will discard the true seeing spell effect when entering a new level.
+		for (int i = 0; i < 6; i++) {
+			for (int ii = 0; ii < 10; ii++) {
+				if (_characters[i].events[ii] == -57 && _characters[i].timers[ii])
+					spellCallback_start_trueSeeing();
+			}
 		}
 	}
+
 	_wllShapeMap[wallIndex] = _mappedDecorationsCount + 1;
 	_specialWallTypes[wallIndex] = specialType;
 	_wllWallFlags[wallIndex] = flags ^ 4;

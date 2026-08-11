@@ -79,11 +79,14 @@ Common::Rect Window::getAbsoluteRect() const {
 
 void Window::sendMessage(Message *message) {
 	switch (message->getMessageType()) {
+	case kMessageTypeActionStart:
+		onActionStart(((ActionStartMessage *)message)->getAction(), ((ActionStartMessage *)message)->getFlags());
+		break;
+	case kMessageTypeActionEnd:
+		onActionEnd(((ActionEndMessage *)message)->getAction(), ((ActionEndMessage *)message)->getFlags());
+		break;
 	case kMessageTypeKeyUp:
 		onKeyUp(((KeyUpMessage *)message)->getKeyState(), ((KeyUpMessage *)message)->getFlags());
-		break;
-	case kMessageTypeKeyDown:
-		onKeyDown(((KeyDownMessage *)message)->getKeyState(), ((KeyDownMessage *)message)->getFlags());
 		break;
 	case kMessageTypeTimer:
 		onTimer(((TimerMessage *)message)->getTimer());
@@ -141,12 +144,12 @@ void Window::updateWindow() {
 	onPaint();
 
 	// Draw children
-	for (WindowList::iterator it = _children.begin(); it != _children.end(); ++it)
-		(*it)->updateWindow();
+	for (auto &child : _children)
+		child->updateWindow();
 
 	// Draw top-most children
-	for (WindowList::iterator it = _topMostChildren.begin(); it != _topMostChildren.end(); ++it)
-		(*it)->updateWindow();
+	for (auto &child : _topMostChildren)
+		child->updateWindow();
 }
 
 void Window::setWindowPos(const Window *insertAfter, int x, int y, int width, int height, uint flags) {

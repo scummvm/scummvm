@@ -186,12 +186,10 @@ void Room40::move_train(int16 mode) {
 		// Train sprite
 		_G(det)->setStaticPos(11, ax, 62, false, false);
 
-		// Chewy and Howard sprite
-		// The original offsets were ax and 62, which for some reason
-		// aren't shown correctly here (perhaps bad correction coords).
-		// Thus, adjust the coordinates here.
+		// Chewy and Howard sprite. Positioned like the train, with the
+		// sprite's own correction offset (26, 18) added.
 		if (mode && _G(gameState).ChewyAni == CHEWY_PUMPKIN)
-			_G(det)->setStaticPos(12, ax + 27, 161, false, true);
+			_G(det)->setStaticPos(12, ax, 62, false, true);
 
 		if (!delay) {
 			lx += SPEED;
@@ -292,7 +290,7 @@ void Room40::setup_func() {
 					_G(det)->stopDetail(17);
 					_G(gameState).R40HoUse = true;
 					_G(person_end_phase)[P_CHEWY] = P_RIGHT;
-					startSetAILWait(10, 1, ANI_FRONT);
+					startDetailWait(10, 1, ANI_FRONT);
 					_G(person_end_phase)[P_HOWARD] = P_RIGHT;
 					startAadWait(224);
 					_G(gameState).R40PoliceAway = true;
@@ -330,7 +328,7 @@ int16 Room40::use_mr_pumpkin() {
 				action_ret = true;
 				autoMove(5, P_CHEWY);
 				delInventory(_G(cur)->getInventoryCursor());
-				startSetAILWait(15, 1, ANI_FRONT);
+				startDetailWait(15, 1, ANI_FRONT);
 				start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(200);
 				break;
@@ -402,11 +400,11 @@ int16 Room40::use_schalter(int16 aad_nr) {
 		}
 
 		_G(det)->hideStaticSpr(15);
-		startSetAILWait(12, 1, ANI_FRONT);
+		startDetailWait(12, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
 		startAadWait(aad_nr);
 		_G(det)->del_static_ani(14);
-		startSetAILWait(13, 1, ANI_FRONT);
+		startDetailWait(13, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(15);
 		_G(room)->set_timer_status(255, TIMER_START);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
@@ -552,7 +550,7 @@ void Room40::bmeister_dia(int16 aad_nr) {
 	_G(det)->del_static_ani(0);
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->stopDetail(0);
-	startSetAILWait(1, 1, ANI_FRONT);
+	startDetailWait(1, 1, ANI_FRONT);
 	_G(det)->set_static_ani(2, -1);
 
 	if (aad_nr == 237) {

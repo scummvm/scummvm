@@ -33,15 +33,15 @@ namespace Sci {
 enum ResourceCompression {
 	kCompUnknown = -1,
 	kCompNone = 0,
-	kCompLZW,
-	kCompHuffman,
-	kCompLZW1,			// LZW-like compression used in SCI01 and SCI1
-	kCompLZW1View,		// Comp3 + view Post-processing
-	kCompLZW1Pic,		// Comp3 + pic Post-processing
+	kCompLZW,           // LZW compression used in SCI0
+	kCompHuffman,       // Huffman compression used for vector pics
+	kCompLZW1,			// LZW compression used in SCI01 and SCI1
+	kCompLZW1View,		// LZW + view post-processing
+	kCompLZW1Pic,		// LZW + pic post-processing
+	kCompDCL            // SCI11
 #ifdef ENABLE_SCI32
-	kCompSTACpack,	// ? Used in SCI32
+,	kCompSTACpack       // SCI32
 #endif
-	kCompDCL
 };
 
 /**
@@ -63,7 +63,11 @@ public:
 
 	virtual ~Decompressor() {}
 
-
+	/**
+	 * Unpack data from source stream to destination buffer.
+	 *
+	 * @return SCI_ERROR_NONE on success, non-zero on error
+	 */
 	virtual int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 protected:
@@ -73,7 +77,6 @@ protected:
 	 * @param dest		destination stream to write to
 	 * @param nPacked	size of packed data
 	 * @param nUnpacket	size of unpacked data
-	 * @return 0 on success, non-zero on error
 	 */
 	virtual void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
@@ -107,7 +110,6 @@ protected:
 	 * Write one byte into _dest stream
 	 * @param b byte to put
 	 */
-
 	virtual void putByte(byte b);
 
 	/**
@@ -142,43 +144,23 @@ protected:
 };
 
 /**
- * LZW-like decompressor for SCI01/SCI1.
- * TODO: Needs clean-up of post-processing fncs
+ * LZW decompressor for SCI0/01/1
  */
 class DecompressorLZW : public Decompressor {
 public:
-	DecompressorLZW(int nCompression) : _numbits(0), _curtoken(0), _endtoken(0) {
-		_compression = nCompression;
-	}
-	void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
+	DecompressorLZW(ResourceCompression compression) : _compression(compression) {}
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
 
 protected:
-	enum {
-		PIC_OPX_EMBEDDED_VIEW = 1,
-		PIC_OPX_SET_PALETTE = 2,
-		PIC_OP_OPX = 0xfe
-	};
-	// unpacking procedures
-	// TODO: unpackLZW and unpackLZW1 are similar and should be merged
-	int unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 	int unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
-	// functions to post-process view and pic resources
-	void reorderPic(byte *src, byte *dest, int dsize);
-	void reorderView(byte *src, byte *dest);
-	void decodeRLE(byte **rledata, byte **pixeldata, byte *outbuffer, int size);
-	int getRLEsize(byte *rledata, int dsize);
-	void buildCelHeaders(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
+	// post-processing functions for view and pic resources
+	static void unpackView(byte *src, byte *dest);
+	static void unpackPic(byte *src, byte *dest, int unpackedSize);
+	static void decodeRLE(byte **rleData, byte **pixelData, byte *dest, int decodedSize);
+	static void skipRLE(byte **rleData, int decodedSize);
 
-	// decompressor data
-	struct Tokenlist {
-		byte data;
-		uint16 next;
-	};
-	uint16 _numbits;
-	uint16 _curtoken, _endtoken;
-	int _compression;
+	ResourceCompression _compression;
 };
 
 /**
@@ -190,17 +172,20 @@ public:
 };
 
 #ifdef ENABLE_SCI32
+
 /**
  * STACpack decompressor for SCI32
  */
 class DecompressorLZS : public Decompressor {
 public:
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) override;
+
 protected:
 	int unpackLZS();
 	uint32 getCompLen();
 	void copyComp(int offs, uint32 clen);
 };
+
 #endif
 
 } // End of namespace Sci

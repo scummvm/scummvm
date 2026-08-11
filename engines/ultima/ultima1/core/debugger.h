@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_ENGINE_DEBUGGER_H
 #define ULTIMA_ULTIMA1_ENGINE_DEBUGGER_H
 
-#include "ultima/shared/engine/debugger.h"
+#include "gui/debugger.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -30,7 +30,7 @@ namespace Ultima1 {
 /**
  * Debugger base class
  */
-class Debugger : public Shared::Debugger {
+class Debugger : public GUI::Debugger {
 private:
 	bool cmdSpell(int argc, const char **argv);
 public:

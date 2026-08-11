@@ -192,12 +192,15 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 }
 
 Common::Error KyraEngine_LoK::init() {
-	if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderPC9801)
+	if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderPC98_16c)
 		_screen = new Screen_LoK_16(this, _system);
 	else
 		_screen = new Screen_LoK(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+
+	Common::Error err = _screen->setResolution();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	setDebugger(new Debugger_LoK(this));
 
@@ -488,7 +491,7 @@ void KyraEngine_LoK::mainLoop() {
 
 		if (_deathHandler != -1) {
 			snd_playWanderScoreViaMap(0, 1);
- 			snd_playSoundEffect(49);
+			snd_playSoundEffect(49);
 			if (_flags.platform == Common::kPlatformMacintosh)
 				_sound->playTrack(15);
 			_screen->setMouseCursor(1, 1, _shapes[0]);

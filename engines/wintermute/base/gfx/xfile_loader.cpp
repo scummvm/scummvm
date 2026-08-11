@@ -723,6 +723,11 @@ bool XFileLoader::decompressMsZipData() {
 	if (!readLE32(&decompressedSize)) {
 		error = true;
 	} else {
+		if (decompressedSize < 16) {
+			delete[] compressedBlock;
+			delete[] decompressedBlock;
+			return false;
+		}
 		decompressedSize -= 16;
 	}
 
@@ -966,7 +971,7 @@ bool XFileLoader::parseObjectParts(XObject *object) {
 				return false;
 			}
 
-			objClass->_vertices = new XVector[objClass->_numVertices];
+			objClass->_vertices = new XVector3[objClass->_numVertices];
 			for (uint n = 0; n < objClass->_numVertices; n++) {
 				if (!getFloat(objClass->_vertices[n]._x) ||
 				    !getFloat(objClass->_vertices[n]._y) ||
@@ -1016,7 +1021,7 @@ bool XFileLoader::parseObjectParts(XObject *object) {
 				return false;
 			}
 
-			objClass->_normals = new XVector[objClass->_numNormals];
+			objClass->_normals = new XVector3[objClass->_numNormals];
 			for (uint n = 0; n < objClass->_numNormals; n++) {
 				if (!getFloat(objClass->_normals[n]._x) ||
 				    !getFloat(objClass->_normals[n]._y) ||

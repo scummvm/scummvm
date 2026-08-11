@@ -81,7 +81,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class CGE2MetaEngine : public AdvancedMetaEngine {
+class CGE2MetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "cge2";
@@ -96,7 +96,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
@@ -130,13 +130,13 @@ SaveStateList CGE2MetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
+	for (const auto &filename : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(filename->c_str() + filename->size() - 3);
+		int slotNum = atoi(filename.c_str() + filename.size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 99) {
 
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
+			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
 			if (file) {
 				CGE2::SavegameHeader header;
 
@@ -201,50 +201,62 @@ SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int s
 	return SaveStateDescriptor();
 }
 
-void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
+bool CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
-	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Sfinx", _("Game Keymappings"));
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Sfinx", _("Game keymappings"));
 
 	Common::Action *act;
 
-	act = new Common::Action("Game Info", _("Game Info"));
-	act->setKeyEvent(KEYCODE_F1);
-	act->addDefaultInputMapping("F1");
+	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
 	keymap->addAction(act);
 
-	act = new Common::Action("Save Game", _("Save Game"));
-	act->setKeyEvent(KEYCODE_F5);
+	act = new Common::Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	keymap->addAction(act);
+
+	// I18N: This closes the Dialog/text box.
+	act = new Common::Action("CLOSEBOX", _("Close the dialog box"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	keymap->addAction(act);
+
+	act = new Common::Action(kStandardActionSave, _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
 	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	keymap->addAction(act);
 
-	act = new Common::Action("Load Game", _("Load Game"));
-	act->setKeyEvent(KEYCODE_F7);
+	act = new Common::Action(kStandardActionLoad, _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
 	act->addDefaultInputMapping("F7");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	keymap->addAction(act);
+
+	// I18N: 3-4 dialogs of game version info, (translation) credits, etc.
+	act = new Common::Action("INFO", _("Game info"));
+	act->setCustomEngineActionEvent(kActionInfo);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 	keymap->addAction(act);
 
 	// I18N: This opens a Quit Prompt where you have to choose
 	// [Confirm] or [Continue Playing] lines with Left Click.
-	act = new Common::Action("Quit Prompt", _("Quit Prompt"));
-	act->setKeyEvent(KeyState(KEYCODE_x, 0, KBD_ALT));
+	act = new Common::Action("QUIT", _("Quit prompt"));
+	act->setCustomEngineActionEvent(kActionQuit);
 	act->addDefaultInputMapping("A+x");
-	keymap->addAction(act);
-
-	// I18N: This directly quits the game.
-	act = new Common::Action("Quit", _("Quit"));
-	act->setKeyEvent(KEYCODE_F10);
-	act->addDefaultInputMapping("F10");
-	keymap->addAction(act);
-
-	// I18N: This closes the Dialogue/text box.
-	act = new Common::Action("Close the box", _("Close the Dialogue box"));
-	act->setKeyEvent(KEYCODE_ESCAPE);
-	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 	keymap->addAction(act);
 
 	return Keymap::arrayOf(keymap);

@@ -40,9 +40,15 @@ enum {
 };
 
 struct PrinceGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	PrinceGameType gameType;
 };
+
+#define GAMEOPTION_TTS_OBJECTS				GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS_SPEECH				GUIO_GAMEOPTIONS2
+#define GAMEOPTION_TTS_MISSING_VOICE        GUIO_GAMEOPTIONS3
 
 } // End of namespace Prince
 

@@ -47,6 +47,8 @@
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Bbvs {
 
 static const BBPoint kInventorySlotPositions[] = {
@@ -238,8 +240,22 @@ bool BbvsEngine::hasFeature(EngineFeature f) const {
 void BbvsEngine::updateEvents() {
 	Common::Event event;
 
+	if (_currSceneNum == kCredits) {
+		Common::Keymapper *keymapper = _eventMan->getKeymapper();
+		keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	} else {
+		Common::Keymapper *keymapper = _eventMan->getKeymapper();
+		keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	}
+
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_customAction = event.customType;
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			_customAction = kActionNone;
+			break;
 		case Common::EVENT_KEYDOWN:
 			_keyCode = event.kbd.keycode;
 			break;
@@ -325,10 +341,10 @@ void BbvsEngine::updateGame() {
 	bool done;
 
 	do {
-		done = !update(_mouseX, _mouseY, _mouseButtons, _keyCode);
+		done = !update(_mouseX, _mouseY, _mouseButtons, _customAction);
 		_mouseButtons &= ~kLeftButtonClicked;
 		_mouseButtons &= ~kRightButtonClicked;
-		_keyCode = Common::KEYCODE_INVALID;
+		_customAction = kActionNone;
 	} while (--inputTicks && _playVideoNumber == 0 && _gameTicks > 0 && !done);
 
 	if (!done && _playVideoNumber == 0 && _gameTicks > 0) {
@@ -357,7 +373,7 @@ void BbvsEngine::updateBackgroundSounds() {
 	}
 }
 
-bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCode keyCode) {
+bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::CustomEventType customAction) {
 
 	if (_bootSaveSlot >= 0) {
 		loadGameState(_bootSaveSlot);
@@ -391,22 +407,21 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 				_verbPos.y = _cameraPos.y + 208;
 			_gameState = kGSVerbs;
 		} else {
-			switch (keyCode) {
-			case Common::KEYCODE_SPACE:
-			case Common::KEYCODE_i:
+			switch (customAction) {
+			case kActionInventory:
 				_inventoryButtonIndex = -1;
 				_gameState = kGSInventory;
 				return true;
-			case Common::KEYCODE_l:
+			case kActionLook:
 				_currVerbNum = kVerbLook;
 				break;
-			case Common::KEYCODE_t:
+			case kActionTalk:
 				_currVerbNum = kVerbTalk;
 				break;
-			case Common::KEYCODE_u:
+			case kActionUse:
 				_currVerbNum = kVerbUse;
 				break;
-			case Common::KEYCODE_w:
+			case kActionWalk:
 				_currVerbNum = kVerbWalk;
 				break;
 			default:
@@ -422,16 +437,15 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 		saveSnapshot();
 		if (mouseButtons & kRightButtonClicked)
 			_currVerbNum = kVerbUse;
-		switch (keyCode) {
-		case Common::KEYCODE_SPACE:
-		case Common::KEYCODE_i:
+		switch (customAction) {
+		case kActionInventory:
 			_gameState = kGSScene;
 			stopSpeech();
 			return true;
-		case Common::KEYCODE_l:
+		case kActionLook:
 			_currVerbNum = kVerbLook;
 			break;
-		case Common::KEYCODE_u:
+		case kActionUse:
 			_currVerbNum = kVerbUse;
 			break;
 		default:
@@ -459,7 +473,7 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 		_activeItemType = kITEmpty;
 		_activeItemIndex = 0;
 		_mouseCursorSpriteIndex = _gameModule->getGuiSpriteIndex(9);
-		if (keyCode == Common::KEYCODE_ESCAPE)
+		if (customAction == kActionEscape)
 			skipCurrAction();
 		else
 			updateCommon();

@@ -119,7 +119,7 @@ private:
 	void processInitSound(reg_t obj);
 	void processDisposeSound(reg_t obj);
 	void processUpdateCues(reg_t obj);
-	int getSoundResourceId(reg_t obj);
+	uint16 getSoundResourceId(reg_t obj);
 	
 	/**
 	 * Returns true if the sound is already playing and shouldn't be interrupted.

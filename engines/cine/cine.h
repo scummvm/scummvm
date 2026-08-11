@@ -30,6 +30,8 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/events.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 
@@ -64,8 +66,8 @@
  * all known game variants. Based on Yaz0r's engine.
  *
  * Cinematique evo.2 status:
- * This generation supports Operation Stealth, originally developed by Yaz0r for
- * French variant of the game which heared to be completable.
+ * This generation supports Operation Stealth, originally developed by Yaz0r,
+ * for a french variant of the game which was said to be completable.
  * Later the work was renewed as part of GSoC'08, by Kari Salminen, but it has not
  * yet been finished. The game is not completable.
  *
@@ -91,6 +93,43 @@ struct VolumeResource {
 };
 
 typedef Common::HashMap<Common::String, Common::Array<VolumeResource> > StringToVolumeResourceArrayHashMap;
+
+enum CINEAction {
+	kActionNone,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveUpLeft,
+	kActionMoveUpRight,
+	kActionMoveDownLeft,
+	kActionMoveDownRight,
+	kActionGameSpeedDefault,
+	kActionGameSpeedSlower,
+	kActionGameSpeedFaster,
+	kActionExamine,
+	kActionTake,
+	kActionInventory,
+	kActionUse,
+	kActionActivate,
+	kActionSpeak,
+	kActionActionMenu,
+	kActionSystemMenu,
+	kActionCollisionPage,
+	kActionMouseLeft,
+	kActionMouseRight,
+	kActionExitSonyScreen,
+	kActionMenuOptionUp,
+	kActionMenuOptionDown
+};
+
+enum TTSLanguage {
+	kEnglish = 0,
+	kFrench = 1,
+	kGerman = 2,
+	kSpanish = 3,
+	kItalian = 4
+};
 
 class CineConsole;
 
@@ -129,6 +168,12 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action);
+	void stopTextToSpeech();
+#ifdef USE_TTS
+	void mouseOverButton();
+#endif
+
 	const CINEGameDescription *_gameDescription;
 	Common::File _partFileHandle;
 
@@ -139,6 +184,12 @@ public:
 	TextHandler _textHandler;
 
 	bool _restartRequested;
+
+	Common::String _previousSaid;
+	TTSLanguage _ttsLanguage;
+	bool _copyProtectionTextScreen;
+	bool _copyProtectionColorScreen;
+	bool _saveInputMenuOpen;
 
 private:
 	void initialize();
@@ -192,6 +243,7 @@ public:
 
 	Common::String _commandBuffer;
 	Common::Array<Common::KeyState> _keyInputList;
+	Common::Array<Common::CustomEventType> _actionList;
 };
 
 extern CineEngine *g_cine;
@@ -222,10 +274,10 @@ enum {
 };
 
 enum {
-	kCineDebugScript    = 1 << 0,
-	kCineDebugPart      = 1 << 1,
-	kCineDebugSound     = 1 << 2,
-	kCineDebugCollision = 1 << 3
+	kCineDebugScript = 1,
+	kCineDebugPart,
+	kCineDebugSound,
+	kCineDebugCollision,
 };
 
 enum {

@@ -64,6 +64,12 @@ protected:
 	Common::Array<Common::String> _textLines;
 	Common::Array<Common::Rect> _hotspots;
 
+	// When set, drawAllText records the dest rect of every drawn mark glyph
+	// (in _fullSurface coords, in draw order). The notebook uses this to hit-
+	// test the tasklist's clickable checkboxes.
+	bool _recordMarkHotspots = false;
+	Common::Array<Common::Rect> _markHotspots;
+
 	// Data for displaying images inside text; used in Hypertext
 	Common::Path _imageName;
 	Common::Array<uint16> _imageLineIDs;

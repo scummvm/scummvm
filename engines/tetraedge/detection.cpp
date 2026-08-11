@@ -33,7 +33,7 @@ const DebugChannelDef TetraedgeMetaEngineDetection::debugFlagList[] = {
 };
 
 TetraedgeMetaEngineDetection::TetraedgeMetaEngineDetection() : AdvancedMetaEngineDetection(Tetraedge::GAME_DESCRIPTIONS,
-	sizeof(ADGameDescription), Tetraedge::GAME_NAMES) {
+	Tetraedge::GAME_NAMES) {
 	_flags = kADFlagMatchFullPaths;
 }
 
@@ -46,6 +46,8 @@ static const Common::Language *getGameLanguages() {
 		Common::ES_ESP,
 		Common::RU_RUS,
 		Common::HE_ISR,  // This is a Fan-translation, which requires additional patch
+		Common::JA_JPN,
+		Common::PL_POL,
 		Common::UNK_LANG
 	};
 	return languages;
@@ -58,9 +60,6 @@ DetectedGame TetraedgeMetaEngineDetection::toDetectedGame(const ADDetectedGame &
 	// game language. All games support multiple languages.  Only Syberia 1
 	// supports RU.
 	for (const Common::Language *language = getGameLanguages(); *language != Common::UNK_LANG; language++) {
-		// "ru" only present on syberia 1
-		if (game.gameId != "syberia" && *language == Common::RU_RUS)
-			continue;
 		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(*language));
 	}
 

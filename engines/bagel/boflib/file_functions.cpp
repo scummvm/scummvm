@@ -25,15 +25,16 @@
 #include "common/fs.h"
 #include "common/macresman.h"
 #include "bagel/boflib/file_functions.h"
-#include "bagel/boflib/string.h"
-#include "bagel/baglib/bagel.h"
 #include "bagel/bagel.h"
+#include "bagel/afxwin.h"
 
 namespace Bagel {
 
 bool fileExists(const char *pszFileName) {
 	if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
 		return Common::MacResManager::exists(pszFileName);
+	} else if (!g_engine->isSpaceBar()) {
+		return MFC::FileExists(pszFileName);
 	} else {
 		return Common::File::exists(pszFileName);
 	}
@@ -58,6 +59,18 @@ int32 fileLength(const char *pszFileName) {
 char *fileGetFullPath(char *pszDstBuf, const char *pszSrcBuf) {
 	Common::strcpy_s(pszDstBuf, MAX_DIRPATH, pszSrcBuf);
 	return pszDstBuf;
+}
+
+void fixPathName(CBofString &s) {
+	// Remove any homedir prefix. In ScummVM, all paths are relative
+	// to the game folder automatically
+	char *p = strstr(s.getBuffer(), HOMEDIR_TOKEN);
+	if (p != nullptr)
+		s = p + strlen(HOMEDIR_TOKEN) + 1;
+
+	// Replace any backslashes with forward slashes
+	while ((p = strchr(s.getBuffer(), '\\')) != nullptr)
+		* p = '/';
 }
 
 const char *formPath(const char *dir, const char *pszFile) {

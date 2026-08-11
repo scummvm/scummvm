@@ -1,0 +1,30 @@
+This directory contains vendored files stored in
+Git-LFS (https://git-lfs.github.com/).  In particular:
+
+- cdrkit-1.1.11-fedora40-patched.tar.gz
+  A vendored version of cdrkit (and more specifically, genisoimage) used to
+  run the tests.  We vendor this because the different versions of genisoimage
+  actually put things in different places on the ISO, and this messes with the
+  tests checking where things are in the ISO.  This doesn't mean that pycdlib
+  can only open ISOs from genisoimage; it just means the tests expect that
+  particular layout.  This file was created by downloading the cdrkit source
+  RPM from koji (https://kojipkgs.fedoraproject.org//packages/cdrkit/1.1.11/54.fc40/src/cdrkit-1.1.11-54.fc40.src.rpm,
+  though that URI may not exist anymore).  The package was then installed
+  (rpm -ivh /path/to/*.src.rpm), and then the original source tarball with
+  patches was prepared (rpmbuild -bp cdrkit.spec).  The "icedax" directory was
+  then removed, as it is not required and needs additional dependencies.  It was
+  then tarred back up.
+
+- cdrkit-1.1.11-fedora29-patched.tar.gz
+  A vendored version of cdrkit (and more specifically, genisoimage) used to
+  run the tests.  We vendor this because the different versions of genisoimage
+  actually put things in different places on the ISO, and this messes with the
+  tests checking where things are in the ISO.  This doesn't mean that pycdlib
+  can only open ISOs from genisoimage; it just means the tests expect that
+  particular layout.  This file was created by downloading the cdrkit source
+  RPM from koji (https://kojipkgs.fedoraproject.org//packages/cdrkit/1.1.11/39.fc29/src/cdrkit-1.1.11-39.fc29.src.rpm,
+  though that URI may not exist anymore).  The package was then installed
+  (rpm -ivh /path/to/*.src.rpm), and then the original source tarball was
+  exploded (tar -xvf ~/rpmbuild/cdrkit-1.1.11.tar.gz), and then the patches
+  from the source RPM were applied in order.  The "icedax" directory was also
+  removed from CMakeLists.txt After all of that, it was tarred back up.

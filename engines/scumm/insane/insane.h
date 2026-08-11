@@ -49,27 +49,29 @@ namespace Scumm {
 #define EN_BEN       9 // used only with handler
 
 class Insane {
- public:
+public:
+	// Used by the Rebel Assault subclasses; _player is only set later, by setSmushPlayer().
+	Insane();
 	Insane(ScummEngine_v7 *scumm);
-	~Insane();
+	virtual ~Insane();
 
 	void setSmushParams(int speed);
 	void setSmushPlayer(SmushPlayer *player);
 	void runScene(int arraynum);
 
-	void procPreRendering();
-	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+	virtual void procPreRendering(byte *renderBitmap);
+	virtual void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						   int32 setupsan13, int32 curFrame, int32 maxFrame);
-	void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+	virtual void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags, int16 par1,
 				  int16 par2, int16 par3, int16 par4);
-	void procSKIP(int32 subSize, Common::SeekableReadStream &b);
+	virtual void procSKIP(int32 subSize, Common::SeekableReadStream &b);
 	void escapeKeyHandler();
 
 	bool isInsaneActive() { return _insaneIsRunning; }
 	void syncCurrentSanFlags();
 
- private:
+ protected:
 
 	ScummEngine_v7 *_vm;
 	SmushPlayer *_player;
@@ -154,7 +156,7 @@ class Insane {
 	int16 _smush_frameNum2;
 	byte _smush_earlyFluContents[0x31a];
 	int16 _enemyState[10][10];
-	byte _iactBits[0x80];
+	byte _iactBits[0x401];
 	int16 _mainRoadPos;
 	int16 _posBrokenCar;
 	int16 _posBrokenTruck;
@@ -180,7 +182,7 @@ class Insane {
 	struct enemy {
 		int32 handler;
 		int32 initializer;
-		int16 occurences;
+		int16 occurrences;
 		int32 maxdamage;
 		int32 isEmpty;
 		int32 weapon;
@@ -333,7 +335,7 @@ class Insane {
 	void init_actStruct(int actornum, int actnum, int32 actorval, byte state,
 						  int32 room, int32 animtilt, int32 tilt, int32 frame);
 	void init_enemyStruct(int n, int32 handler, int32 initializer,
-							   int16 occurences, int32 maxdamage, int32 isEmpty,
+							   int16 occurrences, int32 maxdamage, int32 isEmpty,
 							   int32 field_14, int32 sound, const char *filename,
 							   int32 costume4, int32 costume6, int32 costume5,
 							   int16 field_2C, int32 field_30, int32 field_34);
@@ -395,7 +397,6 @@ class Insane {
 	void prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8);
 	int32 calcBenDamage(bool arg_0, bool arg_4);
 	int32 weaponDamage(int32 actornum);
-	void proc47(int32 actornum, int32 val);
 	bool weaponBenIsEffective();
 	bool actor1StateFlags(int state);
 	bool actor0StateFlags1(int state);
@@ -422,7 +423,7 @@ class Insane {
 	void actor10Reaction(int32 buttons);
 	int32 actionEnemy();
 	int32 processKeyboard();
-	int32 processMouse();
+	virtual int32 processMouse();
 	void setEnemyAnimation(int32 actornum, int anim);
 	void chooseEnemyWeaponAnim(int32 buttons);
 	void switchEnemyWeapon();
@@ -448,12 +449,18 @@ class Insane {
 	void iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
-	bool isBitSet(int n);
-	void setBit(int n);
+	virtual bool isBitSet(int n);
+	virtual void setBit(int n);
 	void clearBit(int n);
 	void chooseEnemy();
 	void removeEmptyEnemies();
 	void removeEnemyFromMetList(int32);
+
+ public:
+
+	virtual void loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
+		// Nothing by default
+	};
 };
 } // End of namespace Insane
 

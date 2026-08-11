@@ -22,10 +22,9 @@
 #ifndef ZVISION_SAFE_CONTROL_H
 #define ZVISION_SAFE_CONTROL_H
 
-#include "zvision/scripting/control.h"
-
 #include "common/list.h"
 #include "common/rect.h"
+#include "zvision/scripting/control.h"
 
 namespace Video {
 	class VideoDecoder;

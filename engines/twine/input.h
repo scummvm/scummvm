@@ -39,18 +39,10 @@ extern const char *holomapKeyMapId;
 
 enum TwinEActionType {
 	Pause,
-	NextRoom,
-	PreviousRoom,
-	ApplyCellingGrid,
-	IncreaseCellingGridIndex,
-	DecreaseCellingGridIndex,
 	DebugGridCameraPressUp,
 	DebugGridCameraPressDown,
 	DebugGridCameraPressLeft,
 	DebugGridCameraPressRight,
-	DebugPlaceActorAtCenterOfScreen,
-	DebugMenu,
-	DebugMenuActivate,
 	QuickBehaviourNormal,
 	QuickBehaviourAthletic,
 	QuickBehaviourAggressive,
@@ -116,6 +108,7 @@ private:
 	Common::String _currentKeyMap;
 
 	uint8 _actionStates[TwinEActionType::Max]{false};
+	Common::Point _lastMousePos;
 public:
 	Input(TwinEEngine *engine);
 
@@ -137,7 +130,8 @@ public:
 	 */
 	bool isActionActive(TwinEActionType actionType, bool onlyFirstTime = true) const;
 
-	bool isMouseHovering(const Common::Rect &rect) const;
+	void resetLastHoveredMousePosition();
+	bool isMouseHovering(const Common::Rect &rect, bool onlyIfMoved = true);
 
 	/**
 	 * @brief If the action is active, the internal state is reset and a following call of this method won't return
@@ -150,7 +144,7 @@ public:
 
 	bool isQuickBehaviourActionActive() const;
 	bool isMoveOrTurnActionActive() const;
-	bool isHeroActionActive() const;
+	bool isHeroActionActive() const; // MyFire & F_SPACE
 	bool resetHeroActions();
 
 	/**

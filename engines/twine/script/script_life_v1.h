@@ -34,6 +34,7 @@ public:
 	static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lMIDI_OFF(TwinEEngine *engine, LifeScriptContext &ctx);
+	static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx);
 
 	ScriptLifeV1(TwinEEngine *engine);
 };

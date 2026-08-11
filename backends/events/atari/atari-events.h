@@ -45,6 +45,7 @@ private:
 	AtariGraphicsManager *_graphicsManager = nullptr;
 
 	bool _lmbDown = false;
+	bool _mmbDown = false;
 	bool _rmbDown = false;
 
 	bool _lshiftActive = false;
@@ -52,6 +53,8 @@ private:
 	bool _ctrlActive = false;
 	bool _altActive = false;
 	bool _capslockActive = false;
+	bool _scrolllockActive = false;
+	bool _numlockActive = false;
 
 	byte _unshiftToAscii[128];
 	byte _shiftToAscii[128];

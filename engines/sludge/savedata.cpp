@@ -19,9 +19,11 @@
  *
  */
 
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "sludge/sludge.h"
 #include "sludge/newfatal.h"
 #include "sludge/savedata.h"
 #include "sludge/variable.h"
@@ -31,11 +33,12 @@
 namespace Sludge {
 
 const char CustomSaveHelper::UTF8_CHECKER[] = {'U', 'N', '\xef', '\xbf', '\xbd', 'L', 'O', '\xef', '\xbf', '\xbd', 'C', 'K', 'E', 'D', '\0'};
+const char CustomSaveHelper::CP1252_CHECKER[] = {'U', 'N', '\xA3', 'L', 'O', '\xE5', 'C', 'K', 'E', 'D', '\0'};
 uint16 CustomSaveHelper::_saveEncoding = false;
 char CustomSaveHelper::_encode1 = 0;
 char CustomSaveHelper::_encode2 = 0;
 
-void CustomSaveHelper::writeStringEncoded(const Common::String checker, Common::WriteStream *stream) {
+void CustomSaveHelper::writeStringEncoded(const Common::String &checker, Common::WriteStream *stream) {
 	int len = checker.size();
 
 	stream->writeUint16BE(len);
@@ -101,7 +104,20 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (fp == NULL) {
-		return fatal("No such file", filename); //TODO: false value
+		// Try looking inside game folder
+		Common::File *f = new Common::File();
+		if (!f->open(Common::Path(filename)))
+			return fatal("No such file", filename); //TODO: false value
+		fp = f;
+
+		// WORKAROUND: For Otto Experiment, when looking for the otto.ini
+		// for the first time, include CRLF line ending to checker for both encoded and ASCII
+		// data. This is needed since the original otto.ini that comes with the installer
+		// have CRLF line ending.
+		Common::String gameId = g_sludge->getGameId();
+		if (gameId == "otto") {
+			checker = _saveEncoding ? "[Custom data (encoded)]\r\n" : "[Custom data (ASCII)]\r\n";
+		}
 	}
 
 	_encode1 = (byte)_saveEncoding & 255;
@@ -116,7 +132,11 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 
 	if (_saveEncoding) {
 		checker = readStringEncoded(fp);
-		if (checker != UTF8_CHECKER) {
+
+		// ScummVM used UTF8_CHECKER when writing files before March 2026 due to a conversion error.
+		// For backward compatibility, we still accept UTF8_CHECKER when reading files.
+		// Files written after March 2026 use CP1252_CHECKER, the correct encoding.
+		if ((checker != CP1252_CHECKER) && (checker != UTF8_CHECKER)) {
 			delete fp;
 			return fatal(LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
 		}
@@ -186,7 +206,7 @@ bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variabl
 
 	if (_saveEncoding) {
 		fp->writeString("[Custom data (encoded)]\r\n");
-		writeStringEncoded(UTF8_CHECKER, fp);
+		writeStringEncoded(CP1252_CHECKER, fp);
 	} else {
 		fp->writeString("[Custom data (ASCII)]\n");
 	}

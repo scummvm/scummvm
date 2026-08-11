@@ -266,7 +266,7 @@ int ScummEngine_v8::readVar(uint var) {
 	// which was disabled for international releases, if the user decides so.
 	if (_enableCOMISong &&
 		VAR_LANGUAGE != 0xFF && var == VAR_LANGUAGE &&
-		vm.slot[_currentScript].number == 319 && _currentRoom == 52)
+		currentScriptSlotIs(319) && _currentRoom == 52)
 		return 0;
 
 	if (!(var & 0xF0000000)) {
@@ -313,7 +313,9 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 		_scummVars[var] = value;
 
 		if ((_varwatch == (int)var) || (_varwatch == 0)) {
-			if (vm.slot[_currentScript].number < 100)
+			if (_currentScript == 0xFF)
+				debugC(DEBUG_VARS, "vars[%d] = %d", var, value);
+			else if (vm.slot[_currentScript].number < 100)
 				debugC(DEBUG_VARS, "vars[%d] = %d (via script-%d)", var, value, vm.slot[_currentScript].number);
 			else
 				debugC(DEBUG_VARS, "vars[%d] = %d (via room-%d-%d)", var, value, _currentRoom, vm.slot[_currentScript].number);
@@ -1149,7 +1151,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		_saveTemporaryState = false;
 		break;
 	case 28:	// stampShotEnqueue
-		debug(0, "o8_kernelSetFunctions: stampShotEnqueue(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+		debug(8, "o8_kernelSetFunctions: stampShotEnqueue(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		stampShotEnqueue(args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 29:	// setKeyScript

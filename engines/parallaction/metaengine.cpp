@@ -43,19 +43,45 @@ Common::Platform Parallaction::getPlatform() const { return _gameDescription->de
 
 } // End of namespace Parallaction
 
-class ParallactionMetaEngine : public AdvancedMetaEngine {
+#ifdef USE_TTS
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+	
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+#endif
+
+class ParallactionMetaEngine : public AdvancedMetaEngine<Parallaction::PARALLACTIONGameDescription> {
 public:
 	const char *getName() const override {
 		return "parallaction";
 	}
 
+#ifdef USE_TTS
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
+	}
+#endif
+
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Parallaction::PARALLACTIONGameDescription *desc) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
 			target = getName();
@@ -79,9 +105,7 @@ bool Parallaction::Parallaction::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-Common::Error ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)desc;
-
+Common::Error ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const Parallaction::PARALLACTIONGameDescription *gd) const {
 	switch (gd->gameType) {
 	case Parallaction::GType_Nippon:
 		*engine = new Parallaction::Parallaction_ns(syst, gd);
@@ -111,13 +135,13 @@ Common::KeymapArray ParallactionMetaEngine::initKeymaps(const char *target) cons
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeymap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -185,8 +209,8 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 
 int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+bool ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PARALLACTION)

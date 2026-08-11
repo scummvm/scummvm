@@ -23,7 +23,7 @@ int main( int argc, char *argv[] )
             fprintf( stderr, "Cannot find class %s\n", argv[1] );
         return 2;
     }
-    
+
     return CxxTest::StdioPrinter().run();
 }
 

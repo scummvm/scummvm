@@ -22,19 +22,45 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION8_ROOM807_H
 #define M4_RIDDLE_ROOMS_SECTION8_ROOM807_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section8/section8_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room807 : public Room {
+class Room807 : public Section8Room {
 public:
-	Room807() : Room() {}
+	Room807() : Section8Room() {}
 	~Room807() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	int32 _807newFacing = 0;
+	int32 _dword1A194C = 0;
+	int32 _dword1A1954 = 0;
+
+	int32 _field34 = 0;
+	int32 _field38 = 0;
+
+	int32 _mctd82aSeries = 0;
+	int32 _ripLooksAroundInAweSeries = 0;
+	int32 _ripLowReachPos1Series = 0;
+	int32 _ripPos3LookAroundSeries = 0;
+	int32 _ripTalkerPos5Series = 0;
+	int32 _ripTrekHiReach2HndSeries = 0;
+
+	machine *_807BeamMach = nullptr;
+	machine *_807Crnk2Mach = nullptr;
+	machine *_807DoorMach = nullptr;
+	machine *_807Mc01Mach = nullptr;
+	machine *_807PostMach = nullptr;
+	machine *_mcTrekMach = nullptr;
+	machine *_safariShadowMach = nullptr;
 };
 
 } // namespace Rooms

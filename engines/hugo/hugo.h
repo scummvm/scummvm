@@ -22,6 +22,8 @@
 #ifndef HUGO_HUGO_H
 #define HUGO_HUGO_H
 
+#include "common/text-to-speech.h"
+
 #include "engines/engine.h"
 
 // This include is here temporarily while the engine is being refactored.
@@ -29,7 +31,7 @@
 #include "hugo/detection.h"
 
 #define HUGO_DAT_VER_MAJ 0                          // 1 byte
-#define HUGO_DAT_VER_MIN 42                         // 1 byte
+#define HUGO_DAT_VER_MIN 44                         // 1 byte
 #define DATAALIGNMENT    4
 
 namespace Common {
@@ -64,9 +66,10 @@ static const int kViewSizeX = kXPix;                // Width of window view
 static const int kViewSizeY = 192;                  // Height of window view. In original game: 184
 static const int kDibOffY = 0;                      // Offset into dib SrcY (old status line area). In original game: 8
 static const int kCompLineSize = 40;                // number of bytes in a compressed line
-static const int kMaxLineSize = kCompLineSize - 2;  // Max length of user input line
+static const int kMaxTextCols = 40;                 // Number of text lines in display
 static const int kMaxTextRows = 25;                 // Number of text lines in display
-static const int kMaxBoxChar = kMaxLineSize * kMaxTextRows; // Max chars on screen
+static const int kMaxLineSize = kMaxTextCols - 2;   // Max length of user input line
+static const int kMaxBoxChar = kMaxTextCols * kMaxTextRows; // Max chars on screen
 static const int kOvlSize = kCompLineSize * kYPix;  // Size of an overlay file
 static const int kStateDontCare = 0xFF;             // Any state allowed in command verb
 static const int kHeroIndex = 0;                    // In all enums, HERO is the first element
@@ -90,17 +93,38 @@ typedef byte Icondib[kXPix * kInvDy];               // Icon bar dib
 typedef byte Viewdib[(long)kXPix * kYPix];          // Viewport dib
 typedef byte Overlay[kOvlSize];                     // Overlay file
 
+enum HUGOAction {
+	kActionNone,
+	kActionEscape,
+	kActionMoveTop,
+	kActionMoveBottom,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveTopRight,
+	kActionMoveTopLeft,
+	kActionMoveBottomRight,
+	kActionMoveBottomLeft,
+	kActionUserHelp,
+	kActionToggleSound,
+	kActionRepeatLine,
+	kActionSaveGame,
+	kActionRestoreGame,
+	kActionNewGame,
+	kActionInventory,
+	kActionToggleTurbo
+};
+
 enum HugoDebugChannels {
-	kDebugSchedule  = 1 <<  0,
-	kDebugEngine    = 1 <<  1,
-	kDebugDisplay   = 1 <<  2,
-	kDebugMouse     = 1 <<  3,
-	kDebugParser    = 1 <<  4,
-	kDebugFile      = 1 <<  5,
-	kDebugRoute     = 1 <<  6,
-	kDebugInventory = 1 <<  7,
-	kDebugObject    = 1 <<  8,
-	kDebugMusic     = 1 <<  9
+	kDebugSchedule = 1,
+	kDebugEngine,
+	kDebugDisplay,
+	kDebugMouse,
+	kDebugParser,
+	kDebugFile,
+	kDebugRoute,
+	kDebugInventory,
+	kDebugObject,
+	kDebugMusic,
 };
 
 enum HugoRegistered {
@@ -172,6 +196,12 @@ struct Hotspot {
 	int16      _viewx, _viewy, _direction;          // Used in auto-route mode
 };
 
+enum TtsOptions {
+	kTtsNoSpeech        = 0,
+	kTtsSpeech          = (1 << 0),
+	kTtsReplaceNewlines = ((1 << 1) | kTtsSpeech)
+};
+
 class FileManager;
 class Scheduler;
 class Screen;
@@ -221,8 +251,17 @@ public:
 	const char *_episode;
 	Common::Path _picDir;
 
-	Command _statusLine;
-	Command _scoreLine;
+	Command _statusLine; // text at top row of screen
+	Command _promptLine; // text at bottom row of screen
+
+#ifdef USE_TTS
+	bool _voiceScoreLine;
+	bool _voiceSoundSetting;
+	bool _queueAllVoicing;
+	int _previousScore;
+
+	Common::String _previousSaid;
+#endif
 
 	const HugoGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -231,6 +270,7 @@ public:
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
 	bool isPacked() const;
+	bool useWindowsInterface() const;
 
 	// Used by the qsort function
 	static HugoEngine &get() {
@@ -263,10 +303,20 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 	bool hasFeature(EngineFeature f) const override;
-	const char *getCopyrightString() const;
+	const char *getCopyrightString1() const;
+	const char *getCopyrightString2() const;
 
 	Common::String getSaveStateName(int slot) const override;
 	uint16 **loadLongArray(Common::SeekableReadStream &in);
+
+	Common::KeyCode notifyBox(const Common::String &text, bool protect = false, TtsOptions ttsOptions = kTtsReplaceNewlines);
+	Common::String promptBox(const Common::String &text);
+	bool yesNoBox(const Common::String &text, bool useFirstKey);
+	void takeObjectBox(const char *name);
+
+#ifdef USE_TTS
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT);
+#endif
 
 	FileManager *_file;
 	Scheduler *_scheduler;
@@ -298,6 +348,7 @@ private:
 	GameType _gameType;
 	Common::Platform _platform;
 	bool _packedFl;
+	bool _windowsInterfaceFl;
 
 	int _score;                                     // Holds current score
 	int _maxscore;                                  // Holds maximum score

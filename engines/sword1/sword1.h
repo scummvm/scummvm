@@ -27,6 +27,7 @@
 #include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/util.h"
+#include "common/events.h"
 #include "sword1/sworddefs.h"
 #include "sword1/console.h"
 
@@ -42,6 +43,14 @@ struct ADGameDescription;
  */
 
 namespace Sword1 {
+
+enum SWORD1Action {
+	kActionNone,
+	kActionPause,
+	kActionQuit,
+	kActionMainPanel,
+	kActionEscape
+};
 
 enum ControlPanelMode {
 	CP_NORMAL = 0,
@@ -174,6 +183,7 @@ private:
 	Common::Point _mouseCoord;
 	uint16 _mouseState;
 	Common::KeyState _keyPressed;
+	Common::CustomEventType _customType;
 
 	ResMan      *_resMan;
 	ObjectMan   *_objectMan;

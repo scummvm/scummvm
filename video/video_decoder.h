@@ -29,6 +29,7 @@
 #include "common/rational.h"
 #include "common/str.h"
 #include "graphics/pixelformat.h"
+#include "image/codec-options.h"
 
 namespace Audio {
 class AudioStream;
@@ -250,6 +251,12 @@ public:
 	int getCurFrame() const;
 
 	/**
+	 * Returns the current frame delay of the video.
+	 * @return the last frame decoded by the video
+	 */
+	int getCurFrameDelay() const;
+
+	/**
 	 * Returns the number of frames in the video.
 	 * @return the number of frames in the video
 	 */
@@ -330,6 +337,12 @@ public:
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 	/**
+	 * Delay/sleep for the specified amount of milliseconds, or until the next
+	 * frame should be displayed.
+	 */
+	void delayMillis(uint msecs);
+
+	/**
 	 * Return the time (in ms) until the next frame should be displayed.
 	 */
 	uint32 getTimeToNextFrame() const;
@@ -399,6 +412,23 @@ public:
 	 * @return true on success, false otherwise
 	 */
 	bool setOutputPixelFormat(const Graphics::PixelFormat &format);
+
+	/**
+	 * Pick the default high color format from a list for videos that convert
+	 * from YUV.
+	 *
+	 * This should be called after loadStream(), but before a decodeNextFrame()
+	 * call. This is enforced.
+	 *
+	 * @param format The preferred output pixel format
+	 * @return true on success, false otherwise
+	 */
+	bool setOutputPixelFormats(const Common::List<Graphics::PixelFormat> &formatList);
+
+	/**
+	 * Set the accuracy of the video decoder
+	 */
+	virtual void setVideoCodecAccuracy(Image::CodecAccuracy accuracy);
 
 	/////////////////////////////////////////
 	// Audio Control
@@ -567,8 +597,8 @@ protected:
 		VideoTrack() {}
 		virtual ~VideoTrack() {}
 
-		TrackType getTrackType() const  { return kTrackTypeVideo; }
-		virtual bool endOfTrack() const;
+		TrackType getTrackType() const override { return kTrackTypeVideo; }
+		bool endOfTrack() const override;
 
 		/**
 		 * Get the width of this track
@@ -588,7 +618,12 @@ protected:
 		/**
 		 * Set the default high color format for videos that convert from YUV.
 		 */
-		virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return false; }
+		virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return format == getPixelFormat(); }
+
+		/**
+		 * Set the image codec accuracy
+		 */
+		virtual void setCodecAccuracy(Image::CodecAccuracy accuracy) {}
 
 		/**
 		 * Get the current frame of this track
@@ -596,6 +631,15 @@ protected:
 		 * @see VideoDecoder::getCurFrame()
 		 */
 		virtual int getCurFrame() const = 0;
+
+		/**
+		 * Get the current frame delay of this track
+		 *
+		 * @see VideoDecoder::getCurFrameDelay()
+		 */
+		virtual int getCurFrameDelay() const {
+			return 0;
+		};
 
 		/**
 		 * Get the frame count of this track
@@ -671,9 +715,9 @@ protected:
 		FixedRateVideoTrack() {}
 		virtual ~FixedRateVideoTrack() {}
 
-		uint32 getNextFrameStartTime() const;
-		virtual Audio::Timestamp getDuration() const;
-		Audio::Timestamp getFrameTime(uint frame) const;
+		uint32 getNextFrameStartTime() const override;
+		Audio::Timestamp getDuration() const override;
+		Audio::Timestamp getFrameTime(uint frame) const override;
 
 		/**
 		 * Get the frame that should be displaying at the given time. This is
@@ -696,9 +740,9 @@ protected:
 		AudioTrack(Audio::Mixer::SoundType soundType);
 		virtual ~AudioTrack() {}
 
-		TrackType getTrackType() const { return kTrackTypeAudio; }
+		TrackType getTrackType() const override { return kTrackTypeAudio; }
 
-		virtual bool endOfTrack() const;
+		bool endOfTrack() const override;
 
 		/**
 		 * Start playing this track
@@ -770,7 +814,7 @@ protected:
 		void setMute(bool mute);
 
 	protected:
-		void pauseIntern(bool shouldPause);
+		void pauseIntern(bool shouldPause) override;
 
 		/**
 		 * Get the AudioStream that is the representation of this AudioTrack
@@ -795,11 +839,11 @@ protected:
 		RewindableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
 		virtual ~RewindableAudioTrack() {}
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 		/**
 		 * Get the RewindableAudioStream pointer to be used by this class
@@ -817,13 +861,13 @@ protected:
 		SeekableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
 		virtual ~SeekableAudioTrack() {}
 
-		bool isSeekable() const { return true; }
-		bool seek(const Audio::Timestamp &time);
+		bool isSeekable() const override { return true; }
+		bool seek(const Audio::Timestamp &time) override;
 
-		Audio::Timestamp getDuration() const;
+		Audio::Timestamp getDuration() const override;
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 		/**
 		 * Get the SeekableAudioStream pointer to be used by this class
@@ -851,7 +895,7 @@ protected:
 
 	protected:
 		Audio::SeekableAudioStream *_stream;
-		Audio::SeekableAudioStream *getSeekableAudioStream() const { return _stream; }
+		Audio::SeekableAudioStream *getSeekableAudioStream() const override { return _stream; }
 	};
 
 	/**
@@ -963,6 +1007,8 @@ protected:
 	 */
 	virtual AudioTrack *getAudioTrack(int index) { return 0; }
 
+	uint getNumTracks() { return _tracks.size(); }
+
 private:
 	// Tracks owned by this VideoDecoder
 	TrackList _tracks;
@@ -974,7 +1020,6 @@ private:
 	Audio::Timestamp _endTime;
 	bool _endTimeSet;
 	Common::Rational _playbackRate;
-	VideoTrack *_nextVideoTrack;
 
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
@@ -995,6 +1040,10 @@ protected:
 
 	Audio::Timestamp _lastTimeChange;
 	int32 _startTime;
+
+	VideoTrack *_nextVideoTrack;
+
+	Image::CodecAccuracy _videoCodecAccuracy;
 
 private:
 	uint32 _pauseLevel;

@@ -107,8 +107,12 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 	// WORKAROUND for bug #3657: Game crash when finishing Indy3 demo.
 	// Script 94 tries to empty the inventory but does so in a bogus way.
+	// (It clears the inventory while iterating it in ascending order.)
 	// This causes it to try to remove object 0 from the inventory.
-	if (_game.id == GID_PASS && obj == 0 && vm.slot[_currentScript].number == 94)
+	// This would then trigger the assert() below.
+	//
+	// Note that the original interpreter did NOT produce an error, here.
+	if (_game.id == GID_PASS && obj == 0 && currentScriptSlotIs(94) && enhancementEnabled(kEnhGameBreakingBugFixes))
 		return;
 
 	// WORKAROUND for bug #6802: assert() was triggered in freddi2.
@@ -117,9 +121,12 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 	// case, it is obj 0. That means two setOwnerOf calls are made with obj 0.
 	// The correct setOwnerOf calls are made afterwards, so just ignoring this
 	// seems to work just fine.
-	if (_game.id == GID_HEGAME && obj == 0 && _currentRoom == 39 && vm.slot[_currentScript].number == 10)
+	if (_game.id == GID_HEGAME && obj == 0 && _currentRoom == 39 && currentScriptSlotIs(10))
 		return;
 
+	// TODO: Should the following assert(), and the ScummEngine::clearOwnerOf()
+	// one, really be used? It looks like some original interpreters let this
+	// through -- but what did they exactly do, in this case?
 	assert(obj > 0);
 
 	if (owner == 0) {
@@ -136,7 +143,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		// The bad code:
 		//   if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
 		// That check makes no sense at all: _inventory only contains 80 items,
-		// which are in the order the player picked up items. We can only
+		// which are in the order the player picked them up. We can only
 		// guess that the SCUMM coders meant to write
 		//   if (ss->where == WIO_INVENTORY && ss->number == obj) {
 		// which would ensure that an object script that nukes itself gets
@@ -311,7 +318,7 @@ int ScummEngine::getState(int obj) {
 		// blowing up the mansion, should they feel the urge to.
 
 		if (_game.id == GID_MANIAC && _game.version != 0 && _game.platform != Common::kPlatformNES && (obj == 182 || obj == 193))
-			_objectStateTable[obj] |= kObjectState_08;
+			_objectStateTable[obj] |= kObjectStateIntrinsic;
 	}
 
 	return _objectStateTable[obj];
@@ -550,7 +557,7 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 int ScummEngine::findObject(int x, int y) {
 	int i, b;
 	byte a;
-	const int mask = (_game.version <= 2) ? kObjectState_08 : 0xF;
+	const int mask = (_game.version <= 2) ? kObjectStateIntrinsic : 0xF;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
@@ -593,7 +600,7 @@ int ScummEngine::findObject(int x, int y) {
 void ScummEngine::drawRoomObject(int i, int arg) {
 	ObjectData *od;
 	byte a;
-	const int mask = (_game.version <= 2) ? kObjectState_08 : 0xF;
+	const int mask = (_game.version <= 2) ? kObjectStateIntrinsic : 0xF;
 
 	od = &_objs[i];
 	if ((i < 1) || (od->obj_nr < 1) || !od->state)
@@ -612,7 +619,7 @@ void ScummEngine::drawRoomObject(int i, int arg) {
 
 void ScummEngine::drawRoomObjects(int arg) {
 	int i;
-	const int mask = (_game.version <= 2) ? kObjectState_08 : 0xF;
+	const int mask = (_game.version <= 2) ? kObjectStateIntrinsic : 0xF;
 
 	if (_game.heversion >= 60) {
 		// In HE games, normal objects are drawn, followed by FlObjects.

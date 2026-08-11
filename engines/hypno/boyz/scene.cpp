@@ -194,6 +194,10 @@ bool BoyzEngine::hoverHotspot(Common::Point mousePos) {
 	if (found) {
 		Hotspot *menu = hots->begin();
 		if (menu->type == MakeMenu && !menu->background.empty()) { // Hihghlight
+			if (selected.rect != _lastHighlighted) {
+				_lastHighlighted = selected.rect;
+				playSound(kMenuHiliteSound, 1);
+			}
 			Graphics::Surface sub = menu->backgroundFrames[2]->getSubArea(selected.rect);
 			drawImage(*menu->backgroundFrames[1], 0, 0, false);
 			renderHighlights(hots);
@@ -202,6 +206,7 @@ bool BoyzEngine::hoverHotspot(Common::Point mousePos) {
 		}
 		return true;
 	}
+	_lastHighlighted = Common::Rect();
 	return false;
 }
 

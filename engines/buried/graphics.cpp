@@ -113,9 +113,7 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	Graphics::Font *font;
 
 	if (stream) {
-		font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome);
-
-		delete stream;
+		font = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, size, Graphics::kTTFSizeModeCharacter, 96, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome);
 	} else {
 		const char *fname;
 		if (bold)
@@ -216,12 +214,12 @@ Graphics::Surface *GraphicsManager::getBitmap(Common::SeekableReadStream *stream
 	// Convert to the screen format, if required
 	if (decoder.getSurface()->format != g_system->getScreenFormat()) {
 		assert(_vm->isTrueColor());
-		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
+		return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette().data(), decoder.getPalette().size());
 	}
 
 	// Remap the palette, if required
-	if (!_vm->isTrueColor() && memcmp(decoder.getPalette() + 3, getDefaultPalette() + 3, 256 - 6) != 0)
-		return remapPalettedFrame(decoder.getSurface(), decoder.getPalette());
+	if (!_vm->isTrueColor() && memcmp(decoder.getPalette().data() + 3, getDefaultPalette() + 3, 256 - 6) != 0)
+		return remapPalettedFrame(decoder.getSurface(), decoder.getPalette().data());
 
 	// Just copy the frame
 	Graphics::Surface *surface = new Graphics::Surface();
@@ -591,7 +589,7 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 	// TODO: Fake a bold version
 	if (stream) {
 		// Force monochrome, since the original uses the bitmap glyphs in the font
-		font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, 96, Graphics::kTTFRenderModeMonochrome);
+		font = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, size, Graphics::kTTFSizeModeCharacter, 96, 96, Graphics::kTTFRenderModeMonochrome);
 	} else {
 		font = Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, Graphics::kTTFSizeModeCharacter, 96, 96, Graphics::kTTFRenderModeMonochrome);
 	}
@@ -599,7 +597,6 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 	if (!font)
 		error("Failed to load MS Gothic font");
 
-	delete stream;
 	return font;
 }
 

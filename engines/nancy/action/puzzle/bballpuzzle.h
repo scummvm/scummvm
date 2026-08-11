@@ -39,9 +39,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-protected:
-	Common::String getRecordTypeName() const override { return "BBallPuzzle"; };
 	bool isViewportRelative() const override { return true; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "BBallPuzzle"; }
 
 	Common::Path _imageName;
 

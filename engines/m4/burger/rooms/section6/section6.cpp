@@ -21,16 +21,18 @@
 
 #include "m4/burger/rooms/section6/section6.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
 static const seriesPlayBreak PLAY1[] = {
-	{  0, 10, nullptr,   1,   0, -1, 2048, 0, 0, 0 },
-	{ 11, 30, "600_011", 2, 255, -1,    0, 0, 0, 0 },
-	{ 31, 33, "600_001", 2, 255, -1,    0, 0, 0, 0 },
-	{ 34, -1, "600_002", 1, 255, -1,    0, 0, 0, 0 },
+	{  0, 10, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 11, 30, "600_011", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 31, 33, "600_001", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 34, -1, "600_002", 1, 255, -1,    0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -67,19 +69,19 @@ void Section6::daemon() {
 	case 6004:
 	case 6005:
 	case 6006:
-		_G(game).new_room = _G(kernel).trigger - 6000 + 600;
+		_G(game).setRoom(_G(kernel).trigger - 6000 + 600);
 		break;
 
 	case 6008:
-		_G(game).new_room = 609;
+		_G(game).setRoom(609);
 		break;
 
 	case 6009:
-		_G(game).new_room = 610;
+		_G(game).setRoom(610);
 		break;
 
 	case 6010:
-		_G(game).new_room = 612;
+		_G(game).setRoom(612);
 		break;
 
 	case 6011:
@@ -346,10 +348,9 @@ void Section6::daemon() {
 			if (_G(executing) == INTERACTIVE_DEMO) {
 				// After having clicked the teleporter/"failed normally" button we end up here
 				// In the DEMO this click leads to the main menu (it does not restart the test sequence)
-				_G(game).new_section = 9;
-				_G(game).new_room = 901;
+				_G(game).setRoom(901);
 			} else {
-				_G(game).new_room = 608;
+				_G(game).setRoom(608);
 			}
 			break;
 
@@ -367,7 +368,7 @@ void Section6::daemon() {
 
 void Section6::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool kibble = player_said("KIBBLE");
+	const bool kibble = player_said("KIBBLE");
 
 	if (player_said("RAY GUN", "BLOCK OF ICE")) {
 		_G(flags)[V247] = 1;
@@ -466,13 +467,11 @@ void Section6::freeDigi(int state) {
 		digi_unload("600_007");
 		break;
 	case 6010:
+	case 6012:
 		digi_unload("600xxxxx");
 		break;
 	case 6011:
 		digi_unload("600_010");
-		break;
-	case 6012:
-		digi_unload("600xxxxx");
 		break;
 	default:
 		break;

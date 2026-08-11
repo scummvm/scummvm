@@ -30,6 +30,7 @@
 #include "common/keyboard.h"
 #include "common/substream.h"
 #include "common/str.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
@@ -54,6 +55,111 @@
 
 namespace Prince {
 
+#ifdef USE_TTS
+
+// Mazovia encoding
+static const uint16 polishEncodingTable[] = {
+	0x86, 0xc485, 0x8d, 0xc487, 0x8f, 0xc484, 0x90, 0xc498,	// ą, ć, Ą, Ę
+	0x91, 0xc499, 0x92, 0xc582, 0x95, 0xc486, 0x98, 0xc59a,	// ę, ł, Ć, Ś
+	0x9c, 0xc581, 0x9e, 0xc59b, 0xa0, 0xc5b9, 0xa1, 0xc5bb,	// Ł, ś, Ź, Ż
+	0xa2, 0xc3b3, 0xa3, 0xc393, 0xa4, 0xc584, 0xa5, 0xc583,	// ó, Ó, ń, Ń
+	0xa6, 0xc5ba, 0xa7, 0xc5bc,								// ź, ż
+	0
+};
+
+// Custom encoding
+static const uint16 russianEncodingTable[] = {
+	0x46, 0xd090, 0x66, 0xd0b0, 0x83, 0xd091, 0x92, 0xd0b1,	// А, а, Б, б
+	0x44, 0xd092, 0x64, 0xd0b2, 0x55, 0xd093, 0x75, 0xd0b3,	// В, в, Г, г
+	0x4c, 0xd094, 0x6c, 0xd0b4, 0x54, 0xd095, 0x74, 0xd0b5,	// Д, д, Е, е
+	0x81, 0xd096, 0x8f, 0xd0b6, 0x50, 0xd097, 0x70, 0xd0b7,	// Ж, ж, З, з
+	0x42, 0xd098, 0x62, 0xd0b8, 0x51, 0xd099, 0x71, 0xd0b9,	// И, и, Й, й
+	0x52, 0xd09a, 0x72, 0xd0ba, 0x4b, 0xd09b, 0x6b, 0xd0bb,	// К, к, Л, л
+	0x56, 0xd09c, 0x76, 0xd0bc, 0x59, 0xd09d, 0x79, 0xd0bd,	// М, м, Н, н
+	0x4a, 0xd09e, 0x6a, 0xd0be, 0x47, 0xd09f, 0x67, 0xd0bf,	// О, о, П, п
+	0x48, 0xd0a0, 0x68, 0xd180, 0x43, 0xd0a1, 0x63, 0xd181,	// Р, р, С, с
+	0x4e, 0xd0a2, 0x6e, 0xd182, 0x45, 0xd0a3, 0x65, 0xd183,	// Т, т, У, у
+	0x41, 0xd0a4, 0x61, 0xd184, 0x7f, 0xd0a5, 0x85, 0xd185,	// Ф, ф, Х, х
+	0x57, 0xd0a6, 0x77, 0xd186, 0x58, 0xd0a7, 0x78, 0xd187,	// Ц, ц, Ч, ч
+	0x49, 0xd0a8, 0x69, 0xd188, 0x4f, 0xd0a9, 0x6f, 0xd189,	// Ш, ш, Щ, щ
+	0x8d, 0xd18a, 0x53, 0xd0ab, 0x73, 0xd18b, 0x4d, 0xd0ac,	// ъ, Ы, ы, Ь
+	0x6d, 0xd18c, 0x82, 0xd0ad, 0x90, 0xd18d, 0x92, 0xd18e,	// ь, Э, э, ю
+	0x5a, 0xd0af, 0x7a, 0xd18f,								// Я, я
+	0
+};
+
+// Custom encoding
+static const uint16 spanishEncodingTable[] = {
+	0x25, 0xc3ad, 0x26, 0xc3ba, 0x35, 0xc3a1, 0x36, 0xc3a9, // í, ú, á, é
+	0x37, 0xc2bf, 0x38, 0xc3b1, 0x3b, 0xc2a1, 0x5f, 0xc3b3, // ¿, ñ, ¡, ó
+	0
+};
+
+// Custom encoding
+static const uint16 germanEncodingTable[] = {
+	0x83, 0xc384, 0x84, 0xc396, 0x85, 0xc39c, 0x7f, 0xc39f,  // Ä, Ö, Ü, ß
+	0x80, 0xc3a4, 0x81, 0xc3b6, 0x82, 0xc3bc,				 // ä, ö, ü
+	0
+};
+
+struct CharacterVoiceData {
+	uint8 textColor;
+	uint8 voiceID;
+	uint8 locationNumber;
+	int8 mobIndex;
+	bool male;
+};
+
+static const CharacterVoiceData characterVoiceData[] = {
+	{ 220, 0, 0, -1, true },	// Hero
+	{ 216, 0, 0, -1, true },	// Hover text
+	{ 211, 1, 7, -1, true },	// Bard
+	{ 211, 1, 5, 11, true },	// Bard (tavern)
+	{ 211, 2, 6, -1, true },	// Witch
+	{ 211, 3, 0, -1, true },	// Arivald (all other cases of text color 211)
+	{ 202, 4, 1, -1, true },	// Grave digger
+	{ 202, 0, 13, -1, false },	// Sheila
+	{ 253, 5, 4, -1, true },	// Tall merchant
+	{ 253, 6, 54, -1, true },	// Butcher
+	{ 225, 7, 4, -1, true },	// Thief
+	{ 225, 8, 6, -1, true },	// Alchemist
+	{ 225, 1, 7, -1, false },	// Bard's wife
+	{ 236, 9, 4, 19, true },	// Fat merchant
+	{ 236, 9, 4, 2, true },		// Fat merchant (initial town cutscene)
+	{ 236, 10, 25, 4, true },	// Dragon
+	{ 236, 2, 0, -1, false },	// Shandria (all other cases of text color 236)
+	{ 246, 11, 5, -1, true },	// Monk
+	{ 246, 12, 31, -1, true },	// Priest
+	{ 195, 13, 0, -1, true },	// Zandahan
+	{ 195, 14, 3, -1, true },	// Hermit
+	{ 252, 15, 10, -1, true },	// Gate guard
+	{ 252, 16, 12, -1, true },	// Courtyard guard
+	{ 252, 17, 30, -1, true },	// Passerby
+	{ 196, 18, 30, -1, true },	// Modern merchant
+	{ 196, 3, 5, -1, false },	// Stranger
+	{ 244, 19, 43, -1, true },	// Devil
+	{ 244, 20, 0, -1, true },	// Devil
+	{ 203, 4, 0, -1, false },	// Witch
+	{ 197, 21, 0, -1, true },	// Short merchant
+	{ 212, 22, 0, -1, true },	// Merchant cooking soup
+	{ 200, 23, 0, -1, true },	// Homunculus
+	{ 205, 24, 0, -1, true },	// Beggar
+	{ 232, 25, 0, -1, true },	// Dwarf
+	{ 208, 26, 0, -1, true },	// Barkeeper
+	{ 235, 27, 42, -1, true },	// Devil
+	{ 235, 28, 0, -1, true },	// Lord Sun
+	{ 201, 5, 0, -1, false },	// Elegant lady
+	{ 245, 29, 0, -1, true },	// Devil
+	{ 219, 30, 0, -1, true },	// Lucifer
+	{ 217, 31, 0, -1, true }	// Narrator
+};
+
+static const int kCharacterVoiceDataCount = ARRAYSIZE(characterVoiceData);
+
+#endif
+
+static const uint8 kNarratorTextColor = 217;
+
 void PrinceEngine::debugEngine(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
@@ -71,14 +177,14 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_cursor1(nullptr), _cursor2(nullptr), _cursor3(nullptr), _font(nullptr),
 	_suitcaseBmp(nullptr), _roomBmp(nullptr), _cursorNr(0), _picWindowX(0), _picWindowY(0), _randomSource("prince"),
 	_invLineX(134), _invLineY(176), _invLine(5), _invLines(3), _invLineW(70), _invLineH(76), _maxInvW(72), _maxInvH(76),
-	_invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
+	_printMapNotification(false), _invLineSkipX(2), _invLineSkipY(3), _showInventoryFlag(false), _inventoryBackgroundRemember(false),
 	_mst_shadow(0), _mst_shadow2(0), _candleCounter(0), _invX1(53), _invY1(18), _invWidth(536), _invHeight(438),
 	_invCurInside(false), _optionsFlag(false), _optionEnabled(0), _invExamY(120), _invMaxCount(2), _invCounter(0),
-	_optionsMob(-1), _currentPointerNumber(1), _selectedMob(-1), _selectedItem(0), _selectedMode(0),
+	_optionsMob(-1), _currentPointerNumber(1), _selectedMob(-1), _previousMob(-1), _dialogMob(-1), _selectedItem(0), _selectedMode(0),
 	_optionsWidth(210), _optionsHeight(170), _invOptionsWidth(210), _invOptionsHeight(130), _optionsStep(20),
 	_invOptionsStep(20), _optionsNumber(7), _invOptionsNumber(5), _optionsColor1(236), _optionsColor2(252),
 	_dialogWidth(600), _dialogHeight(0), _dialogLineSpace(10), _dialogColor1(220), _dialogColor2(223),
-	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _mouseFlag(1),
+	_dialogFlag(false), _dialogLines(0), _dialogText(nullptr), _previousSelectedDialog(-1), _isConversing(false), _mouseFlag(1),
 	_roomPathBitmap(nullptr), _roomPathBitmapTemp(nullptr), _coordsBufEnd(nullptr), _coordsBuf(nullptr), _coords(nullptr),
 	_traceLineLen(0), _rembBitmapTemp(nullptr), _rembBitmap(nullptr), _rembMask(0), _rembX(0), _rembY(0), _fpX(0), _fpY(0),
 	_checkBitmapTemp(nullptr), _checkBitmap(nullptr), _checkMask(0), _checkX(0), _checkY(0), _traceLineFirstPointFlag(false),
@@ -86,7 +192,7 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_shanLen(0), _directionTable(nullptr), _currentMidi(0), _lightX(0), _lightY(0), _curveData(nullptr), _curvPos(0),
 	_creditsData(nullptr), _creditsDataSize(0), _currentTime(0), _zoomBitmap(nullptr), _shadowBitmap(nullptr), _transTable(nullptr),
 	_flcFrameSurface(nullptr), _shadScaleValue(0), _shadLineLen(0), _scaleValue(0), _dialogImage(nullptr), _mobTranslationData(nullptr),
-	_mobTranslationSize(0), _missingVoice(false) {
+	_mobTranslationSize(0), _missingVoice(false), _intro(false), _credits(false) {
 
 	DebugMan.enableDebugChannel("script");
 
@@ -393,6 +499,12 @@ void PrinceEngine::init() {
 	if (getFeatures() & GF_TRANSLATED) {
 		loadMobTranslationTexts();
 	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech") || ConfMan.getBool("tts_enabled_missing_voice"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
 }
 
 void PrinceEngine::showLogo() {
@@ -403,7 +515,7 @@ void PrinceEngine::showLogo() {
 		_graph->draw(_graph->_frontScreen, logo.getSurface());
 		_graph->change();
 		_graph->update(_graph->_frontScreen);
-		setPalette(logo.getPalette());
+		setPalette(logo.getPalette().data());
 
 		uint32 logoStart = _system->getMillis();
 		while (_system->getMillis() < logoStart + 5000) {
@@ -411,8 +523,8 @@ void PrinceEngine::showLogo() {
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
 				switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+					if (event.customType == kActionSkip) {
 						stopSample(0);
 						return;
 					}
@@ -437,6 +549,7 @@ Common::Error PrinceEngine::run() {
 	int startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	init();
 	if (startGameSlot == -1) {
+		_intro = true;
 		playVideo("topware.avi");
 		showLogo();
 	} else {
@@ -449,10 +562,13 @@ Common::Error PrinceEngine::run() {
 
 void PrinceEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
-	if (pause) {
-		_midiPlayer->pause();
-	} else {
-		_midiPlayer->resume();
+
+	if (_midiPlayer) {
+		if (pause) {
+			_midiPlayer->pause();
+		} else {
+			_midiPlayer->resume();
+		}
 	}
 }
 
@@ -463,13 +579,6 @@ void PrinceEngine::setShadowScale(int32 shadowScale) {
 	} else {
 		_shadScaleValue = 10000 / shadowScale;
 	}
-}
-
-void PrinceEngine::plotShadowLinePoint(int x, int y, int color, void *data) {
-	PrinceEngine *vm = (PrinceEngine *)data;
-	WRITE_LE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4], x);
-	WRITE_LE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4 + 2], y);
-	vm->_shadLineLen++;
 }
 
 bool PrinceEngine::playNextFLCFrame() {
@@ -532,27 +641,32 @@ void PrinceEngine::setMobTranslationTexts() {
 }
 
 void PrinceEngine::keyHandler(Common::Event event) {
-	uint16 nChar = event.kbd.keycode;
+	uint16 nChar = event.customType;
 	switch (nChar) {
-	case Common::KEYCODE_F1:
+	case kActionSave:
 		if (canLoadGameStateCurrently())
 			scummVMSaveLoadDialog(false);
 		break;
-	case Common::KEYCODE_F2:
+	case kActionLoad:
 		if (canSaveGameStateCurrently())
 			scummVMSaveLoadDialog(true);
 		break;
-	case Common::KEYCODE_z:
+	case kActionZ: // This refers to the "z" key on the keyboard. It is used to play a prison escape mini-game near the end of the game.
 		if (_flags->getFlagValue(Flags::POWERENABLED)) {
 			_flags->setFlagValue(Flags::MBFLAG, 1);
 		}
 		break;
-	case Common::KEYCODE_x:
+	case kActionX: // This refers to the "x" key on the keyboard. It is used to play a prison escape mini-game near the end of the game.
 		if (_flags->getFlagValue(Flags::POWERENABLED)) {
 			_flags->setFlagValue(Flags::MBFLAG, 2);
 		}
 		break;
-	case Common::KEYCODE_ESCAPE:
+	case kActionSkip:
+		if (_intro) {
+			stopTextToSpeech();
+			_intro = false;
+		}
+
 		_flags->setFlagValue(Flags::ESCAPED2, 1);
 		break;
 	default:
@@ -565,6 +679,34 @@ void PrinceEngine::printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y
 
 	if (getLanguage() == Common::DE_DEU)
 		correctStringDEU(s);
+
+	// Cutscene
+	if (slot == 9) {
+		setTTSVoice(color);
+		sayText(s, true, Common::TextToSpeechManager::QUEUE);
+	} else {
+		bool printText = true;
+		bool isSpeech = false;
+
+		if (slot == 10) {
+			if (_locationNr == 50) {	// Map
+				if (_printMapNotification) {
+					_printMapNotification = false;
+				} else {
+					printText = false;
+				}
+			} else {
+				isSpeech = true;
+			}
+		} else if (slot == 0) {
+			isSpeech = true;
+		}
+
+		if (printText) {
+			setTTSVoice(color);
+			sayText(s, isSpeech);
+		}
+	}
 
 	Text &text = _textSlots[slot];
 	text._str = s;
@@ -631,6 +773,8 @@ uint32 PrinceEngine::getTextWidth(const char *s) {
 }
 
 void PrinceEngine::showTexts(Graphics::Surface *screen) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
 	for (uint32 slot = 0; slot < kMaxTexts; slot++) {
 
 		if (_showInventoryFlag && slot) {
@@ -643,51 +787,223 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 			continue;
 		}
 
-		int x = text._x;
-		int y = text._y;
+		if (ConfMan.getBool("subtitles")) {
+			int x = text._x;
+			int y = text._y;
 
-		if (!_showInventoryFlag) {
-			x -= _picWindowX;
-			y -= _picWindowY;
-		}
-
-		Common::Array<Common::String> lines;
-		_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
-
-		int wideLine = 0;
-		for (uint i = 0; i < lines.size(); i++) {
-			int textLen = getTextWidth(lines[i].c_str());
-			if (textLen > wideLine) {
-				wideLine = textLen;
+			if (!_showInventoryFlag) {
+				x -= _picWindowX;
+				y -= _picWindowY;
 			}
-		}
 
-		int leftBorderText = 6;
-		if (x + wideLine / 2 >  kNormalWidth - leftBorderText) {
-			x = kNormalWidth - leftBorderText - wideLine / 2;
-		}
+			Common::Array<Common::String> lines;
+			_font->wordWrapText(text._str, _graph->_frontScreen->w, lines);
 
-		if (x - wideLine / 2 < leftBorderText) {
-			x = leftBorderText + wideLine / 2;
-		}
-
-		int textSkip = 2;
-		for (uint i = 0; i < lines.size(); i++) {
-			int drawX = x - getTextWidth(lines[i].c_str()) / 2;
-			int drawY = y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
-			if (drawX < 0) {
-				drawX = 0;
+			int wideLine = 0;
+			for (uint i = 0; i < lines.size(); i++) {
+				int textLen = getTextWidth(lines[i].c_str());
+				if (textLen > wideLine) {
+					wideLine = textLen;
+				}
 			}
-			if (drawY < 0) {
-				drawY = 0;
+
+			int leftBorderText = 6;
+			if (x + wideLine / 2 >  kNormalWidth - leftBorderText) {
+				x = kNormalWidth - leftBorderText - wideLine / 2;
 			}
-			_font->drawString(screen, lines[i], drawX, drawY, screen->w, text._color);
+
+			if (x - wideLine / 2 < leftBorderText) {
+				x = leftBorderText + wideLine / 2;
+			}
+
+			int textSkip = 2;
+			for (uint i = 0; i < lines.size(); i++) {
+				int drawX = x - getTextWidth(lines[i].c_str()) / 2;
+				int drawY = y - 10 - (lines.size() - i) * (_font->getFontHeight() - textSkip);
+				if (drawX < 0) {
+					drawX = 0;
+				}
+				if (drawY < 0) {
+					drawY = 0;
+				}
+				Common::String line = lines[i];
+				if (getLanguage() == Common::HE_ISR)
+					line = Common::convertBiDiString(line, Common::kWindows1255);
+				_font->drawString(screen, line, drawX, drawY, screen->w, text._color);
+			}
 		}
 
 		text._time--;
 		if (!text._time) {
+			if (ttsMan != nullptr && (ConfMan.getBool("tts_enabled_speech") ||
+				ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_missing_voice")) && ttsMan->isSpeaking()) {
+				text._time = 1;
+				continue;
+			}
 			text._str = nullptr;
 		}
+	}
+}
+
+void PrinceEngine::sayText(const Common::String &text, bool isSpeech, Common::TextToSpeechManager::Action action) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	// Only voice subtitles if either this is a version with no voices or the speech volume is muted (the English/Spanish
+	// translations still have dubs in different languages, so don't voice the subtitles unless the dub is muted)
+	bool speak = (!isSpeech && ConfMan.getBool("tts_enabled_objects")) ||
+				 (isSpeech && ConfMan.getBool("tts_enabled_speech") &&
+				 (getFeatures() & GF_NOVOICES || ConfMan.getInt("speech_volume") == 0 || ConfMan.getBool("subtitles")));
+	if (ttsMan != nullptr && speak) {
+		Common::String ttsText(text);
+		// Some emotive text has a < at the front, which causes the entire text to not be voiced by the TTS system
+		// Text with quotation marks also contains \ as an escape character, which is awkwardly voiced by TTS if not
+		// removed
+		ttsText.replace('\n', ' ');
+		ttsText.replace('<', ' ');
+		ttsText.replace('\\', ' ');
+#ifdef USE_TTS
+		ttsMan->say(convertText(ttsText), action);
+#endif
+	}
+}
+
+#ifdef USE_TTS
+
+Common::U32String PrinceEngine::convertText(const Common::String &text) const {
+	const uint16 *conversionTable;
+
+	switch (getLanguage()) {
+	case Common::EN_ANY:	// Some of the English text has a few Polish characters
+	case Common::PL_POL:
+		conversionTable = polishEncodingTable;
+		break;
+	case Common::RU_RUS:
+		if (getFeatures() & GF_RUSPROJEDITION) {
+			return Common::U32String(text, Common::CodePage::kDos866);
+		}
+
+		conversionTable = russianEncodingTable;
+		break;
+	case Common::DE_DEU:
+		conversionTable = germanEncodingTable;
+		break;
+	case Common::ES_ESP:
+		conversionTable = spanishEncodingTable;
+		break;
+	default:
+		conversionTable = polishEncodingTable;
+	}
+
+	const byte *bytes = (const byte *)text.c_str();
+	byte *convertedBytes = new byte[text.size() * 2 + 1];
+
+	int i = 0;
+	for (const byte *b = bytes; *b; ++b) {
+		bool inTable = checkConversionTable(b, i, convertedBytes, conversionTable);
+
+		if (_credits && !inTable) {
+			if (*b == 0x2a) {	// * in credits
+				convertedBytes[i] = 0x20;
+				i++;
+				continue;
+			}
+
+			if (*b == 0x23) {
+				i++;
+				break;
+			}
+
+			// Credits in other languages may have some Polish characters
+			inTable = checkConversionTable(b, i, convertedBytes, polishEncodingTable);
+		}
+
+		if (!inTable) {
+			convertedBytes[i] = *b;
+			i++;
+		}
+	}
+
+	convertedBytes[i] = 0;
+
+	Common::U32String result((char *)convertedBytes);
+	delete[] convertedBytes;
+
+	return result;
+}
+
+bool PrinceEngine::checkConversionTable(const byte *character, int &index, byte *convertedBytes, const uint16 *table) const {
+	for (int i = 0; table[i]; i += 2) {
+		if (*character == table[i]) {
+			convertedBytes[index] = (table[i + 1] >> 8) & 0xff;
+			convertedBytes[index + 1] = table[i + 1] & 0xff;
+			index += 2;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+#endif
+
+void PrinceEngine::setTTSVoice(uint8 textColor) const {
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && (ConfMan.getBool("tts_enabled_speech") || ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_missing_voice"))) {
+		int id = 0;
+
+		for (int i = 0; i < kCharacterVoiceDataCount; ++i) {
+			// In many cases, characters can be differentiated by just the text color, but sometimes
+			// there may be different characters with the same text colors in different locations, and rarely
+			// different characters with the same text colors in the same location. Using the location number and/or
+			// mob index differentiates characters in these cases
+			if (characterVoiceData[i].textColor == textColor &&
+				(characterVoiceData[i].locationNumber == 0 || characterVoiceData[i].locationNumber == _locationNr) &&
+				(characterVoiceData[i].mobIndex == -1 || characterVoiceData[i].mobIndex == _dialogMob)) {
+				id = i;
+				break;
+			}
+		}
+
+		Common::Array<int> voices;
+		int pitch = 0;
+		Common::TTSVoice::Gender gender;
+
+		if (characterVoiceData[id].male) {
+			voices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::MALE);
+			gender = Common::TTSVoice::MALE;
+		} else {
+			voices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
+			gender = Common::TTSVoice::FEMALE;
+		}
+
+		// If no voice is available for the necessary gender, set the voice to default
+		if (voices.empty()) {
+			ttsMan->setVoice(0);
+		} else {
+			int voiceIndex = characterVoiceData[id].voiceID % voices.size();
+			ttsMan->setVoice(voices[voiceIndex]);
+		}
+
+		// If no voices are available for this gender, alter the pitch to mimic a voice
+		// of the other gender
+		if (ttsMan->getVoice().getGender() != gender) {
+			if (gender == Common::TTSVoice::MALE) {
+				pitch -= 50;
+			} else {
+				pitch += 50;
+			}
+		}
+
+		ttsMan->setPitch(pitch);
+	}
+#endif
+}
+
+void PrinceEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && (ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech") || ConfMan.getBool("tts_enabled_missing_voice")) &&
+		ttsMan->isSpeaking()) {
+		ttsMan->stop();
 	}
 }
 
@@ -759,9 +1075,15 @@ void PrinceEngine::leftMouseButton() {
 		}
 		_interpreter->storeNewPC(optionEvent);
 		_flags->setFlagValue(Flags::CURRMOB, _selectedMob);
+		_dialogMob = _selectedMob;
 		_selectedMob = -1;
 		_optionsMob = -1;
 	} else {
+		if (_intro) {
+			stopTextToSpeech();
+			_intro = false;
+		}
+
 		if (!_flags->getFlagValue(Flags::POWERENABLED)) {
 			if (!_flags->getFlagValue(Flags::NOCLSTEXT)) {
 				for (int slot = 0; slot < kMaxTexts; slot++) {
@@ -770,6 +1092,7 @@ void PrinceEngine::leftMouseButton() {
 						if (!text._str) {
 							continue;
 						}
+						stopTextToSpeech();
 						text._str = nullptr;
 						text._time = 0;
 					}
@@ -830,6 +1153,7 @@ void PrinceEngine::createDialogBox(int dialogBoxNr) {
 void PrinceEngine::dialogRun() {
 
 	_dialogFlag = true;
+	setTTSVoice(kHeroTextColor);
 
 	while (!shouldQuit()) {
 
@@ -871,10 +1195,24 @@ void PrinceEngine::dialogRun() {
 					actualColor = _dialogColor2;
 					dialogSelected = sentenceNumber;
 					dialogCurrentText = dialogText;
+
+					if (_previousSelectedDialog != dialogSelected) {
+						sayText((const char *)dialogCurrentText, false);
+						_previousSelectedDialog = dialogSelected;
+					}
 				}
 
+				Graphics::TextAlign textAlign = Graphics::kTextAlignLeft;
+				int width = _graph->_frontScreen->w;
+				if (getLanguage() == Common::HE_ISR) {
+					textAlign = Graphics::kTextAlignRight;
+					width -= 2 * dialogTextX;
+				}
 				for (uint j = 0; j < lines.size(); j++) {
-					_font->drawString(_graph->_frontScreen, lines[j], dialogTextX, dialogTextY, _graph->_frontScreen->w, actualColor);
+					Common::String line = lines[j];
+					if (getLanguage() == Common::HE_ISR)
+						line = Common::convertBiDiString(line, Common::kWindows1255);
+					_font->drawString(_graph->_frontScreen, line, dialogTextX, dialogTextY, width, actualColor, textAlign);
 					dialogTextY += _font->getFontHeight();
 				}
 				dialogTextY += _dialogLineSpace;
@@ -885,11 +1223,15 @@ void PrinceEngine::dialogRun() {
 			} while (c);
 		}
 
+		if (dialogSelected == -1) {
+			_previousSelectedDialog = -1;
+		}
+
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				keyHandler(event);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -963,6 +1305,10 @@ void PrinceEngine::talkHero(int slot) {
 		correctStringDEU((char *)_interpreter->getString());
 	}
 	text._str = (const char *)_interpreter->getString();
+
+	setTTSVoice(text._color);
+	sayText(text._str, true);
+
 	_interpreter->increaseString();
 }
 
@@ -1057,6 +1403,14 @@ void PrinceEngine::showPower() {
 
 void PrinceEngine::scrollCredits() {
 	byte *scrollAdress = _creditsData;
+
+	_credits = true;
+	setTTSVoice(kNarratorTextColor);
+	if (getLanguage() == Common::DE_DEU) {
+		correctStringDEU((char *)scrollAdress);
+	}
+	sayText((char *)scrollAdress, false, Common::TextToSpeechManager::INTERRUPT);
+
 	while (!shouldQuit()) {
 		for (int scrollPos = 0; scrollPos > -23; scrollPos--) {
 			const Graphics::Surface *roomSurface = _roomBmp->getSurface();
@@ -1074,6 +1428,8 @@ void PrinceEngine::scrollCredits() {
 				}
 				if (!line.empty()) {
 					int drawX = (kNormalWidth - getTextWidth(line.c_str())) / 2;
+					if (getLanguage() == Common::HE_ISR)
+						line = Common::convertBiDiString(line, Common::kWindows1255);
 					_font->drawString(_graph->_frontScreen, line, drawX, drawY, _graph->_frontScreen->w, 217);
 				}
 
@@ -1102,8 +1458,8 @@ void PrinceEngine::scrollCredits() {
 			Common::Event event;
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN) {
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+					if (event.customType == kActionSkip) {
 						blackPalette();
 						return;
 					}
@@ -1150,7 +1506,7 @@ void PrinceEngine::mainLoop() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				keyHandler(event);
 				break;
 			case Common::EVENT_LBUTTONDOWN:

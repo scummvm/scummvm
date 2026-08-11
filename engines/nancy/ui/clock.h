@@ -35,7 +35,6 @@ struct NancyInput;
 namespace UI {
 
 class Clock : public RenderObject {
-	friend class ClockAnim;
 public:
 	Clock();
 	virtual ~Clock() = default;

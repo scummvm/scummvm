@@ -34,6 +34,7 @@
 #include "engines/stark/services/settings.h"
 
 #include "common/util.h"
+#include "common/unicode-bidi.h"
 
 namespace Stark {
 
@@ -262,6 +263,11 @@ void VisualText::createBitmap() {
 	// Make sure lines have approximately consistent height regardless of the characters they use
 	scaledRect.bottom = MAX<int16>(scaledRect.bottom, scaledLineHeight * lines.size());
 
+	Graphics::TextAlign align = Graphics::convertTextAlignH(_align, StarkSettings->getLanguage() == Common::HE_ISR);
+
+	if (align == Graphics::kTextAlignRight)
+		scaledRect.right = MAX<int16>(scaledRect.right, maxScaledLineWidth);
+
 	if (!isBlank()) {
 		_originalRect.right = StarkGfx->scaleWidthCurrentToOriginal(scaledRect.right);
 		_originalRect.bottom = originalLineHeight * lines.size();
@@ -283,7 +289,8 @@ void VisualText::createBitmap() {
 
 	// Render the lines to the surface
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, surface.w, white, _align, 0, false);
+		Common::U32String line = convertBiDiU32String(lines[i]).visual;
+		font->drawString(&surface, line, 0, scaledLineHeight * i, surface.w, white, align, 0, false);
 	}
 
 	// Blend the text color with the alpha mask to produce an image of the text

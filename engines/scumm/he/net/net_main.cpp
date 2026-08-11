@@ -131,12 +131,12 @@ int Net::hostGame(char *sessionName, char *userName) {
 			_userIdToPeerIndex[_myUserId] = -1;
 			return 1;
 		} else {
-			_vm->displayMessage(0, "Error Adding User \"%s\" to Session \"%s\"", userName, sessionName);
+			_vm->displayMessage("Error Adding User \"%s\" to Session \"%s\"", userName, sessionName);
 			endSession();
 			closeProvider();
 		}
 	} else {
-		_vm->displayMessage(0, "Error creating session \"%s\"", userName );
+		_vm->displayMessage("Error creating session \"%s\"", userName );
 
 		closeProvider();
 	}
@@ -453,7 +453,7 @@ int Net::doJoinSession(Session session) {
 					return true;
 			}
 		}
-		_vm->displayMessage(0, "Unable to join game session with address \"%s:%d\"", session.host.c_str(), session.port);
+		_vm->displayMessage("Unable to join game session with address \"%s:%d\"", session.host.c_str(), session.port);
 		return false;
 	}
 
@@ -766,9 +766,9 @@ bool Net::initProvider() {
 	// Create a new ENet instance and initialize the library.
 	if (_enet)
 		return true;
-	_enet = new Networking::ENet();
+	_enet = new Networking::ENet::ENet();
 	if (!_enet->initialize()) {
-		_vm->displayMessage(0, "Unable to initialize ENet library.");
+		_vm->displayMessage("Unable to initialize ENet library.");
 		Net::closeProvider();
 		return false;
 	}
@@ -825,7 +825,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 		reliable == true ? "true" : "false", data.c_str());
 
 	debugC(DEBUG_NETWORK, "NETWORK: Sending data: %s", res.c_str());
-	Common::JSONValue *str = Common::JSON::parse(res.c_str());
+	Common::JSONValue *str = Common::JSON::parse(res);
 	if (_isHost) {
 		_hostDataQueue.push(str);
 		_peerIndexQueue.push(sendTypeParam - 1);
@@ -836,16 +836,16 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 }
 
 void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex) {
-	debugC(DEBUG_NETWORK, "Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex & ~0x33539000); // PN_RemoteSendArrayCommand
+	debugC(DEBUG_NETWORK, "Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex & ~MAGIC_ARRAY_NUMBER); // PN_RemoteSendArrayCommand
 
-	ScummEngine_v90he::ArrayHeader *ah = (ScummEngine_v90he::ArrayHeader *)_vm->getResourceAddress(rtString, arrayIndex & ~0x33539000);
+	ScummEngine_v90he::ArrayHeader *ah = (ScummEngine_v90he::ArrayHeader *)_vm->getResourceAddress(rtString, arrayIndex & ~MAGIC_ARRAY_NUMBER);
 
 	Common::String jsonData = Common::String::format(
 		"\"type\":%d,\"dim1start\":%d,\"dim1end\":%d,\"dim2start\":%d,\"dim2end\":%d,\"data\":[",
-		ah->type, ah->dim1start, ah->dim1end, ah->dim2start, ah->dim2end);
+		ah->type, ah->acrossMin, ah->acrossMax, ah->downMin, ah->downMax);
 
-	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+	int32 size = (FROM_LE_32(ah->acrossMax) - FROM_LE_32(ah->acrossMin) + 1) *
+		(FROM_LE_32(ah->downMax) - FROM_LE_32(ah->downMin) + 1);
 
 	for (int i = 0; i < size; i++) {
 		int32 data;
@@ -975,7 +975,7 @@ void Net::serviceSessionServer() {
 void Net::handleSessionServerData(Common::String data) {
 	debugC(DEBUG_NETWORK, "NETWORK: Received data from session server.  Data: %s", data.c_str());
 
-	Common::JSONValue *json = Common::JSON::parse(data.c_str());
+	Common::JSONValue *json = Common::JSON::parse(data);
 	if (!json) {
 		warning("NETWORK: Received non-JSON string from session server, \"%s\", ignoring", data.c_str());
 		return;
@@ -1055,7 +1055,7 @@ void Net::handleSessionServerData(Common::String data) {
 				// destinated address, allowing someone with the same address to
 				// communicate with us.  This does not work with every router though...
 				//
-				// More infomation: https://en.wikipedia.org/wiki/UDP_hole_punching
+				// More information: https://en.wikipedia.org/wiki/UDP_hole_punching
 				debugC(DEBUG_NETWORK, "NETWORK: Hole punching %s:%d", address.host.c_str(), address.port);
 				_sessionHost->sendRawData(address.host, address.port, "");
 			}
@@ -1126,7 +1126,7 @@ bool Net::serviceBroadcast() {
 void Net::handleBroadcastData(Common::String data, Common::String host, int port) {
 	debugC(DEBUG_NETWORK, "NETWORK: Received data from broadcast socket.  Source: %s:%d  Data: %s", host.c_str(), port, data.c_str());
 
-	Common::JSONValue *json = Common::JSON::parse(data.c_str());
+	Common::JSONValue *json = Common::JSON::parse(data);
 	if (!json) {
 		// Just about anything could come from the broadcast address, so do not warn.
 		debugC(DEBUG_NETWORK, "NETWORK: Not a JSON string, ignoring.");
@@ -1243,7 +1243,7 @@ void Net::remoteReceiveData() {
 			if (_gameName == "moonbase") {
 				// TODO: Host migration
 				if (!_isHost && _vm->_currentRoom == 2) {
-					_vm->displayMessage(0, "You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
+					_vm->displayMessage("You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
 					_vm->VAR(253) = 26; // gGameMode = GAME-OVER
 					_vm->runScript(2104, 1, 0, 0); // leave-game
 				}
@@ -1271,7 +1271,7 @@ void Net::remoteReceiveData() {
 				break;
 			}
 
-			Common::JSONValue *json = Common::JSON::parse(data.c_str());
+			Common::JSONValue *json = Common::JSON::parse(data);
 			if (!json) {
 				// Just about anything could come from the broadcast address, so do not warn.
 				warning("NETWORK: Received non-JSON string.  Got: \"%s\"", data.c_str());
@@ -1404,7 +1404,7 @@ void Net::handleGameData(Common::JSONValue *json, int peerIndex) {
 				if (paramsArray[0]->asIntegerNumber() == 145 && _fromUserId == 1) {
 					if (!_isHost && _vm->_currentRoom == 2) {
 						// TODO: Host migration
-						_vm->displayMessage(0, "You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
+						_vm->displayMessage("You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
 						_vm->VAR(253) = 26; // GAME-OVER
 						_vm->runScript(2104, 1, 0, 0); // leave-game
 						return;
@@ -1529,7 +1529,7 @@ void Net::handleGameDataHost(Common::JSONValue *json, int peerIndex) {
 				warning("NETWORK: Got individual message for %d, but we don't know this person!  Ignoring...", toparam);
 				return;
 			}
-			debugC(DEBUG_NETWORK, "NETWORK: Transfering message to %s (%d), peerIndex: %d", _userIdToName[toparam].c_str(), toparam, _userIdToPeerIndex[toparam]);
+			debugC(DEBUG_NETWORK, "NETWORK: Transferring message to %s (%d), peerIndex: %d", _userIdToName[toparam].c_str(), toparam, _userIdToPeerIndex[toparam]);
 			Common::String str = Common::JSON::stringify(json);
 			_sessionHost->send(str.c_str(), _userIdToPeerIndex[toparam], 0, reliable);
 		}

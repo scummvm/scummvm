@@ -22,7 +22,7 @@
 #ifndef WINTERMUTE_DEBUGGER_H
 #define WINTERMUTE_DEBUGGER_H
 
-#define EXTENDED_DEBUGGER_ENABLED 1
+#define EXTENDED_DEBUGGER_ENABLED 0
 
 #include "gui/debugger.h"
 

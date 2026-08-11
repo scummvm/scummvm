@@ -49,7 +49,7 @@ public:
 	TwoDeeStuff _2dStuff;
 
 	Fonts *_fonts = nullptr;
-	Rect _viewport;
+	Common::Rect _viewport;
 	Renderer(WGame *game, sdl_wrapper *wrapper);
 	bool addMaterial(gMaterial &material, const Common::String &name, int NumFaces, unsigned int LoaderFlags);
 
@@ -97,7 +97,7 @@ private:
 	// aspect correction
 	float gAspectX = 1, gAspectY = 1;
 	float gInvAspectX = 1, gInvAspectY = 1;
-	float _nearPlane;
+	float _nearPlane = 0.0f;
 	Math::Matrix4 _projectionMatrix;
 };
 

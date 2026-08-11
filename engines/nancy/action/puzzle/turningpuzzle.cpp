@@ -19,12 +19,15 @@
  *
  */
 
+#include "common/random.h"
+
 #include "engines/nancy/util.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/cursor.h"
 #include "engines/nancy/puzzledata.h"
 #include "engines/nancy/state/scene.h"
 
@@ -50,9 +53,41 @@ void TurningPuzzle::updateGraphics() {
 		return;
 	}
 
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		if (_objectCurrentlyTurning == -1 || g_nancy->getTotalPlayTime() <= _nextTurnTime) {
+			return;
+		}
+
+		uint framesPerTurn = framesPerTurnOf(_objectCurrentlyTurning);
+		++_turnFrameID;
+
+		if (_turnFrameID > framesPerTurn) {
+			// The turn is over: commit it, then redraw everything on its new face.
+			turnLogic(_objectCurrentlyTurning);
+			_objectCurrentlyTurning = -1;
+			_turnFrameID = 0;
+			_nextTurnTime = 0;
+			drawAllObjects();
+			return;
+		}
+
+		// Step the turning object and everything linked to it through the in-between frames.
+		_nextTurnTime = g_nancy->getTotalPlayTime() + (_turnDelay / (framesPerTurn + 1));
+		drawObject(_objectCurrentlyTurning, _currentOrder[_objectCurrentlyTurning], _turnFrameID);
+
+		for (uint j = 0; j < _links[_objectCurrentlyTurning].size(); ++j) {
+			uint linkedID = _links[_objectCurrentlyTurning][j] - 1;
+			if (linkedID < _currentOrder.size()) {
+				drawObject(linkedID, _currentOrder[linkedID], _turnFrameID);
+			}
+		}
+
+		return;
+	}
+
 	if (_solveState == kWaitForAnimation) {
 		if (g_nancy->getTotalPlayTime() > _nextTurnTime) {
-			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
+			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _numFramesPerTurn);
 
 			if (	(_turnFrameID == 0 && _solveAnimFace == 0) ||
 					(_turnFrameID == 1 && _solveAnimFace > 0 && (int)_solveAnimFace < _numFaces - 1)) {
@@ -92,7 +127,7 @@ void TurningPuzzle::updateGraphics() {
 
 	if (_objectCurrentlyTurning != -1) {
 		if (g_nancy->getTotalPlayTime() > _nextTurnTime) {
-			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
+			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _numFramesPerTurn);
 			++_turnFrameID;
 
 			uint faceID = _currentOrder[_objectCurrentlyTurning];
@@ -127,11 +162,169 @@ void TurningPuzzle::updateGraphics() {
 	}
 }
 
+void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
+	// 47-byte header
+	readFilename(stream, _imageName);			// 0x00
+	_turnDelay = stream.readUint16LE();			// 0x21
+	_hoverCursorType = stream.readUint16LE();	// 0x23
+	_hitInset = stream.readUint16LE();			// 0x25
+	_turnFlagLabel = stream.readSint16LE();		// 0x27
+	_turnFlagValue = stream.readByte();			// 0x29
+	stream.skip(5);								// 0x2a - not yet identified
+
+	// A count-prefixed array of 23-byte hotspot records (as in PegsPuzzle); the first is
+	// the "give up" hotspot, and its scene doubles as the one shown once solved.
+	int16 numZones = stream.readSint16LE();
+	for (int16 i = 0; i < numZones; ++i) {
+		Common::Rect r;
+		readRect(stream, r);
+		uint16 cursorType = stream.readUint16LE();
+		uint16 sceneID = stream.readUint16LE();
+		int16 exitFlagLabel = stream.readSint16LE();
+		byte exitFlagValue = stream.readByte();
+
+		if (i == 0) {
+			_exitHotspot = r;
+			_exitCursorType = cursorType;
+			_exitScene._sceneChange.sceneID = sceneID;
+			// The field after the scene id is a flag label (set on give-up), not a frame.
+			_exitScene._sceneChange.frameID = 0;
+			_exitScene._flag.label = exitFlagLabel;
+			_exitScene._flag.flag = exitFlagValue;
+			_solveScene._sceneChange = _exitScene._sceneChange;
+		}
+	}
+
+	uint16 numTypes = stream.readUint16LE();
+	_pieceTypes.resize(numTypes);
+	for (uint i = 0; i < numTypes; ++i) {
+		PieceType &t = _pieceTypes[i];
+		t.numFaces = stream.readByte();
+		t.framesPerTurn = stream.readSint16LE();
+		t.gap = stream.readSint16LE();
+		t.cellW = stream.readSint16LE();
+		t.cellH = stream.readSint16LE();
+		t.srcStartX = stream.readSint16LE();
+		t.srcStartY = stream.readSint16LE();
+	}
+
+	uint16 numObjects = stream.readUint16LE();
+	_links.resize(numObjects);
+	_pieceTypeIDs.resize(numObjects);
+	_startPositions.resize(numObjects);
+	_destRects.resize(numObjects);
+	_correctOrders.resize(3);
+	for (uint n = 0; n < 3; ++n) {
+		_correctOrders[n].resize(numObjects);
+	}
+
+	for (uint i = 0; i < numObjects; ++i) {
+		uint16 numLinks = stream.readUint16LE();
+		for (uint16 j = 0; j < numLinks; ++j) {
+			byte link = stream.readByte();
+			if (link != 0) {
+				// 1-based, as in the older games
+				_links[i].push_back(link);
+			}
+		}
+
+		_pieceTypeIDs[i] = stream.readUint16LE();
+		_startPositions[i] = stream.readUint16LE();
+		for (uint n = 0; n < 3; ++n) {
+			_correctOrders[n][i] = stream.readUint16LE();
+		}
+		readRect(stream, _destRects[i]);
+	}
+
+	// Only the middle of an object is clickable.
+	_hotspots = _destRects;
+	for (uint i = 0; i < _hotspots.size(); ++i) {
+		_hotspots[i].grow(-(int16)_hitInset);
+	}
+
+	_turnSoundBlock.readData(stream);
+	_solveSoundBlock.readData(stream);
+}
+
+uint TurningPuzzle::numFacesOf(uint objectID) const {
+	if (g_nancy->getGameType() < kGameTypeNancy13) {
+		return _numFaces;
+	}
+	return _pieceTypes[_pieceTypeIDs[objectID]].numFaces;
+}
+
+uint TurningPuzzle::framesPerTurnOf(uint objectID) const {
+	if (g_nancy->getGameType() < kGameTypeNancy13) {
+		return _numFramesPerTurn;
+	}
+	return _pieceTypes[_pieceTypeIDs[objectID]].framesPerTurn;
+}
+
+bool TurningPuzzle::isSolved() const {
+	if (g_nancy->getGameType() < kGameTypeNancy13) {
+		return _currentOrder == _correctOrder;
+	}
+
+	// Any one of the (up to three) alternative orders solves it. Unused solutions are
+	// filled with 0xffff, which no face can ever match.
+	for (uint n = 0; n < _correctOrders.size(); ++n) {
+		bool match = true;
+		for (uint i = 0; i < _currentOrder.size(); ++i) {
+			if (_currentOrder[i] != _correctOrders[n][i]) {
+				match = false;
+				break;
+			}
+		}
+
+		if (match) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void TurningPuzzle::drawAllObjects() {
+	for (uint i = 0; i < _currentOrder.size(); ++i) {
+		drawObject(i, _currentOrder[i], 0);
+	}
+}
+
+SoundDescription TurningPuzzle::playSoundBlock(const RandomSoundBlock &block) {
+	SoundDescription desc;
+	if (block.names.empty()) {
+		return desc;
+	}
+
+	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
+	const Common::String &name = block.names[idx];
+	if (name.empty() || name == "NO SOUND") {
+		return desc;
+	}
+
+	desc.name = name;
+	desc.channelID = block.channel;
+	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
+	desc.volume = block.volume;
+
+	g_nancy->_sound->loadSound(desc);
+	g_nancy->_sound->playSound(desc);
+	return desc;
+}
+
 void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		readDataNancy13(stream);
+		return;
+	}
+
 	readFilename(stream, _imageName);
 	uint numSpindles = stream.readUint16LE();
 	_numFaces = stream.readUint16LE();
 	_numFramesPerTurn = stream.readUint16LE();
+	if (_numFramesPerTurn == 0) {
+		error("TurningPuzzle::readData(): _numFramesPerTurn is 0");
+	}
 
 	_startPositions.resize(numSpindles);
 	for (uint i = 0; i < numSpindles; ++i) {
@@ -173,6 +366,11 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_turnSound.readNormal(stream);
 
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Nancy 12 inserts 3 bytes before the correct order; purpose unknown.
+		stream.skip(3);
+	}
+
 	_correctOrder.resize(numSpindles);
 	for (uint i = 0; i < numSpindles; ++i) {
 		_correctOrder[i] = stream.readUint16LE();
@@ -185,17 +383,23 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Nancy 12 appends a uint16 here (5 in the sample seen); purpose unknown.
+		stream.skip(2);
+	}
 }
 
 void TurningPuzzle::execute() {
 	switch (_state) {
 	case kBegin :
 		init();
-		g_nancy->_sound->loadSound(_turnSound);
-		_currentOrder = _startPositions;
-		for (uint i = 0; i < _currentOrder.size(); ++i) {
-			drawObject(i, _currentOrder[i], 0);
+		if (g_nancy->getGameType() < kGameTypeNancy13) {
+			// Nancy13 picks its turn sound out of a random block on every turn instead.
+			g_nancy->_sound->loadSound(_turnSound);
 		}
+		_currentOrder = _startPositions;
+		drawAllObjects();
 
 		NancySceneState.setNoHeldItem();
 
@@ -206,9 +410,12 @@ void TurningPuzzle::execute() {
 			return;
 		}
 
-		if (_currentOrder == _correctOrder) {
+		if (isSolved()) {
 			_state = kActionTrigger;
-			if (_solveAnimate) {
+			if (g_nancy->getGameType() >= kGameTypeNancy13) {
+				_solveSound = playSoundBlock(_solveSoundBlock);
+				_solveState = kWaitForSound;
+			} else if (_solveAnimate) {
 				_solveState = kWaitForAnimation;
 			} else {
 				_solveState = kWaitForSound;
@@ -216,7 +423,6 @@ void TurningPuzzle::execute() {
 			}
 			_objectCurrentlyTurning = -1;
 			_turnFrameID = 0;
-			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
 		}
 
 		break;
@@ -256,38 +462,92 @@ void TurningPuzzle::execute() {
 }
 
 void TurningPuzzle::handleInput(NancyInput &input) {
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
 
-		if (input.input & NancyInput::kLeftMouseButtonUp) {
+	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+		if (isNancy13)
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+		else
+			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+
+		if (input.input & NancyInput::kLeftMouseButtonUp)
 			_state = kActionTrigger;
-		}
 
 		return;
 	}
 
 	for (uint i = 0; i < _hotspots.size(); ++i) {
-		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
+		if (!NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos))
+			continue;
+
+		if (isNancy13)
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_hoverCursorType, true);
+		else if (g_nancy->getGameType() >= kGameTypeNancy10)
+			g_nancy->_cursor->setCursorType(CursorManager::kNewUseHandHotspot);
+		else
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
-			if (_objectCurrentlyTurning != -1) {
-				break;
-			}
+		if (_objectCurrentlyTurning != -1)
+			break;
 
-			if (input.input & NancyInput::kLeftMouseButtonUp) {
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			if (isNancy13) {
+				// The original sets this flag the first time the player turns anything.
+				if (_turnFlagLabel != -1 && !_turnFlagSet) {
+					NancySceneState.setEventFlag(_turnFlagLabel,
+						_turnFlagValue ? g_nancy->_true : g_nancy->_false);
+					_turnFlagSet = true;
+				}
+
+				// Nancy13 picks a fresh turn sound out of a random block each time.
+				_turnSound = playSoundBlock(_turnSoundBlock);
+
+				// Start the turn animation from a clean frame counter. (Older games
+				// leave these untouched here - they are already 0 when a spindle is
+				// clickable, and resetting them would disturb the solve animation).
+				_turnFrameID = 0;
+				_nextTurnTime = 0;
+			} else {
+				// A click is ignored for as long as the previous turn's sound keeps playing.
+				if (g_nancy->_sound->isSoundPlaying(_turnSound)) {
+					break;
+				}
+
 				g_nancy->_sound->playSound(_turnSound);
-				_objectCurrentlyTurning = i;
 			}
 
-			// fixes nancy4 scene 4308
-			input.eatMouseInput();
-
-			return;
+			_objectCurrentlyTurning = i;
 		}
+
+		// fixes nancy4 scene 4308
+		input.eatMouseInput();
+		return;
 	}
 }
 
 void TurningPuzzle::drawObject(uint objectID, uint faceID, uint frameID) {
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		// The strip is a grid: one row per object type, with its faces laid out along X,
+		// each face taking (framesPerTurn + 1) frames.
+		const PieceType &t = _pieceTypes[_pieceTypeIDs[objectID]];
+		int stride = t.gap + t.cellW;
+		int step = (t.framesPerTurn + 1) * (int)faceID + (int)frameID;
+
+		Common::Rect srcRect;
+		srcRect.left = t.srcStartX + stride * step;
+		srcRect.top = t.srcStartY;
+		srcRect.right = srcRect.left + t.cellW;
+		srcRect.bottom = srcRect.top + t.cellH;
+
+		// Clear the object's cell first: unlike the older path (opaque sprites that fully
+		// cover their cell), the Nancy13 pipe sprites are transparent, so the previous
+		// frame would otherwise show through underneath.
+		_drawSurface.fillRect(_destRects[objectID], _drawSurface.getTransparentColor());
+		_drawSurface.blitFrom(_image, srcRect, _destRects[objectID]);
+		_needsRedraw = true;
+		return;
+	}
+
 	Common::Rect srcRect = _destRects[objectID];
 	srcRect.moveTo(_startPos);
 	Common::Point inc(_srcIncrement.x == 1 ? srcRect.width() : _srcIncrement.x, _srcIncrement.y == -2 ? srcRect.height() : _srcIncrement.y);
@@ -300,14 +560,19 @@ void TurningPuzzle::drawObject(uint objectID, uint faceID, uint frameID) {
 
 void TurningPuzzle::turnLogic(uint objectID) {
 	++_currentOrder[objectID];
-	if (_currentOrder[objectID] >= _numFaces) {
+	if (_currentOrder[objectID] >= numFacesOf(objectID)) {
 		_currentOrder[objectID] = 0;
 	}
 
 	for (uint j = 0; j < _links[objectID].size(); ++j) {
-		++_currentOrder[_links[objectID][j] - 1];
-		if (_currentOrder[_links[objectID][j] - 1] >= _numFaces) {
-			_currentOrder[_links[objectID][j] - 1] = 0;
+		uint linkedID = _links[objectID][j] - 1;
+		if (linkedID >= _currentOrder.size()) {
+			continue;
+		}
+
+		++_currentOrder[linkedID];
+		if (_currentOrder[linkedID] >= numFacesOf(linkedID)) {
+			_currentOrder[linkedID] = 0;
 		}
 	}
 }

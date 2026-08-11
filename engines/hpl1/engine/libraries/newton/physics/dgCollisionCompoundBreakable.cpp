@@ -1293,7 +1293,7 @@ void dgCollisionCompoundBreakable::SetAnchoredParts(dgInt32 count,
 
 			rootNode = queue[trealingIndex];
 			trealingIndex++;
-			if (trealingIndex >= dgInt32(sizeof(queue) / sizeof(queue[0]))) {
+			if (trealingIndex >= dgInt32(ARRAYSIZE(queue))) {
 				trealingIndex = 0;
 			}
 
@@ -1309,7 +1309,7 @@ void dgCollisionCompoundBreakable::SetAnchoredParts(dgInt32 count,
 					    cost;
 					queue[leadingIndex] = childNode;
 					leadingIndex++;
-					if (leadingIndex >= dgInt32(sizeof(queue) / sizeof(queue[0]))) {
+					if (leadingIndex >= dgInt32(ARRAYSIZE(queue))) {
 						leadingIndex = 0;
 					}
 					NEWTON_ASSERT(leadingIndex != trealingIndex);

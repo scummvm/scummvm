@@ -562,7 +562,7 @@ void VDXPlayer::fadeIn(uint8 *targetpal) {
 	if (_flagSkipPalette)
 		return;
 
-	// TODO: Is it required? If so, move to an appropiate place
+	// TODO: Is it required? If so, move to an appropriate place
 	// Copy the foreground to the background
 	memcpy((byte *)_vm->_graphicsMan->_foreground.getPixels(), (byte *)_vm->_graphicsMan->_background.getPixels(), 640 * 320);
 

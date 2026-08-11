@@ -315,7 +315,7 @@ void cRenderer3D::UpdateRenderList(cWorld3D *apWorld, cCamera3D *apCamera, float
 
 	// Setup fog BV
 	if (mRenderSettings.mbFogActive && mRenderSettings.mbFogCulling) {
-		// This is becuase the fog line is a stright line infront of the camera.
+		// This is because the fog line is a straight line infront of the camera.
 		float fCornerDist = (mRenderSettings.mfFogEnd * 2.0f) /
 							cos(apCamera->GetFOV() * apCamera->GetAspect() * 0.5f);
 

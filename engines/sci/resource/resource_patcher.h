@@ -126,11 +126,6 @@ private:
 		 * data.
 		 */
 		int32 delta;
-
-		PatchSizes(uint32 exp, int32 d) {
-			expected = exp;
-			delta = d;
-		}
 	};
 
 	typedef Common::Array<GameResourcePatch> PatchList;

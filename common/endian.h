@@ -588,7 +588,7 @@ union SwapFloat {
 	uint32 u32;
 };
 
-STATIC_ASSERT(sizeof(float) == sizeof(uint32), Unexpected_size_of_float);
+static_assert(sizeof(float) == sizeof(uint32), "Unexpected size of float");
 
 inline float READ_LE_FLOAT32(const void *ptr) {
 	SwapFloat swap;
@@ -640,7 +640,7 @@ union SwapDouble {
 };
 #endif
 
-STATIC_ASSERT(sizeof(double) == sizeof(uint64) || sizeof(double) == sizeof(uint32), Unexpected_size_of_double);
+static_assert(sizeof(double) == sizeof(uint64) || sizeof(double) == sizeof(uint32), "Unexpected size of double");
 
 template<size_t n> inline double READ_DOUBLE(const SwapDouble& sw);
 template<size_t n> inline void WRITE_DOUBLE(SwapDouble &sw, double d);

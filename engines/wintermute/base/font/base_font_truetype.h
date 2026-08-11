@@ -50,7 +50,7 @@ private:
 		int32 _maxHeight;
 		int32 _maxLength;
 		BaseSurface *_surface;
-		int32 _priority;
+		//int32 _priority;
 		int32 _textOffset;
 		bool _marked;
 		uint32 _lastUsed;
@@ -60,6 +60,7 @@ private:
 			_width = _maxHeight = _maxLength = -1;
 			_align = TAL_LEFT;
 			_surface = nullptr;
+			//_priority = -1;
 			_textOffset = 0;
 			_lastUsed = 0;
 			_marked = false;
@@ -93,6 +94,27 @@ public:
 		uint32 _color;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	class TextLine {
+	public:
+		TextLine(const WideString &text, int32 width) {
+			_text = text;
+			_width = width;
+		}
+
+		const WideString &getText() const {
+			return _text;
+		}
+		int32 getWidth() const {
+			return _width;
+		}
+
+	private:
+		WideString _text;
+		int32 _width;
+	};
+	typedef Common::List<TextLine *> TextLineList;
+
 public:
 	DECLARE_PERSISTENT(BaseFontTT, BaseFont)
 	BaseFontTT(BaseGame *inGame);
@@ -104,7 +126,7 @@ public:
 	int getLetterHeight() override;
 
 	bool loadBuffer(char *buffer);
-	bool loadFile(const Common::String &filename);
+	bool loadFile(const char *filename);
 
 	float getLineHeight() const {
 		return _lineHeight;
@@ -116,7 +138,9 @@ public:
 private:
 	bool parseLayer(BaseTTFontLayer *layer, char *buffer);
 
+	int32 wrapText(const WideString &text, int32 maxWidth, int32 maxHeight, TextLineList &lines);
 	void measureText(const WideString &text, int maxWidth, int maxHeight, int &textWidth, int &textHeight);
+	float getKerning(wchar_t leftChar, wchar_t rightChar);
 
 	BaseSurface *renderTextToTexture(const WideString &text, int width, TTextAlign align, int maxHeight, int &textOffset);
 
@@ -144,7 +168,6 @@ private:
 
 	BaseArray<BaseTTFontLayer *> _layers;
 	void clearCache();
-
 };
 
 } // End of namespace Wintermute

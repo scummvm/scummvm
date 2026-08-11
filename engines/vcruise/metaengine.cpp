@@ -22,7 +22,8 @@
 #include "common/translation.h"
 
 #include "backends/keymapper/action.h"
-#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "engines/advancedDetector.h"
 #include "vcruise/vcruise.h"
@@ -91,12 +92,34 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_PRELOAD_SOUNDS,
+		{
+			_s("Preload sounds"),
+			_s("Preload sounds. May improve performance on slow hard drives."),
+			"vcruise_preload_sounds",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FAST_VIDEO_DECODER,
+		{
+			_s("Faster video decoder (lower quality)"),
+			_s("Reduce video decoding CPU usage at the cost of quality."),
+			"vcruise_fast_video_decoder",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 } // End of namespace VCruise
 
-class VCruiseMetaEngine : public AdvancedMetaEngine {
+class VCruiseMetaEngine : public AdvancedMetaEngine<VCruise::VCruiseGameDescription> {
 public:
 	const char *getName() const override {
 		return "vcruise";
@@ -107,7 +130,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const VCruise::VCruiseGameDescription *desc) const override;
 
 	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 };
@@ -123,15 +146,27 @@ bool VCruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f);
 }
 
-Common::Error VCruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error VCruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const VCruise::VCruiseGameDescription *desc) const {
 	*engine = new VCruise::VCruiseEngine(syst, reinterpret_cast<const VCruise::VCruiseGameDescription *>(desc));
 	return Common::kNoError;
 }
 
 Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *target) const {
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "vcruise", "V-Cruise");
-
 	Common::Action *act;
+
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	keymap->addAction(act);
+
+	act = new Common::Action("VCRUISE_ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(VCruise::kKeymappedEventEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	keymap->addAction(act);
+
 	act = new Common::Action("VCRUISE_HELP", _("Display help screen"));
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventHelp);
 	act->addDefaultInputMapping("F1");
@@ -163,12 +198,12 @@ Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *targe
 	keymap->addAction(act);
 
 
-	act = new Common::Action("VCRUISE_MUSIC_TOGGLE", _("Toggle music on/off"));
+	act = new Common::Action("VCRUISE_MUSIC_TOGGLE", _("Toggle music"));
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventMusicToggle);
 	act->addDefaultInputMapping("F5");
 	keymap->addAction(act);
 
-	act = new Common::Action("VCRUISE_SOUND_TOGGLE", _("Toggle sound effects on/off"));
+	act = new Common::Action("VCRUISE_SOUND_TOGGLE", _("Toggle sound effects"));
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventSoundToggle);
 	act->addDefaultInputMapping("F6");
 	keymap->addAction(act);

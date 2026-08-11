@@ -23,7 +23,6 @@
 #define M4_ADV_R_KERNEL_H
 
 #include "m4/adv_r/adv.h"
-#include "m4/wscript/ws_machine.h"
 
 namespace M4 {
 
@@ -69,6 +68,7 @@ struct Kernel {
 	bool unused = false;
 
 	size_t mem_avail() const { return 7999999; }
+	bool cameraPans() const { return !camera_pan_instant; }
 };
 
 } // namespace M4

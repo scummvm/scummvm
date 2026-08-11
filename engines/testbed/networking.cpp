@@ -21,10 +21,19 @@
 
 #include "testbed/networking.h"
 
+#ifdef USE_BASIC_NET
+#include "backends/networking/basic/socket.h"
+#include "backends/networking/basic/url.h"
+#endif
+
 namespace Testbed {
 
 NetworkingTestSuite::NetworkingTestSuite() {
 	addTest("IsConnectionLimited", Networkingtests::testConnectionLimit, true);
+#ifdef USE_BASIC_NET
+	addTest("URL", Networkingtests::testURL, true);
+	addTest("Socket", Networkingtests::testSocket, true);
+#endif
 }
 
 TestExitStatus Networkingtests::testConnectionLimit() {
@@ -50,5 +59,93 @@ TestExitStatus Networkingtests::testConnectionLimit() {
 	}
 	return TestExitStatus();
 }
+
+#ifdef USE_BASIC_NET
+TestExitStatus Networkingtests::testURL() {
+	if (ConfParams.isSessionInteractive()) {
+		if (Testsuite::handleInteractiveInput("Testing the URL API implementation", "Continue", "Skip", kOptionRight)) {
+			Testsuite::logPrintf("Info! URL test skipped by the user.\n");
+			return kTestSkipped;
+		}
+
+		Common::String lobbyUrl = "https://multiplayer.scummvm.org:9130";
+		Networking::URL *url = Networking::URL::parseURL(lobbyUrl);
+		if (!url) {
+			Testsuite::logDetailedPrintf("Error! URL parsing failed\n");
+			return kTestFailed;
+		}
+
+		if (url->getScheme() != "https") {
+			Testsuite::logDetailedPrintf("Error! URL scheme was unexpected\n");
+			return kTestFailed;
+		}
+
+		if (url->getHost() != "multiplayer.scummvm.org") {
+			Testsuite::logDetailedPrintf("Error! URL host was unexpected\n");
+			return kTestFailed;
+		}
+
+		if (url->getPort() != 9130) {
+			Testsuite::logDetailedPrintf("Error! URL port was unexpected\n");
+			return kTestFailed;
+		}
+
+		Testsuite::logDetailedPrintf("URL test worked\n");
+		return kTestPassed;
+	}
+	return TestExitStatus();
+}
+
+TestExitStatus Networkingtests::testSocket() {
+	if (ConfParams.isSessionInteractive()) {
+		if (Testsuite::handleInteractiveInput("Testing the Socket API implementation", "Continue", "Skip", kOptionRight)) {
+			Testsuite::logPrintf("Info! Socket test skipped by the user.\n");
+			return kTestSkipped;
+		}
+
+		Common::String lobbyUrl = "https://multiplayer.scummvm.org:9130";
+		Networking::Socket *socket = Networking::Socket::connect(lobbyUrl);
+		if (!socket) {
+			Testsuite::logDetailedPrintf("Error! Socket connection failed\n");
+			return kTestFailed;
+		}
+
+		const char *send = "{\"cmd\": \"get_population\", \"area\": 8}\n";
+		size_t length = strlen(send);
+
+		if (socket->send(send, length) != length) {
+			Testsuite::logDetailedPrintf("Error! Socket send failed\n");
+			return kTestFailed;
+		}
+
+		int i;
+		for (i = 0; i < 10; i++) {
+			if (socket->ready()) {
+				break;
+			}
+			g_system->delayMillis(1000);
+		}
+
+		if (i == 10) {
+			Testsuite::logDetailedPrintf("Error! Socket ready check failed\n");
+			return kTestFailed;
+		}
+
+		char reply[1024];
+		length = socket->recv(reply, sizeof(reply));
+		if (length == 0) {
+			Testsuite::logDetailedPrintf("Error! Socket receive failed\n");
+			return kTestFailed;
+		}
+		reply[length] = 0;
+
+		debug("Socket received: %s", reply);
+
+		Testsuite::logDetailedPrintf("URL test worked\n");
+		return kTestPassed;
+	}
+	return TestExitStatus();
+}
+#endif
 
 } // namespace Testbed

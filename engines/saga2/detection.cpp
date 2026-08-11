@@ -106,7 +106,7 @@ static const SAGA2GameDescription gameDescriptions[] = {
 				{"scripts.hrs",	 GAME_SCRIPTFILE,					"95f33928f6c4f02ee04d2ec5c3314c30", 1041948},
 				{"ftasound.hrs", GAME_SOUNDFILE,					"ce930cb38922e6a03461f55d51b4e165", 12403350},
 				{"ftaimage.hrs", GAME_IMAGEFILE,					"09bb003733b20f924e2e373d2ddcd394", 21127397},
-				{"ftavoice.hrs", GAME_VOICEFILE,					nullptr, -1 },
+				{"ftavoice.hrs", GAME_VOICEFILE,					nullptr, AD_NO_SIZE },
 				{"fta2win.exe",  GAME_EXECUTABLE,					"9a94854fef932483754a8f929caa0dba", 1093120},
 				AD_LISTEND
 			},
@@ -127,9 +127,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class Saga2MetaEngineDetection : public AdvancedMetaEngineDetection {
+class Saga2MetaEngineDetection : public AdvancedMetaEngineDetection<Saga2::SAGA2GameDescription> {
 public:
-	Saga2MetaEngineDetection() : AdvancedMetaEngineDetection(Saga2::gameDescriptions, sizeof(Saga2::SAGA2GameDescription), Saga2::saga2Games) {
+	Saga2MetaEngineDetection() : AdvancedMetaEngineDetection(Saga2::gameDescriptions, Saga2::saga2Games) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

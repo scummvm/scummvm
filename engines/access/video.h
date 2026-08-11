@@ -24,6 +24,9 @@
 
 #include "common/scummsys.h"
 #include "common/memstream.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
 #include "access/data.h"
 #include "access/asurface.h"
 #include "access/files.h"
@@ -33,32 +36,9 @@ namespace Access {
 enum VideoFlags { VIDEOFLAG_NONE = 0, VIDEOFLAG_BG = 1 };
 
 class VideoPlayer : public Manager {
-	struct VideoHeader {
-		int _frameCount;
-		int _width, _height;
-		VideoFlags _flags;
-	};
-private:
-	BaseSurface *_vidSurface;
-	Resource *_videoData;
-	VideoHeader _header;
-	byte *_startCoord;
-	int _frameCount;
-	int _xCount;
-	int _scanCount;
-	int _frameSize;
-	Common::Rect _videoBounds;
-
-	void getFrame();
-	void setVideo(BaseSurface *vidSurface, const Common::Point &pt, int rate);
-public:
-	int _videoFrame;
-	bool _soundFlag;
-	int _soundFrame;
-	bool _videoEnd;
 public:
 	VideoPlayer(AccessEngine *vm);
-	~VideoPlayer();
+	virtual ~VideoPlayer();
 
 	/**
 	 * Start up a video
@@ -69,14 +49,136 @@ public:
 	/**
 	 * Decodes a frame of the video
 	 */
-	void playVideo();
+	virtual void playVideo() = 0;
 
-	void copyVideo();
+	virtual void copyVideo() = 0;
 	/**
 	 * Frees the data for a previously loaded video
 	 */
-	void closeVideo();
+	virtual void closeVideo();
+
+	/**
+	 * Play to the end of the video, handling events.
+	 */
+	void playToEnd();
+
+	virtual int getWidth() = 0;
+
+	virtual int getHeight() = 0;
+
+protected:
+	virtual void setVideo(const Common::Point &pt) = 0;
+
+	virtual void setRate(int rate) = 0;
+
+	virtual void delayToNextFrame() = 0;
+
+	Resource *_videoData;
+	BaseSurface *_vidSurface;
+
+public:
+	int _videoFrame;
+	bool _soundFlag;
+	int _soundFrame;
+	bool _videoEnd;
 };
+
+
+class VideoPlayer_v1 : public VideoPlayer {
+	struct VideoHeader {
+		int _frameCount;
+		int _width, _height;
+		VideoFlags _flags;
+	};
+private:
+	VideoHeader _header;
+	byte *_startCoord;
+	int _frameCount;
+	int _xCount;
+	int _scanCount;
+	int _frameSize;
+	Common::Rect _videoBounds;
+	int _rate;
+
+	void getFrame();
+protected:
+	void setVideo(const Common::Point &pt) override;
+
+	void setRate(int rate) override;
+
+	void delayToNextFrame() override;
+
+public:
+	VideoPlayer_v1(AccessEngine *vm);
+
+	~VideoPlayer_v1();
+
+	void playVideo() override;
+
+	void copyVideo() override;
+
+	int getWidth() override { return _header._width; }
+
+	int getHeight() override { return _header._height; }
+
+};
+
+class VideoPlayer_v2 : public VideoPlayer {
+	struct VideoHeader {
+		uint32 _id;
+		byte _version;
+		int _frameCount;
+		int _width, _height;
+		int _frameIncr;
+		uint16 _unk;
+		VideoFlags _flags;
+	};
+private:
+	VideoHeader _header;
+	BaseSurface *_frame;
+	uint32 _nextFrameTime;
+	bool _setPal;
+	bool _drawBorder;
+	uint32 _startMs;
+	uint32 _delayTotal;
+
+	Audio::QueuingAudioStream *_audioStream;
+	Audio::SoundHandle _audioStreamHandle;
+	Graphics::Palette _pal;
+
+	void handleStraitChunk();
+	void handlePaletteChunk();
+	void handleFrameChunk(bool delta, bool skipLines);
+	void handleSoundChunk(bool init);
+
+	void calcNextFrameTime(int delay);
+
+protected:
+	void setVideo(const Common::Point &pt) override;
+
+	void setRate(int rate) override { };
+
+	void delayToNextFrame() override;
+public:
+	VideoPlayer_v2(AccessEngine *vm, bool setPal = false);
+
+	~VideoPlayer_v2();
+
+	void playVideo() override;
+
+	void copyVideo() override {};
+
+	void closeVideo() override;
+
+	int getWidth() override { return _header._width; }
+
+	int getHeight() override { return _header._height; }
+
+	void setVideoPalNow();
+
+	void setDrawBorder(bool drawBorder) { _drawBorder = drawBorder; }
+};
+
 
 } // End of namespace Access
 

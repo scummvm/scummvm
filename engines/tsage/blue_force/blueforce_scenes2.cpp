@@ -103,10 +103,9 @@ void Scene200::Action2::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene200::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(200);
-	setZoomPercents(0, 100, 200, 100);
 	BF_GLOBALS._sound1.play(3);
+	loadScene(200);
+	SceneExt::postInit();
 
 	_object10.postInit();
 	_object10.setVisage(200);
@@ -450,7 +449,7 @@ void Scene225::Action1::signal() {
 		owner->setStrip(4);
 		owner->setFrame(1);
 		owner->fixPriority(116);
-		owner->animate(ANIM_MODE_1, NULL);
+		owner->animate(ANIM_MODE_1, this);
 
 		Common::Point destPos(138, 117);
 		NpcMover *mover = new NpcMover();
@@ -468,6 +467,7 @@ void Scene225::Action1::signal() {
 		owner->addMover(mover2, &destPos, this);
 
 		BF_GLOBALS._player.setPosition(Common::Point(owner->_position.x, 0));
+		BF_GLOBALS._player._moveDiff.x = 10;
 		ADD_MOVER_NULL(BF_GLOBALS._player, 500, 0);
 		break;
 	}
@@ -502,6 +502,7 @@ void Scene225::Action1::signal() {
 		owner->animate(ANIM_MODE_4, 4, -1, this);
 		break;
 	case 20:
+		scene->_object21.show();
 		PaletteRotation *rot;
 		rot = BF_GLOBALS._scenePalette.addRotation(64, 79, 1);
 		rot->setDelay(10);
@@ -624,9 +625,9 @@ void Scene225::Action6::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene225::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(1225);
 	loadBackground(-320, 0);
+	SceneExt::postInit();
 
 	_object8.postInit();
 	_object8.setVisage(1225);
@@ -777,7 +778,7 @@ void Scene265::remove() {
 void Scene270::Action1::signal() {
 	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
 
-	scene->setAction(&scene->_sequenceManager2, this, 2703, &scene->_tv, NULL);
+	setAction(&scene->_sequenceManager2, this, 2703, &scene->_tv, NULL);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1562,12 +1563,13 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 
 	_sceneMode = 11;
 
-	static uint32 black = 0;
-	add2Faders((const byte *)&black, 2, 270, this);
+	static byte black[3] = { 0, 0, 0 };
+	add2Faders(black, 2, 270, this);
 }
 
 void Scene271::signal() {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 10:
@@ -1594,7 +1596,8 @@ void Scene271::signal() {
 		default:
 			_object11.postInit();
 			_object11.setPosition(Common::Point(340, 100));
-			BF_GLOBALS._sound1.play(36);
+			// Door knock sound
+			_sound1.play(36);
 
 			_sceneMode = 2709;
 			setAction(&_sequenceManager1, this, 2709, &BF_GLOBALS._player, &_object1, &_object12, &_object11, NULL);
@@ -1643,7 +1646,7 @@ void Scene271::signal() {
 	case 2709:
 		BF_GLOBALS._sound1.play(68);
 		_sceneMode = 12;
-		addFader((const byte *)&black, 2, this);
+		addFader(black, 2, this);
 		break;
 	case 2712:
 		BF_GLOBALS._sound1.fadeOut2(NULL);
@@ -1660,7 +1663,7 @@ void Scene271::signal() {
 	case 2716:
 		BF_GLOBALS._deathReason = 24;
 		_sceneMode = 13;
-		addFader((const byte *)&black, 2, this);
+		addFader(black2, 2, this);
 		break;
 	default:
 		break;
@@ -1733,7 +1736,7 @@ void Scene271::dispatch() {
 
 void Scene280::Action1::signal() {
 	Scene280 *scene = (Scene280 *)BF_GLOBALS._sceneManager._scene;
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
 	case 0:
@@ -1806,7 +1809,7 @@ void Scene280::Action1::signal() {
 	case 9:
 		scene->_sceneMode = 2;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
-		scene->addFader((const byte *)&black, 2, scene);
+		scene->addFader(black, 2, scene);
 
 		scene->_jake.remove();
 		scene->_mum.animate(ANIM_MODE_5, NULL);
@@ -1834,8 +1837,8 @@ void Scene280::postInit(SceneObjectList *OwnerList) {
 	_object4.setVisage(280);
 	_object4.setPosition(Common::Point(139, 141));
 
-	const uint32 black = 0;
-	add2Faders((const byte *)&black, 2, 280, this);
+	static byte black[3] = { 0, 0, 0 };
+	add2Faders(black, 2, 280, this);
 	_sceneMode = 1;
 	setAction(&_action1);
 }

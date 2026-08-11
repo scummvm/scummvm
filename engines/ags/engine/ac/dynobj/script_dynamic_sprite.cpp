@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/dynobj/script_dynamic_sprite.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 
@@ -27,7 +28,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-int ScriptDynamicSprite::Dispose(const char *address, bool force) {
+int ScriptDynamicSprite::Dispose(void *address, bool force) {
 	// always dispose
 	if ((slot) && (!force))
 		free_dynamic_sprite(slot);
@@ -40,11 +41,11 @@ const char *ScriptDynamicSprite::GetType() {
 	return "DynamicSprite";
 }
 
-size_t ScriptDynamicSprite::CalcSerializeSize() {
+size_t ScriptDynamicSprite::CalcSerializeSize(const void * /*address*/) {
 	return sizeof(int32_t);
 }
 
-void ScriptDynamicSprite::Serialize(const char *address, Stream *out) {
+void ScriptDynamicSprite::Serialize(const void *address, Stream *out) {
 	out->WriteInt32(slot);
 }
 

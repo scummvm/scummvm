@@ -39,41 +39,41 @@ namespace StarTrek {
 #define GUARDSTAT_TIED 8
 
 extern const RoomAction tug3ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::tug3Tick1 },
-	{ {ACTION_TICK, 40, 0, 0}, &Room::tug3Tick40 },
-	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug3LookAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::tug3UsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::tug3UsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERS, 8, 0}, &Room::tug3UseStunPhaserOnElasi1 },
-	{ {ACTION_USE, OBJECT_IPHASERS, 9, 0}, &Room::tug3UseStunPhaserOnElasi2 },
-	{ {ACTION_USE, OBJECT_IPHASERS, 10, 0}, &Room::tug3UseStunPhaserOnElasi3 },
-	{ {ACTION_USE, OBJECT_IPHASERS, 11, 0}, &Room::tug3UseStunPhaserOnElasi4 },
-	{ {ACTION_USE, OBJECT_IPHASERK, 8, 0}, &Room::tug3UseKillPhaserOnElasi1 },
-	{ {ACTION_USE, OBJECT_IPHASERK, 9, 0}, &Room::tug3UseKillPhaserOnElasi2 },
-	{ {ACTION_USE, OBJECT_IPHASERK, 10, 0}, &Room::tug3UseKillPhaserOnElasi3 },
-	{ {ACTION_USE, OBJECT_IPHASERK, 11, 0}, &Room::tug3UseKillPhaserOnElasi4 },
-	{ {ACTION_FINISHED_ANIMATION, 12, 0, 0}, &Room::tug3ElasiStunnedOrKilled },
-	{ {ACTION_TALK, 8, 0, 0}, &Room::tug3TalkToElasi1 },
-	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0}, &Room::tug3Elasi1DrewPhaser },
-	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::tug3Elasi1ShotConsole },
-	{ {ACTION_FINISHED_ANIMATION, 5, 0, 0}, &Room::tug3Elasi1DrewPhaser2 },
-	{ {ACTION_FINISHED_ANIMATION, 6, 0, 0}, &Room::tug3Elasi1ShotConsoleAndSurrenders },
-	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::tug3LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::tug3LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::tug3LookAtRedshirt },
-	{ {ACTION_LOOK, 8, 0, 0}, &Room::tug3LookAtElasi1 },
-	{ {ACTION_LOOK, 9, 0, 0}, &Room::tug3LookAtElasi2 },
-	{ {ACTION_LOOK, 10, 0, 0}, &Room::tug3LookAtElasi3 },
-	{ {ACTION_LOOK, 11, 0, 0}, &Room::tug3LookAtElasi4 },
-	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::tug3TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::tug3TalkToSpock },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::tug3TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::tug3UseCommunicator },
-	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::tug3Timer0Expired },
-	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::tug3AllCrewmenDead },
-	{ {ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::tug3Timer1Expired },
-	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::tug3SecurityTeamBeamedIn },
-	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
+	{ {ACTION_TICK, 1, 0, 0, 0}, &Room::tug3Tick1 },
+	{ {ACTION_TICK, 40, 0, 0, 0}, &Room::tug3Tick40 },
+	{ {ACTION_LOOK, 0xff, 0, 0, 0}, &Room::tug3LookAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0, 0}, &Room::tug3UsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0, 0}, &Room::tug3UsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERS, 8, 0, 0}, &Room::tug3UseStunPhaserOnElasi1 },
+	{ {ACTION_USE, OBJECT_IPHASERS, 9, 0, 0}, &Room::tug3UseStunPhaserOnElasi2 },
+	{ {ACTION_USE, OBJECT_IPHASERS, 10, 0, 0}, &Room::tug3UseStunPhaserOnElasi3 },
+	{ {ACTION_USE, OBJECT_IPHASERS, 11, 0, 0}, &Room::tug3UseStunPhaserOnElasi4 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 8, 0, 0}, &Room::tug3UseKillPhaserOnElasi1 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 9, 0, 0}, &Room::tug3UseKillPhaserOnElasi2 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 10, 0, 0}, &Room::tug3UseKillPhaserOnElasi3 },
+	{ {ACTION_USE, OBJECT_IPHASERK, 11, 0, 0}, &Room::tug3UseKillPhaserOnElasi4 },
+	{ {ACTION_FINISHED_ANIMATION, 12, 0, 0, 0}, &Room::tug3ElasiStunnedOrKilled },
+	{ {ACTION_TALK, 8, 0, 0, 0}, &Room::tug3TalkToElasi1 },
+	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0, 0}, &Room::tug3Elasi1DrewPhaser },
+	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0, 0}, &Room::tug3Elasi1ShotConsole },
+	{ {ACTION_FINISHED_ANIMATION, 5, 0, 0, 0}, &Room::tug3Elasi1DrewPhaser2 },
+	{ {ACTION_FINISHED_ANIMATION, 6, 0, 0, 0}, &Room::tug3Elasi1ShotConsoleAndSurrenders },
+	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0, 0}, &Room::tug3LookAtMccoy },
+	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0, 0}, &Room::tug3LookAtSpock },
+	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::tug3LookAtRedshirt },
+	{ {ACTION_LOOK, 8, 0, 0, 0}, &Room::tug3LookAtElasi1 },
+	{ {ACTION_LOOK, 9, 0, 0, 0}, &Room::tug3LookAtElasi2 },
+	{ {ACTION_LOOK, 10, 0, 0, 0}, &Room::tug3LookAtElasi3 },
+	{ {ACTION_LOOK, 11, 0, 0, 0}, &Room::tug3LookAtElasi4 },
+	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0, 0}, &Room::tug3TalkToMccoy },
+	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0, 0}, &Room::tug3TalkToSpock },
+	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0, 0}, &Room::tug3TalkToRedshirt },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0, 0}, &Room::tug3UseCommunicator },
+	{ {ACTION_TIMER_EXPIRED, 0, 0, 0, 0}, &Room::tug3Timer0Expired },
+	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0, 0}, &Room::tug3AllCrewmenDead },
+	{ {ACTION_TIMER_EXPIRED, 1, 0, 0, 0}, &Room::tug3Timer1Expired },
+	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0, 0}, &Room::tug3SecurityTeamBeamedIn },
+	{ {ACTION_LIST_END, 0, 0, 0, 0}, nullptr }
 };
 
 enum tug3TextIds {
@@ -491,11 +491,11 @@ void Room::tug3UseCommunicator() {
 			showText(TX_SPEAKER_KIRK, TX_TUG3_006);
 			showText(TX_SPEAKER_SCOTT, TX_TUG3_S07);
 
-			playMidiMusicTracks(-1, -1);
+			playMidiMusicTracks(MIDITRACK_NONE);
 
 			_awayMission->disableInput = true;
-			if (_awayMission->tug.missionScore < 0)
-				_awayMission->tug.missionScore = 0;
+			// FIXME: Why do we need to clip the mission score? It shouldn't have gone above 32
+			_awayMission->tug.missionScore = CLIP<int16>(_awayMission->tug.missionScore, 0, 32);
 			endMission(_awayMission->tug.missionScore, _awayMission->tug.field2b, _awayMission->tug.field2d);
 		}
 	}
@@ -547,7 +547,7 @@ void Room::tug3Timer0Expired() {
 }
 
 void Room::tug3AllCrewmenDead() {
-	playMidiMusicTracks(2, -1);
+	playMidiMusicTracks(MIDITRACK_2);
 	showGameOverMenu();
 }
 
@@ -568,7 +568,7 @@ void Room::tug3Timer1Expired() {
 }
 
 void Room::tug3EndMission() {
-	playMidiMusicTracks(28, -1);
+	playMidiMusicTracks(MIDITRACK_28);
 	showText(TX_SPEAKER_KIRK, TX_TUG3_001);
 	playSoundEffectIndex(kSfxTransporterMaterialize);
 	loadActorAnim2(OBJECT_13, "rteleb", 0x14, 0xa0, 7);
@@ -584,10 +584,10 @@ void Room::tug3SecurityTeamBeamedIn() {
 	showText(TX_SPEAKER_KIRK, TX_TUG3_005);
 	showText(TX_SPEAKER_SCOTT, TX_TUG3_S08);
 
-	playMidiMusicTracks(-1, -1);
+	playMidiMusicTracks(MIDITRACK_NONE);
 	_awayMission->disableInput = true;
-	if (_awayMission->tug.missionScore < 0)
-		_awayMission->tug.missionScore = 0;
+	// FIXME: Why do we need to clip the mission score? It shouldn't have gone above 32
+	_awayMission->tug.missionScore = CLIP<int16>(_awayMission->tug.missionScore, 0, 32);
 	endMission(_awayMission->tug.missionScore, _awayMission->tug.field2b, _awayMission->tug.field2d);
 }
 

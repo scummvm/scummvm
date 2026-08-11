@@ -179,11 +179,10 @@ public:
 class KeyboardInput {
 public:
 	CommandType _commandToIssue;
-	Common::KeyCode _key;
-	byte _modifiers;
+	Common::CustomEventType _action;
 
-	KeyboardInput(CommandType command, Common::KeyCode keycode, byte modifierFlags) : _commandToIssue(command), _key(keycode), _modifiers(modifierFlags) {}
-	KeyboardInput() : _commandToIssue(kDMCommandNone), _key(Common::KEYCODE_ESCAPE), _modifiers(0) {}
+	KeyboardInput(CommandType command, Common::CustomEventType action) : _commandToIssue(command), _action(action) {}
+	KeyboardInput() : _commandToIssue(kDMCommandNone), _action(kActionNone) {}
 }; // @ KEYBOARD_INPUT
 
 class DMEngine;
@@ -256,7 +255,7 @@ public:
 	/**
 	* Upon encountering an event type for which the grab parameter is not null, the function
 	* will return with the event type, passes the event to the grab desitination and returns without
-	* processing the rest of the events into commands accoring to the current keyboard and mouse input.
+	* processing the rest of the events into commands according to the current keyboard and mouse input.
 	* If there are no more events, it returns with Common::EVENT_INVALID.
 	*/
 	Common::EventType processInput(Common::Event *grabKey = nullptr, Common::Event *grabMouseClick = nullptr);
@@ -287,7 +286,7 @@ public:
 	void waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
 	void commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2); // @ F0362_COMMAND_HighlightBoxEnable
 	void highlightBoxDisable(); // @ F0363_COMMAND_HighlightBoxDisable
-	void highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning("STUB METHOD: highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
+	void highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2); // @  F0006_MAIN_HighlightScreenBox
 
 	KeyboardInput _primaryKeyboardInputInterface[7]; // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
 	KeyboardInput _secondaryKeyboardInputMovement[19]; // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement

@@ -187,7 +187,7 @@ void Insane::chooseEnemy() {
 	if (readArray(58) != 0)
 		_enemy[EN_TORQUE].isEmpty = 1;
 
-	if (_enemy[EN_TORQUE].occurences == 0) {
+	if (_enemy[EN_TORQUE].occurrences == 0) {
 		_currEnemy = EN_TORQUE;
 		_metEnemiesListTail++;
 		_metEnemiesList[_metEnemiesListTail] = EN_TORQUE;

@@ -22,9 +22,9 @@
 #include "backends/cloud/onedrive/onedrivecreatedirectoryrequest.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/formats/json.h"
 
 namespace Cloud {
@@ -68,11 +68,11 @@ void OneDriveCreateDirectoryRequest::start() {
 
 	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT;
 	if (parent != "")
-		url += ":/" + ConnMan.urlEncode(parent) + ":";
+		url += ":/" + Common::percentEncodeString(parent) + ":";
 	url += "/children";
 	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveCreateDirectoryRequest, const Networking::JsonResponse &>(this, &OneDriveCreateDirectoryRequest::responseCallback);
 	Networking::ErrorCallback errorResponseCallback = new Common::Callback<OneDriveCreateDirectoryRequest, const Networking::ErrorResponse &>(this, &OneDriveCreateDirectoryRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(_storage, innerCallback, errorResponseCallback, url.c_str());
+	Networking::HttpJsonRequest *request = new OneDriveTokenRefresher(_storage, innerCallback, errorResponseCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
 
@@ -96,7 +96,7 @@ void OneDriveCreateDirectoryRequest::responseCallback(const Networking::JsonResp
 		_date = response.request->date();
 
 	Networking::ErrorResponse error(this, "OneDriveCreateDirectoryRequest::responseCallback: unknown error");
-	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
+	const Networking::HttpJsonRequest *rq = (const Networking::HttpJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 

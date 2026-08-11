@@ -23,23 +23,22 @@
 #define ULTIMA8_AUDIO_SPEECHFLEX_H
 
 #include "ultima/ultima8/audio/sound_flex.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class SpeechFlex : public SoundFlex {
-	Std::vector<Std::string> _phrases;
+	Common::Array<Common::String> _phrases;
 
 public:
 	SpeechFlex(Common::SeekableReadStream *rs);
 	~SpeechFlex(void) override;
 
-	int getIndexForPhrase(const Std::string &phrase,
+	int getIndexForPhrase(const Common::String &phrase,
 	                      uint32 start, uint32 &end) const;
 
 	//! get total length (in milliseconds) of speech for a phrase
-	uint32 getSpeechLength(const Std::string &phrase);
+	uint32 getSpeechLength(const Common::String &phrase);
 };
 
 } // End of namespace Ultima8

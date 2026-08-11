@@ -20,6 +20,7 @@
  */
 
 #include "m4/mem/reloc.h"
+#include "common/textconsole.h"
 
 namespace M4 {
 
@@ -27,8 +28,12 @@ struct HR {
 	void *_data;
 };
 
-MemHandle NewHandle(size_t size, const Common::String &) {
+MemHandle NewHandle(size_t size, const Common::String &str) {
 	HR *result = (HR *)malloc(sizeof(HR));
+
+	if (!result)
+		error("Unable to allocate memory - %zd bytes for %s", size, str.c_str());
+
 	result->_data = malloc(size);
 
 	return (MemHandle)result;
@@ -49,10 +54,6 @@ MemHandle MakeNewHandle(size_t size, const Common::String &name) {
 void DisposeHandle(MemHandle handle) {
 	free(*handle);
 	free(handle);
-}
-
-uint32 MaxMem(Size *growBytes) {
-	return 7999999;
 }
 
 } // namespace M4

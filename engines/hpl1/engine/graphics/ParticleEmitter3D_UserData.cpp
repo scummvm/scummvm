@@ -942,7 +942,7 @@ void cParticleEmitter3D_UserData::UpdateMotion(float afTimeStep) {
 			if (mpData->mCoordSystem == eParticleEmitter3DCoordSystem_World) {
 				vDir = pParticle->mvPos - GetWorldMatrix().GetTranslation();
 			} else {
-				// Perhaps on mvPos is needed.. and no substraction.
+				// Perhaps on mvPos is needed.. and no subtraction.
 				vDir = pParticle->mvPos - GetLocalMatrix().GetTranslation();
 			}
 

@@ -31,6 +31,9 @@
 namespace Scumm {
 
 class Insane;
+#ifdef ENABLE_REBEL2_PSX
+class Rebel2PSX;
+#endif
 class SmushMixer;
 class SmushPlayer;
 class TextRenderer_v7;
@@ -38,25 +41,35 @@ class TextRenderer_v7;
 class ScummEngine_v7 : public ScummEngine_v6 {
 	friend class SmushPlayer;
 	friend class Insane;
+	friend class InsaneRebel1;
+	friend class InsaneRebel2;
+#ifdef ENABLE_REBEL2_PSX
+	friend class Rebel2PSX;
+#endif
 public:
 	ScummEngine_v7(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v7() override;
 
 
 protected:
-	int _smushFrameRate;
+	int _smushFrameRate = 0;
 
 	/**
 	 * Flag which signals that the SMUSH video playback should end now
 	 * (e.g. because it was aborted by the user or it's simply finished).
 	 */
-	bool _smushVideoShouldFinish;
+	bool _smushVideoShouldFinish = false;
 
-	bool _smushActive;
+	bool _smushActive = false;
 
-	Insane *_insane;
+	Insane *_insane = nullptr;
+#ifdef ENABLE_REBEL2_PSX
+	Rebel2PSX *_rebel2PSX = nullptr;
+#endif
 
 public:
+	void syncSoundSettings() override;
+
 	SmushMixer *_smixer;
 	SmushPlayer *_splayer;
 
@@ -70,15 +83,15 @@ protected:
 	TextRenderer_v7 *_textV7;
 	Common::Rect _defaultTextClipRect;
 	Common::Rect _wrappedTextClipRect;
-	bool _newTextRenderStyle;
+	bool _newTextRenderStyle = false;
 	int _blastTextRectsQueue = 0;
 
-	int _verbLineSpacing;
-	bool _existLanguageFile;
-	char *_languageBuffer;
+	int _verbLineSpacing = 0;
+	bool _existLanguageFile = false;
+	char *_languageBuffer = nullptr;
 	LangIndexNode *_languageIndex;
-	int _languageIndexSize;
-	char _lastStringTag[12+1];
+	int _languageIndexSize = 0;
+	char _lastStringTag[12+1] = {};
 
 	struct SubtitleText : TextObject {
 		void clear() {
@@ -102,6 +115,10 @@ public:
 	void displayDialog() override;
 	bool isSmushActive() override { return _smushActive; }
 	bool isInsaneActive() override { return _insane ? _insane->isInsaneActive() : false; }
+	Insane *getInsane() { return _insane; }
+#ifdef ENABLE_REBEL2_PSX
+	Rebel2PSX *getRebel2PSX() { return _rebel2PSX; }
+#endif
 	void removeBlastTexts() override;
 	void restoreBlastTextsRects();
 
@@ -134,7 +151,7 @@ protected:
 	int getObjectIdFromOBIM(const byte *obim) override;
 
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
-	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
+	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags, bool ttsVoiceText = true, bool ttsIsSubtitle = false);
 	void drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags);
 	void drawBlastTexts() override;
 	void showMessageDialog(const byte *msg) override;
@@ -164,7 +181,7 @@ protected:
 	void setCursorTransparency(int a) override;
 	void setCursorFromImg(uint img, uint room, uint imgindex) override;
 
-	void drawVerb(int verb, int mode) override;
+	void drawVerb(int verb, int mode, Common::TextToSpeechManager::Action ttsAction = Common::TextToSpeechManager::INTERRUPT) override;
 
 	void pauseEngineIntern(bool pause) override;
 
@@ -173,10 +190,18 @@ protected:
 	struct BlastText : TextObject {
 		Common::Rect rect;
 		TextStyleFlags flags;
+#ifdef USE_TTS
+		bool voiceText;
+		bool isSubtitle;
+#endif
 
 		void clear() {
 			this->TextObject::clear();
 			rect = Common::Rect();
+#ifdef USE_TTS
+			voiceText = true;
+			isSubtitle = false;
+#endif
 		}
 	};
 

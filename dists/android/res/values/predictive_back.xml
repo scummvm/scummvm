@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--
+		Android 33 introduced the enableOnBackInvokedCallback with gesture based navigation.
+		Sadly the implementation is incomplete before Android 34 to detect long presses on the back
+		button.
+		So, only enable the attribute starting with Android 34 as Android 33 works well with false.
+		Note: in Android 33 with gesture navigation, the long "press" on back (aka slow back gesture)
+		cannot be detected.
+	-->
+	<bool name="enableOnBackInvokedCallback">false</bool>
+</resources>

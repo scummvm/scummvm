@@ -27,6 +27,7 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/gfx/xanimation.h"
 #include "engines/wintermute/base/gfx/xanimation_set.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
@@ -43,25 +44,25 @@ Animation::Animation(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 Animation::~Animation() {
-	for (uint32 i = 0; i < _posKeys.size(); i++) {
+	for (int32 i = 0; i < _posKeys.getSize(); i++) {
 		delete _posKeys[i];
 	}
-	_posKeys.clear();
+	_posKeys.removeAll();
 
-	for (uint32 i = 0; i < _rotKeys.size(); i++) {
+	for (int32 i = 0; i < _rotKeys.getSize(); i++) {
 		delete _rotKeys[i];
 	}
-	_rotKeys.clear();
+	_rotKeys.removeAll();
 
-	for (uint32 i = 0; i < _scaleKeys.size(); i++) {
+	for (int32 i = 0; i < _scaleKeys.getSize(); i++) {
 		delete _scaleKeys[i];
 	}
-	_scaleKeys.clear();
+	_scaleKeys.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool Animation::findBone(FrameNode *rootFrame) {
-	if (_targetName != "") {
+	if (!_targetName.empty()) {
 		_targetFrame = rootFrame->findFrame(_targetName.c_str());
 	}
 	return true;
@@ -72,11 +73,14 @@ bool Animation::load(XFileData *xobj, AnimationSet *parentAnimSet) {
 	bool result;
 	XClassType objectType;
 
+	// Query the child for it's FileDataReference
 	if (xobj->isReference()) {
 		// The original data is found
 		result = xobj->getType(objectType);
-		if (!result)
+		if (!result) {
+			BaseEngine::LOG(0, "Couldn't retrieve object type while loading animation");
 			return result;
+		}
 
 		// The object must be a frame
 		if (objectType == kXClassFrame) {
@@ -137,7 +141,7 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 	uint32 numKeys = animationKey->_numKeys;
 
 	if (keyType == 0) { // rotation key
-		if (_rotKeys.size() != 0) {
+		if (_rotKeys.getSize() != 0) {
 			BaseEngine::LOG(0, "Rotation key duplicated");
 			return false;
 		}
@@ -147,18 +151,17 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			assert(fileRotKey->_numTfkeys == 4);
 
 			BoneRotationKey *rotKey = new BoneRotationKey;
-			rotKey->_time         = fileRotKey->_time;
+			rotKey->_time        = fileRotKey->_time;
 			// NOTE x files are w x y z and QUATERNIONS are x y z w
-			rotKey->_rotation.w() = fileRotKey->_tfkeys[0];
-			rotKey->_rotation.x() = fileRotKey->_tfkeys[1];
-			rotKey->_rotation.y() = fileRotKey->_tfkeys[2];
-			// mirror z component
-			rotKey->_rotation.z() = -fileRotKey->_tfkeys[3];
+			rotKey->_rotation._w = fileRotKey->_tfkeys[0];
+			rotKey->_rotation._x = fileRotKey->_tfkeys[1];
+			rotKey->_rotation._y = fileRotKey->_tfkeys[2];
+			rotKey->_rotation._z = fileRotKey->_tfkeys[3];
 
-			_rotKeys.push_back(rotKey);
+			_rotKeys.add(rotKey);
 		}
 	} else if (keyType == 1) { // scale key
-		if (_scaleKeys.size() != 0) {
+		if (_scaleKeys.getSize() != 0) {
 			BaseEngine::LOG(0, "Scale key duplicated");
 			return false;
 		}
@@ -169,14 +172,14 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 
 			BoneScaleKey *scaleKey = new BoneScaleKey;
 			scaleKey->_time  = fileScaleKey->_time;
-			for (uint i = 0; i < fileScaleKey->_numTfkeys; ++i) {
-				scaleKey->_scale.getData()[i] = fileScaleKey->_tfkeys[i];
-			}
+			scaleKey->_scale._x = fileScaleKey->_tfkeys[0];
+			scaleKey->_scale._y = fileScaleKey->_tfkeys[1];
+			scaleKey->_scale._z = fileScaleKey->_tfkeys[2];
 
-			_scaleKeys.push_back(scaleKey);
+			_scaleKeys.add(scaleKey);
 		}
 	} else if (keyType == 2) { // position key
-		if (_posKeys.size() != 0) {
+		if (_posKeys.getSize() != 0) {
 			BaseEngine::LOG(0, "Position key duplicated");
 			return false;
 		}
@@ -187,72 +190,53 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 
 			BonePositionKey *posKey = new BonePositionKey;
 			posKey->_time = filePosKey->_time;
-			for (uint i = 0; i < filePosKey->_numTfkeys; ++i) {
-				posKey->_pos.getData()[i] = filePosKey->_tfkeys[i];
-			}
+			posKey->_pos._x = filePosKey->_tfkeys[0];
+			posKey->_pos._y = filePosKey->_tfkeys[1];
+			posKey->_pos._z = filePosKey->_tfkeys[2];
 
-			// mirror Z
-			posKey->_pos.getData()[2] *= -1.0f;
-
-			_posKeys.push_back(posKey);
+			_posKeys.add(posKey);
 		}
 	} else if (keyType == 4) { // matrix key
-		if (_rotKeys.size() != 0 || _scaleKeys.size() != 0 || _posKeys.size() != 0) {
+		if (_rotKeys.getSize() != 0 || _scaleKeys.getSize() != 0 || _posKeys.getSize() != 0) {
 			BaseEngine::LOG(0, "Matrix key duplicated");
 			return false;
 		}
+
+		DXQuaternion qRot;
+		DXVector3 transVec;
+		DXVector3 scaleVec;
 
 		for (uint32 key = 0; key < numKeys; key++) {
 			const XTimedFloatKeys *fileMatrixKey = &animationKey->_keys[key];
 			uint32 time = fileMatrixKey->_time;
 			assert(fileMatrixKey->_numTfkeys == 16);
 
-			Math::Matrix4 keyData;
-			for (int r = 0; r < 4; ++r) {
-				for (int c = 0; c < 4; ++c) {
-					keyData(c, r) = fileMatrixKey->_tfkeys[r * 4 + c];
-				}
+			DXMatrix keyData;
+			for (uint32 i = 0; i < 16; ++i) {
+				keyData._m4x4[i] = fileMatrixKey->_tfkeys[i];
 			}
 
-			// mirror at orign
-			keyData(2, 3) *= -1.0f;
-
-			// mirror base vectors
-			keyData(2, 0) *= -1.0f;
-			keyData(2, 1) *= -1.0f;
-
-			// change handedness
-			keyData(0, 2) *= -1.0f;
-			keyData(1, 2) *= -1.0f;
-
-			Math::Vector3d translation = keyData.getPosition();
-
-			Math::Vector3d scale;
-			scale.x() = keyData(0, 0) * keyData(0, 0) + keyData(1, 0) * keyData(1, 0) + keyData(2, 0) * keyData(2, 0);
-			scale.x() = sqrtf(scale.x());
-			scale.y() = keyData(0, 1) * keyData(0, 1) + keyData(1, 1) * keyData(1, 1) + keyData(2, 1) * keyData(2, 1);
-			scale.y() = sqrtf(scale.y());
-			scale.z() = keyData(0, 2) * keyData(0, 2) + keyData(1, 2) * keyData(1, 2) + keyData(2, 2) * keyData(2, 2);
-			scale.z() = sqrtf(scale.z());
-
-			Math::Quaternion rotation;
-			rotation.fromMatrix(keyData.getRotation());
+			// we always convert matrix keys to T-R-S
+			C3DUtils::decomposeMatrixSimple(&keyData, &transVec, &scaleVec, &qRot);
 
 			BonePositionKey *positionKey = new BonePositionKey;
-			BoneScaleKey *scaleKey = new BoneScaleKey;
-			BoneRotationKey *rotationKey = new BoneRotationKey;
-
 			positionKey->_time = time;
+			positionKey->_pos = transVec;
+			_posKeys.add(positionKey);
+
+			BoneScaleKey *scaleKey = new BoneScaleKey;
 			scaleKey->_time = time;
+			scaleKey->_scale = scaleVec;
+			_scaleKeys.add(scaleKey);
+
+			BoneRotationKey *rotationKey = new BoneRotationKey;
 			rotationKey->_time = time;
+			rotationKey->_rotation = qRot;
 
-			positionKey->_pos = translation;
-			scaleKey->_scale = scale;
-			rotationKey->_rotation = rotation;
-
-			_posKeys.push_back(positionKey);
-			_scaleKeys.push_back(scaleKey);
-			_rotKeys.push_back(rotationKey);
+			rotationKey->_rotation._x = -rotationKey->_rotation._x;
+			rotationKey->_rotation._y = -rotationKey->_rotation._y;
+			rotationKey->_rotation._z = -rotationKey->_rotation._z;
+			_rotKeys.add(rotationKey);
 		}
 	} else {
 		// the type is unknown, report the error
@@ -268,9 +252,9 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		return true;
 	}
 
-	Math::Vector3d resultPos(0.0f, 0.0f, 0.0f);
-	Math::Vector3d resultScale(1.0f, 1.0f, 1.0f);
-	Math::Quaternion resultRot(0.0f, 0.0f, 0.0f, 1.0f);
+	DXVector3 resultPos(0.0f, 0.0f, 0.0f);
+	DXVector3 resultScale(1.0f, 1.0f, 1.0f);
+	DXQuaternion resultRot(0.0f, 0.0f, 0.0f, 1.0f);
 
 	int keyIndex1, keyIndex2;
 	uint32 time1, time2;
@@ -279,11 +263,11 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 	bool animate = false;
 
 	// scale keys
-	if (_scaleKeys.size() > 0) {
+	if (_scaleKeys.getSize() > 0) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys between which the time is currently in
-		for (uint32 key = 0; key < _scaleKeys.size(); key++) {
+		for (int32 key = 0; key < _scaleKeys.getSize(); key++) {
 			if (_scaleKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 
@@ -307,17 +291,18 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 			lerpValue = float(localTime - time1) / float(time2 - time1);
 		}
 
-		resultScale = (1 - lerpValue) * _scaleKeys[keyIndex1]->_scale + lerpValue * _scaleKeys[keyIndex2]->_scale;
+		// apply the lerp function on the scale vector
+		DXVec3Lerp(&resultScale, &_scaleKeys[keyIndex1]->_scale, &_scaleKeys[keyIndex2]->_scale, lerpValue);
 
 		animate = true;
 	}
 
 	// rotation keys
-	if (_rotKeys.size() > 0) {
+	if (_rotKeys.getSize() > 0) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys surrounding the current time value
-		for (uint32 key = 0; key < _rotKeys.size(); key++) {
+		for (int32 key = 0; key < _rotKeys.getSize(); key++) {
 			if (_rotKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 				if (key > 0) {
@@ -339,17 +324,30 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 			lerpValue = float(localTime - time1) / float(time2 - time1);
 		}
 
-		resultRot = _rotKeys[keyIndex1]->_rotation.slerpQuat(_rotKeys[keyIndex2]->_rotation, lerpValue);
+		// apply spherical lerp function
+		DXQuaternion q1, q2;
+
+		q1._x = -_rotKeys[keyIndex1]->_rotation._x;
+		q1._y = -_rotKeys[keyIndex1]->_rotation._y;
+		q1._z = -_rotKeys[keyIndex1]->_rotation._z;
+		q1._w =  _rotKeys[keyIndex1]->_rotation._w;
+
+		q2._x = -_rotKeys[keyIndex2]->_rotation._x;
+		q2._y = -_rotKeys[keyIndex2]->_rotation._y;
+		q2._z = -_rotKeys[keyIndex2]->_rotation._z;
+		q2._w =  _rotKeys[keyIndex2]->_rotation._w;
+
+		DXQuaternionSlerp(&resultRot, &q1, &q2, lerpValue);
 
 		animate = true;
 	}
 
 	// position keys
-	if (_posKeys.size() > 0) {
+	if (_posKeys.getSize() > 0) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys surrounding the time value
-		for (uint32 key = 0; key < _posKeys.size(); key++) {
+		for (int32 key = 0; key < _posKeys.getSize(); key++) {
 			if (_posKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 				if (key > 0) {
@@ -370,7 +368,8 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		else
 			lerpValue = float(localTime - time1) / float(time2 - time1);
 
-		resultPos = (1 - lerpValue) * _posKeys[keyIndex1]->_pos + lerpValue * _posKeys[keyIndex2]->_pos;
+		// apply the lerp function
+		DXVec3Lerp(&resultPos, &_posKeys[keyIndex1]->_pos, &_posKeys[keyIndex2]->_pos, lerpValue);
 
 		animate = true;
 	}
@@ -389,7 +388,7 @@ int Animation::getFrameTime() {
 
 	// get the shortest frame time
 	prevTime = 0;
-	for (uint32 i = 0; i < _rotKeys.size(); i++) {
+	for (int32 i = 0; i < _rotKeys.getSize(); i++) {
 		if (frameTime == 0 || _rotKeys[i]->_time - prevTime < frameTime)
 			frameTime = _rotKeys[i]->_time - prevTime;
 
@@ -397,7 +396,7 @@ int Animation::getFrameTime() {
 	}
 
 	prevTime = 0;
-	for (uint32 i = 0; i < _posKeys.size(); i++) {
+	for (int32 i = 0; i < _posKeys.getSize(); i++) {
 		if (frameTime == 0 || _posKeys[i]->_time - prevTime < frameTime)
 			frameTime = _posKeys[i]->_time - prevTime;
 
@@ -405,7 +404,7 @@ int Animation::getFrameTime() {
 	}
 
 	prevTime = 0;
-	for (uint32 i = 0; i < _scaleKeys.size(); i++) {
+	for (int32 i = 0; i < _scaleKeys.getSize(); i++) {
 		if (frameTime == 0 || _scaleKeys[i]->_time - prevTime < frameTime)
 			frameTime = _scaleKeys[i]->_time - prevTime;
 
@@ -418,16 +417,16 @@ int Animation::getFrameTime() {
 //////////////////////////////////////////////////////////////////////////
 uint32 Animation::getTotalTime() {
 	uint32 totalTime = 0;
-	if (_rotKeys.size() > 0) {
-		totalTime = MAX(totalTime, _rotKeys[_rotKeys.size() - 1]->_time);
+	if (_rotKeys.getSize() > 0) {
+		totalTime = MAX(totalTime, _rotKeys[_rotKeys.getSize() - 1]->_time);
 	}
 
-	if (_posKeys.size() > 0) {
-		totalTime = MAX(totalTime, _posKeys[_posKeys.size() - 1]->_time);
+	if (_posKeys.getSize() > 0) {
+		totalTime = MAX(totalTime, _posKeys[_posKeys.getSize() - 1]->_time);
 	}
 
-	if (_scaleKeys.size() > 0) {
-		totalTime = MAX(totalTime, _scaleKeys[_scaleKeys.size() - 1]->_time);
+	if (_scaleKeys.getSize() > 0) {
+		totalTime = MAX(totalTime, _scaleKeys[_scaleKeys.getSize() - 1]->_time);
 	}
 
 	return totalTime;

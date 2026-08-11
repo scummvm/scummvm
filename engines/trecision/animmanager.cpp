@@ -101,7 +101,7 @@ void AnimManager::playMovie(const Common::Path &filename, int startFrame, int en
 		}
 
 		while (_vm->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYUP && event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == kActionSkipVideo)
 				skipVideo = true;
 		}
 

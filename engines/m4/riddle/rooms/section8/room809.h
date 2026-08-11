@@ -22,19 +22,54 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION8_ROOM809_H
 #define M4_RIDDLE_ROOMS_SECTION8_ROOM809_H
 
-#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/rooms/section8/section8_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room809 : public Room {
+class Room809 : public Section8Room {
 public:
-	Room809() : Room() {}
+	Room809() : Section8Room() {}
 	~Room809() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
+
+private:
+	bool checkSaid();
+	int32 getMcDestX(int32 xPos, bool facing);
+
+	bool _field20Fl = false;
+
+	// CHECKME: The array and its index don't seem to be used
+	byte _byte1A1990[4] = {0, 0, 0, 0};
+	int32 _field24_index = 0;
+
+	const char *_enableHotspotName = nullptr;
+
+	int32 _mcFacing = 0;
+	int32 _mcPosX = 0;
+	int32 _mcTrekDestX = 0;
+	int32 _playerDestX = 0;
+	int32 _playerDestY = 0;
+	int32 _playerFacing = 0;
+
+	int32 _809hallSeries = 0;
+	int32 _809MusicFadingVol = 0;
+	int32 _mcHandsBehindBackSeries = 0;
+	int32 _ripTalkerPos5Series = 0;
+	int32 _ripTrekHeadTurnPos5Series = 0;
+
+	machine *_809crossMach = nullptr;
+	machine *_809hallMach = nullptr;
+	machine *_809rp01Mach = nullptr;
+	machine *_mcTrekMach = nullptr;
+
 };
 
 } // namespace Rooms

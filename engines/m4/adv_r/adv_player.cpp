@@ -59,6 +59,12 @@ void Player::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(click_y);
 }
 
+void Player::resetWalk() {
+	need_to_walk = false;
+	ready_to_walk = true;
+	waiting_for_walk = false;
+}
+
 void PlayerInfo::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(x);
 	s.syncAsSint32LE(y);
@@ -122,11 +128,10 @@ bool player_load_series(const char *walkerName, const char *shadowName, bool loa
 	int i;
 	int32 thatRoomCode;
 	char assetPath[MAX_FILENAME_SIZE];
-	char *tempPtr;
 
 	// Load walker
 	db_rmlst_get_asset_room_path(walkerName, assetPath, &thatRoomCode);
-	tempPtr = strrchr(assetPath, '.');
+	char *tempPtr = strrchr(assetPath, '.');
 	if (!tempPtr)
 		return false;
 
@@ -158,12 +163,9 @@ bool player_load_series(const char *walkerName, const char *shadowName, bool loa
 	return true;
 }
 
-void player_first_walk(int32 x1, int32 y1, int32 /*f1*/, int32 x2, int32 y2, int32 /*f2*/, bool /*enable_commands_at_destination*/) {
-	player_demand_location(x1, y1);
-	_G(player).ready_to_walk = true;
-	_G(player).need_to_walk = true;
-	_G(player).walk_x = x2;
-	_G(player).walk_y = y2;
+void player_first_walk(int32 x1, int32 y1, int32 f1, int32 x2, int32 y2, int32 f2, bool /*enable_commands_at_destination*/) {
+	ws_demand_location(x1, y1, f1);
+	ws_walk(x2, y2, nullptr, -1, f2);
 }
 
 void player_set_defaults() {
@@ -197,7 +199,7 @@ PlayerInfo *player_update_info() {
 }
 
 void player_set_facing_hotspot(int trigger) {
-	player_set_facing_at(_G(click_x), _G(click_y), trigger);
+	player_set_facing_at(_G(player).click_x, _G(player).click_y, trigger);
 }
 
 void player_set_facing_at(int x, int y, int trigger) {
@@ -210,7 +212,7 @@ int calc_facing(int x, int y) {
 	if (!x) {
 		return -_G(player_info).y < -y;
 	} else {
-		double slope = (double)(y - _G(player_info).y) / (double)(x - _G(player_info).x);
+		const double slope = (double)(y - _G(player_info).y) / (double)(x - _G(player_info).x);
 		term_message("click (%d,%d)  player (%d,%d)  slope = %f",
 			x, -y, _G(player_info).x, -_G(player_info).y);
 

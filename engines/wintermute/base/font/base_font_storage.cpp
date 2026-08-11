@@ -49,40 +49,39 @@ BaseFontStorage::~BaseFontStorage() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::cleanup(bool warn) {
-	for (uint32 i = 0; i < _fonts.size(); i++) {
-		if (warn) {
-			_gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->getFilename());
-		}
+	for (int32 i = 0; i < _fonts.getSize(); i++) {
+		if (warn)
+			_game->LOG(0, "Removing orphan font '%s'", _fonts[i]->_filename);
 		delete _fonts[i];
 	}
-	_fonts.clear();
+	_fonts.removeAll();
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::initLoop() {
-	for (uint32 i = 0; i < _fonts.size(); i++) {
+	for (int32 i = 0; i < _fonts.getSize(); i++) {
 		_fonts[i]->initLoop();
 	}
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
-	if (!filename.size()) {
+BaseFont *BaseFontStorage::addFont(const char *filename) {
+	if (!filename) {
 		return nullptr;
 	}
 
-	for (uint32 i = 0; i < _fonts.size(); i++) {
-		if (scumm_stricmp(_fonts[i]->getFilename(), filename.c_str()) == 0) {
+	for (int32 i = 0; i < _fonts.getSize(); i++) {
+		if (scumm_stricmp(_fonts[i]->_filename, filename) == 0) {
 			_fonts[i]->_refCount++;
 			return _fonts[i];
 		}
 	}
 
 	/*
-	BaseFont* font = new BaseFont(_gameRef);
+	BaseFont* font = new BaseFont(_game);
 	if (!font) return nullptr;
 
 	if (DID_FAIL(font->loadFile(filename))) {
@@ -95,7 +94,7 @@ BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 	    return font;
 	}
 	*/
-	BaseFont *font = BaseFont::createFromFile(_gameRef,  filename);
+	BaseFont *font = BaseFont::createFromFile(_game,  filename);
 	if (font) {
 		font->_refCount = 1;
 		_fonts.add(font);
@@ -110,12 +109,12 @@ bool BaseFontStorage::removeFont(BaseFont *font) {
 		return STATUS_FAILED;
 	}
 
-	for (uint32 i = 0; i < _fonts.size(); i++) {
+	for (int32 i = 0; i < _fonts.getSize(); i++) {
 		if (_fonts[i] == font) {
 			_fonts[i]->_refCount--;
 			if (_fonts[i]->_refCount <= 0) {
 				delete _fonts[i];
-				_fonts.remove_at(i);
+				_fonts.removeAt(i);
 			}
 			break;
 		}
@@ -131,7 +130,7 @@ bool BaseFontStorage::persist(BasePersistenceManager *persistMgr) {
 		cleanup(false);
 	}
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 	_fonts.persist(persistMgr);
 
 	return STATUS_OK;

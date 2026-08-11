@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv3 license mentioned above, this code is also
+ * licensed under LGPL 2.1. See LICENSES/COPYING.LGPL file for the
+ * full text of the license.
+ *
  */
 
 // Currently, only GOB and SCI32 games play IMDs and VMDs, so skip compiling if GOB and SCI32 is disabled.
@@ -34,6 +40,7 @@
 #include "common/rational.h"
 #include "common/str.h"
 
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "video/video_decoder.h"
@@ -98,8 +105,6 @@ public:
 	/** Draw the video at the default position. */
 	void setXY();
 
-	void setDouble(bool isDouble); // double the size of the video, to accommodate higher resolutions
-
 	/** Override the video's frame rate. */
 	void setFrameRate(Common::Rational frameRate);
 	/** Get the video's frame rate. */
@@ -115,6 +120,7 @@ public:
 
 	bool hasPalette() const;
 	virtual bool hasVideo() const;
+	virtual bool hasVideoData() const;
 
 	bool hasSound()       const;
 	bool isSoundEnabled() const;
@@ -144,11 +150,14 @@ public:
 	/** Is the video paletted or true color? */
 	virtual bool isPaletted() const;
 
+	virtual uint32 getVideoBufferSize() const = 0;
+
 	/**
 	 * Get the current frame
 	 * @see VideoDecoder::getCurFrame()
 	 */
 	int getCurFrame() const;
+	int getNbFramesPastEnd() const;
 
 	/**
 	 * Decode the next frame
@@ -179,6 +188,7 @@ public:
 	uint16 getWidth()  const;
 	uint16 getHeight() const;
 	virtual uint32 getFlags() const = 0;
+	virtual uint16 getSoundFlags() const = 0;
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 
 	uint32 getFrameCount() const;
@@ -226,14 +236,13 @@ protected:
 	uint32 _features;
 
 	 int32 _curFrame;
+	 int32 _nbFramesPastEnd;
 	uint32 _frameCount;
 
 	uint32 _startTime;
 
-	byte _palette[768];
+	Graphics::Palette _palette;
 	bool _paletteDirty;
-
-	bool _isDouble;
 
 	bool    _ownSurface;
 	Graphics::Surface _surface;
@@ -263,11 +272,9 @@ protected:
 
 	// Block rendering
 	void renderBlockWhole       (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockWholeDouble (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 	void renderBlockWhole4X     (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 	void renderBlockWhole2Y     (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 	void renderBlockSparse      (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockSparseDouble(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 	void renderBlockSparse2Y    (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 	void renderBlockRLE         (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 
@@ -285,20 +292,22 @@ public:
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~PreIMDDecoder();
 
-	bool reloadStream(Common::SeekableReadStream *stream);
+	bool reloadStream(Common::SeekableReadStream *stream) override;
 
-	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
+	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false) override;
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 	void close();
 
-	bool isVideoLoaded() const;
+	bool isVideoLoaded() const override;
 
-	const Graphics::Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame() override;
 
-	uint32 getFlags() const;
+	uint32 getFlags() const override;
+	uint16 getSoundFlags() const override;
+	uint32 getVideoBufferSize() const override;
 
-	Graphics::PixelFormat getPixelFormat() const;
+	Graphics::PixelFormat getPixelFormat() const override;
 
 private:
 	Common::SeekableReadStream *_stream;
@@ -317,22 +326,24 @@ public:
 	IMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~IMDDecoder();
 
-	bool reloadStream(Common::SeekableReadStream *stream);
+	bool reloadStream(Common::SeekableReadStream *stream) override;
 
-	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
+	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false) override;
 
-	void setXY(uint16 x, uint16 y);
+	void setXY(uint16 x, uint16 y) override;
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 	void close();
 
-	bool isVideoLoaded() const;
+	bool isVideoLoaded() const override;
 
-	const Graphics::Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame() override;
 
-	uint32 getFlags() const;
+	uint32 getFlags() const override;
+	uint16 getSoundFlags() const override;
+	uint32 getVideoBufferSize() const override;
 
-	Graphics::PixelFormat getPixelFormat() const;
+	Graphics::PixelFormat getPixelFormat() const override;
 
 private:
 	enum Command {
@@ -411,35 +422,38 @@ public:
 	VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~VMDDecoder();
 
-	bool reloadStream(Common::SeekableReadStream *stream);
+	bool reloadStream(Common::SeekableReadStream *stream) override;
 
-	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false);
+	bool seek(int32 frame, int whence = SEEK_SET, bool restart = false) override;
 
-	void setXY(uint16 x, uint16 y);
+	void setXY(uint16 x, uint16 y) override;
 
-	void colorModeChanged();
+	void colorModeChanged() override;
 
-	bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height);
+	bool getFrameCoords(int16 frame, int16 &x, int16 &y, int16 &width, int16 &height) override;
 
-	bool hasEmbeddedFiles() const;
-	bool hasEmbeddedFile(const Common::String &fileName) const;
-	Common::SeekableReadStream *getEmbeddedFile(const Common::String &fileName) const;
+	bool hasEmbeddedFiles() const override;
+	bool hasEmbeddedFile(const Common::String &fileName) const override;
+	Common::SeekableReadStream *getEmbeddedFile(const Common::String &fileName) const override;
 
-	int32 getSubtitleIndex() const;
+	int32 getSubtitleIndex() const override;
 
-	bool hasVideo() const;
-	bool isPaletted() const;
+	bool hasVideo() const override;
+	bool hasVideoData() const override;
+	bool isPaletted() const override;
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 	void close();
 
-	bool isVideoLoaded() const;
+	bool isVideoLoaded() const override;
 
-	const Graphics::Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame() override;
 
-	uint32 getFlags() const;
+	uint32 getFlags() const override;
+	uint16 getSoundFlags() const override;
+	uint32 getVideoBufferSize() const override;
 
-	Graphics::PixelFormat getPixelFormat() const;
+	Graphics::PixelFormat getPixelFormat() const override;
 
 protected:
 	void setAutoStartSound(bool autoStartSound);
@@ -506,7 +520,7 @@ private:
 
 	// Sound properties
 	uint16 _soundFlags;
-	int16  _soundFreq;
+	uint16  _soundFreq;
 	int16  _soundSliceSize;
 	int16  _soundSlicesCount;
 	byte   _soundBytesPerSample;
@@ -530,6 +544,7 @@ private:
 
 	// Video properties
 	bool   _hasVideo;
+	bool   _hasVideoData; ///< True if at least a frame contains a "video" part (even with dimensions 0x0)
 	uint32 _videoCodec;
 	byte   _blitMode;
 	byte   _bytesPerPixel;
@@ -591,8 +606,8 @@ public:
 	AdvancedVMDDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	~AdvancedVMDDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 
 	void setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp);
 
@@ -601,17 +616,17 @@ private:
 	public:
 		VMDVideoTrack(VMDDecoder *decoder);
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const;
-		int getFrameCount() const;
-		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const;
-		bool hasDirtyPalette() const;
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override;
+		int getFrameCount() const override;
+		const Graphics::Surface *decodeNextFrame() override;
+		const byte *getPalette() const override;
+		bool hasDirtyPalette() const override;
 
 	protected:
-		Common::Rational getFrameRate() const;
+		Common::Rational getFrameRate() const override;
 
 	private:
 		VMDDecoder *_decoder;
@@ -622,7 +637,7 @@ private:
 		VMDAudioTrack(VMDDecoder *decoder);
 
 	protected:
-		virtual Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		VMDDecoder *_decoder;

@@ -33,6 +33,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/unicode-bidi.h"
+#include "common/formats/po_parser.h"
+#include "common/debug.h"
 
 #ifdef USE_TRANSLATION
 
@@ -44,7 +46,12 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 	return l.name < r.name;
 }
 
-TranslationManager::TranslationManager(const Common::String &fileName) : _currentLang(-1) {
+TranslationManager::TranslationManager(const Common::String &fileName) : _currentLang(-1), _havePoDirectory(false), _usingPo(false) {
+	FSNode root(".");
+	FSNode poDir = root.getChild("po");
+	if (poDir.exists() && poDir.isDirectory())
+		_havePoDirectory = true;
+
 	loadTranslationsInfoDat(fileName);
 
 	// Set the default language
@@ -108,10 +115,45 @@ void TranslationManager::setLanguage(const String &lang) {
 }
 
 U32String TranslationManager::getTranslation(const char *message) const {
+	if (_usingPo)
+		return getPoTranslation(message);
 	return getTranslation(message, nullptr);
 }
 
+U32String TranslationManager::getPoTranslation(const char *message) const {
+	if (_currentTranslationMessages.empty() || *message == '\0')
+		return U32String(message);
+
+	int messageIndex = _poTranslations.getValOrDefault(message, -1);
+
+	if (messageIndex == -1 || messageIndex >= (int)_currentTranslationMessages.size())
+		return U32String(message);
+
+	return _currentTranslationMessages[messageIndex].msgstr.decode();
+}
+
+U32String TranslationManager::getPoTranslation(const char *message, const char *context) const {
+	if (_currentTranslationMessages.empty() || *message == '\0')
+		return U32String(message);
+
+	Common::String key = message;
+	if (context && *context != '\0') {
+		key += "\x04"; // Use the same separation mark as gettext does for context
+		key += context;
+	}
+
+	int messageIndex = _poTranslations.getValOrDefault(key.c_str(), -1);
+
+	if (messageIndex == -1 || messageIndex >= (int)_currentTranslationMessages.size())
+		return U32String(message);
+
+	return _currentTranslationMessages[messageIndex].msgstr.decode();
+}
+
 U32String TranslationManager::getTranslation(const char *message, const char *context) const {
+	if (_usingPo)
+		return getPoTranslation(message, context);
+
 	// If no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
 		return U32String(message);
@@ -143,17 +185,17 @@ U32String TranslationManager::getTranslation(const char *message, const char *co
 			}
 			// Find the context we want
 			if (context == nullptr || *context == '\0' || leftIndex == rightIndex)
-				return _currentTranslationMessages[leftIndex].msgstr;
+				return _currentTranslationMessages[leftIndex].msgstr.decode();
 			// We could use again binary search, but there should be only a small number of contexts.
 			while (rightIndex > leftIndex) {
 				compareResult = strcmp(context, _currentTranslationMessages[rightIndex].msgctxt.c_str());
 				if (compareResult == 0)
-					return _currentTranslationMessages[rightIndex].msgstr;
+					return _currentTranslationMessages[rightIndex].msgstr.decode();
 				else if (compareResult > 0)
 					break;
 				--rightIndex;
 			}
-			return _currentTranslationMessages[leftIndex].msgstr;
+			return _currentTranslationMessages[leftIndex].msgstr.decode();
 		} else if (compareResult < 0)
 			rightIndex = midIndex - 1;
 		else
@@ -161,6 +203,13 @@ U32String TranslationManager::getTranslation(const char *message, const char *co
 	}
 
 	return U32String(message);
+}
+
+U32String TranslationManager::getTranslation(uint32 index) const {
+	if (index >= _currentTranslationMessages.size())
+		return U32String("");
+
+	return _currentTranslationMessages[index].msgstr.decode();
 }
 
 String TranslationManager::getCurrentLanguage() const {
@@ -181,11 +230,21 @@ U32String TranslationManager::getTranslation(const String &message, const String
 	return getTranslation(message.c_str(), context.c_str());
 }
 
+const StringArray TranslationManager::getContexts() const {
+	StringArray contexts;
+
+	for (const auto &m : _currentTranslationMessages) {
+		contexts.push_back(m.msgctxt);
+	}
+
+	return contexts;
+}
+
 const TLangArray TranslationManager::getSupportedLanguageNames() const {
 	TLangArray languages;
 
 	for (unsigned int i = 0; i < _langNames.size(); i++) {
-		TLanguage lng(_langNames[i], i + 1);
+		TLanguage lng(_langNames[i].decode(), i + 1);
 		languages.push_back(lng);
 	}
 
@@ -228,10 +287,9 @@ bool TranslationManager::openTranslationsFile(File &inFile) {
 	// Then try to open it using the SearchMan.
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, Common::Path(_translationsFileName, Common::Path::kNoSeparator));
-	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		ArchiveMember       const &m      = **it;
-		SeekableReadStream *const  stream = m.createReadStream();
-		if (stream && inFile.open(stream, m.getName())) {
+	for (auto &m : fileList) {
+		SeekableReadStream *const stream = m->createReadStream();
+		if (stream && inFile.open(stream, m->getName())) {
 			if (checkHeader(inFile))
 				return true;
 			inFile.close();
@@ -266,8 +324,8 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File &inFile, 
 	if (!node.getChildren(fileList, FSNode::kListDirectoriesOnly))
 		return false;
 
-	for (FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
-		if (openTranslationsFile(*i, inFile, depth == -1 ? - 1 : depth - 1))
+	for (auto &file : fileList) {
+		if (openTranslationsFile(file, inFile, depth == -1 ? - 1 : depth - 1))
 			return true;
 	}
 
@@ -304,7 +362,7 @@ void TranslationManager::loadTranslationsInfoDat(const Common::String &name) {
 		_langs[i] = String(buf, len - 1);
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_langNames[i] = String(buf, len - 1).decode();
+		_langNames[i] = String(buf, len - 1);
 	}
 
 	// Read messages
@@ -324,13 +382,19 @@ void TranslationManager::loadTranslationsInfoDat(const Common::String &name) {
 
 void TranslationManager::loadLanguageDat(int index) {
 	_currentTranslationMessages.clear();
-	_currentCharset.clear();
 	// Sanity check
 	if (index < 0 || index >= (int)_langs.size()) {
 		if (index != -1)
 			warning("Invalid language index %d passed to TranslationManager::loadLanguageDat", index);
 		return;
 	}
+
+
+	// If po directory exists and loading the specific language .po succeeds we can skip loading the dat
+	if (_havePoDirectory && loadLanguagePo(index))
+		return;
+
+	_usingPo = false;
 
 	File in;
 	if (!openTranslationsFile(in))
@@ -364,8 +428,6 @@ void TranslationManager::loadLanguageDat(int index) {
 	int nbMessages = in.readUint16BE();
 	_currentTranslationMessages.resize(nbMessages);
 
-	_currentCharset = "UTF-32";
-
 	// Read messages
 	for (int i = 0; i < nbMessages; ++i) {
 		_currentTranslationMessages[i].msgid = in.readUint16BE();
@@ -376,7 +438,7 @@ void TranslationManager::loadLanguageDat(int index) {
 			msg += String(buf, len > 256 ? 256 : len - 1);
 			len -= 256;
 		}
-		_currentTranslationMessages[i].msgstr = msg.decode();
+		_currentTranslationMessages[i].msgstr = msg;
 		len = in.readUint16BE();
 		if (len > 0) {
 			in.read(buf, len);
@@ -384,7 +446,47 @@ void TranslationManager::loadLanguageDat(int index) {
 		}
 	}
 }
+bool TranslationManager::loadLanguagePo(int index) {
+	File in;
+	Common::Path poPath("po/" + _langs[index] + ".po");
+	FSNode poFile(poPath);
+	if (!poFile.exists())
+		return false;
+	_usingPo = true;
 
+	PlainPoMessageList parserMsgList;
+	PlainPoMessageEntryList *poData = parsePoFile(poPath.toString().c_str(), parserMsgList);
+
+	if (poData) {
+		debug("TranslationManager: Loading strings from file %s", poPath.toString().c_str());
+
+		int numEntries = poData->size();
+
+		_currentTranslationMessages.reserve(numEntries);
+		for (int i = 0; i < numEntries; ++i) {
+			const Common::PlainPoMessageEntry *entry = poData->entry(i);
+			Common::String key = entry->msgid;
+
+			if (entry->msgctxt) {
+				key += "\x04"; // Use the same separation mark as gettext does for context
+				key += entry->msgctxt;
+			}
+
+			_poTranslations[key] = i;
+			PoMessageEntry engineEntry;
+			engineEntry.msgid = i;
+			engineEntry.msgstr = entry->msgstr;
+			if (entry->msgctxt) {
+				engineEntry.msgctxt = entry->msgctxt;
+			}
+
+			_currentTranslationMessages.push_back(engineEntry);
+		}
+	}
+
+	delete poData;
+	return true;
+}
 bool TranslationManager::checkHeader(File &in) {
 	char buf[13];
 	int ver;

@@ -103,7 +103,8 @@ bool SdlAudioCDManager::play(int track, int numLoops, int startFrame, int durati
 	if (!numLoops && !startFrame)
 		return false;
 
-	// FIXME: Explain this.
+	// "Fix MI1 CD Audio (hopefully)", commit 32d69e8c
+	// FIXME: if still true, perhaps guard with a check for MI1?
 	if (duration > 0)
 		duration += 5;
 

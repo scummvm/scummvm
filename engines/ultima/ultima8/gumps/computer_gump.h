@@ -38,7 +38,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ComputerGump();
-	ComputerGump(const Std::string &msg);
+	ComputerGump(const Common::String &msg);
 	~ComputerGump() override;
 
 	// Close on mouse click on key press

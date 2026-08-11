@@ -279,7 +279,7 @@ void SagaEngine::load(const char *fileName) {
 	in->read(_saveHeader.name, sizeof(_saveHeader.name));
 
 	// Some older saves were not written in an endian safe fashion.
-	// We try to detect this here by checking for extremly high version values.
+	// We try to detect this here by checking for extremely high version values.
 	// If found, we retry with the data swapped.
 	if (_saveHeader.version > 0xFFFFFF) {
 		warning("This savegame is not endian safe, retrying with the data swapped");

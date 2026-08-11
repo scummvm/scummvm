@@ -30,8 +30,9 @@
 
 #include "common/scummsys.h"
 #include "hpl1/engine/graphics/VertexBuffer.h"
+#include "hpl1/opengl.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 namespace hpl {
 
@@ -92,5 +93,5 @@ private:
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL
 #endif // HPL_RENDERER3D_OGL_H

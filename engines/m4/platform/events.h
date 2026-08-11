@@ -24,7 +24,6 @@
 
 #include "common/queue.h"
 #include "common/events.h"
-#include "m4/m4_types.h"
 
 namespace M4 {
 

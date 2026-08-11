@@ -23,7 +23,7 @@
 #define BACKENDS_GRAPHICS_OPENGL_PIPELINES_LIBRETRO_TYPES_H
 
 #include "graphics/opengl/system_headers.h"
-#include "backends/graphics/opengl/texture.h"
+#include "graphics/opengl/texture.h"
 
 #if !USE_FORCED_GLES
 #include "common/str.h"

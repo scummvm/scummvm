@@ -48,6 +48,40 @@ struct DataFileHeader {
 	uint16 s_compressed_size;
 } PACKED_STRUCT;
 
+struct Animation;
+
+struct Icon {
+	int _x;
+	int _y;
+	bool _visible;
+	bool _animating;
+	Animation *_anim;
+	int _curFrame;
+	int _tick;
+	float _alpha;
+
+	Icon() {
+		reset();
+	}
+
+	void reset(void) {
+		_visible = false;
+		_animating = true;
+		_anim = 0;
+		_curFrame = 0;
+		_tick = 0;
+		_x = _y = 0;
+		_alpha = 0.0f;
+	}
+
+	void set(int xPos, int yPos, float alphaVal = 1.0f) {
+		_x = xPos;
+		_y = yPos;
+		_visible = true;
+		_alpha = alphaVal;
+	}
+};
+
 struct TurnTable {
 	uint16 turnTableUp[5];
 	uint16 turnTableDown[5];

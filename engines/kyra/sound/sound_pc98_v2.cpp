@@ -122,9 +122,9 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 
 	int trackNum = -1;
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-		for (uint i = 0; i < res()->cdaTableSize; i++) {
+		for (uint i = 0; i < res()->cdaTableSize >> 1; i++) {
 			if (track == (uint8)READ_LE_UINT16(&res()->cdaTable[i * 2])) {
-				trackNum = (int)READ_LE_UINT16(&res()->cdaTable[i * 2 + 1]) - 1;
+				trackNum = (int8)READ_LE_UINT16(&res()->cdaTable[i * 2 + 1]) - 1;
 				break;
 			}
 		}

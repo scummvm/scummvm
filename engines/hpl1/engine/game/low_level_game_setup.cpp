@@ -32,7 +32,7 @@
 namespace hpl {
 
 static iLowLevelGraphics *createLowLevelGfx() {
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 	if (Hpl1::useOpenGL())
 		return hplNew(cLowLevelGraphicsSDL, ());
 #endif

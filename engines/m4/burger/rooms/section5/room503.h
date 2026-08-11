@@ -63,7 +63,7 @@ private:
 	static int32 _state6;
 	int16 _array1[5];
 	int16 _array2[5];
-	int _val2 = 0;
+	int _ctr = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;

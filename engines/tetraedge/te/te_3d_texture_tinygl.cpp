@@ -64,10 +64,10 @@ void Te3DTextureTinyGL::copyCurrentRender(uint xoffset, uint yoffset, uint x, ui
 
 void Te3DTextureTinyGL::writeTo(Graphics::Surface &surf) {
 	Graphics::Surface fullTex;
-	fullTex.create(_texWidth, _texHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	fullTex.create(_texWidth, _texHeight, Graphics::PixelFormat::createFormatRGBA32());
 	//TODO: Come up with equivalent for TGL.
 	//tglGetTexImage(TGL_TEXTURE_2D, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, fullTex.getPixels());
-	surf.create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	surf.create(_width, _height, fullTex.format);
 	surf.copyRectToSurface(fullTex, 0, 0, Common::Rect(_width, _height));
 	fullTex.free();
 }
@@ -76,7 +76,7 @@ void Te3DTextureTinyGL::create() {
 	_flipY = false;
 	_leftBorder = _btmBorder = _texWidth = _texHeight = 0;
 	_rightBorder = _topBorder = _width = _height = 0;
-	_format = TeImage::INVALID;
+	_hasAlpha = false;
 	_loaded = false;
 	if (!_createdTexture)
 		tglGenTextures(1, &_glTexture);
@@ -117,7 +117,7 @@ bool Te3DTextureTinyGL::load(const TeImage &img) {
 
 	_width = img.w;
 	_height = img.h;
-	_format = img.teFormat();
+	_hasAlpha = img.format.aBits() > 0;
 
 	// TODO? set some other fields from the image here.
 	// for now just set some good defaults.
@@ -141,12 +141,10 @@ bool Te3DTextureTinyGL::load(const TeImage &img) {
 
 	const void *imgdata = img.getPixels();
 	TGLenum destfmt = _alphaOnly ? TGL_ALPHA : TGL_RGBA;
-	if (_format == TeImage::RGB8) {
-		tglTexImage2D(TGL_TEXTURE_2D, 0, destfmt, img.pitch / 3, img.h, 0, TGL_RGB, TGL_UNSIGNED_BYTE, imgdata);
-	} else if (_format == TeImage::RGBA8) {
+	if (img.format == Graphics::PixelFormat::createFormatRGBA32()) {
 		tglTexImage2D(TGL_TEXTURE_2D, 0, destfmt, img.w, img.h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, imgdata);
 	} else {
-		warning("Te3DTexture::load can't send image format %d to GL.", _format);
+		warning("Te3DTexture::load can't send image format %s to GL.", img.format.toString().c_str());
 	}
 
 	_matrix.setToIdentity();
@@ -194,17 +192,9 @@ void Te3DTextureTinyGL::update(const TeImage &img, uint xoff, uint yoff) {
 	//tglPixelStorei(TGL_UNPACK_SKIP_PIXELS, 0);
 	tglPixelStorei(TGL_UNPACK_ALIGNMENT, 1);
 
+	//TODO: Come up with equivalent for TGL.
 	//const void *imgdata = img.getPixels();
-	if (_format == TeImage::RGB8) {
-		//TODO: Come up with equivalent for TGL.
-		//tglTexSubImage2D(TGL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, TGL_RGB, TGL_UNSIGNED_BYTE, imgdata);
-	} else if (_format == TeImage::RGBA8) {
-		//TODO: Come up with equivalent for TGL.
-		//tglTexSubImage2D(TGL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, TGL_RGBA, TGL_UNSIGNED_BYTE, imgdata);
-	} else {
-		warning("Te3DTexture::update can't send image format %d to GL.", _format);
-	}
-	return;
+	//tglTexSubImage2D(TGL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, TGL_RGBA, TGL_UNSIGNED_BYTE, imgdata);
 }
 
 } // end namespace Tetraedge

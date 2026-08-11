@@ -24,6 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 #include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
@@ -72,6 +73,14 @@ Common::Error MM1Engine::run() {
 	// Setup mixer
 	_sound = new Sound(_mixer);
 	syncSoundSettings();
+
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+#endif
 
 	// Setup console
 	setDebugger(new Console());
@@ -124,16 +133,11 @@ bool MM1Engine::setupEnhanced() {
 		error("Could not load palette");
 
 	// Load the Xeen palette
-	byte pal[PALETTE_SIZE];
-	for (int i = 0; i < PALETTE_SIZE; ++i)
+	byte pal[Graphics::PALETTE_SIZE];
+	for (int i = 0; i < Graphics::PALETTE_SIZE; ++i)
 		pal[i] = f.readByte() << 2;
-	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(pal, 0, Graphics::PALETTE_COUNT);
 	Gfx::GFX::findPalette(pal);
-
-	// Show the mouse cursor
-	g_events->loadCursors();
-	g_events->setCursor(0);
-	g_events->showCursor();
 
 	return true;
 }

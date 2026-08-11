@@ -26,17 +26,17 @@ namespace Illusions {
 
 // KeyMap
 
-void KeyMap::addKey(Common::KeyCode key) {
-	add(key, MOUSE_NONE);
+void KeyMap::addKey(Common::CustomEventType action) {
+	add(action, MOUSE_NONE);
 }
 
 void KeyMap::addMouseButton(int mouseButton) {
-	add(Common::KEYCODE_INVALID, mouseButton);
+	add(kActionNone, mouseButton);
 }
 
-void KeyMap::add(Common::KeyCode key, int mouseButton) {
+void KeyMap::add(Common::CustomEventType action, int mouseButton) {
 	KeyMapping keyMapping;
-	keyMapping._key = key;
+	keyMapping._action = action;
 	keyMapping._mouseButton = mouseButton;
 	keyMapping._down = false;
 	push_back(keyMapping);
@@ -52,8 +52,8 @@ InputEvent& InputEvent::setBitMask(uint bitMask) {
 	return *this;
 }
 
-InputEvent& InputEvent::addKey(Common::KeyCode key) {
-	_keyMap.addKey(key);
+InputEvent& InputEvent::addKey(Common::CustomEventType action) {
+	_keyMap.addKey(action);
 	return *this;
 }
 
@@ -62,11 +62,10 @@ InputEvent& InputEvent::addMouseButton(int mouseButton) {
 	return *this;
 }
 
-uint InputEvent::handle(Common::KeyCode key, int mouseButton, bool down) {
+uint InputEvent::handle(Common::CustomEventType action, int mouseButton, bool down) {
 	uint newKeys = 0;
-	for (KeyMap::iterator it = _keyMap.begin(); it != _keyMap.end(); ++it) {
-		KeyMapping &keyMapping = *it;
-		if ((keyMapping._key != Common::KEYCODE_INVALID && keyMapping._key == key) ||
+	for (auto &keyMapping : _keyMap) {
+		if ((keyMapping._action != kActionNone && keyMapping._action == action) ||
 			(keyMapping._mouseButton != MOUSE_NONE && keyMapping._mouseButton == mouseButton)) {
 			if (down && !keyMapping._down) {
 				newKeys |= _bitMask;
@@ -99,6 +98,12 @@ Input::Input() {
 
 void Input::processEvent(Common::Event event) {
 	switch (event.type) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		handleAction(event.customType, MOUSE_NONE, true);
+		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		handleAction(event.customType, MOUSE_NONE, false);
+		break;
 	case Common::EVENT_KEYDOWN:
 		handleKey(event.kbd.keycode, MOUSE_NONE, true);
 		break;
@@ -173,33 +178,35 @@ InputEvent& Input::setInputEvent(uint evt, uint bitMask) {
 	return inputEvent.setBitMask(bitMask);
 }
 
-void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
-	switch (key) {
-	case Common::KEYCODE_UP:
+void Input::handleAction(Common::CustomEventType action, int mouseButton, bool down) {
+	switch (action) {
+	case kActionCursorUp:
 		moveCursorByKeyboard(0, -4);
 		break;
-	case Common::KEYCODE_DOWN:
+	case kActionCursorDown:
 		moveCursorByKeyboard(0, 4);
 		break;
-	case Common::KEYCODE_RIGHT:
+	case kActionCursorRight:
 		moveCursorByKeyboard(4, 0);
 		break;
-	case Common::KEYCODE_LEFT:
+	case kActionCursorLeft:
 		moveCursorByKeyboard(-4, 0);
 		break;
 	default:
 		break;
 	}
 	for (uint i = 0; i < kEventMax; ++i) {
-		_newKeys |= _inputEvents[i].handle(key, mouseButton, down);
+		_newKeys |= _inputEvents[i].handle(action, mouseButton, down);
 	}
 	uint prevButtonStates = _buttonStates;
 	_buttonStates |= _newKeys;
 	_newKeys = 0;
 	_newButtons = ~prevButtonStates & _buttonStates;
+}
 
-	if ( !down && !isCheatModeActive()) {
-		if ( _cheatCodeIndex < 7 && key == kCheatCode[_cheatCodeIndex]) {
+void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
+	if (!down && !isCheatModeActive()) {
+		if (_cheatCodeIndex < 7 && key == kCheatCode[_cheatCodeIndex]) {
 			_cheatCodeIndex++;
 		} else {
 			_cheatCodeIndex = 0;
@@ -212,7 +219,7 @@ void Input::handleMouseButton(int mouseButton, bool down) {
 		_buttonsDown |= mouseButton;
 	else
 		_buttonsDown &= ~mouseButton;
-	handleKey(Common::KEYCODE_INVALID, mouseButton, down);
+	handleAction(kActionNone, mouseButton, down);
 }
 
 bool Input::pollButton(uint bitMask) {
@@ -247,6 +254,10 @@ void Input::moveCursorByKeyboard(int deltaX, int deltaY) {
 
 bool Input::isCheatModeActive() {
 	return _cheatCodeIndex == 7;
+}
+
+void Input::setCheatModeActive(bool active) {
+	_cheatCodeIndex = active ? 7 : 0;
 }
 
 } // End of namespace Illusions

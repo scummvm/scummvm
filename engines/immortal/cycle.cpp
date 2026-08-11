@@ -78,7 +78,7 @@ bool Room::cycleAdvance(int c) {
 }
 
 int Room::cycleGetFrame(int c) {
-	/* The source version of this is facinating. It is basically:
+	/* The source version of this is fascinating. It is basically:
 	 * in: cycList, Index
 	 * index -> tmp
 	 * Load the value of cycPtrs + cycList (returns address of start of cyc)

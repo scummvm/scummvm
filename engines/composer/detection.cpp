@@ -51,9 +51,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class ComposerMetaEngineDetection : public AdvancedMetaEngineDetection {
+class ComposerMetaEngineDetection : public AdvancedMetaEngineDetection<Composer::ComposerGameDescription> {
 public:
-	ComposerMetaEngineDetection() : AdvancedMetaEngineDetection(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {
+	ComposerMetaEngineDetection() : AdvancedMetaEngineDetection(Composer::gameDescriptions, composerGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

@@ -19,6 +19,9 @@
  *
  */
 
+
+#include "common/unicode-bidi.h"
+
 #include "prince/prince.h"
 
 #include "prince/mob.h"
@@ -242,6 +245,13 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			}
 		}
 
+		// _selectedMob can't be used here, as it gets reset when the player clicks, causing the mob
+		// name to be voiced again
+		if (mobNumber != _previousMob) {
+			setTTSVoice(kHeroTextColor);
+			sayText(mobName, false);
+		}
+
 		uint16 textW = getTextWidth(mobName.c_str());
 
 		uint16 x = mousePos.x - textW / 2;
@@ -258,8 +268,12 @@ int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobLis
 			y = _font->getFontHeight() - 2;
 		}
 
+		if (getLanguage() == Common::HE_ISR)
+			mobName = Common::convertBiDiString(mobName, Common::kWindows1255);
 		_font->drawString(screen, mobName, x, y, screen->w, 216);
 	}
+
+	_previousMob = mobNumber;
 
 	return mobNumber;
 }

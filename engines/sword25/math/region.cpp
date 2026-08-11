@@ -223,7 +223,7 @@ Vertex Region::findClosestRegionPoint(const Vertex &point) const {
 	if (isPointInRegion(closestVertex))
 		return closestVertex;
 	else {
-		// Try to construct a point within the region - 8 points are tested in the immediate vacinity
+		// Try to construct a point within the region - 8 points are tested in the immediate vicinity
 		// of the point
 		if (isPointInRegion(closestVertex + Vertex(-2, -2)))
 			return closestVertex + Vertex(-2, -2);

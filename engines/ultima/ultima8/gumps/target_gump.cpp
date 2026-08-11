@@ -36,7 +36,7 @@ TargetGump::TargetGump() : ModalGump(), _targetTracing(false) {
 
 }
 
-// Skip pause as usecode processes need to complete & matches orginal game
+// Skip pause as usecode processes need to complete & matches original game
 TargetGump::TargetGump(int x, int y)
 	: ModalGump(x, y, 0, 0, 0, FLAG_DONT_SAVE | FLAG_PREVENT_SAVE, LAYER_MODAL, false),
 	_targetTracing(false) {

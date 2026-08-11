@@ -55,19 +55,19 @@ AdWaypointGroup::~AdWaypointGroup() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdWaypointGroup::cleanup() {
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.clear();
+	_points.removeAll();
 	_editorSelectedPoint = -1;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdWaypointGroup::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdWaypointGroup::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -76,7 +76,7 @@ bool AdWaypointGroup::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
+		_game->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
 	}
 
 
@@ -111,11 +111,11 @@ bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_WAYPOINTS) {
-			_gameRef->LOG(0, "'WAYPOINTS' keyword expected.");
+			_game->LOG(0, "'WAYPOINTS' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -161,7 +161,7 @@ bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in WAYPOINTS definition");
+		_game->LOG(0, "Syntax error in WAYPOINTS definition");
 		return STATUS_FAILED;
 	}
 
@@ -172,7 +172,7 @@ bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "WAYPOINTS {\n");
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
@@ -181,7 +181,7 @@ bool AdWaypointGroup::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	}
 	BaseClass::saveAsText(buffer, indent + 2);
 
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
@@ -208,13 +208,13 @@ bool AdWaypointGroup::persist(BasePersistenceManager *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
+ScValue *AdWaypointGroup::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("waypoint-group");
 		return _scValue;
 	}
@@ -222,7 +222,7 @@ ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Active") {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->setBool(_active);
 		return _scValue;
 	} else {
@@ -255,7 +255,7 @@ bool AdWaypointGroup::mimic(AdWaypointGroup *wpt, float scale, int argX, int arg
 
 	cleanup();
 
-	for (uint32 i = 0; i < wpt->_points.size(); i++) {
+	for (int32 i = 0; i < wpt->_points.getSize(); i++) {
 		int x = (int)((float)wpt->_points[i]->x * scale / 100.0f);
 		int y = (int)((float)wpt->_points[i]->y * scale / 100.0f);
 

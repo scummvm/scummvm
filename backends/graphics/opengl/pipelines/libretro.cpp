@@ -77,14 +77,10 @@ static Graphics::Surface *loadViaImageDecoder(const Common::Path &fileName, Comm
 		return nullptr;
 	}
 
-	return decoder.getSurface()->convertTo(
-#ifdef SCUMM_LITTLE_ENDIAN
-										   Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
-#else
-										   Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
-#endif
-										   // Use a cast to resolve ambiguities in JPEGDecoder
-										   static_cast<Image::ImageDecoder &>(decoder).getPalette());
+	// Use a cast to resolve ambiguities in JPEGDecoder
+	const Graphics::Palette & palette = static_cast<Image::ImageDecoder &>(decoder).getPalette();
+	return decoder.getSurface()->convertTo(OpenGL::Texture::getRGBAPixelFormat(),
+		palette.data(), palette.size());
 }
 
 struct ImageLoader {
@@ -137,8 +133,8 @@ static const char *const g_compatFragment =
  * to the input coordinates space */
 class LibRetroTextureTarget : public TextureTarget {
 public:
-	bool setScaledSize(uint width, uint height, const Common::Rect &scalingRect) {
-		GLTexture *texture = getTexture();
+	bool setScaledSize(uint width, uint height, const Common::Rect &scalingRect, Common::RotationMode rotation) {
+		Texture *texture = getTexture();
 		if (!texture->setSize(width, height)) {
 			return false;
 		}
@@ -155,27 +151,97 @@ public:
 		const float ratioW = (float)width  / scalingRect.width();
 		const float ratioH = (float)height / scalingRect.height();
 
-		// Setup scaling projection matrix.
+		// Setup scaling/rotating projection matrix.
 		// This projection takes window screen coordinates and converts it to input coordinates normalized
-		_projectionMatrix(0, 0) = 2.f * ratioW / texWidth;
-		_projectionMatrix(0, 1) = 0.f;
-		_projectionMatrix(0, 2) = 0.f;
-		_projectionMatrix(0, 3) = 0.f;
+		// The rotation is also inverted so 90° is in fact a -90° rotation.
+		// This is a resulting product of ROTATE * SCALE_TRANSLATE
+		switch (rotation) {
+		default:
+		case Common::kRotationNormal:
+			_projectionMatrix(0, 0) = 2.f * ratioW / texWidth;
+			_projectionMatrix(0, 1) = 0.f;
+			_projectionMatrix(0, 2) = 0.f;
+			_projectionMatrix(0, 3) = 0.f;
 
-		_projectionMatrix(1, 0) = 0.f;
-		_projectionMatrix(1, 1) = 2.f * ratioH / texHeight;
-		_projectionMatrix(1, 2) = 0.f;
-		_projectionMatrix(1, 3) = 0.f;
+			_projectionMatrix(1, 0) = 0.f;
+			_projectionMatrix(1, 1) = 2.f * ratioH / texHeight;
+			_projectionMatrix(1, 2) = 0.f;
+			_projectionMatrix(1, 3) = 0.f;
 
-		_projectionMatrix(2, 0) = 0.f;
-		_projectionMatrix(2, 1) = 0.f;
-		_projectionMatrix(2, 2) = 0.f;
-		_projectionMatrix(2, 3) = 0.f;
+			_projectionMatrix(2, 0) = 0.f;
+			_projectionMatrix(2, 1) = 0.f;
+			_projectionMatrix(2, 2) = 0.f;
+			_projectionMatrix(2, 3) = 0.f;
 
-		_projectionMatrix(3, 0) = -1.f - (2.f * scalingRect.left) * ratioW / texWidth;
-		_projectionMatrix(3, 1) = -1.f - (2.f * scalingRect.top) * ratioH / texHeight;
-		_projectionMatrix(3, 2) = 0.0f;
-		_projectionMatrix(3, 3) = 1.0f;
+			_projectionMatrix(3, 0) = -1.f - (2.f * scalingRect.left) * ratioW / texWidth;
+			_projectionMatrix(3, 1) = -1.f - (2.f * scalingRect.top) * ratioH / texHeight;
+			_projectionMatrix(3, 2) = 0.0f;
+			_projectionMatrix(3, 3) = 1.0f;
+			break;
+		case Common::kRotation90:
+			_projectionMatrix(0, 0) = 0.f;
+			_projectionMatrix(0, 1) = -2.f * ratioW / texWidth;
+			_projectionMatrix(0, 2) = 0.f;
+			_projectionMatrix(0, 3) = 0.f;
+
+			_projectionMatrix(1, 0) = 2.f * ratioH / texHeight;
+			_projectionMatrix(1, 1) = 0.f;
+			_projectionMatrix(1, 2) = 0.f;
+			_projectionMatrix(1, 3) = 0.f;
+
+			_projectionMatrix(2, 0) = 0.f;
+			_projectionMatrix(2, 1) = 0.f;
+			_projectionMatrix(2, 2) = 0.f;
+			_projectionMatrix(2, 3) = 0.f;
+
+			_projectionMatrix(3, 0) = -1.f - (2.f * scalingRect.top) * ratioH / texHeight;
+			_projectionMatrix(3, 1) = 1.f + (2.f * scalingRect.left) * ratioW / texWidth;
+			_projectionMatrix(3, 2) = 0.0f;
+			_projectionMatrix(3, 3) = 1.0f;
+			break;
+		case Common::kRotation180:
+			_projectionMatrix(0, 0) = -2.f * ratioW / texWidth;
+			_projectionMatrix(0, 1) = 0.f;
+			_projectionMatrix(0, 2) = 0.f;
+			_projectionMatrix(0, 3) = 0.f;
+
+			_projectionMatrix(1, 0) = 0.f;
+			_projectionMatrix(1, 1) = -2.f * ratioH / texHeight;
+			_projectionMatrix(1, 2) = 0.f;
+			_projectionMatrix(1, 3) = 0.f;
+
+			_projectionMatrix(2, 0) = 0.f;
+			_projectionMatrix(2, 1) = 0.f;
+			_projectionMatrix(2, 2) = 0.f;
+			_projectionMatrix(2, 3) = 0.f;
+
+			_projectionMatrix(3, 0) = 1.f + (2.f * scalingRect.left) * ratioW / texWidth;
+			_projectionMatrix(3, 1) = 1.f + (2.f * scalingRect.top) * ratioH / texHeight;
+			_projectionMatrix(3, 2) = 0.0f;
+			_projectionMatrix(3, 3) = 1.0f;
+			break;
+		case Common::kRotation270:
+			_projectionMatrix(0, 0) = 0.f;
+			_projectionMatrix(0, 1) = 2.f * ratioW / texWidth;
+			_projectionMatrix(0, 2) = 0.f;
+			_projectionMatrix(0, 3) = 0.f;
+
+			_projectionMatrix(1, 0) = -2.f * ratioH / texHeight;
+			_projectionMatrix(1, 1) = 0.f;
+			_projectionMatrix(1, 2) = 0.f;
+			_projectionMatrix(1, 3) = 0.f;
+
+			_projectionMatrix(2, 0) = 0.f;
+			_projectionMatrix(2, 1) = 0.f;
+			_projectionMatrix(2, 2) = 0.f;
+			_projectionMatrix(2, 3) = 0.f;
+
+			_projectionMatrix(3, 0) = 1.f + (2.f * scalingRect.top) * ratioH / texHeight;
+			_projectionMatrix(3, 1) = -1.f - (2.f * scalingRect.left) * ratioW / texWidth;
+			_projectionMatrix(3, 2) = 0.0f;
+			_projectionMatrix(3, 3) = 1.0f;
+			break;
+		}
 
 		// Directly apply changes when we are active.
 		if (isActive()) {
@@ -196,13 +262,13 @@ public:
 protected:
 	void activateInternal() override {}
 	void deactivateInternal() override {}
-	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override { }
+	void drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override { }
 };
 
 LibRetroPipeline::LibRetroPipeline()
 	: _inputPipeline(ShaderMan.query(ShaderManager::kDefault)),
 	  _outputPipeline(ShaderMan.query(ShaderManager::kDefault)),
-	  _needsScaling(false), _shaderPreset(nullptr), _linearFiltering(false),
+	  _needsScaling(false), _shaderPreset(nullptr), _linearFiltering(false), _rotation(Common::kRotationNormal),
 	  _currentTarget(uint(-1)), _inputWidth(0), _inputHeight(0),
 	  _isAnimated(false), _frameCount(0) {
 }
@@ -228,7 +294,7 @@ static void setLinearFiltering(GLuint glTexture, bool enable) {
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glFilter));
 }
 
-void LibRetroPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void LibRetroPipeline::drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	if (!_needsScaling) {
 		_outputPipeline.drawTexture(texture, coordinates, texcoords);
 		return;
@@ -270,8 +336,8 @@ void LibRetroPipeline::finishScaling() {
 	 * we can do the render through all libretro passes */
 
 	// Now we can actually draw the texture with the setup passes.
-	for (PassArray::const_iterator i = _passes.begin(), end = _passes.end(); i != end; ++i) {
-		renderPass(*i);
+	for (const auto &pass : _passes) {
+		renderPass(pass);
 	}
 
 	// Prepare for the next frame
@@ -297,17 +363,62 @@ void LibRetroPipeline::finishScaling() {
 	 * so everything is flipped when we draw this texture.
 	 * Use custom coordinates to do the flipping. */
 	GLfloat coordinates[4*2];
-	coordinates[0] = _outputRect.left;
-	coordinates[1] = _outputRect.bottom;
 
-	coordinates[2] = _outputRect.right;
-	coordinates[3] = _outputRect.bottom;
+	switch (_rotation) {
+	default:
+	case Common::kRotationNormal:
+		coordinates[0] = _outputRect.left;
+		coordinates[1] = _outputRect.bottom;
 
-	coordinates[4] = _outputRect.left;
-	coordinates[5] = _outputRect.top;
+		coordinates[2] = _outputRect.right;
+		coordinates[3] = _outputRect.bottom;
 
-	coordinates[6] = _outputRect.right;
-	coordinates[7] = _outputRect.top;
+		coordinates[4] = _outputRect.left;
+		coordinates[5] = _outputRect.top;
+
+		coordinates[6] = _outputRect.right;
+		coordinates[7] = _outputRect.top;
+		break;
+	case Common::kRotation90:
+		coordinates[0] = _outputRect.left;
+		coordinates[1] = _outputRect.top;
+
+		coordinates[2] = _outputRect.left;
+		coordinates[3] = _outputRect.bottom;
+
+		coordinates[4] = _outputRect.right;
+		coordinates[5] = _outputRect.top;
+
+		coordinates[6] = _outputRect.right;
+		coordinates[7] = _outputRect.bottom;
+		break;
+	case Common::kRotation180:
+		coordinates[0] = _outputRect.right;
+		coordinates[1] = _outputRect.top;
+
+		coordinates[2] = _outputRect.left;
+		coordinates[3] = _outputRect.top;
+
+		coordinates[4] = _outputRect.right;
+		coordinates[5] = _outputRect.bottom;
+
+		coordinates[6] = _outputRect.left;
+		coordinates[7] = _outputRect.bottom;
+		break;
+	case Common::kRotation270:
+		coordinates[0] = _outputRect.right;
+		coordinates[1] = _outputRect.bottom;
+
+		coordinates[2] = _outputRect.right;
+		coordinates[3] = _outputRect.top;
+
+		coordinates[4] = _outputRect.left;
+		coordinates[5] = _outputRect.bottom;
+
+		coordinates[6] = _outputRect.left;
+		coordinates[7] = _outputRect.top;
+		break;
+	}
 
 	_outputPipeline.drawTexture(*_passes[_passes.size() - 1].target->getTexture(), coordinates);
 
@@ -394,18 +505,16 @@ void LibRetroPipeline::close() {
 }
 
 bool LibRetroPipeline::loadTextures(Common::SearchSet &archSet) {
-	for (LibRetro::ShaderPreset::TextureArray::const_iterator
-		 i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
-		 i != end; ++i) {
-		Texture texture = loadTexture(_shaderPreset->basePath.join(i->fileName).normalize(), _shaderPreset->container, archSet);
-		texture.id = i->id;
+	for (const auto &curTexture : _shaderPreset->textures) {
+		LibRetroTexture texture = loadTexture(_shaderPreset->basePath.join(curTexture.fileName).normalize(), _shaderPreset->container, archSet);
+		texture.id = curTexture.id;
 
 		if (!texture.textureData || !texture.glTexture) {
 			return false;
 		}
 
-		texture.glTexture->enableLinearFiltering(i->filteringMode == LibRetro::kFilteringModeLinear);
-		texture.glTexture->setWrapMode(i->wrapMode);
+		texture.glTexture->enableLinearFiltering(curTexture.filteringMode == LibRetro::kFilteringModeLinear);
+		texture.glTexture->setWrapMode(curTexture.wrapMode);
 		_textures.push_back(texture);
 	}
 	return true;
@@ -443,12 +552,10 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 	Common::StringArray aliases;
 
 	aliases.reserve(_shaderPreset->passes.size());
-	for (LibRetro::ShaderPreset::PassArray::const_iterator
-		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
-		 i != end; ++i) {
-		aliases.push_back(i->alias);
-		if (!i->alias.empty()) {
-			aliasesDefines += Common::String::format("#define %s_ALIAS\n", i->alias.c_str());
+	for (const auto &pass : _shaderPreset->passes) {
+		aliases.push_back(pass.alias);
+		if (!pass.alias.empty()) {
+			aliasesDefines += Common::String::format("#define %s_ALIAS\n", pass.alias.c_str());
 		}
 	}
 
@@ -457,10 +564,8 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 
 	// parameters are shared among all passes so we load them first and apply them to all shaders
 	UniformsMap uniformParams;
-	for (LibRetro::ShaderPreset::PassArray::const_iterator
-		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
-		 i != end; ++i) {
-		Common::Path fileName(_shaderPreset->basePath.join(i->fileName).normalize());
+	for (const auto &curPass : _shaderPreset->passes) {
+		Common::Path fileName(_shaderPreset->basePath.join(curPass.fileName).normalize());
 		Common::SeekableReadStream *stream = nullptr;
 
 		if (_shaderPreset->container) {
@@ -566,7 +671,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		// TODO: float and sRGB FBO handling.
 		target = new TextureTarget();
 
-		_passes.push_back(Pass(i, shader, target));
+		_passes.push_back(Pass(&curPass, shader, target));
 		Pass &pass = _passes[_passes.size() - 1];
 		const uint passId = _passes.size() - 1;
 
@@ -577,9 +682,9 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		pass.buildTexCoords(passId, aliases);
 		pass.buildTexSamplers(passId, _textures, aliases);
 		if (passId > 0) {
-			GLTexture *const texture = _passes[passId - 1].target->getTexture();
-			texture->enableLinearFiltering(i->filteringMode == LibRetro::kFilteringModeLinear);
-			texture->setWrapMode(i->wrapMode);
+			Texture *const texture = _passes[passId - 1].target->getTexture();
+			texture->enableLinearFiltering(curPass.filteringMode == LibRetro::kFilteringModeLinear);
+			texture->setWrapMode(curPass.wrapMode);
 			pass.inputTexture = texture;
 		}
 
@@ -589,14 +694,14 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 	}
 
 	// Apply preset parameters last to override all others
-	for(UniformsMap::iterator it = _shaderPreset->parameters.begin(); it != _shaderPreset->parameters.end(); it++) {
-		uniformParams[it->_key] = it->_value;
+	for (const auto &param : _shaderPreset->parameters) {
+		uniformParams[param._key] = param._value;
 	}
 
 	// Finally apply parameters to all shaders as uniforms
-	for(PassArray::iterator i = _passes.begin(); i != _passes.end(); i++) {
-		for(UniformsMap::iterator it = uniformParams.begin(); it != uniformParams.end(); it++) {
-			i->shader->setUniform1f(it->_key, it->_value);
+	for (auto &pass : _passes) {
+		for (auto &uniformParam : uniformParams) {
+			pass.shader->setUniform1f(uniformParam._key, uniformParam._value);
 		}
 	}
 
@@ -644,8 +749,8 @@ void LibRetroPipeline::setPipelineState() {
 
 bool LibRetroPipeline::setupFBOs() {
 	// Setup the input targets sizes
-	for (Common::Array<LibRetroTextureTarget>::iterator it = _inputTargets.begin(); it != _inputTargets.end(); it++) {
-		if (!it->setScaledSize(_inputWidth, _inputHeight, _outputRect)) {
+	for (auto &inputTarget : _inputTargets) {
+		if (!inputTarget.setScaledSize(_inputWidth, _inputHeight, _outputRect, _rotation)) {
 			return false;
 		}
 	}
@@ -736,12 +841,12 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 	}
 }
 
-void LibRetroPipeline::setShaderTexUniforms(const Common::String &prefix, Shader *shader, const GLTexture &texture) {
+void LibRetroPipeline::setShaderTexUniforms(const Common::String &prefix, Shader *shader, const Texture &texture) {
 	shader->setUniform(prefix + "InputSize", Math::Vector2d(texture.getLogicalWidth(), texture.getLogicalHeight()));
 	shader->setUniform(prefix + "TextureSize", Math::Vector2d(texture.getWidth(), texture.getHeight()));
 }
 
-LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet) {
+LibRetroPipeline::LibRetroTexture LibRetroPipeline::loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet) {
 	Common::String baseName(fileName.baseName());
 	const char *extension = nullptr;
 	for (int dotPos = baseName.size() - 1; dotPos >= 0; --dotPos) {
@@ -753,7 +858,7 @@ LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::Path &file
 
 	if (!extension) {
 		warning("LibRetroPipeline::loadTexture: File name '%s' misses extension", fileName.toString().c_str());
-		return Texture();
+		return LibRetroTexture();
 	}
 
 	for (const ImageLoader *loader = s_imageLoaders; loader->extension; ++loader) {
@@ -761,18 +866,18 @@ LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::Path &file
 			Graphics::Surface *textureData = loader->load(fileName, container, archSet);
 			if (!textureData) {
 				warning("LibRetroPipeline::loadTexture: Loader for '%s' could not load file '%s'", loader->extension, fileName.toString().c_str());
-				return Texture();
+				return LibRetroTexture();
 			}
 
-			GLTexture *texture = new GLTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+			Texture *texture = new Texture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 			texture->setSize(textureData->w, textureData->h);
 			texture->updateArea(Common::Rect(textureData->w, textureData->h), *textureData);
-			return Texture(textureData, texture);
+			return LibRetroTexture(textureData, texture);
 		}
 	}
 
 	warning("LibRetroPipeline::loadTexture: No loader for file '%s' present", fileName.toString().c_str());
-	return Texture();
+	return LibRetroTexture();
 }
 
 void LibRetroPipeline::Pass::buildTexCoords(const uint id, const Common::StringArray &aliases) {
@@ -852,9 +957,9 @@ bool LibRetroPipeline::Pass::addTexSampler(const Common::String &prefix, uint *u
 	const Common::String id = prefixIsId ? prefix : (prefix + "Texture");
 
 	/* Search in the samplers if we already have one for the texture */
-	for(TextureSamplerArray::iterator it = texSamplers.begin(); it != texSamplers.end(); it++) {
-		if (it->type == type && it->index == index) {
-			return shader->setUniform(id, it->unit);
+	for (auto &texSampler : texSamplers) {
+		if (texSampler.type == type && texSampler.index == index) {
+			return shader->setUniform(id, texSampler.unit);
 		}
 	}
 
@@ -901,17 +1006,16 @@ void LibRetroPipeline::renderPass(const Pass &pass) {
 void LibRetroPipeline::renderPassSetupCoordinates(const Pass &pass) {
 	pass.shader->enableVertexAttribute("VertexCoord", 2, GL_FLOAT, GL_FALSE, 0, pass.vertexCoord);
 
-	for (Pass::TexCoordAttributeArray::const_iterator i = pass.texCoords.begin(), end = pass.texCoords.end();
-		 i != end; ++i) {
+	for (const auto &texCoord : pass.texCoords) {
 		const GLfloat *texCoords = nullptr;
 
-		switch (i->type) {
+		switch (texCoord.type) {
 		case Pass::TexCoordAttribute::kTypeTexture:
-			texCoords = _textures[i->index].glTexture->getTexCoords();
+			texCoords = _textures[texCoord.index].glTexture->getTexCoords();
 			break;
 
 		case Pass::TexCoordAttribute::kTypePass:
-			texCoords = _passes[i->index].inputTexture->getTexCoords();
+			texCoords = _passes[texCoord.index].inputTexture->getTexCoords();
 			break;
 
 		case Pass::TexCoordAttribute::kTypePrev:
@@ -924,7 +1028,7 @@ void LibRetroPipeline::renderPassSetupCoordinates(const Pass &pass) {
 			continue;
 		}
 
-		pass.shader->enableVertexAttribute(i->name.c_str(), 2, GL_FLOAT, GL_FALSE, 0, texCoords);
+		pass.shader->enableVertexAttribute(texCoord.name.c_str(), 2, GL_FLOAT, GL_FALSE, 0, texCoords);
 	}
 }
 
@@ -938,22 +1042,21 @@ void LibRetroPipeline::renderPassSetupTextures(const Pass &pass) {
 		GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
 	}
 
-	for (Pass::TextureSamplerArray::const_iterator i = pass.texSamplers.begin(), end = pass.texSamplers.end();
-		 i != end; ++i) {
-		const GLTexture *texture = nullptr;
+	for (const auto &texSampler : pass.texSamplers) {
+		const Texture *texture = nullptr;
 
-		switch (i->type) {
+		switch (texSampler.type) {
 		case Pass::TextureSampler::kTypeTexture:
-			texture = _textures[i->index].glTexture;
+			texture = _textures[texSampler.index].glTexture;
 			break;
 
 		case Pass::TextureSampler::kTypePass:
-			texture = _passes[i->index].inputTexture;
+			texture = _passes[texSampler.index].inputTexture;
 			break;
 
 		case Pass::TextureSampler::kTypePrev: {
-			assert(i->index < _inputTargets.size() - 1);
-			texture = _inputTargets[(_currentTarget - i->index - 1
+			assert(texSampler.index < _inputTargets.size() - 1);
+			texture = _inputTargets[(_currentTarget - texSampler.index - 1
 					+ _inputTargets.size()) % _inputTargets.size()].getTexture();
 			break;
 		}
@@ -963,7 +1066,7 @@ void LibRetroPipeline::renderPassSetupTextures(const Pass &pass) {
 			continue;
 		}
 
-		GL_CALL(glActiveTexture(GL_TEXTURE0 + i->unit));
+		GL_CALL(glActiveTexture(GL_TEXTURE0 + texSampler.unit));
 		texture->bind();
 	}
 }

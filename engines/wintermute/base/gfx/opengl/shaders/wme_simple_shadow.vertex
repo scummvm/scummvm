@@ -1,0 +1,14 @@
+in vec3 position;
+in vec3 normal;
+in vec2 texcoord;
+
+out vec2 Texcoord;
+
+uniform highp mat4 modelMatrix;
+uniform highp mat4 viewMatrix;
+uniform highp mat4 projMatrix;
+
+void main() {
+	gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+	Texcoord = texcoord;
+}

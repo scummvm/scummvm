@@ -153,7 +153,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 
 	_fixedImage = new ZonFixedImage(*this, _inventory, _sprites, &kFixedImageConfiguration);
 
-	// Documentation is needed by noone at init time, let's do it last
+	// Documentation is needed by no one at init time, let's do it last
 	initDocPeopleRecord();
 	_docManager.init(&_sprites, &_fontManager, &_messages, this,
 	                 getFilePath(kFileTypeText, _localizedFilenames[LocalizedFilenames::kAllDocs]),
@@ -596,10 +596,14 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 void CryOmni3DEngine_Versailles::setupSprites() {
 	Common::File file;
 
-	Common::String fName = (getLanguage() == Common::ZH_TWN ? "allsprtw.bin" : "all_spr.bin");
-
-	if (!file.open(getFilePath(kFileTypeSprite, fName))) {
-		error("Failed to open all_spr.bin file");
+	if (!file.open(getFilePath(kFileTypeSprite, "all_spr.bin"))) {
+		// Try with TW specific file
+		if (getLanguage() == Common::ZH_TWN &&
+			!file.open(getFilePath(kFileTypeSprite, "allsprtw.bin"))) {
+			error("Failed to open all_spr.bin and allsprtw.bin file");
+		} else {
+			error("Failed to open all_spr.bin file");
+		}
 	}
 	_sprites.loadSprites(file);
 
@@ -643,9 +647,9 @@ void CryOmni3DEngine_Versailles::loadCursorsPalette() {
 		error("Failed to load BMP file");
 	}
 
-	_cursorPalette = new byte[3 * bmpDecoder.getPaletteColorCount()]();
-	memcpy(_cursorPalette, bmpDecoder.getPalette(),
-	       3 * bmpDecoder.getPaletteColorCount());
+	const Graphics::Palette &palette = bmpDecoder.getPalette();
+	_cursorPalette = new byte[3 * palette.size()]();
+	palette.grab(_cursorPalette, 0, palette.size());
 }
 
 void CryOmni3DEngine_Versailles::setupPalette(const byte *palette, uint start, uint num,
@@ -1208,8 +1212,8 @@ void CryOmni3DEngine_Versailles::doPlaceChange() {
 				_currentPlace->setupWarpConstraints(_omni3dMan);
 				_omni3dMan.setSourceSurface(_currentWarpImage->getSurface());
 
-				setupPalette(_currentWarpImage->getPalette(), 0,
-				             _currentWarpImage->getPaletteColorCount(), !_fadedPalette);
+				setupPalette(_currentWarpImage->getPalette().data(), 0,
+				             _currentWarpImage->getPalette().size(), !_fadedPalette);
 
 				setMousePos(Common::Point(320, 240)); // Center of screen
 
@@ -1605,7 +1609,7 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 			deltaAlpha += 2.*M_PI;
 		}
 
-		// We devide by 5 to slow down movement for modern CPUs
+		// We divide by 5 to slow down movement for modern CPUs
 		int deltaAlphaI;
 		if (deltaAlpha < M_PI) {
 			deltaAlphaI = int(-(deltaAlpha * 512. / 5.));
@@ -1647,8 +1651,8 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 }
 
 void CryOmni3DEngine_Versailles::redrawWarp() {
-	setupPalette(_currentWarpImage->getPalette(), 0,
-	             _currentWarpImage->getPaletteColorCount(), true);
+	setupPalette(_currentWarpImage->getPalette().data(), 0,
+	             _currentWarpImage->getPalette().size(), true);
 	if (_forceRedrawWarp) {
 		const Graphics::Surface *result = _omni3dMan.getSurface();
 		g_system->copyRectToScreen(result->getPixels(), result->pitch, 0, 0, result->w, result->h);
@@ -1720,8 +1724,8 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 
 	if (imageDecoder->hasPalette()) {
 		// We don't need to calculate transparency but it's simpler to call this function
-		setupPalette(imageDecoder->getPalette(), 0,
-		             imageDecoder->getPaletteColorCount());
+		setupPalette(imageDecoder->getPalette().data(), 0,
+		             imageDecoder->getPalette().size());
 	}
 
 	const Graphics::Surface *image = imageDecoder->getSurface();

@@ -134,7 +134,9 @@ void PlumbersGame::handleEvent(const Common::Event &event) {
 }
 
 Common::Error PlumbersGame::run() {
-	startGraphics();
+	Common::Error err = startGraphics();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	_console = new Console();
 	setDebugger(_console);
@@ -267,8 +269,8 @@ void PlumbersGame::drawScreen() {
 			_showScoreFl = false;
 		}
 
-		if (_image->getPalette() != nullptr)
-			g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
+		if (_image->hasPalette())
+			g_system->getPaletteManager()->setPalette(_image->getPalette().data(), 0, _image->getPalette().size());
 		g_system->updateScreen();
 	}
 }

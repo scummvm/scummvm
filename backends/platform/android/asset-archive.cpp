@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -162,5 +160,3 @@ Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const
 	}
 	return new AssetInputStream(_am, path);
 }
-
-#endif

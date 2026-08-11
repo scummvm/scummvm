@@ -22,6 +22,7 @@
 #ifndef IMAGE_NEO_H
 #define IMAGE_NEO_H
 
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 /**
@@ -48,17 +49,15 @@ public:
 	virtual ~NeoDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
+	uint16 getPaletteColorCount() const { return _palette.size(); }
 
 private:
 	Graphics::Surface *_surface;
-	bool _paletteDestroy;
-	byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 };
 } // End of namespace Image
 

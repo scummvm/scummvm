@@ -31,8 +31,6 @@ class ActionManager;
 class PlaySecondaryMovie;
 
 class InteractiveVideo : public ActionRecord {
-	friend class ActionManager;
-	friend class PlaySecondaryMovie;
 public:
 	InteractiveVideo() {}
 	virtual ~InteractiveVideo() {}

@@ -70,7 +70,7 @@ private:
 	RGBA _backgroundColor;
 	Image();                    /* use create method to construct images */
 
-	// disallow assignments, copy contruction
+	// disallow assignments, copy construction
 	Image(const Image &);
 	const Image &operator=(const Image &);
 

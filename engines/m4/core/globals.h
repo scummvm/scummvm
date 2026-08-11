@@ -26,10 +26,6 @@
 #ifndef M4_CORE_GLOBALS_H
 #define M4_CORE_GLOBALS_H
 
-#include "common/array.h"
-#include "common/serializer.h"
-#include "m4/fileio/sys_file.h"
-#include "m4/m4_types.h"
 
 namespace M4 {
 

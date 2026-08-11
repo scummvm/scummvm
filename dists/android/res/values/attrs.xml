@@ -1,0 +1,6 @@
+<resources>
+   <declare-styleable name="LedView">
+	   <attr name="color" format="reference|color" />
+	   <attr name="state" format="boolean" />
+   </declare-styleable>
+</resources>

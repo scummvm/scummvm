@@ -117,7 +117,7 @@ void ActionText::start() {
 
 	case Common::FI_FIN:
 		// fall through
-	case Common::SE_SWE:
+	case Common::SV_SWE:
 		_text = Common::String(str).decode(Common::kWindows1257);
 		break;
 
@@ -153,7 +153,7 @@ void ActionText::start() {
 
 	if (_scrollBar) {
 		_txtWnd = screen->getWndManager().addTextWindow(screen->getTextFont(), _textColorIndex, _backgroundColorIndex,
-														  _xRight - _xLeft, align, nullptr, false);
+														  _xRight - _xLeft, align, nullptr);
 		_txtWnd->setTextColorRGB(_textRGB);
 		_txtWnd->enableScrollbar(true);
 		// it will hide the scrollbar when the text height is smaller than the window height

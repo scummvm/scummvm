@@ -36,7 +36,11 @@ class AdEntity : public AdTalkHolder {
 public:
 	VideoTheoraPlayer *_theora;
 	bool setSprite(const char *filename);
+	int32 _walkToX;
+	int32 _walkToY;
+	TDirection _walkToDir;
 	void setItem(const char *itemName);
+	char *_item;
 	DECLARE_PERSISTENT(AdEntity, AdTalkHolder)
 	void updatePosition();
 	int32 getHeight() override;
@@ -48,11 +52,7 @@ public:
 	~AdEntity() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-
-	int32 getWalkToX() const;
-	int32 getWalkToY() const;
-	TDirection getWalkToDir() const;
-	const char* getItemName() const;
+	TEntityType _subtype;
 
 #ifdef ENABLE_FOXTAIL
 	int32 getHintX() const;
@@ -60,17 +60,13 @@ public:
 #endif
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
+
 	Common::String debuggerToString() const override;
 private:
-	int32 _walkToX;
-	int32 _walkToY;
-	TDirection _walkToDir;
-	char *_item;
-	TEntityType _subtype;
 
 #ifdef ENABLE_FOXTAIL
 	int32 _hintX;

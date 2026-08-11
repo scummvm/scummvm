@@ -75,7 +75,7 @@ private:
 	void clip(byte *&source, byte *&dest, int16 &x, int16 &y);
 	void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 scrWidth);
 
-	byte _palTable[PALETTE_SIZE];
+	byte _palTable[Graphics::PALETTE_SIZE];
 	uint8 _einfuegen = 0;
 
 	int _zoomSpriteDeltaX2;

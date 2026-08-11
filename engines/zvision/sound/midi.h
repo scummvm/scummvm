@@ -32,25 +32,32 @@ public:
 	~MidiManager();
 
 	void stop();
-	void noteOn(int8 channel, int8 noteNumber, int8 velocity);
-	void noteOff(int8 channel);
-	void setPan(int8 channel, int8 pan);
-	void setVolume(int8 channel, int8 volume);
-	void setProgram(int8 channel, int8 prog);
+	void noteOn(uint8 channel, uint8 noteNumber, uint8 velocity);
+	void noteOff(uint8 channel);
+	void setVolume(uint8 channel, uint8 volume);
+	void setBalance(uint8 channel, int8 balance);
+	void setPan(uint8 channel, int8 pan);
+	void setProgram(uint8 channel, uint8 prog);
 
-	int8 getFreeChannel();
+	int8 getFreeChannel();  // Negative if none available
+	bool isAvailable() const {
+		return _available;
+	}
 
 protected:
-
+	bool _available = false;
+	bool _mt32 = false;
 	struct chan {
 		bool playing;
-		int8 note;
+		uint8 note;
 
-		chan() : playing(false), note(0) {};
+		chan() : playing(false), note(0) {}
 	};
-
+	void send(uint8 status, uint8 data1 = 0x00, uint8 data2 = 0x00);
+	uint8 _startChannel = 0;
+	uint8 _maxChannels = 16;
 	MidiDriver *_driver;
-	chan _playChannels[16];
+	chan _activeChannels[16];
 };
 
 }

@@ -69,7 +69,12 @@ struct MapFile {
 		memset(this, 0, sizeof(MapFile));
 
 		mapType = 1;
-		memset((void *)fourPlayerPoints, 0xFF, sizeof(PixelLoc) * 20);
+		memset(fourPlayerPoints, 0xFF, sizeof(fourPlayerPoints));
+		memset(threePlayerPoints, 0xFF, sizeof(threePlayerPoints));
+		memset(twoPlayerPoints, 0xFF, sizeof(twoPlayerPoints));
+		memset(twoVTwoPoints, 0xFF, sizeof(twoVTwoPoints));
+		memset(oneVThreePoints, 0xFF, sizeof(oneVThreePoints));
+		memset(oneVTwoPoints, 0xFF, sizeof(oneVTwoPoints));
 	}
 } PACKED_STRUCT;
 
@@ -81,11 +86,11 @@ public:
 
 	void generateMap(MapFile *map);
 
-	int _dimension; // 32 (small), 40 (medium), 48 (large), 56 (huge), 64 (SAI)
-	int _mapType;
-	char _name[17];
-	byte _cornerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
-	char _centerMap[MAX_TILE_COUNT][MAX_TILE_COUNT];
+	int _dimension = 0; // 32 (small), 40 (medium), 48 (large), 56 (huge), 64 (SAI)
+	int _mapType = 0;
+	char _name[17] = {};
+	byte _cornerMap[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
+	int8 _centerMap[MAX_TILE_COUNT][MAX_TILE_COUNT] = { {}, {} };
 private:
 
 	void defineStartLocations(MapFile *map);

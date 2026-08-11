@@ -38,6 +38,7 @@ struct SpriteDim {
 	int16 h = 0;
 };
 
+// PtrZvExtra
 class SpriteBoundingBoxData : public Parser {
 private:
 	Common::Array<BoundingBox> _boundingBoxes;
@@ -46,7 +47,7 @@ private:
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 
-	const BoundingBox *bbox(int index) const;
+	const BoundingBox *bbox(int index) const; // PtrZvAnim3DS, PtrZvExtra, PtrZvExtraRaw
 	const SpriteDim *dim(int index) const;
 };
 

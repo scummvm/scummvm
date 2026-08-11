@@ -184,12 +184,12 @@ public:
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() { return true; }
+	virtual bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) { return true; }
 
 	/**
 	 * Returns true if the game can currently be saved
 	 */
-	virtual bool canSaveGameStateCurrently() { return false; }
+	virtual bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) { return false; }
 
 	/**
 	 * Handles loading and saving games

@@ -32,6 +32,9 @@
 typedef unsigned char byte;
 typedef unsigned int uint32;
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
 #include "create_ultima.h"
 
 class File {
@@ -42,7 +45,7 @@ public:
 		_file = fopen(filename, "rb");
 		if (!_file) {
 			char buf[255];
-			sprintf(buf, "Could not open file %s", filename);
+			snprintf(buf, ARRAYSIZE(buf), "Could not open file %s", filename);
 			error(buf);
 		}
 	}
@@ -124,49 +127,6 @@ public:
 		while (count-- > 0)
 			writeByte(val);
 	}
-};
-
-/**
- * Simple surface structure
- */
-struct Surface {
-	int _w;
-	int _h;
-	byte *_pixels;
-	byte _palette[768];
-
-	Surface(int w, int h) : _w(w), _h(h) {
-		_pixels = new byte[w * h];
-		memset(_pixels, 0xff, w * h);
-
-		// Set a default palette
-		for (int idx = 0; idx < 256; ++idx) {
-			memset(_palette + idx * 3, idx, 3);
-		}
-
-	}
-
-	~Surface() {
-		delete[] _pixels;
-	}
-
-	Surface &operator=(const Surface &src) {
-		assert(src._w == _w && src._h == _h);
-		memcpy(_pixels, src._pixels, _w * _h);
-		return *this;
-	}
-
-	byte *getBasePtr(int x, int y) {
-		assert(y < _h);
-		return _pixels + (y * _w) + x;
-	}
-
-	void setPaletteEntry(byte index, byte r, byte g, byte b);
-
-	/**
-	 * Save to a BMP file
-	 */
-	void saveToFile(const char *filename);
 };
 
 #endif

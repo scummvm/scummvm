@@ -66,8 +66,8 @@ public:
 	Common::Point drawScreenArc(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawPieSlice(int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color);
 	void drawTriangle(Common::Point *p, Color color);
-	void drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawNormalText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawScrollText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawDigit(int index, int x, int y);
 	void drawDirection(int index, int x, int y);
 	void drawScrollShadow(int16 x1, int16 y1, int16 x2, int16 y2);
@@ -95,6 +95,13 @@ public:
 	// Used in winning()
 	void drawWinningPic();
 
+	/* 
+	* Used in quitting(), the parameter is to accept different numbers (representing different scenarios). I put it here to 
+	* preserve some of the multi-purpose functionality of the original function.
+	*/
+
+	void drawQuittingPic();
+
 	// Ghostroom's functions:
 	void ghostDrawMonster(byte ***picture, uint16 destX, int16 destY, MonsterType type);
 	Graphics::Surface ghostLoadPicture(Common::File &file, Common::Point &coord);
@@ -104,7 +111,7 @@ public:
 	// Help's function:
 	void helpDrawButton(int y, byte which);
 	void helpDrawHighlight(byte which, Color color);
-	void helpDrawBigText(const Common::String text, int16 x, int16 y, Color color);
+	void helpDrawBigText(const Common::String &text, int16 x, int16 y, Color color);
 
 	// Shoot em' up's functions:
 	void seuDrawTitle();
@@ -124,7 +131,6 @@ public:
 	void menuRestoreScreen();
 	void menuLoadPictures();
 	void menuDrawBigText(FontType font, uint16 x, uint16 y, Common::String text, Color color);
-	void menuDrawIndicator(int x);
 
 	void clearAlso();
 	void clearTextBar();
@@ -159,6 +165,8 @@ public:
 	void saveScreen();
 	void restoreScreen();
 	void removeBackup();
+
+	Graphics::Surface &getSurface() { return _surface; }
 
 private:
 	static const int16 kMouseSize = 134;
@@ -196,9 +204,9 @@ private:
 	Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
 	Graphics::Surface loadPictureSign(Common::File &file, uint16 width, uint16 height); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
 
-	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY);
+	void drawText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawBigText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawPicture(Graphics::Surface &target, const Graphics::Surface &picture, uint16 destX, uint16 destY);
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
 	// Returns the end point of the arc. (Needed in Clock.)

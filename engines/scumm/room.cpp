@@ -127,6 +127,25 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			setDirtyColors(0, 255);
 	}
 
+	// WORKAROUND: In the CD version of MI1 a certain palette slot (47)
+	// points to a dark blue color in room 36 (the Marley Mansion outside view).
+	// The same palette slot points to white in the Floppy VGA version.
+	//
+	// This is believed to be an oversight in the scripts/datafiles, as it affects:
+	// - The "Important Notice" sign about how the dogs are only sleeping.
+	// - The color of some of the stars in the sky.
+	//
+	// It has been noted that the Mac version apparently fixes that on the fly
+	// within the interpreter, so we do that as well even if kEnhVisualChanges
+	// is not active.
+	//
+	// The SEGA CD version points to the correct color, and the FM Towns
+	// version makes the text more readable by giving it a black outline.
+	// The Ultimate Talkie version already takes care of that within the data files.
+
+	if (haveToApplyMonkey1PaletteFix() && room == 36)
+		_roomPalette[47] = 15;
+
 	VAR(VAR_ROOM) = room;
 	_fullRedraw = true;
 
@@ -134,6 +153,15 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	_currentRoom = room;
 	VAR(VAR_ROOM) = room;
+
+#ifdef USE_TTS
+	if (_game.id == GID_PASS && _roomResource == 2 && room != _roomResource) {
+		for (uint index = 0; index < ARRAYSIZE(_passHelpButtons); ++index) {
+			_passHelpButtons[index].clear();
+		}
+		_voicePassHelpButtons = false;
+	}
+#endif
 
 	if (room >= 0x80 && _game.version < 7 && _game.heversion <= 71)
 		_roomResource = _resourceMapper[room & 0x7F];
@@ -208,6 +236,14 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		}
 	}
 
+	// WORKAROUND for bug #16111
+	// Due to a faulty box flag, ZAK FM-TOWNS will freeze when trying to load a game saved in
+	// room 138, but also when pressing F5 while in that room and then clicking the PLAY button
+	// in the save menu. The latter case is the reason why I put the workaround in here, and
+	// not just in ScummEngine_v3::scummLoop_handleSaveLoad() where it would be less visible.
+	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && a == nullptr && room == 138)
+		setBoxFlags(4, 0);
+
 	showActors();
 
 	_egoPositioned = false;
@@ -215,7 +251,6 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	towns_resetPalCycleFields();
 #endif
-
 	runEntryScript();
 	if (_game.version >= 1 && _game.version <= 2) {
 		runScript(5, 0, 0, nullptr);
@@ -328,8 +363,10 @@ void ScummEngine::setupRoomSubBlocks() {
 	// Look for an exit script
 	//
 	ptr = findResourceData(MKTAG('E','X','C','D'), roomResPtr);
-	if (ptr)
+	if (ptr) {
 		_EXCD_offs = ptr - roomResPtr;
+		scriptOverride(_roomResource, -2);
+	}
 	if (_dumpScripts && _EXCD_offs)
 		dumpResource("exit-", _roomResource, roomResPtr + _EXCD_offs - _resourceHeaderSize, -1);
 
@@ -337,8 +374,10 @@ void ScummEngine::setupRoomSubBlocks() {
 	// Look for an entry script
 	//
 	ptr = findResourceData(MKTAG('E','N','C','D'), roomResPtr);
-	if (ptr)
+	if (ptr) {
 		_ENCD_offs = ptr - roomResPtr;
+		scriptOverride(_roomResource, -1);
+	}
 	if (_dumpScripts && _ENCD_offs)
 		dumpResource("entry-", _roomResource, roomResPtr + _ENCD_offs - _resourceHeaderSize, -1);
 
@@ -379,7 +418,9 @@ void ScummEngine::setupRoomSubBlocks() {
 			id = READ_LE_UINT32(ptr);
 
 			assertRange(_numGlobalScripts, id, _numLocalScripts + _numGlobalScripts, "local script");
+
 			_localScriptOffsets[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
+			scriptOverride(_roomResource, id);
 
 			if (_dumpScripts) {
 				char buf[32];
@@ -396,6 +437,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 			id = ptr[0];
 			_localScriptOffsets[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
+			scriptOverride(_roomResource, id);
 
 			if (_dumpScripts) {
 				char buf[32];
@@ -486,10 +528,11 @@ void ScummEngine::setupRoomSubBlocks() {
 	// fact to fix the object class of obj 182. This should match what the
 	// 2016 remaster did.
 	//
-	// Not using `_enableEnhancements` since leaving the room too quickly
+	// Using `kEnhGameBreakingBugFixes`, since leaving the room too quickly
 	// would just make this puzzle impossible to complete.
-	if (_game.id == GID_TENTACLE && _roomResource == 26 && readVar(0x8000 + 69)
-			&& getClass(182, kObjectClassUntouchable)) {
+	if (_game.id == GID_TENTACLE && _roomResource == 26 && readVar(ROOM_VAL(69))
+			&& getClass(182, kObjectClassUntouchable)
+			&& enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		putClass(182, kObjectClassUntouchable, 0);
 	}
 
@@ -594,6 +637,17 @@ void ScummEngine::resetRoomSubBlocks() {
 	// We need to setup the current palette before initCycl for Indy4 Amiga.
 	if (_PALS_offs || _CLUT_offs)
 		setCurrentPalette(0);
+
+	if (_game.id == GID_TENTACLE && VAR(VAR_VIDEOMODE) == 13) {
+		// This is a hack to avoid color glitches caused by incomplete EGA mode handling in the scripts.
+		// The original DOTT interpreter (executable and scripts) has various EGA mode handling leftovers
+		// from SCUMM5 in it, but the mode isn't supported. We always set VAR_VIDEOMODE to VGA setting for
+		// SCUMM6, so this codepath here is currently never executed. But it would be if we (for whatever reason)
+		// decided to change that.
+		const byte *room = getResourceAddress(rtRoom, _roomResource);
+		if (findPalInPals(room + _PALS_offs, 1))
+			setCurrentPalette(1);
+	}
 
 	// Color cycling
 	// HE 7.0 games load resources but don't use them.

@@ -949,7 +949,7 @@ void print_score(void) {
 			if (!room[i].unused) {
 				if (room[i].seen) rmcnt++;
 				/* Should really compute this once at the beginning, but */
-				/* I don't want to add yet another global variable, particulary */
+				/* I don't want to add yet another global variable, particularly */
 				/* since this is only used here. */
 				totroom++;
 			}

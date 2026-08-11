@@ -41,7 +41,7 @@ public:
 	uint32 getStartFrame() const;
 	Common::String getText() const;
 private:
-	BaseGame *_gameRef;
+	BaseGame *_game;
 	uint32 _endFrame;
 	uint32 _startFrame;
 	Common::String _text;

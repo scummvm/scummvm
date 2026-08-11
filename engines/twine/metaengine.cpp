@@ -20,14 +20,13 @@
  */
 
 #include "backends/keymapper/action.h"
-#include "backends/keymapper/standard-actions.h"
+#include "backends/keymapper/keymap.h"
 #include "base/plugins.h"
-#include "common/fs.h"
-#include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "twine/achievements_tables.h"
 #include "twine/detection.h"
@@ -67,17 +66,6 @@ static const ADExtraGuiOptionsMap twineOptionsList[] = {
 			_s("Enable debug mode"),
 			_s("Enable the debug mode"),
 			"debug",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_AUDIO_CD,
-		{
-			_s("Enable audio CD"),
-			_s("Enable the original audio cd track"),
-			"usecd",
 			false,
 			0,
 			0
@@ -165,7 +153,7 @@ static const ADExtraGuiOptionsMap twineOptionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class TwinEMetaEngine : public AdvancedMetaEngine {
+class TwinEMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "twine";
@@ -206,7 +194,11 @@ void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	TwinEEngine *engine = (TwinEEngine *)g_engine;
 	const Graphics::ManagedSurface &managedSurface = engine->_workVideoBuffer;
 	const Graphics::Surface &screenSurface = managedSurface.rawSurface();
-	::createThumbnail(&thumb, (const uint8 *)screenSurface.getPixels(), screenSurface.w, screenSurface.h, engine->_screens->_palette);
+	Graphics::Palette *pal = &engine->_screens->_ptrPal;
+	if (engine->_screens->_flagPalettePcx) {
+		pal = &engine->_screens->_palettePcx;
+	}
+	::createThumbnail(&thumb, (const uint8 *)screenSurface.getPixels(), screenSurface.w, screenSurface.h, pal->data());
 }
 
 //
@@ -233,114 +225,74 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("p");
 		gameKeyMap->addAction(act);
 
-		act = new Action("NEXTROOM", _("Debug Next Room"));
-		act->setCustomEngineActionEvent(TwinEActionType::NextRoom);
-		act->addDefaultInputMapping("r");
-		gameKeyMap->addAction(act);
-
-		act = new Action("PREVIOUSROOM", _("Debug Previous Room"));
-		act->setCustomEngineActionEvent(TwinEActionType::PreviousRoom);
-		act->addDefaultInputMapping("f");
-		gameKeyMap->addAction(act);
-
-		act = new Action("APPLYCELLINGGRID", _("Debug Apply Celling Grid"));
-		act->setCustomEngineActionEvent(TwinEActionType::ApplyCellingGrid);
-		act->addDefaultInputMapping("t");
-		gameKeyMap->addAction(act);
-
-		act = new Action("INCREASECELLINGGRIDINDEX", _("Debug Increase Celling Grid Index"));
-		act->setCustomEngineActionEvent(TwinEActionType::IncreaseCellingGridIndex);
-		act->addDefaultInputMapping("g");
-		gameKeyMap->addAction(act);
-
-		act = new Action("DECREASECELLINGGRIDINDEX", _("Debug Decrease Celling Grid Index"));
-		act->setCustomEngineActionEvent(TwinEActionType::DecreaseCellingGridIndex);
-		act->addDefaultInputMapping("b");
-		gameKeyMap->addAction(act);
-
-		act = new Action("DEBUGGRIDCAMERAPRESSUP", _("Debug Grid Camera Up"));
+		act = new Action("DEBUGGRIDCAMERAPRESSUP", _("Debug grid camera up"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressUp);
 		act->addDefaultInputMapping("s");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSDOWN", _("Debug Grid Camera Down"));
+		act = new Action("DEBUGGRIDCAMERAPRESSDOWN", _("Debug grid camera down"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressDown);
 		act->addDefaultInputMapping("x");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSLEFT", _("Debug Grid Camera Left"));
+		act = new Action("DEBUGGRIDCAMERAPRESSLEFT", _("Debug grid camera left"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressLeft);
 		act->addDefaultInputMapping("y");
 		act->addDefaultInputMapping("z");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGGRIDCAMERAPRESSRIGHT", _("Debug Grid Camera Right"));
+		act = new Action("DEBUGGRIDCAMERAPRESSRIGHT", _("Debug grid camera right"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressRight);
 		act->addDefaultInputMapping("c");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DEBUGPLACEACTORATCENTEROFSCREEN", _("Place actor at center of screen"));
-		act->setCustomEngineActionEvent(TwinEActionType::DebugPlaceActorAtCenterOfScreen);
-		act->addDefaultInputMapping("v");
-		gameKeyMap->addAction(act);
-
-		act = new Action("DEBUGMENU", _("Debug Menu"));
-		act->setCustomEngineActionEvent(TwinEActionType::DebugMenu);
-		act->addDefaultInputMapping("MOUSE_RIGHT");
-		gameKeyMap->addAction(act);
-
-		act = new Action("DEBUGMENUEXEC", _("Debug Menu Execute"));
-		act->setCustomEngineActionEvent(TwinEActionType::DebugMenuActivate);
-		act->addDefaultInputMapping("MOUSE_LEFT");
-		gameKeyMap->addAction(act);
-
-		act = new Action("CHANGETONORMALBEHAVIOUR", _("Normal Behaviour"));
+		act = new Action("CHANGETONORMALBEHAVIOUR", _("Normal behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourNormal);
 		act->addDefaultInputMapping("1");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETOATHLETICBEHAVIOUR", _("Athletic Behaviour"));
+		act = new Action("CHANGETOATHLETICBEHAVIOUR", _("Athletic behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourAthletic);
 		act->addDefaultInputMapping("2");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETOAGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour"));
+		act = new Action("CHANGETOAGGRESSIVEBEHAVIOUR", _("Aggressive behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourAggressive);
 		act->addDefaultInputMapping("3");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGETODISCREETBEHAVIOUR", _("Discreet Behaviour"));
+		act = new Action("CHANGETODISCREETBEHAVIOUR", _("Discreet behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourDiscreet);
 		act->addDefaultInputMapping("4");
 		gameKeyMap->addAction(act);
 
-		act = new Action("NORMALBEHAVIOUR", _("Normal Behaviour"));
+		act = new Action("NORMALBEHAVIOUR", _("Normal behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourNormal);
 		act->addDefaultInputMapping("F1");
 		gameKeyMap->addAction(act);
 
-		act = new Action("ATHLETICBEHAVIOUR", _("Athletic Behaviour"));
+		act = new Action("ATHLETICBEHAVIOUR", _("Athletic behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourAthletic);
 		act->addDefaultInputMapping("F2");
 		gameKeyMap->addAction(act);
 
-		act = new Action("AGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour"));
+		act = new Action("AGGRESSIVEBEHAVIOUR", _("Aggressive behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourAggressive);
 		act->addDefaultInputMapping("F3");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DISCREETBEHAVIOUR", _("Discreet Behaviour"));
+		act = new Action("DISCREETBEHAVIOUR", _("Discreet behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourDiscreet);
 		act->addDefaultInputMapping("F4");
 		gameKeyMap->addAction(act);
 
-		act = new Action("BEHAVIOURACTION", _("Behaviour Action"));
+		act = new Action("BEHAVIOURACTION", _("Behavior action"));
 		act->setCustomEngineActionEvent(TwinEActionType::ExecuteBehaviourAction);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("JOY_A");
 		gameKeyMap->addAction(act);
 
-		act = new Action("CHANGEBEHAVIOUR", _("Change Behaviour"));
+		act = new Action("CHANGEBEHAVIOUR", _("Change behavior"));
 		act->setCustomEngineActionEvent(TwinEActionType::BehaviourMenu);
 		act->addDefaultInputMapping("LCTRL");
 		act->addDefaultInputMapping("RCTRL");
@@ -352,7 +304,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setEvent(EVENT_MAINMENU);
 		gameKeyMap->addAction(act);
 
-		act = new Action("OPTIONSMENU", _("Options Menu"));
+		act = new Action("OPTIONSMENU", _("Options menu"));
 		act->setCustomEngineActionEvent(TwinEActionType::OptionsMenu);
 		act->addDefaultInputMapping("F6");
 		gameKeyMap->addAction(act);
@@ -364,41 +316,41 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_RIGHT_STICK");
 		gameKeyMap->addAction(act);
 
-		act = new Action("USESELECTEDOBJECT", _("Use Selected Object"));
+		act = new Action("USESELECTEDOBJECT", _("Use selected object"));
 		act->setCustomEngineActionEvent(TwinEActionType::UseSelectedObject);
 		act->addDefaultInputMapping("S+RETURN");
 		act->addDefaultInputMapping("S+KP_ENTER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("THROWMAGICBALL", _("Throw Magic Ball"));
+		act = new Action("THROWMAGICBALL", _("Throw magic ball"));
 		act->setCustomEngineActionEvent(TwinEActionType::ThrowMagicBall);
 		act->addDefaultInputMapping("LALT");
 		act->addDefaultInputMapping("RALT");
 		act->addDefaultInputMapping("JOY_LEFT_STICK");
 		gameKeyMap->addAction(act);
 
-		act = new Action("MOVEFORWARD", _("Move Forward"));
+		act = new Action("MOVEFORWARD", _("Move forward"));
 		act->setCustomEngineActionEvent(TwinEActionType::MoveForward);
 		act->addDefaultInputMapping("UP");
 		act->addDefaultInputMapping("KP8");
 		act->addDefaultInputMapping("JOY_UP");
 		gameKeyMap->addAction(act);
 
-		act = new Action("MOVEBACKWARD", _("Move Backward"));
+		act = new Action("MOVEBACKWARD", _("Move backwards"));
 		act->setCustomEngineActionEvent(TwinEActionType::MoveBackward);
 		act->addDefaultInputMapping("DOWN");
 		act->addDefaultInputMapping("KP2");
 		act->addDefaultInputMapping("JOY_DOWN");
 		gameKeyMap->addAction(act);
 
-		act = new Action("TURNRIGHT", _("Turn Right"));
+		act = new Action("TURNRIGHT", _("Turn right"));
 		act->setCustomEngineActionEvent(TwinEActionType::TurnRight);
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("KP6");
 		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 
-		act = new Action("TURNLEFT", _("Turn Left"));
+		act = new Action("TURNLEFT", _("Turn left"));
 		act->setCustomEngineActionEvent(TwinEActionType::TurnLeft);
 		act->addDefaultInputMapping("LEFT");
 		act->addDefaultInputMapping("KP4");
@@ -423,13 +375,13 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("i");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SPECIALACTION", _("Special Action"));
+		act = new Action("SPECIALACTION", _("Special action"));
 		act->setCustomEngineActionEvent(TwinEActionType::SpecialAction);
 		act->addDefaultInputMapping("w");
 		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SCENERYZOOM", _("Scenery Zoom"));
+		act = new Action("SCENERYZOOM", _("Scenery zoom"));
 		act->setCustomEngineActionEvent(TwinEActionType::SceneryZoom);
 		gameKeyMap->addAction(act);
 
@@ -439,6 +391,19 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_B");
 		act->addDefaultInputMapping("JOY_BACK");
 		gameKeyMap->addAction(act);
+
+		// TODO: lba2 has shortcuts for the inventory items
+		// J: Protopack/Jetpack
+		// P: Mecha-Penguin
+		// H: Holomap
+		// X: Dodges
+		// 1: Magic Ball
+		// 2: Darts
+		// 3: Blowpipe/Blowtron
+		// 4: Conch Shell
+		// 5: Glove
+		// 6: Laser Gun
+		// 7: Saber
 
 		array[0] = gameKeyMap;
 	}
@@ -492,7 +457,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT");
 		uiKeyMap->addAction(act);
 
-		act = new Action("NEXTPAGE", _("Next Page"));
+		act = new Action("NEXTPAGE", _("Next page"));
 		act->setCustomEngineActionEvent(TwinEActionType::UINextPage);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("PAGEDOWN");

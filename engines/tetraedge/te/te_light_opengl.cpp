@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/math.h"
-
 #include "tetraedge/te/te_light_opengl.h"
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_color.h"

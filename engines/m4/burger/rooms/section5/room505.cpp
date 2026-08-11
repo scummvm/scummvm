@@ -22,6 +22,8 @@
 #include "m4/burger/rooms/section5/room505.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -245,6 +247,9 @@ void Room505::daemon() {
 		case 3:
 			digi_play((imath_ranged_rand(1, 2) == 1) ? "505b004a" : "505b004b", 2);
 			break;
+
+		default:
+			break;
 		}
 		break;
 
@@ -302,7 +307,7 @@ void Room505::pre_parser() {
 
 void Room505::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool railingFlag = player_said("RAILING") && _G(flags)[kStairsBorkState] == 5003;
+	const bool railingFlag = player_said("RAILING") && _G(flags)[kStairsBorkState] == 5003;
 
 	if (player_said("LOOK AT", "STAIRS") && _G(flags)[kStairsBorkState] == 5003) {
 		wilbur_speech("505w002");

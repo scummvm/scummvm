@@ -36,11 +36,11 @@ public:
 	TeICodec() {};
 
 	virtual ~TeICodec() {};
-	virtual bool load(const Common::FSNode &node) = 0;
+	virtual bool load(const TetraedgeFSNode &node) = 0;
 	virtual uint width() = 0;
 	virtual uint height() = 0;
 	virtual int nbFrames() = 0;
-	virtual TeImage::Format imageFormat() = 0;
+	virtual Graphics::PixelFormat pixelFormat() = 0;
 	virtual void setLeftBorderSize(uint val) = 0;
 	virtual uint leftBorderSize() = 0;
 	virtual void setRightBorderSize(uint val) = 0;

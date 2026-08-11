@@ -1,0 +1,49 @@
+OUTPUT
+
+uniform vec4 color;
+
+// Stipple state. The pattern is the same 32×32 / 128-byte layout that
+// glPolygonStipple expects, encoded as 128 ints. Bit 1 → foreground,
+// bit 0 → background (Mac QuickDraw convention).
+//
+// Bit-extraction logic mirrors Freescape's freescape_triangle.fragment:
+// constant-iteration loops avoid GLES2's restriction on dynamic indexing
+// of uniform arrays.
+uniform UBOOL useStipple;
+uniform int stipple[128];
+uniform vec4 stippleFg;
+uniform vec4 stippleBg;
+
+void main() {
+	if (UBOOL_TEST(useStipple)) {
+		ivec2 coord = ivec2(gl_FragCoord.xy);
+		int x = int(mod(float(coord.x), 32.));
+		int y = int(mod(float(coord.y), 32.));
+
+		// Each row has 4 bytes (4 × 8 = 32 columns).
+		int byteIndex = y * 4 + (x / 8);
+		int bitIndex = int(mod(float(x), 8.));
+
+		int patternByte = 0;
+		for (int i = 0; i < 128; i++) {
+			if (i == byteIndex) {
+				patternByte = stipple[i];
+				break;
+			}
+		}
+
+		// Bit 7 (MSB) = leftmost column. Right-shift (7 - bitIndex) times.
+		for (int i = 0; i < 7; i++) {
+			if (i >= 7 - bitIndex)
+				break;
+			patternByte = patternByte / 2;
+		}
+
+		if (int(mod(float(patternByte), 2.)) == 0)
+			outColor = stippleBg;
+		else
+			outColor = stippleFg;
+	} else {
+		outColor = color;
+	}
+}

@@ -79,11 +79,11 @@ To cycle forwards or backwards between graphical filters, press :kbd:`Ctrl + Alt
 
 .. figure:: ../images/graphics/graphics_mode/advmame3x.png
 
-    **AdvMAME 3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
+    **AdvMAME 3x**: Expands each pixel into 9 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/advmame4x.png
 
-    **AdvMAME 3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
+    **AdvMAME 4x**: Expands each pixel into 16 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/sai2x.png
 
@@ -208,7 +208,7 @@ Below are some of the common render modes, to illustrate how the render mode set
 Shaders
 ------------
 
-Shaders change the way a game is rendered, and can be used to make a game look exactly how you remember it from years past - right down to the border of your Gameboy console and its old LCD screen, or your CRT monitor. Alternatively, use shaders simply to improve the overall look and feel of a game. 
+Shaders change the way a game is rendered, and can be used to make a game look exactly how you remember it from years past - right down to the border of your Game Boy console and its old LCD screen, or your CRT monitor. Alternatively, use shaders simply to improve the overall look and feel of a game. 
 
 The shaders included in the ScummVM pack are curated from the Libretro repository, and are grouped according to effect. For an overview of specific shaders, see the `Libretro documentation <https://docs.libretro.com/shader/introduction/>`_
 

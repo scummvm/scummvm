@@ -274,6 +274,7 @@ void Talk::talkTo(const Common::String &filename) {
 			ui.clearInfo();
 			ui.banishWindow(false);
 			ui._key = -1;
+			ui._action = kActionNone;
 			break;
 
 		case FILES_MODE:
@@ -299,7 +300,8 @@ void Talk::talkTo(const Common::String &filename) {
 	screen.resetDisplayBounds();
 	events._pressed = events._released = false;
 	loadTalkFile(filename);
-	ui._selector = ui._oldSelector = ui._key = ui._oldKey = -1;
+	ui._selector = ui._oldSelector = ui._key = -1;
+	ui._action = ui._oldAction = kActionNone;
 
 	// Find the first statement that has the correct flags
 	int select = -1;
@@ -427,7 +429,7 @@ void Talk::talkTo(const Common::String &filename) {
 					_talkHistory[_converseNum][select] = true;
 				}
 
-				ui._key = ui._oldKey = 'T'; // FIXME: I'm not sure what to do here, I need ScalpelUI->_hotkeyTalk
+				ui._action = ui._oldAction = kActionScalpelTalk;
 				ui._temp = ui._oldTemp = 0;
 				ui._menuMode = TALK_MODE;
 				_talkToFlag = 2;
@@ -453,6 +455,7 @@ void Talk::talkTo(const Common::String &filename) {
 	_talkStealth = 0;
 	events._pressed = events._released = events._oldButtons = 0;
 	events.clearKeyboard();
+	events.clearActions();
 
 	if (savedBounds.bottom == SHERLOCK_SCREEN_HEIGHT)
 		screen.resetDisplayBounds();
@@ -900,9 +903,9 @@ int Talk::waitForMore(int delay) {
 			events.pollEventsAndWait();
 			events.setButtonState();
 
-			if (events.kbHit()) {
-				Common::KeyState keyState = events.getKey();
-				if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+			if (events.actionHit()) {
+				Common::CustomEventType action = events.getAction();
+				if (action == kActionTattooSkipProlog) {
 					if (IS_ROSE_TATTOO && static_cast<Tattoo::TattooEngine *>(_vm)->_runningProlog) {
 						// Skip out of the introduction
 						_vm->setFlags(-76);
@@ -911,7 +914,13 @@ int Talk::waitForMore(int delay) {
 					}
 					break;
 
-				} else if (Common::isPrint(keyState.ascii))
+				} else if (action != kActionNone)
+					key2 = action;
+			}
+
+			if (events.kbHit()) {
+				Common::KeyState keyState = events.getKey();
+				if (Common::isPrint(keyState.ascii))
 					key2 = keyState.keycode;
 			}
 

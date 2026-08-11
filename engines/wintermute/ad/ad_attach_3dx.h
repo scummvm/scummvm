@@ -41,22 +41,22 @@ public:
 
 	bool init(const char *modelFile, const char *name, const char *parentBone);
 	bool update() override;
-	bool displayAttachable(const Math::Matrix4 &viewMat, bool registerObjects);
-	bool displayShadowVol(const Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update);
+	bool displayAttachable(DXMatrix *viewMat, bool registerObjects);
+	bool displayShadowVol(DXMatrix *modelMat, DXVector3 *light, float extrusionDepth, bool update);
 	bool invalidateDeviceObjects() override;
 	bool restoreDeviceObjects() override;
 
-	Common::String getParentBone();
+	char *getParentBone();
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 
 private:
 	BaseObject *_owner;
-	Common::String _parentBone;
+	char *_parentBone;
 };
 
 } // namespace Wintermute

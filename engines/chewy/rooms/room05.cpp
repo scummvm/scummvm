@@ -38,15 +38,15 @@ void Room5::pushButton() {
 	if (_G(gameState).R5Terminal) {
 		int16 strNr;
 		if (_G(gameState).R5Door == false) {
-			startSetAILWait(9, 1, ANI_FRONT);
+			startDetailWait(9, 1, ANI_FRONT);
 			_G(gameState).room_e_obj[6].Attribut = EXIT_TOP;
 			strNr = 1;
 		} else {
-			startSetAILWait(9, 1, ANI_BACK);
+			startDetailWait(9, 1, ANI_BACK);
 			_G(gameState).room_e_obj[6].Attribut = 255;
 			strNr = 0;
 		}
-		_G(atds)->set_ats_str(29, strNr, ATS_DATA);
+		_G(atds)->set_all_ats_str(29, strNr, ATS_DATA);
 		_G(gameState).R5Door ^= 1;
 		_G(obj)->calc_rsi_flip_flop(SIB_DOOR_R5);
 	} else {

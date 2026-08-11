@@ -6,9 +6,9 @@
 // in the file PATENTS.  All contributing project authors may
 // be found in the AUTHORS file in the root of the source tree.
 
-#include "common/math.h"
 #include "common/ptr.h"
 #include "common/str.h"
+#include "math/utils.h"
 
 #include "video/mkv/mkvparser.h"
 #include "video/mkv/webmids.h"

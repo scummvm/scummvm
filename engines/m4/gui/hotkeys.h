@@ -23,7 +23,6 @@
 #ifndef M4_GUI_HOTKEYS_H
 #define M4_GUI_HOTKEYS_H
 
-#include "m4/m4_types.h"
 #include "m4/gui/gui_dialog.h"
 
 namespace M4 {
@@ -95,7 +94,6 @@ public:
 	virtual ~Hotkeys() {}
 
 	virtual void add_hot_keys();
-	void disable_hot_keys();
 
 	static void saveGame(void *, void *);
 	static void loadGame(void *, void *);

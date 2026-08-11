@@ -645,12 +645,6 @@ bool PreloadItems::load(MfcArchive &file) {
 	return true;
 }
 
-const char *getSavegameFile(int saveGameIdx) {
-	static char buffer[20];
-	Common::sprintf_s(buffer, "fullpipe.s%02d", saveGameIdx);
-	return buffer;
-}
-
 void GameLoader::restoreDefPicAniInfos() {
 	for (uint i = 0; i < _sc2array.size(); i++) {
 		_sc2array[i]._picAniInfos.clear();

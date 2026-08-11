@@ -21,7 +21,7 @@
 
 //
 // This file is heavily based on the arj code available under the GPL
-// from http://arj.sourceforge.net/ , version 3.10.22 .
+// from <https://arj.sourceforge.net>, version 3.10.22.
 
 #include "common/scummsys.h"
 #include "common/archive.h"
@@ -720,10 +720,9 @@ public:
 
 ArjArchive::~ArjArchive() {
        debug(0, "ArjArchive Destructor Called");
-       ArjHeadersMap::iterator it = _headers.begin();
-       for ( ; it != _headers.end(); ++it) {
-	       for (uint i = 0; i < it->_value.size(); i++)
-		       delete it->_value[i]._header;
+       for (auto &header : _headers) {
+	       for (uint i = 0; i < header._value.size(); i++)
+		       delete header._value[i]._header;
        }
 }
 
@@ -780,9 +779,8 @@ bool ArjArchive::hasFile(const Path &path) const {
 int ArjArchive::listMembers(ArchiveMemberList &list) const {
 	int matches = 0;
 
-	ArjHeadersMap::const_iterator it = _headers.begin();
-	for ( ; it != _headers.end(); ++it) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(Path(it->_value[0]._header->filename), *this)));
+	for (const auto &header : _headers) {
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(Path(header._value[0]._header->filename), *this)));
 		matches++;
 	}
 
@@ -822,6 +820,11 @@ Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::Path
 	byte *uncompressedData = new byte[uncompressedSize];
 	uint32 uncompressedPtr = 0;
 
+	if (!uncompressedData) {
+		warning("ArjArchive: Failed to allocate %d bytes", (uint32)uncompressedSize);
+		return Common::SharedArchiveContents();
+	}
+
 	for (uint chunk = 0; chunk < totalChunks; chunk++) {
 		File archiveFile;
 		ArjHeader *hdr = hdrs[chunk]._header;
@@ -831,6 +834,7 @@ Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::Path
 		if (hdr->method == 0) { // store
 			int32 len = archiveFile.read(uncompressedData + uncompressedPtr, hdr->origSize);
 			assert(len == hdr->origSize);
+			(void)len;
 		} else {
 			ArjDecoder *decoder = new ArjDecoder(hdr);
 

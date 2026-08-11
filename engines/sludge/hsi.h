@@ -21,6 +21,7 @@
 #ifndef SLUDGE_HSI_H
 #define SLUDGE_HSI_H
 
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 namespace Sludge {
@@ -34,10 +35,12 @@ public:
 	void destroy() override;
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	Graphics::Surface *getSurface() const override { return _surface; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 	void setReserve(bool reserve) { _reserve = reserve; }
 
 private:
 	Graphics::Surface *_surface;
+	Graphics::Palette _palette;
 	int _reserve;
 };
 

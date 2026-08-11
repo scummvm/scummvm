@@ -25,6 +25,7 @@
 namespace Watchmaker {
 
 int LoadExternalText(Init *init, char *et);
+int InitStructures(WGame &game);
 
 } // End of namespace Watchmaker
 

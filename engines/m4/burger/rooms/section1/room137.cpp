@@ -21,8 +21,11 @@
 
 #include "m4/burger/rooms/section1/room137.h"
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -47,8 +50,8 @@ static const char *SAID[][4] = {
 };
 
 static const seriesStreamBreak SERIES1[] = {
-	{  9, "100_010", 1, 255, -1, 0, 0, 0 },
-	{ 20, nullptr,   1, 255, 12, 0, 0, 0 },
+	{  9, "100_010", 1, 255, -1, 0, nullptr, 0 },
+	{ 20, nullptr,   1, 255, 12, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -165,7 +168,7 @@ void Room137::daemon() {
 	}
 
 	if (!digi_play_state(2) && _flag1 && imath_ranged_rand(1, 3000) == 235) {
-		// Ocassional actions. *VERY* occasional actions
+		// Occasional actions. *VERY* occasional actions
 		if (_flag2 && inv_object_in_scene("keys", 138)) {
 			digi_play("137_022", 2, 100);
 			_flag2 = false;
@@ -315,7 +318,7 @@ void Room137::daemon() {
 		case 16:
 			if (_sherrifShould == 23) {
 				frame = imath_ranged_rand(0, 8);
-				series_play("137sh03", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0);
+				series_play("137sh03", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, frame, frame);
 
 				if (_digi1) {
 					_G(kernel).trigger_mode = KT_PARSE;
@@ -427,7 +430,7 @@ void Room137::daemon() {
 		break;
 
 	case 3:
-		ws_walk(276, 292, 0, -1, 4);
+		ws_walk(276, 292, nullptr, -1, 4);
 		break;
 
 	case kSOMEONE_TOOK_KEYS:
@@ -445,7 +448,7 @@ void Room137::daemon() {
 
 		if (_G(player_info).y > 308) {
 			_sherrifShould = 14;
-			ws_walk(307, 349, 0, -1, 2);
+			ws_walk(307, 349, nullptr, -1, 2);
 		}
 
 		kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
@@ -616,6 +619,7 @@ void Room137::daemon() {
 			break;
 
 		case 2:
+		case 9:
 			ws_unhide_walker();
 			player_set_commands_allowed(true);
 			break;
@@ -623,7 +627,7 @@ void Room137::daemon() {
 		case 3:
 			ws_demand_location(183, 216, 8);
 			_G(wilbur_should) = 4;
-			ws_walk(171, 236, 0, kCHANGE_WILBUR_ANIMATION, 5);
+			ws_walk(171, 236, nullptr, kCHANGE_WILBUR_ANIMATION, 5);
 			break;
 
 		case 4:
@@ -668,11 +672,6 @@ void Room137::daemon() {
 			series_play_with_breaks(PLAY3, "137wi04", 0x100, kCHANGE_WILBUR_ANIMATION,
 				3, 6, 100, 0, 0);
 			hotspot_set_active("jawz o' life", false);
-			break;
-
-		case 9:
-			ws_unhide_walker();
-			player_set_commands_allowed(true);
 			break;
 
 		case 35:
@@ -775,9 +774,9 @@ void Room137::parser() {
 
 void Room137::conv15() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 14) {
 		if (who <= 0) {

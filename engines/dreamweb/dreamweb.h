@@ -92,8 +92,8 @@ const unsigned int kNumPersonTexts = 1026;
 
 // Engine Debug Flags
 enum {
-	kDebugAnimation = (1 << 0),
-	kDebugSaveLoad = (1 << 1)
+	kDebugAnimation = 1,
+	kDebugSaveLoad,
 };
 
 struct DreamWebGameDescription;
@@ -146,7 +146,7 @@ public:
 	const Common::Path& getSpeechDirName() { return _speechDirName; }
 
 private:
-	// Keyboard buffer. _bufferIn and _bufferOut are indexes
+	// Keyboard buffer. _bufferIn and _bufferOut are indices
 	// into this, making it a ring buffer
 	uint8 _keyBuffer[16];
 	uint16 _bufferIn;
@@ -534,7 +534,7 @@ public:
 	void obPicture();
 	void removeObFromInv();
 	void deleteExObject(uint8 index);
-	void deleteExFrame(uint8 frameNum);
+	void deleteExFrame(uint16 frameNum);
 	void deleteExText(uint8 textNum);
 	void purgeALocation(uint8 index);
 	const uint8 *getObTextStart();

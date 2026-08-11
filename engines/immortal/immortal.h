@@ -22,14 +22,14 @@
 #ifndef IMMORTAL_H
 #define IMMORTAL_H
 
-// Audio is only handled in kernal, therefore it is only needed here
+// Audio is only handled in kernel, therefore it is only needed here
 #include "audio/mixer.h"
 
 // Immortal.h is the engine, so it needs the engine headers
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
-// Theorectically, all graphics should be handled through driver, which is part of kernal, which is in immortal.h
+// Theorectically, all graphics should be handled through driver, which is part of kernel, which is in immortal.h
 #include "graphics/screen.h"
 #include "graphics/surface.h"
 
@@ -56,7 +56,7 @@
 
 namespace Immortal {
 
-// Needed by kernal for input
+// Needed by kernel for input
 enum InputAction {
 	kActionNothing,
 	kActionKey,
@@ -79,13 +79,13 @@ enum InputDirection {
 	kDirectionRight
 };
 
-// Needed by kernal for text
+// Needed by kernel for text
 enum FadeType {
 	kTextFadeIn,
 	kTextDontFadeIn
 };
 
-// Needed by kernal for music
+// Needed by kernel for music
 enum Song {
 	kSongNothing,
 	kSongMaze,
@@ -343,7 +343,7 @@ public:
 	int _roomCellX       = 0;
 	int _roomCellY       = 0;
 	Room *_rooms[kMaxRooms];                            // Rooms within the level
-	Common::Array<SFlame> _allFlames[kMaxRooms];        // The level needs it's own set of flames so that the flames can be turned on/off permenantly. This is technically more like a hashmap in the source, but it could also be seen as a 2d array, just hashed together in the source
+	Common::Array<SFlame> _allFlames[kMaxRooms];        // The level needs it's own set of flames so that the flames can be turned on/off permanently. This is technically more like a hashmap in the source, but it could also be seen as a 2d array, just hashed together in the source
 
 	// Door members
 	Common::Array<Door> _doors;
@@ -454,7 +454,7 @@ public:
 	 */
 
 	/*
-	 * [Kernal.cpp] Functions from Kernal.gs and Driver.gs
+	 * [Kernel.cpp] Functions from Kernel.gs and Driver.gs
 	 */
 
 	// Screen
@@ -523,7 +523,7 @@ public:
 	void makeBlisters(int povX, int povY);              // Turns the unmodified CNM/CBM/LCNM etc into the modified ones to actually be used for drawing the game
 	void loadFont();                                    // Gets the font.spr file, and centers the sprite
 	void clearSprites();                                // Clears all sprites before drawing the current frame
-	void loadSprites();                                 // Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
+	void loadSprites();                                 // Loads all the sprite files and centers their sprites (in spritelist, but called from kernel)
 
 	// Input
 	void userIO();                                      // Get input

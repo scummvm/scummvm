@@ -20,21 +20,24 @@
  *
  */
 
-#include "mads/mads.h"
-
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
-
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "graphics/scaler.h"
 #include "graphics/surface.h"
-
-#include "mads/events.h"
-#include "mads/game.h"
 #include "mads/detection.h"
+#include "mads/nebular/nebular.h"
+#include "mads/nebular/bonus/bonus.h"
+#include "mads/phantom/phantom.h"
+#include "mads/dragonsphere/dragonsphere.h"
+#include "mads/forest/forest.h"
 
 #define MAX_SAVES 99
 
@@ -42,11 +45,23 @@ namespace MADS {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+
+	{
 		GAMEOPTION_EASY_MOUSE,
 		{
 			_s("Easy mouse interface"),
 			_s("Shows object names when hovering the mouse over them"),
-			"EasyMouse",
+			"interface_hotspots",
 			true,
 			0,
 			0
@@ -58,7 +73,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Animated inventory items"),
 			_s("Animated inventory items"),
-			"InvObjectsAnimated",
+			"inventory_mode",
 			true,
 			0,
 			0
@@ -70,7 +85,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Animated game interface"),
 			_s("Animated game interface"),
-			"TextWindowAnimated",
+			"animated_interface",
 			true,
 			0,
 			0
@@ -82,24 +97,36 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Naughty game mode"),
 			_s("Naughty game mode"),
-			"NaughtyMode",
+			"naughtiness",
 			true,
 			0,
 			0
 		}
 	},
 
-	/*{
-		GAMEOPTION_GRAPHICS_DITHERING,
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
-			_s("Graphics dithering"),
-			_s("Graphics dithering"),
-			"GraphicsDithering",
-			true,
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"original_menus",
+			false,
 			0,
 			0
 		}
-	},*/
+	},
+
+	{
+		GAMEOPTION_ORIGINAL_MAC_MENUS,
+		{
+			_s("Use original Macintosh menus (experimental)"),
+			_s("Use the Macintosh menu bar and original desktop framing"),
+			"original_mac_menus",
+			false,
+			0,
+			0
+		}
+	},
 
 #ifdef USE_TTS
 	{
@@ -134,6 +161,10 @@ bool MADSEngine::isDemo() const {
 	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
 }
 
+bool MADSEngine::isCDROM() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_CD);
+}
+
 Common::Language MADSEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
@@ -142,9 +173,9 @@ Common::Platform MADSEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-} // End of namespace MADS
+} // namespace MADS
 
-class MADSMetaEngine : public AdvancedMetaEngine {
+class MADSMetaEngine : public AdvancedMetaEngine<MADS::MADSGameDescription> {
 public:
 	const char *getName() const override {
 		return "mads";
@@ -155,22 +186,21 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-
-	SaveStateList listSaves(const char *target) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves) ||
+		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+		(f == kSimpleSavesNames) ||
+		checkExtendedSaves(f);
 }
 
 bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
@@ -180,73 +210,153 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new MADS::MADSEngine(syst, (const MADS::MADSGameDescription *)desc);
+Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const {
+	if (desc->gameID == MADS::GType_RexNebular) {
+		if (desc->features & MADS::GF_BONUS_DISK)
+			*engine = new MADS::RexNebular::BonusEngine(syst, desc);
+		else
+			*engine = new MADS::RexNebular::RexNebularEngine(syst, desc);
+	} else if (desc->gameID == MADS::GType_Phantom)
+		*engine = new MADS::Phantom::PhantomEngine(syst, desc);
+	else if (desc->gameID == MADS::GType_Forest)
+		*engine = new MADS::Forest::ForestEngine(syst, desc);
+	else if (desc->gameID == MADS::GType_Dragonsphere)
+		*engine = new MADS::Dragonsphere::DragonsphereEngine(syst, desc);
+	else
+		error("Unsupported game specified");
+
 	return Common::kNoError;
-}
-
-SaveStateList MADSMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.0##", target);
-	MADS::MADSSavegameHeader header;
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
-		int slot = ext ? atoi(ext + 1) : -1;
-
-		if (slot >= 0 && slot < MAX_SAVES) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-
-			if (in) {
-				if (MADS::Game::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(this, slot, header._saveName));
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
 }
 
 int MADSMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void MADSMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
-}
+Common::KeymapArray MADSMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace MADS;
 
-SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "mads-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *menuKeyMap = new Keymap(Keymap::kKeymapTypeGame, "menu-shortcuts", _("Start menu keymappings"));
 
-	if (f) {
-		MADS::MADSSavegameHeader header;
-		if (!MADS::Game::readSavegameHeader(f, header, false)) {
-			delete f;
-			return SaveStateDescriptor();
-		}
-		delete f;
+	Action *act;
 
-		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, header._saveName);
-		desc.setThumbnail(header._thumbnail);
-		desc.setSaveDate(header._year, header._month, header._day);
-		desc.setSaveTime(header._hour, header._minute);
-		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
 
-		return desc;
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	{
+		act = new Action("GAMEMENU", _("Open game menu"));
+		act->setCustomEngineActionEvent(kActionGameMenu);
+		act->addDefaultInputMapping("F1");
+		act->addDefaultInputMapping("JOY_Y");
+		gameKeyMap->addAction(act);
+
+		act = new Action("SAVE", _("Save game"));
+		act->setCustomEngineActionEvent(kActionSave);
+		act->addDefaultInputMapping("F5");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		gameKeyMap->addAction(act);
+
+		act = new Action("RESTORE", _("Restore game"));
+		act->setCustomEngineActionEvent(kActionRestore);
+		act->addDefaultInputMapping("F7");
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		gameKeyMap->addAction(act);
+
+		act = new Action("SCROLLUP", _("Scroll bar up"));
+		act->setCustomEngineActionEvent(kActionScrollUp);
+		act->addDefaultInputMapping("PAGEUP");
+		act->addDefaultInputMapping("JOY_UP");
+		gameKeyMap->addAction(act);
+
+		act = new Action("SCROLLDN", _("Scroll bar down"));
+		act->setCustomEngineActionEvent(kActionScrollDown);
+		act->addDefaultInputMapping("PAGEDOWN");
+		act->addDefaultInputMapping("JOY_DOWN");
+		gameKeyMap->addAction(act);
 	}
 
-	return SaveStateDescriptor();
+	{
+		act = new Action("START", _("Start game"));
+		act->setCustomEngineActionEvent(kActionStartGame);
+		act->addDefaultInputMapping("F1");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		menuKeyMap->addAction(act);
+
+		act = new Action("RESUME", _("Resume game"));
+		act->setCustomEngineActionEvent(kActionResumeGame);
+		act->addDefaultInputMapping("F2");
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		menuKeyMap->addAction(act);
+
+		act = new Action("INTRO", _("Show intro"));
+		act->setCustomEngineActionEvent(kActionShowIntro);
+		act->addDefaultInputMapping("F3");
+		act->addDefaultInputMapping("JOY_LEFT");
+		menuKeyMap->addAction(act);
+
+		act = new Action("CREDITS", _("Show credits"));
+		act->setCustomEngineActionEvent(kActionCredits);
+		act->addDefaultInputMapping("F4");
+		act->addDefaultInputMapping("JOY_UP");
+		menuKeyMap->addAction(act);
+
+		act = new Action("QUOTES", _("Show quotes"));
+		act->setCustomEngineActionEvent(kActionQuotes);
+		act->addDefaultInputMapping("F5");
+		act->addDefaultInputMapping("JOY_RIGHT");
+		menuKeyMap->addAction(act);
+
+		act = new Action("EXIT", _("Quit game"));
+		act->setCustomEngineActionEvent(kActionEscape);
+		act->addDefaultInputMapping("F6");
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_X");
+		menuKeyMap->addAction(act);
+
+		act = new Action("RESTARTANIM", _("Restart animation"));
+		act->setCustomEngineActionEvent(kActionRestartAnimation);
+		act->addDefaultInputMapping("s");
+		act->addDefaultInputMapping("JOY_Y");
+		menuKeyMap->addAction(act);
+	}
+
+	KeymapArray keymaps(3);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+	keymaps[2] = menuKeyMap;
+
+	menuKeyMap->setEnabled(false);
+
+	return keymaps;
+}
+
+void MADSMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	const Graphics::Surface &newThumb = MADS::g_engine->getSavegameThumbnail();
+	thumb.free();
+
+	if (newThumb.h == 0)
+		// No provided thumbnail, so just get it from the screen
+		::createThumbnailFromScreen(&thumb);
+	else
+		// Use provided thumbnail
+		thumb.copyFrom(newThumb);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADS)

@@ -56,14 +56,14 @@ void SlideChar(int32 oc) {
 		return ;
 	}
 
-	v.x = w->LookX;
+	v.x = w->Look.x;
 	v.y = 0.0f;
-	v.z = w->LookZ;
+	v.z = w->Look.z;
 
-	x1 = w->Panel[w->CurPanel].x1;
-	z1 = w->Panel[w->CurPanel].z1;
-	x2 = w->Panel[w->CurPanel].x2;
-	z2 = w->Panel[w->CurPanel].z2;
+	x1 = w->Panel[w->CurPanel].a.x;
+	z1 = w->Panel[w->CurPanel].a.z;
+	x2 = w->Panel[w->CurPanel].b.x;
+	z2 = w->Panel[w->CurPanel].b.z;
 	if ((len = (x1 - x2) * (x1 - x2) + (z1 - z2) * (z1 - z2)) == 0) {
 		CharStop(oc);
 		return ;
@@ -274,8 +274,8 @@ void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 
 	t3dVectCopy(&Char->Pos, &Char->Mesh->Trasl);
 
 	w->NumPathNodes = 0;
-	w->PathNode[w->NumPathNodes].x = Char->Pos.x;
-	w->PathNode[w->NumPathNodes].z = Char->Pos.z;
+	w->PathNode[w->NumPathNodes].pos.x = Char->Pos.x;
+	w->PathNode[w->NumPathNodes].pos.z = Char->Pos.z;
 	w->PathNode[w->NumPathNodes].oldp = w->CurPanel;
 	w->PathNode[w->NumPathNodes].curp = -1;
 	w->PathNode[w->NumPathNodes].dist = 0.0f;
@@ -286,15 +286,15 @@ void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 
 	dp = 0;
 	while (*dpl && GetLightPosition(&tmp, *dpl)) {
 		dp = *dpl++;
-		w->PathNode[w->NumPathNodes].x = tmp.x;
-		w->PathNode[w->NumPathNodes].z = tmp.z;
+		w->PathNode[w->NumPathNodes].pos.x = tmp.x;
+		w->PathNode[w->NumPathNodes].pos.z = tmp.z;
 		w->PathNode[w->NumPathNodes].oldp = -1;
 		w->PathNode[w->NumPathNodes].curp = -1;
 		w->PathNode[w->NumPathNodes].dist = t3dVectDistance(&tmp, &Char->Pos);
 		w->NumPathNodes ++;
 
-		Char->Walk.CurX = tmp.x;
-		Char->Walk.CurZ = tmp.z;
+		Char->Walk.Cur.x = tmp.x;
+		Char->Walk.Cur.z = tmp.z;
 	}
 	bNotSkippableWalk = TRUE;
 	BuildStepList(oc, dp, back);
@@ -361,12 +361,12 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 	lastangle = SinCosAngle(Ch->Dir.x, Ch->Dir.z);
 //	calcola lunghezza totale del percorso
 	for (i = 0; i < w->NumPathNodes - 1; i++) {
-		st.x = w->PathNode[i].x;
+		st.x = w->PathNode[i].pos.x;
 		st.y = 0.0;
-		st.z = w->PathNode[i].z;
-		en.x = w->PathNode[i + 1].x;
+		st.z = w->PathNode[i].pos.z;
+		en.x = w->PathNode[i + 1].pos.x;
 		en.y = 0.0;
-		en.z = w->PathNode[i + 1].z;
+		en.z = w->PathNode[i + 1].pos.z;
 
 		len += t3dVectDistance(&st, &en);               // dist of two points
 	}
@@ -375,7 +375,7 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 
 //	Cerca di capire se gli conviene andare avanti o indietro
 	if (back >= 10) {
-		t3dVectInit(&st, w->PathNode[1].x - w->PathNode[0].x, 0.0f, w->PathNode[1].z - w->PathNode[0].z);
+		t3dVectInit(&st, w->PathNode[1].pos.x - w->PathNode[0].pos.x, 0.0f, w->PathNode[1].pos.z - w->PathNode[0].pos.z);
 
 		if (!(w->Check & LONGPATH) && (fabs(t3dVectAngle(&Ch->Dir, &st)) > 145.0f)) {        // devo andare dietro
 //			DebugFile("Back %f\n%f %f | %f %f\n",t3dVectAngle( &Ch->Dir, &st ),Ch->Dir.x,Ch->Dir.z,st.x,st.z);
@@ -447,18 +447,18 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 	w->CurrentStep = 0;
 
 	w->WalkSteps[w->NumSteps].Angle = lastangle;
-	w->WalkSteps[w->NumSteps].Pos.x = w->PathNode[0].x;
+	w->WalkSteps[w->NumSteps].Pos.x = w->PathNode[0].pos.x;
 	w->WalkSteps[w->NumSteps].Pos.y = CurFloorY;
-	w->WalkSteps[w->NumSteps].Pos.z = w->PathNode[0].z;
+	w->WalkSteps[w->NumSteps].Pos.z = w->PathNode[0].pos.z;
 	w->WalkSteps[w->NumSteps++].curp = w->OldPanel;
 
 	for (i = 0; i < w->NumPathNodes - 1; i++) {
-		st.x = w->PathNode[i].x;
+		st.x = w->PathNode[i].pos.x;
 		st.y = 0.0;
-		st.z = w->PathNode[i].z;
-		en.x = w->PathNode[i + 1].x;
+		st.z = w->PathNode[i].pos.z;
+		en.x = w->PathNode[i + 1].pos.x;
 		en.y = 0.0;
-		en.z = w->PathNode[i + 1].z;
+		en.z = w->PathNode[i + 1].pos.z;
 
 		len += t3dVectDistance(&st, &en);               // dist of two points
 		t3dVectSub(&direction, &en, &st);
@@ -483,14 +483,14 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 	}
 
 	if ((dp) && (GetLightDirection(&st, dp)) && (st.x != 0.0f) && (st.z != 0.0f)) {
-		lastangle = SinCosAngle((st.x - w->CurX), (st.z - w->CurZ));
+		lastangle = SinCosAngle((st.x - w->Cur.x), (st.z - w->Cur.z));
 //		DebugLogFile("LastPos %d | AN %d | %f %f", dp, lastangle, st.x, st.z );
 	}
 
 	w->WalkSteps[w->NumSteps].Angle = lastangle;
-	w->WalkSteps[w->NumSteps].Pos.x = w->CurX;
+	w->WalkSteps[w->NumSteps].Pos.x = w->Cur.x;
 	w->WalkSteps[w->NumSteps].Pos.y = CurFloorY;
-	w->WalkSteps[w->NumSteps].Pos.z = w->CurZ;
+	w->WalkSteps[w->NumSteps].Pos.z = w->Cur.z;
 	w->WalkSteps[w->NumSteps++].curp = w->CurPanel;
 
 	// arrotonda la fine
@@ -565,8 +565,9 @@ int32 CheckPathNodes(int32 oc) {
 //	se interseca almeno un baffo si ferma!!
 	for (i = 1; i < w->NumPathNodes; i++) {
 		for (b = 0; b < w->PanelNum; b++) {
-			if (IntersLineLine(w->Panel[b].bx1, w->Panel[b].bz1, w->Panel[b].bx2, w->Panel[b].bz2,
-			                   w->PathNode[i - 1].x, w->PathNode[i - 1].z, w->PathNode[i].x, w->PathNode[i].z)) {
+			PointResult res = IntersLineLine(w->Panel[b].backA, w->Panel[b].backB,
+			                   w->PathNode[i - 1].pos, w->PathNode[i].pos);
+			if (res.isValid) {
 				w->NumPathNodes = i - 1;
 				w->CurPanel = w->PathNode[i - 1].curp;
 				w->NumSteps = 0;
@@ -585,15 +586,15 @@ int32 CheckPathNodes(int32 oc) {
  * --------------------------------------------------*/
 bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint8 back) {
 	t3dCHARACTER *Char = Character[oc];
-	int32 i, j, st;
+	int32 st;
 	t3dV3F tmp;
 	t3dPAN *p;
 
 	if (!Char) return FALSE;
 	StopObjAnim(game, oc);
 
-	Char->Walk.CurX = Pos->x;
-	Char->Walk.CurZ = Pos->z;
+	Char->Walk.Cur.x = Pos->x;
+	Char->Walk.Cur.z = Pos->z;
 
 	// Reset some vars
 	if (!(Char->Mesh->Flags & T3D_MESH_DEFAULTANIM))
@@ -605,42 +606,42 @@ bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
 	}
 
-	for (i = 0; i < T3D_MAX_CHARACTERS; i++) {
-//		Se il personaggio non e' nascosto e ha pannelli, li aggiunge
+	for (int i = 0; i < T3D_MAX_CHARACTERS; i++) {
+		// If the character is not hidden and has panels, adds them
 		if (Character[i] && (Character[i] != Char) && !(Character[i]->Flags & (T3D_CHARACTER_HIDE | T3D_CHARACTER_BNDHIDE)) && (p = Character[i]->Body->Panel[0])) {
 			st = Char->Walk.PanelNum;
-			for (j = 0; j < Character[i]->Body->NumPanels[0]; j++, p++, Char->Walk.PanelNum++) {
-				tmp.x = p->x1;
+			for (int j = 0; j < Character[i]->Body->NumPanels[0]; j++, p++, Char->Walk.PanelNum++) {
+				tmp.x = p->a.x;
 				tmp.y = CurFloorY;
-				tmp.z = p->z1;
+				tmp.z = p->a.z;
 				t3dVectTransform(&tmp, &tmp, &Character[i]->Mesh->Matrix);
 				t3dVectAdd(&tmp, &tmp, &Character[i]->Mesh->Trasl);
-				Char->Walk.Panel[Char->Walk.PanelNum].x1 = tmp.x;
-				Char->Walk.Panel[Char->Walk.PanelNum].z1 = tmp.z;
+				Char->Walk.Panel[Char->Walk.PanelNum].a.x = tmp.x;
+				Char->Walk.Panel[Char->Walk.PanelNum].a.z = tmp.z;
 
-				tmp.x = p->x2;
+				tmp.x = p->b.x;
 				tmp.y = CurFloorY;
-				tmp.z = p->z2;
+				tmp.z = p->b.z;
 				t3dVectTransform(&tmp, &tmp, &Character[i]->Mesh->Matrix);
 				t3dVectAdd(&tmp, &tmp, &Character[i]->Mesh->Trasl);
-				Char->Walk.Panel[Char->Walk.PanelNum].x2 = tmp.x;
-				Char->Walk.Panel[Char->Walk.PanelNum].z2 = tmp.z;
+				Char->Walk.Panel[Char->Walk.PanelNum].b.x = tmp.x;
+				Char->Walk.Panel[Char->Walk.PanelNum].b.z = tmp.z;
 
-				tmp.x = p->bx1;
+				tmp.x = p->backA.x;
 				tmp.y = CurFloorY;
-				tmp.z = p->bz1;
+				tmp.z = p->backA.z;
 				t3dVectTransform(&tmp, &tmp, &Character[i]->Mesh->Matrix);
 				t3dVectAdd(&tmp, &tmp, &Character[i]->Mesh->Trasl);
-				Char->Walk.Panel[Char->Walk.PanelNum].bx1 = tmp.x;
-				Char->Walk.Panel[Char->Walk.PanelNum].bz1 = tmp.z;
+				Char->Walk.Panel[Char->Walk.PanelNum].backA.x = tmp.x;
+				Char->Walk.Panel[Char->Walk.PanelNum].backA.z = tmp.z;
 
-				tmp.x = p->bx2;
+				tmp.x = p->backB.x;
 				tmp.y = CurFloorY;
-				tmp.z = p->bz2;
+				tmp.z = p->backB.z;
 				t3dVectTransform(&tmp, &tmp, &Character[i]->Mesh->Matrix);
 				t3dVectAdd(&tmp, &tmp, &Character[i]->Mesh->Trasl);
-				Char->Walk.Panel[Char->Walk.PanelNum].bx2 = tmp.x;
-				Char->Walk.Panel[Char->Walk.PanelNum].bz2 = tmp.z;
+				Char->Walk.Panel[Char->Walk.PanelNum].backB.x = tmp.x;
+				Char->Walk.Panel[Char->Walk.PanelNum].backB.z = tmp.z;
 
 				Char->Walk.Panel[Char->Walk.PanelNum].near1 = p->near1 + st;
 				Char->Walk.Panel[Char->Walk.PanelNum].near2 = p->near2 + st;

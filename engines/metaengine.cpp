@@ -20,6 +20,7 @@
  */
 
 #include "engines/metaengine.h"
+#include "engines/engine.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
@@ -34,6 +35,25 @@
 #include "graphics/scaler.h"
 #include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"
+
+const char MetaEngineDetection::GAME_NOT_IMPLEMENTED[] = _s("Game not implemented");
+
+// Add backslash before double quotes (") and backslashes themselves (\)
+Common::String MetaEngineDetection::escapeString(const char *string) {
+	if (string == nullptr)
+		return "";
+
+	Common::String res = "";
+
+	for (int i = 0; string[i] != '\0'; i++) {
+		if (string[i] == '"' || string[i] == '\\')
+			res += "\\";
+
+		res += string[i];
+	}
+
+	return res;
+}
 
 Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (!target)
@@ -52,22 +72,25 @@ Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) 
 Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymap"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymappings"));
+
+	// Default keymap for engines should not match partial as it may hide intended input handling.
+	engineKeyMap->setPartialMatchAllowed(false);
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+	act = new Action(kStandardActionMiddleClick, _("Middle click"));
 	act->addDefaultInputMapping("MOUSE_MIDDLE");
 	act->setMiddleClickEvent();
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -341,6 +364,10 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 // MetaEngine default implementations
 //////////////////////////////////////////////
 
+void MetaEngine::deleteInstance(Engine *engine, const DetectedGame &gameDescriptor, const void *meDescriptor) {
+	delete engine;
+}
+
 int MetaEngine::findEmptySaveSlot(const char *target) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	const int maxSaveSlot = getMaximumSaveSlot();
@@ -366,9 +393,9 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &file : filenames) {
 		// Obtain the last 2/3 digits of the filename, since they correspond to the save slot
-		const char *slotStr = file->c_str() + file->size() - 2;
+		const char *slotStr = file.c_str() + file.size() - 2;
 		const char *prev = slotStr - 1;
 		if (*prev >= '0' && *prev <= '9')
 			slotStr = prev;
@@ -394,8 +421,8 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 		return saveList;
 
 	// Check to see if an autosave is present
-	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
-		int slot = it->getSaveSlot();
+	for (auto &save : saveList) {
+		int slot = save.getSaveSlot();
 		if (slot == autosaveSlot) {
 			// It has an autosave
 			return saveList;
@@ -435,11 +462,11 @@ GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidget(GUI::GuiObject
 	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
 }
 
-void MetaEngine::removeSaveState(const char *target, int slot) const {
+bool MetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
-		return;
+		return false;
 
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -456,7 +483,7 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 		}
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, Common::U32String());
+		SaveStateDescriptor desc(this, slot);
 		parseSavegameHeader(&header, &desc);
 		desc.setThumbnail(header.thumbnail);
 		desc.setAutosave(header.isAutosave);

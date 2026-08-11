@@ -32,6 +32,7 @@
 #include "common/system.h"
 
 #include "hugo/hugo.h"
+#include "hugo/display.h"
 #include "hugo/parser.h"
 #include "hugo/file.h"
 #include "hugo/schedule.h"
@@ -54,11 +55,15 @@ Parser_v3d::~Parser_v3d() {
 void Parser_v3d::lineHandler() {
 	debugC(1, kDebugParser, "lineHandler()");
 
+	// Reset the prompt on screen (DOS only)
+	_vm->_screen->updatePromptText("", ' ');
+	_vm->_screen->displayPromptText();
+
 	Status &gameStatus = _vm->getGameStatus();
 
 	// Toggle God Mode
 	if (!strncmp(_vm->_line, "PPG", 3)) {
-		_vm->_sound->playSound(!_vm->_soundTest, kSoundPriorityHigh);
+		_vm->_sound->playSound(_vm->_soundTest, kSoundPriorityHigh);
 		gameStatus._godModeFl = !gameStatus._godModeFl;
 		return;
 	}
@@ -113,8 +118,7 @@ void Parser_v3d::lineHandler() {
 	// Special meta commands
 	// EXIT/QUIT
 	if (!strcmp("exit", _vm->_line) || strstr(_vm->_line, "quit")) {
-		if (Utils::yesNoBox(_vm->_text->getTextParser(kTBExit_1d)))
-			_vm->endGame();
+		endGamePrompt();
 		return;
 	}
 
@@ -179,7 +183,7 @@ void Parser_v3d::lineHandler() {
 
 	// If a not-near comment was generated, print it
 	if (*farComment != '\0') {
-		Utils::notifyBox(farComment);
+		_vm->notifyBox(farComment);
 		return;
 	}
 
@@ -188,13 +192,13 @@ void Parser_v3d::lineHandler() {
 	const char *noun = findNoun();
 
 	if (verb && noun) {                             // A combination I didn't think of
-		Utils::notifyBox(_vm->_text->getTextParser(kTBNoPoint));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBNoPoint));
 	} else if (noun) {
-		Utils::notifyBox(_vm->_text->getTextParser(kTBNoun));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBNoun));
 	} else if (verb) {
-		Utils::notifyBox(_vm->_text->getTextParser(kTBVerb));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBVerb));
 	} else {
-		Utils::notifyBox(_vm->_text->getTextParser(kTBEh));
+		_vm->notifyBox(_vm->_text->getTextParser(kTBEh));
 	}
 }
 
@@ -231,7 +235,7 @@ bool Parser_v3d::isObjectVerb_v3(Object *obj, char *comment) {
 		uint16 *reqs = _arrayReqs[cmnd->_reqIndex];  // ptr to list of required objects
 		for (i = 0; reqs[i]; i++) {                 // for each obj
 			if (!_vm->_object->isCarrying(reqs[i])) {
-				Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataNoCarryIndex));
+				_vm->notifyBox(_vm->_text->getTextData(cmnd->_textDataNoCarryIndex));
 				return true;
 			}
 		}
@@ -239,14 +243,14 @@ bool Parser_v3d::isObjectVerb_v3(Object *obj, char *comment) {
 
 	// Required objects are present, now check state is correct
 	if ((obj->_state != cmnd->_reqState) && (cmnd->_reqState != kStateDontCare)) {
-		Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataWrongIndex));
+		_vm->notifyBox(_vm->_text->getTextData(cmnd->_textDataWrongIndex));
 		return true;
 	}
 
 	// Everything checked.  Change the state and carry out any actions
 	if (cmnd->_reqState != kStateDontCare)           // Don't change new state if required state didn't care
 		obj->_state = cmnd->_newState;
-	Utils::notifyBox(_vm->_text->getTextData(cmnd->_textDataDoneIndex));
+	_vm->notifyBox(_vm->_text->getTextData(cmnd->_textDataDoneIndex));
 	_vm->_scheduler->insertActionList(cmnd->_actIndex);
 
 	// See if any additional generic actions
@@ -268,35 +272,35 @@ bool Parser_v3d::isGenericVerb_v3(Object *obj, char *comment) {
 	if (isWordPresent(_vm->_text->getVerbArray(_vm->_look)) && isNear_v3(obj, _vm->_text->getVerb(_vm->_look, 0), comment)) {
 		// Test state-dependent look before general look
 		if ((obj->_genericCmd & LOOK_S) == LOOK_S) {
-			Utils::notifyBox(_vm->_text->getTextData(obj->_stateDataIndex[obj->_state]));
+			_vm->notifyBox(_vm->_text->getTextData(obj->_stateDataIndex[obj->_state]));
 		} else {
 			if ((LOOK & obj->_genericCmd) == LOOK) {
 				if (obj->_dataIndex != 0)
-					Utils::notifyBox(_vm->_text->getTextData(obj->_dataIndex));
+					_vm->notifyBox(_vm->_text->getTextData(obj->_dataIndex));
 				else
 					return false;
 			} else {
-				Utils::notifyBox(_vm->_text->getTextParser(kTBUnusual));
+				_vm->notifyBox(_vm->_text->getTextParser(kTBUnusual));
 			}
 		}
 	} else if (isWordPresent(_vm->_text->getVerbArray(_vm->_take)) && isNear_v3(obj, _vm->_text->getVerb(_vm->_take, 0), comment)) {
 		if (obj->_carriedFl)
-			Utils::notifyBox(_vm->_text->getTextParser(kTBHave));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBHave));
 		else if ((TAKE & obj->_genericCmd) == TAKE)
 			takeObject(obj);
 		else if (obj->_cmdIndex)                     // No comment if possible commands
 			return false;
 		else if (!obj->_verbOnlyFl && (TAKE & obj->_genericCmd) == TAKE)  // Make sure not taking object in context!
-			Utils::notifyBox(_vm->_text->getTextParser(kTBNoUse));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBNoUse));
 		else
 			return false;
 	} else if (isWordPresent(_vm->_text->getVerbArray(_vm->_drop))) {
 		if (!obj->_carriedFl && ((DROP & obj->_genericCmd) == DROP))
-			Utils::notifyBox(_vm->_text->getTextParser(kTBDontHave));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBDontHave));
 		else if (obj->_carriedFl && ((DROP & obj->_genericCmd) == DROP))
 			dropObject(obj);
 		else if (obj->_cmdIndex == 0)
-			Utils::notifyBox(_vm->_text->getTextParser(kTBNeed));
+			_vm->notifyBox(_vm->_text->getTextParser(kTBNeed));
 		else
 			return false;
 	} else {                                        // It was not a generic cmd
@@ -375,10 +379,11 @@ void Parser_v3d::takeObject(Object *obj) {
 		obj->_cycling = kCycleInvisible;
 	}
 	_vm->adjustScore(obj->_objValue);
+	_vm->_screen->updateStatusText();
 
 	if (obj->_seqNumb > 0)                           // If object has an image, force walk to dropped
 		obj->_viewx = -1;                            // (possibly moved) object next time taken!
-	Utils::notifyBox(Common::String::format(TAKE_TEXT, _vm->_text->getNoun(obj->_nounIndex, TAKE_NAME)));
+	_vm->takeObjectBox(_vm->_text->getNoun(obj->_nounIndex, TAKE_NAME));
 }
 
 /**
@@ -397,7 +402,8 @@ void Parser_v3d::dropObject(Object *obj) {
 	obj->_y = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2 - 1;
 	obj->_y = (obj->_y + obj->_currImagePtr->_y2 < kYPix) ? obj->_y : kYPix - obj->_currImagePtr->_y2 - 10;
 	_vm->adjustScore(-obj->_objValue);
-	Utils::notifyBox(_vm->_text->getTextParser(kTBOk));
+	_vm->_screen->updateStatusText();
+	_vm->notifyBox(_vm->_text->getTextParser(kTBOk));
 }
 
 /**
@@ -409,15 +415,17 @@ void Parser_v3d::dropObject(Object *obj) {
 bool Parser_v3d::isCatchallVerb_v3(ObjectList obj) const {
 	debugC(1, kDebugParser, "isCatchallVerb(object_list_t obj)");
 
-	if (_vm->_maze._enabledFl)
+	// WORKAROUND: obj is an invalid pointer if in the Hugo2 maze (original bug)
+	if (*(_vm->_screenPtr) >= _backgroundObjectsSize) {
 		return false;
+	}
 
 	for (int i = 0; obj[i]._verbIndex != 0; i++) {
 		if (isWordPresent(_vm->_text->getVerbArray(obj[i]._verbIndex)) && obj[i]._nounIndex == 0 &&
 		   (!obj[i]._matchFl || !findNoun()) &&
 		   ((obj[i]._roomState == kStateDontCare) ||
 		    (obj[i]._roomState == _vm->_screenStates[*_vm->_screenPtr]))) {
-			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
+			_vm->notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
 			_vm->_scheduler->processBonus(obj[i]._bonusIndex);
 
 			// If this is LOOK (without a noun), show any takeable objects
@@ -437,15 +445,17 @@ bool Parser_v3d::isCatchallVerb_v3(ObjectList obj) const {
 bool Parser_v3d::isBackgroundWord_v3(ObjectList obj) const {
 	debugC(1, kDebugParser, "isBackgroundWord(object_list_t obj)");
 
-	if (_vm->_maze._enabledFl)
+	// WORKAROUND: obj is an invalid pointer if in the Hugo2 maze (original bug)
+	if (*(_vm->_screenPtr) >= _backgroundObjectsSize) {
 		return false;
+	}
 
 	for (int i = 0; obj[i]._verbIndex != 0; i++) {
 		if (isWordPresent(_vm->_text->getVerbArray(obj[i]._verbIndex)) &&
 		    isWordPresent(_vm->_text->getNounArray(obj[i]._nounIndex)) &&
 		    ((obj[i]._roomState == kStateDontCare) ||
 		     (obj[i]._roomState == _vm->_screenStates[*_vm->_screenPtr]))) {
-			Utils::notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
+			_vm->notifyBox(_vm->_file->fetchString(obj[i]._commentIndex));
 			_vm->_scheduler->processBonus(obj[i]._bonusIndex);
 			return true;
 		}

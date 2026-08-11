@@ -149,8 +149,8 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1u);         // stop other ambient
 			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3,  1u);         // stop other ambient
 			Actor_Says_With_Pause(kActorRachael, 300, 1.0f, 14);  // GoodbyeMcCoy
-			Actor_Says(kActorRachael, 310, 14);                   // Isnt ThisYourFloor --
-			Actor_Says(kActorMcCoy, 2860, 14);                    // YouTakeCareOfYoursel
+			Actor_Says(kActorRachael, 310, 14);                   // IsntThisYourFloor --
+			Actor_Says(kActorMcCoy, 2860, 14);                    // YouTakeCareOfYourself
 
 			Set_Enter(kSetMA02_MA04, kSceneMA02);
 			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kMA06LoopDoorClose, true);

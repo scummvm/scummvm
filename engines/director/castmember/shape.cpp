@@ -19,17 +19,18 @@
  *
  */
 
+#include "common/stream.h"
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/movie.h"
 #include "director/castmember/shape.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
 ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastShape;
-
-	byte unk1;
 
 	_ink = kInkTypeCopy;
 
@@ -39,8 +40,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	}
 
 	if (version < kFileVer400) {
-		unk1 = stream.readByte();
-		_shapeType = static_cast<ShapeType>(stream.readByte());
+		_shapeType = static_cast<ShapeType>(stream.readUint16BE());
 		_initialRect = Movie::readRect(stream);
 		_pattern = stream.readUint16BE();
 		// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
@@ -50,9 +50,8 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
-	} else if (version >= kFileVer400 && version < kFileVer600) {
-		unk1 = stream.readByte();
-		_shapeType = static_cast<ShapeType>(stream.readByte());
+	} else if (version >= kFileVer400 && version < kFileVer1100) {
+		_shapeType = static_cast<ShapeType>(stream.readUint16BE());
 		_initialRect = Movie::readRect(stream);
 		_pattern = stream.readUint16BE();
 		_fgCol = g_director->transformColor((uint8)stream.readByte());
@@ -62,8 +61,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else {
-		warning("STUB: ShapeCastMember::ShapeCastMember(): not yet implemented");
-		unk1 = 0;
+		warning("STUB: ShapeCastMember::ShapeCastMember(): Shapes not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 		_shapeType = kShapeRectangle;
 		_pattern = 0;
 		_fgCol = _bgCol = 0;
@@ -73,8 +71,8 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	}
 	_modified = false;
 
-	debugC(3, kDebugLoading, "ShapeCastMember: unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
-		unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
+	debugC(3, kDebugLoading, "ShapeCastMember: type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
+		_shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
 
 	if (debugChannelSet(3, kDebugLoading))
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
@@ -87,7 +85,8 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, ShapeCastMember &sou
 
 	_initialRect = source._initialRect;
 	_boundingRect = source._boundingRect;
-	_children = source._children;
+	if (cast == source._cast)
+		_children = source._children;
 
 	_shapeType = source._shapeType;
 	_pattern = source._pattern;
@@ -107,6 +106,95 @@ void ShapeCastMember::setForeColor(uint32 fgCol) {
 	_modified = true;
 }
 
+bool ShapeCastMember::hasField(int field) {
+	switch (field) {
+	case kTheFilled:
+	case kTheLineSize:
+	case kThePattern:
+	case kTheShapeType:
+		return true;
+	default:
+		break;
+	}
+	return CastMember::hasField(field);
+}
+
+Datum ShapeCastMember::getField(int field) {
+	Datum d;
+
+	switch (field) {
+	case kTheFilled:
+		d = Datum((bool)_fillType);
+		break;
+	case kTheLineSize:
+		d = Datum(_lineThickness);
+		break;
+	case kThePattern:
+		d = Datum(_pattern);
+		break;
+	case kTheShapeType:
+		switch (_shapeType) {
+		case kShapeRectangle:
+			d = Datum("rect");
+			d.type = SYMBOL;
+			break;
+		case kShapeRoundRect:
+			d = Datum("roundRect");
+			d.type = SYMBOL;
+			break;
+		case kShapeOval:
+			d = Datum("oval");
+			d.type = SYMBOL;
+			break;
+		case kShapeLine:
+			d = Datum("line");
+			d.type = SYMBOL;
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		d = CastMember::getField(field);
+		break;
+	}
+
+	return d;
+}
+
+void ShapeCastMember::setField(int field, const Datum &d) {
+	switch (field) {
+	case kTheFilled:
+		_fillType = d.asInt() ? 1 : 0;
+		return;
+	case kTheLineSize:
+		_lineThickness = d.asInt();
+		return;
+	case kThePattern:
+		_pattern = d.asInt();
+		return;
+	case kTheShapeType:
+		if (d.type == SYMBOL) {
+			Common::String name = *d.u.s;
+			if (name.equalsIgnoreCase("rect")) {
+				_shapeType = kShapeRectangle;
+			} else if (name.equalsIgnoreCase("roundRect")) {
+				_shapeType = kShapeRoundRect;
+			} else if (name.equalsIgnoreCase("oval")) {
+				_shapeType = kShapeOval;
+			} else if (name.equalsIgnoreCase("line")) {
+				_shapeType = kShapeLine;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+
+	CastMember::setField(field, d);
+}
+
+
 Common::String ShapeCastMember::formatInfo() {
 	return Common::String::format(
 		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, shapeType: %d, pattern: %d, fillType: %d, lineThickness: %d, lineDirection: %d, ink: %d",
@@ -120,4 +208,48 @@ Common::String ShapeCastMember::formatInfo() {
 	);
 }
 
+uint32 ShapeCastMember::getCastDataSize() {
+	// unk1 : 1 byte
+	// _shapeType : 1 byte
+	// _initalRect : 8 bytes
+	// _pattern : 2 bytes
+	// _fgCol : 1 byte
+	// _bgCol : 1 byte
+	// _fillType : 1 byte
+	// _lineThickness : 1 byte
+	// _lineDirection : 1 byte
+	// Total : 17 bytes
+	// For Director 4 : 1 byte extra for casttype (See Cast::loadCastData())
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// writeCAStResource() writes 1 byte for the cast type plus 1 for
+		// _flags1 when it isn't 0xFF
+		return 17 + 1 + (_flags1 != 0xFF ? 1 : 0);
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1100) {
+		return 17;
+	} else {
+		warning("ShapeCastMember::getCastDataSize(): invalid or unhandled cast version: %d", _cast->_version);
+		return 0;
+	}
 }
+
+bool ShapeCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer1100;
+}
+
+void ShapeCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
+	writeStream->writeUint16BE((uint16)_shapeType);
+
+	Movie::writeRect(writeStream, _initialRect);
+	writeStream->writeUint16BE(_pattern);
+
+	// The foreground and background colors are transformed
+	// Need to retrieve the original colors for saving
+	writeStream->writeByte(_fgCol);
+	writeStream->writeByte(_bgCol);
+
+	writeStream->writeByte(_fillType);
+	writeStream->writeByte(_lineThickness);
+	writeStream->writeByte(_lineDirection);
+}
+
+}	// End of namespace Director

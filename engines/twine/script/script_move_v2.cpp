@@ -20,6 +20,8 @@
  */
 
 #include "twine/script/script_move_v2.h"
+#include "twine/audio/sound.h"
+#include "twine/resources/resources.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -53,7 +55,7 @@ static const ScriptMoveFunction function_map[] = {
 	{"CLOSE", ScriptMove::mCLOSE},
 	{"WAIT_DOOR", ScriptMove::mWAIT_DOOR},
 	{"SAMPLE_RND", ScriptMove::mSAMPLE_RND},
-	{"SAMPLE_ALWAYS", ScriptMove::mSAMPLE_ALWAYS},
+	{"SAMPLE_ALWAYS", ScriptMoveV2::mSAMPLE_ALWAYS},
 	{"SAMPLE_STOP", ScriptMove::mSAMPLE_STOP},
 	{"PLAY_FLA", ScriptMove::mPLAY_FLA},
 	{"REPEAT_SAMPLE", ScriptMove::mREPEAT_SAMPLE},
@@ -83,7 +85,7 @@ static const ScriptMoveFunction function_map[] = {
 int32 ScriptMoveV2::mWAIT_NB_DIZIEME(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 numSeconds = ctx.stream.readByte();
 	int32 currentTime = ctx.stream.readSint32LE();
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
 		currentTime = engine->timerRef + engine->toSeconds(numSeconds) / 10;
@@ -105,7 +107,7 @@ int32 ScriptMoveV2::mWAIT_NB_DIZIEME(TwinEEngine *engine, MoveScriptContext &ctx
 int32 ScriptMoveV2::mWAIT_NB_DIZIEME_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 numSeconds = engine->getRandomNumber(ctx.stream.readByte());
 	int32 currentTime = ctx.stream.readSint32LE();
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
 		currentTime = engine->timerRef + engine->toSeconds(numSeconds) / 10;
@@ -127,7 +129,7 @@ int32 ScriptMoveV2::mWAIT_NB_DIZIEME_RND(TwinEEngine *engine, MoveScriptContext 
 int32 ScriptMoveV2::mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 numSeconds = engine->getRandomNumber(ctx.stream.readByte());
 	int32 currentTime = ctx.stream.readSint32LE();
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_SECOND_RND(%i, %i)", (int)numSeconds, currentTime);
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::WAIT_NB_SECOND_RND(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
 		currentTime = engine->timerRef + engine->toSeconds(numSeconds);
@@ -148,57 +150,133 @@ int32 ScriptMoveV2::mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &
 
 int32 ScriptMoveV2::mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int16 num = ctx.stream.readSint16LE();
-	if (ctx.actor->_staticFlags.bIsSpriteActor) {
-		ctx.actor->_sprite = num;
-		engine->_actor->initSpriteActor(ctx.actorIdx);
+	if (ctx.actor->_flags.bSprite3D) {
+		engine->_actor->initSprite(num, ctx.actorIdx);
+	}
+	return 0;
+}
+
+int32 ScriptMoveV2::mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx) {
+	int32 sampleIdx = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScriptsMove, "MOVE::SAMPLE_ALWAYS(%i)", (int)sampleIdx);
+	if (!engine->_sound->isSamplePlaying(sampleIdx)) {
+		engine->_sound->mixSample3D(sampleIdx, engine->_sound->_parmSampleFrequence, engine->_sound->_parmSampleVolume, ctx.actor->posObj(), ctx.actorIdx);
 	}
 	return 0;
 }
 
 int32 ScriptMoveV2::mSET_FRAME(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	if (!ctx.actor->_flags.bSprite3D) {
+		engine->_actor->setFrame(ctx.actorIdx, num);
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mSET_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	int32 num = ctx.stream.readByte();
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
+		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
+		if (num > (anim->Fin - anim->Deb)) {
+			num = anim->Fin - anim->Deb;
+		}
+
+		num += anim->Deb;
+
+		engine->_actor->initSprite(num, ctx.actorIdx);
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mSET_START_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	int32 num = ctx.stream.readByte();
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
+		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
+		if (num > (anim->Fin - anim->Deb)) {
+			num = anim->Fin - anim->Deb;
+		}
+
+		num += anim->Deb;
+
+		ctx.actor->A3DS.Deb = num;
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mSET_END_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	int32 num = ctx.stream.readByte();
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
+		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
+		if (num > (anim->Fin - anim->Deb)) {
+			num = anim->Fin - anim->Deb;
+		}
+
+		num += anim->Deb;
+
+		ctx.actor->A3DS.Fin = num;
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mSTART_ANIM_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	const int32 num = ctx.stream.readByte(); // NbFps
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
+		engine->_actor->initSprite(ctx.actor->A3DS.Deb, ctx.actorIdx);
+		ctx.actor->SizeSHit = (int16)num;
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mSTOP_ANIM_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
+		ctx.actor->SizeSHit = 0;
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mWAIT_ANIM_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
+		if (ctx.actor->_sprite != ctx.actor->A3DS.Fin && ctx.actor->SizeSHit != 0) {
+			ctx.undo(1); // OffsetTrack--
+			return 1; // wait
+		}
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mWAIT_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	int32 num = ctx.stream.readByte();
+	if (ctx.actor->_flags.bHasSpriteAnim3D) {
+		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
+		if (num > (anim->Fin - anim->Deb)) {
+			num = anim->Fin - anim->Deb;
+		}
+
+		num += anim->Deb;
+
+		if (ctx.actor->_sprite != num) {
+			ctx.undo(2); // OffsetTrack -= 2
+			return 1; // wait
+		}
+	}
+	return 0;
 }
 
 // DECALAGE
 int32 ScriptMoveV2::mOFFSET(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	engine->_sound->_parmSampleDecalage = ctx.stream.readSint16LE();
+	return 0;
 }
 
 // FREQUENCE
 int32 ScriptMoveV2::mFREQUENCY(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	engine->_sound->_parmSampleFrequence = ctx.stream.readSint16LE();
+	return 0;
 }
 
 int32 ScriptMoveV2::mVOLUME(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	engine->_sound->_parmSampleVolume = ctx.stream.readByte();
+	return 0;
 }
 
 ScriptMoveV2::ScriptMoveV2(TwinEEngine *engine) : ScriptMove(engine, function_map, ARRAYSIZE(function_map)) {

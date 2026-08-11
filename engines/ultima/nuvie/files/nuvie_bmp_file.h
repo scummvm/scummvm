@@ -22,7 +22,7 @@
 #ifndef NUVIE_FILES_NUVIE_BMP_FILE_H
 #define NUVIE_FILES_NUVIE_BMP_FILE_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/core/tile_manager.h"
@@ -87,7 +87,7 @@ public:
 	Graphics::ManagedSurface *getSdlSurface32(const Common::Path &filename);
 
 private:
-	bool handleError(Std::string error);
+	bool handleError(Common::String error);
 	void write8BitData(NuvieIOFileWrite *file);
 };
 

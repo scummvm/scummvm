@@ -24,23 +24,19 @@
 
 #include "common/stream.h"
 #include "m4/m4_types.h"
-#include "m4/dbg/dbg_defs.h"
 #include "m4/graphics/gr_font.h"
 #include "m4/wscript/ws_machine.h"
 
 namespace M4 {
 
-bool dbg_ws_init(bool showTheScreen, Font *useThisFont, frac16 *theGlobals);
-void dbg_ws_shutdown();
-void dbg_ws_update();
-
-void dbg_LaunchSequence(Anim8 *myAnim8);
-void dbg_DebugWSMach(machine *m, bool debug);
-void dbg_DebugNextCycle();
-void dbg_RemoveWSMach(machine *m);
-void dbg_SetCurrMachInstr(machine *m, int32 pcOffset);
-void dbg_SetCurrSequInstr(Anim8 *myAnim8, int32 compareCCR);
-void dbg_WSError(Common::WriteStream *logFile, machine *m, int32 errorType, const char *errDesc, const char *errMsg, int32 pcOffset);
+extern bool dbg_ws_init(bool showTheScreen, Font *useThisFont, frac16 *theGlobals);
+extern void dbg_ws_shutdown();
+extern void dbg_SetCurrMachInstr(machine *m, int32 pcOffset, bool isPcode);
+extern void dbg_EndCurrMachInstr();
+extern void dbg_AddOpcodeToMachineInstr(int instruction);
+extern void dbg_AddParamToCurrMachInstr(const char *param);
+extern void dbg_AddGlobalParamToCurrMachInstr(int num, const char *prefix = nullptr);
+extern void dbg_AddRegParamToCurrMachInstr(int num, const char *prefix = nullptr);
 
 } // namespace M4
 

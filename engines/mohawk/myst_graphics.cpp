@@ -94,8 +94,7 @@ void MystGraphics::loadMenuFont() {
 
 	Common::SeekableReadStream *fontStream = SearchMan.createReadStreamForMember(menuFontName);
 	if (fontStream) {
-		_menuFont = Graphics::loadTTFFont(*fontStream, fontSize);
-		delete fontStream;
+		_menuFont = Graphics::loadTTFFont(fontStream, DisposeAfterUse::YES, fontSize);
 	} else
 #endif
 	{

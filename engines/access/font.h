@@ -59,32 +59,51 @@ public:
 	/**
 	 * Get the width of a given character
 	 */
-	int charWidth(char c);
+	int charWidth(char c) const;
 
 	/**
-	 * Get the width of a given string
+	 * Get the width of a given string.
+	 * The string should already be broken into lines.
 	 */
-	int stringWidth(const Common::String &msg);
+	int stringWidth(const Common::String &msg) const;
+
+	/**
+	 * Get the height of a given string
+	 */
+	virtual int stringHeight(const Common::String &msg) const;
+
+	/**
+	 * Type of line wrapping - Martian wraps based on chars, Amazon based on px.
+	 *
+	 * Since the fonts are variable width we need to support both types to
+	 * exactly wrap like the originals.
+	 */
+	enum LINE_WIDTH_TYPE {
+		kWidthInPixels,
+		kWidthInChars
+	};
 
 	/**
 	 * Get a partial string that will fit in a given width
 	 * @param s			Source string. Modified to remove line
-	 * @param maxWidth	Maximum width allowed
+	 * @param maxWidth	Maximum width allowed in px or chars (see widthType)
 	 * @param line		Output line
-	 * @param width		Calculated width of returned line
+	 * @param width		Actual width of returned line in selected units
+	 * @param widthType Select the type of width constraint - px or chars
 	 * @returns			True if last line
 	 */
-	bool getLine(Common::String &s, int maxWidth, Common::String &line, int &width);
+	bool getLine(Common::String &s, int maxWidth, Common::String &line, int &width,
+				 LINE_WIDTH_TYPE widthType = kWidthInPixels) const;
 
 	/**
 	 * Draw a string on a given surface
 	 */
-	void drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt);
+	void drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt) const;
 
 	/**
 	 * Draw a character on a given surface
 	 */
-	int drawChar(BaseSurface *s, char c, Common::Point &pt);
+	int drawChar(BaseSurface *s, char c, Common::Point &pt) const;
 
 };
 
@@ -109,12 +128,22 @@ private:
 	/**
 	 * Load the given font data
 	 */
-	void load(Common::SeekableReadStream &s);
+	void loadFromStream(Common::SeekableReadStream &s);
+	void loadFromData(size_t count, const byte *widths, const int *offsets, const byte *data);
 public:
 	/**
 	* Constructor
 	*/
 	MartianFont(int height, Common::SeekableReadStream &s);
+	MartianFont(int height, size_t count, const byte *widths, const int *offsets, const byte *data);
+};
+
+class MartianBitFont : public Font {
+public:
+	/**
+	* Constructor
+	*/
+	MartianBitFont(size_t count, const byte *data);
 };
 
 
@@ -123,8 +152,14 @@ public:
 	FontVal _charSet;
 	FontVal _charFor;
 	int _printMaxX;
-	Font *_font1;
-	Font *_font2;
+
+	/** These fonts are used in Amazon/MM */
+	const Font *_font1;
+	const Font *_font2;
+	const Font *_bitFont;
+
+	/** Noctropolis has a list of fonts used by number */
+	Common::Array<const Font *> _fonts;
 public:
 	/**
 	 * Constructor
@@ -134,7 +169,15 @@ public:
 	/**
 	 * Set the fonts
 	 */
-	void load(Font *font1, Font *font2);
+	void load(const Font *font1, const Font *font2, const Font *bitFont);
+
+	void addFont(const Font *font) {
+		_fonts.push_back(font);
+	}
+
+	const Font *getFont(int num) {
+		return _fonts[num];
+	}
 };
 
 } // End of namespace Access

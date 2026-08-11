@@ -31,7 +31,7 @@ namespace Quest {
 
 /* User interface bridge from Geas Core to Glk.
 
-  Glk Window arrangment.
+  Glk Window arrangement.
 
 	+---------+
 	|    B    |

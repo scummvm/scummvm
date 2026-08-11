@@ -172,7 +172,7 @@ void DOSBoxCMS::update(int chip, int16 *buffer, int length) {
 	int j, ch;
 
 	if (chip == 0) {
-		memset(buffer, 0, sizeof(int16)*length*2);
+		memset(buffer, 0, sizeof(int16)*length);
 	}
 
 	/* if the channels are disabled we're done */
@@ -193,7 +193,7 @@ void DOSBoxCMS::update(int chip, int16 *buffer, int length) {
 	rate = getRate() * FRAC_ONE_CMS;
 
 	/* fill all data needed */
-	for (j = 0; j < length; ++j) {
+	for (j = 0; j < length / 2; ++j) {
 		int output_l = 0, output_r = 0;
 
 		/* for each channel */

@@ -472,10 +472,10 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 }
 
 void Atdsys::set_ats_str(int16 txtNr, int16 txtMode, int16 strNr, int16 mode) {
-	_text->setTextId(txtNr, txtMode, strNr, mode);
+	_text->setSubtextNum(txtNr, txtMode, strNr, mode);
 }
 
-void Atdsys::set_ats_str(int16 txtNr, int16 strNr, int16 mode) {
+void Atdsys::set_all_ats_str(int16 txtNr, int16 strNr, int16 mode) {
 	for (int16 i = 0; i < 5; i++)
 		set_ats_str(txtNr, i, strNr, mode);
 }

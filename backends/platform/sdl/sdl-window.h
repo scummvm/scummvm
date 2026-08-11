@@ -45,6 +45,13 @@ public:
 	void setWindowCaption(const Common::String &caption);
 
 	/**
+	 * Allows the window to be resized or not
+	 *
+	 * @param resizable Whether the window can be resizable or not.
+	 */
+	void setResizable(bool resizable);
+
+	/**
 	 * Grab or ungrab the mouse cursor. This decides whether the cursor can leave
 	 * the window or not.
 	 */
@@ -78,6 +85,7 @@ public:
 	 */
 	void iconifyWindow();
 
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
 	/**
 	 * Query platform specific SDL window manager information.
 	 *
@@ -85,6 +93,7 @@ public:
 	 * for accessing it in a version safe manner.
 	 */
 	bool getSDLWMInformation(SDL_SysWMinfo *info) const;
+#endif
 
 	/*
 	 * Retrieve the current desktop resolution.
@@ -108,8 +117,21 @@ public:
 	 */
 	virtual float getDpiScalingFactor() const;
 
-	bool mouseIsGrabbed() const {
+	bool resizable() const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (_window) {
+			return SDL_GetWindowFlags(_window) & SDL_WINDOW_RESIZABLE;
+		}
+#endif
+		return _resizable;
+	}
+
+	bool mouseIsGrabbed() const {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		if (_window) {
+			return SDL_GetWindowMouseGrab(_window);
+		}
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window) {
 			return SDL_GetWindowGrab(_window) == SDL_TRUE;
 		}
@@ -118,7 +140,9 @@ public:
 	}
 
 	bool mouseIsLocked() const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		return SDL_GetWindowRelativeMouseMode(_window);
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
 		return SDL_GetRelativeMouseMode() == SDL_TRUE;
 #else
 		return _inputLockState;
@@ -127,6 +151,7 @@ public:
 
 private:
 	Common::Rect _desktopRes;
+	bool _resizable;
 	bool _inputGrabState, _inputLockState;
 	SDL_Rect grabRect;
 
@@ -153,12 +178,17 @@ public:
 	 * @param flags   SDL flags passed to SDL_CreateWindow
 	 * @return true on success, false otherwise
 	 */
-	bool createOrUpdateWindow(int width, int height, uint32 flags);
+	virtual bool createOrUpdateWindow(int width, int height, uint32 flags);
 
 	/**
 	 * Destroys the current SDL window.
 	 */
 	void destroyWindow();
+
+	/**
+	 * @return The last window flags set
+	 */
+	uint32 getWindowFlags() const { return _lastFlags; }
 
 protected:
 	SDL_Window *_window;
@@ -179,7 +209,7 @@ private:
 
 class SdlIconlessWindow : public SdlWindow {
 public:
-	virtual void setupIcon() {}
+	void setupIcon() override {}
 };
 
 #endif

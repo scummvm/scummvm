@@ -22,10 +22,13 @@
 #include "agi/agi.h"
 #include "agi/opcodes.h"
 #include "agi/graphics.h"
+#include "agi/loader.h"
 
 #include "agi/preagi/preagi.h"
 #include "agi/preagi/mickey.h"
 #include "agi/preagi/winnie.h"
+
+#include "common/file.h"
 
 namespace Agi {
 
@@ -54,6 +57,7 @@ Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	registerCmd("vmvars",          WRAP_METHOD(Console, Cmd_VmVars));
 	registerCmd("vmflags",         WRAP_METHOD(Console, Cmd_VmFlags));
 	registerCmd("disableautosave", WRAP_METHOD(Console, Cmd_DisableAutomaticSave));
+	registerCmd("diskdump",        WRAP_METHOD(Console, Cmd_DiskDump));
 }
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {
@@ -159,7 +163,7 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 		bool scriptLoadedByUs = false;
 		if (!(game->dirLogic[scriptNr].flags & RES_LOADED)) {
 			// But not currently loaded? -> load it now
-			if (_vm->agiLoadResource(RESOURCETYPE_LOGIC, scriptNr) != errOK) {
+			if (_vm->loadResource(RESOURCETYPE_LOGIC, scriptNr) != errOK) {
 				// In case we can't load the source, skip it
 				continue;
 			}
@@ -259,7 +263,7 @@ bool Console::Cmd_Version(int argc, const char **argv) {
 		}
 
 		if (scriptLoadedByUs) {
-			_vm->agiUnloadResource(RESOURCETYPE_LOGIC, scriptNr);
+			_vm->unloadResource(RESOURCETYPE_LOGIC, scriptNr);
 		}
 	}
 
@@ -380,16 +384,15 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 	debugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.curLogicNr, _vm->_game.execStack.size());
 
 	uint8 p[CMD_BSIZE] = { 0 };
-	Common::Array<ScriptPos>::iterator it;
 
-	for (it = _vm->_game.execStack.begin(); it != _vm->_game.execStack.end(); ++it) {
-		uint8 *code = _vm->_game.logics[it->script].data;
-		uint8 op = code[it->curIP];
+	for (auto &entry : _vm->_game.execStack) {
+		uint8 *code = _vm->_game.logics[entry.script].data;
+		uint8 op = code[entry.curIP];
 		int parameterSize = opCodes[op].parameterSize;
-		memmove(p, &code[it->curIP], parameterSize);
+		memmove(p, &code[entry.curIP], parameterSize);
 		memset(p + parameterSize, 0, CMD_BSIZE - parameterSize);
 
-		debugPrintf("%d(%d): %s(", it->script, it->curIP, opCodes[op].name);
+		debugPrintf("%d(%d): %s(", entry.script, entry.curIP, opCodes[op].name);
 
 		for (int i = 0; i < parameterSize; i++)
 			debugPrintf("%d, ", p[i]);
@@ -603,6 +606,80 @@ bool Console::Cmd_DisableAutomaticSave(int argc, const char **argv) {
 	_vm->_game.automaticSave = false;
 
 	debugPrintf("Automatic saving DISABLED!\n");
+	return true;
+}
+
+bool Console::Cmd_DiskDump(int argc, const char **argv) {
+	static const char *resTypes[4] = { "logic", "picture", "view", "sound" };
+
+	if (!(argc == 3 || (argc == 2 && strcmp(argv[1], "*") == 0))) {
+		debugPrintf("Dumps the specified resource to disk as a file\n");
+		debugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
+		debugPrintf("       <resource type> may be logic, picture, view, sound, or '*' for all resources\n");
+		debugPrintf("       <resource number> may be '*' to dump all resources of given type\n");
+		return true;
+	}
+
+	int resType = -1; // -1 == all
+	if (strcmp(argv[1], "*") != 0) {
+		for (int i = 0; i < ARRAYSIZE(resTypes); i++) {
+			if (scumm_stricmp(argv[1], resTypes[i]) == 0) {
+				resType = i;
+				break;
+			}
+		}
+		if (resType == -1) {
+			debugPrintf("Resource type '%s' is not valid\n", argv[1]);
+			return true;
+		}
+	}
+
+	int resNr = -1; // -1 == all
+	if (argc >= 3 && strcmp(argv[2], "*") != 0) {
+		if (!parseInteger(argv[2], resNr)) {
+			return true;
+		}
+		if (!(0 <= resNr && resNr < MAX_DIRECTORY_ENTRIES)) {
+			debugPrintf("Invalid resource number: %d\n", resNr);
+			return true;
+		}
+	}
+
+	AgiDir *resDirs[4] = { _vm->_game.dirLogic, _vm->_game.dirPic, _vm->_game.dirView, _vm->_game.dirSound };
+	for (int t = 0; t < ARRAYSIZE(resDirs); t++) {
+		if (resType != -1 && resType != t) {
+			continue;
+		}
+
+		AgiDir *resDir = resDirs[t];
+		for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
+			if (resNr != -1 && resNr != i) {
+				continue;
+			}
+
+			if (resDir[i].offset == _EMPTY) {
+				if (resNr != -1) {
+					debugPrintf("Resource does not exist: %s.%03d\n", resTypes[t], i);
+				}
+				continue;
+			}
+
+			Common::String fileName = Common::String::format("%s.%03d", resTypes[t], i);
+			byte *resData = _vm->_loader->loadVolumeResource(&resDir[i]);
+			if (resData != nullptr) {
+				Common::DumpFile file;
+				if (file.open(Common::Path(fileName))) {
+					file.write(resData, resDir[i].len);
+					debugPrintf("%s has been dumped to disk\n", fileName.c_str());
+				} else {
+					debugPrintf("Error dumping %s to disk\n", fileName.c_str());
+				}
+				free(resData);
+			} else {
+				debugPrintf("Error dumping %s to disk\n", fileName.c_str());
+			}
+		}
+	}
 	return true;
 }
 

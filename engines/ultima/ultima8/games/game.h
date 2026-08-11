@@ -23,6 +23,7 @@
 #define ULTIMA8_GAMES_GAME_H
 
 #include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {

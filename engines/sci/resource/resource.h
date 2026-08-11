@@ -407,7 +407,8 @@ public:
 	 */
 	bool hasResourceType(ResourceType type);
 
-	void setAudioLanguage(int language);
+	bool setAudioLanguage(int language);
+	void unloadAudioLanguage();
 	int getAudioLanguage() const;
 	void changeAudioDirectory(const Common::Path &path);
 	void changeMacAudioDirectory(const Common::Path &path);

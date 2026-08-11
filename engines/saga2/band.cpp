@@ -55,7 +55,7 @@ void BandList::read(Common::InSaveFile *in) {
 	for (int i = 0; i < bandCount; i++) {
 		BandID      id;
 
-		//  Retreive the Band's id number
+		//  Retrieve the Band's id number
 		id = in->readSint16LE();
 		debugC(3, kDebugSaveload, "Loading Band %d", id);
 

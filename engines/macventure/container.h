@@ -66,7 +66,7 @@ protected:
 
 	bool _simplified;
 
-	uint _lenObjs; // In the case of simple container, lenght of an object
+	uint _lenObjs; // In the case of simple container, length of an object
 	uint _numObjs;
 
 	ContainerHeader _header;

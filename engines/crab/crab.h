@@ -24,12 +24,12 @@
 
 #include "common/random.h"
 #include "common/serializer.h"
+#include "graphics/pixelformat.h"
 
 #include "crab/detection.h"
 
 namespace Graphics {
 class ManagedSurface;
-struct PixelFormat;
 class Screen;
 } // End of namespace Graphics
 
@@ -99,7 +99,7 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	Graphics::PixelFormat *_format = nullptr;
+	Graphics::PixelFormat _format;
 
 	pyrodactyl::image::ImageManager *_imageManager = nullptr;
 	pyrodactyl::text::TextManager *_textManager = nullptr;

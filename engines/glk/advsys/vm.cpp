@@ -353,7 +353,11 @@ void VM::opCLASS() {
 
 void VM::opMATCH() {
 	int idx = _stack.pop() - 1;
-	_stack.top() = match(_stack.top(), _nouns[idx]._noun, _nouns[idx]._adjective) ? TRUE : NIL;
+	if (idx < 0 || _nouns.size() == 0) {
+		_stack.top() = NIL;
+	} else {
+		_stack.top() = match(_stack.top(), _nouns[idx]._noun, _nouns[idx]._adjective) ? TRUE : NIL;
+	}
 }
 
 void VM::opPNOUN() {

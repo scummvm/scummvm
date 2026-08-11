@@ -52,7 +52,7 @@ void MapOverworld::load(Shared::Maps::MapId mapId) {
 }
 
 void MapOverworld::loadWidgets() {
-	// Note: the overworld player, transports, and monsters are persistant, so we only have to set up
+	// Note: the overworld player, transports, and monsters are persistent, so we only have to set up
 	// the initial "on foot" transport the first time
 	if (_widgets.empty()) {
 		// Set up widget for the player

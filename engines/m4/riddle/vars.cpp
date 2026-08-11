@@ -20,15 +20,58 @@
  */
 
 #include "common/debug.h"
-#include "common/events.h"
 #include "m4/riddle/vars.h"
 #include "m4/riddle/inventory.h"
-#include "m4/gui/gui_vmng.h"
+#include "m4/gui/gui_sys.h"
+#include "m4/platform/keys.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Riddle {
 
 Vars *g_vars;
+
+/**
+ * Structure for accented character replacement
+ */
+struct ConverterEntry {
+	const char *_find;
+	byte _replace;
+};
+static const ConverterEntry SPANISH_ASCII_CONVERTERS[] = {
+	{ "\xc7", 1 },
+	{ "\xfc", 2 },
+	{ "\xe9", 3 },
+	{ "\xe2", 4 },
+	{ "\xe4", 5 },
+	{ "\xe0", 6 },
+	{ "\xe7", 0x0C },
+	{ "\xea", 0x0D },
+	{ "\xeb", 0x0E },
+	{ "\xe8", 0x0F },
+	{ "\xef", 0x69 },
+	{ "\xee", 0x25 },
+	{ "\xec", 0x12 },
+	{ "\xc1", 0x23 },
+	{ "\xc9", 0x14 },
+	{ "\xf4", 0x15 },
+	{ "\xf6", 0x16 },
+	{ "\xf2", 0x17 },
+	{ "\xfb", 0x18 },
+	{ "\xf9", 0x19 },
+	{ "\xcd", 0x3C },
+	{ "\xd3", 0x3E },
+	{ "\xda", 0x1C },
+	{ "\xe1", 0x1D },
+	{ "\xed", 0x1E },
+	{ "\xf3", 0x1F },
+	{ "\xfa", 0x40 },
+	{ "\xf1", 0x5F },
+	{ "\xd1", 0x7E },
+	{ "\xbf", 0x7C },
+	{ "\xa1", 0x7F },
+	{ nullptr, 0 }
+};
 
 Vars::Vars() {
 	g_vars = this;
@@ -46,14 +89,12 @@ void Vars::main_cold_data_init() {
 	_player.walker_loads_first = false;
 	_player.walker_visible = true;
 	_global_sound_room = 997;
-	_kernel.letter_box_y = 30;
+	_kernel.letter_box_y = LETTERBOX_Y;
 	_kernel.first_fade = 0;
 	_kernel.first_non_walker_cel_hash = 32;
 	_i_just_hyperwalked = false;
-	// val1 = 15;
 
 	conv_set_default_hv(6, 4);
-	// val2 = 1
 	_game.previous_room = 0;
 	_game.room_id = 0;
 
@@ -62,61 +103,36 @@ void Vars::main_cold_data_init() {
 
 	initMouseSeries("cursor", nullptr);
 	conv_set_default_text_colour(7, 8);
-	//exit_button_code
+
+	if (g_engine->getLanguage() == Common::ES_ESP) {
+		_custom_ascii_converter = spanish_ascii_converter_proc;
+	}
 }
 
 void Vars::global_menu_system_init() {
-/*
-	AddSystemHotkey(KEY_ESCAPE, escape_key_pressed);
-	AddSystemHotkey(KEY_F2, cb_F2);
-	AddSystemHotkey(KEY_F3, cb_F3);
+	AddSystemHotkey(KEY_ESCAPE, Hotkeys::escape_key_pressed);
+	AddSystemHotkey(KEY_F2, Hotkeys::saveGame);
+	AddSystemHotkey(KEY_F3, Hotkeys::loadGame);
 
 	if (_interface.init(0, 5, 6, 8, 9))
 		static_cast<Inventory *>(_inventory)->init();
-		*/
 }
 
 void Vars::initialize_game() {
-/*
 	// Put all the inventory items back in their original scenes
 	for (const auto &item : _inventory->_objects)
 		inv_put_thing_in(item->name, item->scene);
-	inv_give_to_player("MONEY");
 
-	// Reset the global variables
-	_flags.reset();
-	_flags.reset1();
-	_flags.reset2();
-	_flags.reset3();
-	_flags.reset4();
-	_flags.reset5();
-	_flags.conv_reset_all();
-
-	Rooms::Room::setWilburHotspot();
-	*/
+	_G(flags).reset();
 }
 
-void Vars::custom_ascii_converter_proc(char *string) {
-	/*
+void Vars::spanish_ascii_converter_proc(char *string) {
 	char *str;
 
-	for (const auto *entry = ASCII_CONVERTERS; entry->_find; entry++) {
+	for (const auto *entry = SPANISH_ASCII_CONVERTERS; entry->_find; entry++) {
 		while ((str = strstr(string, entry->_find)) != nullptr)
 			*str = entry->_replace;
 	}
-	*/
-}
-
-void Vars::escape_key_pressed(void *, void *) {
-
-}
-
-void Vars::cb_F2(void *, void *) {
-
-}
-
-void Vars::cb_F3(void *, void *) {
-
 }
 
 } // namespace Riddle

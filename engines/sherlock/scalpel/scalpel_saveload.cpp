@@ -24,6 +24,8 @@
 #include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -49,32 +51,31 @@ ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String 
 	_fixedTextDown = FIXED(LoadSave_Down);
 	_fixedTextQuit = FIXED(LoadSave_Quit);
 
-	_hotkeyExit = toupper(_fixedTextExit[0]);
-	_hotkeyLoad = toupper(_fixedTextLoad[0]);
-	_hotkeySave = toupper(_fixedTextSave[0]);
-	_hotkeyUp   = toupper(_fixedTextUp[0]);
-	_hotkeyDown = toupper(_fixedTextDown[0]);
-	_hotkeyQuit = toupper(_fixedTextQuit[0]);
-
-	_hotkeysIndexed[0] = _hotkeyExit;
-	_hotkeysIndexed[1] = _hotkeyLoad;
-	_hotkeysIndexed[2] = _hotkeySave;
-	_hotkeysIndexed[3] = _hotkeyUp;
-	_hotkeysIndexed[4] = _hotkeyDown;
-	_hotkeysIndexed[5] = _hotkeyQuit;
+	_actionsIndexed[0] = kActionScalpelFilesExit;
+	_actionsIndexed[1] = kActionScalpelFilesLoad;
+	_actionsIndexed[2] = kActionScalpelFilesSave;
+	_actionsIndexed[3] = kActionScalpelScrollUp;
+	_actionsIndexed[4] = kActionScalpelScrollDown;
+	_actionsIndexed[5] = kActionScalpelFilesQuit;
+	_actionsIndexed[6] = kActionScalpelFiles1;
+	_actionsIndexed[7] = kActionScalpelFiles2;
+	_actionsIndexed[8] = kActionScalpelFiles3;
+	_actionsIndexed[9] = kActionScalpelFiles4;
+	_actionsIndexed[10] = kActionScalpelFiles5;
+	_actionsIndexed[11] = kActionScalpelFiles6;
+	_actionsIndexed[12] = kActionScalpelFiles7;
+	_actionsIndexed[13] = kActionScalpelFiles8;
+	_actionsIndexed[14] = kActionScalpelFiles9;
 
 	_fixedTextQuitGameQuestion = FIXED(QuitGame_Question);
 	_fixedTextQuitGameYes = FIXED(QuitGame_Yes);
 	_fixedTextQuitGameNo = FIXED(QuitGame_No);
-
-	_hotkeyQuitGameYes = toupper(_fixedTextQuitGameYes[0]);
-	_hotkeyQuitGameNo  = toupper(_fixedTextQuitGameNo[0]);
 }
 
-int ScalpelSaveManager::identifyUserButton(int key) {
-	for (uint16 hotkeyNr = 0; hotkeyNr < sizeof(_hotkeysIndexed); hotkeyNr++) {
-		if (key == _hotkeysIndexed[hotkeyNr])
-			return hotkeyNr;
+int ScalpelSaveManager::identifyUserButton(Common::CustomEventType action) {
+	for (uint16 actionNr = 0; actionNr < ARRAYSIZE(_actionsIndexed); actionNr++) {
+		if (action == _actionsIndexed[actionNr])
+			return actionNr;
 	}
 	return -1;
 }
@@ -231,6 +232,9 @@ bool ScalpelSaveManager::promptForDescription(int slot) {
 	yp = CONTROLS_Y + 12 + (slot - _savegameIndex) * 10;
 
 	int done = 0;
+
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
 	do {
 		while (!_vm->shouldQuit() && !events.kbHit()) {
 			scene.doBgAnim();
@@ -281,13 +285,19 @@ bool ScalpelSaveManager::promptForDescription(int slot) {
 		}
 	} while (!done);
 
+	keymapper->getKeymap("sherlock-default")->setEnabled(true);
+	keymapper->getKeymap("scalpel-quit")->setEnabled(true);
+
 	if (done == 1) {
 		// Enter key perssed
 		_savegames[slot] = saveName;
+		keymapper->getKeymap("scalpel")->setEnabled(true);
 	} else {
 		done = 0;
 		_envMode = SAVEMODE_NONE;
 		highlightButtons(-1);
+		keymapper->getKeymap("scalpel-files")->setEnabled(true);
+		keymapper->getKeymap("scalpel-scroll")->setEnabled(true);
 	}
 
 	return done == 1;

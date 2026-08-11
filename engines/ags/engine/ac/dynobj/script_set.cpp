@@ -20,10 +20,12 @@
  */
 
 #include "ags/engine/ac/dynobj/script_set.h"
+#include "ags/engine/ac/dynobj/dynobj_manager.h"
 #include "ags/shared/util/stream.h"
+
 namespace AGS3 {
 
-int ScriptSetBase::Dispose(const char *address, bool force) {
+int ScriptSetBase::Dispose(void * /*address*/, bool force) {
 	Clear();
 	delete this;
 	return 1;
@@ -33,7 +35,11 @@ const char *ScriptSetBase::GetType() {
 	return "StringSet";
 }
 
-void ScriptSetBase::Serialize(const char *address, Stream *out) {
+size_t ScriptSetBase::CalcSerializeSize(const void * /*address*/) {
+	return CalcContainerSize();
+}
+
+void ScriptSetBase::Serialize(const void * /*address*/, Stream *out) {
 	out->WriteInt32(IsSorted());
 	out->WriteInt32(IsCaseSensitive());
 	SerializeContainer(out);

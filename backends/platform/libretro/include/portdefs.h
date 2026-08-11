@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <math.h>
 #include <new>
@@ -37,15 +38,16 @@
    This conflicts with the use of _X as a variable name. */
 #undef _X
 
-#define RES_W 640
-#define RES_H 480
-
-#if defined(DINGUX) || defined(_3DS)
+#ifndef USE_HIGHRES
 #define RES_W_OVERLAY 320
-#define RES_H_OVERLAY 240
+#define RES_H_OVERLAY 200
+#define RES_INIT_MAX_W 320
+#define RES_INIT_MAX_H 200
 #else
-#define RES_W_OVERLAY 640
-#define RES_H_OVERLAY 480
+#define RES_W_OVERLAY 1280
+#define RES_H_OVERLAY 720
+#define RES_INIT_MAX_W 1280 /* crab engine */
+#define RES_INIT_MAX_H 768 /* e.g. director engine */
 #endif
 
 // HACK: With MinGW, GRIM engine seems to crash when using setjmp and longjmp if not using builtin versions

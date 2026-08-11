@@ -212,12 +212,26 @@ void AI::processCines() {
 					_cine[i]->e->level = (int)_cine[i]->x2;
 					setEntityGoal(_cine[i]->e, (int)_cine[i]->x, (int)_cine[i]->y);
 					_cine[i]->start = 1;
-				} else
+				} else {
 					warning("Can't locate '%s' in moveEntity", _cine[i]->title);
-			} else {
-				debug(3, "C_MOVEENTITY: %d, %s tileX: %d, goalX: %d tileY %d, goalY: %d", i, AIType2Str(_cine[i]->e->type), _cine[i]->e->tileX, _cine[i]->e->goalX, _cine[i]->e->tileY, _cine[i]->e->goalY);
-				if (!_cine[i]->e->goalX)
+					// If the entity can't be found, we consider this cinematic command completed
 					complete = true;
+				}
+			} else {
+				// Fix for bug #16421
+				// Ensure that the entity _cine[i]->e still exists,
+				// because it could have been removed, eg. if Guy shoots the chicken in Map 10
+				AIEntity *e = locateEntity(_cine[i]->title);
+				if (e) {
+					_cine[i]->e = e;
+					debug(3, "C_MOVEENTITY: %d, %s tileX: %d, goalX: %d tileY %d, goalY: %d", i, AIType2Str(_cine[i]->e->type), _cine[i]->e->tileX, _cine[i]->e->goalX, _cine[i]->e->tileY, _cine[i]->e->goalY);
+					if (!_cine[i]->e->goalX)
+						complete = true;
+				} else {
+					warning("Can't locate '%s' in moveEntity (_cine[%d]->start=%d)", _cine[i]->title, i, _cine[i]->start);
+					// If the entity can't be found, we consider this cinematic command completed
+					complete = true;
+				}
 			}
 			break;
 		case C_ANIMENTITY:

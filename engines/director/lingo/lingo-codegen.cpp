@@ -52,6 +52,7 @@
 #include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
+#include "director/types.h"
 
 namespace Director {
 
@@ -119,6 +120,7 @@ LingoCompiler::LingoCompiler() {
 	_refMode = false;
 
 	_hadError = false;
+	_trimGarbage = false;
 }
 
 ScriptContext *LingoCompiler::compileAnonymous(const Common::U32String &code, uint32 preprocFlags) {
@@ -132,12 +134,13 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 	_assemblyArchive = archive;
 	_assemblyAST = nullptr;
 	_assemblyId = id.member;
-	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, type, _assemblyId);
+	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, type, _assemblyId, id.castLib);
 	_currentAssembly = new ScriptData;
 
 	_methodVars = new VarTypeHash;
 	_linenumber = _colnumber = 1;
 	_hadError = false;
+	_trimGarbage = (bool)(preprocFlags & kLPPTrimGarbage);
 
 	// Preprocess the code for ease of the parser
 	Common::U32String codePrep = codePreprocessor(code, archive, type, id, preprocFlags);
@@ -152,7 +155,7 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 	parse(utf8Code);
 	// If it doesn't work, and we have kLPPTrimGarbage enabled,
 	// have another try with the input trimmed to the last valid character.
-	if (!_assemblyAST && (preprocFlags & kLPPTrimGarbage)) {
+	if (!_assemblyAST && _trimGarbage) {
 		delete _assemblyContext;
 		delete _currentAssembly;
 		delete _methodVars;
@@ -1501,7 +1504,7 @@ bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
 	case kNumberOfCastlibs:
 		codeInt(0); // Put dummy id
 		code1(LC::c_theentitypush);
-		codeInt(kTheCastlibs);
+		codeInt(kTheCastLibs);
 		codeInt(kTheNumber);
 		break;
 	case kNumberOfChars:

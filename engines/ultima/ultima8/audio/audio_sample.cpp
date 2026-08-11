@@ -19,7 +19,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/audio/audio_sample.h"
 
 namespace Ultima {

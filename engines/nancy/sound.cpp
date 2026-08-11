@@ -27,7 +27,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/vorbis.h"
+#include "engines/nancy/sound_vorbis.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
@@ -222,7 +222,7 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 	if (type == kSoundTypeRaw || type == kSoundTypeDiamondware)
 		return Audio::makeRawStream(subStream, overrideSamplesPerSec == 0 ? samplesPerSec : overrideSamplesPerSec, flags, DisposeAfterUse::YES);
 	else
-		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
+		return makeHISVorbisStream(subStream, DisposeAfterUse::YES);
 }
 
 SoundManager::SoundManager() : _shouldRecalculate(false), _mixer(g_system->getMixer()) {}
@@ -262,6 +262,27 @@ SoundManager::~SoundManager() {
 	stopAllSounds();
 }
 
+Common::String SoundManager::resolveMusicMix(const Common::String &name) const {
+	auto *mmix = GetEngineData(MMIX);
+	if (!mmix) {
+		// Pre-Nancy13, or no mix table present
+		return name;
+	}
+
+	for (const MMIX::Record &record : mmix->records) {
+		if (record.name.equalsIgnoreCase(name)) {
+			if (record.musicNames.empty()) {
+				return "NO SOUND";
+			}
+
+			uint pick = g_nancy->_randomSource->getRandomNumber(record.musicNames.size() - 1);
+			return record.musicNames[pick];
+		}
+	}
+
+	return name;
+}
+
 void SoundManager::loadSound(const SoundDescription &description, SoundEffectDescription **effectData, bool forceReload) {
 	if (description.name == "NO SOUND") {
 		return;
@@ -289,8 +310,9 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 
 	Channel &chan = _channels[description.channelID];
 
-	delete chan.stream;
+	delete chan.streamForMixer;
 	chan.stream = nullptr;
+	chan.streamForMixer = nullptr;
 
 	chan.name = description.name;
 	chan.playCommands = description.playCommands;
@@ -306,10 +328,28 @@ void SoundManager::loadSound(const SoundDescription &description, SoundEffectDes
 		*effectData = nullptr;
 	}
 
-	Common::Path path(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
+	// Resolve the sound name through the music mix table (Nancy 13+). Location
+	// codes get swapped for a randomly-picked track; unmapped names pass through.
+	Common::String soundName = resolveMusicMix(description.name);
+	if (soundName.empty() || soundName == "NO SOUND") {
+		// The mix maps this location to silence
+		return;
+	}
+
+	Common::Path path(soundName + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(path);
 	if (file) {
-		_channels[description.channelID].stream = makeHISStream(file, DisposeAfterUse::YES, description.samplesPerSec);
+		uint numLoops = chan.numLoops;
+		if (chan.playCommands & kPlayRandomTime) {
+			// We want to add randomized time delays between repeats, which is not doable with
+			// a simple LoopingAudioStream. The delays are added in soundEffectMaintenance();
+			numLoops = 1;
+
+			// Decrement the number of loops since we start playing immediately after
+			--chan.numLoops;
+		}
+		chan.stream = makeHISStream(file, DisposeAfterUse::YES, description.samplesPerSec);
+		chan.streamForMixer = Audio::makeLoopingAudioStream(chan.stream, numLoops);
 	}
 }
 
@@ -371,19 +411,9 @@ void SoundManager::playSound(uint16 channelID) {
 		}
 	}
 
-	uint numLoops = chan.numLoops;
-	if (chan.playCommands & kPlayRandomTime) {
-		// We want to add randomized time delays between repeats, which is not doable with
-		// a simple LoopingAudioStream. The delays are added in soundEffectMaintenance();
-		numLoops = 1;
-
-		// Decrement the number of loops since we start playing immediately after
-		--chan.numLoops;
-	}
-
 	_mixer->playStream(	chan.type,
 						&chan.handle,
-						Audio::makeLoopingAudioStream(chan.stream, numLoops),
+						chan.streamForMixer,
 						channelID,
 						(int)chan.volume * 255 / 100,
 						0, DisposeAfterUse::NO);
@@ -467,8 +497,9 @@ void SoundManager::stopSound(uint16 channelID) {
 	// Persistent sounds only stop playing but do not get unloaded
 	if (!chan.isPersistent) {
 		chan.name = Common::String();
-		delete chan.stream;
+		delete chan.streamForMixer;
 		chan.stream = nullptr;
+		chan.streamForMixer = nullptr;
 		delete chan.effectData;
 		chan.effectData = nullptr;
 		chan.position.set(0, 0, 0);
@@ -528,6 +559,66 @@ void SoundManager::setVolume(const SoundDescription &description, uint16 volume)
 
 void SoundManager::setVolume(const Common::String &chunkName, uint16 volume) {
 	setVolume(_commonSounds[chunkName], volume);
+}
+
+void SoundManager::update3DSoundPosition(uint16 channelID, int32 x, int32 y, int32 z) {
+	if (channelID >= _channels.size())
+		return;
+
+	Channel &chan = _channels[channelID];
+
+	// The original only repositions sounds that play at a fixed point in 3D space
+	if (!chan.effectData || chan.playCommands != kPlaySequentialPosition)
+		return;
+
+	chan.effectData->fixedPosX = x;
+	chan.effectData->fixedPosY = y;
+	chan.effectData->fixedPosZ = z;
+	chan.position.set(x, y, z);
+
+	_shouldRecalculate = true;
+}
+
+void SoundManager::update3DSoundMinDistance(uint16 channelID, uint32 minDistance) {
+	if (channelID >= _channels.size())
+		return;
+
+	Channel &chan = _channels[channelID];
+	if (!chan.effectData)
+		return;
+
+	chan.effectData->minDistance = minDistance;
+	_shouldRecalculate = true;
+}
+
+void SoundManager::update3DSoundMaxDistance(uint16 channelID, uint32 maxDistance) {
+	if (channelID >= _channels.size())
+		return;
+
+	Channel &chan = _channels[channelID];
+	if (!chan.effectData)
+		return;
+
+	chan.effectData->maxDistance = maxDistance;
+	_shouldRecalculate = true;
+}
+
+void SoundManager::setListenerPosition(const Math::Vector3d &position) {
+	_listenerPositionOverride = position;
+	_hasListenerPositionOverride = true;
+	_shouldRecalculate = true;
+}
+
+void SoundManager::clearListenerPositionOverride() {
+	_hasListenerPositionOverride = false;
+}
+
+Math::Vector3d SoundManager::getListenerPosition() const {
+	if (_hasListenerPositionOverride) {
+		return _listenerPositionOverride;
+	}
+
+	return NancySceneState.getSceneSummary().listenerPosition;
 }
 
 uint32 SoundManager::getRate(uint16 channelID) {
@@ -611,7 +702,7 @@ void SoundManager::recalculateSoundEffects() {
 	_positionLerp = 0;
 
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
-		const Nancy::State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
+		const State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
 		SceneChangeDescription &sceneInfo = NancySceneState.getSceneInfo();
 		Math::Vector3d rotatedFrontVector = NancySceneState.getSceneInfo().listenerFrontVector;
 		rotatedFrontVector.normalize();
@@ -636,7 +727,7 @@ void SoundManager::recalculateSoundEffects() {
 void SoundManager::stopAndUnloadSceneSpecificSounds() {
 	byte numSSChans = g_nancy->getStaticData().soundChannelInfo.numSceneSpecificChannels;
 
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+	if (g_nancy->getGameType() == kGameTypeVampire && State::Map::hasInstance()) {
 		// Don't stop the map sound in certain scenes
 		uint nextScene = NancySceneState.getNextSceneInfo().sceneID;
 		if (nextScene != 0 && (nextScene < 15 || nextScene > 27)) {
@@ -653,7 +744,7 @@ void SoundManager::stopAndUnloadSceneSpecificSounds() {
 
 void SoundManager::pauseSceneSpecificSounds(bool pause) {
 	byte numSSChans = g_nancy->getStaticData().soundChannelInfo.numSceneSpecificChannels;
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+	if (g_nancy->getGameType() == kGameTypeVampire && State::Map::hasInstance()) {
 		if (!pause || g_nancy->getState() != NancyState::kMap) {
 			// Stop the map sound in certain scenes
 			uint currentScene = NancySceneState.getSceneInfo().sceneID;
@@ -687,20 +778,21 @@ void SoundManager::initSoundChannels() {
 }
 
 SoundManager::Channel::~Channel() {
-	delete stream;
+	delete streamForMixer;
 	delete effectData;
 }
 
 void SoundManager::soundEffectMaintenance() {
 	// Interpolate position and rotation when scene has changed to avoid audible chop in sound
-	if (_position != NancySceneState.getSceneSummary().listenerPosition && _positionLerp == 0) {
+	Math::Vector3d listenerPosition = getListenerPosition();
+	if (_position != listenerPosition && _positionLerp == 0) {
 		++_positionLerp;
 	}
 
 	if (_positionLerp > 1) {
 		++_positionLerp;
 		if (_positionLerp > 10) {
-			_position = NancySceneState.getSceneSummary().listenerPosition;
+			_position = listenerPosition;
 			_positionLerp = 0;
 		}
 	}
@@ -838,7 +930,7 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 			(chan.playCommands & ~kPlaySequential) & (kPlaySequentialFrameAnchor | kPlayRandomPosition | kPlayMoveLinear)) {
 
 		// Interpolate position when we've changed scenes
-		Math::Vector3d listenerPos = Math::Vector3d::interpolate(_position, NancySceneState.getSceneSummary().listenerPosition, (float)_positionLerp / 10.0);
+		Math::Vector3d listenerPos = Math::Vector3d::interpolate(_position, getListenerPosition(), (float)_positionLerp / 10.0);
 		float dist = listenerPos.getDistanceTo(chan.position);
 		float volume;
 
@@ -900,6 +992,29 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 		_mixer->setChannelBalance(chan.handle, pan * 127);
 		_mixer->setChannelRate(chan.handle, rate);
 	}
+}
+
+Common::String SoundManager::getChannelInfo(uint16 channelID) {
+	Common::String result;
+
+	const auto &chan = _channels[channelID];
+
+	if (isSoundPlaying(channelID)) {
+		result += Common::String::format("Channel %u, filename %s\n", channelID, chan.name.c_str());
+		result += Common::String::format("Source rate %i, playing at %i\n", chan.stream->getRate(), _mixer->getChannelRate(chan.handle));
+		result += Common::String::format("Volume: %u, pan: %i, numLoops: %u\n\n", chan.volume, _mixer->getChannelBalance(chan.handle), chan.numLoops);
+
+		if (chan.playCommands != kPlaySequential) {
+			result += Common::String::format("\tPlay commands 0x%08x\n", chan.playCommands);
+
+			if (chan.effectData) {
+				result += Common::String::format("\tPosition: %f, %f, %f, ", chan.position.x(), chan.position.y(), chan.position.z());
+				result += Common::String::format("delta: %f, %f, %f\n\n", chan.positionDelta.x(), chan.positionDelta.y(), chan.positionDelta.z());
+			}
+		}
+	}
+
+	return result;
 }
 
 } // End of namespace Nancy

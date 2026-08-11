@@ -31,30 +31,4 @@
 
 #define SCUMM_NEED_ALIGNMENT
 
-/* Data types */
-#ifndef SCUMMVM_DONT_DEFINE_TYPES
-typedef unsigned char byte;
-typedef unsigned char uint8;
-typedef signed char int8;
-typedef unsigned short uint16;
-typedef signed short int16;
-typedef unsigned int uint32;
-typedef signed int int32;
-typedef unsigned int uint;
-typedef signed long long int64;
-typedef unsigned long long uint64;
-#endif
-
-#if defined(__x86_64__) || defined(_M_X64) || defined(__ppc64__) || defined(__powerpc64__) || defined(__LP64__) || defined(_M_ARM64)
-
-typedef uint64 uintptr;
-typedef int64 intptr;
-
-#else
-
-typedef uint32 uintptr;
-typedef int32 intptr;
-
-#endif
-
 #endif /* CONFIG_H */

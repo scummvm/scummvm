@@ -33,8 +33,8 @@ namespace Cine {
 
 /** Resets all elements in the object table. */
 void resetObjectTable() {
-	for (Common::Array<ObjectStruct>::iterator it = g_cine->_objectTable.begin(); it != g_cine->_objectTable.end(); ++it) {
-		it->clear();
+	for (auto &obj : g_cine->_objectTable) {
+		obj.clear();
 	}
 }
 
@@ -142,6 +142,10 @@ void addOverlay(uint16 objIdx, uint16 type) {
 	// In Operation Stealth's implementation we might bail out early
 	if (g_cine->getGameType() == Cine::GType_OS && it != g_cine->_overlayList.end() && it->objIdx == objIdx && it->type == type) {
 		return;
+	}
+	
+	if (g_cine->getGameType() == Cine::GType_OS && g_cine->_objectTable[it->objIdx].frame == 22 && scumm_stricmp(currentPrcName, "STARTA.PRC") == 0) {
+		g_cine->sayText("Washington D.C.\nCIA Headquarters", Common::TextToSpeechManager::QUEUE);
 	}
 
 	tmp.objIdx = objIdx;

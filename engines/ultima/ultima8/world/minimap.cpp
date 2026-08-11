@@ -20,6 +20,10 @@
  */
 
 #include "common/stream.h"
+#include "common/file.h"
+
+#include "image/png.h"
+#include "image/bmp.h"
 
 #include "ultima/ultima8/world/minimap.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -87,11 +91,10 @@ uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
 	Point3 end(x, y, -1);
 	int32 dims[3] = {0, 0, 0};
 	uint32 shflags = ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA;
-	Std::list<CurrentMap::SweepItem> collisions;
+	Common::List<CurrentMap::SweepItem> collisions;
 	if (map.sweepTest(start, end, dims, shflags, 0, false, &collisions)) {
-		Std::list<CurrentMap::SweepItem>::const_iterator it;
-		for (it = collisions.begin(); it != collisions.end(); it++) {
-			const Item *item = getItem(it->_item);
+		for (const auto &collision : collisions) {
+			const Item *item = getItem(collision._item);
 			if (item) {
 				const ShapeInfo *si = item->getShapeInfo();
 				if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent())
@@ -320,6 +323,20 @@ void MiniMap::save(Common::WriteStream *ws) const {
 			ws->writeByte(*pixels++);
 		}
 	}
+}
+
+bool MiniMap::dump(const Common::Path &filename) const {
+	Palette *p = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
+	Common::DumpFile dumpFile;
+	bool result = dumpFile.open(filename);
+	if (result) {
+#ifdef USE_PNG
+		result = Image::writePNG(dumpFile, _surface, p->data());
+#else
+		result = Image::writeBMP(dumpFile, _surface, p->data());
+#endif
+	}
+	return result;
 }
 
 } // End of namespace Ultima8

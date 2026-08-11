@@ -323,12 +323,10 @@ void playLongSound(uint32 s) {
 void playVoice(uint32 s) {
 	debugC(1, kDebugSound, "playVoice(%s)", tag2strP(s));
 
-	if (hResCheckResID(voiceRes, s)) {
-		if (s)
-			g_vm->_audio->queueVoice(s, Here);
-		else
-			g_vm->_audio->stopVoice();
-	}
+	if (s && hResCheckResID(voiceRes, s))
+		g_vm->_audio->queueVoice(s, Here);
+	else
+		g_vm->_audio->stopVoice();
 }
 
 //-----------------------------------------------------------------------

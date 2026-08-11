@@ -488,6 +488,12 @@ unzFile unzOpen(Common::SeekableReadStream *stream, bool flattenTree) {
 	if (unzlocal_getShort(us->_stream, &number_entry_CD) != UNZ_OK)
 		err = UNZ_ERRNO;
 
+	if (err != UNZ_OK) {
+		delete us->_stream;
+		delete us;
+		return nullptr;
+	}
+
 	if ((number_entry_CD != us->gi.number_entry) ||
 	    (number_disk_with_CD != 0) ||
 	    (number_disk != 0))
@@ -1090,9 +1096,8 @@ int ZipArchive::listMembers(ArchiveMemberList &list) const {
 	int members = 0;
 
 	const unz_s *const archive = (const unz_s *)_zipFile;
-	for (ZipHash::const_iterator i = archive->_hash.begin(), end = archive->_hash.end();
-	     i != end; ++i) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, *this)));
+	for (const auto &hash : archive->_hash) {
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(hash._key, *this)));
 		++members;
 	}
 

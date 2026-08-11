@@ -89,6 +89,34 @@ bool File::DeleteFile(const String &filename) {
 	return g_system->getSavefileManager()->removeSavefile(file);
 }
 
+bool File::RenameFile(const String &old_name, const String &new_name) {
+	// Only allow renaming files in the savegame folder
+	if (old_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX) || new_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
+		warning("Cannot rename file %s to %s. Only files in the savegame directory can be renamed", old_name.GetCStr(), new_name.GetCStr());
+		return false;
+	}
+	Common::String file_old(old_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	Common::String file_new(new_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	return g_system->getSavefileManager()->renameSavefile(file_old, file_new);
+}
+
+bool File::CopyFile(const String &src_path, const String &dst_path, bool overwrite) {
+	// Only allow copying files to the savegame folder
+	// In theory it should be possible to copy any file to to save folder, but
+	// let's restrict only to files that are already in the save folder for now
+	if (src_path.CompareLeftNoCase(SAVE_FOLDER_PREFIX) || dst_path.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
+		warning("Cannot copy file %s to %s. Source and destination files must be in the savegame directory", src_path.GetCStr(), dst_path.GetCStr());
+		return false;
+	}
+	if (ags_file_exists(dst_path.GetCStr()) && !overwrite) {
+		warning("Cannot copy file %s to %s. File exists", src_path.GetCStr(), dst_path.GetCStr());
+		return false;
+	}
+	Common::String file_src(src_path.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	Common::String file_dest(dst_path.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	return g_system->getSavefileManager()->copySavefile(file_src, file_dest);
+}
+
 bool File::GetFileModesFromCMode(const String &cmode, FileOpenMode &open_mode, FileWorkMode &work_mode) {
 	// We do not test for 'b' and 't' here, because text mode reading/writing should be done with
 	// the use of ITextReader and ITextWriter implementations.
@@ -172,93 +200,11 @@ Stream *File::OpenStderr() {
 }
 
 String File::FindFileCI(const String &dir_name, const String &file_name) {
-#if !defined (AGS_CASE_SENSITIVE_FILESYSTEM)
-	// Simply concat dir and filename paths
 	return Path::ConcatPaths(dir_name, file_name);
-#else
-	// Case insensitive file find - on case sensitive filesystems
-	//
-	// TODO: still not covered: a situation when the file_name contains
-	// nested path -and- the case of at least one path parts does not match
-	// (with all matching case the file will be found by an early check).
-	//
-	struct stat   statbuf;
-	struct dirent *entry = nullptr;
-
-	if (dir_name.IsEmpty() && file_name.IsEmpty())
-		return nullptr;
-
-	String directory;
-	String filename;
-	String buf;
-
-	if (!dir_name.IsEmpty()) {
-		directory = dir_name;
-		Path::FixupPath(directory);
-	}
-	if (!file_name.IsEmpty()) {
-		filename = file_name;
-		Path::FixupPath(filename);
-	}
-
-	if (!filename.IsEmpty()) {
-		// TODO: move this case to ConcatPaths too?
-		if (directory.IsEmpty() && filename[0] == '/')
-			buf = filename;
-		else
-			buf = Path::ConcatPaths(directory.IsEmpty() ? "." : directory, filename);
-
-		if (lstat(buf.GetCStr(), &statbuf) == 0 &&
-			(S_ISREG(statbuf.st_mode) || S_ISLNK(statbuf.st_mode))) {
-			return buf;
-		}
-	}
-
-	if (directory.IsEmpty()) {
-		String match = Path::GetFilename(filename);
-		if (match.IsEmpty())
-			return nullptr;
-		directory = Path::GetParent(filename);
-		filename = match;
-	}
-
-	DIR *rough = nullptr;
-	if ((rough = opendir(directory.GetCStr())) == nullptr) {
-		fprintf(stderr, "ci_find_file: cannot open directory: %s\n", directory.GetCStr());
-		return nullptr;
-	}
-
-	String diamond;
-	while ((entry = readdir(rough)) != nullptr) {
-		if (strcasecmp(filename.GetCStr(), entry->d_name) == 0) {
-			if (lstat(entry->d_name, &statbuf) == 0 &&
-				(S_ISREG(statbuf.st_mode) || S_ISLNK(statbuf.st_mode))) {
-#if AGS_PLATFORM_DEBUG
-				fprintf(stderr, "ci_find_file: Looked for %s in rough %s, found diamond %s.\n",
-					filename.GetCStr(), directory.GetCStr(), entry->d_name);
-#endif // AGS_PLATFORM_DEBUG
-				diamond = Path::ConcatPaths(directory, entry->d_name);
-				break;
-			}
-		}
-	}
-	closedir(rough);
-	return diamond;
-#endif
 }
 
 Stream *File::OpenFileCI(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode) {
-#if !defined (AGS_CASE_SENSITIVE_FILESYSTEM)
 	return File::OpenFile(file_name, open_mode, work_mode);
-#else
-	String fullpath = FindFileCI(nullptr, file_name);
-	if (!fullpath.IsEmpty())
-		return File::OpenFile(fullpath, open_mode, work_mode);
-	// If the file was not found, and it's Create mode, then open new file
-	if (open_mode != kFile_Open)
-		return File::OpenFile(file_name, open_mode, work_mode);
-	return nullptr;
-#endif
 }
 
 Stream *File::OpenFile(const String &filename, soff_t start_off, soff_t end_off) {

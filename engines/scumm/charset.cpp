@@ -59,6 +59,10 @@ void ScummEngine::loadCJKFont() {
 
 	_useMultiFont = false;	// Korean Multi-Font
 
+	// Sega CD Rebel Assault uses its SMUSH subtitle font.
+	if (_game.id == GID_REBEL1 && _game.platform == Common::kPlatformSegaCD)
+		return;
+
 	// Special case for Korean
 	if (isScummvmKorTarget()) {
 		loadKorFont();
@@ -112,7 +116,12 @@ void ScummEngine::loadCJKFont() {
 			numChar = 2350;
 			break;
 		case Common::JA_JPN:
-			fontFile = (_game.id == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
+			if (_game.id == GID_DIG)
+				fontFile = "kanji16.fnt";
+			else if (_game.id == GID_REBEL2)
+				fontFile = "LAUNCH/KANJI.FNT";
+			else
+				fontFile = "japanese.fnt";
 			numChar = 8192;
 			break;
 		case Common::ZH_TWN:
@@ -466,7 +475,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
 	bool isV3Towns = _vm->_game.version == 3 && _vm->_game.platform == Common::kPlatformFMTowns;
 
-	// I have confirmed from disasm that neither LOOM EGA and FM-TOWNS (EN/JP) nor any other games withing the
+	// I have confirmed from disasm that neither LOOM EGA and FM-TOWNS (EN/JP) nor any other games within the
 	// v0-v3 version range add 1 to the width. There isn't even a getStringWidth method. And the v0-2 games don't
 	// even support text rendering over strip borders. However, LOOM VGA Talkie and MONKEY1 EGA do have the
 	// getStringWidth method and they do add 1 to the width. So that seems to have been introduced with version 4.
@@ -747,6 +756,7 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 	byte *dst4 = dst - dest.pitch;
 	byte prevBits = 0;
 	bool leftShadePixel = false;
+	int savedX = x;
 
 	for (y = 0; y < height && y + drawTop < dest.h; y++) {
 		for (x = 0; x < width; x++) {
@@ -775,7 +785,13 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 					if (prevBits & revBitMask(x % 8))
 						dst4[0] = _shadowColor;
 				}
-				dst[0] = col;
+
+				// Since C64 texts are moved one pixel forward in the X axis, let's avoid
+				// any out-of-line pixel drawing...
+				if (_vm->_game.platform != Common::kPlatformC64 || (savedX + x < dest.pitch)) {
+					dst[0] = col;
+				}
+
 			} else if (!(bits & revBitMask(x % 8))) {
 				leftShadePixel = true;
 				if (y < height - 1 && _vm->_useCJKMode && _vm->_game.platform == Common::kPlatformSegaCD)
@@ -875,8 +891,8 @@ void CharsetRendererV3::setColor(byte color, bool shadowModeSpecialFlag) {
 		mode = (_color & 0x40) ? (shadowModeSpecialFlag ? kNoShadowType : kOutlineShadowType) : ((_color & 0x80) ? kNormalShadowType : kNoShadowType);
 		_color &= 0x0f;
 	} else if (_vm->_game.version >= 2 && (_vm->_game.features & GF_16COLOR)) {
-		if ((_color & 0xF0) != 0)
-			mode = kNormalShadowType;
+		mode = (_color & 0x80) ? kNormalShadowType : kNoShadowType;
+		_color &= 0x0f;
 	}
 
 	setShadowMode(mode);
@@ -1049,6 +1065,13 @@ void CharsetRenderer::saveLoadWithSerializer(Common::Serializer &ser) {
 	ser.syncAsByte(_color, VER(73));
 
 	if (ser.isLoading()) {
+		// Some old v0.13.x saves have bogus values, for some reason (see
+		// bug #15931). When detecting such weird values made before the
+		// v1.0.0 release (VER(80)) that followed it, reinitialize the id
+		// using a, hopefully, sane value.
+		if (ser.getVersion() < VER(80) && _curId > _vm->_numCharsets - 1)
+			_curId = _vm->_string[0]._default.charset;
+
 		setCurID(_curId);
 		setColor(_color);
 	}
@@ -1258,7 +1281,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
 			dstSurface = _vm->_textSurface;
-			dstPtr = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop - _vm->_screenDrawOffset) * _vm->_textSurfaceMultiplier);
+			dstPtr = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier);
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {
@@ -1269,7 +1292,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		}
 
 		if (!ignoreCharsetMask && vs->hasTwoBuffers) {
-			drawTop = _top - _vm->_screenTop - _vm->_screenDrawOffset;
+			drawTop = _top - _vm->_screenTop;
 		}
 
 		if (is2byte && _vm->_game.platform != Common::kPlatformFMTowns)
@@ -1680,7 +1703,7 @@ CharsetRendererMac::~CharsetRendererMac() {
 }
 
 void CharsetRendererMac::setCurID(int32 id) {
-	if  (id == -1)
+	if (id == -1)
 		return;
 
 	// This should only happen, if it happens at all, with older savegames.
@@ -1737,7 +1760,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// If this is the beginning of a line, assume the position will be
 	// correct without any padding.
 
-	if (_firstChar || (_top - _vm->_screenDrawOffset) != _lastTop) {
+	if (_firstChar || _top != _lastTop) {
 		_pad = false;
 	}
 
@@ -1794,7 +1817,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	bool drawToTextBox = (vs->number == kTextVirtScreen && _vm->_game.id == GID_INDY3);
 
 	if (drawToTextBox)
-		_vm->_macGui->printCharToTextArea(chr, macLeft, macTop - 2 * (_vm->_screenDrawOffset), color);
+		_vm->_macGui->printCharToTextArea(chr, macLeft, macTop, color);
 	else
 		printCharInternal(chr, color, enableShadow, macLeft, macTop);
 
@@ -1874,7 +1897,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		_pad = true;
 
 	_left = macLeft / 2;
-	_lastTop = _top - _vm->_screenDrawOffset;
+	_lastTop = _top;
 }
 
 byte CharsetRendererMac::getTextColor() {
@@ -1920,16 +1943,16 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			_font->drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
 
 			if (color != -1) {
-				_font->drawChar(_vm->_macScreen, chr, x + 1, y - 1, shadowColor);
-				_font->drawChar(_vm->_macScreen, chr, x - 1, y + 1, shadowColor);
-				_font->drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x + 1, y - 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x - 1, y + 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x + 2, y + 2 + 2 * _vm->_macScreenDrawOffset, shadowColor);
 			}
 		} else {
 			// Indy 3 uses simpler shadowing, and doesn't need the
 			// "draw only on text surface" hack.
 
 			_font->drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
-			_font->drawChar(_vm->_macScreen, chr, x + 1, y + 1, shadowColor);
+			_font->drawChar(_vm->_macScreen, chr, x + 1, y + 1 + 2 * _vm->_macScreenDrawOffset, shadowColor);
 		}
 	}
 
@@ -1946,14 +1969,14 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 				for (int x0 = 0; x0 < _glyphSurface->w; x0++) {
 					if (_glyphSurface->getPixel(x0, y0)) {
 						int x1 = x + x0;
-						int y1 = y + y0;
+						int y1 = y + y0 + 2 * _vm->_macScreenDrawOffset;
 
 						_vm->_macScreen->setPixel(x1, y1, ((x1 + y1) & 1) ? 0 : 15);
 					}
 				}
 			}
 		} else {
-			_font->drawChar(_vm->_macScreen, chr, x, y, color);
+			_font->drawChar(_vm->_macScreen, chr, x, y + 2 * _vm->_macScreenDrawOffset, color);
 		}
 	}
 }
@@ -2076,6 +2099,7 @@ void CharsetRendererNut::setCurID(int32 id) {
 
 	int numFonts = ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO)) ? 4 : 5;
 	assert(id < numFonts);
+	(void)numFonts;
 	_curId = id;
 	if (!_fr[id]) {
 		char fontname[11];
@@ -2154,8 +2178,8 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 	}
 
 	int drawTop = _top - vs->topline;
-
-	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
+	int offset = vs->number == kTextVirtScreen ? 16 : 0;
+	_vm->markRectAsDirty(vs->number, _left + offset, _left + width + offset, drawTop, drawTop + height);
 
 	if (!ignoreCharsetMask) {
 		_hasMask = true;
@@ -2163,9 +2187,9 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 	}
 
 	if (ignoreCharsetMask || !vs->hasTwoBuffers)
-		drawBits1(*vs, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(*vs, _left + vs->xstart + offset, drawTop, charPtr, drawTop, origWidth, origHeight);
 	else
-		drawBits1(_vm->_textSurface, _left, _top, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(_vm->_textSurface, _left + offset, _top, charPtr, drawTop, origWidth, origHeight);
 
 	if (_str.left > _left)
 		_str.left = _left;

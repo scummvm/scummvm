@@ -56,6 +56,7 @@ const char *gameDataEn[] =  {
 	"The coat of arms$",
 	"$",
 	"Max, the servant, welcomes you and shows you to your room$",
+	// FIXME: Spelling incorrect. apropriate should be appropriate. Fixing changes game data and thus may cause issues
 	"Mortville     6/2/51@         My dear Jerome@Regarding my telegram, I must tell  you  the reason for my wor-@ries. A year ago, Murielle, my lady companion, disappeared. The de@part may have had something to do@with the financial success of themanor, or... A silence hard to un@derstand for my son Guy.  Not  ha@ving been able to see the  light of day over this affair, I count @on you to sort things out. If my state of health doesn't improve, @take the decisions that you feel @are apropriate.@             Kind regards, Julia DEFRANCK$",
 	"Later, Guy will inform you of Leo's suicide after a@heavy bet at the races$",
 	"F3: AGAIN             F8: STOP$",

@@ -39,6 +39,8 @@ enum CineGameFeatures {
 };
 
 struct CINEGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameType;
@@ -47,6 +49,7 @@ struct CINEGameDescription {
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD   GUIO_GAMEOPTIONS1
 #define GAMEOPTION_TRANSPARENT_DIALOG_BOXES   GUIO_GAMEOPTIONS2
+#define GAMEOPTION_TTS                 GUIO_GAMEOPTIONS3
 
 } // End of namespace Cine
 

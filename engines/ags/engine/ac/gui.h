@@ -75,14 +75,14 @@ void    update_gui_zorder();
 void    export_gui_controls(int ee);
 void    unexport_gui_controls(int ee);
 void    update_gui_disabled_status();
-int     adjust_x_for_guis(int xx, int yy);
-int     adjust_y_for_guis(int yy);
+int     adjust_x_for_guis(int x, int y, bool assume_blocking = false);
+int     adjust_y_for_guis(int y, bool assume_blocking = false);
 
 int     gui_get_interactable(int x, int y);
-int     gui_on_mouse_move();
+int     gui_on_mouse_move(const int mx, const int my);
 void    gui_on_mouse_hold(const int wasongui, const int wasbutdown);
-void    gui_on_mouse_up(const int wasongui, const int wasbutdown);
-void    gui_on_mouse_down(const int guin, const int mbut);
+void    gui_on_mouse_up(const int wasongui, const int wasbutdown, const int mx, const int my);
+void    gui_on_mouse_down(const int guin, const int mbut, const int mx, const int my);
 
 } // namespace AGS3
 

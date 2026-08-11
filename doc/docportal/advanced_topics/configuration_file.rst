@@ -97,9 +97,9 @@ Example of a configuration file
 Default configuration file option
 =====================================
 
-An initial (default) configuration file can be specified via the :doc:`command line <../advanced_topics/command_line>` using the ``--i`` or ``--initial-cfg`` option. ScummVM uses this default file if the configuration file is missing from its usual location, such as after initial install, or if the user deletes their configuration file. 
+An initial (default) configuration file can be specified via the :doc:`command line <../advanced_topics/command_line>` using the ``--i`` or ``--initial-cfg`` option. ScummVM uses this default file if the configuration file is missing from its usual location, such as after initial install, or if the user deletes their configuration file.
 
-Setting an initial configuration file in this way allows default settings to easily be bundled with a game. The alternatives are to use the command line for all settings, which has fewer options and in some cases means the user can't change settings, or to install a default configuration file to a writable location and using the ``--config`` option, which is harder to deploy, and leaves the user with no way to restore default settings except re-installing the game. 
+Setting an initial configuration file in this way allows default settings to easily be bundled with a game. The alternatives are to use the command line for all settings, which has fewer options and in some cases means the user can't change settings, or to install a default configuration file to a writable location and using the ``--config`` option, which is harder to deploy, and leaves the user with no way to restore default settings except re-installing the game.
 
 
 .. _configuration_keys:
@@ -107,7 +107,7 @@ Setting an initial configuration file in this way allows default settings to eas
 Configuration keys
 =====================
 
-There are many recognized configuration keys. In the table below, each key is either linked to an explanatory description in the Settings pages, or has further information in the **Decription/Options** column.
+There are many recognized configuration keys. In the table below, each key is either linked to an explanatory description in the Settings pages, or has further information in the **Description/Options** column.
 
 .. csv-table::
   	:header-rows: 1
@@ -184,6 +184,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`enable_video_upscale <upscale>`",boolean,true,
 		":ref:`enable_tts <ttsenabled>`",boolean,false,
 		enable_unsupported_game_warning,boolean,true, Shows a warning when adding a game that is unsupported.
+		enable_unsupported_addon_warning,boolean,true, Shows a warning when starting a game including an add-on that is unsupported.
 		":ref:`extended_timer <extended>`",boolean,false,
 		extra,string, ,"Shows additional information about a game, such as version"
 		":ref:`english_speech <english>`",boolean,false,
@@ -219,6 +220,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`font_override <fontoverride>`",boolean,false,
 		":ref:`footsteps <footsteps>`",boolean,true,
 		":ref:`force_2d_renderer <2d>`",boolean,false,
+		forced_dpi_scaling,integer,,"Overrides DPI scaling factor reported by the system."
 		":ref:`frameLimit <framelimit>`",boolean,true,
 		":ref:`frameSkip <frameskip>`",boolean,false,
 		":ref:`frames_per_secondfl <fpsfl>`",boolean,false,
@@ -249,7 +251,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- timidity"
 		":ref:`gui_browser_native <guibrowser>`", boolean, true
 		gui_browser_show_hidden,boolean,false, Shows hidden files/folders in the ScummVM file browser.
-		gui_list_max_scan_entries,integer,-1, "Specifies the threshold for scanning directories in the Launcher. If the number of game entires exceeds the specified number, then scanning is skipped."
+		gui_list_max_scan_entries,integer,-1, "Specifies the threshold for scanning directories in the Launcher. If the number of game entries exceeds the specified number, then scanning is skipped."
 		":ref:`gui_return_to_launcher_at_exit <guireturn>`",boolean,false,
 		gui_saveload_chooser,string,grid,"- list
 	- grid"
@@ -394,7 +396,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- 44100"
 		":ref:`palette_mods <palette>`",boolean,false,
 		":ref:`platform <platform>`",string,,
-		":ref:`portaits_on <portraits>`",boolean,true,
+		":ref:`portraits_on <portraits>`",boolean,true,
 		":ref:`prefer_digitalsfx <dsfx>`",boolean,true,
 		":ref:`prerecorded_sounds <prerecorded>`",boolean,true,
 		":ref:`renderer <renderer>`",string,default,"

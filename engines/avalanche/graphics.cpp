@@ -27,10 +27,11 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/graphics.h"
 
-#include "common/math.h"
 #include "common/system.h"
+#include "common/random.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
+#include "math/utils.h"
 
 namespace Avalanche {
 
@@ -163,7 +164,7 @@ void GraphicManager::loadMouse(byte which) {
 	mask.free();
 	f.close();
 
-	CursorMan.replaceCursor(cursor, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
+	CursorMan.replaceCursor(cursor, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255);
 	cursor.free();
 }
 
@@ -208,7 +209,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	if (yRadius == 0)
 		yRadius++;
 
-	// Check for an ellipse with negligable x and y radius.
+	// Check for an ellipse with negligible x and y radius.
 	if ((xRadius <= 1) && (yRadius <= 1)) {
 		*(byte *)_scrolls.getBasePtr(x, y) = color;
 		endPoint.x = x;
@@ -242,7 +243,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	uint16 deltaEnd = 91;
 
 	// Set the end point.
-	float tempTerm = Common::deg2rad<float>(endAngle);
+	float tempTerm = Math::deg2rad<float>(endAngle);
 	endPoint.x = (int16)floor(xRadius * cos(tempTerm) + 0.5) + x;
 	endPoint.y = (int16)floor(yRadius * sin(tempTerm + M_PI) + 0.5) + y;
 
@@ -253,7 +254,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 		int16 xTemp = xNext;
 		int16 yTemp = yNext;
 		// This is used by both sin and cos.
-		tempTerm = Common::deg2rad<float>(j + delta);
+		tempTerm = Math::deg2rad<float>(j + delta);
 
 		xNext = (int16)floor(xRadius * cos(tempTerm) + 0.5);
 		yNext = (int16)floor(yRadius * sin(tempTerm + M_PI) + 0.5);
@@ -335,7 +336,7 @@ void GraphicManager::drawTriangle(Common::Point *p, Color color) {
 	_scrolls.drawLine(p[2].x, p[2].y, p[0].x, p[0].y, color);
 }
 
-void GraphicManager::drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
@@ -348,14 +349,14 @@ void GraphicManager::drawText(Graphics::Surface &surface, const Common::String t
 	}
 }
 
-void GraphicManager::drawNormalText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawNormalText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_surface, text, font, fontHeight, x, y, color);
 }
 
 /**
  * Draws text double the size of the normal.
  */
-void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	for (uint i = 0; i < text.size(); i++) {
 		for (int j = 0; j < fontHeight; j++) {
 			byte pixel = font[(byte)text[i]][j];
@@ -371,7 +372,7 @@ void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::Strin
 	}
 }
 
-void GraphicManager::drawScrollText(const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+void GraphicManager::drawScrollText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_scrolls, text, font, fontHeight, x, y, color);
 }
 
@@ -621,11 +622,11 @@ void GraphicManager::ghostDrawBackgroundItems(Common::File &file) {
 		int height = cb._height + 1;
 
 		Graphics::Surface picture;
-		picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 		// Load the picture according to it's type.
 		switch (cb._flavour) {
 		case kFlavourOne: // There is only one plane.
+			picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 			for (uint16 y = 0; y < height; y++) {
 				for (uint16 x = 0; x < width; x += 8) {
 					byte pixel = file.readByte();
@@ -640,6 +641,7 @@ void GraphicManager::ghostDrawBackgroundItems(Common::File &file) {
 			picture = loadPictureRaw(file, width, height);
 			break;
 		default:
+			picture.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 			break;
 		}
 
@@ -695,7 +697,7 @@ void GraphicManager::helpDrawHighlight(byte which, Color color) {
 	drawRectangle(Common::Rect(466, 38 + which * 27, 556, 63 + which * 27), color);
 }
 
-void GraphicManager::helpDrawBigText(const Common::String text, int16 x, int16 y, Color color) {
+void GraphicManager::helpDrawBigText(const Common::String &text, int16 x, int16 y, Color color) {
 	drawBigText(_surface, text, _vm->_font, 8, x, y, color);
 }
 
@@ -871,13 +873,6 @@ void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::
 	drawBigText(_menu, text, font, 14, x, y, color);
 }
 
-void GraphicManager::menuDrawIndicator(int x) { // TODO: Implement striped pattern for the indicator.
-	if (x > 0)
-		_menu.fillRect(Common::Rect(x - 1, 330, x, 337), kColorBlack);
-	_menu.fillRect(Common::Rect(x, 330, x + 1, 337), kColorWhite);
-	menuRefreshScreen();
-}
-
 /**
  * This function is for skipping the difference between a stored 'size' value associated with a picture
  * and the actual size of the pictures  when reading them from files for Ghostroom and Shoot em' up.
@@ -996,6 +991,53 @@ void GraphicManager::drawWinningPic() {
 	file.close();
 }
 
+void GraphicManager::drawQuittingPic() {
+	// Nag screen text "joke".
+    static const char *nouns[] = {
+		"sackbut", "harpsichord", "camel", "conscience", "ice-cream", "serf",
+		"abacus", "castle", "carrots", "megaphone", "manticore", "drawbridge"
+	};
+
+	static const char *verbs[] = {
+		"haunt", "daunt", "tickle", "gobble", "erase", "provoke", "surprise",
+		"ignore", "stare at", "shriek at", "frighten", "quieten"
+	};
+
+	Common::String result = Common::String(nouns[_vm->_rnd->getRandomNumber(11)]) + " will " + Common::String(verbs[_vm->_rnd->getRandomNumber(11)]) + " you.";
+
+	Common::File file;
+	Common::Path filename("text3.scr");
+
+	if (!file.open(filename))
+		error("AVALANCHE: Timer: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
+
+	uint32 fileSize = file.size();
+	byte *buffer = new byte[fileSize];
+	file.read(buffer, fileSize);
+	file.close();
+
+	// Write the joke string at position 1628 (from source code)
+	// Side note: I added 2 because there was no space between the first word of the joke and last letter of the original file
+	// Each cell is 2 bytes: char, attribute 
+	for (uint i = 0; i < result.size(); i++) {
+		buffer[1628 * 2 + i * 2 + 2] = (byte)result[i];
+		// skip attribute byte
+	}
+
+	// The text3.scr file is DOS text-mode screen dump, 80 x 24
+	for (int i = 0; i < 24; i++) {
+		for (int j = 0; j < 80; j++) {
+			byte pixel = buffer[(i * 80 + j) * 2];
+			byte colorByte = buffer[(i * 80 + j) * 2 + 1];
+
+			for (int row = 0; row < 8; row++) {
+				byte rowPixel = _vm->_font[pixel][row];
+				drawChar(rowPixel, 8 * j, 8 * i + row, (Color)colorByte);
+			}
+		}
+	}
+}
+
 void GraphicManager::clearAlso() {
 	_magics.fillRect(Common::Rect(0, 0, 640, 200), 0);
 	_magics.frameRect(Common::Rect(0, 45, 640, 161), 15);
@@ -1058,7 +1100,7 @@ void GraphicManager::drawSprite(AnimationType *sprite, byte picnum, int16 x, int
 	}
 }
 
-void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surface picture, uint16 destX, uint16 destY) {
+void GraphicManager::drawPicture(Graphics::Surface &target, const Graphics::Surface &picture, uint16 destX, uint16 destY) {
 	// Copy the picture to the given place on the screen.
 	uint16 maxX = picture.w;
 	uint16 maxY = picture.h;
@@ -1179,6 +1221,7 @@ void GraphicManager::drawChar(byte ander, int x, int y, Color color) {
 			*(byte *)_surface.getBasePtr(x + 7 - bit, y) = color;
 	}
 }
+
 void GraphicManager::refreshScreen() {
 	// These cycles are for doubling the screen height.
 	for (uint16 y = 0; y < _screen.h / 2; y++) {

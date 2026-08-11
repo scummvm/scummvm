@@ -19,6 +19,8 @@
  *
  */
 
+#include "ultima/ultima8/world/actors/pathfinder.h"
+
 #include "common/system.h"
 #include "ultima/ultima.h"
 #include "ultima/ultima8/misc/direction_util.h"
@@ -125,9 +127,8 @@ Pathfinder::~Pathfinder() {
 		_cleanupNodes.size(), _visited.size(), expandednodes, _expandTime);
 
 	// clean up _nodes
-	Std::vector<PathNode *>::iterator iter;
-	for (iter = _cleanupNodes.begin(); iter != _cleanupNodes.end(); ++iter)
-		delete *iter;
+	for (auto *node : _cleanupNodes)
+		delete node;
 	_cleanupNodes.clear();
 }
 
@@ -166,7 +167,7 @@ void Pathfinder::setTarget(Item *item, bool hit) {
 }
 
 bool Pathfinder::canReach() {
-	Std::vector<PathfindingAction> path;
+	Common::Array<PathfindingAction> path;
 	return pathfind(path);
 }
 
@@ -179,9 +180,8 @@ bool Pathfinder::alreadyVisited(const Point3 &pt) const {
 	//
 	// Linear search of an array is just as fast, or slightly faster.
 	//
-	Common::Array<PathfindingState>::const_iterator iter;
-	for (iter = _visited.begin(); iter != _visited.end(); iter++) {
-		if (iter->checkPoint(pt, 8*8))
+	for (const auto &i : _visited) {
+		if (i.checkPoint(pt, 8*8))
 			return true;
 	}
 
@@ -493,7 +493,7 @@ void Pathfinder::expandNode(PathNode *node) {
 	}
 }
 
-bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
+bool Pathfinder::pathfind(Common::Array<PathfindingAction> &path) {
 	if (_targetItem) {
 		debugC(kDebugPath, "Actor %u pathfinding to item %u", _actor->getObjId(), _targetItem->getObjId());
 		debugC(kDebugPath, "Target Item: %s", _targetItem->dumpInfo().c_str());

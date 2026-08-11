@@ -27,6 +27,53 @@
 
 namespace Common {
 
+static Common::String convertEntities(const Common::String &escaped) {
+	const char *begin = escaped.c_str();
+	const char *nextAmp = strchr(begin, '&');
+	if (!nextAmp) {
+		return escaped;
+	}
+
+	Common::String result;
+	while (nextAmp) {
+		result.append(begin, nextAmp);
+
+		const char *p = nextAmp + 1;
+		while (*p && *p != ';') {
+			p++;
+		}
+		if (!*p) {
+			// Unfinished entity: paste what we got
+			result.append(nextAmp, p);
+			return result;
+		}
+
+		// TODO: implement &#....; form if needed
+
+		Common::String entity(nextAmp + 1, p);
+		if (entity == "quot") {
+			result.append(1, '"');
+		} else if (entity == "apos") {
+			result.append(1, '\'');
+		} else if (entity == "amp") {
+			result.append(1, '&');
+		} else if (entity == "lt") {
+			result.append(1, '<');
+		} else if (entity == "gt") {
+			result.append(1, '>');
+		} else {
+			// Unknown entity: paste it
+			result.append(nextAmp, p + 1);
+		}
+
+		begin = p + 1;
+		nextAmp = strchr(begin, '&');
+	}
+
+	result.append(begin);
+	return result;
+}
+
 XMLParser::~XMLParser() {
 	while (!_activeKey.empty())
 		freeNode(_activeKey.pop());
@@ -34,9 +81,8 @@ XMLParser::~XMLParser() {
 	delete _XMLkeys;
 	delete _stream;
 
-	for (List<XMLKeyLayout *>::iterator i = _layoutList.begin();
-		i != _layoutList.end(); ++i)
-		delete *i;
+	for (auto *layout : _layoutList)
+		delete layout;
 
 	_layoutList.clear();
 }
@@ -65,9 +111,9 @@ bool XMLParser::loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Fla
 	return true;
 }
 
-bool XMLParser::loadStream(SeekableReadStream *stream) {
+bool XMLParser::loadStream(SeekableReadStream *stream, const String &name) {
 	_stream = stream;
-	_fileName = "File Stream";
+	_fileName = name;
 	return _stream != nullptr;
 }
 
@@ -171,12 +217,12 @@ bool XMLParser::parseActiveKey(bool closed) {
 		StringMap localMap = key->values;
 		int keyCount = localMap.size();
 
-		for (List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
-			if (i->required && !localMap.contains(i->name))
-				return parserError("Missing required property '" + i->name + "' inside key '" + key->name + "'");
-			else if (localMap.contains(i->name)) {
+		for (const auto &prop : key->layout->properties) {
+			if (prop.required && !localMap.contains(prop.name))
+				return parserError("Missing required property '" + prop.name + "' inside key '" + key->name + "'");
+			else if (localMap.contains(prop.name)) {
 				keyCount--;
-				localMap.erase(i->name);
+				localMap.erase(prop.name);
 			}
 		}
 
@@ -245,7 +291,7 @@ bool XMLParser::parseKeyValue(String keyName) {
 		return false;
 	}
 
-	_activeKey.top()->values[keyName] = _token;
+	_activeKey.top()->values[keyName] = convertEntities(_token);
 	return true;
 }
 
@@ -352,6 +398,7 @@ bool XMLParser::parse() {
 						parserError("Unexpected end of file.");
 						break;
 					}
+					text = convertEntities(text);
 					if (!textCallback(text)) {
 						parserError("Failed to process text segment.");
 						break;

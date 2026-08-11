@@ -68,7 +68,7 @@ struct KernelPal_Globals {
 	RGB8 *_picPal = nullptr;
 	int32 _seriesHash = 0;
 	machine *_seriesAnim8 = nullptr;
-	uint8 _translation[32];		// Only 32 greys in ramp
+	uint8 _translation[64];
 
 	int32 _colorAreaX1 = -1;
 	int32 _colorAreaY1 = -1;
@@ -118,12 +118,16 @@ void pal_fx_update();
  */
 void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, int32 lastPalEntry, bool transparent);
 
+void kernel_examine_inventory_object(const char *picName, RGB8 *pal,
+	int steps, int delay, int32 x, int32 y, int32 trigger,
+	const char *digiName, int32 digiTrigger);
+
 void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay);
 
 void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, int32 y2);
 void krn_SetGreyVideoMode(int32 grey_x1, int32 grey_y1, int32 grey_x2, int32 grey_y2, int32 color_x1, int32 color_y1, int32 color_x2, int32 color_y2);
-void krn_UnsetGreyVideoMode(void);
-bool krn_GetGreyMode(void);
+void krn_UnsetGreyVideoMode();
+bool krn_GetGreyMode();
 void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY,
 	int32 greyX1, int32 greyY1, int32 greyX2, int32 greyY2);
 void krn_ChangeBufferLuminance(Buffer *target, int32 percent);

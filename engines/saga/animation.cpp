@@ -703,7 +703,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 		int curY = 0, curX = 0;
 		unsigned realY = 0;
 		unsigned outbit = 0;
-		// TODO: Check if we want to use tempaltes instead to optimize AGA case
+		// TODO: Check if we want to use templates instead to optimize AGA case
 		unsigned int pixelSize = _vm->isAGA() ? 8 : 5;
 		while (1) {
 			markByte = readS.readByte();

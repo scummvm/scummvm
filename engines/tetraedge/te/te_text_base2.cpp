@@ -97,7 +97,7 @@ void TeTextBase2::build() {
 
 	TeImage img;
 	Common::SharedPtr<TePalette> nullpal;
-	img.createImg(_size._x, _size._y, nullpal, TeImage::RGBA8);
+	img.createImg(_size._x, _size._y, nullpal, Graphics::PixelFormat::createFormatRGBA32());
 	// fill with global color, alpha 0 so that the font anti-aliasing blends
 	// to the right color (see eg, the cellphone display)
 	img.fill(_globalColor.r(), _globalColor.g(), _globalColor.b(), 0);

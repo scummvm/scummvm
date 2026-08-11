@@ -37,6 +37,7 @@
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -55,7 +56,7 @@ AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 	_font = nullptr;
 
 	_pos.x = _pos.y = 0;
-	_width = _gameRef->_renderer->getWidth();
+	_width = _game->_renderer->getWidth();
 
 	_align = (TTextAlign)TAL_CENTER;
 
@@ -72,16 +73,11 @@ AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdSentence::~AdSentence() {
-	delete _sound;
-	delete[] _text;
-	delete[] _stances;
-	delete[] _tempStance;
-	delete _talkDef;
-	_sound = nullptr;
-	_text = nullptr;
-	_stances = nullptr;
-	_tempStance = nullptr;
-	_talkDef = nullptr;
+	SAFE_DELETE(_sound);
+	SAFE_DELETE_ARRAY(_text);
+	SAFE_DELETE_ARRAY(_stances);
+	SAFE_DELETE_ARRAY(_tempStance);
+	SAFE_DELETE(_talkDef);
 
 	_currentSprite = nullptr; // ref only
 	_currentSkelAnim = nullptr;
@@ -126,7 +122,7 @@ char *AdSentence::getNextStance() {
 
 //////////////////////////////////////////////////////////////////////////
 char *AdSentence::getStance(int stance) {
-	if (_stances == nullptr) {
+	if (_stances == nullptr || !_stances[0]) {
 		return nullptr;
 	}
 
@@ -178,7 +174,8 @@ char *AdSentence::getStance(int stance) {
 
 	_tempStance = new char [curr - start + 1];
 	if (_tempStance) {
-		Common::strlcpy(_tempStance, start, curr - start + 1);
+        _tempStance[curr - start] = '\0';
+		Common::strlcpy(_tempStance, start, curr - start);
 	}
 
 	return _tempStance;
@@ -196,18 +193,18 @@ bool AdSentence::display() {
 		_soundStarted = true;
 	}
 
-	if (_gameRef->_subtitles) {
+	if (_game->_subtitles) {
 		int32 x = _pos.x;
 		int32 y = _pos.y;
 
 		if (!_fixedPos) {
-			x = x - ((AdGame *)_gameRef)->_scene->getOffsetLeft();
-			y = y - ((AdGame *)_gameRef)->_scene->getOffsetTop();
+			x = x - ((AdGame *)_game)->_scene->getOffsetLeft();
+			y = y - ((AdGame *)_game)->_scene->getOffsetTop();
 		}
 
 
 		x = MAX<int32>(x, 0);
-		x = MIN(x, _gameRef->_renderer->getWidth() - _width);
+		x = MIN(x, _game->_renderer->getWidth() - _width);
 		y = MAX<int32>(y, 0);
 
 		_font->drawText((byte *)_text, x, y, _width, _align);
@@ -222,7 +219,7 @@ void AdSentence::setSound(BaseSound *sound) {
 	if (!sound) {
 		return;
 	}
-	delete _sound;
+	SAFE_DELETE(_sound);
 	_sound = sound;
 	_soundStarted = false;
 }
@@ -240,7 +237,7 @@ bool AdSentence::finish() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
 	persistMgr->transferSint32(TMEMBER_INT(_align));
 	persistMgr->transferSint32(TMEMBER(_currentStance));
@@ -266,8 +263,7 @@ bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::setupTalkFile(const char *soundFilename) {
-	delete _talkDef;
-	_talkDef = nullptr;
+	SAFE_DELETE(_talkDef);
 	_currentSprite = nullptr;
 
 	if (!soundFilename) {
@@ -280,17 +276,16 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 
 	AnsiString talkDefFileName = PathUtil::combine(path, name + ".talk");
 
-	if (!BaseFileManager::getEngineInstance()->hasFile(talkDefFileName)) {
+	if (!_game->_fileManager->hasFile(talkDefFileName)) {
 		return STATUS_OK;    // no talk def file found
 	}
 
-	_talkDef = new AdTalkDef(_gameRef);
+	_talkDef = new AdTalkDef(_game);
 	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
-		delete _talkDef;
-		_talkDef = nullptr;
+		SAFE_DELETE(_talkDef);
 		return STATUS_FAILED;
 	}
-	//_gameRef->LOG(0, "Using .talk file: %s", TalkDefFile);
+	//_game->LOG(0, "Using .talk file: %s", TalkDefFile);
 
 	return STATUS_OK;
 }
@@ -306,13 +301,13 @@ bool AdSentence::update(TDirection dir) {
 	// if sound is available, synchronize with sound, otherwise use timer
 
 	/*
-	if (_sound) CurrentTime = _sound->GetPositionTime();
-	else CurrentTime = _gameRef->getTimer()->getTime() - _startTime;
+	if (_sound) currentTime = _sound->getPositionTime();
+	else currentTime = _game->_timer - _startTime;
 	*/
-	currentTime = _gameRef->getTimer()->getTime() - _startTime;
+	currentTime = _game->_timer - _startTime;
 
 	bool talkNodeFound = false;
-	for (uint32 i = 0; i < _talkDef->_nodes.size(); i++) {
+	for (int32 i = 0; i < _talkDef->_nodes.getSize(); i++) {
 		if (_talkDef->_nodes[i]->isInTimeInterval(currentTime, dir)) {
 			talkNodeFound = true;
 
@@ -348,7 +343,7 @@ bool AdSentence::update(TDirection dir) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::canSkip() {
 	// prevent accidental sentence skipping (TODO make configurable)
-	return (_gameRef->getTimer()->getTime() - _startTime) > 300;
+	return (_game->_timer - _startTime) > 300;
 }
 
 } // End of namespace Wintermute

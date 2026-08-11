@@ -41,14 +41,13 @@ sint32 U6AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
 		return -1;
 	if (!pf->check_loc(c2.x, c2.y, c2.z)) {
 		// check for door
-		Obj *block = game->get_obj_manager()->get_obj(c2.x, c2.y, c2.z);
-		// HACK: check the neighboring tiles for the "real" door
-		Obj *real = game->get_obj_manager()->get_obj(c2.x + 1, c2.y, c2.z);
-		if (!real || !game->get_usecode()->is_unlocked_door(real))
-			real = game->get_obj_manager()->get_obj(c2.x, c2.y + 1, c2.z);
-		if (!block || !game->get_usecode()->is_unlocked_door(block) || real)
+		// Door objects consist of a wall and the actual door tile.
+		// We use get_objBasedAt() here since we are only interested in the latter.
+		Obj *block = game->get_obj_manager()->get_objBasedAt(c2.x, c2.y, c2.z, true, false);
+		if (block && game->get_usecode()->is_unlocked_door(block))
+			c += 2; // cost for opening door
+		else
 			return -1;
-		c += 2;
 	}
 	// add cost of *original* step
 //    c += game->get_game_map()->get_impedance(c1.x, c1.y, c1.z);

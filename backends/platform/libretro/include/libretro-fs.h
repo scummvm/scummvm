@@ -40,6 +40,8 @@ protected:
 	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
+	bool _isReadable;
+	bool _isWritable;
 
 	virtual AbstractFSNode *makeNode(const Common::String &path) const {
 		return new LibRetroFilesystemNode(path);
@@ -71,13 +73,13 @@ public:
 		return _path;
 	}
 	virtual bool isDirectory() const {
-		return _isDirectory;
+		return _isDirectory && _isReadable;
 	}
 	virtual bool isReadable() const {
-		return access(_path.c_str(), R_OK) == 0;
+		return _isReadable;
 	}
 	virtual bool isWritable() const {
-		return access(_path.c_str(), W_OK) == 0;
+		return _isWritable;
 	}
 
 	virtual AbstractFSNode *getChild(const Common::String &n) const;
@@ -85,7 +87,7 @@ public:
 	virtual AbstractFSNode *getParent() const;
 
 	virtual Common::SeekableReadStream *createReadStream();
-	virtual Common::SeekableWriteStream *createWriteStream();
+	virtual Common::SeekableWriteStream *createWriteStream(bool atomic);
 	virtual bool createDirectory();
 
 	static Common::String getHomeDir(void);
@@ -96,20 +98,4 @@ private:
 	virtual void setFlags();
 };
 
-
-#ifndef __ANDROID__ //In this case definition in backends/fs/posix/posix-fs.h is used
-namespace Posix {
-
-/**
- * Assure that a directory path exists.
- *
- * @param dir The path which is required to exist.
- * @param prefix An (optional) prefix which should not be created if non existent.
- *               prefix is prepended to dir if supplied.
- * @return true in case the directoy exists (or was created), false otherwise.
- */
-bool assureDirectoryExists(const Common::String &dir, const char *prefix = nullptr);
-
-} // End of namespace Posix
-#endif
 #endif

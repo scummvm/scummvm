@@ -24,6 +24,13 @@ This file contains all strings and some file names depending only on platform/lo
 Some filenames depend on the edition, these are handled by game flags in engine code.
 Those informations were stored in the original executables.
 
+darkseed.dat:
+This file contains essential game data used by the Darkseed engine.
+
+eem.dat:
+This file contains floppy-only scrapbook dialog data used by the Eagle Eye
+Mysteries engine.
+
 drascula.dat:
 This file contains essential game data used by the Drascula engine.
 
@@ -41,6 +48,17 @@ fonts-cjk.dat:
 This file contains set of free CJK fonts (or other big ones), used in our GUI and
 some engines. This file is intended to be big, thus, not suitable for ports with
 memory constraints.
+
+fonts-imgui.dat:
+This file contains set of free symbol fonts (or other big ones), used by ImGui with
+some engines. This file is intended to be big, thus, not suitable for ports with
+memory constraints.
+
+got.gfx:
+This is a set of graphics for the title screen and main menu that were embedded in the executable.
+
+got.aud:
+This is the title screen music that was embedded in the executable.
 
 grim-patch.lab:
 This file contains set of script patches for Grim Fandango game.
@@ -62,6 +80,9 @@ scripts, from.
 
 lure.dat:
 This file contains essential game data used by Lure of the Temptress game.
+
+macs2_translation.dat:
+This file contains game translations for the MACS2 engine.
 
 macgui.dat:
 The file contains set of offsets for recreation of Classic Mac OS GUI, used

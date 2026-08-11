@@ -32,15 +32,15 @@ ChewyVocStream::ChewyVocStream(Common::SeekableReadStream* stream, DisposeAfterU
 
 void ChewyVocStream::removeHeaders() {
 	// Check the sample blocks for non-standard headers.
-	for (BlockList::iterator i = _blocks.begin(), end = _blocks.end(); i != end; ++i) {
-		if (i->code == 1 && i->sampleBlock.samples > 80) {
+	for (auto &block : _blocks) {
+		if (block.code == 1 && block.sampleBlock.samples > 80) {
 			// Found a sample block. Check for the headers.
 			int headerSize = 0;
 			if (_stream->readUint32BE() == FOURCC_RIFF) {
 				// Found a RIFF header. 
 				headerSize = 44;
 			} else {
-				_stream->seek(i->sampleBlock.offset + 76);
+				_stream->seek(block.sampleBlock.offset + 76);
 				if (_stream->readUint32BE() == FOURCC_SCRS) {
 					// Found an SCRS (?) header.
 					headerSize = 80;
@@ -49,8 +49,8 @@ void ChewyVocStream::removeHeaders() {
 
 			if (headerSize > 0) {
 				// Move the offset past the header and adjust the length.
-				i->sampleBlock.offset += headerSize;
-				i->sampleBlock.samples -= headerSize;
+				block.sampleBlock.offset += headerSize;
+				block.sampleBlock.samples -= headerSize;
 				_length = _length.addFrames(-headerSize);
 			}
 		}

@@ -23,18 +23,14 @@
 #ifndef ZVISION_ZVISION_H
 #define ZVISION_ZVISION_H
 
-#include "zvision/core/clock.h"
-#include "zvision/file/search_manager.h"
-#include "zvision/detection.h"
-
-#include "common/random.h"
 #include "common/events.h"
-
+#include "common/random.h"
+#include "common/system.h"
 #include "engines/engine.h"
-
 #include "graphics/pixelformat.h"
-
 #include "gui/debugger.h"
+#include "zvision/detection.h"
+#include "zvision/core/clock.h"
 
 namespace Common {
 class Keymap;
@@ -56,32 +52,49 @@ class VideoDecoder;
  */
 namespace ZVision {
 
+struct ZvisionGameDescription;
+
 class Console;
 class ScriptManager;
 class RenderManager;
 class CursorManager;
 class StringManager;
+class FileManager;
 class SaveManager;
 class RLFDecoder;
-class MenuHandler;
+class MenuManager;
+class SubtitleManager;
 class TextRenderer;
 class Subtitle;
 class MidiManager;
+class VolumeManager;
+
+struct ScreenLayout {
+	Common::Rect screenArea;  // Original screen resolution
+	Common::Rect menuArea;  // Menu display area, relative to original screen
+	Common::Rect workingArea;   // Playfield & video playback area, relative to original screen
+	Common::Rect textArea;  // Subtitle & message area, relative to original screen
+};
+
+// NB Footage of original DOS Nemesis engine indicates playfield was centrally placed on screen.
+// Subtitle scripts, however, suggest playfield was higher up, otherwise they run off the bottom of the screen.
+// This could just be an error in the scripts or an artefact of the original game's development, so we will continue to use as-released central placement.
+
+static const ScreenLayout nemesisLayout {
+	Common::Rect(640, 480), // Screen
+	Common::Rect(Common::Point(64, 0), 512, 32), // Menu
+	Common::Rect(Common::Point(64, 80), 512, 320), // Working; aspect ratio 1.6
+	Common::Rect(Common::Point(64, 420), 512, 60) // Text
+};
+
+static const ScreenLayout zgiLayout {
+	Common::Rect(640, 480), // Screen
+	Common::Rect(Common::Point(0, 0), 640, 32), // Menu
+	Common::Rect(Common::Point(0, 68), 640, 344), // Working; aspect ratio 1.86
+	Common::Rect(Common::Point(0, 412), 640, 68) // Text
+};
 
 enum {
-	WINDOW_WIDTH = 640,
-	WINDOW_HEIGHT = 480,
-
-	HIRES_WINDOW_WIDTH = 800,
-	HIRES_WINDOW_HEIGHT = 600,
-
-	// Zork Nemesis working window sizes
-	ZNM_WORKING_WINDOW_WIDTH = 512,
-	ZNM_WORKING_WINDOW_HEIGHT = 320,
-
-	// ZGI working window sizes
-	ZGI_WORKING_WINDOW_WIDTH = 640,
-	ZGI_WORKING_WINDOW_HEIGHT = 344,
 
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
 	MAX_ROTATION_SPEED = 400, // Pixels per second
@@ -115,19 +128,11 @@ public:
 	~ZVision() override;
 
 public:
-	/**
-	 * A Rectangle centered inside the actual window. All in-game coordinates
-	 * are given in this coordinate space. Also, all images are clipped to the
-	 * edges of this Rectangle
-	 */
-	Common::Rect _workingWindow;
 	const Graphics::PixelFormat _resourcePixelFormat;
-	const Graphics::PixelFormat _screenPixelFormat;
 
 private:
 	const ZVisionGameDescription *_gameDescription;
 
-	const int _desiredFrameTime;
 
 	// We need random numbers
 	Common::RandomSource *_rnd;
@@ -137,11 +142,13 @@ private:
 	RenderManager *_renderManager;
 	CursorManager *_cursorManager;
 	StringManager *_stringManager;
-	SearchManager *_searchManager;
 	TextRenderer *_textRenderer;
 	MidiManager *_midiManager;
+	FileManager *_fileManager;
 	SaveManager *_saveManager;
-	MenuHandler *_menu;
+	MenuManager *_menu;
+	SubtitleManager *_subtitleManager;
+	VolumeManager *_volumeManager;
 
 	// Clock
 	Clock _clock;
@@ -160,7 +167,9 @@ private:
 	int16 _mouseVelocity;
 	int16 _keyboardVelocity;
 	bool _doubleFPS;
+	bool _widescreen;
 	bool _videoIsPlaying;
+	bool _breakMainLoop = false;
 
 	uint8 _cheatBuffer[KEYBUF_SIZE];
 
@@ -181,14 +190,14 @@ public:
 	CursorManager *getCursorManager() const {
 		return _cursorManager;
 	}
+	FileManager *getFileManager() const {
+		return _fileManager;
+	}
 	SaveManager *getSaveManager() const {
 		return _saveManager;
 	}
 	StringManager *getStringManager() const {
 		return _stringManager;
-	}
-	SearchManager *getSearchManager() const {
-		return _searchManager;
 	}
 	TextRenderer *getTextRenderer() const {
 		return _textRenderer;
@@ -196,10 +205,15 @@ public:
 	MidiManager *getMidiManager() const {
 		return _midiManager;
 	}
-	MenuHandler *getMenuHandler() const {
+	MenuManager *getMenuManager() const {
 		return _menu;
 	}
-
+	SubtitleManager *getSubtitleManager() const {
+		return _subtitleManager;
+	}
+	VolumeManager *getVolumeManager() const {
+		return _volumeManager;
+	}
 	Common::Keymap *getGameKeymap() const {
 		return _gameKeymap;
 	}
@@ -223,8 +237,7 @@ public:
 		_clock.stop();
 	}
 
-	void initScreen();
-	void initHiresScreen();
+	void initScreen(bool hiRes = false);
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call
@@ -233,9 +246,10 @@ public:
 	 *
 	 * @param videoDecoder    The video to play
 	 * @param destRect        Where to put the video. (In working window coords)
+	 * @param srcRect         What subset of video to blit to destRect (In video frame coords)  // TODO implement
 	 * @param skippable       If true, the video can be skipped at any time using [Spacebar]
 	 */
-	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
+	void playVideo(Video::VideoDecoder &videoDecoder, Common::Rect destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, uint16 sub = 0, Common::Rect srcRect = Common::Rect(0, 0, 0, 0));
 	Video::VideoDecoder *loadAnimation(const Common::Path &fileName);
 
 	void setRenderDelay(uint);
@@ -246,12 +260,16 @@ public:
 		return _fps;
 	}
 
+	bool isWidescreen() {
+		return _widescreen;
+	}
+
 	void syncSoundSettings() override;
 
 	void loadSettings();
 	void saveSettings();
 
-	bool ifQuit();
+	bool quit(bool askFirst = true, bool streaming = false);
 
 	// Engine features
 	bool hasFeature(EngineFeature f) const override;
@@ -260,11 +278,18 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
+	// Used to update cursor on a location change
+	void onMouseMove() {
+		onMouseMove(_system->getEventManager()->getMousePos());
+	}
+
 private:
-	void initialize();
+	Common::Error initialize();
 	void initFonts();
 
-	void parseStrFile(const Common::String fileName);
+	void initializePath(const Common::FSNode &gamePath) override;
+
+	void parseStrFile(const Common::String &fileName);
 
 	/** Called every frame from ZVision::run() to process any events from EventMan */
 	void processEvents();
@@ -277,8 +302,6 @@ private:
 	void pushKeyToCheatBuf(uint8 key);
 	bool checkCode(const char *code);
 	uint8 getBufferedKey(uint8 pos);
-
-	double getVobAmplification(Common::String fileName) const;
 };
 
 } // End of namespace ZVision

@@ -350,7 +350,7 @@ void EoBCoreEngine::drawBlockItems(int index) {
 	int tile2 = 0;
 
 	for (bool loop = true; o != o2 || loop; ) {
-		EoBItem *itm = &_items[o];
+		const EoBItem *itm = &_items[o];
 		if (itm->pos == 8 || itm->pos < 4) {
 			tile2 = -1;
 

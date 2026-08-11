@@ -20,6 +20,8 @@
  */
 
 #include "director/director.h"
+#include "director/movie.h"
+#include "director/cast.h"
 #include "director/debugger/dt-internal.h"
 
 #include "director/debugger.h"
@@ -38,13 +40,28 @@ private:
 	int _indent = 0;
 	bool _isScriptInDebug = false;
 	bool _currentStatementDisplayed = false;
+	bool _scrollTo = false;
+	bool _scrollDone = false;
+	int _renderLineID = 1;
+	uint _markPc = 0;
+	bool _markPcValid = false;
 
 public:
-	explicit RenderOldScriptVisitor(ImGuiScript &script) : _script(script) {
+	explicit RenderOldScriptVisitor(ImGuiScript &script, bool scrollTo) : _script(script), _scrollTo(scrollTo) {
 		Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 		if (!callstack.empty()) {
 			CFrame *head = callstack[callstack.size() - 1];
-			_isScriptInDebug = (head->sp.ctx->_id == script.id.member) && (*head->sp.name == script.handlerId);
+			if (head->sp.ctx)
+				_isScriptInDebug = (head->sp.ctx->_id == script.id.member) && (*head->sp.name == script.handlerId);
+		}
+		// find the statement containing the pc from the previous render's offsets
+		if (_script.pc != 0) {
+			for (uint off : _script.startOffsets) {
+				if (off <= _script.pc && (!_markPcValid || off > _markPc)) {
+					_markPc = off;
+					_markPcValid = true;
+				}
+			}
 		}
 		_script.startOffsets.clear();
 	}
@@ -52,7 +69,7 @@ public:
 	virtual bool visitHandlerNode(HandlerNode *node) {
 		ImGui::Text("on ");
 		ImGui::SameLine();
-		ImGui::TextColored(_state->_colors._call_color, "%s", node->name->c_str());
+		ImGui::TextColored(_state->theme->call_color, "%s", node->name->c_str());
 		if (!node->args->empty()) {
 			ImGui::SameLine();
 			ImGui::Text(" ");
@@ -68,6 +85,10 @@ public:
 			}
 			ImGui::NewLine();
 		}
+		if (_scrollTo) {
+			ImGui::SetScrollHereY(0.5f);
+		}
+
 		indent();
 		for (uint i = 0; i < node->stmts->size(); i++) {
 			Node *stmt = (*node->stmts)[i];
@@ -77,7 +98,7 @@ public:
 		}
 		unindent();
 		renderLine(node->endOffset);
-		ImGui::TextColored(_state->_colors._keyword_color, "end");
+		ImGui::TextColored(_state->theme->keyword_color, "end");
 		return true;
 	}
 
@@ -111,7 +132,7 @@ public:
 		ImGui::Text("%s ", node->name->c_str());
 		ImGui::SameLine();
 		if (*node->name == "go") {
-			ImGui::TextColored(_state->_colors._keyword_color, "to ");
+			ImGui::TextColored(_state->theme->keyword_color, "to ");
 			ImGui::SameLine();
 		}
 		for (uint i = 0; i < node->args->size(); i++) {
@@ -129,40 +150,40 @@ public:
 	}
 
 	virtual bool visitPutIntoNode(PutIntoNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "put ");
+		ImGui::TextColored(_state->theme->keyword_color, "put ");
 		ImGui::SameLine();
 		node->val->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, " into ");
+		ImGui::TextColored(_state->theme->keyword_color, " into ");
 		ImGui::SameLine();
 		node->var->accept(this);
 		return true;
 	}
 
 	virtual bool visitPutAfterNode(PutAfterNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "put ");
+		ImGui::TextColored(_state->theme->keyword_color, "put ");
 		ImGui::SameLine();
 		node->val->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, " after ");
+		ImGui::TextColored(_state->theme->keyword_color, " after ");
 		ImGui::SameLine();
 		node->var->accept(this);
 		return true;
 	}
 
 	virtual bool visitPutBeforeNode(PutBeforeNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "put ");
+		ImGui::TextColored(_state->theme->keyword_color, "put ");
 		ImGui::SameLine();
 		node->val->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, " before ");
+		ImGui::TextColored(_state->theme->keyword_color, " before ");
 		ImGui::SameLine();
 		node->var->accept(this);
 		return true;
 	}
 
 	virtual bool visitSetNode(SetNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "set ");
+		ImGui::TextColored(_state->theme->keyword_color, "set ");
 		ImGui::SameLine();
 		node->val->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, " to ");
+		ImGui::TextColored(_state->theme->keyword_color, " to ");
 		ImGui::SameLine();
 		node->var->accept(this);
 		return true;
@@ -198,10 +219,10 @@ public:
 	}
 
 	virtual bool visitIfStmtNode(IfStmtNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "if ");
+		ImGui::TextColored(_state->theme->keyword_color, "if ");
 		ImGui::SameLine();
 		node->cond->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, " then ");
+		ImGui::TextColored(_state->theme->keyword_color, " then ");
 		if (node->stmts->size() == 1) {
 			ImGui::SameLine();
 			(*node->stmts)[0]->accept(this);
@@ -215,17 +236,17 @@ public:
 			}
 			unindent();
 			renderLine(node->endOffset);
-			ImGui::TextColored(_state->_colors._keyword_color, "endif");
+			ImGui::TextColored(_state->theme->keyword_color, "endif");
 			ImGui::SameLine();
 		}
 		return true;
 	}
 
 	virtual bool visitIfElseStmtNode(IfElseStmtNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "if ");
+		ImGui::TextColored(_state->theme->keyword_color, "if ");
 		ImGui::SameLine();
 		node->cond->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, " then ");
+		ImGui::TextColored(_state->theme->keyword_color, " then ");
 		if (node->stmts1->size() == 1) {
 			ImGui::SameLine();
 			(*node->stmts1)[0]->accept(this);
@@ -244,7 +265,7 @@ public:
 			unindent();
 			renderLine(offset);
 		}
-		ImGui::TextColored(_state->_colors._keyword_color, "else ");
+		ImGui::TextColored(_state->theme->keyword_color, "else ");
 		if (node->stmts2->size() == 1) {
 			ImGui::SameLine();
 			(*node->stmts2)[0]->accept(this);
@@ -260,14 +281,14 @@ public:
 			}
 			unindent();
 			renderLine(offset);
-			ImGui::TextColored(_state->_colors._keyword_color, "endif");
+			ImGui::TextColored(_state->theme->keyword_color, "endif");
 			ImGui::SameLine();
 		}
 		return true;
 	}
 
 	virtual bool visitRepeatWhileNode(RepeatWhileNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "repeat while ");
+		ImGui::TextColored(_state->theme->keyword_color, "repeat while ");
 		ImGui::SameLine();
 		node->cond->accept(this);
 		ImGui::NewLine();
@@ -282,17 +303,17 @@ public:
 		}
 		unindent();
 		renderLine(offset);
-		ImGui::TextColored(_state->_colors._keyword_color, "endrepeat");
+		ImGui::TextColored(_state->theme->keyword_color, "endrepeat");
 		return true;
 	}
 
 	virtual bool visitRepeatWithToNode(RepeatWithToNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "repeat with ");
+		ImGui::TextColored(_state->theme->keyword_color, "repeat with ");
 		ImGui::SameLine();
 		ImGui::Text("%s = ", node->var->c_str());
 		ImGui::SameLine();
 		node->start->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, " %s ", node->down ? "down to" : "to");
+		ImGui::TextColored(_state->theme->keyword_color, " %s ", node->down ? "down to" : "to");
 		node->end->accept(this);
 		ImGui::NewLine();
 		indent();
@@ -304,12 +325,12 @@ public:
 		}
 		unindent();
 		renderLine(node->endOffset);
-		ImGui::TextColored(_state->_colors._keyword_color, "endrepeat");
+		ImGui::TextColored(_state->theme->keyword_color, "endrepeat");
 		return true;
 	}
 
 	virtual bool visitRepeatWithInNode(RepeatWithInNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "repeat with ");
+		ImGui::TextColored(_state->theme->keyword_color, "repeat with ");
 		ImGui::SameLine();
 		ImGui::Text("%s in ", node->var->c_str());
 		ImGui::SameLine();
@@ -324,27 +345,27 @@ public:
 		}
 		unindent();
 		renderLine(node->endOffset);
-		ImGui::TextColored(_state->_colors._keyword_color, "endrepeat");
+		ImGui::TextColored(_state->theme->keyword_color, "endrepeat");
 		return true;
 	}
 
 	virtual bool visitNextRepeatNode(NextRepeatNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "next repeat");
+		ImGui::TextColored(_state->theme->keyword_color, "next repeat");
 		return true;
 	}
 
 	virtual bool visitExitRepeatNode(ExitRepeatNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "exit repeat");
+		ImGui::TextColored(_state->theme->keyword_color, "exit repeat");
 		return true;
 	}
 
 	virtual bool visitExitNode(ExitNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "exit");
+		ImGui::TextColored(_state->theme->keyword_color, "exit");
 		return true;
 	}
 
 	virtual bool visitReturnNode(ReturnNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "return");
+		ImGui::TextColored(_state->theme->keyword_color, "return");
 		if (node->expr) {
 			ImGui::Text(" ");
 			ImGui::SameLine();
@@ -355,11 +376,11 @@ public:
 	}
 
 	virtual bool visitTellNode(TellNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "tell ");
+		ImGui::TextColored(_state->theme->keyword_color, "tell ");
 		node->target->accept(this);
 		if (node->stmts->size() == 1) {
 			ImGui::SameLine();
-			ImGui::TextColored(_state->_colors._keyword_color, " to ");
+			ImGui::TextColored(_state->theme->keyword_color, " to ");
 			ImGui::SameLine();
 			(*node->stmts)[0]->accept(this);
 		} else {
@@ -372,17 +393,17 @@ public:
 			}
 			unindent();
 			renderLine(node->endOffset);
-			ImGui::TextColored(_state->_colors._keyword_color, "endtell");
+			ImGui::TextColored(_state->theme->keyword_color, "endtell");
 		}
 		return true;
 	}
 
 	virtual bool visitWhenNode(WhenNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "when ");
+		ImGui::TextColored(_state->theme->keyword_color, "when ");
 		ImGui::SameLine();
 		ImGui::Text("%s", node->event->c_str());
 		ImGui::SameLine();
-		ImGui::TextColored(_state->_colors._keyword_color, " then ");
+		ImGui::TextColored(_state->theme->keyword_color, " then ");
 		ImGui::SameLine();
 		ImGui::Text("%s", node->code->c_str());
 		ImGui::SameLine();
@@ -390,46 +411,46 @@ public:
 	}
 
 	virtual bool visitDeleteNode(DeleteNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "delete ");
+		ImGui::TextColored(_state->theme->keyword_color, "delete ");
 		ImGui::SameLine();
 		node->chunk->accept(this);
 		return true;
 	}
 
 	virtual bool visitHiliteNode(HiliteNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "hilite ");
+		ImGui::TextColored(_state->theme->keyword_color, "hilite ");
 		ImGui::SameLine();
 		node->chunk->accept(this);
 		return true;
 	}
 
 	virtual bool visitAssertErrorNode(AssertErrorNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "scummvmAssertError ");
+		ImGui::TextColored(_state->theme->keyword_color, "scummvmAssertError ");
 		ImGui::SameLine();
 		node->stmt->accept(this);
 		return true;
 	}
 
 	virtual bool visitIntNode(IntNode *node) {
-		ImGui::TextColored(_state->_colors._literal_color, "%d", node->val);
+		ImGui::TextColored(_state->theme->literal_color, "%d", node->val);
 		ImGui::SameLine();
 		return true;
 	}
 
 	virtual bool visitFloatNode(FloatNode *node) {
-		ImGui::TextColored(_state->_colors._literal_color, "%g", node->val);
+		ImGui::TextColored(_state->theme->literal_color, "%g", node->val);
 		ImGui::SameLine();
 		return true;
 	}
 
 	virtual bool visitSymbolNode(SymbolNode *node) {
-		ImGui::TextColored(_state->_colors._literal_color, "%s", node->val->c_str());
+		ImGui::TextColored(_state->theme->literal_color, "%s", node->val->c_str());
 		ImGui::SameLine();
 		return true;
 	}
 
 	virtual bool visitStringNode(StringNode *node) {
-		ImGui::TextColored(_state->_colors._literal_color, "\"%s\"", node->val->c_str());
+		ImGui::TextColored(_state->theme->literal_color, "\"%s\"", node->val->c_str());
 		ImGui::SameLine();
 		return true;
 	}
@@ -480,9 +501,10 @@ public:
 	}
 
 	virtual bool visitFuncNode(FuncNode *node) {
-		const bool isBuiltin = g_lingo->_builtinCmds.contains(*node->name);
-		const ImVec4 color = (ImVec4)ImColor(isBuiltin ? _state->_colors._builtin_color : _state->_colors._call_color);
+		const bool isBuiltin = g_lingo->_builtinCmds.contains(*node->name) || g_lingo->_builtinFuncs.contains(*node->name);
+		const ImVec4 color = (ImVec4)ImColor(isBuiltin ? _state->theme->builtin_color : _state->theme->call_color);
 		ImGui::TextColored(color, "%s(", node->name->c_str());
+		maybeHighlightLastItem(*node->name);
 		if (!isBuiltin && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
 			ImGui::Text("Go to definition");
 			ImGui::EndTooltip();
@@ -496,10 +518,15 @@ public:
 				}
 			}
 
-			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(obj, _script.id.castLib), *node->name);
-			script.moviePath = _script.moviePath;
-			script.handlerName = *node->name;
-			setScriptToDisplay(script);
+			ScriptContext *context = resolveHandlerContext(obj, _script.id, *node->name);
+			if (context) {
+				ImGuiScript script = buildImGuiHandlerScript(context, _script.id.castLib, *node->name, _script.moviePath);
+				// Open the definition in the window that hosts this script view
+				if (_state->_dbg._hostExecutionContext)
+					setScriptToDisplay(script);
+				else
+					addToOpenHandlers(script);
+			}
 		}
 		ImGui::SameLine();
 		for (uint i = 0; i < node->args->size(); i++) {
@@ -516,12 +543,19 @@ public:
 	}
 
 	virtual bool visitVarNode(VarNode *node) {
-		ImGui::TextColored(_state->_colors._var_color, "%s", node->name->c_str());
+		ImGui::TextColored(_state->theme->var_color, "%s", node->name->c_str());
 		if (ImGui::IsItemHovered() && g_lingo->_globalvars.contains(*node->name)) {
 			const Datum &val = g_lingo->_globalvars.getVal(*node->name);
 			ImGui::BeginTooltip();
 			ImGui::Text("Click to add to watches.");
-			ImGui::Text("= %s", val.asString(true).c_str());
+			Common::String s = val.asString(true);
+			s.wordWrap(150);
+			if (s.size() > 4000) {
+				uint chop = s.size() - 4000;
+				s.chop(s.size() - 4000);
+				s += Common::String::format("... [chopped %d chars]", chop);
+			}
+			ImGui::Text("= %s", s.c_str());
 			ImGui::EndTooltip();
 		}
 		if (ImGui::IsItemClicked()) {
@@ -589,52 +623,52 @@ public:
 	}
 
 	virtual bool visitFrameNode(FrameNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "frame ");
+		ImGui::TextColored(_state->theme->keyword_color, "frame ");
 		ImGui::SameLine();
 		node->arg->accept(this);
 		return true;
 	}
 
 	virtual bool visitMovieNode(MovieNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "movie ");
+		ImGui::TextColored(_state->theme->keyword_color, "movie ");
 		ImGui::SameLine();
 		node->arg->accept(this);
 		return true;
 	}
 
 	virtual bool visitIntersectsNode(IntersectsNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "sprite ");
+		ImGui::TextColored(_state->theme->keyword_color, "sprite ");
 		ImGui::SameLine();
 		node->sprite1->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, "intersects ");
+		ImGui::TextColored(_state->theme->keyword_color, "intersects ");
 		node->sprite2->accept(this);
 		return true;
 	}
 
 	virtual bool visitWithinNode(WithinNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "sprite ");
+		ImGui::TextColored(_state->theme->keyword_color, "sprite ");
 		ImGui::SameLine();
 		node->sprite1->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, "within ");
+		ImGui::TextColored(_state->theme->keyword_color, "within ");
 		node->sprite2->accept(this);
 		return true;
 	}
 
 	virtual bool visitTheNode(TheNode *node) {
-		ImGui::TextColored(_state->_colors._the_color, "the %s", node->prop->c_str());
+		ImGui::TextColored(_state->theme->the_color, "the %s", node->prop->c_str());
 		ImGui::SameLine();
 		return true;
 	}
 
 	virtual bool visitTheOfNode(TheOfNode *node) {
-		ImGui::TextColored(_state->_colors._the_color, "the %s of ", node->prop->c_str());
+		ImGui::TextColored(_state->theme->the_color, "the %s of ", node->prop->c_str());
 		ImGui::SameLine();
 		node->obj->accept(this);
 		return true;
 	}
 
 	virtual bool visitTheNumberOfNode(TheNumberOfNode *node) {
-		ImGui::TextColored(_state->_colors._the_color, "the number of ");
+		ImGui::TextColored(_state->theme->the_color, "the number of ");
 		ImGui::SameLine();
 		node->arg->accept(this);
 		return true;
@@ -642,7 +676,7 @@ public:
 
 	virtual bool visitTheLastNode(TheLastNode *node) {
 		// TODO: change the node to know if it's 'in' or 'of'
-		ImGui::TextColored(_state->_colors._the_color, "the last %s in/of ", toString(node->type).c_str());
+		ImGui::TextColored(_state->theme->the_color, "the last %s in/of ", toString(node->type).c_str());
 		ImGui::SameLine();
 		node->arg->accept(this);
 		return true;
@@ -662,37 +696,37 @@ public:
 			break;
 		}
 		const char *key2 = node->entity == kTheDate ? "date" : "time";
-		ImGui::TextColored(_state->_colors._the_color, "the %s %s", key1, key2);
+		ImGui::TextColored(_state->theme->the_color, "the %s %s", key1, key2);
 		ImGui::SameLine();
 		return true;
 	}
 
 	virtual bool visitMenuNode(MenuNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "menu ");
+		ImGui::TextColored(_state->theme->keyword_color, "menu ");
 		ImGui::SameLine();
 		node->arg->accept(this);
 		return true;
 	}
 
 	virtual bool visitMenuItemNode(MenuItemNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "menuitem ");
+		ImGui::TextColored(_state->theme->keyword_color, "menuitem ");
 		ImGui::SameLine();
 		node->arg1->accept(this);
-		ImGui::TextColored(_state->_colors._keyword_color, "of menu ");
+		ImGui::TextColored(_state->theme->keyword_color, "of menu ");
 		ImGui::SameLine();
 		node->arg2->accept(this);
 		return true;
 	}
 
 	virtual bool visitSoundNode(SoundNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "sound ");
+		ImGui::TextColored(_state->theme->keyword_color, "sound ");
 		ImGui::SameLine();
 		node->arg->accept(this);
 		return true;
 	}
 
 	virtual bool visitSpriteNode(SpriteNode *node) {
-		ImGui::TextColored(_state->_colors._keyword_color, "sprite ");
+		ImGui::TextColored(_state->theme->keyword_color, "sprite ");
 		ImGui::SameLine();
 		node->arg->accept(this);
 		return true;
@@ -718,11 +752,11 @@ public:
 		ImGui::SameLine();
 		node->start->accept(this);
 		if (node->end) {
-			ImGui::TextColored(_state->_colors._keyword_color, " to ");
+			ImGui::TextColored(_state->theme->keyword_color, " to ");
 			ImGui::SameLine();
 			node->end->accept(this);
 		}
-		ImGui::TextColored(_state->_colors._keyword_color, " of ");
+		ImGui::TextColored(_state->theme->keyword_color, " of ");
 		ImGui::SameLine();
 		node->src->accept(this);
 		return true;
@@ -764,7 +798,12 @@ private:
 		bool showCurrentStatement = false;
 		_script.startOffsets.push_back(pc);
 
-		if (_isScriptInDebug && g_lingo->_exec._state == kPause) {
+		if (_script.pc != 0 && (_markPcValid ? pc == _markPc : pc >= _script.pc)) {
+			if (!_currentStatementDisplayed) {
+				showCurrentStatement = true;
+				_currentStatementDisplayed = true;
+			}
+		} else if (_isScriptInDebug && g_lingo->_exec._state == kPause) {
 			// check current statement
 			if (!_currentStatementDisplayed) {
 				if (g_lingo->_state->pc <= pc) {
@@ -779,18 +818,26 @@ private:
 		const float width = ImGui::GetContentRegionAvail().x;
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
 
-		ImVec4 color = _state->_colors._bp_color_disabled;
+		// add/delBreakpoint invalidate bp, so copy its state into locals
 		const Director::Breakpoint *bp = getBreakpoint(_script.handlerId, _script.id.member, pc);
-		if (bp)
-			color = _state->_colors._bp_color_enabled;
+		bool hasBp = bp != nullptr;
+		bool bpEnabled = bp && bp->enabled;
+		ImVec4 color = hasBp ? _state->theme->bp_color_enabled : _state->theme->bp_color_disabled;
 
+		// Need to give a new id for each button
+		Common::String id = _script.handlerId + _renderLineID;
+		ImGui::PushID(id.c_str());
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::PopID();
+		_renderLineID++;
 
 		// click on breakpoint column?
 		if (ImGui::IsItemClicked(0)) {
-			if (color == _state->_colors._bp_color_enabled) {
+			if (hasBp) {
 				g_lingo->delBreakpoint(bp->id);
-				color = _state->_colors._bp_color_disabled;
+				hasBp = false;
+				bpEnabled = false;
+				color = _state->theme->bp_color_disabled;
 			} else {
 				Director::Breakpoint newBp;
 				newBp.type = kBreakpointFunction;
@@ -798,31 +845,35 @@ private:
 				newBp.funcName = _script.handlerId;
 				newBp.funcOffset = pc;
 				g_lingo->addBreakpoint(newBp);
-				color = _state->_colors._bp_color_enabled;
+				hasBp = true;
+				bpEnabled = true;
+				color = _state->theme->bp_color_enabled;
 			}
+			bp = nullptr;
 		}
 
-		if (color == _state->_colors._bp_color_disabled && ImGui::IsItemHovered()) {
-			color = _state->_colors._bp_color_hover;
+		if (color == _state->theme->bp_color_disabled && ImGui::IsItemHovered()) {
+			color = _state->theme->bp_color_hover;
 		}
 
 		// draw breakpoint
-		if (!bp || bp->enabled)
+		if (!hasBp || bpEnabled)
 			dl->AddCircleFilled(mid, 4.0f, ImColor(color));
 		else
-			dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._line_color));
+			dl->AddCircle(mid, 4.0f, ImColor(_state->theme->line_color));
 
 		// draw current statement
 		if (showCurrentStatement) {
-			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
-			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
-			if (_state->_dbg._isScriptDirty && !ImGui::IsItemVisible()) {
+			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->theme->current_statement));
+			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->theme->current_statement));
+			if (!_scrollDone && _scrollTo) {
 				ImGui::SetScrollHereY(0.5f);
+				_scrollDone = true;
 			}
-			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0x20)), 0.4f);
+			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), _state->theme->current_statement_bg, 0.4f);
 		}
 		// draw separator
-		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->_colors._line_color));
+		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->theme->line_color));
 
 		ImGui::SetItemTooltip("Click to add a breakpoint");
 		ImGui::SameLine();
@@ -834,8 +885,8 @@ private:
 	}
 };
 
-void renderOldScriptAST(ImGuiScript &script, bool showByteCode) {
-    RenderOldScriptVisitor oldVisitor(script);
+void renderOldScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo) {
+	RenderOldScriptVisitor oldVisitor(script, scrollTo);
 	script.oldAst->accept(&oldVisitor);
 }
 

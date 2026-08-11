@@ -22,6 +22,7 @@
 #include "agi/agi.h"
 
 #include "agi/sound_2gs.h"
+#include "agi/sound_a2.h"
 #include "agi/sound_coco3.h"
 #include "agi/sound_midi.h"
 #include "agi/sound_sarien.h"
@@ -45,25 +46,36 @@ SoundGen::~SoundGen() {
 // TODO: add support for variable sampling rate in the output device
 //
 
-AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu) {
+AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu, bool isAgiV1) {
 	if (data == nullptr || len < 2) // Check for too small resource or no resource at all
 		return nullptr;
+
+	// Handle platform-specific formats that can't be detected by contents.
+	// These formats have no headers or predictable first bytes.
+	if (soundemu == SOUND_EMU_APPLE2) {
+		return new AgiSound(resnum, data, len, AGI_SOUND_APPLE2);
+	}
+	if (soundemu == SOUND_EMU_COCO3) {
+		return new AgiSound(resnum, data, len, AGI_SOUND_COCO3);
+	}
+
+	// Handle AGIv1; this format has no header or predictable first bytes.
+	// Must occur after platform check; Apple II always uses its format.
+	if (isAgiV1) {
+		return new PCjrSound(resnum, data, len, AGI_SOUND_4CHN);
+	}
+
 	uint16 type = READ_LE_UINT16(data);
-
-	// For V1 sound resources
-	if (type != AGI_SOUND_SAMPLE && (type & 0xFF) == 0x01)
-		return new PCjrSound(data, len, resnum);
-
 	switch (type) { // Create a sound object based on the type
 	case AGI_SOUND_SAMPLE:
-		return new IIgsSample(data, len, resnum);
+		return new IIgsSample(resnum, data, len, type);
 	case AGI_SOUND_MIDI:
-		return new IIgsMidi(data, len, resnum);
+		return new IIgsMidi(resnum, data, len, type);
 	case AGI_SOUND_4CHN:
 		if (soundemu == SOUND_EMU_MIDI) {
-			return new MIDISound(data, len, resnum);
+			return new AgiSound(resnum, data, len, type);
 		} else {
-			return new PCjrSound(data, len, resnum);
+			return new PCjrSound(resnum, data, len, type);
 		}
 	default:
 		break;
@@ -73,19 +85,12 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, i
 	return nullptr;
 }
 
-PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum) : AgiSound() {
-	_data = data; // Save the resource pointer
-	_len  = len;  // Save the resource's length
-	_type = READ_LE_UINT16(data); // Read sound resource's type
+PCjrSound::PCjrSound(byte resourceNr, byte *data, uint32 length, uint16 type) :
+	AgiSound(resourceNr, data, length, type) {
 
-	// Detect V1 sound resources
-	if ((_type & 0xFF) == 0x01)
-		_type = AGI_SOUND_4CHN;
-
-	_isValid = (_type == AGI_SOUND_4CHN) && (_data != nullptr) && (_len >= 2);
-
-	if (!_isValid) // Check for errors
-		warning("Error creating PCjr 4-channel sound from resource %d (Type %d, length %d)", resnum, _type, len);
+	bool isValid = (_type == AGI_SOUND_4CHN) && (_data != nullptr) && (_length >= 2);
+	if (!isValid) // Check for errors
+		warning("Error creating PCjr 4-channel sound from resource %d (Type %d, length %d)", _resourceNr, _type, _length);
 }
 
 const uint8 *PCjrSound::getVoicePointer(uint voiceNum) {
@@ -94,17 +99,6 @@ const uint8 *PCjrSound::getVoicePointer(uint voiceNum) {
 
 	return _data + voiceStartOffset;
 }
-
-#if 0
-static const uint16 period[] = {
-	1024, 1085, 1149, 1218, 1290, 1367,
-	1448, 1534, 1625, 1722, 1825, 1933
-};
-
-static int noteToPeriod(int note) {
-	return 10 * (period[note % 12] >> (note / 12 - 3));
-}
-#endif
 
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
@@ -129,30 +123,29 @@ void SoundMgr::unloadSound(int resnum) {
  * @param flag    the flag that is wished to be set true when finished
  */
 void SoundMgr::startSound(int resnum, int flag) {
-	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d)", resnum, flag);
-
-	if (_vm->_game.sounds[resnum] == nullptr) // Is this needed at all?
+	AgiSound *sound = _vm->_game.sounds[resnum];
+	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d, type = %d)", resnum, flag, sound ? sound->type() : 0);
+	if (sound == nullptr) {
+		warning("startSound: sound %d does not exist", resnum);
 		return;
+	}
 
 	stopSound();
 
-	AgiSoundEmuType type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
-	if (type != AGI_SOUND_SAMPLE && type != AGI_SOUND_MIDI && type != AGI_SOUND_4CHN)
+	// This check handles an Apple IIgs sample with an invalid header
+	if (!sound->isValid()) {
+		warning("startSound: sound %d is invalid", resnum);
 		return;
-	debugC(3, kDebugLevelSound, "    type = %d", type);
+	}
 
-	_vm->_game.sounds[resnum]->play();
+	sound->play();
 	_playingSound = resnum;
 	_soundGen->play(resnum);
 
 	// Reset the flag
 	_endflag = flag;
 
-	if (_vm->getVersion() < 0x2000) {
-		_vm->_game.vars[_endflag] = 0;
-	} else {
-		_vm->setFlag(_endflag, false);
-	}
+	_vm->setFlagOrVar(_endflag, false);
 }
 
 void SoundMgr::stopSound() {
@@ -168,19 +161,16 @@ void SoundMgr::stopSound() {
 	// This is needed all the time, some games wait until music got played and when a sound/music got stopped early
 	// it would otherwise block the game (for example Death Angel jingle in back door poker room in Police Quest 1, room 71)
 	if (_endflag != -1) {
-		if (_vm->getVersion() < 0x2000) {
-			_vm->_game.vars[_endflag] = 1;
-		} else {
-			_vm->setFlag(_endflag, true);
-		}
+		_vm->setFlagOrVar(_endflag, true);
 	}
 
 	_endflag = -1;
 }
 
+// FIXME: This is called from SoundGen classes on unsynchronized background threads.
 void SoundMgr::soundIsFinished() {
 	if (_endflag != -1)
-		_vm->setFlag(_endflag, true);
+		_vm->setFlagOrVar(_endflag, true);
 
 	if (_playingSound != -1)
 		_vm->_game.sounds[_playingSound]->stop();
@@ -193,6 +183,18 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 	_endflag = -1;
 	_playingSound = -1;
 
+	// FIXME: AGIv1 sounds are only supported by SoundGenPCJr, so we must not
+	// use SoundGenSarien for those games or it will crash because it expects
+	// the later AGI sound format. This means we cannot currently play these
+	// sounds in PC Speaker mode (SOUND_EMU_PC) or accept SOUND_EMU_NONE,
+	// because SoundGenSarien supports these but SoundGenPCJr does not.
+	if (agi->getVersion() <= 0x2001 && agi->getPlatform() == Common::kPlatformDOS) {
+		if (_vm->_soundemu != SOUND_EMU_PCJR) {
+			warning("Unsupported sound emulation %d for AGIv1 sounds, using PCjr", _vm->_soundemu);
+			_vm->_soundemu = SOUND_EMU_PCJR;
+		}
+	}
+
 	switch (_vm->_soundemu) {
 	default:
 	case SOUND_EMU_NONE:
@@ -204,6 +206,9 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 	case SOUND_EMU_PCJR:
 		_soundGen = new SoundGenPCJr(_vm, pMixer);
 		break;
+	case SOUND_EMU_APPLE2:
+		_soundGen = new SoundGenA2(_vm, pMixer);
+		break;
 	case SOUND_EMU_APPLE2GS:
 		_soundGen = new SoundGen2GS(_vm, pMixer);
 		break;
@@ -214,10 +219,6 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 		_soundGen = new SoundGenMIDI(_vm, pMixer);
 		break;
 	}
-}
-
-void SoundMgr::setVolume(uint8 volume) {
-	// TODO
 }
 
 SoundMgr::~SoundMgr() {

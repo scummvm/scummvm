@@ -212,6 +212,8 @@ void CryOmni3DEngine_Versailles::setupDialogShows() {
 	                                 &CryOmni3DEngine_Versailles::dialogShowLaChaizeGivesBack);
 	_dialogsMan.registerShowCallback("(LA CHAIZE " "\x83" "CRIT DRAGONNADES)",
 	                                 &CryOmni3DEngine_Versailles::dialogShowLaChaizeWrites);
+	_dialogsMan.registerShowCallback("(LA CHAIZE " "\x8e" "CRIT DRAGONNADES)",
+	                                 &CryOmni3DEngine_Versailles::dialogShowLaChaizeWrites);
 	_dialogsMan.registerShowCallback("(LACHAIZE-DONNE-PAMPHLET-JOUEUR)",
 	                                 &CryOmni3DEngine_Versailles::dialogShowLaChaizeGivesPamphlet);
 	_dialogsMan.registerShowCallback("(BONTEMPS-DONNE-CLEF-DES-COMBLES)",

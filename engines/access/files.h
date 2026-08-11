@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "graphics/managed_surface.h"
 #include "access/decompress.h"
+#include "access/detection.h"
 
 namespace Access {
 
@@ -34,10 +35,10 @@ class AccessEngine;
 
 struct FileIdent {
 	int _fileNum;
-	int _subfile;
+	int _subFile;
 
 	FileIdent();
-	FileIdent(int fileNum, int subfile) { _fileNum = fileNum; _subfile = subfile; }
+	FileIdent(int fileNum, int subfile) { _fileNum = fileNum; _subFile = subfile; }
 
 	void load(Common::SeekableReadStream &s);
 };
@@ -63,13 +64,18 @@ public:
 	Resource();
 	Resource(byte *data, int size);
 	~Resource();
-	byte *data();
+	const byte *data();
+
+	const char *getFileName() const;
 };
 
 class FileManager {
 private:
 	AccessEngine *_vm;
 
+	/**
+	 * Open a raw file, no index data is read.
+	 */
 	void openFile(Resource *res, const Common::Path &filename);
 
 	/**
@@ -83,16 +89,22 @@ private:
 	void handleScreen(Graphics::ManagedSurface *dest, Resource *res);
 
 	/**
-	* Open up a sub-file container file
-	*/
-	void setAppended(Resource *file, int fileNum);
+	 * Open up a sub-file container file
+	 */
+	void setAppended(Resource *file, const Common::Path &fileName);
 
 	/**
-	* Open up a sub-file resource within an alrady opened container file.
-	*/
+	 * Open up a sub-file resource within an alrady opened container file.
+	 */
 	void gotoAppended(Resource *file, int subfile);
+
+	/**
+	 * Read index data from the container file
+	 */
+	void readIndex(Resource *res);
+
 public:
-	int _fileNumber;
+	Common::Path _indexedFilename;
 	Common::Array<uint32> _fileIndex;
 	bool _setPaletteFlag;
 public:
@@ -115,9 +127,9 @@ public:
 	Resource *loadFile(const FileIdent &fileIdent);
 
 	/**
-	 * Load a given file by name
+	 * Load a given *non-container* file by name directly.
 	 */
-	Resource *loadFile(const Common::Path &filename);
+	Resource *loadRawFile(const Common::Path &filename);
 
 	/**
 	 * Load a given scren from a container file

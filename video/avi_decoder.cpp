@@ -184,7 +184,7 @@ bool AVIDecoder::parseNextChunk() {
 	if (_fileStream->eos())
 		return false;
 
-	debug(6, "Decoding tag %s", tag2str(tag));
+	debugC(6, kDebugLevelGVideo, "Decoding tag %s", tag2str(tag));
 
 	switch (tag) {
 	case ID_LIST:
@@ -206,7 +206,9 @@ bool AVIDecoder::parseNextChunk() {
 		_fileStream->skip(16);
 		break;
 	case ID_STRH:
-		handleStreamHeader(size);
+		// e.g. unsupported stream types or codecs will return false
+		if (!handleStreamHeader(size))
+			return false;
 		break;
 	case ID_HDRL: // Header list.. what's it doing here? Probably ok to ignore?
 	case ID_STRD: // Extra stream info, safe to ignore
@@ -233,7 +235,9 @@ bool AVIDecoder::parseNextChunk() {
 		readOldIndex(size);
 		break;
 	default:
-		error("Unknown tag \'%s\' found", tag2str(tag));
+		warning("Unknown tag \'%s\' found", tag2str(tag));
+		skipChunk(size);
+		break;
 	}
 
 	return true;
@@ -249,7 +253,7 @@ void AVIDecoder::handleList(uint32 listSize) {
 	listSize -= 4; // Subtract away listType's 4 bytes
 	uint32 curPos = _fileStream->pos();
 
-	debug(7, "Found LIST of type %s", tag2str(listType));
+	debugC(7, kDebugLevelGVideo, "Found LIST of type %s", tag2str(listType));
 
 	switch (listType) {
 	case ID_MOVI: // Movie List
@@ -273,17 +277,19 @@ void AVIDecoder::handleList(uint32 listSize) {
 		break;
 	}
 
-	while ((_fileStream->pos() - curPos) < listSize)
-		parseNextChunk();
+	while ((_fileStream->pos() - curPos) < listSize && parseNextChunk())
+		;
 }
 
-void AVIDecoder::handleStreamHeader(uint32 size) {
+bool AVIDecoder::handleStreamHeader(uint32 size) {
 	AVIStreamHeader sHeader;
 	sHeader.size = size;
 	sHeader.streamType = _fileStream->readUint32BE();
 
-	if (sHeader.streamType == ID_MIDS)
-		error("Unhandled MIDI/Text stream");
+	if (sHeader.streamType == ID_MIDS) {
+		warning("Unhandled MIDI/Text stream");
+		return false;
+	}
 
 	if (sHeader.streamType == ID_TXTS)
 		warning("Unsupported Text stream detected");
@@ -303,8 +309,10 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 
 	_fileStream->skip(sHeader.size - 48); // Skip over the remainder of the chunk (frame)
 
-	if (_fileStream->readUint32BE() != ID_STRF)
-		error("Could not find STRF tag");
+	if (_fileStream->readUint32BE() != ID_STRF) {
+		warning("Could not find STRF tag");
+		return false;
+	}
 
 	uint32 strfSize = _fileStream->readUint32LE();
 	uint32 startPos = _fileStream->pos();
@@ -345,11 +353,13 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 			}
 		}
 
-		AVIVideoTrack *track = new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette);
+		AVIVideoTrack *track = new AVIVideoTrack(_header.totalFrames, sHeader, bmInfo, initialPalette, _videoCodecAccuracy);
 		if (track->isValid())
 			addTrack(track);
-		else
+		else {
 			delete track;
+			return false;
+		}
 	} else if (sHeader.streamType == ID_AUDS) {
 		PCMWaveFormat wvInfo;
 		wvInfo.tag = _fileStream->readUint16LE();
@@ -371,6 +381,7 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 
 	// Ensure that we're at the end of the chunk
 	_fileStream->seek(startPos + strfSize);
+	return true;
 }
 
 void AVIDecoder::addTrack(Track *track, bool isExternal) {
@@ -425,6 +436,11 @@ void AVIDecoder::readPalette8(uint32 size) {
 bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	if (!stream->size()) {
+		debugC(8, kDebugLevelGVideo, "AVIDecoder::loadStream(): skipping empty stream");
+		return false;
+	}
+
 	uint32 riffTag = stream->readUint32BE();
 	if (riffTag != ID_RIFF) {
 		warning("Failed to find RIFF header");
@@ -446,8 +462,16 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		;
 
 	if (_decodedHeader) {
-		// Ensure there's at least a supported video track
-		_decodedHeader = findNextVideoTrack() != nullptr;
+		// Ensure there's at least one supported media track. Some AVI files
+		// carry only audio data, which is still valid for MCI-style playback.
+		bool hasSupportedTrack = findNextVideoTrack() != nullptr;
+		for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++) {
+			if ((*it)->getTrackType() == Track::kTrackTypeVideo || (*it)->getTrackType() == Track::kTrackTypeAudio) {
+				hasSupportedTrack = true;
+				break;
+			}
+		}
+		_decodedHeader = hasSupportedTrack;
 	}
 
 	if (!_decodedHeader) {
@@ -519,7 +543,7 @@ void AVIDecoder::close() {
 
 void AVIDecoder::readNextPacket() {
 	// Shouldn't get this unless called on a non-open video
-	if (_videoTracks.empty())
+	if (_videoTracks.empty() && _audioTracks.empty())
 		return;
 
 	// Handle the video first
@@ -541,7 +565,7 @@ void AVIDecoder::handleNextPacket(TrackStatus &status) {
 		if (status.track->getTrackType() == Track::kTrackTypeVideo) {
 			// Horrible AVI video has a premature end
 			// Force the frame to be the last frame
-			debug(7, "Forcing end of AVI video");
+			debugC(7, kDebugLevelGVideo, "Forcing end of AVI video");
 			((AVIVideoTrack *)status.track)->forceTrackEnd();
 		}
 
@@ -563,7 +587,7 @@ void AVIDecoder::handleNextPacket(TrackStatus &status) {
 			if (status.track->getTrackType() == Track::kTrackTypeVideo) {
 				// Horrible AVI video has a premature end
 				// Force the frame to be the last frame
-				debug(7, "Forcing end of AVI video");
+				debugC(7, kDebugLevelGVideo, "Forcing end of AVI video");
 				((AVIVideoTrack *)status.track)->forceTrackEnd();
 			}
 
@@ -633,6 +657,9 @@ bool AVIDecoder::shouldQueueAudio(TrackStatus& status) {
 	// Sanity check:
 	if (status.track->getTrackType() != Track::kTrackTypeAudio)
 		return false;
+
+	if (_videoTracks.empty())
+		return true;
 
 	// If video is done, make sure that the rest of the audio is queued
 	// (I guess this is also really a sanity check)
@@ -866,7 +893,7 @@ byte AVIDecoder::getStreamIndex(uint32 tag) {
 void AVIDecoder::readOldIndex(uint32 size) {
 	uint32 entryCount = size / 16;
 
-	debug(7, "Old Index: %d entries", entryCount);
+	debugC(7, kDebugLevelGVideo, "Old Index: %d entries", entryCount);
 
 	if (entryCount == 0)
 		return;
@@ -882,12 +909,12 @@ void AVIDecoder::readOldIndex(uint32 size) {
 	// If it's absolute, the offset will equal the start of the movie list
 	bool isAbsolute = firstEntry.offset == _movieListStart;
 
-	debug(6, "Old index is %s", isAbsolute ? "absolute" : "relative");
+	debugC(6, kDebugLevelGVideo, "Old index is %s", isAbsolute ? "absolute" : "relative");
 
 	if (!isAbsolute)
 		firstEntry.offset += _movieListStart - 4;
 
-	debug(7, "Index 0: Tag '%s', Offset = %d, Size = %d (Flags = %d)", tag2str(firstEntry.id), firstEntry.offset, firstEntry.size, firstEntry.flags);
+	debugC(7, kDebugLevelGVideo, "Index 0: Tag '%s', Offset = %d, Size = %d (Flags = %d)", tag2str(firstEntry.id), firstEntry.offset, firstEntry.size, firstEntry.flags);
 	_indexEntries.push_back(firstEntry);
 
 	for (uint32 i = 1; i < entryCount; i++) {
@@ -902,13 +929,13 @@ void AVIDecoder::readOldIndex(uint32 size) {
 			indexEntry.offset += _movieListStart - 4;
 
 		_indexEntries.push_back(indexEntry);
-		debug(7, "Index %d: Tag '%s', Offset = %d, Size = %d (Flags = %d)", i, tag2str(indexEntry.id), indexEntry.offset, indexEntry.size, indexEntry.flags);
+		debugC(7, kDebugLevelGVideo, "Index %d: Tag '%s', Offset = %d, Size = %d (Flags = %d)", i, tag2str(indexEntry.id), indexEntry.offset, indexEntry.size, indexEntry.flags);
 	}
 }
 
 void AVIDecoder::checkTruemotion1() {
-	// If we got here from loadStream(), we know the track is valid
-	assert(!_videoTracks.empty());
+	if (_videoTracks.empty())
+		return;
 
 	TrackStatus &status = _videoTracks[0];
 	AVIVideoTrack *track = (AVIVideoTrack *)status.track;
@@ -945,8 +972,8 @@ VideoDecoder::AudioTrack *AVIDecoder::getAudioTrack(int index) {
 	return (AudioTrack *)track;
 }
 
-AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette)
-		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _initialPalette(initialPalette) {
+AVIDecoder::AVIVideoTrack::AVIVideoTrack(int frameCount, const AVIStreamHeader &streamHeader, const BitmapInfoHeader &bitmapInfoHeader, byte *initialPalette, Image::CodecAccuracy accuracy)
+		: _frameCount(frameCount), _vidsHeader(streamHeader), _bmInfo(bitmapInfoHeader), _palette(256), _initialPalette(initialPalette), _accuracy(accuracy) {
 	_videoCodec = createCodec();
 	_lastFrame = 0;
 	_curFrame = -1;
@@ -997,9 +1024,10 @@ void AVIDecoder::AVIVideoTrack::loadPaletteFromChunkRaw(Common::SeekableReadStre
 	assert(firstEntry >= 0);
 	assert(numEntries > 0);
 	for (uint16 i = firstEntry; i < numEntries + firstEntry; i++) {
-		_palette[i * 3] = chunk->readByte();
-		_palette[i * 3 + 1] = chunk->readByte();
-		_palette[i * 3 + 2] = chunk->readByte();
+		byte r = chunk->readByte();
+		byte g = chunk->readByte();
+		byte b = chunk->readByte();
+		_palette.set(i, r, g, b);
 		chunk->readByte(); // Flags that don't serve us any purpose
 	}
 	_dirtyPalette = true;
@@ -1025,7 +1053,7 @@ void AVIDecoder::AVIVideoTrack::useInitialPalette() {
 	_dirtyPalette = false;
 
 	if (_initialPalette) {
-		memcpy(_palette, _initialPalette, sizeof(_palette));
+		_palette.set(_initialPalette, 0, 256);
 		_dirtyPalette = true;
 	}
 }
@@ -1051,8 +1079,13 @@ bool AVIDecoder::AVIVideoTrack::rewind() {
 }
 
 Image::Codec *AVIDecoder::AVIVideoTrack::createCodec() {
-	return Image::createBitmapCodec(_bmInfo.compression, _vidsHeader.streamHandler, _bmInfo.width,
+	Image::Codec *codec = Image::createBitmapCodec(_bmInfo.compression, _vidsHeader.streamHandler, _bmInfo.width,
 									_bmInfo.height, _bmInfo.bitCount);
+
+	if (codec != nullptr)
+		codec->setCodecAccuracy(_accuracy);
+
+	return codec;
 }
 
 void AVIDecoder::AVIVideoTrack::forceTrackEnd() {
@@ -1064,7 +1097,7 @@ const byte *AVIDecoder::AVIVideoTrack::getPalette() const {
 		return _videoCodec->getPalette();
 
 	_dirtyPalette = false;
-	return _palette;
+	return _palette.data();
 }
 
 bool AVIDecoder::AVIVideoTrack::hasDirtyPalette() const {
@@ -1098,6 +1131,15 @@ bool AVIDecoder::AVIVideoTrack::canDither() const {
 void AVIDecoder::AVIVideoTrack::setDither(const byte *palette) {
 	assert(_videoCodec);
 	_videoCodec->setDither(Image::Codec::kDitherTypeVFW, palette);
+}
+
+void AVIDecoder::AVIVideoTrack::setCodecAccuracy(Image::CodecAccuracy accuracy) {
+	if (_accuracy != accuracy) {
+		_accuracy = accuracy;
+
+		if (_videoCodec)
+			_videoCodec->setCodecAccuracy(accuracy);
+	}
 }
 
 AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :

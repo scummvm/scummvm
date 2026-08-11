@@ -84,10 +84,6 @@ TinyGLRenderer::TinyGLRenderer(OSystem *system) :
 		_blitImageRgba4444(nullptr) {
 }
 
-TinyGLRenderer::~TinyGLRenderer() {
-	TinyGL::destroyContext(_context);
-}
-
 void TinyGLRenderer::init() {
 	debug("Initializing Software 3D Renderer");
 
@@ -128,6 +124,7 @@ void TinyGLRenderer::deinit() {
 	tglDeleteBlitImage(_blitImageRgb565);
 	tglDeleteBlitImage(_blitImageRgba5551);
 	tglDeleteBlitImage(_blitImageRgba4444);
+	TinyGL::destroyContext(_context);
 }
 
 void TinyGLRenderer::loadTextureRGBA(Graphics::Surface *texture) {
@@ -189,10 +186,23 @@ void TinyGLRenderer::enableFog(const Math::Vector4d &fogColor) {
 	tglEnable(TGL_FOG);
 }
 
+void TinyGLRenderer::disableFog() {
+	tglDisable(TGL_FOG);
+}
+
+void TinyGLRenderer::enableScissor(int x, int y, int width, int height) {
+	tglScissor(x, y, width, height);
+	tglEnable(TGL_SCISSOR_TEST);
+}
+
+void TinyGLRenderer::disableScissor() {
+	tglDisable(TGL_SCISSOR_TEST);
+}
+
 void TinyGLRenderer::drawFace(uint face) {
 	tglBegin(TGL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {
-		tglColor3f(cubeVertices[11 * (4 * face + i) + 8], cubeVertices[11 * (4 * face + i) + 9], cubeVertices[11 * (4 * face + i) + 10]);
+		tglColor4f(cubeVertices[11 * (4 * face + i) + 8], cubeVertices[11 * (4 * face + i) + 9], cubeVertices[11 * (4 * face + i) + 10], 1.0f);
 		tglVertex3f(cubeVertices[11 * (4 * face + i) + 2], cubeVertices[11 * (4 * face + i) + 3], cubeVertices[11 * (4 * face + i) + 4]);
 		tglNormal3f(cubeVertices[11 * (4 * face + i) + 5], cubeVertices[11 * (4 * face + i) + 6], cubeVertices[11 * (4 * face + i) + 7]);
 	}
@@ -205,6 +215,12 @@ void TinyGLRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &r
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadMatrixf(_modelViewMatrix.getData());
+
+	tglDisable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE, TGL_ZERO);
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_TRUE);
+	tglDisable(TGL_TEXTURE_2D);
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(roll.x(), 1.0f, 0.0f, 0.0f);
@@ -223,10 +239,16 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadMatrixf(_modelViewMatrix.getData());
 
+	tglDisable(TGL_BLEND);
+	tglBlendFunc(TGL_ONE, TGL_ZERO);
+	tglEnable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_TRUE);
+	tglDisable(TGL_TEXTURE_2D);
+
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglRotatef(roll.y(), 0.0f, 1.0f, 0.0f);
 
-	tglColor3f(0.0f, 1.0f, 0.0f);
+	tglColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 	tglBegin(TGL_TRIANGLES);
 	tglVertex3f(-1.0f,  1.0, 0.0f);
 	tglVertex3f( 1.0f,  1.0, 0.0f);
@@ -235,13 +257,53 @@ void TinyGLRenderer::drawPolyOffsetTest(const Math::Vector3d &pos, const Math::V
 
 	tglPolygonOffset(-1.0f, 0.0f);
 	tglEnable(TGL_POLYGON_OFFSET_FILL);
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	tglBegin(TGL_TRIANGLES);
 	tglVertex3f(-0.5f,  0.5, 0.0f);
 	tglVertex3f( 0.5f,  0.5, 0.0f);
 	tglVertex3f( 0.0f, -0.5, 0.0f);
 	tglEnd();
 	tglDisable(TGL_POLYGON_OFFSET_FILL);
+}
+
+void TinyGLRenderer::drawQuadStripTest() {
+	tglMatrixMode(TGL_PROJECTION);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglDisable(TGL_BLEND);
+	tglDisable(TGL_CULL_FACE);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+	tglDisable(TGL_TEXTURE_2D);
+
+	tglColor4f(0.0f, 0.75f, 0.2f, 1.0f);
+	tglBegin(TGL_QUAD_STRIP);
+	tglVertex3f(-0.8f,  0.7f, 0.0f);
+	tglVertex3f( 0.8f,  0.7f, 0.0f);
+	tglVertex3f(-0.8f, -0.7f, 0.0f);
+	tglVertex3f( 0.8f, -0.7f, 0.0f);
+	tglEnd();
+
+	tglColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	tglBegin(TGL_TRIANGLES);
+	tglVertex3f(-0.12f,  0.12f, 0.0f);
+	tglVertex3f( 0.12f,  0.12f, 0.0f);
+	tglVertex3f( 0.0f, -0.12f, 0.0f);
+	tglEnd();
+
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPopMatrix();
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglPopMatrix();
 }
 
 void TinyGLRenderer::flipBuffer() {
@@ -317,9 +379,9 @@ void TinyGLRenderer::drawInViewport() {
 	tglPushMatrix();
 	_pos.x() += 0.01f;
 	_pos.y() += 0.01f;
-	if (_pos.x() >= 1.0f) {
-		_pos.x() = -1.0;
-		_pos.y() = -1.0;
+	if (_pos.x() >= 1.1f) {
+		_pos.x() = -1.1f;
+		_pos.y() = -1.1f;
 	}
 	tglTranslatef(_pos.x(), _pos.y(), 0);
 

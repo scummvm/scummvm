@@ -103,10 +103,10 @@ void QObjectCase::draw() {
 
 		QSystem *sys = g_vm->getQSystem();
 
-		const Common::List<Common::Rect> &dirty = g_vm->videoSystem()->rects();
+		const Graphics::DirtyRectList &dirty = g_vm->videoSystem()->rects();
 		const Common::Array<Common::Rect> &mskRects = flc->getMskRects();
 
-		for (Common::List<Common::Rect>::const_iterator it = dirty.begin(); it != dirty.end(); ++it) {
+		for (Graphics::DirtyRectList::const_iterator it = dirty.begin(); it != dirty.end(); ++it) {
 			for (uint i = 0; i < mskRects.size(); ++i) {
 				Common::Rect destRect = mskRects[i].findIntersectingRect(*it);
 				Common::Rect srcRect = destRect;

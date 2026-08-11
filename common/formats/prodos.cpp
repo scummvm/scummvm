@@ -31,7 +31,7 @@ ProDOSFile::ProDOSFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint1
 	, _eof(eof)
 	, _blockPtr(bPtr)
 	, _disk(disk) {
-	strncpy(_name, name, 16);
+	Common::strlcpy(_name, name, 16);
 }
 
 /* For debugging purposes, this prints the meta data of a file */
@@ -400,9 +400,8 @@ bool ProDOSDisk::hasFile(const Common::Path &path) const {
 
 int ProDOSDisk::listMembers(Common::ArchiveMemberList &list) const {
 	int f = 0;
-	Common::HashMap<Common::String, Common::SharedPtr<ProDOSFile>>::const_iterator it;
-	for (it = _files.begin(); it != _files.end(); ++it) {
-		list.push_back(Common::ArchiveMemberList::value_type(it->_value));
+	for (const auto &file : _files) {
+		list.push_back(Common::ArchiveMemberList::value_type(file._value));
 		++f;
 	}
 	return f;

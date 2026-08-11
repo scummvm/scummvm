@@ -58,7 +58,7 @@ typedef struct rect_t {
 #define DEBUG_SKIP_INTRO 0xFF
 #endif
 
-#if 1
+#if 0
 #define DEBUG_ZONE
 #endif
 

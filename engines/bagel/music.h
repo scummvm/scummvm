@@ -38,6 +38,6 @@ public:
 	void stop() override;
 };
 
-} // End of namespace Bagel
+} // namespace Bagel
 
 #endif

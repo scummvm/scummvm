@@ -949,7 +949,7 @@ static FT_Error ah_hinter_load(AH_Hinter hinter, FT_UInt glyph_index, FT_Int32 l
 		ah_outline_save(outline, gloader);
 
 		/* we now need to hint the metrics according to the change in */
-		/* width/positioning that occured during the hinting process  */
+		/* width/positioning that occurred during the hinting process  */
 		{
 			FT_Pos old_advance, old_rsb, old_lsb, new_lsb;
 			AH_Edge edge1 = outline->vert_edges; /* leftmost edge  */

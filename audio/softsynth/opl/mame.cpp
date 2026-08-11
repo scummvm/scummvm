@@ -22,6 +22,8 @@
  *
  */
 
+#ifndef DISABLE_MAME_OPL
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +41,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#if defined(GP2X) || defined(__MAEMO__) || defined(__DS__) || defined(__MINT__) || defined(__N64__)
+#if defined(__MAEMO__) || defined(__DS__) || defined(__MINT__) || defined(__N64__)
 #include "common/config-manager.h"
 #endif
 
@@ -69,10 +71,6 @@ void OPL::reset() {
 
 void OPL::write(int a, int v) {
 	MAME::OPLWrite(_opl, a, v);
-}
-
-byte OPL::read(int a) {
-	return MAME::OPLRead(_opl, a);
 }
 
 void OPL::writeReg(int r, int v) {
@@ -773,7 +771,7 @@ static void OPLCloseTable(void) {
 	free(ENV_CURVE);
 }
 
-/* CSM Key Controll */
+/* CSM Key Control */
 inline void CSMKeyControll(OPL_CH *CH) {
 	OPL_SLOT *slot1 = &CH->SLOT[SLOT1];
 	OPL_SLOT *slot2 = &CH->SLOT[SLOT2];
@@ -815,7 +813,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 	uint block_fnum;
 
 	switch (r & 0xe0) {
-	case 0x00: /* 00-1f:controll */
+	case 0x00: /* 00-1f:control */
 		switch (r & 0x1f) {
 		case 0x01:
 			/* wave selector enable */
@@ -1219,7 +1217,7 @@ int OPLTimerOver(FM_OPL *OPL, int c) {
 		OPL_STATUS_SET(OPL, 0x20);
 	} else {	/* Timer A */
 		OPL_STATUS_SET(OPL, 0x40);
-		/* CSM mode key,TL controll */
+		/* CSM mode key,TL control */
 		if (OPL->mode & 0x80) {	/* CSM mode total level latch and auto key on */
 			int ch;
 			if (OPL->UpdateHandler)
@@ -1238,7 +1236,7 @@ FM_OPL *makeAdLibOPL(int rate) {
 	// We need to emulate one YM3812 chip
 	int env_bits = FMOPL_ENV_BITS_HQ;
 	int eg_ent = FMOPL_EG_ENT_HQ;
-#if defined(GP2X) || defined(__MAEMO__) || defined(__DS__) || defined(__MINT__) || defined(__N64__)
+#if defined(__MAEMO__) || defined(__DS__) || defined(__MINT__) || defined(__N64__)
 	if (ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) {
 		env_bits = FMOPL_ENV_BITS_HQ;
 		eg_ent = FMOPL_EG_ENT_HQ;
@@ -1257,3 +1255,5 @@ FM_OPL *makeAdLibOPL(int rate) {
 
 } // End of namespace MAME
 } // End of namespace OPL
+
+#endif // !DISABLE_MAME_OPL

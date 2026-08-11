@@ -30,6 +30,7 @@
 namespace GUI {
 
 class ScrollBarWidget;
+class FluidScroller;
 
 enum NumberingMode {
 	kListNumberingOff	= -1,
@@ -60,6 +61,7 @@ public:
 	};
 
 	typedef Common::Array<ListData> ListDataArray;
+	~ListWidget() override;
 
 protected:
 	Common::U32StringArray	_list;
@@ -72,8 +74,18 @@ protected:
 	int				_currentPos;
 	int				_entriesPerPage;
 	int				_selectedItem;
+	Common::Array<bool> _selectedItems;    /// Multiple selected items (bool array)
+	bool			_multiSelectEnabled;	/// Flag for multi-selection
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
+
+	float			_scrollPos;
+	FluidScroller	*_fluidScroller;
+	bool			_wasAnimating;
+	bool			_isMouseDown;
+	bool			_isDragging;
+	int				_dragStartY;
+	int				_dragLastY;
 
 	Common::String	_quickSelectStr;
 	uint32			_quickSelectTime;
@@ -84,6 +96,7 @@ protected:
 	int				_rightPadding;
 	int				_topPadding;
 	int				_bottomPadding;
+	int				_itemSpacing;
 	int				_scrollBarWidth;
 
 	Common::U32String	_filter;
@@ -98,6 +111,9 @@ protected:
 
 	FilterMatcher	_filterMatcher;
 	void			*_filterMatcherArg;
+
+	static const int kDragThreshold = 5;
+
 public:
 	ListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
@@ -116,11 +132,22 @@ public:
 
 	const Common::U32String getSelectedString() const	{ return stripGUIformatting(_list[_selectedItem]); }
 
+	/// Get visual position (index in filtered list) from real data index
+	int getVisualPos(int dataIndex) const;
+
+	/// Multi-selection support
+	const Common::Array<bool> &getSelectedItems() const { return _selectedItems; }
+	bool isItemSelected(int item) const;
+	void markSelectedItem(int item, bool state);
+	void clearSelection();
+	void selectItemRange(int from, int to);
+	int _lastSelectionStartItem;          /// Used for Shift+Click range selection
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 
 	void scrollTo(int item);
 	void scrollToEnd();
 	int getCurrentScrollPos() const { return _currentPos; }
+	bool isItemVisible(int item) const { return _currentPos <= item && item < _currentPos + _entriesPerPage; }
 
 	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
 	Common::String getQuickSelectString() const { return _quickSelectStr; }
@@ -132,6 +159,10 @@ public:
 	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
 	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
 
+	// Multi-selection methods
+	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
+	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
+
 	// Made startEditMode/endEditMode for SaveLoadChooser
 	void startEditMode() override;
 	void endEditMode() override;
@@ -139,6 +170,7 @@ public:
 	void setFilter(const Common::U32String &filter, bool redraw = true);
 
 	void handleTickle() override;
+	void applyScrollPos();
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
@@ -176,6 +208,16 @@ protected:
 	void lostFocusWidget() override;
 	void checkBounds();
 	void scrollToCurrent();
+
+	/// Find the visual position of a data item
+	int findDataIndex(int dataIndex) const;
+
+	/// Check if an item at a given position is selectable
+	virtual bool isItemSelectable(int item) const { return true; }
+
+	// Searches for the next selectable item in the given direction (1 for down, -1 for up) starting from 'item' and returns its index.
+	// Returns -1 if no selectable item is found.
+	int findSelectableItem(int item, int direction) const;
 
 	virtual ThemeEngine::WidgetStateInfo getItemState(int item) const { return _state; }
 

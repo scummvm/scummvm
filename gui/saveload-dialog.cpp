@@ -21,10 +21,10 @@
 
 #include "gui/saveload-dialog.h"
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/savessyncrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #endif
 
 #include "common/translation.h"
@@ -43,7 +43,7 @@ namespace GUI {
 
 #define SCALEVALUE(val) ((val) * g_gui.getScaleFactor())
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 
 enum {
 	kCancelSyncCmd = 'PDCS',
@@ -134,7 +134,7 @@ void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 	_progressBar->markAsDirty();
 
 	if (_parent) {
-		_parent->updateSaveList();
+		_parent->updateSaveList(true);
 		_parent->reflowLayout();
 	}
 }
@@ -178,7 +178,7 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, c
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	, _listButton(nullptr), _gridButton(nullptr)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	, _pollFrame(0), _didUpdateAfterSync(true)
 #endif
 	{
@@ -194,7 +194,7 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const b
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	, _listButton(nullptr), _gridButton(nullptr)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	, _pollFrame(0), _didUpdateAfterSync(true)
 #endif
 	{
@@ -259,7 +259,7 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 	return Dialog::handleCommand(sender, cmd, data);
 }
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 	if (!CloudMan.isSyncing()) {
 		if (hasSavepathOverride) {
@@ -272,7 +272,7 @@ void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 #endif
 
 void SaveLoadChooserDialog::handleTickle() {
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	if (!_dialogWasShown && CloudMan.isSyncing()) {
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles();
 		if (!files.empty()) {
@@ -284,7 +284,7 @@ void SaveLoadChooserDialog::handleTickle() {
 				}
 			}
 			_dialogWasShown = true;
-			updateSaveList();
+			updateSaveList(false);
 		}
 	}
 
@@ -316,8 +316,8 @@ void SaveLoadChooserDialog::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-void SaveLoadChooserDialog::updateSaveList() {
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+void SaveLoadChooserDialog::updateSaveList(bool external) {
+#ifdef USE_CLOUD
 	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 	g_system->getSavefileManager()->updateSavefilesList(files);
 #endif
@@ -328,7 +328,7 @@ void SaveLoadChooserDialog::listSaves() {
 	if (!_metaEngine) return; //very strange
 	_saveList = _metaEngine->listSaves(_target.c_str(), _saveMode);
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	//if there is Cloud support, add currently synced files as "locked" saves in the list
 	if (_metaEngine->hasFeature(MetaEngine::kSimpleSavesNames)) {
 		Common::String pattern = _target + ".###";
@@ -356,7 +356,7 @@ void SaveLoadChooserDialog::listSaves() {
 #endif
 }
 
-void SaveLoadChooserDialog::activate(int slot, const Common::U32String &description) {
+void SaveLoadChooserDialog::activate(int slot, const Common::String &description) {
 	if (!_saveList.empty() && slot < int(_saveList.size())) {
 		const SaveStateDescriptor &desc = _saveList[slot];
 		if (_saveMode)
@@ -392,7 +392,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
 		button = new PicButtonWidget(this, name, tooltip, cmd);
-		((PicButtonWidget *)button)->setGfxFromTheme(image, kPicButtonStateEnabled, false);
+		((PicButtonWidget *)button)->setGfxFromTheme(image);
 	} else
 #endif
 		button = new ButtonWidget(this, name, desc, tooltip, cmd);
@@ -401,7 +401,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 }
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 void SaveLoadChooserDialog::pollCloudMan() {
 	_pollFrame = (_pollFrame + 1) % 60;
 	if (_pollFrame != 1)
@@ -422,7 +422,7 @@ void SaveLoadChooserDialog::pollCloudMan() {
 	}
 
 	if (update)
-		updateSaveList();
+		updateSaveList(false);
 }
 #endif
 
@@ -478,18 +478,18 @@ void SaveLoadChooserSimple::addThumbnailContainer() {
 
 int SaveLoadChooserSimple::runIntern() {
 	if (_gfxWidget)
-		_gfxWidget->setGfx((Graphics::ManagedSurface *)nullptr);
+		_gfxWidget->clearGfx();
 
 	_resultString.clear();
 	reflowLayout();
-	updateSaveList();
+	updateSaveList(false);
 
 	return Dialog::runModal();
 }
 
-const Common::U32String SaveLoadChooserSimple::getResultString() const {
+const Common::String SaveLoadChooserSimple::getResultString() const {
 	int selItem = _list->getSelected();
-	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
+	return (selItem >= 0) ? _list->getSelectedString().encode() : _resultString;
 }
 
 void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -517,7 +517,7 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 				Common::U32String description;
 				if (!_saveList.empty())
 					description = _list->getSelectedString();
-				activate(selItem, description);
+				activate(selItem, description.encode());
 			}
 		}
 		break;
@@ -527,7 +527,7 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 			Common::U32String description;
 			if (!_saveList.empty())
 				description = _list->getSelectedString();
-			activate(selItem, description);
+			activate(selItem, description.encode());
 		}
 		break;
 	case kListSelectionChangedCmd:
@@ -539,13 +539,24 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 			MessageDialog alert(_("Do you really want to delete this saved game?"),
 								_("Delete"), _("Cancel"));
 			if (alert.runModal() == kMessageOK) {
-				_metaEngine->removeSaveState(_target.c_str(), _saveList[selItem].getSaveSlot());
+				int saveSlot = _saveList[selItem].getSaveSlot();
+				if (_metaEngine->removeSaveState(_target.c_str(), saveSlot)) {
+					setResult(-1);
+					int scrollPos = _list->getCurrentScrollPos();
+					updateSaveList(false); // resets scroll pos
+					_list->scrollTo(scrollPos);
+					updateSelection(true);
+				} else {
+					// Delete failed. SavefileManager may contain an error description.
+					Common::String errorDesc;
+					if (g_system->getSavefileManager()->getError().getCode() != Common::kNoError) {
+						errorDesc = ", " + g_system->getSavefileManager()->getErrorDesc();
+					}
+					warning("Error deleting %s save slot %d%s", _target.c_str(), saveSlot, errorDesc.c_str());
 
-				setResult(-1);
-				int scrollPos = _list->getCurrentScrollPos();
-				updateSaveList(); // resets scroll pos
-				_list->scrollTo(scrollPos);
-				updateSelection(true);
+					GUI::MessageDialog errorDialog(_("Error deleting saved game"));
+					errorDialog.runModal();
+				}
 			}
 		}
 		break;
@@ -730,8 +741,8 @@ void SaveLoadChooserSimple::close() {
 	SaveLoadChooserDialog::close();
 }
 
-void SaveLoadChooserSimple::updateSaveList() {
-	SaveLoadChooserDialog::updateSaveList();
+void SaveLoadChooserSimple::updateSaveList(bool external) {
+	SaveLoadChooserDialog::updateSaveList(external);
 
 	int curSlot = 0;
 	int saveSlot = 0;
@@ -757,7 +768,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 		}
 
 		// Show "Untitled saved game" for empty/whitespace saved game descriptions
-		Common::U32String description = x->getDescription();
+		Common::U32String description = x->getDescription().decode();
 		Common::U32String trimmedDescription = description;
 		trimmedDescription.trim();
 		if (trimmedDescription.empty()) {
@@ -796,7 +807,11 @@ void SaveLoadChooserSimple::updateSaveList() {
 	else
 		_chooseButton->setEnabled(false);
 
-	g_gui.scheduleTopDialogRedraw();
+	if (external) {
+		g_gui.scheduleFullRedraw();
+	} else {
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 // SaveLoadChooserGrid implementation
@@ -841,14 +856,14 @@ SaveLoadChooserGrid::~SaveLoadChooserGrid() {
 	delete _pageDisplay;
 }
 
-const Common::U32String SaveLoadChooserGrid::getResultString() const {
+const Common::String SaveLoadChooserGrid::getResultString() const {
 	return _resultString;
 }
 
 void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	const int slot = cmd + _curPage * _entriesPerPage - 1;
 	if (cmd <= _entriesPerPage && slot < (int)_saveList.size()) {
-		activate(slot, Common::U32String());
+		activate(slot, Common::String());
 	}
 
 	switch (cmd) {
@@ -893,10 +908,14 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 	}
 }
 
-void SaveLoadChooserGrid::updateSaveList() {
-	SaveLoadChooserDialog::updateSaveList();
+void SaveLoadChooserGrid::updateSaveList(bool external) {
+	SaveLoadChooserDialog::updateSaveList(external);
 	updateSaves();
-	g_gui.scheduleTopDialogRedraw();
+	if (external) {
+		g_gui.scheduleFullRedraw();
+	} else {
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 void SaveLoadChooserGrid::open() {
@@ -929,8 +948,8 @@ void SaveLoadChooserGrid::open() {
 	if (_saveMode) {
 		int lastSlot = -1;
 		_nextFreeSaveSlot = -1;
-		for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
-			const int curSlot = x->getSaveSlot();
+		for (const auto &x : _saveList) {
+			const int curSlot = x.getSaveSlot();
 
 			// In case there was a gap found use the slot.
 			if (lastSlot + 1 < curSlot) {
@@ -954,6 +973,10 @@ void SaveLoadChooserGrid::open() {
 				_nextFreeSaveSlot = i + 1;
 			}
 		}
+
+		// Do not allow more slots than available
+		if (_nextFreeSaveSlot > maxSlot)
+			_nextFreeSaveSlot = -1;
 	}
 
 	updateSaves();
@@ -1133,7 +1156,7 @@ void SaveLoadChooserGrid::destroyButtons() {
 
 void SaveLoadChooserGrid::hideButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
-		i->button->setGfx((Graphics::ManagedSurface *)nullptr);
+		i->button->clearGfx();
 		i->setVisible(false);
 	}
 }
@@ -1157,10 +1180,10 @@ void SaveLoadChooserGrid::updateSaves() {
 		} else {
 			curButton.button->setGfx(kThumbnailWidth, kThumbnailHeight2, 0, 0, 0);
 		}
-		curButton.description->setLabel(Common::U32String(Common::String::format("%d. ", saveSlot)) + _saveList[i].getDescription());
+		curButton.description->setLabel(Common::U32String::format("%d. %s", saveSlot, _saveList[i].getDescription().c_str()));
 
 		Common::U32String tooltip(_("Name: "));
-		tooltip += _saveList[i].getDescription();
+		tooltip += _saveList[i].getDescription().decode();
 
 		if (_saveDateSupport) {
 			const Common::U32String &saveDate = desc.getSaveDate();
@@ -1225,12 +1248,12 @@ SavenameDialog::SavenameDialog()
 	_targetSlot = 0;
 }
 
-void SavenameDialog::setDescription(const Common::U32String &desc) {
-	_description->setEditString(desc);
+void SavenameDialog::setDescription(const Common::String &desc) {
+	_description->setEditString(desc.decode());
 }
 
-const Common::U32String &SavenameDialog::getDescription() {
-	return _description->getEditString();
+const Common::String SavenameDialog::getDescription() {
+	return _description->getEditString().encode();
 }
 
 void SavenameDialog::open() {

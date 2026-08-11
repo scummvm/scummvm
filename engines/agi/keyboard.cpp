@@ -422,7 +422,9 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 
 			if (displayLineRect.contains(_mouse.pos)) {
 				// and user clicked within the line of the prompt
-				showPredictiveDialog();
+				if (_game.predictiveDlgOnMouseClick) {
+					showPredictiveDialog();
+				}
 
 				key = 0; // eat event
 				return true;
@@ -444,7 +446,9 @@ bool AgiEngine::handleMouseClicks(uint16 &key) {
 			Common::Rect displayRect = _gfx->getFontRectForDisplayScreen(stringColumn, stringRow, stringMaxLen, 1);
 			if (displayRect.contains(_mouse.pos)) {
 				// user clicked inside the input space
-				showPredictiveDialog();
+				if (_game.predictiveDlgOnMouseClick) {
+					showPredictiveDialog();
+				}
 
 				key = 0; // eat event
 				return true;
@@ -671,6 +675,22 @@ int AgiEngine::waitAnyKey() {
 			break;
 	}
 	return key;
+}
+
+/**
+ * Waits on any key to be pressed or for a finished sound.
+ * This is used on platforms where sound playback would block the
+ * interpreter until the sound finished or was interrupted.
+ */
+void AgiEngine::waitAnyKeyOrFinishedSound() {
+	clearKeyQueue();
+
+	while (!(shouldQuit() || _restartGame || !_sound->isPlaying())) {
+		wait(10);
+		if (doPollKeyboard()) {
+			break;
+		}
+	}
 }
 
 bool AgiEngine::isKeypress() {

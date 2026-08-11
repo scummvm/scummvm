@@ -22,16 +22,16 @@
 #include "bagel/spacebar/main_window.h"
 #include "bagel/spacebar/main_link_object.h"
 #include "bagel/spacebar/filter.h"
-#include "bagel/baglib/event_sdev.h"
+#include "bagel/spacebar/baglib/event_sdev.h"
 #include "bagel/bagel.h"
-#include "bagel/boflib/std_keys.h"
+#include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
 namespace SpaceBar {
 
 #define PLAY_MODE_ONLY    1
 
-SBarThud *CMainWindow::_pThudBmp = nullptr;    // Pointer to the WEILD object
+SBarThud *CMainWindow::_pThudBmp = nullptr;    // Pointer to the WIELD object
 int CMainWindow::_nInstances = 0;      // Number of space bar windows
 bool CMainWindow::_bZzazzlVision = false;
 CBofRect *CMainWindow::_xFilterRect;
@@ -111,7 +111,7 @@ ErrorCode CMainWindow::attach() {
 	rView.setRect(_cLastLoc.x, _cLastLoc.y, _cLastLoc.x - 1, _cLastLoc.y - 1);
 	if (g_engine->g_bUseInitLoc) {
 		rView.setRect(g_engine->g_cInitLoc.x, g_engine->g_cInitLoc.y,
-			g_engine->g_cInitLoc.x - 1, g_engine->g_cInitLoc.y - 1);
+		              g_engine->g_cInitLoc.x - 1, g_engine->g_cInitLoc.y - 1);
 		g_engine->g_bUseInitLoc = false;
 	}
 

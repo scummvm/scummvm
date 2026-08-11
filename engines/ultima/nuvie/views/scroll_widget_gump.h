@@ -27,12 +27,10 @@
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/fonts/font.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Nuvie {
-
-using Std::list;
 
 
 class Configuration;
@@ -61,7 +59,7 @@ class ScrollWidgetGump: public MsgScroll {
 	uint8 font_highlight;
 	uint16 position;
 
-	Std::string trailing_whitespace;
+	Common::String trailing_whitespace;
 
 	bool show_up_arrow;
 	bool show_down_arrow;
@@ -80,8 +78,8 @@ public:
 	void Display(bool full_redraw) override;
 
 	void display_prompt() override {}
-	void display_string(const Std::string &s);
-	void display_string(const Std::string &s, Font *f, bool include_on_map_window) override {
+	void display_string(const Common::String &s);
+	void display_string(const Common::String &s, Font *f, bool include_on_map_window) override {
 		return MsgScroll::display_string(s, f, include_on_map_window);
 	}
 
@@ -91,8 +89,8 @@ public:
 	bool can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token) override;
 
 	GUI_status KeyDown(const Common::KeyState &key) override;
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;    // otherwise we do Msgscroll::MouseUp
 	}
 	GUI_status MouseWheel(sint32 x, sint32 y) override;

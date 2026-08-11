@@ -38,9 +38,7 @@
 #include "common/scummsys.h"
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 #include "backends/networking/sdl_net/handlers/connectcloudhandler.h"
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 namespace Common {
@@ -76,9 +74,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	ListAjaxHandler _listAjaxHandler;
 	FilesAjaxPageHandler _filesAjaxPageHandler;
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	ConnectCloudHandler _connectCloudHandler;
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 	ResourceHandler _resourceHandler;
 	uint32 _idlingFrames;
@@ -110,9 +106,7 @@ public:
 	static uint32 getPort();
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	void setStorageConnectionCallback(Networking::ErrorCallback cb) { _connectCloudHandler.setStorageConnectionCallback(cb); }
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 	static void setClientGetHandler(Client &client, const Common::String &response, long code = 200, const char *mimeType = nullptr);

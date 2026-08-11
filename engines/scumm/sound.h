@@ -26,22 +26,22 @@
 #include "common/serializer.h"
 #include "common/str.h"
 #include "audio/mididrv.h"
-#include "backends/audiocd/audiocd.h"
 #include "scumm/file.h"
-
-// The number of "ticks" (1/10th of a second) into the Overture that the
-// LucasFilm logo should appear. This corresponds to a timer value of 204.
-// The default value is selected to work well with the Ozawa recording.
-
-#define DEFAULT_LOOM_OVERTURE_TRANSITION 1160
+#include "scumm/soundcd.h"
+#include "scumm/soundse.h"
 
 #define DIGI_SND_MODE_EMPTY  0
 #define DIGI_SND_MODE_SFX    1
 #define DIGI_SND_MODE_TALKIE 2
 
+namespace Common {
+class SeekableSubReadStream;
+}
+
 namespace Audio {
 class Mixer;
 class SoundHandle;
+class SeekableAudioStream;
 }
 
 namespace Scumm {
@@ -69,6 +69,8 @@ protected:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 
+	Common::Mutex _speechTimerMutex;
+
 	int16 _midiQueuePos, _midiQueue[0x100];
 	int16 _soundQueuePos;
 
@@ -87,6 +89,8 @@ protected:
 	SoundMode _soundMode;
 	MP3OffsetTable *_offsetTable;	// For compressed audio
 	int _numSoundEffects;		// For compressed audio
+	int64 _cachedSfxLocationInPak = -1;	// For sfx files in pak files
+	int32 _cachedSfxLengthInPak = 0;    // For sfx files in pak files
 
 	uint32 _queuedSfxOffset, _queuedTalkieOffset, _queuedSfxLen, _queuedTalkieLen;
 	byte _queuedSoundMode, _queuedSfxChannel;
@@ -95,16 +99,12 @@ protected:
 	uint16 _mouthSyncTimes[64];
 	uint _curSoundPos;
 
-	int16 _currentCDSound;
-	int16 _currentMusic;
+	int16 _currentMusic;	// used by HE games
 
-	Audio::SoundHandle *_loomSteamCDAudioHandle;
-	bool _isLoomSteam;
-	AudioCDManager::Status _loomSteamCD;
-	bool _useReplacementAudioTracks;
-	int _musicTimer;
-	int _loomOvertureTransition;
-	uint32 _replacementTrackStartTime;
+	SoundCD *_soundCD = nullptr;
+	SoundSE *_soundSE = nullptr;
+	bool _useRemasteredAudio = false;
+	bool _enableAmbienceSounds = false;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
@@ -112,8 +112,6 @@ public:
 	bool _soundsPaused;
 	byte _digiSndMode;
 	uint _lastSound;
-	uint32 _cdMusicTimerMod;
-	uint32 _cdMusicTimer;
 	uint32 _speechTimerMod;
 
 	MidiDriverFlags _musicType;
@@ -146,28 +144,46 @@ public:
 	void resetSpeechTimer();
 	void startSpeechTimer();
 	void stopSpeechTimer();
-
-	void startCDTimer();
-	void stopCDTimer();
-
-	void playCDTrack(int track, int numLoops, int startFrame, int duration);
-	void playCDTrackInternal(int track, int numLoops, int startFrame, int duration);
-	void stopCD();
-	int pollCD() const;
-	void updateCD();
-	AudioCDManager::Status getCDStatus();
-	int getCurrentCDSound() const { return _currentCDSound; }
-	int getCDTrackIdFromSoundId(int soundId, int &loops, int &start);
-	bool isRolandLoom() const;
-	bool useReplacementAudio() const { return _useReplacementAudioTracks; }
-	void updateMusicTimer();
-	int getMusicTimer() const { return _musicTimer; }
-	int getCDMusicTimer() const { return _cdMusicTimer; }
+	bool speechIsPlaying(); // Used within MIDI iMUSE
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	void restoreAfterLoad();
 
 	bool isAudioDisabled();
+
+	void updateMusicTimer();
+
+	bool shouldInjectMISEAudio() const;
+	void startRemasteredSpeech(const char *msgString, uint16 roomNumber, uint16 actorTalking, uint16 numWaits);
+
+	// TODO: Duplicate this in Sound as well?
+	bool isRolandLoom() const {
+		return _soundCD->isRolandLoom();
+	}
+
+	// CD audio wrapper methods
+	int pollCD() const {
+		return _soundCD->pollCD();
+	}
+	void updateCD() {
+		_soundCD->updateCD();
+	}
+	void stopCD() {
+		_soundCD->stopCD();
+		_soundCD->stopCDTimer();
+	}
+	void playCDTrack(int track, int numLoops, int startFrame, int duration) {
+		_soundCD->playCDTrack(track, numLoops, startFrame, duration);
+	}
+	int getCurrentCDSound() const {
+		return _soundCD->getCurrentCDSound();
+	}
+	void restoreCDAudioAfterLoad(AudioCDManager::Status &info) {
+		_soundCD->restoreCDAudioAfterLoad(info);
+	}
+	void setupMISEAudioParams(int32 scriptNum, int32 scriptOffset) {
+		_soundSE->setupMISEAudioParams(scriptNum, scriptOffset);
+	}
 
 protected:
 	void setupSfxFile();
@@ -177,8 +193,6 @@ protected:
 	bool isSoundInQueue(int sound) const;
 
 	virtual void processSoundQueues();
-
-	int getReplacementAudioTrack(int soundID);
 };
 
 

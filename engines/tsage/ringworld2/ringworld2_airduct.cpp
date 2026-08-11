@@ -623,27 +623,23 @@ void Scene1200::process(Event &event) {
 		default:
 			return;
 		}
-	} else if (event.eventType == EVENT_KEYPRESS) {
+	} else if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
 		if (_field414) {
 			event.handled = false;
 			return;
 		}
 
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_KP8:
-		case Common::KEYCODE_UP:
+		switch (event.customType) {
+		case kActionMoveUpCrawlNorth:
 			startCrawling(CRAWL_NORTH);
 			break;
-		case Common::KEYCODE_KP4:
-		case Common::KEYCODE_LEFT:
+		case kActionMoveLeftCrawlWest:
 			startCrawling(CRAWL_WEST);
 			break;
-		case Common::KEYCODE_KP6:
-		case Common::KEYCODE_RIGHT:
+		case kActionMoveRightCrawlEast:
 			startCrawling(CRAWL_EAST);
 			break;
-		case Common::KEYCODE_KP2:
-		case Common::KEYCODE_DOWN:
+		case kActionMoveDownCrawlSouth:
 			startCrawling(CRAWL_SOUTH);
 			break;
 		default:

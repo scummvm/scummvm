@@ -33,6 +33,7 @@ public:
 	static int32 mWAIT_NB_DIZIEME(TwinEEngine *engine, MoveScriptContext &ctx);
 	static int32 mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx);
 	static int32 mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx);
 	static int32 mSET_FRAME(TwinEEngine *engine, MoveScriptContext &ctx);
 	static int32 mSET_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
 	static int32 mSET_START_3DS(TwinEEngine *engine, MoveScriptContext &ctx);

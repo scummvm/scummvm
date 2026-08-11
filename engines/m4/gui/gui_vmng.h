@@ -23,8 +23,6 @@
 #ifndef M4_GUI_GUI_VMNG_H
 #define M4_GUI_GUI_VMNG_H
 
-#include "m4/m4_types.h"
-#include "m4/gui/gui_univ.h"
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/gui/gui_vmng_rectangles.h"
 #include "m4/gui/gui_vmng_screen.h"
@@ -58,9 +56,6 @@ enum {
 #define SF_IMMOVABLE    0x0100		// if set, it ain't draggable
 #define SF_OFFSCRN		0x0200		// can be dragged off screen, if it's draggable
 #define SF_TRANSPARENT	0x0400		// if the screen is transparent
-
-#define SF_DEFAULT	SF_DRIFTER | SF_GET_ALL | SF_BLOCK_NONE
-#define SF_ALERT	SF_FLOATER | SF_GET_ALL | SF_BLOCK_ALL
 
 } // End of namespace M4
 

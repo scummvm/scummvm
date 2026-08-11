@@ -1,0 +1,49 @@
+1.  Add tests to ensure that non-zero length symlinks get dealt with properly
+    both for parsing and for writing back out (don't write them out, they have
+    bogus data).
+2.  Add tests to ensure that Rock Ridge CE records are the very last record in
+    the Rock Ridge extensions (some OSs, like FreeBSD, doesn't like them if
+    they aren't the last one).
+3.  Add a test for Rockridge RR entries in 1.12 version ISOs.  This isn't
+    technically allowed by the standard, but we have seen it in the wild, so
+    we should have a test to make sure we don't break it.
+4.  Add a test for "bare" El Torito section entries.  The El Torito standard
+    requires that section entries beyond the initial entry all start with a
+    section header, but we've seen ISOs in the wild where this isn't the case.
+    Add a test to ensure that these entries still work.
+5.  Add a test for when the El Torito boot catalog record is in a Rock Ridge
+    Continuation Entry.
+6.  Add a test for when the El Torito boot catalog record is in a Rock Ridge
+    relocated directory record.
+7.  Break the API for progress_cb(), by making sure the user always has to
+    have a function with a 3rd opaque argument.
+8.  Allow removal of El Torito entries without removing El Torito altogether.
+    To do this, we'll need to look up the bootfile when removing and only
+    remove the entry that corresponds to it, or the whole thing if it is
+    the initial entry.
+9.  Show the "logical" Rock Ridge tree in pycdlib-explorer when the user
+    requests the "rr" print mode.  This essentially means relocating Rock Ridge
+    deep directory trees as appropriate.
+10. Support the genisoimage options to allow relaxed ISO9660 filenames.
+11. Add parsing tests against xorriso.
+12. Remove the deprecated methods get_and_write(), get_and_write_fp(),
+    add_joliet_directory(), rm_joliet_directory(), list_dir(), and get_entry().
+13. Add the ability to hard-link from El Torito Initial and Section entries to
+    ISO9660, Joliet, and UDF.
+14. It should be possible to implement add_hard_link_in_place() and
+    rm_hard_link_in_place(), provided that the addition/removal doesn't affect
+    the number of extents for the parent DirectoryRecord/UDF File Entry.
+15. Add support for the rest of the "walk" API to make it more compatible with
+    os.walk().  In particular, support the topdown, onerror, and followlinks
+    flags.
+16. It is apparently possible to make an ISO that has *only* El Torito floppy
+    booting on it (with no PVD and hence no filesystem; see
+    http://www.menuetos.net/cdboot.htm for an example).  This is pretty
+    esoteric, but might be interesting to support creating/parsing.
+17. According to this post: http://reboot.pro/topic/21664-makeiso/?p=205285, the
+    sizes specified for El Torito floppy disk sizes aren't actual sizes, but
+    are instead specified as T/H/S, where H and S are fixed and column
+    corresponds to 'size'.  Thus, it should be possible to support booting from
+    so-called 'super-floppies'.  This doesn't entirely jive with the El Torito
+    specification, but apparently most modern BIOSs support this.  We should
+    fix PyCdlib for this.

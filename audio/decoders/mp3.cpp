@@ -394,7 +394,7 @@ Common::SeekableReadStream *MP3Stream::skipID3(Common::SeekableReadStream *strea
 	// ID3v1 (beginning with with 'TAG') is located at the end of files. So we can ignore those.
 	// ID3v2 can be located at the start of files and begins with a 10 bytes header, the first 3 bytes being 'ID3'.
 	// The tag size is coded on the last 4 bytes of the 10 bytes header as a 32 bit synchsafe integer.
-	// See http://id3.org/id3v2.4.0-structure for details.
+	// See https://id3.org/id3v2.4.0-structure for details.
 	char data[10];
 	stream->read(data, sizeof(data));
 

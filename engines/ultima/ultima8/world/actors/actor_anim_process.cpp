@@ -19,27 +19,25 @@
  *
  */
 
-#include "common/config-manager.h"
-
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
-#include "ultima/ultima8/world/actors/anim_action.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/misc/direction_util.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/actors/animation_tracker.h"
+
+#include "common/config-manager.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/world/actors/combat_process.h"
-#include "ultima/ultima8/world/actors/auto_firer_process.h"
-#include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/gfx/palette_fader_process.h"
-#include "ultima/ultima8/world/create_item_process.h"
-#include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/direction_util.h"
+#include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/world/actors/animation_tracker.h"
+#include "ultima/ultima8/world/actors/auto_firer_process.h"
+#include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/create_item_process.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {

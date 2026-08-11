@@ -39,19 +39,10 @@ Common::String getGLErrStr(GLenum error) {
 		return "GL_INVALID_VALUE";
 	case GL_INVALID_OPERATION:
 		return "GL_INVALID_OPERATION";
-// OpenGL ES 2.0 doesn't have GL_STACK_OVERFLOW and GL_STACK_UNDERFLOW
-// see https://registry.khronos.org/OpenGL/api/GLES2/gl2.h and https://registry.khronos.org/OpenGL/api/GLES2/gl2ext.h
-#ifdef USE_FORCED_GLES2
-	case GL_STACK_OVERFLOW_KHR:
-		return "GL_STACK_OVERFLOW_KHR";
-	case GL_STACK_UNDERFLOW_KHR:
-		return "GL_STACK_UNDERFLOW_KHR";
-#else
 	case GL_STACK_OVERFLOW:
 		return "GL_STACK_OVERFLOW";
 	case GL_STACK_UNDERFLOW:
 		return "GL_STACK_UNDERFLOW";
-#endif
 	case GL_OUT_OF_MEMORY:
 		return "GL_OUT_OF_MEMORY";
 	default:

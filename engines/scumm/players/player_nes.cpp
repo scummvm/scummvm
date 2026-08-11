@@ -22,6 +22,8 @@
 #ifndef DISABLE_NES_APU
 
 #include "engines/engine.h"
+#include "common/array.h"
+#include "common/system.h"
 #include "scumm/players/player_nes.h"
 #include "scumm/scumm.h"
 #include "audio/mixer.h"
@@ -89,25 +91,25 @@ static const byte LengthCounts[32] = {
 
 class SoundGen {
 protected:
-	byte wavehold;
-	uint32 freq;	// short
-	uint32 CurD;
+	byte wavehold = 0;
+	uint32 freq = 0;	// short
+	uint32 CurD = 1;
 
 public:
-	byte Timer;
-	int32 Pos;
-	uint32 Cycles;	// short
+	byte Timer = 0;
+	int32 Pos = 0;
+	uint32 Cycles = 1;	// short
 
 	inline byte GetTimer() const { return Timer; }
 };
 
 class Square : public SoundGen {
 protected:
-	byte volume, envelope, duty, swpspeed, swpdir, swpstep, swpenab;
-	byte Vol;
-	byte EnvCtr, Envelope, BendCtr;
-	bool Enabled, ValidFreq, Active;
-	bool EnvClk, SwpClk;
+	byte volume = 0, envelope = 0, duty = 0, swpspeed = 0, swpdir = 0, swpstep = 0, swpenab = 0;
+	byte Vol = 0;
+	byte EnvCtr = 1, Envelope = 0, BendCtr = 1;
+	bool Enabled = 0, ValidFreq = 0, Active = 0;
+	bool EnvClk = 0, SwpClk = 0;
 
 	void CheckActive();
 
@@ -127,10 +129,7 @@ static const int8 Duties[4][8] = {
 };
 
 void Square::Reset() {
-	memset(this, 0, sizeof(*this));
-	Cycles = 1;
-	EnvCtr = 1;
-	BendCtr = 1;
+	*this = Square();
 }
 
 void Square::CheckActive() {
@@ -236,10 +235,10 @@ void Square::HalfFrame() {
 
 class Triangle : public SoundGen {
 protected:
-	byte linear;
-	byte LinCtr;
-	bool Enabled, Active;
-	bool LinClk;
+	byte linear = 0;
+	byte LinCtr = 0;
+	bool Enabled = false, Active = false;
+	bool LinClk = false;
 
 	void CheckActive();
 
@@ -259,8 +258,7 @@ static const int8 TriDuty[32] = {
 };
 
 void Triangle::Reset() {
-	memset(this, 0, sizeof(*this));
-	Cycles = 1;
+	*this = Triangle();
 }
 
 void Triangle::CheckActive() {
@@ -341,13 +339,11 @@ void Triangle::HalfFrame() {
 
 class Noise : public SoundGen {
 protected:
-	byte volume, envelope, datatype;
-	byte Vol;
-	byte EnvCtr, Envelope;
-	bool Enabled;
-	bool EnvClk;
-
-	void CheckActive();
+	byte volume = 0, envelope = 0, datatype = 0;
+	byte Vol = 0;
+	byte EnvCtr = 1, Envelope = 0;
+	bool Enabled = false;
+	bool EnvClk = false;
 
 public:
 	void Reset();
@@ -363,11 +359,7 @@ static const uint32 NoiseFreq[16] = {
 };
 
 void Noise::Reset() {
-	memset(this, 0, sizeof(*this));
-	CurD = 1;
-	Cycles = 1;
-	EnvCtr = 1;
-
+	*this = Noise();
 }
 
 void Noise::Write(int Reg, byte Val) {
@@ -613,6 +605,8 @@ Player_NES::Player_NES(ScummEngine *scumm, Audio::Mixer *mixer) {
 		_slot[i].data = nullptr;
 	}
 
+	_title2SfxActive = false;
+
 	for (i = 0; i < NUMCHANS; i++) {
 		_mchan[i].command = 0;
 		_mchan[i].framedelay = 0;
@@ -654,6 +648,7 @@ int Player_NES::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 void Player_NES::stopAllSounds() {
+	_title2SfxActive = false;
 	for (int i = 0; i < NUMSLOTS; i++) {
 		_slot[i].framesleft = 0;
 		_slot[i].type = 0;
@@ -662,6 +657,34 @@ void Player_NES::stopAllSounds() {
 
 	isSFXplaying = 0;
 	checkSilenceChannels(0);
+}
+
+
+void Player_NES::startTitleTwinkleGroup(const byte twinkleSteps4x6[4][6]) {
+	_title2SfxActive = true;
+	_titleSfxBuf.clear();
+	_titleSfxBuf.reserve(29);
+
+	for (int stepIndex = 0; stepIndex < 4; ++stepIndex) {
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][0]);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][1]);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][2]);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][3]);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][4]);
+		_titleSfxBuf.push_back(0x10);
+		_titleSfxBuf.push_back(twinkleSteps4x6[stepIndex][5]);
+	}
+
+	_titleSfxBuf.push_back(0xFF);
+
+	const int slotIndex = 0;
+	_slot[slotIndex].type = 10;
+	_slot[slotIndex].id = -2;
+	_slot[slotIndex].data = _titleSfxBuf.data();
+	_slot[slotIndex].offset = 0;
+	_slot[slotIndex].framesleft = 1;
+	checkSilenceChannels(slotIndex);
+	isSFXplaying = true;
 }
 
 void Player_NES::stopSound(int nr) {
@@ -732,6 +755,8 @@ void Player_NES::sound_play() {
 }
 
 void Player_NES::playSFX (int nr) {
+	const bool isTitle2Chirp = (nr == 0 && _slot[nr].id == -2 && _title2SfxActive);
+
 	if (--_slot[nr].framesleft)
 		return;
 
@@ -751,15 +776,26 @@ void Player_NES::playSFX (int nr) {
 			_slot[nr].id = -1;
 			_slot[nr].type = 0;
 			isSFXplaying = false;
-			APU_writeControl(0);
+
+			if (!isTitle2Chirp)
+				APU_writeControl(0);
 
 			if (!nr && _slot[1].framesleft) {
 				_slot[1].framesleft = 1;
 				isSFXplaying = true;
 			}
+
+			if (isTitle2Chirp)
+				_title2SfxActive = false;
+
 			return;
 		} else {
-			_slot[nr].framesleft = _slot[nr].data[_slot[nr].offset++];
+			if (isTitle2Chirp) {
+				const byte frames = _slot[nr].data[_slot[nr].offset++];
+				_slot[nr].framesleft = frames;
+			} else {
+				_slot[nr].framesleft = _slot[nr].data[_slot[nr].offset++];
+			}
 			return;
 		}
 	}

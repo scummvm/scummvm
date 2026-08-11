@@ -31,8 +31,6 @@ namespace Ultima8 {
 static const unsigned int PATH_OK = 1;
 static const unsigned int PATH_FAILED = 0;
 
-const uint16 PathfinderProcess::PATHFINDER_PROC_TYPE = 0x204;
-
 DEFINE_RUNTIME_CLASSTYPE_CODE(PathfinderProcess)
 
 PathfinderProcess::PathfinderProcess() : Process(),

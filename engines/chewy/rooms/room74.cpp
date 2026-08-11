@@ -96,12 +96,12 @@ int Room74::proc1() {
 		_G(gameState).R74CutRubberPlant = true;
 		autoMove(4, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(1, 1, ANI_FRONT);
+		startDetailWait(1, 1, ANI_FRONT);
 		setPersonPos(272, 116, P_CHEWY, P_RIGHT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(det)->startDetail(0, 255, false);
 		_G(gameState).flags29_1 = true;
-		_G(atds)->set_ats_str(435, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(435, 1, ATS_DATA);
 
 	} else if (!_G(cur)->usingInventoryCursor() && _G(gameState).R74CutRubberPlant) {
 		_G(atds)->setControlBit(435, ATS_ACTIVE_BIT);

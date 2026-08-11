@@ -29,12 +29,67 @@ namespace Riddle {
 namespace Rooms {
 
 class Room603 : public Room {
+private:
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val9 = 0;
+	int _val10 = 0;
+	bool _showingNoteCloseup = false;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
+	int _ttMode = 0;
+	int _ttShould = 0;
+	int _trigger1 = 0;
+	machine *_shed = nullptr;
+	machine *_shenWalker = nullptr;
+	machine *_kuangWalker = nullptr;
+	machine *_note = nullptr;
+	machine *_pole = nullptr;
+	machine *_shirt = nullptr;
+	machine *_sleeve = nullptr;
+	machine *_door = nullptr;
+	machine *_tt = nullptr;
+	machine *_ttShadow = nullptr;
+	machine *_pu01 = nullptr;
+	machine *_ripley = nullptr;
+	machine *_shadow = nullptr;
+	machine *_ttNote = nullptr;
+	machine *_explosion = nullptr;
+	int _rp01 = 0;
+	int _rp02 = 0;
+	int _ttDigShirtOff = 0;
+	int _ttDigShirtOn = 0;
+	int _tt03 = 0;
+	int _ttD01 = 0;
+	int _rp04 = 0;
+	int _ripHandsBehindBack = 0;
+	int _ripTalk = 0;
+	int _ripHandsHips = 0;
+	int _ripHandChin = 0;
+	int _ripTwoHandTalk = 0;
+	int _ripAction = 0;
+
+	void conv603a();
+	void conv603b();
+	void unloadSeries();
+	bool takeSleeve();
+	bool takeNote();
+	bool takePole();
+	void enter();
+	void playRandomDigi(int max);
+
 public:
 	Room603() : Room() {}
 	~Room603() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms

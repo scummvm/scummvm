@@ -732,7 +732,16 @@ void Script::talk(const Common::Array<int> &params) {
 	// Set the string and text color
 	surface->markDirtyRect(speechFrame->getRect(kNoDisplacement));
 	if (_vm->_sound->showSubtitles() || !sample) {
-		speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
+		Common::String text = Common::String((const char *)f->_data+1, f->_length-1);
+		speechFrame->setText(text);
+
+		_vm->setTTSVoice(personID);
+		// Count credits as objects for TTS purposes
+		if (_vm->_game->getMapID() == kCreditsMapID) {
+			_vm->sayText(text, false);
+		} else if (!sample) {
+			_vm->sayText(text, true);
+		}
 	} else {
 		speechFrame->setText("");
 	}
@@ -784,6 +793,7 @@ void Script::talk(const Common::Array<int> &params) {
 	// Delete the text
 	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect(kNoDisplacement));
 	speechFrame->setText("");
+	_vm->setTTSVoice(kBertID);
 
 	// Stop the playing sample and deallocate it.  Stopping should only be
 	// necessary if the user interrupts the playback.

@@ -38,6 +38,7 @@
 #include "m4/wscript/wst_regs.h"
 #include "m4/vars.h"
 #include "m4/m4.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 
@@ -51,7 +52,7 @@ void Room::parser() {
 
 
 void Sections::global_section_constructor() {
-	uint sectionNum = _G(game).new_section;
+	const uint sectionNum = _G(game).new_section;
 	assert(sectionNum >= 1 && sectionNum <= 9);
 
 	_activeSection = _sections[sectionNum - 1];
@@ -115,7 +116,7 @@ void Sections::m4SceneLoad() {
 	_G(kernel).going = kernel_load_room(MIN_PAL_ENTRY, MAX_PAL_ENTRY,
 		&_G(currentSceneDef), &_G(screenCodeBuff), &_G(game_bgBuff));
 	if (!_G(kernel).going)
-		error_show(FL, 'IMP!');	// this should never ever happen
+		error_show(FL, "kernel_load_room failed");	// this should never ever happen
 
 	get_ipl();
 
@@ -174,10 +175,10 @@ void Sections::m4SceneLoad() {
 }
 
 void Sections::m4RunScene() {
-	game_control_cycle();
-
 	if (!player_been_here(_G(game).room_id))
 		player_enters_scene(_G(game).room_id);
+
+	game_control_cycle();
 }
 
 void Sections::m4EndScene() {
@@ -222,13 +223,16 @@ void Sections::m4EndScene() {
 	ClearWSAssets(_WS_ASSET_DATA, 0, 255);
 	ClearWSAssets(_WS_ASSET_CELS, 0, 255);
 
+	// Dump a list of any resources remaining in memory
+	_G(resources).dumpResources();
+
 	// Reload the walker and show scripts.
 	if (!LoadWSAssets("walker script", &_G(master_palette)[0]))
-		error_show(FL, 'FNF!', "walker script");
+		error_show(FL, "walker script");
 	if (!LoadWSAssets("show script", &_G(master_palette)[0]))
-		error_show(FL, 'FNF!', "show script");
+		error_show(FL, "show script");
 	if (!LoadWSAssets("stream script", &_G(master_palette)[0]))
-		error_show(FL, 'FNF', "stream script");
+		error_show(FL, "stream script");
 
 	g_vars->global_menu_system_init();
 }
@@ -238,10 +242,9 @@ void Sections::get_ipl() {
 		delete _G(inverse_pal);
 	_G(inverse_pal) = nullptr;
 
-	char *name;
 	Common::String filename;
 
-	name = env_find(_G(currentSceneDef).art_base);
+	char *name = env_find(_G(currentSceneDef).art_base);
 	if (name) {
 		// Means found in database
 		filename = f_extension_new(name, "ipl");
@@ -252,26 +255,22 @@ void Sections::get_ipl() {
 	}
 
 	_G(inverse_pal) = new InvPal(filename.c_str());
-	if (!_G(inverse_pal))
-		error_show(FL, 'OOM!', "loading ipl: %s", filename.c_str());
 }
 
 void Sections::get_walker() {
 	term_message("Loading walker sprites");
-	if (!_GW().walk_load_walker_and_shadow_series())
-		error_show(FL, 'WLOD');
+	_GW().walk_load_walker_and_shadow_series();
 	ws_walk_init_system();
 }
 
 void Sections::game_control_cycle() {
-	int32 status;
-
 	while (_G(game).new_room == _G(game).room_id && _G(kernel).going && !_G(kernel).force_restart) {
 		krn_pal_game_task();
 
+		int32 status;
 		ScreenContext *screen = vmng_screen_find(_G(gameDrawBuff), &status);
 		if (!screen)
-			error_show(FL, 'BUF!');
+			error_show(FL, "no gameDrawBuff");
 
 		if (_G(player).ready_to_walk) {
 			if (_G(player).need_to_walk) {
@@ -306,11 +305,11 @@ void Sections::game_control_cycle() {
 
 		if (_G(player).walker_in_this_scene && _G(camera_reacts_to_player) &&
 				_G(gameDrawBuff)->w > 640 && _G(my_walker)) {
-			int xp = (_G(my_walker)->myAnim8->myRegs[IDX_X] >> 16) + screen->x1;
+			const int xp = (_G(my_walker)->myAnim8->myRegs[IDX_X] >> 16) + screen->x1;
 
 			if (xp > 560 && _cameraShiftAmount >= 0) {
 				_cameraShiftAmount += screen->x1 - 427;
-				int xv = _cameraShiftAmount + _G(gameDrawBuff)->w - 1;
+				const int xv = _cameraShiftAmount + _G(gameDrawBuff)->w - 1;
 
 				if (xv < 639)
 					_cameraShiftAmount = -(_G(gameDrawBuff)->w - 640);
@@ -328,6 +327,7 @@ void Sections::game_control_cycle() {
 		// Ensure the screen is updated
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+		g_engine->updateSubtitleOverlay();
 
 		if (g_engine->shouldQuit())
 			_G(kernel).going = false;
@@ -365,8 +365,7 @@ void Sections::parse_player_command_now() {
 
 void Sections::pal_game_task() {
 	int32 status;
-	bool updateVideo;
-	int delta = 0;
+	int delta;
 	Common::String line;
 
 	if (!player_commands_allowed())
@@ -376,12 +375,12 @@ void Sections::pal_game_task() {
 
 	if (!_G(kernel).pause) {
 		if (_G(toggle_cursor) != CURSCHANGE_NONE) {
-			CursorChange change = _G(toggle_cursor);
+			const CursorChange change = _G(toggle_cursor);
 			_G(toggle_cursor) = CURSCHANGE_NONE;
 			g_vars->getHotkeys()->toggle_through_cursors(change);
 		}
 
-		updateVideo = !_cameraShiftAmount && !_cameraShift_vert_Amount;
+		const bool updateVideo = !_cameraShiftAmount && !_cameraShift_vert_Amount;
 
 		cycleEngines(_G(game_bgBuff)->get_buffer(), &(_G(currentSceneDef).depth_table[0]),
 			_G(screenCodeBuff)->get_buffer(), (uint8 *)&_G(master_palette)[0], _G(inverse_pal)->get_ptr(), updateVideo);
@@ -390,16 +389,25 @@ void Sections::pal_game_task() {
 		_G(game_bgBuff)->release();
 
 		if (!game_buff_ptr)
-			error_show(FL, 'BUF!');
+			error_show(FL, "no gameDrawBuff");
+
+		if _G(please_hyperwalk) {
+			_G(please_hyperwalk) = false;
+			adv_hyperwalk_to_final_destination(nullptr, nullptr);
+		}
 
 		if (_cameraShiftAmount) {
 			if (_G(kernel).camera_pan_instant) {
 				delta = _cameraShiftAmount;
 				_cameraShiftAmount = 0;
-			} else if (_cameraShiftAmount > 0) {
-				delta = imath_min(_cameraShiftAmount, camera_pan_step);
 			} else {
-				delta = imath_max(_cameraShiftAmount, camera_pan_step);
+				if (_cameraShiftAmount > 0) {
+					delta = imath_min(_cameraShiftAmount, camera_pan_step);
+				} else {
+					delta = imath_max(_cameraShiftAmount, -camera_pan_step);
+				}
+
+				_cameraShiftAmount -= delta;
 			}
 
 			MoveScreenDelta(game_buff_ptr, delta, 0);
@@ -409,11 +417,16 @@ void Sections::pal_game_task() {
 			if (_G(kernel).camera_pan_instant) {
 				delta = _cameraShift_vert_Amount;
 				_cameraShift_vert_Amount = 0;
-			} else if (_cameraShift_vert_Amount > 0) {
-				delta = imath_min(_cameraShift_vert_Amount, camera_pan_step);
 			} else {
-				delta = imath_max(_cameraShift_vert_Amount, camera_pan_step);
+				if (_cameraShift_vert_Amount > 0) {
+					delta = imath_min(_cameraShift_vert_Amount, camera_pan_step);
+				} else {
+					delta = imath_max(_cameraShift_vert_Amount, camera_pan_step);
+				}
+
+				_cameraShift_vert_Amount -= delta;
 			}
+			MoveScreenDelta(game_buff_ptr, 0, delta);
 		}
 	}
 
@@ -442,6 +455,28 @@ void Sections::pal_game_task() {
 
 	if (_G(showMousePos))
 		update_mouse_pos_dialog();
+}
+
+void Sections::camera_shift_xy(int32 x, int32 y) {
+	int32 status;
+	ScreenContext *sc = vmng_screen_find(_G(gameDrawBuff), &status);
+	assert(sc);
+
+	_cameraShiftAmount = -sc->x1 - x + _G(kernel).letter_box_x;
+	_cameraShift_vert_Amount = -sc->y1 - y + _G(kernel).letter_box_y;
+}
+
+void Sections::set_camera_delta_pan(int32 deltaX, int32 deltaY) {
+	_cameraShiftAmount = -deltaX;
+	_cameraShift_vert_Amount = -deltaY;
+}
+
+void Sections::adv_camera_pan_step(int32 step) {
+	camera_pan_step = step;
+}
+
+Room *Sections::getRoom(int room) const {
+	return (*_sections[(room / 100) - 1])[room];
 }
 
 /*------------------------------------------------------------------------*/

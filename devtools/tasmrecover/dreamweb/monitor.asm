@@ -173,7 +173,7 @@ foundpersonal:	call	openfile
 
 
 Loadnews	proc	near		;textfile2 holds information
-				;accessable by anyone
+				;accessible by anyone
 	mov	al,newsitem
 	mov	dx,offset cs:monitorfile10
 	cmp	al,0

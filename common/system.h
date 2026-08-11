@@ -31,6 +31,7 @@
 #include "common/hash-str.h" // For OSystem::updateStartSettings()
 #include "common/path.h"
 #include "common/log.h"
+#include "common/frac.h"
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
 #include "graphics/opengl/context.h"
@@ -40,6 +41,7 @@ class Mixer;
 }
 
 namespace Graphics {
+class CursorManager;
 struct Surface;
 }
 
@@ -69,12 +71,15 @@ class TextToSpeechManager;
 #if defined(USE_SYSDIALOGS)
 class DialogManager;
 #endif
+class PrintingManager;
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
 class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
+
+enum RotationMode : int;
 
 typedef Array<Keymap *> KeymapArray;
 }
@@ -159,6 +164,8 @@ typedef struct ImGuiCallbacks {
  * - Sound output
  */
 class OSystem : Common::NonCopyable {
+	friend class Graphics::CursorManager;
+
 protected:
 	OSystem();
 	virtual ~OSystem();
@@ -196,8 +203,6 @@ protected:
 
 	/**
 	 * No default value is provided for _eventManager by OSystem.
-	 * However, EventsBaseBackend::initBackend() does set a default value
-	 * if none has been set before.
 	 *
 	 * @note _eventManager is deleted by the OSystem destructor.
 	 */
@@ -261,6 +266,13 @@ protected:
 	 * @note _fsFactory is deleted by the OSystem destructor.
 	 */
 	FilesystemFactory *_fsFactory;
+
+	/**
+	 * No default value is provided for _printingManager by OSystem.
+	 *
+	 * @note _printingManager is deleted by the OSystem destructor.
+	*/
+	Common::PrintingManager *_printingManager;
 
 	/**
 	 * Used by the DLC Manager implementation
@@ -515,17 +527,6 @@ public:
 		kFeatureVSync,
 
 		/**
-		 * When a backend supports this feature, it guarantees the graphics
-		 * context is not destroyed when switching to and from fullscreen.
-		 *
-		 * For OpenGL, that means the context is kept with all of its content:
-		 * texture, programs, etc.
-		 *
-		 * For TinyGL, that means the backbuffer surface is kept.
-		 */
-		kFeatureFullscreenToggleKeepsContext,
-
-		/**
 		 * The presence of this feature indicates whether the displayLogFile()
 		 * call is supported.
 		 *
@@ -628,6 +629,21 @@ public:
 		* Covers a wide range of platforms, Apple Macs, XBox 360, PS3, and more
 		*/
 		kFeatureCpuAltivec,
+
+		/**
+		* Graphics code is able to rotate the screen
+		*/
+		kFeatureRotationMode,
+
+		/**
+		* WORKAROUND: The backend corrects mouse motion events that carry a
+		* stale position, an Apple bug on macOS 26
+		* (https://github.com/libsdl-org/SDL/issues/15967). The workaround is
+		* enabled by default where available; the testbed engine disables it
+		* at runtime to check whether the underlying bug still occurs (see
+		* EventTests::staleMousePosition()).
+		*/
+		kFeatureStaleMousePositionWorkaround,
 	};
 
 	/**
@@ -910,6 +926,22 @@ public:
 	 * @param callbacks Structure containing init/render/cleanup callbacks called on screen initialization, rendering and when deinitialized.
 	 */
 	virtual void setImGuiCallbacks(const ImGuiCallbacks &callbacks) {}
+	/**
+	 * Creates a new ImGui texture from a Graphics::Surface.
+	 *
+	 * @param image The Surface to convert.
+	 * @param palette The palette to use if image is a paletized surface.
+	 * @param palCount The number of entries in the palette.
+	 *
+	 * @return An ImGui texture identifier casted to void *.
+	 */
+	virtual void *getImGuiTexture(const Graphics::Surface &image, const byte *palette = nullptr, int palCount = 0) { return nullptr; }
+	/**
+	 * Frees an ImGui texture previously obtained by getImGuiTexture.
+	 *
+	 * @param texture The texture to free.
+	 */
+	virtual void freeImGuiTexture(void *texture) {}
 #endif
 
 	/**
@@ -917,7 +949,7 @@ public:
 	 *
 	 * If loading the new shader fails, this method returns false.
 	 *
-	 * @param fileNode File node of the new shader.
+	 * @param fileName File node of the new shader.
 	 *
 	 * @return True if the switch was successful, false otherwise.
 	 */
@@ -981,6 +1013,28 @@ public:
 	 * @return ID of the active stretch mode.
 	 */
 	virtual int getStretchMode() const { return 0; }
+
+	/**
+	 * Switch to the specified rotation
+	 *
+	 * If switching to the new rotation fails, this method returns false.
+	 *
+	 * @param rotation Rotation angle
+	 *
+	 * @return True if the switch was successful, false otherwise.
+	 */
+	virtual bool setRotationMode(Common::RotationMode rotation) { return false; }
+
+	/**
+	 * Switch to the specified rotation with the given int
+	 *
+	 * If switching to the new rotation fails, this method returns false.
+	 *
+	 * @param rotation Rotation angle
+	 *
+	 * @return True if the switch was successful, false otherwise.
+	 */
+	bool setRotationMode(int rotation);
 
 	/**
 	 * Return the ID of the 'default' scaler.
@@ -1262,6 +1316,11 @@ public:
 	virtual void updateScreen() = 0;
 
 	/**
+	 * When in 3D mode, forces a rendering pass to let the engine read back pixels.
+	 */
+	virtual void presentBuffer() {}
+
+	/**
 	 * Set current shake position, a feature needed for screen effects in some
 	 * engines.
 	 *
@@ -1338,7 +1397,7 @@ public:
 	 * This works because we assume the game to be "paused" whenever an overlay
 	 * is active.
 	 *
-	 * @param inGame Whether the overlay is used to display GUI or in game images
+	 * @param inGUI Whether the overlay is used to display GUI or in game images
 	 *
 	 */
 
@@ -1400,14 +1459,27 @@ public:
 	 *
 	 * @see getHeight
 	 */
-	virtual int16 getOverlayHeight() = 0;
+	virtual int16 getOverlayHeight() const = 0;
 
 	/**
 	 * Return the width of the overlay.
 	 *
 	 * @see getWidth
 	 */
-	virtual int16 getOverlayWidth() = 0;
+	virtual int16 getOverlayWidth() const = 0;
+
+	/**
+	 * Return the safe area for the overlay.
+	 * This area does not interfere with any system UI elements
+	 * such as the notch or home indicator on mobile devices.
+	 * Also returns the full overlay size.
+	 *
+	 * @param width   Returns the width of the overlay, if not nullptr
+	 * @param height  Returns the height of the overlay, if not nullptr
+	 *
+	 * @return The safe area in overlay coordinates.
+	 */
+	virtual Common::Rect getSafeOverlayArea(int16 *width = nullptr, int16 *height = nullptr) const;
 
 	/** @} */
 
@@ -1422,7 +1494,7 @@ public:
 	 * class instead of using this directly.
 	 */
 
-
+protected:
 	/**
 	 * Show or hide the mouse cursor.
 	 *
@@ -1438,21 +1510,6 @@ public:
 	virtual bool showMouse(bool visible) = 0;
 
 	/**
-	 * Lock or unlock the mouse cursor within the window.
-	 *
-	 */
-	virtual bool lockMouse(bool lock) { return false; }
-
-	/**
-	 * Move ("warp") the mouse cursor to the specified position in virtual
-	 * screen coordinates.
-	 *
-	 * @param x		New x position of the mouse.
-	 * @param y		New y position of the mouse.
-	 */
-	virtual void warpMouse(int x, int y) = 0;
-
-	/**
 	 * Set the bitmap used for drawing the cursor.
 	 *
 	 * @param buf       Pixmap data to be used.
@@ -1464,12 +1521,14 @@ public:
 	 *                  In case it does, the behavior is undefined. The backend might just error out or simply ignore the
 	 *                  value. (The SDL backend will just assert to prevent abuse of this).
 	 *                  This parameter does nothing if a mask is provided.
-	 * @param dontScale Whether the cursor should never be scaled. An exception is high ppi displays, where the cursor
-	 *                  might be too small to notice otherwise, these are allowed to scale the cursor anyway.
 	 * @param format    Pointer to the pixel format that the cursor graphic uses (0 means CLUT8).
 	 * @param mask      A mask containing values from the CursorMaskValue enum for each cursor pixel.
+	 * @param scaleX    Horizontal scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
+	 * @param scaleY    Vertical scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
 	 */
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = nullptr, const byte *mask = nullptr) = 0;
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) = 0;
 
 	/**
 	 * Replace the specified range of cursor palette with new colors.
@@ -1484,7 +1543,21 @@ public:
 	 */
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
 
+public:
+	/**
+	 * Lock or unlock the mouse cursor within the window.
+	 *
+	 */
+	virtual bool lockMouse(bool lock) { return false; }
 
+	/**
+	 * Move ("warp") the mouse cursor to the specified position in virtual
+	 * screen coordinates.
+	 *
+	 * @param x		New x position of the mouse.
+	 * @param y		New y position of the mouse.
+	 */
+	virtual void warpMouse(int x, int y) = 0;
 
 	/**
 	 * Get the system-configured double-click time interval.
@@ -1740,6 +1813,15 @@ public:
 		return _textToSpeechManager;
 	}
 
+	/**
+	 * Return the PrintingManager, used to handle printing.
+	 *
+	 * @return The PrintingManager for the current architecture.
+	 */
+	virtual Common::PrintingManager *getPrintingManager() {
+		return _printingManager;
+	}
+
 #if defined(USE_SYSDIALOGS)
 	/**
 	 * Return the DialogManager, which is used to handle system dialogs.
@@ -1782,7 +1864,7 @@ public:
 	 * @param s         SearchSet to which the system-specific dirs, if any, are added.
 	 * @param priority	Priority with which those dirs are added.
 	 */
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) {}
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
 	/**
 	 * Open the default config file for reading by returning a suitable

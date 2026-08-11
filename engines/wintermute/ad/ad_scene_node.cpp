@@ -42,10 +42,10 @@ AdSceneNode::AdSceneNode(BaseGame *inGame) : BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneNode::~AdSceneNode() {
-	_gameRef->unregisterObject(_region);
+	_game->unregisterObject(_region);
 	_region = nullptr;
 
-	_gameRef->unregisterObject(_entity);
+	_game->unregisterObject(_entity);
 	_entity = nullptr;
 }
 
@@ -54,7 +54,7 @@ AdSceneNode::~AdSceneNode() {
 bool AdSceneNode::setEntity(AdEntity *entity) {
 	_type = OBJECT_ENTITY;
 	_entity = entity;
-	return _gameRef->registerObject(entity);
+	return _game->registerObject(entity);
 }
 
 
@@ -62,7 +62,7 @@ bool AdSceneNode::setEntity(AdEntity *entity) {
 bool AdSceneNode::setRegion(AdRegion *region) {
 	_type = OBJECT_REGION;
 	_region = region;
-	return _gameRef->registerObject(region);
+	return _game->registerObject(region);
 }
 
 

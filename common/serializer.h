@@ -24,6 +24,7 @@
 
 #include "common/stream.h"
 #include "common/str.h"
+#include "common/data-io.h"
 
 namespace Common {
 
@@ -296,6 +297,49 @@ public:
 		for (size_t i = 0; i < entries; ++i) {
 			serializer(*this, arr[i]);
 		}
+	}
+
+	/**
+	 * Synchronizes multiple values in the serializer using a specified data format.
+	 */
+	template<class TDataFormat, class... T>
+	void syncMultiple(const TDataFormat &dataFormat, T &...values) {
+		const TDataFormat dataFormatCopy = dataFormat;	// Copy to help compiler alias analysis, parameter is const ref to ensure TDataFormat is a concrete type
+
+		byte buffer[DataMultipleIO<TDataFormat, T...>::kMaxSize];
+		const uint actualSize = DataMultipleIO<TDataFormat, T...>::computeSize(dataFormatCopy);
+
+		if (isLoading()) {
+			syncBytes(buffer, actualSize);
+			DataMultipleIO<TDataFormat, T...>::decode(dataFormatCopy, buffer, values...);
+		} else {
+			DataMultipleIO<TDataFormat, T...>::encode(dataFormatCopy, buffer, values...);
+			syncBytes(buffer, actualSize);
+		}
+	}
+
+	/**
+	 * Synchronizes multiple values from the serializer using a specified endianness.
+	 */
+	template<class... T>
+	inline void syncMultipleEndian(bool isLittle, T &...values) {
+		this->syncMultiple<EndianStorageFormat, T...>(isLittle ? EndianStorageFormat::Little : EndianStorageFormat::Big, values...);
+	}
+
+	/**
+	 * Synchronizes multiple values to the serializer in little endian format.
+	 */
+	template<class... T>
+	inline void syncMultipleLE(T &...values) {
+		this->syncMultiple<EndianStorageFormat, T...>(EndianStorageFormat::Little, values...);
+	}
+
+	/**
+	 * Synchronizes multiple values to the serializer in big endian format.
+	 */
+	template<class... T>
+	inline void syncMultipleBE(T &...values) {
+		this->syncMultiple<EndianStorageFormat, T...>(EndianStorageFormat::Big, values...);
 	}
 };
 

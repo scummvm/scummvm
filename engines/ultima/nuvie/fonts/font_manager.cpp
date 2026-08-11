@@ -41,11 +41,8 @@ FontManager::FontManager(const Configuration *cfg) : config(cfg), num_fonts(0),
 }
 
 FontManager::~FontManager() {
-	Std::vector<Font *>::iterator font;
-
-	for (font = fonts.begin(); font != fonts.end();) {
-		delete *font;
-		font++;
+	for (auto *font : fonts) {
+		delete font;
 	}
 	if (conv_font) {
 		delete conv_font;
@@ -101,7 +98,7 @@ bool FontManager::initU6() {
 	return true;
 }
 
-bool FontManager::initWOU(Std::string filename) {
+bool FontManager::initWOU(Common::String filename) {
 	WOUFont *font;
 	Common::Path path;
 	U6Lib_n lib_file;

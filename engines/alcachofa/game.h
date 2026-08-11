@@ -1,0 +1,146 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef ALCACHOFA_GAME_H
+#define ALCACHOFA_GAME_H
+
+#include "alcachofa/script.h"
+
+#include "common/textconsole.h"
+#include "common/file.h"
+
+namespace Alcachofa {
+
+class ObjectBase;
+class PointObject;
+class Character;
+class Door;
+class Room;
+class Process;
+struct ScriptInstruction;
+class GlobalUI;
+
+/**
+ * @brief Provides functionality specific to a game title / engine version.
+ * Also includes all exemptions to inconsistencies in the original games.
+ *
+ * If an error is truly unrecoverable or a warning never an engine bug, no method is necessary here
+ */
+class Game {
+	typedef void (*Message)(const char *s, ...);
+public:
+	Game();
+	virtual ~Game() {}
+
+	virtual void onLoadedGameFiles();
+	virtual Common::Point getResolution() = 0;
+	virtual Common::Point getThumbnailResolution() = 0;
+	virtual const char *const *getMapFiles() = 0; ///< Returns a nullptr-terminated list
+	virtual GameFileReference getScriptFileRef() = 0;
+	virtual Common::Span<const ScriptOp> getScriptOpMap() = 0;
+	virtual Common::Span<const ScriptKernelTask> getScriptKernelTaskMap() = 0;
+	virtual void updateScriptVariables() = 0;
+	virtual void drawScreenStates();
+	virtual Common::String reencodePath(const Common::String &path);
+	virtual const char *getDialogFileName() = 0;
+	virtual const char *getObjectFileName() = 0;
+	virtual char getTextFileKey() = 0;
+	virtual Common::Point getSubtitlePos() = 0;
+	virtual Common::Point getObjectNameOffset() = 0;
+	virtual const char *getMenuRoom() = 0;
+	virtual const char *getInitScriptName() = 0;
+	virtual int32 getKernelTaskArgCount(int32 kernelTaskI); // only necessary for V1
+	virtual Common::Path getVideoPath(int32 videoId) = 0;
+	virtual Common::String getSoundPath(const char *filename) = 0; ///< Without file-extension
+	virtual Common::String getMusicPath(int32 trackId) = 0; ///< Without file-extension
+	virtual int32 getCharacterJingle(MainCharacterKind kind) = 0;
+	virtual bool shouldMusicLoop();
+	virtual bool shouldFilterTexturesByDefault() = 0;
+	virtual bool shouldClipCamera() = 0;
+	virtual bool isAllowedToInteract() = 0;
+	virtual bool isAllowedToOpenMenu() = 0; ///< only the game-specific condition
+	virtual bool shouldScriptLockInteraction() = 0;
+	virtual bool shouldChangeCharacterUseGameLock() = 0;
+	virtual bool shouldAvoidCollisions() = 0;
+	virtual Common::Point getMainCharacterSize() = 0;
+
+	virtual bool doesRoomHaveBackground(const Room *room);
+	virtual void unknownRoomObject(const Common::String &type);
+	virtual void unknownRoomType(const Common::String &type);
+	virtual void unknownDoorTargetRoom(const Common::String &name);
+	virtual void unknownDoorTargetDoor(const Common::String &room, const Common::String &door);
+
+	virtual void invalidDialogLine(uint index);
+	virtual void tooManyDialogLines(uint lineCount, uint maxLineCount);
+	virtual void tooManyDrawRequests(int order);
+
+	virtual bool shouldCharacterTrigger(const Character *character, const char *action);
+	virtual bool shouldTriggerDoor(const Door *door);
+	virtual bool hasMortadeloVoice(const Character *character);
+	virtual void onUserChangedCharacter();
+
+	virtual void unknownCamSetInactiveAttribute(int attribute);
+	virtual void unknownFadeType(int fadeType);
+	virtual void unknownSerializedObject(const char *object, const char *owner, const char *room);
+	virtual void unknownPickupItem(const char *name);
+	virtual void unknownDropItem(const char *name);
+	virtual void unknownVariable(const char *name);
+	virtual void unknownInstruction(const ScriptInstruction &instruction);
+	virtual void unknownAnimateObject(const char *name);
+	virtual void unknownScriptCharacter(const char *action, const char *name);
+	virtual PointObject *unknownGoPutTarget(const Process &process, const char *action, const char *name); ///< May return an alternative target to use
+	virtual void unknownChangeCharacterRoom(const char *name);
+	virtual void unknownAnimateCharacterObject(const char *name);
+	virtual Character *unknownSayTextCharacter(const char *name, int32 dialogId);
+	virtual void unknownAnimateTalkingObject(const char *name);
+	virtual void unknownClearInventoryTarget(int characterKind);
+	virtual PointObject *unknownCamLerpTarget(const char *action, const char *name);
+	virtual void unknownKernelTask(int task);
+	virtual void unknownScriptProcedure(const Common::String &procedure);
+	virtual void unknownMenuAction(int32 actionId);
+
+	virtual Common::String alternativeAnimationName(const Common::String &fileName, int variant);
+	virtual void missingAnimation(const Common::String &fileName);
+	virtual void missingSound(const Common::String &fileName);
+	virtual void invalidSNDFormat(uint format, uint channels, uint freq, uint bps);
+	virtual void notEnoughRoomDataRead(const char *path, int64 filePos, int64 objectEnd);
+	virtual void notEnoughObjectDataRead(const char *room, int64 filePos, int64 objectEnd);
+	virtual bool isKnownBadVideo(int32 videoId);
+	virtual void invalidVideo(int32 videoId, const char *context);
+
+	static Game *create();
+	static Game *createForMovieAdventureSpecial(); // V3
+	static Game *createForMovieAdventureOriginal(); // V1
+	static Game *createForTerror(); // V1
+	static Game *createForVaqueros(); // V1
+	static Game *createForSecta(); // V2
+	static Game *createForMoscu(); // V2
+	static Game *createForEscarabajo(); // V2
+	static Game *createForCorvino(); // V2
+	static Game *createForBalones(); // V2
+	static Game *createForMamelucos(); // V2
+
+	const Message _message;
+};
+
+}
+
+#endif // ALCACHOFA_GAME_H

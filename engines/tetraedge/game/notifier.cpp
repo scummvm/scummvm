@@ -77,8 +77,8 @@ void Notifier::launchNextnotifier() {
 	colorAnim->_callbackObj = _gui.layoutChecked("sprite");
 	colorAnim->play();
 
-	if (!g_engine->gameIsAmerzone()) {
-		colorAnim = _gui.colorLinearAnimation("fadeInImage");
+	colorAnim = g_engine->gameIsAmerzone() ? nullptr : _gui.colorLinearAnimation("fadeInImage");
+	if (colorAnim) {
 		colorAnim->_callbackObj = _gui.layoutChecked("image");
 		colorAnim->play();
 	}
@@ -108,8 +108,8 @@ bool Notifier::onFadeInFinished() {
 	colorAnim->_callbackObj = _gui.layout("sprite");
 	colorAnim->play();
 
-	if (!g_engine->gameIsAmerzone()) {
-		colorAnim = _gui.colorLinearAnimation("visibleImage");
+	colorAnim = g_engine->gameIsAmerzone() ? nullptr : _gui.colorLinearAnimation("visibleImage");
+	if (colorAnim) {
 		colorAnim->_callbackObj = _gui.layout("image");
 		colorAnim->play();
 	}
@@ -129,8 +129,8 @@ bool Notifier::onVisibleFinished() {
 	colorAnim->_callbackObj = _gui.layout("sprite");
 	colorAnim->play();
 
-	if (!g_engine->gameIsAmerzone()) {
-		colorAnim = _gui.colorLinearAnimation("fadeOutImage");
+	colorAnim = g_engine->gameIsAmerzone() ? nullptr : _gui.colorLinearAnimation("fadeOutImage");
+	if (colorAnim) {
 		colorAnim->_callbackObj = _gui.layout("image");
 		colorAnim->play();
 	}

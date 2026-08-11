@@ -21,6 +21,8 @@
 
 #include "m4/burger/rooms/section3/room303.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/platform/timer.h"
 
 namespace M4 {
 namespace Burger {
@@ -47,13 +49,13 @@ const char *Room303::SAID[][4] = {
 };
 
 const seriesStreamBreak Room303::SERIES1[] = {
-	{ 0, "303_001", 2, 255, -1, 0, 0, 0 },
+	{ 0, "303_001", 2, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 const seriesPlayBreak Room303::PLAY1[] = {
-	{ 0, 7, 0, 1, 0, -1, 2048, 0, 0, 0 },
-	{ 8, -1, 0, 1, 0, 9, 2048, 0, 0, 0 },
+	{ 0, 7, nullptr, 1, 0, -1, 2048, 0, nullptr, 0 },
+	{ 8, -1, nullptr, 1, 0, 9, 2048, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -226,22 +228,22 @@ void Room303::doDaemon(int trigger) {
 	case 2:
 		if (_G(flags)[V115] > 1) {
 			player_set_commands_allowed(true);
-			ws_walk(290, 325, 0, 4, 1);
+			ws_walk(290, 325, nullptr, 4, 1);
 		} else {
 			_G(wilbur_should) = 18;
 			player_set_commands_allowed(false);
-			ws_walk(290, 325, 0, kCHANGE_WILBUR_ANIMATION, 1);
+			ws_walk(290, 325, nullptr, kCHANGE_WILBUR_ANIMATION, 1);
 		}
 		break;
 
 	case 3:
 		if (_G(flags)[V115] > 1) {
 			player_set_commands_allowed(true);
-			ws_walk(261, 276, 0, 4, 3);
+			ws_walk(261, 276, nullptr, 4, 3);
 		} else {
 			_G(wilbur_should) = 18;
 			player_set_commands_allowed(false);
-			ws_walk(261, 276, 0, kCHANGE_WILBUR_ANIMATION, 3);
+			ws_walk(261, 276, nullptr, kCHANGE_WILBUR_ANIMATION, 3);
 		}
 		break;
 
@@ -339,6 +341,10 @@ void Room303::doDaemon(int trigger) {
 			}
 			if (_G(wilbur_should) == 20)
 				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
+			break;
+
+		default:
+			break;
 		}
 		break;
 

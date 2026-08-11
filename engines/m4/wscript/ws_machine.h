@@ -41,7 +41,33 @@ enum {
 	TERMINATE = 6,
 	PLAYER_HIDE = 7,
 	PLAYER_UNHIDE = 8,
-	TURN_TO_FACE = 9
+	TURN_TO_FACE = 9,
+	ACTION_11 = 11,
+	ACTION_12 = 12,
+	ACTION_13 = 13,
+	ACTION_14 = 14,
+	ACTION_15 = 15,
+	ACTION_17 = 17,
+	ACTION_18 = 18,
+	ACTION_19 = 19,
+	ACTION_20 = 20,
+	ACTION_21 = 21,
+	ACTION_22 = 22,
+	ACTION_23 = 23,
+	ACTION_24 = 24,
+	ACTION_25 = 25,
+	ACTION_26 = 26,
+	ACTION_27 = 27,
+	ACTION_28 = 28,
+	ACTION_29 = 29,
+	ACTION_30 = 30,
+	ACTION_31 = 31,
+	ACTION_32 = 32,
+	ACTION_33 = 33,
+	ACTION_666 = 666,
+	HYPERWALK = 747,
+	ACTION_900 = 900,
+	ACTION_902 = 902
 };
 
 // A message request
@@ -133,7 +159,7 @@ struct machine {
 	uint32 myHash = 0;
 	uint32 machID = 0;
 	char *machName = nullptr;
-	MemHandle machHandle = 0;
+	MemHandle machHandle = nullptr;
 	int32 machInstrOffset = 0;
 	int32 stateTableOffset = 0;
 	int32 curState = 0;
@@ -142,7 +168,7 @@ struct machine {
 	Anim8 *myAnim8 = nullptr;
 	Anim8 *parentAnim8 = nullptr;
 	int32 dataHash = 0;
-	MemHandle dataHandle = 0;
+	MemHandle dataHandle = nullptr;
 	int32 dataOffset = 0;
 	int32 targetCount = 0;
 	struct machine *msgReplyXM = nullptr;
@@ -183,7 +209,6 @@ bool ws_Initialize(frac16 *theGlobals);
 void ws_Shutdown();
 void pauseEngines();
 void unpauseEngines();
-void addPauseTime(int32 myTime);
 
 void cycleEngines(Buffer *cleanBackground, int16 *depth_table, Buffer *screenCodes,
 	uint8 *myPalette, uint8 *ICT, bool updateVideo);
@@ -200,16 +225,17 @@ void ws_StepWhile(machine *m, int32 pcOffset, int32 pcCount);
 void IntoTheState(machine *m);
 machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, int32 dataRow, MessageCB CintrMsg, bool debug, const char *machName);
 machine *TriggerMachineByHash(int32 val1, int32 val2, int32 val3, int32 val4, int32 val5, int32 val6,
-	int32 val7, int32 val8, int32 val9, int32 val10, bool flag,
+	int32 x, int32 y, int32 scale, int32 layer, bool flag,
 	MessageCB intrMsg, const char *machName);
+machine *TriggerMachineByHash(MessageCB intrMsg, const char *machName);
 
 /**
  * This proc is what allows a machine to send a message to another machine(s)
  */
 void sendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	uint32 machHash, machine *sendM, int32 msgCount);
-void sendWSMessage(int32 val1, machine *recv, int32 val2, int32 val3, int32 val4,
-	int32 trigger, int32 val5, int32 val6, int32 val7, int32 val8);
+void sendWSMessage(int32 val1, machine *recv, int32 series1, int32 val3, int32 val4,
+	int32 trigger, int32 series2, int32 val6, int32 val7, int32 val8);
 
 #define kernel_spawn_machine(name,hash,callback) TriggerMachineByHash(hash, nullptr, -1, -1, callback, false, name)
 #define kernel_terminate_machine(m) terminateMachine(m)

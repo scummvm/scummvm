@@ -79,6 +79,9 @@ void AGSWaves::DrawBlur(ScriptMethodParams &params) {
 				vx++;
 			}
 
+			if (!pixels_parsed)
+				pixels_parsed = 1;
+
 			int rN = totalRed / pixels_parsed;
 			int gN = totalGreen / pixels_parsed;
 			int bN = totalBlue / pixels_parsed;
@@ -124,6 +127,9 @@ void AGSWaves::DrawBlur(ScriptMethodParams &params) {
 
 				vy++;
 			}
+
+			if (!pixels_parsed)
+				pixels_parsed = 1;
 
 			int rN = totalRed / pixels_parsed;
 			int gN = totalGreen / pixels_parsed;
@@ -668,6 +674,9 @@ void AGSWaves::TintProper(ScriptMethodParams &params) {
 				vx++;
 			}
 
+			if (!pixels_parsed)
+				pixels_parsed = 1;
+
 			int rN = totalRed / pixels_parsed;
 			int gN = totalGreen / pixels_parsed;
 			int bN = totalBlue / pixels_parsed;
@@ -718,6 +727,9 @@ void AGSWaves::TintProper(ScriptMethodParams &params) {
 
 				vy++;
 			}
+
+			if (!pixels_parsed)
+				pixels_parsed = 1;
 
 			int rN = totalRed / pixels_parsed;
 			int gN = totalGreen / pixels_parsed;

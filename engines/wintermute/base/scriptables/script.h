@@ -52,18 +52,17 @@ public:
 	bool copyParameters(ScStack *stack);
 
 	void afterLoad();
-protected:
+
 	ScValue *_operand;
 	ScValue *_reg1;
-public:
 	bool _freezable;
 	bool resume();
 	bool pause();
-	bool canHandleEvent(const Common::String &eventName) const;
-	bool canHandleMethod(const Common::String &methodName) const;
-	bool createThread(ScScript *original, uint32 initIP, const Common::String &eventName);
-	bool createMethodThread(ScScript *original, const Common::String &methodName);
-	ScScript *invokeEventHandler(const Common::String &eventName, bool unbreakable = false);
+	bool canHandleEvent(const char *eventName);
+	bool canHandleMethod(const char *methodName);
+	bool createThread(ScScript *original, uint32 initIP, const char *eventName);
+	bool createMethodThread(ScScript *original, const char *methodName);
+	ScScript *invokeEventHandler(const char *eventName, bool unbreakable = false);
 	uint32 _timeSlice;
 	DECLARE_PERSISTENT(ScScript, BaseClass)
 	void runtimeError(const char *fmt, ...);
@@ -79,9 +78,9 @@ public:
 	TScriptState _state;
 	TScriptState _origState;
 	ScValue *getVar(char *name);
-	uint32 getFuncPos(const Common::String &name);
-	uint32 getEventPos(const Common::String &name) const;
-	uint32 getMethodPos(const Common::String &name) const;
+	uint32 getFuncPos(const char *name);
+	uint32 getEventPos(const char *name);
+	uint32 getMethodPos(const char *name);
 	typedef struct {
 		uint32 magic;
 		uint32 version;
@@ -93,7 +92,7 @@ public:
 		uint32 methodTable;
 	} TScriptHeader;
 
-	TScriptHeader _header;
+	TScriptHeader _header{};
 
 	typedef struct {
 		char *name;
@@ -115,7 +114,7 @@ public:
 		char *dll_name;
 		TCallType call_type;
 		TExternalType returns;
-		int32 nu_params;
+		int32 numParams;
 		TExternalType *params;
 	} TExternalFunction;
 
@@ -134,22 +133,13 @@ public:
 	void cleanup();
 	bool create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner);
 	uint32 _iP;
-private:
 	void readHeader();
 	uint32 _bufferSize;
 	byte *_buffer;
-public:
 	Common::SeekableReadStream *_scriptStream;
 	ScScript(BaseGame *inGame, ScEngine *engine);
 	~ScScript() override;
 	char *_filename;
-	bool _thread;
-	bool _methodThread;
-	char *_threadEvent;
-	BaseScriptHolder *_owner;
-	ScScript::TExternalFunction *getExternal(char *name);
-	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
-private:
 	char **_symbols;
 	uint32 _numSymbols;
 	TFunctionPos *_functions;
@@ -160,6 +150,13 @@ private:
 	uint32 _numFunctions;
 	uint32 _numMethods;
 	uint32 _numEvents;
+	bool _thread;
+	bool _methodThread;
+	char *_threadEvent;
+	BaseScriptHolder *_owner;
+	ScScript::TExternalFunction *getExternal(char *name);
+	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
+private:
 
 	bool initScript();
 	bool initTables();
@@ -172,6 +169,8 @@ private:
 	void initOpcodesType();
 	uint32 decodeAltOpcodes(uint32 inst);
 #endif
+
+	bool _enableFloatCompareWA{};
 };
 
 } // End of namespace Wintermute

@@ -111,9 +111,9 @@ public:
 	~LinuxAudioCDStream();
 
 protected:
-	uint getStartFrame() const;
-	uint getEndFrame() const;
-	bool readFrame(int frame, int16 *buffer);
+	uint getStartFrame() const override;
+	uint getEndFrame() const override;
+	bool readFrame(int frame, int16 *buffer) override;
 
 private:
 	int _fd;

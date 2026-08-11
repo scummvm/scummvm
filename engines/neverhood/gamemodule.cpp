@@ -155,14 +155,14 @@ void GameModule::handleAsciiKey(char key) {
 		_currentCheat += key;
 }
 
-void GameModule::handleKeyDown(Common::KeyCode keyCode) {
+void GameModule::handleKeyDown(Common::CustomEventType action) {
 	if (_childObject) {
-		if (keyCode == Common::KEYCODE_ESCAPE)
+		if (action == kActionPause || action == kActionQuit || action == kActionSkipFull)
 			handleEscapeKey();
-		else if (keyCode == Common::KEYCODE_SPACE)
+		else if (action == kActionSkipPartial)
 			handleSpaceKey();
 		debug(2, "GameModule::handleKeyDown()");
-		sendMessage(_childObject, 0x000B, keyCode);
+		sendMessage(_childObject, 0x000B, action);
 	}
 }
 
@@ -330,6 +330,8 @@ void GameModule::initCrystalColorsPuzzle() {
 }
 
 uint32 GameModule::getCurrRadioMusicFileHash() {
+	if (!getGlobalVar(V_RADIO_ENABLED))
+		return 0;
 	uint musicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
 	return (musicIndex % 5 != 0) ? 0 : kRadioMusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];
 }

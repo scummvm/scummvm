@@ -45,9 +45,9 @@ static const DebugChannelDef debugFlagList[] = {
 
 #include "tinsel/detection_tables.h"
 
-class TinselMetaEngineDetection : public AdvancedMetaEngineDetection {
+class TinselMetaEngineDetection : public AdvancedMetaEngineDetection<Tinsel::TinselGameDescription> {
 public:
-	TinselMetaEngineDetection() : AdvancedMetaEngineDetection(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
+	TinselMetaEngineDetection() : AdvancedMetaEngineDetection(Tinsel::gameDescriptions, tinselGames) {
 	}
 
 	const char *getName() const  override{
@@ -70,7 +70,7 @@ public:
 };
 
 struct SizeMD5 {
-	int size;
+	unsigned int size;
 	Common::String md5;
 };
 typedef Common::HashMap<Common::Path, SizeMD5, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> SizeMD5Map;
@@ -150,7 +150,7 @@ ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 					tmp.size = (int32)testFile.size();
 					tmp.md5 = computeStreamMD5AsString(testFile, _md5Bytes);
 				} else {
-					tmp.size = -1;
+					tmp.size = AD_NO_SIZE;
 				}
 
 				filesSizeMD5[fname] = tmp;
@@ -193,7 +193,7 @@ ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 				break;
 			}
 
-			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesSizeMD5[tstr].size) {
+			if (fileDesc->fileSize != AD_NO_SIZE && fileDesc->fileSize != filesSizeMD5[tstr].size) {
 				fileMissing = true;
 				break;
 			}

@@ -142,8 +142,8 @@ class MapWindow: public GUI_Widget {
 
 	bool draw_brit_lens_anim;
 	bool draw_garg_lens_anim;
-// Std::vector<TileInfo> m_ViewableObjTiles; // shouldn't need this for in_town checks
-	Std::vector<TileInfo> m_ViewableMapTiles;
+// Common::Array<TileInfo> m_ViewableObjTiles; // shouldn't need this for in_town checks
+	Common::Array<TileInfo> m_ViewableMapTiles;
 
 	bool lighting_update_required;
 
@@ -282,7 +282,7 @@ public:
 	bool in_town() const;
 // can put object at world location x,y?
 	CanDropOrMoveMsg can_drop_or_move_obj(uint16 x, uint16 y, Actor *actor, Obj *obj);
-	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Std::string msg_text = "");
+	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Common::String msg_text = "");
 	bool can_get_obj(const Actor *actor, Obj *obj);
 	bool blocked_by_wall(const Actor *actor, const Obj *obj);
 	MapCoord original_obj_loc;
@@ -292,15 +292,15 @@ public:
 	void update();
 	void Display(bool full_redraw) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override;
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDouble(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseClick(int x, int y, Events::MouseButton button) override;
 	GUI_status Idle(void) override;
 	GUI_status MouseLeave(uint8 state) override;
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDelayed(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseHeld(int x, int y, Events::MouseButton button) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
@@ -326,7 +326,7 @@ public:
 		return roof_tiles;
 	}
 
-	Std::vector<const Obj *> m_ViewableObjects; //^^ dodgy public buffer
+	Common::Array<const Obj *> m_ViewableObjects; //^^ dodgy public buffer
 
 	void wizard_eye_start(const MapCoord &location, uint16 duration, CallBack *caller);
 

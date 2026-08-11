@@ -54,7 +54,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	// Myst
 	// English Windows 3.11, v1.0.1
-	// From lotharsm
+	// From felsqualle
 	{
 		{
 			"myst",
@@ -384,12 +384,12 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"myst",
 			"Masterpiece Edition - 25th Anniversary",
 			{
-				{"myst.dat", 0, "c4cae9f143b5947262e6cb2397e1617e", -1},
-				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", -1},
-				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", -1},
-				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", -1},
-				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				{"myst.dat", 0, "c4cae9f143b5947262e6cb2397e1617e", AD_NO_SIZE},
+				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", AD_NO_SIZE},
+				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", AD_NO_SIZE},
+				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", AD_NO_SIZE},
+				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", AD_NO_SIZE},
+				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::UNK_LANG,
@@ -765,7 +765,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("ZOOMBINI.MHK", "98b758fec55104c096cfd129048be9a6"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -780,7 +780,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -795,7 +795,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported // "v2.0",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported // "v2.0",
 			AD_ENTRY1("ZOOMBINI.MHK", "506b1122ffa740e2566cf0b583d24478"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -809,7 +809,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
@@ -823,7 +823,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
@@ -837,7 +837,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "6d95ef2148043b51ef31d3a35d3b7521", 23853146),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -851,7 +851,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "8191a3568facff94cecc8d99f83a7772", 1964112),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -865,7 +865,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "cfa2db71d571a40a4ae692606547e391", 1492603),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -879,7 +879,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "3133e8d164958f8a3f740cb1f4e49f15", 24120142),
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
@@ -894,7 +894,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"orly",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("DEMO_STO.MHK", "9ab19aa65e72ae34ce3ec2c54f4e6f8b", 6245780),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -909,7 +909,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"alientales",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ATDEMO.DAT", "7ac30ba63080cd5ad6af9946707e01cc", 1656768),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -924,7 +924,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"csworld",
-			_s("Missing game code"), // Reason for being unsupported // "v3.0",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported // "v3.0",
 			AD_ENTRY1("C2K.MHK", "605fe88380848031bbd0ff84ade6fe40"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -938,7 +938,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"csworld",
-			_s("Missing game code"), // Reason for being unsupported // "v3.5",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported // "v3.5",
 			AD_ENTRY1("C2K.MHK", "d4857aeb0f5e2e0c4ac556aa74f38c23"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -953,7 +953,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"csamtrak",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("AMTRAK.MHK", "2f95301f0bb950d555bb7b0e3b1b7eb1"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -970,7 +970,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshop",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAT", "5fc18dc4e12ed4988182af17d1f1cf8c", 10972138),
 			Common::EN_USA,
 			Common::kPlatformWindows,
@@ -988,7 +988,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshop",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAE", "f42b70727bb3d5b224c85735339d4489", 7751154),
 			Common::EN_GRB,
 			Common::kPlatformWindows,
@@ -1002,7 +1002,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshop",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAD", "9d75b524de80ac99e6ef43e679c97340", 7748061),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
@@ -1016,7 +1016,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshop",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAF", "260ba9aec6c16b3aee6377afe7e212e6", 7667595),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
@@ -1033,7 +1033,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshopdx",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAT", "338563e58ac1313bc7606c5584a3576a", 7756078),
 			Common::EN_USA,
 			Common::kPlatformWindows,
@@ -1051,7 +1051,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"wricamact",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("SYSTEM.MHK", "ed7dec6e3a5d3a5f74307faaf12242bf", 460),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
@@ -1068,8 +1068,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"amazingwriting",
-			_s("Missing game code"), // Reason for being unsupported,
-			AD_ENTRY1s("system.dat", "h:6d65aa2cc7d437bb352aa18c0d63e332", 131),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
+			AD_ENTRY1s("system.dat", "f:6d65aa2cc7d437bb352aa18c0d63e332", 131),
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_UNSUPPORTED,
@@ -1182,13 +1182,30 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Harry and the Haunted House 1.0
+	// Bugreport #15042
+	{
+		{
+			"harryhh",
+			"v1.0",
+			AD_ENTRY1s("HARRY.512", "d1d33d3c02897bbcc798cd162c5c8fce", 2381),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"HARRY.EXE"
+	},
+
 	// Harry and the Haunted House 1.1
 	// From pacifist
 	{
 		{
 			"harryhh",
 			"v1.1",
-			AD_ENTRY1("HARRY.512", "8d786f0998f27e44603a2202d6786c25"),
+			AD_ENTRY1s("HARRY.512", "8d786f0998f27e44603a2202d6786c25", 2381),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -1348,7 +1365,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"jamesmath",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("BRODER.MHK", "007299da8b2c6e8ec1cde9598c243024"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1364,7 +1381,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"jamesmath",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("BRODER.MHK", "53c000938a50dca92860fd9b546dd276"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1379,7 +1396,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"treehouse",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("MAINROOM.MHK", "12f51894d7f838af639ea9bf1bc8f45b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1425,7 +1442,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{ // Version 2.0, has lots of additional livingbooks_code
 		{
 			"greeneggs",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("Outline", "bca2320b800f616118c2be239628a964", 3022),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -1544,10 +1561,26 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Demo from Arisu Media website
+	{
+		{
+			"seussabc",
+			"Demo",
+			AD_ENTRY1s("ABC32.LB", "ee396c0ddf1e28f47e2045bca371e893", 608),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		0
+	},
+
 	{ // Version 1.0, built on unsupported LivingBooks version
 		{
 			"seussps",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("SEUSS_PS.CFG", "627afcfa170460f0e2b7ed4fa734361c", 1439),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1562,7 +1595,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{ // Bugreport #11184, version 2.0
 		{
 			"seussps",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1("SEUSS_PS.CFG", "a2fc5596e6f1511d17acbc687e27a4ac"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1577,7 +1610,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"1stdegree",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("AL236_1.MHK", "3ba145492a7b8b4dee0ef4222c5639c3"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1595,7 +1628,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"1stdegree",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("AL236_1.MHK", "0e0c70b1b702b6ddca61a1192ada1282"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
@@ -1610,7 +1643,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"csusa",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("USAC2K.MHK", "b8c9d3a2586f62bce3a48b50d7a700e9"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1782,6 +1815,86 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Steam edition of "The Tortoise And The Hare" (English main language, German and French)
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "537b920a621d60b99b4f6876ec145482", 4438),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// Steam edition of "The Tortoise And The Hare" (French main language, German, English)
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "b7e5d17312284f433cc8580735ec1ec2", 4429),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// Steam edition of "The Tortoise And The Hare" ("La Tartaruga e la Lepre") (Italian main language, English)
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "289a89feac274136ce5ea3aa4738a69e", 2905),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	//  Steam edition of  "The Tortoise And The Hare" (German main language, French, English)
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "44c5a4af293d3df6e14b4239b16694d8", 4426),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	//  Steam edition of "The Tortoise And The Hare" (Japanese main language, English (US), English (BR))
+	{
+		{
+			"tortoise",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "ee0a0182b685d3e191af065c64e96fea", 4397),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
 	{
 		{
@@ -1848,7 +1961,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
-			"English, German and French Demo",
+			"Demo English/German/French",
 			AD_ENTRY1("TORTB.LB", "bd6784dc9f6a9c1143ca03230fca3f29"),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
@@ -1859,6 +1972,54 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		"TORTB.EXE"
 	},
+
+	// From MacFormat 18 coverdisc
+	// Only difference is the order of the languages
+	{
+		{
+			"tortoise",
+			"Demo English/German/French",
+			AD_ENTRY1s("The Tortoise and the Hare", "fe58b2cd82b92e4b5a748618798f51af", 576),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	// Die Schildkröte und der Hase
+	{
+		{
+			"tortoise",
+			"Demo German/French/English",
+			AD_ENTRY1s("xn--Die Schildkrte und der Hase-0yc", "481bd2bcb28653c71511742dd853ff31", 576),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	// Le Lièvre et la Tortue
+	{
+		{
+			"tortoise",
+			"Demo French/German/English",
+			AD_ENTRY1s("xn--Le Livre et la Tortue-s4b", "62503913bae127a96adf334377c0ad3e", 576),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+
 
 	{
 		{
@@ -1879,9 +2040,9 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
-			"",
+			"Demo Spanish/English",
 			AD_ENTRY1s("BookOutline", "91245b8ac388a54378b94fce65c29d02", 582),
-			Common::EN_ANY,
+			Common::UNK_LANG,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
@@ -1889,6 +2050,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		0,
 		"The Tortoise & The Hare"
+	},
+
+	// 이술우화 토끼와 거북이
+	// Demo from Arisu Media website
+	{
+		{
+			"tortoise",
+			"Demo",
+			AD_ENTRY1s("Tortoise.lb", "a02a038109b773fec178cbc8c40c37df", 1281),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"TORTOISE.EXE"
 	},
 
 	{
@@ -2354,6 +2532,68 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// From MacFormat 18 coverdisc
+	// Only difference is the order of the languages
+	{
+		{
+			"grandma",
+			"Demo English/German/French",
+			AD_ENTRY1s("Just Grandma and Me", "b5557ac9294279bea9f373a08da4d885", 584),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	{
+		{
+			"grandma",
+			"Demo German/French/English",
+			AD_ENTRY1s("Nur Oma und Ich", "bc74e2931637fd507f9dee50d1153c1d", 584),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	// Grand-Mère et Moi
+	{
+		{
+			"grandma",
+			"Demo French/German/English",
+			AD_ENTRY1s("xn--Grand-Mre et Moi-zpb", "0ccb20f426ab00a6694e6f6f434aa869", 584),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+	// 할머니와 둘이서
+	// Demo from Arisu Media website
+	{
+		{
+			"grandma",
+			"Demo Korean/English/French/German",
+			AD_ENTRY1s("outline", "d1e7e5a3589930e6a85dddfb7113740f", 751),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"Living Books Player"
+	},
+
 	// Ruff's Bone 1.0
 	// From pacifist
 	{
@@ -2652,6 +2892,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Demo from Arisu Media website
+	{
+		{
+			"arthurrace",
+			"Demo",
+			AD_ENTRY1s("RACE.LB", "cf33793a7ec94f215656a6a726be06e5", 656),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	// Arthur's Reading Games
 	// Rerelease of Arthur's Reading Race
 	// There is also ARG.LB ("82baf9c67d417bc3278c79018d1617d4", 3353)
@@ -2659,7 +2915,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthurreading",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("ARG32.LB", "51be80dff4be9fd07c32b3b207320677", 3355),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -2674,7 +2930,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthurreading",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("Bookoutline", "394e06287031512c8487b0940abe1049", 3166),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -3789,12 +4045,45 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// From sev
+	{
+		{
+			"noah",
+			"",
+			AD_ENTRY1s("OUTLINE.TXT", "aba1304eca32cac54a7107ba76120601", 2151),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// iOS App Store v1.3
+	// TRAC report #15827
+	{
+		{
+			"noah",
+			"",
+			AD_ENTRY1s("OUTLINE.TXT", "11e0a57b6d0dd9ced652c56376253c0e", 2028),
+			Common::EN_ANY,
+			Common::kPlatformIOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// Dr. Seuss Reading Games
 	// Contains "Dr. Seuss's ABC" and "The Cat in the Hat"
 	{
 		{
 			"drseussreading",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("Outline", "1f522d42174e8e98537db10bc715aa97", 5330),
 			Common::EN_ANY,
 			Common::kPlatformUnknown, // identical on both Win and Mac partitions of disc
@@ -3809,7 +4098,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"wsg",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("WSKL.CFG", "0d0d1156387ad51bf2b0c6bdc380f751", 1269),
 			Common::EN_ANY,
 			Common::kPlatformWindows,

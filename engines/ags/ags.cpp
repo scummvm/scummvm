@@ -31,12 +31,13 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/tokenizer.h"
 #include "common/util.h"
 #include "engines/util.h"
 
 #include "ags/shared/core/platform.h"
 
-#include "ags/lib/std/set.h"
+#include "common/std/set.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game.h"
 #include "ags/globals.h"
@@ -88,7 +89,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 		Common::parseBool(forceAA, _forceTextAA);
 
 	// WORKAROUND: Certain games need to force AA to render the text correctly
-	if (_gameDescription->desc.flags & GAMEFLAG_FORCE_AA)
+	if (_gameDescription->features & GAMEFLAG_FORCE_AA)
 		_forceTextAA = true;
 }
 
@@ -112,8 +113,24 @@ uint32 AGSEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
+static const PluginVersion AGSTEAM_WADJETEYE[] = { { "agsteam", kWadjetEye }, { nullptr, 0 } };
+static const PluginVersion AGS_FLASHLIGHT[] = { { "agsflashlight", 0 }, { nullptr, 0 } };
+static const PluginVersion AGSSPRITEFONT_CLIFFTOP[] = { { "agsspritefont", kClifftopGames }, { "agsplugin.spritefont", kClifftopGames }, { nullptr, 0 } };
+
+static const PluginVersion *const PLUGIN_VERSIONS[] = {
+	nullptr,
+	AGSTEAM_WADJETEYE,
+	AGS_FLASHLIGHT,
+	AGSSPRITEFONT_CLIFFTOP
+};
+
 const PluginVersion *AGSEngine::getNeededPlugins() const {
-	return _gameDescription->_plugins;
+	uint index = (_gameDescription->features & GAMEFLAG_PLUGINS_MASK);
+
+	if (index >= ARRAYSIZE(PLUGIN_VERSIONS))
+		return nullptr;
+	else
+		return PLUGIN_VERSIONS[index];
 }
 
 Common::String AGSEngine::getGameId() const {
@@ -136,6 +153,11 @@ Common::Error AGSEngine::run() {
 		return Common::kNoError;
 	}
 
+	if (isUnsupportedAGS4()) {
+		GUIErrorMessage(_("The selected game uses version 4 of the AGS engine, which is not supported."));
+		return Common::kNoError;
+	}
+
 	if (is64BitGame()) {
 		// If the game file was opened and the engine started, but the
 		// size is -1, then it must be a game like Strangeland where
@@ -155,14 +177,18 @@ Common::Error AGSEngine::run() {
 
 	setDebugger(new AGSConsole(this));
 
-	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
-	if (_gameDescription->desc.flags & GAMEFLAG_INSTALLER) {
+	Common::String filename(_gameDescription->desc.filesDescriptions[0].fileName);
+	Common::StringTokenizer tok(filename, ":");
+
+	Common::String type = tok.nextToken();
+	if (type.equals("clk")) {
 		Common::File *f = new Common::File();
-		f->open(filename);
+		f->open(tok.nextToken().c_str());
 		SearchMan.add("installer", Common::ClickteamInstaller::open(f, DisposeAfterUse::YES));
-		filename = _gameDescription->_mainNameInsideInstaller;
+		filename = tok.nextToken();
 	}
-	const char *ARGV[] = { "scummvm.exe", filename };
+
+	const char *ARGV[] = { "scummvm.exe", filename.c_str() };
 	const int ARGC = 2;
 	AGS3::main_init(ARGC, ARGV);
 
@@ -288,7 +314,12 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h, int colorDepth) {
 
 bool AGSEngine::isUnsupportedPre25() const {
 	return _gameDescription->desc.extra &&
-		!strcmp(_gameDescription->desc.extra, "Pre 2.5");
+		   Common::String(_gameDescription->desc.extra).contains("Pre 2.5");
+}
+
+bool AGSEngine::isUnsupportedAGS4() const {
+	return _gameDescription->desc.extra &&
+		   Common::String(_gameDescription->desc.extra).contains("AGS 4");
 }
 
 bool AGSEngine::is64BitGame() const {

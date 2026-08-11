@@ -50,7 +50,7 @@ float sweepAABB(Math::AABB const &a, Math::AABB const &b, Math::Vector3d const &
 
 	// X min
 	s = lineToPlane(zero, direction, m, Math::Vector3d(-1, 0, 0));
-	if (s >= 0 && direction.x() > 0 && s < h && between(s * direction.y(), m.y(), m.y()+mh.y()) && between(s * direction.z(), m.z(), m.z() + mh.z())) {
+	if (s >= 0 && direction.x() > 0 && s < h && between(s * direction.y(), m.y(), m.y() + mh.y()) && between(s * direction.z(), m.z(), m.z() + mh.z())) {
 		h = s;
 		normal = Math::Vector3d(-1, 0, 0);
 	}
@@ -83,7 +83,7 @@ float sweepAABB(Math::AABB const &a, Math::AABB const &b, Math::Vector3d const &
 	// Z min
 	m.y() = m.y() - mh.y();
 	s = lineToPlane(zero, direction, m, Math::Vector3d(0, 0, -1));
-	if (s >= 0 && direction.z() > 0 && s < h && between(s * direction.x(), m.x() , m.x() + mh.x()) && between(s * direction.y(), m.y(), m.y() + mh.y())) {
+	if (s >= 0 && direction.z() > 0 && s < h && between(s * direction.x(), m.x(), m.x() + mh.x()) && between(s * direction.y(), m.y(), m.y() + mh.y())) {
 		h = s;
 		normal = Math::Vector3d(0, 0, -1);
 	}

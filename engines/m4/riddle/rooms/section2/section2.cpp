@@ -26,6 +26,29 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+const int16 S2_MEI_NORMAL_DIRS[] = { 220, 221, 222, 223, 224, -1 };
+const char *S2_MEI_NORMAL_NAMES[] = {
+	"mei chen trek walk pos1",
+	"mei chen trek walk pos2",
+	"mei chen trek walk pos3",
+	"mei chen trek walk pos4",
+	"mei chen trek walk pos5"
+};
+const int16 S2_MEI_SHADOW_DIRS[] = { 230, 231, 232, 233, 234, -1 };
+const char *S2_MEI_SHADOW_NAMES[] = {
+	"mctsh1",
+	"mctsh2",
+	"mctsh3",
+	"mctsh4",
+	"mctsh5"
+};
+
+const int16 S2_PEASANT_NORMAL_DIRS[] = { 240, -1 };
+const char *S2_PEASANT_NORMAL_NAMES[] = { "pesky walk pos3" };
+const int16 S2_PEASANT_SHADOW_DIRS[] = { 250, -1 };
+const char *S2_PEASANT_SHADOW_NAMES[] = { "shadow pesky walk pos3" };
+
+
 Section2::Section2() : Rooms::Section() {
 	add(201, &_room201);
 	add(202, &_room202);

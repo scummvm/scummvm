@@ -27,6 +27,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tchar.h>
+#include <errno.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -52,6 +53,19 @@ WindowsSaveFileManager::WindowsSaveFileManager(bool isPortable) {
 	}
 
 	ConfMan.registerDefault("savepath", Common::Path(Win32::tcharToString(defaultSavepath), Common::Path::kNativeSeparator));
+}
+
+Common::ErrorCode WindowsSaveFileManager::removeFile(const Common::FSNode &fileNode) {
+	TCHAR *tFile = Win32::stringToTchar(fileNode.getPath().toString(Common::Path::kNativeSeparator));
+	int result = _tremove(tFile);
+	free(tFile);
+	if (result == 0)
+		return Common::kNoError;
+	if (errno == EACCES)
+		return Common::kWritePermissionDenied;
+	if (errno == ENOENT)
+		return Common::kPathDoesNotExist;
+	return Common::kUnknownError;
 }
 
 #endif

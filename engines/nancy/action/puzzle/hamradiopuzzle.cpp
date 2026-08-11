@@ -160,9 +160,13 @@ void HamRadioPuzzle::setFrequency(const Common::Array<uint16> &freq) {
 }
 
 void HamRadioPuzzle::CCSound::readData(Common::SeekableReadStream &stream) {
-	char buf[100];
-	stream.read(buf, 100);
-	assembleTextLine(buf, text, 100);
+	// One line, "Voice: Mensaje recibido.<n>..." fills all bytes, no NUL!
+	// Guarantee NUL-terminated buf, even up to `size` chars.
+	const uint size = 100;
+	char buf[size + 1];
+	stream.read(buf, size);
+	buf[size] = 0;
+	assembleTextLine(buf, text, size);
 	sound.readNormal(stream);
 }
 
@@ -170,11 +174,7 @@ void HamRadioPuzzle::CCSound::loadAndPlay() {
 	g_nancy->_sound->loadSound(sound);
 	g_nancy->_sound->playSound(sound);
 
-	if (text.size() && ConfMan.getBool("subtitles")) {
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(text);
-		NancySceneState.getTextbox().drawTextbox();
-	}
+	showSubtitle(text, true);
 }
 
 void HamRadioPuzzle::Frequency::readData(Common::SeekableReadStream &stream, uint16 numDigits) {
@@ -281,12 +281,7 @@ void HamRadioPuzzle::execute() {
 					_curMorseString.clear();
 					_badLetterSound.loadAndPlay();
 				} else {
-					if (ConfMan.getBool("subtitles")) {
-						NancySceneState.getTextbox().clear();
-						NancySceneState.getTextbox().addTextLine(_curMorseString);
-						NancySceneState.getTextbox().setOverrideFont(3); // Original engine pushes <f3> tag instead
-						NancySceneState.getTextbox().drawTextbox();
-					}
+					showSubtitle(_curMorseString, true, 3); // Original engine pushes <f3> tag instead
 				}
 
 				break;
@@ -311,9 +306,14 @@ void HamRadioPuzzle::execute() {
 					break;
 				}
 
-				// Morse code is incorrect
+				// Morse code is invalid (unrecognized, or Send pressed without any
+				// dots/dashes). Play the "bad letter" sound, whose caption reads
+				// "Invalid Character", and stop here: falling through to the textbox
+				// refresh below would immediately overwrite that caption.
 				if (!foundCorrect) {
+					_curMorseString.clear();
 					_badLetterSound.loadAndPlay();
+					break;
 				}
 			}
 

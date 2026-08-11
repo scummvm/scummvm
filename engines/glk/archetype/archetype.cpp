@@ -157,8 +157,8 @@ void Archetype::writeln_internal(const String *fmt, ...) {
 }
 
 String Archetype::readLine() {
-	// WORKAROUND: THe original archetype games prompt for save file names due to script
-	// code before calling the save/load code. It's a bit hacky, but we detect the occurance
+	// WORKAROUND: The original archetype games prompt for save file names due to script
+	// code before calling the save/load code. It's a bit hacky, but we detect the occurrence
 	// of save/load in the text just before the readLine call and skip waiting for text
 	String text = _lastOutputText;
 	text.toLowercase();

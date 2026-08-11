@@ -19,20 +19,17 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/scripting/controls/hotmov_control.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "common/stream.h"
 #include "common/file.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/hotmov_control.h"
 
 namespace ZVision {
 
@@ -62,19 +59,19 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 			int width;
 			int height;
 
-			sscanf(values.c_str(), "%d %d %d %d", &x, &y, &width, &height);
-
-			_rectangle = Common::Rect(x, y, width, height);
+			if (sscanf(values.c_str(), "%d %d %d %d", &x, &y, &width, &height) == 4)
+				_rectangle = Common::Rect(x, y, width, height);
 		} else if (param.matchString("num_frames", true)) {
 			_framesCount = atoi(values.c_str());
 		} else if (param.matchString("num_cycles", true)) {
 			_cyclesCount = atoi(values.c_str());
 		} else if (param.matchString("animation", true)) {
 			char filename[64];
-			sscanf(values.c_str(), "%s", filename);
-			values = Common::String(filename);
-			_animation = _engine->loadAnimation(Common::Path(values));
-			_animation->start();
+			if (sscanf(values.c_str(), "%s", filename) == 1) {
+				values = Common::String(filename);
+				_animation = _engine->loadAnimation(Common::Path(values));
+				_animation->start();
+			}
 		} else if (param.matchString("venus_id", true)) {
 			_venusId = atoi(values.c_str());
 		}
@@ -119,14 +116,16 @@ bool HotMovControl::process(uint32 deltaTimeInMillis) {
 }
 
 bool HotMovControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	debugC(6, kDebugControl, "ZVision::HotMovControl::onMouseMove( (%d,%d), (%d,%d))", screenSpacePos.x, screenSpacePos.y, backgroundImageSpacePos.x, backgroundImageSpacePos.y);
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
-
 	if (!_animation)
 		return false;
-
 	if (_cycle < _cyclesCount) {
-		if (_frames[_animation->getCurFrame()].contains(backgroundImageSpacePos)) {
+		_frame = _animation->getCurFrame();
+		if(_frame < 0)
+			return false;
+		if (_frames[_frame].contains(backgroundImageSpacePos)) {
 			_engine->getCursorManager()->changeCursor(CursorIndex_Active);
 			return true;
 		}
@@ -158,7 +157,7 @@ void HotMovControl::readHsFile(const Common::Path &fileName) {
 		return;
 
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+	if (!file.open(fileName)) {
 		warning("HS file %s could could be opened", fileName.toString().c_str());
 		return;
 	}
@@ -176,10 +175,10 @@ void HotMovControl::readHsFile(const Common::Path &fileName) {
 		int width;
 		int height;
 
-		sscanf(line.c_str(), "%d:%d %d %d %d~", &frame, &x, &y, &width, &height);
-
-		if (frame >= 0 && frame < _framesCount)
-			_frames[frame] = Common::Rect(x, y, width, height);
+		if (sscanf(line.c_str(), "%d:%d %d %d %d~", &frame, &x, &y, &width, &height) == 5) {
+			if (frame >= 0 && frame < _framesCount)
+				_frames[frame] = Common::Rect(x, y, width, height);
+		}
 	}
 	file.close();
 }

@@ -35,7 +35,7 @@ class AmazonScripts : public Scripts {
 private:
 	AmazonEngine *_game;
 protected:
-	void executeSpecial(int commandIndex, int param1, int param2) override;
+	bool executeSpecial(int commandIndex, int param1, int param2) override;
 	void executeCommand(int commandIndex) override;
 
 	void cLoop();

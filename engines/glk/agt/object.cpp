@@ -360,7 +360,7 @@ defined in exec.h */
 	/* Weight */
 	if (obj2 == 1 || (aver > AGTME15 && aver < AGX00)) {
 		/* Pre-1.56 interpreters forgot to check this;
-		   Magx deliberatly *doesn't* check this */
+		   Magx deliberately *doesn't* check this */
 
 		net = noun[obj1 - first_noun].weight;
 		if (aver >= AGX00) net += contweight(obj1);

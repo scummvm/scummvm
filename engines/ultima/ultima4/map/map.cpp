@@ -237,8 +237,8 @@ Map::Map() : _id(0), _type(WORLD), _width(0), _height(0), _levels(1),
 }
 
 Map::~Map() {
-	for (PortalList::iterator i = _portals.begin(); i != _portals.end(); i++)
-		delete *i;
+	for (auto *i : _portals)
+		delete i;
 	delete _annotations;
 }
 
@@ -442,8 +442,8 @@ ObjectDeque::iterator Map::removeObject(ObjectDeque::iterator rem, bool deleteOb
 Creature *Map::moveObjects(MapCoords avatar) {
 	Creature *attacker = nullptr;
 
-	for (uint i = 0; i < _objects.size(); i++) {
-		Creature *m = dynamic_cast<Creature *>(_objects[i]);
+	for (auto *object : _objects) {
+		Creature *m = dynamic_cast<Creature *>(object);
 
 		if (m) {
 			/* check if the object is an attacking creature and not
@@ -693,7 +693,6 @@ bool Map::fillMonsterTable() {
 
 	int nCreatures = 0;
 	int nObjects = 0;
-	int i;
 
 	for (int idx = 0; idx < MONSTERTABLE_SIZE; ++idx)
 		_monsterTable[idx].clear();
@@ -747,17 +746,19 @@ bool Map::fillMonsterTable() {
 	/**
 	 * Fill in our monster table
 	 */
+	int i = 0;
 	TileMap *base = g_tileMaps->get("base");
-	for (i = 0; i < MONSTERTABLE_SIZE; i++) {
-		Coords c = monsters[i]->getCoords(),
-			prevc = monsters[i]->getPrevCoords();
+	for (auto *monster : monsters) {
+		Coords c = monster->getCoords(),
+			prevc = monster->getPrevCoords();
 
-		_monsterTable[i]._tile = base->untranslate(monsters[i]->getTile());
+		_monsterTable[i]._tile = base->untranslate(monster->getTile());
 		_monsterTable[i]._x = c.x;
 		_monsterTable[i]._y = c.y;
-		_monsterTable[i]._prevTile = base->untranslate(monsters[i]->getPrevTile());
+		_monsterTable[i]._prevTile = base->untranslate(monster->getPrevTile());
 		_monsterTable[i]._prevX = prevc.x;
 		_monsterTable[i]._prevY = prevc.y;
+		i++;
 	}
 
 	return true;

@@ -5,7 +5,6 @@
 
 #include <cxxtest/YesNoRunner.h>
 
-int main()
-{
+int main() {
     return CxxTest::YesNoRunner().run();
 }

@@ -136,7 +136,7 @@ static const char *ext_voc[] = {
 
 
 /*-------------------------------------------------------------------*/
-/* Routines to read in and use various auxilary files.               */
+/* Routines to read in and use various auxiliary files.              */
 /*   (.TTL, .INS, .VOC, .CFG)                                        */
 /*-------------------------------------------------------------------*/
 
@@ -665,7 +665,7 @@ static void ext_dict(void)
 static void fix_dummy(void) {
 	int i;
 
-	/* At this point, all occurances in the game file of the dictionary
+	/* At this point, all occurrences in the game file of the dictionary
 	   words have been converted to dictionary indices, and so as long as
 	   we don't change the dictionary index values, we can change the contents
 	   without interfering with the metacommand scanner (since it compares
@@ -731,7 +731,7 @@ static fc_type setup_game(fc_type fc)
 	no_auxsyn = 0;
 	debug_disambig = 0;
 	debug_any = 1;
-	dbg_nomsg = 1; /* Supress output of MSG arguments to metacommands */
+	dbg_nomsg = 1; /* Suppress output of MSG arguments to metacommands */
 	textbold = 0;
 	debug_mode = 0;
 	aver = 0;

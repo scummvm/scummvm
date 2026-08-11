@@ -118,7 +118,7 @@ void Room73::moveBushes() {
 	_G(atds)->delControlBit(432, ATS_ACTIVE_BIT);	// show skeleton hotspot
 	_G(det)->showStaticSpr(3);								// show skeleton + machete
 	_G(det)->hideStaticSpr(4);								// hide skeleton
-	_G(atds)->set_ats_str(430, 1, ATS_DATA);
+	_G(atds)->set_all_ats_str(430, 1, ATS_DATA);
 }
 
 void Room73::pickupMachete() {

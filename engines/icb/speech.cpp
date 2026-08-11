@@ -90,7 +90,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_speech_status(int32 &result, int3
 
 	if (g_icb->getGameType() == GType_ICB) {
 		if ((cur_id == player.Fetch_player_id()) && (player.player_status == REMORA))
-			Fatal_error("fn_get_speech_status - player cant start conversation inside remora!");
+			Fatal_error("fn_get_speech_status - player can't start conversation inside remora!");
 
 		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
 			g_oIconMenu->CloseDownIconMenu();
@@ -166,9 +166,9 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 
 	S.script_pc = (char *)LinkedDataObject::Try_fetch_item_by_name(scripts, temp_buf); // run init script
 
-	//	conversation script doesnt exist
+	//	conversation script doesn't exist
 	if (!S.script_pc)
-		Fatal_error("object [%d] tried to start conversation script [%s] which doesnt exist", cur_id, (const char *)temp_buf);
+		Fatal_error("object [%d] tried to start conversation script [%s] which doesn't exist", cur_id, (const char *)temp_buf);
 
 	// reset number of subs
 	S.total_subscribers = 0; // everyone but us initially
@@ -214,7 +214,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_talker(int32 &, int32 *params) {
 		Fatal_error("fn_add_talker finds [%s] is not a real object", object_name);
 
 	if (cur_id == talk_id)
-		Fatal_error("[%s] calls fn_add_talker('%s') which isnt necessary and may cause strange lock up effects!", object_name, object_name);
+		Fatal_error("[%s] calls fn_add_talker('%s') which isn't necessary and may cause strange lock up effects!", object_name, object_name);
 
 	Zdebug("talk id %d", talk_id);
 
@@ -229,7 +229,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_talker(int32 &, int32 *params) {
 		S.total_subscribers++;
 
 	} else {
-		//		named object doesnt exist which is pretty serious
+		//		named object doesn't exist which is pretty serious
 		Fatal_error("tried to add non existent object [%s] to conversation", object_name);
 	}
 
@@ -345,7 +345,7 @@ mcodeFunctionReturnCodes _game_session::fn_anon_speech_invite(int32 &result, int
 }
 
 mcodeFunctionReturnCodes _game_session::fn_kill_conversations(int32 &, int32 *) {
-	// current conversations end - allowing a new one to interupt
+	// current conversations end - allowing a new one to interrupt
 
 	// if there are conversations on going them kill em (it)
 	if (total_convs)
@@ -671,7 +671,7 @@ mcodeFunctionReturnCodes _game_session::fn_speak(int32 &, int32 *params) {
 			Fatal_error("Speech xa file is 0 game cycles see, int32");
 	}
 
-	no_click_zone = 0; // cant click past for specified period
+	no_click_zone = 0; // can't click past for specified period
 
 	// set conv mode
 	speech_info[CONV_ID].current_talker = speaker_id;
@@ -888,7 +888,7 @@ mcodeFunctionReturnCodes _game_session::speak_set_custom(int32 &, int32 *params)
 	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, person_name);
 
 	if (speaker_id == -1)
-		Fatal_error("speak_set_custom cant find object [%s]", person_name);
+		Fatal_error("speak_set_custom can't find object [%s]", person_name);
 
 	Set_string(custom_name, logic_structs[speaker_id]->mega->custom_set, MAX_CUSTOM_NAME_LENGTH);
 	logic_structs[speaker_id]->mega->custom = TRUE8;
@@ -1027,7 +1027,7 @@ void _game_session::End_conversation(uint32 uid) {
 		for (j = 0; j < speech_info[uid].total_subscribers; j++) {
 			if (speech_info[uid].subscribers_requested[j] == player.Fetch_player_id()) {
 				if (logic_structs[player.Fetch_player_id()]->conversation_uid !=
-				    NO_SPEECH_REQUEST) { // dont reset player if he never joined - for request failures on ladders, etc.
+				    NO_SPEECH_REQUEST) { // don't reset player if he never joined - for request failures on ladders, etc.
 					player.Pop_player_stat(); // stood or aiming, etc
 				}
 			}
@@ -1116,7 +1116,7 @@ mcodeFunctionReturnCodes _game_session::speak_add_chooser_icon(int32 &, int32 *p
 
 mcodeFunctionReturnCodes _game_session::speak_add_special_chooser_icon(int32 &, int32 *params) {
 	// add icon to speech menu
-	// these icons dont count as items that must be selected to finish with the menu
+	// these icons don't count as items that must be selected to finish with the menu
 
 	// params    0   ascii name of icon
 	const char *icon_name = (const char *)MemoryUtil::resolvePtr(params[0]);
@@ -1186,7 +1186,7 @@ mcodeFunctionReturnCodes _game_session::speak_chosen(int32 &result, int32 *param
 }
 
 mcodeFunctionReturnCodes _game_session::speak_menu_still_active(int32 &result, int32 *) {
-	// says if menu is still active - i.e user hasnt chosen a quit icon
+	// says if menu is still active - i.e user hasn't chosen a quit icon
 
 	result = TRUE8;
 

@@ -20,6 +20,7 @@
  */
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/endian.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/driller/driller.h"
@@ -61,29 +62,37 @@ Common::SeekableReadStream *DrillerEngine::decryptFileAtari(const Common::Path &
 }
 
 void DrillerEngine::loadAssetsAtariFullGame() {
-
+	Common::SeekableReadStream *stream = nullptr;
 	if (_variant & GF_ATARI_RETAIL) {
-		Common::SeekableReadStream *stream = decryptFileAtari("x.prg");
+		stream = decryptFileAtari("x.prg");
 
 		_border = loadAndConvertNeoImage(stream, 0x14b96);
-		_title = loadAndConvertNeoImage(stream, 0x1c916);
+		_borderExtra = loadAndConvertNeoImage(stream, 0x1c916);
+		_title = loadAndConvertNeoImage(stream, 0x3f6);
 
-		loadFonts(stream, 0x8a92, _font);
+		loadFonts(stream, 0x8a92);
+		Common::Array<Graphics::ManagedSurface *> chars;
+		chars = getCharsAmigaAtariInternal(8, 8, -3, 33, 32, stream, 0x8a92 + 112 * 33 + 1, 100);
+		_fontSmall = Font(chars);
+		_fontSmall.setCharWidth(5);
+
 		loadMessagesFixedSize(stream, 0xda22, 14, 20);
 		loadGlobalObjects(stream, 0xd116, 8);
 		load8bitBinary(stream, 0x2afb8, 16);
 		loadPalettes(stream, 0x2ab76);
-		//loadSoundsFx(&file, 0x30da6, 25);
+		_sound = loadSoundsFx(stream, 0x30da6 + 0x147c, 25);
 	} else if (_variant & GF_ATARI_BUDGET) {
 		Common::File file;
 		file.open("x.prg");
 
-		if (!file.isOpen())
-			error("Failed to open 'x.prg' executable for AtariST");
+		if (!file.isOpen()) {
+			stream = decryptFileAtariVirtualWorlds("dril.all");
+		} else
+			stream = &file;
 
 		if (isSpaceStationOblivion()) {
 			_border = loadAndConvertNeoImage(&file, 0x13544);
-			byte *palette = (byte *)malloc(16 * 3);
+			byte palette[16 * 3];
 			for (int i = 0; i < 16; i++) { // gray scale palette
 				palette[i * 3 + 0] = i * (255 / 16);
 				palette[i * 3 + 1] = i * (255 / 16);
@@ -91,30 +100,56 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 			}
 			_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
-			loadFonts(&file, 0x8a32 - 0x1d6, _font);
+			loadFonts(&file, 0x8a32 - 0x1d6);
 			loadMessagesFixedSize(&file, 0xc5d8 - 0x1da, 14, 20);
 			loadGlobalObjects(&file, 0xbccc - 0x1da, 8);
 			load8bitBinary(&file, 0x29b3c - 0x1d6, 16);
 			loadPalettes(&file, 0x296fa - 0x1d6);
-			loadSoundsFx(&file, 0x30da6 - 0x1d6, 25);
+			_sound = loadSoundsFx(&file, 0x30da6 - 0x1d6, 25);
 		} else {
-			_border = loadAndConvertNeoImage(&file, 0x1371a);
-			byte *palette = (byte *)malloc(16 * 3);
-			for (int i = 0; i < 16; i++) { // gray scale palette
-				palette[i * 3 + 0] = i * (255 / 16);
-				palette[i * 3 + 1] = i * (255 / 16);
-				palette[i * 3 + 2] = i * (255 / 16);
-			}
-			_title = loadAndConvertNeoImage(&file, 0x10, palette);
+			_border = loadAndConvertNeoImage(stream, 0x1371a);
+			_title = loadAndConvertNeoImage(stream, 0x396);
 
-			loadFonts(&file, 0x8a32, _font);
-			loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
-			loadGlobalObjects(&file, 0xbccc, 8);
-			load8bitBinary(&file, 0x29b3c, 16);
-			loadPalettes(&file, 0x296fa);
-			loadSoundsFx(&file, 0x30da6, 25);
+			loadFonts(stream, 0x8a32);
+
+			Common::Array<Graphics::ManagedSurface *> chars;
+			chars = getCharsAmigaAtariInternal(8, 8, -3, 33, 32, stream, 0x8a32 + 112 * 33 + 1, 100);
+			_fontSmall = Font(chars);
+			_fontSmall.setCharWidth(5);
+
+			loadMessagesFixedSize(stream, 0xc5d8, 14, 20);
+			loadGlobalObjects(stream, 0xbccc, 8);
+			load8bitBinary(stream, 0x29b3c, 16);
+			loadPalettes(stream, 0x296fa);
+			_sound = loadSoundsFx(stream, 0x30da6, 25);
+
+			// Budget Atari full-game indicator blocks match the Amiga retail data
+			// shifted by -0xDA in the validated 293062-byte x.prg layout.
+			byte *palette = getPaletteFromNeoImage(stream, 0x1371a);
+			loadRigSprites(stream, 0x23FA0, palette);
+			if (palette) {
+				loadIndicatorSprites(stream, palette, 0x26EC0, 0x27148, 0x24CAE, 0x26838);
+				loadCompassStrips(stream, palette, 0x2323C, 0x26E72);
+				loadEarthquakeSprites(stream, palette, 0x27486);
+			}
+			free(palette);
 		}
+	} else
+		error("Unknown Atari ST Driller variant");
+
+	for (auto &area : _areaMap) {
+		// Center and pad each area name so we do not have to do it at each frame
+		area._value->_name = centerAndPadString(area._value->_name, 14);
 	}
+
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_0_Amiga", false));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_1_Amiga", false));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_2_Amiga", false));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_3_Amiga", false));
+	_indicators.push_back(loadBundledImage("driller_ship_indicator_Amiga", false));
+
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 void DrillerEngine::loadAssetsAtariDemo() {
@@ -140,15 +175,6 @@ void DrillerEngine::loadAssetsAtariDemo() {
 	loadDemoData(&file, 0, 0x1000);
 
 	file.close();
-	file.open("data");
-
-	if (!file.isOpen())
-		error("Failed to open 'data' file");
-
-	load8bitBinary(&file, 0x442, 16);
-	loadPalettes(&file, 0x0);
-
-	file.close();
 	if (_variant & GF_ATARI_MAGAZINE_DEMO) {
 		file.open("auto_x.prg");
 		if (!file.isOpen())
@@ -161,21 +187,65 @@ void DrillerEngine::loadAssetsAtariDemo() {
 	}
 
 	if (_variant & GF_ATARI_MAGAZINE_DEMO) {
-		loadFonts(&file, 0x7ee, _font);
 		loadMessagesFixedSize(&file, 0x40d2, 14, 20);
 		loadGlobalObjects(&file, 0x3e88, 8);
+
+		loadFonts(&file, 0x7ee);
+		Common::Array<Graphics::ManagedSurface *> chars;
+		chars = getCharsAmigaAtariInternal(8, 8, -3, 33, 32, &file, 0x7ee + 112 * 33 + 1, 100);
+		_fontSmall = Font(chars);
+		_fontSmall.setCharWidth(5);
 	} else {
-		loadFonts(&file, 0x7bc, _font);
+		loadFonts(&file, 0x7bc);
 		loadMessagesFixedSize(&file, 0x3b90, 14, 20);
 		loadGlobalObjects(&file, 0x3946, 8);
+
+		byte *palette = nullptr;
+		Common::File neoFile;
+		neoFile.open("console.neo");
+		if (neoFile.isOpen())
+			palette = getPaletteFromNeoImage(&neoFile, 0);
+
+		loadRigSprites(&file, 0x1AB9A);
+		if (palette) {
+			// The rolling Atari demo carries the same indicator blocks here,
+			// but the current bundled vehicle fallback is already good enough.
+			loadIndicatorSprites(&file, palette, 0x1D55A, 0x1D7E2, -1, 0x1CED2);
+			loadCompassStrips(&file, palette, 0x19E36, 0x1D50C);
+			loadEarthquakeSprites(&file, palette, 0x1DB20);
+		}
+		free(palette);
 	}
+
+	file.close();
+	file.open("data");
+
+	if (!file.isOpen())
+		error("Failed to open 'data' file");
+
+	load8bitBinary(&file, 0x442, 16);
+	loadPalettes(&file, 0x0);
 
 	file.close();
 	file.open("soundfx");
 	if (!file.isOpen())
 		error("Failed to open 'soundfx' executable for AtariST demo");
 
-	loadSoundsFx(&file, 0, 25);
+	_sound = loadSoundsFx(&file, 0, 25);
+
+	for (auto &area : _areaMap) {
+		// Center and pad each area name so we do not have to do it at each frame
+		area._value->_name = centerAndPadString(area._value->_name, 14);
+	}
+
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_0_Amiga", false));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_1_Amiga", false));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_2_Amiga", false));
+	_indicators.push_back(loadBundledImage("driller_tank_indicator_3_Amiga", false));
+	_indicators.push_back(loadBundledImage("driller_ship_indicator_Amiga", false));
+
+	for (auto &it : _indicators)
+		it->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 } // End of namespace Freescape

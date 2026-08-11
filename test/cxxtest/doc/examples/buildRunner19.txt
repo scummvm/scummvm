@@ -1,0 +1,10 @@
+Running cxxtest tests (1 test)
+In EnumTraits::test_Enum_traits:
+MyTestSuite9.h:27: Error: Test failed: Yes
+MyTestSuite9.h:28: Error: Test failed: No
+MyTestSuite9.h:29: Error: Test failed: Maybe
+MyTestSuite9.h:30: Error: Test failed: DontKnow
+MyTestSuite9.h:31: Error: Test failed: DontCare
+MyTestSuite9.h:32: Error: Test failed: (Answer)1000
+Failed 1 and Skipped 0 of 1 test
+Success rate: 0%

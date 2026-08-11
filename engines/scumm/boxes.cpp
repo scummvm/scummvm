@@ -165,6 +165,10 @@ static Common::Point closestPtOnLine(const Common::Point &lineStart, const Commo
 byte ScummEngine::getMaskFromBox(int box) {
 	// WORKAROUND for bug #791 and #897. This appears to have been a
 	// long standing bug in the original engine?
+	//
+	// TODO: check whether the original interpreter did a lucky
+	// out-of-bound access, as theorized in the 2003-06-30 comment
+	// from bug #791 above.
 	if (_game.version <= 3 && box == kOldInvalidBox)
 		return 1;
 
@@ -568,17 +572,30 @@ bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
 	// (quadrangle in this case), compute whether p is "left" or "right"
 	// from it.
 
-	if (!compareSlope(box.ul, box.ur, p))
-		return false;
+	if (_game.version >= 7) {
+		if (compareSlope(box.ul, box.ur, p) &&
+			compareSlope(box.ur, box.lr, p) &&
+			compareSlope(box.lr, box.ll, p) &&
+			compareSlope(box.ll, box.ul, p))
+				return true;
+		if (!compareSlope(box.ul, box.ll, p) ||
+			!compareSlope(box.ll, box.lr, p) ||
+			!compareSlope(box.lr, box.ur, p) ||
+			!compareSlope(box.ur, box.ul, p))
+				return false;
+	} else {
+		if (!compareSlope(box.ul, box.ur, p))
+			return false;
 
-	if (!compareSlope(box.ur, box.lr, p))
-		return false;
+		if (!compareSlope(box.ur, box.lr, p))
+			return false;
 
-	if (!compareSlope(box.lr, box.ll, p))
-		return false;
+		if (!compareSlope(box.lr, box.ll, p))
+			return false;
 
-	if (!compareSlope(box.ll, box.ul, p))
-		return false;
+		if (!compareSlope(box.ll, box.ul, p))
+			return false;
+	}
 
 	return true;
 }
@@ -599,20 +616,6 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 		box->lr.x = (short)FROM_LE_32(bp->v8.lrx);
 		box->lr.y = (short)FROM_LE_32(bp->v8.lry);
 
-		// WORKAROUND (see patch #8173): Some walkboxes in CMI appear
-		// to have been flipped, in the sense that for instance the
-		// lower boundary is above the upper one. We work around this
-		// by simply flipping them back.
-
-		if (box->ul.y > box->ll.y && box->ur.y > box->lr.y) {
-			SWAP(box->ul, box->ll);
-			SWAP(box->ur, box->lr);
-		}
-
-		if (box->ul.x > box->ur.x && box->ll.x > box->lr.x) {
-			SWAP(box->ul, box->ur);
-			SWAP(box->ll, box->lr);
-		}
 	} else if (_game.version == 0) {
 		box->ul.x = bp->v0.x1;
 		box->ul.y = bp->v0.y1;
@@ -782,7 +785,7 @@ int ScummEngine::getNextBox(byte from, byte to) {
 	// WORKAROUND #2: In addition to the above, we have to add this special
 	// case to fix the scene in Indy3 where Indy meets Hitler in Berlin.
 	// See bug #1017 and also bug #1052.
-	if ((_game.id == GID_INDY3) && _roomResource == 46 && from == 1 && to == 0)
+	if (_game.id == GID_INDY3 && _roomResource == 46 && from == 1 && to == 0 && enhancementEnabled(kEnhGameBreakingBugFixes))
 		return 0;
 
 	// Skip up to the matrix data for box 'from'
@@ -1009,7 +1012,7 @@ void ScummEngine::calcItineraryMatrix(byte *itineraryMatrix, int num) {
 	// Compute the shortest routes between boxes via Kleene's algorithm.
 	// The original code used some kind of mangled Dijkstra's algorithm;
 	// while that might in theory be slightly faster, it was
-	// a) extremly obfuscated
+	// a) extremely obfuscated
 	// b) incorrect: it didn't always find the shortest paths
 	// c) not any faster in reality for our sparse & small adjacent matrices
 	for (k = 0; k < num; k++) {
@@ -1057,6 +1060,7 @@ void ScummEngine::createBoxMatrix() {
 
 	byte *matrixStart = _res->createResource(rtMatrix, 1, BOX_MATRIX_SIZE);
 	const byte *matrixEnd = matrixStart + BOX_MATRIX_SIZE;
+	(void)matrixEnd;
 
 	#define addToMatrix(b)	do { *matrixStart++ = (b); assert(matrixStart < matrixEnd); } while (0)
 
@@ -1099,11 +1103,11 @@ bool ScummEngine::areBoxesNeighbors(int box1nr, int box2nr) {
 	box2 = getBoxCoordinates(box1nr);
 	box = getBoxCoordinates(box2nr);
 
-	// Roughly, the idea of this algorithm is to search for sies of the given
+	// Roughly, the idea of this algorithm is to search for sides of the given
 	// boxes that touch each other.
-	// In order to keep te code simple, we only match the upper sides;
+	// In order to keep the code simple, we only match the upper sides;
 	// then, we "rotate" the box coordinates four times each, for a total
-	// of 16 comparisions.
+	// of 16 comparisons.
 	for (int j = 0; j < 4; j++) {
 		for (int k = 0; k < 4; k++) {
 			// Are the "upper" sides of the boxes on a single vertical line
@@ -1223,6 +1227,7 @@ bool ScummEngine_v0::areBoxesNeighbors(int box1nr, int box2nr) {
 	int i;
 	const int numOfBoxes = getNumBoxes();
 	const byte *boxm;
+	(void)numOfBoxes;
 
 	assert(box1nr < numOfBoxes);
 	assert(box2nr < numOfBoxes);

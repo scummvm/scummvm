@@ -115,7 +115,7 @@ int16 Scenery::loadStatic(char search) {
 	byte *backsPtr;
 	int16 picsCount;
 	int16 resId;
-	int16 sceneryIndex;
+	int32 sceneryIndex;
 	Static *ptr;
 	int16 width;
 	int16 height;
@@ -226,8 +226,11 @@ int16 Scenery::loadStatic(char search) {
 void Scenery::freeStatic(int16 index) {
 	int16 spr;
 
-	if (index == -1)
-		_vm->_game->_script->evalExpr(&index);
+	if (index == -1) {
+		int32 indexFromScript = 0;
+		_vm->_game->_script->evalExpr(&indexFromScript);
+		index = (int16) indexFromScript;
+	}
 
 	if (_staticPictCount[index] == -1)
 		return;
@@ -436,7 +439,7 @@ int16 Scenery::loadAnim(char search) {
 	int16 resId;
 	int16 i;
 	int16 j;
-	int16 sceneryIndex;
+	int32 sceneryIndex;
 	int16 framesCount;
 	Animation *ptr;
 	int16 width;
@@ -558,8 +561,11 @@ int16 Scenery::loadAnim(char search) {
 void Scenery::freeAnim(int16 index) {
 	int16 spr;
 
-	if (index == -1)
-		_vm->_game->_script->evalExpr(&index);
+	if (index == -1) {
+		int32 indexFromScript = 0;
+		_vm->_game->_script->evalExpr(&indexFromScript);
+		index = (int16) indexFromScript;
+	}
 
 	if (_animPictCount[index] == 0)
 		return;
@@ -645,7 +651,7 @@ void Scenery::updateAnimObjectVideo(int16 layer, int16 frame, int16 animation, i
 	Mult::Mult_Object &obj = _vm->_mult->_objects[-animation - 1];
 
 	if ((obj.videoSlot == 0) || !_vm->_vidPlayer->slotIsOpen(obj.videoSlot - 1)) {
-		if (_vm->getGameType() == kGameTypeAdibou2) {
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 			if (!(flags & 4))
 				_toRedrawLeft = -12345;
 
@@ -789,8 +795,7 @@ void Scenery::updateAnimObjectVideo(int16 layer, int16 frame, int16 animation, i
 					if (layer & 0x80) {
 						sprite_dest_left = *obj.pPosX + _vm->_vidPlayer->getWidth(obj.videoSlot - 1) - deltaX - sprite_width;
 					}
-				}
-				else {
+				} else {
 					sprite_dest_left = *obj.pPosX ;
 					sprite_dest_top = *obj.pPosY;
 					sprite_dest_right = sprite_dest_left +  _vm->_vidPlayer->getWidth(obj.videoSlot - 1) - 1;
@@ -1023,7 +1028,7 @@ void Scenery::updateAnimObjectVideo(int16 layer, int16 frame, int16 animation, i
 // flags & 1 - do capture all area animation is occupying
 // flags & 4 == 0 - calculate animation final size
 // flags & 2 != 0 - don't check with "toRedraw"'s
-// flags & 4 != 0 - checkk view toRedraw
+// flags & 4 != 0 - check view toRedraw
 void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	    int16 drawDeltaX, int16 drawDeltaY, char doDraw) {
 	AnimLayer *layerPtr;
@@ -1047,9 +1052,10 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	int16 destX;
 	int16 destY;
 
-	if ((animation < 0) &&
-	    ((_vm->getGameType() == kGameTypeWoodruff) ||
-	     (_vm->getGameType() == kGameTypeAdibou2))) {
+	if (animation < 0 &&
+	    (_vm->getGameType() == kGameTypeWoodruff ||
+	     _vm->getGameType() == kGameTypeAdibou2 ||
+	     _vm->getGameType() == kGameTypeAdi4)) {
 		// Object video
 
 		updateAnimObjectVideo(layer, frame, animation, flags, drawDeltaX, drawDeltaY, doDraw);
@@ -1057,7 +1063,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	}
 
 
-	if ((_vm->getGameType() == kGameTypeAdibou2) && animation >= 0) {
+	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) && animation >= 0) {
 		_toRedrawRight = 1000;
 		_toRedrawBottom = 1000;
 		_toRedrawLeft = 1000;

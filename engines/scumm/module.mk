@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	actor.o \
 	akos.o \
 	base-costume.o \
+	base-costume-optimised.o \
 	bomp.o \
 	boxes.o \
 	camera.o \
@@ -15,9 +16,11 @@ MODULE_OBJS := \
 	debugger.o \
 	dialogs.o \
 	file.o \
+	file_engine.o \
 	file_nes.o \
 	gfx_gui.o \
 	gfx_mac.o \
+	gfx_nes.o \
 	gfx_towns.o \
 	gfx.o \
 	he/mixer_he.o \
@@ -35,7 +38,7 @@ MODULE_OBJS := \
 	imuse/drivers/amiga.o \
 	imuse/drivers/fmtowns.o \
 	imuse/drivers/midi.o \
-	imuse/drivers/mac_m68k.o \
+	imuse/drivers/macintosh.o \
 	imuse/drivers/pcspk.o \
 	input.o \
 	ks_check.o \
@@ -44,11 +47,15 @@ MODULE_OBJS := \
 	macgui/macgui_impl.o \
 	macgui/macgui_indy3.o \
 	macgui/macgui_loom.o \
+	macgui/macgui_strings.o \
+	macgui/macgui_v5.o \
+	macgui/macgui_v6.o \
 	macgui/macgui_widgets.o \
 	metaengine.o \
 	midiparser_ro.o \
 	object.o \
 	palette.o \
+	playback.o \
 	players/player_ad.o \
 	players/player_apple2.o \
 	players/player_he.o \
@@ -82,15 +89,34 @@ MODULE_OBJS := \
 	script.o \
 	scumm.o \
 	sound.o \
+	soundcd.o \
+	soundse.o \
 	string.o \
 	usage_bits.o \
 	util.o \
 	vars.o \
 	verbs.o
 
-ifdef USE_ARM_COSTUME_ASM
+ifdef USE_IMGUI
 MODULE_OBJS += \
-	proc3ARM.o
+	debugger/debugtools.o \
+	debugger/editor.o \
+	debugger/explorer.o \
+	debugger/file.o \
+	debugger/resource.o
+endif
+
+ifdef USE_M68K_COSTUME_ASM
+MODULE_OBJS += \
+	m68k/bylerledecode_classic.o \
+	m68k/bylerledecode_mode0.o \
+	m68k/bylerledecode_mode1.o \
+	m68k/bylerledecode_mode3.o \
+	m68k/bylerledecode_scaled_mode0.o \
+	m68k/bylerledecode_scaled_mode0_smask.o \
+	m68k/bylerledecode_scaled_mode1.o \
+	m68k/bylerledecode_scaled_mode1_smask.o \
+	m68k/bylerledecode_scaled_mode3.o
 endif
 
 ifdef ENABLE_SCUMM_7_8
@@ -121,11 +147,48 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
+	insane/rebel/rebel_audio.o \
+	insane/rebel/rebel_gamepad.o \
+	insane/rebel1/rebel.o \
+	insane/rebel1/audio.o \
+	insane/rebel1/iact.o \
+	insane/rebel1/levels.o \
+	insane/rebel1/menu.o \
+	insane/rebel1/render.o \
+	insane/rebel1/runlevels.o \
+	insane/rebel1/saveload.o \
+	insane/rebel2/rebel.o \
+	insane/rebel2/audio.o \
+	insane/rebel2/iact.o \
+	insane/rebel2/levels.o \
+	insane/rebel2/menu.o \
+	insane/rebel2/render.o \
+	insane/rebel2/runlevels.o \
 	smush/codec1.o \
 	smush/codec20.o \
 	smush/codec37.o \
 	smush/codec47.o \
-	smush/smush_player.o
+	smush/smush_player.o \
+	smush/rebel/codec_ra1.o \
+	smush/rebel/codec_ra2.o \
+	smush/rebel/font_rebel2.o \
+	smush/rebel/smush_multi_font.o \
+	smush/rebel/smush_player_rebel.o \
+	smush/rebel/smush_player_ra1.o \
+	smush/rebel/smush_player_ra2.o
+
+ifdef ENABLE_REBEL2_PSX
+MODULE_OBJS += \
+	insane/rebel2/psx/audio.o \
+	insane/rebel2/psx/level1.o \
+	insane/rebel2/psx/level2.o \
+	insane/rebel2/psx/menu.o \
+	insane/rebel2/psx/model.o \
+	insane/rebel2/psx/psx.o \
+	insane/rebel2/psx/resource.o \
+	insane/rebel2/psx/ui.o \
+	insane/rebel2/psx/video.o
+endif
 
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \
@@ -139,10 +202,36 @@ MODULE_OBJS += \
 	gfxARM.o
 endif
 
+ifdef USE_M68K_GFX_ASM
+MODULE_OBJS += \
+	gfxM68K.o
+endif
+
 ifdef ENABLE_HE
 MODULE_OBJS += \
 	he/animation_he.o \
+	he/basketball/ai.o \
+	he/basketball/basketball.o \
+	he/basketball/collision/bball_collision.o \
+	he/basketball/collision/bball_collision_basketball.o \
+	he/basketball/collision/bball_collision_box.o \
+	he/basketball/collision/bball_collision_cylinder.o \
+	he/basketball/collision/bball_collision_node.o \
+	he/basketball/collision/bball_collision_object.o \
+	he/basketball/collision/bball_collision_player.o \
+	he/basketball/collision/bball_collision_shields.o \
+	he/basketball/collision/bball_collision_sphere.o \
+	he/basketball/collision/bball_collision_stack.o \
+	he/basketball/collision/bball_collision_tree.o \
+	he/basketball/court.o \
+	he/basketball/cursor.o \
+	he/basketball/geo_translation.o \
+	he/basketball/obstacle_avoidance.o \
+	he/basketball/passing.o \
+	he/basketball/shooting.o \
+	he/basketball/trajectory.o \
 	he/cup_player_he.o \
+	he/font_he.o \
 	he/gfx_comp/aux_comp.o \
 	he/gfx_comp/mrle_comp.o \
 	he/gfx_comp/trle_comp.o \
@@ -161,7 +250,7 @@ MODULE_OBJS += \
 	he/wizwarp_he.o \
 	he/localizer.o \
 	he/logic/baseball2001.o \
-	he/logic/basketball.o \
+	he/logic/basketball_logic.o \
 	he/logic/football.o \
 	he/logic/funshop.o \
 	he/logic/moonbase_logic.o \
@@ -190,7 +279,7 @@ MODULE_OBJS += \
 	dialog-sessionselector.o \
 	he/net/net_main.o
 
-ifdef USE_LIBCURL
+ifdef USE_BASIC_NET
 MODULE_OBJS += \
 	he/net/net_lobby.o
 endif

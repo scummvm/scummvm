@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -42,31 +43,31 @@ IMPLEMENT_PERSISTENT(AdAttach3DX, false)
 //////////////////////////////////////////////////////////////////////////
 AdAttach3DX::AdAttach3DX(BaseGame *inGame, BaseObject *owner) : AdObject3D(inGame) {
 	_owner = owner;
+	_parentBone = nullptr;
 	_dropToFloor = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 AdAttach3DX::~AdAttach3DX() {
+	SAFE_DELETE_ARRAY(_parentBone);
 	_owner = nullptr; // ref only
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::init(const char *modelFile, const char *name, const char *parentBone) {
-	delete _xmodel;
-	_xmodel = nullptr;
+	SAFE_DELETE(_xmodel);
 
-	_parentBone = parentBone;
+	BaseUtils::setString(&_parentBone, parentBone);
 	setName(name);
 
-	_xmodel = new XModel(_gameRef, _owner);
+	_xmodel = new XModel(_game, _owner);
 	if (!_xmodel) {
 		return false;
 	}
 
 	bool res = _xmodel->loadFromFile(modelFile);
 	if (!res) {
-		delete _xmodel;
-		_xmodel = nullptr;
+		SAFE_DELETE(_xmodel);
 	}
 
 	return res;
@@ -83,37 +84,38 @@ bool AdAttach3DX::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerObjects) {
-	Math::Matrix4 finalMat = _owner->_worldMatrix * viewMat * _worldMatrix;
-	_gameRef->_renderer3D->setWorldTransform(finalMat);
+bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
+	BaseRenderer3D *renderer = _game->_renderer3D;
+	DXMatrix finalMat;
+	DXMatrixMultiply(&finalMat, &_worldMatrix, viewMat);
+	renderer->setWorldTransform(finalMat);
 
 	if (_xmodel) {
 		_xmodel->render();
 
 		if (registerObjects && _owner && _owner->_registrable) {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, _owner, _xmodel,
-			                                                      _xmodel->_boundingRect.left,
-			                                                      _xmodel->_boundingRect.top,
-			                                                      _xmodel->_boundingRect.right - _xmodel->_boundingRect.left,
-			                                                      _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top,
-			                                                      true));
+			renderer->_rectList.add(new BaseActiveRect(_game, _owner, _xmodel, _xmodel->_boundingRect.left, _xmodel->_boundingRect.top, _xmodel->_boundingRect.right - _xmodel->_boundingRect.left, _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top, true));
 		}
 	}
+
+	_game->_renderer3D->invalidateLastTexture();
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdAttach3DX::displayShadowVol(const Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update) {
-	Math::Matrix4 finalMat = modelMat * _worldMatrix;
+bool AdAttach3DX::displayShadowVol(DXMatrix *modelMat, DXVector3 *light, float extrusionDepth, bool update) {
+	BaseRenderer3D *renderer = _game->_renderer3D;
+	DXMatrix finalMat;
+	DXMatrixMultiply(&finalMat, &_worldMatrix, modelMat);
 
 	if (_xmodel) {
 		if (update) {
 			getShadowVolume()->reset();
-			_xmodel->updateShadowVol(getShadowVolume(), finalMat, light, extrusionDepth);
+			_xmodel->updateShadowVol(getShadowVolume(), &finalMat, light, extrusionDepth);
 		}
 
-		_gameRef->_renderer3D->setWorldTransform(finalMat);
+		renderer->setWorldTransform(finalMat);
 		getShadowVolume()->renderToStencilBuffer();
 	}
 
@@ -121,7 +123,7 @@ bool AdAttach3DX::displayShadowVol(const Math::Matrix4 &modelMat, const Math::Ve
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::String AdAttach3DX::getParentBone() {
+char *AdAttach3DX::getParentBone() {
 	return _parentBone;
 }
 
@@ -134,7 +136,7 @@ bool AdAttach3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "PlayAnim") == 0 || strcmp(name, "PlayAnimAsync") == 0) {
 		stack->correctParams(1);
-		Common::String animName = stack->pop()->getString();
+		const char *animName = stack->pop()->getString();
 		if (!_xmodel || !_xmodel->playAnim(0, animName, 0, true)) {
 			stack->pushBool(false);
 		} else {
@@ -200,13 +202,13 @@ bool AdAttach3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 }
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdAttach3DX::scGetProperty(const Common::String &name) {
+ScValue *AdAttach3DX::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("attachment");
 		return _scValue;
 	} else {
@@ -229,7 +231,7 @@ bool AdAttach3DX::persist(BasePersistenceManager *persistMgr) {
 	AdObject3D::persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER(_owner));
-	persistMgr->transferString(TMEMBER(_parentBone));
+	persistMgr->transferCharPtr(TMEMBER(_parentBone));
 
 	return true;
 }

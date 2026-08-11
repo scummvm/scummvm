@@ -649,7 +649,7 @@ void CStatusLine::experationCheck() {
 		_waitAlarm.set(_lineQueue[_queueTail].frameTime);
 		_minWaitAlarm.set(_lineQueue[_queueTail].frameTime / 5);
 
-		// copy upto the buffer's size in chars
+		// copy up to the buffer's size in chars
 		Common::strlcpy(_lineBuf, _lineQueue[_queueTail].text,kBufSize);
 		_lineBuf[kBufSize - 1] = '\0';
 

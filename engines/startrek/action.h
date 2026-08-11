@@ -59,6 +59,7 @@ struct Action {
 	byte b1;
 	byte b2;
 	byte b3;
+	int32 dummy; // for memory alignment on 64-bit systems. See RoomAction struct
 
 	// ACTION_USE, ACTION_GET, ACTION_LOOK, ACTION_TALK
 	byte activeObject() const {

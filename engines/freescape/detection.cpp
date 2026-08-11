@@ -24,10 +24,14 @@
 
 #include "freescape/games/driller/driller.h"
 #include "freescape/games/eclipse/eclipse.h"
+#include "freescape/zx_tape.h"
+
+#include "common/config-manager.h"
+#include "common/file.h"
 
 namespace Freescape {
 
-static const PlainGameDescriptor freescapeGames[] = {
+const PlainGameDescriptor freescapeGames[] = {
 	{"3dkit", "3D Kit Game"},
 	{"driller", "Driller"},
 	{"spacestationoblivion", "Space Station Oblivion"},
@@ -35,9 +39,11 @@ static const PlainGameDescriptor freescapeGames[] = {
 	{"totaleclipse", "Total Eclipse"},
 	{"totaleclipse2", "Total Eclipse 2"},
 	{"castlemaster", "Castle Master"},
-	{0, 0}};
+	{"castlemaster2", "Castle Master 2: The Crypt"},
+	{0, 0}
+};
 
-static const ADGameDescription gameDescriptions[] = {
+const ADGameDescription gameDescriptions[] = {
 	// Original Freescape games
 	// Driller
 	{
@@ -92,16 +98,34 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		ADGF_UNSUPPORTED,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{
-		"driller",
+		"driller", // Original tape relase?
 		"",
-		AD_ENTRY1s("DRILLER.C64.DATA", "73a6f206e54fb13245fe6d92f60fbb34", 41071),
+		AD_ENTRY1s("DRILLER.C64.DATA", "055b261bf28f313041bc4c23ff03c8da", 54532),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_UNSTABLE,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+		GF_C64_TAPE,
+		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
+	},
+	{
+		"driller", // Tape re-relase
+		"",
+		AD_ENTRY1s("DRILLER.C64.DATA", "4afec6eea3887343e7f91fb21a2f2948", 43278),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSUPPORTED, //| GF_C64_TAPE,
+		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
+	},
+	{
+		"driller", // Disc release
+		"",
+		AD_ENTRY1s("DRILLER.C64.DATA", "055b261bf28f313041bc4c23ff03c8da", 55556),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		GF_C64_DISC,
+		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{
 		"driller",
@@ -117,9 +141,10 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO4(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING)
+		GUIO6(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GUIO_RENDERHERCGREEN, GAMEOPTION_AUTOMATIC_DRILLING, GAMEOPTION_OPL_MUSIC)
 	},
-	{ // Retail release
+	{
+		// Retail release
 		"driller",
 		"",
 		AD_ENTRY1s("x.prg", "d002983a8b652f25b18a09425db78c4c", 293159),
@@ -128,7 +153,8 @@ static const ADGameDescription gameDescriptions[] = {
 		GF_ATARI_RETAIL,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-	{ // Budget release
+	{
+		// Budget release
 		"driller",
 		"",
 		AD_ENTRY1s("x.prg", "1a79e68e6c2c223c96de0ca2d65149ae", 293062),
@@ -137,9 +163,10 @@ static const ADGameDescription gameDescriptions[] = {
 		GF_ATARI_BUDGET,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-	{ // Virtual Worlds release
+	{
+		// Virtual Worlds release
 		"driller",
-		"This release requires unpacking, check the wiki for instructions: https://wiki.scummvm.org/index.php?title=Driller#AtariST_releases",
+		"",
 		{
 			{"d.pak", 0, "607b44b9d31e0da5668b653e03d25efe", 706},
 			{"dril.all", 0, "65277222effa1eb4d73b234245001d75", 158158},
@@ -147,7 +174,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSUPPORTED,
+		GF_ATARI_BUDGET,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -156,6 +183,20 @@ static const ADGameDescription gameDescriptions[] = {
 		{
 			{"driller", 0, "13dab2e10d8e8b9a364c94a660e0d42a", 282384},
 			{"title.seq", 0, "4dd1b3b45110b24e8240a6132241c973", 185296},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		GF_AMIGA_RETAIL,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDERAMIGA, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		// Virtual Worlds release
+		"driller",
+		"",
+		{
+			{"driller", 0, "45312c9ccdb567c332f953059e4819a5", 282384},
+			{"text", 0, "bf949a753634cdcb376e0dab9447b08b", 215},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -272,7 +313,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO4(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING)
+		GUIO5(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING, GAMEOPTION_OPL_MUSIC)
 	},
 	{
 		"spacestationoblivion",
@@ -289,7 +330,16 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("x.prg", "7fc6ef316be4819d88d8031738571a50", 293264),
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		GF_ATARI_BUDGET,
+		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"spacestationoblivion",
+		"",
+		AD_ENTRY1s("oblivion", "7fc6ef316be4819d88d8031738571a50", 293264),
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSUPPORTED,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -299,7 +349,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		ADGF_UNSUPPORTED,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{
 		"spacestationoblivion",
@@ -308,7 +358,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		ADGF_UNSUPPORTED,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 
 	// Dark Side
@@ -322,8 +372,22 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
+	},
+	// Microstatus release decrypted
+	{
+		"darkside",
+		"",
+		{
+			{"0.DRK", 0, "5aa6473a75991f1e1217974a7844a042", 77900},
+			{"1.DRK", 0, "49cc73a5ca7adb26065286a7afd4d0a4", 280704},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Cinemaware release
 	{
@@ -336,13 +400,13 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSTABLE,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Microstatus release
 	{
 		"darkside",
-		"Encrypted executable with CopyLock",
+		"Encrypted executable with CopyLock, follow the instructions here: https://wiki.scummvm.org/index.php?title=Freescape/DRM",
 		{
 			{"0.DRK", 0, "c19bc332f6550e21e7b8ef79bcf3d99e", 81840},
 			{"1.DRK", 0, "9e700d991054f4393b1ccef706586b5b", 223272},
@@ -351,6 +415,20 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
 		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
+	},
+	{
+		// Stampede AtariST, Issue 1, where 0.DRK ships packed
+		"darkside",
+		"",
+		{
+			{"0.DRK", 0, "86794a6cb2d371cdf892a2173e3b7568", 47966},
+			{"1.DRK", 0, "9e700d991054f4393b1ccef706586b5b", 223272},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Stampede Amiga, Issue 1, July 1990
@@ -364,7 +442,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSUPPORTED,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
 	},
 	{
@@ -380,7 +458,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		GUIO5(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GUIO_RENDERHERCGREEN, GAMEOPTION_OPL_MUSIC)
 	},
 	{
 		"darkside",
@@ -395,7 +473,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		GUIO5(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GUIO_RENDERHERCGREEN, GAMEOPTION_OPL_MUSIC)
 	},
 	{
 		"darkside",
@@ -410,7 +488,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		GUIO5(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GUIO_RENDERHERCGREEN, GAMEOPTION_OPL_MUSIC)
 	},
 	{
 		"darkside",
@@ -454,6 +532,37 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
 	},
+	{
+		"darkside", // Tape release
+		"",
+		AD_ENTRY1s("DARKSIDE.C64.DATA", "7d5fc9a962a146e303a0c71a2d5c651e", 48129),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		GF_C64_TAPE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
+	},
+	{
+		"darkside", // Disk release PAL?
+		"",
+		AD_ENTRY1s("DARKSIDE.C64.DATA", "1d8e42c71d6a9ae0e682396824dd12ba", 53780),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		GF_C64_DISC,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
+	},
+	{
+		"darkside", // Disk release NTSC?
+		"",
+		{
+			{"DARKSIDE.C64.DATA", 0, "0d4edbc562ac5a9e6b3cf8a2b763dc08", 53780},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		GF_C64_DISC,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
+	},
+
 	// Total Eclipse
 	{
 		"totaleclipse",
@@ -466,7 +575,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
 		ADGF_DEMO,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERCPC, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
 	},
 	{
 		"totaleclipse",
@@ -480,7 +589,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_DEMO | GF_ZX_DEMO_MICROHOBBY,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERZX)
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
 	},
 	{
 		"totaleclipse",
@@ -494,7 +603,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_DEMO | GF_ZX_DEMO_CRASH,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERZX)
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
 	},
 	{
 		"totaleclipse",
@@ -503,16 +612,16 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERZX)
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
 	},
 	{
 		"totaleclipse2",
 		"",
-		AD_ENTRY1s("totaleclipse.zx.data", "5e80cb6a518d5ab2192b845801b1a32e", 35661),
+		AD_ENTRY1s("totaleclipse2.zx.data", "5e80cb6a518d5ab2192b845801b1a32e", 35661),
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERZX)
+		ADGF_NO_FLAGS,
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
 	},
 	{
 		"totaleclipse",
@@ -525,8 +634,8 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
-		ADGF_TESTING,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
+		ADGF_NO_FLAGS,
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERCPC, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
 	},
 	{
 		"totaleclipse2",
@@ -539,8 +648,49 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
-		ADGF_TESTING,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
+		ADGF_NO_FLAGS,
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERCPC, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
+	},
+	{
+		"totaleclipse2",
+		"",
+		{
+			{"TE2.BI1", 0, "fc6e1a240e76a68e02ce1db5ad9a689a", 16512},
+			{"TE2.BI2", 0, "c346262234e509ba5576c0a3362bc414", 35398},
+			{"TE2.BI3", 0, "d73485df2eccb90592bb598693b10555", 16512},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_NO_FLAGS,
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERCPC, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
+	},
+	{
+		"totaleclipse2", // Tape release
+		"",
+		AD_ENTRY1s("TOTALECLIPSE2.C64.DATA", "7ab839a4260c197f24b41ef6ab45ef21", 47105),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE | GF_C64_TAPE,
+		GUIO4(GUIO_NOMIDI, GUIO_RENDERC64, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS)
+	},
+	{
+		"totaleclipse2", // Disk release
+		"",
+		AD_ENTRY1s("TOTALECLIPSE2.C64.DATA", "b1f59bee6a6e1eec6bb2dbbe0bee0e93", 50372),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE | GF_C64_DISC,
+		GUIO4(GUIO_NOMIDI, GUIO_RENDERC64, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS)
+	},
+	{
+		"totaleclipse2", // Commodore Format #18
+		"",
+		AD_ENTRY1s("TOTALECLIPSE2.C64.DATA", "6d0ce2c971f7f1fee36bf0851f19721b", 63490),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSUPPORTED | GF_C64_DISC,
+		GUIO4(GUIO_NOMIDI, GUIO_RENDERC64, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS)
 	},
 	{
 		"totaleclipse",
@@ -555,10 +705,11 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		ADGF_NO_FLAGS,
+		GUIO7(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GUIO_RENDERHERCGREEN, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_OPL_MUSIC)
 	},
-	{ // Erbe Software release
+	{
+		// Erbe Software release
 		"totaleclipse",
 		"",
 		{
@@ -571,8 +722,26 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		ADGF_NO_FLAGS,
+		GUIO7(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GUIO_RENDERHERCGREEN, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_OPL_MUSIC)
+	},
+	{
+		"totaleclipse", // Tape relese
+		"",
+		AD_ENTRY1s("TOTALECLIPSE.C64.DATA", "968fd46b941a00f887741dfc348ac149", 47105),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_TESTING | GF_C64_TAPE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
+	},
+	{
+		"totaleclipse", // Disk release
+		"",
+		AD_ENTRY1s("TOTALECLIPSE.C64.DATA", "b9d3aa682777ee50840cabfc036693b0", 50356),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_TESTING | GF_C64_DISC,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
 	},
 	{
 		"totaleclipse",
@@ -584,8 +753,36 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
+	},
+	{
+		// Virtual Worlds release
+		"totaleclipse",
+		"",
+		{
+			{"0.TEC", 0, "8daa244d6814f06b9a081b7bd0ec542d", 89500},
+			{"1.TEC", 0, "c1b022ad7284578f97aa2ff46ed3db38", 304030},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
+	},
+	{
+		// Virtual Worlds release
+		"totaleclipse",
+		"",
+		{
+			{"TEC.ALL", 0, "e71e07b7d20ea9888dd0b35d66d30ec3", 48128},
+  			{"1.TEC", 0, "7bc83a8293f3a7e09a827db1c278c8bc", 122620},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_TESTING,
+		GUIO4(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS)
 	},
 	{
 		"totaleclipse",
@@ -597,10 +794,11 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSTABLE,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
+		ADGF_TESTING,
+		GUIO4(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS)
 	},
-	{ // Stampede Atari, Issue 7
+	{
+		// Stampede Atari, Issue 7
 		"totaleclipse",
 		"",
 		{
@@ -610,19 +808,40 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 
 	// Castle Master
+	// Tape release
 	{
 		"castlemaster",
 		"",
 		AD_ENTRY1s("castlemaster.zx.data", "e2ed83c30cd0ed7119e349d0f677ae91", 36096),
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_UNSTABLE,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERZX)
+		GF_ZX_RETAIL,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERZX, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Disc release
+	{
+		"castlemaster",
+		"",
+		AD_ENTRY1s("castlemaster.zx.data", "98513a4438ba93971d793a0fbc875b70", 36309),
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		GF_ZX_DISC,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERZX, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Spanish release was disc-only?
+	{
+		"castlemaster",
+		"",
+		AD_ENTRY1s("castlemaster.zx.data", "3e6f6b283fa00a3073edce2392950601", 36309),
+		Common::ES_ESP,
+		Common::kPlatformZX,
+		GF_ZX_DISC,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERZX, GAMEOPTION_WASD_CONTROLS)
 	},
 	{
 		"castlemaster",
@@ -635,8 +854,8 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | ADGF_DEMO,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		ADGF_DEMO,
+		GUIO6(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_OPL_MUSIC)
 	},
 	{
 		"castlemaster",
@@ -648,13 +867,14 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE | ADGF_DEMO,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
+		ADGF_DEMO,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
 	},
-	// Stampede Amiga, Issue 1, July 1990
+	// Stampede Amiga, Issue 1, July 1990: the same demo as above, only its
+	// AmigaDOS loader differs
 	{
 		"castlemaster",
-		"",
+		"Demo",
 		{
 			{"cm", 0, "b7e713a0742fa09aa81c9606bbbba4af", 4068},
 			{"x", 0, "c8c811439da0cf8a193e35feb5b5c6dc", 353388},
@@ -662,8 +882,127 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_UNSTABLE | ADGF_DEMO,
-		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
+		ADGF_DEMO,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Full Castle Master, Amiga
+	{
+		"castlemaster",
+		"",
+		{
+			{"cm", 0, "67dcb3f62fe15f18ecc31380ffaf5c4e", 1112},
+			{"w", 0, "63c770f1008a641c5fd5d0b9df2bcbb6", 32048},
+			{"x", 0, "afc245de66ef8eb1b5fd061c6bbd602e", 349975},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_TESTING,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Full Castle Master, Amiga, by Domark: another build of the same game, with
+	// its data at different offsets
+	{
+		"castlemaster",
+		"",
+		{
+			{"cm", 0, "cbfc54c0e79c30dd64a0b2d72236d56c", 1184},
+			{"w", 0, "63c770f1008a641c5fd5d0b9df2bcbb6", 32000},
+			{"x", 0, "bdf95c6c97dfc35f3d7b07d7f66fc417", 353774},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_TESTING,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Full Castle Master, Amiga, from "Castle Master & The Crypt" by Incentive,
+	// where the game is packed into "cmstr.com"
+	{
+		"castlemaster",
+		"",
+		{
+			{"cm", 0, "07d6cabd9d2acdc762956eb3e189cde3", 1188},
+			{"w", 0, "63c770f1008a641c5fd5d0b9df2bcbb6", 32000},
+			{"cmstr.com", 0, "ad4cf87a37561b8f08d888b7a82d6c82", 216950},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_TESTING,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Full Castle Master, Atari ST, as found on the original disk: "M.PRG" is
+	// wrapped in a Copylock protection, which the engine removes at load time,
+	// and both it and the intro program "J.PRG" are Huffman-packed.
+	{
+		"castlemaster",
+		"",
+		{
+			{"M.PRG", 0, "6e6e1b68b311a60e7885377fc67b1a93", 269432},
+			{"J.PRG", 0, "4934cf2f304b8ae5327e92b773acd35c", 58514},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_TESTING,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERATARIST, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Full Castle Master, Atari ST, from the "Castle Master & The Crypt"
+	// release by Incentive. Same game program, wrapped with another Copylock
+	// key and cipher.
+	{
+		"castlemaster",
+		"",
+		{
+			{"M.PRG", 0, "ced428ad4c59ebdeb778fcd4bed4be08", 269478},
+			{"J.PRG", 0, "fd61e4eed3b1a965fa53f5560eb066c0", 58430},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_TESTING,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERATARIST, GAMEOPTION_WASD_CONTROLS)
+	},
+	// The same, with "M.PRG" already decrypted by hand (dec0de and a real or
+	// emulated Atari ST), as was required before the protection was removable
+	// from the engine.
+	{
+		"castlemaster",
+		"",
+		{
+			{"M.PRG", 0, "70975b6656cd00a52ddede00d9ef3e64", 266232},
+			{"J.PRG", 0, "4934cf2f304b8ae5327e92b773acd35c", 58514},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_TESTING,
+		GUIO4(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDERATARIST, GAMEOPTION_WASD_CONTROLS)
+	},
+	{
+		"castlemaster",
+		"",
+		{
+			{"CM.BIN", 0, "b971443542d1f8cfe0b8a92054f0aa61", 39866},
+			{"CMLOAD.BIN", 0, "14806e71e2d14980a4ba8e3e35e66593", 16512},
+			{"CMSCR.BIN", 0, "75fe4a8af0ca797c51922f0ceeb8d383", 16512},
+			AD_LISTEND
+		},
+		Common::UNK_LANG, // Multi-language
+		Common::kPlatformAmstradCPC,
+		ADGF_NO_FLAGS,
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERCPC, GAMEOPTION_TRAVEL_ROCK, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
+	},
+	// C64 tape release
+	{
+		"castlemaster",
+		"",
+		AD_ENTRY1s("CASTLEMASTER.C64.DATA", "d433af0fc854d91fb22f986e274d809b", 51201),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE | GF_C64_TAPE,
+		GUIO4(GUIO_NOMIDI, GUIO_RENDERC64, GAMEOPTION_TRAVEL_ROCK, GAMEOPTION_WASD_CONTROLS)
 	},
 	{
 		"castlemaster",
@@ -678,12 +1017,12 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::UNK_LANG,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		ADGF_PIRATED,
+		GUIO5(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_WASD_CONTROLS)
 	},
 	{
 		"castlemaster",
-		"Virtual Words",
+		"Virtual Worlds",
 		{
 			{"CASTLE.EXE", 0, "f1a141df0e47860246716db20d2ba061", 2806},
 			{"CMC.EXE", 0, "7b9275df446f82fdd0c377f6ec2db546", 57168},
@@ -692,10 +1031,26 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CMH.EXE", 0, "26337adc7861300e5395e992e42b6329", 59968},
 			AD_LISTEND
 		},
-		Common::EN_ANY,
+		Common::UNK_LANG, // Multi-language
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		ADGF_NO_FLAGS,
+		GUIO6(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_OPL_MUSIC)
+	},
+	{
+		"castlemaster",
+		"Virtual Worlds",
+		{
+			{"CASTLE.EXE", 0, "ee80b083151fb1d70e3045a02f0de7fd", 2688},
+			{"CMC.EXE", 0, "9015c244dc8a97fe55df7b235b31e00c", 57168},
+			{"CME.EXE", 0, "d563ae1475752e6a9a81b1350abebef3", 89248},
+			{"CMH.EXE", 0, "cc68c42d254b3aa0f208cd08731c6805", 59968},
+			{"CMT.EXE", 0, "5814e68a175f74ebce0773a73e7488c7", 78768},
+			AD_LISTEND
+		},
+		Common::UNK_LANG, // Multi-language
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO6(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_OPL_MUSIC)
 	},
 	{
 		"castlemaster",
@@ -708,10 +1063,26 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CMH.EXE", 0, "03b6f4c5b8931259e42e229de06ac5fc", 35645},
 			AD_LISTEND
 		},
-		Common::EN_ANY,
+		Common::UNK_LANG, // Multi-language
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		ADGF_UNSUPPORTED, // Compressed with lzexe
+		GUIO5(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_WASD_CONTROLS)
+	},
+	{
+		"castlemaster",
+		"CD release",
+		{
+			{"CASTLE.EXE", 0, "7601f74572b3c99bfc8d3f6d9d43d356", 29804},
+			{"CMC.EXE", 0, "c7f651402307693048604e0f47c5c9e9", 57216},
+			{"CME.EXE", 0, "e01f1561cbdc48d0a20823fdb852bdf1", 89296},
+			{"CMH.EXE", 0, "76ac58ed66451689e84823706e000b6e", 60016},
+			{"CMT.EXE", 0, "8c8621b5927d090bb7a4dca8d39cbfcf", 78816},
+			AD_LISTEND
+		},
+		Common::UNK_LANG, // Multi-language
+		Common::kPlatformDOS,
+		ADGF_UNSUPPORTED, // Game data offset are different
+		GUIO5(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_WASD_CONTROLS)
 	},
 	{
 		"castlemaster",
@@ -726,10 +1097,64 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+		ADGF_NO_FLAGS,
+		GUIO6(GUIO_NOMIDI, GAMEOPTION_TRAVEL_ROCK, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_OPL_MUSIC)
 	},
-
+	// Castle Master 2: The Crypt
+	{
+		"castlemaster2",
+		"",
+		AD_ENTRY1s("castlemaster2.zx.data", "a470acb51c7925e921b0de056cdb880f", 35328),
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Castle Master 2, Amiga, the other game on the "Castle Master & The Crypt"
+	// disc by Incentive, packed into "crypt.com" like its companion.
+	{
+		"castlemaster2",
+		"",
+		{
+			{"crypt.com", 0, "6b56e849a9487a3c46e2ff9bbaf1f351", 177218},
+			{"thecrypt.neo", 0, "358873947261352242c75788066dfbc9", 32000},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_TESTING,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDERAMIGA, GAMEOPTION_WASD_CONTROLS)
+	},
+	// Castle Master 2, Atari ST, the second disc of "Castle Master & The Crypt"
+	// by Incentive. C.PRG carries no Copylock, unlike the Castle Master disc.
+	{
+		"castlemaster2",
+		"",
+		{
+			{"C.PRG", 0, "0953c495ea8fd11adf25c98885f1fa60", 225666},
+			{"L.PRG", 0, "9526c32330ae9b2b046f29ed95864a8b", 33946},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_TESTING,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_WASD_CONTROLS)
+	},
+	{
+		// Only an EGA executable is shipped, unlike Castle Master
+		"castlemaster2",
+		"",
+		{
+			{"CRYPT.EXE", 0, "c1fdbb7cfbb4cb35fe9ccebf9883d8b8", 2582},
+			{"CRE.EXE", 0, "91838da45e67a0362a0658038a5f125f", 76878},
+			{"CREDF", 0, "cab9a101a8632927a96a635d796edffe", 17279},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GAMEOPTION_WASD_CONTROLS)
+	},
 	// 3D Construction Kit games
 	{
 		"3dkit",
@@ -890,7 +1315,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"3dkit",
 		"3D House v4",
 		AD_ENTRY2s("3DHOUSE4.EXE", "49f7a832104ae76d38851d1b4fd8f0a1", 8859,
-				   "RUNNER.3WD", "cc0bfa95f695d2b7eadc1d6f3dd6e8f9", 62434),
+		           "RUNNER.3WD", "cc0bfa95f695d2b7eadc1d6f3dd6e8f9", 62434),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSUPPORTED,
@@ -900,7 +1325,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"3dkit",
 		"Anarchy Academy",
 		AD_ENTRY2s("ANARCHY.PRG", "78d543be4aad9608093c1e91bc100307", 270,
-				   "RUNNER.DAT", "1cf7c049ee59503dd7218b0f45828132", 42802),
+		           "RUNNER.DAT", "1cf7c049ee59503dd7218b0f45828132", 42802),
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
 		ADGF_UNSUPPORTED,
@@ -910,27 +1335,29 @@ static const ADGameDescription gameDescriptions[] = {
 		"3dkit",
 		"The World of Stairs",
 		AD_ENTRY2s("RUNNER.EXE", "8d20d849694fb098b5fa7883f770a122", 96439,
-				   "RUNNER.3WD", "daf373f23a122dd1b7eda48f33d3aa54", 44694),
+		           "RUNNER.3WD", "daf373f23a122dd1b7eda48f33d3aa54", 44694),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
 	},
 
-	AD_TABLE_END_MARKER};
+	AD_TABLE_END_MARKER
+};
 } // End of namespace Freescape
 
-static const DebugChannelDef debugFlagList[] = {
+const DebugChannelDef debugFlagList[] = {
 	{Freescape::kFreescapeDebugMove, "move", ""},
 	{Freescape::kFreescapeDebugParser, "parser", ""},
 	{Freescape::kFreescapeDebugCode, "code", ""},
 	{Freescape::kFreescapeDebugMedia, "media", ""},
+	{Freescape::kFreescapeDebugGroup, "group", ""},
 	DEBUG_CHANNEL_END
 };
 
-class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection {
+class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames) {
+	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, Freescape::freescapeGames) {
 		_guiOptions = GUIO7(GUIO_NOMIDI, GAMEOPTION_EXTENDED_TIMER, GAMEOPTION_DISABLE_DEMO_MODE, GAMEOPTION_DISABLE_SENSORS, GAMEOPTION_DISABLE_FALLING, GAMEOPTION_INVERT_Y, GAMEOPTION_AUTHENTIC_GRAPHICS);
 	}
 
@@ -949,8 +1376,69 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
 	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
+
+private:
+	ADDetectedGames detectZxTapeGames(const Common::FSList &fslist, uint32 skipADFlags) const;
 };
+
+Common::Error FreescapeMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
+	Common::Error err = AdvancedMetaEngineDetection<ADGameDescription>::identifyGame(game, descriptor);
+	if (err.getCode() == Common::kNoError)
+		return err;
+
+	Common::Path path = ConfMan.hasKey("path") ? ConfMan.getPath("path") : Common::Path(".");
+	Common::FSNode dir(path);
+	Common::FSList files;
+	if (!dir.isDirectory() || !dir.getChildren(files, Common::FSNode::kListAll) || files.empty())
+		return err;
+
+	Common::String gameId = ConfMan.get("gameid");
+	ADDetectedGames tapeGames = detectZxTapeGames(files, 0);
+	for (const ADDetectedGame &tapeGame : tapeGames) {
+		if (tapeGame.desc->gameId == gameId) {
+			game = toDetectedGame(tapeGame, nullptr);
+			*descriptor = new ADDynamicGameDescription<ADGameDescription>(tapeGame.desc);
+			return Common::kNoError;
+		}
+	}
+
+	return err;
+}
+
+DetectedGames FreescapeMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
+	DetectedGames detectedGames = AdvancedMetaEngineDetection::detectGames(fslist, skipADFlags, skipIncomplete);
+
+	ADDetectedGames tapeGames = detectZxTapeGames(fslist, skipADFlags);
+	for (const ADDetectedGame &game : tapeGames)
+		detectedGames.push_back(toDetectedGame(game, nullptr));
+
+	return detectedGames;
+}
+
+ADDetectedGames FreescapeMetaEngineDetection::detectZxTapeGames(const Common::FSList &fslist, uint32 skipADFlags) const {
+	ADDetectedGames detectedGames;
+
+	for (const Common::FSNode &node : fslist) {
+		Common::File file;
+		Common::String name = node.getName();
+		if ((name.hasSuffixIgnoreCase(".tap") || name.hasSuffixIgnoreCase(".tzx")) && file.open(node)) {
+			for (const ADGameDescription *desc = Freescape::gameDescriptions; desc->gameId; ++desc) {
+				if (!(desc->flags & skipADFlags) && desc->platform == Common::kPlatformZX) {
+					file.seek(0);
+					Freescape::ZxTapeFileList files;
+					if (Freescape::extractZxSpectrumTapeFiles(file, desc->gameId, files) &&
+							Freescape::matchZxSpectrumTapeFiles(files, *desc, _md5Bytes))
+						detectedGames.push_back(ADDetectedGame(desc));
+				}
+			}
+		}
+	}
+
+	return detectedGames;
+}
 
 DetectedGame FreescapeMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
 	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);

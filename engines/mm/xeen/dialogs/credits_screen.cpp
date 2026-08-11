@@ -55,8 +55,13 @@ void CreditsScreen::execute(const char *content) {
 	windows[GAME_WINDOW].close();
 
 	screen.loadBackground("marb.raw");
-	windows[0].writeString(content);
+	Common::String ttsMessage;
+	windows[0].writeString(content, false, &ttsMessage);
 	doScroll(false, false);
+
+#ifdef USE_TTS
+	speakText(ttsMessage, (_vm->getGameID() != GType_Swords || content == Res.SWORDS_CREDITS1));
+#endif
 
 	events.setCursor(0);
 	windows[0].update();
@@ -66,8 +71,60 @@ void CreditsScreen::execute(const char *content) {
 	while (!_vm->shouldExit() && !events.isKeyMousePressed())
 		events.pollEventsAndWait();
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	doScroll(true, false);
 }
+
+#ifdef USE_TTS
+
+void CreditsScreen::speakText(const Common::String &text, bool firstCreditsScreen) const {
+	if (_vm->getGameID() == GType_Swords && firstCreditsScreen) {
+		uint index = 0;
+		// Developed/published by
+		_vm->sayText(getNextTextSection(text, index, 2));
+
+		// Next four headers are separate from their corresponding credits. First get the headers, then voice the person
+		// for the first header, and then voice the second header and second person
+		for (uint8 i = 0; i < 2; ++i) {
+			_vm->sayText(getNextTextSection(text, index));
+			Common::String nextHeader = getNextTextSection(text, index);
+			_vm->sayText(getNextTextSection(text, index));
+			_vm->sayText(nextHeader);
+			_vm->sayText(getNextTextSection(text, index));
+		}
+
+		// Same as first four headers, but with two people at a time instead of one
+		for (uint8 i = 0; i < 2; ++i) {
+			// First two headers
+			_vm->sayText(getNextTextSection(text, index));
+			Common::String nextHeader = getNextTextSection(text, index);
+
+			// First people listed
+			_vm->sayText(getNextTextSection(text, index));
+			Common::String nextHeaderPerson = getNextTextSection(text, index);
+
+			// Second person listed under first header
+			_vm->sayText(getNextTextSection(text, index));
+
+			// Next header
+			_vm->sayText(nextHeader);
+			_vm->sayText(nextHeaderPerson);
+
+			// Second person for second header
+			if (i == 0) {
+				_vm->sayText(getNextTextSection(text, index));
+			} else {	// Last header has more than two people
+				_vm->sayText(text.substr(index));
+			}
+		}
+	} else {
+		_vm->sayText(text);
+	}
+}
+
+#endif
 
 } // End of namespace Xeen
 } // End of namespace MM

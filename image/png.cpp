@@ -42,7 +42,6 @@ namespace Image {
 PNGDecoder::PNGDecoder() :
 		_outputSurface(0),
 		_palette(0),
-		_paletteColorCount(0),
 		_skipSignature(false),
 		_keepTransparencyPaletted(false),
 		_hasTransparentColor(false),
@@ -59,17 +58,15 @@ void PNGDecoder::destroy() {
 		delete _outputSurface;
 		_outputSurface = 0;
 	}
-	delete[] _palette;
-	_palette = NULL;
+	_palette.clear();
 	_hasTransparentColor = false;
 }
 
 Graphics::PixelFormat PNGDecoder::getByteOrderRgbaPixelFormat(bool isAlpha) const {
-#ifdef SCUMM_BIG_ENDIAN
-	return Graphics::PixelFormat(4, 8, 8, 8, isAlpha ? 8 : 0, 24, 16, 8, 0);
-#else
-	return Graphics::PixelFormat(4, 8, 8, 8, isAlpha ? 8 : 0, 0, 8, 16, 24);
-#endif
+	if (isAlpha)
+		return Graphics::PixelFormat::createFormatRGBA32();
+	else
+		return Graphics::PixelFormat::createFormatRGB24();
 }
 
 #ifdef USE_PNG
@@ -126,8 +123,8 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// The following is based on the guide provided in:
-	//http://www.libpng.org/pub/png/libpng-1.2.5-manual.html#section-3
-	//http://www.libpng.org/pub/png/libpng-1.4.0-manual.pdf
+	// https://www.libpng.org/pub/png/libpng-1.2.5-manual.html#section-3
+	// https://www.libpng.org/pub/png/libpng-1.4.0-manual.pdf
 	// along with the png-loading code used in the sword25-engine.
 	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!pngPtr) {
@@ -177,12 +174,10 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
 			return false;
 		}
-		_paletteColorCount = numPalette;
-		_palette = new byte[_paletteColorCount * 3];
-		for (int i = 0; i < _paletteColorCount; i++) {
-			_palette[(i * 3)] = palette[i].red;
-			_palette[(i * 3) + 1] = palette[i].green;
-			_palette[(i * 3) + 2] = palette[i].blue;
+
+		_palette.resize(numPalette, false);
+		for (int i = 0; i < numPalette; i++) {
+			_palette.set(i, palette[i].red, palette[i].green, palette[i].blue);
 		}
 
 		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
@@ -209,16 +204,14 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		if (hasRgbaPalette) {
 			// Build up the RGBA palette using the transparency alphas
 			Common::fill(&rgbaPalette[0], &rgbaPalette[256], 0);
-			for (int i = 0; i < _paletteColorCount; ++i) {
+			for (int i = 0; i < numPalette; ++i) {
 				byte a = (i < numTrans) ? trans[i] : 0xff;
 				rgbaPalette[i] = _outputSurface->format.ARGBToColor(
 					a, palette[i].red, palette[i].green, palette[i].blue);
 			}
 
 			// We won't be needing a separate palette
-			_paletteColorCount = 0;
-			delete[] _palette;
-			_palette = nullptr;
+			_palette.clear();
 		}
 	} else {
  		bool isAlpha = (colorType & PNG_COLOR_MASK_ALPHA);
@@ -238,9 +231,6 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		if (colorType == PNG_COLOR_TYPE_GRAY ||
 			colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 			png_set_gray_to_rgb(pngPtr);
-
-		if (colorType != PNG_COLOR_TYPE_RGB_ALPHA)
-			png_set_filler(pngPtr, 0xff, PNG_FILLER_AFTER);
 	}
 
 	// After the transformations have been registered, the image data is read again.
@@ -303,29 +293,34 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 }
 
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette) {
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const Graphics::Palette &palette) {
+	return writePNG(out, input, palette.data(), palette.size());
+}
+
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette, uint paletteCount) {
 #ifdef USE_PNG
-#ifdef SCUMM_LITTLE_ENDIAN
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#else
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#endif
+	const Graphics::PixelFormat requiredFormat_1byte = Graphics::PixelFormat::createFormatCLUT8();
+	const Graphics::PixelFormat requiredFormat_3byte = Graphics::PixelFormat::createFormatRGB24();
+	const Graphics::PixelFormat requiredFormat_4byte = Graphics::PixelFormat::createFormatRGBA32();
 
 	int colorType;
 	Graphics::Surface *tmp = NULL;
 	const Graphics::Surface *surface;
 
-	if (input.format == requiredFormat_3byte) {
+	if (input.format == requiredFormat_1byte) {
+		surface = &input;
+		colorType = PNG_COLOR_TYPE_PALETTE;
+	} else if (input.format == requiredFormat_3byte) {
 		surface = &input;
 		colorType = PNG_COLOR_TYPE_RGB;
+	} else if (input.format == requiredFormat_4byte) {
+		surface = &input;
+		colorType = PNG_COLOR_TYPE_RGB_ALPHA;
+	} else if (input.format.aBits() == 0) {
+		surface = tmp = input.convertTo(requiredFormat_3byte, palette, paletteCount);
+		colorType = PNG_COLOR_TYPE_RGB;
 	} else {
-		if (input.format == requiredFormat_4byte) {
-			surface = &input;
-		} else {
-			surface = tmp = input.convertTo(requiredFormat_4byte, palette);
-		}
+		surface = tmp = input.convertTo(requiredFormat_4byte, palette, paletteCount);
 		colorType = PNG_COLOR_TYPE_RGB_ALPHA;
 	}
 
@@ -351,6 +346,17 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const by
 	// TODO: The manual says errors should be handled via setjmp
 
 	png_set_write_fn(pngPtr, &out, pngWriteToStream, pngFlushStream);
+
+	Common::Array<png_color> colorPtr;
+	if (colorType == PNG_COLOR_TYPE_PALETTE) {
+		colorPtr.resize(paletteCount);
+		for (uint i = 0; i < paletteCount; i++) {
+			colorPtr[i].red   = palette[i * 3 + 0];
+			colorPtr[i].green = palette[i * 3 + 1];
+			colorPtr[i].blue  = palette[i * 3 + 2];
+		}
+		png_set_PLTE(pngPtr, infoPtr, colorPtr.data(), paletteCount);
+	}
 
 	png_set_IHDR(pngPtr, infoPtr, surface->w, surface->h, 8, colorType, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 

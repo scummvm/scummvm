@@ -21,6 +21,7 @@
 
 #include "ags/engine/ac/global_view_frame.h"
 #include "ags/shared/ac/common.h"
+#include "ags/engine/ac/game.h"
 #include "ags/shared/ac/view.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -30,15 +31,8 @@
 namespace AGS3 {
 
 void SetFrameSound(int vii, int loop, int frame, int sound) {
-	if ((vii < 1) || (vii > _GP(game).numviews))
-		quit("!SetFrameSound: invalid view number");
-	vii--;
-
-	if (loop >= _GP(views)[vii].numLoops)
-		quit("!SetFrameSound: invalid loop number");
-
-	if (frame >= _GP(views)[vii].loops[loop].numFrames)
-		quit("!SetFrameSound: invalid frame number");
+	vii--; // convert to 0-based
+	AssertFrame("SetFrameSound", vii, loop, frame);
 
 	if (sound < 1) {
 		_GP(views)[vii].loops[loop].frames[frame].sound = -1;

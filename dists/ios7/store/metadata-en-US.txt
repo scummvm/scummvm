@@ -4,45 +4,122 @@
 
 ScummVM
 
-*** Short description:
+*** Promotional Text
 
-Runs many old point-and-click adventures and RPGs
+ScummVM provides a way to play many classic graphical point-and-click adventure games and RPGs.
 
-*** Full description:
+*** Description:
 
-ScummVM includes the following full games which are all freeware:
-Beneath a Steel Sky - DOS English Floppy Version
-Dráscula: The Vampire Strikes Back - DOS English Version
-Flight of the Amazon Queen - DOS English Floppy Version
-The Griffon Legend - Windows English Version
-Lure of the Temptress - DOS English Version
-Hi-Ress Adventure #1: Mystery House - Public Domain Apple II English Version
-Nippon Safes Inc - Amiga English/Frenc/German Version
-Sfinx - English Version
-Soltys - English Version
-
-ScummVM includes the following games as demo versions:
-Arthur's Birthday - Macintosh English Version
-Indiana Jones and the Fate of Atlantis - DOS English Version
-Putt-Putt Joins the Parade - DOS English Version
-
-ScummVM provides a way to play many classic graphical point-and-click adventure games and RPGs - such as SCUMM games (like Monkey Island and Day of the Tentacle), Revolution's Beneath A Steel Sky, and many more. Other than bundled freeware games ad demos NO GAME DATA FILES ARE INCLUDED; you must supply your own.
+ScummVM provides a way to play many classic graphical point-and-click adventure games and RPGs. NO GAME DATA FILES ARE INCLUDED; you must supply your own.
 
 You can find more information, demos, and some free-to-download adventure games on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
 
-https://forums.scummvm.org/viewforum.php?f=15 is our web forum where you can discuss the iOS version.
+Full documentation of ScummVM can be found at
+https://docs.scummvm.org/
 
-*** Current release:
-2.8.0pre
+Please visit our web forum where you can discuss the iOS version.
+https://forums.scummvm.org/viewforum.php?f=15
 
-*** Release notes (limit is 500 characters):
-This is the first pre-release version of ScummVM 2.8.0 for iOS.
+ScummVM is open source software available under the term of the GPL v3.0 license.
+The source code is available from https://github.com/scummvm/scummvm.
 
-There have been multiple bug fixes and new features for many of the supported games.
-The iOS port has received some new features as:
-- A default soundfont bundled with the application so users doesn't have to download one, unless they want a different one.
-- More buttons on the virtual controller to allow for more keymappings in games depending on joysticks.
-- A minimal layout of the virtual controller for games that doesn't need that many buttons
-- NEON acceleration in some games (e.g. AGS games)
+*** What's New in This Version
 
-Happy testing
+For a more comprehensive changelog of the latest experimental code, see:
+        https://github.com/scummvm/scummvm/commits/
+
+General:
+   - Fixed GLSL version parsing on some OpenGL ES2 platforms.
+   - Don't try to use shaders on old OpenGL implementations.
+
+ AGI:
+   - Fixed Space Quest 1 version 1.0X freezing in the skimmer.
+   - Fixed Mixed-Up Mother Goose message boxes during nursery rhymes.
+   - Fixed Mixed-Up Mother Goose graphics in Amiga version.
+   - Fixed Gold Rush clock time at Fast and Fastest speeds.
+   - Fixed Atari ST version of Manhunter 1 not starting.
+   - Fixed Tandy CoCo3 version of Leisure Suit Larry 1 not starting.
+   - Fixed Tandy CoCo3 unofficial ports not starting.
+   - Fixed Amiga menus in Space Quest 1, Manhunter 1, and Manhunter 2.
+   - Fixed Graham facing away from the king in King's Quest 1.
+   - Fixed Alexander getting stuck on the stairs in King's Quest 3.
+   - Fixed Larry being able to shoplift in Leisure Suit Larry 1.
+   - Fixed ducks not jumping at the start of Donald Duck's Playground.
+   - Fixed instant death in fan game "Phil's Quest: The Search for Tolbaga".
+   - Fixed buttons freezing in fan game "DG: The AGIMouse Adventure".
+   - Fixed unrecognized words in fan game "V - The Graphical Adventure".
+   - Added detection for Macintosh version of Mixed-Up Mother Goose.
+
+ AGS:
+   - Updated detection tables.
+   - Simplified character import from Sierra games for QfG2 AGDI.
+   - Fixed graphical glitch affecting Unavowed and Heroine's Quest.
+   - Fixed partial outlines for some letters in Kathy Rain.
+   - Fixed crash in Alum.
+   - Added stub to prevent crash at the beginning of Falcon City.
+
+ Broken Sword 2:
+   - Fixed crash when quitting the game while it was paused.
+
+ MM:
+   - Enabled engine, allowing MM1 and Xeen to be compiled.
+   - Added MT32/LAPC-1 support for Xeen engine.
+   - Fixed Xeen regression which caused some sound effects to stop abruptly.
+
+ mTropolis:
+   - Fixed crash in Muppet Treasure Island on some platforms.
+   - Fixed jewel puzzle in Muppet Treasure Island not being randomized.
+
+ NANCY:
+   - Fixed the telephone hints in Secrets Can Kill.
+   - Fixed the crashing and drawing issues on ARM machines when playing
+     Message in a Haunted Mansion's maze minigame.
+   - Fixed the 'M' keyboard key not working in Message in a Haunted Mansion.
+   - Allowed general keymaps to be shown in the engine Keymaps menu.
+   - Virtual keyboard now correctly triggers on/off wherever text input is needed.
+
+ SCUMM:
+   - Fix screen corruption (and sometimes even crashes) in Mac Loom and
+     Indiana Jones and the Last Crusade, most noticeably when using menu
+     shortcut keys.
+   - Fix enabling/disabling of Open and Save in Mac Indiana Jones and the Last
+     Crusade.
+
+ TWINE:
+   - Fix ladder climbing regression.
+   - Fix scenery zoom issue.
+   - Fix animation glitches after using the holomap.
+
+ Ultima:
+   - Fix Ultima VIII hidden minimap blocking keyring use.
+   - Fix Ultima VIII page breaks in books.
+   - Fix Ultima VIII text centering for plaques.
+   - Fix Ultima VIII crash on dragging items to screen edge.
+   - Fix Ultima VIII unexpected jumping on left click.
+   - Fix Ultima VIII camera during cutscenes for Shrine of the Ancient Ones.
+   - Fix Ultima VIII invalid placement of items within containers.
+   - Fix Ultima VIII never-ending lava sounds.
+
+ V-Cruise:
+   - Fixed crash in Reah: Face the Unknown and Schizm: Mysterious Journey
+     when music is muted.
+
+*** Keywords
+
+ScummVM, Adventure, Point & Click, RPG, Retro, Classic
+
+*** Support URL
+
+https://www.scummvm.org
+
+*** Marketing URL
+
+https://www.scummvm.org
+
+*** Version
+2.8.1
+
+*** Copyright
+
+2023 ScummVM Team
+

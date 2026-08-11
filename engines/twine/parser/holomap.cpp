@@ -37,9 +37,9 @@ bool TrajectoryData::loadFromStream(Common::SeekableReadStream &stream, bool lba
 		data.locationIdx = stream.readSint16LE();
 		data.trajLocationIdx = stream.readSint16LE();
 		data.vehicleIdx = stream.readSint16LE();
-		data.pos.x = stream.readSint16LE();
-		data.pos.y = stream.readSint16LE();
-		data.pos.z = stream.readSint16LE();
+		data.angle.x = stream.readSint16LE();
+		data.angle.y = stream.readSint16LE();
+		data.angle.z = stream.readSint16LE();
 		data.numAnimFrames = stream.readSint16LE();
 		assert(data.numAnimFrames < ARRAYSIZE(data.positions));
 		for (int32 i = 0; i < data.numAnimFrames; ++i) {

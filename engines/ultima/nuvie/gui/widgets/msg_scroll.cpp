@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -40,7 +40,7 @@ namespace Nuvie {
 MsgText::MsgText() : font(nullptr), color(0) {
 }
 
-MsgText::MsgText(const Std::string &new_string, Font *f) : font(f), color(0) {
+MsgText::MsgText(const Common::String &new_string, Font *f) : font(f), color(0) {
 	s.assign(new_string);
 	if (font) {
 		color = font->getDefaultColor();
@@ -50,7 +50,7 @@ MsgText::MsgText(const Std::string &new_string, Font *f) : font(f), color(0) {
 MsgText::~MsgText() {
 }
 
-void MsgText::append(const Std::string &new_string) {
+void MsgText::append(const Common::String &new_string) {
 	s.append(new_string);
 }
 
@@ -61,7 +61,7 @@ void MsgText::copy(MsgText *msg_text) {
 }
 
 uint32 MsgText::length() {
-	return (uint32)s.length();
+	return (uint32)s.size();
 }
 
 uint16 MsgText::getDisplayWidth() {
@@ -80,7 +80,7 @@ void MsgLine::append(MsgText *new_text) {
 	if (text.size() > 0)
 		msg_text = text.back();
 
-	if (msg_text && msg_text->font == new_text->font && msg_text->color == new_text->color && new_text->s.length() == 1 && new_text->s[0] != ' ')
+	if (msg_text && msg_text->font == new_text->font && msg_text->color == new_text->color && new_text->s.size() == 1 && new_text->s[0] != ' ')
 		msg_text->s.append(new_text->s);
 	else {
 		msg_text = new MsgText();
@@ -88,7 +88,7 @@ void MsgLine::append(MsgText *new_text) {
 		text.push_back(msg_text);
 	}
 
-	total_length += new_text->s.length();
+	total_length += new_text->s.size();
 
 	return;
 }
@@ -101,9 +101,9 @@ void MsgLine::remove_char() {
 		return;
 
 	msg_text = text.back();
-	msg_text->s.erase(msg_text->s.length() - 1, 1);
+	msg_text->s.deleteLastChar();
 
-	if (msg_text->s.length() == 0) {
+	if (msg_text->s.empty()) {
 		text.pop_back();
 		delete msg_text;
 	}
@@ -119,17 +119,16 @@ uint32 MsgLine::length() {
 
 // gets the MsgText object that contains the text at line position pos
 MsgText *MsgLine::get_text_at_pos(uint16 pos) {
-	uint16 i;
-	Std::list<MsgText *>::iterator iter;
+	uint16 i = 0;
 
 	if (pos > total_length)
 		return nullptr;
 
-	for (i = 0, iter = text.begin(); iter != text.end(); iter++) {
-		if (i + (*iter)->s.length() >= pos)
-			return (*iter);
+	for (auto *t : text) {
+		if (i + t->s.size() >= pos)
+			return t;
 
-		i += (*iter)->s.length();
+		i += t->s.size();
 	}
 
 	return nullptr;
@@ -245,7 +244,7 @@ MsgScroll::~MsgScroll() {
 }
 
 bool MsgScroll::init(const char *player_name) {
-	Std::string prompt_string;
+	Common::String prompt_string;
 
 	prompt_string.append(player_name);
 	if (game_type == NUVIE_GAME_U6) {
@@ -276,7 +275,7 @@ void MsgScroll::set_scroll_dimensions(uint16 w, uint16 h) {
 	display_pos = 0;
 }
 
-int MsgScroll::print_internal(const Std::string *format, ...) {
+int MsgScroll::print_internal(const Common::String *format, ...) {
 
 	va_list ap;
 	int printed = 0;
@@ -338,23 +337,23 @@ void MsgScroll::display_fmt_string(const char *format, ...) {
 	display_string(buf);
 }
 
-void MsgScroll::display_string(const Std::string &s, uint16 length, uint8 lang_num) {
+void MsgScroll::display_string(const Common::String &s, uint16 length, uint8 lang_num) {
 
 }
 
-void MsgScroll::display_string(const Std::string &s, bool include_on_map_window) {
+void MsgScroll::display_string(const Common::String &s, bool include_on_map_window) {
 	display_string(s, font, include_on_map_window);
 }
 
-void MsgScroll::display_string(const Std::string &s, uint8 color, bool include_on_map_window) {
+void MsgScroll::display_string(const Common::String &s, uint8 color, bool include_on_map_window) {
 	display_string(s, font, color, include_on_map_window);
 }
 
-void MsgScroll::display_string(const Std::string &s, Font *f, bool include_on_map_window) {
+void MsgScroll::display_string(const Common::String &s, Font *f, bool include_on_map_window) {
 	display_string(s, f, font_color, include_on_map_window);
 }
 
-void MsgScroll::display_string(const Std::string &s, Font *f, uint8 color, bool include_on_map_window) {
+void MsgScroll::display_string(const Common::String &s, Font *f, uint8 color, bool include_on_map_window) {
 	MsgText *msg_text;
 
 	if (s.empty())
@@ -412,13 +411,13 @@ MsgText *MsgScroll::holding_buffer_get_token() {
 	if (i == 0) i++;
 
 	if (i == -1)
-		i = input->s.length();
+		i = input->s.size();
 
 	if (i > 0) {
 		token = new MsgText(input->s.substr(0, i), font); // FIX maybe a format flag. // input->font);
 		token->color = input->color;
 		input->s.erase(0, i);
-		if (input->s.length() == 0) {
+		if (input->s.empty()) {
 			holding_buffer.pop_front();
 			delete input;
 		}
@@ -439,7 +438,7 @@ bool MsgScroll::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token) {
 bool MsgScroll::parse_token(MsgText *token) {
 	MsgLine *msg_line = nullptr;
 
-	if (!(token && token->s.length()))
+	if (!(token && token->s.size()))
 		return true;
 
 	if (!msg_buf.empty())
@@ -476,7 +475,7 @@ bool MsgScroll::parse_token(MsgText *token) {
 				msg_line = add_new_line();
 			}
 			// This adds extra newlines. (SB-X)
-			//                 if(msg_line->total_length + token->length() == scroll_width) //we add a new line but write to the old line.
+			//                 if(msg_line->total_length + token->size() == scroll_width) //we add a new line but write to the old line.
 			//                    add_new_line();
 
 			if (msg_line->total_length == 0 && token->s[0] == ' ' && discard_whitespace) // discard whitespace at the start of a line.
@@ -635,7 +634,7 @@ void MsgScroll::set_input_mode(bool state, const char *allowed, bool can_escape,
 		if (allowed && strlen(allowed))
 			set_permitted_input(allowed);
 		//FIXME SDL2 SDL_EnableUNICODE(1); // allow character translation
-		input_buf.erase(0, input_buf.length());
+		input_buf.erase(0, input_buf.size());
 	} else {
 		//FIXME SDL2 SDL_EnableUNICODE(0); // reduce translation overhead when not needed
 		if (callback_target)
@@ -649,7 +648,7 @@ void MsgScroll::set_input_mode(bool state, const char *allowed, bool can_escape,
 		char *user_data = callback_user_data;
 		cancel_input_request(); // clear originals (callback may request again)
 
-		Std::string input_str = input_buf;
+		Common::String input_str = input_buf;
 		requestor->set_user_data(user_data); // use temp requestor/user_data
 		requestor->callback(MSGSCROLL_CB_TEXT_READY, this, &input_str);
 	}
@@ -858,9 +857,9 @@ GUI_status MsgScroll::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status MsgScroll::MouseUp(int x, int y, Events::MouseButton button) {
 	uint16 i;
-	Std::string token_str;
+	Common::String token_str;
 
 	if (page_break) { // any click == scroll-to-end
 		process_page_break();
@@ -870,7 +869,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 	if (button == 1) { // left click == select word
 		if (input_mode) {
 			token_str = get_token_string_at_pos(x, y);
-			if (permit_input != nullptr && token_str.length()) {
+			if (permit_input != nullptr && !token_str.empty()) {
 				if (strchr(permit_input, token_str[0])
 				        || strchr(permit_input, tolower(token_str[0]))) {
 					input_buf_add_char(token_str[0]);
@@ -879,7 +878,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 				return GUI_YUM;
 			}
 
-			for (i = 0; i < token_str.length(); i++) {
+			for (i = 0; i < token_str.size(); i++) {
 				if (Common::isAlnum(token_str[i]))
 					input_buf_add_char(token_str[i]);
 			}
@@ -898,11 +897,11 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 	return GUI_PASS;
 }
 
-Std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
+Common::String MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 i;
 	sint32 buf_x, buf_y;
 	MsgText *token = nullptr;
-	Std::list<MsgLine *>::iterator iter;
+	Common::List<MsgLine *>::iterator iter;
 
 	buf_x = (x - area.left) / 8;
 	buf_y = (y - area.top) / 8;
@@ -936,7 +935,7 @@ Std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 
 void MsgScroll::Display(bool full_redraw) {
 	uint16 i;
-	Std::list<MsgLine *>::iterator iter;
+	Common::List<MsgLine *>::iterator iter;
 	MsgLine *msg_line = nullptr;
 
 
@@ -981,7 +980,7 @@ inline void MsgScroll::drawLine(Screen *theScreen, MsgLine *msg_line, uint16 lin
 
 	for (MsgText *token : msg_line->text) {
 		token->font->drawString(theScreen, token->s.c_str(), area.left + left_margin + total_length * 8, area.top + line_y * 8, token->color, font_highlight_color); //FIX for hardcoded font height
-		total_length += token->s.length();
+		total_length += token->s.size();
 	}
 }
 
@@ -1043,8 +1042,8 @@ bool MsgScroll::input_buf_add_char(char c) {
 }
 
 bool MsgScroll::input_buf_remove_char() {
-	if (input_buf.length()) {
-		input_buf.erase(input_buf.length() - 1, 1);
+	if (!input_buf.empty()) {
+		input_buf.deleteLastChar();
 		scroll_updated = true;
 		remove_char();
 
@@ -1061,9 +1060,9 @@ bool MsgScroll::has_input() {
 	return false;
 }
 
-Std::string MsgScroll::get_input() {
+Common::String MsgScroll::get_input() {
 // MsgScroll sets input_mode to false when it receives Common::KEYCODE_ENTER
-	Std::string s;
+	Common::String s;
 
 	if (input_mode == false) {
 		s.assign(input_buf);

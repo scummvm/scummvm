@@ -46,8 +46,8 @@ public:
 
 	virtual int GetSelection() const;
 
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
-	GUI_status Activate_button(int x = 0, int y = 0, Shared::MouseButton button = Shared::BUTTON_LEFT) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
+	GUI_status Activate_button(int x = 0, int y = 0, Events::MouseButton button = Events::BUTTON_LEFT) override;
 
 protected:
 	int selection;

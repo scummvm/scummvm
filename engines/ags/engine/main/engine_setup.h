@@ -27,9 +27,6 @@
 
 namespace AGS3 {
 
-// Sets up game viewport and object scaling parameters depending on _GP(game).
-// TODO: this is part of the game init, not engine init, move it later
-void engine_init_resolution_settings(const Size game_size);
 // Setup engine after the graphics mode has changed
 void engine_post_gfxmode_setup(const Size &init_desktop, const DisplayMode &old_dm);
 // Prepare engine for graphics mode release; could be called before switching display mode too

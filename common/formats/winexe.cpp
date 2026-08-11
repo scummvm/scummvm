@@ -97,7 +97,7 @@ bool WinResources::loadFromEXE(const Path &fileName) {
 }
 
 bool WinResources::loadFromCompressedEXE(const Path &fileName) {
-	// Based on http://www.cabextract.org.uk/libmspack/doc/szdd_kwaj_format.html
+	// Based on https://www.cabextract.org.uk/libmspack/doc/szdd_kwaj_format.html
 
 	// TODO: Merge this with with loadFromEXE() so the handling of the compressed
 	// EXE's is transparent

@@ -32,7 +32,7 @@
 
 #if defined(USE_OPENGL_SHADERS)
 
-#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d_shader.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl_shader.h"
 
 namespace Wintermute {
@@ -40,29 +40,23 @@ namespace Wintermute {
 struct ShadowVertexShader {
 	float x;
 	float y;
+	float z;
 };
 
 //////////////////////////////////////////////////////////////////////////
 ShadowVolumeOpenGLShader::ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::Shader *volumeShader, OpenGL::Shader *maskShader)
-	: ShadowVolume(inGame), _color(0x7f000000), _volumeShader(volumeShader), _maskShader(maskShader) {
-	ShadowVertexShader shadowMask[4];
-	Rect32 viewport = _gameRef->_renderer->getViewPort();
+	: ShadowVolume(inGame), _volumeShader(volumeShader), _maskShader(maskShader) {
+	_shadowVolumeVertexBuffer = 0;
 
-	shadowMask[0].x = viewport.left;
-	shadowMask[0].y = viewport.bottom;
-
-	shadowMask[1].x = viewport.left;
-	shadowMask[1].y = viewport.top;
-
-	shadowMask[2].x = viewport.right;
-	shadowMask[2].y = viewport.bottom;
-
-	shadowMask[3].x = viewport.right;
-	shadowMask[3].y = viewport.top;
+	glGenBuffers(1, &_shadowVolumeVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, _shadowVolumeVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, 12 * _vertices.getSize(), _vertices.getData(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &_shadowMaskVertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowMaskVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(ShadowVertexShader), shadowMask, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(ShadowVertexShader), nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -72,7 +66,10 @@ ShadowVolumeOpenGLShader::~ShadowVolumeOpenGLShader() {
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGLShader::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+	glDisable(GL_TEXTURE_2D);
+	_game->_renderer3D->_lastTexture = nullptr;
+
+	glDrawArrays(GL_TRIANGLES, 0, _vertices.getSize());
 
 	return true;
 }
@@ -86,14 +83,16 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	glDeleteBuffers(1, &_shadowVolumeVertexBuffer);
 	glGenBuffers(1, &_shadowVolumeVertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowVolumeVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, 12 * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 12 * _vertices.getSize(), _vertices.getData(), GL_STATIC_DRAW);
 
 	_volumeShader->enableVertexAttribute("position", _shadowVolumeVertexBuffer, 3, GL_FLOAT, false, 12, 0);
 	_volumeShader->use(true);
 
-	// Disable z-buffer writes (note: z-testing still occurs), and enable the
+	// Disable z-buffer/color writes (note: z-testing still occurs), and enable the
 	// stencil-buffer
 	glDepthMask(GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -101,28 +100,25 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	// Stencil test passes if ((ref & mask) cmpfn (stencil & mask)) is true.
 	// Note: since we set up the stencil-test to always pass, the STENCILFAIL
 	// renderstate is really not needed.
-	glStencilFunc(GL_ALWAYS, 0x1, 0xFFFFFFFF);
-
-	// Make sure that no pixels get drawn to the frame buffer
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ZERO, GL_ONE);
+	glStencilFunc(GL_ALWAYS, 0x1, (GLuint)~0);
 
 	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
 	// Draw back-side of shadow volume in stencil/z only
-	glCullFace(GL_FRONT);
+	glFrontFace(GL_CCW);
 	render();
 
 	// Decrement stencil buffer value
 	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 	// Draw front-side of shadow volume in stencil/z only
-	glCullFace(GL_BACK);
+	glFrontFace(GL_CW);
 	render();
 
 	// Restore render states
 	glFrontFace(GL_CCW);
 	glDepthMask(GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDisable(GL_STENCIL_TEST);
 	glDisable(GL_BLEND);
 
@@ -139,15 +135,19 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Only write where stencil val >= 1 (count indicates # of shadows that overlap that pixel)
-	glStencilFunc(GL_LEQUAL, 0x1, 0xFFFFFFFF);
+	glStencilFunc(GL_LEQUAL, 0x1, (GLuint)~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-	_gameRef->_renderer3D->setProjection2D();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	_maskShader->enableVertexAttribute("position", _shadowMaskVertexBuffer, 2, GL_FLOAT, false, 8, 0);
+	BaseRenderOpenGL3DShader *renderer = dynamic_cast<BaseRenderOpenGL3DShader *>(_game->_renderer3D);
+	renderer->_shadowMaskShader->use();
+	renderer->setProjection2D(renderer->_shadowMaskShader);
+
+	_maskShader->enableVertexAttribute("position", _shadowMaskVertexBuffer, 3, GL_FLOAT, false, 12, 0);
 	_maskShader->use(true);
+
+	glFrontFace(GL_CW);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -155,7 +155,7 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_STENCIL_TEST);
 
-	_gameRef->_renderer3D->setup3D(nullptr, true);
+	_game->_renderer3D->setup3D(nullptr, true);
 
 	// clear stencil buffer
 	glClearStencil(0);
@@ -166,21 +166,28 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGLShader::initMask() {
-	Rect32 viewport = _gameRef->_renderer->getViewPort();
-
+	auto *rend = _game->_renderer3D;
 	ShadowVertexShader shadowMask[4];
 
-	shadowMask[0].x = viewport.left;
-	shadowMask[0].y = viewport.bottom;
+	// bottom left
+	shadowMask[0].x = 0.0f;
+	shadowMask[0].y = rend->getHeight();
+	shadowMask[0].z = 1.0f;
 
-	shadowMask[1].x = viewport.left;
-	shadowMask[1].y = viewport.top;
+	// top left
+	shadowMask[1].x = 0.0f;
+	shadowMask[1].y = 0.0f;
+	shadowMask[1].z = 1.0f;
 
-	shadowMask[2].x = viewport.right;
-	shadowMask[2].y = viewport.bottom;
+	// bottom right
+	shadowMask[2].x = rend->getWidth();
+	shadowMask[2].y = rend->getHeight();
+	shadowMask[2].z = 1.0f;
 
-	shadowMask[3].x = viewport.right;
-	shadowMask[3].y = viewport.top;
+	// top right
+	shadowMask[3].x = rend->getWidth();
+	shadowMask[3].y = 0.0f;
+	shadowMask[3].z = 1.0f;
 
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowMaskVertexBuffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(ShadowVertexShader), shadowMask);

@@ -28,6 +28,8 @@
 #include "audio/decoders/raw.h"
 #include "graphics/surface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Voyeur {
 
 // Number of audio frames to keep audio track topped up when playing back video
@@ -310,10 +312,10 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 }
 
 void RL2Decoder::RL2VideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
-	for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
-		for (int y = (*it).top; y < (*it).bottom; ++y) {
-			const int x = (*it).left;
-			memcpy(dst + y * pitch + x, (byte *)_surface->getPixels() + y * getWidth() + x, (*it).right - x);
+	for (const auto &r : _dirtyRects) {
+		for (int y = r.top; y < r.bottom; ++y) {
+			const int x = r.left;
+			memcpy(dst + y * pitch + x, (byte *)_surface->getPixels() + y * getWidth() + x, r.right - x);
 		}
 	}
 
@@ -466,6 +468,11 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 
 	PictureResource videoFrame(getRL2VideoTrack()->getBackSurface());
 	int picCtr = 0;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("voyeur-default")->setEnabled(false);
+	keymapper->getKeymap("cutscene")->setEnabled(true);
+
 	while (!vm->shouldQuit() && !endOfVideo() && !vm->_eventsManager->_mouseClicked) {
 		if (hasDirtyPalette()) {
 			const byte *palette = getPalette();
@@ -495,6 +502,9 @@ void RL2Decoder::play(VoyeurEngine *vm, int resourceOffset,
 		vm->_eventsManager->getMouseInfo();
 		g_system->delayMillis(10);
 	}
+
+	keymapper->getKeymap("cutscene")->setEnabled(false);
+	keymapper->getKeymap("voyeur-default")->setEnabled(true);
 }
 
 } // End of namespace Voyeur

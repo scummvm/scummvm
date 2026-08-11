@@ -25,12 +25,10 @@
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Nuvie {
-
-using Std::list;
 
 
 class Configuration;
@@ -39,10 +37,10 @@ class MsgScroll;
 class Actor;
 
 class ConverseGump: public MsgScroll {
-	Std::list<MsgText> conv_keywords;
-	Std::list<MsgText> permitted_input_keywords;
+	Common::List<MsgText> conv_keywords;
+	Common::List<MsgText> permitted_input_keywords;
 
-	Std::list<MsgText> *keyword_list;
+	Common::List<MsgText> *keyword_list;
 
 	unsigned char *npc_portrait;
 	unsigned char *avatar_portrait;
@@ -70,8 +68,8 @@ public:
 	void set_actor_portrait(Actor *a);
 	unsigned char *create_framed_portrait(Actor *a);
 	bool parse_token(MsgText *token) override;
-	Std::string get_token_string_at_pos(uint16 x, uint16 y) override;
-	void display_string(const Std::string &s, Font *f, bool include_on_map_window) override;
+	Common::String get_token_string_at_pos(uint16 x, uint16 y) override;
+	void display_string(const Common::String &s, Font *f, bool include_on_map_window) override;
 	void set_talking(bool state, Actor *actor = nullptr) override;
 	void set_font(uint8 font_type) override {}
 //bool get_solid_bg() { return solid_bg; }
@@ -82,9 +80,9 @@ public:
 	void Display(bool full_redraw) override;
 
 	GUI_status KeyDown(const Common::KeyState &key) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 	GUI_status MouseMotion(int x, int y, uint8 state) override {
@@ -96,16 +94,16 @@ public:
 	GUI_status MouseLeave(uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseClick(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDouble(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseDelayed(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override {
+	GUI_status MouseHeld(int x, int y, Events::MouseButton button) override {
 		return GUI_YUM;
 	}
 
@@ -123,8 +121,8 @@ public:
 	void drawCursor(uint16 x, uint16 y) override;
 
 protected:
-	Std::string strip_whitespace_after_break(Std::string s);
-	void add_keyword(Std::string keyword);
+	Common::String strip_whitespace_after_break(Common::String s);
+	void add_keyword(Common::String keyword);
 
 	void set_permitted_input(const char *allowed) override;
 	void clear_permitted_input() override;
@@ -139,11 +137,11 @@ protected:
 		cursor_position = keyword_list ? keyword_list->size() : 0;
 	}
 
-	void input_add_string(Std::string token_str);
+	void input_add_string(Common::String token_str);
 
-	Std::string get_token_at_cursor();
+	Common::String get_token_at_cursor();
 
-	bool is_permanent_keyword(const Std::string &keyword);
+	bool is_permanent_keyword(const Common::String &keyword);
 	void parse_fm_towns_token(MsgText *token);
 
 private:

@@ -199,8 +199,8 @@ void DialogBox::onClick(const Common::Point &pos) {
 	}
 }
 
-void DialogBox::onKeyPress(const Common::KeyState &keyState) {
-	if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+void DialogBox::onKeyPress(const Common::CustomEventType customType) {
+	if (customType == kActionSkip) {
 		close();
 	}
 }
@@ -254,7 +254,7 @@ Gfx::Bitmap *DialogBox::loadBackground(Gfx::Driver *gfx) {
 
 	delete[] bitmapWithHeader;
 
-	return gfx->createBitmap(decoder.getSurface(), decoder.getPalette());
+	return gfx->createBitmap(decoder.getSurface(), decoder.getPalette().data());
 }
 
 void DialogBox::onRender() {

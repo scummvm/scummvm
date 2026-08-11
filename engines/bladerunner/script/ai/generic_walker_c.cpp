@@ -490,6 +490,10 @@ bool AIScriptGenericWalkerC::preparePath() {
 		isInside = true;
 		if (Random_Query(0, 1)) {
 			AI_Movement_Track_Append(kActorGenwalkerC, 164, 0);
+			// Original code does indeed have duplication of branches here
+			// TODO This could possible indicate intent of different movement tracks for the actor
+			// based on repeated "coin flips", but as it was the code block for each branch was identical.
+#if 0
 			if (Random_Query(0, 1)) {
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 162, 0);
@@ -497,18 +501,26 @@ bool AIScriptGenericWalkerC::preparePath() {
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 162, 0);
 			} else {
+#endif
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 162, 0);
-			}
+			//}
 		} else {
 			AI_Movement_Track_Append(kActorGenwalkerC, 162, 0);
+			// Original code does indeed have duplication of branches here (similar to above)
+			// TODO This could possible indicate intent of different movement tracks for the actor
+			// based on repeated "coin flips", but as it was the code block for each branch was identical.
+			// NOTE The code for generic walker A here is slightly different, setting based on a "coin flip"
+			// the actor's "facing".
 			if (Random_Query(0, 1)) {
+#if 0
+				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
+				AI_Movement_Track_Append(kActorGenwalkerC, 164, 0);
+			} else if (Random_Query(0, 1)) {
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 164, 0);
 			} else {
-				if (Random_Query(0, 1)) {
-					AI_Movement_Track_Append_With_Facing(kActorGenwalkerC, 166, 0, 30);
-				}
+#endif
 				AI_Movement_Track_Append(kActorGenwalkerC, 163, 0);
 				AI_Movement_Track_Append(kActorGenwalkerC, 164, 0);
 			}

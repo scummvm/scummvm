@@ -86,8 +86,10 @@ public:
 
 	void charHandler();
 	void command(const char *format, ...);
+	void resetCommandLine();
 	void freeParser();
 	void keyHandler(Common::Event event);
+	void actionHandler(Common::Event event);
 	void loadArrayReqs(Common::SeekableReadStream &in);
 	void loadBackgroundObjects(Common::ReadStream &in);
 	void loadCatchallList(Common::ReadStream &in);
@@ -119,6 +121,10 @@ protected:
 	void  readBG(Common::ReadStream &in, Background &curBG);
 	void  readCmd(Common::ReadStream &in, cmd &curCmd);
 	void  showDosInventory() const;
+#ifdef USE_TTS
+	void  sayInventory(const char *intro, const char *outro, int nounIndex2) const;
+#endif
+	void  endGamePrompt();
 
 	bool   _checkDoubleF1Fl;                        // Flag used to display user help or instructions
 	uint16 _getIndex;                               // Index into ring buffer
@@ -155,6 +161,12 @@ public:
 	~Parser_v2d() override;
 
 	void lineHandler() override;
+
+protected:
+	bool  isBackgroundWord_v2(const char *noun, const char *verb, ObjectList obj) const;
+	bool  isCatchallVerb_v2(bool testNounFl, const char *noun, const char *verb, ObjectList obj) const;
+	bool  isGenericVerb_v2(const char *word, Object *obj);
+	bool  isObjectVerb_v2(const char *word, Object *obj);
 };
 
 class Parser_v3d : public Parser_v1d {

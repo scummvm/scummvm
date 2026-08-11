@@ -28,7 +28,6 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 
 #include "gui/saveload.h"
 
@@ -573,32 +572,32 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(RESOURCETYPE_LOGIC, i);
+			loadResource(RESOURCETYPE_LOGIC, i);
 		else
-			agiUnloadResource(RESOURCETYPE_LOGIC, i);
+			unloadResource(RESOURCETYPE_LOGIC, i);
 		_game.logics[i].sIP = in->readSint16BE();
 		_game.logics[i].cIP = in->readSint16BE();
 	}
 
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(RESOURCETYPE_PICTURE, i);
+			loadResource(RESOURCETYPE_PICTURE, i);
 		else
-			agiUnloadResource(RESOURCETYPE_PICTURE, i);
+			unloadResource(RESOURCETYPE_PICTURE, i);
 	}
 
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(RESOURCETYPE_VIEW, i);
+			loadResource(RESOURCETYPE_VIEW, i);
 		else
-			agiUnloadResource(RESOURCETYPE_VIEW, i);
+			unloadResource(RESOURCETYPE_VIEW, i);
 	}
 
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(RESOURCETYPE_SOUND, i);
+			loadResource(RESOURCETYPE_SOUND, i);
 		else
-			agiUnloadResource(RESOURCETYPE_SOUND, i);
+			unloadResource(RESOURCETYPE_SOUND, i);
 	}
 
 	// game.pictures - loaded above
@@ -705,7 +704,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 			continue;
 
 		if (!(_game.dirView[screenObj->currentViewNr].flags & RES_LOADED))
-			agiLoadResource(RESOURCETYPE_VIEW, screenObj->currentViewNr);
+			loadResource(RESOURCETYPE_VIEW, screenObj->currentViewNr);
 
 		setView(screenObj, screenObj->currentViewNr);   // Fix v->view_data
 		setLoop(screenObj, screenObj->currentLoopNr);   // Fix v->loop_data
@@ -744,9 +743,9 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	_sprites->eraseSprites();
 	_sprites->buildAllSpriteLists();
 	_sprites->drawAllSpriteLists();
-	_picture->showPicWithTransition();
+	_picture->showPictureWithTransition();
 	_game.pictureShown = true;
-	_text->statusDraw();
+	_text->statusDraw(true, true);
 	_text->promptRedraw();
 
 	// copy everything over (we should probably only copy over the remaining parts of the screen w/o play screen
@@ -763,20 +762,20 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		dialog = new GUI::SaveLoadChooser(true);
 
 		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
 
 		if (desc.empty()) {
-			// create our own description for the saved game, the user didnt enter it
+			// create our own description for the saved game, the user didn't enter it
 			desc = dialog->createDefaultSaveDescription(slot);
 		}
 
 		if (desc.size() > 28)
 			desc = Common::String(desc.c_str(), 28);
 	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		dialog = new GUI::SaveLoadChooser(false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
 
@@ -833,22 +832,20 @@ SavedGameSlotIdArray AgiEngine::getSavegameSlotIds() {
 	// search for saved game filenames...
 	filenames = _saveFileMan->listSavefiles(_targetName + ".###");
 
-	Common::StringArray::iterator it;
-	Common::StringArray::iterator end = filenames.end();
-
 	// convert to lower-case, just to be sure
-	for (it = filenames.begin(); it != end; it++) {
-		it->toLowercase();
+	for (auto &file : filenames) {
+		file.toLowercase();
 	}
+
 	// sort
 	Common::sort(filenames.begin(), filenames.end());
 
 	// now extract slot-Ids
-	for (it = filenames.begin(); it != end; it++) {
-		slotId = atoi(it->c_str() + numberPos);
-
+	for (auto &file : filenames) {
+		slotId = atoi(file.c_str() + numberPos);
 		slotIdArray.push_back(slotId);
 	}
+
 	return slotIdArray;
 }
 
@@ -1037,11 +1034,11 @@ void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 	switch (type) {
 	case ADD_PIC:
 		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);
-		agiLoadResource(RESOURCETYPE_PICTURE, p1);
+		loadResource(RESOURCETYPE_PICTURE, p1);
 		_picture->decodePicture(p1, p2, p3 != 0);
 		break;
 	case ADD_VIEW:
-		agiLoadResource(RESOURCETYPE_VIEW, p1);
+		loadResource(RESOURCETYPE_VIEW, p1);
 		_sprites->addToPic(p1, p2, p3, p4, p5, p6, p7);
 		break;
 	default:

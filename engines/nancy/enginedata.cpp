@@ -42,63 +42,100 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	s.skip(0x17, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x49, kGameTypeNancy1, kGameTypeNancy1);
-	s.skip(0x43, kGameTypeNancy2);
+	s.skip(0x43, kGameTypeNancy2, kGameTypeNancy9);
+	s.skip(0x41, kGameTypeNancy10, kGameTypeNancy15);
+	s.skip(0x55, kGameTypeNancy16);
 
 	readFilename(s, conversationTextsFilename, kGameTypeNancy6);
 	readFilename(s, autotextFilename, kGameTypeNancy6);
+	readFilename(s, fontFilename, kGameTypeNancy12);
+	readFilename(s, flagsFilename, kGameTypeNancy12);
 
-	s.syncAsUint16LE(firstScene.sceneID);
+	// Nancy16 went back to the pre-Nancy14 field order, and dropped both vertical offsets
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy16);
+	s.syncAsUint16LE(firstScene.frameID, kGameTypeNancy16);
+	s.syncAsUint16LE(startTimeHours, kGameTypeNancy16);
+	s.syncAsUint16LE(startTimeMinutes, kGameTypeNancy16);
+	s.skip(1, kGameTypeNancy16);	// Unknown
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy16);
+	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy16);
+	s.skip(2, kGameTypeNancy16);	// Unknown
+
+	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeVampire, kGameTypeNancy13);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
-	s.syncAsUint16LE(firstScene.frameID);
-	s.syncAsUint16LE(firstScene.verticalOffset);
-	s.syncAsUint16LE(startTimeHours);
-	s.syncAsUint16LE(startTimeMinutes);
+	s.syncAsUint16LE(firstScene.frameID, kGameTypeVampire, kGameTypeNancy15);
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy14, kGameTypeNancy15);
+	s.skip(2, kGameTypeNancy14, kGameTypeNancy15); // Unknown
+	s.syncAsUint16LE(firstScene.verticalOffset, kGameTypeVampire, kGameTypeNancy15);
 
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7);
-	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy7);
-	s.syncAsUint16LE(adScene.verticalOffset, kGameTypeNancy7);
+	s.syncAsUint16LE(startTimeHours, kGameTypeVampire, kGameTypeNancy13);
+	s.syncAsUint16LE(startTimeMinutes, kGameTypeVampire, kGameTypeNancy13);
+
+	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
+
+	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7, kGameTypeNancy13);
+	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy7, kGameTypeNancy15);
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy14, kGameTypeNancy15);
+	s.skip(2, kGameTypeNancy14, kGameTypeNancy15);	// Unknown
+	s.syncAsUint16LE(adScene.verticalOffset, kGameTypeNancy7, kGameTypeNancy15);
 
 	s.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
-	s.skip(3); // Number of object, frame, and logo images
+
+	// Nancy15 added the studio URL, preceded by a few unknown values
+	s.skip(4, kGameTypeNancy15, kGameTypeNancy15);	// Unknown
+	s.skip(2, kGameTypeNancy15);					// Unknown
+	s.skip(256, kGameTypeNancy15);					// Studio URL
+
+	// Nancy16 dropped the image counts together with the OB0/FR0/LG0 chunks they describe
+	s.skip(3, kGameTypeVampire, kGameTypeNancy15); // Number of object, frame, and logo images
 	if (g_nancy->getEngineData("PLG0")) {
-		// Parner logos were introduced with nancy4, but at least one nancy3 release
+		// Partner logos were introduced with nancy4, but at least one nancy3 release
 		// had one as well. For some reason they didn't port over the code from the
 		// later games, but implemented it the same way the other BSUM images work.
 		// Hence, we skip an extra byte indicating the number of partner logos.
 		s.skip(1);
 	}
 
+	s.skip(4, kGameTypeNancy11, kGameTypeNancy14);	// Unknown
+
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, extraButtonHotspot, kGameTypeVampire, kGameTypeVampire);
-	readRect(s, extraButtonHotspot, kGameTypeNancy2);
-	readRect(s, extraButtonHighlightDest, kGameTypeNancy1);
+	readRect(s, extraButtonHotspot, kGameTypeNancy2, kGameTypeNancy14);
+	readRect(s, extraButtonHighlightDest, kGameTypeNancy1, kGameTypeNancy15);
 	s.skip(0x10, kGameTypeVampire, kGameTypeVampire);
-	readRect(s, textboxScreenPosition);
-	readRect(s, inventoryBoxScreenPosition);
-	readRect(s, menuButtonSrc);
-	readRect(s, helpButtonSrc);
-	readRect(s, menuButtonDest);
-	readRect(s, helpButtonDest);
-	readRect(s, menuButtonHighlightSrc, kGameTypeNancy2);
-	readRect(s, helpButtonHighlightSrc, kGameTypeNancy2);
-	readRect(s, clockHighlightSrc, kGameTypeNancy2);
+	readRect(s, textboxScreenPosition, kGameTypeVampire, kGameTypeNancy15);
+	readRect(s, inventoryBoxScreenPosition, kGameTypeVampire, kGameTypeNancy14);
+
+	readRect(s, menuButtonSrc, kGameTypeVampire, kGameTypeNancy9);
+	readRect(s, helpButtonSrc, kGameTypeVampire, kGameTypeNancy9);
+	readRect(s, menuButtonDest, kGameTypeVampire, kGameTypeNancy9);
+	readRect(s, helpButtonDest, kGameTypeVampire, kGameTypeNancy9);
+	readRect(s, menuButtonHighlightSrc, kGameTypeNancy2, kGameTypeNancy9);
+	readRect(s, helpButtonHighlightSrc, kGameTypeNancy2, kGameTypeNancy9);
+
+	readRect(s, clockHighlightSrc, kGameTypeNancy2, kGameTypeNancy14);
 
 	s.skip(0x2, kGameTypeVampire, kGameTypeVampire);
 	s.syncAsByte(paletteTrans, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x2, kGameTypeVampire, kGameTypeVampire);
-	s.syncAsByte(rTrans);
-	s.syncAsByte(gTrans);
-	s.syncAsByte(bTrans);
-	s.skip(6); // Black and white
+	s.syncAsByte(rTrans, kGameTypeVampire, kGameTypeNancy15);
+	s.syncAsByte(gTrans, kGameTypeVampire, kGameTypeNancy15);
+	s.syncAsByte(bTrans, kGameTypeVampire, kGameTypeNancy15);
+	s.skip(6, kGameTypeVampire, kGameTypeNancy15); // Black and white
 
 	s.syncAsUint16LE(horizontalEdgesSize);
 	s.syncAsUint16LE(verticalEdgesSize);
 
-	s.syncAsUint16LE(numFonts);
+	// Nancy16 replaced the bitmap fonts with system fonts, and the font count
+	// is now implied by the number of FONT chunks inside the font IFF
+	s.syncAsUint16LE(numFonts, kGameTypeVampire, kGameTypeNancy15);
 
 	// Skip data for debug features (diagnostics, version...)
 	s.skip(0x18, kGameTypeVampire, kGameTypeVampire);
-	s.skip(0x1A, kGameTypeNancy1);
+	s.skip(0x1A, kGameTypeNancy1, kGameTypeNancy15);
+	s.skip(0x18, kGameTypeNancy16);
 
 	s.syncAsSint16LE(playerTimeMinuteLength);
 	s.syncAsUint16LE(buttonPressTimeDelay);
@@ -123,37 +160,41 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
-	readRect(*chunkStream, scrollbarSrcBounds);
-	s.syncAsUint16LE(scrollbarDefaultPos.x);
-	s.syncAsUint16LE(scrollbarDefaultPos.y);
-	s.syncAsUint16LE(scrollbarMaxScroll);
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		readRect(*chunkStream, scrollbarSrcBounds);
+		s.syncAsUint16LE(scrollbarDefaultPos.x);
+		s.syncAsUint16LE(scrollbarDefaultPos.y);
+		s.syncAsUint16LE(scrollbarMaxScroll);
 
-	readRectArray(s, ornamentSrcs, 6, 6, kGameTypeVampire, kGameTypeNancy1);
-	readRectArray(s, ornamentDests, 6, 6, kGameTypeVampire, kGameTypeNancy1);
+		readRectArray(s, ornamentSrcs, 6, 6, kGameTypeVampire, kGameTypeNancy1);
+		readRectArray(s, ornamentDests, 6, 6, kGameTypeVampire, kGameTypeNancy1);
 
-	uint numFrames = g_nancy->getGameType() == kGameTypeVampire ? 10 : 7;
+		uint numFrames = g_nancy->getGameType() == kGameTypeVampire ? 10 : 7;
 
-	readRectArray(s, curtainAnimationSrcs, numFrames * 2);
+		readRectArray(s, curtainAnimationSrcs, numFrames * 2);
 
-	readRect(s, curtainsScreenPosition);
-	s.syncAsUint16LE(curtainsFrameTime);
+		readRect(s, curtainsScreenPosition);
+		s.syncAsUint16LE(curtainsFrameTime);
+	}
 
 	s.syncAsUint16LE(captionAutoClearTime, kGameTypeNancy3);
 
 	readFilename(s, inventoryBoxIconsImageName);
-	readFilename(s, inventoryCursorsImageName);
+	// Nancy13 moved the inventory cursors name into the CURS chunk, so it is no
+	// longer stored here.
+	readFilename(s, inventoryCursorsImageName, kGameTypeVampire, kGameTypeNancy12);
 
 	s.skip(0x4, kGameTypeVampire, kGameTypeNancy1); // inventory box icons surface w/h
 	s.skip(0x4, kGameTypeVampire, kGameTypeNancy1); // inventory cursors surface w/h
 
-	s.skip(0x10); // unknown rect, same size as a hotspot
+	s.skip(0x10, kGameTypeVampire, kGameTypeNancy9); // unknown rect, same size as a hotspot
 
-	byte textBuf[60];
+	byte textBuf[61];
 
 	if (s.getVersion() >= kGameTypeNancy2) {
 		cantSound.readNormal(*chunkStream);
 		s.syncBytes(textBuf, 60);
-		textBuf[59] = '\0';
+		textBuf[60] = '\0';
 		cantText = (char *)textBuf;
 	}
 
@@ -189,47 +230,83 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 		if (s.getVersion() == kGameTypeNancy2) {
 			s.syncBytes(textBuf, 60);
-			textBuf[59] = '\0';
+			textBuf[60] = '\0';
 			assembleTextLine((char *)textBuf, item.cantText, 60);
 
 			s.syncBytes(textBuf, 60);
-			textBuf[59] = '\0';
+			textBuf[60] = '\0';
 			assembleTextLine((char *)textBuf, item.cantTextNotHolding, 60);
 
 			item.cantSound.readNormal(*chunkStream);
 			item.cantSoundNotHolding.readNormal(*chunkStream);
-		} else if (s.getVersion() >= kGameTypeNancy3) {
+		} else if (s.getVersion() >= kGameTypeNancy3 && s.getVersion() <= kGameTypeNancy8) {
 			s.syncBytes(textBuf, 60);
-			textBuf[59] = '\0';
+			textBuf[60] = '\0';
 			assembleTextLine((char *)textBuf, item.cantText, 60);
 
 			item.cantSound.readNormal(*chunkStream);
+		} else if (s.getVersion() >= kGameTypeNancy9) {
+			for (int j = 0; j < 3; ++j) {
+				if (s.getVersion() >= kGameTypeNancy10)
+					readFilename(s, item.cantSounds[j].name);
+				s.syncBytes(textBuf, 60);
+				textBuf[60] = '\0';
+				assembleTextLine((char *)textBuf, item.cantTexts[j], 60);
+				if (s.getVersion() == kGameTypeNancy9)
+					readFilename(s, item.cantSounds[j].name);
+			}
+
+			item.cantText = item.cantTexts[0]; // Default text is the first one
+			item.cantSound.name = item.cantSounds[0].name;
 		}
 	}
 }
 
 TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	bool isVampire = g_nancy->getGameType() == Nancy::GameType::kGameTypeVampire;
+	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
 
 	readRect(*chunkStream, scrollbarSrcBounds);
 
-	chunkStream->seek(0x20);
+	if (g_nancy->getGameType() <= kGameTypeNancy9)
+		chunkStream->seek(0x20);
+
 	readRect(*chunkStream, innerBoundingBox);
 
 	scrollbarDefaultPos.x = chunkStream->readUint16LE() - (isVampire ? 1 : 0);
 	scrollbarDefaultPos.y = chunkStream->readUint16LE();
 	scrollbarMaxScroll = chunkStream->readUint16LE();
 
-	upOffset = chunkStream->readUint16LE() + 1;
+	uint16 legacyOffsetAdjust = g_nancy->getGameType() < kGameTypeNancy10 ? 1 : 0;
+	upOffset = chunkStream->readUint16LE() + legacyOffsetAdjust;
 	downOffset = chunkStream->readUint16LE();
-	leftOffset = chunkStream->readUint16LE() - 1;
+	leftOffset = chunkStream->readUint16LE() - legacyOffsetAdjust;
 	rightOffset = chunkStream->readUint16LE();
 
-	readRectArray(*chunkStream, ornamentSrcs, 14);
-	readRectArray(*chunkStream, ornamentDests, 14);
+	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		readRectArray(*chunkStream, ornamentSrcs, 14);
+		readRectArray(*chunkStream, ornamentDests, 14);
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		chunkStream->skip(2);
+
+		maxScrollWidth = chunkStream->readSint32LE();
+		firstLineY = chunkStream->readSint32LE();
+		unknown1 = chunkStream->readSint32LE();
+		unknown2 = chunkStream->readSint32LE();
+		contentWidth = chunkStream->readSint32LE();
+		contentHeight = chunkStream->readSint32LE();
+	}
 
 	defaultFontID = chunkStream->readUint16LE();
 	defaultTextColor = chunkStream->readUint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		lineStartXCursor = chunkStream->readUint16LE();	// text left inset
+		stripRightMargin = chunkStream->readUint16LE();	// strip text right margin (see FrameTextBox)
+		chunkStream->skip(2);	// unused
+		chunkStream->skip(2);	// initial color (we use the AR for this)
+	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
 		conversationFontID = chunkStream->readUint16LE();
@@ -506,7 +583,8 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 		readRectArray(*chunkStream, _disabledButtonSrcs, 5);
 
 		readRectArray(*chunkStream, _buttonDests, 5);
-		readRectArray(*chunkStream, _textboxBounds, 10);
+		readRectArray(*chunkStream, _textboxBounds, 9);
+		readRect(*chunkStream, _inputTextboxBounds);
 
 		chunkStream->skip(25); // prefixes and suffixes for filenames
 
@@ -776,7 +854,11 @@ CVTX::CVTX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		if (buf) {
 			chunkStream->read(buf, stringSize);
 			buf[stringSize] = '\0';
-			texts.setVal(keyName, buf);
+
+			// Text is stored as null-separated bits that must be concatenated
+			Common::String assembled;
+			assembleTextLine(buf, assembled, stringSize);
+			texts.setVal(keyName, assembled);
 		} else {
 			texts.setVal(keyName, Common::String());
 		}
@@ -815,6 +897,544 @@ TABL::TABL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 MARK::MARK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRectArray(*chunkStream, _markSrcs, 5);
+}
+
+SCTB::SCTB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+	readRect(*chunkStream, restoreSrcRect);
+}
+
+SHUI::SHUI(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readRectArray(*chunkStream, _closeRects, 4);
+	readRectArray(*chunkStream, _sliderRects, 4);
+}
+
+TASK::TASK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, imageName);
+
+	readRect(*chunkStream, srcRect);
+	readRect(*chunkStream, dstRect);
+	readRect(*chunkStream, unkRect1);
+	readRect(*chunkStream, ccTextboxScreenRect);
+
+	// The button count varies by game (Nancy12 adds a 6th slot for the coin
+	// purse), so derive it from the chunk size. A slot marked "NO_UI_ITEM" (e.g.
+	// the cell phone Nancy12 removed) is read but skipped by the taskbar.
+	const uint numButtons = MIN<uint>(kNumButtons,
+		(uint)(chunkStream->size() - chunkStream->pos()) / kButtonRecordSize);
+
+	char nameBuf[34];
+	for (uint i = 0; i < numButtons; ++i) {
+		readUIButton(*chunkStream, buttons[i].button);
+		readRect(*chunkStream, buttons[i].notificationSrcRect);
+		for (uint s = 0; s < kNumAltSounds; ++s) {
+			chunkStream->read(nameBuf, 33);
+			nameBuf[33] = '\0';
+			buttons[i].clickSoundName[s] = nameBuf;
+		}
+	}
+}
+
+UIBW::UIBW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, imageName);
+
+	// Read URL records one at a time, stopping when the remaining bytes
+	// are no longer enough for a full record or when the record has an
+	// empty (zero-byte) name — the game pads the array with empty slots.
+	while (chunkStream->size() - chunkStream->pos() >= (int64)kUrlRecordSize) {
+		UrlPage page;
+		readFilename(*chunkStream, page.imageName);
+		if (page.imageName.empty()) {
+			// Skip the remainder of the (empty) record: 215 - 33 bytes.
+			chunkStream->skip(kUrlRecordSize - 33);
+			continue;
+		}
+
+		uint16 hotspotCount = chunkStream->readUint16LE();
+		for (uint i = 0; i < kMaxHotspotsPerPage; ++i) {
+			Hotspot h;
+			h.id = chunkStream->readUint16LE();
+			readRect(*chunkStream, h.rect);
+			if (i < hotspotCount) {
+				page.hotspots.push_back(h);
+			}
+		}
+
+		pages.push_back(page);
+	}
+}
+
+UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+
+	readFilename(*chunkStream, overlayImageName);
+
+	// Shared UIButton template (206 bytes); its sub-fields are read
+	// separately per button below. The last 49 bytes of the block are
+	// the call-sound template (channel / volume / loops for the ring,
+	// pickup and invalid-number cues).
+	chunkStream->skip(157);
+	callSoundTemplate.readNormal(*chunkStream);
+
+	for (uint i = 0; i < kNumDialPadSlots; ++i) {
+		readRect(*chunkStream, dialPadSlots[i].srcRect);
+		readRect(*chunkStream, dialPadSlots[i].destRect);
+		char nameBuf[34];
+		chunkStream->read(nameBuf, 33);
+		nameBuf[33] = '\0';
+		dialPadSlots[i].soundName = nameBuf;
+	}
+
+	char labelBuf[21];
+	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
+
+	// Version-specific preamble: Nancy 13 replaced the dial-highlight /
+	// screen-out / welcome block with a camera sub-UI, and moved the
+	// dial/web/dir labels ahead of the status labels.
+	if (isNancy13) {
+		readRect(*chunkStream, cameraViewSrcRect);
+		cameraTextX = chunkStream->readSint32LE();
+		cameraTextY = chunkStream->readSint32LE();
+		readFilename(*chunkStream, cameraViewImageName);
+		readFilename(*chunkStream, cameraClickSound);
+		readRect(*chunkStream, pictureDisplayRect);
+
+		// TODO: Camera picture-slot / thumbnail data (int16 rects, ~9 records) —
+		// skipped for now. Map these if the picture-view thumbnail grid is ever
+		// implemented (the original stores per-slot source rects here).
+		chunkStream->skip(114);
+
+		readRect(*chunkStream, noPictureScreenRect);
+
+		// The dialed-number baseline is the camera text position (Nancy 13
+		// dropped the separate statusText field). welcomeScreen is read from the
+		// screen-graphic block further down.
+		statusTextX = cameraTextX;
+		statusTextY = cameraTextY;
+
+		// Eight ribbon-label SrcDestRectPairs across three on-screen columns
+		// (dest x = 437 / 492 / 551). Atlas order is CAM, DIAL, MENU, DIR, DEL,
+		// SEND, YES, NO; each screen shows one label per column.
+		readRect(*chunkStream, dialLabel.srcRect);		// CAM (col 437)
+		readRect(*chunkStream, dialLabel.destRect);
+		readRect(*chunkStream, dialingLabel.srcRect);	// DIAL (col 437)
+		readRect(*chunkStream, dialingLabel.destRect);
+		readRect(*chunkStream, webLabel.srcRect);		// MENU (col 492)
+		readRect(*chunkStream, webLabel.destRect);
+		readRect(*chunkStream, dirLabel.srcRect);		// DIR (col 551)
+		readRect(*chunkStream, dirLabel.destRect);
+		readRect(*chunkStream, delLabel.srcRect);		// DEL (col 492)
+		readRect(*chunkStream, delLabel.destRect);
+		readRect(*chunkStream, sendLabel.srcRect);		// SEND (col 551)
+		readRect(*chunkStream, sendLabel.destRect);
+		readRect(*chunkStream, yesLabel.srcRect);		// YES (col 492)
+		readRect(*chunkStream, yesLabel.destRect);
+		readRect(*chunkStream, noLabel.srcRect);		// NO (col 551)
+		readRect(*chunkStream, noLabel.destRect);
+	} else {
+		readRect(*chunkStream, dialHilite.srcRect);
+		readRect(*chunkStream, dialHilite.destRect);
+		readRect(*chunkStream, screenOutSrcRect);
+		statusTextX = chunkStream->readSint32LE();
+		statusTextY = chunkStream->readSint32LE();
+		readRect(*chunkStream, welcomeScreen.srcRect);
+		readRect(*chunkStream, welcomeScreen.destRect);
+	}
+
+	for (uint i = 0; i < kNumStatusLabels; ++i) {
+		chunkStream->read(labelBuf, 20);
+		labelBuf[20] = '\0';
+		statusLabels[i] = labelBuf;
+	}
+
+	if (!isNancy13) {
+		// Nancy 13 reads the dial/web/dir labels in the camera block above.
+		readRect(*chunkStream, dialLabel.srcRect);
+		readRect(*chunkStream, dialLabel.destRect);
+		readRect(*chunkStream, webLabel.srcRect);
+		readRect(*chunkStream, webLabel.destRect);
+		readRect(*chunkStream, dirLabel.srcRect);
+		readRect(*chunkStream, dirLabel.destRect);
+	}
+
+	// Help "?" button (3 rects) + its CVTX text key. Nancy 13 orders the key
+	// before the button and adds a second key.
+	if (isNancy13) {
+		readFilename(*chunkStream, helpTextKey);
+		readRect(*chunkStream, helpButton.srcRectIdle);
+		readRect(*chunkStream, helpButton.srcRectPressed);
+		readRect(*chunkStream, helpButton.destRect);
+		readFilename(*chunkStream, helpTextKey2);
+	} else {
+		readRect(*chunkStream, helpButton.srcRectIdle);
+		readRect(*chunkStream, helpButton.srcRectPressed);
+		readRect(*chunkStream, helpButton.destRect);
+		readFilename(*chunkStream, helpTextKey);
+	}
+
+	readRect(*chunkStream, signalSpriteSrc);
+	readRect(*chunkStream, signalSpriteSrcAlt);
+	readRect(*chunkStream, signalSpriteDest);
+	readRect(*chunkStream, batterySpriteSrc);
+	readRect(*chunkStream, batterySpriteSrcAlt);
+	readRect(*chunkStream, batterySpriteDest);
+
+	if (isNancy13) {
+		// Welcome / idle screen graphic: a normal source variant, a no-signal
+		// source variant, then the on-screen dest (all 171x164). This is what
+		// drawWelcomeScreen blits, and it carries the top-row button
+		// backgrounds; its dest rect also bounds the small-LCD directory list.
+		// Nancy 13 dropped the separate typeMessage / connectedLabel /
+		// connectingSprite fields.
+		readRect(*chunkStream, welcomeScreen.srcRect);
+		chunkStream->skip(16);	// no-signal source variant
+		readRect(*chunkStream, welcomeScreen.destRect);
+		chunkStream->skip(8);	// trailing pad
+	} else {
+		readRect(*chunkStream, typeMessage.srcRect);
+		readRect(*chunkStream, typeMessage.destRect);
+		readRect(*chunkStream, connectedLabel.srcRect);
+		readRect(*chunkStream, connectedLabel.destRect);
+		readRect(*chunkStream, connectingSpriteSrc);
+		readRect(*chunkStream, connectingSpriteSrcAlt);
+		readRect(*chunkStream, connectingSpriteDest);
+
+		if (g_nancy->getGameType() >= kGameTypeNancy11) {
+			// TODO: Looks to be a new coordinate - values (548, 50)
+			chunkStream->skip(8);
+		}
+
+		readRect(*chunkStream, onlineHeading.srcRect);
+		readRect(*chunkStream, onlineHeading.destRect);
+	}
+
+	readRect(*chunkStream, fullEmptyScreenSrc);
+	readRect(*chunkStream, emailListContainer);
+	readRect(*chunkStream, dirArrowSrc);
+	readRect(*chunkStream, dirCursorSrc);
+
+	if (isNancy13) {
+		// Nancy 13 has 11 online sub-buttons (Ghidra widgets 0x10..0x1a). The
+		// first (0x10, at what older games use for the directory heading) is the
+		// Back button, so the whole array is read contiguously here.
+		for (uint i = 0; i < kNumSubButtonsNancy13; ++i) {
+			readRect(*chunkStream, subButtons[i].srcRectIdle);
+			readRect(*chunkStream, subButtons[i].srcRectPressed);
+			readRect(*chunkStream, subButtons[i].destRect);
+		}
+	} else {
+		readRect(*chunkStream, dirHeading.srcRect);
+		readRect(*chunkStream, dirHeading.destRect);
+
+		for (uint i = 0; i < kNumSubButtons; ++i) {
+			readRect(*chunkStream, subButtons[i].srcRectIdle);
+			readRect(*chunkStream, subButtons[i].srcRectPressed);
+			readRect(*chunkStream, subButtons[i].destRect);
+		}
+	}
+
+	readRect(*chunkStream, searchHeading.srcRect);
+	readRect(*chunkStream, searchHeading.destRect);
+	readRect(*chunkStream, emailIconUnread);
+	readRect(*chunkStream, emailIconSelected);
+	readRect(*chunkStream, emailHeading.srcRect);
+	readRect(*chunkStream, emailHeading.destRect);
+
+	if (!isNancy13) {
+		// Nancy 13 has no separate help heading in this block.
+		readRect(*chunkStream, helpHeading.srcRect);
+		readRect(*chunkStream, helpHeading.destRect);
+	}
+
+	readRect(*chunkStream, browserHeading.srcRect);
+	readRect(*chunkStream, browserHeading.destRect);
+
+	// Initial email entry (key + value + flag + event flag), then initial
+	// web-search entry (key + extra + flag + event flag). Both are optional;
+	// an empty key marks an absent entry. CellPhonePopup seeds these on init.
+	readFilename(*chunkStream, initialEmail.key);
+	readFilename(*chunkStream, initialEmail.value);
+	initialEmail.flag = chunkStream->readSint16LE();
+	initialEmail.eventFlag = chunkStream->readSint16LE();
+	readFilename(*chunkStream, initialSearch.key);
+	initialSearch.extra = chunkStream->readSint16LE();
+	initialSearch.flag = chunkStream->readSint16LE();
+	initialSearch.eventFlag = chunkStream->readSint16LE();
+
+	if (isNancy13) {
+		// Three RGB colors for the phone screen, added in Nancy 13.
+		chunkStream->read(screenColors, sizeof(screenColors));
+	}
+
+	fontId1 = chunkStream->readUint16LE();
+	fontId2 = chunkStream->readUint16LE();
+
+	readFilename(*chunkStream, outgoingRingSound);
+	readFilename(*chunkStream, pickupSound);
+	readFilename(*chunkStream, invalidNumberSound);
+
+	contactCount = chunkStream->readUint16LE();
+
+	const int64 maxEntries = (chunkStream->size() - chunkStream->pos()) / 41;
+	const uint16 entries = MIN<uint16>(contactCount, (uint16)maxEntries);
+	contacts.resize(entries);
+	for (uint i = 0; i < entries; ++i) {
+		Contact &c = contacts[i];
+
+		chunkStream->read(c.unknownPrefix, sizeof(c.unknownPrefix));
+
+		char nameBuf[21];
+		chunkStream->read(nameBuf, 20);
+		nameBuf[20] = '\0';
+		c.name = nameBuf;
+
+		chunkStream->read(c.unknownSuffix, sizeof(c.unknownSuffix));
+	}
+
+	if (isNancy13) {
+		// Trailing captured-picture slot table, added in Nancy 13. These are the
+		// game's built-in photo slots; runtime captures are persisted separately
+		// (CellPhonePictureData), so this table is parsed but currently unused.
+		// TODO: identify PictureRecord::unknown (6 bytes, identical across slots).
+		const uint16 pictureCount = chunkStream->readUint16LE();
+		pictures.resize(pictureCount);
+		for (uint i = 0; i < pictureCount; ++i) {
+			PictureRecord &p = pictures[i];
+			p.id = chunkStream->readUint16LE();
+			readRect(*chunkStream, p.rect);
+			chunkStream->read(p.unknown, sizeof(p.unknown));
+		}
+	}
+}
+
+UICM::UICM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, overlayImageName);
+
+	readRect(*chunkStream, viewRect);
+	maxPictures = chunkStream->readUint16LE();
+	pictureCount = chunkStream->readByte();
+	chunkStream->skip(2);
+
+	shutterSound.readData(*chunkStream);
+
+	const uint16 count = chunkStream->readUint16LE();
+	subjects.resize(count);
+	for (uint i = 0; i < count; ++i) {
+		CameraSubject &s = subjects[i];
+		s.hotspot.readData(*chunkStream);
+		s.subjectID = chunkStream->readSint16LE();
+		s.flag.label = chunkStream->readSint16LE();
+		s.flag.flag = chunkStream->readByte();
+		chunkStream->skip(1);
+	}
+}
+
+UICO::UICO(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+	readRect(*chunkStream, textRect);
+}
+
+UIIV::UIIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+
+	readRectArray(*chunkStream, slotSrcRects, 16);
+	readRectArray(*chunkStream, slotDestRects, 16);
+
+	// Nancy13 inserted a Rect here (the clickable region of the item slots)
+	// before the original 2-byte field.
+	if (g_nancy->getGameType() >= kGameTypeNancy13)
+		readRect(*chunkStream, slotsHotspot);
+
+	// Two byte flags. The first controls where items added while the popup is
+	// open land in the inventory order (see appendItemsWhileOpen); the second
+	// is unused here.
+	appendItemsWhileOpen = chunkStream->readByte();
+	chunkStream->skip(1);
+
+	for (uint i = 0; i < kNumFilters; ++i) {
+		readUIButtonSlot(*chunkStream, filters[i]);
+	}
+
+	readRectArray(*chunkStream, tabCaptionSrcRects, kNumFilters);
+
+	readRect(*chunkStream, tabCaptionDestRect);
+}
+
+UINB::UINB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readUIPopupHeader(*chunkStream, header);
+
+	for (uint i = 0; i < kNumTabs; ++i) {
+		readUIButtonSlot(*chunkStream, tabs[i]);
+	}
+
+	readRect(*chunkStream, textRect);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		// Two RGB text colors, added in Nancy 13
+		for (uint i = 0; i < 3; ++i) {
+			primaryTextColor[i] = chunkStream->readByte();
+		}
+		for (uint i = 0; i < 3; ++i) {
+			secondaryTextColor[i] = chunkStream->readByte();
+		}
+	}
+
+	primaryFontID = chunkStream->readUint16LE();
+	secondaryFontAttr = chunkStream->readUint16LE();
+	useFilenameTextFlag = chunkStream->readUint16LE();
+	readFilename(*chunkStream, conditionalTextFilename);
+
+	// 3 sound names played at random when an item is marked complete
+	// (glyph attr -> 8)
+	for (uint i = 0; i < kNumPageSoundsPerSet; ++i) {
+		readFilename(*chunkStream, actionableClickSounds[i]);
+	}
+
+	// 3 sound names for no-action clicks
+	for (uint i = 0; i < kNumPageSoundsPerSet; ++i) {
+		readFilename(*chunkStream, noActionClickSounds[i]);
+	}
+
+	readRectArray(*chunkStream, tabCaptionSrcRects, kNumTabs);
+	readRect(*chunkStream, tabCaptionDestRect);
+}
+
+EVNT::EVNT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	Common::String name;
+	const uint16 count = (uint16)(chunkStream->size() / (int64)kEventRecordSize);
+
+	eventFlagNames.resize(count);
+
+	for (uint16 i = 0; i < count; ++i) {
+		readFilename(*chunkStream, name);
+		chunkStream->skip(2);	// flag ID (starting from 2000)
+		eventFlagNames[i] = name;
+	}
+}
+
+UIRC::UIRC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	while (chunkStream->size() - chunkStream->pos() >= (int64)kItemRecordSize) {
+		ItemRecord rec;
+		rec.id = chunkStream->readUint16LE();
+		readFilename(*chunkStream, rec.overlayName);
+		readRect(*chunkStream, rec.rect);
+		rec.unknown1 = chunkStream->readSint16LE();
+		rec.unknown2 = chunkStream->readSint16LE();
+		rec.soundChannel = chunkStream->readSint16LE();
+		rec.soundVolume = chunkStream->readSint16LE();
+		for (uint i = 0; i < kNumSounds; ++i) {
+			readFilename(*chunkStream, rec.soundNames[i]);
+		}
+		items.push_back(rec);
+	}
+}
+
+MMIX::MMIX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	const uint16 count = chunkStream->readUint16LE();
+	records.resize(count);
+
+	for (uint16 i = 0; i < count; ++i) {
+		Record &rec = records[i];
+		readFilename(*chunkStream, rec.name);
+		const uint16 numTracks = chunkStream->readUint16LE();
+		rec.musicNames.resize(numTracks);
+		for (uint16 j = 0; j < numTracks; ++j) {
+			readFilename(*chunkStream, rec.musicNames[j]);
+		}
+	}
+}
+
+LVLN::LVLN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	// The count is the total number of strings, which always comes in
+	// (code, name) pairs - hence it must be even.
+	const uint16 count = chunkStream->readUint16LE();
+	const uint16 numPairs = count / 2;
+	levelCodes.resize(numPairs);
+	levelNames.resize(numPairs);
+
+	for (uint16 i = 0; i < numPairs; ++i) {
+		readFilename(*chunkStream, levelCodes[i]);
+		readFilename(*chunkStream, levelNames[i]);
+	}
+}
+
+PCUI::PCUI(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	flag = chunkStream->readByte();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readFilename(*chunkStream, uiName);
+	}
+
+	const uint16 count = chunkStream->readUint16LE();
+	characters.resize(count);
+
+	for (uint16 i = 0; i < count; ++i) {
+		// Each entry begins with the slot index it populates.
+		const byte slot = chunkStream->readByte();
+		Character &chr = (slot < characters.size()) ? characters[slot] : characters[i];
+		readFilename(*chunkStream, chr.imageName);
+		readFilename(*chunkStream, chr.defaultImageName);
+		chr.id = chunkStream->readUint16LE();
+	}
+}
+
+LDSN::LDSN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, backgroundImageName);
+	readFilename(*chunkStream, overlayImageName);
+
+	// The remainder is a run of button/selection rects (16 bytes each),
+	// followed by a short trailer whose fields aren't fully understood yet.
+	while (chunkStream->pos() + 16 <= chunkStream->size()) {
+		Common::Rect rect;
+		readRect(*chunkStream, rect);
+		rects.push_back(rect);
+	}
+}
+
+PUIH::PUIH(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	flag = chunkStream->readByte();
+	readFilename(*chunkStream, themeName);
+	readFilename(*chunkStream, swatchImageName);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readFilename(*chunkStream, journalPrepName);
+		readFilename(*chunkStream, tasklistPrepName);
+	}
+}
+
+TSKL::TSKL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	// The chunk holds a fixed pair of banks, with no count in front of them
+	for (uint i = 0; i < 2; ++i) {
+		SoundBank &bank = soundBanks[i];
+		const uint16 numSounds = chunkStream->readUint16LE();
+		bank.soundNames.resize(numSounds);
+		for (uint16 j = 0; j < numSounds; ++j) {
+			readFilename(*chunkStream, bank.soundNames[j]);
+		}
+
+		bank.channelID = chunkStream->readUint16LE();
+		bank.numLoops = chunkStream->readUint32LE();
+		bank.volume = chunkStream->readUint16LE();
+	}
+}
+
+PUIV::PUIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, name);
+	channelID = chunkStream->readUint16LE();
+	unknown   = chunkStream->readUint32LE();
+	volume    = chunkStream->readUint16LE();
+
+	const uint16 count = chunkStream->readUint16LE();
+	soundGroups.resize(count);
+	for (uint16 i = 0; i < count; ++i) {
+		SoundGroup &group = soundGroups[i];
+		group.tag = chunkStream->readByte();
+		const uint16 numVariants = chunkStream->readUint16LE();
+		group.variants.resize(numVariants);
+		for (uint16 j = 0; j < numVariants; ++j) {
+			readFilename(*chunkStream, group.variants[j]);
+		}
+	}
 }
 
 } // End of namespace Nancy

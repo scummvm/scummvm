@@ -19,11 +19,10 @@
  *
  */
 
-#include "twine/scene/grid.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
-#include "twine/debugger/debug_grid.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/menu/interface.h"
 #include "twine/parser/blocklibrary.h"
 #include "twine/renderer/redraw.h"
@@ -32,6 +31,8 @@
 #include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/collision.h"
+#include "twine/scene/graph.h"
+#include "twine/scene/grid.h"
 #include "twine/scene/scene.h"
 #include "twine/shared.h"
 #include "twine/twine.h"
@@ -50,24 +51,24 @@ Grid::~Grid() {
 	for (int32 i = 0; i < ARRAYSIZE(_brickMaskTable); i++) {
 		free(_brickMaskTable[i]);
 	}
-	for (int32 i = 0; i < ARRAYSIZE(_brickTable); i++) {
-		free(_brickTable[i]);
+	for (int32 i = 0; i < ARRAYSIZE(_bufferBrick); i++) {
+		free(_bufferBrick[i]);
 	}
 	free(_currentGrid);
-	free(_brickInfoBuffer);
-	free(_bricksDataBuffer);
+	free(_nbBrickColon);
+	free(_listBrickColon);
 }
 
 void Grid::init(int32 w, int32 h) {
 	const int32 numbrickentries = (1 + (w + 24) / 24);
-	const size_t brickDataBufferSize = numbrickentries * MAXBRICKS * sizeof(BrickEntry);
-	_bricksDataBuffer = (BrickEntry *)malloc(brickDataBufferSize);
+	const size_t brickDataBufferSize = numbrickentries * MAX_BRICKS * sizeof(BrickEntry);
+	_listBrickColon = (BrickEntry *)malloc(brickDataBufferSize);
 	_brickInfoBufferSize = numbrickentries * sizeof(int16);
-	_brickInfoBuffer = (int16 *)malloc(_brickInfoBufferSize);
+	_nbBrickColon = (int16 *)malloc(_brickInfoBufferSize);
 }
 
 void Grid::copyMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer) {
-	if (_engine->_debugGrid->_disableGridRendering) {
+	if (_engine->_debugState->_disableGridRendering) {
 		return;
 	}
 	uint8 *ptr = _brickMaskTable[index];
@@ -162,8 +163,8 @@ void Grid::copyMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurfac
 	} while (--vSize);
 }
 
-const BrickEntry* Grid::getBrickEntry(int32 j, int32 i) const {
-	return &_bricksDataBuffer[j * MAXBRICKS + i];
+const BrickEntry *Grid::getBrickEntry(int32 j, int32 i) const {
+	return &_listBrickColon[j * MAX_BRICKS + i];
 }
 
 void Grid::drawOverBrick(int32 x, int32 y, int32 z) {
@@ -171,7 +172,7 @@ void Grid::drawOverBrick(int32 x, int32 y, int32 z) {
 	const int32 endCol = ((_engine->_interface->_clip.right + 24) / 24);
 
 	for (int32 col = startCol; col <= endCol; col++) {
-		for (int32 i = 0; i < _brickInfoBuffer[col]; i++) {
+		for (int32 i = 0; i < _nbBrickColon[col]; i++) {
 			const BrickEntry *currBrickEntry = getBrickEntry(col, i);
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->_clip.top && currBrickEntry->posY <= _engine->_interface->_clip.bottom && currBrickEntry->y >= y) {
@@ -188,7 +189,7 @@ void Grid::drawOverBrick3(int32 x, int32 y, int32 z) {
 	const int32 endCol = (_engine->_interface->_clip.right + 24) / 24;
 
 	for (int32 col = startCol; col <= endCol; col++) {
-		for (int32 i = 0; i < _brickInfoBuffer[col]; i++) {
+		for (int32 i = 0; i < _nbBrickColon[col]; i++) {
 			const BrickEntry *currBrickEntry = getBrickEntry(col, i);
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->_clip.top && currBrickEntry->posY <= _engine->_interface->_clip.bottom && currBrickEntry->y >= y) {
@@ -240,7 +241,7 @@ void Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
 			if (type == 2) {
 				opaquePixels += runLength;
 				buffer++;
-			} else if (type == 1) {
+			} else if (type == 1) { // 0x40
 				opaquePixels += runLength;
 				buffer += runLength;
 			} else { // skip (type 3)
@@ -249,7 +250,7 @@ void Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
 					numOfBlock++;
 					opaquePixels = 0;
 				}
-				*targetPtrPos++ = runLength; //write skip
+				*targetPtrPos++ = runLength; // write skip
 				numOfBlock++;
 			}
 		}
@@ -274,7 +275,7 @@ void Grid::createGridMask() {
 			free(_brickMaskTable[b]);
 		}
 		_brickMaskTable[b] = (uint8 *)malloc(_brickSizeTable[b]);
-		processGridMask(_brickTable[b], _brickMaskTable[b]);
+		processGridMask(_bufferBrick[b], _brickMaskTable[b]);
 	}
 }
 
@@ -325,11 +326,11 @@ void Grid::loadGridBricks() {
 
 	for (uint32 i = firstBrick; i <= lastBrick; i++) {
 		if (!_brickUsageTable[i]) {
-			free(_brickTable[i]);
-			_brickTable[i] = nullptr;
+			free(_bufferBrick[i]);
+			_bufferBrick[i] = nullptr;
 			continue;
 		}
-		_brickSizeTable[i] = HQR::getAllocEntry(&_brickTable[i], Resources::HQR_LBA_BRK_FILE, i);
+		_brickSizeTable[i] = HQR::getAllocEntry(&_bufferBrick[i], Resources::HQR_LBA_BRK_FILE, i);
 		if (_brickSizeTable[i] == 0) {
 			warning("Failed to load isometric brick index %i", i);
 		}
@@ -349,7 +350,7 @@ void Grid::decompColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *des
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(0);
 			}
-		} else if (type == 1) {
+		} else if (type == 1) { // 0x40
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(stream.readUint16LE());
 			}
@@ -364,7 +365,7 @@ void Grid::decompColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *des
 	} while (--brickCount);
 }
 
-void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
+void Grid::calcGraphMsk(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
 	Common::MemoryReadStream stream(gridEntry, gridEntrySize);
 	Common::SeekableMemoryWriteStream outstream(dest, destSize);
 	int32 brickCount = stream.readByte();
@@ -417,7 +418,7 @@ void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) { // Mi
 		for (int32 x = 0; x < SIZE_CUBE_X; x++) {
 			const int gridOffset = READ_LE_UINT16(tempGridPtr);
 			tempGridPtr += 2;
-			createCellingGridColumn(gridPtr + gridOffset, gridPtrSize - gridOffset, _bufCube + blockOffset, _blockBufferSize - blockOffset);
+			calcGraphMsk(gridPtr + gridOffset, gridPtrSize - gridOffset, _bufCube + blockOffset, _blockBufferSize - blockOffset);
 			blockOffset += 2 * SIZE_CUBE_Y;
 		}
 		currGridOffset += SIZE_CUBE_X + SIZE_CUBE_Z;
@@ -464,13 +465,13 @@ bool Grid::initCellingGrid(int32 index) { // IncrustGrm
 	return true;
 }
 
-bool Grid::drawBrick(int32 index, int32 posX, int32 posY) {
-	return drawBrickSprite(posX, posY, _brickTable[index], false);
+bool Grid::drawGraph(int32 index, int32 posX, int32 posY) { // AffGraph
+	return drawGraph(posX, posY, _bufferBrick[index], false);
 }
 
-bool Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) { // AffGraph
-	ptr = ptr + READ_LE_INT32(ptr + index * 4);
-	return drawBrickSprite(posX, posY, ptr, true);
+bool Grid::drawGraph(int32 index, int32 posX, int32 posY, const uint8 *ptr) { // AffGraph
+	ptr = ptr + READ_LE_INT32(ptr + index * 4);                               // GetGraph, GetMask
+	return drawGraph(posX, posY, ptr, true);
 }
 
 bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteIndex) {
@@ -496,102 +497,22 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteI
 	return true;
 }
 
-// WARNING: Rewrite this function to have better performance
-bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
-	if (_engine->_debugGrid->_disableGridRendering) {
+bool Grid::drawGraph(int32 posX, int32 posY, const uint8 *pGraph, bool isSprite) {
+	if (_engine->_debugState->_disableGridRendering) {
 		return false;
 	}
-	if (!_engine->_interface->_clip.isValidRect()) {
-		return false;
-	}
-
-	const int32 left = posX + *(ptr + 2);
-	if (left >= _engine->_interface->_clip.right) {
-		return false;
-	}
-	const int32 right = *ptr + left;
-	if (right < _engine->_interface->_clip.left) {
-		return false;
-	}
-	const int32 top = posY + *(ptr + 3);
-	if (top >= _engine->_interface->_clip.bottom) {
-		return false;
-	}
-	const int32 bottom = (int32)*(ptr + 1) + top;
-	if (bottom < _engine->_interface->_clip.top) {
-		return false;
-	}
-	const int32 maxY = MIN(bottom, (int32)_engine->_interface->_clip.bottom);
-
-	ptr += 4;
-
-	int32 x = left;
-
-	//if (left >= textWindowLeft-2 && top >= textWindowTop-2 && right <= textWindowRight-2 && bottom <= textWindowBottom-2) // crop
-	{
-		for (int32 y = top; y < maxY; ++y) {
-			const uint8 rleAmount = *ptr++;
-			for (int32 run = 0; run < rleAmount; ++run) {
-				const uint8 rleMask = *ptr++;
-				const uint8 iterations = bits(rleMask, 0, 6) + 1;
-				const uint8 type = bits(rleMask, 6, 2);
-				if (type == 0) {
-					x += iterations;
-					continue;
-				}
-				if (y < _engine->_interface->_clip.top || x >= _engine->_interface->_clip.right || x + iterations < _engine->_interface->_clip.left) {
-					if (type == 1) {
-						ptr += iterations;
-					} else {
-						++ptr;
-					}
-					x += iterations;
-					continue;
-				}
-				if (type == 1) {
-					uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(x, y);
-					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->_clip.left && x < _engine->_interface->_clip.right) {
-							*out = *ptr;
-						}
-
-						++out;
-						++x;
-						++ptr;
-					}
-				} else {
-					const uint8 pixel = *ptr++;
-					uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(x, y);
-					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->_clip.left && x < _engine->_interface->_clip.right) {
-							*out = pixel;
-						}
-
-						++out;
-						++x;
-					}
-				}
-			}
-			x = left;
-		}
-	}
-
-	Common::Rect rect(left, top, right, bottom);
-	_engine->_frontVideoBuffer.addDirtyRect(rect);
-
-	return true;
+	const Common::Rect &clip = _engine->_interface->_clip;
+	TwineScreen &frontVideoBuffer = _engine->_frontVideoBuffer;
+	return TwinE::drawGraph(posX, posY, pGraph, isSprite, frontVideoBuffer, clip);
 }
 
 const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	const IVec3 &collision = updateCollisionCoordinates(pos.x, pos.y, pos.z);
-	const uint8 *ptr = _bufCube
-					   + collision.y * 2
-					   + collision.x * SIZE_CUBE_Y * 2
-					   + collision.z * SIZE_CUBE_X * SIZE_CUBE_Y * 2;
+	const uint8 *ptr = _bufCube + collision.y * 2 + collision.x * SIZE_CUBE_Y * 2 + collision.z * SIZE_CUBE_X * SIZE_CUBE_Y * 2;
 
 	int32 collisionY = collision.y;
 	while (collisionY) {
-		if (READ_LE_INT16(ptr)) { // found the ground
+		if (READ_LE_INT16(ptr)) { // found the ground - sizeof(BlockEntry);
 			break;
 		}
 		collisionY--;
@@ -604,7 +525,7 @@ const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	return ptr;
 }
 
-const BlockDataEntry* Grid::getAdrBlock(int32 blockIdx, int32 brickIdx) const {
+const BlockDataEntry *Grid::getAdrBlock(int32 blockIdx, int32 brickIdx) const {
 	const BlockData *blockPtr = getBlockLibrary(blockIdx);
 	return &blockPtr->entries[brickIdx];
 }
@@ -613,24 +534,24 @@ const BlockData *Grid::getBlockLibrary(int32 blockIdx) const {
 	return _currentBlockLibrary.getLayout(blockIdx - 1);
 }
 
-void Grid::getBrickPos(int32 x, int32 y, int32 z, int32 &posx, int32 &posy) const {
+void Grid::map2Screen(int32 x, int32 y, int32 z, int32 &posx, int32 &posy) const {
 	posx = (x - z) * 24 + _engine->width() / 2 - SIZE_CUBE_X / 2;
 	posy = ((x + z) * 12) - (y * 15) + _engine->height() / 2 - SIZE_CUBE_Y;
 }
 
-void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) { // AffBrickBlock
+void Grid::drawBrickBlock(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) { // AffBrickBlock
 	const BlockDataEntry *blockPtr = getAdrBlock(blockIdx, brickBlockIdx);
 	const uint8 brickShape = blockPtr->brickShape;
 	const uint8 brickSound = blockPtr->brickType;
-	const uint16 brickIdx = blockPtr->brickIdx;
-	if (!brickIdx) {
+	const uint16 numBrick = blockPtr->brickIdx;
+	if (!numBrick) {
 		return;
 	}
 
 	int32 brickPixelPosX = 0;
 	int32 brickPixelPosY = 0;
 
-	getBrickPos(x - _newCamera.x, y - _newCamera.y, z - _newCamera.z, brickPixelPosX, brickPixelPosY);
+	map2Screen(x - _startCube.x, y - _startCube.y, z - _startCube.z, brickPixelPosX, brickPixelPosY);
 
 	if (brickPixelPosX < -24) {
 		return;
@@ -646,46 +567,52 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 	}
 
 	// draw the background brick
-	drawBrick(brickIdx - 1, brickPixelPosX, brickPixelPosY);
+	drawGraph(numBrick - 1, brickPixelPosX, brickPixelPosY);
 
-	int32 brickBuffIdx = (brickPixelPosX + 24) / 24;
+	int32 col = (brickPixelPosX + 24) / 24;
 
-	if (_brickInfoBuffer[brickBuffIdx] >= MAXBRICKS) {
+	if (_nbBrickColon[col] >= MAX_BRICKS) {
 		warning("GRID: brick buffer exceeded");
 		return;
 	}
 
-	BrickEntry *currBrickEntry = &_bricksDataBuffer[brickBuffIdx * MAXBRICKS + _brickInfoBuffer[brickBuffIdx]];
+	BrickEntry *pColonBrick = &_listBrickColon[col * MAX_BRICKS + _nbBrickColon[col]];
 
-	currBrickEntry->x = x;
-	currBrickEntry->y = y;
-	currBrickEntry->z = z;
-	currBrickEntry->posX = brickPixelPosX;
-	currBrickEntry->posY = brickPixelPosY;
-	currBrickEntry->index = brickIdx - 1;
-	currBrickEntry->shape = brickShape;
-	currBrickEntry->sound = brickSound;
+	pColonBrick->x = x;
+	pColonBrick->y = y;
+	pColonBrick->z = z;
+	pColonBrick->posX = brickPixelPosX;
+	pColonBrick->posY = brickPixelPosY;
+	pColonBrick->index = numBrick - 1;
+	pColonBrick->shape = brickShape;
+	pColonBrick->sound = brickSound;
 
-	_brickInfoBuffer[brickBuffIdx]++;
+	_nbBrickColon[col]++;
 }
 
 void Grid::redrawGrid() { // AffGrille
-	_worldCube.x = _newCamera.x * SIZE_BRICK_XZ;
-	_worldCube.y = _newCamera.y * SIZE_BRICK_Y;
-	_worldCube.z = _newCamera.z * SIZE_BRICK_XZ;
+	_worldCube.x = _startCube.x * SIZE_BRICK_XZ;
+	_worldCube.y = _startCube.y * SIZE_BRICK_Y;
+	_worldCube.z = _startCube.z * SIZE_BRICK_XZ;
 
-	memset(_brickInfoBuffer, 0, _brickInfoBufferSize);
+	const IVec3 &projPos = _engine->_renderer->projectPoint(-_worldCube);
+	_engine->_redraw->_projPosScreen.x = projPos.x;
+	_engine->_redraw->_projPosScreen.y = projPos.y;
 
-	if (!_engine->_scene->_enableGridTileRendering) {
+	memset(_nbBrickColon, 0, _brickInfoBufferSize);
+
+	if (!_engine->_scene->_flagRenderGrid) {
 		return;
 	}
+
+	_engine->_screens->clearScreen();
 
 	for (int32 z = 0; z < SIZE_CUBE_Z; z++) {
 		for (int32 x = 0; x < SIZE_CUBE_X; x++) {
 			for (int32 y = 0; y < SIZE_CUBE_Y; y++) {
 				const BlockEntry entry = getBlockEntry(x, y, z);
 				if (entry.blockIdx) {
-					drawColumnGrid(entry.blockIdx, entry.brickBlockIdx, x, y, z);
+					drawBrickBlock(entry.blockIdx, entry.brickBlockIdx, x, y, z);
 				}
 			}
 		}
@@ -694,9 +621,10 @@ void Grid::redrawGrid() { // AffGrille
 
 BlockEntry Grid::getBlockEntry(int32 xmap, int32 ymap, int32 zmap) const {
 	const uint8 *pCube = _bufCube;
-	pCube += xmap * SIZE_CUBE_Y * 2;
-	pCube += ymap * 2;
-	pCube += zmap * (SIZE_CUBE_X * SIZE_CUBE_Y * 2);
+	const int32 size = 2; // sizeof(BlockEntry);
+	pCube += xmap * SIZE_CUBE_Y * size;
+	pCube += ymap * size;
+	pCube += zmap * (SIZE_CUBE_X * SIZE_CUBE_Y * size);
 
 	BlockEntry entry;
 	entry.blockIdx = *pCube;
@@ -707,19 +635,15 @@ BlockEntry Grid::getBlockEntry(int32 xmap, int32 ymap, int32 zmap) const {
 ShapeType Grid::worldColBrick(int32 x, int32 y, int32 z) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
+	if (collision.x < 0 || collision.x >= SIZE_CUBE_X || collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
+		return ShapeType::kNone;
+	}
+
 	if (collision.y <= -1) {
 		return ShapeType::kSolid;
 	}
 
-	if (collision.x < 0 || collision.x >= SIZE_CUBE_X) {
-		return ShapeType::kNone;
-	}
-
-	if (collision.y < 0 || collision.y >= SIZE_CUBE_Y) {
-		return ShapeType::kNone;
-	}
-
-	if (collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
+	if (collision.y >= SIZE_CUBE_Y) {
 		return ShapeType::kNone;
 	}
 
@@ -732,9 +656,9 @@ ShapeType Grid::worldColBrick(int32 x, int32 y, int32 z) {
 }
 
 const IVec3 &Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
-	_engine->_collision->_collision.x = (x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
-	_engine->_collision->_collision.y = y / SIZE_BRICK_Y;
-	_engine->_collision->_collision.z = (z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
+	_engine->_collision->_collision.x = (x + DEMI_BRICK_XZ) >> 9;
+	_engine->_collision->_collision.y = y >> 8;
+	_engine->_collision->_collision.z = (z + DEMI_BRICK_XZ) >> 9;
 	return _engine->_collision->_collision;
 }
 
@@ -742,8 +666,8 @@ bool Grid::shouldCheckWaterCol(int32 actorIdx) const {
 	if (actorIdx == OWN_ACTOR_SCENE_INDEX) {
 		ActorStruct *ptrobj = _engine->_scene->getActor(actorIdx);
 		if (_engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack
-		 && ptrobj->_staticFlags.bComputeCollisionWithFloor
-		 && !ptrobj->_staticFlags.bIsHidden
+		 && ptrobj->_flags.bComputeCollisionWithFloor
+		 && !ptrobj->_flags.bIsInvisible
 		 && !ptrobj->_workFlags.bIsFalling
 		 && ptrobj->_carryBy == -1) {
 			return true;
@@ -756,12 +680,12 @@ bool Grid::shouldCheckWaterCol(int32 actorIdx) const {
 ShapeType Grid::worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 actorIdx) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
-	if (collision.y <= -1) {
-		return ShapeType::kSolid;
-	}
-
 	if (collision.x < 0 || collision.x >= SIZE_CUBE_X || collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
 		return ShapeType::kNone;
+	}
+
+	if (collision.y <= -1) {
+		return ShapeType::kSolid;
 	}
 
 	bool checkWater = shouldCheckWaterCol(actorIdx);
@@ -792,7 +716,7 @@ ShapeType Grid::worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 act
 					const BlockDataEntry *blockPtr = getAdrBlock(block, 0);
 					if (blockPtr->brickType == WATER_BRICK) {
 						// Special check mount funfrock
-						if (_engine->_scene->_currentSceneIdx != LBA1SceneId::Polar_Island_on_the_rocky_peak) {
+						if (_engine->_scene->_numCube != LBA1SceneId::Polar_Island_on_the_rocky_peak) {
 							// full collision
 							return ShapeType::kSolid;
 						}
@@ -830,37 +754,37 @@ uint8 Grid::worldCodeBrick(int32 x, int32 y, int32 z) {
 	return code;
 }
 
-void Grid::centerOnActor(const ActorStruct* actor) {
-	_newCamera.x = (actor->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
-	_newCamera.y = (actor->_pos.y + SIZE_BRICK_Y) / SIZE_BRICK_Y;
-	_newCamera.z = (actor->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+void Grid::centerOnActor(const ActorStruct *actor) {
+	_startCube.x = (actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	_startCube.y = (actor->_posObj.y + SIZE_BRICK_Y) / SIZE_BRICK_Y;
+	_startCube.z = (actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
 	_engine->_redraw->_firstTime = true;
 }
 
 void Grid::centerScreenOnActor() {
-	if (_engine->_disableScreenRecenter) {
+	if (_engine->_cameraZone) {
 		return;
 	}
-	if (_engine->_debugGrid->_useFreeCamera) {
+	if (_engine->_debugState->_useFreeCamera) {
 		return;
 	}
 
-	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->_currentlyFollowedActor);
-	const IVec3 projPos = _engine->_renderer->projectPoint(actor->_pos.x - (_newCamera.x * SIZE_BRICK_XZ),
-	                                   actor->_pos.y - (_newCamera.y * SIZE_BRICK_Y),
-	                                   actor->_pos.z - (_newCamera.z * SIZE_BRICK_XZ));
+	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->_numObjFollow);
+	const IVec3 projPos = _engine->_renderer->projectPoint(actor->_posObj.x - (_startCube.x * SIZE_BRICK_XZ),
+	                                   actor->_posObj.y - (_startCube.y * SIZE_BRICK_Y),
+	                                   actor->_posObj.z - (_startCube.z * SIZE_BRICK_XZ));
 	// TODO: these border values should get scaled for higher resolutions
 	if (projPos.x < 80 || projPos.x >= _engine->width() - 60 || projPos.y < 80 || projPos.y >= _engine->height() - 50) {
-		_newCamera.x = ((actor->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _newCamera.x) / 2;
-		_newCamera.y = actor->_pos.y / SIZE_BRICK_Y;
-		_newCamera.z = ((actor->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _newCamera.z) / 2;
+		_startCube.x = ((actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _startCube.x) / 2;
+		_startCube.y = actor->_posObj.y / SIZE_BRICK_Y;
+		_startCube.z = ((actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) + (((actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ) - _startCube.z) / 2;
 
-		if (_newCamera.x >= SIZE_CUBE_X) {
-			_newCamera.x = SIZE_CUBE_X - 1;
+		if (_startCube.x >= SIZE_CUBE_X) {
+			_startCube.x = SIZE_CUBE_X - 1;
 		}
 
-		if (_newCamera.z >= SIZE_CUBE_Z) {
-			_newCamera.z = SIZE_CUBE_Z - 1;
+		if (_startCube.z >= SIZE_CUBE_Z) {
+			_startCube.z = SIZE_CUBE_Z - 1;
 		}
 
 		_engine->_redraw->_firstTime = true;

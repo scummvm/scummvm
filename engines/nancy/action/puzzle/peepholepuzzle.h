@@ -40,9 +40,10 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "PeepholePuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawInner();
 	void checkButtons();
@@ -81,7 +82,7 @@ protected:
 // on the fly and replaces the TextScroll/AutotextEntryList
 class TextScroll : public Autotext, public PeepholePuzzle {
 public:
-	TextScroll(bool isEntryList) : _isEntryList(isEntryList) {}
+	TextScroll(bool isEntryList) : _isEntryList(isEntryList) { _selfDisplay = false; _hasPlacementDescriptor = false; }
 
 	void init() override;
 	void execute() override { PeepholePuzzle::execute(); }

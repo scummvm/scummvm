@@ -43,7 +43,7 @@ public:
 	              uint32 flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
 	~ContainerGump() override;
 
-	void setItemArea(Rect *itemArea) {
+	void setItemArea(Common::Rect32 *itemArea) {
 		_itemArea = *itemArea;
 	}
 
@@ -87,7 +87,7 @@ protected:
 
 	void getItemCoords(Item *item, int32 &itemx, int32 &itemy);
 
-	Rect _itemArea;
+	Common::Rect32 _itemArea;
 
 	bool _displayDragging;
 	uint32 _draggingShape;

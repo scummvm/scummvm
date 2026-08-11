@@ -324,8 +324,11 @@ void SciMusic::resetGlobalPauseCounter() {
 	// do anything unpleasant afterwards, either). So this is not
 	// needed there.
 	// I have added an assert, since it is such a special case,
-	// people need to know what they're doing if they call this...
-	assert(_globalPause == 1);
+	// people need to know what they're doing if they call this.
+	// The value can be greater than 1, since the scripts may
+	// already have increased it, before the kRestoreGame() call
+	// happens.
+	assert(_globalPause >= 1);
 	_globalPause = 0;
 }
 
@@ -676,6 +679,11 @@ void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
 
+			// Call this before initTrack(), since several sound drivers have custom channel volumes that get set in
+			// initTrack() and we don't want to overwrite those with the generic values from sendInitCommands().
+			if (pSnd->status != kSoundPaused)
+				pSnd->pMidiParser->sendInitCommands();
+
 			// The track init always needs to be done. Otherwise some sounds will not be properly set up (bug #11476).
 			// It is also safe to do this for paused tracks, since the jumpToTick() command further down will parse through
 			// the song from the beginning up to the resume position and ensure that the actual current voice mapping,
@@ -686,8 +694,6 @@ void SciMusic::soundPlay(MusicEntry *pSnd, bool restoring) {
 			// from the last sound would still be active.
 			pSnd->pMidiParser->initTrack();
 
-			if (pSnd->status != kSoundPaused)
-				pSnd->pMidiParser->sendInitCommands();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
 
 			// Disable sound looping and hold before jumpToTick is called,
@@ -1019,6 +1025,8 @@ MusicEntry::MusicEntry() {
 	volume = MUSIC_VOLUME_DEFAULT;
 	hold = -1;
 	reverb = -1;
+	playBed = false;
+	overridePriority = false;
 
 	pauseCounter = 0;
 	sampleLoopCounter = 0;
@@ -1045,6 +1053,7 @@ MusicEntry::MusicEntry() {
 		_chan[i]._prio = 127;
 		_chan[i]._voices = 0;
 		_chan[i]._dontRemap = false;
+		_chan[i]._dontMap = false;
 		_chan[i]._mute = false;
 	}
 }

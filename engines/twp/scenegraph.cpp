@@ -246,7 +246,7 @@ void Node::draw(const Math::Matrix4 &parent) {
 }
 
 Math::Vector2d Node::getAbsPos() const {
-	return !_parent ? _pos : _parent->getAbsPos() + _pos;
+	return !_parent ? _pos : _parent->getAbsPos() + _pos + _offset;
 }
 
 Math::Matrix4 Node::getTrsf(const Math::Matrix4 &parentTrsf) {
@@ -590,6 +590,7 @@ static bool hasDownArrow(Common::SharedPtr<Object> actor) {
 }
 
 Inventory::Inventory() : Node("Inventory") {
+	_visible = false;
 	for (int i = 0; i < NUMOBJECTS; i++) {
 		float x = SCREEN_WIDTH / 2.f + ARROWWIDTH + MARGIN + ((i % NUMOBJECTSBYROW) * (BACKWIDTH + BACKOFFSET));
 		float y = MARGINBOTTOM + BACKHEIGHT + BACKOFFSET - ((float)(i / NUMOBJECTSBYROW) * (BACKHEIGHT + BACKOFFSET));

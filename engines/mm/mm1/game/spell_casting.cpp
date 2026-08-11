@@ -106,21 +106,19 @@ void SpellCasting::setSpell(const Character *chr, int lvl, int num) {
 	// Figure the offset in the spell list
 	int spellIndex = getSpellIndex(chr, lvl, num);
 
-	// Get required SP
-	int requiredSp = lvl - 1;
+	// The required SP matches the spell level
+	int requiredSp = lvl;
 
 	if (SPELLS_SP_GEMS[spellIndex] < 0)
 		// required SP increases with character's level
 		requiredSp = chr->_level;
 
-	if (!chr->_sp._current) {
-		if (SPELLS_SP_GEMS[spellIndex] < 0 && chr->_sp._current < chr->_level._current)
-			_spellState = SS_NOT_ENOUGH_SP;
-		else if ((lvl - 1) > chr->_sp._current)
-			_spellState = SS_NOT_ENOUGH_SP;
-	}
+	if (SPELLS_SP_GEMS[spellIndex] < 0 && chr->_sp._current < chr->_level._current)
+		_spellState = SS_NOT_ENOUGH_SP;
+	else if (requiredSp > chr->_sp._current)
+		_spellState = SS_NOT_ENOUGH_SP;
 
-	int requiredGems = (uint8)SPELLS_SP_GEMS[spellIndex] & 0x7f;
+	int requiredGems = ABS(SPELLS_SP_GEMS[spellIndex]);
 	if (_spellState == SS_OK)
 		setSpell(spellIndex, requiredSp, requiredGems);
 
@@ -181,12 +179,16 @@ Common::String SpellCasting::getSpellError() const {
 	}
 
 	if (!isInCombat())
-		msg = Common::String::format("*** %s ***", msg.c_str());
+		msg = spellResultMessage(msg);
 	return msg;
 }
 
 bool SpellCasting::isInCombat() const {
 	return g_events->isPresent("Combat");
+}
+
+Common::String SpellCasting::spellResultMessage(const Common::String &msg) {
+	return Common::String::format("*** %s ***", msg.c_str());
 }
 
 } // namespace Game

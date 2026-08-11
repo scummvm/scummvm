@@ -53,7 +53,7 @@ static const char *const directoryGlobs[] = {
 };
 } // End of namespace BladeRunner
 
-class BladeRunnerMetaEngineDetection : public AdvancedMetaEngineDetection {
+class BladeRunnerMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	BladeRunnerMetaEngineDetection();
 
@@ -66,7 +66,6 @@ public:
 BladeRunnerMetaEngineDetection::BladeRunnerMetaEngineDetection()
 	: AdvancedMetaEngineDetection(
 		BladeRunner::gameDescriptions,
-		sizeof(BladeRunner::gameDescriptions[0]),
 		BladeRunner::bladeRunnerGames) {
 		// Setting this, allows the demo files to be copied in the BladeRunner
 		// game data folder and be detected and subsequently launched without

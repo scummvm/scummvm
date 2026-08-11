@@ -240,7 +240,6 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_system = syst;
 	_rnd = nullptr;
 
-	_shouldQuit = false;
 	_lastTime = 0;
 	_platform = Common::kPlatformUnknown;
 	_mainSurface = nullptr;
@@ -353,6 +352,10 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_statusMenuActive = false;
 	_menuDepth = 0;
 	_menuItemCounter = 0;
+	_selectedMenuBox = -1;
+	_sayMenu = true;
+	_sayLowStatusScreen = false;
+	_initiatedTalkByMenu = false;
 
 	for (int i = 0; i < 15; ++i)
 		_menuStatItemArr[i] = 0;
@@ -394,8 +397,6 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	// If requested, load a savegame instead of showing the intro
 	_loadSaveSlot = -1;
 	_saveAuthorized = false;
-
-	_speakerStream = nullptr;
 
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");

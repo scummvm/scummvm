@@ -19,11 +19,61 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "engines/advancedDetector.h"
 #include "prince/prince.h"
 #include "prince/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Prince {
+
+#ifdef USE_TTS
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS_OBJECTS,
+		{
+			_s("Enable Text to Speech for Objects and Options"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled_objects",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_TTS_SPEECH,
+		{
+			_s("Enable Text to Speech for Subtitles"),
+			_s("Use TTS to read the subtitles (if TTS is available)"),
+			"tts_enabled_speech",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_TTS_MISSING_VOICE,
+		{
+			_s("Enable Text to Speech for Missing Voiceovers"),
+			_s("Use TTS to read the subtitles of missing voiceovers (if TTS is available)"),
+			"tts_enabled_missing_voice",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+#endif
 
 int PrinceEngine::getGameType() const {
 	return _gameDescription->gameType;
@@ -43,19 +93,26 @@ Common::Language PrinceEngine::getLanguage() const {
 
 } // End of namespace Prince
 
-class PrinceMetaEngine : public AdvancedMetaEngine {
+class PrinceMetaEngine : public AdvancedMetaEngine<Prince::PrinceGameDescription> {
 public:
 	const char *getName() const override {
 		return "prince";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+#ifdef USE_TTS
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Prince::optionsList;
+	}
+#endif
+
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Prince::PrinceGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override { return 99; }
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -86,13 +143,13 @@ SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); filename++) {
+	for (const auto &filename : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(filename->c_str() + filename->size() - 3);
+		int slotNum = atoi(filename.c_str() + filename.size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 99) {
 
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
+			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
 			if (file) {
 				Prince::SavegameHeader header;
 
@@ -153,14 +210,69 @@ SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int
 	return SaveStateDescriptor();
 }
 
-void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
+bool PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-Common::Error PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Prince::PrinceEngine(syst, (const Prince::PrinceGameDescription *)desc);
+Common::Error PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const Prince::PrinceGameDescription *desc) const {
+	*engine = new Prince::PrinceEngine(syst,desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray PrinceMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Prince;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "prince-default", _("Default keymappings"));
+
+	Common::Action *act;
+
+	act = new Common::Action(kStandardActionLeftClick, _("Move / Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Open interaction menu"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SAVE", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("F2");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	// I18N: This refers to the Z key on a keyboard.
+	act = new Action("Z", _("Z key")); // TODO: Rename this action to better reflect its use in the prison cell minigame near the end of the game.
+	act->setCustomEngineActionEvent(kActionZ);
+	act->addDefaultInputMapping("z");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	// I18N: This refers to the X key on a keyboard.
+	act = new Action("X", _("X key")); // TODO: Rename this action to better reflect its use in the prison cell minigame near the end of the game.
+	act->setCustomEngineActionEvent(kActionX);
+	act->addDefaultInputMapping("x");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PRINCE)

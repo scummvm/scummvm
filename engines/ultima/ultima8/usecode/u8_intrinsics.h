@@ -53,7 +53,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // Ultima 8 Intrinsics
-Intrinsic U8Intrinsics[] = {
+const Intrinsic U8Intrinsics[] = {
 	// 0x000
 	TargetGump::I_target,
 	0, //U

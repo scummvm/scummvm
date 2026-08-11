@@ -36,7 +36,7 @@ protected:
 	std::vector<VariableWidthFont *> _fonts;
 
 	VariableWidthFont *getFontFor(int fontNum);
-	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
+	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height, int colour);
 public:
 	VariableWidthSpriteFontRenderer(IAGSEngine *engine);
 	virtual ~VariableWidthSpriteFontRenderer();

@@ -218,7 +218,7 @@ void SpiderEngine::checkMixture(Code *code) {
 	if (ingredients[0]) {
 		MVideo video("cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
 		runIntro(video);
-		memset(ingredients, 0, 7);
+		memset(ingredients, 0, sizeof(ingredients));
 		return;
 	}
 
@@ -235,7 +235,7 @@ void SpiderEngine::checkMixture(Code *code) {
 		if (!ingredients[i]) {
 			MVideo video("cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
 			runIntro(video);
-			memset(ingredients, 0, 7);
+			memset(ingredients, 0, sizeof(ingredients));
 			return;
 		}
 	}
@@ -1175,7 +1175,7 @@ void SpiderEngine::runGiveUp() {
 	_nextLevel = "mainmenu.mi_";
 }
 
-void SpiderEngine::showScore(const Common::String prefix) {
+void SpiderEngine::showScore(const Common::String &prefix) {
 	Common::String fmessage = "%s\nYou finished the ";
 	fmessage = fmessage + (isDemo() ? "demo" : "game") + " with a score of %d points";
 	Common::String message = Common::String::format(fmessage.c_str(), prefix.c_str(), _score);

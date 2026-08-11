@@ -294,7 +294,6 @@ void Registry::save() {
 
 	ConfMan.set("spew_on_error", _spewOnError.getString());
 	ConfMan.setPath("path", Common::Path(_dataPath.getString(), Common::Path::kNativeSeparator));
-	ConfMan.setPath("savepath", Common::Path(_savePath.getString(), Common::Path::kNativeSeparator));
 	if (ConfMan.hasKey("last_set")) {
 		ConfMan.set("last_set", _lastSet.getString());
 	}

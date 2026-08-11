@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/memstream.h"
+#include "graphics/macgamma.h"
 #include "graphics/paletteman.h"
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -42,6 +43,11 @@ namespace Director {
 uint32 DirectorEngine::transformColor(uint32 color) {
 	if (_pixelformat.bytesPerPixel == 1)
 		return color;
+
+	// A palette index can never exceed 0xff (max 256 colors); a larger value
+	// must be a packed RGB int from a Lingo color assignment (e.g. rgb()).
+	if (color > 0xff)
+		return _wm->findBestColor((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
 
 	return _wm->findBestColor(_currentPalette[color * 3], _currentPalette[color * 3 + 1], _currentPalette[color * 3 + 2]);
 }
@@ -132,9 +138,13 @@ void DirectorEngine::loadDefaultPalettes() {
 	_loaded4Palette = PaletteV4(CastMemberID(kClutGrayscale, -1), grayscale4Palette, 4);
 }
 
-PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
+PaletteV4 *DirectorEngine::getPalette(CastMemberID id) {
 	if (id.isNull())
 		return nullptr;
+
+	// Reference to internal palettes
+	if (id.member < 0)
+		id.castLib = -1; // Ensure we use the default palette set
 
 	if (!_loadedPalettes.contains(id)) {
 		warning("DirectorEngine::getPalette(): Palette %s not found, hash %x", id.asString().c_str(), id.hash());
@@ -144,11 +154,15 @@ PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
 	return &_loadedPalettes[id];
 }
 
-bool DirectorEngine::hasPalette(const CastMemberID &id) {
+bool DirectorEngine::hasPalette(CastMemberID id) {
+	// Reference to internal palettes
+	if (id.member < 0)
+		id.castLib = -1; // Ensure we use the default palette set
+
 	return _loadedPalettes.contains(id);
 }
 
-void DirectorEngine::addPalette(CastMemberID &id, byte *palette, int length) {
+void DirectorEngine::addPalette(CastMemberID &id, const byte *palette, int length) {
 	if (id.castLib < 0) {
 		warning("DirectorEngine::addPalette(): Negative cast library ids reserved for default palettes");
 		return;
@@ -177,11 +191,12 @@ bool DirectorEngine::setPalette(const CastMemberID &id) {
 	return true;
 }
 
-void DirectorEngine::setPalette(byte *palette, uint16 count) {
+void DirectorEngine::setPalette(const byte *palette, uint16 count) {
 
 	memset(_currentPalette, 0, 768);
 	memmove(_currentPalette, palette, count * 3);
 	_currentPaletteLength = count;
+
 	if (debugChannelSet(8, kDebugImages)) {
 		Common::String palData;
 		for (size_t i = 0; i < (size_t)_currentPaletteLength; i++) {
@@ -190,11 +205,7 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 		debugC(8, kDebugImages, "DirectorEngine::setPalette(): Setting current palette: %s", palData.c_str());
 	}
 
-	// Pass the palette to OSystem only for 8bpp mode
-	if (_pixelformat.bytesPerPixel == 1)
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
-
-	_wm->passPalette(_currentPalette, _currentPaletteLength);
+	syncPalette();
 }
 
 void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
@@ -228,11 +239,25 @@ void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
 		debugC(8, kDebugImages, "DirectorEngine::shiftPalette(): Rotating current palette (start: %d, end: %d, reverse: %d): %s", startIndex, endIndex, reverse, palData.c_str());
 	}
 
-	// Pass the palette to OSystem only for 8bpp mode
-	if (_pixelformat.bytesPerPixel == 1)
-		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
+	syncPalette();
+}
 
-	_wm->passPalette(_currentPalette, _currentPaletteLength);
+void DirectorEngine::syncPalette() {
+	byte paletteBuf[768];
+	if (_gammaCorrection) {
+		for (size_t i = 0; i < (size_t)_currentPaletteLength*3; i++) {
+			paletteBuf[i] = Graphics::macGammaCorrectionLookUp[_currentPalette[i]];
+		}
+	} else {
+		memcpy(paletteBuf, _currentPalette, _currentPaletteLength*3);
+	}
+
+	if (_pixelformat.bytesPerPixel == 1) {
+		// Pass the palette to OSystem only for 8bpp mode
+		_system->getPaletteManager()->setPalette(paletteBuf, 0, _currentPaletteLength);
+	}
+
+	_wm->passPalette(paletteBuf, _currentPaletteLength);
 }
 
 void DirectorEngine::clearPalettes() {
@@ -266,12 +291,28 @@ void DirectorEngine::draw() {
 }
 
 template <typename T>
-void inkDrawPixel(int x, int y, int src, void *data) {
+class InkPrimitives final : public Graphics::Primitives {
+public:
+	constexpr InkPrimitives() {}
+	void drawPoint(int x, int y, uint32 src, void *data) override;
+private:
+	inline void decomposeColor(Graphics::MacWindowManager *wm, uint32 color, byte &r, byte &g, byte &b) {
+		if (sizeof(T) == sizeof(byte)) {
+			wm->getPaletteEntry(color, r, g, b);
+		} else {
+			wm->_pixelformat.colorToRGB(color, r, g, b);
+		}
+	}
+};
+
+template <typename T>
+void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 	DirectorPlotData *p = (DirectorPlotData *)data;
 	Graphics::MacWindowManager *wm = p->d->_wm;
 
 	if (!p->destRect.contains(x, y))
 		return;
+
 
 	T *dst;
 	uint32 tmpDst;
@@ -279,19 +320,19 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	dst = (T *)p->dst->getBasePtr(x, y);
 
 	if (p->ms) {
-		if (p->ms->pd->thickness > 1) {
-			int prevThickness = p->ms->pd->thickness;
+		if (p->ms->pd->thickness.x > 1 || p->ms->pd->thickness.y > 1) {
+			Common::Point prevThickness = p->ms->pd->thickness;
 			int x1 = x;
-			int x2 = x1 + prevThickness;
+			int x2 = x1 + prevThickness.x;
 			int y1 = y;
-			int y2 = y1 + prevThickness;
+			int y2 = y1 + prevThickness.y;
 
-			p->ms->pd->thickness = 1;	// We do not want recursive loops
+			p->ms->pd->thickness = Common::Point(1, 1);	// We do not want recursive loops
 
 			for (y = y1; y < y2; y++)
 				for (x = x1; x < x2; x++)
 					if (x >= 0 && x < p->ms->pd->surface->w && y >= 0 && y < p->ms->pd->surface->h) {
-						inkDrawPixel<T>(x, y, src, data);
+						drawPoint(x, y, src, data);
 					}
 
 			p->ms->pd->thickness = prevThickness;
@@ -299,15 +340,19 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		}
 
 		if (p->ms->tile) {
-			int x1 = p->ms->tileRect->left + (p->ms->pd->fillOriginX + x) % p->ms->tileRect->width();
-			int y1 = p->ms->tileRect->top  + (p->ms->pd->fillOriginY + y) % p->ms->tileRect->height();
+			int x1 = (p->ms->tileRect->left + p->ms->pd->fillOriginX + x) % p->ms->tileRect->width();
+			if (x1 < 0)
+				x1 += p->ms->tileRect->width();
+			int y1 = (p->ms->tileRect->top  + p->ms->pd->fillOriginY + y) % p->ms->tileRect->height();
+			if (y1 < 0)
+				y1 += p->ms->tileRect->height();
 
 			src = p->ms->tile->_surface.getPixel(x1, y1);
 		} else {
 			// Get the pixel that macDrawPixel will give us, but store it to apply the
 			// ink later
 			tmpDst = *dst;
-			(wm->getDrawPixel())(x, y, src, p->ms->pd);
+			wm->getDrawPrimitives().drawPoint(x, y, src, p->ms->pd);
 			src = *dst;
 
 			*dst = tmpDst;
@@ -317,8 +362,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+		decomposeColor(wm, src, rSrc, gSrc, bSrc);
+		decomposeColor(wm, *dst, rDst, gDst, bDst);
 
 		rDst = lerpByte(rSrc, rDst, p->alpha, 255);
 		gDst = lerpByte(gSrc, gDst, p->alpha, 255);
@@ -329,12 +374,17 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
  	switch (p->ink) {
 	case kInkTypeBackgndTrans:
-		if (p->oneBitImage) {
-			// One-bit images have a slightly different rendering algorithm for BackgndTrans.
-			// Foreground colour is used, and background colour is ignored.
-			*dst = (src == (int)p->colorBlack) ? p->foreColor : *dst;
+		if (p->srfMask) {
+			// If there's a mask, we already dealing with transparency, so just copy the pixel.
+			 *dst = src;
 		} else {
-			*dst = (src == (int)p->backColor) ? *dst : src;
+			if (p->oneBitImage) {
+				// One-bit images have a slightly different rendering algorithm for BackgndTrans.
+				// Foreground colour is used, and background colour is ignored.
+				*dst = (src == p->colorBlack) ? p->foreColor : *dst;
+			} else {
+				*dst = (src == p->backColor) ? *dst : src;
+			}
 		}
 		break;
 	case kInkTypeMatte:
@@ -346,24 +396,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		// Otherwise, treat it like a Matte image.
 	case kInkTypeCopy: {
 		if (p->applyColor) {
-			if (sizeof(T) == 1) {
-				*dst = src == 0xff ? p->foreColor : (src == 0x00 ? p->backColor : *dst);
-			} else {
-				// TODO: Improve the efficiency of this composition
-				byte rSrc, gSrc, bSrc;
-				byte rDst, gDst, bDst;
-				byte rFor, gFor, bFor;
-				byte rBak, gBak, bBak;
-
-				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
-				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
-				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
-				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
-
-				*dst = wm->findBestColor((rSrc | rFor) & (~rSrc | rBak),
-										(gSrc | gFor) & (~gSrc | gBak),
-										(bSrc | bFor) & (~bSrc | bBak));
-			}
+			*dst = (src == p->colorBlack) ? p->foreColor : ((src == p->colorWhite) ? p->backColor : *dst);
 		} else {
 			*dst = src;
 		}
@@ -372,77 +405,100 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	case kInkTypeNotCopy:
 		if (p->applyColor) {
 			if (sizeof(T) == 1) {
-				*dst = src == 0xff ? p->backColor : (src == 0x00 ? p->foreColor : src);
-			} else {
-				// TODO: Improve the efficiency of this composition
-				byte rSrc, gSrc, bSrc;
-				byte rDst, gDst, bDst;
-				byte rFor, gFor, bFor;
-				byte rBak, gBak, bBak;
-
-				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
-				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
-				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
-				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
-
-				*dst = wm->findBestColor((~rSrc | rFor) & (rSrc | rBak),
-										(~gSrc | gFor) & (gSrc | gBak),
-										(~bSrc | bFor) & (bSrc | bBak));
+				*dst = (src == p->colorBlack) ? p->backColor : ((src == p->colorWhite) ? p->foreColor : src);
+			} else if (sizeof(T) == 4) {
+				// In 32-bit, apply color mode seems to just return the original src
+				// with no changes. This is different to kInkTypeCopy.
+				*dst = src;
 			}
 		} else {
 			// Find the inverse of the colour and match it back to the palette if required
 			byte rSrc, gSrc, bSrc;
-			wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+			decomposeColor(wm, src, rSrc, gSrc, bSrc);
 
 			*dst = wm->findBestColor(~rSrc, ~gSrc, ~bSrc);
 		}
 		break;
 	case kInkTypeTransparent:
 		if (p->oneBitImage || p->applyColor) {
-			*dst = src == (int)p->colorBlack ? p->foreColor : *dst;
+			*dst = (src == p->colorBlack) ? p->foreColor : *dst;
 		} else {
-			// OR dst palette index with src.
-			// Originally designed for 1-bit mode to make white pixels
-			// transparent.
-			*dst = *dst | src;
+			if (sizeof(T) == 1) {
+				// OR dst palette index with src.
+				// Originally designed for 1-bit mode to make white pixels
+				// transparent.
+				*dst = *dst | src;
+			} else {
+				// In 32-bit mode, this is an AND.
+				*dst = *dst & src;
+			}
 		}
 		break;
 	case kInkTypeNotTrans:
 		if (p->oneBitImage || p->applyColor) {
-			*dst = src == (int)p->colorWhite ? p->foreColor : *dst;
+			*dst = (src == p->colorWhite) ? p->foreColor : *dst;
 		} else {
-			// OR dst palette index with the inverse of src.
-			*dst = *dst | ~src;
+			if (sizeof(T) == 1) {
+				// OR dst palette index with the inverse of src.
+				*dst = *dst | ~src;
+			} else {
+				// In 32-bit mode, this is an AND.
+				*dst = *dst & ~(src & 0xffffff00);
+			}
 		}
 		break;
 	case kInkTypeReverse:
-		// XOR dst palette index with src.
-		// Originally designed for 1-bit mode so that
-		// black pixels would appear white on a black
-		// background.
-		*dst ^= src;
+		if (sizeof(T) == 1) {
+			// XOR dst palette index with src.
+			// Originally designed for 1-bit mode so that
+			// black pixels would appear white on a black
+			// background.
+			if (p->oneBitImage || p->ms || p->applyColor) {
+				*dst ^= src;
+			} else {
+				*dst = (src == p->backColor) ? *dst : src;
+			}
+		} else {
+			// In 32-bit mode, this is the opposite??
+			*dst ^= ~(src);
+		}
 		break;
 	case kInkTypeNotReverse:
-		// XOR dst palette index with the inverse of src.
-		*dst ^= ~(src);
+		if (sizeof(T) == 1) {
+			// XOR dst palette index with the inverse of src.
+			*dst ^= ~(src);
+		} else {
+			// In 32-bit mode, this is the opposite??
+			*dst ^= src & 0xffffff00;
+		}
 		break;
 	case kInkTypeGhost:
 		if (p->oneBitImage || p->applyColor) {
-			*dst = src == (int)p->colorBlack ? p->backColor : *dst;
+			*dst = (src == p->colorBlack) ? p->backColor : *dst;
 		} else {
-			// AND dst palette index with the inverse of src.
-			// Originally designed for 1-bit mode so that
-			// black pixels would be invisible until they were
-			// over a black background, showing as white.
-			*dst = *dst & ~src;
+			if (sizeof(T) == 1) {
+				// AND dst palette index with the inverse of src.
+				// Originally designed for 1-bit mode so that
+				// black pixels would be invisible until they were
+				// over a black background, showing as white.
+				*dst = *dst & ~src;
+			} else {
+				// In 32-bit mode, OR dst RGBA with inverse src
+				*dst = *dst | ~src;
+			}
 		}
 		break;
 	case kInkTypeNotGhost:
 		if (p->oneBitImage || p->applyColor) {
-			*dst = src == (int)p->colorWhite ? p->backColor : *dst;
+			*dst = (src == p->colorWhite) ? p->backColor : *dst;
 		} else {
-			// AND dst palette index with src.
-			*dst = *dst & src;
+			if (sizeof(T) == 1) {
+				// AND dst palette index with src.
+				*dst = *dst & src;
+			} else {
+				// In 32-bit mode, OR dst RGBA with src
+				*dst = *dst | src;
+			}
 		}
 		break;
 	default: {
@@ -450,8 +506,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+		decomposeColor(wm, src, rSrc, gSrc, bSrc);
+		decomposeColor(wm, *dst, rDst, gDst, bDst);
 
 		switch (p->ink) {
 		case kInkTypeAddPin:
@@ -485,11 +541,17 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	}
 }
 
-Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
-	if (_pixelformat.bytesPerPixel == 1)
-		return &inkDrawPixel<byte>;
-	else
-		return &inkDrawPixel<uint32>;
+Graphics::Primitives *DirectorEngine::getInkPrimitives() {
+	if (!_primitives) {
+		if (_pixelformat.bytesPerPixel == 1)
+			_primitives = new InkPrimitives<byte>();
+		else if (_pixelformat.bytesPerPixel == 2)
+			_primitives = new InkPrimitives<uint16>();
+		else
+			_primitives = new InkPrimitives<uint32>();
+	}
+
+	return _primitives;
 }
 
 uint32 DirectorEngine::getColorBlack() {
@@ -544,7 +606,7 @@ uint32 DirectorPlotData::preprocessColor(uint32 src) {
 	// HACK: Right now this method is just used for adjusting the colourization on text
 	// sprites, as it would be costly to colourize the chunks on the fly each
 	// time a section needs drawing. It's ugly but mostly works.
-	if (sprite == kTextSprite) {
+	if (sprite == kTextSprite || sprite == kButtonSprite || sprite == kCheckboxSprite || sprite == kRadioButtonSprite) {
 		switch(ink) {
 		case kInkTypeMask:
 			src = (src == backColor ? foreColor : 0xff);
@@ -605,7 +667,7 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 
 	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
 	fillAreaRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotFill(dst, nullptr, &d->getPatterns(), ms->pattern, srcRect.left + wpos.x, srcRect.top + wpos.y, 1, ms->backColor);
+	Graphics::MacPlotData plotFill(dst, nullptr, &d->getPatterns(), ms->pattern, srcRect.left + wpos.x, srcRect.top + wpos.y, {1, 1}, ms->backColor);
 
 	uint strokePattern = 1;
 
@@ -617,12 +679,14 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 
 	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
 	strokeRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), strokePattern, strokeRect.left + wpos.x, strokeRect.top + wpos.y, ms->lineSize, ms->backColor);
+	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), strokePattern, strokeRect.left + wpos.x, strokeRect.top + wpos.y, {(int16)ms->lineSize, (int16)ms->lineSize}, ms->backColor);
+
+	Graphics::Primitives *primitives = g_director->getInkPrimitives();
 
 	switch (ms->spriteType) {
 	case kRectangleSprite:
 		ms->pd = &plotFill;
-		Graphics::drawFilledRect1(fillAreaRect, ms->foreColor, d->getInkDrawPixel(), this);
+		primitives->drawFilledRect1(fillAreaRect, ms->foreColor, this);
 		// fall through
 	case kOutlinedRectangleSprite:
 		// if we have lineSize <= 0, means we are not drawing anything. so we may return directly.
@@ -633,11 +697,11 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (!outline)
 			ms->tile = nullptr;
 
-		Graphics::drawRect1(strokeRect, ms->foreColor, d->getInkDrawPixel(), this);
+		primitives->drawRect1(strokeRect, ms->foreColor, this);
 		break;
 	case kRoundedRectangleSprite:
 		ms->pd = &plotFill;
-		Graphics::drawRoundRect1(fillAreaRect, 12, ms->foreColor, true, d->getInkDrawPixel(), this);
+		primitives->drawRoundRect1(fillAreaRect, 12, ms->foreColor, true, this);
 		// fall through
 	case kOutlinedRoundedRectangleSprite:
 		if (ms->lineSize <= 0)
@@ -647,11 +711,11 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (!outline)
 			ms->tile = nullptr;
 
-		Graphics::drawRoundRect1(strokeRect, 12, ms->foreColor, false, d->getInkDrawPixel(), this);
+		primitives->drawRoundRect1(strokeRect, 12, ms->foreColor, false, this);
 		break;
 	case kOvalSprite:
 		ms->pd = &plotFill;
-		Graphics::drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, ms->foreColor, true, d->getInkDrawPixel(), this);
+		primitives->drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, ms->foreColor, true, this);
 		// fall through
 	case kOutlinedOvalSprite:
 		if (ms->lineSize <= 0)
@@ -661,15 +725,15 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (!outline)
 			ms->tile = nullptr;
 
-		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, d->getInkDrawPixel(), this);
+		primitives->drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, this);
 		break;
 	case kLineTopBottomSprite:
 		ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, d->getInkDrawPixel(), this);
+		primitives->drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, this);
 		break;
 	case kLineBottomTopSprite:
 		ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, ms->foreColor, d->getInkDrawPixel(), this);
+		primitives->drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, ms->foreColor, this);
 		break;
 	default:
 		warning("DirectorPlotData::inkBlitShape: Expected shape type but got type %d", ms->spriteType);
@@ -680,8 +744,11 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 	if (!srf)
 		return;
 
+	if (mask && srfMask)
+		error("DirectorPlotData::inkBlitSurface: Masking not supported on surfaces with separate mask");
+
 	// TODO: Determine why colourization causes problems in Warlock
-	if (sprite == kTextSprite)
+	if (sprite == kTextSprite || sprite == kButtonSprite || sprite == kCheckboxSprite || sprite == kRadioButtonSprite)
 		applyColor = false;
 
 	Common::Rect srfClip = srf->getBounds();
@@ -698,8 +765,10 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 		offsetRect.clip(srfClip);
 		switch (ink) {
 		case kInkTypeCopy:
-			dst->blitFrom(*srf, offsetRect, destRect);
-			return;
+			if (!mask) {
+				dst->blitFrom(*srf, offsetRect, destRect);
+				return;
+			}
 			break;
 		default:
 			break;
@@ -710,10 +779,19 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 	// format as the window manager. Most of the time this is
 	// the job of BitmapCastMember::createWidget.
 
+	Graphics::Primitives *primitives = g_director->getInkPrimitives();
+
 	srcPoint.y = abs(srcRect.top - destRect.top);
 	for (int i = 0; i < destRect.height(); i++, srcPoint.y++) {
 		srcPoint.x = abs(srcRect.left - destRect.left);
 		const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
+
+		if (srfMask) {
+			if (srcPoint.y >= srfMask->h)
+				continue;
+
+			msk = (const byte *)srfMask->getBasePtr(srcPoint.x, srcPoint.y);
+		}
 
 		for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
 			if (!srfClip.contains(srcPoint)) {
@@ -721,12 +799,19 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 				continue;
 			}
 
-			if (!mask || (msk && (*msk++))) {
+			// Do not try render beyond the mask bounds
+			if (srfMask && (srcPoint.x >= srfMask->w))
+				continue;
+
+			if (!(mask || srfMask) || (msk && (*msk++))) {
 				if (d->_wm->_pixelformat.bytesPerPixel == 1) {
-					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
+					primitives->drawPoint(destRect.left + j, destRect.top + i,
 										preprocessColor(*((byte *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
+				} else if (d->_wm->_pixelformat.bytesPerPixel == 2) {
+					primitives->drawPoint(destRect.left + j, destRect.top + i,
+										preprocessColor(*((uint16 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
 				} else {
-					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
+					primitives->drawPoint(destRect.left + j, destRect.top + i,
 										preprocessColor(*((uint32 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
 				}
 			}

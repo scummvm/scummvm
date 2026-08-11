@@ -50,22 +50,22 @@ void HitZone::load(SagaEngine *vm, Common::MemoryReadStreamEndian *readStream, i
 	_nameIndex = readStream->readUint16();
 	_scriptNumber = readStream->readUint16();
 
-	for (ClickAreas::iterator i = _clickAreas.begin(); i != _clickAreas.end(); ++i) {
-		i->resize(readStream->readUint16LE());
+	for (auto &area : _clickAreas) {
+		area.resize(readStream->readUint16LE());
 
-		assert(!i->empty());
+		assert(!area.empty());
 
-		for (ClickArea::iterator j = i->begin(); j != i->end(); ++j) {
-			j->x = readStream->readSint16();
-			j->y = readStream->readSint16();
+		for (auto &point : area) {
+			point.x = readStream->readSint16();
+			point.y = readStream->readSint16();
 
 			// WORKAROUND: bug #2154: "ITE: Riff ignores command in Ferret merchant center"
 			// Apparently ITE Mac version has bug in game data. Both ObjectMap and ActionMap
 			// for exit area are little taller (y = 123) and thus Riff goes to exit
 			// when clicked on barrel of nails.
 			if (vm->getGameId() == GID_ITE) {
-				if (sceneNumber == 18 && index == 0 && (i == _clickAreas.begin()) && (j == i->begin()) && j->y == 123) {
-					j->y = 129;
+				if (sceneNumber == 18 && index == 0 && (&area == _clickAreas.begin()) && (&point == area.begin()) && point.y == 123) {
+					point.y = 129;
 				}
 			}
 		}
@@ -73,9 +73,9 @@ void HitZone::load(SagaEngine *vm, Common::MemoryReadStreamEndian *readStream, i
 }
 
 bool HitZone::getSpecialPoint(Point &specialPoint) const {
-	for (ClickAreas::const_iterator i = _clickAreas.begin(); i != _clickAreas.end(); ++i) {
-		if (i->size() == 1) {
-			specialPoint = (*i)[0];
+	for (const auto &area : _clickAreas) {
+		if (area.size() == 1) {
+			specialPoint = area[0];
 			return true;
 		}
 	}
@@ -87,12 +87,12 @@ bool HitZone::hitTest(const Point &testPoint) {
 	uint pointsCount;
 
 	if (_flags & kHitZoneEnabled) {
-		for (ClickAreas::const_iterator i = _clickAreas.begin(); i != _clickAreas.end(); ++i) {
-			pointsCount = i->size();
+		for (const auto &area : _clickAreas) {
+			pointsCount = area.size();
 			if (pointsCount < 2) {
 				continue;
 			}
-			points = &i->front();
+			points = &area.front();
 			if (pointsCount == 2) {
 				// Hit-test a box region
 				if ((testPoint.x >= points[0].x) &&
@@ -121,9 +121,9 @@ void HitZone::draw(SagaEngine *vm, int color) {
 	Point specialPoint1;
 	Point specialPoint2;
 
-	for (ClickAreas::const_iterator i = _clickAreas.begin(); i != _clickAreas.end(); ++i) {
-		pointsCount = i->size();
-		points = &i->front();
+	for (const auto &area : _clickAreas) {
+		pointsCount = area.size();
+		points = &area.front();
 		if (vm->_scene->getFlags() & kSceneFlagISO) {
 			tmpPoints.resize(pointsCount);
 			for (j = 0; j < pointsCount; j++) {
@@ -178,8 +178,8 @@ void ObjectMap::load(const ByteArray &resourceData) {
 	_hitZoneList.resize(readS.readUint16());
 
 	int idx = 0;
-	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
-		i->load(_vm, &readS, idx++, _vm->_scene->currentSceneNumber());
+	for (auto &hitZone : _hitZoneList) {
+		hitZone.load(_vm, &readS, idx++, _vm->_scene->currentSceneNumber());
 	}
 }
 
@@ -204,7 +204,7 @@ void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 
 	hitZoneIndex = hitTest(pickPoint);
 
-	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
+	for (auto &i : _hitZoneList) {
 		i->draw(_vm, (hitZoneIndex == i->getIndex()) ? color2 : color);
 	}
 
@@ -220,9 +220,9 @@ void ObjectMap::draw(const Point& testPoint, int color, int color2) {
 int ObjectMap::hitTest(const Point& testPoint) {
 
 	// Loop through all scene objects
-	for (HitZoneArray::iterator i = _hitZoneList.begin(); i != _hitZoneList.end(); ++i) {
-		if (i->hitTest(testPoint)) {
-			return i->getIndex();
+	for (auto &hitZone : _hitZoneList) {
+		if (hitZone.hitTest(testPoint)) {
+			return hitZone.getIndex();
 		}
 	}
 

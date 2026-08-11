@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_MISC_POINT3_H
 #define ULTIMA8_MISC_POINT3_H
 
+#include "common/stream.h"
+
 namespace Ultima {
 namespace Ultima8 {
 

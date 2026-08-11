@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -48,7 +48,7 @@ MsgScrollNewUI::MsgScrollNewUI(const Configuration *cfg, Screen *s) {
 
 	init(cfg, font_normal);
 
-	Std::string new_scroll_cfg = config_get_game_key(config) + "/newscroll";
+	Common::String new_scroll_cfg = config_get_game_key(config) + "/newscroll";
 
 	cfg->value(new_scroll_cfg + "/solid_bg", solid_bg, false);
 
@@ -99,24 +99,23 @@ bool MsgScrollNewUI::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token)
 	return true;
 }
 
-void MsgScrollNewUI::display_string(const Std::string &str, Font *f, bool include_on_map_window) {
+void MsgScrollNewUI::display_string(const Common::String &str, Font *f, bool include_on_map_window) {
 	if (str.empty())
 		return;
 	bool has_trailing_whitespace = (!trailing_whitespace.empty());
-	string s = trailing_whitespace + str;
+	Common::String s = trailing_whitespace + str;
 	trailing_whitespace.clear();
 
-	Std::string::reverse_iterator iter;
-	uint16 i;
-	for (i = 0, iter = s.rbegin(); iter != s.rend(); iter++, i++) {
-		char c = *iter;
+	uint16 i, pos;
+	for (i = 0, pos = s.size(); pos >= 0; pos--, i++) {
+		char c = s[pos];
 		if (c != '\t' && c != '\n')
 			break;
 	}
 
 	if (i > 0) {
-		trailing_whitespace = s.substr(s.length() - i, i);
-		s = s.substr(0, s.length() - i);
+		trailing_whitespace = s.substr(s.size() - i, i);
+		s = s.substr(0, s.size() - i);
 	}
 
 	if (!s.empty()) {
@@ -133,7 +132,7 @@ void MsgScrollNewUI::display_string(const Std::string &str, Font *f, bool includ
 	}
 }
 
-uint16 MsgScrollNewUI::count_empty_lines(const Std::string &s) {
+uint16 MsgScrollNewUI::count_empty_lines(const Common::String &s) {
 	uint16 count = 0;
 	for (char c : s) {
 		if (c != ' ' && c != '\t' && c != '\n')
@@ -186,7 +185,7 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 
 	uint16 y = area.top + 4;
 	uint16 total_length = 0;
-	Std::list<MsgLine *>::iterator iter;
+	Common::List<MsgLine *>::iterator iter;
 
 	iter = msg_buf.begin();
 	for (uint16 i = 0; i < position && iter != msg_buf.end(); i++)
@@ -194,7 +193,7 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 
 	for (uint16 i = 0; i < scroll_height && iter != msg_buf.end(); i++, iter++) {
 		MsgLine *msg_line = *iter;
-		Std::list<MsgText *>::iterator iter1;
+		Common::List<MsgText *>::iterator iter1;
 
 		iter1 = msg_line->text.begin();
 
@@ -252,7 +251,7 @@ GUI_status MsgScrollNewUI::KeyDown(const Common::KeyState &key) {
 	return MsgScroll::KeyDown(key);
 }
 
-GUI_status MsgScrollNewUI::MouseDown(int x, int y, Shared::MouseButton button) {
+GUI_status MsgScrollNewUI::MouseDown(int x, int y, Events::MouseButton button) {
 	MsgScrollEventType event = SCROLL_ESCAPE;
 
 	return scroll_movement_event(event);

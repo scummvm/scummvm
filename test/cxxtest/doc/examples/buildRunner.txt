@@ -1,0 +1,1 @@
+Running cxxtest tests (1 test).OK!

@@ -26,7 +26,7 @@
 
 namespace M4 {
 
-Console::Console() : GUI::Debugger() {
+Console::Console() : ::GUI::Debugger() {
 	registerCmd("teleport",  WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("item",      WRAP_METHOD(Console, cmdItem));
 	registerCmd("hyperwalk", WRAP_METHOD(Console, cmdHyperwalk));
@@ -34,27 +34,30 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("trigger",   WRAP_METHOD(Console, cmdTrigger));
 	registerCmd("cels",      WRAP_METHOD(Console, cmdCels));
 	registerCmd("cel",       WRAP_METHOD(Console, cmdCel));
+	registerCmd("interface", WRAP_METHOD(Console, cmdInterface));
+	registerCmd("music",     WRAP_METHOD(Console, cmdMusic));
+	registerCmd("hotspots",  WRAP_METHOD(Console, cmdHotspots));
 }
 
 bool Console::cmdTeleport(int argc, const char **argv) {
-	if (argc == 2) {
-		_G(game).setRoom(atol(argv[1]));
-		_G(kernel).teleported_in = true;
-		return false;
-	} else {
+	if (argc != 2) {
 		debugPrintf("Currently in room %d\n", _G(game).room_id);
 		return true;
 	}
+
+	_G(game).setRoom(atol(argv[1]));
+	_G(kernel).teleported_in = true;
+	return false;
 }
 
 bool Console::cmdItem(int argc, const char **argv) {
-	if (argc == 2) {
-		inv_give_to_player(argv[1]);
-		return false;
-	} else {
+	if (argc != 2) {
 		debugPrintf("item <item name>\n");
 		return true;
 	}
+
+	inv_give_to_player(argv[1]);
+	return false;
 }
 
 bool Console::cmdHyperwalk(int argc, const char **argv) {
@@ -72,22 +75,20 @@ bool Console::cmdDigi(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("digi <sound name>\n");
 		return true;
-	} else {
-		digi_play(argv[1], 1);
-		return false;
 	}
 
-	return true;
+	digi_play(argv[1], 1);
+	return false;
 }
 
 bool Console::cmdTrigger(int argc, const char **argv) {
 	if (argc == 2) {
 		kernel_trigger_dispatch_now(atol(argv[1]));
 		return false;
-	} else {
-		debugPrintf("trigger <number>\n");
-		return true;
 	}
+
+	debugPrintf("trigger <number>\n");
+	return true;
 }
 
 bool Console::cmdCels(int argc, const char **argv) {
@@ -108,7 +109,7 @@ bool Console::cmdCel(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("cel <cel number>\n");
 	} else {
-		int num = atol(argv[1]);
+		const int num = atol(argv[1]);
 
 		if (!_GWS(globalCELSHandles)[num]) {
 			debugPrintf("cel index not in use\n");
@@ -124,6 +125,47 @@ bool Console::cmdCel(int argc, const char **argv) {
 				debugPrintf("%s\n", line.c_str());
 			}
 		}
+	}
+
+	return true;
+}
+
+bool Console::cmdInterface(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("interface ['show', 'hide']\n");
+		return true;
+	}
+
+	Common::String param(argv[1]);
+
+	if (param == "hide" || param == "off" || param == "false")
+		interface_hide();
+	else
+		interface_show();
+
+	return false;
+}
+
+bool Console::cmdMusic(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("music <name>\n");
+		midi_play("ripthem1", 255, false, -1, 999);
+		return true;
+	}
+
+	midi_play(argv[1], 255, false, -1, 999);
+	return false;
+}
+
+bool Console::cmdHotspots(int argc, const char **argv) {
+	for (HotSpotRec *hs = _G(currentSceneDef).hotspots;
+			hs; hs = hs->next) {
+		debugPrintf("vocab=%s, verb=%s, prep=%s, pos=(%d,%d,%d,%d), feet=(%d,%d)\n",
+			hs->vocab ? hs->vocab : "",
+			hs->verb ? hs->verb : "",
+			hs->prep ? hs->prep : "",
+			hs->ul_x, hs->ul_y, hs->lr_x, hs->lr_y,
+			hs->feet_x, hs->feet_y);
 	}
 
 	return true;

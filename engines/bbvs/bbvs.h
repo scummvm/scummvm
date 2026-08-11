@@ -62,6 +62,16 @@ class SoundMan;
 
 #define BBVS_SAVEGAME_VERSION 0
 
+enum BBVSAction {
+	kActionNone,
+	kActionInventory,
+	kActionLook,
+	kActionTalk,
+	kActionUse,
+	kActionWalk,
+	kActionEscape
+};
+
 enum {
 	kVerbLook      = 0,
 	kVerbUse       = 1,
@@ -279,6 +289,7 @@ public:
 	int _mouseX, _mouseY;
 	uint _mouseButtons;
 	Common::KeyCode _keyCode;
+	Common::CustomEventType _customAction;
 
 	int _mouseCursorSpriteIndex;
 
@@ -364,7 +375,7 @@ public:
 	void loadScene(int sceneNum);
 	void initScene(bool sounds);
 	bool changeScene();
-	bool update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCode keyCode);
+	bool update(int mouseX, int mouseY, uint mouseButtons, Common::CustomEventType customAction);
 
 	void buildDrawList(DrawList &drawList);
 

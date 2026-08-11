@@ -165,7 +165,7 @@ void MidiDriver_Accolade_AdLib::deinitSource(uint8 source) {
 	MidiDriver_ADLIB_Multisource::deinitSource(source);
 }
 
-uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
+uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source, InstrumentInfo &instrumentInfo) {
 	Common::StackLock lock(_allocationMutex);
 
 	if (_sources[source].type == SOURCE_TYPE_SFX) {
@@ -177,7 +177,7 @@ uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source,
 				allocatedChannel = 6 - source;
 			} else {
 				// For OPL3, use the dynamic allocation algorithm.
-				allocatedChannel = MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentId);
+				allocatedChannel = MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentInfo);
 			}
 
 			_activeNotesMutex.lock();
@@ -202,6 +202,10 @@ uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source,
 
 	// Channel allocation for music sources.
 	if (_oplType != OPL::Config::kOpl3) {
+		// Use the regular allocation algorithm for rhythm instruments.
+		if (channel == MIDI_RHYTHM_CHANNEL)
+			return MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentInfo);
+
 		// For OPL2, discard events for channels 6 and 7 and channels allocated
 		// for SFX.
 		if (channel >= 6 || _activeNotes[channel].channelAllocated)
@@ -211,7 +215,7 @@ uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source,
 		return channel;
 	} else {
 		// For OPL3, use the dynamic allocation algorithm.
-		return MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentId);
+		return MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentInfo);
 	}
 }
 
@@ -232,7 +236,7 @@ void MidiDriver_Accolade_AdLib::loadSfxInstrument(uint8 source, byte *instrument
 	// Allocate a channel
 	programChange(0, 0, source);
 	InstrumentInfo instrument = determineInstrument(0, source, 0);
-	uint8 oplChannel = allocateOplChannel(0, source, instrument.instrumentId);
+	uint8 oplChannel = allocateOplChannel(0, source, instrument);
 
 	// Update the active note data.
 	ActiveNote *activeNote = &_activeNotes[oplChannel];
@@ -263,8 +267,11 @@ void MidiDriver_Accolade_AdLib::patchE1Instruments() {
 		// This workaround is only needed for OPL3 mode.
 		return;
 
+	// This is allocated in readDriverData so it's not really const
+	OplInstrumentDefinition *instrumentBank = const_cast<OplInstrumentDefinition *>(_instrumentBank);
+
 	// Patch the attack and decay of instrument 0x18.
-	_instrumentBank[0x18].operator0.decayAttack = 0x42; // Was 0x24
+	instrumentBank[0x18].operator0.decayAttack = 0x42; // Was 0x24
 }
 
 void MidiDriver_Accolade_AdLib::patchWwInstruments() {
@@ -286,19 +293,22 @@ void MidiDriver_Accolade_AdLib::patchWwInstruments() {
 		// This workaround is only needed for OPL3 mode.
 		return;
 
+	// This is allocated in readDriverData so it's not really const
+	OplInstrumentDefinition *instrumentBank = const_cast<OplInstrumentDefinition *>(_instrumentBank);
+
 	// Patch the attack of instrument 0x22.
-	_instrumentBank[0x22].operator1.decayAttack &= 0x0F;
-	_instrumentBank[0x22].operator1.decayAttack |= 0x50;
+	instrumentBank[0x22].operator1.decayAttack &= 0x0F;
+	instrumentBank[0x22].operator1.decayAttack |= 0x50;
 
 	// Patch the attack of instrument 0x25.
-	_instrumentBank[0x25].operator1.decayAttack &= 0x0F;
-	_instrumentBank[0x25].operator1.decayAttack |= 0x60;
+	instrumentBank[0x25].operator1.decayAttack &= 0x0F;
+	instrumentBank[0x25].operator1.decayAttack |= 0x60;
 
 	// Patch the attack of instrument 0x7F.
-	_instrumentBank[0x7F].operator0.decayAttack &= 0x0F;
-	_instrumentBank[0x7F].operator0.decayAttack |= 0x60;
-	_instrumentBank[0x7F].operator1.decayAttack &= 0x0F;
-	_instrumentBank[0x7F].operator1.decayAttack |= 0x90;
+	instrumentBank[0x7F].operator0.decayAttack &= 0x0F;
+	instrumentBank[0x7F].operator0.decayAttack |= 0x60;
+	instrumentBank[0x7F].operator1.decayAttack &= 0x0F;
+	instrumentBank[0x7F].operator1.decayAttack |= 0x90;
 }
 
 MidiDriver_Accolade_AdLib::InstrumentInfo MidiDriver_Accolade_AdLib::determineInstrument(uint8 channel, uint8 source, uint8 note) {
@@ -379,7 +389,7 @@ uint16 MidiDriver_Accolade_AdLib::calculateFrequency(uint8 channel, uint8 source
 	return block << 10 | frequency;
 }
 
-uint8 MidiDriver_Accolade_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+uint8 MidiDriver_Accolade_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, const OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
 	// A volume adjustment is applied to the velocity of melodic notes.
 	int8 volumeAdjustment = 0;
 	if (_sources[source].type != SOURCE_TYPE_SFX) {
@@ -466,6 +476,7 @@ void MidiDriver_Accolade_AdLib::loadInstrumentData(OplInstrumentDefinition &defi
 
 	definition.rhythmType = rhythmType;
 	definition.rhythmNote = rhythmNote;
+	definition.transpose = 0;
 }
 
 void MidiDriver_Accolade_AdLib::readDriverData(byte *driverData, uint16 driverDataSize, bool newVersion) {
@@ -508,13 +519,13 @@ void MidiDriver_Accolade_AdLib::readDriverData(byte *driverData, uint16 driverDa
 	uint16 rhythmNoteOffset = newVersion ? 376 + 36 : 256 + 16 + 16;
 	uint16 instrumentDataOffset = newVersion ? 722 : 256 + 16 + 16 + 64 + 2;
 
-	_instrumentBank = new OplInstrumentDefinition[instrumentDefinitionCount];
+	OplInstrumentDefinition *instrumentBank = new OplInstrumentDefinition[instrumentDefinitionCount];
 	for (int i = 0; i < instrumentDefinitionCount; i++) {
 		byte *instrumentData = driverData + instrumentDataOffset + (i * 9);
-		loadInstrumentData(_instrumentBank[i], instrumentData, RHYTHM_TYPE_UNDEFINED, 0, newVersion);
+		loadInstrumentData(instrumentBank[i], instrumentData, RHYTHM_TYPE_UNDEFINED, 0, newVersion);
 	}
 
-	_rhythmBank = new OplInstrumentDefinition[40];
+	OplInstrumentDefinition *rhythmBank = new OplInstrumentDefinition[40];
 	_rhythmBankFirstNote = 36;
 	_rhythmBankLastNote = 75;
 	// Elvira 1 version uses instruments 1-5 for rhythm, Elvira 2 / Waxworks
@@ -527,8 +538,12 @@ void MidiDriver_Accolade_AdLib::readDriverData(byte *driverData, uint16 driverDa
 			static_cast<OplInstrumentRhythmType>(11 - RHYTHM_NOTE_INSTRUMENT_TYPES[i]);
 		byte *instrumentData = rhythmInstrumentDefinitions + (instrumentDefNumber * 9);
 
-		loadInstrumentData(_rhythmBank[i], instrumentData, rhythmType, rhythmNotes[i], newVersion);
+		loadInstrumentData(rhythmBank[i], instrumentData, rhythmType, rhythmNotes[i], newVersion);
 	}
+
+	// Set the const class variables with our just allocated banks
+	_instrumentBank = instrumentBank;
+	_rhythmBank = rhythmBank;
 }
 
 MidiDriver_Multisource *MidiDriver_Accolade_AdLib_create(Common::String driverFilename, OPL::Config::OplType oplType, int timerFrequency) {

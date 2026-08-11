@@ -77,8 +77,8 @@ public:
 
 	GUI_status KeyDown(const Common::KeyState &key) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override {
 		return DraggableView::MouseMotion(x, y, state);
 	}
@@ -96,7 +96,7 @@ protected:
 	void init_chest(const Common::Path &datadir);
 	void init_crate(const Common::Path &datadir);
 	void init_barrel(const Common::Path &datadir);
-	void init_corpse(const Common::Path &datadir, Std::string bg_filename);
+	void init_corpse(const Common::Path &datadir, Common::String bg_filename);
 	void display_inventory_weight();
 
 	void left_arrow();

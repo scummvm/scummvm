@@ -81,7 +81,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			for (unsigned int type = 0; type < typecount; type++) {
 				awo->_overlay[type]._dirCount = dircount;
 				awo->_overlay[type]._frames =
-				    new Std::vector<WeaponOverlayFrame>[dircount];
+				    new Common::Array<WeaponOverlayFrame>[dircount];
 				for (unsigned int dir = 0; dir < dircount; dir++) {
 					awo->_overlay[type]._frames[dir].resize(animlength);
 					for (unsigned int frame = 0; frame < animlength; frame++) {

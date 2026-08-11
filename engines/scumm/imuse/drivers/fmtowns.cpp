@@ -792,8 +792,8 @@ void TownsMidiInputChannel::sysEx_customInstrument(uint32 type, const byte *inst
 	const uint8 instrSize = 30;
 	if (instr && dataSize == instrSize)
 		memcpy(_instrument, instr, instrSize);
-	else if (type != 'ADL ') // FM-Towns is actually supposed to get ADL type data.
-		warning("TownsMidiInputChannel: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
+	else if (type != MKTAG('A','D','L',' ')) // FM-Towns is actually supposed to get ADL type data.
+		warning("TownsMidiInputChannel: Receiving '%s' instrument data. Probably loading a savegame with that sound setting", tag2str(type));
 }
 
 void TownsMidiInputChannel::controlModulationWheel(byte value) {

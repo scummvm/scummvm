@@ -29,24 +29,29 @@
 
 namespace Wintermute {
 
-Mesh3DSOpenGL::Mesh3DSOpenGL() {
+Mesh3DSOpenGL::Mesh3DSOpenGL(BaseGame *inGame) : Mesh3DS(inGame) {
+	_vertexCount = 0;
+	_vertexData = nullptr;
 }
 
 Mesh3DSOpenGL::~Mesh3DSOpenGL() {
 }
 
-void Mesh3DSOpenGL::fillVertexBuffer(uint32 color) {
-	_color.x() = RGBCOLGetR(color) / 255.0f;
-	_color.y() = RGBCOLGetG(color) / 255.0f;
-	_color.z() = RGBCOLGetB(color) / 255.0f;
-	_color.w() = RGBCOLGetA(color) / 255.0f;
+void Mesh3DSOpenGL::fillVertexBuffer() {
+	_vertexCount = _numFaces * 3;
+	_vertexData = (Mesh3DSVertex *)_vb.ptr();
 }
 
-void Mesh3DSOpenGL::render() {
-	glColor4f(_color.x(), _color.y(), _color.z(), _color.w());
+void Mesh3DSOpenGL::render(bool color) {
+	if (_vertexCount == 0)
+		return;
+
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(GeometryVertex), reinterpret_cast<byte *>(_vertexData));
-	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, _indexData);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(Mesh3DSVertex), &_vertexData[0]._x);
+	glColorPointer(4, GL_FLOAT, sizeof(Mesh3DSVertex), &_vertexData[0]._r);
+	glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
+	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 

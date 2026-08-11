@@ -28,26 +28,25 @@
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
+extern "C" { long __stack = 4 * 1024 * 1024; }
+
 int main(int argc, char *argv[]) {
 
-	// Set up a stack cookie to avoid crashes from a stack set too low
-	static const char *stack_cookie __attribute__((used)) = "$STACK: 2048000";
-
-	// Create our OSystem instance
+	// Create our OSystem instance.
 	g_system = new OSystem_MorphOS();
 	assert(g_system);
 
-	// Pre initialize the backend
+	// Pre-initialize the backend.
 	g_system->init();
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
-	// Invoke the actual ScummVM main entry point
+	// Invoke the actual ScummVM main entry point.
 	int res = scummvm_main(argc, argv);
 
-	// Free OSystem
+	// Free OSystem.
 	g_system->destroy();
 
 	return res;

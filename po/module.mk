@@ -45,4 +45,7 @@ update-translations: updatepot $(POFILES)
 	@$(foreach file, $(POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
 	@rm -f messages.mo
 
-.PHONY: updatepot translations-dat update-translations
+android-translations: devtools/generate-android-i18n-strings.py
+	devtools/generate-android-i18n-strings.py
+
+.PHONY: updatepot translations-dat update-translations android-translations

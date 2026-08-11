@@ -73,9 +73,8 @@ void SnapProcess::run() {
 void SnapProcess::addEgg(Item *item) {
 	assert(item);
 	ObjId id = item->getObjId();
-	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
-		 iter != _snapEggs.end(); iter++) {
-		if (*iter == id)
+	for (const auto &eggId : _snapEggs) {
+		if (eggId == id)
 			return;
 	}
 	_snapEggs.push_back(id);
@@ -94,18 +93,17 @@ void SnapProcess::updateCurrentEgg() {
 	int32 axd, ayd, azd;
 	Point3 pta = a->getLocation();
 	a->getFootpadWorld(axd, ayd, azd);
-	Rect arect(pta.x, pta.y, pta.x + axd, pta.y + ayd);
+	Common::Rect32 arect(pta.x, pta.y, pta.x + axd, pta.y + ayd);
 
-	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
-		 iter != _snapEggs.end(); iter++) {
-		const Item *egg = getItem(*iter);
+	for (const auto &eggId : _snapEggs) {
+		const Item *egg = getItem(eggId);
 		if (!egg)
 			continue;
-		Rect r;
+		Common::Rect32 r;
 		Point3 pte = egg->getLocation();
 		getSnapEggRange(egg, r);
 		if (r.intersects(arect) && (pta.z <= pte.z + 0x30 && pta.z >= pte.z - 0x30)) {
-			_currentSnapEgg = *iter;
+			_currentSnapEgg = eggId;
 			_currentSnapEggRange = r;
 			CameraProcess::SetCameraProcess(new CameraProcess(_currentSnapEgg));
 		}
@@ -115,22 +113,21 @@ void SnapProcess::updateCurrentEgg() {
 void SnapProcess::removeEgg(Item *item) {
 	assert(item);
 	ObjId id = item->getObjId();
-	for (Std::list<ObjId>::iterator iter = _snapEggs.begin();
-		 iter != _snapEggs.end(); iter++) {
+	for (auto iter = _snapEggs.begin(); iter != _snapEggs.end(); ++iter) {
 		if (*iter == id) {
 			iter = _snapEggs.erase(iter);
 		}
 	}
 	if (id == _currentSnapEgg) {
 		_currentSnapEgg = 0;
-		_currentSnapEggRange = Rect();
+		_currentSnapEggRange = Common::Rect32();
 	}
 }
 
 void SnapProcess::clearEggs() {
 	_snapEggs.clear();
 	_currentSnapEgg = 0;
-	_currentSnapEggRange = Rect();
+	_currentSnapEggRange = Common::Rect32();
 }
 
 
@@ -149,7 +146,7 @@ bool SnapProcess::isNpcInRangeOfCurrentEgg() const {
 	a->getFootpadWorld(axd, ayd, azd);
 	Point3 pte = currentegg->getLocation();
 
-	Rect arect(pta.x, pta.y, pta.x + axd, pta.y + ayd);
+	Common::Rect32 arect(pta.x, pta.y, pta.x + axd, pta.y + ayd);
 
 	if (!_currentSnapEggRange.intersects(arect))
 		return false;
@@ -159,7 +156,7 @@ bool SnapProcess::isNpcInRangeOfCurrentEgg() const {
 	return true;
 }
 
-void SnapProcess::getSnapEggRange(const Item *item, Rect &rect) const {
+void SnapProcess::getSnapEggRange(const Item *item, Common::Rect32 &rect) const {
 	assert(item);
 	uint16 qhi = ((item->getQuality() >> 8) & 0xff);
 	// Interpreting the values as *signed* char here is deliberate.
@@ -181,9 +178,8 @@ void SnapProcess::saveData(Common::WriteStream *ws) {
 
 	ws->writeUint16LE(_currentSnapEgg);
 	ws->writeUint16LE(_snapEggs.size());
-	for (Std::list<ObjId>::const_iterator iter = _snapEggs.begin();
-		 iter != _snapEggs.end(); iter++) {
-		ws->writeUint16LE(*iter);
+	for (const auto &eggId : _snapEggs) {
+		ws->writeUint16LE(eggId);
 	}
 }
 
@@ -196,7 +192,7 @@ bool SnapProcess::loadData(Common::ReadStream *rs, uint32 version) {
 		_snapEggs.push_back(rs->readUint16LE());
 	}
 
-	_type = 1; // should be persistant but older savegames may not know that.
+	_type = 1; // should be persistent but older savegames may not know that.
 
 	return true;
 }

@@ -29,6 +29,7 @@
 
 #include "gui/about.h"
 #include "gui/gui-manager.h"
+#include "gui/helpdialog.h"
 #include "gui/message.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
@@ -62,7 +63,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", Common::U32String(gScummVMVersionDate));
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", Common::U32String(gScummVMFullVersion));
 	version->setAlign(Graphics::kTextAlignCenter);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), Common::U32String(), kPlayCmd, 'P');
@@ -75,9 +76,11 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	// The help button is disabled by default.
 	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
 	// (at least for now, we might change how this works in the future).
-	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("~H~elp"), Common::U32String(), kHelpCmd);
+	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("Game ~H~elp"), Common::U32String(), kHelpCmd);
 	_helpButton->setVisible(_engine->hasFeature(Engine::kSupportsHelp));
 	_helpButton->setEnabled(_engine->hasFeature(Engine::kSupportsHelp));
+
+	new GUI::ButtonWidget(this, "GlobalMenu.MainHelp", _("~H~elp"), Common::U32String(), kMainHelpCmd);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(), kAboutCmd);
 
@@ -90,9 +93,9 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit) && (!(ConfMan.getBool("gui_return_to_launcher_at_exit")) || !_engine->hasFeature(Engine::kSupportsReturnToLauncher)))
 		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), Common::U32String(), kQuitCmd);
 
-	_aboutDialog = new GUI::AboutDialog();
-	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	_aboutDialog = new GUI::AboutDialog(true);
+	_loadDialog = new GUI::SaveLoadChooser(false);
+	_saveDialog = new GUI::SaveLoadChooser(true);
 }
 
 MainMenuDialog::~MainMenuDialog() {
@@ -126,6 +129,11 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 					"Please consult the README for basic information, and for "
 					"instructions on how to obtain further assistance."));
 		dialog.runModal();
+		}
+		break;
+	case kMainHelpCmd: {
+		GUI::HelpDialog dlg;
+		dlg.runModal();
 		}
 		break;
 	case kLauncherCmd: {

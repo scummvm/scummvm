@@ -578,8 +578,8 @@ void AnimationSequencePlayer::syncTime() {
 		Common::Event ev;
 		while (_event->pollEvent(ev)) {
 			switch (ev.type) {
-			case Common::EVENT_KEYDOWN:
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (ev.customType == kActionEscape) {
 					_seqNum = 1;
 				}
 				break;

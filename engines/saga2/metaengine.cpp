@@ -20,15 +20,16 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "engines/advancedDetector.h"
 
-class Saga2MetaEngine : public AdvancedMetaEngine {
+class Saga2MetaEngine : public AdvancedMetaEngine<Saga2::SAGA2GameDescription> {
 public:
 	const char *getName() const override {
 		return "saga2";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Saga2::SAGA2GameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 };
 
@@ -38,8 +39,7 @@ bool Saga2MetaEngine::hasFeature(MetaEngineFeature f) const {
 		checkExtendedSaves(f);
 }
 
-Common::Error Saga2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Saga2::SAGA2GameDescription *gd = (const Saga2::SAGA2GameDescription *)desc;
+Common::Error Saga2MetaEngine::createInstance(OSystem *syst, Engine **engine, const Saga2::SAGA2GameDescription *gd) const {
 	*engine = new Saga2::Saga2Engine(syst, gd);
 	return Common::kNoError;
 }

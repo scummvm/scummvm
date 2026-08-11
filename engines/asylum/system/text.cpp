@@ -170,12 +170,27 @@ void Text::drawChinese(const Common::U32String &utext) {
 	Graphics::Surface *surf = getScreen()->getSurface();
 	uint8 color = 0;
 	// TODO: Add more colors
-	switch (_fontResource->getResourceId()) {
+	switch ((uint32_t)_fontResource->getResourceId()) {
 	case 0: // Case to quiet VS C4065 warning
 	default:
 		debug(5, "Unrecognized font resource 0x%x for string %s", _fontResource->getResourceId(), utext.encode().c_str());
 		color = 1;
 		break;
+	case 0x80010039:
+		color = 0xff;
+		break;
+	case 0x8005000d:
+		color = 0x10;
+		break;
+	case 0x8005000e:
+		color = 0x25;
+		break;
+	case 0x8005000f:
+		color = 0x1f;
+		break;
+	case 0x80120012:
+		color = 0x69;
+		break;		
 	}
 
 	_chineseFont->drawString(surf, utext, _position.x, _position.y, surf->w - _position.x, color);

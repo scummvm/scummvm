@@ -22,7 +22,7 @@ Optional: Run the extracted ``ScummVM_Install`` script. This installer guides yo
 
     The ScummVM installer.
 
-Note: AmiUpdate is already aware of ScummVM and will automatically keep ScummVM up to date through it's ``Autoinstall`` script.
+Note: AmiUpdate is already aware of ScummVM and will automatically keep ScummVM up to date through its ``Autoinstall`` script.
 
 
 Transferring game files

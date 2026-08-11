@@ -285,6 +285,10 @@ struct GLContext {
 	FrameBuffer *fb;
 	Common::Rect renderRect;
 
+	// scissor
+	bool scissor_test_enabled;
+	int scissor[4];
+
 	// blending
 	bool blending_enabled;
 	int source_blending_factor;
@@ -320,6 +324,7 @@ struct GLContext {
 	int texture_min_filter;
 	uint texture_wrap_s;
 	uint texture_wrap_t;
+	GLTextureEnv _texEnv;
 	Common::Array<struct tglColorAssociation> colorAssociationList;
 
 	// shared state
@@ -429,9 +434,9 @@ struct GLContext {
 	bool stencil_buffer_supported;
 	bool stencil_test_enabled;
 	int stencil_test_func;
-	int stencil_ref_val;
-	uint stencil_mask;
-	uint stencil_write_mask;
+	byte stencil_ref_val;
+	byte stencil_mask;
+	byte stencil_write_mask;
 	int stencil_sfail;
 	int stencil_dpfail;
 	int stencil_dppass;
@@ -448,13 +453,13 @@ struct GLContext {
 	float fog_start;
 	float fog_end;
 
-	Common::Rect _scissorRect;
-
 	bool _enableDirtyRectangles;
 
 	// stipple
 	bool polygon_stipple_enabled;
 	byte polygon_stipple_pattern[128];
+	uint32 stippleColor;
+	bool two_color_stipple_enabled;
 
 	// blit test
 	Common::List<BlitImage *> _blitImages;

@@ -30,6 +30,7 @@
 #include "gui/widgets/popup.h"
 
 #include "sci/detection.h"
+#include "sci/detection_internal.h"
 #include "sci/dialogs.h"
 #include "sci/graphics/helpers_detection_enums.h"
 #include "sci/sci.h"
@@ -50,7 +51,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Sci::kDebugLevelTime, "Time", "Time debugging"},
 	{Sci::kDebugLevelRoom, "Room", "Room number debugging"},
 	{Sci::kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging"},
-	{Sci::kDebugLevelDclInflate, "DCL", "DCL inflate debugging"},
+	{Sci::kDebugLevelDclImplode, "DCL", "DCL implode debugging"},
 	{Sci::kDebugLevelVM, "VM", "VM debugging"},
 	{Sci::kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded"},
 	{Sci::kDebugLevelPatcher, "Patcher", "Notifies when scripts or resources are patched"},
@@ -148,6 +149,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
 	{"realm",           "The Realm"},
+	{"shield",          "Behind the Developer's Shield"},
 	{"shivers",         "Shivers"},
 	{"sq6",             "Space Quest 6: The Spinal Frontier"},
 	{"torin",           "Torin's Passage"},
@@ -178,9 +180,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class SciMetaEngineDetection : public AdvancedMetaEngineDetection {
+class SciMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	SciMetaEngineDetection() : AdvancedMetaEngineDetection(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles) {
+	SciMetaEngineDetection() : AdvancedMetaEngineDetection(Sci::SciGameDescriptions, s_sciGameTitles) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 		// Use SCI fallback detection results instead of the partial matches found by
@@ -213,11 +215,38 @@ public:
 		return "Sierra's Creative Interpreter (C) Sierra Online";
 	}
 
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
+
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
+
+	void dumpDetectionEntries() const override;
 
 private:
 	void addFileToDetectedGame(const Common::Path &name, const FileMap &allFiles, MD5Properties md5Prop, ADDetectedGame &game) const;
 };
+
+DetectedGames SciMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
+	DetectedGames games = AdvancedMetaEngineDetection::detectGames(fslist, skipADFlags, skipIncomplete);
+
+	for (DetectedGame &game : games) {
+		const GameIdStrToEnum *g = gameIdStrToEnum;
+		for (; g->gameidStr; ++g) {
+			if (game.gameId.equals(g->gameidStr))
+				break;
+		}
+
+		// Save the language info from the options string, since it will be overwritten in the next step.
+		Common::List<Common::Language> langList = Common::parseLanguagesFromGameGUIOptionsString(game.getGUIOptions());
+
+		game.setGUIOptions(customizeGuiOptions(fslist.begin()->getParent().getPath(), parseGameGUIOptions(game.getGUIOptions()), game.platform, g->gameidStr, g->version));
+
+		// Restore the language info to the options string.
+		for (const Common::Language &lang : langList)
+			game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(lang));
+	}
+
+	return games;
+}
 
 ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	/**
@@ -227,27 +256,22 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 
 	if (ConfMan.hasKey("always_run_fallback_detection_extern")) {
 		if (ConfMan.getBool("always_run_fallback_detection_extern") == false) {
-			warning("SCI: Fallback detection is disabled.");
+			warning("SCI: Fallback detection is disabled");
 			return ADDetectedGame();
 		}
 	}
 
-	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getName());
-	if (!metaEnginePlugin) {
-		return ADDetectedGame();
-	}
-
-	const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);
+	const Plugin *enginePlugin = PluginMan.findEnginePlugin(getName());
 	if (!enginePlugin) {
 		static bool warn = true;
 		if (warn) {
-			warning("Engine plugin for SCI not present. Fallback detection is disabled.");
+			warning("Engine plugin for SCI not present. Fallback detection is disabled");
 			warn = false;
 		}
 		return ADDetectedGame();
 	}
 
-	ADDetectedGame game = enginePlugin->get<AdvancedMetaEngine>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
+	ADDetectedGame game = enginePlugin->get<AdvancedMetaEngineBase>().fallbackDetectExtern(_md5Bytes, allFiles, fslist);
 	if (!game.desc) {
 		return game;
 	}
@@ -282,7 +306,7 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		}
 	} else if (allFiles.contains("Data1")) {
 		// add Mac volumes
-		md5Prop = (MD5Properties)(md5Prop | kMD5MacResOrDataFork);
+		md5Prop = (MD5Properties)(md5Prop | kMD5MacResFork);
 		for (int i = 1; i <= 13; i++) {
 			Common::String volume = Common::String::format("Data%d", i);
 			addFileToDetectedGame(Common::Path(volume), allFiles, md5Prop, game);
@@ -298,6 +322,12 @@ void SciMetaEngineDetection::addFileToDetectedGame(const Common::Path &name, con
 		game.hasUnknownFiles = true;
 		game.matchedFiles[name] = fileProperties;
 	}
+}
+
+void SciMetaEngineDetection::dumpDetectionEntries() const {
+#if 0
+	AdvancedMetaEngineDetectionBase::dumpDetectionEntries();
+#endif
 }
 
 } // End of namespace Sci

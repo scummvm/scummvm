@@ -72,7 +72,7 @@ public:
 	void execute();
 
 	/**
-	 * Chooses whether an encounter can be fleed
+	 * Chooses whether an encounter can be fled
 	 */
 	bool checkSurroundParty() const;
 

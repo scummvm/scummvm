@@ -1035,7 +1035,7 @@ gameerror5:	db	13,10,13,10
 	db	24h
 gameerror6:	db	13,10,13,10
 	db	"Dreamweb has an Error:",13,10
-	db	"Sound Blaster not found on interupt "
+	db	"Sound Blaster not found on interrupt "
 error6patch:	db	"0"
 	db	13,10,13,10
 	db	24h

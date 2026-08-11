@@ -19,8 +19,11 @@
  *
  */
 
+#include "common/stream.h"
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/castmember/script.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -36,11 +39,13 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 	if (version < kFileVer400) {
 		error("Unhandled Script cast");
-	} else if (version >= kFileVer400 && version < kFileVer600) {
-		byte unk1 = stream.readByte();
-		byte type = stream.readByte();
+	} else if (version >= kFileVer400 && version < kFileVer1100) {
+		uint16 type = stream.readUint16BE();
 
 		switch (type) {
+		case 0:
+			_scriptType = kNoneScript;
+			break;
 		case 1:
 			_scriptType = kScoreScript;
 			break;
@@ -55,12 +60,11 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			error("ScriptCastMember: Unprocessed script type: %d", type);
 		}
 
-		debugC(3, kDebugLoading, "CASt: Script type: %s (%d), unk1: %d", scriptType2str(_scriptType), type, unk1);
+		debugC(3, kDebugLoading, "  CASt: Script type: %s (%d)", scriptType2str(_scriptType), type);
 
-		stream.readByte(); // There should be no more data
-		assert(stream.eos());
+		assert(stream.pos() == stream.size()); // There should be no more data
 	} else {
-		warning("STUB: ScriptCastMember::ScriptCastMember(): Scripts not yet supported for version %d", version);
+		warning("STUB: ScriptCastMember::ScriptCastMember(): Scripts not yet supported for version v%d (%d)", humanVersion(version), version);
 	}
 }
 
@@ -71,10 +75,109 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, ScriptCastMember &
 	warning("ScriptCastMember(): Duplicating source %d to target %d! This is unlikely to work properly, as the actual scripts aren't yet copied", source._castId, castId);
 }
 
+bool ScriptCastMember::hasField(int field) {
+	switch (field) {
+	case kTheScriptType:
+		return true;
+	default:
+		break;
+	}
+	return CastMember::hasField(field);
+}
+
+Datum ScriptCastMember::getField(int field) {
+	Datum d;
+
+	switch (field) {
+	case kTheScriptType:
+		switch (_scriptType) {
+		case kMovieScript:
+			d = Common::String("movie");
+			d.type = SYMBOL;
+			break;
+		case kScoreScript:
+			d = Common::String("score");
+			d.type = SYMBOL;
+			break;
+		case kParentScript:
+			d = Common::String("parent");
+			d.type = SYMBOL;
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		d = CastMember::getField(field);
+		break;
+	}
+
+	return d;
+}
+
+void ScriptCastMember::setField(int field, const Datum &d) {
+	switch (field) {
+	case kTheScriptType:
+		warning("ScriptCastMember::setField(): setting scriptType! This probably isn't going to work as it doesn't recategorize the script.");
+		if (d.type == SYMBOL) {
+			if (d.u.s->equalsIgnoreCase("movie")) {
+				_scriptType = kMovieScript;
+			} else if (d.u.s->equalsIgnoreCase("score")) {
+				_scriptType = kScoreScript;
+			} else if (d.u.s->equalsIgnoreCase("parent")) {
+				_scriptType = kParentScript;
+			}
+		}
+		return;
+	default:
+		break;
+	}
+
+	CastMember::setField(field, d);
+}
+
 Common::String ScriptCastMember::formatInfo() {
 	return Common::String::format(
 		"scriptType: %s", scriptType2str(_scriptType)
 	);
+}
+
+bool ScriptCastMember::canWriteCastData() {
+	return _cast->_version >= kFileVer400 && _cast->_version < kFileVer1200;
+}
+
+uint32 ScriptCastMember::getCastDataSize() {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// 2 bytes for type and unk1 + 2 byte for castType and flags ma(see Cast::loadCastData() for Director 4 only
+		return 2 + 2;
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer1200) {
+		return 2;
+	} else {
+		warning("ScriptCastMember::getCastDataSize(): invalid or unhandled Script version: %d", _cast->_version);
+		return 0;
+	}
+}
+
+void ScriptCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer1200) {
+		writeStream->writeByte(0);		// unknown
+
+		switch (_scriptType) {
+		case kScoreScript:
+			writeStream->writeByte(1);
+			break;
+		case kMovieScript:
+			writeStream->writeByte(3);
+			break;
+		case kParentScript:
+			writeStream->writeByte(7);
+			break;
+		default:
+			break;
+		}
+	} else {
+		warning("ScriptCastMember::writeCastData(): invalid or unhandled Script version: %d", _cast->_version);
+	}
 }
 
 }

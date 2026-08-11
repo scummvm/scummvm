@@ -511,7 +511,7 @@ protected:
 	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
 	void doorOpened() override;
 
-	void updateCursor(const Common::Point, const Hotspot *) override;
+	void updateCursor(const Common::Point &, const Hotspot *) override;
 
 	FlagsArray<uint16, kNumCaldoriaPrivateFlags> _privateFlags;
 

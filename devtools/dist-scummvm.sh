@@ -32,11 +32,12 @@ toolsrepo='https://github.com/scummvm/scummvm-tools.git'
 ### init
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <scummvm | scummvm-tools> <version-number> [<temporary-directory> [<tag>]]"
+  echo "Usage: $0 <scummvm | scummvm-tools> <version-number> [<absolute-path-to-temporary-directory>] [<tag>]"
   exit 1
 fi
 
 echo_n() {
+	# shellcheck disable=SC2059
 	printf "$@"
 }
 
@@ -48,6 +49,7 @@ if [ -z "$tag" ]; then
   tag="v$version"
 fi
 fullname="$module-$version"
+repodir=`pwd`
 
 # Check modules
 case $module in
@@ -62,6 +64,11 @@ scummvm-tools)
     exit 1
 esac
 
+if [ ! -f "$repodir/dists/codeblocks/scummvm.cbp" ]; then
+  echo "Code::Blocks project file scummvm.cbp not found in dists/codeblocks"
+  echo "Please run 'make ideprojects' first to generate the project files."
+  exit 1
+fi
 
 echo "packaging $module release $version, GIT tag $tag"
 
@@ -88,9 +95,18 @@ fi
 
 cd $tmpdir/$fullname
 
+echo_n "Create GIT bundle for $tag..."
+git reset $tag --hard --quiet
+if git bundle create $tag.bundle --all --quiet 2>/dev/null; then
+    mv $tag.bundle $tmpdir/$fullname.bundle && echo "done"
+else
+    echo "creating bundle for $tag failed."
+    exit 1
+fi
+
 echo_n "Checking out tag $tag..."
 if git checkout $tag --quiet 2>/dev/null; then
-    echo done
+    echo "done"
 else
     echo "checking out tag $tag failed."
     exit 1
@@ -98,8 +114,12 @@ fi
 
 cd $tmpdir
 
-echo "Cleaning up .git directory"
+echo "Cleaning up .git temporary bundle directories..."
 rm -rf $fullname/.git
+
+echo "Copying ideprojects files..."
+cp -rp $repodir/dists/codeblocks/engines $repodir/dists/codeblocks/*.workspace $repodir/dists/codeblocks/*.cbp $fullname/dists/codeblocks/
+cp -rp $repodir/dists/msvc/engines $repodir/dists/msvc/*.sln $repodir/dists/msvc/*.vcxproj $repodir/dists/msvc/*.vcxproj.filters $repodir/dists/msvc/*.props $fullname/dists/msvc/
 
 ### roll the tarball
 
@@ -147,12 +167,12 @@ fi
 
 echo ""
 echo "The following release tarball archives have been created:"
-ls -l $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+ls -l $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip $fullname.bundle
 echo ""
 echo "SHA256 checksums (recommended):"
-shasum -a 256 $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+shasum -a 256 $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip $fullname.bundle
 echo ""
 echo "MD5 checksums (deprecated):"
-md5sum $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+md5sum $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip $fullname.bundle
 
 exit 0

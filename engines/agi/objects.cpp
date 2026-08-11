@@ -86,17 +86,7 @@ int AgiEngine::loadObjects(const char *fname) {
 	if (!fp.open(fname))
 		return errBadFileOpen;
 
-	return readObjects(fp, fp.size());
-}
-
-/**
- * Loads an object file that is in the common VOL resource format. Expects
- * the file pointer to point to the last field in header, ie. file length.
- * This is used at least by the V1 booter games.
- */
-int AgiEngine::loadObjects(Common::File &fp) {
-	int flen = fp.readUint16LE();
-	return readObjects(fp, flen);
+	return loadObjects(fp, fp.size());
 }
 
 /**
@@ -105,16 +95,14 @@ int AgiEngine::loadObjects(Common::File &fp) {
  * @param  fp    File pointer
  * @param  flen  File length
  */
-int AgiEngine::readObjects(Common::File &fp, int flen) {
+int AgiEngine::loadObjects(Common::SeekableReadStream &fp, int flen) {
 	uint8 *mem;
 
 	if ((mem = (uint8 *)calloc(1, flen + 32)) == nullptr) {
-		fp.close();
 		return errNotEnoughMemory;
 	}
 
 	fp.read(mem, flen);
-	fp.close();
 
 	decodeObjects(mem, flen);
 	free(mem);
@@ -123,7 +111,7 @@ int AgiEngine::readObjects(Common::File &fp, int flen) {
 
 void AgiEngine::objectSetLocation(uint16 objectNr, int location) {
 	if (objectNr >= _game.numObjects) {
-		warning("AgiEngine::objectSetLocation: Can't access object %d.\n", objectNr);
+		warning("AgiEngine::objectSetLocation: Can't access object %d", objectNr);
 		return;
 	}
 	_objects[objectNr].location = location;
@@ -131,7 +119,7 @@ void AgiEngine::objectSetLocation(uint16 objectNr, int location) {
 
 int AgiEngine::objectGetLocation(uint16 objectNr) {
 	if (objectNr >= _game.numObjects) {
-		warning("AgiEngine::objectGetLocation: Can't access object %d.\n", objectNr);
+		warning("AgiEngine::objectGetLocation: Can't access object %d", objectNr);
 		return 0;
 	}
 	return _objects[objectNr].location;
@@ -139,7 +127,7 @@ int AgiEngine::objectGetLocation(uint16 objectNr) {
 
 const char *AgiEngine::objectName(uint16 objectNr) {
 	if (objectNr >= _game.numObjects) {
-		warning("AgiEngine::objectName: Can't access object %d.\n", objectNr);
+		warning("AgiEngine::objectName: Can't access object %d", objectNr);
 		return "";
 	}
 	return _objects[objectNr].name.c_str();

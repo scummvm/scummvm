@@ -27,35 +27,34 @@
 namespace AGS {
 
 enum AGSDebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugPath     = 1 << 1,
-	kDebugScan     = 1 << 2,
-	kDebugFilePath = 1 << 3,
-	kDebugScript   = 1 << 4
+	kDebugGraphics = 1,
+	kDebugPath,
+	kDebugScan,
+	kDebugFilePath,
+	kDebugScript,
 };
 
 enum GameFlag {
-	GAMEFLAG_FORCE_AA = 1,
-	GAMEFLAG_INSTALLER = 2,
-};
+	GAMEFLAG_PLUGINS_MASK = 0xff,
+	GAMEFLAG_PLUGINS_NONE = 0,
+	GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE = 1,
+	GAMEFLAG_PLUGINS_AGS_FLASHLIGHT = 2,
+	GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP = 3,
 
-struct PluginVersion {
-	const char *_plugin;
-	int _version;
+	GAMEFLAG_FORCE_AA = 1 << 8,
 };
 
 struct AGSGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
-	const PluginVersion *_plugins;
-	const char *_mainNameInsideInstaller;
+
+	uint32 features;
 };
 
 extern const PlainGameDescriptor GAME_NAMES[];
 
 extern const AGSGameDescription GAME_DESCRIPTIONS[];
-
-enum AGSSteamVersion { kAGSteam = 0, kWadjetEye = 1 };
-enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 
 #define GAMEOPTION_NO_SAVE_THUMBNAIL GUIO_GAMEOPTIONS1
 #define GAMEOPTION_NO_AUTOSAVE		 GUIO_GAMEOPTIONS2
@@ -64,10 +63,10 @@ enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 } // namespace AGS
 
 
-class AGSMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AGSMetaEngineDetection : public AdvancedMetaEngineDetection<AGS::AGSGameDescription> {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
-	mutable Common::Path _filename;
+	mutable Common::String _filenameStr;
 	mutable Common::String _md5;
 
 	static const DebugChannelDef debugFlagList[];

@@ -45,12 +45,14 @@ public:
 	virtual void stopAudioStream() = 0;
 	void fastForward();
 	bool isFastForwarding();
-	virtual void drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color, bool blackBackground) {}
+	virtual void drawString(Graphics::Surface *surface, const Common::String &text, int posx, int posy, uint32 color, bool blackBackground) {}
 	virtual void copyfgtobg(uint8 arg) {}
 	void setOverrideSpeed(bool isOverride);
 
 	void loadSubtitles(const char *fname) { _subtitles.loadSRTFile(fname); }
 	void unloadSubtitles();
+
+	virtual bool isFileHandled() { return false; }
 
 protected:
 	// To be implemented by subclasses
@@ -79,7 +81,7 @@ private:
 	Video::Subtitles _subtitles;
 
 protected:
-	void waitFrame();
+	virtual void waitFrame();
 };
 
 } // End of Groovie namespace

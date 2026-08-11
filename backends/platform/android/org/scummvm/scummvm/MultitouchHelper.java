@@ -1,9 +1,29 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 package org.scummvm.scummvm;
 
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MOUSE_WHEEL_DOWN;
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MOUSE_WHEEL_UP;
-import static org.scummvm.scummvm.ScummVMEventsBase.JE_MULTI;
+import static org.scummvm.scummvm.ScummVMEvents.JE_MOUSE_WHEEL_DOWN;
+import static org.scummvm.scummvm.ScummVMEvents.JE_MOUSE_WHEEL_UP;
+import static org.scummvm.scummvm.ScummVMEvents.JE_MULTI;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -78,7 +98,7 @@ public class MultitouchHelper {
 	// 2: no "scrolling" (mouse wheel) (decided)
 	// Scrolling (mouse wheel) mode is mutually exclusive with the rest of the multi-touch modes,
 	// we can either send mouse wheel events or mouse click events in a multitouch session.
-	private int _touchMouseWheelDecisionLevel = 0;
+	private int _touchMouseWheelDecisionLevel;
 
 	// constructor
 	public MultitouchHelper(ScummVM scummvm) {
@@ -149,8 +169,8 @@ public class MultitouchHelper {
 
 			pointerIndex = 0;
 			_firstPointerId = event.getPointerId(pointerIndex);
-			_cachedActionEventOnPointer1DownX = (int) event.getX(pointerIndex);;
-			_cachedActionEventOnPointer1DownY = (int) event.getY(pointerIndex);;
+			_cachedActionEventOnPointer1DownX = (int) event.getX(pointerIndex);
+			_cachedActionEventOnPointer1DownY = (int) event.getY(pointerIndex);
 			return false;
 
 		} else if (maskedAction == MotionEvent.ACTION_CANCEL) {

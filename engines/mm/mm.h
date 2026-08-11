@@ -28,10 +28,10 @@
 namespace MM {
 
 enum MightAndMagicDebugChannels {
-	kDebugPath = 1 << 0,
-	kDebugScripts = 1 << 1,
-	kDebugGraphics = 1 << 2,
-	kDebugSound = 1 << 3
+	kDebugPath = 1,
+	kDebugScripts,
+	kDebugGraphics,
+	kDebugSound,
 };
 
 class MMEngine : public Engine {

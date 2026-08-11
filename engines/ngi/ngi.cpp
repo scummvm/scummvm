@@ -26,6 +26,7 @@
 #include "common/debug-channels.h"
 #include "audio/mixer.h"
 
+#include "engines/metaengine.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 
@@ -42,7 +43,6 @@
 #include "ngi/floaters.h"
 #include "ngi/console.h"
 #include "ngi/constants.h"
-
 namespace NGI {
 
 NGIEngine *g_nmi = nullptr;
@@ -222,14 +222,14 @@ bool NGIEngine::shouldQuit() {
 Common::Error NGIEngine::loadGameState(int slot) {
 	deleteModalObject();
 
-	if (_gameLoader->readSavegame(getSavegameFile(slot)))
+	if (_gameLoader->readSavegame(g_nmi->getMetaEngine()->getSavegameFile(slot,"fullpipe").c_str()))
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;
 }
 
 Common::Error NGIEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
-	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot), description))
+	if (_gameLoader->writeSavegame(_currentScene, g_nmi->getMetaEngine()->getSavegameFile(slot,"fullpipe").c_str(), description))
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;
@@ -240,12 +240,14 @@ Common::String NGIEngine::getSaveStateName(int slot) const {
 }
 
 Common::Error NGIEngine::run() {
-	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	// Initialize backend
-	initGraphics(800, 600, &format);
+	initGraphics(800, 600, nullptr);
+
+	const Graphics::PixelFormat format = g_system->getScreenFormat();
+	if (format.isCLUT8())
+		return Common::kUnsupportedColorMode;
 
 	_backgroundSurface.create(800, 600, format);
-	_origFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	_globalMessageQueueList.reset(new GlobalMessageQueueList);
 	_behaviorManager.reset(new BehaviorManager);
@@ -343,6 +345,12 @@ void NGIEngine::updateEvents() {
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+			ex->_param = event.customType;
+			ex->_excFlags |= 3;
+			ex->handle();
+			break;
 		case Common::EVENT_KEYDOWN:
 			_keyState = event.kbd.keycode;
 

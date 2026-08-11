@@ -240,7 +240,7 @@ void Room::loveaTimer2Expired() {
 		_awayMission->love.spockInfectionCounter++;
 		if (_awayMission->love.spockInfectionCounter >= 100) { // Spock succumbs, game over
 			loadActorAnim(OBJECT_SPOCK, "sgetdn", -1, -1, 0);
-			playMidiMusicTracks(2, -1); // FIXME: assembly had no second parameter...?
+			playMidiMusicTracks(MIDITRACK_2); // FIXME: assembly had no second parameter...?
 			showDescription(TX_GENER004);
 			showGameOverMenu();
 		} else if (_awayMission->love.spockInfectionCounter == 15) {
@@ -304,7 +304,7 @@ void Room::loveaUseHumanLaughingGas() {
 	showText(TX_SPEAKER_SPOCK, TX_MUD2_040);
 	_awayMission->love.releasedHumanLaughingGas = true;
 	loseItem(OBJECT_IN2O);
-	playMidiMusicTracks(3, -1); // FIXME: assembly had no second parameter...?
+	playMidiMusicTracks(MIDITRACK_3); // FIXME: assembly had no second parameter...?
 
 	// BUGFIX: start the effects immediately
 	_awayMission->timers[0] = getRandomWordInRange(200, 400);

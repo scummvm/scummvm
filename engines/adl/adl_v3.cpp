@@ -58,15 +58,13 @@ void AdlEngine_v3::loadItemDescriptions(Common::SeekableReadStream &stream, byte
 int AdlEngine_v3::o_isNounNotInRoom(ScriptEnv &e) {
 	OP_DEBUG_1("\t&& NO_SUCH_ITEMS_IN_ROOM(%s)", itemRoomStr(e.arg(1)).c_str());
 
-	Common::List<Item>::const_iterator item;
-
 	bool isAnItem = false;
 
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun == e.getNoun()) {
+	for (const auto &item : _state.items) {
+		if (item.noun == e.getNoun()) {
 			isAnItem = true;
 
-			if (item->room == roomArg(e.arg(1)))
+			if (item.room == roomArg(e.arg(1)))
 				return -1;
 		}
 	}

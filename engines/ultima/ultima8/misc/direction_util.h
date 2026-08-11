@@ -24,7 +24,7 @@
 
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/ultima8.h"
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -97,7 +97,7 @@ inline Direction Direction_Get(int deltay, int deltax, DirectionMode dirmode) {
 			return dydx >= -424 ? dir_southwest : dydx >= -2472 ? dir_west
 				   : dir_northwest;
 	} else {
-		double angle = Common::rad2deg(atan2(deltay, deltax));
+		double angle = Math::rad2deg(atan2(deltay, deltax));
 		if (angle < -168.75)      return dir_southwest;
 		else if (angle < -146.25) return dir_ssw;
 		else if (angle < -123.75) return dir_south;
@@ -138,7 +138,7 @@ inline Direction Direction_GetWorldDir(int deltay, int deltax, DirectionMode dir
 		else			// south-west
 			return dydx >= -424 ? dir_west : dydx >= -2472 ? dir_southwest : dir_south;
 	} else {
-		double angle = Common::rad2deg(atan2(deltay, deltax));
+		double angle = Math::rad2deg(atan2(deltay, deltax));
 		if (angle < -168.75)      return dir_west;
 		else if (angle < -146.25) return dir_wnw;
 		else if (angle < -123.75) return dir_northwest;

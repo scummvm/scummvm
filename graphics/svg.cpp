@@ -29,11 +29,7 @@
 #define NANOSVGRAST_IMPLEMENTATION
 #include "graphics/nanosvg/nanosvgrast.h"
 
-#ifdef SCUMM_BIG_ENDIAN
-#define PIXELFORMAT Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
-#else
-#define PIXELFORMAT Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)
-#endif
+#define PIXELFORMAT Graphics::PixelFormat::createFormatRGBA32()
 
 namespace Graphics {
 

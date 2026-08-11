@@ -48,6 +48,31 @@ static const int actorAnimationData[21] = {20, 21, 22, 23, 24, 25, 26, 13, 14, 1
 	18, 19, 6, 7, 8, 9, 10, 11, 12};
 
 
+// The Rebel Assault subclasses don't use any of the Full Throttle state, but it
+// still has to be initialized: ~Insane() releases the resource pointers below
+// unconditionally, and initvars() covers every other member.
+Insane::Insane() {
+	_vm = nullptr;
+	_player = nullptr;
+
+	initvars();
+	_speed = 0;
+
+	_smush_roadrashRip = nullptr;
+	_smush_roadrsh2Rip = nullptr;
+	_smush_roadrsh3Rip = nullptr;
+	_smush_goglpaltRip = nullptr;
+	_smush_tovista1Flu = nullptr;
+	_smush_tovista2Flu = nullptr;
+	_smush_toranchFlu = nullptr;
+	_smush_minedrivFlu = nullptr;
+	_smush_minefiteFlu = nullptr;
+	_smush_bencutNut = nullptr;
+	_smush_bensgoggNut = nullptr;
+	_smush_iconsNut = nullptr;
+	_smush_icons2Nut = nullptr;
+}
+
 Insane::Insane(ScummEngine_v7 *scumm) {
 	_vm = scumm;
 
@@ -184,11 +209,12 @@ void Insane::initvars() {
 		for (j = 0; j < 9; j++)
 			_enHdlVar[i][j] = 0;
 
-	for (i = 0; i < 0x80; i++)
+	for (i = 0; i < 0x401; i++)
 		_iactBits[i] = 0;
 
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
+	// _vm is null when initvars() runs for the Rebel Assault subclasses.
+	if (_vm && (_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 60, 0, INV_MACE, 63, "endcrshr.san",
 						 25, 15, 16, 26, 13, 3);
 	} else {
@@ -371,7 +397,7 @@ void Insane::initvars() {
 	init_scenePropStruct(138, 57, 0, 59, 134, 0xFF, 0xFF, 0xFF, 0, 30, 0);
 
 	_actor[0].damage = 0;
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
+	if (_vm && (_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 		_actor[0].maxdamage = 60;
 	else
 		_actor[0].maxdamage = 80;
@@ -468,7 +494,7 @@ void Insane::init_actStruct(int actornum, int actnum, int32 actorval, byte state
 }
 
 void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
-								   int16 occurences, int32 maxdamage, int32 isEmpty,
+								   int16 occurrences, int32 maxdamage, int32 isEmpty,
 								   int32 weapon, int32 sound, const char *filename,
 								   int32 costume4, int32 costume6, int32 costume5,
 								   int16 costumevar, int32 maxframe, int32 apprAnim) {
@@ -476,7 +502,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 
 	_enemy[n].handler = handler;
 	_enemy[n].initializer = initializer;
-	_enemy[n].occurences = occurences;
+	_enemy[n].occurrences = occurrences;
 	_enemy[n].maxdamage = maxdamage;
 	_enemy[n].isEmpty = isEmpty;
 	_enemy[n].weapon = weapon;
@@ -611,14 +637,16 @@ int32 Insane::processKeyboard() {
 }
 
 void Insane::readFileToMem(const char *name, byte **buf) {
-	ScummFile in(_vm);
+	ScummFile *file = _vm->instantiateScummFile();
 	uint32 len;
 
-	if (!_vm->openFile(in, name))
+	if (!_vm->openFile(*file, name))
 		error("Cannot open file %s", name);
-	len = in.size();
+	len = file->size();
 	*buf = (byte *)malloc(len);
-	in.read(*buf, len);
+	file->read(*buf, len);
+	file->close();
+	delete file;
 }
 
 void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
@@ -684,15 +712,15 @@ void Insane::readState() { // PATCH
 		_posBrokenCar = readArray(326);
 		_val54d = readArray(327);
 		_posFatherTorque = readArray(328);
-		_enemy[EN_TORQUE].occurences = readArray(337);
-		_enemy[EN_ROTT1].occurences = readArray(329);
-		_enemy[EN_ROTT2].occurences = readArray(330);
-		_enemy[EN_ROTT3].occurences = readArray(331);
-		_enemy[EN_VULTF1].occurences = readArray(332);
-		_enemy[EN_VULTM1].occurences = readArray(333);
-		_enemy[EN_VULTF2].occurences = readArray(334);
-		_enemy[EN_VULTM2].occurences = readArray(335);
-		_enemy[EN_CAVEFISH].occurences = readArray(336);
+		_enemy[EN_TORQUE].occurrences = readArray(337);
+		_enemy[EN_ROTT1].occurrences = readArray(329);
+		_enemy[EN_ROTT2].occurrences = readArray(330);
+		_enemy[EN_ROTT3].occurrences = readArray(331);
+		_enemy[EN_VULTF1].occurrences = readArray(332);
+		_enemy[EN_VULTM1].occurrences = readArray(333);
+		_enemy[EN_VULTF2].occurrences = readArray(334);
+		_enemy[EN_VULTM2].occurrences = readArray(335);
+		_enemy[EN_CAVEFISH].occurrences = readArray(336);
 		_enemy[EN_VULTM2].isEmpty = readArray(340);
 		_enemy[EN_VULTF2].isEmpty = readArray(339);
 		_enemy[EN_CAVEFISH].isEmpty = readArray(56);
@@ -715,12 +743,12 @@ void Insane::readState() { // PATCH
 
 		// FIXME
 		// This used to be here but.
-		//  - bootparam 551 gives googles without cavefish met
-		//  - when you get the ramp, googles disappear, but you already won the cavefish
+		//  - bootparam 551 gives goggles without cavefish met
+		//  - when you get the ramp, goggles disappear, but you already won the cavefish
 		// Incorrect situation would be
-		//  you won cavefish, don't have googles, don't have ramp
+		//  you won cavefish, don't have goggles, don't have ramp
 		//
-		// So if you find out what how to check ramp presense, feel free to add check here
+		// So if you find out how to check ramp presence, feel free to add check here
 		// (beware of FT ver a and ver b. In version b var311 is inserted and all vars >311
 		// are shifted),
 		//
@@ -1262,7 +1290,7 @@ void Insane::smlayer_soundSetPriority(int32 soundId, int32 priority) {
 void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam,
 			   int32 x, int32 y, int32 arg_10, NutRenderer *nutfile,
 			   int32 c, int32 arg_1C, int32 arg_20) {
-	nutfile->drawFrame(renderBitmap, c, x, y);
+	nutfile->drawFrame(renderBitmap, c, x, y, codecparam); // codecparam appears to be pitch
 }
 
 void Insane::smlayer_overrideDrawActorAt(byte *arg_0, byte arg_4, byte arg_8) {
@@ -1355,13 +1383,13 @@ void Insane::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 }
 
 bool Insane::isBitSet(int n) {
-	assert (n < 0x80);
+	assert (n < 0x200);
 
 	return (_iactBits[n] != 0);
 }
 
 void Insane::setBit(int n) {
-	assert (n < 0x80);
+	assert (n < 0x200);
 
 	_iactBits[n] = 1;
 }

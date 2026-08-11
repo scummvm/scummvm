@@ -64,7 +64,7 @@ iGameEntity::iGameEntity(cInit *apInit, const tString &asName) {
 
 	mpCharBody = NULL;
 
-	mType = eGameEntityType_Unkown;
+	mType = eGameEntityType_Unknown;
 
 	msDescription = _W("");
 	msGameName = _W("");

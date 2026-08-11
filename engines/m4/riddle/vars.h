@@ -32,18 +32,17 @@
 namespace M4 {
 namespace Riddle {
 
-enum global_triggers {
-	gFIRST_GLOBAL_TRIGGER = 10000,
+#define LETTERBOX_Y 30
 
-	kCALLED_EACH_LOOP = 32764
+enum global_triggers {
+	kINVENTORY_CLOSEUP_END = 990,
+	kCALLED_EACH_LOOP = 32764,
+	kGOTO_MAIN_MENU = 32766
 };
 
 class Vars : public M4::Vars {
 private:
-	static void custom_ascii_converter_proc(char *string);
-	static void escape_key_pressed(void *, void *);
-	static void cb_F2(void *, void *);
-	static void cb_F3(void *, void *);
+	static void spanish_ascii_converter_proc(char *string);
 
 protected:
 	void main_cold_data_init() override;
@@ -53,6 +52,20 @@ public:
 	Riddle::Walker _walker;
 	Riddle::Hotkeys _hotkeys;
 	Riddle::GUI::Interface _interface;
+	bool _menuSystemInitialized = false;
+	int _global301 = 0;
+	bool _room303_btnFlag = false;
+	int _flag1 = 0;
+	int _204_dword1A1898 = 0;
+	bool _kittyScreaming = false;
+	bool _spleenSpraying = false;
+	Common::String _string1;
+	Common::String _string2;
+	Common::String _string3;
+	int _ripSketching = 0;
+	TextScrn *_messageScreen = nullptr;
+	int32 _messageLogTrigger = 0;
+	int32 _messageLogResult = 0;
 
 public:
 	Vars();

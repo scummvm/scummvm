@@ -27,7 +27,6 @@
 //
 // Only streams with uncommon behavior should be derived directly from Stream.
 // Most I/O devices should inherit DataStream instead.
-// Streams that wrap other streams should inherit ProxyStream.
 //
 //=============================================================================
 
@@ -35,6 +34,7 @@
 #define AGS_SHARED_UTIL_STREAM_H
 
 #include "ags/shared/util/iags_stream.h"
+#include "ags/shared/util/string.h"
 #include "ags/lib/allegro/file.h"
 #include "common/stream.h"
 #include "common/types.h"
@@ -51,12 +51,17 @@ enum StreamWorkMode {
 
 class Stream : public IAGSStream {
 public:
+	Stream() = default;
+	Stream(const String &path)
+		: _path(path) {}
 	virtual ~Stream() {}
 
-	// Tells if the stream has errors
-	virtual bool HasErrors() const {
-		return false;
-	}
+	// Returns an optional path of a stream's source, such as a filepath;
+	// primarily for diagnostic purposes
+	const String &GetPath() const { return _path; }
+	// Tells if there were errors during previous io operation(s);
+	// the call to GetError() *resets* the error record.
+	virtual bool GetError() const { return false; }
 	// Flush stream buffer to the underlying device
 	virtual bool Flush() = 0;
 
@@ -91,6 +96,9 @@ public:
 
 	// Fill the requested number of bytes with particular value
 	size_t WriteByteCount(uint8_t b, size_t count);
+
+protected:
+	String _path; // optional name of the stream's source (e.g. filepath)
 };
 
 class ScummVMReadStream : public Common::SeekableReadStream {
@@ -290,11 +298,11 @@ public:
 		return 0;
 	}
 
-	bool Seek(soff_t offset, StreamSeek origin = kSeekCurrent) override {
+	soff_t Seek(soff_t offset, StreamSeek origin = kSeekCurrent) override {
 		return _stream->seek(offset, origin);
 	}
 
-	bool HasErrors() const override {
+	bool GetError() const override {
 		return _stream->err();
 	}
 	bool Flush() override {

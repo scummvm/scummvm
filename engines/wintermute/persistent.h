@@ -59,8 +59,8 @@ namespace Wintermute {
 		return ::new className(DYNAMIC_CONSTRUCTOR, DYNAMIC_CONSTRUCTOR);\
 	}\
 	\
-	bool className::persistLoad(void *instance, BasePersistenceManager *persistMgr) {\
-		return ((className*)instance)->persist(persistMgr);\
+	bool className::persistLoad(void *Instance, BasePersistenceManager *persistMgr) {\
+		return ((className*)Instance)->persist(persistMgr);\
 	}\
 	\
 	const char *className::getClassName() {\
@@ -82,7 +82,7 @@ namespace Wintermute {
 
 #define TMEMBER(memberName) #memberName, &memberName
 #define TMEMBER_PTR(memberName) #memberName, &memberName
-#define TMEMBER_INT(memberName) #memberName, (int32*)&memberName
+#define TMEMBER_INT(memberName) #memberName, (int32 *)&memberName
 
 } // End of namespace Wintermute
 

@@ -35,13 +35,17 @@ void HugoMetaEngine::getSupportedGames(PlainGameList &games) {
 	}
 }
 
+const GlkDetectionEntry* HugoMetaEngine::getDetectionEntries() {
+	return HUGO_GAMES;
+}
+
 GameDescriptor HugoMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = HUGO_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
 	}
 
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 bool HugoMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {

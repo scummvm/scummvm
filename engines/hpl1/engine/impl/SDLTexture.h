@@ -32,8 +32,9 @@
 #include "hpl1/engine/graphics/Texture.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
+#include "hpl1/opengl.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 namespace hpl {
 
@@ -52,9 +53,6 @@ public:
 	bool Create(unsigned int alWidth, unsigned int alHeight, cColor aCol);
 
 	bool CreateFromArray(unsigned char *apPixelData, int alChannels, const cVector3l &avSize);
-
-	void SetPixels2D(int alLevel, const cVector2l &avOffset, const cVector2l &avSize,
-					 eColorDataFormat aDataFormat, void *apPixelData);
 
 	float GetGamma() { return 0; }
 	void SetGamma(float afGamma) {}
@@ -101,5 +99,5 @@ private:
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL
 #endif // HPL_SDL_TEXTURE_H

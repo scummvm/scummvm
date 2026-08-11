@@ -25,6 +25,7 @@
  *  - buried
  *  - hugo
  *  - mohawk
+ *  - qdengine
  *  - wintermute
  */
 
@@ -33,6 +34,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "graphics/palette.h"
 #include "image/image_decoder.h"
 
 namespace Common {
@@ -70,23 +72,36 @@ public:
 	virtual ~BitmapDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 
 private:
 	Codec *_codec;
 	const Graphics::Surface *_surface;
-	byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 };
 
 /**
  * Outputs an uncompressed BMP stream of the given input surface.
+ *
+ *  @param out  Stream to which to write the BMP image.
+ *  @param input The surface to save as a BMP image..
+ *  @param palette    The palette (in RGB888), if the source format has a bpp of 1.
+ *  @param paletteCount Number of colors in the palette (default: 256).
  */
-bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette = nullptr);
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette = nullptr, uint paletteCount = 256);
+
+/**
+ * Outputs an uncompressed BMP stream of the given input surface.
+ *
+ *  @param out  Stream to which to write the BMP image.
+ *  @param input The surface to save as a BMP image..
+ *  @param palette    The palette if the source format has a bpp of 1.
+ */
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const Graphics::Palette &palette);
+
 /** @} */
 } // End of namespace Image
 

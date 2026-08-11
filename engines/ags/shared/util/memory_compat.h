@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_UTIL_MEMORY_COMPAT_H
 #define AGS_SHARED_UTIL_MEMORY_COMPAT_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 
 namespace AGS3 {
 

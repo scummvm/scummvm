@@ -51,11 +51,11 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(windowsPath),
-				Common::String("C:\\some\\")
+				Common::String("C:/some/")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(windowsCapPath),
-				Common::String("C:\\SOME\\")
+				Common::String("C:/SOME/")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(emptyString),
@@ -67,7 +67,7 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(windowsDirPath),
-				Common::String("C:\\some\\dir\\")
+				Common::String("C:/some/dir/")
 				);
 	}
 
@@ -113,11 +113,11 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 	void test_getextension() {
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(windowsPath),
-				Common::String("ext")
+				Common::String(".ext")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(windowsCapPath),
-				Common::String("EXT")
+				Common::String(".EXT")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(emptyString),
@@ -125,19 +125,19 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(dualExtPath),
-				Common::String("gz")
+				Common::String(".gz")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(manyExtPath),
-				Common::String("zip")
+				Common::String(".zip")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(unixRelativePath),
-				Common::String("ext")
+				Common::String(".ext")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(windowsRelativePath),
-				Common::String("ext")
+				Common::String(".ext")
 				);
 	}
 
@@ -176,28 +176,24 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(windowsPath) +
 				Wintermute::PathUtil::getFileNameWithoutExtension(windowsPath) +
-				"." +
 				Wintermute::PathUtil::getExtension(windowsPath),
-				windowsPath
+				Common::String("C:/some/file.ext")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(windowsCapPath) +
 				Wintermute::PathUtil::getFileNameWithoutExtension(windowsCapPath) +
-				"." +
 				Wintermute::PathUtil::getExtension(windowsCapPath),
-				windowsCapPath
+				Common::String("C:/SOME/FILE.EXT")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(unixCapPath) +
 				Wintermute::PathUtil::getFileNameWithoutExtension(unixCapPath) +
-				"." +
 				Wintermute::PathUtil::getExtension(unixCapPath),
 				unixCapPath
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(manyExtPath) +
 				Wintermute::PathUtil::getFileNameWithoutExtension(manyExtPath) +
-				"." +
 				Wintermute::PathUtil::getExtension(manyExtPath),
 				manyExtPath
 				);

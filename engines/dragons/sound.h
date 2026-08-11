@@ -24,7 +24,7 @@
 #include "common/scummsys.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
-#include "midimusicplayer.h"
+#include "dragons/midimusicplayer.h"
 
 
 namespace Dragons {

@@ -317,6 +317,7 @@ void ScummEngine_v80he::setupScummVars() {
 	VAR_PLATFORM_VERSION = 79;
 	VAR_CURRENT_CHARSET = 80;
 	VAR_SOUND_TOKEN_OFFSET = 84;
+	VAR_WINDEX_RUNNING = 85;
 	VAR_KEY_STATE = 86;
 	VAR_SOUND_CALLBACK_SCRIPT = 87;
 	VAR_NUM_SOUND_CHANNELS = 88;
@@ -328,7 +329,8 @@ void ScummEngine_v80he::setupScummVars() {
 void ScummEngine_v90he::setupScummVars() {
 	ScummEngine_v80he::setupScummVars();
 
-	VAR_TIMER = 97;
+	VAR_LAST_FRAME_BURN_TIME = 96;
+	VAR_LAST_FRAME_SCUMM_TIME = 97;
 	VAR_QUIT_SCRIPT = 102;
 	VAR_DEFAULT_SCRIPT_PRIORITY = 103;
 	VAR_LAST_SCRIPT_PRIORITY = 104;
@@ -337,7 +339,7 @@ void ScummEngine_v90he::setupScummVars() {
 		VAR_NUM_SPRITE_GROUPS = 105;
 		VAR_NUM_SPRITES = 106;
 		VAR_U32_VERSION = 107;
-		VAR_U32_ARRAY_UNK = 116;
+		VAR_U32_RESERVED = 116;
 		VAR_WIZ_TRANSPARENT_COLOR = 117;
 		VAR_OPERATION_FAILURE = 119;
 		VAR_START_DYN_SOUND_CHANNELS = 120;
@@ -356,7 +358,7 @@ void ScummEngine_v90he::setupScummVars() {
 #endif
 		VAR_MAIN_SCRIPT = 127;
 		VAR_NUM_PALETTES = 130;
-		VAR_NUM_UNK = 131;
+		VAR_NUM_WINDOWS = 131;
 		VAR_SPRITE_IMAGE_CHANGE_DOES_NOT_RESET_SETTINGS = 139;
 	}
 }
@@ -368,12 +370,17 @@ void ScummEngine_v100he::setupScummVars() {
 		VAR_REMOTE_START_SCRIPT = 98;
 		VAR_NETWORK_AVAILABLE = 100;
 		VAR_NETWORK_RECEIVE_ARRAY_SCRIPT = 101;
+	}
+
+	if (_game.id == GID_MOONBASE || _game.id == GID_BASKETBALL) {
 		VAR_U32_USER_VAR_A = 108;
 		VAR_U32_USER_VAR_B = 109;
 		VAR_U32_USER_VAR_C = 110;
 		VAR_U32_USER_VAR_D = 111;
 		VAR_U32_USER_VAR_E = 112;
 		VAR_U32_USER_VAR_F = 113;
+		VAR_U32_USER_VAR_G = 114;
+		VAR_U32_USER_VAR_H = 115;
 	}
 }
 #endif
@@ -735,7 +742,7 @@ void ScummEngine_v90he::resetScummVars() {
 	}
 	if (_game.heversion >= 98) {
 		VAR(VAR_U32_VERSION) = _logicHE->versionID();
-		VAR(VAR_U32_ARRAY_UNK) = 0;
+		VAR(VAR_U32_RESERVED) = 0;
 	}
 }
 
@@ -743,7 +750,7 @@ void ScummEngine_v99he::resetScummVars() {
 	ScummEngine_v90he::resetScummVars();
 
 	VAR(VAR_NUM_PALETTES) = _numPalettes;
-	VAR(VAR_NUM_UNK) = _numUnk;
+	VAR(VAR_NUM_WINDOWS) = _numWindows;
 
 	if (_game.heversion >= 100 && (_game.features & GF_16BIT_COLOR)) {
 		// Enable Bink video in 16bit color games
@@ -765,7 +772,7 @@ void ScummEngine_v100he::resetScummVars() {
 	ScummEngine_v99he::resetScummVars();
 
 	if (_game.id == GID_MOONBASE) {
-#ifdef USE_LIBCURL
+#ifdef USE_BASIC_NET
 		VAR(VAR_NETWORK_AVAILABLE) = 1;
 #else
 		VAR(VAR_NETWORK_AVAILABLE) = 0;
@@ -813,8 +820,8 @@ void ScummEngine::resetScummVars() {
 
 	if (VAR_DEBUGMODE != 0xFF) {
 		VAR(VAR_DEBUGMODE) = (_debugMode ? 1 : 0);
-		if (_game.heversion >= 80 && _debugMode)
-			VAR(85) = 1;
+		if (_game.heversion >= 80 && _debugMode && VAR_WINDEX_RUNNING != 0xFF)
+			VAR(VAR_WINDEX_RUNNING) = 1;
 	}
 
 	if (VAR_FADE_DELAY != 0xFF)
@@ -842,7 +849,9 @@ void ScummEngine::setVideoModeVarToCurrentConfig() {
 		VAR(VAR_VIDEOMODE) = 6;
 	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
 		VAR(VAR_VIDEOMODE) = 30;
-	else if (_renderMode == Common::kRenderEGA)
+	else if (_renderMode == Common::kRenderEGA && _game.version < 6)
+		// DOTT has leftover handling for VAR_VIDEOMODE in some of its scripts (room entry and verb scripts). But this hasn't been updated to work
+		// correctly, it's really just leftover from MI2. It is easier to prevent graphics glitches by just setting the var to VGA in that case.
 		VAR(VAR_VIDEOMODE) = 13;
 	else
 		VAR(VAR_VIDEOMODE) = 19;
@@ -852,23 +861,29 @@ void ScummEngine::setSoundCardVarToCurrentConfig() {
 	if (VAR_SOUNDCARD == 0xFF)
 		return;
 
+	switch (_sound->_musicType) {
+	case MDT_MACINTOSH:
+		switch (_game.id) {
+		case GID_INDY3:
+			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music")) ? 10 : 11;
+			break;
+		case GID_LOOM:
+			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_snd_quality") && ConfMan.getInt("mac_snd_quality") > 0 && ConfMan.getInt("mac_snd_quality") < 4) ? 10 : 11;
+			break;
+		case GID_MONKEY:
+			VAR(VAR_SOUNDCARD) = 0xFFFF;
+			break;
+		default:
+			VAR(VAR_SOUNDCARD) = (_game.version >= 6) ? 0 : 4; 
+			break;
+		}
+		break;
 	// VAR_SOUNDCARD modes
 	// 0 PC Speaker
 	// 1 Tandy
 	// 2 CMS
 	// 3 AdLib
 	// 4 Roland
-	switch (_sound->_musicType) {
-	case MDT_MACINTOSH:
-		if (_game.id == GID_INDY3)
-			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_v3_low_quality_music") && ConfMan.getBool("mac_v3_low_quality_music")) ? 10 : 11;
-		else if (_game.id == GID_LOOM)
-			VAR(VAR_SOUNDCARD) = (ConfMan.hasKey("mac_snd_quality") && ConfMan.getInt("mac_snd_quality") > 0 && ConfMan.getInt("mac_snd_quality") < 4) ? 10 : 11;
-		else if (_game.id == GID_MONKEY)
-			VAR(VAR_SOUNDCARD) = 0xffff;
-		else
-			VAR(VAR_SOUNDCARD) = 3;
-		break;
 	case MDT_NONE:
 	case MDT_PCSPK:
 		VAR(VAR_SOUNDCARD) = 0;

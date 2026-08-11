@@ -55,7 +55,7 @@ void GUI_TextInput::release_focus() {
 // SDL_EnableUNICODE(0); //disable unicode.
 }
 
-GUI_status GUI_TextInput::MouseUp(int x, int y, Shared::MouseButton button) {
+GUI_status GUI_TextInput::MouseUp(int x, int y, Events::MouseButton button) {
 // if(button == SDL_BUTTON_WHEELUP || button == SDL_BUTTON_WHEELDOWN)
 //   return GUI_PASS;
 //release focus if we click outside the text box.

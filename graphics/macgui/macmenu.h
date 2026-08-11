@@ -66,16 +66,17 @@ struct MacMenuItem {
 	int shortcutPos;
 	bool enabled;
 	bool checked;
+	int checkSymbol;
 	Common::Rect bbox;
 
 	MacMenuSubMenu *submenu;
 
-	MacMenuItem(const Common::String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false) :
+	MacMenuItem(const Common::String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false, int cs = 0) :
 			text(t), unicode(false), action(a), style(s), shortcut(sh),
-			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c) {}
-	MacMenuItem(const Common::U32String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false) :
+			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c), checkSymbol(cs) {}
+	MacMenuItem(const Common::U32String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false, int cs = 0) :
 			unicodeText(t), unicode(true), action(a), style(s), shortcut(sh),
-			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c) {}
+			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c), checkSymbol(cs) {}
 
 	~MacMenuItem() {
 		if (submenu)
@@ -128,6 +129,7 @@ public:
 	void loadMenuResource(Common::MacResManager *resFork, uint16 id);
 	void loadMenuBarResource(Common::MacResManager *resFork, uint16 id);
 	void createSubMenuFromString(int id, const char *string, int commandId);
+	void appendMenu(MacMenuSubMenu *submenu, const Common::String &string, int commandId);
 	void clearSubMenu(int id);
 
 	MacMenuSubMenu *getSubmenu(MacMenuSubMenu *submenu, int index);
@@ -148,6 +150,8 @@ public:
 
 	bool isVisible() { return _isVisible; }
 	void setVisible(bool visible, bool silent = false) override { _isVisible = visible; _contentIsDirty = true; }
+
+	void setFont(uint16 fontID, uint16 fontSize);
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 
@@ -170,6 +174,7 @@ public:
 
 	int getLastSelectedMenuItem() { return _lastActiveItem; };
 	int getLastSelectedSubmenuItem() { return _lastActiveSubItem; };
+	void getMenuShortCut(uint16 key, int &menuItem, int &submenuItem);
 
 	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
 
@@ -177,14 +182,16 @@ public:
 
 	int getDropdownItemHeight() { return _menuDropdownItemHeight; }
 
+	void setOverlayDirty(bool dirty) { _overlayDirty = dirty; _contentIsDirty |= dirty; }
+
 	Common::Array<MacMenuSubMenu *> _menustack;
 
 protected:
 	Common::Rect _bbox;
-	ManagedSurface _screen;
 	ItemArray _items;
 	bool _isVisible;
 	bool _dimensionsDirty;
+	bool _overlayDirty;
 	int _menuDropdownItemHeight;
 
 	int _activeItem;
@@ -203,6 +210,7 @@ private:
 private:
 	bool checkCallback(bool unicode = false);
 	const Font *getMenuFont(int slant = kMacFontRegular);
+	Common::CodePage getMenuEncoding() const;
 	const Common::String getAcceleratorString(MacMenuItem *item, const char *prefix);
 	void processTabs();
 	void processSubmenuTabs(MacMenuSubMenu *submenu);
@@ -224,11 +232,15 @@ private:
 	MacMenuItem *findMenuItem(int menuId, int itemId);
 
 
+	uint16 _fontID;
+	uint16 _fontSize;
 	const Font *_font;
 	Font *_loadedFont;
 
 	int _lastActiveItem;
 	int _lastActiveSubItem;
+
+	int _selectedItem;
 
 	bool _scrollTimerActive;
 	int _scrollDirection;

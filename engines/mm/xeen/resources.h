@@ -63,12 +63,14 @@ class Resources {
 		void syncStrings(const char **str, int count) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count, 0, 0, 0));
+			(void)tag;
 			for (int idx = 0; idx < count; ++idx)
 				syncString(str[idx]);
 		}
 		void syncStrings2D(const char **str, int count1, int count2) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, 0, 0));
+			(void)tag;
 			for (int idx = 0; idx < count1 * count2; ++idx)
 				syncString(str[idx]);
 		}
@@ -78,30 +80,35 @@ class Resources {
 		void syncNumbers(int *vals, int count) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count, 0, 0, 0));
+			(void)tag;
 			for (int idx = 0; idx < count; ++idx)
 				vals[idx] = readSint32LE();
 		}
 		void syncNumbers2D(int *vals, int count1, int count2) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, 0, 0));
+			(void)tag;
 			for (int idx = 0; idx < count1 * count2; ++idx)
 				vals[idx] = readSint32LE();
 		}
 		void syncNumbers3D(int *vals, int count1, int count2, int count3) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, count3, 0));
+			(void)tag;
 			for (int idx = 0; idx < count1 * count2 * count3; ++idx)
 				vals[idx] = readSint32LE();
 		}
 		void syncNumbers4D(int *vals, int count1, int count2, int count3, int count4) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, count3, count4));
+			(void)tag;
 			for (int idx = 0; idx < count1 * count2 * count3 * count4; ++idx)
 				vals[idx] = readSint32LE();
 		}
 		void syncBytes2D(byte *vals, int count1, int count2) {
 			uint tag = readUint32LE();
 			assert(tag == MKTAG(count1, count2, 0, 0));
+			(void)tag;
 			read(vals, count1 * count2);
 		}
 	};
@@ -196,7 +203,7 @@ public:
 	int ELEMENTAL_CATEGORIES[6];
 	int ATTRIBUTE_CATEGORIES[10];
 	int ATTRIBUTE_BONUSES[72];
-	int ELEMENTAL_RESISTENCES[37];
+	int ELEMENTAL_RESISTANCES[37];
 	int ELEMENTAL_DAMAGE[37];
 	int WEAPON_DAMAGE_BASE[35];
 	int WEAPON_DAMAGE_MULTIPLIER[35];
@@ -261,10 +268,10 @@ public:
 	const char *SPELL_PURCHASE;
 	const char *MAP_TEXT;
 	const char *LIGHT_COUNT_TEXT;
-	const char *FIRE_RESISTENCE_TEXT;
-	const char *ELECRICITY_RESISTENCE_TEXT;
-	const char *COLD_RESISTENCE_TEXT;
-	const char *POISON_RESISTENCE_TEXT;
+	const char *FIRE_RESISTANCE_TEXT;
+	const char *ELECRICITY_RESISTANCE_TEXT;
+	const char *COLD_RESISTANCE_TEXT;
+	const char *POISON_RESISTANCE_TEXT;
 	const char *CLAIRVOYANCE_TEXT;
 	const char *LEVITATE_TEXT;
 	const char *WALK_ON_WATER_TEXT;
@@ -286,7 +293,7 @@ public:
 	const char *BORN[2];
 	const char *AGE_TEXT;
 	const char *LEVEL_TEXT;
-	const char *RESISTENCES_TEXT;
+	const char *RESISTANCES_TEXT;
 	const char *NONE;
 	const char *EXPERIENCE_TEXT;
 	const char *ELIGIBLE;
@@ -411,12 +418,12 @@ public:
 	int NEW_CHAR_SKILLS_OFFSET[10];
 	int NEW_CHAR_SKILLS_LEN[10];
 	int NEW_CHAR_RACE_SKILLS[10];
-	int RACE_MAGIC_RESISTENCES[5];
-	int RACE_FIRE_RESISTENCES[5];
-	int RACE_ELECTRIC_RESISTENCES[5];
-	int RACE_COLD_RESISTENCES[5];
-	int RACE_ENERGY_RESISTENCES[5];
-	int RACE_POISON_RESISTENCES[5];
+	int RACE_MAGIC_RESISTANCES[5];
+	int RACE_FIRE_RESISTANCES[5];
+	int RACE_ELECTRIC_RESISTANCES[5];
+	int RACE_COLD_RESISTANCES[5];
+	int RACE_ENERGY_RESISTANCES[5];
+	int RACE_POISON_RESISTANCES[5];
 	int NEW_CHARACTER_SPELLS[10][4];
 	const char *COMBAT_DETAILS;
 	const char *NOT_ENOUGH_TO_CAST;

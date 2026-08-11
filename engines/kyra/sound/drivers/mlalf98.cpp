@@ -925,6 +925,7 @@ void MusicChannelFM::parse() {
 	toggleSpecialMode(usingSpecialMode());
 	SoundChannelNonSSG::parse();
 }
+
 void MusicChannelFM::noteOn(uint8 note) {
 	static uint16 freqTableFM[12] = {
 		0x026a, 0x028f, 0x02b6, 0x02df, 0x030b, 0x0339, 0x036a, 0x039e, 0x03d5, 0x0410, 0x044e, 0x048f
@@ -990,10 +991,11 @@ void MusicChannelFM::updateVibrato() {
 		return;
 	}
 
+	static const uint8 regs[] = { 0xA6, 0xAC, 0xAD, 0xAE };	
 	for (int i = 0; i < 4; ++i) {
 		uint16 frqFin = _frequency + getSpecialFrequencyModifier(i);
-		writeDevice(0xA9 + i + _regOffset, frqFin >> 8);
-		writeDevice(0xA5 + i + _regOffset, frqFin & 0xFF);
+		writeDevice(regs[i], frqFin >> 8);
+		writeDevice(regs[i] - 4, frqFin & 0xFF);
 	}
 }
 

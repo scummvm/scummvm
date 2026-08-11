@@ -212,17 +212,17 @@ int createResFileEntry(int width, int height, int size, int resType) {
 }
 
 fileTypeEnum getFileType(const char *name) {
-	char extentionBuffer[16];
+	char extensionBuffer[16];
 
 	fileTypeEnum newFileType = type_UNK;
 
-	getFileExtention(name, extentionBuffer, sizeof(extentionBuffer));
+	getFileExtension(name, extensionBuffer, sizeof(extensionBuffer));
 
-	if (!strcmp(extentionBuffer, ".SPL")) {
+	if (!strcmp(extensionBuffer, ".SPL")) {
 		newFileType = type_SPL;
-	} else if (!strcmp(extentionBuffer, ".SET")) {
+	} else if (!strcmp(extensionBuffer, ".SET")) {
 		newFileType = type_SET;
-	} else if (!strcmp(extentionBuffer, ".FNT")) {
+	} else if (!strcmp(extensionBuffer, ".FNT")) {
 		newFileType = type_FNT;
 	}
 

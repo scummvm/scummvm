@@ -26,7 +26,6 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
-#include "common/translation.h"
 
 #include "startrek/resource.h"
 #include "startrek/room.h"
@@ -39,13 +38,13 @@ bool StarTrekEngine::showSaveMenu() {
 	Common::String desc;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	dialog = new GUI::SaveLoadChooser(true);
 
 	slot = dialog->runModalWithCurrentTarget();
 	desc = dialog->getResultString();
 
 	if (desc.empty()) {
-		// create our own description for the saved game, the user didnt enter it
+		// create our own description for the saved game, the user didn't enter it
 		desc = dialog->createDefaultSaveDescription(slot);
 	}
 
@@ -64,7 +63,7 @@ bool StarTrekEngine::showLoadMenu() {
 	GUI::SaveLoadChooser *dialog;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	dialog = new GUI::SaveLoadChooser(false);
 	slot = dialog->runModalWithCurrentTarget();
 
 	delete dialog;
@@ -188,7 +187,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			_sound->clearAllMidiSlots();
 		else {
 			_sound->loadMusicFile(midiFilename);
-			_sound->playMidiMusicTracks(_sound->_loopingMidiTrack, _sound->_loopingMidiTrack);
+			_sound->playMidiTrackInSlot(0, _sound->_loopingMidiTrack);
 		}
 	}
 

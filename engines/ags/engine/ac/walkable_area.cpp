@@ -59,7 +59,7 @@ int get_area_scaling(int onarea, int xx, int yy) {
 	xx = room_to_mask_coord(xx);
 	yy = room_to_mask_coord(yy);
 
-	if ((onarea >= 0) && (onarea <= MAX_WALK_AREAS) &&
+	if ((onarea >= 0) && (onarea < MAX_WALK_AREAS) &&
 	        (_GP(thisroom).WalkAreas[onarea].ScalingNear != NOT_VECTOR_SCALED)) {
 		// We have vector scaling!
 		// In case the character is off the screen, limit the Y co-ordinate
@@ -81,7 +81,7 @@ int get_area_scaling(int onarea, int xx, int yy) {
 			zoom_level = _GP(thisroom).WalkAreas[onarea].ScalingNear;
 		}
 		zoom_level += 100;
-	} else if ((onarea >= 0) & (onarea <= MAX_WALK_AREAS))
+	} else if ((onarea >= 0) && (onarea < MAX_WALK_AREAS))
 		zoom_level = _GP(thisroom).WalkAreas[onarea].ScalingFar + 100;
 
 	if (zoom_level == 0)
@@ -148,9 +148,9 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 		CharacterInfo *char1 = &_GP(game).chars[ww];
 		int cwidth, fromx;
 
-		if (is_char_on_another(sourceChar, ww, &fromx, &cwidth))
-			continue;
-		if ((sourceChar >= 0) && (is_char_on_another(ww, sourceChar, nullptr, nullptr)))
+		// If walking character is already inside that other character's blocking rect,
+		// then ignore that blocking rect (otherwise character may get stuck forever)
+		if (is_char_in_blocking_rect(sourceChar, ww, &fromx, &cwidth))
 			continue;
 
 		remove_walkable_areas_from_temp(fromx, cwidth, char1->get_blocking_top(), char1->get_blocking_bottom());
@@ -215,7 +215,7 @@ int get_walkable_area_at_location(int xx, int yy) {
 			onarea = 0;
 	}
 
-	return onarea;
+	return (onarea >= 0 && onarea < MAX_WALK_AREAS) ? onarea : 0;
 }
 
 int get_walkable_area_at_character(int charnum) {

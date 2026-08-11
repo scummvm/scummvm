@@ -21,6 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common/translation.h"
+
 namespace Sword2 {
 
 static const ADGameDescription gameDescriptions[] = {
@@ -89,7 +91,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "speech1.clu", "a403904a0e825356107d228f8f74092e", 176260048,
 				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263,
 				   "bs2k.fnt",    nullptr,                            1222000,
-				   "korean.clu",  nullptr,                            -1),
+				   "korean.clu",  nullptr,                            AD_NO_SIZE),
 		Common::KO_KOR,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -144,6 +146,18 @@ static const ADGameDescription gameDescriptions[] = {
 				   "speech1.clg", "d49a5f3683b734d1129cbf6a0f95ae83", 57935499,
 				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263),
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{ // USA English, Windows 2-CD. Bugreport #15287
+		"sword2",
+		"USA 2-CD",
+		AD_ENTRY3s("general.clu", "11e824864a75195652610e8b397382a6", 8030769,
+				   "text.clu",    "2b3ff1803200fc155c1de09e9b2875b5", 337938,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263),
+		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO0()
@@ -281,6 +295,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // Alternate version (2 CD). Bugreport #16449
+		"sword2",
+		"English speech/alternate version",
+		AD_ENTRY3s("general.clu", "11e824864a75195652610e8b397382a6", 8030769,
+				   "text.clu",    "77fb6f58acad0f9c4eebeb5527b32861", 410707,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword2",
 		"English speech",
@@ -399,6 +425,18 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+
+	{	// Remastered version, not supported
+		"sword2",
+		_s("Remastered edition is not supported. Please, use the classic version"),
+		AD_ENTRY2s("general.clu", "5b237f3d0bbe05ceb94e271616c6e560", 33964,
+				   "docks.clu",   "9b5ddad1fb436b4897df9c6632cccbbe", 21641864),
+		Common::UNK_LANG,
+		Common::kPlatformUnknown,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+
 
 	AD_TABLE_END_MARKER
 };

@@ -22,9 +22,13 @@
 #ifndef ULTIMA8_KERNEL_USECODE_PROCESS_H
 #define ULTIMA8_KERNEL_USECODE_PROCESS_H
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/classtype.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/debugger.h"
+
+namespace Common {
+class ReadStream;
+}
 
 namespace Ultima {
 namespace Ultima8 {
@@ -143,7 +147,7 @@ protected:
 
 	//! Processes waiting for this one to finish.
 	//! When this process terminates, awaken them and pass them the result val.
-	Std::vector<ProcId> _waiting;
+	Common::Array<ProcId> _waiting;
 
 public:
 

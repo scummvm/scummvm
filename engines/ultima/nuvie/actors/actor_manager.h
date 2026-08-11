@@ -22,7 +22,7 @@
 #ifndef NUVIE_ACTORS_ACTOR_MANAGER_H
 #define NUVIE_ACTORS_ACTOR_MANAGER_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/misc/actor_list.h"
 #include "ultima/nuvie/actors/actor.h"
@@ -163,8 +163,8 @@ private:
 	bool loadCustomTiles(nuvie_game_t game_type);
 	void loadNPCTiles(const Common::Path &datadir);
 	void loadAvatarTiles(const Common::Path &datadir);
-	void loadCustomBaseTiles(const Common::Path &datadir);
-	Std::set<Std::string> getCustomTileFilenames(const Common::Path &datadir, const Std::string &filenamePrefix);
+	void loadCustomBaseTiles();
+	Common::Array<Common::String> getCustomTileFilenames(const Common::Path &datadir, const Common::String &filenamePrefix);
 };
 
 } // End of namespace Nuvie

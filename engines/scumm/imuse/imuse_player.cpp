@@ -469,7 +469,7 @@ uint16 Player::sysExNoDelay(const byte *msg, uint16 length) {
 	// but most of the time not. So it seems to be rather a delicate and race-condition prone matter. The original
 	// parser handles the timing differently than our general purpose parser and the code execution is also expected
 	// to be much slower, so that might make all the difference here. It is really a flaw of the track. The time stamps
-	// after the sysex messages should have been made a bit more generous. 
+	// after the sysex messages should have been made a bit more generous.
 	// Now, I have added some delays here that I have taken from the original DOTT MT-32 driver's sysex function which
 	// are supposed to handle the situation when _scanning is enabled. For non-_scanning situations there is no delay in
 	// the original driver, since apparently is wasn't necessary.
@@ -617,7 +617,7 @@ int Player::setTranspose(byte relative, int b) {
 	if (b > 24 || b < -24 || relative > 1)
 		return -1;
 	if (relative)
-		b = transpose_clamp(_transpose + b, -7, 7);	
+		b = transpose_clamp(_transpose + b, -7, 7);
 
 	_transpose = b;
 
@@ -789,17 +789,9 @@ int Player::scan(uint totrack, uint tobeat, uint totick) {
 }
 
 void Player::turn_off_parts() {
-	Part *part;
-
-	if (!_se->_dynamicChanAllocation) {
-		turn_off_pedals();
-		for (part = _parts; part; part = part->_next)
-			part->allNotesOff();
-	} else {
-		for (part = _parts; part; part = part->_next)
-			part->off();
-		_se->reallocateMidiChannels(_midi);
-	}
+	for (Part *part = _parts; part; part = part->_next)
+		part->off(_se->_dynamicChanAllocation);
+	_se->reallocateMidiChannels(_midi);
 }
 
 void Player::play_active_notes() {
@@ -913,7 +905,7 @@ int Player::query_part_param(int param, byte chan) {
 
 void Player::onTimer() {
 	// First handle any parameter transitions
-	// that are occuring.
+	// that are occurring.
 	transitionParameters();
 
 	// Since the volume parameter can cause
@@ -1085,7 +1077,7 @@ void Player::fixAfterLoad() {
 	_midi = _se->getBestMidiDriver(_id);
 	if (!_midi) {
 		clear();
-	} else {		
+	} else {
 		start_seq_sound(_id, false);
 		setSpeed(_speed);
 		if (_parser)
@@ -1096,7 +1088,7 @@ void Player::fixAfterLoad() {
 	}
 }
 
-void Player::metaEvent(byte type, byte *msg, uint16 len) {
+void Player::metaEvent(byte type, const byte *msg, uint16 len) {
 	if (type == 0x2F)
 		clear();
 }
@@ -1111,14 +1103,18 @@ void Player::metaEvent(byte type, byte *msg, uint16 len) {
 static void syncWithSerializer(Common::Serializer &s, ParameterFader &pf) {
 	s.syncAsSint16LE(pf.param, VER(17));
 	if (s.isLoading() && s.getVersion() < 116) {
-		int16 start, end;
-		uint32 tt, ct;
+		int16 start = 0, end = 0;
+		uint32 tt = 0, ct = 0;
 		s.syncAsSint16LE(start, VER(17));
 		s.syncAsSint16LE(end, VER(17));
 		s.syncAsUint32LE(tt, VER(17));
 		s.syncAsUint32LE(ct, VER(17));
 		int32 diff = end - start;
 		if (pf.param && diff && tt) {
+			if (tt < 10000) {
+				tt = 10000;
+				ct = tt - diff;
+			}
 			pf.dir = diff / ABS<int>(diff);
 			pf.incr = diff / (tt / 10000);
 			pf.ifrac = ABS<int>(diff) % (tt / 10000);
@@ -1128,7 +1124,7 @@ static void syncWithSerializer(Common::Serializer &s, ParameterFader &pf) {
 		}
 		pf.irem = 0;
 		pf.cntdwn = 0;
-		
+
 	} else {
 		s.syncAsSByte(pf.dir, VER(116));
 		s.syncAsSint16LE(pf.incr, VER(116));

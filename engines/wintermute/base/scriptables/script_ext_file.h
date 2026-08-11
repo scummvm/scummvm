@@ -34,17 +34,16 @@
 
 namespace Wintermute {
 
-class BaseFile;
-
 class SXFile : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(SXFile, BaseScriptable)
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
-	SXFile(BaseGame *inGame, ScStack *Stack);
+	SXFile(BaseGame *inGame, ScStack *stack);
 	~SXFile() override;
+
 private:
 	Common::SeekableReadStream *_readFile;
 	Common::WriteStream *_writeFile;
@@ -56,6 +55,7 @@ private:
 	uint32 getLength();
 	bool setPos(uint32 pos, int whence = SEEK_SET);
 	char *_filename;
+
 	Common::WriteStream *openForWrite(const Common::String &filename, bool binary);
 	Common::WriteStream *openForAppend(const Common::String &filename, bool binary);
 };

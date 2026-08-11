@@ -30,7 +30,7 @@ namespace LastExpress {
 // Sound
 //////////////////////////////////////////////////////////////////////////
 
-enum SoundTag {
+enum SoundTag : uint {
 	kSoundTagNone        = 0,
 	kSoundTagAmbient     = 1,
 	kSoundTagOldAmbient  = 2,
@@ -76,7 +76,7 @@ enum SoundTag {
     one for every non-zero volume, so I suppose the performance was an issue).
     The original game has also many events that could happen in different areas
     of the train at the same time, some of them are synchronized via the sound
-    (kActionEndSound). To deal with it, the original game uses kSoundFlagMute:
+    (kCharacterActionEndSound). To deal with it, the original game uses kSoundFlagMute:
     muted sounds don't have their own buffer, don't participate in mixing the channels,
     but the interrupt handler still tracks their progress.
     Non-audible sounds (e.g. because the corresponding event goes on in another car)
@@ -100,7 +100,7 @@ enum SoundTag {
     to just mix the silence without special processing of muted entries.
 */
 enum SoundFlag : uint {
-	kSoundVolumeEntityDefault = 0xFFFFFFFF, // special value for SoundManager::playSound; choose volume based on distance to the entity
+	kSoundVolumeEntityDefault = 0xFFFFFFFF, // special value for SoundManager::playSound; choose volume based on distance to the character
 
 	kVolumeNone               = 0x0,
 	kVolume1                  = 0x1,
@@ -137,7 +137,7 @@ enum SoundFlag : uint {
 	kSoundFlagHasLinkAfter    = 0x10000, // _linkAfter is valid and should be activated after this sound; used by xxx.NIS sounds for xxx.LNK
 	kSoundFlagHasSubtitles    = 0x20000,
 	kSoundFlagPaused          = 0x40000, // IRQ handler has seen kSoundFlagPauseRequested and does not use the buffer anymore
-	kSoundFlagFixedVolume     = 0x80000, // Turns off the logic of volume adjusting for entity-related sounds when distance to entity is changed
+	kSoundFlagFixedVolume     = 0x80000, // Turns off the logic of volume adjusting for character-related sounds when distance to character is changed
 	kSoundFlagVolumeChanging  = 0x100000, // smooth changing of the volume is in progress
 	kSoundFlagHeaderProcessed = 0x200000, // count of blocks is the accurate value from the header
 	kSoundFlagPauseRequested  = 0x400000, // used when the reader needs to change the buffer
@@ -149,7 +149,7 @@ enum SoundFlag : uint {
 	kSoundTypeMenu            = 0x3000000, // menu screen, blinking egg after time travel; excluded from savefiles
 	kSoundTypeLink            = 0x4000000, // xxx.LNK linked after NIS sound, except for 1917.LNK
 	kSoundTypeIntro           = 0x5000000, // intro at game start before showing the menu
-	kSoundTypeWalla           = 0x6000000, // LOOP8A.SND by kEntityTables2
+	kSoundTypeWalla           = 0x6000000, // LOOP8A.SND by kCharacterTableC
 	kSoundTypeNIS             = 0x7000000, // special entry managed by NIS code
 
 	kSoundTypeMask            = 0x7000000,
@@ -160,9 +160,71 @@ enum SoundFlag : uint {
 	kSoundFlagUnmuteRequested = 0x80000000  // purely informational
 };
 
-enum AmbientSoundState {
+enum AmbientSoundState : uint {
 	kAmbientSoundEnabled  = 1,
-	kAmbientSoundSteam    = 2
+	kAmbientSoundSteam    = 2,
+	kAmbientLooping       = 69
+};
+
+enum SoundDriverFlag : uint {
+	kSoundDriverInitState            = 0x1,
+	kSoundDriverNISHasRequestedDelay = 0x2,
+	kSoundDriverClearBufferRequested = 0x4,
+	kSoundDriverClearBufferProcessed = 0x8,
+	kSoundDriverNISHasRequestedFade  = 0x20,
+	kSoundDriverStarted              = 0x8000
+};
+
+enum MouseFlags : int {
+	kMouseFlagLeftButton  = 0x1,
+	kMouseFlagRightButton = 0x2,
+	kMouseFlagLeftDown    = 0x8,
+	kMouseFlagRightDown   = 0x10,
+	kMouseFlagDoubleClick = 0x20,
+	kMouseFlagLeftUp      = 0x80,
+	kMouseFlagRightUp     = 0x100
+};
+
+enum EventChannel : int {
+	kEventChannelMouse  = 1,
+	kEventChannelTimer  = 3,
+	kEventChannelEngine = 4
+};
+
+enum NisFlags : uint {
+	kNisFlagHasSound            = 0x1,     // Set when a valid NIS sound exists
+	kNisFlagDataChunksAvailable = 0x100,   // Used during initialization and chunk loading
+	kNisFlagPlaying             = 0x200,   // NIS is currently playing
+	kNisFlagBaseFlag            = 0x4000,  // Flag with which doNIS is always called
+	kNisFlagSoundFade           = 0x8000,  // Flag for sound fading operations
+	kNisFlagSoundInitialized    = 0x40000, // First sound chunk has been loaded and initialized
+	kNisFlagAbortRequested      = 0x80000  // Abort has been requested (e.g., via right mouse click)
+};
+
+enum NISEventTypes : uint {
+	kNISEventNone = 0,
+	kNISEventUnknown1 = 1,
+	kNISEventUnknown2 = 2,
+	kNISEventAudioInfo = 3,
+	kNISEventUnknown4 = 4,
+	kNISEventUnknown5 = 5,
+	kNISEventBackground1 = 10,
+	kNISEventSelectBackground1 = 11,
+	kNISEventBackground2 = 12,
+	kNISEventSelectBackground2 = 13,
+	kNISEventOverlay = 20,
+	kNISEventUpdate = 21,
+	kNISEventUpdateTransition = 22,
+	kNISEventSound1 = 30,
+	kNISEventSound2 = 31,
+	kNISEventAudioData = 32,
+	kNISEventAudioEnd = 99
+};
+
+enum SubtitlesFlags : int32 {
+	kSubFlagDrawOnScreen = 0x1,
+	kSubFlagLoaded       = 0x2,
+	kSubFlagStatusKilled = 0x400
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -452,8 +514,7 @@ enum TimeValue : uint {
 	kTimeEnd                  = 15803100,
 	kTime16451100             = 16451100,
 
-	kTimeInvalid              = 2147483647,
-	kTimeInvalid2             = 0xFFFFFEDA
+	kTimeInvalid              = 0x7FFFFFFF
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -658,7 +719,7 @@ enum CursorStyle {
 //////////////////////////////////////////////////////////////////////////
 // Position - should be between 0 & 100
 //////////////////////////////////////////////////////////////////////////
-typedef unsigned char Position;
+typedef unsigned char PositionOld;
 
 //////////////////////////////////////////////////////////////////////////
 // EntityPosition
@@ -801,7 +862,7 @@ enum CarIndex {
 	kCarBaggage = 6,
 	kCarCoalTender = 7,
 	kCarLocomotive = 8,
-	kCar9 = 9
+	kCarVestibule = 9
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -924,7 +985,7 @@ enum InventoryItem {
 };
 
 //////////////////////////////////////////////////////////////////////////
-// Object ID
+// Door ID
 //////////////////////////////////////////////////////////////////////////
 enum ObjectIndex {
 	kObjectNone,
@@ -1059,51 +1120,51 @@ enum ObjectIndex {
 };
 
 //////////////////////////////////////////////////////////////////////////
-// Entity ID
+// Character ID
 //////////////////////////////////////////////////////////////////////////
-enum EntityIndex {
-	kEntityPlayer,
-	kEntityAnna,
-	kEntityAugust,
-	kEntityMertens,
-	kEntityCoudert,
-	kEntityPascale,             // 5
-	kEntityWaiter1,
-	kEntityWaiter2,
-	kEntityCooks,
-	kEntityVerges,
-	kEntityTatiana,             // 10
-	kEntityVassili,
-	kEntityAlexei,
-	kEntityAbbot,
-	kEntityMilos,
-	kEntityVesna,               // 15
-	kEntityIvo,
-	kEntitySalko,
-	kEntityKronos,
-	kEntityKahina,
-	kEntityFrancois,            // 20
-	kEntityMmeBoutarel,
-	kEntityBoutarel,
-	kEntityRebecca,
-	kEntitySophie,
-	kEntityMahmud,              // 25
-	kEntityYasmin,
-	kEntityHadija,
-	kEntityAlouan,
-	kEntityGendarmes,
-	kEntityMax,                 // 30
-	kEntityChapters,
-	kEntityTrain,
-	kEntityTables0,
-	kEntityTables1,
-	kEntityTables2,             // 35
-	kEntityTables3,
-	kEntityTables4,
-	kEntityTables5,
-	kEntity39,
+enum CharacterIndex {
+	kCharacterCath,
+	kCharacterAnna,
+	kCharacterAugust,
+	kCharacterCond1,
+	kCharacterCond2,
+	kCharacterHeadWait,          // 5
+	kCharacterWaiter1,
+	kCharacterWaiter2,
+	kCharacterCook,
+	kCharacterTrainM,
+	kCharacterTatiana,           // 10
+	kCharacterVassili,
+	kCharacterAlexei,
+	kCharacterAbbot,
+	kCharacterMilos,
+	kCharacterVesna,             // 15
+	kCharacterIvo,
+	kCharacterSalko,
+	kCharacterKronos,
+	kCharacterKahina,
+	kCharacterFrancois,          // 20
+	kCharacterMadame,
+	kCharacterMonsieur,
+	kCharacterRebecca,
+	kCharacterSophie,
+	kCharacterMahmud,            // 25
+	kCharacterYasmin,
+	kCharacterHadija,
+	kCharacterAlouan,
+	kCharacterPolice,
+	kCharacterMax,               // 30
+	kCharacterMaster,
+	kCharacterClerk,
+	kCharacterTableA,
+	kCharacterTableB,
+	kCharacterTableC,            // 35
+	kCharacterTableD,
+	kCharacterTableE,
+	kCharacterTableF,
+	kCharacterMitchell,
 
-	kEntitySteam = 255
+	kCharacterSteam = 255
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -1114,7 +1175,7 @@ enum EntityIndex {
 //   - ND: during the night, coming down the train
 //   - NU: during the night, coming up the train
 //////////////////////////////////////////////////////////////////////////
-enum EventIndex {
+enum EventIndex : uint {
 	kEventNone = 0,
 	kEventGotALight = 1,
 	kEventGotALightD = 2,
@@ -1148,7 +1209,7 @@ enum EventIndex {
 	kEventAugustBringBriefcase = 30,
 	kEventAugustTalkCigar = 31,
 	kEventAnnaBaggageArgument = 32,
-	kEventAnnaBagagePart2 = 33,
+	kEventAnnaBaggagePart2 = 33,
 	kEventAnnaConversation_34 = 34,
 	kEventAugustDrink = 35,
 	kEventAnnaTired = 36,
@@ -1391,422 +1452,586 @@ enum EventIndex {
 };
 
 //////////////////////////////////////////////////////////////////////////
-// Action ID (used by entity logic)
+// Character Actions
 //////////////////////////////////////////////////////////////////////////
-enum ActionIndex {
-	kActionNone            = 0,
-	kAction1               = 1,
-	kActionEndSound        = 2,
-	kActionExitCompartment = 3,
-	kAction4               = 4,
-	kActionExcuseMeCath    = 5,
-	kActionExcuseMe        = 6,
-	kActionKnock           = 8,
-	kActionOpenDoor        = 9,
-	kAction10              = 10,
-	kAction11              = 11,
-	kActionDefault         = 12,
-	kAction16              = 16,
-	kActionDrawScene       = 17,
-	kActionCallback        = 18,
+enum CharacterActions : uint {
+	kCharacterActionNone            = 0,
+	kCharacterAction1               = 1,
+	kCharacterActionEndSound        = 2,
+	kCharacterActionExitCompartment = 3,
+	kCharacterAction4               = 4,
+	kCharacterActionExcuseMeCath    = 5,
+	kCharacterActionExcuseMe        = 6,
+	kCharacterActionKnock           = 8,
+	kCharacterActionOpenDoor        = 9,
+	kCharacterAction10              = 10,
+	kCharacterAction11              = 11,
+	kCharacterActionDefault         = 12,
+	kCharacterAction16              = 16,
+	kCharacterActionDrawScene       = 17,
+	kCharacterActionCallback        = 18,
 
 	/////////////////////////////
 	// Abbot
 	/////////////////////////////
-	kAction100969180 = 100969180,    // Anna
-	kAction101169422 = 101169422,
-	kAction104060776 = 104060776,
-	kAction135600432 = 135600432,
-	kAction136196244 = 136196244,
-	kAction157159392 = 157159392,
-	kAction157489665 = 157489665,
-	kAction158480160 = 158480160,
-	kAction192054567 = 192054567,
-	kAction203073664 = 203073664,
-	kAction222609266 = 222609266,
+	kCharacterAction100969180 = 100969180,    // Anna
+	kCharacterAction101169422 = 101169422,
+	kCharacterAction104060776 = 104060776,
+	kCharacterAction135600432 = 135600432,
+	kCharacterAction136196244 = 136196244,
+	kCharacterAction157159392 = 157159392,
+	kCharacterAction157489665 = 157489665,
+	kCharacterAction158480160 = 158480160,
+	kCharacterAction192054567 = 192054567,
+	kCharacterAction203073664 = 203073664,
+	kCharacterAction222609266 = 222609266,
 
 	/////////////////////////////
 	// Alexei
 	/////////////////////////////
-	kAction100906246 = 100906246,
-	kAction123536024 = 123536024,
-	kAction124697504 = 124697504,
-	kAction135664192 = 135664192,
-	kAction135854208 = 135854208,
-	kAction188784532 = 188784532,
-	kAction221617184 = 221617184,
+	kCharacterAction100906246 = 100906246,
+	kCharacterAction123536024 = 123536024,
+	kCharacterAction124697504 = 124697504,
+	kCharacterAction135664192 = 135664192,
+	kCharacterAction135854208 = 135854208,
+	kCharacterAction188784532 = 188784532,
+	kCharacterAction221617184 = 221617184,
 
 	/////////////////////////////
 	// Alouan
 	/////////////////////////////
-	kAction189489753 = 189489753,
-	kAction190219584 = 190219584,    // Francois
+	kCharacterAction189489753 = 189489753,
+	kCharacterAction190219584 = 190219584,    // Francois
 
 	/////////////////////////////
 	// Anna
 	/////////////////////////////
-	kAction136702400 = 136702400,
-	kAction139254416 = 139254416,
-	kAction156049968 = 156049968,
-	kAction157370960 = 157370960,
-	kAction157894320 = 157894320,
-	kAction159332865 = 159332865,   // August
-	kAction189299008 = 189299008,
-	kAction191668032 = 191668032,   // some action during or before concert?
-	kAction201437056 = 201437056,
-	kAction235856512 = 235856512,
-	kAction236060709 = 236060709,
-	kAction238936000 = 238936000,
-	kAction259136835 = 259136835,
-	kAction291662081 = 291662081,
+	kCharacterAction136702400 = 136702400,
+	kCharacterAction139254416 = 139254416,
+	kCharacterAction156049968 = 156049968,
+	kCharacterAction157370960 = 157370960,
+	kCharacterAction157894320 = 157894320,
+	kCharacterAction159332865 = 159332865,   // August
+	kCharacterAction189299008 = 189299008,
+	kCharacterAction191668032 = 191668032,   // some action during or before concert?
+	kCharacterAction201437056 = 201437056,
+	kCharacterAction235856512 = 235856512,
+	kCharacterAction236060709 = 236060709,
+	kCharacterAction238936000 = 238936000,
+	kCharacterAction259136835 = 259136835,
+	kCharacterAction291662081 = 291662081,
 
 
 	/////////////////////////////
 	// August
 	/////////////////////////////
-	kAction123793792 = 123793792,
-	kAction134611040 = 134611040,
-	kAction168046720 = 168046720,
-	kAction168627977 = 168627977,
-	kAction169032608 = 169032608,
-	kAction189426612 = 189426612,
-	kAction203859488 = 203859488,
-	kAction219522616 = 219522616,    // Waiter1
-	kAction225182640 = 225182640,
-	kAction235257824 = 235257824,
+	kCharacterAction123793792 = 123793792,
+	kCharacterAction134611040 = 134611040,
+	kCharacterAction168046720 = 168046720,
+	kCharacterAction168627977 = 168627977,
+	kCharacterAction169032608 = 169032608,
+	kCharacterAction189426612 = 189426612,
+	kCharacterAction203859488 = 203859488,
+	kCharacterAction219522616 = 219522616,    // Waiter1
+	kCharacterAction225182640 = 225182640,
+	kCharacterAction235257824 = 235257824,
 
 	/////////////////////////////
 	// Boutarel
 	/////////////////////////////
-	kAction125039808 = 125039808,
-	kAction134466544 = 134466544,
-	kAction135854206 = 135854206,
-	kAction159003408 = 159003408,
-	kAction203520448 = 203520448,
-	kAction237889408 = 237889408,
+	kCharacterAction125039808 = 125039808,
+	kCharacterAction134466544 = 134466544,
+	kCharacterAction135854206 = 135854206,
+	kCharacterAction159003408 = 159003408,
+	kCharacterAction203520448 = 203520448,
+	kCharacterAction237889408 = 237889408,
 
 	/////////////////////////////
 	// Chapters
 	/////////////////////////////
-	kAction135800432 = 135800432,
-	kActionChapter3  = 139122728,
-	kActionChapter5  = 139254416,
-	kAction156435676 = 156435676,
-	kAction169629818 = 169629818,
-	kAction171843264 = 171843264,
-	kAction190346110 = 190346110,
+	kCharacterAction135800432 = 135800432,
+	kCharacterActionChapter3  = 139122728,
+	kCharacterActionChapter5  = 139254416,
+	kCharacterAction156435676 = 156435676,
+	kCharacterAction169629818 = 169629818,
+	kCharacterAction171843264 = 171843264,
+	kCharacterAction190346110 = 190346110,
 
 	/////////////////////////////
 	// Cooks
 	/////////////////////////////
-	kAction101632192 = 101632192,
-	kAction224849280 = 224849280,
-	kAction236976550 = 236976550,
+	kCharacterAction101632192 = 101632192,
+	kCharacterAction224849280 = 224849280,
+	kCharacterAction236976550 = 236976550,
 
 	/////////////////////////////
 	// Coudert
 	/////////////////////////////
-	kAction123733488 = 123733488,
-	kAction154005632 = 154005632,
-	kAction155991520 = 155991520,
-	kAction157026693 = 157026693,
-	kAction168253822 = 168253822,
-	kAction168254872 = 168254872,
-	kAction168316032 = 168316032,    // Tatiana
-	kAction169557824 = 169557824,
-	kAction171394341 = 171394341,    // Mertens
-	kAction185671840 = 185671840,
-	kAction185737168 = 185737168,
-	kAction188570113 = 188570113,
-	kAction189026624 = 189026624,
-	kAction189750912 = 189750912,
-	kAction192063264 = 192063264,    // Anna
-	kAction201431954 = 201431954,    // Mertens / Verges
-	kAction201439712 = 201439712,
-	kAction205033696 = 205033696,
-	kAction205346192 = 205346192,    // Francois
-	kAction219971920 = 219971920,    // Anna
-	kAction223068211 = 223068211,    // MmeBoutarel
-	kAction225932896 = 225932896,
-	kAction226031488 = 226031488,    // Verges
-	kAction235061888 = 235061888,    // Tatiana
-	kAction238358920 = 238358920,    // Anna
-	kAction253868128 = 253868128,    // Anna
-	kAction285528346 = 285528346,    // Rebecca
-	kAction292048641 = 292048641,
-	kAction305159806 = 305159806,
-	kAction326348944 = 326348944,
-	kAction339669520 = 339669520,    // Verges
+	kCharacterAction123733488 = 123733488,
+	kCharacterAction154005632 = 154005632,
+	kCharacterAction155991520 = 155991520,
+	kCharacterAction157026693 = 157026693,
+	kCharacterAction168253822 = 168253822,
+	kCharacterAction168254872 = 168254872,
+	kCharacterAction168316032 = 168316032,    // Tatiana
+	kCharacterAction169557824 = 169557824,
+	kCharacterAction171394341 = 171394341,    // Mertens
+	kCharacterAction185671840 = 185671840,
+	kCharacterAction185737168 = 185737168,
+	kCharacterAction188570113 = 188570113,
+	kCharacterAction189026624 = 189026624,
+	kCharacterAction189750912 = 189750912,
+	kCharacterAction192063264 = 192063264,    // Anna
+	kCharacterAction201431954 = 201431954,    // Mertens / Verges
+	kCharacterAction201439712 = 201439712,
+	kCharacterAction205033696 = 205033696,
+	kCharacterAction205346192 = 205346192,    // Francois
+	kCharacterAction219971920 = 219971920,    // Anna
+	kCharacterAction223068211 = 223068211,    // MmeBoutarel
+	kCharacterAction225932896 = 225932896,
+	kCharacterAction226031488 = 226031488,    // Verges
+	kCharacterAction235061888 = 235061888,    // Tatiana
+	kCharacterAction238358920 = 238358920,    // Anna
+	kCharacterAction253868128 = 253868128,    // Anna
+	kCharacterAction285528346 = 285528346,    // Rebecca
+	kCharacterAction292048641 = 292048641,
+	kCharacterAction305159806 = 305159806,
+	kCharacterAction326348944 = 326348944,
+	kCharacterAction339669520 = 339669520,    // Verges
 
 	/////////////////////////////
 	// Francois
 	/////////////////////////////
-	kAction100901266 = 100901266,
-	kAction100957716 = 100957716,
-	kAction101107728 = 101107728,
-	kAction189872836 = 189872836,
-	kAction190390860 = 190390860,
+	kCharacterAction100901266 = 100901266,
+	kCharacterAction100957716 = 100957716,
+	kCharacterAction101107728 = 101107728,
+	kCharacterAction189872836 = 189872836,
+	kCharacterAction190390860 = 190390860,
 
 	/////////////////////////////
 	// Gendarmes
 	/////////////////////////////
-	kAction168710784 = 168710784,
-	kAction169499649 = 169499649,
+	kCharacterAction168710784 = 168710784,
+	kCharacterAction169499649 = 169499649,
 
 	/////////////////////////////
 	// Kahina
 	/////////////////////////////
-	kAction92186062  = 92186062,
-	kAction137503360 = 137503360,
-	kAction237555748 = 237555748,
+	kCharacterAction92186062  = 92186062,
+	kCharacterAction137503360 = 137503360,
+	kCharacterAction237555748 = 237555748,
 
 	/////////////////////////////
 	// Kronos
 	/////////////////////////////
-	kAction137685712 = 137685712,
-	kAction138085344 = 138085344,
-	kAction171849314 = 171849314,
-	kAction235599361 = 235599361,
+	kCharacterAction137685712 = 137685712,
+	kCharacterAction138085344 = 138085344,
+	kCharacterAction171849314 = 171849314,
+	kCharacterAction235599361 = 235599361,
 
 	/////////////////////////////
 	// Mahmud
 	/////////////////////////////
-	kAction102227384 = 102227384,    // Mertens
-	kAction156567128 = 156567128,
-	kAction170483072 = 170483072,
-	kAction225563840 = 225563840,
+	kCharacterAction102227384 = 102227384,    // Mertens
+	kCharacterAction156567128 = 156567128,
+	kCharacterAction170483072 = 170483072,
+	kCharacterAction225563840 = 225563840,
 
 	/////////////////////////////
 	// Max
 	/////////////////////////////
-	kAction71277948  = 71277948,
-	kAction158007856 = 158007856,
-	kAction101687594 = 101687594,
-	kAction122358304 = 122358304,    // also Waiter2/Boutarel?
-	kActionMaxFreeFromCage = 135204609,
-	kAction156622016 = 156622016,
+	kCharacterAction71277948  = 71277948,
+	kCharacterAction158007856 = 158007856,
+	kCharacterAction101687594 = 101687594,
+	kCharacterAction122358304 = 122358304,    // also Waiter2/Boutarel?
+	kCharacterActionMaxFreeFromCage = 135204609,
+	kCharacterAction156622016 = 156622016,
 
 	/////////////////////////////
 	// Mertens
 	/////////////////////////////
-	kAction155604840 = 155604840,    // MmeBoutarel
-	kAction169633856 = 169633856,
-	kAction188635520 = 188635520,
-	kAction190082817 = 190082817,
-	kAction192849856 = 192849856,
-	kAction204379649 = 204379649,
-	kAction224122407 = 224122407,
-	kAction238732837 = 238732837,
-	kAction238790488 = 238790488,    // Tatiana
-	kAction269436673 = 269436673,
-	kAction269624833 = 269624833,
-	kAction302614416 = 302614416,
-	kAction303343617 = 303343617,
+	kCharacterAction155604840 = 155604840,    // MmeBoutarel
+	kCharacterAction169633856 = 169633856,
+	kCharacterAction188635520 = 188635520,
+	kCharacterAction190082817 = 190082817,
+	kCharacterAction192849856 = 192849856,
+	kCharacterAction204379649 = 204379649,
+	kCharacterAction224122407 = 224122407,
+	kCharacterAction238732837 = 238732837,
+	kCharacterAction238790488 = 238790488,    // Tatiana
+	kCharacterAction269436673 = 269436673,
+	kCharacterAction269624833 = 269624833,
+	kCharacterAction302614416 = 302614416,
+	kCharacterAction303343617 = 303343617,
 
 	/////////////////////////////
 	// Milos
 	/////////////////////////////
-	kAction88652208 = 88652208,      // Coudert
-	kAction122865568 = 122865568,
-	kAction123852928 = 123852928,
-	kAction123199584 = 123199584,    // Coudert
-	kAction157691176 = 157691176,
-	kAction208228224 = 208228224,
-	kAction221683008 = 221683008,
-	kAction259125998 = 259125998,
+	kCharacterAction88652208 = 88652208,      // Coudert
+	kCharacterAction122865568 = 122865568,
+	kCharacterAction123852928 = 123852928,
+	kCharacterAction123199584 = 123199584,    // Coudert
+	kCharacterAction157691176 = 157691176,
+	kCharacterAction208228224 = 208228224,
+	kCharacterAction221683008 = 221683008,
+	kCharacterAction259125998 = 259125998,
 
 	/////////////////////////////
 	// Mme Boutarel
 	/////////////////////////////
-	kAction102484312 = 102484312,
-	kAction102752636 = 102752636,
-	kAction134289824 = 134289824,
-	kAction168986720 = 168986720,
-	kAction202221040 = 202221040,
-	kAction242526416 = 242526416,
+	kCharacterAction102484312 = 102484312,
+	kCharacterAction102752636 = 102752636,
+	kCharacterAction134289824 = 134289824,
+	kCharacterAction168986720 = 168986720,
+	kCharacterAction202221040 = 202221040,
+	kCharacterAction242526416 = 242526416,
 
 	/////////////////////////////
 	// Pascale
 	/////////////////////////////
-	kAction101824388 = 101824388,
-	kAction136059947 = 136059947,
-	kAction169750080 = 169750080,
-	kAction190605184 = 190605184,
-	kAction191604416 = 191604416,
-	kAction207769280 = 207769280,
-	kAction223262556 = 223262556,
-	kAction239072064 = 239072064,
-	kAction257489762 = 257489762,
-	kAction269479296 = 269479296,
-	kAction352703104 = 352703104,
-	kAction352768896 = 352768896,
+	kCharacterAction101824388 = 101824388,
+	kCharacterAction136059947 = 136059947,
+	kCharacterAction169750080 = 169750080,
+	kCharacterAction190605184 = 190605184,
+	kCharacterAction191604416 = 191604416,
+	kCharacterAction207769280 = 207769280,
+	kCharacterAction223262556 = 223262556,
+	kCharacterAction239072064 = 239072064,
+	kCharacterAction257489762 = 257489762,
+	kCharacterAction269479296 = 269479296,
+	kCharacterAction352703104 = 352703104,
+	kCharacterAction352768896 = 352768896,
 
 	/////////////////////////////
 	// Rebecca
 	/////////////////////////////
-	kAction125496184 = 125496184,
-	kAction155465152 = 155465152,
-	kAction155980128 = 155980128,
-	kAction169358379 = 169358379,
-	kAction224253538 = 224253538,
-	kAction254915200 = 254915200,
+	kCharacterAction125496184 = 125496184,
+	kCharacterAction155465152 = 155465152,
+	kCharacterAction155980128 = 155980128,
+	kCharacterAction169358379 = 169358379,
+	kCharacterAction224253538 = 224253538,
+	kCharacterAction254915200 = 254915200,
 
 	/////////////////////////////
 	// Salko
 	/////////////////////////////
-	kAction55996766  = 55996766,
-	kAction101169464 = 101169464,
-	kAction102675536 = 102675536,    // Ivo
-	kAction136184016 = 136184016,
+	kCharacterAction55996766  = 55996766,
+	kCharacterAction101169464 = 101169464,
+	kCharacterAction102675536 = 102675536,    // Ivo
+	kCharacterAction136184016 = 136184016,
 
 	/////////////////////////////
 	// Servers 0
 	/////////////////////////////
-	kAction170016384 = 170016384,
-	kAction188893625 = 188893625,
-	kAction201964801 = 201964801,    // August
-	kAction204704037 = 204704037,
-	kAction207330561 = 207330561,
-	kAction218128129 = 218128129,
-	kAction218586752 = 218586752,
-	kAction218983616 = 218983616,
-	kAction223712416 = 223712416,
-	kAction237485916 = 237485916,
-	kAction252568704 = 252568704,
-	kAction268773672 = 268773672,    // Anna / August
-	kAction270068760 = 270068760,
-	kAction270410280 = 270410280,
-	kAction286403504 = 286403504,
-	kAction286534136 = 286534136,
-	kAction292758554 = 292758554,
-	kAction304061224 = 304061224,
-	kAction337548856 = 337548856,
+	kCharacterAction170016384 = 170016384,
+	kCharacterAction188893625 = 188893625,
+	kCharacterAction201964801 = 201964801,    // August
+	kCharacterAction204704037 = 204704037,
+	kCharacterAction207330561 = 207330561,
+	kCharacterAction218128129 = 218128129,
+	kCharacterAction218586752 = 218586752,
+	kCharacterAction218983616 = 218983616,
+	kCharacterAction223712416 = 223712416,
+	kCharacterAction237485916 = 237485916,
+	kCharacterAction252568704 = 252568704,
+	kCharacterAction268773672 = 268773672,    // Anna / August
+	kCharacterAction270068760 = 270068760,
+	kCharacterAction270410280 = 270410280,
+	kCharacterAction286403504 = 286403504,
+	kCharacterAction286534136 = 286534136,
+	kCharacterAction292758554 = 292758554,
+	kCharacterAction304061224 = 304061224,
+	kCharacterAction337548856 = 337548856,
 
 	/////////////////////////////
 	// Servers 1
 	/////////////////////////////
-	kAction101106391 = 101106391,
-	kAction122288808 = 122288808,    // Boutarel
-	kAction123712592 = 123712592,    // Ivo
-	kAction125826561 = 125826561,    // August
-	kAction134486752 = 134486752,    // August
-	kAction168717392 = 168717392,    // Boutarel
-	kAction189688608 = 189688608,
-	kAction219377792 = 219377792,
-	kAction223002560 = 223002560,
-	kAction236237423 = 236237423,
-	kAction256200848 = 256200848,
-	kAction258136010 = 258136010,
-	kAction269485588 = 269485588,
-	kAction291721418 = 291721418,
-	kAction302203328 = 302203328,
-	kAction302996448 = 302996448,
-	kAction326144276 = 326144276,
+	kCharacterAction101106391 = 101106391,
+	kCharacterAction122288808 = 122288808,    // Boutarel
+	kCharacterAction123712592 = 123712592,    // Ivo
+	kCharacterAction125826561 = 125826561,    // August
+	kCharacterAction134486752 = 134486752,    // August
+	kCharacterAction168717392 = 168717392,    // Boutarel
+	kCharacterAction189688608 = 189688608,
+	kCharacterAction219377792 = 219377792,
+	kCharacterAction223002560 = 223002560,
+	kCharacterAction236237423 = 236237423,
+	kCharacterAction256200848 = 256200848,
+	kCharacterAction258136010 = 258136010,
+	kCharacterAction269485588 = 269485588,
+	kCharacterAction291721418 = 291721418,
+	kCharacterAction302203328 = 302203328,
+	kCharacterAction302996448 = 302996448,
+	kCharacterAction326144276 = 326144276,
 
 	/////////////////////////////
 	// Sophie
 	/////////////////////////////
-	kActionProceedChapter5  = 70549068,
-	kAction123668192 = 123668192,
-	kAction125242096 = 125242096,
-	kAction136654208 = 136654208,
-	kAction259921280 = 259921280,
-	kAction292775040 = 292775040,
+	kCharacterActionProceedChapter5  = 70549068,
+	kCharacterAction123668192 = 123668192,
+	kCharacterAction125242096 = 125242096,
+	kCharacterAction136654208 = 136654208,
+	kCharacterAction259921280 = 259921280,
+	kCharacterAction292775040 = 292775040,
 
 	/////////////////////////////
 	// Tables
 	/////////////////////////////
-	kActionDrawTablesWithChairs = 103798704,
-	kAction136455232 = 136455232,
+	kCharacterActionDrawTablesWithChairs = 103798704,
+	kCharacterAction136455232 = 136455232,
 
 	/////////////////////////////
 	// Tatiana
 	/////////////////////////////
-	kAction69239528  = 69239528,
-	kAction123857088 = 123857088,
-	kAction124973510 = 124973510,
-	kAction154071333 = 154071333,
-	kAction156444784 = 156444784,
-	kAction169360385 = 169360385,
-	kAction191198209 = 191198209,
-	kAction223183000 = 223183000,    // August
-	kAction236053296 = 236053296,    // Alexei
-	kAction236241630 = 236241630,    // Anna
-	kAction236517970 = 236517970,    // Anna
-	kAction268620864 = 268620864,    // August
-	kAction290869168 = 290869168,
+	kCharacterAction69239528  = 69239528,
+	kCharacterAction123857088 = 123857088,
+	kCharacterAction124973510 = 124973510,
+	kCharacterAction154071333 = 154071333,
+	kCharacterAction156444784 = 156444784,
+	kCharacterAction169360385 = 169360385,
+	kCharacterAction191198209 = 191198209,
+	kCharacterAction223183000 = 223183000,    // August
+	kCharacterAction236053296 = 236053296,    // Alexei
+	kCharacterAction236241630 = 236241630,    // Anna
+	kCharacterAction236517970 = 236517970,    // Anna
+	kCharacterAction268620864 = 268620864,    // August
+	kCharacterAction290869168 = 290869168,
 
 	/////////////////////////////
 	// Train
 	/////////////////////////////
-	kAction191070912 = 191070912,
-	kActionTrainStopRunning = 191350523,
-	kActionCatchBeetle = 202613084,
-	kAction203339360 = 203339360,
-	kActionTrainStartRunning = 203419131,
-	kAction203863200 = 203863200,
-	kAction222746496 = 222746496,
-	kActionBreakCeiling = 225056224,
-	kAction290410610 = 290410610,
-	kActionJumpDownCeiling = 338494260,
+	kCharacterAction191070912 = 191070912,
+	kCharacterActionTrainStopRunning = 191350523,
+	kCharacterActionCatchBeetle = 202613084,
+	kCharacterAction203339360 = 203339360,
+	kCharacterActionTrainStartRunning = 203419131,
+	kCharacterAction203863200 = 203863200,
+	kCharacterAction222746496 = 222746496,
+	kCharacterActionBreakCeiling = 225056224,
+	kCharacterAction290410610 = 290410610,
+	kCharacterActionJumpDownCeiling = 338494260,
 
 	/////////////////////////////
 	// Verges
 	/////////////////////////////
-	kAction125233040 = 125233040,   // Abbot
-	kAction125499160 = 125499160,
-	kAction155853632 = 155853632,
-	kAction158617345 = 158617345,
-	kAction167854368 = 167854368,
-	kAction168187490 = 168187490,
-	kAction168255788 = 168255788,
-	kActionDeliverMessageToTyler = 191337656,
-	kAction202558662 = 202558662,
+	kCharacterAction125233040 = 125233040,   // Abbot
+	kCharacterAction125499160 = 125499160,
+	kCharacterAction155853632 = 155853632,
+	kCharacterAction158617345 = 158617345,
+	kCharacterAction167854368 = 167854368,
+	kCharacterAction168187490 = 168187490,
+	kCharacterAction168255788 = 168255788,
+	kCharacterActionDeliverMessageToTyler = 191337656,
+	kCharacterAction202558662 = 202558662,
 
 	/////////////////////////////
 	// Vassili
 	/////////////////////////////
-	kAction122732000 = 122732000,
-	kAction168459827 = 168459827,
-	kAction191477936 = 191477936,
+	kCharacterAction122732000 = 122732000,
+	kCharacterAction168459827 = 168459827,
+	kCharacterAction191477936 = 191477936,
 
 	/////////////////////////////
 	// Vesna
 	/////////////////////////////
-	kAction124190740 = 124190740,
-	kAction134427424 = 134427424,
-	kAction135024800 = 135024800,
-	kAction137165825 = 137165825,
-	kAction155913424 = 155913424,
-	kAction190412928 = 190412928,
-	kAction203663744 = 203663744,
-	kAction204832737 = 204832737,
+	kCharacterAction124190740 = 124190740,
+	kCharacterAction134427424 = 134427424,
+	kCharacterAction135024800 = 135024800,
+	kCharacterAction137165825 = 137165825,
+	kCharacterAction155913424 = 155913424,
+	kCharacterAction190412928 = 190412928,
+	kCharacterAction203663744 = 203663744,
+	kCharacterAction204832737 = 204832737,
 
 	/////////////////////////////
 	// Misc
 	/////////////////////////////
-	kAction158610240 = 158610240,
-	kAction167992577 = 167992577,
-	kAction168646401 = 168646401,
-	kAction169300225 = 169300225,
-	kAction169773228 = 169773228,
-	kActionEndChapter = 190346110,
-	kAction191001984 = 191001984,
-	kAction192637492 = 192637492,
-	kAction201959744 = 201959744,
-	kAction202621266 = 202621266,
-	kAction202884544 = 202884544,
-	kAction203078272 = 203078272,
-	kAction205034665 = 205034665,
-	kAction205294778 = 205294778,
-	kActionUseWhistle = 270751616,
-	kAction272177921 = 272177921,
-	kAction224309120 = 224309120,
-	kAction225358684 = 225358684,
-	kAction225367984 = 225367984,
-	kAction226078300 = 226078300, // Whistle
+	kCharacterAction158610240 = 158610240,
+	kCharacterAction167992577 = 167992577,
+	kCharacterAction168646401 = 168646401,
+	kCharacterAction169300225 = 169300225,
+	kCharacterAction169773228 = 169773228,
+	kCharacterActionEndChapter = 190346110,
+	kCharacterAction191001984 = 191001984,
+	kCharacterAction192637492 = 192637492,
+	kCharacterAction201959744 = 201959744,
+	kCharacterAction202621266 = 202621266,
+	kCharacterAction202884544 = 202884544,
+	kCharacterAction203078272 = 203078272,
+	kCharacterAction205034665 = 205034665,
+	kCharacterAction205294778 = 205294778,
+	kCharacterActionUseWhistle = 270751616,
+	kCharacterAction272177921 = 272177921,
+	kCharacterAction224309120 = 224309120,
+	kCharacterAction225358684 = 225358684,
+	kCharacterAction225367984 = 225367984,
+	kCharacterAction226078300 = 226078300, // Whistle
 
-	kActionEnd
+	kCharacterActionEnd
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Menu Action IDs
+//////////////////////////////////////////////////////////////////////////
+enum MenuActions {
+	kMenuActionNone = 0,
+	kMenuActionPlayGame,
+	kMenuActionCredits,
+	kMenuActionQuit,
+	kMenuAction4,
+	kMenuAction5, // 5
+	kMenuActionSwitchEggs,
+	kMenuActionRewind,
+	kMenuActionFastForward,
+	kMenuAction9,
+	kMenuActionGoToParis, // 10
+	kMenuActionGoToStrasbourg,
+	kMenuActionGoToMunich,
+	kMenuActionGoToVienna,
+	kMenuActionGoToBudapest,
+	kMenuActionGoToBelgrad, // 15
+	kMenuActionGoToCostantinople,
+	kMenuActionVolumeDown,
+	kMenuActionVolumeUp,
+	kMenuActionBrightnessDown,
+	kMenuActionBrightnessUp, // 20
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Action IDs
+//////////////////////////////////////////////////////////////////////////
+enum Actions {
+	kActionNone = 0,
+	kActionInventory,
+	kActionSendCathMessage,
+	kActionPlaySound,
+	kActionPlayMusic,
+	kActionKnock,          // 5
+	kActionCompartment,
+	kActionPlaySounds,
+	kActionPlayAnimation,
+	kActionSetDoor,
+	kActionSetModel,       // 10
+	kActionSetItem,
+	kActionKnockInside,
+	kActionTakeItem,
+	kActionDropItem,
+	kActionLinkOnGlobal,   // 15
+	kActionRattle,
+	kActionDummyAction1,
+	kActionLeanOutWindow,
+	kActionAlmostFall,
+	kActionClimbInWindow,  // 20
+	kActionClimbLadder,
+	kActionClimbDownTrain,
+	kActionKronosSanctum,
+	kActionEscapeBaggage,
+	kActionEnterBaggage,   // 25
+	kActionBombPuzzle,
+	kActionConductors,
+	kActionKronosConcert,
+	kActionLetterInAugustSuitcase,
+	kActionCatchBeetle,    // 30
+	kActionExitCompartment,
+	kActionOutsideTrain,
+	kActionFirebirdPuzzle,
+	kActionOpenMatchBox,
+	kActionOpenBed,        // 35
+	kActionDummyAction2,
+	kActionHintDialog,
+	kActionMusicEggBox,
+	kActionFindEggUnderSink,
+	kActionBed,            // 40
+	kActionPlayMusicChapter,
+	kActionPlayMusicChapterSetupTrain,
+	kActionSwitchChapter,
+	kActionEasterEgg
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Node properties
+//////////////////////////////////////////////////////////////////////////
+enum NodeProperties {
+	kNodeHasDoor = 1,
+	kNodeHasItem,
+	kNodeHas2Items,
+	kNodeHasDoorItem,
+	kNodeHas3Items,
+	kNodeModelPad,
+	kNodeSoftPoint,
+	kNodeSoftPointItem,
+
+	kNodeAutoWalk = 128,
+	kNodeSleepingOnBed,
+	kNodeBeetle,
+	kNodePullingStop,
+	kNodeRebeccaDiary,
+	kNodeExitFastWalk
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Game Progress
+//////////////////////////////////////////////////////////////////////////
+enum GameGlobals {
+	kGlobalJacket = 1,
+	kGlobalCorpseMovedFromFloor,
+	kGlobalReadLetterInAugustSuitcase,
+	kGlobalFoundCorpse,
+	kGlobalCharacterSearchingForCath,
+	kGlobalPhaseOfTheNight,
+	kGlobalCathIcon,
+	kGlobalCorpseHasBeenThrown,
+	kGlobalFrancoisHasSeenCorpseThrown,
+	kGlobalAnnaIsEating,
+	kGlobalChapter,
+	kGlobalDoneSavePointAfterLeftCompWithNewJacket,
+	kGlobalMetAugust,
+	kGlobalIsDayTime,
+	kGlobalPoliceHasBoardedAndGone,
+	kGlobalConcertIsHappening,
+	kGlobalKahinaKillTimeoutActive,
+	kGlobalMaxHasToStayInBaggage,
+	kGlobalUnknownDebugFlag,
+	kGlobalTrainIsRunning,
+	kGlobalAnnaIsInBaggageCar,
+	kGlobalDoneSavePointAfterLeavingSuitcaseInCathComp,
+	kGlobalTatianaFoundOutEggStolen,
+	kGlobalOverheardAugustInterruptingAnnaAtDinner,
+	kGlobalMetTatianaAndVassili,
+	kGlobalOverheardTatianaAndAlexeiAtBreakfast,
+	kGlobalKnowAboutAugust,
+	kGlobalKnowAboutKronos,
+	kGlobalEggIsOpen,
+	kGlobalCanPlayKronosSuitcaseLeftInCompMusic,
+	kGlobalCanPlayEggSuitcaseMusic,
+	kGlobalCanPlayEggUnderSinkMusic,
+	kGlobalCathInSpecialState,
+	kGlobalOverheardAlexeiTellingTatianaAboutBomb,
+	kGlobalOverheardAlexeiTellingTatianaAboutWantingToKillVassili,
+	kGlobalOverheardTatianaAndAlexeiPlayingChess,
+	kGlobalOverheardMilosAndVesnaConspiring,
+	kGlobalOverheardVesnaAndMilosDebatingAboutCath,
+	kGlobalFrancoisSawABlackBeetle,
+	kGlobalOverheardMadameAndFrancoisTalkingAboutWhistle,
+	kGlobalMadameDemandedMaxInBaggage,
+	kGlobalMadameComplainedAboutMax,
+	kGlobalMetMadame,
+	kGlobalKnowAboutRebeccaDiary,
+	kGlobalOverheardSophieTalkingAboutCath,
+	kGlobalMetSophieAndRebecca,
+	kGlobalKnowAboutRebeccaAndSophieRelationship,
+	kGlobalRegisteredTimeAtWhichCathGaveFirebirdToKronos,
+	kGlobalMetMahmud,
+	kGlobalAlmostFallActionIsAvailable,
+	kGlobalMetMilos,
+	kGlobalMetMonsieur,
+	kGlobalMetHadija,
+	kGlobalMetYasmin,
+	kGlobalMetAlouan,
+	kGlobalMetFatima,
+	kGlobalTatianaScheduledToVisitCath,
+
+	kGlobalCount = 128
 };
 
 } // End of namespace LastExpress

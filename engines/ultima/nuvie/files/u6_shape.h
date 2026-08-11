@@ -27,7 +27,7 @@
  *  Includes
  * ==========
  */
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 
 namespace Ultima {

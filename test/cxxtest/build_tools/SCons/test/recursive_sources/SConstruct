@@ -1,0 +1,3 @@
+env = Environment(toolpath=['../../'],tools=['default','cxxtest'])
+
+env.CxxTest('joint_tests',['src/test_foo.t.h',['src/test_bar.t.h','src/requirement.cpp']])

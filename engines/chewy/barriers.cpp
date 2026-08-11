@@ -46,7 +46,7 @@ int16 Barriers::getBarrierId(int16 g_idx, const byte *buffer) {
 			break;
 
 		case 9:
-			if (!_G(gameState).R9Gitter)
+			if (!_G(gameState).R9Grid)
 				return 0;
 			break;
 

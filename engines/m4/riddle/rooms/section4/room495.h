@@ -29,12 +29,25 @@ namespace Riddle {
 namespace Rooms {
 
 class Room495 : public Room {
+private:
+	int _val1 = 0;
+	const char *_seriesName1 = nullptr;
+	const char *_seriesName2 = nullptr;
+	int _lastFrame = 0;
+	
+	void updateFlags1();
+	void updateFlags2();
+	void play(const char *seriesName1, const char *seriesName2,
+		int lastFrame, int frameRate);
+
 public:
 	Room495() : Room() {}
 	~Room495() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
 };
 
 } // namespace Rooms

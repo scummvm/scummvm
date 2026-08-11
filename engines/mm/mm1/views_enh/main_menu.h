@@ -29,8 +29,15 @@ namespace MM1 {
 namespace ViewsEnh {
 
 class MainMenu : public ScrollView {
+	enum Choice {
+		CHOICE_NONE,
+		CHOICE_CREATE,
+		CHOICE_VIEW,
+		CHOICE_TOWN
+	};
 private:
 	Graphics::ManagedSurface _circles[2];
+	Choice _hoverChoice = CHOICE_NONE;
 
 	/**
 	 * Draws the two circles from the original game screens
@@ -48,11 +55,21 @@ private:
 	void drawCircleLine(const Graphics::Surface *src,
 		Graphics::ManagedSurface *dest, int x, int y);
 
+	/**
+	 * Gets the choice at the given mouse position
+	 */
+	Choice getChoiceAt(const Common::Point &pos);
+
 public:
 	MainMenu() : ScrollView("MainMenu") {}
 	virtual ~MainMenu() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };
 

@@ -48,7 +48,90 @@ namespace Ultima4 {
 
 Debugger *g_debugger;
 
-Debugger::Debugger() : Shared::Debugger() {
+static bool strToBool(const char *s) {
+	return s && tolower(*s) == 't';
+}
+
+static int strToInt(const char *s) {
+	if (!*s)
+		// No string at all
+		return 0;
+	else if (toupper(s[strlen(s) - 1]) != 'H')
+		// Standard decimal string
+		return atoi(s);
+
+	// Hexadecimal string
+	uint tmp = 0;
+	int read = sscanf(s, "%xh", &tmp);
+	if (read < 1)
+		error("strToInt failed on string \"%s\"", s);
+	return (int)tmp;
+}
+
+static void splitString(const Common::String &str,
+		Common::StringArray &argv) {
+	// Clear the vector
+	argv.clear();
+
+	bool quoted = false;
+	Common::String::const_iterator it;
+	int ch;
+	Common::String arg;
+
+	for (it = str.begin(); it != str.end(); ++it) {
+		ch = *it;
+
+		// Toggle quoted string handling
+		if (ch == '\"') {
+			quoted = !quoted;
+			continue;
+		}
+
+		// Handle \\, \", \', \n, \r, \t
+		if (ch == '\\') {
+			Common::String::const_iterator next = it + 1;
+			if (next != str.end()) {
+				if (*next == '\\' || *next == '\"' || *next == '\'') {
+					ch = *next;
+					++it;
+				} else if (*next == 'n') {
+					ch = '\n';
+					++it;
+				} else if (*next == 'r') {
+					ch = '\r';
+					++it;
+				} else if (*next == 't') {
+					ch = '\t';
+					++it;
+				} else if (*next == ' ') {
+					ch = ' ';
+					++it;
+				}
+			}
+		}
+
+		// A space, a tab, line feed, carriage return
+		if (!quoted && (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')) {
+			// If we are not empty then we are at the end of the arg
+			// otherwise we will ignore the extra chars
+			if (!arg.empty()) {
+				argv.push_back(arg);
+				arg.clear();
+			}
+
+			continue;
+		}
+
+		// Add the charater to the string
+		arg += ch;
+	}
+
+	// Push any arg if it's left
+	if (!arg.empty())
+		argv.push_back(arg);
+}
+
+Debugger::Debugger() : GUI::Debugger() {
 	g_debugger = this;
 	_collisionOverride = false;
 	_disableCombat = false;
@@ -149,9 +232,9 @@ void Debugger::printN(const char *fmt, ...) {
 		// Strip off any color special characters that aren't
 		// relevant for showing the text in the debugger
 		Common::String s;
-		for (Common::String::iterator it = str.begin(); it != str.end(); ++it) {
-			if (*it >= ' ' || *it == '\n')
-				s += *it;
+		for (const auto &c : str) {
+			if (c >= ' ' || c == '\n')
+				s += c;
 		}
 
 		debugPrintf("%s", s.c_str());
@@ -166,11 +249,11 @@ void Debugger::prompt() {
 }
 
 bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
-	static const char *DUNGEON_DISALLOWED[] = {
+	static const char *const DUNGEON_DISALLOWED[] = {
 		"attack", "board", "enter", "fire", "jimmy", "locate",
 		"open", "talk", "exit", "yell", nullptr
 	};
-	static const char *COMBAT_DISALLOWED[] = {
+	static const char *const COMBAT_DISALLOWED[] = {
 		"board", "climb", "descend", "enter", "exit", "fire", "hole",
 		"ignite", "jimmy", "mix", "order", "open", "peer", "quitAndSave",
 		"search", "wear", "yell", nullptr
@@ -194,7 +277,7 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 		}
 	}
 
-	bool result = Shared::Debugger::handleCommand(argc, argv, keepRunning);
+	bool result = GUI::Debugger::handleCommand(argc, argv, keepRunning);
 
 	if (result) {
 		Controller *ctl = eventHandler->getController();
@@ -584,10 +667,10 @@ bool Debugger::cmdFire(int argc, const char **argv) {
 	}
 
 	// nothing (not even mountains!) can block cannonballs
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
 		1, 3, nullptr, false);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (fireAt(*i, true))
+	for (const auto &coords : path) {
+		if (fireAt(coords, true))
 			return isDebuggerActive();
 	}
 
@@ -744,10 +827,10 @@ bool Debugger::cmdJimmy(int argc, const char **argv) {
 	if (dir == DIR_NONE)
 		return isDebuggerActive();
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 1, nullptr, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (jimmyAt(*i))
+	for (const auto &coords : path) {
+		if (jimmyAt(coords))
 			return isDebuggerActive();
 	}
 
@@ -887,10 +970,10 @@ bool Debugger::cmdOpenDoor(int argc, const char **argv) {
 	if (dir == DIR_NONE)
 		return isDebuggerActive();
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 1, nullptr, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (openAt(*i))
+	for (const auto &coords : path) {
+		if (openAt(coords))
 			return isDebuggerActive();
 	}
 
@@ -1141,10 +1224,10 @@ bool Debugger::cmdTalk(int argc, const char **argv) {
 	if (dir == DIR_NONE)
 		return isDebuggerActive();
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 2, &Tile::canTalkOverTile, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (talkAt(*i))
+	for (const auto &coords : path) {
+		if (talkAt(coords))
 			return isDebuggerActive();
 	}
 
@@ -1298,10 +1381,10 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 	if (dir == DIR_NONE)
 		return isDebuggerActive();
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
 		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, nullptr, true);
-	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
-		if (destroyAt(*i)) {
+	for (const auto &coords : path) {
+		if (destroyAt(coords)) {
 			return false;
 		}
 	}
@@ -1885,6 +1968,34 @@ bool Debugger::cmdListTriggers(int argc, const char **argv) {
 	}
 
 	return isDebuggerActive();
+}
+
+void Debugger::executeCommand(const Common::String &cmd) {
+	// Split up the command, and form a const char * array
+	Common::StringArray args;
+	splitString(cmd, args);
+
+	Common::Array<const char *> argv;
+	for (uint idx = 0; idx < args.size(); ++idx)
+		argv.push_back(args[idx].c_str());
+
+	// Execute the command
+	executeCommand(argv.size(), &argv[0]);
+}
+
+void Debugger::executeCommand(int argc, const char **argv) {
+	if (argc <= 0)
+		return;
+
+	bool keepRunning = false;
+	if (!handleCommand(argc, argv, keepRunning)) {
+		debugPrintf("Unknown command - %s\n", argv[0]);
+		keepRunning = true;
+	}
+
+	// If any message occurred, then we need to ensure the debugger is opened if it isn't already
+	if (keepRunning)
+		attach();
 }
 
 } // End of namespace Ultima4

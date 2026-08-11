@@ -544,7 +544,7 @@ void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 			if (r2 == _dirtyRects.end())
 				r2 = r;
 			else
-				_dirtyRects.erase(r);
+				r = _dirtyRects.erase(r);
 		}
 	}
 
@@ -607,7 +607,7 @@ void TownsScreen::scrollLayer(int layer, int offset, int top, int bottom, bool f
 	if (top == 0 && bottom == _height - 1)
 		_numDirtyRects = kDirtyRectsMax;
 
-	addDirtyRect(0, top, _width, bottom - top);	
+	addDirtyRect(0, top, _width, bottom - top);
 }
 
 void TownsScreen::update() {

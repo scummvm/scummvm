@@ -19,8 +19,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/usecode/uc_stack.h"
+
+#include "common/stream.h"
+#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {

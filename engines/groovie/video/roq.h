@@ -25,6 +25,10 @@
 #include "groovie/video/player.h"
 #include "audio/mixer.h"
 
+namespace Video {
+class VideoDecoder;
+}
+
 namespace Groovie {
 
 class GroovieEngine;
@@ -45,10 +49,13 @@ public:
 		return _soundHandle;
 	}
 
-	void drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color, bool blackBackground) override;
+	void drawString(Graphics::Surface *surface, const Common::String &text, int posx, int posy, uint32 color, bool blackBackground) override;
 	void copyfgtobg(uint8 arg) override;
 
+	bool isFileHandled() override { return _isFileHandled; }
+
 protected:
+	void waitFrame() override;
 	uint16 loadInternal() override;
 	bool playFrameInternal() override;
 	void stopAudioStream() override;
@@ -61,6 +68,7 @@ protected:
 private:
 	bool readBlockHeader(ROQBlockHeader &blockHeader);
 
+	bool isValidBlockHeaderType(uint16 blockHeaderType);
 	bool processBlock();
 	bool processBlockInfo(ROQBlockHeader &blockHeader);
 	bool processBlockQuadCodebook(ROQBlockHeader &blockHeader);
@@ -73,7 +81,7 @@ private:
 	bool processBlockAudioContainer(ROQBlockHeader &blockHeader);
 	bool playFirstFrame() { return _flagNoPlay; }; // _alpha && !_flagOverlay; }
 	void clearOverlay();
-	void dumpAllSurfaces(const Common::String funcname);
+	void dumpAllSurfaces(const Common::String &funcname);
 
 	void paint2(byte i, int destx, int desty);
 	void paint4(byte i, int destx, int desty);
@@ -113,6 +121,9 @@ private:
 	byte _alpha;
 	bool _firstFrame;
 	Common::Rect *_restoreArea;	// Area to be repainted by foreground
+
+	Video::VideoDecoder *_videoDecoder;
+	bool _isFileHandled;
 };
 
 class ROQSoundPlayer : public ROQPlayer {

@@ -42,7 +42,6 @@ class NancyConsole;
 class NancyEngine;
 
 class SoundManager {
-	friend class NancyConsole;
 public:
 	// Settings for playing a sound, used in nancy3 and up
 	// Older versions had a different, non-bitflag enum, but testing
@@ -95,6 +94,18 @@ public:
 	void setVolume(const SoundDescription &description, uint16 volume);
 	void setVolume(const Common::String &chunkName, uint16 volume);
 
+	// Nancy 11+ Update3DSound (AR 156). Adjusts a playing fixed-position
+	// 3D sound's position and/or its min/max audible distance.
+	void update3DSoundPosition(uint16 channelID, int32 x, int32 y, int32 z);
+	void update3DSoundMinDistance(uint16 channelID, uint32 minDistance);
+	void update3DSoundMaxDistance(uint16 channelID, uint32 maxDistance);
+
+	// Nancy12 Set3DSoundListenerPosition (AR 168). Overrides the 3D listener
+	// position, which is otherwise taken from the scene summary. The override
+	// is cleared when a new scene is loaded.
+	void setListenerPosition(const Math::Vector3d &position);
+	void clearListenerPositionOverride();
+
 	uint32 getRate(uint16 channelID);
 	uint32 getRate(const SoundDescription &description);
 	uint32 getRate(const Common::String &chunkName);
@@ -111,8 +122,13 @@ public:
 	Audio::Timestamp getLength(const SoundDescription &description);
 	Audio::Timestamp getLength(const Common::String &chunkName);
 
+	bool isCommonSound(const Common::String &soundName) const { return _commonSounds.contains(soundName); }
+
 	void soundEffectMaintenance();
 	void recalculateSoundEffects();
+
+	Math::Vector3d &getOrientation() { return _orientation; }
+	Common::String getChannelInfo(uint16 channelID);
 
 	// Used when changing scenes
 	void stopAndUnloadSceneSpecificSounds();
@@ -131,6 +147,7 @@ protected:
 		uint16 panAnchorFrame = 0;
 		bool isPanning = false;
 		Audio::SeekableAudioStream *stream = nullptr;
+		Audio::AudioStream *streamForMixer = nullptr;
 		Audio::SoundHandle handle;
 		bool isPersistent = false;
 
@@ -145,6 +162,17 @@ protected:
 
 	void soundEffectMaintenance(uint16 channelID, bool force = false);
 
+	// Nancy 13 introduced the MMIX ("music mix") boot chunk, a table mapping a
+	// short location code (e.g. "CAM", "BRI") to a set of interchangeable music /
+	// ambience tracks. When a sound is loaded by such a code, the engine picks one
+	// of the mapped tracks at random and plays that instead. Returns the resolved
+	// filename, or the input name unchanged when it doesn't match any mix record.
+	Common::String resolveMusicMix(const Common::String &name) const;
+
+	// Returns the listener position override if one is active, otherwise
+	// the scene summary's listener position
+	Math::Vector3d getListenerPosition() const;
+
 	Audio::Mixer *_mixer;
 
 	Common::Array<Channel> _channels;
@@ -155,6 +183,9 @@ protected:
 	Math::Vector3d _orientation;
 	Math::Vector3d _position;
 	uint _positionLerp = 0;
+
+	Math::Vector3d _listenerPositionOverride;
+	bool _hasListenerPositionOverride = false;
 };
 
 } // End of namespace Nancy

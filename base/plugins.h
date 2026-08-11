@@ -27,6 +27,10 @@
 #include "common/str.h"
 #include "backends/plugins/elf/version.h"
 
+#if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
+#include <cxxabi.h>
+#endif
+
 #define INCLUDED_FROM_BASE_PLUGINS_H
 #include "base/internal_plugins.h"
 #undef INCLUDED_FROM_BASE_PLUGINS_H
@@ -48,7 +52,7 @@ enum PluginType {
 };
 
 // TODO: Make the engine API version depend on ScummVM's version
-// because of the backlinking (posibly from the checkout revision)
+// because of the back linking (possibly from the checkout revision)
 #define PLUGIN_TYPE_ENGINE_DETECTION_VERSION 1
 #define PLUGIN_TYPE_ENGINE_VERSION 2
 #define PLUGIN_TYPE_MUSIC_VERSION 1
@@ -64,8 +68,15 @@ extern const int pluginTypeVersions[PLUGIN_TYPE_MAX];
 #if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
 #define PLUGIN_DYNAMIC_DSO_HANDLE \
 	uint32 __dso_handle __attribute__((visibility("hidden"))) = 0;
+// Exported helper that runs __cxa_finalize from inside the plugin, so the
+// &__dso_handle argument is the plugin's own resolved address -- the same one
+// GCC embedded in its __cxa_atexit calls. Calling __cxa_finalize from the host
+// with a findSymbol() lookup is fragile (see elf-provider.cpp).
+#define PLUGIN_DYNAMIC_FINALIZE \
+	PLUGIN_EXPORT void PLUGIN_finalize() { __cxxabiv1::__cxa_finalize(&__dso_handle); }
 #else
 #define PLUGIN_DYNAMIC_DSO_HANDLE
+#define PLUGIN_DYNAMIC_FINALIZE
 #endif
 
 #ifdef USE_ELF_LOADER
@@ -106,6 +117,7 @@ extern const int pluginTypeVersions[PLUGIN_TYPE_MAX];
 #define REGISTER_PLUGIN_DYNAMIC(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
 		PLUGIN_DYNAMIC_DSO_HANDLE \
+		PLUGIN_DYNAMIC_FINALIZE \
 		PLUGIN_DYNAMIC_BUILD_DATE \
 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
 		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
@@ -186,8 +198,8 @@ class StaticPlugin : public Plugin {
 public:
 	StaticPlugin(PluginObject *pluginobject, PluginType type);
 	~StaticPlugin();
-	virtual bool loadPlugin();
-	virtual void unloadPlugin();
+	bool loadPlugin() override;
+	void unloadPlugin() override;
 };
 
 
@@ -292,12 +304,12 @@ protected:
 
 	bool tryLoadPlugin(Plugin *plugin);
 	void addToPluginsInMemList(Plugin *plugin);
-	const Plugin *findEnginePlugin(const Common::String &engineId);
 	const Plugin *findLoadedPlugin(const Common::String &engineId);
 
 	static PluginManager *_instance;
 	PluginManager();
 
+	void unloadAllPlugins();
 public:
 	virtual ~PluginManager();
 
@@ -307,28 +319,13 @@ public:
 	void addPluginProvider(PluginProvider *pp);
 
 	/**
-	 * A method which takes in a plugin of type ENGINE,
-	 * and returns the appropriate & matching METAENGINE.
-	 * It uses the Engine plugin's getName method, which is an identifier,
-	 * and then tries to matches it with each plugin present in memory.
+	 * A method which finds the METAENGINE plugin for the provided engineId
 	 *
-	 * @param plugin A plugin of type ENGINE.
+	 * @param engineId The engine ID
 	 *
 	 * @return A plugin of type METAENGINE.
 	 */
-	const Plugin *getMetaEngineFromEngine(const Plugin *plugin);
-
-	/**
-	 * A method which takes in a plugin of type METAENGINE,
-	 * and returns the appropriate & matching ENGINE.
-	 * It uses the MetaEngine's getEngineID to reconstruct the name
-	 * of engine plugin, and then tries to matches it with each plugin in memory.
-	 *
-	 * @param A plugin of type METAENGINE.
-	 *
-	 * @return A plugin of type ENGINE.
-	 */
-	const Plugin *getEngineFromMetaEngine(const Plugin *plugin);
+	const Plugin *findEnginePlugin(const Common::String &engineId);
 
 	// Functions used by the uncached PluginManager
 	virtual void init()	{}
@@ -342,7 +339,6 @@ public:
 	// Functions used only by the cached PluginManager
 	virtual void loadAllPlugins();
 	virtual void loadAllPluginsOfType(PluginType type);
-	void unloadAllPlugins();
 
 	void unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin = true);
 
@@ -362,10 +358,11 @@ protected:
 
 	bool _isDetectionLoaded;
 
-	PluginManagerUncached() : _isDetectionLoaded(false), _detectionPlugin(nullptr) {}
+	PluginManagerUncached() : _detectionPlugin(nullptr), _currentPlugin(nullptr), _isDetectionLoaded(false) {}
 	bool loadPluginByFileName(const Common::Path &filename);
 
 public:
+	virtual ~PluginManagerUncached();
 	void init() override;
 	void loadFirstPlugin() override;
 	bool loadNextPlugin() override;

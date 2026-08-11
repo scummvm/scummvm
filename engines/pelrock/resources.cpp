@@ -1,0 +1,617 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/file.h"
+
+#include "pelrock/dialog.h"
+#include "pelrock/resources.h"
+#include "pelrock/offsets.h"
+#include "pelrock/util.h"
+
+namespace Pelrock {
+
+// ALFRED.7 — cursor sprites
+static const uint32 cursor_offsets[5] = {0x0FDDFD, 0x0FDCDD, 0x0FDF1D, 0x0FE33D, 0x367EF0};
+
+// ALFRED.3 / ALFRED.7 — Alfred combing animations
+static const uint32 ALFRED7_ALFRED_COMB_R = 67768;
+static const uint32 ALFRED7_ALFRED_COMB_L = 88408;
+
+// ALFRED.4 — inventory icon pixel data
+static const uint32 kInventoryIconsOffset = 42366;
+static const uint32 kInventoryIconsTailSize = 423656; // bytes trailing the icon block
+
+// ALFRED.7 — action-popup balloon frames
+static const uint32 kBalloonFramesOffset = 2176936;
+static const uint32 kBalloonFramesSize = 24950; // compressed size
+
+// JUEGO.EXE — Alfred in-game text responses
+static const uint32 kAlfredResponsesOffset = 0x441DC;
+static const uint32 kAlfredResponsesSize = 12143;
+static const uint32 kConversationTerminatorOffset = 0x0492EE;
+
+// JUEGO.EXE — credits
+static const uint32 kCreditsOffset = 0x49F60;
+static const uint32 kCreditsSize = 2540;
+
+// JUEGO.EXE — computer-screen text
+static const uint32 kComputerTextOffset = 0x0004901A;
+static const uint32 kComputerTextSize = 490;
+
+const uint32 stickerOffsets[137] = {
+	0x000000, 0x00005B, 0x0000B6, 0x000298, 0x00047A, 0x0023C8, 0x004316, 0x004376,
+	0x005119, 0x005EBC, 0x0083ED, 0x008529, 0x0092C4, 0x00A3AA, 0x00B490, 0x00B6A6,
+	0x00C05A, 0x00CA0E, 0x00D3D0, 0x00D46E, 0x00F036, 0x00FB8F, 0x00FC55, 0x0119D7,
+	0x013759, 0x01391F, 0x014A9D, 0x015C1B, 0x017601, 0x018FE7, 0x019048, 0x0190A9,
+	0x01910A, 0x0197F4, 0x019EDE, 0x01A7EC, 0x01B0FA, 0x01B8C4, 0x01C644, 0x01D83A,
+	0x01E104, 0x01E8C6, 0x01F45D, 0x01FBBB, 0x02011D, 0x02052F, 0x020A95, 0x020E5B,
+	0x0210B3, 0x0216E6, 0x021D5E, 0x0233A3, 0x0249E8, 0x025777, 0x026506, 0x028E2B,
+	0x02B82F, 0x02C9D7, 0x02E4CA, 0x02FFBD, 0x03234A, 0x0346D7, 0x036A83, 0x038E2F,
+	0x03B18D, 0x03D4EB, 0x03DEC9, 0x03F813, 0x04115D, 0x045303, 0x0494A9, 0x04955F,
+	0x049615, 0x0496CB, 0x0499E1, 0x049EC7, 0x04A023, 0x04A447, 0x04BA6D, 0x04BFA1,
+	0x04CE33, 0x04CF09, 0x04DB3B, 0x052885, 0x0575CF, 0x05775B, 0x057D79, 0x058397,
+	0x058969, 0x058F50, 0x05A9DB, 0x05C561, 0x05C72E, 0x05C8FB, 0x05EAC1, 0x060C87,
+	0x060D19, 0x060E62, 0x061039, 0x0613C2, 0x061764, 0x061847, 0x062535, 0x062D4B,
+	0x064F11, 0x0670D7, 0x067381, 0x0675A9, 0x0677EF, 0x067A98, 0x067DDE, 0x068115,
+	0x0684E3, 0x068A76, 0x068F30, 0x0693C8, 0x0696AD, 0x06C2C9, 0x06C84D, 0x07095D,
+	0x071854, 0x07274B, 0x073642, 0x074539, 0x075454, 0x0791DA, 0x07CF60, 0x07E4AB,
+	0x07ECED, 0x07F52F, 0x07FD71, 0x080591, 0x080B24, 0x080B84, 0x080F39, 0x0812F5,
+	0x0816B1
+};
+
+ResourceManager::ResourceManager(/* args */) {
+	_inventoryIcons = new InventoryObject[69];
+	for (int i = 0; i < 4; i++) {
+		alfredIdle[i] = nullptr;
+	}
+}
+
+const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
+	{10, 51, 102, 1, 7, kAlfredAnimReadBookOffset, 1, 2, 0},                // 0  - READ BOOK
+	{10, 51, 102, 1, 7, kAlfredAnimReadRecipeOffset, 1, 2, 0},              // 1  - READ RECIPE
+	{3, 45, 87, 0, 7, kAlfredAnimElectricShock1Offset, 1, 2, 0},            // 2  - ELECTRIC SHOCK 1
+	{2, 82, 58, 0, 7, kAlfredAnimElectricShock3Offset, 20, 1, 0},           // 3  - ELECTRIC SHOCK 3
+	{3, 71, 110, 1, 2, kAlfredAnimThrowOffset, 1, 1, kAlfredAnimThrowSize}, // 4  - Throw
+	{14, 171, 107, 1, 7, kAlfredAnimCrocodileOffset, 1, 2, 0},              // 5  - crocodile
+	{12, 113, 103, 1, 7, kAlfredAnimManholeOffset, 1, 2, 0},                // 6  - exit through manhole
+	{11, 33, 72, 1, 7, kAlfredAnimClimbDownOffset, 1, 2, 0},                // 7  - alfred climbs down
+	{9, 33, 72, 1, 7, kAlfredAnimClimbUpOffset, 1, 2, 0},                   // 8  - alfred climbs up
+	{16, 158, 115, 0, 7, kAlfredAnimExitTunnelOffset, 1, 2, 0},             // 9  - alfred exits tunnel
+	{7, 208, 102, 0, 7, kAlfredAnimWorkersOffset, 1, 2, 0},                 // 10 - alfred with workers
+	{23, 116, 124, 1, 7, kAlfredAnimMunheco1Offset, 1, 2, 0},               // 11 - Doll 1
+	{18, 177, 124, 1, 7, kAlfredAnimMunheco2Offset, 1, 2, 0},               // 12 - Doll 2
+	{11, 98, 138, 1, 7, kAlfredAnimMunheco3Offset, 1, 2, 0},                // 13 - Doll 3
+	{4, 51, 102, 1, 7, kAlfredAnimDescamisaOffset, 1, 2, 0},                // 14 - Taking off shirt
+	{13, 95, 99, 1, 7, kAlfredAnimSecretPassageOffset, 1, 2, 0},            // 15 - alfred enters secret passage
+	{14, 71, 66, 1, 7, kAlfredAnimInBedOffset, 1, 2, 0},                    // 16 - Alfred in bed
+};
+
+ResourceManager::~ResourceManager() {
+	for (int i = 0; i < 5; i++) {
+		delete[] _cursorMasks[i];
+	}
+	for (int i = 0; i < kNumVerbIcons; i++) {
+		delete[] _verbIcons[i];
+	}
+	free(_popUpBalloon);
+	for (int i = 0; i < 4; i++) {
+		// free all frame buffers
+		for (int j = 0; j < walkingAnimLengths[i]; j++) {
+			delete[] alfredWalkFrames[i][j];
+			delete[] alfredTalkFrames[i][j];
+		}
+
+		for (int j = 0; j < 2; j++) {
+			delete[] alfredInteractFrames[i][j];
+		}
+
+		// free the array of pointers
+		delete[] alfredWalkFrames[i];
+		delete[] alfredTalkFrames[i];
+		delete[] alfredInteractFrames[i];
+		delete[] alfredIdle[i];
+	}
+
+	for (int i = 0; i < 11; i++) {
+		delete[] alfredCombFrames[0][i];
+		delete[] alfredCombFrames[1][i];
+	}
+	delete[] alfredCombFrames[0];
+	delete[] alfredCombFrames[1];
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 9; j++) {
+			delete[] alfredCrawlFrames[i][j];
+		}
+		delete[] alfredCrawlFrames[i];
+	}
+
+	delete[] _inventoryIcons;
+	clearSpecialAnim();
+}
+
+void ResourceManager::loadCursors() {
+	Common::File alfred7File;
+	if (!alfred7File.open("ALFRED.7")) {
+		error("ResourceManager::loadCursors(): Couldnt find file ALFRED.7");
+	}
+	for (int i = 0; i < 5; i++) {
+		uint32 cursorOffset = cursor_offsets[i];
+		alfred7File.seek(cursorOffset);
+		_cursorMasks[i] = new byte[kCursorSize];
+		alfred7File.read(_cursorMasks[i], kCursorSize);
+	}
+	alfred7File.close();
+}
+
+void ResourceManager::loadInteractionIcons() {
+	Common::File alfred7File;
+	if (!alfred7File.open("ALFRED.7")) {
+		error("ResourceManager::loadInteractionIcons(): Couldnt find file ALFRED.7");
+	}
+
+	alfred7File.seek(kBalloonFramesOffset, SEEK_SET);
+
+	uint32 totalBalloonSize = kBalloonWidth * kBalloonHeight * kBalloonFrames;
+	_popUpBalloon = nullptr;
+
+	uint32 compressedSize = kBalloonFramesSize;
+
+	byte *raw = new byte[compressedSize];
+	alfred7File.read(raw, compressedSize);
+	rleDecompress(raw, compressedSize, 0, totalBalloonSize, &_popUpBalloon);
+
+	delete[] raw;
+
+	alfred7File.close();
+	Common::File alfred4File;
+	if (!alfred4File.open("ALFRED.4")) {
+		error("ResourceManager::loadInteractionIcons(): Couldnt find file ALFRED.4");
+	}
+
+	int iconSize = kVerbIconHeight * kVerbIconWidth;
+	for (int i = 0; i < kNumVerbIcons; i++) {
+		_verbIcons[i] = new byte[iconSize];
+		alfred4File.read(_verbIcons[i], iconSize);
+	}
+	alfred4File.close();
+}
+
+void ResourceManager::loadAlfredAnims() {
+	Common::File alfred3;
+	if (!alfred3.open(Common::Path("ALFRED.3"))) {
+		error("ResourceManager::loadAlfredAnims(): Could not open ALFRED.3");
+		return;
+	}
+	int alfred3Size = alfred3.size();
+	byte *bufferFile = (byte *)malloc(alfred3Size);
+	alfred3.seek(0, SEEK_SET);
+	alfred3.read(bufferFile, alfred3Size);
+	alfred3.close();
+
+	uint32 capacity = 3060 * 102 + 2340 * 55;
+	byte *completePic = nullptr;
+	rleDecompress(bufferFile, alfred3Size, 0, capacity, &completePic);
+
+	byte *stdFramesPic = new byte[3060 * 102];
+	Common::copy(completePic, completePic + 3060 * 102, stdFramesPic);
+	int frameSize = kAlfredFrameHeight * kAlfredFrameWidth;
+	for (int i = 0; i < 4; i++) {
+		alfredIdle[i] = new byte[frameSize];
+		int talkingFramesOffset = walkingAnimLengths[0] + walkingAnimLengths[1] + walkingAnimLengths[2] + walkingAnimLengths[3] + 4;
+		int interactingFramesOffset = talkingFramesOffset + talkingAnimLengths[0] + talkingAnimLengths[1] + talkingAnimLengths[2] + talkingAnimLengths[3];
+		int prevWalkingFrames = 0;
+		int prevTalkingFrames = 0;
+		int prevInteractingFrames = 0;
+
+		for (int j = 0; j < i; j++) {
+			prevWalkingFrames += walkingAnimLengths[j] + 1;
+			prevTalkingFrames += talkingAnimLengths[j];
+			prevInteractingFrames += interactingAnimLength;
+		}
+
+		alfredWalkFrames[i] = new byte *[walkingAnimLengths[i]];
+
+		int standingFrame = prevWalkingFrames;
+
+		extractSingleFrame(stdFramesPic, alfredIdle[i], standingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		for (int j = 0; j < walkingAnimLengths[i]; j++) {
+
+			alfredWalkFrames[i][j] = new byte[frameSize];
+			int walkingFrame = prevWalkingFrames + 1 + j;
+			extractSingleFrame(stdFramesPic, alfredWalkFrames[i][j], walkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		}
+
+		alfredTalkFrames[i] = new byte *[talkingAnimLengths[i]];
+
+		int talkingStartFrame = talkingFramesOffset + prevTalkingFrames;
+		for (int j = 0; j < talkingAnimLengths[i]; j++) {
+			alfredTalkFrames[i][j] = new byte[frameSize];
+			int talkingFrame = talkingStartFrame + j;
+			extractSingleFrame(stdFramesPic, alfredTalkFrames[i][j], talkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		}
+
+		alfredInteractFrames[i] = new byte *[interactingAnimLength];
+		int interactingStartFrame = interactingFramesOffset + prevInteractingFrames;
+		for (int j = 0; j < interactingAnimLength; j++) {
+			alfredInteractFrames[i][j] = new byte[frameSize];
+			int interactingFrame = interactingStartFrame + j;
+			extractSingleFrame(stdFramesPic, alfredInteractFrames[i][j], interactingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		}
+	}
+
+	byte *crawlFramesPic = new byte[2340 * 55];
+	Common::copy(completePic + 3060 * 102, completePic + 3060 * 102 + 2340 * 55, crawlFramesPic);
+	int crawlFrameSize = 2340 * 55;
+	for (int i = 0; i < 4; i++) {
+		alfredCrawlFrames[i] = new byte *[9];
+		for (int j = 0; j < 9; j++) {
+			int walkingFrame = (i % 2) * 9 + j;
+			alfredCrawlFrames[i][j] = new byte[crawlFrameSize];
+			extractSingleFrame(crawlFramesPic, alfredCrawlFrames[i][j], walkingFrame, 130, 55);
+		}
+	}
+
+	delete[] crawlFramesPic;
+	delete[] stdFramesPic;
+	free(completePic);
+	free(bufferFile);
+
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		error("ResourceManager::loadAlfredAnims(): Could not open ALFRED.7");
+		return;
+	}
+	int spriteMapSize = frameSize * 11;
+
+	/* Combing */
+	byte *alfredCombRightRaw;
+	size_t alfredCombRightSize;
+
+	readUntilBuda(&alfred7, ALFRED7_ALFRED_COMB_R, alfredCombRightRaw, alfredCombRightSize);
+	byte *alfredCombRight = nullptr;
+	rleDecompress(alfredCombRightRaw, alfredCombRightSize, 0, spriteMapSize, &alfredCombRight);
+
+	alfredCombFrames[0] = new byte *[11];
+	alfredCombFrames[1] = new byte *[11];
+
+	for (int i = 0; i < 11; i++) {
+		alfredCombFrames[0][i] = new byte[frameSize];
+		extractSingleFrame(alfredCombRight, alfredCombFrames[0][i], i, kAlfredFrameWidth, kAlfredFrameHeight);
+	}
+
+	byte *alfredCombLeftRaw;
+	size_t alfredCombLeftSize;
+	readUntilBuda(&alfred7, ALFRED7_ALFRED_COMB_L, alfredCombLeftRaw, alfredCombLeftSize);
+	byte *alfredCombLeft = nullptr;
+	rleDecompress(alfredCombLeftRaw, alfredCombLeftSize, 0, spriteMapSize, &alfredCombLeft);
+
+	for (int i = 0; i < 11; i++) {
+		alfredCombFrames[1][i] = new byte[frameSize];
+		extractSingleFrame(alfredCombLeft, alfredCombFrames[1][i], i, kAlfredFrameWidth, kAlfredFrameHeight);
+	}
+
+	free(alfredCombRight);
+	free(alfredCombLeft);
+	free(alfredCombRightRaw);
+	free(alfredCombLeftRaw);
+
+	alfred7.close();
+}
+
+void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t &bufferSize) {
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		error("ResourceManager::loadOtherSpecialAnim(): Could not open ALFRED.7");
+		return;
+	}
+
+	if (rleCompressed) {
+		byte *compressed = nullptr;
+		size_t compressedSize = 0;
+		readUntilBuda(&alfred7, offset, compressed, compressedSize);
+		bufferSize = rleDecompress(compressed, compressedSize, 0, 0, &buffer, true);
+		free(compressed);
+	} else {
+		alfred7.seek(offset, SEEK_SET);
+		alfred7.read(buffer, bufferSize);
+	}
+	alfred7.close();
+}
+
+void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
+	AlfredSpecialAnimOffset anim = alfredSpecialAnims[numAnim];
+
+	Common::String filename = Common::String::format("ALFRED.%d", anim.numAlfred);
+	Common::File alfredFile;
+	if (!alfredFile.open(Common::Path(filename))) {
+		error("ResourceManager::loadAlfredSpecialAnim(): Could not open %s", filename.c_str());
+		return;
+	}
+
+	alfredFile.seek(anim.offset, SEEK_SET);
+	if (_currentSpecialAnim)
+		delete _currentSpecialAnim;
+	_currentSpecialAnim = new AlfredSpecialAnim(anim.numFrames, anim.w, anim.h, anim.numBudas, anim.offset, anim.loops, anim.size, anim.speed);
+	uint32 size = anim.size == 0 ? anim.numFrames * anim.w * anim.h : anim.size;
+	_currentSpecialAnim->animData = new byte[size];
+	if (anim.numBudas > 0) {
+		byte *thisBlock = nullptr;
+		size_t blockSize = 0;
+		readUntilBuda(&alfredFile, anim.offset, thisBlock, blockSize);
+		rleDecompress(thisBlock, blockSize, 0, size, &_currentSpecialAnim->animData, false);
+		free(thisBlock);
+	} else {
+		alfredFile.read(_currentSpecialAnim->animData, anim.numFrames * anim.w * anim.h);
+	}
+	if (reverse) {
+		// reverse frames for testing
+		byte *reversedData = new byte[anim.numFrames * anim.w * anim.h];
+		for (int i = 0; i < anim.numFrames; i++) {
+			extractSingleFrame(_currentSpecialAnim->animData,
+							   &reversedData[i * anim.w * anim.h],
+							   anim.numFrames - 1 - i,
+							   anim.w,
+							   anim.h);
+		}
+		delete[] _currentSpecialAnim->animData;
+		_currentSpecialAnim->animData = reversedData;
+	}
+
+	_isSpecialAnimFinished = false;
+	alfredFile.close();
+}
+
+void ResourceManager::clearSpecialAnim() {
+	delete _currentSpecialAnim;
+	_currentSpecialAnim = nullptr;
+}
+
+void ResourceManager::loadInventoryItems() {
+	// loadInventoryDescriptions();
+	Common::File alfred4File;
+	if (!alfred4File.open("ALFRED.4")) {
+		error("ResourceManager::loadInventoryItems(): Couldnt find file ALFRED.4");
+	}
+	uint32 iconsSize = alfred4File.size() - kInventoryIconsTailSize;
+	byte *iconData = new byte[iconsSize];
+	alfred4File.seek(kInventoryIconsOffset, SEEK_SET);
+	alfred4File.read(iconData, iconsSize);
+
+	for (int i = 0; i < 69; i++) {
+		_inventoryIcons[i].index = i;
+		extractSingleFrame(iconData, _inventoryIcons[i].iconData, i, 60, 60);
+	}
+	delete[] iconData;
+}
+
+void ResourceManager::loadHardcodedText() {
+
+	Common::File exe;
+	if (!exe.open("JUEGO.EXE")) {
+		error("ResourceManager::loadHardcodedText(): Couldnt find file JUEGO.EXE");
+	}
+	byte *descBuffer = new byte[kAlfredResponsesSize];
+	exe.seek(kAlfredResponsesOffset, SEEK_SET);
+	exe.read(descBuffer, kAlfredResponsesSize);
+	_ingameTexts = processTextData(descBuffer, kAlfredResponsesSize);
+	// exe.seek(-1, SEEK_CUR);
+	_left = exe.readString();
+	_right = exe.readString((char)0xFD);
+	byte *terminatorBuffer = new byte[39];
+	exe.seek(kConversationTerminatorOffset, SEEK_SET);
+	exe.read(terminatorBuffer, 39);
+	_conversationTerminator = Common::String((const char *)terminatorBuffer, 39);
+	delete[] terminatorBuffer;
+	delete[] descBuffer;
+	exe.close();
+}
+
+void ResourceManager::getPaletteForRoom28(byte *palette) {
+	// Load the special palette from ALFRED.7 at offset 0x1610CE
+	static const uint32 kRoom28PaletteOffset = 0x1610CE;
+
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		warning("Could not open ALFRED.7 for room 28 palette");
+		return;
+	}
+
+	alfred7.seek(kRoom28PaletteOffset, SEEK_SET);
+	alfred7.read(palette, 768);
+
+	// Convert 6-bit VGA palette (0-63) to 8-bit (0-255)
+	for (int i = 0; i < 768; i++) {
+		palette[i] = palette[i] << 2;
+	}
+
+	alfred7.close();
+}
+
+Common::Array<Common::StringArray> ResourceManager::loadComputerText() {
+
+	Common::File exe;
+	if (!exe.open("JUEGO.EXE")) {
+		error("ResourceManager::loadComputerText(): Couldnt find file JUEGO.EXE");
+	}
+	int bufSize = kComputerTextSize;
+	byte *computerTextBuf = new byte[bufSize];
+	exe.seek(kComputerTextOffset, SEEK_SET);
+	exe.read(computerTextBuf, bufSize);
+	Common::Array<Common::StringArray> computerTexts = processTextData(computerTextBuf, bufSize);
+
+	delete[] computerTextBuf;
+
+	exe.close();
+	return computerTexts;
+}
+void ResourceManager::getExtraScreen(int screenIndex, byte *screenBuf, byte *palette) {
+	Common::File alfred7;
+	if (!alfred7.open("ALFRED.7")) {
+		error("ResourceManager::getExtraScreen(): Couldnt find file ALFRED.7");
+	}
+	ExtraScreen screen = extraScreens[screenIndex];
+	mergeRleBlocks(&alfred7, screen.offset, 8, screenBuf);
+	alfred7.seek(screen.paletteOffset, SEEK_SET);
+	alfred7.read(palette, 768);
+	for (int i = 0; i < 256; i++) {
+		palette[i * 3] = palette[i * 3] << 2;
+		palette[i * 3 + 1] = palette[i * 3 + 1] << 2;
+		palette[i * 3 + 2] = palette[i * 3 + 2] << 2;
+	}
+	alfred7.close();
+}
+
+Common::Array<Common::StringArray> ResourceManager::getCredits() {
+	Common::File exe;
+	if (!exe.open("JUEGO.EXE")) {
+		error("ResourceManager::getCredits(): Couldnt find file JUEGO.EXE");
+	}
+	byte *descBuffer = new byte[kCreditsSize];
+	exe.seek(kCreditsOffset, SEEK_SET);
+	exe.read(descBuffer, kCreditsSize);
+	Common::Array<Common::StringArray> credits = processTextData(descBuffer, kCreditsSize);
+	delete[] descBuffer;
+	exe.close();
+	return credits;
+}
+
+Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, size_t size, bool decode) {
+	uint pos = 0;
+	Common::String desc = "";
+	Common::StringArray lines;
+	Common::Array<Common::StringArray> texts;
+	while (pos < size) {
+		if (data[pos] == kCtrlEndText) {
+			lines.push_back(desc);
+			texts.push_back(lines);
+			lines.clear();
+			desc = Common::String();
+			pos++;
+			continue;
+		}
+		if (data[pos] == 0x00) {
+			pos++;
+			continue;
+		}
+
+		if (data[pos] == kCtrlSpeakerId) {
+			byte color = data[pos + 1];
+			desc.append(1, '@');
+			desc.append(1, color);
+			pos += 2;
+			if (data[pos + 1] == 0x78 || data[pos + 2] == 0x78) {
+				pos += 2;
+			}
+
+			continue;
+		}
+
+		if (data[pos] == 0xC8 || data[pos] == 0xB1) {
+			if (!desc.empty() || data[pos] == 0xC8) {
+				lines.push_back(desc);
+			}
+			desc = Common::String();
+			pos++;
+			continue;
+		}
+		if (decode)
+			desc.append(1, decodeChar(data[pos]));
+		else
+			desc.append(1, data[pos]);
+		if (pos + 1 == size) {
+			lines.push_back(desc);
+			texts.push_back(lines);
+		}
+		pos++;
+	}
+	return texts;
+}
+
+Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
+	Common::File alfred6File;
+	if (!alfred6File.open("ALFRED.6")) {
+		error("ResourceManager::getSticker(): Couldnt find file ALFRED.6");
+	}
+
+	uint32 stickerOffset = stickerOffsets[stickerIndex];
+	alfred6File.seek(stickerOffset, SEEK_SET);
+	Sticker sticker;
+	sticker.x = alfred6File.readUint16LE();
+	sticker.y = alfred6File.readUint16LE();
+	sticker.w = alfred6File.readByte();
+	sticker.h = alfred6File.readByte();
+	sticker.stickerIndex = stickerIndex;
+	alfred6File.close();
+	return sticker;
+}
+
+byte *ResourceManager::loadStickerPixels(const Sticker &sticker) {
+	Common::File alfred6File;
+	if (!alfred6File.open("ALFRED.6")) {
+		error("ResourceManager::loadStickerPixels(): Couldnt find file ALFRED.6");
+	}
+	uint32 pixelOffset = stickerOffsets[sticker.stickerIndex] + 6; // skip x(2)+y(2)+w(1)+h(1)
+	alfred6File.seek(pixelOffset, SEEK_SET);
+	byte *pixels = new byte[sticker.w * sticker.h];
+	alfred6File.read(pixels, sticker.w * sticker.h);
+	alfred6File.close();
+	return pixels;
+}
+
+InventoryObject ResourceManager::getIconForObject(byte objectIndex) {
+	byte iconIndex = 0;
+	if (objectIndex < 59) {
+		if (objectIndex >= 11) {
+			iconIndex = ((objectIndex - 11) & 3) + 11; // Books cycle through icons 11-14
+		} else {
+			iconIndex = objectIndex; // Direct mapping for IDs 0-11
+		}
+	} else {
+		iconIndex = objectIndex - 44; // Offset for high IDs (59+)
+	}
+	return _inventoryIcons[iconIndex];
+}
+
+void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 offset, int numBlocks, byte *outputBuffer) {
+	stream->seek(offset, SEEK_SET);
+	// get screen
+	size_t combined_size = 0;
+	for (int i = 0; i < numBlocks; i++) {
+		byte *thisBlock = nullptr;
+		size_t blockSize = 0;
+		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
+		byte *block_data = nullptr;
+		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);
+		// debug("Decompressed block %d: %zu bytes, total %zu", i, decompressedSize, combined_size + decompressedSize);
+		if (combined_size + decompressedSize > 640 * 400) {
+			debug("Warning: decompressed data exceeds output buffer size, truncating");
+			decompressedSize = 640 * 400 - combined_size;
+		}
+		memcpy(outputBuffer + combined_size, block_data, decompressedSize);
+		combined_size += decompressedSize;
+
+		free(block_data);
+		free(thisBlock);
+	}
+}
+
+} // End of namespace Pelrock

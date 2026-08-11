@@ -31,7 +31,6 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/math/vector2.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/sound/base_sound.h"
@@ -42,12 +41,6 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/savefile.h"
-
-#ifdef ENABLE_WME3D
-#include "math/angle.h"
-#include "math/matrix4.h"
-#include "math/vector3d.h"
-#endif
 
 namespace Wintermute {
 
@@ -67,9 +60,9 @@ BasePersistenceManager::BasePersistenceManager(const Common::String &savePrefix,
 	_loadStream = nullptr;
 	_deleteSingleton = deleteSingleton;
 	if (BaseEngine::instance().getGameRef()) {
-		_gameRef = BaseEngine::instance().getGameRef();
+		_game = BaseEngine::instance().getGameRef();
 	} else {
-		_gameRef = nullptr;
+		_game = nullptr;
 	}
 
 	_richBuffer = nullptr;
@@ -97,8 +90,8 @@ BasePersistenceManager::BasePersistenceManager(const Common::String &savePrefix,
 	_thumbnailData = nullptr;
 	if (savePrefix != "") {
 		_savePrefix = savePrefix;
-	} else if (_gameRef) {
-		_savePrefix = _gameRef->getGameTargetName();
+	} else if (_game) {
+		_savePrefix = _game->_targetName.c_str();
 	} else {
 		_savePrefix = "wmesav";
 	}
@@ -129,20 +122,16 @@ void BasePersistenceManager::cleanup() {
 
 	_thumbnailDataSize = 0;
 	if (_thumbnailData) {
-		delete[] _thumbnailData;
-		_thumbnailData = nullptr;
+		SAFE_DELETE_ARRAY(_thumbnailData);
 	}
 
 	_scummVMThumbSize = 0;
 	if (_scummVMThumbnailData) {
-		delete[] _scummVMThumbnailData;
-		_scummVMThumbnailData = nullptr;
+		SAFE_DELETE_ARRAY(_scummVMThumbnailData);
 	}
 
-	delete _loadStream;
-	delete _saveStream;
-	_loadStream = nullptr;
-	_saveStream = nullptr;
+	SAFE_DELETE(_loadStream);
+	SAFE_DELETE(_saveStream);
 }
 
 Common::String BasePersistenceManager::getFilenameForSlot(int slot) const {
@@ -156,6 +145,11 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 	if (DID_FAIL(readHeader(filename))) {
 		debugC(kWintermuteDebugSaveGame, "getSavedDesc(%d) - Failed for %s", slot, filename.c_str());
 		return;
+	}
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		if (_savedVerMajor == 1 && _savedVerMinor < 5) {
+			return;
+		}
 	}
 	desc.setSaveSlot(slot);
 	desc.setDescription(_savedDescription);
@@ -190,9 +184,9 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 	desc.setPlayTime(0);
 }
 
-void BasePersistenceManager::deleteSaveSlot(int slot) {
+bool BasePersistenceManager::deleteSaveSlot(int slot) {
 	Common::String filename = getFilenameForSlot(slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 uint32 BasePersistenceManager::getMaxUsedSlot() {
@@ -213,6 +207,11 @@ bool BasePersistenceManager::getSaveExists(int slot) {
 	if (DID_FAIL(readHeader(filename))) {
 		return false;
 	}
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		if (_savedVerMajor == 1 && _savedVerMinor < 5) {
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -229,11 +228,10 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 
 	if (_saveStream) {
 		// get thumbnails
-		if (!_gameRef->_cachedThumbnail) {
-			_gameRef->_cachedThumbnail = new SaveThumbHelper(_gameRef);
-			if (DID_FAIL(_gameRef->_cachedThumbnail->storeThumbnail(true))) {
-				delete _gameRef->_cachedThumbnail;
-				_gameRef->_cachedThumbnail = nullptr;
+		if (!_game->_cachedThumbnail) {
+			_game->_cachedThumbnail = new SaveThumbHelper(_game);
+			if (DID_FAIL(_game->_cachedThumbnail->storeThumbnail(true))) {
+				SAFE_DELETE(_game->_cachedThumbnail);
 			}
 		}
 
@@ -244,7 +242,7 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 		putDWORD(magic);
 
 		byte verMajor, verMinor, extMajor, extMinor;
-		_gameRef->getVersion(&verMajor, &verMinor, &extMajor, &extMinor);
+		_game->getVersion(&verMajor, &verMinor, &extMajor, &extMinor);
 		_saveStream->writeByte(verMajor);
 		_saveStream->writeByte(verMinor);
 		_saveStream->writeByte(extMajor);
@@ -252,15 +250,15 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 
 		// new in ver 2
 		putDWORD((uint32)DCGF_VER_BUILD);
-		putString(_gameRef->getName());
+		putString(_game->_name);
 
 		// thumbnail data size
 		bool thumbnailOK = false;
 
-		if (_gameRef->_cachedThumbnail) {
-			if (_gameRef->_cachedThumbnail->_thumbnail) {
+		if (_game->_cachedThumbnail) {
+			if (_game->_cachedThumbnail->_thumbnail) {
 				Common::MemoryWriteStreamDynamic thumbStream(DisposeAfterUse::YES);
-				if (_gameRef->_cachedThumbnail->_thumbnail->writeBMPToStream(&thumbStream)) {
+				if (_game->_cachedThumbnail->_thumbnail->writeBMPToStream(&thumbStream)) {
 					_saveStream->writeUint32LE(thumbStream.size());
 					_saveStream->write(thumbStream.getData(), thumbStream.size());
 				} else {
@@ -275,10 +273,10 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 		}
 		thumbnailOK = false;
 		// Again for the ScummVM-thumb:
-		if (_gameRef->_cachedThumbnail) {
-			if (_gameRef->_cachedThumbnail->_scummVMThumb) {
+		if (_game->_cachedThumbnail) {
+			if (_game->_cachedThumbnail->_scummVMThumb) {
 				Common::MemoryWriteStreamDynamic scummVMthumbStream(DisposeAfterUse::YES);
-				if (_gameRef->_cachedThumbnail->_scummVMThumb->writeBMPToStream(&scummVMthumbStream)) {
+				if (_game->_cachedThumbnail->_scummVMThumb->writeBMPToStream(&scummVMthumbStream)) {
 					_saveStream->writeUint32LE(scummVMthumbStream.size());
 					_saveStream->write(scummVMthumbStream.getData(), scummVMthumbStream.size());
 				} else {
@@ -294,8 +292,7 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 
 
 		// in any case, destroy the cached thumbnail once used
-		delete _gameRef->_cachedThumbnail;
-		_gameRef->_cachedThumbnail = nullptr;
+		SAFE_DELETE(_game->_cachedThumbnail);
 
 		uint32 dataOffset = _offset +
 		                    sizeof(uint32) + // data offset
@@ -307,7 +304,7 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 
 		g_system->getTimeAndDate(_savedTimestamp);
 		putTimeDate(_savedTimestamp);
-		_savedPlayTime = g_system->getMillis();
+		_savedPlayTime = BasePlatform::getTime();
 		_saveStream->writeUint32LE(_savedPlayTime);
 	}
 	return STATUS_OK;
@@ -383,10 +380,18 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	}
 	_saving = false;
 
-	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _gameRef->getName()) != 0) {
+	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _game->_name) != 0) {
 		debugC(kWintermuteDebugSaveGame, "ERROR: Saved game name doesn't match current game");
 		cleanup();
 		return STATUS_FAILED;
+	}
+
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		if (_savedVerMajor == 1 && _savedVerMinor < 5) {
+			debugC(kWintermuteDebugSaveGame, "ERROR: Saved game version is too old for 3D game");
+			cleanup();
+			return STATUS_FAILED;
+		}
 	}
 
 	// if save is newer version than we are, fail
@@ -544,47 +549,51 @@ TimeDate BasePersistenceManager::getTimeDate() {
 }
 
 void BasePersistenceManager::putFloat(float val) {
-	int exponent = 0;
-	float significand = frexp(val, &exponent);
-	Common::String str = Common::String::format("FS%f", significand);
-	putString(str.c_str());
-	_saveStream->writeSint32LE(exponent);
+	if (checkVersion(1, 8, 1)) {
+		_saveStream->writeFloatLE(val);
+	}
 }
 
 float BasePersistenceManager::getFloat() {
-	char *str = getString();
-	float value = 0.0f;
-	float significand = 0.0f;
-	int32 exponent = _loadStream->readSint32LE();
-	int ret = sscanf(str, "FS%f", &significand);
-	value = ldexp(significand, exponent);
-	if (ret != 1) {
-		warning("%s not parsed as float", str);
+	if (checkVersion(1, 8, 1)) {
+		return _loadStream->readFloatLE();
+	} else {
+		char *str = getString();
+		float value = 0.0f;
+		float significand = 0.0f;
+		int32 exponent = _loadStream->readSint32LE();
+		int ret = sscanf(str, "FS%f", &significand);
+		value = ldexp(significand, exponent);
+		if (ret != 1) {
+			warning("%s not parsed as float", str);
+		}
+		delete[] str;
+		return value;
 	}
-	delete[] str;
-	return value;
 }
 
 void BasePersistenceManager::putDouble(double val) {
-	int exponent = 0;
-	double significand = frexp(val, &exponent);
-	Common::String str = Common::String::format("DS%f", significand);
-	putString(str.c_str());
-	_saveStream->writeSint32LE(exponent);
+	if (checkVersion(1, 8, 1)) {
+		_saveStream->writeDoubleLE(val);
+	}
 }
 
 double BasePersistenceManager::getDouble() {
-	char *str = getString();
-	double value = 0.0f;
-	float significand = 0.0f;
-	int32 exponent = _loadStream->readSint32LE();
-	int ret = sscanf(str, "DS%f", &significand);
-	value = ldexp(significand, exponent);
-	if (ret != 1) {
-		warning("%s not parsed as double", str);
+	if (checkVersion(1, 8, 1)) {
+		return _loadStream->readDoubleLE();
+	} else {
+		char *str = getString();
+		double value = 0.0f;
+		float significand = 0.0f;
+		int32 exponent = _loadStream->readSint32LE();
+		int ret = sscanf(str, "DS%f", &significand);
+		value = ldexp(significand, exponent);
+		if (ret != 1) {
+			warning("%s not parsed as double", str);
+		}
+		delete[] str;
+		return value;
 	}
-	delete[] str;
-	return value;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -759,7 +768,7 @@ bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
+bool BasePersistenceManager::transferRect32(const char *name, Common::Rect32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
@@ -784,7 +793,7 @@ bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-bool BasePersistenceManager::transferPoint32(const char *name, Point32 *val) {
+bool BasePersistenceManager::transferPoint32(const char *name, Common::Point32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);
@@ -805,17 +814,17 @@ bool BasePersistenceManager::transferPoint32(const char *name, Point32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
+bool BasePersistenceManager::transferVector2(const char *name, DXVector2 *val) {
 	if (_saving) {
-		putFloat(val->x);
-		putFloat(val->y);
+		putFloat(val->_x);
+		putFloat(val->_y);
 		if (_saveStream->err()) {
 			return STATUS_FAILED;
 		}
 		return STATUS_OK;
 	} else {
-		val->x = getFloat();
-		val->y = getFloat();
+		val->_x = getFloat();
+		val->_y = getFloat();
 		if (_loadStream->err()) {
 			return STATUS_FAILED;
 		}
@@ -823,14 +832,13 @@ bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 	}
 }
 
-#ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
 // Vector3
-bool BasePersistenceManager::transferVector3d(const char *name, Math::Vector3d *val) {
+bool BasePersistenceManager::transferVector3d(const char *name, DXVector3 *val) {
 	if (_saving) {
-		putFloat(val->x());
-		putFloat(val->y());
-		putFloat(val->z());
+		putFloat(val->_x);
+		putFloat(val->_y);
+		putFloat(val->_z);
 
 		if (_saveStream->err()) {
 			return STATUS_FAILED;
@@ -838,9 +846,37 @@ bool BasePersistenceManager::transferVector3d(const char *name, Math::Vector3d *
 
 		return STATUS_OK;
 	} else {
-		val->x() = getFloat();
-		val->y() = getFloat();
-		val->z() = getFloat();
+		val->_x = getFloat();
+		val->_y = getFloat();
+		val->_z = getFloat();
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Vector4
+bool BasePersistenceManager::transferVector4d(const char *name, DXVector4 *val) {
+	if (_saving) {
+		putFloat(val->_x);
+		putFloat(val->_y);
+		putFloat(val->_z);
+		putFloat(val->_w);
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	} else {
+		val->_x = getFloat();
+		val->_y = getFloat();
+		val->_z = getFloat();
+		val->_w = getFloat();
 
 		if (_loadStream->err()) {
 			return STATUS_FAILED;
@@ -852,12 +888,10 @@ bool BasePersistenceManager::transferVector3d(const char *name, Math::Vector3d *
 
 //////////////////////////////////////////////////////////////////////////
 // Matrix4
-bool BasePersistenceManager::transferMatrix4(const char *name, Math::Matrix4 *val) {
+bool BasePersistenceManager::transferMatrix4(const char *name, DXMatrix *val) {
 	if (_saving) {
-		for (int r = 0; r < 4; ++r) {
-			for (int c = 0; c < 4; ++c) {
-				putFloat((*val)(r, c));
-			}
+		for (int i = 0; i < 16; ++i) {
+			putFloat(val->_m4x4[i]);
 		}
 
 		if (_saveStream->err()) {
@@ -866,10 +900,8 @@ bool BasePersistenceManager::transferMatrix4(const char *name, Math::Matrix4 *va
 
 		return STATUS_OK;
 	} else {
-		for (int r = 0; r < 4; ++r) {
-			for (int c = 0; c < 4; ++c) {
-				(*val)(r, c) = getFloat();
-			}
+		for (int i = 0; i < 16; ++i) {
+			val->_m4x4[i] = getFloat();
 		}
 
 		if (_loadStream->err()) {
@@ -879,26 +911,6 @@ bool BasePersistenceManager::transferMatrix4(const char *name, Math::Matrix4 *va
 		return STATUS_OK;
 	}
 }
-
-bool BasePersistenceManager::transferAngle(const char *name, Math::Angle *val) {
-	if (_saving) {
-		putFloat(val->getDegrees());
-
-		if (_saveStream->err()) {
-			return STATUS_FAILED;
-		}
-	} else {
-		*val = getFloat();
-
-		if (_loadStream->err()) {
-			return STATUS_FAILED;
-		}
-	}
-
-	return STATUS_OK;
-}
-#endif
-
 
 //////////////////////////////////////////////////////////////////////////
 // generic pointer

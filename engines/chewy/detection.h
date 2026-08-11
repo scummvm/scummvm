@@ -25,6 +25,8 @@
 namespace Chewy {
 
 struct ChewyGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
 

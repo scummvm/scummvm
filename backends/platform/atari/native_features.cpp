@@ -82,7 +82,7 @@ static long _nf_detect_tos(void) {
 	return ret;
 }
 
-static long nf_stderr_id;
+long nf_stderr_id;
 
 void nf_init(void) {
 	long ret = Supexec(_nf_detect_tos);

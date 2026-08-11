@@ -1329,7 +1329,7 @@ doplace:	call	delpointer
 
 
 Deletetaken	proc	near		;gets rid of objects that were
-				;transfered to exlist ages ago
+				;transferred to exlist ages ago
 	mov	es,freedat
 	mov	ah,reallocation
 	mov	ds,extras

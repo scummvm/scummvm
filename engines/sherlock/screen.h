@@ -31,7 +31,6 @@
 
 namespace Sherlock {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 #define BG_GREYSCALE_RANGE_END 229
 #define BLACK 0
 
@@ -51,9 +50,9 @@ protected:
 public:
 	Surface _backBuffer1, _backBuffer2;
 	bool _fadeStyle;
-	byte _cMap[PALETTE_SIZE];
-	byte _sMap[PALETTE_SIZE];
-	byte _tMap[PALETTE_SIZE];
+	byte _cMap[Graphics::PALETTE_SIZE];
+	byte _sMap[Graphics::PALETTE_SIZE];
+	byte _tMap[Graphics::PALETTE_SIZE];
 	bool _flushScreen;
 	Common::Point _currentScroll;
 public:
@@ -79,7 +78,7 @@ public:
 	/**
 	 * Fades from the currently active palette to the passed palette
 	 */
-	int equalizePalette(const byte palette[PALETTE_SIZE]);
+	int equalizePalette(const byte palette[Graphics::PALETTE_SIZE]);
 
 	/**
 	 * Fade out the palette to black
@@ -89,7 +88,7 @@ public:
 	/**
 	 * Fade in a given palette
 	 */
-	void fadeIn(const byte palette[PALETTE_SIZE], int speed = 2);
+	void fadeIn(const byte palette[Graphics::PALETTE_SIZE], int speed = 2);
 
 	/**
 	 * Do a random pixel transition in from _backBuffer surface to the screen
@@ -196,7 +195,7 @@ public:
 	 * Translate a palette from 6-bit RGB values to full 8-bit values suitable for passing
 	 * to the underlying palette manager
 	 */
-	static void translatePalette(byte palette[PALETTE_SIZE]);
+	static void translatePalette(byte palette[Graphics::PALETTE_SIZE]);
 };
 
 } // End of namespace Sherlock

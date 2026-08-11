@@ -70,13 +70,13 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 
 		thingBeingProcessed = dungeon.getNextThing(thingBeingProcessed);
 	}
-	for (thingBeingProcessed = squareFirstThing; thingBeingProcessed != _vm->_thingEndOfList; thingBeingProcessed = dungeon.getNextThing(thingBeingProcessed)) {
-		Thing lastProcessedThing = thingBeingProcessed;
+	Thing lastProcessedThing = squareFirstThing;
+	for (thingBeingProcessed = squareFirstThing; thingBeingProcessed != _vm->_thingEndOfList; lastProcessedThing = thingBeingProcessed, thingBeingProcessed = dungeon.getNextThing(thingBeingProcessed)) {
 		uint16 ProcessedThingType = thingBeingProcessed.getType();
 		if (ProcessedThingType == kDMThingTypeSensor) {
 			int16 cellIdx = thingBeingProcessed.getCell();
 			sensorCountToProcessPerCell[cellIdx]--;
-			Sensor *currentSensor = (Sensor *)dungeon.getThingData(thingBeingProcessed);
+			Sensor *currentSensor = dungeon.getSensor(thingBeingProcessed);
 			SensorType processedSensorType = currentSensor->getType();
 			if (processedSensorType == kDMSensorDisabled)
 				continue;
@@ -111,7 +111,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 				if (!doNotTriggerSensor && (processedSensorType == kDMSensorWallOrnClickWithSpecObjRemovedSensor)) {
 					if (lastProcessedThing == thingBeingProcessed) /* If the sensor is the only one of its type on the cell */
 						break;
-					Sensor *lastSensor = (Sensor *)dungeon.getThingData(lastProcessedThing);
+					Sensor *lastSensor = dungeon.getSensor(lastProcessedThing);
 					lastSensor->setNextThing(currentSensor->getNextThing());
 					currentSensor->setNextThing(_vm->_thingNone);
 					thingBeingProcessed = lastProcessedThing;
@@ -135,14 +135,14 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					if (leaderHandObject == _vm->_thingNone)
 						continue;
 
-					dungeon.unlinkThingFromList(leaderHandObject, Thing(0), mapX, mapY);
+					dungeon.unlinkThingFromList(leaderHandObject, Thing(0xFFFF), mapX, mapY);
 					_vm->_championMan->putObjectInLeaderHand(leaderHandObject, true);
 				} else {
 					if ((_vm->_objectMan->getObjectType(leaderHandObject) != sensorData) || (getObjectOfTypeInCell(mapX, mapY, cellIdx, sensorData) != _vm->_thingNone))
 						continue;
 
 					_vm->_championMan->getObjectRemovedFromLeaderHand();
-					dungeon.linkThingToList(_vm->thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
+					dungeon.linkThingToList(_vm->thingWithNewCell(leaderHandObject, cellIdx), Thing(0xFFFF), mapX, mapY);
 					leaderHandObject = _vm->_thingNone;
 				}
 				triggerLocalEffect(kDMSensorEffectToggle, mapX, mapY, cellIdx); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
@@ -160,9 +160,9 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 				if ((_vm->_objectMan->getObjectType(leaderHandObject) != sensorData) || (thingOnSquare == _vm->_thingNone))
 					continue;
 
-				dungeon.unlinkThingFromList(thingOnSquare, Thing(0), mapX, mapY);
+				dungeon.unlinkThingFromList(thingOnSquare, Thing(0xFFFF), mapX, mapY);
 				_vm->_championMan->getObjectRemovedFromLeaderHand();
-				dungeon.linkThingToList(_vm->thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
+				dungeon.linkThingToList(_vm->thingWithNewCell(leaderHandObject, cellIdx), Thing(0xFFFF), mapX, mapY);
 				_vm->_championMan->putObjectInLeaderHand(thingOnSquare, true);
 				doNotTriggerSensor = false;
 				}
@@ -186,7 +186,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					_vm->_sound->requestPlay(kDMSoundIndexSwitch, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayIfPrioritized);
 
 				if (!_vm->_championMan->_leaderEmptyHanded && ((processedSensorType == kDMSensorWallOrnClickWithSpecObjRemoved) || (processedSensorType == kDMSensorWallOrnClickWithSpecObjRemovedRotateSensors) || (processedSensorType == kDMSensorWallOrnClickWithSpecObjRemovedSensor))) {
-					Thing *leaderThing = (Thing *)dungeon.getThingData(leaderHandObject);
+					Thing *leaderThing = dungeon.getNextThingPtr(leaderHandObject);
 					*leaderThing = _vm->_thingNone;
 					_vm->_championMan->getObjectRemovedFromLeaderHand();
 					leaderHandObject = _vm->_thingNone;
@@ -228,8 +228,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 			return true; /* The specified group thing cannot be moved because it was killed by a projectile impact */
 	}
 
-	uint16 mapIndexSource = 0;
-	uint16 mapIndexDestination = 0;
+	int16 mapIndexSource = 0;
+	int16 mapIndexDestination = 0;
 	bool groupOnPartyMap = false;
 	bool partySquare = false;
 	bool audibleTeleporter = false;
@@ -254,8 +254,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 			requiredTeleporterScope = (kDMTeleporterScopeCreatures | kDMTeleporterScopeObjectsOrParty);
 
 		if (thingType == kDMThingTypeProjectile) {
-			Teleporter *L0712_ps_Teleporter = (Teleporter *)dungeon.getThingData(thing);
-			_moveResultDir = (_vm->_timeline->_events[((Projectile *)L0712_ps_Teleporter)->_eventIndex])._Cu._projectile.getDir();
+			_moveResultDir = (_vm->_timeline->_events[dungeon.getProjectile(thing)->_eventIndex])._Cu._projectile.getDir();
 		}
 
 		int16 destinationSquareData = 0;
@@ -267,7 +266,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				if (!getFlag(destinationSquareData, kDMSquareMaskTeleporterOpen))
 					break;
 
-				Teleporter *teleporter = (Teleporter *)dungeon.getSquareFirstThingData(destMapX, destMapY);
+				Teleporter *teleporter = dungeon.getTeleporter(dungeon.getSquareFirstThing(destMapX, destMapY));
 				if ((teleporter->getScope() == kDMTeleporterScopeCreatures) && (thingType != kDMThingTypeGroup))
 					break;
 
@@ -308,7 +307,6 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 			} else {
 				if ((destinationSquareType == (int)kDMElementTypePit) && !thingLevitates && getFlag(destinationSquareData, kDMSquareMaskPitOpen) && !getFlag(destinationSquareData, kDMSquareMaskPitImaginary)) {
 					if (drawDungeonViewWhileFalling && !_useRopeToClimbDownPit) {
-						drawDungeonViewWhileFalling = true;
 						if (traversedPitCount) {
 							dungeon.setCurrentMapAndPartyMap(mapIndexDestination);
 							display.loadCurrentMapGraphics();
@@ -319,6 +317,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 																					/* BUG0_01 While drawing creatures the engine will read invalid ACTIVE_GROUP data in _vm->_groupMan->_g375_activeGroups because the data is for the creatures on the source map and not the map being drawn. The only consequence is that creatures may be drawn with incorrect bitmaps and/or directions */
 					}
 					mapIndexDestination = dungeon.getLocationAfterLevelChange(mapIndexDestination, 1, &destMapX, &destMapY);
+					if (mapIndexDestination < 0)
+						break;
 					dungeon.setCurrentMap(mapIndexDestination);
 					if (thing == _vm->_thingParty) {
 						dungeon._partyMapX = destMapX;
@@ -336,7 +336,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 						_useRopeToClimbDownPit = false;
 					} else if (thingType == kDMThingTypeGroup) {
 						dungeon.setCurrentMap(mapIndexSource);
-						uint16 outcome = _vm->_groupMan->getDamageAllCreaturesOutcome((Group *)dungeon.getThingData(thing), mapX, mapY, 20, false);
+						uint16 outcome = _vm->_groupMan->getDamageAllCreaturesOutcome(dungeon.getGroup(thing), mapX, mapY, 20, false);
 						dungeon.setCurrentMap(mapIndexDestination);
 						fallKilledGroup = (outcome == kDMKillOutcomeAllCreaturesInGroup);
 						if (fallKilledGroup)
@@ -348,6 +348,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				} else if ((destinationSquareType == (int)kDMElementTypeStairs) && (thing != _vm->_thingParty) && (thingType != kDMThingTypeProjectile)) {
 					if (!getFlag(destinationSquareData, kDMSquareMaskStairsUp)) {
 						mapIndexDestination = dungeon.getLocationAfterLevelChange(mapIndexDestination, 1, &destMapX, &destMapY);
+						if (mapIndexDestination < 0)
+							break;
 						dungeon.setCurrentMap(mapIndexDestination);
 					}
 					direction = dungeon.getStairsExitDirection(destMapX, destMapY);
@@ -434,8 +436,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 		} else {
 			if (thingType == kDMThingTypeGroup) {
 				dungeon.setCurrentMap(mapIndexDestination);
-				Teleporter *L0712_ps_Teleporter = (Teleporter *)dungeon.getThingData(thing);
-				int16 activeGroupIndex = ((Group *)L0712_ps_Teleporter)->getActiveGroupIndex();
+				int16 activeGroupIndex = dungeon.getGroup(thing)->getActiveGroupIndex();
 				if (((mapIndexDestination == dungeon._partyMapIndex) && (destMapX == dungeon._partyMapX) && (destMapY == dungeon._partyMapY)) || (_vm->_groupMan->groupGetThing(destMapX, destMapY) != _vm->_thingEndOfList)) { /* If a group tries to move to the party square or over another group then create an event to move the group later */
 					dungeon.setCurrentMap(mapIndexSource);
 					if (mapX >= 0)
@@ -447,8 +448,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					createEventMoveGroup(thing, destMapX, destMapY, mapIndexDestination, audibleTeleporter);
 					return true; /* The specified group thing cannot be moved because the party or another group is on the destination square */
 				}
-				Group *tmpGroup = (Group *)dungeon._thingData[kDMThingTypeGroup];
-				uint16 movementSoundIndex = getSound((CreatureType)tmpGroup[thing.getIndex()]._type);
+				uint16 movementSoundIndex = getSound((CreatureType)dungeon.getGroup(thing)->_type);
 				if (movementSoundIndex < kDMSoundCount)
 					_vm->_sound->requestPlay(movementSoundIndex, destMapX, destMapY, kDMSoundModePlayIfPrioritized);
 
@@ -460,7 +460,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					moveGroupResult = true;
 				}
 				if (thingLevitates)
-					dungeon.linkThingToList(thing, Thing(0), destMapX, destMapY);
+					dungeon.linkThingToList(thing, Thing(0xFFFF), destMapX, destMapY);
 				else
 					processThingAdditionOrRemoval(destMapX, destMapY, thing, false, true);
 
@@ -478,7 +478,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 			}
 			dungeon.setCurrentMap(mapIndexDestination);
 			if (thingType == kDMThingTypeProjectile) /* BUG0_29 An explosion can trigger a floor sensor. Explosions do not trigger floor sensors on the square where they are created. However, if an explosion is moved by a teleporter (or by falling into a pit, see BUG0_26) after it was created, it can trigger floor sensors on the destination square. This is because explosions are not considered as levitating in the code, while projectiles are. The condition here should be (L0713_B_ThingLevitates) so that explosions would not start sensor processing on their destination square as they should be Levitating. This would work if F0264_MOVE_IsLevitating returned true for explosions (see BUG0_26) */
-				dungeon.linkThingToList(thing, Thing(0), destMapX, destMapY);
+				dungeon.linkThingToList(thing, Thing(0xFFFF), destMapX, destMapY);
 			else
 				processThingAdditionOrRemoval(destMapX, destMapY, thing, (dungeon._currMapIndex == dungeon._partyMapIndex) && (destMapX == dungeon._partyMapX) && (destMapY == dungeon._partyMapY), true);
 
@@ -530,7 +530,7 @@ bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, i
 		}
 	} else {
 		impactType = kDMElementTypeCreature;
-		Group *curGroup = (Group *)dungeon.getThingData(thing);
+		Group *curGroup = dungeon.getGroup(thing);
 		int16 creatureAlive = 0;
 		for (uint16 cellIdx = kDMCellNorthWest; cellIdx < kDMCellSouthWest + 1; cellIdx++) {
 			creatureAlive |= curGroup->_health[cellIdx];
@@ -567,7 +567,7 @@ T0266017_CheckProjectileImpacts:
 	Thing curThing = dungeon.getSquareFirstThing(projectileMapX, projectileMapY);
 	while (curThing != _vm->_thingEndOfList) {
 		if ((curThing.getType() == kDMThingTypeProjectile) &&
-			(_vm->_timeline->_events[(((Projectile *)dungeon._thingData[kDMThingTypeProjectile])[curThing.getIndex()])._eventIndex]._type != kDMEventTypeMoveProjectileIgnoreImpacts)) {
+			(_vm->_timeline->_events[dungeon.getProjectile(curThing)->_eventIndex]._type != kDMEventTypeMoveProjectileIgnoreImpacts)) {
 			int16 championOrCreatureOrdinal = championOrCreatureOrdinalInCell[curThing.getCell()];
 			if (championOrCreatureOrdinal && _vm->_projexpl->hasProjectileImpactOccurred(impactType, srcMapX, srcMapY, _vm->ordinalToIndex(championOrCreatureOrdinal), curThing)) {
 				_vm->_projexpl->projectileDeleteEvent(curThing);
@@ -650,7 +650,7 @@ int16 MovesensMan::getSound(CreatureType creatureType) {
 
 int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing thing, uint16 mapIndex) {
 	DungeonMan &dungeon = *_vm->_dungeonMan;
-	Group *group = (Group *)dungeon.getThingData(thing);
+	Group *group = dungeon.getGroup(thing);
 	Direction rotation = teleporter->getRotation();
 	uint16 groupDirections = _vm->_groupMan->getGroupDirections(group, mapIndex);
 
@@ -716,7 +716,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 	}
 
 	if ((!addThing) && (thingType != kDMThingTypeParty))
-		dungeon.unlinkThingFromList(thing, Thing(0), mapX, mapY);
+		dungeon.unlinkThingFromList(thing, Thing(0xFFFF), mapX, mapY);
 
 	Square curSquare = Square(dungeon._currMapData[mapX][mapY]);
 	int16 sensorTriggeredCell;
@@ -756,12 +756,12 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 		}
 	}
 	if (addThing && (thingType != kDMThingTypeParty))
-		dungeon.linkThingToList(thing, Thing(0), mapX, mapY);
+		dungeon.linkThingToList(thing, Thing(0xFFFF), mapX, mapY);
 
 	for (curThing = dungeon.getSquareFirstThing(mapX, mapY); curThing != _vm->_thingEndOfList; curThing = dungeon.getNextThing(curThing)) {
 		uint16 curThingType = curThing.getType();
 		if (curThingType == kDMThingTypeSensor) {
-			Sensor *curSensor = (Sensor *)dungeon.getThingData(curThing);
+			Sensor *curSensor = dungeon.getSensor(curThing);
 			if (curSensor->getType() == kDMSensorDisabled)
 				continue;
 
@@ -815,7 +815,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 						continue;
 
 					// Strangerke: 20 is a hardcoded version of the game. later version uses 21. Not present in the original dungeons anyway.
-					triggerSensor = (curSensorData <= 20);
+					triggerSensor = (curSensorData <= 21);
 					break;
 				default:
 					continue;
@@ -885,14 +885,19 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 				}
 
 				int16 curObjectType = _vm->_objectMan->getObjectType(curThing);
-				if (curObjectType == objectType)
+				if ((curObjectType == objectType) ||
+					((objectType == kDMIconIndiceWeaponTheFirestaff || objectType == kDMIconIndiceWeaponTheFirestaffComplete) &&
+					(curObjectType == kDMIconIndiceWeaponTheFirestaff || curObjectType == kDMIconIndiceWeaponTheFirestaffComplete)))
 					return true;
 
 				if (curObjectType == kDMIconIndiceContainerChestClosed) {
-					Container *container = (Container *)dungeon.getThingData(curThing);
+					Container *container = dungeon.getContainer(curThing);
 					curThing = container->getSlot();
 					while (curThing != _vm->_thingEndOfList) {
-						if (_vm->_objectMan->getObjectType(curThing) == objectType)
+						int16 chestObjectType = _vm->_objectMan->getObjectType(curThing);
+						if ((chestObjectType == objectType) ||
+							((objectType == kDMIconIndiceWeaponTheFirestaff || objectType == kDMIconIndiceWeaponTheFirestaffComplete) &&
+							(chestObjectType == kDMIconIndiceWeaponTheFirestaff || chestObjectType == kDMIconIndiceWeaponTheFirestaffComplete)))
 							return true;
 
 						curThing = dungeon.getNextThing(curThing);
@@ -937,7 +942,7 @@ void MovesensMan::triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX,
 
 void MovesensMan::triggerLocalEffect(SensorEffect localEffect, int16 effX, int16 effY, int16 effCell) {
 	if (localEffect == kDMSensorEffectAddExperience) {
-		addSkillExperience(kDMSkillSteal, 300, localEffect != kDMSensorEffectNone);
+		addSkillExperience(kDMSkillSteal, 300, effCell != kDMCellAny);
 		return;
 	}
 	_sensorRotationEffect = localEffect;
@@ -972,24 +977,24 @@ void MovesensMan::processRotationEffect() {
 		{
 			Thing firstSensorThing = dungeon.getSquareFirstThing(_sensorRotationEffMapX, _sensorRotationEffMapY);
 			while ((firstSensorThing.getType() != kDMThingTypeSensor)
-				|| ((_sensorRotationEffCell != kDMCellAny) && (firstSensorThing.getCell() != _sensorRotationEffCell))) {
+				|| ((_sensorRotationEffCell != kDMCellAny) && ((int16)firstSensorThing.getCell() != _sensorRotationEffCell))) {
 				firstSensorThing = dungeon.getNextThing(firstSensorThing);
 			}
-			Sensor *firstSensor = (Sensor *)dungeon.getThingData(firstSensorThing);
+			Sensor *firstSensor = dungeon.getSensor(firstSensorThing);
 			Thing lastSensorThing = firstSensor->getNextThing();
 			while ((lastSensorThing != _vm->_thingEndOfList)
 				&& ((lastSensorThing.getType() != kDMThingTypeSensor)
-				|| ((_sensorRotationEffCell != kDMCellAny) && (lastSensorThing.getCell() != _sensorRotationEffCell)))) {
+				|| ((_sensorRotationEffCell != kDMCellAny) && ((int16)lastSensorThing.getCell() != _sensorRotationEffCell)))) {
 				lastSensorThing = dungeon.getNextThing(lastSensorThing);
 			}
 			if (lastSensorThing == _vm->_thingEndOfList)
 				break;
-			dungeon.unlinkThingFromList(firstSensorThing, Thing(0), _sensorRotationEffMapX, _sensorRotationEffMapY);
-			Sensor *lastSensor = (Sensor *)dungeon.getThingData(lastSensorThing);
+			dungeon.unlinkThingFromList(firstSensorThing, Thing(0xFFFF), _sensorRotationEffMapX, _sensorRotationEffMapY);
+			Sensor *lastSensor = dungeon.getSensor(lastSensorThing);
 			lastSensorThing = dungeon.getNextThing(lastSensorThing);
 			while (((lastSensorThing != _vm->_thingEndOfList) && (lastSensorThing.getType() == kDMThingTypeSensor))) {
-				if ((_sensorRotationEffCell == kDMCellAny) || (lastSensorThing.getCell() == _sensorRotationEffCell))
-					lastSensor = (Sensor *)dungeon.getThingData(lastSensorThing);
+				if ((_sensorRotationEffCell == kDMCellAny) || ((int16)lastSensorThing.getCell() == _sensorRotationEffCell))
+					lastSensor = dungeon.getSensor(lastSensorThing);
 				lastSensorThing = dungeon.getNextThing(lastSensorThing);
 			}
 			firstSensor->setNextThing(lastSensor->getNextThing());
@@ -1017,7 +1022,7 @@ Thing MovesensMan::getObjectOfTypeInCell(int16 mapX, int16 mapY, int16 cell, int
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Thing curThing = dungeon.getSquareFirstObject(mapX, mapY);
 	while (curThing != _vm->_thingEndOfList) {
-		if ((_vm->_objectMan->getObjectType(curThing) == objectType) && ((cell == kDMCellAny) || (curThing.getCell() == cell)))
+		if ((_vm->_objectMan->getObjectType(curThing) == objectType) && ((cell == kDMCellAny) || ((int16)curThing.getCell() == cell)))
 			return curThing;
 
 		curThing = dungeon.getNextThing(curThing);

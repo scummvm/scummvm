@@ -110,10 +110,10 @@ void Sprites::setupMapTable(const uint *table, uint size) {
 		if (unswept) {
 			warning("We got %d unreachable sprites from map table. This should not happen."
 			        " Fixing it for now", unswept);
-			// Enlarge the map to hold new indexes
+			// Enlarge the map to hold new indices
 			_map->reserve(_map->size() + unswept);
 
-			// Set new indexes to unswept sprites
+			// Set new indices to unswept sprites
 			i = 0;
 			for (Common::Array<CryoCursor *>::iterator it = _cursors.begin(); it != _cursors.end(); it++, i++) {
 				if ((*it)->_constantId == -1u) {

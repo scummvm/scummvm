@@ -1018,8 +1018,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 			if (abortFlag) break;
 
 			while (events.pollEvent()) {
-				if ((events.type() == Common::EVENT_KEYDOWN) &&
-					(events.event().kbd.keycode == Common::KEYCODE_ESCAPE)) {
+				if (events.type() == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
+						events.event().customType == kActionEscape) {
 					abortFlag = true;
 					break;
 				}

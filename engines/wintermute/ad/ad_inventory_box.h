@@ -39,12 +39,16 @@ class AdInventoryBox : public BaseObject {
 public:
 	bool _hideSelected;
 	DECLARE_PERSISTENT(AdInventoryBox, BaseObject)
+	bool _exclusive;
+	int32 _scrollBy;
+	int32 _itemHeight;
+	int32 _itemWidth;
 	bool _visible;
 	bool display() override;
 	UIButton *_closeButton;
 	int32 _spacing;
 	int32 _scrollOffset;
-	Rect32 _itemsArea;
+	Common::Rect32 _itemsArea;
 	bool listen(BaseScriptHolder *param1, uint32 param2) override;
 	UIWindow *_window;
 	AdInventoryBox(BaseGame *inGame);
@@ -52,11 +56,6 @@ public:
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
-private:
-	bool _exclusive;
-	int32 _scrollBy;
-	int32 _itemHeight;
-	int32 _itemWidth;
 };
 
 } // End of namespace Wintermute

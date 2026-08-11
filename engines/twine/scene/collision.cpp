@@ -20,10 +20,8 @@
  */
 
 #include "twine/scene/collision.h"
-#include "common/debug.h"
-#include "common/memstream.h"
 #include "common/util.h"
-#include "twine/debugger/debug_scene.h"
+#include "twine/debugger/debug_state.h"
 #include "twine/renderer/renderer.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
@@ -80,18 +78,6 @@ bool Collision::checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const {
 	}
 
 	return true;
-}
-
-int32 Collision::boundRuleThree(int32 val1, int32 val2, int32 nbstep, int32 step) const { // BoundRegleTrois
-	if (step <= 0) {
-		return val1;
-	}
-
-	if (step >= nbstep) {
-		return val2;
-	}
-
-	return val1 + (((val2 - val1) * step) / nbstep);
 }
 
 void Collision::reajustPos(IVec3 &processActor, ShapeType brickShape) const {
@@ -187,10 +173,10 @@ void Collision::handlePushing(IVec3 &processActor, const IVec3 &minsTest, const 
 	const int32 newAngle = _engine->_movements->getAngle(processActor, ptrobjt->posObj());
 
 	// protect against chain reactions
-	if (ptrobjt->_staticFlags.bCanBePushed && !ptrobj->_staticFlags.bCanBePushed) {
+	if (ptrobjt->_flags.bCanBePushed && !ptrobj->_flags.bCanBePushed) {
 		ptrobjt->_animStep.y = 0;
 
-		if (ptrobjt->_staticFlags.bUseMiniZv) {
+		if (ptrobjt->_flags.bUseMiniZv) {
 			if (newAngle >= LBAAngles::ANGLE_45 && newAngle < LBAAngles::ANGLE_135 && ptrobj->_beta >= LBAAngles::ANGLE_45 && ptrobj->_beta < LBAAngles::ANGLE_135) {
 				ptrobjt->_animStep.x = SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
@@ -266,7 +252,7 @@ bool Collision::checkValidObjPos(int32 actorIdx) {
 
 	for (int32 n = 0; n < _engine->_scene->_nbObjets; ++n) {
 		const ActorStruct *ptrobjt = _engine->_scene->getActor(n);
-		if (n != actorIdx && ptrobjt->_body != -1 && !ptrobj->_staticFlags.bIsHidden && ptrobjt->_carryBy != actorIdx) {
+		if (n != actorIdx && ptrobjt->_body != -1 && !ptrobj->_flags.bIsInvisible && ptrobjt->_carryBy != actorIdx) {
 			const IVec3 &t0 = ptrobjt->posObj() + ptrobjt->_boundingBox.mins;
 			const IVec3 &t1 = ptrobjt->posObj() + ptrobjt->_boundingBox.maxs;
 			if (m0.x < t1.x && m1.x > t0.x && m0.y < t1.y && m1.y > t0.y && m0.z < t1.z && m1.z > t0.z) {
@@ -284,20 +270,23 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 	IVec3 mins = processActor + ptrobj->_boundingBox.mins;
 	IVec3 maxs = processActor + ptrobj->_boundingBox.maxs;
 
+	int32 oldObjCol = ptrobj->_objCol;
 	ptrobj->_objCol = -1;
 
 	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
 		ActorStruct *ptrobjt = _engine->_scene->getActor(a);
 
 		// avoid current processed actor
-		if (a != actorIdx && ptrobjt->_body != -1 && !ptrobj->_staticFlags.bIsHidden && ptrobjt->_carryBy != actorIdx) {
+		if (a != actorIdx && ptrobjt->_body != -1 && !ptrobj->_flags.bIsInvisible && ptrobjt->_carryBy != actorIdx) {
 			const IVec3 &minsTest = ptrobjt->posObj() + ptrobjt->_boundingBox.mins;
 			const IVec3 &maxsTest = ptrobjt->posObj() + ptrobjt->_boundingBox.maxs;
 
 			if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
 				ptrobj->_objCol = a; // mark as collision with actor a
-
-				if (ptrobjt->_staticFlags.bIsCarrierActor) {
+				if (a != oldObjCol) {
+					debugC(1, TwinE::kDebugCollision, "Actor %d is colliding with %d", actorIdx, a);
+				}
+				if (ptrobjt->_flags.bIsCarrierActor) {
 					if (ptrobj->_workFlags.bIsFalling) {
 						// I touch a carrier
 						processActor.y = maxsTest.y - ptrobj->_boundingBox.mins.y + 1;
@@ -335,11 +324,11 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 			// avoid current processed actor
-			if (a != actorIdx && actorTest->_body != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
+			if (a != actorIdx && actorTest->_body != -1 && !actorTest->_flags.bIsInvisible && actorTest->_carryBy != actorIdx) {
 				const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
 				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
-					_engine->_actor->hitObj(actorIdx, a, ptrobj->_strengthOfHit, ptrobj->_beta + LBAAngles::ANGLE_180);
+					_engine->_actor->hitObj(actorIdx, a, ptrobj->_hitForce, ptrobj->_beta + LBAAngles::ANGLE_180);
 					ptrobj->_workFlags.bIsHitting = 0;
 				}
 			}
@@ -445,6 +434,10 @@ void Collision::receptionObj(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, actor->_nextGenAnim, actorIdx);
 	}
 
+	if (actor->_workFlags.bIsFalling) {
+		debugC(1, TwinE::kDebugCollision, "Actor %d reset falling", actorIdx);
+	}
+
 	actor->_workFlags.bIsFalling = 0;
 	actor->_workFlags.bWasWalkingBeforeFalling = 0;
 }
@@ -521,6 +514,11 @@ int32 Collision::extraCheckExtraCol(ExtraListStruct *extra, int32 extraIdx) cons
 	}
 
 	return -1;
+}
+
+void Collision::doImpact(int32 num, int32 x, int32 y, int32 z, int32 owner) {
+	debugC(3, kDebugLevels::kDebugCollision, "Collision::doImpact(%i, %i, %i, %i, %i)", num, x, y, z, owner);
+	// TODO: Implement me
 }
 
 } // namespace TwinE

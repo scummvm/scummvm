@@ -45,7 +45,7 @@
 #ifndef AGS_SHARED_FONT_WFN_FONT_H
 #define AGS_SHARED_FONT_WFN_FONT_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {
@@ -90,7 +90,7 @@ public:
 	}
 
 	// Get WFN character for the given code; if the character is missing, returns empty character
-	const WFNChar &GetChar(uint8_t code) const;
+	const WFNChar &GetChar(uint16_t code) const;
 
 	void Clear();
 	// Reads WFNFont object, using data_size bytes from stream; if data_size = 0,

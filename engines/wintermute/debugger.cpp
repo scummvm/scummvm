@@ -31,10 +31,10 @@
 namespace Wintermute {
 
 Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
-	registerCmd("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	registerCmd("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
-	registerCmd("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
+#if EXTENDED_DEBUGGER_ENABLED
 	registerCmd("help", WRAP_METHOD(Console, Cmd_Help));
+	registerCmd("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	// Actual (script) debugger commands
 	registerCmd(STEP_CMD, WRAP_METHOD(Console, Cmd_Step));
 	registerCmd(CONTINUE_CMD, WRAP_METHOD(Console, Cmd_Continue));
@@ -53,15 +53,18 @@ Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
 	registerCmd(INFO_CMD, WRAP_METHOD(Console, Cmd_Info));
 	registerCmd(SET_PATH_CMD, WRAP_METHOD(Console, Cmd_SourcePath));
 	registerCmd(TOP_CMD, WRAP_METHOD(Console, Cmd_Top));
+#endif
 }
 
 Console::~Console() {
 }
 
+#if EXTENDED_DEBUGGER_ENABLED
+
 bool Console::Cmd_Help(int argc, const char **argv) {
 	if (argc == 1) {
 		// Debugger::Cmd_Help(argc, argv);
-		debugPrintf("\nType help somecommand to get specific help.\n");
+		debugPrintf("\nType 'help' <command> to get specific help.\n");
 	} else {
 		printUsage(argv[1]);
 	}
@@ -306,6 +309,8 @@ bool Console::Cmd_ShowFps(int argc, const char **argv) {
 	return true;
 }
 
+#endif
+
 bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Usage: %s <file path> <output file name>\n", argv[0]);
@@ -325,19 +330,18 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	Common::DumpFile *outFile = new Common::DumpFile();
 	outFile->open(Common::Path(outFileName, Common::Path::kNativeSeparator));
 
-	byte *data = new byte[inFile->size()];
-	inFile->read(data, inFile->size());
-	outFile->write(data, inFile->size());
+	outFile->writeStream(inFile);
 	outFile->finalize();
 	outFile->close();
-	delete[] data;
 
 	delete outFile;
-	delete inFile;
+	fileManager->closeFile(inFile);
 
 	debugPrintf("Resource file '%s' dumped to file '%s'\n", argv[1], argv[2]);
 	return true;
 }
+
+#if EXTENDED_DEBUGGER_ENABLED
 
 bool Console::Cmd_SourcePath(int argc, const char **argv) {
 	if (argc != 2) {
@@ -413,5 +417,7 @@ bool Console::Cmd_Top(int argc, const char **argv) {
 void Console::printError(const Common::String &command, Error error) {
 	debugPrintf("%s: %s\n", command.c_str(), error.getErrorDisplayStr().c_str());
 }
+
+#endif
 
 } // End of namespace Wintermute

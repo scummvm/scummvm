@@ -40,26 +40,10 @@
 #include "backends/platform/android/jni-android.h"
 #include "backends/graphics/android/android-graphics.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/texture.h"
 
 #include "graphics/blit.h"
-
-static void loadBuiltinTexture(JNI::BitmapResources resource, OpenGL::Surface *surf) {
-	const Graphics::Surface *src = JNI::getBitmapResource(resource);
-	if (!src) {
-		error("Failed to fetch touch arrows bitmap");
-	}
-
-	surf->allocate(src->w, src->h);
-	Graphics::Surface *dst = surf->getSurface();
-
-	Graphics::crossBlit(
-			(byte *)dst->getPixels(), (const byte *)src->getPixels(),
-			dst->pitch, src->pitch,
-			src->w, src->h,
-			src->format, dst->format);
-
-	delete src;
-}
+#include "graphics/managed_surface.h"
 
 //
 // AndroidGraphicsManager
@@ -72,12 +56,9 @@ AndroidGraphicsManager::AndroidGraphicsManager() :
 	// Initialize our OpenGL ES context.
 	initSurface();
 
-	_touchcontrols = createSurface(_defaultFormatAlpha);
-	loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP, _touchcontrols);
-	_touchcontrols->updateGLTexture();
-
-	// not in 3D, not in GUI
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, false);
+	_rendering3d = (_renderer3d != nullptr);
+	// maybe in 3D, not in GUI
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(_rendering3d, false);
 	dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 }
 
@@ -85,6 +66,8 @@ AndroidGraphicsManager::~AndroidGraphicsManager() {
 	ENTER();
 
 	deinitSurface();
+
+	delete _touchcontrols;
 }
 
 void AndroidGraphicsManager::initSurface() {
@@ -105,21 +88,18 @@ void AndroidGraphicsManager::initSurface() {
 		// If not 16, this must be 24 or 32 bpp so make use of them
 		notifyContextCreate(OpenGL::kContextGLES2,
 				new OpenGL::Backbuffer(),
-#ifdef SCUMM_BIG_ENDIAN
-				Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
-				Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
-#else
-				Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
-				Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)
-#endif
+				OpenGL::Texture::getRGBPixelFormat(),
+				OpenGL::Texture::getRGBAPixelFormat()
 		);
 	}
 
 	if (_touchcontrols) {
 		_touchcontrols->recreate();
 		_touchcontrols->updateGLTexture();
+	} else {
+		_touchcontrols = createSurface(_defaultFormatAlpha);
 	}
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().setDrawer(
 	    this, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	handleResize(JNI::egl_surface_width, JNI::egl_surface_height);
@@ -132,7 +112,7 @@ void AndroidGraphicsManager::deinitSurface() {
 	LOGD("deinitializing 2D surface");
 
 	// Deregister us from touch control
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().setDrawer(
 	    nullptr, 0, 0);
 	if (_touchcontrols) {
 		_touchcontrols->destroy();
@@ -157,7 +137,7 @@ void AndroidGraphicsManager::resizeSurface() {
 		error("JNI::initSurface failed");
 	}
 
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().setDrawer(
 	    this, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	handleResize(JNI::egl_surface_width, JNI::egl_surface_height);
@@ -170,6 +150,9 @@ void AndroidGraphicsManager::updateScreen() {
 	if (!JNI::haveSurface())
 		return;
 
+	// Sets _forceRedraw if needed
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().beforeDraw();
+
 	OpenGLGraphicsManager::updateScreen();
 }
 
@@ -179,6 +162,23 @@ void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	JNI::displayMessageOnOSD(msg);
 }
 
+void AndroidGraphicsManager::recalculateDisplayAreas() {
+	Common::Rect oldDrawRect = _activeArea.drawRect;
+
+	OpenGLGraphicsManager::recalculateDisplayAreas();
+
+	int offsetX = _activeArea.drawRect.left - oldDrawRect.left;
+	int offsetY = _activeArea.drawRect.top - oldDrawRect.top;
+
+	int newX = _cursorX + offsetX;
+	int newY = _cursorY + offsetY;
+
+	newX = CLIP<int16>(newX, _activeArea.drawRect.left, _activeArea.drawRect.right);
+	newY = CLIP<int16>(newY, _activeArea.drawRect.top, _activeArea.drawRect.bottom);
+
+	setMousePosition(newX, newY);
+}
+
 void AndroidGraphicsManager::showOverlay(bool inGUI) {
 	if (_overlayVisible && inGUI == _overlayInGUI)
 		return;
@@ -186,8 +186,8 @@ void AndroidGraphicsManager::showOverlay(bool inGUI) {
 	// Don't change touch mode when not changing mouse coordinates
 	if (inGUI) {
 		_old_touch_mode = JNI::getTouchMode();
-		// not in 3D, in overlay
-		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
+		// maybe in 3D, in overlay
+		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(_renderer3d != nullptr, true);
 		dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 	} else if (_overlayInGUI) {
 		// Restore touch mode active before overlay was shown
@@ -218,8 +218,21 @@ float AndroidGraphicsManager::getHiDPIScreenFactor() const {
 	return dpi[2] / 1.2f;
 }
 
-bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
-	ENTER("%d, %d, %s", requestedWidth, requestedHeight, format.toString().c_str());
+bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) {
+	ENTER("%d, %d, %d, %d", requestedWidth, requestedHeight, resizable, antialiasing);
+
+	// As GLES2 provides FBO, OpenGL graphics manager must ask us for a resizable surface
+	assert(resizable);
+	if (antialiasing != 0) {
+		warning("Requesting antialiased video mode while not available");
+	}
+
+	const bool render3d = (_renderer3d != nullptr);
+	if (_rendering3d != render3d) {
+		_rendering3d = render3d;
+		// 3D status changed: refresh the touch mode
+		applyTouchSettings();
+	}
 
 	// We get this whenever a new resolution is requested. Since Android is
 	// using a fixed output size we do nothing like that here.
@@ -235,6 +248,11 @@ void AndroidGraphicsManager::refreshScreen() {
 	JNI::swapBuffers();
 }
 
+void AndroidGraphicsManager::applyTouchSettings() const {
+	// maybe in 3D, maybe in GUI
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(_renderer3d != nullptr, _overlayVisible && _overlayInGUI);
+}
+
 void AndroidGraphicsManager::syncVirtkeyboardState(bool virtkeybd_on) {
 	_screenAlign = SCREEN_ALIGN_CENTER;
 	if (virtkeybd_on) {
@@ -246,12 +264,34 @@ void AndroidGraphicsManager::syncVirtkeyboardState(bool virtkeybd_on) {
 	_forceRedraw = true;
 }
 
-void AndroidGraphicsManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
+void AndroidGraphicsManager::touchControlInitSurface(const Graphics::ManagedSurface &surf) {
+	if (_touchcontrols->getWidth() == (uint)surf.w && _touchcontrols->getHeight() == (uint)surf.h) {
+		return;
+	}
+
+	_touchcontrols->allocate(surf.w, surf.h);
+	Graphics::Surface *dst = _touchcontrols->getSurface();
+
+	Graphics::crossBlit(
+			(byte *)dst->getPixels(), (const byte *)surf.getPixels(),
+			dst->pitch, surf.pitch,
+			surf.w, surf.h,
+			dst->format, surf.format);
+	_touchcontrols->updateGLTexture();
+}
+
+void AndroidGraphicsManager::touchControlDraw(uint8 alpha, int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
 	_targetBuffer->enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
 	OpenGL::Pipeline *pipeline = getPipeline();
 	pipeline->activate();
+	if (alpha != 255) {
+		pipeline->setColor(1.0f, 1.0f, 1.0f, alpha / 255.0f);
+	}
 	pipeline->drawTexture(_touchcontrols->getGLTexture(),
 	                      x, y, w, h, clip);
+	if (alpha != 255) {
+		pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+	}
 }
 
 void AndroidGraphicsManager::touchControlNotifyChanged() {
@@ -269,31 +309,8 @@ bool AndroidGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	return true;
 }
 
-AndroidCommonGraphics::State AndroidGraphicsManager::getState() const {
-	State state;
-
-	state.screenWidth   = getWidth();
-	state.screenHeight  = getHeight();
-	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
-	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
-	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
-#ifdef USE_RGB_COLOR
-	state.pixelFormat   = getScreenFormat();
-#endif
-	return state;
-}
-
-bool AndroidGraphicsManager::setState(const AndroidCommonGraphics::State &state) {
-	beginGFXTransaction();
-
-#ifdef USE_RGB_COLOR
-		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
-#else
-		initSize(state.screenWidth, state.screenHeight, nullptr);
-#endif
-		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
-		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
-		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
-
-	return endGFXTransaction() == OSystem::kTransactionSuccess;
+WindowedGraphicsManager::Insets AndroidGraphicsManager::getSafeAreaInsets() const {
+	return WindowedGraphicsManager::Insets{
+		(int16)JNI::cutout_insets[0], (int16)JNI::cutout_insets[1],
+		(int16)JNI::cutout_insets[2], (int16)JNI::cutout_insets[3]};
 }

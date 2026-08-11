@@ -123,8 +123,8 @@ void FogSphere::read(Common::ReadStream *stream, int frameCount) {
 void FogSphere::calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) {
 	*coeficient = 0.0f;
 
-	// Ray - sphere intersection, where sphere center is always at 0, 0, 0 as everything else tranformed by the fog matrix.
-	// Quadratic formula can and was simplified becasue rayDirection is normalized and hence a = 1.
+	// Ray - sphere intersection, where sphere center is always at 0, 0, 0 as everything else transformed by the fog matrix.
+	// Quadratic formula can and was simplified because rayDirection is normalized and hence a = 1.
 	// Explained on wikipedia https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
 
 	// There is also alternative approach which will end-up with this formula where plane is created from ray origin, ray destination

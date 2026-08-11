@@ -48,12 +48,12 @@ struct BlitTransform {
 		_gTint = gTint;
 		_bTint = bTint;
 	}
-/*
+
 	void scale(int width, int height) {
 		_destinationRectangle.setWidth(width);
 		_destinationRectangle.setHeight(height);
 	}
-*/
+
 	void rotate(int rotation, int originX, int originY) {
 		_rotation = rotation;
 		_originX = originX;

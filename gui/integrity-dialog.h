@@ -22,7 +22,7 @@
 #ifndef GUI_INTEGRITY_DIALOG_H
 #define GUI_INTEGRITY_DIALOG_H
 
-#include "backends/networking/curl/postrequest.h"
+#include "backends/networking/http/postrequest.h"
 
 #include "common/array.h"
 #include "common/formats/json.h"
@@ -62,6 +62,8 @@ class IntegrityDialog : public Dialog, public CommandSender {
 	ButtonWidget *_copyEmailButton;
 
 	bool _close;
+	uint32 _lastEventPoll;
+
 
 	Common::U32String getSizeLabelText();
 	void refreshWidgets();
@@ -70,13 +72,20 @@ public:
 	IntegrityDialog(Common::String endpoint, Common::String gameConfig);
 	~IntegrityDialog();
 
+
+	/**
+	 * Updates the progress bar every 500ms
+	 * Includes polling to avoid freezing when processing files
+	 */
+	bool progressUpdate(int bytesProcessed);
+
 	void sendJSON();
 	void checksumResponseCallback(const Common::JSONValue *r);
 	void errorCallback(const Networking::ErrorResponse &error);
 
-	void calculateTotalSize(Common::Path gamePath);
+	void calculateTotalSize(Common::Path gamePath, const Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> &ignoredSubdirsMap);
 
-	Common::Array<Common::StringArray> generateChecksums(Common::Path gamePath, Common::Array<Common::StringArray> &fileChecksums);
+	Common::Array<Common::StringArray> generateChecksums(Common::Path currentPath, Common::Array<Common::StringArray> &fileChecksums, Common::Path gamePath);
 	Common::JSONValue *generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);
 	void parseJSON(const Common::JSONValue *response);
 

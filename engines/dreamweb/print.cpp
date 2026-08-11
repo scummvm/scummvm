@@ -138,11 +138,11 @@ uint8 DreamWebEngine::printDirect(const uint8** string, uint16 x, uint16 *y, uin
 		uint16 i = offset;
 		do {
 			uint8 c = (*string)[0];
-			uint8 nextChar = (*string)[1];
 			++(*string);
 			if ((c == 0) || (c == ':')) {
 				return c;
 			}
+			uint8 nextChar = (*string)[0];
 			c = modifyChar(c);
 			uint8 width, height;
 			printChar(charSet, &i, *y, c, nextChar, &width, &height);

@@ -55,7 +55,7 @@ public:
 	virtual Common::SeekableReadStream *get_datasource(uint32 index);
 
 protected:
-	Std::vector<uint8 *> _objects;
+	Common::Array<uint8 *> _objects;
 };
 
 } // End of namespace Ultima8

@@ -29,79 +29,104 @@
 
 namespace Freescape {
 
-void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
+void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
 	Common::Action *act;
 
 	act = new Common::Action(Common::kStandardActionMoveUp, _("Up"));
-	act->setKeyEvent(Common::KEYCODE_UP);
+	act->setCustomEngineActionEvent(kActionMoveUp);
+	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_UP");
 	act->addDefaultInputMapping("o");
+	if (_useWASDControls)
+		act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveDown, _("Down"));
-	act->setKeyEvent(Common::KEYCODE_DOWN);
+	act->setCustomEngineActionEvent(kActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
 	act->addDefaultInputMapping("k");
+	if (_useWASDControls)
+		act->addDefaultInputMapping("s");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe Left"));
-	act->setKeyEvent(Common::KEYCODE_LEFT);
+	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe left"));
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("JOY_LEFT");
-	//act->addDefaultInputMapping("q");
+	if (_useWASDControls)
+		act->addDefaultInputMapping("a");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe Right"));
-	act->setKeyEvent(Common::KEYCODE_RIGHT);
+	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe right"));
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT");
-	//act->addDefaultInputMapping("w");
+	if (_useWASDControls)
+		act->addDefaultInputMapping("d");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SHOOT", _("Shoot"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_KP5, '5'));
+	act->setCustomEngineActionEvent(kActionShoot);
 	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("KP5");
 	act->addDefaultInputMapping("5");
+	act->addDefaultInputMapping("KP0");
+	act->addDefaultInputMapping("0");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("RISE", _("Rise/Fly up"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_r, 'r'));
-	act->addDefaultInputMapping("JOY_B");
-	act->addDefaultInputMapping("r");
+	act = new Common::Action("ROTUP", _("Rotate up"));
+	act->setCustomEngineActionEvent(kActionRotateUp);
+	act->addDefaultInputMapping("p");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("LOWER", _("Lower/Fly down"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_f, 'f'));
-	act->addDefaultInputMapping("JOY_Y");
-	act->addDefaultInputMapping("f");
+	act = new Common::Action("ROTDN", _("Rotate down"));
+	act->setCustomEngineActionEvent(kActionRotateDown);
+	act->addDefaultInputMapping("l");
 	engineKeyMap->addAction(act);
 
+	act = new Common::Action("TURNB", _("Turn back"));
+	act->setCustomEngineActionEvent(kActionTurnBack);
+	act->addDefaultInputMapping("u");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SKIP", _("Skip"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	// I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 	act = new Common::Action("SWITCH", _("Change mode"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_SPACE, Common::ASCII_SPACE));
+	act->setCustomEngineActionEvent(kActionChangeMode);
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("ROTL", _("Rotate Left"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_q, 'q'));
-	act->addDefaultInputMapping("q");
+	act = new Common::Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("ROTR", _("Rotate Right"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_w, 'w'));
-	act->addDefaultInputMapping("w");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("MENU", _("Info Menu"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_i, 'i'));
+	act = new Common::Action("MENU", _("Info menu"));
+	act->setCustomEngineActionEvent(kActionInfoMenu);
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("JOY_GUIDE");
 	engineKeyMap->addAction(act);
+
+	// I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
+	act = new Common::Action("STEREO3D", _("Toggle red/blue 3D"));
+	act->setCustomEngineActionEvent(kActionToggleStereoscopic);
+	act->addDefaultInputMapping("3");
+	engineKeyMap->addAction(act);
 }
 
-Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight) {
-	Math::AABB boundingBox(position, position);
-
-	Math::Vector3d v1(position.x() + 1, position.y() + 1, position.z() + 1);
+Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight, float reductionHeight = 0.0f) {
+	Math::Vector3d v1(position.x() + 1, position.y() - playerHeight * reductionHeight - 1, position.z() + 1);
 	Math::Vector3d v2(position.x() - 1, position.y() - playerHeight, position.z() - 1);
+
+	Math::AABB boundingBox(v1, v2);
 
 	boundingBox.expand(v1);
 	boundingBox.expand(v2);
@@ -122,61 +147,160 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	Math::Vector3d rotation = entrance->getRotation();
 	_position = entrance->getOrigin();
 
-	if (scale == 1) {
+	if (_position.x() < 0) {
+		assert(isCastle());
+		_position.x() = _lastPosition.x();
+	}
+
+	if (_position.y() < 0) {
+		assert(isCastle());
+		_position.y() = _lastPosition.y();
+	}
+
+	if (_position.z() < 0) {
+		assert(isCastle());
+		_position.z() = _lastPosition.z();
+	}
+
+	// TODO: verify if this is needed
+	/*if (scale == 1) {
 		_position.x() = _position.x() + 16;
 		_position.z() = _position.z() + 16;
 	} else if (scale == 5) {
 		_position.x() = _position.x() + 4;
 		_position.z() = _position.z() + 4;
+	}*/
+
+	if (rotation.x() >= 0 && rotation.y() >= 0 && rotation.z() >= 0) {
+		_pitch = rotation.x();
+		float y = rotation.y();
+
+		// Adjust _yaw based on normalized angle
+		if (y >= 0 && y < 90)
+			_yaw = 90 - y;			// 0 to 90 maps to 90 to 0 (yaw should be 90 to 0)
+		else if (y >= 90 && y <= 180)
+			_yaw = 450 - y;			// 90 to 180 maps to 360 to 270 (yaw should be 360 to 270)
+		else if (y > 180 && y <= 225)
+			_yaw = y;				// 180 to 225 maps to 180 to 225 (yaw should be 180 to 225)
+		else if (y > 225 && y < 270)
+			_yaw = y - 90;			// 180 to 270 maps to 90 to 0 (yaw should be 90 to 0)
+		else
+			_yaw = 360 + 90 - y;	// 270 to 360 maps to 90 to 180 (yaw should be 90 to 180)
+
+		_roll = rotation.z();
 	}
 
-	_pitch = rotation.x();
-	if (rotation.y() > 0 && rotation.y() <= 45)
-		_yaw = rotation.y();
-	else if (rotation.y() <= 0 || (rotation.y() >= 180 && rotation.y() < 270))
-		_yaw = rotation.y() + 90;
-	else
-		_yaw = rotation.y() - 90;
-
 	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
-
-	int delta = 0;
-	if (scale == 2)
-		delta = 8;
-	else if (scale == 4)
-		delta = 12;
-
-	if (_playerHeightNumber >= 0)
-		_playerHeight = _playerHeights[_playerHeightNumber] + delta;
-	else
+	// Set the player height
+	_playerHeight = 0;
+	if (isDriller() && _playerHeightNumber == -1) {
 		_playerHeight = 2;
+		_position.setValue(1, _position.y() + _playerHeight);
+	} else
+		changePlayerHeight(_playerHeightNumber);
 	debugC(1, kFreescapeDebugMove, "player height: %d", _playerHeight);
-	_position.setValue(1, _position.y() + _playerHeight);
 
 	_sensors = _currentArea->getSensors();
 	_gfx->_scale = _currentArea->_scale;
 }
 
 void FreescapeEngine::activate() {
-	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
-	float xoffset = _crossairPosition.x - center.x;
-	float yoffset = _crossairPosition.y - center.y;
-	xoffset = xoffset * 0.33;
-	yoffset = yoffset * 0.50;
+	// Castle Master interaction following the original Z80 code (Lb464 in
+	// castlemaster2-annotated.asm). activate() is only called by Castle Master.
+	//
+	// 1. Find object under pointer via ray cast (equivalent to Lb607)
+	// 2. Reject objects where any dimension > room_scale * 5 (line 10216-10223)
+	// 3. Compute manhattan distance to object center (lines 10227-10266)
+	// 4. Normalize by room_scale if scale >= 2 (lines 10269-10277)
+	// 5. If distance >= 300, show "OUT OF REACH" (lines 10279-10283)
+	// 6. Otherwise execute the object's rules
 
-	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset, false);
+	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
+	float ndcX = (2.0f * (_crossairPosition.x - _viewArea.left) / _viewArea.width()) - 1.0f;
+	float ndcY = 1.0f - (2.0f * (_crossairPosition.y - _viewArea.top) / _viewArea.height());
+
+	float fovHorizontalRad = (float)(75.0f * M_PI / 180.0f);
+	float aspectRatio = 1.6f;
+	float fovVerticalRad = 2.0f * atan(tan(fovHorizontalRad / 2.0f) / aspectRatio);
+
+	float angleOffsetX = atan(ndcX * tan(fovHorizontalRad / 2.0f)) * 180.0f / M_PI;
+	float angleOffsetY = atan(ndcY * tan(fovVerticalRad / 2.0f)) * 180.0f / M_PI;
+
+	Math::Vector3d direction = directionToVector(_pitch + angleOffsetY, _yaw - angleOffsetX, false);
 	Math::Ray ray(_position, direction);
-	Object *interacted = _currentArea->checkCollisionRay(ray, 8192);
+	// Use a wide ray to find the object under the pointer. The original code
+	// (Lb607_find_object_under_pointer) works in screen-space projected
+	// coordinates, so it finds objects regardless of their 3D thickness.
+	// The manhattan distance check below handles reachability.
+	Object *interacted = _currentArea->checkCollisionRay(ray, 8000.0 / _currentArea->getScale());
+
 	if (interacted) {
 		GeometricObject *gobj = (GeometricObject *)interacted;
-		debugC(1, kFreescapeDebugMove, "Interact with object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
+		int scale = _currentArea->getScale();
+		// Z80 (line 10216-10222): rejects objects with any raw dimension > scale * 5.
+		// ScummVM sizes are in raw * 32 / scale units, so the equivalent
+		// threshold is: scale * 5 * 32 / scale = 160.
+		int maxSize = 160;
+		Math::Vector3d objOrigin = gobj->getOrigin();
+		Math::Vector3d objSize = gobj->getSize();
 
-		if (!gobj->_conditionSource.empty())
-			debugC(1, kFreescapeDebugMove, "Must use interact = true when executing: %s", gobj->_conditionSource.c_str());
+		debugC(1, kFreescapeDebugMove, "Activate: found object %d (type %d) at (%.0f,%.0f,%.0f) size (%.0f,%.0f,%.0f) scale %d",
+			gobj->getObjectID(), (int)gobj->getType(),
+			objOrigin.x(), objOrigin.y(), objOrigin.z(),
+			objSize.x(), objSize.y(), objSize.z(), scale);
 
-		executeObjectConditions(gobj, false, false, true);
+		// Reject objects where any dimension > room_scale * 5
+		bool tooLarge = false;
+		for (int i = 0; i < 3; i++) {
+			if ((int)objSize.getValue(i) > maxSize) {
+				tooLarge = true;
+				break;
+			}
+		}
+
+		if (tooLarge) {
+			debugC(1, kFreescapeDebugMove, "Activate: object %d too large (maxSize %d), skipping", gobj->getObjectID(), maxSize);
+		} else {
+			// Manhattan distance to object center, matching the Z80 code at
+			// Lb486 (castlemaster2-annotated.asm lines 10215-10281).
+			//
+			// Z80 works in *64 space: center = raw_pos*64 + raw_size*32,
+			// player = raw*64+32.
+			// ScummVM stores positions as raw*32/scale (after load8bitObject
+			// multiplies by 32 and load8bitArea divides by scale).
+			// So ScummVM center = origin + size/2, and the Z80 distance
+			// (after its /scale normalization) maps to:
+			//   dist_z80_normalized = dist_scummvm * 2 * scale / scale
+			//                       = dist_scummvm * 2
+			// Threshold in Z80 (post-normalization) = 300, so in ScummVM = 150.
+			int manhattanDist = 0;
+			for (int i = 0; i < 3; i++) {
+				float objCenter = objOrigin.getValue(i) + objSize.getValue(i) / 2.0f;
+				float playerPos = _position.getValue(i);
+				int diff = (int)ABS(objCenter - playerPos);
+				debugC(1, kFreescapeDebugMove, "Activate: axis %d: objCenter=%.1f playerPos=%.1f |diff|=%d",
+					i, objCenter, playerPos, diff);
+				manhattanDist += diff;
+			}
+
+			debugC(1, kFreescapeDebugMove, "Activate: object %d manhattanDist=%d (threshold 150)",
+				gobj->getObjectID(), manhattanDist);
+
+			if (manhattanDist >= 150) {
+				clearTemporalMessages();
+				insertTemporaryMessage(_outOfReachMessage, _countdown - 2);
+			} else {
+				debugC(1, kFreescapeDebugMove, "Activate: interacting with object %d", gobj->getObjectID());
+				executeObjectConditions(gobj, false, false, true);
+			}
+		}
+	} else {
+		debugC(1, kFreescapeDebugMove, "Activate: no object found under pointer");
+		if (!_outOfReachMessage.empty()) {
+			clearTemporalMessages();
+			insertTemporaryMessage(_outOfReachMessage, _countdown - 2);
+		}
 	}
-	//executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }
 
 
@@ -184,30 +308,27 @@ void FreescapeEngine::shoot() {
 	if (_shootingFrames > 0) // No more than one shot at a time
 		return;
 
-	if (isDriller())
-		playSound(1, false);
-	else if (isSpectrum()) {
-		if (isDark())
-			playSound(15, false);
-		else if (isEclipse())
-			playSound(5, false);
-		else
-			playSound(8, false);
-	} else
-		playSound(8, false);
-
+	playSound(_soundIndexShoot, false, Sound::kTypeMovement);
 	g_system->delayMillis(2);
-	_shootingFrames = 10;
+	_shootingFrames = 8;
 
-	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
-	float xoffset = _crossairPosition.x - center.x;
-	float yoffset = _crossairPosition.y - center.y;
-	xoffset = xoffset * 0.33;
-	yoffset = yoffset * 0.50;
+	// Convert to normalized coordinates [-1, 1]
+	float ndcX = (2.0f * (_crossairPosition.x - _viewArea.left) / _viewArea.width()) - 1.0f;
+	float ndcY = 1.0f - (2.0f * (_crossairPosition.y - _viewArea.top) / _viewArea.height());
 
-	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset, false);
+	// Calculate angular offsets using perspective projection
+	float fovHorizontalRad = (float)(75.0f * M_PI / 180.0f);
+	float aspectRatio = isCastle() ? 1.6 : 2.18;
+	float fovVerticalRad = 2.0f * atan(tan(fovHorizontalRad / 2.0f) / aspectRatio);
+
+	// Convert NDC to angle offset
+	float angleOffsetX = atan(ndcX * tan(fovHorizontalRad / 2.0f)) * 180.0f / M_PI;
+	float angleOffsetY = atan(ndcY * tan(fovVerticalRad / 2.0f)) * 180.0f / M_PI;
+
+	Math::Vector3d direction = directionToVector(_pitch + angleOffsetY, _yaw - angleOffsetX, false);
 	Math::Ray ray(_position, direction);
-	Object *shot = _currentArea->checkCollisionRay(ray, 8192);
+	// Original shooting picks from rendered faces, so fully transparent geometry does not catch shots.
+	Object *shot = _currentArea->checkCollisionRay(ray, 8192, true);
 	if (shot) {
 		GeometricObject *gobj = (GeometricObject *)shot;
 		debugC(1, kFreescapeDebugMove, "Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
@@ -217,20 +338,45 @@ void FreescapeEngine::shoot() {
 
 		_delayedShootObject = gobj;
 	}
+
 	executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }
 
+void FreescapeEngine::changeAngle(int offset, bool wrapAround) {
+	_angleRotationIndex = _angleRotationIndex + offset;
+
+	if (_angleRotationIndex < 0) {
+		if (wrapAround)
+			_angleRotationIndex = int(_angleRotations.size()) - 1;
+		else
+			_angleRotationIndex = 0;
+	} else if (_angleRotationIndex >= int(_angleRotations.size())) {
+		if (wrapAround)
+			_angleRotationIndex = 0;
+		else
+			_angleRotationIndex = int(_angleRotations.size()) - 1;
+	}
+
+	_angleRotationIndex = _angleRotationIndex % int(_angleRotations.size());
+}
+
 void FreescapeEngine::changePlayerHeight(int index) {
+	if (index < 0) {
+		warning("Invalid player height index %d, clamping to 0", index);
+		index = 0;
+	}
+
 	int scale = _currentArea->getScale();
-	int delta = 0;
-	if (scale == 2)
-		delta = 8;
-	else if (scale == 4 || scale == 5)
-		delta = 12;
 
 	_position.setValue(1, _position.y() - _playerHeight);
-	_playerHeight = _playerHeights[index] + delta;
+	_playerHeight = 32 * (index + 1) - 16 / float(scale);
+	assert(_playerHeight > 0);
 	_position.setValue(1, _position.y() + _playerHeight);
+}
+
+void FreescapeEngine::changeStepSize() {
+	_playerStepIndex++;
+	_playerStepIndex = _playerStepIndex % int(_playerSteps.size());
 }
 
 void FreescapeEngine::increaseStepSize() {
@@ -247,16 +393,18 @@ void FreescapeEngine::decreaseStepSize() {
 	_playerStepIndex--;
 }
 
-void FreescapeEngine::rise() {
+bool FreescapeEngine::rise() {
+	bool result = false;
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
 	if (_flyMode) {
+		_moveUp = true;
 		Math::Vector3d destination = _position;
 		destination.y() = destination.y() + _playerSteps[_playerStepIndex];
 		resolveCollisions(destination);
 	} else {
-		if (_playerHeightNumber == int(_playerHeights.size()) - 1)
-			return;
+		if (_playerHeightNumber >= _playerHeightMaxNumber)
+			return result;
 
 		_playerHeightNumber++;
 		changePlayerHeight(_playerHeightNumber);
@@ -268,18 +416,31 @@ void FreescapeEngine::rise() {
 			if (_currentArea->getAreaID() == previousAreaID) {
 				_playerHeightNumber--;
 				changePlayerHeight(_playerHeightNumber);
+				if (!isCastle())
+					setGameBit(31);
+
+				Math::Ray ray(_position, _upVector);
+				Object *collidedUp = _currentArea->checkCollisionRay(ray, _playerHeight + 3);
+				if (collidedUp) {
+					GeometricObject *gobj = (GeometricObject *)collidedUp;
+					debugC(1, kFreescapeDebugMove, "Collided up with object id %d", gobj->getObjectID());
+					executeObjectConditions(gobj, false, true, false);
+				}
 			}
-		}
+		} else
+			result = true;
 	}
 	checkIfStillInArea();
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	executeMovementConditions();
+	return result;
 }
 
 void FreescapeEngine::lower() {
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	if (_flyMode) {
+		_moveDown = true;
 		Math::Vector3d destination = _position;
 		destination.y() = destination.y() - _playerSteps[_playerStepIndex];
 		resolveCollisions(destination);
@@ -312,35 +473,68 @@ void FreescapeEngine::checkIfStillInArea() {
 			_position.setValue(i, maxPositiveDistance);
 	}
 	if (_position.y() >= 2016)
-		_position.y() = _lastPosition.z();
+		_position.y() = _lastPosition.y();
+
+	// Workaround for Castle Master 2: the first area (the crypt) is indoors, but it shares
+	// its area ID with the Castle Master courtyard, so it also gets the unbounded synthetic
+	// floor added by Area::addFloor(). The player can then walk past the room walls and keep
+	// going, ending up far outside the room. Keep them within the room instead, which is the
+	// area covered by the crypt floor: 127 units, as in the original bound (MAX_COORDINATE is
+	// 127 * 64 in La5d9_move_player, expressed in 1/64th of a unit).
+	if (isCastleMaster2() && _currentArea->getAreaID() == _startArea) {
+		float roomSize = 127.0f * 32.0f / _currentArea->getScale();
+		_position.x() = CLIP(_position.x(), 0.0f, roomSize);
+		_position.z() = CLIP(_position.z(), 0.0f, roomSize);
+	}
 }
 
-void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
+void FreescapeEngine::updatePlayerMovement(float deltaTime) {
+	if (_smoothMovement)
+		updatePlayerMovementSmooth(deltaTime);
+	else
+		updatePlayerMovementClassic(deltaTime);
+}
+
+void FreescapeEngine::updatePlayerMovementClassic(float deltaTime) {
+	if (!_moveForward && !_moveBackward && !_strafeLeft && !_strafeRight)
+		return;
+
 	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	int previousAreaID = _currentArea->getAreaID();
 
-	Math::Vector3d stepFront = _cameraFront * (float(_playerSteps[_playerStepIndex]) / 2 / _cameraFront.length());
-	Math::Vector3d stepRight = _cameraRight * (float(_playerSteps[_playerStepIndex]) / 2 / _cameraRight.length());
+	Math::Vector3d stepFront;
+	Math::Vector3d stepRight;
 
-	stepFront.x() = floor(stepFront.x()) + 0.5;
-	stepFront.z() = floor(stepFront.z()) + 0.5;
+	if (_playerSteps[_playerStepIndex] > 2) {
+		stepFront = _cameraFront * (float(_playerSteps[_playerStepIndex]) / 2 / _cameraFront.length());
+		stepRight = _cameraRight * (float(_playerSteps[_playerStepIndex]) / 2 / _cameraRight.length());
+
+		stepFront.x() = floor(stepFront.x()) + 0.5;
+		stepFront.z() = floor(stepFront.z()) + 0.5;
+	} else {
+		stepFront = _cameraFront * (float(_playerSteps[_playerStepIndex]) / _cameraFront.length());
+		stepRight = _cameraRight * (float(_playerSteps[_playerStepIndex]) / _cameraRight.length());
+
+		stepFront.x() = ceil(stepFront.x());
+		stepFront.z() = ceil(stepFront.z());
+	}
 
 	float positionY = _position.y();
-	Math::Vector3d destination;
-	switch (direction) {
-	case kForwardMovement:
-		destination = _position + stepFront;
-		break;
-	case kBackwardMovement:
-		destination = _position - stepFront;
-		break;
-	case kRightMovement:
-		destination = _position - stepRight;
-		break;
-	case kLeftMovement:
-		destination = _position + stepRight;
-		break;
-	}
+	Math::Vector3d destination = _position;
+
+	if (_moveForward)
+		destination += stepFront;
+	if (_moveBackward)
+		destination -= stepFront;
+	if (_strafeRight)
+		destination -= stepRight;
+	if (_strafeLeft)
+		destination += stepRight;
+
+	_moveForward = false;
+	_moveBackward = false;
+	_strafeLeft = false;
+	_strafeRight = false;
 
 	if (!_flyMode)
 		destination.y() = positionY;
@@ -353,7 +547,54 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	if (_currentArea->getAreaID() == previousAreaID)
 		executeMovementConditions();
 	_gotoExecuted = false;
-	clearGameBit(31);
+	if (!isCastle())
+		clearGameBit(31);
+}
+
+void FreescapeEngine::updatePlayerMovementSmooth(float deltaTime) {
+	if (_moveForward && !_eventManager->isActionActive(kActionMoveUp))
+		_moveForward = false;
+	if (_moveBackward && !_eventManager->isActionActive(kActionMoveDown))
+		_moveBackward = false;
+	if (_strafeLeft && !_eventManager->isActionActive(kActionMoveLeft))
+		_strafeLeft = false;
+	if (_strafeRight && !_eventManager->isActionActive(kActionMoveRight))
+		_strafeRight = false;
+
+	if (!_moveForward && !_moveBackward && !_strafeLeft && !_strafeRight)
+		return;
+
+	const float moveSpeed = _playerSteps[_playerStepIndex] * 5.0f;
+	Math::Vector3d moveDir;
+
+	if (_moveForward)
+		moveDir += _cameraFront;
+	if (_moveBackward)
+		moveDir -= _cameraFront;
+	if (_strafeLeft)
+		moveDir += _cameraRight;
+	if (_strafeRight)
+		moveDir -= _cameraRight;
+
+	if (_flyMode) {
+		if (_moveUp)
+			moveDir.y() += 1.0f;
+		if (_moveDown)
+			moveDir.y() -= 1.0f;
+	}
+
+	moveDir.normalize();
+	moveDir = moveDir * moveSpeed * deltaTime;
+	if (moveDir.length() > 1.0f) {
+		Math::Vector3d destination = _position + moveDir;
+		resolveCollisions(destination);
+		checkIfStillInArea();
+		_lastPosition = _position;
+		executeMovementConditions();
+	}
+	_gotoExecuted = false;
+	if (!isCastle())
+		clearGameBit(31);
 }
 
 void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
@@ -367,6 +608,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 	_gotoExecuted = false;
 	bool executed = runCollisionConditions(lastPosition, newPosition);
+
 	if (_gotoExecuted) {
 		_gotoExecuted = false;
 		return;
@@ -376,14 +618,19 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 	if (_flyMode) {
 		if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
-			if (!executed)
+			if (!executed && !isCastle())
 				setGameBit(31);
-			playSound(4, false);
+			playSound(_soundIndexCollide, false, Sound::kTypeMovement);
 		}
 		_position = newPosition;
 		return;
 	}
 
+	bool isSteppingUp = false;
+	bool isSteppingDown = false;
+	bool isCollidingWithWall = false;
+
+	// If the player has not moved, try to step up
 	if ((lastPosition - newPosition).length() < 1) { // If the player has not moved
 		// Try to step up
 		newPosition = position;
@@ -393,66 +640,135 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		lastPosition.y() = lastPosition.y() + _stepUpDistance;
 
 		newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
-	}
+		if (_lastPosition.y() < newPosition.y())
+			isSteppingUp = true;
 
-	if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
-		if (!executed)
+		if (!executed && !isCastle())
 			setGameBit(31);
-		if (isSpectrum())
-			playSound(10, false);
-		else
-			playSound(2, false);
+
+		isCollidingWithWall = true;
 	}
 
-	lastPosition = newPosition;
-	newPosition.y() = -8192;
-	newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
-	int fallen = lastPosition.y() - newPosition.y();
+	// Check for falling
+	Math::Vector3d fallStart = newPosition;   // current standing point
+	Math::Vector3d fallEnd   = fallStart;     // copy for downward probe
+	fallEnd.y() = -8192;                      // probe way down below
+	newPosition = _currentArea->resolveCollisions(fallStart, fallEnd, _playerHeight);
+	int fallen = _lastPosition.y() - newPosition.y();
 
 	if (fallen > _maxFallingDistance) {
 		_hasFallen = !_disableFalling;
+		if (isDriller() || isDark()) {
+			_roll = -90;
+			_pitch = 0;
+			_yaw = 0;
+			changePlayerHeight(0);
+		}
 		_avoidRenderingFrames = 60 * 3;
-		if (isEclipse())
+		_endGameDelayTicks = 60 * 5;
+		if (isEclipse()) // No need for an variable index, since these are special types of sound
 			playSoundFx(0, true);
+		else
+			playSound(_soundIndexFall, false, Sound::kTypeMovement);
+
+		if (_hasFallen)
+			stopMovement();
 	}
 
 	if (!_hasFallen && fallen > 0) {
-		playSound(3, false);
-
+		isSteppingDown = true;
 		// Position in Y was changed, let's re-run effects
-		runCollisionConditions(lastPosition, newPosition);
+		runCollisionConditions(_lastPosition, newPosition);
 	}
+
+	if (isSteppingUp && (newPosition - _lastPosition).length() <= 1) {
+		isCollidingWithWall = true;
+		isSteppingUp = false;
+	}
+
+	if (isSteppingDown && (newPosition - _lastPosition).length() <= 1) {
+		isCollidingWithWall = true;
+		isSteppingDown = false;
+	}
+
+	if (isSteppingUp)  {
+		//debug("Stepping up sound!");
+		if (!isPlayingSound(Sound::kTypeMovement))
+			playSound(_soundIndexStepUp, false, Sound::kTypeMovement);
+	} else if (isSteppingDown) {
+		//debug("Stepping down sound!");
+		if (!isPlayingSound(Sound::kTypeMovement))
+			playSound(_soundIndexStepDown, false, Sound::kTypeMovement);
+	} else if (isCollidingWithWall) {
+		//debug("Colliding with wall sound!");
+		if (!isPlayingSound(Sound::kTypeMovement))
+			playSound(_soundIndexCollide, false, Sound::kTypeMovement);
+	}
+
 	_position = newPosition;
 }
 
+void FreescapeEngine::stopMovement() {
+	_moveForward = false;
+	_moveBackward = false;
+	_strafeLeft = false;
+	_strafeRight = false;
+	_moveUp = false;
+	_moveDown = false;
+	_eventManager->purgeKeyboardEvents();
+}
+
 bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition) {
-	bool executed = false;
-	uint16 areaID = _currentArea->getAreaID();
+	bool floorExecuted = false;
+	bool wallExecuted = false;
+
 	GeometricObject *gobj = nullptr;
 	Object *collided = nullptr;
+	_gotoExecuted = false;
+
+	stopAllSounds(Sound::kTypeMovement);
 
 	Math::Ray ray(newPosition, -_upVector);
 	collided = _currentArea->checkCollisionRay(ray, _playerHeight + 3);
 	if (collided) {
 		gobj = (GeometricObject *)collided;
 		debugC(1, kFreescapeDebugMove, "Collided down with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
-		executed |= executeObjectConditions(gobj, false, true, false);
+		floorExecuted |= executeObjectConditions(gobj, false, true, false);
 	}
 
-	if (areaID != _currentArea->getAreaID())
-		return collided;
+	if (_gotoExecuted) {
+		executeMovementConditions();
+		return true;
+	}
 
 	Math::Vector3d direction = newPosition - lastPosition;
 	direction.normalize();
-	ray = Math::Ray(lastPosition, direction);
-	collided = _currentArea->checkCollisionRay(ray, 45);
-	if (collided) {
-		gobj = (GeometricObject *)collided;
-		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
-		executed |= executeObjectConditions(gobj, false, true, false);
+	int rayLenght = 45;
+	if (_currentArea->getScale() == 16)
+		rayLenght = 20;
+	else if (_currentArea->getScale() >= 5)
+		rayLenght = MAX(5, 45 / (2 * _currentArea->getScale()));
+
+	_gotoExecuted = false;
+	for (int i = 0; i <= 4; i++) {
+		Math::Vector3d rayPosition = lastPosition;
+		rayPosition.y() = rayPosition.y() - _playerHeight * (i / 4.0);
+		ray = Math::Ray(rayPosition, direction);
+		collided = _currentArea->checkCollisionRay(ray, rayLenght);
+		if (collided) {
+			gobj = (GeometricObject *)collided;
+			debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
+			wallExecuted |= executeObjectConditions(gobj, false, true, false);
+		}
+		if (_gotoExecuted) {
+			executeMovementConditions();
+			return true;
+		}
+		if (wallExecuted)
+			break;
 	}
 
-	return executed;
+	return floorExecuted || wallExecuted;
 }
 
 } // namespace Freescape

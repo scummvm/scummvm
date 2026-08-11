@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/encounter.h"
+#include "mm/mm1/views_enh/scroll_text.h"
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -62,9 +63,10 @@ void Encounter::draw() {
 		Graphics::ManagedSurface s = getSurface();
 		Common::Point pt((_innerBounds.left + _innerBounds.right) / 2,
 			(_innerBounds.top + _innerBounds.bottom) / 2);
-		s.fillRect(Common::Rect(pt.x - 50, pt.y - 9, pt.x + 50, pt.y + 18), 0);
+		ScrollText view("EncounterMsg", nullptr);
+		view.setBounds(Common::Rect(pt.x - 50, pt.y - 9, pt.x + 50, pt.y + 18));
+		view.draw();
 
-		setTextColor(4);
 		writeLine(7, STRING["dialogs.encounter.title"], ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
@@ -140,13 +142,14 @@ void Encounter::draw() {
 		setDisplayArea(true);
 		drawGraphic(enc._monsterImgNum);
 
-		setBounds(Common::Rect(168, 10, 310, 140));
-		Graphics::ManagedSurface monArea = getSurface();
-		monArea.clear();
-
 		// Write the monster list
+		// Draw an empty scroll for the background
+		ScrollText view("MonstersList", nullptr);
+		view.setBounds(Common::Rect(168, 10, 310, 140));
+		view.draw();
+
 		setReduced(true);
-		setTextColor(4);
+		setBounds(Common::Rect(168, 10, 310, 140));
 		for (uint i = 0; i < enc._monsterList.size(); ++i) {
 			writeString(12, i * 8,
 				Common::String::format("%c)", 'A' + i), ALIGN_RIGHT);

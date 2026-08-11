@@ -21,6 +21,8 @@
 
 #include "ultima/ultima8/kernel/delay_process.h"
 
+#include "common/stream.h"
+
 namespace Ultima {
 namespace Ultima8 {
 

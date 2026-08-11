@@ -23,7 +23,8 @@
 #define NANCY_UI_VIEWPORT_H
 
 #include "engines/nancy/time.h"
-#include "engines/nancy/video.h"
+#include "engines/nancy/commontypes.h"
+#include "engines/nancy/movieplayer.h"
 
 #include "engines/nancy/renderobject.h"
 
@@ -38,7 +39,7 @@ struct NancyInput;
 
 namespace UI {
 
-class Viewport : public Nancy::RenderObject {
+class Viewport : public RenderObject {
 public:
 	Viewport() :
 		RenderObject(6),
@@ -48,7 +49,6 @@ public:
 		_videoFormat(kLargeVideoFormat),
 		_stickyCursorPos(-1, -1),
 		_panningType(kPanNone),
-		_decoder(AVFDecoder::kLoadBidirectional),
 		_autoMove(false) {}
 
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
@@ -66,10 +66,14 @@ public:
 	void scrollUp(uint delta);
 	void scrollDown(uint delta);
 
-	uint16 getFrameCount() const { return _decoder.isVideoLoaded() ? _decoder.getFrameCount() : 0; }
+	uint16 getFrameCount() const { return _decoder.getFrameCount(); }
 	uint16 getCurFrame() const { return _currentFrame; }
 	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y; }
 	uint16 getMaxScroll() const;
+
+	// The currently-visible scene background, in viewport-local coords. Used by
+	// puzzles that composite additively over the background (e.g. MirrorLight).
+	const Graphics::ManagedSurface &getBackground() const { return _drawSurface; }
 
 	Common::Rect convertViewportToScreen(const Common::Rect &viewportRect) const;
 	Common::Rect convertScreenToViewport(const Common::Rect &viewportRect) const;
@@ -88,7 +92,7 @@ protected:
 
 	byte _panningType;
 
-	AVFDecoder _decoder;
+	MoviePlayer _decoder;
 	uint16 _currentFrame;
 	uint16 _videoFormat;
 	Graphics::ManagedSurface _fullFrame;

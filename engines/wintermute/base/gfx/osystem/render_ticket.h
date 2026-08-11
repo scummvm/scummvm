@@ -28,7 +28,7 @@
 #ifndef WINTERMUTE_RENDER_TICKET_H
 #define WINTERMUTE_RENDER_TICKET_H
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #include "common/rect.h"
 
@@ -55,9 +55,9 @@ public:
 	~RenderTicket();
 	const Graphics::Surface *getSurface() const { return _surface; }
 	// Non-dirty-rects:
-	void drawToSurface(Graphics::Surface *_targetSurface) const;
+	void drawToSurface(Graphics::ManagedSurface *_targetSurface) const;
 	// Dirty-rects:
-	void drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const;
+	void drawToSurface(Graphics::ManagedSurface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const;
 
 	Common::Rect _dstRect;
 

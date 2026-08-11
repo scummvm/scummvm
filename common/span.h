@@ -26,7 +26,7 @@
 #include "common/memstream.h"
 #include "common/safe-bool.h"
 #include "common/scummsys.h"
-#include "common/type-traits.h"
+#include "common/type_traits.h"
 
 namespace Common {
 
@@ -40,7 +40,7 @@ namespace Common {
 	typedef typename super_type::pointer pointer; \
 	typedef typename super_type::const_pointer const_pointer; \
 	typedef typename super_type::reference reference; \
-	typedef typename super_type::const_reference const_reference;
+	typedef typename super_type::const_reference const_reference
 
 enum : uint {
 	kSpanMaxSize = 0xFFFFFFFF,
@@ -65,13 +65,13 @@ namespace SpanInternal {
 	template <typename Span, bool IsConst>
 	class SpanIterator {
 		typedef typename Span::value_type span_value_type;
-		typedef typename Conditional<IsConst, const Span, Span>::type span_type;
+		typedef typename conditional<IsConst, const Span, Span>::type span_type;
 
 	public:
 		typedef typename Span::difference_type difference_type;
-		typedef typename RemoveConst<span_value_type>::type value_type;
-		typedef typename Conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
-		typedef typename Conditional<IsConst, const span_value_type, span_value_type>::type &reference;
+		typedef typename remove_const<span_value_type>::type value_type;
+		typedef typename conditional<IsConst, const span_value_type, span_value_type>::type *pointer;
+		typedef typename conditional<IsConst, const span_value_type, span_value_type>::type &reference;
 
 		inline SpanIterator() : _span(nullptr), _index(0) {}
 
@@ -253,8 +253,8 @@ namespace SpanInternal {
 template <typename ValueType, template <typename> class Derived>
 class SpanBase : public SafeBool<Derived<ValueType> > {
 	typedef Derived<ValueType> derived_type;
-	typedef typename AddConst<derived_type>::type const_derived_type;
-	typedef typename RemoveConst<derived_type>::type mutable_derived_type;
+	typedef typename add_const<derived_type>::type const_derived_type;
+	typedef typename remove_const<derived_type>::type mutable_derived_type;
 
 	template <typename T, bool U> friend class SpanInternal::SpanIterator;
 	template <typename T, template <typename> class U> friend class SpanBase;
@@ -322,74 +322,74 @@ public:
 	}
 
 	inline int8 getInt8At(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) == sizeof(uint8), int8_can_only_be_read_from_byte_or_char_spans);
+		static_assert(sizeof(value_type) == sizeof(uint8), "int8 can only be read from byte or char spans");
 		return (int8)getUint8At(index);
 	}
 
 	inline uint8 getUint8At(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) == sizeof(uint8), uint8_can_only_be_read_from_byte_or_char_spans);
+		static_assert(sizeof(value_type) == sizeof(uint8), "uint8 can only be read from byte or char spans");
 		impl().validate(index, sizeof(uint8));
 		return (uint8)impl().data()[index];
 	}
 
 	inline int16 getInt16BEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint16), int16_can_only_be_read_from_int16_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint16), "int16 can only be read from int16 or smaller spans");
 		return (int16)impl().getUint16BEAt(index);
 	}
 
 	inline int16 getInt16LEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint16), int16_can_only_be_read_from_int16_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint16), "int16 can only be read from int16 or smaller spans");
 		return (int16)impl().getUint16LEAt(index);
 	}
 
 	inline uint16 getUint16BEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint16), uint16_can_only_be_read_from_int16_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint16), "uint16 can only be read from int16 or smaller spans");
 		impl().validate(index, sizeof(uint16));
 		return READ_BE_UINT16(impl().data() + index);
 	}
 
 	inline uint16 getUint16LEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint16), uint16_can_only_be_read_from_int16_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint16), "uint16 can only be read from int16 or smaller spans");
 		impl().validate(index, sizeof(uint16));
 		return READ_LE_UINT16(impl().data() + index);
 	}
 
 	inline uint32 getUint24LEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= 3, uint24_can_only_be_read_from_int24_or_smaller_spans);
+		static_assert(sizeof(value_type) <= 3, "uint24 can only be read from int24 or smaller spans");
 		impl().validate(index, 3);
 		return READ_LE_UINT24(impl().data() + index);
 	}
 
 	inline uint32 getUint32At(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), uint32_can_only_be_read_from_int32_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint32), "uint32 can only be read from int32 or smaller spans");
 		impl().validate(index, sizeof(uint32));
 		return READ_UINT32(impl().data() + index);
 	}
 
 	inline int32 getInt32BEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), int32_can_only_be_read_from_int32_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint32), "int32 can only be read from int32 or smaller spans");
 		return (int32)impl().getUint32BEAt(index);
 	}
 
 	inline int32 getInt32LEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), int32_can_only_be_read_from_int32_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint32), "int32 can only be read from int32 or smaller spans");
 		return (int32)impl().getUint32LEAt(index);
 	}
 
 	inline uint32 getUint32BEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), uint32_can_only_be_read_from_int32_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint32), "uint32 can only be read from int32 or smaller spans");
 		impl().validate(index, sizeof(uint32));
 		return READ_BE_UINT32(impl().data() + index);
 	}
 
 	inline uint32 getUint32LEAt(const index_type index) const {
-		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), uint32_can_only_be_read_from_int32_or_smaller_spans);
+		static_assert(sizeof(value_type) <= sizeof(uint32), "uint32 can only be read from int32 or smaller spans");
 		impl().validate(index, sizeof(uint32));
 		return READ_LE_UINT32(impl().data() + index);
 	}
 
 	inline String getStringAt(const index_type index, size_type numEntries = kSpanMaxSize) const {
-		STATIC_ASSERT(sizeof(value_type) == sizeof(char), strings_can_only_be_read_from_byte_or_char_spans);
+		static_assert(sizeof(value_type) == sizeof(char), "strings can only be read from byte or char spans");
 		const char *string = (const char *)impl().data() + index;
 
 		if (numEntries == kSpanMaxSize) {
@@ -533,8 +533,8 @@ protected:
 template <typename ValueType, template <typename> class Derived>
 class SpanImpl : public SpanBase<ValueType, Derived> {
 	typedef SpanBase<ValueType, Derived> super_type;
-	typedef typename AddConst<Derived<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename add_const<Derived<ValueType> >::type const_derived_type;
+	typedef typename remove_const<Derived<ValueType> >::type mutable_derived_type;
 
 	template <typename T, template <typename> class U> friend class SpanImpl;
 #ifdef CXXTEST_RUNNING
@@ -542,7 +542,7 @@ class SpanImpl : public SpanBase<ValueType, Derived> {
 #endif
 
 public:
-	COMMON_SPAN_TYPEDEFS
+	COMMON_SPAN_TYPEDEFS;
 
 	inline SpanImpl() : super_type(), _data(nullptr), _size(0) {}
 
@@ -644,7 +644,7 @@ protected:
 #pragma mark SpanImpl - Allocation
 
 private:
-	typedef typename RemoveConst<value_type>::type mutable_value_type;
+	typedef typename remove_const<value_type>::type mutable_value_type;
 	typedef Derived<mutable_value_type> mutable_value_derived_type;
 
 public:
@@ -653,7 +653,7 @@ public:
 		assert(numEntries != kSpanMaxSize);
 		_data = new mutable_value_type[numEntries];
 		_size = numEntries;
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	template <typename Other>
@@ -663,7 +663,7 @@ public:
 		_data = new mutable_value_type[other.size()];
 		_size = other.size();
 		copy(other.begin(), other.end(), const_cast<mutable_value_type *>(_data));
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	mutable_value_derived_type &allocateFromStream(SeekableReadStream &stream, size_type numEntries = kSpanMaxSize) {
@@ -676,7 +676,8 @@ public:
 		allocate(numEntries);
 		const uint32 bytesRead = stream.read((void *)const_cast<mutable_value_type *>(_data), bytesRequested);
 		assert(bytesRead == bytesRequested);
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		(void)bytesRead;
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	value_type *_data;
@@ -689,12 +690,12 @@ public:
 template <typename ValueType>
 class Span : public SpanImpl<ValueType, Span> {
 	typedef SpanImpl<ValueType, ::Common::Span> super_type;
-	typedef typename AddConst<Span<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Span<ValueType> >::type mutable_derived_type;
+	typedef typename add_const<Span<ValueType> >::type const_derived_type;
+	typedef typename remove_const<Span<ValueType> >::type mutable_derived_type;
 	template <typename T> friend class Span;
 
 public:
-	COMMON_SPAN_TYPEDEFS
+	COMMON_SPAN_TYPEDEFS;
 
 	inline Span() : super_type() {}
 
@@ -712,8 +713,8 @@ public:
 template <typename ValueType, template <typename> class Derived>
 class NamedSpanImpl : public SpanImpl<ValueType, Derived> {
 	typedef SpanImpl<ValueType, Derived> super_type;
-	typedef typename AddConst<Derived<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+	typedef typename add_const<Derived<ValueType> >::type const_derived_type;
+	typedef typename remove_const<Derived<ValueType> >::type mutable_derived_type;
 
 	template <typename T, template <typename> class U> friend class NamedSpanImpl;
 #ifdef CXXTEST_RUNNING
@@ -721,9 +722,9 @@ class NamedSpanImpl : public SpanImpl<ValueType, Derived> {
 #endif
 
 public:
-	COMMON_SPAN_TYPEDEFS
+	COMMON_SPAN_TYPEDEFS;
 
-	inline NamedSpanImpl() : super_type(), _name(), _sourceByteOffset(0) {}
+	inline NamedSpanImpl() = default;
 
 	inline NamedSpanImpl(const pointer data_,
 						 const size_type size_,
@@ -753,7 +754,7 @@ public:
 
 private:
 	String _name;
-	size_type _sourceByteOffset;
+	size_type _sourceByteOffset = 0;
 
 #pragma mark -
 #pragma mark NamedSpanImpl - Subspan
@@ -820,7 +821,7 @@ public:
 #pragma mark NamedSpanImpl - Allocation
 
 private:
-	typedef typename RemoveConst<value_type>::type mutable_value_type;
+	typedef typename remove_const<value_type>::type mutable_value_type;
 	typedef Derived<mutable_value_type> mutable_value_derived_type;
 
 public:
@@ -828,7 +829,7 @@ public:
 		super_type::allocate(numEntries);
 		_name = name_;
 		_sourceByteOffset = 0;
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	template <typename OtherValueType>
@@ -836,20 +837,20 @@ public:
 		super_type::allocateFromSpan(other);
 		_name = other.name();
 		_sourceByteOffset = other.sourceByteOffset();
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	template <typename OtherValueType, template <typename> class OtherDerived>
 	mutable_value_derived_type &allocateFromSpan(const SpanImpl<OtherValueType, OtherDerived> &other) {
 		super_type::allocateFromSpan(other);
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	mutable_value_derived_type &allocateFromStream(SeekableReadStream &stream, size_type numEntries = kSpanMaxSize, const String &name_ = String()) {
 		super_type::allocateFromStream(stream, numEntries);
 		_name = name_;
 		_sourceByteOffset = 0;
-		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+		return reinterpret_cast<mutable_value_derived_type &>(const_cast<Derived<value_type> &>(this->impl()));
 	}
 
 	mutable_value_derived_type &allocateFromStream(File &file, const size_type numEntries = kSpanMaxSize) {
@@ -867,9 +868,9 @@ class NamedSpan : public NamedSpanImpl<ValueType, NamedSpan> {
 	template <typename T> friend class NamedSpan;
 
 public:
-	COMMON_SPAN_TYPEDEFS
+	COMMON_SPAN_TYPEDEFS;
 
-	inline NamedSpan() : super_type() {}
+	inline NamedSpan() = default;
 
 	inline NamedSpan(const pointer data_,
 					 const size_type size_,
@@ -924,7 +925,7 @@ public:
 			return *this;
 		}
 
-		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename remove_const<value_type>::type *>(_span.data());
 		_span.clear();
 
 		// Allocating memory when copy-assigning from an unallocated owner
@@ -938,7 +939,7 @@ public:
 	}
 
 	inline ~SpanOwner() {
-		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename remove_const<value_type>::type *>(_span.data());
 	}
 
 	/**
@@ -949,7 +950,7 @@ public:
 			return *this;
 		}
 
-		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename remove_const<value_type>::type *>(_span.data());
 		_span = other._span;
 		other.release();
 		return *this;
@@ -968,7 +969,7 @@ public:
 	 * Destroys the memory owned by this owner.
 	 */
 	inline void clear() {
-		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename remove_const<value_type>::type *>(_span.data());
 		_span.clear();
 	}
 

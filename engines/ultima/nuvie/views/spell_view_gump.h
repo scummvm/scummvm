@@ -53,8 +53,8 @@ public:
 
 	void Display(bool full_redraw) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override {
 		return DraggableView::MouseMotion(x, y, state);
 	}
@@ -71,7 +71,7 @@ protected:
 
 	uint8 fill_cur_spell_list() override;
 	void loadCircleString(const Common::Path &datadir);
-	void loadCircleSuffix(const Common::Path &datadir, const Std::string &image);
+	void loadCircleSuffix(const Common::Path &datadir, const Common::String &image);
 	void printSpellQty(uint8 spell_num, uint16 x, uint16 y);
 
 	void close_spellbook();

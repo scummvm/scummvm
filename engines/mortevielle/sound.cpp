@@ -67,7 +67,7 @@ SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
 	_ttsMan = g_system->getTextToSpeechManager();
 	if (_ttsMan) {
 		_ttsMan->setLanguage(ConfMan.get("language"));
-		_ttsMan->enable(true);
+		_ttsMan->enable(ConfMan.getBool("tts_enabled"));
 		_ttsMan->stop();
 		_ttsMan->setRate(0);
 		_ttsMan->setPitch(0);
@@ -766,7 +766,7 @@ void SoundManager::startSpeech(int rep, int character, int typ) {
 		// Speech
 		const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
 		const int voiceIndices[9] = { 0, 1, 2, 3, 0, 4, 5, 1, 6 };
-		if (!_ttsMan)
+		if (!_ttsMan || !ConfMan.getBool("tts_enabled"))
 			return;
 		Common::Array<int> voices;
 		int pitch = haut[character];

@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -42,7 +43,7 @@ BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_length = 0;
-	_values = new ScValue(_gameRef);
+	_values = new ScValue(_game);
 
 	int numParams = stack->pop()->getInt(0);
 
@@ -61,20 +62,19 @@ SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 //////////////////////////////////////////////////////////////////////////
 SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 	_length = 0;
-	_values = new ScValue(_gameRef);
+	_values = new ScValue(_game);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 SXArray::~SXArray() {
-	delete _values;
-	_values = nullptr;
+	SAFE_DELETE(_values);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXArray::scToString() {
-	char dummy[32768];
+	static char dummy[32768];
 	dummy[0] = '\0';
 	char propName[20];
 	for (int i = 0; i < _length; i++) {
@@ -90,8 +90,7 @@ const char *SXArray::scToString() {
 			Common::strcat_s(dummy, ",");
 		}
 	}
-	_strRep = dummy;
-	return _strRep.c_str();
+	return dummy;
 }
 
 
@@ -167,13 +166,13 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXArray::scGetProperty(const Common::String &name) {
+ScValue *SXArray::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("array");
 		return _scValue;
 	}
@@ -181,7 +180,7 @@ ScValue *SXArray::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Length") {
+	else if (strcmp(name, "Length") == 0) {
 		_scValue->setInt(_length);
 		return _scValue;
 	}
@@ -191,7 +190,7 @@ ScValue *SXArray::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	else {
 		char paramName[20];
-		if (validNumber(name.c_str(), paramName)) { // TODO: Change to Common::String
+		if (validNumber(name, paramName)) {
 			return _values->getProp(paramName);
 		} else {
 			return _scValue;

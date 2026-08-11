@@ -19,9 +19,10 @@
  *
  */
 
-#include "common/config-manager.h"
-
 #include "ultima/ultima8/world/actors/u8_avatar_mover_process.h"
+
+#include "common/config-manager.h"
+#include "common/system.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"

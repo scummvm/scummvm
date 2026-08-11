@@ -54,7 +54,8 @@ Hotspots::Hotspot::Hotspot(uint16 i,
 	funcEnter = enter;
 	funcLeave = leave;
 	funcPos   = pos;
-	script    = nullptr;
+	scriptFuncPos = nullptr;
+	scriptFuncLeave = nullptr;
 }
 
 void Hotspots::Hotspot::clear() {
@@ -68,7 +69,8 @@ void Hotspots::Hotspot::clear() {
 	funcEnter = 0;
 	funcLeave = 0;
 	funcPos   = 0;
-	script    = nullptr;
+	scriptFuncPos = nullptr;
+	scriptFuncLeave = nullptr;
 }
 
 Hotspots::Type Hotspots::Hotspot::getType() const {
@@ -209,6 +211,10 @@ Hotspots::Hotspots(GobEngine *vm) : _vm(vm) {
 	_currentId    = 0;
 	_currentX     = 0;
 	_currentY     = 0;
+#ifdef USE_TTS
+	_currentHotspotTTSTextIndex = -1;
+	_hotspotSpokenLast = false;
+#endif
 }
 
 Hotspots::~Hotspots() {
@@ -260,7 +266,13 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 		spot.id = id;
 
 		// Remember the current script
-		spot.script = _vm->_game->_script;
+		spot.scriptFuncPos = _vm->_game->_script;
+		spot.scriptFuncLeave = _vm->_game->_script;
+
+#ifdef USE_TTS
+		removeHotspotTTSText(i);
+		expandHotspotTTSText(i);
+#endif
 
 		debugC(1, kDebugHotspots, "Adding hotspot %03d: Coord:%3d+%3d+%3d+%3d - id:%04X, key:%04X, flag:%04X - fcts:%5d, %5d, %5d",
 				i, spot.left, spot.top, spot.right, spot.bottom,
@@ -278,6 +290,9 @@ void Hotspots::remove(uint16 id) {
 		if (_hotspots[i].id == id) {
 			debugC(1, kDebugHotspots, "Removing hotspot %d: %X", i, id);
 			_hotspots[i].clear();
+#ifdef USE_TTS
+			removeHotspotTTSText(i);
+#endif
 		}
 	}
 }
@@ -289,6 +304,9 @@ void Hotspots::removeState(uint8 state) {
 		if (spot.getState() == state) {
 			debugC(1, kDebugHotspots, "Removing hotspot %d: %X (by state %X)", i, spot.id, state);
 			spot.clear();
+#ifdef USE_TTS
+			removeHotspotTTSText(i);
+#endif
 		}
 	}
 }
@@ -310,7 +328,7 @@ void Hotspots::recalculate(bool force) {
 		// Setting the needed script
 		Script *curScript = _vm->_game->_script;
 
-		_vm->_game->_script = spot.script;
+		_vm->_game->_script = spot.scriptFuncPos;
 		if (!_vm->_game->_script)
 			_vm->_game->_script = curScript;
 
@@ -368,6 +386,11 @@ void Hotspots::recalculate(bool force) {
 
 		_vm->_game->_script = curScript;
 	}
+
+#ifdef USE_TTS
+	voiceUnassignedHotspots();
+	clearUnassignedHotspotTTSText();
+#endif
 }
 
 void Hotspots::push(uint8 all, bool force) {
@@ -376,6 +399,10 @@ void Hotspots::push(uint8 all, bool force) {
 	// Should we push at all?
 	if (!_shouldPush && !force)
 		return;
+
+#ifdef USE_TTS
+	voiceUnassignedHotspots();
+#endif
 
 	// Count the hotspots
 	uint32 size = 0;
@@ -444,6 +471,10 @@ void Hotspots::pop() {
 	debugC(1, kDebugHotspots, "Popping hotspots");
 
 	assert(!_stack.empty());
+
+#ifdef USE_TTS
+	voiceUnassignedHotspots();
+#endif
 
 	StackEntry backup = _stack.pop();
 
@@ -524,8 +555,15 @@ void Hotspots::enter(uint16 index) {
 	_currentX = _vm->_global->_inter_mouseX;
 	_currentY = _vm->_global->_inter_mouseY;
 
-	if (spot.funcEnter != 0)
+	if (spot.funcEnter != 0) {
+		_vm->_game->pushOnGlobalCallStack(kHotspotEnter,
+										  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+										  _vm->_game->_curTotFile, spot.funcEnter);
+
 		call(spot.funcEnter);
+
+		_vm->_game->popGlobalCallStack();
+	}
 }
 
 void Hotspots::leave(uint16 index) {
@@ -536,6 +574,10 @@ void Hotspots::leave(uint16 index) {
 		return;
 	}
 
+#ifdef USE_TTS
+	clearPreviousSaid();
+#endif
+
 	Hotspot &spot = _hotspots[index];
 
 	// If requested, write the ID into a variable
@@ -543,8 +585,21 @@ void Hotspots::leave(uint16 index) {
 	    (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, spot.id & 0x0FFF);
 
-	if (spot.funcLeave != 0)
+	if (spot.funcLeave != 0) {
+		Script *curScript = _vm->_game->_script;
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+			_vm->_game->_script = spot.scriptFuncLeave;
+		}
+
+		_vm->_game->pushOnGlobalCallStack(kHotspotLeave,
+										  _vm->_game->_curTotFile, curScript->_currentOpcodePos,
+										  _vm->_game->_curTotFile, spot.funcLeave);
+
 		call(spot.funcLeave);
+
+		_vm->_game->popGlobalCallStack();
+		_vm->_game->_script = curScript;
+	}
 }
 
 int16 Hotspots::windowCursor(int16 &dx, int16 &dy) const {
@@ -726,6 +781,15 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 		_currentKey   = 0;
 		_currentId    = 0;
 		_currentIndex = 0;
+	}
+
+	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) &&
+			_currentKey != 0 &&
+			(_hotspots[_currentIndex].id != _currentId ||
+			_hotspots[_currentIndex].key != _currentKey)) {
+		_currentKey = 0;
+		_currentIndex = 0;
+		_currentId = 0;
 	}
 
 	id    = 0;
@@ -1220,8 +1284,12 @@ uint16 Hotspots::handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
 
 		case kKeyReturn:
 			// Just one input => return
-			if (inputCount == 1)
+			if (inputCount == 1) {
+#ifdef USE_TTS
+				_vm->sayText(GET_VARO_STR(inputSpot.key));
+#endif
 				return kKeyReturn;
+			}
 
 			// End of input chain reached => wrap
 			if (curInput == (inputCount - 1)) {
@@ -1360,6 +1428,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 				spot.enable();
 				spot.funcEnter = _vm->_game->_script->pos();
 				spot.funcLeave = _vm->_game->_script->pos();
+				spot.scriptFuncLeave = _vm->_game->_script;
 			}
 		}
 
@@ -1368,7 +1437,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		return;
 	}
 
-	int16 key   = 0;
+	uint16 key   = 0;
 	int16 flags = 0;
 	Font *font = nullptr;
 	uint32 funcEnter = 0, funcLeave = 0;
@@ -1553,8 +1622,15 @@ bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
 			}
 
 			// Leave the current hotspot
-			if ((_currentKey != 0) && (_hotspots[_currentIndex].funcLeave != 0))
+			if ((_currentKey != 0) && (_hotspots[_currentIndex].funcLeave != 0)) {
+				_vm->_game->pushOnGlobalCallStack(kHotspotLeave,
+												  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+												  _vm->_game->_curTotFile, _hotspots[_currentIndex].funcLeave);
+
 				call(_hotspots[_currentIndex].funcLeave);
+
+				_vm->_game->popGlobalCallStack();
+			}
 
 			_currentKey = 0;
 		}
@@ -1636,6 +1712,11 @@ void Hotspots::evaluate() {
 	// Recalculate all hotspots if requested
 	if (needRecalculation)
 		recalculate(true);
+#ifdef USE_TTS
+	else {
+		voiceUnassignedHotspots();
+	}
+#endif
 
 	_vm->_game->_forceHandleMouse = 0;
 	_vm->_util->clearKeyBuf();
@@ -1678,8 +1759,15 @@ void Hotspots::evaluate() {
 		setCurrentHotspot(ids, id);
 
 		// Enter it
-		if (_hotspots[index].funcEnter != 0)
+		if (_hotspots[index].funcEnter != 0) {
+			_vm->_game->pushOnGlobalCallStack(kHotspotEnter,
+											  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+											  _vm->_game->_curTotFile, _hotspots[index].funcEnter);
+
 			call(_hotspots[index].funcEnter);
+
+			_vm->_game->popGlobalCallStack();
+		}
 
 		setCurrentHotspot(nullptr, 0);
 		id = 0;
@@ -1716,6 +1804,9 @@ void Hotspots::evaluate() {
 				spot.disable();
 	}
 
+#ifdef USE_TTS
+	clearUnassignedHotspotTTSText();
+#endif
 }
 
 int16 Hotspots::findCursor(uint16 x, uint16 y) const {
@@ -1789,7 +1880,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	return cursor;
 }
 
-void Hotspots::oPlaytoons_F_1B() {
+void Hotspots::createButton() {
 	int16 shortId;
 	int16 longId;
 	int16 var2;
@@ -1819,7 +1910,7 @@ void Hotspots::oPlaytoons_F_1B() {
 		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) ||
 			(_hotspots[i].id == 0x4000 + shortId)) {
 			longId = _hotspots[i].id;
-			warning("oPlaytoons_F_1B: shortId %d, var2 %d fontIndex %d var4 %d - longId %d", shortId, var2, fontIndex, var4, longId);
+			warning("createButton: shortId %d, var2 %d fontIndex %d var4 %d - longId %d", shortId, var2, fontIndex, var4, longId);
 
 			left = _hotspots[i].left;
 			top = _hotspots[i].top;
@@ -1836,13 +1927,126 @@ void Hotspots::oPlaytoons_F_1B() {
 				right -= 2;
 				bottom -= 2;
 			}
-			_vm->_draw->oPlaytoons_sub_F_1B(0x8000+ var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), fontIndex, var4, shortId);
+			_vm->_draw->drawButton(0x8000+ var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), fontIndex, var4, shortId);
 			return;
 		}
 	}
 	warning("shortId not found %d", shortId);
 	return;
 }
+
+#ifdef USE_TTS
+
+bool Hotspots::hoveringOverHotspot() const {
+	return _currentIndex != 0;
+}
+
+void Hotspots::addHotspotTTSText(const Common::String &text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int16 surf) {
+	if (x1 <= x2 && y1 <= y2) {
+		Common::Rect rect(x1, y1, x2, y2);
+		for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
+			// If there's already hotspot text at the same position, simply change the text
+			if (rect.contains(_hotspotTTSText[i].rect) || _hotspotTTSText[i].rect.contains(rect)) {
+				_hotspotTTSText[i].str = text;
+				_hotspotTTSText[i].voiced = false;
+				return;
+			}
+		}
+
+		_hotspotTTSText.push_back(HotspotTTSText{text, rect, -1, false, surf});
+	} else {
+		_vm->sayText(text, Common::TextToSpeechManager::QUEUE);
+	}
+}
+
+void Hotspots::voiceHotspotTTSText(int16 x, int16 y) {
+	// Don't allow any text on Ween's notepad to be voiced by moving the mouse, as the text is typically broken into pieces,
+	// which results in awkward voicing
+	if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
+		return;
+	}
+
+	for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
+		if (_hotspotTTSText[i].rect.contains(x, y)) {
+			if ((int16)i != _currentHotspotTTSTextIndex) {
+				_vm->sayText(_hotspotTTSText[i].str, _hotspotSpokenLast ? Common::TextToSpeechManager::INTERRUPT : Common::TextToSpeechManager::QUEUE);
+				_hotspotSpokenLast = true;
+				_currentHotspotTTSTextIndex = i;
+			}
+			
+			return;
+		}
+	}
+
+	_currentHotspotTTSTextIndex = -1;
+	if (!hoveringOverHotspot()) {
+		clearPreviousSaid();
+	}
+}
+
+
+void Hotspots::voiceUnassignedHotspots() {
+	Common::String ttsMessage;
+	for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
+		// For Ween's notepad, manually add spaces back in
+		if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
+			if (_vm->_weenVoiceNotepad) {
+				if (_vm->_draw->_fontIndex < _vm->_draw->kFontCount && _vm->_draw->_fonts[_vm->_draw->_fontIndex]) {
+					if (i > 0 && 
+						_hotspotTTSText[i].rect.left !=
+						_hotspotTTSText[i - 1].rect.left + _vm->_draw->_fonts[_vm->_draw->_fontIndex]->getCharWidth()) {
+						ttsMessage += " ";
+					}
+				}
+
+				ttsMessage += _hotspotTTSText[i].str;
+			}
+		} else if (_hotspotTTSText[i].hotspot == -1 && !_hotspotTTSText[i].voiced) {
+			ttsMessage += _hotspotTTSText[i].str + "\n";
+			_hotspotTTSText[i].voiced = true;
+		}
+	}
+
+	if (_previousSaid != ttsMessage && !ttsMessage.empty()) {
+		_hotspotSpokenLast = false;
+		_vm->sayText(ttsMessage, Common::TextToSpeechManager::QUEUE);
+		_previousSaid = ttsMessage;
+	}
+}
+
+void Hotspots::clearHotspotTTSText() {
+	_hotspotTTSText.clear();
+}
+
+void Hotspots::clearUnassignedHotspotTTSText() {
+	for (Common::Array<HotspotTTSText>::iterator it = _hotspotTTSText.begin(); it != _hotspotTTSText.end();) {
+		if (it->hotspot == -1) {
+			it = _hotspotTTSText.erase(it);
+		} else {
+			it++;
+		}
+	}
+}
+
+void Hotspots::clearPreviousSaid() {
+	_previousSaid.clear();
+}
+
+void Hotspots::adjustHotspotTTSTextRect(int16 oldLeft, int16 oldTop, int16 oldRight, int16 oldBottom, int16 newX, int16 newY, int16 surf) {
+	if (oldLeft > oldRight || oldTop > oldBottom) {
+		return;
+	}
+
+	Common::Rect oldRect(oldLeft, oldTop, oldRight, oldBottom);
+	for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
+		if (_hotspotTTSText[i].surf == surf && oldRect.contains(_hotspotTTSText[i].rect)) {
+			_hotspotTTSText[i].rect.moveTo(newX, newY);
+			return;
+		}
+	}
+}
+
+#endif
 
 uint16 Hotspots::inputToHotspot(uint16 input) const {
 	uint16 inputIndex = 0;
@@ -2039,7 +2243,14 @@ bool Hotspots::leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const u
 
 		// Call the leave and time it
 		startTime = _vm->_util->getTimeKey();
+		_vm->_game->pushOnGlobalCallStack(kHotspotLeave,
+										  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+										  _vm->_game->_curTotFile, spot.funcLeave);
+
 		call(spot.funcLeave);
+
+		_vm->_game->popGlobalCallStack();
+
 		_vm->_inter->animPalette();
 		callTime = _vm->_util->getTimeKey() - startTime;
 
@@ -2253,4 +2464,69 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 		input++;
 	}
 }
+
+#ifdef USE_TTS
+
+void Hotspots::expandHotspotTTSText(uint16 spotID) {
+	if (spotID > kHotspotCount || _hotspots[spotID].getType() == kTypeClick || _hotspots[spotID].isDisabled()) {
+		return;
+	}
+
+	if (_vm->getGameType() == kGameTypeFascination) {
+		// Don't include hotspots that aren't on the current window
+		uint16 windowNum = _hotspots[spotID].getWindow();
+		if (windowNum != 0 && windowNum < 10 && (_vm->_draw->_fascinWin[windowNum].id == -1 ||
+							_vm->_draw->_fascinWin[windowNum].id != _vm->_draw->_winCount - 1)) {
+			return;
+		}
+	}
+
+	Common::Rect spotRect;
+	spotRect.left = _hotspots[spotID].left;
+	spotRect.top = _hotspots[spotID].top;
+	spotRect.right = _hotspots[spotID].right;
+	spotRect.bottom = _hotspots[spotID].bottom;
+	
+	if (!spotRect.isValidRect()) {
+		return;
+	}
+	
+	for (int i = _hotspotTTSText.size() - 1; i >= 0; --i) {
+		if (_hotspotTTSText[i].hotspot != -1) {
+			continue;
+		}
+
+		if (spotRect.intersects(_hotspotTTSText[i].rect)) {
+			_hotspotTTSText[i].rect = spotRect;
+			_hotspotTTSText[i].hotspot = spotID;
+
+			// Try to voice what the mouse is hovering over, as the text underneath the mouse may have changed
+			int16 dx = 0;
+			int16 dy = 0;
+			if (_vm->_draw->getWinFromCoord(dx, dy) < 0) {
+				dx = 0;
+				dy = 0;
+			}
+
+			voiceHotspotTTSText(_vm->_global->_inter_mouseX - dx, _vm->_global->_inter_mouseY - dy);
+			return;
+		}
+	}
+}
+
+void Hotspots::removeHotspotTTSText(uint16 spotID) {
+	for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
+		if (_hotspotTTSText[i].hotspot == spotID) {
+			_hotspotTTSText.remove_at(i);
+
+			if ((int16)i == _currentHotspotTTSTextIndex) {
+				_currentHotspotTTSTextIndex = -1;
+			}
+			return;
+		}
+	}
+}
+
+#endif
+
 } // End of namespace Gob

@@ -1,0 +1,241 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "graphics/blit.h"
+#include "graphics/pixelformat.h"
+#include "common/endian.h"
+#include "common/system.h"
+
+namespace Graphics {
+
+namespace {
+
+template<bool bswap, int rotate>
+static void swapBlit(byte *dst, const byte *src,
+                     const uint dstPitch, const uint srcPitch,
+                     const uint w, const uint h) {
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta = (srcPitch - w * sizeof(uint32));
+	const uint dstDelta = (dstPitch - w * sizeof(uint32));
+
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			uint32 col = *(const uint32 *)src;
+
+			if (bswap)
+				col = SWAP_BYTES_32(col);
+			if (rotate != 0)
+				col = ROTATE_RIGHT_32(col, rotate);
+
+			*(uint32 *)dst = col;
+
+			src += sizeof(uint32);
+			dst += sizeof(uint32);
+		}
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
+static void fastBlit_XRGB1555_RGB565(byte *dst, const byte *src,
+                                     const uint dstPitch, const uint srcPitch,
+                                     const uint w, const uint h) {
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta = (srcPitch - w * sizeof(uint16));
+	const uint dstDelta = (dstPitch - w * sizeof(uint16));
+
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			uint16 col = *(const uint16 *)src;
+
+			col =   ((col & 0x7C00) << 1)                           // R
+			      | (((col & 0x03E0) << 1) | ((col & 0x0200) >> 4)) // G
+			      | (col & 0x001F);                                 // B
+
+			*(uint16 *)dst = col;
+
+			src += sizeof(uint16);
+			dst += sizeof(uint16);
+		}
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
+static void fastBlit_XRGB1555_RGBA5551(byte *dst, const byte *src,
+                                       const uint dstPitch, const uint srcPitch,
+                                       const uint w, const uint h) {
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta = (srcPitch - w * sizeof(uint16));
+	const uint dstDelta = (dstPitch - w * sizeof(uint16));
+
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			uint16 col = *(const uint16 *)src;
+
+			col = (col << 1) | 1;
+
+			*(uint16 *)dst = col;
+
+			src += sizeof(uint16);
+			dst += sizeof(uint16);
+		}
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
+static void fastBlit_RGB565_BGR565(byte *dst, const byte *src,
+                                   const uint dstPitch, const uint srcPitch,
+                                   const uint w, const uint h) {
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta = (srcPitch - w * sizeof(uint16));
+	const uint dstDelta = (dstPitch - w * sizeof(uint16));
+
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			uint16 col = *(const uint16 *)src;
+
+			col =   ((col & 0xF800) >> 11)  // R
+			      |  (col & 0x07E0)         // G
+			      | ((col & 0x001F) << 11); // B
+
+			*(uint16 *)dst = col;
+
+			src += sizeof(uint16);
+			dst += sizeof(uint16);
+		}
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
+} // End of anonymous namespace
+
+// TODO: Add fast 24<->32bpp conversion
+// TODO: Add more fast 16bpp RGB <-> 16bpp BGR conversion
+struct FastBlitLookup {
+	FastBlitFunc func;
+	Graphics::PixelFormat srcFmt, dstFmt;
+};
+
+static const FastBlitLookup fastBlitFuncs_4to4[] = {
+	// 32-bit byteswap
+	{ swapBlit<true,   0>, Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0) }, // ABGR8888 -> RGBA8888
+	{ swapBlit<true,   0>, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24) }, // RGBA8888 -> ABGR8888
+	{ swapBlit<true,   0>, Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0) }, // ARGB8888 -> BGRA8888
+	{ swapBlit<true,   0>, Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24) }, // BGRA8888 -> ARGB8888
+
+	// 32-bit rotate right
+	{ swapBlit<false,  8>, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24) }, // RGBA8888 -> ARGB8888
+	{ swapBlit<false,  8>, Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24) }, // BGRA8888 -> ABGR8888
+
+	// 32-bit rotate left
+	{ swapBlit<false, 24>, Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0) }, // ABGR8888 -> BGRA8888
+	{ swapBlit<false, 24>, Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0) }, // ARGB8888 -> RGBA8888
+
+	// 32-bit byteswap and rotate right
+	{ swapBlit<true,   8>, Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24) }, // ABGR8888 -> ARGB8888
+	{ swapBlit<true,   8>, Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24) }, // ARGB8888 -> ABGR8888
+
+	// 32-bit byteswap and rotate left
+	{ swapBlit<true,  24>, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0) }, // RGBA8888 -> BGRA8888
+	{ swapBlit<true,  24>, Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0) }  // BGRA8888 -> RGBA8888
+
+};
+
+static const FastBlitLookup fastBlitFuncs_2to2[] = {
+	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // XRGB1555 -> RGB565
+	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0,  0,  5, 10,  0), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // XBGR1555 -> BGR565
+	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // ARGB1555 -> RGB565
+	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1,  0,  5, 10, 15), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // ABGR1555 -> BGR565
+
+	{ fastBlit_XRGB1555_RGBA5551, Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11,  6,  1,  0) }, // XRGB1555 -> RGBA5551
+	{ fastBlit_XRGB1555_RGBA5551, Graphics::PixelFormat(2, 5, 5, 5, 0,  0,  5, 10,  0), Graphics::PixelFormat(2, 5, 5, 5, 1,  1,  6, 11,  0) }, // XBGR1555 -> BGRA5551
+
+	{ fastBlit_RGB565_BGR565, Graphics::PixelFormat(2, 5, 5, 5, 0, 11,  5,  0,  0), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // RGB565 -> BGR565
+	{ fastBlit_RGB565_BGR565, Graphics::PixelFormat(2, 5, 5, 5, 0,  0,  5, 11,  0), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // BGR565 -> RGB565
+};
+
+#ifdef SCUMMVM_NEON
+static const FastBlitLookup fastBlitFuncs_NEON[] = {
+	// 16-bit with NEON
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // XRGB1555 -> RGB565
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0,  0,  5, 10,  0), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // XBGR1555 -> BGR565
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // ARGB1555 -> RGB565
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1,  0,  5, 10, 15), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // ABGR1555 -> BGR565
+};
+#endif
+
+FastBlitFunc getFastBlitFunc(const PixelFormat &dstFmt, const PixelFormat &srcFmt) {
+	const uint dstBpp = dstFmt.bytesPerPixel;
+	const uint srcBpp = srcFmt.bytesPerPixel;
+	const FastBlitLookup *table = nullptr;
+	size_t length = 0;
+
+	if (srcBpp == 4 && dstBpp == 4) {
+		table = fastBlitFuncs_4to4;
+		length = ARRAYSIZE(fastBlitFuncs_4to4);
+
+		for (size_t i = 0; i < length; i++) {
+			if (srcFmt != table[i].srcFmt)
+				continue;
+			if (dstFmt != table[i].dstFmt)
+				continue;
+
+			return table[i].func;
+		}
+	}
+
+#ifdef SCUMMVM_NEON
+	if (srcBpp == 2 && dstBpp == 2 && g_system->hasFeature(OSystem::kFeatureCpuNEON)) {
+		table = fastBlitFuncs_NEON;
+		length = ARRAYSIZE(fastBlitFuncs_NEON);
+
+		for (size_t i = 0; i < length; i++) {
+			if (srcFmt != table[i].srcFmt)
+				continue;
+			if (dstFmt != table[i].dstFmt)
+				continue;
+
+			return table[i].func;
+		}
+	}
+#endif
+
+	if (srcBpp == 2 && dstBpp == 2) {
+		table = fastBlitFuncs_2to2;
+		length = ARRAYSIZE(fastBlitFuncs_2to2);
+
+		for (size_t i = 0; i < length; i++) {
+			if (srcFmt != table[i].srcFmt)
+				continue;
+			if (dstFmt != table[i].dstFmt)
+				continue;
+
+			return table[i].func;
+		}
+	}
+
+	return nullptr;
+}
+
+} // End of namespace Graphics

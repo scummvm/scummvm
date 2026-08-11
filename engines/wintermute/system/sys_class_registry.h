@@ -65,23 +65,23 @@ public:
 #endif
 	static SystemClassRegistry *getInstance();
 
-	SystemClassRegistry();
-	virtual ~SystemClassRegistry();
-
 	bool enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData);
-	bool loadTable(BaseGame *Game, BasePersistenceManager *PersistMgr);
-	bool saveTable(BaseGame *Game, BasePersistenceManager *PersistMgr, bool quickSave);
-	bool loadInstances(BaseGame *Game, BasePersistenceManager *PersistMgr);
-	bool saveInstances(BaseGame *Game, BasePersistenceManager *PersistMgr, bool quickSave);
-	void *idToPointer(int classID, int instanceID);
-	bool getPointerID(void *pointer, int *classID, int *instanceID);
+	bool loadTable(BaseGame *game, BasePersistenceManager *persistMgr);
+	bool saveTable(BaseGame *game, BasePersistenceManager *persistMgr, bool quickSave);
+	bool loadInstances(BaseGame *game, BasePersistenceManager *persistMgr);
+	bool saveInstances(BaseGame *game, BasePersistenceManager *persistMgr, bool quickSave);
+	void *idToPointer(int classID, int instanceId);
+	bool getPointerID(void *pointer, int *classId, int *instanceId);
 	bool registerClass(SystemClass *classObj);
 	bool unregisterClass(SystemClass *classObj);
 	bool registerInstance(const char *className, void *instance);
 	bool unregisterInstance(const char *className, void *instance);
 	void dumpClasses(Common::WriteStream *stream);
-	int getNextID();
+	int getNextId();
 	void addInstanceToTable(SystemInstance *instance, void *pointer);
+
+	SystemClassRegistry();
+	virtual ~SystemClassRegistry();
 
 	bool _disabled;
 	int _count;

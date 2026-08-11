@@ -114,13 +114,13 @@ int16 Room67::use_kommode() {
 			autoMove(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(9);
-			_G(atds)->set_ats_str(400, 1, ATS_DATA);
+			_G(atds)->set_all_ats_str(400, 1, ATS_DATA);
 		} else if (!_G(gameState).R67KostuemWeg) {
 			action_flag = true;
 			_G(gameState).R67KostuemWeg = true;
 			autoMove(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			_G(atds)->set_ats_str(400, 2, ATS_DATA);
+			_G(atds)->set_all_ats_str(400, 2, ATS_DATA);
 			new_invent_2_cur(GALA_INV);
 		}
 		showCur();

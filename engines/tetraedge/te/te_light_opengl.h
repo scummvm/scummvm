@@ -22,6 +22,8 @@
 #ifndef TETRAEDGE_TE_TE_LIGHT_OPENGL_H
 #define TETRAEDGE_TE_TE_LIGHT_OPENGL_H
 
+#include "common/scummsys.h"
+
 #if defined(USE_OPENGL_GAME)
 
 #include "tetraedge/te/te_light.h"

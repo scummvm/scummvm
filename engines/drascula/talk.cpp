@@ -21,6 +21,8 @@
 
 #include "drascula/drascula.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Drascula {
 
 static const int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
@@ -39,14 +41,15 @@ bool DrasculaEngine::isTalkFinished() {
 	}
 
 	Common::KeyCode key = getScan();
-	if (key == Common::KEYCODE_SPACE || key == Common::KEYCODE_PAUSE) {
+	Common::CustomEventType action = getAction();
+	if (action == kActionPauseSpeech) {
 		// Pause speech until space is pressed again
 		// Note: an alternative is to implement a PauseDialog as is done in engines/scumm/dialogs.cpp
 		do {
 			pause(10);
-			key = getScan();
-		} while (key != Common::KEYCODE_SPACE && key != Common::KEYCODE_PAUSE && !shouldQuit());
-	} else if (key != 0)
+			action = getAction();
+		} while (action != kActionPauseSpeech && !shouldQuit());
+	} else if (key != 0 || action != kActionNone)
 		stopSound();
 	if (soundIsActive())
 		return false;
@@ -207,10 +210,14 @@ void DrasculaEngine::talk_drascula_big(int index) {
 	int x_talk[4] = {47, 93, 139, 185};
 	int face;
 	int l = 0;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	color_abc(kColorRed);
 
 	talkInit(filename);
+
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("animation")->setEnabled(true);
 
 	do {
 		face = _rnd->getRandomNumber(3);
@@ -229,10 +236,13 @@ void DrasculaEngine::talk_drascula_big(int index) {
 
 		pause(3);
 
-		byte key = getScan();
-		if (key == Common::KEYCODE_ESCAPE)
+		Common::CustomEventType action = getAction();
+		if (action == kActionSkip)
 			term_int = 1;
 	} while (!isTalkFinished());
+
+	keymapper->getKeymap("animation")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 }
 
 void DrasculaEngine::talk_solo(const char *said, const char *filename) {

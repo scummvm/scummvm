@@ -56,7 +56,7 @@ SX3fStatistics::SX3fStatistics(BaseGame *inGame, ScStack *stack) : BaseScriptabl
 
 	_repeat = 0;
 
-	_gameRef->LOG(0, "new Statistics(\"%s\", \"%s\", \"%s\", \"%s\")", _baseUrl.c_str(), _chapter.c_str(), _language.c_str(), _buildNum.c_str());
+	_game->LOG(0, "new Statistics(\"%s\", \"%s\", \"%s\", \"%s\")", _baseUrl.c_str(), _chapter.c_str(), _language.c_str(), _buildNum.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ bool SX3fStatistics::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 	if (strcmp(name, "Send") == 0) {
 		stack->correctParams(1);
 		const char *message = stack->pop()->getString();
-		_gameRef->LOG(0, "Send(\"%s\")", message);
+		_game->LOG(0, "Send(\"%s\")", message);
 
 		// do nothing
 
@@ -133,13 +133,13 @@ bool SX3fStatistics::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SX3fStatistics::scGetProperty(const Common::String &name) {
+ScValue *SX3fStatistics::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("statistics");
 		return _scValue;
 	}

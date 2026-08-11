@@ -22,7 +22,7 @@
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/utf8.h"
 #include "ags/shared/core/platform.h"
-#include "ags/lib/std/regex.h"
+#include "common/std/regex.h"
 #include "ags/shared/util/math.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_compat.h"
@@ -40,7 +40,7 @@ String StrUtil::IntToString(int d) {
 }
 
 int StrUtil::StringToInt(const String &s, int def_val) {
-	if (!s.GetCStr())
+	if (s.IsEmpty())
 		return def_val;
 	char *stop_ptr;
 	int val = strtol(s.GetCStr(), &stop_ptr, 0);
@@ -49,7 +49,7 @@ int StrUtil::StringToInt(const String &s, int def_val) {
 
 StrUtil::ConversionError StrUtil::StringToInt(const String &s, int &val, int def_val) {
 	val = def_val;
-	if (!s.GetCStr())
+	if (s.IsEmpty())
 		return StrUtil::kFailed;
 	char *stop_ptr;
 	_G(errnum) = 0;
@@ -58,12 +58,12 @@ StrUtil::ConversionError StrUtil::StringToInt(const String &s, int &val, int def
 		return StrUtil::kFailed;
 	if (lval > INT_MAX || lval < INT_MIN || _G(errnum) == AL_ERANGE)
 		return StrUtil::kOutOfRange;
-	val = (int)lval;
+	val = static_cast<int>(lval);
 	return StrUtil::kNoError;
 }
 
 float StrUtil::StringToFloat(const String &s, float def_val) {
-	if (!s.GetCStr())
+	if (s.IsEmpty())
 		return def_val;
 	char *stop_ptr;
 	float val = strtof(s.GetCStr(), &stop_ptr);
@@ -148,6 +148,17 @@ void StrUtil::ReadString(char **cstr, Stream *in) {
 	if (len > 0)
 		in->Read(*cstr, len);
 	(*cstr)[len] = 0;
+}
+
+String StrUtil::ReadStringAligned(Stream *in) {
+	String s = ReadString(in);
+	size_t rem = s.GetLength() % sizeof(int32_t);
+	if (rem > 0) {
+		size_t pad = sizeof(int32_t) - rem;
+		for (size_t i = 0; i < pad; ++i)
+			in->ReadByte();
+	}
+	return s;
 }
 
 void StrUtil::SkipString(Stream *in) {
@@ -253,6 +264,8 @@ void StrUtil::WriteStringMap(const StringMap &map, Stream *out) {
 size_t StrUtil::ConvertUtf8ToAscii(const char *mbstr, const char *loc_name, char *out_cstr, size_t out_sz) {
 	// TODO: later consider using alternative conversion methods
 	// (e.g. see C++11 features), as setlocale is unreliable.
+	char old_locale[64];
+	snprintf(old_locale, sizeof(old_locale), "%s", setlocale(LC_CTYPE, nullptr));
 	if (setlocale(LC_CTYPE, loc_name) == nullptr) { // If failed setlocale, then resort to plain copy the mb string
 		return static_cast<size_t>(snprintf(out_cstr, out_sz, "%s", mbstr));
 	}
@@ -268,7 +281,7 @@ size_t StrUtil::ConvertUtf8ToAscii(const char *mbstr, const char *loc_name, char
 	}
 	// Then convert widestring to single-byte string using specified locale
 	size_t res_sz = wcstombs(out_cstr, &wcsbuf[0], out_sz);
-	setlocale(LC_CTYPE, "");
+	setlocale(LC_CTYPE, old_locale);
 	return res_sz;
 }
 

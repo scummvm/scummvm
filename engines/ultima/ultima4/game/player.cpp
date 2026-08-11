@@ -65,7 +65,7 @@ void PartyMember::notifyOfChange() {
 	}
 }
 
-Common::String PartyMember::translate(Std::vector<Common::String> &parts) {
+Common::String PartyMember::translate(Common::Array<Common::String> &parts) {
 	if (parts.size() == 0)
 		return "";
 	else if (parts.size() == 1) {
@@ -576,7 +576,7 @@ void Party::notifyOfChange(PartyMember *pm, PartyEvent::Type eventType) {
 	notifyObservers(event);
 }
 
-Common::String Party::translate(Std::vector<Common::String> &parts) {
+Common::String Party::translate(Common::Array<Common::String> &parts) {
 	if (parts.size() == 0)
 		return "";
 	else if (parts.size() == 1) {
@@ -615,7 +615,7 @@ Common::String Party::translate(Std::vector<Common::String> &parts) {
 	} else if (parts.size() >= 2) {
 		if (parts[0].findFirstOf("member") == 0) {
 			// Make a new parts list, but remove the first item
-			Std::vector<Common::String> new_parts = parts;
+			Common::Array<Common::String> new_parts = parts;
 			new_parts.erase(new_parts.begin());
 
 			// Find the member we'll be working with

@@ -25,26 +25,24 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
+#include "graphics/palette.h"
 #include "access/access.h"
 #include "access/screen.h"
 #include "access/resources.h"
 #include "access/martian/martian_resources.h"
+#include "access/noctropolis/noctropolis_resources.h"
+
 
 namespace Access {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-
-ScreenSave::ScreenSave(){
-	_clipWidth = _clipHeight = 0;
-	_windowXAdd = _windowYAdd = 0;
-	_scrollCol = _scrollRow = 0;
-	_screenYOff = 0;
+ScreenSave::ScreenSave() : _clipWidth(0), _clipHeight(0), _windowXAdd(0), _windowYAdd(0), _scrollCol(0), _scrollRow(0), _screenYOff(0) {
 }
 
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
-	create(320, 200);
-	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
-	Common::fill(&_manPal[0], &_manPal[0x60], 0);
+	Graphics::Screen::create(_vm->getScreenWidth(), _vm->getScreenHeight());
+	Common::fill(&_tempPalette[0], &_tempPalette[Graphics::PALETTE_SIZE], 0);
+	Common::fill(&_manPal[0], &_manPal[0x84], 0);
+	Common::fill(&_stilPal[0], &_stilPal[99], 0);
 	Common::fill(&_scaleTable1[0], &_scaleTable1[256], 0);
 	Common::fill(&_scaleTable2[0], &_scaleTable2[256], 0);
 	_savedPaletteCount = 0;
@@ -71,7 +69,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_endCycle = 0;
 	_fadeIn = false;
 
-	for (int i = 0; i < 768; ++i) {
+	for (int i = 0; i < Graphics::PALETTE_SIZE; ++i) {
 		_rawPalette[i] = 0;
 		_savedPalettes[0][i] = 0;
 		_savedPalettes[1][i] = 0;
@@ -113,49 +111,95 @@ void Screen::update() {
 
 void Screen::setInitialPalettte() {
 	Common::copy(&INITIAL_PALETTE[0], &INITIAL_PALETTE[18 * 3], _rawPalette);
-	Common::fill(&_rawPalette[18 * 3], &_rawPalette[PALETTE_SIZE], 0);
+	Common::fill(&_rawPalette[18 * 3], &_rawPalette[Graphics::PALETTE_SIZE], 0);
 
 	g_system->getPaletteManager()->setPalette(INITIAL_PALETTE, 0, 18);
 }
 
 void Screen::setManPalette() {
-	for (int i = 0; i < 0x42; i++) {
-		_rawPalette[672 + i] = VGA_COLOR_TRANS(_manPal[i]);
-	}
-}
-
-void Screen::setIconPalette() {
-	if (_vm->getGameID() == GType_MartianMemorandum) {
-		for (int i = 0; i < 0x1B; i++) {
-			_rawPalette[741 + i] = VGA_COLOR_TRANS(Martian::ICON_PALETTE[i]);
+	// Player palette is colors 224~246 in MM
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		for (int i = 0; i < 0x42; i++) {
+			_rawPalette[0x2a0 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
+		}
+	} else if (_vm->getGameID() == kGameNoctropolis) {
+		for (int i = 0; i < 0x84; i++) {
+			_rawPalette[0x240 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
 		}
 	}
 }
 
-void Screen::loadPalette(int fileNum, int subfile) {
+void Screen::setStilPalette() {
+	assert(_vm->getGameID() == kGameNoctropolis);
+	for (int i = 0; i < 99; i++) {
+		_rawPalette[0x1e0 + i] = PALETTE_6BIT_TO_8BIT(_stilPal[i]);
+	}
+}
+
+void Screen::setIconPalette() {
+	// Icon palette is colors 247~255
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		for (int i = 0; i < 0x1B; i++) {
+			_rawPalette[741 + i] = PALETTE_6BIT_TO_8BIT(Martian::ICON_PALETTE[i]);
+		}
+	} else if (_vm->getGameID() == kGameNoctropolis) {
+		for (int i = 0; i < 60; i++) {
+			_rawPalette[708 + i] = Noctropolis::ICON_PALETTE[i];
+		}
+	}
+}
+
+void Screen::setDarkPalette(int16 mulValue, uint firstIndex, uint count) {
+	uint lastIndex = firstIndex + count;
+	for (uint i = firstIndex; i <= lastIndex; i++) {
+		_tempPalette[i * 3 + 0] = (_rawPalette[i * 3 + 0] * mulValue) >> 16;
+		_tempPalette[i * 3 + 1] = (_rawPalette[i * 3 + 1] * mulValue) >> 16;
+		_tempPalette[i * 3 + 2] = (_rawPalette[i * 3 + 2] * mulValue) >> 16;
+	}
+
+	updatePalette();
+}
+
+
+void Screen::loadPalette(int fileNum, int subfile, int srcOffset) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
-	byte *palette = res->data();
-	Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
+	const byte *palette = res->data() + srcOffset;
+
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		for (int i = 0; i < _numColors * 3; i++)
+			_rawPalette[_startColor * 3 + i] = PALETTE_6BIT_TO_8BIT(palette[i]);
+	} else {
+		// TODO: is this right for Amazon?  Surely it should be converted?  Maybe never used..
+		Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
+	}
 	delete res;
 }
 
 void Screen::setPalette() {
-	g_system->getPaletteManager()->setPalette(&_rawPalette[0], 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(&_rawPalette[0], 0, Graphics::PALETTE_COUNT);
+}
+
+void Screen::setRawPalette(const Graphics::Palette &p) {
+	p.grab(_rawPalette, 0, 256);
 }
 
 void Screen::loadRawPalette(Common::SeekableReadStream *stream) {
-	stream->read(&_rawPalette[0], PALETTE_SIZE);
-	for (byte *p = &_rawPalette[0]; p < &_rawPalette[PALETTE_SIZE]; ++p)
-		*p = VGA_COLOR_TRANS(*p);
+	stream->read(&_rawPalette[0], Graphics::PALETTE_SIZE);
+	for (byte *p = &_rawPalette[0]; p < &_rawPalette[Graphics::PALETTE_SIZE]; ++p)
+		*p = PALETTE_6BIT_TO_8BIT(*p);
+}
+
+void Screen::clearColor0() {
+	_rawPalette[0] = _rawPalette[1] = _rawPalette[2] = 0;
 }
 
 void Screen::updatePalette() {
-	g_system->getPaletteManager()->setPalette(&_tempPalette[0], 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(&_tempPalette[0], 0, Graphics::PALETTE_COUNT);
 	update();
 }
 
 void Screen::savePalette() {
-	Common::copy(&_rawPalette[0], &_rawPalette[PALETTE_SIZE],
+	Common::copy(&_rawPalette[0], &_rawPalette[Graphics::PALETTE_SIZE],
 		&_savedPalettes[_savedPaletteCount][0]);
 
 	if (++_savedPaletteCount == 2)
@@ -167,22 +211,27 @@ void Screen::restorePalette() {
 		_savedPaletteCount = 0;
 
 	Common::copy(&_savedPalettes[_savedPaletteCount][0],
-		&_savedPalettes[_savedPaletteCount][PALETTE_SIZE], &_rawPalette[0]);
+		&_savedPalettes[_savedPaletteCount][Graphics::PALETTE_SIZE], &_rawPalette[0]);
 }
 
 void Screen::getPalette(byte *pal) {
 	g_system->getPaletteManager()->grabPalette(pal, 0, 256);
 }
 
+void Screen::copyRawPalToTempPal() {
+	Common::copy(&_rawPalette[0],
+		&_rawPalette[Graphics::PALETTE_SIZE], &_tempPalette[0]);
+}
+
 void Screen::forceFadeOut() {
-	const int FADE_AMOUNT = 2;
-	bool repeatFlag;
+	constexpr int FADE_AMOUNT = 2;
 	byte *srcP;
 	int count;
+	bool repeatFlag;
 
 	do {
 		repeatFlag = false;
-		for (srcP = &_tempPalette[0], count = 0; count < PALETTE_SIZE; ++count, ++srcP) {
+		for (srcP = &_tempPalette[0], count = 0; count < Graphics::PALETTE_SIZE; ++count, ++srcP) {
 			int v = *srcP;
 			if (v) {
 				repeatFlag = true;
@@ -196,16 +245,16 @@ void Screen::forceFadeOut() {
 }
 
 void Screen::forceFadeIn() {
-	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
+	Common::fill(&_tempPalette[0], &_tempPalette[Graphics::PALETTE_SIZE], 0);
 
-	const int FADE_AMOUNT = 2;
+	constexpr int FADE_AMOUNT = 2;
 	bool repeatFlag;
 	do {
 		repeatFlag = false;
 		const byte *srcP = &_rawPalette[0];
 		byte *destP = &_tempPalette[0];
 
-		for (int idx = 0; idx < PALETTE_SIZE; ++idx, ++srcP, ++destP) {
+		for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx, ++srcP, ++destP) {
 			if (*destP != *srcP) {
 				repeatFlag = true;
 				*destP = MIN((int)*destP + FADE_AMOUNT, (int)*srcP);
@@ -214,8 +263,36 @@ void Screen::forceFadeIn() {
 
 		updatePalette();
 		_vm->_events->pollEventsAndWait();
-	} while (repeatFlag);
+	} while (repeatFlag && !_vm->shouldQuit());
 }
+
+void Screen::forceFadeWhite() {
+	constexpr int FADE_AMOUNT = 2;
+	byte *srcP;
+	int count;
+	bool repeatFlag;
+
+	do {
+		repeatFlag = false;
+		for (srcP = &_tempPalette[0], count = 0; count < Graphics::PALETTE_SIZE; ++count, ++srcP) {
+			int v = *srcP;
+			if (v) {
+				repeatFlag = true;
+				*srcP = MIN((int)*srcP + FADE_AMOUNT, 255);
+			}
+		}
+
+		updatePalette();
+		_vm->_events->pollEventsAndWait();
+	} while (repeatFlag && !_vm->shouldQuit());
+}
+
+void Screen::fadeOutThenClearAndSetPal() {
+	fadeOut();
+	clearScreen();
+	setPalette();
+}
+
 
 void Screen::copyBuffer(const byte *data) {
 	byte *destP = (byte *)getPixels();
@@ -224,15 +301,23 @@ void Screen::copyBuffer(const byte *data) {
 }
 
 void Screen::setBufferScan() {
+	int16 scanBottom;
+	switch (_vm->getGameID()) {
+	case kGameMartianMemorandum: 	scanBottom = 184; break;
+	case kGameAmazon:				scanBottom = 176; break;
+	case kGameNoctropolis:			scanBottom = 400; break;
+	default:						error("Unsupported game");
+	}
+
 	_clipWidth = _vWindowBytesWide - 1;
-	_windowXAdd = (320 - _clipWidth) >> 1;
+	_windowXAdd = (w - _clipWidth) >> 1;
 	_clipHeight = _vWindowLinesTall - 1;
-	_windowYAdd = (176 - _clipHeight) >> 1;
+	_windowYAdd = (scanBottom - _clipHeight) >> 1;
 }
 
 void Screen::setScaleTable(int scale) {
 	int total = 0;
-	for (int idx = 0; idx < 256; ++idx) {
+	for (int idx = 0; idx < ARRAYSIZE(_scaleTable1); ++idx) {
 		_scaleTable1[idx] = total >> 8;
 		_scaleTable2[idx] = total & 0xff;
 		total += scale;
@@ -267,7 +352,7 @@ void Screen::restoreScreen() {
 	_screenYOff = _screenSave._screenYOff;
 }
 
-void Screen::copyBlock(BaseSurface *src, const Common::Rect &bounds) {
+void Screen::copyBlock(const BaseSurface *src, const Common::Rect &bounds) {
 	Common::Rect destBounds = bounds;
 	destBounds.translate(_windowXAdd, _windowYAdd + _screenYOff);
 
@@ -331,8 +416,22 @@ void Screen::cyclePaletteBackwards() {
 	}
 }
 
-void Screen::flashPalette(int count) {
-	// No implementation needed in ScummVM
+void Screen::flashPalette(int step) {
+	// Note: Original parameter is for 64-level palette
+	step *= 4;
+
+	for (int i = 0; i < Graphics::PALETTE_SIZE; ++i) {
+		_tempPalette[i] = (byte)MIN(_rawPalette[i] + step, 255);
+	}
+
+	updatePalette();
+	_vm->_events->pollEventsAndWait();
+
+	// Ensure at least 1 frame delay at 30FPS before resetting palette
+	// to ensure the effect is perceptible and matches original.
+	_vm->_events->delay(30);
+	setPalette();
+	_vm->_events->pollEventsAndWait();
 }
 
 } // End of namespace Access

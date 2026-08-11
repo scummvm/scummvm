@@ -24,10 +24,10 @@
 #define BAGEL_SPACEBAR_COMPUTER_H
 
 #include "bagel/spacebar/spacebar.h"
-#include "bagel/boflib/gui/list_box.h"
-#include "bagel/boflib/gui/text_box.h"
-#include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/list.h"
+#include "bagel/spacebar/boflib/gui/list_box.h"
+#include "bagel/spacebar/boflib/gui/text_box.h"
+#include "bagel/spacebar/boflib/gui/button.h"
+#include "bagel/spacebar/boflib/list.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -137,8 +137,8 @@ public:
 	void onPaint(CBofRect *pRect);
 	void eraseBackdrop();
 
-	void onLButtonDown(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
-	void onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void * = nullptr) {}
+	void onLButtonDown(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void * = nullptr) {}
+	void onLButtonUp(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void * = nullptr) {}
 
 	void onMouseMove(uint32 nFlags, CBofPoint *, void * = nullptr);
 };

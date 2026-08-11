@@ -28,16 +28,12 @@ namespace M4 {
 
 enum AccessMode {
 	UNOPENED,
-	READ,
-	WRITE,
-	READ_OR_WRITE
+	READ
 };
 
 enum FileMode {
 	BINARY,
-	TEXT,
-	BINARYW,
-	TEXTW
+	TEXT
 };
 
 struct Hag_Name_Record {

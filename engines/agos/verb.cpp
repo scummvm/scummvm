@@ -1004,9 +1004,16 @@ void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 					src[i] = color;
 				}
 			} else if (getGameType() == GType_ELVIRA2) {
-				if (!(color & 1)) {
-					color ^= 2;
-					src[i] = color;
+				if (getPlatform() == Common::kPlatformAtariST && ha->y < 136) {
+					if ((color & 0x0F) == 1)
+						src[i] = (color & 0xF0) | 15;
+					else if ((color & 0x0F) == 12 || (color & 0x0F) == 15)
+						src[i] = (color & 0xF0) | 1;
+				} else {
+					if (!(color & 1)) {
+						color ^= 2;
+						src[i] = color;
+					}
 				}
 			} else if (getGameType() == GType_ELVIRA1) {
 				if (color & 1) {

@@ -251,7 +251,7 @@ void cPlayerHands::OnStart() {
 //-----------------------------------------------------------------------
 
 void cPlayerHands::Update(float afTimeStep) {
-	UpdatePrevPostions();
+	UpdatePrevPositions();
 
 	///////////////////////////////////
 	// Get the camera properties
@@ -589,7 +589,7 @@ void cPlayerHands::OnWorldLoad() {
 //////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------
-void cPlayerHands::UpdatePrevPostions() {
+void cPlayerHands::UpdatePrevPositions() {
 	///////////////////////////////////
 	// Get current position
 	cCamera3D *pCam = mpInit->mpPlayer->GetCamera();
@@ -606,7 +606,7 @@ void cPlayerHands::UpdatePrevPostions() {
 		mlstRotations.pop_front();
 
 	///////////////////////////////////////
-	// Get the current camera postion and rotation
+	// Get the current camera position and rotation
 	cVector3f vRotation(0, 0, 0);
 	cVector3f vPosition(0, 0, 0);
 	float fRotNum = 0;

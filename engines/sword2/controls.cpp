@@ -21,9 +21,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "common/rect.h"
 #include "common/system.h"
+
+#include "backends/keymapper/keymapper.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -1408,7 +1409,16 @@ void SaveRestoreDialog::setResult(int result) {
 }
 
 int SaveRestoreDialog::runModal() {
+	Common::Keymapper *keymapper = _vm->_system->getEventManager()->getKeymapper();
+	Common::Keymap *engineDefault = keymapper->getKeymap("engine-default");
+
+	if (_mode == kSaveDialog)
+		engineDefault->setEnabled(false);
+
 	int result = Dialog::runModal();
+
+	if (_mode == kSaveDialog)
+		engineDefault->setEnabled(true);
 
 	if (result) {
 		switch (_mode) {

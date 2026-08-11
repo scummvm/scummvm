@@ -48,17 +48,20 @@
 #include "director/window.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/filmloop.h"
+#include "director/castmember/movie.h"
 #include "director/castmember/transition.h"
+#include "director/debugger/debugtools.h"
 
 namespace Director {
 
 #include "director/palette-fade.h"
 
-Score::Score(Movie *movie) {
+Score::Score(Movie *movie, bool haveInteractivity) {
 	_movie = movie;
 	_window = movie->getWindow();
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
+	_haveInteractivity = haveInteractivity;
 
 	_soundManager = _window->getSoundManager();
 
@@ -70,26 +73,32 @@ Score::Score(Movie *movie) {
 	_labels = nullptr;
 
 	_currentFrameRate = 20;
+	_currentDigitalVideoTimeScale = 60;
 	_nextFrame = 0;
 	_currentLabel = 0;
 	_nextFrameTime = 0;
 	_nextFrameDelay = 0;
 	_lastTempo = 0;
 	_waitForChannel = 0;
+	_waitForChannelCue = 0;
 	_waitForVideoChannel = 0;
 	_cursorDirty = false;
 	_waitForClick = false;
 	_waitForClickCursor = false;
 	_activeFade = false;
 	_exitFrameCalled = false;
+	_stopPlayCalled = false;
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
 	_skipTransition = false;
+	_skipIdle = false;
 
 	_curFrameNumber = 1;
 	_framesStream = nullptr;
 	_currentFrame = nullptr;
+
+	_disableGoPlayUpdateStage = false;
 }
 
 Score::~Score() {
@@ -118,7 +127,7 @@ void Score::setPuppetTempo(int16 puppetTempo) {
 }
 
 CastMemberID Score::getCurrentPalette() {
-	return g_director->_lastPalette;
+	return _puppetPalette ? _vm->_lastPuppetPalette : _vm->_lastPalette;
 }
 
 bool Score::processImmediateFrameScript(Common::String s, int id) {
@@ -133,23 +142,8 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 }
 
 bool Score::processFrozenScripts(bool recursion, int count) {
-	// Unfreeze the play script if the special flag is set
-	if (g_lingo->_playDone) {
-		g_lingo->_playDone = false;
-		if (_window->thawLingoPlayState()) {
-			Symbol currentScript = _window->getLingoState()->callstack.front()->sp;
-			g_lingo->switchStateFromWindow();
-			bool completed = g_lingo->execute();
-			if (!completed) {
-				debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
-				return false;
-			} else if (currentScript == g_lingo->_currentInputEvent) {
-				// script that just completed was the current input event, clear the flag
-				debugC(3, kDebugEvents, "Score::processFrozenScripts(): Input event completed");
-				g_lingo->_currentInputEvent = Symbol();
-			}
-		}
-	}
+	if (!_haveInteractivity)
+		return true;
 
 	// Unfreeze any in-progress scripts and attempt to run them
 	// to completion.
@@ -158,7 +152,9 @@ bool Score::processFrozenScripts(bool recursion, int count) {
 	while (remainCount && (limit ? count > 0 : true)) {
 		_window->thawLingoState();
 		LingoState *state = _window->getLingoState();
-		Symbol currentScript = state->callstack.front()->sp;
+		Symbol currentScript;
+		if (state && !state->callstack.empty())
+			currentScript = state->callstack.front()->sp;
 		g_lingo->switchStateFromWindow();
 		bool completed = g_lingo->execute();
 		if (!completed || (recursion ? _window->frozenLingoRecursionCount() : _window->frozenLingoStateCount()) >= remainCount) {
@@ -207,15 +203,16 @@ Common::String *Score::getLabelList() {
 	return res;
 }
 
-Common::String *Score::getFrameLabel(uint id) {
+Common::String Score::getFrameLabel(uint id) {
+	if (!_labels)
+		return Common::String();
+
 	for (auto &i : *_labels) {
-		if (i->number == id) {
-			return new Common::String(i->name);
-			break;
-		}
+		if (i->number == id)
+			return i->name;
 	}
 
-	return new Common::String;
+	return Common::String();
 }
 
 void Score::setStartToLabel(Common::String &label) {
@@ -237,7 +234,7 @@ void Score::gotoLoop() {
 		_nextFrame = _currentLabel;
 	}
 
-	_vm->_skipFrameAdvance = true;
+	_window->_skipFrameAdvance = true;
 }
 
 int Score::getCurrentLabelNumber() {
@@ -268,26 +265,14 @@ int Score::getNextLabelNumber(int referenceFrame) {
 	if (_labels == nullptr || _labels->size() == 0)
 		return 0;
 
-	Common::SortedArray<Label *>::iterator i;
-
-	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->number >= referenceFrame) {
-			int n = (*i)->number;
-			++i;
-			if (i != _labels->end()) {
-				// return to the first marker to to the right
-				return (*i)->number;
-			} else {
-				// if no markers are to the right of the playback head,
-				// the playback head goes to the first marker to the left
-				return n;
-			}
+	for (auto &it : *_labels) {
+		if (it->number > referenceFrame) {
+			return it->number;
 		}
 	}
-
-	// If there are not markers to the left,
-	// the playback head goes to frame 1, (Director frame array start from 1, engine from 0)
-	return 0;
+	// if no markers are to the right of the playback head,
+	// return the last marker
+	return _labels->back()->number;
 }
 
 int Score::getPreviousLabelNumber(int referenceFrame) {
@@ -325,11 +310,14 @@ void Score::startPlay() {
 	updateCurrentFrame();
 
 	// All frames in the same movie have the same number of channels
-	if (_playState != kPlayStopped)
+	if (_playState != kPlayStopped && _channels.size() == 0)
 		for (uint i = 0; i < _currentFrame->_sprites.size(); i++)
 			_channels.push_back(new Channel(this, _currentFrame->_sprites[i], i));
 
-	if (_vm->getVersion() >= 300)
+	updateSprites(kRenderForceUpdate, true);
+
+	// Stage has been set up, run the StartMovie script
+	if (_haveInteractivity && _version >= kFileVer300)
 		_movie->processEvent(kEventStartMovie);
 }
 
@@ -339,22 +327,40 @@ void Score::step() {
 
 	if (_playState == kPlayStopped)
 		return;
+	bool hasJump = (_nextFrame != 0) || !_window->_nextMovie.movie.empty();
 
-	if (!_movie->_inputEventQueue.empty() && !_window->frozenLingoStateCount()) {
-		_lingo->processEvents(_movie->_inputEventQueue, true);
-	}
-	if (_vm->getVersion() >= 300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
-		_movie->processEvent(kEventIdle);
+	if (_haveInteractivity && !hasJump) {
+		if (!_movie->_inputEventQueue.empty() && !_window->frozenLingoStateCount()) {
+			_lingo->processEvents(_movie->_inputEventQueue, true);
+		}
+		if (_version >= kFileVer300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
+			if (!_skipIdle)
+				_movie->processEvent(kEventIdle);
+
+			if (_version >= kFileVer600) {
+				if (_movie->_currentHoveredSpriteId) {
+					_movie->processEvent(kEventMouseWithin, _movie->_currentHoveredSpriteId);
+				}
+
+				_soundManager->processCuePoints();
+			} else 	if (_version >= kFileVer500) {
+				// In D5, these events are only generated if a mouse button is pressed
+				bool isButtonDown = !Director::DT::isMouseInputIgnored() && (g_system->getEventManager()->getButtonState() != 0);
+				if (_movie->_currentHoveredSpriteId && isButtonDown) {
+					_movie->processEvent(kEventMouseWithin, _movie->_currentHoveredSpriteId);
+				}
+			}
+		}
 	}
 
 	update();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot)) {
-		warning("Score::startLoop(): ran frame %0d", g_director->_framesRan);
-		g_director->_framesRan++;
+		warning("Score::startLoop(): ran frame %0d", _vm->_framesRan);
+		_vm->_framesRan++;
 	}
 
-	if (debugChannelSet(-1, kDebugFewFramesOnly) && g_director->_framesRan > kFewFamesMaxCounter) {
+	if (debugChannelSet(-1, kDebugFewFramesOnly) && _vm->_framesRan > kFewFamesMaxCounter) {
 		warning("Score::startLoop(): exiting due to debug few frames only");
 		_playState = kPlayStopped;
 		return;
@@ -365,9 +371,16 @@ void Score::step() {
 }
 
 void Score::stopPlay() {
-	if (_vm->getVersion() >= 300)
-		_movie->processEvent(kEventStopMovie);
-	_lingo->executePerFrameHook(-1, 0);
+	if (_stopPlayCalled)
+		return;
+	_stopPlayCalled = true;
+
+	if (_haveInteractivity) {
+		if (_version >= kFileVer300)
+			_movie->processEvent(kEventStopMovie);
+
+		_lingo->executePerFrameHook(-1, 0);
+	}
 }
 
 void Score::setDelay(uint32 ticks) {
@@ -388,22 +401,31 @@ bool Score::isWaitingForNextFrame() {
 	bool keepWaiting = false;
 	debugC(8, kDebugEvents, "Score::isWaitingForNextFrame(): nextFrameTime: %d, time: %d, sound: %d, click: %d, video: %d", _nextFrameTime, g_system->getMillis(false), _waitForChannel, _waitForClick, _waitForVideoChannel);
 
+	bool goingTo = _nextFrame && _nextFrame != _curFrameNumber;
+
 	if (_waitForChannel) {
-		if (_soundManager->isChannelActive(_waitForChannel)) {
+		if (_waitForChannelCue != 0 && _waitForChannelCue != -2) {
+			 // -1: next, -2: end, else specific cue point
+			 warning("STUB: Implement waiting for sound channel %d cue point %d", _waitForChannel, _waitForChannelCue);
+		}
+
+		if (_soundManager->isChannelActive(_waitForChannel) && !goingTo) {
 			keepWaiting = true;
 		} else {
 			_waitForChannel = 0;
 		}
 	} else if (_waitForClick) {
-		if (g_system->getMillis() >= _nextFrameTime + 1000) {
-			_waitForClickCursor = !_waitForClickCursor;
-			renderCursor(_movie->getWindow()->getMousePos());
-			_nextFrameTime = g_system->getMillis();
+		if (!goingTo) {
+			if (g_system->getMillis() >= _nextFrameTime + 1000) {
+				_waitForClickCursor = !_waitForClickCursor;
+				renderCursor(_movie->getWindow()->getMousePos());
+				_nextFrameTime = g_system->getMillis();
+			}
+			keepWaiting = true;
 		}
-		keepWaiting = true;
 	} else if (_waitForVideoChannel) {
 		Channel *movieChannel = _channels[_waitForVideoChannel];
-		if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0) {
+		if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0 && !goingTo) {
 			keepWaiting = true;
 		} else {
 			_waitForVideoChannel = 0;
@@ -421,20 +443,25 @@ bool Score::isWaitingForNextFrame() {
 void Score::updateCurrentFrame() {
 	uint32 nextFrameNumberToLoad = _curFrameNumber;
 
-	if (!_vm->_playbackPaused) {
+	if (!_window->_playbackPaused) {
 		if (_nextFrame) {
 			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
 			// when jumping.
 			nextFrameNumberToLoad = _nextFrame;
-		}
-		else if (!_window->_newMovieStarted)
+		} else if (!_window->_newMovieStarted)
 			nextFrameNumberToLoad = (_curFrameNumber+1);
 	}
 
+	// whether this frame is held by an explicit jump (go the frame), which
+	// film loops treat differently from a natural single-frame loop
+	_frameHeldByJump = (_nextFrame != 0);
+
 	_nextFrame = 0;
+	_window->_skipFrameAdvance = false;
 
 	if (nextFrameNumberToLoad >= getFramesNum()) {
 		Window *window = _vm->getCurrentWindow();
+		// reached the end of the movie
 		if (!window->_movieStack.empty()) {
 			MovieReference ref = window->_movieStack.back();
 			window->_movieStack.pop_back();
@@ -443,6 +470,9 @@ void Score::updateCurrentFrame() {
 				window->setNextMovie(ref.movie);
 				window->_nextMovie.frameI = ref.frameI;
 				return;
+			}
+			if (window->getLingoPlayState()) {
+				window->requeueLingoPlayState();
 			}
 			nextFrameNumberToLoad = ref.frameI;
 		} else {
@@ -465,18 +495,35 @@ void Score::updateCurrentFrame() {
 	}
 
 	if (_curFrameNumber != nextFrameNumberToLoad) {
-		// Load the current sprite information into the _currentFrame data store.
-		// This is specifically because of delta updates; loading the next frame
-		// in the score applies delta changes to _currentFrame, and ideally we want
-		// those deltas to be applied over the top of whatever the current state is.
-		for (uint ch = 0; ch < _channels.size(); ch++)
-			*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
+		// Cache the previous bounding box for the purposes of rollOver.
+		// If the sprite is blank, D4 and below will use whatever the previous valid bounding
+		// box was for rollOver testing.
+		if (_version < kFileVer500) {
+			for (uint ch = 0; ch < _channels.size(); ch++) {
+				if (_channels[ch]->_sprite->_castId.member != 0) {
+					_channels[ch]->_rollOverBbox = _channels[ch]->getBbox();
+				}
+			}
+		}
 
-		// this copies in the frame data and updates _curFrameNumber
+		// Load the current sprite information into the _currentFrame data store.
+		// This copies in the frame data and updates _curFrameNumber.
 		loadFrame(nextFrameNumberToLoad, true);
 
-		// finally, update the channels and buffer any dirty rectangles
-		updateSprites();
+		for (uint ch = 0; ch < _channels.size(); ch++)
+			_channels[ch]->_sprite->releaseAutoPuppet(_currentFrame->_sprites[ch]->_copyBackMask);
+
+		// Finally, update the channels and buffer any dirty rectangles.
+		// This will ignore any channel data that is overridden with the puppet flag.
+		updateSprites(kRenderModeNormal, true);
+	} else if (!_window->_playbackPaused) {
+		// Loading the same frame; e.g. "go to frame".
+		// This is mostly a no-op, however any sprite changes for
+		// non-puppet sprites will be reverted.
+
+		// If playback has been paused on a frame, the sprites aren't cleaned.
+		updateSprites(kRenderModeNormal, true);
+
 	}
 	return;
 }
@@ -491,48 +538,88 @@ void Score::updateNextFrameTime() {
 	}
 
 	if (tempo) {
-		const bool waitForClickOnly = _vm->getVersion() < 300;
-		int maxDelay = 60;
-		if (_vm->getVersion() < 300) {
-			maxDelay = 120;
-		} else if (_vm->getVersion() < 400) {
-			// Director 3 has a slider that goes up to 120, but any value
-			// beyond 95 gets converted into a video wait instruction.
-			maxDelay = 95;
-		}
-		if (tempo >= 256 - maxDelay) {
-			// Delay
-			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
-			debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a delay of %d", _nextFrameTime, 256 - tempo);
-		} else if (tempo <= 120) {
-			// FPS
-			_currentFrameRate = tempo;
-			if (g_director->_fpsLimit)
-				_currentFrameRate = MIN(g_director->_fpsLimit, _currentFrameRate);
-			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
-			debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
-		} else {
-			if (tempo == 128) {
+		if (_version < kFileVer600) {
+			const bool waitForClickOnly = _version < kFileVer300;
+			int maxDelay = 60;
+			if (_version < kFileVer300) {
+				maxDelay = 120;
+			} else if (_version < kFileVer400) {
+				// Director 3 has a slider that goes up to 120, but any value
+				// beyond 95 gets converted into a video wait instruction.
+				maxDelay = 95;
+			}
+			if (tempo >= 256 - maxDelay) {
+				// Delay
+				_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a delay of %d", _nextFrameTime, 256 - tempo);
+			} else if (tempo <= 120) {
+				// FPS
+				_currentFrameRate = tempo;
+				if (_vm->_fpsLimit)
+					_currentFrameRate = MIN(_vm->_fpsLimit, _currentFrameRate);
+				_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
+			} else {
+				if (tempo == 128) {
+					_waitForClick = true;
+					_waitForClickCursor = false;
+					renderCursor(_movie->getWindow()->getMousePos());
+					debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for mouse click before next frame");
+				} else if (!waitForClickOnly && tempo == 135) {
+					// Wait for sound channel 1
+					_waitForChannel = 1;
+					debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for sound channel 1 before next frame");
+				} else if (!waitForClickOnly && tempo == 134) {
+					// Wait for sound channel 2
+					_waitForChannel = 2;
+					debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for sound channel 2 before next frame");
+				} else if (!waitForClickOnly && tempo >= 136 && tempo <= 135 + _numChannelsDisplayed) {
+					// Wait for a digital video in a channel to finish playing
+					_waitForVideoChannel = tempo - 135;
+					debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for video in channel %d before next frame", _waitForVideoChannel);
+				} else {
+					warning("Score::updateNextFrameTime(): Unhandled tempo instruction: %d", tempo);
+				}
+				_nextFrameTime = g_system->getMillis();
+			}
+		} else { // D6+
+			int16 tempoCuePoint = _currentFrame->_mainChannels.tempoCuePoint;
+
+			if (tempo == 255) {
+				// Wait for sound channel 1
+				_waitForChannel = 1;
+				_waitForChannelCue = tempoCuePoint; // -1: next, -2: end, else specific cue point
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for sound channel 1, cue point %d before next frame", _waitForChannelCue);
+				_nextFrameTime = g_system->getMillis();
+			} else if (tempo == 254) {
+				// Wait for sound channel 2
+				_waitForChannel = 2;
+				_waitForChannelCue = tempoCuePoint;
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for sound channel 2, cue point %d before next frame", _waitForChannelCue);
+				_nextFrameTime = g_system->getMillis();
+			} else if (tempo == 248) {
 				_waitForClick = true;
 				_waitForClickCursor = false;
 				renderCursor(_movie->getWindow()->getMousePos());
 				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for mouse click before next frame");
-			} else if (!waitForClickOnly && tempo == 135) {
-				// Wait for sound channel 1
-				_waitForChannel = 1;
-				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for sound channel 1 before next frame");
-			} else if (!waitForClickOnly && tempo == 134) {
-				// Wait for sound channel 2
-				_waitForChannel = 2;
-				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for sound channel 2 before next frame");
-			} else if (!waitForClickOnly && tempo >= 136 && tempo <= 135 + _numChannelsDisplayed) {
-				// Wait for a digital video in a channel to finish playing
-				_waitForVideoChannel = tempo - 135;
-				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for video in channel %d before next frame", _waitForVideoChannel);
+				_nextFrameTime = g_system->getMillis();
+			} else if (tempo == 247) {
+				// Delay
+				_nextFrameTime = g_system->getMillis() + tempoCuePoint * 1000;
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a delay of %d", _nextFrameTime, tempoCuePoint);
+			} else if (tempo == 246) {
+				// FPS
+				_currentFrameRate = tempoCuePoint;
+				if (_vm->_fpsLimit)
+					_currentFrameRate = MIN(_vm->_fpsLimit, _currentFrameRate);
+				_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
 			} else {
-				warning("Score::updateNextFrameTime(): Unhandled tempo instruction: %d", tempo);
+				// Wait for a digital video in a channel to finish playing
+				_waitForVideoChannel = tempo;
+				debugC(5, kDebugEvents, "Score::updateNextFrameTime(): waiting for video in channel %d before next frame", _waitForVideoChannel);
+				_nextFrameTime = g_system->getMillis();
 			}
-			_nextFrameTime = g_system->getMillis();
 		}
 	} else {
 		_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
@@ -548,6 +635,20 @@ void Score::update() {
 		_activeFade = _soundManager->fadeChannels();
 	}
 
+	// Process timeout events independently of the frame delay
+	if (_haveInteractivity && !_window->_playbackPaused) {
+		if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
+			_movie->processEvent(kEventTimeout);
+			_movie->_lastTimeOut = _vm->getMacTicks();
+		}
+	}
+
+	// Don't process frozen script if we use jump instructions
+	// like "go to frame", or open a new movie.
+	bool hasJump = (_nextFrame != 0) || !_window->_nextMovie.movie.empty();
+	if ((g_director->getVersion() < 400) && hasJump)
+		_skipIdle = true;
+
 	if (!debugChannelSet(-1, kDebugFast)) {
 		// end update cycle if we're still waiting for the next frame
 		if (isWaitingForNextFrame()) {
@@ -556,9 +657,7 @@ void Score::update() {
 				_window->render();
 			}
 
-			// Don't process frozen script if we use jump instructions
-			// like "go to frame", or open a new movie.
-			if (!_nextFrame || _nextFrame == _curFrameNumber) {
+			if (!hasJump) {
 				processFrozenScripts();
 			}
 			return;
@@ -566,18 +665,17 @@ void Score::update() {
 	}
 
 	// For previous frame
-	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
+	if (!_window->_newMovieStarted && !_window->_playbackPaused) {
 		// When Lingo::func_goto* is called, _nextFrame is set
 		// and _skipFrameAdvance is set to true.
 		// exitFrame is not called in this case.
-		if (!_vm->_skipFrameAdvance && !_exitFrameCalled) {
+		if (_haveInteractivity && !_window->_skipFrameAdvance && !_exitFrameCalled) {
 			// Exit the current frame. This can include scopeless ScoreScripts.
 			_movie->processEvent(kEventExitFrame);
 			_exitFrameCalled = true;
+			_skipIdle = false;
 		}
 	}
-
-	_vm->_skipFrameAdvance = false;
 
 	// Check for delay
 	if (g_system->getMillis() < _nextFrameDelay) {
@@ -586,9 +684,7 @@ void Score::update() {
 			_window->render();
 		}
 
-		// Don't process frozen script if we use jump instructions
-		// like "go to frame", or open a new movie.
-		if (!_nextFrame || _nextFrame == _curFrameNumber) {
+		if (!hasJump || _nextFrame == _curFrameNumber) {
 			processFrozenScripts();
 		}
 
@@ -601,73 +697,136 @@ void Score::update() {
 		return;
 	}
 
+	// Kill behaviors if they are going to expire next frame
+	if (!_window->_playbackPaused)
+		killScriptInstances(_nextFrame ? _nextFrame : _curFrameNumber + 1);
+
+	CastMemberID oldSound1 = _currentFrame->_mainChannels.sound1;
+	CastMemberID oldSound2 = _currentFrame->_mainChannels.sound2;
+
 	// change current frame and load frame data, if required
 	updateCurrentFrame();
 
 	// set the delay time/condition until the next frame
 	updateNextFrameTime();
 
-	debugC(1, kDebugEvents, "******************************  Current frame: %d, time: %d", _curFrameNumber, g_system->getMillis(false));
+	debugC(1, kDebugEvents, "##############################");
+	debugC(1, kDebugEvents, "###### Current frame: %d, time: %d", _curFrameNumber, g_system->getMillis(false));
+	debugC(1, kDebugEvents, "##############################");
 	g_debugger->frameHook();
 
-	// movie could have been stopped by a window switch or a debug flag
-	if (_playState == kPlayStopped) {
-		processFrozenScripts();
-		return;
-	}
+	uint32 count = 0;
 
-	uint32 count = _window->frozenLingoStateCount();
+	if (_haveInteractivity) {
+		// movie could have been stopped by a window switch or a debug flag
+		if (_playState == kPlayStopped) {
+			processFrozenScripts();
+			return;
+		}
 
-	// new frame, first call the perFrameHook (if one exists)
-	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
-		// Call the perFrameHook as soon as a frame switch is done.
-		// If there is a transition, the perFrameHook is called
-		// after each transition subframe instead of here.
-		if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
-			_lingo->executePerFrameHook(_curFrameNumber, 0);
+		count = _window->frozenLingoStateCount();
+
+		// Director 4 and below will allow infinite recursion via the perFrameHook.
+		if (_version < kFileVer500) {
+			// new frame, first call the perFrameHook (if one exists)
+			if (!_window->_newMovieStarted && !_window->_playbackPaused) {
+				// Call the perFrameHook as soon as a frame switch is done.
+				// If there is a transition, the perFrameHook is called
+				// after each transition subframe instead of here.
+				if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
+					_lingo->executePerFrameHook(_curFrameNumber, 0);
+				}
+			}
+			if (_window->frozenLingoStateCount() > count)
+				return;
+		}
+
+		// Check to see if we've hit the recursion limit
+		if (_version >= kFileVer400 && _window->frozenLingoRecursionCount() >= 2) {
+			debugC(1, kDebugEvents, "Score::update(): hitting D4 recursion depth limit, defrosting");
+			processFrozenScripts(true);
+			return;
+		} else if (_window->frozenLingoStateCount() >= 64) {
+			warning("Score::update(): Stopping runaway script recursion. By this point D3 will have run out of stack space");
+			processFrozenScripts();
+			return;
+		}
+
+		// Director 5 and above actually check for recursion for the perFrameHook.
+		if (_version >= kFileVer500) {
+			// new frame, first call the perFrameHook (if one exists)
+			if (!_window->_newMovieStarted && !_window->_playbackPaused) {
+				// Call the perFrameHook as soon as a frame switch is done.
+				// If there is a transition, the perFrameHook is called
+				// after each transition subframe instead of here.
+				//
+				// This also sends stepFrame message to actorList
+				if (_currentFrame->_mainChannels.transType == 0 && _currentFrame->_mainChannels.trans.isNull()) {
+					_lingo->executePerFrameHook(_curFrameNumber, 0);
+				}
+			}
+			if (_window->frozenLingoStateCount() > count)
+				return;
+		}
+
+		if (_version >= kFileVer600) {
+			bool prevDis = _disableGoPlayUpdateStage;
+			_disableGoPlayUpdateStage = true;
+
+			_movie->broadcastEvent(kEventPrepareFrame);
+
+			_disableGoPlayUpdateStage = prevDis;
 		}
 	}
-	if (_window->frozenLingoStateCount() > count)
-		return;
 
-	// Check to see if we've hit the recursion limit
-	if (_vm->getVersion() >= 400 && _window->frozenLingoRecursionCount() >= 2) {
-		debugC(1, kDebugEvents, "Score::update(): hitting D4 recursion depth limit, defrosting");
-		processFrozenScripts(true);
-		// keep plowing on
-	} else if (_window->frozenLingoStateCount() >= 64) {
-		warning("Score::update(): Stopping runaway script recursion. By this point D3 will have run out of stack space");
-		processFrozenScripts();
-		return;
+	bool sound1Changed = true;
+	bool sound2Changed = true;
+
+	if (_version >= kFileVer600 && !_firstRun) {
+		// We check if the sound channels have changed, and only restart
+		// the sound if they have. Even if the sound was stopped
+		//
+		// We need to check _firstRun, because we come here with the
+		// first frame already loaded.
+		sound1Changed = oldSound1 != _currentFrame->_mainChannels.sound1;
+		sound2Changed = oldSound2 != _currentFrame->_mainChannels.sound2;
 	}
 
-	if (_vm->getVersion() >= 600) {
-		// _movie->processEvent(kEventBeginSprite);
-		// TODO: Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
-		// _movie->processEvent(kEventPrepareFrame);
-		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
-	}
+	_firstRun = false;
+
+	// Force cursor update if a new movie's started.
+	if (_window->_newMovieStarted)
+		renderCursor(_movie->getWindow()->getMousePos(), true);
+
+	_window->_newMovieStarted = false;
+
+	if (!_haveInteractivity)
+		return;
 
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
-	renderFrame(_curFrameNumber);
-	_window->_newMovieStarted = false;
+	renderFrame(_curFrameNumber, kRenderModeNormal, sound1Changed, sound2Changed);
 
 	// then call the stepMovie hook (if one exists)
 	// D4 and above only call it if _allowOutdatedLingo is enabled.
 	count = _window->frozenLingoStateCount();
-	if (!_vm->_playbackPaused && (_vm->getVersion() < 400 || _movie->_allowOutdatedLingo)) {
+	if (!_window->_playbackPaused && (_version < kFileVer400 || _movie->_allowOutdatedLingo)) {
 		_movie->processEvent(kEventStepMovie);
 	}
 	// If this stepMovie call is frozen, drop the next enterFrame event
 	if (_window->frozenLingoStateCount() > count)
 		return;
 
+	// If we've hit the recursion limit, don't enterFrame
+	if (_version >= kFileVer400 && _window->frozenLingoRecursionCount() >= 2) {
+		debugC(1, kDebugEvents, "Score::update: exiting early due to recursion depth limit");
+		return;
+	}
 
 	// then call the enterFrame hook (if one exists)
 	count = _window->frozenLingoStateCount();
-	if (!_vm->_playbackPaused) {
+	if (!_window->_playbackPaused) {
 		_exitFrameCalled = false;
-		if (_vm->getVersion() >= 400) {
+		if (_version >= kFileVer400) {
 			_movie->processEvent(kEventEnterFrame);
 		}
 	}
@@ -683,36 +842,38 @@ void Score::update() {
 	// Attempt to thaw and continue any frozen execution after startMovie and enterFrame.
 	// If they don't complete (i.e. another freezing event like a "go to frame"),
 	// force another cycle of Score::update().
-	if (!_nextFrame && !processFrozenScripts())
+	if (!_nextFrame && _window->_nextMovie.movie.empty() && !processFrozenScripts())
 		return;
 
-	if (!_vm->_playbackPaused) {
+	if (!_window->_playbackPaused) {
 		if (_movie->_timeOutPlay)
 			_movie->_lastTimeOut = _vm->getMacTicks();
 	}
 
 	// TODO Director 6 - another order
-
-	// TODO: Figure out when exactly timeout events are processed
-	if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
-		_movie->processEvent(kEventTimeout);
-		_movie->_lastTimeOut = _vm->getMacTicks();
-	}
-
 }
 
-void Score::renderFrame(uint16 frameId, RenderMode mode) {
+void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, bool sound2Changed) {
+	// An embedded movie only refreshes its own channels for the host to
+	// composite via getSubChannels(); it must never touch the shared window.
+	if (_movie->_isEmbedded) {
+		updateSprites(mode);
+		return;
+	}
+
 	uint32 start = g_system->getMillis(false);
 	// Force cursor update if a new movie's started.
 	if (_window->_newMovieStarted)
 		renderCursor(_movie->getWindow()->getMousePos(), true);
 
+	// If we have transitions, sounds start in parallel
+	playSoundChannel(false, sound1Changed, sound2Changed);
 
 	if (_skipTransition) {
 		incrementFilmLoops();
 		_window->render();
 		_skipTransition = false;
-	} else if (g_director->_playbackPaused) {
+	} else if (_window->_playbackPaused) {
 		updateSprites(mode);
 		incrementFilmLoops();
 		_window->render();
@@ -726,11 +887,10 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 			renderPaletteCycle(mode);
 	}
 
-	playSoundChannel(false);
 	playQueuedSound(); // this is currently only used in FPlayXObj
 
 	if (_cursorDirty) {
-		renderCursor(_movie->getWindow()->getMousePos());
+		renderCursor(_movie->getWindow()->getMousePos(), true);
 		_cursorDirty = false;
 	}
 	uint32 end = g_system->getMillis(false);
@@ -763,28 +923,55 @@ bool Score::renderTransition(uint16 frameId, RenderMode mode) {
 	return false;
 }
 
+// increment filmloops or movie cast members
 void Score::incrementFilmLoops() {
+	// Film loops do not advance while the movie is paused
+	if (_window->_playbackPaused)
+		return;
+
+	// In D4, film loops freeze while an explicit jump holds the playhead on
+	// one frame (a natural single-frame loop still advances them); D5+ always
+	// animate. Movie cast members are independent and always keep running.
+	bool filmLoopsFrozen = (_vm->getVersion() < 500 && _curFrameNumber == _filmLoopsLastFrame && _frameHeldByJump);
+	if (!filmLoopsFrozen)
+		_filmLoopsLastFrame = _curFrameNumber;
+
 	for (auto &it : _channels) {
-		if (it->_sprite->_cast && it->_sprite->_cast->_type == kCastFilmLoop) {
+		if (!it->_sprite->_cast)
+			continue;
+		CastType type = it->_sprite->_cast->_type;
+
+		if (type == kCastMovie) {
+			// A movie cast member steps its own embedded score like a normal
+			// movie, not the film loop flipbook.
+			((MovieCastMember *)it->_sprite->_cast)->update();
+		} else if (type == kCastFilmLoop && !filmLoopsFrozen) {
 			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
-			if (!fl->_frames.empty()) {
-				// increment the film loop counter
-				it->_filmLoopFrame += 1;
-				it->_filmLoopFrame %= fl->_frames.size();
+			if (fl->_score && !fl->_score->_scoreCache.empty()) {
+				if (fl->_looping) {
+					it->_filmLoopFrame += 1;
+					it->_filmLoopFrame %= fl->_score->_scoreCache.size();
+				} else if (it->_filmLoopFrame < (fl->_score->_scoreCache.size() - 1)) {
+					it->_filmLoopFrame += 1;
+				}
 			} else {
-				warning("Score::updateFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
+				warning("Score::incrementFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
 			}
 		}
 	}
 }
 
-void Score::updateSprites(RenderMode mode) {
+void Score::updateSprites(RenderMode mode, bool withClean) {
 	if (_window->_newMovieStarted)
 		mode = kRenderForceUpdate;
 
 	debugC(5, kDebugImages, "Score::updateSprites(): starting render cycle, mode %d", mode);
 
 	_movie->_videoPlayback = false;
+
+	_movie->_currentKeyDownCastID = CastMemberID();
+	_movie->_currentKeyDownSpriteScriptID = CastMemberID();
+	_movie->_currentKeyDownSpriteImmediate = false;
 
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
@@ -801,26 +988,25 @@ void Score::updateSprites(RenderMode mode) {
 		}
 
 		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
-			bool invalidCastMember = currentSprite && currentSprite->_spriteType == kCastMemberSprite && currentSprite->_cast == nullptr;
-			if (currentSprite && !invalidCastMember && !currentSprite->_trails)
-				_window->addDirtyRect(channel->getBbox());
 
 			if (currentSprite && currentSprite->_cast && currentSprite->_cast->_erase) {
-				_movie->eraseCastMember(currentSprite->_castId);
 				currentSprite->_cast->_erase = false;
+				_movie->eraseCastMember(currentSprite->_castId);
 
 				currentSprite->setCast(currentSprite->_castId);
 				nextSprite->setCast(nextSprite->_castId);
 			}
 
-			channel->setClean(nextSprite);
-			invalidCastMember = currentSprite ? (currentSprite->_spriteType == kCastMemberSprite && currentSprite->_cast == nullptr) : false;
+			// Only clean out the channel if we're moving to a different frame
+			if (withClean)
+				channel->setClean(nextSprite);
+			bool invalidCastMember = currentSprite ? (currentSprite->_spriteType == kCastMemberSprite && currentSprite->_cast == nullptr) : false;
 			// Check again to see if a video has just been started by setClean.
 			if (channel->isActiveVideo())
 				_movie->_videoPlayback = true;
 
-			if (!invalidCastMember)
-				_window->addDirtyRect(channel->getBbox());
+			// flag channel for drawing
+			channel->setNeedsDraw();
 
 			if (currentSprite) {
 				Common::Rect bbox = channel->getBbox();
@@ -843,6 +1029,14 @@ void Score::updateSprites(RenderMode mode) {
 		if (channel->isActiveText())
 			_movie->_currentEditableTextChannel = i;
 	}
+
+	createScriptInstances(_curFrameNumber);
+
+	// We've updated the channels from the frame, reset the copyback mask so that e.g.
+	// disabling the puppet flag copies all the data as expected.
+	for (auto &it : _currentFrame->_sprites) {
+		it->_copyBackMask = static_cast<uint32>(kSCBNoMask);
+	}
 }
 
 bool Score::renderPrePaletteCycle(RenderMode mode) {
@@ -862,19 +1056,19 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 		if (debugChannelSet(-1, kDebugFast))
 			frameRate = 30;
 
-		if (g_director->_fpsLimit)
-			frameRate = MIN((int)g_director->_fpsLimit, frameRate);
+		if (_vm->_fpsLimit)
+			frameRate = MIN((int)_vm->_fpsLimit, frameRate);
 
 		int frameDelay = 1000 / 60;
 		int fadeFrames = kFadeColorFrames[frameRate - 1];
-		if (_vm->getVersion() >= 500)
+		if (_version >= kFileVer500)
 			fadeFrames = kFadeColorFramesD5[frameRate - 1];
 		byte calcPal[768];
 
 		// Copy the current palette into the snapshot buffer
 		memset(_paletteSnapshotBuffer, 0, 768);
-		memcpy(_paletteSnapshotBuffer, g_director->getPalette(), g_director->getPaletteColorCount() * 3);
-		PaletteV4 *destPal = g_director->getPalette(currentPalette);
+		memcpy(_paletteSnapshotBuffer, _vm->getPalette(), _vm->getPaletteColorCount() * 3);
+		PaletteV4 *destPal = _vm->getPalette(currentPalette);
 		if (!destPal) {
 			warning("Unable to fetch palette %s", currentPalette.asString().c_str());
 			return false;
@@ -883,7 +1077,7 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 		if (_currentFrame->_mainChannels.palette.normal) {
 			// If the target palette ID is the same as the previous palette ID,
 			// a normal fade is a no-op.
-			if (_currentFrame->_mainChannels.palette.paletteId == g_director->_lastPalette) {
+			if (_currentFrame->_mainChannels.palette.paletteId == _vm->_lastPalette) {
 				return false;
 			}
 
@@ -899,27 +1093,27 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 					i + 1,
 					fadeFrames
 				);
-				g_director->setPalette(calcPal, 256);
-				g_director->draw();
+				_vm->setPalette(calcPal, 256);
+				_vm->draw();
 				if (_activeFade) {
 					_activeFade = _soundManager->fadeChannels();
 				}
 				// On click, stop loop and reset palette
-				if (_vm->processEvents(true)) {
+				if (_vm->processSysEvents(true)) {
 					debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
-					g_director->setPalette(currentPalette);
+					_vm->setPalette(currentPalette);
 					return true;
 				}
 				uint32 endTime = g_system->getMillis();
 				int diff = (int)frameDelay - (int)(endTime - startTime);
-				g_director->delayMillis(MAX(0, diff));
+				_vm->delayMillis(MAX(0, diff));
 			}
 
 		} else {
 			// For fade to black and fade to white palette transitions,
 			// the first half happens with the previous frame's layout.
 
-			byte *fadePal = nullptr;
+			const byte *fadePal = nullptr;
 			if (_currentFrame->_mainChannels.palette.fadeToBlack) {
 				// Fade everything except color index 0 to black
 				debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): fading palette to black over %d frames", fadeFrames);
@@ -942,20 +1136,20 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 					i + 1,
 					fadeFrames
 				);
-				g_director->setPalette(calcPal, 256);
-				g_director->draw();
+				_vm->setPalette(calcPal, 256);
+				_vm->draw();
 				if (_activeFade) {
 					_activeFade = _soundManager->fadeChannels();
 				}
 				// On click, stop loop and reset palette
-				if (_vm->processEvents(true)) {
+				if (_vm->processSysEvents(true)) {
 					debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
-					g_director->setPalette(currentPalette);
+					_vm->setPalette(currentPalette);
 					return true;
 				}
 				uint32 endTime = g_system->getMillis();
 				int diff = (int)frameDelay - (int)(endTime - startTime);
-				g_director->delayMillis(MAX(0, diff));
+				_vm->delayMillis(MAX(0, diff));
 			}
 		}
 	}
@@ -970,19 +1164,19 @@ void Score::setLastPalette() {
 	CastMemberID currentPalette = _currentFrame->_mainChannels.palette.paletteId;
 	// Director allows you to use palette IDs for cast members
 	// that have long since been erased. Check all of them.
-	if (!g_director->hasPalette(currentPalette))
+	if (!_vm->hasPalette(currentPalette))
 		currentPalette = CastMemberID();
 	// Palette not specified in the frame
 	if (currentPalette.isNull()) {
 		// Use the score cached palette ID
 		isCachedPalette = true;
 		currentPalette = _currentFrame->_mainChannels.scoreCachedPaletteId;
-		if (!g_director->hasPalette(currentPalette))
+		if (!_vm->hasPalette(currentPalette))
 			currentPalette = CastMemberID();
 		// The cached ID is created before the cast gets loaded; if it's zero,
 		// this corresponds to the movie default palette.
 		if (currentPalette.isNull()) {
-			currentPalette = g_director->getCurrentMovie()->_defaultPalette;
+			currentPalette = _vm->getCurrentMovie()->_defaultPalette;
 		}
 		// If for whatever reason this doesn't resolve, abort.
 		if (currentPalette.isNull())
@@ -991,17 +1185,17 @@ void Score::setLastPalette() {
 
 	// If the palette is defined in the frame and doesn't match
 	// the current one, set it
-	bool paletteChanged = (currentPalette != g_director->_lastPalette) && (!currentPalette.isNull());
+	bool paletteChanged = (currentPalette != _vm->_lastPalette) && (!currentPalette.isNull());
 	if (paletteChanged) {
 		debugC(2, kDebugImages, "Score::setLastPalette(): palette changed to %s, from %s", currentPalette.asString().c_str(), isCachedPalette ? "cache" :"frame");
-		g_director->_lastPalette = currentPalette;
+		_vm->_lastPalette = currentPalette;
 		_paletteTransitionIndex = 0;
 
 		// Switch to a new palette immediately if:
 		// - this is color cycling mode, or
 		// - the cached palette ID is different (i.e. we jumped in the score)
 		if (_currentFrame->_mainChannels.palette.colorCycling || isCachedPalette)
-			g_director->setPalette(g_director->_lastPalette);
+			_vm->setPalette(_vm->_lastPalette);
 	}
 
 }
@@ -1034,8 +1228,8 @@ void Score::renderPaletteCycle(RenderMode mode) {
 		return;
 
 	// Apply the global FPS limit if required
-	if (g_director->_fpsLimit)
-		speed = MIN((int)g_director->_fpsLimit, speed);
+	if (_vm->_fpsLimit)
+		speed = MIN((int)_vm->_fpsLimit, speed);
 
 	if (debugChannelSet(-1, kDebugFast))
 		speed = 30;
@@ -1050,12 +1244,12 @@ void Score::renderPaletteCycle(RenderMode mode) {
 		if (_currentFrame->_mainChannels.palette.overTime) {
 			// Do a single color step in one frame transition
 			debugC(2, kDebugImages, "Score::renderPaletteCycle(): color cycle palette %s, from colors %d to %d, by 1 frame", currentPalette.asString().c_str(), firstColor, lastColor);
-			g_director->shiftPalette(firstColor, lastColor, false);
-			g_director->draw();
+			_vm->shiftPalette(firstColor, lastColor, false);
+			_vm->draw();
 		} else {
 			// Short circuit for few frames renderer
 			if (debugChannelSet(-1, kDebugFast)) {
-				g_director->setPalette(currentPalette);
+				_vm->setPalette(currentPalette);
 				return;
 			}
 
@@ -1065,43 +1259,43 @@ void Score::renderPaletteCycle(RenderMode mode) {
 			for (int i = 0; i < _currentFrame->_mainChannels.palette.cycleCount; i++) {
 				for (int j = 0; j < steps; j++) {
 					uint32 startTime = g_system->getMillis();
-					g_director->shiftPalette(firstColor, lastColor, false);
-					g_director->draw();
+					_vm->shiftPalette(firstColor, lastColor, false);
+					_vm->draw();
 					if (_activeFade) {
 						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
-					if (_vm->processEvents(true)) {
-						g_director->setPalette(currentPalette);
+					if (_vm->processSysEvents(true)) {
+						_vm->setPalette(currentPalette);
 						return;
 					}
 					uint32 endTime = g_system->getMillis();
 					int diff = (int)delay - (int)(endTime - startTime);
-					g_director->delayMillis(MAX(0, diff));
+					_vm->delayMillis(MAX(0, diff));
 				}
 				if (_currentFrame->_mainChannels.palette.autoReverse) {
 					for (int j = 0; j < steps; j++) {
 						uint32 startTime = g_system->getMillis();
-						g_director->shiftPalette(firstColor, lastColor, true);
-						g_director->draw();
+						_vm->shiftPalette(firstColor, lastColor, true);
+						_vm->draw();
 						if (_activeFade) {
 							_activeFade = _soundManager->fadeChannels();
 						}
 						// On click, stop loop and reset palette
-						if (_vm->processEvents(true)) {
-							g_director->setPalette(currentPalette);
+						if (_vm->processSysEvents(true)) {
+							_vm->setPalette(currentPalette);
 							return;
 						}
 						uint32 endTime = g_system->getMillis();
 						int diff = (int)delay - (int)(endTime - startTime);
-						g_director->delayMillis(MAX(0, diff));
+						_vm->delayMillis(MAX(0, diff));
 					}
 				}
 			}
 		}
 	} else {
 		// Transition from the current palette to a new palette
-		PaletteV4 *destPal = g_director->getPalette(currentPalette);
+		PaletteV4 *destPal = _vm->getPalette(currentPalette);
 		if (!destPal) {
 			warning("Score::renderPaletteCycle(): no match for palette id %s", currentPalette.asString().c_str());
 			return;
@@ -1114,7 +1308,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 			if (_paletteTransitionIndex == 0) {
 				// Copy the current palette into the snapshot buffer
 				memset(_paletteSnapshotBuffer, 0, 768);
-				memcpy(_paletteSnapshotBuffer, g_director->getPalette(), g_director->getPaletteColorCount() * 3);
+				memcpy(_paletteSnapshotBuffer, _vm->getPalette(), _vm->getPaletteColorCount() * 3);
 				debugC(2, kDebugImages, "Score::renderPaletteCycle(): fading palette to %s over %d frames", currentPalette.asString().c_str(), frameCount);
 			}
 
@@ -1132,7 +1326,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 				// then to the new palette
 				int halfway = frameCount / 2;
 
-				byte *fadePal = nullptr;
+				const byte *fadePal = nullptr;
 				if (_currentFrame->_mainChannels.palette.fadeToBlack) {
 					// Fade everything except color index 0 to black
 					fadePal = kBlackPalette;
@@ -1162,21 +1356,21 @@ void Score::renderPaletteCycle(RenderMode mode) {
 					);
 				}
 			}
-			g_director->setPalette(calcPal, 256);
+			_vm->setPalette(calcPal, 256);
 			_paletteTransitionIndex++;
 			_paletteTransitionIndex %= frameCount;
 		} else {
 			// Short circuit for fast renderer
 			if (debugChannelSet(-1, kDebugFast)) {
 				debugC(2, kDebugImages, "Score::renderPaletteCycle(): setting palette to %s", currentPalette.asString().c_str());
-				g_director->setPalette(currentPalette);
+				_vm->setPalette(currentPalette);
 				return;
 			}
 
 			// Do a full cycle in one frame transition
 			// For normal mode, we've already faded the palette in renderPrePaletteCycle
 			if (!_currentFrame->_mainChannels.palette.normal) {
-				byte *fadePal = nullptr;
+				const byte *fadePal = nullptr;
 				if (_currentFrame->_mainChannels.palette.fadeToBlack) {
 					// Fade everything except color index 0 to black
 					fadePal = kBlackPalette;
@@ -1192,31 +1386,31 @@ void Score::renderPaletteCycle(RenderMode mode) {
 				if (debugChannelSet(-1, kDebugFast))
 					frameRate = 30;
 
-				if (g_director->_fpsLimit)
-					frameRate = MIN((int)g_director->_fpsLimit, frameRate);
+				if (_vm->_fpsLimit)
+					frameRate = MIN((int)_vm->_fpsLimit, frameRate);
 
 				int frameDelay = 1000 / 60;
 				int fadeFrames = kFadeColorFrames[frameRate - 1];
-				if (_vm->getVersion() >= 500)
+				if (_version >= kFileVer500)
 					fadeFrames = kFadeColorFramesD5[frameRate - 1];
 
 				// Wait for a fixed time
-				g_director->setPalette(fadePal, 256);
-				g_director->draw();
+				_vm->setPalette(fadePal, 256);
+				_vm->draw();
 				for (int i = 0; i < kFadeColorWait; i++) {
 					uint32 startTime = g_system->getMillis();
 					if (_activeFade) {
 						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
-					if (_vm->processEvents(true)) {
+					if (_vm->processSysEvents(true)) {
 						debugC(2, kDebugImages, "Score::renderPaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
-						g_director->setPalette(currentPalette);
+						_vm->setPalette(currentPalette);
 						return;
 					}
 					uint32 endTime = g_system->getMillis();
 					int diff = (int)frameDelay - (int)(endTime - startTime);
-					g_director->delayMillis(MAX(0, diff));
+					_vm->delayMillis(MAX(0, diff));
 				}
 
 				debugC(2, kDebugImages, "Score::renderPaletteCycle(): fading palette to %s over %d frames", currentPalette.asString().c_str(), fadeFrames);
@@ -1230,20 +1424,20 @@ void Score::renderPaletteCycle(RenderMode mode) {
 						i + 1,
 						fadeFrames
 					);
-					g_director->setPalette(calcPal, 256);
-					g_director->draw();
+					_vm->setPalette(calcPal, 256);
+					_vm->draw();
 					if (_activeFade) {
 						_activeFade = _soundManager->fadeChannels();
 					}
 					// On click, stop loop and reset palette
-					if (_vm->processEvents(true)) {
+					if (_vm->processSysEvents(true)) {
 						debugC(2, kDebugImages, "Score::renderPaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
-						g_director->setPalette(currentPalette);
+						_vm->setPalette(currentPalette);
 						return;
 					}
 					uint32 endTime = g_system->getMillis();
 					int diff = (int)frameDelay - (int)(endTime - startTime);
-					g_director->delayMillis(MAX(0, diff));
+					_vm->delayMillis(MAX(0, diff));
 				}
 
 			}
@@ -1252,6 +1446,10 @@ void Score::renderPaletteCycle(RenderMode mode) {
 }
 
 void Score::renderCursor(Common::Point pos, bool forceUpdate) {
+	if (Director::DT::isMouseInputIgnored()) {
+		pos = _movie->_lastMousePos;
+	}
+
 	if (_window != _vm->getCursorWindow()) {
 		// The cursor is outside of this window.
 		return;
@@ -1265,11 +1463,15 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 	if (!_channels.empty() && _playState != kPlayStopped) {
 		uint spriteId = 0;
 
-		for (int i = _channels.size() - 1; i >= 0; i--)
-			if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty()) {
+		for (int i = _channels.size() - 1; i >= 0; i--) {
+			CollisionTest test = _channels[i]->isMouseIn(pos);
+			if (test == kCollisionYes && !_channels[i]->_cursor.isEmpty()) {
 				spriteId = i;
 				break;
+			} else if (test == kCollisionHole) {
+				break;
 			}
+		}
 
 		if (!_channels[spriteId]->_cursor.isEmpty()) {
 			if (!forceUpdate && _currentCursor == _channels[spriteId]->_cursor)
@@ -1277,8 +1479,8 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 
 			// try to use the cursor read from exe file.
 			// currently, we are using mac arrow to represent custom win cursor since we didn't find where it stores. So i comment it out here.
-//			if (g_director->getPlatform() == Common::kPlatformWindows && _channels[spriteId]->_cursor._cursorType == Graphics::kMacCursorCustom)
-//				_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, g_director->_winCursor[_channels[spriteId]->_cursor._cursorResId]);
+//			if (_vm->getPlatform() == Common::kPlatformWindows && _channels[spriteId]->_cursor._cursorType == Graphics::kMacCursorCustom)
+//				_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, _vm->_winCursor[_channels[spriteId]->_cursor._cursorResId]);
 			_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, &_channels[spriteId]->_cursor);
 			_currentCursor = _channels[spriteId]->_cursor.getRef();
 			return;
@@ -1300,7 +1502,7 @@ void Score::updateWidgets(bool hasVideoPlayback) {
 			channel->updateVideoTime();
 		if (cast && (cast->_type != kCastDigitalVideo || hasVideoPlayback) && cast->isModified()) {
 			channel->replaceWidget();
-			_window->addDirtyRect(channel->getBbox());
+			channel->setNeedsDraw();
 		}
 	}
 }
@@ -1309,7 +1511,7 @@ void Score::invalidateRectsForMember(CastMember *member) {
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		if (channel->_sprite->_cast == member) {
-			_window->addDirtyRect(channel->getBbox());
+			channel->setDirty();
 		}
 	}
 }
@@ -1336,7 +1538,7 @@ bool Score::checkShotSimilarity(const Graphics::Surface *oldSurface, const Graph
 				absolute_pixel_differences++;
 
 				for (int c = 0; c < 4; c++) {
-					if (ABS((newColor & 0xFF) - (oldColor & 0xFF)) > kShotColorDiffThreshold) {
+					if (ABS<int32>((newColor & 0xFF) - (oldColor & 0xFF)) > kShotColorDiffThreshold) {
 						different_pixel_count++;
 						break;
 					}
@@ -1369,13 +1571,13 @@ void Score::screenShot() {
 #else
 
 	Graphics::Surface rawSurface = _window->getSurface()->rawSurface();
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	const Graphics::PixelFormat requiredFormat_4byte = Graphics::PixelFormat::createFormatRGBA32();
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 
 	Common::String currentPath = _vm->getCurrentPath().c_str();
-	Common::replace(currentPath, Common::String(g_director->_dirSeparator), "-"); // exclude dir separator from screenshot filename prefix
+	Common::replace(currentPath, Common::String(_vm->_dirSeparator), "-"); // exclude dir separator from screenshot filename prefix
 	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), Common::punycode_encodefilename(_movie->getMacName()).c_str());
-	Common::Path filename = dumpScriptName(prefix.c_str(), kMovieScript, g_director->_framesRan, "png");
+	Common::Path filename = dumpScriptName(prefix.c_str(), kMovieScript, _vm->_framesRan, "png");
 
 	const char *buildNumber = getenv("BUILD_NUMBER");
 
@@ -1385,7 +1587,7 @@ void Score::screenShot() {
 		// ./dumps/theapartment/25/xn--Main Menu-zd0e-19.png
 
 		Common::Path buildDir(Common::String::format("%s/%s", ConfMan.get("screenshotpath").c_str(),
-			g_director->getTargetName().c_str()), '/');
+			_vm->getTargetName().c_str()), '/');
 
 		// We run for the first time, let's check if we had the directory previously
 		if (_previousBuildBotBuild == -1) {
@@ -1401,7 +1603,7 @@ void Score::screenShot() {
 
 		// Now we try to find any previous dump
 		while (prevbuild > 0) {
-			filename = buildDir.join(Common::Path(Common::String::format("%d/%s-%d.png", prevbuild, prefix.c_str(), g_director->_framesRan), '/'));
+			filename = buildDir.join(Common::Path(Common::String::format("%d/%s-%d.png", prevbuild, prefix.c_str(), _vm->_framesRan), '/'));
 
 			Common::FSNode fs(filename);
 
@@ -1436,7 +1638,7 @@ void Score::screenShot() {
 		// the screenshot was different from the previous one.
 		//
 		// Regenerate file name with the correct build number
-		filename = buildDir.join(Common::Path(Common::String::format("%s/%s-%d.png", buildNumber, prefix.c_str(), g_director->_framesRan), '/'));
+		filename = buildDir.join(Common::Path(Common::String::format("%s/%s-%d.png", buildNumber, prefix.c_str(), _vm->_framesRan), '/'));
 	}
 
 	Common::DumpFile screenshotFile;
@@ -1454,40 +1656,72 @@ void Score::screenShot() {
 #endif // USE_PNG
 }
 
-uint16 Score::getSpriteIDFromPos(Common::Point pos) {
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos))
+uint16 Score::getSpriteIDOfActiveWidget() {
+	Graphics::MacWidget *active = _vm->_wm->getActiveWidget();
+	if (!active)
+		return 0;
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		if (active == _channels[i]->_widget)
 			return i;
+	}
+	return 0;
+}
+
+uint16 Score::getSpriteIDFromPos(Common::Point pos) {
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		CollisionTest test = _channels[i]->isMouseIn(pos);
+		if (test == kCollisionYes)
+			return i;
+		else if (test == kCollisionHole)
+			break;
+	}
 
 	return 0;
 }
 
 uint16 Score::getMouseSpriteIDFromPos(Common::Point pos) {
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos) && _channels[i]->_sprite->respondsToMouse())
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		CollisionTest test = _channels[i]->isMouseIn(pos);
+		if (test == kCollisionYes && _channels[i]->_sprite->respondsToMouse())
 			return i;
+		else if (test == kCollisionHole)
+			break;
+	}
 
 	return 0;
 }
 
 uint16 Score::getActiveSpriteIDFromPos(Common::Point pos) {
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos) && _channels[i]->_sprite->isActive())
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		CollisionTest test = _channels[i]->isMouseIn(pos);
+		if (test == kCollisionYes && _channels[i]->_sprite->isActive())
 			return i;
-
+		else if (test == kCollisionHole)
+			break;
+	}
 	return 0;
 }
 
-bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
-	if (_channels[spriteId]->getBbox().contains(pos))
+bool Score::checkSpriteRollOver(uint16 spriteId, Common::Point pos) {
+	if (_channels[spriteId]->getRollOverBbox().contains(pos))
 		return true;
 
 	return false;
 }
 
-Common::List<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
-	Common::List<Channel *> intersections;
-	Common::List<Channel *> appendix;
+uint16 Score::getRollOverSpriteIDFromPos(Common::Point pos) {
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		if (_channels[i]->getRollOverBbox().contains(pos))
+			return i;
+	}
+
+	return 0;
+}
+
+
+Common::Array<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
+	Common::Array<Channel *> intersections;
+	Common::Array<Channel *> appendix;
 
 	for (uint i = 0; i < _channels.size(); i++) {
 		if (!_channels[i]->isEmpty() && !r.findIntersectingRect(_channels[i]->getBbox()).isEmpty()) {
@@ -1515,6 +1749,32 @@ uint16 Score::getSpriteIdByMemberId(CastMemberID id) {
 	return 0;
 }
 
+Common::Rect Score::getChannelDirtyRectBounds() {
+	// if we've just started a new movie, we need to redraw everything.
+	if (_window->_newMovieFirstDraw) {
+		return _window->_window->getInnerDimensions();
+	}
+	Common::Array<Common::Rect> dirtyRects;
+	for (auto &it : _channels) {
+		if (it->_needsDraw) {
+			if (!it->_lastRenderedBbox.isEmpty())
+				dirtyRects.push_back(it->_lastRenderedBbox);
+			Common::Rect bbox = it->getBbox();
+			if (!bbox.isEmpty())
+				dirtyRects.push_back(bbox);
+		}
+	}
+
+	Common::Rect result;
+	if (dirtyRects.size() == 0)
+		return result;
+	result = Common::Rect(dirtyRects.front());
+	for (auto &r : dirtyRects) {
+		result.extend(r);
+	}
+	return result;
+}
+
 bool Score::refreshPointersForCastMemberID(CastMemberID id) {
 	// FIXME: This can be removed once Sprite is refactored to not
 	// keep a pointer to a CastMember.
@@ -1523,7 +1783,6 @@ bool Score::refreshPointersForCastMemberID(CastMemberID id) {
 		if (it->_sprite->_castId == id) {
 			it->_sprite->_cast = nullptr;
 			it->setCast(id);
-			it->_dirty = true;
 			hit = true;
 		}
 	}
@@ -1532,6 +1791,33 @@ bool Score::refreshPointersForCastMemberID(CastMemberID id) {
 		if (it->_castId == id) {
 			it->_cast = nullptr;
 			it->setCast(id);
+			hit = true;
+		}
+	}
+	return hit;
+}
+
+bool Score::refreshPointersForCastLib(uint16 castLib) {
+	// FIXME: This can be removed once Sprite is refactored to not
+	// keep a pointer to a CastMember.
+	bool hit = false;
+	for (auto &it : _channels) {
+		if (it->_sprite->_castId.castLib == castLib) {
+			it->_sprite->_cast = nullptr;
+			it->setCast(it->_sprite->_castId);
+			hit = true;
+		}
+	}
+
+	// The frame may not be loaded yet, e.g. when Lingo swaps a cast lib
+	// before the score started playing.
+	if (!_currentFrame)
+		return hit;
+
+	for (auto &it : _currentFrame->_sprites) {
+		if (it->_castId.castLib == castLib) {
+			it->_cast = nullptr;
+			it->setCast(it->_castId);
 			hit = true;
 		}
 	}
@@ -1565,34 +1851,45 @@ Channel *Score::getChannelById(uint16 id) {
 	return _channels[id];
 }
 
-void Score::playSoundChannel(bool puppetOnly) {
+void Score::playSoundChannel(bool puppetOnly, bool sound1Changed, bool sound2Changed) {
 	DirectorSound *sound = _window->getSoundManager();
+	CastMemberID sound1 = _currentFrame->_mainChannels.sound1;
+	CastMemberID sound2 = _currentFrame->_mainChannels.sound2;
+	for (int i = (int)_channels.size() - 1; i >= 0; i--) {
+		if (_channels[i]->hasSubChannels()) {
+			if (sound1.isNull())
+				sound1 = _channels[i]->getSubChannelSound1();
+			if (sound2.isNull())
+				sound2 = _channels[i]->getSubChannelSound2();
+		}
+	}
+
 	debugC(5, kDebugSound, "Score::playSoundChannel(): Sound1: %s puppet: %d type: %d, volume: %d, Sound2: %s puppet: %d, type: %d, volume: %d",
-			_currentFrame->_mainChannels.sound1.asString().c_str(), sound->isChannelPuppet(1), _currentFrame->_mainChannels.soundType1, sound->getChannelVolume(1),
-			_currentFrame->_mainChannels.sound2.asString().c_str(), sound->isChannelPuppet(2), _currentFrame->_mainChannels.soundType2, sound->getChannelVolume(2));
+			sound1.asString().c_str(), sound->isChannelPuppet(1), _currentFrame->_mainChannels.soundType1, sound->getChannelVolume(1),
+			sound2.asString().c_str(), sound->isChannelPuppet(2), _currentFrame->_mainChannels.soundType2, sound->getChannelVolume(2));
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
-	} else if (!puppetOnly) {
+	} else if (!puppetOnly && sound1Changed) {
 		if (_currentFrame->_mainChannels.soundType1 >= kMinSampledMenu && _currentFrame->_mainChannels.soundType1 <= kMaxSampledMenu) {
 			sound->playExternalSound(_currentFrame->_mainChannels.soundType1, _currentFrame->_mainChannels.sound1.member, 1);
 		} else {
-			sound->playCastMember(_currentFrame->_mainChannels.sound1, 1);
+			sound->playCastMember(sound1, 1);
 		}
 	}
 
 	if (sound->isChannelPuppet(2)) {
 		sound->playPuppetSound(2);
-	} else if (!puppetOnly) {
+	} else if (!puppetOnly && sound2Changed) {
 		if (_currentFrame->_mainChannels.soundType2 >= kMinSampledMenu && _currentFrame->_mainChannels.soundType2 <= kMaxSampledMenu) {
 			sound->playExternalSound(_currentFrame->_mainChannels.soundType2, _currentFrame->_mainChannels.sound2.member, 2);
 		} else {
-			sound->playCastMember(_currentFrame->_mainChannels.sound2, 2);
+			sound->playCastMember(sound2, 2);
 		}
 	}
 
 	// Channels above 2 are only usable by Lingo.
-	if (g_director->getVersion() >= 300) {
+	if (_version >= kFileVer300) {
 		sound->playPuppetSound(3);
 		sound->playPuppetSound(4);
 	}
@@ -1603,7 +1900,7 @@ void Score::playQueuedSound() {
 	sound->playFPlaySound();
 }
 
-void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version) {
+void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version, bool loadSprites) {
 	debugC(1, kDebugLoading, "****** Loading frames VWSC");
 
 	// Setup our streams for frames processing
@@ -1617,19 +1914,72 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		_framesStream->hexdump(_framesStream->size());
 	}
 
-	_framesStreamSize = _framesStream->readUint32();
+	_frameDataOffset = 0;
+	_maxChannelsUsed = 0;
 
-	if (version < kFileVer400) {
+	if (version < kFileVer100) {
+		_framesStreamSize = _framesStream->readUint32();
+		_numChannelsDisplayed = 24;
+
+		_firstFramePosition = _framesStream->pos();
+	} else if (version < kFileVer400) {
+		_framesStreamSize = _framesStream->readUint32();
 		_numChannelsDisplayed = 30;
-	} else if (version >= kFileVer400 && version < kFileVer600) {
-		uint32 frame1Offset = _framesStream->readUint32();
-		/* uint32 numOfFrames = */ _framesStream->readUint32();
+
+		_firstFramePosition = _framesStream->pos();
+	} else if (version >= kFileVer600) {
+		_framesStreamSize = _framesStream->readUint32();
+		int32 ver = (int32)_framesStream->readUint32();
+		uint32 listStart = _framesStream->readUint32();
+
+		debugC(1, kDebugLoading, "Score::loadFrames(): D6+ len: %d, version: %d, listStart: 0x%x",
+			_framesStreamSize, ver, listStart);
+
+		_framesStream->seek(listStart);
+		int32 numEntries = (int32)_framesStream->readUint32();
+		int32 listSize = (int32)_framesStream->readUint32();
+		int32 maxDataLen = (int32)_framesStream->readUint32();
+
+		debugC(1, kDebugLoading, "Score::loadFrames(): Sprite Details: numEntries: %d, maxVar: %d, maxDataLen: 0x%x",
+			numEntries, listSize, maxDataLen);
+
+		// 3 * 4 = 3 int32 from above
+		_indexStart = listStart + 3 * 4;
+		_frameDataOffset = _indexStart + listSize * 4;
+
+		_spriteDetailOffsets.resize(numEntries);
+		_spriteDetailAccessed.resize(numEntries);
+
+		int prevOff = 0;
+		for (int i = 0; i < numEntries; i++) {
+			uint32 off = _framesStream->readUint32();
+			_spriteDetailOffsets[i] = _frameDataOffset + off;
+			_spriteDetailAccessed[i] = false;
+
+			if (i > 0) {
+				debugC(2, kDebugLoading, "  Detail entry %d offset: 0x%x (%d) -> 0x%x, size: %d",
+					i - 1, prevOff, prevOff, _frameDataOffset + prevOff, off - prevOff);
+			}
+			prevOff = off;
+		}
+
+		// now seek to the header, which is position 0 in the list
+		_framesStream->seek(_indexStart, SEEK_SET);
+		uint32 off = _framesStream->readUint32();
+		_framesStream->seek(_frameDataOffset + off, SEEK_SET);
+		_spriteDetailAccessed[0] = true;
+	}
+
+	if (version >= kFileVer400) {
+		_framesStreamSize = _framesStream->readUint32();
+		_frame1Offset = _framesStream->readUint32();
+		_numOfFrames = _framesStream->readUint32();
 		_framesVersion = _framesStream->readUint16();
-		uint16 spriteRecordSize = _framesStream->readUint16();
+		_spriteRecordSize = _framesStream->readUint16();
 		_numChannels = _framesStream->readUint16();
 
 		if (_framesVersion > 13) {
-			_numChannelsDisplayed = _framesStream->readUint16();
+			_numChannelsDisplayed = _framesStream->readUint16(); // Up to 500
 		} else {
 			if (_framesVersion <= 7)    // Director5
 				_numChannelsDisplayed = 48;
@@ -1639,11 +1989,10 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 			_framesStream->readUint16(); // Skip
 		}
 
-		warning("STUB: Score::loadFrames(): frame1Offset: 0x%x, version: %d, spriteRecordSize: 0x%x, numChannels: %d, numChannelsDisplayed: %d",
-			frame1Offset, _framesVersion, spriteRecordSize, _numChannels, _numChannelsDisplayed);
-		// Unknown, some bytes - constant (refer to contuinity).
-	} else {
-		error("STUB: Score::loadFrames(): score not yet supported for version %d", version);
+		_firstFramePosition = _framesStream->pos();
+
+		debugC(1, kDebugLoading, "Score::loadFrames(): size: %d, frame1Offset: %d, numOfFrames: %d, version: %d, spriteRecordSize: %d, numChannels: %d, numChannelsDisplayed: %d",
+			_framesStreamSize, _frame1Offset, _numOfFrames, _framesVersion, _spriteRecordSize, _numChannels, _numChannelsDisplayed);
 	}
 
 	// partically by channels, hence we keep it and read the score from left to right
@@ -1655,19 +2004,57 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	// Prepare frameOffsets
 	_version = version;
-	_firstFramePosition = _framesStream->pos();
 
 	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches
-	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames! First frame pos: %d, framesstreamsizeL %d",
-			_firstFramePosition, _framesStreamSize);
+	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames! First frame pos: 0x%x",
+			_firstFramePosition);
+
+	// Index 1 in the list contains the sprite order. We are not using it,
+	if (_version >= kFileVer600) {
+		Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(1);
+		if (!stream1) {
+			warning("Score::loadFrames: could not fetch sprite details stream");
+		} else {
+			int numSprites = stream1->readUint32();
+			debugCN(2, kDebugLoading, "Sprites order: ");
+			for (int i = 0; i < numSprites; i++) {
+				int spriteId = stream1->readUint32();
+				debugCN(2, kDebugLoading, "%d ", spriteId);
+			}
+			debugC(2, kDebugLoading, "%s", "");
+			delete stream1;
+		}
+	}
 
 	// Calculate number of frames and their positions
 	// numOfFrames in the header is often incorrect
-	for (_numFrames = 1; loadFrame(_numFrames, false); _numFrames++) {
+	for (_numFrames = 1; loadFrame(_numFrames, loadSprites); _numFrames++) {
 		_scoreCache.push_back(new Frame(*_currentFrame));
+
+		for (int i = 0; i < (int)_currentFrame->_sprites.size(); i++) {
+			if (_currentFrame->_sprites[i]->_castId.member && i > _maxChannelsUsed)
+				_maxChannelsUsed = i;
+		}
 	}
 
-	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
+	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d", _numFrames);
+
+	if (_version >= kFileVer600) {
+		for (uint i = 0; i < _spriteDetailAccessed.size() - 1; i++) {
+			int size = _spriteDetailOffsets[i + 1] - _spriteDetailOffsets[i];
+			if (!_spriteDetailAccessed[i] && size > 0) {
+				int type = i % 3;
+				const char *purpose = (type == 0) ? "spriteInfo" : (type == 1) ? "behavior" : "name";
+				debugC(2, kDebugLoading, "Sprite detail %d not accessed, size: %d (%s)", i, size, purpose);
+
+				Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(i);
+				if (stream1) {
+					stream1->hexdump(stream1->size());
+					delete stream1;
+				}
+			}
+		}
+	}
 
 	_currentFrame->reset();
 
@@ -1676,36 +2063,187 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }
 
+BehaviorElement Score::loadSpriteBehavior(Common::MemoryReadStreamEndian *stream, bool skipLog) {
+	BehaviorElement behavior;
+	behavior.read(*stream);
+
+	if (behavior.initializerIndex) {
+		Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(behavior.initializerIndex);
+
+		if (stream1) {
+			behavior.initializerParams = stream1->readString();
+			delete stream1;
+		}
+	}
+
+	if (!skipLog)
+		debugC(2, kDebugLoading, "    Behavior: %s", behavior.toString().c_str());
+
+	return behavior;
+}
+
+SpriteInfo Score::loadSpriteInfo(int spriteId, bool skipLog) {
+	SpriteInfo info;
+
+	Common::MemoryReadStreamEndian *stream = getSpriteDetailsStream(spriteId);
+	if (stream) {
+		info.read(*stream);
+		delete stream;
+	}
+
+	stream = getSpriteDetailsStream(spriteId + 2);
+	if (stream) {
+		info.name = stream->readString();
+		delete stream;
+	}
+
+	if (!skipLog)
+		debugC(2, kDebugLoading, "  SpriteInfo: %s", info.toString().c_str());
+
+	return info;
+}
+
+void Score::loadFrameSpriteDetails(bool skipLog) {
+	Common::MemoryReadStreamEndian *stream = nullptr;
+	for (uint i = 0; i < _currentFrame->_sprites.size(); i++) {
+		Sprite *sprite = _currentFrame->_sprites[i];
+		sprite->_behaviors.clear();
+		if (sprite->_spriteListIdx) {
+			if (!skipLog)
+				debugC(2, kDebugLoading, "Sprite %d", i);
+			sprite->_spriteInfo = loadSpriteInfo(sprite->_spriteListIdx, skipLog);
+
+			stream = getSpriteDetailsStream(sprite->_spriteListIdx + 1);
+			if (stream) {
+				while (stream->pos() < stream->size()) {
+					BehaviorElement behavior = loadSpriteBehavior(stream, skipLog);
+
+					sprite->_behaviors.push_back(behavior);
+				}
+				delete stream;
+			}
+		}
+	}
+
+	// Script channel
+	_currentFrame->_mainChannels.behaviors.clear();
+	if (_currentFrame->_mainChannels.scriptSpriteListIdx) {
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Script channel");
+
+		_currentFrame->_mainChannels.scriptSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.scriptSpriteListIdx, skipLog);
+
+		stream = getSpriteDetailsStream(_currentFrame->_mainChannels.scriptSpriteListIdx + 1);
+		// We can have only one behavior here
+		if (stream) {
+			_currentFrame->_mainChannels.behaviors.push_back(loadSpriteBehavior(stream, skipLog));
+			delete stream;
+		}
+	}
+
+	// Tempo channel
+	if (_currentFrame->_mainChannels.tempoSpriteListIdx) {
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Tempo channel");
+		_currentFrame->_mainChannels.tempoSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.tempoSpriteListIdx, skipLog);
+	}
+
+	// Transition channel
+	if (_currentFrame->_mainChannels.transSpriteListIdx) {
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Transition channel");
+		_currentFrame->_mainChannels.transSpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.transSpriteListIdx, skipLog);
+	}
+
+	// Sound2 channel
+	if (_currentFrame->_mainChannels.sound2SpriteListIdx) {
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Sound2 channel");
+		_currentFrame->_mainChannels.sound2SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound2SpriteListIdx, skipLog);
+	}
+
+	// Sound1 channel
+	if (_currentFrame->_mainChannels.sound1SpriteListIdx) {
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Sound1 channel");
+		_currentFrame->_mainChannels.sound1SpriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.sound1SpriteListIdx, skipLog);
+	}
+
+	// Palette channel
+	if (_currentFrame->_mainChannels.palette.spriteListIdx) {
+		if (!skipLog)
+			debugC(2, kDebugLoading, "Palette channel");
+		_currentFrame->_mainChannels.palette.spriteInfo = loadSpriteInfo(_currentFrame->_mainChannels.palette.spriteListIdx, skipLog);
+	}
+}
+
+void Score::seekToMemberInList(int frameNum) {
+	if (frameNum < 1 || frameNum >= _numOfFrames) {
+		warning("Score::seekToMemberInList(): frameNum %d out of bounds [1, %d)", frameNum, _numOfFrames);
+		return;
+	}
+
+	_framesStream->seek(_indexStart + frameNum * 4, SEEK_SET);
+	uint32 off = _framesStream->readUint32();
+	uint32 size = _framesStream->readUint32() - off;
+
+	debugC(3, kDebugLoading, "    off: 0x%x size: %d", _frameDataOffset + off, size);
+
+	_framesStream->seek(_frameDataOffset + off, SEEK_SET);
+}
+
 bool Score::loadFrame(int frameNum, bool loadCast) {
-	debugC(7, kDebugLoading, "****** Frame request %d, current pos: %ld, current frame number: %d", frameNum, _framesStream->pos(), _curFrameNumber);
+	debugC(7, kDebugLoading, "****** Frame request %d, current pos: 0x%x, current frame number: %d", frameNum, (uint32)_framesStream->pos(), _curFrameNumber);
 
 	int sourceFrame = _curFrameNumber;
 	int targetFrame = frameNum;
 
 	if (frameNum <= (int)_curFrameNumber) {
-		debugC(7, kDebugLoading, "****** Resetting frame %d to start %ld", sourceFrame, _framesStream->pos());
+		debugC(7, kDebugLoading, "****** Resetting frame %d to start 0x%x", sourceFrame, (uint32)_framesStream->pos());
 		// If we are going back, we need to rebuild frames from start
 		_currentFrame->reset();
-		sourceFrame = 0;
 
 		// Reset position to start
 		_framesStream->seek(_firstFramePosition);
+		sourceFrame = 0;
 
 		// Reset sprite contents
 		for (auto &it : _currentFrame->_sprites)
 			it->reset();
 	}
 
-	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset %ld", sourceFrame, targetFrame, _framesStream->pos());
+	// Reset the copyback mask on all sprites, so we know what changed
+	for (auto &it : _currentFrame->_sprites) {
+		if (frameNum <= (int)_curFrameNumber) {
+			// starting from rewind, copy back everything
+			it->_copyBackMask = static_cast<uint32>(-1);
+		} else {
+			// starting at delta, only copy back changes
+			it->_copyBackMask = 0;
+		}
+	}
 
+	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset 0x%x", sourceFrame, targetFrame, (uint32)_framesStream->pos());
+
+	_curFrameNumber = sourceFrame + 1;
 	while (sourceFrame < targetFrame - 1 && readOneFrame()) {
 		sourceFrame++;
+		_curFrameNumber = sourceFrame + 1;
 	}
 
 	// Finally read the target frame!
+	debugC(2, kDebugLoading, "Loading target frame %d", targetFrame);
+
 	bool isFrameRead = readOneFrame();
 	if (!isFrameRead)
 		return false;
+
+	int64 pos = _framesStream->pos();
+
+	if (_version >= kFileVer600)
+		loadFrameSpriteDetails(loadCast);
+
+	_framesStream->seek(pos, SEEK_SET);
 
 	// We have read the frame, now update current frame number
 	_curFrameNumber = targetFrame;
@@ -1722,11 +2260,11 @@ bool Score::readOneFrame() {
 	uint16 channelSize;
 	uint16 channelOffset;
 
-	if (_framesStream->pos() >= _framesStreamSize || _framesStream->eos())
+	if (_framesStream->pos() - _frameDataOffset >= _framesStreamSize || _framesStream->eos())
 		return false;
 
 	uint16 frameSize = _framesStream->readUint16();
-	debugC(4, kDebugLoading, "pos: %ld frameSize: %d (0x%x) streamSize: %d", _framesStream->pos() - 2, frameSize, frameSize, _framesStreamSize);
+	debugC(4, kDebugLoading, "  pos: 0x%x frameSize: %d (0x%x) streamSize: %d", (uint32)(_framesStream->pos() - 2)	, frameSize, frameSize, _framesStreamSize);
 	assert(frameSize < _framesStreamSize);
 
 	debugC(3, kDebugLoading, "++++++++++ score load frame %d (frameSize %d) saveOffset", _curFrameNumber, frameSize);
@@ -1738,7 +2276,7 @@ bool Score::readOneFrame() {
 
 		while (frameSize != 0) {
 
-			if (_vm->getVersion() < 400) {
+			if (_version < kFileVer400) {
 				channelSize = _framesStream->readByte() * 2;
 				channelOffset = _framesStream->readByte() * 2;
 				frameSize -= channelSize + 2;
@@ -1797,6 +2335,12 @@ void Score::setSpriteCasts() {
 		debugC(8, kDebugLoading, "Score::setSpriteCasts(): Frame: 0 Channel: %d castId: %s type: %d (%s)",
 			 j, _currentFrame->_sprites[j]->_castId.asString().c_str(), _currentFrame->_sprites[j]->_spriteType,
 			spriteType2str(_currentFrame->_sprites[j]->_spriteType));
+	}
+
+	if (_channels.size() == 0) {
+		for (uint i = 0; i < _currentFrame->_sprites.size(); i++) {
+			_channels.push_back(new Channel(this, _currentFrame->_sprites[i], i));
+		}
 	}
 }
 
@@ -1909,42 +2453,198 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 Common::String Score::formatChannelInfo() {
 	Frame &frame = *_currentFrame;
 	Common::String result;
-	CastMemberID defaultPalette = g_director->getCurrentMovie()->_defaultPalette;
+	CastMemberID defaultPalette = _vm->getCurrentMovie()->_defaultPalette;
 	result += Common::String::format("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d, currentFPS: %d\n",
 		frame._mainChannels.tempo, frame._mainChannels.skipFrameFlag, frame._mainChannels.blend, _currentFrameRate);
 	if (!frame._mainChannels.palette.paletteId.isNull()) {
 		result += Common::String::format("PAL:    paletteId: %s, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d, currentId: %s, defaultId: %s\n",
 			frame._mainChannels.palette.paletteId.asString().c_str(), frame._mainChannels.palette.firstColor, frame._mainChannels.palette.lastColor, frame._mainChannels.palette.flags,
 			frame._mainChannels.palette.cycleCount, frame._mainChannels.palette.speed, frame._mainChannels.palette.frameCount,
-			frame._mainChannels.palette.fade, frame._mainChannels.palette.delay, frame._mainChannels.palette.style, g_director->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
+			frame._mainChannels.palette.fade, frame._mainChannels.palette.delay, frame._mainChannels.palette.style, _vm->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
 	} else {
-		result += Common::String::format("PAL:    paletteId: 000, currentId: %s, defaultId: %s\n", g_director->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
+		result += Common::String::format("PAL:    paletteId: 000, currentId: %s, defaultId: %s\n", _vm->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
 	}
 	result += Common::String::format("TRAN:   transType: %d, transDuration: %d, transChunkSize: %d\n",
 		frame._mainChannels.transType, frame._mainChannels.transDuration, frame._mainChannels.transChunkSize);
 	result += Common::String::format("SND: 1  sound1: %d, soundType1: %d\n", frame._mainChannels.sound1.member, frame._mainChannels.soundType1);
 	result += Common::String::format("SND: 2  sound2: %d, soundType2: %d\n", frame._mainChannels.sound2.member, frame._mainChannels.soundType2);
-	result += Common::String::format("LSCR:   actionId: %d\n", frame._mainChannels.actionId.member);
+	result += Common::String::format("LSCR:   actionId: %s\n", frame._mainChannels.actionId.asString().c_str());
 
-	for (int i = 0; i < frame._numChannels; i++) {
+	bool skipped = false;
+
+	for (int i = 0; (i < frame._numChannels && ((i + 1) < (int)_channels.size())); i++) {
 		Channel &channel = *_channels[i + 1];
 		Sprite &sprite = *channel._sprite;
-		Common::Point position = channel.getPosition();
 		if (sprite._castId.member) {
-			result += Common::String::format("CH: %-3d castId: %s, visible: %d, [inkData: 0x%02x [ink: %d, trails: %d, stretch: %d, line: %d], %dx%d@%d,%d type: %d (%s) fg: %d bg: %d], script: %s, colorcode: 0x%x, blendAmount: 0x%x, unk3: 0x%x, constraint: %d, puppet: %d, moveable: %d, movieRate: %f, movieTime: %d (%f), filmLoopFrame: %d\n",
-				i + 1, sprite._castId.asString().c_str(), channel._visible, sprite._inkData,
-				sprite._ink, sprite._trails, sprite._stretch, sprite._thickness,
-				channel.getWidth(), channel.getHeight(), position.x, position.y,
-				sprite._spriteType, spriteType2str(sprite._spriteType), sprite._foreColor, sprite._backColor,
-				sprite._scriptId.asString().c_str(), sprite._colorcode, sprite._blendAmount, sprite._unk3,
-				channel._constraint, sprite._puppet, sprite._moveable, channel._movieRate, channel._movieTime, (float)(channel._movieTime/60.0f), channel._filmLoopFrame);
+			result += Common::String::format("CH: %-3d - %s\n", i + 1, channel.formatInfo().c_str());
+			if (!sprite._behaviors.empty()) {
+				result += Common::String::format("        behaviours: ");
+				for (auto &it : sprite._behaviors) {
+					result += Common::String::format("(%s), ", it.toString().c_str());
+				}
+				result += Common::String::format("\n");
+			}
+
+			skipped = false;
 		} else {
-			result += Common::String::format("CH: %-3d castId: 000\n", i + 1);
+			if (i == frame._numChannels - 1 || (i > 0 && _channels[i]->_sprite->_castId.member)) {
+				result += Common::String::format("CH: %-3d - [sprite: castId: 000]\n", i + 1);
+			} else {
+				if (!skipped) {
+					result += "...\n";
+					skipped = true;
+				}
+			}
 		}
 	}
 
 	return result;
 
+}
+
+void Score::writeVWSCResource(Common::SeekableWriteStream *writeStream, uint32 offset) {
+	uint32 channelSize = 0;
+	uint32 mainChannelSize = 0;
+	if (_version >= kFileVer400 && _version < kFileVer500) {
+		channelSize = kSprChannelSizeD4;
+		mainChannelSize = kMainChannelSizeD4;
+	} else if (_version >= kFileVer500 && _version < kFileVer600) {
+		channelSize = kSprChannelSizeD5;
+		mainChannelSize = kMainChannelSizeD5;
+	} else if (_version >= kFileVer600 && _version < kFileVer700) {
+		channelSize = kSprChannelSizeD6;
+		mainChannelSize = kMainChannelSizeD6;
+	} else if (_version >= kFileVer700 && _version < kFileVer1100) {
+		channelSize = kSprChannelSizeD7;
+		mainChannelSize = kMainChannelSizeD7;
+	} else {
+		warning("Score::writeVWSCResource: Writing this Director version is not supported yet");
+		return;
+	}
+
+	writeStream->seek(offset);
+
+	uint32 scoreSize = getVWSCResourceSize();
+
+	writeStream->writeUint32LE(MKTAG('V', 'W', 'S', 'C'));
+	writeStream->writeUint32LE(scoreSize);
+
+	// The format of a score is similar to that of FilmLoopCastMember, or rather its vice-verca
+	writeStream->writeUint32BE(scoreSize);
+
+	// Headers
+	writeStream->writeUint32BE(0);		// frame10Offset
+	writeStream->writeUint32BE(0);		// numOfFrames
+	writeStream->writeUint16BE(_framesVersion);
+	writeStream->writeUint16BE(_spriteRecordSize);
+	writeStream->writeUint16BE(_numChannels);
+
+	writeStream->writeUint16BE(_numChannelsDisplayed);		// In case _framesVersion > 13, we ignore this while loading
+
+	// until there are no more frames
+		// size of the frame ->
+		// until there are no more channels in the frame
+			// width of message (One chunk of data) (This is the size of data for the sprite that needs to be read) ->
+			// order of message (this order tells us the channel we're reading) ->
+			// 1-20 bytes of Sprite data
+
+	for (uint it = 0; it < _scoreCache.size(); it ++) {
+		Frame frame = *(_scoreCache[it]);
+
+		// The frame._sprites had an empty 0th index
+		writeStream->writeUint16BE((mainChannelSize + 4) + (frame._sprites.size() - 1) * (channelSize + 4) + 2);		// frameSize
+
+		// It's not necessary to make this code this modular, but for the sake of paralleling loading code
+		// dividing this writing function into different parts
+		// writeFrame is parallel to the combination of (loadFrame() and readOneFrame())
+		writeFrame(writeStream, frame, channelSize, mainChannelSize);
+	}
+}
+
+void Score::writeFrame(Common::SeekableWriteStream *writeStream, Frame frame, uint32 channelSize, uint32 mainChannelSize) {
+	// The first sprite is the main channel
+	writeStream->writeUint16BE(mainChannelSize);
+	// the offset for the main channel should be 0 since we're writing all the 40/48 bytes
+	writeStream->writeUint16BE(0);
+	frame.writeMainChannels(writeStream, _version);
+
+	for (uint it = 1; it < frame._sprites.size(); it++) {
+		Sprite sprite = *(frame._sprites[it]);
+
+		writeStream->writeUint16BE(channelSize);
+		writeStream->writeUint16BE(((it - 1) * channelSize) + mainChannelSize);
+
+		if (_version >= kFileVer400 && _version < kFileVer500) {
+			writeSpriteDataD4(writeStream, sprite);
+		} else if (_version >= kFileVer500 && _version < kFileVer600) {
+			writeSpriteDataD5(writeStream, sprite);
+		} else if (_version >= kFileVer600 && _version < kFileVer700) {
+			writeSpriteDataD6(writeStream, sprite);
+		} else if (_version >= kFileVer700 && _version < kFileVer1100) {
+			writeSpriteDataD7(writeStream, sprite);
+		}
+	}
+}
+
+uint32 Score::getVWSCResourceSize() {
+	uint32 channelSize = 0;
+	uint32 mainChannelSize = 0;
+	if (_version >= kFileVer400 && _version < kFileVer500) {
+		channelSize = kSprChannelSizeD4;
+		mainChannelSize = kMainChannelSizeD4;
+	} else if (_version >= kFileVer500 && _version < kFileVer600) {
+		channelSize = kSprChannelSizeD5;
+		mainChannelSize = kMainChannelSizeD5;
+	} else if (_version >= kFileVer600 && _version < kFileVer700) {
+		// Must match writeVWSCResource()/Frame::readChannel() (D6: main channel 144).
+		channelSize = kSprChannelSizeD6;
+		mainChannelSize = kMainChannelSizeD6;
+	} else if (_version >= kFileVer700 && _version < kFileVer1100) {
+		channelSize = kSprChannelSizeD7;
+		mainChannelSize = kMainChannelSizeD7;
+	} else {
+		warning("Score::getVWSCResourceSize: Director version unsupported");
+	}
+
+	uint32 framesSize = 0;
+	for (Frame *frame : _scoreCache) {
+		// Frame size
+		framesSize += 2;
+
+		framesSize += (2 + 2 + mainChannelSize);
+		for (uint it = 1; it < frame->_sprites.size(); it++) {
+			// message width: 2 bytes
+			// order: 2 bytes
+			// Sprite data: 20 bytes
+			framesSize += 2 + 2 + channelSize;
+		}
+	}
+	// _firstFramePosition is the header size
+	// header + frames (main channel + sprite channels) (20 bytes)
+	return _firstFramePosition + framesSize;
+}
+
+Common::MemoryReadStreamEndian *Score::getSpriteDetailsStream(int spriteIdx) {
+	Common::MemoryReadStreamEndian *stream = nullptr;
+
+	if (!_framesStream || _spriteDetailOffsets.size() == 0)
+		return nullptr;
+
+	if (spriteIdx >= 0 && spriteIdx < (int)_spriteDetailOffsets.size() - 1) {
+		uint32 size = _spriteDetailOffsets[spriteIdx + 1] - _spriteDetailOffsets[spriteIdx];
+
+		_spriteDetailAccessed[spriteIdx] = true;
+
+		if (!size)
+			return nullptr;
+
+		byte *data = (byte *)malloc(size);
+		_framesStream->seek(_spriteDetailOffsets[spriteIdx], SEEK_SET);
+		_framesStream->read(data, size);
+		stream = new Common::MemoryReadStreamEndian(data, size, _framesStream->isBE(), DisposeAfterUse::YES);
+	}
+
+	return stream;
 }
 
 } // End of namespace Director

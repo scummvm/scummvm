@@ -36,8 +36,6 @@ namespace ZVision {
 struct FontStyle {
 	const char *zorkFont;
 	const char *fontBase;
-	const char *freeFontBase;
-	const char *freeFontItalicName;
 	const char *liberationFontBase;
 };
 
@@ -71,15 +69,15 @@ public:
 
 	int getFontHeight();
 	int getMaxCharWidth();
-	int getCharWidth(byte chr);
+	int getCharWidth(uint32 chr);
 	int getKerningOffset(byte left, byte right);
 
-	void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color);
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color);
 
-	void drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
-	int getStringWidth(const Common::String &str);
+	void drawString(Graphics::Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+	int getStringWidth(const Common::U32String &str);
 
-	Graphics::Surface *renderSolidText(const Common::String &str, uint32 color);
+	Graphics::Surface *renderSolidText(const Common::U32String &str, uint32 color);
 
 	bool isLoaded() {
 		return _font != NULL;

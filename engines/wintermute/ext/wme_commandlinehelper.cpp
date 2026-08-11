@@ -45,7 +45,7 @@ BaseScriptable *makeSXCommandLineHelper(BaseGame *inGame, ScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 SXCommandLineHelper::SXCommandLineHelper(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(0);
-	_gameRef->LOG(0, "new SXCommandLineHelper()");
+	_game->LOG(0, "new SXCommandLineHelper()");
 }
 
 
@@ -67,7 +67,7 @@ bool SXCommandLineHelper::scCallMethod(ScScript *script, ScStack *stack, ScStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXCommandLineHelper::scGetProperty(const Common::String &name) {
+ScValue *SXCommandLineHelper::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ ScValue *SXCommandLineHelper::scGetProperty(const Common::String &name) {
 	// Used to launch demo: "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"
 	// 'DEMO', 'FULLDEMO'
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Parameters") {
+	if (strcmp(name, "Parameters") == 0) {
 		_scValue->setString("Pizza.exe DEMO");
 		return _scValue;
 	}

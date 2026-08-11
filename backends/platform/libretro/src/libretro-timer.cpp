@@ -38,9 +38,12 @@ void LibretroTimerManager::switchThread(uint8 caller) {
 	handler();
 }
 
-void LibretroTimerManager::checkThread(uint8 caller) {
-	if (g_system->getMillis() >= _nextSwitchTime)
+bool LibretroTimerManager::checkThread(uint8 caller) {
+	if (g_system->getMillis() >= _nextSwitchTime) {
 		switchThread(caller);
+		return true;
+	} else
+		return false;
 }
 
 uint32 LibretroTimerManager::timeToNextSwitch(void) {
@@ -52,7 +55,7 @@ uint32 LibretroTimerManager::spentOnMainThread(void) {
 	return _spentOnMainThread;
 }
 
-uint8 LibretroTimerManager::getThreadSwitchCaller(void){
+uint8 LibretroTimerManager::getThreadSwitchCaller(void) {
 	return _threadSwitchCaller;
 }
 #endif

@@ -29,10 +29,12 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/string_util.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/wintermute.h"
+
 #include "common/config-manager.h"
 #include "audio/mixer.h"
 
@@ -42,13 +44,13 @@ namespace Wintermute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-//IMPLEMENT_PERSISTENT(BaseSoundMgr, true);
+//IMPLEMENT_PERSISTENT(BaseSoundMgr, true)
 
 //////////////////////////////////////////////////////////////////////////
 BaseSoundMgr::BaseSoundMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_soundAvailable = false;
-	_volumeMaster = 255;
-	_volumeMasterPercent = 100;
+
+	_volumeMaster = 100;
 }
 
 
@@ -61,17 +63,17 @@ BaseSoundMgr::~BaseSoundMgr() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::cleanup() {
-	for (uint32 i = 0; i < _sounds.size(); i++) {
+	for (int32 i = 0; i < _sounds.getSize(); i++) {
 		delete _sounds[i];
 	}
-	_sounds.clear();
+	_sounds.removeAll();
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundMgr::saveSettings() {
 	if (_soundAvailable) {
-		ConfMan.setInt("master_volume_percent", _volumeMasterPercent);
+		ConfMan.setInt("master_volume_percent", _volumeMaster);
 	}
 }
 
@@ -82,21 +84,34 @@ bool BaseSoundMgr::initialize() {
 	if (!g_system->getMixer()->isReady()) {
 		return STATUS_FAILED;
 	}
-	byte volumeMasterPercent = (ConfMan.hasKey("master_volume_percent") ? ConfMan.getInt("master_volume_percent") : 100);
-	setMasterVolumePercent(volumeMasterPercent);
-	_soundAvailable = true;
 
 	g_engine->syncSoundSettings();
+
+	_volumeMaster = (ConfMan.hasKey("master_volume_percent") ? ConfMan.getInt("master_volume_percent") : 100);
+
+	_soundAvailable = true;
+
+	setMasterVolumePercent(_volumeMaster);
+
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
+bool BaseSoundMgr::initLoop() {
+	if (!_soundAvailable) {
+		return STATUS_OK;
+	}
+
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+BaseSoundBuffer *BaseSoundMgr::addSound(const char *filename, TSoundType type, bool streamed, uint32 initialPrivateVolume) {
 	if (!_soundAvailable) {
 		return nullptr;
 	}
 
-	if (filename.empty()) {
+	if (!filename || filename[0] == '\0') {
 		// At least one game, Bickadoodle, calls playSound with an empty filename, see #6594
 		BaseEngine::LOG(0, "addSound called with empty filename");
 	}
@@ -110,12 +125,12 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 		Common::String oggFilename = useFilename;
 		oggFilename.erase(oggFilename.size() - 4);
 		oggFilename = oggFilename + ".ogg";
-		if (BaseFileManager::getEngineInstance()->hasFile(oggFilename)) {
+		if (_game->_fileManager->hasFile(oggFilename)) {
 			useFilename = oggFilename;
 		}
 	}
 
-	sound = new BaseSoundBuffer(_gameRef);
+	sound = new BaseSoundBuffer(_game);
 	if (!sound) {
 		return nullptr;
 	}
@@ -124,45 +139,40 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	sound->setType(type);
 
 
-	bool res = sound->loadFromFile(useFilename);
+	bool res = sound->loadFromFile(useFilename.c_str());
 	if (DID_FAIL(res)) {
-		BaseEngine::LOG(res, "Error loading sound '%s'", useFilename.c_str());
+		_game->LOG(res, "Error loading sound '%s'", useFilename.c_str());
 		delete sound;
 		return nullptr;
 	}
 
-	// Make sure the master-volume is applied to the sound.
-	sound->updateVolume();
+	// sound starts with user defined instead of 100% volume (of the global setting)
+	sound->setPrivateVolume(initialPrivateVolume);
 
 	// register sound
-	_sounds.push_back(sound);
+	_sounds.add(sound);
 
 	return sound;
-
-	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type) {
+bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, TSoundType type) {
 	if (!sound) {
 		return STATUS_FAILED;
 	}
 
-	// Make sure the master-volume is applied to the sound.
-	sound->updateVolume();
-
 	// register sound
-	_sounds.push_back(sound);
+	_sounds.add(sound);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
-	for (uint32 i = 0; i < _sounds.size(); i++) {
+	for (int32 i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i] == sound) {
 			delete _sounds[i];
-			_sounds.remove_at(i);
+			_sounds.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -172,97 +182,81 @@ bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
+bool BaseSoundMgr::setVolume(TSoundType type, int volume) {
 	if (!_soundAvailable) {
 		return STATUS_OK;
 	}
 
 	switch (type) {
-	case Audio::Mixer::kSFXSoundType:
-		ConfMan.setInt("sfx_volume", volume);
+	case TSoundType::SOUND_SFX:
+		g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (volume * Audio::Mixer::kMaxChannelVolume) / 100);
+		ConfMan.setInt("sfx_volume", g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 		break;
-	case Audio::Mixer::kSpeechSoundType:
-		ConfMan.setInt("speech_volume", volume);
+	case TSoundType::SOUND_SPEECH:
+		g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (volume * Audio::Mixer::kMaxChannelVolume) / 100);
+		ConfMan.setInt("speech_volume", g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
 		break;
-	case Audio::Mixer::kMusicSoundType:
-		ConfMan.setInt("music_volume", volume);
-		break;
-	case Audio::Mixer::kPlainSoundType:
-		error("Plain sound type shouldn't be used in WME");
+	case TSoundType::SOUND_MUSIC:
+		g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (volume * Audio::Mixer::kMaxChannelVolume) / 100);
+		ConfMan.setInt("music_volume", g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 		break;
 	default:
 		break;
 	}
-	g_engine->syncSoundSettings();
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) {
-	return setVolume(type, percent * 255 / 100);
+bool BaseSoundMgr::setVolumePercent(TSoundType type, byte percent) {
+	return setVolume(type, percent);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
+byte BaseSoundMgr::getVolumePercent(TSoundType type) {
 	int volume = 0;
 
 	switch (type) {
-	case Audio::Mixer::kSFXSoundType:
-	case Audio::Mixer::kSpeechSoundType:
-	case Audio::Mixer::kMusicSoundType:
-		volume = g_system->getMixer()->getVolumeForSoundType(type);
+	case TSoundType::SOUND_SFX:
+		volume = ConfMan.getInt("sfx_volume") * 100 / Audio::Mixer::kMaxChannelVolume;
+		break;
+	case TSoundType::SOUND_SPEECH:
+		volume = ConfMan.getInt("speech_volume") * 100 / Audio::Mixer::kMaxChannelVolume;
+		break;
+	case TSoundType::SOUND_MUSIC:
+		volume = ConfMan.getInt("music_volume") * 100 / Audio::Mixer::kMaxChannelVolume;
 		break;
 	default:
-		error("Sound-type not set");
 		break;
 	}
 
-	return (byte)(volume * 100 / 255);
+	return (byte)volume;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseSoundMgr::setMasterVolume(byte value) {
-	// This function intentionally doesn't touch _volumeMasterPercent,
-	// as that variable keeps track of what the game actually wanted,
-	// and this gives a close approximation, while letting the game
-	// be none the wiser about round-off-errors. This function should thus
-	// ONLY be called by setMasterVolumePercent.
-	_volumeMaster = value;
-	for (uint32 i = 0; i < _sounds.size(); i++) {
-		_sounds[i]->updateVolume();
-	}
-	return STATUS_OK;
-}
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setMasterVolumePercent(byte percent) {
-	_volumeMasterPercent = percent;
-	setMasterVolume((int)ceil(percent * 255.0 / 100.0));
+	_volumeMaster = percent;
+	for (int32 i = 0; i < _sounds.getSize(); i++) {
+		_sounds[i]->setVolume(percent);
+	}
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 byte BaseSoundMgr::getMasterVolumePercent() {
-	return _volumeMasterPercent;
-}
-
-//////////////////////////////////////////////////////////////////////////
-byte BaseSoundMgr::getMasterVolume() {
-	return (byte)_volumeMaster;
+	return _volumeMaster;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::pauseAll(bool includingMusic) {
-
-	for (uint32 i = 0; i < _sounds.size(); i++) {
-		if (_sounds[i]->isPlaying() && (_sounds[i]->getType() != Audio::Mixer::kMusicSoundType || includingMusic)) {
+	for (int32 i = 0; i < _sounds.getSize(); i++) {
+		if (_sounds[i]->isPlaying() && (_sounds[i]->_type != TSoundType::SOUND_MUSIC || includingMusic)) {
 			_sounds[i]->pause();
-			_sounds[i]->setFreezePaused(true);
+			_sounds[i]->_freezePaused = true;
 		}
 	}
 
@@ -273,10 +267,10 @@ bool BaseSoundMgr::pauseAll(bool includingMusic) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::resumeAll() {
 
-	for (uint32 i = 0; i < _sounds.size(); i++) {
-		if (_sounds[i]->isFreezePaused()) {
+	for (int32 i = 0; i < _sounds.getSize(); i++) {
+		if (_sounds[i]->_freezePaused) {
 			_sounds[i]->resume();
-			_sounds[i]->setFreezePaused(false);
+			_sounds[i]->_freezePaused = false;
 		}
 	}
 
@@ -286,10 +280,29 @@ bool BaseSoundMgr::resumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseSoundMgr::posToPan(int x, int y) {
-	float relPos = (float)x / ((float)BaseEngine::getRenderer()->getWidth());
+	/*
+	 * This is tricky to do right. Scenes could be scrolling (thus bigger than rendering width)
+	 * and even then objects that emit sound could be "outside" the scene.
+	 *
+	 * As a compromise, the range where panning is applied is defined from
+	 * (-0.5 * width) .. 0 .. (+1.5 * width).
+	 *
+	 * Because the sound library might simply ignore values out of range, extreme
+	 * values are truncated.
+	 */
+	float width = (float)_game->_renderer->getWidth();
+	float relPos = ((float)x + (0.5f * width)) / (width * 2.0f);
 
-	float minPan = -0.7f;
-	float maxPan = 0.7f;
+	// saturate
+	if (relPos < 0.0f) {
+		relPos = 0.0f;
+	}
+	if (relPos > 1.0f) {
+		relPos = 1.0f;
+	}
+
+	float minPan = -1.0f;
+	float maxPan = 1.0f;
 
 	return minPan + relPos * (maxPan - minPan);
 }

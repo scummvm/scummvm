@@ -313,14 +313,14 @@ void SetMusicVolume(int newvol) {
 void SetMusicMasterVolume(int newvol) {
 	const int min_volume = _G(loaded_game_file_version) < kGameVersion_330 ? 0 :
 	                       -LegacyMusicMasterVolumeAdjustment - (kRoomVolumeMax * LegacyRoomVolumeFactor);
-	if ((newvol < min_volume) | (newvol > 100))
+	if ((newvol < min_volume) || (newvol > 100))
 		quitprintf("!SetMusicMasterVolume: invalid volume - must be from %d to %d", min_volume, 100);
 	_GP(play).music_master_volume = newvol + LegacyMusicMasterVolumeAdjustment;
 	update_music_volume();
 }
 
 void SetSoundVolume(int newvol) {
-	if ((newvol < 0) | (newvol > 255))
+	if ((newvol < 0) || (newvol > 255))
 		quit("!SetSoundVolume: invalid volume - must be from 0-255");
 	_GP(play).sound_volume = newvol;
 	Game_SetAudioTypeVolume(AUDIOTYPE_LEGACY_AMBIENT_SOUND, (newvol * 100) / 255, VOL_BOTH);
@@ -346,7 +346,7 @@ void SetChannelVolume(int chan, int newvol) {
 }
 
 void SetDigitalMasterVolume(int newvol) {
-	if ((newvol < 0) | (newvol > 100))
+	if ((newvol < 0) || (newvol > 100))
 		quit("!SetDigitalMasterVolume: invalid volume - must be from 0-100");
 	_GP(play).digital_master_volume = newvol;
 #if !AGS_PLATFORM_SCUMMVM
@@ -364,15 +364,10 @@ void SetMusicRepeat(int loopflag) {
 }
 
 void PlayMP3File(const char *filename) {
-	if (strlen(filename) >= PLAYMP3FILE_MAX_FILENAME_LEN)
-		quit("!PlayMP3File: filename too long");
-
 	debug_script_log("PlayMP3File %s", filename);
 
 	AssetPath asset_name(filename, "audio");
-
-	int useChan = prepare_for_new_music();
-	bool doLoop = (_GP(play).music_repeat > 0);
+	const bool doLoop = (_GP(play).music_repeat > 0);
 
 	SOUNDCLIP *clip = my_load_ogg(asset_name, doLoop);
 	int sound_type = 0;
@@ -385,28 +380,18 @@ void PlayMP3File(const char *filename) {
 		sound_type = MUS_MP3;
 	}
 
-	if (clip) {
-		clip->set_volume255(150);
-		if (clip->play()) {
-			AudioChans::SetChannel(useChan, clip);
-			_G(current_music_type) = sound_type;
-			_GP(play).cur_music_number = 1000;
-			// save the filename (if it's not what we were supplied with)
-			if (filename != &_GP(play).playmp3file_name[0])
-				snprintf(_GP(play).playmp3file_name, sizeof(_GP(play).playmp3file_name), "%s", filename);
-		} else {
-			delete clip;
-			clip = nullptr;
-		}
-	}
-
 	if (!clip) {
-		AudioChans::SetChannel(useChan, nullptr);
-		debug_script_warn("PlayMP3File: file '%s' not found or cannot play", filename);
+		debug_script_warn("PlayMP3File: music file '%s' not found or be read", filename);
+		return;
 	}
 
+	const int use_chan = prepare_for_new_music();
+	_G(current_music_type) = sound_type;
+	_GP(play).cur_music_number = 1000;
+	_GP(play).playmp3file_name = filename;
+	clip->set_volume255(150);
+	AudioChans::SetChannel(use_chan, clip);
 	post_new_music_check();
-
 	update_music_volume();
 }
 
@@ -437,7 +422,7 @@ void PlaySilentMIDI(int mnum) {
 }
 
 void SetSpeechVolume(int newvol) {
-	if ((newvol < 0) | (newvol > 255))
+	if ((newvol < 0) || (newvol > 255))
 		quit("!SetSpeechVolume: invalid volume - must be from 0-255");
 
 	auto *ch = AudioChans::GetChannel(SCHAN_SPEECH);
@@ -447,7 +432,7 @@ void SetSpeechVolume(int newvol) {
 }
 
 void SetVoiceMode(int newmod) {
-	if ((newmod < kSpeech_First) | (newmod > kSpeech_Last))
+	if ((newmod < kSpeech_First) || (newmod > kSpeech_Last))
 		quitprintf("!SetVoiceMode: invalid mode number %d", newmod);
 	_GP(play).speech_mode = (SpeechMode)newmod;
 }
@@ -476,10 +461,10 @@ String get_cue_filename(int charid, int sndid) {
 	String script_name;
 	if (charid >= 0) {
 		// append the first 4 characters of the script name to the filename
-		if (_GP(game).chars[charid].scrname[0] == 'c')
-			script_name.SetString(&_GP(game).chars[charid].scrname[1], 4);
+		if (_GP(game).chars2[charid].scrname_new.GetAt(0) == 'c')
+			script_name.SetString(_GP(game).chars2[charid].scrname_new.GetCStr() + 1, 4);
 		else
-			script_name.SetString(_GP(game).chars[charid].scrname, 4);
+			script_name.SetString(_GP(game).chars2[charid].scrname_new.GetCStr(), 4);
 	} else {
 		script_name = "NARR";
 	}
@@ -569,7 +554,7 @@ bool play_voice_speech(int charid, int sndid) {
 	_G(curLipLine) = -1;  // See if we have voice lip sync for this line
 	_G(curLipLinePhoneme) = -1;
 	for (ii = 0; ii < _G(numLipLines); ii++) {
-		if (voice_file.CompareNoCase(_G(splipsync)[ii].filename) == 0) {
+		if (voice_file.CompareNoCase(_GP(splipsync)[ii].filename) == 0) {
 			_G(curLipLine) = ii;
 			break;
 		}

@@ -38,12 +38,16 @@
 #include <libgen.h>
 #endif
 
+#include <features/features_cpu.h> // cpu_features_get_time_usec()
+
 /**
  * Include base/internal_version.h to allow access to SCUMMVM_VERSION.
  * @see retro_get_system_info()
  */
 #define INCLUDED_FROM_BASE_VERSION_CPP
 #include "base/internal_version.h"
+
+#include "graphics/managed_surface.h"
 
 #include "backends/platform/libretro/include/libretro-defs.h"
 #include "backends/platform/libretro/include/libretro-core.h"
@@ -63,53 +67,52 @@ static retro_environment_t environ_cb = NULL;
 static retro_input_poll_t poll_cb = NULL;
 static int retro_input_device = RETRO_DEVICE_JOYPAD;
 
+// MIDI interface
+struct retro_midi_interface *retro_midi_interface = nullptr;
+
 // Default deadzone: 15%
 static int analog_deadzone = (int)(0.15f * ANALOG_RANGE);
 
 static float gamepad_cursor_speed = 1.0f;
 static bool analog_response_is_quadratic = false;
-static bool gamepad_cursor_only = false;
 
 static float mouse_speed = 1.0f;
 static float gamepad_acceleration_time = 0.2f;
 static int mouse_fine_control_speed_reduction = 4;
-
-static bool timing_inaccuracies_enabled = false;
+static int pointer_device = RETRO_DEVICE_JOYPAD; // default pointer/mouse device
 
 char cmd_params[20][200];
 char cmd_params_num;
 
 static uint8 video_hw_mode = 0;
 
-static uint32 current_frame = 0;
-static uint8 frameskip_no;
-static uint8 frameskip_type;
-static uint8 frameskip_threshold;
-static uint32 frameskip_counter = 0;
-static uint8 frameskip_events = 0;
+static unsigned base_width = RES_W_OVERLAY;
+static unsigned base_height = RES_H_OVERLAY;
+static unsigned gui_width = RES_W_OVERLAY;
+static unsigned gui_height = RES_H_OVERLAY;
+static unsigned max_width = RES_INIT_MAX_W;
+static unsigned max_height = RES_INIT_MAX_H;
 
-static uint8 audio_status = AUDIO_STATUS_MUTE;
-
-static unsigned retro_audio_buff_occupancy = 0;
-static uint8 retro_audio_buff_underrun_threshold = 25;
+static uint16 av_status = AUDIO_STATUS_MUTE;
 
 static float frame_rate = 0;
 static uint16 sample_rate = 0;
 static float audio_samples_per_frame   = 0.0f; // length in samples per frame
 static float audio_samples_accumulator = 0.0f;
+static retro_time_t audio_last_time_usec = 0; // timestamp of the previous audio_run()
 
 static int16 *audio_sample_buffer = NULL; // pointer to output buffer
 
 static bool input_bitmask_supported = false;
 static bool updating_variables = false;
-static int opt_frameskip_threshold_display = 0;
-static int opt_frameskip_no_display = 0;
 
 #ifdef USE_OPENGL
 static struct retro_hw_render_callback hw_render;
 
 static void context_reset(void) {
 	retro_log_cb(RETRO_LOG_DEBUG, "HW context reset\n");
+	if (retro_emu_thread_started())
+		LIBRETRO_G_SYSTEM->resetGraphicsContext();
 }
 
 static void context_destroy(void) {
@@ -125,6 +128,20 @@ void *retro_get_proc_address(const char *name) {
 }
 #endif
 
+#ifdef USE_HIGHRES
+static void retro_gui_res_reset() {
+	if (retro_emu_thread_started()) {
+		LIBRETRO_G_SYSTEM->beginGFXTransaction();
+		LIBRETRO_G_SYSTEM->initSize(0, 0, nullptr);
+		LIBRETRO_G_SYSTEM->endGFXTransaction();
+	}
+}
+#endif
+
+static retro_midi_event_t midi_queue[MIDI_QUEUE_SIZE];
+static volatile uint32 midi_head = 0; /* producer writes */
+static volatile uint32 midi_tail = 0; /* consumer writes */
+
 static void setup_hw_rendering(void) {
 
 	enum retro_pixel_format pixel_fmt;
@@ -135,7 +152,7 @@ static void setup_hw_rendering(void) {
 			retro_log_cb(RETRO_LOG_WARN, "RETRO_PIXEL_FORMAT_XRGB8888 not supported.\n");
 		hw_render.context_reset = context_reset;
 		hw_render.context_destroy = context_destroy;
-		hw_render.cache_context = true;
+		hw_render.cache_context = false;
 		hw_render.bottom_left_origin = true;
 #if defined(HAVE_OPENGL)
 		hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
@@ -177,6 +194,7 @@ static void log_scummvm_exit_code(void) {
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	audio_samples_accumulator = 0.0f;
+	audio_last_time_usec      = cpu_features_get_time_usec();
 	audio_samples_per_frame   = (float)sample_rate / (float)frame_rate;
 	uint32 audio_sample_buffer_size  = ((uint32)retro_setting_get_audio_samples_buffer_size()) * 2 * sizeof(int16);
 	audio_sample_buffer       = audio_sample_buffer ? (int16 *)realloc(audio_sample_buffer, audio_sample_buffer_size) : (int16 *)malloc(audio_sample_buffer_size);
@@ -191,18 +209,32 @@ static void audio_run(void) {
 	int16 *audio_buffer_ptr;
 	uint32 samples_to_read;
 	uint32 samples_produced;
+	uint16 samples_buffer_size = retro_setting_get_audio_samples_buffer_size();
 
-	/* Audio_samples_per_frame is decimal;
-	 * get integer component */
-	samples_to_read = (uint32)audio_samples_per_frame;
+	/* Pace audio against elapsed wall time instead of a fixed sample_rate/frame_rate
+	 * batch, so output stays at sample_rate even when the frontend runs retro_run()
+	 * above or below frame_rate (a slow frontend would otherwise underrun the audio
+	 * buffer). Video stays frame-locked. */
+	retro_time_t now_usec = cpu_features_get_time_usec();
+	float samples_target = (float)sample_rate * (float)(now_usec - audio_last_time_usec) / 1000000.0f;
+	audio_last_time_usec = now_usec;
+
+	/* Samples_target is decimal; get integer component */
+	samples_to_read = (uint32)samples_target;
 
 	/* Account for fractional component */
-	audio_samples_accumulator += audio_samples_per_frame - (float)samples_to_read;
+	audio_samples_accumulator += samples_target - (float)samples_to_read;
 
 	if (audio_samples_accumulator >= 1.0f) {
 		samples_to_read++;
 		audio_samples_accumulator -= 1.0f;
 	}
+
+	/* Bound the batch to the mix buffer: after a long stall (content load,
+	 * save-state) the elapsed interval would otherwise request a multi-second
+	 * batch and overrun audio_sample_buffer. */
+	if (samples_to_read > samples_buffer_size)
+		samples_to_read = samples_buffer_size;
 
 	samples_produced = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) audio_sample_buffer, samples_to_read * 2 * sizeof(int16));
 
@@ -217,9 +249,9 @@ static void audio_run(void) {
 	}
 
 	if (samples_produced)
-		audio_status &= ~AUDIO_STATUS_MUTE;
+		av_status &= ~AUDIO_STATUS_MUTE;
 	else {
-		audio_status |= AUDIO_STATUS_MUTE;
+		av_status |= AUDIO_STATUS_MUTE;
 		return;
 	}
 
@@ -238,20 +270,6 @@ static void audio_run(void) {
 	}
 }
 
-static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool underrun_likely) {
-	if (active)
-		audio_status |= AUDIO_STATUS_BUFFER_ACTIVE;
-	else
-		audio_status &= ~AUDIO_STATUS_BUFFER_ACTIVE;
-
-	if (occupancy < retro_audio_buff_underrun_threshold)
-		audio_status |= AUDIO_STATUS_BUFFER_UNDERRUN;
-	else if (occupancy > (retro_audio_buff_underrun_threshold << 2))
-		audio_status &= ~AUDIO_STATUS_BUFFER_UNDERRUN;
-
-	retro_audio_buff_occupancy = occupancy;
-}
-
 void retro_osd_notification(const char *msg) {
 	if (!msg || *msg == '\0')
 		return;
@@ -267,12 +285,16 @@ static void update_variables(void) {
 	struct retro_variable var;
 	updating_variables = true;
 
-	var.key = "scummvm_gamepad_cursor_only";
+	var.key = "scummvm_pointer_device";
 	var.value = NULL;
-	gamepad_cursor_only = false;
+	pointer_device = RETRO_DEVICE_JOYPAD;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		if (strcmp(var.value, "enabled") == 0)
-			gamepad_cursor_only = true;
+		if (strcmp(var.value, "mouse") == 0)
+			pointer_device = RETRO_DEVICE_MOUSE;
+		else if (strcmp(var.value, "pointer") == 0)
+			pointer_device = RETRO_DEVICE_POINTER;
+		/* else if (strcmp(var.value, "retropad") == 0)
+			pointer_device = RETRO_DEVICE_JOYPAD; */
 	}
 
 	var.key = "scummvm_gamepad_cursor_speed";
@@ -317,14 +339,6 @@ static void update_variables(void) {
 		mouse_fine_control_speed_reduction = (int)atoi(var.value);
 	}
 
-	var.key = "scummvm_allow_timing_inaccuracies";
-	var.value = NULL;
-	timing_inaccuracies_enabled = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		if (strcmp(var.value, "enabled") == 0)
-			timing_inaccuracies_enabled = true;
-	}
-
 	var.key = "scummvm_framerate";
 	var.value = NULL;
 	float old_frame_rate = frame_rate;
@@ -348,36 +362,6 @@ static void update_variables(void) {
 		sample_rate = atoi(sample_rate_var);
 	} else
 		sample_rate = DEFAULT_SAMPLE_RATE;
-
-	var.key = "scummvm_frameskip_threshold";
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		frameskip_threshold = (uint8)strtol(var.value, NULL, 10);
-	}
-
-	var.key = "scummvm_frameskip_no";
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		frameskip_no = (uint8)strtol(var.value, NULL, 10) + 1;
-	}
-
-	var.key = "scummvm_frameskip_type";
-	var.value = NULL;
-	uint8 old_frameskip_type = frameskip_type;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		opt_frameskip_threshold_display = 0;
-		opt_frameskip_no_display = 0;
-
-		if (strcmp(var.value, "disabled") == 0)
-			frameskip_type = 0;
-		else if (strcmp(var.value, "fixed") == 0) {
-			frameskip_type = 1;
-			opt_frameskip_no_display = 1;
-		} else if (strcmp(var.value, "auto") == 0)
-			frameskip_type = 2;
-		else if (strcmp(var.value, "manual") == 0) {
-			frameskip_type = 3;
-			opt_frameskip_threshold_display = 1;
-		}
-	}
 
 	var.key = "scummvm_mapper_up";
 	var.value = NULL;
@@ -541,21 +525,35 @@ static void update_variables(void) {
 		}
 	}
 
-	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
-		if (frameskip_type > 1) {
-			retro_log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
-			retro_osd_notification("Selected frameskip mode not available");
-			frameskip_type = 0;
-		}
+#ifdef USE_HIGHRES
+	var.key = "scummvm_gui_h_res";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		uint16 new_gui_height = (int)atoi(var.value);
+		av_status |= new_gui_height != gui_height && LIBRETRO_G_SYSTEM && LIBRETRO_G_SYSTEM->inLauncher() ? AV_STATUS_UPDATE_GUI : 0;
+		gui_height = new_gui_height;
 	}
 
-	if (old_frameskip_type != frameskip_type || old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
-		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
-		if (old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
-			audio_buffer_init(sample_rate, (uint16) frame_rate);
-			if (g_system)
-				audio_status |= AUDIO_STATUS_UPDATE_AV_INFO;
+	var.key = "scummvm_gui_aspect_ratio";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		uint8 num = 4;
+		uint8 den = 3;
+		if (atoi(var.value)) {
+			num = 16;
+			den = 9;
 		}
+		uint16 new_gui_width = gui_height * num / den + (gui_height * num % den != 0);
+		av_status |= (new_gui_width != gui_width) && LIBRETRO_G_SYSTEM && LIBRETRO_G_SYSTEM->inLauncher() ? AV_STATUS_UPDATE_GUI : 0;
+		gui_width = new_gui_width;
+	}
+#endif
+
+	if (old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
+		av_status |= AUDIO_STATUS_UPDATE_LATENCY;
+		audio_buffer_init(sample_rate, (uint16) frame_rate);
+		if (g_system)
+			av_status |= (AV_STATUS_UPDATE_AV_INFO & AV_STATUS_RESET_PENDING);
 	}
 
 	if (video_hw_mode & VIDEO_GRAPHIC_MODE_RESET_PENDING) {
@@ -571,7 +569,7 @@ static void update_variables(void) {
 }
 
 static void retro_set_options_display(void) {
-	struct retro_core_option_display option_display;
+	/*struct retro_core_option_display option_display;
 
 	option_display.visible = opt_frameskip_threshold_display;
 	option_display.key = "scummvm_frameskip_threshold";
@@ -579,7 +577,7 @@ static void retro_set_options_display(void) {
 
 	option_display.visible = opt_frameskip_no_display;
 	option_display.key = "scummvm_frameskip_no";
-	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);
+	environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY, &option_display);*/
 }
 
 static bool retro_update_options_display(void) {
@@ -594,14 +592,6 @@ static bool retro_update_options_display(void) {
 		retro_set_options_display();
 	}
 	return updated;
-}
-
-bool retro_setting_get_timing_inaccuracies_enabled() {
-	return timing_inaccuracies_enabled;
-}
-
-bool retro_setting_get_gamepad_cursor_only(void) {
-	return gamepad_cursor_only;
 }
 
 int retro_setting_get_analog_deadzone(void) {
@@ -628,8 +618,20 @@ float retro_setting_get_gamepad_acceleration_time(void) {
 	return gamepad_acceleration_time;
 }
 
+int retro_setting_get_pointer_device(void) {
+	return pointer_device;
+}
+
 float retro_setting_get_frame_rate(void) {
 	return frame_rate;
+}
+
+int retro_setting_get_gui_res_w(void) {
+	return gui_width;
+}
+
+int retro_setting_get_gui_res_h(void) {
+	return gui_height;
 }
 
 bool retro_get_input_bitmask_supported(void) {
@@ -640,17 +642,25 @@ uint16 retro_setting_get_sample_rate(void) {
 	return sample_rate;
 }
 
+
+static uint32 next_pow2(uint32 x) {
+	if (x <= 1) return 1;
+	x--;
+	x |= x >> 1; x |= x >> 2; x |= x >> 4;
+	x |= x >> 8; x |= x >> 16;
+	return x + 1;
+}
+
 uint16 retro_setting_get_audio_samples_buffer_size(void) {
 	/* ScummVM audio buffer size is normally between 512 and 8192, but the value
 	must be one of: 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768. */
-	uint16 v = audio_samples_per_frame--;
-	v |= v >> 1;
-	v |= v >> 2;
-	v |= v >> 4;
-	v |= v >> 8;
-	v |= v >> 16;
-
-	return ++v;
+	static const uint16 allowed[] = {256,512,1024,2048,4096,8192,16384,32768};
+	uint32 target = (uint32)(audio_samples_per_frame * 2.0f + 0.5f); // stereo
+	uint32 pow2   = next_pow2(target);
+	for (uint16 v : allowed) {
+		if (pow2 <= v) return v;
+	}
+	return allowed[sizeof(allowed)/sizeof(allowed[0])];
 }
 
 void init_command_params(void) {
@@ -707,7 +717,7 @@ static void exit_to_frontend(void) {
 }
 
 static void close_emu_thread(void) {
-	while (!retro_emu_thread_exited()) {
+	while (retro_emu_thread_started() && !retro_emu_thread_exited()) {
 		LIBRETRO_G_SYSTEM->requestQuit();
 		retro_switch_to_emu_thread();
 	}
@@ -814,12 +824,26 @@ void retro_get_system_info(struct retro_system_info *info) {
 	info->block_extract = false;
 }
 
+void retro_set_size(unsigned width, unsigned height) {
+	if (base_width == width && base_height == height) {
+		return;
+	} else if (width > max_width || height > max_height) {
+		max_width = width;
+		max_height = height;
+		av_status |= AV_STATUS_UPDATE_AV_INFO;
+	} else
+		av_status |= AV_STATUS_UPDATE_GEOMETRY;
+
+	base_width = width;
+	base_height = height;
+}
+
 void retro_get_system_av_info(struct retro_system_av_info *info) {
-	info->geometry.base_width = RES_W;
-	info->geometry.base_height = RES_H;
-	info->geometry.max_width = RES_W;
-	info->geometry.max_height = RES_H;
-	info->geometry.aspect_ratio = 4.0f / 3.0f;
+	info->geometry.base_width = base_width;
+	info->geometry.base_height = base_height;
+	info->geometry.max_width = max_width;
+	info->geometry.max_height = max_height;
+	info->geometry.aspect_ratio = (float)base_width / (float)base_height;
 	info->timing.fps = frame_rate;
 	info->timing.sample_rate = sample_rate;
 }
@@ -856,6 +880,41 @@ const char *retro_get_playlist_dir(void) {
 	return playlistdir;
 }
 
+void retro_midi_queue_push(uint8 byte, uint32 delta_us) {
+	uint32 next = (midi_head + 1) & (MIDI_QUEUE_SIZE - 1);
+
+	if (next == midi_tail) {
+		/* Queue full → drop event (acceptable for MIDI) */
+		return;
+	}
+
+	midi_queue[midi_head].byte     = byte;
+	midi_queue[midi_head].delta_us = delta_us;
+	midi_head = next;
+}
+
+static void retro_midi_queue_drain(void) {
+	if (!retro_midi_interface)
+		return;
+	if (!retro_midi_interface->output_enabled)
+		return;
+	if (!retro_midi_interface->output_enabled())
+		return;
+
+	bool did_write = false;
+
+	while (midi_tail != midi_head) {
+		retro_midi_event_t ev = midi_queue[midi_tail];
+		midi_tail = (midi_tail + 1) & (MIDI_QUEUE_SIZE - 1);
+
+		retro_midi_interface->write(ev.byte, ev.delta_us);
+		did_write = true;
+	}
+
+	if (did_write)
+		retro_midi_interface->flush();
+}
+
 void retro_init(void) {
 	struct retro_log_callback log;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
@@ -863,13 +922,12 @@ void retro_init(void) {
 	else
 		retro_log_cb = NULL;
 
-	retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
-
-	struct retro_audio_buffer_status_callback buf_status_cb;
-	buf_status_cb.callback = retro_audio_buff_status_cb;
-	audio_status = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, &buf_status_cb) ? (audio_status | AUDIO_STATUS_BUFFER_SUPPORT) : (audio_status & ~AUDIO_STATUS_BUFFER_SUPPORT);
+	if (retro_log_cb)
+		retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
 
 	update_variables();
+	max_width = gui_width > max_width ? gui_width : max_width;
+	max_height = gui_height > max_height ? gui_height : max_height;
 
 	retro_set_options_display();
 
@@ -886,6 +944,18 @@ void retro_init(void) {
 
 	if (environ_cb(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS, NULL))
 		input_bitmask_supported = true;
+
+	// Initialize MIDI interface
+	static struct retro_midi_interface midi_interface;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_MIDI_INTERFACE, &midi_interface)) {
+		retro_midi_interface = &midi_interface;
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_INFO, "MIDI interface initialized\n");
+	} else {
+		retro_midi_interface = nullptr;
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_INFO, "MIDI interface unavailable\n");
+	}
 
 	g_system = new OSystem_libretro();
 }
@@ -1037,28 +1107,38 @@ void retro_run(void) {
 	except in case of core options reset to defaults, for which the following call is needed*/
 	retro_update_options_display();
 
-	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO) {
+#ifdef USE_HIGHRES
+	if (av_status & AV_STATUS_UPDATE_GUI) {
+		retro_gui_res_reset();
+		av_status &= ~AV_STATUS_UPDATE_GUI;
+	}
+#endif
+
+	if (av_status & (AV_STATUS_UPDATE_AV_INFO | AV_STATUS_UPDATE_GEOMETRY)) {
 		struct retro_system_av_info info;
 		retro_get_system_av_info(&info);
-		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
+		if (av_status & AV_STATUS_UPDATE_AV_INFO)
+			environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &info);
+		else
+			environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &info);
+
+		av_status &= ~(AV_STATUS_UPDATE_AV_INFO | AV_STATUS_UPDATE_GEOMETRY);
 	}
 
-	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY) {
+	if (av_status & AUDIO_STATUS_UPDATE_LATENCY) {
 		uint32 audio_latency;
 		float frame_time_msec = 1000.0f / frame_rate;
 
 		audio_latency = (uint32)((8.0f * frame_time_msec) + 0.5f);
 		audio_latency = (audio_latency + 0x1F) & ~0x1F;
 
-		retro_audio_buff_underrun_threshold = frame_time_msec * 100 / audio_latency;
-
 		/* This can only be called from within retro_run() */
 		environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY, &audio_latency);
-		audio_status &= ~AUDIO_STATUS_UPDATE_LATENCY;
+		av_status &= ~AUDIO_STATUS_UPDATE_LATENCY;
 	}
 
-	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO) {
-		audio_status &= ~AUDIO_STATUS_UPDATE_AV_INFO;
+	if (av_status & AV_STATUS_RESET_PENDING) {
+		av_status &= ~AV_STATUS_RESET_PENDING;
 		retro_reset();
 		return;
 	}
@@ -1067,32 +1147,7 @@ void retro_run(void) {
 	int audio_video_enable = 0;
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable);
 
-	bool skip_frame = false;
-
 	if (g_system) {
-
-		/* Determine frameskip need based on settings */
-		if (frameskip_type == 2)
-			skip_frame = ((audio_status & (AUDIO_STATUS_BUFFER_UNDERRUN | AUDIO_STATUS_BUFFER_ACTIVE)) == (AUDIO_STATUS_BUFFER_UNDERRUN | AUDIO_STATUS_BUFFER_ACTIVE));
-		else if (frameskip_type == 1)
-			skip_frame = !(current_frame % frameskip_no == 0);
-		else if (frameskip_type == 3)
-			skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
-
-		/* No frame skipping if
-		- no incoming audio (e.g. GUI)
-		- doing a THREAD_SWITCH_UPDATE loop */
-		skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE);
-
-		/* Reset frameskip counter if not flagged */
-		if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
-			retro_log_cb(RETRO_LOG_DEBUG, "%d frame(s) skipped (%ld)\n", frameskip_counter, current_frame);
-			skip_frame = false;
-			frameskip_counter = 0;
-			/* Keep on skipping frames if flagged */
-		} else if (skip_frame)
-			frameskip_counter++;
-
 		/* Switch to ScummVM thread */
 		retro_switch_to_emu_thread();
 
@@ -1106,9 +1161,9 @@ void retro_run(void) {
 			audio_run();
 
 		/* Retrieve video */
-		if (!skip_frame && (audio_video_enable & 1)) {
+		if (audio_video_enable & 1) {
 			if (video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_SW) {
-				const Graphics::Surface *screen;
+				const Graphics::ManagedSurface *screen;
 				LIBRETRO_G_SYSTEM->getScreen(screen);
 				video_cb(screen->getPixels(), screen->w, screen->h, screen->pitch);
 			} else
@@ -1116,11 +1171,11 @@ void retro_run(void) {
 
 		}
 
-		current_frame++;
-
 		poll_cb();
 		LIBRETRO_G_SYSTEM->processInputs();
 	}
+
+	retro_midi_queue_drain();
 }
 
 void retro_unload_game(void) {

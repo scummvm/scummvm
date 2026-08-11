@@ -23,9 +23,9 @@
 #include "backends/cloud/googledrive/googledrivestorage.h"
 #include "backends/cloud/iso8601.h"
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/formats/json.h"
 #include "googledrivetokenrefresher.h"
 
@@ -114,11 +114,11 @@ void GoogleDriveUploadRequest::startUpload() {
 
 	Common::String url = GOOGLEDRIVE_API_FILES;
 	if (_resolvedId != "")
-		url += "/" + ConnMan.urlEncode(_resolvedId);
+		url += "/" + Common::percentEncodeString(_resolvedId);
 	url += "?uploadType=resumable&fields=id,mimeType,modifiedTime,name,size";
 	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, const Networking::JsonResponse &>(this, &GoogleDriveUploadRequest::startUploadCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, const Networking::ErrorResponse &>(this, &GoogleDriveUploadRequest::startUploadErrorCallback);
-	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
+	Networking::HttpJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
 	if (_resolvedId != "")
@@ -146,7 +146,7 @@ void GoogleDriveUploadRequest::startUploadCallback(const Networking::JsonRespons
 		return;
 
 	Networking::ErrorResponse error(this, false, true, "GoogleDriveUploadRequest::startUploadCallback", -1);
-	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
+	const Networking::HttpJsonRequest *rq = (const Networking::HttpJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
@@ -191,7 +191,7 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 
 	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, const Networking::JsonResponse &>(this, &GoogleDriveUploadRequest::partUploadedCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, const Networking::ErrorResponse &>(this, &GoogleDriveUploadRequest::partUploadedErrorCallback);
-	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
+	Networking::HttpJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->usePut();
 
@@ -252,7 +252,7 @@ void GoogleDriveUploadRequest::partUploadedCallback(const Networking::JsonRespon
 		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
-	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
+	const Networking::HttpJsonRequest *rq = (const Networking::HttpJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
@@ -283,17 +283,17 @@ void GoogleDriveUploadRequest::partUploadedCallback(const Networking::JsonRespon
 			return;
 		}
 
-		if (Networking::CurlJsonRequest::jsonContainsString(object, "id", "GoogleDriveUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsString(object, "name", "GoogleDriveUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsString(object, "mimeType", "GoogleDriveUploadRequest")) {
+		if (Networking::HttpJsonRequest::jsonContainsString(object, "id", "GoogleDriveUploadRequest") &&
+			Networking::HttpJsonRequest::jsonContainsString(object, "name", "GoogleDriveUploadRequest") &&
+			Networking::HttpJsonRequest::jsonContainsString(object, "mimeType", "GoogleDriveUploadRequest")) {
 			//finished
 			Common::String id = object.getVal("id")->asString();
 			Common::String name = object.getVal("name")->asString();
 			bool isDirectory = (object.getVal("mimeType")->asString() == "application/vnd.google-apps.folder");
 			uint32 size = 0, timestamp = 0;
-			if (Networking::CurlJsonRequest::jsonContainsString(object, "size", "GoogleDriveUploadRequest", true))
+			if (Networking::HttpJsonRequest::jsonContainsString(object, "size", "GoogleDriveUploadRequest", true))
 				size = object.getVal("size")->asString().asUint64();
-			if (Networking::CurlJsonRequest::jsonContainsString(object, "modifiedTime", "GoogleDriveUploadRequest", true))
+			if (Networking::HttpJsonRequest::jsonContainsString(object, "modifiedTime", "GoogleDriveUploadRequest", true))
 				timestamp = ISO8601::convertToTimestamp(object.getVal("modifiedTime")->asString());
 
 			finishUpload(StorageFile(id, _savePath, name, size, timestamp, isDirectory));
@@ -316,7 +316,7 @@ void GoogleDriveUploadRequest::partUploadedErrorCallback(const Networking::Error
 	if (_ignoreCallback)
 		return;
 
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)error.request;
+	Networking::HttpJsonRequest *rq = (Networking::HttpJsonRequest *)error.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {

@@ -54,7 +54,7 @@ public:
 
 	bool loadPlugin() override {
 		assert(!_dlHandle);
-		TCHAR *tFilename = Win32::stringToTchar(_filename);
+		TCHAR *tFilename = Win32::stringToTchar(_filename.toString(Common::Path::kNativeSeparator));
 		_dlHandle = LoadLibrary(tFilename);
 		free(tFilename);
 

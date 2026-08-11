@@ -19,12 +19,9 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include <curl/curl.h>
 #include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/box/boxstorage.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/debug.h"
 #include "common/formats/json.h"
 
@@ -32,7 +29,7 @@ namespace Cloud {
 namespace Box {
 
 BoxTokenRefresher::BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url):
-	CurlJsonRequest(callback, ecb, url), _parentStorage(parent) {}
+	HttpJsonRequest(callback, ecb, url), _parentStorage(parent) {}
 
 BoxTokenRefresher::~BoxTokenRefresher() {}
 
@@ -45,12 +42,11 @@ void BoxTokenRefresher::tokenRefreshed(const Storage::BoolResponse &response) {
 	}
 
 	//update headers: first change header with token, then pass those to request
-	for (uint32 i = 0; i < _headers.size(); ++i) {
-		if (_headers[i].contains("Authorization")) {
-			_headers[i] = "Authorization: Bearer " + _parentStorage->accessToken();
+	for (uint32 i = 0; i < _headersList.size(); ++i) {
+		if (_headersList[i].contains("Authorization")) {
+			_headersList[i] = "Authorization: Bearer " + _parentStorage->accessToken();
 		}
 	}
-	setHeaders(_headers);
 
 	//successfully received refreshed token, can restart the original request now
 	retry(0);
@@ -59,7 +55,7 @@ void BoxTokenRefresher::tokenRefreshed(const Storage::BoolResponse &response) {
 void BoxTokenRefresher::finishJson(const Common::JSONValue *json) {
 	if (!json) {
 		//that's probably not an error (200 OK)
-		CurlJsonRequest::finishJson(nullptr);
+		HttpJsonRequest::finishJson(nullptr);
 		return;
 	}
 
@@ -104,7 +100,7 @@ void BoxTokenRefresher::finishJson(const Common::JSONValue *json) {
 	}
 
 	//notify user of success
-	CurlJsonRequest::finishJson(json);
+	HttpJsonRequest::finishJson(json);
 }
 
 void BoxTokenRefresher::finishError(const Networking::ErrorResponse &error, Networking::RequestState state) {
@@ -118,19 +114,6 @@ void BoxTokenRefresher::finishError(const Networking::ErrorResponse &error, Netw
 	// but TokenRefresher is there to refresh token when it's invalid only
 
 	Request::finishError(error);
-}
-
-void BoxTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
-	_headers = headers;
-	curl_slist_free_all(_headersList);
-	_headersList = nullptr;
-	for (uint32 i = 0; i < headers.size(); ++i)
-		CurlJsonRequest::addHeader(headers[i]);
-}
-
-void BoxTokenRefresher::addHeader(const Common::String  &header) {
-	_headers.push_back(header);
-	CurlJsonRequest::addHeader(header);
 }
 
 } // End of namespace Box

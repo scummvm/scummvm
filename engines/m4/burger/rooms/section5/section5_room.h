@@ -42,6 +42,7 @@ protected:
 
 public:
 	Section5Room() : Rooms::Room() {
+		_borkHotspot.clear();
 	}
 	~Section5Room() override {}
 

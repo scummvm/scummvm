@@ -36,7 +36,7 @@ namespace Wintermute {
 class SXObject : public BaseObject {
 public:
 	DECLARE_PERSISTENT(SXObject, BaseObject)
-	SXObject(BaseGame *inGame, ScStack *Stack);
+	SXObject(BaseGame *inGame, ScStack *stack);
 	~SXObject() override;
 };
 

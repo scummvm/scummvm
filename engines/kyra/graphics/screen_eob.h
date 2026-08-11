@@ -102,11 +102,12 @@ public:
 	int getRectSize(int w, int h) override;
 
 	void setFadeTable(const uint8 *table);
-	void createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
-	void createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16 rootColor, uint8 weight);
+	void createColorFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
+	void createHiColorFadeTable(const uint16 *palData, void *dst, uint8 rootColor, uint8 weight);
 
-	const uint16 *getCGADitheringTable(int index);
-	const uint8 *getEGADitheringTable();
+	const uint16 *getCGADitheringTable(int index) const;
+	const uint8 *getEGADitheringTable() const;
+	int bytesPerPixel() const;
 
 	bool loadFont(FontId fontId, const char *filename) override;
 
@@ -165,20 +166,23 @@ private:
 	void updateDirtyRects() override;
 	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
 
-	void drawShapeSetPixel(uint8 *dst, uint8 col);
+	template<typename pixelType	, bool shapeFading>	void drawShapeSetPixel(uint8 *dst, uint8 col);
 	void scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc);
 	void scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src);
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
 
-	void setPagePixel16bit(int pageNum, int x, int y, uint16 color);
+	void setPagePixelHiCol(int pageNum, int x, int y, int color);
 
 	void generateEGADitheringTable(const Palette &pal);
 	void generateCGADitheringTables(const uint8 *mappingData);
 
+	typedef void (Screen_EoB::*DrawShapePlotFunc)(uint8*, uint8);
+	DrawShapePlotFunc _drawShapeSetPixel;
+
 	int _dsDiv, _dsRem, _dsScaleTrans;
 	uint8 *_cgaScaleTable;
 	int16 _gfxX, _gfxY;
-	uint16 _gfxCol;
+	int _gfxCol;
 	const uint8 *_gfxMaxY;
 
 	int16 _dsX1, _dsX2, _dsY1, _dsY2;
@@ -189,7 +193,7 @@ private:
 
 	uint8 *_dsTempPage;
 	uint8 *_shpBuffer;
-	uint8 *_convertHiColorBuffer;
+	uint8 *_hiColorConvertBuffer;
 
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;
@@ -199,7 +203,7 @@ private:
 
 	Common::String _cpsFilePattern;
 
-	const uint16 _cursorColorKey16Bit;
+	const uint16 _hiColorCursorColorKey;
 
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTableIntl[];
@@ -273,7 +277,7 @@ public:
 	bool usesOverlay() const override { return _useOverlay; }
 	int getCharWidth(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
-	void set16bitColorMap(const uint16 *src) override { _colorMap16bit = src; }
+	void setHiColorMap(const uint32 *src) override { _hiColorMap = src; }
 	void setStyles(int styles) override { _style = styles; }
 	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const override;
 
@@ -296,7 +300,7 @@ private:
 	void drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col1, int col2) const;
 	virtual uint16 convert(uint16 c) const;
 	Common::RenderMode _renderMode;
-	const uint16 *_colorMap16bit;
+	const uint32 *_hiColorMap;
 	bool _remapCharacters;
 
 	static uint16 *_cgaDitheringTable;

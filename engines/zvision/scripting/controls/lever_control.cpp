@@ -19,21 +19,19 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#include "zvision/scripting/controls/lever_control.h"
-
-#include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-#include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "common/stream.h"
+#include "common/debug.h"
 #include "common/file.h"
-#include "common/tokenizer.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
 #include "common/system.h"
+#include "common/tokenizer.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
+#include "zvision/zvision.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/scripting/controls/lever_control.h"
 
 namespace ZVision {
 
@@ -63,14 +61,12 @@ LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("descfile", true)) {
 			char levFileName[25];
-			sscanf(values.c_str(), "%24s", levFileName);
-
-			parseLevFile(levFileName);
+			if (sscanf(values.c_str(), "%24s", levFileName) == 1)
+				parseLevFile(levFileName);
 		} else if (param.matchString("cursor", true)) {
 			char cursorName[25];
-			sscanf(values.c_str(), "%24s", cursorName);
-
-			_cursor = _engine->getCursorManager()->getCursorId(Common::String(cursorName));
+			if (sscanf(values.c_str(), "%24s", cursorName) == 1)
+				_cursor = _engine->getCursorManager()->getCursorId(Common::String(cursorName));
 		}
 
 		line = stream.readLine();
@@ -89,8 +85,9 @@ LeverControl::~LeverControl() {
 }
 
 void LeverControl::parseLevFile(const Common::Path &fileName) {
+	debugC(2, kDebugControl, "LeverControl::parseLevFile(%s)", fileName.toString().c_str());
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+	if (!file.open(fileName)) {
 		warning("LEV file %s could could be opened", fileName.toString().c_str());
 		return;
 	}
@@ -99,47 +96,48 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 	Common::String param;
 	Common::String values;
 
+	int id = 0;
+
 	while (!file.eos()) {
 		line = file.readLine();
 		getLevParams(line, param, values);
 
 		if (param.matchString("animation_id", true)) {
-			// Not used
+			sscanf(values.c_str(), "%d", &id);
+			debugC(2, kDebugControl, "Lever animation ID: %d", id);
 		} else if (param.matchString("filename", true)) {
 			_animation = _engine->loadAnimation(Common::Path(values));
 		} else if (param.matchString("skipcolor", true)) {
 			// Not used
 		} else if (param.matchString("anim_coords", true)) {
 			int left, top, right, bottom;
-			sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom);
-
-			_animationCoords.left = left;
-			_animationCoords.top = top;
-			_animationCoords.right = right;
-			_animationCoords.bottom = bottom;
+			if (sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom) == 4) {
+				_animationCoords.left = left;
+				_animationCoords.top = top;
+				_animationCoords.right = right;
+				_animationCoords.bottom = bottom;
+			}
 		} else if (param.matchString("mirrored", true)) {
 			uint mirrored;
-			sscanf(values.c_str(), "%u", &mirrored);
-
-			_mirrored = mirrored == 0 ? false : true;
+			if (sscanf(values.c_str(), "%u", &mirrored) == 1)
+				_mirrored = mirrored == 0 ? false : true;
 		} else if (param.matchString("frames", true)) {
-			sscanf(values.c_str(), "%u", &_frameCount);
-
-			_frameInfo = new FrameInfo[_frameCount];
+			if (sscanf(values.c_str(), "%u", &_frameCount) == 1)
+				_frameInfo = new FrameInfo[_frameCount];
 		} else if (param.matchString("elsewhere", true)) {
 			// Not used
 		} else if (param.matchString("out_of_control", true)) {
 			// Not used
 		} else if (param.matchString("start_pos", true)) {
-			sscanf(values.c_str(), "%u", &_startFrame);
-			_currentFrame = _startFrame;
+			if (sscanf(values.c_str(), "%u", &_startFrame) == 1)
+				_currentFrame = _startFrame;
 		} else if (param.matchString("hotspot_deltas", true)) {
 			uint x;
 			uint y;
-			sscanf(values.c_str(), "%u %u", &x, &y);
-
-			_hotspotDelta.x = x;
-			_hotspotDelta.y = y;
+			if (sscanf(values.c_str(), "%u %u", &x, &y) == 2) {
+				_hotspotDelta.x = x;
+				_hotspotDelta.y = y;
+			}
 		} else if (param.matchString("venus_id", true)) {
 			_venusId = atoi(values.c_str());
 		} else {
@@ -166,9 +164,8 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 
 					uint angle;
 					uint toFrame;
-					sscanf(token.c_str(), "%u,%u", &toFrame, &angle);
-
-					_frameInfo[frameNumber].directions.push_back(Direction(angle, toFrame));
+					if (sscanf(token.c_str(), "%u,%u", &toFrame, &angle) == 2)
+						_frameInfo[frameNumber].paths.push_back(PathSegment(angle, toFrame));
 				} else if (token.hasPrefix("p")) {
 					// Format: P(<from> to <to>)
 					tokenizer.nextToken();
@@ -185,6 +182,32 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 
 		// Don't read lines in this place because last will not be parsed.
 	}
+	// WORKAROUND for a script bug in Zork: Nemesis, room tz2e (orrery)
+	// Animation coordinates for left hand lever do not properly align with background image
+	switch (id) {
+	case 2926:
+		_animationCoords.bottom -= 4;
+		_animationCoords.right += 1;
+		_animationCoords.left -= 1;
+		_animationCoords.top += 1;
+		break;
+	default:
+		break;
+	}
+
+	// Cycle through all unit direction vectors in path segments & determine step distance
+	debugC(3, kDebugControl, "Setting step distances");
+	for (uint frame=0; frame < _frameCount; frame++) {
+		debugC(3, kDebugControl, "Frame %d", frame);
+		for (auto &iter : _frameInfo[frame].paths) {
+			uint destFrame = iter.toFrame;
+			Common::Point deltaPos = _frameInfo[destFrame].hotspot.origin() - _frameInfo[frame].hotspot.origin();
+			Math::Vector2d deltaPosVector((float)deltaPos.x, (float)deltaPos.y);
+			iter.distance *= deltaPosVector.getMagnitude();
+			debugC(3, kDebugControl, "\tdeltaPos = %d,%d, Distance %f", deltaPos.x, deltaPos.y, iter.distance);
+		}
+	}
+	debugC(2, kDebugControl, "LeverControl::~parseLevFile()");
 }
 
 bool LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
@@ -194,7 +217,7 @@ bool LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		setVenus();
 		_mouseIsCaptured = true;
-		_lastMousePos = backgroundImageSpacePos;
+		_gripOffset = backgroundImageSpacePos - _frameInfo[_currentFrame].hotspot.origin();
 	}
 	return false;
 }
@@ -211,6 +234,7 @@ bool LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 		_returnRoutesCurrentProgress = _frameInfo[_currentFrame].returnRoute.begin();
 		_returnRoutesCurrentFrame = _currentFrame;
 	}
+	_gripOffset = Common::Point(0,0);
 	return false;
 }
 
@@ -221,29 +245,39 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 	bool cursorWasChanged = false;
 
 	if (_mouseIsCaptured) {
-		// Make sure the square distance between the last point and the current point is greater than 16
-		// This is a heuristic. This determines how responsive the lever is to mouse movement.
-		if (_lastMousePos.sqrDist(backgroundImageSpacePos) >= 16) {
-			int angle = calculateVectorAngle(_lastMousePos, backgroundImageSpacePos);
-			_lastMousePos = backgroundImageSpacePos;
-
-			for (Common::List<Direction>::iterator iter = _frameInfo[_currentFrame].directions.begin(); iter != _frameInfo[_currentFrame].directions.end(); ++iter) {
-				if (angle >= (int)iter->angle - ANGLE_DELTA && angle <= (int)iter->angle + ANGLE_DELTA) {
-					_currentFrame = iter->toFrame;
-					renderFrame(_currentFrame);
-					_engine->getScriptManager()->setStateValue(_key, _currentFrame);
-					break;
-				}
+		uint nextFrame = _currentFrame;
+		do {
+			Common::Point gripOrigin = _frameInfo[_currentFrame].hotspot.origin() + _gripOffset;
+			debugC(1, kDebugControl, "LeverControl::onMouseMove() screenPos = %d,%d, imagePos = %d,%d, gripOrigin = %d,%d", screenSpacePos.x, screenSpacePos.y, backgroundImageSpacePos.x, backgroundImageSpacePos.y, gripOrigin.x, gripOrigin.y);
+			Common::Point deltaPos = backgroundImageSpacePos - gripOrigin;
+			nextFrame = getNextFrame(deltaPos);
+			if (nextFrame != _currentFrame) {
+				_currentFrame = nextFrame;
+				_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 			}
-		}
+		} while (nextFrame != _currentFrame);
+
+		if (_lastRenderedFrame != _currentFrame)
+			renderFrame(_currentFrame);
+
 		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;
 	} else if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;
 	}
-
 	return cursorWasChanged;
+}
+
+uint LeverControl::getNextFrame(Common::Point &deltaPos) {
+	Math::Vector2d movement((float)deltaPos.x, (float)deltaPos.y);
+	for (auto &iter : _frameInfo[_currentFrame].paths) {
+		debugC(1, kDebugControl, "\tPossible step = %f,%f, angle = %d, distance %f", iter.direction.getX(), iter.direction.getY(), (uint)Math::rad2deg(iter.angle), iter.distance);
+		if (movement.dotProduct(iter.direction) >= iter.distance/2) {
+			return iter.toFrame;
+		}
+	}
+	return _currentFrame;
 }
 
 bool LeverControl::process(uint32 deltaTimeInMillis) {
@@ -252,8 +286,8 @@ bool LeverControl::process(uint32 deltaTimeInMillis) {
 
 	if (_isReturning) {
 		_accumulatedTime += deltaTimeInMillis;
-		while (_accumulatedTime >= ANIMATION_FRAME_TIME) {
-			_accumulatedTime -= ANIMATION_FRAME_TIME;
+		while (_accumulatedTime >= _returnFramePeriod) {
+			_accumulatedTime -= _returnFramePeriod;
 			if (_returnRoutesCurrentFrame == *_returnRoutesCurrentProgress) {
 				_returnRoutesCurrentProgress++;
 			}
@@ -278,104 +312,10 @@ bool LeverControl::process(uint32 deltaTimeInMillis) {
 	return false;
 }
 
-int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Common::Point &pointTwo) {
-	// Check for the easy angles first
-	if (pointOne.x == pointTwo.x && pointOne.y == pointTwo.y)
-		return -1; // This should never happen
-	else if (pointOne.x == pointTwo.x) {
-		if (pointTwo.y < pointOne.y)
-			return 90;
-		else
-			return 270;
-	} else if (pointOne.y == pointTwo.y) {
-		if (pointTwo.x > pointOne.x)
-			return 0;
-		else
-			return 180;
-	} else {
-		// Calculate the angle with trig
-		int16 xDist = pointTwo.x - pointOne.x;
-		int16 yDist = pointTwo.y - pointOne.y;
-
-		// Calculate the angle using arctan
-		// Then convert to degrees. (180 / 3.14159 = 57.2958)
-		int angle = int(atan((float)yDist / (float)abs(xDist)) * 57);
-
-		// Calculate what quadrant pointTwo is in
-		uint quadrant = ((yDist > 0 ? 1 : 0) << 1) | (xDist < 0 ? 1 : 0);
-
-		// Explanation of quadrants:
-		//
-		// yDist > 0  | xDist < 0 | Quadrant number
-		//     0      |     0     |   0
-		//     0      |     1     |   1
-		//     1      |     0     |   2
-		//     1      |     1     |   3
-		//
-		// Note: I know this doesn't line up with traditional mathematical quadrants
-		// but doing it this way allows you can use a switch and is a bit cleaner IMO.
-		//
-		// The graph below shows the 4 quadrants pointTwo can end up in as well
-		// as what the angle as calculated above refers to.
-		// Note: The calculated angle in quadrants 0 and 3 is negative
-		// due to arctan(-x) = -theta
-		//
-		// Origin => (pointOne.x, pointOne.y)
-		//   *    => (pointTwo.x, pointTwo.y)
-		//
-		//                         90                                             |
-		//                         ^                                              |
-		//                 *       |       *                                      |
-		//                  \      |      /                                       |
-		//                   \     |     /                                        |
-		//                    \    |    /                                         |
-		// Quadrant 1          \   |   /         Quadrant 0                       |
-		//                      \  |  /                                           |
-		//                       \ | /                                            |
-		//                angle ( \|/ ) -angle                                    |
-		// 180 <----------------------------------------> 0                       |
-		//               -angle ( /|\ )  angle                                    |
-		//                       / | \                                            |
-		//                      /  |  \                                           |
-		// Quadrant 3          /   |   \         Quadrant 2                       |
-		//                    /    |    \                                         |
-		//                   /     |     \                                        |
-		//                  /      |      \                                       |
-		//                 *       |       *                                      |
-		//                         ^                                              |
-		//                        270                                             |
-
-		// Convert the local angles to unit circle angles
-		switch (quadrant) {
-		case 0:
-			angle = -angle;
-			break;
-		case 1:
-			angle = angle + 180;
-			break;
-		case 2:
-			angle = 360 - angle;
-			break;
-		case 3:
-			angle = 180 + angle;
-			break;
-		default:
-			break;
-		}
-
-		return angle;
-	}
-}
-
 void LeverControl::renderFrame(uint frameNumber) {
-	if (frameNumber == 0) {
-		_lastRenderedFrame = frameNumber;
-	} else if (frameNumber < _lastRenderedFrame && _mirrored) {
-		_lastRenderedFrame = frameNumber;
+	_lastRenderedFrame = frameNumber;
+	if (frameNumber != 0 && frameNumber < _lastRenderedFrame && _mirrored)
 		frameNumber = (_frameCount * 2) - frameNumber - 1;
-	} else {
-		_lastRenderedFrame = frameNumber;
-	}
 
 	const Graphics::Surface *frameData;
 

@@ -1,13 +1,73 @@
-CxxTest Releases
-================
 
-Version 3.10.1 (2004-12-01):
-----------------------------
+CxxTest Releases
+----------------
+
+* Version 4.4 (2014-06-03)
+ - Fixed compilation error on Windows (MSVC) in XmlFormatter.h (#86)
+ - Fix to ensure that tearDown() is called (#89)
+ - Add option run test with a user defined command in scons (#91)
+ - Use a Python path relative to the cxxtestgen script (#88)
+ - Add defensive guard in ErrorFormatter.h (#96)
+ - Fixed bug with "None" appearing in CXXTEST_CPPATH (#99)
+ - Added CXXTEST_LIBPATH to properly use shared libraries (#100)
+ - Added guards when XmlFormatter.h data is not initialize (#87)
+
+* Version 4.3 (2013-07-05)
+ - Changes to assess code coverage of the cxxtestgen command
+ - Standardizing C++ file formats (using astyle)
+ - Bug fixes that led to the test runner hanging
+ - Adding special assertions for floating point values
+ - Added date to XML output
+ - Added support for comparison of C strings
+
+* Version 4.2.1 (2013-03-22)
+ - Fixing documentation of LGPL version
+
+* Version 4.2 (2013-03-16)
+ - Changes to support test fixtures in namespaces
+ - Adding logic to support test skipping
+ - Change to create self-contained HTML documentation
+ - Fixed inheritance issue in GlobalFixture (#69)
+ - Update LGPL version
+ - Changes to try/catch to avoid ambiguities withn catching std::exception (#53)
+ - Fixed TS_ASSERT_DELTA to work on integer types (#65)
+ - Changed output format to print world-name (#70)
+
+* Version 4.1 (2012-11-30)
+ - Added absolute paths to resolve bug when relative path links are provided.
+ - Bug fix when files contain unicode characters
+ - Fix for --no-static-init:  Changed how non-static tests are created
+ - Updated user guide to include SCons build system
+ - Closing out Tigris and SourceForge tickets
+ - Added valgrind tests.
+
+* Version 4.0.3 (2012-01-07)
+ - Adding support for Python 2.4 - 3.2
+ - Various cleanup of CxxTest root directory
+ - Adding patch that allows the cxxtestgen script to be used when symlinked.
+
+* Version 4.0.2 (2012-01-02)
+ - Bug fix to enable installation of cxxtestgen without the 'setuptools' package
+
+* Version 4.0.1 (2012-01-01)
+ - Documentation updates
+ - Bug fix for installation of cxxtestgen script
+
+* Version 4.0 (2011-12-28)
+ - Perl is no longer used to support CxxTest scripts.  Python is now the only scripting language used by      CxxTest.
+ - The testing scripts have been rewritten using the PyUnit framework.
+ - The installation process for CxxTest now leverages and integrates with the system Python installation.
+ - A more comprehensive C++ parser is now available, which supports testing of templates.
+ - The CxxTest GUI is no longer supported.
+ - The <<ts_trace,TS_TRACE>> and <<ts_warn,TS_WARN>> macros have the same behavior now.
+ - CxxTest runners now have a command-line interface that facilitates interactive use of the test runner.
+ - A new user guide is now available in PDF, HTML and Ebook formats.
+
+* Version 3.10.1 (2004-12-01)
  - Improved support for VC7
  - Fixed clash with some versions of STL
 
-Version 3.10.0 (2004-11-20):
-----------------------------
+* Version 3.10.0 (2004-11-20)
  - Added mock framework for global functions
  - Added TS_ASSERT_THROWS_ASSERT and TS_ASSERT_THROWS_EQUALS
  - Added CXXTEST_ENUM_TRAITS
@@ -16,47 +76,40 @@ Version 3.10.0 (2004-11-20):
  - Reduced root/part compilation time and binary size
  - Support C++-style commenting of tests
 
-Version 3.9.1 (2004-01-19):
----------------------------
+* Version 3.9.1 (2004-01-19)
  - Fixed small bug with runner exit code
  - Embedded test suites are now deprecated
 
-Version 3.9.0 (2004-01-17):
----------------------------
+* Version 3.9.0 (2004-01-17)
  - Added TS_TRACE
  - Added --no-static-init
  - CxxTest::setAbortTestOnFail() works even without --abort-on-fail
 
-Version 3.8.5 (2004-01-08):
----------------------------
+* Version 3.8.5 (2004-01-08)
  - Added --no-eh
  - Added CxxTest::setAbortTestOnFail() and CXXTEST_DEFAULT_ABORT
  - Added CxxTest::setMaxDumpSize()
  - Added StdioFilePrinter
 
-Version 3.8.4 (2003-12-31):
----------------------------
+* Version 3.8.4 (2003-12-31)
  - Split distribution into cxxtest and cxxtest-selftest
  - Added `sample/msvc/FixFiles.bat'
 
-Version 3.8.3 (2003-12-24):
----------------------------
+* Version 3.8.3 (2003-12-24)
  - Added TS_ASSERT_PREDICATE
  - Template files can now specify where to insert the preamble
  - Added a sample Visual Studio workspace in `sample/msvc'
  - Can compile in MSVC with warning level 4
  - Changed output format slightly
 
-Version 3.8.1 (2003-12-21):
----------------------------
+* Version 3.8.1 (2003-12-21)
  - Fixed small bug when using multiple --part files.
  - Fixed X11 GUI crash when there's no X server.
  - Added GlobalFixture::setUpWorld()/tearDownWorld()
  - Added leaveOnly(), activateAllTests() and `sample/only.tpl'
  - Should now run without warnings on Sun compiler.
 
-Version 3.8.0 (2003-12-13):
----------------------------
+* Version 3.8.0 (2003-12-13)
  - Fixed bug where `Root.cpp' needed exception handling
  - Added TS_ASSERT_RELATION
  - TSM_ macros now also tell you what went wrong
@@ -64,30 +117,25 @@ Version 3.8.0 (2003-12-13):
  - Now compatible with more versions of Borland compiler
  - Improved the documentation
 
-Version 3.7.1 (2003-09-29):
----------------------------
+* Version 3.7.1 (2003-09-29)
  - Added --version
  - Compiles with even more exotic g++ warnings
  - Win32 Gui compiles with UNICODE
  - Should compile on some more platforms (Sun Forte, HP aCC)
 
-Version 3.7.0 (2003-09-20):
----------------------------
+* Version 3.7.0 (2003-09-20)
  - Added TS_ASSERT_LESS_THAN_EQUALS
  - Minor cleanups
 
-Version 3.6.1 (2003-09-15):
----------------------------
+* Version 3.6.1 (2003-09-15)
  - Improved QT GUI
  - Improved portability some more
 
-Version 3.6.0 (2003-09-04):
----------------------------
+* Version 3.6.0 (2003-09-04)
  - Added --longlong
  - Some portability improvements
 
-Version 3.5.1 (2003-09-03):
----------------------------
+* Version 3.5.1 (2003-09-03)
  - Major internal rewrite of macros
  - Added TS_ASSERT_SAME_DATA
  - Added --include option
@@ -96,19 +144,16 @@ Version 3.5.1 (2003-09-03):
  - Enhanced Win32 GUI with timers, -keep and -title
  - Now compiles with strict warnings
 
-Version 3.1.1 (2003-08-27):
----------------------------
+* Version 3.1.1 (2003-08-27)
  - Fixed small bug in TS_ASSERT_THROWS_*()
 
-Version 3.1.0 (2003-08-23):
----------------------------
+* Version 3.1.0 (2003-08-23)
  - Default ValueTraits now dumps value as hex bytes
  - Fixed double invocation bug (e.g. TS_FAIL(functionWithSideEffects()))
  - TS_ASSERT_THROWS*() are now "abort on fail"-friendly
  - Win32 GUI now supports Windows 98 and doesn't need comctl32.lib
 
-Version 3.0.1 (2003-08-07):
----------------------------
+* Version 3.0.1 (2003-08-07)
  - Added simple GUI for X11, Win32 and Qt
  - Added TS_WARN() macro
  - Removed --exit-code
@@ -116,37 +161,32 @@ Version 3.0.1 (2003-08-07):
  - Improved support for older (pre-std::) compilers
  - Made a PDF version of the User's Guide
 
-Version 2.8.4 (2003-07-21):
----------------------------
+* Version 2.8.4 (2003-07-21)
  - Now supports g++-3.3
  - Added --have-eh
  - Fixed bug in numberToString()
 
-Version 2.8.3 (2003-06-30):
----------------------------
+* Version 2.8.3 (2003-06-30)
  - Fixed bugs in cxxtestgen.pl
  - Fixed warning for some compilers in ErrorPrinter/StdioPrinter
  - Thanks Martin Jost for pointing out these problems!
 
-Version 2.8.2 (2003-06-10):
----------------------------
+* Version 2.8.2 (2003-06-10)
  - Fixed bug when using CXXTEST_ABORT_TEST_ON_FAIL without standard library
  - Added CXXTEST_USER_TRAITS
  - Added --abort-on-fail
 
-Version 2.8.1 (2003-01-16):
----------------------------
+* Version 2.8.1 (2003-01-16)
  - Fixed charToString() for negative chars
 
-Version 2.8.0 (2003-01-13):
----------------------------
+* Version 2.8.0 (2003-01-13)
  - Added CXXTEST_ABORT_TEST_ON_FAIL for xUnit-like behaviour
  - Added `sample/winddk'
  - Improved ValueTraits
  - Improved output formatter
  - Started version history
 
-Version 2.7.0 (2002-09-29):
----------------------------
+* Version 2.7.0 (2002-09-29)
  - Added embedded test suites
  - Major internal improvements
+

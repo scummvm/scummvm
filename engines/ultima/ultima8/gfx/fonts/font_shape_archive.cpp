@@ -64,13 +64,11 @@ void FontShapeArchive::setHVLeads() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
 	KeyMap leadkeyvals = config->listKeyValues("game", "fontleads");
-	KeyMap::const_iterator iter;
+	for (const auto &i : leadkeyvals) {
+		int fontnum = atoi(i._key.c_str());
+		Common::String leaddesc = i._value;
 
-	for (iter = leadkeyvals.begin(); iter != leadkeyvals.end(); ++iter) {
-		int fontnum = atoi(iter->_key.c_str());
-		Std::string leaddesc = iter->_value;
-
-		Std::vector<Std::string> vals;
+		Common::Array<Common::String> vals;
 		SplitString(leaddesc, ',', vals);
 		if (vals.size() != 2) {
 			warning("Invalid hlead/vlead description: %s", leaddesc.c_str());

@@ -21,7 +21,6 @@
 #ifndef DRAGONS_CURSOR_H
 #define DRAGONS_CURSOR_H
 
-#include "common/system.h"
 #include "dragons/scriptopcodes.h"
 
 namespace Dragons {

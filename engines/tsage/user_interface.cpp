@@ -329,7 +329,7 @@ void UIElements::synchronize(Serializer &s) {
 		_itemList.clear();
 
 		for (int idx = 0; idx < count; ++idx) {
-			int itemId;
+			int itemId = 0;
 			s.syncAsSint16LE(itemId);
 			_itemList.push_back(itemId);
 		}

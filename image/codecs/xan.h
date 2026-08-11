@@ -47,7 +47,12 @@ public:
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
-	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _pixelFormat = format; return true; }
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override {
+		if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
+			return false;
+		_pixelFormat = format;
+		return true;
+	}
 
 private:
 	void decodeFrameType0(Common::SeekableReadStream &stream);

@@ -40,6 +40,59 @@ protected:
 	Common::String getRecordTypeName() const override { return "SetVolume"; }
 };
 
+// Nancy 11+ AR 147. Linearly ramps a channel's volume down to 0 over
+// the given time, then stops execution.
+class FadeSoundToSilence : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	uint16 channel = 0;
+	uint32 fadeTimeMs = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "FadeSoundToSilence"; }
+
+private:
+	uint32 _startTime = 0;
+	uint16 _startVolume = 0;
+};
+
+// Nancy 11+ AR 156. Adjusts a playing 3D sound's position and/or its
+// min/max audible distance. A field set to kNoChange is left untouched.
+class Update3DSound : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	static const int32 kNoChange = 10000;
+
+	uint16 _channelID = 0;
+	int32 _posX = 0;
+	int32 _posY = 0;
+	int32 _posZ = 0;
+	int32 _minDistance = 0;
+	int32 _maxDistance = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "Update3DSound"; }
+};
+
+// Added in Nancy12 (AR 168). Sets a 3D-sound position from a set of coordinates,
+// most likely the global listener position.
+class Set3DSoundListenerPosition : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	int32 _posX = 0;
+	int32 _posY = 0;
+	int32 _posZ = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "Set3DSoundListenerPosition"; }
+};
+
 // Used for sound effects. From nancy3 up it includes 3D sound data, which lets
 // the sound move in 3D space as the player rotates/changes scenes. Also supports
 // changing the scene and/or setting a flag
@@ -57,8 +110,22 @@ public:
 	SceneChangeDescription _sceneChange;
 	FlagDescription _flag;
 
+	// Nancy13+: a list of flags (was a single flag) and a multi-name random sound.
+	Common::Array<FlagDescription> _flags;
+	byte _afterSoundAction = 0;	// Nancy13+: 1 dismisses the text box overlay
+
+	// Subtitle shown in the game textbox while the sound plays. In Nancy13+ this
+	// is resolved from the sound name (see readDataNancy13); earlier games store
+	// it explicitly in the closed-caption records below.
+	Common::String _ccText;
+
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+
 protected:
 	Common::String getRecordTypeName() const override;
+
+	void readDataNancy13(Common::SeekableReadStream &stream);
+	void applyAfterSoundAction();
 };
 
 // The same as PlaySound, but with the addition of captioning text,
@@ -69,8 +136,6 @@ public:
 	void execute() override;
 
 	void readCCText(Common::SeekableReadStream &stream, Common::String &out);
-
-	Common::String _ccText;
 
 protected:
 	Common::String getRecordTypeName() const override;
@@ -119,8 +184,10 @@ public:
 	FlagDescription _flag; // 0x2A
 	Common::Array<HotspotDescription> _hotspots; // 0x31
 
-protected:
 	bool canHaveHotspot() const override { return true; }
+	
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+protected:
 	Common::String getRecordTypeName() const override { return "PlaySoundMultiHS"; }
 };
 
@@ -138,12 +205,12 @@ protected:
 	Common::String getRecordTypeName() const override { return "StopSound"; }
 };
 
-// Same as PlaySound, except it randomly picks between one of several
-// provided sound files; all other settings for the sound are shared.
+// Same as PlaySound, except it randomly picks between one of several provided
+// sound files; all other settings for the sound are shared. The played sound is
+// chosen when the record is loaded.
 class PlayRandomSound : public PlaySound {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
 
 	Common::Array<Common::String> _soundNames;
 
@@ -153,11 +220,11 @@ protected:
 	Common::String getRecordTypeName() const override { return "PlayRandomSound"; }
 };
 
-// Short version of PlayRandomSound, but ALSO supports closed captioning text
+// Short version of PlayRandomSound, but ALSO supports closed captioning text.
+// The played sound is chosen at random when the record is loaded.
 class PlayRandomSoundTerse : public PlaySoundTerse {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
 
 	Common::Array<Common::String> _soundNames;
 	Common::Array<Common::String> _ccTexts;

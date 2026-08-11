@@ -74,8 +74,11 @@ void ScummEngine_v4::o4_ifState() {
 	// though you're not supposed to. However if you escape WITHOUT getting
 	// caught, you get 0 IQ points (supposed to get 25 IQ points)."
 	// This workaround is meant to address that.
-	if (_game.id == GID_INDY3 && a == 367 &&
-	    vm.slot[_currentScript].number == 363 && _currentRoom == 25) {
+	//
+	// See also the similar ScummEngine_v5::o5_startScript() workaround.
+	if (_game.id == GID_INDY3 && a == 367 && currentScriptSlotIs(363) &&
+	    _currentRoom == 25 && enhancementEnabled(kEnhMinorBugFixes)) {
+		// Buggy script compares it with '1'
 		b = 0;
 	}
 
@@ -537,7 +540,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 			// to the game reaching towards a non-existent string, and crashing as a consequence.
 			result = 6;
 		} else
-			result = (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns) ? 8 : 7; // Save file does not exist
+			result = 7; // Save file does not exist
 		}
 
 		break;

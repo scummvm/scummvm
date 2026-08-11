@@ -27,6 +27,7 @@
 #ifndef SCUMM_CDDA_H
 #define SCUMM_CDDA_H
 
+#include "common/str.h"
 #include "common/types.h"
 
 namespace Common {
@@ -43,12 +44,12 @@ namespace Scumm {
  * Create a new SeekableAudioStream from the CDDA data in the given stream.
  * Allows for seeking (which is why we require a SeekableReadStream).
  *
- * @param stream          The SeekableReadStream from which to read the CDDA data
+ * @param filename          The file name from which to read the CDDA data
  * @param disposeAfterUse Whether to delete the stream after use
  * @return a new SeekableAudioStream, or NULL, if an error occurred
  */
 Audio::SeekableAudioStream *makeCDDAStream(
-	Common::SeekableReadStream *stream,
+	const Common::String &filename,
 	DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio

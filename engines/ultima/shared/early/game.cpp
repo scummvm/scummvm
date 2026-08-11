@@ -25,6 +25,7 @@
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/gfx/font.h"
 #include "ultima/shared/gfx/screen.h"
+#include "graphics/palette.h"
 
 namespace Ultima {
 namespace Shared {
@@ -98,14 +99,14 @@ void Game::setEGAPalette(const byte *palette) {
 void Game::loadU6Palette() {
 	// Read in the palette
 	File f("u6pal");
-	byte palette[PALETTE_SIZE];
-	f.read(palette, PALETTE_SIZE);
+	byte palette[Graphics::PALETTE_SIZE];
+	f.read(palette, Graphics::PALETTE_SIZE);
 	f.close();
 
 	// Adjust the palette values from 0-63 to 0-255, and set the palette
-	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
-		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
-	g_vm->_screen->setPalette(&palette[0], 0, PALETTE_COUNT);
+	for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx)
+		palette[idx] = PALETTE_6BIT_TO_8BIT(palette[idx]);
+	g_vm->_screen->setPalette(&palette[0], 0, Graphics::PALETTE_COUNT);
 
 	// TODO: Set appropriate indexes
 	_edgeColor = 15;

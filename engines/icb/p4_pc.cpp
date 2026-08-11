@@ -243,7 +243,7 @@ void InitEngine(const char *lpCmdLine) {
 	// if so set the stub mode to GameScript mode
 	if (gs.Init_game_script() && strstr(lpCmdLine, "mission") == nullptr) {
 		// GameScript mode
-		// unless there is a console.icb file we dont allow debugging
+		// unless there is a console.icb file we don't allow debugging
 
 		// set base mode of stub to gameScript processor
 		g_stub->Set_current_stub_mode(__game_script);

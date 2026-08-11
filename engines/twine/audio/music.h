@@ -43,21 +43,27 @@ private:
 	TwinEEngine *_engine;
 	TwinEMidiPlayer _midiPlayer;
 
-	void musicFadeIn();
-	void musicFadeOut();
+	void fadeMusicMidi(uint32 time = 1);
 
 	/** Auxiliar midi pointer to  */
 	uint8 *midiPtr = nullptr;
 	Audio::SoundHandle _midiHandle;
 	/** Track number of the current playing music */
-	int32 currentMusic = -1;
-	/**
-	 * Play CD music
-	 * @param track track number to play
-	 */
-	bool playTrackMusicCd(int32 track);
+	int32 numXmi = -1;
+	int32 currentMusicCD = -1;
+	// int32 endMusicCD = -1;
+	const bool _flagVoiceCD = false;
+public:
+	// TODO: implement the handling
+	int32 _nextMusic = -1;       // lba2: NextMusic
+	int32 _nextMusicTimer;       // lba2: NextMusicTimer
+	bool _stopLastMusic = false; // lba2: StopLastMusic
+private:
 	/** Stop CD music */
-	void stopTrackMusicCd();
+	void stopMusicCD();
+	bool playMidi(int32 midiIdx);
+	int32 getLengthTrackCDR(int track) const;
+	bool playTrackCDR(int32 track);
 public:
 	Music(TwinEEngine *engine);
 
@@ -68,26 +74,35 @@ public:
 	void musicVolume(int32 volume);
 
 	/**
+	 * Play CD music
+	 * @param track track number to play
+	 */
+	bool playCdTrack(int32 track);
+	/**
 	 * Generic play music, according with settings it plays CD or high quality sounds instead
 	 * @param track track number to play
 	 */
-	bool playTrackMusic(int32 track);
-	/** Generic stop music according with settings */
-	void stopTrackMusic();
+	bool playMusic(int32 track);
 	/**
 	 * Play MIDI music
 	 * @param midiIdx music index under mini_mi_win.hqr
 	 * @note valid indices for lba1 are [1-32]
 	 */
-	bool playMidiMusic(int32 midiIdx, int32 loop = 1);
+	bool playMidiFile(int32 midiIdx);
+
+	void playAllMusic(int track);
+
 	/** Stop MIDI music */
-	void stopMidiMusic();
+	void stopMusicMidi();
 
 	/** Initialize CD-Rom */
 	bool initCdrom();
 
 	/** Stop MIDI and Track music */
 	void stopMusic();
+
+	bool isMidiPlaying() const;
+	int32 getMusicCD();
 };
 
 } // namespace TwinE

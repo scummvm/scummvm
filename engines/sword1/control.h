@@ -202,7 +202,7 @@ private:
 	bool gameVersionIsMediaHouse();
 	bool loadCustomStrings(const char *filename);
 
-	int displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
+	int displayMessage(MSVC_PRINTF const char *message, ...) GCC_PRINTF(2, 3);
 
 	// PSX Credits functions
 	int32 getCreditsFontHeight(uint8 *font);
@@ -229,6 +229,7 @@ private:
 	Logic *_logic;
 	uint8 *_screenBuf;
 	Common::KeyState _keyPressed;
+	Common::CustomEventType _customType;
 
 	Common::Point _mouseCoord;
 	uint16 _mouseState;

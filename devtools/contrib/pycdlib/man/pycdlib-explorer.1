@@ -1,0 +1,108 @@
+.TH PYCDLIB-EXPLORER 1 "Jan 2018" "pycdlib-explorer"
+
+.SH NAME
+pycdlib-explorer - tool to examine and modify ISOs using pycdlib
+
+.SH SYNOPSIS
+.B pycdlib-explorer <iso-file>
+
+.SH DESCRIPTION
+This is a tool to examine and modify existing ISO files on disk.  Using this
+tool, the files, directories, and metadata on an ISO can be examined, new
+files can be added, and old files can be deleted.  Note that due to the nature
+of the ISO standard, files or directories on the ISO cannot be modified in
+place in a general way.  To accomplish this, remove the file and then re-add
+it with new contents.
+
+The commands that change the contents of the ISO only modify the in-memory copy.
+Changes are written out to a new ISO file when the \fBwrite\fR command is issued.
+
+pycdlib-explorer has no command-line options; instead, it is controlled
+entirely at runtime through commands.  The following section describes the
+available commands in pycdlib-explorer.
+
+.SH COMMANDS
+.TP
+.B "add_file <iso_path> <src_filename> [rr_name=<rr_name>] [joliet_path=<joliet_path>]"
+Add the contents of \fBsrc_filename\fR to the ISO at the location specified in \fBiso_path\fR.
+If the ISO is a Rock Ridge ISO, \fBrr_name\fR must be specified; otherwise, it must not be.
+If the ISO is not a Joliet ISO, \fBjoliet_path\fR must not be specified.  If the ISO is a
+Joliet ISO, \fBjoliet_path\fR is optional, but highly recommended to supply.
+.TP
+.B "cd <iso_dir>"
+Change the current working directory to relative or absolute ISO path \fBiso_dir\fR.
+.TP
+.B "cwd"
+Show the current working directory.
+.TP
+.B "exit"
+Exit out of pycdlib-explorer.
+.TP
+.B "get <iso_file> <out_file>"
+Copy the contents of the relative or absolute ISO path \fBiso_file\fR into \fBout_file\fR.
+.TP
+.B "help"
+Print the available commands.  Use "help <cmd>" for a more detailed
+description of the commands, including the command-line arguments they
+require.
+.TP
+.B "ls"
+Show the contents of the current working directory. The format of the output is:
+TYPE(F=file, D=directory) NAME.
+.TP
+.B "modify_file_in_place <iso_path> <src_filename>"
+Replace the contents of the file referred to in \fBiso_path\fR with the contents
+from \fBsrc_filename\fR.
+Warning: This command modifies the opened ISO file in-place.
+Also, the \fBsrc_filename\fR must occupy the same number of extents (2048-byte blocks) as the original file.
+.TP
+.B "mkdir <iso_path> [rr_name=<rr_name>] [joliet_path=<joliet_path>]"
+Make a new directory called \fBiso_path\fR.
+If the ISO is a Rock Ridge ISO, \fBrr_name\fR must be specified; otherwise, it must not be.
+If the ISO is not a Joliet ISO, \fBjoliet_path\fR must not be specified.  If the ISO is a
+Joliet ISO, \fBjoliet_path\fR is optional, but highly recommended to supply.
+.TP
+.B "print_mode [iso9660|rr|joliet|udf]"
+Change which 'mode' of filenames are printed out.  There are four main
+modes: ISO9660 (iso9660, the default), Rock Ridge (rr), Joliet (joliet), and
+UDF (udf).  The original iso9660 mode only allows filenames of 8 characters,
+plus 3 for the extension.  The Rock Ridge extensions allow much longer
+filenames and much deeper directory structures.  The Joliet extensions also
+allow longer filenames and deeper directory structures, but in an entirely
+different context (though in most circumstances, the Joliet context will
+mirror the ISO9660/Rock Ridge context).  The UDF Bridge extensions add an
+entirely parallel UDF context to the ISO as well.  Any given ISO will always
+have ISO9660 mode, but may have any combination of Rock Ridge, Joliet, and UDF
+(including none of them).  Running this command with no arguments prints out
+the current mode.  Passing 'iso9660' as an argument sets it to the original
+ISO9660 mode.  Passing 'rr' as an argument sets it to Rock Ridge mode.
+Passing 'joliet' as an argument sets it to Joliet mode.  Passing 'udf' as an
+argument sets it to UDF mode.
+.TP
+.B "quit"
+Exit out of pycdlib-explorer.
+.TP
+.B "rm_file <iso_path>"
+Remove the file named \fBiso_path\fR from the ISO.  Note that this
+must be a file; to remove a directory, use \fBrmdir\fR.
+.TP
+.B "rmdir <iso_path>"
+Remove the directory named \fBiso_path\fR from the ISO.  Note that
+this must be a directory; to remove a file, use \fBrm_file\fR.
+.TP
+.B "tree"
+List the contents of the ISO in a tree-like format, similar to the
+bash \fBtree\fR command.
+.TP
+.B "write <out_file>"
+Write a valid ISO9660 file out to \fBout_file\fR, taking into
+account any changes made while running the program.  This is
+also sometimes referred to as "mastering" the ISO.  Note that
+the \fBout_file\fR must NOT be the same file as the input
+file, or the resulting ISO will not work properly.
+
+.SH SEE ALSO
+pycdlib-extract-files(1), pycdlib-genisoimage(1)
+
+.SH AUTHOR
+Chris Lalancette <clalancette@gmail.com>

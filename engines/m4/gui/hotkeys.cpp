@@ -46,45 +46,6 @@ Hotkeys::Hotkeys() {
 	_teleportDialog = nullptr;
 }
 
-void Hotkeys::disable_hot_keys() {
-	RemoveSystemHotkey(KEY_HOME);
-	RemoveSystemHotkey(KEY_PAGE_UP);
-	RemoveSystemHotkey(KEY_PAGE_DOWN);
-	RemoveSystemHotkey(KEY_END);
-
-	RemoveSystemHotkey(KEY_ALT_UP);
-	RemoveSystemHotkey(KEY_ALT_DOWN);
-	RemoveSystemHotkey(KEY_ALT_LEFT);
-	RemoveSystemHotkey(KEY_ALT_RIGHT);
-
-	RemoveSystemHotkey(KEY_CTRL_UP);
-	RemoveSystemHotkey(KEY_CTRL_DOWN);
-	RemoveSystemHotkey(KEY_CTRL_LEFT);
-	RemoveSystemHotkey(KEY_CTRL_RIGHT);
-
-	RemoveSystemHotkey(KEY_F4);
-
-	RemoveSystemHotkey('[');
-	RemoveSystemHotkey(']');
-	RemoveSystemHotkey('{');
-	RemoveSystemHotkey('}');
-
-	//RemoveSystemHotkey( KEY_ALT_B);
-	RemoveSystemHotkey(KEY_ALT_C);
-	RemoveSystemHotkey(KEY_ALT_D);
-	RemoveSystemHotkey(KEY_ALT_F);
-	RemoveSystemHotkey(KEY_ALT_G);
-	RemoveSystemHotkey(KEY_ALT_I);
-	RemoveSystemHotkey(KEY_ALT_B);
-	RemoveSystemHotkey(KEY_ALT_M);
-	RemoveSystemHotkey(KEY_ALT_P);
-	RemoveSystemHotkey(KEY_ALT_R);
-	RemoveSystemHotkey(KEY_ALT_S);
-	RemoveSystemHotkey(KEY_ALT_T);
-	RemoveSystemHotkey(KEY_ALT_W);
-	RemoveSystemHotkey(KEY_ALT_Z);
-}
-
 void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_F2, saveGame);
 	AddSystemHotkey(KEY_F3, loadGame);
@@ -285,9 +246,9 @@ void Hotkeys::changeGlobalChange(void *, void *) {
 	_changeGlobalDialog->destroy();
 
 	// Create secondary dialog to get value to set global to
-	int globalVal = (g_engine->getGameType() == GType_Burger) ?
-		Burger::g_vars->_flags[_globalToChange] :
-		Riddle::g_vars->_flags[_globalToChange];
+	const int globalVal = (g_engine->getGameType() == GType_Burger) ?
+		                      Burger::g_vars->_flags[(Burger::Flag)_globalToChange] :
+		                      Riddle::g_vars->_flags[(Riddle::Flag)_globalToChange];
 
 	_changeGlobalDialog = DialogCreateAbsolute(250, 120, 450, 220, 242);
 	_changeGlobalDialog->addButton(60, 40,
@@ -305,12 +266,12 @@ void Hotkeys::changeGlobalChange(void *, void *) {
 
 void Hotkeys::changeGlobalDoChange(void *, void *) {
 	Item *textField = _changeGlobalDialog->getItem(3);
-	int globalVal = atoi(textField->prompt);
+	const int globalVal = atoi(textField->prompt);
 
 	if (g_engine->getGameType() == GType_Burger)
-		Burger::g_vars->_flags[_globalToChange] = globalVal;
+		Burger::g_vars->_flags[(Burger::Flag)_globalToChange] = globalVal;
 	else
-		Riddle::g_vars->_flags[_globalToChange] = globalVal;
+		Riddle::g_vars->_flags[(Riddle::Flag)_globalToChange] = globalVal;
 
 	_changeGlobalDialog->destroy();
 	_changeGlobalDialog = nullptr;

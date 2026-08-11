@@ -49,7 +49,7 @@ void Inter_Inca2::setupOpcodesDraw() {
 void Inter_Inca2::setupOpcodesFunc() {
 	Inter_v3::setupOpcodesFunc();
 
-	OPCODEFUNC(0x25, oInca2_spaceShooter);
+	OPCODEFUNC(0x25, oInca2_goblinFunc);
 }
 
 void Inter_Inca2::setupOpcodesGob() {
@@ -57,11 +57,23 @@ void Inter_Inca2::setupOpcodesGob() {
 
 void Inter_Inca2::oInca2_spaceShooter(OpFuncParams &params) {
 	// TODO: Not yet implemented. We'll pretend we won the match for now
-	_vm->_game->_script->skip(4);
 	uint16 resVar = _vm->_game->_script->readUint16();
 	_vm->_game->_script->skip(4);
 
 	WRITE_VAR(resVar, 1);
+}
+
+void Inter_Inca2::oInca2_goblinFunc(OpFuncParams &params) {
+	OpGobParams gobParams;
+	int16 cmd = _vm->_game->_script->readInt16();
+
+	gobParams.paramCount = _vm->_game->_script->readInt16();
+	gobParams.extraData = cmd;
+
+	if (cmd == 100 || cmd == 200 || cmd == 218) // TODO: Non-space shooter opcodes found in disassembly, yet to be implemented
+		executeOpcodeGob(cmd, gobParams); // Will print the warning "unimplemented opcodeGob"
+	else
+		oInca2_spaceShooter(params); // Space shooter opcodes, also to be implemented (NOTE: there are actually several of them)
 }
 
 } // End of namespace Gob

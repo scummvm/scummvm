@@ -19,41 +19,57 @@
  *
  */
 
+/*
+ * This file is based on WME.
+ * http://dead-code.org/redir.php?target=wme
+ * Copyright (c) 2003-2013 Jan Nedoma and contributors
+ */
+
 #ifndef WINTERMUTE_3D_MESH_H
 #define WINTERMUTE_3D_MESH_H
 
 #include "common/memstream.h"
 
-#include "math/vector4d.h"
+#include "engines/wintermute/base/base_named_object.h"
+#include "engines/wintermute/base/gfx/xmath.h"
+#include "engines/wintermute/base/gfx/xbuffer.h"
+#include "engines/wintermute/base/gfx/3dface.h"
+#include "engines/wintermute/base/gfx/3dvertex.h"
 
 namespace Wintermute {
 
-struct GeometryVertex {
-	float x;
-	float y;
-	float z;
+#if defined(SCUMMVM_USE_PRAGMA_PACK)
+#pragma pack(4)
+#endif
+
+struct Mesh3DSVertex {
+	float _x, _y, _z;
+	float _nx, _ny, _nz;
+	float _r, _g, _b, _a;
 };
 
-class Mesh3DS {
+#if defined(SCUMMVM_USE_PRAGMA_PACK)
+#pragma pack()
+#endif
+
+class Mesh3DS : public BaseNamedObject {
 public:
-	Mesh3DS();
+	bool persist(BasePersistenceManager *persistMgr);
+	bool createVertexBuffer();
+	void computeNormals();
+	void cleanup();
+	Mesh3DS(BaseGame *inGame);
 	virtual ~Mesh3DS();
-	virtual void fillVertexBuffer(uint32 color) = 0;
-	virtual bool loadFrom3DS(Common::MemoryReadStream &fileStream);
-	virtual void render() = 0;
-	virtual void dumpVertexCoordinates(const char *filename);
-	virtual int faceCount();
-	virtual uint16 *getFace(int index);
+	virtual void fillVertexBuffer() = 0;
+	bool fillVertexBuffer(uint32 color);
+	virtual void render(bool color = false) = 0;
 
-	virtual int vertexCount();
-	virtual float *getVertexPosition(int index);
-
-protected:
-	GeometryVertex *_vertexData;
-	uint16 _vertexCount;
-	uint16 *_indexData;
-	uint16 _indexCount;
-	Math::Vector4d _color;
+	Face3D *_faces;
+	uint16 _numFaces;
+	uint16 _numVertices;
+	Vertex3D *_vertices;
+	DXBuffer _vb;
+	bool _visible;
 };
 
 } // namespace Wintermute

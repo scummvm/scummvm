@@ -45,16 +45,16 @@ TwpOptionsContainerWidget::TwpOptionsContainerWidget(GuiObject *boss, const Comm
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
 	// I18N: Setting to invert verb colors or keep the original verb colors.
-	_enableInvertVerbColorsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck1", _("Invert verb colors"), _(""));
+	_enableInvertVerbColorsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck1", _("Invert verb colors"));
 	// I18N: Setting to use retro or modern fonts.
-	_enableRetroFontsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck2", _("Retro Fonts"), _(""));
+	_enableRetroFontsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck2", _("Retro Fonts"));
 	// I18N: Setting to use retro or modern verbs.
-	_enableRetroVerbsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck3", _("Retro Verbs"), _(""));
+	_enableRetroVerbsGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck3", _("Retro Verbs"));
 	// I18N: Setting to use classic sentence or modern sentence.
-	_enableClassicSentenceGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck4", _("Classic Sentence"), _(""));
+	_enableClassicSentenceGUICheckbox = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.ControlsCheck4", _("Classic Sentence"));
 
 	// I18N: Settings to enable or disable Ransome unbeeped DLC.
-	_enableDLC = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck1", _("Ransome *unbeeped* (DLC)"), _(""));
+	_enableDLC = new GUI::CheckboxWidget(widgetsBoss(), "TwpGameOptionsDialog.TextCheck1", _("Ransome *unbeeped* (DLC)"));
 }
 
 void TwpOptionsContainerWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {

@@ -28,23 +28,26 @@
 #include "engines/wintermute/base/particles/part_particle.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
-	_pos = Vector2(0.0f, 0.0f);
+	_pos = DXVector2(0.0f, 0.0f);
 	_posZ = 0.0f;
-	_velocity = Vector2(0.0f, 0.0f);
+	_velocity = DXVector2(0.0f, 0.0f);
 	_scale = 100.0f;
 	_sprite = nullptr;
 	_creationTime = 0;
 	_lifeTime = 0;
 	_isDead = true;
-	_border.setEmpty();
+	BasePlatform::setRectEmpty(&_border);
 
 	_state = PARTICLE_NORMAL;
 	_fadeStart = 0;
@@ -63,28 +66,25 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 PartParticle::~PartParticle() {
-	delete _sprite;
-	_sprite = nullptr;
+	SAFE_DELETE(_sprite);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool PartParticle::setSprite(const Common::String &filename) {
-	if (_sprite && _sprite->getFilename() && scumm_stricmp(filename.c_str(), _sprite->getFilename()) == 0) {
+bool PartParticle::setSprite(const char *filename) {
+	if (_sprite && _sprite->_filename && _sprite->_filename[0] && scumm_stricmp(filename, _sprite->_filename) == 0) {
 		_sprite->reset();
 		return STATUS_OK;
 	}
 
-	delete _sprite;
-	_sprite = nullptr;
+	SAFE_DELETE(_sprite);
 
 	SystemClassRegistry::getInstance()->_disabled = true;
-	_sprite = new BaseSprite(_gameRef, (BaseObject*)_gameRef);
+	_sprite = new BaseSprite(_game, _game);
 	if (_sprite && DID_SUCCEED(_sprite->loadFile(filename))) {
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_OK;
 	} else {
-		delete _sprite;
-		_sprite = nullptr;
+		SAFE_DELETE(_sprite);
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_FAILED;
 	}
@@ -98,7 +98,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 			_state = PARTICLE_NORMAL;
 			_currentAlpha = _alpha1;
 		} else {
-			_currentAlpha = (int)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1);
+			_currentAlpha = (int32)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _alpha1);
 		}
 
 		return STATUS_OK;
@@ -107,7 +107,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 			_isDead = true;
 			return STATUS_OK;
 		} else {
-			_currentAlpha = _fadeStartAlpha - (int)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha);
+			_currentAlpha = _fadeStartAlpha - (int32)(((float)currentTime - (float)_fadeStart) / (float)_fadeTime * _fadeStartAlpha);
 		}
 
 		return STATUS_OK;
@@ -124,10 +124,10 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 		}
 
 		// particle hit the border
-		if (!_isDead && !_border.isRectEmpty()) {
-			Point32 p;
-			p.x = (int32)_pos.x;
-			p.y = (int32)_pos.y;
+		if (!_isDead && !BasePlatform::isRectEmpty(&_border)) {
+			Common::Point32 p;
+			p.x = (int32)_pos._x;
+			p.y = (int32)_pos._y;
 			if (!BasePlatform::ptInRect(&_border, p)) {
 				fadeOut(currentTime, emitter->_fadeOutTime);
 			}
@@ -147,7 +147,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 		// update position
 		float elapsedTime = (float)timerDelta / 1000.f;
 
-		for (uint32 i = 0; i < emitter->_forces.size(); i++) {
+		for (int32 i = 0; i < emitter->_forces.getSize(); i++) {
 			PartForce *force = emitter->_forces[i];
 			switch (force->_type) {
 			case PartForce::FORCE_GLOBAL:
@@ -155,8 +155,8 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 				break;
 
 			case PartForce::FORCE_POINT: {
-				Vector2 vecDist = force->_pos - _pos;
-				float dist = fabs(vecDist.length());
+				DXVector2 vecDist = force->_pos - _pos;
+				float dist = fabs(DXVec2Length(&vecDist));
 
 				dist = 100.0f / dist;
 
@@ -200,7 +200,7 @@ bool PartParticle::display(PartEmitter *emitter) {
 	}
 
 	_sprite->getCurrentFrame();
-	return _sprite->display((int)_pos.x, (int)_pos.y,
+	return _sprite->display((int)_pos._x, (int)_pos._y,
 	                        nullptr,
 	                        _scale, _scale,
 	                        BYTETORGBA(255, 255, 255, _currentAlpha),
@@ -253,16 +253,19 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_fadeStartAlpha));
 
 	if (persistMgr->getIsSaving()) {
-		const char *filename = _sprite->getFilename();
-		persistMgr->transferConstChar(TMEMBER(filename));
+		persistMgr->transferCharPtr(TMEMBER(_sprite->_filename));
 	} else {
 		char *filename;
 		persistMgr->transferCharPtr(TMEMBER(filename));
 		SystemClassRegistry::getInstance()->_disabled = true;
 		setSprite(filename);
 		SystemClassRegistry::getInstance()->_disabled = false;
-		delete[] filename;
-		filename = nullptr;
+		SAFE_DELETE_ARRAY(filename);
+	}
+
+	// initialise to default
+	if (!persistMgr->getIsSaving()) {
+		_fadeStartAlpha = 0;
 	}
 
 	return STATUS_OK;

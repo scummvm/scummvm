@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h> and abort()
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_abort
@@ -45,6 +43,8 @@
 #include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/asset-archive.h"
 
+#include "backends/networking/basic/android/jni.h"
+
 #include "base/main.h"
 #include "base/version.h"
 #include "common/config-manager.h"
@@ -62,7 +62,6 @@ pthread_key_t JNI::_env_tls;
 
 JavaVM *JNI::_vm = 0;
 jobject JNI::_jobj = 0;
-jobject JNI::_jobj_audio_track = 0;
 jobject JNI::_jobj_egl = 0;
 jobject JNI::_jobj_egl_display = 0;
 jobject JNI::_jobj_egl_surface = 0;
@@ -70,6 +69,8 @@ int JNI::_egl_version = 0;
 
 Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
+
+bool JNI::assets_updated = false;
 
 bool JNI::pause = false;
 sem_t JNI::pause_sem;
@@ -80,6 +81,8 @@ int JNI::egl_surface_height = 0;
 int JNI::egl_bits_per_pixel = 0;
 bool JNI::_ready_for_events = 0;
 bool JNI::virt_keyboard_state = false;
+int32 JNI::gestures_insets[4] = { 0, 0, 0, 0 };
+int32 JNI::cutout_insets[4] = { 0, 0, 0, 0 };
 
 jmethodID JNI::_MID_getDPI = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
@@ -91,7 +94,6 @@ jmethodID JNI::_MID_isConnectionLimited = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showOnScreenControls = 0;
-jmethodID JNI::_MID_getBitmapResource = 0;
 jmethodID JNI::_MID_setTouchMode = 0;
 jmethodID JNI::_MID_getTouchMode = 0;
 jmethodID JNI::_MID_setOrientation = 0;
@@ -99,6 +101,7 @@ jmethodID JNI::_MID_getScummVMBasePath;
 jmethodID JNI::_MID_getScummVMConfigPath;
 jmethodID JNI::_MID_getScummVMLogPath;
 jmethodID JNI::_MID_setCurrentGame = 0;
+jmethodID JNI::_MID_notifyHTTPService = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -107,22 +110,16 @@ jmethodID JNI::_MID_eglVersion = 0;
 jmethodID JNI::_MID_getNewSAFTree = 0;
 jmethodID JNI::_MID_getSAFTrees = 0;
 jmethodID JNI::_MID_findSAFTree = 0;
+jmethodID JNI::_MID_exportBackup = 0;
+jmethodID JNI::_MID_importBackup = 0;
 
 jmethodID JNI::_MID_EGL10_eglSwapBuffers = 0;
-
-jmethodID JNI::_MID_AudioTrack_flush = 0;
-jmethodID JNI::_MID_AudioTrack_pause = 0;
-jmethodID JNI::_MID_AudioTrack_play = 0;
-jmethodID JNI::_MID_AudioTrack_stop = 0;
-jmethodID JNI::_MID_AudioTrack_write = 0;
-
-PauseToken JNI::_pauseToken;
 
 const JNINativeMethod JNI::_natives[] = {
 	{ "create", "(Landroid/content/res/AssetManager;"
 				"Ljavax/microedition/khronos/egl/EGL10;"
 				"Ljavax/microedition/khronos/egl/EGLDisplay;"
-				"Landroid/media/AudioTrack;II)V",
+				"Z)V",
 		(void *)JNI::create },
 	{ "destroy", "()V",
 		(void *)JNI::destroy },
@@ -140,6 +137,12 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::syncVirtkeyboardState },
 	{ "setPause", "(Z)V",
 		(void *)JNI::setPause },
+	{ "systemInsetsUpdated", "([I[I[I)V",
+		(void *)JNI::systemInsetsUpdated },
+	{ "setDefaultAudioValues", "(II)V",
+		(void *)JNI::setDefaultAudioValues },
+	{ "notifyAudioDisconnect", "()V",
+		(void *)JNI::notifyAudioDisconnect },
 	{ "getNativeVersionInfo", "()Ljava/lang/String;",
 		(void *)JNI::getNativeVersionInfo }
 };
@@ -434,71 +437,6 @@ void JNI::showOnScreenControls(int enableMask) {
 	}
 }
 
-Graphics::Surface *JNI::getBitmapResource(BitmapResources resource) {
-	JNIEnv *env = JNI::getEnv();
-
-	jobject bitmap = env->CallObjectMethod(_jobj, _MID_getBitmapResource, (int) resource);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Can't get bitmap resource");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-
-		return nullptr;
-	}
-
-	if (bitmap == nullptr) {
-		LOGE("Bitmap resource was not found");
-		return nullptr;
-	}
-
-	AndroidBitmapInfo bitmap_info;
-	if (AndroidBitmap_getInfo(env, bitmap, &bitmap_info) != ANDROID_BITMAP_RESULT_SUCCESS) {
-		LOGE("Error reading bitmap info");
-		env->DeleteLocalRef(bitmap);
-		return nullptr;
-	}
-
-	Graphics::PixelFormat fmt;
-	switch(bitmap_info.format) {
-		case ANDROID_BITMAP_FORMAT_RGBA_8888:
-#ifdef SCUMM_BIG_ENDIAN
-			fmt = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#else
-			fmt = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
-			break;
-		case ANDROID_BITMAP_FORMAT_RGBA_4444:
-			fmt = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
-			break;
-		case ANDROID_BITMAP_FORMAT_RGB_565:
-			fmt = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-			break;
-		default:
-			LOGE("Bitmap has unsupported format");
-			env->DeleteLocalRef(bitmap);
-			return nullptr;
-	}
-
-	void *src_pixels = nullptr;
-	if (AndroidBitmap_lockPixels(env, bitmap, &src_pixels) != ANDROID_BITMAP_RESULT_SUCCESS) {
-		LOGE("Error locking bitmap pixels");
-		env->DeleteLocalRef(bitmap);
-		return nullptr;
-	}
-
-	Graphics::Surface *ret = new Graphics::Surface();
-	ret->create(bitmap_info.width, bitmap_info.height, fmt);
-	ret->copyRectToSurface(src_pixels, bitmap_info.stride,
-			0, 0, bitmap_info.width, bitmap_info.height);
-
-	AndroidBitmap_unlockPixels(env, bitmap);
-	env->DeleteLocalRef(bitmap);
-
-	return ret;
-}
-
 void JNI::setTouchMode(int touchMode) {
 	JNIEnv *env = JNI::getEnv();
 
@@ -563,6 +501,15 @@ Common::String JNI::getScummVMBasePath() {
 	env->DeleteLocalRef(pathObj);
 
 	return path;
+}
+
+Common::String JNI::getScummVMAssetsPath() {
+	Common::String basePath = getScummVMBasePath();
+	if (!basePath.empty() && basePath.lastChar() != '/') {
+		basePath += '/';
+	}
+	basePath += "assets";
+	return basePath;
 }
 
 Common::String JNI::getScummVMConfigPath() {
@@ -636,6 +583,19 @@ void JNI::setCurrentGame(const Common::String &target) {
 	}
 }
 
+void JNI::notifyHTTPService(int localPort, bool minimal) {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_notifyHTTPService, localPort, minimal);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error notifying HTTP service state");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
 // The following adds assets folder to search set.
 // However searching and retrieving from "assets" on Android this is slow
 // so we also make sure to add the base directory, with a higher priority
@@ -663,7 +623,7 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 		const char *path = env->GetStringUTFChars(path_obj, 0);
 
 		if (path != 0) {
-			s.addDirectory(path, path, priority);
+			s.addDirectory(path, path, priority, 2);
 			env->ReleaseStringUTFChars(path_obj, path);
 		}
 
@@ -734,59 +694,11 @@ int JNI::fetchEGLVersion() {
 	return _egl_version;
 }
 
-void JNI::setAudioPause() {
-	JNIEnv *env = JNI::getEnv();
-
-	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_flush);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Error flushing AudioTrack");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-
-	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_pause);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Error setting AudioTrack: pause");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-}
-
-void JNI::setAudioPlay() {
-	JNIEnv *env = JNI::getEnv();
-
-	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_play);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Error setting AudioTrack: play");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-}
-
-void JNI::setAudioStop() {
-	JNIEnv *env = JNI::getEnv();
-
-	env->CallVoidMethod(_jobj_audio_track, _MID_AudioTrack_stop);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Error setting AudioTrack: stop");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-}
-
 // natives for the dark side
 
 void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 				jobject egl, jobject egl_display,
-				jobject at, jint audio_sample_rate, jint audio_buffer_size) {
+				jboolean assets_updated_) {
 	LOGI("Native version: %s", gScummVMFullVersion);
 
 	assert(!_system);
@@ -809,7 +721,6 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
         }                                                                   \
     } while (0)
 
-	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(, getDPI, "([F)V");
 	FIND_METHOD(, displayMessageOnOSD, "(Ljava/lang/String;)V");
 	FIND_METHOD(, openUrl, "(Ljava/lang/String;)V");
@@ -817,9 +728,9 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getTextFromClipboard, "()Ljava/lang/String;");
 	FIND_METHOD(, setTextInClipboard, "(Ljava/lang/String;)Z");
 	FIND_METHOD(, isConnectionLimited, "()Z");
+	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showOnScreenControls, "(I)V");
-	FIND_METHOD(, getBitmapResource, "(I)Landroid/graphics/Bitmap;");
 	FIND_METHOD(, setTouchMode, "(I)V");
 	FIND_METHOD(, getTouchMode, "()I");
 	FIND_METHOD(, setOrientation, "(I)V");
@@ -827,15 +738,18 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getScummVMConfigPath, "()Ljava/lang/String;");
 	FIND_METHOD(, getScummVMLogPath, "()Ljava/lang/String;");
 	FIND_METHOD(, setCurrentGame, "(Ljava/lang/String;)V");
+	FIND_METHOD(, notifyHTTPService, "(IZ)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
 	FIND_METHOD(, eglVersion, "()I");
 	FIND_METHOD(, getNewSAFTree,
-	            "(ZZLjava/lang/String;Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
+	            "(ZLjava/lang/String;Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, getSAFTrees, "()[Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, findSAFTree, "(Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
+	FIND_METHOD(, exportBackup, "(Ljava/lang/String;)I");
+	FIND_METHOD(, importBackup, "(Ljava/lang/String;Ljava/lang/String;)I");
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
@@ -849,29 +763,26 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 				"(Ljavax/microedition/khronos/egl/EGLDisplay;"
 				"Ljavax/microedition/khronos/egl/EGLSurface;)Z");
 
-	_jobj_audio_track = env->NewGlobalRef(at);
-
-	env->DeleteLocalRef(cls);
-
-	cls = env->GetObjectClass(_jobj_audio_track);
-
-	FIND_METHOD(AudioTrack_, flush, "()V");
-	FIND_METHOD(AudioTrack_, pause, "()V");
-	FIND_METHOD(AudioTrack_, play, "()V");
-	FIND_METHOD(AudioTrack_, stop, "()V");
-	FIND_METHOD(AudioTrack_, write, "([BII)I");
-
 	env->DeleteLocalRef(cls);
 #undef FIND_METHOD
+
+	assets_updated = assets_updated_;
+
+	// Initialize network bindings here in a Java thread
+	// If net called gets called for the first time in a timer thread,
+	// the class loader is lost and can't find our classes.
+	Networking::NetJNI::init(env);
 
 	pause = false;
 	// initial value of zero!
 	sem_init(&pause_sem, 0, 0);
 
+	virt_keyboard_state = false;
+
 	_asset_archive = new AndroidAssetArchive(asset_manager);
 	assert(_asset_archive);
 
-	_system = new OSystem_Android(audio_sample_rate, audio_buffer_size);
+	_system = new OSystem_Android();
 	assert(_system);
 
 	g_system = _system;
@@ -896,7 +807,6 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 
 	JNI::getEnv()->DeleteGlobalRef(_jobj_egl_display);
 	JNI::getEnv()->DeleteGlobalRef(_jobj_egl);
-	JNI::getEnv()->DeleteGlobalRef(_jobj_audio_track);
 	JNI::getEnv()->DeleteGlobalRef(_jobj);
 }
 
@@ -1014,14 +924,7 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	if (!_system)
 		return;
 
-	if (g_engine) {
-		LOGD("pauseEngine: %d", value);
-
-		if (value)
-			JNI::_pauseToken = g_engine->pauseEngine();
-		else if (JNI::_pauseToken.isActive())
-			JNI::_pauseToken.clear();
-	}
+	_system->setPause(value);
 
 	if (pause != value) {
 		pause = value;
@@ -1033,6 +936,15 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 		}
 	}
 }
+
+void JNI::systemInsetsUpdated(JNIEnv *env, jobject self, jintArray gestureInsets, jintArray systemInsets, jintArray cutoutInsets) {
+	assert(env->GetArrayLength(gestureInsets) == ARRAYSIZE(gestures_insets));
+
+	env->GetIntArrayRegion(gestureInsets, 0, ARRAYSIZE(gestures_insets), gestures_insets);
+	env->GetIntArrayRegion(cutoutInsets, 0, ARRAYSIZE(cutout_insets), cutout_insets);
+}
+
+// JNI::setDefaultAudioValues and JNI::notifyAudioDisconnect are in android-mixer.cpp
 
 jstring JNI::getNativeVersionInfo(JNIEnv *env, jobject self) {
 	return convertToJString(env, Common::U32String(gScummVMVersion));
@@ -1114,14 +1026,17 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 	return res;
 }
 
-jobject JNI::getNewSAFTree(bool folder, bool writable, const Common::String &initURI,
+jobject JNI::getNewSAFTree(bool writable, const Common::String &initURI,
                            const Common::String &prompt) {
 	JNIEnv *env = JNI::getEnv();
 	jstring javaInitURI = env->NewStringUTF(initURI.c_str());
 	jstring javaPrompt = env->NewStringUTF(prompt.c_str());
 
 	jobject tree = env->CallObjectMethod(_jobj, _MID_getNewSAFTree,
-	                                     folder, writable, javaInitURI, javaPrompt);
+	                                     writable, javaInitURI, javaPrompt);
+
+	env->DeleteLocalRef(javaInitURI);
+	env->DeleteLocalRef(javaPrompt);
 
 	if (env->ExceptionCheck()) {
 		LOGE("getNewSAFTree: error");
@@ -1131,9 +1046,6 @@ jobject JNI::getNewSAFTree(bool folder, bool writable, const Common::String &ini
 
 		return nullptr;
 	}
-
-	env->DeleteLocalRef(javaInitURI);
-	env->DeleteLocalRef(javaPrompt);
 
 	return tree;
 }
@@ -1186,4 +1098,52 @@ jobject JNI::findSAFTree(const Common::String &name) {
 	return tree;
 }
 
-#endif
+int JNI::exportBackup(const Common::U32String &prompt) {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring promptObj = convertToJString(env, prompt);
+
+	jint result = env->CallIntMethod(_jobj, _MID_exportBackup, promptObj);
+
+	env->DeleteLocalRef(promptObj);
+
+	if (env->ExceptionCheck()) {
+		LOGE("exportBackup: error");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		// BackupManager.ERROR_INVALID_BACKUP
+		return -1;
+	}
+
+	return result;
+}
+
+int JNI::importBackup(const Common::U32String &prompt, const Common::String &path) {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring promptObj = convertToJString(env, prompt);
+
+	jstring pathObj = nullptr;
+	if (!path.empty()) {
+		pathObj = env->NewStringUTF(path.c_str());
+	}
+
+	jint result = env->CallIntMethod(_jobj, _MID_importBackup, promptObj, pathObj);
+
+	env->DeleteLocalRef(pathObj);
+	env->DeleteLocalRef(promptObj);
+
+	if (env->ExceptionCheck()) {
+		LOGE("importBackup: error");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		// BackupManager.ERROR_INVALID_BACKUP
+		return -1;
+	}
+
+	return result;
+}

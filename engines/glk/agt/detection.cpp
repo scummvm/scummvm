@@ -34,6 +34,10 @@ void AGTMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
+const GlkDetectionEntry* AGTMetaEngine::getDetectionEntries() {
+	return AGT_GAMES;
+}
+
 GameDescriptor AGTMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = AGT_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))

@@ -43,9 +43,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class Sword2MetaEngineDetection : public AdvancedMetaEngineDetection {
+class Sword2MetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	Sword2MetaEngineDetection() : AdvancedMetaEngineDetection(Sword2::gameDescriptions, sizeof(ADGameDescription), sword2Games) {
+	Sword2MetaEngineDetection() : AdvancedMetaEngineDetection(Sword2::gameDescriptions, sword2Games) {
 		_guiOptions = GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_OBJECT_LABELS);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
@@ -53,6 +53,11 @@ public:
 
 	PlainGameDescriptor findGame(const char *gameId) const override {
 		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
+	}
+
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngineDetection::identifyGame(game, descriptor);
 	}
 
 	const char *getName() const override {

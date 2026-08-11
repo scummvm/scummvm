@@ -23,8 +23,7 @@
 #define M4_CORE_ROOMS_H
 
 #include "common/hashmap.h"
-#include "m4/adv_r/adv.h"
-#include "m4/adv_r/adv_control.h"
+#include "common/serializer.h"
 #include "m4/adv_r/adv_hotspot.h"
 
 namespace M4 {
@@ -39,9 +38,9 @@ public:
 	virtual void daemon() {}
 	virtual void pre_parser() {}
 	virtual void parser();
-	virtual void parser_code() {}
 	virtual void roomError() {}
 	virtual void shutdown() {}
+	virtual void syncGame(Common::Serializer &s) {}
 
 	/**
 	 * Used to return custom hotspots at a given position
@@ -140,9 +139,6 @@ public:
 	void room_parser() {
 		_activeRoom->parser();
 	}
-	void parser_code() {
-		_activeRoom->parser_code();
-	}
 	void room_error() {
 		_activeRoom->roomError();
 	}
@@ -152,15 +148,22 @@ public:
 	HotSpotRec *custom_hotspot_which(int x, int y) {
 		return _activeRoom->custom_hotspot_which(x, y);
 	}
+	Room *getRoom(int room) const;
 
 	void m4SceneLoad();
 	void m4RunScene();
 	void m4EndScene();
 
 	void pal_game_task();
+	void camera_shift_xy(int32 x, int32 y);
+	void set_camera_delta_pan(int32 deltaX, int32 deltaY);
+	void adv_camera_pan_step(int32 step);
+	bool game_camera_panning() const {
+		return _cameraShiftAmount != 0 || _cameraShift_vert_Amount != 0;
+	}
 
 	virtual void global_daemon() = 0;
-	virtual void global_pre_parser() = 0;
+	virtual void global_pre_parser() {}
 	virtual void global_parser() = 0;
 
 	void global_error_code() {

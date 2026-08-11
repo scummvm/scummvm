@@ -42,7 +42,40 @@ byte kEGADefaultPalette[16][3] = {
 	{0xff, 0xff, 0xff}
 };
 
-byte kDrillerC64Palette[16][3] = {
+byte kCGAPalettePinkBlue[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0xaa},
+	{0xaa, 0x00, 0xaa},
+	{0xaa, 0xaa, 0xaa},
+};
+
+byte kCGAPaletteRedGreen[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0x00},
+	{0xaa, 0x00, 0x00},
+	{0xaa, 0x55, 0x00},
+};
+
+byte kCGAPalettePinkBlueBright[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0xff},
+	{0xff, 0x55, 0xff},
+	{0xff, 0xff, 0xff},
+};
+
+byte kCGAPaletteRedGreenBright[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0x55},
+	{0xff, 0x55, 0x55},
+	{0xff, 0xff, 0x55},
+};
+
+byte kHerculesPaletteGreen[2][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xff, 0x00},
+};
+
+byte kC64Palette[16][3] = {
 	{0x00, 0x00, 0x00},
 	{0xFF, 0xFF, 0xFF},
 	{0x68, 0x37, 0x2B},
@@ -74,49 +107,51 @@ byte kDrillerZXPalette[9][3] = {
 };
 
 byte kDrillerCPCPalette[32][3] = {
-	{0x80, 0x80, 0x80}, // 0: special case?
-	{0x00, 0x00, 0x00}, // 1: used in dark only?
-	{0x80, 0xff, 0x80}, // 2
-	{0xff, 0xff, 0x80}, // 3
-	{0x11, 0x22, 0x33},
-	{0xff, 0x00, 0x80}, // 5
-	{0x00, 0x80, 0x80}, // 6
-	{0xff, 0x80, 0x80}, // 7
-	{0x11, 0x22, 0x33},
-	{0x11, 0x22, 0x33},
-	{0xff, 0xff, 0x00}, // 10
-	{0xff, 0xff, 0xff}, // 11
-	{0xff, 0x00, 0x00}, // 12
-	{0x11, 0x22, 0x33},
-	{0xff, 0x80, 0x00}, // 14
-	{0x11, 0x22, 0x33},
-	{0x11, 0x22, 0x33},
-	{0x00, 0xff, 0x80}, // 17
-	{0x00, 0xff, 0x00}, // 18
-	{0x80, 0xff, 0xff}, // 19
-	{0x80, 0x80, 0x80}, // 20
-	{0x00, 0x00, 0xff}, // 21
-	{0x00, 0x80, 0x00}, // 22
-	{0x00, 0x80, 0xff}, // 23
-	{0x80, 0x00, 0x80}, // 24
-	{0x80, 0xff, 0x80}, // 25
-	{0x80, 0xff, 0x00}, // 26
-	{0x00, 0xff, 0xff}, // 27
-	{0x80, 0x00, 0x00}, // 28
-	{0x11, 0x22, 0x33},
-	{0x11, 0x22, 0x33},
-	{0x80, 0x80, 0xff}, // 31
+	{0x80, 0x80, 0x80}, // 0: white
+	{0x80, 0x80, 0x80}, // 1: white
+	{0x00, 0xff, 0x80}, // 2: sea green
+	{0xff, 0xff, 0x80}, // 3: pastel yellow
+	{0x00, 0x00, 0x80}, // 4: blue
+	{0xff, 0x00, 0x80}, // 5: purple
+	{0x00, 0x80, 0x80}, // 6: cyan
+	{0xff, 0x80, 0x80}, // 7: pink
+	{0xff, 0x00, 0x80}, // 8: purple
+	{0xff, 0xff, 0x80}, // 9: pastel yellow
+	{0xff, 0xff, 0x00}, // 10: bright yellow
+	{0xff, 0xff, 0xff}, // 11: bright white
+	{0xff, 0x00, 0x00}, // 12: bright red
+	{0xff, 0x00, 0xff}, // 13: bright magenta
+	{0xff, 0x80, 0x00}, // 14: orange
+	{0xff, 0x80, 0xff}, // 15: pastel magenta
+	{0x00, 0x00, 0x80}, // 16: blue
+	{0x00, 0xff, 0x80}, // 17: sea green
+	{0x00, 0xff, 0x00}, // 18: bright green
+	{0x00, 0xff, 0xff}, // 19: bright cyan
+	{0x00, 0x00, 0x00}, // 20: black
+	{0x00, 0x00, 0xff}, // 21: bright blue
+	{0x00, 0x80, 0x00}, // 22: green
+	{0x00, 0x80, 0xff}, // 23: sky blue
+	{0x80, 0x00, 0x80}, // 24: magenta
+	{0x80, 0xff, 0x80}, // 25: pastel green
+	{0x80, 0xff, 0x00}, // 26: lime
+	{0x80, 0xff, 0xff}, // 27: pastel cyan
+	{0x80, 0x00, 0x00}, // 28: red
+	{0x80, 0x00, 0xff}, // 29: mauve
+	{0x80, 0x80, 0x00}, // 30: yellow
+	{0x80, 0x80, 0xff}, // 31: pastel blue
 };
 
 void FreescapeEngine::loadColorPalette() {
 	if (_renderMode == Common::kRenderEGA) {
 		_gfx->_palette = (byte *)&kEGADefaultPalette;
 	} else if (_renderMode == Common::kRenderC64) {
-		_gfx->_palette = (byte *)&kDrillerC64Palette;
+		_gfx->_palette = (byte *)&kC64Palette;
 	} else if (_renderMode == Common::kRenderZX) {
 		_gfx->_palette = (byte *)kDrillerZXPalette;
 	} else if (_renderMode == Common::kRenderCPC) {
 		_gfx->_palette = (byte *)kDrillerCPCPalette;
+	} else if (_renderMode == Common::kRenderHercG) {
+		_gfx->_palette = (byte *)&kHerculesPaletteGreen;
 	} else if (_renderMode == Common::kRenderCGA) {
 		// palette depends on the area
 	} else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
@@ -125,6 +160,25 @@ void FreescapeEngine::loadColorPalette() {
 		error("Invalid render mode, no palette selected");
 
 	_gfx->setColorMap(&_colorMap);
+}
+
+byte *FreescapeEngine::loadPalette(Common::SeekableReadStream *file) {
+	int r, g, b;
+	auto palette = new byte[16][3];
+	for (int c = 0; c < 16; c++) {
+		int v = file->readUint16BE();
+		r = (v & 0xf00) >> 8;
+		r = r << 4 | r;
+		palette[c][0] = r & 0xff;
+		g = (v & 0xf0) >> 4;
+		g = g << 4 | g;
+		palette[c][1] = g & 0xff;
+		b = v & 0xf;
+		b = b << 4 | b;
+		palette[c][2] = b & 0xff;
+		debugC(1, kFreescapeDebugParser, "Color %d: (%04x) %02x %02x %02x", c, v, palette[c][0], palette[c][1], palette[c][2]);
+	}
+	return (byte *)palette;
 }
 
 void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset) {
@@ -139,13 +193,17 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 		numberOfAreas += 2;
 	else if (isDark())
 		numberOfAreas += 5;
+	else if (isCastle())
+		numberOfAreas += 20;
+	else if (isEclipse())
+		numberOfAreas += 2;
 
 	for (uint i = 0; i < numberOfAreas; i++) {
 		int label = readField(file, 8);
 		if (label == 255)
 			break;
 		auto palette = new byte[16][3];
-		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d at %lx", label, file->pos());
+		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d at %" PRIx64, label, file->pos());
 		for (int c = 0; c < 16; c++) {
 			int v = file->readUint16BE();
 			r = (v & 0xf00) >> 8;
@@ -157,9 +215,14 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 			b = v & 0xf;
 			b = b << 4 | b;
 			palette[c][2] = b & 0xff;
+			debugC(1, kFreescapeDebugParser, "Color %d: (%04x) %02x %02x %02x", c, v, palette[c][0], palette[c][1], palette[c][2]);
 		}
-
-		assert(!_paletteByArea.contains(label));
+		if (_paletteByArea.contains(label)) {
+			// Eclipse Atari ST / Amiga has a duplicate palette entry for area 42
+			assert(isEclipse() && (isAtariST() || isAmiga()));
+			delete[] palette;
+			continue;
+		}
 		_paletteByArea[label] = (byte *)palette;
 	}
 }
@@ -176,8 +239,21 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 		_gfx->_paperColor = _areaMap[levelID]->_paperColor;
 		_gfx->_underFireBackgroundColor = _areaMap[levelID]->_underFireBackgroundColor;
 
-		if (isSpectrum() && _gfx->_paperColor >= 9)
-			_gfx->_paperColor = 1;
+		if (isCPC()) {
+			if (isEncodedCPCDirectColor(_gfx->_inkColor))
+				_gfx->_inkColor = decodeCPCDirectColor(_gfx->_inkColor);
+			if (isEncodedCPCDirectColor(_gfx->_paperColor))
+				_gfx->_paperColor = decodeCPCDirectColor(_gfx->_paperColor);
+			if (isEncodedCPCDirectColor(_gfx->_underFireBackgroundColor))
+				_gfx->_underFireBackgroundColor = decodeCPCDirectColor(_gfx->_underFireBackgroundColor);
+		}
+
+		if (isC64()) {
+			_gfx->_inkColor %= 16;
+			_gfx->_paperColor %= 16;
+			_gfx->_underFireBackgroundColor %= 16;
+			return; // C64 does not have to process the border
+		}
 
 		if (!_border)
 			return;
@@ -210,17 +286,31 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 }
 
 byte *FreescapeEngine::findCGAPalette(uint16 levelID) {
-	const CGAPaletteEntry *entry = _rawCGAPaletteByArea;
-	byte *palette = nullptr;
-	while (entry->areaId) {
-		if (entry->areaId == levelID) {
-			palette = entry->palette;
-			break;
-		}
-		entry++;
+	if (isCastle()) {
+		// Castle Master always sets the intensity bit of the color select register
+		// (BIOS AH=0Bh, BH=0, BL=0x10 is a constant), so it runs bright. Driller
+		// reads that byte from a variable and keeps the dim palettes below
+		if (levelID % 2 == 0)
+			return (byte *)&kCGAPalettePinkBlueBright;
+		else
+			return (byte *)&kCGAPaletteRedGreenBright;
 	}
-
-	return palette;
+	if (isDriller() || isDark()) {
+		if (levelID % 2 == 0)
+			return (byte *)&kCGAPalettePinkBlue;
+		else
+			return (byte *)&kCGAPaletteRedGreen;
+	}
+	if (isEclipse()) {
+		if (_areaMap.contains(levelID)) {
+			if (_areaMap[levelID]->_extraColor[0] & 0x01) {
+				return (byte *)&kCGAPaletteRedGreenBright;
+			} else {
+				return (byte *)&kCGAPalettePinkBlueBright;
+			}
+		}
+	}
+	return (byte *)&kCGAPaletteRedGreenBright;
 }
 
 } // End of namespace Freescape

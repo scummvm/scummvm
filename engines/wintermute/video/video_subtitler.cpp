@@ -73,22 +73,18 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		newFile = PathUtil::combine(path, name + ext);
 	}
 
-	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(newFile, true, false);
+	uint32 fileSize;
+	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(newFile, &fileSize);
 
-	if (file == nullptr) {
+	if (buffer == nullptr) {
 		return false; // no subtitles
 	}
-
-	int fileSize = file->size();
-	char *buffer = new char[fileSize];
-
-	file->read(buffer, fileSize);
 
 	/* This is where we parse .sub files.
 	 * Subtitles cards are in the form
 	 * {StartFrame}{EndFrame} FirstLine | SecondLine \n
 	 */
-	int pos = 0;
+	uint32 pos = 0;
 
 	while (pos < fileSize) {
 		char *tokenStart = 0;
@@ -116,7 +112,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		}
 
 		Common::String cardText;
-		char *fileLine = (char *)&buffer[pos];
+		char *fileLine = &buffer[pos];
 
 		for (int i = 0; i < realLength; i++) {
 			if (fileLine[i] == '{') {
@@ -166,7 +162,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 		if (start != -1 && cardText.size() > 0 && (start != 1 || end != 1)){
 			// Add a subtitlecard based on the line we have just parsed
-			_subtitles.push_back(SubtitleCard(_gameRef, cardText, start, end));
+			_subtitles.push_back(SubtitleCard(_game, cardText, start, end));
 		}
 
 		pos += lineLength + 1;
@@ -183,21 +179,21 @@ void VideoSubtitler::display() {
 
 		BaseFont *font;
 
-		if (_gameRef->getVideoFont() == nullptr) {
-			font = _gameRef->getSystemFont();
+		if (_game->_videoFont == nullptr) {
+			font = _game->_systemFont;
 		} else {
-			font = _gameRef->getVideoFont();
+			font = _game->_videoFont;
 		}
 
 		int textHeight = font->getTextHeight(
 		                     (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
-		                     _gameRef->_renderer->getWidth());
+		                     _game->_renderer->getWidth());
 
 		font->drawText(
 		    (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
 		    0,
-		    (_gameRef->_renderer->getHeight() - textHeight - 5),
-		    (_gameRef->_renderer->getWidth()),
+		    (_game->_renderer->getHeight() - textHeight - 5),
+		    (_game->_renderer->getWidth()),
 		    TAL_CENTER);
 	}
 }

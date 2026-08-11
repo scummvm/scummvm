@@ -111,6 +111,7 @@ MODULE_OBJS := \
 	lipsync.o \
 	localize.o \
 	lua.o \
+	lua_grim_patch.o \
 	lua_v1.o \
 	lua_v1_actor.o \
 	lua_v1_graphics.o \

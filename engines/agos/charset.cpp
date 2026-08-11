@@ -134,6 +134,10 @@ void AGOSEngine::justifyStart() {
 	} else {
 		_printCharCurPos = _textWindow->textLength;
 		_printCharMaxPos = _textWindow->textMaxLength;
+		if (isPnAmigaTextWindow(_textWindow)) {
+			_printCharCurPos = _textWindow->textColumn;
+			_printCharMaxPos = getPnAmigaTextPlaneWidth(_textWindow);
+		}
 	}
 	_printCharPixelCount = 0;
 	_numLettersToPrint = 0;
@@ -141,6 +145,8 @@ void AGOSEngine::justifyStart() {
 }
 
 void AGOSEngine::justifyOutPut(byte chr) {
+	const bool pnAmigaText = isPnAmigaTextWindow(_textWindow);
+
 	if (chr == 12) {
 		_numLettersToPrint = 0;
 		_printCharCurPos = 0;
@@ -154,6 +160,10 @@ void AGOSEngine::justifyOutPut(byte chr) {
 		doOutput(_lettersToPrintBuf, 1);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
 		bool fit;
+		int16 separatorWidth = (getGameType() == GType_FF || getGameType() == GType_PP) ? getFeebleFontSize(chr) : 1;
+
+		if (pnAmigaText && chr == ' ')
+			separatorWidth = getPnAmigaGlyphAdvance(chr);
 
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			fit = _printCharMaxPos - _printCharCurPos > _printCharPixelCount;
@@ -166,14 +176,14 @@ void AGOSEngine::justifyOutPut(byte chr) {
 			doOutput(_lettersToPrintBuf, _numLettersToPrint);
 
 			if (_printCharCurPos == _printCharMaxPos) {
-				_printCharCurPos = 0;
+				_printCharCurPos = pnAmigaText ? kPnAmigaTextStartX : 0;
 			} else {
 				if (chr)
 					doOutput(&chr, 1);
 				if (chr == 10)
-					_printCharCurPos = 0;
+					_printCharCurPos = pnAmigaText ? kPnAmigaTextStartX : 0;
 				else if (chr != 0)
-					_printCharCurPos += (getGameType() == GType_FF || getGameType() == GType_PP) ? getFeebleFontSize(chr) : 1;
+					_printCharCurPos += separatorWidth;
 			}
 		} else {
 			const byte newline_character = 10;
@@ -182,17 +192,23 @@ void AGOSEngine::justifyOutPut(byte chr) {
 			doOutput(_lettersToPrintBuf, _numLettersToPrint);
 			if (chr == ' ') {
 				doOutput(&chr, 1);
-				_printCharCurPos += (getGameType() == GType_FF || getGameType() == GType_PP) ? getFeebleFontSize(chr) : 1;
+				_printCharCurPos += separatorWidth;
 			} else {
 				doOutput(&chr, 1);
-				_printCharCurPos = 0;
+				_printCharCurPos = pnAmigaText ? kPnAmigaTextStartX : 0;
 			}
 		}
 		_numLettersToPrint = 0;
 		_printCharPixelCount = 0;
 	} else {
+		int16 charWidth = (getGameType() == GType_FF || getGameType() == GType_PP) ? getFeebleFontSize(chr) : 1;
+
 		_lettersToPrintBuf[_numLettersToPrint++] = chr;
-		_printCharPixelCount += (getGameType() == GType_FF || getGameType() == GType_PP) ? getFeebleFontSize(chr) : 1;
+
+		if (pnAmigaText)
+			charWidth = getPnAmigaGlyphAdvance(chr);
+
+		_printCharPixelCount += charWidth;
 	}
 }
 
@@ -220,6 +236,37 @@ void AGOSEngine_PN::windowPutChar(WindowBlock *window, byte c, byte b) {
 void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	byte width = 6;
 	byte textColumnWidth = 8;
+
+	if (isPnAmigaTextWindow(window)) {
+		ensurePnAmigaTextPlanes();
+		if (c == 12) {
+			clearWindow(window);
+		} else if (c == 13 || c == 10) {
+			windowNewLine(window);
+		} else if ((c == 1 || c == 8) && window->textColumn > kPnAmigaTextStartX) {
+			window->textColumn = MAX<int16>(kPnAmigaTextStartX, window->textColumn - (int16)getPnAmigaGlyphAdvance(' '));
+		} else if (c >= 32) {
+			const PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
+			const uint16 advance = getPnAmigaGlyphAdvance(c);
+			const uint16 renderWidth = getPnAmigaGlyphRenderWidth(c);
+			const uint16 cursorWidth = isPnAmigaInputWindow(window) ? getPnAmigaGlyphRenderWidth('_') : 0;
+			const uint16 drawWidth = isPnAmigaInputWindow(window) ? MAX<uint16>(renderWidth, advance + cursorWidth) : renderWidth;
+			if (plane == nullptr)
+				return;
+			if (advance == 0 && renderWidth == 0)
+				return;
+			if (window->textColumn + drawWidth > plane->width) {
+				if (isPnAmigaInputWindow(window))
+					return;
+				windowNewLine(window);
+			}
+			drawPnAmigaTopazChar(window, c);
+			compositePnAmigaTextPlane(window);
+			window->textColumn += advance;
+			window->textLength++;
+		}
+		return;
+	}
 
 	if (c == 12) {
 		clearWindow(window);
@@ -333,6 +380,23 @@ void AGOSEngine_Feeble::windowNewLine(WindowBlock *window) {
 #endif
 
 void AGOSEngine::windowNewLine(WindowBlock *window) {
+	if (isPnAmigaTextWindow(window)) {
+		window->textColumn = kPnAmigaTextStartX;
+		window->textLength = 0;
+		if (isPnAmigaInputWindow(window)) {
+			clearPnAmigaTextPlane(window);
+			const int16 top = ((int16)getPnAmigaWindowInteriorHeight(window) - (int16)getPnAmigaGlyphHeight()) / 2;
+			window->textRow = MAX((int16)0, top);
+			compositePnAmigaTextPlane(window);
+			return;
+		}
+		window->textRow += getPnAmigaTextLineStep();
+		if (window->textRow + getPnAmigaGlyphHeight() > (int16)getPnAmigaWindowInteriorHeight(window) - 2) {
+			scrollPnAmigaTextPlane(window);
+			window->textRow -= getPnAmigaTextLineStep();
+		}
+		return;
+	}
 	window->textColumn = 0;
 	window->textColumnOffset = (getGameType() == GType_ELVIRA2) ? 4 : 0;
 	window->textLength = 0;
@@ -356,6 +420,10 @@ void AGOSEngine::windowNewLine(WindowBlock *window) {
 }
 
 void AGOSEngine::windowScroll(WindowBlock *window) {
+	if (isPnAmigaTextWindow(window)) {
+		scrollPnAmigaTextPlane(window);
+		return;
+	}
 	_videoLockOut |= 0x8000;
 
 	if (window->height != 1) {

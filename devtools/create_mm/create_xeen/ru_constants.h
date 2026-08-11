@@ -25,7 +25,6 @@
 
 class RU : public LangConstants {
 public:
-	virtual ~RU() {}
 	const char *CLOUDS_CREDITS() {
 		return "\v012\t000\x3"																								 // "\v012\t000\x3"
 			   "c\f35\x88\xA4\xA5\xEF \xA8 \xE0\xE3\xAA\xAE\xA2\xAE\xA4\xE1\xE2\xA2\xAE \xAF\xE0\xAE\xA5\xAA\xE2\xAE\xAC:\n" // "c\f35Идея и руководство проектом:\n"
@@ -2583,6 +2582,21 @@ public:
 				_soxm = new RU_CloudsOfXeenMenu();
 			return _soxm;
 		}
+
+		virtual ~RU_KeyConstants() {
+			delete _dci;
+			delete _dcp;
+			delete _dcc;
+			delete _dd;
+			delete _di;
+			delete _dp;
+			delete _dq;
+			delete _dqf;
+			delete _ds;
+			delete _l;
+			delete _soxm;
+		}
+
 	private:
 		RU_DialogsCharInfo     *_dci = NULL;
 		RU_DialogsControlPanel *_dcp = NULL;
@@ -2600,6 +2614,10 @@ public:
 	RU_KeyConstants *keyConstants() {
 		if (!_kc) _kc = new RU_KeyConstants();
 		return _kc;
+	}
+
+	virtual ~RU() {
+		delete _kc;
 	}
 
 private:

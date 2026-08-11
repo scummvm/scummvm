@@ -93,6 +93,7 @@ public:
 	void unloadResourceById(uint32 resId);
 	void unloadResourcesBySceneId(uint32 sceneId);
 	void unloadSceneResources(uint32 sceneId1, uint32 sceneId2);
+	void unloadAllResources();
 	Resource *getResource(uint32 resId);
 
 protected:

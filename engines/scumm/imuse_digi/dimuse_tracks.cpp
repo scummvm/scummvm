@@ -49,6 +49,17 @@ int IMuseDigital::tracksInit() {
 		_tracks[l].dispatchPtr = dispatchGetDispatchByTrackId(l);
 		_tracks[l].dispatchPtr->trackPtr = &_tracks[l];
 		_tracks[l].soundId = 0;
+		_tracks[l].group = 0;
+		_tracks[l].marker = 0;
+		_tracks[l].priority = 0;
+		_tracks[l].vol = 0;
+		_tracks[l].effVol = 0;
+		_tracks[l].pan = 0;
+		_tracks[l].detune = 0;
+		_tracks[l].transpose = 0;
+		_tracks[l].pitchShift = 0;
+		_tracks[l].mailbox = 0;
+		_tracks[l].jumpHook = 0;
 		_tracks[l].syncSize_0 = 0;
 		_tracks[l].syncSize_1 = 0;
 		_tracks[l].syncSize_2 = 0;
@@ -472,6 +483,8 @@ int IMuseDigital::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed,
 }
 
 void IMuseDigital::tracksClear(IMuseDigiTrack *trackPtr) {
+	Common::StackLock lock(*_mutex);
+
 	if (_vm->_game.id == GID_CMI) {
 		if (trackPtr->syncPtr_0) {
 			trackPtr->syncSize_0 = 0;

@@ -21,7 +21,7 @@
 
 #include "bagel/boflib/cache.h"
 #include "bagel/boflib/log.h"
-#include "bagel/boflib/debug.h"
+#include "bagel/spacebar/boflib/debug.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {

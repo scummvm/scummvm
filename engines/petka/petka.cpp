@@ -98,8 +98,9 @@ Common::Error PetkaEngine::run() {
 	_vsys.reset(new VideoSystem(*this));
 	_resMgr.reset(new QManager(*this));
 
-	_textFont.reset(Graphics::loadTTFFontFromArchive("FreeSansBold.ttf", 20, Graphics::kTTFSizeModeCell));
-	_descriptionFont.reset(Graphics::loadTTFFontFromArchive("FreeSansBold.ttf", 16, Graphics::kTTFSizeModeCell));
+	// TODO: Which fonts did the original game use?
+	_textFont.reset(Graphics::loadTTFFontFromArchive("LiberationSans-Bold.ttf", 18, Graphics::kTTFSizeModeCell));
+	_descriptionFont.reset(Graphics::loadTTFFontFromArchive("LiberationSans-Bold.ttf", 14, Graphics::kTTFSizeModeCell));
 
 	loadPart(isDemo() ? 1 : 0);
 
@@ -248,6 +249,7 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				goto end;
 			default:
 				break;

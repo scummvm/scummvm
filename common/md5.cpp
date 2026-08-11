@@ -243,7 +243,7 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 }
 
 
-bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length) {
+bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length, ProgressUpdateCallback progressUpdateCallback, void *callbackParameter) {
 
 #ifdef DISABLE_MD5
 	memset(digest, 0, 16);
@@ -262,6 +262,11 @@ bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length) {
 	md5_starts(&ctx);
 
 	while ((i = stream.read(buf, readlen)) > 0) {
+
+		if (progressUpdateCallback != nullptr && !progressUpdateCallback(callbackParameter, i)) {
+			return false;
+		}
+
 		md5_update(&ctx, buf, i);
 
 		if (restricted) {
@@ -279,10 +284,10 @@ bool computeStreamMD5(ReadStream &stream, uint8 digest[16], uint32 length) {
 	return true;
 }
 
-String computeStreamMD5AsString(ReadStream &stream, uint32 length) {
+String computeStreamMD5AsString(ReadStream &stream, uint32 length, ProgressUpdateCallback progressUpdateCallback, void *callbackParameter) {
 	String md5;
 	uint8 digest[16];
-	if (computeStreamMD5(stream, digest, length)) {
+	if (computeStreamMD5(stream, digest, length, progressUpdateCallback, callbackParameter)) {
 		for (int i = 0; i < 16; i++) {
 			md5 += String::format("%02x", (int)digest[i]);
 		}

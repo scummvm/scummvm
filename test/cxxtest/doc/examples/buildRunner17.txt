@@ -1,0 +1,9 @@
+Running cxxtest tests (1 test)
+In MyTestSuite7::testCompareData:
+MyTestSuite7.h:28: Error: Expected (x == y), found ({ 12 12 12  } != { F6 F6 F6  })
+MyTestSuite7.h:33: Error: Expected sizeof(z) (3) bytes to be equal at (&z) and (&w), found:
+   { 12 12 12 }
+     differs from
+   { F6 F6 F6 }
+Failed 1 and Skipped 0 of 1 test
+Success rate: 0%

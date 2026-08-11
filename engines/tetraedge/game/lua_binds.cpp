@@ -2651,6 +2651,12 @@ static int tolua_ExportedFunctions_PlayVerticalScrolling00(lua_State *L) {
 	error("#ferror in function 'SetObjectMoveTime': %d %d %s", err.index, err.array, err.type);
 }
 
+static int tolua_ExportedFunctions_GetNXPadType(lua_State *L) {
+	// TODO: Actually implement this
+	tolua_pushstring(L, "Handheld");
+	return 1;
+}
+
 // Not your imagination, the implementation of these two is quite different to the others.
 static int tolua_GetParticleIndex(lua_State *L) {
 	Common::String s1(tolua_tostring(L, 1, nullptr));
@@ -2849,6 +2855,7 @@ static void LuaOpenBinds_Syberia(lua_State *L) {
 	tolua_function(L, "PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
 	tolua_function(L, "GetParticleIndex", tolua_GetParticleIndex);
 	tolua_function(L, "EnableParticle", tolua_EnableParticle);
+	tolua_function(L, "GetNXPadType", tolua_ExportedFunctions_GetNXPadType);
 
 	tolua_endmodule(L);
 }

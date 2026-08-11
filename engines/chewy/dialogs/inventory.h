@@ -31,7 +31,6 @@ class Inventory {
 private:
 	static int16 inv_rand_x;
 	static int16 inv_rand_y;
-	static int keyVal;
 
 	static bool calc_use_invent(int16 invNr);
 	static void showDiary();

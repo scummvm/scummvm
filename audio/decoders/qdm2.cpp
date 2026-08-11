@@ -22,10 +22,10 @@
 // Based off ffmpeg's QDM2 decoder
 
 #include "common/scummsys.h"
+
+#ifdef USE_QDM2
+
 #include "audio/decoders/qdm2.h"
-
-#ifdef AUDIO_QDM2_H
-
 #include "audio/audiostream.h"
 #include "audio/decoders/codec.h"
 #include "audio/decoders/qdm2data.h"
@@ -33,7 +33,7 @@
 
 #include "common/array.h"
 #include "common/debug.h"
-#include "common/math.h"
+#include "common/intrinsics.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/bitstream.h"
@@ -106,7 +106,7 @@ public:
 	QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData);
 	~QDM2Stream();
 
-	AudioStream *decodeFrame(Common::SeekableReadStream &stream);
+	AudioStream *decodeFrame(Common::SeekableReadStream &stream) override;
 
 private:
 	// Parameters from codec header, do not change during playback
@@ -703,7 +703,7 @@ static int allocTable(VLC *vlc, int size, int use_static) {
 	vlc->table_size += size;
 	if (vlc->table_size > vlc->table_allocated) {
 		if(use_static)
-			error("QDM2 cant do anything, init_vlc() is used with too little memory");
+			error("QDM2 can't do anything, init_vlc() is used with too little memory");
 		vlc->table_allocated += (1 << vlc->bits);
 		temp = (int16 (*)[2])realloc(vlc->table, sizeof(int16 *) * 2 * vlc->table_allocated);
 		if (!temp) {

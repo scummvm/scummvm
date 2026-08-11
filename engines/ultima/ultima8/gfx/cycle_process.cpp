@@ -20,7 +20,9 @@
  */
 
 #include "ultima/ultima8/gfx/cycle_process.h"
+
 #include "ultima/ultima8/gfx/palette.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
@@ -136,7 +138,7 @@ bool CycleProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_running = rs->readByte();
 	_instance = this; //static
 
-	_type = 1; // should be persistant but older savegames may not know that.
+	_type = 1; // should be persistent but older savegames may not know that.
 	return true;
 }
 

@@ -588,7 +588,7 @@ int rollDice(int strike, int stamina, int boatFlag) {
 
 	int delay = 60;
 
-	while (1) {
+	while (!g_vm->shouldQuit()) {
 		g_scott->glk_select(&event);
 		if (event.type == evtype_Timer) {
 			if (theirDiceStopped) {
@@ -670,8 +670,7 @@ void battleHitEnter(int strike, int stamina, int boatFlag) {
 			rearrangeBattleDisplay(strike, stamina, boatFlag);
 		}
 
-	} while (result == 0);
-	return;
+	} while (result == 0 && !g_vm->shouldQuit());
 }
 
 void battleLoop(int enemy, int strike, int stamina, int boatFlag) {
@@ -726,8 +725,7 @@ void battleLoop(int enemy, int strike, int stamina, int boatFlag) {
 
 		battleHitEnter(strike, stamina, boatFlag);
 		g_scott->glk_window_clear(_G(_bottomWindow));
-
-	} while (stamina > 0 && _G(_counters)[3] > 0);
+	} while (stamina > 0 && _G(_counters)[3] > 0 && !g_vm->shouldQuit());
 }
 
 void swapStaminaAndCrewStrength(void) {

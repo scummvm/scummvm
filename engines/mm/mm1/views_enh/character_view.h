@@ -41,6 +41,7 @@ public:
 	 * Draw the view
 	 */
 	void draw() override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 } // namespace Views

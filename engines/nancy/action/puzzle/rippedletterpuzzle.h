@@ -80,16 +80,15 @@ public:
 	int16 _customCursorID = -1;
 
 	Misc::MouseFollowObject _pickedUpPiece;
-	int8 _pickedUpPieceID = -1;
-	byte _pickedUpPieceRot = 0;
 
 	Graphics::ManagedSurface _image;
 	SolveState _solveState = kNotSolved;
 	RippedLetterPuzzleData *_puzzleState = nullptr;
 
+	bool isViewportRelative() const override { return true; }
+
 protected:
 	Common::String getRecordTypeName() const override { return "RippedLetterPuzzle"; }
-	bool isViewportRelative() const override { return true; }
 
 	void drawPiece(const uint pos, const byte rotation, const int pieceID = -1);
 	bool checkOrder(bool useAlt);

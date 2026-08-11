@@ -307,9 +307,9 @@ void Timeline::processTimeline() {
 				break;
 			case kDMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
-					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
-					curEvent = (TimelineEvent *)_vm->_dungeonMan->getThingData(Thing(newEvent._Cu._slot));
-					((Explosion *)curEvent)->setNextThing(_vm->_thingNone);
+					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0xFFFF), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
+					Explosion *explosion = _vm->_dungeonMan->getExplosion(Thing(newEvent._Cu._slot));
+					explosion->setNextThing(_vm->_thingNone);
 				}
 				break;
 			case kDMEventTypeEnableChampionAction:
@@ -352,7 +352,7 @@ void Timeline::processTimeline() {
 				break;
 			case kDMEventTypePoisonChampion: {
 				uint16 championIndex = newEvent._priority;
-				_vm->_championMan->_champions[championIndex = newEvent._priority]._poisonEventCount--;
+				_vm->_championMan->_champions[championIndex]._poisonEventCount--;
 				_vm->_championMan->championPoison(championIndex, newEvent._Bu._attack);
 				}
 				break;
@@ -392,7 +392,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 	event->_mapTime++;
 	int16 sensorEffect = event->_Cu.A._effect;
 	if (sensorEffect == kDMSensorEffectClear) {
-		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+		Door *curDoor = _vm->_dungeonMan->getDoor(_vm->_dungeonMan->getSquareFirstThing(mapX, mapY));
 		bool verticalDoorFl = curDoor->opensVertically();
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX)
 		 && (mapY == _vm->_dungeonMan->_partyMapY) && (doorState != kDMDoorStateOpen)) {
@@ -411,14 +411,16 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 			return;
 		}
 		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
-		uint16 creatureAttributes = _vm->_dungeonMan->getCreatureAttributes(groupThing);
-		if ((groupThing != _vm->_thingEndOfList) && !getFlag(creatureAttributes, kDMCreatureMaskNonMaterial)) {
+		uint16 creatureAttributes;
+		if ((groupThing != _vm->_thingEndOfList) && !getFlag((creatureAttributes = _vm->_dungeonMan->getCreatureAttributes(groupThing)), kDMCreatureMaskNonMaterial)) {
 			if (doorState >= (verticalDoorFl ? CreatureInfo::getHeight(creatureAttributes) : 1)) { /* Creature height or 1 */
-				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != kDMKillOutcomeAllCreaturesInGroup)
+				if (_vm->_groupMan->getDamageAllCreaturesOutcome(_vm->_dungeonMan->getGroup(groupThing), mapX, mapY, 5, true) != kDMKillOutcomeAllCreaturesInGroup)
 					_vm->_groupMan->processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionDangerOnSquare, 0);
 
-				int16 nextState = doorState - 1;
-				doorState = (doorState == kDMDoorStateOpen) ? kDMDoorStateOpen : (DoorState) nextState;
+				int16 nextState = (int16)doorState - 1;
+				if (nextState < 0)
+					nextState = 0;
+				doorState = (DoorState)nextState;
 				curSquare->setDoorState(doorState);
 				_vm->_sound->requestPlay(kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, mapX, mapY, kDMSoundModePlayIfPrioritized);
 				event->_mapTime++;
@@ -433,9 +435,13 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 	if ((sensorEffect == kDMSensorEffectClear) && (doorState == kDMDoorStateClosed))
 		return;
 
-	int16 nextDoorEffect = doorState + 1;
-	int16 prevDoorEffect = doorState - 1;
-	doorState = (DoorState) ((sensorEffect == kDMSensorEffectSet) ? prevDoorEffect : nextDoorEffect);
+	int16 nextDoorStateVal = (sensorEffect == kDMSensorEffectSet) ? (int16)doorState - 1 : (int16)doorState + 1;
+	if (nextDoorStateVal < 0) {
+		nextDoorStateVal = 0;
+	} else if (nextDoorStateVal > 4) {
+		nextDoorStateVal = 4;
+	}
+	doorState = (DoorState)nextDoorStateVal;
 	curSquare->setDoorState(doorState);
 	_vm->_sound->requestPlay(kDMSoundIndexDoorRattle, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
@@ -482,11 +488,16 @@ void Timeline::processEventSquareDoor(TimelineEvent *event) {
 	if (doorState == kDMDoorStateDestroyed)
 		return;
 
-	if (event->_Cu.A._effect == kDMSensorEffectToggle)
+	if (event->_Cu.A._effect == kDMSensorEffectToggle) {
 		event->_Cu.A._effect = (doorState == kDMDoorStateOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
-	else if (event->_Cu.A._effect == kDMSensorEffectSet) {
-		if ((doorState == kDMDoorStateOpen) || (doorState == kDMDoorStateClosed))
-			return;
+	} else {
+		if (event->_Cu.A._effect == kDMSensorEffectSet) {
+			if (doorState == kDMDoorStateOpen)
+           		return;
+		} else if (event->_Cu.A._effect == kDMSensorEffectClear) {
+			if (doorState == kDMDoorStateClosed)
+            	return;
+		}
 	}
 	event->_type = kDMEventTypeDoorAnimation;
 	addEventGetEventIndex(event);
@@ -536,7 +547,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			_vm->_moveSens->getMoveResult(curThing, mapX, mapY, mapX, mapY);
 
 		if (curThingType == kDMThingTypeProjectile) {
-			Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(curThing);
+			Projectile *projectile = _vm->_dungeonMan->getProjectile(curThing);
 			TimelineEvent *newEvent;
 			newEvent = &_events[projectile->_eventIndex];
 			newEvent->_Cu._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
@@ -582,13 +593,13 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 	while (curThing != _vm->_thingEndOfList) {
 		int16 curThingType = curThing.getType();
 		if ((curThingType == kDMstringTypeText) && (curThing.getCell() == event->_Cu.A._cell)) {
-			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
+			TextString *textString = _vm->_dungeonMan->getTextString(curThing);
 			if (event->_Cu.A._effect == kDMSensorEffectToggle)
 				textString->setVisible(!textString->isVisible());
 			else
 				textString->setVisible(event->_Cu.A._effect == kDMSensorEffectSet);
 		} else if (curThingType == kDMThingTypeSensor) {
-			Sensor *curThingSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			Sensor *curThingSensor = _vm->_dungeonMan->getSensor(curThing);
 			uint16 curSensorType = curThingSensor->getType();
 			uint16 curSensorData = curThingSensor->getData();
 			if (curSensorType == kDMSensorWallCountdown) {
@@ -668,7 +679,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 		if (firstProjectileAssociatedThing == _vm->_thingNone) /* BUG0_19 The game crashes when an object launcher sensor is triggered. _vm->_none should be _vm->_endOfList */
 			return;
 
-		_vm->_dungeonMan->unlinkThingFromList(firstProjectileAssociatedThing, Thing(0), mapX, mapY); /* The object is removed without triggering any sensor effects */
+		_vm->_dungeonMan->unlinkThingFromList(firstProjectileAssociatedThing, Thing(0xFFFF), mapX, mapY); /* The object is removed without triggering any sensor effects */
 		if (!launchSingleProjectile) {
 			secondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 			while (secondProjectileAssociatedThing != _vm->_thingNone) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. _vm->_none should be _vm->_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
@@ -712,7 +723,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 	while (curThing != _vm->_thingEndOfList) {
 		int16 curThingType = curThing.getType();
 		if (curThingType == kDMstringTypeText) {
-			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
+			TextString *textString = _vm->_dungeonMan->getTextString(curThing);
 			bool textCurrentlyVisible = textString->isVisible();
 			if (event->_Cu.A._effect == kDMSensorEffectToggle)
 				textString->setVisible(!textCurrentlyVisible);
@@ -724,7 +735,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 				_vm->_textMan->printMessage(kDMColorWhite, _vm->_stringBuildBuffer);
 			}
 		} else if (curThingType == kDMThingTypeSensor) {
-			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			Sensor *curSensor = _vm->_dungeonMan->getSensor(curThing);
 			if (curSensor->getType() == kDMSensorFloorGroupGenerator) {
 				int16 creatureCount = curSensor->getAttrValue();
 				if (getFlag(creatureCount, kDMMaskRandomizeGeneratedCreatureCount))
@@ -736,6 +747,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 				if (healthMultiplier == 0)
 					healthMultiplier = _vm->_dungeonMan->_currMap->_difficulty;
 
+				creatureCount = CLIP<int16>(creatureCount, 0, 3);
 				_vm->_groupMan->groupGetGenerated((CreatureType)curSensor->getData(), healthMultiplier, creatureCount, (Direction)_vm->getRandomNumber(4), mapX, mapY);
 				if (curSensor->getAttrAudibleA())
 					_vm->_sound->requestPlay(kDMSoundIndexBuzz, mapX, mapY, kDMSoundModePlayIfPrioritized);
@@ -749,12 +761,11 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 						if (actionTicks > 127)
 							actionTicks = (actionTicks - 126) << 6;
 
-						TimelineEvent newEvent;
+						TimelineEvent newEvent = {};
 						newEvent._type = kDMEventTypeEnableGroupGenerator;
 						newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + actionTicks);
 						newEvent._priority = 0;
 						newEvent._Bu._location._mapX = mapX;
-						newEvent._Bu._location._mapY = mapY;
 						newEvent._Bu._location._mapY = mapY;
 						addEventGetEventIndex(&newEvent);
 					}
@@ -779,7 +790,7 @@ T0252001:
 	} else {
 		if (!randomDirectionMoveRetried) {
 			randomDirectionMoveRetried = true;
-			Group *group = (Group *)_vm->_dungeonMan->getThingData(Thing(event->_Cu._slot));
+			Group *group = _vm->_dungeonMan->getGroup(Thing(event->_Cu._slot));
 			if ((group->_type == kDMCreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
 				switch (_vm->getRandomNumber(4)) {
 				case 0:
@@ -810,7 +821,7 @@ void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(event->_Bu._location._mapX, event->_Bu._location._mapY);
 	while (curThing != _vm->_thingNone) {
 		if ((curThing.getType()) == kDMThingTypeSensor) {
-			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			Sensor *curSensor = _vm->_dungeonMan->getSensor(curThing);
 			if (curSensor->getType() == kDMSensorDisabled) {
 				curSensor->setDatAndTypeWithOr(kDMSensorFloorGroupGenerator);
 				return;
@@ -825,7 +836,7 @@ void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 	curChampion->_enableActionEventIndex = -1;
 	clearFlag(curChampion->_attributes, kDMAttributeDisableAction);
 	if (curChampion->_actionIndex != kDMActionNone) {
-		curChampion->_actionDefense -= _actionDefense[curChampion->_actionDefense];
+		curChampion->_actionDefense -= _actionDefense[curChampion->_actionIndex];
 	}
 	if (curChampion->_currHealth) {
 		if ((curChampion->_actionIndex == kDMActionShoot) && (curChampion->_slots[kDMSlotReadyHand] == _vm->_thingNone)) {
@@ -903,7 +914,7 @@ void Timeline::processEventLight(TimelineEvent *event) {
 	}
 	_vm->_championMan->_party._magicalLightAmount += lightAmount;
 	if (weakerLightPower) {
-		TimelineEvent newEvent;
+		TimelineEvent newEvent = {};
 		newEvent._type = kDMEventTypeLight;
 		newEvent._Bu._lightPower = weakerLightPower;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
@@ -940,9 +951,9 @@ T0255002:
 			if ((curThing.getCell() == cell) && (curThing.getType() == kDMThingTypeJunk)) {
 				int16 iconIndex = _vm->_objectMan->getIconIndex(curThing);
 				if (iconIndex == kDMIconIndiceJunkChampionBones) {
-					Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(curThing);
+					Junk *junkData = _vm->_dungeonMan->getJunk(curThing);
 					if (junkData->getChargeCount() == championIndex) {
-						_vm->_dungeonMan->unlinkThingFromList(curThing, Thing(0), mapX, mapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
+						_vm->_dungeonMan->unlinkThingFromList(curThing, Thing(0xFFFF), mapX, mapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
 						junkData->setNextThing(_vm->_thingNone);
 						event->_mapTime += 1;
 						goto T0255002;
@@ -961,7 +972,7 @@ T0255002:
 	}
 }
 
-void Timeline::saveEventsPart(Common::OutSaveFile *file) {
+void Timeline::saveEventsPart(Common::WriteStream *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i) {
 		TimelineEvent *event = &_events[i];
 		file->writeSint32BE(event->_mapTime);
@@ -974,12 +985,12 @@ void Timeline::saveEventsPart(Common::OutSaveFile *file) {
 	}
 }
 
-void Timeline::saveTimelinePart(Common::OutSaveFile *file) {
+void Timeline::saveTimelinePart(Common::WriteStream *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i)
 		file->writeUint16BE(_timeline[i]);
 }
 
-void Timeline::loadEventsPart(Common::InSaveFile *file) {
+void Timeline::loadEventsPart(Common::SeekableReadStream *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i) {
 		TimelineEvent *event = &_events[i];
 		event->_mapTime = file->readSint32BE();
@@ -992,7 +1003,7 @@ void Timeline::loadEventsPart(Common::InSaveFile *file) {
 	}
 }
 
-void Timeline::loadTimelinePart(Common::InSaveFile *file) {
+void Timeline::loadTimelinePart(Common::SeekableReadStream *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i)
 		_timeline[i] = file->readUint16BE();
 }

@@ -33,8 +33,40 @@ public:
 	Room710() : Room() {}
 	~Room710() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	bool _centerDoorPullAnimationFl = false;
+	bool _ladderActiveFl = false;
+
+	int32 _710Rpld2Series = 0;
+	int32 _710Rpld3Series = 0;
+	int32 _710Rpro1Series = 0;
+	int32 _710Rpro2Series = 0;
+	int32 _710Rpro3Series = 0;
+	int32 _710Rpro4Series = 0;
+	int32 _laderComesDownSeries = 0;
+	int32 _mazeCentreDoorLiteSeries = 0;
+	int32 _ripPullsRopeForLaderSeries = 0;
+	int32 _ripTrekMedReachHandPos1Series = 0;
+
+	machine *_710Rpld4Mach = nullptr;
+	machine *_710Rpld5Mach = nullptr;
+	machine *_710Rprs1Mach = nullptr;
+	machine *_710Rprs2Mach = nullptr;
+	machine *_710Rprs3Mach = nullptr;
+	machine *_710Rprs4Mach = nullptr;
+	machine *_ripContraptionMach = nullptr;
+	machine *_ripContractionMach02 = nullptr;
+	machine *_ripPullMach = nullptr;
+	machine *_ripPullMach02 = nullptr;
+	machine *_ripPullsKeyropeMach = nullptr;
+	machine *_ripReacherMach = nullptr;
+	machine *_safariShadow1Mach = nullptr;
 };
 
 } // namespace Rooms

@@ -66,18 +66,18 @@ bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
 }
 
 
-class CryOmni3DMetaEngine : public AdvancedMetaEngine {
+class CryOmni3DMetaEngine : public AdvancedMetaEngine<CryOmni3DGameDescription> {
 public:
 	const char *getName() const override {
 		return "cryomni3d";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const CryOmni3DGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 999; }
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
 			target = getName();
@@ -128,14 +128,12 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+bool CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
 }
 
 Common::Error CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
-		const ADGameDescription *desc) const {
-	const CryOmni3DGameDescription *gd = (const CryOmni3DGameDescription *)desc;
-
+		const CryOmni3DGameDescription *gd) const {
 	switch (gd->gameType) {
 	case GType_VERSAILLES:
 #ifdef ENABLE_VERSAILLES

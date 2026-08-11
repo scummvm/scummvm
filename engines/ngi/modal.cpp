@@ -19,6 +19,7 @@
  *
  */
 
+#include "engines/metaengine.h"
 #include "ngi/ngi.h"
 
 #include "ngi/constants.h"
@@ -34,6 +35,8 @@
 
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
+
+#include "backends/keymapper/keymapper.h"
 
 namespace NGI {
 
@@ -54,11 +57,19 @@ ModalIntro::ModalIntro() {
 
 	g_vars->sceneIntro_skipIntro = false;
 	_sfxVolume = g_nmi->_sfxVolume;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("ngi-default")->setEnabled(false);
+	keymapper->getKeymap("intro")->setEnabled(true);
 }
 
 ModalIntro::~ModalIntro() {
 	g_nmi->stopAllSounds();
 	g_nmi->_sfxVolume = _sfxVolume;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("intro")->setEnabled(false);
+	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
 bool ModalIntro::handleMessage(ExCommand *message) {
@@ -68,7 +79,7 @@ bool ModalIntro::handleMessage(ExCommand *message) {
 	if (message->_messageNum != 36)
 		return false;
 
-	if (message->_param != 13 && message->_param != 27 && message->_param != 32)
+	if (message->_param != kActionSkipIntro)
 		return false;
 
 	if (_stillRunning) {
@@ -239,11 +250,18 @@ ModalIntroDemo::ModalIntroDemo() {
 	_introFlags = 9;
 	g_vars->sceneIntro_skipIntro = false;
 	_sfxVolume = g_nmi->_sfxVolume;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("ngi-default")->setEnabled(false);
+	keymapper->getKeymap("intro")->setEnabled(true);
 }
 
 ModalIntroDemo::~ModalIntroDemo() {
 	g_nmi->stopAllSounds();
 	g_nmi->_sfxVolume = _sfxVolume;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("intro")->setEnabled(false);
+	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
 bool ModalIntroDemo::handleMessage(ExCommand *message) {
@@ -253,7 +271,7 @@ bool ModalIntroDemo::handleMessage(ExCommand *message) {
 	if (message->_messageNum != 36)
 		return false;
 
-	if (message->_param != 13 && message->_param != 27 && message->_param != 32)
+	if (message->_param != kActionSkipIntro)
 		return false;
 
 	if (_introFlags & 0x8) {
@@ -361,15 +379,11 @@ void ModalIntroDemo::finish() {
 
 static bool checkSkipVideo(const Common::Event &event) {
 	switch (event.type) {
-	case Common::EVENT_KEYDOWN:
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_ESCAPE:
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_SPACE:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (event.customType == kActionSkipIntro)
 			return true;
-		default:
+		else
 			return false;
-		}
 	case Common::EVENT_QUIT:
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 		return true;
@@ -439,6 +453,10 @@ ModalMap::ModalMap() {
 	_rect2.left = 0;
 	_rect2.bottom = 600;
 	_rect2.right = 800;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("ngi-default")->setEnabled(false);
+	keymapper->getKeymap("map")->setEnabled(true);
 }
 
 ModalMap::~ModalMap() {
@@ -448,6 +466,10 @@ ModalMap::~ModalMap() {
 
 	g_nmi->_currentScene->_x = _x;
 	g_nmi->_currentScene->_y = _y;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("map")->setEnabled(false);
+	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
 bool ModalMap::init(int counterdiff) {
@@ -616,7 +638,7 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 		return false;
 
 	case 36:
-		if (cmd->_param != 9 && cmd->_param != 27)
+		if (cmd->_param != kActionMapClose)
 			return false;
 
 		break;
@@ -1116,7 +1138,7 @@ void ModalFinal::unloadScenes() {
 }
 
 bool ModalFinal::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == 27) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == kActionPause) {
 		g_nmi->_modalObject = new ModalMainMenu();
 		g_nmi->_modalObject->_parentObj = this;
 
@@ -1178,16 +1200,24 @@ ModalCredits::ModalCredits() {
 	_currX = 400 - dims.x / 2;
 
 	_creditsPic->setOXY(_currX, _currY);
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("ngi-default")->setEnabled(false);
+	keymapper->getKeymap("credits")->setEnabled(true);
 }
 
 ModalCredits::~ModalCredits() {
 	g_nmi->_gameLoader->unloadScene(SC_TITLES);
 
 	g_nmi->_sfxVolume = _sfxVolume;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("credits")->setEnabled(false);
+	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
 bool ModalCredits::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == 27) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == kActionSkipCredits) {
 		_fadeIn = false;
 
 		return true;
@@ -1391,7 +1421,7 @@ bool ModalMainMenu::handleMessage(ExCommand *message) {
 	if (message->_messageNum != 36)
 		return false;
 
-	if (message->_param == 27)
+	if (message->_param == kActionPause)
 		_hoverAreaId = PIC_MNU_CONTINUE_L;
 	else
 		enableDebugMenu(message->_param);
@@ -1836,6 +1866,10 @@ ModalQuery::~ModalQuery() {
 
 bool ModalQuery::create(Scene *sc, Scene *bgScene, int id) {
 	if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS) {
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->getKeymap("ngi-default")->setEnabled(false);
+		keymapper->getKeymap("dialog")->setEnabled(true);
+
 		_bg = sc->getPictureObjectById(386, 0);
 
 		if (!_bg)
@@ -1858,6 +1892,10 @@ bool ModalQuery::create(Scene *sc, Scene *bgScene, int id) {
 	}
 
 	if (id == PIC_MEX_BGR) {
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->getKeymap("ngi-default")->setEnabled(false);
+		keymapper->getKeymap("dialog")->setEnabled(true);
+
 		_bg = sc->getPictureObjectById(PIC_MEX_BGR, 0);
 
 		if (!_bg)
@@ -1922,7 +1960,7 @@ bool ModalQuery::handleMessage(ExCommand *cmd) {
 
 			if (_cancelBtn->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
 				_queryResult = 0;
-		} else if (cmd->_messageNum == 36 && cmd->_param == 27) {
+		} else if (cmd->_messageNum == 36 && cmd->_param == kActionCloseDialog) {
 			_queryResult = 0;
 
 			return false;
@@ -1947,6 +1985,10 @@ bool ModalQuery::init(int counterdiff) {
 		return true;
 	} else {
 		if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS) {
+			Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+			keymapper->getKeymap("dialog")->setEnabled(false);
+			keymapper->getKeymap("ngi-default")->setEnabled(true);
+
 			if (!_queryResult)
 				return false;
 
@@ -1969,6 +2011,10 @@ bool ModalQuery::init(int counterdiff) {
 				g_nmi->_gameContinue = false;
 
 				return false;
+			} else if (_queryResult == 0) {
+				Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+				keymapper->getKeymap("dialog")->setEnabled(false);
+				keymapper->getKeymap("ngi-default")->setEnabled(true);
 			}
 		}
 	}
@@ -1996,10 +2042,18 @@ ModalSaveGame::ModalSaveGame() {
 	_mode = 1;
 
 	_objtype = kObjTypeModalSaveGame;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("ngi-default")->setEnabled(false);
+	keymapper->getKeymap("dialog")->setEnabled(true);
 }
 
 ModalSaveGame::~ModalSaveGame() {
 	g_nmi->_sceneRect = _rect;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("dialog")->setEnabled(false);
+	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
 void ModalSaveGame::setScene(Scene *sc) {
@@ -2007,8 +2061,8 @@ void ModalSaveGame::setScene(Scene *sc) {
 	_menuScene = sc;
 }
 
-void ModalSaveGame::processKey(int key) {
-	if (key == 27)
+void ModalSaveGame::processKey(int action) {
+	if (action == kActionCloseDialog)
 		_queryRes = 0;
 }
 
@@ -2117,7 +2171,7 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 	for (int i = 0; i < 7; i++) {
 		FileInfo &fileinfo = _files[i];
 
-		Common::strlcpy(fileinfo.filename, getSavegameFile(i), sizeof(fileinfo.filename));
+		Common::strlcpy(fileinfo.filename, g_nmi->getMetaEngine()->getSavegameFile(i,fileinfo.filename).c_str(), sizeof(fileinfo.filename));
 
 		if (!getFileInfo(i, &fileinfo)) {
 			fileinfo.empty = true;
@@ -2147,20 +2201,20 @@ char *ModalSaveGame::getSaveName() {
 
 bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		NGI::getSavegameFile(slot)));
+		g_nmi->getMetaEngine()->getSavegameFile(slot,fileinfo->filename)));
 
 	if (!f)
 		return false;
 
-	NGI::FullpipeSavegameHeader header;
-	if (!NGI::readSavegameHeader(f.get(), header))
+	ExtendedSavegameHeader header;
+	if (!MetaEngine::readSavegameHeader(f.get(), &header))
 		return false;
 
 	// Create the return descriptor
 	SaveStateDescriptor desc(g_nmi->getMetaEngine(), slot, header.description);
 	char res[17];
 
-	NGI::parseSavegameHeader(header, desc);
+	MetaEngine::parseSavegameHeader(&header, &desc);
 
 	snprintf(res, sizeof(res), "%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 
@@ -2470,7 +2524,7 @@ bool ModalDemo::handleMessage(ExCommand *cmd) {
 	if (cmd->_messageNum == 29) {
 		if (_button->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
 			_clickedQuit = 1;
-	} else if (cmd->_messageNum == 36 && (cmd->_param == 27 || g_nmi->getLanguage() == Common::RU_RUS)) {
+	} else if (cmd->_messageNum == 36 && (cmd->_param == kActionPause || g_nmi->getLanguage() == Common::RU_RUS)) {
 		_clickedQuit = 1;
 	}
 
@@ -2488,6 +2542,18 @@ void NGIEngine::openHelp() {
 }
 
 void NGIEngine::openMainMenu() {
+	/**
+	 * This function is only called in global_messageHandler1 to open the main menu.
+	 * To reach it, g_nmi->_modalObject is supposed to be null because, else, this object
+	 * would catch the message (see ExCommand::handle).
+	 * If we hammer kPauseAction, we get several messages in the queue which lead to this method
+	 * executed several times leading to use-after-frees when the last main menu is closed.
+	 * Instead, ignore messages which come in a row and only handle the first one.
+	 */
+	if (g_nmi->_modalObject) {
+		return;
+	}
+
 	if (isDemo() && getLanguage() == Common::RU_RUS) {
 		ModalQuery *q = new ModalQuery;
 

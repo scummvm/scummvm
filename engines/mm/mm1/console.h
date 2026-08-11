@@ -28,8 +28,16 @@
 namespace MM {
 namespace MM1 {
 
+class UIElement;
+
 class Console : public GUI::Debugger, public MM1::Game::SpellCasting {
+private:
+	bool _pendingSoundTest = false;
+	UIElement *_soundTestRunner = nullptr;
+
 protected:
+	void postEnter() override;
+
 	/**
 	 * Used to dump a map's code and data
 	 */
@@ -105,9 +113,14 @@ protected:
 	 */
 	bool cmdDumpRoster(int argc, const char **argv);
 
+	/**
+	 * Stages gameplay events used to test classic sounds
+	 */
+	bool cmdSoundTest(int argc, const char **argv);
+
 public:
 	Console();
-	~Console() override {}
+	~Console() override;
 };
 
 } // namespace MM1

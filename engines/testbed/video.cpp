@@ -22,13 +22,23 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "engines/util.h"
+#include "video/avi_decoder.h"
+#include "video/dxa_decoder.h"
+#include "video/flic_decoder.h"
+#include "video/mpegps_decoder.h"
+#include "video/mve_decoder.h"
 #include "video/qt_decoder.h"
 #include "video/qt_data.h"
+#include "video/smk_decoder.h"
+#include "video/4xm_decoder.h"
 
 #include "testbed/testbed.h"
 #include "testbed/video.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 #include "gui/browser.h"
+
+#include "video/qt_data.h"
 
 namespace Testbed {
 
@@ -53,13 +63,38 @@ Common::Error Videotests::videoTest(const Common::FSNode &node) {
 }
 
 Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Common::String &name) {
-	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
+	Video::QuickTimeDecoder *qtVideo = nullptr;
+	Video::VideoDecoder *video = nullptr;
+
+	if (name.hasSuffixIgnoreCase(".avi")) {
+		video = new Video::AVIDecoder();
+	} else if (name.hasSuffixIgnoreCase(".dxa")) {
+		video = new Video::DXADecoder();
+	} else if (name.hasSuffixIgnoreCase(".flc")) {
+		video = new Video::FlicDecoder();
+	} else if (name.hasSuffixIgnoreCase(".mpg") || name.hasSuffixIgnoreCase(".mpeg")) {
+		video = new Video::MPEGPSDecoder();
+	} else if (name.hasSuffixIgnoreCase(".mve")) {
+		video = new Video::MveDecoder();
+	} else if (name.hasSuffixIgnoreCase(".smk")) {
+		video = new Video::SmackerDecoder();
+	} else if (name.hasSuffixIgnoreCase(".4xm")) {
+		video = new Video::FourXMDecoder();
+	} else {
+		qtVideo = new Video::QuickTimeDecoder();
+		video = qtVideo;
+	}
+
 	if (!video->loadStream(stream)) {
 		warning("Cannot open video %s", name.c_str());
-		delete stream;
 		delete video;
 		return Common::kReadingFailed;
 	}
+
+	if (qtVideo)
+		qtVideo->setTargetSize(400, 300);
+
+	warning("Video size: %d x %d", video->getWidth(), video->getHeight());
 
 	Common::List<Graphics::PixelFormat> supportedFormatsList = g_system->getSupportedFormats();
 	Graphics::PixelFormat pixelformat = supportedFormatsList.front();
@@ -71,13 +106,10 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 	} else {
 		if (pixelformat.isCLUT8() && video->setDitheringPalette(Video::quickTimeDefaultPalette256)) {
 			pixelformat = Graphics::PixelFormat::createFormatCLUT8();
+		} else if (video->setOutputPixelFormats(supportedFormatsList)) {
+			pixelformat = video->getPixelFormat();
 		} else {
 			pixelformat = supportedFormatsList.front();
-
-			if (!video->setOutputPixelFormat(pixelformat)) {
-				// TODO: Search for the pixel format in supportedFormatsList?
-				pixelformat = video->getPixelFormat();
-			}
 		}
 	}
 
@@ -85,6 +117,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 
 #ifdef __DS__
 	int w = 256, h = 192;
+#elif defined(__3DS__)
+	int w = 320, h = 240;
 #elif defined(USE_HIGHRES)
 	int w = 640, h = 480;
 #else
@@ -99,6 +133,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 
 	video->start();
 
+	Common::Point mouse;
+
 	while (!video->endOfVideo()) {
 		if (video->needsUpdate()) {
 			uint32 pos = video->getTime();
@@ -109,20 +145,25 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			}
 
 			const Graphics::Surface *frame = video->decodeNextFrame();
+			int x = 0, y = 0;
+			int mw = 0, mh = 0;
+
 			if (frame) {
 				const Graphics::Surface *surf = frame;
 				Graphics::Surface *conv = nullptr;
 
 				if (frame->format != pixelformat) {
-					surf = conv = frame->convertTo(pixelformat, video->getPalette());
+					surf = conv = frame->convertTo(pixelformat, Video::quickTimeDefaultPalette256);
 				}
 
-				int x = 0, y = 0;
+				mw = surf->w;
+				mh = surf->h;
 
-				if (surf->w < w && surf->h < h) {
+				if (surf->w < w)
 					x = (w - surf->w) >> 1;
+				if (surf->h < h)
 					y = (h - surf->h) >> 1;
-				}
+
 				g_system->copyRectToScreen(surf->getPixels(), surf->pitch, x, y, MIN<uint16>(surf->w, w), MIN<uint16>(surf->h, h));
 
 				if (conv) {
@@ -134,6 +175,32 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			Common::Event event;
 
 			while (g_system->getEventManager()->pollEvent(event)) {
+				if (Common::isMouseEvent(event))
+					mouse = event.mouse;
+
+				if (qtVideo && mouse.x >= x && mouse.x < x + mw &&
+						mouse.y >= y && mouse.y < y + mh) {
+					switch (event.type) {
+					case Common::EVENT_LBUTTONDOWN:
+						qtVideo->handleMouseButton(true, event.mouse.x - x, event.mouse.y - y);
+						break;
+					case Common::EVENT_LBUTTONUP:
+						qtVideo->handleMouseButton(false, event.mouse.x - x, event.mouse.y - y);
+						break;
+					case Common::EVENT_MOUSEMOVE:
+						qtVideo->handleMouseMove(event.mouse.x - x, event.mouse.y - y);
+						break;
+					case Common::EVENT_KEYUP:
+					case Common::EVENT_KEYDOWN:
+						qtVideo->handleKey(event.kbd, event.type == Common::EVENT_KEYDOWN);
+						break;
+					default:
+						break;
+					}
+				} else {
+					CursorMan.showMouse(false);
+				}
+
 				if (Engine::shouldQuit()) {
 					video->close();
 					delete video;
@@ -141,7 +208,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 				}
 			}
 			g_system->updateScreen();
-			g_system->delayMillis(10);
+			video->delayMillis(10);
 		}
 	}
 	video->close();
@@ -152,7 +219,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 
 TestExitStatus Videotests::testPlayback() {
 	Testsuite::clearScreen();
-	Common::String info = "Video playback test. A QuickTime video should be selected using the file browser, and it'll be played on the screen.";
+	Common::String info = "Video playback test. A video should be selected using the file browser, and it'll be played on the screen.";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing video playback", pt);

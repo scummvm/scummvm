@@ -22,11 +22,12 @@
 #ifndef BACKENDS_DLC_SCUMMVMCLOUD_H
 #define BACKENDS_DLC_SCUMMVMCLOUD_H
 
+#include "common/error.h"
 #include "common/queue.h"
 
 #include "backends/dlc/store.h"
-#include "backends/networking/curl/request.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/request.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Networking {
 class SessionRequest;
@@ -43,11 +44,11 @@ public:
 	ScummVMCloud() {}
 	virtual ~ScummVMCloud() {}
 
-	virtual void getAllDLCs() override;
+	void getAllDLCs() override;
 
-	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) override;
+	void startDownloadAsync(const Common::String &id, const Common::String &url) override;
 
-	virtual void removeCacheFile(const Common::Path &file) override;
+	void removeCacheFile(const Common::Path &file) override;
 
 	// extracts the provided zip in the provided destination path
 	Common::Error extractZip(const Common::Path &file, const Common::Path &destPath);

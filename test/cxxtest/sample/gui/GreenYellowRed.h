@@ -4,7 +4,7 @@
 #   include <windows.h>
 #   define CXXTEST_SAMPLE_GUI_WAIT() Sleep( 1000 )
 #else // !_WIN32
-    extern "C" unsigned sleep( unsigned seconds );
+extern "C" unsigned sleep(unsigned seconds);
 #   define CXXTEST_SAMPLE_GUI_WAIT() sleep( 1 )
 #endif // _WIN32
 
@@ -23,13 +23,13 @@ public:
 
     void test_Green_again()
     {
-        TS_TRACE( "Still green" );
+        TS_TRACE("Still green");
         wait();
     }
 
     void test_Now_yellow()
     {
-        TS_WARN( "Yellow" );
+        TS_WARN("Yellow");
         wait();
     }
 
@@ -40,13 +40,13 @@ public:
 
     void test_Finally_red()
     {
-        TS_FAIL( "Red" );
+        TS_FAIL("Red");
         wait();
     }
 
     void test_Cannot_go_back_to_yellow()
     {
-        TS_WARN( "Yellow?" );
+        TS_WARN("Yellow?");
         wait();
     }
 

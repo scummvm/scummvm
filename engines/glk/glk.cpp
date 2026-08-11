@@ -68,6 +68,7 @@ GlkEngine::~GlkEngine() {
 	delete _streams;
 	delete _windows;
 	delete _conf;
+	g_vm = nullptr;
 }
 
 void GlkEngine::initialize() {
@@ -82,12 +83,15 @@ void GlkEngine::initialize() {
 	_screen->initialize();
 	_clipboard = new Clipboard();
 	_events = new Events();
-	_pcSpeaker = new PCSpeaker(_mixer);
+	_pcSpeaker = new PCSpeaker();
 	_pictures = new Pictures();
 	_selection = new Selection();
 	_sounds = new Sounds();
 	_streams = new Streams();
 	_windows = new Windows(_screen);
+
+	if (_conf->_windowColorOverride || _conf->_windowColor != _conf->parseColor("ffffff"))
+		Windows::_overrideBgSet = true;
 
 	// Setup mixer
 	syncSoundSettings();

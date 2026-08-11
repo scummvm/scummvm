@@ -35,13 +35,17 @@ void MagneticMetaEngine::getSupportedGames(PlainGameList &games) {
 	}
 }
 
+const GlkDetectionEntry* MagneticMetaEngine::getDetectionEntries() {
+	return MAGNETIC_GAMES;
+}
+
 GameDescriptor MagneticMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = MAGNETIC_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
 	}
 
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {

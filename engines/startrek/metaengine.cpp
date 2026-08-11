@@ -53,18 +53,18 @@ Common::Language StarTrekEngine::getLanguage() const {
 
 } // End of Namespace StarTrek
 
-class StarTrekMetaEngine : public AdvancedMetaEngine {
+class StarTrekMetaEngine : public AdvancedMetaEngine<StarTrek::StarTrekGameDescription> {
 public:
 	const char *getName() const override {
 		return "startrek";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const StarTrek::StarTrekGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
@@ -80,8 +80,8 @@ bool StarTrekMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSimpleSavesNames);
 }
 
-Common::Error StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new StarTrek::StarTrekEngine(syst, (const StarTrek::StarTrekGameDescription *)desc);
+Common::Error StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const StarTrek::StarTrekGameDescription *desc) const {
+	*engine = new StarTrek::StarTrekEngine(syst,desc);
 	return Common::kNoError;
 }
 
@@ -132,9 +132,9 @@ int StarTrekMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-void StarTrekMetaEngine::removeSaveState(const char *target, int slot) const {
+bool StarTrekMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
@@ -174,7 +174,7 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 		return descriptor;
 
 	} else {
-		SaveStateDescriptor emptySave(this, slotNr, Common::U32String());
+		SaveStateDescriptor emptySave(this, slotNr);
 		return emptySave;
 	}
 }

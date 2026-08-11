@@ -30,13 +30,13 @@ namespace Ultima8 {
 
 class SlidingWidget : public Gump {
 protected:
-	Rect _dragBounds;
+	Common::Rect32 _dragBounds;
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	SlidingWidget();
-	SlidingWidget(int x, int y, FrameID frame, const Rect &dragBounds);
+	SlidingWidget(int x, int y, FrameID frame, const Common::Rect32 &dragBounds);
 	~SlidingWidget() override;
 
 	int getValueForRange(int min, int max);

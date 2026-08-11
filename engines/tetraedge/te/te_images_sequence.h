@@ -37,7 +37,7 @@ public:
 	TeImagesSequence();
 	virtual ~TeImagesSequence();
 
-	virtual bool load(const Common::FSNode &node) override;
+	virtual bool load(const TetraedgeFSNode &node) override;
 	virtual uint width() override { return _width; }
 	virtual uint height() override { return _height; }
 	virtual int nbFrames() override { return _files.size(); }
@@ -49,7 +49,7 @@ public:
 	virtual uint bottomBorderSize() override { return 0; }
 	virtual void setTopBorderSize(uint val) override  { }
 	virtual uint topBorderSize() override { return 0; }
-	virtual TeImage::Format imageFormat() override;
+	virtual Graphics::PixelFormat pixelFormat() override;
 	virtual float frameRate() override { return _frameRate; }
 	virtual bool update(uint i, TeImage &imgout) override;
 	virtual bool isAtEnd() override;
@@ -63,7 +63,7 @@ private:
 	float _frameRate;
 	uint _width;
 	uint _height;
-	Common::Array<Common::FSNode> _files;
+	Common::Array<TetraedgeFSNode> _files;
 	Common::Array<Graphics::ManagedSurface *> _cachedSurfaces;
 	uint _curFrame;
 };

@@ -36,11 +36,11 @@
 	{
 		"gob1",
 		"EGA",
-		AD_ENTRY1("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4"),
+		AD_ENTRY1s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561),
 		UNK_LANG,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
 	0, 0, 0
@@ -53,7 +53,7 @@
 		RU_RUS,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
 	0, 0, 0
@@ -65,11 +65,11 @@
 	{
 		"gob1",
 		"VGA",
-		AD_ENTRY1("intro.stk", "26a9118c0770fa5ac93a9626761600b2"),
-		UNK_LANG,
+		AD_ENTRY1s("intro.stk", "26a9118c0770fa5ac93a9626761600b2", 233466),
+		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesNone,
 	0, 0, 0
@@ -103,7 +103,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -116,7 +116,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -129,7 +129,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -142,7 +142,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -155,7 +155,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.000 version.
+{
 	{
 		"gob1",
 		"CD v1.000",
@@ -168,7 +168,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.02 version. Multilingual
+{ // Multilingual
 	{
 		"gob1",
 		"CD v1.02",
@@ -181,7 +181,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.02 version. Multilingual
+{ // Multilingual
 	{
 		"gob1",
 		"CD v1.02",
@@ -194,7 +194,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.02 version. Multilingual
+{ // Multilingual
 	{
 		"gob1",
 		"CD v1.02",
@@ -207,7 +207,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.02 version. Multilingual
+{ // Multilingual
 	{
 		"gob1",
 		"CD v1.02",
@@ -220,7 +220,7 @@
 	kFeaturesCD,
 	0, 0, 0
 },
-{ // CD 1.02 version. Multilingual
+{ // Multilingual
 	{
 		"gob1",
 		"CD v1.02",
@@ -296,7 +296,7 @@
 		EN_ANY,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesNone,
 	0, 0, 0
@@ -305,11 +305,11 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		EN_ANY,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -318,11 +318,11 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		DE_DEU,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -331,11 +331,11 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		FR_FRA,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -344,11 +344,11 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		IT_ITA,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -357,11 +357,11 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY1("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267"),
+		AD_ENTRY1s("intro.stk", "00a42a7d2d22e6b6ab1b8c673c4ed267", 199890),
 		ES_ESP,
 		kPlatformMacintosh,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -374,7 +374,7 @@
 		JA_JPN,
 		kPlatformMacintosh,
 		ADGF_UNSTABLE,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -396,7 +396,7 @@
 
 // -- Windows --
 
-{ // Supplied by Hkz on #scummvm
+{ // Supplied by Hkz on #scummvm - Multilingual - Used by ADI4 unlockable games
 	{
 		"gob1",
 		"",
@@ -410,7 +410,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by Hkz on #scummvm
+{ // Supplied by Hkz on #scummvm - Multilingual - Used by ADI4 unlockable games
 	{
 		"gob1",
 		"",
@@ -424,7 +424,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by Hkz on #scummvm
+{ // Supplied by Hkz on #scummvm - Multilingual - Used by ADI4 unlockable games
 	{
 		"gob1",
 		"",
@@ -438,7 +438,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by Hkz on #scummvm
+{ // Supplied by Hkz on #scummvm - Multilingual - Used by ADI4 unlockable games
 	{
 		"gob1",
 		"",
@@ -452,7 +452,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Supplied by Hkz on #scummvm
+{ // Supplied by Hkz on #scummvm - Multilingual - Used by ADI4 unlockable games
 	{
 		"gob1",
 		"",
@@ -544,7 +544,7 @@
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -557,7 +557,7 @@
 		EN_GRB,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -570,7 +570,7 @@
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -583,7 +583,7 @@
 		IT_ITA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
@@ -596,11 +596,42 @@
 		ES_ESP,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
 	},
 	kFeaturesAdLib,
 	0, 0, 0
 },
+
+// -- Amiga --
+
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY1s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561),
+		UNK_LANG,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
+		           "disk1.stk", "a6ed3c1c9a46c511952bac0c11c691f5", 367048),
+		DE_DEU,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
+
 
 // -- Demos --
 
@@ -618,11 +649,11 @@
 	0, 0, 0
 },
 {
-	{
+	{ // dated 8/1/93
 		"gob1",
-		"Interactive Demo",
+		"Interactive Demo (v2.0)",
 		AD_ENTRY1s("intro.stk", "e72bd1e3828c7dec4c8a3e58c48bdfdb", 280044),
-		UNK_LANG,
+		EN_ANY,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
@@ -656,6 +687,9 @@
 	kFeaturesNone,
 	0, 0, 0
 },
+
+// -- CD-i --
+
 {
 	{
 		"gob1",
@@ -694,6 +728,19 @@
 	},
 	kFeaturesAdLib,
 	0, "AVT003.TOT", 0
+},
+{ // Found on ADI Spielerisch lernen (German CD-i version) Found on Klasse 1&2 also on 3&4
+	{
+		"gob1",
+		"",
+		AD_ENTRY1s("intro.stk", "0acc50f67f9323c3654921915dab2d63", 7098368),
+		DE_DEU,
+		kPlatformCDi,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kFeaturesAdLib,
+	0, "avt003.tot", 0
 },
 
 #endif // GOB_DETECTION_TABLES_GOB1_H

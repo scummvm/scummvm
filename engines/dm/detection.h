@@ -68,6 +68,8 @@ enum SaveTarget {
 };
 
 struct DMADGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(_desc);
+
 	ADGameDescription _desc;
 
 	SaveTarget _saveTargetToWrite;

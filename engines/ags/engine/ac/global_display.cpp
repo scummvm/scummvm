@@ -43,6 +43,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
+void DisplayAtYImpl(int ypos, const char *texx, bool as_speech);
+
 void Display(const char *texx, ...) {
 	char displbuf[STD_BUFFER_SIZE];
 	va_list ap;
@@ -54,6 +56,10 @@ void Display(const char *texx, ...) {
 
 void DisplaySimple(const char *text) {
 	DisplayAtY(-1, text);
+}
+
+void DisplayMB(const char *text) {
+	DisplayAtYImpl(-1, text, false);
 }
 
 void DisplayTopBar(int ypos, int ttexcol, int backcol, const char *title, const char *text) {
@@ -149,10 +155,10 @@ void DisplayAt(int xxp, int yyp, int widd, const char *text) {
 
 	if (widd < 1) widd = _GP(play).GetUIViewport().GetWidth() / 2;
 	if (xxp < 0) xxp = _GP(play).GetUIViewport().GetWidth() / 2 - widd / 2;
-	_display_at(xxp, yyp, widd, text, DISPLAYTEXT_MESSAGEBOX, 0, 0, 0, false);
+	display_at(xxp, yyp, widd, text);
 }
 
-void DisplayAtY(int ypos, const char *texx) {
+void DisplayAtYImpl(int ypos, const char *texx, bool as_speech) {
 	const Rect &ui_view = _GP(play).GetUIViewport();
 	if ((ypos < -1) || (ypos >= ui_view.GetHeight()))
 		quitprintf("!DisplayAtY: invalid Y co-ordinate supplied (used: %d; valid: 0..%d)", ypos, ui_view.GetHeight());
@@ -166,7 +172,7 @@ void DisplayAtY(int ypos, const char *texx) {
 	if (ypos > 0)
 		ypos = data_to_game_coord(ypos);
 
-	if (_GP(game).options[OPT_ALWAYSSPCH])
+	if (as_speech)
 		DisplaySpeechAt(-1, (ypos > 0) ? game_to_data_coord(ypos) : ypos, -1, _GP(game).playercharacter, texx);
 	else {
 		// Normal "Display" in text box
@@ -178,9 +184,12 @@ void DisplayAtY(int ypos, const char *texx) {
 			_GP(play).disabled_user_interface--;
 		}
 
-		_display_at(-1, ypos, ui_view.GetWidth() / 2 + ui_view.GetWidth() / 4,
-		            get_translation(texx), DISPLAYTEXT_MESSAGEBOX, 0, 0, 0, false);
+		display_at(-1, ypos, ui_view.GetWidth() / 2 + ui_view.GetWidth() / 4, get_translation(texx));
 	}
+}
+
+void DisplayAtY(int ypos, const char *texx) {
+	DisplayAtYImpl(ypos, texx, _GP(game).options[OPT_ALWAYSSPCH] != 0);
 }
 
 void SetSpeechStyle(int newstyle) {

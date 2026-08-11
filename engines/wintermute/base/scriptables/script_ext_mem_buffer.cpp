@@ -154,10 +154,10 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	else if (strcmp(name, "GetBool") == 0) {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
-		if (!checkBounds(script, start, sizeof(bool))) {
+		if (!checkBounds(script, start, sizeof(byte))) {
 			stack->pushNULL();
 		} else {
-			stack->pushBool(*(bool *)((byte *)_buffer + start));
+			stack->pushBool(*((byte *)_buffer + start) != 0);
 		}
 
 		return STATUS_OK;
@@ -260,7 +260,8 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			stack->pushNULL();
 		} else {
 			char *str = new char[length + 1];
-			Common::strlcpy(str, (const char *)_buffer + start, length + 1);
+			strncpy(str, (const char *)_buffer + start, length);
+			str[length] = '\0';
 			stack->pushString(str);
 			delete[] str;
 		}
@@ -277,7 +278,7 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			stack->pushNULL();
 		} else {
 			void *pointer = *(void **)((byte *)_buffer + start);
-			SXMemBuffer *buf = new SXMemBuffer(_gameRef,  pointer);
+			SXMemBuffer *buf = new SXMemBuffer(_game, pointer);
 			stack->pushNative(buf, false);
 		}
 		return STATUS_OK;
@@ -291,10 +292,10 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		int start = stack->pop()->getInt();
 		bool val = stack->pop()->getBool();
 
-		if (!checkBounds(script, start, sizeof(bool))) {
+		if (!checkBounds(script, start, sizeof(byte))) {
 			stack->pushBool(false);
 		} else {
-			*(bool *)((byte *)_buffer + start) = val;
+			*((byte *)_buffer + start) = (byte)val;
 			stack->pushBool(true);
 		}
 		return STATUS_OK;
@@ -446,13 +447,13 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
+ScValue *SXMemBuffer::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("membuffer");
 		return _scValue;
 	}
@@ -460,7 +461,7 @@ ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Size (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Size") {
+	if (strcmp(name, "Size") == 0) {
 		_scValue->setInt(_size);
 		return _scValue;
 	} else {
@@ -477,7 +478,7 @@ bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "Length")==0) {
 	    int origLength = _length;
-	    _length = max(value->getInt(0), 0);
+	    _length = MAX(value->getInt(0), 0);
 
 	    char propName[20];
 	    if (_length < origLength) {

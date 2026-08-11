@@ -22,6 +22,8 @@
 #ifndef TETRAEDGE_TE_TE_LIGHT_TINYGL_H
 #define TETRAEDGE_TE_TE_LIGHT_TINYGL_H
 
+#include "common/scummsys.h"
+
 #if defined(USE_TINYGL)
 
 #include "tetraedge/te/te_light.h"

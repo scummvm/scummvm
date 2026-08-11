@@ -28,60 +28,49 @@
 #ifndef WINTERMUTE_VIDPLAYER_H
 #define WINTERMUTE_VIDPLAYER_H
 
+#include "video/avi_decoder.h"
+
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/video/video_subtitler.h"
+#include "graphics/surface.h"
 
 #define MAX_AUDIO_STREAMS 5
 #define MAX_VIDEO_STREAMS 5
 
 
 namespace Wintermute {
-
-// AVI-Video-player, currently fully stubbed
+class BaseSurface;
+// AVI-Video-player
 class VideoPlayer : public BaseClass {
 public:
-	bool _showSubtitle;
-	int32 _currentSubtitle;
-	bool loadSubtitles(const char *filename, const char *subtitleFile);
-	bool _slowRendering;
 	bool isPlaying();
-	char *_filename;
+	// external object
+	Common::String _filename;
 	bool stop();
 	bool play(TVideoPlayback Type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeMusic = true);
-	uint32 _totalVideoTime;
-	uint32 _startTime;
-	//CVidRenderer *_vidRenderer;
-	//BaseSoundAVI *_sound;
-	bool _soundAvailable;
+	Video::AVIDecoder *_aviDecoder;
 	bool setDefaults();
 	bool _playing;
 	bool display();
 	bool update();
-	bool initialize(const char *inFilename, const char *subtitleFile = nullptr);
+	bool initialize(const Common::String &filename, const Common::String &subtitleFile = Common::String());
 	bool cleanup();
 	VideoPlayer(BaseGame *inGame);
 	~VideoPlayer() override;
 
-	/*PAVIFILE _aviFile;
-
-	LONG _lastSample;
-
-	PAVISTREAM _audioStream;
-	PAVISTREAM _videoStream;
-
-	LPWAVEFORMAT _audioFormat;
-
-	LPBITMAPINFO _videoFormat;
-	PGETFRAME _videoPGF;*/
-	uint32 _videoEndTime;
+	BaseSurface *_texture;
+	VideoSubtitler *_subtitler;
 
 	int32 _playPosX;
 	int32 _playPosY;
 	float _playZoom;
 
-	/*  LPBITMAPV4HEADER _targetFormat;
-
-	    BaseArray<CVidSubtitle *, CVidSubtitle *> _subtitles;*/
+private:
+	bool _foundSubtitles;
+	bool _videoFrameReady;
+	bool _playbackStarted;
+	bool _freezeGame;
 };
 
 } // End of namespace Wintermute

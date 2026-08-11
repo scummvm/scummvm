@@ -168,7 +168,7 @@ private:
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
 
-	// Analagous to above, used when pushing/popping
+	// Analogous to above, used when pushing/popping
 	Sprite *_pushedSprites[MAX_SPRITES];
 	int _pushedNumSprites;
 

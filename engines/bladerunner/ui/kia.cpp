@@ -628,13 +628,12 @@ void KIA::playPhotograph(int photographId) {
 void KIA::playImage(const Graphics::Surface &image) {
 	if (image.w != 80) {
 		Graphics::Surface *tmp = image.scale(80, 60);
-		_playerImage.copyFrom(*tmp);
+		_playerImage.convertFrom(*tmp, screenPixelFormat());
 		tmp->free();
 		delete tmp;
 	} else {
-		_playerImage.copyFrom(image);
+		_playerImage.convertFrom(image, screenPixelFormat());
 	}
-	_playerImage.convertToInPlace(screenPixelFormat());
 }
 
 const char *KIA::scrambleSuspectsName(const char *name) {

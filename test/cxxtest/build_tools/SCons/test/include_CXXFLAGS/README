@@ -1,0 +1,5 @@
+This test tests whether variables that are put into the environment after it has
+been initialised work as expected.
+
+If they do not, -pedantic-errors will appear in the gcc commandline and the
+compilation WILL FAIL, failing the test.

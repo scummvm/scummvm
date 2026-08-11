@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/random.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 
@@ -47,6 +48,21 @@ namespace Cruise {
 
 #define MAX_LANGUAGE_STRINGS 25
 
+
+
+enum CRUISEAction {
+	kActionNone,
+	kActionFastMode,
+	kActionExit,
+	kActionEscape,
+	kActionPause,
+	kActionPlayerMenu,
+	kActionInventory,
+	kActionEndUserWaiting,
+	kActionIncreaseGameSpeed,
+	kActionDecreaseGameSpeed
+};
+
 enum LangStringId { ID_PAUSED = 0, ID_INVENTORY = 5, ID_SPEAK_ABOUT = 6, ID_PLAYER_MENU = 7,
 	ID_SAVE = 9, ID_LOAD = 10, ID_RESTART = 11, ID_QUIT = 12};
 
@@ -62,6 +78,8 @@ private:
 	int _gameSpeed;
 	bool _speedFlag;
 	PauseToken _gamePauseToken;
+
+	Common::CodePage _ttsTextEncoding;
 
 	void initialize();
 	void deinitialize();
@@ -89,6 +107,9 @@ public:
 	PCSound &sound() { return *_sound; }
 	virtual void pauseEngine(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action);
+	void sayQueuedText(Common::TextToSpeechManager::Action action);
+	void stopTextToSpeech();
 
 	static const char *getSavegameFile(int saveGameIdx);
 	Common::Error loadGameState(int slot) override;
@@ -126,6 +147,11 @@ public:
 	Common::Array<CtStruct> *_polyStruct;
 
 	Common::File _PAL_file;
+
+	Common::String _toSpeak;
+	Common::String _previousSaid;
+	bool _mouseButtonDown;
+	bool _menuJustOpened;
 };
 
 extern CruiseEngine *_vm;
@@ -146,8 +172,8 @@ enum {
 };
 
 enum {
-	kCruiseDebugScript = 1 << 0,
-	kCruiseDebugSound = 1 << 1
+	kCruiseDebugScript = 1,
+	kCruiseDebugSound,
 };
 
 enum {

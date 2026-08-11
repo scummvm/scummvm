@@ -135,9 +135,9 @@ VMenu::~VMenu() {
 	}
 }
 
-void VMenu::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
+void VMenu::touch(uint16 mask, V2D pos) {
 	if (_items) {
-		Sprite::touch(mask, pos, keyCode);
+		Sprite::touch(mask, pos);
 
 		int n = 0;
 		bool ok = false;

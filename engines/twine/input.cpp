@@ -22,7 +22,6 @@
 #include "twine/input.h"
 #include "backends/keymapper/keymapper.h"
 #include "common/events.h"
-#include "common/keyboard.h"
 #include "common/system.h"
 #include "twine/scene/actor.h"
 #include "twine/twine.h"
@@ -34,7 +33,7 @@ const char *uiKeyMapId = "uiKeyMap";
 const char *cutsceneKeyMapId = "cutsceneKeyMap";
 const char *holomapKeyMapId = "holomapKeyMap";
 
-ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
+ScopedKeyMap::ScopedKeyMap(TwinEEngine *engine, const char *id) : _engine(engine) {
 	_changed = _engine->_input->enableAdditionalKeyMap(id, true);
 	_keymap = id;
 }
@@ -45,7 +44,9 @@ ScopedKeyMap::~ScopedKeyMap() {
 	}
 }
 
-Input::Input(TwinEEngine *engine) : _engine(engine) {}
+Input::Input(TwinEEngine *engine) : _engine(engine) {
+	resetLastHoveredMousePosition();
+}
 
 bool Input::isActionActive(TwinEActionType actionType, bool onlyFirstTime) const {
 	if (onlyFirstTime) {
@@ -86,7 +87,7 @@ bool Input::isMoveOrTurnActionActive() const {
 }
 
 bool Input::isHeroActionActive() const {
-	return isActionActive(TwinEActionType::ExecuteBehaviourAction) || isActionActive(TwinEActionType::SpecialAction);
+	return isActionActive(TwinEActionType::ExecuteBehaviourAction);
 }
 
 bool Input::resetHeroActions() {
@@ -112,44 +113,23 @@ void Input::enableKeyMap(const char *id) {
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	const Common::KeymapArray &keymaps = keymapper->getKeymaps();
 	for (Common::Keymap *keymap : keymaps) {
-		const Common::String& keymapId = keymap->getId();
+		const Common::String &keymapId = keymap->getId();
 		if (keymapId == mainKeyMapId || keymapId == uiKeyMapId || keymapId == cutsceneKeyMapId || keymapId == holomapKeyMapId) {
 			keymap->setEnabled(keymapId == id);
 		}
 	}
 	_currentKeyMap = id;
-	debug("enable keymap %s", id);
+	debugC(1, TwinE::kDebugInput, "enable keymap %s", id);
 }
 
 void Input::processCustomEngineEventStart(const Common::Event &event) {
-	if (!_engine->_cfgfile.Debug) {
-		switch (event.customType) {
-		case TwinEActionType::DebugGridCameraPressUp:
-		case TwinEActionType::DebugGridCameraPressDown:
-		case TwinEActionType::DebugGridCameraPressLeft:
-		case TwinEActionType::DebugGridCameraPressRight:
-		case TwinEActionType::DebugPlaceActorAtCenterOfScreen:
-		case TwinEActionType::DebugMenu:
-		case TwinEActionType::DebugMenuActivate:
-		case TwinEActionType::NextRoom:
-		case TwinEActionType::PreviousRoom:
-		case TwinEActionType::ApplyCellingGrid:
-		case TwinEActionType::IncreaseCellingGridIndex:
-		case TwinEActionType::DecreaseCellingGridIndex:
-			break;
-		default:
-			_actionStates[event.customType] = 1 + event.kbdRepeat;
-			break;
-		}
-	} else {
-		_actionStates[event.customType] = 1 + event.kbdRepeat;
-	}
-	debug(3, "twine custom event type start: %i", event.customType);
+	_actionStates[event.customType] = 1 + event.kbdRepeat;
+	debugC(2, TwinE::kDebugInput, "twine custom event type start: %i", event.customType);
 }
 
 void Input::processCustomEngineEventEnd(const Common::Event &event) {
 	_actionStates[event.customType] = 0;
-	debug(3, "twine custom event type end: %i", event.customType);
+	debugC(2, TwinE::kDebugInput, "twine custom event type end: %i", event.customType);
 }
 
 void Input::readKeys() {
@@ -172,12 +152,23 @@ Common::Point Input::getMousePositions() const {
 	return g_system->getEventManager()->getMousePos();
 }
 
-bool Input::isMouseHovering(const Common::Rect &rect) const {
+bool Input::isMouseHovering(const Common::Rect &rect, bool onlyIfMoved) {
 	if (!_engine->_cfgfile.Mouse) {
 		return false;
 	}
 	const Common::Point &point = getMousePositions();
-	return rect.contains(point);
+	if (onlyIfMoved && _lastMousePos == point) {
+		return false;
+	}
+	if (rect.contains(point)) {
+		_lastMousePos = point;
+		return true;
+	}
+	return false;
+}
+
+void Input::resetLastHoveredMousePosition() {
+	_lastMousePos = Common::Point(-1, -1);
 }
 
 } // namespace TwinE

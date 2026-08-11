@@ -71,8 +71,7 @@ const DebugChannelDef AGSMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(AGS::GAME_DESCRIPTIONS,
-	        sizeof(AGS::AGSGameDescription), AGS::GAME_NAMES) {
+AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(AGS::GAME_DESCRIPTIONS, AGS::GAME_NAMES) {
 	_flags = kADFlagCanPlayUnknownVariants;
 }
 
@@ -160,7 +159,6 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			continue;
 
 		if (AGS3::isAGSFile(f)) {
-			_filename = filename;
 			f.seek(0);
 			_md5 = Common::computeStreamMD5AsString(f, 5000);
 
@@ -168,7 +166,8 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			for (const ::AGS::AGSGameDescription *gameP = ::AGS::GAME_DESCRIPTIONS;
 			        gameP->desc.gameId; ++gameP) {
 				if (_md5 == gameP->desc.filesDescriptions[0].md5 &&
-				        f.size() == gameP->desc.filesDescriptions[0].fileSize) {
+				        f.size() == gameP->desc.filesDescriptions[0].fileSize &&
+					AD_NO_SIZE != gameP->desc.filesDescriptions[0].fileSize) {
 					hasUnknownFiles = false;
 					_gameid = gameP->desc.gameId;
 					break;
@@ -177,13 +176,19 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 
 			AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
 			AGS::g_fallbackDesc.desc.extra = _extra.c_str();
-			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filename.toString('/').c_str();
-			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = f.size();
+
+			_filenameStr = filename.toString('/');
+			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filenameStr.c_str();
+			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = (f.size() >= 0xffffffff) ? AD_NO_SIZE : f.size();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].md5 = _md5.c_str();
 
+			// If adding an unknown game, append filename for easier identification
+			if (_gameid.equals("ags"))
+				AGS::g_fallbackDesc.desc.extra = _filenameStr.c_str();
+
 			ADDetectedGame game(&AGS::g_fallbackDesc.desc);
-			game.matchedFiles[_filename].md5 = _md5;
-			game.matchedFiles[_filename].size = f.size();
+			game.matchedFiles[filename].md5 = _md5;
+			game.matchedFiles[filename].size = f.size();
 
 			game.hasUnknownFiles = hasUnknownFiles;
 			return game;

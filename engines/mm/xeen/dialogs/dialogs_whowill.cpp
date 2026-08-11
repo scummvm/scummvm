@@ -56,8 +56,13 @@ int WhoWill::execute(int message, int action, bool type) {
 		Res.WHO_ACTIONS[message], party._activeParty.size());
 
 	windows[36].open();
-	windows[36].writeString(msg);
+	Common::String ttsMessage;
+	windows[36].writeString(msg, false, &ttsMessage);
 	windows[36].update();
+
+#ifdef USE_TTS
+	speakText(ttsMessage);
+#endif
 
 	intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;
 	intf._face2State = map._headData[party._mazePosition.y][party._mazePosition.x]._right;
@@ -97,10 +102,29 @@ int WhoWill::execute(int message, int action, bool type) {
 		}
 	}
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	intf._face1State = intf._face2State = 2;
 	windows[36].close();
 	return _buttonValue;
 }
+
+#ifdef USE_TTS
+
+void WhoWill::speakText(const Common::String &text) const {
+	uint index = 0;
+	// Title
+	_vm->sayText(getNextTextSection(text, index));
+
+	// "Who will" and the action verb (i.e. try)
+	_vm->sayText(getNextTextSection(text, index, 2, " "));
+
+	// F1 - F6
+	_vm->sayText(getNextTextSection(text, index));
+}
+
+#endif
 
 } // End of namespace Xeen
 } // End of namespace MM

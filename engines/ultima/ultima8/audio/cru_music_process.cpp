@@ -38,7 +38,7 @@ static const int MAX_TRACK_REGRET = 22;
 
 // NOTE: The order of these lists has to be the same as the original games
 // as they come as numbers from the usecode.
-static const char *TRACK_FILE_NAMES_REMORSE[] = {
+static const char *const TRACK_FILE_NAMES_REMORSE[] = {
 	nullptr,
 	"M01",
 	"M02",
@@ -63,7 +63,7 @@ static const char *TRACK_FILE_NAMES_REMORSE[] = {
 	"buyme" // for demo
 };
 
-static const char *TRACK_FILE_NAMES_REGRET[] = {
+static const char *const TRACK_FILE_NAMES_REGRET[] = {
 	nullptr,
 	"ninth",
 	"phil",
@@ -183,7 +183,7 @@ void CruMusicProcess::playMusic_internal(int track) {
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
-		const Std::string fname = Std::string::format("sound/%s.amf", _trackNames[track]);
+		const Common::String fname = Common::String::format("sound/%s.amf", _trackNames[track]);
 		auto *rs = new Common::File();
 		if (!rs->open(Common::Path(fname))) {
 			// This happens in No Regret demo.

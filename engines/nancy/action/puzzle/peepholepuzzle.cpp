@@ -55,7 +55,7 @@ void PeepholePuzzle::init() {
 
 	_currentSrc = _startSrc;
 
-	setTransparent(_transparency == kPlayOverlayTransparent);
+	setTransparent(_transparency >= kPlayOverlayTransparent);
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 	setVisible(true);
 
@@ -117,6 +117,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 		if (input.input & NancyInput::kLeftMouseButtonHeld) {
 			// Player is still holding the left button, check if mouse has moved outside bounds
 			if (NancySceneState.getViewport().convertViewportToScreen(_buttonDests[_pressedButton]).contains(input.mousePos)) {
+				// NOTE: Contrary to the original, we don't change the cursor to a hotspot over disabled buttons
 				if (!_disabledButtons[_pressedButton]) {
 					// Do not show hover cursor on disabled button
 					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
@@ -135,6 +136,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 			// Player released mouse button
 
 			// Avoid single frame with non-highlighted cursor
+			// NOTE: Contrary to the original, we don't change the cursor to a hotspot over disabled buttons
 			if (NancySceneState.getViewport().convertViewportToScreen(_buttonDests[_pressedButton]).contains(input.mousePos) && !_disabledButtons[_pressedButton]) {
 				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			}
@@ -146,6 +148,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 	} else {
 		// Mouse is not currently pressing button, check all buttons
 		for (uint i = 0; i < 4; ++i) {
+			// NOTE: Contrary to the original, we don't change the cursor to a hotspot over disabled buttons
 			if (!_disabledButtons[i]) {
 				if (NancySceneState.getViewport().convertViewportToScreen(_buttonDests[i]).contains(input.mousePos)) {
 					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
@@ -165,8 +168,8 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 	// Perform movement
 	if (_pressedButton != -1 && _pressStart != 0) {
 		uint32 curTime = g_nancy->getTotalPlayTime();
-		uint pixelsToMove = 0;
-		if (curTime - _pressStart >= 1000 / _pixelsToScroll) {
+		int16 pixelsToMove = 0;
+		if (curTime - _pressStart >= 1000u / _pixelsToScroll) {
 			pixelsToMove = (curTime - _pressStart) / (1000 / _pixelsToScroll);
 		}
 

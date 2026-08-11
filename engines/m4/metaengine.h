@@ -25,7 +25,9 @@
 #include "graphics/surface.h"
 #include "engines/advancedDetector.h"
 
-class M4MetaEngine : public AdvancedMetaEngine {
+#include "engines/m4/detection.h"
+
+class M4MetaEngine : public AdvancedMetaEngine<M4::M4GameDescription> {
 private:
 	Common::InSaveFile *getOriginalSave(const Common::String &saveName) const;
 
@@ -37,7 +39,7 @@ public:
 
 	const char *getName() const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const M4::M4GameDescription *desc) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.

@@ -71,13 +71,44 @@ void IMuseDigital::waveOutWrite(uint8 **audioData, int &feedSize, int &sampleRat
 	if (_waveOutDisableWrite)
 		return;
 
+	feedSize = 0;
+
+	// A bit of context for what follows:
+	//
+	// In COMI, when entering certain rooms (e.g. barber shop in Plunder Island), the game
+	// sends a State music event followed immediately by a Sequence music event.
+	// If the iMUSE callback happens to run between these two commands, it can cause a brief
+	// audio glitch where a few milliseconds of the intermediate state music is heard
+	// before being replaced by the sequence music, with the fade in between canceled.
+	//
+	// To prevent this, we skip the very first audio callback after any music change
+	// by setting _waveOutXorTrigger to 1 in playComiMusic(). This gives the scripts
+	// enough time to send any follow-up sequence events before iMUSE processes
+	// the audio transition, ensuring the absence of glitches and most importantly
+	// no permanent audio delay on other audio feeds.
+	//
+	// This is very strongly inspired by what the disassembly does:
+	//
+	// The original DirectSound implementation uses the XOR flag combined with play
+	// cursor position checks that naturally skip audio processing cycles when the
+	// play cursor gets too close to the write cursor. In addition to this, the main
+	// portion of tracksCallback() is executed in loop until feedSide is finally 0.
+	// This creates the exact timing conditions where rapid music events have sufficient
+	// time to accumulate before iMUSE processes any audio transitions.
+	//
+	// We're not using DirectSound, so recreate this I could either simulate the
+	// play cursor handling shenanigans, or I could just do exactly what I have done :-)
+	if (_vm->_game.id == GID_CMI && _waveOutXorTrigger != 0) {
+		_waveOutXorTrigger = 0;
+		return;
+	}
+
 	if (!_isEarlyDiMUSE && _vm->_game.id == GID_DIG) {
 		_waveOutXorTrigger ^= 1;
 		if (!_waveOutXorTrigger)
 			return;
 	}
 
-	feedSize = 0;
 	if (_mixer->isReady()) {
 		curBufferBlock = &_waveOutOutputBuffer[_waveOutPreferredFeedSize * _waveOutWriteIndex * _waveOutBytesPerSample * _waveOutNumChannels];
 

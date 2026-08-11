@@ -19,12 +19,23 @@
  *
  */
 
+//
+//=============================================================================
+//
+// GameSetupStructBase is a base class for main game data.
+//
+//=============================================================================
+
 #ifndef AGS_SHARED_AC_GAME_SETUP_STRUCT_BASE_H
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_BASE_H
 
 #include "ags/lib/allegro.h" // RGB
+#include "common/std/array.h"
+#include "common/std/memory.h"
+#include "common/std/vector.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/game_struct_defines.h"
+#include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/util/string.h"
 #include "ags/globals.h"
 
@@ -39,31 +50,32 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
-struct WordsDictionary;
 struct CharacterInfo;
 struct ccScript;
 
 
 struct GameSetupStructBase {
-	static const int  GAME_NAME_LENGTH = 50;
+	static const int  LEGACY_GAME_NAME_LENGTH = 50;
 	static const int  MAX_OPTIONS = 100;
-	static const int  NUM_INTS_RESERVED = 17;
+	static const int  NUM_INTS_RESERVED = 16;
 
-	char              gamename[GAME_NAME_LENGTH];
+	Shared::String    gamename;
 	int32_t           options[MAX_OPTIONS];
-	unsigned char     paluses[256];
+	uint8_t           paluses[256];
 	RGB               defpal[256];
 	int               numviews;
 	int               numcharacters;
 	int               playercharacter;
 	int               totalscore;
-	short             numinvitems;
-	int               numdialog, numdlgmessage;
+	int               numinvitems;
+	int               numdialog;
+	int               numdlgmessage;  // [DEPRECATED]
 	int               numfonts;
 	int               color_depth;          // in bytes per pixel (ie. 1 or 2)
 	int               target_win;
 	int               dialog_bullet;        // 0 for none, otherwise slot num of bullet point
-	unsigned short    hotdot, hotdotouter;  // inv cursor hotspot dot color
+	int               hotdot;  // inv cursor hotspot dot color
+	int               hotdotouter;
 	int               uniqueid;    // random key identifying the game
 	int               numgui;
 	int               numcursors;
@@ -71,29 +83,37 @@ struct GameSetupStructBase {
 	int               invhotdotsprite;
 	int32_t           reserved[NUM_INTS_RESERVED];
 	String			  messages[MAXGLOBALMES];
-	WordsDictionary *dict;
-	char *globalscript;
-	CharacterInfo *chars;
-	ccScript *compiled_script;
-
-	// TODO: refactor to not have this as struct members
-	int32_t *load_messages;
-	bool load_dictionary;
-	bool load_compiled_script;
-	// [IKM] 2013-03-30
-	// NOTE: it looks like nor 'globalscript', not 'compiled_script' are used
-	// to store actual script data anytime; 'ccScript* _GP(gamescript)' global
-	// pointer is used for that instead.
+	std::unique_ptr<WordsDictionary> dict;
+	std::vector<CharacterInfo> chars;
+	std::vector<CharacterInfo2> chars2; // extended character fields
 
 	GameSetupStructBase();
+	GameSetupStructBase(GameSetupStructBase &&gss) = default;
 	~GameSetupStructBase();
+
+	GameSetupStructBase &operator=(GameSetupStructBase &&gss) = default;
+
 	void Free();
 	void SetDefaultResolution(GameResolutionType type);
 	void SetDefaultResolution(Size game_res);
 	void SetGameResolution(GameResolutionType type);
 	void SetGameResolution(Size game_res);
-	void ReadFromFile(Shared::Stream *in, GameDataVersion game_ver);
-	void WriteToFile(Shared::Stream *out) const;
+
+	// Tells whether the serialized game data contains certain components
+	struct SerializeInfo {
+		bool HasCCScript = false;
+		bool HasWordsDict = false;
+		std::array<int32_t> HasMessages;
+		// File offset at which game data extensions begin
+		uint32_t ExtensionOffset = 0u;
+
+		SerializeInfo() {
+			HasMessages.resize(MAXGLOBALMES);
+		}
+	};
+
+	void ReadFromFile(Shared::Stream *in, GameDataVersion game_ver, SerializeInfo &info);
+	void WriteToFile(Shared::Stream *out, const SerializeInfo &info) const;
 
 	//
 	// ** On game resolution.

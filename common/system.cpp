@@ -25,11 +25,13 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/file.h"
+#include "common/printman.h"
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/taskbar.h"
 #include "common/updates.h"
 #include "common/dialogs.h"
+#include "common/rotationmode.h"
 #include "common/str-enc.h"
 #include "common/textconsole.h"
 #include "common/text-to-speech.h"
@@ -46,6 +48,7 @@ OSystem::OSystem() {
 	_eventManager = nullptr;
 	_timerManager = nullptr;
 	_savefileManager = nullptr;
+	_printingManager = nullptr;
 #if defined(USE_TASKBAR)
 	_taskbarManager = nullptr;
 #endif
@@ -70,6 +73,9 @@ OSystem::~OSystem() {
 
 	delete _timerManager;
 	_timerManager = nullptr;
+
+	delete _printingManager;
+	_printingManager = nullptr;
 
 #if defined(USE_TASKBAR)
 	delete _taskbarManager;
@@ -218,6 +224,18 @@ bool OSystem::setStretchMode(const char *name) {
 	return false;
 }
 
+bool OSystem::setRotationMode(int rotation) {
+	return setRotationMode(Common::parseRotationMode(rotation));
+}
+
+Common::Rect OSystem::getSafeOverlayArea(int16 *width, int16 *height) const {
+	int16 w = getOverlayWidth(),
+		  h = getOverlayHeight();
+	if (width) *width = w;
+	if (height) *height = h;
+	return Common::Rect(w, h);
+}
+
 void OSystem::fatalError() {
 	quit();
 	exit(1);
@@ -226,6 +244,12 @@ void OSystem::fatalError() {
 FilesystemFactory *OSystem::getFilesystemFactory() {
 	assert(_fsFactory);
 	return _fsFactory;
+}
+
+void OSystem::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 Common::SeekableReadStream *OSystem::createConfigReadStream() {

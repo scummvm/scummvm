@@ -1232,7 +1232,7 @@ void ThreadList::read(Common::InSaveFile *in) {
 		debugC(3, kDebugSaveload, "Saving Thread %d", i);
 		ThreadID id;
 
-		//  Retreive the Thread's id number
+		//  Retrieve the Thread's id number
 		id = in->readSint16LE();
 		debugC(4, kDebugSaveload, "...... id = %d", id);
 

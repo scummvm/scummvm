@@ -12,6 +12,7 @@ uniform highp vec3 cameraPos;
 uniform UBOOL textured;
 uniform UBOOL useVertexAlpha;
 uniform vec4 uniformColor;
+uniform vec4 spriteColor;
 
 struct shadow_info {
 	UBOOL _active;
@@ -38,7 +39,6 @@ void main() {
 	pos.z *= -1.0;
 
 	vec4 projectedPos = projMatrix * pos;
-	projectedPos.z = ROUND(projectedPos.z);
 
 	gl_Position = projectedPos;
 
@@ -50,6 +50,7 @@ void main() {
 	if (!UBOOL_TEST(useVertexAlpha))
 		Color.a = 1.0;
 	Color *= uniformColor;
+	Color *= spriteColor;
 	if (UBOOL_TEST(textured)) {
 		Texcoord = texcoord;
 	} else {

@@ -38,15 +38,9 @@ namespace UI {
 
 InventoryBox::InventoryBox() :
 		RenderObject(6),
-		_scrollbar(nullptr),
 		_scrollbarPos(0),
 		_highlightedHotspot(-1),
 		_inventoryData(nullptr) {}
-
-InventoryBox::~InventoryBox() {
-	_fullInventorySurface.free();
-	_iconsSurface.free(); delete _scrollbar;
-}
 
 void InventoryBox::init() {
 	auto *bootSummary = GetEngineData(BSUM);
@@ -75,10 +69,10 @@ void InventoryBox::init() {
 
 	RenderObject::init();
 
-	_scrollbar = new Scrollbar(	9,
+	_scrollbar.reset(new Scrollbar(	9,
 								_inventoryData->scrollbarSrcBounds,
 								_inventoryData->scrollbarDefaultPos,
-								_inventoryData->scrollbarMaxScroll - _inventoryData->scrollbarDefaultPos.y);
+								_inventoryData->scrollbarMaxScroll - _inventoryData->scrollbarDefaultPos.y));
 	_scrollbar->init();
 	_curtains.init();
 }

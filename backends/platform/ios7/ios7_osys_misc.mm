@@ -51,7 +51,7 @@ void OSystem_iOS7::updateStartSettings(const Common::String &executable, Common:
 		// Check if scummvm is running from an app bundle
 		if (!bundle || ![bundle bundleIdentifier]) {
 			// Use default autostart implementation
-			EventsBaseBackend::updateStartSettings(executable, command, settings, additionalArgs);
+			BaseBackend::updateStartSettings(executable, command, settings, additionalArgs);
 			return;
 		}
 
@@ -143,16 +143,13 @@ Common::U32String OSystem_iOS7::getTextFromClipboard() {
 	if (str == nil)
 		return Common::U32String();
 
-	// If translations are supported, use the current TranslationManager charset and otherwise
-	// use ASCII. If the string cannot be represented using the requested encoding we get a null
-	// pointer below, which is fine as ScummVM would not know what to do with the string anyway.
 #ifdef SCUMM_LITTLE_ENDIAN
 	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
 #else
 	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
 	NSUInteger textLength = [str length];
-	uint32 *text = new uint32[textLength];
+	Common::u32char_type_t *text = new Common::u32char_type_t[textLength];
 
 	if (![str getBytes:text maxLength:4*textLength usedLength:NULL encoding: stringEncoding options:0 range:NSMakeRange(0, textLength) remainingRange:NULL]) {
 		delete[] text;
@@ -217,7 +214,7 @@ Common::HardwareInputSet *OSystem_iOS7::getHardwareInputSet() {
 	using namespace Common;
 
 	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
-	// Mouse is alwyas supported, either through touch or device
+	// Mouse is always supported, either through touch or device
 	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
 
 	if ([[iOS7AppDelegate iPhoneView] isGamepadControllerSupported]) {
@@ -308,7 +305,7 @@ _s(
 "To open the virtual keyboard, long press on the controller icon at the top right of the screen, perform a pinch gesture (zoom out) or tap on any editable text field. To hide the virtual keyboard, tap the controller icon again, do an opposite pinch gesture (zoom in) or tap outside the text field.\n"
 "\n"
 "\n"
-"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 ),
 _s("External keyboard"),

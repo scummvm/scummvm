@@ -63,8 +63,8 @@ namespace Nuvie {
  * Mani ......... Life/Healing     Zu .................. Sleep
  */
 
-const char *syllable[26] = {"An ", "Bet ", "Corp ", "Des ", "Ex ", "Flam ", "Grav ", "Hur ", "In ", "Jux ", "Kal ", "Lor ", "Mani ", "Nox ", "Ort ", "Por ", "Quas ", "Rel ", "Sanct ", "Tym ", "Uus ", "Vas ", "Wis ", "Xen ", "Ylem ", "Zu "};
-const char *reagent[8] = {"mandrake root", "nightshade", "black pearl", "blood moss", "spider silk", "garlic", "ginseng", "sulfurous ash"}; // check names
+const char *const syllable[26] = {"An ", "Bet ", "Corp ", "Des ", "Ex ", "Flam ", "Grav ", "Hur ", "In ", "Jux ", "Kal ", "Lor ", "Mani ", "Nox ", "Ort ", "Por ", "Quas ", "Rel ", "Sanct ", "Tym ", "Uus ", "Vas ", "Wis ", "Xen ", "Ylem ", "Zu "};
+const char *const reagent[8] = {"mandrake root", "nightshade", "black pearl", "blood moss", "spider silk", "garlic", "ginseng", "sulfurous ash"}; // check names
 const int obj_n_reagent[8] = {OBJ_U6_MANDRAKE_ROOT, OBJ_U6_NIGHTSHADE, OBJ_U6_BLACK_PEARL, OBJ_U6_BLOOD_MOSS, OBJ_U6_SPIDER_SILK, OBJ_U6_GARLIC, OBJ_U6_GINSENG, OBJ_U6_SULFUROUS_ASH};
 
 
@@ -285,7 +285,7 @@ bool Magic::cast() {
 }
 
 void Magic::display_spell_incantation(uint8 index) {
-	string incantation_str;
+	Common::String incantation_str;
 	for (int i = 0; spell[index]->invocation[i] != '\0'; i++)
 		incantation_str += syllable[spell[index]->invocation[i] - Common::KEYCODE_a];
 
@@ -306,7 +306,7 @@ void Magic::display_ingredients(uint8 index) {
 		event->scroll->display_string("None\n\n");
 		return;
 	}
-	string list;
+	Common::String list;
 	for (int shift = 0; shift < 8; shift++) {
 		if (1 << shift & spell[index]->reagents) {
 			list += " ";
@@ -321,7 +321,7 @@ void Magic::display_ingredients(uint8 index) {
 }
 
 void Magic::cast_spell_directly(uint8 spell_num) {
-	string lua = "run_magic_script(\"";
+	Common::String lua = "run_magic_script(\"";
 	lua += spell[spell_num]->invocation;
 	lua += "\")";
 
@@ -398,6 +398,7 @@ bool Magic::process_script_return(uint8 ret) {
 		delete magic_script;
 		magic_script = nullptr;
 		state = MAGIC_STATE_READY;
+		Game::get_game()->get_actor_manager()->startActors(); // end player turn
 		break;
 	case NUVIE_SCRIPT_GET_TARGET :
 		state = MAGIC_STATE_ACQUIRE_TARGET;

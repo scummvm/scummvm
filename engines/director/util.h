@@ -43,14 +43,15 @@ Common::String unixToMacPath(const Common::String &path);
 Common::String getPath(const Common::String &path, const Common::String &cwd);
 
 Common::Path resolveFSPath(const Common::String &path, const Common::Path &base, bool directory);
+Common::Path resolvePathInner(const Common::String &path, const Common::Path &base, bool directory, const char *ext);
 Common::Path resolvePath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path resolvePartialPath(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path resolvePathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path resolvePartialPathWithFuzz(const Common::String &path, const Common::Path &base, bool directory, const char **exts);
 Common::Path findAbsolutePath(const Common::String &path, bool directory = false, const char **exts = nullptr);
 Common::Path findPath(const Common::Path &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
-Common::Path findPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
-Common::Path findMoviePath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
+Common::Path findPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr, Common::String currentPath_ = "");
+Common::Path findMoviePath(const Common::String &path, bool currentFolder = true, bool searchPaths = true, Common::String currentPath = "");
 Common::Path findXLibPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
 Common::Path findAudioPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
 
@@ -70,6 +71,8 @@ Common::Path dumpFactoryName(const char *prefix, const char *name, const char *e
 
 bool isButtonSprite(SpriteType spriteType);
 
+uint32 macTimeSeed();
+
 class RandomState {
 public:
 	uint32 _seed;
@@ -80,7 +83,7 @@ public:
 		_seed = _mask = _len = 0;
 	}
 
-	void setSeed(int seed);
+	void setSeed(uint32 seed, bool runInit = true);
 	uint32 getSeed() { return _seed; }
 	int32 getRandom(int32 range);
 
@@ -92,7 +95,7 @@ private:
 
 uint32 readVarInt(Common::SeekableReadStream &stream);
 
-Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian);
+Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, uint32 len, uint32 *outLen, bool bigEndian);
 
 uint16 humanVersion(uint16 ver);
 
@@ -103,7 +106,8 @@ Common::CodePage detectFontEncoding(Common::Platform platform, uint16 fontId);
 
 int charToNum(Common::u32char_type_t ch);
 Common::u32char_type_t numToChar(int num);
-int compareStrings(const Common::String &s1, const Common::String &s2);
+int compareStringOrder(const Common::String &s1, const Common::String &s2);
+bool compareStringEquality(const Common::String &s1, const Common::String &s2);
 
 // Our implementation of strstr() with Director character order
 const char *d_strstr(const char *str, const char *substr);
@@ -124,7 +128,7 @@ inline byte lerpByte(byte a, byte b, int alpha, int span) {
 	return static_cast<byte>((bi * alpha + ai * (span - alpha)) / span);
 }
 
-inline void lerpPalette(byte *target, byte *palA, int palALength, byte *palB, int palBLength, int alpha, int span) {
+inline void lerpPalette(byte *target, const byte *palA, int palALength, const byte *palB, int palBLength, int alpha, int span) {
 	for (int i = 0; i < 768; i++) {
 		target[i] = lerpByte(
 			i < palALength * 3 ? palA[i] : 0,
@@ -138,5 +142,6 @@ inline void lerpPalette(byte *target, byte *palA, int palALength, byte *palB, in
 } // End of namespace Director
 
 double readAppleFloat80(void *ptr);
+void hexdumpIfNotZero(byte *data, int len, const char *prefix);
 
 #endif

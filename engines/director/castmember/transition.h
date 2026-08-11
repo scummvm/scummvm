@@ -31,8 +31,19 @@ public:
 	TransitionCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	TransitionCastMember(Cast *cast, uint16 castId, TransitionCastMember &source);
 
+	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new TransitionCastMember(cast, castId, *this)); }
+
+	bool hasField(int field) override;
+	Datum getField(int field) override;
+	void setField(int field, const Datum &value) override;
+
 	Common::String formatInfo() override;
 
+	uint32 getCastDataSize() override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
+
+	uint8 _transTime;
 	TransitionType _transType;
 	uint16 _durationMillis;
 	uint8 _flags;

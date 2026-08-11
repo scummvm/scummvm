@@ -23,12 +23,23 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
 
 namespace AGOS {
+
+static bool g_pnInventoryPaletteSaved = false;
+static byte g_pnSavedInventoryPalette[16 * 3];
+
+static const uint16 kPnAmigaAtariStInventoryPalette[16] = {
+	0x000, 0x111, 0x500, 0x733,
+	0x740, 0x530, 0x131, 0x020,
+	0x211, 0x322, 0x004, 0x737,
+	0x333, 0x444, 0x777, 0x222
+};
 
 void AGOSEngine::loadIconFile() {
 	Common::File in;
@@ -1064,6 +1075,39 @@ void AGOSEngine_PN::drawIconHitBar() {
 	}
 
 	updateBackendSurface();
+}
+
+void AGOSEngine_PN::saveInventoryPalette() {
+	if (g_pnInventoryPaletteSaved)
+		return;
+
+	memcpy(g_pnSavedInventoryPalette, _currentPalette, sizeof(g_pnSavedInventoryPalette));
+	g_pnInventoryPaletteSaved = true;
+}
+
+void AGOSEngine_PN::applyInventoryPalette() {
+	for (int i = 0; i < 16; ++i) {
+		const uint16 color = kPnAmigaAtariStInventoryPalette[i];
+		_displayPalette[i * 3 + 0] = ((color & 0x0F00) >> 8) * 32;
+		_displayPalette[i * 3 + 1] = ((color & 0x00F0) >> 4) * 32;
+		_displayPalette[i * 3 + 2] = ((color & 0x000F) >> 0) * 32;
+	}
+
+	memcpy(_currentPalette, _displayPalette, sizeof(g_pnSavedInventoryPalette));
+	_system->getPaletteManager()->setPalette(_displayPalette, 0, 16);
+	_paletteFlag = 0;
+}
+
+void AGOSEngine_PN::restoreInventoryPalette() {
+	if (!g_pnInventoryPaletteSaved)
+		return;
+
+	memcpy(_displayPalette, g_pnSavedInventoryPalette, sizeof(g_pnSavedInventoryPalette));
+	memcpy(_currentPalette, g_pnSavedInventoryPalette, sizeof(g_pnSavedInventoryPalette));
+	_system->getPaletteManager()->setPalette(_displayPalette, 0, 16);
+	_paletteFlag = 0;
+
+	g_pnInventoryPaletteSaved = false;
 }
 
 void AGOSEngine_PN::iconPage() {

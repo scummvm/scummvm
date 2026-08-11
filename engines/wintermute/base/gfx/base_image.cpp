@@ -26,7 +26,10 @@
  */
 
 #include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/file/base_savefile_manager_file.h"
 
 #include "graphics/surface.h"
 
@@ -45,6 +48,7 @@ namespace Wintermute {
 BaseImage::BaseImage() {
 	_fileManager = BaseFileManager::getEngineInstance();
 	_palette = nullptr;
+	_paletteCount = 0;
 	_surface = nullptr;
 	_decoder = nullptr;
 	_deletableSurface = nullptr;
@@ -60,170 +64,235 @@ BaseImage::~BaseImage() {
 	delete _deletableSurface;
 }
 
+bool BaseImage::getImageInfo(const Common::String &filename, int32 &width, int32 &height) {
+	bool ret = false;
+	Common::String file = filename;
+	file.toLowercase();
+	if (file.hasPrefix("savegame:") || file.hasSuffix(".bmp")) {
+		ret = getImageInfoBMP(filename, width, height);
+	} else if (file.hasSuffix(".tga")) {
+		ret = getImageInfoTGA(filename, width, height);
+	} else if (file.hasSuffix(".png")) {
+		ret = getImageInfoPNG(filename, width, height);
+	} else if (file.hasSuffix(".jpg")) {
+		ret = getImageInfoJPG(filename, width, height);
+	} else {
+		warning("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
+	}
+
+	return ret;
+}
+
+bool BaseImage::getImageInfoBMP(const Common::String &filename, int32 &width, int32 &height) {
+	Common::SeekableReadStream *stream = _fileManager->openFile(filename);
+	if (!stream) {
+		return false;
+	}
+
+	uint16 fileType = stream->readUint16BE();
+	if (fileType != MKTAG16('B', 'M')) {
+		_fileManager->closeFile(stream);
+		return false;
+	}
+
+	stream->skip(16);
+
+	width = stream->readSint32LE();
+	height = stream->readSint32LE();
+
+	_fileManager->closeFile(stream);
+
+	return true;
+}
+
+
+bool BaseImage::getImageInfoTGA(const Common::String &filename, int32 &width, int32 &height) {
+	Common::SeekableReadStream *stream = _fileManager->openFile(filename);
+	if (!stream) {
+		return false;
+	}
+
+	stream->skip(12);
+
+	width = stream->readSint16LE();
+	height = stream->readSint16LE();
+
+	_fileManager->closeFile(stream);
+
+	return true;
+}
+
+bool BaseImage::getImageInfoPNG(const Common::String &filename, int32 &width, int32 &height) {
+	Common::SeekableReadStream *stream = _fileManager->openFile(filename);
+	if (!stream) {
+		return false;
+	}
+
+	if (stream->readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
+		_fileManager->closeFile(stream);
+		return false;
+	}
+	stream->skip(4);
+
+	uint32 headerLen = stream->readUint32BE();
+	uint32 headerType = stream->readUint32BE();
+	if (headerType != MKTAG('I', 'H', 'D', 'R') || headerLen != 13) {
+		_fileManager->closeFile(stream);
+		return false;
+	}
+
+	width = stream->readSint32BE();
+	height = stream->readSint32BE();
+
+	_fileManager->closeFile(stream);
+
+	return true;
+}
+
+bool BaseImage::getImageInfoJPG(const Common::String &filename, int32 &width, int32 &height) {
+	Common::SeekableReadStream *stream = _fileManager->openFile(filename);
+	if (!stream) {
+		return false;
+	}
+
+	uint16 fileType = stream->readSint16BE();
+	if (fileType != 0xFFD8) {
+		_fileManager->closeFile(stream);
+		return false;
+	}
+
+	while (1) {
+		byte markerPrefix = stream->readByte();
+		if (stream->eos() || stream->err()) {
+			break;
+		}
+		if (markerPrefix != 0xff) {
+			continue;
+		}
+
+		byte marker = stream->readByte();
+		while (marker == 0xff) {
+			marker = stream->readByte();
+			if (stream->eos() || stream->err()) {
+				_fileManager->closeFile(stream);
+				return false;
+			}
+		}
+
+		if (marker == 0xd9 || marker == 0xda) {
+			break;
+		}
+
+		uint16 segLength = stream->readUint16BE();
+		if (segLength < 2) {
+			break;
+		}
+
+		if ((marker >= 0xc0 && marker <= 0xc3) ||
+			(marker >= 0xc9 && marker <= 0xcb)) {
+
+			stream->skip(1);
+
+			height = stream->readUint16BE();
+			width = stream->readUint16BE();
+
+			_fileManager->closeFile(stream);
+
+			return true;
+		} else {
+			stream->skip(segLength - 2);
+			if (stream->eos() || stream->err()) {
+				break;
+			}
+		}
+	}
+
+	_fileManager->closeFile(stream);
+
+	return false;
+}
+
 bool BaseImage::loadFile(const Common::String &filename) {
 	_filename = filename;
 	_filename.toLowercase();
 	if (filename.hasPrefix("savegame:") || _filename.hasSuffix(".bmp")) {
 		_decoder = new Image::BitmapDecoder();
 	} else if (_filename.hasSuffix(".png")) {
+		if (BaseEngine::instance().getGameId() == "satanandsons" &&
+		    (_filename.hasSuffix("\\plein\\kaars.1.png") ||
+			 _filename.hasSuffix("\\bos2\\bos.png") ||
+			 _filename.hasSuffix("\\bos\\background.png"))) {
+			debug(2, "BaseImage::loadFile : Buggy PNG bitmap %s, skipping...", filename.c_str());
+			return false;
+		}
 		_decoder = new Image::PNGDecoder();
 	} else if (_filename.hasSuffix(".tga")) {
 		_decoder = new Image::TGADecoder();
 	} else if (_filename.hasSuffix(".jpg")) {
-		_decoder = new Image::JPEGDecoder();
+		Image::JPEGDecoder *jpeg = new Image::JPEGDecoder();
+		jpeg->setOutputPixelFormat(BaseEngine::getRenderer()->getPixelFormat());
+		_decoder = jpeg;
 	} else {
-		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
+		warning("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 	_filename = filename;
-	Common::SeekableReadStream *file = _fileManager->openFile(filename.c_str());
+	Common::SeekableReadStream *file = _fileManager->openFile(filename);
 	if (!file) {
 		return false;
 	}
 
 	_decoder->loadStream(*file);
 	_surface = _decoder->getSurface();
-	_palette = _decoder->getPalette();
+	_palette = _decoder->getPalette().data();
+	_paletteCount = _decoder->getPalette().size();
 	_fileManager->closeFile(file);
 
 	return true;
 }
 
-byte BaseImage::getAlphaAt(int x, int y) const {
-	if (!_surface) {
-		return 0xFF;
-	}
-	uint32 color = *(const uint32 *)_surface->getBasePtr(x, y);
-	byte r, g, b, a;
-	_surface->format.colorToARGB(color, a, r, g, b);
-	return a;
-}
-
-void BaseImage::copyFrom(const Graphics::Surface *surface) {
-	_surface = _deletableSurface = new Graphics::Surface();
-	_deletableSurface->copyFrom(*surface);
-}
-
 //////////////////////////////////////////////////////////////////////////
-bool BaseImage::saveBMPFile(const Common::String &filename) const {
-	warning("BaseImage::saveBMPFile - stubbed"); // TODO
+bool BaseImage::saveBMPFile(const char *filename) const {
+	Common::WriteStream *stream = openSfmFileForWrite(filename);
+	if (stream) {
+		bool ret = writeBMPToStream(stream);
+		delete stream;
+		return ret;
+	}
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseImage::resize(int newWidth, int newHeight) {
-	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
-	Graphics::Surface *temp = _surface->scale((uint16)newWidth, (uint16)newHeight);
-	if (_deletableSurface) {
-		_deletableSurface->free();
-		delete _deletableSurface;
-		_deletableSurface = nullptr;
-	}
-	_surface = _deletableSurface = temp;
-	return true;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
-	if (!_surface) {
+	if (!stream || !_surface) {
 		return false;
 	}
 
-	/* The following is just copied over and inverted to write-ops from the BMP-decoder */
-	stream->writeByte('B');
-	stream->writeByte('M');
-
-	/* Since we don't care during reads, we don't care during writes: */
-	/* uint32 fileSize = */
-	stream->writeUint32LE(54 + _surface->h * _surface->pitch);
-	/* uint16 res1 = */
-	stream->writeUint16LE(0);
-	/* uint16 res2 = */
-	stream->writeUint16LE(0);
-	const uint32 imageOffset = 54;
-	stream->writeUint32LE(imageOffset);
-
-	const uint32 infoSize = 40; /* Windows v3 BMP */
-	stream->writeUint32LE(infoSize);
-
-	uint32 width = _surface->w;
-	int32 height = _surface->h;
-	stream->writeUint32LE(width);
-	stream->writeUint32LE((uint32)height);
-
-	if (width == 0 || height == 0) {
-		return false;
-	}
-
-	if (height < 0) {
-		warning("Right-side up bitmaps not supported");
-		return false;
-	}
-
-	/* uint16 planes = */ stream->writeUint16LE(1);
-	const uint16 bitsPerPixel = 24;
-	stream->writeUint16LE(bitsPerPixel);
-
-	const uint32 compression = 0;
-	stream->writeUint32LE(compression);
-
-	/* uint32 imageSize = */
-	stream->writeUint32LE(_surface->h * _surface->pitch);
-	/* uint32 pixelsPerMeterX = */
-	stream->writeUint32LE(0);
-	/* uint32 pixelsPerMeterY = */
-	stream->writeUint32LE(0);
-	const uint32 paletteColorCount = 0;
-	stream->writeUint32LE(paletteColorCount);
-	/* uint32 colorsImportant = */
-	stream->writeUint32LE(0);
-
-	// Start us at the beginning of the image (54 bytes in)
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-
-	// BGRA for 24bpp
-	if (bitsPerPixel == 24) {
-		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
-	}
-
-	Graphics::Surface *surface = _surface->convertTo(format);
-
-	int srcPitch = width * (bitsPerPixel >> 3);
-	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
-
-	for (int32 i = height - 1; i >= 0; i--) {
-		for (uint32 j = 0; j < width; j++) {
-			byte b, g, r;
-			uint32 color = *(uint32 *)surface->getBasePtr(j, i);
-			surface->format.colorToRGB(color, r, g, b);
-			stream->writeByte(b);
-			stream->writeByte(g);
-			stream->writeByte(r);
-		}
-
-		for (int k = 0; k < extraDataLength; k++) {
-			stream->writeByte(0);
-		}
-	}
-	surface->free();
-	delete surface;
-	return true;
+	return Image::writeBMP(*stream, *_surface, _palette);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
-	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
+void BaseImage::copyFrom(const Graphics::Surface *surface, int newWidth, int newHeight, byte flip) {
+	if (newWidth == 0)
+		newWidth = surface->w;
+	if (newHeight == 0)
+		newHeight = surface->h;
 
-	Graphics::Surface *temp = origImage->_surface->scale((uint16)newWidth, (uint16)newHeight);
+	Graphics::Surface *temp;
+	if (newWidth == surface->w && newHeight == surface->h && flip == 0) {
+		temp = new Graphics::Surface();
+		temp->copyFrom(*surface);
+	} else {
+		temp = surface->scale((uint16)newWidth, (uint16)newHeight, true, flip);
+	}
+
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
 		_deletableSurface = nullptr;
 	}
 	_surface = _deletableSurface = temp;
-	return true;
 }
 
 } // End of namespace Wintermute

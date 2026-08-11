@@ -21,10 +21,9 @@
 #ifndef DRAGONS_DRAGONS_H
 #define DRAGONS_DRAGONS_H
 
-#include "gui/EventRecorder.h"
 #include "engines/engine.h"
-#include "dragons/specialopcodes.h"
 #include "dragons/detection.h"
+#include "common/rect.h"
 
 namespace Dragons {
 
@@ -245,7 +244,7 @@ private:
 protected:
 	bool hasFeature(EngineFeature f) const override;
 public:
-	DragonsEngine(OSystem *syst, const ADGameDescription *desc);
+	DragonsEngine(OSystem *syst, const DragonsGameDescription *desc);
 	~DragonsEngine();
 
 	void updateEvents();

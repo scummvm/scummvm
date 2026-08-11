@@ -65,6 +65,10 @@ int Hotspot_GetID(ScriptHotspot *hss) {
 	return hss->id;
 }
 
+const char *Hotspot_GetScriptName(ScriptHotspot *hss) {
+	return CreateNewScriptString(_GP(thisroom).Hotspots[hss->id].ScriptName);
+}
+
 int Hotspot_GetWalkToX(ScriptHotspot *hss) {
 	return GetHotspotPointX(hss->id);
 }
@@ -145,6 +149,14 @@ int get_hotspot_at(int xpp, int ypp) {
 //
 //=============================================================================
 
+ScriptHotspot *Hotspot_GetByName(const char *name) {
+	return static_cast<ScriptHotspot *>(ccGetScriptObjectAddress(name, _GP(ccDynamicHotspot).GetType()));
+}
+
+RuntimeScriptValue Sc_Hotspot_GetByName(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(ScriptHotspot, _GP(ccDynamicHotspot), Hotspot_GetByName, const char);
+}
+
 RuntimeScriptValue Sc_GetHotspotAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptHotspot, _GP(ccDynamicHotspot), GetHotspotAtRoom);
 }
@@ -155,9 +167,7 @@ RuntimeScriptValue Sc_GetHotspotAtScreen(const RuntimeScriptValue *params, int32
 }
 
 RuntimeScriptValue Sc_Hotspot_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
-	(void)params; (void)param_count;
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaHotspot);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
+	API_SCALL_OBJAUTO(ScriptDrawingSurface, Hotspot_GetDrawingSurface);
 }
 
 // void (ScriptHotspot *hss, char *buffer)
@@ -177,7 +187,7 @@ RuntimeScriptValue Sc_Hotspot_GetPropertyText(void *self, const RuntimeScriptVal
 
 // const char* (ScriptHotspot *hss, const char *property)
 RuntimeScriptValue Sc_Hotspot_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ_POBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetTextProperty, const char);
+	API_OBJCALL_OBJ_POBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Hotspot_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -212,9 +222,13 @@ RuntimeScriptValue Sc_Hotspot_GetID(void *self, const RuntimeScriptValue *params
 	API_OBJCALL_INT(ScriptHotspot, Hotspot_GetID);
 }
 
+RuntimeScriptValue Sc_Hotspot_GetScriptName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetScriptName);
+}
+
 // const char* (ScriptHotspot *hss)
 RuntimeScriptValue Sc_Hotspot_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_CONST_OBJCALL_OBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetName_New);
+	API_OBJCALL_OBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetName_New);
 }
 
 RuntimeScriptValue Sc_Hotspot_SetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -231,27 +245,32 @@ RuntimeScriptValue Sc_Hotspot_GetWalkToY(void *self, const RuntimeScriptValue *p
 	API_OBJCALL_INT(ScriptHotspot, Hotspot_GetWalkToY);
 }
 
-
-
 void RegisterHotspotAPI() {
-	ccAddExternalStaticFunction("Hotspot::GetAtRoomXY^2", Sc_GetHotspotAtRoom);
-	ccAddExternalStaticFunction("Hotspot::GetAtScreenXY^2", Sc_GetHotspotAtScreen);
-	ccAddExternalStaticFunction("Hotspot::GetDrawingSurface", Sc_Hotspot_GetDrawingSurface);
-	ccAddExternalObjectFunction("Hotspot::GetName^1", Sc_Hotspot_GetName);
-	ccAddExternalObjectFunction("Hotspot::GetProperty^1", Sc_Hotspot_GetProperty);
-	ccAddExternalObjectFunction("Hotspot::GetPropertyText^2", Sc_Hotspot_GetPropertyText);
-	ccAddExternalObjectFunction("Hotspot::GetTextProperty^1", Sc_Hotspot_GetTextProperty);
-	ccAddExternalObjectFunction("Hotspot::SetProperty^2", Sc_Hotspot_SetProperty);
-	ccAddExternalObjectFunction("Hotspot::SetTextProperty^2", Sc_Hotspot_SetTextProperty);
-	ccAddExternalObjectFunction("Hotspot::IsInteractionAvailable^1", Sc_Hotspot_IsInteractionAvailable);
-	ccAddExternalObjectFunction("Hotspot::RunInteraction^1", Sc_Hotspot_RunInteraction);
-	ccAddExternalObjectFunction("Hotspot::get_Enabled", Sc_Hotspot_GetEnabled);
-	ccAddExternalObjectFunction("Hotspot::set_Enabled", Sc_Hotspot_SetEnabled);
-	ccAddExternalObjectFunction("Hotspot::get_ID", Sc_Hotspot_GetID);
-	ccAddExternalObjectFunction("Hotspot::get_Name", Sc_Hotspot_GetName_New);
-	ccAddExternalObjectFunction("Hotspot::set_Name", Sc_Hotspot_SetName);
-	ccAddExternalObjectFunction("Hotspot::get_WalkToX", Sc_Hotspot_GetWalkToX);
-	ccAddExternalObjectFunction("Hotspot::get_WalkToY", Sc_Hotspot_GetWalkToY);
+	ScFnRegister hotspot_api[] = {
+		{"Hotspot::GetAtRoomXY^2", API_FN_PAIR(GetHotspotAtRoom)},
+		{"Hotspot::GetAtScreenXY^2", API_FN_PAIR(GetHotspotAtScreen)},
+		{"Hotspot::GetByName", API_FN_PAIR(Hotspot_GetByName)},
+		{"Hotspot::GetDrawingSurface", API_FN_PAIR(Hotspot_GetDrawingSurface)},
+
+		{"Hotspot::GetName^1", API_FN_PAIR(Hotspot_GetName)},
+		{"Hotspot::GetProperty^1", API_FN_PAIR(Hotspot_GetProperty)},
+		{"Hotspot::GetPropertyText^2", API_FN_PAIR(Hotspot_GetPropertyText)},
+		{"Hotspot::GetTextProperty^1", API_FN_PAIR(Hotspot_GetTextProperty)},
+		{"Hotspot::SetProperty^2", API_FN_PAIR(Hotspot_SetProperty)},
+		{"Hotspot::SetTextProperty^2", API_FN_PAIR(Hotspot_SetTextProperty)},
+		{"Hotspot::IsInteractionAvailable^1", API_FN_PAIR(Hotspot_IsInteractionAvailable)},
+		{"Hotspot::RunInteraction^1", API_FN_PAIR(Hotspot_RunInteraction)},
+		{"Hotspot::get_Enabled", API_FN_PAIR(Hotspot_GetEnabled)},
+		{"Hotspot::set_Enabled", API_FN_PAIR(Hotspot_SetEnabled)},
+		{"Hotspot::get_ID", API_FN_PAIR(Hotspot_GetID)},
+		{"Hotspot::get_Name", API_FN_PAIR(Hotspot_GetName_New)},
+		{"Hotspot::set_Name", API_FN_PAIR(Hotspot_SetName)},
+		{"Hotspot::get_ScriptName", API_FN_PAIR(Hotspot_GetScriptName)},
+		{"Hotspot::get_WalkToX", API_FN_PAIR(Hotspot_GetWalkToX)},
+		{"Hotspot::get_WalkToY", API_FN_PAIR(Hotspot_GetWalkToY)},
+	};
+
+	ccAddExternalFunctions361(hotspot_api);
 }
 
 } // namespace AGS3

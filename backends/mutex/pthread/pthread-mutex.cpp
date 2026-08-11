@@ -21,10 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-#include "common/scummsys.h"
-
-#if defined(__ANDROID__) || defined(IPHONE)
-
 #include "backends/mutex/pthread/pthread-mutex.h"
 
 #include <pthread.h>
@@ -82,5 +78,3 @@ bool PthreadMutexInternal::unlock() {
 Common::MutexInternal *createPthreadMutexInternal() {
 	return new PthreadMutexInternal();
 }
-
-#endif

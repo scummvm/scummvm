@@ -22,11 +22,7 @@
 #ifndef AUDIO_FMOPL_H
 #define AUDIO_FMOPL_H
 
-#include "audio/audiostream.h"
-
-#include "common/func.h"
-#include "common/ptr.h"
-#include "common/scummsys.h"
+#include "audio/chip.h"
 
 namespace Audio {
 class SoundHandle;
@@ -94,7 +90,8 @@ public:
 	/**
 	 * Detects a driver for the specific type.
 	 *
-	 * @return Returns a valid driver id on success, -1 otherwise.
+	 * @return Returns a valid driver id on success, 0 for null device,
+	 *         -1 on failure.
 	 */
 	static DriverId detect(OplType type);
 
@@ -114,14 +111,9 @@ private:
 };
 
 /**
- * The type of the OPL timer callback functor.
- */
-typedef Common::Functor0<void> TimerCallback;
-
-/**
  * A representation of a Yamaha OPL chip.
  */
-class OPL {
+class OPL : virtual public Audio::Chip {
 private:
 	static bool _hasInstance;
 public:
@@ -149,14 +141,6 @@ public:
 	virtual void write(int a, int v) = 0;
 
 	/**
-	 * Reads a byte from the given I/O port.
-	 *
-	 * @param a		port address
-	 * @return		value read
-	 */
-	virtual byte read(int a) = 0;
-
-	/**
 	 * Function to directly write to a specific OPL register.
 	 * This writes to *both* chips for a Dual OPL2. We allow
 	 * writing to secondary OPL registers by using register
@@ -167,21 +151,8 @@ public:
 	 */
 	virtual void writeReg(int r, int v) = 0;
 
-	/**
-	 * Start the OPL with callbacks.
-	 */
-	void start(TimerCallback *callback, int timerFrequency = kDefaultCallbackFrequency);
-
-	/**
-	 * Stop the OPL
-	 */
-	void stop();
-
-	/**
-	 * Change the callback frequency. This must only be called from a
-	 * timer proc.
-	 */
-	virtual void setCallbackFrequency(int timerFrequency) = 0;
+	using Audio::Chip::start;
+	void start(TimerCallback *callback) { start(callback, kDefaultCallbackFrequency); }
 
 	enum {
 		/**
@@ -213,104 +184,22 @@ protected:
 	*/
 	bool emulateDualOpl2OnOpl3(int r, int v, Config::OplType oplType);
 
-	/**
-	 * Start the callbacks.
-	 */
-	virtual void startCallbacks(int timerFrequency) = 0;
-
-	/**
-	 * Stop the callbacks.
-	 */
-	virtual void stopCallbacks() = 0;
-
-	/**
-	 * The functor for callbacks.
-	 */
-	Common::ScopedPtr<TimerCallback> _callback;
-
 	bool _rhythmMode;
 	int _connectionFeedbackValues[3];
 };
 
 /**
- * An OPL that represents a real OPL, as opposed to an emulated one.
- *
- * This will use an actual timer instead of using one calculated from
- * the number of samples in an AudioStream::readBuffer call.
+ * A null implementation of a Yamaha OPL chip that runs the callback
+ * but doesn't output any audio.
  */
-class RealOPL : public OPL {
+class NullOPL final : public ::OPL::OPL, public Audio::RealChip {
 public:
-	RealOPL();
-	virtual ~RealOPL();
-
-	// OPL API
-	void setCallbackFrequency(int timerFrequency);
-
-protected:
-	// OPL API
-	void startCallbacks(int timerFrequency);
-	void stopCallbacks();
-	virtual void onTimer();
-
-private:
-	static void timerProc(void *refCon);
-
-	uint _baseFreq;
-	uint _remainingTicks;
-
-	enum {
-		kMaxFreq = 100
-	};
+	bool init() override { return true; }
+	void reset() override {}
+	void write(int a, int v) override {}
+	void writeReg(int r, int v) override {}
 };
 
-/**
- * An OPL that represents an emulated OPL.
- *
- * This will send callbacks based on the number of samples
- * decoded in readBuffer().
- */
-class EmulatedOPL : public OPL, protected Audio::AudioStream {
-public:
-	EmulatedOPL();
-	virtual ~EmulatedOPL();
-
-	// OPL API
-	void setCallbackFrequency(int timerFrequency);
-
-	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	int getRate() const;
-	bool endOfData() const { return false; }
-
-protected:
-	// OPL API
-	void startCallbacks(int timerFrequency);
-	void stopCallbacks();
-
-	/**
-	 * Read up to 'length' samples.
-	 *
-	 * Data will be in native endianess, 16 bit per sample, signed.
-	 * For stereo OPL, buffer will be filled with interleaved
-	 * left and right channel samples, starting with a left sample.
-	 * Furthermore, the samples in the left and right are summed up.
-	 * So if you request 4 samples from a stereo OPL, you will get
-	 * a total of two left channel and two right channel samples.
-	 */
-	virtual void generateSamples(int16 *buffer, int numSamples) = 0;
-
-private:
-	int _baseFreq;
-
-	enum {
-		FIXP_SHIFT = 16
-	};
-
-	int _nextTick;
-	int _samplesPerTick;
-
-	Audio::SoundHandle *_handle;
-};
 /** @} */
 } // End of namespace OPL
 

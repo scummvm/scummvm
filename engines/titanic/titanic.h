@@ -78,6 +78,46 @@ class CScriptHandler;
 class TTscriptBase;
 struct TitanicGameDescription;
 
+enum TITANICActions {
+	kActionNone,
+	kActionUp,
+	kActionDown,
+	kActionSelect,
+	kActionCheat,
+	kActionSave,
+	kActionLoad,
+	kActionQuit,
+	kActionShift,
+	kActionPETConversation,
+	kActionPETInventory,
+	kActionPETRemote,
+	kActionPETRooms,
+	kActionPETRealLife,
+	kActionPETTranslation,
+	kActionPETScrollPageUp,
+	kActionPETScrollPageDown,
+	kActionPETScrollTop,
+	kActionPeTScrollBottom,
+	kActionStarMapToggle,
+	kActionStarMapLeft,
+	kActionStarMapRight,
+	kActionStarMapUp,
+	kActionStarMapDown,
+	kActionStarMapForward,
+	kActionStarMapBackward,
+	kActionStarMapStop,
+	kActionStarMapLock,
+	kActionStarMapUnlock,
+	kActionStarMapConstellations,
+	kActionStarMapBoundaries,
+	kActionMovementNone,
+	kActionMovementForwards,
+	kActionMovementBackwards,
+	kActionMovementLeft,
+	kActionMovementRight,
+
+};
+
 class TitanicEngine : public Engine {
 private:
 	/**

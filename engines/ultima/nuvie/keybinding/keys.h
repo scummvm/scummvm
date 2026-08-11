@@ -25,7 +25,7 @@
 #include "ultima/nuvie/keybinding/keys_enum.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "common/events.h"
 #include "common/hash-str.h"
 
@@ -102,6 +102,7 @@ public:
 	bool handle_always_available_keys(ActionType a);
 
 	void ShowKeys() const;
+    void AddIosBindings();
 
 	uint8 get_axis(uint8 index) const;
 	void set_axis(uint8 index, uint8 value);

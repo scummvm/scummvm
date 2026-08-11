@@ -38,12 +38,12 @@
 
 #include <sys/ioctl.h>
 #include <alsa/asoundlib.h>
-#include <sound/asound_fm.h>
+#include <alsa/sound/asound_fm.h>
 
 namespace OPL {
 namespace ALSA {
 
-class OPL : public ::OPL::RealOPL {
+class OPL : public ::OPL::OPL, public Audio::RealChip {
 private:
 	enum {
 		kOpl2Voices = 9,
@@ -69,13 +69,12 @@ public:
 	OPL(Config::OplType type);
 	~OPL();
 
-	bool init();
-	void reset();
+	bool init() override;
+	void reset() override;
 
-	void write(int a, int v);
-	byte read(int a);
+	void write(int a, int v) override;
 
-	void writeReg(int r, int v);
+	void writeReg(int r, int v) override;
 };
 
 const int OPL::voiceToOper0[OPL::kVoices] =
@@ -232,10 +231,6 @@ void OPL::write(int port, int val) {
 			break;
 		}
 	}
-}
-
-byte OPL::read(int port) {
-	return 0;
 }
 
 void OPL::writeReg(int r, int v) {

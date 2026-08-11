@@ -21,7 +21,10 @@
 
 #include "m4/burger/rooms/section7/room702.h"
 #include "m4/burger/rooms/section7/section7.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -94,7 +97,7 @@ void Room702::daemon() {
 		break;
 
 	case 4:
-		_G(game).new_room = 706;
+		_G(game).setRoom(706);
 		break;
 
 	case kCHANGE_FLUMIX_ANIMATION:
@@ -220,7 +223,7 @@ void Room702::daemon() {
 	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 10:
-			ws_walk(236, 338, 0, 11, 4);
+			ws_walk(236, 338, nullptr, 11, 4);
 			break;
 
 		case 11:
@@ -256,7 +259,7 @@ void Room702::parser() {
 			wilbur_speech("702W003");
 		}
 	} else if (player_said("DOOR", "GEAR")) {
-		ws_walk(174, 316, 0, -1, 10);
+		ws_walk(174, 316, nullptr, -1, 10);
 		wilbur_speech("702W005");
 
 	} else if (!_G(walker).wilbur_said(SAID)) {

@@ -64,6 +64,8 @@ void Scene100::Action1::signal() {
 		} else {
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				setTextStrings(BF_NAME, ESP_BF_ALL_RIGHTS_RESERVED, this);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				setTextStrings(BF_NAME, RUS_BF_ALL_RIGHTS_RESERVED, this);
 			} else {
 				setTextStrings(BF_NAME, BF_ALL_RIGHTS_RESERVED, this);
 			}
@@ -129,6 +131,7 @@ void Scene100::Action1::setTextStrings(const Common::String &msg1, const Common:
 void Scene100::Action2::signal() {
 	Scene100 *scene = (Scene100 *)g_globals->_sceneManager._scene;
 	static byte black[3] = {0, 0, 0};
+	static byte black2[3] = {0, 0, 0};
 
 	switch (_actionIndex++) {
 	case 0:
@@ -146,11 +149,14 @@ void Scene100::Action2::signal() {
 		} else {
 			// Prompt user for whether to start play or watch introduction
 			g_globals->_player.enableControl();
-			g_globals->_events.setCursor(CURSOR_WALK);
+			// Set Arrow cursor for this popup prompt
+			g_globals->_events.setCursor(CURSOR_ARROW);
 
 			int rc;
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				rc = MessageDialog::show2(ESP_WATCH_INTRO_MSG, ESP_START_PLAY_BTN_STRING, ESP_INTRODUCTION_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				rc = MessageDialog::show2(RUS_WATCH_INTRO_MSG, RUS_START_PLAY_BTN_STRING, RUS_INTRODUCTION_BTN_STRING);
 			} else {
 				rc = MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING);
 			}
@@ -163,7 +169,7 @@ void Scene100::Action2::signal() {
 		}
 
 		// At this point the introduction needs to start
-		g_globals->_scenePalette.addFader(black, 1, 2, this);
+		g_globals->_scenePalette.addFader(black2, 1, 2, this);
 		break;
 	}
 	case 3:
@@ -244,6 +250,8 @@ void Scene109::Action1::signal() {
 	case 2:
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			scene->_text.setup(ESP_BF_19840515, this);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_text.setup(RUS_BF_19840515, this);
 		} else {
 			scene->_text.setup(BF_19840515, this);
 		}
@@ -2082,7 +2090,7 @@ void Scene125::Action4::signal() {
 		setDelay(180);
 		break;
 	case 1: {
-		owner->setPriority(scene->_object2._priority - 1);
+		owner->fixPriority(scene->_object2._priority + 1);
 		Common::Point destPos(66, 168);
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
@@ -2268,6 +2276,8 @@ void Scene140::Action1::signal() {
 		BF_GLOBALS._scenePalette.refresh();
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			scene->_text.setup(ESP_BF_19840518, this);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_text.setup(RUS_BF_19840518, this);
 		} else {
 			scene->_text.setup(BF_19840518, this);
 		}
@@ -2365,7 +2375,7 @@ void Scene140::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 void Scene150::Action1::signal() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
-	static uint32 v50B96 = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2414,7 +2424,7 @@ void Scene150::Action1::signal() {
 		setDelay(30);
 		break;
 	case 10:
-		BF_GLOBALS._scenePalette.addFader((const byte *)&v50B96, 1, 2, this);
+		BF_GLOBALS._scenePalette.addFader(black, 1, 2, this);
 		break;
 	case 11:
 		BF_GLOBALS._sound1.play(9);
@@ -2426,8 +2436,8 @@ void Scene150::Action1::signal() {
 }
 
 void Scene150::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
 	loadScene(150);
+	SceneExt::postInit();
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setPosition(Common::Point(160, 100));
@@ -2502,8 +2512,8 @@ void Scene160::Action1::signal() {
 void Scene160::Action2::signal() {
 	Scene160 *scene = (Scene160 *)BF_GLOBALS._sceneManager._scene;
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
-	static uint32 v50BAB = 0;
-	static uint32 v50BC3 = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2613,7 +2623,7 @@ void Scene160::Action2::signal() {
 		owner->animate(ANIM_MODE_5, this);
 		break;
 	case 17:
-		setDelay(70);
+		setDelay(60);
 		break;
 	case 18:
 		owner->animate(ANIM_MODE_6, this);
@@ -2623,7 +2633,7 @@ void Scene160::Action2::signal() {
 		break;
 	case 20:
 		BF_GLOBALS._sound1.changeSound(10);
-		BF_GLOBALS._scenePalette.addFader((const byte *)&v50BAB, 1, 2, this);
+		BF_GLOBALS._scenePalette.addFader(black, 1, 2, this);
 		break;
 	case 21:
 		BF_GLOBALS._scenePalette.loadPalette(2);
@@ -2634,6 +2644,8 @@ void Scene160::Action2::signal() {
 		scene->_sceneBounds.set(0, 0, 320, 200);
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			scene->_text.setup(ESP_BF_11_YEARS, this);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_text.setup(RUS_BF_11_YEARS, this);
 		} else {
 			scene->_text.setup(BF_11_YEARS, this);
 		}
@@ -2641,23 +2653,15 @@ void Scene160::Action2::signal() {
 	case 23:
 		BF_GLOBALS._scenePalette.loadPalette(2);
 		scene->loadScene(165);
-		BF_GLOBALS._scenePalette.addFader((const byte *)&v50BC3, 1, -5, this);
+		BF_GLOBALS._scenePalette.addFader(black2, 1, -5, this);
 		break;
 	case 24:
 		setDelay(900);
 		break;
 	case 25:
 		BF_GLOBALS._sound1.fade(0, 10, 10, true, this);
-// FIXME: Currently, fade() doesn't end properly with this song,
-//        thus never returns here. This hack skips the wait and changes
-//        directly to the next scene
-// Start of hack
-//		break;
-//	case 26:
-		setDelay(5);
-		BF_GLOBALS._sound1.stop();
-// End of hack
-
+		break;
+	case 26:
 		BF_GLOBALS._sceneManager.changeScene(200);
 		break;
 	default:
@@ -2666,7 +2670,8 @@ void Scene160::Action2::signal() {
 }
 
 void Scene160::Action2::process(Event &event) {
-	if ((event.handled) || ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType != EVENT_KEYPRESS)))
+	if ((event.handled) || ((event.eventType != EVENT_BUTTON_DOWN)
+			&& (event.eventType != EVENT_KEYPRESS && event.eventType != EVENT_CUSTOM_ACTIONSTART)))
 		return;
 
 	if (_actionIndex == 25) {
@@ -2682,6 +2687,8 @@ void Scene160::Action3::signal() {
 	case 0:
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			scene->_text.setup(ESP_BF_3_DAYS, this);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			scene->_text.setup(RUS_BF_3_DAYS, this);
 		} else {
 			scene->_text.setup(BF_3_DAYS, this);
 		}
@@ -2702,11 +2709,20 @@ void Scene160::Action3::signal() {
 }
 
 void Scene160::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(160);
 	_sceneBounds.moveTo(0, 0);
+	loadScene(160);
 
 	BF_GLOBALS._scenePalette.loadPalette(2);
+	// ORIGINAL BUG FIX
+	// A Palette refresh is required because the fader (to black) from Scene 150 wrongly set
+	// the BF_GLOBALS._scenePalette._colors.background to index 255 (instead index 19 that is expected for palette 2)
+	// The fix allows the intro scene text "Three Days Later" to become visible as intended.
+	BF_GLOBALS._scenePalette.refresh();
+
+	SceneExt::postInit();
+
+	// FIXME: This fixes an obvious glitch during scene transition.
+	clearScreen();
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setPosition(Common::Point(160, 100));
@@ -2811,6 +2827,8 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 	if ((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) {
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			_sceneMessage.setup(ESP_THE_NEXT_DAY);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			_sceneMessage.setup(RUS_THE_NEXT_DAY);
 		} else {
 			_sceneMessage.setup(THE_NEXT_DAY);
 		}
@@ -2823,6 +2841,8 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4))) {
 		if (g_vm->getLanguage() == Common::ES_ESP) {
 			_sceneMessage.setup(ESP_THE_NEXT_DAY);
+		} else if (g_vm->getLanguage() == Common::RU_RUS) {
+			_sceneMessage.setup(RUS_THE_NEXT_DAY);
 		} else {
 			_sceneMessage.setup(THE_NEXT_DAY);
 		}
@@ -3034,7 +3054,7 @@ void Scene180::signal() {
 		_palms.setDetails(6, 180, 12, 13, 14, 1);
 		_garage.setDetails(Rect(241, 85, 319, 121), 180, 30, 31, 32, 1, NULL);
 		_fence.setDetails(Rect(0, 109, 21, 125), 180, 9, 10, 11, 1, NULL);
-		_house.setDetails(4, 180, 24, 25, 26, 1);
+		_house.setDetails(5, 180, 24, 25, 26, 1);
 		_steps.setDetails(7, 180, 6, 7, 8, 1);
 		_curb.setDetails(2, 180, 3, 4, 5, 1);
 		_sky.setDetails(Rect(0, 0, 319, 190), 180, 0, 1, 2, 1, NULL);

@@ -22,8 +22,8 @@
 #define DRAGONS_MIDIMUSICPLAYER_H
 
 #include "audio/midiplayer.h"
-#include "vabsound.h"
-#include "bigfile.h"
+#include "dragons/vabsound.h"
+#include "dragons/bigfile.h"
 
 namespace Dragons {
 

@@ -78,7 +78,7 @@ public:
 	AbstractFSNode *getParent() const override;
 
 	Common::SeekableReadStream *createReadStream() override;
-	Common::SeekableWriteStream *createWriteStream() override;
+	Common::SeekableWriteStream *createWriteStream(bool atomic) override;
 	bool createDirectory() override;
 
 private:

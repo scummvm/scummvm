@@ -34,6 +34,17 @@
 
 namespace Playground3d {
 
+struct TextureType {
+	enum type {
+		RGBA8888 = 0,
+		RGB888   = 1,
+		RGB565   = 2,
+		RGBA5551 = 3,
+		RGBA4444 = 4,
+		MAX      = 5
+	};
+};
+
 class Renderer {
 public:
 	Renderer(OSystem *system);
@@ -65,11 +76,16 @@ public:
 	virtual void loadTextureRGBA4444(Graphics::Surface *texture) = 0;
 	virtual void drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
 	virtual void drawPolyOffsetTest(const Math::Vector3d &pos, const Math::Vector3d &roll) = 0;
+	virtual void drawQuadStripTest() = 0;
 	virtual void dimRegionInOut(float fade) = 0;
 	virtual void drawInViewport() = 0;
 	virtual void drawRgbaTexture() = 0;
 
 	virtual void enableFog(const Math::Vector4d &fogColor) = 0;
+	virtual void disableFog() = 0;
+
+	virtual void enableScissor(int x, int y, int width, int height) = 0;
+	virtual void disableScissor() = 0;
 
 protected:
 	OSystem *_system;
@@ -81,7 +97,6 @@ protected:
 	Math::Matrix4 _mvpMatrix;
 
 	static const float cubeVertices[11 * 6 * 4];
-	Graphics::Surface *_texture;
 
 	Math::Matrix4 makeProjectionMatrix(float fov, float nearClip, float farClip) const;
 };

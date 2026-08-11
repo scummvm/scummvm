@@ -22,7 +22,9 @@
 #ifndef AGS_SHARED_AC_WORDS_DICTIONARY_H
 #define AGS_SHARED_AC_WORDS_DICTIONARY_H
 
+#include "common/std/vector.h"
 #include "ags/shared/core/types.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -51,8 +53,13 @@ struct WordsDictionary {
 	int   find_index(const char *);
 };
 
-extern void decrypt_text(char *toenc, size_t buf_sz);
+// Decrypts text found in the given buffer, writes back to the same buffer
+extern void decrypt_text(char *buf, size_t buf_sz);
+// Reads an encrypted string from the stream and decrypts into the provided buffer
 extern void read_string_decrypt(Shared::Stream *in, char *buf, size_t buf_sz);
+// Reads an encrypted string from the stream and returns as a string;
+// uses provided vector as a temporary decryption buffer (avoid extra allocs)
+extern Shared::String read_string_decrypt(Shared::Stream *in, std::vector<char> &dec_buf);
 extern void read_dictionary(WordsDictionary *dict, Shared::Stream *in);
 
 #if defined (OBSOLETE)

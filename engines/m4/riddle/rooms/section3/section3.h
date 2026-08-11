@@ -35,6 +35,16 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+extern const int16 S3_NORMAL_DIRS[];
+extern const char *S3_NORMAL_NAMES[];
+extern const int16 S3_SHADOW_DIRS[];
+extern const char *S3_SHADOW_NAMES[];
+extern const int16 S3_NORMAL_DIRS2[];
+extern const char *S3_NORMAL_NAMES2[];
+extern const int16 S3_SHADOW_DIRS2[];
+extern const char *S3_SHADOW_NAMES2[];
+
+
 class Section3 : public Section {
 private:
 	Room301 _room301;

@@ -121,7 +121,7 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 		drawFocus(x, y);
 }
 
-void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
+void TileView::drawTile(Common::Array<MapTile> &tiles, bool focus, int x, int y) {
 	assertMsg(x < _columns, "x value of %d out of range", x);
 	assertMsg(y < _rows, "y value of %d out of range", y);
 
@@ -134,8 +134,8 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 	);
 
 	// Iterate through rendering each of the needed tiles
- 	for (Std::vector<MapTile>::reverse_iterator t = tiles.rbegin(); t != tiles.rend(); ++t) {
-		MapTile &frontTile = *t;
+	for (int t = tiles.size() - 1; t >= 0; --t) {
+		MapTile &frontTile = tiles[t];
 		Tile *frontTileType = _tileSet->get(frontTile._id);
 
 		if (!frontTileType) {

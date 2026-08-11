@@ -22,6 +22,7 @@
 #include "common/gui_options.h"
 
 #include "common/config-manager.h"
+#include "common/platform.h"
 #include "common/str.h"
 
 namespace Common {
@@ -70,8 +71,8 @@ const struct GameOpt {
 	{ GUIO_RENDERVGA,			"vga" },
 	{ GUIO_RENDERAMIGA,			"amiga" },
 	{ GUIO_RENDERFMTOWNS,		"fmtowns" },
-	{ GUIO_RENDERPC9821,		"pc9821" },
-	{ GUIO_RENDERPC9801,		"pc9801" },
+	{ GUIO_RENDERPC98_256C,		"pc98-256c" },
+	{ GUIO_RENDERPC98_16C,		"pc98-16c" },
 	{ GUIO_RENDERAPPLE2GS,		"2gs" },
 	{ GUIO_RENDERATARIST,		"atari" },
 	{ GUIO_RENDERMACINTOSH,		"macintosh" },
@@ -79,6 +80,10 @@ const struct GameOpt {
 	{ GUIO_RENDERCPC,			"cpc" },
 	{ GUIO_RENDERZX,			"zx" },
 	{ GUIO_RENDERC64,			"c64" },
+	{ GUIO_RENDERVGAGREY,		"vgaGray" },
+	{ GUIO_RENDERPC98_8C,		"pc98-8c" },
+	{ GUIO_RENDERWIN_256C,		"win256c" },
+	{ GUIO_RENDERWIN_16C,		"win16c" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
 	{ GUIO_GAMEOPTIONS2, "gameOption2" },
@@ -163,23 +168,49 @@ String parseGameGUIOptions(const String &str) {
 		}
 	}
 
+	res += parseGameGUIOptionsPlatforms(str);
+
 	return res;
 }
 
 const String getGameGUIOptionsDescription(const String &options) {
 	String res;
 
-	for (int i = 0; g_gameOptions[i].desc; i++)
-		if (options.contains(g_gameOptions[i].option[0]))
-			res += String(g_gameOptions[i].desc) + " ";
+	for (uint i = 0; i < options.size(); i++) {
+		// Skip the next byte after platform prefix as it will contain platform info
+		if (options[i] == GUIO_PLATFORM_PREFIX[0]) {
+			i++;
+			continue;
+		}
 
+		for (int j = 0; g_gameOptions[j].desc; j++) {
+			if (options[i] == g_gameOptions[j].option[0]) {
+				if (options[i] & 0x80) {
+					// 2-bytes option
+					// Make sure this is a leading option byte
+					assert((options[i] & 0xe0) == 0xc0);
+					if (options[i+1] != g_gameOptions[j].option[1]) {
+						continue;
+					}
+					// Skip the byte now we found our option
+					// The 2nd byte will be skipped at the end of loop
+					i++;
+				}
+				res += String(g_gameOptions[j].desc) + " ";
+				break;
+			}
+		}
+	}
+
+	res += getGameGUIOptionsDescriptionPlatforms(options);
 	res.trim();
 
 	return res;
 }
 
-void updateGameGUIOptions(const String &options, const String &langOption) {
-	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption;
+void updateGameGUIOptions(const String &options, const String &langOption, const String &platOption) {
+	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption + " " + platOption;
+
 	ConfMan.setAndFlush("guioptions", newOptionString);
 }
 

@@ -139,7 +139,7 @@ protected:
 	void reset();
 	void getNextSample(Channel &chn);
 	int16 tune(Slide &slide, int16 start) const;
-	virtual void interrupt();
+	void interrupt() override;
 };
 
 } // End of namespace Audio

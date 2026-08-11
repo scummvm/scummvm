@@ -73,7 +73,6 @@ MODULE_OBJS = \
 	globvar.o \
 	main.o \
 	metaengine.o \
-	rect.o \
 	render.o \
 	renderer.o \
 	saveload.o \

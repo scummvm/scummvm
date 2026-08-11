@@ -35,9 +35,9 @@ namespace Wintermute {
 
 class SXMemBuffer : public BaseScriptable {
 public:
-	int scCompare(BaseScriptable *Val) override;
+	int scCompare(BaseScriptable *val) override;
 	DECLARE_PERSISTENT(SXMemBuffer, BaseScriptable)
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
@@ -45,9 +45,9 @@ public:
 	SXMemBuffer(BaseGame *inGame, void *buffer);
 	~SXMemBuffer() override;
 	void *scToMemBuffer() override;
-private:
 	int32 _size;
 
+private:
 	bool resize(int newSize);
 	void *_buffer;
 	void cleanup();

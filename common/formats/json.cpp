@@ -50,8 +50,8 @@
 #endif
 
 // Macros to free an array/object
-#define FREE_ARRAY(x) { JSONArray::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete *iter; } }
-#define FREE_OBJECT(x) { JSONObject::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete (*iter)._value; } }
+#define FREE_ARRAY(x) { for (auto *i : x) { delete i; } }
+#define FREE_OBJECT(x) { for (auto &i : x) { delete i._value; } }
 
 namespace Common {
 
@@ -63,23 +63,11 @@ namespace Common {
 */
 JSON::JSON() {}
 
-char *JSON::untaintContents(Common::MemoryWriteStreamDynamic &stream) {
+char *JSON::zeroTerminateContents(Common::MemoryWriteStreamDynamic &stream) {
 	// write one more byte in the end
 	byte zero[1] = {0};
 	stream.write(zero, 1);
-
-	// replace all "bad" bytes with '.' character
 	byte *result = stream.getData();
-	uint32 size = stream.size();
-	for (uint32 i = 0; i < size; ++i) {
-		if (result[i] == '\n')
-			result[i] = ' '; // yeah, kinda stupid
-		else if (result[i] < 0x20 || result[i] > 0x7f)
-			result[i] = '.';
-	}
-
-	// make it zero-terminated string
-	result[size - 1] = '\0';
 
 	return (char *)result;
 }
@@ -223,7 +211,7 @@ bool JSON::extractString(const char **data, String &str) {
 		}
 
 		// Disallowed char?
-		else if (next_char < ' ' && next_char != '\t') {
+		else if (next_char > 0 && next_char < ' ' && next_char != '\t') {
 			// SPEC Violation: Allow tabs due to real world cases
 			return false;
 		}
@@ -535,7 +523,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			}
 
 			// Special case - empty array
-			if (array.size() == 0 && **data == ']') {
+			if (array.empty() && **data == ']') {
 				(*data)++;
 				return new JSONValue(array);
 			}
@@ -704,20 +692,18 @@ JSONValue::JSONValue(const JSONValue &source) {
 
 	case JSONType_Array: {
 		JSONArray source_array = *source._arrayValue;
-		JSONArray::iterator iter;
 		_arrayValue = new JSONArray();
-		for (iter = source_array.begin(); iter != source_array.end(); iter++)
-			_arrayValue->push_back(new JSONValue(**iter));
+		for (auto &src : source_array)
+			_arrayValue->push_back(new JSONValue(*src));
 		break;
 	}
 
 	case JSONType_Object: {
 		JSONObject source_object = *source._objectValue;
 		_objectValue = new JSONObject();
-		JSONObject::iterator iter;
-		for (iter = source_object.begin(); iter != source_object.end(); iter++) {
-			String name = (*iter)._key;
-			(*_objectValue)[name] = new JSONValue(*((*iter)._value));
+		for (auto &src : source_object) {
+			String name = src._key;
+			(*_objectValue)[name] = new JSONValue(*(src._value));
 		}
 		break;
 	}
@@ -738,15 +724,12 @@ JSONValue::JSONValue(const JSONValue &source) {
 */
 JSONValue::~JSONValue() {
 	if (_type == JSONType_Array) {
-		JSONArray::iterator iter;
-		for (iter = _arrayValue->begin(); iter != _arrayValue->end(); iter++)
-			delete *iter;
+		for (auto *array : *_arrayValue)
+			delete array;
 		delete _arrayValue;
 	} else if (_type == JSONType_Object) {
-		JSONObject::iterator iter;
-		for (iter = _objectValue->begin(); iter != _objectValue->end(); iter++) {
-			delete (*iter)._value;
-		}
+		for (auto &object : *_objectValue)
+			delete object._value;
 		delete _objectValue;
 	} else if (_type == JSONType_String) {
 		delete _stringValue;
@@ -794,7 +777,7 @@ bool JSONValue::isBool() const {
 * @return bool Returns true if it is a Number value, false otherwise
 */
 bool JSONValue::isNumber() const {
-	return _type == JSONType_Number;
+	return _type == JSONType_Number || _type == JSONType_IntegerNumber;
 }
 
 /**
@@ -863,6 +846,8 @@ bool JSONValue::asBool() const {
 * @return double Returns the number value
 */
 double JSONValue::asNumber() const {
+	if (_type == JSONType_IntegerNumber)
+		return (double)_integerValue;
 	return _numberValue;
 }
 
@@ -1001,11 +986,8 @@ Array<String> JSONValue::objectKeys() const {
 	Array<String> keys;
 
 	if (_type == JSONType_Object) {
-		JSONObject::const_iterator iter = _objectValue->begin();
-		while (iter != _objectValue->end()) {
-			keys.push_back(iter->_key);
-
-			iter++;
+		for (auto &obj : *_objectValue) {
+			keys.push_back(obj._key);
 		}
 	}
 
@@ -1195,7 +1177,7 @@ uint32 JSONValue::decodeUtf8Char(String::const_iterator &iter, const String::con
 * with the state from the previous byte until it returns 0 (success) or 1 (failure).
 *
 * Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
-* See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
+* See https://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
 *
 * @access private
 *

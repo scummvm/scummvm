@@ -21,7 +21,6 @@
 
 #include "engines/util.h"
 #include "gui/saveload.h"
-#include "common/translation.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_map.h"
@@ -34,6 +33,8 @@
 #include "sherlock/music.h"
 #include "sherlock/animation.h"
 #include "video/3do_decoder.h"
+
+#include "backends/keymapper/keymapper.h"
 
 namespace Sherlock {
 
@@ -253,20 +254,19 @@ void ScalpelEngine::setupGraphics() {
 		initGraphics(320, 200);
 	} else {
 		// 3DO actually uses RGB555, but some platforms of ours only support RGB565, so we use that
+		// TODO: Support platforms without RGB565
 		const Graphics::PixelFormat pixelFormatRGB565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
-		// First try for a 640x400 mode
-		g_system->beginGFXTransaction();
-			initCommonGFX();
-			g_system->initSize(640, 400, &pixelFormatRGB565);
-		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
-
-		if (gfxError == OSystem::kTransactionSuccess) {
-			_isScreenDoubled = true;
-		} else {
+		Graphics::ModeWithFormatList modes = {
+			// First try for a 640x400 mode
+			Graphics::ModeWithFormat(640, 400, pixelFormatRGB565),
 			// System doesn't support it, so fall back on 320x200 mode
-			initGraphics(320, 200, &pixelFormatRGB565);
-		}
+			Graphics::ModeWithFormat(320, 200, pixelFormatRGB565),
+		};
+
+		int modeIdx = initGraphicsAny(modes);
+
+		_isScreenDoubled = (modeIdx == 0);
 	}
 }
 
@@ -357,11 +357,11 @@ void ScalpelEngine::showOpening() {
 }
 
 bool ScalpelEngine::showCityCutscene() {
-	byte greyPalette[PALETTE_SIZE];
-	byte palette[PALETTE_SIZE];
+	byte greyPalette[Graphics::PALETTE_SIZE];
+	byte palette[Graphics::PALETTE_SIZE];
 
 	// Demo fades from black into grey and then fades from grey into the scene
-	Common::fill(&greyPalette[0], &greyPalette[PALETTE_SIZE], 142);
+	Common::fill(&greyPalette[0], &greyPalette[Graphics::PALETTE_SIZE], 142);
 	_screen->fadeIn((const byte *)greyPalette, 3);
 
 	_music->loadSong("prolog1");
@@ -475,7 +475,7 @@ bool ScalpelEngine::showCityCutscene() {
 }
 
 bool ScalpelEngine::showAlleyCutscene() {
-	byte palette[PALETTE_SIZE];
+	byte palette[Graphics::PALETTE_SIZE];
 	_music->loadSong("prolog2");
 
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
@@ -644,15 +644,15 @@ bool ScalpelEngine::scrollCredits() {
 	_screen->_backBuffer1.SHblitFrom(*_screen);
 
 	// Loop for showing the credits
-	for(int idx = 0; idx < 600 && !_events->kbHit() && !shouldQuit(); ++idx) {
+	for(int idx = 0; idx < 600 && !_events->kbHit() && !_events->actionHit() && !shouldQuit(); ++idx) {
 		// Copy the entire screen background before writing text
 		_screen->SHblitFrom(_screen->_backBuffer1);
 
 		// Write the text appropriate for the next frame
 		if (idx < 400)
-			_screen->SHtransBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false, 0);
+			_screen->SHtransBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false);
 		if (idx > 200)
-			_screen->SHtransBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
+			_screen->SHtransBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false);
 
 		// Don't show credit text on the top and bottom ten rows of the screen
 		_screen->SHblitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->width(), 10));
@@ -1246,7 +1246,7 @@ void ScalpelEngine::flushBrumwellMirror() {
 
 
 void ScalpelEngine::showScummVMSaveDialog() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
@@ -1259,7 +1259,7 @@ void ScalpelEngine::showScummVMSaveDialog() {
 }
 
 void ScalpelEngine::showScummVMRestoreDialog() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
@@ -1321,6 +1321,10 @@ bool ScalpelEngine::play3doMovie(const Common::Path &filename, const Common::Poi
 	// If we're to show the movie at half-size, we'll need a temporary intermediate surface
 	if (halfSize)
 		tempSurface.create(width / 2, height / 2, videoDecoder->getPixelFormat());
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("scalpel-3d0-movie")->setEnabled(true);
 
 	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
@@ -1406,14 +1410,19 @@ bool ScalpelEngine::play3doMovie(const Common::Path &filename, const Common::Poi
 		_events->pollEventsAndWait();
 		_events->setButtonState();
 
-		if (_events->kbHit()) {
-			Common::KeyState keyState = _events->getKey();
-			if (keyState.keycode == Common::KEYCODE_ESCAPE)
+		if (_events->actionHit()) {
+			Common::CustomEventType action = _events->getAction();
+			if (action == kActionScalpelSkipMovie)
 				skipVideo = true;
 		} else if (_events->_pressed) {
 			skipVideo = true;
 		}
 	}
+
+	keymapper->getKeymap("scalpel-3d0-movie")->setEnabled(false);
+	keymapper->getKeymap("sherlock-default")->setEnabled(true);
+	keymapper->getKeymap("scalpel-quit")->setEnabled(true);
+	keymapper->getKeymap("scalpel")->setEnabled(true);
 
 	if (halfSize)
 		tempSurface.free();

@@ -202,20 +202,30 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		 */
 		entry.setFlags();
 #else
-		if (dp->d_type == DT_UNKNOWN) {
+		switch (dp->d_type) {
+		case DT_DIR:
+		case DT_REG:
+			entry._isValid = true;
+			entry._isDirectory = (dp->d_type == DT_DIR);
+			break;
+		case DT_LNK:
+			entry._isValid = true;
+			struct stat st;
+			if (stat(entry._path.c_str(), &st) == 0)
+				entry._isDirectory = S_ISDIR(st.st_mode);
+			else
+				entry._isDirectory = false;
+			break;
+		case DT_UNKNOWN:
+		default:
 			// Fall back to stat()
+			//
+			// It's important NOT to limit this to DT_UNKNOWN, because d_type can
+			// be unreliable on some OSes and filesystems; a confirmed example is
+			// macOS 10.4, where d_type can hold bogus values when iterating over
+			// the files of a cddafs mount point (as used by MacOSXAudioCDManager).
 			entry.setFlags();
-		} else {
-			entry._isValid = (dp->d_type == DT_DIR) || (dp->d_type == DT_REG) || (dp->d_type == DT_LNK);
-			if (dp->d_type == DT_LNK) {
-				struct stat st;
-				if (stat(entry._path.c_str(), &st) == 0)
-					entry._isDirectory = S_ISDIR(st.st_mode);
-				else
-					entry._isDirectory = false;
-			} else {
-				entry._isDirectory = (dp->d_type == DT_DIR);
-			}
+			break;
 		}
 #endif
 
@@ -266,22 +276,23 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
-	return PosixIoStream::makeFromPath(getPath(), false);
+	return PosixIoStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 }
 
 Common::SeekableReadStream *POSIXFilesystemNode::createReadStreamForAltStream(Common::AltStreamType altStreamType) {
 #ifdef MACOSX
 	if (altStreamType == Common::AltStreamType::MacResourceFork) {
 		// Check the actual fork on a Mac computer
-		return PosixIoStream::makeFromPath(getPath() + "/..namedfork/rsrc", false);
+		return PosixIoStream::makeFromPath(getPath() + "/..namedfork/rsrc", StdioStream::WriteMode_Read);
 	}
 #endif
 
 	return nullptr;
 }
 
-Common::SeekableWriteStream *POSIXFilesystemNode::createWriteStream() {
-	return PosixIoStream::makeFromPath(getPath(), true);
+Common::SeekableWriteStream *POSIXFilesystemNode::createWriteStream(bool atomic) {
+	return PosixIoStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 }
 
 bool POSIXFilesystemNode::createDirectory() {

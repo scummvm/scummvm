@@ -109,6 +109,9 @@ void InventoryMgr::drawAll() {
 
 	_text->charPos_Set(0, 11);
 	_text->displayText(_systemUI->getInventoryTextYouAreCarrying());
+#ifdef USE_TTS
+	_vm->sayText(_systemUI->getInventoryTextYouAreCarrying(), Common::TextToSpeechManager::INTERRUPT, false);
+#endif
 
 	for (int16 inventoryNr = 0; inventoryNr < inventoryCount; inventoryNr++) {
 		drawItem(inventoryNr);
@@ -118,8 +121,23 @@ void InventoryMgr::drawAll() {
 void InventoryMgr::drawItem(int16 itemNr) {
 	if (itemNr == _activeItemNr) {
 		_text->charAttrib_Set(15, 0);
+
+#ifdef USE_TTS
+		if (_vm->_queueNextText) {
+			_vm->sayText(_array[itemNr].name, Common::TextToSpeechManager::QUEUE, false);
+			_vm->_queueNextText = false;
+		} else {
+			_vm->sayText(_array[itemNr].name, Common::TextToSpeechManager::INTERRUPT, false);
+		}
+#endif
 	} else {
 		_text->charAttrib_Set(0, 15);
+
+#ifdef USE_TTS
+		if (_activeItemNr == -1) {
+			_vm->sayText(_array[itemNr].name, Common::TextToSpeechManager::QUEUE, false);
+		}
+#endif
 	}
 
 	_text->charPos_Set(_array[itemNr].row, _array[itemNr].column);
@@ -143,15 +161,24 @@ void InventoryMgr::show() {
 		_activeItemNr = -1; // so that none is shown as active
 	}
 
+#ifdef USE_TTS
+	_vm->_queueNextText = true;
+#endif
 	drawAll();
 
 	_text->charAttrib_Set(0, 15);
 	if (selectItems) {
 		_text->charPos_Set(24, 2);
 		_text->displayText(_systemUI->getInventoryTextSelectItems());
+#ifdef USE_TTS
+		_vm->sayText(_systemUI->getInventoryTextSelectItems());
+#endif
 	} else {
 		_text->charPos_Set(24, 4);
 		_text->displayText(_systemUI->getInventoryTextReturnToGame());
+#ifdef USE_TTS
+		_vm->sayText(_systemUI->getInventoryTextReturnToGame());
+#endif
 	}
 
 	if (selectItems) {
@@ -168,6 +195,9 @@ void InventoryMgr::show() {
 			// nothing was selected
 			_vm->setVar(VM_VAR_SELECTED_INVENTORY_ITEM, 0xff);
 		}
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+#endif
 
 	} else {
 		// no selection is supposed to be possible, just wait for key and exit

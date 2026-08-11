@@ -33,8 +33,19 @@ public:
 	Room860() : Room() {}
 	~Room860() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+
+private:
+	int32 _860DragonHeadsSpewingSeries = 0;
+	int32 _860MeiTalkSeries = 0;
+	int32 _860RipCrossSeries = 0;
+	int32 _860RipTalkSeries = 0;
+	int32 _860RipWalkSeries = 0;
+
+	machine *_860McMach = nullptr;
+	machine *_860RipMach = nullptr;
 };
 
 } // namespace Rooms

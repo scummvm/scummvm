@@ -31,15 +31,9 @@ class SeekableReadStream;
 
 namespace Nancy {
 
-class NancyEngine;
-class ResourceManager;
-
 class IFF {
-	friend class ResourceManager;
-private:
-	IFF(Common::SeekableReadStream *stream);
-
 public:
+	IFF(Common::SeekableReadStream *stream);
 	~IFF();
 
 	const byte *getChunk(uint32 id, uint &size, uint index = 0) const;

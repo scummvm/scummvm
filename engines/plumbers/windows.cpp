@@ -55,11 +55,11 @@ void PlumbersGameWindows::loadImage(const Common::String &name) {
 		_compositeSurface = new Graphics::Surface();
 		const Graphics::Surface *inSurf = _image->getSurface();
 		_compositeSurface->create(_screenW, _screenH, inSurf->format);
-		Graphics::downscaleSurfaceByHalf(_compositeSurface, inSurf, _image->getPalette());
+		Graphics::downscaleSurfaceByHalf(_compositeSurface, inSurf, _image->getPalette().data());
 	}
 }
 
-void PlumbersGameWindows::startGraphics() {
+Common::Error PlumbersGameWindows::startGraphics() {
 	_image = new Image::BitmapDecoder();
 
 	Graphics::ModeWithFormatList modes = {
@@ -79,6 +79,8 @@ void PlumbersGameWindows::startGraphics() {
 		_screenW = 320;
 		_screenH = 240;
 	}
+
+	return Common::kNoError;
 }
 
 void PlumbersGameWindows::readTables() {

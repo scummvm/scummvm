@@ -28,10 +28,15 @@
 #ifndef GOB_DRAW_H
 #define GOB_DRAW_H
 
+#include "common/stack.h"
 #include "gob/video.h"
 
 namespace Common {
 class WinResources;
+}
+
+namespace Image {
+class AniDecoder;
 }
 
 namespace Gob {
@@ -87,6 +92,7 @@ public:
 	int16 _destSpriteY;
 	int16 _backColor;
 	int16 _frontColor;
+	int16 _colorOffset;
 	int16 _transparency;
 
 	int16 _sourceSurface;
@@ -125,6 +131,8 @@ public:
 	int16 _unusedPalette1[18];
 	int16 _unusedPalette2[16];
 	Video::Color _vgaPalette[256];
+
+	Common::Stack<Video::Color *> _paletteStack;
 
 	// 0 (00b): No cursor
 	// 1 (01b): Cursor would be on _backSurface
@@ -192,12 +200,10 @@ public:
 	void setPalette();
 	void clearPalette();
 
-	uint32 getColor(uint8 index) const;
-
 	void dirtiedRect(int16 surface, int16 left, int16 top, int16 right, int16 bottom);
 	void dirtiedRect(SurfacePtr surface, int16 left, int16 top, int16 right, int16 bottom);
 
-	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags);
+	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags, byte bpp = 0);
 	void freeSprite(int16 index);
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
 	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
@@ -207,7 +213,7 @@ public:
 	int stringLength(const char *str, uint16 fontIndex);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
-	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
+	void drawButton( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
 
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);
@@ -223,8 +229,9 @@ public:
 	virtual void blitCursor() = 0;
 
 	virtual void animateCursor(int16 cursor) = 0;
+	virtual void updateAnimatedCursor() {}
 	virtual void printTotText(int16 id) = 0;
-	virtual void spriteOperation(int16 operation) = 0;
+	virtual void spriteOperation(int16 operation, bool ttsAddHotspotText = true) = 0;
 
 	virtual int16 openWin(int16 id) { return 0; }
 	virtual void closeWin(int16 id) {}
@@ -240,6 +247,9 @@ public:
 
 protected:
 	GobEngine *_vm;
+#ifdef USE_TTS
+	Common::String _previousTot;
+#endif
 };
 
 class Draw_v1 : public Draw {
@@ -249,7 +259,7 @@ public:
 	void blitCursor() override;
 	void animateCursor(int16 cursor) override;
 	void printTotText(int16 id) override;
-	void spriteOperation(int16 operation) override;
+	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 
 	Draw_v1(GobEngine *vm);
 	~Draw_v1() override {}
@@ -262,7 +272,7 @@ public:
 	void blitCursor() override;
 	void animateCursor(int16 cursor) override;
 	void printTotText(int16 id) override;
-	void spriteOperation(int16 operation) override;
+	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 
 	Draw_v2(GobEngine *vm);
 	~Draw_v2() override {}
@@ -285,7 +295,7 @@ class Draw_Fascination: public Draw_v2 {
 public:
 	Draw_Fascination(GobEngine *vm);
 	~Draw_Fascination() override {}
-	void spriteOperation(int16 operation) override;
+	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 
 	void decompWin(int16 x, int16 y, SurfacePtr destPtr);
 	void drawWin(int16 fct);
@@ -306,10 +316,23 @@ public:
 };
 
 class Draw_Playtoons: public Draw_v2 {
+private:
+	struct TotTextInfo {
+		Common::String str;
+		int16 rectLeft = 0;
+		int16 rectRight = 0;
+		int16 rectTop = 0;
+		int16 rectBottom = 0;
+		int16 colCmd = 0;
+		int16 fontIndex = 0;
+		int16 color = 0;
+	};
+
 public:
 	Draw_Playtoons(GobEngine *vm);
 	~Draw_Playtoons() override {}
-	void spriteOperation(int16 operation) override;
+	void printTotText(int16 id) override;
+	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 };
 
 
@@ -320,10 +343,20 @@ public:
 
 	void initScreen() override;
 	void animateCursor(int16 cursor) override;
+	void updateAnimatedCursor() override;
 
 
 private:
 	Common::WinResources *_cursors;
+
+	// Animated cursor (.ANI) state
+	Image::AniDecoder *_aniDecoder;
+	uint16 _aniCurrentFrame;
+	uint32 _aniLastFrameTime;
+
+	void clearAniCursor();
+	bool loadAniCursor(Common::SeekableReadStream *stream);
+	bool updateAniCursorFrame();
 
 	bool loadCursorFile();
 	bool loadCursorFromFile(Common::String filename);

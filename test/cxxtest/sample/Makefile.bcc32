@@ -15,14 +15,14 @@ TARGETS = error_printer.exe stdio_printer.exe yes_no_runner.exe file_printer.exe
 GUI_TARGETS = win32_runner.exe qt_runner.exe
 TESTS = *.h
 GUI_TESTS = gui/GreenYellowRed.h $(TESTS)
-TESTGEN = perl -w ../cxxtestgen.pl
+TESTGEN = ../bin/cxxtestgen
 CXXC = bcc32.exe -w- -I. -I..
 
 all: $(TARGETS)
 
 clean:
-	del *~ *.o *.obj 
-	del $(TARGETS) 
+	del *~ *.o *.obj
+	del $(TARGETS)
 	del $(GUI_TARGETS)
 	del tests.cpp error_printer.cpp stdio_printer.cpp file_printer.cpp aborter.cpp only.cpp
 	del win32_runner.cpp qt_runner.cpp

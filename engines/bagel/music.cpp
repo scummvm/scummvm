@@ -20,7 +20,7 @@
  */
 
 #include "audio/midiparser_qt.h"
-
+#include "audio/midiparser_smf.h"
 #include "bagel/music.h"
 #include "bagel/boflib/sound.h"
 
@@ -51,14 +51,25 @@ void MusicPlayer::play(CBofSound *sound) {
 
 	MidiParser *parser;
 	bool loaded;
-	if (sound->_chType == SOUND_TYPE_XM) {
+
+	switch (sound->_chType) {
+	case SOUND_TYPE_XM:
 		parser = MidiParser::createParser_XMIDI();
 		loaded = parser->loadMusic(sound->_pFileBuf, sound->_iFileSize);
-	} else if (sound->_chType == SOUND_TYPE_QT) {
+		break;
+
+	case SOUND_TYPE_QT:
 		parser = MidiParser::createParser_QT();
 		// HACK: loadMusic doesn't work with QT MIDI
 		loaded = ((MidiParser_QT *)parser)->loadFromContainerFile(sound->_szFileName);
-	} else {
+		break;
+
+	case SOUND_TYPE_SMF:
+		parser = MidiParser::createParser_SMF();
+		loaded = parser->loadMusic(sound->_pFileBuf, sound->_iFileSize);
+		break;
+
+	default:
 		warning("Invalid sound %s passed to MusicPlayer", sound->_szFileName);
 		return;
 	}
@@ -69,7 +80,8 @@ void MusicPlayer::play(CBofSound *sound) {
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-
+		parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+		parser->setLoopSectionMicroseconds(sound->_dwRePlayStart * 1000, sound->_dwRePlayEnd * 1000);
 		_parser = parser;
 
 		// TODO: Set channel volume
@@ -89,4 +101,4 @@ void MusicPlayer::stop() {
 	_sound = nullptr;
 }
 
-} // End of namespace Bagel
+} // namespace Bagel

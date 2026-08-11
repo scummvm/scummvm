@@ -19,160 +19,527 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "common/system.h"
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "common/text-to-speech.h"
+#include "common/memstream.h"
 #include "engines/util.h"
+#include "graphics/scaler.h"
 #include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
-#include "mads/resources.h"
-#include "mads/sound.h"
-#include "mads/sprites.h"
-#include "mads/mps_installer.h"
+#include "mads/mads.h"
+#include "mads/core/anim.h"
+#include "mads/core/attr.h"
+#include "mads/core/camera.h"
+#include "mads/core/config.h"
+#include "mads/core/conv.h"
+#include "mads/core/cursor.h"
+#include "mads/core/cycle.h"
+#include "mads/core/dialog.h"
+#include "mads/core/font.h"
+#include "mads/core/game.h"
+#include "mads/core/global.h"
+#include "mads/core/hspot.h"
+#include "mads/core/inter.h"
+#include "mads/core/kernel.h"
+#include "mads/core/keys.h"
+#include "mads/core/matte.h"
+#include "mads/core/mcga.h"
+#include "mads/core/object.h"
+#include "mads/core/pal.h"
+#include "mads/core/player.h"
+#include "mads/core/popup.h"
+#include "mads/core/quote.h"
+#include "mads/core/rail.h"
+#include "mads/core/room.h"
+#include "mads/core/speech.h"
+#include "mads/core/sprite.h"
+#include "mads/core/timer.h"
+#include "mads/core/vocab.h"
+#include "mads/phantom/main.h"
+#include "mads/forest/extra.h"
+#include "mads/forest/global.h"
+#include "mads/core/sound_manager.h"
 
 namespace MADS {
 
+constexpr int SAVEGAME_VERSION = 1;
+constexpr int GAME_FRAME_RATE = 50;
+constexpr int GAME_FRAME_TIME = 1000 / GAME_FRAME_RATE;
+
+MADSEngine *g_engine;
+
+static const Common::KeyCode KEYBINDING_ACTIONS[kActionRestartAnimation + 1] = {
+	Common::KEYCODE_INVALID, Common::KEYCODE_ESCAPE, Common::KEYCODE_F1,
+	Common::KEYCODE_F5, Common::KEYCODE_F7, Common::KEYCODE_PAGEUP,
+	Common::KEYCODE_PAGEDOWN, Common::KEYCODE_F1, Common::KEYCODE_F2,
+	Common::KEYCODE_F3, Common::KEYCODE_F4, Common::KEYCODE_F5,
+	Common::KEYCODE_INVALID
+};
+
 MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		_gameDescription(gameDesc), Engine(syst), _randomSource("MADS") {
+		Engine(syst), _gameDescription(gameDesc), _randomSource("MADS") {
+	g_engine = this;
+	_speechFlag = true;
 
-	// Initialize game/engine options
-	_easyMouse = true;
-	_invObjectsAnimated = true;
-	_textWindowStill = false;
-	_screenFade = SCREEN_FADE_SMOOTH;
-	_musicFlag = true;
-	_soundFlag = true;
-	_dithering = false;
-	_disableFastwalk = false;
-
-	_dialogs = nullptr;
-	_events = nullptr;
-	_font = nullptr;
-	_game = nullptr;
-	_gameConv = nullptr;
-	_palette = nullptr;
-	_resources = nullptr;
-	_sound = nullptr;
-	_audio = nullptr;
-	_screen = nullptr;
+	initGlobals();
 }
 
 MADSEngine::~MADSEngine() {
-	delete _dialogs;
-	delete _events;
-	delete _font;
-	Font::deinit();
-	delete _game;
-	delete _gameConv;
-	delete _palette;
-	delete _resources;
-	delete _sound;
-	delete _audio;
-	//_debugger Debugger is deleted by Engine
-
-	_mixer->stopAll();
+	g_engine = nullptr;
+	delete _screen;
+	delete _soundManager;
 }
 
-void MADSEngine::initialize() {
-	if (_gameDescription->desc.flags & GF_INSTALLER) {
-		// Right now used only by Rex Nebular
-		Common::Archive* arch = MpsInstaller::open("MPSLABS");
-		if (arch)
-			SearchMan.add("mpslabs", arch);
-	}
-
-	// Initial sub-system engine references
-	MSurface::setVm(this);
-	MSprite::setVm(this);
-
-	Resources::init(this);
-	Conversation::init(this);
-	_debugger = new Debugger(this);
-	setDebugger(_debugger);
-	_dialogs = Dialogs::init(this);
-	_events = new EventsManager(this);
-	_palette = new Palette(this);
-	Font::init(this);
-	_font = new Font();
-	_screen = new Screen();
-	_sound = new SoundManager(this, _mixer);
-	_audio = new AudioPlayer(_mixer, getGameID());
-	_game = Game::init(this);
-	_gameConv = new GameConversations(this);
-
-	loadOptions();
-
-	_screen->clear();
+void MADSEngine::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+	Common::FSNode folder = gamePath.getChild("resource");
+	if (folder.exists())
+		SearchMan.addDirectory(folder);
 }
 
-void MADSEngine::loadOptions() {
-	if (ConfMan.hasKey("EasyMouse"))
-		_easyMouse = ConfMan.getBool("EasyMouse");
-
-	if (ConfMan.hasKey("mute") && ConfMan.getBool("mute")) {
-		_soundFlag = false;
-		_musicFlag = false;
-	} else {
-		_soundFlag = !ConfMan.hasKey("sfx_mute") || !ConfMan.getBool("sfx_mute");
-		_musicFlag = !ConfMan.hasGameDomain("music_mute") || !ConfMan.getBool("music_mute");
-	}
-
-	if (ConfMan.hasKey("ScreenFade"))
-		_screenFade = (ScreenFade)ConfMan.getInt("ScreenFade");
-	//if (ConfMan.hasKey("GraphicsDithering"))
-	//	_dithering = ConfMan.getBool("GraphicsDithering");
-
-	if (getGameID() == GType_RexNebular) {
-		if (ConfMan.hasKey("InvObjectsAnimated"))
-			_invObjectsAnimated = ConfMan.getBool("InvObjectsAnimated");
-		if (ConfMan.hasKey("TextWindowStill"))
-			_textWindowStill = !ConfMan.getBool("TextWindowAnimated");
-		if (ConfMan.hasKey("NaughtyMode"))
-			_game->setNaughtyMode(ConfMan.getBool("NaughtyMode"));
-	}
-
-	// Note: MADS is weird in that sfx and music are handled by the same driver,
-	// and the game scripts themselves check for music being enabled before playing
-	// a "music" sound. Which means we can independently mute music in ScummVM, but
-	// otherwise all sound, music and sfx, is controlled by the SFX volume slider.
-	int soundVolume = MIN(255, ConfMan.getInt("sfx_volume"));
-	_sound->setVolume(soundVolume);
-
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr)
-		ttsMan->enable(ConfMan.getBool("tts_narrator"));
+void MADSEngine::initGlobals() {
+	init_anim();
+	init_attr();
+	init_camera();
+	init_config();
+	init_conv();
+	init_cursor();
+	init_cycle();
+	init_dialog();
+	init_font();
+	init_game();
+	init_global();
+	init_hspot();
+	init_inter();
+	init_kernel();
+	init_keys();
+	init_matte();
+	init_object();
+	init_pal();
+	init_player();
+	init_popup();
+	init_quote();
+	init_rail();
+	init_room();
+	init_speech();
+	init_sprite();
+	init_timer();
+	init_vocab();
+	Forest::init_extra();
 }
 
-void MADSEngine::saveOptions() {
-	ConfMan.setBool("EasyMouse", _easyMouse);
-	ConfMan.setInt("ScreenFade", (int)_screenFade);
-	//ConfMan.setBool("GraphicsDithering", _dithering);
+void MADSEngine::readConfigFile() {
+	read_config_file();
+	_musicFlag = config_file.music_flag;
+	_soundFlag = config_file.sound_flag;
+	_speechFlag = config_file.speech_flag;
 
-	ConfMan.setBool("mute", !_soundFlag && !_musicFlag);
-	ConfMan.setBool("sfx_mute", !_soundFlag && _musicFlag);
-	ConfMan.setBool("music_mute", _soundFlag && !_musicFlag);
-
-	if (getGameID() == GType_RexNebular) {
-		ConfMan.setBool("InvObjectsAnimated", _invObjectsAnimated);
-		ConfMan.setBool("TextWindowAnimated", !_textWindowStill);
-		ConfMan.setBool("NaughtyMode", _game->getNaughtyMode());
-	}
-
-	ConfMan.flushToDisk();
+	if (ConfMan.hasKey("save_slot"))
+		savegame_slot = ConfMan.getInt("save_slot");
 }
 
-Common::Error MADSEngine::run() {
-	initGraphics(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
-	initialize();
+bool MADSEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return game.going && !win_status && !kernel.activate_menu &&
+		inter_input_mode == INTER_BUILDING_SENTENCES &&
+		conv_control.running == -1;
+}
 
-	// Run the game
-	_game->run();
+Common::Error MADSEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	stream->writeByte(SAVEGAME_VERSION);
+	Common::Serializer s(nullptr, stream);
+	s.setVersion(SAVEGAME_VERSION);
+
+	// Sync main game data
+	syncGame(s);
+
+	// Save conversation data
+	conv_append(stream);
 
 	return Common::kNoError;
+}
+
+Common::Error MADSEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	int save = player.walker_is_loaded;
+
+	byte version = stream->readByte();
+	if (version != SAVEGAME_VERSION)
+		error("Invalid savegame version");
+
+
+	// Sync main game data
+	Common::Serializer s(stream, nullptr);
+	syncGame(s);
+
+	// Load conversation data
+	if (conv_expand(stream))
+		goto done;
+
+	if (inven_num_objects > 0) {
+		active_inven = 0;
+	} else {
+		active_inven = -1;
+	}
+
+	first_inven = 0;
+
+	section_id = KERNEL_RESTORING_GAME;
+	room_id = KERNEL_RESTORING_GAME;
+
+	new_section = new_room / 100;
+
+	kernel.clock = timer_read();
+	game.going = true;
+
+done:
+	player.walker_is_loaded = save;
+	return Common::kNoError;
+}
+	
+void MADSEngine::syncGame(Common::Serializer &s) {
+	if (s.isSaving()) {
+		// Write the room specific locals to the game scratchpad
+		Common::fill(game.scratch, game.scratch + KERNEL_SCRATCH_SIZE, 0);
+		Common::MemoryWriteStream scratchStream(game.scratch, KERNEL_SCRATCH_SIZE);
+		Common::Serializer s2(nullptr, &scratchStream);
+		syncRoom(s2);
+	}
+
+	game.synchronize(s);
+	s.syncAsSint16LE(new_room);
+
+	if (s.isLoading()) {
+		// Unpack the loaded scratch data for the room
+		Common::MemoryReadStream scratchStream(game.scratch, KERNEL_SCRATCH_SIZE);
+		Common::Serializer s2(&scratchStream, nullptr);
+		syncRoom(s2);
+	}
+
+	player2.synchronize(s);
+
+	s.syncAsSint16LE(inven_num_objects);
+	for (int i = 0; i < inven_num_objects; ++i)
+		s.syncAsSint16LE(inven[i]);
+
+	player.synchronize(s);
+	for (int i = 0; i < global_list_size; ++i)
+		s.syncAsSint16LE(global[i]);
+
+	for (int i = 0; i < num_objects; ++i)
+		object[i].synchronize(s);
+
+	s.syncAsSint16LE(conv_restore_running);
+
+	if (s.isSaving()) {
+		s.syncAsSint16LE(picture_view_x);
+		s.syncAsSint16LE(picture_view_y);
+	} else {
+		s.syncAsSint16LE(camera_old_x_target);
+		s.syncAsSint16LE(camera_old_y_target);
+	}
+
+	if (getGameID() == GType_Forest)
+		s.syncMultipleLE(Forest::flags);
+
+	for (int i = 0; i < OMR; ++i)
+		s.syncAsSint16LE(room_state[i]);
+	s.syncAsSint16LE(previous_room);
+}
+
+void MADSEngine::pollEvents() {
+	// Check for screen update time
+	uint32 time = g_system->getMillis();
+	if (time >= _nextFrameTime) {
+		updateScreen();
+		_nextFrameTime = time + GAME_FRAME_TIME;
+	}
+
+	// Handle calling any set timer function
+	checkForTimerFunction();
+
+	// Poll for events
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+		if (handleMacEvent(e))
+			continue;
+
+		bool isMouse = false;
+		switch (e.type) {
+		case Common::EVENT_LBUTTONDOWN:
+			_mouseButtons |= 1;
+			isMouse = true;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_mouseButtons &= ~1;
+			isMouse = true;
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			_mouseButtons |= 2;
+			isMouse = true;
+			break;
+		case Common::EVENT_RBUTTONUP:
+			_mouseButtons &= ~2;
+			isMouse = true;
+			break;
+		case Common::EVENT_MBUTTONDOWN:
+			_mouseButtons |= 4;
+			isMouse = true;
+			break;
+		case Common::EVENT_MBUTTONUP:
+			_mouseButtons &= ~4;
+			isMouse = true;
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			isMouse = true;
+			break;
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+		case Common::EVENT_QUIT:
+			game.going = false;
+			break;
+		default:
+			break;
+		}
+
+		if (isMouse)
+			_mousePos = screenToGame(e.mouse);
+
+		if (e.type == Common::EVENT_KEYDOWN && !isSpecialKey(e.kbd.keycode))
+			_keyEvents.push(e.kbd);
+		if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
+				KEYBINDING_ACTIONS[e.customType] != Common::KEYCODE_INVALID)
+			_keyEvents.push(Common::KeyState(KEYBINDING_ACTIONS[e.customType]));
+	}
+}
+
+void MADSEngine::updateScreen() {
+	int offset = 0;
+
+	// Handle any screen shaking
+	if (mcga_shakes) {
+		_shakeRandom = _shakeRandom * 5 + 1;
+		offset = (_shakeRandom >> 8) & 3;
+		if (--mcga_shakes == 0)
+			offset = 0;
+	}
+
+	presentScreen(offset * 4);
+}
+
+Common::Point MADSEngine::screenToGame(const Common::Point &point) const {
+	return point;
+}
+
+Common::Point MADSEngine::gameToScreen(const Common::Point &point) const {
+	return point;
+}
+
+void MADSEngine::presentScreen(int shakeOffset) {
+	if (shakeOffset > 0) {
+		// Copy the hidden strip at the left back to the right edge.
+		const byte *buf = (const byte *)_screen->getBasePtr(shakeOffset, 0);
+		g_system->copyRectToScreen(buf, 320, 0, 0, 320 - shakeOffset, 200);
+		g_system->copyRectToScreen(_screen->getPixels(), 320,
+			320 - shakeOffset, 0, shakeOffset, 200);
+		g_system->updateScreen();
+	} else {
+		// Buffer objects access the surface directly, so every frame is dirty.
+		_screen->markAllDirty();
+		_screen->update();
+	}
+}
+
+bool MADSEngine::isSpecialKey(Common::KeyCode key) const {
+	static const Common::KeyCode KEYS[] = {
+		Common::KEYCODE_LCTRL, Common::KEYCODE_LALT, Common::KEYCODE_LSHIFT,
+		Common::KEYCODE_RCTRL, Common::KEYCODE_RALT, Common::KEYCODE_RSHIFT
+	};
+
+	for (const Common::KeyCode &kc : KEYS) {
+		if (kc == key)
+			return true;
+	}
+
+	return false;
+}
+
+void MADSEngine::checkForTimerFunction() {
+	if (_timerFunction && _nextTimerTime != (uint32)-1) {
+		uint32 time = g_system->getMillis();
+		if (time >= _nextTimerTime) {
+			// Flag the timer as disabled to prevent recursive calls
+			_nextTimerTime = (uint32)-1;
+
+			// Call the timer
+			_timerFunction();
+
+			// Determine the next time to call the function at 60Hz
+			_nextTimerTime = time + (1000 / 60);
+		}
+	}
+}
+
+bool MADSEngine::hasPendingKey() {
+	pollEvents();
+
+	return !_keyEvents.empty();
+}
+
+int MADSEngine::getKey() {
+	pollEvents();
+
+	if (!_keyEvents.empty()) {
+		Common::KeyState ks = _keyEvents.pop();
+		return ks.ascii && ((ks.flags & (Common::KBD_CTRL | Common::KBD_ALT)) == 0) ? ks.ascii : (ks.flags << 16) | ks.keycode;
+	}
+
+	return 0;
+}
+
+void MADSEngine::flushKeys() {
+	pollEvents();
+
+	_keyEvents.clear();
+	_mouseButtons = 0;
+}
+
+int MADSEngine::getMouseState(int &x, int &y) {
+	pollEvents();
+
+	x = _mousePos.x;
+	y = _mousePos.y;
+	return _mouseButtons;
+}
+
+void MADSEngine::warpMouse(int x, int y) {
+	const Common::Point point = gameToScreen(Common::Point(x, y));
+	g_system->warpMouse(point.x, point.y);
+}
+
+void MADSEngine::updateDisplay() {
+	presentScreen(0);
+}
+
+uint32 MADSEngine::getMillis() {
+	pollEvents();
+	return g_system->getMillis();
+}
+
+void MADSEngine::playSpeech(Audio::AudioStream *stream) {
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
+}
+
+void MADSEngine::stopSpeech() {
+	_mixer->stopHandle(_speechHandle);
+}
+
+bool MADSEngine::isSpeechPlaying() const {
+	return _mixer->isSoundHandleActive(_speechHandle);
+}
+
+SaveStateList MADSEngine::listSaves() const {
+	return getMetaEngine()->listSaves(_targetName.c_str());
+}
+
+void MADSEngine::player_keep_walking() {
+	int at_x, at_y;
+	int walk_code;
+	int id;
+	int new_facing = false;
+	int temp_velocity;
+	int angle_scale;
+	int angle_range;
+
+	while (player.walking && !player.walk_off_edge && (player.x == player.target_x) && (player.y == player.target_y)) {
+		if (rail_solution_stack_pointer == 0) {
+			if (player.walk_off_edge_to_room) {
+				player.walk_off_edge = player.walk_off_edge_to_room;
+				player.walk_anywhere = true;
+				player.walk_off_edge_to_room = 0;
+				player.commands_allowed = false;
+				new_facing = false;
+			} else {
+				player.walking = false;
+				player_set_final_facing();
+				new_facing = true;
+			}
+		} else {
+			id = rail_solution_stack[--rail_solution_stack_pointer];
+			player.target_x = room->rail[id].x;
+			player.target_y = room->rail[id].y;
+			new_facing = true;
+		}
+	}
+
+	if (new_facing) {
+		if (player.walking) player_set_facing();
+	}
+
+	if (player.facing != player.turn_to_facing) {
+		player_keep_turning();
+	} else {
+		if (!player.walking) {
+			player_new_stop_walker();
+			player_activate_trigger();
+		}
+	}
+
+	temp_velocity = player.velocity;
+
+	if (player.scaling_velocity && (player.total_distance > 0)) {
+		angle_range = 100 - player.scale;
+		angle_scale = player.scale + ((angle_range * (player.x_count - 1)) / player.total_distance);
+		temp_velocity = (int)(((long)temp_velocity * ((long)player.scale * (long)angle_scale)) / 10000L);
+		temp_velocity = MAX(temp_velocity, 1);
+	}
+
+	if (player.walking && (player.facing == player.turn_to_facing)) {
+		at_x = player.x;
+		at_y = player.y;
+		walk_code = false;
+		player.special_code = 0;
+
+		if (player.dist_accum < temp_velocity) {
+
+			do {
+				if (player.pixel_accum < player.x_count) {
+					player.pixel_accum += player.y_count;
+				}
+				if (player.pixel_accum >= player.x_count) {
+					if ((player.y_counter > 0) || player.walk_off_edge) at_y += player.sign_y;
+					player.y_counter--;
+					player.pixel_accum -= player.x_count;
+				}
+				if (player.pixel_accum < player.x_count) {
+					if ((player.x_counter > 0) || player.walk_off_edge) at_x += player.sign_x;
+					player.x_counter--;
+				}
+
+				if (!player.walk_anywhere && !(player.walk_off_edge || player.walk_off_edge_to_room)) {
+					walk_code |= attr_walk(&scr_walk, at_x, at_y);
+					if (!player.special_code) {
+						player.special_code = (g_engine->getGameID() == GType_RexNebular) ?
+							rex_attr_special(&scr_special, at_x, at_y) :
+							attr_special(&scr_special, at_x, at_y);
+					}
+				}
+
+				player.dist_accum += player.delta_distance;
+			} while ((player.dist_accum < temp_velocity) && (!walk_code) &&
+				((player.x_counter > 0) || (player.y_counter > 0) || (player.walk_off_edge)));
+
+		}
+
+		player.dist_accum -= temp_velocity;
+
+		if (walk_code) {
+			player_cancel_command();
+		} else {
+			if (!player.walk_off_edge) {
+				if (player.x_counter <= 0) at_x = player.target_x;
+				if (player.y_counter <= 0) at_y = player.target_y;
+			}
+			player.x = at_x;
+			player.y = at_y;
+		}
+	}
 }
 
 int MADSEngine::getRandomNumber(int maxNumber) {
@@ -185,35 +552,12 @@ int MADSEngine::getRandomNumber(int minNumber, int maxNumber) {
 	return minNumber + _randomSource.getRandomNumber(range);
 }
 
-bool MADSEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return !_game->_winStatus && !_game->globals()[5]
-		&& _dialogs->_pendingDialog == DIALOG_NONE
-		&& _events->_cursorId != CURSOR_WAIT;
+void MADSEngine::setSavegameThumbnail() {
+	::createThumbnailFromScreen(&_savegameThumbnail);
 }
 
-bool MADSEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return !_game->_winStatus && !_game->globals()[5]
-		&& _dialogs->_pendingDialog == DIALOG_NONE
-		&& _events->_cursorId != CURSOR_WAIT
-		&& _game->_scene._sceneLogic;
+void MADSEngine::clearSavegameThumbnail() {
+	_savegameThumbnail.free();
 }
 
-void MADSEngine::syncSoundSettings() {
-	Engine::syncSoundSettings();
-
-	loadOptions();
-}
-
-Common::Error MADSEngine::loadGameState(int slot) {
-	_game->_loadGameSlot = slot;
-	_game->_scene._currentSceneId = -1;
-	_game->_currentSectionNumber = -1;
-	return Common::kNoError;
-}
-
-Common::Error MADSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	_game->saveGame(slot, desc);
-	return Common::kNoError;
-}
-
-} // End of namespace MADS
+} // namespace MADS

@@ -28,9 +28,9 @@ namespace CryOmni3D {
 // We use files common to all installations except the documentation links and the binary
 // We only check the file presence to simplify and use program to discriminate the version
 #define VERSAILLES_ENTRY(f, x, s, lien_doc_ext) { \
-	{ "11D_LEB1.HNM", 0, nullptr, -1}, \
-	{ "COFBOUM.HNM", 0, nullptr, -1}, \
-	{ "lien_doc." lien_doc_ext, 0, nullptr, -1}, \
+	{ "11D_LEB1.HNM", 0, nullptr, AD_NO_SIZE}, \
+	{ "COFBOUM.HNM", 0, nullptr, AD_NO_SIZE}, \
+	{ "lien_doc." lien_doc_ext, 0, nullptr, AD_NO_SIZE}, \
 	{ f, 0, x, s}, \
 	AD_LISTEND}
 
@@ -533,6 +533,57 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		},
 		GType_VERSAILLES,
 		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// Chinese Windows 95 from hybrid Win95/DOS CD
+	// From kane159. on Discord
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("VERSAILL.EXE", "6b30654356ac219d2dda7ad8054146e4", 386048),
+			Common::ZH_TWN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES | GF_VERSAILLES_LINK_STANDARD,
+	},
+
+	// Versailles 1685
+	// Chinese Windows 95 compressed from hybrid Win95/DOS CD
+	// From kane159. on Discord
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("PROGRAM.Z", "62e0d8a68ce0ec92db5d1699db8679ec", 262633),
+			Common::ZH_TWN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES | GF_VERSAILLES_LINK_STANDARD,
+	},
+
+	// Versailles 1685
+	// Chinese DOS from hybrid Win95/DOS CD
+	// From kane159. on Discord
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("VERSAILL.PGM", "1c992f034f43418a5da2e8ebd0b92620", 725487),
+			Common::ZH_TWN,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES | GF_VERSAILLES_LINK_STANDARD,
 	},
 
 	// Versailles 1685

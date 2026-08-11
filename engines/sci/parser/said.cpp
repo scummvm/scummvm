@@ -1004,7 +1004,6 @@ static int augment_parse_nodes(ParseTreeNode *parseT, ParseTreeNode *saidT) {
 /*******************/
 
 int said(const byte *spec, bool verbose) {
-	int retval;
 	Vocabulary *voc = g_sci->getVocabulary();
 
 	ParseTreeNode *parse_tree_ptr = voc->_parserNodes;
@@ -1015,14 +1014,14 @@ int said(const byte *spec, bool verbose) {
 
 		if (verbose)
 			vocab_dump_parse_tree("Said-tree", said_tree);
-		retval = augment_parse_nodes(parse_tree_ptr, said_tree);
+		int retval = augment_parse_nodes(parse_tree_ptr, said_tree);
 
 		if (!retval)
 			return SAID_NO_MATCH;
-		else if (retval != SAID_PARTIAL_MATCH)
-			return SAID_FULL_MATCH;
-		else
+		else if (retval == SAID_PARTIAL_MATCH)
 			return SAID_PARTIAL_MATCH;
+		else
+			return SAID_FULL_MATCH;
 	}
 
 	return SAID_NO_MATCH;

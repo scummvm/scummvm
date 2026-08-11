@@ -499,7 +499,7 @@ bool FontPC98::loadBMPData() {
 	}
 
 	if (data->readUint16LE() != 1) {
-		warning("font.bmp needs to be single-planed");
+		warning("font.bmp needs to be single-plane'd");
 		return false;
 	}
 

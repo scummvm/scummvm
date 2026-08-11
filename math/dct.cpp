@@ -48,7 +48,7 @@ DCT::~DCT() {
 	delete[] _csc2;
 }
 
-void DCT::calc(float *data) {
+void DCT::calc(float *data) const {
 	switch (_trans) {
 	case DCT_I:
 		calcDCTI(data);
@@ -72,7 +72,7 @@ void DCT::calc(float *data) {
 /* cos((M_PI * x / (2*n)) */
 #define COS(n,x) (_tCos[x])
 
-void DCT::calcDCTI(float *data) {
+void DCT::calcDCTI(float *data) const {
 	int n = 1 << _bits;
 
 	float next = -0.5f * (data[0] - data[n]);
@@ -104,7 +104,7 @@ void DCT::calcDCTI(float *data) {
 		data[i] = data[i - 2] - data[i];
 }
 
-void DCT::calcDCTII(float *data) {
+void DCT::calcDCTII(float *data) const {
 	int n = 1 << _bits;
 
 	for (int i = 0; i < (n / 2); i++) {
@@ -141,7 +141,7 @@ void DCT::calcDCTII(float *data) {
 	}
 }
 
-void DCT::calcDCTIII(float *data) {
+void DCT::calcDCTIII(float *data) const {
 	int n = 1 << _bits;
 
 	float next  = data[n - 1];
@@ -175,7 +175,7 @@ void DCT::calcDCTIII(float *data) {
 	}
 }
 
-void DCT::calcDSTI(float *data) {
+void DCT::calcDSTI(float *data) const {
 	int n = 1 << _bits;
 
 	data[0] = 0;

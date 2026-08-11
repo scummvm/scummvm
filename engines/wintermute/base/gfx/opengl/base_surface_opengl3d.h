@@ -35,30 +35,36 @@ class BaseRenderer3D;
 
 class BaseSurfaceOpenGL3D : public BaseSurface {
 public:
-	BaseSurfaceOpenGL3D(BaseGame* game, BaseRenderer3D* renderer);
+	BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderer3D *renderer);
 	~BaseSurfaceOpenGL3D();
 
 	bool invalidate() override;
+	bool prepareToDraw() override;
 
-	bool displayHalfTrans(int x, int y, Rect32 rect) override;
-	bool isTransparentAt(int x, int y) override;
-	bool displayTransRotate(int x, int y, uint32 angle, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
-	bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
-	bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) override;
-	bool display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
-	bool displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) override;
-	bool restore() override;
-	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
+	bool displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTransZoom(int x, int y, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTrans(int x, int y, Common::Rect32 rect, uint32 alpha = 0xFFFFFFFF, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) override;
+	bool display(int x, int y, Common::Rect32 rect, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTiled(int x, int y, Common::Rect32 rect, int numTimesX, int numTimesY) override;
+	bool create(const char *filename, bool texture2D, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
 	bool create(int width, int height) override;
+	bool setAlphaImage(const char *filename) override;
 	bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
-	bool putPixel(int x, int y, byte r, byte g, byte b, int a = -1) override;
-	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr) override;
-	bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1) override;
+	bool putPixel(int x, int y, byte r, byte g, byte b, byte a) override;
+	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr) const override;
 	bool startPixelOp() override;
 	bool endPixelOp() override;
-	bool isTransparentAtLite(int x, int y) override;
+	bool isTransparentAtLite(int x, int y) const override;
 
 	void setTexture();
+
+	int getWidth() override {
+		return _width;
+	}
+
+	int getHeight() override {
+		return _height;
+	}
 
 	GLuint getTextureName() {
 		return _tex;
@@ -76,8 +82,15 @@ private:
 	GLuint _tex;
 	BaseRenderer3D *_renderer;
 	Graphics::Surface *_imageData;
+	Graphics::Surface *_maskData;
 	uint _texWidth;
 	uint _texHeight;
+	bool _pixelOpReady;
+
+	bool loadImage();
+	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
+	bool uploadTexture();
+	void freeImageData();
 };
 
 } // End of namespace Wintermute

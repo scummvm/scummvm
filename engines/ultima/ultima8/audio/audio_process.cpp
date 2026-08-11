@@ -20,6 +20,8 @@
  */
 
 #include "ultima/ultima8/audio/audio_process.h"
+
+#include "common/debug.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/audio/speech_flex.h"
@@ -87,8 +89,7 @@ void AudioProcess::run() {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
 	// Update the channels
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+	for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		bool finished = false;
 		if (!mixer->isPlaying(it->_channel)) {
 			if (it->_sfxNum == -1)
@@ -154,18 +155,17 @@ void AudioProcess::saveData(Common::WriteStream *ws) {
 
 	ws->writeByte(static_cast<uint8>(_sampleInfo.size()));
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		ws->writeUint16LE(it->_sfxNum);
-		ws->writeUint16LE(it->_priority);
-		ws->writeUint16LE(it->_objId);
-		ws->writeUint16LE(it->_loops);
-		ws->writeUint32LE(it->_pitchShift);
-		ws->writeUint16LE(it->_volume);
+	for (const auto &si : _sampleInfo) {
+		ws->writeUint16LE(si._sfxNum);
+		ws->writeUint16LE(si._priority);
+		ws->writeUint16LE(si._objId);
+		ws->writeUint16LE(si._loops);
+		ws->writeUint32LE(si._pitchShift);
+		ws->writeUint16LE(si._volume);
 
-		if (it->_sfxNum == -1) { // Speech
-			ws->writeUint32LE(static_cast<uint32>(it->_barked.size()));
-			ws->write(it->_barked.c_str(), static_cast<uint32>(it->_barked.size()));
+		if (si._sfxNum == -1) { // Speech
+			ws->writeUint32LE(static_cast<uint32>(si._barked.size()));
+			ws->write(si._barked.c_str(), static_cast<uint32>(si._barked.size()));
 		}
 	}
 }
@@ -197,7 +197,7 @@ bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
 			char *buf = new char[slen + 1];
 			rs->read(buf, slen);
 			buf[slen] = 0;
-			Std::string text = buf;
+			Common::String text = buf;
 			delete[] buf;
 
 			playSpeech(text, priority, objId, pitchShift, volume);
@@ -214,8 +214,7 @@ int AudioProcess::playSample(AudioSample *sample, int priority, int loops, bool 
 	if (channel == -1) return channel;
 
 	// Erase old sample using channel (if any)
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+	for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if (it->_channel == channel) {
 			it = _sampleInfo.erase(it);
 		} else {
@@ -235,8 +234,7 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 	AudioMixer *mixer = AudioMixer::get_instance();
 
 	if (no_duplicates) {
-		Std::list<SampleInfo>::iterator it;
-		for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+		for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 			if (it->_sfxNum == sfxNum && it->_objId == objId &&
 			        it->_loops == loops) {
 
@@ -272,8 +270,7 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 void AudioProcess::stopSFX(int sfxNum, ObjId objId) {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+	for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if ((sfxNum == -1 || it->_sfxNum == sfxNum)
 			 && it->_objId == objId) {
 			if (mixer->isPlaying(it->_channel)) mixer->stopSample(it->_channel);
@@ -286,9 +283,8 @@ void AudioProcess::stopSFX(int sfxNum, ObjId objId) {
 
 bool AudioProcess::isSFXPlaying(int sfxNum) {
 	AudioMixer *mixer = AudioMixer::get_instance();
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum && mixer->isPlaying(it->_channel))
+	for (const auto &si : _sampleInfo) {
+		if (si._sfxNum == sfxNum && mixer->isPlaying(si._channel))
 			return true;
 	}
 
@@ -297,9 +293,8 @@ bool AudioProcess::isSFXPlaying(int sfxNum) {
 
 bool AudioProcess::isSFXPlayingForObject(int sfxNum, ObjId objId) {
 	AudioMixer *mixer = AudioMixer::get_instance();
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if ((it->_sfxNum == sfxNum || sfxNum == -1) && (objId == it->_objId) && mixer->isPlaying(it->_channel))
+	for (const auto &si : _sampleInfo) {
+		if ((si._sfxNum == sfxNum || sfxNum == -1) && (objId == si._objId) && mixer->isPlaying(si._channel))
 			return true;
 	}
 
@@ -308,28 +303,24 @@ bool AudioProcess::isSFXPlayingForObject(int sfxNum, ObjId objId) {
 
 void AudioProcess::setVolumeSFX(int sfxNum, uint8 volume) {
 	AudioMixer *mixer = AudioMixer::get_instance();
+	for (auto &si : _sampleInfo) {
+		if (si._sfxNum == sfxNum && si._sfxNum != -1) {
+			si._volume = volume;
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum && it->_sfxNum != -1) {
-			it->_volume = volume;
-
-			calculateSoundVolume(it->_objId, it->_calcVol, it->_balance);
-			mixer->setVolume(it->_channel, (it->_calcVol * it->_volume) / 256, it->_balance);
+			calculateSoundVolume(si._objId, si._calcVol, si._balance);
+			mixer->setVolume(si._channel, (si._calcVol * si._volume) / 256, si._balance);
 		}
 	}
 }
 
 void AudioProcess::setVolumeForObjectSFX(ObjId objId, int sfxNum, uint8 volume) {
 	AudioMixer *mixer = AudioMixer::get_instance();
+	for (auto &si : _sampleInfo) {
+		if (si._sfxNum == sfxNum && si._sfxNum != -1 && objId == si._objId) {
+			si._volume = volume;
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum && it->_sfxNum != -1 && objId == it->_objId) {
-			it->_volume = volume;
-
-			calculateSoundVolume(it->_objId, it->_calcVol, it->_balance);
-			mixer->setVolume(it->_channel, (it->_calcVol * it->_volume) / 256, it->_balance);
+			calculateSoundVolume(si._objId, si._calcVol, si._balance);
+			mixer->setVolume(si._channel, (si._calcVol * si._volume) / 256, si._balance);
 		}
 	}
 }
@@ -339,15 +330,14 @@ void AudioProcess::setVolumeForObjectSFX(ObjId objId, int sfxNum, uint8 volume) 
 // Speech
 //
 
-bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId objId, uint32 pitchShift, uint16 volume) {
+bool AudioProcess::playSpeech(const Common::String &barked, int shapeNum, ObjId objId, uint32 pitchShift, uint16 volume) {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapeNum);
 
 	if (!speechflex) return false;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+	for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 
 		if (it->_sfxNum == -1 && it->_barked == barked &&
 		        it->_priority == shapeNum && it->_objId == objId) {
@@ -383,7 +373,7 @@ bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId obj
 	return true;
 }
 
-uint32 AudioProcess::getSpeechLength(const Std::string &barked, int shapenum) const {
+uint32 AudioProcess::getSpeechLength(const Common::String &barked, int shapenum) const {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapenum);
 	if (!speechflex) return 0;
 
@@ -391,11 +381,10 @@ uint32 AudioProcess::getSpeechLength(const Std::string &barked, int shapenum) co
 }
 
 
-void AudioProcess::stopSpeech(const Std::string &barked, int shapenum, ObjId objId) {
+void AudioProcess::stopSpeech(const Common::String &barked, int shapenum, ObjId objId) {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+	for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if (it->_sfxNum == -1 && it->_priority == shapenum &&
 		        it->_objId == objId && it->_barked == barked) {
 			if (mixer->isPlaying(it->_channel)) mixer->stopSample(it->_channel);
@@ -406,11 +395,10 @@ void AudioProcess::stopSpeech(const Std::string &barked, int shapenum, ObjId obj
 	}
 }
 
-bool AudioProcess::isSpeechPlaying(const Std::string &barked, int shapeNum) {
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == -1 && it->_priority == shapeNum &&
-		        it->_barked == barked) {
+bool AudioProcess::isSpeechPlaying(const Common::String &barked, int shapeNum) {
+	for (auto &si : _sampleInfo) {
+		if (si._sfxNum == -1 && si._priority == shapeNum &&
+		        si._barked == barked) {
 			return true;
 		}
 	}
@@ -424,8 +412,7 @@ void AudioProcess::pauseAllSamples() {
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+	for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if (mixer->isPlaying(it->_channel)) {
 			mixer->setPaused(it->_channel, true);
 			++it;
@@ -443,8 +430,7 @@ void AudioProcess::unpauseAllSamples() {
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+	for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if (mixer->isPlaying(it->_channel)) {
 			mixer->setPaused(it->_channel, false);
 			++it;
@@ -459,8 +445,7 @@ void AudioProcess::unpauseAllSamples() {
 void AudioProcess::stopAllExceptSpeech() {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	Std::list<SampleInfo>::iterator it;
-	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
+	for (auto it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if (it->_barked.empty()) {
 			if (mixer->isPlaying(it->_channel)) mixer->stopSample(it->_channel);
 			it = _sampleInfo.erase(it);

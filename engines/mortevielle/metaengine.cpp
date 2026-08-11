@@ -21,12 +21,31 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "common/translation.h"
 
 #include "mortevielle/mortevielle.h"
 #include "mortevielle/saveload.h"
 #include "mortevielle/detection.h"
 
 namespace Mortevielle {
+
+#ifdef USE_TTS
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read text in the game (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+#endif
+
 
 uint32 MortevielleEngine::getGameFlags() const { return _gameDescription->desc.flags; }
 
@@ -38,13 +57,19 @@ bool MortevielleEngine::useOriginalData() const { return _gameDescription->dataF
 
 } // End of namespace Mortevielle
 
-class MortevielleMetaEngine : public AdvancedMetaEngine {
+class MortevielleMetaEngine : public AdvancedMetaEngine<Mortevielle::MortevielleGameDescription> {
 public:
 	const char *getName() const override {
 		return "mortevielle";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+#ifdef USE_TTS
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Mortevielle::optionsList;
+	}
+#endif
+
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Mortevielle::MortevielleGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override;
@@ -60,8 +85,8 @@ public:
 	}
 };
 
-Common::Error MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Mortevielle::MortevielleEngine(syst, (const Mortevielle::MortevielleGameDescription *)desc);
+Common::Error MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const Mortevielle::MortevielleGameDescription *desc) const {
+	*engine = new Mortevielle::MortevielleEngine(syst,desc);
 	return Common::kNoError;
 }
 

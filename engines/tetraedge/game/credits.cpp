@@ -36,7 +36,10 @@ void Credits::enter(bool returnToOptions) {
 	_animCounter = 0;
 	_timer.start();
 	// TODO: set _field0x50 = 0;
-	_gui.load("menus/credits/credits.lua");
+	if (!g_engine->gameIsAmerzone())
+		_gui.load("menus/credits/credits.lua");
+	else
+		_gui.load("GUI/Credits.lua");
 	Application *app = g_engine->getApplication();
 	app->frontLayout().addChild(_gui.layoutChecked("menu"));
 

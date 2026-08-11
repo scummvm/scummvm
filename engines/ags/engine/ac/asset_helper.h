@@ -28,8 +28,8 @@
 #ifndef AGS_ENGINE_AC_ASSET_HELPER_H
 #define AGS_ENGINE_AC_ASSET_HELPER_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/utility.h"
+#include "common/std/memory.h"
+#include "common/std/utility.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/core/asset_manager.h"
 

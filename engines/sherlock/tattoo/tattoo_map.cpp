@@ -23,6 +23,8 @@
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -97,7 +99,7 @@ int TattooMap::show() {
 
 	// Load the palette
 	Common::SeekableReadStream *stream = res.load("map.pal");
-	stream->read(screen._cMap, PALETTE_SIZE);
+	stream->read(screen._cMap, Graphics::PALETTE_SIZE);
 	screen.translatePalette(screen._cMap);
 	delete stream;
 
@@ -119,6 +121,10 @@ int TattooMap::show() {
 	// Set initial scroll position, forcing the map to be displayed
 	_targetScroll = _bigPos;
 	screen._currentScroll = Common::Point(-1, -1);
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-map")->setEnabled(true);
 
 	do {
 		// Allow for event processing and get the current mouse position
@@ -152,34 +158,34 @@ int TattooMap::show() {
 		if ((_targetScroll.y + SHERLOCK_SCREEN_HEIGHT) > screen._backBuffer1.height())
 			_targetScroll.y = screen._backBuffer1.height() - SHERLOCK_SCREEN_HEIGHT;
 
-		// Check the keyboard
-		if (events.kbHit()) {
-			Common::KeyState keyState = events.getKey();
+		// Check the action
+		if (events.actionHit()) {
+			Common::CustomEventType action = events.getAction();
 
-			switch (keyState.keycode) {
-			case Common::KEYCODE_HOME:
+			switch (action) {
+			case kActionTattooMapTopLeft:
 				_targetScroll.x = 0;
 				_targetScroll.y = 0;
 				break;
 
-			case Common::KEYCODE_END:
+			case kActionTattooMapBottomRight:
 				_targetScroll.x = screen._backBuffer1.width() - SHERLOCK_SCREEN_WIDTH;
 				_targetScroll.y = screen._backBuffer1.height() - SHERLOCK_SCREEN_HEIGHT;
 				break;
 
-			case Common::KEYCODE_PAGEUP:
+			case kActionTattooMapUp:
 				_targetScroll.y -= SHERLOCK_SCREEN_HEIGHT;
 				if (_targetScroll.y < 0)
 					_targetScroll.y = 0;
 				break;
 
-			case Common::KEYCODE_PAGEDOWN:
+			case kActionTattooMapDown:
 				_targetScroll.y += SHERLOCK_SCREEN_HEIGHT;
 				if (_targetScroll.y > (screen._backBuffer1.height() - SHERLOCK_SCREEN_HEIGHT))
 					_targetScroll.y = screen._backBuffer1.height() - SHERLOCK_SCREEN_HEIGHT;
 				break;
 
-			case Common::KEYCODE_SPACE:
+			case kActionTattooMapSelect:
 				events._pressed = false;
 				events._oldButtons = 0;
 				events._released = true;
@@ -213,6 +219,9 @@ int TattooMap::show() {
 			result = _bgFound + 1;
 		}
 	} while (!result && !_vm->shouldQuit());
+
+	keymapper->getKeymap("tattoo-map")->setEnabled(false);
+	keymapper->getKeymap("tattoo")->setEnabled(true);
 
 	music.stopMusic();
 	events.clearEvents();
@@ -405,7 +414,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 			screen._currentScroll.y + closeUp.y / 100 - picSize.y / 2);
 
 		restoreArea(oldBounds);
-		screen._backBuffer1.SHtransBlitFrom(pic[0], pt, false, 0, scaleVal);
+		screen._backBuffer1.SHtransBlitFrom(pic[0], pt, false, scaleVal);
 
 		screen.slamRect(oldBounds);
 		screen.slamArea(pt.x, pt.y, picSize.x, picSize.y);

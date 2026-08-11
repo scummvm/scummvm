@@ -158,8 +158,8 @@ public:
 
 	bool hasFactor(uint factor) const {
 		const Common::Array<uint> &factors = getFactors();
-		for (Common::Array<uint>::const_iterator it = factors.begin(); it != factors.end(); it++) {
-			if ((*it) == factor)
+		for (const auto &curFactor : factors) {
+			if (curFactor == factor)
 				return true;
 		}
 

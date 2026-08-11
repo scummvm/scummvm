@@ -34,7 +34,7 @@
 
 namespace Wintermute {
 
-class BaseFont: public BaseObject {
+class BaseFont : public BaseObject {
 public:
 	DECLARE_PERSISTENT(BaseFont, BaseObject)
 	virtual int getTextWidth(const byte *text, int maxLength = -1);
@@ -47,12 +47,12 @@ public:
 	BaseFont(BaseGame *inGame);
 	~BaseFont() override;
 
-	static BaseFont *createFromFile(BaseGame *game, const Common::String &filename);
+	static BaseFont *createFromFile(BaseGame *game, const char *filename);
 
 private:
-	//bool loadBuffer(byte * Buffer);
+	//bool loadBuffer(char *buffer);
 	//bool loadFile(const char* Filename);
-	static bool isTrueType(BaseGame *game, const Common::String &filename);
+	static bool isTrueType(BaseGame *game, const char *filename);
 };
 
 } // End of namespace Wintermute

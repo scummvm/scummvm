@@ -44,10 +44,8 @@ typedef CruiseEngine::MemInfo MemInfo;
 void MemoryList() {
 	if (!_vm->_memList.empty()) {
 		debug("Current list of un-freed memory blocks:");
-		Common::List<MemInfo *>::iterator i;
-		for (i = _vm->_memList.begin(); i != _vm->_memList.end(); ++i) {
-			MemInfo const *const v = *i;
-			debug("%s - %d", v->fname, v->lineNum);
+		for (auto &m : _vm->_memList) {
+			debug("%s - %d", m->fname, m->lineNum);
 		}
 	}
 }
@@ -309,7 +307,7 @@ void printInfoBlackBox(const char *string) {
 void waitForPlayerInput() {
 }
 
-void getFileExtention(const char *name, char *buffer, size_t ln) {
+void getFileExtension(const char *name, char *buffer, size_t ln) {
 	while (*name != '.' && *name) {
 		name++;
 	}
@@ -317,7 +315,7 @@ void getFileExtention(const char *name, char *buffer, size_t ln) {
 	Common::strcpy_s(buffer, ln, name);
 }
 
-void removeExtention(const char *name, char *buffer, size_t ln) {	// not like in original
+void removeExtension(const char *name, char *buffer, size_t ln) {	// not like in original
 	char *ptr;
 
 	Common::strcpy_s(buffer, ln, name);
@@ -344,10 +342,10 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 		}
 	}
 
-	getFileExtention(name, buffer, sizeof(buffer));
+	getFileExtension(name, buffer, sizeof(buffer));
 
 	if (!strcmp(buffer, ".SPL")) {
-		removeExtention(name, buffer, sizeof(buffer));
+		removeExtension(name, buffer, sizeof(buffer));
 
 		/* if (useH32)
 		 *{
@@ -714,7 +712,16 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 								*outObjOvl = linkedObjOvl;
 								*outObjIdx = linkedObjIdx;
 
+								// "Ok" button on the copy protection screen
+								if (!strcmp(overlayTable[currentObject->overlay].overlayName, "XX2") && 
+											(currentObject->idx == 1 || currentObject->idx == 0)) {
+									_vm->sayText("OK", Common::TextToSpeechManager::INTERRUPT);
+								}
+
 								return (currentObject->type);
+							} else if (!strcmp(overlayTable[currentObject->overlay].overlayName, "XX2") && 
+											(currentObject->idx == 1 || currentObject->idx == 0)) {
+								_vm->_previousSaid.clear();
 							}
 						} else {
 							// int numBitPlanes = filesDatabase[j].resType;
@@ -762,7 +769,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 	return -1;
 }
 
-Common::KeyCode keyboardCode = Common::KEYCODE_INVALID;
+Common::CustomEventType action = kActionNone;
+bool endpause = false;
 
 void freeStuff2() {
 	warning("implement freeStuff2");
@@ -811,6 +819,8 @@ void buildInventory(int X, int Y) {
 	if (numObjectInInventory == 0) {
 		freeMenu(menuTable[1]);
 		menuTable[1] = nullptr;
+	} else {
+		_vm->sayText(_vm->langString(ID_INVENTORY), Common::TextToSpeechManager::INTERRUPT);
 	}
 }
 
@@ -836,6 +846,7 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 			currentMenuElementX = pMenuElement->x;
 			currentMenuElementY = pMenuElement->y;
 			currentMenuElement = pMenuElement;
+			_vm->stopTextToSpeech();
 
 			return pMenuElement->ptrSub;
 		}
@@ -958,6 +969,8 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
+	Common::String ttsMessage;
+
 	for (int j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
@@ -1010,6 +1023,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 							const char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
 
 							menuTable[0] = createMenu(x, y, ptrName);
+							ttsMessage = ptrName;
 							first = false;
 						}
 					}
@@ -1036,6 +1050,10 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 				}
 			}
 		}
+	}
+
+	if (found) {
+		_vm->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
 	}
 
 	return found;
@@ -1192,6 +1210,8 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 							userEnabled = 0;
 							freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
 						}
+					} else {
+						_vm->sayQueuedText(Common::TextToSpeechManager::QUEUE);
 					}
 				}
 			}
@@ -1340,6 +1360,8 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						userEnabled = 0;
 						freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
 					}
+				} else {
+					_vm->sayQueuedText(Common::TextToSpeechManager::QUEUE);
 				}
 			}
 		} else {
@@ -1413,65 +1435,63 @@ int CruiseEngine::processInput() {
 	}
 
 	// Check for Exit 'X' key
-	if (keyboardCode == Common::KEYCODE_x)
+	if (action == kActionExit)
 		return 1;
 
 	// Check for Pause 'P' key
-	if (keyboardCode == Common::KEYCODE_p) {
-		keyboardCode = Common::KEYCODE_INVALID;
+	if (action == kActionPause) {
+		action = kActionNone;
+		endpause = false;
 		_vm->pauseEngine(true);
 		mouseOff();
 
-		bool pausedButtonDown = false;
 		while (!_vm->shouldQuit()) {
 			manageEvents();
 			getMouseStatus(&main10, &mouseX, &button, &mouseY);
 
-			if (button) pausedButtonDown = true;
-			else if (pausedButtonDown)
-				// Button released, so exit pause
-				break;
-			else if (keyboardCode != Common::KEYCODE_INVALID)
+			if (endpause)
 				break;
 
 			g_system->delayMillis(10);
 		}
 
-		if (keyboardCode == Common::KEYCODE_x)
+		if (action == kActionExit)
 			// Exit the game
 			return 1;
 
-		keyboardCode = Common::KEYCODE_INVALID;
+		action = kActionNone;
 		_vm->pauseEngine(false);
 		mouseOn();
 		return 0;
 	}
 
 	// Player Menu - test for both buttons or the F10 key
-	if (((button & CRS_MB_BOTH) == CRS_MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
+	if (((button & CRS_MB_BOTH) == CRS_MB_BOTH) || (action == kActionPlayerMenu)) {
 		changeCursor(CURSOR_NORMAL);
-		keyboardCode = Common::KEYCODE_INVALID;
+		action = kActionNone;
 		return (playerMenu(mouseX, mouseY));
 	}
 
 	if (userWait) {
 		// Check for left mouse button click or Space to end user waiting
-		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == CRS_MB_LEFT))
+		if ((action == kActionEndUserWaiting) || (button == CRS_MB_LEFT)) {
 			userWait = false;
+			stopTextToSpeech();
+		}
 
-		keyboardCode = Common::KEYCODE_INVALID;
+		action = kActionNone;
 		return 0;
 	}
 
 	// Handle any changes in game speed
 	if (_speedFlag) {
-		if ((keyboardCode == Common::KEYCODE_KP_PLUS) && (_gameSpeed >= 30)) {
+		if ((action == kActionIncreaseGameSpeed) && (_gameSpeed >= 30)) {
 			_gameSpeed -= 10;
-			keyboardCode = Common::KEYCODE_INVALID;
+			action = kActionNone;
 		}
-		if ((keyboardCode == Common::KEYCODE_KP_MINUS) && (_gameSpeed <= 200)) {
+		if ((action == kActionDecreaseGameSpeed) && (_gameSpeed <= 200)) {
 			_gameSpeed += 10;
-			keyboardCode = Common::KEYCODE_INVALID;
+			action = kActionNone;
 		}
 	}
 
@@ -1498,6 +1518,8 @@ int CruiseEngine::processInput() {
 
 			if (menuTable[0]) {
 				if (dialogFound) {
+					sayText(menuTable[0]->stringPtr, Common::TextToSpeechManager::INTERRUPT);
+
 					currentActiveMenu = 0;
 				} else {
 					freeMenu(menuTable[0]);
@@ -1626,6 +1648,11 @@ int CruiseEngine::processInput() {
 							Common::strcat_s(text, ":");
 							Common::strcat_s(text, currentMenuElement->string);
 							linkedMsgList = renderText(320, (const char *)text);
+
+							Common::String ttsMessage = text;
+							Common::replace(ttsMessage, ":", ": ");
+							sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+
 							changeCursor(CURSOR_CROSS);
 						}
 					}
@@ -1645,9 +1672,9 @@ int CruiseEngine::processInput() {
 				}
 			}
 		}
-	} else if ((button & CRS_MB_RIGHT) || (keyboardCode == Common::KEYCODE_F9)) {
+	} else if ((button & CRS_MB_RIGHT) || (action == kActionInventory)) {
 		if (buttonDown == 0) {
-			keyboardCode = Common::KEYCODE_INVALID;
+			action = kActionNone;
 
 			// close object menu if there is no linked relation
 			if ((linkedRelation == nullptr) && (menuTable[0])) {
@@ -1691,15 +1718,22 @@ bool manageEvents() {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			currentMouseButton |= CRS_MB_LEFT;
+			_vm->_mouseButtonDown = true;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			currentMouseButton &= ~CRS_MB_LEFT;
+			endpause = true;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			currentMouseButton |= CRS_MB_RIGHT;
+			_vm->_mouseButtonDown = true;
 			break;
 		case Common::EVENT_RBUTTONUP:
 			currentMouseButton &= ~CRS_MB_RIGHT;
+			endpause = true;
+			break;
+		case Common::EVENT_JOYBUTTON_DOWN:
+			endpause = true;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			currentMouseX = event.mouse.x;
@@ -1710,30 +1744,30 @@ bool manageEvents() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_playerDontAskQuit = true;
 			break;
-		case Common::EVENT_KEYUP:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_ESCAPE:
+		case Common::EVENT_KEYDOWN:
+			endpause = true;
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == kActionEscape) {
 				currentMouseButton &= ~CRS_MB_MIDDLE;
-				break;
-			default:
-				break;
 			}
 			break;
-		case Common::EVENT_KEYDOWN:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_ESCAPE:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			action = event.customType;
+
+			switch (action) {
+			case kActionFastMode:
+				bFastMode = !bFastMode;
+				break;
+			case kActionEscape:
 				currentMouseButton |= CRS_MB_MIDDLE;
 				break;
 			default:
-				keyboardCode = event.kbd.keycode;
 				break;
 			}
 
-			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
-				bFastMode = !bFastMode;
-				keyboardCode = Common::KEYCODE_INVALID;
-			}
-
+			endpause = true;
+			break;
 		default:
 			break;
 		}
@@ -1942,6 +1976,7 @@ void CruiseEngine::mainLoop() {
 				if (isAnimFinished(narratorOvl, narratorIdx, &actorHead, ATP_MOUSE)) {
 					if (autoMsg != -1) {
 						freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
+						sayQueuedText(Common::TextToSpeechManager::QUEUE);
 
 						char* pText = getText(autoMsg, autoOvl);
 

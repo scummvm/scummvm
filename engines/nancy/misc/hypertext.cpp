@@ -30,7 +30,7 @@ namespace Nancy {
 namespace Misc {
 
 struct MetaInfo {
-	enum Type { kColor, kFont, kMark, kHotspot };
+	enum Type { kColor, kFont, kMark, kHotspot, kUnderline };
 
 	Type type;
 	uint numChars;
@@ -60,6 +60,14 @@ void HypertextParser::setImageName(const Common::Path &name) {
 	_imageName = name;
 }
 
+static uint lineStep(const Font *font) {
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		const uint h = font->getLineHeight();
+		return h + h / 9;
+	}
+	return font->getFontHeight();
+}
+
 void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffsetNonNewline, uint fontID, uint highlightFontID) {
 	using namespace Common;
 
@@ -68,6 +76,10 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 	Graphics::ManagedSurface image;
 
 	_numDrawnLines = 0;
+
+	if (_recordMarkHotspots) {
+		_markHotspots.clear();
+	}
 
 	if (!_imageName.empty()) {
 		g_nancy->_resource->loadImage(_imageName, image);
@@ -82,6 +94,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 		newlineTokens.push(0);
 		int curFontID = fontID;
 		uint numNonSpaceChars = 0;
+		bool hasMark = false;
 
 		// Token braces plus invalid characters that are known to appear in strings
 		Common::StringTokenizer tokenizer(_textLines[lineID], "<>\"");
@@ -159,6 +172,15 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 					currentLine += '\t';
 					continue;
+				case 'u' :
+					// Underline toggle. Paired <u> tags bracket underlined text
+					// (e.g. journal cross-references).
+					if (curToken.size() != 1) {
+						break;
+					}
+
+					metaInfo.push({MetaInfo::kUnderline, numNonSpaceChars, 0});
+					continue;
 				case 'c' :
 					// Color tokens
 					// We keep the positions (excluding spaces) and colors of the color tokens in a queue
@@ -186,7 +208,14 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						break;
 					}
 
-					metaInfo.push({MetaInfo::kMark, numNonSpaceChars, (byte)(curToken[0] - '1')});
+					// Mark token for Nancy 8 and later games. Treated as newline in earlier games
+					if (g_nancy->getGameType() <= kGameTypeNancy7) {
+						currentLine += '\n';
+						newlineTokens.push(numNonSpaceChars);
+					} else {
+						metaInfo.push({MetaInfo::kMark, numNonSpaceChars, (byte)(curToken[0] - '1')});
+						hasMark = true;
+					}
 					continue;
 				default:
 					break;
@@ -194,7 +223,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 				// Ignore non-tokens when they're between braces. This fixes nancy6 scenes 1953 & 1954,
 				// where some sound names slipped through into the text data.
-				debugC(Nancy::kDebugHypertext, "Unrecognized hypertext tag <%s>", curToken.c_str());
+				debugC(kDebugHypertext, "Unrecognized hypertext tag <%s>", curToken.c_str());
 				continue;
 			}
 
@@ -217,20 +246,31 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 		// Do word wrapping on the text, sans tokens. This assumes
 		// all text uses fonts of the same width
 		Array<Common::String> wrappedLines;
-		font->wordWrap(currentLine, textBounds.width(), wrappedLines, 0);
+		int maxWidth = textBounds.width();
+		if (hasMark) {
+			auto *mark = GetEngineData(MARK);
+			assert(mark);
+			maxWidth -= mark->_markSrcs[0].width();
+		}
+		font->wordWrap(currentLine, maxWidth, wrappedLines, 0);
 
 		// Setup most of the hotspot; textbox
 		if (hasHotspot) {
 			hotspot.left = textBounds.left;
-			hotspot.top = textBounds.top + (_numDrawnLines * font->getFontHeight()) - 1;
+			hotspot.top = textBounds.top + (_numDrawnLines * lineStep(font)) - 1;
 			hotspot.setHeight(0);
-			hotspot.setWidth(0);
+			// Conversation responses are clickable across the whole width of the
+			// text area, not only where the glyphs are, so the player can click
+			// (and highlight) anywhere on the line. The MAX() width accumulation
+			// below preserves this since no wrapped line is wider than the area.
+			hotspot.setWidth(textBounds.width());
 		}
 
 		// Go through the wrapped lines and draw them, making sure to
 		// respect color tokens
 		uint totalCharsDrawn = 0;
 		byte colorID = _defaultTextColor;
+		bool underline = false;
 		uint numNewlineTokens = 0;
 		uint horizontalOffset = 0;
 		bool newLineStart = false;
@@ -238,8 +278,13 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 			Common::String &line = wrappedLines[lineNumber];
 			horizontalOffset = 0;
 			newLineStart = false;
+
 			// Draw images
-			if (newlineTokens.front() <= totalCharsDrawn) {
+			if (newlineTokens.empty()) {
+				warning("HypertextParser::drawAllText():: newlineTokens list was empty at line %u out of %u wrapped lines", lineNumber+1, wrappedLines.size());
+			}
+
+			if (!newlineTokens.empty() && newlineTokens.front() <= totalCharsDrawn) {
 				newlineTokens.pop();
 				newLineStart = true;
 
@@ -256,7 +301,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 						_fullSurface.blitFrom(image, _imageSrcs[i],
 							Common::Point(	textBounds.left + horizontalOffset + 1,
-											textBounds.top + _numDrawnLines * highlightFont->getFontHeight() + _imageVerticalOffset));
+											textBounds.top + _numDrawnLines * lineStep(highlightFont) + _imageVerticalOffset));
 						_imageVerticalOffset += _imageSrcs[i].height() - 1;
 
 						if (lineNumber == 0) {
@@ -294,11 +339,16 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 					case MetaInfo::kColor:
 						colorID = change.index;
 						break;
+					case MetaInfo::kUnderline:
+						underline = !underline;
+						break;
 					case MetaInfo::kMark: {
 						auto *mark = GetEngineData(MARK);
 						assert(mark);
 
-						if (lineNumber == 0) {
+						const bool useLineAlignedMark = g_nancy->getGameType() >= kGameTypeNancy10;
+
+						if (!useLineAlignedMark && lineNumber == 0) {
 							// A mark on the first line pushes up all text
 							if (textBounds.top - _imageVerticalOffset > 3) {
 								_imageVerticalOffset -= 3;
@@ -309,13 +359,28 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 						Common::Rect markSrc = mark->_markSrcs[change.index];
 						Common::Rect markDest = markSrc;
-						markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
-							lineNumber == 0 ?
-								textBounds.top - ((font->getFontHeight() + 1) / 2) + _imageVerticalOffset + 4 :
-								textBounds.top + _numDrawnLines * font->getFontHeight() + _imageVerticalOffset - 4);
+						if (useLineAlignedMark) {
+							// Nancy 10+: bottom-anchor the mark to the current line,
+							// matching the original engine. The mark's baseline stays
+							// fixed while sprites of different heights (e.g. an unchecked
+							// box vs. a checked one) grow upward, so toggling a checkbox
+							// does not shift it vertically.
+							const int lineTop = textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset;
+							markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
+								lineTop + font->getFontHeight() - markSrc.height());
+						} else {
+							markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
+								lineNumber == 0 ?
+									textBounds.top - ((font->getFontHeight() + 1) / 2) + _imageVerticalOffset + 4 :
+									textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset - 4);
+						}
 
 						// For now we do not check if we need to go to new line; neither does the original
 						_fullSurface.blitFrom(g_nancy->_graphics->_object0, markSrc, markDest);
+
+						if (_recordMarkHotspots) {
+							_markHotspots.push_back(markDest);
+						}
 
 						horizontalOffset += markDest.width() + 2;
 						break;
@@ -326,7 +391,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 						if (hasHotspot) {
 							hotspot.left = textBounds.left + (newLineStart ? 0 : horizontalOffset + leftOffsetNonNewline);
-							hotspot.top = textBounds.top + _numDrawnLines * font->getFontHeight() + _imageVerticalOffset - 1;
+							hotspot.top = textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset - 1;
 							hotspot.setHeight(0);
 							hotspot.setWidth(0);
 						} else {
@@ -361,19 +426,29 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 				Common::String &stringToDraw = subLine.size() ? subLine : line;
 
 				// Draw the normal text
+				const int drawX = textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline);
+				const int drawY = textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset;
 				font->drawString(				&_fullSurface,
 												stringToDraw,
-												textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline),
-												textBounds.top + _numDrawnLines * font->getFontHeight() + _imageVerticalOffset,
+												drawX,
+												drawY,
 												textBounds.width(),
 												colorID);
+
+				// Underline the segment (the <u> markup toggle) in the text color.
+				if (underline && !stringToDraw.empty()) {
+					const int underlineWidth = font->getStringWidth(stringToDraw);
+					const int underlineY = drawY + font->getFontHeight() - 1;
+					_fullSurface.fillRect(Common::Rect(drawX, underlineY, drawX + underlineWidth, underlineY + 1),
+											font->getColorPixel(colorID));
+				}
 
 				// Then, draw the highlight
 				if (hasHotspot && !_textHighlightSurface.empty()) {
 					highlightFont->drawString(	&_textHighlightSurface,
 												stringToDraw,
 												textBounds.left + horizontalOffset + (newLineStart ? leftOffsetNonNewline : 0),
-												textBounds.top + _numDrawnLines * highlightFont->getFontHeight() + _imageVerticalOffset,
+												textBounds.top + _numDrawnLines * lineStep(highlightFont) + _imageVerticalOffset,
 												textBounds.width(),
 												colorID);
 				}
@@ -391,7 +466,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 					hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(stringToDraw)));
 
 					if (!stringToDraw.empty() && newWrappedLine) {
-						hotspot.setHeight(hotspot.height() + font->getFontHeight());
+						hotspot.setHeight(hotspot.height() + lineStep(font));
 					}
 				}
 
@@ -407,7 +482,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 			++_numDrawnLines;
 
 			// Record the height of the text currently drawn. Used for textbox scrolling
-			_drawnTextHeight = (_numDrawnLines - 1) * font->getFontHeight() + _imageVerticalOffset;
+			_drawnTextHeight = (_numDrawnLines - 1) * lineStep(font) + _imageVerticalOffset;
 		}
 
 		// Draw the footer image(s)
@@ -417,14 +492,14 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 				_fullSurface.blitFrom(image, _imageSrcs[i],
 					Common::Point(	textBounds.left + horizontalOffset + 1,
-									textBounds.top + _numDrawnLines * highlightFont->getFontHeight() + _imageVerticalOffset));
+									textBounds.top + _numDrawnLines * lineStep(highlightFont) + _imageVerticalOffset));
 				_imageVerticalOffset += _imageSrcs[i].height() - 1;
 
 				if (i < _imageLineIDs.size() - 1) {
 					_imageVerticalOffset += (font->getFontHeight() + 1) / 2 + 3;
 				}
 
-				_drawnTextHeight = (_numDrawnLines - 1) * font->getFontHeight() + _imageVerticalOffset;
+				_drawnTextHeight = (_numDrawnLines - 1) * lineStep(font) + _imageVerticalOffset;
 			}
 		}
 
@@ -448,12 +523,12 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 		// Add a newline after every full piece of text
 		++_numDrawnLines;
-		_drawnTextHeight += font->getFontHeight();
+		_drawnTextHeight += lineStep(font);
 	}
 
 	// Add a line's height at end of text to replicate original behavior
 	if (font) {
-		_drawnTextHeight += font->getFontHeight();
+		_drawnTextHeight += lineStep(font);
 	}
 
 	_needsTextRedraw = false;

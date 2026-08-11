@@ -50,9 +50,17 @@ ScriptDynamicSprite *DynamicSprite_Create(int width, int height, int alphaChanne
 ScriptDynamicSprite *DynamicSprite_CreateFromExistingSprite_Old(int slot);
 ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y1, int width, int height);
 
-
-void    add_dynamic_sprite(int gotSlot, Shared::Bitmap *redin, bool hasAlpha = false);
-void    free_dynamic_sprite(int gotSlot);
+// Registers a new dynamic sprite, and returns a slot number;
+// returns 0 if no free slot could be found or allocated.
+// Updates game.SpriteInfos[].
+int     add_dynamic_sprite(std::unique_ptr<AGS::Shared::Bitmap> image, bool has_alpha = false, uint32_t extra_flags = 0u);
+// Registers a new dynamic sprite in the given slot number,
+// previous bitmap on this slot (if any) will be deleted.
+// Returns same slot number on success, or 0 if there was an error.
+// Updates game.SpriteInfos[].
+int     add_dynamic_sprite(int slot, std::unique_ptr<AGS::Shared::Bitmap> image, bool hasAlpha = false, uint32_t extra_flags = 0u);
+// Disposes a dynamic sprite, and frees the slot
+void    free_dynamic_sprite(int slot, bool notify_all = true);
 
 } // namespace AGS3
 

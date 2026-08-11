@@ -111,7 +111,7 @@ Common::SeekableReadStream *IFF::getChunkStream(const Common::String &id, uint i
 	const byte *chunk = getChunk(stringToId(id), size, index);
 
 	if (chunk) {
-		byte *dup = new byte[size];
+		byte *dup = (byte *)malloc(size);
 		memcpy(dup, chunk, size);
 		return new Common::MemoryReadStream(dup, size, DisposeAfterUse::YES);
 	}

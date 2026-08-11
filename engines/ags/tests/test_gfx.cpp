@@ -43,7 +43,7 @@ void Test_GfxSpeed(bool enableSimd, size_t blenderModeStart, size_t blenderModeE
 	uint oldSimdFlags = _G(simd_flags);
 	if (!enableSimd) _G(simd_flags) = AGS3::Globals::SIMD_NONE;
 	if (enableSimd) debug("SIMD optimizations: true\n");
-	else debug("SIMD optmizations: false\n");
+	else debug("SIMD optimizations: false\n");
 	Bitmap *benchgfx32 = BitmapHelper::CreateBitmap(100, 100, 32);
 	Bitmap *benchgfx16 = BitmapHelper::CreateBitmapCopy(benchgfx32, 16);
 	Bitmap *benchgfx8 = BitmapHelper::CreateBitmap(100, 100, 8);
@@ -57,7 +57,7 @@ void Test_GfxSpeed(bool enableSimd, size_t blenderModeStart, size_t blenderModeE
 	Bitmap *graphics[] = {benchgfx32, benchgfx16, benchgfx8};
 	uint64 time = 0, numIters = 0, timeNotStretched = 0, numItersNotStretched = 0, timeCommon = 0, numItersCommon = 0;
 	//int bpps[] = {32, 16, 8};
-	if (blenderModeEnd >= sizeof(blenderModes) / sizeof(blenderModes[0])) blenderModeEnd = (sizeof(blenderModes) / sizeof(blenderModes[0])) - 1;
+	if (blenderModeEnd >= ARRAYSIZE(blenderModes)) blenderModeEnd = (ARRAYSIZE(blenderModes)) - 1;
 	for (int dest = 0; dest < 3; dest++) {
 		for (int gfx = 0; gfx < 3; gfx++) {
 			if (dest == 2 && gfx != 2) continue;
@@ -250,7 +250,7 @@ void Test_BlenderModes() {
 
 void Test_GfxTransparency() {
 	// Test that every transparency which is a multiple of 10 is converted
-	// forth and back without loosing precision
+	// forth and back without losing precision
 	const size_t arr_sz = 11;
 	const int trans100[arr_sz] = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
 	int trans255[arr_sz] = { 0 };

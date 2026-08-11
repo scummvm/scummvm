@@ -101,6 +101,8 @@ Menu::Menu() {
 		_backoutY = 0;
 		_warpX = 0;
 		_warpY = 4;
+		_warpBackoutX = 0;
+		_warpBackoutY = 0;
 	} else {
 		_menuX = 48 * 8;
 		_menuY = 80;
@@ -1214,7 +1216,7 @@ void Menu::drawTitle() {
 		if (g_hdb->_gfx->isFadeActive())
 			break;
 		g_hdb->_gfx->turnOffFade();
-		g_hdb->_gfx->fillScreen(0);
+		g_hdb->_gfx->fillScreen();
 		{
 			_titleCycle++;
 			_rocketY = g_hdb->_screenHeight;	// ycoord

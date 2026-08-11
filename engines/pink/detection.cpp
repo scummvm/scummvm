@@ -48,9 +48,9 @@ static const DebugChannelDef debugFlagList[] = {
 };
 
 
-class PinkMetaEngineDetection : public AdvancedMetaEngineDetection {
+class PinkMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	PinkMetaEngineDetection() : AdvancedMetaEngineDetection(Pink::gameDescriptions, sizeof(ADGameDescription), pinkGames) {
+	PinkMetaEngineDetection() : AdvancedMetaEngineDetection(Pink::gameDescriptions, pinkGames) {
 		_gameIds = pinkGames;
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

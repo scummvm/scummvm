@@ -23,7 +23,7 @@
 #ifndef BAGEL_SPACEBAR_MAIN_LINK_OBJECT_H
 #define BAGEL_SPACEBAR_MAIN_LINK_OBJECT_H
 
-#include "bagel/baglib/link_object.h"
+#include "bagel/spacebar/baglib/link_object.h"
 
 namespace Bagel {
 namespace SpaceBar {

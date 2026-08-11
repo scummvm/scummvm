@@ -27,7 +27,7 @@
 
 namespace Scumm {
 
-static byte waterTileMap[] = {
+static const byte waterTileMap[] = {
 	0x44, 0x40, 0x32, 0x32, 0x3C, 0x38, 0x32, 0x32, // 0x00
 	0x2C, 0x2C, 0x26, 0x26, 0x2A, 0x2A, 0x26, 0x26,
 	0x2F, 0x2D, 0x27, 0x27, 0x2F, 0x2D, 0x27, 0x27, // 0x10
@@ -63,7 +63,7 @@ static byte waterTileMap[] = {
 };
 
 static int magic(int x, int y) {
-	static byte matrix[8][8] = {
+	static const byte matrix[8][8] = {
 		{ 2, 0, 2, 1, 3, 0, 3, 1 } ,
 		{ 3, 1, 0, 3, 2, 1, 0, 2 } ,
 		{ 0, 2, 1, 2, 0, 3, 1, 3 } ,
@@ -102,7 +102,7 @@ void MIF::defineStartLocations(MapFile *map) {
 
 	for (y = 0; y < _dimension; ++y) {
 		for (x = 0; x < _dimension; ++x) {
-			char ch = _centerMap[x][y];
+			int8 ch = _centerMap[x][y];
 
 			if (ch < 0) {
 				int i;
@@ -126,7 +126,7 @@ void MIF::defineStartLocations(MapFile *map) {
 					i = 0;
 					while (i < 3) {
 						if (map->threePlayerPoints[i].x == 0xFFFF) {
-							map->threePlayerPoints[i].y = x * 60;
+							map->threePlayerPoints[i].x = x * 60;
 							map->threePlayerPoints[i].y = y * 60;
 							break;
 						}
@@ -246,7 +246,7 @@ void MIF::defineEnergyPools(MapFile *map) {
 
 void MIF::makeCraters(MapFile *map) {
 	// squarenumber, type, x, y (offset from top left (abs y)). x/y = 9 if none of that type
-	static byte locations[8][3][2] = {
+	static const byte locations[8][3][2] = {
 		{ {1, 1}, {5, 2}, {3, 5} },
 		{ {6, 1}, {1, 6}, {2, 0} },
 		{ {0, 4}, {3, 2}, {6, 5} },
@@ -259,7 +259,7 @@ void MIF::makeCraters(MapFile *map) {
 
 	// I made up the crater patterns for sizes larger than SAI
 	// This will work for maps up to 80x80
-	static byte largegrid[10][10] =  {
+	static byte const largegrid[10][10] =  {
 		{0, 1, 2, 3, 4, 5, 6, 7, 0, 1},
 		{2, 3, 4, 5, 6, 7, 0, 1, 2, 3},
 		{4, 5, 6, 7, 0, 1, 2, 3, 4, 5},
@@ -303,7 +303,7 @@ void MIF::makeCraters(MapFile *map) {
 
 uint16 MIF::findTileFor(int x, int y) {
 	int index;
-	char ch;
+	int8 ch;
 
 	byte aLowBlanks[] = {0x93, 0x94, 0x00, 0x96};
 	byte aMedBlanks[] = {0x97, 0x99, 0x0D, 0x9A};

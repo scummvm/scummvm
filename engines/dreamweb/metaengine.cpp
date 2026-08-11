@@ -31,6 +31,18 @@
 
 static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Enable copy protection"),
+			_s("Enable any copy protection that would otherwise be bypassed by default."),
+			"copy_protection",
+			false,
+			0,
+			0
+		},
+	},
+
+	{
 		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
 			_s("Use original save/load screens"),
@@ -83,7 +95,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-class DreamWebMetaEngine : public AdvancedMetaEngine {
+class DreamWebMetaEngine : public AdvancedMetaEngine<DreamWeb::DreamWebGameDescription> {
 public:
 	const char *getName() const override {
 		return "dreamweb";
@@ -93,13 +105,13 @@ public:
 		return gameGuiOptions;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const DreamWeb::DreamWebGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (saveGameIdx == kSavegameFilePattern)
@@ -135,8 +147,8 @@ bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
-Common::Error DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new DreamWeb::DreamWebEngine(syst, (const DreamWeb::DreamWebGameDescription *)desc);
+Common::Error DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const DreamWeb::DreamWebGameDescription *desc) const {
+	*engine = new DreamWeb::DreamWebEngine(syst,desc);
 	return Common::kNoError;
 }
 
@@ -167,9 +179,9 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 
 int DreamWebMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
+bool DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("DREAMWEB.D%02d", slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

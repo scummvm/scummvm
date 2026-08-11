@@ -122,7 +122,7 @@ private:
 	CTreeItem *findChildInstance(ClassDef *classDef) const;
 
 	/**
-	 * Finds the next sibling occurance of a given class type
+	 * Finds the next sibling occurrence of a given class type
 	 */
 	CTreeItem *findSiblingChildInstanceOf(ClassDef *classDef, CTreeItem *startItem) const;
 private:

@@ -102,7 +102,7 @@ void MoviePlayer::handleNextFrame() {
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_CUSTOM_BACKEND_ACTION_START:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (event.customType == kActionExitCutscene) {
 				_leftButtonDown = true;
 				_rightButtonDown = true;
@@ -421,7 +421,7 @@ MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 
 	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
 	_subtitles.setColor(0xff, 0xff, 0xff);
-	_subtitles.setFont("FreeSans.ttf");
+	_subtitles.setFont("LiberationSans-Regular.ttf");
 }
 
 bool MoviePlayerSMK::load() {
@@ -574,7 +574,7 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 	}
 
 	Common::U32String buf = Common::U32String::format(_("Cutscene file '%s' not found!"), baseName);
-	GUI::MessageDialog dialog(buf, _("OK"));
+	GUI::MessageDialog dialog(buf);
 	dialog.runModal();
 
 	return NULL;

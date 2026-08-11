@@ -4142,7 +4142,7 @@ void MotionTask::updatePositions() {
 				} else if (mt->freeFall(obj->_data.location, sti) == false)
 					moveTaskDone = true;
 			} else {
-				//  If actor was running, go through an abreviated
+				//  If actor was running, go through an abbreviated
 				//  landing sequence by aborting the landing animation
 				//  after the first frame.
 				if (mt->_prevMotionType == kMotionTypeWalk

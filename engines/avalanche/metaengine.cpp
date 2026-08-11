@@ -53,23 +53,23 @@ Common::Platform AvalancheEngine::getPlatform() const {
 
 namespace Avalanche {
 
-class AvalancheMetaEngine : public AdvancedMetaEngine {
+class AvalancheMetaEngine : public AdvancedMetaEngine<AvalancheGameDescription> {
 public:
 	const char *getName() const override {
 		return "avalanche";
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const AvalancheGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override { return 99; }
 	SaveStateList listSaves(const char *target) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-Common::Error AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	*engine = new AvalancheEngine(syst, (const AvalancheGameDescription *)gd);
+Common::Error AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const AvalancheGameDescription *gd) const {
+	*engine = new AvalancheEngine(syst,gd);
 	return Common::kNoError;
 }
 
@@ -93,11 +93,10 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		const Common::String &fname = *filename;
-		int slotNum = atoi(fname.c_str() + fname.size() - 3);
+	for (const auto &filename : filenames) {
+		int slotNum = atoi(filename.c_str() + filename.size() - 3);
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *file = saveFileMan->openForLoading(fname);
+			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
 			if (file) {
 				// Check for our signature.
 				uint32 signature = file->readUint32LE();
@@ -137,9 +136,9 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
+bool AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

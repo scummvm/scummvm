@@ -23,12 +23,23 @@
 #define PLATFORM_SDL_MORPHOS_H
 
 #include "backends/platform/sdl/sdl.h"
+#include "backends/base-backend.h"
 
 class OSystem_MorphOS : public OSystem_SDL {
 public:
+	OSystem_MorphOS() {}
+	virtual ~OSystem_MorphOS();
+
+	bool hasFeature(Feature f) override;
+
 	void init() override;
-	virtual bool hasFeature(Feature f);
+
+	void initBackend() override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
+
+protected:
+	Common::Path getDefaultConfigFileName() override;
+
 };
 
 #endif

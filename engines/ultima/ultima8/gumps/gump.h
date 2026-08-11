@@ -22,10 +22,9 @@
 #ifndef ULTIMA8_GUMPS_GUMP_H
 #define ULTIMA8_GUMPS_GUMP_H
 
-#include "ultima/ultima8/kernel/object.h"
-#include "ultima/ultima8/misc/rect.h"
+#include "common/rect.h"
 #include "ultima/ultima8/gfx/frame_id.h"
-#include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
@@ -51,7 +50,7 @@ protected:
 	int32 _x, _y;         // Gump's position in parent.
 	// Always the upper left corner!
 
-	Rect _dims;           // The dimensions/coord space of the gump
+	Common::Rect32 _dims; // The dimensions/coord space of the gump
 	uint32 _flags;        // Gump flags
 	int32 _layer;         // gump ordering layer
 
@@ -62,7 +61,7 @@ protected:
 
 	//! The Gump list for this gump. This will contain all child gumps,
 	//! as well as all gump widgets.
-	Std::list<Gump *> _children;      // List of all gumps
+	Common::List<Gump *> _children;      // List of all gumps
 	Gump               *_focusChild;  // The child that has focus
 
 	uint16              _notifier;      // Process to notify when we're closing
@@ -241,12 +240,12 @@ public:
 	//
 
 	//! Get the _dims
-	virtual void GetDims(Rect &d) const {
-		d = _dims;
+	const Common::Rect32 &getDims() const {
+		return _dims;
 	}
 
 	//! Set the _dims
-	virtual void SetDims(const Rect &d) {
+	void setDims(const Common::Rect32 &d) {
 		_dims = d;
 	}
 
@@ -279,10 +278,10 @@ public:
 		PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Transform a rectangle to screenspace from gumpspace
-	virtual void GumpRectToScreenSpace(Rect &gr, RectRoundDir r = ROUND_OUTSIDE);
+	virtual void GumpRectToScreenSpace(Common::Rect32 &gr, RectRoundDir r = ROUND_OUTSIDE);
 
 	//! Transform a rectangle to gumpspace from screenspace
-	virtual void ScreenSpaceToGumpRect(Rect &sr, RectRoundDir r = ROUND_OUTSIDE);
+	virtual void ScreenSpaceToGumpRect(Common::Rect32 &sr, RectRoundDir r = ROUND_OUTSIDE);
 
 	//! Trace a click, and return ObjId
 	virtual uint16 TraceObjId(int32 mx, int32 my);

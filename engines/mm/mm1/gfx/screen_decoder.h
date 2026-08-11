@@ -24,6 +24,7 @@
 
 #include "image/image_decoder.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 
 namespace MM {
 namespace MM1 {
@@ -32,10 +33,11 @@ namespace Gfx {
 class ScreenDecoder : public Image::ImageDecoder {
 private:
 	Graphics::Surface _surface;
+	Graphics::Palette _palette;
 public:
 	byte _indexes[4] = { 0 };		// EGA palete indexes used
 public:
-	ScreenDecoder() {}
+	ScreenDecoder() : _palette(0) {}
 	~ScreenDecoder() override;
 
 	void destroy() override;
@@ -49,8 +51,7 @@ public:
 	const Graphics::Surface *getSurface() const override {
 		return &_surface;
 	}
-	const byte *getPalette() const override { return nullptr; }
-	uint16 getPaletteColorCount() const override { return 0; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 	void clear() { _surface.free(); }
 };
 

@@ -33,8 +33,41 @@ public:
 	Room702() : Room() {}
 	~Room702() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
+
+private:
+	static void callback(frac16 myMessage, machine *sender);
+	void conv702a();
+
+	bool _alreadyBeen702Fl = false; // Unused : Set but never used
+
+	int32 _field40 = 0;
+	int32 _ripleyMode = 0;
+	int32 _ripleyShould = 0;
+	int32 _field4C_triggerNum = 0;
+	int32 _guardMode = 0;
+	int32 _guardShould = 0;
+	int32 _field58 = 0; // Useless (but synchronized?) - Always -1?
+
+	int32 _702GuardShadow1Series = 0;
+	int32 _702GuardShadow2Series = 0;
+	int32 _guardStepsAsideTalksSeries = 0;
+	int32 _guardTalksAndBowsSeries = 0;
+	int32 _ringCloseupSeries = 0;
+	int32 _ripSafariWalkerPos1Series = 0;
+	int32 _ripShowsRingSeries = 0;
+	int32 _safariShadow1Series = 0;
+
+	machine *_ringCloseupMach = nullptr;
+	machine *_guardMach = nullptr;
+	machine *_guardShadowMach = nullptr;
+	machine *_ripTalksGuardMach = nullptr;
+	machine *_ripTalksGuardShadowMach = nullptr;
 };
 
 } // namespace Rooms

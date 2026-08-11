@@ -1,5 +1,27 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.scummvm.scummvm;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +31,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
+import android.system.OsConstants;
 import android.util.Log;
 
+import androidx.annotation.Keep;
 import androidx.annotation.RequiresApi;
 
 import java.io.FileNotFoundException;
@@ -18,16 +42,100 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * SAF primitives for C++ FSNode
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class SAFFSTree {
+	@SuppressLint("ObsoleteSdkInt")
+	@SuppressWarnings("DefaultAnnotationParam")
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
+	public interface IOBusyListener {
+		void onIOBusy(float ratio);
+	}
+
+	private static class IOTime {
+		long start;
+		long end;
+		long duration;
+	}
+	// Declare us as busy when I/O waits took more than 90% in 2 secs
+	private static final long IO_BUSINESS_TIMESPAN = 2000;
+	private static final long IO_BUSINESS_THRESHOLD = 1800;
+
+	private static ConcurrentLinkedQueue<IOTime> _lastIOs;
+	private static IOBusyListener _listener;
+
 	private static HashMap<String, SAFFSTree> _trees;
 
-	public static void loadSAFTrees(Context context) {
+	// This map will store the references of all our objects used
+	// by the native side.
+	// This avoids overflowing JNI will a pile of global references
+	private static ConcurrentHashMap<Long, SAFFSNode> _nodes;
+	// This atomic variable will generate unique identifiers for our objects
+	private static AtomicLong _idCounter;
+
+	@SuppressLint("ObsoleteSdkInt")
+	@SuppressWarnings("DefaultAnnotationParam")
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
+	public static void setIOBusyListener(IOBusyListener l) {
+		if (_lastIOs == null) {
+			_lastIOs = new ConcurrentLinkedQueue<>();
+		}
+		_listener = l;
+	}
+
+	private static void reportIO(long start, long end) {
+		if (_listener == null) {
+			return;
+		}
+
+		// Register this new query
+		IOTime entry = new IOTime();
+		entry.start = start;
+		entry.end = end;
+		entry.duration = end - start;
+		_lastIOs.add(entry);
+
+		long deadline = end - IO_BUSINESS_TIMESPAN;
+		long duration = 0;
+
+		// Remove outdated entries and compute the time spent in I/Os
+		Iterator<IOTime> it = _lastIOs.iterator();
+		while (it.hasNext()) {
+			entry = it.next();
+			//Log.d(ScummVM.LOG_TAG, "ENTRY <" + Long.toString(entry.start) + " " + Long.toString(entry.end) + " " + Long.toString(entry.duration) + ">");
+			if (entry.end <= deadline) {
+				// entry is too old
+				it.remove();
+			} else if (entry.start < deadline) {
+				// This entry crossed the deadline
+				duration += entry.end - deadline;
+			} else {
+				duration += entry.duration;
+			}
+		}
+		//Log.d(ScummVM.LOG_TAG, "SUM: " + Long.toString(duration) + " DEADLINE WAS: " + Long.toString(deadline));
+
+		if (duration >= IO_BUSINESS_THRESHOLD && _listener != null) {
+			_listener.onIOBusy((float)duration / IO_BUSINESS_TIMESPAN);
+		}
+	}
+
+	private static void loadSAFTrees(Context context) {
 		final ContentResolver resolver = context.getContentResolver();
+
+		// As this function is called before starting to emit nodes,
+		// we can take the opportunity to setup the reference related stuff here
+		if (_nodes == null) {
+			_nodes = new ConcurrentHashMap<>();
+			_idCounter = new AtomicLong();
+		}
 
 		_trees = new HashMap<>();
 		for (UriPermission permission : resolver.getPersistedUriPermissions()) {
@@ -64,7 +172,52 @@ public class SAFFSTree {
 		return _trees.get(name);
 	}
 
-	@RequiresApi(api = 0)
+	public static class PathResult {
+		public final SAFFSTree tree;
+		public final SAFFSNode node;
+
+		PathResult(SAFFSTree tree, SAFFSNode node) {
+			this.tree = tree;
+			this.node = node;
+		}
+	}
+
+	/**
+	 * Resolves a ScummVM virtual path to SAF objects if it's in the SAF domain.
+	 * Returns null otherwise and throws a FileNotFoundException if the SAF path doesn't exist.
+	 */
+	@SuppressLint("ObsoleteSdkInt")
+	@SuppressWarnings("DefaultAnnotationParam")
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
+	public static PathResult fullPathToNode(Context context, String path, boolean createDirIfNotExists) throws FileNotFoundException {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N ||
+			!path.startsWith("/saf/")) {
+			return null;
+		}
+
+		// This is a SAF fake mount point
+		int slash = path.indexOf('/', 5);
+		if (slash == -1) {
+			slash = path.length();
+		}
+		String treeName = path.substring(5, slash);
+		String innerPath = path.substring(slash);
+
+		SAFFSTree tree = SAFFSTree.findTree(context, treeName);
+		if (tree == null) {
+			throw new FileNotFoundException();
+		}
+		SAFFSNode node = tree.pathToNode(innerPath, createDirIfNotExists);
+		if (node == null) {
+			throw new FileNotFoundException();
+		}
+
+		return new PathResult(tree, node);
+	}
+
+	@SuppressLint("ObsoleteSdkInt")
+	@SuppressWarnings("DefaultAnnotationParam")
+	@RequiresApi(api = Build.VERSION_CODES.BASE)
 	public static void clearCaches() {
 		if (_trees == null) {
 			return;
@@ -74,6 +227,40 @@ public class SAFFSTree {
 		}
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public static void addNodeRef(long nodeId) {
+		assert(nodeId != 0);
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		long newId = node.addRef();
+		assert(newId == nodeId);
+	}
+
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public static void decNodeRef(long nodeId) {
+		assert(nodeId != 0);
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		node.decRef();
+	}
+
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public static SAFFSNode refToNode(long nodeId) {
+		assert(nodeId != 0);
+		return _nodes.get(nodeId);
+	}
+
 	public static class SAFFSNode implements Comparable<SAFFSNode> {
 		public static final int DIRECTORY = 0x01;
 		public static final int WRITABLE  = 0x02;
@@ -81,16 +268,31 @@ public class SAFFSTree {
 		public static final int DELETABLE = 0x08;
 		public static final int REMOVABLE = 0x10;
 
+		/** @noinspection unused
+		 * Read by the C++ side
+		 */
+		@Keep
 		public SAFFSNode _parent;
+		/** @noinspection unused
+		 * Read by the C++ side
+		 */
+		@Keep
 		public String _path;
+		/** @noinspection unused
+		 * Read by the C++ side
+		 */
+		@Keep
 		public String _documentId;
+		/** @noinspection unused
+		 * Read by the C++ side
+		 */
+		@Keep
 		public int _flags;
 
 		private HashMap<String, SoftReference<SAFFSNode>> _children;
 		private boolean _dirty;
-
-		private SAFFSNode() {
-		}
+		private int _refCnt; // Reference counter for the native side
+		private long _id; // Identifier for the native side
 
 		private SAFFSNode reset(SAFFSNode parent, String path, String documentId, int flags) {
 			_parent = parent;
@@ -129,13 +331,48 @@ public class SAFFSTree {
 			}
 			return _path.compareTo(o._path);
 		}
+
+		/** @noinspection unused
+		 * Called by the C++ side
+		 */
+		@Keep
+		public synchronized long addRef() {
+			_refCnt += 1;
+			if (_refCnt > 1) {
+				return _id;
+			}
+			assert(_refCnt == 1);
+
+			if (_id == 0) {
+				_id = _idCounter.incrementAndGet();
+			}
+			_nodes.put(_id, this);
+
+			return _id;
+		}
+
+		public synchronized void decRef() {
+			if (_refCnt == 1) {
+				SAFFSNode tmp = _nodes.remove(_id);
+				assert(tmp == this);
+			}
+			_refCnt -= 1;
+		}
 	}
 
-	private Context _context;
-	private Uri _treeUri;
+	private final Context _context;
+	private final Uri _treeUri;
 
-	private SAFFSNode _root;
-	private String _treeName;
+	/** @noinspection unused
+	 * Read by the C++ side
+	 */
+	@Keep
+	private final SAFFSNode _root;
+	/** @noinspection unused
+	 * Read by the C++ side
+	 */
+	@Keep
+	private final String _treeName;
 
 	public SAFFSTree(Context context, Uri treeUri) {
 		_context = context;
@@ -143,17 +380,33 @@ public class SAFFSTree {
 
 		_root = new SAFFSNode().reset(null, "", DocumentsContract.getTreeDocumentId(treeUri), 0);
 		// Update flags and get name
-		_treeName = stat(_root);
+		String treeName = stat(_root);
+		if (treeName == null) {
+			// The tree likely got deleted
+			// Use the document ID instead as this will let the user do some cleanup
+			treeName = DocumentsContract.getTreeDocumentId(treeUri);
+		}
+		_treeName = treeName;
 	}
 
+	/** @noinspection unused
+	 * Called by the C++ side
+	 */
+	@Keep
 	public String getTreeId() {
 		return Uri.encode(DocumentsContract.getTreeDocumentId(_treeUri));
+	}
+	public String getTreeName() {
+		return _treeName;
+	}
+	public Uri getTreeDocumentUri() {
+		return DocumentsContract.buildDocumentUriUsingTree(_treeUri, _root._documentId);
 	}
 
 	private void clearCache() {
 		ArrayDeque<SAFFSNode> stack = new ArrayDeque<>();
 		stack.push(_root);
-		while (stack.size() > 0) {
+		while (!stack.isEmpty()) {
 			SAFFSNode node = stack.pop();
 			node._dirty = true;
 			if (node._children == null) {
@@ -168,7 +421,11 @@ public class SAFFSTree {
 		}
 	}
 
-	public SAFFSNode pathToNode(String path) {
+	/** @noinspection unused
+	 * Called by the C++ side
+	 */
+	@Keep
+	public SAFFSNode pathToNode(String path, boolean createDirIfNotExists) {
 		String[] components = path.split("/");
 
 		SAFFSNode node = _root;
@@ -183,10 +440,14 @@ public class SAFFSTree {
 				continue;
 			}
 
-			node = getChild(node, component);
-			if (node == null) {
+			SAFFSNode newNode = getChild(node, component);
+			if (newNode == null && createDirIfNotExists) {
+				newNode = createDirectory(node, component);
+			}
+			if (newNode == null) {
 				return null;
 			}
+			node = newNode;
 		}
 		return node;
 	}
@@ -221,6 +482,17 @@ public class SAFFSTree {
 		return results.toArray(new SAFFSNode[0]);
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public SAFFSNode[] getChildren(long nodeId) {
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		return getChildren(node);
+	}
+
 	public Collection<SAFFSNode> fetchChildren(SAFFSNode node) {
 		final ContentResolver resolver = _context.getContentResolver();
 		final Uri searchUri = DocumentsContract.buildChildDocumentsUriUsingTree(_treeUri, node._documentId);
@@ -235,10 +507,16 @@ public class SAFFSTree {
 		HashMap<String, SoftReference<SAFFSNode>> newChildren = new HashMap<>();
 
 		Cursor c = null;
+
+		long startIO = System.currentTimeMillis();
+
 		try {
 			c = resolver.query(searchUri, new String[] { DocumentsContract.Document.COLUMN_DISPLAY_NAME,
 				DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE,
 				DocumentsContract.Document.COLUMN_FLAGS }, null, null, null);
+			if (c == null) {
+				return results;
+			}
 			while (c.moveToNext()) {
 				final String displayName = c.getString(0);
 				final String documentId = c.getString(1);
@@ -248,7 +526,7 @@ public class SAFFSTree {
 				final int ourFlags = SAFFSNode.computeFlags(mimeType, flags);
 
 				SAFFSNode newnode = null;
-				SoftReference<SAFFSNode> oldnodeRef = null;
+				SoftReference<SAFFSNode> oldnodeRef;
 				if (oldChildren != null) {
 					oldnodeRef = oldChildren.remove(displayName);
 					if (oldnodeRef != null) {
@@ -271,22 +549,22 @@ public class SAFFSTree {
 			if (c != null) {
 				c.close();
 			}
+
+			long endIO = System.currentTimeMillis();
+			reportIO(startIO, endIO);
 		}
 
 		return results;
 	}
 
 	public SAFFSNode getChild(SAFFSNode node, String name) {
-		final ContentResolver resolver = _context.getContentResolver();
-		final Uri searchUri = DocumentsContract.buildChildDocumentsUriUsingTree(_treeUri, node._documentId);
-
-		SAFFSNode newnode;
-
-		// This variable is used to hold a strong reference on every children nodes
+		//This variable is used to hold a strong reference on every children nodes
+		//noinspection unused
 		Collection<SAFFSNode> children;
 
 		if (node._children == null || node._dirty) {
 			try {
+				//noinspection UnusedAssignment
 				children = fetchChildren(node);
 			} catch (Exception e) {
 				Log.w(ScummVM.LOG_TAG, "Failed to get children: " + e);
@@ -299,13 +577,14 @@ public class SAFFSTree {
 			return null;
 		}
 
-		newnode = ref.get();
+		SAFFSNode newnode = ref.get();
 		if (newnode != null) {
 			return newnode;
 		}
 
 		// Node reference was stale, force a refresh
 		try {
+			//noinspection UnusedAssignment
 			children = fetchChildren(node);
 		} catch (Exception e) {
 			Log.w(ScummVM.LOG_TAG, "Failed to get children: " + e);
@@ -325,54 +604,135 @@ public class SAFFSTree {
 		return newnode;
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public SAFFSNode getChild(long nodeId, String name) {
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		return getChild(node, name);
+	}
+
 	public SAFFSNode createDirectory(SAFFSNode node, String name) {
 		return createDocument(node, name, DocumentsContract.Document.MIME_TYPE_DIR);
+	}
+
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public SAFFSNode createDirectory(long nodeId, String name) {
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		return createDirectory(node, name);
 	}
 
 	public SAFFSNode createFile(SAFFSNode node, String name) {
 		return createDocument(node, name, "application/octet-stream");
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public SAFFSNode createFile(long nodeId, String name) {
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		return createFile(node, name);
+	}
+
 	public int createReadStream(SAFFSNode node) {
 		return createStream(node, "r");
+	}
+
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public int createReadStream(long nodeId) {
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		return createReadStream(node);
 	}
 
 	public int createWriteStream(SAFFSNode node) {
 		return createStream(node, "wt");
 	}
 
-	public boolean removeNode(SAFFSNode node) {
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public int createWriteStream(long nodeId) {
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		return createWriteStream(node);
+	}
+
+	public int removeNode(SAFFSNode node) {
 		final ContentResolver resolver = _context.getContentResolver();
 		final Uri uri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
 
 		if ((node._flags & SAFFSNode.REMOVABLE) != 0) {
 			final Uri parentUri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._parent._documentId);
+
+			long startIO = System.currentTimeMillis();
+
 			try {
 				if (!DocumentsContract.removeDocument(resolver, uri, parentUri)) {
-					return false;
+					return OsConstants.EIO;
 				}
 			} catch(FileNotFoundException e) {
-				return false;
+				return OsConstants.ENOENT;
+			} finally {
+				long endIO = System.currentTimeMillis();
+				reportIO(startIO, endIO);
 			}
 		} else if ((node._flags & SAFFSNode.DELETABLE) != 0) {
+			long startIO = System.currentTimeMillis();
+
 			try {
 				if (!DocumentsContract.deleteDocument(resolver, uri)) {
-					return false;
+					return OsConstants.EIO;
 				}
 			} catch(FileNotFoundException e) {
-				return false;
+				return OsConstants.ENOENT;
+			} finally {
+				long endIO = System.currentTimeMillis();
+				reportIO(startIO, endIO);
 			}
 		} else {
-			return false;
+			return OsConstants.EPERM;
 		}
 
 		// Cleanup node
 		node._parent._dirty = true;
 		node.reset(null, null, null, 0);
 
-		return true;
+		return 0;
 	}
 
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
+	public int removeNode(long nodeId) {
+		SAFFSNode node = _nodes.get(nodeId);
+		assert(node != null);
+
+		return removeNode(node);
+	}
+
+	/** @noinspection unused
+	 * This version is used by the C++ side
+	 */
+	@Keep
 	public void removeTree() {
 		final ContentResolver resolver = _context.getContentResolver();
 
@@ -401,10 +761,15 @@ public class SAFFSTree {
 			}
 		}
 
+		long startIO = System.currentTimeMillis();
+
 		try {
 			newDocUri = DocumentsContract.createDocument(resolver, parentUri, mimeType, name);
 		} catch(FileNotFoundException e) {
 			return null;
+		} finally {
+			long endIO = System.currentTimeMillis();
+			reportIO(startIO, endIO);
 		}
 		if (newDocUri == null) {
 			return null;
@@ -444,16 +809,23 @@ public class SAFFSTree {
 		final Uri uri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
 
 		ParcelFileDescriptor pfd;
+
+		long startIO = System.currentTimeMillis();
+
 		try {
 			pfd = resolver.openFileDescriptor(uri, mode);
 		} catch(FileNotFoundException e) {
 			return null;
+		} finally {
+			long endIO = System.currentTimeMillis();
+			reportIO(startIO, endIO);
 		}
 
 		return pfd;
 	}
 
 	private int createStream(SAFFSNode node, String mode) {
+		@SuppressWarnings("resource")
 		ParcelFileDescriptor pfd = createFileDescriptor(node, mode);
 		if (pfd == null) {
 			return -1;
@@ -466,10 +838,16 @@ public class SAFFSTree {
 		final Uri uri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
 
 		Cursor c = null;
+
+		long startIO = System.currentTimeMillis();
+
 		try {
 			c = resolver.query(uri, new String[] { DocumentsContract.Document.COLUMN_DISPLAY_NAME,
 				DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_FLAGS }, null, null, null);
-			while (c.moveToNext()) {
+			if (c == null) {
+				return null;
+			}
+			if (c.moveToNext()) {
 				final String displayName = c.getString(0);
 				final String mimeType = c.getString(1);
 				final int flags = c.getInt(2);
@@ -484,13 +862,15 @@ public class SAFFSTree {
 			if (c != null) {
 				try {
 					c.close();
-				} catch (RuntimeException e) {
-					throw e;
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 			}
+
+			long endIO = System.currentTimeMillis();
+			reportIO(startIO, endIO);
 		}
-		// We should never end up here...
+		// We should never end up here
+		// If we do, a tree or a file got likely removed
 		return null;
 	}
 }

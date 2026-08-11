@@ -27,9 +27,6 @@
 
 namespace M4 {
 
-uint32 timer_read();
-uint32 timer_read_dos();
-uint32 timer_read_600();
 uint32 timer_read_60();
 
 } // End of namespace M4

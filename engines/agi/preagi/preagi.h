@@ -25,7 +25,6 @@
 #include "agi/agi.h"
 
 namespace Audio {
-class SoundHandle;
 class PCSpeaker;
 }
 
@@ -50,24 +49,26 @@ enum SelectionTypes {
 	kSelBackspace
 };
 
+// Options for controlling behavior during waits and sound playback
+enum WaitOptions {
+	kWaitBlock          = 0x00, // no event processing, cannot be interrupted
+	kWaitProcessEvents  = 0x01, // process events, stops on quit
+	kWaitAllowInterrupt = 0x03  // process events, stops on input or quit
+};
+
 class PreAgiEngine : public AgiBase {
 	int _gameId;
 
 protected:
 	void initialize() override;
 
-	void pollTimer() {}
 	int getKeypress() override { return 0; }
 	bool isKeypress() override { return false; }
 	void clearKeyQueue() override {}
 
 	PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	~PreAgiEngine() override;
-	int getGameId() {
-		return _gameId;
-	}
-
-	PictureMgr *_picture;
+	int getGameId() const { return _gameId; }
 
 	void clearImageStack() override {}
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
@@ -79,38 +80,38 @@ protected:
 	int loadGame(const Common::String &fileName, bool checkId = true) { return -1; }
 
 	// Game
-	Common::String getTargetName() { return _targetName; }
+	Common::String getTargetName() const { return _targetName; }
 
 	// Screen
 	void clearScreen(int attr, bool overrideDefault = true);
 	void clearGfxScreen(int attr);
 	void setDefaultTextColor(int attr) { _defaultColor = attr; }
+	byte getWhite() const;
 
 	// Keyboard
 	int getSelection(SelectionTypes type);
 
-	int rnd(int hi);
+	// Random number between 1 and max. Example: rnd(2) returns 1 or 2.
+	int rnd(int max);
 
 	// Text
 	void drawStr(int row, int col, int attr, const char *buffer);
-	void drawStrMiddle(int row, int attr, const char *buffer);
 	void clearTextArea();
 	void clearRow(int row);
-	void XOR80(char *buffer);
+	static void XOR80(char *buffer);
 	void printStr(const char *szMsg);
 	void printStrXOR(char *szMsg);
 
 	// Saved Games
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 
-	void playNote(int16 frequency, int32 length);
-	void waitForTimer(int msec_delay);
+	bool playSpeakerNote(int16 frequency, int32 length, WaitOptions options);
+	bool wait(uint32 delay, WaitOptions options = kWaitProcessEvents);
 
 private:
 	int _defaultColor;
 
-	Audio::PCSpeaker *_speakerStream;
-	Audio::SoundHandle *_speakerHandle;
+	Audio::PCSpeaker *_speaker;
 };
 
 } // End of namespace Agi

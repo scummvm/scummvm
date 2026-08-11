@@ -53,14 +53,15 @@ protected:
 		Piece(uint z) : RenderObject(z) {}
 		virtual ~Piece() {}
 
+		Piece(Piece &&) = default;
+
 		Common::Point _gridPos;
 		Common::Point _lastPos;
 
-	protected:
 		bool isViewportRelative() const override { return true; }
 	};
 
-	Common::String getRecordTypeName() const override { return "MazeChasePuzzle"; };
+	Common::String getRecordTypeName() const override { return "MazeChasePuzzle"; }
 	bool isViewportRelative() const override { return true; }
 
 	Common::Rect getScreenPosition(Common::Point gridPos);
@@ -115,6 +116,12 @@ protected:
 	Common::Array<Piece> _pieces;
 
 	int _currentAnimFrame = -1;
+
+	// nancy10 added a byte before the grid selecting how the player piece
+	// leaves the board once it reaches the exit. When zero (the roadrunner
+	// minigame), the piece simply vanishes at the hole; otherwise it slides
+	// off past the edge of the board and stays visible (the nancy5 dancers).
+	bool _pieceDisappearsAtExit = false;
 
 	uint32 _solveSoundPlayTime = 0;
 	bool _solved = false;

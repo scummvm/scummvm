@@ -23,10 +23,13 @@
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 
 #include "common/file.h"
+#include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/compression/unzip.h"
 #include "image/bmp.h"
 
 #include "freescape/freescape.h"
+#include "freescape/zx_tape.h"
 
 namespace Freescape {
 
@@ -125,11 +128,18 @@ void FreescapeEngine::loadDataBundle() {
 	if (versionData != expectedVersion)
 		error("Unexpected version number for freescape.dat: expecting '%s' but found '%s'", expectedVersion.c_str(), versionData);
 	free(versionData);
+
+	if (Common::Archive *archive = makeZxSpectrumTapeArchive(*_gameDescription, ConfMan.getPath("path")))
+		SearchMan.add("freescape-zx-tape", archive, 10);
 }
 
-Graphics::Surface *FreescapeEngine::loadBundledImage(const Common::String &name) {
+Graphics::Surface *FreescapeEngine::loadBundledImage(const Common::String &name, bool appendRenderMode) {
 	Image::BitmapDecoder decoder;
-	Common::Path bmpFilename(name + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp");
+	Common::Path bmpFilename(name + ".bmp");
+
+	if (appendRenderMode)
+		bmpFilename = Common::Path(name + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp");
+
 	debugC(1, kFreescapeDebugParser, "Loading %s from bundled archive", bmpFilename.toString().c_str());
 	if (!_dataBundle->hasFile(bmpFilename))
 		error("Failed to open file %s from bundle", bmpFilename.toString().c_str());

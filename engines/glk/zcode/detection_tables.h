@@ -624,6 +624,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "penury",             "The Algophilists' Penury" },
 	{ "perilousmagic",      "Perilous Magic" },
 	{ "perrysworld",        "Perry's World" },
+	{ "phantomarcade1",     "Phantom of the Arcade" },
+	{ "phantomarcade2",     "Phantom of the Arcade 2: Shadows, Darkness, and Dread" },
 	{ "philosophersstone",  "The Quest for the Philosopher's Stone" },
 	{ "phlegm",             "Phlegm" },
 	{ "phoenix",            "Phoenix's Landing: Destiny" },
@@ -2494,6 +2496,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "starrider",          "Star Rider" },
 	{ "trampelviecher",     "Trampelvieche: Eine Halloween-Kurzgeschichte" },
 	{ "wasserhasser",       "Wasser-Hasser" },
+	{ "whisperedworldta",   "The Whispered World" },
 	{ "wichtel",            "Wichtel" },
 
 	// Textfire Grand Prix 2002 (German)
@@ -3732,7 +3735,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	{ nullptr, nullptr }
 };
-#if defined (hSE_TTS)
+#if defined (USE_TTS)
 #define NONE GUIO3(GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES)
 #define ENTRYS(ID, VERSION, MD5, FILESIZE) { ID, VERSION, MD5, FILESIZE, Common::EN_ANY, GUIO2(GUIO_NOMUSIC, GUIO_NOSUBTITLES) }
 #else
@@ -4618,6 +4621,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("penury", "120528/zblorb", "5d0cb16db2d9e72ce9f27d3764a375a9", 250436),
 	ENTRY0("perilousmagic", "990821", "56901ae08078fc15fb74a50e48101bbf", 66560),
 	ENTRY0("perrysworld", "070501", "6466fe74c657f960521237d5a3274b05", 124300),
+	ENTRY0("phantomarcade1", "080128", "1f296706bfcc50775c185075d00b4bba", 241664),
+	ENTRY0("phantomarcade2", "091022", "9ac5784b96d16fe8a1f4a2eb3824f3ca", 240128),
 	ENTRY0("philosophersstone", "427301", "3684b64c0b5972908af83893ab662bf1", 93696),
 	ENTRY0("phoenix", "080430", "d0c50e5cff1098009fbb9f893e7dc75e", 890884),
 	ENTRY0("phoneboothp2", "961017/Demo", "28d166262aa22fb55fdb9685a5a124ef", 65024),
@@ -6782,6 +6787,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("deklinator", "040630", "1ca69e16e8e3e1941eb5c4cd403b2022", 103424, Common::DE_DEU),
 	ENTRY1("dermantel", "100913", "81155fc7363968d2a47612d13d12830d", 281564, Common::DE_DEU),
 	ENTRY1("diegerechtenricht", "101024", "47f0308a684a569ed6df68dbdc92387e", 439064, Common::DE_DEU),
+	ENTRY1("drakdiamanten_zcode", "230707", "8d1c7c9aeaf4ed6e55fb8eda0a7d4c61", 475998, Common::DE_DEU),
 	ENTRY1("drakdiamanten_zcode", "240103", "484eead39ed34619a3af8a23e1e94b6e", 476510, Common::DE_DEU),
 	ENTRY1("eskmausden", "130714", "71d37a2c11f9c0b085ff1ce06ba488f9", 199168, Common::DE_DEU),
 	ENTRY1("halb2", "020523", "d424290a37b5efc67482e4fc9224bc0e", 30208, Common::DE_DEU),
@@ -6798,6 +6804,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("starrider", "040110", "6c42a3e46e29419d9d0e3786117ab94b", 222208, Common::DE_DEU),
 	ENTRY1("wasserhasser", "140105/z5", "b87ebdaca633e964a575abd70cb88c5a", 151040, Common::DE_DEU),
 	ENTRY1("wasserhasser", "140105/zblorb", "1d332f660aec117a4460d0555a2b30f6", 165336, Common::DE_DEU),
+	ENTRY1("whisperedworldta", "090401/Demo", "863627aea7e6095d75d175375072bdef", 146432, Common::DE_DEU),
 	ENTRY1("wichtel", "021006", "f52166e02c6bd5e0311145683f415ef5", 88576, Common::DE_DEU),
 
 	// Textfire Grand Prix 2002 (German)
@@ -7248,14 +7255,14 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph10_sobrevive", "021127", "f951b4a1540035a90c470fc9016ed39f", 111616, Common::ES_ESP),
 
 	// Swedish games
-	ENTRY1("aventyr", "071029", "fff0eb351b418ada4010d56c4298d6ac", 133632, Common::SE_SWE),
-	ENTRY1("drakmagi_zcode", "080419", "12739044930fc939b0adf0efd5432713", 98304, Common::SE_SWE),
-	ENTRY1("hotellet", "041212", "efb166d12edc19b19dd1d6e99d67800e", 109056, Common::SE_SWE),
-	ENTRY1("pangnyheten", "040916", "2049135115dff02b2baf1b7bfb59606c", 185856, Common::SE_SWE),
-	ENTRY1("storforsen", "041212", "5e3c06b6b0650f938d2831b2aac98153", 103936, Common::SE_SWE),
-	ENTRY1("stuga", "090712/z5", "c9be7126299f47dfd395af5b951233ff", 122368, Common::SE_SWE),
-	ENTRY1("stuga", "090712/zblorb", "58eef72aada351e7e059202ab00342c4", 588800, Common::SE_SWE),
-	ENTRY1("vanyar_zcode", "030613", "abbc2b2fa0f5e922b45a3f8698ba9ad1", 110080, Common::SE_SWE),
+	ENTRY1("aventyr", "071029", "fff0eb351b418ada4010d56c4298d6ac", 133632, Common::SV_SWE),
+	ENTRY1("drakmagi_zcode", "080419", "12739044930fc939b0adf0efd5432713", 98304, Common::SV_SWE),
+	ENTRY1("hotellet", "041212", "efb166d12edc19b19dd1d6e99d67800e", 109056, Common::SV_SWE),
+	ENTRY1("pangnyheten", "040916", "2049135115dff02b2baf1b7bfb59606c", 185856, Common::SV_SWE),
+	ENTRY1("storforsen", "041212", "5e3c06b6b0650f938d2831b2aac98153", 103936, Common::SV_SWE),
+	ENTRY1("stuga", "090712/z5", "c9be7126299f47dfd395af5b951233ff", 122368, Common::SV_SWE),
+	ENTRY1("stuga", "090712/zblorb", "58eef72aada351e7e059202ab00342c4", 588800, Common::SV_SWE),
+	ENTRY1("vanyar_zcode", "030613", "abbc2b2fa0f5e922b45a3f8698ba9ad1", 110080, Common::SV_SWE),
 
 	// Playfic games
 	ENTRY0("1hour52min15sec", "190319", "9b6b06de44936164c6ebb2cc0e52bbb6", 179712),

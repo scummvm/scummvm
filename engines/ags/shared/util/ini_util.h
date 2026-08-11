@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_UTIL_INI_UTIL_H
 #define AGS_SHARED_UTIL_INI_UTIL_H
 
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {

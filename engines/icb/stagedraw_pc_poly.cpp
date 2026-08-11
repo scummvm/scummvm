@@ -246,7 +246,7 @@ void OpenTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, ui
 	rs_anims->Res_purge(tex_name, tex_hash, base, base_hash, 0);
 }
 
-// gets a handle to a texture, loading it in if necesary
+// gets a handle to a texture, loading it in if necessary
 TextureHandle *GetRegisteredTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, uint32 pal_hash, const char *base, uint32 base_hash) {
 	int32 i;
 
@@ -274,7 +274,7 @@ TextureHandle *GetRegisteredTexture(const char *tex_name, uint32 tex_hash, const
 void PreRegisterTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, uint32 pal_hash, const char *base, uint32 base_hash) {
 	TextureHandle *th = GetRegisteredTexture(tex_name, tex_hash, pal_name, pal_hash, base, base_hash);
 	if (!th)
-		Fatal_error("Cant open texture:palette %s:%s\n", tex_name, pal_name);
+		Fatal_error("Can't open texture:palette %s:%s\n", tex_name, pal_name);
 }
 
 void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShadeList &shadelist, MATRIXPC *local2screen, int32 *brightnessReturn) {
@@ -1978,7 +1978,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 	// Draw weather effects
 	set->DrawWeather();
 
-	// Draw the screen effects (widescreen fades ect)
+	// Draw the screen effects (widescreen fades etc)
 	surface_manager->DrawEffects(working_buffer_id);
 }
 

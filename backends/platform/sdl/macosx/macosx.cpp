@@ -33,7 +33,11 @@
 #include "backends/platform/sdl/macosx/macosx-window.h"
 #include "backends/updates/macosx/macosx-updates.h"
 #include "backends/taskbar/macosx/macosx-taskbar.h"
+#ifdef USE_NS_SPEECH_SYNTHESIZER
 #include "backends/text-to-speech/macosx/macosx-text-to-speech.h"
+#else
+#include "backends/text-to-speech/avfaudio/avfaudio-text-to-speech.h"
+#endif
 #include "backends/dialogs/macosx/macosx-dialogs.h"
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
 #include "backends/fs/posix/posix-fs.h"
@@ -114,8 +118,26 @@ void OSystem_MacOSX::initBackend() {
 
 #ifdef USE_TTS
 	// Initialize Text to Speech manager
+#ifdef USE_NS_SPEECH_SYNTHESIZER
 	_textToSpeechManager = new MacOSXTextToSpeechManager();
+#else
+	_textToSpeechManager = new AVFAudioTextToSpeechManager();
 #endif
+#endif
+
+	// Migrate savepath.
+	// It used to be in ~/Documents/ScummVM Savegames/, but was changed to use the application support
+	// directory. To migrate old config files we use a flag to indicate if the config file was migrated.
+	// This allows detecting old config files. If the flag is not set we:
+	// 1. Set the flag
+	// 2. If the config file has no custom savepath and has some games, we set the savepath to the old default.
+	if (!ConfMan.hasKey("macos_savepath_migrated", Common::ConfigManager::kApplicationDomain)) {
+		if (!ConfMan.hasKey("savepath", Common::ConfigManager::kApplicationDomain) && !ConfMan.getGameDomains().empty()) {
+			ConfMan.set("savepath", getDocumentsPathMacOSX() + "/ScummVM Savegames", Common::ConfigManager::kApplicationDomain);
+		}
+		ConfMan.setBool("macos_savepath_migrated", true, Common::ConfigManager::kApplicationDomain);
+		ConfMan.flushToDisk();
+	}
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();

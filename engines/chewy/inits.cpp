@@ -115,7 +115,7 @@ void var_init() {
 
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 		_G(PersonAni)[i] = -1;
-		_G(PersonTaf)[i] = 0;
+		_G(PersonTaf)[i] = nullptr;
 		_G(spieler_mi)[i].Mode = false;
 
 		_G(ani_stand_flag)[i] = false;

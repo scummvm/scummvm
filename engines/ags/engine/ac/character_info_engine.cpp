@@ -43,20 +43,19 @@ using namespace AGS::Shared;
 
 #define Random __Rand
 
-int CharacterInfo::get_effective_y() {
-	return y - z;
-}
-int CharacterInfo::get_baseline() {
+int CharacterInfo::get_baseline() const {
 	if (baseline < 1)
 		return y;
 	return baseline;
 }
-int CharacterInfo::get_blocking_top() {
+
+int CharacterInfo::get_blocking_top() const {
 	if (blocking_height > 0)
 		return y - blocking_height / 2;
 	return y - 2;
 }
-int CharacterInfo::get_blocking_bottom() {
+
+int CharacterInfo::get_blocking_bottom() const {
 	// the blocking_bottom should be 1 less than the top + height
 	// since the code does <= checks on it rather than < checks
 	if (blocking_height > 0)
@@ -64,19 +63,12 @@ int CharacterInfo::get_blocking_bottom() {
 	return y + 3;
 }
 
-void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, std::vector<int> &followingAsSheep) {
-	int res;
+void CharacterInfo::FixupCurrentLoopAndFrame() {
+	// If current loop property exceeds number of loops,
+	// or if selected loop has no frames, then try select any first loop that has frames.
+	// NOTE: although this may seem like a weird solution to a problem,
+	// we do so for backwards compatibility; this approximately emulates older games behavior.
 
-	if (on != 1) return;
-
-	// walking
-	res = update_character_walking(chex);
-	// [IKM] Yes, it should return! upon getting RETURN_CONTINUE here
-	if (res == RETURN_CONTINUE) { // [IKM] now, this is one of those places...
-		return;                   //  must be careful not to screw things up
-	}
-
-	// Fixup character's view when possible
 	if (view >= 0 &&
 		(loop >= _GP(views)[view].numLoops || _GP(views)[view].loops[loop].numFrames == 0)) {
 		for (loop = 0;
@@ -86,13 +78,37 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, st
 			// view has no frames?!
 			// amazingly enough there are old games that allow this to happen...
 			if (_G(loaded_game_file_version) >= kGameVersion_300)
-				quitprintf("!Character %s is assigned view %d that has no frames!", name, view);
+				quitprintf("!Character %s is assigned view %d that has no frames!", scrname, view);
 			loop = 0;
 		}
 	}
 
-	int doing_nothing = 1;
+	// If the last saved frame exceeds a new loop, then switch to frame 1
+	// (first walking frame) if walking, or frame 0 otherwise or if there's less than 2 frames.
+	int frames_in_loop = _GP(views)[view].loops[loop].numFrames;
+	if (frame >= frames_in_loop) {
+		frame = (walking > 0 && frames_in_loop > 1) ? 1 : 0;
+	}
+}
 
+void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, std::vector<int> &followingAsSheep) {
+	int res;
+
+	if (on != 1)
+		return;
+
+	// Turn around during walk
+	res = update_character_walkturning(chex);
+	// Fixup character's loop prior to any further logic updates
+	FixupCurrentLoopAndFrame();
+
+	// FIXME: refactor this nonsense!
+	// [IKM] Yes, it should return! upon getting RETURN_CONTINUE here
+	if (res == RETURN_CONTINUE) { // [IKM] now, this is one of those places...
+		return;                   //  must be careful not to screw things up
+	}
+
+	int doing_nothing = 1;
 	update_character_moving(char_index, chex, doing_nothing);
 
 	// [IKM] 2012-06-28:
@@ -125,7 +141,7 @@ void CharacterInfo::UpdateFollowingExactlyCharacter() {
 		baseline = usebase + 1;
 }
 
-int CharacterInfo::update_character_walking(CharacterExtras *chex) {
+int CharacterInfo::update_character_walkturning(CharacterExtras *chex) {
 	if (walking >= TURNING_AROUND) {
 		// Currently rotating to correct direction
 		if (walkwait > 0) walkwait--;
@@ -150,9 +166,6 @@ int CharacterInfo::update_character_walking(CharacterExtras *chex) {
 				} else break;
 			}
 			loop = turnlooporder[wantloop];
-			if (frame >= _GP(views)[view].loops[loop].numFrames)
-				frame = 0; // AVD: make sure the loop always has a valid frame
-			if (frame >= _GP(views)[view].loops[loop].numFrames) frame = 0; // AVD: make sure the loop always has a valid frame
 			walking -= TURNING_AROUND;
 			// if still turning, wait for next frame
 			if (walking % TURNING_BACKWARDS >= TURNING_AROUND)
@@ -208,20 +221,8 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				walkwaitcounter++;
 		}
 
-		if (loop >= _GP(views)[view].numLoops)
-			quitprintf("Unable to render character %d (%s) because loop %d does not exist in view %d", index_id, name, loop, view + 1);
-
-		// check don't overflow loop
-		int framesInLoop = _GP(views)[view].loops[loop].numFrames;
-		if (frame > framesInLoop) {
-			frame = 1;
-
-			if (framesInLoop < 2)
-				frame = 0;
-
-			if (framesInLoop < 1)
-				quitprintf("Unable to render character %d (%s) because there are no frames in loop %d", index_id, name, loop);
-		}
+		// Fixup character's loop, it may be changed when making a walk-move
+		FixupCurrentLoopAndFrame();
 
 		doing_nothing = 0; // still walking?
 
@@ -235,7 +236,7 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				// use standing pic
 				chex->animwait = 0;
 				frame = 0;
-				CheckViewFrameForCharacter(this);
+				chex->CheckViewFrame(this);
 			}
 		} else if (chex->animwait > 0) {
 			chex->animwait--;
@@ -260,13 +261,15 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				else
 					walkwait = 0;
 
-				CheckViewFrameForCharacter(this);
+				chex->CheckViewFrame(this);
 			}
 		}
 	}
 }
 
 int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
+	CharacterExtras *chex = &_GP(charextra)[index_id];
+
 	// not moving, but animating
 	// idleleft is <0 while idle view is playing (.animating is 0)
 	if (((animating != 0) || (idleleft < 0)) &&
@@ -290,7 +293,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 
 			if (frame != fraa) {
 				frame = fraa;
-				CheckViewFrameForCharacter(this);
+				chex->CheckViewFrame(this);
 			}
 
 			//continue;
@@ -309,8 +312,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 				done_anim = true;
 				frame = 0;
 			} else {
-				if (!CycleViewAnim(view, loop, frame, (animating & CHANIM_BACKWARDS) == 0,
-					(animating & CHANIM_REPEAT) ? ANIM_REPEAT : ANIM_ONCE)) {
+				if (!CycleViewAnim(view, loop, frame, get_anim_forwards(), get_anim_repeat())) {
 					done_anim = true; // finished animating
 					// end of idle anim
 					if (idleleft < 0) {
@@ -331,10 +333,10 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			if (idleleft < 0)
 				wait += idle_anim_speed;
 			else
-				wait += (animating >> 8) & 0x00ff;
+				wait += get_anim_delay();
 
 			if (frame != oldframe)
-				CheckViewFrameForCharacter(this);
+				chex->CheckViewFrame(this);
 
 			if (done_anim)
 				stop_character_anim(this);
@@ -400,10 +402,10 @@ void CharacterInfo::update_character_follower(int &aa, std::vector<int> &followi
 				}
 			}
 		} else if (room != _G(displayed_room)) {
-			// if the characetr is following another character and
+			// if the character is following another character and
 			// neither is in the current room, don't try to move
-		} else if ((abs(_GP(game).chars[following].x - x) > distaway + 30) |
-		           (abs(_GP(game).chars[following].y - y) > distaway + 30) |
+		} else if ((abs(_GP(game).chars[following].x - x) > distaway + 30) ||
+		           (abs(_GP(game).chars[following].y - y) > distaway + 30) ||
 		           ((followinfo & 0x00ff) == 0)) {
 			// in same room
 			int goxoffs = (Random(50) - 25);
@@ -455,7 +457,7 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 			else if (useloop >= maxLoops)
 				useloop = 0;
 
-			animate_character(this, useloop, idle_anim_speed, (idletime == 0) ? 1 : 0, 1);
+			animate_character(this, useloop, idle_anim_speed, (idletime == 0) ? 1 : 0 /* repeat */);
 
 			// don't set Animating while the idle anim plays (TODO: investigate why?)
 			animating = 0;

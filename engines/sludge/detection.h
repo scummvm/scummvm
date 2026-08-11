@@ -25,6 +25,8 @@
 namespace Sludge {
 
 struct SludgeGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	uint languageID;
 };

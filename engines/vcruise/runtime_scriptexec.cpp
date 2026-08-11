@@ -542,6 +542,7 @@ void Runtime::scriptOpItemClear(ScriptArg_t arg) {
 			item.highlighted = false;
 			item.itemID = 0;
 			item.graphic.reset();
+			item.mask.reset();
 			drawInventory(slot);
 		}
 	}
@@ -2314,7 +2315,8 @@ void Runtime::scriptOpRSet(ScriptArg_t arg) {
 
 				_inventoryActiveItem.itemID = itemID;
 				getFileNamesForItemGraphic(itemID, itemFileName, alphaFileName);
-				_inventoryActiveItem.graphic = loadGraphic(itemFileName, alphaFileName, false);
+				_inventoryActiveItem.graphic = loadGraphic(itemFileName, false);
+				_inventoryActiveItem.mask = loadGraphic(alphaFileName, false);
 
 				clearActiveItemGraphic();
 				drawActiveItemGraphic();

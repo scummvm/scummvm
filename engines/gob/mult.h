@@ -121,8 +121,8 @@ public:
 		byte* field_3C;
 		char animName[16];
 		int8 field_50;
-		int16* animVariables;
-		bool ownAnimVariables;
+		VariableReferenceArray *animVariables;
+		//bool ownAnimVariables;
 	} PACKED_STRUCT;
 
 	struct Mult_StaticKey {

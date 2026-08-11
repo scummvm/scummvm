@@ -20,17 +20,80 @@
  */
 
 #include "m4/riddle/rooms/section6/room647.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
 void Room647::init() {
+	switch (_G(game).previous_room) {
+	case KERNEL_RESTORING_GAME:
+		digi_preload("950_s28c");
+		break;
+
+	case 641:
+		ws_demand_location(_G(my_walker), 320, 353, 1);
+		break;
+
+	case 646:
+		ws_demand_location(_G(my_walker), -30, 330, 3);
+		ws_walk(_G(my_walker), 30, 330, nullptr, 1, 3);
+		player_set_commands_allowed(false);
+		break;
+
+	case 648:
+		ws_demand_location(_G(my_walker), 670, 307, 9);
+		ws_walk(_G(my_walker), 610, 307, nullptr, 1, 9);
+		player_set_commands_allowed(false);
+		break;
+
+	case 651:
+		ws_demand_location(_G(my_walker), 0, 292, 5);
+		break;
+
+	default:
+		digi_preload("950_s28c");
+		ws_demand_location(_G(my_walker), 320, 353, 1);
+		break;
+	}
+
+	digi_play_loop("950_s28c", 3);
 }
 
-void Room647::daemon() {
+void Room647::parser() {
+	Maze::parser();
+	checkExitLeft(646);
+	checkExitRight(648);
+	checkExitUp(651);
+
+	if (player_said("up2")) {
+		_G(flags)[V206] = 1;
+
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			_G(player).command_ready = false;
+			break;
+
+		case 1:
+			digi_stop(1);
+			digi_stop(2);
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s28", 3);
+			_G(game).setRoom(651);
+			_G(player).command_ready = false;
+			break;
+
+		default:
+			checkExitDown(641);
+			break;
+		}
+	} else {
+		checkExitDown(641);
+	}
 }
 
 } // namespace Rooms

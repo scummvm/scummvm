@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/font/base_font_truetype.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 
 namespace Wintermute {
 
@@ -82,9 +83,9 @@ bool BaseFont::persist(BasePersistenceManager *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const Common::String &filename) {
-	if (isTrueType(gameRef,  filename)) {
-		BaseFontTT *font = new BaseFontTT(gameRef);
+BaseFont *BaseFont::createFromFile(BaseGame *game, const char *filename) {
+	if (isTrueType(game, filename)) {
+		BaseFontTT *font = new BaseFontTT(game);
 		if (font) {
 			if (DID_FAIL(font->loadFile(filename))) {
 				delete font;
@@ -93,7 +94,7 @@ BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const Common::String &file
 		}
 		return font;
 	} else {
-		BaseFontBitmap *font = new BaseFontBitmap(gameRef);
+		BaseFontBitmap *font = new BaseFontBitmap(game);
 		if (font) {
 			if (DID_FAIL(font->loadFile(filename))) {
 				delete font;
@@ -110,14 +111,14 @@ TOKEN_DEF(FONT)
 TOKEN_DEF(TTFONT)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
+bool BaseFont::isTrueType(BaseGame *game, const char *filename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(FONT)
 	TOKEN_TABLE(TTFONT)
 	TOKEN_TABLE_END
 
 
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
 		return false;
 	}
@@ -125,7 +126,7 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 	char *workBuffer = buffer;
 
 	char *params;
-	BaseParser parser;
+	BaseParser parser(game);
 
 	bool ret = false;
 	if (parser.getCommand(&workBuffer, commands, &params) == TOKEN_TTFONT) {

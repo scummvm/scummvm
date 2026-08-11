@@ -148,7 +148,7 @@ class Settings : public SettingsData, public Observable<Settings *> {
 	typedef Common::HashMap<Common::String, Common::String> SettingsMap;
 private:
 	static Settings *_instance;
-	Std::vector<Common::String> _battleDiffs;
+	Common::Array<Common::String> _battleDiffs;
 private:
 	/**
 	 * Default contructor.  Settings is a singleton so this is private.
@@ -174,7 +174,7 @@ public:
 	 */
 	bool write();
 
-	const Std::vector<Common::String> &getBattleDiffs();
+	const Common::Array<Common::String> &getBattleDiffs();
 };
 
 /* the global settings */

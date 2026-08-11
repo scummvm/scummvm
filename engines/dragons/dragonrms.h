@@ -21,8 +21,6 @@
 #ifndef DRAGONS_DRAGONRMS_H
 #define DRAGONS_DRAGONRMS_H
 
-#include "common/system.h"
-
 namespace Dragons {
 
 struct RMS {

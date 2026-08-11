@@ -26,11 +26,9 @@
 
 namespace Pegasus {
 
-enum {
-	GF_DVD = (1 << 1)
-};
-
 struct PegasusGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
 

@@ -35,13 +35,11 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/opengl.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 namespace hpl {
 
 //-------------------------------------------------
-
-GLenum ColorFormatToGL(eColorDataFormat format);
 
 GLenum TextureTargetToGL(eTextureTarget target);
 
@@ -313,5 +311,5 @@ private:
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL
 #endif // HPL_LOWLEVELGRAPHICS_SDL_H

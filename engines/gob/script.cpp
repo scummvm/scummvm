@@ -162,6 +162,7 @@ byte Script::readByte() {
 
 	n = read(&v, 1);
 	assert(n == 1);
+	(void)n;
 
 	return v;
 }
@@ -180,6 +181,7 @@ uint16 Script::readUint16() {
 
 	n = read(v, 2);
 	assert(n == 2);
+	(void)n;
 
 	return READ_LE_UINT16(v);
 }
@@ -190,6 +192,7 @@ uint32 Script::readUint32() {
 
 	n = read(v, 4);
 	assert(n == 4);
+	(void)n;
 
 	return READ_LE_UINT32(v);
 }
@@ -287,7 +290,7 @@ void Script::skipExpr(char stopToken) {
 	_expression->skipExpr(stopToken);
 }
 
-char Script::evalExpr(int16 *pRes) {
+char Script::evalExpr(int32 *pRes) {
 	byte type;
 
 	_expression->printExpr(99);

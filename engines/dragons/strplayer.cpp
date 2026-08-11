@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/events.h"
 #include "video/psx_decoder.h"
 #include "dragons/dragons.h"
 #include "dragons/screen.h"

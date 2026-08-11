@@ -241,11 +241,6 @@ void CBofString::concatInPlace(int nSrcLen, const char *lpszSrcData) {
 			_nLength = (uint16)(_nLength + (uint16)nSrcLen);
 
 		} else {
-			// Handle no buffer in place.
-			if (NORMALIZEBUFFERSIZE() == 0) {
-				allocBuffer(_nLength + nAllocAmount);
-			}
-
 			assert(_pszData != nullptr);
 
 			// We have to grow the buffer, use the concat in place routine
@@ -485,7 +480,7 @@ void CBofString::replaceChar(char chOld, char chNew) {
 	assert(chOld != '\0');
 
 	if (_pszData != nullptr) {
-		// Walk thru the string and replace the specified character
+		// Walk through the string and replace the specified character
 		char *p = _pszData;
 		for (int i = 0; i < _nLength; i++) {
 			if (*p == chOld) {

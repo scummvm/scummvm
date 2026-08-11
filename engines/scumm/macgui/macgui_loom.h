@@ -35,33 +35,33 @@ public:
 	MacLoomGui(ScummEngine *vm, const Common::Path &resourceFile);
 	~MacLoomGui();
 
-	const Common::String name() const { return "Loom"; }
+	const Common::String name() const override { return "Loom"; }
+	int getNumColors() const override { return 16; }
 
-	bool handleEvent(Common::Event event);
+	bool handleEvent(Common::Event event) override;
 
-	const Graphics::Font *getFontByScummId(int32 id);
+	const Graphics::Font *getFontByScummId(int32 id) override;
 
-	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
+	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) override;
 
-	void resetAfterLoad();
-	void update(int delta);
+	void resetAfterLoad() override;
+	void update(int delta) override;
 
 	void runDraftsInventory();
 
 protected:
-	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const override;
 
-	bool handleMenu(int id, Common::String &name);
+	void updateMenus() override;
+	bool handleMenu(int id, Common::String &name) override;
 
-	void runAboutDialog();
-	bool runOpenDialog(int &saveSlotToHandle);
-	bool runSaveDialog(int &saveSlotToHandle, Common::String &name);
-	bool runOptionsDialog();
+	void runAboutDialog() override;
+	bool runOptionsDialog() override;
 
 private:
 	Graphics::Surface *_practiceBox = nullptr;
 	Common::Point _practiceBoxPos;
-	int _practiceBoxNotes;
+	int _practiceBoxNotes = 0;
 };
 
 } // End of namespace Scumm

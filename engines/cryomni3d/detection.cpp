@@ -50,10 +50,9 @@ static const DebugChannelDef debugFlagList[] = {
 
 namespace CryOmni3D {
 
-class CryOmni3DMetaEngineDetection : public AdvancedMetaEngineDetection {
+class CryOmni3DMetaEngineDetection : public AdvancedMetaEngineDetection<CryOmni3DGameDescription> {
 public:
-	CryOmni3DMetaEngineDetection() : AdvancedMetaEngineDetection(CryOmni3D::gameDescriptions,
-				sizeof(CryOmni3DGameDescription), cryomni3DGames) {
+	CryOmni3DMetaEngineDetection() : AdvancedMetaEngineDetection(CryOmni3D::gameDescriptions, cryomni3DGames) {
 		_directoryGlobs = directoryGlobs;
 		_maxScanDepth = 5;
 	}

@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
+#include "sci/detection_internal.h"
 #include "sci/dialogs.h"
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
@@ -41,98 +42,6 @@
 #include "sci/engine/state.h"
 
 namespace Sci {
-
-struct GameIdStrToEnum {
-	const char *gameidStr;
-	const char *sierraIdStr;
-	SciGameId gameidEnum;
-	bool isSci32;
-	SciVersion version;
-};
-
-static const GameIdStrToEnum s_gameIdStrToEnum[] = {
-	{ "astrochicken",    "",                GID_ASTROCHICKEN,     false, SCI_VERSION_NONE },	// Sierra ID is "sq3", distinguished by resource count
-	{ "camelot",         "arthur",          GID_CAMELOT,          false, SCI_VERSION_NONE },
-	{ "castlebrain",     "brain",           GID_CASTLEBRAIN,      false, SCI_VERSION_1_LATE },	// Amiga is SCI1 middle, PC SCI1 late
-	{ "chest",           "archive",         GID_CHEST,            true,  SCI_VERSION_NONE },
-	{ "christmas1988",   "demo",            GID_CHRISTMAS1988,    false, SCI_VERSION_0_EARLY },
-	{ "christmas1990",   "card",            GID_CHRISTMAS1990,    false, SCI_VERSION_1_EARLY },
-	{ "christmas1992",   "card",            GID_CHRISTMAS1992,    false, SCI_VERSION_1_1 },
-	{ "cnick-kq",        "",                GID_CNICK_KQ,         false, SCI_VERSION_NONE },	// Sierra ID is "hoyle3", distinguished by resource count
-	{ "cnick-laurabow",  "",                GID_CNICK_LAURABOW,   false, SCI_VERSION_NONE },
-	{ "cnick-longbow",   "RH Budget",       GID_CNICK_LONGBOW,    false, SCI_VERSION_NONE },
-	{ "cnick-lsl",       "",                GID_CNICK_LSL,        false, SCI_VERSION_NONE },	// Sierra ID is "lsl1", distinguished by resource count
-	{ "cnick-sq",        "",                GID_CNICK_SQ,         false, SCI_VERSION_NONE },	// Sierra ID is "sq4", distinguished by resource count
-	{ "ecoquest",        "eco",             GID_ECOQUEST,         false, SCI_VERSION_NONE },
-	{ "ecoquest2",       "rain",            GID_ECOQUEST2,        false, SCI_VERSION_NONE },
-	{ "fairytales",      "tales",           GID_FAIRYTALES,       false, SCI_VERSION_NONE },
-	{ "freddypharkas",   "fp",              GID_FREDDYPHARKAS,    false, SCI_VERSION_NONE },
-	{ "funseeker",       "emc",             GID_FUNSEEKER,        false, SCI_VERSION_NONE },
-	{ "gk1demo",         "",                GID_GK1DEMO,          false, SCI_VERSION_NONE },
-	{ "gk1",             "gk",              GID_GK1,              true,  SCI_VERSION_NONE },
-	{ "gk2",             "gk2",             GID_GK2,              true,  SCI_VERSION_NONE },
-	{ "hoyle1",          "cardgames",       GID_HOYLE1,           false, SCI_VERSION_NONE },
-	{ "hoyle2",          "solitaire",       GID_HOYLE2,           false, SCI_VERSION_NONE },
-	{ "hoyle3",          "hoyle3",          GID_HOYLE3,           false, SCI_VERSION_NONE },
-	{ "hoyle4",          "hoyle4",          GID_HOYLE4,           false, SCI_VERSION_1_1 },
-	{ "hoyle5",          "hoyle4",          GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
-	{ "hoyle5bridge",    "",                GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
-	{ "hoyle5children",  "",                GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
-	{ "hoyle5school",    "",                GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
-	{ "hoyle5solitaire", "",                GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
-	{ "iceman",          "iceman",          GID_ICEMAN,           false, SCI_VERSION_NONE },
-	{ "inndemo",         "",                GID_INNDEMO,          false, SCI_VERSION_NONE },
-	{ "islandbrain",     "brain",           GID_ISLANDBRAIN,      false, SCI_VERSION_1_1 },
-	{ "jones",           "jones",           GID_JONES,            false, SCI_VERSION_1_1 },
-	{ "kq1sci",          "kq1",             GID_KQ1,              false, SCI_VERSION_NONE },
-	{ "kq4sci",          "kq4",             GID_KQ4,              false, SCI_VERSION_NONE },
-	{ "kq5",             "kq5",             GID_KQ5,              false, SCI_VERSION_NONE },
-	{ "kq6",             "kq6",             GID_KQ6,              false, SCI_VERSION_NONE },
-	{ "kq7",             "kq7cd",           GID_KQ7,              true,  SCI_VERSION_NONE },
-	{ "kquestions",      "quizgame-demo",   GID_KQUESTIONS,       true,  SCI_VERSION_NONE },
-	{ "laurabow",        "cb1",             GID_LAURABOW,         false, SCI_VERSION_NONE },
-	{ "laurabow2",       "lb2",             GID_LAURABOW2,        false, SCI_VERSION_NONE },
-	{ "lighthouse",      "lite",            GID_LIGHTHOUSE,       true,  SCI_VERSION_NONE },
-	{ "longbow",         "longbow",         GID_LONGBOW,          false, SCI_VERSION_NONE },
-	{ "lsl1sci",         "lsl1",            GID_LSL1,             false, SCI_VERSION_NONE },
-	{ "lsl2",            "lsl2",            GID_LSL2,             false, SCI_VERSION_NONE },
-	{ "lsl3",            "lsl3",            GID_LSL3,             false, SCI_VERSION_NONE },
-	{ "lsl5",            "lsl5",            GID_LSL5,             false, SCI_VERSION_NONE },
-	{ "lsl6",            "lsl6",            GID_LSL6,             false, SCI_VERSION_NONE },
-	{ "lsl6hires",       "",                GID_LSL6HIRES,        true,  SCI_VERSION_NONE },
-	{ "lsl7",            "l7",              GID_LSL7,             true,  SCI_VERSION_NONE },
-	{ "mothergoose",     "mg",              GID_MOTHERGOOSE,      false, SCI_VERSION_NONE },
-	{ "mothergoose256",  "",                GID_MOTHERGOOSE256,   false, SCI_VERSION_NONE },
-	{ "mothergoosehires","",                GID_MOTHERGOOSEHIRES, true,  SCI_VERSION_NONE },
-	{ "msastrochicken",  "",                GID_MSASTROCHICKEN,   false, SCI_VERSION_NONE },	// Sierra ID is "sq4", distinguished by resource count
-	{ "pepper",          "twisty",          GID_PEPPER,           false, SCI_VERSION_NONE },
-	{ "phantasmagoria",  "scary",           GID_PHANTASMAGORIA,   true,  SCI_VERSION_NONE },
-	{ "phantasmagoria2", "p2",              GID_PHANTASMAGORIA2,  true,  SCI_VERSION_NONE },
-	{ "pq1sci",          "pq1",             GID_PQ1,              false, SCI_VERSION_NONE },
-	{ "pq2",             "pq",              GID_PQ2,              false, SCI_VERSION_NONE },
-	{ "pq3",             "pq3",             GID_PQ3,              false, SCI_VERSION_NONE },
-	{ "pq4",             "pq4",             GID_PQ4,              true,  SCI_VERSION_NONE },
-	{ "pq4demo",         "",                GID_PQ4DEMO,          false, SCI_VERSION_NONE },
-	{ "pqswat",          "swat",            GID_PQSWAT,           true,  SCI_VERSION_NONE },
-	{ "qfg1",            "gfg1",            GID_QFG1,             false, SCI_VERSION_NONE },
-	{ "qfg1vga",         "",                GID_QFG1VGA,          false, SCI_VERSION_NONE },	// Sierra ID is "glory", distinguished by resources
-	{ "qfg2",            "trial",           GID_QFG2,             false, SCI_VERSION_NONE },
-	{ "qfg3",            "",                GID_QFG3,             false, SCI_VERSION_NONE },	// Sierra ID is "glory", distinguished by resources
-	{ "qfg4",            "",                GID_QFG4,             true,  SCI_VERSION_NONE },	// Sierra ID is "glory", distinguished by resources
-	{ "qfg4demo",        "",                GID_QFG4DEMO,         false, SCI_VERSION_NONE },	// Sierra ID is "glory", distinguished by resources
-	{ "rama",            "rama",            GID_RAMA,             true,  SCI_VERSION_NONE },
-	{ "sci-fanmade",     "",                GID_FANMADE,          false, SCI_VERSION_NONE },
-	{ "shivers",         "",                GID_SHIVERS,          true,  SCI_VERSION_NONE },
-	//{ "shivers2",        "shivers2",        GID_SHIVERS2,       true,  SCI_VERSION_NONE },	// Not SCI
-	{ "slater",          "thegame",         GID_SLATER,           false, SCI_VERSION_NONE },
-	{ "sq1sci",          "sq1",             GID_SQ1,              false, SCI_VERSION_NONE },
-	{ "sq3",             "sq3",             GID_SQ3,              false, SCI_VERSION_NONE },
-	{ "sq4",             "sq4",             GID_SQ4,              false, SCI_VERSION_NONE },
-	{ "sq5",             "sq5",             GID_SQ5,              false, SCI_VERSION_NONE },
-	{ "sq6",             "sq6",             GID_SQ6,              true,  SCI_VERSION_NONE },
-	{ "torin",           "torin",           GID_TORIN,            true,  SCI_VERSION_NONE },
-	{ nullptr,           nullptr,           GID_ALL,              false, SCI_VERSION_NONE }
-};
 
 struct DemoIdEntry {
 	const char *demoId;
@@ -216,7 +125,7 @@ static Common::String convertSierraGameId(Common::String sierraId, SciVersion sc
 			return "msastrochicken";
 	}
 
-	for (const GameIdStrToEnum *cur = s_gameIdStrToEnum; cur->gameidStr; ++cur) {
+	for (const GameIdStrToEnum *cur = gameIdStrToEnum; cur->gameidStr; ++cur) {
 		if (sierraId == cur->sierraIdStr) {
 			// Distinguish same IDs via the SCI version
 			if (cur->version != SCI_VERSION_NONE && cur->version != sciVersion)
@@ -270,7 +179,7 @@ static Common::String convertSierraGameId(Common::String sierraId, SciVersion sc
 
 namespace Sci {
 
-class SciMetaEngine : public AdvancedMetaEngine {
+class SciMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "sci";
@@ -281,7 +190,7 @@ public:
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	// Disable autosave (see mirrored method in sci.h for detailed explanation)
 	int getAutosaveSlot() const override { return -1; }
@@ -295,7 +204,7 @@ public:
 };
 
 Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const GameIdStrToEnum *g = s_gameIdStrToEnum;
+	const GameIdStrToEnum *g = gameIdStrToEnum;
 	for (; g->gameidStr; ++g) {
 		if (0 == strcmp(desc->gameId, g->gameidStr)) {
 #ifndef ENABLE_SCI32
@@ -303,8 +212,17 @@ Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 				return Common::Error(Common::kUnsupportedGameidError, _s("SCI32 support not compiled in"));
 			}
 #endif
-
 			*engine = new SciEngine(syst, desc, g->gameidEnum);
+
+			// Save the language info from the options string, since it will be overwritten in the next step.
+			const Common::String optStr = ConfMan.get("guioptions");
+			const Common::List<Common::Language> langList = Common::parseLanguagesFromGameGUIOptionsString(optStr);
+
+			// If the GUI options were updated, we catch this here and update them in the users config file transparently.
+			Common::updateGameGUIOptions(customizeGuiOptions(ConfMan.getPath("path"), desc->guiOptions, desc->platform, g->gameidStr, g->version),
+										 getGameGUIOptionsDescriptionLanguages(langList),
+										 getGameGUIOptionsDescriptionPlatform(desc->platform));
+
 			return Common::kNoError;
 		}
 	}
@@ -433,9 +351,9 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
 
-void SciMetaEngine::removeSaveState(const char *target, int slot) const {
+bool SciMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 Common::Error SciEngine::loadGameState(int slot) {
@@ -529,7 +447,7 @@ static ADGameDescription s_fallbackDesc = {
 	GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)
 };
 
-Common::Platform getSciFallbackDetectionPlatform(const AdvancedMetaEngine::FileMap &allFiles) {
+Common::Platform getSciFallbackDetectionPlatform(const AdvancedMetaEngineBase::FileMap &allFiles) {
 	// Data1 contains both map and volume for SCI1.1+ Mac games
 	if (allFiles.contains("Data1"))
 		return Common::kPlatformMacintosh;
@@ -549,7 +467,7 @@ Common::Platform getSciFallbackDetectionPlatform(const AdvancedMetaEngine::FileM
 	return Common::kPlatformDOS;
 }
 
-bool necessarySciResourceFilesFound(const AdvancedMetaEngine::FileMap &allFiles) {
+bool necessarySciResourceFilesFound(const AdvancedMetaEngineBase::FileMap &allFiles) {
 	bool foundResMap = false;
 	bool foundRes000 = false;
 
@@ -575,7 +493,7 @@ bool necessarySciResourceFilesFound(const AdvancedMetaEngine::FileMap &allFiles)
 	return foundResMap && foundRes000;
 }
 
-bool isSciCDVersion(const AdvancedMetaEngine::FileMap &allFiles) {
+bool isSciCDVersion(const AdvancedMetaEngineBase::FileMap &allFiles) {
 	// Determine if we got a CD version and set the CD flag accordingly, by checking for
 	// resource.aud for SCI1.1 CD games, or audio001.002 for SCI1 CD games. We assume that
 	// the file should be over 10MB, as it contains all the game speech and is usually
@@ -591,6 +509,67 @@ bool isSciCDVersion(const AdvancedMetaEngine::FileMap &allFiles) {
 	}
 
 	return false;
+}
+
+Common::Language determineGameLanguage(ResourceManager &resMan, const SciMetaEngine::FileMap &allFiles) {
+	Common::Language language = Common::EN_ANY;
+
+	// Try to determine the game language
+	// Load up text 0 and start looking for "#" characters
+	// Non-English versions contain strings like XXXX#YZZZZ
+	// Where XXXX is the English string, #Y a separator indicating the language
+	// (e.g. #G for German) and ZZZZ is the translated text
+	// NOTE: This doesn't work for games which use message instead of text resources
+	// (like, for example, Eco Quest 1 and all SCI1.1 games and newer, e.g. Freddy Pharkas).
+	// As far as we know, these games store the messages of each language in separate
+	// resources, and it's not possible to detect that easily
+	// Also look for "%J" which is used in japanese games
+	Resource *text = resMan.findResource(ResourceId(kResourceTypeText, 0), false);
+	if (text) {
+		uint seeker = 0;
+		while (seeker < text->size()) {
+			if (text->getUint8At(seeker) == '#') {
+				if (seeker + 1 < text->size())
+					language = charToScummVMLanguage(text->getUint8At(seeker + 1));
+				break;
+			}
+			if (text->getUint8At(seeker) == '%') {
+				if ((seeker + 1 < text->size()) && (text->getUint8At(seeker + 1) == 'J')) {
+					language = charToScummVMLanguage(text->getUint8At(seeker + 1));
+					break;
+				}
+			}
+			seeker++;
+		}
+	}
+
+	// Try to determine the game language from config file (SCI1.1 and later)
+	const char *configNames[] = {"resource.cfg", "resource.win"};
+	for (int i = 0; i < ARRAYSIZE(configNames) && language == Common::EN_ANY; i++) {
+		Common::File file;
+		if (allFiles.contains(configNames[i]) && file.open(allFiles[configNames[i]])) {
+			while (!file.eos()) {
+				Common::String line = file.readLine();
+				uint32 separatorPos = line.find('=');
+				if (separatorPos == Common::String::npos) {
+					continue;
+				}
+				Common::String key = line.substr(0, separatorPos);
+				key.trim();
+				if (key.equalsIgnoreCase("language")) {
+					Common::String val = line.substr(separatorPos + 1);
+					val.trim();
+					Common::Language parsedLanguage = sciToScummVMLanguage(atoi(val.c_str()));
+					if (parsedLanguage != Common::UNK_LANG) {
+						language = parsedLanguage;
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	return language;
 }
 
 void constructFallbackDetectionEntry(const Common::String &gameId, Common::Platform platform, SciVersion sciVersion, Common::Language language, bool hasEgaViews, bool isCD, bool isDemo) {
@@ -688,65 +667,7 @@ ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap 
 
 	bool isDemo = false;
 	Common::String gameId = convertSierraGameId(sierraGameId, sciVersion, resMan, &isDemo);
-	Common::Language language = Common::EN_ANY;
-
-	// Try to determine the game language
-	// Load up text 0 and start looking for "#" characters
-	// Non-English versions contain strings like XXXX#YZZZZ
-	// Where XXXX is the English string, #Y a separator indicating the language
-	// (e.g. #G for German) and ZZZZ is the translated text
-	// NOTE: This doesn't work for games which use message instead of text resources
-	// (like, for example, Eco Quest 1 and all SCI1.1 games and newer, e.g. Freddy Pharkas).
-	// As far as we know, these games store the messages of each language in separate
-	// resources, and it's not possible to detect that easily
-	// Also look for "%J" which is used in japanese games
-	Resource *text = resMan.findResource(ResourceId(kResourceTypeText, 0), false);
-	uint seeker = 0;
-	if (text) {
-		while (seeker < text->size()) {
-			if (text->getUint8At(seeker) == '#')  {
-				if (seeker + 1 < text->size())
-					language = charToScummVMLanguage(text->getUint8At(seeker + 1));
-				break;
-			}
-			if (text->getUint8At(seeker) == '%') {
-				if ((seeker + 1 < text->size()) && (text->getUint8At(seeker + 1) == 'J')) {
-					language = charToScummVMLanguage(text->getUint8At(seeker + 1));
-					break;
-				}
-			}
-			seeker++;
-		}
-	}
-
-	// Try to determine the game language from config file (SCI1.1 and later)
-	const char *configNames[] = { "resource.cfg", "resource.win" };
-	for (int i = 0; i < ARRAYSIZE(configNames) && language == Common::EN_ANY; i++) {
-		Common::File file;
-		if (allFiles.contains(configNames[i]) && file.open(allFiles[configNames[i]])) {
-			while (true) {
-				Common::String line = file.readLine();
-				if (file.eos()) {
-					break;
-				}
-				uint32 separatorPos = line.find('=');
-				if (separatorPos == Common::String::npos) {
-					continue;
-				}
-				Common::String key = line.substr(0, separatorPos);
-				key.trim();
-				if (key.equalsIgnoreCase("language")) {
-					Common::String val = line.substr(separatorPos + 1);
-					val.trim();
-					Common::Language parsedLanguage = sciToScummVMLanguage(atoi(val.c_str()));
-					if (parsedLanguage != Common::UNK_LANG) {
-						language = parsedLanguage;
-					}
-					break;
-				}
-			}
-		}
-	}
+	Common::Language language = determineGameLanguage(resMan, allFiles);
 
 	constructFallbackDetectionEntry(gameId, platform, sciVersion, language, gameViews == kViewEga, isCD, isDemo);
 
@@ -759,6 +680,14 @@ void SciMetaEngine::registerDefaultSettings(const Common::String &target) const 
 
 	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
 		ConfMan.registerDefault(entry->configOption, entry->defaultState);
+
+	// enable_high_resolution_graphics is normally enabled by default,
+	// except for KQ6 where it overrides the DOS platform with Windows.
+	// If it were enabled by default for KQ6, then the DOS platform
+	// would produce the Windows experience by default instead of DOS.
+	if (ConfMan.get("gameid", target) == "kq6" && ConfMan.get("platform", target) == "pc") {
+		ConfMan.registerDefault("enable_high_resolution_graphics", false);
+	}
 }
 
 GUI::OptionsContainerWidget *SciMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {

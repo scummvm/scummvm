@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 #define DCGF_VER_MAJOR 1
-#define DCGF_VER_MINOR 4
+#define DCGF_VER_MINOR 11
 #define DCGF_VER_BUILD 1
 #define DCGF_VER_SUFFIX "ScummVM"
 #define DCGF_VER_BETA true
@@ -46,5 +46,17 @@
 //////////////////////////////////////////////////////////////////////////
 
 #define COMPRESSED_FILE_MAGIC 0x504D435A // ZCMP
+
+#define SAFE_DELETE(obj) \
+do {                     \
+	delete (obj);        \
+	(obj) = nullptr;     \
+} while (0)
+
+#define SAFE_DELETE_ARRAY(obj) \
+do {                           \
+	delete[] (obj);            \
+	(obj) = nullptr;           \
+} while (0)
 
 #endif

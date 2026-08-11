@@ -26,6 +26,19 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+const int16 TT_NORMAL_DIRS[] = { 200, 201, 202, 203, 204, -1 };
+const char *TT_NORMAL_NAMES[] = {
+	"tt walker 1", "tt walker 2", "tt walker 3",
+	"tt walker 4", "tt walker 5"
+};
+const int16 TT_SHADOW_DIRS[] = { 210, 211, 212, 213, 214, -1 };
+const char *TT_SHADOW_NAMES[] = {
+	"tt walker shadow 1", "tt walker shadow 2",
+	"tt walker shadow 3", "tt walker shadow 4",
+	"tt walker shadow 5"
+};
+
+
 Section6::Section6() : Rooms::Section() {
 	add(603, &_room603);
 	add(604, &_room604);

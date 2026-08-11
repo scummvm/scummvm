@@ -23,9 +23,9 @@
 #ifndef BAGEL_SPACEBAR_MAIN_WINDOW_H
 #define BAGEL_SPACEBAR_MAIN_WINDOW_H
 
-#include "bagel/boflib/gfx/palette.h"
-#include "bagel/baglib/pan_window.h"
-#include "bagel/baglib/menu_dlg.h"
+#include "bagel/boflib/palette.h"
+#include "bagel/spacebar/baglib/pan_window.h"
+#include "bagel/spacebar/baglib/menu_dlg.h"
 #include "bagel/spacebar/thud.h"
 
 namespace Bagel {
@@ -48,11 +48,11 @@ namespace SpaceBar {
 //
 class CMainWindow : public CBagPanWindow {
 public:
-	static SBarThud *_pThudBmp;	// Pointer to the THUD object
+	static SBarThud *_pThudBmp; // Pointer to the THUD object
 
 private:
-	static int _nInstances;		// Number of space bar windows
-	static bool _bZzazzlVision;	// If Zzazzl vision is on/off
+	static int _nInstances;     // Number of space bar windows
+	static bool _bZzazzlVision; // If Zzazzl vision is on/off
 
 	CBagMenu *_pMenu;
 	CBofPalette *_pGamePalette;

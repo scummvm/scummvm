@@ -27,8 +27,10 @@
 
 #include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/timer.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/platform_osystem.h"
+
 #include "common/util.h"
 
 namespace Wintermute {
@@ -69,9 +71,9 @@ bool BaseFader::update() {
 	uint32 time;
 
 	if (_system) {
-		time = g_system->getMillis() - _startTime;
+		time = BasePlatform::getTime() - _startTime;
 	} else {
-		time = BaseEngine::getTimer()->getTime() - _startTime;
+		time = _game->_timer - _startTime;
 	}
 
 	if (time >= _duration) {
@@ -97,11 +99,10 @@ bool BaseFader::display() {
 	}
 
 	if (_currentAlpha > 0x00) {
-		BaseEngine::getRenderer()->fadeToColor(_red, _green, _blue, _currentAlpha);
+		return _game->_renderer->fadeToColor(_red, _green, _blue, _currentAlpha);
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFader::deactivate() {
@@ -127,9 +128,9 @@ bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	_system = system;
 
 	if (_system) {
-		_startTime = g_system->getMillis();
+		_startTime = BasePlatform::getTime();
 	} else {
-		_startTime = BaseEngine::getTimer()->getTime();
+		_startTime = _game->_timer;
 	}
 
 	return STATUS_OK;
@@ -153,9 +154,9 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	_system = system;
 
 	if (_system) {
-		_startTime = g_system->getMillis();
+		_startTime = BasePlatform::getTime();
 	} else {
-		_startTime = BaseEngine::getTimer()->getTime();
+		_startTime = _game->_timer;
 	}
 
 
@@ -164,7 +165,7 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseFader::getCurrentColor() const {
+uint32 BaseFader::getCurrentColor() {
 	return BYTETORGBA(_red, _green, _blue, _currentAlpha);
 }
 

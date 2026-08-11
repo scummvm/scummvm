@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_AUDIO_H
 #define AGS_ENGINE_MEDIA_AUDIO_AUDIO_H
 
-#include "ags/lib/std/array.h"
+#include "common/std/array.h"
 #include "ags/engine/media/audio/audio_defines.h"
 #include "ags/shared/ac/dynobj/script_audio_clip.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"

@@ -59,16 +59,16 @@ public:
 	/**
 	 * Plays a midi track as a sound effect (one of midi slots 1-7)
 	 */
-	void playMidiTrack(int track);
-	void playMidiTrackInSlot(int slot, int track);
+	void playMidiTrack(MidiTracks track);
+	void playMidiTrackInSlot(int slot, MidiTracks track);
 	bool isMidiPlaying();
 	void loadMusicFile(const Common::String &baseSoundName);
-	void playMidiMusicTracks(int startTrack, int loopTrack);
+	void playMidiMusicTracks(MidiTracks startTrack, MidiLoopType loopType = kLoopTypeNone);
 	void playVoc(const Common::String &baseSoundName);
 	void playSpeech(const Common::String &basename);
 	void stopAllVocSounds();
 	void stopPlayingSpeech();
-	void playSoundEffectIndex(int index);
+	void playSoundEffectIndex(SoundEffects index);
 	void setMusicEnabled(bool enable);
 	void setSfxEnabled(bool enable);
 	void toggleMusic();
@@ -99,7 +99,7 @@ private:
 public:
 	Common::String _loopingAudioName;
 	Common::String _loadedMidiFilename;
-	int _loopingMidiTrack;
+	MidiTracks _loopingMidiTrack;
 
 private:
 	// Driver callback

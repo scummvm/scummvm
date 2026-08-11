@@ -549,22 +549,22 @@ void CmidPlayer::load_ultima_midi_tracks() {
 	}
 }
 
-Std::string CmidPlayer::gettype() {
+Common::String CmidPlayer::gettype() {
 	switch (type) {
 	case FILE_LUCAS:
-		return Std::string("LucasArts AdLib MIDI");
+		return Common::String("LucasArts AdLib MIDI");
 	case FILE_MIDI:
-		return Std::string("General MIDI");
+		return Common::String("General MIDI");
 	case FILE_CMF:
-		return Std::string("Creative Music Format (CMF MIDI)");
+		return Common::String("Creative Music Format (CMF MIDI)");
 	case FILE_OLDLUCAS:
-		return Std::string("Lucasfilm Adlib MIDI");
+		return Common::String("Lucasfilm Adlib MIDI");
 	case FILE_ADVSIERRA:
-		return Std::string("Sierra On-Line VGA MIDI");
+		return Common::String("Sierra On-Line VGA MIDI");
 	case FILE_SIERRA:
-		return Std::string("Sierra On-Line EGA MIDI");
+		return Common::String("Sierra On-Line EGA MIDI");
 	default:
-		return Std::string("MIDI unknown");
+		return Common::String("MIDI unknown");
 	}
 }
 

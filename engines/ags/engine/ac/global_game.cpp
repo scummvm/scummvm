@@ -151,29 +151,23 @@ int GetSaveSlotDescription(int slnum, char *desbuf) {
 }
 
 int LoadSaveSlotScreenshot(int slnum, int width, int height) {
-	int gotSlot;
-	data_to_game_coords(&width, &height);
-
-	if (!read_savedgame_screenshot(get_save_game_path(slnum), gotSlot))
+	if (!_GP(spriteset).HasFreeSlots())
 		return 0;
 
-	if (gotSlot == 0)
+	auto screenshot = read_savedgame_screenshot(get_save_game_path(slnum));
+	if (!screenshot)
 		return 0;
-
-	if ((_GP(game).SpriteInfos[gotSlot].Width == width) && (_GP(game).SpriteInfos[gotSlot].Height == height))
-		return gotSlot;
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[gotSlot]->GetColorDepth());
-	newPic->StretchBlt(_GP(spriteset)[gotSlot],
-	                   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
-	                   RectWH(0, 0, width, height));
-
-	// replace the bitmap in the sprite set
-	free_dynamic_sprite(gotSlot);
-	add_dynamic_sprite(gotSlot, newPic);
-
-	return gotSlot;
+	data_to_game_coords(&width, &height);
+	if ((screenshot->GetWidth() != width) || (screenshot->GetHeight() != height)) {
+		std::unique_ptr<Bitmap> temp(BitmapHelper::CreateBitmap(width, height, screenshot->GetColorDepth()));
+		temp->StretchBlt(screenshot.get(),
+						 RectWH(0, 0, screenshot->GetWidth(), screenshot->GetHeight()),
+						 RectWH(0, 0, width, height));
+		screenshot = std::move(temp);
+	}
+	return add_dynamic_sprite(std::move(screenshot));
 }
 
 void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count) {
@@ -202,7 +196,7 @@ void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count) {
 }
 
 void SetGlobalInt(int index, int valu) {
-	if ((index < 0) | (index >= MAXGSVALUES))
+	if ((index < 0) || (index >= MAXGSVALUES))
 		quitprintf("!SetGlobalInt: invalid index %d, supported range is %d - %d", index, 0, MAXGSVALUES - 1);
 
 	if (_GP(play).globalscriptvars[index] != valu) {
@@ -214,20 +208,20 @@ void SetGlobalInt(int index, int valu) {
 
 
 int GetGlobalInt(int index) {
-	if ((index < 0) | (index >= MAXGSVALUES))
+	if ((index < 0) || (index >= MAXGSVALUES))
 		quitprintf("!GetGlobalInt: invalid index %d, supported range is %d - %d", index, 0, MAXGSVALUES - 1);
 	return _GP(play).globalscriptvars[index];
 }
 
 void SetGlobalString(int index, const char *newval) {
-	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
+	if ((index < 0) || (index >= MAXGLOBALSTRINGS))
 		quitprintf("!SetGlobalString: invalid index %d, supported range is %d - %d", index, 0, MAXGLOBALSTRINGS - 1);
 	debug_script_log("GlobalString %d set to '%s'", index, newval);
 	snprintf(_GP(play).globalstrings[index], MAX_MAXSTRLEN, "%s", newval);
 }
 
 void GetGlobalString(int index, char *strval) {
-	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
+	if ((index < 0) || (index >= MAXGLOBALSTRINGS))
 		quitprintf("!GetGlobalString: invalid index %d, supported range is %d - %d", index, 0, MAXGLOBALSTRINGS - 1);
 	snprintf(strval, MAX_MAXSTRLEN, "%s", _GP(play).globalstrings[index]);
 }
@@ -261,7 +255,11 @@ int RunAGSGame(const String &newgame, unsigned int mode, int data) {
 		return 0;
 	}
 
-	int ee;
+	// Optionally save legacy GlobalInts
+	int savedscriptvars[MAXGSVALUES];
+	if ((mode & RAGMODE_PRESERVEGLOBALINT) != 0) {
+		memcpy(savedscriptvars, _GP(play).globalscriptvars, sizeof(_GP(play).globalscriptvars));
+	}
 
 	unload_old_room();
 	_G(displayed_room) = -10;
@@ -292,10 +290,9 @@ int RunAGSGame(const String &newgame, unsigned int mode, int data) {
 	if (!err)
 		quitprintf("!RunAGSGame: error loading new sprites:\n%s", err->FullMessage().GetCStr());
 
-	if ((mode & RAGMODE_PRESERVEGLOBALINT) == 0) {
-		// reset GlobalInts
-		for (ee = 0; ee < MAXGSVALUES; ee++)
-			_GP(play).globalscriptvars[ee] = 0;
+	// Restore saved GlobalInts
+	if ((mode & RAGMODE_PRESERVEGLOBALINT) != 0) {
+		memcpy(_GP(play).globalscriptvars, savedscriptvars, sizeof(_GP(play).globalscriptvars));
 	}
 
 	engine_init_game_settings();
@@ -324,15 +321,7 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 	case GP_FRAMEIMAGE:
 	case GP_FRAMESOUND:
 	case GP_ISFRAMEFLIPPED: {
-		if ((data1 < 1) || (data1 > _GP(game).numviews)) {
-			quitprintf("!GetGameParameter: invalid view specified (v: %d, l: %d, f: %d)", data1, data2, data3);
-		}
-		if ((data2 < 0) || (data2 >= _GP(views)[data1 - 1].numLoops)) {
-			quitprintf("!GetGameParameter: invalid loop specified (v: %d, l: %d, f: %d)", data1, data2, data3);
-		}
-		if ((data3 < 0) || (data3 >= _GP(views)[data1 - 1].loops[data2].numFrames)) {
-			quitprintf("!GetGameParameter: invalid frame specified (v: %d, l: %d, f: %d)", data1, data2, data3);
-		}
+		AssertFrame("GetGameParameter", data1 - 1, data2, data3);
 
 		ViewFrame *pvf = &_GP(views)[data1 - 1].loops[data2].frames[data3];
 
@@ -393,7 +382,7 @@ void SetGameSpeed(int newspd) {
 }
 
 int GetGameSpeed() {
-	return ::lround(get_current_fps()) - _GP(play).game_speed_modifier;
+	return ::lround(get_game_fps()) - _GP(play).game_speed_modifier;
 }
 
 int SetGameOption(int opt, int newval) {
@@ -475,7 +464,8 @@ void SkipUntilCharacterStops(int cc) {
 	if (!is_valid_character(cc))
 		quit("!SkipUntilCharacterStops: invalid character specified");
 	if (_GP(game).chars[cc].room != _G(displayed_room))
-		quit("!SkipUntilCharacterStops: specified character not in current room");
+		quitprintf("!SkipUntilCharacterStops: character %s is not in current room %d (it is in room %d)",
+				   _GP(game).chars[cc].scrname, _G(displayed_room), _GP(game).chars[cc].room);
 
 	// if they are not currently moving, do nothing
 	if (!_GP(game).chars[cc].walking)
@@ -539,10 +529,14 @@ int EndCutscene() {
 	return retval;
 }
 
-void sc_inputbox(const char *msg, char *bufr) {
+void ShowInputBox(const char *msg, char *bufr) {
 	VALIDATE_STRING(bufr);
+	ShowInputBoxImpl(msg, bufr, MAX_MAXSTRLEN);
+}
+
+void ShowInputBoxImpl(const char *msg, char *bufr, size_t buf_len) {
 	setup_for_dialog();
-	enterstringwindow(get_translation(msg), bufr);
+	enterstringwindow(get_translation(msg), bufr, buf_len);
 	restore_after_dialog();
 }
 
@@ -579,7 +573,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 			if (_GP(play).get_loc_name_last_time != 1000 + mover)
 				GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 			_GP(play).get_loc_name_last_time = 1000 + mover;
-			snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).invinfo[mover].name));
+			snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).invinfo[mover].name.GetCStr()));
 		} else if ((_GP(play).get_loc_name_last_time > 1000) && (_GP(play).get_loc_name_last_time < 1000 + MAX_INV)) {
 			// no longer selecting an item
 			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
@@ -594,7 +588,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		return;
 	xxx = vpt.first.X;
 	yyy = vpt.first.Y;
-	if ((xxx >= _GP(thisroom).Width) | (xxx < 0) | (yyy < 0) | (yyy >= _GP(thisroom).Height))
+	if ((xxx >= _GP(thisroom).Width) || (xxx < 0) || (yyy < 0) || (yyy >= _GP(thisroom).Height))
 		return;
 
 	int onhs, aa;
@@ -609,7 +603,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	// on character
 	if (loctype == LOCTYPE_CHAR) {
 		onhs = _G(getloctype_index);
-		snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).chars[onhs].name));
+		snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).chars2[onhs].name_new.GetCStr()));
 		if (_GP(play).get_loc_name_last_time != 2000 + onhs)
 			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 		_GP(play).get_loc_name_last_time = 2000 + onhs;
@@ -651,7 +645,10 @@ int SaveScreenShot(const char *namm) {
 	else
 		fileName = Path::ConcatPaths(svg_dir, namm);
 
-	Bitmap *buffer = CopyScreenIntoBitmap(_GP(play).GetMainViewport().GetWidth(), _GP(play).GetMainViewport().GetHeight());
+	// NOTE: be aware that by the historical logic AGS makes a screenshot
+	// of a "main viewport", that may be smaller in legacy "letterbox" mode.
+	const Rect &viewport = _GP(play).GetMainViewport();
+	Bitmap *buffer = CopyScreenIntoBitmap(_GP(play).GetMainViewport().GetWidth(), _GP(play).GetMainViewport().GetHeight(), &viewport);
 	if (!buffer->SaveToFile(fileName, _G(palette)) != 0) {
 		delete buffer;
 		return 0;
@@ -661,7 +658,7 @@ int SaveScreenShot(const char *namm) {
 }
 
 void SetMultitasking(int mode) {
-	if ((mode < 0) | (mode > 1))
+	if ((mode < 0) || (mode > 1))
 		quit("!SetMultitasking: invalid mode parameter");
 	// Save requested setting
 	_GP(usetup).multitasking = mode != 0;
@@ -815,7 +812,14 @@ int WaitImpl(int skip_type, int nloops) {
 	if (_GP(play).fast_forward && ((skip_type & ~SKIP_AUTOTIMER) != 0))
 		return 0;
 
-	_GP(play).wait_counter = nloops;
+	// < 3.6.0 treated negative nloops as "no time";
+	// also old engine let nloops to overflow into neg when assigned to wait_counter...
+	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) {
+		if (nloops < 0 || nloops > INT16_MAX)
+			nloops = 0;
+	}
+	// clamp to int16
+	_GP(play).wait_counter = static_cast<int16_t>(Math::Clamp<int>(nloops, -1, INT16_MAX));
 	_GP(play).wait_skipped_by = SKIP_NONE;
 	_GP(play).wait_skipped_by = SKIP_AUTOTIMER; // we set timer flag by default to simplify that case
 	_GP(play).wait_skipped_by_data = 0;
@@ -824,7 +828,7 @@ int WaitImpl(int skip_type, int nloops) {
     GameLoopUntilValueIsZero(&_GP(play).wait_counter);
 
 	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) {
-		// < 3.6.0 return 1 is skipped by user input, otherwise 0
+		// < 3.6.0 return 1 if skipped by user input, otherwise 0
 		return ((_GP(play).wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0) ? 1 : 0;
 	}
 	// >= 3.6.0 return skip (input) type flags with keycode

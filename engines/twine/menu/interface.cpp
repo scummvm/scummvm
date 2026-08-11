@@ -142,6 +142,9 @@ bool Interface::drawLine(int32 x0, int32 y0, int32 x1, int32 y1, uint8 color) {
 			}
 		} while (--x1);
 	}
+
+	_engine->_frontVideoBuffer.addDirtyRect(Common::Rect(MIN<int16>(x0, x1), MIN<int16>(y0, y1), MAX<int16>(x0, x1), MAX<int16>(y0, y1)));
+
 	return true;
 }
 
@@ -152,7 +155,7 @@ void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface
 	dest.blitFrom(source, r, Common::Point(rect.left, rect.top));
 }
 
-void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
+void Interface::shadeBox(const Common::Rect &rect, int32 colorAdj) {
 	Common::Rect r = rect;
 	r.clip(_engine->rect());
 	if (r.isEmpty()) {
@@ -176,7 +179,7 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 	_engine->_frontVideoBuffer.addDirtyRect(r);
 }
 
-void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) { // Box
+void Interface::box(const Common::Rect &rect, uint8 colorIndex) { // Box
 	if (!rect.isValidRect()) {
 		return;
 	}

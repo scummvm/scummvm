@@ -521,6 +521,13 @@ void Sword2Engine::gameCycle() {
 }
 
 void Sword2Engine::startGame() {
+	// Normally not needed, but we could be coming here from a cancelled
+	// load game dialog. And since the first cutscene doesn't cover the
+	// entire screen, that would leave garbage on the rest of it.
+
+	_screen->clearScene();
+	_screen->updateDisplay();
+
 	// Boot the game straight into a start script. It's always George's
 	// script #1, but with different ScreenManager objects depending on
 	// if it's the demo or the full game, or if we're using a boot param.

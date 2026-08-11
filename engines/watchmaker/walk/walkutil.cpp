@@ -28,8 +28,6 @@
 
 namespace Watchmaker {
 
-extern float  x3d, y3d, z3d;
-
 /* -----------------05/06/00 12.49-------------------
  *                  PointIn2DRectangle
  * --------------------------------------------------*/
@@ -69,6 +67,9 @@ bool PointInside2DRectangle(double pgon[4][2], double x, double z) {
 /* 04/02/98 16.01 ----------------------------------
     Guarda se un pto e' all'interno di un pannello
 --------------------------------------------------*/
+int PointInside(int32 oc, int32 pan, const PointXZ &point) {
+	return PointInside(oc, pan, (double)point.x, (double)point.z);
+}
 int PointInside(int32 oc, int32 pan, double x, double z) {
 	t3dWALK *w = &Character[oc]->Walk;
 	double pgon[4][2], ox, oz, s;
@@ -76,16 +77,16 @@ int PointInside(int32 oc, int32 pan, double x, double z) {
 	if (pan < 0)
 		return FALSE;
 
-	pgon[0][0] = (double)w->Panel[pan].x1;
-	pgon[0][1] = (double)w->Panel[pan].z1;
-	pgon[3][0] = (double)w->Panel[pan].x2;
-	pgon[3][1] = (double)w->Panel[pan].z2;
+	pgon[0][0] = (double)w->Panel[pan].a.x;
+	pgon[0][1] = (double)w->Panel[pan].a.z;
+	pgon[3][0] = (double)w->Panel[pan].b.x;
+	pgon[3][1] = (double)w->Panel[pan].b.z;
 
-	pgon[1][0] = (double)w->Panel[pan].bx1;
-	pgon[1][1] = (double)w->Panel[pan].bz1;
+	pgon[1][0] = (double)w->Panel[pan].backA.x;
+	pgon[1][1] = (double)w->Panel[pan].backA.z;
 
-	pgon[2][0] = (double)w->Panel[pan].bx2;
-	pgon[2][1] = (double)w->Panel[pan].bz2;
+	pgon[2][0] = (double)w->Panel[pan].backB.x;
+	pgon[2][1] = (double)w->Panel[pan].backB.z;
 
 	ox = pgon[3][0] - pgon[0][0];
 	oz = pgon[3][1] - pgon[0][1];
@@ -113,6 +114,10 @@ int PointInside(int32 oc, int32 pan, double x, double z) {
 /*-----------------07/10/96 11.14-------------------
             Distanza falsa tra 2 punti 2D
 --------------------------------------------------*/
+float DistF(PointXZ a, PointXZ b) {
+	return DistF(a.x, a.z, b.x, b.z);
+}
+
 float DistF(float x1, float y1, float x2, float y2) {
 	float d1 = (float)fabs(x1 - x2);
 	float d2 = (float)fabs(y1 - y2);
@@ -131,26 +136,30 @@ float DistF(float x1, float y1, float x2, float y2) {
 /*-----------------07/10/96 11.21-------------------
         Interseca linea 2D con linea 2D
 --------------------------------------------------*/
-int IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
-	float r, s, divisor;
-
-	divisor = (float)((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
+PointResult IntersLineLine(const PointXZ &a, const PointXZ &b, const PointXZ &c, const PointXZ &d) {
+	return IntersLineLine(a.x, a.z, b.x, b.z, c.x, c.z, d.x, d.z);
+}
+PointResult IntersLineLine(const PointXZ &a, const PointXZ &b, float xc, float yc, float xd, float yd) {
+	return IntersLineLine(a.x, a.z, b.x, b.z, xc, yc, xd, yd);
+}
+PointResult IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
+	float divisor = (float)((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
 	if (!divisor) divisor = 0.000001f;
-	r = (float)((ya - yc) * (xd - xc) - (xa - xc) * (yd - yc)) / divisor;
-	s = (float)((ya - yc) * (xb - xa) - (xa - xc) * (yb - ya)) / divisor;
+	float r = (float)((ya - yc) * (xd - xc) - (xa - xc) * (yd - yc)) / divisor;
+	float s = (float)((ya - yc) * (xb - xa) - (xa - xc) * (yb - ya)) / divisor;
 
-	if ((r < -EPSILON) || (r > (1.0f + EPSILON)) || (s < -EPSILON) || (s > (1.0f + EPSILON)))
-		return FALSE;
-	else {
+	PointResult result;
+	if ((r < -EPSILON) || (r > (1.0f + EPSILON)) || (s < -EPSILON) || (s > (1.0f + EPSILON))) {
+		result.isValid = false;
+	} else {
 		if (r < 0.0f)    r = 0.0f;
 		else if (r > 1.0f)   r = 1.0f;
 
-		x3d = xa + r * (xb - xa);
-		y3d = 0.0;
-		z3d = ya + r * (yb - ya);
+		result.result.x = xa + r * (xb - xa);
+		result.result.z = ya + r * (yb - ya);
 	}
 
-	return TRUE;
+	return result;
 }
 
 /*-----------------15/10/96 10.33-------------------

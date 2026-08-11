@@ -122,6 +122,13 @@ private:
 	void drawText(const uint index, uint length);
 
 	/**
+	 * Draws text in a right-to-left language. Only the printable characters
+	 * take part in the bidirectional reordering; each is then drawn in the
+	 * style that its logical position gave it.
+	 */
+	void drawTextRTL(const char *text, uint length);
+
+	/**
 	 * Gets the length of the longest run of text available within the currently
 	 * loaded text, starting from the given `charIndex` and running for up to
 	 * `maxWidth` pixels. Returns the number of characters that can be written,

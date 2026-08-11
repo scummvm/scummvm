@@ -278,7 +278,7 @@ public:
 	void getStringBounds(const char *s, Rect &bounds, int maxWidth);
 
 	void setDialogPalette();
-	Graphics::ManagedSurface lockSurface() {
+	Graphics::ManagedSurface &lockSurface() {
 		_surface.setBounds(_bounds);
 		return _surface.lockSurface();
 	}

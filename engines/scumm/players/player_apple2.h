@@ -231,7 +231,7 @@ public:
 	/* returns true if finished */
 	virtual bool update() = 0;
 protected:
-	Player_AppleII *_player;
+	Player_AppleII *_player = nullptr;
 };
 
 class Player_AppleII : public Audio::AudioStream, public MusicEngine {
@@ -263,28 +263,26 @@ public:
 
 private:
 	// sound number
-	int _soundNr;
+	int _soundNr = 0;
 	// type of sound
-	int _type;
+	int _type = 0;
 	// number of loops left
-	int _loop;
+	int _loop = 0;
 	// global sound param list
-	const byte *_params;
+	const byte *_params = nullptr;
 	// speaker toggle state (0 / 1)
-	byte _speakerState;
+	byte _speakerState = 0;
 	// sound function
 	AppleII_SoundFunction *_soundFunc;
 	// cycle to sample converter
 	SampleConverter _sampleConverter;
 
-private:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	int _sampleRate;
+	int _sampleRate = 0;
 	Common::Mutex _mutex;
 
-private:
 	void resetState();
 	bool updateSound();
 };

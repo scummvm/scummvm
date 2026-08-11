@@ -64,9 +64,6 @@ void VCruiseEngine::handleEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_runtime->onMouseMove(evt.mouse.x, evt.mouse.y);
 			break;
-		case Common::EVENT_KEYDOWN:
-			_runtime->onKeyDown(evt.kbd.keycode);
-			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			_runtime->onKeymappedEvent(static_cast<VCruise::KeymappedEvent>(evt.customType));
 			break;
@@ -85,8 +82,6 @@ void VCruiseEngine::handleMidiTimer() {
 }
 
 Common::Error VCruiseEngine::run() {
-	Common::List<Graphics::PixelFormat> pixelFormats = _system->getSupportedFormats();
-
 #if !defined(USE_JPEG)
 	if (_gameDescription->desc.flags & VCRUISE_GF_NEED_JPEG) {
 		return Common::Error(Common::kUnknownError, _s("This game requires JPEG support, which was not compiled in."));
@@ -97,8 +92,7 @@ Common::Error VCruiseEngine::run() {
 	if (_gameDescription->desc.flags & VCRUISE_GF_WANT_OGG_VORBIS) {
 		GUI::MessageDialog dialog(
 			_("Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
-			  "The game will still play, but will not have any music."),
-			_("OK"));
+			  "The game will still play, but will not have any music."));
 		dialog.runModal();
 	}
 #endif
@@ -107,8 +101,7 @@ Common::Error VCruiseEngine::run() {
 	if (_gameDescription->desc.flags & VCRUISE_GF_WANT_MP3) {
 		GUI::MessageDialog dialog(
 			_("Music for this game requires MP3 support, which was not compiled in.\n"
-			  "The game will still play, but will not have any music."),
-			_("OK"));
+			  "The game will still play, but will not have any music."));
 		dialog.runModal();
 	}
 #endif
@@ -130,27 +123,27 @@ Common::Error VCruiseEngine::run() {
 		if (!f->open(_gameDescription->desc.filesDescriptions[0].fileName))
 			error("Couldn't open installer package '%s'", _gameDescription->desc.filesDescriptions[0].fileName);
 
-		Common::Archive *installerPackageArchive = Common::createGenteeInstallerArchive(f, "#setuppath#\\", true);
+		Common::Archive *installerPackageArchive = Common::createGenteeInstallerArchive(f, "#setuppath#/", false, true);
 		if (!installerPackageArchive)
 			error("Couldn't load installer package '%s'", _gameDescription->desc.filesDescriptions[0].fileName);
 
 		SearchMan.add("VCruiseInstallerPackage", installerPackageArchive);
 	}
 
-	syncSoundSettings();
+	if (_gameDescription->desc.flags & VCRUISE_GF_USE_SETUP_EXE) {
+		Common::File *f = new Common::File();
 
-	const Graphics::PixelFormat *fmt16_565 = nullptr;
-	const Graphics::PixelFormat *fmt16_555 = nullptr;
-	const Graphics::PixelFormat *fmt32 = nullptr;
+		if (!f->open(_gameDescription->desc.filesDescriptions[1].fileName))
+			error("Couldn't open installer package '%s'", _gameDescription->desc.filesDescriptions[1].fileName);
 
-	for (const Graphics::PixelFormat &fmt : pixelFormats) {
-		if (fmt32 == nullptr && fmt.bytesPerPixel == 4 && fmt.rBits() == 8 && fmt.gBits() == 8 && fmt.bBits() == 8)
-			fmt32 = &fmt;
-		if (fmt16_555 == nullptr && fmt.rBits() == 5 && fmt.gBits() == 5 && fmt.bBits() == 5)
-			fmt16_555 = &fmt;
-		if (fmt16_565 == nullptr && fmt.rBits() == 5 && fmt.gBits() == 6 && fmt.bBits() == 5)
-			fmt16_565 = &fmt;
+		Common::Archive *setupPackageArchive = Common::createGenteeInstallerArchive(f, "#setuppath#/", true, true);
+		if (!setupPackageArchive)
+			error("Couldn't load installer package '%s'", _gameDescription->desc.filesDescriptions[1].fileName);
+
+		SearchMan.add("VCruiseSetupPackage", setupPackageArchive);
 	}
+
+	syncSoundSettings();
 
 	// Figure out screen layout
 	Common::Point size;
@@ -202,14 +195,10 @@ Common::Error VCruiseEngine::run() {
 		_trayRect = Common::Rect(trayTL.x, trayTL.y, trayTL.x + traySize.x, trayTL.y + traySize.y);
 	}
 
-	if (fmt32)
-		initGraphics(size.x, size.y, fmt32);
-	else if (fmt16_565)
-		initGraphics(size.x, size.y, fmt16_565);
-	else if (fmt16_555)
-		initGraphics(size.x, size.y, fmt16_555);
-	else
-		error("Unable to find a suitable graphics format");
+	// TODO: Optionally support CLUT8 for AD 2044
+	initGraphics(size.x, size.y, nullptr);
+	if (_system->getScreenFormat().isCLUT8())
+		return Common::kUnsupportedColorMode;
 
 	_system->fillScreen(0);
 
@@ -232,6 +221,10 @@ Common::Error VCruiseEngine::run() {
 
 	if (ConfMan.getBool("vcruise_fast_animations")) {
 		_runtime->setFastAnimationMode(true);
+	}
+
+	if (ConfMan.getBool("vcruise_preload_sounds")) {
+		_runtime->setPreloadSounds(true);
 	}
 
 	if (ConfMan.getBool("vcruise_use_4bit")) {

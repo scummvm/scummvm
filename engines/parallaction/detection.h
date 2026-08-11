@@ -41,11 +41,15 @@ enum ParallactionGameType {
 };
 
 struct PARALLACTIONGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameType;
 	uint32 features;
 };
+
+#define GAMEOPTION_TTS                    GUIO_GAMEOPTIONS1
 
 } // End of namespace Parallaction
 

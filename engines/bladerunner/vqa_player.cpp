@@ -36,6 +36,8 @@
 namespace BladeRunner {
 
 bool VQAPlayer::open() {
+	close();
+
 	_s = _vm->getResourceStream(_vm->_enhancedEdition ? ("video/" + _name) : _name);
 	if (!_s) {
 		return false;
@@ -109,6 +111,7 @@ bool VQAPlayer::open() {
 }
 
 void VQAPlayer::close() {
+	_decoder.close();
 	_vm->_mixer->stopHandle(_soundHandle);
 	delete _s;
 	_s = nullptr;

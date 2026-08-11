@@ -232,9 +232,9 @@ Audio32::~Audio32() {
 #pragma mark -
 #pragma mark AudioStream implementation
 
-int Audio32::writeAudioInternal(Audio::AudioStream &sourceStream, Audio::RateConverter &converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume) {
+int Audio32::writeAudioInternal(Audio::AudioStream &sourceStream, Audio::RateConverter &converter, int16 *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume) {
 	const int samplePairsToRead = numSamples >> 1;
-	const int samplePairsWritten = converter.convert(sourceStream, targetBuffer, samplePairsToRead, leftVolume, rightVolume);
+	const int samplePairsWritten = converter.convert(sourceStream, (byte *)targetBuffer, sizeof(int16), samplePairsToRead, leftVolume, rightVolume, Audio::MIX_CLAMPED_ADD);
 	return samplePairsWritten << 1;
 }
 
@@ -289,7 +289,7 @@ bool Audio32::channelShouldMix(const AudioChannel &channel) const {
 // do all audio processing in real time, and we have streams, and we do not need
 // to completely fill the audio buffer, the functionality of all these original
 // functions is combined here and simplified.
-int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) {
+int Audio32::readBuffer(int16 *const buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
 	if (_pausedAtTick != 0 || _numActiveChannels == 0) {
@@ -307,7 +307,7 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 	// The caller of `readBuffer` is a rate converter, which reuses (without
 	// clearing) an intermediate buffer, so we need to zero the intermediate
 	// buffer to prevent mixing into audio data from the last callback.
-	memset(buffer, 0, numSamples * sizeof(Audio::st_sample_t));
+	memset(buffer, 0, numSamples * sizeof(int16));
 
 	// This emulates the attenuated mixing mode of SSCI engine, which reduces
 	// the volume of the target buffer when each new channel is mixed in.
@@ -413,12 +413,12 @@ int Audio32::readBuffer(Audio::st_sample_t *const buffer, const int numSamples) 
 			if (numSamples > (int)_monitoredBuffer.size()) {
 				_monitoredBuffer.resize(numSamples);
 			}
-			memset(_monitoredBuffer.data(), 0, _monitoredBuffer.size() * sizeof(Audio::st_sample_t));
+			memset(_monitoredBuffer.data(), 0, _monitoredBuffer.size() * sizeof(int16));
 			_numMonitoredSamples = writeAudioInternal(*channel.stream, *channel.converter, _monitoredBuffer.data(), numSamples, leftVolume, rightVolume);
 
-			Audio::st_sample_t *sourceBuffer = _monitoredBuffer.data();
-			Audio::st_sample_t *targetBuffer = buffer;
-			const Audio::st_sample_t *const end = _monitoredBuffer.data() + _numMonitoredSamples;
+			int16 *sourceBuffer = _monitoredBuffer.data();
+			int16 *targetBuffer = buffer;
+			const int16 *const end = _monitoredBuffer.data() + _numMonitoredSamples;
 			while (sourceBuffer != end) {
 				Audio::clampedAdd(*targetBuffer++, *sourceBuffer++);
 			}
@@ -1203,11 +1203,11 @@ bool Audio32::hasSignal() const {
 		return false;
 	}
 
-	const Audio::st_sample_t *buffer = _monitoredBuffer.data();
-	const Audio::st_sample_t *const end = _monitoredBuffer.data() + _numMonitoredSamples;
+	const int16 *buffer = _monitoredBuffer.data();
+	const int16 *const end = _monitoredBuffer.data() + _numMonitoredSamples;
 
 	while (buffer != end) {
-		const Audio::st_sample_t sample = *buffer++;
+		const int16 sample = *buffer++;
 		if (sample > 1280 || sample < -1280) {
 			return true;
 		}

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/array.h"
 #include "common/util.h"
 #include "common/stack.h"
 #include "common/unicode-bidi.h"
@@ -378,6 +379,49 @@ void GfxText32::drawTextBox(const Common::String &text) {
 	drawTextBox();
 }
 
+// This internal function gets called as soon as a '|' is found in a text. It
+// will read the encountered code and its value, and forward the text past the
+// whole control code.
+// Returns false when the control code runs off the end of the text, in which
+// case the caller stops reading it.
+static bool readStyleControl(const char *&text, uint &length, char &controlChar, uint16 &value) {
+	controlChar = *text++;
+	--length;
+
+	if (length == 0) {
+		return false;
+	}
+
+	value = 0;
+	if (controlChar == 'a' || controlChar == 'c' || controlChar == 'f') {
+		while (length > 0) {
+			const char valueChar = *text;
+			if (valueChar < '0' || valueChar > '9') {
+				break;
+			}
+
+			++text;
+			--length;
+			value = 10 * value + (valueChar - '0');
+		}
+
+		if (length == 0) {
+			return false;
+		}
+	}
+
+	while (length > 0 && *text != '|') {
+		++text;
+		--length;
+	}
+	if (length > 0) {
+		++text;
+		--length;
+	}
+
+	return true;
+}
+
 void GfxText32::drawText(const uint index, uint length) {
 	assert(index + length <= _text.size());
 
@@ -385,15 +429,10 @@ void GfxText32::drawText(const uint index, uint length) {
 	// implementation in SSCI, but is accurate. Primarily the changes revolve
 	// around eliminating some extra temporaries and fixing the logic to match.
 
-	Common::String textString;
-	const char *text;
-	if (!g_sci->isLanguageRTL()) {
-		text = _text.c_str() + index;
-	} else {
-		const char *textOrig = _text.c_str() + index;
-		Common::String textLogical = Common::String(textOrig, (uint32)length);
-		textString = Common::convertBiDiString(textLogical, g_sci->getLanguage(), Common::BiDiParagraph::BIDI_PAR_RTL);
-		text = textString.c_str();
+	const char *text = _text.c_str() + index;
+	if (g_sci->isLanguageRTL()) {
+		drawTextRTL(text, length);
+		return;
 	}
 
 	while (length-- > 0) {
@@ -403,52 +442,87 @@ void GfxText32::drawText(const uint index, uint length) {
 		}
 
 		if (currentChar == '|') {
-			const char controlChar = *text++;
-			--length;
-
-			if (length == 0) {
+			char controlChar;
+			uint16 value;
+			if (!readStyleControl(text, length, controlChar, value)) {
 				return;
 			}
 
-			if (controlChar == 'a' || controlChar == 'c' || controlChar == 'f') {
-				uint16 value = 0;
-
-				while (length > 0) {
-					const char valueChar = *text;
-					if (valueChar < '0' || valueChar > '9') {
-						break;
-					}
-
-					++text;
-					--length;
-					value = 10 * value + (valueChar - '0');
-				}
-
-				if (length == 0) {
-					return;
-				}
-
-				if (controlChar == 'a') {
-					_alignment = (TextAlign)value;
-				} else if (controlChar == 'c') {
-					_foreColor = value;
-				} else if (controlChar == 'f') {
-					setFont(value);
-				}
-			}
-
-			while (length > 0 && *text != '|') {
-				++text;
-				--length;
-			}
-			if (length > 0) {
-				++text;
-				--length;
+			if (controlChar == 'a') {
+				_alignment = (TextAlign)value;
+			} else if (controlChar == 'c') {
+				_foreColor = value;
+			} else if (controlChar == 'f') {
+				setFont(value);
 			}
 		} else {
 			drawChar(currentChar);
 		}
 	}
+}
+
+// The styles that the inline control codes give to a character
+struct TextStyle {
+	GuiResourceId fontId;
+	uint8 foreColor;
+};
+
+void GfxText32::drawTextRTL(const char *text, uint length) {
+	Common::String textLogical;
+	// The style each printable character is drawn in
+	Common::Array<TextStyle> styles;
+
+	TextStyle currentStyle;
+	currentStyle.fontId = _fontId;
+	currentStyle.foreColor = _foreColor;
+	// Alignment positions the line as a whole, so only its final value is used
+	TextAlign alignment = _alignment;
+
+	while (length-- > 0) {
+		const char currentChar = *text++;
+
+		if (currentChar == '|') {
+			char controlChar;
+			uint16 value;
+			// Leaves the loop rather than the function, so that the characters
+			// collected so far are still drawn below
+			if (!readStyleControl(text, length, controlChar, value)) {
+				break;
+			}
+
+			if (controlChar == 'a') {
+				alignment = (TextAlign)value;
+			} else if (controlChar == 'c') {
+				currentStyle.foreColor = value;
+			} else if (controlChar == 'f') {
+				currentStyle.fontId = value;
+			}
+		} else {
+			textLogical += currentChar;
+			styles.push_back(currentStyle);
+		}
+	}
+
+	// The only right-to-left language in SCI is Hebrew, see isLanguageRTL
+	assert(g_sci->getLanguage() == Common::HE_ISR);
+	const Common::CodePage codePage = Common::kWindows1255;
+	const Common::UnicodeBiDiText bidi(textLogical.decode(codePage), Common::BIDI_PAR_RTL);
+	const Common::String textVisual = bidi.visual.encode(codePage);
+
+	// Reordering separates the characters from the controls that styled them,
+	// so each one is drawn in the style its logical position gave it
+	for (uint i = 0; i < textVisual.size(); ++i) {
+		const TextStyle &style = styles[bidi.getLogicalPosition(i)];
+		setFont(style.fontId);
+		_foreColor = style.foreColor;
+		drawChar((byte)textVisual[i]);
+	}
+
+	// Leave behind the styles that were in effect at the logical end of the
+	// line, because that is where the next line carries on from
+	setFont(currentStyle.fontId);
+	_foreColor = currentStyle.foreColor;
+	_alignment = alignment;
 }
 
 void GfxText32::invertRect(const reg_t bitmapId, int16 bitmapStride, const Common::Rect &rect, const uint8 foreColor, const uint8 backColor, const bool doScaling) {
@@ -863,9 +937,10 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 	_text = lineText;
 	int16 textWidth = getTextWidth(0, lineText.size());
 
+	const TextAlign farEdge = !g_sci->isLanguageRTL() ? kTextAlignRight : kTextAlignLeft;
 	if (_alignment == kTextAlignCenter) {
 		_drawPosition.x += (_textRect.width() - textWidth) / 2;
-	} else if (_alignment == kTextAlignRight) {
+	} else if (_alignment == farEdge) {
 		_drawPosition.x += _textRect.width() - textWidth;
 	}
 

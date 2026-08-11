@@ -25,8 +25,12 @@
 namespace Voyeur {
 
 struct VoyeurGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 };
+
+#define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS1
 
 } // End of namespace Voyeur
 

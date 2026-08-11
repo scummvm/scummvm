@@ -31,7 +31,7 @@ namespace Nuvie {
 /*                                                                      */
 /************************************************************************/
 
-Graphics::ManagedSurface *GUI_LoadImage(int w, int h, uint8 *pal, uint8 *data) {
+Graphics::ManagedSurface *GUI_LoadImage(int w, int h, const uint8 *pal, const uint8 *data) {
 	Graphics::ManagedSurface *image = new Graphics::ManagedSurface(w, h,
 		Graphics::PixelFormat::createFormatCLUT8());
 
@@ -77,7 +77,7 @@ Graphics::ManagedSurface *GUI_FontGump(void) {
 	return the_font_gump;
 }
 
-uint8 *GUI_FontGumpWData(void) {
+const uint8 *GUI_FontGumpWData(void) {
 	return font_gump_w_data;
 }
 

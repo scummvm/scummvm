@@ -392,6 +392,7 @@ public:
 	int16 _temporaryExperience;
 	int32 _experience;
 
+	Skill() : _temporaryExperience(0), _experience(0) {}
 	void resetToZero() { _temporaryExperience = _experience = 0; }
 }; // @ SKILL
 
@@ -430,7 +431,18 @@ public:
 	int16 _shieldDefense;
 	byte _portrait[928]; // 32 x 29 pixel portrait
 
-	Champion() {}
+	Champion() : _vm(nullptr), _attributes(0), _wounds(0), _dir(kDMDirNorth), _cell(kDMViewCellFronLeft),
+		_actionIndex(kDMActionN), _symbolStep(0), _directionMaximumDamageReceived(0),
+		_maximumDamageReceived(0), _poisonEventCount(0), _enableActionEventIndex(0),
+		_hideDamageReceivedIndex(0), _currHealth(0), _maxHealth(0), _currStamina(0),
+		_maxStamina(0), _currMana(0), _maxMana(0), _actionDefense(0), _food(0), _water(0),
+		_load(0), _shieldDefense(0) {
+		memset(_statistics, 0, sizeof(_statistics));
+		memset(_name, '\0', sizeof(_name));
+		memset(_title, '\0', sizeof(_title));
+		memset(_symbols, '\0', sizeof(_symbols));
+		memset(_portrait, 0, sizeof(_portrait));
+	}
 	void setVm(DMEngine *vm) { _vm = vm; }
 
 	Thing &getSlot(ChampionSlot slot) { return _slots[slot]; }
@@ -462,7 +474,7 @@ public:
 
 class Spell {
 public:
-	Spell() {}
+	Spell() : _symbols(0), _baseRequiredSkillLevel(0), _skillIndex(0), _attributes(0) {}
 	Spell(int32 symbols, byte baseSkillReq, byte skillIndex, uint16 attributes)
 	: _symbols(symbols), _baseRequiredSkillLevel(baseSkillReq), _skillIndex(skillIndex), _attributes(attributes) {}
 
@@ -566,8 +578,8 @@ public:
 	void dropAllObjects(uint16 champIndex); // @ F0318_CHAMPION_DropAllObjects
 	void unpoison(int16 champIndex); // @ F0323_CHAMPION_Unpoison
 	void applyTimeEffects(); // @ F0331_CHAMPION_ApplyTimeEffects_CPSF
-	void savePartyPart2(Common::OutSaveFile *file);
-	void loadPartyPart2(Common::InSaveFile *file);
+	void savePartyPart2(Common::WriteStream *file);
+	void loadPartyPart2(Common::SeekableReadStream *file);
 
 	Box _boxChampionIcons[4];
 	Color _championColor[4];

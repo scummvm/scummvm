@@ -180,7 +180,7 @@ void Room12::bork_ok() {
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 3, (const MovLine *)R12_BORK_MPKT2);
 	wait_auto_obj(R12_BORK_OBJ);
 	_G(det)->hideStaticSpr(10);
-	startSetAILWait(4, 1, ANI_FRONT);
+	startDetailWait(4, 1, ANI_FRONT);
 	_G(talk_hide_static) = -1;
 	_G(det)->showStaticSpr(12);
 	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATA);
@@ -209,7 +209,7 @@ int16 Room12::use_terminal() {
 
 				load_chewy_taf(CHEWY_BORK);
 				_G(flags).NoScroll = false;
-				_G(atds)->set_ats_str(118, 0, ATS_DATA);
+				_G(atds)->set_all_ats_str(118, 0, ATS_DATA);
 				_G(det)->hideStaticSpr(12);
 				_G(menu_item) = CUR_WALK;
 				cursorChoice(_G(menu_item));
@@ -217,7 +217,7 @@ int16 Room12::use_terminal() {
 				_G(gameState).R12ChewyBork = true;
 				_G(gameState).R12RaumOk = true;
 				autoMove(4, P_CHEWY);
-				start_spz(68, 255, false, P_CHEWY);
+				start_spz(CH_BORK_TALK, 255, false, P_CHEWY);
 				startAadWait(113);
 
 			} else if (_G(gameState).R12TalismanOk && !_G(gameState).R12RaumOk) {
@@ -275,6 +275,7 @@ int16 Room12::useTransformerTube() {
 			_G(atds)->set_ats_str(117, TXT_MARK_LOOK, 0, ATS_DATA);
 		} else {
 			autoMove(7, P_CHEWY);
+			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(29);
 		}
 	}

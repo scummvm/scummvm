@@ -19,9 +19,10 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/error.h"
 #include "common/scummsys.h"
+#include "common/debug.h"
+#include "common/endian.h"
+#include "common/error.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/types.h"
@@ -36,7 +37,7 @@ static int g_tick;
 
 // Only include OPL3 when we actually have an AdLib emulator builtin, which
 // supports OPL3.
-#if !defined(DISABLE_DOSBOX_OPL) || !defined(DISABLE_NUKED_OPL)
+#if !defined(DISABLE_DOSBOX_OPL) || !defined(DISABLE_NUKED_OPL) || defined(USE_NFM)
 #define ENABLE_OPL3
 #endif
 
@@ -1271,10 +1272,10 @@ void AdLibPart::sysEx_customInstrument(uint32 type, const byte *instr, uint32 da
 	}
 #endif
 
-	if (type == 'ADL ' && instr && dataSize == sizeof(AdLibInstrument))
+	if (type == MKTAG('A','D','L',' ') && instr && dataSize == sizeof(AdLibInstrument))
 		memcpy(&_partInstr, instr, sizeof(AdLibInstrument));
-	else if (type != 'ADL '){
-		warning("AdLibPart: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
+	else if (type != MKTAG('A','D','L',' ')) {
+		warning("AdLibPart: Receiving '%s' instrument data. Probably loading a savegame with that sound setting", tag2str(type));
 	}
 }
 
@@ -1359,7 +1360,7 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 	}
 #endif
 
-	if (type == 'ADLP' && instr && dataSize) {
+	if (type == MKTAG('A','D','L','P') && instr && dataSize) {
 		byte note = instr[0];
 		_notes[note] = instr[1];
 
@@ -1381,8 +1382,8 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 		_customInstruments[note]->carSustainRelease     = instr[10];
 		_customInstruments[note]->carWaveformSelect     = instr[11];
 		_customInstruments[note]->feedback               = instr[12];
-	} else if (type != 'ADLP'){
-		warning("AdLibPercussionChannel: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
+	} else if (type != MKTAG('A','D','L','P')) {
+		warning("AdLibPercussionChannel: Receiving '%s' instrument data. Probably loading a savegame with that sound setting", tag2str(type));
 	}
 }
 
@@ -1440,7 +1441,7 @@ int MidiDriver_ADLIB::open() {
 		_opl = OPL::Config::create(OPL::Config::kOpl3);
 	}
 
-	// Initialize plain OPL2 when no OPL3 is intiailized already.
+	// Initialize plain OPL2 when no OPL3 is initialized already.
 	if (!_opl) {
 #endif
 		_opl = OPL::Config::create();
@@ -2311,14 +2312,23 @@ public:
 
 MusicDevices AdLibEmuMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	devices.push_back(MusicDevice(this, "", MT_ADLIB));
+
+	if (OPL::Config::detect(OPL::Config::kOpl2) > 0 ||
+	    OPL::Config::detect(OPL::Config::kOpl3) > 0) {
+		devices.push_back(MusicDevice(this, "", MT_ADLIB));
+	}
+
 	return devices;
 }
 
 Common::Error AdLibEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = new MidiDriver_ADLIB();
+	if (OPL::Config::detect(OPL::Config::kOpl2) > 0 ||
+	    OPL::Config::detect(OPL::Config::kOpl3) > 0) {
+		*mididriver = new MidiDriver_ADLIB();
+		return Common::kNoError;
+	}
 
-	return Common::kNoError;
+	return Common::kAudioDeviceInitFailed;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ADLIB)

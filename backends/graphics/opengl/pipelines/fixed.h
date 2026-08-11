@@ -37,7 +37,7 @@ public:
 
 protected:
 	void activateInternal() override;
-	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
+	void drawTextureInternal(const Texture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
 
 	GLfloat _r, _g, _b, _a;
 };

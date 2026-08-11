@@ -27,7 +27,7 @@
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
 #include "bagel/boflib/sound.h"
-#include "bagel/boflib/std_keys.h"
+#include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -293,7 +293,7 @@ ErrorCode CNavWindow::attach() {
 	setTimer(777, 200, nullptr);
 
 	BofPlaySound(makeDir(WELCOME_SND), SOUND_WAVE);
-	CSound::waitWaveSounds();
+	CBofSound::waitWaveSounds();
 
 	CBagCursor::showSystemCursor();
 
@@ -530,7 +530,7 @@ void CNavWindow::refreshData() {
 		};
 		i++;
 	};
-	cRect.left -= 10;		// Un-indent
+	cRect.left -= 10;       // Un-indent
 
 	// Leave blank space before next section
 	cRect.top += 30;

@@ -25,7 +25,8 @@
  *
  */
 
-/* Detection tables for the ADI / Addy 2 series. */
+/* Detection tables for the ADI 2 series. */
+/* These games are part of the Adi series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Adi_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADI2_H
 #define GOB_DETECTION_TABLES_ADI2_H
@@ -111,7 +112,7 @@
 	"adi2.stk", "ediintro.tot", 0
 },
 
-// -- German: Addy --
+// -- German: ADI Spielerisch lernen --
 
 {
 	{
@@ -127,7 +128,7 @@
 	"adi2.stk", "ediintro.tot", 0
 },
 {
-	{ // 1994 CD version
+	{ // 1994 CD version - Supplied by BJNFNE
 		"adi2",
 		"Adi 2 (CD)",
 		AD_ENTRY1s("adi2.stk", "157a26943a021d92f5c76f6eb8f18f2a", 12960390),
@@ -153,7 +154,7 @@
 	"adi2.stk", "ediintro.tot", 0
 },
 {
-	{
+	{ // Supplied by Indy4-Fan
 		"adi2",
 		"Adi 2.5",
 		AD_ENTRY1s("adi2.stk", "f44526b8ce3a96f966ffce0ba81d6d25", 16918426),
@@ -238,7 +239,7 @@
 },
 {
 	{
-		"adi2", // This version comes from the Sierra's Schoolhouse Math 
+		"adi2", // This version comes from the Sierra's Schoolhouse Math - Supplied by BJNFNE
 		"Adi 2",
 		AD_ENTRY1s("adi2.stk", "da5c5b4a6b56ed34d10ae5e0acfb9f8d", 11690760),
 		EN_USA,
@@ -246,12 +247,12 @@
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	kFeaturesNone, // When Assertion bug is fixed check if this version also needs kFeatures600x400
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
 	{
-		"adi2", // This version comes from the Sierra's Schoolhouse Math 
+		"adi2", // This version comes from the Sierra's Schoolhouse Math - Supplied by BJNFNE
 		"Adi 2 Math",
 		AD_ENTRY1s("adi2.stk", "0f102a6e4fac493162dfb70144c662bf", 12112994),
 		EN_USA,
@@ -259,7 +260,7 @@
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	kFeaturesNone, // When Assertion bug is fixed check if this version also needs kFeatures600x400
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 
@@ -269,10 +270,7 @@
 	{
 		"adi2",
 		"Non-Interactive Demo",
-		AD_ENTRY4s("demo.scn", "8b5ba359fd87d586ad39c1754bf6ea35", 168,
-				"demadi2t.vmd",	"08a1b18cfe2015d3b43270da35cc813d", 7250723,
-                "demarch.vmd", "4c4a4616585d40ef3df209e3c3911062", 5622731,
-                "demobou.vmd", "2208b9855775564d15c4a5a559da0aec", 3550511),
+		AD_ENTRY1s("demo.scn", "8b5ba359fd87d586ad39c1754bf6ea35", 168),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_DEMO,
@@ -282,13 +280,10 @@
 	0, 0, 1
 },
 {
-	{
+	{ // Supplied by BJNFNE
 		"adi2",
 		"Non-Interactive Demo",
-		AD_ENTRY4s("demo.scn", "16331b4db31b153f241ebcee49b7383d", 170,
-				"demadi2d.vmd",	"658b5502bf0aeb46a39788f6a07e3d97", 7552841,
-                "demarchd.vmd", "a93184f0e297bb2e1ebfd64c1038e1ae", 5946788,
-                "demoboud.vmd", "37f3a61852c4485f2cc86b9880b98a6c", 3552135),
+		AD_ENTRY1s("demo.scn", "16331b4db31b153f241ebcee49b7383d", 170),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_DEMO,
@@ -298,12 +293,10 @@
 	0, 0, 1
 },
 {
-	{
+	{ // Supplied by BJNFNE
 		"adi2",
 		"Non-Interactive Demo",
-		AD_ENTRY3s("demo.scn", "8b5ba359fd87d586ad39c1754bf6ea35", 168,
-				"demarch.vmd",	"4c4a4616585d40ef3df209e3c3911062", 5622731,
-                "demobou.vmd", "2208b9855775564d15c4a5a559da0aec", 3550511),
+		AD_ENTRY1s("demo.scn", "8b5ba359fd87d586ad39c1754bf6ea35", 168),
 		FR_FRA,
 	  	kPlatformDOS,
 	  	ADGF_DEMO,
@@ -312,5 +305,5 @@
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 1
 },
-		  
+
 #endif // GOB_DETECTION_TABLES_ADI2_H

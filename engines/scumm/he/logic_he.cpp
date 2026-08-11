@@ -41,12 +41,12 @@ int LogicHE::versionID() {
 }
 
 int LogicHE::getFromArray(int arg0, int idx2, int idx1) {
-	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = arg0;
+	_vm->VAR(_vm->VAR_U32_RESERVED) = arg0;
 	return _vm->readArray(116, idx2, idx1);
 }
 
 void LogicHE::putInArray(int arg0, int idx2, int idx1, int val) {
-	_vm->VAR(_vm->VAR_U32_ARRAY_UNK) = arg0;
+	_vm->VAR(_vm->VAR_U32_RESERVED) = arg0;
 	_vm->writeArray(116, idx2, idx1, val);
 }
 
@@ -98,7 +98,7 @@ LogicHE *LogicHE::makeLogicHE(ScummEngine_v90he *vm) {
 		return makeLogicHEbaseball2001(vm);
 
 	case GID_BASKETBALL:
-		return makeLogicHEbasketball(vm);
+		return makeLogicHEbasketball((ScummEngine_v100he *)vm);
 
 	case GID_MOONBASE:
 		return makeLogicHEmoonbase((ScummEngine_v100he *)vm);

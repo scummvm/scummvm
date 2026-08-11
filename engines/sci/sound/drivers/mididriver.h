@@ -144,7 +144,6 @@ extern MidiPlayer *MidiPlayer_AmigaMac1_create(SciVersion version, Common::Platf
 extern MidiPlayer *MidiPlayer_PCJr_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_PCSpeaker_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_CMS_create(SciVersion version);
-extern MidiPlayer *MidiPlayer_MacSci0_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Midi_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Fb01_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Casio_create(SciVersion version, MusicType midiType);

@@ -158,6 +158,7 @@ int SCXStream::readBuffer(int16 *buffer, const int numSamples) {
 		int samplesDecodedLeft = _xaStreams[0]->readBuffer(leftSamples, samplesPerChannel);
 		int samplesDecodedRight = _xaStreams[1]->readBuffer(rightSamples, samplesPerChannel);
 		assert(samplesDecodedLeft == samplesDecodedRight);
+		(void)samplesDecodedRight;
 
 		// Now re-interleave the data
 		int samplesDecoded = 0;

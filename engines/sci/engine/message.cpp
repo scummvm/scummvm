@@ -228,7 +228,10 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			reader = new MessageReaderV4(*res);
 		break;
 	default:
-		error("Message: unsupported resource version %d", version);
+		// Ignore message resources with invalid versions.
+		// The LSL7 Russian "Fargus" translation contains an incorrectly
+		// compressed message resource that fails this check. Bug #16597
+		warning("Message: unsupported resource version %d", version);
 		return false;
 	}
 

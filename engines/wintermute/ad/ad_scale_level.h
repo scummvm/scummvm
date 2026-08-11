@@ -36,14 +36,12 @@ namespace Wintermute {
 class AdScaleLevel : public BaseObject {
 public:
 	DECLARE_PERSISTENT(AdScaleLevel, BaseObject)
+	float _scale;
 	AdScaleLevel(BaseGame *inGame);
 	~AdScaleLevel() override;
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	float getScale() const;
-private:
-	float _scale;
 };
 
 } // End of namespace Wintermute

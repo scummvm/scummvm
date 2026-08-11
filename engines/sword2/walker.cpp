@@ -95,7 +95,7 @@ int Router::doWalk(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkd
 	if (obLogic.getLooping() == 0) {
 		// If we're already there, don't even bother allocating
 		// memory and calling the router, just quit back & continue
-		// the script! This avoids an embarassing mega stand frame
+		// the script! This avoids an embarrassing mega stand frame
 		// appearing for one cycle when we're already in position for
 		// an anim eg. repeatedly clicking on same object to repeat
 		// an anim - no mega frame will appear in between runs of the

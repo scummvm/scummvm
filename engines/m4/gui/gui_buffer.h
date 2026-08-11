@@ -40,10 +40,11 @@ bool gui_buffer_system_init();
 void gui_buffer_system_shutdown();
 
 /**
- * Register a Buffer with the view manager by creating a view mananger screen
+ * Register a Buffer with the view manager by creating a view manager screen
  * @param x1		Where the screen should initially be placed, coords relative
 					to the top left hand monitor corner.
  * @param y1		The screens initial "y" coord
+ * @param myBuf		The Buffer specified
  * @param scrnFlags	Flags defining the screens: layer, transparency,
 					moveability, etc.
  * @param evtHandler	A pointer to the procedure to be executed when
@@ -52,12 +53,9 @@ void gui_buffer_system_shutdown();
  * @remarks			The user is responsible for keeping the Buffer *.
 					Any changes to the contents will be made by the user.
  */
-bool gui_buffer_register(int32 x1, int32 y1, Buffer *myBuf, uint32 scrnFlags, EventHandler evtHandler);
-void gui_buffer_deregister(void *myBuf);
-
 bool gui_GrBuff_register(int32 x1, int32 y1, GrBuff *myBuf, uint32 scrnFlags, EventHandler evtHandler);
+void gui_buffer_deregister(void *myBuf);
 void gui_buffer_activate(Buffer *myBuf);
-bool gui_buffer_add_key(Buffer *myBuf, long myKey, HotkeyCB cb);
 
 /**
  * Change which procedure will handle the events sent to the screen, which was

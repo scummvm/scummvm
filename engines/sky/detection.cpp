@@ -32,6 +32,9 @@
 static const PlainGameDescriptor skySetting =
 	{"sky", "Beneath a Steel Sky" };
 
+static const PlainGameDescriptor ibassSetting =
+	{ "ibass", "Beneath a Steel Sky iOS remastered" };
+
 struct SkyVersion {
 	int dinnerTableEntries;
 	int dataDiskSize;
@@ -67,6 +70,7 @@ public:
 
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 
 	uint getMD5Bytes() const override {
@@ -94,13 +98,22 @@ const char *SkyMetaEngineDetection::getOriginalCopyright() const {
 PlainGameList SkyMetaEngineDetection::getSupportedGames() const {
 	PlainGameList games;
 	games.push_back(skySetting);
+	games.push_back(ibassSetting);
 	return games;
 }
 
 PlainGameDescriptor SkyMetaEngineDetection::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
+	else if (0 == scumm_stricmp(gameid, ibassSetting.gameId))
+		return ibassSetting;
 	return PlainGameDescriptor::empty();
+}
+
+Common::Error SkyMetaEngineDetection::identifyGame(DetectedGame &game, const void **descriptor) {
+	*descriptor = nullptr;
+	game = DetectedGame(getName(), findGame(ConfMan.get("gameid").c_str()));
+	return game.gameId.empty() ? Common::kUnknownError : Common::kNoError;
 }
 
 DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {
@@ -109,6 +122,8 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 	bool hasSkyDnr = false;
 	int dinnerTableEntries = -1;
 	int dataDiskSize = -1;
+	bool hasIbassDat = false;
+	int ibassDiskSize = -1;
 	Common::String dataDiskHeadMD5 = "";
 	int exeSize = -1; 
 	const Common::Language langs[] = {
@@ -116,7 +131,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		Common::DE_DEU,
 		Common::FR_FRA,
 		Common::EN_USA,
-		Common::SE_SWE,
+		Common::SV_SWE,
 		Common::IT_ITA,
 		Common::PT_BRA,
 		Common::ES_ESP,
@@ -133,8 +148,18 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 				if (dataDisk.open(*file)) {
 					hasSkyDsk = true;
 					dataDiskSize = dataDisk.size();
-					if (dataDiskSize == 73123264)
+					if (dataDiskSize == 73123264 || dataDiskSize == 75893200)
 						dataDiskHeadMD5 = Common::computeStreamMD5AsString(dataDisk, 5000);
+				}
+			}
+
+			if (0 == scumm_stricmp("bass.dat", file->getName().c_str())) {
+				Common::File ibassDisk;
+				if (ibassDisk.open(*file)) {
+					hasIbassDat = true;
+					ibassDiskSize = ibassDisk.size();
+					if (ibassDiskSize == 9737168)
+						dataDiskHeadMD5 = Common::computeStreamMD5AsString(ibassDisk, 5000);
 				}
 			}
 
@@ -178,6 +203,8 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		Common::Language lang = Common::Language::UNK_LANG;
 		if (dataDiskSize == 73123264 && dataDiskHeadMD5 == "886d6faecd97488be09b73f4f87b92d9")
 			lang = Common::Language::RU_RUS;
+		if (dataDiskSize == 75893200 && dataDiskHeadMD5 == "886d6faecd97488be09b73f4f87b92d9")
+			lang = Common::Language::HE_ISR;
 
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
@@ -185,7 +212,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 			game = DetectedGame(getName(), skySetting.gameId, skySetting.description, lang, Common::kPlatformDOS, extra);
 			game.setGUIOptions(sv->guioptions);
 		} else {
-			game = DetectedGame(getName(), skySetting.gameId, skySetting.description);
+			game = DetectedGame(getName(), skySetting.gameId, skySetting.description, lang);
 		}
 
 		if (lang == Common::Language::UNK_LANG) {
@@ -199,6 +226,13 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		} else
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(lang));
 
+		detectedGames.push_back(game);
+	}
+
+	if (hasIbassDat) {
+		DetectedGame game;
+		Common::Language lang = Common::Language::UNK_LANG;
+		game = DetectedGame(getName(), ibassSetting.gameId, ibassSetting.description, lang);
 		detectedGames.push_back(game);
 	}
 

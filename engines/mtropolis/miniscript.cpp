@@ -24,6 +24,7 @@
 #include "common/random.h"
 #include "common/memstream.h"
 
+#include "mtropolis/coroutines.h"
 #include "mtropolis/miniscript.h"
 
 namespace MTropolis {
@@ -630,7 +631,7 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 
 	if (_messageFlags.immediate) {
 		thread->getRuntime()->sendMessageOnVThread(dispatch);
-		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+		return kMiniscriptInstructionOutcomeYieldToVThread;
 	} else {
 		thread->getRuntime()->queueMessage(dispatch);
 		return kMiniscriptInstructionOutcomeContinue;
@@ -762,7 +763,19 @@ MiniscriptInstructionOutcome Modulo::arithExecute(MiniscriptThread *thread, doub
 		thread->error("Arithmetic error: Modulo division by zero");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
-	result = fmod(left, right);
+
+	// fmod keeps the sign from the left operand, but mTropolis modulo keeps the
+	// sign of the right operand.
+	double r = fmod(left, right);
+	if (signbit(left) != signbit(right)) {
+		if (r == 0.0)
+			r = copysign(0.0, right);
+		else
+			r += right;
+	}
+
+	result = r;
+
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
@@ -1248,9 +1261,21 @@ MiniscriptInstructionOutcome BuiltinFunc::executeStr2Num(MiniscriptThread *threa
 	const Common::String &str = inputDynamicValue.getString();
 	if (str.empty())
 		result = 0.0;
-	else if (str.size() == 0 || !sscanf(str.c_str(), "%lf", &result)) {
-		thread->error("Couldn't parse number");
-		return kMiniscriptInstructionOutcomeFailed;
+	else if (!sscanf(str.c_str(), "%lf", &result)) {
+		// NOTE: sscanf will properly handle cases where a number is followed by a non-numeric value,
+		// which is consistent with mTropolis' behavior.
+		// 
+		// If it fails, the result is 0.0 and no script error.
+		//
+		// This includes a case in Obsidian where it tries to parse in invalid room number "L100"
+		// upon entering the sky face for the first time in Bureau.
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+			debugger->notify(kDebugSeverityWarning, Common::String::format("Failed to parse '%s' as a number", str.c_str()));
+#endif
+
+		result = 0.0;
 	}
 
 	returnValue->setFloat(result);
@@ -1886,11 +1911,6 @@ MiniscriptThread::MiniscriptThread(Runtime *runtime, const Common::SharedPtr<Mes
 	: _runtime(runtime), _msgProps(msgProps), _program(program), _refs(refs), _modifier(modifier), _currentInstruction(0), _failed(false) {
 }
 
-void MiniscriptThread::runOnVThread(VThread &vthread, const Common::SharedPtr<MiniscriptThread> &thread) {
-	ResumeTaskData *taskData = vthread.pushTask("MiniscriptThread::resumeTask", resumeTask);
-	taskData->thread = thread;
-}
-
 void MiniscriptThread::error(const Common::String &message) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (_runtime->debugGetDebugger())
@@ -2002,6 +2022,10 @@ void MiniscriptThread::createWriteIncomingDataProxy(DynamicValueWriteProxy &prox
 	proxy.pod.ptrOrOffset = 0;
 }
 
+void MiniscriptThread::retryInstruction() {
+	_currentInstruction--;
+}
+
 MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	thread->_msgProps->setValue(value);
 
@@ -2018,50 +2042,40 @@ MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::refAt
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
+CORO_BEGIN_DEFINITION(MiniscriptThread::ResumeThreadCoroutine)
+	struct Locals {
+		MiniscriptThread *self = nullptr;
+		size_t numInstrs = 0;
+		size_t instrNum = 0;
+	};
 
-VThreadState MiniscriptThread::resumeTask(const ResumeTaskData &data) {
-	return data.thread->resume(data);
-}
+	CORO_BEGIN_FUNCTION
+		locals->self = params->thread.get();
+		locals->numInstrs = locals->self->_program->getInstructions().size();
 
-VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
-	const Common::Array<MiniscriptInstruction *> &instrsArray = _program->getInstructions();
+		CORO_IF (locals->numInstrs == 0)
+			CORO_RETURN;
+		CORO_END_IF
 
-	if (instrsArray.size() == 0)
-		return kVThreadReturn;
+		CORO_WHILE (locals->self->_currentInstruction < locals->numInstrs && !locals->self->_failed)
+			CORO_AWAIT_MINISCRIPT(locals->self->runNextInstruction());
+		CORO_END_WHILE
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
-	MiniscriptInstruction *const *instrs = &instrsArray[0];
-	size_t numInstrs = instrsArray.size();
+MiniscriptInstructionOutcome MiniscriptThread::runNextInstruction() {
+	const MiniscriptInstruction *instr = _program->getInstructions()[_currentInstruction++];
 
-	if (_currentInstruction >= numInstrs || _failed)
-		return kVThreadReturn;
+	MiniscriptInstructionOutcome outcome = instr->execute(this);
 
-	// Requeue now so that any VThread tasks queued by instructions run in front of the resume
-	{
-		ResumeTaskData *requeueData = _runtime->getVThread().pushTask("MiniscriptThread::resumeTask", resumeTask);
-		requeueData->thread = taskData.thread;
+	if (outcome == kMiniscriptInstructionOutcomeFailed) {
+		// Treat this as non-fatal but bail out of the execution loop
+		_failed = true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
-	while (_currentInstruction < numInstrs && !_failed) {
-		size_t instrNum = _currentInstruction++;
-		MiniscriptInstruction *instr = instrs[instrNum];
-
-		MiniscriptInstructionOutcome outcome = instr->execute(this);
-		if (outcome == kMiniscriptInstructionOutcomeFailed) {
-			// Should this also interrupt the message dispatch?
-			_failed = true;
-			return kVThreadReturn;
-		}
-
-		if (outcome == kMiniscriptInstructionOutcomeYieldToVThreadAndRetry) {
-			_currentInstruction = instrNum;
-			return kVThreadReturn;
-		}
-
-		if (outcome == kMiniscriptInstructionOutcomeYieldToVThreadNoRetry)
-			return kVThreadReturn;
-	}
-
-	return kVThreadReturn;
+	// Otherwise continue
+	return outcome;
 }
 
 MiniscriptInstructionOutcome MiniscriptThread::tryLoadVariable(MiniscriptStackValue &stackValue) {
@@ -2074,6 +2088,13 @@ MiniscriptInstructionOutcome MiniscriptThread::tryLoadVariable(MiniscriptStackVa
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome miniscriptIgnoreFailure(MiniscriptInstructionOutcome outcome) {
+	if (outcome == kMiniscriptInstructionOutcomeFailed)
+		return kMiniscriptInstructionOutcomeContinue;
+
+	return outcome;
 }
 
 } // End of namespace MTropolis

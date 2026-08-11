@@ -28,26 +28,31 @@
 
 #include <arm_neon.h>
 
-#ifdef __GNUC__
+#if !defined(__aarch64__) && !defined(__ARM_NEON)
+
+#if defined(__clang__)
+#pragma clang attribute push (__attribute__((target("neon"))), apply_to=function)
+#elif defined(__GNUC__)
 #pragma GCC push_options
-
-#if !defined(__aarch64__)
 #pragma GCC target("fpu=neon")
-#endif // !defined(__aarch64__)
+#endif
 
-#endif // __GNUC__
+#endif // !defined(__aarch64__) && !defined(__ARM_NEON)
 
 namespace Graphics {
 
 class BlendBlitImpl_NEON : public BlendBlitImpl_Base {
 	friend class BlendBlit;
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend<doscale, rgbmod, alphamod> {
-	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend<rgbmod, alphamod> {
+public:
+	constexpr AlphaBlend(const uint32 color) : BlendBlitImpl_Base::AlphaBlend<rgbmod, alphamod>(color) {}
+
+	inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst) const {
 		uint32x4_t ina;
 		if (alphamod)
-			ina = vshrq_n_u32(vmulq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vdupq_n_u32(ca)), 8);
+			ina = vshrq_n_u32(vmulq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vdupq_n_u32(this->ca)), 8);
 		else
 			ina = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
 		uint32x4_t alphaMask = vceqq_u32(ina, vmovq_n_u32(0));
@@ -63,9 +68,9 @@ struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend<doscale, rgbmod, alpha
 			dstR = vshrq_n_u32(vmulq_u32(dstR, vsubq_u32(vmovq_n_u32(255), ina)), 8);
 			dstG = vshrq_n_u32(vmulq_u32(dstG, vsubq_u32(vmovq_n_u32(255), ina)), 8);
 			dstB = vshrq_n_u32(vmulq_u32(dstB, vsubq_u32(vmovq_n_u32(255), ina)), 8);
-			srcR = vaddq_u32(dstR, vshrq_n_u32(vmulq_u32(vmulq_u32(srcR, ina), vmovq_n_u32(cr)), 16));
-			srcG = vaddq_u32(dstG, vshrq_n_u32(vmulq_u32(vmulq_u32(srcG, ina), vmovq_n_u32(cg)), 16));
-			srcB = vaddq_u32(dstB, vshrq_n_u32(vmulq_u32(vmulq_u32(srcB, ina), vmovq_n_u32(cb)), 16));
+			srcR = vaddq_u32(dstR, vshrq_n_u32(vmulq_u32(vmulq_u32(srcR, ina), vmovq_n_u32(this->cr)), 16));
+			srcG = vaddq_u32(dstG, vshrq_n_u32(vmulq_u32(vmulq_u32(srcG, ina), vmovq_n_u32(this->cg)), 16));
+			srcB = vaddq_u32(dstB, vshrq_n_u32(vmulq_u32(vmulq_u32(srcB, ina), vmovq_n_u32(this->cb)), 16));
 			src = vorrq_u32(vandq_u32(srcB, vmovq_n_u32(BlendBlit::kBModMask)), vmovq_n_u32(BlendBlit::kAModMask));
 			src = vorrq_u32(vandq_u32(vshlq_n_u32(srcG, 8), vmovq_n_u32(BlendBlit::kGModMask)), src);
 			src = vorrq_u32(vandq_u32(vshlq_n_u32(srcR, 16), vmovq_n_u32(BlendBlit::kRModMask)), src);
@@ -89,12 +94,15 @@ struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend<doscale, rgbmod, alpha
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend<doscale, rgbmod, alphamod> {
-	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend<rgbmod, alphamod> {
+public:
+	constexpr MultiplyBlend(const uint32 color) : BlendBlitImpl_Base::MultiplyBlend<rgbmod, alphamod>(color) {}
+
+	inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst) const {
 		uint32x4_t ina, alphaMask;
 		if (alphamod) {
-			ina = vshrq_n_u32(vmulq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vdupq_n_u32(ca)), 8);
+			ina = vshrq_n_u32(vmulq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vdupq_n_u32(this->ca)), 8);
 			alphaMask = vceqq_u32(ina, vmovq_n_u32(0));
 		} else {
 			ina = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
@@ -109,9 +117,9 @@ struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend<doscale, rgbmod,
 			uint32x4_t dstG = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
 			uint32x4_t dstR = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
 
-			srcB = vandq_u32(vshlq_n_u32(vmulq_u32(dstB, vshrq_n_u32(vmulq_u32(vmulq_u32(srcB, vmovq_n_u32(cb)), ina), 16)), BlendBlit::kBModShift - 8), vmovq_n_u32(BlendBlit::kBModMask));
-			srcG = vandq_u32(vshlq_n_u32(vmulq_u32(dstG, vshrq_n_u32(vmulq_u32(vmulq_u32(srcG, vmovq_n_u32(cg)), ina), 16)), BlendBlit::kGModShift - 8), vmovq_n_u32(BlendBlit::kGModMask));
-			srcR = vandq_u32(vshlq_n_u32(vmulq_u32(dstR, vshrq_n_u32(vmulq_u32(vmulq_u32(srcR, vmovq_n_u32(cr)), ina), 16)), BlendBlit::kRModShift - 8), vmovq_n_u32(BlendBlit::kRModMask));
+			srcB = vandq_u32(vshlq_n_u32(vmulq_u32(dstB, vshrq_n_u32(vmulq_u32(vmulq_u32(srcB, vmovq_n_u32(this->cb)), ina), 16)), BlendBlit::kBModShift - 8), vmovq_n_u32(BlendBlit::kBModMask));
+			srcG = vandq_u32(vshlq_n_u32(vmulq_u32(dstG, vshrq_n_u32(vmulq_u32(vmulq_u32(srcG, vmovq_n_u32(this->cg)), ina), 16)), BlendBlit::kGModShift - 8), vmovq_n_u32(BlendBlit::kGModMask));
+			srcR = vandq_u32(vshlq_n_u32(vmulq_u32(dstR, vshrq_n_u32(vmulq_u32(vmulq_u32(srcR, vmovq_n_u32(this->cr)), ina), 16)), BlendBlit::kRModShift - 8), vmovq_n_u32(BlendBlit::kRModMask));
 
 			src = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
 			src = vorrq_u32(src, vorrq_u32(srcB, vorrq_u32(srcG, srcR)));
@@ -135,16 +143,22 @@ struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend<doscale, rgbmod,
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct OpaqueBlend : public BlendBlitImpl_Base::OpaqueBlend<doscale, rgbmod, alphamod> {
-	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct OpaqueBlend : public BlendBlitImpl_Base::OpaqueBlend<rgbmod, alphamod> {
+public:
+	constexpr OpaqueBlend(const uint32 color) : BlendBlitImpl_Base::OpaqueBlend<rgbmod, alphamod>(color) {}
+
+	inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst) const {
 		return vorrq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend<doscale, rgbmod, alphamod> {
-	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend<rgbmod, alphamod> {
+public:
+	constexpr BinaryBlend(const uint32 color) : BlendBlitImpl_Base::BinaryBlend<rgbmod, alphamod>(color) {}
+
+	inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst) const {
 		uint32x4_t alphaMask = vceqq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vmovq_n_u32(0));
 		dst = vandq_u32(dst, alphaMask);
 		src = vandq_u32(vorrq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vmvnq_u32(alphaMask));
@@ -152,12 +166,15 @@ struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend<doscale, rgbmod, alp
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend<doscale, rgbmod, alphamod> {
-	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend<rgbmod, alphamod> {
+public:
+	constexpr AdditiveBlend(const uint32 color) : BlendBlitImpl_Base::AdditiveBlend<rgbmod, alphamod>(color) {}
+
+	inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst) const {
 		uint32x4_t ina;
 		if (alphamod)
-			ina = vshrq_n_u32(vmulq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vdupq_n_u32(ca)), 8);
+			ina = vshrq_n_u32(vmulq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vdupq_n_u32(this->ca)), 8);
 		else
 			ina = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
 		uint32x4_t alphaMask = vceqq_u32(ina, vmovq_n_u32(0));
@@ -170,9 +187,9 @@ struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend<doscale, rgbmod,
 			uint32x4_t dstg = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
 			uint32x4_t dstr = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
 
-			srcb = vandq_u32(vaddq_u32(dstb, vshrq_n_u32(vmulq_u32(srcb, vmulq_u32(vmovq_n_u32(cb), ina)), 16)), vmovq_n_u32(BlendBlit::kBModMask));
-			srcg = vandq_u32(vaddq_u32(dstg, vmulq_u32(srcg, vmulq_u32(vmovq_n_u32(cg), ina))), vmovq_n_u32(BlendBlit::kGModMask));
-			srcr = vandq_u32(vaddq_u32(dstr, vshrq_n_u32(vmulq_u32(srcr, vmulq_u32(vmovq_n_u32(cr), ina)), BlendBlit::kRModShift - 16)), vmovq_n_u32(BlendBlit::kRModMask));
+			srcb = vandq_u32(vaddq_u32(dstb, vshrq_n_u32(vmulq_u32(srcb, vmulq_u32(vmovq_n_u32(this->cb), ina)), 16)), vmovq_n_u32(BlendBlit::kBModMask));
+			srcg = vandq_u32(vaddq_u32(dstg, vmulq_u32(srcg, vmulq_u32(vmovq_n_u32(this->cg), ina))), vmovq_n_u32(BlendBlit::kGModMask));
+			srcr = vandq_u32(vaddq_u32(dstr, vshrq_n_u32(vmulq_u32(srcr, vmulq_u32(vmovq_n_u32(this->cr), ina)), BlendBlit::kRModShift - 16)), vmovq_n_u32(BlendBlit::kRModMask));
 
 			src = vandq_u32(dst, vmovq_n_u32(BlendBlit::kAModMask));
 			src = vorrq_u32(src, vorrq_u32(srcb, vorrq_u32(srcg, srcr)));
@@ -206,9 +223,12 @@ struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend<doscale, rgbmod,
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct SubtractiveBlend : public BlendBlitImpl_Base::SubtractiveBlend<doscale, rgbmod, alphamod> {
-	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct SubtractiveBlend : public BlendBlitImpl_Base::SubtractiveBlend<rgbmod, alphamod> {
+public:
+	constexpr SubtractiveBlend(const uint32 color) : BlendBlitImpl_Base::SubtractiveBlend<rgbmod, alphamod>(color) {}
+
+	inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst) const {
 		uint32x4_t ina = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
 		uint32x4_t srcb = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
 		uint32x4_t srcg = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
@@ -217,27 +237,23 @@ struct SubtractiveBlend : public BlendBlitImpl_Base::SubtractiveBlend<doscale, r
 		uint32x4_t dstg = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
 		uint32x4_t dstr = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
 
-		srcb = vandq_u32(vshlq_n_u32(vreinterpretq_u32_s32(vmaxq_s32(vsubq_s32(vreinterpretq_s32_u32(dstb), vreinterpretq_s32_u32(vshrq_n_u32(vmulq_u32(vmulq_u32(srcb, vmovq_n_u32(cb)), vmulq_u32(dstb, ina)), 24))), vmovq_n_s32(0))), BlendBlit::kBModShift), vmovq_n_u32(BlendBlit::kBModMask));
-		srcg = vandq_u32(vshlq_n_u32(vreinterpretq_u32_s32(vmaxq_s32(vsubq_s32(vreinterpretq_s32_u32(dstg), vreinterpretq_s32_u32(vshrq_n_u32(vmulq_u32(vmulq_u32(srcg, vmovq_n_u32(cg)), vmulq_u32(dstg, ina)), 24))), vmovq_n_s32(0))), BlendBlit::kGModShift), vmovq_n_u32(BlendBlit::kGModMask));
-		srcr = vandq_u32(vshlq_n_u32(vreinterpretq_u32_s32(vmaxq_s32(vsubq_s32(vreinterpretq_s32_u32(dstr), vreinterpretq_s32_u32(vshrq_n_u32(vmulq_u32(vmulq_u32(srcr, vmovq_n_u32(cr)), vmulq_u32(dstr, ina)), 24))), vmovq_n_s32(0))), BlendBlit::kRModShift), vmovq_n_u32(BlendBlit::kRModMask));
+		srcb = vandq_u32(vshlq_n_u32(vreinterpretq_u32_s32(vmaxq_s32(vsubq_s32(vreinterpretq_s32_u32(dstb), vreinterpretq_s32_u32(vshrq_n_u32(vmulq_u32(vmulq_u32(srcb, vmovq_n_u32(this->cb)), vmulq_u32(dstb, ina)), 24))), vmovq_n_s32(0))), BlendBlit::kBModShift), vmovq_n_u32(BlendBlit::kBModMask));
+		srcg = vandq_u32(vshlq_n_u32(vreinterpretq_u32_s32(vmaxq_s32(vsubq_s32(vreinterpretq_s32_u32(dstg), vreinterpretq_s32_u32(vshrq_n_u32(vmulq_u32(vmulq_u32(srcg, vmovq_n_u32(this->cg)), vmulq_u32(dstg, ina)), 24))), vmovq_n_s32(0))), BlendBlit::kGModShift), vmovq_n_u32(BlendBlit::kGModMask));
+		srcr = vandq_u32(vshlq_n_u32(vreinterpretq_u32_s32(vmaxq_s32(vsubq_s32(vreinterpretq_s32_u32(dstr), vreinterpretq_s32_u32(vshrq_n_u32(vmulq_u32(vmulq_u32(srcr, vmovq_n_u32(this->cr)), vmulq_u32(dstr, ina)), 24))), vmovq_n_s32(0))), BlendBlit::kRModShift), vmovq_n_u32(BlendBlit::kRModMask));
 
 		return vorrq_u32(vmovq_n_u32(BlendBlit::kAModMask), vorrq_u32(srcb, vorrq_u32(srcg, srcr)));
 	}
 };
 
 public:
-template<template <bool DOSCALE, bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool doscale, bool rgbmod, bool alphamod, bool coloradd1, bool loaddst>
+template<template <bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool doscale, bool rgbmod, bool alphamod>
 static inline void blitInnerLoop(BlendBlit::Args &args) {
+	const bool loaddst = true; // TODO: Only set this when necessary
+
 	const byte *in;
 	byte *out;
 
-	const byte rawcr = (args.color >> BlendBlit::kRModShift) & 0xFF;
-	const byte rawcg = (args.color >> BlendBlit::kGModShift) & 0xFF;
-	const byte rawcb = (args.color >> BlendBlit::kBModShift) & 0xFF;
-	const byte ca = alphamod ? ((args.color >> BlendBlit::kAModShift) & 0xFF) : 255;
-	const uint32 cr = coloradd1 ? (rgbmod   ? (rawcr == 255 ? 256 : rawcr) : 256) : (rgbmod   ? rawcr : 255);
-	const uint32 cg = coloradd1 ? (rgbmod   ? (rawcg == 255 ? 256 : rawcg) : 256) : (rgbmod   ? rawcg : 255);
-	const uint32 cb = coloradd1 ? (rgbmod   ? (rawcb == 255 ? 256 : rawcb) : 256) : (rgbmod   ? rawcb : 255);
+	PixelFunc<rgbmod, alphamod> pixelFunc(args.color);
 
 	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
@@ -274,7 +290,7 @@ static inline void blitInnerLoop(BlendBlit::Args &args) {
 				srcPixels = vcombine_u32(vget_high_u32(srcPixels), vget_low_u32(srcPixels));
 			}
 			{
-				const uint32x4_t res = PixelFunc<doscale, rgbmod, alphamod>::simd(srcPixels, dstPixels, args.flipping & FLIP_H, ca, cr, cg, cb);
+				const uint32x4_t res = pixelFunc.simd(srcPixels, dstPixels);
 				vst1q_u32((uint32 *)out, res);
 			}
 			if (!doscale) in += args.inStep * 4;
@@ -286,7 +302,7 @@ static inline void blitInnerLoop(BlendBlit::Args &args) {
 				in = inBase + scaleXCtr / BlendBlit::SCALE_THRESHOLD * args.inStep;
 			}
 
-			PixelFunc<doscale, rgbmod, alphamod>::normal(in, out, ca, cr, cg, cb);
+			pixelFunc.normal(in, out);
 
 			if (doscale)
 				scaleXCtr += args.scaleX;
@@ -308,10 +324,68 @@ void BlendBlit::blitNEON(Args &args, const TSpriteBlendMode &blendMode, const Al
 	blitT<BlendBlitImpl_NEON>(args, blendMode, alphaType);
 }
 
+void fastBlitNEON_XRGB1555_RGB565(byte *dst, const byte *src,
+                  const uint dstPitch, const uint srcPitch,
+                  const uint w, const uint h) {
+	const uint srcDelta = (srcPitch - w * 2);
+	const uint dstDelta = (dstPitch - w * 2);
+
+	const uint16 *src_ptr = (const uint16 *)src;
+	uint16 *dst_ptr = (uint16 *)dst;
+	uint16x4_t pixels;
+
+	for (uint y = h; y > 0; --y) {
+		uint x = w;
+		for (; x >= 4; x -= 4) {
+			src_ptr = (const uint16 *)src;
+			dst_ptr = (uint16 *)dst;
+
+			// Load pixels to NEON
+			pixels = vld1_u16(src_ptr);
+
+			// Convert from XRGB1555 to RGB565
+			// Here we do : ((pixels & 0x7FE0) << 1) | ((pixels & 0x0200) >> 4) | (pixels & 0x001F)
+			pixels = vorr_u16(
+				vorr_u16(
+					vshl_n_u16(vand_u16(pixels, vmov_n_u16(0x7FE0)), 1),
+					vshr_n_u16(vand_u16(pixels, vmov_n_u16(0x0200)), 4)
+				),
+				vand_u16(pixels, vmov_n_u16(0x001F))
+			);
+
+			// Store pixels to destination
+			vst1_u16(dst_ptr, pixels);
+
+			src += 4 * 2;
+			dst += 4 * 2;
+		}
+
+		for (; x > 0; --x) {
+			// We have remaining pixels, convert them the classic way
+			src_ptr = (const uint16 *)src;
+			dst_ptr = (uint16 *)dst;
+
+			*dst_ptr = ((((*src_ptr) & 0x7FE0) << 1) | (((*src_ptr) & 0x0200) >> 4) | ((*src_ptr) & 0x001F));
+
+			src += 2;
+			dst += 2;
+		}
+
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
 } // end of namespace Graphics
 
-#ifdef __GNUC__
+#if !defined(__aarch64__) && !defined(__ARM_NEON)
+
+#if defined(__clang__)
+#pragma clang attribute pop
+#elif defined(__GNUC__)
 #pragma GCC pop_options
 #endif
+
+#endif // !defined(__aarch64__) && !defined(__ARM_NEON)
 
 #endif // SCUMMVM_NEON

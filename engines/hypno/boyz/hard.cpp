@@ -27,9 +27,14 @@
 
 #include "hypno/hypno.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 void BoyzEngine::runCode(Code *code) {
+	if (!isMusicActive())
+		playMusic(kMenuMusic, 22050, true);
+
 	if (code->name == "<main_menu>")
 		runMainMenu(code);
 	else if (code->name == "<difficulty_menu>")
@@ -74,6 +79,8 @@ void BoyzEngine::runMainMenu(Code *code) {
 		if (posY >= 185)
 			break;
 	}
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -88,6 +95,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE)
 					_name.deleteLastChar();
 				else if (event.kbd.keycode == Common::KEYCODE_RETURN && !_name.empty()) {
+					playSound(kMenuChoiceSound, 1);
 					cont = false;
 				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					if (runExitMenu())
@@ -96,7 +104,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 				}
 
 				else if (Common::isAlpha(event.kbd.keycode)) {
-					playSound("sound/m_choice.raw", 1);
+					playSound(kMenuChoiceSound, 1);
 					_name = _name + char(event.kbd.keycode - 32);
 				}
 
@@ -120,6 +128,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 		g_system->delayMillis(10);
 	}
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 	menu->free();
 	delete menu;
 
@@ -152,6 +161,8 @@ bool BoyzEngine::runExitMenu() {
 	Common::Rect yesBox(142, 87, 179, 102);
 	Common::Rect noBox(142, 104, 179, 119);
 	bool cont = true;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("exit-menu")->setEnabled(true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Point mousePos = g_system->getEventManager()->getMousePos();
@@ -162,12 +173,14 @@ bool BoyzEngine::runExitMenu() {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_y) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionYes) {
+					playSound(kMenuChoiceSound, 1);
 					quit = true;
 					cont = false;
 
-				} else if (event.kbd.keycode == Common::KEYCODE_n) {
+				} else if (event.customType == kActionNo) {
+					playSound(kMenuChoiceSound, 1);
 					quit = false;
 					cont = false;
 					break;
@@ -176,10 +189,12 @@ bool BoyzEngine::runExitMenu() {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (yesBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					quit = true;
 					cont = false;
 					break;
 				} else if (noBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					quit = false;
 					cont = false;
 					break;
@@ -194,6 +209,7 @@ bool BoyzEngine::runExitMenu() {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+	keymapper->getKeymap("exit-menu")->setEnabled(false);
 	menu->free();
 	delete menu;
 	return quit;
@@ -215,6 +231,9 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 	free(palette);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("difficulty-menu")->setEnabled(true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -228,30 +247,38 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (chumpBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					_difficulty = "chump";
 					cont = false;
 				} else if (punkBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					_difficulty = "punk";
 					cont = false;
 				} else if (badAssBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					_difficulty = "bad ass";
 					cont = false;
 				} else if (cancelBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					cont = false;
 				}
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_c) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionDifficultyChump) {
+					playSound(kMenuChoiceSound, 1);
 					_difficulty = "chump";
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_p) {
+				} else if (event.customType == kActionDifficultyPunk) {
+					playSound(kMenuChoiceSound, 1);
 					_difficulty = "punk";
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_b) {
+				} else if (event.customType == kActionDifficultyBadass) {
+					playSound(kMenuChoiceSound, 1);
 					_difficulty = "bad ass";
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_a) {
+				} else if (event.customType == kActionDifficultExit) {
+					playSound(kMenuChoiceSound, 1);
 					cont = false;
 				}
 				break;
@@ -264,6 +291,8 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+	keymapper->getKeymap("difficulty-menu")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	if (_difficulty.empty())
 		_nextLevel = "<main_menu>";
@@ -303,6 +332,9 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	free(palette);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("retry-menu")->setEnabled(true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -316,36 +348,46 @@ void BoyzEngine::runRetryMenu(Code *code) {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (retryMissionBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					_nextLevel = _checkpoint;
 					cont = false;
 				} else if (restartTerritoryBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					// Restore initial health for the team
 					_health = _maxHealth;
 					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
 				} else if (restartMissionBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					_nextLevel = "<main_menu>";
 					cont = false;
-				} else if (quitBox.contains(mousePos))
+				} else if (quitBox.contains(mousePos)) {
+					playSound(kMenuChoiceSound, 1);
 					quitGame();
+				}
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_s) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionRetry) {
+					playSound(kMenuChoiceSound, 1);
 					_nextLevel = _checkpoint;
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_n) {
+				} else if (event.customType == kActionNewMission) {
+					playSound(kMenuChoiceSound, 1);
 					_nextLevel = "<main_menu>";
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_t) {
+				} else if (event.customType == kActionRestart) {
+					playSound(kMenuChoiceSound, 1);
 					// Restore initial health for the team
 					_health = _maxHealth;
 					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_q)
+				} else if (event.customType == kActionQuit) {
+					playSound(kMenuChoiceSound, 1);
 					quitGame();
+				}
 				break;
 
 			default:
@@ -356,6 +398,8 @@ void BoyzEngine::runRetryMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+	keymapper->getKeymap("retry-menu")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	menu->free();
 	delete menu;
@@ -443,10 +487,13 @@ void BoyzEngine::endCredits(Code *code) {
 }
 
 void BoyzEngine::showCredits() {
+	stopMusic();
+	playMusic(kCreditsMusic, 22050, true);
 	MVideo c1("intro/sbcred1.smk", Common::Point(0, 0), false, true, false);
 	runIntro(c1);
 	MVideo c2("intro/sbcred2.smk", Common::Point(0, 0), false, true, false);
 	runIntro(c2);
+	stopMusic();
 }
 
 int BoyzEngine::getTerritory(const Common::String &level) {

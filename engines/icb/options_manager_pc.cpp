@@ -3378,7 +3378,7 @@ bool8 OptionsManager::VerifyLabel() {
 
 	// Another difficulty arises when the length exceeds expected limits but NOT
 	// before the imposed 22 character limit is reached ie all capital w's...
-	// Perhaps I need to watch this everytime a character is input to the label
+	// Perhaps I need to watch this every time a character is input to the label
 	// and refuse any further input if the string exceeds the slot blitting box.
 
 	return TRUE8;
@@ -3396,7 +3396,7 @@ void OptionsManager::EditSlotLabel() {
 
 		// Shall we quit
 		if (c == Common::KEYCODE_RETURN) {
-			// Not allowed an empty name 'cos thats daft
+			// Not allowed an empty name 'cos that's daft
 			if (!VerifyLabel())
 				return;
 
@@ -3793,7 +3793,7 @@ void OptionsManager::DrawMovieSlots(uint32 offset, uint32 surface_id /* = workin
 	if (m_M_MOVIE_selected < NOTHANKS) {
 		uint32 selectMovie = m_M_MOVIE_selected + offset;
 
-		// Is this movie availble
+		// Is this movie available
 		if (g_movieLibrary[selectMovie].visible) {
 			// Get the nice name to go with the nice piccy
 			if (selectMovie < 10)
@@ -6531,7 +6531,7 @@ linesDone:
 	uint32 pitch = surface_manager->Get_pitch(working_buffer_id);
 
 	// Draw the credit lines all nicely formatted
-	for (uint32 count = 0; TRUE8; count++) {
+	while (TRUE8) {
 		// Is this the end of the file
 		if (m_cursor >= (uint32)m_numberOfBytes) {
 			if (m_logoAttached) {
@@ -6553,7 +6553,7 @@ linesDone:
 			m_cursor += 2;
 			// Increment line height
 			m_currentHeight += CREDIT_LINE_SPACING;
-			// Dont draw this line
+			// Don't draw this line
 		} else if (ret == IGNORE_LINE) {
 			// Skip the special character
 			m_cursor++;

@@ -13,7 +13,7 @@ Usage
 
     scummvm [option] [game]
 
-- By default, executing ``scummvm`` on the command line starts the Launcher. 
+- By default, executing ``scummvm`` on the command line starts the Launcher.
 - Specify a game or use ``--auto-detect`` to start a game directly.
 - Some options, such as ``--help`` or ``--list-audio-devices``, allow you to view information about ScummVM directly on the command line without starting the Launcher or starting a game.
 
@@ -165,7 +165,7 @@ Short options are listed where they are available.
         ``--dump-scripts``,``-u``,"Enables script dumping if a directory called 'dumps' exists in the current directory",false
         ``--enable-gs``,,":ref:`Enables Roland GS mode for MIDI playback <gs>`",false
         ``--engine=ID``,,"In combination with ``--list-games`` or ``--list-all-games`` only lists games for this engine",
-        ``--engine-speed=NUM``,,"Sets frame-per-second limit for Grim Fandango or Escape from Monkey Island. 0 is no limit. Allowed values 0 - 100", 60             
+        ``--engine-speed=NUM``,,"Sets frame-per-second limit for Grim Fandango or Escape from Monkey Island. 0 is no limit. Allowed values 0 - 100", 60
         ``--extrapath=PATH``,,":ref:`Extra path to additional game data <extra>`",
         ``--filtering``,,":ref:`Forces filtered graphics mode <filtering>`",false
         ``--fullscreen``,``-f``,":ref:`Forces full-screen mode <fullscreen>`",false
@@ -176,36 +176,40 @@ Short options are listed where they are available.
         ``--iconspath=PATH``,,":ref:`Path to additional icons for the launcher grid view <iconspath>`",
         ``--initial-cfg=FILE``,``-i``,"Loads an initial configuration file if no configuration file has been saved yet.",
         ``--joystick=NUM``,,"Enables joystick input.",0
-        ``--language``,``-q``,":ref:`Selects language <lang>`. Allowed values: en, de, fr, it, pt, es, jp, zh, kr, se, gb, hb, ru, cz",en
+        ``--language``,``-q``,":ref:`Selects language <lang>`. Allowed values: en, de, fr, it, pt, es, jp, zh, kr, sv, gb, hb, ru, cz",en
         ``--list-all-debugflags``,,"Lists all debug flags",
         ``--list-all-engines``,,"Lists all detection engines, then exits",
         ``--list-audio-devices``,,"Lists all available audio devices",
         ``--list-debugflags=engine``,,"Lists engine-specific debug flags. If ``engine=global`` or engine is not specified, then it lists global debug flags.",
         ``--list-engines``,,"Lists supported engines, then exits",
+        ``--list-engines-json``,,"Lists supported engines as json, then exits",
         ``--list-games``,``-z``, "Lists supported games, then exits.",
-        ``--list-records=TARGET``,, "Lists recordings for the specified target (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",
+        ``--list-games-json``,, "Lists supported games as json, then exits.",
+        ``--list-records --game=TARGET``,, "Lists recordings for the specified target (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",
+        ``--list-records-json --game=TARGET``,, "Lists recordings as json for the specified target (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",
         ``--list-saves --game=TARGET``,,"Displays a list of saved games for the game specified, or for all targets if no game specified.",
         ``--list-targets``,``-t``,"Lists configured targets, then exits",
+        ``--list-targets-json``,,"Lists configured targets as json, then exits",
         ``--list-themes``,,"Lists all usable GUI themes",
         ``--logfile=PATH``,``-l``,"Uses alternate path for log file (SDL backend only).",
         ``--md5``,,"Shows MD5 hash of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first or last ``NUM`` bytes of the file given by ``PATH``. If ``--md5-engine=ENGINE_ID`` option is passed then it auto-calculates the required bytes and its hash, overriding ``--md5-length``",
         ``--md5mac``,,"Shows MD5 hash for both the resource fork and data fork of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first or last``NUM`` bytes of each fork.",
         ``--md5-engine=ENGINE_ID``,,"Used with ``--md5`` to specify the engine for which number of bytes to be hashed must be calculated. This option overrides ``--md5-length`` if used along with it. Use ``--list-engines`` to find all engine IDs.",
-        ``--md5-length=NUM``,,"Used with ``--md5`` or ``--md5mac`` to specify the number of bytes to be hashed.If ``NUM`` is 0, MD5 hash of the whole file is calculated. If ``NUM`` is negative, the MD5 hash is calculated from the tail. Is overriden if passed with ``--md5-engine`` option",0
+        ``--md5-length=NUM``,,"Used with ``--md5`` or ``--md5mac`` to specify the number of bytes to be hashed. If ``NUM`` is 0, MD5 hash of the whole file is calculated. If ``NUM`` is negative, the MD5 hash is calculated from the tail. Is overridden if passed with ``--md5-engine`` option",0
         ``--md5-path=PATH``,,"Used with ``--md5`` or ``--md5mac`` to specify path of file to calculate MD5 hash of", ./scummvm
-        ``--midi-gain=NUM``,,":ref:`Sets the gain for MIDI playback <gain>` Only supported by some MIDI drivers. 0-1000",100 
+        ``--midi-gain=NUM``,,":ref:`Sets the gain for MIDI playback <gain>` Only supported by some MIDI drivers. 0-1000",100
         ``--multi-midi``,,":ref:`Enables combination AdLib and native MIDI <multi>`",false
         ``--music-driver=MODE``,``-e``,":ref:`Selects preferred music device <device>`",auto
         ``--music-volume=NUM``,``-m``,":ref:`Sets the music volume <music>`, 0-255",192
-    	``--native-mt32``,,":ref:`True Roland MT-32 (disables GM emulation) <mt32>`",false
+        ``--native-mt32``,,":ref:`True Roland MT-32 (disables GM emulation) <mt32>`",false
         ``--no-fullscreen``,``-F``,"Forces windowed mode",
         ``--opl-driver=DRIVER``,,":ref:`Selects AdLib (OPL) emulator <opl>`",
         ``--output-channels=CHANNELS``,,"Select output channel count, for example, 2 for stereo.",
         ``--output-rate=RATE``,,"Selects output sample rate in Hz, for example 22050Hz.",
         ``--path=PATH``,``-p``,"Sets path to where the game is installed",
-        ``--platform=STRING``,,":ref: `Specifies platform of game <platform>` 
-        Allowed values: 
-        
+        ``--platform=STRING``,,":ref: `Specifies platform of game <platform>`
+        Allowed values:
+
         - 2gs
         - 3do
         - acorn
@@ -215,7 +219,7 @@ Short options are listed where they are available.
         - fmtowns
         - nes
         - mac
-        - pc 
+        - pc
         - pc98
         - pce
         - segacd
@@ -223,11 +227,11 @@ Short options are listed where they are available.
         - windows",
         ``--random-seed=SEED``,,":ref:`Sets the random seed used to initialize entropy <seed>`",
         ``--record-file-name=FILE``,,"Specifies recorded file name (`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",record.bin
-        ``--record-mode=MODE``,,"Specifies record mode for `Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_. Allowed values: record, playback, info, update, passthrough.", none
+        ``--record-mode=MODE``,,"Specifies record mode for `Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_. Allowed values: record, playback, fast_playback, info, update, passthrough.", none
         ``--recursive``,,"In combination with ``--add or ``--detect`` recurses down all subdirectories",
         ``--renderer=RENDERER``,,"Selects 3D renderer. Allowed values: software, opengl, opengl_shaders",
-        ``--render-mode=MODE``,,":ref:`Enables additional render modes <render>`. 
-        Allowed values: 
+        ``--render-mode=MODE``,,":ref:`Enables additional render modes <render>`.
+        Allowed values:
 
         - hercGreen
         - hercAmber
@@ -246,7 +250,7 @@ Short options are listed where they are available.
         ``--savepath=PATH``,,":ref:`Specifies path to where saved games are stored <savepath>`",
         ``--scale-factor=FACTOR``,,"Specifies the factor to scale the graphics by",
         ``--scaler=MODE``,, "Selects graphics scaler.
-        Allowed values: 
+        Allowed values:
 
         - normal
         - hq
@@ -257,114 +261,26 @@ Short options are listed where they are available.
         - supereagle
         - pm
         - dotmatrix
-        - tv2x",default
+        - tv",default
         ``--screenshotpath=PATH``,,"Specify path where screenshot files are created. SDL backend only.",
-        ``--screenshot-period=NUM``,,"When recording, triggers a screenshot every NUM milliseconds.(`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",60000         
+        ``--screenshot-period=NUM``,,"When recording, triggers a screenshot every NUM milliseconds.(`Event Recorder <https://wiki.scummvm.org/index.php/Event_Recorder>`_)",60000
         ``--sfx-volume=NUM``,``-s``,":ref:`Sets the sfx volume <sfx>`, 0-255",192
     	``--show-fps``,,Turns on frames-per-second information in 3D games,false
-        ``--soundfont=FILE``,,":ref:`Selects the SoundFont for MIDI playback. <soundfont>`. Only supported bysome MIDI drivers.",
+        ``--soundfont=FILE``,,":ref:`Selects the SoundFont for MIDI playback. <soundfont>`. Only supported by some MIDI drivers.",
         ``--speech-volume=NUM``,``-r``,":ref:`Sets the speech volume <speechvol>`, 0-255",192
         ``--start-movie=NAME@NUM``,,"Starts Director movie at specified frame. Either can be specified without the other.",
-        ``--stretch-mode=MODE``,, "Selects stretch mode. 
-        Allowed values: 
-        
+        ``--stretch-mode=MODE``,, "Selects stretch mode.
+        Allowed values:
+
         - center
         - pixel-perfect
         - even-pixels
         - fit
         - stretch
-        - fit_force_aspect", 
+        - fit_force_aspect",
         ``--subtitles``,``-n``,":ref:`Enables subtitles  <speechmute>`",
         ``--talkspeed=NUM``,,":ref:`Sets talk speed for games <talkspeed>`",60
         ``--tempo=NUM``,,"Sets music tempo (in percent, 50-200) for SCUMM games.",100
         ``--themepath=PATH``,,":ref:`Specifies path to where GUI themes are stored <themepath>`",
         ``--version``,``-v``,"Displays ScummVM version information, then exits.",
         "``--window-size=W,H``",,"Sets the ScummVM window size to the specified dimensions. OpenGL only.",
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -24,7 +24,7 @@
 
 namespace Immortal {
 
-// We need a few two-dimentional vectors, and writing them out in full each time is tedious
+// We need a few two-dimensional vectors, and writing them out in full each time is tedious
 template<class T> using CArray2D = Common::Array<Common::Array<T>>;
 
 struct Image {

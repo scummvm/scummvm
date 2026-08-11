@@ -37,6 +37,7 @@ bool LordIronfist::msgFocus(const FocusMessage &msg) {
 	g_globals->_currCharacter = &g_globals->_party[0];
 	_canAccept = !g_globals->_currCharacter->_quest;
 	Sound::sound(SOUND_2);
+	Sound::sound2(SOUND_2);
 
 	return TextView::msgFocus(msg);
 }
@@ -46,7 +47,6 @@ void LordIronfist::draw() {
 	clearSurface();
 
 	if (_canAccept) {
-		Sound::sound2(SOUND_2);
 		writeString(0, 1, STRING["maps.map43.ironfist1"]);
 		writeString(0, 2, STRING["maps.map43.ironfist2"]);
 

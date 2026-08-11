@@ -21,8 +21,11 @@
 
 #include "m4/burger/rooms/section1/room105.h"
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/core/imath.h"
 
 namespace M4 {
 namespace Burger {
@@ -45,7 +48,7 @@ static const char *SAID[][4] = {
 
 static const seriesPlayBreak PLAY1[] = {
 	{ 0, 5, "105_014", 2, 255, -1, 0, 0, nullptr, 0 },
-	{ 6, -1, 0, 1, 255, 28, 0, 0, nullptr, 0 },
+	{ 6, -1, nullptr, 1, 255, 28, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -254,7 +257,7 @@ static const seriesPlayBreak PLAY31[] = {
 	{ 7, 7, "105_002", 2, 255, -1, 0, 0, nullptr, 0 },
 	{ 6, 6, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
 	{ 7, 7, "105_002", 2, 255, -1, 0, 0, nullptr, 0 },
-	{ 3, 0, 0, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 3, 0, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -267,7 +270,7 @@ static const seriesPlayBreak PLAY32[] = {
 
 void Room105::init() {
 	_val1 = 1;
-	_series5 = 0;
+	_series5 = nullptr;
 	digi_preload("105_001");
 
 	Common::fill(&_series1[0], &_series1[12], -1);
@@ -1045,10 +1048,8 @@ void Room105::daemon() {
 		break;
 
 	case 5:
-		player_set_commands_allowed(true);
-		break;
-
 	case 6:
+	case 26:
 		player_set_commands_allowed(true);
 		break;
 
@@ -1065,7 +1066,7 @@ void Room105::daemon() {
 		break;
 
 	case 11:
-		ws_walk(186, 263, 0, -1, 10);
+		ws_walk(186, 263, nullptr, -1, 10);
 		break;
 
 	case 12:
@@ -1073,7 +1074,7 @@ void Room105::daemon() {
 		break;
 
 	case 13:
-		ws_walk(415, 254, 0, -1, 2);
+		ws_walk(415, 254, nullptr, -1, 2);
 		break;
 
 	case 15:
@@ -1158,15 +1159,12 @@ void Room105::daemon() {
 		break;
 
 	case 24:
-		ws_walk(385, 254, 0, -1, 2);
+		ws_walk(385, 254, nullptr, -1, 2);
 		break;
 
 	case 25:
+	case 46:
 		ws_unhide_walker();
-		break;
-
-	case 26:
-		player_set_commands_allowed(true);
 		break;
 
 	case 27:
@@ -1287,20 +1285,16 @@ void Room105::daemon() {
 		terminateMachineAndNull(_series5);
 		break;
 
-	case 46:
-		ws_unhide_walker();
-		break;
-
 	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 62:
 			if (_G(flags)[kPerkinsLostIsland] && !_G(flags)[V034]) {
 				player_set_commands_allowed(false);
 				_G(flags)[V034] = 1;
-				ws_walk(199, 279, 0, 19, 9);
+				ws_walk(199, 279, nullptr, 19, 9);
 
 			} else {
-				ws_walk(301, 313, 0, -1, 11);
+				ws_walk(301, 313, nullptr, -1, 11);
 			}
 			break;
 
@@ -1330,7 +1324,7 @@ void Room105::pre_parser() {
 }
 
 void Room105::parser() {
-	bool lookFlag = player_said("look") || player_said("look at");
+	const bool lookFlag = player_said("look") || player_said("look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("conv12")) {
@@ -1407,8 +1401,8 @@ void Room105::parser() {
 
 void Room105::conv10() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
 
 	if (_G(kernel).trigger == 10) {
 		if (who <= 0) {
@@ -1469,9 +1463,9 @@ void Room105::conv10() {
 
 void Room105::conv11() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 10) {
 		if (who <= 0) {
@@ -1492,7 +1486,7 @@ void Room105::conv11() {
 				kernel_timing_trigger(30, 1);
 
 			} else if ((node == 8 && entry == 1) ||
-					(node == 1 && entry == 4 && inv_player_has("deed"))) {
+					(node == 11 && entry == 4 && inv_player_has("deed"))) {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				kernel_timing_trigger(1, 29);
 				_elgusShould = 5;
@@ -1503,7 +1497,7 @@ void Room105::conv11() {
 				kernel_trigger_dispatch_now(kCHANGE_ELGUS_ANIMATION);
 			}
 		} else if (who == 1) {
-			sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 			conv_resume();
 		}
 	} else if (conv_sound_to_play()) {
@@ -1545,7 +1539,7 @@ void Room105::conv11() {
 				kernel_timing_trigger(1, 32);
 				_G(kernel).trigger_mode = KT_PARSE;
 			} else if (node != 13 || entry != 0) {
-				sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 			}
 
 			digi_play(conv_sound_to_play(), 1, 255, 10);
@@ -1557,9 +1551,9 @@ void Room105::conv11() {
 
 void Room105::conv12() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 10) {
 		if (who <= 0) {
@@ -1601,7 +1595,7 @@ void Room105::conv12() {
 			if (node == 16 && entry == 1)
 				digi_unload("12p1702");
 
-			sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 			conv_resume();
 		}
 	} else if (conv_sound_to_play()) {
@@ -1638,7 +1632,7 @@ void Room105::conv12() {
 				_val1 = 0;
 			}
 
-			sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+			sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 			digi_play(conv_sound_to_play(), 1, 255, 10);
 		}
 	} else {
@@ -1648,14 +1642,14 @@ void Room105::conv12() {
 
 void Room105::conv13() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
 
 	if (_G(kernel).trigger == 10) {
 		if (who <= 0) {
 			_elgusShould = 59;
 		} else if (who == 1) {
-			sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 		}
 
 		conv_resume();
@@ -1666,7 +1660,7 @@ void Room105::conv13() {
 			_savedTrigger = 10;
 			_digi1 = conv_sound_to_play();
 		} else if (who == 1) {
-			sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+			sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 			digi_play(conv_sound_to_play(), 1, 255, 10);
 		}
 	} else {

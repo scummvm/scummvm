@@ -41,6 +41,8 @@ struct reg_t {
 	SegmentId _segment;
 	uint16 _offset;
 
+	void init(SegmentId segment, uint32 offset);
+
 	SegmentId getSegment() const;
 	void setSegment(SegmentId segment);
 
@@ -193,15 +195,13 @@ private:
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {
 	reg_t r;
-	r.setSegment(segment);
-	r.setOffset(offset);
+	r.init(segment, offset);
 	return r;
 }
 
 static inline reg_t make_reg32(SegmentId segment, uint32 offset) {
 	reg_t r;
-	r.setSegment(segment);
-	r.setOffset(offset);
+	r.init(segment, offset);
 	return r;
 }
 

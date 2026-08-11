@@ -22,13 +22,13 @@
 #ifndef ZVISION_TITLER_CONTROL_H
 #define ZVISION_TITLER_CONTROL_H
 
-#include "zvision/scripting/control.h"
-
-#include "graphics/surface.h"
-
+#include "common/array.h"
+#include "common/file.h"
 #include "common/path.h"
 #include "common/rect.h"
-#include "common/array.h"
+#include "common/stream.h"
+#include "graphics/surface.h"
+#include "zvision/scripting/control.h"
 
 namespace ZVision {
 

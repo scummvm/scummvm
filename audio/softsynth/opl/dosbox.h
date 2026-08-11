@@ -68,13 +68,13 @@ namespace DBOPL {
 struct Chip;
 } // end of namespace DBOPL
 
-class OPL : public ::OPL::EmulatedOPL {
+class OPL : public ::OPL::OPL, public Audio::EmulatedChip {
 private:
 	Config::OplType _type;
 	uint _rate;
 
 	DBOPL::Chip *_emulator;
-	Chip _chip[2];
+	::OPL::DOSBox::Chip _chip[2];
 	union {
 		uint16 normal;
 		uint8 dual[2];
@@ -86,18 +86,17 @@ public:
 	OPL(Config::OplType type);
 	~OPL();
 
-	bool init();
-	void reset();
+	bool init() override;
+	void reset() override;
 
-	void write(int a, int v);
-	byte read(int a);
+	void write(int a, int v) override;
 
-	void writeReg(int r, int v);
+	void writeReg(int r, int v) override;
 
-	bool isStereo() const { return _type != Config::kOpl2; }
+	bool isStereo() const override { return _type != Config::kOpl2; }
 
 protected:
-	void generateSamples(int16 *buffer, int length);
+	void generateSamples(int16 *buffer, int length) override;
 };
 
 } // End of namespace DOSBox

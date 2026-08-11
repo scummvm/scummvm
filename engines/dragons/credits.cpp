@@ -18,9 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "dragons/credits.h"
 
-#include "common/system.h"
+#include "dragons/credits.h"
 #include "dragons/bigfile.h"
 #include "dragons/dragons.h"
 #include "dragons/screen.h"

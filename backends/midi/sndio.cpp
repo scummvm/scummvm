@@ -123,16 +123,16 @@ void MidiDriver_Sndio::sysEx(const byte *msg, uint16 length) {
 
 class SndioMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "Sndio";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "sndio";
 	}
 
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 MusicDevices SndioMusicPlugin::getDevices() const {

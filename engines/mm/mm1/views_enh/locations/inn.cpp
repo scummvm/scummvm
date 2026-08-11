@@ -70,6 +70,7 @@ bool Inn::msgFocus(const FocusMessage &msg) {
 }
 
 void Inn::draw() {
+	setButtonEnabled(0, true);
 	setButtonEnabled(1, !_partyChars.empty());
 	if (!_partyChars.empty()) {
 		setButtonPos(0, Common::Point(155, 166));
@@ -114,7 +115,9 @@ void Inn::draw() {
 			if (isInParty)
 				s.frameRect(Common::Rect(pt.x, pt.y, pt.x + 19, pt.y + 19), 37);
 
-			writeString(pt.x - _innerBounds.left + 22, pt.y - _innerBounds.top + 5, c._name);
+			Common::String name = truncateString(c._name, _innerBounds.width() / 3 - 22);
+
+			writeString(pt.x - _innerBounds.left + 22, pt.y - _innerBounds.top + 5, name);
 		}
 
 		setReduced(false);
@@ -149,7 +152,7 @@ bool Inn::msgMouseDown(const MouseDownMessage &msg) {
 				else
 					_partyChars.push_back(charNum);
 
-				setButtonEnabled(0, !_partyChars.empty());
+				setButtonEnabled(1, !_partyChars.empty());
 				redraw();
 			} else {
 				g_globals->_currCharacter = &g_globals->_roster[charNum];
@@ -174,7 +177,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 			else
 				_partyChars.push_back(charNum);
 
-			setButtonEnabled(0, !_partyChars.empty());
+			setButtonEnabled(1, !_partyChars.empty());
 			redraw();
 
 		} else {

@@ -30,7 +30,7 @@ struct AgiAppleIIgsDelayOverwriteRoomEntry {
 	int16 activePictureNr; // resource number of current active background picture
 	int16 timeDelayOverwrite; // time delay here is like on PC
 	// so 0 - unlimited, 1 - 20 cycles, 2 - 10 cycles, -1 means do not touch speed set by scripts
-	bool onlyWhenPlayerNotInControl; // only sets spee, when play is not in control
+	bool onlyWhenPlayerNotInControl; // only sets speed, when play is not in control
 };
 
 struct AgiAppleIIgsDelayOverwriteGameEntry {
@@ -94,6 +94,16 @@ static const AgiAppleIIgsDelayOverwriteGameEntry appleIIgsDelayOverwriteGameTabl
 	{ GID_SQ2,        2, appleIIgsDelayOverwriteSQ2 },
 	{ GID_AGIDEMO,   -1, nullptr }
 };
+
+static const AgiAppleIIgsDelayOverwriteGameEntry *getAppleIIgsDelayOverwriteGameEntry(uint32 gameId) {
+	const AgiAppleIIgsDelayOverwriteGameEntry *appleIIgsDelayOverwrite = appleIIgsDelayOverwriteGameTable;
+	while (appleIIgsDelayOverwrite->gameId != GID_AGIDEMO) {
+		if (appleIIgsDelayOverwrite->gameId == gameId)
+			break; // game found
+		appleIIgsDelayOverwrite++;
+	}
+	return appleIIgsDelayOverwrite;
+}
 
 } // End of namespace Agi
 

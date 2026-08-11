@@ -71,7 +71,7 @@ void BbvsEngine::playVideo(int videoNum) {
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
+			if ((event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && event.customType == kActionEscape) ||
 				event.type == Common::EVENT_LBUTTONUP)
 				skipVideo = true;
 		}

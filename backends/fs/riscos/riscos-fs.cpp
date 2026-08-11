@@ -206,11 +206,12 @@ AbstractFSNode *RISCOSFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *RISCOSFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return StdioStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 }
 
-Common::SeekableWriteStream *RISCOSFilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath(), true);
+Common::SeekableWriteStream *RISCOSFilesystemNode::createWriteStream(bool atomic) {
+	return StdioStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 }
 
 bool RISCOSFilesystemNode::createDirectory() {

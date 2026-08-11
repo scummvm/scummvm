@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/system.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 
@@ -53,8 +55,7 @@ void EventsManager::timer_handler() {
 void EventsManager::checkTimers() {
 	uint32 currTime = g_system->getMillis();
 
-	for (TimerList::iterator it = _timers.begin(); it != _timers.end(); ++it) {
-		TimerRecord &rec = *it;
+	for (auto &rec : _timers) {
 		if (currTime >= rec._nextFrameTime) {
 			rec._proc();
 			rec._nextFrameTime = currTime + rec._interval;
@@ -72,13 +73,18 @@ void EventsManager::updateScreen() {
 void EventsManager::handleEvent(const Common::Event &event) {
 	if (event.type >= Common::EVENT_MOUSEMOVE && event.type <= Common::EVENT_MBUTTONUP)
 		handleMouseEvent(event);
-	else if (event.type == Common::EVENT_KEYUP)
+	else if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP)
 		handleKbdEvent(event);
 }
 
-void EventsManager::handleMouseEvent(const Common::Event &event) {
-	_pendingEvents.push(event);
+static void returnInventoryCursorToSlot() {
+	if (_G(cur)->usingInventoryCursor()) {
+		invent_2_slot(_G(cur)->getInventoryCursor());
+		_G(cur)->setInventoryCursor(-1);
+	}
+}
 
+void EventsManager::handleMouseEvent(const Common::Event &event) {
 	_mousePos = event.mouse;
 	bool isWheelEnabled = !_G(menu_display) && !_G(flags).InventMenu &&
 		g_engine->canSaveAutosaveCurrently() &&
@@ -100,6 +106,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	case Common::EVENT_WHEELUP:
 		// Cycle backwards through cursors
 		if (isWheelEnabled) {
+			returnInventoryCursorToSlot();
 			if (--_G(menu_item) < 0)
 				_G(menu_item) = CUR_TALK;
 			cursorChoice(_G(menu_item));
@@ -109,6 +116,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	case Common::EVENT_WHEELDOWN:
 		// Cycle forwards through cursors
 		if (isWheelEnabled) {
+			returnInventoryCursorToSlot();
 			if (++_G(menu_item) > CUR_TALK)
 				_G(menu_item) = CUR_WALK;
 			cursorChoice(_G(menu_item));
@@ -118,6 +126,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	case Common::EVENT_MBUTTONDOWN:
 		// Toggle between walk and look cursor
 		if (isWheelEnabled) {
+			returnInventoryCursorToSlot();
 			_G(menu_item) = (_G(menu_item) == CUR_WALK) ? CUR_LOOK : CUR_WALK;
 			cursorChoice(_G(menu_item));
 		}
@@ -133,13 +142,26 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 }
 
 void EventsManager::handleKbdEvent(const Common::Event &event) {
-	_pendingKeyEvents.push(event);
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		// Fresh keyboard input (not leaked from overlay)
+		_ignoreKeyUp = false;
+		return;
 
-	if (event.type == Common::EVENT_KEYUP) {
+	case Common::EVENT_KEYUP:
+		if (_ignoreKeyUp) {
+			// This key-up has no matching key-down within the running engine.
+			debug(1, "dropping leaked key up after resume: keycode=%d ascii=%d", event.kbd.keycode, event.kbd.ascii);
+			return;
+		}
 		_kbInfo._keyCode = event.kbd.ascii;
 		_kbInfo._scanCode = event.kbd.keycode;
 		if (event.kbd.flags & Common::KBD_ALT)
 			_kbInfo._scanCode |= ALT;
+		return;
+
+	default:
+		return;
 	}
 }
 
@@ -155,8 +177,6 @@ void EventsManager::delay(size_t time) {
 
 void EventsManager::clearEvents() {
 	processEvents();
-	_pendingEvents.clear();
-	_pendingKeyEvents.clear();
 
 	_kbInfo._scanCode = Common::KEYCODE_INVALID;
 	_kbInfo._keyCode = '\0';

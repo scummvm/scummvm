@@ -49,6 +49,17 @@ static const DMADGameDescription gameDescriptions[] = {
 		{ kDMSavePlatformAcceptAny}
 	},
 	{
+		{"dm", "MS DOS v3.4 English",
+			AD_ENTRY2s("graphics.dat",	"c0cee1d0f9ee9946f955999a66b54eb5", 363417,
+					   "Dungeon.dat",	"ebfc4019b67e66da41a20224c8a3f0c3", 33357),
+	    	Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI),
+	    },
+	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformPC,
+	    { kDMSaveTargetDM21, kDMSaveTargetEndOfList},
+	    { kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
+	    { kDMSavePlatformAcceptAny }
+	},
+	{
 		{"dm", "Atari v??? English",
 			AD_ENTRY2s("graphics.dat",	"6ffff2a17e2df0effa9a12fb4b1bf6b6", 271911,
 					   "Dungeon.dat",	"be9468b460515741babec9a70501e2e9", 33286),
@@ -89,9 +100,9 @@ static const DMADGameDescription gameDescriptions[] = {
 	}
 };
 
-class DMMetaEngineDetection : public AdvancedMetaEngineDetection {
+class DMMetaEngineDetection : public AdvancedMetaEngineDetection<DMADGameDescription> {
 public:
-	DMMetaEngineDetection() : AdvancedMetaEngineDetection(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames) {
+	DMMetaEngineDetection() : AdvancedMetaEngineDetection(DM::gameDescriptions, DMGames) {
 	}
 
 	const char *getName() const override {

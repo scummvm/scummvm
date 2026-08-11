@@ -75,13 +75,13 @@ PXreal REPULSE_DISTANCE = (15 * REAL_ONE); // 15 cm
 
 __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXreal newy, PXreal newz, PXreal oldx, PXreal /* oldy */, PXreal oldz, bool8 pl) {
 	// see if the coordinates passed are close to the players current barriers
-	// returns   0 no barrier found thats too near
+	// returns   0 no barrier found that's too near
 	//				1 a barrier was too close
 
 	RouteBarrier *bar;
 	PXreal pdist, dist;
 	uint32 j;
-	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degress
+	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degrees
 	PXfloat diff;
 	int32 ignoreThis;
 
@@ -264,7 +264,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 			return (result);
 	}
 	if ((!made_adjust) && (MS->player.player_status != RUNNING) && (MS->player.player_status != WALKING)) {
-		// didnt hit a normal barrier so check if we hit a stair or ladder barrier
+		// didn't hit a normal barrier so check if we hit a stair or ladder barrier
 
 		// check for stair entry complience - oh yes
 		for (j = 0; j < num_stairs; j++) {
@@ -422,7 +422,7 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 __barrier_result _game_session::Check_this_barrier(RouteBarrier *bar, PXreal newx, PXreal newz, PXreal /* oldx */, PXreal /* oldz */, PXreal bar_close, int32 *ignoreThis) {
 	PXfloat delta;
 	PXfloat delta2;
-	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degress
+	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degrees
 	PXreal pdist, dist;
 	PXreal ignore_bar_close = IGNORE_BARRIER_CLOSE;
 
@@ -472,7 +472,7 @@ __barrier_result _game_session::Check_this_barrier(RouteBarrier *bar, PXreal new
 					else if (pdist < 0)
 						normalAngle = bar->m_pan - QUARTER_TURN;
 				} else {
-					// cant adjust
+					// can't adjust
 					return (__BLOCKED);
 				}
 			} else
@@ -1113,7 +1113,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 
 							bar = Fetch_barrier(bars[i]);
 
-							if (l == total_anim_bars) { // didnt find in list
+							if (l == total_anim_bars) { // didn't find in list
 								Tdebug("anim_barriers.txt", "     new barrier %d  x%3.2f y%3.2f z%3.2f", bars[i], bar->m_x1, bar->m_bottom,
 								       bar->m_z1);
 
@@ -1165,7 +1165,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 
 											if (!anim_slices[cur_slice].anim_parents[f]) {
 												anim_slices[cur_slice].anim_parents[f] = &anim_parent_table[parents_used++];
-												Tdebug("anim_barriers.txt", "        new aparent");
+												Tdebug("anim_barriers.txt", "        new parent");
 											}
 
 											pbar_num = anim_slices[cur_slice].anim_parents[f]->num_props;
@@ -1286,7 +1286,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 						// get the prop number
 						uint32 prop_number = LinkedDataObject::Fetch_item_number_by_name(MS->prop_anims, (const char *)LinkedDataObject::Fetch_items_name_by_number(MS->prop_anims, j));
 
-						// gotta check for anims with no equivelent game objects
+						// gotta check for anims with no equivalent game objects
 						if (prop_number != 0xffffffff) {
 							Tdebug("anim_barriers.txt", "  listing as prop number %d", anim_slices[cur_slice].num_props_in_slice);
 							// ok, add the prop to the slices list of props

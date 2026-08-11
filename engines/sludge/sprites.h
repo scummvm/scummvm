@@ -27,8 +27,8 @@ namespace Sludge {
 
 struct Sprite {
 	int xhot, yhot;
-	Graphics::Surface surface;
-	Graphics::Surface burnSurface;
+	Graphics::ManagedSurface surface;
+	Graphics::ManagedSurface burnSurface;
 };
 
 class SpritePalette {
@@ -81,20 +81,6 @@ struct SpriteBank {
 	Sprite *sprites;
 	SpritePalette myPalette;
 	bool isFont;
-};
-
-// Sprite display informations
-struct SpriteDisplay {
-	int x, y;
-	int width, height;
-	bool freeAfterUse;
-	Graphics::FLIP_FLAGS flip;
-	Graphics::Surface *surface;
-	byte transparency;
-
-	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, bool free = false, byte trans = 255) :
-			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), freeAfterUse(free), transparency(trans) {
-	}
 };
 
 } // End of namespace Sludge

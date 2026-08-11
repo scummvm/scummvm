@@ -25,11 +25,13 @@
 #include "engines/achievements.h"
 #include "engines/advancedDetector.h"
 
-class AGSMetaEngine : public AdvancedMetaEngine {
+#include "engines/ags/detection.h"
+
+class AGSMetaEngine : public AdvancedMetaEngine<AGS::AGSGameDescription> {
 public:
 	const char *getName() const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const AGS::AGSGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 
@@ -75,9 +77,11 @@ public:
 	 * @param target  Name of a config manager target.
 	 * @param slot    Slot number of the save state to be removed.
 	 */
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 
 	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
+
+	static Common::StringArray getGameTranslations(const Common::String &domain);
 };
 
 #endif

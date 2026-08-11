@@ -24,6 +24,10 @@
 
 #include "common/scummsys.h"
 
+#include "common/type_traits.h"
+
+struct TimeDate;
+
 /**
  * @defgroup common_util Util
  * @ingroup common
@@ -79,7 +83,26 @@ template<typename T> inline T CLIP(T v, T amin, T amax)
 /**
  * Template method to swap the values of its two parameters.
  */
-template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
+template<typename T> inline void SWAP(T &a, T &b);
+
+/** Function to rotate the 32-bit integer @p x left by @p r bits */
+static inline uint32 ROTATE_LEFT_32(const uint32 x, const uint32 r) {
+	return (x >> (32 - r)) | (x << r);
+}
+
+/** Function to rotate the 32-bit integer @p x right by @p bits */
+static inline uint32 ROTATE_RIGHT_32(const uint32 x, const uint32 r) {
+	return (x << (32 - r)) | (x >> r);
+}
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1910
+/** Template method to return the number of arguments passed to it. */
+template<typename... A> constexpr size_t NUMARGS(A&&...)	{ return sizeof...(A); }
+#else
+/** Macro that returns the number of arguments passed to it. */
+using int_c_array = int[]; // MSVC 2015 doesn't like the template method above
+#define NUMARGS(...)	(sizeof(int_c_array{__VA_ARGS__})/sizeof(int))
+#endif
 
 #ifdef ARRAYSIZE
 #undef ARRAYSIZE
@@ -131,78 +154,6 @@ class U32String;
  */
 
 /**
- * Provides a way to store two heterogeneous objects as a single unit.
- */
-template<class T1, class T2>
-struct Pair {
-	T1 first;
-	T2 second;
-
-	Pair() {
-	}
-	Pair(T1 first_, T2 second_) : first(first_), second(second_) {
-	}
-};
-
-/**
- * A set of templates which remove const and/or volatile specifiers.
- * Use the remove_*_t<T> variants.
- */
-template<class T> struct remove_cv {
-	typedef T type;
-};
-template<class T> struct remove_cv<const T> {
-	typedef T type;
-};
-template<class T> struct remove_cv<volatile T> {
-	typedef T type;
-};
-template<class T> struct remove_cv<const volatile T> {
-	typedef T type;
-};
-
-template<class T> struct remove_const {
-	typedef T type;
-};
-template<class T> struct remove_const<const T> {
-	typedef T type;
-};
-
-template<class T> struct remove_volatile {
-	typedef T type;
-};
-template<class T> struct remove_volatile<volatile T> {
-	typedef T type;
-};
-
-/**
- * A set of templates which removes the reference over types.
- * Use remove_reference_t<T> for this.
- */
-template<class T>
-struct remove_reference {
-	typedef T type;
-};
-template<class T>
-struct remove_reference<T &> {
-	typedef T type;
-};
-template<class T>
-struct remove_reference<T &&> {
-	typedef T type;
-};
-
-template<class T>
-using remove_cv_t        = typename remove_cv<T>::type;
-template<class T>
-using remove_const_t     = typename remove_const<T>::type;
-template<class T>
-using remove_volatile_t  = typename remove_volatile<T>::type;
-
-template<class T>
-using remove_reference_t = typename remove_reference<T>::type;
-
-/**
  * A reimplementation of std::move.
  */
 template<class T>
@@ -211,9 +162,56 @@ constexpr remove_reference_t<T> &&move(T &&t) noexcept {
 }
 
 template<class T>
+constexpr T&& forward(remove_reference_t<T> &&t) noexcept {
+	return static_cast<T &&>(t);
+}
+
+template<class T>
 constexpr T&& forward(remove_reference_t<T> &t) noexcept {
 	return static_cast<T &&>(t);
 }
+
+/**
+ * Provides a way to store two heterogeneous objects as a single unit.
+ */
+template<class T1, class T2>
+struct Pair {
+	T1 first;
+	T2 second;
+
+	constexpr Pair() {
+	}
+
+	constexpr Pair(const Pair &other) : first(other.first), second(other.second) {
+	}
+
+	constexpr Pair(Pair &&other) : first(Common::move(other.first)), second(Common::move(other.second)) {
+	}
+
+	constexpr Pair(const T1 &first_, const T2 &second_) : first(first_), second(second_) {
+	}
+
+	constexpr Pair(T1 &&first_, T2 &&second_) : first(Common::move(first_)), second(Common::move(second_)) {
+	}
+
+	constexpr Pair(T1 &&first_, const T2 &second_) : first(Common::move(first_)), second(second_) {
+	}
+
+	constexpr Pair(const T1 &first_, T2 &&second_) : first(first_), second(Common::move(second_)) {
+	}
+
+	Pair &operator=(const Pair &other) {
+		this->first = other.first;
+		this->second = other.second;
+		return *this;
+	}
+
+	Pair &operator=(Pair &&other) {
+		this->first = Common::move(other.first);
+		this->second = Common::move(other.second);
+		return *this;
+	}
+};
 
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is
@@ -415,8 +413,57 @@ bool isBlank(int c);
  */
 Common::String getHumanReadableBytes(uint64 bytes, const char *&unitsOut);
 
+/**
+ * Utility functions for converting a TimeDate structure into an integer representation of the time, and vice versa.
+ * The integer representation is the number of seconds since the Unix epoch (1970-01-01 00:00:00 UTC).
+ */
+namespace DateTime {
+	/**
+	 * Convert a time value (number of seconds since the Unix epoch) to a TimeDate struct representing the corresponding date and time components.
+	 */
+	TimeDate int64ToTimeDate(int64 integer);
+
+	/**
+	 * Convert a TimeDate struct representing date and time components to a time value (number of seconds since the Unix epoch).
+	 */
+	int64_t dateTimeToInt64(const TimeDate &timeDate);
+
+	/**
+	 * Convert a time value (number of seconds since the Unix epoch) to a human-readable string format.
+	 */
+	Common::String formatTime(int64 integer);
+
+	/**
+	 * Get the current time as a time value (number of seconds since the Unix epoch).
+	 */
+	int64 getTime();
+}
+
+template<typename T, bool useMove = Common::is_move_constructible<T>::v && Common::is_move_assignable<T>::v>
+struct SWAP_helper {};
+
+template<typename T>
+struct SWAP_helper<T, true> {
+	static void swap(T &a, T &b) {
+		T tmp = Common::move(a);
+		a = Common::move(b);
+		b = Common::move(tmp);
+	}
+};
+
+template<typename T>
+struct SWAP_helper<T, false> {
+	static void swap(T &a, T &b) {
+		T tmp = a;
+		a = b;
+		b = tmp;
+	}
+};
+
 /** @} */
 
 } // End of namespace Common
+
+template<typename T> inline void SWAP(T &a, T &b) { Common::SWAP_helper<T>::swap(a, b); }
 
 #endif

@@ -51,7 +51,7 @@ public:
 
 	void release_focus() override;
 
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
 
 	void add_char(char c);

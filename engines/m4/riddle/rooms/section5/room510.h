@@ -29,12 +29,39 @@ namespace Riddle {
 namespace Rooms {
 
 class Room510 : public Room {
+private:
+	int _val1 = 0;
+	int _ripLooksDown = 0;
+	int _ripLowReach = 0;
+	int _ripLowReach2 = 0;
+	int _ripLowReach3 = 0;
+	int _ripLowReach4 = 0;
+	int _dangling = 0;
+	machine *_statue = nullptr;
+	machine *_rope = nullptr;
+	machine *_ladder = nullptr;
+	machine *_skull = nullptr;
+	machine *_ripDangles = nullptr;
+	int _stepsSeries = 0;
+	machine *_steps = nullptr;
+	int _ripStartsDownWall = 0;
+	machine *_pu03 = nullptr;
+	bool _flag1 = false;
+
+	bool useAltarPost();
+	bool takeVinesRope();
+	void useVines();
+	void woodenLadder();
+	void altar();
+
 public:
 	Room510() : Room() {}
 	~Room510() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

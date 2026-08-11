@@ -230,6 +230,27 @@ void AGOSEngine::deleteVgaEvent(VgaTimerEntry * vte) {
 	_videoLockOut &= ~1;
 }
 
+void AGOSEngine::schedulePNFadeEvent() {
+	if (!isPNDayNightPaletteMode())
+		return;
+
+	for (VgaTimerEntry *vte = _vgaTimerList; vte->delay; ++vte) {
+		if (vte->type == PN_FADE_EVENT)
+			return;
+	}
+
+	addVgaEvent(_vgaBaseDelay, PN_FADE_EVENT, nullptr, 0, 0);
+}
+
+void AGOSEngine::removePNFadeEvent() {
+	for (VgaTimerEntry *vte = _vgaTimerList; vte->delay; ++vte) {
+		if (vte->type == PN_FADE_EVENT) {
+			deleteVgaEvent(vte);
+			return;
+		}
+	}
+}
+
 void AGOSEngine::processVgaEvents() {
 	VgaTimerEntry *vte = _vgaTimerList;
 
@@ -246,6 +267,8 @@ void AGOSEngine::processVgaEvents() {
 			case ANIMATE_INT:
 				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
 				animateSprites();
+				if (isPNDayNightPaletteMode())
+					schedulePNFadeEvent();
 				vte++;
 				break;
 			case ANIMATE_EVENT:
@@ -266,6 +289,20 @@ void AGOSEngine::processVgaEvents() {
 				break;
 			case MONSTER_DAMAGE_EVENT:
 				monsterDamageEvent(vte, curZoneNum);
+				vte = _nextVgaTimerToProcess;
+				break;
+			case PN_FADE_EVENT:
+				if (isPNDayNightPaletteMode()) {
+					if (_pnDayNightControllerTickCounter > _vgaBaseDelay) {
+						_pnDayNightControllerTickCounter -= _vgaBaseDelay;
+					} else {
+						_pnDayNightControllerTickCounter = 0x00C8;
+						updatePNDayNightController(_pnDayNightControllerSelectorMask);
+					}
+				}
+
+				_nextVgaTimerToProcess = vte + 1;
+				deleteVgaEvent(vte);
 				vte = _nextVgaTimerToProcess;
 				break;
 			default:
@@ -471,6 +508,16 @@ void AGOSEngine::delay(uint amount) {
 				_action = (AGOSAction)event.customType;
 				if (event.customType == kActionToggleFastMode) {
 					_fastMode = !_fastMode;
+				} else if (event.customType == kActionToggleFightMode && getGameId() == GID_WAXWORKS) {
+					HitArea *fightButton = findBox(117);
+
+					if (fightButton && !(fightButton->flags & kBFBoxDead)) {
+						_needHitAreaRecalc++;
+						_lastHitArea = fightButton;
+
+						// Switch between normal cursor (0) and fighting mode (3)
+						_mouseCursor = (_mouseCursor == 3) ? 0 : 3;
+					}
 				}
 				break;
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
@@ -480,6 +527,9 @@ void AGOSEngine::delay(uint amount) {
 				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9
 					&& (event.kbd.hasFlags(Common::KBD_ALT) ||
 						event.kbd.hasFlags(Common::KBD_CTRL))) {
+					if (getGameType() == GType_PN)
+						break;
+
 					_saveLoadSlot = event.kbd.keycode - Common::KEYCODE_0;
 
 					// There is no save slot 0
@@ -679,6 +729,15 @@ void AGOSEngine::timerProc() {
 	_videoLockOut |= 2;
 
 	handleMouseMoved();
+
+	if (_simon2LanguageFlagTimer != 0) {
+		--_simon2LanguageFlagTimer;
+		_displayFlag = 1;
+		if (_simon2LanguageFlagTimer == 0)
+			_simon2LanguageFlagClearPending = true;
+	} else if (_simon2LanguageFlagClearPending) {
+		_displayFlag = 1;
+	}
 
 	if (!(_videoLockOut & 0x10)) {
 		processVgaEvents();

@@ -130,7 +130,7 @@ void scnECA(UnpStr *unp) {
 				01ec  C9 DF     CMP #$DF   ;<< not fixed, found as lower as $44 for
 				example 01ee  D0 EA     BNE $01DA 01f0  60        RTS Because of this,
 				$d000-dfff will be a copy of $e000-efff. So if $2d points to >= $d000,
-				SOMETIMES it's better save upto $ffff or: mem[$2d]|(mem[$2e]+$10)<<8
+				SOMETIMES it's better save up to $ffff or: mem[$2d]|(mem[$2e]+$10)<<8
 				Still it's not a rule and I don't know exactly when.
 				17/06/09: Implemented but still experimental, so better check
 				extensively. use -v to know when it does the adjustments. 28/10/09:

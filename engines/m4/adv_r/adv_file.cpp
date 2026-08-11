@@ -26,10 +26,10 @@
 #include "m4/adv_r/adv_chk.h"
 #include "m4/adv_r/adv_walk.h"
 #include "m4/adv_r/db_env.h"
-#include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/fileio/extensions.h"
+#include "m4/fileio/info.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_vmng.h"
@@ -89,11 +89,8 @@ void kernel_unload_room(SceneDef *rdef, GrBuff **code_data, GrBuff **loadBuffer)
 
 
 bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff **scr_orig_data, GrBuff **scr_orig) {
-	char *tempName;
-
 	if (!scr_orig_data || !scr_orig) {
-		error_show(FL, 'BUF!', "load_picture_and_codes");
-		return false;
+		error_show(FL, "load_picture_and_codes");
 	}
 
 	term_message("Reading scene %d", _G(game).new_room);
@@ -104,8 +101,7 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 
 	// Read DEF file
 	if (db_def_chk_read(_G(game).new_room, rdef) != -1) {
-		error_show(FL, 'DF:(', "trying to find %d.CHK", (uint32)_G(game).new_room);
-		return false;
+		error_show(FL, "trying to find %d.CHK", (uint32)_G(game).new_room);
 	}
 
 	set_walker_scaling(rdef);
@@ -115,7 +111,7 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 
 	_G(currBackgroundFN) = get_background_filename(rdef);
 
-	tempName = env_find(_G(currBackgroundFN));
+	char *tempName = env_find(_G(currBackgroundFN));
 	if (tempName) {
 		// In normal rooms.db mode
 		_G(currBackgroundFN) = f_extension_new(tempName, "TT");
@@ -124,7 +120,7 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 		_G(currBackgroundFN) = f_extension_new(_G(currBackgroundFN), "TT");
 	}
 
-	SysFile *pic_file = new SysFile(_G(currBackgroundFN), BINARY);
+	SysFile *pic_file = new SysFile(_G(currBackgroundFN));
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Select attributes code file
@@ -140,7 +136,7 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 		_G(currCodeFN) = f_extension_new(_G(currCodeFN), "COD");
 	}
 
-	SysFile *code_file = new SysFile(_G(currCodeFN), BINARY);
+	SysFile *code_file = new SysFile(_G(currCodeFN));
 	if (!code_file->exists()) {
 		delete code_file;
 		code_file = nullptr;
@@ -169,10 +165,9 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 
 	RestoreScreens(MIN_VIDEO_X, MIN_VIDEO_Y, MAX_VIDEO_X, MAX_VIDEO_Y);
 
-	if (pic_file) {
-		pic_file->close();
-		delete pic_file;
-	}
+	pic_file->close();
+	delete pic_file;
+
 	if (code_file) {
 		code_file->close();
 		delete code_file;
@@ -189,6 +184,58 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 	return true;
 }
 
+bool kernel_load_variant(const char *variant) {
+	SceneDef &sceneDef = _G(currentSceneDef);
+	GrBuff *codeBuff = _G(screenCodeBuff);
+	Common::String filename;
+
+	if (!codeBuff)
+		return false;
+
+	if (_G(kernel).hag_mode) {
+		filename = f_extension_new(variant, "COD");
+	} else {
+		char *base = env_find(sceneDef.art_base);
+		char *dotPos = nullptr;
+		if (base)
+			dotPos = strchr(base, '.');
+
+		if (!dotPos)
+			return false;
+
+		filename = f_extension_new(base, "COD");
+
+		if (!f_info_exists(Common::Path(filename)))
+			return false;
+	}
+
+	SysFile code_file(filename);
+	if (!code_file.exists())
+		error("Failed to load variant %s", filename.c_str());
+
+	// TODO: This is just copied from the room loading code,
+	// rather than disassembling the reset of the original method.
+	// Need to determine whether this is correct or not,
+	// then modified to clean screenCodeBuff and the edges.
+
+	GrBuff *scr_orig_data = load_codes(&code_file);
+
+	code_file.close();
+
+	if (scr_orig_data) {
+		_G(screenCodeBuff)->release();
+		free _G(screenCodeBuff);
+		RestoreEdgeList(nullptr);
+
+		Buffer *scr_orig_data_buffer = scr_orig_data->get_buffer();
+		RestoreEdgeList(scr_orig_data_buffer);
+		
+		_G(screenCodeBuff) = scr_orig_data;
+	}
+
+	return true;
+}
+
 GrBuff *load_codes(SysFile *code_file) {
 	// No this is not a cheat to allow bugs to live,
 	// if there is no code file, then we don't need a code buffer, either.
@@ -196,30 +243,16 @@ GrBuff *load_codes(SysFile *code_file) {
 	if (!code_file)			
 		return nullptr;
 
-	int16 x_size, y_size;
-	char *bufferHandle;
-
-	bufferHandle = (char *)&x_size;
-	code_file->read((MemHandle)&bufferHandle, sizeof(int16));
-	bufferHandle = (char *)&y_size;
-	code_file->read((MemHandle)&bufferHandle, sizeof(int16));
-
-	x_size = convert_intel16(x_size);
-	y_size = convert_intel16(y_size);
+	const int16 x_size = code_file->readSint16LE();
+	const int16 y_size = code_file->readSint16LE();
 
 	GrBuff *temp = new GrBuff(x_size, y_size);
-	if (!temp) {
-		error_show(FL, 'OOM!', "load_codes: %d bytes", (int16)(x_size * y_size));
-		return nullptr;
-	}
+	Buffer *myBuff = temp->get_buffer();
+	byte *bufferHandle = myBuff->data;
 
-	Buffer *mybuff = temp->get_buffer();
-
-	uint8 *buffer = mybuff->data;
-	bufferHandle = (char *)buffer;
 	for (int i = 0; i < y_size; i++) {
-		code_file->read((MemHandle)&bufferHandle, x_size);
-		bufferHandle += mybuff->stride;
+		code_file->read(bufferHandle, x_size);
+		bufferHandle += myBuff->stride;
 	}
 
 	// Let the memory float
@@ -228,29 +261,24 @@ GrBuff *load_codes(SysFile *code_file) {
 }
 
 bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
-	int32 num_x_tiles, num_y_tiles, tile_x, tile_y, file_x, file_y, x_end, y_end;
-	int i, j;
+	int32 num_x_tiles, num_y_tiles, tile_x, tile_y, file_x, file_y;
 	int32 count = 0;
-	Buffer *out;
 
 	tt_read_header(pic_file, &file_x, &file_y,
-		&num_x_tiles, &num_y_tiles, &tile_x, &tile_y, palette);
+	               &num_x_tiles, &num_y_tiles, &tile_x, &tile_y, palette);
 
 	*loadBuffer = new GrBuff(file_x, file_y);
 
-	if (!*loadBuffer)
-		error_show(FL, 'OOM!');
-
 	Buffer *theBuff = (**loadBuffer).get_buffer();
 
-	for (i = 0; i < num_y_tiles; i++) {
-		for (j = 0; j < num_x_tiles; j++) {
-			out = tt_read(pic_file, count, tile_x, tile_y);
+	for (int i = 0; i < num_y_tiles; i++) {
+		for (int j = 0; j < num_x_tiles; j++) {
+			Buffer *out = tt_read(pic_file, count, tile_x, tile_y);
 			count++;
 
 			if (out && (out->data)) {
-				x_end = imath_min(file_x, (1 + j) * tile_x);
-				y_end = imath_min(file_y, (1 + i) * tile_y);
+				const int32 x_end = imath_min(file_x, (1 + j) * tile_x);
+				const int32 y_end = imath_min(file_y, (1 + i) * tile_y);
 				gr_buffer_rect_copy_2(out, theBuff, 0, 0, j * tile_x, i * tile_y,
 					x_end - (j * tile_x), y_end - (i * tile_y));
 				mem_free(out->data);
@@ -266,13 +294,13 @@ bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
 }
 
 static Common::SeekableReadStream *openForLoading(int slot) {
-	Common::String slotName = g_engine->getSaveStateName(slot);
+	const Common::String slotName = g_engine->getSaveStateName(slot);
 	return g_system->getSavefileManager()->openForLoading(slotName);
 }
 
 bool kernel_save_game_exists(int32 slot) {
 	Common::SeekableReadStream *save = openForLoading(slot);
-	bool result = save != nullptr;
+	const bool result = save != nullptr;
 	delete save;
 
 	return result;
@@ -294,24 +322,25 @@ int32 extract_room_num(const Common::String &name) {
 
 	if (Common::isDigit(name[0]) && Common::isDigit(name[1]) && Common::isDigit(name[2])) {
 		return ((int32)(name[0] - '0')) * 100 + ((int32)(name[1] - '0')) * 10 + ((int32)(name[2] - '0'));
-	} else
-		return _G(game).room_id;
+	}
+
+	return _G(game).room_id;
 }
 
 static Common::String get_background_filename(const SceneDef *rdef) {
 	if (_G(art_base_override) != nullptr) {
 		return _G(art_base_override);
-	} else {
-		return rdef->art_base;
 	}
+
+	return rdef->art_base;
 }
 
 static Common::String get_attribute_filename(const SceneDef *rdef) {
 	if (_G(art_base_override) == nullptr || !_G(use_alternate_attribute_file)) {
 		return rdef->art_base;
-	} else {
-		return _G(art_base_override);
 	}
+
+	return _G(art_base_override);
 }
 
 static void recreate_animation_draw_screen(GrBuff **loadBuf) {
@@ -323,9 +352,7 @@ static void recreate_animation_draw_screen(GrBuff **loadBuf) {
 		_G(game_buff_ptr) = nullptr;
 	}
 	_G(gameDrawBuff) = new GrBuff((**loadBuf).w, (**loadBuf).h);
-	if (!_G(gameDrawBuff)) error_show(FL, 'OOM!', "no memory for GrBuff");
-	gui_GrBuff_register(_G(kernel).letter_box_x, _G(kernel).letter_box_y, _G(gameDrawBuff),
-		SF_BACKGRND | SF_GET_ALL | SF_BLOCK_NONE, nullptr);
+	gui_GrBuff_register(_G(kernel).letter_box_x, _G(kernel).letter_box_y, _G(gameDrawBuff), SF_BACKGRND | SF_GET_ALL | SF_BLOCK_NONE, nullptr);
 	gui_buffer_activate((Buffer *)_G(gameDrawBuff));
 	vmng_screen_to_back((void *)_G(gameDrawBuff));
 	_G(game_buff_ptr) = vmng_screen_find(_G(gameDrawBuff), nullptr);
@@ -341,19 +368,36 @@ static void recreate_animation_draw_screen(GrBuff **loadBuf) {
 
 static void troll_for_colors(RGB8 *newPal, uint8 minPalEntry, uint8 maxPalEntry) {
 	bool gotOne = false;
-	int16 pal_iter;
-	for (pal_iter = minPalEntry; pal_iter <= maxPalEntry; pal_iter++)	// accept any colours that came with the background
-		if (gotOne || (newPal[pal_iter].r | newPal[pal_iter].g | newPal[pal_iter].b))
-		{
+	for (int16 pal_iter = minPalEntry; pal_iter <= maxPalEntry; pal_iter++) { // accept any colors that came with the background
+		if (gotOne || (newPal[pal_iter].r | newPal[pal_iter].g | newPal[pal_iter].b)) {
 			gotOne = true;
 			// colors are 6 bit...
 			_G(master_palette)[pal_iter].r = newPal[pal_iter].r << 2;
 			_G(master_palette)[pal_iter].g = newPal[pal_iter].g << 2;
 			_G(master_palette)[pal_iter].b = newPal[pal_iter].b << 2;
 		}
-	if (gotOne) {
-		gr_pal_interface(&_G(master_palette)[0]); // enforce interface colours
 	}
+	
+	if (gotOne) {
+		gr_pal_interface(&_G(master_palette)[0]); // enforce interface colors
+	}
+}
+
+Common::String expand_name_2_RAW(const Common::String &name, int32 room_num) {
+	Common::String tempName = f_extension_new(name, "RAW");
+
+	if (!_G(kernel).hag_mode) {
+		if (room_num == -1)
+			room_num = extract_room_num(name);
+
+		return Common::String::format("%d\\%s", room_num, tempName.c_str());
+	}
+
+	return tempName;
+}
+
+Common::String expand_name_2_HMP(const Common::String &name, int32 room_num) {
+	return f_extension_new(name, "HMP");
 }
 
 } // End of namespace M4

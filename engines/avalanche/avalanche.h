@@ -61,6 +61,9 @@ class RandomSource;
 namespace Avalanche {
 
 struct AvalancheGameDescription;
+class Intro;
+
+class Outro;
 
 static const int kSavegameVersion = 2;
 
@@ -90,6 +93,8 @@ public:
 	GhostRoom *_ghostroom;
 	Help *_help;
 	HighScore *_highscore;
+	Intro *_intro;
+	Outro *_outro;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine() override;

@@ -25,12 +25,36 @@
 
 #include "engines/advancedDetector.h"
 
+#include "common/translation.h"
 #include "testbed/testbed.h"
+#include "testbed/detection.h"
 
-class TestbedMetaEngine : public AdvancedMetaEngine {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+
+	{
+		GAMEOPTION_INTERACTIVE_MODE,
+		{
+			// I18N: Runs tests in interactive mode
+			_s("Run in interactive mode"),
+			_s("Run in interactive mode"),
+			"interactive-mode",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+class TestbedMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "testbed";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const override {

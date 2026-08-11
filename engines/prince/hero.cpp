@@ -33,6 +33,15 @@
 
 namespace Prince {
 
+class ShadowLinePlotter : public Graphics::Primitives {
+	void drawPoint(int x, int y, uint32 color, void *data) override {
+		PrinceEngine *vm = (PrinceEngine *)data;
+		WRITE_LE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4], x);
+		WRITE_LE_UINT16(&vm->_shadowLine[vm->_shadLineLen * 4 + 2], y);
+		vm->_shadLineLen++;
+	}
+};
+
 Hero::Hero(PrinceEngine *vm, GraphicsMan *graph) : _vm(vm), _graph(graph),
 	_number(0), _visible(false), _state(kHeroStateStay), _middleX(0), _middleY(0),
 	_boreNum(1), _currHeight(0), _moveDelay(0), _shadMinus(0), _moveSetType(0), _zoomedHeroSurface(nullptr),
@@ -231,7 +240,7 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 		}
 
 		vm->_shadLineLen = 0;
-		Graphics::drawLine(vm->_lightX, vm->_lightY, drawNode->posX, drawNode->posY, 0, &vm->plotShadowLinePoint, vm);
+		ShadowLinePlotter().drawLine(vm->_lightX, vm->_lightY, drawNode->posX, drawNode->posY, 0, vm);
 
 		byte *sprShadow = vm->_graph->_shadowTable70;
 
@@ -264,7 +273,6 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 		int shadWallBitAddr = 0;
 		int shadWallBitMask = 0;
 		byte *shadWallDestAddr = nullptr;
-		int shadWallPosY = 0;
 		int shadWallSkipX = 0;
 		int shadWallModulo = 0;
 
@@ -408,7 +416,6 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 						shadWallBitAddr = shadBitAddr;
 						shadWallDestAddr = (byte *)screen->getBasePtr(shadDrawX + diffX, shadDrawY + diffY);
 						shadWallBitMask = shadBitMask;
-						shadWallPosY = shadPosY;
 						shadWallSkipX = shadSkipX;
 						shadWallModulo = sprModulo;
 					}
@@ -455,7 +462,6 @@ void Hero::showHeroShadow(Graphics::Surface *screen, DrawNode *drawNode) {
 						//krap2
 						shadWallDestAddr -= PrinceEngine::kNormalWidth;
 						shadWallBitAddr -= PrinceEngine::kMaxPicWidth / 8;
-						shadWallPosY--;
 					}
 				}
 			}

@@ -81,6 +81,7 @@ extern const SciWorkaroundEntry kFrameOut_workarounds[];
 extern const SciWorkaroundEntry kDeleteKey_workarounds[];
 extern const SciWorkaroundEntry kGetAngle_workarounds[];
 extern const SciWorkaroundEntry kGetCWD_workarounds[];
+extern const SciWorkaroundEntry kGetSaveFiles_workarounds[];
 extern const SciWorkaroundEntry kGraphDrawLine_workarounds[];
 extern const SciWorkaroundEntry kGraphSaveBox_workarounds[];
 extern const SciWorkaroundEntry kGraphRestoreBox_workarounds[];

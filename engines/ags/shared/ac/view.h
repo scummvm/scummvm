@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_AC_VIEW_H
 #define AGS_SHARED_AC_VIEW_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {
@@ -59,8 +59,8 @@ struct ViewLoopNew {
 	int numFrames;
 	int   flags;
 	std::vector<ViewFrame> frames;
-	// NOTE: we still need numFrames for backward compatibility:
-	// some older versions could allocate extra frame(s) for safety,
+	// NOTE: we still need numFrames:
+	// as we always allocate at least 1 frame for safety, to avoid crashes,
 	// but have to report "logical" number of frames for the engine API.
 
 	ViewLoopNew();
@@ -69,8 +69,8 @@ struct ViewLoopNew {
 	bool RunNextLoop();
 	void WriteToFile_v321(Shared::Stream *out);
 	void ReadFromFile_v321(Shared::Stream *in);
-	void WriteFrames_Aligned(Shared::Stream *out);
-	void ReadFrames_Aligned(Shared::Stream *in);
+	void WriteFrames(Shared::Stream *out);
+	void ReadFrames(Shared::Stream *in);
 };
 
 struct ViewStruct {

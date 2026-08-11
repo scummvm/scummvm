@@ -136,7 +136,7 @@ public:
 	}
 
 	Common::List<cVector3f> mlstPositions;
-	cVector3f mvPostion;
+	cVector3f mvPosition;
 
 	cVector3f mvGoalForward;
 
@@ -259,7 +259,7 @@ private:
 
 	cVector3f mvLastForward;
 
-	int mlMaxSegmentPostions;
+	int mlMaxSegmentPositions;
 	float mfTurnSpeed;
 
 	bool mbFirstUpdate;

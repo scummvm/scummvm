@@ -24,6 +24,7 @@
 #include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_room.h"
 #include "access/amazon/amazon_scripts.h"
+#include "access/amazon/amazon_inventory.h"
 
 namespace Access {
 
@@ -97,8 +98,10 @@ void AmazonEngine::configSelect() {
 }
 
 void AmazonEngine::initObjects() {
+	_inventory = new AmazonInventory(this);
 	_room = new AmazonRoom(this);
 	_scripts = new AmazonScripts(this);
+	_video = new VideoPlayer_v1(this);
 
 	_ant = new Ant(this);
 	_cast = new Cast(this);
@@ -161,7 +164,7 @@ void AmazonEngine::setupGame() {
 		_deaths._cells[i] = CellIdent(DEATH_CELLS[i][0], DEATH_CELLS[i][1], DEATH_CELLS[i][2]);
 
 	// Miscellaneous
-	_fonts.load(res._font6x6, res._font3x5);
+	_fonts.load(res._font6x6, res._font3x5, nullptr);
 
 	initVariables();
 }
@@ -181,7 +184,7 @@ void AmazonEngine::initVariables() {
 	_player->_playerOff = false;
 
 	// Setup timers
-	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
+	static const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
 	for (int i = 0; i < 32; ++i) {
 		TimerEntry te;
 		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
@@ -195,7 +198,7 @@ void AmazonEngine::initVariables() {
 	_room->_selectCommand = -1;
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
-	_numAnimTimers = 0;
+	_animation->clearTimers();
 }
 
 void AmazonEngine::establish(int screenId, int esatabIndex) {
@@ -209,14 +212,14 @@ void AmazonEngine::establishCenter(int screenId, int esatabIndex) {
 	doEstablish(screenId, esatabIndex);
 }
 
-const char *const _estTable[] = { "ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT" };
+static const char *const EST_TABLE[] = { "ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT" };
 
 void AmazonEngine::loadEstablish(int estabIndex) {
 	if (!_files->existFile("ETEXT.DAT")) {
 		int oldGroup = _establishGroup;
 		_establishGroup = 0;
 
-		_establish = _files->loadFile(_estTable[oldGroup]);
+		_establish = _files->loadRawFile(EST_TABLE[oldGroup]);
 		_establishCtrlTblOfs = READ_LE_UINT16(_establish->data());
 
 		int ofs = _establishCtrlTblOfs + (estabIndex * 2);
@@ -235,7 +238,7 @@ void AmazonEngine::loadEstablish(int estabIndex) {
 		_narateFile = 0;
 		_txtPages = 0;
 		_sndSubFile = 0;
-		_establish = _files->loadFile("ETEXT.DAT");
+		_establish = _files->loadRawFile("ETEXT.DAT");
 	}
 }
 
@@ -255,23 +258,12 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_screen->setIconPalette();
 	_screen->forceFadeIn();
 
-	if (getGameID() == GType_MartianMemorandum) {
-		_fonts._charSet._lo = 1;
-		_fonts._charSet._hi = 10;
-		_fonts._charFor._lo = 0xF7;
-		_fonts._charFor._hi = 0xFF;
-
-		_screen->_maxChars = 50;
-		_screen->_printOrg = _screen->_printStart = Common::Point(24, 18);
-	} else {
-		_fonts._charSet._lo = 1;
-		_fonts._charSet._hi = 10;
-		_fonts._charFor._lo = 29;
-		_fonts._charFor._hi = 32;
-
-		_screen->_maxChars = 37;
-		_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
-	}
+	_fonts._charSet._lo = 1;
+	_fonts._charSet._hi = 10;
+	_fonts._charFor._lo = 29;
+	_fonts._charFor._hi = 32;
+	_screen->_maxChars = 37;
+	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 
 	loadEstablish(estabIndex);
 	uint16 msgOffset;
@@ -318,7 +310,7 @@ void AmazonEngine::tileScreen() {
 	if (!_files->existFile(_tileFiles[idx]))
 		return;
 
-	Resource *res = _files->loadFile(_tileFiles[idx]);
+	Resource *res = _files->loadRawFile(_tileFiles[idx]);
 	int x = res->_stream->readSint16LE();
 	int y = res->_stream->readSint16LE();
 	int size = ((x + 2) * y) + 10;
@@ -473,7 +465,7 @@ void AmazonEngine::drawHelpText(const Common::String &msg) {
 	_events->showCursor();
 }
 
-void AmazonEngine::drawHelp(const Common::String str) {
+void AmazonEngine::drawHelp(const Common::String &str) {
 	_events->hideCursor();
 	if (_useItem == 0) {
 		_buffer2.copyBuffer(_screen);
@@ -524,7 +516,7 @@ void AmazonEngine::startChapter(int chapter) {
 			return;
 
 		_events->debounceLeft();
-		_events->zeroKeys();
+		_events->zeroKeysActions();
 		playVideo(_chapter, Common::Point(4, 113));
 		if (shouldQuit())
 			return;
@@ -544,14 +536,14 @@ void AmazonEngine::startChapter(int chapter) {
 		}
 
 		// Wait loop
-		while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[20]._flag) {
+		while (!shouldQuit() && !_events->isKeyActionMousePressed() && _timers[20]._flag) {
 			_events->pollEventsAndWait();
 		}
 	}
 
 	_screen->forceFadeOut();
 	_events->debounceLeft();
-	_events->zeroKeys();
+	_events->zeroKeysActions();
 	_screen->clearScreen();
 
 	_screen->setPanel(3);
@@ -584,7 +576,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_timers[20]._flag++;
 
 	// Wait loop
-	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[20]._flag) {
+	while (!shouldQuit() && !_events->isKeyActionMousePressed() && _timers[20]._flag) {
 		_events->pollEventsAndWait();
 	}
 	if (shouldQuit())
@@ -592,7 +584,7 @@ void AmazonEngine::startChapter(int chapter) {
 
 	_screen->forceFadeOut();
 	_events->debounceLeft();
-	_events->zeroKeys();
+	_events->zeroKeysActions();
 
 	_screen->clearBuffer();
 	_files->loadScreen(96, 16);
@@ -616,7 +608,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_establishGroup = 1;
 	loadEstablish(0x40 + _chapter);
 
-	byte *entryOffset = _establish->data() + ((0x40 + _chapter) * 2);
+	const byte *entryOffset = _establish->data() + ((0x40 + _chapter) * 2);
 	if (isCD())
 		entryOffset += 2;
 
@@ -676,9 +668,9 @@ void AmazonEngine::dead(int deathId) {
 	_screen->forceFadeOut();
 	_scripts->cmdFreeSound();
 	_events->debounceLeft();
-	_events->zeroKeys();
+	_events->zeroKeysActions();
 
-	_sound->_soundTable.push_back(SoundEntry(_files->loadFile(98, 44), 1));
+	_sound->loadAndAddSound(98, 44);
 
 	_screen->clearScreen();
 	_screen->setPanel(3);
@@ -734,7 +726,7 @@ void AmazonEngine::dead(int deathId) {
 			_screen->_printOrg = Common::Point(20, 155);
 			_screen->_printStart = Common::Point(20, 155);
 
-			Common::String &msg = de._msg;
+			const Common::String &msg = de._msg;
 			_printEnd = 180;
 
 			printText(_screen, msg);
@@ -760,7 +752,7 @@ void AmazonEngine::dead(int deathId) {
 			_screen->_printOrg = Common::Point(15, 165);
 			_screen->_printStart = Common::Point(15, 165);
 
-			Common::String msg = Common::String(_deaths[deathId]._msg);
+			const Common::String &msg = _deaths[deathId]._msg;
 			_printEnd = 200;
 
 			printText(_screen, msg);
@@ -780,7 +772,7 @@ void AmazonEngine::dead(int deathId) {
 	}
 }
 
-void AmazonEngine::synchronize(Common::Serializer &s) {
+Common::Error AmazonEngine::synchronize(Common::Serializer &s) {
 	AccessEngine::synchronize(s);
 
 	s.syncAsSint16LE(_chapter);
@@ -796,6 +788,8 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 
 	_river->synchronize(s);
 	_ant->synchronize(s);
+
+	return Common::kNoError;
 }
 
 } // End of namespace Amazon

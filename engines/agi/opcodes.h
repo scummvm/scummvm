@@ -207,8 +207,9 @@ void cmdDivN(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdDivV(AgiGame *state, AgiEngine *vm, uint8 *p);  // 0xa8
 void cmdCloseWindow(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdAgi256LoadPic(AgiGame *state, AgiEngine *vm, uint8 *p); // modified 0xaa
 void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *p);
-void cmdAgiMousePushScript(AgiGame *state, AgiEngine *vm, uint8 *p); // modified 0xab
+void cmdAgiMouseGetMouseState(AgiGame *state, AgiEngine *vm, uint8 *p); // modified 0xab
 void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *p);
@@ -224,6 +225,9 @@ void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetSpeed(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdSetItemView(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdCallV1(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdNearWater(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdSetBit(AgiGame *state, AgiEngine *vm, uint8 *p);
+void cmdClearBit(AgiGame *state, AgiEngine *vm, uint8 *p);
 void cmdUnknown(AgiGame *state, AgiEngine *vm, uint8 *p);
 
 void condEqual(AgiGame *state, AgiEngine *vm, uint8 *p);

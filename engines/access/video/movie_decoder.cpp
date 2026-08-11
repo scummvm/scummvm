@@ -49,7 +49,7 @@ AccessVIDMovieDecoder::AccessVIDMovieDecoder()
 }
 
 AccessVIDMovieDecoder::~AccessVIDMovieDecoder() {
-	close();
+	AccessVIDMovieDecoder::close();
 }
 
 bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
@@ -100,7 +100,7 @@ bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	//warning("width %d, height %d", videoWidth, videoHeight);
 
 	// Look through the first few packets
-	static const int maxPacketCheckCount = 10;
+	static constexpr int maxPacketCheckCount = 10;
 
 	for (int i = 0; i < maxPacketCheckCount; i++) {
 		byte chunkId = _stream->readByte();
@@ -725,9 +725,9 @@ bool AccessEngine::playMovie(const Common::Path &filename, const Common::Point &
 
 		_events->pollEventsAndWait();
 
-		Common::KeyState keyState;
-		if (_events->getKey(keyState)) {
-			if (keyState.keycode == Common::KEYCODE_ESCAPE)
+		Common::CustomEventType action;
+		if (_events->getAction(action)) {
+			if (action == kActionSkip)
 				skipVideo = true;
 		}
 	}

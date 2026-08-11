@@ -26,7 +26,6 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "engines/util.h"
-#include "graphics/managed_surface.h"
 #include "graphics/paletteman.h"
 #include "m4/m4.h"
 #include "m4/adv_r/adv_control.h"
@@ -34,12 +33,10 @@
 #include "m4/adv_r/conv_io.h"
 #include "m4/graphics/gr_sprite.h"
 #include "m4/gui/hotkeys.h"
-#include "m4/platform/sound/digi.h"
 #include "m4/platform/sound/midi.h"
 #include "m4/detection.h"
 #include "m4/console.h"
 #include "m4/metaengine.h"
-#include "m4/core/param.h"
 
 namespace M4 {
 
@@ -50,13 +47,12 @@ M4Engine *g_engine;
 M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("M4") {
 	g_engine = this;
-
-	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "goodstuf");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
 }
 
-M4Engine::~M4Engine() {
+void M4Engine::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+	SearchMan.addSubDirectoryMatching(gamePath, "goodstuf");
+	SearchMan.addSubDirectoryMatching(gamePath, "resource");
 }
 
 uint32 M4Engine::getFeatures() const {
@@ -78,21 +74,25 @@ Common::Language M4Engine::getLanguage() const {
 int M4Engine::isDemo() const {
 	if ((getFeatures() & ADGF_DEMO) == 0)
 		return GStyle_Game;
-	else if (_gameDescription->features & kFeaturesNonInteractiveDemo)
+
+	if (_gameDescription->features & kFeaturesNonInteractiveDemo)
 		return GStyle_NonInteractiveDemo;
-	else
-		return GStyle_Demo;
+
+	return GStyle_Demo;
 }
 
 Common::Error M4Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 480);
-	syncSoundSettings();
+
+	_subtitles.load();
 
 	// Instantiate globals and setup
 	Vars *vars = createVars();
 
 	if (vars->init()) {
+		syncSoundSettings();
+
 		// Set the console
 		setupConsole();
 
@@ -120,7 +120,9 @@ void M4Engine::m4_inflight() {
 	while (KEEP_PLAYING) {
 		if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 			midi_stop();
-			kernel_load_game(_G(kernel).restore_slot);
+			const int slot = _G(kernel).restore_slot;
+			if (!kernel_load_game(slot))
+				error("Could not restore save slot %d", slot);
 		}
 
 		// Start up next section
@@ -140,8 +142,13 @@ void M4Engine::m4_inflight() {
 void M4Engine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
+	_G(midi).syncSoundSettings();
+}
+
+void M4Engine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	_G(midi).pause(pause);
 }
 
 bool M4Engine::canLoadGameStateCurrently(Common::U32String *msg) {
@@ -176,10 +183,10 @@ Common::Error M4Engine::loadGameStateDoIt(int slot) {
 
 	if (save) {
 		// Skip original description
-		int descSize = save->readUint32LE();
+		const int descSize = save->readUint32LE();
 		save->seek(descSize + 45, SEEK_CUR);
 
-		int thumbSize = save->readUint32LE();
+		const int thumbSize = save->readUint32LE();
 		save->seek(thumbSize, SEEK_CUR);
 
 		// We're now at data section, handle it
@@ -191,9 +198,9 @@ Common::Error M4Engine::loadGameStateDoIt(int slot) {
 
 		return result;
 
-	} else {
-		return Engine::loadGameState(slot);
 	}
+
+	return Engine::loadGameState(slot);
 }
 
 Common::InSaveFile *M4Engine::getOriginalSave(int slot) const {
@@ -206,7 +213,9 @@ Common::InSaveFile *M4Engine::getOriginalSave(int slot) const {
 				!strncmp(name, "MIRROR", 7)) {
 			save->seek(0);
 			return save;
-		} else if (save->seek(-44, SEEK_END) && save->read(name, 7) == 7 &&
+		}
+
+		if (save->seek(-44, SEEK_END) && save->read(name, 7) == 7 &&
 				!strncmp(name, "FAUCET ", 7)) {
 			save->seek(0);
 			return save;
@@ -226,7 +235,7 @@ Common::Error M4Engine::saveGameStream(Common::WriteStream *stream, bool isAutos
 }
 
 Common::Error M4Engine::loadGameStream(Common::SeekableReadStream *stream) {
-	byte version = stream->readByte();
+	const byte version = stream->readByte();
 	if (version > SAVEGAME_VERSION)
 		error("Tried to load unsupported savegame version");
 
@@ -262,8 +271,12 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 
 	} else {
 		s.syncAsByte(_G(kernel).restore_game);
-		s.syncAsSint32LE(_G(game).digi_overall_volume_percent);
-		s.syncAsSint32LE(_G(game).midi_overall_volume_percent);
+		int32 sfx_volume_percent = ConfMan.getInt("sfx_volume") * 100 / 256;
+		s.syncAsSint32LE(sfx_volume_percent);
+		ConfMan.setInt("sfx_volume", sfx_volume_percent * 256 / 100);
+		int32 midi_volume_percent = ConfMan.getInt("music_volume") * 100 / 256;
+		s.syncAsSint32LE(midi_volume_percent);
+		ConfMan.setInt("music_volume", midi_volume_percent * 256 / 100);
 		s.syncAsByte(_G(kernel).camera_pan_instant);
 	}
 
@@ -278,23 +291,27 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	_G(conversations).syncGame(s);
 	_G(inventory)->syncGame(s);
 
+	Room *room = s.isSaving() ? g_engine->_activeRoom :
+		g_engine->getRoom(_G(game).room_id);
+	room->syncGame(s);
+
 	if (s.isLoading()) {
 		// set up variables so everyone knows we've teleported
 		_G(kernel).restore_game = true;
 		_G(between_rooms) = true;
 		_G(game).previous_room = KERNEL_RESTORING_GAME;
 
-		digi_set_overall_volume(_G(game).digi_overall_volume_percent);
-		midi_set_overall_volume(_G(game).midi_overall_volume_percent);
+		syncSoundSettings();
+		interface_show();
 	}
 
 	return Common::kNoError;
 }
 
 bool M4Engine::autosaveExists() const {
-	Common::String slotName = getSaveStateName(getAutosaveSlot());
+	const Common::String slotName = getSaveStateName(getAutosaveSlot());
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
-	bool result = saveFile != nullptr;
+	const bool result = saveFile != nullptr;
 	delete saveFile;
 
 	return result;
@@ -309,7 +326,7 @@ bool M4Engine::savesExist() const {
 }
 
 bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
-	SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slotNum);
+	const SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slotNum);
 	if (!desc.isValid())
 		return false;
 
@@ -322,16 +339,19 @@ bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
 	thumbnail->h = surf->h;
 	thumbnail->encoding = NO_COMPRESS;
 
+	thumbnail->sourceHandle = (MemHandle)malloc(sizeof(void *));
+	if (!thumbnail->sourceHandle)
+		error("loadSaveThumbnail - Unable to allocate sourceHandle");
+
 	byte *data = (byte *)malloc(surf->w * surf->h);
-	thumbnail->sourceHandle = (MemHandle)malloc(sizeof(MemHandle));
-	*thumbnail->sourceHandle = data;
+	*thumbnail->sourceHandle = (void *)data;
 	thumbnail->sourceOffset = 0;
 	thumbnail->data = data;
 
-	byte pal[PALETTE_SIZE];
+	byte pal[Graphics::PALETTE_SIZE];
 	byte r, g, b;
-	int proximity, minProximity;
-	g_system->getPaletteManager()->grabPalette(pal, 0, PALETTE_COUNT);
+
+	g_system->getPaletteManager()->grabPalette(pal, 0, Graphics::PALETTE_COUNT);
 
 	// Translate the 16-bit thumbnail to paletted
 	for (int y = 0; y < surf->h; ++y) {
@@ -339,16 +359,16 @@ bool M4Engine::loadSaveThumbnail(int slotNum, M4sprite *thumbnail) const {
 		byte *destLine = data + surf->w * y;
 
 		for (int x = 0; x < surf->w; ++x, ++srcLine, ++destLine) {
-			proximity = minProximity = 0xffff;
+			int minProximity = 0xffff;
 			surf->format.colorToRGB(*srcLine, r, g, b);
 
 			const byte *palP = pal;
-			for (int palIdx = 0; palIdx < PALETTE_COUNT; ++palIdx, palP += 3) {
-				proximity = ABS((int)r - (int)palP[0]) +
-					ABS((int)g - (int)palP[1]) +
-					ABS((int)b - (int)palP[2]);
+			for (int palIdx = 0; palIdx < Graphics::PALETTE_COUNT; ++palIdx, palP += 3) {
+				const int proximity = ABS((int)r - (int)palP[0]) +
+				                      ABS((int)g - (int)palP[1]) +
+				                      ABS((int)b - (int)palP[2]);
 
-				if (proximity < minProximity) {
+				if (proximity < minProximity && destLine) {
 					minProximity = proximity;
 					*destLine = (byte)palIdx;
 				}
@@ -364,7 +384,7 @@ bool M4Engine::saveGameFromMenu(int slotNum, const Common::String &desc,
 	M4MetaEngine *metaEngine = static_cast<M4MetaEngine *>(getMetaEngine());
 	metaEngine->_thumbnail = &thumbnail;
 
-	bool result = saveGameState(slotNum, desc).getCode() == Common::kNoError;
+	const bool result = saveGameState(slotNum, desc).getCode() == Common::kNoError;
 
 	metaEngine->_thumbnail = nullptr;
 	return result;

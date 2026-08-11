@@ -32,6 +32,12 @@ namespace ViewsEnh {
 #define GLYPH_W 24
 #define GLYPH_H 20
 
+#ifdef MM1_NEW_GFX
+constexpr int SCROLL_BG_COLOR = 0;
+#else
+constexpr int SCROLL_BG_COLOR = 153;
+#endif
+
 class ScrollView : public TextView {
 	struct Button {
 		Shared::Xeen::SpriteResource *_sprites;
@@ -69,8 +75,8 @@ class ScrollView : public TextView {
 	};
 private:
 	Common::Array<Button> _buttons;
-	int _selectedButton = -1;
 protected:
+	int _selectedButton = -1;
 	Common::Point _symbolPos;
 protected:
 	/**

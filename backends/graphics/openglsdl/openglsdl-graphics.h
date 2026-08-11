@@ -50,8 +50,17 @@ public:
 	void notifyVideoExpose() override;
 	void notifyResize(const int width, const int height) override;
 
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+	void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) override;
+	void freeImGuiTexture(void *texture) override;
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	void destroyingWindow() override;
+#endif
+
 protected:
-	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
+	bool loadVideoMode(uint requestedWidth, uint requestedHeight, bool resizable, int antialiasing) override;
 
 	void refreshScreen() override;
 
@@ -59,8 +68,12 @@ protected:
 
 	bool saveScreenshot(const Common::Path &filename) const override;
 
+	bool canSwitchFullscreen() const override;
+
 private:
 	bool setupMode(uint width, uint height);
+
+	void deinitOpenGLContext();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	int _glContextProfileMask, _glContextMajor, _glContextMinor;
@@ -85,7 +98,11 @@ private:
 #endif
 
 	OpenGL::ContextType _glContextType;
+	bool _resizable;
+	int _requestedAntialiasing;
+	int _effectiveAntialiasing;
 
+	uint _forceFrameUpdate = 0;
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;
 	uint _graphicsScale;

@@ -24,8 +24,9 @@
 #include <Foundation/NSFileManager.h>
 #include <Foundation/NSBundle.h>
 #include <Foundation/NSPathUtilities.h>
+
 #include "backends/platform/ios7/ios7_common.h"
-#include <common/str.h>
+#include "common/str.h"
 
 Common::String iOS7_getDocumentsDir() {
 #if TARGET_OS_IOS

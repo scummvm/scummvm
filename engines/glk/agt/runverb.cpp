@@ -1013,7 +1013,7 @@ static void v_yell(void) {
 
 
 /* ------------------------------------------------------------------- */
-/*  VERB EXECUTION AND GRAMMER CHECKING */
+/*  VERB EXECUTION AND GRAMMAR CHECKING */
 
 
 static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag) {
@@ -1025,7 +1025,7 @@ static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag
 	if (redir_flag < 2) redir_flag = 0;
 	if (PURE_GRAMMAR) redir_flag = 1;
 
-	/* First of all, no constraints on dummy_verb grammer */
+	/* First of all, no constraints on dummy_verb grammar */
 	if (vb_ >= BASE_VERB && vb_ < TOTAL_VERB) return 0;
 
 	if (!(verbflag[vb_]&VERB_TAKEOBJ)
@@ -1149,13 +1149,13 @@ rbool metacommand_cycle(int save_vb, int *p_redir_flag) {
 	if (DEBUG_AGT_CMD)
 		debugout("*** Scanning: ANY metacommands ****\n");
 	/* ANY metacommands: */
-	supress_debug = !debug_any;
+	suppress_debug = !debug_any;
 	clear_stack();
 	if ((PURE_METAVERB || !was_metaverb)
 	        && 2 == scan_metacommand(0, 0, 0, 0, 0, nullptr))
 		return 1;
 
-	supress_debug = 0;
+	suppress_debug = 0;
 
 	vb = save_vb;
 	actor_in_scope |= visible(actor); /* Set up for ActorWasPresent */
@@ -1226,7 +1226,7 @@ void exec_verb(void) {
 		/* LOOK: Doesn't matter if turn is done. */
 		v_look();
 	else if (!turndone) {
-		/* Execute normal verbs: check grammer and then call */
+		/* Execute normal verbs: check grammar and then call */
 		if (!objswap) {
 			if (checkgram(vb, dobj, prep, iobj, redir_flag) == -1) return;
 		} else if (checkgram(vb, 0, prep, iobj, redir_flag) == -1) return;
@@ -1497,12 +1497,12 @@ void exec_verb(void) {
 		if (DEBUG_AGT_CMD)
 			debugout("*** Scanning: AFTER metacommands ****\n");
 		/* AFTER metacommands: */
-		supress_debug = !debug_any;
+		suppress_debug = !debug_any;
 		clear_stack();
 		if ((PURE_METAVERB || !was_metaverb) &&
 		        2 == scan_metacommand(0, 57, 0, 0, 0, nullptr))
 			turndone = 1;
-		supress_debug = 0;
+		suppress_debug = 0;
 	}
 
 	/* If the player really typed 'q' and we generated an "EndGame"
@@ -1547,7 +1547,7 @@ int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
 
 	clear_stack();
 	*success = 1;
-	supress_debug = !debug_disambig;
+	suppress_debug = !debug_disambig;
 	if (actor != 0 && aver < AGX00) {
 		result = scan_metacommand(2, verbid, dobj, prep_, iobj, nullptr);
 		if (result == 2) {
@@ -1561,7 +1561,7 @@ int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
 	}
 	clear_stack();
 	result = scan_metacommand(actor, verbid, dobj, prep_, iobj, nullptr);
-	supress_debug = 0;
+	suppress_debug = 0;
 	switch (result) {
 	case -2:
 		free_all_parserec();

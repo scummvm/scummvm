@@ -21,7 +21,6 @@
 #ifndef DRAGONS_DRAGONINI_H
 #define DRAGONS_DRAGONINI_H
 
-#include "common/system.h"
 #include "dragons/bigfile.h"
 
 namespace Dragons {

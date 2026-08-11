@@ -175,32 +175,95 @@ void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
 	PSP_DEBUG_PRINT("format[%p], _buffer[%p], _palette[%p]\n", format, &_buffer, &_palette);
 
 	if (!format) {
-		memset(&_pixelFormat, 0, sizeof(_pixelFormat));
-		_pixelFormat.bytesPerPixel = 1;	// default
+		_srcFormat = Graphics::PixelFormat::createFormatCLUT8();
 	} else {
-		_pixelFormat = *format;
+		_srcFormat = *format;
 	}
 
 	PSPPixelFormat::Type bufferFormat, paletteFormat;
-	bool swapRedBlue = false;
+	bool fakeAlpha = false;
 
-	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferFormat, paletteFormat, swapRedBlue);
-	_buffer.setPixelFormat(bufferFormat, swapRedBlue);
-	_palette.setPixelFormats(paletteFormat, bufferFormat, swapRedBlue);
+	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferFormat, paletteFormat, fakeAlpha);
+	_buffer.setPixelFormat(bufferFormat);
+	_palette.setPixelFormats(paletteFormat, bufferFormat);
+
+	if (paletteFormat == PSPPixelFormat::Type_None) {
+		_dstFormat = PSPPixelFormat::convertToScummvmPixelFormat(bufferFormat, fakeAlpha);
+		_blitFunc = Graphics::getFastBlitFunc(_dstFormat, _srcFormat);
+		_convert = (_srcFormat != _dstFormat);
+	} else {
+		_dstFormat = Graphics::PixelFormat::createFormatCLUT8();
+		_blitFunc = nullptr;
+		_convert = false;
+	}
 }
 
 Graphics::Surface *Screen::lockAndGetForEditing() {
 	DEBUG_ENTER_FUNC();
 
-	_frameBuffer.init(_buffer.getSourceWidth(), _buffer.getSourceHeight(), _buffer.getBytesPerPixel() * _buffer.getWidth(),
-	                  _buffer.getPixels(), _pixelFormat);
 	// We'll set to dirty once we unlock the screen
 
 	return &_frameBuffer;
 }
 
+void Screen::unlock() {
+
+	// set dirty here because of changes
+
+	_dirtyRects.emplace_back(getWidth(), getHeight());
+	setDirty();
+}
+
+void Screen::copyFromRect(const byte *buf, int pitch, int destX, int destY, int recWidth, int recHeight) {
+	DEBUG_ENTER_FUNC();
+	_frameBuffer.copyRectToSurface(buf, pitch, destX, destY, recWidth, recHeight);
+	_dirtyRects.emplace_back(destX, destY, destX + recWidth, destY + recHeight);
+	setDirty();
+}
+
 bool Screen::allocate() {
 	DEBUG_ENTER_FUNC();
 
-	return DefaultDisplayClient::allocate(true, false);	// buffer in VRAM
+	if (!DefaultDisplayClient::allocate(true, false))	// buffer in VRAM
+		return false;
+
+	if (_convert) {
+		_frameBuffer.create(_buffer.getSourceWidth(), _buffer.getSourceHeight(), _srcFormat);
+	} else {
+		_frameBuffer.init(_buffer.getSourceWidth(), _buffer.getSourceHeight(), _buffer.getWidthInBytes(),
+		                  _buffer.getPixels(), _srcFormat);
+	}
+
+	return true;
+}
+
+void Screen::deallocate() {
+	if (_convert)
+		_frameBuffer.free();
+	else
+		_frameBuffer.setPixels(nullptr);
+	DefaultDisplayClient::deallocate();
+}
+
+void Screen::render() {
+	if (_convert && !_dirtyRects.empty()) {
+		_dirtyRects.merge();
+
+		for (const Common::Rect &r : _dirtyRects) {
+			const byte *src = (const byte *)_frameBuffer.getBasePtr(r.left, r.top);
+			byte *dst = (byte *)_buffer.getBasePtr(r.left, r.top);
+
+			if (_blitFunc) {
+				_blitFunc(dst, src, _buffer.getWidthInBytes(),
+				          _frameBuffer.pitch, r.width(), r.height());
+			} else {
+				Graphics::crossBlit(dst, src, _buffer.getWidthInBytes(),
+				                    _frameBuffer.pitch, r.width(), r.height(),
+				                    _dstFormat, _srcFormat);
+			}
+		}
+	}
+	_dirtyRects.clear();
+
+	DefaultDisplayClient::render();
 }

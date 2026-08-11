@@ -291,7 +291,7 @@ bool U6Actor::init_silver_serpent() {
 	if (obj != nullptr) //old snake
 		gather_snake_objs_from_map(obj, x, y, z);
 	else { //new snake
-		//FIXME we need to make long, randomly layed out snakes here!
+		//FIXME: we need to make long, randomly laid out snakes here!
 		init_new_silver_serpent();
 	}
 
@@ -598,7 +598,7 @@ bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 
 	case MOVETYPE_U6_AIR_LOW :
 		map_tile = map->get_tile(new_x, new_y, new_z, MAP_ORIGINAL_TILE);
-		if (map_tile->flags1 & TILEFLAG_WALL) //low air boundry
+		if (map_tile->flags1 & TILEFLAG_WALL) //low air boundary
 			return false;
 
 		map_tile = obj_manager->get_obj_tile(new_x, new_y, new_z, false);
@@ -705,7 +705,7 @@ bool U6Actor::weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hi
 		return true;
 	}
 
-	const Std::list<Obj *> &surrounding_objs = target->get_surrounding_obj_list();
+	const Common::List<Obj *> &surrounding_objs = target->get_surrounding_obj_list();
 	for (Obj *obj : surrounding_objs) {
 		if (Actor::weapon_can_hit(weapon, obj->x, obj->y)) {
 			*hit_x = obj->x;
@@ -1066,7 +1066,7 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 	if (surrounding_objects.empty())
 		return;
 
-	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
+	Common::List<Obj *>::iterator obj = surrounding_objects.begin();
 
 	sint8 new_pos = 2 + rel_x + (rel_y * 2);
 
@@ -1131,7 +1131,7 @@ inline void U6Actor::set_direction_of_surrounding_objs(NuvieDir new_direction) {
 }
 
 inline void U6Actor::set_direction_of_surrounding_ship_objs(NuvieDir new_direction) {
-	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
+	Common::List<Obj *>::iterator obj = surrounding_objects.begin();
 	if (obj == surrounding_objects.end())
 		return;
 
@@ -1268,7 +1268,7 @@ inline void U6Actor::set_direction_of_surrounding_splitactor_objs(NuvieDir new_d
 }
 
 inline void U6Actor::set_direction_of_surrounding_dragon_objs(NuvieDir new_direction) {
-	Std::list<Obj *>::iterator obj;
+	Common::List<Obj *>::iterator obj;
 	uint8 frame_offset = (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
 	Obj *head, *tail, *wing1, *wing2;
 
@@ -1351,7 +1351,7 @@ inline void U6Actor::twitch_surrounding_dragon_objs() {
 }
 
 inline void U6Actor::twitch_surrounding_hydra_objs() {
-	Std::list<Obj *>::iterator obj;
+	Common::List<Obj *>::iterator obj;
 	int i;
 
 	//Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()

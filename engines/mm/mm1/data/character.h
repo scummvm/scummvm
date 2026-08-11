@@ -401,7 +401,7 @@ union Resistances {
 	Resistances();
 
 	/**
-	 * Handles save/loading resistences
+	 * Handles save/loading resistances
 	 */
 	void synchronize(Common::Serializer &s);
 
@@ -601,6 +601,12 @@ struct Character : public PrimaryAttributes {
 	bool hasBadCondition() const {
 		return (_condition & BAD_CONDITION) != 0;
 	}
+};
+
+struct SuggestedName {
+	CharacterClass _class;
+	Sex _sex;
+	Common::String _name;
 };
 
 } // namespace MM1

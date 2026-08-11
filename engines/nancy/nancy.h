@@ -43,18 +43,18 @@ class Serializer;
  *
  * Status of this engine:
  * The Vampire Diaries and all Nancy Drew games up to and including
- * Nancy Drew: Ghost Dogs of Moon Lake are fully completable.
+ * Nancy Drew: Danger on Deception Island are fully completable.
  * Every other game is untested but definitely unplayable.
  *
  * Games using this engine:
  *	- The Vampire Diaries (1996)
  *	- Almost every mainline Nancy Drew game by HeR Interactive,
- *		beginnning with Nancy Drew: Secrets can Kill (1998)
+ *		beginning with Nancy Drew: Secrets can Kill (1998)
  *		up to and including Nancy Drew: Sea of Darkness (2015)
  */
 namespace Nancy {
 
-static const int kSavegameVersion = 3;
+static const int kSavegameVersion = 8;
 
 struct NancyGameDescription;
 
@@ -73,8 +73,6 @@ class State;
 
 class NancyEngine : public Engine {
 public:
-	friend class NancyConsole;
-
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
 	~NancyEngine();
 
@@ -83,6 +81,7 @@ public:
 	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
 	bool hasFeature(EngineFeature f) const override;
 
+	Common::Error loadGameState(int slot) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
@@ -99,6 +98,7 @@ public:
 
 	const StaticData &getStaticData() const;
 	const EngineData *getEngineData(const Common::String &name) const;
+	const Common::String getEventFlagName(uint flagID) const;
 
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
 	NancyState::NancyState getState() { return _gameFlow.curState; }
@@ -144,6 +144,9 @@ private:
 
 	void preloadCals();
 	void readDatFile();
+	// Nancy12 onwards no longer ship their static data in nancy.dat; the values
+	// the engine still needs are provided here instead (see also the EVNT chunk).
+	void populateStaticData();
 
 	Common::Error synchronize(Common::Serializer &serializer);
 

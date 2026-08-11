@@ -136,7 +136,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	} else {
-		debug(6, "IDOS->ExamineObjectTags() failed -> Not a directory (or it doesn't exist!");
+		debug(6, "IDOS->ExamineObjectTags() failed -> Not a directory (or it doesn't exist)!");
 	}
 }
 
@@ -346,12 +346,13 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 }
 
 Common::SeekableReadStream *AmigaOSFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return StdioStream::makeFromPath(getPath(), StdioStream::WriteMode_Read);
 }
 
 
-Common::SeekableWriteStream *AmigaOSFilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath(), true);
+Common::SeekableWriteStream *AmigaOSFilesystemNode::createWriteStream(bool atomic) {
+	return StdioStream::makeFromPath(getPath(), atomic ?
+			StdioStream::WriteMode_WriteAtomic : StdioStream::WriteMode_Write);
 }
 
 bool AmigaOSFilesystemNode::createDirectory() {

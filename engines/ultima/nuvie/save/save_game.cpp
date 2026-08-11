@@ -135,7 +135,7 @@ bool SaveGame::load_new() {
 }
 
 bool SaveGame::load_original() {
-	Std::string objblk_filename;
+	Common::String objblk_filename;
 	Common::Path path, objlist_filename;
 	char x, y;
 	uint16 len;
@@ -147,7 +147,7 @@ bool SaveGame::load_original() {
 	init(obj_manager);
 
 	objblk_filename = OBJBLK_FILENAME;
-	len = objblk_filename.length();
+	len = objblk_filename.size();
 
 	uint8 i = 0;
 
@@ -211,7 +211,7 @@ bool SaveGame::transfer_character() {
 	Common::FSNode folder = dialog.getResult();
 
 	// TODO: Load in character data from given folder and start new game
-	g_engine->GUIError(Common::String::format("Load party file from folder - %s", folder.getPath().toString(Common::Path::kNativeSeparator).c_str()));
+	GUIErrorMessage(Common::String::format("Load party file from folder - %s", folder.getPath().toString(Common::Path::kNativeSeparator).c_str()));
 
 	return false;
 }
@@ -436,11 +436,11 @@ void SaveGame::update_objlist_for_new_game() {
 }
 
 void SaveGame::update_objlist_for_new_game_u6() {
-	Std::string name = "";
+	Common::String name = "";
 
 	config->value("config/newgamedata/name", name, "Avatar");
 	objlist.seek(0xf00);
-	int len = name.length();
+	int len = name.size();
 	if (len > 13)
 		len = 13;
 
@@ -467,26 +467,30 @@ void SaveGame::update_objlist_for_new_game_u6() {
 	objlist.seek(0xa01);
 	objlist.write1(stat);
 
-	config->value("config/newgamedata/int", stat, 0xf);
+	int intelligence;
+	config->value("config/newgamedata/int", intelligence, 0xf);
 	objlist.seek(0xb01);
-	objlist.write1(stat);
+	objlist.write1(intelligence);
 
+	config->value("config/newgamedata/exp", stat, 0x172);
 	objlist.seek(0xc02);
-	objlist.write2(0x172); // experience
+	objlist.write2(stat); // experience
 
+	config->value("config/newgamedata/magic", stat, intelligence * 2);
 	objlist.seek(0x13f2);
-	objlist.write1(stat * 2); // magic
+	objlist.write1(stat); // magic
 
+	config->value("config/newgamedata/level", stat, 3);
 	objlist.seek(0xff2);
-	objlist.write1(3); //level
+	objlist.write1(stat); //level
 }
 
 void SaveGame::update_objlist_for_new_game_se() {
-	Std::string name = "";
+	Common::String name = "";
 
 	config->value("config/newgamedata/name", name, "Avatar");
 	objlist.seek(0xf00);
-	int len = name.length();
+	int len = name.size();
 	if (len > 13)
 		len = 13;
 
@@ -513,14 +517,14 @@ void SaveGame::update_objlist_for_new_game_se() {
 }
 
 void SaveGame::update_objlist_for_new_game_md() {
-	Std::string name = "";
+	Common::String name = "";
 
 	int gender;
 	config->value("config/newgamedata/gender", gender, 0);
 
 	config->value("config/newgamedata/name", name, "Avatar");
 	objlist.seek(0xf00);
-	int len = name.length();
+	int len = name.size();
 	if (len > 13)
 		len = 13;
 

@@ -467,11 +467,7 @@ IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixe
 	_width = width;
 	_height = height;
 	_bitsPerPixel = bitsPerPixel;
-	_pixelFormat = g_system->getScreenFormat();
-
-	// Default to a 32bpp format, if in 8bpp mode
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	_pixelFormat = getDefaultYUVFormat();
 
 	_ctx._bRefBuf = 3; // buffer 2 is used for scalability mode
 }

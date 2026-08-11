@@ -450,8 +450,8 @@ private:
 		MEMCPY_BUFFER_SIZE = 8192
 	};
 
-	void fastCopySpecificSize(byte *dst, byte *src, uint32 bytes, bool swap = false);
-	void fastCopyDifferentSizes(byte *dst, byte *src, bool swap = false);
+	void fastCopySpecificSize(byte *dst, byte *src, uint32 bytes);
+	void fastCopyDifferentSizes(byte *dst, byte *src);
 
 };
 
@@ -474,13 +474,13 @@ void PspUnitTests::testFastCopy() {
 	byte *bufferSrc = ((byte *)bufferSrc32);
 	byte *bufferDst = ((byte *)bufferDst32);
 
-	fastCopyDifferentSizes(bufferDst, bufferSrc, true);
+	fastCopyDifferentSizes(bufferDst, bufferSrc);
 	fastCopyDifferentSizes(bufferDst+1, bufferSrc+1);
-	fastCopyDifferentSizes(bufferDst+2, bufferSrc+2, true);
+	fastCopyDifferentSizes(bufferDst+2, bufferSrc+2);
 	fastCopyDifferentSizes(bufferDst+3, bufferSrc+3);
 	fastCopyDifferentSizes(bufferDst, bufferSrc+1);
-	fastCopyDifferentSizes(bufferDst, bufferSrc+2, true);
-	fastCopyDifferentSizes(bufferDst+2, bufferSrc, true);
+	fastCopyDifferentSizes(bufferDst, bufferSrc+2);
+	fastCopyDifferentSizes(bufferDst+2, bufferSrc);
 	fastCopyDifferentSizes(bufferDst, bufferSrc+3);
 	fastCopyDifferentSizes(bufferDst+1, bufferSrc+2);
 	fastCopyDifferentSizes(bufferDst+1, bufferSrc+3);
@@ -495,46 +495,36 @@ void PspUnitTests::testFastCopy() {
 
 void PspUnitTests::fastCopyDifferentSizes(byte *dst, byte *src, bool swap) {
 	fastCopySpecificSize(dst, src, 1);
-	fastCopySpecificSize(dst, src, 2, swap);
-	fastCopySpecificSize(dst, src, 4, swap);
-	fastCopySpecificSize(dst, src, 6, swap);
-	fastCopySpecificSize(dst, src, 8, swap);
+	fastCopySpecificSize(dst, src, 2);
+	fastCopySpecificSize(dst, src, 4);
+	fastCopySpecificSize(dst, src, 6);
+	fastCopySpecificSize(dst, src, 8);
 	fastCopySpecificSize(dst, src, 9);
-	fastCopySpecificSize(dst, src, 10, swap);
+	fastCopySpecificSize(dst, src, 10);
 	fastCopySpecificSize(dst, src, 11);
-	fastCopySpecificSize(dst, src, 12, swap);
+	fastCopySpecificSize(dst, src, 12);
 	fastCopySpecificSize(dst, src, 13);
-	fastCopySpecificSize(dst, src, 14, swap);
+	fastCopySpecificSize(dst, src, 14);
 	fastCopySpecificSize(dst, src, 15);
-	fastCopySpecificSize(dst, src, 16, swap);
+	fastCopySpecificSize(dst, src, 16);
 	fastCopySpecificSize(dst, src, 17);
-	fastCopySpecificSize(dst, src, 18, swap);
+	fastCopySpecificSize(dst, src, 18);
 	fastCopySpecificSize(dst, src, 19);
-	fastCopySpecificSize(dst, src, 20, swap);
-	fastCopySpecificSize(dst, src, 32, swap);
+	fastCopySpecificSize(dst, src, 20);
+	fastCopySpecificSize(dst, src, 32);
 	fastCopySpecificSize(dst, src, 33);
-	fastCopySpecificSize(dst, src, 34, swap);
+	fastCopySpecificSize(dst, src, 34);
 	fastCopySpecificSize(dst, src, 35);
-	fastCopySpecificSize(dst, src, 36, swap);
-	fastCopySpecificSize(dst, src, 50, swap);
-	fastCopySpecificSize(dst, src, 100, swap);
-	fastCopySpecificSize(dst, src, 500, swap);
-	fastCopySpecificSize(dst, src, 1000, swap);
+	fastCopySpecificSize(dst, src, 36);
+	fastCopySpecificSize(dst, src, 50);
+	fastCopySpecificSize(dst, src, 100);
+	fastCopySpecificSize(dst, src, 500);
+	fastCopySpecificSize(dst, src, 1000);
 }
 
-void PspUnitTests::fastCopySpecificSize(byte *dst, byte *src, uint32 bytes, bool swap) {
+void PspUnitTests::fastCopySpecificSize(byte *dst, byte *src, uint32 bytes) {
 	memset(dst, 0, bytes);
 	PspMemory::fastCopy(dst, src, bytes);
-
-	if (swap) {	// test swap also
-		memset(dst, 0, bytes);
-
-		// pixelformat for swap
-		PSPPixelFormat format;
-		format.set(PSPPixelFormat::Type_4444, true);
-
-		PspMemory::fastSwap(dst, src, bytes, format);
-	}
 }
 
 // This function leaks. For now I don't care

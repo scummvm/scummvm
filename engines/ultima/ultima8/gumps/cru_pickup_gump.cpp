@@ -149,7 +149,7 @@ void CruPickupGump::updateForNewItem(const Item *item) {
 void CruPickupGump::addCountText() {
 	if (_q <= 1 || !_showCount)
 		return;
-	Std::string qstr = Std::string::format("%d", _q);
+	Common::String qstr = Common::String::format("%d", _q);
 	TextWidget *count = new TextWidget(ITEM_AREA_WIDTH / 2 + 22, _dims.height() / 2 + 3, qstr, true, COUNT_TEXT_FONT);
 	count->InitGump(this, false);
 	count->SetIndex(COUNT_TEXT_INDEX);

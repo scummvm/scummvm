@@ -21,6 +21,7 @@
 
 #include "image/codecs/cinepak.h"
 #include "image/codecs/cinepak_tables.h"
+#include "image/codecs/dither.h"
 
 #include "common/debug.h"
 #include "common/stream.h"
@@ -37,12 +38,12 @@ namespace Image {
 namespace {
 
 inline void convertYUVToRGB(const byte *clipTable, byte y, int8 u, int8 v, byte &r, byte &g, byte &b) {
-	r = clipTable[y + (v << 1)];
+	r = clipTable[y + (v * 2)];
 	g = clipTable[y - (u >> 1) - v];
-	b = clipTable[y + (u << 1)];
+	b = clipTable[y + (u * 2)];
 }
 
-inline uint32 convertYUVToColor(const byte *clipTable, const Graphics::PixelFormat &format, byte y, byte u, byte v) {
+inline uint32 convertYUVToColor(const byte *clipTable, const Graphics::PixelFormat &format, byte y, int8 u, int8 v) {
 	byte r, g, b;
 	convertYUVToRGB(clipTable, y, u, v, r, g, b);
 	return format.RGBToColor(r, g, b);
@@ -278,22 +279,17 @@ void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, Common::Seeka
 
 } // End of anonymous namespace
 
-CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec(), _bitsPerPixel(bitsPerPixel) {
+CinepakDecoder::CinepakDecoder(int bitsPerPixel) : Codec(), _bitsPerPixel(bitsPerPixel), _ditherPalette(0) {
 	_curFrame.surface = 0;
 	_curFrame.strips = 0;
 	_y = 0;
 	_colorMap = 0;
-	_ditherPalette = 0;
 	_ditherType = kDitherTypeUnknown;
 
 	if (bitsPerPixel == 8) {
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	} else {
-		_pixelFormat = g_system->getScreenFormat();
-
-		// Default to a 32bpp format, if in 8bpp mode
-		if (_pixelFormat.bytesPerPixel == 1)
-			_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+		_pixelFormat = getDefaultYUVFormat();
 	}
 
 	// Create a lookup for the clip function
@@ -322,7 +318,6 @@ CinepakDecoder::~CinepakDecoder() {
 	delete[] _clipTableBuf;
 
 	delete[] _colorMap;
-	delete[] _ditherPalette;
 }
 
 const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream &stream) {
@@ -341,7 +336,7 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 		}
 	}
 
-	debug(4, "Cinepak Frame: Width = %d, Height = %d, Strip Count = %d", _curFrame.width, _curFrame.height, _curFrame.stripCount);
+	debugC(kDebugLevelGVideo, 4, "Cinepak Frame: Width = %d, Height = %d, Strip Count = %d", _curFrame.width, _curFrame.height, _curFrame.stripCount);
 
 	// Borrowed from FFMPEG. This should cut out the extra data Cinepak for Sega has (which is useless).
 	// The theory behind this is that this is here to confuse standard Cinepak decoders. But, we won't let that happen! ;)
@@ -412,7 +407,7 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 			case 0x30:
 			case 0x31:
 			case 0x32:
-				if (_ditherPalette)
+				if (_ditherPalette.size() > 0)
 					ditherVectors(stream, i, chunkID, chunkSize);
 				else if (_bitsPerPixel == 8)
 					decodeVectors8(stream, i, chunkID, chunkSize);
@@ -649,6 +644,9 @@ void CinepakDecoder::decodeVectors24(Common::SeekableReadStream &stream, uint16 
 
 bool CinepakDecoder::setOutputPixelFormat(const Graphics::PixelFormat &format) {
 	if (_bitsPerPixel == 8)
+		return format.isCLUT8();
+
+	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
 		return false;
 
 	_pixelFormat = format;
@@ -663,10 +661,9 @@ void CinepakDecoder::setDither(DitherType type, const byte *palette) {
 	assert(canDither(type));
 
 	delete[] _colorMap;
-	delete[] _ditherPalette;
 
-	_ditherPalette = new byte[256 * 3];
-	memcpy(_ditherPalette, palette, 256 * 3);
+	_ditherPalette.resize(256, false);
+	_ditherPalette.set(palette, 0, 256);
 
 	_dirtyPalette = true;
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -680,42 +677,16 @@ void CinepakDecoder::setDither(DitherType type, const byte *palette) {
 	} else {
 		// Generate QuickTime dither table
 		// 4 blocks of 0x4000 bytes (RGB554 lookup)
-		_colorMap = createQuickTimeDitherTable(palette, 256);
+		_colorMap = DitherCodec::createQuickTimeDitherTable(palette, 256);
 	}
 }
 
 byte CinepakDecoder::findNearestRGB(int index) const {
-	int r = s_defaultPalette[index * 3];
-	int g = s_defaultPalette[index * 3 + 1];
-	int b = s_defaultPalette[index * 3 + 2];
+	byte r = s_defaultPalette[index * 3];
+	byte g = s_defaultPalette[index * 3 + 1];
+	byte b = s_defaultPalette[index * 3 + 2];
 
-	byte result = 0;
-	int diff = 0x7FFFFFFF;
-
-	for (int i = 0; i < 256; i++) {
-		int bDiff = b - (int)_ditherPalette[i * 3 + 2];
-		int curDiffB = diff - (bDiff * bDiff);
-
-		if (curDiffB > 0) {
-			int gDiff = g - (int)_ditherPalette[i * 3 + 1];
-			int curDiffG = curDiffB - (gDiff * gDiff);
-
-			if (curDiffG > 0) {
-				int rDiff = r - (int)_ditherPalette[i * 3];
-				int curDiffR = curDiffG - (rDiff * rDiff);
-
-				if (curDiffR > 0) {
-					diff -= curDiffR;
-					result = i;
-
-					if (diff == 0)
-						break;
-				}
-			}
-		}
-	}
-
-	return result;
+	return _ditherPalette.findBestColor(r, g, b, Graphics::kColorDistanceEuclidean);
 }
 
 void CinepakDecoder::ditherVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize) {

@@ -503,7 +503,7 @@ void Lua_V2::ThumbnailFromFile() {
 		return;
 	}
 
-	screenshot->_data->convertToColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	screenshot->_data->convertToColorFormat(Graphics::PixelFormat::createFormatRGBA32());
 	g_driver->createSpecialtyTexture(index, (const uint8 *)screenshot->getData(0).getPixels(), width, height);
 	delete screenshot;
 	delete[] data;

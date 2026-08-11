@@ -9,20 +9,17 @@
 // This is useful when you refactor your tests, as shown below
 //
 
-class MessageTest : public CxxTest::TestSuite
-{
+class MessageTest : public CxxTest::TestSuite {
 public:
-    void testValues()
-    {
-        checkValue( 0, "My hovercraft" );
-        checkValue( 1, "is full" );
-        checkValue( 2, "of eels" );
+    void testValues() {
+        checkValue(0, "My hovercraft");
+        checkValue(1, "is full");
+        checkValue(2, "of eels");
     }
 
-    void checkValue( unsigned value, const char *message )
-    {
-        TSM_ASSERT( message, value != 0 );
-        TSM_ASSERT_EQUALS( message, value, value * value );
+    void checkValue(unsigned value, const char *message) {
+        TSM_ASSERT(message, value != 0);
+        TSM_ASSERT_EQUALS(message, value, value * value);
     }
 };
 

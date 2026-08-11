@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "image/image_decoder.h"
 
@@ -61,8 +62,7 @@ public:
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	void destroy() override;
 	const Graphics::Surface *getSurface() const override { return _outputSurface; }
-	const byte *getPalette() const override { return _palette; }
-	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 	bool hasTransparentColor() const override { return _hasTransparentColor; }
 	uint32 getTransparentColor() const override { return _transparentColor; }
 	void setSkipSignature(bool skip) { _skipSignature = skip; }
@@ -70,8 +70,7 @@ public:
 private:
 	Graphics::PixelFormat getByteOrderRgbaPixelFormat(bool isAlpha) const;
 
-	byte *_palette;
-	uint16 _paletteColorCount;
+	Graphics::Palette _palette;
 
 	// flag to skip the png signature check for headless png files
 	bool _skipSignature;
@@ -86,12 +85,22 @@ private:
 
 /**
  * Outputs a compressed PNG stream of the given input surface.
-  *
+ *
  *  @param out  Stream to which to write the PNG image.
  *  @param input The surface to save as a PNG image..
  *  @param palette    The palette (in RGB888), if the source format has a bpp of 1.
+ *  @param paletteCount Number of colors in the palette (default: 256).
  */
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette = nullptr);
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette = nullptr, uint paletteCount = 256);
+
+/**
+ * Outputs a compressed PNG stream of the given input surface.
+ *
+ *  @param out  Stream to which to write the PNG image.
+ *  @param input The surface to save as a PNG image..
+ *  @param palette    The palette if the source format has a bpp of 1.
+ */
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const Graphics::Palette &palette);
 /** @} */
 } // End of namespace Image
 

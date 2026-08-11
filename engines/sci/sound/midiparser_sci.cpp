@@ -51,11 +51,13 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_ppqn = 1;
 	setTempo(16667);
 
+	_track = nullptr;
+	_pSnd = nullptr;
+	_loopTick = 0;
 	_masterVolume = 15;
 	_volume = 127;
 
 	_resetOnPause = false;
-	_pSnd = nullptr;
 
 	_mainThreadCalled = false;
 
@@ -110,7 +112,8 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	}
 
 	_numTracks = 1;
-	_tracks[0] = const_cast<byte *>(_mixedData->data());
+	_numSubtracks[0] = 1;
+	_tracks[0][0] = const_cast<byte *>(_mixedData->data());
 	if (_pSnd)
 		setTrack(0);
 	_loopTick = 0;
@@ -150,7 +153,7 @@ static inline bool validateNextRead(const SoundResource::Channel *channel) {
 }
 
 void MidiParser_SCI::midiMixChannels() {
-	int totalSize = 0;
+	size_t totalChannelDataSize = 0;
 
 	for (int i = 0; i < _track->channelCount; i++) {
 		_track->channels[i].time = 0;
@@ -159,27 +162,39 @@ void MidiParser_SCI::midiMixChannels() {
 		// Ignore the digital channel data, if it exists - it's not MIDI data
 		if (i == _track->digitalChannelNr)
 			continue;
-		totalSize += _track->channels[i].data.size();
+		totalChannelDataSize += _track->channels[i].data.size();
 	}
 
-	SciSpan<byte> outData = _mixedData->allocate(totalSize * 2, Common::String::format("mixed sound.%d", _pSnd ? _pSnd->resourceId : -1)); // FIXME: creates overhead and still may be not enough to hold all data
+	// Allocate twice the channel data to hold the mixed data. If there are
+	// no channels due to a truncated sound resource (Longbow Amiga sound 461)
+	// then allocate the five bytes for the stop event below.
+	int resourceId = _pSnd ? _pSnd->resourceId : -1;
+	size_t mixedDataSize;
+	if (totalChannelDataSize != 0) {
+		// FIXME: creates overhead and still may not be enough to hold all data.
+		mixedDataSize = totalChannelDataSize * 2;
+	} else {
+		warning("Sound %d has no channels to mix", resourceId);
+		mixedDataSize = 5;
+	}
+
+	Common::String mixedDataName = Common::String::format("mixed sound.%d", resourceId);
+	SciSpan<byte> outData = _mixedData->allocate(mixedDataSize, mixedDataName);
 
 	long ticker = 0;
-	byte channelNr, curDelta;
+	byte channelNr;
 	byte midiCommand = 0, midiParam, globalPrev = 0;
-	long newDelta;
-	SoundResource::Channel *channel;
 	bool breakOut = false;
 
 	while ((channelNr = midiGetNextChannel(ticker)) != 0xFF) { // there is still an active channel
-		channel = &_track->channels[channelNr];
+		SoundResource::Channel *channel = &_track->channels[channelNr];
 		if (!validateNextRead(channel))
 			break;
-		curDelta = channel->data[channel->curPos++];
+		byte curDelta = channel->data[channel->curPos++];
 		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the command is supposed to occur
 		if (curDelta == 0xF8)
 			continue;
-		newDelta = channel->time - ticker;
+		long newDelta = channel->time - ticker;
 		ticker += newDelta;
 
 		if (channelNr == _track->digitalChannelNr)
@@ -280,7 +295,10 @@ void MidiParser_SCI::midiFilterChannels(int channelMask) {
 		if (!validateNextRead(channelData))
 			goto end;
 		curDelta = *channelData++;
-		if (curDelta == 0xF8) {
+		if (curDelta == kEndOfTrack) {
+			// kEndOfTrack status byte can potentially appear without delta.
+			goto end;
+		} else if (curDelta == 0xF8) {
 			delta += 240;
 			continue;
 		}
@@ -306,6 +324,13 @@ void MidiParser_SCI::midiFilterChannels(int channelMask) {
 			if (curChannel != 0xF)
 				containsMidiData = true;
 
+			// Stop at first kEndOfTrack.
+			// There can be duplicate end of track events afterwards,
+			// or junk bytes, or other leftover events.
+			if (command == kEndOfTrack) {
+				goto end;
+			}
+
 			// Write delta
 			while (delta > 240) {
 				*outData++ = 0xF8;
@@ -325,13 +350,6 @@ void MidiParser_SCI::midiFilterChannels(int channelMask) {
 					*outData++ = curByte; // out
 				} while (curByte != 0xF7);
 				lastCommand = command;
-				break;
-
-			case kEndOfTrack: // end of channel
-				// At least KQ4 sound 104 has a doubled kEndOfTrack marker at
-				// the end of the file, which breaks filtering
-				if (channelData.size() < 2)
-					goto end;
 				break;
 
 			default: // MIDI command
@@ -369,7 +387,14 @@ void MidiParser_SCI::midiFilterChannels(int channelMask) {
 
 end:
 	// Insert stop event
-	// (Delta is already output above)
+
+	// Write final delta
+	while (delta > 240) {
+		*outData++ = 0xF8;
+		delta -= 240;
+	}
+	*outData++ = (byte)delta;
+
 	*outData++ = 0xFF; // Meta event
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
@@ -618,33 +643,37 @@ void MidiParser_SCI::trackState(uint32 b) {
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-	info.start = _position._playPos;
+	const byte *playPos = _position._subtracks[0]._playPos;
+
+	info.start = playPos;
 	info.delta = 0;
-	while (*_position._playPos == 0xF8) {
+	while (*playPos == 0xF8) {
 		info.delta += 240;
-		_position._playPos++;
+		playPos++;
 	}
-	info.delta += *(_position._playPos++);
+	info.delta += *(playPos++);
 
 	// Process the next info.
-	if ((_position._playPos[0] & 0xF0) >= 0x80)
-		info.event = *(_position._playPos++);
+	if ((playPos[0] & 0xF0) >= 0x80)
+		info.event = *(playPos++);
 	else
-		info.event = _position._runningStatus;
-	if (info.event < 0x80)
+		info.event = _position._subtracks[0]._runningStatus;
+	if (info.event < 0x80) {
+		_position._subtracks[0]._playPos = playPos;
 		return;
+	}
 
-	_position._runningStatus = info.event;
+	_position._subtracks[0]._runningStatus = info.event;
 	switch (info.command()) {
 	case 0xC:
 	case 0xD:
-		info.basic.param1 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
 		info.basic.param2 = 0;
 		break;
 
 	case 0xB:
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
 		info.length = 0;
 		break;
 
@@ -652,8 +681,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0x9:
 	case 0xA:
 	case 0xE:
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
 		if (info.command() == 0x9 && info.basic.param2 == 0) {
 			// NoteOn with param2==0 is a NoteOff
 			info.event = info.channel() | 0x80;
@@ -664,12 +693,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0xF: // System Common, Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
-			info.basic.param1 = *(_position._playPos++);
-			info.basic.param2 = *(_position._playPos++);
+			info.basic.param1 = *(playPos++);
+			info.basic.param2 = *(playPos++);
 			break;
 
 		case 0x3: // Song Select
-			info.basic.param1 = *(_position._playPos++);
+			info.basic.param1 = *(playPos++);
 			info.basic.param2 = 0;
 			break;
 
@@ -683,16 +712,16 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ(_position._playPos);
-			info.ext.data = _position._playPos;
-			_position._playPos += info.length;
+			info.length = readVLQ(playPos);
+			info.ext.data = playPos;
+			playPos += info.length;
 			break;
 
 		case 0xF: // META event
-			info.ext.type = *(_position._playPos++);
-			info.length = readVLQ(_position._playPos);
-			info.ext.data = _position._playPos;
-			_position._playPos += info.length;
+			info.ext.type = *(playPos++);
+			info.length = readVLQ(playPos);
+			info.ext.data = playPos;
+			playPos += info.length;
 			break;
 		default:
 			warning(
@@ -703,6 +732,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	default:
 		break;
 	}// switch (info.command())
+
+	_position._subtracks[0]._playPos = playPos;
 }
 
 bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
@@ -717,12 +748,16 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			if (info.basic.param1 == kSetSignalLoop) {
 				_loopTick = _position._playTick;
 				// kSetSignalLoop (127) is not passed on to scripts, except in SCI_VERSION_0_EARLY.
-				// We also pass it to all versions of KQ4 because the scripts expect this. Sierra didn't
-				// update them when they changed the driver behavior. Introduction script 222 waits
-				// on signal 127 in sound 106 to start the game, causing later versions to wait forever.
+				// We also pass it to all versions of KQ4 when playing the introduction sound,
+				// because the KQ4 scripts expect it, and Sierra did not update the scripts when
+				// they changed the driver behavior. Script 222 waits on signal 127 in sound 106
+				// to start the game, causing later versions to wait forever.
 				// Now the introduction correctly ends when the music does in all versions.
-				if (_soundVersion > SCI_VERSION_0_EARLY && g_sci->getGameId() != GID_KQ4) {
-					return true;
+				// We must only apply this to sound 106, because Amiga adds signal 127 to others.
+				if (_soundVersion > SCI_VERSION_0_EARLY) {
+					if (!(g_sci->getGameId() == GID_KQ4 && _pSnd->resourceId == 106)) {
+						return true;
+					}
 				}
 			}
 

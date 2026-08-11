@@ -48,7 +48,7 @@ struct Trajectory {
 	int16 locationIdx = -1;
 	int16 trajLocationIdx = -1;
 	int16 vehicleIdx = -1;
-	IVec3 pos;
+	IVec3 angle;
 	int16 numAnimFrames = 0;
 	TrajectoryPos positions[512];
 

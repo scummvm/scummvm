@@ -48,6 +48,14 @@ private:
 	 * Load butons for the dialog
 	 */
 	void loadButtons();
+
+#ifdef USE_TTS
+	/**
+	 * Sets up button texts
+	 * @param text	Text for buttons, with each button text separated by newlines
+	 */
+	void setUpButtons(const Common::String &text);
+#endif
 public:
 	/**
 	 * Show the dialog

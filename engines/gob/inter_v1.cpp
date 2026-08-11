@@ -426,12 +426,12 @@ void Inter_v1::o1_freeAnim() {
 }
 
 void Inter_v1::o1_updateAnim() {
-	int16 deltaX;
-	int16 deltaY;
-	int16 flags;
-	int16 frame;
-	int16 layer;
-	int16 animation;
+	int32 deltaX;
+	int32 deltaY;
+	int32 flags;
+	int32 frame;
+	int32 layer;
+	int32 animation;
 
 	_vm->_game->_script->evalExpr(&deltaX);
 	_vm->_game->_script->evalExpr(&deltaY);
@@ -439,17 +439,17 @@ void Inter_v1::o1_updateAnim() {
 	_vm->_game->_script->evalExpr(&layer);
 	_vm->_game->_script->evalExpr(&frame);
 	flags = _vm->_game->_script->readInt16();
-	_vm->_scenery->updateAnim(layer, frame, animation, flags,
-			deltaX, deltaY, 1);
+	_vm->_scenery->updateAnim((int16)layer, (int16)frame, (int16)animation, (int16)flags,
+							  (int16)deltaX, (int16)deltaY, 1);
 }
 
 void Inter_v1::o1_initMult() {
 	int16 oldAnimHeight;
 	int16 oldAnimWidth;
 	int16 oldObjCount;
-	int16 posXVar;
-	int16 posYVar;
-	int16 animDataVar;
+	uint16 posXVar;
+	uint16 posYVar;
+	uint16 animDataVar;
 
 	oldAnimWidth = _vm->_mult->_animWidth;
 	oldAnimHeight = _vm->_mult->_animHeight;
@@ -505,7 +505,6 @@ void Inter_v1::o1_initMult() {
 			_vm->_mult->_objects[i].animName[0] = '\0';
 			_vm->_mult->_objects[i].videoSlot = 0;
 			_vm->_mult->_objects[i].animVariables = nullptr;
-			_vm->_mult->_objects[i].ownAnimVariables = false;
 			_vm->_mult->_objects[i].lastLeft = -1;
 			_vm->_mult->_objects[i].lastRight = -1;
 			_vm->_mult->_objects[i].lastTop = -1;
@@ -548,8 +547,8 @@ void Inter_v1::o1_animate() {
 }
 
 void Inter_v1::o1_loadMultObject() {
-	int16 val;
-	int16 objIndex;
+	int32 val;
+	int32 objIndex;
 	byte *multData;
 
 	_vm->_game->_script->evalExpr(&objIndex);
@@ -571,11 +570,11 @@ void Inter_v1::o1_loadMultObject() {
 }
 
 void Inter_v1::o1_getAnimLayerInfo() {
-	int16 anim;
-	int16 layer;
-	int16 varDX, varDY;
-	int16 varUnk0;
-	int16 varFrames;
+	int32 anim;
+	int32 layer;
+	uint16 varDX, varDY;
+	uint16 varUnk0;
+	uint16 varFrames;
 
 	_vm->_game->_script->evalExpr(&anim);
 	_vm->_game->_script->evalExpr(&layer);
@@ -590,7 +589,7 @@ void Inter_v1::o1_getAnimLayerInfo() {
 }
 
 void Inter_v1::o1_getObjAnimSize() {
-	int16 objIndex;
+	int32 objIndex;
 
 	_vm->_game->_script->evalExpr(&objIndex);
 
@@ -633,17 +632,23 @@ void Inter_v1::o1_freeStatic() {
 }
 
 void Inter_v1::o1_renderStatic() {
-	int16 layer;
-	int16 index;
+	int32 layer;
+	int32 index;
 
 	_vm->_game->_script->evalExpr(&index);
 	_vm->_game->_script->evalExpr(&layer);
-	_vm->_scenery->renderStatic(index, layer);
+	_vm->_scenery->renderStatic((int16)index, (int16)layer);
 }
 
 void Inter_v1::o1_loadCurLayer() {
-	_vm->_game->_script->evalExpr(&_vm->_scenery->_curStatic);
-	_vm->_game->_script->evalExpr(&_vm->_scenery->_curStaticLayer);
+	int32 curStatic;
+	int32 curStaticLayer;
+	_vm->_game->_script->evalExpr(&curStatic);
+	_vm->_game->_script->evalExpr(&curStaticLayer);
+
+	_vm->_scenery->_curStatic = (int16)curStatic;
+	_vm->_scenery->_curStaticLayer = (int16)curStaticLayer;
+
 }
 
 void Inter_v1::o1_playCDTrack() {
@@ -690,8 +695,20 @@ void Inter_v1::o1_freeFontToSprite() {
 void Inter_v1::o1_callSub(OpFuncParams &params) {
 	uint16 offset = _vm->_game->_script->readUint16();
 
-	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d",
-			_vm->_game->_curTotFile.c_str(), offset);
+	if (debugChannelSet(5, kDebugGameFlow)) {
+		Common::String functionName = _vm->_game->getFunctionName(_vm->_game->_curTotFile, offset);
+		Common::String functionNameInLog;
+
+		if (!functionName.empty()) {
+			functionNameInLog = Common::String::format(", function = \"%s\"",
+													   functionName.c_str());
+		}
+
+		debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d%s",
+			   _vm->_game->_curTotFile.c_str(),
+			   offset,
+			   functionNameInLog.c_str());
+	}
 
 	if (offset < 128) {
 		warning("Inter_v1::o1_callSub(): Offset %d points into the header. "
@@ -705,8 +722,8 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
 	}
-	// Skipping the copy protection screen in Gobliins 2
-	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746) &&
+	// Skipping the copy protection screen in Gobliins 2 (offset 1722 - Amiga, offset 1746 - PC)
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1722 || offset == 1746) &&
 	    _vm->isCurrentTot("intro0.tot")) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
@@ -719,10 +736,16 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 		return;
 	}
 
+	_vm->_game->pushOnGlobalCallStack(kCallSub,
+									  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+									  _vm->_game->_curTotFile, offset);
+
 	_vm->_game->_script->call(offset);
 
 	if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
 		_vm->_game->_script->pop(false);
+		if (!_vm->_game->_globalFuncCallStack.empty())
+			_vm->_game->_globalFuncCallStack.top().tailCall = true;
 		params.doReturn = true;
 		return;
 	}
@@ -730,6 +753,7 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 	callSub(2);
 
 	_vm->_game->_script->pop();
+	_vm->_game->popGlobalCallStack();
 }
 
 void Inter_v1::o1_printTotText(OpFuncParams &params) {
@@ -962,9 +986,9 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 
 void Inter_v1::o1_assign(OpFuncParams &params) {
 	byte destType = _vm->_game->_script->peekByte();
-	int16 dest = _vm->_game->_script->readVarIndex();
+	uint16 dest = _vm->_game->_script->readVarIndex();
 
-	int16 result;
+	int32 result;
 	int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 	switch (destType) {
@@ -1227,17 +1251,33 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 		memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 		break;
 
-	case 55:
-		// TODO case 55 implementation
-		warning("STUB: o1_palLoad case 55 not implemented");
+	case 55: {
+		// Push a copy of the current palette
+		Video::Color *paletteCopy = new Video::Color[256];
+		memcpy((char *)paletteCopy, (char *)_vm->_draw->_vgaPalette, 768);
+		_vm->_draw->_paletteStack.push(paletteCopy);
+
 		_vm->_game->_script->skip(2);
 		_vm->_draw->_applyPal = false;
 		return;
+	}
 
 	case 56:
-		// TODO case 56 implementation
-		warning("STUB: o1_palLoad case 56 not implemented");
-		_vm->_game->_script->skip(2);
+		// Pop the last pushed palette
+		index1 =  _vm->_game->_script->readByte();
+		index2 = (_vm->_game->_script->readByte() - index1 + 1) * 3;
+		if (!_vm->_draw->_paletteStack.empty()) {
+			memcpy((char *)_vm->_draw->_vgaPalette + index1 * 3,
+				   (char *)_vm->_draw->_paletteStack.top() + index1 * 3, index2);
+			delete[] _vm->_draw->_paletteStack.pop();
+		} else {
+			warning("o1_palLoad case 56: empty palette stack, cannot pop");
+		}
+
+		_vm->_draw->_applyPal = true;
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+		_vm->_draw->_applyPal = false;
+
 		break;
 
 	case 61:
@@ -1259,7 +1299,7 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_draw->_vgaPalette[0].blue  = 0;
 		}
 
-		if (_vm->getGameType() == kGameTypeAdibou2) {
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 			_vm->_draw->_vgaPalette[0].red = 0;
 			_vm->_draw->_vgaPalette[0].green = 0;
 			_vm->_draw->_vgaPalette[0].blue = 0;
@@ -1280,7 +1320,7 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 	}
 
 	if (!_vm->_draw->_applyPal) {
-		if (_vm->getGameType() == kGameTypeAdibou2) {
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 			if (_vm->_global->_pPaletteDesc)
 				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			else
@@ -1308,11 +1348,6 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_keyFunc(OpFuncParams &params) {
-	if (!_vm->_vidPlayer->isPlayingLive()) {
-		_vm->_draw->forceBlit();
-		_vm->_video->retrace();
-	}
-
 	animPalette();
 	_vm->_draw->blitInvalidated();
 
@@ -1328,40 +1363,44 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	int16 cmd = _vm->_game->_script->readInt16();
 	int16 key;
 
+#ifdef USE_TTS
+	_vm->_game->_hotspots->voiceUnassignedHotspots();
+#endif
 	switch (cmd) {
 	case 0:
 		_vm->_draw->_showCursor &= ~2;
 		_vm->_util->longDelay(1);
 		key = _vm->_game->_hotspots->check(0, 0);
 		storeKey(key);
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+		_vm->_game->_hotspots->clearHotspotTTSText();
+#endif
 
 		_vm->_util->clearKeyBuf();
 		break;
 
 	case -1:
-		if (_vm->getGameType() != kGameTypeAdibou2)
-			break;
-		// fall through
-	case 1:
-		if (_vm->getGameType() != kGameTypeFascination && _vm->getGameType() != kGameTypeAdibou2)
-			_vm->_util->forceMouseUp(true);
+		break;
 
-		// FIXME This is a hack to fix an issue with "text" tool in Adibou2 paint game.
-		// keyFunc() is called twice in a loop before testing its return value.
-		// If the first keyFunc call catches the key event, the second call will reset
-		// the key buffer, and the loop continues.
-		// Strangely in the original game it seems that the event is always caught by the
-		// second keyFunc.
-		if (_vm->getGameType() == kGameTypeAdibou2
-			&&
-			(_vm->_game->_script->pos() == 18750 || _vm->_game->_script->pos() == 18955)
-			&&
-			_vm->isCurrentTot("palette.tot"))
-			break;
+	case 1:
+		if (_vm->getGameType() != kGameTypeFascination)
+			_vm->_util->forceMouseUp(true);
 
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
 		storeKey(key);
+#ifdef USE_TTS
+		if (key) {
+			// After a key is pressed with the notepad open, no longer voice the notepad. This prevents very awkward voicing
+			// as the user types
+			if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
+				_vm->_weenVoiceNotepad = false;
+			}
+
+			_vm->stopTextToSpeech();
+		}
+#endif
 		break;
 
 	case 2:
@@ -1377,8 +1416,9 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		if (cmd < 20) {
 			_vm->_util->delay(cmd);
 			_noBusyWait = true;
-		} else
+		} else {
 			_vm->_util->longDelay(cmd);
+		}
 		break;
 	}
 }
@@ -1438,11 +1478,30 @@ void Inter_v1::o1_renewTimeInVars(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_speakerOn(OpFuncParams &params) {
-	_vm->_sound->speakerOn(_vm->_game->_script->readValExpr(), -1);
+	int16 frequency = _vm->_game->_script->readValExpr();
+	int32 length = -1;
+
+	_ignoreSpeakerOff = false;
+
+	// WORKAROUND: This is the footsteps sound in Gob2 CD.
+	// We explicitly set a length in this case and ignore the
+	// next speaker off command. This is the same workaround
+	// as the one for Goblins 3 in Inter_v3::o3_speakerOn().
+	// Fixes bug #15341
+	if (_vm->getGameType() == kGameTypeGob2 && frequency == 50) {
+		length = 5;
+
+		_ignoreSpeakerOff = true;
+	}
+
+	_vm->_sound->speakerOn(frequency, length);
 }
 
 void Inter_v1::o1_speakerOff(OpFuncParams &params) {
-	_vm->_sound->speakerOff();
+	if (!_ignoreSpeakerOff)
+		_vm->_sound->speakerOff();
+
+	_ignoreSpeakerOff = false;
 }
 
 void Inter_v1::o1_putPixel(OpFuncParams &params) {
@@ -1524,7 +1583,13 @@ void Inter_v1::o1_createSprite(OpFuncParams &params) {
 
 	_vm->_draw->adjustCoords(0, &width, &height);
 	flag = _vm->_game->_script->readInt16();
-	_vm->_draw->initSpriteSurf(index, width, height, flag ? 2 : 0);
+	byte bpp = (flag & 0x200) ? 1 : _vm->_pixelFormat.bytesPerPixel;
+	if (width == 0 || height == 0) {
+		warning("o1_createSprite(): invalid sprite dimensions (w = %d, h = %d)", width, height);
+		return;
+	}
+
+	_vm->_draw->initSpriteSurf(index, width, height, flag ? 2 : 0, bpp);
 }
 
 void Inter_v1::o1_freeSprite(OpFuncParams &params) {
@@ -1580,6 +1645,27 @@ void Inter_v1::o1_copySprite(OpFuncParams &params) {
 
 	_vm->_draw->_transparency = _vm->_game->_script->readInt16();
 
+	if (_vm->_draw->_sourceSurface != 100 &&
+		_vm->_draw->_sourceSurface != 101 &&
+		(_vm->_draw->_sourceSurface < 0 || _vm->_draw->_sourceSurface >= Draw::kSpriteCount)) {
+		warning("o1_copySprite(): Invalid source surface index %d", _vm->_draw->_sourceSurface);
+		return;
+	}
+
+	if (_vm->_draw->_destSurface != 100 &&
+		_vm->_draw->_destSurface != 101 &&
+		(_vm->_draw->_destSurface < 0 || _vm->_draw->_destSurface >= Draw::kSpriteCount)) {
+		warning("o1_copySprite(): Invalid destination surface index %d", _vm->_draw->_destSurface);
+		return;
+	}
+
+#ifdef USE_TTS
+	_vm->_game->_hotspots->adjustHotspotTTSTextRect(_vm->_draw->_spriteLeft, _vm->_draw->_spriteTop,
+											_vm->_draw->_spriteLeft + _vm->_draw->_spriteRight - 1, 
+											_vm->_draw->_spriteTop + _vm->_draw->_spriteBottom - 1,
+											_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY, _vm->_draw->_sourceSurface);
+#endif
+
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 }
 
@@ -1624,15 +1710,12 @@ void Inter_v1::o1_drawLine(OpFuncParams &params) {
 
 void Inter_v1::o1_strToLong(OpFuncParams &params) {
 	char str[20];
-	int16 strVar;
-	int16 destVar;
-	int32 res;
 
-	strVar = _vm->_game->_script->readVarIndex();
+	uint16 strVar = _vm->_game->_script->readVarIndex();
 	Common::strlcpy(str, GET_VARO_STR(strVar), 20);
-	res = atoi(str);
+	int32 res = atoi(str);
 
-	destVar = _vm->_game->_script->readVarIndex();
+	uint16 destVar = _vm->_game->_script->readVarIndex();
 	WRITE_VAR_OFFSET(destVar, res);
 }
 
@@ -1711,7 +1794,7 @@ void Inter_v1::o1_waitEndPlay(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_playComposition(OpFuncParams &params) {
-	int16 dataVar = _vm->_game->_script->readVarIndex();
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int16 freqVal = _vm->_game->_script->readValExpr();
 
 	int16 composition[50];
@@ -1723,8 +1806,8 @@ void Inter_v1::o1_playComposition(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_getFreeMem(OpFuncParams &params) {
-	int16 freeVar;
-	int16 maxFreeVar;
+	uint16 freeVar;
+	uint16 maxFreeVar;
 
 	freeVar = _vm->_game->_script->readVarIndex();
 	maxFreeVar = _vm->_game->_script->readVarIndex();
@@ -1736,7 +1819,7 @@ void Inter_v1::o1_getFreeMem(OpFuncParams &params) {
 
 void Inter_v1::o1_checkData(OpFuncParams &params) {
 	const char *file   = _vm->_game->_script->evalString();
-	      int16 varOff = _vm->_game->_script->readVarIndex();
+	      uint16 varOff = _vm->_game->_script->readVarIndex();
 
 	if (!_vm->_dataIO->hasFile(file)) {
 		warning("File \"%s\" not found", file);
@@ -1746,7 +1829,7 @@ void Inter_v1::o1_checkData(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_cleanupStr(OpFuncParams &params) {
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	_vm->_util->cleanupStr(GET_VARO_FSTR(strVar));
@@ -1754,7 +1837,7 @@ void Inter_v1::o1_cleanupStr(OpFuncParams &params) {
 
 void Inter_v1::o1_insertStr(OpFuncParams &params) {
 	int16 pos;
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	_vm->_game->_script->evalExpr(nullptr);
@@ -1765,7 +1848,7 @@ void Inter_v1::o1_insertStr(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_cutStr(OpFuncParams &params) {
-	int16 strVar;
+	uint16 strVar;
 	int16 pos;
 	int16 size;
 
@@ -1776,8 +1859,8 @@ void Inter_v1::o1_cutStr(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_strstr(OpFuncParams &params) {
-	int16 strVar;
-	int16 resVar;
+	uint16 strVar;
+	uint16 resVar;
 	int16 pos;
 
 	strVar = _vm->_game->_script->readVarIndex();
@@ -1791,7 +1874,7 @@ void Inter_v1::o1_strstr(OpFuncParams &params) {
 
 void Inter_v1::o1_istrlen(OpFuncParams &params) {
 	int16 len;
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	len = strlen(GET_VARO_STR(strVar));
@@ -1806,9 +1889,18 @@ void Inter_v1::o1_setMousePos(OpFuncParams &params) {
 	_vm->_draw->adjustCoords(0, &_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY);
 	_vm->_global->_inter_mouseX -= _vm->_video->_scrollOffsetX;
 	_vm->_global->_inter_mouseY -= _vm->_video->_scrollOffsetY;
-	if (_vm->_global->_useMouse != 0)
+	if (_vm->_global->_useMouse != 0) {
 		_vm->_util->setMousePos(_vm->_global->_inter_mouseX,
 				_vm->_global->_inter_mouseY);
+		if (_vm->getGameType() == kGameTypeAdi4) {
+			// WORKAROUND: setMousePos() calls g_system->warpMouse() which calls purgeMouseEvents(),
+			// which will eat any pending mouse up event. This lead to a lock in Adi4 "cereal farm"
+			// simulation activity, where the script is waiting for a mouse up event that gets intercepted
+			// by the purge, if the click was fast enough.
+			// Force syncing with the EventManager's mouse state to recover from this as a workaround.
+			_vm->_util->forceMouseButtonsSync();
+		}
+	}
 }
 
 void Inter_v1::o1_setFrameRate(OpFuncParams &params) {
@@ -1855,7 +1947,7 @@ void Inter_v1::o1_freeFont(OpFuncParams &params) {
 
 void Inter_v1::o1_readData(OpFuncParams &params) {
 	const char *file    = _vm->_game->_script->evalString();
-	      int16 dataVar = _vm->_game->_script->readVarIndex();
+	      uint16 dataVar = _vm->_game->_script->readVarIndex();
 	      int16 size    = _vm->_game->_script->readValExpr();
 	      int16 offset  = _vm->_game->_script->readValExpr();
 	      int16 retSize = 0;

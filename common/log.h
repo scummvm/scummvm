@@ -47,7 +47,7 @@ namespace Common {
  * A typical example would be a function that shows a debug
  * console and displays the given message in it.
  */
-typedef void (*LogWatcher)(LogMessageType::Type type, int level, uint32 debugChannels, const char *message);
+typedef void (*LogWatcher)(LogMessageType::Type type, int level, uint32 debugChannel, const char *message);
 
 /**
  * Set the watcher used by debug, error and warning methods.

@@ -25,16 +25,33 @@
 #include "access/access.h"
 #include "access/asurface.h"
 
+// for frame contents debugging
+//#define DEBUG_FRAME_DUMP 1
+
+#ifdef DEBUG_FRAME_DUMP
+#include "graphics/paletteman.h"
+#include "image/png.h"
+#include "common/path.h"
+#include "common/file.h"
+#endif
+
+
 namespace Access {
 
-const int TRANSPARENCY = 0;
+static constexpr int TRANSPARENCY = 0;
 
-SpriteResource::SpriteResource(AccessEngine *vm, Resource *res) {
+SpriteResource::SpriteResource(const AccessEngine *vm, Resource *res) {
 	Common::Array<uint32> offsets;
 	int count = res->_stream->readUint16LE();
+	if (count > 4096)
+		error("Corrupt sprite resource: suspicious number of frames (%d)", count);
 
-	for (int i = 0; i < count; i++)
-		offsets.push_back(res->_stream->readUint32LE());
+	for (int i = 0; i < count; i++) {
+		uint32 offset = res->_stream->readUint32LE();
+		if ((int)offset > res->_size)
+			error("Corrupt sprite resource: offset %d (%d) is past end of file (%d)", i, offset, res->_size);
+		offsets.push_back(offset);
+	}
 	offsets.push_back(res->_size);	// For easier calculations of Noctropolis sizes
 
 	// Build up the frames
@@ -48,20 +65,20 @@ SpriteResource::SpriteResource(AccessEngine *vm, Resource *res) {
 }
 
 SpriteResource::~SpriteResource() {
-	for (uint i = 0; i < _frames.size(); ++i)
-		delete _frames[i];
+	for (auto *frame : _frames)
+		delete frame;
 }
 
-SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
+SpriteFrame::SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
 	int xSize = stream->readUint16LE();
 	int ySize = stream->readUint16LE();
 
-	if (vm->getGameID() == GType_MartianMemorandum) {
+	if (vm->getGameID() == kGameMartianMemorandum) {
 		int size = stream->readUint16LE();
 		if (size != frameSize)
 			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, size);
 	}
-	create(xSize, ySize);
+	Graphics::Screen::create(xSize, ySize);
 
 	// Empty surface
 	byte *data = (byte *)getPixels();
@@ -79,16 +96,12 @@ SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, i
 }
 
 SpriteFrame::~SpriteFrame() {
-	free();
+	Graphics::Screen::free();
 }
 
 /*------------------------------------------------------------------------*/
 
-ImageEntry::ImageEntry() {
-	_frameNumber = 0;
-	_spritesPtr = nullptr;
-	_offsetY = 0;
-	_flags = 0;
+ImageEntry::ImageEntry() : _frameNumber(0), _spritesPtr(nullptr), _offsetY(0), _flags(0), _scaleOverride(0) {
 }
 
 /*------------------------------------------------------------------------*/
@@ -109,12 +122,15 @@ void ImageEntryList::addToList(ImageEntry &ie) {
 int BaseSurface::_clipWidth;
 int BaseSurface::_clipHeight;
 
+int BaseSurface::_lastBoundsX;
+int BaseSurface::_lastBoundsY;
+int BaseSurface::_lastBoundsW;
+int BaseSurface::_lastBoundsH;
+
 BaseSurface::BaseSurface(): Graphics::Screen(0, 0) {
-	free();		// Free the 0x0 surface allocated by Graphics::Screen
+	Graphics::Screen::free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
-	_lastBoundsX = _lastBoundsY = 0;
-	_lastBoundsW = _lastBoundsH = 0;
 	_orgX1 = _orgY1 = 0;
 	_orgX2 = _orgY2 = 0;
 	_lColor = 0;
@@ -130,8 +146,8 @@ void BaseSurface::clearBuffer() {
 	Common::fill(pSrc, pSrc + w * h, 0);
 }
 
-void BaseSurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt) {
-	SpriteFrame *frame = sprite->getFrame(frameNum);
+void BaseSurface::plotImage(const SpriteResource *sprite, int frameNum, const Common::Point &pt) {
+	const SpriteFrame *frame = sprite->getFrame(frameNum);
 	Common::Rect r(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
 
 	if (!clip(r)) {
@@ -148,23 +164,23 @@ void BaseSurface::copyBuffer(Graphics::ManagedSurface *src) {
 	blitFrom(*src);
 }
 
-void BaseSurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
+void BaseSurface::plotF(const SpriteFrame *frame, const Common::Point &pt) {
 	sPlotF(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
 }
 
-void BaseSurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
+void BaseSurface::plotB(const SpriteFrame *frame, const Common::Point &pt) {
 	sPlotB(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
 }
 
-void BaseSurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
+void BaseSurface::sPlotF(const SpriteFrame *frame, const Common::Rect &bounds) {
 	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, false);
 }
 
-void BaseSurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
+void BaseSurface::sPlotB(const SpriteFrame *frame, const Common::Rect &bounds) {
 	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, true);
 }
 
-void BaseSurface::copyBlock(BaseSurface *src, const Common::Rect &bounds) {
+void BaseSurface::copyBlock(const BaseSurface *src, const Common::Rect &bounds) {
 	copyRectToSurface(*src, bounds.left, bounds.top, bounds);
 }
 
@@ -180,7 +196,7 @@ void BaseSurface::saveBlock(const Common::Rect &bounds) {
 	_savedBounds.clip(Common::Rect(0, 0, this->w, this->h));
 
 	_savedBlock.free();
-	_savedBlock.create(bounds.width(), bounds.height(),
+	_savedBlock.create(_savedBounds.width(), _savedBounds.height(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	_savedBlock.copyRectToSurface(*this, 0, 0, _savedBounds);
 }
@@ -208,10 +224,14 @@ void BaseSurface::drawLine() {
 }
 
 void BaseSurface::drawBox() {
-	Graphics::ManagedSurface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX1, _orgY2, _orgX2, _orgY2, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX2, _orgY1, _orgX2, _orgY1, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX2, _orgY2, _orgX2, _orgY2, _lColor);
+	drawBox(_orgX1, _orgY1, _orgX2, _orgY2, _lColor);
+}
+
+void BaseSurface::drawBox(int x1, int y1, int x2, int y2, int color) {
+	Graphics::ManagedSurface::hLine(x1, y1, x2, color);
+	Graphics::ManagedSurface::hLine(x1, y2, x2, color);
+	Graphics::ManagedSurface::vLine(x1, y1, y2, color);
+	Graphics::ManagedSurface::vLine(x2, y1, y2, color);
 }
 
 void BaseSurface::flipHorizontal(BaseSurface &dest) {
@@ -227,7 +247,7 @@ void BaseSurface::flipHorizontal(BaseSurface &dest) {
 
 void BaseSurface::moveBufferLeft() {
 	byte *p = (byte *)getPixels();
-	Common::copy(p + TILE_WIDTH, p + (w * h), p);
+	Common::copy(p + TILE_WIDTH, p + (pitch * h), p);
 }
 
 void BaseSurface::moveBufferRight() {
@@ -245,6 +265,8 @@ void BaseSurface::moveBufferDown() {
 	Common::copy_backward(p, p + (pitch * (h - TILE_HEIGHT)), p + (pitch * h));
 }
 
+/* For compatibility with the original logic, true return means the
+   rect is *outside* the clip region. */
 bool BaseSurface::clip(Common::Rect &r) {
 	int skip;
 	_leftSkip = _rightSkip = 0;
@@ -289,6 +311,19 @@ bool BaseSurface::clip(Common::Rect &r) {
 	}
 
 	return false;
+}
+
+void BaseSurface::dump(const char *fname) const {
+#ifdef DEBUG_FRAME_DUMP
+	// For debugging, dump the frame contents.
+	::Common::DumpFile outf;
+	uint32 now = g_system->getMillis();
+	outf.open(::Common::Path(::Common::String::format("/tmp/%07d-%s.png", now, fname)));
+	byte pal[768];
+	((AccessEngine *)g_engine)->_screen->getPalette(pal);
+	::Image::writePNG(outf, *this, pal);
+	outf.close();
+#endif
 }
 
 } // End of namespace Access

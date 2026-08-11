@@ -21,7 +21,6 @@
 
 #ifdef ENABLE_HE
 
-#include "common/math.h"
 #include "common/system.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/wiz_he.h"
@@ -181,7 +180,9 @@ void Wiz::auxWRLEUncompressAndCopyFromStreamOffset(WizRawPixel *destStream, cons
 				if (!_uses16BitColor) {
 					memcpy(dest8, dest8 + streamOffset, (runCount * sizeof(WizRawPixel8)));
 				} else {
-					memcpy(dest16, dest16 + streamOffset, (runCount * sizeof(WizRawPixel16)));
+					// memcpy(dest16, dest16 + streamOffset, (runCount * sizeof(WizRawPixel16)));
+					for (int i = 0; i < runCount; i++)
+						dest16[i] = FROM_LE_16((dest16 + streamOffset)[i]);
 				}
 			}
 
@@ -230,7 +231,9 @@ void Wiz::auxWRLEUncompressAndCopyFromStreamOffset(WizRawPixel *destStream, cons
 				if (!_uses16BitColor) {
 					memcpy(dest8, dest8 + streamOffset, (runCount * sizeof(WizRawPixel8)));
 				} else {
-					memcpy(dest16, dest16 + streamOffset, (runCount * sizeof(WizRawPixel16)));
+					// memcpy(dest16, dest16 + streamOffset, (runCount * sizeof(WizRawPixel16)));
+					for (int i = 0; i < runCount; i++)
+						dest16[i] = FROM_LE_16((dest16 + streamOffset)[i]);	
 				}
 			}
 
@@ -320,7 +323,10 @@ void Wiz::auxDecompSRLEStream(WizRawPixel *destStream, const WizRawPixel *backgr
 				backgroundStream = (const WizRawPixel *)background8;
 				destStream = (WizRawPixel *)dest8;
 			} else {
-				memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
+				// memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
+				for (int i = 0; i < runCount; i++)
+					dest16[i] = FROM_LE_16(background16[i]);
+				
 				background16 += runCount;
 				dest16 += runCount;
 
@@ -853,7 +859,7 @@ int Wiz::auxHitTestTRLEXPos(const byte *dataStream, int skipAmount) {
 }
 
 int Wiz::auxHitTestTRLEImageRelPos(const byte *compData, int x, int y, int width, int height) {
-	// Quickly reject points outside the image boundry.
+	// Quickly reject points outside the image boundary.
 	if ((x < 0) || (width <= x) || (y < 0) || (height <= y)) {
 		return 0;
 	}
@@ -921,7 +927,7 @@ int Wiz::auxPixelHitTestTRLEXPos(byte *dataStream, int skipAmount, int transpare
 }
 
 int Wiz::auxPixelHitTestTRLEImageRelPos(byte *compData, int x, int y, int width, int height, int transparentValue) {
-	// Quickly reject points outside the image boundry.
+	// Quickly reject points outside the image boundary.
 	if ((x < 0) || (width <= x) || (y < 0) || (height <= y)) {
 		return transparentValue;
 	}
@@ -1103,13 +1109,11 @@ void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizR
 				background8 += runCount;
 
 				destPtr = (WizRawPixel *)dest8;
-				backgroundPtr = (WizRawPixel *)background8;
 			} else {
 				dest16 += runCount;
 				background16 += runCount;
 
 				destPtr = (WizRawPixel *)dest16;
-				backgroundPtr = (WizRawPixel *)background16;
 			}
 
 			decompAmount -= runCount;
@@ -1128,13 +1132,11 @@ void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizR
 					background8 += runCount;
 
 					destPtr = (WizRawPixel *)dest8;
-					backgroundPtr = (WizRawPixel *)background8;
 				} else {
 					dest16 += runCount;
 					background16 += runCount;
 
 					destPtr = (WizRawPixel *)dest16;
-					backgroundPtr = (WizRawPixel *)background16;
 				}
 			} else {
 				runCount += decompAmount;
@@ -1152,21 +1154,23 @@ void Wiz::auxDecompDRLEStream(WizRawPixel *destPtr, const byte *dataStream, WizR
 					background8 += runCount;
 
 					destPtr = (WizRawPixel *)dest8;
-					backgroundPtr = (WizRawPixel *)background8;
 				} else {
-					memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
+					for (int i = 0; i < runCount; i++)
+						dest16[i] = FROM_LE_16(background16[i]);
+					//memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
 					dest16 += runCount;
 					background16 += runCount;
 
 					destPtr = (WizRawPixel *)dest16;
-					backgroundPtr = (WizRawPixel *)background16;
 				}
 			} else {
 				runCount += decompAmount;
 				if (!_uses16BitColor) {
 					memcpy(dest8, background8, runCount * sizeof(WizRawPixel8));
 				} else {
-					memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
+					for (int i = 0; i < runCount; i++)
+						dest16[i] = FROM_LE_16(background16[i]);
+					//memcpy(dest16, background16, runCount * sizeof(WizRawPixel16));
 				}
 			}
 		}

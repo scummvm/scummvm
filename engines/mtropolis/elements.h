@@ -23,10 +23,12 @@
 #define MTROPOLIS_ELEMENTS_H
 
 #include "graphics/fontman.h"
+#include "graphics/palette.h"
 
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/render.h"
+#include "mtropolis/coroutine_protos.h"
 
 namespace Video {
 
@@ -63,12 +65,17 @@ public:
 
 	void render(Window *window) override;
 
+	Common::SharedPtr<Structural> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Graphic Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
+	GraphicElement(const GraphicElement &other);
+
 	bool _cacheBitmap;
 
 	Common::SharedPtr<Graphics::ManagedSurface> _mask;
@@ -91,7 +98,7 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
 	void deactivate() override;
@@ -101,8 +108,12 @@ public:
 
 	void render(Window *window) override;
 	void playMedia(Runtime *runtime, Project *project) override;
+	void tryAutoSetName(Runtime *runtime, Project *project) override;
 
 	void setResizeFilter(const Common::SharedPtr<MovieResizeFilter> &filter);
+
+	Common::SharedPtr<Structural> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movie Element"; }
@@ -115,10 +126,17 @@ protected:
 	void onPauseStateChanged() override;
 	void onSegmentUnloaded(int segmentIndex) override;
 
+	struct MovieElementConsumeCommandCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(MovieElement *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
+	};
+
 private:
 	IntRange computeRealRange() const;
 
 	void stopSubtitles();
+
+	void initFallbackPalette();
 
 	MiniscriptInstructionOutcome scriptSetRange(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value);
@@ -129,21 +147,15 @@ private:
 
 	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &range);
 
-	struct StartPlayingTaskData {
-		StartPlayingTaskData() : runtime(nullptr) {}
-
-		Runtime *runtime;
+	struct StartPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(MovieElement *, self, Runtime *, runtime);
 	};
 
-	struct SeekToTimeTaskData {
-		SeekToTimeTaskData() : runtime(nullptr), timestamp(0) {}
-
-		Runtime *runtime;
-		uint32 timestamp;
+	struct SeekToTimeCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(MovieElement *, self, Runtime *, runtime, uint32, timestamp);
 	};
-
-	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
-	VThreadState seekToTimeTask(const SeekToTimeTaskData &taskData);
 
 	bool _cacheBitmap;
 	bool _alternate;
@@ -173,6 +185,8 @@ private:
 	Common::SharedPtr<SubtitlePlayer> _subtitles;
 
 	Common::Array<int> _damagedFrames;
+
+	Common::ScopedPtr<Graphics::Palette> _fallbackPalette;
 };
 
 class ImageElement : public VisualElement {
@@ -188,7 +202,12 @@ public:
 	void activate() override;
 	void deactivate() override;
 
+	void tryAutoSetName(Runtime *runtime, Project *project) override;
+
 	void render(Window *window) override;
+
+	Common::SharedPtr<Structural> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Image Element"; }
@@ -217,10 +236,12 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
 	void deactivate() override;
+
+	void tryAutoSetName(Runtime *runtime, Project *project) override;
 
 	bool canAutoPlay() const override;
 
@@ -230,6 +251,9 @@ public:
 
 	Common::Rect getRelativeCollisionRect() const override;
 
+	Common::SharedPtr<Structural> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "mToon Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
@@ -237,27 +261,27 @@ public:
 #endif
 
 private:
-	struct StartPlayingTaskData {
-		StartPlayingTaskData() : runtime(nullptr) {}
+	MToonElement(const MToonElement &other);
 
-		Runtime *runtime;
+	struct MToonConsumeCommandCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(MToonElement *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
 	};
 
-	struct StopPlayingTaskData {
-		StopPlayingTaskData() : runtime(nullptr) {}
-
-		Runtime *runtime;
+	struct StartPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(MToonElement *, self, Runtime *, runtime);
 	};
 
-	struct ChangeFrameTaskData {
-		ChangeFrameTaskData() : runtime(nullptr), frame(0) {}
-
-		Runtime *runtime;
-		uint32 frame;
+	struct StopPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(MToonElement *, self, Runtime *, runtime);
 	};
 
-	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
-	VThreadState stopPlayingTask(const StopPlayingTaskData &taskData);
+	struct ChangeFrameCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(MToonElement *, self, Runtime *, runtime, uint32, frame);
+	};
 
 	void playMedia(Runtime *runtime, Project *project) override;
 	MiniscriptInstructionOutcome scriptSetRate(MiniscriptThread *thread, const DynamicValue &value);
@@ -331,12 +355,17 @@ public:
 	Graphics::FontManager::FontUsage getDefaultUsageForMacFont(uint16 macFontID, uint size);
 	Graphics::FontManager::FontUsage getDefaultUsageForNamedFont(const Common::String &fontFamilyName, uint size);
 
+	Common::SharedPtr<Structural> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Text Label Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
 #endif
 
 private:
+	TextLabelElement(const TextLabelElement &other);
+
 	struct TextLabelLineWriteInterface {
 		static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset);
 		static MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib);
@@ -352,7 +381,7 @@ private:
 	bool _cacheBitmap;
 	bool _needsRender;
 
-	//bool _isBitmap;
+	bool _isBitmap;
 	uint32 _assetID;
 
 	Common::String _text;
@@ -380,7 +409,7 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
 	void deactivate() override;
@@ -388,8 +417,12 @@ public:
 	bool canAutoPlay() const override;
 
 	void playMedia(Runtime *runtime, Project *project) override;
+	void tryAutoSetName(Runtime *runtime, Project *project) override;
 
 	bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const override;
+
+	Common::SharedPtr<Structural> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Element"; }
@@ -398,6 +431,9 @@ public:
 #endif
 
 private:
+	SoundElement(const SoundElement &other);
+
+	void initSubtitles();
 	void stopPlayer();
 
 	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
@@ -405,14 +441,20 @@ private:
 	MiniscriptInstructionOutcome scriptSetBalance(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetAsset(MiniscriptThread *thread, const DynamicValue &value);
 
-	struct StartPlayingTaskData {
-		StartPlayingTaskData() : runtime(nullptr) {}
-
-		Runtime *runtime;
+	struct SoundElementConsumeCommandCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(SoundElement *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
 	};
 
-	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
-	VThreadState stopPlayingTask(const StartPlayingTaskData &taskData);
+	struct StartPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(SoundElement *, self, Runtime *, runtime);
+	};
+
+	struct StopPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(SoundElement *, self, Runtime *, runtime);
+	};
 
 	void setLoop(bool loop);
 	void setVolume(uint16 volume);

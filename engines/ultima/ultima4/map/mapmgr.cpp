@@ -60,9 +60,9 @@ MapMgr::MapMgr() {
 	const Config *config = Config::getInstance();
 	Map *map;
 
-	Std::vector<ConfigElement> maps = config->getElement("maps").getChildren();
-	for (Std::vector<ConfigElement>::iterator i = maps.begin(); i != maps.end(); i++) {
-		map = initMapFromConf(*i);
+	Common::Array<ConfigElement> maps = config->getElement("maps").getChildren();
+	for (const auto &i : maps) {
+		map = initMapFromConf(i);
 
 		// Map actually gets loaded later, when it's needed
 		registerMap(map);
@@ -70,18 +70,18 @@ MapMgr::MapMgr() {
 }
 
 MapMgr::~MapMgr() {
-	for (Std::vector<Map *>::iterator i = _mapList.begin(); i != _mapList.end(); i++)
-		delete *i;
+	for (auto *i : _mapList)
+		delete i;
 }
 
 void MapMgr::unloadMap(MapId id) {
 	delete _mapList[id];
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> maps = config->getElement("maps").getChildren();
+	Common::Array<ConfigElement> maps = config->getElement("maps").getChildren();
 
-	for (Std::vector<ConfigElement>::const_iterator i = maps.begin(); i != maps.end(); ++i) {
-		if (id == static_cast<MapId>((*i).getInt("id"))) {
-			Map *map = initMapFromConf(*i);
+	for (const auto &i : maps) {
+		if (id == static_cast<MapId>(i.getInt("id"))) {
+			Map *map = initMapFromConf(i);
 			_mapList[id] = map;
 			break;
 		}
@@ -150,8 +150,8 @@ void MapMgr::registerMap(Map *map) {
 
 Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	Map *map;
-	static const char *mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", "xml", nullptr };
-	static const char *borderBehaviorEnumStrings[] = { "wrap", "exit", "fixed", nullptr };
+	static const char *const mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", "xml", nullptr };
+	static const char *const borderBehaviorEnumStrings[] = { "wrap", "exit", "fixed", nullptr };
 
 	map = initMap(static_cast<Map::Type>(mapConf.getEnum("type", mapTypeEnumStrings)));
 	if (!map)
@@ -187,30 +187,30 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	map->_tileSet = g_tileSets->get(mapConf.getString("tileset"));
 	map->_tileMap = g_tileMaps->get(mapConf.getString("tilemap"));
 
-	Std::vector<ConfigElement> children = mapConf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() == "city") {
+	Common::Array<ConfigElement> children = mapConf.getChildren();
+	for (const auto &i : children) {
+		if (i.getName() == "city") {
 			City *city = dynamic_cast<City *>(map);
 			assert(city);
-			initCityFromConf(*i, city);
-		} else if (i->getName() == "shrine") {
+			initCityFromConf(i, city);
+		} else if (i.getName() == "shrine") {
 			Shrine *shrine = dynamic_cast<Shrine *>(map);
 			assert(shrine);
-			initShrineFromConf(*i, shrine);
-		} else if (i->getName() == "dungeon") {
+			initShrineFromConf(i, shrine);
+		} else if (i.getName() == "dungeon") {
 			Dungeon *dungeon = dynamic_cast<Dungeon *>(map);
 			assert(dungeon);
-			initDungeonFromConf(*i, dungeon);
-		} else if (i->getName() == "portal")
-			map->_portals.push_back(initPortalFromConf(*i));
-		else if (i->getName() == "moongate")
-			createMoongateFromConf(*i);
-		else if (i->getName() == "compressedchunk")
-			map->_compressedChunks.push_back(initCompressedChunkFromConf(*i));
-		else if (i->getName() == "label")
-			map->_labels[i->getString("name")] = MapCoords(i->getInt("x"), i->getInt("y"), i->getInt("z", 0));
-		else if (i->getName() == "tiles" && map->_type == Map::XML)
-			static_cast<XMLMap *>(map)->_tilesText = i->getNode()->firstChild()->text();
+			initDungeonFromConf(i, dungeon);
+		} else if (i.getName() == "portal")
+			map->_portals.push_back(initPortalFromConf(i));
+		else if (i.getName() == "moongate")
+			createMoongateFromConf(i);
+		else if (i.getName() == "compressedchunk")
+			map->_compressedChunks.push_back(initCompressedChunkFromConf(i));
+		else if (i.getName() == "label")
+			map->_labels[i.getString("name")] = MapCoords(i.getInt("x"), i.getInt("y"), i.getInt("z", 0));
+		else if (i.getName() == "tiles" && map->_type == Map::XML)
+			static_cast<XMLMap *>(map)->_tilesText = i.getNode()->firstChild()->text();
 	}
 
 	return map;
@@ -221,16 +221,16 @@ void MapMgr::initCityFromConf(const ConfigElement &cityConf, City *city) {
 	city->_type = cityConf.getString("type");
 	city->_tlkFname = cityConf.getString("tlk_fname");
 
-	Std::vector<ConfigElement> children = cityConf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() == "personrole")
-			city->_personRoles.push_back(initPersonRoleFromConf(*i));
+	Common::Array<ConfigElement> children = cityConf.getChildren();
+	for (const auto &i : children) {
+		if (i.getName() == "personrole")
+			city->_personRoles.push_back(initPersonRoleFromConf(i));
 	}
 }
 
 PersonRole *MapMgr::initPersonRoleFromConf(const ConfigElement &personRoleConf) {
 	PersonRole *personrole;
-	static const char *roleEnumStrings[] = { "companion", "weaponsvendor", "armorvendor", "foodvendor", "tavernkeeper",
+	static const char *const roleEnumStrings[] = { "companion", "weaponsvendor", "armorvendor", "foodvendor", "tavernkeeper",
 	                                         "reagentsvendor", "healer", "innkeeper", "guildvendor", "horsevendor",
 	                                         "lordbritish", "hawkwind", nullptr
 	                                       };
@@ -309,16 +309,16 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 	// for new/fan maps being added to the overworld
 	portal->_tile = portalConf.exists("tile") ? portalConf.getInt("tile") : -1;
 
-	Std::vector<ConfigElement> children = portalConf.getChildren();
-	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
-		if (i->getName() == "retroActiveDest") {
+	Common::Array<ConfigElement> children = portalConf.getChildren();
+	for (const auto &i : children) {
+		if (i.getName() == "retroActiveDest") {
 			portal->_retroActiveDest = new PortalDestination();
 
 			portal->_retroActiveDest->_coords = MapCoords(
-			                                        i->getInt("x"),
-			                                        i->getInt("y"),
-			                                        i->getInt("z", 0));
-			portal->_retroActiveDest->_mapid = static_cast<MapId>(i->getInt("mapid"));
+			                                        i.getInt("x"),
+			                                        i.getInt("y"),
+			                                        i.getInt("z", 0));
+			portal->_retroActiveDest->_mapid = static_cast<MapId>(i.getInt("mapid"));
 		}
 	}
 
@@ -326,7 +326,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 }
 
 void MapMgr::initShrineFromConf(const ConfigElement &shrineConf, Shrine *shrine) {
-	static const char *virtues[] = {"Honesty", "Compassion", "Valor", "Justice", "Sacrifice", "Honor", "Spirituality", "Humility", nullptr};
+	static const char *const virtues[] = {"Honesty", "Compassion", "Valor", "Justice", "Sacrifice", "Honor", "Spirituality", "Humility", nullptr};
 
 	shrine->setVirtue(static_cast<Virtue>(shrineConf.getEnum("virtue", virtues)));
 	shrine->setMantra(shrineConf.getString("mantra"));

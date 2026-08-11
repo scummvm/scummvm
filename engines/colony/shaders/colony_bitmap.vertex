@@ -1,0 +1,11 @@
+in vec2 position;
+in vec2 texcoord;
+
+uniform mat4 projection;
+
+out vec2 var_texcoord;
+
+void main() {
+	var_texcoord = texcoord;
+	gl_Position = projection * vec4(position, 0.0, 1.0);
+}

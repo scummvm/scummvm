@@ -40,8 +40,11 @@
 #include "backends/platform/android/jni-android.h"
 #include "backends/fs/android/android-fs-factory.h"
 #include "backends/fs/android/android-saf-fs.h"
+#include "backends/graphics/android/android-graphics.h"
 
+#include "gui/browser.h"
 #include "gui/gui-manager.h"
+#include "gui/message.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
@@ -51,6 +54,8 @@
 
 enum {
 	kRemoveCmd = 'RemS',
+	kExportBackupCmd = 'ExpD',
+	kImportBackupCmd = 'ImpD',
 };
 
 class AndroidOptionsWidget final : public GUI::OptionsContainerWidget {
@@ -70,6 +75,7 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_onscreenCheckbox;
+	GUI::CheckboxWidget *_ignoreGameSafeAreaCheckbox;
 	GUI::StaticTextWidget *_preferredTouchModeDesc;
 	GUI::StaticTextWidget *_preferredTMMenusDesc;
 	GUI::PopUpWidget *_preferredTMMenusPopUp;
@@ -129,6 +135,7 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);;
 
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.OnScreenControl", _("Show On-screen control"));
+	_ignoreGameSafeAreaCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.IgnoreGameSafeArea", _("Ignore safe areas in-game"));
 	_preferredTouchModeDesc = new GUI::StaticTextWidget(widgetsBoss(), "AndroidOptionsDialog.PreferredTouchModeText", _("Choose the preferred touch mode:"));
 	if (inAppDomain) {
 		_preferredTMMenusDesc = new GUI::StaticTextWidget(widgetsBoss(), "AndroidOptionsDialog.TMMenusText", _("In menus"));
@@ -183,10 +190,14 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 	_orientationGamesPopUp->appendEntry(_("Portrait"), kOrientationPortrait);
 	_orientationGamesPopUp->appendEntry(_("Landscape"), kOrientationLandscape);
 
-	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
-		// Only show this checkbox in Options (via Options... in the launcher), and not at game domain level (via Edit Game...)
-		// I18N: This button opens a list of all folders added for Android Storage Attached Framework
-		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ForgetSAFButton", _("Remove folder authorizations..."), Common::U32String(), kRemoveCmd))->setTarget(this);
+	if (inAppDomain) {
+		// Only show these buttons in Options (via Options... in the launcher), and not at game domain level (via Edit Game...)
+		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ExportDataButton", _("Export backup"), _("Export a backup of the configuration and save files"), kExportBackupCmd))->setTarget(this);
+		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ImportDataButton", _("Import backup"), _("Import a previously exported backup file"), kImportBackupCmd))->setTarget(this);
+		if (AndroidFilesystemFactory::instance().hasSAF()) {
+			// I18N: This button opens a list of all folders added for Android Storage Attached Framework
+			(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ForgetSAFButton", _("Remove folder authorizations..."), Common::U32String(), kRemoveCmd))->setTarget(this);
+		}
 	}
 }
 
@@ -200,6 +211,7 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("OnScreenControl", "Checkbox")
+	            .addWidget("IgnoreGameSafeArea", "Checkbox")
 	            .addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
 
 	if (inAppDomain) {
@@ -234,8 +246,12 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 			.addWidget("OGames", "PopUp")
 		.closeLayout();
 
-	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
-		layouts.addWidget("ForgetSAFButton", "WideButton");
+	if (inAppDomain) {
+		layouts.addWidget("ExportDataButton", "WideButton");
+		layouts.addWidget("ImportDataButton", "WideButton");
+		if (AndroidFilesystemFactory::instance().hasSAF()) {
+			layouts.addWidget("ForgetSAFButton", "WideButton");
+		}
 	}
 	layouts.closeLayout()
 	    .closeDialog();
@@ -249,6 +265,60 @@ void AndroidOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		}
 		SAFRemoveDialog removeDlg;
 		removeDlg.runModal();
+		break;
+	}
+	case kExportBackupCmd:
+	{
+		Common::U32String prompt(_("Select backup destination"));
+		int ret = JNI::exportBackup(prompt);
+		if (ret == 1) {
+			// BackupManager.ERROR_CANCELLED
+			break;
+		}
+
+		if (ret == 0 && AndroidFilesystemFactory::instance().hasSAF()) {
+			prompt = _("The backup has been saved successfully.");
+		} else if (ret == 0) {
+			prompt = _("The backup has been saved successfully to the Downloads folder.");
+		} else if (ret == -2) {
+			prompt = _("The game saves couldn't be backed up");
+		} else {
+			prompt = _("An error occured while saving the backup.");
+		}
+		g_system->displayMessageOnOSD(prompt);
+		break;
+	}
+	case kImportBackupCmd:
+	{
+		GUI::MessageDialog alert(_("Restoring a backup will erase the current configuration and overwrite existing saves. Do you want to proceed?"), _("Proceed"), _("Cancel"));
+		if (alert.runModal() != GUI::kMessageOK) {
+			break;
+		}
+
+		Common::U32String prompt(_("Select backup file"));
+		Common::Path path;
+		if (!AndroidFilesystemFactory::instance().hasSAF()) {
+			GUI::BrowserDialog browser(prompt, false);
+			if (browser.runModal() <= 0) {
+				break;
+			}
+
+			path = browser.getResult().getPath();
+		}
+		int ret = JNI::importBackup(prompt, path.toString());
+		if (ret == 1) {
+			// BackupManager.ERROR_CANCELLED
+			break;
+		}
+
+		if (ret == 0) {
+			prompt = _("The backup has been restored successfully.");
+		} else if (ret == -2) {
+			prompt = _("The game saves couldn't be backed up");
+		} else {
+			prompt = _("An error occured while restoring the backup.");
+		}
+		g_system->displayMessageOnOSD(prompt);
 		break;
 	}
 	default:
@@ -294,6 +364,7 @@ void AndroidOptionsWidget::load() {
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	_onscreenCheckbox->setState(ConfMan.getBool("onscreen_control", _domain));
+	_ignoreGameSafeAreaCheckbox->setState(ConfMan.getBool("ignore_game_safe_area", _domain));
 
 	// When in application domain, we don't have default entry so we must have a value
 	if (inAppDomain) {
@@ -349,6 +420,7 @@ bool AndroidOptionsWidget::save() {
 
 	if (_enabled) {
 		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
+		ConfMan.setBool("ignore_game_safe_area", _ignoreGameSafeAreaCheckbox->getState(), _domain);
 
 		if (inAppDomain) {
 			saveTouchMode("touch_mode_menus", _preferredTMMenusPopUp->getSelectedTag());
@@ -362,6 +434,7 @@ bool AndroidOptionsWidget::save() {
 		saveOrientation("orientation_games", _orientationGamesPopUp->getSelectedTag());
 	} else {
 		ConfMan.removeKey("onscreen_control", _domain);
+		ConfMan.removeKey("ignore_game_safe_area", _domain);
 
 		if (inAppDomain) {
 			ConfMan.removeKey("touch_mode_menus", _domain);
@@ -380,6 +453,7 @@ bool AndroidOptionsWidget::save() {
 
 bool AndroidOptionsWidget::hasKeys() {
 	return ConfMan.hasKey("onscreen_control", _domain) ||
+	       ConfMan.hasKey("ignore_game_safe_area", _domain) ||
 	       (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("touch_mode_menus", _domain)) ||
 	       ConfMan.hasKey("touch_mode_2d_games", _domain) ||
 	       ConfMan.hasKey("touch_mode_3d_games", _domain) ||
@@ -393,6 +467,7 @@ void AndroidOptionsWidget::setEnabled(bool e) {
 	_enabled = e;
 
 	_onscreenCheckbox->setEnabled(e);
+	_ignoreGameSafeAreaCheckbox->setEnabled(e);
 
 	if (inAppDomain) {
 		_preferredTMMenusDesc->setEnabled(e);
@@ -417,6 +492,7 @@ GUI::OptionsContainerWidget *OSystem_Android::buildBackendOptionsWidget(GUI::Gui
 
 void OSystem_Android::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("onscreen_control", true);
+	ConfMan.registerDefault("ignore_game_safe_area", false);
 	ConfMan.registerDefault("touch_mode_menus", "mouse");
 	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
 	ConfMan.registerDefault("touch_mode_3d_games", "gamepad");
@@ -477,6 +553,9 @@ void OSystem_Android::applyOrientationSettings() {
 
 void OSystem_Android::applyBackendSettings() {
 	updateOnScreenControls();
+	if (_graphicsManager) {
+		dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->setIgnoreGameSafeArea(ConfMan.getBool("ignore_game_safe_area"));
+	}
 }
 
 SAFRemoveDialog::SAFRemoveDialog() : GUI::Dialog("SAFBrowser") {

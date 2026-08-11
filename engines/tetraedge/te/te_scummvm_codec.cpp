@@ -38,9 +38,9 @@ TeScummvmCodec::~TeScummvmCodec() {
 	}
 }
 
-bool TeScummvmCodec::load(const Common::FSNode &node) {
-	Common::File file;
-	if (file.open(node) && load(static_cast<Common::SeekableReadStream&>(file))) {
+bool TeScummvmCodec::load(const TetraedgeFSNode &node) {
+	Common::ScopedPtr<Common::SeekableReadStream> file(node.createReadStream());
+	if (file && load(*file)) {
 		_loadedPath = node.getPath();
 		return true;
 	}
@@ -59,8 +59,10 @@ uint TeScummvmCodec::height() {
 	return 0;
 }
 
-TeImage::Format TeScummvmCodec::imageFormat() {
-	return TeImage::RGBA8;
+Graphics::PixelFormat TeScummvmCodec::pixelFormat() {
+	if (_loadedSurface)
+		return _loadedSurface->format;
+	return Graphics::PixelFormat();
 }
 
 bool TeScummvmCodec::update(uint i, TeImage &imgout) {

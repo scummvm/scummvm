@@ -21,7 +21,9 @@
 
 #include "m4/burger/rooms/section1/room104.h"
 #include "m4/burger/rooms/section1/section1.h"
+#include "m4/burger/core/conv.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"
 
@@ -57,7 +59,6 @@ static const seriesPlayBreak PLAY2[] = {
 void Room104::init() {
 	_stolieSleepCtr = 0;
 	_stolieShould = 14;
-	_val3 = 0;
 
 	digi_preload("104_001");
 
@@ -418,12 +419,12 @@ void Room104::daemon() {
 		case 1:
 			ws_demand_location(315, 373);
 			ws_demand_facing(10);
-			ws_walk(271, 348, 0, -1, 10);
+			ws_walk(271, 348, nullptr, -1, 10);
 			break;
 		case 2:
 			ws_demand_location(208, 243);
 			ws_demand_facing(7);
-			ws_walk(180, 287, 0, -1, 7);
+			ws_walk(180, 287, nullptr, -1, 7);
 			break;
 		case 3:
 			ws_demand_location(417, 361);
@@ -529,16 +530,16 @@ void Room104::freeSeries() {
 int Room104::getRandom() const {
 	if (imath_ranged_rand(1, 4) == 1) {
 		return imath_ranged_rand(3, 4);
-	} else {
-		switch (imath_ranged_rand(1, 5)) {
-		case 1:
-		case 2:
-			return 1;
-		case 3:
-			return 2;
-		default:
-			return 5;
-		}
+	}
+
+	switch (imath_ranged_rand(1, 5)) {
+	case 1:
+	case 2:
+		return 1;
+	case 3:
+		return 2;
+	default:
+		return 5;
 	}
 }
 

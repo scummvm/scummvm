@@ -1,0 +1,19 @@
+This file is meant to be a full credit of the people who helped make the CxxTest
+builder what it is today.
+
+
+Current maintainer:
+    Gašper Ažman  (gasper dot azman at gmail.com)
+
+
+Original author:
+    Gašper Ažman
+
+Additional patches and tests:
+    Diego Nieto Cid
+    Edmundo López Bobeda
+    John Darby Mitchell
+    Pavol Juhas
+
+Other helpful suggestions:
+    John Darby Mitchell

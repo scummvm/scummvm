@@ -52,24 +52,30 @@ protected:
 	bool Cmd_MoveObject(int argc, const char **argv) override;
 };
 
+#ifdef ENABLE_RINGWORLD
 class RingworldDebugger : public Debugger {
 protected:
 	bool Cmd_ListObjects(int argc, const char **argv) override;
 	bool Cmd_MoveObject(int argc, const char **argv) override;
 };
+#endif
 
+#ifdef ENABLE_BLUEFORCE
 class BlueForceDebugger : public Debugger {
 protected:
 	bool Cmd_ListObjects(int argc, const char **argv) override;
 	bool Cmd_MoveObject(int argc, const char **argv) override;
 };
+#endif
 
+#ifdef ENABLE_RINGWORLD2
 class Ringworld2Debugger : public Debugger {
 protected:
 	bool Cmd_ListObjects(int argc, const char **argv) override;
 	bool Cmd_MoveObject(int argc, const char **argv) override;
 	bool Cmd_SetOutpostAlphaDebug(int argc, const char **argv) override;
 };
+#endif
 
 } // End of namespace TsAGE
 

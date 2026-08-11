@@ -23,6 +23,7 @@
 #define SCUMM_PLAYERS_PLAYER_NES_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -52,6 +53,8 @@ public:
 	void stopAllSounds() override;
 	int  getSoundStatus(int sound) const override;
 
+	void startTitleTwinkleGroup(const byte twinkleSteps4x6[4][6]);
+
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;
 	bool isStereo() const override { return false; }
@@ -63,7 +66,6 @@ private:
 	void sound_play();
 	void playSFX(int nr);
 	void playMusic();
-	byte fetchSoundByte(int nr);
 	void chainCommand(int chan);
 	void checkSilenceChannels(int chan);
 
@@ -88,6 +90,9 @@ private:
 		int offset;
 	} _slot[NUMSLOTS];
 
+	Common::Array<byte> _titleSfxBuf;
+	bool _title2SfxActive;
+
 	struct mchan {
 		int command;
 		int framedelay;
@@ -100,12 +105,9 @@ private:
 
 	bool isSFXplaying, wasSFXplaying;
 
-	byte *dataStart;
 	int numNotes;
 	byte *auxData1;
 	byte *auxData2;
-
-	byte *soundptr;
 };
 
 } // End of namespace Scumm

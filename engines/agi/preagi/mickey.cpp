@@ -26,6 +26,7 @@
 #include "graphics/cursorman.h"
 
 #include "agi/preagi/preagi.h"
+#include "agi/preagi/picture_mickey_winnie.h"
 #include "agi/preagi/mickey.h"
 #include "agi/graphics.h"
 
@@ -50,48 +51,36 @@ void MickeyEngine::readExe(int ofs, uint8 *buffer, long buflen) {
 		return;
 	infile.seek(ofs, SEEK_SET);
 	infile.read(buffer, buflen);
-	infile.close();
 }
 
-void MickeyEngine::getDatFileName(int iRoom, char *szFile) {
-	Common::sprintf_s(szFile, 256, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[getDat(iRoom)]);
+void MickeyEngine::getDatFileName(int iRoom, char *fileName) {
+	Common::sprintf_s(fileName, 256, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[getDat(iRoom)]);
 }
 
-void MickeyEngine::readDatHdr(char *szFile, MSA_DAT_HEADER *hdr) {
+void MickeyEngine::readDatHdr(char *fileName, MSA_DAT_HEADER *hdr) {
 	Common::File infile;
-
-	if (!infile.open(szFile))
+	if (!infile.open(fileName))
 		return;
 
-	hdr->filelen = infile.readByte();
-	hdr->filelen += infile.readByte() * 0x100;
+	hdr->filelen = infile.readUint16LE();
 
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++) {
-		hdr->ofsRoom[i] = infile.readByte();
-		hdr->ofsRoom[i] += infile.readByte() * 0x100;
+		hdr->ofsRoom[i] = infile.readUint16LE();
 	}
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++) {
-		hdr->ofsDesc[i] = infile.readByte();
-		hdr->ofsDesc[i] += infile.readByte() * 0x100;
+		hdr->ofsDesc[i] = infile.readUint16LE();
 	}
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++) {
-		hdr->ofsStr[i] = infile.readByte();
-		hdr->ofsStr[i] += infile.readByte() * 0x100;
+		hdr->ofsStr[i] = infile.readUint16LE();
 	}
-
-	infile.close();
 }
 
 void MickeyEngine::readOfsData(int offset, int iItem, uint8 *buffer, long buflen) {
-	uint16 ofs[256];
-
 	readExe(offset, buffer, buflen);
-	memcpy(ofs, buffer, sizeof(ofs));
 
-	for (int i = 0; i < 256; i++)
-		ofs[i] = buffer[i * 2] + 256 * buffer[i * 2 + 1];
+	uint16 ofs = READ_LE_UINT16(&buffer[iItem * 2]);
 
-	readExe(ofs[iItem] + IDI_MSA_OFS_EXE, buffer, buflen);
+	readExe(ofs + IDI_MSA_OFS_EXE, buffer, buflen);
 }
 
 // User Interface
@@ -119,32 +108,32 @@ bool MickeyEngine::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 }
 
 int MickeyEngine::choose1to9(int ofsPrompt) {
-	int answer = 0;
 	printExeStr(ofsPrompt);
 
 	while (!shouldQuit()) {
-		answer = getSelection(kSelNumber);
+		int answer = getSelection(kSelNumber);
 		if (answer == 10) {
 			printExeStr(IDO_MSA_PRESS_1_TO_9);
-			if (getSelection(kSelAnyKey) == 0)
+			if (getSelection(kSelAnyKey) == 0) {
 				return 0;
+			}
 			printExeStr(ofsPrompt);
-		} else return answer;
+		} else {
+			return answer;
+		}
 	}
 
 	return 0;
 }
 
 void MickeyEngine::printStr(char *buffer) {
-	int pc = 1;
-	int nRows, iCol, iRow;
-
-	nRows = *buffer + IDI_MSA_ROW_MENU_0;
-
 	clearTextArea();
 
-	for (iRow = IDI_MSA_ROW_MENU_0; iRow < nRows; iRow++) {
-		iCol = *(buffer + pc++);
+	int pc = 1;
+	const int nRows = *buffer + IDI_MSA_ROW_MENU_0;
+
+	for (int iRow = IDI_MSA_ROW_MENU_0; iRow < nRows; iRow++) {
+		int iCol = *(buffer + pc++);
 		drawStr(iRow, iCol, IDA_DEFAULT, buffer + pc);
 		pc += strlen(buffer + pc) + 1;
 	}
@@ -183,60 +172,52 @@ void MickeyEngine::printExeMsg(int ofs) {
 }
 
 void MickeyEngine::printDatString(int iStr) {
-	char buffer[256];
+	char fileName[256] = {0};
 	int iDat = getDat(_gameStateMickey.iRoom);
-
+	Common::sprintf_s(fileName, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[iDat]);
+	
 	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-
-	Common::sprintf_s(szFile, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[iDat]);
-	readDatHdr(szFile, &hdr);
+	readDatHdr(fileName, &hdr);
 
 	Common::File infile;
-
-	if (!infile.open(szFile))
+	if (!infile.open(fileName))
 		return;
 
+	char buffer[256];
 	infile.seek(hdr.ofsStr[iStr] + IDI_MSA_OFS_DAT, SEEK_SET);
 	infile.read((uint8 *)buffer, 256);
-	infile.close();
 
 	printStr(buffer);
 }
 
 void MickeyEngine::printDesc(int iRoom) {
+	char fileName[256] = {0};
+	getDatFileName(iRoom, fileName);
+	
 	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-
-	getDatFileName(iRoom, szFile);
-	readDatHdr(szFile, &hdr);
+	readDatHdr(fileName, &hdr);
 
 	Common::File infile;
-
-	if (!infile.open(szFile))
+	if (!infile.open(fileName))
 		return;
 
-	char *buffer = (char *)malloc(256);
-	memset(buffer, 0, 256);
-
+	char buffer[256] = {0};
 	infile.seek(hdr.ofsDesc[iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
 	infile.read(buffer, 256);
-	infile.close();
 
 	printStr(buffer);
-	free(buffer);
 }
 
 bool MickeyEngine::checkMenu() {
 	MSA_MENU menu;
 	int iSel0, iSel1;
 	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
+	char fileName[256] = {0};
 	Common::File infile;
 
-	getDatFileName(_gameStateMickey.iRoom, szFile);
-	readDatHdr(szFile, &hdr);
-	if (!infile.open(szFile))
+	getDatFileName(_gameStateMickey.iRoom, fileName);
+	readDatHdr(fileName, &hdr);
+	if (!infile.open(fileName))
 		return false;
 
 	char *buffer = new char[sizeof(MSA_MENU)];
@@ -255,26 +236,12 @@ bool MickeyEngine::checkMenu() {
 }
 
 void MickeyEngine::drawMenu(MSA_MENU &menu, int sel0, int sel1) {
-	int iWord;
-	int iRow;
-	int sel;
-	uint8 attr;
-
-	// draw menu
-
 	clearTextArea();
 
-	for (iRow = 0; iRow < 2; iRow++) {
-		for (iWord = 0; iWord < menu.row[iRow].count; iWord++) {
-			if (iRow)
-				sel = sel1;
-			else
-				sel = sel0;
-
-			if (iWord == sel)
-				attr = IDA_DEFAULT_REV;
-			else
-				attr = IDA_DEFAULT;
+	for (int iRow = 0; iRow < 2; iRow++) {
+		for (int iWord = 0; iWord < menu.row[iRow].count; iWord++) {
+			int sel = (iRow == 0) ? sel0 : sel1;
+			uint8 attr = (iWord == sel) ? IDA_DEFAULT_REV : IDA_DEFAULT;
 
 			drawStr(IDI_MSA_ROW_MENU_0 + iRow, menu.row[iRow].entry[iWord].x0,
 			        attr, (char *)menu.row[iRow].entry[iWord].szText);
@@ -286,7 +253,6 @@ void MickeyEngine::drawMenu(MSA_MENU &menu, int sel0, int sel1) {
 }
 
 void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow, int x, int y) {
-	int iWord;
 	int *sel = nullptr;
 
 	switch (iRow) {
@@ -302,7 +268,7 @@ void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int 
 		return;
 	}
 
-	for (iWord = 0; iWord < menu.row[iRow].count; iWord++) {
+	for (int iWord = 0; iWord < menu.row[iRow].count; iWord++) {
 		if ((x >= menu.row[iRow].entry[iWord].x0) &&
 		        (x < (int)(menu.row[iRow].entry[iWord].x0 +
 		                   strlen((char *)menu.row[iRow].entry[iWord].szText)))) {
@@ -315,7 +281,6 @@ void MickeyEngine::getMouseMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int 
 bool MickeyEngine::getMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow) {
 	Common::Event event;
 	int *sel = nullptr;
-	int nWords;
 	int x, y;
 	int goIndex = -1, northIndex = -1, southIndex = -1, eastIndex = -1, westIndex = -1;
 
@@ -329,7 +294,7 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow)
 	default:
 		break;
 	}
-	nWords = menu.row[iRow].count;
+	int nWords = menu.row[iRow].count;
 	_clickToMove = false;
 
 	for (int i = 0; i <= menu.row[0].count; i++)
@@ -587,19 +552,15 @@ void MickeyEngine::getMenuSel(char *buffer, int *sel0, int *sel1) {
 }
 
 void MickeyEngine::centerMenu(MSA_MENU *menu) {
-	int iWord;
-	int iRow;
-	int w, x;
-
-	for (iRow = 0; iRow < 2; iRow++) {
-		w = 0;
-		for (iWord = 0; iWord < menu->row[iRow].count; iWord++) {
+	for (int iRow = 0; iRow < 2; iRow++) {
+		int w = 0;
+		for (int iWord = 0; iWord < menu->row[iRow].count; iWord++) {
 			w += strlen((char *)menu->row[iRow].entry[iWord].szText);
 		}
 		w += menu->row[iRow].count - 1;
-		x = (40 - w) / 2;   // FIX
+		int x = (40 - w) / 2;   // FIX
 
-		for (iWord = 0; iWord < menu->row[iRow].count; iWord++) {
+		for (int iWord = 0; iWord < menu->row[iRow].count; iWord++) {
 			menu->row[iRow].entry[iWord].x0 = x;
 			x += strlen((char *)menu->row[iRow].entry[iWord].szText) + 1;
 		}
@@ -607,11 +568,6 @@ void MickeyEngine::centerMenu(MSA_MENU *menu) {
 }
 
 void MickeyEngine::patchMenu(MSA_MENU *menu) {
-	uint8 buffer[512];
-	uint8 menubuf[sizeof(MSA_MENU)];
-	int nPatches;
-	int pBuf = 0;
-
 	// change planet name in ship airlock menu
 	if (_gameStateMickey.iRoom == IDI_MSA_PIC_SHIP_AIRLOCK) {
 		Common::strcpy_s(menu->row[1].entry[2].szText, IDS_MSA_NAME_PLANET[_gameStateMickey.iPlanet]);
@@ -624,9 +580,11 @@ void MickeyEngine::patchMenu(MSA_MENU *menu) {
 	}
 
 	// copy menu to menubuf
+	uint8 menubuf[sizeof(MSA_MENU)];
 	memcpy(menubuf, menu, sizeof(menubuf));
 
 	// read patches
+	uint8 buffer[512];
 	readOfsData(
 	    IDOFS_MSA_MENU_PATCHES,
 	    _gameStateMickey.nRmMenu[_gameStateMickey.iRoom] + _gameStateMickey.iRmMenu[_gameStateMickey.iRoom] - 1,
@@ -634,7 +592,8 @@ void MickeyEngine::patchMenu(MSA_MENU *menu) {
 	);
 
 	// get number of patches
-	nPatches = buffer[pBuf++];
+	int pBuf = 0;
+	int nPatches = buffer[pBuf++];
 
 	// patch menubuf
 	for (int iPatch = 0; iPatch < nPatches; iPatch++) {
@@ -659,18 +618,19 @@ void MickeyEngine::printDatMessage(int iStr) {
 
 // Sound
 
-void MickeyEngine::playNote(MSA_SND_NOTE note) {
-	if (!note.counter) {
-		// Pause
-		_system->delayMillis((uint)(note.length / IDI_SND_TIMER_RESOLUTION));
-	} else {
-		PreAgiEngine::playNote(IDI_SND_OSCILLATOR_FREQUENCY / note.counter, (int32)(note.length / IDI_SND_TIMER_RESOLUTION));
+bool MickeyEngine::playNote(MSA_SND_NOTE note, WaitOptions options) {
+	int16 frequency = 0;
+	if (note.counter != 0) {
+		frequency = IDI_SND_OSCILLATOR_FREQUENCY / note.counter;
 	}
+	int32 lengthMs = (int32)(note.length / IDI_SND_TIMER_RESOLUTION);
+	return playSpeakerNote(frequency, lengthMs, options);
 }
 
-void MickeyEngine::playSound(ENUM_MSA_SOUND iSound) {
+bool MickeyEngine::playSound(ENUM_MSA_SOUND iSound, WaitOptions options) {
+	bool completed = true;
 	if (!getFlag(VM_FLAG_SOUND_ON))
-		return;
+		return completed;
 
 	Common::Event event;
 	MSA_SND_NOTE note;
@@ -682,52 +642,44 @@ void MickeyEngine::playSound(ENUM_MSA_SOUND iSound) {
 		for (int iNote = 0; iNote < 6; iNote++) {
 			note.counter = rnd(59600) + 59;
 			note.length = 4;
-			playNote(note);
+			if (!playNote(note, options)) {
+				completed = false;
+				break;
+			}
 		}
 		break;
 	default:
 		readOfsData(IDOFS_MSA_SOUND_DATA, iSound, buffer, 1024);
 
 		for (;;) {
-			memcpy(&note, buffer + pBuf, sizeof(note));
+			note.counter = READ_LE_UINT16(&buffer[pBuf]);
+			note.length = buffer[pBuf + 2];
 			if (!note.counter && !note.length)
 				break;
 
-			playNote(note);
+			if (!playNote(note, options)) {
+				completed = false;
+				break;
+			}
 
 			pBuf += 3;
-
-			if (iSound == IDI_MSA_SND_THEME) {
-				while (_system->getEventManager()->pollEvent(event)) {
-					switch (event.type) {
-					case Common::EVENT_RETURN_TO_LAUNCHER:
-					case Common::EVENT_QUIT:
-					case Common::EVENT_LBUTTONUP:
-					case Common::EVENT_RBUTTONUP:
-					case Common::EVENT_KEYDOWN:
-						delete[] buffer;
-						return;
-					default:
-						break;
-					}
-				}
-			}
 		}
 
 		break;
 	}
 
 	delete[] buffer;
+	return completed;
 }
 
 // Graphics
 
 void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
-	char szFile[255] = {0};
-	Common::sprintf_s(szFile, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
+	char fileName[255] = {0};
+	Common::sprintf_s(fileName, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
 
 	Common::File file;
-	if (!file.open(szFile))
+	if (!file.open(fileName))
 		return;
 
 	uint8 *buffer = new uint8[4096];
@@ -735,21 +687,29 @@ void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	file.read(buffer, size);
 	file.close();
 
-	if (iObj == IDI_MSA_OBJECT_CRYSTAL)
-		_picture->setPictureFlags(kPicFStep);
+	int maxStep = 0; // default: draw all opcodes
+	if (iObj == IDI_MSA_OBJECT_CRYSTAL) {
+		// Handle crystal animation. Each "frame" is the picture
+		// drawn with an additional opcode until it wraps around.
+		// The crystal has 14 opcodes followed by the terminator.
+		maxStep = _picture->getMaxStep() + 1;
+		if (maxStep == 15) {
+			maxStep = 1;
+		}
+	}
 
-	_picture->setOffset(x0, y0);
-	_picture->decodePicture(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_picture->setOffset(0, 0);
-	_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->setMaxStep(maxStep);
+	_picture->setOffset(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0);
+	_picture->decodePictureFromBuffer(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->showPicture(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
 void MickeyEngine::drawPic(int iPic) {
-	char szFile[255] = {0};
-	Common::sprintf_s(szFile, IDS_MSA_PATH_PIC, iPic);
+	char fileName[255] = {0};
+	Common::sprintf_s(fileName, IDS_MSA_PATH_PIC, iPic);
 
 	Common::File file;
-	if (!file.open(szFile))
+	if (!file.open(fileName))
 		return;
 
 	uint8 *buffer = new uint8[4096];
@@ -758,17 +718,13 @@ void MickeyEngine::drawPic(int iPic) {
 	file.close();
 
 	// Note that decodePicture clears the screen
-	_picture->setOffset(10, 0);
-	_picture->decodePicture(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_picture->setOffset(0, 0);
-	_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->setMaxStep(0);
+	_picture->setOffset(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0);
+	_picture->decodePictureFromBuffer(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_picture->showPicture(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
 void MickeyEngine::drawRoomAnimation() {
-	uint8 objLight[] = {
-		0xF0, 1, 0xF9, 2, 43, 45, 0xFF
-	};
-
 	switch (_gameStateMickey.iRoom) {
 	case IDI_MSA_PIC_EARTH_SHIP:
 	case IDI_MSA_PIC_VENUS_SHIP:
@@ -788,31 +744,38 @@ void MickeyEngine::drawRoomAnimation() {
 	case IDI_MSA_PIC_SHIP_MARS:
 	case IDI_MSA_PIC_SHIP_URANUS: {
 		// draw blinking ship lights
-
-		uint8 iColor = 0;
-
-		_picture->setPattern(2, 0);
+		uint8 lightPicture[] = {
+			0xF0, 1,          // Set Color: 1
+			0xF9, 2, 44, 45,  // Set Pattern: 2, plot at 44,45
+			0xFF              // End
+		};
 
 		for (int i = 0; i < 12; i++) {
-			iColor = _gameStateMickey.nFrame + i;
+			uint8 iColor = _gameStateMickey.nFrame + i;
 			if (iColor > 15)
 				iColor -= 15;
 
-			objLight[1] = iColor;
-			objLight[4] += 7;
+			// FIXME: this is not the correct animation pattern.
+			// the lights do not simply advance in a sequence from
+			// left to right in the original, they do something else.
+			lightPicture[1] = iColor; // change light color
+			lightPicture[4] += 7;     // increase x coordinate
 
-			_picture->setPictureData(objLight);
-			_picture->setPictureFlags(kPicFCircle);
-			_picture->drawPicture();
+			_picture->setMaxStep(0);
+			_picture->setOffset(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0);
+			_picture->decodePictureFromBuffer(lightPicture, sizeof(lightPicture), false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 		}
-		_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-
+		_picture->showPicture(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 
 		_gameStateMickey.nFrame--;
 		if (_gameStateMickey.nFrame < 0)
 			_gameStateMickey.nFrame = 15;
 
-		playSound(IDI_MSA_SND_PRESS_BLUE);
+		// play the spaceship beep but don't process events during playback.
+		// this sound plays during menu usage, so events must not be consumed
+		// while waiting or else inputs will be dropped. playing this sound
+		// does create an input lag, but that is what happened in the original.
+		playSound(IDI_MSA_SND_PRESS_BLUE, kWaitBlock);
 	}
 	break;
 
@@ -833,7 +796,7 @@ void MickeyEngine::drawRoomAnimation() {
 
 		// draw crystal
 		if (_gameStateMickey.iRoom == IDI_MSA_XTAL_ROOM_XY[_gameStateMickey.iPlanet][0]) {
-			if (!_gameStateMickey.fHasXtal) {
+			if (isCrystalOnCurrentPlanet()) {
 				switch (_gameStateMickey.iPlanet) {
 				case IDI_MSA_PLANET_VENUS:
 					if (_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] != 2)
@@ -855,10 +818,6 @@ void MickeyEngine::drawRoomAnimation() {
 }
 
 void MickeyEngine::drawRoom() {
-	uint8 buffer[512];
-	int pBuf = 0;
-	int nObjs;
-
 	// Draw room picture
 	if (_gameStateMickey.iRoom == IDI_MSA_PIC_TITLE) {
 		drawPic(IDI_MSA_PIC_TITLE);
@@ -878,10 +837,12 @@ void MickeyEngine::drawRoom() {
 	// Draw room objects
 	if (_gameStateMickey.iRoom < IDI_MSA_MAX_ROOM &&
 		_gameStateMickey.iRmObj[_gameStateMickey.iRoom] != IDI_MSA_OBJECT_NONE) {
+		uint8 buffer[512];
 		readOfsData(IDO_MSA_ROOM_OBJECT_XY_OFFSETS,
 		            _gameStateMickey.iRmObj[_gameStateMickey.iRoom], buffer, sizeof(buffer));
 
-		nObjs = buffer[pBuf++];
+		int pBuf = 0;
+		int nObjs = buffer[pBuf++];
 
 		for (int iObj = 0; iObj < nObjs; iObj++) {
 			drawObj((ENUM_MSA_OBJECT)buffer[pBuf], buffer[pBuf + 1], buffer[pBuf + 2]);
@@ -894,23 +855,18 @@ void MickeyEngine::drawRoom() {
 }
 
 // Straight mapping, CGA colors to CGA
-const byte BCGColorMappingCGAToCGA[4] = {
+static const byte BCGColorMappingCGAToCGA[4] = {
 	0, 1, 2, 3
 };
 
 // Mapping table to map CGA colors to EGA
-const byte BCGColorMappingCGAToEGA[4] = {
+static const byte BCGColorMappingCGAToEGA[4] = {
 	0, 11, 13, 15
 };
 
-void MickeyEngine::drawLogo() {
+bool MickeyEngine::drawLogo() {
 	const int width = 80;
 	const int height = 85 * 2;
-	byte  color1, color2, color3, color4;
-	byte  *fileBuffer = nullptr;
-	uint32 fileBufferSize = 0;
-	byte  *dataBuffer;
-	byte   curByte;
 	const byte *BCGColorMapping = BCGColorMappingCGAToEGA;
 
 	// disable color mapping in case we are in CGA mode
@@ -919,28 +875,30 @@ void MickeyEngine::drawLogo() {
 
 	// read logos.bcg
 	Common::File infile;
-	if (!infile.open(IDS_MSA_PATH_LOGO))
-		return;
+	if (!infile.open(IDS_MSA_PATH_LOGO)) {
+		warning("%s: file not found", IDS_MSA_PATH_LOGO);
+		return false;
+	}
 
-	fileBufferSize = infile.size();
-	fileBuffer = new byte[fileBufferSize];
+	uint32 fileBufferSize = infile.size();
+	if (fileBufferSize < (width * height / 4)) {
+		warning("%s: truncated file: %d", IDS_MSA_PATH_LOGO, fileBufferSize);
+		return false;
+	}
+	byte *fileBuffer = new byte[fileBufferSize];
 	infile.read(fileBuffer, fileBufferSize);
-	infile.close();
-
-	if (fileBufferSize < (width * height / 4))
-		error("logos.bcg: unexpected end of file");
 
 	// Show BCG picture
 	// It's basically uncompressed CGA 4-color data (4 pixels per byte)
-	dataBuffer = fileBuffer;
+	byte *dataBuffer = fileBuffer;
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			curByte = *dataBuffer++;
+			byte curByte = *dataBuffer++;
 
-			color1 = BCGColorMapping[(curByte >> 6) & 0x03];
-			color2 = BCGColorMapping[(curByte >> 4) & 0x03];
-			color3 = BCGColorMapping[(curByte >> 2) & 0x03];
-			color4 = BCGColorMapping[(curByte >> 0) & 0x03];
+			byte color1 = BCGColorMapping[(curByte >> 6) & 0x03];
+			byte color2 = BCGColorMapping[(curByte >> 4) & 0x03];
+			byte color3 = BCGColorMapping[(curByte >> 2) & 0x03];
+			byte color4 = BCGColorMapping[(curByte >> 0) & 0x03];
 
 			_gfx->putPixelOnDisplay(x * 4 + 0, y, color1);
 			_gfx->putPixelOnDisplay(x * 4 + 1, y, color2);
@@ -952,6 +910,7 @@ void MickeyEngine::drawLogo() {
 	_gfx->copyDisplayToScreen();
 
 	delete[] fileBuffer;
+	return true;
 }
 
 void MickeyEngine::animate() {
@@ -972,20 +931,18 @@ void MickeyEngine::printRoomDesc() {
 
 bool MickeyEngine::loadGame() {
 	Common::InSaveFile *infile;
-	char szFile[256] = {0};
+	char fileName[256] = {0};
 	bool diskerror = true;
-	int sel;
-	int saveVersion = 0;
 	int i = 0;
 
 	while (diskerror) {
-		sel = choose1to9(IDO_MSA_LOAD_GAME[1]);
+		int sel = choose1to9(IDO_MSA_LOAD_GAME[1]);
 		if (!sel)
 			return false;
 
 		// load game
-		Common::sprintf_s(szFile, "%s.s%02d", getTargetName().c_str(), sel);
-		if (!(infile = getSaveFileMan()->openForLoading(szFile))) {
+		Common::sprintf_s(fileName, "%s.s%02d", getTargetName().c_str(), sel);
+		if (!(infile = getSaveFileMan()->openForLoading(fileName))) {
 			printLine("PLEASE CHECK THE DISK DRIVE");
 
 			if (getSelection(kSelAnyKey) == 0)
@@ -993,17 +950,16 @@ bool MickeyEngine::loadGame() {
 		} else {
 			if (infile->readUint32BE() != MKTAG('M', 'I', 'C', 'K')) {
 				warning("MickeyEngine::loadGame wrong save game format");
+				delete infile;
 				return false;
 			}
 
-			saveVersion = infile->readByte();
-			if (saveVersion < 2) {
-				warning("The planet data in this save game is corrupted. Load aborted");
+			byte saveVersion = infile->readByte();
+			if (saveVersion != MSA_SAVEGAME_VERSION) { // currently only one valid version
+				warning("MickeyEngine::loadGame unknown save version: %d", saveVersion);
+				delete infile;
 				return false;
 			}
-
-			if (saveVersion != MSA_SAVEGAME_VERSION)
-				warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, MSA_SAVEGAME_VERSION);
 
 			_gameStateMickey.iRoom = infile->readByte();
 			_gameStateMickey.iPlanet = infile->readByte();
@@ -1072,9 +1028,8 @@ bool MickeyEngine::loadGame() {
 
 void MickeyEngine::saveGame() {
 	Common::OutSaveFile *outfile;
-	char szFile[256] = {0};
+	char fileName[256] = {0};
 	bool diskerror = true;
-	int sel;
 	int i = 0;
 
 	bool fOldDisk = chooseY_N(IDO_MSA_SAVE_GAME[0], false);
@@ -1088,7 +1043,7 @@ void MickeyEngine::saveGame() {
 		return;
 
 	while (diskerror) {
-		sel = choose1to9(IDO_MSA_SAVE_GAME[3]);
+		int sel = choose1to9(IDO_MSA_SAVE_GAME[3]);
 		if (!sel)
 			return;
 
@@ -1101,8 +1056,8 @@ void MickeyEngine::saveGame() {
 			return;
 
 		// save game
-		Common::sprintf_s(szFile, "%s.s%02d", getTargetName().c_str(), sel);
-		if (!(outfile = getSaveFileMan()->openForSaving(szFile))) {
+		Common::sprintf_s(fileName, "%s.s%02d", getTargetName().c_str(), sel);
+		if (!(outfile = getSaveFileMan()->openForSaving(fileName))) {
 			printLine("PLEASE CHECK THE DISK DRIVE");
 
 			if (getSelection(kSelAnyKey) == 0)
@@ -1170,7 +1125,7 @@ void MickeyEngine::saveGame() {
 			outfile->finalize();
 
 			if (outfile->err())
-				warning("Can't write file '%s'. (Disk full?)", szFile);
+				warning("Can't write file '%s'. (Disk full?)", fileName);
 
 			diskerror = false;
 			delete outfile;
@@ -1182,21 +1137,19 @@ void MickeyEngine::saveGame() {
 
 void MickeyEngine::showPlanetInfo() {
 	for (int i = 0; i < 4; i++) {
-		printExeStr(IDO_MSA_PLANET_INFO[_gameStateMickey.iPlanet][i]);
-		waitAnyKey();
+		printExeMsg(IDO_MSA_PLANET_INFO[_gameStateMickey.iPlanet][i]);
 	}
 }
 
 void MickeyEngine::printStory() {
 	char buffer[IDI_MSA_LEN_STORY] = {0};
 	char szLine[41] = {0};
-	int iRow;
 	int pBuf = 0;
 
 	readExe(IDO_MSA_GAME_STORY, (uint8 *)buffer, sizeof(buffer));
 
 	clearScreen(IDA_DEFAULT);
-	for (iRow = 0; iRow < 25; iRow++) {
+	for (int iRow = 0; iRow < 25; iRow++) {
 		Common::strlcpy(szLine, buffer + pBuf, 41);
 		drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
@@ -1204,7 +1157,7 @@ void MickeyEngine::printStory() {
 	waitAnyKey();
 
 	clearScreen(IDA_DEFAULT);
-	for (iRow = 0; iRow < 21; iRow++) {
+	for (int iRow = 0; iRow < 21; iRow++) {
 		Common::strlcpy(szLine, buffer + pBuf, 41);
 		drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
@@ -1255,7 +1208,7 @@ void MickeyEngine::pressOB(int iButton) {
 	}
 
 	// print pressed buttons
-	printLine("MICKEY HAS PRESSED:                  ");
+	printExeStr(IDO_MSA_MICKEY_HAS_PRESSED);
 	drawStr(20, 22, IDA_DEFAULT, szButtons);
 	waitAnyKey();
 }
@@ -1267,10 +1220,6 @@ void MickeyEngine::insertDisk(int iDisk) {
 }
 
 void MickeyEngine::gameOver() {
-	// We shouldn't run the game over segment if we're quitting.
-	if (shouldQuit())
-		return;
-
 	drawPic(IDI_MSA_PIC_EARTH_SHIP_LEAVING);
 	printExeMsg(IDO_MSA_GAME_OVER[3]);
 	playSound(IDI_MSA_SND_GAME_OVER);
@@ -1284,11 +1233,11 @@ void MickeyEngine::gameOver() {
 		printExeMsg(IDO_MSA_GAME_OVER[7]);
 	}
 
-	waitAnyKey();
+	_isGameOver = true;
 }
 
 void MickeyEngine::flipSwitch() {
-	if (_gameStateMickey.fHasXtal || _gameStateMickey.nXtals) {
+	if (_gameStateMickey.nXtals) {
 		if (!_gameStateMickey.fStoryShown)
 			printStory();
 
@@ -1390,29 +1339,30 @@ void MickeyEngine::inventory() {
 
 void MickeyEngine::intro() {
 	// Draw Sierra logo
-	drawLogo();     // Original does not even show this, so we skip it too
-	waitAnyKey();       // Not in the original, but needed so that the logo is visible
+	if (drawLogo()) {          // Original does not show the logo, we do if available
+		waitAnyKey();          // Not in the original, but needed so that the logo is visible
+		_gfx->clearDisplay(0); // Logo is larger than picture area, clear entire screen
+	}
 
 	// draw title picture
 	_gameStateMickey.iRoom = IDI_MSA_PIC_TITLE;
 	drawRoom();
 
-	// show copyright and play theme
+	// show copyright
 	printExeMsg(IDO_MSA_COPYRIGHT);
 
 	// Quit if necessary
 	if (shouldQuit())
 		return;
 
-	playSound(IDI_MSA_SND_THEME);
+	// play theme
+	playSound(IDI_MSA_SND_THEME, kWaitAllowInterrupt);
 
 	// load game
 	_gameStateMickey.fIntro = true;
 	if (chooseY_N(IDO_MSA_LOAD_GAME[0], true)) {
 		if (loadGame()) {
-			_gameStateMickey.iPlanet = IDI_MSA_PLANET_EARTH;
 			_gameStateMickey.fIntro = false;
-			_gameStateMickey.iRoom = IDI_MSA_PIC_SHIP_CORRIDOR;
 			return;
 		}
 	}
@@ -1439,7 +1389,7 @@ void MickeyEngine::intro() {
 		playSound(IDI_MSA_SND_PRESS_BLUE);
 
 		//Set screen to white
-		_gfx->clearDisplay(15);
+		_gfx->clearDisplay(getWhite());
 		_gfx->updateScreen();
 
 		_system->delayMillis(IDI_MSA_ANIM_DELAY);
@@ -1773,14 +1723,14 @@ bool MickeyEngine::parse(int cmd, int arg) {
 	// MERCURY
 
 	case IDI_MSA_ACTION_GET_XTAL_MERCURY:
-		if (_gameStateMickey.fHasXtal) {
-			_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 2;
-			printDatMessage(32);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			if (_gameStateMickey.fItem[IDI_MSA_ITEM_SUNGLASSES]) {
 				_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 1;
 			}
 			printDatMessage(arg);
+		} else {
+			_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 2;
+			printDatMessage(32);
 		}
 		break;
 	case IDI_MSA_ACTION_GIVE_SUNGLASSES:
@@ -1805,16 +1755,19 @@ bool MickeyEngine::parse(int cmd, int arg) {
 
 		break;
 	case IDI_MSA_ACTION_USE_MATTRESS:
-		_gameStateMickey.iRoom = IDI_MSA_PIC_SATURN_ISLAND;
-
 		printDatMessage(arg);
+		
+		// must set room after printDatMessage, or else the crystal from
+		// the next room will appear and animate while still displaying
+		// the picture for the current room
+		_gameStateMickey.iRoom = IDI_MSA_PIC_SATURN_ISLAND;
 
 		return true;
 	case IDI_MSA_ACTION_GET_XTAL_SATURN:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(29);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			getXtal(arg);
+		} else {
+			printDatMessage(29);
 		}
 		break;
 	case IDI_MSA_ACTION_LEAVE_ISLAND:
@@ -1827,13 +1780,13 @@ bool MickeyEngine::parse(int cmd, int arg) {
 	// PLUTO
 
 	case IDI_MSA_ACTION_GET_XTAL_PLUTO:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(19);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			if (_gameStateMickey.fItem[IDI_MSA_ITEM_BONE]) {
 				_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 1;
 			}
 			printDatMessage(arg);
+		} else {
+			printDatMessage(19);
 		}
 		break;
 	case IDI_MSA_ACTION_GIVE_BONE:
@@ -1859,9 +1812,7 @@ bool MickeyEngine::parse(int cmd, int arg) {
 		}
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_JUPITER:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(15);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			switch (_gameStateMickey.nRocks) {
 			case 0:
 				if (_gameStateMickey.fItem[IDI_MSA_ITEM_ROCK]) {
@@ -1881,6 +1832,8 @@ bool MickeyEngine::parse(int cmd, int arg) {
 			default:
 				break;
 			}
+		} else {
+			printDatMessage(15);
 		}
 		break;
 	case IDI_MSA_ACTION_THROW_ROCK:
@@ -1917,17 +1870,17 @@ bool MickeyEngine::parse(int cmd, int arg) {
 
 		return true;
 	case IDI_MSA_ACTION_PLUTO_DIG:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(21);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			getXtal(arg);
+		} else {
+			printDatMessage(21);
 		}
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_MARS:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(23);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			printDatMessage(arg);
+		} else {
+			printDatMessage(23);
 		}
 		break;
 
@@ -1973,13 +1926,13 @@ bool MickeyEngine::parse(int cmd, int arg) {
 		}
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_URANUS:
-		if (_gameStateMickey.fHasXtal) {
-			printDatMessage(34);
-		} else {
+		if (isCrystalOnCurrentPlanet()) {
 			if (_gameStateMickey.fItem[IDI_MSA_ITEM_CROWBAR]) {
 				_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] = 1;
 			}
 			printDatMessage(arg);
+		} else {
+			printDatMessage(34);
 		}
 		break;
 	case IDI_MSA_ACTION_USE_CROWBAR_1:
@@ -2005,10 +1958,12 @@ bool MickeyEngine::parse(int cmd, int arg) {
 		break;
 	case IDI_MSA_ACTION_GO_PLANET:
 		if (!_gameStateMickey.fShipDoorOpen) {
-			if ((_gameStateMickey.nXtals == IDI_MSA_MAX_PLANET) && (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH))
+			if ((_gameStateMickey.nXtals == IDI_MSA_MAX_PLANET) && (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH)) {
 				gameOver();
+				return true;
+			}
+
 			if ((_gameStateMickey.iPlanet == _gameStateMickey.iPlanetXtal[_gameStateMickey.nXtals]) || (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH)) {
-				_gameStateMickey.fHasXtal = false;
 				_gameStateMickey.iRoom = IDI_MSA_HOME_PLANET[_gameStateMickey.iPlanet];
 
 				if (_gameStateMickey.iPlanet != IDI_MSA_PLANET_EARTH)
@@ -2203,9 +2158,14 @@ void MickeyEngine::waitAnyKey(bool anim) {
 	while (!shouldQuit()) {
 		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				// don't interrupt if a modifier is pressed
+				if (event.kbd.flags & Common::KBD_NON_STICKY) {
+					continue;
+				}
+				// fall through
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 			case Common::EVENT_QUIT:
-			case Common::EVENT_KEYDOWN:
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_RBUTTONUP:
 				return;
@@ -2239,36 +2199,29 @@ void MickeyEngine::debugGotoRoom(int room) {
 }
 
 MickeyEngine::MickeyEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
+	_picture = nullptr;
+	_isGameOver = false;
 	setDebugger(new MickeyConsole(this));
 }
 
 MickeyEngine::~MickeyEngine() {
+	delete _picture;
 	//_console deleted by Engine
 }
 
 void MickeyEngine::init() {
+	_picture = new PictureMgr_Mickey_Winnie(this, _gfx);
+
 	uint8 buffer[512];
 
 	// clear game struct
 	memset(&_gameStateMickey, 0, sizeof(_gameStateMickey));
 	memset(&_gameStateMickey.iItem, IDI_MSA_OBJECT_NONE, sizeof(_gameStateMickey.iItem));
-	// read room extended desc flags
-	//readExe(IDO_MSA_ROOM_TEXT, buffer, sizeof(buffer));
-	//memcpy(_gameStateMickey.fRmTxt, buffer, sizeof(_gameStateMickey.fRmTxt));
 
 	// read room extended desc offsets
 	readExe(IDO_MSA_ROOM_TEXT_OFFSETS, buffer, sizeof(buffer));
-	memcpy(_gameStateMickey.oRmTxt, buffer, sizeof(_gameStateMickey.oRmTxt));
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++)
-		_gameStateMickey.oRmTxt[i] = buffer[i * 2] + 256 * buffer[i * 2 + 1];
-
-	// read room object indices
-	//readExe(IDO_MSA_ROOM_OBJECT, buffer, sizeof(buffer));
-	//memcpy(_gameStateMickey.iRmObj, buffer, sizeof(_gameStateMickey.iRmObj));
-
-	// read room picture indices
-	//readExe(IDO_MSA_ROOM_PICTURE, buffer, sizeof(buffer));
-	//memcpy(_gameStateMickey.iRmPic, buffer, sizeof(_gameStateMickey.iRmPic));
+		_gameStateMickey.oRmTxt[i] = READ_LE_UINT16(&buffer[i * 2]);
 
 	// read room menu patch indices
 	readExe(IDO_MSA_ROOM_MENU_FIX, buffer, sizeof(buffer));
@@ -2293,7 +2246,6 @@ void MickeyEngine::init() {
 	_gameStateMickey.fHasXtal = true;
 	_gameStateMickey.nXtals = 9;
 	_gameStateMickey.fItemUsed[IDI_MSA_ITEM_LETTER] = true;
-
 #endif
 
 	setFlag(VM_FLAG_SOUND_ON, true); // enable sound
@@ -2306,7 +2258,7 @@ Common::Error MickeyEngine::go() {
 	intro();
 
 	// Game loop
-	while (!shouldQuit()) {
+	while (!shouldQuit() && !_isGameOver) {
 		drawRoom();
 
 		if (_gameStateMickey.fIntro) {
@@ -2346,9 +2298,25 @@ Common::Error MickeyEngine::go() {
 		_gameStateMickey.nFrame = 0;
 	}
 
-	gameOver();
-
 	return Common::kNoError;
+}
+
+bool MickeyEngine::isCrystalOnCurrentPlanet() const {
+	// Earth is a special case, because the planet list may not have been
+	// initialized yet. Earth is always the first planet, so if no crystals
+	// have been gotten yet, then earth's crystal must still be there.
+	if (_gameStateMickey.iPlanet == IDI_MSA_PLANET_EARTH) {
+		return (_gameStateMickey.nXtals == 0);
+	}
+
+	if (_gameStateMickey.fPlanetsInitialized) {
+		for (uint8 i = 1; i < IDI_MSA_MAX_DAT; i++) {
+			if (_gameStateMickey.iPlanetXtal[i] == _gameStateMickey.iPlanet) {
+				return (_gameStateMickey.nXtals <= i);
+			}
+		}
+	}
+	return false;
 }
 
 } // End of namespace Agi

@@ -33,6 +33,9 @@
 #include "ROMInfo.h"
 #include "TVA.h"
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
 #if MT32EMU_MONITOR_SYSEX > 0
 #include "mmath.h"
 #endif
@@ -213,10 +216,10 @@ public:
 		tmpBuffers(createTmpBuffers())
 	{}
 
-	void render(IntSample *stereoStream, Bit32u len);
-	void render(FloatSample *stereoStream, Bit32u len);
-	void renderStreams(const DACOutputStreams<IntSample> &streams, Bit32u len);
-	void renderStreams(const DACOutputStreams<FloatSample> &streams, Bit32u len);
+	void render(IntSample *stereoStream, Bit32u len) override;
+	void render(FloatSample *stereoStream, Bit32u len) override;
+	void renderStreams(const DACOutputStreams<IntSample> &streams, Bit32u len) override;
+	void renderStreams(const DACOutputStreams<FloatSample> &streams, Bit32u len) override;
 
 	template <class O>
 	void doRenderAndConvert(O *stereoStream, Bit32u len);
@@ -575,7 +578,7 @@ bool Synth::loadControlROM(const ROMImage &controlROMImage) {
 	// Control ROM successfully loaded, now check whether it's a known type
 	controlROMMap = NULL;
 	controlROMFeatures = NULL;
-	for (unsigned int i = 0; i < sizeof(ControlROMMaps) / sizeof(ControlROMMaps[0]); i++) {
+	for (unsigned int i = 0; i < ARRAYSIZE(ControlROMMaps); i++) {
 		if (strcmp(controlROMInfo->shortName, ControlROMMaps[i].shortName) == 0) {
 			controlROMMap = &ControlROMMaps[i];
 			controlROMFeatures = &controlROMMap->featureSet;
@@ -1978,13 +1981,13 @@ public:
 /** Storage space for SysEx data is allocated dynamically on demand and is disposed lazily. */
 class DynamicSysexDataStorage : public MidiEventQueue::SysexDataStorage {
 public:
-	Bit8u *allocate(Bit32u sysexLength) {
+	Bit8u *allocate(Bit32u sysexLength) override {
 		return new Bit8u[sysexLength];
 	}
 
-	void reclaimUnused(const Bit8u *, Bit32u) {}
+	void reclaimUnused(const Bit8u *, Bit32u) override {}
 
-	void dispose(const Bit8u *sysexData, Bit32u) {
+	void dispose(const Bit8u *sysexData, Bit32u) override {
 		delete[] sysexData;
 	}
 };
@@ -2007,7 +2010,7 @@ public:
 		delete[] storageBuffer;
 	}
 
-	Bit8u *allocate(Bit32u sysexLength) {
+	Bit8u *allocate(Bit32u sysexLength) override {
 		Bit32u myStartPosition = startPosition;
 		Bit32u myEndPosition = endPosition;
 
@@ -2033,7 +2036,7 @@ public:
 		return storageBuffer + myEndPosition;
 	}
 
-	void reclaimUnused(const Bit8u *sysexData, Bit32u sysexLength) {
+	void reclaimUnused(const Bit8u *sysexData, Bit32u sysexLength) override {
 		if (sysexData == NULL) return;
 		Bit32u allocatedPosition = startPosition;
 		if (storageBuffer + allocatedPosition == sysexData) {
@@ -2044,7 +2047,7 @@ public:
 		}
 	}
 
-	void dispose(const Bit8u *, Bit32u) {}
+	void dispose(const Bit8u *, Bit32u) override {}
 
 private:
 	Bit8u * const storageBuffer;

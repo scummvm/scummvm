@@ -28,13 +28,11 @@ namespace Ultima {
 namespace Ultima4 {
 
 /*-------------------------------------------------------------------*/
-U4ImageDecoder::U4ImageDecoder(int width, int height, int bpp) {
+U4ImageDecoder::U4ImageDecoder(int width, int height, int bpp) : _palette(0) {
 	_width = width;
 	_height = height;
 	_bpp = bpp;
 	_surface = nullptr;
-	_palette = nullptr;
-	_paletteColorCount = 0;
 }
 
 U4ImageDecoder::~U4ImageDecoder() {
@@ -48,9 +46,7 @@ void U4ImageDecoder::destroy() {
 		_surface = nullptr;
 	}
 
-	// _palette is owned by U4PaletteLoader
-	_palette = nullptr;
-	_paletteColorCount = 0;
+	_palette.clear();
 }
 
 void U4ImageDecoder::setFromRawData(const byte *rawData) {
@@ -98,17 +94,10 @@ Graphics::PixelFormat U4ImageDecoder::getPixelFormatForBpp() const {
 	case 4:
 	case 8:
 		return Graphics::PixelFormat::createFormatCLUT8();
-#ifdef SCUMM_LITTLE_ENDIAN
 	case 24:
-		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+		return Graphics::PixelFormat::createFormatRGB24();
 	case 32:
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#else
-	case 24:
-		return Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
-	case 32:
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#endif
+		return Graphics::PixelFormat::createFormatRGBA32();
 	default:
 		error("invalid bits-per-pixel (bpp): %d", _bpp);
 	}

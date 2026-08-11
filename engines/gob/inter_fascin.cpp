@@ -136,11 +136,11 @@ void Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
 
 		// WORKAROUND: The script of the PC version of Fascination, when the protection check
 		// fails, writes on purpose everywhere in the memory in order to hang the computer.
-		// This results in a crash in Scummvm. This workaround avoids that crash.
+		// This results in a crash in ScummVM. This workaround avoids that crash.
 		if (_vm->getPlatform() == Common::kPlatformDOS) {
 			if (((blockPos == 3533) && _vm->isCurrentTot("INTRO1.TOT")) ||
 			    ((blockPos == 3519) && _vm->isCurrentTot("INTRO2.TOT")) ||
-			    ((blockPos == 3265) && _vm->isCurrentTot("INTRO2.TOT")))  //PC Hebrew
+			    ((blockPos == 3265) && _vm->isCurrentTot("INTRO2.TOT")))  // PC Hebrew
 				_terminate = 1;
 		}
 	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());
@@ -165,7 +165,7 @@ void Inter_Fascination::oFascin_assign(OpFuncParams &params) {
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
-		int16 result;
+		int32 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {
@@ -320,23 +320,24 @@ void Inter_Fascination::oFascin_setWinSize() {
 }
 
 void Inter_Fascination::oFascin_closeWin() {
-	int16 id;
+	int32 id;
 	_vm->_game->_script->evalExpr(&id);
-	_vm->_draw->activeWin(id);
-	_vm->_draw->closeWin(id);
+	_vm->_draw->activeWin((int16) id);
+	_vm->_draw->closeWin((int16) id);
 }
 
 void Inter_Fascination::oFascin_activeWin() {
-	int16 id;
+	int32 id;
 	_vm->_game->_script->evalExpr(&id);
-	_vm->_draw->activeWin(id);
+	_vm->_draw->activeWin((int16) id);
 }
 
 void Inter_Fascination::oFascin_openWin() {
-	int16 retVal, id;
+	int16 retVal;
+	int32 id;
 	_vm->_game->_script->evalExpr(&id);
 	retVal = _vm->_game->_script->readVarIndex();
-	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin(id));
+	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin((int16) id));
 }
 
 void Inter_Fascination::oFascin_initCursorAnim() {
@@ -347,15 +348,15 @@ void Inter_Fascination::oFascin_initCursorAnim() {
 }
 
 void Inter_Fascination::oFascin_setRenderFlags() {
-	int16 expr;
+	int32 expr;
 	_vm->_game->_script->evalExpr(&expr);
-	_vm->_draw->_renderFlags = expr;
+	_vm->_draw->_renderFlags = (int16)expr;
 }
 
 void Inter_Fascination::oFascin_setWinFlags() {
-	int16 expr;
+	int32 expr;
 	_vm->_game->_script->evalExpr(&expr);
-	_vm->_global->_curWinId = expr;
+	_vm->_global->_curWinId = (int16) expr;
 }
 
 void Inter_Fascination::oFascin_playProtracker(OpGobParams &params) {

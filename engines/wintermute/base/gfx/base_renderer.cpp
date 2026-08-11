@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/dcgf.h"
 
 #ifdef ENABLE_WME3D
 #include "engines/wintermute/base/gfx/xmodel.h"
@@ -50,26 +51,8 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 	_windowed = true;
 	_forceAlphaColor = 0x00;
 
-	_indicatorDisplay = false;
-	_indicatorColor = BYTETORGBA(255, 0, 0, 128);
-	_indicatorProgress = 0;
-	_indicatorX = -1;
-	_indicatorY = -1;
-	_indicatorWidth = -1;
-	_indicatorHeight = 8;
-	_indicatorWidthDrawn = 0;
-
-	_loadImageName = "";
-	_saveImageName = "";
-	_saveLoadImage = nullptr;
-	_loadInProgress = false;
-	_hasDrawnSaveLoadImage = false;
-
-	_saveImageX = _saveImageY = 0;
-	_loadImageX = _loadImageY = 0;
-
 	_width = _height = _bPP = 0;
-	_monitorRect.setEmpty();
+	BasePlatform::setRectEmpty(&_monitorRect);
 
 	_realWidth = _realHeight = 0;
 	_drawOffsetX = _drawOffsetY = 0;
@@ -79,7 +62,6 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 BaseRenderer::~BaseRenderer() {
 	deleteRectList();
 	unclipCursor();
-	delete _saveLoadImage;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -87,123 +69,27 @@ void BaseRenderer::initLoop() {
 	deleteRectList();
 }
 
-void BaseRenderer::initIndicator() {
-	if (_indicatorY == -1) {
-		_indicatorY = _height - _indicatorHeight;
-	}
-	if (_indicatorX == -1) {
-		_indicatorX = 0;
-	}
-	if (_indicatorWidth == -1) {
-		_indicatorWidth = _width;
-	}
-}
-
-void BaseRenderer::setIndicator(int width, int height, int x, int y, uint32 color) {
-	_indicatorWidth = width;
-	_indicatorHeight = height;
-	_indicatorX = x;
-	_indicatorY = y;
-	_indicatorColor = color;
-}
-
-void BaseRenderer::setIndicatorVal(int value) {
-	bool redisplay = (_indicatorProgress != value);
-	_indicatorProgress = value;
-	if (redisplay)
-		displayIndicator();
-}
-
-void BaseRenderer::setLoadingScreen(const char *filename, int x, int y) {
-	if (filename == nullptr) {
-		_saveImageName = "";
-	} else {
-		_loadImageName = filename;
-	}
-	_loadImageX = x;
-	_loadImageY = y;
-}
-
-void BaseRenderer::setSaveImage(const char *filename, int x, int y) {
-	if (filename == nullptr) {
-		_saveImageName = "";
-	} else {
-		_saveImageName = filename;
-	}
-	_saveImageX = x;
-	_saveImageY = y;
-}
-
-void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
-	_indicatorDisplay = true;
-	_indicatorProgress = 0;
-	_hasDrawnSaveLoadImage = false;
-
-	if (isSaving && !quickSave) {
-		delete _saveLoadImage;
-		_saveLoadImage = nullptr;
-		if (_saveImageName.size()) {
-			_saveLoadImage = createSurface();
-
-			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
-				delete _saveLoadImage;
-				_saveLoadImage = nullptr;
-			}
-		}
-	} else {
-		delete _saveLoadImage;
-		_saveLoadImage = nullptr;
-		if (_loadImageName.size()) {
-			_saveLoadImage = createSurface();
-
-			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
-				delete _saveLoadImage;
-				_saveLoadImage = nullptr;
-			}
-		}
-		_loadInProgress = true;
-	}
-}
-
-void BaseRenderer::endSaveLoad() {
-	_loadInProgress = false;
-	_indicatorDisplay = false;
-	_indicatorWidthDrawn = 0;
-
-	delete _saveLoadImage;
-	_saveLoadImage = nullptr;
-}
-
-void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {
-	persistMgr->transferString(TMEMBER(_loadImageName));
-	persistMgr->transferString(TMEMBER(_saveImageName));
-	persistMgr->transferSint32(TMEMBER(_saveImageX));
-	persistMgr->transferSint32(TMEMBER(_saveImageY));
-	persistMgr->transferSint32(TMEMBER(_loadImageX));
-	persistMgr->transferSint32(TMEMBER(_loadImageY));
-}
-
 //////////////////////////////////////////////////////////////////////
 BaseObject *BaseRenderer::getObjectAt(int x, int y) {
-	Point32 point;
+	Common::Point32 point;
 	point.x = x;
 	point.y = y;
 
-	for (int i = _rectList.size() - 1; i >= 0; i--) {
+	for (int32 i = _rectList.getSize() - 1; i >= 0; i--) {
 		if (BasePlatform::ptInRect(&_rectList[i]->_rect, point)) {
 			if (_rectList[i]->_precise) {
 				// frame
 				if (_rectList[i]->_frame) {
-					int xx = (int)((_rectList[i]->_frame->getRect().left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
-					int yy = (int)((_rectList[i]->_frame->getRect().top  + y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
+					int xx = (int)((_rectList[i]->_frame->_rect.left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
+					int yy = (int)((_rectList[i]->_frame->_rect.top + y - _rectList[i]->_rect.top + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
 
 					if (_rectList[i]->_frame->_mirrorX) {
-						int width = _rectList[i]->_frame->getRect().right - _rectList[i]->_frame->getRect().left;
+						int width = _rectList[i]->_frame->_rect.right - _rectList[i]->_frame->_rect.left;
 						xx = width - xx;
 					}
 
 					if (_rectList[i]->_frame->_mirrorY) {
-						int height = _rectList[i]->_frame->getRect().bottom - _rectList[i]->_frame->getRect().top;
+						int height = _rectList[i]->_frame->_rect.bottom - _rectList[i]->_frame->_rect.top;
 						yy = height - yy;
 					}
 
@@ -213,7 +99,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 				}
 
 #ifdef ENABLE_WME3D
-				if (_rectList[i]->_xmodel) {
+				else if (_rectList[i]->_xmodel) {
 					if (!_rectList[i]->_xmodel->isTransparentAt(x, y)) {
 						return _rectList[i]->_owner;
 					}
@@ -236,10 +122,10 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderer::deleteRectList() {
-	for (uint32 i = 0; i < _rectList.size(); i++) {
+	for (int32 i = 0; i < _rectList.getSize(); i++) {
 		delete _rectList[i];
 	}
-	_rectList.clear();
+	_rectList.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -257,7 +143,7 @@ bool BaseRenderer::windowedBlt() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setup2D(bool Force) {
+bool BaseRenderer::setup2D(bool force) {
 	return STATUS_FAILED;
 }
 
@@ -269,11 +155,6 @@ bool BaseRenderer::setup3D(Camera3D *camera, bool force) {
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setupLines() {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return STATUS_FAILED;
 }
@@ -283,7 +164,7 @@ bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int wi
 	for (int i = 0; i < width; i++) {
 		drawLine(x1 + i, y1 + i, x2 - i,     y1 + i, color); // up
 		drawLine(x1 + i, y2 - i, x2 - i + 1, y2 - i, color); // down
-
+		
 		drawLine(x1 + i, y1 + i, x1 + i, y2 - i,     color); // left
 		drawLine(x2 - i, y1 + i, x2 - i, y2 - i + 1, color); // right
 	}
@@ -291,10 +172,14 @@ bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int wi
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
+bool BaseRenderer::fillRect(int x, int y, int w, int h, uint32 color) {
 	return STATUS_FAILED;
 }
 
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
+	return STATUS_FAILED;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setScreenViewport() {
@@ -302,7 +187,7 @@ bool BaseRenderer::setScreenViewport() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setViewport(Rect32 *rect) {
+bool BaseRenderer::setViewport(Common::Rect32 *rect) {
 	return setViewport(rect->left + _drawOffsetX,
 	                   rect->top + _drawOffsetY,
 	                   rect->right + _drawOffsetX,
@@ -314,7 +199,7 @@ bool BaseRenderer::clipCursor() {
 	// TODO: Reimplement this. (Currently aspect-indpendence isn't quite finished)
 	/*
 	if (!_windowed) {
-	    Rect32 rc;
+	    Common::Rect32 rc;
 	    GetWindowRect(_window, &rc);
 
 	    // if "maintain aspect ratio" is in effect, lock mouse to visible area
@@ -338,7 +223,7 @@ bool BaseRenderer::unclipCursor() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::pointInViewport(Point32 *p) {
+bool BaseRenderer::pointInViewport(Common::Point32 *p) {
 	if (p->x < _drawOffsetX) {
 		return false;
 	}
@@ -353,82 +238,6 @@ bool BaseRenderer::pointInViewport(Point32 *p) {
 	}
 
 	return true;
-}
-
-void BaseRenderer::addRectToList(BaseActiveRect *rect) {
-	_rectList.push_back(rect);
-}
-
-bool BaseRenderer::saveScreenShot(const Common::String &filename, int sizeX, int sizeY) {
-	BaseImage *image = takeScreenshot();
-	if (image) {
-		if (sizeX != 0 && sizeY != 0) {
-			if (!DID_SUCCEED(image->resize(sizeX, sizeY))) {
-				delete image;
-				return false;
-			}
-		}
-		image->saveBMPFile(filename);
-		delete image;
-		return true;
-	}
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::displayIndicator() {
-	if (!_indicatorDisplay || !_indicatorProgress) {
-		return STATUS_OK;
-	}
-
-#ifdef ENABLE_FOXTAIL
-	if (BaseEngine::instance().isFoxTail()) {
-		_hasDrawnSaveLoadImage = false;
-		fill(0, 0, 0);
-		displaySaveloadLines();
-		displaySaveloadImage();
-		forcedFlip();
-		return STATUS_OK;
-	}
-#endif
-
-	displaySaveloadImage();
-	displaySaveloadLines();
-	indicatorFlip();
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::displaySaveloadImage() {
-	if (_saveLoadImage && !_hasDrawnSaveLoadImage) {
-		Rect32 rc;
-		rc.setRect(0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
-		if (_loadInProgress) {
-			_saveLoadImage->displayTrans(_loadImageX, _loadImageY, rc);
-		} else {
-			_saveLoadImage->displayTrans(_saveImageX, _saveImageY, rc);
-		}
-		flip();
-		_hasDrawnSaveLoadImage = true;
-	}
-
-	return STATUS_OK;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::displaySaveloadLines() {
-	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) {
-		return STATUS_OK;
-	}
-	setupLines();
-	int curWidth = (int)(_indicatorWidth * (float)((float)_indicatorProgress / 100.0f));
-	for (int i = 0; i < _indicatorHeight; i++) {
-		drawLine(_indicatorX, _indicatorY + i, _indicatorX + curWidth, _indicatorY + i, _indicatorColor);
-	}
-
-	setup2D();
-	_indicatorWidthDrawn = curWidth;
-	return STATUS_OK;
 }
 
 } // End of namespace Wintermute

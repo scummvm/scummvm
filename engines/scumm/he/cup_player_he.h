@@ -83,26 +83,26 @@ protected:
 
 	Common::File _fileStream;
 
-	int _playbackRate;
-	int _width, _height;
+	int _playbackRate = 0;
+	int _width = 0, _height = 0;
 
-	uint8 _paletteData[256 * 3];
-	bool _paletteChanged;
-	uint8 *_offscreenBuffer;
+	uint8 _paletteData[256 * 3] = {};
+	bool _paletteChanged = false;
+	uint8 *_offscreenBuffer = nullptr;
 
-	uint8 *_inLzssBufData;
-	uint32 _inLzssBufSize;
-	uint8 *_outLzssBufData;
-	uint32 _outLzssBufSize;
+	uint8 *_inLzssBufData = nullptr;
+	uint32 _inLzssBufSize = 0;
+	uint8 *_outLzssBufData = nullptr;
+	uint32 _outLzssBufSize = 0;
 
-	uint32 _dataSize;
+	uint32 _dataSize = 0;
 
-	int _sfxCount;
-	uint8 *_sfxBuffer;
-	CUP_SfxChannel _sfxChannels[kSfxChannels];
-	CUP_Sfx _sfxQueue[kSfxQueueSize];
-	int _sfxQueuePos;
-	int _lastSfxChannel;
+	int _sfxCount = 0;
+	uint8 *_sfxBuffer = nullptr;
+	CUP_SfxChannel _sfxChannels[kSfxChannels] = {};
+	CUP_Sfx _sfxQueue[kSfxQueueSize] = {};
+	int _sfxQueuePos = 0;
+	int _lastSfxChannel = 0;
 };
 
 } // End of namespace Scumm

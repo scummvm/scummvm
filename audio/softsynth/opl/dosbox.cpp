@@ -235,29 +235,6 @@ void OPL::write(int port, int val) {
 	}
 }
 
-byte OPL::read(int port) {
-	switch (_type) {
-	case Config::kOpl2:
-		if (!(port & 1))
-			//Make sure the low bits are 6 on opl2
-			return _chip[0].read() | 0x6;
-		break;
-	case Config::kOpl3:
-		if (!(port & 1))
-			return _chip[0].read();
-		break;
-	case Config::kDualOpl2:
-		// Only return for the lower ports
-		if (port & 1)
-			return 0xff;
-		// Make sure the low bits are 6 on opl2
-		return _chip[(port >> 1) & 1].read() | 0x6;
-	default:
-		break;
-	}
-	return 0;
-}
-
 void OPL::writeReg(int r, int v) {
 	int tempReg = 0;
 	switch (_type) {
@@ -321,27 +298,44 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 }
 
 void OPL::generateSamples(int16 *buffer, int length) {
-	// For stereo OPL cards, we divide the sample count by 2,
-	// to match stereo AudioStream behavior.
-	if (_type != Config::kOpl2)
-		length >>= 1;
-
 	const uint bufferLength = 512;
 	int32 tempBuffer[bufferLength * 2];
 
-	if (_emulator->opl3Active) {
-		while (length > 0) {
-			const uint readSamples = MIN<uint>(length, bufferLength);
+	if (isStereo()) {
+		// For stereo OPL cards, we divide the sample count by 2,
+		// to match stereo AudioStream behavior.
+		length >>= 1;
+		if (_emulator->opl3Active) {
+			// DUAL_OPL2 or OPL3 in OPL3 mode (stereo)
+			while (length > 0) {
+				const uint readSamples = MIN<uint>(length, bufferLength);
+				const uint readSamples2 = (readSamples << 1);
 
-			_emulator->GenerateBlock3(readSamples, tempBuffer);
+				_emulator->GenerateBlock3(readSamples, tempBuffer);
 
-			for (uint i = 0; i < (readSamples << 1); ++i)
-				buffer[i] = tempBuffer[i];
+				for (uint i = 0; i < readSamples2; ++i)
+					buffer[i] = tempBuffer[i];
 
-			buffer += (readSamples << 1);
-			length -= readSamples;
+				buffer += readSamples2;
+				length -= readSamples;
+			}
+		} else {
+			// OPL3 (stereo) in OPL2 compatibility mode (mono)
+			while (length > 0) {
+				const uint readSamples = MIN<uint>(length, bufferLength);
+				const uint readSamples2 = (readSamples << 1);
+
+				_emulator->GenerateBlock2(readSamples, tempBuffer);
+
+				for (uint i = 0, j = 0; i < readSamples; ++i, j += 2)
+					buffer[j] = buffer[j + 1] = tempBuffer[i];
+
+				buffer += readSamples2;
+				length -= readSamples;
+			}
 		}
 	} else {
+		// OPL2
 		while (length > 0) {
 			const uint readSamples = MIN<uint>(length, bufferLength << 1);
 

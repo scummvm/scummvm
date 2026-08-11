@@ -19,18 +19,15 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include <curl/curl.h>
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/onedrive/onedrivecreatedirectoryrequest.h"
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivelistdirectoryrequest.h"
 #include "backends/cloud/onedrive/onedriveuploadrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/formats/json.h"
@@ -80,7 +77,7 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, const
 		return;
 	}
 
-	if (!Networking::CurlJsonRequest::jsonIsObject(json, "OneDriveStorage::infoInnerCallback")) {
+	if (!Networking::HttpJsonRequest::jsonIsObject(json, "OneDriveStorage::infoInnerCallback")) {
 		delete json;
 		delete outerCallback;
 		return;
@@ -91,18 +88,18 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, const
 	Common::String uid, displayName, email;
 	uint64 quotaUsed = 0, quotaAllocated = 26843545600LL; // 25 GB, because I actually don't know any way to find out the real one
 
-	if (Networking::CurlJsonRequest::jsonContainsObject(jsonInfo, "createdBy", "OneDriveStorage::infoInnerCallback")) {
+	if (Networking::HttpJsonRequest::jsonContainsObject(jsonInfo, "createdBy", "OneDriveStorage::infoInnerCallback")) {
 		Common::JSONObject createdBy = jsonInfo.getVal("createdBy")->asObject();
-		if (Networking::CurlJsonRequest::jsonContainsObject(createdBy, "user", "OneDriveStorage::infoInnerCallback")) {
+		if (Networking::HttpJsonRequest::jsonContainsObject(createdBy, "user", "OneDriveStorage::infoInnerCallback")) {
 			Common::JSONObject user = createdBy.getVal("user")->asObject();
-			if (Networking::CurlJsonRequest::jsonContainsString(user, "id", "OneDriveStorage::infoInnerCallback"))
+			if (Networking::HttpJsonRequest::jsonContainsString(user, "id", "OneDriveStorage::infoInnerCallback"))
 				uid = user.getVal("id")->asString();
-			if (Networking::CurlJsonRequest::jsonContainsString(user, "displayName", "OneDriveStorage::infoInnerCallback"))
+			if (Networking::HttpJsonRequest::jsonContainsString(user, "displayName", "OneDriveStorage::infoInnerCallback"))
 				displayName = user.getVal("displayName")->asString();
 		}
 	}
 
-	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(jsonInfo, "size", "OneDriveStorage::infoInnerCallback")) {
+	if (Networking::HttpJsonRequest::jsonContainsIntegerNumber(jsonInfo, "size", "OneDriveStorage::infoInnerCallback")) {
 		quotaUsed = jsonInfo.getVal("size")->asIntegerNumber();
 	}
 
@@ -131,7 +128,7 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 		return;
 	}
 
-	if (!Networking::CurlJsonRequest::jsonIsObject(json, "OneDriveStorage::fileInfoCallback")) {
+	if (!Networking::HttpJsonRequest::jsonIsObject(json, "OneDriveStorage::fileInfoCallback")) {
 		if (outerCallback)
 			(*outerCallback)(Networking::NetworkReadStreamResponse(response.request, nullptr));
 		delete json;
@@ -140,7 +137,7 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 	}
 
 	Common::JSONObject result = response.value->asObject();
-	if (!Networking::CurlJsonRequest::jsonContainsString(result, "@microsoft.graph.downloadUrl", "OneDriveStorage::fileInfoCallback")) {
+	if (!Networking::HttpJsonRequest::jsonContainsString(result, "@microsoft.graph.downloadUrl", "OneDriveStorage::fileInfoCallback")) {
 		warning("OneDriveStorage: downloadUrl not found in passed JSON");
 		debug(9, "%s", response.value->stringify().c_str());
 		if (outerCallback)
@@ -154,7 +151,7 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 	if (outerCallback)
 		(*outerCallback)(Networking::NetworkReadStreamResponse(
 			response.request,
-			new Networking::NetworkReadStream(url, nullptr, "")
+			Networking::NetworkReadStream::make(url, nullptr, "")
 		));
 
 	delete json;
@@ -173,9 +170,9 @@ Networking::Request *OneDriveStorage::upload(const Common::String &path, Common:
 
 Networking::Request *OneDriveStorage::streamFileById(const Common::String &path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
 	debug(9, "OneDrive: `download \"%s\"`", path.c_str());
-	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT_ID + ConnMan.urlEncode(path);
+	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT_ID + Common::percentEncodeString(path);
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, const Networking::NetworkReadStreamResponse &, const Networking::JsonResponse &>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
+	Networking::HttpJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: bearer " + _token);
 	return addRequest(request);
 }
@@ -190,7 +187,7 @@ Networking::Request *OneDriveStorage::createDirectory(const Common::String &path
 Networking::Request *OneDriveStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	debug(9, "OneDrive: `info`");
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, const StorageInfoResponse &, const Networking::JsonResponse &>(this, &OneDriveStorage::infoInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, ONEDRIVE_API_SPECIAL_APPROOT);
+	Networking::HttpJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, ONEDRIVE_API_SPECIAL_APPROOT);
 	request->addHeader("Authorization: bearer " + _token);
 	return addRequest(request);
 }

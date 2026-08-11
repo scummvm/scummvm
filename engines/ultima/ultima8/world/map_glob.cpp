@@ -19,9 +19,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
-
 #include "ultima/ultima8/world/map_glob.h"
+
+#include "common/stream.h"
+#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {

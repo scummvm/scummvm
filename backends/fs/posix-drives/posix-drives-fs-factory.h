@@ -57,7 +57,6 @@ protected:
 	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
 	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
-private:
 	typedef Common::Array<Common::String> DrivesArray;
 	struct StaticDrivesConfig : public DrivePOSIXFilesystemNode::Config {
 		StaticDrivesConfig(const DrivesPOSIXFilesystemFactory *factory) : _factory(factory) { }

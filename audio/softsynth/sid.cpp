@@ -24,12 +24,12 @@
  *  Copyright (C) 2004  Dag Lem <resid@nimrod.no>
  */
 
-#ifndef DISABLE_SID
-
 #include "common/translation.h"
 
 #include "audio/softsynth/sid.h"
 #include "audio/null.h"
+
+#ifdef USE_SID_AUDIO
 
 namespace Resid {
 
@@ -496,14 +496,14 @@ Filter::Filter() {
 
 	// Create mappings from FC to cutoff frequency.
 	interpolate(f0_points_6581, f0_points_6581
-		+ sizeof(f0_points_6581)/sizeof(*f0_points_6581) - 1,
+		+ ARRAYSIZE(f0_points_6581) - 1,
 		PointPlotter<sound_sample>(f0_6581), 1.0);
 
 	mixer_DC = (-0xfff*0xff/18) >> 7;
 
 	f0 = f0_6581;
 	f0_points = f0_points_6581;
-	f0_count = sizeof(f0_points_6581)/sizeof(*f0_points_6581);
+	f0_count = ARRAYSIZE(f0_points_6581);
 
 	set_w0();
 	set_Q();
@@ -1093,22 +1093,38 @@ void Voice::reset() {
 }
 
 
+struct TimingProps {
+	double clockFreq;
+	int cyclesPerFrame;
+};
+
+static const TimingProps timingProps[2] = {
+	{ 17734472.0 / 18, 312 * 63 }, // PAL:  312*63 cycles/frame @  985248 Hz (~50Hz)
+	{ 14318180.0 / 14, 263 * 65 }  // NTSC: 263*65 cycles/frame @ 1022727 Hz (~60Hz)
+};
+
 /*
  * SID
  */
 
-SID::SID() {
+SID::SID(::SID::Config::SidType videoSystem) : _videoSystem(videoSystem), _cpuCyclesLeft(0) {
 	voice[0].set_sync_source(&voice[2]);
 	voice[1].set_sync_source(&voice[0]);
 	voice[2].set_sync_source(&voice[1]);
 
-	set_sampling_parameters(985248, 44100);
+	set_sampling_parameters(timingProps[videoSystem].clockFreq, getRate());
+	enable_filter(true);
 
 	bus_value = 0;
 	bus_value_ttl = 0;
 }
 
 SID::~SID() {}
+
+bool SID::init() {
+	reset();
+	return true;
+}
 
 void SID::reset() {
 	for (int i = 0; i < 3; i++) {
@@ -1166,7 +1182,7 @@ reg8 SID::read(reg8 offset) {
 	}
 }
 
-void SID::write(reg8 offset, reg8 value) {
+void SID::writeReg(int offset, int value) {
 	bus_value = value;
 	bus_value_ttl = 0x2000;
 
@@ -1422,6 +1438,21 @@ int SID::updateClock(cycle_count& delta_t, short* buf, int n, int interleave) {
 	return s;
 }
 
+void SID::generateSamples(int16 *buffer, const int numSamples) {
+	int samplesLeft = numSamples;
+
+	while (samplesLeft > 0) {
+		// update SID status after each frame
+		if (_cpuCyclesLeft <= 0) {
+			_cpuCyclesLeft = timingProps[_videoSystem].cyclesPerFrame;
+		}
+		// fetch samples
+		int sampleCount = updateClock(_cpuCyclesLeft, (short *)buffer, samplesLeft);
+		samplesLeft -= sampleCount;
+		buffer += sampleCount;
+	}
+}
+
 }
 
 //	Plugin interface
@@ -1454,4 +1485,4 @@ MusicDevices C64MusicPlugin::getDevices() const {
 	REGISTER_PLUGIN_STATIC(C64, PLUGIN_TYPE_MUSIC, C64MusicPlugin);
 //#endif
 
-#endif
+#endif // USE_SID_AUDIO

@@ -33,7 +33,7 @@
 #include "engines/icb/common/px_linkeddatafile.h"
 #include "engines/icb/common/px_route_barriers.h"
 
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace ICB {
 

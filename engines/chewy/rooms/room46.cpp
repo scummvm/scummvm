@@ -112,15 +112,15 @@ void Room46::bodo() {
 	autoMove(2, P_CHEWY);
 
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	startSetAILWait(0, 1, ANI_FRONT);
+	startDetailWait(0, 1, ANI_FRONT);
 	_G(det)->startDetail(5, 255, ANI_FRONT);
 	startAadWait(241);
 	_G(det)->stopDetail(5);
 	_G(det)->showStaticSpr(5);
 	startAadWait(609);
 	_G(det)->hideStaticSpr(5);
-	startSetAILWait(2, 1, ANI_FRONT);
-	startSetAILWait(3, 1, ANI_FRONT);
+	startDetailWait(2, 1, ANI_FRONT);
+	startDetailWait(3, 1, ANI_FRONT);
 	_G(det)->startDetail(4, 255, ANI_FRONT);
 	startAadWait(242);
 	_G(det)->stopDetail(4);
@@ -128,10 +128,10 @@ void Room46::bodo() {
 	_G(det)->showStaticSpr(6);
 	startAadWait(610);
 	_G(det)->hideStaticSpr(6);
-	startSetAILWait(6, 1, ANI_FRONT);
+	startDetailWait(6, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(3);
 	_G(gameState)._personHide[P_CHEWY] = true;
-	startSetAILWait(1, 1, ANI_FRONT);
+	startDetailWait(1, 1, ANI_FRONT);
 	flic_cut(FCUT_065);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();

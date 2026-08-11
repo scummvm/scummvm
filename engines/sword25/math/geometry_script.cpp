@@ -334,6 +334,45 @@ static int r_setY(lua_State *L) {
 	return 0;
 }
 
+static void drawPolygon(const Polygon &polygon, uint color, const Vertex &offset) {
+	GraphicEngine *pGE = Kernel::getInstance()->getGfx();
+	assert(pGE);
+
+	for (int i = 0; i < polygon.vertexCount - 1; i++)
+		pGE->drawDebugLine(polygon.vertices[i] + offset, polygon.vertices[i + 1] + offset, color);
+
+	pGE->drawDebugLine(polygon.vertices[polygon.vertexCount - 1] + offset, polygon.vertices[0] + offset, color);
+}
+
+static void drawRegion(const Region &region, uint color, const Vertex &offset) {
+	drawPolygon(region.getContour(), color, offset);
+	for (int i = 0; i < region.getHoleCount(); i++)
+		drawPolygon(region.getHole(i), color, offset);
+}
+
+static int r_draw(lua_State *L) {
+	Region *pR = checkRegion(L);
+	assert(pR);
+
+	switch (lua_gettop(L)) {
+	case 3: {
+		Vertex offset;
+		Vertex::luaVertexToVertex(L, 3, offset);
+		drawRegion(*pR, GraphicEngine::luaColorToARGBColor(L, 2), offset);
+	}
+	break;
+
+	case 2:
+		drawRegion(*pR, GraphicEngine::luaColorToARGBColor(L, 2), Vertex(0, 0));
+		break;
+
+	default:
+		drawRegion(*pR, BS_RGB(255, 255, 255), Vertex(0, 0));
+	}
+
+	return 0;
+}
+
 static int r_getCentroid(lua_State *L) {
 	Region *RPtr = checkRegion(L);
 	assert(RPtr);
@@ -350,12 +389,6 @@ static int r_delete(lua_State *L) {
 	return 0;
 }
 
-// Marks a function that should never be used
-static int dummyFuncError(lua_State *L) {
-	error("Dummy function invoked by LUA");
-	return 1;
-}
-
 static const luaL_reg REGION_METHODS[] = {
 	{"SetPos", r_setPos},
 	{"SetX", r_setX},
@@ -365,7 +398,7 @@ static const luaL_reg REGION_METHODS[] = {
 	{"GetX", r_getX},
 	{"GetY", r_getY},
 	{"IsValid", r_isValid},
-	{"Draw", dummyFuncError},
+	{"Draw", r_draw},
 	{"GetCentroid", r_getCentroid},
 	{0, 0}
 };

@@ -19,8 +19,8 @@ class RenderModeTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::parseRenderMode("ega"), Common::kRenderEGA);
 		TS_ASSERT_EQUALS(Common::parseRenderMode("Vga"), Common::kRenderVGA);
 		TS_ASSERT_EQUALS(Common::parseRenderMode("AmigA"), Common::kRenderAmiga);
-		TS_ASSERT_EQUALS(Common::parseRenderMode("pc9821"), Common::kRenderPC9821);
-		TS_ASSERT_EQUALS(Common::parseRenderMode("PC9801"), Common::kRenderPC9801);
+		TS_ASSERT_EQUALS(Common::parseRenderMode("pc98-256c"), Common::kRenderPC98_256c);
+		TS_ASSERT_EQUALS(Common::parseRenderMode("PC98-16c"), Common::kRenderPC98_16c);
 		TS_ASSERT_EQUALS(Common::parseRenderMode("0"), Common::kRenderDefault);
 	}
 
@@ -38,8 +38,8 @@ class RenderModeTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::parseRenderMode("\t"), Common::kRenderDefault);
 		// This is the only interesting bit: if the function was really, really
 		// broken it could be tempted to test for +-0x20.
-		TS_ASSERT_EQUALS(Common::parseRenderMode("pc Y8 21 "), Common::kRenderDefault);
-		TS_ASSERT_EQUALS(Common::parseRenderMode(" PC\t9801 "), Common::kRenderDefault);
+		TS_ASSERT_EQUALS(Common::parseRenderMode("pc Y8 -256c "), Common::kRenderDefault);
+		TS_ASSERT_EQUALS(Common::parseRenderMode(" PC\t98-16c "), Common::kRenderDefault);
 		TS_ASSERT_EQUALS(Common::parseRenderMode("0"), Common::kRenderDefault);
 	}
 
@@ -53,8 +53,8 @@ class RenderModeTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("vga")), "vga", 3);
 		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("Ega")), "ega", 3);
 		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("AmiGa")), "amiga", 5);
-		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("PC9821")), "pc9821", 6);
-		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("PC9801")), "pc9801", 6);
+		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("PC98-256C")), "pc98-256c", 9);
+		TS_ASSERT_SAME_DATA(Common::getRenderModeCode(Common::parseRenderMode("PC98-16C")), "pc98-16c", 8);
 		// Slightly more interesting:
 		// Make sure that we get a null pointer for 0 (and not the "0" string or stuff)
 		char *null_p = 0;
@@ -73,8 +73,8 @@ class RenderModeTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::renderMode2GUIO(Common::kRenderVGA), GUIO_RENDERVGA);
 		TS_ASSERT_EQUALS(Common::renderMode2GUIO(Common::kRenderAmiga), GUIO_RENDERAMIGA);
 		TS_ASSERT_EQUALS(Common::renderMode2GUIO(Common::kRenderFMTowns), GUIO_RENDERFMTOWNS);
-		TS_ASSERT_EQUALS(Common::renderMode2GUIO(Common::kRenderPC9821), GUIO_RENDERPC9821);
-		TS_ASSERT_EQUALS(Common::renderMode2GUIO(Common::kRenderPC9801), GUIO_RENDERPC9801);
+		TS_ASSERT_EQUALS(Common::renderMode2GUIO(Common::kRenderPC98_256c), GUIO_RENDERPC98_256C);
+		TS_ASSERT_EQUALS(Common::renderMode2GUIO(Common::kRenderPC98_16c), GUIO_RENDERPC98_16C);
 		// renderMode2GUIO is supposed to return an empty string
 		// if given kRenderDefault as an argument
 		Common::String empty;

@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-ShapeRenderedText::ShapeRenderedText(const Std::list<PositionedText> &lines,
+ShapeRenderedText::ShapeRenderedText(const Common::List<PositionedText> &lines,
 									 int width, int height, int vLead,
 									 ShapeFont *font)
 	: _lines(lines), _font(font) {
@@ -45,31 +45,29 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 	// TODO support masking here???
 
 	uint32 color = TEX32_PACK_RGB(0, 0, 0);
-	Std::list<PositionedText>::const_iterator iter;
-
 	surface->BeginPainting();
 
-	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
-		int line_x = x + iter->_dims.left;
-		int line_y = y + iter->_dims.top;
+	for (const auto &line : _lines) {
+		int line_x = x + line._dims.left;
+		int line_y = y + line._dims.top;
 
-		size_t textsize = iter->_text.size();
+		size_t textsize = line._text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			surface->Paint(_font, _font->charToFrameNum(iter->_text[i]),
+			surface->Paint(_font, _font->charToFrameNum(line._text[i]),
 			               line_x, line_y);
 
-			if (i == iter->_cursor) {
+			if (i == line._cursor) {
 				surface->fill32(color, line_x, line_y - _font->getBaseline(),
-				                1, iter->_dims.height());
+				                1, line._dims.height());
 			}
 
-			line_x += _font->getWidth(iter->_text[i]) - _font->getHlead();
+			line_x += _font->getWidth(line._text[i]) - _font->getHlead();
 		}
 
-		if (iter->_cursor == textsize) {
+		if (line._cursor == textsize) {
 			surface->fill32(color, line_x, line_y - _font->getBaseline(),
-			                1, iter->_dims.height());
+			                1, line._dims.height());
 		}
 	}
 
@@ -79,20 +77,17 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 									uint32 col, bool /*destmasked*/) {
 	// TODO Support masking here ????
+	for (const auto &line : _lines) {
+		int line_x = x + line._dims.left;
+		int line_y = y + line._dims.top;
 
-	Std::list<PositionedText>::const_iterator iter;
-
-	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
-		int line_x = x + iter->_dims.left;
-		int line_y = y + iter->_dims.top;
-
-		size_t textsize = iter->_text.size();
+		size_t textsize = line._text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
 			surface->PaintHighlight(_font,
-			                        static_cast<unsigned char>(iter->_text[i]),
+			                        static_cast<unsigned char>(line._text[i]),
 			                        line_x, line_y, false, false, col);
-			line_x += _font->getWidth(iter->_text[i]) - _font->getHlead();
+			line_x += _font->getWidth(line._text[i]) - _font->getHlead();
 		}
 
 	}

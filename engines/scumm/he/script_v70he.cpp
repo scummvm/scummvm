@@ -405,7 +405,7 @@ void ScummEngine_v70he::o70_readINI() {
 	switch (type) {
 	case 1: // number
 		if (!strcmp((char *)option, "NoPrinting")) {
-			push(1);
+			push(0);
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));
 		} else {

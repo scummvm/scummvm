@@ -21,6 +21,7 @@
 
 #include "common/stream.h"
 #include "common/memstream.h"
+#include "graphics/surface.h"
 
 #include "startrek/iwfile.h"
 #include "startrek/resource.h"
@@ -92,7 +93,7 @@ void StarTrekEngine::loadBanFile(const Common::String &name) {
 }
 
 bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY) {
-	debugC(6, "Obj %d: walk from (%d,%d) to (%d,%d)", actorIndex, srcX, srcY, destX, destY);
+	debugC(6, kDebugGeneral, "Obj %d: walk from (%d,%d) to (%d,%d)", actorIndex, srcX, srcY, destX, destY);
 
 	Actor *actor = &_actorList[actorIndex];
 
@@ -1000,7 +1001,7 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 	else {
 		// If this action has code defined for it in this room, buffer the action to be
 		// done after the object finished walking there.
-		Action action = {static_cast<int8>(_awayMission.activeAction), _awayMission.activeObject, 0, 0};
+		Action action = {static_cast<int8>(_awayMission.activeAction), _awayMission.activeObject, 0, 0, 0};
 		if (_awayMission.activeAction == ACTION_USE)
 			action.b2 = _awayMission.passiveObject;
 
@@ -1295,7 +1296,7 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		removeNextEvent();
 	}
 
-	_sound->playSoundEffectIndex(0x10);
+	_sound->playSoundEffectIndex(kSfxSelection);
 	if (lastItemIndex >= 0)
 		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
 
@@ -1414,7 +1415,6 @@ void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uin
 		uint16 var4 = scaledWidth << 1;
 		uint16 var6 = (scaledWidth - origWidth) << 1;
 		uint16 varE = 0;
-		uint16 varA = 0;
 		uint16 var8 = origWidth;
 		uint16 di = 0;
 
@@ -1437,13 +1437,11 @@ void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uin
 			}
 
 			di++;
-			varA++;
 		}
 	} else {
 		int16 var2 = ((origWidth - 1) << 1) - (scaledWidth - 1);
 		uint16 var4 = (origWidth - 1) << 1;
 		uint16 var6 = ((origWidth - 1) - (scaledWidth - 1)) << 1;
-		uint16 varA = 0;
 		uint16 var8 = scaledWidth;
 		uint16 di = 0;
 
@@ -1460,8 +1458,6 @@ void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uin
 				var2 += var6;
 				di++;
 			}
-
-			varA++;
 		}
 	}
 }

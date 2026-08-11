@@ -21,12 +21,12 @@
 
 #include "bagel/spacebar/bibble_window.h"
 #include "bagel/spacebar/spacebar.h"
-#include "bagel/baglib/master_win.h"
-#include "bagel/boflib/gui/button.h"
+#include "bagel/spacebar/baglib/master_win.h"
+#include "bagel/spacebar/boflib/gui/button.h"
 #include "bagel/boflib/sound.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
-#include "bagel/boflib/std_keys.h"
+#include "bagel/spacebar/boflib/std_keys.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -1040,7 +1040,7 @@ void CBibbleWindow::onLButtonDblClk(uint32 /*nFlags*/, CBofPoint *pPoint) {
 }
 
 
-void CBibbleWindow::onLButtonUp(uint32 /*nFlags*/, CBofPoint * /*pPoint*/, void *) {
+void CBibbleWindow::onLButtonUp(uint32 /*nFlags*/, CBofPoint */*pPoint*/, void *) {
 	assert(isValidObject(this));
 }
 

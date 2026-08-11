@@ -37,7 +37,7 @@ class Armor;
 class Party;
 class Weapon;
 
-typedef Std::vector<class PartyMember *> PartyMemberVector;
+typedef Common::Array<class PartyMember *> PartyMemberVector;
 
 #define ALL_PLAYERS -1
 
@@ -113,7 +113,7 @@ public:
 	/**
 	 * Used to translate script values into something useful
 	 */
-	Common::String translate(Std::vector<Common::String> &parts) override;
+	Common::String translate(Common::Array<Common::String> &parts) override;
 
 	// Accessor methods
 	int getHp() const override;
@@ -280,7 +280,7 @@ public:
 	PartyMember *_player;
 };
 
-typedef Std::vector<PartyMember *> PartyMemberVector;
+typedef Common::Array<PartyMember *> PartyMemberVector;
 
 class Party : public Observable<Party *, PartyEvent &>, public Script::Provider {
 	friend class PartyMember;
@@ -294,7 +294,7 @@ public:
 	void notifyOfChange(PartyMember *partyMember = 0, PartyEvent::Type = PartyEvent::GENERIC);
 
 	// Used to translate script values into something useful
-	Common::String translate(Std::vector<Common::String> &parts) override;
+	Common::String translate(Common::Array<Common::String> &parts) override;
 
 	void adjustFood(int food);
 	void adjustGold(int gold);

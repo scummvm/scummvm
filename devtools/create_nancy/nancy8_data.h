@@ -35,9 +35,9 @@ const GameConstants _nancy8Constants ={
 	32												// wonGameFlagID
 };
 
-const Common::Array<Common::Language> _nancy8LanguagesOrder = {
-	Common::Language::EN_ANY,
-	Common::Language::RU_RUS
+const Common::Array<GameLanguage> _nancy8LanguagesOrder = {
+	GameLanguage::kEnglish,
+	GameLanguage::kRussian
 };
 
 const Common::Array<Common::Array<ConditionalDialogue>> _nancy8ConditionalDialogue = {
@@ -91,7 +91,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy8ConditionalDialog
 	{	0, 1458, "NHS58",
 		{ { kEv, 244, true }, { kEv, 388, true }, { kEv, 385, false }, { kEv, 198, false }, { kEv, 167, false } } },
 	{	0, 1459, "NHS59",
-		{ { kIn, 24, true }, { kEv, 117, false } } },
+		{ { kIn, 24, true }, { kEv, 177, false } } },
 	{	0, 1460, "NHS60",
 		{ { kEv, 365, true }, { kIn, 23, true }, { kEv, 174, false } } },
 	{	0, 1461, "NHS61",
@@ -267,7 +267,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy8ConditionalDialog
 },
 {	// Frank & Joe, 21 responses + 2 repeats
 	{	0, 1750, "NFJ50",
-		{ { kEv, 231, true }, { kEv, 148, false } } },
+		{ { kEv, 231, false }, { kEv, 148, false } } },
 	{	0, 1751, "NFJ51",
 		{ { kEv, 231, true }, { kEv, 389, false }, { kEv, 232, false }, { kEv, 228, false }, { kEv, 148, false } } },
 	{	0, 1751, "NFJ51",
@@ -331,9 +331,9 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy8ConditionalDialog
 	{	0, 1951, "NAS51",
 		{ { kEv, 125, true }, { kEv, 127, false } } },
 	{	0, 1952, "NAS52",
-		{ { kEv, 245, false }, { kEv, 127, true }, { kEv, 124, true } } },
+		{ { kEv, 245, false }, { kEv, 127, true }, { kEv, 124, false } } },
 	{	0, 1952, "NAS52",
-		{ { kEv, 125, true }, { kEv, 127, true }, { kEv, 124, true } } },
+		{ { kEv, 125, true }, { kEv, 127, true }, { kEv, 124, false } } },
 	{	0, 1953, "NAS53",
 		{ { kEv, 245, false }, { kEv, 120, true }, { kEv, 123, false } } },
 	{	0, 1953, "NAS53",

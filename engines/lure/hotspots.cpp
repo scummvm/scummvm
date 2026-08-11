@@ -45,7 +45,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_anim = nullptr;
 	_frames = nullptr;
 	_numFrames = 0;
-	_persistant = false;
+	_persistent = false;
 	_direction = NO_DIRECTION;
 
 	_hotspotId = res->hotspotId;
@@ -56,6 +56,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_destX = res->startX;
 	_destY = res->startY;
 	_destHotspotId = 0;
+	_walkToHotspotId = 0;
 	_frameWidth = res->width;
 	_frameStartsUsed = false;
 	_height = res->height;
@@ -96,11 +97,12 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_anim = nullptr;
 	_frames = nullptr;
 	_numFrames = 0;
-	_persistant = false;
+	_persistent = false;
 	_hotspotId = 0xffff;
 	_override = nullptr;
 	_colorOffset = 0;
 	_destHotspotId = character->hotspotId();
+	_walkToHotspotId = 0;
 	_blockedOffset = 0;
 	_exitCtr = 0;
 	_voiceCtr = 0;
@@ -141,7 +143,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 		_widthCopy = 19;
 		_heightCopy = 18 + character->heightCopy();
 		_layer = 1;
-		_persistant = false;
+		_persistent = false;
 		_yCorrection = 1;
 		_voiceCtr = CONVERSE_COUNTDOWN_SIZE;
 
@@ -167,11 +169,12 @@ Hotspot::Hotspot(): _pathFinder(nullptr) {
 	_anim = nullptr;
 	_frames = nullptr;
 	_numFrames = 0;
-	_persistant = false;
+	_persistent = false;
 	_hotspotId = 0xffff;
 	_override = nullptr;
 	_colorOffset = 0;
 	_destHotspotId = 0;
+	_walkToHotspotId = 0;
 	_blockedOffset = 0;
 	_exitCtr = 0;
 	_voiceCtr = 0;
@@ -492,6 +495,7 @@ void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot) {
 	_destX = endPosX;
 	_destY = endPosY;
 	_destHotspotId = destHotspot;
+	_walkToHotspotId = 0;
 	currentActions().addFront(START_WALKING, _roomNumber);
 }
 
@@ -606,6 +610,7 @@ void Hotspot::setRandomDest() {
 	else
 		currentActions().top().setAction(START_WALKING);
 	_walkFlag = true;
+	setWalkToHotspot(0);
 
 	// Try up to 20 times to find an unoccupied destination
 	for (int tryCtr = 0; tryCtr < 20; ++tryCtr) {
@@ -1100,6 +1105,7 @@ bool Hotspot::characterWalkingCheck(uint16 id) {
 	int16 xp, yp;
 	bool altFlag;
 	HotspotData *hotspot;
+	uint16 walkToHotspotId = 0;
 
 	// Note that several invalid hotspot Ids are used to identify special walk to
 	// coordinates used throughout the game
@@ -1137,6 +1143,7 @@ bool Hotspot::characterWalkingCheck(uint16 id) {
 			yp = hotspot->walkY & 0x7fff;
 			altFlag = (hotspot->walkY & 0x8000) != 0;
 		}
+		walkToHotspotId = id;
 		break;
 	}
 
@@ -1146,6 +1153,7 @@ bool Hotspot::characterWalkingCheck(uint16 id) {
 			((((y() + heightCopy()) >> 3) - 1) != (yp >> 3))) {
 			// Walk to the specified destination
 			walkTo(xp, yp);
+			setWalkToHotspot(walkToHotspotId);
 			return true;
 		} else {
 			return false;
@@ -1156,6 +1164,7 @@ bool Hotspot::characterWalkingCheck(uint16 id) {
 	if ((ABS(x() - xp) >= 8) ||
 		(ABS(y() + heightCopy() - yp - 1) >= 19)) {
 		walkTo(xp, yp);
+		setWalkToHotspot(walkToHotspotId);
 		return true;
 	}
 
@@ -1258,7 +1267,7 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 	StringList &stringList = Resources::getReference().stringList();
 	int charId = _hotspotId;
 	debugC(ERROR_INTERMEDIATE, kLureDebugHotspots,  "Action charId=%xh Action=%d/%s",
-		charId, (int)action, (action > EXAMINE) ? nullptr : stringList.getString((int)action));
+		charId, (int)action, (action > EXAMINE) ? "(null)" : stringList.getString((int)action));
 
 	// Set the ACTIVE_HOTSPOT_ID and USE_HOTSPOT_ID fields
 	if (hotspot != nullptr) {
@@ -1712,8 +1721,14 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 		}
 	}
 
+	// Only start a conversation if the character actually has one defined for the
+	// current talk index.
+	uint16 talkId = getTalkId(hotspot);
+	if (talkId == 0)
+		return;
+
 	// Start talking with character
-	startTalk(hotspot, getTalkId(hotspot));
+	startTalk(hotspot, talkId);
 }
 
 void Hotspot::doTell(HotspotData *hotspot) {
@@ -2269,7 +2284,8 @@ uint16 Hotspot::getTalkId(HotspotData *charHotspot) {
 	Resources &res = Resources::getReference();
 	uint16 talkIndex;
 	TalkHeaderData *headerEntry;
-	bool isEnglish = LureEngine::getReference().getLanguage() == Common::EN_ANY;
+	bool isEnglish = LureEngine::getReference().getLanguage() == Common::EN_ANY ||
+		LureEngine::getReference().getLanguage() == Common::RU_RUS; // Russian version is based on English one, same logic applies
 
 	// If the hotspot has a talk data override, return it
 	if (charHotspot->talkOverride != 0) {
@@ -2355,7 +2371,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) const {
 	stream->writeUint16LE(_blockedOffset);
 	stream->writeUint16LE(_exitCtr);
 	stream->writeByte(_walkFlag);
-	stream->writeByte(_persistant);
+	stream->writeByte(_persistent);
 	stream->writeUint16LE(_startRoomNumber);
 	stream->writeUint16LE(_supportValue);
 }
@@ -2402,7 +2418,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_blockedOffset = stream->readUint16LE();
 	_exitCtr = stream->readUint16LE();
 	_walkFlag = stream->readByte() != 0;
-	_persistant = stream->readByte() != 0;
+	_persistent = stream->readByte() != 0;
 	_startRoomNumber = stream->readUint16LE();
 	_supportValue = stream->readUint16LE();
 }
@@ -3635,13 +3651,6 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			responseNumber = Script::execute(_talkResponse->preSequenceId);
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character response new response = %d",
 				responseNumber);
-
-			// FIXME: Fix for resetting the character being talked to
-			// after talking to Goewin whilst transformed
-			if (_talkResponse->preSequenceId == 10902) {
-				HotspotData *character = res.getHotspot(PLAYER_ID);
-				character->talkDestCharacterId = 0;
-			}
 		} while (responseNumber != TALK_RESPONSE_MAGIC_ID);
 
 		descId = _talkResponse->descId;
@@ -3705,7 +3714,12 @@ void HotspotTickHandlers::talkEndConversation() {
 	Hotspot *charHotspot = res.getActiveHotspot(talkDestCharacter);
 	assert(charHotspot);
 
-	res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID);
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+	player->setTickProc(PLAYER_TICK_PROC_ID);
+
+	// Clear the player's talk destination now that the conversation is over.
+	player->resource()->talkDestCharacterId = 0;
+
 	charHotspot->setUseHotspotId(0);
 	charHotspot->resource()->talkerId = 0;
 	charHotspot->setDelayCtr(24);
@@ -4129,6 +4143,21 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 		destRoom = h.currentActions().top().roomNumber();
 	RoomExitCoordinates &coords = res.coordinateList().getEntry(srcRoom);
 	RoomExitCoordinateData &exitData = coords.getData(destRoom);
+
+	// If the routing to an intermediate next-hop room leads straight back to srcRoom,
+	// the target is unreachable (routing cycle); give up and stay put in the current room.
+	uint16 nextHop = exitData.roomNumber & 0xff;
+	if ((nextHop != 0) && (nextHop != destRoom)) {
+		RoomExitCoordinates &nextHopCoords = res.coordinateList().getEntry(nextHop);
+		RoomExitCoordinateData &nextHopExitData = nextHopCoords.getData(destRoom);
+		uint16 backHop = nextHopExitData.roomNumber & 0xff;
+
+		if (backHop == srcRoom) {
+			h.currentActions().top().setRoomNumber(h.roomNumber());
+			h.setExitCtr(0);
+			return;
+		}
+	}
 
 	if (h.hotspotId() != RATPOUCH_ID) {
 		// Count up the number of characters in the room

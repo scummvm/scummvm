@@ -27,6 +27,7 @@
 
 /* Detection tables for the ADI / Addy 4 series. */
 /* This Game uses the DEV6 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV6_Information */
+/* These games are part of the Adi series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Adi_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADI4_H
 #define GOB_DETECTION_TABLES_ADI4_H
@@ -128,7 +129,7 @@
 // -- German: Addy --
 
 {
-	{
+	{ // Supplied by Indy4-Fan
 		"adi4",
 		"Addy 4.00 Erdkunde",
 		AD_ENTRY1s("intro.stk", "fda1566d233ee55d65b2ad014c1cb485", 188),
@@ -139,6 +140,19 @@
 	},
 	kFeatures640x480,
 	0, "GA2INTRO.TOT", 0
+},
+{
+	{ // Supplied by fischbeck
+		"adi4",
+		"Addi Simule", // That is not an typo in the name "Addi" that's how this version is called.
+		AD_ENTRY1s("simule.stk", "66d97fe54bbf8ea4bbb18534cb28b13f", 2523796),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kFeatures640x480,
+	"simule.stk", "INTRODD.TOT", 0 // INTRODD.TOT brings up a main menu to select various environmental learning tasks.
 },
 {
 	{
@@ -220,6 +234,126 @@
 		kPlatformWindows,
 		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+
+// -- Add-ons : "Math & Language" --
+// 8-9 years
+{
+	{
+		"adi4mathlanguage89",
+		"", // Français Maths CE2
+		AD_ENTRY2s("ADIF91.STK", "f5e4d0e38e96cb9ea3fdb122548a7775", 19707056,
+				   "ADIM91.STK", "2f839dffcded30680456d0e881f16f31", 27322360),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// 9-10 years
+
+// 10-11 years
+{
+	{
+		"adi4mathlanguage1011",
+		"", // Français Maths CM2
+		AD_ENTRY2s("ADIF71.STK", "a0dc766e42025271df54f4e705e530e5", 13668920,
+				   "ADIM71.STK", "d093bf3b38c668d9f89ae1118b2dfc95", 21544420),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// 11-12 years
+
+// 12-13 years
+
+// 13-14 years
+
+// 14-15 years
+
+// -- Add-ons : "Anglais" (English for non-native speakers) --
+// 7-9 years
+
+// 9-11 years
+{
+	{
+		"adi4anglais911",
+		"",
+		AD_ENTRY2s("A71RAN.STK", "1c16f54d71ed3d2fa49fe4d8ff4884ae", 100144,
+				   "ADIA71.STK", "9cc17a7ccbf157c1742387ce133205fd", 21661580),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// 11-12 years
+
+// 12-13 years
+
+// 13-14 years
+
+// 14-15 years
+
+// -- Add-ons : Geography --
+{
+	{
+		"adi4geo",
+		"", // Géographie
+		AD_ENTRY2s("INTROGEO.STK", "d86d0f53818dd285bebff25925627b8c", 3170680,
+				   "INTROGEO.ITK", "5daacbf8840f811e48b99e1d92933873", 20084736),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+{
+	{
+		"adi4geo",
+		"", // Erdkunde
+		AD_ENTRY2s("INTROGEO.STK", "f01ffe9366df86a7ea5ed425b41081ba", 3284478,
+				   "INTROGEO.ITK", "998bb8e759d5b8b4e7aa22d6030f2dad", 22046720),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// -- Add-ons : Sciences --
+
+// -- Add-ons : Euro --
+{
+	{
+		"adi4euro",
+		"", // Der Euro
+		AD_ENTRY2s("EURO.STK", "7dac3823570036c6eda57cc2c872aa59", 681944,
+				   "EURO.ITK", "09629a0aa35a00f68211f6429bd43e9f", 25409536),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
 	},
 	kFeatures640x480,
 	0, 0, 0

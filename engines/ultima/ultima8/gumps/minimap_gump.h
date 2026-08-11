@@ -25,6 +25,10 @@
 #include "ultima/ultima8/gumps/resizable_gump.h"
 #include "ultima/ultima8/misc/classtype.h"
 
+namespace Common {
+class Path;
+}
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -46,6 +50,7 @@ public:
 
 	void generate();
 	void clear();
+	bool dump(const Common::Path &filename) const;
 
 	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	uint16      TraceObjId(int32 mx, int32 my) override;

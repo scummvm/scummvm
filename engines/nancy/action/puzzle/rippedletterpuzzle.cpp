@@ -100,6 +100,8 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	uint elemSize = g_nancy->getGameType() <= kGameTypeNancy8 ? 1 : 2;
 
 	_initOrder.resize(width * height);
+	assert(width * height <= 24); // If this gets hit we need to increase the sizes in RippedLetterPuzzleData
+
 	for (uint i = 0; i < height; ++i) {
 		for (uint j = 0; j < width; ++j) {
 			_initOrder[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
@@ -118,8 +120,8 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy9) {
-		uint16 numDoubledElements = stream.readUint16LE();
-		_doubles.resize(numDoubledElements);
+		uint16 numDoubledElements = stream.readUint16LE();	// 0 in Nancy 12
+		_doubles.resize(numDoubledElements > 0 ? numDoubledElements : 20);
 		uint i = 0;
 		for (uint j = 0; j < 20; ++j) {
 			int16 id = stream.readSint16LE();
@@ -193,16 +195,67 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void RippedLetterPuzzle::execute() {
 	switch (_state) {
-	case kBegin:
+	case kBegin: {
+		_puzzleState = (RippedLetterPuzzleData *)NancySceneState.getPuzzleData(RippedLetterPuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 
 		NancySceneState.setNoHeldItem();
 
+		bool hasLoadedProgress = false;
+		// Detect progress from the loaded tile order because
+		// playerHasTriedPuzzle is not serialized
 		if (!_puzzleState->playerHasTriedPuzzle) {
-			_puzzleState->order = _initOrder;
-			_puzzleState->rotations = _initRotations;
-			_puzzleState->playerHasTriedPuzzle = true;
+			const uint loadedStateSize = MIN<uint>(_puzzleState->order.size(), _puzzleState->rotations.size());
+			const uint loadedTileCount = MIN<uint>(loadedStateSize, _initOrder.size());
+			for (uint i = 0; i < loadedTileCount; ++i) {
+				if (_puzzleState->order[i] != _initOrder[i] || _puzzleState->rotations[i] != _initRotations[i]) {
+					hasLoadedProgress = true;
+					break;
+				}
+			}
+
+			// Traverse the order and rotations arrays to check if
+			// they have been initialized. If they haven't, they'll
+			// be full of zeroes, so there's no progress to continue,
+			// thus the arrays will need to be initialized normally.
+			if (hasLoadedProgress) {
+				bool arraysAreInitialized = false;
+				for (uint i = 0; i < loadedStateSize; ++i) {
+					if (_puzzleState->order[i] != 0 || _puzzleState->rotations[i] != 0) {
+						arraysAreInitialized = true;
+						break;
+					}
+				}
+
+				if (!arraysAreInitialized)
+					hasLoadedProgress = false;
+			}
+		}
+
+		// The serialized puzzle state uses 24 slots. Resize it to
+		// the current puzzle dimensions before use
+		_puzzleState->order.resize(_initOrder.size());
+		_puzzleState->rotations.resize(_initRotations.size());
+
+		if (!_puzzleState->playerHasTriedPuzzle) {
+			if (hasLoadedProgress) {
+				_puzzleState->playerHasTriedPuzzle = true;
+			} else {
+				_puzzleState->order = _initOrder;
+				_puzzleState->rotations = _initRotations;
+				_puzzleState->playerHasTriedPuzzle = true;
+			}
+		} else if (_puzzleState->_pickedUpPieceID != -1) {
+			// Puzzle was left while still holding a piece (e.g. by clicking a scene item).
+			// Make sure we put the held piece back in its place
+			_puzzleState->order[_puzzleState->_pickedUpPieceLastPos] = _puzzleState->_pickedUpPieceID;
+			_puzzleState->rotations[_puzzleState->_pickedUpPieceLastPos] = _puzzleState->_pickedUpPieceRot;
+			_puzzleState->_pickedUpPieceID = -1;
+			_puzzleState->_pickedUpPieceLastPos = -1;
+			_puzzleState->_pickedUpPieceRot = 0;
 		}
 
 		for (uint i = 0; i < _puzzleState->order.size(); ++i) {
@@ -214,7 +267,8 @@ void RippedLetterPuzzle::execute() {
 		g_nancy->_sound->loadSound(_rotateSound);
 
 		_state = kRun;
-		// fall through
+	}
+	// fall through
 	case kRun:
 		switch (_solveState) {
 		case kNotSolved :
@@ -271,11 +325,18 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	// Nancy10+ uses the dedicated puzzle rotate/hand cursors; earlier games
+	// reuse the generic rotate and hotspot cursors.
+	const bool useNewCursors = g_nancy->getGameType() >= kGameTypeNancy10;
+	const CursorManager::CursorType rotateCursor = useNewCursors ? CursorManager::kNewRotatePiece : CursorManager::kRotateCW;
+	const CursorManager::CursorType takeCursor = useNewCursors ? CursorManager::kNewUseHandHotspot : CursorManager::kHotspot;
+	const CursorManager::CursorType dropCursor = useNewCursors ? CursorManager::kNewUseHand : CursorManager::kHotspot;
+
 	for (uint i = 0; i < _puzzleState->order.size(); ++i) {
 		Common::Rect screenHotspot = NancySceneState.getViewport().convertViewportToScreen(_destRects[i]);
 		if (screenHotspot.contains(input.mousePos)) {
 			Common::Rect insideRect;
-			if (_pickedUpPieceID == -1) {
+			if (_puzzleState->_pickedUpPieceID == -1) {
 				// No piece picked up
 
 				// Check if the mouse is inside the rotation hotspot
@@ -283,7 +344,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 				insideRect.translate(screenHotspot.left, screenHotspot.top);
 
 				if (_rotationType != kRotationNone && insideRect.contains(input.mousePos)) {
-					g_nancy->_cursor->setCursorType(CursorManager::kRotateCW);
+					g_nancy->_cursor->setCursorType(rotateCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						// Player has clicked, rotate the piece
@@ -304,7 +365,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 				insideRect.translate(screenHotspot.left, screenHotspot.top);
 
 				if (insideRect.contains(input.mousePos)) {
-					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+					g_nancy->_cursor->setCursorType(takeCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						// Player has clicked, take the piece
@@ -320,9 +381,10 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 						_pickedUpPiece.pickUp();
 
 						// ...then change the data...
-						_pickedUpPieceID = _puzzleState->order[i];
-						_pickedUpPieceRot = _puzzleState->rotations[i];
+						_puzzleState->_pickedUpPieceID = _puzzleState->order[i];
+						_puzzleState->_pickedUpPieceRot = _puzzleState->rotations[i];
 						_puzzleState->order[i] = -1;
+						_puzzleState->_pickedUpPieceLastPos = i;
 
 						// ...then clear the piece from the drawSurface
 						drawPiece(i, 0);
@@ -340,7 +402,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 				insideRect.translate(screenHotspot.left, screenHotspot.top);
 
 				if (insideRect.contains(input.mousePos)) {
-					g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+					g_nancy->_cursor->setCursorType(dropCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						// Player has clicked, drop the piece and pick up a new one
@@ -349,6 +411,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 						if (_puzzleState->order[i] == -1) {
 							// No, hide the picked up piece graphic
 							_pickedUpPiece.setVisible(false);
+							_puzzleState->_pickedUpPieceLastPos = -1;
 						} else {
 							// Yes, change the picked piece graphic
 							if (!_useCustomPickUpTile) {
@@ -358,10 +421,13 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 							_pickedUpPiece.setVisible(true);
 							_pickedUpPiece.setTransparent(true);
+							// After a swap, the held piece must return
+							// to this slot on save or re-entry
+							_puzzleState->_pickedUpPieceLastPos = i;
 						}
 
-						SWAP<int8>(_puzzleState->order[i], _pickedUpPieceID);
-						SWAP<byte>(_puzzleState->rotations[i], _pickedUpPieceRot);
+						SWAP<int8>(_puzzleState->order[i], _puzzleState->_pickedUpPieceID);
+						SWAP<byte>(_puzzleState->rotations[i], _puzzleState->_pickedUpPieceRot);
 
 						// Draw the newly placed piece
 						drawPiece(i, _puzzleState->rotations[i], _puzzleState->order[i]);
@@ -377,10 +443,13 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 	_pickedUpPiece.handleInput(input);
 
-	if (_pickedUpPieceID == -1) {
+	if (_puzzleState->_pickedUpPieceID == -1) {
 		// No piece picked up, check the exit hotspot
 		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(_customCursorID != -1 ? (CursorManager::CursorType)_customCursorID : g_nancy->_cursor->_puzzleExitCursor);
+			if (_customCursorID != -1)
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_customCursorID, true);
+			else
+				g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				// Player has clicked, exit
@@ -410,11 +479,7 @@ bool RippedLetterPuzzle::checkOrder(bool useAlt) {
 	auto &current = _puzzleState->order;
 	auto &correct = useAlt ? _solveOrderAlt : _solveOrder;
 
-	if (!_doubles.size()) {
-		return current == correct;
-	}
-
-	for (uint i = 0; i < current.size(); ++i) {
+	for (uint i = 0; i < correct.size(); ++i) {
 		bool foundCorrect = false;
 		bool isDoubled = false;
 		for (auto &d : _doubles) {

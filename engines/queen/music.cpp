@@ -191,7 +191,7 @@ void MidiMusic::send(uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
+void MidiMusic::metaEvent(byte type, const byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F: // End of Track
 		if (_isLooping || _songQueue[1]) {

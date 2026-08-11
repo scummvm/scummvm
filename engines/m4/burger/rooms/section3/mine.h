@@ -98,8 +98,8 @@ private:
 	int16 _presentSceneID = 0;
 	static int16 _entranceDoor;		// Shared between cellar and mine room classes
 	MineRoom _mineRoomInfo;
-	bool _fade_down_rect_active = false;	// True if a fade down should occurr when walker in the fade_down_rect
-	Rectangle _fade_down_rect;				// If the walker is in his rectum and its active, turn off the lights
+	bool _fade_down_rect_active = false;	// True if a fade down should occur when walker in the fade_down_rect
+	Rectangle _fade_down_rect = {0, 0, 0, 0};				// If the walker is in his rectum and its active, turn off the lights
 	int _volume = 0;
 	int _random1 = 0;
 	int _random2 = 0;

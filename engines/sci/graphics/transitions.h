@@ -73,7 +73,7 @@ private:
 	void doTransition(int16 number, bool blackout);
 	void setNewPalette(bool blackoutFlag);
 	void setNewScreen(bool blackoutFlag);
-	void copyRectToScreen(const Common::Rect rect, bool blackoutFlag);
+	void copyRectToScreen(const Common::Rect &rect, bool blackoutFlag);
 	void fadeOut();
 	void fadeIn();
 	void pixelation(bool blackoutFlag);
@@ -98,7 +98,7 @@ private:
 	int16 _number;
 	bool _blackoutFlag;
 	Common::Rect _picRect;
-	byte *_oldScreen; // buffer for saving current active screen data to, has dimenions of _screen->_displayScreen
+	byte *_oldScreen; // buffer for saving current active screen data to, has dimensions of _screen->_displayScreen
 
 	uint32 _transitionStartTime; // when the current transition started in milliseconds
 };

@@ -204,11 +204,11 @@ mcodeFunctionReturnCodes _game_session::fn_add_ammo_clips(int32 &result, int32 *
 		player.AddAmmoClips((uint32)params[0], bFlashIcons);
 
 		result = 0;
-	} else { // cant take all that were offered
+	} else { // can't take all that were offered
 		// Call the function that does the work.
 		player.AddAmmoClips(can_take, bFlashIcons); // take max we can take
 
-		result = params[0] - can_take; // leave behind those we cant take
+		result = params[0] - can_take; // leave behind those we can't take
 	}
 
 	// Preload the icon for PSX smoothing.

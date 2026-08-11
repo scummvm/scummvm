@@ -63,7 +63,7 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "subv",               "vv",       &cmdSubV },             // 08
 	{ "load.view",          "n",        &cmdLoadView },         // 09
 	{ "animate.obj",        "n",        &cmdAnimateObj },       // 0A
-	{ "new.room",           "n",        &cmdNewRoom },          // 0B
+	{ "new.room",           "n",        &cmdNewRoom },          // 0B TODO
 	{ "draw.pic",           "v",        &cmdDrawPicV1 },        // 0C
 	{ "print",              "s",        &cmdPrint },            // 0D TODO
 	{ "status",             "",         &cmdStatus },           // 0E TODO
@@ -85,7 +85,7 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "reverse.loop",       "nn",       &cmdReverseLoopV1 },    // 1E
 	{ "move.obj",           "nnnnn",    &cmdMoveObj },          // 1F
 	{ "set.view",           "nn",       &cmdSetView },          // 20
-	{ "follow.ego",         "nnn",      &cmdFollowEgo },        // 21
+	{ "follow.ego",         "nnv",      &cmdFollowEgo },        // 21
 	{ "block",              "nnnn",     &cmdBlock },            // 22
 	{ "unblock",            "",         &cmdUnblock },          // 23
 	{ "ignore.blocks",      "n",        &cmdIgnoreBlocks },     // 24
@@ -120,36 +120,37 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "quit",               "",         &cmdQuitV1 },           // 41
 	{ "set.speed",          "v",        &cmdSetSpeed },         // 42
 	{ "move.obj.v",         "nvvvv",    &cmdMoveObjF },         // 43
-	{ "...",                "nn",       &cmdUnknown },          // 44
+	{ "get.num",            "nv",       &cmdUnknown },          // 44
 	{ "get.v",              "v",        &cmdUnknown },          // 45
 	{ "assign.v",           "vv",       &cmdUnknown },          // 46
-	{ "...",                "n",        &cmdUnknown },          // 47 # printvar.v
+	{ "printvar",           "v",        &cmdUnknown },          // 47 prints a variable (debug script)
 	{ "get.priority",       "nv",       &cmdGetPriority },      // 48
 	{ "ignore.objs",        "n",        &cmdIgnoreObjs },       // 49
 	{ "observe.objs",       "n",        &cmdObserveObjs },      // 4A
 	{ "distance",           "nnv",      &cmdDistance },         // 4B
 	{ "object.on.land",     "n",        &cmdObjectOnLand },     // 4C
-	{ "...",                "nv",       &cmdUnknown },          // 4D # set.priority.f
+	{ "set.priority.v",     "nv",       &cmdUnknown },          // 4D # set.priority.v / set.priority.f
 	{ "show.obj",           "n",        &cmdShowObj },          // 4E # show.obj (KQ2)
 	{ "load.logics",        "n",        &cmdLoadLogic },        // 4F # load.global.logics
 	{ "display",            "nnns",     &cmdDisplay },          // 50 TODO: 4 vs 3 args
-	{ "prevent.input???",   "",         &cmdUnknown },          // 51
-	{ "...",                "",         &cmdUnknown },          // 52 # nop
-	{ "...",                "n",        &cmdUnknown },          // 53 # text.screen
-	{ "...",                "",         &cmdUnknown },          // 54 ???
-	{ "stop.motion",        "",         &cmdStopMotion },       // 55 or force.update??
+	{ "prevent.input",      "",         &cmdUnknown },          // 51 TODO: disables input by clearing a global, reset on new.room
+	{ "...",                "",         &cmdUnknown },          // 52 nop, 0 args
+	{ "text.screen",        "n",        &cmdUnknown },          // 53
+	{ "graphics",           "",         &cmdUnknown },          // 54
+	{ "stop.motion",        "",         &cmdStopMotion },       // 55
 	{ "discard.view",       "n",        &cmdDiscardView },      // 56
 	{ "discard.pic",        "v",        &cmdDiscardPic },       // 57
 	{ "set.item.view",      "nn",       &cmdSetItemView },      // 58
-	{ "...",                "",         &cmdUnknown },          // 59 # reverse.cycle
+	{ "reverse.cycle",      "n",        &cmdReverseCycle },     // 59
 	{ "last.cel",           "nv",       &cmdLastCel },          // 5A
 	{ "set.cel.v",          "nv",       &cmdSetCelF },          // 5B
-	{ "...",                "",         &cmdUnknown },          // 5C # normal.cycle
-	{ "load.view",          "n",        &cmdLoadView },         // 5D
-	{ "...",                "",         &cmdUnknown },          // 5E
-	{ "...",                "",         &cmdUnknown },          // 5F
-	{ "setbit",             "nv",       &cmdUnknown },          // 60
-	{ "...",                "nv",       &cmdUnknown },          // 61 # clearbit
+	{ "normal.cycle",       "n",        &cmdNormalCycle },      // 5C
+	{ "load.view",          "n",        &cmdLoadView },         // 5D duplicate opcode: same table entry as 09
+	{ "...",                "n",        &cmdUnknown },          // 5E nop, 1 arg
+	{ "near.water",         "nv",       &cmdNearWater },        // 5F BC script 102 when attempting to fill flask
+	{ "set.bit",            "nv",       &cmdSetBit },           // 60
+	{ "clear.bit",          "nv",       &cmdClearBit },         // 61
+	{ "set.upper.left",     "nn",       &cmdSetUpperLeft }      // 62 BC Apple II
 };
 
 static const AgiOpCodeDefinitionEntry opCodesV2Cond[] = {
@@ -331,7 +332,7 @@ static const AgiOpCodeDefinitionEntry opCodesV2[] = {
 	{ "print.at.v",         "vnnn",     &cmdPrintAtV },         // 98
 	{ "discard.view.v",     "v",        &cmdDiscardView},       // 99
 	{ "clear.text.rect",    "nnnnn",    &cmdClearTextRect },    // 9A
-	{ "set.upper.left",     "nn",       &cmdSetUpperLeft },     // 9B
+	{ "set.upper.left",     "nn",       &cmdSetUpperLeft },     // 9B Apple II
 	{ "set.menu",           "s",        &cmdSetMenu },          // 9C
 	{ "set.menu.item",      "sn",       &cmdSetMenuItem },      // 9D
 	{ "submit.menu",        "",         &cmdSubmitMenu },       // 9E
@@ -346,12 +347,12 @@ static const AgiOpCodeDefinitionEntry opCodesV2[] = {
 	{ "div.n",              "vn",       &cmdDivN },             // A7
 	{ "div.v",              "vv",       &cmdDivV },             // A8
 	{ "close.window",       "",         &cmdCloseWindow },      // A9
-	{ "set.simple",         "n",        &cmdSetSimple },        // AA AGI2.425+, *BUT* not included in AGI2.440
+	{ "set.simple",         "n",        &cmdSetSimple },        // AA AGI2.425+, *BUT* not included in AGI2.440, discard.sound in some Apple IIgs
 	{ "push.script",        "",         &cmdPushScript },       // AB
 	{ "pop.script",         "",         &cmdPopScript },        // AC
 	{ "hold.key",           "",         &cmdHoldKey },          // AD
-	{ "set.pri.base",       "n",        &cmdSetPriBase },       // AE AGI2.936+ *AND* also inside AGI2.425
-	{ "discard.sound",      "n",        &cmdDiscardSound },     // AF was skip for PC
+	{ "set.pri.base",       "n",        &cmdSetPriBase },       // AE AGI2.936+ *AND* also inside AGI2.425, discard.sound in some Apple IIgs
+	{ "discard.sound",      "n",        &cmdDiscardSound },     // AF Apple IIGS only
 	{ "hide.mouse",         "",         &cmdHideMouse },        // B0 1 arg for AGI3 Apple IIGS and AGI 3.002.086. AGI3+ only starts here
 	{ "allow.menu",         "n",        &cmdAllowMenu },        // B1
 	{ "show.mouse",         "",         &cmdShowMouse },        // B2 1 arg for AGI3 Apple IIGS
@@ -402,7 +403,7 @@ void AgiEngine::setupOpCodes(uint16 version) {
 	}
 
 	// Alter opcode parameters for specific games
-	if ((version >= 0x2000) && (version < 0x3000)) {
+	if (0x2000 <= version && version < 0x3000) {
 		// AGI2 adjustments
 
 		// 'quit' takes 0 args for 2.089
@@ -417,22 +418,12 @@ void AgiEngine::setupOpCodes(uint16 version) {
 			_opCodes[0x97].parameters = "vvv";
 			_opCodes[0x98].parameters = "vvv";
 		}
-
-		// TODO: Opcode B0 is used by SQ2 Apple IIgs, but its purpose is
-		// currently unknown. It takes one parameter, and that parameter
- 		// appears to be a variable number. It is not hide.mouse from AGI3.
-		// No other AGI2 games have been discovered that call this opcode.
-		// Logic 1: during the spaceship cutscene in the intro, called with 53
-		// Logic 23: called twice with 39.
-		_opCodes[0xb0].name = "unknown";
-		_opCodes[0xb0].parameters = "v";
-		_opCodes[0xb0].functionPtr = &cmdUnknown;
 	}
 
 	if (version >= 0x3000) {
 		// AGI3 adjustments
 
-		// hide.mouse and hide.key take 1 parameter for 3.002.086.
+		// hide.mouse and hold.key take 1 parameter for 3.002.086.
 		// KQ4 is the only known game with this interpreter and
 		// its scripts do not call either opcode. no game scripts
 		// have been discovered that call hold.key with 1 parameter.
@@ -462,9 +453,54 @@ void AgiEngine::setupOpCodes(uint16 version) {
 		}
 	}
 
-	// AGIMOUSE games use a modified push.script that updates mouse state
+	// Apple IIgs adjustments
+	if (getPlatform() == Common::kPlatformApple2GS) {
+		// A2GS has platform-specific opcodes whose values changed over time.
+		// Our A2GS version numbering isn't as precise as for DOS interpreters,
+		// so the following version checks are just meant to separate A2GS games
+		// into three broad groups. The use of these opcodes has been audited in
+		// all known A2GS games and versions. Although all of these are currently
+		// no-ops in our implementation, what's important is that they prevent
+		// the "normal" opcodes from being unexpectedly called.
+
+		if (version <= 0x2440) {
+			// opcode 170: discard.sound.
+			// called by AGIDEMO, KQ1, LSL1, PQ1.
+			memcpy(&_opCodes[0xaa], &_opCodes[0xaf], sizeof(AgiOpCodeDefinitionEntry));
+		} else if (version < 0x3000) {
+			// opcode 174: discard.sound.
+			// called by MMMG, KQ2, KQ3, SQ2.
+			memcpy(&_opCodes[0xae], &_opCodes[0xaf], sizeof(AgiOpCodeDefinitionEntry));
+
+			// TODO: opcode 175: unknown opcode that takes one unknown parameter.
+			// called by KQ3 and SQ2. possibly related to sound. example:
+			// SQ2 Logic 20: called once during music after kicking spores
+			_opCodes[0xaf].name = "unknown";
+			_opCodes[0xaf].parameters = "n";
+			_opCodes[0xaf].functionPtr = &cmdUnknown;
+
+			// TODO: opcode 176: unknown opcode that takes one variable parameter.
+			// called by SQ2 in only two places:
+			// Logic 1: during the spaceship cutscene in the intro, called with 53
+			// Logic 23: called twice with 39.
+			_opCodes[0xb0].name = "unknown";
+			_opCodes[0xb0].parameters = "v";
+			_opCodes[0xb0].functionPtr = &cmdUnknown;
+		} else {
+			// AGI3 opcodes are already in the table:
+			// opcode 175: discard sound.
+			// called by KQ4 and MH1.
+		}
+	}
+
+	// AGI256 games use a modified opcode (set.simple) that loads 256 color pictures
+	if (getFeatures() & GF_AGI256) {
+		_opCodes[0xaa].functionPtr = &cmdAgi256LoadPic;
+	}
+
+	// AGIMOUSE games use a modified opcode (push.script) that gets mouse state
 	if (getFeatures() & GF_AGIMOUSE) {
-		_opCodes[0xab].functionPtr = &cmdAgiMousePushScript;
+		_opCodes[0xab].functionPtr = &cmdAgiMouseGetMouseState;
 	}
 
 	// add invalid entries for every opcode, that is not defined at all
@@ -484,11 +520,11 @@ void AgiEngine::setupOpCodes(uint16 version) {
 
 	// calculate parameter size
 	for (int opCodeNr = 0; opCodeNr < opCodesTableSize; opCodeNr++) {
-		_opCodes[opCodeNr].parameterSize = strlen( _opCodes[opCodeNr].parameters);
+		_opCodes[opCodeNr].parameterSize = strlen(_opCodes[opCodeNr].parameters);
 	}
 
 	for (int opCodeNr = 0; opCodeNr < opCodesCondTableSize; opCodeNr++) {
-		_opCodesCond[opCodeNr].parameterSize = strlen( _opCodesCond[opCodeNr].parameters);
+		_opCodesCond[opCodeNr].parameterSize = strlen(_opCodesCond[opCodeNr].parameters);
 	}
 }
 

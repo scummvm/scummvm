@@ -123,14 +123,14 @@ void Scalpel3DOScreen::SHfillRect(const Common::Rect &r, uint color) {
 }
 
 void Scalpel3DOScreen::SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped, int overrideColor, int scaleVal) {
-	ScalpelScreen::SHtransBlitFrom(src, pt, flipped, overrideColor,
+		bool flipped, int scaleVal) {
+	ScalpelScreen::SHtransBlitFrom(src, pt, flipped,
 		_vm->_isScreenDoubled ? scaleVal / 2 : scaleVal);
 }
 
 void Scalpel3DOScreen::SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped, int overrideColor, int scaleVal) {
-	ScalpelScreen::SHtransBlitFrom(src, pt, flipped, overrideColor,
+		bool flipped, int scaleVal) {
+	ScalpelScreen::SHtransBlitFrom(src, pt, flipped,
 		_vm->_isScreenDoubled ? scaleVal / 2 : scaleVal);
 }
 

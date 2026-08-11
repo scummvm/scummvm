@@ -51,7 +51,7 @@ protected:
 
 	void mapExeStrings(const Common::StringArray &strings);
 	void insertDisk(byte volume);
-	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
+	virtual Common::DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const { }
 	void loadItems(Common::ReadStream &stream);
 	void loadRooms(Common::ReadStream &stream, byte count);
@@ -87,9 +87,9 @@ protected:
 	} _strings_v2;
 
 	uint _maxLines;
-	DiskImage *_disk;
+	Common::DiskImage *_disk;
 	byte _currentVolume;
-	Common::Array<DataBlockPtr> _itemPics;
+	Common::Array<Common::DataBlockPtr> _itemPics;
 	bool _itemRemoved;
 	byte _roomOnScreen, _picOnScreen, _itemsOnScreen;
 	Common::Array<byte> _brokenRooms;

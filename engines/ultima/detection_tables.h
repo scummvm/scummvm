@@ -21,6 +21,7 @@
 
 namespace Ultima {
 
+#define GUI_OPTIONS_ULTIMA0	GUIO0()
 #define GUI_OPTIONS_ULTIMA1	GUIO0()
 #define GUI_OPTIONS_ULTIMA4	GUIO1(GUIO_NOSPEECH)
 #define GUI_OPTIONS_ULTIMA6	GUIO0()
@@ -45,8 +46,42 @@ namespace Ultima {
 // Ultima 6 normal mode only - unstable (currently only used for the PC98 version)
 #define ENTRY_ULTIMA6_NORMAL_UNSTABLE(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_UNSTABLE, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, 0}
 
+static const PlainGameDescriptor ULTIMA_GAMES[] = {
+	{ "akalabeth", "Akalabeth: World of Doom" },
+#ifndef RELEASE_BUILD
+	{ "ultima1", "Ultima I: The First Age of Darkness" },
+#endif
+	{ "ultima4", "Ultima IV: Quest of the Avatar" },
+	{ "ultima4_enh", "Ultima IV: Quest of the Avatar - Enhanced" },
+	{ "ultima6", "Ultima VI: The False Prophet" },
+	{ "ultima6_enh", "Ultima VI: The False Prophet - Enhanced" },
+	{ "ultima8", "Ultima VIII: Pagan" },
+	{ "remorse", "Crusader: No Remorse" },
+	{ "regret", "Crusader: No Regret" },
+
+	{ "martiandreams", "Worlds of Ultima: Martian Dreams" },
+	{ "martiandreams_enh", "Worlds of Ultima: Martian Dreams - Enhanced" },
+	{ "thesavageempire", "Worlds of Ultima: The Savage Empire" },
+	{ "thesavageempire_enh", "Worlds of Ultima: The Savage Empire - Enhanced" },
+	{ 0, 0 }
+};
+
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
-#ifdef ENABLE_ULTIMA1
+	{
+		// Akalabeth: World of Doom
+		{
+			"akalabeth",
+			nullptr,
+			AD_ENTRY1s("ak.dat", "f083346a49f450319a624d170a55d9e3", 17241),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA0
+		},
+		GAME_AKALABETH,
+		0
+	},
+
 	{
 		// Ultima I - The First Age of Darkness
 		{
@@ -97,9 +132,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA1,
 		0
 	},
-#endif
 
-#ifdef ENABLE_ULTIMA4
 	{
 		// Ultima IV - Quest of the Avatar
 		{
@@ -129,9 +162,37 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA4,
 		GF_VGA_ENHANCED
 	},
-#endif
 
-#ifdef ENABLE_ULTIMA6
+	{
+		// Ultima IV - Quest of the Avatar + French patch
+		{
+			"ultima4",
+			"Fanmade",
+			AD_ENTRY1s("britain.ult", "61b8f1f415e1bfb459ab3831eabd4899", 1280),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA4
+		},
+		GAME_ULTIMA4,
+		0
+	},
+
+	{
+		// Ultima IV - Quest of the Avatar + French patch
+		{
+			"ultima4_enh",
+			"Fanmade",
+			AD_ENTRY1s("britain.ult", "61b8f1f415e1bfb459ab3831eabd4899", 1280),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA4
+		},
+		GAME_ULTIMA4,
+		GF_VGA_ENHANCED
+	},
+
 	// GOG Ultima VI
 	ENTRY_ULTIMA6("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615,
 				Common::EN_ANY,
@@ -156,6 +217,12 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 				Common::DE_DEU,
 				Common::kPlatformDOS),
 
+	// Ultima VI - German Patch 1.7 https://sirjohn.de/ultima-6/
+	// Note: Not all user interface elements are translated in ScummVM
+	ENTRY_ULTIMA6("converse.a", "f4e9280402baff12e5132e62f7bbb54f", 198810,
+				Common::DE_DEU,
+				Common::kPlatformDOS),
+
 	// PC98 Ultima 6
 	ENTRY_ULTIMA6_NORMAL_UNSTABLE("converse.a", "99975e79e7cae3ee24a8e33982f60fe4", 190920,
 				Common::JA_JPN,
@@ -176,15 +243,13 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	ENTRY_ULTIMA6("converse.a", "ee22a6ac3964f9ff11a48fcb3f4a9389", 162458,
 				Common::EN_ANY,
 				Common::kPlatformDOS),
-#endif
 
-#ifdef ENABLE_ULTIMA8
 	// Ultima VIII - CD (provided by ddeluca1com, bug #11944)
 	{
 		{
 			"ultima8",
 			"",
-			AD_ENTRY1s("eusecode.flx", "5494165cbf4b07be04a465e28350e086", 1209018),
+			AD_ENTRY1s("usecode/eusecode.flx", "5494165cbf4b07be04a465e28350e086", 1209018),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -199,7 +264,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"",
-			AD_ENTRY1s("eusecode.flx", "87c8b584e2947e5e4d99bd8bff6cea2e", 1251108),
+			AD_ENTRY1s("usecode/eusecode.flx", "87c8b584e2947e5e4d99bd8bff6cea2e", 1251108),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -214,7 +279,8 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			AD_ENTRY1s("eusecode.flx", "c61f1dacde591cb39d452264e281f234", 1251108),
+			AD_ENTRY2s("usecode/eusecode.flx", "c61f1dacde591cb39d452264e281f234", 1251108,
+					   "static/eintro.skf", "b34169ece4286735262ac3430c441909", 1297731),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -228,7 +294,8 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			AD_ENTRY1s("fusecode.flx", "4017eb8678ee24af0ce8c7647a05509b", 1300957),
+			AD_ENTRY2s("usecode/fusecode.flx", "4017eb8678ee24af0ce8c7647a05509b", 1300957,
+					   "static/fintro.skf", "58990327f3e155551a69f41e7dcc0d08", 1275321),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -242,7 +309,8 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			AD_ENTRY1s("gusecode.flx", "d69599a46870b66c1b7c02710ed185bd", 1378604),
+			AD_ENTRY2s("usecode/gusecode.flx", "d69599a46870b66c1b7c02710ed185bd", 1378604,
+					   "static/gintro.skf", "4a2f3a996d13dba0528ef73264303bf5", 1264343),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -257,7 +325,8 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			AD_ENTRY1s("eusecode.flx", "cd4b330e09efd232360fd476bcc6a1d1", 1285847),
+			AD_ENTRY2s("usecode/eusecode.flx", "cd4b330e09efd232360fd476bcc6a1d1", 1285847,
+					   "static/eintro.skf", "9f8a9d95248ae3ae4b74a24ab88bf95f", 1233678),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -272,7 +341,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"",
-			AD_ENTRY1s("gusecode.flx", "dc981f82c6303548ad1c967cdef1a0ea", 1335445),
+			AD_ENTRY1s("usecode/gusecode.flx", "dc981f82c6303548ad1c967cdef1a0ea", 1335445),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -287,7 +356,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"",
-			AD_ENTRY1s("fusecode.flx", "6f7643af10bffa11debea4533ba47061", 1300957),
+			AD_ENTRY1s("usecode/fusecode.flx", "6f7643af10bffa11debea4533ba47061", 1300957),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -301,7 +370,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"",
-			AD_ENTRY1s("eusecode.flx", "1abad7a58e052ff3d9664df1ab2ddb86", 1136206),
+			AD_ENTRY1s("usecode/eusecode.flx", "1abad7a58e052ff3d9664df1ab2ddb86", 1136206),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -315,7 +384,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"",
-			AD_ENTRY1s("jusecode.flx", "1793bb252b805bf8d59300690987c605", 1208003),
+			AD_ENTRY1s("usecode/jusecode.flx", "1793bb252b805bf8d59300690987c605", 1208003),
 			Common::JA_JPN,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -325,18 +394,34 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// Crusader games use basically the same engine as ultima8, but
-	// are less complete.
+	// Crusader games use a very similar engine to ultima8.
+	// complete.  Because each version requires a separate Usecode callback
+	// table, only fully patched versions are marked supported.
 
 	// GOG Crusader - No Remorse (V1.21)
 	{
 		{
 			"remorse",
 			"",
-			AD_ENTRY1s("eusecode.flx", "0a0f64507adc4f280129c735ee9cad42", 556613),
+			AD_ENTRY1s("usecode/eusecode.flx", "0a0f64507adc4f280129c735ee9cad42", 556613),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_USECODE_DEFAULT,
+			GUI_OPTIONS_REMORSE
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
+	// Crusader - No Remorse CD version (V1.10) provided by heff978 (#15065)
+	{
+		{
+			"remorse",
+			"",
+			AD_ENTRY1s("usecode/eusecode.flx", "73b413b1ef291c4512f16c719ad746f3", 419591),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
 			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
@@ -348,7 +433,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"remorse",
 			"",
-			AD_ENTRY1s("eusecode.flx", "3fb211f4adfd80595078afc85bdfe7b4", 433143),
+			AD_ENTRY1s("usecode/eusecode.flx", "3fb211f4adfd80595078afc85bdfe7b4", 433143),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -363,7 +448,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"remorse",
 			"",
-			AD_ENTRY1s("eusecode.flx", "8c74327e30088ce93f08a15a7f85b3ce", 418556),
+			AD_ENTRY1s("usecode/eusecode.flx", "8c74327e30088ce93f08a15a7f85b3ce", 418556),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_ORIG,
@@ -378,7 +463,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"remorse",
 			"",
-			AD_ENTRY1s("eusecode.flx", "efbd33d6a5e8f14e9c57f963c3fbe939", 423051),
+			AD_ENTRY1s("usecode/eusecode.flx", "efbd33d6a5e8f14e9c57f963c3fbe939", 423051),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_FR,
@@ -393,7 +478,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"remorse",
 			"",
-			AD_ENTRY1s("eusecode.flx", "36a16d70c97d0379f1133cc743c31313", 558493),
+			AD_ENTRY1s("usecode/eusecode.flx", "36a16d70c97d0379f1133cc743c31313", 558493),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_USECODE_ES,
@@ -408,7 +493,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"remorse",
 			"Fan Translation",
-			AD_ENTRY1s("eusecode.flx", "a8b5c421c5d74be8c69fcd4fecadd1dd", 559015),
+			AD_ENTRY1s("usecode/eusecode.flx", "a8b5c421c5d74be8c69fcd4fecadd1dd", 559015),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_USECODE_DEFAULT,
@@ -423,7 +508,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"remorse",
 			"",
-			AD_ENTRY1s("jusecode.flx", "088105959be4f2de1cb9e796e71c5f2d", 554522),
+			AD_ENTRY1s("usecode/jusecode.flx", "088105959be4f2de1cb9e796e71c5f2d", 554522),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_USECODE_JA,
@@ -438,7 +523,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"remorse",
 			"Demo",
-			AD_ENTRY1s("eusecode.flx", "41cdca35b62f4b2a7bb4c3b1ec782423", 556613),
+			AD_ENTRY1s("usecode/eusecode.flx", "41cdca35b62f4b2a7bb4c3b1ec782423", 556613),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
@@ -453,7 +538,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"regret",
 			"",
-			AD_ENTRY1s("eusecode.flx", "1bb360156b7240a1f05eb9bda01c54db", 481652),
+			AD_ENTRY1s("usecode/eusecode.flx", "1bb360156b7240a1f05eb9bda01c54db", 481652),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_DEFAULT,
@@ -468,7 +553,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"regret",
 			"",
-			AD_ENTRY1s("eusecode.flx", "1824d9725de45a8b49f058c12c6cf5c3", 484445),
+			AD_ENTRY1s("usecode/eusecode.flx", "1824d9725de45a8b49f058c12c6cf5c3", 484445),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_DE,
@@ -483,7 +568,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"regret",
 			"Demo",
-			AD_ENTRY1s("eusecode.flx", "c6416e4716f3c008dba113a2a460367e", 483174),
+			AD_ENTRY1s("usecode/eusecode.flx", "c6416e4716f3c008dba113a2a460367e", 483174),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_DEMO,
@@ -498,7 +583,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"regret",
 			"",
-			AD_ENTRY1s("eusecode.flx", "f5906654047ed1dab75760da6426ecfa", 478125),
+			AD_ENTRY1s("usecode/eusecode.flx", "f5906654047ed1dab75760da6426ecfa", 478125),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_ES,
@@ -507,30 +592,83 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_CRUSADER_REG,
 		0
 	},
-#endif
 
-#ifdef ENABLE_ULTIMA6
-	// GOG Martian Dreams
+	// REMARK: MD can have many versions, but the detection is less tricky than with SE.
+	//
+	//	There seems only one master version available, V1.4,
+	//	with two graphic modes (EGA/VGA) and (Time/Space) saving.
+	//	So there are 4 different versions of datafile-sets for this game.
+	//
+	//	* talk.lzc   differs only by (Time/Space) installation
+	//	* tileindx.* differs only by (EGA/VGA) installation
+
+	// REMARK: The next 2 versions are unsupported!
+
+	// Martian Dreams V1.4 EGA - Space saving installation
 	{
 		{
 			"martiandreams",
-			0,
-			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
+			"V1.4S/EGA",
+			{
+				{"talk.lzc", 0, "78fa6198a30b848a45f3c2471e3c6a4e", 240299},
+				{"tileindx.ega", 0, "ce79cdcb68f214fde732106f32f16ffc", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_MARTIAN_DREAMS
+		},
+		GAME_MARTIAN_DREAMS,
+		0
+	},
+	// Martian Dreams V1.4 EGA - Time saving installation
+	{
+		{
+			"martiandreams",
+			"V1.4T/EGA",
+			{
+				{"talk.lzc", 0, "6efafc030cb552028c564897e40d87b5", 409705},
+				{"tileindx.ega", 0, "ce79cdcb68f214fde732106f32f16ffc", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_MARTIAN_DREAMS
 		},
 		GAME_MARTIAN_DREAMS,
 		0
 	},
 
-	// GOG Martian Dreams - Enhanced
+	// Martian Dreams - Enhanced V1.4 VGA - Space saving installation
 	{
 		{
 			"martiandreams_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
+			"V1.4S/VGA",
+			{
+				{"talk.lzc", 0, "78fa6198a30b848a45f3c2471e3c6a4e", 240299},
+				{"tileindx.vga", 0, "6af67a836ee36ec0ee7c0d96a4be81b3", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_MARTIAN_DREAMS
+		},
+		GAME_MARTIAN_DREAMS,
+		GF_VGA_ENHANCED
+	},
+	// Martian Dreams - Enhanced V1.4 VGA - Time saving installation (available on GOG)
+	{
+		{
+			"martiandreams_enh",
+			"V1.4T/VGA",
+			{
+				{"talk.lzc", 0, "6efafc030cb552028c564897e40d87b5", 409705},
+				{"tileindx.vga", 0, "6af67a836ee36ec0ee7c0d96a4be81b3", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -540,28 +678,130 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// REMARK: SE can have many versions, so the detection is a bit tricky:
+	//
+	// 	There are two known versions, V1.6 and V2.1.
+	// 	During installation theres an option to select between (Time/Space)-saving,
+	// 	which results in different data files.
+	// 	Also theres another option to select other graphic devices (Tandy/EGA/VGA),
+	// 	which also results in different data files.
+	// 	Installation comes with Time-saving and VGA, the conversion is done by the installer.
+	// 	So there are 12 different versions of datafile-sets for that game.
+	//
+	//         * talk.lzc    differs only from V1.6 to V2.1
+	//         * endgame.lzc differs in each generated version, but is not affected by V1.6 => V2.1
+	//         * tileindx.*  is the same for each graphics type and is not affected by V1.6 => V2.1
 
-	// The Savage Empire v1.6
+	// REMARK: The next 4 versions are unsupported!
+
+	// The Savage Empire v1.6 Tandy - Space saving installation
 	{
 		{
 			"thesavageempire",
-			0,
-			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			"V1.6S/TGA",
+			{
+				{"endgame.lzc", 0, "aed2d979ea10c4adf907f7babe82776e", 56905},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v1.6 Tandy - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6T/TGA",
+			{
+				{"endgame.lzc", 0, "e1c362564e5754fb9d79c01d33286e14", 168092},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		0
 	},
 
-	// The Savage Empire v1.6
+	// The Savage Empire v1.6 EGA - Space saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6S/EGA",
+			{
+				{"endgame.lzc", 0, "e917bd55bb3b895b06e250abe269680a", 60695},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v1.6 EGA - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6T/EGA",
+			{
+				{"endgame.lzc", 0, "893cd767e54711939f1694a87cace3b4", 99270},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// The Savage Empire v1.6 VGA - Space saving installation
 	{
 		{
 			"thesavageempire_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			"V1.6S/VGA",
+			{
+				{"endgame.lzc", 0, "32bd4f1daf9b97816f906623753d657b", 100947},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		GF_VGA_ENHANCED
+	},
+	// The Savage Empire v1.6 VGA - Time saving installation
+	{
+		{
+			"thesavageempire_enh",
+			"V1.6T/VGA",
+			{
+				{"endgame.lzc", 0, "04e34a7c9f2934507673ef8477a7763a", 172957},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -571,27 +811,100 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
-	// The Savage Empire v2.1
+	// REMARK: The next 4 versions are unsupported!
+	// Reason: different graphic files depending on the installation type.
+	// Detailed: User can choose between (Time/Space) x (Tandy/EGA/VGA) during installation.
+	//           These files will be converted according to the selection.
+
+	// The Savage Empire v2.1 Tandy - Space saving installation
 	{
 		{
 			"thesavageempire",
-			0,
-			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			"V2.1S/TGA",
+			{
+				{"endgame.lzc", 0, "aed2d979ea10c4adf907f7babe82776e", 56905},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v2.1 Tandy - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V2.1T/TGA",
+			{
+				{"endgame.lzc", 0, "e1c362564e5754fb9d79c01d33286e14", 168092},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		0
 	},
 
-	// The Savage Empire v2.1
+	// The Savage Empire v2.1 EGA - Space saving installation
+	{
+		{
+			"thesavageempire",
+			"V2.1S/EGA",
+			{
+				{"endgame.lzc", 0, "e917bd55bb3b895b06e250abe269680a", 60695},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v2.1 EGA - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V2.1T/EGA",
+			{
+				{"endgame.lzc", 0, "893cd767e54711939f1694a87cace3b4", 99270},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// The Savage Empire v2.1 VGA - Space saving installation
 	{
 		{
 			"thesavageempire_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			"V2.1S/VGA",
+			{
+				{"endgame.lzc", 0, "32bd4f1daf9b97816f906623753d657b", 100947},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -600,37 +913,25 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED
 	},
-
-	// The Savage Empire v2.1
-	{
-		{
-			"thesavageempire",
-			0,
-			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
-			GUIO0()
-		},
-		GAME_SAVAGE_EMPIRE,
-		0
-	},
-
-	// The Savage Empire v2.1
+	// The Savage Empire v2.1 VGA - Time saving installation
 	{
 		{
 			"thesavageempire_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			"V2.1T/VGA",
+			{
+				{"endgame.lzc", 0, "04e34a7c9f2934507673ef8477a7763a", 172957},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED
 	},
-#endif
 
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
 };

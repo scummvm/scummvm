@@ -51,16 +51,16 @@ class MystCard;
 
 // Engine Debug Flags
 enum {
-	kDebugVariable = (1 << 0),
-	kDebugSaveLoad = (1 << 1),
-	kDebugView     = (1 << 2),
-	kDebugHint     = (1 << 3),
-	kDebugResource = (1 << 4),
-	kDebugINIT     = (1 << 5),
-	kDebugEXIT     = (1 << 6),
-	kDebugScript   = (1 << 7),
-	kDebugHelp     = (1 << 8),
-	kDebugCache    = (1 << 9)
+	kDebugVariable = 1,
+	kDebugSaveLoad,
+	kDebugView,
+	kDebugHint,
+	kDebugResource,
+	kDebugINIT,
+	kDebugEXIT,
+	kDebugScript,
+	kDebugHelp,
+	kDebugCache,
 };
 
 // Myst Stacks

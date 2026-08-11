@@ -22,16 +22,14 @@
 #ifndef M4_BURGER_VARS_H
 #define M4_BURGER_VARS_H
 
-#include "common/textconsole.h"
 #include "m4/vars.h"
 #include "m4/burger/core/release_trigger.h"
 #include "m4/burger/core/stream_break.h"
 #include "m4/burger/gui/gui.h"
 #include "m4/burger/gui/gui_gizmo.h"
-#include "m4/burger/gui/game_menu.h"
+#include "m4/burger/gui/interface.h"
 #include "m4/burger/flags.h"
 #include "m4/burger/hotkeys.h"
-#include "m4/burger/inventory.h"
 #include "m4/burger/series_player.h"
 #include "m4/burger/walker.h"
 
@@ -98,14 +96,12 @@ public:
 	GUI::Gizmo_Globals _gizmo;
 	GUI::Interface _interface;
 	Burger::Hotkeys _hotkeys;
-	GUI::MenuGlobals _menu;
 	SeriesPlayers _seriesPlayers;
 	ReleaseTrigger_Globals _releaseTrigger;
 	StreamBreak_Globals _streamBreak;
 	Burger::Walker _walker;
 
 	int _wilburTerm = 2;
-	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
 	int _room902Flag = 0;
 	int _roomVal3 = 0;

@@ -22,8 +22,6 @@
 #ifndef CREATE_DRASCULA_H
 #define CREATE_DRASCULA_H
 
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
-
 #define DATAALIGNMENT 4
 
 #define NUM_LANGS 6

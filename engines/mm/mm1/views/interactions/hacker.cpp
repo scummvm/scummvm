@@ -43,6 +43,7 @@ bool Hacker::msgGame(const GameMessage &msg) {
 	if (_canAccept) {
 		// Show the view
 		Sound::sound(SOUND_2);
+		Sound::sound2(SOUND_2);
 		addView();
 
 	} else {
@@ -58,6 +59,7 @@ bool Hacker::msgGame(const GameMessage &msg) {
 		g_maps->_mapPos.x--;
 		map.redrawGame();
 
+		Sound::sound2(SOUND_2);
 		send(SoundMessage(
 			0, 1, STRING["maps.map36.hacker1"],
 			0, 2, line

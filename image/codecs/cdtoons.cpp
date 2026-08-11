@@ -47,14 +47,13 @@ static Common::Rect readRect(Common::SeekableReadStream &stream) {
 	return rect;
 }
 
-CDToonsDecoder::CDToonsDecoder(uint16 width, uint16 height) {
+CDToonsDecoder::CDToonsDecoder(uint16 width, uint16 height) : _palette(256) {
 	debugN(5, "CDToons: width %d, height %d\n", width, height);
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	_currentPaletteId = 0;
-	memset(_palette, 0, 256 * 3);
 	_dirtyPalette = false;
 }
 
@@ -62,8 +61,8 @@ CDToonsDecoder::~CDToonsDecoder() {
 	_surface->free();
 	delete _surface;
 
-	for (Common::HashMap<uint16, CDToonsBlock>::iterator i = _blocks.begin(); i != _blocks.end(); i++)
-		delete[] i->_value.data;
+	for (auto &block : _blocks)
+		delete[] block._value.data;
 }
 
 Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &stream) {
@@ -435,13 +434,11 @@ void CDToonsDecoder::setPalette(byte *data) {
 
 	// A lovely QuickTime palette
 	for (uint i = 0; i < 256; i++) {
-		_palette[i * 3]     = *data;
-		_palette[i * 3 + 1] = *(data + 2);
-		_palette[i * 3 + 2] = *(data + 4);
+		_palette.set(i, *data, *(data + 2), *(data + 4));
 		data += 6;
 	}
 
-	_palette[0] = _palette[1] = _palette[2] = 0;
+	_palette.set(0, 0, 0, 0);
 }
 
 } // End of namespace Image

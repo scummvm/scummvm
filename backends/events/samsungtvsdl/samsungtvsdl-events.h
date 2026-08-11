@@ -22,12 +22,12 @@
 #if !defined(BACKEND_EVENTS_SDL_SAMSUNGTV_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
 #define BACKEND_EVENTS_SDL_SAMSUNGTV_H
 
-#include "backends/events/sdl/legacy-sdl-events.h"
+#include "backends/events/sdl/sdl-events.h"
 
 /**
  * SDL events manager for Samsung TV
  */
-class SamsungTVSdlEventSource : public LegacySdlEventSource {
+class SamsungTVSdlEventSource : public SdlEventSource {
 protected:
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };

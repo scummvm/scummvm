@@ -41,6 +41,8 @@ enum MadeGameFeatures {
 };
 
 struct MadeGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameID;
@@ -50,6 +52,8 @@ struct MadeGameDescription {
 };
 
 #define GAMEOPTION_INTRO_MUSIC_DIGITAL GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS                 GUIO_GAMEOPTIONS2
+#define GAMEOPTION_WINDOWS_CURSORS     GUIO_GAMEOPTIONS3
 
 } // End of namespace Made
 

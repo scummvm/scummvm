@@ -42,6 +42,7 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/base_access_mgr.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
@@ -53,6 +54,7 @@
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 #include "common/str.h"
 
@@ -80,29 +82,10 @@ AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdEntity::~AdEntity() {
-	_gameRef->unregisterObject(_region);
+	_game->unregisterObject(_region);
+	SAFE_DELETE(_theora);
 
-	delete _theora;
-	_theora = nullptr;
-
-	delete[] _item;
-	_item = nullptr;
-}
-
-int32 AdEntity::getWalkToX() const {
-	return _walkToX;
-}
-
-int32 AdEntity::getWalkToY() const {
-	return _walkToY;
-}
-
-TDirection AdEntity::getWalkToDir() const {
-	return _walkToDir;
-}
-
-const char *AdEntity::getItemName() const {
-	return _item;
+	SAFE_DELETE_ARRAY(_item);
 }
 
 #ifdef ENABLE_FOXTAIL
@@ -117,9 +100,9 @@ int32 AdEntity::getHintY() const {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::loadFile(const char *filename) {
-	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdEntity::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdEntity::loadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -128,7 +111,7 @@ bool AdEntity::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing ENTITY file '%s'", filename);
+		_game->LOG(0, "Error parsing ENTITY file '%s'", filename);
 	}
 
 
@@ -239,17 +222,17 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ENTITY) {
-			_gameRef->LOG(0, "'ENTITY' keyword expected.");
+			_game->LOG(0, "'ENTITY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 	BaseSprite *spr = nullptr;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
@@ -269,9 +252,8 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_SPRITE: {
-			delete _sprite;
-			_sprite = nullptr;
-			spr = new BaseSprite(_gameRef, this);
+			SAFE_DELETE(_sprite);
+			spr = new BaseSprite(_game, this);
 			if (!spr || DID_FAIL(spr->loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -281,7 +263,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_TALK: {
-			spr = new BaseSprite(_gameRef, this);
+			spr = new BaseSprite(_game, this);
 			if (!spr || DID_FAIL(spr->loadFile(params, adGame->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -291,7 +273,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
-			spr = new BaseSprite(_gameRef, this);
+			spr = new BaseSprite(_game, this);
 			if (!spr || DID_FAIL(spr->loadFile(params, adGame->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -356,11 +338,10 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
-			_cursor = new BaseSprite(_gameRef);
+			SAFE_DELETE(_cursor);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -371,31 +352,27 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_REGION: {
 			if (_region) {
-				_gameRef->unregisterObject(_region);
+				_game->unregisterObject(_region);
 			}
 			_region = nullptr;
-			BaseRegion *rgn = new BaseRegion(_gameRef);
+			BaseRegion *rgn = new BaseRegion(_game);
 			if (!rgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_region = rgn;
-				_gameRef->registerObject(_region);
+				_game->registerObject(_region);
 			}
 		}
 		break;
 
 		case TOKEN_BLOCKED_REGION: {
-			delete _blockRegion;
-			_blockRegion = nullptr;
-			delete _currentBlockRegion;
-			_currentBlockRegion = nullptr;
-			BaseRegion *rgn = new BaseRegion(_gameRef);
-			BaseRegion *crgn = new BaseRegion(_gameRef);
+			SAFE_DELETE(_blockRegion);
+			SAFE_DELETE(_currentBlockRegion);
+			BaseRegion *rgn = new BaseRegion(_game);
+			BaseRegion *crgn = new BaseRegion(_game);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
-				delete _blockRegion;
-				_blockRegion = nullptr;
-				delete _currentBlockRegion;
-				_currentBlockRegion = nullptr;
+				SAFE_DELETE(_blockRegion);
+				SAFE_DELETE(_currentBlockRegion);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_blockRegion = rgn;
@@ -406,17 +383,13 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_WAYPOINTS: {
-			delete _wptGroup;
-			_wptGroup = nullptr;
-			delete _currentWptGroup;
-			_currentWptGroup = nullptr;
-			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
-			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
+			SAFE_DELETE(_wptGroup);
+			SAFE_DELETE(_currentWptGroup);
+			AdWaypointGroup *wpt = new AdWaypointGroup(_game);
+			AdWaypointGroup *cwpt = new AdWaypointGroup(_game);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
-				delete _wptGroup;
-				_wptGroup = nullptr;
-				delete _currentWptGroup;
-				_currentWptGroup = nullptr;
+				SAFE_DELETE(_wptGroup);
+				SAFE_DELETE(_currentWptGroup);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_wptGroup = wpt;
@@ -432,22 +405,21 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_SUBTYPE: {
 			if (scumm_stricmp(params, "sound") == 0) {
-				delete _sprite;
-				_sprite = nullptr;
-				if (_gameRef->_editorMode) {
-					spr = new BaseSprite(_gameRef, this);
+				SAFE_DELETE(_sprite);
+				if (_game->_editorMode) {
+					spr = new BaseSprite(_game, this);
 					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) {
 						cmd = PARSERR_GENERIC;
 					} else {
 						_sprite = spr;
 					}
 				}
-				if (_gameRef->_editorMode) {
+				if (_game->_editorMode) {
 					_editorOnly = true;
 				}
 				_zoomable = false;
 				_rotatable = false;
-				_registrable = _gameRef->_editorMode;
+				_registrable = _game->_editorMode;
 				_shadowable = false;
 				_subtype = ENTITY_SOUND;
 			}
@@ -523,18 +495,17 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			break;
 #endif
 		}
-		break;
 
 		default:
 			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ENTITY definition");
+		_game->LOG(0, "Syntax error in ENTITY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading ENTITY definition");
+		_game->LOG(0, "Error loading ENTITY definition");
 		if (spr) {
 			delete spr;
 		}
@@ -542,7 +513,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (_region && _sprite) {
-		_gameRef->LOG(0, "Warning: Entity '%s' has both sprite and region.", getName());
+		_game->LOG(0, "Warning: Entity '%s' has both sprite and region.", _name);
 	}
 
 	updatePosition();
@@ -553,7 +524,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 	_state = STATE_READY;
 
-	if (_item && ((AdGame *)_gameRef)->isItemTaken(_item)) {
+	if (_item && _item[0] && ((AdGame *)_game)->isItemTaken(_item)) {
 		_active = false;
 	}
 
@@ -570,7 +541,7 @@ bool AdEntity::display() {
 		if (_alphaColor != 0) {
 			alpha = _alphaColor;
 		} else {
-			alpha = _shadowable ? ((AdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
+			alpha = _shadowable ? ((AdGame *)_game)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
 		}
 
 		float scaleX, scaleY;
@@ -581,7 +552,7 @@ bool AdEntity::display() {
 			if (_rotateValid) {
 				rotate = _rotate;
 			} else {
-				rotate = ((AdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
+				rotate = ((AdGame *)_game)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
 			}
 		} else {
 			rotate = 0.0f;
@@ -589,12 +560,12 @@ bool AdEntity::display() {
 
 
 		bool reg = _registrable;
-		if (_ignoreItems && ((AdGame *)_gameRef)->_selectedItem) {
+		if (_ignoreItems && ((AdGame *)_game)->_selectedItem) {
 			reg = false;
 		}
 
 		if (_region && (reg || _editorAlwaysRegister)) {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
+			_game->_renderer->_rectList.add(new BaseActiveRect(_game,  _registerAlias, _region, _game->_offsetX, _game->_offsetY));
 		}
 
 		displaySpriteAttachments(true);
@@ -616,6 +587,20 @@ bool AdEntity::display() {
 			_partEmitter->display(_region);
 		}
 
+		// accessibility
+		if (_game->_accessMgr->getActiveObject() == this) {
+			getScale(&scaleX, &scaleY);
+
+			Common::Rect32 rc;
+			BasePlatform::setRectEmpty(&rc);
+			if (_currentSprite) {
+				_currentSprite->getBoundingRect(&rc, _posX - _game->_offsetX, _posY - _game->_offsetY, scaleX, scaleY);
+			} else if (_region) {
+				_region->getBoundingRect(&rc);
+				BasePlatform::offsetRect(&rc, -_game->_offsetX, -_game->_offsetY);
+			}
+			_game->_accessMgr->setHintRect(&rc);
+		}
 	}
 	return STATUS_OK;
 }
@@ -626,12 +611,11 @@ bool AdEntity::update() {
 	_currentSprite = nullptr;
 
 	if (_state == STATE_READY && _animSprite) {
-		delete _animSprite;
-		_animSprite = nullptr;
+		SAFE_DELETE(_animSprite);
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->_finished) {
 		_state = STATE_READY;
 		_currentSprite = _animSprite;
 	}
@@ -665,8 +649,8 @@ bool AdEntity::update() {
 			_tempSprite2 = _sentence->_currentSprite;
 		}
 
-		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
-		if (_tempSprite2 == nullptr || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _game->_timer - _sentence->_startTime);
+		if (_tempSprite2 == nullptr || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = nullptr;
@@ -677,11 +661,11 @@ bool AdEntity::update() {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
-				((AdGame *)_gameRef)->addSentence(_sentence);
+				((AdGame *)_game)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((AdGame *)_gameRef)->addSentence(_sentence);
+			((AdGame *)_game)->addSentence(_sentence);
 		}
 	}
 	break;
@@ -691,8 +675,8 @@ bool AdEntity::update() {
 
 
 	if (_currentSprite) {
-		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
-		if (_currentSprite->isChanged()) {
+		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_game)->_scene->getZoomAt(_posX, _posY) : 100);
+		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
 		}
@@ -703,15 +687,14 @@ bool AdEntity::update() {
 
 	if (_theora) {
 		int offsetX, offsetY;
-		_gameRef->getOffset(&offsetX, &offsetY);
+		_game->getOffset(&offsetX, &offsetY);
 		_theora->_posX = _posX - offsetX;
 		_theora->_posY = _posY - offsetY;
 
 		_theora->update();
 		if (_theora->isFinished()) {
 			_theora->stop();
-			delete _theora;
-			_theora = nullptr;
+			SAFE_DELETE(_theora);
 		}
 	}
 
@@ -750,11 +733,15 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *valAlpha = stack->pop();
 		int startTime = stack->pop()->getInt();
 
-		delete _theora;
-		_theora = new VideoTheoraPlayer(_gameRef);
+		SAFE_DELETE(_theora);
+		_theora = new VideoTheoraPlayer(_game);
 		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
 			if (!valAlpha->isNULL()) {
-				_theora->setAlphaImage(valAlpha->getString());
+				if (BaseEngine::instance().getGameId() == "barrowhilldp") {
+					// Silence wrong alpha argument in 'Barrow Hill - The Dark Path'
+				} else {
+					_theora->setAlphaImage(valAlpha->getString());
+				}
 			}
 			_theora->play(VID_PLAY_POS, 0, 0, false, false, looping, startTime, _scale >= 0.0f ? _scale : -1.0f, _sFXVolume);
 			//if (_scale>=0) _theora->_playZoom = _scale;
@@ -774,8 +761,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 		if (_theora) {
 			_theora->stop();
-			delete _theora;
-			_theora = nullptr;
+			SAFE_DELETE(_theora);
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -854,19 +840,19 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		const char *nodeName = stack->pop()->getString();
 
-		if (strcmp(getName(), nodeName) == 0) {
+		if (strcmp(_name, nodeName) == 0) {
 			warning("%s(%s): source and target have the same name", name, nodeName);
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
 
-		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.size(); i++) {
-			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
-			for (uint32 j = 0; j < layer->_nodes.size(); j++) {
+		for (int32 i = 0; i < ((AdGame *)_game)->_scene->_layers.getSize(); i++) {
+			AdLayer *layer = ((AdGame *)_game)->_scene->_layers[i];
+			for (int32 j = 0; j < layer->_nodes.getSize(); j++) {
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					// found source layer and index, looking for target node
-					for (uint32 k = 0; k < layer->_nodes.size(); k++) {
-						if (layer->_nodes[k]->_type == OBJECT_ENTITY && strcmp(layer->_nodes[k]->_entity->getName(), nodeName) == 0) {
+					for (int32 k = 0; k < layer->_nodes.getSize(); k++) {
+						if (layer->_nodes[k]->_type == OBJECT_ENTITY && strcmp(layer->_nodes[k]->_entity->_name, nodeName) == 0) {
 							// update target index, depending on method name and comparison of index values
 							if (j < k && strcmp(name, "SetBeforeEntity") == 0) {
 								k--;
@@ -877,7 +863,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 							// shift layer nodes array between source and target
 							int32 delta = j <= k ? 1 : -1;
 							AdSceneNode *tmp = layer->_nodes[j];
-							for (int32 x = j; x != (int32)k; x += delta) {
+							for (int32 x = j; x != k; x += delta) {
 								layer->_nodes[x] = layer->_nodes[x + delta];
 							}
 							layer->_nodes[k] = tmp;
@@ -903,9 +889,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "GetLayer") == 0 || strcmp(name, "GetIndex") == 0) {
 		stack->correctParams(0);
 
-		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.size(); i++) {
-			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
-			for (uint32 j = 0; j < layer->_nodes.size(); j++) {
+		for (int32 i = 0; i < ((AdGame *)_game)->_scene->_layers.getSize(); i++) {
+			AdLayer *layer = ((AdGame *)_game)->_scene->_layers[i];
+			for (int32 j = 0; j < layer->_nodes.getSize(); j++) {
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					if (strcmp(name, "GetLayer") == 0) {
 						stack->pushNative(layer, true);
@@ -929,8 +915,8 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "CreateRegion") == 0) {
 		stack->correctParams(0);
 		if (!_region) {
-			_region = new BaseRegion(_gameRef);
-			_gameRef->registerObject(_region);
+			_region = new BaseRegion(_game);
+			_game->registerObject(_region);
 		}
 		if (_region) {
 			stack->pushNative(_region, true);
@@ -947,7 +933,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "DeleteRegion") == 0) {
 		stack->correctParams(0);
 		if (_region) {
-			_gameRef->unregisterObject(_region);
+			_game->unregisterObject(_region);
 			_region = nullptr;
 			stack->pushBool(true);
 		} else {
@@ -962,13 +948,13 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdEntity::scGetProperty(const Common::String &name) {
+ScValue *AdEntity::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("entity");
 		return _scValue;
 	}
@@ -976,8 +962,8 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Item") {
-		if (_item) {
+	else if (strcmp(name, "Item") == 0) {
+		if (_item && _item[0]) {
 			_scValue->setString(_item);
 		} else {
 			_scValue->setNULL();
@@ -989,7 +975,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Subtype (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Subtype") {
+	else if (strcmp(name, "Subtype") == 0) {
 		if (_subtype == ENTITY_SOUND) {
 			_scValue->setString("sound");
 		} else {
@@ -1002,7 +988,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "WalkToX") {
+	else if (strcmp(name, "WalkToX") == 0) {
 		_scValue->setInt(_walkToX);
 		return _scValue;
 	}
@@ -1010,7 +996,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "WalkToY") {
+	else if (strcmp(name, "WalkToY") == 0) {
 		_scValue->setInt(_walkToY);
 		return _scValue;
 	}
@@ -1019,7 +1005,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] HintX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "HintX") {
+	else if (strcmp(name, "HintX") == 0) {
 		_scValue->setInt(_hintX);
 		return _scValue;
 	}
@@ -1027,7 +1013,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] HintY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "HintY") {
+	else if (strcmp(name, "HintY") == 0) {
 		_scValue->setInt(_hintY);
 		return _scValue;
 	}
@@ -1036,7 +1022,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "WalkToDirection") {
+	else if (strcmp(name, "WalkToDirection") == 0) {
 		_scValue->setInt((int)_walkToDir);
 		return _scValue;
 	}
@@ -1044,7 +1030,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Region (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Region") {
+	else if (strcmp(name, "Region") == 0) {
 		if (_region) {
 			_scValue->setNative(_region, true);
 		} else {
@@ -1126,7 +1112,7 @@ const char *AdEntity::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND) {
 		buffer->putTextIndent(indent + 2, "SUBTYPE=\"SOUND\"\n");
 	}
@@ -1153,7 +1139,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SAVE_STATE=%s\n", _saveState ? "TRUE" : "FALSE");
 	}
 
-	if (_item && _item[0] != '\0') {
+	if (_item && _item[0]) {
 		buffer->putTextIndent(indent + 2, "ITEM=\"%s\"\n", _item);
 	}
 
@@ -1168,20 +1154,19 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "HINT_Y=%d\n", _hintY);
 #endif
 
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_subtype == ENTITY_NORMAL && _sprite && _sprite->getFilename()) {
-		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->getFilename());
+	if (_subtype == ENTITY_NORMAL && _sprite && _sprite->_filename) {
+		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->_filename);
 	}
 
-	if (_subtype == ENTITY_SOUND && _sFX && _sFX->getFilename()) {
-		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->getFilename());
+	if (_subtype == ENTITY_SOUND && _sFX && _sFX->_soundFilename && _sFX->_soundFilename[0]) {
+		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename);
 		buffer->putTextIndent(indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
 		buffer->putTextIndent(indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
 	}
-
 
 	if (RGBCOLGetR(_alphaColor) != 0 || RGBCOLGetG(_alphaColor) != 0 ||  RGBCOLGetB(_alphaColor) != 0) {
 		buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", RGBCOLGetR(_alphaColor), RGBCOLGetG(_alphaColor), RGBCOLGetB(_alphaColor));
@@ -1199,12 +1184,12 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "RELATIVE_SCALE = %d\n", (int)_relativeScale);
 	}
 
-	if (_font && _font->getFilename()) {
-		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	if (_font && _font->_filename && _font->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
 
-	if (_cursor && _cursor->getFilename()) {
-		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	if (_cursor && _cursor->_filename && _cursor->_filename[0]) {
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 
 	AdTalkHolder::saveAsText(buffer, indent + 2);
@@ -1286,12 +1271,10 @@ bool AdEntity::setSprite(const char *filename) {
 		_currentSprite = nullptr;
 	}
 
-	delete _sprite;
-	_sprite = nullptr;
-	BaseSprite *spr = new BaseSprite(_gameRef, this);
+	SAFE_DELETE(_sprite);
+	BaseSprite *spr = new BaseSprite(_game, this);
 	if (!spr || DID_FAIL(spr->loadFile(filename))) {
-		delete _sprite;
-		_sprite = nullptr;
+		SAFE_DELETE(_sprite);
 		return STATUS_FAILED;
 	} else {
 		_sprite = spr;
@@ -1301,6 +1284,6 @@ bool AdEntity::setSprite(const char *filename) {
 }
 
 Common::String AdEntity::debuggerToString() const {
-	return Common::String::format("%p: Entity \"%s\"; (X,Y): (%d, %d), rotate(%d): %f deg, scale(%d): (%f, %f)%%", (const void *)this, getName(), _posX, _posY, _rotatable, _rotate, _zoomable, _scaleX, _scaleY);
+	return Common::String::format("%p: Entity \"%s\"; (X,Y): (%d, %d), rotate(%d): %f deg, scale(%d): (%f, %f)%%", (const void *)this, _name, _posX, _posY, _rotatable, _rotate, _zoomable, _scaleX, _scaleY);
 }
 } // End of namespace Wintermute

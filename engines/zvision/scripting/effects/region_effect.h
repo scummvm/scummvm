@@ -23,9 +23,8 @@
 #define ZVISION_REGION_NODE_H
 
 #include "graphics/surface.h"
-
-#include "zvision/scripting/scripting_effect.h"
 #include "zvision/graphics/graphics_effect.h"
+#include "zvision/scripting/scripting_effect.h"
 
 namespace ZVision {
 

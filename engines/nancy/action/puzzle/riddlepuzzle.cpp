@@ -97,6 +97,9 @@ void RiddlePuzzle::readData(Common::SeekableReadStream &stream) {
 void RiddlePuzzle::execute() {
 	switch (_state) {
 	case kBegin: {
+		_puzzleState = (RiddlePuzzleData *)NancySceneState.getPuzzleData(RiddlePuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 		_nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkTime;
@@ -135,9 +138,7 @@ void RiddlePuzzle::execute() {
 
 		g_nancy->_sound->loadSound(_riddles[_riddleID].sound);
 		g_nancy->_sound->playSound(_riddles[_riddleID].sound);
-		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().setOverrideFont(_textboxTextFontID);
-		NancySceneState.getTextbox().addTextLine(_riddles[_riddleID].text);
+		showSubtitle(_riddles[_riddleID].text, false, _textboxTextFontID);
 		NancySceneState.setNoHeldItem();
 
 		_state = kRun;

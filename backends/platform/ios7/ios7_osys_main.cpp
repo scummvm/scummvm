@@ -47,13 +47,14 @@
 #include "graphics/cursorman.h"
 #include "gui/gui-manager.h"
 
+#include "backends/events/default/default-events.h"
 #include "backends/graphics/ios/ios-graphics.h"
-#include "backends/graphics3d/ios/ios-graphics3d.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/fs/chroot/chroot-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
+#include "backends/text-to-speech/avfaudio/avfaudio-text-to-speech.h"
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
 
@@ -72,20 +73,17 @@ public:
 			: DefaultSaveFileManager(defaultSavepath), _sandboxRootPath(sandboxRootPath) {
 	}
 
-	bool removeSavefile(const Common::String &filename) override {
-		Common::Path chrootedFile = getSavePath().join(filename);
-		Common::Path realFilePath = _sandboxRootPath.join(chrootedFile);
+	Common::ErrorCode removeFile(const Common::FSNode &fileNode) override {
+		Common::Path chrootedFile(fileNode.getPath());
+		Common::Path realFilePath(_sandboxRootPath.join(chrootedFile));
 
-		if (remove(realFilePath.toString(Common::Path::kNativeSeparator).c_str()) != 0) {
-			if (errno == EACCES)
-				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+chrootedFile.toString(Common::Path::kNativeSeparator));
-
-			if (errno == ENOENT)
-				setError(Common::kPathDoesNotExist, "removeSavefile: '"+chrootedFile.toString(Common::Path::kNativeSeparator)+"' does not exist or path is invalid");
-			return false;
-		} else {
-			return true;
-		}
+		if (remove(realFilePath.toString(Common::Path::kNativeSeparator).c_str()) == 0)
+			return Common::kNoError;
+		if (errno == EACCES)
+			return Common::kWritePermissionDenied;
+		if (errno == ENOENT)
+			return Common::kPathDoesNotExist;
+		return Common::kUnknownError;
 	}
 };
 
@@ -112,6 +110,37 @@ OSystem_iOS7::~OSystem_iOS7() {
 	delete _graphicsManager;
 }
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+Common::Array<uint> OSystem_iOS7::getSupportedAntiAliasingLevels() const {
+	Common::Array<uint> levels;
+
+	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
+		return levels;
+	}
+
+	GLint numLevels;
+	GLint *glLevels;
+
+	// We take the format used by Renderer3D
+	glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_NUM_SAMPLE_COUNTS, 1, &numLevels);
+	if (numLevels == 0) {
+		return levels;
+	}
+
+	glLevels = new GLint[numLevels];
+	glGetInternalformativ(GL_RENDERBUFFER, GL_RGBA8, GL_SAMPLES, numLevels, glLevels);
+
+	// SDL returns values in ascending order while glGetInternalformativ returns them in descending order.
+	// Revert our result to match SDL
+	for(numLevels--; numLevels >= 0; numLevels--) {
+		levels.push_back(glLevels[numLevels]);
+	}
+
+	delete glLevels;
+	return levels;
+}
+#endif
+
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 void *OSystem_iOS7::getOpenGLProcAddress(const char *name) const {
 	return dlsym(RTLD_DEFAULT, name);
@@ -125,6 +154,8 @@ int OSystem_iOS7::timerHandler(int t) {
 }
 
 void OSystem_iOS7::initBackend() {
+	_eventManager = new DefaultEventManager(this);
+
 	_savefileManager = new SandboxedSaveFileManager(Common::Path(_chrootBasePath, Common::Path::kNativeSeparator), "/Savegames");
 
 	_timerManager = new DefaultTimerManager();
@@ -133,13 +164,18 @@ void OSystem_iOS7::initBackend() {
 
 	_graphicsManager = new iOSGraphicsManager();
 
+#ifdef USE_TTS
+	// Initialize Text to Speech manager
+	_textToSpeechManager = new AVFAudioTextToSpeechManager();
+#endif
+
 	setupMixer();
 
 	setTimerCallback(&OSystem_iOS7::timerHandler, 10);
 
 	ConfMan.registerDefault("iconspath", Common::Path("/"));
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_iOS7::hasFeature(Feature f) {
@@ -154,8 +190,6 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureOpenUrl:
 	case kFeatureNoQuit:
 	case kFeatureKbdMouseSpeed:
-	case kFeatureOpenGLForGame:
-	case kFeatureShadersForGame:
 	case kFeatureTouchscreen:
 #ifdef SCUMMVM_NEON
 	case kFeatureCpuNEON:
@@ -188,65 +222,6 @@ bool OSystem_iOS7::getFeatureState(Feature f) {
 		return ModularGraphicsBackend::getFeatureState(f);
 	}
 }
-
-bool OSystem_iOS7::setGraphicsMode(int mode, uint flags) {
-	bool render3d = flags & OSystem::kGfxModeRender3d;
-
-	// Utilize the same way to switch between 2D and 3D graphics manager as
-	// in SDL based backends and Android.
-	iOSCommonGraphics *commonGraphics = dynamic_cast<iOSCommonGraphics *>(_graphicsManager);
-	iOSCommonGraphics::State gfxManagerState = commonGraphics->getState();
-
-	bool supports3D = _graphicsManager->hasFeature(kFeatureOpenGLForGame);
-	bool switchedManager = false;
-
-	// If the new mode and the current mode are not from the same graphics
-	// manager, delete and create the new mode graphics manager
-	if (render3d && !supports3D) {
-		delete _graphicsManager;
-		iOSGraphics3dManager *manager = new iOSGraphics3dManager();
-		_graphicsManager = manager;
-		commonGraphics = manager;
-		switchedManager = true;
-	} else if (!render3d && supports3D) {
-		delete _graphicsManager;
-		iOSGraphicsManager *manager = new iOSGraphicsManager();
-		_graphicsManager = manager;
-		commonGraphics = manager;
-		switchedManager = true;
-	}
-
-	if (switchedManager) {
-		// Setup the graphics mode and size first
-		// This is needed so that we can check the supported pixel formats when
-		// restoring the state.
-		_graphicsManager->beginGFXTransaction();
-		if (!_graphicsManager->setGraphicsMode(mode, flags))
-			return false;
-		_graphicsManager->initSize(gfxManagerState.screenWidth, gfxManagerState.screenHeight);
-		_graphicsManager->endGFXTransaction();
-
-		// This failing will probably have bad consequences...
-		//if (!androidGraphicsManager->setState(gfxManagerState)) {
-		//	return false;
-		//}
-
-		// Next setup the cursor again
-		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
-		CursorMan.popCursor();
-
-		// Next setup cursor palette if needed
-		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
-			CursorMan.pushCursorPalette(0, 0, 0);
-			CursorMan.popCursorPalette();
-		}
-
-		_graphicsManager->beginGFXTransaction();
-		return true;
-	} else {
-		return _graphicsManager->setGraphicsMode(mode, flags);
-	}
- }
 
 void OSystem_iOS7::suspendLoop() {
 	bool done = false;
@@ -436,16 +411,33 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 		}
 		CFRelease(fileUrl);
 	}
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 void iOS7_buildSharedOSystemInstance() {
 	OSystem_iOS7::sharedInstance();
 }
 
+void iOS7_setSafeAreaInsets(int l, int r, int t, int b) {
+	ModularGraphicsBackend *sys = dynamic_cast<ModularGraphicsBackend *>(g_system);
+	if (!sys) {
+		return;
+	}
+	iOSGraphicsManager *gfx = dynamic_cast<iOSGraphicsManager *>(sys->getGraphicsManager());
+	if (!gfx) {
+		return;
+	}
+	gfx->setSafeAreaInsets(l, r, t, b);
+}
+
 TouchMode iOS7_getCurrentTouchMode() {
 	OSystem_iOS7 *sys = dynamic_cast<OSystem_iOS7 *>(g_system);
 	if (!sys) {
-		abort();
+		// If the system has not finished loading, just return a
+		// default value.
+		return kTouchModeDirect;
 	}
 	return sys->getCurrentTouchMode();
 }
@@ -455,7 +447,8 @@ void iOS7_main(int argc, char **argv) {
 	//OSystem_iOS7::migrateApp();
 
 	Common::String logFilePath = iOS7_getDocumentsDir() + "/scummvm.log";
-	FILE *logFile = fopen(logFilePath.c_str(), "a");
+	// Only log to file when not attached to debugger console
+	FILE *logFile = isatty(STDERR_FILENO) != 1 ? fopen(logFilePath.c_str(), "a") : nullptr;
 	if (logFile != nullptr) {
 		// We check for log file size; if it's too big, we rewrite it.
 		// This happens only upon app launch

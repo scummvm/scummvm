@@ -128,7 +128,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Living Room & Kitchen
 		return new Scene270();
 	case 271:
-		// Living Room & Kitchen #2
+		// Living Room & Kitchen #2 (post accident)
 		return new Scene271();
 	case 280:
 		// Bedroom Flashback cut-scene
@@ -291,49 +291,53 @@ void BlueForceGame::rightClick() {
 }
 
 void BlueForceGame::processEvent(Event &event) {
-	if (event.eventType == EVENT_KEYPRESS) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
+	if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
+		switch (event.customType) {
+		case kActionHelp:
 			// F1 - Help
 			int tmp;
 			tmp = BF_GLOBALS._dialogCenter.y;
 			BF_GLOBALS._dialogCenter.y = 100;
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				MessageDialog::show(ESP_HELP_MSG, ESP_OK_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				MessageDialog::show(TsAGE::BlueForce::RUS_HELP_MSG, RUS_OK_BTN_STRING);
 			} else {
 				MessageDialog::show(HELP_MSG, OK_BTN_STRING);
 			}
 			BF_GLOBALS._dialogCenter.y = tmp;
 			break;
 
-		case Common::KEYCODE_F2:
+		case kActionSoundOptions:
 			// F2 - Sound Options
 			SoundDialog::execute();
 			break;
 
-		case Common::KEYCODE_F3:
+		case kActionQuitGame:
 			// F3 - Quit
 			quitGame();
 			event.handled = false;
 			break;
 
-		case Common::KEYCODE_F4:
+		case kActionRestartGame:
 			// F4 - Restart
 			restartGame();
 			g_globals->_events.setCursorFromFlag();
 			break;
 
-		case Common::KEYCODE_F7:
+		case kActionRestoreGame:
 			// F7 - Restore
 			restoreGame();
 			g_globals->_events.setCursorFromFlag();
 			break;
 
-		case Common::KEYCODE_F10:
+		case kActionPauseGame:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				MessageDialog::show(ESP_GAME_PAUSED_MSG, ESP_OK_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				MessageDialog::show(RUS_GAME_PAUSED_MSG, RUS_OK_BTN_STRING);
 			} else {
 				MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
 			}
@@ -777,6 +781,9 @@ void SceneExt::dispatch() {
 void SceneExt::loadScene(int sceneNum) {
 	Scene::loadScene(sceneNum);
 
+	BF_GLOBALS._sceneManager._scrollerRect.top = 0;
+	BF_GLOBALS._sceneManager._scrollerRect.bottom = 300;
+
 	BF_GLOBALS._sceneHandler->_delayTicks = 1;
 }
 
@@ -975,22 +982,33 @@ void SceneHandlerExt::process(Event &event) {
 
 	// If the user clicks the button whilst the introduction is active, prompt for playing the game
 	if ((BF_GLOBALS._dayNumber == 0) && (event.eventType == EVENT_BUTTON_DOWN)) {
-		// Prompt user for whether to start play or watch introduction
-		BF_GLOBALS._player.enableControl();
-		BF_GLOBALS._events.setCursor(CURSOR_WALK);
+		// Don't show this on-demand popup (ie. for the "Watch" or "Play" prompt) upon mouse click,
+		// during the Tsunami Title Screen or Tsnunami Title Screen #2.
+		// NOTE The game will automatically show this popup after a while in Tsnunami Title Screen #2 (Scene 100)
+		if (BF_GLOBALS._sceneManager._sceneNumber == 20) {
+			// Just skip the Tsunami logo scene and proceed to the next scene (100)
+			BF_GLOBALS._sceneManager.changeScene(100);
+		} else if (BF_GLOBALS._sceneManager._sceneNumber != 100) {
+			// Prompt user for whether to start play or watch introduction
+			BF_GLOBALS._player.enableControl();
+			// Set Arrow cursor for this popup prompt
+			BF_GLOBALS._events.setCursor(CURSOR_ARROW);
 
-		int rc;
-		if (g_vm->getLanguage() == Common::ES_ESP) {
-			rc = MessageDialog::show2(ESP_WATCH_INTRO_MSG, ESP_START_PLAY_BTN_STRING, ESP_INTRODUCTION_BTN_STRING);
-		} else {
-			rc = MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING);
-		}
-		if (rc == 0) {
-			// Start the game
-			BF_GLOBALS._dayNumber = 1;
-			BF_GLOBALS._sceneManager.changeScene(190);
-		} else {
-			BF_GLOBALS._player.disableControl();
+			int rc;
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				rc = MessageDialog::show2(ESP_WATCH_INTRO_MSG, ESP_START_PLAY_BTN_STRING, ESP_INTRODUCTION_BTN_STRING);
+			} else if (g_vm->getLanguage() == Common::RU_RUS) {
+				rc = MessageDialog::show2(RUS_WATCH_INTRO_MSG, RUS_START_PLAY_BTN_STRING, RUS_INTRODUCTION_BTN_STRING);
+			} else {
+				rc = MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING);
+			}
+			if (rc == 0) {
+				// Start the game
+				BF_GLOBALS._dayNumber = 1;
+				BF_GLOBALS._sceneManager.changeScene(190);
+			} else {
+				BF_GLOBALS._player.disableControl();
+			}
 		}
 
 		event.handled = true;
@@ -1243,6 +1261,13 @@ void BlueForceInvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 	T2_GLOBALS._uiElements.updateInventory();
 }
 
+/**
+ * This method is called when the day changes (starting from the change from day 1 to day 2).
+ * It handles setting items to the inventory or their proper location at the start of a day
+ * It also resets the dialogue options for Hayley McCoy (at the City Hall (scene 385))
+ * The method is not called when initializing the game's day to 1.
+ * @param mode The day number
+ */
 void BlueForceInvObjectList::alterInventory(int mode) {
 	// Check for existing specific items in player's inventory
 	bool hasPrintout = getObjectScene(INV_PRINT_OUT) == 1;
@@ -1273,6 +1298,9 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 	// Reset ticket book and miranda card back to motorcycle
 	setObjectScene(INV_TICKET_BOOK, 60);
 	setObjectScene(INV_MIRANDA_CARD, 60);
+
+	// The dialogue options for talking to Hayley McCoy is reset here for the day change
+	BF_GLOBALS._deziTopic = 0;
 
 	switch (mode) {
 	case 2:
@@ -1334,7 +1362,12 @@ void BlueForceInvObjectList::alterInventory(int mode) {
  * When an inventory item is selected, check if it's the gun belt, since that has a specific dialog
  */
 bool BlueForceInvObjectList::SelectItem(int objectNumber) {
-	if (objectNumber == INV_AMMO_BELT) {
+	if (objectNumber == INV_NONE) {
+		// For Blue Force, clicking on an empty inventory slot (which corresponds to objectNumber 0)
+		// has to return true here to prevent the cursor being set (in UIInventorySlot::process())
+		// which would cause an assertion fault for resource size.
+		return true;
+	} else if (objectNumber == INV_AMMO_BELT) {
 		AmmoBeltDialog *dlg = new AmmoBeltDialog();
 		dlg->execute();
 		delete dlg;
@@ -1421,7 +1454,7 @@ void SceneMessage::signal() {
 
 void SceneMessage::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) ||
-		((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN))) {
+		((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionReturn))) {
 		signal();
 	}
 }

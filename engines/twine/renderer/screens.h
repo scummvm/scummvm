@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "twine/twine.h"
 
@@ -42,48 +43,31 @@ private:
 	 * @param palette palette to adjust
 	 * @param intensity intensity value to adjust
 	 */
-	void adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *palette, int32 intensity);
+	void fadePal(uint8 r, uint8 g, uint8 b, const Graphics::Palette &palette, int32 intensity);
 
 public:
 	Screens(TwinEEngine *engine) : _engine(engine) {}
 
-	/** In-game palette (should not be used, except in special case. otherwise use other images functions instead) */
-	uint8 _palette[NUMOFCOLORS * 3]{0};
-
 	int32 mapLba2Palette(int32 palIndex);
 
-	/** converted in-game palette */
-	uint32 _paletteRGBA[NUMOFCOLORS]{0};
+	/** LBA2: Load the per-island XPL palette for the current scene */
+	void choicePalette();
 
-	/** converted custom palette */
-	uint32 _paletteRGBACustom[NUMOFCOLORS]{0};
+	/** main palette */
+	Graphics::Palette _ptrPal{0};
+	Graphics::Palette _palettePcx{0};
 
 	/** flag to check in the game palette was changed */
-	bool _palResetted = false;
+	bool _flagBlackPal = false;
 
 	/** flag to check if the main flag is locked */
-	bool _fadePalette = false;
+	bool _flagFade = false;
 
 	/** flag to check if we are using a different palette than the main one */
-	bool _useAlternatePalette = false;
-
-	/** converted in-game palette */
-	uint32 _mainPaletteRGBA[NUMOFCOLORS]{0};
+	bool _flagPalettePcx = false;
 
 	/** Load and display Adeline Logo */
 	bool adelineLogo();
-
-	void convertPalToRGBA(const uint8 *in, uint32 *out);
-
-	/**
-	 * @sa setNormalPal
-	 */
-	void setDarkPal();
-	/**
-	 * @sa setDarkPal()
-	 * Reset the palette to the main palette after the script changed it via @c setDarkPal()
-	 */
-	void setNormalPal();
 
 	/**
 	 * Load a custom palette
@@ -95,7 +79,7 @@ public:
 	void loadMenuImage(bool fadeIn = true);
 
 	/**
-	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect
+	 * Load and display a particularly image on \a RESS.HQR file with cross fade effect
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param fadeIn if we fade in before using the palette
@@ -103,7 +87,7 @@ public:
 	void loadImage(TwineImage image, bool fadeIn = true);
 
 	/**
-	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect and delay
+	 * Load and display a particularly image on \a RESS.HQR file with cross fade effect and delay
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param seconds number of seconds to delay
@@ -114,64 +98,42 @@ public:
 	bool loadBitmapDelay(const char *image, int32 seconds);
 
 	/**
-	 * Fade image in
-	 * @param palette current palette to fade in
-	 */
-	void fadeIn(const uint32 *palette);
-
-	/**
-	 * Fade image out
-	 * @param palette current palette to fade out
-	 */
-	void fadeOut(const uint32 *palette);
-
-	/**
-	 * Linear interpolation of the given value between start and end
-	 * @param value color component
-	 * @param start lower range
-	 * @param end upper range
-	 * @param t the location in given range
-	 * @return the lerped value
-	 * @note Doesn't clamp
-	 */
-	int32 lerp(int32 value, int32 start, int32 end, int32 t);
-
-	/**
 	 * Adjust between two palettes
 	 * @param pal1 palette from adjust
 	 * @param pal2 palette to adjust
 	 */
-	void adjustCrossPalette(const uint32 *pal1, const uint32 *pal2);
+	void fadePalToPal(const Graphics::Palette &pal1, const Graphics::Palette &pal2);
 
 	/**
 	 * Fade image to black
 	 * @param palette current palette to fade
 	 */
-	void fadeToBlack(const uint32 *palette);
+	void fadeToBlack(const Graphics::Palette &palette);
+	void fadeWhiteToPal(const Graphics::Palette &ptrpal);
 
 	/**
 	 * Fade image with another palette source
 	 * @param palette current palette to fade
 	 */
-	void fadeToPal(const uint32 *palette);
+	void fadeToPal(const Graphics::Palette &palette);
 
 	/** Fade black palette to white palette */
-	void blackToWhite();
+	void whiteFade();
 
 	/** Resets both in-game and sdl palettes */
-	void setBackPal();
+	void setBlackPal();
 
 	/**
 	 * Fade palette to red palette
 	 * @param palette current palette to fade
 	 */
-	void fadePalRed(const uint32 *palette);
+	void fadeToRed(const Graphics::Palette &palette);
 
 	/**
 	 * Fade red to palette
 	 * @param palette current palette to fade
 	 */
-	void fadeRedPal(const uint32 *palette);
+	void fadeRedToPal(const Graphics::Palette &palette);
 
 	/**
 	 * Copy a determinate screen buffer to another
@@ -181,7 +143,7 @@ public:
 	void copyScreen(const Graphics::ManagedSurface &source, Graphics::ManagedSurface &destination);
 
 	/** Clear front buffer screen */
-	void clearScreen();
+	void clearScreen(); // Cls()
 
 	/** Init palettes */
 	void initPalettes();

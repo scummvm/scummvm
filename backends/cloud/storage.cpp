@@ -23,7 +23,7 @@
 #include "backends/cloud/downloadrequest.h"
 #include "backends/cloud/folderdownloadrequest.h"
 #include "backends/cloud/savessyncrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/translation.h"

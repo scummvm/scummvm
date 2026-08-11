@@ -67,7 +67,9 @@ void Characters::draw() {
 			s.blitFrom(portrait, Common::Rect(0, 0, 30, 30),
 				Common::Rect(pt.x + 2, pt.y + 2, pt.x + 17, pt.y + 17));
 
-			writeString(pt.x - _innerBounds.left + 22, pt.y - _innerBounds.top + 5, c._name);
+			Common::String name = truncateString(c._name, _innerBounds.width() / 3 - 22);
+
+			writeString(pt.x - _innerBounds.left + 22, pt.y - _innerBounds.top + 5, name);
 		}
 
 		setReduced(false);

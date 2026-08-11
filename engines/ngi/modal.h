@@ -299,7 +299,7 @@ public:
 
 	void setScene(Scene *sc);
 	void setup(Scene *sc, int mode);
-	void processKey(int key);
+	void processKey(int action);
 
 	char *getSaveName();
 	bool getFileInfo(int slot, FileInfo *fileinfo);

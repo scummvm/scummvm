@@ -69,6 +69,7 @@ void PrinceEngine::changeCursor(uint16 curId) {
 		CursorMan.showMouse(false);
 		_optionsFlag = 0;
 		_selectedMob = -1;
+		_previousMob = -1;
 		return;
 	case 1:
 		curSurface = _cursor1->getSurface();
@@ -85,12 +86,12 @@ void PrinceEngine::changeCursor(uint16 curId) {
 		break;
 	}
 
-	CursorMan.replaceCursorPalette(_roomBmp->getPalette(), 0, 255);
+	CursorMan.replaceCursorPalette(_roomBmp->getPalette().data(), 0, 255);
 	CursorMan.replaceCursor(
 		curSurface->getBasePtr(0, 0),
 		curSurface->w, curSurface->h,
 		0, 0,
-		255, false,
+		255,
 		&curSurface->format
 	);
 	CursorMan.showMouse(true);

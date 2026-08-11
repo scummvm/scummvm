@@ -23,6 +23,7 @@
 #define GRAPHICS_WINFONT_H
 
 #include "common/str.h"
+#include "common/path.h"
 #include "graphics/font.h"
 
 namespace Common {
@@ -62,13 +63,15 @@ public:
 	void close();
 
 	// Font API
-	int getFontHeight() const { return _pixHeight; }
-	int getFontAscent() const { return _ascent; }
-	int getMaxCharWidth() const { return _maxWidth; }
+	int getFontHeight() const override { return _pixHeight; }	//< pixels, not points - for points, see getFontSizeInPointsAtDPI()
+	int getFontAscent() const override { return _ascent; }
+	int getMaxCharWidth() const override { return _maxWidth; }
 	Common::String getName() const { return _name; }
-	int getCharWidth(uint32 chr) const;
-	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 	int getStyle() const;
+
+	int getFontSizeInPointsAtDPI(const int dpi) const;
 
 	static WinFont *scaleFont(const WinFont *src, int newSize);
 private:
@@ -83,6 +86,8 @@ private:
 	uint16 _pixHeight;
 	uint16 _maxWidth;
 	uint16 _ascent;
+	uint16 _sizeInPoints;
+	uint16 _dpi;
 	byte _firstChar;
 	byte _lastChar;
 	byte _defaultChar;
@@ -101,7 +106,7 @@ private:
 
 	uint16 _glyphCount;
 	struct GlyphEntry {
-		GlyphEntry() { bitmap = 0; charWidth = 0; offset = 0; }
+		GlyphEntry() : charWidth(0), offset(0), bitmap(nullptr) {}
 		~GlyphEntry() { delete[] bitmap; }
 
 		uint16 charWidth;

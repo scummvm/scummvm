@@ -22,7 +22,7 @@
 #include "backends/networking/sdl_net/handlers/connectcloudhandler.h"
 #include "backends/fs/fs-factory.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 #include "backends/networking/sdl_net/getclienthandler.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
@@ -109,7 +109,7 @@ void ConnectCloudClientHandler::handle(Client *client) {
 	if (!client->readContent(&_clientContent))
 		return;
 
-	char *contents = Common::JSON::untaintContents(_clientContent);
+	char *contents = Common::JSON::zeroTerminateContents(_clientContent);
 	Common::JSONValue *json = Common::JSON::parse(contents);
 	if (json == nullptr) {
 		handleError(*client, "Not Acceptable", 406);

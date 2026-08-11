@@ -26,7 +26,6 @@
 
 class EN : public LangConstants {
 public:
-	virtual ~EN() {}
 	const char *CLOUDS_CREDITS() {
 		return "\v012\t000\x3"
 			   "c\f35Designed and Directed By:\n"
@@ -522,9 +521,10 @@ public:
 			   "077";
 	}
 
-	const char **DEPOSIT_WITHDRAWAL() {
-		static const char *_depositWithdrawal[] = { "Deposit", "Withdrawal" };
-		return _depositWithdrawal;
+	// FIXME: Spelling incorrect. Withdrawl should be Withdrawal. Fixing changes game data and thus may cause issues
+	const char **DEPOSIT_WITHDRAWL() {
+		static const char *_depositWithdrawl[] = { "Deposit", "Withdrawl" };
+		return _depositWithdrawl;
 	}
 
 	const char *NOT_ENOUGH_X_IN_THE_Y() {
@@ -781,6 +781,7 @@ public:
 			"Nonexistant", "Very Poor", "Poor", "Very Low", "Low", "Average", "Good",
 				"Very Good", "High", "Very High", "Great", "Super", "Amazing", "Incredible",
 				"Gigantic", "Fantastic", "Astoundig", "Astonishing", "Monumental", "Tremendous",
+				// FIXME: Spelling incorrect. Collosal should be Colossal. Fixing changes game data and thus may cause issues
 				"Collosal", "Awesome", "Awe Inspiring", "Ultimate"
 		};
 		return _ratingText;
@@ -2130,6 +2131,20 @@ public:
 			return _soxm;
 		}
 
+		virtual ~EN_KeyConstants() {
+			delete _dci;
+			delete _dcp;
+			delete _dcc;
+			delete _dd;
+			delete _di;
+			delete _dp;
+			delete _dq;
+			delete _dqf;
+			delete _ds;
+			delete _l;
+			delete _soxm;
+		}
+
 	private:
 		EN_DialogsCharInfo     *_dci = NULL;
 		EN_DialogsControlPanel *_dcp = NULL;
@@ -2147,6 +2162,10 @@ public:
 	EN_KeyConstants *keyConstants() {
 		if (!_kc)_kc = new EN_KeyConstants();
 		return _kc;
+	}
+
+	virtual ~EN() {
+		delete _kc;
 	}
 
 private:

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/utility.h"
+#include "common/std/utility.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/string.h"
 #include "ags/globals.h"
@@ -52,6 +52,10 @@ bool cc_has_error() {
 
 const ScriptError &cc_get_error() {
 	return _GP(ccError);
+}
+
+String cc_get_err_callstack(int max_lines) {
+	return cc_has_error() ? _GP(ccError).CallStack : cc_get_callstack(max_lines);
 }
 
 void cc_error(const char *descr, ...) {

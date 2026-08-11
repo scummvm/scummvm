@@ -39,13 +39,6 @@ uint8 *gr_color_createInverseTable(RGB8 *pal, uint8 bitDepth, int begin_color, i
 	error("gr_color_createInverseTable is not implemented in ScummVM");
 }
 
-void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num) {
-	error("gr_color_create_ipl5 is not implemented in ScummVM");
-}
-
-uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors) {
-	error("gr_color_load_ipl5 is not implemented in ScummVM");
-}
 
 void gr_color_set(int32 c) {
 	_G(color) = c;
@@ -56,9 +49,7 @@ byte gr_color_get_current() {
 }
 
 void gr_pal_clear(RGB8 *palette) {
-	int i;
-
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		palette[i].r = 0;
 		palette[i].g = 0;
 		palette[i].b = 0;
@@ -101,13 +92,13 @@ void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color) {
 }
 
 uint8 gr_pal_find_best_match(RGB8 *pal, uint8 r, uint8 g, uint8 b) {
-	int i, index = 0, Rdiff, Gdiff, Bdiff;
+	int index = 0;
 	uint32 minDist = 0x7fffffff;
 
-	for (i = 0; i < 256; ++i) {
-		Rdiff = r - pal[i].r;
-		Gdiff = g - pal[i].g;
-		Bdiff = b - pal[i].b;
+	for (int i = 0; i < 256; ++i) {
+		const int Rdiff = r - pal[i].r;
+		const int Gdiff = g - pal[i].g;
+		const int Bdiff = b - pal[i].b;
 		if (Rdiff * Rdiff + Gdiff * Gdiff + Bdiff * Bdiff < (int)minDist) {
 			minDist = Rdiff * Rdiff + Gdiff * Gdiff + Bdiff * Bdiff;
 			index = i;
@@ -121,7 +112,10 @@ void gr_pal_interface(RGB8 *fixpal) {
 	if (_GI().set_interface_palette(fixpal))
 		return;
 
-	// Low intesity
+	// The following code is unreachable as set_interface_palette always returns true
+	// This is also present in the original code
+	// 
+	// Low intensity
 	gr_pal_set_RGB8(&fixpal[0], 0, 0, 0);		// r0 g0 b0		black
 	gr_pal_set_RGB8(&fixpal[1], 0, 0, 168);		// r0 g0 b2		blue
 	gr_pal_set_RGB8(&fixpal[2], 0, 168, 0);		// r0 g2 b0		green
@@ -173,9 +167,9 @@ void gr_restore_palette() {
 
 void pal_mirror_colours(int first_color, int last_color, RGB8 *pal) {
 	if (first_color < 0 || last_color > 255 || first_color > last_color)
-		error_show(FL, 'Burg', "pal_mirror_colours index error");
+		error_show(FL, "pal_mirror_colours index error");
 
-	int num_colors = last_color - first_color + 1;
+	const int num_colors = last_color - first_color + 1;
 	for (int index = 0; index < num_colors; ++index) {
 		RGB8 *destP = pal + (last_color + num_colors - index);
 		RGB8 *srcP = pal + (first_color + index);

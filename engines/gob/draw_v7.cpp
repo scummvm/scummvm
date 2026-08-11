@@ -27,8 +27,11 @@
 
 #include "common/formats/winexe_ne.h"
 #include "common/formats/winexe_pe.h"
+#include "graphics/blit.h"
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
+#include "image/ani.h"
+#include "image/icocur.h"
 
 #include "gob/dataio.h"
 #include "gob/draw.h"
@@ -42,11 +45,65 @@
 
 namespace Gob {
 
-Draw_v7::Draw_v7(GobEngine *vm) : Draw_Playtoons(vm), _cursors(nullptr)  {
+Draw_v7::Draw_v7(GobEngine *vm) : Draw_Playtoons(vm), _cursors(nullptr),
+	_aniDecoder(nullptr), _aniCurrentFrame(0), _aniLastFrameTime(0) {
 }
 
 Draw_v7::~Draw_v7() {
+	clearAniCursor();
 	delete _cursors;
+}
+
+void Draw_v7::clearAniCursor() {
+	delete _aniDecoder;
+	_aniDecoder = nullptr;
+	_aniCurrentFrame = 0;
+	_aniLastFrameTime = 0;
+}
+
+bool Draw_v7::loadAniCursor(Common::SeekableReadStream *stream) {
+	clearAniCursor();
+
+	_aniDecoder = new Image::AniDecoder();
+	if (!_aniDecoder->open(*stream, DisposeAfterUse::YES) || _aniDecoder->getMetadata().numFrames == 0) {
+		clearAniCursor();
+		return false;
+	}
+
+	_aniCurrentFrame = 0;
+	_aniLastFrameTime = _vm->_util->getTimeKey();
+
+	return updateAniCursorFrame();
+}
+
+bool Draw_v7::updateAniCursorFrame() {
+	if (!_aniDecoder)
+		return false;
+
+	const Image::AniDecoder::Metadata &meta = _aniDecoder->getMetadata();
+	Image::AniDecoder::FrameDef frameDef = _aniDecoder->getSequenceFrame(_aniCurrentFrame);
+
+	Graphics::Cursor *cursor = nullptr;
+
+	if (meta.isCURFormat) {
+		Common::SeekableReadStream *frameStream = _aniDecoder->openImageStream(frameDef.imageIndex);
+		if (frameStream) {
+			Image::IcoCurDecoder cursorDecoder;
+			cursorDecoder.open(*frameStream);
+			if (cursorDecoder.numItems() > 0)
+				cursor = cursorDecoder.loadItemAsCursor(0);
+			delete frameStream;
+		}
+	}
+
+	if (!cursor)
+		cursor = Graphics::makeDefaultWinCursor();
+
+	CursorMan.replaceCursor(cursor);
+	CursorMan.disableCursorPalette(false);
+	delete cursor;
+
+	return true;
 }
 
 bool Draw_v7::loadCursorFile() {
@@ -73,42 +130,54 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 	Graphics::WinCursorGroup *cursorGroup = nullptr;
 	Graphics::Cursor *defaultCursor = nullptr;
 
-	// Load the cursor file and cursor group
-	if (loadCursorFile())
-		cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_cursors, Common::WinResourceID(cursorName));
-
-	// If the requested cursor does not exist, create a default one
 	const Graphics::Cursor *cursor = nullptr;
-	if (!cursorGroup || cursorGroup->cursors.empty() || !cursorGroup->cursors[0].cursor) {
-		defaultCursor = Graphics::makeDefaultWinCursor();
 
-		cursor = defaultCursor;
-	} else
-		cursor = cursorGroup->cursors[0].cursor;
+	if (cursorName.hasPrefix("*")) {
+		// Load from an external .CUR or .ANI file
+		cursorName = cursorName.substr(1);
+		Common::SeekableReadStream *cursorStream = _vm->_dataIO->getFile(cursorName);
 
-	// Make sure the cursor sprite is big enough
-	if (_scummvmCursor->getWidth() != cursor->getWidth() || _scummvmCursor->getHeight() != cursor->getHeight()) {
-		_vm->_draw->_scummvmCursor.reset();
-		_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(cursor->getWidth(), cursor->getHeight(), SCUMMVM_CURSOR);
+		if (cursorStream) {
+			if (cursorName.hasSuffixIgnoreCase(".ANI")) {
+				// Animated cursor
+				if (loadAniCursor(cursorStream)) {
+					return true;
+				}
+				warning("Failed to open ANI file '%s'", cursorName.c_str());
+			} else {
+				Image::IcoCurDecoder cursorDecoder;
+				cursorDecoder.open(*cursorStream);
+
+				if (cursorDecoder.numItems() > 0) {
+					cursor = cursorDecoder.loadItemAsCursor(0);
+				} else {
+					warning("No cursor item found in file '%s'", cursorName.c_str());
+				}
+
+				delete cursorStream;
+				clearAniCursor();
+			}
+		} else {
+			warning("External cursor file '%s' not found", cursorName.c_str());
+		}
+	} else {
+		clearAniCursor();
+		// Load from a .DLL cursor file and cursor group
+		if (loadCursorFile())
+			cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_cursors, Common::WinResourceID(cursorName));
+
+		if (cursorGroup && !cursorGroup->cursors.empty() && cursorGroup->cursors[0].cursor) {
+			cursor = cursorGroup->cursors[0].cursor;
+		}
 	}
 
-	_scummvmCursor->clear();
+	// If the requested cursor does not exist, create a default one
+	if (!cursor) {
+		defaultCursor = Graphics::makeDefaultWinCursor();
+		cursor = defaultCursor;
+	}
 
-	Surface cursorSurf(cursor->getWidth(), cursor->getHeight(), 1, cursor->getSurface());
-	_scummvmCursor->blit(cursorSurf, 0, 0);
-
-	CursorMan.replaceCursor(_scummvmCursor->getData(),
-							cursor->getWidth(),
-							cursor->getHeight(),
-							cursor->getHotspotX(),
-							cursor->getHotspotY(),
-							cursor->getKeyColor(),
-							false,
-							&_vm->getPixelFormat(),
-							cursor->getMask());
-	CursorMan.replaceCursorPalette(cursor->getPalette(),
-								   cursor->getPaletteStartIndex(),
-								   cursor->getPaletteCount());
+	CursorMan.replaceCursor(cursor);
 	CursorMan.disableCursorPalette(false);
 
 	delete cursorGroup;
@@ -116,8 +185,7 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 	return true;
 }
 
-void Draw_v7::initScreen()
-{
+void Draw_v7::initScreen() {
 	_vm->_game->_preventScroll = false;
 
 	_scrollOffsetX = 0;
@@ -140,6 +208,24 @@ void Draw_v7::initScreen()
 	_spritesArray[kBackSurface ] = _backSurface;
 
 	_vm->_video->dirtyRectsAll();
+}
+
+void Draw_v7::updateAnimatedCursor() {
+	if (!_aniDecoder)
+		return;
+
+	const Image::AniDecoder::Metadata &metaData = _aniDecoder->getMetadata();
+	if (metaData.numSteps <= 1)
+		return;
+
+	Image::AniDecoder::FrameDef frameDef = _aniDecoder->getSequenceFrame(_aniCurrentFrame);
+	uint32 delayMs = frameDef.delay * 1000 / 60;
+	uint32 now = _vm->_util->getTimeKey();
+	if (now - _aniLastFrameTime >= delayMs) {
+		_aniCurrentFrame = (_aniCurrentFrame + 1) % metaData.numSteps;
+		_aniLastFrameTime = now;
+		updateAniCursorFrame();
+	}
 }
 
 void Draw_v7::animateCursor(int16 cursor) {
@@ -252,7 +338,7 @@ void Draw_v7::animateCursor(int16 cursor) {
 								 _cursorHeight - 1, 0, 0);
 
 			CursorMan.replaceCursor(_scummvmCursor->getData(),
-									_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, false, &_vm->getPixelFormat());
+									_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, &_vm->getPixelFormat());
 			CursorMan.disableCursorPalette(true);
 		}
 

@@ -35,9 +35,6 @@ class CallBack;
 class GameClock;
 class GameTimedCallback;
 
-using Std::list;
-using Std::string;
-
 //our callbacks
 
 #define WEATHER_CB_CHANGE_WIND_DIR 1
@@ -50,7 +47,7 @@ class Weather: public CallBack {
 	nuvie_game_t gametype; // what game is being played?
 
 	NuvieDir wind_dir;
-	Std::list<CallBack *>wind_change_notification_list;
+	Common::List<CallBack *>wind_change_notification_list;
 
 	GameTimedCallback *wind_timer;
 
@@ -62,7 +59,7 @@ public:
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
 
-	Std::string get_wind_dir_str() const;
+	Common::String get_wind_dir_str() const;
 	NuvieDir get_wind_dir() const {
 		return wind_dir;
 	}

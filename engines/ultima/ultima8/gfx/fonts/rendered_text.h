@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_GFX_FONTS_RENDEREDTEXT_H
 #define ULTIMA8_GFX_FONTS_RENDEREDTEXT_H
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima8 {
 

@@ -59,9 +59,9 @@ void LeadActor::loadState(Archive &archive) {
 	_stateBeforeInventory = (State)archive.readByte();
 	_stateBeforePDA = (State)archive.readByte();
 	_isHaveItem = archive.readByte();
-	Common::String recepient = archive.readString();
-	if (!recepient.empty())
-		_recipient = _page->findActor(recepient);
+	Common::String recipient = archive.readString();
+	if (!recipient.empty())
+		_recipient = _page->findActor(recipient);
 	else
 		_recipient = nullptr;
 	_sequencer->loadState(archive);
@@ -167,14 +167,14 @@ void LeadActor::loadPDA(const Common::String &pageName) {
 	_page->getGame()->getPdaMgr().goToPage(pageName);
 }
 
-void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
+void LeadActor::onActionClick(Common::CustomEventType action) {
 	switch (_state) {
 	case kMoving:
-		switch (code) {
-		case Common::KEYCODE_ESCAPE:
+		switch (action) {
+		case kActionSkipWalkAndCancelInteraction:
 			cancelInteraction();
 			// fall through
-		case Common::KEYCODE_SPACE:
+		case kActionSkipWalk:
 			_walkMgr->skip();
 			break;
 		default:
@@ -183,15 +183,14 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 		break;
 	case kPlayingSequence:
 	case kPlayingExitSequence:
-		switch (code) {
-		case Common::KEYCODE_SPACE:
-		case Common::KEYCODE_RIGHT:
+		switch (action) {
+		case kActionSkipSubSequence:
 			_sequencer->skipSubSequence();
 			break;
-		case Common::KEYCODE_ESCAPE:
+		case kActionSkipSequence:
 			_sequencer->skipSequence();
 			break;
-		case Common::KEYCODE_LEFT:
+		case kActionRestartSequence:
 			_sequencer->restartSequence();
 			break;
 		default:

@@ -29,6 +29,8 @@
 #include "supernova/supernova1/state.h"
 #include "supernova/supernova1/stringid.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Supernova {
 
 bool GameManager1::serialize(Common::WriteStream *out) {
@@ -374,9 +376,14 @@ void GameManager1::updateEvents() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_keyPressed = true;
+			_action = event.customType;
+			processInput(event.customType);
+			break;
 		case Common::EVENT_KEYDOWN:
 			_keyPressed = true;
-			processInput(event.kbd);
+			_key = event.kbd;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			// fallthrough
@@ -446,11 +453,14 @@ void GameManager1::telomat(int nr) {
 	_vm->renderText(kStringTelomat10, 100, 103, kColorGreen);
 	_vm->renderText(kStringTelomat11, 100, 120, kColorDarkGreen);
 	Common::String input;
+	Common::Keymapper *keymapper =  g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("computer")->setEnabled(true);
 	do {
 		getInput();
 
-		switch (_key.keycode) {
-		case Common::KEYCODE_2: {
+		switch (_action) {
+		case kActionPhone: {
 			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
 			_vm->renderText(kStringTelomat12, 50, 80, kColorGreen);
 			_vm->renderText(kStringTelomat13, 50, 91, kColorGreen);
@@ -464,6 +474,9 @@ void GameManager1::telomat(int nr) {
 				_vm->paletteBrightness();
 				_guiEnabled = true;
 				drawMapExits();
+				keymapper->getKeymap("computer")->setEnabled(false);
+				keymapper->getKeymap("supernova-default")->setEnabled(true);
+				keymapper->getKeymap("improved-mode")->setEnabled(true);
 				return;
 			}
 
@@ -481,6 +494,9 @@ void GameManager1::telomat(int nr) {
 				_vm->paletteBrightness();
 				_guiEnabled = true;
 				drawMapExits();
+				keymapper->getKeymap("computer")->setEnabled(false);
+				keymapper->getKeymap("supernova-default")->setEnabled(true);
+				keymapper->getKeymap("improved-mode")->setEnabled(true);
 				return;
 			}
 
@@ -492,6 +508,9 @@ void GameManager1::telomat(int nr) {
 				_vm->paletteBrightness();
 				_guiEnabled = true;
 				drawMapExits();
+				keymapper->getKeymap("computer")->setEnabled(false);
+				keymapper->getKeymap("supernova-default")->setEnabled(true);
+				keymapper->getKeymap("improved-mode")->setEnabled(true);
 				return;
 			}
 
@@ -541,11 +560,14 @@ void GameManager1::telomat(int nr) {
 			}
 			_guiEnabled = true;
 			drawMapExits();
+			keymapper->getKeymap("computer")->setEnabled(false);
+			keymapper->getKeymap("supernova-default")->setEnabled(true);
+			keymapper->getKeymap("improved-mode")->setEnabled(true);
 			return;
 			}
-		case Common::KEYCODE_1:
-		case Common::KEYCODE_3:
-		case Common::KEYCODE_4:
+		case kActionOfficeManager:
+		case kActionProText:
+		case kActionCalculata:
 			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
 			_vm->renderText(kStringTelomat21, 100, 90, kColorGreen);
 			input = "";
@@ -558,12 +580,15 @@ void GameManager1::telomat(int nr) {
 				wait(10);
 			}
 			// fallthrough
-		case Common::KEYCODE_ESCAPE:
+		case kActionExit:
 			_vm->renderBox(0, 0, 320, 200, kColorBlack);
 			_vm->renderRoom(*_currentRoom);
 			_vm->paletteBrightness();
 			_guiEnabled = true;
 			drawMapExits();
+			keymapper->getKeymap("computer")->setEnabled(false);
+			keymapper->getKeymap("supernova-default")->setEnabled(true);
+			keymapper->getKeymap("improved-mode")->setEnabled(true);
 			return;
 		default:
 			break;

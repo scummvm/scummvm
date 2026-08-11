@@ -50,13 +50,15 @@
 #include "common/events.h"
 #include "common/punycode.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
+
+#include "audio/softsynth/pcspk.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
 
-#include "graphics/macgui/macdialog.h"
-
 #include "wage/wage.h"
+#include "wage/debugtools.h"
 #include "wage/entities.h"
 #include "wage/gui.h"
 #include "wage/script.h"
@@ -64,10 +66,12 @@
 
 namespace Wage {
 
+WageEngine *g_wage = nullptr;
+
 WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	_rnd = new Common::RandomSource("wage");
 
-	_aim = -1;
+	_aim = Chr::SIDE;
 	_opponentAim = -1;
 	_temporarilyHidden = false;
 	_isGameOver = false;
@@ -88,6 +92,10 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 
 	_resManager = NULL;
 
+	_speaker = NULL;
+
+	g_wage = this;
+
 	debug("WageEngine::WageEngine()");
 }
 
@@ -98,6 +106,9 @@ WageEngine::~WageEngine() {
 	delete _resManager;
 	delete _gui;
 	delete _rnd;
+
+	g_engine = nullptr;
+	g_wage = nullptr;
 }
 
 bool WageEngine::pollEvent(Common::Event &event) {
@@ -136,6 +147,18 @@ Common::Error WageEngine::run() {
 
 	_gui = new Gui(this);
 
+#ifdef USE_IMGUI
+	ImGuiCallbacks callbacks;
+	bool drawImGui = debugChannelSet(-1, kDebugImGui);
+	callbacks.init = onImGuiInit;
+	callbacks.render = drawImGui ? onImGuiRender : nullptr;
+	callbacks.cleanup = onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
+#endif
+
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
+
 	_temporarilyHidden = true;
 	performInitialSetup();
 	if (ConfMan.hasKey("save_slot")) {
@@ -147,6 +170,13 @@ Common::Error WageEngine::run() {
 
 	_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		_gui->_wm->setTTSEnabled(ConfMan.getBool("tts_enabled"));
+	}
+
 	Common::String input("look");
 	processTurn(&input, NULL);
 	_temporarilyHidden = false;
@@ -157,28 +187,59 @@ Common::Error WageEngine::run() {
 		if (_restartRequested)
 			restart();
 
-		_gui->draw();
+		if (_gui)
+			_gui->draw();
+
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 
-		if (!_soundToPlay.empty()) {
-			playSound(_soundToPlay);
+		if (!_soundToPlay.empty() && !_mixer->isSoundHandleActive(_soundHandle)) {
+			debugC(1, kDebugSound, "** Sound from queue: %s", _soundToPlay.c_str());
+			playSound(_soundToPlay, false); // Do not block input
 			_soundToPlay.clear();
 		}
 	}
 
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 	return Common::kNoError;
 }
 
+// Resetting required variables
+void WageEngine::resetState() {
+	_aim = Chr::CHEST;
+	_opponentAim = -1;
+	_temporarilyHidden = false;
+	_isGameOver = false;
+	_monster = nullptr;
+	_running = nullptr;
+	_lastScene = nullptr;
+	_loopCount = 0;
+	_turn = 0;
+	_commandWasQuick = false;
+	_shouldQuit = false;
+	_offer = nullptr;
+
+	delete _speaker;
+}
+
 void WageEngine::restart() {
+	if (_isGameOver)
+		resetState();
 	_restartRequested = false;
 	delete _gui;
 	delete _world;
 
+	_gui = nullptr;
+
 	_world = new World(this);
 
-	if (!_world->loadWorld(_resManager))
+	if (!_world->loadWorld(_resManager)) {
+		_shouldQuit = true;
 		return;
+	}
 
 	_shouldQuit = false;
 
@@ -200,14 +261,27 @@ void WageEngine::processEvents() {
 
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			if (saveDialog())
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {
+				if (!_shouldQuit) {
+					g_system->getEventManager()->resetQuit();
+					g_system->getEventManager()->resetReturnToLauncher();
+					if (_gui->saveDialog()) {
+						_shouldQuit = true;
+						g_system->getEventManager()->pushEvent(event);
+					}
+				}
+			} else {
 				_shouldQuit = true;
+			}
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_RETURN: {
 					_inputText = Common::convertFromU32String(_gui->_consoleWindow->getInput());
 					Common::String inp = _inputText + '\n';
+
+					sayText(_gui->_consoleWindow->getInput(), Common::TextToSpeechManager::INTERRUPT);
 
 					_gui->appendText(inp.c_str());
 
@@ -241,82 +315,26 @@ void WageEngine::setMenu(Common::String menu) {
 void WageEngine::appendText(const char *str) {
 	Common::String s(str);
 
-	s += '\n';
+	// HACK: Added here because sometimes empty strings would be passed, leading to extra newlines
+	if (!s.empty()){
+		s += '\n';
 
-	_gui->appendText(s.c_str());
+		_gui->appendText(s.c_str());
+		sayText(s, Common::TextToSpeechManager::QUEUE);
+	}
 
 	_inputText.clear();
 }
 
-void WageEngine::gameOver() {
-	Graphics::MacDialogButtonArray buttons;
-
-	buttons.push_back(new Graphics::MacDialogButton("OK", 66, 67, 68, 28));
-
-	Graphics::MacFont font;
-
-	Graphics::MacText gameOverMessage(*_world->_gameOverMessage, _gui->_wm, &font, Graphics::kColorBlack,
-									  Graphics::kColorWhite, 199, Graphics::kTextAlignCenter);
-
-	Graphics::MacDialog gameOverDialog(&_gui->_screen, _gui->_wm,  199, &gameOverMessage, 199, &buttons, 0);
-
-	int button = gameOverDialog.run();
-
-	if (button == Graphics::kMacDialogQuitRequested)
-		_shouldQuit = true;
-
-	doClose();
-
-	_gui->disableAllMenus();
-	_gui->enableNewGameMenus();
+void WageEngine::sayText(const Common::U32String &str, Common::TextToSpeechManager::Action action) const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(str, action);
+	}
 }
 
-bool WageEngine::saveDialog() {
-	Graphics::MacDialogButtonArray buttons;
-
-	buttons.push_back(new Graphics::MacDialogButton("No", 19, 67, 68, 28));
-	buttons.push_back(new Graphics::MacDialogButton("Yes", 112, 67, 68, 28));
-	buttons.push_back(new Graphics::MacDialogButton("Cancel", 205, 67, 68, 28));
-
-	Graphics::MacFont font;
-
-	Graphics::MacText saveBeforeCloseMessage(*_world->_saveBeforeCloseMessage, _gui->_wm, &font, Graphics::kColorBlack,
-									  Graphics::kColorWhite, 291, Graphics::kTextAlignCenter);
-
-	Graphics::MacDialog save(&_gui->_screen, _gui->_wm, 291, &saveBeforeCloseMessage, 291, &buttons, 1);
-
-	int button = save.run();
-
-	if (button == Graphics::kMacDialogQuitRequested)
-		_shouldQuit = true;
-	else if (button == 2) // Cancel
-		return false;
-	else if (button == 1)
-		saveGame();
-
-	doClose();
-
-	return true;
-}
-
-void WageEngine::aboutDialog() {
-	Graphics::MacDialogButtonArray buttons;
-
-	buttons.push_back(new Graphics::MacDialogButton("OK", 191, 167, 68, 28));
-
-	Graphics::MacText aboutMessage(_world->_aboutMessage, _gui->_wm, _gui->_consoleWindow->getTextWindowFont(), Graphics::kColorBlack,
-											 Graphics::kColorWhite, 400, Graphics::kTextAlignCenter);
-
-	Common::U32String disclaimer("\n\n\n\nThis adventure was produced with World Builder\xAA\nthe adventure game creation system.\n© Copyright 1986 by William C. Appleton, All Right Reserved\nPublished by Silicon Beach Software, Inc.");
-
-	aboutMessage.appendText(disclaimer, 3, 9, 0, false);
-
-	Graphics::MacDialog about(&_gui->_screen, _gui->_wm, 450, &aboutMessage, 400, &buttons, 0);
-
-	int button = about.run();
-
-	if (button == Graphics::kMacDialogQuitRequested)
-		_shouldQuit = true;
+void WageEngine::sayText(const Common::String &str, Common::TextToSpeechManager::Action action) const {
+	sayText(Common::U32String(str, Common::CodePage::kMacRoman), action);
 }
 
 void WageEngine::saveGame() {
@@ -328,16 +346,20 @@ void WageEngine::saveGame() {
 
 void WageEngine::performInitialSetup() {
 	debug(5, "Resetting Objs: %d", _world->_orderedObjs.size());
-	for (uint i = 0; i < _world->_orderedObjs.size() - 1; i++)
-		_world->move(_world->_orderedObjs[i], _world->_storageScene, true);
+	if (_world->_orderedObjs.size() > 0) {
+		for (uint i = 0; i < _world->_orderedObjs.size() - 1; i++)
+			_world->move(_world->_orderedObjs[i], _world->_storageScene, true);
 
-	_world->move(_world->_orderedObjs[_world->_orderedObjs.size() - 1], _world->_storageScene);
+		_world->move(_world->_orderedObjs[_world->_orderedObjs.size() - 1], _world->_storageScene);
+	}
 
 	debug(5, "Resetting Chrs: %d", _world->_orderedChrs.size());
-	for (uint i = 0; i < _world->_orderedChrs.size() - 1; i++)
-		_world->move(_world->_orderedChrs[i], _world->_storageScene, true);
+	if (_world->_orderedChrs.size() > 0) {
+		for (uint i = 0; i < _world->_orderedChrs.size() - 1; i++)
+			_world->move(_world->_orderedChrs[i], _world->_storageScene, true);
 
-	_world->move(_world->_orderedChrs[_world->_orderedChrs.size() - 1], _world->_storageScene);
+		_world->move(_world->_orderedChrs[_world->_orderedChrs.size() - 1], _world->_storageScene);
+	}
 
 	debug(5, "Resetting Owners: %d", _world->_orderedObjs.size());
 	for (uint i = 0; i < _world->_orderedObjs.size(); i++) {
@@ -384,6 +406,8 @@ void WageEngine::performInitialSetup() {
 		_world->move(_world->_player, _world->getRandomScene());
 	}
 
+	sayText(_world->_player->_currentScene->_name);
+
 	// Set the console window's dimensions early here because
 	// flowText() that needs them gets called before they're set
 	_gui->_consoleWindow->setDimensions(*_world->_player->_currentScene->_textBounds);
@@ -415,7 +439,7 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 	if (currentScene == _world->_storageScene && !_temporarilyHidden) {
 		if (!_isGameOver) {
 			_isGameOver = true;
-			gameOver();
+			_gui->gameOver();
 		}
 		return;
 	}
@@ -430,25 +454,28 @@ void WageEngine::onMove(Designed *what, Designed *from, Designed *to) {
 
 	if (what != player && what->_classType == CHR) {
 		Chr *chr = (Chr *)what;
-		if (to == _world->_storageScene) {
-			int returnTo = chr->_returnTo;
-			if (returnTo != Chr::RETURN_TO_STORAGE) {
-				Common::String returnToSceneName;
-				if (returnTo == Chr::RETURN_TO_INITIAL_SCENE) {
-					returnToSceneName = chr->_initialScene;
-					returnToSceneName.toLowercase();
-				} else {
-					returnToSceneName = "random@";
-				}
-				Scene *scene = getSceneByName(returnToSceneName);
-				if (scene != NULL && scene != _world->_storageScene) {
-					_world->move(chr, scene);
-					// To avoid sleeping twice, return if the above move command would cause a sleep.
-					if (scene == currentScene)
-						return;
-				}
-			}
-		} else if (to == player->_currentScene) {
+		// the original code below forced enemies to immediately respawn if moved to storage.
+		// this broke the "Escape" mechanic, comment it out so they stay in storage.
+		//if (to == _world->_storageScene) {
+		//	int returnTo = chr->_returnTo;
+		//	if (returnTo != Chr::RETURN_TO_STORAGE) {
+		//		Common::String returnToSceneName;
+		//		if (returnTo == Chr::RETURN_TO_INITIAL_SCENE) {
+		//			returnToSceneName = chr->_initialScene;
+		//			returnToSceneName.toLowercase();
+		//		} else {
+		//			returnToSceneName = "random@";
+		//		}
+		//		Scene *scene = getSceneByName(returnToSceneName);
+		//		if (scene != NULL && scene != _world->_storageScene) {
+		//			_world->move(chr, scene);
+		//			// To avoid sleeping twice, return if the above move command would cause a sleep.
+		//			if (scene == currentScene)
+		//				return;
+		//		}
+		//	}
+		//}
+		if (to == player->_currentScene) {
 			if (getMonster() == NULL) {
 				_monster = chr;
 				encounter(player, chr);
@@ -511,12 +538,27 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		_temporarilyHidden = true;
 		_gui->clearOutput();
 		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
+		_world->_commandsMenu = _world->_commandsMenuDefault;
+   		_gui->regenCommandsMenu();
 		regen();
+		sayText(playerScene->_name, Common::TextToSpeechManager::QUEUE);
 		Common::String input("look");
 		processTurnInternal(&input, NULL);
 
 		if (_shouldQuit)
 			return;
+
+		// WORKAROUND: The original Java codebase did not have this check and
+		// called gameOver() only in onMove() method. However, this leads to a crash in
+		// Gui::redraw(), when _engine->_world->_player->_currentScene is equal to _world->_storageScene.
+		// The crash happens because storage scene's _designBounds member is NULL.
+		// Therefore, to fix this, we check and call gameOver() here if needed.
+		if (_world->_player->_currentScene == _world->_storageScene) {
+			if (!_isGameOver) {
+				_isGameOver = true;
+				_gui->gameOver();
+			}
+		}
 
 		redrawScene();
 		_temporarilyHidden = false;
@@ -539,7 +581,8 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 	_commandWasQuick = false;
 	Scene *prevScene = _world->_player->_currentScene;
-	Chr *prevMonster = getMonster();
+	Chr *prevMonster = _monster;
+	Chr *runner = _running;
 	Common::String input;
 
 	if (textInput)
@@ -547,17 +590,61 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 
 	input.toLowercase();
 
-	processTurnInternal(&input, clickInput);
+	// if the player is frozen, we loop automatically to process enemy turns
+	// without waiting for user input
+	while (_world->_player->_context._frozen) {
+		// decrement Timer
+		_world->_player->_context._freezeTimer--;
+
+		if (_world->_player->_context._freezeTimer <= 0) {
+			_world->_player->_context._frozen = false;
+			_world->_player->_context._freezeTimer = 0;
+			// we break the loop. The player regains control for the next input
+			break;
+		}
+
+		// enemy gets a free attack
+		if (getMonster() != NULL)
+			performCombatAction(getMonster(), _world->_player);
+
+		// since we are inside a while loop, we must
+		// force a screen update or the text will not appear until the end
+		if (_gui) _gui->draw();
+		g_system->updateScreen();
+
+		// if player died during freeze, return
+		if (_isGameOver || _world->_player->_currentScene == _world->_storageScene)
+			return;
+	}
+
+	// only process the player's input if they are not frozen
+	if (!_world->_player->_context._frozen)
+		processTurnInternal(&input, clickInput);
+
 	Scene *playerScene = _world->_player->_currentScene;
 
 	if (prevScene != playerScene && playerScene != _world->_storageScene) {
 		if (prevMonster != NULL) {
 			bool followed = false;
-			if (getMonster() == NULL) {
+			bool monsterEscaped = false;
+
+			// check if the previous monster followed us to the new room
+			if (prevMonster->_currentScene != playerScene) {
+				// monster is gone did it escape?
+				// if the monster we were fighting was running, and is now in storage that means it escaped
+				if (prevMonster == runner && prevMonster->_currentScene == _world->_storageScene) {
+					char buf[512];
+					snprintf(buf, 512, "%s%s escapes!", prevMonster->getDefiniteArticle(true), prevMonster->_name.c_str());
+					appendText(buf);
+					monsterEscaped = true;
+				}
 				// TODO: adjacent scenes doesn't contain up/down etc... verify that monsters can't follow these...
-				if (_world->scenesAreConnected(playerScene, prevMonster->_currentScene)) {
-					int chance = _rnd->getRandomNumber(255);
-					followed = (chance < prevMonster->_followsOpponent);
+				// only check follow logic if monster did not just escape to storage
+				if (!monsterEscaped) {
+					if (_world->scenesAreConnected(playerScene, prevMonster->_currentScene)) {
+						int chance = _rnd->getRandomNumber(255);
+						followed = (chance < prevMonster->_followsOpponent);
+					}
 				}
 			}
 
@@ -568,7 +655,8 @@ void WageEngine::processTurn(Common::String *textInput, Designed *clickInput) {
 				appendText(buf);
 
 				_world->move(prevMonster, playerScene);
-			} else {
+			} else if (!monsterEscaped) {
+				// only say "You escape" if the monster did not already "Escape"
 				snprintf(buf, 512, "You escape %s%s.", prevMonster->getDefiniteArticle(false), prevMonster->_name.c_str());
 				appendText(buf);
 			}

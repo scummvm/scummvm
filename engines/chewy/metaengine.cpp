@@ -54,7 +54,7 @@ Common::Language ChewyEngine::getLanguage() const {
 
 } // End of namespace Chewy
 
-class ChewyMetaEngine : public AdvancedMetaEngine {
+class ChewyMetaEngine : public AdvancedMetaEngine<Chewy::ChewyGameDescription> {
 public:
 	const char *getName() const override {
 		return "chewy";
@@ -65,7 +65,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Chewy::ChewyGameDescription *desc) const override;
 
 	int getMaximumSaveSlot() const override;
 };
@@ -83,8 +83,8 @@ bool Chewy::ChewyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-Common::Error ChewyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Chewy::ChewyEngine(syst, (const Chewy::ChewyGameDescription *)desc);
+Common::Error ChewyMetaEngine::createInstance(OSystem *syst, Engine **engine, const Chewy::ChewyGameDescription *desc) const {
+	*engine = new Chewy::ChewyEngine(syst,desc);
 	return Common::kNoError;
 }
 

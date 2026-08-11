@@ -57,7 +57,6 @@ private:
 
 private:
 	void open_read();
-	void open_write();
 	void open_read_low_level();
 	bool open_hash_file();
 	Common::String get_last_string(const Common::String &src);
@@ -113,7 +112,7 @@ public:
 	bool seek(uint32 pos);
 
 	/**
-	 * Seek ahaead by a given amount
+	 * Seek ahead by a given amount
 	 */
 	bool seek_ahead(int32 amount);
 
@@ -122,6 +121,23 @@ public:
 	 */
 	uint32 read(MemHandle bufferHandle);
 	int32 read(MemHandle bufferHandle, int32 n);
+	int32 read(byte *bufferHandle, int32 n);
+
+	/**
+	 * Read in a 8-bit value
+	 */
+	byte readByte();
+	int8 readSByte() {
+		return (int8)readByte();
+	}
+
+	/**
+	 * Read in a 16-bit value
+	 */
+	uint16 readUint16LE();
+	int16 readSint16LE() {
+		return (int16)readUint16LE();
+	}
 
 	/**
 	 * Read in a 32-bit value

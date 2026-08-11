@@ -32,7 +32,7 @@ class ShapeFont;
 
 class JPRenderedText : public RenderedText {
 public:
-	JPRenderedText(Std::list<PositionedText> &lines,
+	JPRenderedText(Common::List<PositionedText> &lines,
 	               int width, int height, int vlead, ShapeFont *font,
 	               unsigned int fontnum);
 	~JPRenderedText() override;
@@ -41,7 +41,7 @@ public:
 	void drawBlended(RenderSurface *surface, int x, int y, uint32 col, bool destmasked = false) override;
 
 protected:
-	Std::list<PositionedText> _lines;
+	Common::List<PositionedText> _lines;
 	ShapeFont *_font;
 	unsigned int _fontNum;
 };

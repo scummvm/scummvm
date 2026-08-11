@@ -19,12 +19,13 @@
 
 #include "audio/mixer_intern.h"
 #include "base/main.h"
-#include "backends/base-backend.h"
+//#include "backends/base-backend.h"
 #include "common/system.h"
 #include "common/mutex.h"
 #include "common/list.h"
 #include "common/events.h"
 #include "backends/modular-backend.h"
+#include "graphics/managed_surface.h"
 
 #define BASE_CURSOR_SPEED 4
 #define CURSOR_STATUS_DOING_JOYSTICK  (1 << 0)
@@ -50,7 +51,7 @@ public:
 	};
 };
 
-class OSystem_libretro : public EventsBaseBackend, public ModularGraphicsBackend {
+class OSystem_libretro : virtual public BaseBackend, public Common::EventSource, public ModularGraphicsBackend {
 private:
 	int _relMouseX;
 	int _relMouseY;
@@ -85,20 +86,18 @@ public:
 	void refreshScreen(void);
 	void destroy(void);
 	void quit() override {}
-
 	void resetGraphicsManager(void);
-	void getScreen(const Graphics::Surface *&screen);
+	void getScreen(const Graphics::ManagedSurface *&screen);
 	int16 getScreenWidth(void);
 	int16 getScreenHeight(void);
-	bool isOverlayInGUI(void);
+	bool inLauncher(void);
 
 #ifdef USE_OPENGL
+	void resetGraphicsContext(void);
+#ifdef USE_GLAD
 	void *getOpenGLProcAddress(const char *name) const override;
 #endif
-
-private:
-	bool checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory = true);
-	void setLibretroDir(const char *path, Common::String &var);
+#endif
 
 	/* Events */
 public:
@@ -108,9 +107,7 @@ public:
 	Common::MutexInternal *createMutex(void) override;
 	void requestQuit(void);
 	void resetQuit(void);
-
 	void setMousePosition(int x, int y);
-	Common::Point convertWindowToVirtual(int x, int y) const;
 
 	/* Utils */
 	void getTimeAndDate(TimeDate &t, bool skipRecord) const override;
@@ -125,6 +122,8 @@ public:
 	void applyBackendSettings() override;
 private:
 	bool parseGameName(const Common::String &gameName, Common::String &engineId, Common::String &gameId);
+	bool checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory = true);
+	void setLibretroDir(const char *path, Common::String &var);
 
 	/* Inputs */
 public:

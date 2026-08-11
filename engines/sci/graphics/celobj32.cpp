@@ -105,7 +105,7 @@ void CelObj::deinit() {
 
 template<bool FLIP, typename READER>
 struct SCALER_NoScale {
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 	const byte *_rowEdge;
 #endif
 	const byte *_row;
@@ -125,23 +125,29 @@ struct SCALER_NoScale {
 		_row = _reader.getRow(y - _sourceY);
 
 		if (FLIP) {
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 			_rowEdge = _row - 1;
 #endif
 			_row += _lastIndex - (x - _sourceX);
+#ifndef RELEASE_BUILD
+
 			assert(_row > _rowEdge);
+#endif
 		} else {
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 			_rowEdge = _row + _lastIndex + 1;
 #endif
 			_row += x - _sourceX;
+#ifndef RELEASE_BUILD
 			assert(_row < _rowEdge);
+#endif
 		}
 	}
 
 	inline byte read() {
+#ifndef RELEASE_BUILD
 		assert(_row != _rowEdge);
-
+#endif
 		if (FLIP) {
 			return *_row--;
 		} else {
@@ -152,7 +158,7 @@ struct SCALER_NoScale {
 
 template<bool FLIP, typename READER>
 struct SCALER_Scale {
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 	int16 _minX;
 	int16 _maxX;
 #endif
@@ -167,7 +173,7 @@ struct SCALER_Scale {
 
 	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY) :
 	_row(nullptr),
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 	_minX(targetRect.left),
 	_maxX(targetRect.right - 1),
 #endif
@@ -176,7 +182,7 @@ struct SCALER_Scale {
 	// decompress an entire line of source data when scaling
 	_reader(celObj, celObj._width),
 	_sourceBuffer() {
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 		assert(_minX <= _maxX);
 #endif
 
@@ -297,11 +303,15 @@ struct SCALER_Scale {
 			? static_cast<const byte *>( _sourceBuffer->getBasePtr(0, _valuesY[y]))
 			: _reader.getRow(_valuesY[y]);
 		_x = x;
+#ifndef RELEASE_BUILD
 		assert(_x >= _minX && _x <= _maxX);
+#endif
 	}
 
 	inline byte read() {
+#ifndef RELEASE_BUILD
 		assert(_x >= _minX && _x <= _maxX);
+#endif
 		return _row[_valuesX[_x++]];
 	}
 };
@@ -316,7 +326,7 @@ int16 SCALER_Scale<FLIP, READER>::_valuesY[kCelScalerTableSize];
 
 struct READER_Uncompressed {
 private:
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 	int16 _sourceHeight;
 #endif
 	const byte *_pixels;
@@ -324,7 +334,7 @@ private:
 
 public:
 	READER_Uncompressed(const CelObj &celObj, const int16) :
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 	_sourceHeight(celObj._height),
 #endif
 	_sourceWidth(celObj._width) {
@@ -334,7 +344,7 @@ public:
 
 		if (numPixels < celObj._width * celObj._height) {
 			warning("%s is truncated", celObj._info.toString().c_str());
-#ifndef NDEBUG
+#ifndef RELEASE_BUILD
 			_sourceHeight = numPixels / celObj._width;
 #endif
 		}
@@ -343,7 +353,9 @@ public:
 	}
 
 	inline const byte *getRow(const int16 y) const {
+#ifndef RELEASE_BUILD
 		assert(y >= 0 && y < _sourceHeight);
+#endif
 		return _pixels + y * _sourceWidth;
 	}
 };

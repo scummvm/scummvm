@@ -55,8 +55,8 @@ enum ExtraType {
 	MAGIC_BALL_KEY = 1 << 9,  // 0x0200
 	TIME_IN = 1 << 10,        // 0x0400
 	ONE_FRAME = 1 << 11,      // 0x0800
-	EXPLOSION = 1 << 12,      // 0x1000
-	WAIT_NO_COL = 1 << 13,    // 0x2000
+	EXPLOSION = 1 << 12,      // 0x1000 EXTRA_EXPLO
+	WAIT_NO_COL = 1 << 13,    // 0x2000 EXTRA_WAIT_NO_COL
 	WAIT_SOME_TIME = 1 << 14, // 0x4000
 	COMPUTE_TRAJ = 1 << 15    // 0x8000 used in dotemu enhanced to render the magic ball trajectories
 };
@@ -67,7 +67,7 @@ struct ExtraListStruct {
 	IVec3 lastPos;
 	IVec3 destPos;
 
-	ActorMoveStruct trackActorMove;
+	RealValue trackActorMove;
 
 	uint16 type = 0; /**< ExtraType bitmask */
 	int16 angle = 0; // weight
@@ -113,7 +113,7 @@ public:
 	}
 
 	/** Reset all used extras */
-	void resetExtras();
+	void clearExtra();
 
 	int32 initSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
 	int32 addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount);

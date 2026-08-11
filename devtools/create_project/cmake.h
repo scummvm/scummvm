@@ -34,7 +34,7 @@ namespace CreateProjectTool {
  */
 class CMakeProvider final : public ProjectProvider {
 public:
-	CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version = 0);
+	CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors);
 
 protected:
 
@@ -55,12 +55,6 @@ protected:
 
 private:
 	std::stringstream enginesStr;
-
-	enum SDLVersion {
-		kSDLVersionAny,
-		kSDLVersion1,
-		kSDLVersion2
-	};
 
 	/**
 	 * CMake properties for a library required by a feature
@@ -85,7 +79,7 @@ private:
 		LibraryProps &WinLibraries(const char *libs) { winLibraries = libs; return *this; }
 	};
 
-	const Library *getLibraryFromFeature(const char *feature, bool useSDL2) const;
+	const Library *getLibraryFromFeature(const char *feature, SDLVersion useSDL) const;
 
 	void writeWarnings(std::ofstream &output) const;
 	void writeDefines(const BuildSetup &setup, std::ofstream &output) const;

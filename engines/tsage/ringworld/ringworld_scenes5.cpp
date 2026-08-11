@@ -4483,7 +4483,7 @@ void Scene4301::Action1::process(Event &event) {
 		}
 	}
 
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 		event.handled = true;
 		remove();
 	}

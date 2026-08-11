@@ -51,19 +51,18 @@ GfxMenu::GfxMenu(EventManager *event, SegManager *segMan, GfxPorts *ports, GfxPa
 }
 
 GfxMenu::~GfxMenu() {
-	for (GuiMenuItemList::iterator itemIter = _itemList.begin(); itemIter != _itemList.end(); ++itemIter)
-		delete *itemIter;
-
-	_itemList.clear();
-
-	for (GuiMenuList::iterator menuIter = _list.begin(); menuIter != _list.end(); ++menuIter)
-		delete *menuIter;
-
-	_list.clear();
+	reset();
 }
 
 void GfxMenu::reset() {
+	for (GuiMenuList::iterator i = _list.begin(); i != _list.end(); ++i) {
+		delete *i;
+	}
 	_list.clear();
+
+	for (GuiMenuItemList::iterator i = _itemList.begin(); i != _itemList.end(); ++i) {
+		delete *i;
+	}
 	_itemList.clear();
 
 	// We actually set active item in here and remember last selection of the
@@ -111,8 +110,11 @@ void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content
 				tagPos = curPos;
 				break;
 			case '`': // Right-aligned
-				if (rightAlignedPos)
-					error("multiple right-aligned markers within one menu-item");
+				if (rightAlignedPos) {
+					// SQ3 Russian translation has two consecutive ` characters.
+					// SSCI tolerated this, so warn instead of error. Bug #16642
+					warning("multiple right-aligned markers within one menu-item");
+				}
 				rightAlignedPos = curPos;
 				break;
 			case '^': // Ctrl-prefix
@@ -161,6 +163,7 @@ void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content
 			content.setChar(toupper(content[tempPos]), tempPos);
 		}
 		if (functionPos) {
+			// "#1" => "F1". Needs extra handling for F10; see below.
 			content.setChar(SCI_MENU_REPLACE_ONFUNCTION, functionPos);
 			int tempPos = functionPos + 1;
 			if (tempPos >= contentSize)
@@ -213,7 +216,7 @@ void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content
 			itemEntry->separatorLine = true;
 		} else {
 			// We don't strSplit here, because multilingual SCI01 support
-			// language switching on the fly, so we have to do this everytime
+			// language switching on the fly, so we have to do this every time
 			// the menu is called.
 			itemEntry->text = Common::String(content.c_str() + beginPos, tempPos - beginPos);
 
@@ -248,6 +251,17 @@ void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content
 				itemEntry->keyPress = '+';
 			} else if (itemEntry->textRightAligned == "=") {
 				itemEntry->keyPress = '=';
+			}
+
+			// Handle "F10". The parser built the keypress text from the menu string
+			// in place by replacing each control character with a display character.
+			// This assumed that the display text never exceeds the control text, but
+			// this is not the case for "#0" => "F10", so it must be patched. Bug #15557
+			if (itemEntry->keyPress == kSciKeyF10) {
+				size_t f10Pos = itemEntry->textRightAligned.find("F0");
+				if (f10Pos != Common::String::npos) {
+					itemEntry->textRightAligned.insertChar('1', f10Pos + 1);
+				}
 			}
 		}
 

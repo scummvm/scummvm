@@ -23,26 +23,60 @@
 #ifndef M4_SOUND_PLATFORM_MIDI_H
 #define M4_SOUND_PLATFORM_MIDI_H
 
-#include "m4/m4_types.h"
+#include "audio/mididrv_ms.h"
+#include "audio/midiparser.h"
 
 namespace M4 {
 namespace Sound {
 
 class Midi {
+private:
+	// Trigger to fire once the current track has finished, or -1 for none.
+	// _pendingEndTrigger hands it from the audio thread to the main thread.
+	int _midiEndTrigger;
+	int _pendingEndTrigger;
+
+	Common::Mutex _mutex;
+
+	MusicType _deviceType;
+
+	MidiDriver_Multisource *_driver;
+	MidiParser *_midiParser;
+	byte *_midiData;
+
+	bool _paused;
+
+protected:
+	static void onTimer(void *data);
+
 public:
-	void midi_play(const char *name, int volume, int loop, int trigger, int roomNum);
+	Midi();
+	~Midi();
+
+	int open();
+
+	void load(byte *in, int32 size);
+	void play();
+	void pause(bool pause);
+	void stop();
+	bool isPlaying();
+	void startFade(uint16 duration, uint16 targetVolume);
+	bool isFading();
+
+	void syncSoundSettings();
+
+	void midi_play(const char *name, int volume, bool loop, int trigger, int roomNum);
 	void task();
 	void loop();
-	void stop();
-	void set_overall_volume(int vol);
+	void midi_fade_volume(int targetVolume, int duration);
 };
 
 } // namespace Sound
 
-void midi_play(const char *name, int volume, int loop, int trigger, int roomNum);
+void midi_play(const char *name, int volume, bool loop, int trigger, int roomNum);
 void midi_loop();
 void midi_stop();
-void midi_set_overall_volume(int vol);
+void midi_fade_volume(int targetVolume, int duration);
 
 } // namespace M4
 

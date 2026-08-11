@@ -85,8 +85,17 @@ public:
 	static bool is_highlightItems() {
 		return _highlightItems;
 	}
-	static void toggleFootpads() {
-		_showFootpads = !_showFootpads;
+	static bool getShowFootpads() {
+		return _showFootpads;
+	}
+	static void setShowFootpads(bool value) {
+		_showFootpads = value;
+	}
+	static int getGridlines() {
+		return _gridlines;
+	}
+	static void setGridlines(int gridlines) {
+		_gridlines = gridlines;
 	}
 
 	void        RenderSurfaceChanged() override;
@@ -100,6 +109,7 @@ protected:
 
 	static bool _highlightItems;
 	static bool _showFootpads;
+	static int _gridlines;
 };
 
 } // End of namespace Ultima8

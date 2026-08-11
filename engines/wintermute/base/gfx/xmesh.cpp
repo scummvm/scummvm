@@ -28,48 +28,135 @@
 #include "engines/wintermute/base/gfx/3dshadow_volume.h"
 #include "engines/wintermute/base/gfx/xmaterial.h"
 #include "engines/wintermute/base/gfx/xmesh.h"
-#include "engines/wintermute/base/gfx/xskinmesh_loader.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/base/gfx/xbuffer.h"
+#include "engines/wintermute/base/gfx/xskinmesh.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/math/math_util.h"
+#include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/dcgf.h"
+
+#include "math/utils.h"
 
 namespace Wintermute {
 
 XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
-	_numAttrs = 0;
-
 	_skinMesh = nullptr;
-	_skinnedMesh = false;
+	_blendedMesh = nullptr;
+	_staticMesh = nullptr;
 
-	_BBoxStart = Math::Vector3d(0.0f, 0.0f, 0.0f);
-	_BBoxEnd = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_boneMatrices = nullptr;
+	_adjacency = nullptr;
+
+	_BBoxStart = _BBoxEnd = DXVector3(0.0f, 0.0f, 0.0f);
 }
 
 XMesh::~XMesh() {
-	delete _skinMesh;
-	_materials.clear();
+	SAFE_DELETE(_skinMesh);
+	SAFE_DELETE(_blendedMesh);
+	SAFE_DELETE(_staticMesh);
+
+	SAFE_DELETE_ARRAY(_boneMatrices);
+	SAFE_DELETE_ARRAY(_adjacency);
+
+	_materials.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
+bool XMesh::loadFromXData(const char *filename, XFileData *xobj) {
 	// get name
 	if (!XModel::loadName(this, xobj)) {
 		BaseEngine::LOG(0, "Error loading mesh name");
 		return false;
 	}
 
-	XMeshObject *meshObject = xobj->getXMeshObject();
-	if (!meshObject) {
+	// load mesh
+	DXBuffer bufMaterials;
+	uint32 numMaterials;
+	DXMesh *mesh;
+	DXSkinInfo *skinInfo;
+
+	auto res = DXLoadSkinMesh(xobj, bufMaterials, numMaterials, &skinInfo, &mesh);
+	if (!res) {
 		BaseEngine::LOG(0, "Error loading skin mesh");
 		return false;
 	}
+	_skinMesh = new SkinMeshHelper(mesh, skinInfo);
 
-	XSkinMeshLoader *mesh = new XSkinMeshLoader(this, meshObject);
-	_skinMesh = new SkinMeshHelper(mesh);
-	mesh->loadMesh(filename, xobj, materialReferences);
+	uint32 numBones = _skinMesh->getNumBones();
+
+	// Process skinning data
+	if (numBones) {
+		// bones are available
+		_boneMatrices = new DXMatrix*[numBones];
+
+		generateMesh();
+	} else {
+		// no bones are found, blend the mesh and use it as a static mesh
+		_skinMesh->getOriginalMesh(&_staticMesh);
+		_staticMesh->cloneMesh(&_blendedMesh);
+
+		SAFE_DELETE(_skinMesh);
+
+		if (_blendedMesh) {
+			uint32 numFaces = _blendedMesh->getNumFaces();
+			_adjacency = new uint32[numFaces * 3];
+			_blendedMesh->generateAdjacency(_adjacency);
+		}
+	}
+
+
+	// check for materials
+	if ((bufMaterials.ptr() == nullptr) || (numMaterials == 0)) {
+		// no materials are found, create default material
+		Material *mat = new Material(_game);
+		mat->_material._diffuse.color._r = 0.5f;
+		mat->_material._diffuse.color._g = 0.5f;
+		mat->_material._diffuse.color._b = 0.5f;
+		mat->_material._specular = mat->_material._diffuse;
+		mat->_material._ambient = mat->_material._diffuse;
+
+		_materials.add(mat);
+	} else {
+		// load the materials
+		DXMaterial *fileMats = (DXMaterial *)bufMaterials.ptr();
+		for (uint i = 0; i < numMaterials; i++) {
+			Material *mat = new Material(_game);
+			mat->_material = fileMats[i];
+			mat->_material._ambient = mat->_material._diffuse;
+
+			if (fileMats[i]._textureFilename[0] != '\0') {
+				Common::String texturePath = PathUtil::getDirectoryName(filename) + fileMats[i]._textureFilename;
+				mat->setTexture(texturePath.c_str(), true);
+			}
+
+			_materials.add(mat);
+		}
+	}
+
+	bufMaterials.free();
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool XMesh::generateMesh() {
+	uint32 numFaces = _skinMesh->getNumFaces();
+
+	SAFE_DELETE(_blendedMesh);
+
+	SAFE_DELETE_ARRAY(_adjacency);
+	_adjacency = new uint32[numFaces * 3];
+
+	// blend the mesh
+	if (!_skinMesh->generateSkinnedMesh(_adjacency, &_blendedMesh)) {
+		BaseEngine::LOG(0, "Error converting to blended mesh");
+		return false;
+	}
 
 	return true;
 }
@@ -77,20 +164,18 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Commo
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::findBones(FrameNode *rootFrame) {
 	// normal meshes don't have bones
-	if (!_skinnedMesh) {
+	if (!_skinMesh)
 		return true;
-	}
-	auto skinWeightsList = _skinMesh->_mesh->_skinWeightsList;
 
-	_boneMatrices.resize(skinWeightsList.size());
-
-	for (uint i = 0; i < skinWeightsList.size(); ++i) {
-		FrameNode *frame = rootFrame->findFrame(skinWeightsList[i]._boneName.c_str());
-
+	// get the buffer with the names of the bones
+	for (uint32 i = 0; i < _skinMesh->getNumBones(); i++) {
+		// find a frame with the same name
+		FrameNode *frame = rootFrame->findFrame(_skinMesh->getBoneName(i));
 		if (frame) {
+			// get a *pointer* to its world matrix
 			_boneMatrices[i] = frame->getCombinedMatrix();
 		} else {
-			warning("XMeshOpenGL::findBones could not find bone %s", skinWeightsList[i]._boneName.c_str());
+			BaseEngine::LOG(0, "Warning: Cannot find frame '%s'", _skinMesh->getBoneName(i));
 		}
 	}
 
@@ -99,225 +184,128 @@ bool XMesh::findBones(FrameNode *rootFrame) {
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::update(FrameNode *parentFrame) {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
-	if (vertexData == nullptr) {
+	if (!_blendedMesh)
 		return false;
-	}
-
-	float *vertexPositionData = _skinMesh->_mesh->_vertexPositionData;
-	float *vertexNormalData = _skinMesh->_mesh->_vertexNormalData;
-	uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
-	auto skinWeightsList = _skinMesh->_mesh->_skinWeightsList;
 
 	// update skinned mesh
-	if (_skinnedMesh) {
-		BaseArray<Math::Matrix4> finalBoneMatrices;
-		finalBoneMatrices.resize(_boneMatrices.size());
+	if (_skinMesh) {
+		int numBones = _skinMesh->getNumBones();
+		DXMatrix *boneMatrices = new DXMatrix[numBones];
 
-		for (uint i = 0; i < skinWeightsList.size(); ++i) {
-			finalBoneMatrices[i] = *_boneMatrices[i] * skinWeightsList[i]._offsetMatrix;
+		// prepare final matrices
+		for (int i = 0; i < numBones; i++) {
+			DXMatrixMultiply(&boneMatrices[i], _skinMesh->getBoneOffsetMatrix(i), _boneMatrices[i]);
 		}
 
-		// the new vertex coordinates are the weighted sum of the product
-		// of the combined bone transformation matrices and the static pose coordinates
-		// to be able too add the weighted summands together, we reset everything to zero first
-		for (uint32 i = 0; i < vertexCount; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				vertexData[i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset + j] = 0.0f;
+		// generate skinned mesh
+		_skinMesh->updateSkinnedMesh(boneMatrices, _blendedMesh);
+		delete[] boneMatrices;
+
+		// update mesh bounding box
+		byte *points = _blendedMesh->getVertexBuffer().ptr();
+
+		DXComputeBoundingBox((DXVector3 *)points, _blendedMesh->getNumVertices(), DXGetFVFVertexSize(_blendedMesh->getFVF()), &_BBoxStart, &_BBoxEnd);
+		// if you want something done right...
+		if (isnan(_BBoxEnd._x)) {
+			float minX = FLT_MAX;
+			float minY = FLT_MAX;
+			float minZ = FLT_MAX;
+			float maxX = FLT_MIN;
+			float maxY = FLT_MIN;
+			float maxZ = FLT_MIN;
+
+			uint32 fvfSize = _blendedMesh->getFVF();
+
+			byte *vectBuf = points;
+			for (uint32 i = 0; i < _blendedMesh->getNumVertices(); i++) {
+				DXVector3 *vect = (DXVector3 *)vectBuf;
+
+				minX = MIN(minX, vect->_x);
+				minY = MIN(minY, vect->_y);
+				minZ = MIN(minZ, vect->_z);
+
+				maxX = MAX(maxX, vect->_x);
+				maxY = MAX(maxY, vect->_y);
+				maxZ = MAX(maxZ, vect->_z);
+
+				vectBuf += DXGetFVFVertexSize(fvfSize);
 			}
+			_BBoxStart = DXVector3(minX, minY, minZ);
+			_BBoxEnd = DXVector3(maxX, maxY, maxZ);
+		}
+	} else {
+		// update static mesh
+		uint32 fvfSize = DXGetFVFVertexSize(_blendedMesh->getFVF());
+		uint32 numVertices = _blendedMesh->getNumVertices();
+
+		// lock static vertex buffer
+		byte *oldPoints = _staticMesh->getVertexBuffer().ptr();
+
+		// lock blended vertex buffer
+		byte *newPoints = _blendedMesh->getVertexBuffer().ptr();
+
+		for (uint32 i = 0; i < numVertices; i++) {
+			DXVector3 v = *(DXVector3 *)(oldPoints + i * fvfSize);
+			DXVector4 newVertex;
+			DXVec3Transform(&newVertex, &v, parentFrame->getCombinedMatrix());
+
+			((DXVector3 *)(newPoints + i * fvfSize))->_x = newVertex._x;
+			((DXVector3 *)(newPoints + i * fvfSize))->_y = newVertex._y;
+			((DXVector3 *)(newPoints + i * fvfSize))->_z = newVertex._z;
 		}
 
-		for (uint boneIndex = 0; boneIndex < skinWeightsList.size(); ++boneIndex) {
-			// to every vertex which is affected by the bone, we add the product
-			// of the bone transformation with the coordinates of the static pose,
-			// weighted by the weight for the particular vertex
-			// repeating this procedure for all bones gives the new pose
-			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
-				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
-				Math::Vector3d pos;
-				pos.setData(vertexPositionData + vertexIndex * 3);
-				finalBoneMatrices[boneIndex].transform(&pos, true);
-				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
-
-				for (uint j = 0; j < 3; ++j) {
-					vertexData[vertexIndex * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset + j] += pos.getData()[j];
-				}
-			}
-		}
-
-		// now we have to update the vertex normals as well, so prepare the bone transformations
-		for (uint i = 0; i < skinWeightsList.size(); ++i) {
-			finalBoneMatrices[i].transpose();
-			finalBoneMatrices[i].inverse();
-		}
-
-		// reset so we can form the weighted sums
-		for (uint32 i = 0; i < vertexCount; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				vertexData[i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kNormalOffset + j] = 0.0f;
-			}
-		}
-
-		for (uint boneIndex = 0; boneIndex < skinWeightsList.size(); ++boneIndex) {
-			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
-				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
-				Math::Vector3d pos;
-				pos.setData(vertexNormalData + vertexIndex * 3);
-				finalBoneMatrices[boneIndex].transform(&pos, true);
-				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
-
-				for (uint j = 0; j < 3; ++j) {
-					vertexData[vertexIndex * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kNormalOffset + j] += pos.getData()[j];
-				}
-			}
-		}
-
-	//updateNormals();
-	} else { // update static
-		for (uint32 i = 0; i < vertexCount; ++i) {
-			Math::Vector3d pos(vertexPositionData + 3 * i);
-			parentFrame->getCombinedMatrix()->transform(&pos, true);
-
-			for (uint j = 0; j < 3; ++j) {
-				vertexData[i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset + j] = pos.getData()[j];
-			}
-		}
+		// update bounding box
+		DXComputeBoundingBox((DXVector3 *)newPoints, _blendedMesh->getNumVertices(), DXGetFVFVertexSize(_blendedMesh->getFVF()), &_BBoxStart, &_BBoxEnd);
 	}
-
-	updateBoundingBox();
-
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
-	if (vertexData == nullptr) {
+bool XMesh::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth) {
+	if (!_blendedMesh)
 		return false;
-	}
 
-	Math::Vector3d invLight = light;
-	Math::Matrix4 matInverseModel = modelMat;
-	matInverseModel.inverse();
-	matInverseModel.transform(&invLight, false);
-
-	uint32 numEdges = 0;
-
-	auto indexData = _skinMesh->_mesh->_indexData;
-	Common::Array<bool> isFront(indexData.size() / 3, false);
-
-	// First pass : for each face, record if it is front or back facing the light
-	for (uint32 i = 0; i < indexData.size() / 3; i++) {
-		uint16 index0 = indexData[3 * i + 0];
-		uint16 index1 = indexData[3 * i + 1];
-		uint16 index2 = indexData[3 * i + 2];
-
-		Math::Vector3d v0(vertexData + index0 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
-		Math::Vector3d v1(vertexData + index1 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
-		Math::Vector3d v2(vertexData + index2 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
-
-		// Transform vertices or transform light?
-		Math::Vector3d vNormal = Math::Vector3d::crossProduct(v2 - v1, v1 - v0);
-
-		if (Math::Vector3d::dotProduct(vNormal, invLight) >= 0.0f) {
-			isFront[i] = false; // back face
-		} else {
-			isFront[i] = true; // front face
-		}
-	}
-
-	// Allocate a temporary edge list
-	Common::Array<uint16> edges(indexData.size() * 2, 0);
-
-	// First pass : for each face, record if it is front or back facing the light
-	for (uint32 i = 0; i < indexData.size() / 3; i++) {
-		if (isFront[i]) {
-			uint16 wFace0 = indexData[3 * i + 0];
-			uint16 wFace1 = indexData[3 * i + 1];
-			uint16 wFace2 = indexData[3 * i + 2];
-
-			uint32 adjacent0 = _adjacency[3 * i + 0];
-			uint32 adjacent1 = _adjacency[3 * i + 1];
-			uint32 adjacent2 = _adjacency[3 * i + 2];
-
-			if (adjacent0 == XSkinMeshLoader::kNullIndex || isFront[adjacent0] == false) {
-				//	add edge v0-v1
-				edges[2 * numEdges + 0] = wFace0;
-				edges[2 * numEdges + 1] = wFace1;
-				numEdges++;
-			}
-			if (adjacent1 == XSkinMeshLoader::kNullIndex || isFront[adjacent1] == false) {
-				//	add edge v1-v2
-				edges[2 * numEdges + 0] = wFace1;
-				edges[2 * numEdges + 1] = wFace2;
-				numEdges++;
-			}
-			if (adjacent2 == XSkinMeshLoader::kNullIndex || isFront[adjacent2] == false) {
-				//	add edge v2-v0
-				edges[2 * numEdges + 0] = wFace2;
-				edges[2 * numEdges + 1] = wFace0;
-				numEdges++;
-			}
-		}
-	}
-
-	for (uint32 i = 0; i < numEdges; i++) {
-		Math::Vector3d v1(vertexData + edges[2 * i + 0] * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
-		Math::Vector3d v2(vertexData + edges[2 * i + 1] * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset);
-		Math::Vector3d v3 = v1 - invLight * extrusionDepth;
-		Math::Vector3d v4 = v2 - invLight * extrusionDepth;
-
-		// Add a quad (two triangles) to the vertex list
-		shadow->addVertex(v1);
-		shadow->addVertex(v2);
-		shadow->addVertex(v3);
-		shadow->addVertex(v2);
-		shadow->addVertex(v4);
-		shadow->addVertex(v3);
-	}
-
-	return true;
+	return shadow->addMesh(_blendedMesh, _adjacency, modelMat, light, extrusionDepth);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
-	if (vertexData == nullptr) {
+bool XMesh::pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir) {
+	if (!_blendedMesh)
 		return false;
-	}
 
-	bool res = false;
+	uint32 fvfSize = DXGetFVFVertexSize(_blendedMesh->getFVF());
+	uint32 numFaces = _blendedMesh->getNumFaces();
 
-	auto indexData = _skinMesh->_mesh->_indexData;
-	for (uint16 i = 0; i < indexData.size(); i += 3) {
-		uint16 index1 = indexData[i + 0];
-		uint16 index2 = indexData[i + 1];
-		uint16 index3 = indexData[i + 2];
+	// lock vertex buffer
+	byte *points = _blendedMesh->getVertexBuffer().ptr();
 
-		Math::Vector3d v0;
-		v0.setData(&vertexData[index1 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset]);
-		Math::Vector3d v1;
-		v1.setData(&vertexData[index2 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset]);
-		Math::Vector3d v2;
-		v2.setData(&vertexData[index3 * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset]);
+	// lock index buffer
+	uint32 *indices = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 
-		if (isnan(v0.x()))
+
+	bool found = false;
+	DXVector3 intersection;
+
+	for (uint32 i = 0; i < numFaces; i++) {
+		DXVector3 v0 = *(DXVector3 *)(points + indices[3 * i + 0] * fvfSize);
+		DXVector3 v1 = *(DXVector3 *)(points + indices[3 * i + 1] * fvfSize);
+		DXVector3 v2 = *(DXVector3 *)(points + indices[3 * i + 2] * fvfSize);
+
+		if (isnan(v0._x))
 			continue;
 
-		Math::Vector3d intersection;
-		if (lineIntersectsTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, intersection.x(), intersection.y(), intersection.z())) {
-			res = true;
+		found = C3DUtils::intersectTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, &intersection._x, &intersection._y, &intersection._z) != false;
+		if (found)
 			break;
-		}
 	}
 
-	return res;
+	return found;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-bool XMesh::setMaterialSprite(const Common::String &matName, BaseSprite *sprite) {
-	for (uint32 i = 0; i < _materials.size(); i++) {
-		if (_materials[i]->getName() && _materials[i]->getName() == matName) {
+bool XMesh::setMaterialSprite(const char *matName, BaseSprite *sprite) {
+	for (int32 i = 0; i < _materials.getSize(); i++) {
+		if (_materials[i]->_name && scumm_stricmp(_materials[i]->_name,  matName) == 0) {
 			_materials[i]->setSprite(sprite);
 		}
 	}
@@ -325,9 +313,9 @@ bool XMesh::setMaterialSprite(const Common::String &matName, BaseSprite *sprite)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora) {
-	for (uint32 i = 0; i < _materials.size(); i++) {
-		if (_materials[i]->getName() && _materials[i]->getName() == matName) {
+bool XMesh::setMaterialTheora(const char *matName, VideoTheoraPlayer *theora) {
+	for (int32 i = 0; i < _materials.getSize(); i++) {
+		if (_materials[i]->_name && scumm_stricmp(_materials[i]->_name, matName) == 0) {
 			_materials[i]->setTheora(theora);
 		}
 	}
@@ -335,10 +323,32 @@ bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::invalidateDeviceObjects() {
-	// release buffers here
+bool XMesh::setMaterialEffect(const char *matName, Effect3D *effect, Effect3DParams *params) {
+	for (int32 i = 0; i < _materials.getSize(); i++) {
+		if (_materials[i]->_name && scumm_stricmp(_materials[i]->_name, matName) == 0) {
+			_materials[i]->setEffect(effect, params);
+		}
+	}
+	return true;
+}
 
-	for (uint32 i = 0; i < _materials.size(); i++) {
+//////////////////////////////////////////////////////////////////////////
+bool XMesh::removeMaterialEffect(const char *matName) {
+	for (int32 i = 0; i < _materials.getSize(); i++) {
+		if (_materials[i]->_name && scumm_stricmp(_materials[i]->_name, matName) == 0) {
+			_materials[i]->setEffect(nullptr, nullptr);
+		}
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool XMesh::invalidateDeviceObjects() {
+	if (_skinMesh) {
+		SAFE_DELETE(_blendedMesh);
+	}
+
+	for (int32 i = 0; i < _materials.getSize(); i++) {
 		_materials[i]->invalidateDeviceObjects();
 	}
 
@@ -347,38 +357,14 @@ bool XMesh::invalidateDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::restoreDeviceObjects() {
-	for (uint32 i = 0; i < _materials.size(); i++) {
+	for (int32 i = 0; i < _materials.getSize(); i++) {
 		_materials[i]->restoreDeviceObjects();
 	}
 
-	if (_skinnedMesh) {
-		return _skinMesh->_mesh->generateAdjacency(_adjacency);
+	if (_skinMesh) {
+		return generateMesh();
 	} else {
 		return true;
-	}
-}
-
-void XMesh::updateBoundingBox() {
-	float *vertexData = _skinMesh->_mesh->_vertexData;
-	uint32 vertexCount = _skinMesh->_mesh->_vertexCount;
-	if (vertexData == nullptr || vertexCount == 0) {
-		return;
-	}
-
-	_BBoxStart.setData(&vertexData[0 + XSkinMeshLoader::kPositionOffset]);
-	_BBoxEnd.setData(&vertexData[0 + XSkinMeshLoader::kPositionOffset]);
-
-	for (uint16 i = 1; i < vertexCount; ++i) {
-		Math::Vector3d v;
-		v.setData(&vertexData[i * XSkinMeshLoader::kVertexComponentCount + XSkinMeshLoader::kPositionOffset]);
-
-		_BBoxStart.x() = MIN(_BBoxStart.x(), v.x());
-		_BBoxStart.y() = MIN(_BBoxStart.y(), v.y());
-		_BBoxStart.z() = MIN(_BBoxStart.z(), v.z());
-
-		_BBoxEnd.x() = MAX(_BBoxEnd.x(), v.x());
-		_BBoxEnd.y() = MAX(_BBoxEnd.y(), v.y());
-		_BBoxEnd.z() = MAX(_BBoxEnd.z(), v.z());
 	}
 }
 

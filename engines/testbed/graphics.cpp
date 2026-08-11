@@ -19,9 +19,12 @@
  *
  */
 
+#include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/list.h"
 #include "common/random.h"
+#include "common/zip-set.h"
 
 #include "engines/engine.h"
 
@@ -65,7 +68,7 @@ GFXTestSuite::GFXTestSuite() {
 	addTest("ScaledCursors", &GFXtests::scaledCursors);
 
 	// Effects
-	addTest("shakingEffect", &GFXtests::shakingEffect);
+	addTest("ShakingEffect", &GFXtests::shakingEffect);
 	// addTest("focusRectangle", &GFXtests::focusRectangle);
 
 	// Overlay
@@ -74,6 +77,9 @@ GFXTestSuite::GFXTestSuite() {
 	// Specific Tests:
 	addTest("PaletteRotation", &GFXtests::paletteRotation);
 	addTest("cursorTrailsInGUI", &GFXtests::cursorTrails);
+	
+	// Shader compatibility test
+	addTest("ShaderCompatibility", &GFXtests::shaderCompatibility, false);
 }
 
 void GFXTestSuite::prepare() {
@@ -136,26 +142,8 @@ void GFXtests::initMouseCursor() {
 	CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
 }
 
-Common::Rect GFXtests::computeSize(const Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale) {
-	if (cursorTargetScale == 1 || scalingFactor == 1) {
-		// Game data and cursor would be scaled equally.
-		// so dimensions would be same.
-		return Common::Rect(cursorRect.width(), cursorRect.height());
-	}
-
-	if (scalingFactor == 2) {
-		// Game data is scaled by 2, cursor is said to be scaled by 2 or 3. so it wud not be scaled any further
-		// So a w/2 x h/2 rectangle when scaled would match the cursor
-		return Common::Rect(cursorRect.width() / 2, cursorRect.height() / 2);
-	}
-
-	if (scalingFactor == 3) {
-		// Cursor traget scale is 2 or 3.
-		return Common::Rect((cursorRect.width() / cursorTargetScale), (cursorRect.height() / cursorTargetScale));
-	} else {
-		Testsuite::logPrintf("Unsupported scaler %dx\n", scalingFactor);
-		return Common::Rect();
-	}
+Common::Rect GFXtests::computeSize(const Common::Rect &cursorRect, frac_t cursorTargetScaleX, frac_t cursorTargetScaleY) {
+	return Common::Rect(fracToInt(cursorTargetScaleX * cursorRect.width()), fracToInt(cursorTargetScaleY * cursorRect.height()));
 }
 
 void GFXtests::HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, int val) {
@@ -220,7 +208,7 @@ void GFXtests::HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, in
 	bComp = (int)(b * 255);
 }
 
-Common::Rect GFXtests::drawCursor(bool cursorPaletteDisabled, int cursorTargetScale) {
+Common::Rect GFXtests::drawCursor(bool cursorPaletteDisabled, frac_t cursorTargetScaleX, frac_t cursorTargetScaleY) {
 	// Buffer initialized with yellow color
 	byte buffer[500];
 	memset(buffer, 2, sizeof(buffer));
@@ -242,8 +230,8 @@ Common::Rect GFXtests::drawCursor(bool cursorPaletteDisabled, int cursorTargetSc
 	*/
 
 	// Uncommenting the next line and commenting the line after that would reproduce the crash
-	// CursorMan.replaceCursor(buffer, 11, 11, 0, 0, 255, cursorTargetScale);
-	CursorMan.replaceCursor(buffer, 12, 12, 0, 0, 255, cursorTargetScale);
+	// CursorMan.replaceCursor(buffer, 11, 11, 0, 0, 255, nullptr, nullptr, cursorTargetScaleX, cursorTargetScaleY);
+	CursorMan.replaceCursor(buffer, 12, 12, 0, 0, 255, nullptr, nullptr, cursorTargetScaleX, cursorTargetScaleY);
 	CursorMan.showMouse(true);
 
 	if (cursorPaletteDisabled) {
@@ -276,14 +264,14 @@ void rotatePalette(byte *palette, int size) {
 /**
  * Sets up mouse loop, exits when user clicks any of the mouse button
  */
-void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName, int cursorTargetScale) {
+void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName, frac_t cursorTargetScaleX, frac_t cursorTargetScaleY) {
 	bool isFeaturePresent;
 	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorPalette);
 	Common::Rect cursorRect;
 
 	if (isFeaturePresent) {
 
-		cursorRect = GFXtests::drawCursor(disableCursorPalette, cursorTargetScale);
+		cursorRect = GFXtests::drawCursor(disableCursorPalette, cursorTargetScaleX, cursorTargetScaleY);
 
 		Common::EventManager *eventMan = g_system->getEventManager();
 		Common::Event event;
@@ -305,29 +293,17 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 
 		Testsuite::writeOnScreen(info, pt);
 
-		info = "GFX Mode";
+		info = "GFX Mode: ";
 		info += gfxModeName;
-		info += " ";
+		info += ", ";
 
-		char cScale = cursorTargetScale + '0';
-		info += "Cursor scale: ";
-		info += cScale;
+		info += Common::String::format("Cursor scale: %.1f x %.1f", fracToDouble(cursorTargetScaleX), fracToDouble(cursorTargetScaleY));
 
 		Common::Rect estimatedCursorRect;
 
 		if (!gfxScalarMode.equals("")) {
 
-			if (gfxScalarMode.contains("1x")) {
-				estimatedCursorRect = computeSize(cursorRect, 1, cursorTargetScale);
-			} else if (gfxScalarMode.contains("2x")) {
-				estimatedCursorRect = computeSize(cursorRect, 2, cursorTargetScale);
-			} else if (gfxScalarMode.contains("3x")) {
-				estimatedCursorRect = computeSize(cursorRect, 3, cursorTargetScale);
-			} else {
-				// If unable to detect scaler, default to 2
-				Testsuite::writeOnScreen("Unable to detect scaling factor, assuming 2x", Common::Point(0, 5));
-				estimatedCursorRect = computeSize(cursorRect, 2, cursorTargetScale);
-			}
+			estimatedCursorRect = computeSize(cursorRect, cursorTargetScaleX, cursorTargetScaleY);
 			Testsuite::writeOnScreen(info, Common::Point(0, 120));
 
 			// Move cursor to (20, 20)
@@ -756,7 +732,7 @@ TestExitStatus GFXtests::alphaCursors() {
 		};
 
 		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		CursorMan.replaceCursor(cursorData, 7, 7, 3, 3, 0, false, &format);
+		CursorMan.replaceCursor(cursorData, 7, 7, 3, 3, 0, &format);
 		CursorMan.showMouse(true);
 
 		bool waitingForClick = true;
@@ -912,9 +888,9 @@ TestExitStatus GFXtests::maskedCursors() {
 		g_system->getPaletteManager()->setPalette(newPalette, 0, 4);
 
 		if (haveCursorPalettes)
-			g_system->setCursorPalette(newPalette, 0, 4);
+			CursorMan.replaceCursorPalette(newPalette, 0, 4);
 
-		CursorMan.replaceCursor(cursorData, 16, 16, 1, 1, 0, false, nullptr, maskData);
+		CursorMan.replaceCursor(cursorData, 16, 16, 1, 1, 0, nullptr, maskData);
 		CursorMan.showMouse(true);
 
 		bool waitingForClick = true;
@@ -958,7 +934,7 @@ TestExitStatus GFXtests::maskedCursors() {
 			if (haveCursorAlpha) {
 				g_system->delayMillis(500);
 
-				Graphics::PixelFormat rgbaFormat = Graphics::createPixelFormat<8888>();
+				Graphics::PixelFormat rgbaFormat = Graphics::PixelFormat::createFormatRGBA32();
 
 				uint32 rgbaCursorData[16 * 16];
 				for (uint i = 0; i < 16 * 16; i++) {
@@ -970,7 +946,7 @@ TestExitStatus GFXtests::maskedCursors() {
 					rgbaCursorData[i] = rgbaFormat.ARGBToColor(255, r, g, b);
 				}
 
-				CursorMan.replaceCursor(rgbaCursorData, 16, 16, 1, 1, 0, false, &rgbaFormat, maskData);
+				CursorMan.replaceCursor(rgbaCursorData, 16, 16, 1, 1, 0, &rgbaFormat, maskData);
 
 				waitingForClick = true;
 				while (waitingForClick) {
@@ -1186,7 +1162,7 @@ TestExitStatus GFXtests::scaledCursors() {
 	Common::String info = "Testing : Scaled cursors\n"
 		"Here every graphics mode is tried with a cursorTargetScale of 1, 2 and 3.\n"
 		"The expected cursor size is drawn as a rectangle.\n The cursor should approximately match that rectangle.\n"
-		"This may take time, You may skip the later scalers and just examine the first three i.e 1x, 2x and 3x";
+		"This may take time, You may skip the later scalers and just examine the first four i.e 0.5x, 1x, 2x and 3x";
 
 	bool isAspectRatioCorrected = g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection);
 
@@ -1200,7 +1176,7 @@ TestExitStatus GFXtests::scaledCursors() {
 	}
 
 	int maxLimit = 1000;
-	if (!Testsuite::handleInteractiveInput("Do You want to restrict scalers to 1x, 2x and 3x only?", "Yes", "No", kOptionRight)) {
+	if (!Testsuite::handleInteractiveInput("Do You want to restrict scalers to 0.5x, 1x, 2x and 3x only?", "Yes", "No", kOptionRight)) {
 		maxLimit = 3;
 	}
 
@@ -1240,13 +1216,19 @@ TestExitStatus GFXtests::scaledCursors() {
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 		if (gfxError == OSystem::kTransactionSuccess && isGFXModeSet) {
-			setupMouseLoop(false, gfxMode->name, 1);
+			setupMouseLoop(false, gfxMode->name, FRAC_HALF, FRAC_HALF);
 			Testsuite::clearScreen();
 
-			setupMouseLoop(false, gfxMode->name, 2);
+			setupMouseLoop(false, gfxMode->name, FRAC_ONE, FRAC_ONE);
 			Testsuite::clearScreen();
 
-			setupMouseLoop(false, gfxMode->name, 3);
+			setupMouseLoop(false, gfxMode->name, FRAC_ONE, FRAC_ONE * 2);
+			Testsuite::clearScreen();
+
+			setupMouseLoop(false, gfxMode->name, FRAC_ONE * 2, FRAC_ONE);
+			Testsuite::clearScreen();
+
+			setupMouseLoop(false, gfxMode->name, FRAC_ONE * 2, FRAC_ONE * 2);
 			Testsuite::clearScreen();
 		} else {
 			Testsuite::logDetailedPrintf("Switching to graphics mode %s failed\n", gfxMode->name);
@@ -1324,14 +1306,14 @@ TestExitStatus GFXtests::shakingEffect() {
 			break;
 		}
 
-		Testsuite::writeOnScreen(Common::String::format("If Shaking Effect works, this should shake %s", direction.c_str()), pt);
-		int times = 15;
+		Testsuite::writeOnScreen(Common::String::format("If Shaking Effect works, this should shake %s", direction.c_str()), pt, kWriteDrawFrame);
+		int times = 8;
 		while (times--) {
 			g_system->setShakePos(shakeXOffset, shakeYOffset);
-			g_system->delayMillis(50);
+			g_system->delayMillis(100);
 			g_system->updateScreen();
 			g_system->setShakePos(0, 0);
-			g_system->delayMillis(50);
+			g_system->delayMillis(100);
 			g_system->updateScreen();
 			shakeXOffset = -shakeXOffset;
 			shakeYOffset = -shakeYOffset;
@@ -1340,10 +1322,12 @@ TestExitStatus GFXtests::shakingEffect() {
 
 		if (Testsuite::handleInteractiveInput("Did the Shaking test work as you were expecting?", "Yes", "No", kOptionRight)) {
 			Testsuite::logDetailedPrintf("Shaking Effect didn't work");
+			Testsuite::clearEntireScreen();
 			return kTestFailed;
 		}
 	}
 
+	Testsuite::clearEntireScreen();
 	return kTestPassed;
 }
 
@@ -1621,7 +1605,7 @@ TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfLis
 			showPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), iter->aLoss);
 
 			Common::Point pt(0, 170);
-			Testsuite::writeOnScreen("Example displayed with Pixel Format CLUT8", pt, false);
+			Testsuite::writeOnScreen("Example displayed with Pixel Format CLUT8", pt, kWriteNoFlag);
 
 			Common::String tutorial;
 			tutorial = Common::String::format("Testing a group of Pixel Formats with %d-bit alpha channel.\nPlease, memorize the pattern displayed in the frame above.", 8 - iter->aLoss);
@@ -1645,7 +1629,7 @@ TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfLis
 		Common::Point pt(0, 170);
 		Common::String msg;
 		msg = Common::String::format("Testing Pixel Format %s, %d of %d", iter->toString().c_str(), numFormatsTested, pfList.size());
-		Testsuite::writeOnScreen(msg, pt, true);
+		Testsuite::writeOnScreen(msg, pt, kWriteRGBColors);
 
 		g_system->delayMillis(500);
 
@@ -1706,7 +1690,7 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 
 	const uint nTones = nLevels * (nLevels - 1) / 2;
 	const uint paletteSize = nStdColors + nColors * nTones;
-	STATIC_ASSERT(paletteSize < 256, cant_fit_all_the_tones_into_CLUT8_palettes);
+	static_assert(paletteSize < 256, "can't fit all the tones into CLUT8 palettes");
 
 	uint level[nLevels];
 	for (uint i = 0; i < nLevels - 1; i++) {
@@ -1837,6 +1821,81 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 	g_system->copyRectToScreen(dstSurface.getPixels(), dstSurface.pitch, 0, 0,
 	                           dstSurface.w, dstSurface.h);
 	g_system->updateScreen();
+}
+
+TestExitStatus GFXtests::shaderCompatibility() {
+	// Check if shaders are supported
+	if (!g_system->hasFeature(OSystem::kFeatureShaders)) {
+		Testsuite::logPrintf("Info! Shaders are not supported on this platform.\n");
+		return kTestSkipped;
+	}
+
+	Testsuite::logPrintf("Info! Testing all available shaders from shaders.dat\n");
+
+	// List all shader files
+	Common::ArchiveMemberList files;
+	Common::SearchSet shaderSet;
+	const char *kFileMask = "*.glslp";
+
+	// Get the shaders archive
+	Common::generateZipSet(shaderSet, "shaders.dat", "shaders*.dat");
+	shaderSet.listMatchingMembers(files, kFileMask, true);
+	Common::sort(files.begin(), files.end(), Common::ArchiveMemberListComparator());
+
+	Common::StringArray brokenShaders;
+	int totalShaders = 0;
+	int workingShaders = 0;
+
+	Testsuite::logPrintf("Testing %d shader(s)...\n", files.size());
+
+	// Test each shader
+	for (auto &file : files) {
+		totalShaders++;
+		g_system->beginGFXTransaction();
+		Common::Path filename = Common::Path(file->getPathInArchive().toString().decode());
+		Testsuite::logDetailedPrintf("Testing shader: '%s'\n", filename.toString().c_str());
+		g_system->setShader(filename);
+		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+		if (gfxError & OSystem::kTransactionShaderChangeFailed) {
+			Testsuite::logDetailedPrintf("  Failed: Shader '%s' is incompatible\n", filename.toString().c_str());
+			brokenShaders.push_back(file->getPathInArchive().toString().decode());
+		} else {
+			Testsuite::logDetailedPrintf("  Passed: Shader '%s' loaded successfully\n", filename.toString().c_str());
+			workingShaders++;
+		}
+	}
+
+	// Reset shader to configured value
+	g_system->beginGFXTransaction();
+	g_system->setShader(ConfMan.getPath("shader"));
+	g_system->endGFXTransaction();
+
+	// Report results
+	Testsuite::logPrintf("\nShader Test Results:\n");
+	Testsuite::logPrintf("  Total shaders tested: %d\n", totalShaders);
+	Testsuite::logPrintf("  Working shaders: %d\n", workingShaders);
+	Testsuite::logPrintf("  Broken shaders: %d\n", brokenShaders.size());
+
+	if (!brokenShaders.empty()) {
+		Common::String listStr = "";
+		for (Common::String &shader : brokenShaders) {
+			listStr += shader + " ";
+		}
+		Testsuite::logPrintf("\nBroken shaders in archive, remove with:\n");
+		Testsuite::logPrintf("  zip -d shaders.dat %s\n", listStr.c_str());
+
+		// Also print to warning for visibility
+		warning("Broken shaders in archive, remove with: zip -d shaders.dat %s", listStr.c_str());
+	}
+
+	// Test passes if all shaders work, fails if any are broken
+	if (brokenShaders.empty()) {
+		Testsuite::logPrintf("\nAll shaders are compatible!\n");
+		return kTestPassed;
+	} else {
+		Testsuite::logPrintf("\nSome shaders are incompatible.\n");
+		return kTestFailed;
+	}
 }
 
 } // End of namespace Testbed

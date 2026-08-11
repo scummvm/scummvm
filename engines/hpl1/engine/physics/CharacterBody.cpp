@@ -611,7 +611,7 @@ void iCharacterBody::Update(float afTimeStep) {
 	}
 
 	////////////////////////////////
-	// Set the postion to the body
+	// Set the position to the body
 	mpBody->SetPosition(mvPosition);
 
 	//////////////////////////
@@ -642,7 +642,7 @@ void iCharacterBody::Update(float afTimeStep) {
 	}
 
 	/////////////////////////////////////////
-	// Update postion
+	// Update position
 	if (mbClimbing)
 		mfCheckStepClimbCount = 0;
 	else
@@ -782,7 +782,7 @@ void iCharacterBody::Update(float afTimeStep) {
 	}
 
 	if (mbGravityActive == false) {
-		// Set the postion to the body
+		// Set the position to the body
 		mpBody->SetPosition(mvPosition);
 
 		UpdateCamera();
@@ -1052,7 +1052,7 @@ void iCharacterBody::UpdateCamera() {
 
 		float fNum = (float)mlstCameraPos.size();
 
-		// Add all positions and devide by the number of em.
+		// Add all positions and divide by the number of them.
 		// that way we get the average
 		cVector3f vTotalPos(0, 0, 0);
 		tVector3fListIt it = mlstCameraPos.begin();
@@ -1093,7 +1093,7 @@ void iCharacterBody::UpdateEntity() {
 
 		float fNum = (float)mlstEntityPos.size();
 
-		// Add all positions and devide by the number of em.
+		// Add all positions and divide by the number of them.
 		// that way we get the average
 		cVector3f vTotalPos(0, 0, 0);
 		tVector3fListIt it = mlstEntityPos.begin();

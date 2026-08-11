@@ -28,10 +28,6 @@
 #ifndef WINTERMUTE_MATHUTIL_H
 #define WINTERMUTE_MATHUTIL_H
 
-#ifdef ENABLE_WME3D
-#include "math/vector3d.h"
-#endif
-
 namespace Wintermute {
 
 class MathUtil {
@@ -39,16 +35,6 @@ public:
 	static float round(float val);
 	static float roundUp(float val);
 };
-
-#ifdef ENABLE_WME3D
-bool lineIntersectsTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
-							const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
-							float &t, float &u, float &v);
-
-bool lineSegmentIntersectsTriangle(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
-								   const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
-								   Math::Vector3d &intersection, float &distance);
-#endif
 
 } // End of namespace Wintermute
 

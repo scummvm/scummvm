@@ -28,7 +28,7 @@
 // This program decompresses Ultima_6-style LZW-compressed files
 // =============================================================
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_lzw.h"
@@ -51,7 +51,7 @@ U6Lzw::~U6Lzw() {
  */
 unsigned char *U6Lzw::compress_buffer(unsigned char *src, uint32 src_len,
 									  uint32 &dest_len) {
-	// FIXME - didnt bother fixing this since its output will be larger than
+	// FIXME - didn't bother fixing this since its output will be larger than
 	//         the uncompressed data
 	uint32 blocks = 0; //, block = 0, b = 0, d = 0, rshift = 0;
 	//uint16 val = 0;

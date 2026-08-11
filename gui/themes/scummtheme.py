@@ -54,8 +54,8 @@ def buildAllThemes():
 			buildTheme(f)
 
 def parseSTX(theme_file, def_file, subcount):
-	comm = re.compile("<!--(.*?)-->", re.DOTALL)
-	head = re.compile("<\?(.*?)\?>")
+	comm = re.compile(r"<!--(.*?)-->", re.DOTALL)
+	head = re.compile(r"<\?(.*?)\?>")
 
 	strlitcount = 0
 	subcount += 1

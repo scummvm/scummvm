@@ -43,6 +43,7 @@ Inventory::Inventory(Myst3Engine *vm) :
 		_vm(vm),
 		_texture(nullptr) {
 	_scaled = !_vm->isWideScreenModEnabled();
+	_hidden = !_scaled;
 	initializeTexture();
 }
 
@@ -61,14 +62,40 @@ void Inventory::initializeTexture() {
 
 bool Inventory::isMouseInside() {
 	Common::Point mouse = _vm->_cursor->getPosition(false);
+	if (_vm->isWideScreenModEnabled()) {
+		Common::Rect triggerArea;
+		if (_hidden) {
+			Common::Rect screen = _vm->_gfx->viewport();
+			float scale = MIN(
+				screen.width()  / (float) Renderer::kOriginalWidth,
+				screen.height() / (float) Renderer::kOriginalHeight
+			);
+			triggerArea = Common::Rect(screen.width(), Renderer::kBottomTriggerForInventoryInWideScreen * scale);
+			triggerArea.translate(0, screen.height() - triggerArea.height());
+		} else {
+			triggerArea = getPosition();
+		}
+
+		bool shouldShowInventory = triggerArea.contains(mouse);
+		if (shouldShowInventory) {
+			if (_hidden)  _hidden = false;
+		} else {
+			if (!_hidden) _hidden = true;
+		}
+		return shouldShowInventory;
+	}
 	return getPosition().contains(mouse);
 }
 
 void Inventory::draw() {
 	if (_vm->isWideScreenModEnabled()) {
-		// Draw a black background to cover the main game frame
+		// Draw a semi-transparent background to cover the main game frame
 		Common::Rect screen = _vm->_gfx->viewport();
-		_vm->_gfx->drawRect2D(Common::Rect(screen.width(), Renderer::kBottomBorderHeight), 0xFF, 0x00, 0x00, 0x00);
+		float scale = MIN(
+			screen.width()  / (float) Renderer::kOriginalWidth,
+			screen.height() / (float) Renderer::kOriginalHeight
+		);
+		_vm->_gfx->drawRect2D(Common::Rect(screen.width(), Renderer::kBottomBorderHeight * scale), 0x9F, 0x00, 0x00, 0x00);
 	}
 
 	uint16 hoveredItemVar = hoveredItem();
@@ -161,15 +188,24 @@ void Inventory::reflow() {
 	uint16 itemCount = 0;
 	uint16 totalWidth = 0;
 
+	float scale = 1.0f;
+	if (_vm->isWideScreenModEnabled()) {
+		Common::Rect screen = _vm->_gfx->viewport();
+		scale = MIN(
+			screen.width()  / (float) Renderer::kOriginalWidth,
+			screen.height() / (float) Renderer::kOriginalHeight
+		);
+	}
+
 	for (uint i = 0; _availableItems[i].var; i++) {
 		if (hasItem(_availableItems[i].var)) {
-			totalWidth += _availableItems[i].textureWidth;
+			totalWidth += (_availableItems[i].textureWidth * scale);
 			itemCount++;
 		}
 	}
 
 	if (itemCount >= 2)
-		totalWidth += 9 * (itemCount - 1);
+		totalWidth += 9 * (itemCount - 1) * scale;
 
 	uint16 left;
 	if (_vm->isWideScreenModEnabled()) {
@@ -182,15 +218,17 @@ void Inventory::reflow() {
 	for (ItemList::iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		const ItemData &item = getData(it->var);
 
-		uint16 top = (Renderer::kBottomBorderHeight - item.textureHeight) / 2;
+		uint16 top = ((Renderer::kBottomBorderHeight - item.textureHeight) / 2) * scale;
 
-		it->rect = Common::Rect(item.textureWidth, item.textureHeight);
+		int16 itemTextureWidth = item.textureWidth * scale;
+		int16 itemTextureHeight = item.textureHeight * scale;
+		it->rect = Common::Rect(itemTextureWidth, itemTextureHeight);
 		it->rect.translate(left, top);
 
-		left += item.textureWidth;
+		left += itemTextureWidth;
 
 		if (itemCount >= 2)
-			left += 9;
+			left += 9 * scale;
 	}
 }
 
@@ -294,7 +332,11 @@ Common::Rect Inventory::getPosition() const {
 
 	Common::Rect frame;
 	if (_vm->isWideScreenModEnabled()) {
-		frame = Common::Rect(screen.width(), Renderer::kBottomBorderHeight);
+		float scale = MIN(
+			screen.width()  / (float) Renderer::kOriginalWidth,
+			screen.height() / (float) Renderer::kOriginalHeight
+		);
+		frame = Common::Rect(screen.width(), Renderer::kBottomBorderHeight * scale);
 
 		Common::Rect scenePosition = _vm->_scene->getPosition();
 		int16 top = CLIP<int16>(screen.height() - frame.height(), 0, scenePosition.bottom);
@@ -379,7 +421,13 @@ Common::Rect DragItem::getPosition() {
 	uint posX = CLIP<uint>(mouse.x, _texture->width / 2, viewport.width() - _texture->width / 2);
 	uint posY = CLIP<uint>(mouse.y, _texture->height / 2, viewport.height() - _texture->height / 2);
 
-	Common::Rect screenRect = Common::Rect::center(posX, posY, _texture->width, _texture->height);
+	// Proper scaling code - similar to cursor scaling code (see: Cursor::draw())
+	float scale = MIN(
+		viewport.width()  / (float) Renderer::kOriginalWidth,
+		viewport.height() / (float) Renderer::kOriginalHeight
+	);
+
+	Common::Rect screenRect = Common::Rect::center(posX, posY, _texture->width * scale, _texture->height * scale);
 	return screenRect;
 }
 

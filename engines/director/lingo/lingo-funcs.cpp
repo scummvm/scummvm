@@ -40,7 +40,7 @@
 namespace Director {
 
 void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
-	_vm->_playbackPaused = false;
+	_vm->getCurrentWindow()->_playbackPaused = false;
 
 	if (!_vm->getCurrentMovie())
 		return;
@@ -49,13 +49,21 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 		return;
 
 	Window *stage = _vm->getCurrentWindow();
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Score *score = stage->getCurrentMovie()->getScore();
 
-	_vm->_skipFrameAdvance = true;
+	if (score->_disableGoPlayUpdateStage) {
+		warning("Lingo::func_goto(): ignoring goto due to disableGoPlayUpdateStage flag");
+		return;
+	}
+
+	stage->_skipFrameAdvance = true;
 
 	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
 	// freeze this script context. We'll return to it after entering the next frame.
-	g_lingo->_freezeState = true;
+
+	// Returning from a script with "play done" does not freeze the state. Instead it obliterates it.
+	if (!_playDone)
+		_freezeState = true;
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
@@ -66,9 +74,9 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 		// If we reached here from b_go, and the movie is getting swapped out,
 		// reset all of the custom event handlers.
 		if (calledfromgo)
-			g_lingo->resetLingoGo();
+			resetLingoGo();
 
-		if (g_lingo->_updateMovieEnabled) {
+		if (_updateMovieEnabled) {
 			// Save the movie when branching to another movie.
 			LB::b_saveMovie(0);
 		}
@@ -102,45 +110,59 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 		debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to frame %d", frame.asInt());
 		score->setCurrentFrame(frame.asInt());
 	}
+
+	// Since the frames are not going to be consecutive, we might run into
+	// an endge case, so better kill behaviors proactively.
+	score->killScriptInstances(score->getNextFrame());
 }
 
 void Lingo::func_gotoloop() {
 	if (!_vm->getCurrentMovie())
 		return;
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	stage->_playbackPaused = false;
+	Score *score = stage->getCurrentMovie()->getScore();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotoloop(): looping frame %d", score->getCurrentFrameNum());
 
 	score->gotoLoop();
 
-	_vm->_skipFrameAdvance = true;
+	stage->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotonext() {
 	if (!_vm->getCurrentMovie())
 		return;
 
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	stage->_playbackPaused = false;
+	Score *score = stage->getCurrentMovie()->getScore();
 	score->gotoNext();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotonext(): going to next frame %d", score->getNextFrame());
 
-	_vm->_skipFrameAdvance = true;
+	stage->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotoprevious() {
 	if (!_vm->getCurrentMovie())
 		return;
 
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	stage->_playbackPaused = false;
+	Score *score = stage->getCurrentMovie()->getScore();
 	score->gotoPrevious();
 	debugC(3, kDebugLingoExec, "Lingo::func_gotoprevious(): going to previous frame %d", score->getNextFrame());
 
-	_vm->_skipFrameAdvance = true;
+	stage->_skipFrameAdvance = true;
 }
 
 void Lingo::func_play(Datum &frame, Datum &movie) {
 	MovieReference ref;
 	Window *stage = _vm->getCurrentWindow();
 
+	if (stage->getCurrentMovie()->getScore()->_disableGoPlayUpdateStage) {
+		warning("Lingo::func_play(): ignoring play due to disableGoPlayUpdateStage flag");
+		return;
+	}
 
 	// play #done
 	if (frame.type == SYMBOL) {
@@ -185,7 +207,7 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrameNum();
 
 	// if we are issuing play command from script channel script. then play done should return to next frame
-	if (g_lingo->_currentChannelId == 0)
+	if (_state->currentChannelId == 0)
 		ref.frameI++;
 
 	stage->_movieStack.push_back(ref);
@@ -195,7 +217,8 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 }
 
 void Lingo::func_cursor(Datum cursorDatum) {
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
 	if (cursorDatum.type == ARRAY){
 		score->_defaultCursor.readFromCast(cursorDatum);
 	} else {
@@ -216,14 +239,16 @@ int Lingo::func_marker(int m) 	{
 	if (!_vm->getCurrentMovie())
 		return 0;
 
-	int labelNumber = _vm->getCurrentMovie()->getScore()->getCurrentLabelNumber();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
+	int labelNumber = score->getCurrentLabelNumber();
 	if (m != 0) {
 		if (m < 0) {
 			for (int marker = 0; marker > m; marker--)
-				labelNumber = _vm->getCurrentMovie()->getScore()->getPreviousLabelNumber(labelNumber);
+				labelNumber = score->getPreviousLabelNumber(labelNumber);
 		} else {
 			for (int marker = 0; marker < m; marker++)
-				labelNumber = _vm->getCurrentMovie()->getScore()->getNextLabelNumber(labelNumber);
+				labelNumber = score->getNextLabelNumber(labelNumber);
 		}
 	}
 
@@ -231,7 +256,8 @@ int Lingo::func_marker(int m) 	{
 }
 
 uint16 Lingo::func_label(Datum &label) {
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Window *stage = _vm->getCurrentWindow();
+	Score *score = stage->getCurrentMovie()->getScore();
 
 	if (!score->_labels)
 		return 0;

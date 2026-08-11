@@ -531,7 +531,7 @@ mcodeFunctionReturnCodes _game_session::fn_snap_face_object(int32 &, int32 *para
 	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
-		Fatal_error("fn_snap_face_object cant find target object %s", object_name);
+		Fatal_error("fn_snap_face_object can't find target object %s", object_name);
 
 	log = Fetch_object_struct(id);
 
@@ -1274,7 +1274,7 @@ mcodeFunctionReturnCodes _game_session::fn_sync_with_mega(int32 &, int32 *params
 	if (!L->looping) {
 		L->list[0] = LinkedDataObject::Fetch_item_number_by_name(objects, mega_name);
 		L->list[1] = 42;    // we are here
-		L->looping = TRUE8; // dont do this again
+		L->looping = TRUE8; // don't do this again
 	}
 
 	if (logic_structs[L->list[0]]->list[1] == 42) {
@@ -1322,11 +1322,11 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 	// default is 1
 	int32 shotType = CGameObject::GetIntegerValueOrDefault(object, "gun_effects", 1);
 
-	// if mega then do dynamic light (only if shotType isnt 0
+	// if mega then do dynamic light (only if shotType isn't 0)
 	if ((logic_structs[cur_id]->image_type == VOXEL) && (shotType == 1)) {
 		// dynamic light
 		M->SetDynamicLight(1, 255, 255, 255, 0, 150, 100, 200); // 2 metres
-		// Hey we are shooting someone (muzzle flash on / cartridge case on (we my want to split this!)
+		// Hey we are shooting someone (muzzle flash on / cartridge case on) - we may want to split this!
 		M->is_shooting = TRUE8;
 	}
 
@@ -1365,7 +1365,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 
 				// kick kinematic for the player if we are shooting the player
 				if (tid == player.Fetch_player_id()) {
-					MS->player.being_shot = 3;            // cant shoot for 3 cycles (engine anim over three frames)
+					MS->player.being_shot = 3;            // can't shoot for 3 cycles (engine anim over three frames)
 					MS->player.shot_by_id = (int8)cur_id; // shot by us...!
 
 					CGame *ob = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
@@ -1464,7 +1464,7 @@ mcodeFunctionReturnCodes _game_session::fn_apply_anim_y(int32 &, int32 *params) 
 
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	// search for the named generic anim - cant use __ANIM_NAME from script unfortunately
+	// search for the named generic anim - can't use __ANIM_NAME from script unfortunately
 	for (k = 0; k < __TOTAL_ANIMS; k++) {
 		// we must search the table
 		if (!strcmp(anim_name, master_anim_name_table[k].name)) {
@@ -1489,7 +1489,7 @@ mcodeFunctionReturnCodes _game_session::fn_apply_anim_y(int32 &, int32 *params) 
 		}
 	}
 
-	Fatal_error("fn_apply_anim_y [%s] cant find generic anim [%s]", CGameObject::GetName(object), anim_name);
+	Fatal_error("fn_apply_anim_y [%s] can't find generic anim [%s]", CGameObject::GetName(object), anim_name);
 
 	return IR_CONT;
 }
@@ -1500,7 +1500,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_y(int32 &, int32 *params) {
 	// params        0   value
 
 	if (L->image_type == PROP)
-		Fatal_error("fn_add_y cant be used on a prop - %s", CGameObject::GetName(object));
+		Fatal_error("fn_add_y can't be used on a prop - %s", CGameObject::GetName(object));
 
 	M->actor_xyz.y += params[0];
 

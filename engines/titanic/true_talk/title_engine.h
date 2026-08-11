@@ -52,7 +52,7 @@ public:
 	virtual void setup(int val1, VocabMode vocabMode = VOCAB_MODE_NONE);
 
 	/**
-	 * Sets a conversation reponse
+	 * Sets a conversation response
 	 */
 	virtual int setResponse(TTscriptBase *script, TTresponse *response) { return SS_4; }
 
@@ -81,7 +81,7 @@ public:
 	void setup(int val1, VocabMode vocabMode = VOCAB_MODE_NONE) override;
 
 	/**
-	 * Sets a conversation reponse
+	 * Sets a conversation response
 	 */
 	int setResponse(TTscriptBase *script, TTresponse *response) override;
 

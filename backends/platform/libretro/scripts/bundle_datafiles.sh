@@ -76,12 +76,14 @@ DATAFILES_LIST_DATA=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data.mk" 2>/
 DATAFILES_LIST_DATA_BIG=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data_big.mk" 2>/dev/null| grep DIST_FILES_LIST | sed "s|DIST_FILES_LIST += \(.*\)|${SCUMMVM_PATH}/\1|g")
 DATAFILES_LIST_DATA_CORE=$(cat "${SCUMMVM_PATH}/dists/engine-data/engine_data_core.mk" 2>/dev/null| grep DIST_FILES_LIST | sed "s|DIST_FILES_LIST += \(.*\)|${SCUMMVM_PATH}/\1|g")
 SOUNDFONTS_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null| grep FILE.*dists/soundfonts | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
+SHADERS_LIST=$(cat "${SCUMMVM_PATH}/dists/scummvm.rc" 2>/dev/null| grep FILE.*/shaders/ | sed "s|.*\"\(.*\)\"|${SCUMMVM_PATH}/\1|g")
 
 # Put retrieved data into arrays
 set +e
 read -a THEME_ARRAY -d '' -r <<< "${THEMES_LIST}"
 read -a DATAFILES_ARRAY -d '' -r <<< "$DATAFILES_LIST_DATA $DATAFILES_LIST_DATA_BIG $DATAFILES_LIST_DATA_CORE"
 read -a SOUNDFONTS_ARRAY -d '' -r <<< "$SOUNDFONTS_LIST"
+read -a SHADERS_ARRAY -d '' -r <<< "$SHADERS_LIST"
 set -e
 
 # Add specific data files
@@ -90,6 +92,7 @@ DATAFILES_ARRAY[${#DATAFILES_ARRAY[@]}]="${SCUMMVM_PATH}"/backends/vkeybd/packs/
 # Make sure target folders exist
 [ $3 = "bundle" ] && mkdir -p "${TMP_PATH}/${BUNDLE_THEME_DIR}/"
 [ $3 = "bundle" ] && mkdir -p "${TMP_PATH}/${BUNDLE_DATAFILES_DIR}/"
+[ $3 = "bundle" ] && mkdir -p "${TMP_PATH}/${BUNDLE_DATAFILES_DIR}/shaders"
 
 count=0
 # Process themes
@@ -98,6 +101,7 @@ count=0
 # Process datafiles
 	process_group "$BUNDLE_DATAFILES_DIR" $3 ${DATAFILES_ARRAY[@]}
 	process_group "$BUNDLE_DATAFILES_DIR" $3 ${SOUNDFONTS_ARRAY[@]}
+	process_group "$BUNDLE_DATAFILES_DIR/shaders" $3 ${SHADERS_ARRAY[@]}
 
 # Process additional local bundle files
 if [ -d "$BUNDLE_LOCAL_DATAFILES_DIR" -a ! -z "$(ls -A ${BUNDLE_LOCAL_DATAFILES_DIR} 2>/dev/null)" ] ; then
@@ -108,18 +112,13 @@ if [ -d "$BUNDLE_LOCAL_DATAFILES_DIR" -a ! -z "$(ls -A ${BUNDLE_LOCAL_DATAFILES_
 fi
 
 if [ ! $3 = "bundle" ]; then
-
-# Update from libretro ScummVM.dat
-wget -NO "$BUILD_PATH"/ScummVM.dat https://raw.githubusercontent.com/libretro/libretro-database/master/dat/ScummVM.dat
-[ -f "$BUILD_PATH"/ScummVM.dat ] && SUPPORTED_EXTENSIONS="$(cat $BUILD_PATH/ScummVM.dat | grep 'rom (' | sed -e 's/\" .*//g' -e 's/.*\.//g' | sort -u | tr '\n' '|')" || SUPPORTED_EXTENSIONS="$ALLOWED_EXT"
-
 	# Create core.info file
 	set +e
 	read -d '' CORE_INFO_CONTENT <<EOF
 # Software Information
 display_name = "$NICE_NAME"
-authors = "SCUMMVMdev"
-supported_extensions = "$SUPPORTED_EXTENSIONS"
+authors = "ScummVM Team"
+supported_extensions = "$ALLOWED_EXT"
 corename = "$NICE_NAME"
 categories = "Game"
 license = "GPLv3"
@@ -154,7 +153,7 @@ EOF
 	set -e
 
 	CORE_INFO_CONTENT="${CORE_INFO_CONTENT}${CORE_INFO_DATS}
-description = \"The ScummVM adventure game engine ported to libretro. This core is built directly from the upstream repo and is synced upon stable releases, though it is not supported upstream. So please report any bug to Libretro and/or make sure the same apply to the standalone ScummVM program as well, before making any report to ScummVM Team.\""
+description = \"The ScummVM official port to libretro core.\""
 	echo "$CORE_INFO_CONTENT" > "${TARGET_PATH}/${INFO_FILE_PRE}_libretro.info"
 	echo "${INFO_FILE_PRE}_libretro.info created successfully"
 else

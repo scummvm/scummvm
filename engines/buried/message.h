@@ -22,6 +22,7 @@
 #ifndef BURIED_MESSAGE_H
 #define BURIED_MESSAGE_H
 
+#include "common/events.h"
 #include "common/keyboard.h"
 #include "common/rect.h"
 
@@ -45,12 +46,16 @@ enum MessageType {
 	kMessageTypeRButtonDown,
 	kMessageTypeSetCursor,
 	kMessageTypeEnable,
+	kMessageTypeActionStart,
+	kMessageTypeActionEnd,
 
 	// Ranges of messages
 	kMessageTypeMouseBegin = kMessageTypeMouseMove,
 	kMessageTypeMouseEnd = kMessageTypeRButtonDown,
 	kMessageTypeKeyBegin = kMessageTypeKeyUp,
-	kMessageTypeKeyEnd = kMessageTypeKeyDown
+	kMessageTypeKeyEnd = kMessageTypeKeyDown,
+	kMessageTypeActionRangeBegin = kMessageTypeActionStart,
+	kMessageTypeActionRangeEnd = kMessageTypeActionEnd
 };
 
 
@@ -95,6 +100,19 @@ private:
 	uint _flags;
 };
 
+template <MessageType type>
+class ActionMessage : public MessageTypeIntern<type> {
+public:
+	ActionMessage(const Common::CustomEventType &action, uint flags) : _action(action), _flags(flags) {}
+
+	Common::CustomEventType getAction() const { return _action; }
+	uint getFlags() const { return _flags; }
+
+private:
+	Common::CustomEventType _action;
+	uint _flags;
+};
+
 // Types for everything that falls under one of the above categories
 typedef KeyMessage<kMessageTypeKeyUp>                  KeyUpMessage;
 typedef KeyMessage<kMessageTypeKeyDown>                KeyDownMessage;
@@ -104,6 +122,8 @@ typedef MouseMessage<kMessageTypeLButtonDown>          LButtonDownMessage;
 typedef MouseMessage<kMessageTypeMButtonUp>            MButtonUpMessage;
 typedef MouseMessage<kMessageTypeRButtonUp>            RButtonUpMessage;
 typedef MouseMessage<kMessageTypeRButtonDown>          RButtonDownMessage;
+typedef ActionMessage<kMessageTypeActionStart>         ActionStartMessage;
+typedef ActionMessage<kMessageTypeActionEnd>           ActionEndMessage;
 
 // ...and the rest
 class SetCursorMessage : public MessageTypeIntern<kMessageTypeSetCursor> {

@@ -119,7 +119,7 @@ bool EmulateHTTPConnectExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *
 	// Specification: external "httpconnect.dll" cdecl long SendRecvHTTP(string, long, string, long, string, long)
 	// Always returns -7 for me in a test game, probably returns the same network errors as Register()
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(function->name, "SendRecvHTTP") == 0 && function->nu_params == 6) {
+	else if (strcmp(function->name, "SendRecvHTTP") == 0 && function->numParams == 6) {
 		stack->correctParams(6);
 		const char *server = stack->pop()->getString();
 		int serverMaxLen = stack->pop()->getInt();
@@ -143,7 +143,7 @@ bool EmulateHTTPConnectExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *
 	// My Zbang demo does not have this dll, so there is no way to actually test it with a test game
 	// Return value is never used in Zbang scripts
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(function->name, "SendRecvHTTP") == 0 && function->nu_params == 4) {
+	else if (strcmp(function->name, "SendRecvHTTP") == 0 && function->numParams == 4) {
 		stack->correctParams(4);
 		const char *dirUrl = stack->pop()->getString();
 		int dirUrlMaxLen = stack->pop()->getInt();

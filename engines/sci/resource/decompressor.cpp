@@ -19,8 +19,6 @@
  *
  */
 
-// Resource library
-
 #include "common/compression/dcl.h"
 #include "common/util.h"
 #include "common/endian.h"
@@ -32,19 +30,13 @@
 #include "sci/resource/resource.h"
 
 namespace Sci {
+
 int Decompressor::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
-	uint32 chunk;
-	while (nPacked && !(src->eos() || src->err())) {
-		chunk = MIN<uint32>(1024, nPacked);
-		src->read(dest, chunk);
-		nPacked -= chunk;
-		dest += chunk;
-	}
-	return (src->eos() || src->err()) ? 1 : 0;
+	uint32 bytesRead = src->read(dest, nPacked);
+	return (bytesRead == nPacked) ? SCI_ERROR_NONE : SCI_ERROR_IO_ERROR;
 }
 
-void Decompressor::init(Common::ReadStream *src, byte *dest, uint32 nPacked,
-						uint32 nUnpacked) {
+void Decompressor::init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	_src = src;
 	_dest = dest;
 	_szPacked = nPacked;
@@ -101,26 +93,25 @@ byte Decompressor::getByteLSB() {
 void Decompressor::putByte(byte b) {
 	_dest[_dwWrote++] = b;
 }
+
 //-------------------------------
 //  Huffman decompressor
 //-------------------------------
-int DecompressorHuffman::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
-	init(src, dest, nPacked, nUnpacked);
-	byte numnodes;
-	int16 c;
-	uint16 terminator;
 
-	numnodes = _src->readByte();
-	terminator = _src->readByte() | 0x100;
+int DecompressorHuffman::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
+	init(src, dest, nPacked, nUnpacked);
+
+	byte numnodes = _src->readByte();
+	uint16 terminator = _src->readByte() | 0x100;
 	_nodes = new byte [numnodes << 1];
 	_src->read(_nodes, numnodes << 1);
 
+	int16 c;
 	while ((c = getc2()) != terminator && (c >= 0) && !isFinished())
 		putByte(c);
 
 	delete[] _nodes;
-	return _dwWrote == _szUnpacked ? 0 : 1;
+	return (_dwWrote == _szUnpacked) ? SCI_ERROR_NONE : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
 int16 DecompressorHuffman::getc2() {
@@ -141,496 +132,365 @@ int16 DecompressorHuffman::getc2() {
 //-------------------------------
 // LZW Decompressor for SCI0/01/1
 //-------------------------------
-void DecompressorLZW::init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
-	Decompressor::init(src, dest, nPacked, nUnpacked);
 
-	_numbits = 9;
-	_curtoken = 0x102;
-	_endtoken = 0x1ff;
-}
-
-int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
+int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	byte *buffer = nullptr;
+	int result = SCI_ERROR_NONE;
 
 	switch (_compression) {
 	case kCompLZW:	// SCI0 LZW compression
-		return unpackLZW(src, dest, nPacked, nUnpacked);
-		break;
 	case kCompLZW1: // SCI01/1 LZW compression
-		return unpackLZW1(src, dest, nPacked, nUnpacked);
-		break;
+		return unpackLZW(src, dest, nPacked, nUnpacked);
 	case kCompLZW1View:
 		buffer = new byte[nUnpacked];
-		unpackLZW1(src, buffer, nPacked, nUnpacked);
-		reorderView(buffer, dest);
+		result = unpackLZW(src, buffer, nPacked, nUnpacked);
+		if (result == SCI_ERROR_NONE) {
+			unpackView(buffer, dest);
+		}
 		break;
 	case kCompLZW1Pic:
 		buffer = new byte[nUnpacked];
-		unpackLZW1(src, buffer, nPacked, nUnpacked);
-		reorderPic(buffer, dest, nUnpacked);
+		result = unpackLZW(src, buffer, nPacked, nUnpacked);
+		if (result == SCI_ERROR_NONE) {
+			unpackPic(buffer, dest, nUnpacked);
+		}
 		break;
 	default:
 		break;
 	}
 	delete[] buffer;
-	return 0;
+	return result;
 }
 
-int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
+// Decompresses SCI0 LZW and SCI01/1 LZW, depending on _compression value.
+//
+// SCI0:    LSB-first.
+// SCI01/1: MSB-first, code size is increased one code earlier than necessary.
+//          This is known as an "early change" bug in LZW implementations.
+int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
-	uint16 token; // The last received value
-	uint16 tokenlastlength = 0;
+	uint16 codeBitLength = 9;
+	uint16 tableSize = 258;
+	uint16 codeLimit = (_compression == kCompLZW) ? 512 : 511;
 
-	uint16 *tokenlist = (uint16 *)malloc(4096 * sizeof(uint16)); // pointers to dest[]
-	uint16* tokenlengthlist = (uint16 *)malloc(4096 * sizeof(uint16)); // char length of each token
-	if (!tokenlist || !tokenlengthlist) {
-		free(tokenlist);
-		free(tokenlengthlist);
+	// LZW table
+	uint16 *stringOffsets = new uint16[4096]; // 0-257: unused
+	uint16 *stringLengths = new uint16[4096]; // 0-257: unused
 
-		error("[DecompressorLZW::unpackLZW] Cannot allocate token memory buffers");
-	}
-
+	bool terminatorFound = false;
 	while (!isFinished()) {
-		token = getBitsLSB(_numbits);
+		uint16 code = (_compression == kCompLZW) ?
+		              getBitsLSB(codeBitLength) :
+		              getBitsMSB(codeBitLength);
 
-		if (token == 0x101) {
-			free(tokenlist);
-			free(tokenlengthlist);
-
-			return 0; // terminator
+		if (code >= tableSize) {
+			warning("LZW code %x exceeds table size %x", code, tableSize);
+			break;
 		}
 
-		if (token == 0x100) { // reset command
-			_numbits = 9;
-			_endtoken = 0x1FF;
-			_curtoken = 0x0102;
+		if (code == 257) { // terminator
+			terminatorFound = true;
+			break;
+		}
+
+		if (code == 256) { // reset command
+			codeBitLength = 9;
+			tableSize = 258;
+			codeLimit = (_compression == kCompLZW) ? 512 : 511;
+			continue;
+		}
+
+		uint16 newStringOffset = _dwWrote;
+		if (code <= 255) {
+			// Code is a literal byte
+			putByte(code);
 		} else {
-			if (token > 0xff) {
-				if (token >= _curtoken) {
-					warning("unpackLZW: Bad token %x", token);
+			// Code is a table index
 
-					free(tokenlist);
-					free(tokenlengthlist);
-
-					return SCI_ERROR_DECOMPRESSION_ERROR;
-				}
-				tokenlastlength = tokenlengthlist[token] + 1;
-				if (_dwWrote + tokenlastlength > _szUnpacked) {
-					// For me this seems a normal situation, It's necessary to handle it
-					warning("unpackLZW: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
-					        _szUnpacked, _dwWrote, tokenlastlength);
-					for (int i = 0; _dwWrote < _szUnpacked; i++)
-						putByte(dest[tokenlist[token] + i]);
-				} else
-					for (int i = 0; i < tokenlastlength; i++)
-						putByte(dest[tokenlist[token] + i]);
-			} else {
-				tokenlastlength = 1;
-				if (_dwWrote >= _szUnpacked)
-					warning("unpackLZW: Try to write single byte beyond end of array");
-				else
-					putByte(token);
+			// Boundary check included because the previous decompressor had a
+			// comment saying it's "a normal situation" for a string to attempt
+			// to write beyond the destination. I have not seen this occur.
+			for (int i = 0; i < stringLengths[code] && !isFinished(); i++) {
+				putByte(dest[stringOffsets[code] + i]);
 			}
-			if (_curtoken > _endtoken && _numbits < 12) {
-				_numbits++;
-				_endtoken = (_endtoken << 1) + 1;
-			}
-			if (_curtoken <= _endtoken) {
-				tokenlist[_curtoken] = _dwWrote - tokenlastlength;
-				tokenlengthlist[_curtoken] = tokenlastlength;
-				_curtoken++;
-			}
-
 		}
+
+		// Stop adding to the table once it is full
+		if (tableSize >= 4096) {
+			continue;
+		}
+
+		// Increase code size once a bit limit has been reached
+		if (tableSize == codeLimit && codeBitLength < 12) {
+			codeBitLength++;
+			codeLimit = 1 << codeBitLength;
+			if (_compression != kCompLZW) {
+				codeLimit--;
+			}
+		}
+
+		// Append code to table
+		stringOffsets[tableSize] = newStringOffset;
+		stringLengths[tableSize] = _dwWrote - newStringOffset + 1;
+		tableSize++;
 	}
 
-	free(tokenlist);
-	free(tokenlengthlist);
+	delete[] stringOffsets;
+	delete[] stringLengths;
 
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
+	// Reaching the compression terminator before writing _szUnpacked bytes is
+	// expected. For kCompLZW1View and kCompLZW1Pic, the unpacked size is not
+	// the LZW output size, it is the final size after processing LZW output.
+	return (terminatorFound || (_dwWrote == _szUnpacked)) ?
+		SCI_ERROR_NONE:
+		SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
-int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
-	init(src, dest, nPacked, nUnpacked);
-
-	byte *stak = (byte *)malloc(0x1014);
-	uint32 tokensSize = 0x1004 * sizeof(Tokenlist);
-	Tokenlist *tokens = (Tokenlist *)malloc(tokensSize);
-	if (!stak || !tokens) {
-		free(stak);
-		free(tokens);
-
-		error("[DecompressorLZW::unpackLZW1] Cannot allocate decompression buffers");
-	}
-
-	memset(tokens, 0, tokensSize);
-
-	byte lastchar = 0;
-	uint16 stakptr = 0, lastbits = 0;
-
-	byte decryptstart = 0;
-	uint16 bitstring;
-	uint16 token;
-	bool bExit = false;
-
-	while (!isFinished() && !bExit) {
-		switch (decryptstart) {
-		case 0:
-			bitstring = getBitsMSB(_numbits);
-			if (bitstring == 0x101) {// found end-of-data signal
-				bExit = true;
-				continue;
-			}
-			putByte(bitstring);
-			lastbits = bitstring;
-			lastchar = (bitstring & 0xff);
-			decryptstart = 1;
-			break;
-
-		case 1:
-			bitstring = getBitsMSB(_numbits);
-			if (bitstring == 0x101) { // found end-of-data signal
-				bExit = true;
-				continue;
-			}
-			if (bitstring == 0x100) { // start-over signal
-				_numbits = 9;
-				_curtoken = 0x102;
-				_endtoken = 0x1ff;
-				decryptstart = 0;
-				continue;
-			}
-
-			token = bitstring;
-			if (token >= _curtoken) { // index past current point
-				token = lastbits;
-				stak[stakptr++] = lastchar;
-			}
-			while ((token > 0xff) && (token < 0x1004)) { // follow links back in data
-				stak[stakptr++] = tokens[token].data;
-				token = tokens[token].next;
-			}
-			lastchar = stak[stakptr++] = token & 0xff;
-			// put stack in buffer
-			while (stakptr > 0) {
-				putByte(stak[--stakptr]);
-				if (_dwWrote == _szUnpacked) {
-					bExit = true;
-					continue;
-				}
-			}
-			// put token into record
-			if (_curtoken <= _endtoken) {
-				tokens[_curtoken].data = lastchar;
-				tokens[_curtoken].next = lastbits;
-				_curtoken++;
-				if (_curtoken == _endtoken && _numbits < 12) {
-					_numbits++;
-					_endtoken = (_endtoken << 1) + 1;
-				}
-			}
-			lastbits = bitstring;
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	free(stak);
-	free(tokens);
-
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
-}
-
-#define PAL_SIZE 1284
-#define EXTRA_MAGIC_SIZE 15
-#define VIEW_HEADER_COLORS_8BIT 0x80
-
-void DecompressorLZW::decodeRLE(byte **rledata, byte **pixeldata, byte *outbuffer, int size) {
-	int pos = 0;
-	byte nextbyte;
-	byte *rd = *rledata;
-	byte *ob = outbuffer;
-	byte *pd = *pixeldata;
-
-	while (pos < size) {
-		nextbyte = *rd++;
-		*ob++ = nextbyte;
-		pos++;
-		switch (nextbyte & 0xC0) {
-		case 0x40:
-		case 0x00:
-			memcpy(ob, pd, nextbyte);
-			pd += nextbyte;
-			ob += nextbyte;
-			pos += nextbyte;
-			break;
-		case 0xC0:
-		default:
-			break;
-		case 0x80:
-			nextbyte = *pd++;
-			*ob++ = nextbyte;
-			pos++;
-			break;
-		}
-	}
-
-	*rledata = rd;
-	*pixeldata = pd;
-}
-
-/**
- * Does the same this as decodeRLE, only to determine the length of the
- * compressed source data.
- */
-int DecompressorLZW::getRLEsize(byte *rledata, int dsize) {
-	int pos = 0;
-	byte nextbyte;
-	int size = 0;
-
-	while (pos < dsize) {
-		nextbyte = *(rledata++);
-		pos++;
-		size++;
-
-		switch (nextbyte & 0xC0) {
-		case 0x40:
-		case 0x00:
-			pos += nextbyte;
-			break;
-		case 0xC0:
-		default:
-			break;
-		case 0x80:
-			pos++;
-			break;
-		}
-	}
-
-	return size;
-}
-
-void DecompressorLZW::reorderPic(byte *src, byte *dest, int dsize) {
-	uint16 view_size, view_start, cdata_size;
-	int i;
+void DecompressorLZW::unpackView(byte *src, byte *dest) {
 	byte *seeker = src;
 	byte *writer = dest;
-	char viewdata[7];
-	byte *cdata, *cdata_start;
 
-	*writer++ = PIC_OP_OPX;
-	*writer++ = PIC_OPX_SET_PALETTE;
-
-	for (i = 0; i < 256; i++) /* Palette translation map */
-		*writer++ = i;
-
-	WRITE_LE_UINT32(writer, 0); /* Palette stamp */
-	writer += 4;
-
-	view_size = READ_LE_UINT16(seeker);
+	// read compressed header
+	byte *celLengths = src + READ_LE_UINT16(seeker) + 2;
 	seeker += 2;
-	view_start = READ_LE_UINT16(seeker);
+	byte loopCount = *seeker++;
+	byte loopHeaderCount = *seeker++; // non-mirrored loops
+	uint16 mirrorMask = READ_LE_UINT16(seeker);
 	seeker += 2;
-	cdata_size = READ_LE_UINT16(seeker);
+	uint16 version = READ_LE_UINT16(seeker);
+	seeker += 2;
+	uint16 paletteOffset = READ_LE_UINT16(seeker); // offset in output view
+	seeker += 2;
+	int celHeaderCount = READ_LE_UINT16(seeker); // non-mirrored loops
 	seeker += 2;
 
-	memcpy(viewdata, seeker, sizeof(viewdata));
-	seeker += sizeof(viewdata);
+	// read cel counts for each loop header
+	byte *celCounts = seeker;
+	seeker += loopHeaderCount;
 
-	memcpy(writer, seeker, 4*256); /* Palette */
-	seeker += 4*256;
-	writer += 4*256;
-
-	if (view_start != PAL_SIZE + 2) { /* +2 for the opcode */
-		memcpy(writer, seeker, view_start-PAL_SIZE-2);
-		seeker += view_start - PAL_SIZE - 2;
-		writer += view_start - PAL_SIZE - 2;
+	// read lengths of decoded cels
+	uint16 *celDecodedLengths = new uint16[celHeaderCount];
+	for (int i = 0; i < celHeaderCount; i++) {
+		celDecodedLengths[i] = READ_LE_UINT16(celLengths + (2 * i));
 	}
 
-	if (dsize != view_start + EXTRA_MAGIC_SIZE + view_size) {
-		memcpy(dest + view_size + view_start + EXTRA_MAGIC_SIZE, seeker,
-		       dsize - view_size - view_start - EXTRA_MAGIC_SIZE);
-		seeker += dsize - view_size - view_start - EXTRA_MAGIC_SIZE;
+	// locate pixel data by seeking past each cel's RLE data
+	byte *rleData = celLengths + (2 * celHeaderCount);
+	byte *pixelData = rleData;
+	for (int i = 0; i < celHeaderCount; i++) {
+		skipRLE(&pixelData, celDecodedLengths[i]);
 	}
 
-	cdata_start = cdata = (byte *)malloc(cdata_size);
-	memcpy(cdata, seeker, cdata_size);
-	seeker += cdata_size;
-
-	writer = dest + view_start;
-	*writer++ = PIC_OP_OPX;
-	*writer++ = PIC_OPX_EMBEDDED_VIEW;
-	*writer++ = 0;
-	*writer++ = 0;
-	*writer++ = 0;
-	WRITE_LE_UINT16(writer, view_size + 8);
+	// write view header
+	*writer++ = loopCount;
+	*writer++ = 0x80; // flags for a VGA pic with RLE compression
+	WRITE_LE_UINT16(writer, mirrorMask);
+	writer += 2;
+	WRITE_LE_UINT16(writer, version);
+	writer += 2;
+	WRITE_LE_UINT16(writer, paletteOffset);
 	writer += 2;
 
-	memcpy(writer, viewdata, sizeof(viewdata));
-	writer += sizeof(viewdata);
+	// skip loop offset table, we will write it while writing loops
+	byte *loopOffsets = writer;
+	writer += 2 * loopCount;
 
-	*writer++ = 0;
-
-	decodeRLE(&seeker, &cdata, writer, view_size);
-
-	free(cdata_start);
-}
-
-void DecompressorLZW::buildCelHeaders(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max) {
-	for (int c = 0; c < max; c++) {
-		memcpy(*writer, *seeker, 6);
-		*seeker += 6;
-		*writer += 6;
-		int w = *((*seeker)++);
-		WRITE_LE_UINT16(*writer, w); /* Zero extension */
-		*writer += 2;
-
-		*writer += cc_lengths[celindex];
-		celindex++;
-	}
-}
-
-void DecompressorLZW::reorderView(byte *src, byte *dest) {
-	byte *cellengths;
-	int loopheaders;
-	int lh_present;
-	int lh_mask;
-	int pal_offset;
-	int cel_total;
-	int unknown;
-	byte *seeker = src;
-	char celcounts[100];
-	byte *writer = dest;
-	byte *lh_ptr;
-	byte *rle_ptr, *pix_ptr;
-	int l, lb, c, celindex, lh_last = -1;
-	int chptr;
-	int w;
-	int *cc_lengths;
-	byte **cc_pos;
-
-	/* Parse the main header */
-	cellengths = src + READ_LE_UINT16(seeker) + 2;
-	seeker += 2;
-	loopheaders = *seeker++;
-	lh_present = *seeker++;
-	lh_mask = READ_LE_UINT16(seeker);
-	seeker += 2;
-	unknown = READ_LE_UINT16(seeker);
-	seeker += 2;
-	pal_offset = READ_LE_UINT16(seeker);
-	seeker += 2;
-	cel_total = READ_LE_UINT16(seeker);
-	seeker += 2;
-
-	cc_pos = (byte **) malloc(sizeof(byte *) * cel_total);
-	cc_lengths = (int *) malloc(sizeof(int) * cel_total);
-
-	for (c = 0; c < cel_total; c++)
-		cc_lengths[c] = READ_LE_UINT16(cellengths + 2 * c);
-
-	*writer++ = loopheaders;
-	*writer++ = VIEW_HEADER_COLORS_8BIT;
-	WRITE_LE_UINT16(writer, lh_mask);
-	writer += 2;
-	WRITE_LE_UINT16(writer, unknown);
-	writer += 2;
-	WRITE_LE_UINT16(writer, pal_offset);
-	writer += 2;
-
-	lh_ptr = writer;
-	writer += 2 * loopheaders; /* Make room for the loop offset table */
-
-	pix_ptr = writer;
-
-	memcpy(celcounts, seeker, lh_present);
-	seeker += lh_present;
-
-	lb = 1;
-	celindex = 0;
-
-	rle_ptr = pix_ptr = cellengths + (2 * cel_total);
-	w = 0;
-
-	for (l = 0; l < loopheaders; l++) {
-		if (lh_mask & lb) { /* The loop is _not_ present */
-			if (lh_last == -1) {
-				warning("Error: While reordering view: Loop not present, but can't re-use last loop");
-				lh_last = 0;
-			}
-			WRITE_LE_UINT16(lh_ptr, lh_last);
-			lh_ptr += 2;
+	// write loops and their cels
+	int loopTableIndex = 0;
+	int celTableIndex = 0;
+	for (int loop = 0; loop < loopCount; loop++) {
+		if (mirrorMask & (1 << loop)) {
+			// mirrored loop: write previous loop offset to table
+			memcpy(loopOffsets, loopOffsets - 2, 2);
 		} else {
-			lh_last = writer - dest;
-			WRITE_LE_UINT16(lh_ptr, lh_last);
-			lh_ptr += 2;
-			WRITE_LE_UINT16(writer, celcounts[w]);
-			writer += 2;
-			WRITE_LE_UINT16(writer, 0);
-			writer += 2;
+			// write loop offset to table
+			WRITE_LE_UINT16(loopOffsets, writer - dest);
 
-			/* Now, build the cel offset table */
-			chptr = (writer - dest) + (2 * celcounts[w]);
+			// write loop header
+			byte celCount = celCounts[loopTableIndex];
+			*writer++ = celCount;
+			memset(writer, 0, 3);
+			writer += 3;
 
-			for (c = 0; c < celcounts[w]; c++) {
-				WRITE_LE_UINT16(writer, chptr);
+			// write cel offset table
+			int celOffset = (writer - dest) + (2 * celCount);
+			for (int cel = 0; cel < celCount; cel++) {
+				WRITE_LE_UINT16(writer, celOffset);
 				writer += 2;
-				cc_pos[celindex+c] = dest + chptr;
-				chptr += 8 + READ_LE_UINT16(cellengths + 2 * (celindex + c));
+				celOffset += 8 + celDecodedLengths[celTableIndex + cel];
 			}
 
-			buildCelHeaders(&seeker, &writer, celindex, cc_lengths, celcounts[w]);
+			// write cels
+			for (int cel = 0; cel < celCount; cel++) {
+				// cel header
+				memcpy(writer, seeker, 7);
+				seeker += 7;
+				writer += 7;
+				*writer++ = 0;
 
-			celindex += celcounts[w];
-			w++;
+				// cel data
+				int celDecodedLength = celDecodedLengths[celTableIndex + cel];
+				decodeRLE(&rleData, &pixelData, writer, celDecodedLength);
+				writer += celDecodedLength;
+			}
+
+			celTableIndex += celCount;
+			loopTableIndex++;
 		}
-
-		lb = lb << 1;
+		loopOffsets += 2;
 	}
 
-	if (celindex < cel_total) {
-		warning("View decompression generated too few (%d / %d) headers", celindex, cel_total);
-		free(cc_pos);
-		free(cc_lengths);
-		return;
-	}
-
-	/* Figure out where the pixel data begins. */
-	for (c = 0; c < cel_total; c++)
-		pix_ptr += getRLEsize(pix_ptr, cc_lengths[c]);
-
-	rle_ptr = cellengths + (2 * cel_total);
-	for (c = 0; c < cel_total; c++)
-		decodeRLE(&rle_ptr, &pix_ptr, cc_pos[c] + 8, cc_lengths[c]);
-
-	if (pal_offset) {
+	// write palette
+	if (paletteOffset != 0) {
 		*writer++ = 'P';
 		*writer++ = 'A';
 		*writer++ = 'L';
 
-		for (c = 0; c < 256; c++)
-			*writer++ = c;
+		// palette translation map
+		for (int i = 0; i < 256; i++) {
+			*writer++ = i;
+		}
 
-		seeker -= 4; /* The missing four. Don't ask why. */
-		memcpy(writer, seeker, 4*256 + 4);
+		// palette time stamp and palette colors
+		// include the unrelated four bytes before the palette so that
+		// they are written to the palette time stamp. this is a bogus
+		// value but it's what sierra's decompressor did, so we do it
+		// to be consistent with it and other SCI tools. this field is
+		// ignored by the interpreter when reading a view.
+		memcpy(writer, seeker - 4, 4 + 1024);
 	}
 
-	free(cc_pos);
-	free(cc_lengths);
+	delete[] celDecodedLengths;
+}
+
+void DecompressorLZW::unpackPic(byte *src, byte *dest, int unpackedSize) {
+	byte *seeker = src;
+	byte *writer = dest;
+
+	// begin writing set-palette instruction
+	*writer++ = 0xfe; // PIC_OP_OPX
+	*writer++ = 0x02; // PIC_OPX_VGA_SET_PALETTE
+
+	// write palette translation map
+	for (int i = 0; i < 256; i++) {
+		*writer++ = i;
+	}
+
+	// write palette time stamp
+	memset(writer, 0, 4);
+	writer += 4;
+
+	// read compressed header
+	uint16 viewCelSize = READ_LE_UINT16(seeker);
+	seeker += 2;
+	uint16 viewOpPos = READ_LE_UINT16(seeker); // offset in output pic
+	seeker += 2;
+	uint16 viewPixelDataSize = READ_LE_UINT16(seeker);
+	seeker += 2;
+	byte *viewHeader = seeker;
+	seeker += 7;
+
+	// write palette colors
+	memcpy(writer, seeker, 1024);
+	seeker += 1024;
+	writer += 1024;
+
+	// write optional data before embedded-view instruction
+	if (viewOpPos != 1286) { // 1286 = set-palette instruction size
+		int preViewDataSize = viewOpPos - 1286;
+		memcpy(writer, seeker, preViewDataSize);
+		seeker += preViewDataSize;
+		writer += preViewDataSize;
+	}
+
+	// write optional data after embedded-view instruction (written to end)
+	int postViewDataPosition = viewOpPos + 15 + viewCelSize;
+	if (unpackedSize != postViewDataPosition) {
+		int postViewDataSize = unpackedSize - postViewDataPosition;
+		memcpy(dest + postViewDataPosition, seeker, postViewDataSize);
+		seeker += postViewDataSize;
+	}
+
+	// begin writing embedded-view instruction
+	*writer++ = 0xfe; // PIC_OP_OPX
+	*writer++ = 0x01; // PIC_OPX_VGA_EMBEDDED_VIEW
+
+	// write coordinates (0, 0)
+	memset(writer, 0, 3);
+	writer += 3;
+
+	// write cel size
+	WRITE_LE_UINT16(writer, 8 + viewCelSize);
+	writer += 2;
+
+	// write view header
+	memcpy(writer, viewHeader, 7);
+	writer += 7;
+	*writer++ = 0;
+
+	// write view cel (stored as pixel data followed by RLE data)
+	byte *viewRleData = seeker + viewPixelDataSize;;
+	decodeRLE(&viewRleData, &seeker, writer, viewCelSize);
+}
+
+/***
+ * Decodes a cel's data from two separate RLE and pixel buffers.
+ */
+void DecompressorLZW::decodeRLE(byte **rleData, byte **pixelData, byte *dest, int decodedSize) {
+	int pos = 0;
+	byte *rleSeeker = *rleData;
+	byte *pixelSeeker = *pixelData;
+
+	while (pos < decodedSize) {
+		byte currentByte = *rleSeeker++;
+		*dest++ = currentByte;
+		pos++;
+
+		byte upperBits = (currentByte & 0xc0);
+		if (upperBits <= 0x40) { // 00, 40
+			memcpy(dest, pixelSeeker, currentByte);
+			pixelSeeker += currentByte;
+			dest += currentByte;
+			pos += currentByte;
+		} else if (upperBits == 0x80) {
+			*dest++ = *pixelSeeker++;
+			pos++;
+		}
+	}
+
+	*rleData = rleSeeker;
+	*pixelData = pixelSeeker;
+}
+
+/**
+ * Seeks past a cel's RLE data without decoding.
+ * Used to seek past all RLE data to locate the start of pixel data.
+ */
+void DecompressorLZW::skipRLE(byte **rleData, int decodedSize) {
+	int pos = 0;
+	byte *rleSeeker = *rleData;
+
+	while (pos < decodedSize) {
+		byte currentByte = *(rleSeeker++);
+		pos++;
+
+		byte upperBits = (currentByte & 0xc0);
+		if (upperBits <= 0x40) { // 00, 40
+			pos += currentByte;
+		} else if (upperBits == 0x80) {
+			pos++;
+		}
+	}
+
+	*rleData = rleSeeker;
 }
 
 //----------------------------------------------
 // DCL decompressor for SCI1.1
 //----------------------------------------------
 
-int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-							uint32 nUnpacked) {
+int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	return Common::decompressDCL(src, dest, nPacked, nUnpacked) ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
@@ -638,8 +498,10 @@ int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 
 //----------------------------------------------
 // STACpack/LZS decompressor for SCI32
-// Based on Andre Beck's code from http://micky.ibh.de/~beck/stuff/lzs4i4l/
+// Based on Andre Beck's code from
+// https://web.archive.org/web/20070817214826/http://micky.ibh.de/~beck/stuff/lzs4i4l/
 //----------------------------------------------
+
 int DecompressorLZS::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 	return unpackLZS();
@@ -671,7 +533,7 @@ int DecompressorLZS::unpackLZS() {
 		} else // Literal byte follows
 			putByte(getByteMSB());
 	} // end of while ()
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
+	return (_dwWrote == _szUnpacked) ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
 uint32 DecompressorLZS::getCompLen() {

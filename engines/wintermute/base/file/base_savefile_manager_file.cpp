@@ -72,4 +72,15 @@ Common::StringArray sfmFileList(const Common::String &mask) {
 	return array;
 }
 
+bool sfmFileRemove(const Common::String &filename) {
+	Common::String smFilename = makeSfmFilename(filename);
+	return g_system->getSavefileManager()->removeSavefile(smFilename);
+}
+
+bool sfmFileRename(const Common::String &oldName, const Common::String &newName) {
+	Common::String smOldName = makeSfmFilename(oldName);
+	Common::String smNewName = makeSfmFilename(newName);
+	return g_system->getSavefileManager()->renameSavefile(smOldName, smNewName, false);
+}
+
 } // End of namespace Wintermute

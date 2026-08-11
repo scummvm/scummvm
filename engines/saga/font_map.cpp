@@ -19,9 +19,10 @@
  *
  */
 
-// Font module character mapping table ( MS CP-850 to ISO 8859-1 )
+// Font module character mapping table (MS CP-850 to ISO 8859-1)
 
-// Translation table derived from http://www.kostis.net/charsets/
+// Translation table derived from
+// https://web.archive.org/web/20040404103818/http://www.kostis.net/charsets/
 
 #include "saga/saga.h"
 #include "saga/font.h"

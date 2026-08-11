@@ -46,7 +46,9 @@ protected:
 	void Autoplay(ScriptMethodParams &params);
 	void IsAutoplaying(ScriptMethodParams &params);
 	void StopAutoplay(ScriptMethodParams &params);
-
+	void get_renderstage(ScriptMethodParams &params);
+	void set_renderstage(ScriptMethodParams &params);
+	void NextFrame(ScriptMethodParams &params);
 
 public:
 	AGSSpriteVideo() : PluginBase() {}

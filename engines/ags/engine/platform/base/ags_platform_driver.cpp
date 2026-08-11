@@ -36,8 +36,8 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/lib/system/datetime.h"
-#include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/thread.h"
+#include "common/std/algorithm.h"
+#include "common/std/thread.h"
 #include "ags/globals.h"
 
 #if defined (AGS_HAS_CD_AUDIO)

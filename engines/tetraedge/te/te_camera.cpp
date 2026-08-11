@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/math.h"
+#include "common/file.h"
 #include "math/ray.h"
 
 #include "tetraedge/tetraedge.h"
@@ -169,8 +169,8 @@ void TeCamera::loadXml(const Common::Path &path) {
 	setName(path.baseName());
 	_projectionMatrixType = 3;
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(path);
-	if (!node.isReadable()) {
+	TetraedgeFSNode cameraNode = core->findFile(path);
+	if (!cameraNode.isReadable()) {
 		//
 		// WORKAROUND: scenes/A3_Village/34015 has Camera34010, not 34015
 		//
@@ -179,28 +179,18 @@ void TeCamera::loadXml(const Common::Path &path) {
 		if (pos != Common::String::npos) {
 			spath.replace(pos + 4, 1, "0");
 		}
-		node = core->findFile(Common::Path(spath, '/'));
+		cameraNode = core->findFile(Common::Path(spath, '/'));
 	}
-	if (!node.isReadable()) {
-		warning("Can't open camera data %s", path.toString(Common::Path::kNativeSeparator).c_str());
+	if (!cameraNode.isReadable()) {
+		warning("Can't open camera data %s", cameraNode.toString().c_str());
 	}
 	TeCameraXmlParser parser;
 	parser._cam = this;
-	if (!parser.loadFile(node))
-		error("TeCamera::loadXml: can't load file %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+	if (!cameraNode.loadXML(parser))
+		error("TeCamera::loadXml: can't load file %s", cameraNode.toString().c_str());
 	if (!parser.parse())
-		error("TeCamera::loadXml: error parsing %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		error("TeCamera::loadXml: error parsing %s", cameraNode.toString().c_str());
 }
-
-/*
-void TeCamera::loadBin(const Common::Path &path) {
-	error("TODO: Implement TeCamera::loadBin");
-}
-
-void TeCamera::loadBin(const Common::ReadStream &stream) {
-	error("TODO: Implement TeCamera::loadBin");
-}
-*/
 
 void TeCamera::orthogonalParams(float left, float right, float top, float bottom) {
 	_orthogonalParamL = left;

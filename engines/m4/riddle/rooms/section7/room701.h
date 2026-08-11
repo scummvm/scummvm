@@ -33,9 +33,80 @@ public:
 	Room701() : Room() {}
 	~Room701() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+	void syncGame(Common::Serializer &s) override;
+
+private:
+	void conv701a();
+	void updateCounter();
+	int32 inventoryCheck();
+
+	const char *_field58_digiName = nullptr;
+	const char *_field5C_digiName = nullptr;
+	const char *_field60_digiName = nullptr; // Useless: Never set
+	const char *_field64_digiName = nullptr; // Useless: Never set
+
+	const char *_itemDigiName = nullptr;
+	Common::String _convDigiName_1 = ""; // Useless: Assigned but not used?
+	Common::String _convDigiName_2 = "";
+
+	bool _field88 = false;
+	bool _field8C_unusedFl = false; // Set but never used
+	bool _field90 = false;
+	bool _fieldBC_unusedFl = false;
+	bool _field130 = false;
+	bool _alreadyBeenHereFl = false;
+
+	int32 _field50_counter = 0;
+	int32 _agentMode = 0;
+	int32 _agentShould = 0;
+	int32 _field72_triggerNum = -1; // Useless : always -1
+	int32 _ripleyMode = 0;
+	int32 _ripleyShould = 0;
+	int32 _field9E_triggerNum = -1; // Useless : always -1
+	int32 _conv701aNode = 0;
+	int32 _travelDest = 0;
+	int32 _lastInventoryCheck = 0;
+	int32 _fieldC8 = 0; // Useless: Set but never used
+	int32 _inventoryCheckArray[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Useless: Most likely a residual of debug trace
+	int32 _inventoryCheckCounter = 0;
+	int32 _hasCrystalSkull = 0;
+	int32 _hasStickAnsShellMap = 0;
+	int32 _hasWheeledToy = 0;
+	int32 _hasRebusAmulet = 0;
+	int32 _hasShrunkenHead = 0;
+	int32 _hasSilverButterfly = 0;
+	int32 _hasPostageStamp = 0;
+	int32 _hasGermanBankNote = 0;
+	int32 _hasWhaleBoneHorn = 0;
+	int32 _hasChisel = 0;
+	int32 _hasIncenseBurner = 0;
+	int32 _hasRomanovEmerald = 0;
+
+	int32 _701rp01Series = 0;
+	int32 _701rp99Series = 0;
+	int32 _agentExchangeMoneySeries = 0;
+	int32 _agentGetTelegramSeries = 0;
+	int32 _agentGiveParcelSeries = 0;
+	int32 _agentShowMapSeries = 0;
+	int32 _agentSignsForMoneySeries = 0;
+	int32 _agentTalkLoopTjSeries = 0;
+	int32 _ripSketchingInNotebookPos3Series = 0;
+	int32 _ripTrekHandTalkPos3Series = 0;
+	int32 _ripTrekMedReachPos3Series = 0;
+	int32 _ripTrekTalkerPos3Series = 0;
+	
+	machine *_agentPoshExpressMach = nullptr;
+	machine *_agentPoshExpressMach02 = nullptr;
+	machine *_agentPoshExpressMach03 = nullptr;
+	machine *_ripTalksAgentMach = nullptr;
+	machine *_safariShadow3Mach = nullptr;
 };
+
 
 } // namespace Rooms
 } // namespace Riddle

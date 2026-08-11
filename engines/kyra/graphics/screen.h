@@ -30,6 +30,8 @@
 #include "common/rendermode.h"
 #include "common/stream.h"
 #include "common/ptr.h"
+#include "common/error.h"
+#include "graphics/pixelformat.h"
 
 class OSystem;
 
@@ -120,7 +122,7 @@ public:
 	/**
 	* Sets a text 16bit palette map. Only used in in EOB II FM-Towns. The map contains 2 entries.
 	*/
-	virtual void set16bitColorMap(const uint16 *src) {}
+	virtual void setHiColorMap(const uint32 *src) {}
 
 	enum FontStyle {
 		kStyleNone			=	0,
@@ -372,7 +374,7 @@ class ChineseOneByteFontLoL final : public ChineseFont {
 public:
 	ChineseOneByteFontLoL(int pitch) : ChineseFont(pitch, 8, 14, 8, 16, 0, 0) { _pixelColorShading = false; }
 	void setStyles(int styles) override {}
-	
+
 private:
 	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
 	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 14; }
@@ -410,6 +412,26 @@ private:
 	void processColorMap() override;
 };
 
+class KoreanOneByteFontHOF final : public ChineseFont {
+public:
+	KoreanOneByteFontHOF(int pitch) : ChineseFont(pitch, 8, 9, 8, 10, 0, 0) {}
+	Type getType() const override { return kJohab; }
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 9; }
+	void processColorMap() override;
+};
+
+class KoreanTwoByteFontHOF final : public ChineseFont {
+public:
+	KoreanTwoByteFontHOF(int pitch) : ChineseFont(pitch, 10, 9, 10, 10, 0, 0) {}
+	Type getType() const override { return kJohab; }
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return (c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override;
+	void processColorMap() override;
+};
+
 class MultiSubsetFont final : public Font {
 public:
 	MultiSubsetFont(Common::Array<Font*> *subsets) : Font(), _subsets(subsets) {}
@@ -421,7 +443,7 @@ public:
 	// already been filled. It will then try the next slot. So, unlike other fonts the
 	// subset fonts cannot be allowed to call the load method as often as they want
 	// (which we never did anyway - we only ever load each font exactly one time).
-	// But this also means that different 
+	// But this also means that different
 	bool load(Common::SeekableReadStream &data) override;
 
 	void setStyles(int styles) override;
@@ -620,7 +642,7 @@ public:
 
 	// init
 	virtual bool init();
-	virtual void setResolution();
+	virtual Common::Error setResolution();
 	virtual void enableHiColorMode(bool enabled);
 
 	// refresh
@@ -656,8 +678,14 @@ public:
 
 	void clearPage(int pageNum);
 
-	int getPagePixel(int pageNum, int x, int y);
-	void setPagePixel(int pageNum, int x, int y, uint8 color);
+	int getPagePixel(int pageNum, int x, int y) {
+		assert(_getPagePixelProc);
+		return (this->*_getPagePixelProc)(pageNum, x, y);
+	}
+	void setPagePixel(int pageNum, int x, int y, uint8 color) {
+		assert(_setPagePixelProc);
+		(this->*_setPagePixelProc)(pageNum, x, y, color);
+	}
 
 	const uint8 *getCPagePtr(int pageNum) const;
 	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
@@ -709,7 +737,7 @@ public:
 
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
-	void setTextColor16bit(const uint16 *cmap16);
+	void setTextColorHiCol(const uint32 *cmap);
 	int setFontStyles(FontId fontId, int styles);
 
 	const ScreenDim *getScreenDim(int dim) const;
@@ -792,8 +820,8 @@ public:
 	// can well afford the 20 lines of extra code.
 	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
-	uint16 *get16bitPalette() { return _16bitPalette; }
-	void set16bitShadingLevel(int lvl) { _16bitShadingLevel = lvl; }
+	const void *getHiColorPalette() const { return _hiColorNativePalettes; }
+	void set16bitShadingLevel(int lvl) { _hiColorShadingLevel = lvl; }
 
 protected:
 	void resetPagePtrsAndBuffers(int pageSize);
@@ -802,13 +830,11 @@ protected:
 	void updateDirtyRectsAmiga();
 	void updateDirtyRectsOvl();
 
-	template<typename srcType, typename scaleToType> void scale2x(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h);
+	template<typename srcPixelType, typename dstPixelType> void scale2x(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h);
 	template<typename pixelType> void mergeOverlayImpl(int x, int y, int w, int h);
 	virtual void mergeOverlay(int x, int y, int w, int h) {
-		if (_useHiColorScreen)
-			mergeOverlayImpl<uint16>(x, y, w, h);
-		else
-			mergeOverlayImpl<uint8>(x, y, w, h);
+		assert(_mergeOverlayProc);
+		(this->*_mergeOverlayProc)(x, y, w, h);
 	}
 
 	// overlay specific
@@ -826,6 +852,23 @@ protected:
 	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
 	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
 
+	typedef void (Screen::*MergeOverlayFunc)(int, int, int, int);
+	MergeOverlayFunc _mergeOverlayProc;
+	static const MergeOverlayFunc _mergeOverlayProcs[];
+	typedef void (Screen::*Scale2xFunc)(uint8*, int, const uint8*, int, int, int);
+	Scale2xFunc _scale2xProc;
+	static const Scale2xFunc _scale2xProcs[];
+
+	template<typename T> int getPagePixelImpl(int pageNum, int x, int y);
+	template<typename T> void setPagePixelImpl(int pageNum, int x, int y, uint8 color);
+
+	typedef int (Screen::*GetPagePixelProc)(int, int, int);
+	GetPagePixelProc _getPagePixelProc;
+	static const GetPagePixelProc _getPagePixelProcs[];
+	typedef void (Screen::*SetPagePixelProc)(int, int, int, uint8);
+	SetPagePixelProc _setPagePixelProc;
+	static const SetPagePixelProc _setPagePixelProcs[];
+
 	uint8 *_pagePtrs[16];
 	const uint8 *_pagePtrsBuff;
 	uint8 *_sjisOverlayPtrs[SCREEN_OVLS_NUM];
@@ -837,7 +880,7 @@ protected:
 
 	Font *_fonts[FID_NUM];
 	uint8 _textColorsMap[16];
-	uint16 _textColorsMap16bit[2];
+	uint32 _textColorsMapHiCol[2];
 
 	uint8 *_textRenderBuffer;
 	int _textRenderBufferSize;
@@ -848,15 +891,14 @@ protected:
 
 	// colors/palette specific
 	bool _use16ColorMode;
-	bool _useShapeShading;
 	bool _4bitPixelPacking;
 	bool _useHiResEGADithering;
-	bool _useHiColorScreen;
+	Graphics::PixelFormat _outputPixelFormat;
 	bool _isAmiga;
 	bool _useAmigaExtraColors;
 	bool _isSegaCD;
 	Common::RenderMode _renderMode;
-	int _bytesPerPixel;
+	int _internalBytesPerPixel;
 	int _screenPageSize;
 	const int _screenHeight;
 	int _yTransOffs;
@@ -865,11 +907,11 @@ protected:
 	Common::Array<Palette *> _palettes;
 	Palette *_internFadePalette;
 
-	uint16 shade16bitColor(uint16 col);
+	uint32 shadeRGBColor(uint32 col);
 
-	uint16 *_16bitPalette;
-	uint16 *_16bitConversionPalette;
-	uint8 _16bitShadingLevel;
+	void *_hiColorNativePalettes;
+	void *_hiColorConversionPalette;
+	uint8 _hiColorShadingLevel;
 
 	uint8 *_animBlockPtr;
 	int _animBlockSize;

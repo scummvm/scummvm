@@ -32,9 +32,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const int INT_MAX_VALUE = 0x7fffffff;
-static const int NO_SPEECH_LENGTH = 480;
-static const int MILLIS_PER_TICK = (1000 / Kernel::TICKS_PER_SECOND) + 1;
+static constexpr int INT_MAX_VALUE = 0x7fffffff;
+static constexpr int NO_SPEECH_LENGTH = 480;
+static constexpr int MILLIS_PER_TICK = (1000 / Kernel::TICKS_PER_SECOND) + 1;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump) 
 
@@ -46,7 +46,7 @@ BarkGump::BarkGump() : ItemRelativeGump(), _counter(0), _textWidget(0),
 	_talkSpeed = ConfMan.getInt("talkspeed");
 }
 
-BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) :
+BarkGump::BarkGump(uint16 owner, const Common::String &msg, uint32 speechShapeNum) :
 	ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
 	_barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
 	_speechLength(0), _textWidget(0),
@@ -61,7 +61,7 @@ BarkGump::~BarkGump(void) {
 
 int BarkGump::dialogFontForActor(uint16 actor) {
 	// OK, this is a bit of a hack, but it's how it has to be
-	if (actor == kMainActorId)
+	if (actor == kMainActorId || actor == kGuardianId)
 		return 6;
 	if (actor > 256)
 		return 8;
@@ -107,8 +107,7 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 		}
 	}
 
-	Rect d;
-	widget->GetDims(d);
+	Common::Rect32 d = widget->getDims();
 	_dims.setHeight(d.height());
 	_dims.setWidth(d.width());
 	_counter = calculateTicks();
@@ -130,8 +129,7 @@ bool BarkGump::NextText() {
 	TextWidget *widget = dynamic_cast<TextWidget *>(getGump(_textWidget));
 	assert(widget);
 	if (widget->setupNextText()) {
-		Rect d;
-		widget->GetDims(d);
+		Common::Rect32 d = widget->getDims();
 		_dims.setHeight(d.height());
 		_dims.setWidth(d.width());
 		_counter = calculateTicks();
@@ -148,8 +146,8 @@ int BarkGump::calculateTicks() {
 	uint length = end - start;
 	int ticks = INT_MAX_VALUE;
 	if (length > 0) {
-		if (_speechLength && _barked.length()) {
-			ticks = (length * _speechLength) / (_barked.length() * MILLIS_PER_TICK);
+		if (_speechLength && !_barked.empty()) {
+			ticks = (length * _speechLength) / (_barked.size() * MILLIS_PER_TICK);
 		} else if (_talkSpeed) {
 			ticks = (length * NO_SPEECH_LENGTH) / _talkSpeed;
 		}
@@ -239,8 +237,7 @@ bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!widget)
 		return false;
 
-	Rect d;
-	widget->GetDims(d);
+	Common::Rect32 d = widget->getDims();
 	_dims.setHeight(d.height());
 	_dims.setWidth(d.width());
 

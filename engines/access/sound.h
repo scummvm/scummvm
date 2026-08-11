@@ -37,87 +37,137 @@ namespace Access {
 
 class AccessEngine;
 
-struct SoundEntry {
-	Resource *_res;
-	int _priority;
-
-	SoundEntry() { _res = nullptr; _priority = 0; }
-	SoundEntry(Resource *res, int priority) { _res = res; _priority = priority; }
-};
-
 class SoundManager {
+	struct SoundEntry {
+		Resource *_res;
+		int _priority;
+		int _fileNum;
+		int _subFileNum;
+
+		SoundEntry() : _res(nullptr), _priority(0), _fileNum(0), _subFileNum(0) { }
+		SoundEntry(Resource *res, int priority, int fileNum = -1, int subFileNum = -1) :
+			_res(res), _priority(priority), _fileNum(fileNum), _subFileNum(subFileNum) { }
+
+		bool matches(const FileIdent &ident) const { return _fileNum == ident._fileNum && _subFileNum == ident._subFile; }
+	};
+
 	struct QueuedSound {
 		Audio::AudioStream *_stream;
 		int _soundId;
 
 		QueuedSound() : _stream(nullptr), _soundId(-1) {}
-		QueuedSound(Audio::AudioStream *stream, int soundId) : _stream(stream), _soundId(soundId) {}
+		QueuedSound(Audio::AudioStream *stream, int soundIdx) : _stream(stream), _soundId(soundIdx) {}
 	};
 private:
 	AccessEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle *_effectsHandle;
 	Common::Array<QueuedSound> _queue;
+	Common::Array<SoundEntry> _soundTable;
 
 	void clearSounds();
 
 	void playSound(Resource *res, int priority, bool loop, int soundIndex = -1);
 
 	bool isSoundQueued(int soundId) const;
-public:
-	Common::Array<SoundEntry> _soundTable;
-	bool _playingSound;
+
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
 
+	// replace the current table entry at idx with a new one
 	void loadSoundTable(int idx, int fileNum, int subfile, int priority = 1);
 
+	// load and add a single sound resource to the table
+	int loadAndAddSound(int fileNum, int subfile, int priority = 1);
+	int loadAndAddSound(const FileIdent &ident, int priority = 1);
+
+	bool hasLoadedSound(const FileIdent &ident) const;
+
 	void playSound(int soundIndex, bool loop = false);
+	void playSoundByIdent(const FileIdent &ident, bool loop = false);
 	void checkSoundQueue();
 	bool isSFXPlaying();
 
-	Resource *loadSound(int fileNum, int subfile);
-	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
+	void loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds);
+	int loadRawSound(const Common::Path &path, int priority);
+	void syncVolume();
 
 	void stopSound();
 	void freeSounds();
+	void freeSound(int idx);
+	bool hasSounds() const { return _soundTable.size() > 0 && _soundTable[0]._res; }
 };
 
-class MusicManager : public Audio::MidiPlayer {
-private:
-	AccessEngine *_vm;
+class MusicManager : public Manager {
+public:
+	MusicManager(AccessEngine *vm) : Manager(vm), _music(nullptr), _tempMusic(nullptr) {};
+	virtual ~MusicManager();
 
+	bool isMusicLoaded() { return _music != nullptr; }
+	void freeMusic();
+	virtual void loadMusic(int fileNum, int subfile);
+	void loadMusic(FileIdent ident) { loadMusic(ident._fileNum, ident._subFile); };
+
+	virtual void midiPlay() = 0;
+	virtual bool isPlaying() = 0;
+	virtual void midiRepeat() = 0;
+	virtual void stopSong() = 0;
+	virtual void newMusic(int musicId, int mode) = 0;
+	virtual void startMusicFade() = 0;
+	virtual void setLoop(bool loop) = 0;
+	virtual void syncVolume() = 0;
+
+protected:
+	Resource *_music;
 	Resource *_tempMusic;
 
+};
+
+class MusicManagerMIDI : private Audio::MidiPlayer, public MusicManager {
+private:
 	// MidiDriver_BASE interface implementation
 	void send(uint32 b) override;
 
 public:
-	Resource *_music;
-	bool _byte1F781;
+	MusicManagerMIDI(AccessEngine *vm);
+	~MusicManagerMIDI() override;
+
+	void midiPlay() override;
+	bool isPlaying() override { return MidiPlayer::isPlaying(); }
+	void midiRepeat() override;
+	void stopSong() override;
+	void newMusic(int musicId, int mode) override;
+	void startMusicFade() override;
+	void setLoop(bool loop) override;
+
+	void syncVolume() override { MidiPlayer::syncVolume(); }
+};
+
+#ifdef USE_VORBIS
+
+class MusicManagerOGG : public MusicManager {
+private:
+	Audio::SoundHandle *_handle;
 
 public:
-	MusicManager(AccessEngine *vm);
-	~MusicManager() override;
+	MusicManagerOGG(AccessEngine *vm);
+	~MusicManagerOGG() override;
 
-	void midiPlay();
+	void midiPlay() override;
+	bool isPlaying() override;
+	void midiRepeat() override;
+	void stopSong() override;
+	void newMusic(int musicId, int mode) override;
+	void startMusicFade() override;
+	void setLoop(bool loop) override;
+	void syncVolume() override;
 
-	bool checkMidiDone();
-
-	void midiRepeat();
-
-	void stopSong();
-
-	void newMusic(int musicId, int mode);
-
-	void freeMusic();
-
-	void loadMusic(int fileNum, int subfile);
-	void loadMusic(FileIdent file);
-
-	void setLoop(bool loop);
+	void loadMusic(int fileNum, int subfile) override;
 };
+
+#endif
+
 } // End of namespace Access
 
 #endif /* ACCESS_SOUND_H*/

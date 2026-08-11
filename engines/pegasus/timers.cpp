@@ -91,7 +91,7 @@ TimeValue TimeBase::getTime(const TimeScale scale) {
 	return _time.getNumerator() * ((scale == 0) ? _preferredScale : scale) / _time.getDenominator();
 }
 
-void TimeBase::setRate(const Common::Rational rate) {
+void TimeBase::setRate(const Common::Rational &rate) {
 	_rate = rate;
 	_lastMillis = 0;
 

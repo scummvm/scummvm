@@ -71,10 +71,10 @@ static const Common::KeyTableEntry odKeyboardButtons[] = {
 	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_e,		_s("L")			},
 	// I18N: Hardware key
 	{ "JOY_RIGHT_SHOULDER", Common::KEYCODE_t,		_s("R")			},
-	{ "JOY_UP",		Common::KEYCODE_UP,		_s("D-pad Up")	},
-	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad Down")	},
-	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad Left")	},
-	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad Right")	},
+	{ "JOY_UP",		Common::KEYCODE_UP,		_s("D-pad up")	},
+	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad down")	},
+	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad left")	},
+	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad right")	},
 	// I18N: Hardware key
 	{ "JOY_LEFT_STICK",     Common::KEYCODE_TAB,		_s("L2")		},
 	// I18N: Hardware key
@@ -98,10 +98,10 @@ static const Common::KeyTableEntry odKeyboardButtons[] = {
 	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_TAB,		_s("L")			},
 	// I18N: Hardware key
 	{ "JOY_RIGHT_SHOULDER", Common::KEYCODE_BACKSPACE,	_s("R")			},
-	{ "JOY_UP",		Common::KEYCODE_UP,		_s("D-pad Up")	},
-	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad Down")	},
-	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad Left")	},
-	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad Right")	},
+	{ "JOY_UP",		Common::KEYCODE_UP,		_s("D-pad up")	},
+	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad down")	},
+	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad left")	},
+	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad right")	},
 	// I18N: Hardware key
 	{ "JOY_LEFT_STICK",     Common::KEYCODE_PAGEUP,		_s("L2")		},
 	// I18N: Hardware key

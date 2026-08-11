@@ -23,6 +23,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
 #include "math/glmath.h"
@@ -81,7 +82,7 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	_scaleW = _screenWidth / (float)_gameWidth;
 	_scaleH = _screenHeight / (float)_gameHeight;
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	_pixelFormat = g_system->getScreenFormat();
 	debug(2, "INFO: TinyGL front buffer pixel format: %s", _pixelFormat.toString().c_str());
@@ -175,7 +176,12 @@ void GfxTinyGL::clearDepthBuffer() {
 	tglClear(TGL_DEPTH_BUFFER_BIT);
 }
 
-void GfxTinyGL::flipBuffer() {
+void GfxTinyGL::flipBuffer(bool opportunistic) {
+	if (opportunistic) {
+		g_system->updateScreen();
+		return;
+	}
+
 	Common::List<Common::Rect> dirtyAreas;
 	TinyGL::presentBuffer(dirtyAreas);
 
@@ -473,11 +479,11 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglDisable(TGL_LIGHTING);
 		tglDisable(TGL_TEXTURE_2D);
 		if (g_grim->getGameType() == GType_GRIM) {
-			tglColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
+			tglColor4ub(_shadowColorR, _shadowColorG, _shadowColorB, 255);
 		} else {
-			tglColor3ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue());
+			tglColor4ub(_currentShadowArray->color.getRed(), _currentShadowArray->color.getGreen(), _currentShadowArray->color.getBlue(), 255);
 		}
-		//tglColor3f(0.0f, 1.0f, 0.0f); // debug draw color
+		//tglColor4f(0.0f, 1.0f, 0.0f, 1.0f); // debug draw color
 		shadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
@@ -539,7 +545,7 @@ void GfxTinyGL::finishActorDraw() {
 
 	if (_currentShadowArray) {
 		tglEnable(TGL_LIGHTING);
-		tglColor3f(1.0f, 1.0f, 1.0f);
+		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		tglDisable(TGL_POLYGON_OFFSET_FILL);
 	}
 
@@ -551,7 +557,7 @@ void GfxTinyGL::finishActorDraw() {
 }
 
 void GfxTinyGL::drawShadowPlanes() {
-/*	tglColor3f(1.0f, 1.0f, 1.0f);
+/*	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
 		Sector *shadowSector = i->sector;
@@ -673,7 +679,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnd();
 
 	if (!_currentShadowArray) {
-		tglColor3f(1.0f, 1.0f, 1.0f);
+		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	tglEnable(TGL_TEXTURE_2D);
@@ -903,11 +909,11 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			Graphics::Surface buffer;
-			buffer.create(bitmap->_width, bitmap->_height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+			buffer.create(bitmap->_width, bitmap->_height, Graphics::PixelFormat::createFormatRGBA32());
 			uint32 *buf = (uint32 *)buffer.getPixels();
 			const uint16 *bufPtr = (const uint16 *)(bitmap->getImageData(pic).getPixels());
 			for (int i = 0; i < (bitmap->_width * bitmap->_height); i++) {
-				uint16 val = READ_LE_UINT16(bufPtr + i);
+				uint16 val = bufPtr[i];
 				// fix the value if it is incorrectly set to the bitmap transparency color
 				if (val == 0xf81f) {
 					val = 0;
@@ -923,34 +929,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 		for (int i = 0; i < bitmap->_numImages; ++i) {
 			imgs[i] = tglGenBlitImage();
 			const Graphics::Surface &imageBuffer = bitmap->getImageData(i);
-#ifdef SCUMM_BIG_ENDIAN
-			if (g_grim->getGameType() == GType_MONKEY4 && imageBuffer.format.bytesPerPixel == 2) {
-				Graphics::Surface buffer;
-				buffer.create(bitmap->_width, bitmap->_height, imageBuffer.format);
-				uint16 *bufSrc = (uint16 *)const_cast<void *>(imageBuffer.getPixels());
-				uint16 *bufDst = (uint16 *)(buffer.getPixels());
-				for (int f = 0; f < (bitmap->_width * bitmap->_height); f++) {
-					uint16 val = SWAP_BYTES_16(bufSrc[f]);
-					bufDst[f] = val;
-				}
-				tglUploadBlitImage(imgs[i], buffer, buffer.format.ARGBToColor(0, 255, 0, 255), true);
-				buffer.free();
-			} else if (g_grim->getGameType() == GType_MONKEY4 && imageBuffer.format.bytesPerPixel == 4) {
-				Graphics::Surface buffer;
-				buffer.create(bitmap->_width, bitmap->_height, imageBuffer.format);
-				uint32 *bufSrc = (uint32 *)const_cast<void *>(imageBuffer.getPixels());
-				uint32 *bufDst = (uint32 *)(buffer.getPixels());
-				for (int f = 0; f < (bitmap->_width * bitmap->_height); f++) {
-					uint32 val = SWAP_BYTES_32(bufSrc[f]);
-					bufDst[f] = val;
-				}
-				tglUploadBlitImage(imgs[i], buffer, buffer.format.ARGBToColor(0, 255, 0, 255), true);
-				buffer.free();
-			} else
-#endif
-			{
-				tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
-			}
+			tglUploadBlitImage(imgs[i], imageBuffer, imageBuffer.format.ARGBToColor(0, 255, 0, 255), true);
 		}
 	}
 }
@@ -961,7 +940,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data && bitmap->_data->_texc) {
 		tglEnable(TGL_BLEND);
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
-		tglColor3f(1.0f, 1.0f, 1.0f);
+		tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 		BitmapData *data = bitmap->_data;
 		float *texc = data->_texc;
@@ -1104,10 +1083,21 @@ void GfxTinyGL::destroyTextObject(TextObject *text) {
 void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
 	texture->_texture = new TGLuint[1];
 	tglGenTextures(1, (TGLuint *)texture->_texture);
-	uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
-	uint8 *texdatapos = texdata;
+
+	TGLuint *textures = (TGLuint *)texture->_texture;
+	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
+
+	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP_TO_EDGE
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
+	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
 
 	if (cmap != nullptr) { // EMI doesn't have colour-maps
+		uint8 *texdata = new uint8[texture->_width * texture->_height * 4];
+		uint8 *texdatapos = texdata;
+
 		for (int y = 0; y < texture->_height; y++) {
 			for (int x = 0; x < texture->_width; x++) {
 				uint8 col = *data;
@@ -1124,21 +1114,14 @@ void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 				data++;
 			}
 		}
+
+		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->_width, texture->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
+		delete[] texdata;
 	} else {
-		memcpy(texdata, data, texture->_width * texture->_height * texture->_bpp);
+		TGLint format = (texture->_bpp == 4) ? TGL_RGBA : TGL_RGB;
+
+		tglTexImage2D(TGL_TEXTURE_2D, 0, format, texture->_width, texture->_height, 0, format, TGL_UNSIGNED_BYTE, data);
 	}
-
-	TGLuint *textures = (TGLuint *)texture->_texture;
-	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
-
-	// TinyGL doesn't have issues with dark lines in EMI intro so doesn't need TGL_CLAMP_TO_EDGE
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, texture->_width, texture->_height, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, texdata);
-	delete[] texdata;
 }
 
 void GfxTinyGL::selectTexture(const Texture *texture) {
@@ -1165,6 +1148,10 @@ void GfxTinyGL::destroyTexture(Texture *texture) {
 	}
 }
 
+const Graphics::PixelFormat GfxTinyGL::getMovieFormat() const {
+	return g_system->getScreenFormat();
+}
+
 void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {
 	if (_smushImage == nullptr)
 		_smushImage = tglGenBlitImage();
@@ -1181,7 +1168,7 @@ void GfxTinyGL::releaseMovieFrame() {
 
 void GfxTinyGL::loadEmergFont() {
 	Graphics::Surface characterSurface;
-	Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	Graphics::PixelFormat textureFormat = Graphics::PixelFormat::createFormatRGBA32();
 	characterSurface.create(8, 13, textureFormat);
 	uint32 color = textureFormat.ARGBToColor(255, 255, 255, 255);
 	uint32 colorTransparent = textureFormat.ARGBToColor(0, 255, 255, 255);
@@ -1271,7 +1258,7 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 	tglVertex2f(x, y + h);
 	tglEnd();
 
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);
@@ -1292,7 +1279,7 @@ void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	tglDisable(TGL_LIGHTING);
 	tglDepthMask(TGL_FALSE);
 
-	tglColor3f(0.0f, 0.0f, 0.0f);
+	tglColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Explicitly cast to avoid problems with C++11
 	float fx1 = x1;
@@ -1319,7 +1306,7 @@ void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 10);
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	tglEnable(TGL_DEPTH_TEST);
 	tglEnable(TGL_LIGHTING);
 	tglDepthMask(TGL_TRUE);
@@ -1342,7 +1329,7 @@ void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
-	tglColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+	tglColor4ub(color.getRed(), color.getGreen(), color.getBlue(), 255);
 
 	if (primitive->isFilled()) {
 		tglBegin(TGL_QUADS);
@@ -1361,7 +1348,7 @@ void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 		tglEnd();
 	}
 
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	tglDepthMask(TGL_TRUE);
 	tglEnable(TGL_DEPTH_TEST);
@@ -1386,7 +1373,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
-	tglColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+	tglColor4ub(color.getRed(), color.getGreen(), color.getBlue(), 255);
 
 	//tglLineWidth(_scaleW); // Not implemented in TinyGL
 
@@ -1395,7 +1382,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 	tglVertex2f(x2, y2);
 	tglEnd();
 
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	tglDepthMask(TGL_TRUE);
 	tglEnable(TGL_DEPTH_TEST);
@@ -1457,7 +1444,7 @@ void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
 	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
-	tglColor3ub(color.getRed(), color.getGreen(), color.getBlue());
+	tglColor4ub(color.getRed(), color.getGreen(), color.getBlue(), 255);
 
 	tglBegin(TGL_LINES);
 	tglVertex2f(x1, y1);
@@ -1466,7 +1453,7 @@ void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
 	tglVertex2f(x4 + 1, y4);
 	tglEnd();
 
-	tglColor3f(1.0f, 1.0f, 1.0f);
+	tglColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	tglDepthMask(TGL_TRUE);
 	tglEnable(TGL_DEPTH_TEST);

@@ -28,15 +28,6 @@
 
 namespace Common {
 
-String::String(char c)
-	: BaseString<char>() {
-
-	_storage[0] = c;
-	_storage[1] = 0;
-
-	_size = (c == 0) ? 0 : 1;
-}
-
 #ifndef SCUMMVM_UTIL
 String::String(const U32String &str, Common::CodePage page)
 	: BaseString<char>() {
@@ -61,22 +52,22 @@ String &String::operator=(String &&str) {
 }
 
 String &String::operator=(char c) {
-	assign(c);
+	assign(1, c);
 	return *this;
 }
 
 String &String::operator+=(const char *str) {
-	assignAppend(str);
+	append(str);
 	return *this;
 }
 
 String &String::operator+=(const String &str) {
-	assignAppend(str);
+	append(str);
 	return *this;
 }
 
 String &String::operator+=(char c) {
-	assignAppend(c);
+	push_back(c);
 	return *this;
 }
 
@@ -255,11 +246,16 @@ String String::forEachLine(String(*func)(const String, va_list args), ...) const
 	va_list args;
 	va_start(args, func);
 	while (index != npos) {
+		va_list args_;
+		scumm_va_copy(args_, args);
+
 		String textLine = substr(prev_index, index - prev_index);
-		textLine = (*func)(textLine, args);
+		textLine = (*func)(textLine, args_);
 		result = result + textLine + '\n';
 		prev_index = index + 1;
 		index = findFirstOf('\n', index + 1);
+
+		va_end(args_);
 	}
 
 	String textLine = substr(prev_index);
@@ -672,11 +668,7 @@ int vsprintf_s(char *dst, size_t size, const char *format, va_list ap) {
 
 	int ret = vsnprintf(dst, size, format, ap);
 
-	if ((size_t)ret < size
-#if defined(_MSC_VER) && _MSC_VER <= 1800
-		&& ret != -1
-#endif
-		) {
+	if ((size_t)ret < size) {
 		// Nominal case: no truncation
 		return ret;
 	}
@@ -699,6 +691,12 @@ size_t strlcpy(char *dst, const char *src, size_t size) {
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
 	const char * const srcStart = src;
+
+	// If no src was specified, treat it as an empty string
+	if (!src) {
+		*dst = '\0';
+		return 0;
+	}
 
 	// In case a non-empty size was specified we
 	// copy over (size - 1) bytes at max.
@@ -830,7 +828,7 @@ String percentEncodeString(const String &src) {
 			c == '~' || c == '-' || c == '.' || c == '_')
 			res += c;
 		else
-			res += Common::String::format("%%%02X", c);
+			res += Common::String::format("%%%02X", (unsigned char)c);
 	}
 
 	return res;
@@ -842,33 +840,37 @@ String percentEncodeString(const String &src) {
 // TODO: Rename this to Common::strcasecmp
 int scumm_stricmp(const char *s1, const char *s2) {
 	byte l1, l2;
+	int result;
 	do {
-		// Don't use ++ inside tolower, in case the macro uses its
-		// arguments more than once.
 		l1 = (byte)*s1++;
-		l1 = tolower(l1);
 		l2 = (byte)*s2++;
-		l2 = tolower(l2);
-	} while (l1 == l2 && l1 != 0);
-	return l1 - l2;
+
+		result = l1 - l2;
+		if (result) {
+			result = tolower(l1) - tolower(l2);
+		}
+	} while (!result && l1 != 0);
+	return result;
 }
 
 // Portable implementation of strnicmp / strncasecmp / strncmpi.
 // TODO: Rename this to Common::strncasecmp
 int scumm_strnicmp(const char *s1, const char *s2, uint n) {
 	byte l1, l2;
+	int result;
 	do {
 		if (n-- == 0)
 			return 0; // no difference found so far -> signal equality
 
-		// Don't use ++ inside tolower, in case the macro uses its
-		// arguments more than once.
 		l1 = (byte)*s1++;
-		l1 = tolower(l1);
 		l2 = (byte)*s2++;
-		l2 = tolower(l2);
-	} while (l1 == l2 && l1 != 0);
-	return l1 - l2;
+
+		result = l1 - l2;
+		if (result) {
+			result = tolower(l1) - tolower(l2);
+		}
+	} while (!result && l1 != 0);
+	return result;
 }
 
 const char *scumm_skipArticle(const char *s1) {

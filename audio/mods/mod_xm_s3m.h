@@ -82,13 +82,12 @@ class AudioStream;
  * @param stream			the ReadStream from which to read the tracker sound data
  * @param disposeAfterUse	whether to delete the stream after use
  * @param initialPos		initial track to start playback from
- * @param rate				sample rate
  * @param interpolation		interpolation effect level
  */
 RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream,
 		DisposeAfterUse::Flag disposeAfterUse,
 		int initialPos = 0,
-		int rate = 48000, int interpolation = 0);
+		int interpolation = 0);
 
 /**
  * Check if the stream is one of the supported formats

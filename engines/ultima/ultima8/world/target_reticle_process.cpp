@@ -195,7 +195,7 @@ void TargetReticleProcess::clearSprite() {
 
 void TargetReticleProcess::toggle() {
 	bool newstate = !getEnabled();
-	Std::string msg = newstate ? _TL_("TARGETING RETICLE ACTIVE") : _TL_("TARGETING RETICLE INACTIVE");
+	Common::String msg = newstate ? _TL_("TARGETING RETICLE ACTIVE") : _TL_("TARGETING RETICLE INACTIVE");
 	MessageBoxGump::Show("", msg, TEX32_PACK_RGB(0x70, 0x70, 0x70));
 	setEnabled(newstate);
 }
@@ -234,7 +234,7 @@ bool TargetReticleProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (GAME_IS_REGRET)
 		_reticleStyle = rs->readUint16LE();
 
-	_type = 1; // should be persistant but older savegames may not know that.
+	_type = 1; // should be persistent but older savegames may not know that.
 
 	return true;
 }

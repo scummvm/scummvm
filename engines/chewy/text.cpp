@@ -140,9 +140,9 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 		error("getText(): Invalid chunk number requested, %d (min %d)", chunk, kADSTextMax);
 
 	TextEntry *d = new TextEntry();
-	const uint8 altSubString = !isInvDesc ?
-		getTextId(entry, subEntry, type) :
-		getTextId(origChunk, 0, type);
+	uint8 altSubString = !isInvDesc ?
+		getSubtextNum(entry, subEntry, type) :
+		getSubtextNum(origChunk, 0, type);
 
 	byte *data = getChunkData(chunk);
 	byte *ptr = data;
@@ -340,36 +340,38 @@ uint8 *Text::getBuffer(uint8 type) {
 	}
 }
 
-uint8 getNibble(uint8 value, uint8 subEntry) {
+uint8 getNibble(uint8 curValue, int8 subEntry) {
 	if ((subEntry + 1) % 2 == 0)
-		return value & 0x0F;
+		return curValue & 0x0F;
 	else
-		return (value >> 4) & 0x0F;
+		return (curValue >> 4) & 0x0F;
 }
 
-uint8 setNibble(uint8 value, uint8 subEntry, uint8 nibble) {
+uint8 setNibble(uint8 curValue, int8 subEntry, uint8 newValue) {
 	if ((subEntry + 1) % 2 == 0)
-		return (nibble & 0x0F) | (value & 0xF0);
+		return (curValue & 0xF0) | (newValue & 0x0F);
 	else
-		return (nibble << 4) | (value & 0x0F);
+		return (newValue << 4) | (curValue & 0x0F);
 }
 
-uint8 Text::getTextId(uint16 entry, uint8 subEntry, uint8 type) {
-	if (type != ATS_DATA && type != INV_USE_DATA && type != INV_ATS_DATA)
+uint8 Text::getSubtextNum(uint16 entry, int8 txtMode, uint8 bufferType) {
+	if (bufferType != ATS_DATA && bufferType != INV_USE_DATA && bufferType != INV_ATS_DATA)
 		return 0;
 
-	const uint8 *buffer = getBuffer(type);
-	const uint8 value = buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2];
-	return getNibble(value, subEntry);
+	const int8 mode = txtMode == -1 ? 0 : txtMode;
+	const uint8 *buffer = getBuffer(bufferType);
+	const uint8 curValue = buffer[(entry * MAX_ATS_STATUS) + (mode + 1) / 2];
+	return getNibble(curValue, mode);
 }
 
-void Text::setTextId(uint16 entry, uint8 subEntry, uint8 strNr, uint8 type) {
-	if (type != ATS_DATA && type != INV_USE_DATA && type != INV_ATS_DATA)
+void Text::setSubtextNum(uint16 entry, int8 txtMode, uint8 strNr, uint8 bufferType) {
+	if (bufferType != ATS_DATA && bufferType != INV_USE_DATA && bufferType != INV_ATS_DATA)
 		return;
 
-	uint8 *buffer = getBuffer(type);
-	const uint8 value = buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2];
-	buffer[(entry * MAX_ATS_STATUS) + (subEntry + 1) / 2] = setNibble(value, subEntry, (uint8)strNr);
+	const int8 mode = txtMode == -1 ? 0 : txtMode;
+	uint8 *buffer = getBuffer(bufferType);
+	const uint8 curValue = buffer[(entry * MAX_ATS_STATUS) + (mode + 1) / 2];
+	buffer[(entry * MAX_ATS_STATUS) + (mode + 1) / 2] = setNibble(curValue, mode, (uint8)strNr);
 }
 
 } // namespace Chewy

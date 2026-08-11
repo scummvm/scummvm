@@ -23,6 +23,7 @@
 #include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/core/term.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
 #include "m4/mem/memman.h"
 #include "m4/vars.h"
@@ -37,7 +38,7 @@ void HotSpotRec::clear() {
 	feet_x = feet_y = 0;
 	facing = 0;
 	active = false;
-	cursor_number = 0;
+	cursor_number = kArrowCursor;
 	syntax = 0;
 	vocabID = verbID = 0;
 	vocab = verb = prep = nullptr;
@@ -88,8 +89,6 @@ void hotspot_newPrep(HotSpotRec *h, const char *prep) {
 
 HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2) {
 	HotSpotRec *newSpot = (HotSpotRec *)mem_alloc(sizeof(HotSpotRec), STR_HOT_SPOT);
-	if (!newSpot)
-		return newSpot;
 
 	newSpot->ul_x = x1;
 	newSpot->ul_y = y1;
@@ -100,7 +99,7 @@ HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2) {
 	newSpot->verb = nullptr;
 	newSpot->prep = nullptr;
 	newSpot->syntax = 0;		// Unused field
-	newSpot->cursor_number = 0;
+	newSpot->cursor_number = kArrowCursor;
 	newSpot->facing = 5;
 	newSpot->feet_x = 32767;
 	newSpot->feet_y = 32767;
@@ -111,8 +110,6 @@ HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2) {
 
 HotSpotRec *hotspot_duplicate(HotSpotRec *dupMe) {
 	HotSpotRec *newSpot = (HotSpotRec *)mem_alloc(sizeof(HotSpotRec), STR_HOT_SPOT);
-	if (!newSpot)
-		return newSpot;
 
 	newSpot->ul_x = dupMe->ul_x;
 	newSpot->ul_y = dupMe->ul_y;
@@ -139,9 +136,7 @@ static int32 hotspot_area(HotSpotRec *h) {
 }
 
 HotSpotRec *hotspot_add(HotSpotRec *head, HotSpotRec *h, bool new_head) {
-	int hArea = hotspot_area(h);
-	int iArea;
-	HotSpotRec *i;
+	const int hArea = hotspot_area(h);
 
 	// Is head nullptr?
 	if (!head)
@@ -153,9 +148,9 @@ HotSpotRec *hotspot_add(HotSpotRec *head, HotSpotRec *h, bool new_head) {
 		return h;
 	}
 
-	i = head;
+	HotSpotRec *i = head;
 	while (i) {
-		iArea = hotspot_area(i->next);
+		const int iArea = hotspot_area(i->next);
 		if (hArea < iArea) {
 			h->next = i->next;
 			i->next = h;
@@ -165,6 +160,30 @@ HotSpotRec *hotspot_add(HotSpotRec *head, HotSpotRec *h, bool new_head) {
 	}
 
 	return head;
+}
+
+HotSpotRec *hotspot_add_dynamic(const char *verb, const char *noun,
+		int32 x1, int32 y1, int32 x2, int32 y2, int32 cursor,
+		bool new_head, int32 walkto_x, int32 walkto_y, int32 facing) {
+	int32 status;
+	ScreenContext *sc = vmng_screen_find(_G(gameDrawBuff), &status);
+	y2 = MIN(y2, sc->y2);
+
+	HotSpotRec *hotspot = hotspot_new(x1, y1, x2, y2);
+	if (!hotspot)
+		error("hotspot_new failed");
+
+	hotspot_newVocab(hotspot, noun);
+	hotspot_newVerb(hotspot, verb);
+	hotspot->feet_x = walkto_x;
+	hotspot->feet_y = walkto_y;
+	hotspot->cursor_number = cursor;
+	hotspot->facing = facing;
+
+	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots,
+		hotspot, new_head);
+
+	return hotspot;
 }
 
 void kill_hotspot_node(HotSpotRec *h) {
@@ -185,7 +204,7 @@ void kill_hotspot_node(HotSpotRec *h) {
 HotSpotRec *hotspot_delete_record(HotSpotRec *head, HotSpotRec *h) {
 	HotSpotRec *i;
 
-	if (!(h || head))
+	if (!h || !head)
 		return head;
 
 	// Are we deleting the head node?
@@ -200,7 +219,8 @@ HotSpotRec *hotspot_delete_record(HotSpotRec *head, HotSpotRec *h) {
 		if (i->next == h)
 			break;
 
-	i->next = h->next;
+	if (i)
+		i->next = h->next;
 
 	kill_hotspot_node(h);
 	return head;
@@ -209,7 +229,7 @@ HotSpotRec *hotspot_delete_record(HotSpotRec *head, HotSpotRec *h) {
 HotSpotRec *hotspot_unlink(HotSpotRec *head, HotSpotRec *h) {
 	HotSpotRec *i;
 
-	if (!(h || head))
+	if (!h || !head)
 		return head;
 
 	// Are we deleting the head node?
@@ -223,23 +243,23 @@ HotSpotRec *hotspot_unlink(HotSpotRec *head, HotSpotRec *h) {
 		if (i->next == h)
 			break;
 
-	i->next = h->next;
+	if (i)
+		i->next = h->next;
+
 	return head;
 }
 
 void hotspot_delete_all(HotSpotRec *head) {
-	HotSpotRec *i;
 	HotSpotRec *next;
 
-	for (i = head; i; i = next) {
+	for (HotSpotRec *i = head; i; i = next) {
 		next = i->next;
 		kill_hotspot_node(i);
 	}
 }
 
 HotSpotRec *hotspot_which(HotSpotRec *head, int x, int y) {
-	HotSpotRec *i;
-	for (i = head; i; i = i->next)
+	for (HotSpotRec *i = head; i; i = i->next)
 		if ((x >= i->ul_x) && (x <= i->lr_x) && (y >= i->ul_y) && (y <= i->lr_y) && i->active)
 			return i;
 
@@ -252,14 +272,13 @@ HotSpotRec *hotspot_which(int x, int y) {
 
 void hotspot_set_active(HotSpotRec *head, const char *name, bool active_or_not) {
 	char name_str[MAX_FILENAME_SIZE];
-	HotSpotRec *i;
 	bool hotspot_found = false;
 
 	cstrncpy(name_str, name, MAX_FILENAME_SIZE);
 	cstrupr(name_str);
 
-	for (i = head; i; i = i->next) {
-		if (!scumm_strnicmp(i->vocab, name_str, MAX_FILENAME_SIZE)) {
+	for (HotSpotRec *i = head; i; i = i->next) {
+		if (i->vocab && !scumm_strnicmp(i->vocab, name_str, MAX_FILENAME_SIZE)) {
 			i->active = active_or_not;
 			hotspot_found = true;
 		}
@@ -274,13 +293,12 @@ void hotspot_set_active(const char *name, bool active_or_not) {
 
 void hotspot_set_active_xy(HotSpotRec *head, const char *name, int32 x, int32 y, bool active_or_not) {
 	char name_str[MAX_FILENAME_SIZE];
-	HotSpotRec *i;
 
 	cstrncpy(name_str, name, MAX_FILENAME_SIZE);
 
 	cstrupr(name_str);
 
-	for (i = head; i; i = i->next)
+	for (HotSpotRec *i = head; i; i = i->next)
 		if (!scumm_strnicmp(i->vocab, name_str, MAX_FILENAME_SIZE))
 			if ((x >= i->ul_x) && (x <= i->lr_x) && (y >= i->ul_y) && (y <= i->lr_y))
 				i->active = active_or_not;
@@ -296,7 +314,7 @@ static HotSpotRec *saved_hotspots = nullptr;
 
 void hotspot_hide_all() {
 	if (saved_hotspots)
-		error_show(FL, 'HNST');
+		error_show(FL, "Cannot nest hotspots_hide_all()");
 
 	saved_hotspots = _G(currentSceneDef).hotspots;
 	_G(currentSceneDef).hotspots = nullptr;
@@ -304,7 +322,7 @@ void hotspot_hide_all() {
 
 void hotspot_restore_all() {
 	if (!saved_hotspots) {
-		error_show(FL, 'HNON');
+		error_show(FL, "No saved hotspots to restore");
 	}
 
 	if (_G(currentSceneDef).hotspots)

@@ -56,6 +56,8 @@ struct Hacks {
 	bool mtiSceneReturnHack;
 	bool mtiHispaniolaDamagedStringHack;
 
+	bool ignoreSceneUnloads;
+
 	uint midiVolumeScale;	// 256 = 1.0
 
 	uint32 minTransitionDuration;

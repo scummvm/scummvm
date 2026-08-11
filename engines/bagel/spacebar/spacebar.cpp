@@ -22,21 +22,53 @@
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "engines/util.h"
-#include "bagel/console.h"
 #include "bagel/music.h"
+#include "bagel/spacebar/console.h"
 #include "bagel/spacebar/spacebar.h"
 #include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/bib_odds_wnd.h"
 #include "bagel/spacebar/main_window.h"
-#include "bagel/boflib/app.h"
-#include "bagel/dialogs/start_dialog.h"
-#include "bagel/dialogs/opt_window.h"
-#include "bagel/baglib/button_object.h"
+#include "bagel/spacebar/boflib/app.h"
+#include "bagel/spacebar/baglib/button_object.h"
 #include "bagel/boflib/file_functions.h"
-#include "bagel/boflib/gui/movie.h"
+#include "bagel/spacebar/boflib/gui/movie.h"
+
+#include "bagel/music.h"
+#include "bagel/spacebar/baglib/bagel.h"
+#include "bagel/spacebar/baglib/character_object.h"
+#include "bagel/spacebar/baglib/cursor.h"
+#include "bagel/spacebar/baglib/dossier_object.h"
+#include "bagel/spacebar/baglib/event_sdev.h"
+#include "bagel/spacebar/baglib/expression.h"
+#include "bagel/spacebar/baglib/inv.h"
+#include "bagel/spacebar/baglib/log_msg.h"
+#include "bagel/spacebar/baglib/menu_dlg.h"
+#include "bagel/spacebar/baglib/moo.h"
+#include "bagel/spacebar/baglib/paint_table.h"
+#include "bagel/spacebar/baglib/pan_window.h"
+#include "bagel/spacebar/baglib/parse_object.h"
+#include "bagel/spacebar/baglib/pda.h"
+#include "bagel/spacebar/baglib/sound_object.h"
+#include "bagel/spacebar/dialogs/start_dialog.h"
+#include "bagel/spacebar/dialogs/opt_window.h"
+#include "bagel/spacebar/dialogs/start_dialog.h"
+#include "bagel/spacebar/baglib/storage_dev_win.h"
+#include "bagel/spacebar/baglib/var.h"
+#include "bagel/spacebar/baglib/wield.h"
+#include "bagel/spacebar/baglib/zoom_pda.h"
+
+#include "bagel/boflib/cache.h"
+#include "bagel/spacebar/boflib/gfx/cursor.h"
+#include "bagel/boflib/error.h"
+#include "bagel/boflib/sound.h"
+#include "bagel/boflib/palette.h"
+#include "bagel/spacebar/boflib/gfx/sprite.h"
+#include "bagel/spacebar/boflib/gui/window.h"
 
 namespace Bagel {
 namespace SpaceBar {
+
+#define SAVEGAME_VERSION 1
 
 #define SMK_LOGO1        "$SBARDIR\\INTRO\\LOGO1.SMK"
 #define SMK_LOGO2        "$SBARDIR\\INTRO\\LOGO2.SMK"
@@ -58,20 +90,58 @@ static const BagelReg SPACEBAR_REG = {
 SpaceBarEngine *g_engine;
 
 SpaceBarEngine::SpaceBarEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
-		SBarBibOddsWnd::initialize();
-		CMainWindow::initialize();
+	BagelEngine(syst, gameDesc), CBagel(&SPACEBAR_REG) {
+	SBarBibOddsWnd::initialize();
+	CMainWindow::initialize();
 
 	g_engine = this;
 
+	// baglib/ class statics initializations
+	CBagCharacterObject::initialize();
+	CBagCursor::initialize();
+	CBagDossierObject::initialize();
+	CBagEventSDev::initialize();
+	CBagExpression::initialize();
+	CBagInv::initialize();
+	CBagLog::initialize();
+	CBagMenu::initialize();
+	CBagMenuDlg::initialize();
+	CBagMoo::initialize();
+	CBagPanWindow::initialize();
+	CBagParseObject::initialize();
+	CBagPDA::initialize();
+	CBagSoundObject::initialize();
+	CBagStorageDev::initialize();
+	CBagStorageDevWnd::initialize();
+	CBagVarManager::initialize();
+	CBagWield::initialize();
+	SBZoomPda::initialize();
+
+	// boflib/ class statics initializations
+	CCache::initialize();
+	CBofCursor::initialize();
+	CBofError::initialize();
+	CBofPalette::initialize();
+	CBofSound::initialize();
+	CBofSprite::initialize();
+	CBofWindow::initialize();
+
 	for (int i = 0; i < BIBBLE_NUM_BET_AREAS; ++i)
 		g_cBetAreas[i] = CBetArea(BET_AREAS[i]);
+
+	_saveData.clear();
 }
 
 SpaceBarEngine::~SpaceBarEngine() {
-	g_engine = nullptr;
-
+	CBofSound::shutdown();
+	CBofSprite::shutdown();
+	CBagCursor::shutdown();
+	CBagExpression::shutdown();
+	CBagStorageDev::shutdown();
 	CMainWindow::shutdown();
+
+	delete _screen;
+	g_engine = nullptr;
 }
 
 void SpaceBarEngine::initializePath(const Common::FSNode &gamePath) {
@@ -89,7 +159,7 @@ ErrorCode SpaceBarEngine::initialize() {
 		bool bShowLogo = true;
 
 		_masterWin = new CSBarMasterWin();
-		
+
 		// This is the primary game window
 		setMainWindow(_masterWin);
 
@@ -113,7 +183,7 @@ ErrorCode SpaceBarEngine::initialize() {
 		if (saveSlot != -1) {
 			bRestart = loadGameState(saveSlot).getCode() != Common::kNoError;
 
-		} else if (savesExist()) {
+		} else if (savesExist() && !isDemo()) {
 			bRestart = false;
 
 			CBagStartDialog cDlg(buildSysDir("START.BMP"), _masterWin);
@@ -220,8 +290,7 @@ ErrorCode SpaceBarEngine::ShutDownSoundSystem() {
 
 Common::Error SpaceBarEngine::run() {
 	// Initialize graphics mode
-	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(640, 480, &format);
+	initGraphics(640, 480, nullptr);
 
 	// Initialize systems
 	_screen = new Graphics::Screen();
@@ -243,6 +312,90 @@ Common::Error SpaceBarEngine::run() {
 	shutdown();
 	postShutDown();
 
+	return Common::kNoError;
+}
+
+void SpaceBarEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (pause) {
+		_midi->pause();
+	} else {
+		_midi->resume();
+	}
+}
+
+
+bool SpaceBarEngine::canSaveLoadFromWindow(bool save) const {
+	CBofWindow *win = CBofWindow::getActiveWindow();
+
+	// Don't allow saves when capture/focus is active
+	if (CBofApp::getApp()->getCaptureControl() != nullptr ||
+	        CBofApp::getApp()->getFocusControl() != nullptr ||
+	        win == nullptr)
+		return false;
+
+	// These two dialogs need to allow save/load for the ScummVM
+	// dialogs to work from them when original save/load is disabled
+	if ((dynamic_cast<CBagStartDialog *>(win) != nullptr && !save) ||
+	        dynamic_cast<CBagOptWindow *>(win) != nullptr)
+		return true;
+
+	// Otherwise, allow save/load if it's not a dialog, and it's
+	// not a special view that shows the system cursor, like the
+	// Nav Window minigame or Drink Mixer
+	return dynamic_cast<CBofDialog *>(win) == nullptr &&
+	       !CBagCursor::isSystemCursorVisible();
+}
+
+bool SpaceBarEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return canSaveLoadFromWindow(false);
+}
+
+bool SpaceBarEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return canSaveLoadFromWindow(true);
+}
+
+Common::Error SpaceBarEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	_masterWin->fillSaveBuffer(&_saveData);
+
+	return Engine::saveGameState(slot, desc, isAutosave);
+}
+
+Common::Error SpaceBarEngine::saveGameState(int slot, const Common::String &desc,
+        bool isAutosave, StBagelSave &saveData) {
+	_saveData = saveData;
+	return Engine::saveGameState(slot, desc, isAutosave);
+}
+
+Common::Error SpaceBarEngine::loadGameState(int slot) {
+	Common::Error result = Engine::loadGameState(slot);
+
+	if (result.getCode() == Common::kNoError) {
+		// Make sure we close any GUI windows before loading from GMM
+		CBofWindow *win = CBofWindow::getActiveWindow();
+		if (win)
+			win->close();
+		_masterWin->doRestore(&_saveData);
+	}
+
+	return result;
+}
+
+Common::Error SpaceBarEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	stream->writeByte(SAVEGAME_VERSION);
+
+	Common::Serializer s(nullptr, stream);
+	_saveData.synchronize(s);
+	return Common::kNoError;
+}
+
+Common::Error SpaceBarEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	const byte version = stream->readByte();
+	if (version > SAVEGAME_VERSION)
+		error("Tried to load unsupported savegame version");
+
+	Common::Serializer s(stream, nullptr);
+	_saveData.synchronize(s);
 	return Common::kNoError;
 }
 

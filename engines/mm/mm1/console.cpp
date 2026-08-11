@@ -22,14 +22,370 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "mm/shared/utils/strings.h"
 #include "mm/mm1/console.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/game/spells_party.h"
+#include "mm/mm1/messages.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
+
+namespace {
+
+const char *const SOUND_TESTS[] = {
+	"wall",
+	"message",
+	"triple",
+	"encounter",
+	"combat",
+	"search",
+	"cast",
+	"death"
+};
+
+const SoundId SOUND_TEST_SOUND_IDS[] = {
+	SOUND_1, SOUND_2, SOUND_3
+};
+
+const SoundId SOUND_TEST_SOUND2_IDS[] = {
+	SOUND_TITLE, SOUND_1, SOUND_2, SOUND_3, SOUND_4, SOUND_5, SOUND_8, SOUND_9
+};
+
+class SoundTestRunner;
+SoundTestRunner *g_soundTestRunner = nullptr;
+
+void faceDirection(Maps::DirMask dir) {
+	Maps::Maps &maps = g_globals->_maps;
+
+	for (int i = 0; i < 4 && maps._forwardMask != dir; ++i)
+		maps.turnLeft();
+}
+
+bool stageWallBump() {
+	Maps::Maps &maps = g_globals->_maps;
+	maps.loadTown(Maps::SORPIGAL);
+	g_globals->_intangible = false;
+
+	static const Maps::DirMask DIRS[] = {
+		Maps::DIRMASK_N, Maps::DIRMASK_E, Maps::DIRMASK_S, Maps::DIRMASK_W
+	};
+
+	for (int y = 0; y < MAP_H; ++y) {
+		for (int x = 0; x < MAP_W; ++x) {
+			const uint offset = y * MAP_W + x;
+			if (maps._currentMap->_states[offset] & Maps::CELL_SPECIAL)
+				continue;
+
+			for (uint i = 0; i < ARRAYSIZE(DIRS); ++i) {
+				const Maps::DirMask dir = DIRS[i];
+				if (!(maps._currentMap->_walls[offset] & dir) ||
+						!(maps._currentMap->_states[offset] & 0x55 & dir))
+					continue;
+
+				maps._mapPos = Common::Point(x, y);
+				faceDirection(dir);
+				maps._mapOffset = offset;
+				maps._currentWalls = maps._currentMap->_walls[offset];
+				maps._currentState = maps._currentMap->_states[offset];
+				g_events->send("View", ActionMessage(KEYBIND_FORWARDS));
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+Character *findSpellTester() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (c._class == CLERIC || c._class == SORCERER || c._class == ARCHER)
+			return &c;
+	}
+
+	return g_globals->_party.empty() ? nullptr : &g_globals->_party[0];
+}
+
+void stageSpellDone() {
+	Character *c = findSpellTester();
+	if (!c)
+		return;
+
+	g_globals->_currCharacter = c;
+	c->_class = SORCERER;
+	c->_spellLevel = 7;
+	c->_sp = 100;
+	c->_gems = 100;
+
+	int spellIndex = Console::getSpellIndex(c, 1, 5);
+	g_events->send("CastSpell", GameMessage("SPELL", spellIndex));
+}
+
+void stageSearchTreasure() {
+	g_globals->_treasure.clear();
+	g_globals->_treasure._container = CLOTH_SACK;
+	g_globals->_treasure._trapType = 2;
+	g_globals->_treasure.setGold(6);
+	g_globals->_treasure.setGems(0);
+	g_events->send("Search", GameMessage("SHOW"));
+}
+
+void stageEncounter() {
+	if (g_globals->_party.empty()) {
+		warning("MM1 sound test: encounter requires an active party");
+		return;
+	}
+
+	Game::Encounter &enc = g_globals->_encounters;
+	const bool encountersOn = g_globals->_encountersOn;
+	g_globals->_encountersOn = true;
+
+	enc.clearMonsters();
+	enc.addMonster(1, 1);
+	enc._manual = true;
+	enc._levelIndex = 80;
+	enc._encounterType = Game::FORCE_SURPRISED;
+	enc.execute();
+
+	g_globals->_encountersOn = encountersOn;
+}
+
+void stageTripleBeepSpecial() {
+	g_events->send("GameMessages", InfoMessage(
+		0, 1, STRING["maps.map13.snake_pit"],
+		0, 2, STRING["maps.map13.levitation2"]
+	));
+	Sound::sound(SOUND_3);
+}
+
+void stageCombatKill() {
+	Character *c = g_globals->_party.empty() ? nullptr : &g_globals->_party[0];
+	if (!c)
+		return;
+
+	c->_class = KNIGHT;
+	c->_condition = FINE;
+	c->_level = 50;
+	c->_hp = c->_hpCurrent = c->_hpMax = 200;
+	c->_might = 50;
+	c->_accuracy = 50;
+	c->_speed = 50;
+	c->_physicalAttr = 50;
+	g_globals->_currCharacter = c;
+
+	stageEncounter();
+	g_events->send("Combat", GameMessage("COMBAT"));
+}
+
+bool runSoundTestCase(const Common::String &testName) {
+	if (!scumm_stricmp(testName.c_str(), "wall")) {
+		return stageWallBump();
+
+	} else if (!scumm_stricmp(testName.c_str(), "message")) {
+		g_events->send("GameMessages", SoundMessage(STRING["dialogs.search.nothing"]));
+		return true;
+
+	} else if (!scumm_stricmp(testName.c_str(), "triple")) {
+		stageTripleBeepSpecial();
+		return true;
+
+	} else if (!scumm_stricmp(testName.c_str(), "encounter")) {
+		stageEncounter();
+		return true;
+
+	} else if (!scumm_stricmp(testName.c_str(), "combat")) {
+		stageCombatKill();
+		return true;
+
+	} else if (!scumm_stricmp(testName.c_str(), "search")) {
+		stageSearchTreasure();
+		return true;
+
+	} else if (!scumm_stricmp(testName.c_str(), "death") ||
+			!scumm_stricmp(testName.c_str(), "dead")) {
+		g_events->addView("Dead");
+		return true;
+
+	} else if (!scumm_stricmp(testName.c_str(), "cast")) {
+		stageSpellDone();
+		return true;
+	}
+
+	return false;
+}
+
+bool parseSoundId(const char *str, SoundId &soundId) {
+	char *end = nullptr;
+	const long value = strtol(str, &end, 10);
+
+	if (!str[0] || *end)
+		return false;
+
+	switch (value) {
+	case SOUND_TITLE:
+	case SOUND_1:
+	case SOUND_2:
+	case SOUND_3:
+	case SOUND_4:
+	case SOUND_5:
+	case SOUND_8:
+	case SOUND_9:
+		soundId = (SoundId)value;
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool isSoundIdSupported(const SoundId *ids, uint count, SoundId soundId) {
+	for (uint i = 0; i < count; ++i) {
+		if (ids[i] == soundId)
+			return true;
+	}
+
+	return false;
+}
+
+bool runDirectSoundTest(const Common::String &routine, SoundId soundId) {
+	if (!scumm_stricmp(routine.c_str(), "sound")) {
+		if (!isSoundIdSupported(SOUND_TEST_SOUND_IDS, ARRAYSIZE(SOUND_TEST_SOUND_IDS), soundId))
+			return false;
+
+		Sound::sound(soundId);
+		return true;
+	}
+
+	if (!scumm_stricmp(routine.c_str(), "sound2")) {
+		if (!isSoundIdSupported(SOUND_TEST_SOUND2_IDS, ARRAYSIZE(SOUND_TEST_SOUND2_IDS), soundId))
+			return false;
+
+		Sound::sound2(soundId);
+		return true;
+	}
+
+	return false;
+}
+
+bool runDirectSoundTestAlias(const Common::String &testName) {
+	const char *name = testName.c_str();
+	SoundId soundId;
+
+	if (!strncmp(name, "sound2-", 7) && parseSoundId(name + 7, soundId))
+		return runDirectSoundTest("sound2", soundId);
+
+	if (!strncmp(name, "sound-", 6) && parseSoundId(name + 6, soundId))
+		return runDirectSoundTest("sound", soundId);
+
+	return false;
+}
+
+void soundTestPromptAccepted();
+
+class SoundTestRunner : public UIElement {
+private:
+	enum State {
+		ST_INACTIVE,
+		ST_PROMPT,
+		ST_RUN,
+		ST_WAIT
+	};
+
+	State _state = ST_INACTIVE;
+	uint _testIndex = 0;
+	uint32 _waitUntil = 0;
+	bool _promptOpen = false;
+	bool _promptAccepted = false;
+
+	void nextTest() {
+		++_testIndex;
+		_promptOpen = false;
+		_promptAccepted = false;
+
+		if (_testIndex >= ARRAYSIZE(SOUND_TESTS)) {
+			_state = ST_INACTIVE;
+			close();
+		} else {
+			_state = ST_PROMPT;
+		}
+	}
+
+	uint32 waitMillisForTest(const Common::String &testName) const {
+		if (!scumm_stricmp(testName.c_str(), "encounter"))
+			return 5000;
+		if (!scumm_stricmp(testName.c_str(), "combat"))
+			return 8000;
+		if (!scumm_stricmp(testName.c_str(), "cast"))
+			return 3000;
+		if (!scumm_stricmp(testName.c_str(), "search"))
+			return 3000;
+		return 2000;
+	}
+
+public:
+	SoundTestRunner(UIElement *owner) : UIElement("SoundTestRunner", owner) {}
+
+	void start() {
+		_state = ST_PROMPT;
+		_testIndex = 0;
+		_promptOpen = false;
+		_promptAccepted = false;
+		_waitUntil = 0;
+	}
+
+	void promptAccepted() {
+		_promptAccepted = true;
+	}
+
+	bool tick() override {
+		if (_state == ST_INACTIVE)
+			return false;
+
+		const Common::String testName = SOUND_TESTS[_testIndex];
+
+		switch (_state) {
+		case ST_PROMPT:
+			if (!_promptOpen) {
+				_promptOpen = true;
+				g_events->send("GameMessages", InfoMessage(
+					0, 3,
+					Common::String::format("proceed with %s test", testName.c_str()),
+					soundTestPromptAccepted));
+				return true;
+			}
+
+			if (_promptAccepted)
+				_state = ST_RUN;
+			return true;
+
+		case ST_RUN:
+			runSoundTestCase(testName);
+			_waitUntil = g_system->getMillis() + waitMillisForTest(testName);
+			_state = ST_WAIT;
+			return true;
+
+		case ST_WAIT:
+			if (g_system->getMillis() >= _waitUntil)
+				nextTest();
+			return true;
+
+		default:
+			break;
+		}
+
+		return false;
+	}
+};
+
+void soundTestPromptAccepted() {
+	if (g_soundTestRunner)
+		g_soundTestRunner->promptAccepted();
+}
+
+} // namespace
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
@@ -47,6 +403,28 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("specials", WRAP_METHOD(Console, cmdSpecials));
 	registerCmd("special", WRAP_METHOD(Console, cmdSpecial));
 	registerCmd("view", WRAP_METHOD(Console, cmdView));
+	registerCmd("sound", WRAP_METHOD(Console, cmdSoundTest));
+}
+
+Console::~Console() {
+	if (g_soundTestRunner == _soundTestRunner)
+		g_soundTestRunner = nullptr;
+	delete _soundTestRunner;
+}
+
+void Console::postEnter() {
+	GUI::Debugger::postEnter();
+
+	if (_pendingSoundTest) {
+		_pendingSoundTest = false;
+		if (!_soundTestRunner) {
+			UIElement *game = g_events->findView("Game");
+			assert(game);
+			_soundTestRunner = new SoundTestRunner(game);
+			g_soundTestRunner = static_cast<SoundTestRunner *>(_soundTestRunner);
+		}
+		static_cast<SoundTestRunner *>(_soundTestRunner)->start();
+	}
 }
 
 bool Console::cmdDumpMap(int argc, const char **argv) {
@@ -487,6 +865,50 @@ bool Console::cmdView(int argc, const char **argv) {
 		g_events->addView(argv[1]);
 		return false;
 	}
+}
+
+bool Console::cmdSoundTest(int argc, const char **argv) {
+	Common::String testName;
+	SoundId soundId;
+
+	if (argc > 1 && !scumm_stricmp(argv[1], "list")) {
+		debugPrintf("sound [test|list|wall|message|triple|encounter|combat|search|cast|death]\n");
+		debugPrintf("sound sound <1|2|3>\n");
+		debugPrintf("sound sound2 <0|1|2|3|4|5|8|9>\n");
+		debugPrintf("  sound <name> stages one gameplay event for classic sound testing.\n");
+		debugPrintf("  sound test runs the staged checks interactively.\n");
+		debugPrintf("  sound sound <id> calls the original sound(id) routine directly.\n");
+		debugPrintf("  sound sound2 <id> calls the original sound2(id) routine directly.\n");
+		for (uint i = 0; i < ARRAYSIZE(SOUND_TESTS); ++i)
+			debugPrintf("  %u: %s\n", i + 1, SOUND_TESTS[i]);
+		for (uint i = 0; i < ARRAYSIZE(SOUND_TEST_SOUND_IDS); ++i)
+			debugPrintf("  sound-%d\n", SOUND_TEST_SOUND_IDS[i]);
+		for (uint i = 0; i < ARRAYSIZE(SOUND_TEST_SOUND2_IDS); ++i)
+			debugPrintf("  sound2-%d\n", SOUND_TEST_SOUND2_IDS[i]);
+		return true;
+	}
+
+	if (argc == 1 || !scumm_stricmp(argv[1], "test")) {
+		_pendingSoundTest = true;
+		return false;
+	}
+
+	if (argc == 3 && parseSoundId(argv[2], soundId)) {
+		if (runDirectSoundTest(argv[1], soundId))
+			return false;
+
+		debugPrintf("Sound routine '%s' does not support id %d\n", argv[1], soundId);
+		debugPrintf("Use 'sound list' to show known tests.\n");
+		return true;
+	}
+
+	testName = argv[1];
+	if (runDirectSoundTestAlias(testName) || runSoundTestCase(testName))
+		return false;
+
+	debugPrintf("Unknown sound test '%s'\n", argv[1]);
+	debugPrintf("Use 'sound list' to show known tests.\n");
+	return true;
 }
 
 } // namespace MM1

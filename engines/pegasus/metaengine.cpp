@@ -43,7 +43,7 @@ bool PegasusEngine::isDemo() const {
 }
 
 bool PegasusEngine::isDVD() const {
-	return (_gameDescription->desc.flags & GF_DVD) != 0;
+	return (_gameDescription->desc.flags & ADGF_DVD) != 0;
 }
 
 bool PegasusEngine::isDVDDemo() const {
@@ -64,18 +64,18 @@ bool PegasusEngine::isLinux() const {
 
 } // End of namespace Pegasus
 
-class PegasusMetaEngine : public AdvancedMetaEngine {
+class PegasusMetaEngine : public AdvancedMetaEngine<Pegasus::PegasusGameDescription> {
 public:
 	const char *getName() const override {
 		return "pegasus";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Pegasus::PegasusGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 999; }
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (saveGameIdx == kSavegameFilePattern)
@@ -117,18 +117,18 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
+bool PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern
 	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
-	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
+	return g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
 }
 
 Common::KeymapArray PegasusMetaEngine::initKeymaps(const char *target) const {
 	return Pegasus::PegasusEngine::initKeymaps();
 }
 
-Common::Error PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Pegasus::PegasusEngine(syst, (const Pegasus::PegasusGameDescription *)desc);
+Common::Error PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const Pegasus::PegasusGameDescription *desc) const {
+	*engine = new Pegasus::PegasusEngine(syst,desc);
 	return Common::kNoError;
 }
 

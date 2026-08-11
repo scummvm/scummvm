@@ -123,15 +123,16 @@ const byte Instrument::_gmRhythmMap[35] = {
 class Instrument_Program : public InstrumentInternal {
 private:
 	byte _program;
+	byte _bank;
 	bool _soundTypeMT32;
 	bool _nativeMT32Device;
 
 public:
-	Instrument_Program(byte program, bool soundTypeMT32, bool nativeMT32Device);
+	Instrument_Program(byte program, byte bank, bool soundTypeMT32, bool nativeMT32Device);
 	Instrument_Program(Common::Serializer &s, bool nativeMT32Device);
 	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void send(MidiChannel *mc) override;
-	void copy_to(Instrument *dest) override { dest->program(_program, _soundTypeMT32); }
+	void copy_to(Instrument *dest) override { dest->program(_program, _bank, _soundTypeMT32); }
 	bool is_valid() override {
 		return (_program < 128) &&
 		       ((_nativeMT32Device == _soundTypeMT32) || (_nativeMT32Device
@@ -276,21 +277,6 @@ private:
 	byte _instrument[23];
 };
 
-class Instrument_MacSfx : public InstrumentInternal {
-private:
-	byte _program;
-
-public:
-	Instrument_MacSfx(byte program);
-	Instrument_MacSfx(Common::Serializer &s);
-	void saveLoadWithSerializer(Common::Serializer &s) override;
-	void send(MidiChannel *mc) override;
-	void copy_to(Instrument *dest) override { dest->macSfx(_program); }
-	bool is_valid() override {
-		return (_program < 128);
-	}
-};
-
 ////////////////////////////////////////
 //
 // Instrument class members
@@ -303,12 +289,12 @@ void Instrument::clear() {
 	_type = itNone;
 }
 
-void Instrument::program(byte prog, bool mt32SoundType) {
+void Instrument::program(byte prog, byte bank, bool mt32SoundType) {
 	clear();
 	if (prog > 127)
 		return;
 	_type = itProgram;
-	_instrument = new Instrument_Program(prog, mt32SoundType, _nativeMT32Device);
+	_instrument = new Instrument_Program(prog, bank, mt32SoundType, _nativeMT32Device);
 }
 
 void Instrument::adlib(const byte *instrument) {
@@ -335,14 +321,6 @@ void Instrument::pcspk(const byte *instrument) {
 	_instrument = new Instrument_PcSpk(instrument);
 }
 
-void Instrument::macSfx(byte prog) {
-	clear();
-	if (prog > 127)
-		return;
-	_type = itMacSfx;
-	_instrument = new Instrument_MacSfx(prog);
-}
-
 void Instrument::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.isSaving()) {
 		s.syncAsByte(_type);
@@ -366,9 +344,11 @@ void Instrument::saveLoadWithSerializer(Common::Serializer &s) {
 		case itPcSpk:
 			_instrument = new Instrument_PcSpk(s);
 			break;
-		case itMacSfx:
-			_instrument = new Instrument_MacSfx(s);
-			break;
+		case itMacDeprecated: {
+			byte prog = 255;
+			s.syncAsByte(prog);
+			_instrument = new Instrument_Program(prog, 1, false, false);
+			} break;
 		default:
 			warning("No known instrument classification #%d", (int)_type);
 			_type = itNone;
@@ -382,8 +362,9 @@ void Instrument::saveLoadWithSerializer(Common::Serializer &s) {
 //
 ////////////////////////////////////////
 
-Instrument_Program::Instrument_Program(byte program, bool soundTypeMT32, bool nativeMT32Device) :
+Instrument_Program::Instrument_Program(byte program, byte bank, bool soundTypeMT32, bool nativeMT32Device) :
 	_program(program),
+	_bank(bank),
 	_soundTypeMT32(soundTypeMT32),
 	_nativeMT32Device(nativeMT32Device) {
 	if (program > 127)
@@ -393,6 +374,7 @@ Instrument_Program::Instrument_Program(byte program, bool soundTypeMT32, bool na
 Instrument_Program::Instrument_Program(Common::Serializer &s, bool nativeMT32Device) :
 	_nativeMT32Device(nativeMT32Device) {
 	_program = 255;
+	_bank = 0;
 	_soundTypeMT32 = false;
 	if (!s.isSaving())
 		saveLoadWithSerializer(s);
@@ -400,12 +382,16 @@ Instrument_Program::Instrument_Program(Common::Serializer &s, bool nativeMT32Dev
 
 void Instrument_Program::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsByte(_program);
+	s.syncAsByte(_bank, VER(123));
 	if (s.isSaving()) {
 		s.syncAsByte(_soundTypeMT32);
+		s.syncAsByte(_nativeMT32Device);
 	} else {
 		byte tmp;
 		s.syncAsByte(tmp);
 		_soundTypeMT32 = (tmp > 0);
+		s.syncAsByte(tmp, VER(122));
+		_nativeMT32Device = (tmp > 0);
 	}
 }
 
@@ -416,8 +402,13 @@ void Instrument_Program::send(MidiChannel *mc) {
 	byte program = _program;
 	if (!_nativeMT32Device && _soundTypeMT32)
 		program =  MidiDriver::_mt32ToGm[program];
+
+	if (_bank)
+		mc->bankSelect(_bank);
 	if (program < 128)
 		mc->programChange(program);
+	if (_bank)
+		mc->bankSelect(0);
 }
 
 ////////////////////////////////////////
@@ -526,34 +517,4 @@ void Instrument_PcSpk::send(MidiChannel *mc) {
 	mc->sysEx_customInstrument('SPK ', (byte *)&_instrument, sizeof(_instrument));
 }
 
-////////////////////////////////////////
-//
-// Instrument_MacSfx class members
-//
-////////////////////////////////////////
-
-Instrument_MacSfx::Instrument_MacSfx(byte program) :
-	_program(program) {
-	if (program > 127) {
-		_program = 255;
-	}
-}
-
-Instrument_MacSfx::Instrument_MacSfx(Common::Serializer &s) {
-	_program = 255;
-	if (!s.isSaving()) {
-		saveLoadWithSerializer(s);
-	}
-}
-
-void Instrument_MacSfx::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncAsByte(_program);
-}
-
-void Instrument_MacSfx::send(MidiChannel *mc) {
-	if (_program > 127) {
-		return;
-	}
-	mc->sysEx_customInstrument('MAC ', &_program, sizeof(_program));
-}
 } // End of namespace Scumm

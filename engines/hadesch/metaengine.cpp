@@ -26,7 +26,7 @@
 #include "hadesch/hadesch.h"
 #include "engines/advancedDetector.h"
 
-class HadeschMetaEngine : public AdvancedMetaEngine {
+class HadeschMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	bool hasFeature(MetaEngineFeature f) const override {
 		return

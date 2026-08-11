@@ -88,8 +88,8 @@ struct Hotspot {
 const int kMaxTimers = 10;
 
 enum GnapDebugChannels {
-	kDebugBasic	= 1 << 0,
-	kDebugMusic = 1 << 1
+	kDebugBasic	= 1,
+	kDebugMusic,
 };
 
 enum {

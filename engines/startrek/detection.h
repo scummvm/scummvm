@@ -37,6 +37,8 @@ enum StarTrekGameFeatures {
 };
 
 struct StarTrekGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	uint8 gameType;

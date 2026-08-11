@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/macresman.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -28,8 +29,10 @@
 #include "scumm/scumm_v4.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/dialogs.h"
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_indy3.h"
+#include "scumm/music.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
@@ -104,16 +107,27 @@ void MacIndy3Gui::Widget::markScreenAsDirty(Common::Rect r) const {
 }
 
 byte MacIndy3Gui::Widget::translateChar(byte c) const {
-	if (c == '^')
+	// Remap SCUMM-specific characters to Mac OS Roman. I have verified
+	// that these are actually used. If we find others, or if there are
+	// fan translations, that can be dealt with later.
+
+	switch (c) {
+	case 0x10: // Left half of TM glyph
+		return 0xAA;
+	case 0x11: // Right half of TM glyph. Don't draw at all.
+		return 0x00;
+	case 0x5E: // ...
 		return 0xC9;
-	return c;
+	default:
+		return c;
+	}
 }
 
 void MacIndy3Gui::Widget::fill(Common::Rect r) {
 	_gui->fill(r);
 }
 
-void MacIndy3Gui::Widget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
+void MacIndy3Gui::Widget::drawBitmap(Common::Rect r, const uint16 *bitmap, byte color) const {
 	_gui->drawBitmap(_surface, r, bitmap, color);
 }
 
@@ -136,7 +150,7 @@ void MacIndy3Gui::Widget::drawShadowBox(Common::Rect r) const {
 // The shadow frame is a rectangle with a highlight. It can be filled or
 // unfilled.
 
-void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor) {
+void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor) {
 	_surface->hLine(r.left, r.top, r.right - 1, kBlack);
 	_surface->hLine(r.left, r.bottom - 1, r.right - 1, kBlack);
 	_surface->vLine(r.left, r.top + 1, r.bottom - 2, kBlack);
@@ -313,7 +327,7 @@ void MacIndy3Gui::Button::draw() {
 
 		int x = (_bounds.left + (_bounds.width() - 1 - stringWidth) / 2) - 1;
 		int y = _bounds.top + 2;
-		Color color = _enabled ? kWhite : kBlack;
+		byte color = _enabled ? kWhite : kBlack;
 
 		if (hasTimer()) {
 			x++;
@@ -322,12 +336,15 @@ void MacIndy3Gui::Button::draw() {
 
 		for (uint i = 0; i < _text.size() && x < _bounds.right; i++) {
 			byte c = translateChar(_text[i]);
-			if (x >= _bounds.left) {
-				if (_enabled)
-					outlineFont->drawChar(_surface, c, x, y, kBlack);
-				boldFont->drawChar(_surface, c, x + 1, y, color);
+
+			if (c) {
+				if (x >= _bounds.left) {
+					if (_enabled)
+						outlineFont->drawChar(_surface, c, x, y, kBlack);
+					boldFont->drawChar(_surface, c, x + 1, y, color);
+				}
+				x += boldFont->getCharWidth(c);
 			}
-			x += boldFont->getCharWidth(c);
 		}
 	}
 }
@@ -655,7 +672,7 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 
 	Widget::draw();
 
-	Color fg, bg;
+	byte fg, bg;
 
 	if (hasTimer()) {
 		fg = kWhite;
@@ -676,8 +693,10 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 		for (uint i = 0; i < _name.size() && x < _bounds.right; i++) {
 			byte c = translateChar(_name[i]);
 
-			font->drawChar(_surface, c, x, y, fg);
-			x += font->getCharWidth(c);
+			if (c) {
+				font->drawChar(_surface, c, x, y, fg);
+				x += font->getCharWidth(c);
+			}
 		}
 	}
 }
@@ -686,9 +705,6 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 // Inventory::ScrollBar is the slider which shows if the inventory contains
 // more objects than are visible on screen.
 // ---------------------------------------------------------------------------
-
-// NB: This class makes several references to ARRAYSIZE(_slots), but accessing
-//     members of the enclosing class like that should be ok in C++11.
 
 MacIndy3Gui::Inventory::ScrollBar::ScrollBar(int x, int y, int width, int height) : MacIndy3Gui::Widget(x, y, width, height) {
 }
@@ -712,7 +728,7 @@ bool MacIndy3Gui::Inventory::ScrollBar::handleEvent(Common::Event &event) {
 		if (event.mouse.y <= pos + 4)
 			_invOffset = 0;
 		else if (event.mouse.y >= pos + 6)
-			_invOffset = _invCount - ARRAYSIZE(_slots);
+			_invOffset = _invCount - INDY3_INVENTORY_SLOT_SIZE;
 
 		_gui->setInventoryScrollOffset(_invOffset);
 		setRedraw(true);
@@ -725,7 +741,7 @@ void MacIndy3Gui::Inventory::ScrollBar::setInventoryParameters(int invCount, int
 	if (invOffset != _invOffset)
 		setRedraw(true);
 
-	if (invCount != _invCount && _invCount >= ARRAYSIZE(_slots))
+	if (invCount != _invCount && _invCount >= INDY3_INVENTORY_SLOT_SIZE)
 		setRedraw(true);
 
 	_invCount = invCount;
@@ -734,7 +750,7 @@ void MacIndy3Gui::Inventory::ScrollBar::setInventoryParameters(int invCount, int
 
 void MacIndy3Gui::Inventory::ScrollBar::scroll(ScrollDirection dir) {
 	int newOffset = _invOffset;
-	int maxOffset = _invCount - ARRAYSIZE(_slots);
+	int maxOffset = _invCount - INDY3_INVENTORY_SLOT_SIZE;
 
 	if (dir == kScrollUp)
 		newOffset--;
@@ -760,7 +776,7 @@ int MacIndy3Gui::Inventory::ScrollBar::getHandlePosition() {
 	// Hopefully this matches the original scroll handle position.
 
 	int maxPos = _bounds.height() - 8;
-	int maxOffset = _invCount - ARRAYSIZE(_slots);
+	int maxOffset = _invCount - INDY3_INVENTORY_SLOT_SIZE;
 
 	if (_invOffset >= maxOffset)
 		return maxPos;
@@ -861,7 +877,7 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 	};
 
 	const uint16 *arrow = (_direction == kScrollUp) ? upArrow : downArrow;
-	Color color = hasTimer() ? kBlack : kWhite;
+	byte color = hasTimer() ? kBlack : kWhite;
 
 	drawBitmap(_bounds, arrow, color);
 
@@ -878,7 +894,7 @@ MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, const Common::Path &resourceFile) :
 	MacGuiImpl(vm, resourceFile), _visible(false) {
 
 	Common::Rect verbGuiArea(640, 112);
-	verbGuiArea.translate(0, 288 + 2 * _vm->_screenDrawOffset);
+	verbGuiArea.translate(0, 288 + _vm->_macScreenDrawOffset * 2);
 
 	_verbGuiTop = verbGuiArea.top;
 	_verbGuiSurface = _surface->getSubArea(verbGuiArea);
@@ -997,19 +1013,19 @@ bool MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) c
 		return true;
 
 	case kIndy3VerbFontRegular:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
 		return true;
 
 	case kIndy3VerbFontBold:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontBold;
 		return true;
 
 	case kIndy3VerbFontOutline:
-		id = Graphics::kMacFontGeneva;
+		id = Graphics::kMacFontApplication;
 		size = 9;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense;
 		return true;
@@ -1076,6 +1092,23 @@ void MacIndy3Gui::printCharToTextArea(int chr, int x, int y, int color) {
 	font->drawChar(&_textArea, chr, x + 5, y + 11, color);
 }
 
+void MacIndy3Gui::updateMenus() {
+	// Taken from Mac disasm...
+	// The VAR(94) part tells us whether the copy protection has
+	// failed or not, while the VAR(58) part uses bitmasks to enable
+	// or disable saving and loading during normal gameplay.
+	bool saveCondition = (_vm->VAR(58) & 0x01) && !(_vm->VAR(94) & 0x10);
+	bool loadCondition = (_vm->VAR(58) & 0x02) && !(_vm->VAR(94) & 0x10);
+
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	Graphics::MacMenuItem *gameMenu = menu->getMenuItem(1);
+	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
+	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
+
+	loadMenu->enabled = _vm->canLoadGameStateCurrently() && loadCondition;
+	saveMenu->enabled = _vm->canSaveGameStateCurrently() && saveCondition;
+}
+
 bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	if (MacGuiImpl::handleMenu(id, name))
 		return true;
@@ -1085,16 +1118,16 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	switch (id) {
 	case 204:	// IQ Points
 		runIqPointsDialog();
-		break;
+		return true;
 
 	case 205:	// Options
 		runOptionsDialog();
-		break;
+		return true;
 
 	case 206:	// Quit
 		if (runQuitDialog())
 			_vm->quitGame();
-		break;
+		return true;
 
 	default:
 		debug("MacIndy3Gui::handleMenu: Unknown menu command: %d", id);
@@ -1115,7 +1148,7 @@ void MacIndy3Gui::runAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	MacDialogWindow *window = createWindow(bounds);
+	MacDialogWindow *window = createWindow(bounds, kWindowStyleNormal, kMenuStyleApple);
 	Graphics::Surface *pict = loadPict(2000);
 
 	// For the background of the sprites to match the background of the
@@ -1152,72 +1185,73 @@ void MacIndy3Gui::runAboutDialog() {
 	int trolleyWaitFrames = 20;	// ~2 seconds
 	int waitFrames = 0;
 
-	// TODO: These strings are part of the STRS resource, but I don't know
-	// how to safely read them from there yet. So hard-coded it is for now.
+	const char *subVers = (const char *)_vm->getStringAddress(24);
+
+	Common::String version = Common::String::format(_strsStrings[kMSIAboutString3].c_str(), subVers, '5', '1', '6');
 
 	const TextLine page1[] = {
-		{ 0, 4, kStyleHeader, Graphics::kTextAlignCenter, "Indiana Jones and the Last Crusade" },
-		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, "The Graphic Adventure" },
-		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Mac 1.7 8/17/90, Interpreter version 5.1.6" },
-		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
+		{ 0, 4, kStyleHeader1, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString1].c_str() }, // "Indiana Jones and the Last Crusade"
+		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString2].c_str() }, // "The Graphic Adventure"
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, version.c_str() }, // "Mac 1.7 8/17/90, Interpreter version 5.1.6"
+		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString4].c_str() }, // "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved."
 		TEXT_END_MARKER
 	};
 
 	const TextLine page2[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
-		{ 70, 21, kStyleHeader, Graphics::kTextAlignLeft, "Eric Johnston" },
-		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 216, 41, kStyleHeader, Graphics::kTextAlignLeft, "Dan Filner" },
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString5].c_str() }, // "Macintosh version by"
+		{ 70, 21, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString7].c_str() }, // "Eric Johnston"
+		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString6].c_str() }, // "and"
+		{ 216, 41, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString8].c_str() }, // "Dan Filner"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page3[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
-		{ 75, 21, kStyleHeader, Graphics::kTextAlignLeft, "Ron Baldwin" },
-		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 214, 41, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString9].c_str() }, // "Macintosh scripting by"
+		{ 75, 21, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString11].c_str() }, // "Ron Baldwin"
+		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString10].c_str() }, // "and"
+		{ 214, 41, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString12].c_str() }, // "David Fox"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Designed and scripted by" },
-		{ 77, 24, kStyleHeader, Graphics::kTextAlignLeft, "Noah Falstein" },
-		{ 134, 44, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
-		{ 167, 64, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString13].c_str() }, // "Designed and scripted by"
+		{ 77, 24, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString14].c_str() }, // "Noah Falstein"
+		{ 134, 44, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString15].c_str() }, // "David Fox"
+		{ 167, 64, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString16].c_str() }, // "Ron Gilbert"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story System" },
-		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "created by" },
-		{ 107, 36, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
-		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 132, 66, kStyleHeader, Graphics::kTextAlignLeft, "Aric Wilmunder" },
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString17].c_str() }, // "SCUMM Story System"
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString18].c_str() }, // "created by"
+		{ 107, 36, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString20].c_str() }, // "Ron Gilbert"
+		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString19].c_str() }, // "and"
+		{ 132, 66, kStyleHeader1, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString21].c_str() }, // "Aric Wilmunder"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, "Stumped?  Indy hint books are available!" },
-		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, "In the U.S. call" },
-		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, "1 (800) STAR-WARS" },
-		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, "that\xD5s  1 (800) 782-7927" },
-		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, "In Canada call" },
-		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, "1 (800) 828-7927" },
+		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString22].c_str() }, // "Stumped?  Indy hint books are available!"
+		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString25].c_str() }, // "In the U.S. call"
+		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString23].c_str() }, // "1 (800) STAR-WARS"
+		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString27].c_str() }, // "that\xD5s  1 (800) 782-7927"
+		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString26].c_str() }, // "In Canada call"
+		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString24].c_str() }, // "1 (800) 828-7927"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "Need a hint NOW?  Having problems?" },
-		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, "For hints or technical support call" },
-		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
-		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, "The charge is 75\xA2 per minute." },
-		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
-		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString28].c_str() }, // "Need a hint NOW?  Having problems?"
+		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString30].c_str() }, // "For hints or technical support call"
+		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, _strsStrings[kMSIAboutString29].c_str() }, // "1 (900) 740-JEDI"
+		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString31].c_str() }, // "The charge is 75\xA2 per minute."
+		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString32].c_str() }, // "(You must have your parents\xD5 permission to"
+		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString33].c_str() }, // "call this number if you are under 18.)"
 		TEXT_END_MARKER
 	};
 
 	const TextLine page8[] = {
-		{ 1, 1, kStyleBold, Graphics::kTextAlignCenter, "Click to continue" },
+		{ 1, 1, kStyleBold, Graphics::kTextAlignCenter, _strsStrings[kMSIAboutString34].c_str() }, // "Click to continue"
 		TEXT_END_MARKER
 	};
 
@@ -1313,7 +1347,7 @@ void MacIndy3Gui::runAboutDialog() {
 				break;
 
 			case 8:
-				window->drawTextBox(Common::Rect(142, 106, 262, 119), page8, 3);
+				window->drawTextBox(Common::Rect(142, 106, 262, 119), page8, false, 3);
 				break;
 			}
 
@@ -1363,7 +1397,15 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001);
 
-	window->setDefaultWidget(0);
+	MacButton *buttonOpen = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 2);
+	MacButton *buttonEject = (MacButton *)window->getWidget(kWidgetButton, 3);
+	MacButton *buttonDrive = (MacButton *)window->getWidget(kWidgetButton, 4);
+
+	window->setDefaultWidget(buttonOpen);
+	buttonEject->setEnabled(false);
+	buttonDrive->setEnabled(false);
+
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
@@ -1372,31 +1414,43 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
-	MacGuiImpl::MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 248, 187), savegameNames, true);
+	MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 232, 187), savegameNames, true);
 
-	// When quitting, the default action is to not open a saved game
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
+	drawFakePathList(window, Common::Rect(14, 18, 231, 37), "Indy Last Crusade");
+	drawFakeDriveLabel(window, Common::Rect(239, 41, 349, 61), "ScummVM");
 
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == 0 || clicked == 10) {
-			ret = true;
-			saveSlotToHandle =
-				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOpen || event.widget == listBox) {
+					saveSlotToHandle =
+						listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
+
+				break;
+
+			default:
+				break;
+			}
 		}
 
-		if (clicked == 2)
-			break;
+		window->delayAndUpdate();
 	}
 
+	// When quitting, do not load the saved game
 	delete window;
-	return ret;
+	return false;
 }
 
-bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
+bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &saveName) {
 	// Widgets:
 	//
 	// 0 - Save button
@@ -1414,7 +1468,18 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998 : 3999);
 
-	window->setDefaultWidget(0);
+	MacButton *buttonSave = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+	MacButton *buttonEject = (MacButton *)window->getWidget(kWidgetButton, 2);
+	MacButton *buttonDrive = (MacButton *)window->getWidget(kWidgetButton, 3);
+	MacStaticText *saveText = (MacStaticText *)window->getWidget(kWidgetStaticText, 0);
+	MacEditText *editText = (MacEditText *)window->getWidget(kWidgetEditText);
+
+	window->setDefaultWidget(buttonSave);
+	buttonEject->setEnabled(false);
+	buttonDrive->setEnabled(false);
+	saveText->setText(_strsStrings[kMSISaveGameFileAs]);
+
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
@@ -1422,6 +1487,9 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	int slotIds[100];
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
+
+	drawFakePathList(window, Common::Rect(16, 8, 198, 27), "Indy Last Crusade");
+	drawFakeDriveLabel(window, Common::Rect(205, 31, 304, 51), "ScummVM");
 
 	int firstAvailableSlot = -1;
 	for (int i = 0; i < ARRAYSIZE(busySlots); i++) {
@@ -1433,39 +1501,43 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	window->addListBox(Common::Rect(16, 31, 199, 129), savegameNames, true, true);
 
-	// When quitting, the default action is not to save a game
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == 0) {
-			ret = true;
-			name = window->getWidget(5)->getText(); // Edit text widget
-			saveSlotToHandle = firstAvailableSlot;
-			break;
-		}
-
-		if (clicked == 1)
-			break;
-
-		if (clicked == -2) {
-			// Cycle through deferred actions
-			for (uint i = 0; i < deferredActionsIds.size(); i++) {
-				// Edit text widget
-				if (deferredActionsIds[i] == 5) {
-					MacGuiImpl::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
-
-					// Disable "Save" button when text is empty
-					window->getWidget(0)->setEnabled(!wid->getText().empty());
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonSave) {
+					saveName = editText->getText();
+					saveSlotToHandle = firstAvailableSlot;
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
 				}
+
+				break;
+
+			case kDialogKeyDown:
+				if (event.widget == editText) {
+					// Disable "Save" button when text is empty
+					buttonSave->setEnabled(!editText->getText().empty());
+				}
+
+				break;
+
+			default:
+				break;
 			}
 		}
+
+		window->delayAndUpdate();
 	}
 
+	// When quitting, do not save the game
 	delete window;
-	return ret;
+	return false;
 }
 
 bool MacIndy3Gui::runOptionsDialog() {
@@ -1482,71 +1554,87 @@ bool MacIndy3Gui::runOptionsDialog() {
 	// 8 - Scrolling checkbox
 	// 9 - Text speed slider (manually created)
 
-	int sound = _vm->_mixer->isSoundTypeMuted(Audio::Mixer::SoundType::kSFXSoundType) ? 0 : 1;
-	int music = _vm->_mixer->isSoundTypeMuted(Audio::Mixer::SoundType::kPlainSoundType) ? 0 : 1;
-
+	int sound = (!ConfMan.hasKey("mute") || !ConfMan.getBool("mute")) ? 1 : 0;
+	int music = (!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")) ? 1 : 0;
 	int scrolling = _vm->_snapScroll == 0;
 	int textSpeed = _vm->_defaultTextSpeed;
 
 	MacDialogWindow *window = createDialog(1000);
 
-	window->setWidgetValue(2, sound);
-	window->setWidgetValue(3, music);
-	window->setWidgetValue(8, scrolling);
+	MacButton *buttonOk = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonCancel = (MacButton *)window->getWidget(kWidgetButton, 1);
+
+	MacCheckbox *checkboxSound = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 0);
+	MacCheckbox *checkboxMusic = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 1);
+	MacCheckbox *checkboxScrolling = (MacCheckbox *)window->getWidget(kWidgetCheckbox, 2);
+
+	checkboxSound->setValue(sound);
+	checkboxMusic->setValue(music);
+	checkboxScrolling->setValue(scrolling);
 
 	if (!sound)
-		window->setWidgetEnabled(3, false);
+		checkboxMusic->setEnabled(false);
 
-	window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
-	window->setWidgetValue(9, textSpeed);
+	MacImageSlider *sliderTextSpeed = window->addImageSlider(4, 5, true, 5, 105, 0, 9);
+	sliderTextSpeed->setValue(textSpeed);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
 
-	// When quitting, the default action is not to not apply options
-	bool ret = false;
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == 0) {
-			ret = true;
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonOk) {
+					// Update settings
+
+					// TEXT SPEED
+					_vm->_defaultTextSpeed = CLIP<int>(sliderTextSpeed->getValue(), 0, 9);
+					ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
+					_vm->setTalkSpeed(_vm->_defaultTextSpeed);
+
+					// SOUND&MUSIC ACTIVATION
+					// 0 - Sound&Music on
+					// 1 - Sound on, music off
+					// 2 - Sound&Music off
+					bool disableSound = checkboxSound->getValue() == 0;
+					bool disableMusic = checkboxMusic->getValue() == 0;
+
+					_vm->_musicEngine->toggleMusic(!disableMusic);
+					_vm->_musicEngine->toggleSoundEffects(!disableSound);
+					ConfMan.setBool("music_mute", disableMusic);
+					ConfMan.setBool("mute", disableSound);
+					ConfMan.flushToDisk();
+
+					_vm->syncSoundSettings();
+
+					// SCROLLING ACTIVATION
+					_vm->_snapScroll = checkboxScrolling->getValue() == 0;
+					delete window;
+					return true;
+				} else if (event.widget == buttonCancel) {
+					delete window;
+					return false;
+				}
+
+				break;
+
+			case kDialogValueChange:
+				if (event.widget == checkboxSound)
+					checkboxMusic->setEnabled(checkboxSound->getValue() != 0);
+				break;
+
+			default:
+				break;
+			}
 		}
 
-		if (clicked == 1)
-			break;
-
-		if (clicked == 2)
-			window->setWidgetEnabled(3, window->getWidgetValue(2) != 0);
-	}
-
-	if (ret) {
-		// Update settings
-
-		// TEXT SPEED
-		_vm->_defaultTextSpeed = CLIP<int>(window->getWidgetValue(9), 0, 9);
-		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
-		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
-		_vm->syncSoundSettings();
-
-		// SOUND&MUSIC ACTIVATION
-		// 0 - Sound&Music on
-		// 1 - Sound on, music off
-		// 2 - Sound&Music off
-		bool disableSound = window->getWidgetValue(2) == 0;
-		bool disableMusic = window->getWidgetValue(3) == 0;
-		_vm->_mixer->muteSoundType(Audio::Mixer::SoundType::kSFXSoundType, disableSound);
-		_vm->_mixer->muteSoundType(Audio::Mixer::SoundType::kPlainSoundType, disableMusic || disableSound);
-
-		// SCROLLING ACTIVATION
-		_vm->_snapScroll = window->getWidgetValue(8) == 0;
-
-		ConfMan.flushToDisk();
+		window->delayAndUpdate();
 	}
 
 	delete window;
-	return ret;
+	return false;
 }
 
 bool MacIndy3Gui::runIqPointsDialog() {
@@ -1561,25 +1649,40 @@ bool MacIndy3Gui::runIqPointsDialog() {
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002);
 
+	MacButton *buttonDone = (MacButton *)window->getWidget(kWidgetButton, 0);
+	MacButton *buttonReset = (MacButton *)window->getWidget(kWidgetButton, 1);
+
+	MacStaticText *textSeriesIQ = (MacStaticText *)window->getWidget(kWidgetStaticText, 2);
+
 	((ScummEngine_v4 *)_vm)->updateIQPoints();
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
-	Common::Array<int> deferredActionsIds;
-
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog(deferredActionsIds);
+		MacDialogEvent event;
 
-		if (clicked == 0)
-			break;
+		while (window->runDialog(event)) {
+			switch (event.type) {
+			case kDialogClick:
+				if (event.widget == buttonDone) {
+					delete window;
+					return true;
+				} else if (event.widget == buttonReset) {
+					if (!_vm->enhancementEnabled(kEnhUIUX) || runOkCancelDialog("Are you sure you want to reset the series IQ score?")) {
+						((ScummEngine_v4 *)_vm)->clearSeriesIQPoints();
+						window->replaceSubstitution(1, Common::String::format("%d", _vm->VAR(245)));
+						textSeriesIQ->setRedraw(true);
+					}
+				}
 
-		if (clicked == 1) {
-			if (!_vm->enhancementEnabled(kEnhUIUX) || runOkCancelDialog("Are you sure you want to reset the series IQ score?")) {
-				((ScummEngine_v4 *)_vm)->clearSeriesIQPoints();
-				window->replaceSubstitution(1, Common::String::format("%d", _vm->VAR(245)));
-				window->redrawWidget(4);
+				break;
+
+			default:
+				break;
 			}
 		}
+
+		window->delayAndUpdate();
 	}
 
 	delete window;
@@ -1603,7 +1706,7 @@ bool MacIndy3Gui::isVerbGuiAllowed() const {
 	// really seems to be all that's needed.
 
 	VirtScreen *vs = &_vm->_virtscr[kVerbVirtScreen];
-	if (vs->topline != 144 + _vm->_screenDrawOffset || vs->h != 56 + _vm->_screenDrawOffset)
+	if (vs->topline != 144 || vs->h != 56)
 		return false;
 
 	// HACK: Don't allow the GUI during fist fights. Usually this is not a

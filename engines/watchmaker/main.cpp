@@ -79,7 +79,7 @@ int WMakerMain() {
 
 	game->initCharNames();
 
-	// Setup soudn/kbd/mouse
+	// Setup sound/kbd/mouse
 	if (!(LoaderFlags & T3D_NOSOUND) && !(InitMusic()))                // Attiva DirectSound
 		warning("No Sound-Card detected");
 
@@ -196,7 +196,7 @@ void Render3DEnvironment(WGame &game) {
 
 		t3dProcessPortals();                                                                    // Processa i portali visibili
 
-		GetRealCharPos(game.init, &cp, ocCURPLAYER, 0);
+		game._cameraMan->GetRealCharPos(game.init, &cp, ocCURPLAYER, 0);
 		PortalCrossed = t3dCheckPortalCrossed(&cp);                                              // Controlla se ha attraversato portali
 
 		if (LoaderFlags & T3D_SKY)

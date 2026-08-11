@@ -55,6 +55,8 @@ public:
 		_windowWidth(0),
 		_windowHeight(0),
 		_screenAlign(SCREEN_ALIGN_CENTER | SCREEN_ALIGN_MIDDLE),
+		_rotationMode(Common::kRotationNormal),
+		_ignoreGameSafeArea(false),
 		_overlayVisible(false),
 		_overlayInGUI(false),
 		_gameScreenShakeXOffset(0),
@@ -103,6 +105,78 @@ public:
 
 	bool isOverlayVisible() const override { return _overlayVisible; }
 
+	Common::Rect getSafeOverlayArea(int16 *width, int16 *height) const override {
+		Insets insets = getSafeAreaInsets();
+
+		// Create the overlay rect cut of the insets
+		// in the window coordinate space
+		// Make sure to avoid a negative size (and an invalid rect)
+		const int safeLeft = MAX(_overlayDrawRect.left, insets.left),
+		          safeTop = MAX(_overlayDrawRect.top, insets.top);
+		Common::Rect safeArea(safeLeft, safeTop,
+				MAX(safeLeft, MIN((int)_overlayDrawRect.right, _windowWidth - insets.right)),
+				MAX(safeTop, MIN((int)_overlayDrawRect.bottom, _windowHeight - insets.bottom)));
+
+		// Convert this safe area in the overlay coordinate space
+		const int targetWidth = getOverlayWidth(),
+		          targetHeight = getOverlayHeight(),
+		          sourceWidth = _overlayDrawRect.width(),
+		          sourceHeight = _overlayDrawRect.height();
+
+		if (width) *width = targetWidth;
+		if (height) *height = targetHeight;
+
+		int rotatedTargetWidth = targetWidth,
+		    rotatedTargetHeight = targetHeight;
+		if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
+			SWAP(rotatedTargetWidth, rotatedTargetHeight);
+		}
+
+		// First make it relative to overlay origin and scale it
+		safeArea.left = ((safeArea.left - _overlayDrawRect.left) * rotatedTargetWidth) / sourceWidth;
+		safeArea.top = ((safeArea.top - _overlayDrawRect.top) * rotatedTargetHeight) / sourceHeight;
+		safeArea.right = ((safeArea.right - _overlayDrawRect.left) * rotatedTargetWidth) / sourceWidth;
+		safeArea.bottom = ((safeArea.bottom - _overlayDrawRect.top) * rotatedTargetHeight) / sourceHeight;
+
+		// Now rotate it
+		switch (_rotationMode) {
+		default:
+		case Common::kRotationNormal:
+			// Nothing to do
+			break;
+		case Common::kRotation90: {
+			int16 tmp = safeArea.left;
+			safeArea.left = safeArea.top;
+			safeArea.top = rotatedTargetWidth - safeArea.right;
+			//safeArea.right = targetWidth - (rotatedTargetHeight - safeArea.bottom);
+			safeArea.right = safeArea.bottom; // targetWidth == rotatedTargetHeight
+			safeArea.bottom = targetHeight - tmp;
+			break;
+		}
+		case Common::kRotation180: {
+			int16 tmp;
+			tmp = safeArea.left;
+			safeArea.left = rotatedTargetWidth - safeArea.right;
+			safeArea.right = rotatedTargetWidth - tmp;
+			tmp = safeArea.top;
+			safeArea.top = rotatedTargetHeight - safeArea.bottom;
+			safeArea.bottom = rotatedTargetHeight - tmp;
+			break;
+		}
+		case Common::kRotation270: {
+			int16 tmp = safeArea.left;
+			safeArea.left = rotatedTargetHeight - safeArea.bottom;
+			//safeArea.bottom = targetHeight - (rotatedTargetWidth - safeArea.right);
+			safeArea.bottom = safeArea.right; // targetHeight == rotatedTargetWidth
+			safeArea.right = targetWidth - safeArea.top;
+			safeArea.top = tmp;
+			break;
+		}
+		}
+
+		return safeArea;
+	}
+
 	void setShakePos(int shakeXOffset, int shakeYOffset) override {
 		if (_gameScreenShakeXOffset != shakeXOffset || _gameScreenShakeYOffset != shakeYOffset) {
 			_gameScreenShakeXOffset = shakeXOffset;
@@ -114,6 +188,24 @@ public:
 
 	int getWindowWidth() const { return _windowWidth; }
 	int getWindowHeight() const { return _windowHeight; }
+
+	void setIgnoreGameSafeArea(bool ignoreGameSafeArea) {
+		if (_ignoreGameSafeArea == ignoreGameSafeArea) {
+			return;
+		}
+
+		_ignoreGameSafeArea = ignoreGameSafeArea;
+
+		Insets insets = getSafeAreaInsets();
+		if (insets.left == 0 &&
+		    insets.top == 0 &&
+		    insets.right == 0 &&
+		    insets.bottom == 0) {
+			return;
+		}
+
+		handleResizeImpl(_windowWidth, _windowHeight);
+	}
 
 protected:
 	/**
@@ -145,8 +237,26 @@ protected:
 			error("convertVirtualToWindow called without a valid draw rect");
 		}
 
-		int windowX = targetX + (x * targetWidth + sourceWidth / 2) / sourceWidth;
-		int windowY = targetY + (y * targetHeight + sourceHeight / 2) / sourceHeight;
+		int windowX, windowY;
+		switch (_rotationMode) {
+		default:
+		case Common::kRotationNormal:
+			windowX = targetX + (x * targetWidth + sourceWidth / 2) / sourceWidth;
+			windowY = targetY + (y * targetHeight + sourceHeight / 2) / sourceHeight;
+			break;
+		case Common::kRotation90:
+			windowX = targetX + ((y - (sourceHeight - 1)) * targetWidth + sourceHeight / 2) / sourceHeight;
+			windowY = targetY + (x * targetHeight + sourceWidth / 2) / sourceWidth;
+			break;
+		case Common::kRotation180:
+			windowX = targetX + ((x - (sourceWidth - 1)) * targetWidth + sourceWidth / 2) / sourceWidth;
+			windowY = targetY + ((y - (sourceHeight - 1)) * targetHeight + sourceHeight / 2) / sourceHeight;
+			break;
+		case Common::kRotation270:
+			windowX = targetX + (y * targetWidth + sourceHeight / 2) / sourceHeight;
+			windowY = targetY + ((x - (sourceWidth - 1)) * targetHeight + sourceWidth / 2) / sourceWidth;
+			break;
+		}
 
 		return Common::Point(CLIP<int>(windowX, targetX, targetX + targetWidth - 1),
 		                     CLIP<int>(windowY, targetY, targetY + targetHeight - 1));
@@ -174,8 +284,26 @@ protected:
 		x = CLIP<int>(x, sourceX, sourceMaxX);
 		y = CLIP<int>(y, sourceY, sourceMaxY);
 
-		int virtualX = ((x - sourceX) * targetWidth + sourceWidth / 2) / sourceWidth;
-		int virtualY = ((y - sourceY) * targetHeight + sourceHeight / 2) / sourceHeight;
+		int virtualX, virtualY;
+		switch (_rotationMode) {
+		default:
+		case Common::kRotationNormal:
+			virtualX = ((x - sourceX) * targetWidth + sourceWidth / 2) / sourceWidth;
+			virtualY = ((y - sourceY) * targetHeight + sourceHeight / 2) / sourceHeight;
+			break;
+		case Common::kRotation90:
+			virtualY = targetHeight - 1 - ((x - sourceX) * targetHeight + sourceWidth / 2) / sourceWidth;
+			virtualX = ((y - sourceY) * targetWidth + sourceHeight / 2) / sourceHeight;
+			break;
+		case Common::kRotation180:
+			virtualX = targetWidth - 1 - ((x - sourceX) * targetWidth + sourceWidth / 2) / sourceWidth;
+			virtualY = targetHeight - 1 - ((y - sourceY) * targetHeight + sourceHeight / 2) / sourceHeight;
+			break;
+		case Common::kRotation270:
+			virtualY = ((x - sourceX) * targetHeight + sourceWidth / 2) / sourceWidth;
+			virtualX = targetWidth - 1 - ((y - sourceY) * targetWidth + sourceHeight / 2) / sourceHeight;
+			break;
+		}
 
 		return Common::Point(CLIP<int>(virtualX, 0, targetWidth - 1),
 		                     CLIP<int>(virtualY, 0, targetHeight - 1));
@@ -199,6 +327,23 @@ protected:
 		return 1;
 	}
 
+	struct Insets {
+		int16 left;
+		int16 top;
+		int16 right;
+		int16 bottom;
+	};
+
+	/**
+	 * Returns the insets needed to get a safe area which does not interfere
+	 * with any system UI elements such as the notch or home indicator on mobile devices.
+	 *
+	 * @return The safe area insets
+	 */
+	virtual Insets getSafeAreaInsets() const {
+		return {0, 0, 0, 0};
+	}
+
 	/**
 	 * Called after the window has been updated with new dimensions.
 	 *
@@ -220,11 +365,28 @@ protected:
 			return;
 		}
 
-		populateDisplayAreaDrawRect(getDesiredGameAspectRatio(), getWidth() * getGameRenderScale(), getHeight() * getGameRenderScale(), _gameDrawRect);
+		// Compute a safe area rectangle out of the insets
+		Insets insets;
+		if (_ignoreGameSafeArea) {
+			insets = {0, 0, 0, 0};
+		} else {
+			insets = getSafeAreaInsets();
+		}
+		Common::Rect safeArea(insets.left, insets.top,
+				_windowWidth - insets.right,
+				_windowHeight - insets.bottom);
+
+		// Create a game draw rect using the safe are dimensions
+		populateDisplayAreaDrawRect(getDesiredGameAspectRatio(),
+				getWidth() * getGameRenderScale(), getHeight() * getGameRenderScale(),
+				safeArea, _gameDrawRect);
 
 		if (getOverlayHeight()) {
-			const frac_t overlayAspect = intToFrac(getOverlayWidth()) / getOverlayHeight();
-			populateDisplayAreaDrawRect(overlayAspect, getOverlayWidth(), getOverlayHeight(), _overlayDrawRect);
+			const int16 overlayWidth = getOverlayWidth(),
+			            overlayHeight = getOverlayHeight();
+			const frac_t overlayAspect = intToFrac(overlayWidth) / overlayHeight;
+			populateDisplayAreaDrawRect(overlayAspect, overlayWidth, overlayHeight,
+					Common::Rect(_windowWidth, _windowHeight),_overlayDrawRect);
 		}
 
 		if (_overlayInGUI) {
@@ -321,6 +483,16 @@ protected:
 	int _screenAlign;
 
 	/**
+	 * How the screens need to be rotated on the screen
+	 */
+	Common::RotationMode _rotationMode;
+
+	/**
+	 * Whether the safe area should be ignored for games
+	 */
+	bool _ignoreGameSafeArea;
+
+	/**
 	 * Whether the overlay (i.e. launcher, including the out-of-game launcher)
 	 * is visible or not.
 	 */
@@ -406,42 +578,54 @@ protected:
 	int _cursorX, _cursorY;
 
 private:
-	void populateDisplayAreaDrawRect(const frac_t displayAspect, int originalWidth, int originalHeight, Common::Rect &drawRect) const {
+	void populateDisplayAreaDrawRect(const frac_t displayAspect, int originalWidth, int originalHeight, const Common::Rect &safeArea, Common::Rect &drawRect) const {
 		int mode = getStretchMode();
+
+		Common::Rect rotatedSafeArea(safeArea);
+		int rotatedWindowWidth = _windowWidth,
+		    rotatedWindowHeight = _windowHeight;
+
+		if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
+			SWAP(rotatedSafeArea.left, rotatedSafeArea.top);
+			SWAP(rotatedSafeArea.right, rotatedSafeArea.bottom);
+			SWAP(rotatedWindowWidth, rotatedWindowHeight);
+		}
+		const int rotatedSafeWidth = rotatedSafeArea.width(),
+		    rotatedSafeHeight = rotatedSafeArea.height();
+
 		// Mode Center   = use original size, or divide by an integral amount if window is smaller than game surface
 		// Mode Integral = scale by an integral amount.
 		// Mode Fit      = scale to fit the window while respecting the aspect ratio
 		// Mode Stretch  = scale and stretch to fit the window without respecting the aspect ratio
 		// Mode Fit Force Aspect = scale to fit the window while forcing a 4:3 aspect ratio
-
 		int width = 0, height = 0;
 		if (mode == STRETCH_CENTER || mode == STRETCH_INTEGRAL || mode == STRETCH_INTEGRAL_AR) {
 			width = originalWidth;
 			height = intToFrac(width) / displayAspect;
-			if (width > _windowWidth || height > _windowHeight) {
-				int fac = 1 + MAX((width - 1) / _windowWidth, (height - 1) / _windowHeight);
+			if (width > rotatedSafeWidth || height > rotatedSafeHeight) {
+				int fac = 1 + MAX((width - 1) / rotatedSafeWidth, (height - 1) / rotatedSafeHeight);
 				width /= fac;
 				height /= fac;
 			} else if (mode == STRETCH_INTEGRAL) {
-				int fac = MIN(_windowWidth / width, _windowHeight / height);
+				int fac = MIN(rotatedSafeWidth / width, rotatedSafeHeight / height);
 				width *= fac;
 				height *= fac;
 			}  else if (mode == STRETCH_INTEGRAL_AR) {
 				int targetHeight = height;
-				int horizontalFac = _windowWidth / width;
+				int horizontalFac = rotatedSafeWidth / width;
 				do {
 					width = originalWidth * horizontalFac;
 					int verticalFac = (targetHeight * horizontalFac + originalHeight / 2) / originalHeight;
 					height = originalHeight * verticalFac;
 					--horizontalFac;
-				} while (horizontalFac > 0 && height > _windowHeight);
-				if (height > _windowHeight)
+				} while (horizontalFac > 0 && height > rotatedSafeHeight);
+				if (height > rotatedSafeHeight)
 					height = targetHeight;
 			}
 		} else {
-			frac_t windowAspect = intToFrac(_windowWidth) / _windowHeight;
-			width = _windowWidth;
-			height = _windowHeight;
+			frac_t windowAspect = intToFrac(rotatedSafeWidth) / rotatedSafeHeight;
+			width = rotatedSafeWidth;
+			height = rotatedSafeHeight;
 			if (mode == STRETCH_FIT_FORCE_ASPECT) {
 				frac_t ratio = intToFrac(4) / 3;
 				if (windowAspect < ratio)
@@ -456,37 +640,49 @@ private:
 			}
 		}
 
-		int alignX, alignY;
+		int16 alignX, alignY;
 		switch (_screenAlign & SCREEN_ALIGN_XMASK) {
 			default:
 			case SCREEN_ALIGN_CENTER:
-				alignX = ((_windowWidth - width) / 2);
+				alignX = ((rotatedWindowWidth - width) / 2);
 				break;
 			case SCREEN_ALIGN_LEFT:
 				alignX = 0;
 				break;
 			case SCREEN_ALIGN_RIGHT:
-				alignX = (_windowWidth - width);
+				alignX = (rotatedSafeArea.right - width);
 				break;
 		}
 
 		switch (_screenAlign & SCREEN_ALIGN_YMASK) {
 			default:
 			case SCREEN_ALIGN_MIDDLE:
-				alignY = ((_windowHeight - height) / 2);
+				alignY = ((rotatedWindowHeight - height) / 2);
 				break;
 			case SCREEN_ALIGN_TOP:
 				alignY = 0;
 				break;
 			case SCREEN_ALIGN_BOTTOM:
-				alignY = (_windowHeight - height);
+				alignY = (rotatedSafeArea.bottom - height);
 				break;
 		}
 
-		drawRect.left = alignX + _gameScreenShakeXOffset * width / getWidth();
-		drawRect.top = alignY + _gameScreenShakeYOffset * height / getHeight();
-		drawRect.setWidth(width);
-		drawRect.setHeight(height);
+		rotatedSafeArea.constrain(alignX, alignY, width, height);
+
+		alignX += _gameScreenShakeXOffset * width / getWidth();
+		alignY += _gameScreenShakeYOffset * height / getHeight();
+
+		if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
+			drawRect.top = alignX;
+			drawRect.left = alignY;
+			drawRect.setWidth(height);
+			drawRect.setHeight(width);
+		} else {
+			drawRect.left = alignX;
+			drawRect.top = alignY;
+			drawRect.setWidth(width);
+			drawRect.setHeight(height);
+		}
 	}
 };
 

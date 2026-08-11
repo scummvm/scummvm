@@ -161,6 +161,10 @@ BbdouSpecialCode::~BbdouSpecialCode() {
 	delete _inventory;
 	delete _cursor;
 	delete _bubble;
+
+	for (auto &it : _map) {
+		delete it._value;
+	}
 }
 
 typedef Common::Functor1Mem<OpCall&, void, BbdouSpecialCode> SpecialCodeFunctionI;

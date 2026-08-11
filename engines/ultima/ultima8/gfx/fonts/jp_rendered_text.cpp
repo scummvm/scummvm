@@ -19,19 +19,19 @@
  *
  */
 
-#include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/gfx/fonts/jp_rendered_text.h"
+
 #include "ultima/ultima8/gfx/fonts/shape_font.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gfx/render_surface.h"
 #include "ultima/ultima8/gfx/shape_frame.h"
-#include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gfx/texture.h"
+#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines, int width, int height,
+JPRenderedText::JPRenderedText(Common::List<PositionedText> &lines, int width, int height,
 		int vLead, ShapeFont *font, unsigned int fontNum)
 		: _lines(lines), _font(font), _fontNum(fontNum) {
 	_width = width;
@@ -53,34 +53,33 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 	_font->setPalette(pal);
 
 	uint32 color = TEX32_PACK_RGB(0, 0, 0);
-	Std::list<PositionedText>::const_iterator iter;
 
-	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
-		int line_x = x + iter->_dims.left;
-		int line_y = y + iter->_dims.top;
+	for (const auto &line : _lines) {
+		int line_x = x + line._dims.left;
+		int line_y = y + line._dims.top;
 
-		size_t textsize = iter->_text.size();
+		size_t textsize = line._text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			uint16 sjis = iter->_text[i] & 0xFF;
+			uint16 sjis = line._text[i] & 0xFF;
 			if (sjis >= 0x80) {
-				uint16 t = iter->_text[++i] & 0xFF;
+				uint16 t = line._text[++i] & 0xFF;
 				sjis += (t << 8);
 			}
 			uint16 u8char = shiftjis_to_ultima8(sjis);
 			surface->Paint(_font, u8char, line_x, line_y);
 
-			if (i == iter->_cursor) {
+			if (i == line._cursor) {
 				surface->fill32(color, line_x, line_y - _font->getBaseline(),
-				                1, iter->_dims.height());
+				                1, line._dims.height());
 			}
 
 			line_x += (_font->getFrame(u8char))->_width - _font->getHlead();
 		}
 
-		if (iter->_cursor == textsize) {
+		if (line._cursor == textsize) {
 			surface->fill32(color, line_x, line_y - _font->getBaseline(),
-			                1, iter->_dims.height());
+			                1, line._dims.height());
 		}
 	}
 
@@ -98,18 +97,16 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	const Palette *savepal = _font->getPalette();
 	_font->setPalette(pal);
 
-	Std::list<PositionedText>::const_iterator iter;
+	for (const auto &line : _lines) {
+		int line_x = x + line._dims.left;
+		int line_y = y + line._dims.top;
 
-	for (iter = _lines.begin(); iter != _lines.end(); ++iter) {
-		int line_x = x + iter->_dims.left;
-		int line_y = y + iter->_dims.top;
-
-		size_t textsize = iter->_text.size();
+		size_t textsize = line._text.size();
 
 		for (size_t i = 0; i < textsize; ++i) {
-			uint16 sjis = iter->_text[i] & 0xFF;
+			uint16 sjis = line._text[i] & 0xFF;
 			if (sjis >= 0x80) {
-				uint16 t = iter->_text[++i] & 0xFF;
+				uint16 t = line._text[++i] & 0xFF;
 				sjis += (t << 8);
 			}
 			uint16 u8char = shiftjis_to_ultima8(sjis);

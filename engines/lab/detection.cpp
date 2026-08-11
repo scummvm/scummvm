@@ -94,9 +94,9 @@ static const char *const directoryGlobs[] = {
 
 
 
-class LabMetaEngineDetection : public AdvancedMetaEngineDetection {
+class LabMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	LabMetaEngineDetection() : AdvancedMetaEngineDetection(labDescriptions, sizeof(ADGameDescription), lab_setting) {
+	LabMetaEngineDetection() : AdvancedMetaEngineDetection(labDescriptions, lab_setting) {
 		_maxScanDepth = 4;
 		_directoryGlobs = directoryGlobs;
 		_flags = kADFlagUseExtraAsHint;

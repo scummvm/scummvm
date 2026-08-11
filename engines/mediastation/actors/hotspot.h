@@ -1,0 +1,74 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef MEDIASTATION_HOTSPOT_H
+#define MEDIASTATION_HOTSPOT_H
+
+#include "mediastation/actor.h"
+#include "mediastation/events.h"
+#include "mediastation/mediascript/scriptvalue.h"
+#include "mediastation/mediascript/scriptconstants.h"
+
+namespace MediaStation {
+
+class HotspotActor : public SpatialEntity {
+public:
+	HotspotActor() : SpatialEntity(kActorTypeHotspot) {};
+
+	bool inBounds(const Common::Point &point);
+	virtual bool isVisible() const override { return false; }
+	virtual bool isActive() const override { return _isActive; }
+	virtual bool interactsWithMouse() const override { return isActive(); }
+
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+	virtual uint16 findActorToAcceptMouseEvents(
+		const Common::Point &point,
+		uint16 eventMask,
+		MouseActorState &state,
+		bool clipMouseEvents) override;
+	virtual uint16 findActorToAcceptKeyboardEvents(
+		uint16 charCode,
+		uint16 eventMask,
+		MouseActorState &state) override;
+
+	void activate();
+	void deactivate();
+
+	virtual void mouseDownEvent(const MouseEvent &event) override;
+	virtual void mouseUpEvent(const MouseEvent &event) override;
+	virtual void mouseEnteredEvent(const MouseEvent &event) override;
+	virtual void mouseExitedEvent(const MouseEvent &event) override;
+	virtual void mouseMovedEvent(const MouseEvent &event) override;
+	virtual void keyboardEvent(const KeyboardEvent &event) override;
+
+	uint _cursorResourceId = 0;
+
+private:
+	bool _isActive = false;
+	bool _getOffstageEvents = false;
+	Polygon _mouseActiveArea;
+};
+
+} // End of namespace MediaStation
+
+#endif

@@ -118,6 +118,10 @@ bool EventsClass::getEvent(Event &evt, int eventMask) {
 			evt.eventType = EVENT_KEYPRESS;
 			evt.kbd = _event.kbd;
 			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			evt.eventType = EVENT_CUSTOM_ACTIONSTART;
+			evt.customType = _event.customType;
+			break;
 		default:
 			break;
 		}
@@ -289,7 +293,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		DEALLOCATE(cursor);
 
 	// For Blue Force and Return to Ringworld, enable the question button when an inventory icon is selected
-	if (g_vm->getGameID() != GType_Ringworld)
+	if (g_vm->getGameID() == GType_BlueForce || g_vm->getGameID() == GType_Ringworld2)
 		T2_GLOBALS._uiElements._question.setEnabled(questionEnabled);
 }
 

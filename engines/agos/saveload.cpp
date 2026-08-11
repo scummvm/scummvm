@@ -35,8 +35,7 @@ namespace AGOS {
 // FIXME: This code counts savegames, but callers in many cases assume
 // that the return value + 1 indicates an empty slot.
 int AGOSEngine::countSaveGames() {
-	Common::StringArray filenames;
-	uint s, numSaveGames = 1;
+	uint numSaveGames = 1;
 	int slotNum;
 	bool marks[256];
 
@@ -45,20 +44,20 @@ int AGOSEngine::countSaveGames() {
 	Common::String tmp = genSaveName(998);
 	assert(tmp.size() >= 4 && tmp[tmp.size()-4] == '.');
 	Common::String prefix = Common::String(tmp.c_str(), tmp.size()-3) + "*";
+	Common::StringArray filenames = _saveFileMan->listSavefiles(prefix);
 
 	memset(marks, false, 256 * sizeof(bool));	//assume no savegames for this title
-	filenames = _saveFileMan->listSavefiles(prefix);
 
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file){
-		//Obtain the last 3 digits of the filename, since they correspond to the save slot
-		assert(file->size() >= 4);
-		slotNum = atoi(file->c_str() + file->size() - 3);
+	for (const auto &filename : filenames){
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		assert(filename.size() >= 4);
+		slotNum = atoi(filename.c_str() + filename.size() - 3);
 		if (slotNum >= 0 && slotNum < 256)
 			marks[slotNum] = true;	//mark this slot as valid
 	}
 
 	// locate first empty slot
-	for (s = 1; s < 256; s++) {
+	for (uint s = 1; s < 256; s++) {
 		if (marks[s])
 			numSaveGames++;
 	}
@@ -222,7 +221,7 @@ bool AGOSEngine_Waxworks::confirmOverWrite(WindowBlock *window) {
 }
 
 bool AGOSEngine_Elvira2::confirmOverWrite(WindowBlock *window) {
-	// Original verison never confirmed
+	// Original version never confirmed
 	return true;
 }
 
@@ -289,6 +288,11 @@ int16 AGOSEngine::matchSaveGame(const char *name, uint16 max) {
 	}
 
 	return -1;
+}
+
+void AGOSEngine::enterSaveLoadScreen(bool entering) {
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, entering);
+	getEventManager()->getKeymapper()->getKeymap("game-shortcuts")->setEnabled(!entering);
 }
 
 void AGOSEngine::userGame(bool load) {
@@ -716,9 +720,6 @@ void AGOSEngine_Simon1::userGame(bool load) {
 restart:;
 	i = userGameGetKey(&b, maxChar);
 
-	Common::Keymapper *keymapper = AGOSEngine::getEventManager()->getKeymapper();
-	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
-
 	if (i == 205)
 		goto get_out;
 	if (!load) {
@@ -838,8 +839,6 @@ get_out:;
 	disableFileBoxes();
 
 	_gameStoppedClock = getTime() - saveTime + _gameStoppedClock;
-
-	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 }
 
 int AGOSEngine_Simon1::userGameGetKey(bool *b, uint maxChar) {

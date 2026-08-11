@@ -46,8 +46,7 @@ public:
 
 private:
 	AvalancheEngine *_vm;
-	Audio::PCSpeaker *_speakerStream;
-	Audio::SoundHandle _speakerHandle;
+	Audio::PCSpeaker *_speaker;
 };
 
 } // End of namespace Avalanche

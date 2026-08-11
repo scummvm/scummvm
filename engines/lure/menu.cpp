@@ -575,20 +575,20 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 					++selectedIndex;
 					refreshFlag = true;
 				}
-			} else if (e.type() == Common::EVENT_KEYDOWN) {
-				uint16 keycode = e.event().kbd.keycode;
+			} else if (e.type() == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				uint16 keycode = e.event().customType;
 
-				if (((keycode == Common::KEYCODE_KP8) || (keycode == Common::KEYCODE_UP)) && (selectedIndex > 0)) {
+				if ((keycode == kActionIndexPrevious) && (selectedIndex > 0)) {
 					--selectedIndex;
 					refreshFlag = true;
-				} else if (((keycode == Common::KEYCODE_KP2) || (keycode == Common::KEYCODE_DOWN)) &&
+				} else if ((keycode == kActionIndexNext) &&
 						(selectedIndex < numEntries-1)) {
 					++selectedIndex;
 					refreshFlag = true;
-				} else if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
+				} else if (keycode == kActionIndexSelect) {
 					bailOut = true;
 					break;
-				} else if (keycode == Common::KEYCODE_ESCAPE) {
+				} else if (keycode == kActionEscape) {
 					selectedIndex = 0xffff;
 					bailOut = true;
 					break;

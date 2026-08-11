@@ -30,9 +30,11 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/xmaterial.h"
+#include "engines/wintermute/base/gfx/3deffect.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/video/video_theora_player.h"
 
 namespace Wintermute {
@@ -43,46 +45,56 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 Material::Material(BaseGame *inGame) : BaseNamedObject(inGame) {
+	memset(&_material, 0, sizeof(_material));
+	_textureFilename = nullptr;
 	_surface = nullptr;
 	_ownedSurface = false;
 	_sprite = nullptr;
 	_theora = nullptr;
+	_effect = nullptr;
+	_params = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 Material::~Material() {
+	SAFE_DELETE_ARRAY(_textureFilename);
 	if (_surface && _ownedSurface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
 	_sprite = nullptr; // ref only
 	_theora = nullptr;
+	_effect = nullptr;
+	_params = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool Material::invalidateDeviceObjects() {
-	// as long as we don't support D3DX effects, there is nothing to be done here
+	if (_effect)
+		return _effect->invalidateDeviceObjects();
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool Material::restoreDeviceObjects() {
+	if (_effect)
+		return _effect->restoreDeviceObjects();
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Material::setTexture(const Common::String &filename, bool adoptName) {
+bool Material::setTexture(const char *filename, bool adoptName) {
 	if (adoptName) {
-		setName(PathUtil::getFileName(filename).c_str());
+		setName(PathUtil::getFileNameWithoutExtension(filename).c_str());
 	}
 
-	_textureFilename = filename;
+	BaseUtils::setString(&_textureFilename, filename);
 
 	if (_surface && _ownedSurface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
-	_surface = _gameRef->_surfaceStorage->addSurface(_textureFilename);
+	_surface = _game->_surfaceStorage->addSurface(_textureFilename, false);
 	_ownedSurface = true;
 	_sprite = nullptr;
 
@@ -92,12 +104,12 @@ bool Material::setTexture(const Common::String &filename, bool adoptName) {
 //////////////////////////////////////////////////////////////////////////
 bool Material::setSprite(BaseSprite *sprite, bool adoptName) {
 	if (adoptName) {
-		setName(PathUtil::getFileName(sprite->getFilename()).c_str());
+		setName(PathUtil::getFileNameWithoutExtension(sprite->_filename).c_str());
 	}
 
-	_textureFilename = sprite->getFilename();
+	BaseUtils::setString(&_textureFilename, sprite->_filename);
 	if (_surface && _ownedSurface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
 	_surface = nullptr;
@@ -112,18 +124,37 @@ bool Material::setSprite(BaseSprite *sprite, bool adoptName) {
 //////////////////////////////////////////////////////////////////////////
 bool Material::setTheora(VideoTheoraPlayer *theora, bool adoptName) {
 	if (adoptName) {
-		setName(PathUtil::getFileName(theora->_filename).c_str());
+		setName(PathUtil::getFileNameWithoutExtension(theora->_filename).c_str());
 	}
-	_textureFilename = theora->_filename;
+	BaseUtils::setString(&_textureFilename, theora->_filename.c_str());
 
 	if (_surface && _ownedSurface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
 	_surface = nullptr;
 
 	_theora = theora;
 	_ownedSurface = false;
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Material::setEffect(Effect3D *effect, Effect3DParams *params, bool adoptName) {
+	if (!effect) {
+		_effect = nullptr;
+		_params = nullptr;
+		return true;
+	}
+
+	if (adoptName) {
+		setName(PathUtil::getFileNameWithoutExtension(effect->getFileName()).c_str());
+	}
+	BaseUtils::setString(&_textureFilename, effect->getFileName());
+
+	_effect = effect;
+	_params = params;
 
 	return true;
 }
@@ -139,47 +170,6 @@ BaseSurface *Material::getSurface() {
 	} else {
 		return _surface;
 	}
-}
-
-bool Material::loadFromX(XFileData *xobj, const Common::String &filename) {
-	XMaterialObject *material = xobj->getXMaterialObject();
-	if (!material)
-		return false;
-
-	_diffuse.r() = material->_colorR;
-	_diffuse.g() = material->_colorG;
-	_diffuse.b() = material->_colorB;
-	_diffuse.a() = material->_colorA;
-
-	_shininess = material->_power;
-
-	_specular.r() = material->_specularR;
-	_specular.g() = material->_specularG;
-	_specular.b() = material->_specularB;
-	_specular.a() = 1.0f;
-
-	_emissive.r() = material->_emissiveR;
-	_emissive.g() = material->_emissiveG;
-	_emissive.b() = material->_emissiveB;
-	_emissive.a() = 1.0f;
-
-	uint numChildren = 0;
-	xobj->getChildren(numChildren);
-
-	for (uint32 i = 0; i < numChildren; i++) {
-		XFileData xchildData;
-		XClassType objectType;
-		bool res = xobj->getChild(i, xchildData);
-		if (res) {
-			res = xchildData.getType(objectType);
-			if (res && objectType == kXClassTextureFilename) {
-				Common::String textureFilename = xchildData.getXTextureFilenameObject()->_filename;
-				setTexture(PathUtil::getDirectoryName(filename) + textureFilename);
-			}
-		}
-	}
-
-	return true;
 }
 
 } // namespace Wintermute

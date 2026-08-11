@@ -600,7 +600,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	case kFuncSaveVars:
 		debug(3, "kFuncSaveVars(%d)", param1);
 		{
-		Common::String filename = _targetName + Common::String::format(".%03d", param1);
+		Common::String filename = getSaveStateName(param1);
 		Common::WriteStream *stream = _saveFileMan->openForSaving(filename);
 		for (uint i = 0; i < 1000; i++) {
 			stream->writeUint16LE(_vars[i]);
@@ -611,7 +611,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	case kFuncLoadVars:
 		debug(3, "kFuncLoadVars(%d, %d, %d)", param1, param2, param3);
 		{
-		Common::String filename = _targetName + Common::String::format(".%03d", param1);
+		Common::String filename = getSaveStateName(param1);
 		Common::SeekableReadStream *stream = _saveFileMan->openForLoading(filename);
 		if (!stream) {
 			if (!_bookIni.hasKey(Common::String::format("%d", param1), "Data"))

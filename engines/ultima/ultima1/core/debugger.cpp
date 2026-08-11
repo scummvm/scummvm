@@ -27,7 +27,23 @@
 namespace Ultima {
 namespace Ultima1 {
 
-Debugger::Debugger() : Shared::Debugger() {
+static int strToInt(const char *s) {
+	if (!*s)
+		// No string at all
+		return 0;
+	else if (toupper(s[strlen(s) - 1]) != 'H')
+		// Standard decimal string
+		return atoi(s);
+
+	// Hexadecimal string
+	uint tmp = 0;
+	int read = sscanf(s, "%xh", &tmp);
+	if (read < 1)
+		error("strToInt failed on string \"%s\"", s);
+	return (int)tmp;
+}
+
+Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
 }
 

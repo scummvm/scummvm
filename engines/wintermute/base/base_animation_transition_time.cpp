@@ -27,30 +27,39 @@
 
 #include "engines/wintermute/base/base_animation_transition_time.h"
 #include "engines/wintermute/persistent.h"
+#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseAnimationTransitionTime::BaseAnimationTransitionTime(const Common::String &from, const Common::String &to, uint32 time) {
-	_animFrom = from;
-	_animTo = to;
+BaseAnimationTransitionTime::BaseAnimationTransitionTime(const char *from, const char *to, uint32 time) {
+	_animFrom = nullptr;
+	_animTo = nullptr;
+
+	BaseUtils::setString(&_animFrom, from);
+	BaseUtils::setString(&_animTo, to);
 	_time = time;
 }
 
 //////////////////////////////////////////////////////////////////////////
 BaseAnimationTransitionTime::BaseAnimationTransitionTime() {
+	_animFrom = nullptr;
+	_animTo = nullptr;
 	_time = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 BaseAnimationTransitionTime::~BaseAnimationTransitionTime() {
+	SAFE_DELETE_ARRAY(_animFrom);
+	SAFE_DELETE_ARRAY(_animTo);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseAnimationTransitionTime::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferString(TMEMBER(_animFrom));
-	persistMgr->transferString(TMEMBER(_animTo));
+	persistMgr->transferCharPtr(TMEMBER(_animFrom));
+	persistMgr->transferCharPtr(TMEMBER(_animTo));
 	persistMgr->transferUint32(TMEMBER(_time));
 
 	return true;

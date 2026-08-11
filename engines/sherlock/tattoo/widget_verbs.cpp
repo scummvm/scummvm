@@ -26,6 +26,8 @@
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -50,6 +52,10 @@ void WidgetVerbs::load(bool objectsOn) {
 	_outsideMenu = false;
 	_verbCommands.clear();
 	_selector = _oldSelector = -1;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-exit")->setEnabled(true);
 
 	// Check if we need to show options for the highlighted object
 	if (objectsOn) {
@@ -156,6 +162,7 @@ void WidgetVerbs::handleEvents() {
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	Common::String strLook = fixedText.getText(kFixedText_Look);
 	Common::String strTalk = fixedText.getText(kFixedText_Talk);
@@ -199,6 +206,9 @@ void WidgetVerbs::handleEvents() {
 					banishWindow();
 					events.clearEvents();
 
+					keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+					keymapper->getKeymap("tattoo")->setEnabled(true);
+
 					// Reset the active UI mode
 					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 				}
@@ -208,6 +218,9 @@ void WidgetVerbs::handleEvents() {
 			// Erase the menu
 			banishWindow();
 			events.clearEvents();
+
+			keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 
 			// See if they are activating the Look Command
 			if (!_verbCommands[_selector].compareToIgnoreCase(strLook)) {
@@ -275,10 +288,13 @@ void WidgetVerbs::handleEvents() {
 				}
 			}
 		}
-	} else if (ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
-		// User closing the menu with the ESC key
+	} else if (ui._action == kActionTattooExit) {
+		// User closing the menu with the exit action
 		banishWindow();
 		ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+
+		keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+		keymapper->getKeymap("tattoo")->setEnabled(true);
 	}
 }
 

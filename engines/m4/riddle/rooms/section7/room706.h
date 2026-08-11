@@ -33,9 +33,39 @@ public:
 	Room706() : Room() {}
 	~Room706() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	void conv706a();
+	void playCheckBrochureAnim(int32 trigger, const char *digiName);
+	void useWheelOnNiche(int32 trigger, int32 val1);
+
+	int32 _field78_mode = 0;
+	int32 _field7C_should = 0;
+
+	int32 _706eye3aSeries = 0;
+	int32 _706Monk1Series = 0;
+	int32 _706Monk2Series = 0;
+	int32 _706Monk3Series = 0;
+	int32 _706Monk4Series = 0;
+	int32 _706RipGoesDownStairsSeries = 0;
+	int32 _706RipGoesUpStairsSeries = 0;
+	int32 _ripChecksBrochureSeries = 0;
+	int32 _ripLooksDownSeries = 0;
+	int32 _ripShieldsFaceSeries = 0;
+	int32 _ripStepsDownSeries = 0;
+	int32 _ripTrekMedReachHandPos1Series = 0;
+
+	machine *_downToMazeMach = nullptr;
+	machine *_monkMach = nullptr;
+	machine *_prayerWheelMach = nullptr;
+	machine *_ripStairsMach = nullptr;
 };
+
 
 } // namespace Rooms
 } // namespace Riddle

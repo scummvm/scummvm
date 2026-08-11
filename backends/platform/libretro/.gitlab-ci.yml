@@ -30,6 +30,10 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/linux-x64.yml'
 
+  # Linux ARM 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/linux-aarch64.yml'
+
   # Linux 32-bit
   - project: 'libretro-infrastructure/ci-templates'
     file: '/linux-i686.yml'
@@ -97,6 +101,10 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/emscripten-static.yml'
 
+  # webOS 32-bit (LGTV)
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/webos-make.yml'
+
 # Stages for building
 stages:
   - build-prepare
@@ -131,6 +139,12 @@ libretro-build-windows-i686:
 libretro-build-linux-x64:
   extends:
     - .libretro-linux-x64-make-default
+    - .core-defs
+
+# Linux ARM 64-bit
+libretro-build-linux-aarch64:
+  extends:
+    - .libretro-linux-aarch64-make-default
     - .core-defs
 
 # Linux 32-bit
@@ -184,6 +198,8 @@ android-x86:
 
 # iOS
 libretro-build-ios-arm64:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-ios-arm64-make-default
     - .core-defs
@@ -196,6 +212,8 @@ libretro-build-ios9:
     
 # tvOS
 libretro-build-tvos-arm64:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-tvos-arm64-make-default
     - .core-defs
@@ -260,4 +278,10 @@ libretro-build-miyoo-arm32:
 libretro-build-emscripten:
   extends:
     - .libretro-emscripten-static-retroarch-master
+    - .core-defs
+
+# webOS 32-bit
+libretro-build-webos-armv7a:
+  extends:
+    - .libretro-webos-armv7a-make-platform-webos
     - .core-defs

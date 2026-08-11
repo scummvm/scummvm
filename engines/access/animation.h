@@ -42,7 +42,6 @@ private:
 public:
 	Animation *_animStart;
 	Common::Point _base;
-	int _frameScale;
 public:
 	AnimationManager(AccessEngine *vm);
 	~AnimationManager();
@@ -68,6 +67,16 @@ public:
 	 * Update the timing of all currently active animation
 	 */
 	void updateTimers();
+
+	/**
+	 * Remove the last animation timer
+	 */
+	void popBackTimer() { if (_animationTimers.size()) _animationTimers.pop_back(); }
+
+	/**
+	 * True if there is an anim running
+	 */
+	bool hasTimer() const { return !_animationTimers.empty(); };
 };
 
 class AnimationResource {
@@ -77,7 +86,7 @@ public:
 	AnimationResource(AccessEngine *vm, Resource *res);
 	~AnimationResource();
 
-	int getCount() { return _animations.size(); }
+	int getCount() const { return _animations.size(); }
 	Animation *getAnimation(int idx) { return _animations[idx]; }
 };
 
@@ -92,11 +101,16 @@ private:
 	void anim4();
 	void animNone();
 	void anim7();
+	void anim8();
+	void anim9();
+	void anim10();
+	void anim11();
+	void anim12();
 
-	AnimationFrame *calcFrame();
-	AnimationFrame *calcFrame1();
-	void setFrame(AnimationFrame *frame);
-	void setFrame1(AnimationFrame *frame);
+	const AnimationFrame *calcFrame();
+	const AnimationFrame *calcFrame1();
+	void setFrame(const AnimationFrame *frame);
+	void setFrame1(const AnimationFrame *frame, int16 xoff = 0, int16 yoff = 0);
 public:
 	int _type;
 	int _scaling;
@@ -116,7 +130,7 @@ class AnimationFrame {
 public:
 	int _baseX, _baseY;
 	int _frameDelay;
-	Common::Array<AnimationFramePart *> _parts;
+	Common::Array<AnimationFramePart> _parts;
 public:
 	AnimationFrame(Common::SeekableReadStream *stream, int startOffset);
 	~AnimationFrame();

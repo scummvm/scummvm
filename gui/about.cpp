@@ -31,6 +31,9 @@
 #include "gui/about.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/widgets/scrollbar.h"
+#include "gui/animation/FluidScroll.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
@@ -65,7 +68,7 @@ enum {
 
 static const char *const copyright_text[] = {
 "",
-"C0""Copyright (C) 2001-2024 The ScummVM Team",
+"C0""Copyright (C) 2001-2026 The ScummVM Team",
 "C0""https://www.scummvm.org",
 "",
 "C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
@@ -84,11 +87,23 @@ static const char *const gpl_text[] = {
 
 #include "gui/credits.h"
 
-AboutDialog::AboutDialog()
+AboutDialog::AboutDialog(bool inGame)
 	: Dialog(10, 20, 300, 174),
-	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
+	  _scrollPos(0.0f), _scrollTime(0), _willClose(false), _autoScroll(true), _inGame(inGame),
+	  _isDragging(false), _dragLastY(0) {
 
+	_fluidScroller = new FluidScroller();	
+	_scrollbar = nullptr;
+	_closeButton = nullptr;
 	reflowLayout();
+}
+
+AboutDialog::~AboutDialog() {
+	delete _fluidScroller;
+}
+
+void AboutDialog::buildLines() {
+	_lines.clear();
 
 	int i;
 
@@ -99,8 +114,13 @@ AboutDialog::AboutDialog()
 	version += gScummVMVersion;
 	addLine(version);
 
+	#ifdef RELEASE_BUILD
+	// I18N: built with <compiler>
+	Common::U32String date = Common::U32String::format(_("(built with %s)"), gScummVMCompiler);
+	#else
 	// I18N: built on <build date> with <compiler>
 	Common::U32String date = Common::U32String::format(_("(built on %s with %s)"), gScummVMBuildDate, gScummVMCompiler);
+	#endif
 	addLine(Common::U32String("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
@@ -142,7 +162,7 @@ AboutDialog::AboutDialog()
 	extensionsInfo += _("CPU extensions support:");
 	addLine(extensionsInfo);
 	Common::U32String compiledExtensionsList("C0");
-	compiledExtensionsList += Common::U32String::format("SSE2(%S) AVX2(%S) NEON(%S)",
+	compiledExtensionsList += Common::U32String::format("SSE2: %S, AVX2: %S, NEON: %S",
 		extensionSupportString[sse2Support].c_str(),
 		extensionSupportString[avx2Support].c_str(),
 		extensionSupportString[neonSupport].c_str());
@@ -155,15 +175,36 @@ AboutDialog::AboutDialog()
 	engines += _("Available engines:");
 	addLine(engines);
 
-	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
-	PluginList::const_iterator iter = plugins.begin();
-	for (; iter != plugins.end(); ++iter) {
+	Common::StringArray enginesDetected;
+
+	uint32 beginTime = g_system->getMillis(true);
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
+	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
+	if (!_inGame) PluginMan.unloadDetectionPlugin();
+#endif
+	if (!_inGame) PluginMan.loadFirstPlugin();
+	do {
+		uint32 currentTime = g_system->getMillis(true);
+		if (currentTime - beginTime > 1500) {
+			// Too slow
+			enginesDetected.clear();
+			break;
+		}
+		const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+		for (const auto &plugin : plugins) {
+			enginesDetected.push_back(plugin->getName());
+		}
+	} while (!_inGame && PluginMan.loadNextPlugin());
+
+	if (!_inGame) PluginMan.loadDetectionPlugin();
+
+	for (auto &engine : enginesDetected) {
 		Common::String str;
 
-		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
+		const Plugin *p = EngineMan.findDetectionPlugin(engine);
 
 		if (!p) {
-			warning("Cannot find plugin for %s", (*iter)->getName());
+			if (!_inGame) warning("Cannot find plugin for %s", engine.c_str());
 			continue;
 		}
 
@@ -184,6 +225,14 @@ AboutDialog::AboutDialog()
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(Common::U32String(credits[i], Common::kUtf8));
+
+	if (_scrollbar) {
+		_scrollbar->_numEntries = _lines.size() * _lineHeight;
+		int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+		_scrollbar->_entriesPerPage = _h - buttonHeight - 8 - 3 * _yOff;
+		_scrollbar->_singleStep = _lineHeight;
+		_scrollbar->recalc();
+	}
 }
 
 void AboutDialog::addLine(const Common::U32String &str) {
@@ -196,10 +245,11 @@ void AboutDialog::addLine(const Common::U32String &str) {
 		Common::U32String renderStr(strBeginItr, str.end());
 
 		Common::U32StringArray wrappedLines;
-		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff, wrappedLines);
+		// Leave some margin inside the rectangle
+		g_gui.getFont().wordWrapText(renderStr, _textRect.width() - 2 * _xOff, wrappedLines);
 
-		for (Common::U32StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
-			_lines.push_back(format + *i);
+		for (const auto &line : wrappedLines) {
+			_lines.push_back(format + line);
 		}
 	}
 }
@@ -207,9 +257,10 @@ void AboutDialog::addLine(const Common::U32String &str) {
 
 void AboutDialog::open() {
 	_scrollTime = g_system->getMillis() + kScrollStartDelay;
-	_scrollPos = 0;
+	_scrollPos = 0.0f;
 	_willClose = false;
 
+	_fluidScroller->reset();
 	Dialog::open();
 }
 
@@ -217,19 +268,28 @@ void AboutDialog::close() {
 	Dialog::close();
 }
 
-void AboutDialog::drawDialog(DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void AboutDialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
-	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
+	// Draw text inside this rectangle to mimic a viewport
+	Common::Rect r = _textRect;
+	r.translate(_x, _y);
+	g_gui.theme()->drawWidgetBackground(r, ThemeEngine::kWidgetBackgroundBorder);
+	setTextDrawableArea(r);
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
 	// TODO: Maybe prerender all of the text into another surface,
 	//       and then simply compose that over the screen surface
 	//       in the right way. Should be even faster...
-	const int firstLine = _scrollPos / _lineHeight;
-	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, (uint32)_lines.size());
-	int y = _y + _yOff - (_scrollPos % _lineHeight);
+	float visualScrollPos = _fluidScroller->getVisualPosition();
+	int firstLine = (int)floorf(visualScrollPos / (float)_lineHeight);
+	int lastLine = (int)floorf((visualScrollPos + (float)_textRect.height()) / (float)_lineHeight) + 1;
+	firstLine = CLIP(firstLine, 0, (int)_lines.size());
+	lastLine = CLIP(lastLine, 0, (int)_lines.size());
+
+	float yOffset = visualScrollPos - (float)firstLine * (float)_lineHeight;
+	int y = _y + _textRect.top - (int)yOffset;
 
 	for (int line = firstLine; line < lastLine; line++) {
 		Common::U32String str = _lines[line];
@@ -283,15 +343,28 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 
 		Common::U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
-			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
-			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
-			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+			// Center the text line within the _textRect
+			g_gui.theme()->drawText(Common::Rect(_x + _textRect.left + _xOff, y, _x + _textRect.right - _xOff, y + g_gui.theme()->getFontHeight()),
+									renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
+									ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}
 }
 
 void AboutDialog::handleTickle() {
 	const uint32 t = g_system->getMillis();
+
+	if (_fluidScroller->update(t, _scrollPos)) {
+		if (_scrollbar) {
+			_scrollbar->_currentPos = (int)_scrollPos;
+			_scrollbar->recalc();
+		}
+		drawDialog(kDrawLayerForeground);
+		// Update scrollTime to prevent jump (if auto-scroll resumes)
+		_scrollTime = t;
+		return;
+	}
+
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (_autoScroll && scrollOffset > 0) {
 		int modifiers = g_system->getEventManager()->getModifierState();
@@ -306,36 +379,77 @@ void AboutDialog::handleTickle() {
 		_scrollTime = t;
 
 		if (_scrollPos < 0) {
-			_scrollPos = 0;
-		} else if ((uint32)_scrollPos > _lines.size() * _lineHeight) {
-			_scrollPos = 0;
+			_scrollPos = 0.0f;
+		} else if (_scrollPos > (float)_lines.size() * (float)_lineHeight) {
+			_scrollPos = 0.0f;
 			_scrollTime += kScrollStartDelay;
+		}
+
+		_fluidScroller->setPosition(_scrollPos);
+
+		if (_scrollbar) {
+			_scrollbar->_currentPos = (int)_scrollPos;
+			_scrollbar->recalc();
 		}
 		drawDialog(kDrawLayerForeground);
 	}
 }
 
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
-	// Close upon any mouse click
-	close();
+	if (_isDragging) {
+		_isDragging = false;
+		_fluidScroller->startFling();
+	}
+	Dialog::handleMouseUp(x, y, button, clickCount);
+}
+
+void AboutDialog::handleMouseDown(int x, int y, int button, int clickCount) {
+	if (button == 1 && !findWidget(x, y)) {
+		_isDragging = true;
+		_dragLastY = y;
+		_autoScroll = false;
+		_fluidScroller->stopAnimation();
+	}
+	Dialog::handleMouseDown(x, y, button, clickCount);
+}
+
+void AboutDialog::handleMouseMoved(int x, int y, int button) {
+	if (_isDragging) {
+		int deltaY = _dragLastY - y;
+		_dragLastY = y;
+
+		if (deltaY != 0) {
+			_autoScroll = false;
+			_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
+			_scrollPos = _fluidScroller->getVisualPosition();
+
+			if (_scrollbar) {
+				_scrollbar->_currentPos = (int)_scrollPos;
+				_scrollbar->recalc();
+			}
+
+			drawDialog(kDrawLayerForeground);
+		}
+	} else {
+		Dialog::handleMouseMoved(x, y, button);
+	}
 }
 
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
-	const int stepping = 5 * _lineHeight * direction;
-
-	if (stepping == 0)
-		return;
-
 	_autoScroll = false;
+	_fluidScroller->handleMouseWheel(direction);
+}
 
-	int newScrollPos = _scrollPos + stepping;
-
-	if (newScrollPos < 0) {
-		_scrollPos = 0;
-	} else if ((uint32)newScrollPos < _lines.size() * _lineHeight) {
-		_scrollPos = newScrollPos;
+void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	if (cmd == kSetPositionCmd) {
+		_scrollPos = (float)data;
+		_autoScroll = false;
+		_fluidScroller->stopAnimation();
+		_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
+		drawDialog(kDrawLayerForeground);
+	} else if (cmd == kCloseCmd) {
+		close();
 	}
-	drawDialog(kDrawLayerForeground);
 }
 
 void AboutDialog::handleKeyDown(Common::KeyState state) {
@@ -346,44 +460,76 @@ void AboutDialog::handleKeyDown(Common::KeyState state) {
 		return;
 	}
 
-	if (state.ascii)
+	if (state.keycode == Common::KEYCODE_ESCAPE)
 		_willClose = true;
 }
 
 void AboutDialog::handleKeyUp(Common::KeyState state) {
-	if (state.ascii && _willClose)
+	if (state.keycode == Common::KEYCODE_ESCAPE && _willClose)
 		close();
 }
 
 void AboutDialog::reflowLayout() {
 	Dialog::reflowLayout();
 	int i;
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+
+	int16 screenW, screenH;
+	const Common::Rect screenArea = g_system->getSafeOverlayArea(&screenW, &screenH);
 
 	_xOff = g_gui.xmlEval()->getVar("Globals.About.XOffset", 5);
 	_yOff = g_gui.xmlEval()->getVar("Globals.About.YOffset", 5);
 	int outerBorder = g_gui.xmlEval()->getVar("Globals.About.OuterBorder");
 
-	_w = screenW - 2 * outerBorder;
-	_h = screenH - 2 * outerBorder;
+	_w = screenArea.width() - 2 * outerBorder;
+	_h = screenArea.height() - 2 * outerBorder;
 
 	_lineHeight = g_gui.getFontHeight() + 3;
 
-	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*_xOff;
-	_w = 0;
-	for (i = 0; i < ARRAYSIZE(credits); i++) {
-		int tmp = g_gui.getStringWidth(credits[i]) + 5;
-		if (_w < tmp && tmp <= maxW) {
-			_w = tmp;
-		}
-	}
-	_w += 2*_xOff;
+	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 15);
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 80);
 
-	// Center the dialog
+	// Heuristic to compute 'optimal' dialog width
+	int maxW = _w - 2 * _xOff - scrollbarWidth - 10;
+	int optimalW = 0;
+	for (i = 0; i < ARRAYSIZE(credits); i++) {
+			int tmp = g_gui.getStringWidth(credits[i]) + 5;
+			if (optimalW < tmp && tmp <= maxW)
+				optimalW = tmp;
+	}
+	_w = optimalW + 2 * _xOff + scrollbarWidth + 20;
+
+	// Make sure it's not wider than max width
+	_w = MIN<uint16>(_w, screenArea.width() - 2 * outerBorder);
+
+	// Calculate the rectangle for the text area
+	_textRect = Common::Rect(_xOff, _yOff, _w - scrollbarWidth - 3 * _xOff, _h - buttonHeight - 8 - 3 * _yOff);
+
+	if (!_scrollbar)
+		_scrollbar = new ScrollBarWidget(this, _w - scrollbarWidth - _xOff, _yOff, scrollbarWidth, _h - buttonHeight - 8 - 3 * _yOff);
+	else {
+		_scrollbar->setPos(_w - scrollbarWidth - _xOff, _yOff);
+		_scrollbar->setSize(scrollbarWidth, _h - buttonHeight - 8 - 3 * _yOff);
+	}
+
+	if (!_closeButton)
+		_closeButton = new ButtonWidget(this, _w - buttonWidth - 16 - _xOff, _h - buttonHeight - 2 * _yOff, buttonWidth, buttonHeight, _("Close"), Common::U32String(), kCloseCmd);
+	else {
+		_closeButton->setPos(_w - buttonWidth - 16 - _xOff, _h - buttonHeight - 2 * _yOff);
+		_closeButton->setSize(buttonWidth, buttonHeight);
+	}
+
+	// Center the dialog in the screen
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
+
+	// Make it fit in the safe area
+	screenArea.constrain(_x, _y, _w, _h);
+
+	buildLines();
+
+	int maxScroll = MAX(0, (int)(_lines.size() * _lineHeight) - _textRect.height());
+	_fluidScroller->setBounds((float)maxScroll, _textRect.height(), (float)_scrollbar->_singleStep);
 }
 
 
@@ -417,27 +563,33 @@ enum {
 	kSpSpace,
 	kSpLast
 };
-class EE  {
-public:
-	EE();
-	~EE();
 
-	void run();
+class EEWidget final : public Widget, public CommandSender, public Graphics::ManagedSurface {
+public:
+	EEWidget(GuiObject *boss, const Common::String &name);
+	~EEWidget();
+
+	bool wantsFocus() override { return true; }
+	void reflowLayout() override;
+	void drawWidget() override;
+	void handleTickle() override;
+	bool handleKeyUp(Common::KeyState state) override;
+	bool handleKeyDown(Common::KeyState state) override;
+
+	void addDirtyRect(const Common::Rect &r) override;
 
 private:
-	Graphics::Surface _back;
 	int _hits;
-	bool _rmode; // animation after loosing
+	bool _rmode; // animation after losing
 	int _score[2];
 
 	bool _soundEnabled;
-	bool _shouldQuit;
 
 	int _rcnt; //last 20 cycles of round
 	int _winner; //who wins the point or serving
 	int _tvelx, _tvely;
 
-	int _x[2], _y[2], _px[2];
+	int _xx[2], _yy[2], _px[2];
 	int _frame[2], _frameindex[2];
 	int _rebound[2];
 	int _bx, _by, _pbx, _pby, _tbx, _tby, _bvelx, _bvely;
@@ -462,17 +614,13 @@ private:
 
 	Graphics::Surface _sp[kSpLast];
 
-	Graphics::PixelFormat _format;
-	int _windowX, _windowY, _windowW, _windowH;
+	int _offsetX, _offsetY;
 	float _scale;
 	bool _inited;
 
 	uint32 _colorBlack, _colorBlue, _colorOrange, _colorKey;
 
-	void cls(bool update = true);
 	void loadSounds();
-	void processKeyUp(Common::Event &e);
-	void processKeyDown(Common::Event &e);
 	void getPos();
 	void setwinner();
 	void resetpt();
@@ -483,8 +631,8 @@ private:
 	void computer0();
 	void computer1();
 	void init();
-	void draw(int sn, int x, int y);
-	void doMenu(Common::Event &e);
+	void drawEE(int sn, int x, int y);
+	bool doMenu(Common::KeyState state);
 	void putshapes();
 	void game();
 	void playSound(int d);
@@ -493,13 +641,29 @@ private:
 	void genField();
 };
 
+class EEDialog : public Dialog {
+public:
+	EEDialog() : Dialog("EEDialog") {
+		_ee = new EEWidget(this, "EEDialog.Widget");
+		new ButtonWidget(this, "EEDialog.Close", _("Close"), Common::U32String(), kCloseCmd);
+	}
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override {
+		switch (cmd) {
+		case kCloseCmd:
+			close();
+		}
+	}
+
+private:
+	EEWidget *_ee;
+};
+
+
 bool EEHandler::handleKeyDown(Common::KeyState &state) {
 	if (state.ascii == 'v') {
-		EE *ee = new EE();
-		ee->run();
-		delete ee;
-
-		g_gui.redrawFull();
+		EEDialog dlg;
+		dlg.runModal();
 
 		return true;
 	}
@@ -507,79 +671,47 @@ bool EEHandler::handleKeyDown(Common::KeyState &state) {
 	return false;
 }
 
-EE::EE() {
+EEWidget::EEWidget(GuiObject *boss, const Common::String &name)
+	: Widget(boss, name), CommandSender(boss) {
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
+
+	_type = kEEWidget;
+
 	init();
-
-	_scale = 1.0;
-	_windowW = 320;
-	_windowH = 200;
-	_windowX = _windowY = 0;
-
-	_format = g_system->getOverlayFormat();
-
-	_colorBlack = _colorBlue = _colorOrange = _colorKey = 0;
 }
 
-EE::~EE() {
+EEWidget::~EEWidget() {
 	for (int i = 0; i < kSpLast; i++)
 		_sp[i].free();
 }
 
-void EE::cls(bool update) {
-	_back.fillRect(Common::Rect(0, 0, _windowW, _windowH), _colorBlack);
-
-	if (update)
-		g_system->copyRectToOverlay(_back.getPixels(), _back.pitch, _windowX, _windowY, _windowW, _windowH);
-}
-
-void EE::run() {
-	if (!_inited)
-		return;
-
-	_shouldQuit = false;
+void EEWidget::reflowLayout() {
+	Widget::reflowLayout();
 
 	setupGraphics();
+}
 
-	init();
-
-	while (!_shouldQuit) {
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RETURN_TO_LAUNCHER:
-				_shouldQuit = true;
-				break;
-			case Common::EVENT_SCREEN_CHANGED:
-				if (g_gui.checkScreenChange())
-					setupGraphics();
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				break;
-			case Common::EVENT_KEYDOWN:
-				processKeyDown(event);
-				break;
-			case Common::EVENT_KEYUP:
-				processKeyUp(event);
-				break;
-			default:
-				break;
-			}
-		}
-
-		game();
-		putshapes();
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
+void EEWidget::drawWidget() {
+	if (!empty()) {
+		g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), *this, Graphics::ALPHA_OPAQUE);
 	}
+}
+
+void EEWidget::addDirtyRect(const Common::Rect &r) {
+	// TODO: Partially invalidate the widget
+        markAsDirty();
+}
+
+void EEWidget::handleTickle() {
+	game();
+	putshapes();
 }
 
 const int polecol[] = {0, 1, 2, 3, 3, 4, 6, 7, 9, 14};
 const int jump[] = {-4, -4, -3, -3, -3, -3, -2, -2, -2, -2, -2, -1, -1, -1, -1, -1, -1, 0, 0,
 					0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4};
 
-void EE::loadSounds() {
+void EEWidget::loadSounds() {
 #if 0
 	if ($.isEmptyObject(sounds)) {
 		for (i = 0; i < snNames.length; i++) {
@@ -591,105 +723,107 @@ void EE::loadSounds() {
 #endif
 }
 
-void EE::processKeyUp(Common::Event &e) {
-	switch (e.kbd.keycode) {
+bool EEWidget::handleKeyUp(Common::KeyState state) {
+	switch (state.keycode) {
 	case Common::KEYCODE_LEFT: // left
 		_keymove[1][kDirLeft] = 0;
-		break;
+		return true;
 	case Common::KEYCODE_RIGHT: // right
 		_keymove[1][kDirRight] = 0;
-		break;
+		return true;
 	case Common::KEYCODE_UP: // top
 		_keymove[1][kDirUp] = 0;
-		break;
+		return true;
 	case Common::KEYCODE_a: //a
 		_keymove[0][kDirLeft] = 0;
-		break;
+		return true;
 	case Common::KEYCODE_d: // d
 		_keymove[0][kDirRight] = 0;
-		break;
+		return true;
 	case Common::KEYCODE_w: // w
 		_keymove[0][kDirUp] = 0;
-		break;
+		return true;
 	default:
-		break;
+		return false;
 	}
 }
 
-void EE::processKeyDown(Common::Event &e) {
+bool EEWidget::handleKeyDown(Common::KeyState state) {
 	if (_mode == kModeMenu) {
-		doMenu(e);
-		return;
+		return doMenu(state);
 	}
 
-	switch (e.kbd.keycode) {
+	switch (state.keycode) {
 	case Common::KEYCODE_LEFT: // left
 		_keymove[1][kDirLeft] = -2;
-		break;
+		return true;
 	case Common::KEYCODE_RIGHT: // right
 		_keymove[1][kDirRight] = 2;
-		break;
+		return true;
 	case Common::KEYCODE_UP: // top
 		_keymove[1][kDirUp]= 1;
-		break;
+		return true;
 	case Common::KEYCODE_a: //a
 		_keymove[0][kDirLeft] = -2;
-		break;
+		return true;
 	case Common::KEYCODE_d: // d
 		_keymove[0][kDirRight] = 2;
-		break;
+		return true;
 	case Common::KEYCODE_w: // w
 		_keymove[0][kDirUp] = 1;
-		break;
+		return true;
 	case Common::KEYCODE_ESCAPE:
 		_mode = kModeMenu;
-		break;
+		return true;
 	case Common::KEYCODE_p: // p
 		_keymove[0][kDirRight] = _keymove[0][kDirLeft] = _keymove[0][kDirUp] = 0;
 		_mode = (_mode == kModePlay) ? kModePause : kModePlay;
-		break;
+		return true;
 	case Common::KEYCODE_r: // r
-		if (_mode == kModePlay)
+		if (_mode == kModePlay) {
 			init();
+			return true;
+		}
 		break;
 	case Common::KEYCODE_s: // s
 		if (!_soundEnabled)
 			loadSounds();
 		_soundEnabled = !_soundEnabled;
-		break;
+		return true;
 	default:
 		break;
 	}
+	return false;
 }
 
-void EE::getPos() {
+void EEWidget::getPos() {
 	for (int i = 0; i < 2; i++) {
 		if (_keymove[i][kDirUp] && _frameindex[i] == -1)
 			_frameindex[i] = 0;
 		int velx = _keymove[i][kDirLeft] + _keymove[i][kDirRight];
-		int tx = _x[i] + velx;
+		int tx = _xx[i] + velx;
 		int bnd = 3 + i * 155;
 		if (velx > 0) {
 			if (tx < bnd + 119)
-				_x[i] = tx;
+				_xx[i] = tx;
 			else
-				_x[i] = bnd + 119;
+				_xx[i] = bnd + 119;
 		} else if (tx > bnd) {
-			_x[i] = tx;
+			_xx[i] = tx;
 		} else {
-			_x[i] = bnd;
+			_xx[i] = bnd;
 		}
 
 		if (_frameindex[i] == -2) {
-			_y[i] = 173;
+			_yy[i] = 173;
 			_frame[i] = 0;
 			_frameindex[i] = -1;
 		}
 		if (_frameindex[i] == -1) {
 			if (velx != 0) {
-				if (abs(_px[i] - _x[i]) > 4) {
+				if (abs(_px[i] - _xx[i]) > 4) {
 					_frame[i] ^= 1;
-					_px[i] = _x[i];
+					_px[i] = _xx[i];
 				}
 			} else {
 				_frame[i] = 0;
@@ -698,9 +832,9 @@ void EE::getPos() {
 			_frame[i] = 2 + (_frameindex[i] > 18);
 
 			if (_frameindex[i] == 19)
-				_y[i] -= 4;
+				_yy[i] -= 4;
 
-			_y[i] += jump[_frameindex[i]++];
+			_yy[i] += jump[_frameindex[i]++];
 
 			if (_frameindex[i] > 37)
 				_frameindex[i] = -2;
@@ -708,7 +842,7 @@ void EE::getPos() {
 	}
 }
 
-void EE::setwinner() {
+void EEWidget::setwinner() {
 	if (_hits > 2) {
 		_winner = 1 - _hitter;
 	} else {
@@ -719,7 +853,7 @@ void EE::setwinner() {
 	_tvelx = abs(_bvelx) >> 3;
 }
 
-void EE::resetpt() {
+void EEWidget::resetpt() {
 	_keymove[0][kDirUp] = 0;
 	_keymove[1][kDirUp] = 0;
 	getPos();
@@ -743,7 +877,7 @@ void EE::resetpt() {
 	putshapes();
 }
 
-void EE::calcscore() {
+void EEWidget::calcscore() {
 	if (_winner == _server) {
 		if (_soundEnabled && _mode != kModeMenu) {
 			playSound(kSndPoint);
@@ -771,8 +905,8 @@ void EE::calcscore() {
 	_sstage = 0;
 }
 
-int EE::destination(int pl, int destx, int tol) {
-	int xp = _x[pl];
+int EEWidget::destination(int pl, int destx, int tol) {
+	int xp = _xx[pl];
 	if (abs(xp - destx) < tol) {
 		_keymove[pl][kDirLeft] = 0;
 		_keymove[pl][kDirRight] = 0;
@@ -790,7 +924,7 @@ int EE::destination(int pl, int destx, int tol) {
 
 int reset = false;
 
-bool EE::moveball() {
+bool EEWidget::moveball() {
 	if (!reset) {
 		_bx = 4096; _by = 8640; _bvelx = 125; _bvely = -259;
 		reset = true;
@@ -855,10 +989,10 @@ bool EE::moveball() {
 	return hitfloor;
 }
 
-void EE::docollisions() {
+void EEWidget::docollisions() {
 	for (int i = 0; i < 2; i++) {
-		int dx = _tbx - _x[i] - i * 7;
-		int dy = (_tby - _y[i]) >> 1;
+		int dx = _tbx - _xx[i] - i * 7;
+		int dy = (_tby - _yy[i]) >> 1;
 		int dist = (dx >> 2) * dx + dy * dy;
 		if (dist < 110) {
 			int rndoff = 8 - (_rnd & 15);
@@ -922,7 +1056,7 @@ void EE::docollisions() {
 }
 
 
-void EE::computer0() {
+void EEWidget::computer0() {
 	_keymove[0][kDirUp] = 0;
 	if (_tby < _bytop) _bytop = _tby;
 	int rndoff = 5 - _rnd % 10;
@@ -982,7 +1116,7 @@ void EE::computer0() {
 		else
 			destx = _tbx + (_bvelx >> 6) * ystep - 4;
 
-		int dx = _x[0] - _tbx;
+		int dx = _xx[0] - _tbx;
 
 		if (abs(_bvelx) < 128 && _bytop < 75) {
 			if ((_tby < 158) ^ (_bvelx < 0))
@@ -992,10 +1126,10 @@ void EE::computer0() {
 		} else {
 			if (_tby > 130) {
 				if (abs(dx) > 6 && abs(_bvelx) < 1024) {
-					destination(0, _tbx - ((_x[0] - 60) >> 3), 3);
+					destination(0, _tbx - ((_xx[0] - 60) >> 3), 3);
 				} else {
-					destination(0, _tbx + rndoff + ((_x[0] - 60) >> 3), 10);
-					_keymove[0][kDirUp] = _x[0] < 105 && (_hitter != 0 || _hits < 2);
+					destination(0, _tbx + rndoff + ((_xx[0] - 60) >> 3), 10);
+					_keymove[0][kDirUp] = _xx[0] < 105 && (_hitter != 0 || _hits < 2);
 				}
 			} else {
 				if (destx < 3)
@@ -1009,7 +1143,7 @@ void EE::computer0() {
 		destination(0, 56, 8);
 }
 
-void EE::computer1() {
+void EEWidget::computer1() {
 	_keymove[1][kDirUp] = 0;
 	if (_tby < _bytop) _bytop = _tby;
 	int rndoff = 5 - _rnd % 10;
@@ -1069,7 +1203,7 @@ void EE::computer1() {
 		else
 			destx = _tbx + (_bvelx >> 6) * ystep - 4;
 
-		int dx = _x[1] - _tbx;
+		int dx = _xx[1] - _tbx;
 
 		if (abs(_bvelx) < 128 && _bytop < 75) {
 			if ((_tby < 158) ^ (_bvelx < 0))
@@ -1079,10 +1213,10 @@ void EE::computer1() {
 		} else {
 			if (_tby > 130) {
 				if (abs(dx) > 6 && abs(_bvelx) < 1024)
-					destination(1, _tbx + ((_x[1] - 218) >> 3), 3);
+					destination(1, _tbx + ((_xx[1] - 218) >> 3), 3);
 				else {
-					destination(1, _tbx - rndoff - ((_x[1] - 218) >> 3), 10);
-					_keymove[1][kDirUp] = _x[1] > 175 && (_hitter != 1 || _hits < 2);
+					destination(1, _tbx - rndoff - ((_xx[1] - 218) >> 3), 10);
+					_keymove[1][kDirUp] = _xx[1] > 175 && (_hitter != 1 || _hits < 2);
 				}
 			} else {
 				if (destx < 158)
@@ -1096,13 +1230,13 @@ void EE::computer1() {
 		destination(1, 211, 8);
 }
 
-void EE::init() {
+void EEWidget::init() {
 	_rnd = 0;
 	_starter = _winner = _hits = 0;
 	_bvelx = _bvely = 0;
 	_tbx = 200; _tby = 20;
 	_bytop = 200;
-	_x[0] = 64; _x[1] = 226;
+	_xx[0] = 64; _xx[1] = 226;
 
 	_air = false;
 
@@ -1110,8 +1244,8 @@ void EE::init() {
 	_tvelx = _tvely = 0;
 
 	for (int i = 0; i < 2; i++) {
-		_px[i] = _x[i];
-		_y[i] = 173;
+		_px[i] = _xx[i];
+		_yy[i] = 173;
 		_frameindex[i] = -1;
 		_rebound[i] = 0;
 		_score[i] = 0;
@@ -1143,61 +1277,49 @@ void EE::init() {
 
 	_rmode = false;
 
-	_shouldQuit = false;
-
 	_inited = true;
 }
 
-void EE::draw(int sn, int x1, int y1) {
+void EEWidget::drawEE(int sn, int x1, int y1) {
 	int x = x1 * _scale;
 	int y = y1 * _scale;
 
-	_back.copyRectToSurfaceWithKey(_sp[sn].getPixels(), _sp[sn].pitch, x, y, _sp[sn].w, _sp[sn].h, _colorKey);
-	g_system->copyRectToOverlay(_back.getBasePtr(x, y), _back.pitch, _windowX + x, _windowY + y, _sp[sn].w, _sp[sn].h);
+	copyRectToSurfaceWithKey(_sp[sn].getPixels(), _sp[sn].pitch, _offsetX + x, _offsetY + y, _sp[sn].w, _sp[sn].h, _colorKey);
 }
 
-void EE::putshapes() {
+void EEWidget::putshapes() {
 	int sprite;
 
-	cls(false);
-
-	if (_oCoords) {
-		int obx = _obx * _scale, oby = _oby * _scale;
-		int olx = _olx * _scale, oly = _oly * _scale;
-		int orx = _orx * _scale, ory = _ory * _scale;
-		g_system->copyRectToOverlay(_back.getBasePtr(obx, oby), _back.pitch, _windowX + obx, _windowY + oby, _sp[kSpB1].w, _sp[kSpB1].h);
-		g_system->copyRectToOverlay(_back.getBasePtr(olx, oly), _back.pitch, _windowX + olx, _windowY + oly, _sp[kSpL1].w, _sp[kSpL1].h);
-		g_system->copyRectToOverlay(_back.getBasePtr(orx, ory), _back.pitch, _windowX + orx, _windowY + ory, _sp[kSpR1].w, _sp[kSpR1].h);
-	}
+	clear(_colorBlack);
 
 	sprite = kSpB1 + (_tbx / 16) % 4;
-	draw(sprite, _tbx, _tby);
+	drawEE(sprite, _tbx, _tby);
 	_obx = _tbx;
 	_oby = _tby;
 
-	if (_y[0] < 173) {
+	if (_yy[0] < 173) {
 		sprite = kSpL3;
 	} else {
-		if ((_x[0] / 8) % 2)
+		if ((_xx[0] / 8) % 2)
 			sprite = kSpL1;
 		else
 			sprite = kSpL2;
 	}
-	draw(sprite, _x[0], _y[0]);
-	_olx = _x[0];
-	_oly = _y[0];
+	drawEE(sprite, _xx[0], _yy[0]);
+	_olx = _xx[0];
+	_oly = _yy[0];
 
-	if (_y[1] < 173) {
+	if (_yy[1] < 173) {
 		sprite = kSpR3;
 	} else {
-		if ((_x[1] / 8) % 2)
+		if ((_xx[1] / 8) % 2)
 			sprite = kSpR1;
 		else
 			sprite = kSpR2;
 	}
-	draw(sprite, _x[1], _y[1]);
-	_orx = _x[1];
-	_ory = _y[1];
+	drawEE(sprite, _xx[1], _yy[1]);
+	_orx = _xx[1];
+	_ory = _yy[1];
 
 	_oCoords = true;
 
@@ -1210,24 +1332,24 @@ void EE::putshapes() {
 		154, 107, 159, 199
 	};
 
-	uint32 color1 = _back.format.RGBToColor(5 * 16, 7 * 16, 8 * 16);
-	uint32 color2 = _back.format.RGBToColor(6 * 16, 8 * 16, 12 * 16);
+	uint32 color1 = format.RGBToColor(5 * 16, 7 * 16, 8 * 16);
+	uint32 color2 = format.RGBToColor(6 * 16, 8 * 16, 12 * 16);
 
 	const int *ptr = frames;
 	for (int i = 0; i < 6; i++, ptr += 4) {
-		Common::Rect r(ptr[0] * _scale, ptr[1] * _scale, ptr[2] * _scale, ptr[3] * _scale);
-		_back.fillRect(r, (i < 5 ? color1 : color2));
-		g_system->copyRectToOverlay(_back.getBasePtr(r.left, r.top), _back.pitch, _windowX + r.left, _windowY + r.top, r.width(), r.height());
+		Common::Rect r(_offsetX + ptr[0] * _scale, _offsetY + ptr[1] * _scale,
+		               _offsetX + ptr[2] * _scale, _offsetY + ptr[3] * _scale);
+		fillRect(r, (i < 5 ? color1 : color2));
 	}
 
 	for (int i = 0; i < 2; i++) {
 		int startx = i ? 264 : 32;
 
-		draw(kSpNum0 + _score[i] / 10, startx, 1);
+		drawEE(kSpNum0 + _score[i] / 10, startx, 1);
 		startx += 8;
-		draw(kSpNum0 + _score[i] % 10, startx, 1);
+		drawEE(kSpNum0 + _score[i] % 10, startx, 1);
 		startx += 8;
-		draw(_server == i ? kSpStar : kSpSpace, startx, 1);
+		drawEE(_server == i ? kSpStar : kSpSpace, startx, 1);
 	}
 
 	for (int i = 0; i < 6; i++) {
@@ -1235,45 +1357,48 @@ void EE::putshapes() {
 		int sy = i == 0 ? 2 : 20;
 
 		int code = i == 0 ? kSpCode1 : i - 1 == _opt ? kSpCode1h + i : kSpCode1 + i;
-		draw(code, sx, sy + i * 10);
+		drawEE(code, sx, sy + i * 10);
 
 		if (_mode != kModeMenu)
 			break;
 	}
 }
 
-void EE::doMenu(Common::Event &e) {
-	switch (e.kbd.keycode) {
+bool EEWidget::doMenu(Common::KeyState state) {
+	switch (state.keycode) {
 	case Common::KEYCODE_UP:
 		_opt--;
 		if (_opt < 0)
 			_opt = 4;
-		break;
+		return true;
 
 	case Common::KEYCODE_DOWN:
 		_opt = (_opt + 1) % 5;
-		break;
+		return true;
 
 	case Common::KEYCODE_RETURN:
 		if (_opt < 4) {
 			_opts = _opt;
 			_mode = kModePlay;
 
-			cls();
+			clear(_colorBlack);
 		} else {
-			_shouldQuit = true;
+			sendCommand(kCloseCmd, 0);
 		}
-		break;
+		return true;
 
 	case Common::KEYCODE_ESCAPE:
-		_shouldQuit = true;
-		break;
+		sendCommand(kCloseCmd, 0);
+		return true;
+
 	default:
 		break;
 	}
+
+	return false;
 }
 
-void EE::game() {
+void EEWidget::game() {
 	if (_mode == kModePlay || _mode == kModeMenu) {
 		_rnd = (_rnd * 5 + 1) % 32767;
 
@@ -1310,7 +1435,7 @@ void EE::game() {
 	}
 }
 
-void EE::playSound(int sound) {
+void EEWidget::playSound(int sound) {
 	// FIXME
 }
 
@@ -1352,47 +1477,40 @@ const char *const codes =
 "Dvhgkm#Ztrsm|ffrs(#$%&'#$%&O}pes&}{1$M{tiq$%&'#$M{tiq${y5(Fsrv||hv%&'#$"
 "Hutxxxjx'~v2%N|udr%&'#Gtsw}wiw&}{1$Hutxxxjx'#$%&'(#$%W|qw$%&'(#$%&'";
 
-void EE::setupGraphics() {
+void EEWidget::setupGraphics() {
 	// Determine scale factor
-	float scaleX = g_system->getOverlayWidth() * 0.9 / 320;
-	float scaleY = g_system->getOverlayHeight() * 0.9 / 200;
-	_scale = MIN(scaleX, scaleY);
+	_scale = MIN(_w / 320.0f, _h / 200.0f);
+	_offsetX = (_w - (int)(320.0f * _scale)) / 2;
+	_offsetY = (_h - (int)(200.0f * _scale)) / 2;
 
-	_windowW = 320 * _scale;
-	_windowH = 200 * _scale;
-	_windowX = (g_system->getOverlayWidth() > 320) ? (g_system->getOverlayWidth() - _windowW) / 2 : 0;
-	_windowY = (g_system->getOverlayHeight() > 200) ? (g_system->getOverlayHeight() - _windowH) / 2 : 0;
+	create(_w, _h, g_gui.theme()->getPixelFormat());
 
-	_format = g_system->getOverlayFormat();
-	_back.create(_windowW, _windowH, _format);
-
-	_colorBlack  = _format.RGBToColor( 0 * 16,  0 * 16,  0 * 16);
-	_colorBlue   = _format.RGBToColor( 5 * 16,  7 * 16,  8 * 16);
-	_colorOrange = _format.RGBToColor(15 * 16,  7 * 16,  8 * 16);
+	_colorBlack  = format.RGBToColor( 0 * 16,  0 * 16,  0 * 16);
+	_colorBlue   = format.RGBToColor( 5 * 16,  7 * 16,  8 * 16);
+	_colorOrange = format.RGBToColor(15 * 16,  7 * 16,  8 * 16);
 	_colorKey    = _colorBlack;
 
-	cls();
+	clear(_colorBlack);
 
 	uint32 palette[12];
 	for (int i = 0; i < 10 * 3; i += 3)
-		palette[i / 3] = _back.format.RGBToColor(spcolors[i] * 16, spcolors[i + 1] * 16, spcolors[i + 2] * 16);
+		palette[i / 3] = format.RGBToColor(spcolors[i] * 16, spcolors[i + 1] * 16, spcolors[i + 2] * 16);
 
 	Graphics::Surface tmp;
-	int w = 25, h = 21;
-	tmp.create(w, h, g_system->getOverlayFormat());
+	tmp.create(25, 21, format);
 
 	for (int s = 0; s < 4; s++) {
 
 		int posy = 0, dy = 1;
 		if (s & 2) { posy = 20; dy = -1; }
 
-		for (int y = 0; y < h; y++, posy += dy) {
+		for (int y = 0; y < tmp.h; y++, posy += dy) {
 			uint32 pixels = ball[y];
 
 			int posx = 0, dx = 1;
 			if (s & 1) { posx = 24; dx = -1; }
 
-			for (int x = 0; x < w; x++, posx += dx) {
+			for (int x = 0; x < tmp.w; x++, posx += dx) {
 				int color = pixels & 1;
 
 				pixels >>= 1;
@@ -1401,26 +1519,24 @@ void EE::setupGraphics() {
 			}
 		}
 
-		Graphics::Surface *tmp2 = tmp.scale(w * _scale, h * _scale);
+		Graphics::Surface *tmp2 = tmp.scale(tmp.w * _scale, tmp.h * _scale);
 		_sp[kSpB1 + s].copyFrom(*tmp2);
 		tmp2->free();
 		delete tmp2;
 	}
 	tmp.free();
 
-	w = 32;
-	h = 26;
-	tmp.create(w, h, g_system->getOverlayFormat());
+	tmp.create(32, 26, format);
 
 	for (int s = 0; s < 6; s++) {
-		for (int y = 0; y < h; y++) {
+		for (int y = 0; y < tmp.h; y++) {
 			const uint32 *ptr = (y < 19) ? &head[y * 2] : &legs[(y - 19 + (s % 3) * 7) * 2];
 			uint32 pixels = *ptr++;
 
 			int posx = 0, dx = 1;
 			if (s > 2) { posx = 31; dx = -1; }
 
-			for (int x = 0; x < w; x++, posx += dx) {
+			for (int x = 0; x < tmp.w; x++, posx += dx) {
 				int color = pixels & 3;
 
 				pixels >>= 2;
@@ -1432,19 +1548,17 @@ void EE::setupGraphics() {
 			}
 		}
 
-		Graphics::Surface *tmp2 = tmp.scale(w * _scale, h * _scale);
+		Graphics::Surface *tmp2 = tmp.scale(tmp.w * _scale, tmp.h * _scale);
 		_sp[kSpL1 + s].copyFrom(*tmp2);
 		tmp2->free();
 		delete tmp2;
 	}
 	tmp.free();
 
-	w = 23 * 8;
-	h = 10;
-	tmp.create(w, h, g_system->getOverlayFormat());
+	tmp.create(23 * 8, 10, format);
 	for (int hl = 0; hl < 2; hl++) {
 		for (int i = 0; i < 6; i++) {
-			tmp.fillRect(Common::Rect(0, 0, w, h), hl == 1 ? _colorBlue : _colorKey);
+			tmp.fillRect(Common::Rect(0, 0, tmp.w, tmp.h), hl == 1 ? _colorBlue : _colorKey);
 
 			char buf[100];
 			int c;
@@ -1454,9 +1568,9 @@ void EE::setupGraphics() {
 
 			int c1 = i == 0 ? _colorOrange : hl == 1 ? _colorKey : _colorBlue;
 
-			_font.drawString(&tmp, buf, 0, 1, w, c1, Graphics::kTextAlignLeft, 0, false);
+			_font.drawString(&tmp, buf, 0, 1, tmp.w, c1, Graphics::kTextAlignLeft, 0, false);
 
-			Graphics::Surface *tmp2 = tmp.scale(w * _scale, h * _scale, true);
+			Graphics::Surface *tmp2 = tmp.scale(tmp.w * _scale, tmp.h * _scale, true);
 			_sp[kSpCode1 + hl * 6 + i].copyFrom(*tmp2);
 			tmp2->free();
 			delete tmp2;
@@ -1464,11 +1578,9 @@ void EE::setupGraphics() {
 	}
 	tmp.free();
 
-	w = 8;
-	h = 10;
-	tmp.create(w, h, g_system->getOverlayFormat());
+	tmp.create(8, 10, format);
 	for (int i = 0; i < 12; i++) {
-		tmp.fillRect(Common::Rect(0, 0, w, h), _colorKey);
+		tmp.fillRect(Common::Rect(0, 0, tmp.w, tmp.h), _colorKey);
 
 		char buf[2];
 		buf[0] = i == 10 ? '*' : i == 11 ? ' ' : '0' + i;
@@ -1476,9 +1588,9 @@ void EE::setupGraphics() {
 
 		int c = i > 9 ? _colorBlue : _colorOrange;
 
-		_font.drawString(&tmp, buf, 0, 1, w, c, Graphics::kTextAlignLeft, 0, false);
+		_font.drawString(&tmp, buf, 0, 1, tmp.w, c, Graphics::kTextAlignLeft, 0, false);
 
-		Graphics::Surface *tmp2 = tmp.scale(w * _scale, h * _scale, true);
+		Graphics::Surface *tmp2 = tmp.scale(tmp.w * _scale, tmp.h * _scale, true);
 		_sp[kSpNum0 + i].copyFrom(*tmp2);
 		tmp2->free();
 		delete tmp2;

@@ -27,18 +27,17 @@
 
 /* Detection tables for Adibou 3 / Adiboo 3 series. */
 /* This Game uses the DEV7 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV7_Information */
+/* These games are part of the Adibou series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Adibou_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADIBOU3_H
 #define GOB_DETECTION_TABLES_ADIBOU3_H
 
-//#include "common/translation.h"  // Make release checker happy
-
 // -- French: Adibou 3 --
 
 {
-	{
+	{ // Supplied by BJNFNE
 		"adibou3",
-		_s("Missing game code"), // Adibou 3 3.00 (Engine: DEV7 version 1.2.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou 3 3.00 (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY1s("b3_common.stk", "8819bc86b7af241ed336b1a84e34de07", 499731),
 		FR_FRA,
 		kPlatformWindows,
@@ -46,13 +45,12 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
-
 {
-	{
+	{ // Supplied by BJNFNE
 		"adibou3",
-		_s("Missing game code"), // Adibou 3 3.00 (Engine: DEV7 version 1.2.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou 3 3.00 (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY1s("b3_common.stk", "8819bc86b7af241ed336b1a84e34de07", 499731),
 		FR_FRA,
 		kPlatformWindows,
@@ -60,13 +58,29 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 {
 	{
+		"adibou3",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou 3 3.00 (Engine: DEV7 version 1.2.0.0)
+		AD_ENTRY1s("b3_common.stk", "c8d8db01b33ded9ecba2e371ca188a4c", 501767),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"b3_common.stk", "b3_storyboard.obc", 0
+},
+
+// -- German: Adiboo 3 --
+
+{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.3.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.3.0.0)
 		AD_ENTRY1s("b3_common.stk", "13360fa1d7298c2f06abeba244485a45", 552447),
 		DE_DEU,
 		kPlatformWindows,
@@ -74,16 +88,14 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
-// -- German: Adiboo 3 --
-
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.00 (Engine: DEV7 version 1.2.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.00 (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY1s("b3_common.stk", "e3ed6837d19cc0ed19275f3196de2ae3", 523246),
 		DE_DEU,
 		kPlatformWindows,
@@ -91,14 +103,14 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 (Engine: DEV7 version 1.3.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.10 (Engine: DEV7 version 1.30b)
 		AD_ENTRY1s("b3_common.stk", "2293ff44a5bb7a36f5219443f0ede5cf", 554569),
 		DE_DEU,
 		kPlatformWindows,
@@ -106,28 +118,13 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
-},
-
-{
-	{
-
-		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 Demo (Engine: DEV7 version 1.3.0.0)
-		AD_ENTRY1s("b3_common.stk", "0c7624de252a9be3c67616f298ecb34a", 558632),
-		DE_DEU,
-		kPlatformWindows,
-		ADGF_UNSUPPORTED | ADGF_DEMO,
-		GUIO0()
-	},
-	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 (shipped with English Application) (Engine: DEV7 version 1.3.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.10 (shipped with English Application) (Engine: DEV7 version 1.30b)
 		AD_ENTRY1s("b3_common.stk", "fc3a619b44366ded7027bc458d34be6a", 554569),
 		DE_DEU,
 		kPlatformWindows,
@@ -135,13 +132,13 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.3.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.30b)
 		AD_ENTRY1s("b3_common.stk", "814d8edb015969618dbcc670b18fcfb4", 554569),
 		DE_DEU,
 		kPlatformWindows,
@@ -149,16 +146,16 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 // -- English: Adiboo 3 --
 
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.00 (Engine: DEV7 version 1.2.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.00 (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY1s("b3_common.stk", "3f34b0172396321d0c5e37c53b4de005", 523852),
 		EN_ANY,
 		kPlatformWindows,
@@ -166,16 +163,30 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
+},
+{
+	{
+
+		"adibou3",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.10 (shipped with Music Application) (Engine: DEV7 version 1.3.0.0)
+		AD_ENTRY1s("b3_common.stk", "4409c79e9005f46bf4298dc0273c9d12", 552743),
+		EN_ANY,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 // -- Dutch: Adiboo 3 --
 
 {
-	{
+	{ // Supplied by Coby Cat
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.00 (Published by Transposia) (Engine: DEV7 version 1.2.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.00 (Published by Transposia) (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY1s("b3_common.stk", "2650174b2b45ae776ebccc02073fea1f", 523647),
 		NL_NLD,
 		kPlatformWindows,
@@ -183,7 +194,178 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
+},
+
+// -- Rusian: Антошка 3 --
+
+{
+	{
+
+		"adibou3",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Антошка 3 3.10 (Published by Akella) (Engine: DEV7 version 1.3.0.0)
+		AD_ENTRY1s("b3_common.stk", "9795c08d44b7d79dd6ecfdb415892fbf", 553095),
+		RU_RUS,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"b3_common.stk", "b3_storyboard.obc", 0
+},
+
+// -- Demos --
+
+{
+	{
+
+		"adibou3",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 Preview Demo (Engine: DEV7 version 1.2.0.0)
+		AD_ENTRY1s("VmdLauncher.stk", "89a55e998a03063e35c92c8b5c76c4f4", 88596675),
+		EN_ANY,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"VmdLauncher.stk", "VmdLauncher.obc", 0
+},
+{
+	{ // Supplied by BJNFNE
+
+		"adibou3",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adiboo 3 3.10 Demo (Engine: DEV7 version 1.30b)
+		AD_ENTRY1s("b3_common.stk", "0c7624de252a9be3c67616f298ecb34a", 558632),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"b3_common.stk", "b3_storyboard.obc", 0
+},
+{
+	{
+
+		"adibou3",
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou 3 3.10 Du pareil au même (Engine: DEV7 version 1.30b)
+		AD_ENTRY1s("b3_common.stk", "c0a485db0c58462693fe3da3c8eaa084", 559844),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"b3_common.stk", "b3_storyboard.obc", 0
+},
+
+// -- Add-ons : Read/Count 4-5 years --
+
+{
+	{
+		"adibou3readcount45",
+		"", // "Lecture/Calcul 4-5 ans"
+		AD_ENTRY2s("BMA45F300.BCD1", "0db3f04047a68606ca184037825dbedb", 284,
+				   "BFR45F300.BCD1",  "dbcbff695b14b80dc44f1b06b92d56b5", 301),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+// -- Add-ons : Read/Count 5-6 years --
+
+{
+	{
+		"adibou3readcount56",
+		"", // "Read/Count 5-6 age"
+		AD_ENTRY2s("BFR56A300.BCD1", "b6ab820cf0b8948731a634e5aea18a1a", 293,
+				   "BMA56A300.BCD1",  "9e2e7087a004cb0d4114ff07a3d1b41a", 285),
+		EN_ANY,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : Read/Count 6-7 years --
+
+{
+	{
+		"adibou3readcount67",
+		"", // "Lesen/Rechnen 6-7 Jahre"
+		AD_ENTRY2s("BFR67D300.BCD1", "819f13cfaebf01a036131c60f6618d91", 303,
+				   "BMA67D300.BCD1",  "14d86a43a14ffc2a464e9c02946f0ed6", 302),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : Nature & Sciences --
+
+{
+	{
+		"adibou3sciences",
+		"", // "L'île volante 4-7 ans"
+		AD_ENTRY1s("bsc47F310.bcd1", "e30b6a3fbe993dc867161d5465b7efba", 286),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+{
+	{
+		"adibou3sciences",
+		"", // "Das schwebende Land (Natur & Technik 4-7 Jahre)"
+		AD_ENTRY1s("bsc47D310.bcd1", "1ea4391027ea3d412577c13cad808249", 307),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : Music --
+{
+	{
+		"adibou3music",
+		"", // Die rätselhafte Musikmaschine (Musik 4-7 Jahre)
+		AD_ENTRY1s("bmu47D310.bcd1", "cac210f0c5c7d13667a84072d2f3947c", 324),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : Anglais --
+{
+	{
+		"adibou3anglais",
+		"", // Das Königreich Hocus Pocus (Englisch 4-7 Jahre)
+		AD_ENTRY1s("blg47D310.bcd1", "cbbb2ab6399776ae3ec14c4c2edb1a96", 327),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
 },
 
 #endif // GOB_DETECTION_TABLES_ADIBOU3_H

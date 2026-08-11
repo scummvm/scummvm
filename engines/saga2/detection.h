@@ -40,6 +40,8 @@ enum GameFileTypes {
 };
 
 struct SAGA2GameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 
 	int gameId;

@@ -23,7 +23,12 @@
 #include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/duckman/illusions_duckman.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/config-manager.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -44,19 +49,21 @@ Common::Language IllusionsEngine::getGameLanguage() const {
 
 } // End of namespace Illusions
 
-class IllusionsMetaEngine : public AdvancedMetaEngine {
+class IllusionsMetaEngine : public AdvancedMetaEngine<Illusions::IllusionsGameDescription> {
 public:
 	const char *getName() const override {
 		return "illusions";
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Illusions::IllusionsGameDescription *desc) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	void removeSaveState(const char *target, int slot) const override;
+	bool removeSaveState(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -70,9 +77,90 @@ bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportCreationDate);
 }
 
-void IllusionsMetaEngine::removeSaveState(const char *target, int slot) const {
+bool IllusionsMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
+	return g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+Common::KeymapArray IllusionsMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Illusions;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "illusions-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+
+	Common::Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("RETURN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("BACKSPACE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("CRSRUP", _("Move cursor up"));
+	act->setCustomEngineActionEvent(kActionCursorUp);
+	act->addDefaultInputMapping("JOY_UP");
+	act->addDefaultInputMapping("UP");
+	act->allowKbdRepeats();
+	gameKeyMap->addAction(act);
+
+	act = new Action("CRSRDOWN", _("Move cursor down"));
+	act->setCustomEngineActionEvent(kActionCursorDown);
+	act->addDefaultInputMapping("JOY_DOWN");
+	act->addDefaultInputMapping("DOWN");
+	act->allowKbdRepeats();
+	gameKeyMap->addAction(act);
+
+	act = new Action("CRSRLEFT", _("Move cursor left"));
+	act->setCustomEngineActionEvent(kActionCursorLeft);
+	act->addDefaultInputMapping("JOY_LEFT");
+	act->addDefaultInputMapping("LEFT");
+	act->allowKbdRepeats();
+	gameKeyMap->addAction(act);
+
+	act = new Action("CRSRRIGHT", _("Move cursor right"));
+	act->setCustomEngineActionEvent(kActionCursorRight);
+	act->addDefaultInputMapping("JOY_RIGHT");
+	act->addDefaultInputMapping("RIGHT");
+	act->allowKbdRepeats();
+	gameKeyMap->addAction(act);
+
+	act = new Action("ABORT", _("Abort"));
+	act->setCustomEngineActionEvent(kActionAbort);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("SPACE");
+	gameKeyMap->addAction(act);
+
+	act = new Action("INVENTORY", _("Open inventory"));
+	act->setCustomEngineActionEvent(kActionInventory);
+	act->addDefaultInputMapping("TAB");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeyMap->addAction(act);
+
+	act = new Action("ENCHEAT", _("Enable cheat mode"));
+	act->setCustomEngineActionEvent(kActionCheatMode);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 int IllusionsMetaEngine::getMaximumSaveSlot() const {
@@ -87,11 +175,11 @@ SaveStateList IllusionsMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (const auto &file : filenames) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+		int slotNum = atoi(file.c_str() + file.size() - 3);
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(file.c_str());
 			if (in) {
 				if (Illusions::IllusionsEngine::readSaveHeader(in, header) == Illusions::IllusionsEngine::kRSHENoError) {
 					saveList.push_back(SaveStateDescriptor(this, slotNum, header.description));
@@ -124,8 +212,7 @@ SaveStateDescriptor IllusionsMetaEngine::querySaveMetaInfos(const char *target, 
 	return SaveStateDescriptor();
 }
 
-Common::Error IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Illusions::IllusionsGameDescription *gd = (const Illusions::IllusionsGameDescription *)desc;
+Common::Error IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const Illusions::IllusionsGameDescription *gd) const {
 	switch (gd->gameId) {
 	case Illusions::kGameIdBBDOU:
 		*engine = new Illusions::IllusionsEngine_BBDOU(syst, gd);

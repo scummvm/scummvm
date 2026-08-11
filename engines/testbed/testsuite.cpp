@@ -121,25 +121,28 @@ void Testsuite::displayMessage(const Common::String &textToDisplay, const char *
 	prompt.runModal();
 }
 
-Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const Common::Point &pt, bool flag) {
-	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
+Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const Common::Point &pt, WriteFlags flags) {
 	uint fillColor = kColorBlack;
 	uint textColor = kColorWhite;
+	if (flags & kWriteRGBColors) {
+		Graphics::PixelFormat pf = g_system->getScreenFormat();
+		fillColor = pf.RGBToColor(0, 0, 0);
+		textColor = pf.RGBToColor(255, 255, 255);
+	}
+
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
 
 	int height = font.getFontHeight();
 	int width = g_system->getWidth();
 
 	Common::Rect rect(pt.x, pt.y, pt.x + width, pt.y + height);
 
-	if (flag) {
-		Graphics::PixelFormat pf = g_system->getScreenFormat();
-		fillColor = pf.RGBToColor(0, 0, 0);
-		textColor = pf.RGBToColor(255, 255, 255);
-	}
-
 	g_system->fillScreen(rect, fillColor);
 
 	Graphics::Surface *screen = g_system->lockScreen();
+	if (flags & kWriteDrawFrame) {
+		screen->frameRect(Common::Rect(width, g_system->getHeight()), textColor);
+	}
 	font.drawString(screen, textToDisplay, rect.left, rect.top, screen->w, textColor, Graphics::kTextAlignCenter);
 	g_system->unlockScreen();
 	g_system->updateScreen();

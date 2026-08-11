@@ -202,7 +202,7 @@ void Credits::execute() {
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
-	for (int i = 0; i < 6; ++i) {
+	for (int16 i = 0; i < 6; ++i) {
 		int color = 63 - (6 * i);
 
 		_G(out)->raster_col(6 - i, color, 0, 0);

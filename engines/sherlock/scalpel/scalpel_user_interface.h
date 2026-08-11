@@ -25,6 +25,8 @@
 #include "common/scummsys.h"
 #include "sherlock/user_interface.h"
 
+#include "common/events.h"
+
 namespace Sherlock {
 
 class Inventory;
@@ -60,12 +62,15 @@ class ScalpelUserInterface: public UserInterface {
 	friend class Sherlock::Talk;
 private:
 	char _keyPress;
+	Common::CustomEventType _actionPress;
 	int _lookHelp;
 	int _help, _oldHelp;
-	int _key, _oldKey;
+	int _key;
+	Common::CustomEventType _action, _oldAction;
 	int _temp, _oldTemp; // button number (0-11)
 	int _oldLook;
 	bool _keyboardInput;
+	bool _actionInput;
 	bool _pause;
 	int _cNum;
 	Common::String _cAnimStr;
@@ -159,22 +164,7 @@ public:
 		ImageFile *_controls;
 	int _oldUse;
 
-	byte _hotkeyLook;
-	byte _hotkeyMove;
-	byte _hotkeyTalk;
-	byte _hotkeyPickUp;
-	byte _hotkeyOpen;
-	byte _hotkeyClose;
-	byte _hotkeyInventory;
-	byte _hotkeyUse;
-	byte _hotkeyGive;
-	byte _hotkeyJournal; // not used for 3DO
-	byte _hotkeyFiles; // not used for 3DO
-	byte _hotkeySetUp; // SetUp-button is in the spot of Journal for 3DO
-	byte _hotkeyLoadGame; // 3DO
-	byte _hotkeySaveGame; // 3DO
-
-	byte _hotkeysIndexed[14];
+	Common::CustomEventType _actionsIndexed[14];
 
 public:
 	ScalpelUserInterface(SherlockEngine *vm);

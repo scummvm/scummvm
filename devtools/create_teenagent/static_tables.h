@@ -22,6 +22,8 @@
 #ifndef STATIC_TABLES_H
 #define STATIC_TABLES_H
 
+#include "common/array.h"
+
 // Static data tables for Teenagent engine
 
 // Unpacked Executable MD5sum - 51b6d64721f7c4b498bfc0f323013e36
@@ -7442,7 +7444,9 @@ const static uint8 dsegStartBlock[DSEG_STARTBLK_SIZE] = {
 	0x69, 0x6e, 0x75, 0x65, 0x2e, 0x24
 };
 
-const static char* messages[333] = {
+const uint kNumMessages = 333 + 1; // Plus one to account for combine error message
+
+const static char *englishMessages[kNumMessages] = {
 	"I have no idea what to do with it.", // 0
 	"I can't imagine what I could do with\nthis.", // 1
 	"I can't figure out what I should do\nwith this.", // 2
@@ -7737,7 +7741,8 @@ const static char* messages[333] = {
 	"What's the use of the models?", // 291
 	"The barman will surely notice its\ndisappearing.", // 292
 	"It'd take too much time to drink it all.\nMaybe after the mission...", // 293
-	"\n\nI'm not a thief. And it's empty, by the way.", // 294
+	// Two extra null bytes  at are removed from here.
+	"I'm not a thief. And it's empty, by the way.", // 294
 	"There are too many of them to search.", // 295
 	"Captain surely wouldn't fit them.\nI must look elsewhere.", // 296
 	"Chickening? Me? Never!", // 297
@@ -7775,7 +7780,1028 @@ const static char* messages[333] = {
 	"\"Greyhounds and other hunting dogs\".", // 329
 	"\"Greenhorn, or my adventures in the Wild West\".", // 330
 	"\"Charlie Brown and his company\".", // 331
-	"\"Pink Panther: an unauthorised biography\"." // 332
+	"\"Pink Panther: an unauthorised biography\".", // 332
+
+	// Combine error message.
+	// NOTE: This string is stored separately from
+	// the rest of the messages above in the executable.
+	"Using these two objects together won't\naccomplish anything.",
+};
+
+const static char *polishMessages[kNumMessages] = {
+	"Nie mam poj#cia, co z tym zrobi^.", // 0
+	"Nic mi nie przychodzi na my$l.", // 1
+	"Nie mam <adnego pomys%u...", // 2
+	"Nie ma powodu, <eby co$ z tym\npr*bowa^ robi^.", // 3
+	"Miodzio.", // 4
+	"To raczej nic nie da.", // 5
+	"]a%! W $rodku jest podno$nik!\nEkstra!", // 6
+	"W skrzynce jest co$ jeszcze!\nTo klucz francuski!", // 7
+	"Ostatnia\nszansa?", // 8
+	"Poddaj# si#.", // 9
+	"Nie zamierzam podchodzi^ do tych pszcz*%\nbli<ej ni< pi#^ metr*w!", // 10
+	"W %*dce niczego wi#cej nie ma.", // 11
+	"Drewno jest za twarde jak dla mnie.", // 12
+	"Bum!", // 13
+	"Nie powinienem przepracowywa^ swojego\nszcz#$cia.", // 14
+	"To zwyk%y st*g siana. Teraz.", // 15
+	"A m*wi@, <e nie mo<na znale>^ ig%y\nw stogu siana.", // 16
+	"Nie ma tam ju< wi#cej ziemniak*w.", // 17
+	"Dobrze, <e zawsze cisn@%em mam#\no spodnie z du<ymi kieszeniami...", // 18
+	"Lajf is brutal.", // 19
+	"Lajf is naprawd# brutal.", // 20
+	"Co$ mnie po%askota%o!", // 21
+	"Przynajmniej odlecia%o.", // 22
+	"Kto wie, co za potwory mog@\n<y^ w $rodku...", // 23
+	"Lepiej nie b#d# tam wsadza% r@k.\nCo$ mo<e mi je odgry>^\n(ble)!", // 24
+	"Wida^, <e jest kompletnie\npusta.", // 25
+	"Ma%y krok dla cz%owieka...\nDu<y b*l w ...g%owie..", // 26
+	"Wola%bym nie ryzykowa^\npo raz drugi...", // 27
+	"Naprawd# mam nadziej#, <e to ko$^\nDINOZAURA...", // 28
+	"Ooo! Chyba wstrz@sn@%em wszystkimi\n$cianami w pobli<u!", // 29
+	"Deko tu ciemnawo.", // 30
+	"Nie mam zamiaru gania^ tu\nznowu w ciemno$ciach.", // 31
+	"Zamkni#cie klapy strz@sn#%o kurz\nze $ciany i ods%oni%o w%@cznik!", // 32
+	"Sorry, kole$, ale potrzebuj#\ntwoich okulark*w.", // 33
+	"To nie najlepsze miejsce na nurkowanie...", // 34
+	"Lepiej b#d# nurkowa% tylko w pobli<u\nbrzegu...", // 35
+	"Naprawd# nie umiem gada^ pod wod@!...", // 36
+	"Pop%yni#cie tam chyba nie jest warte wysi%ku.", // 37
+	"Je$li chc# dorwa^ t# kotwiczk#, to musz# mie^\ntroch# wi#cej powietrza w p%ucach...", // 38
+	"Ta kotwiczka to by% niez%y haczyk!", // 39
+	"Te wodorosty wygl@daj@ idealnie jak kwiatki,\nkt*re da%em mamie na jej urodziny.", // 40
+	"Ciekawe, co ryby robi@ nocami\nwewn@trz tej %*dki.", // 41
+	"Chyba musz# wy|LEDZI\\ co$ tam na dole.", // 42
+	"Ryby przynajmniej nie przejmuj@ si# deszczem.", // 43
+	"To p%ywanie pod wod@ to chyba jedno\nwielkie lanie wody.", // 44
+	"Fajnie tam w dole.", // 45
+	"Ej, ty, popu$^, co?!", // 46
+	"Aaaaaaaaaaaaaahhh!...", // 47
+	"Oops.", // 48
+	"Ludzie zostawiaj@ jedzenie w niewiarygodnych\nmiejscach.", // 49
+	"Chod> tutaj, mam co$ specjalnego\ndla ciebie...", // 50
+	"Jest za szybka!", // 51
+	"Myszka wpad%a w pu%apk#!", // 52
+	"Ojej!", // 53
+	"Ch%opie, ta mysz to ma nerwy!...", // 54
+	"W szufladach nie ma nic wi#cej.", // 55
+	"Najpierw musz# pozby^ si# tego krzaka.", // 56
+	"Myszka uciek%a!", // 57
+	"Nonsens.", // 58
+	"Rozumiem. Dobry piesek.", // 59
+	"Tutaj, Burek.", // 60
+	"Chyba zostali$my przyjaci*%mi, co?", // 61
+	"To raczej nie jest w%a$ciwe miejsce.", // 62
+	"Sto moment*w p*>niej...", // 63
+	"Nast#pne sto moment*w p*>niej...", // 64
+	"Przynajmniej znalaz%em rop# i zostan# bogaty!", // 65
+	"Ca%e moje <ycie.", // 66
+	"!?&!", // 67
+	"Ale dziadku, obieca%e$!...", // 68
+	"Och, dobrze. Pojedziemy.", // 69
+	"Baj-baj.", // 70
+	"Nie ma powodu m#czy^ si# znowu.", // 71
+	"Naprawd# nie wiem, jak si# rozmawia\nz dziewczynami...", // 72
+	"Zwykle nie pracuj# bez powodu.", // 73
+	"Tylko orzech jest tu prawdziwy.", // 74
+	"Ciekawe, czy kury lataj@. Podejd> no,\ndziecinko...", // 75
+	"Pierwszy test oblany.", // 76
+	"Ju< si# pozby%em swoich frustracji.", // 77
+	"Eee tam, to droga do nik@d.", // 78
+	"Otwiera baga<nik.", // 79
+	"Jest zatrza$ni#ty.", // 80
+	"Nie ma tam ju< nic wi#cej.", // 81
+	"Ciuchy s@ ju< suche.", // 82
+	"Te wrony na pewno mnie zabij@!", // 83
+	"Jak chc# wej$^, to albo musz# pozby^ si#\ntego stra<nika, albo znale>^ jaki$\ninny spos*b.", // 84
+	"Powierzchnia muru jest zbyt g%adka, nie\ndam rady si# wspi@^.", // 85
+	"M*g%bym si# na nie\nwspi@^, gdyby nie\nby%o tu tyle <ywicy.", // 86
+	"Jedyna zielona rzecz, jak@ bym chcia% mie^, to\ntaki prostok@tny kawa%ek papieru z narysowanym\njakim$ wa<niakiem.", // 87
+	"Nie chc# go dotyka^. Jego kolce mog@\nmi zrani^ moje delikatne d%onie.", // 88
+	"Dzi#ki, nie jestem g%odny.", // 89
+	"Naprawd# nie mam tak d%ugich r@k.", // 90
+	"Nie dop%yn# tak daleko.", // 91
+	"Echo!", // 92
+	"ECHO!", // 93
+	"Kto tam jest?!", // 94
+	"KTO TAM JEST?!", // 95
+	"NIE POWTARZAJ PO MNIE!...", // 96
+	"NIE POWTARZAJ PO MNIE!!!", // 97
+	"...ALBO WRZUC[ CI TAM JAKIEGO| KAMOLA!", // 98
+	"ALBO WRZU...", // 99
+	"Jeste$ tam jeszcze?", // 100
+	"To nie katarynka. No i nie ma wiadra.", // 101
+	"Nie musz# go otwiera^.", // 102
+	"Hmmm... Trawka... Eh, jeszcze dzieci\nb#d@ patrze^.", // 103
+	"Nie znajd# orzecha ot tak sobie...", // 104
+	"Nie jestem rogaczem.", // 105
+	"Tak wysoko to nikt nie\npodskoczy.", // 106
+	"Nie potrzebuj# tego.", // 107
+	"Nie jestem |wi#tym Miko%ajem.", // 108
+	"Nie potrzebuj# plastikowych imitacji.", // 109
+	"Boj# si# nosi^ tak delikatne rzeczy.", // 110
+	"Lepiej niech zostan@ otwarte.", // 111
+	"Czu%bym si# g%upio ganiaj@c tam i nazad\nz cudzymi gaciami w kieszeni.", // 112
+	"Nie jestem zm#czony.", // 113
+	"W@tpi#, bym kiedykolwiek tego potrzebowa%.", // 114
+	"Tu chyba nie ma <adnego tajnego\nprzej$cia.", // 115
+	"Nie ma tu ju< wi#cej <adnych fajnych owoc*w.", // 116
+	"Kto$ mi mo<e oberwa^ UCHO za ten\nDZBANEK.", // 117
+	"Lepiej je zostawi#. Kobiety s@ lekko\nprzewra<liwione na punkcie\nkwiat*w.", // 118
+	"Lustereczko, lustereczko,\nkto tu jest najlepszy zdeczko?", // 119
+	"Hej, nie my$l tak d%ugo.", // 120
+	"Podpowied>: kto$ w tym pokoju,\np%ci m#skiej.", // 121
+	"OK, namy$l si#.", // 122
+	"Lepiej nie b#d# przerywa% jego\nproces*w my$lowych.", // 123
+	"Nie chc# mie^ nic wsp*lnego z dentystami.", // 124
+	"Jest za ci#<ki. Nie to, <e jestem\nrzadziak.", // 125
+	"Zobaczmy co tu mamy...", // 126
+	"\'Marmolada truskawkowa\'.", // 127
+	"\'Marmolada porzeczkowa\'.", // 128
+	"\'Marmolada jagodowa\'.", // 129
+	"\'Marmolada malinowa\'.", // 130
+	"Zabierzcie mnie st@d, albo zrobi#\nz kogo$ marmolad#!", // 131
+	"Och, i jest \'Marmolada z r*<y\'.", // 132
+	"Zna%em kiedy$ pewn@ R*<#.", // 133
+	"Nie chc# si# upapra^.", // 134
+	"Nie widz# dok%adnie, jest tu zbyt ciemno.", // 135
+	"JAAAAAAAA]]!", // 136
+	"(ziew)", // 137
+	"($mieszek)", // 138
+	"Nie wyrw# go r#koma - te ciernie s@\nostre jak szpilki.", // 139
+	"Pi%a nie ma paliwa.", // 140
+	"Ciernie s@ za cienkie, pi%a jest\ntu bezu<yteczna.", // 141
+	"Tak, $wietny pomys%. We>my sobie t#\nska%# i pospacerujmy. Jezu...", // 142
+	"Nie chc# ich p%oszy^. Dzi#ki nim to\nmiejsce wygl@da $licznie.", // 143
+	"Nawet nie wiem, czy toto <yje.", // 144
+	"Nie znam jego j#zyka.", // 145
+	"Moja d%o= nie zmie$ci si# w t# dziur#.", // 146
+	"Ej, ty! Obud> si#! Ptaki atakuj@!", // 147
+	"Nie mam nakazu rewizji.", // 148
+	"Nie widz# nic ciekawego w tym stogu.", // 149
+	"Dostanie si# tam wymaga chyba nieco\nwi#kszego wysi%ku.", // 150
+	"To bezcelowe, orzech prze$lizgnie si#\npomi#dzy drutami.", // 151
+	"Wios%o jest Z]AMANE.", // 152
+	"Ta ga%@> to nie wios%o. Nawet go nie\nprzypomina.", // 153
+	"Lepiej spr*buj# gdzie indziej - ta strona wygl@da\nna silniej strze<on@.", // 154
+	"Mia%em go naostrzy^, a nie zetrze^ w py%.", // 155
+	"Nie mog# tu nic u<y^, jest za ciemno.", // 156
+	"Dalej, niech ci kiesze=\ntroch# przytyje.", // 157
+	"To jaka$ nota z banku. Dziwne, ale kto$\ndopisa% na niej \"NIGDY! ANNA\"", // 158
+	"Jak poka<# jej fors# bez powodu,\nto mo<e j@ przyj@^.", // 159
+	"Sto dolc*w!!!", // 160
+	"Krwi!!!", // 161
+	"Nie chc# wyj$^, chc# krwi!", // 162
+	"Jestem <a%osnym pajacem.", // 163
+	"Dziwne, ale ta szuflada si# zacina,\nje$li szuflada obok jest otwarta...", // 164
+	"Mo<e to nie s@ zwyk%e szuflady!", // 165
+	"Nie mog# otworzy^ szuflady, je$li\njaka$ obok jest otwarta!", // 166
+	"Ma niebieskie wn#trze.", // 167
+	"Ma czerwone wn#trze.", // 168
+	"Ma szare wn#trze.", // 169
+	"Ma zielone wn#trze.", // 170
+	"Ma br@zowe wn#trze.", // 171
+	"Ma r*<owe wn#trze.", // 172
+	"]a%! W $rodku jest dyktafon!", // 173
+	"Le<y tu polaroid!\nMog# go potrzebowa^.", // 174
+	"Co$ nie puszcza ksi@<ki!", // 175
+	"]a%! Tajna skrytka!", // 176
+	"Nie musz# ju< z tym nic miesza^.", // 177
+	"Pe%na automatyzacja.", // 178
+	"Na razie nie potrzebuj#\ndalszych kartek.", // 179
+	"Nie, nie chc# deprawowa^ ma%oletnich.", // 180
+	"Nie chc# czyta^ jej znowu.\nJeszcze mi si# spodoba.", // 181
+	"W%a$nie skojarzy%em, <e telewizor jest\nwy%@czony.", // 182
+	"Nic si# nie sta%o.", // 183
+	"Ta$ma odpali%a!", // 184
+	"Znacznie lepiej.", // 185
+	"Nie chc# i$^ spa^.", // 186
+	"To tylko jaki$ korek.", // 187
+	"Nie potrzebuj# wi#cej zdj#^.", // 188
+	"Taaa, mog# to nagra^ i straszy^\ntym koty.", // 189
+	"Ju< nagra%em to, co chcia%em.", // 190
+	"Nie mog# nic nagra^, dop*ki nie znajd#\njakich$ baterii.", // 191
+	"Nie ma baterii, nie ma zabawy.", // 192
+	"Teraz chyba nie jest najlepszy moment.", // 193
+	"Dop*ki ten kuchcik jest tutaj,\nnie mog# nic zrobi^.", // 194
+	"Butelka jest podobna, ale\nto raczej nikogo nie oszuka.", // 195
+	"Chcia%em je rozwali^, a nie\nrozwa%kowa^!..", // 196
+	"Zawsze by%em ciekawy, co jest w $rodku\ntakich rzeczy.", // 197
+	"Inne resztki nie s@ interesuj@ce.", // 198
+	"]a%! P*%torej-woltowe baterie!", // 199
+	"To jest ju< zaj#te, OK?", // 200
+	"To si# w ko=cu sta%o. Oszala%em.", // 201
+	"Papier kompletnie si# spali%!", // 202
+	"P%o=, kochanie, p%o=!", // 203
+	"Voila.", // 204
+	"Za gor@ce!", // 205
+	"Przymarz%o do p*%ki!", // 206
+	"Pychota.", // 207
+	"I tak nie lubi# wo%owiny.", // 208
+	"Nie ma powodu, <eby to robi^.", // 209
+	"Ju< go oszuka%em \'w tym temacie\'.", // 210
+	"Czesiu, przeprowad> test g%osu.", // 211
+	"Nie oszukam Czesia MOIM g%osem.", // 212
+	"...laseczkaaaa!...", // 213
+	"Czesiu, pu$^ szybko test zapachu.", // 214
+	"Czesiu, dawaj no test wygl@du.", // 215
+	"\'Sekretny dziennik Ci@gwy. Autoryzowany.\'", // 216
+	"Nie mog# si# tu schowa^!", // 217
+	"Ci@gwa jest na zewn@trz! Nie mog# wyj$^!", // 218
+	"Ma%o brakowa%o.", // 219
+	"Korek twardo siedzi w zlewie.", // 220
+	"Pasuje idealnie!", // 221
+	"W zlewie jest ju< do$^ wody.", // 222
+	"W zlewie nie ma gor@cej wody.", // 223
+	"Naklejka odpad%a!", // 224
+	"Korek jest troch# za ma%y.", // 225
+	"Nie musz# ich pr*bowa^ teraz.", // 226
+	"Nie chc# zrobi^ z siebie sa%atki.", // 227
+	"Eee tam...", // 228
+	"Lepiej najpierw zatrzyma^ wentylator.", // 229
+	"Najpierw musz# z%apa^ Ci@gw#.", // 230
+	"Dobrze, <e to czerwone, to tylko chilli...", // 231
+	"Woda wygl@da na bardzo gor@c@.", // 232
+	"Zlew jest pe%en gor@cej wody.", // 233
+	"Nie mam niczego, w co\nm*g%bym zapakowa^ te\nskarpetki.", // 234
+	"Oto moje papiery.", // 235
+	"Ju< dosta%em zezwolenie.", // 236
+	"\'Oszcz#dzanie jest wspania%e. Zw%aszcza, je$li\nto zrobili ju< za ciebie rodzice\'", // 237
+	"\'Kocham kapitana\'", // 238
+	"\'MKS rz@dzi\'", // 239
+	"\'Nie wycinaj drzew, bo i ty mo<esz\nzosta^ partyzantem\'", // 240
+	"\'Przyjmujemy karty VISA\'", // 241
+	"Reszta graffiti jest wulgarna.", // 242
+	"Szpana, jestem Marek. Nowy.", // 243
+	"Zamkni#te!", // 244
+	"Dzi#ki.", // 245
+	"Teraz nie mam poj#cia, co\nm*g%bym z tym zrobi^.", // 246
+	"Mam pewien pomys%...", // 247
+	"Jeszcze musz# sprawdzi^, czy to dzia%a...", // 248
+	"Chyba czas zawo%a^ kapitana...", // 249
+	"Hej! Sko=czy%em je$^!", // 250
+	"Rany, przysma<y% si# do miski!...", // 251
+	"Mam ci#.", // 252
+	"Nie chc# mu wi#cej szpera^\nw kieszeniach.", // 253
+	"To nie dzia%a.", // 254
+	"Piku$.", // 255
+	"No i jak ja mam teraz wr*ci^?", // 256
+	"Ekstra.", // 257
+	"No tak, racja...", // 258
+	"Nie mog# go wyci@gn@^.", // 259
+	"Nie chc# go dotyka^ - mo<na %atwo si# skaleczy^.", // 260
+	"Ogrodzenie blokuje dost#p...", // 261
+	"Nie potrzebuj# snu.", // 262
+	"Nie mog# dosi#gn@^.", // 263
+	"Halo?", // 264
+	"Totalnie si# uzale<ni%.", // 265
+	"A co z nowym...", // 266
+	"...gor@cym...", // 267
+	"...kolorowym...", // 268
+	"...specjalnym wydaniem...", // 269
+	"...\'Tygodnia }o%nierza\'?!", // 270
+	"Nigdy wi#cej!", // 271
+	"Jeden raz wystarczy. W ko=cu nie jestem\na< tak zdesperowany...", // 272
+	"Trzydzie$ci siedem przekle=stw p*>niej...", // 273
+	"mczasem w posiad%o$ci...", // 274
+	"Teraz jest otwarta.", // 275
+	"Dawaj, dziecinko, to wszystko\ntwoje!", // 276
+	"Na razie nie mam z nim o czym\nrozmawia^.", // 277
+	"Ta... Racja!...", // 278
+	"Barman jest za blisko...", // 279
+	"Ble!", // 280
+	"Wol# wod#.", // 281
+	"Nie dam rady si# na ni@ wdrapa^.", // 282
+	"Spr#<yny k%u%yby mnie w plecki.", // 283
+	"Nie, dzi#ki. To <arcie chyba jeszcze <yje.", // 284
+	"Drzwi s@ zamkni#te. Co za niespodzianka.", // 285
+	"W $rodku nie ma nic ciekawego.", // 286
+	"Powinienem bardziej uwa<a^ na gegrze...", // 287
+	"Niczego st@d nie potrzebuj#.", // 288
+	"Dzi#ki, widzia%em ju< bardziej mi#kkie kamienie.", // 289
+	"}aden z nich u<ytek, s@ zbyt t#pe.", // 290
+	"Jaka pociecha z modeli?", // 291
+	"Barman na pewno zauwa<y%by jego\nznikni#cie.", // 292
+	"Nie dam rady wypi^ tego wszystkiego.\nMo<e na koniec...", // 293
+	"Nie jestem z%odziejem. Zreszt@,\ni tak jest pusta.", // 294
+	"Nie mam ochoty ich przeszukiwa^.", // 295
+	"Kapitan na pewno si# w nich nie zmie$ci%.\nMusz# szuka^ gdzie indziej.", // 296
+	"Stch*rzy^? Ja? Nigdy!", // 297
+	"Nie mog# otworzy^.", // 298
+	"Nie potrzebuj# ich.", // 299
+	"Brzydko jest podgl@da^.", // 300
+	"Kieszenie mam du<e, ale istniej@ jakie$ granice.", // 301
+	"Jak j@ za%o<#, mog# mie^\nk%opoty z wchodzeniem\npo schodach.", // 302
+	"}eby je wszystkie przeczyta^, musia%bym\nmie^ z 9 <y^!", // 303
+	"Nie potrzebuj# odpoczynku.", // 304
+	"W pokoju jest wystarczaj@co jasno.", // 305
+	"Nie uniesie mojej wagi.", // 306
+	"Nigdy si# nie nauczy%em obs%ugiwa^\ntakich rzeczy...", // 307
+	"S@ tak ostre, <e poprzecina%yby mi kieszenie!", // 308
+	"Pfuj! Ten koniak na pewno zepsu% ca%y smak...", // 309
+	"Nie mam czasu na przyjemno$ci.", // 310
+	"Nie dotkn# tych skarpetek go%ymi r#kami!", // 311
+	"To nie Halloween.", // 312
+	"Nie da si# sterowa^ r#cznie. Nienawidz# go!", // 313
+	"Nie mam nic do puszczenia.", // 314
+	"Nie mog# go wzi@^. Nie jest moje.", // 315
+	"Hej! O co chodzi?!", // 316
+	"Otwarte!", // 317
+	"Zepsuty.", // 318
+	"Przy kapitanie?... Lepiej nie...", // 319
+	"Sierp jest za t#py.", // 320
+	"Najpierw mam tu co$ do za%atwienia.", // 321
+	"Wydziabanie tego no<em mog%oby\ntrwa^ sto lat.", // 322
+	"Nie mam zamiaru dodatkowo\nza$mieca^ stolik.", // 323
+	"Mam rzuca^ mu okruszki\nwprost do dziubka?!\nNie trafi#!", // 324
+	"Szkoda takich fajnych okruszk*w.", // 325
+	"Lepiej nie... Jeszcze podczas nabierania\npo$lizgn# si# i wpadn#...", // 326
+	// "Sk@d ja znam ten g%os?... Ach, te firmy\nsoftware\'owe i ich niski bud<et...",
+	"\"Niebieskie ko%nierzyki\".", // 327
+	"\"Manchester United, czyli historia\nCzerwonych Diab%*w\".", // 328
+	"\"Jak zrobi^ Urz@d Skarbowy na szaro\".", // 329
+	"\"Zielone ludziki s@ w$r*d nas\".", // 330
+	"\"Odbr@zawianie mit*w\".", // 331
+	"\"R*<owa Pantera: nieautoryzowana biografia\".", // 332
+
+	"(U<ycie tych dw*ch rzeczy razem nie\nprzyniesie korzy$ci).",
+};
+
+const static char *czechMessages[kNumMessages] = {
+	"Nem#m tu@en;, co bych s t;m mohl d+lat.", // 0
+	"Mu$te m+, ale nevim co by s t;mhle @lo\nud+lat.", // 1
+	"Nejde mi do hlavy, na co by tohle bylo\ndobr*. Hmm...", // 2
+	"Tohle rad@i nech#m b^t jak to je.", // 3
+	"Bezva.", // 4
+	"To je na nic.", // 5
+	"Bezva! V bedn+ se v#lel hever!\nChe!", // 6
+	"Ah#, je tam schovan^ je@t+ n+co! Polez ven...\nFrancouzskej kl;$!", // 7
+	"Posledn;\n@ance?", // 8
+	"Vzd#v#m to.", // 9
+	"Ne, ne, od t+ch vos si m;n;m dr{et\naspo< p+timetrovej odstup!", // 10
+	"V lo%ce je u{ jenom tma.", // 11
+	"P>;li@ tuh^ d>evo na to, aby se dalo zlomit.", // 12
+	"Baf!", // 13
+	"Nemysl;m si, {e bych m+l pokou@et\nsv* @t+st;.", // 14
+	"Jenom takov# oby$ejn# kupa sena.", // 15
+	"Che, a to se >;k#, {e jehlu\nv kupce sena nenajde@.", // 16
+	"~#dn^ dal@; raj$ata\nu{ se nekonaj.", // 17
+	"No jo, v{dycky jsem po mamce cht+l\nkalhoty s velk^ma kapsama...", // 18
+	"~ivot je n+kdy tvrdej.", // 19
+	"~ivot je n+kdy fakticky tvrdej.", // 20
+	"N+co m+ lochtalo!\nNo co $um;te? N+co m+ lochtalo!", // 21
+	"Kone$n+ je ta \\chyln# v+c pry$.", // 22
+	"Kdo v; co se tam kr$; za p>;@eru\nmo{n# n+jakej Beast...", // 23
+	"Rad@i tam nebudu strkat ruce, nejsem masochista.\nN+co by mi je mohlo ukousnout\n(bl**)!", // 24
+	"Vidim, {e nic nevidim...", // 25
+	"Ruka, noha, hlava OK, nic zlomen^ho.\nAle na dal@; pokus to nevidim.", // 26
+	"Podruh^ u{ ani zlat^ pr..\nza modr^ z nebe!", // 27
+	"To vypad# na kost n+jk^ho po>#dn^ho macka.", // 28
+	"Uh! To muselo set>#st om;tku\nze v@ech st+n okolo!", // 29
+	"Je tu jak v Jir#skov+ temnu.", // 30
+	"No podruh^ u{ tu potm+ @#trat\nrozhodn+ nebudu.", // 31
+	"To, {e jsem naho>e zabouchnul poklop odlepilo\nn+jakej plivanec ze st+ny a je tu tla$;tko!", // 32
+	"Promi<, ale musim si p]j$it\ntvoje fe@n^ brejle.", // 33
+	"M-mmm, tady se {#dn^ pot#p+n; konat nebude...", // 34
+	"Tady ne...", // 35
+	"Pod vodou mi n+jak ne@lo mluvit...", // 36
+	"Tam p>eci v]bec nic nebylo, pro$ bych tam m+l plavat?", // 37
+	"To vypadalo zaj;mav+, ale bohu{el u{ se mi jaksi\nnedost#valo vzduchu, abych se tam pod;val...", // 38
+	"...a po velk*m z#polen; jsem vylovil kotvu!", // 39
+	"Mo>sk^ >asy mi nejedou od t^ doby, co jsem vid+l,\njak si v^chodn; N+mci ulevuj; do mo>e...", // 40
+	"Mo{n# v t*hle lo%ce ryby v noci\npo>#daj; mal* ryb; orgie.", // 41
+	"}ekl bych, {e tam dole mus;m n+co ulovit.\nAle co?", // 42
+	"Mysl;te, {e si ryby n+kdy kupujou de@tn;ky?", // 43
+	"Douf#m, {e tohle plav#n; nen; jen takov#\nslep# uli$ka.", // 44
+	"Tam dole je to p+kn^.", // 45
+	"Magore, co to d+l#@?!", // 46
+	"Aaaaaaaaaaaaaahhh!...", // 47
+	"Je{i@!", // 48
+	"Lidi nechaj j;dlo tam, kde jim \nod huby upadne.", // 49
+	"P==[, m#m tu pro tebe n+co m==c\ndobr^ho...", // 50
+	"Tu ne$apnu!", // 51
+	"Zamotala se do kapesn;ku!", // 52
+	"OH!", // 53
+	"Ta m# ale nervy, mrcha, j# m#m ale del@;!", // 54
+	"V t+ch @upl;k#ch se u{ kr$; jen tma.", // 55
+	"Nejd>;v si to mus;m vy>;dit s t;mhle ke>;kem.", // 56
+	"My@ pr#skla do tlapek!", // 57
+	"Nesmysl.", // 58
+	"Kl;dek, j# tu jenom lap#m vzduch...", // 59
+	"Tum#@, papej.", // 60
+	"A te% u{ jsme k#mo@i, ale nic intimn;ho!", // 61
+	"Taky si m]{u leda tak vykopat hrob.", // 62
+	"O sto uhynul^ch minut pozd+ji...", // 63
+	"A dal@;ch sto uhynul^ch minut pozd+ji...", // 64
+	"Kone$n+ jsem na@el lo{isko ropy, sem \nbohatej!", // 65
+	"Hmmm, bohatej, kulov^!", // 66
+	"!?&!", // 67
+	"Ale d+do, p>ece si mi sl;bil..", // 68
+	"Ach no jo, tak teda jdeme.", // 69
+	"Nashle.", // 70
+	"Ermm, tak teda navid+nou.", // 71
+	"Probl*m: nikdy jsem nev+d+l, jak\nkecat s holkama...", // 72
+	"Oby$ejn+ ned+l#m v+ci, kter* ned#vaj; smysl.", // 73
+	"Jenom o>ech je pravej.", // 74
+	"Zaj;malo by m+, jestli slepice opravdu l;taj.\nPoj% ke m+ mil#@ku...", // 75
+	"Prvn; test ne\\sp+@n^.", // 76
+	"U{ sem se mindr#k] zbavil a druh^ test by stejn+\ndopadl stejn+.", // 77
+	"Ne ne, tahle cesta nikam nevede.", // 78
+	"Otev;r# kufr.", // 79
+	"Pevn+ zav>enej.", // 80
+	"Nic jin*ho u{ v kufru nen;.", // 81
+	"Pr#dlo je te% such*, koho by to tak mohlo zaj;mat?", // 82
+	"Ty vr#ny m+ pravd+podobn+ oklobou na kost!", // 83
+	"Jestli se chci dostat dovnit>, mus;m se\nnejd>;v zbavit str#{n*ho, ale i kdy{ m#m\nmotorovou pilu, @el bych na to trochu jinak.", // 84
+	"St+na je p>;li@ hladk#, aby se po n; dalo l*zt.", // 85
+	"Mohl bych po n+m vyl*zt, ale na\nkmeni je n+jakej\nzelenej fujtabl, bl***.", // 86
+	"Jedin* zelen^ v+ci, kter* je@t+ snesu, jsou takov*\nobd*ln;kov* pap;rky s d]le{it+ vypadaj;c;mi\nosobnostmi $um;c;mi na m+ mezi kulat^mi $;sly.", // 87
+	"Nechci se toho dot^kat, mohl bych se po@kr#bat\na pak bych se nemohl... po@kr#bat.", // 88
+	"D;k, ale nem#m hlad.", // 89
+	"Tak dlouh* ruce opravdu nem#m.", // 90
+	"Ostrov je moc daleko, abych tam mohl doplavat.", // 91
+	"Ozv+na!", // 92
+	"Ozv+na!", // 93
+	"Kdo je tam?!", // 94
+	"KDO JE TAM?!", // 95
+	"     Neopakuj to po m+!...", // 96
+	"        Neopakuj po mn+!!!", // 97
+	"...Nebo tam dolu hodim k#men!", // 98
+	"NEBO TAM...", // 99
+	"Se@ po>#d tam?", // 100
+	"Chyb; tu kompletn; kladka a nav;c\nnem#m {#dnej kybl;k.", // 101
+	"Nepot>ebuju otev;rat okno, je@t+ d^ch#m.", // 102
+	"Hmmm... Tr#va... Ale ne, mohly by to vid+t\n n+jak* mal* d+ti.", // 103
+	"Takhle ten o>ech nenajdu.\nTr#va je p>;li@ hust#.", // 104
+	"Nebudu tu troubit jen tak pro srandu kr#l;k]m.", // 105
+	"Tak vysoko nevysko$im,\nproto{e b;l; mu{i er..., b;l; mu{i\nneum+j; sk#kat.", // 106
+	"To nepot>ebuju (a vy taky ne).", // 107
+	"Nejsem mikul#@.", // 108
+	"Atrapy m+ z bryndy nepom]{ou.", // 109
+	"Je p>;li@ k>ehk^, nem# smysl ho br#t s sebou.", // 110
+	"Rad+ji je nech#m otev>en*.", // 111
+	"Nejsem na tom tak b;dn+, abych se musel\nproch#zet v ciz;ch pono{k#ch.", // 112
+	"A{ um>u.", // 113
+	"Je to moc velk*, t+{ko n+co takov*ho\nbudu pot>ebovat.", // 114
+	"~#dnej tajnej vchod za nima asi nebude\nLeda tak hejno plesnivejch pavouk].", // 115
+	"~#dn* dal@; ovoce nevypad# zaj;mav+.", // 116
+	"Malovan^ d{b#nku, te% m#@ na kah#nku,\nukradnu t+ a rozbiju t+!", // 117
+	"Rad@i ho nech#m bejt, kdo v;, jestli\nta babka necvi$ila d{udo.", // 118
+	"Zrcadlo, zrcadlo na st+n+,\nkdo je ze v@ech lid; nejchyt>ej@;?", // 119
+	"Hej, nep>em^@lej tak dlouho.", // 120
+	"Napov;m: n+kdo v tomhle pokoji...\na je mu{sk*ho pohlav;.", // 121
+	"OK, nech#m ti $as na rozmy@lenou.", // 122
+	"Rad@i ho nebudu vyru@ovat z p>em^@len;,\nmohlo by rupnout.", // 123
+	"Se zuba>ema nechci m;t nic spole$n*ho,\nned#vno jsem hr#l hru Hell.", // 124
+	"Moc t+{kej. Tykat si nebudeme.", // 125
+	"Mrkneme se, co to tady m#me...", // 126
+	"\'Jahodevej d{em\'.", // 127
+	"\'Malinovej d{em\'.", // 128
+	"\'Bor]vkovej d{em\'.", // 129
+	"\'~ampi=novej d{em (?)\'.", // 130
+	"Oupln# d{em#rna!", // 131
+	"O==, a tady je poloplesnivej \'Veverkovej d{em!\'.", // 132
+	"Jednu docela hodnou veverku zn#m,\n mo{n# z jej;ch sester.", // 133
+	"Asi budu blinkat. Najd+te rychle n+jakej igeli[#k!", // 134
+	"Vidim, {e nic nevidim.", // 135
+	"AAA########!", // 136
+	"U#u#u#u# (z;v#n;)", // 137
+	"Che, che. H# ha H####.. CHE!", // 138
+	"Moc ostr^ trny, po@kr#bal bych si ruce\na nemohl bych se.. v@ak v;te.", // 139
+	"V pile bohu{el nen; palivo, tak{e trucuje.", // 140
+	"Trny jsou moc tenk^, tady motorov#\npila nepom]{e. M-mmm.", // 141
+	"No, mohl byl vz;t ten k#men a b+hat s n;m\ndokola. Hele, a nen; n+co pod n;m...?", // 142
+	"Rad@i je nech#m b^t, mohli by m+ pokousat\nnebo dokonce zn#silnit!", // 143
+	"Mo{n# u{ je tuhej, chov# se tak.", // 144
+	"B]hv; jak^m jazykem tohle mluv;.", // 145
+	"Musel bych dlouho hubnout, ne{ bych\ntam dok#zal str$it ruku.", // 146
+	"Hej, vy! Vst#vat, bude pogroma na vr#ny!", // 147
+	"Nem#m povolen; k prohl;dce.", // 148
+	"Na t^hle kupce nevidim ani zbla zaj;mav*ho. Sorry.", // 149
+	"Dostat se dovnit> nebude @#dn# @vanda.", // 150
+	"Nem# to smysl, o>ech by mezi vyl#man^mi\nzuby ur$it+ proklouzl.", // 151
+	"P#dlo je p>ece rozbit^.", // 152
+	"Tahle v+tev nen; {#dn^ p#dlo, jak v#s to\nv]bec mohlo napadnout?", // 153
+	"Rad@i to zkusim vedle, m#m takovej pocit, {e\nje tahle $#st st+ny dob>e hl;dan#.", // 154
+	"Chci to nabrousit, ne rozdrtit.", // 155
+	"K ni$emu m+ nedonut;te, je tady moc tma.", // 156
+	"Hele, chce@ si trochu\np>ivyd+lat?", // 157
+	"Je to oby$ejn# bankovka, ale n+kdo\nna n; zezadu napsal \"Nezapome< Ani$ko!\".\nAsi n+jakej \\chyl, nebo...?", // 158
+	"Kdyby j; ty pen;ze jen tak uk#zal,,\nmohla by si myslet, {e si j; chci koupit.", // 159
+	"P+t tis;c, to jest asi dva\na p]l tis;ce rohl;k]!!!", // 160
+	"Chci krev!", // 161
+	"Neodejdu z vily, dokud neproliju\nPankr#covu krev!", // 162
+	"Tum de dum, tu de d###... nic jste nevid+li!", // 163
+	"Divn^, kdy{ je jedno @uple otev>en^,\njin^ nejde otev>;t, hmm..", // 164
+	"Mo{n# to nejsou jen tak oby$ejn^\n@uplata!", // 165
+	"Nem]{u otev>;t druh* @uple,\nkdy{ u{ je jedno otev>en*. Pro$?", // 166
+	"M# modr^ vnit>ek.", // 167
+	"M# $erven^ vnit>ek.", // 168
+	"M# @ed^ vnit>ek.", // 169
+	"M# zelen^ vnit>ek.", // 170
+	"M# hn+d^ vnit>ek.", // 171
+	"M# r]{ovou$kou$k^ vnit>ek.", // 172
+	"Ale ale! Tady se v#l; diktafon!", // 173
+	"Vzadu n+co je. Fo[#k polaroid!\nM]{e se hodit.", // 174
+	"N+co knihu dr{;, nem]{u s n; pohnout!", // 175
+	"Vida! Tajn# skr^@, copak skr^v#@, tajn# skr^@i?", // 176
+	"U{ se s nem#m na co d;vat.\nCopak doma nem#te video?", // 177
+	"Pln+ automatick*.", // 178
+	"Jeden pap;r mi sta$; ke @t+st;.\nJsem jednoduch^ $lov+k.", // 179
+	"Opil bych se a mlel bych spros[#rny,\nco{ mi auto>i zak#zali.", // 180
+	"Vsad;m se, {e tam bude naps#no to sam*,\nco minule.", // 181
+	"Osah#v#n; vypnut* televize? Hmm, takov^ maniak nejsem.", // 182
+	"Nic. V]bec nic.", // 183
+	"P#ska se spustila!", // 184
+	"To u{ je lep@;.", // 185
+	"Korek vod vokurek.", // 186
+	"Prachoby$ejn^ korek. Z korku, kulat^ a nez#{ivn^.", // 187
+	"Jedna fotografie sta$;.", // 188
+	"Jo, to si teda nahraju na zastra@ov#n;\npotuln^ch jehovist].", // 189
+	"U{ jsem nahr#l, co byla pot>eba nahr#t.", // 190
+	"Bez bateri; v diktafonu se {#dn* nahr#v#n;\nkonat nebude.", // 191
+	"~#dn* baterie, {#dn# @vanda.", // 192
+	"Ne>ekl bych, {e je pr#v+ te%\nten spr#vn^ moment.", // 193
+	"Dokud tu oxiduje ten zpropadenej\nkucha>, nem]{u nic d+lat.", // 194
+	"Lahev je to sice stejn#,\nale pochybuju, {e by na to kucha>\njen tak sko$il.", // 195
+	"Cht+l jsem to jenom rozb;t,\na ne rozpl#cnout!..", // 196
+	"V{dycky jsem byl zv+davej, co se\nv t+chto v+ci$k#ch skr^v#.", // 197
+	"Z toho u{ {#dnej Gott nikdy >v#t nebude.", // 198
+	"Ga ga ga! Dv+ 1.5-voltov* baterie!", // 199
+	"Tahle lednice je u{ zabran#, OK?", // 200
+	"Kone$n+ se to stalo, jsem @;len^!", // 201
+	"Kurnik, pap;r doho>el!", // 202
+	"Pap;r chytil a ho>;.\nRychle, kam s n;m?!", // 203
+	"Gut.", // 204
+	"Haisss, haisss, p#l; to!", // 205
+	"P>imrzlo to k Poli$ce, mrcha jedna!", // 206
+	"M<am.", // 207
+	"Pol;vka \'Vyblitka\' bude tahkhle\nje@t+ pikantn+j@;.", // 208
+	"~#dn^ d]vod pro$ tohle d+lat\nnikde bl;zko nepoletuje.", // 209
+	"U{ jsem ho obelhal jednou.", // 210
+	"Ludv;ku, aktivuj test hlasu.", // 211
+	"Sv^m vlastn;m hlasem Ludv;ka neo@#l;m.", // 212
+	"...zp;;;v###n;;;..", // 213
+	"Ludv;ku, pust;me se do testu smradu,\nvlastn+ testu pachu.", // 214
+	"Ludv;ku, je% vizu#ln; test!", // 215
+	"\'Tajn^ di#> Pankr#ce Oblouka. Top Secret.\'", // 216
+	"Tam se neschov#m!", // 217
+	"Nem]{u ven, $apli by m+ a sn+dli!", // 218
+	"Jen tak tak.", // 219
+	"Korek zapadl do d;ry.", // 220
+	"Pasuje perfektn+!", // 221
+	"V umyvadle u{ je dost vody.", // 222
+	"V umyvadle nen; {#dn# voda!", // 223
+	"N#lepka se odlepila!", // 224
+	"Korek je moc malej, neucpe to.", // 225
+	"Te% sp;@ n+co na hlavu,\nt>eba heroin.", // 226
+	"U{ takhle jsem sal#t, nechci bejt @pen#t.", // 227
+	"Ne.", // 228
+	"Byla by ze m+ fa@;rka.\nBlb+ by se to ukl;zelo ze st+n.", // 229
+	"Rad@i nejd>;v $apnu Pankr#ce Oblouka.", // 230
+	"Douf#m, {e to $erven^ je jenom chilli...", // 231
+	"Voda vypad# opravdu \'horce\'.", // 232
+	"Do umyvadla natekla hork# voda.", // 233
+	"Nem#m nic, do $eho bych\nty plesniv* pono{ky mohl zabalit.", // 234
+	"Tady jsou moje pap;ry.", // 235
+	"Nen; t>eba vytahovat se\ns povolen;m dvakr#t.", // 236
+	"\'Ahoj brou$ku, m#m r]{ovou$k^ pr#dlo\na hlav$u plnou bezvadnejch my@lenek.\nCinkni na 05 535 113\'", // 237
+	"\'Dungeon Master II je bomba!\'", // 238
+	"\'Vochozka je.. (cenzurov#no)\'", // 239
+	"\'Je to $erven^ a je to na p=diu?\nCo je to?\nKULTURN; VLO~KA!\'", // 240
+	"\'Orgie po>#dan* redakc; Score\nse konaj; v{dy ve $tvrtek...\'", // 241
+	"Zbytek n#pis] je p>;li@ perverzn;.", // 242
+	"Pane veliteli, jsem Marek. Zelen#$.", // 243
+	"Hrome, zam$eno!", // 244
+	"D;k.", // 245
+	"No, nev;m co bych s t;m mohl d+lat\npr#v+ te%.\nLeda tak ob+sit se.", // 246
+	"M#m n#pad, sledujte m+..", // 247
+	"Te%ko mus;m vyzkou@et, jestli to funguje...", // 248
+	"}ekl bych, {e je $as zavolat kapit#na...", // 249
+	"Hej! U{ jsem to vyl;zal do sucha!", // 250
+	"Tak a te% se p>ifa>il k misce!...", // 251
+	"N+co m#m!", // 252
+	"Na jeho kapsy\nu{ nem;n;m @matat.", // 253
+	"To asi nep]jde.", // 254
+	"Levou rukou.", // 255
+	"A jak se m#m dostat zp#tky?", // 256
+	"Taky to @lo.", // 257
+	"Jo, j# vim...", // 258
+	"Nejde to vyt#hnout.", // 259
+	"Hal=, vy tam p>ed obrazovkou, u{ jste n+kdy,\nrukama p#rali dr#t+nej plot?", // 260
+	"Plot stoj; v cest+\nJen tak si stoj;, stoj; si tam...", // 261
+	"Rad@i ne, co kdy{ je to sklad mrtv^ch.", // 262
+	"Nedos#hnu tam.", // 263
+	"Hal=?", // 264
+	"Je \\pln+ mimo.", // 265
+	"Co{ takhle d#t si..", // 266
+	"...$erstv+ vy@l*...", // 267
+	"...pln+ barevn*...", // 268
+	"...extra vzru@uj;c;..", // 269
+	"... \'Vojensk* Noviny\'?!", // 270
+	"Roch<a$ka!", // 271
+	"Jsem snad n+jakej vysava$?!", // 272
+	"          Po dlouh*m a ohavn*m klen;...", // 273
+	"Zat;m ve vile...", // 274
+	"Te% je otev>eno.", // 275
+	"Poj%, ptakovit* stvo>en;, je to ba@ta!", // 276
+	"Te% zrovna nevypad# p>;li@ konzerva$n+,\nehm, konverza$n+.", // 277
+	"Tak, te% to jenom nepokazit...", // 278
+	"Barman je moc bl;zko...", // 279
+	"Fuj!", // 280
+	"J# rad@i vodu.", // 281
+	"Nejsem kobylka, sko$te si to sami.", // 282
+	"Lezouc; p*ra by ze m+ nad+laly >e@eto.", // 283
+	"Ne d;ky, to j;dlo je po>#d je@t+ {iv^.", // 284
+	"To je ale p>ekvapen;, nejdou otev>;t!", // 285
+	"Jenom t>i kr#li$; bobky a pou{it^ toaletn; pap;r.\nNez#jem.", // 286
+	"Nem]{u naj;t Prahu, mo{n# u{ ji p>ejmenovali\nna n+co, co se N+mc]m l*pe vyslovuje.", // 287
+	"Binec, {e by se dal fotit do aktualit.", // 288
+	"D;k, ale u{ jsem vid+l m+k$; kameny.", // 289
+	"Tup^ a m#lo zahnut^. Turci vym;raj.", // 290
+	"Na co by mi byly mod^lky zbran;?", // 291
+	"Barman by si ur$it+ v@iml, {e hrn;$ek\nvzal roha.", // 292
+	"Vo{;rat se budu, a{ tuhle hru dohraju.\nPak si tu d#me zpicha a vypijem to v@echno!", // 293
+	"J# nekradu! A nav;c je stejn+ pr#zdn#.", // 294
+	"Toho je na mn+ trochu moc a nem#m lupu.", // 295
+	"Na ty je kapit#n moc tlustej.\nKdo hled# najde, ale ne tady.", // 296
+	"Pr#sknout do bot? Nikdy!", // 297
+	"Nejde to otev>;t.", // 298
+	"Nepot>ebuju.", // 299
+	"Nejsem {#dnej sebeukaje$ $um+n;m do d+r!", // 300
+	"Kapsy m#m sice po>#dn^, ale maj sv]j limit.", // 301
+	"Kdybych si to obl*kl, cesta ze schod] by se\npravd+podobn+ stala osudovou.", // 302
+	"Bohu{el nejsem knihomol, aspo< bych si mohl\njuchnout radost;.", // 303
+	"Tv#>; se l#kav+. Ale j# nechci j;t \'sed+t\'.", // 304
+	"Sv+tla dost, sta$; jen nezav;rat o$i.", // 305
+	"Moje @peky tahle @unka neunese.", // 306
+	"Nem#m r#d mikrovlnky, tak{e\ns nima neum;m zach#zet.", // 307
+	"Jsou tak ostr^, {e by mi pro>ezaly kapsy.", // 308
+	"Ko<ak se sna{il, ale moc tomu nepomohl..", // 309
+	"C;tite po>ebu zbavit se @p;ny {ivota?\nJ# ne.", // 310
+	"Nejsem masochista, ty pono{ky jsou ve\nst#diu rozkladu. Rukama ne!", // 311
+	"Na Masku p]jdu rad@i do kina.", // 312
+	"Sakra, je to JENOM na d#lkov* ovl#d#n;!", // 313
+	"Nem#m s sebou ani Depe@#ky ani Oldfielda.", // 314
+	"Nen; to moje. Sta$ilo,\n {e jsem zvedl tu bankovku.", // 315
+	"Hej! Co je?!", // 316
+	"Je otev>eno!", // 317
+	"Nefunguje.", // 318
+	"Kdy{ se d+dek d;v#?...\nRad@i ne...", // 319
+	"Srp je tupej, mus; se o n+co nabrousit.", // 320
+	"Nejd>;ve je tu n+co jin*ho,\no co se mus;m postarat.", // 321
+	"Rejpat do toho no{ejkem by trvalo\ntak sto - dv+ st+ let.", // 322
+	"Na stole je u{ takhle p+knej\nbinec, net>eba tomu pom#hat.", // 323
+	"To m#m ty drobky jako HODIT nahoru?\nTo snad ne.", // 324
+	"Takov^ p+kn^ drobky, p>ece bych je \nnevyplejtval takhle zbrkle.", // 325
+	"Rad@i ne, mohl bych tam spadnout a obahnit se.", // 326
+	"\"Historie Blues\".", // 327
+	"\"Manchester United neboli p>;b+h Rud*ho %#bla\".", // 328
+	"\"Vl$#ci a jin; love$t; psi\".", // 329
+	"\"Zelen#$ neboli moje dob^v#n; divok*ho z#padu\".", // 330
+	"\"Charlie Brown and jeho spole$nost\".", // 331
+	"\"R]{ov^ Panter: neleg#ln; biografie\".", // 332
+
+	// Combine error message
+	"Tyto dva p>edm+ty nejdou dohromady,\nnejdou a nejdou a nejdou. GRR! (to chce klid) ",
+};
+
+const static char *russianMessages[kNumMessages] = {
+	"Bfh pon\200si\200, xso r ~sim eflas}.\x1f\x1f\x1f", // 0
+	"Mnf sqteno pqietmas}, xso r ~sim\neflas}.\x1f\x1f", // 1
+	"Nf modt pqfersacis}, xso r\n~sim eflas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 2
+	"Nt i na koj mnf r ~sim\nrc\200h|cas}r\200.\x1f\x1f\x1f\x1f\x1f", // 3
+	"Cfz}.", // 4
+	"Sak nf poje>s.\x1f", // 5
+	"Tv s|! Cntsqi eomkqas!\nHeoqoco!\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 6
+	"Cntsqi \200zika fz> xso-so frs}!\nKl\177x!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 7
+	"Bfh\nobie?\x1f\x1f\x1f", // 8
+	"Rea\177r}.\x1f\x1f\x1f", // 9
+	"` nf poeojet k ~sim px>lam bligf xfm\nna p\200s} mfsqoc!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 10
+	"C loekf bol}yf nixfdo nfs.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 11
+	"^so efqfco oxfn} rlogno lomas}.", // 12
+	"^j!\x1f\x1f", // 13
+	"Cq\200e li rsois pqocfq\200s}\nteaxt.\x1f\x1f\x1f\x1f\x1f\x1f", // 14
+	"Ob|xn|j rsod rfna. Sfpfq}.\x1f\x1f\x1f\x1f\x1f\x1f", // 15
+	"A fz> docoq\200s, xso nfl}h\200 najsi\nidlt c rsodf rfna.\x1f\x1f", // 16
+	"Hefr} bol}yf nfs\nkaqsoyki.\x1f", // 17
+	"Nf hq\200 \200 pqoril t mam|\nysan| r bol}yimi kaqmanami...\x1f\x1f\x1f\x1f", // 18
+	"Sakoca gihn}.\x1f\x1f", // 19
+	"Gihn} cpqacet gfrsoka.", // 20
+	"Mfn\200 xso-so\nzfkoxfs!\x1f", // 21
+	"Cqoef pqonfrlo.\x1f\x1f\x1f\x1f", // 22
+	"Kso hnafs, kakif xteiza\nsts modts obisas}...", // 23
+	"Qtki ltxyf stea nf rocas}.\nA so fz> kso-nibte} tktris\n(b-q-q)!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 24
+	"Kak cieim, sts rocrfm\nptrso.\x1f", // 25
+	"Oein yad el\200 xflocfka\ni odqomna\200 bol} el\200 doloc|.\x1f\x1f\x1f\x1f\x1f", // 26
+	"Nf voxt rnoca irp|s|cas}\nrte}bt...\x1f\x1f\x1f\x1f\x1f\x1f", // 27
+	"^so kors} einohacqa, \200\nnaef\177r}...\x1f\x1f\x1f\x1f\x1f", // 28
+	"Odo! ^so eolgno qaryasas}\ncrf rorfenif rsfn|!\x1f\x1f\x1f", // 29
+	"Hefr} sfmnocaso.\x1f\x1f\x1f\x1f\x1f", // 30
+	"Nf robiqa\177r} rnoca bqoeis} sts\nc pos>mkav.\x1f\x1f\x1f\x1f\x1f", // 31
+	"Os vlopka ecfqwfj oscalilar} dq\200h},\nrkq|cacya\200 c|kl\177xasfl} na rsfnf!\x1f\x1f\x1f\x1f", // 32
+	"Pqorsi, pqi\200sfl}, no mnf ntgn|\nscoi oxki.", // 33
+	"Nf ramof ltxyff mfrso el\200 n|q\200ni\200...\x1f", // 34
+	"Nf hefr}...", // 35
+	"` nf modt docoqis} poe coeoj!..\x1f\x1f\x1f", // 36
+	"Cq\200e li ktpanif sam rsois posqaxfnn|v trilij.\x1f\x1f\x1f\x1f", // 37
+	"Frli \200 voxt eorsas} \200koq}, ntgno pl|s} stea r\nbol}yim haparom cohetva c l>dkiv...\x1f\x1f\x1f\x1f", // 38
+	"` rmod hawfpis}r\200 ha \200koq}!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 39
+	"^si coeoqorli povogi na wcfs|, xso\n\200 eaqil mamf na efn} qogefni\200.\x1f\x1f\x1f\x1f\x1f", // 40
+	"Insfqfrno, xso eflafs q|ba\nc loekf nox}\177.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 41
+	"Nacfqn\200ka, \200 rmodt sts xso-nibte}\nc|teis}.\x1f\x1f\x1f\x1f\x1f\x1f", // 42
+	"Vos\200 b| q|bt eoge>m nf naptdas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 43
+	"Naef\177r}, ~si rnarsi nf osclfka\177zij man>cq.\x1f\x1f\x1f\x1f\x1f\x1f", // 44
+	"Voqoyo sam, cniht.\x1f\x1f\x1f", // 45
+	"^j, osptrsi, a?!\x1f\x1f\x1f\x1f\x1f\x1f", // 46
+	"A-a-a!..\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 47
+	"Oj.\x1f\x1f", // 48
+	"L\177ei orsacl\200\177s fet c nfcfqo\200sn|v mfrsav.\x1f", // 49
+	"Iei r\177ea, t mfn\200 kof-xso frs}\nel\200 sfb\200.\x1f", // 50
+	"Nf modt pojmas}!\x1f", // 51
+	"M|y} c loctykf!\x1f\x1f\x1f\x1f\x1f\x1f", // 52
+	"Oj!\x1f\x1f\x1f", // 53
+	"A m|y} nf saka\200 i sqtrlica\200!\x1f\x1f\x1f", // 54
+	"C \200zikav bol}yf nixfdo nfs.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 55
+	"Rpfqca naeo ihbacis}r\200 os ktrsa.\x1f\x1f", // 56
+	"M|y} tbfgala!\x1f\x1f\x1f\x1f\x1f\x1f", // 57
+	"Bqfe.\x1f\x1f\x1f\x1f", // 58
+	"` pon\200l. Voqoyij p>rik.\x1f\x1f", // 59
+	"Efqgi.\x1f\x1f\x1f\x1f", // 60
+	"Naef\177r}, m| eqth}\200.\x1f\x1f\x1f\x1f\x1f\x1f", // 61
+	"Romnfca\177r}, xso ~so ntgnof mfrso.\x1f\x1f\x1f\x1f\x1f", // 62
+	"Rso mdnocfnij rptrs\200...\x1f", // 63
+	"I fz> rso mdnocfnij rptrs\200...\x1f\x1f\x1f", // 64
+	"Vos\200 b| nay>l nfus} i rkoqo\nqahbodasf\177.\x1f\x1f\x1f\x1f\x1f", // 65
+	"Iqoni\200 rte}b|.\x1f", // 66
+	"!?&!", // 67
+	"No efea, s| gf obfzal!..\x1f\x1f\x1f\x1f\x1f", // 68
+	"Ov, nt laeno. Poyli.\x1f\x1f\x1f\x1f", // 69
+	"Pa.\x1f", // 70
+	"Nfhaxfm pocsoq\200s}.\x1f\x1f\x1f\x1f\x1f", // 71
+	"` cpqacet nf tmf\177 docoqis} r\nefctykami...\x1f\x1f", // 72
+	"` ob|xno nf qabosa\177 bfh x>skoj wfli.\x1f\x1f\x1f", // 73
+	"Rtzfrsctfs liy} oqfv.", // 74
+	"Thnafm, lfsa\177s li ktq|. Iei-ka\nr\177ea...\x1f\x1f\x1f\x1f\x1f\x1f", // 75
+	"Nf hax>s.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 76
+	"` tgf c|ptrsil paq.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 77
+	"Nfs, ~so eoqoda c niktea.\x1f\x1f\x1f", // 78
+	"Oskqofs badagnik.\x1f", // 79
+	"On hapfqs.\x1f\x1f\x1f\x1f\x1f\x1f", // 80
+	"C badagnikf bol}yf nixfdo nfs.\x1f\x1f\x1f", // 81
+	"Oefgea tgf c|rovla.\x1f\x1f\x1f\x1f\x1f", // 82
+	"Tcfqfn, coqon| mfn\200 hakl\177\177s!\x1f\x1f\x1f\x1f\x1f\x1f", // 83
+	"Frli \200 voxt popars} cntsq}, ntgno ihbacis}r\200\nos ovqannika ili najsi eqtdoj\npts}.\x1f\x1f", // 84
+	"Rsfna rliykom dlaeka\200, xsob| poen\200s}r\200.\x1f", // 85
+	"` rmod b|\nhabqas}r\200, bte}\nsts mfn}yf rmol|.\x1f\x1f\x1f\x1f", // 86
+	"` l\177bl\177 liy} oent hfl>nt\177 cfz}, pq\200motdol}n|j\nktroxfk btmadi r kakim-libo cagn|m\npolisikom c wfnsqf.\x1f", // 87
+	"Nf voxt fdo sqodas}. Kol\177xki modts\npokolos} moi nfgn|f qtki.\x1f\x1f\x1f\x1f", // 88
+	"Rparibo, \200 nf doloefn.\x1f", // 89
+	"Moi qtki nf narsol}ko elinn|f.\x1f\x1f\x1f\x1f\x1f\x1f", // 90
+	"Stea ealfkocaso pl|s}.\x1f\x1f\x1f\x1f\x1f", // 91
+	"^vo!\x1f", // 92
+	"^VO!\x1f", // 93
+	"Kso hefr}?!\x1f\x1f", // 94
+	"KSO HEFR]?!\x1f\x1f", // 95
+	"NF POCSOQ`J!..\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 96
+	"NF POCSOQ`J!!!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 97
+	"...ILI ` BQOYT STEA KAMFN]!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 98
+	"ILI `...\x1f\x1f\x1f\x1f", // 99
+	"Cr> fz> hefr}?\x1f\x1f\x1f\x1f\x1f\x1f", // 100
+	"^so nf yaqmanka. I cfeqa\nhefr} nfs.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 101
+	"Nfhaxfm ~so oskq|cas}.\x1f\x1f", // 102
+	"Vm-m... sqacka... Nf, modts tciefs}\nefsi.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 103
+	"Sak mnf oqfv nf najsi.\nSqaca rliykom dtrsa\200.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 104
+	"Nf rsois.\x1f\x1f\x1f\x1f\x1f", // 105
+	"Nikodea nf eopq|dnt,\n~-~... cfe} bfl|f\nnf tmf\177s pq|das}.\x1f\x1f\x1f\x1f\x1f\x1f", // 106
+	"Mnf nf ntgno.\x1f\x1f\x1f", // 107
+	"` nf Ransa-Klatr.\x1f\x1f\x1f", // 108
+	"Plarsikoc|f kopii nf insfqfrt\177s.", // 109
+	"Vqtpkof oparno noris} r roboj.\x1f\x1f\x1f", // 110
+	"Ptrs} btefs oskq|so.\x1f\x1f\x1f\x1f\x1f", // 111
+	"` nf robiqa\177r} qarvagicas}\nr xtgimi norkami.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 112
+	"Rparibo, \200 nf trsal.\x1f\x1f", // 113
+	"Oxfn} bol}yoj - i cq\200e li\nponaeobisr\200.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 114
+	"Romnfca\177r}, xso cntsqi frs} sajn|j\nvoe.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 115
+	"Sts bol}yf nfs insfqfrn|v uqtksoc.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 116
+	"Frli ~so tkqaet, mfn\200 porae\200s.\x1f\x1f", // 117
+	"Ltxyf orsacl\177. Gfnzin| rliykom\nxtcrscisfl}n| k wcfsam.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 118
+	"Rcfs moj, hfqkal}wf, rkagi,\nkso crfv tmnff, pokagi?\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 119
+	"^j, nf etmaj sak eoldo.\x1f\x1f\x1f", // 120
+	"Poerkahka: kof-kso c komnasf,\npaqfn}.", // 121
+	"Laeno, nf soqopir}.", // 122
+	"Ltxyf nf btet\nmfyas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 123
+	"` nf voxt imfs} nixfdo obzfdo\nr eansirsami.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 124
+	"S\200gflfnna\200. I \200 cocrf nf plakra.\x1f\x1f", // 125
+	"Ea t nar sts halfgi pociela...\x1f\x1f\x1f", // 126
+	"Kltbnixnof.\x1f\x1f\x1f\x1f\x1f\x1f", // 127
+	"`bloxnof.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 128
+	"Fgfcixnof.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 129
+	"Rlicocof.\x1f\x1f\x1f\x1f\x1f\x1f", // 130
+	"Nt \200 i clip!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 131
+	"O, fz> sts qohmaqinocof.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 132
+	"Hnacal \200 oent Qohmaqi.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 133
+	"Nfnacigt ~si \"halipon|\".", // 134
+	"Sfmno, vos} dlah c|koli.\x1f\x1f\x1f\x1f\x1f", // 135
+	"T-A-A-A!\x1f\x1f\x1f\x1f", // 136
+	"(rson)", // 137
+	"(rmfv)\x1f\x1f\x1f\x1f", // 138
+	"` nf modt ihbacis}r\200 os niv qtkami -\nyip| na cie oxfn} orsq|f.\x1f\x1f\x1f", // 139
+	"C bfnhopilf nfs soplica.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 140
+	"Yip| rliykom sonkif, bfnhopila\nsts bfrpolfhna.\x1f\x1f\x1f\x1f", // 141
+	"Ea, oslixna\200 m|rl}. Ch\200s} kamfn} i\ndtl\200s} r nim. M-ea...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 142
+	"Ltxyf nf btet iv sqodas}, oni oxfn}\ntkqaya\177s ~so mfrso.\x1f\x1f\x1f\x1f\x1f", // 143
+	"Romnfca\177r}, xso ono gicof.\x1f", // 144
+	"Nf hna\177, na kakom \200h|kf ona docoqis.\x1f", // 145
+	"E|qa rliykom thka\200 el\200 mofj qtki.\x1f\x1f\x1f\x1f\x1f", // 146
+	"^j! Pqornir}! Psiw| napaea\177s!\x1f\x1f", // 147
+	"T mfn\200 nfs oqefqa na ob|rk.\x1f\x1f\x1f", // 148
+	"Nf cigt c ~som rsodf rfna\nnixfdo insfqfrnodo.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 149
+	"Cr> nfmnodo rlognff.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 150
+	"Bfrpolfhno, oqfv pqorkol}hn>s mfg\nhtb}fc dqabfl}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 151
+	"Cfrlo RLOMANO.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 152
+	"^sa cfska nf cfrlo. Ona na nfdo\neagf nf povoga.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 153
+	"Ltxyf pop|sas}r\200 inaxf - ~sa rsoqona\nvoqoyo ovqan\200fsr\200.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 154
+	"Ntgno fdo hasoxis}, a nf ihmfl}xis}.\x1f\x1f", // 155
+	"Nf modt nixfdo sts eflas}, oxfn} sfmno.\x1f", // 156
+	"Cos, eacaj nab}>m scoj\nkaqman.\x1f\x1f\x1f", // 157
+	"^so kaka\200-so banknosa. Rsqanno,\nna nfj kso-so napiral \"NIKODEA!\nANNA\".\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 158
+	"Frli \200 pokagt fj efn}di,\nona mogfs iv habqas}.\x1f\x1f", // 159
+	"Rosn\200 bakroc!!!\x1f\x1f\x1f", // 160
+	"Gaget kqoci!\x1f", // 161
+	"` nf robiqa\177r} pokieas} orobn\200k,\n\200 gaget kqoci!\x1f", // 162
+	"` galka\200 malfn}ka\200 plakra.\x1f", // 163
+	"Rsqanno, no \200zik hafeafs, kodea\noskq|s rorfenij...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 164
+	"Cohmogno, ~so nf rocrfm ob|xn|f\n\200ziki!\x1f\x1f\x1f\x1f", // 165
+	"` nf modt oskq|s} \200zik,\nfrli oskq|s rorfenij!\x1f\x1f\x1f\x1f", // 166
+	"On cntsqi rinij.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 167
+	"On cntsqi kqarn|j.\x1f\x1f\x1f\x1f\x1f\x1f", // 168
+	"On cntsqi rfq|j.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 169
+	"On cntsqi hfl>n|j.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 170
+	"On cntsqi koqixnfc|j.\x1f\x1f\x1f\x1f\x1f", // 171
+	"On cntsqi qohoc|j.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 172
+	"Odo! Cntsqi lfgis eiksouon!\x1f\x1f\x1f\x1f\x1f\x1f", // 173
+	"Sts lfgis polaqoie!\nOn mogfs mnf pqidoeis}r\200.", // 174
+	"C knidf xso-so pq\200sali!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 175
+	"Tv s|! Sajn|j osrfk!\x1f\x1f\x1f\x1f\x1f\x1f", // 176
+	"Mnf tgf nf ntgno r nim\ncohis}r\200.\x1f\x1f\x1f\x1f\x1f", // 177
+	"O, acsomasika.\x1f\x1f", // 178
+	"Maktlastq| mnf poka\nvcasis.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 179
+	"Nfs, nf voxt poqsis} efsfj.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 180
+	"Nfs gflani\200 xisas} rnoca.\nModlo ponqacis}r\200.\x1f\x1f\x1f", // 181
+	"` pon\200l, xso sflfcihoq c|kl\177xfn.\x1f\x1f\x1f", // 182
+	"Bfh solkt.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 183
+	"Karrfsa ckl\177xfna!", // 184
+	"Sak namnodo ltxyf.\x1f", // 185
+	"Nf voxt rpas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 186
+	"Pqorso pqobka.\x1f\x1f\x1f", // 187
+	"Bol}yf uoso mnf nf ntgno.\x1f\x1f\x1f\x1f", // 188
+	"Ea, \200 modt ~so hapiras} i ptdas}\nkoyfk.\x1f\x1f\x1f\x1f", // 189
+	"` tgf hapiral so, xso vosfl.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 190
+	"` nixfdo nf rmodt hapiras}, poka nf najet\nbasaqfjki.", // 191
+	"Bfh basaqffk nikak.\x1f\x1f", // 192
+	"Nf etma\177, xso momfns poevoeis.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 193
+	"Nixfdo nf poltxisr\200,\npoka pocaq q\200eom.\x1f\x1f\x1f\x1f", // 194
+	"Vos} i bts|lka sa gf, cq\200e\nli \200 sak rmodt kodo-nibte}\nobmants}.\x1f\x1f", // 195
+	"` voxt fdo qahbis}, a nf\nqaheacis}!..\x1f\x1f\x1f\x1f\x1f", // 196
+	"Crfdea insfqfrocalo, xso cntsqi\nsakiv ystk.\x1f\x1f\x1f\x1f\x1f", // 197
+	"Orsal}nof liynff.\x1f\x1f\x1f", // 198
+	"O! 2 basaqfjki na 1,5C!\x1f", // 199
+	"Hefr} han\200so, \200rno?\x1f\x1f", // 200
+	"Nakonfw ~so pqoihoylo. ` roy>l r tma.\x1f", // 201
+	"Btmada polnors}\177 rdoqfla!\x1f\x1f\x1f\x1f\x1f\x1f", // 202
+	"Doqi, efska!\x1f\x1f\x1f\x1f\x1f", // 203
+	"Ctal\200.", // 204
+	"Nf kornts}r\200, gaqko!\x1f\x1f", // 205
+	"Ono pqim>qhlo k polkf!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 206
+	"N\200mki.", // 207
+	"Nikodea nf l\177bil sfl\200sint.", // 208
+	"Nfhaxfm sak eflas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 209
+	"Oenage| \200 fdo tgf obmantl.\x1f\x1f", // 210
+	"Majk, ckl\177xi pqocfqkt dolora.\x1f", // 211
+	"Moim dolorom Majka nf obmants}.\x1f\x1f", // 212
+	"...pooooo>s!...\x1f\x1f\x1f", // 213
+	"Majk, haptrsi pqocfqkt\nhapava.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 214
+	"Eacaj pqocfqkt obqaha.\x1f\x1f", // 215
+	"\"Sajn|j enfcnik Egona Nosi\". R poepir}\177.\x1f\x1f", // 216
+	"Sts nf rpq\200sas}r\200!", // 217
+	"Rnaqtgi Egon Nosi! ` nf modt c|jsi!\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 218
+	"Pqonfrlo!\x1f\x1f\x1f\x1f\x1f\x1f", // 219
+	"Pqobka harsq\200la c oscfqrsii.\x1f\x1f", // 220
+	"Oslixno poeoyla!\x1f\x1f", // 221
+	"C qakocinf eorsasoxno coe|.\x1f\x1f\x1f\x1f\x1f\x1f", // 222
+	"C qakocinf nfs doq\200xfj coe|.\x1f\x1f\x1f\x1f\x1f", // 223
+	"^sikfska osrsala!\x1f\x1f\x1f\x1f\x1f\x1f", // 224
+	"Pqobka rliykom mflka\200.\x1f\x1f\x1f\x1f\x1f\x1f", // 225
+	"Rfjxar nf rsois i p|sas}r\200.\x1f\x1f\x1f\x1f\x1f", // 226
+	"Xso-so nf voxfsr\200 pqfcqasis}r\200 c ralas.\x1f\x1f", // 227
+	"Nfs...", // 228
+	"Rnaxala rsois orsanocis} cfnsil\200soq.\x1f\x1f", // 229
+	"Rnaxala ntgno pojmas} Egona Nosi.", // 230
+	"Voqoyo, xso ~so crfdo liy} xili...\x1f\x1f\x1f\x1f\x1f", // 231
+	"Coea, povogf, kip\200sok.\x1f\x1f\x1f", // 232
+	"Qakocina polna doq\200xfj coe|.\x1f\x1f", // 233
+	"Mnf nfktea pologis}\n~si norki.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 234
+	"Cos moi btmadi.\x1f\x1f\x1f\x1f", // 235
+	"` tgf poltxil qahqfyfnif.\x1f\x1f\x1f\x1f", // 236
+	"\"Rbfqfgfni\200 - cfz} voqoya\200. Orobfnno\nfrli ha sfb\200 kop\200s qoeisfli\"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 237
+	"\"L\177bl\177 kapisana\"", // 238
+	"\"Utsbol qtlh\"", // 239
+	"\"Nf qtbisf efqfc}\200, ceqtd\noenage| havosisf tjsi\nc paqsihan|\"\x1f\x1f", // 240
+	"\"Crsac} kaqst\"\x1f", // 241
+	"Orsal}n|f dqauuisi nfpqilixn|f.\x1f", // 242
+	"R~q, \200 Maqk. Nocobqanfw.", // 243
+	"Hapfqso!\x1f\x1f\x1f\x1f", // 244
+	"Rparib.", // 245
+	"Bfh pon\200si\200, xso rfjxar\nr ~sim\neflas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 246
+	"Nasalkicafs na m|rl}...\x1f", // 247
+	"Pqocfq\177, kak ~so qabosafs...\x1f\x1f\x1f\x1f\x1f", // 248
+	"Ramof cqfm\200 hcas} kapisana...\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 249
+	"^j! ` tgf poktyal!\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 250
+	"Odo, on pqicaqilr\200 k mirkf!...\x1f\x1f\x1f\x1f", // 251
+	"Rwapan.", // 252
+	"Nf voxt bol}yf q|s}r\200\nc fdo kaqmanav.\x1f\x1f\x1f", // 253
+	"^so nf qabosafs.\x1f\x1f", // 254
+	"Paqa ptrs\200koc.", // 255
+	"I kak \200 eolgfn cfqnts}r\200?\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 256
+	"Laeno.", // 257
+	"Nt ea, cfqno...\x1f\x1f\x1f", // 258
+	"Nf modt c|sazis}.\x1f\x1f\x1f", // 259
+	"Nf voxt pqikaras}r\200, a so fz> poqan\177r}.\x1f\x1f\x1f\x1f\x1f", // 260
+	"Qfy>ska pqfdqageafs pts}...", // 261
+	"` nf voxt rpas}.\x1f\x1f\x1f\x1f\x1f\x1f", // 262
+	"Nf modt eorsas}.\x1f", // 263
+	"^j?\x1f\x1f\x1f", // 264
+	"On rliykom tclfx>n.\x1f\x1f\x1f", // 265
+	"Kak narx>s...\x1f\x1f\x1f\x1f\x1f\x1f", // 266
+	"nocodo rcfgfdo...\x1f\x1f\x1f\x1f\x1f\x1f", // 267
+	"polnowcfsnodo...", // 268
+	"rpfwc|ptrka...\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 269
+	"\"Roleasrkiv nocorsfj\"?\x1f", // 270
+	"Vcasis!\x1f\x1f\x1f\x1f\x1f", // 271
+	"` sfbf kso? P|lfror?!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 272
+	"Rptrs\200 67 bqann|v rloc...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 273
+	"C so gf cqfm\200 c orobn\200kf...", // 274
+	"Tqa, oskq|so.\x1f", // 275
+	"Eacaj, kqoyka, cr> el\200 sfb\200!", // 276
+	"Nf cigt pqixin| docoqis} r nim\nrfjxar.\x1f\x1f\x1f\x1f\x1f\x1f", // 277
+	"Ada, pqacea!..\x1f", // 278
+	"Baqmfn oxfn} blihko...\x1f\x1f\x1f\x1f", // 279
+	"S}ut!", // 280
+	"Ltxyf b| coea.\x1f", // 281
+	"Mnf ril nf vcasis clfhs}.", // 282
+	"Pqtgin| modts pokolos} rpint.\x1f\x1f\x1f", // 283
+	"Nfs, rparibo. Fea, povogf, fz> gica\200.\x1f\x1f\x1f", // 284
+	"Ecfq} hapfqsa. Kaka\200 nfogieannors}.\x1f", // 285
+	"Sts ptrso.\x1f", // 286
+	"Rsoilo b|s} bolff cnimasfl}n|m\nna tqokav dfodqauii...\x1f\x1f\x1f\x1f", // 287
+	"Mnf nfhaxfm ~sos vlam.\x1f", // 288
+	"Rparibo, \200 ciefl kamni pom\200dxf.\x1f\x1f\x1f\x1f", // 289
+	"Oxfn} stp|f - i cq\200e li pqidoe\200sr\200.\x1f", // 290
+	"Kaka\200 os niv pol}ha?\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 291
+	"Baqmfn nacfqn\200ka hamfsis\npqopagt.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 292
+	"Ntgno nfmalo cqfmfni, xsob| cr> c|pis}.\nMogfs, porlf haeani\200...\x1f\x1f\x1f\x1f", // 293
+	"` cfe} nf coq. I cr> qacno hefr} ptrso.\x1f\x1f\x1f\x1f\x1f", // 294
+	"Iv rliykom mnodo, xsob pqocfqis} crf.", // 295
+	"Kapisan r\177ea nf pomfrsisr\200.\nPoizt c eqtdom mfrsf.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 296
+	"Rsqtril? `? Nikodea!\x1f\x1f", // 297
+	"Nf modt oskq|s}.", // 298
+	"Oni mnf nf ntgn|.\x1f", // 299
+	"` L\177bop|sna\200 Caqcaqa?\x1f\x1f\x1f\x1f", // 300
+	"T mfn\200 bol}yif kaqman|, no nf bfheonn|f.\x1f", // 301
+	"Frli \200 iv naefnt, btefs rlogno iesi\npo lfrsniwf.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 302
+	"Xsob iv pqoxisas}, ntgno 9 gihnfj.", // 303
+	"Rparibo, \200 fz> nf trsal.\x1f", // 304
+	"Nfs ntge| ~so ckl\177xas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 305
+	"Ona cfris bol}yf mfn\200.\x1f\x1f", // 306
+	"Nikodea nf tmfl fj pol}hocas}r\200.", // 307
+	"Sakif orsq|f, xso ysan| modts qahqfhas}!", // 308
+	"Ut! Os kon}\200ka nixfdo voqoyfdo nf gei...\x1f\x1f\x1f\x1f\x1f", // 309
+	"Nfs cqfmfni qarrlabl\200s}r\200.\x1f\x1f\x1f\x1f\x1f\x1f", // 310
+	"` nf btet sqodas} ~si norki dol|mi qtkami!\x1f\x1f\x1f", // 311
+	"N|nf nf V~llotin.\x1f\x1f", // 312
+	"Na n>m nfs knopok! Nfnacigt!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 313
+	"Mnf nfxfdo porsacis}.\x1f\x1f", // 314
+	"` nf coh}mt so, xso nf mo>.\x1f\x1f\x1f\x1f", // 315
+	"^j! C x>m eflo?!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 316
+	"Oskq|so!\x1f\x1f", // 317
+	"Nf qabosafs.\x1f\x1f\x1f\x1f\x1f\x1f", // 318
+	"Poka kapisan nabl\177eafs?..\nNf rsois...\x1f\x1f", // 319
+	"Rfqp rliykom stpoj.\x1f\x1f\x1f\x1f\x1f", // 320
+	"Co-pfqc|v, t mfn\200 vcasafs eqtdiv habos.\x1f\x1f\x1f\x1f\x1f\x1f", // 321
+	"Na poekop r pomoz}\177 noga tje>s\neobqa\200 rosn\200 lfs.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 322
+	"Nfs gflani\200 fz> i trtdtbl\200s}\n~sos bfrpoq\200eok.", // 323
+	"Rsois li bqoras} iv psiwf natdae?\x1f\x1f\x1f\x1f\x1f", // 324
+	"Nf voxt posqasis} sakif cktrn|f kqoyki.\x1f\x1f", // 325
+	"Nf rsois... Modt rorkol}hnts} c...\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 326
+	"\"Irsoqi\200 bl\177ha\".\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 327
+	"\"Manxfrsfq _najsfe: idqa kqarn|v e}\200coloc\".\x1f\x1f", // 328
+	"\"Boqh|f i eqtdif ovosnix}i robaki\".\x1f", // 329
+	"\"Molokoror, ili mo\200 gihn} na Eikom Hapaef\".\x1f\x1f\x1f\x1f", // 330
+	"\"Xaqli Bqatn i fdo kompani\200\".\x1f\x1f\x1f", // 331
+	"\"Qohoca\200 pansfqa: nfihcfrsna\200 biodqaui\200\".\x1f", // 332
+
+	"Irpol}hocanif ~siv ectv pqfemfsoc cmfrsf\nnixfdo nf ears.",
 };
 
 #define DSEG_ENDBLK_SIZE 34651
@@ -12115,6 +13141,235 @@ const static uint8 dsegEndBlock[DSEG_ENDBLK_SIZE] = {
 	0x00, 0x00, 0x00
 };
 
+struct Combination {
+	byte _obj1Id;
+	byte _obj2Id;
+	byte _newObjId;
+
+	void write(FILE *fd) {
+		writeByte(fd, _obj1Id);
+		writeByte(fd, _obj2Id);
+		writeByte(fd, _newObjId);
+	}
+};
+
+const uint kNumCombinations = 34;
+
+Combination combiningTable[kNumCombinations] = {
+	{0x12, 0x16, 0x17},
+	{0x15, 0x18, 0x19},
+	{0x01, 0x1c, 0x1f},
+	{0x11, 0x1c, 0x1e},
+	{0x1f, 0x11, 0x20},
+	{0x1e, 0x01, 0x20},
+	{0x0d, 0x10, 0x0e},
+	{0x08, 0x0f, 0x09},
+	{0x14, 0x21, 0x22},
+	{0x27, 0x28, 0x29},
+	{0x26, 0x2a, 0x2b},
+	{0x12, 0x13, 0x00},
+	{0x01, 0x30, 0x00},
+	{0x10, 0x30, 0x00},
+	{0x12, 0x14, 0x00},
+	{0x12, 0x22, 0x00},
+	{0x12, 0x1a, 0x00},
+	{0x12, 0x1c, 0x00},
+	{0x12, 0x31, 0x00},
+	{0x12, 0x13, 0x00},
+	{0x13, 0x30, 0x00},
+	{0x18, 0x0a, 0x00},
+	{0x18, 0x0b, 0x00},
+	{0x15, 0x26, 0x00},
+	{0x2d, 0x30, 0x00},
+	{0x2c, 0x30, 0x00},
+	{0x2e, 0x30, 0x00},
+	{0x31, 0x1a, 0x00},
+	{0x31, 0x30, 0x00},
+	{0x37, 0x3b, 0x3c},
+	{0x41, 0x38, 0x40},
+	{0x42, 0x34, 0x43},
+	{0x54, 0x58, 0x59},
+	{0x57, 0x5a, 0x5b},
+};
+
+const char *englishCombineMessages[kNumCombinations] = {
+	"Wow, now it looks like it came straight\nfrom the store!",
+	"Tying the ribbon around the rake narrowed\nthe space between the teeth!",
+	"With the help of super glue I made...\nsomething...",
+	"With the help of super glue I made...\nsomething...",
+	"Using the super glue once again...",
+	"Using the super glue once again...",
+	"The whisky is strong enough to use as\nfuel, but I wonder if the chainsaw\ncan take it...",
+	"Once again the super-glue comes in handy...",
+	"The soot gives the potatoe a brand new look...",
+	"Now I'm ready to conquer the lake!",
+	"It makes me feel like another\nwanna-be cliffhanger.",
+	"I wouldn't impress anyone with such candy.",
+	"It's active enough.",
+	"Great idea! But, you see, ecomaniacs might\nbe watching...",
+	"It won't look any better in a wrapper.",
+	"It won't look any better in a wrapper.",
+	"It won't look any better in a wrapper.",
+	"It won't look any better in a wrapper.",
+	"It won't look any better in a wrapper.",
+	"The cake is too big for this wrapper.",
+	"I don't want to waste this candy.",
+	"The flower is beautiful enough without\nany fancy extras.",
+	"The flower is beautiful enough without\nany fancy extras.",
+	"Good idea, but I need something smaller\nthan this rope.",
+	"I might need this cheese. Again.",
+	"It's not DOOM. It's a harmless graphic adventure\nfor the whole family (we want DOOM! we want\nDOOM!).",
+	"It's not DOOM. It's a harmless graphic adventure\nfor the whole family (we want DOOM! we want\nDOOM!).",
+	"I don't need to open this nut.",
+	"It's not DOOM. It's a harmless graphic adventure\nfor the whole family (we want DOOM! we want\nDOOM!).",
+	"Let's make this cork larger.",
+	"Once again the super glue comes in handy.",
+	"The batteries fit!",
+	"I tied the rope to the pin.",
+	"Let's make it spicy.",
+};
+
+const char *polishCombineMessages[kNumCombinations] = {
+	"]a%, teraz wygl@da jak prosto ze sklepu!",
+	"Obwi@zanie grabi wst@<k@ zw#zi%o odst#py\nmi#dzy z#bami!",
+	"Z pomoc@ super kleju zrobi%em...\nco$...",
+	"Z pomoc@ super kleju zrobi%em...\nco$...",
+	"U<ywam super kleju raz jeszcze...",
+	"U<ywam super kleju raz jeszcze...",
+	"Whisky jest na tyle mocna, by zast@pi^ paliwo,\nale ciekawe, czy pi%a to prze<yje...",
+	"Raz jeszcze super klej si# przydaje...",
+	"Sadza nadaje ziemniakowi ca%kiem nowy wygl@d...",
+	"Teraz mog# podbi^ ka<de jezioro!",
+	"\'Alpinista\', co?...",
+	"Takim ciastkiem nikogo nie zainteresuj#.",
+	"Jest wystarczaj@co aktywna.",
+	"Wspania%y pomys%. Ale, widzisz, ekomaniacy\nmog@ patrze^...",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Ciastko jest za du<e na ten celofan.",
+	"Nie chc# zniszczy^ tego ciastka.",
+	"Kwiatek jest $liczny bez dodatk*w.",
+	"Kwiatek jest $liczny bez dodatk*w.",
+	"Dobry pomys%, ale potrzebuj# czego$\nmniejszego ni< ta lina.",
+	"Mog# jeszcze potrzebowa^ tego sera. Znowu.",
+	"To nie DOOM. To %agodna przygod*wka dla ca%ej\nrodziny (my chcemy DOOMA! my chcemy\nDOOMA!).",
+	"To nie DOOM. To %agodna przygod*wka dla ca%ej\nrodziny (my chcemy DOOMA! my chcemy\nDOOMA!).",
+	"Nie musz# go otwiera^.",
+	"To nie DOOM. To %agodna przygod*wka dla ca%ej\nrodziny (my chcemy DOOMA! my chcemy\nDOOMA!).",
+	"Powi#ksz# nieco ten korek.",
+	"Kolejny raz u<ywam super kleju.",
+	"Baterie pasuj@!",
+	"Przywi@za%em lin# do zawleczki.",
+	"Dodajmy troch# przypraw...",
+};
+
+const char *czechCombineMessages[kNumCombinations] = {
+	"No par#da, vypad# to jako $erstv+ koupen*\nv obchod+!",
+	"Uta{en; zbyl^ch zub] hr#b; p#skou zmen@ilo\nmezery mezi zuby, hr#b+ jsou ready!",
+	"Pou{it;m super lepidla jsem cosi stvo>il.\nN+jak* cosi. Zat;m...",
+	"Pou{it;m super lepidla jsem cosi stvo>il.\nN+jak* cosi. Zat;m...",
+	"Dal@;m pou{it;m super lepidla...",
+	"Dal@;m pou{it;m super lepidla...",
+	"Whiska je dost siln#, aby se dala pou{;t\njako palivo, jen aby to ale vydr{ela\nchud#k motorov# pila.",
+	"A znovu se hodilo super lepidlo...",
+	"Saze m+n; brambor na n+co \\pln+ jin*ho,\nhroziv+j@;ho.",
+	"Poslu@n+ hl#s;m, jsem p>ipraven k pot#p+n;!",
+	"C;t;m se jako dal@; novope$en^ Cliffhanger.\nSly@;@ Sly?",
+	"S takov^mhle ocucan^m bonb=nem nikoho neosln;m.",
+	"Mele se, jako by m+la padoucnici.",
+	"Bezvadnej n#pad, ale bacha, ekomaniaci \njsou po>#d na pozoru...",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"M-mm. Moc malej obal na moc velkej bonb=n.",
+	"Nechci ten bonb=n jen tak promarnit.",
+	"Kv+tina je kr#sn# i tak, nepot>ebuje\n{#dn* vylep@ov#ky.",
+	"Kv+tina je kr#sn# i tak, nepot>ebuje\n{#dn* vylep@ov#ky.",
+	"Dobrej n#pad, ale pot>ebuju n+co men@;ho\nne{ tenhle provaz.",
+	"Fuj. A nav;c se ten s^r m]{e je@t+ hodit.",
+	"Nejsme v DOOMu, ale v ne@kodn* adventu>e\npro celou rodinu (My chceme DOOM! my chceme\nDOOM!).",
+	"Nejsme v DOOMu, ale v ne@kodn* adventu>e\npro celou rodinu (My chceme DOOM! my chceme\nDOOM!).",
+	"Nen; pot>eba o>ech otev;rat.",
+	"Nejsme v DOOMu, ale v ne@kodn* adventu>e\npro celou rodinu (My chceme DOOM! my chceme\nDOOM!).",
+	"Ano, ud+l#me ten @punt v+t@;, tak!",
+	"A je@t+ jednou se super lepidlo hodilo.",
+	"Baterky pasovaly!",
+	"P>iv#zal jsem lano k tomu, k $emu pat>;.",
+	"Trochu to oko>en;me...",
+};
+
+const char *russianCombineMessages[kNumCombinations] = {
+	"Odo, sfpfq} ona c|dl\200eis kak\npq\200mikom ih madahina!\x1f\x1f\x1f\x1f\x1f",
+	"Obc\200hac dqabli lfnsoj, tealor} tmfn}yis}\nhahoq mfget htb}\200mi!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"R pomoz}\177 rtpfqklf\200 \200 reflal...\nxso-so...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"R pomoz}\177 rtpfqklf\200 \200 reflal...\nxso-so...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Rnoca pqimfnic rtpfqklfj...\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Rnoca pqimfnic rtpfqklfj...\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Cirki eorsasoxno kqfpkij, xsob|\nrojsi ha soplico, no cos poje>s li\nono el\200 bfnhopil|...",
+	"Rtpfqklfj rnoca pqidoeilr\200...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Raga pqieala kaqsoykf rocfqyfnno inoj cie...\x1f\x1f",
+	"Sfpfq} \200 dosoc pokoqis} ohfqo!\x1f\x1f\x1f\x1f",
+	"Oztzfnif, xso ~so rnoca\ndltp|j \"qo\200l} c ktrsav\".\x1f\x1f\x1f",
+	"Feca li saka\200 konufsa komt-so ponqacisr\200.\x1f",
+	"Sfpfq} poecigna\200.\x1f\x1f",
+	"Oslixno! No ha mnoj modts nabl\177eas}\n~kolodi-uanasiki...\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"Piqod rliykom bol}yoj el\200 ob>qski.\x1f\x1f\x1f",
+	"` nf voxt liyis}r\200 ~soj konufs|.\x1f",
+	"Wcfsok eorsasoxno kqaric i bfh\nc|xtqn|v ystxfk.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Wcfsok eorsasoxno kqaric i bfh\nc|xtqn|v ystxfk.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Voqoya\200 m|rl}, no ntgno xso-nibte} mfn}yf\n~soj cfq>cki.",
+	"R|q mogfs pqidoeis}r\200. Rnoca.\x1f\x1f\x1f",
+	"^so nf ETM. ^so bfhobienof pqikl\177xfnif\nel\200 crfj rfm}i (ea>y} ETM! Ea>y}\nETM!).\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"^so nf ETM. ^so bfhobienof pqikl\177xfnif\nel\200 crfj rfm}i (ea>y} ETM! Ea>y}\nETM!).\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Nf ntgno oskq|cas} ~sos oqfv.\x1f",
+	"^so nf ETM. ^so bfhobienof pqikl\177xfnif\nel\200 crfj rfm}i (ea>y} ETM! Ea>y}\nETM!).\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Eacajsf tcflixim ~st pqobkt.",
+	"I rnoca rtpfqklfj mnf pqidoeilr\200!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Basaqfjki poeoyli!",
+	"` pqic\200hal cfq>ckt k xfkf.\x1f",
+	"Eobacim pfqxinkt.\x1f\x1f\x1f",
+};
+
+// Dialog stack arr
+const uint16 dialogStacks[] = {
+	0, 1, 2, 3, 4, 0xffff, // 0
+	6, 7, 8, 0xffff, // 1
+	13, 14, 15, 16, 0xffff, // 2
+	18, 19, 20, 21, 0xffff, // 3
+	22, 23, 0xffff, // 4
+	25, 26, 0xffff, // 5
+	27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 0xffff, // 6
+	39, 40, 0xffff, // 7
+	41, 42, 0xffff, // 8
+	48, 49, 0xffff, // 9
+	58, 59, 0xffff, // 10
+	65, 66, 67, 68, 69, 0xffff, // 11
+	78, 79, 80, 81, 0xffff, // 12
+	82, 83, 0xffff, // 13
+	101, 102, 103, 104, 0xffff, // 14
+	105, 106, 107, 0xffff, // 15
+	131, 132, 133, 134, 0xffff, // 16
+	135, 136, 137, 138, 139, 0xffff, // 17
+	140, 141, 142, 143, 0xffff, // 18
+	145, 146, 0xffff, // 19
+	151, 152, 153, 154, 155, 0xffff, // 20
+	169, 170, 171, 172, 0xffff, // 21
+	173, 174, 175, 0xffff, // 22
+	187, 188, 189, 0xffff, // 23
+	158, 159, 160, 0xffff, // 24
+	190, 191, 0xffff, // 25
+};
+
 // Dialog Strings Block
 
 #define ANIM_WAIT        "\xff"
@@ -12123,7 +13378,9 @@ const static uint8 dsegEndBlock[DSEG_ENDBLK_SIZE] = {
 #define CHANGE_CHARACTER "\n\n\n"
 #define END_DIALOG       "\n\n\n\n"
 
-const static char* dialog_0[] = {
+const uint kNumDialogs = 213;
+
+const static char *englishDialog0[] = {
 	ANIM_WAIT,
 	"Good day.",
 	CHANGE_CHARACTER,
@@ -12163,7 +13420,7 @@ const static char* dialog_0[] = {
 	END_DIALOG
 };
 
-const static char* dialog_1[] = {
+const static char *englishDialog1[] = {
 	"So...",
 	DISPLAY_MESSAGE,
 	"What are you doing now?",
@@ -12226,7 +13483,7 @@ const static char* dialog_1[] = {
 	END_DIALOG
 };
 
-const static char* dialog_2[] = {
+const static char *englishDialog2[] = {
 	"Thanks. What is it?",
 	CHANGE_CHARACTER,
 	"Chocolate candy.",
@@ -12300,7 +13557,7 @@ const static char* dialog_2[] = {
 	END_DIALOG
 };
 
-const static char* dialog_3[] = {
+const static char *englishDialog3[] = {
 	"Mister guard, I...",
 	CHANGE_CHARACTER,
 	"Listen, boy.",
@@ -12329,14 +13586,14 @@ const static char* dialog_3[] = {
 	END_DIALOG
 };
 
-const static char* dialog_4[] = {
+const static char *englishDialog4[] = {
 	"Nice suit.",
 	CHANGE_CHARACTER,
 	"Yeah.",
 	END_DIALOG
 };
 
-const static char* dialog_5[] = {
+const static char *englishDialog5[] = {
 	CHANGE_CHARACTER,
 	"Damn!",
 	DISPLAY_MESSAGE,
@@ -12344,7 +13601,7 @@ const static char* dialog_5[] = {
 	END_DIALOG
 };
 
-const static char* dialog_6[] = {
+const static char *englishDialog6[] = {
 	"Hey!",
 	CHANGE_CHARACTER,
 	"What?",
@@ -12367,7 +13624,7 @@ const static char* dialog_6[] = {
 	END_DIALOG
 };
 
-const static char* dialog_7[] = {
+const static char *englishDialog7[] = {
 	"Hey!",
 	CHANGE_CHARACTER,
 	"You've seen nothing.",
@@ -12376,14 +13633,14 @@ const static char* dialog_7[] = {
 	END_DIALOG
 };
 
-const static char* dialog_8[] = {
+const static char *englishDialog8[] = {
 	"Hey!",
 	CHANGE_CHARACTER,
 	"Get lost.",
 	END_DIALOG
 };
 
-const static char* dialog_9[] = {
+const static char *englishDialog9[] = {
 	"What would you say if I gave you some",
 	NEW_LINE,
 	"gold?...",
@@ -12402,7 +13659,7 @@ const static char* dialog_9[] = {
 	END_DIALOG
 };
 
-const static char* dialog_10[] = {
+const static char *englishDialog10[] = {
 	"Now please open the door.",
 	CHANGE_CHARACTER,
 	"No way. Now buzz off.",
@@ -12417,7 +13674,7 @@ const static char* dialog_10[] = {
 	END_DIALOG
 };
 
-const static char* dialog_11[] = {
+const static char *englishDialog11[] = {
 	"You... You...",
 	CHANGE_CHARACTER,
 	"Buzz off.",
@@ -12430,14 +13687,14 @@ const static char* dialog_11[] = {
 	END_DIALOG
 };
 
-const static char* dialog_12[] = {
+const static char *englishDialog12[] = {
 	"You can't even trust corrupt",
 	NEW_LINE,
 	"guards these days.",
 	END_DIALOG
 };
 
-const static char* dialog_13[] = {
+const static char *englishDialog13[] = {
 	"Hi.",
 	CHANGE_CHARACTER,
 	"Hello.",
@@ -12478,7 +13735,7 @@ const static char* dialog_13[] = {
 	END_DIALOG
 };
 
-const static char* dialog_14[] = {
+const static char *englishDialog14[] = {
 	"Listen, Sonny or whatever.",
 	DISPLAY_MESSAGE,
 	"What are you trying to do",
@@ -12521,7 +13778,7 @@ const static char* dialog_14[] = {
 	END_DIALOG
 };
 
-const static char* dialog_15[] = {
+const static char *englishDialog15[] = {
 	"Hey, kid!",
 	DISPLAY_MESSAGE,
 	"I've got a great idea!",
@@ -12546,14 +13803,14 @@ const static char* dialog_15[] = {
 	END_DIALOG
 };
 
-const static char* dialog_16[] = {
+const static char *englishDialog16[] = {
 	"Hey...",
 	CHANGE_CHARACTER,
 	"Go away.",
 	END_DIALOG
 };
 
-const static char* dialog_17[] = {
+const static char *englishDialog17[] = {
 	"Hey, boy! It's unbelievable!",
 	CHANGE_CHARACTER,
 	"What?",
@@ -12576,7 +13833,7 @@ const static char* dialog_17[] = {
 	END_DIALOG
 };
 
-const static char* dialog_18[] = {
+const static char *englishDialog18[] = {
 	"Good day, sir!",
 	CHANGE_CHARACTER,
 	"And good day to",
@@ -12603,7 +13860,7 @@ const static char* dialog_18[] = {
 	END_DIALOG
 };
 
-const static char* dialog_19[] = {
+const static char *englishDialog19[] = {
 	"Do you know the boy",
 	NEW_LINE,
 	"playing with the ball",
@@ -12644,7 +13901,7 @@ const static char* dialog_19[] = {
 	END_DIALOG
 };
 
-const static char* dialog_20[] = {
+const static char *englishDialog20[] = {
 	"Are you going to sit here",
 	NEW_LINE,
 	"all day long?",
@@ -12697,14 +13954,14 @@ const static char* dialog_20[] = {
 	END_DIALOG
 };
 
-const static char* dialog_21[] = {
+const static char *englishDialog21[] = {
 	"Anything new?",
 	CHANGE_CHARACTER,
 	"Hope not.",
 	END_DIALOG
 };
 
-const static char* dialog_22[] = {
+const static char *englishDialog22[] = {
 	"May I borrow this shotgun?",
 	CHANGE_CHARACTER,
 	"No.",
@@ -12725,7 +13982,7 @@ const static char* dialog_22[] = {
 	END_DIALOG
 };
 
-const static char* dialog_23[] = {
+const static char *englishDialog23[] = {
 	"Maybe you will change your mind",
 	NEW_LINE,
 	"about the shotgun?...",
@@ -12748,7 +14005,7 @@ const static char* dialog_23[] = {
 	END_DIALOG
 };
 
-const static char* dialog_24[] = {
+const static char *englishDialog24[] = {
 	"May I search your drawers?",
 	CHANGE_CHARACTER,
 	"Yes.",
@@ -12777,7 +14034,7 @@ const static char* dialog_24[] = {
 	END_DIALOG
 };
 
-const static char* dialog_25[] = {
+const static char *englishDialog25[] = {
 	"May I borrow the fan?",
 	CHANGE_CHARACTER,
 	"No way. It makes this hot day more",
@@ -12786,14 +14043,14 @@ const static char* dialog_25[] = {
 	END_DIALOG
 };
 
-const static char* dialog_26[] = {
+const static char *englishDialog26[] = {
 	"About this fan...",
 	CHANGE_CHARACTER,
 	"Come back in winter.",
 	END_DIALOG
 };
 
-const static char* dialog_27[] = {
+const static char *englishDialog27[] = {
 	"Nice weather we have",
 	NEW_LINE,
 	"today...",
@@ -12804,7 +14061,7 @@ const static char* dialog_27[] = {
 	END_DIALOG
 };
 
-const static char* dialog_28[] = {
+const static char *englishDialog28[] = {
 	"Is it your daughter?",
 	CHANGE_CHARACTER,
 	"You are very kind,",
@@ -12857,7 +14114,7 @@ const static char* dialog_28[] = {
 	END_DIALOG
 };
 
-const static char* dialog_29[] = {
+const static char *englishDialog29[] = {
 	"May I ask what you are",
 	NEW_LINE,
 	"doing?",
@@ -12897,21 +14154,21 @@ const static char* dialog_29[] = {
 	END_DIALOG
 };
 
-const static char* dialog_30[] = {
+const static char *englishDialog30[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"Indeed it is.",
 	END_DIALOG
 };
 
-const static char* dialog_31[] = {
+const static char *englishDialog31[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"You know.",
 	END_DIALOG
 };
 
-const static char* dialog_32[] = {
+const static char *englishDialog32[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"It's nice you ask,",
@@ -12922,7 +14179,7 @@ const static char* dialog_32[] = {
 	END_DIALOG
 };
 
-const static char* dialog_33[] = {
+const static char *englishDialog33[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"Don't repeat",
@@ -12931,7 +14188,7 @@ const static char* dialog_33[] = {
 	END_DIALOG
 };
 
-const static char* dialog_34[] = {
+const static char *englishDialog34[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"Don't interrupt",
@@ -12940,19 +14197,19 @@ const static char* dialog_34[] = {
 	END_DIALOG
 };
 
-const static char* dialog_35[] = {
+const static char *englishDialog35[] = {
 	"Is everything OK?",
 	CHANGE_CHARACTER,
 	"Oh shut up.",
 	END_DIALOG
 };
 
-const static char* dialog_36[] = {
+const static char *englishDialog36[] = {
 	"Is everything OK?",
 	END_DIALOG
 };
 
-const static char* dialog_37[] = {
+const static char *englishDialog37[] = {
 	"Excuse my",
 	NEW_LINE,
 	"immodesty...",
@@ -12973,7 +14230,7 @@ const static char* dialog_37[] = {
 	END_DIALOG
 };
 
-const static char* dialog_38[] = {
+const static char *englishDialog38[] = {
 	"I hope you",
 	NEW_LINE,
 	"like it...",
@@ -13002,7 +14259,7 @@ const static char* dialog_38[] = {
 	END_DIALOG
 };
 
-const static char* dialog_39[] = {
+const static char *englishDialog39[] = {
 	"Would you care for",
 	NEW_LINE,
 	"another flower?",
@@ -13015,7 +14272,7 @@ const static char* dialog_39[] = {
 	END_DIALOG
 };
 
-const static char* dialog_40[] = {
+const static char *englishDialog40[] = {
 	"Are you sure you don't",
 	NEW_LINE,
 	"want another flower?",
@@ -13024,7 +14281,7 @@ const static char* dialog_40[] = {
 	END_DIALOG
 };
 
-const static char* dialog_41[] = {
+const static char *englishDialog41[] = {
 	"May I borrow this",
 	NEW_LINE,
 	"duster?",
@@ -13047,7 +14304,7 @@ const static char* dialog_41[] = {
 	END_DIALOG
 };
 
-const static char* dialog_42[] = {
+const static char *englishDialog42[] = {
 	"Any chances to borrow the",
 	NEW_LINE,
 	"feather duster?",
@@ -13056,7 +14313,7 @@ const static char* dialog_42[] = {
 	END_DIALOG
 };
 
-const static char* dialog_43[] = {
+const static char *englishDialog43[] = {
 	"Do you think you could",
 	NEW_LINE,
 	"lend me the feather duster",
@@ -13075,14 +14332,14 @@ const static char* dialog_43[] = {
 	END_DIALOG
 };
 
-const static char* dialog_44[] = {
+const static char *englishDialog44[] = {
 	"Ha! I'm even faster than Indy`!",
 	CHANGE_CHARACTER,
 	"I've seen it all, boy!",
 	END_DIALOG
 };
 
-const static char* dialog_45[] = {
+const static char *englishDialog45[] = {
 	"Er...",
 	DISPLAY_MESSAGE,
 	"Uh...",
@@ -13095,7 +14352,7 @@ const static char* dialog_45[] = {
 	END_DIALOG
 };
 
-const static char* dialog_46[] = {
+const static char *englishDialog46[] = {
 	"Excuse me, lady, but I think your",
 	NEW_LINE,
 	"laundry is dry now...",
@@ -13112,7 +14369,7 @@ const static char* dialog_46[] = {
 	END_DIALOG
 };
 
-const static char* dialog_47[] = {
+const static char *englishDialog47[] = {
 	CHANGE_CHARACTER,
 	"You were right, young man.",
 	DISPLAY_MESSAGE,
@@ -13122,7 +14379,7 @@ const static char* dialog_47[] = {
 	END_DIALOG
 };
 
-const static char* dialog_48[] = {
+const static char *englishDialog48[] = {
 	"Do you need this fake apple?",
 	CHANGE_CHARACTER,
 	"It depends. This apple",
@@ -13151,7 +14408,7 @@ const static char* dialog_48[] = {
 	END_DIALOG
 };
 
-const static char* dialog_49[] = {
+const static char *englishDialog49[] = {
 	"This apple...",
 	CHANGE_CHARACTER,
 	"No story, no apple.",
@@ -13161,7 +14418,7 @@ const static char* dialog_49[] = {
 	END_DIALOG
 };
 
-const static char* dialog_50[] = {
+const static char *englishDialog50[] = {
 	"Could she be...",
 	DISPLAY_MESSAGE,
 	"...the most beautiful girl...",
@@ -13170,7 +14427,7 @@ const static char* dialog_50[] = {
 	END_DIALOG
 };
 
-const static char* dialog_51[] = {
+const static char *englishDialog51[] = {
 	"I think it's high time to",
 	NEW_LINE,
 	"introduce myself.",
@@ -13181,7 +14438,7 @@ const static char* dialog_51[] = {
 	END_DIALOG
 };
 
-const static char* dialog_52[] = {
+const static char *englishDialog52[] = {
 	"The moment I saw those eyes",
 	NEW_LINE,
 	"was the best moment of my entire",
@@ -13197,7 +14454,7 @@ const static char* dialog_52[] = {
 	END_DIALOG
 };
 
-const static char* dialog_53[] = {
+const static char *englishDialog53[] = {
 	"Uh...",
 	DISPLAY_MESSAGE,
 	"Er...",
@@ -13277,14 +14534,14 @@ const static char* dialog_53[] = {
 	END_DIALOG
 };
 
-const static char* dialog_54[] = {
+const static char *englishDialog54[] = {
 	"Do you like it?",
 	CHANGE_CHARACTER,
 	"You're charming.",
 	END_DIALOG
 };
 
-const static char* dialog_55[] = {
+const static char *englishDialog55[] = {
 	"As a matter",
 	NEW_LINE,
 	"of fact...",
@@ -13295,7 +14552,7 @@ const static char* dialog_55[] = {
 	END_DIALOG
 };
 
-const static char* dialog_56[] = {
+const static char *englishDialog56[] = {
 	"Oh,yes...",
 	DISPLAY_MESSAGE,
 	"I just wanted to say",
@@ -13310,12 +14567,12 @@ const static char* dialog_56[] = {
 	END_DIALOG
 };
 
-const static char* dialog_57[] = {
+const static char *englishDialog57[] = {
 	"I hate myself.",
 	END_DIALOG
 };
 
-const static char* dialog_58[] = {
+const static char *englishDialog58[] = {
 	"I have another",
 	NEW_LINE,
 	"flower...",
@@ -13332,7 +14589,7 @@ const static char* dialog_58[] = {
 	END_DIALOG
 };
 
-const static char* dialog_59[] = {
+const static char *englishDialog59[] = {
 	"So you don't want",
 	NEW_LINE,
 	"another flower?",
@@ -13341,7 +14598,7 @@ const static char* dialog_59[] = {
 	END_DIALOG
 };
 
-const static char* dialog_60[] = {
+const static char *englishDialog60[] = {
 	"Would you like some candy?",
 	CHANGE_CHARACTER,
 	"You're nice, but no, thanks.",
@@ -13378,7 +14635,7 @@ const static char* dialog_60[] = {
 	END_DIALOG
 };
 
-const static char* dialog_61[] = {
+const static char *englishDialog61[] = {
 	ANIM_WAIT,
 	"Khm...",
 	CHANGE_CHARACTER,
@@ -13420,14 +14677,14 @@ const static char* dialog_61[] = {
 	END_DIALOG
 };
 
-const static char* dialog_62[] = {
+const static char *englishDialog62[] = {
 	"Thanks. I will never",
 	NEW_LINE,
 	"wash it.",
 	END_DIALOG
 };
 
-const static char* dialog_63[] = {
+const static char *englishDialog63[] = {
 	"I found your name on a banknote",
 	NEW_LINE,
 	"some fatso gave me. Do you know",
@@ -13438,7 +14695,7 @@ const static char* dialog_63[] = {
 	END_DIALOG
 };
 
-const static char* dialog_64[] = {
+const static char *englishDialog64[] = {
 	"Hey, what's up?!",
 	CHANGE_CHARACTER,
 	"Oh, poor me!...",
@@ -13479,7 +14736,7 @@ const static char* dialog_64[] = {
 	END_DIALOG
 };
 
-const static char* dialog_65[] = {
+const static char *englishDialog65[] = {
 	"Hey, you!",
 	DISPLAY_MESSAGE,
 	"Would you please give me that nut",
@@ -13488,12 +14745,12 @@ const static char* dialog_65[] = {
 	END_DIALOG
 };
 
-const static char* dialog_66[] = {
+const static char *englishDialog66[] = {
 	"Are you gonna give me that nut or not?!",
 	END_DIALOG
 };
 
-const static char* dialog_67[] = {
+const static char *englishDialog67[] = {
 	"All right.",
 	DISPLAY_MESSAGE,
 	"That's it.",
@@ -13506,19 +14763,19 @@ const static char* dialog_67[] = {
 	END_DIALOG
 };
 
-const static char* dialog_68[] = {
+const static char *englishDialog68[] = {
 	"Don't you know it's not politically",
 	NEW_LINE,
 	"correct to wear a fur?",
 	END_DIALOG
 };
 
-const static char* dialog_69[] = {
+const static char *englishDialog69[] = {
 	"Hey, thanks again for the nut.",
 	END_DIALOG
 };
 
-const static char* dialog_70[] = {
+const static char *englishDialog70[] = {
 	"I didn't ask if I could take the rope.",
 	DISPLAY_MESSAGE,
 	"It's really rude to take someone else's",
@@ -13537,12 +14794,12 @@ const static char* dialog_70[] = {
 	END_DIALOG
 };
 
-const static char* dialog_71[] = {
+const static char *englishDialog71[] = {
 	"No pain no gain.",
 	END_DIALOG
 };
 
-const static char* dialog_72[] = {
+const static char *englishDialog72[] = {
 	"Listen, guys. I want you to get",
 	NEW_LINE,
 	"outta here at once!",
@@ -13555,7 +14812,7 @@ const static char* dialog_72[] = {
 	END_DIALOG
 };
 
-const static char* dialog_73[] = {
+const static char *englishDialog73[] = {
 	"I can see...",
 	DISPLAY_MESSAGE,
 	"...there's a...",
@@ -13564,7 +14821,7 @@ const static char* dialog_73[] = {
 	END_DIALOG
 };
 
-const static char* dialog_74[] = {
+const static char *englishDialog74[] = {
 	"Not that I'm chicken.",
 	DISPLAY_MESSAGE,
 	"It's just that it could be",
@@ -13593,12 +14850,12 @@ const static char* dialog_74[] = {
 	END_DIALOG
 };
 
-const static char* dialog_75[] = {
+const static char *englishDialog75[] = {
 	"This spider gives me thrills...",
 	END_DIALOG
 };
 
-const static char* dialog_76[] = {
+const static char *englishDialog76[] = {
 	"Hey, little buddy!",
 	DISPLAY_MESSAGE,
 	"I've got a DECENT PROPOSAL for you.",
@@ -13613,7 +14870,7 @@ const static char* dialog_76[] = {
 	END_DIALOG
 };
 
-const static char* dialog_77[] = {
+const static char *englishDialog77[] = {
 	"I should have know",
 	NEW_LINE,
 	"there's a catch.",
@@ -13623,36 +14880,36 @@ const static char* dialog_77[] = {
 	END_DIALOG
 };
 
-const static char* dialog_78[] = {
+const static char *englishDialog78[] = {
 	"Hello there, big boy.",
 	END_DIALOG
 };
 
-const static char* dialog_79[] = {
+const static char *englishDialog79[] = {
 	"Don't ignore me, please.",
 	END_DIALOG
 };
 
-const static char* dialog_80[] = {
+const static char *englishDialog80[] = {
 	"You know, I'm a little bit dog-tired",
 	NEW_LINE,
 	"talking to you.",
 	END_DIALOG
 };
 
-const static char* dialog_81[] = {
+const static char *englishDialog81[] = {
 	"What's up?",
 	END_DIALOG
 };
 
-const static char* dialog_82[] = {
+const static char *englishDialog82[] = {
 	"Yes, I could take this...",
 	DISPLAY_MESSAGE,
 	"It's a quiet little village...",
 	DISPLAY_MESSAGE,
 	"No police...",
 	DISPLAY_MESSAGE,
-	"Noone will hear their screams...",
+	"No one will hear their screams...",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
 	"But I don't have a hockey mask.",
@@ -13662,14 +14919,14 @@ const static char* dialog_82[] = {
 	END_DIALOG
 };
 
-const static char* dialog_83[] = {
+const static char *englishDialog83[] = {
 	"I don't want my fingerprints on it.",
 	DISPLAY_MESSAGE,
 	" Who knows what it was used for.",
 	END_DIALOG
 };
 
-const static char* dialog_84[] = {
+const static char *englishDialog84[] = {
 	"I'm afraid that it's too hard",
 	NEW_LINE,
 	"to catch a mouse just like",
@@ -13680,7 +14937,7 @@ const static char* dialog_84[] = {
 	END_DIALOG
 };
 
-const static char* dialog_85[] = {
+const static char *englishDialog85[] = {
 	"I could try to scare these birds myself",
 	NEW_LINE,
 	"if I hadn't watched that Hitchcock",
@@ -13693,14 +14950,14 @@ const static char* dialog_85[] = {
 	END_DIALOG
 };
 
-const static char* dialog_86[] = {
+const static char *englishDialog86[] = {
 	"Great. Let's GET THE MESSAGE.",
 	DISPLAY_MESSAGE,
 	"\"Gold awaits at the end of the road.\"",
 	END_DIALOG
 };
 
-const static char* dialog_87[] = {
+const static char *englishDialog87[] = {
 	"Are you Mr. John Noty?",
 	CHANGE_CHARACTER,
 	"How do you do, my friend.",
@@ -13769,7 +15026,7 @@ const static char* dialog_87[] = {
 	END_DIALOG
 };
 
-const static char* dialog_88[] = {
+const static char *englishDialog88[] = {
 	"I will NEVER take this!",
 	DISPLAY_MESSAGE,
 	"NEVER!",
@@ -13782,13 +15039,13 @@ const static char* dialog_88[] = {
 	NEW_LINE,
 	"and pick up the banknote.",
 	DISPLAY_MESSAGE,
-	"Noone has to know...",
+	"No one has to know...",
 	DISPLAY_MESSAGE,
 	"Good bye, my friend.",
 	END_DIALOG
 };
 
-const static char* dialog_89[] = {
+const static char *englishDialog89[] = {
 	"I can't believe he treated me",
 	NEW_LINE,
 	"like that.",
@@ -13800,7 +15057,7 @@ const static char* dialog_89[] = {
 	END_DIALOG
 };
 
-const static char* dialog_90[] = {
+const static char *englishDialog90[] = {
 	"Boy...",
 	DISPLAY_MESSAGE,
 	"It's all black...",
@@ -13816,7 +15073,7 @@ const static char* dialog_90[] = {
 	END_DIALOG
 };
 
-const static char* dialog_91[] = {
+const static char *englishDialog91[] = {
 	"Searching trash cans again?",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -13826,7 +15083,7 @@ const static char* dialog_91[] = {
 	END_DIALOG
 };
 
-const static char* dialog_92[] = {
+const static char *englishDialog92[] = {
 	"The same as usual...",
 	DISPLAY_MESSAGE,
 	"Disasters...",
@@ -13844,7 +15101,7 @@ const static char* dialog_92[] = {
 	END_DIALOG
 };
 
-const static char* dialog_93[] = {
+const static char *englishDialog93[] = {
 	ANIM_WAIT,
 	"Gee...",
 	CHANGE_CHARACTER,
@@ -13882,7 +15139,7 @@ const static char* dialog_93[] = {
 	END_DIALOG
 };
 
-const static char* dialog_94[] = {
+const static char *englishDialog94[] = {
 	"There's nothing intere...",
 	DISPLAY_MESSAGE,
 	"No, wait a minute...",
@@ -13891,7 +15148,7 @@ const static char* dialog_94[] = {
 	END_DIALOG
 };
 
-const static char* dialog_95[] = {
+const static char *englishDialog95[] = {
 	"Don't you think you",
 	NEW_LINE,
 	"should add a little",
@@ -13922,7 +15179,7 @@ const static char* dialog_95[] = {
 	END_DIALOG
 };
 
-const static char* dialog_96[] = {
+const static char *englishDialog96[] = {
 	CHANGE_CHARACTER,
 	"This... hic!...",
 	DISPLAY_MESSAGE,
@@ -13940,7 +15197,7 @@ const static char* dialog_96[] = {
 	END_DIALOG
 };
 
-const static char* dialog_97[] = {
+const static char *englishDialog97[] = {
 	"I don't need this radio, but",
 	NEW_LINE,
 	"I can use its batteries.",
@@ -13953,7 +15210,7 @@ const static char* dialog_97[] = {
 	END_DIALOG
 };
 
-const static char* dialog_98[] = {
+const static char *englishDialog98[] = {
 	CHANGE_CHARACTER,
 	"Security test: voice, scent, view.",
 	DISPLAY_MESSAGE,
@@ -13964,7 +15221,7 @@ const static char* dialog_98[] = {
 	END_DIALOG
 };
 
-const static char* dialog_99[] = {
+const static char *englishDialog99[] = {
 	CHANGE_CHARACTER,
 	"Security test: voice, scent, view.",
 	DISPLAY_MESSAGE,
@@ -13975,7 +15232,7 @@ const static char* dialog_99[] = {
 	END_DIALOG
 };
 
-const static char* dialog_100[] = {
+const static char *englishDialog100[] = {
 	CHANGE_CHARACTER,
 	"Security test: voice, scent, view.",
 	DISPLAY_MESSAGE,
@@ -13986,7 +15243,7 @@ const static char* dialog_100[] = {
 	END_DIALOG
 };
 
-const static char* dialog_101[] = {
+const static char *englishDialog101[] = {
 	"May I talk with...",
 	CHANGE_CHARACTER,
 	"Go away.",
@@ -14003,7 +15260,7 @@ const static char* dialog_101[] = {
 	END_DIALOG
 };
 
-const static char* dialog_102[] = {
+const static char *englishDialog102[] = {
 	"Well, but maybe...",
 	CHANGE_CHARACTER,
 	"I...",
@@ -14024,7 +15281,7 @@ const static char* dialog_102[] = {
 	END_DIALOG
 };
 
-const static char* dialog_103[] = {
+const static char *englishDialog103[] = {
 	"Last time I ask you...",
 	CHANGE_CHARACTER,
 	"BUSY.",
@@ -14057,7 +15314,7 @@ const static char* dialog_103[] = {
 	END_DIALOG
 };
 
-const static char* dialog_104[] = {
+const static char *englishDialog104[] = {
 	"Er...",
 	CHANGE_CHARACTER,
 	"Wrrrr...",
@@ -14066,7 +15323,7 @@ const static char* dialog_104[] = {
 	END_DIALOG
 };
 
-const static char* dialog_105[] = {
+const static char *englishDialog105[] = {
 	"Good day, Mr. Robot.",
 	CHANGE_CHARACTER,
 	"Hey, yo, wassup my man,",
@@ -14153,21 +15410,21 @@ const static char* dialog_105[] = {
 	END_DIALOG
 };
 
-const static char* dialog_106[] = {
+const static char *englishDialog106[] = {
 	"Sesame, open...",
 	CHANGE_CHARACTER,
 	"(CENSORED), you (CENSORED).",
 	END_DIALOG
 };
 
-const static char* dialog_107[] = {
+const static char *englishDialog107[] = {
 	"Hi there!",
 	CHANGE_CHARACTER,
 	"(PARENTAL GUIDANCE: EXPLICIT LYRICS)",
 	END_DIALOG
 };
 
-const static char* dialog_108[] = {
+const static char *englishDialog108[] = {
 	"I'm telling you, it's something great.",
 	CHANGE_CHARACTER,
 	"I remember when you killed my",
@@ -14221,7 +15478,7 @@ const static char* dialog_108[] = {
 	END_DIALOG
 };
 
-const static char* dialog_109[] = {
+const static char *englishDialog109[] = {
 	ANIM_WAIT,
 	"Great.",
 	DISPLAY_MESSAGE,
@@ -14241,7 +15498,7 @@ const static char* dialog_109[] = {
 	END_DIALOG
 };
 
-const static char* dialog_110[] = {
+const static char *englishDialog110[] = {
 	"Here I am.",
 	DISPLAY_MESSAGE,
 	"Well, have you noticed anything",
@@ -14264,7 +15521,7 @@ const static char* dialog_110[] = {
 	END_DIALOG
 };
 
-const static char* dialog_111[] = {
+const static char *englishDialog111[] = {
 	"Where is my wallet?!",
 	DISPLAY_MESSAGE,
 	"You thief!",
@@ -14277,7 +15534,7 @@ const static char* dialog_111[] = {
 	END_DIALOG
 };
 
-const static char* dialog_112[] = {
+const static char *englishDialog112[] = {
 	"I demand an explanation.",
 	CHANGE_CHARACTER,
 	"Hah!",
@@ -14403,7 +15660,7 @@ const static char* dialog_112[] = {
 	END_DIALOG
 };
 
-const static char* dialog_113[] = {
+const static char *englishDialog113[] = {
 	"This fool trusts me.",
 	DISPLAY_MESSAGE,
 	"But I will use him...",
@@ -14432,7 +15689,7 @@ const static char* dialog_113[] = {
 	END_DIALOG
 };
 
-const static char* dialog_114[] = {
+const static char *englishDialog114[] = {
 	"But soon...",
 	DISPLAY_MESSAGE,
 	"I'll get rich.",
@@ -14447,19 +15704,19 @@ const static char* dialog_114[] = {
 	END_DIALOG
 };
 
-const static char* dialog_115[] = {
+const static char *englishDialog115[] = {
 	ANIM_WAIT,
 	"TAKE ON THE WORLD!...",
 	END_DIALOG
 };
 
-const static char* dialog_116[] = {
+const static char *englishDialog116[] = {
 	ANIM_WAIT,
 	"I always wanted to say that.",
 	END_DIALOG
 };
 
-const static char* dialog_117[] = {
+const static char *englishDialog117[] = {
 	"It's me again.",
 	CHANGE_CHARACTER,
 	"Goodbye again.",
@@ -14506,7 +15763,7 @@ const static char* dialog_117[] = {
 	END_DIALOG
 };
 
-const static char* dialog_118[] = {
+const static char *englishDialog118[] = {
 	"Ok, get in, you filthy terrorist.",
 	DISPLAY_MESSAGE,
 	"Just don't tell anybody.",
@@ -14515,7 +15772,7 @@ const static char* dialog_118[] = {
 	END_DIALOG
 };
 
-const static char* dialog_119[] = {
+const static char *englishDialog119[] = {
 	"So...",
 	DISPLAY_MESSAGE,
 	"That's how it all happened...",
@@ -14547,14 +15804,14 @@ const static char* dialog_119[] = {
 	END_DIALOG
 };
 
-const static char* dialog_120[] = {
+const static char *englishDialog120[] = {
 	"I have to hide somewhere!",
 	DISPLAY_MESSAGE,
 	"Now!",
 	END_DIALOG
 };
 
-const static char* dialog_121[] = {
+const static char *englishDialog121[] = {
 	"I have to buy an old-fashioned safe.",
 	DISPLAY_MESSAGE,
 	"That stupid robot went mad again.",
@@ -14565,7 +15822,7 @@ const static char* dialog_121[] = {
 	END_DIALOG
 };
 
-const static char* dialog_122[] = {
+const static char *englishDialog122[] = {
 	"Third time this week.",
 	DISPLAY_MESSAGE,
 	"Oh, all right, all right!...",
@@ -14574,7 +15831,7 @@ const static char* dialog_122[] = {
 	END_DIALOG
 };
 
-const static char* dialog_123[] = {
+const static char *englishDialog123[] = {
 	"...cover it all.",
 	DISPLAY_MESSAGE,
 	"I need more money for the security system.",
@@ -14589,7 +15846,7 @@ const static char* dialog_123[] = {
 	END_DIALOG
 };
 
-const static char* dialog_124[] = {
+const static char *englishDialog124[] = {
 	"Mr. John Noty?",
 	DISPLAY_MESSAGE,
 	"I just received some information from",
@@ -14604,7 +15861,7 @@ const static char* dialog_124[] = {
 	END_DIALOG
 };
 
-const static char* dialog_125[] = {
+const static char *englishDialog125[] = {
 	"So this is it?!",
 	CHANGE_CHARACTER,
 	"Definitely ...hic!... yes.",
@@ -14613,14 +15870,14 @@ const static char* dialog_125[] = {
 	END_DIALOG
 };
 
-const static char* dialog_126[] = {
+const static char *englishDialog126[] = {
 	"I have to stop them!",
 	DISPLAY_MESSAGE,
 	"There's no time to waste!",
 	END_DIALOG
 };
 
-const static char* dialog_127[] = {
+const static char *englishDialog127[] = {
 	"Well, well, well...",
 	DISPLAY_MESSAGE,
 	"You really play on my nerves.",
@@ -14635,7 +15892,7 @@ const static char* dialog_127[] = {
 	END_DIALOG
 };
 
-const static char* dialog_128[] = {
+const static char *englishDialog128[] = {
 	"But I have to kill you anyway.",
 	CHANGE_CHARACTER,
 	"No, no!",
@@ -14650,7 +15907,7 @@ const static char* dialog_128[] = {
 	END_DIALOG
 };
 
-const static char* dialog_129[] = {
+const static char *englishDialog129[] = {
 	CHANGE_CHARACTER,
 	"The poor professor has fainted...",
 	CHANGE_CHARACTER,
@@ -14695,7 +15952,7 @@ const static char* dialog_129[] = {
 	END_DIALOG
 };
 
-const static char* dialog_130[] = {
+const static char *englishDialog130[] = {
 	ANIM_WAIT,
 	"(gulp)",
 	DISPLAY_MESSAGE,
@@ -14705,7 +15962,7 @@ const static char* dialog_130[] = {
 	END_DIALOG
 };
 
-const static char* dialog_131[] = {
+const static char *englishDialog131[] = {
 	"You've lost, mister!",
 	DISPLAY_MESSAGE,
 	"The police are surrounding the building!",
@@ -14728,7 +15985,7 @@ const static char* dialog_131[] = {
 	END_DIALOG
 };
 
-const static char* dialog_132[] = {
+const static char *englishDialog132[] = {
 	"I'll have to disarm you.",
 	DISPLAY_MESSAGE,
 	"Be nice and surrender without problems.",
@@ -14749,7 +16006,7 @@ const static char* dialog_132[] = {
 	END_DIALOG
 };
 
-const static char* dialog_133[] = {
+const static char *englishDialog133[] = {
 	"I won't give you any more chances...",
 	CHANGE_CHARACTER,
 	"Good.",
@@ -14758,12 +16015,12 @@ const static char* dialog_133[] = {
 	END_DIALOG
 };
 
-const static char* dialog_134[] = {
+const static char *englishDialog134[] = {
 	"Stop packing that money!",
 	END_DIALOG
 };
 
-const static char* dialog_135[] = {
+const static char *englishDialog135[] = {
 	"Hi, there!",
 	CHANGE_CHARACTER,
 	"Hi.",
@@ -14782,7 +16039,7 @@ const static char* dialog_135[] = {
 	END_DIALOG
 };
 
-const static char* dialog_136[] = {
+const static char *englishDialog136[] = {
 	"Can't you let me in without all that",
 	NEW_LINE,
 	"bureaucracy?",
@@ -14801,7 +16058,7 @@ const static char* dialog_136[] = {
 	END_DIALOG
 };
 
-const static char* dialog_137[] = {
+const static char *englishDialog137[] = {
 	"MAY I PASS, PLEASE?!",
 	CHANGE_CHARACTER,
 	"YES, YOU MAY!",
@@ -14810,7 +16067,7 @@ const static char* dialog_137[] = {
 	END_DIALOG
 };
 
-const static char* dialog_138[] = {
+const static char *englishDialog138[] = {
 	"Let me in!",
 	CHANGE_CHARACTER,
 	"Show your documents!",
@@ -14830,14 +16087,14 @@ const static char* dialog_138[] = {
 	END_DIALOG
 };
 
-const static char* dialog_139[] = {
+const static char *englishDialog139[] = {
 	"I have to...",
 	CHANGE_CHARACTER,
 	"Documents!",
 	END_DIALOG
 };
 
-const static char* dialog_140[] = {
+const static char *englishDialog140[] = {
 	"What are you reading?",
 	CHANGE_CHARACTER,
 	"'Soldier News', of course.",
@@ -14882,7 +16139,7 @@ const static char* dialog_140[] = {
 	END_DIALOG
 };
 
-const static char* dialog_141[] = {
+const static char *englishDialog141[] = {
 	"Would you lend me the magazine?",
 	CHANGE_CHARACTER,
 	"And what am I supposed",
@@ -14902,25 +16159,25 @@ const static char* dialog_141[] = {
 	END_DIALOG
 };
 
-const static char* dialog_142[] = {
+const static char *englishDialog142[] = {
 	"What's up?",
 	CHANGE_CHARACTER,
 	"The sky, I hope.",
 	END_DIALOG
 };
 
-const static char* dialog_143[] = {
+const static char *englishDialog143[] = {
 	"Keep up the good work.",
 	END_DIALOG
 };
 
-const static char* dialog_144[] = {
+const static char *englishDialog144[] = {
 	CHANGE_CHARACTER,
 	"Hey, get back!",
 	END_DIALOG
 };
 
-const static char* dialog_145[] = {
+const static char *englishDialog145[] = {
 	"What's the matter?",
 	CHANGE_CHARACTER,
 	"You must show me your pass",
@@ -14937,7 +16194,7 @@ const static char* dialog_145[] = {
 	END_DIALOG
 };
 
-const static char* dialog_146[] = {
+const static char *englishDialog146[] = {
 	CHANGE_CHARACTER,
 	"I warn you...",
 	DISPLAY_MESSAGE,
@@ -14945,7 +16202,7 @@ const static char* dialog_146[] = {
 	END_DIALOG
 };
 
-const static char* dialog_147[] = {
+const static char *englishDialog147[] = {
 	CHANGE_CHARACTER,
 	"All right.",
 	DISPLAY_MESSAGE,
@@ -14957,7 +16214,7 @@ const static char* dialog_147[] = {
 	END_DIALOG
 };
 
-const static char* dialog_148[] = {
+const static char *englishDialog148[] = {
 	CHANGE_CHARACTER,
 	"We're gonna turn you into a real man,",
 	NEW_LINE,
@@ -14987,7 +16244,7 @@ const static char* dialog_148[] = {
 	END_DIALOG
 };
 
-const static char* dialog_149[] = {
+const static char *englishDialog149[] = {
 	CHANGE_CHARACTER,
 	"The task is simple.",
 	DISPLAY_MESSAGE,
@@ -15003,7 +16260,7 @@ const static char* dialog_149[] = {
 	END_DIALOG
 };
 
-const static char* dialog_150[] = {
+const static char *englishDialog150[] = {
 	ANIM_WAIT,
 	"Hello?",
 	DISPLAY_MESSAGE,
@@ -15012,14 +16269,14 @@ const static char* dialog_150[] = {
 	END_DIALOG
 };
 
-const static char* dialog_151[] = {
+const static char *englishDialog151[] = {
 	"OK, that was funny.",
 	DISPLAY_MESSAGE,
 	"Now let me out!",
 	END_DIALOG
 };
 
-const static char* dialog_152[] = {
+const static char *englishDialog152[] = {
 	"Hey! Is there anybody out",
 	NEW_LINE,
 	"there?!",
@@ -15029,24 +16286,24 @@ const static char* dialog_152[] = {
 	END_DIALOG
 };
 
-const static char* dialog_153[] = {
+const static char *englishDialog153[] = {
 	"Have mercy!",
 	DISPLAY_MESSAGE,
 	"I'm gonna die here!",
 	END_DIALOG
 };
 
-const static char* dialog_154[] = {
+const static char *englishDialog154[] = {
 	"I'm getting hungry!",
 	END_DIALOG
 };
 
-const static char* dialog_155[] = {
+const static char *englishDialog155[] = {
 	"I don't know what to say now...",
 	END_DIALOG
 };
 
-const static char* dialog_156[] = {
+const static char *englishDialog156[] = {
 	"I think...",
 	DISPLAY_MESSAGE,
 	"...you've passed...",
@@ -15059,7 +16316,7 @@ const static char* dialog_156[] = {
 	END_DIALOG
 };
 
-const static char* dialog_157[] = {
+const static char *englishDialog157[] = {
 	CHANGE_CHARACTER,
 	"Ok, soldier.",
 	DISPLAY_MESSAGE,
@@ -15087,7 +16344,7 @@ const static char* dialog_157[] = {
 	END_DIALOG
 };
 
-const static char* dialog_158[] = {
+const static char *englishDialog158[] = {
 	"Please tell me the password",
 	NEW_LINE,
 	"and let's get over it all.",
@@ -15097,7 +16354,7 @@ const static char* dialog_158[] = {
 	END_DIALOG
 };
 
-const static char* dialog_159[] = {
+const static char *englishDialog159[] = {
 	"Hey, talk to me.",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -15111,7 +16368,7 @@ const static char* dialog_159[] = {
 	END_DIALOG
 };
 
-const static char* dialog_160[] = {
+const static char *englishDialog160[] = {
 	"Are you ready to talk?",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -15119,7 +16376,7 @@ const static char* dialog_160[] = {
 	END_DIALOG
 };
 
-const static char* dialog_161[] = {
+const static char *englishDialog161[] = {
 	"Now, what is the password?",
 	CHANGE_CHARACTER,
 	"Get lost, you pathetic wimp.",
@@ -15137,7 +16394,7 @@ const static char* dialog_161[] = {
 	END_DIALOG
 };
 
-const static char* dialog_162[] = {
+const static char *englishDialog162[] = {
 	"I brought you something...",
 	CHANGE_CHARACTER,
 	"You can't bribe me.",
@@ -15150,7 +16407,7 @@ const static char* dialog_162[] = {
 // The usage of this in the engine overlaps the previous dialog i.e. the
 // starting offset used is two bytes early, thus implicitly changing the
 // first command of this dialog from NEW_LINE to CHANGE_CHARACTER.
-const static char* dialog_163[] = {
+const static char *englishDialog163[] = {
 	NEW_LINE,
 	"OH GIMMIE GIMMIE GIMMIE!!!",
 	DISPLAY_MESSAGE,
@@ -15172,7 +16429,7 @@ const static char* dialog_163[] = {
 	END_DIALOG
 };
 
-const static char* dialog_164[] = {
+const static char *englishDialog164[] = {
 	"You...",
 	DISPLAY_MESSAGE,
 	"...you...",
@@ -15182,7 +16439,7 @@ const static char* dialog_164[] = {
 	END_DIALOG
 };
 
-const static char* dialog_165[] = {
+const static char *englishDialog165[] = {
 	"Would you care for a wonderful kaleidoscope?",
 	CHANGE_CHARACTER,
 	"I had one once, but captain saw me",
@@ -15213,12 +16470,12 @@ const static char* dialog_165[] = {
 	END_DIALOG
 };
 
-const static char* dialog_166[] = {
+const static char *englishDialog166[] = {
 	"'COFFEE'.",
 	END_DIALOG
 };
 
-const static char* dialog_167[] = {
+const static char *englishDialog167[] = {
 	CHANGE_CHARACTER,
 	"Hot, wasn't it?",
 	CHANGE_CHARACTER,
@@ -15266,14 +16523,14 @@ const static char* dialog_167[] = {
 	END_DIALOG
 };
 
-const static char* dialog_168[] = {
+const static char *englishDialog168[] = {
 	"Time for a little hint?",
 	CHANGE_CHARACTER,
 	"No.",
 	END_DIALOG
 };
 
-const static char* dialog_169[] = {
+const static char *englishDialog169[] = {
 	"Hello, sir. I'm Mark.",
 	CHANGE_CHARACTER,
 	"What a pity you're not a dollar.",
@@ -15312,7 +16569,7 @@ const static char* dialog_169[] = {
 	END_DIALOG
 };
 
-const static char* dialog_170[] = {
+const static char *englishDialog170[] = {
 	"Not much of a rush on, is there?",
 	CHANGE_CHARACTER,
 	"Do you want to order something or not?",
@@ -15348,7 +16605,7 @@ const static char* dialog_170[] = {
 	END_DIALOG
 };
 
-const static char* dialog_171[] = {
+const static char *englishDialog171[] = {
 	"What are you drinking?",
 	CHANGE_CHARACTER,
 	"Tea.",
@@ -15357,14 +16614,14 @@ const static char* dialog_171[] = {
 	END_DIALOG
 };
 
-const static char* dialog_172[] = {
+const static char *englishDialog172[] = {
 	"Nice weather.",
 	CHANGE_CHARACTER,
 	"Mhmmm...",
 	END_DIALOG
 };
 
-const static char* dialog_173[] = {
+const static char *englishDialog173[] = {
 	"Sometimes I feel tired.",
 	DISPLAY_MESSAGE,
 	ANIM_WAIT,
@@ -15372,30 +16629,30 @@ const static char* dialog_173[] = {
 	END_DIALOG
 };
 
-const static char* dialog_174[] = {
+const static char *englishDialog174[] = {
 	"Hey, Woodstock's over!",
 	END_DIALOG
 };
 
-const static char* dialog_175[] = {
+const static char *englishDialog175[] = {
 	"Thanks.",
 	END_DIALOG
 };
 
-const static char* dialog_176[] = {
+const static char *englishDialog176[] = {
 	CHANGE_CHARACTER,
 	"What the...",
 	END_DIALOG
 };
 
-const static char* dialog_177[] = {
+const static char *englishDialog177[] = {
 	"Hey, aren't you thirsty?",
 	DISPLAY_MESSAGE,
 	"Have you forgotten about your cup?",
 	END_DIALOG
 };
 
-const static char* dialog_178[] = {
+const static char *englishDialog178[] = {
 	"Sir, we have been informed that...",
 	CHANGE_CHARACTER,
 	"Later!",
@@ -15406,14 +16663,14 @@ const static char* dialog_178[] = {
 	END_DIALOG
 };
 
-const static char* dialog_179[] = {
+const static char *englishDialog179[] = {
 	"Sir, some young boy tried to get inside",
 	NEW_LINE,
 	"the mansion.",
 	END_DIALOG
 };
 
-const static char* dialog_180[] = {
+const static char *englishDialog180[] = {
 	"Don't worry.",
 	DISPLAY_MESSAGE,
 	"Young boys are curious...",
@@ -15426,12 +16683,12 @@ const static char* dialog_180[] = {
 	END_DIALOG
 };
 
-const static char* dialog_181[] = {
+const static char *englishDialog181[] = {
 	"Sir, that boy tried to get in again.",
 	END_DIALOG
 };
 
-const static char* dialog_182[] = {
+const static char *englishDialog182[] = {
 	"Do you think it's serious?",
 	CHANGE_CHARACTER,
 	"Hmmm... No...",
@@ -15450,7 +16707,7 @@ const static char* dialog_182[] = {
 	END_DIALOG
 };
 
-const static char* dialog_183[] = {
+const static char *englishDialog183[] = {
 	"Don't tell me it's that boy again...",
 	CHANGE_CHARACTER,
 	"I'm afraid so.",
@@ -15459,7 +16716,7 @@ const static char* dialog_183[] = {
 	END_DIALOG
 };
 
-const static char* dialog_184[] = {
+const static char *englishDialog184[] = {
 	"He's starting to get on my nerves.",
 	DISPLAY_MESSAGE,
 	"And what am I paying you for?",
@@ -15472,7 +16729,7 @@ const static char* dialog_184[] = {
 	END_DIALOG
 };
 
-const static char* dialog_185[] = {
+const static char *englishDialog185[] = {
 	"Sir...",
 	CHANGE_CHARACTER,
 	"Let me guess...",
@@ -15493,7 +16750,7 @@ const static char* dialog_185[] = {
 	END_DIALOG
 };
 
-const static char* dialog_186[] = {
+const static char *englishDialog186[] = {
 	"I'll handle it myself.",
 	DISPLAY_MESSAGE,
 	"Now get out!",
@@ -15502,7 +16759,7 @@ const static char* dialog_186[] = {
 	END_DIALOG
 };
 
-const static char* dialog_187[] = {
+const static char *englishDialog187[] = {
 	"Hey, you up there!",
 	DISPLAY_MESSAGE,
 	"Get down at once!",
@@ -15515,7 +16772,7 @@ const static char* dialog_187[] = {
 	END_DIALOG
 };
 
-const static char* dialog_188[] = {
+const static char *englishDialog188[] = {
 	"Hey, birdy, don't be shy.",
 	DISPLAY_MESSAGE,
 	"Come to me...",
@@ -15525,12 +16782,12 @@ const static char* dialog_188[] = {
 	END_DIALOG
 };
 
-const static char* dialog_189[] = {
+const static char *englishDialog189[] = {
 	"Come here, little bird...",
 	END_DIALOG
 };
 
-const static char* dialog_190[] = {
+const static char *englishDialog190[] = {
 	NEW_LINE,
 	"Hey, keep away from this door!",
 	CHANGE_CHARACTER,
@@ -15542,7 +16799,7 @@ const static char* dialog_190[] = {
 	END_DIALOG
 };
 
-const static char* dialog_191[] = {
+const static char *englishDialog191[] = {
 	CHANGE_CHARACTER,
 	"I told you to keep away, didn't I?",
 	CHANGE_CHARACTER,
@@ -15550,7 +16807,7 @@ const static char* dialog_191[] = {
 	END_DIALOG
 };
 
-const static char* dialog_192[] = {
+const static char *englishDialog192[] = {
 	"I've got a new delivery of gold.",
 	CHANGE_CHARACTER,
 	"Yeah, I know.",
@@ -15567,7 +16824,7 @@ const static char* dialog_192[] = {
 	END_DIALOG
 };
 
-const static char* dialog_193[] = {
+const static char *englishDialog193[] = {
 	"As I told you, our organisation",
 	NEW_LINE,
 	"takes care of unusual problems.",
@@ -15650,7 +16907,7 @@ const static char* dialog_193[] = {
 	END_DIALOG
 };
 
-const static char* dialog_194[] = {
+const static char *englishDialog194[] = {
 	ANIM_WAIT,
 	"The name is...",
 	DISPLAY_MESSAGE,
@@ -15662,12 +16919,12 @@ const static char* dialog_194[] = {
 	END_DIALOG
 };
 
-const static char* dialog_195[] = {
+const static char *englishDialog195[] = {
 	"He's coming.",
 	END_DIALOG
 };
 
-const static char* dialog_196[] = {
+const static char *englishDialog196[] = {
 	"Oh, I'm sorry about my men.",
 	DISPLAY_MESSAGE,
 	"Sometimes they get a bit too nervous...",
@@ -15678,7 +16935,7 @@ const static char* dialog_196[] = {
 	END_DIALOG
 };
 
-const static char* dialog_197[] = {
+const static char *englishDialog197[] = {
 	"Listen, mister...",
 	CHANGE_CHARACTER,
 	"I know, I know.",
@@ -15774,19 +17031,19 @@ const static char* dialog_197[] = {
 	END_DIALOG
 };
 
-const static char* dialog_198[] = {
+const static char *englishDialog198[] = {
 	CHANGE_CHARACTER,
 	"Our respect?",
 	END_DIALOG
 };
 
-const static char* dialog_199[] = {
+const static char *englishDialog199[] = {
 	CHANGE_CHARACTER,
 	"Patriotism?",
 	END_DIALOG
 };
 
-const static char* dialog_200[] = {
+const static char *englishDialog200[] = {
 	CHANGE_CHARACTER,
 	"Girls?",
 	CHANGE_CHARACTER,
@@ -15796,7 +17053,7 @@ const static char* dialog_200[] = {
 	END_DIALOG
 };
 
-const static char* dialog_201[] = {
+const static char *englishDialog201[] = {
 	"Ok, I agree. What am I supposed to do?",
 	CHANGE_CHARACTER,
 	"Before you start, I suggest that first",
@@ -15813,7 +17070,7 @@ const static char* dialog_201[] = {
 	END_DIALOG
 };
 
-const static char* dialog_202[] = {
+const static char *englishDialog202[] = {
 	"...and it was even fun.",
 	CHANGE_CHARACTER,
 	"I'm glad you liked our training methods.",
@@ -15907,7 +17164,7 @@ const static char* dialog_202[] = {
 	END_DIALOG
 };
 
-const static char* dialog_203[] = {
+const static char *englishDialog203[] = {
 	CHANGE_CHARACTER,
 	"Don't worry.",
 	DISPLAY_MESSAGE,
@@ -15917,7 +17174,7 @@ const static char* dialog_203[] = {
 	END_DIALOG
 };
 
-const static char* dialog_204[] = {
+const static char *englishDialog204[] = {
 	CHANGE_CHARACTER,
 	"He got what he deserved.",
 	DISPLAY_MESSAGE,
@@ -15986,7 +17243,7 @@ const static char* dialog_204[] = {
 	END_DIALOG
 };
 
-const static char* dialog_205[] = {
+const static char *englishDialog205[] = {
 	CHANGE_CHARACTER,
 	"It's not a soap opera, it's",
 	NEW_LINE,
@@ -16007,7 +17264,7 @@ const static char* dialog_205[] = {
 	END_DIALOG
 };
 
-const static char* dialog_206[] = {
+const static char *englishDialog206[] = {
 	CHANGE_CHARACTER,
 	"You don't have to tell me.",
 	DISPLAY_MESSAGE,
@@ -16037,7 +17294,7 @@ const static char* dialog_206[] = {
 	END_DIALOG
 };
 
-const static char* dialog_207[] = {
+const static char *englishDialog207[] = {
 	CHANGE_CHARACTER,
 	"Me?...",
 	DISPLAY_MESSAGE,
@@ -16049,7 +17306,7 @@ const static char* dialog_207[] = {
 	END_DIALOG
 };
 
-const static char* dialog_208[] = {
+const static char *englishDialog208[] = {
 	CHANGE_CHARACTER,
 	"(sigh)",
 	DISPLAY_MESSAGE,
@@ -16062,7 +17319,7 @@ const static char* dialog_208[] = {
 	END_DIALOG
 };
 
-const static char* dialog_209[] = {
+const static char *englishDialog209[] = {
 	"In the name of...",
 	DISPLAY_MESSAGE,
 	"...blah...blah...blah...",
@@ -16073,14 +17330,14 @@ const static char* dialog_209[] = {
 	END_DIALOG
 };
 
-const static char* dialog_210[] = {
+const static char *englishDialog210[] = {
 	"       Well...       ",
 	DISPLAY_MESSAGE,
 	"That's all, folks!",
 	END_DIALOG
 };
 
-const static char* dialog_211[] = {
+const static char *englishDialog211[] = {
 	"I found the time pill!",
 	DISPLAY_MESSAGE,
 	"It must have fallen out of the jar!...",
@@ -16090,227 +17347,17815 @@ const static char* dialog_211[] = {
 	END_DIALOG
 };
 
-const static char* dialog_212[] = {
+const static char *englishDialog212[] = {
 	"Wow!",
 	DISPLAY_MESSAGE,
 	"This is charming!...",
 	END_DIALOG
 };
 
-const static char** dialogs[] = {
-	dialog_0,
-	dialog_1,
-	dialog_2,
-	dialog_3,
-	dialog_4,
-	dialog_5,
-	dialog_6,
-	dialog_7,
-	dialog_8,
-	dialog_9,
-	dialog_10,
-	dialog_11,
-	dialog_12,
-	dialog_13,
-	dialog_14,
-	dialog_15,
-	dialog_16,
-	dialog_17,
-	dialog_18,
-	dialog_19,
-	dialog_20,
-	dialog_21,
-	dialog_22,
-	dialog_23,
-	dialog_24,
-	dialog_25,
-	dialog_26,
-	dialog_27,
-	dialog_28,
-	dialog_29,
-	dialog_30,
-	dialog_31,
-	dialog_32,
-	dialog_33,
-	dialog_34,
-	dialog_35,
-	dialog_36,
-	dialog_37,
-	dialog_38,
-	dialog_39,
-	dialog_40,
-	dialog_41,
-	dialog_42,
-	dialog_43,
-	dialog_44,
-	dialog_45,
-	dialog_46,
-	dialog_47,
-	dialog_48,
-	dialog_49,
-	dialog_50,
-	dialog_51,
-	dialog_52,
-	dialog_53,
-	dialog_54,
-	dialog_55,
-	dialog_56,
-	dialog_57,
-	dialog_58,
-	dialog_59,
-	dialog_60,
-	dialog_61,
-	dialog_62,
-	dialog_63,
-	dialog_64,
-	dialog_65,
-	dialog_66,
-	dialog_67,
-	dialog_68,
-	dialog_69,
-	dialog_70,
-	dialog_71,
-	dialog_72,
-	dialog_73,
-	dialog_74,
-	dialog_75,
-	dialog_76,
-	dialog_77,
-	dialog_78,
-	dialog_79,
-	dialog_80,
-	dialog_81,
-	dialog_82,
-	dialog_83,
-	dialog_84,
-	dialog_85,
-	dialog_86,
-	dialog_87,
-	dialog_88,
-	dialog_89,
-	dialog_90,
-	dialog_91,
-	dialog_92,
-	dialog_93,
-	dialog_94,
-	dialog_95,
-	dialog_96,
-	dialog_97,
-	dialog_98,
-	dialog_99,
-	dialog_100,
-	dialog_101,
-	dialog_102,
-	dialog_103,
-	dialog_104,
-	dialog_105,
-	dialog_106,
-	dialog_107,
-	dialog_108,
-	dialog_109,
-	dialog_110,
-	dialog_111,
-	dialog_112,
-	dialog_113,
-	dialog_114,
-	dialog_115,
-	dialog_116,
-	dialog_117,
-	dialog_118,
-	dialog_119,
-	dialog_120,
-	dialog_121,
-	dialog_122,
-	dialog_123,
-	dialog_124,
-	dialog_125,
-	dialog_126,
-	dialog_127,
-	dialog_128,
-	dialog_129,
-	dialog_130,
-	dialog_131,
-	dialog_132,
-	dialog_133,
-	dialog_134,
-	dialog_135,
-	dialog_136,
-	dialog_137,
-	dialog_138,
-	dialog_139,
-	dialog_140,
-	dialog_141,
-	dialog_142,
-	dialog_143,
-	dialog_144,
-	dialog_145,
-	dialog_146,
-	dialog_147,
-	dialog_148,
-	dialog_149,
-	dialog_150,
-	dialog_151,
-	dialog_152,
-	dialog_153,
-	dialog_154,
-	dialog_155,
-	dialog_156,
-	dialog_157,
-	dialog_158,
-	dialog_159,
-	dialog_160,
-	dialog_161,
-	dialog_162,
-	dialog_163,
-	dialog_164,
-	dialog_165,
-	dialog_166,
-	dialog_167,
-	dialog_168,
-	dialog_169,
-	dialog_170,
-	dialog_171,
-	dialog_172,
-	dialog_173,
-	dialog_174,
-	dialog_175,
-	dialog_176,
-	dialog_177,
-	dialog_178,
-	dialog_179,
-	dialog_180,
-	dialog_181,
-	dialog_182,
-	dialog_183,
-	dialog_184,
-	dialog_185,
-	dialog_186,
-	dialog_187,
-	dialog_188,
-	dialog_189,
-	dialog_190,
-	dialog_191,
-	dialog_192,
-	dialog_193,
-	dialog_194,
-	dialog_195,
-	dialog_196,
-	dialog_197,
-	dialog_198,
-	dialog_199,
-	dialog_200,
-	dialog_201,
-	dialog_202,
-	dialog_203,
-	dialog_204,
-	dialog_205,
-	dialog_206,
-	dialog_207,
-	dialog_208,
-	dialog_209,
-	dialog_210,
-	dialog_211,
-	dialog_212
+const static char *czechDialog0[] = {
+	ANIM_WAIT,
+	"Dobr^ den.",
+	CHANGE_CHARACTER,
+	"Jo.",
+	CHANGE_CHARACTER,
+	"Pro$ tu tak stoj;@?",
+	CHANGE_CHARACTER,
+	"Zeptej se gravitace.",
+	CHANGE_CHARACTER,
+	"Docela vtipn^.",
+	DISPLAY_MESSAGE,
+	"Na voj#ka.",
+	CHANGE_CHARACTER,
+	"Nejsem voj#k, i kdy{ jsem se",
+	NEW_LINE,
+	"o to pokou@el.",
+	DISPLAY_MESSAGE,
+	"Neud+lalt jsem test intel...",
+	NEW_LINE,
+	"test zdatnosti.",
+	DISPLAY_MESSAGE,
+	"Na>;dili mi sest>elit let;c;",
+	NEW_LINE,
+	"minci zat;mco jsem sk#kal",
+	NEW_LINE,
+	"ze stromu na kon+.",
+	CHANGE_CHARACTER,
+	"Jo, to zn; komplikovan+.",
+	CHANGE_CHARACTER,
+	"Speci#ln; Jednotky, to nen; {#dn# sranda,",
+	NEW_LINE,
+	"v;@?",
+	CHANGE_CHARACTER,
+	"Je mi l;to, {es\' to nezvl#d.",
+	CHANGE_CHARACTER,
+	"Jo, minul jsem kon+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog1[] = {
+	"Tak...",
+	DISPLAY_MESSAGE,
+	"A co d+l#@ te%?",
+	CHANGE_CHARACTER,
+	"Chce@ sly@et fakt vtipnou odpov+%?",
+	CHANGE_CHARACTER,
+	"Hele, ani se nenam#hej...",
+	CHANGE_CHARACTER,
+	"Dob>e, dob>e, ale zn#@ to, nen; tu",
+	NEW_LINE,
+	"{#dn# z#bava.",
+	DISPLAY_MESSAGE,
+	"Tak{e si ob$as chci zavtipkovat.",
+	NEW_LINE,
+	"N+jak# ta le-hegr#cka, v;@? He, he. He.",
+	CHANGE_CHARACTER,
+	"A-ha. Ha, ehm...",
+	CHANGE_CHARACTER,
+	"Hl;d#m to tady...",
+	CHANGE_CHARACTER,
+	"Wow. To je teda p>ekvapen;.",
+	CHANGE_CHARACTER,
+	"...a >ekli mi, {e m#m zab;t ka{d^ho,",
+	NEW_LINE,
+	"kdo se pokus; vej;t dovnit>.",
+	CHANGE_CHARACTER,
+	"Tak{e prvn; tuhej byl majitel domu, ne?",
+	CHANGE_CHARACTER,
+	"Je{i@, ten neni jen tak n+kdo. P>ece.",
+	CHANGE_CHARACTER,
+	"J# taky ne, tak{e bych mohl vej;t?",
+	CHANGE_CHARACTER,
+	"Ne-e.",
+	CHANGE_CHARACTER,
+	"A co kdy{ p+kn+ poprosim a >eknu \'b#bovka\'?",
+	CHANGE_CHARACTER,
+	"Ani n#pad, mladej, ani n#pad.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Pros;;;m, b##bovk###.",
+	CHANGE_CHARACTER,
+	"Ani n#pad.",
+	NEW_LINE,
+	"M#m srdce z kamene.",
+	CHANGE_CHARACTER,
+	"Tak{e ze stejn*ho materi#lu",
+	NEW_LINE,
+	"jako mozek, to je unik#t.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nech#pu.",
+	CHANGE_CHARACTER,
+	"Nic si z toho ned+lej.",
+	NEW_LINE,
+	"Jakpak bych tedy mohl",
+	NEW_LINE,
+	"obm+k$it tv* srdce?",
+	CHANGE_CHARACTER,
+	"To nep]jde, sem tvr%#k.",
+	DISPLAY_MESSAGE,
+	"Ale poj% sem, d#m ti n+co",
+	NEW_LINE,
+	"abys ne>ekl...",
+	END_DIALOG,
+};
+
+const static char *czechDialog2[] = {
+	"D;ky, co to je?",
+	CHANGE_CHARACTER,
+	"|okol#dovej bonb=n.",
+	DISPLAY_MESSAGE,
+	"M]j zam+stnavatel mi jich dal p#r",
+	NEW_LINE,
+	"k ob+du a...",
+	CHANGE_CHARACTER,
+	"A je tv]j @*f doma?!",
+	CHANGE_CHARACTER,
+	"Pan Pankr#c Oblouk?",
+	CHANGE_CHARACTER,
+	"A#, tak...",
+	DISPLAY_MESSAGE,
+	"Pankr#c Oblouk...",
+	DISPLAY_MESSAGE,
+	"Mysl;m, {e jsem o n+m sly@el...",
+	CHANGE_CHARACTER,
+	"No bodej[. D+l# te% velk^ pen;ze, v;@?",
+	NEW_LINE,
+	"Hlavn+ v posledn; dob+...",
+	CHANGE_CHARACTER,
+	"Jo?...",
+	CHANGE_CHARACTER,
+	"No, j# nevim p>esn+ jak.",
+	DISPLAY_MESSAGE,
+	"Mo{n# to m# n+co spole$n^ho s takovym",
+	NEW_LINE,
+	"divnym v+dcem, co takhle jednou",
+	NEW_LINE,
+	"p>i@el a..",
+	DISPLAY_MESSAGE,
+	"A#, ty si mysl;@, {e se@ chytrej, co?!",
+	NEW_LINE,
+	"Nejse@ ty n#hodou @peh?!",
+	CHANGE_CHARACTER,
+	"Ale pros;mt+, j# a @peh? Nesmysl.",
+	DISPLAY_MESSAGE,
+	"J# jsem jenom oby$ejnej pas#$ek bobr] z kolchozu",
+	NEW_LINE,
+	"t#mhle za kopcem. Dru{ba se to tam jmenuje",
+	CHANGE_CHARACTER,
+	"Aha, pase@ teda bobry. Boss mi >ekl,",
+	NEW_LINE,
+	"abych si dal na @pi=ny velkej pozor...",
+	CHANGE_CHARACTER,
+	"Copak vypad#m jako n+jakej @pi=n?",
+	CHANGE_CHARACTER,
+	"...a abych se zab;jel na potk#n;...",
+	CHANGE_CHARACTER,
+	"Hele, kl;dek...",
+	CHANGE_CHARACTER,
+	"...a j# u{ jsem nikoho nezabil",
+	NEW_LINE,
+	"h===dn+ dlouhou dobu!",
+	CHANGE_CHARACTER,
+	"Hele to kv]li tomu bomb=nu, {ejo?",
+	NEW_LINE,
+	"Ty ho chce@ zp#tky, co? ~#dnej probl*m.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Promi<, nechal jsem trochu un*st.",
+	CHANGE_CHARACTER,
+	"Ch#pu.",
+	NEW_LINE,
+	"Je tu p+kn^ vedro, co?",
+	CHANGE_CHARACTER,
+	"Jo, to jo.",
+	END_DIALOG,
+};
+
+const static char *czechDialog3[] = {
+	"Pane str#{n^, j#..",
+	CHANGE_CHARACTER,
+	"Posly@ mladej:",
+	DISPLAY_MESSAGE,
+	"@peh ne@peh ned+lej si iluze,",
+	NEW_LINE,
+	"{e t+ pust;m do domu.",
+	DISPLAY_MESSAGE,
+	"Postav se t>eba na hlavu,",
+	NEW_LINE,
+	"ale dovnit> se prost+ nedostane@,",
+	NEW_LINE,
+	"mohl bys tam n+co ukr#st nebo",
+	DISPLAY_MESSAGE,
+	"n+jak obt+{ovat pana Oblouka.",
+	DISPLAY_MESSAGE,
+	"A taky u{ ze mn+ nic nedostane@.",
+	DISPLAY_MESSAGE,
+	"Je@t+ jeden pokus o takovejhle rozhovor",
+	NEW_LINE,
+	"a se@ d#lnice pro $ervy.",
+	DISPLAY_MESSAGE,
+	"Kap]to.",
+	DISPLAY_MESSAGE,
+	"Jasn^?",
+	CHANGE_CHARACTER,
+	"Jasn^.",
+	END_DIALOG,
+};
+
+const static char *czechDialog4[] = {
+	"Hezkej oblek. Od Vision?",
+	CHANGE_CHARACTER,
+	"Jo.",
+	END_DIALOG,
+};
+
+const static char *czechDialog5[] = {
+	CHANGE_CHARACTER,
+	"Zatracen+!",
+	DISPLAY_MESSAGE,
+	"Tos zas ty!",
+	END_DIALOG,
+};
+
+const static char *czechDialog6[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Co?",
+	CHANGE_CHARACTER,
+	"Copak je v t^ lahvi?",
+	CHANGE_CHARACTER,
+	"Nem]{e@ mi nic dok#zat!",
+	CHANGE_CHARACTER,
+	"N+jakej tvrdej, {e jo?..",
+	CHANGE_CHARACTER,
+	"Do toho je ti kulov^.",
+	CHANGE_CHARACTER,
+	"Ty chlast#@ ve slu{b+? Cha ch#, von chlast# ve slu{b+!",
+	CHANGE_CHARACTER,
+	"Mysl;@ si, {es\' na m+ vyzr#l, co?",
+	NEW_LINE,
+	"Je to tak?",
+	DISPLAY_MESSAGE,
+	"Lejna. M]{e@ se j;t vycpat!",
+	END_DIALOG,
+};
+
+const static char *czechDialog7[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Nic si nevid+l.",
+	DISPLAY_MESSAGE,
+	"Jsem $istej jak cejcha.",
+	END_DIALOG,
+};
+
+const static char *czechDialog8[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Vypadni.",
+	END_DIALOG,
+};
+
+const static char *czechDialog9[] = {
+	"Co bys >ekl tomu, kdybych ti",
+	NEW_LINE,
+	"dal n+jak* zlato?...",
+	CHANGE_CHARACTER,
+	"}ekl bych \'d+kuju\'.",
+	CHANGE_CHARACTER,
+	"A pustil bys m+ dovnit>?",
+	CHANGE_CHARACTER,
+	"}ek bych, {e jo..",
+	CHANGE_CHARACTER,
+	"Aha, tak a{ si bude@ jist+j@;...",
+	CHANGE_CHARACTER,
+	"OK, jsem si jistej. Ur$it+, ur$it+ te pust;m dovnit>.",
+	CHANGE_CHARACTER,
+	"Dob>e, tak tum#@.",
+	END_DIALOG,
+};
+
+const static char *czechDialog10[] = {
+	"Tak a te% otev>i dve>e.",
+	CHANGE_CHARACTER,
+	"Neexistuje, vypadni.",
+	CHANGE_CHARACTER,
+	"Sakra co je to? Dal jsem ti zlato!",
+	CHANGE_CHARACTER,
+	"Jak^ zlato?",
+	CHANGE_CHARACTER,
+	"Jak^ zlato?!?",
+	CHANGE_CHARACTER,
+	"Nevim nic o {#dn^m zlat+, vid;@ ho tady n+kde?",
+	END_DIALOG,
+};
+
+const static char *czechDialog11[] = {
+	"Ty... ty sr#goro!",
+	CHANGE_CHARACTER,
+	"Padej malej.",
+	CHANGE_CHARACTER,
+	"}ek\' si, {e m+ za zlato pust;@ dovnit>!",
+	DISPLAY_MESSAGE,
+	"A ty m+ p>itom pou@t;@ k vod+!",
+	CHANGE_CHARACTER,
+	"To jo, ale m]{e@ bejt aspo< r#d,",
+	NEW_LINE,
+	"{e k t^ vod+ odejde@ celej.",
+	END_DIALOG,
+};
+
+const static char *czechDialog12[] = {
+	"V dne@n; nechutn^ dob+ nem]{e@ v+>it",
+	NEW_LINE,
+	"ani dementn;m zkorumpovan^m str#{c]m!",
+	END_DIALOG,
+};
+
+const static char *czechDialog13[] = {
+	"|au.",
+	CHANGE_CHARACTER,
+	"Ahoj.",
+	CHANGE_CHARACTER,
+	"J# jsem Kevin.",
+	DISPLAY_MESSAGE,
+	"}ekni mi, jak se jmenuje@ ty.",
+	CHANGE_CHARACTER,
+	"Jak se jmenuje@ ty?",
+	CHANGE_CHARACTER,
+	"No j# to nevim, to pr#v+ mus;@ ty >;ct mn+...",
+	CHANGE_CHARACTER,
+	"Mn+.",
+	CHANGE_CHARACTER,
+	"Ne>;kej jenom \'mn+\', >ekni",
+	NEW_LINE,
+	"svoje jm*no! (Bo{e!)",
+	CHANGE_CHARACTER,
+	"Svoje jm*..",
+	CHANGE_CHARACTER,
+	"A#! V@ude jsou tu sam; vypatlanci a dementi!",
+	DISPLAY_MESSAGE,
+	"A jak ti >;k# tat;nek?",
+	CHANGE_CHARACTER,
+	"Synku.",
+	CHANGE_CHARACTER,
+	"Synek jako jm*no a nebo synek jako",
+	NEW_LINE,
+	"prost+ jenom synek? (U{ mi z toho jebe)",
+	CHANGE_CHARACTER,
+	"Synek.",
+	CHANGE_CHARACTER,
+	"Jse@ debiln; nebo jenom drzej?",
+	CHANGE_CHARACTER,
+	"Synek, to jsem.",
+	CHANGE_CHARACTER,
+	"(Asi dement, uff, ale m# gr#dy!)",
+	END_DIALOG,
+};
+
+const static char *czechDialog14[] = {
+	"Poslouhej, synku nebo n+co.",
+	DISPLAY_MESSAGE,
+	"Co se pokou@;@ d+lat s t;m",
+	NEW_LINE,
+	"basketov^m bal=nem?",
+	CHANGE_CHARACTER,
+	"D+da >;kal, {e m+ vezme do ZOO,",
+	NEW_LINE,
+	"kdy{ d#m ko@.",
+	CHANGE_CHARACTER,
+	"}ekl bych, {e bys m+l ten m;$ h#zet",
+	NEW_LINE,
+	"o trochu v^@, vej@ jako nahoru, ch#pe@?",
+	CHANGE_CHARACTER,
+	"Jo, ch#pu.",
+	CHANGE_CHARACTER,
+	"Tak co?",
+	CHANGE_CHARACTER,
+	"Co?",
+	CHANGE_CHARACTER,
+	"Tak pro$ to neud+l#@?! (U{ to zas za$;n#)",
+	CHANGE_CHARACTER,
+	"Mus;m m;t asi n+co s o$ima.",
+	NEW_LINE,
+	"Jo, asi ty o$i.",
+	CHANGE_CHARACTER,
+	"Jako {e bys m+l m;t brejle, ne?",
+	CHANGE_CHARACTER,
+	"Ne, pro$?",
+	CHANGE_CHARACTER,
+	"(Sprcha! Kde je?)",
+	DISPLAY_MESSAGE,
+	"Mo{n# jse@ jenom moc slabej,",
+	NEW_LINE,
+	"abys hodil m;$ tak vysoko.",
+	CHANGE_CHARACTER,
+	"Vysoko.",
+	CHANGE_CHARACTER,
+	"(Aa####, je fakt TVRDEJ!)",
+	END_DIALOG,
+};
+
+const static char *czechDialog15[] = {
+	"Hele, synku!",
+	DISPLAY_MESSAGE,
+	"M#m bezva n#pad!",
+	CHANGE_CHARACTER,
+	"Fakt?",
+	CHANGE_CHARACTER,
+	"Jdi za d+de$kem a >ekni mu,",
+	NEW_LINE,
+	"{es\' hodil ko@!",
+	CHANGE_CHARACTER,
+	"To jako mysl;@ lh#t?",
+	CHANGE_CHARACTER,
+	"No jo, tak n+jak...",
+	CHANGE_CHARACTER,
+	"J# NIKDY NEL~U!",
+	CHANGE_CHARACTER,
+	"Nikdy?!",
+	CHANGE_CHARACTER,
+	"NIKDY!",
+	CHANGE_CHARACTER,
+	"To se@ teda hodnej kluk (grrr).",
+	END_DIALOG,
+};
+
+const static char *czechDialog16[] = {
+	"Hej...",
+	CHANGE_CHARACTER,
+	"\'di pry$.",
+	END_DIALOG,
+};
+
+const static char *czechDialog17[] = {
+	"Hele synku, to je neuv+>iteln^!",
+	CHANGE_CHARACTER,
+	"Co?",
+	CHANGE_CHARACTER,
+	"Mo{n# si bude@ myslet, {e je to vtip,",
+	NEW_LINE,
+	"ale z jezera $ouh# ruka a dr{;",
+	NEW_LINE,
+	"nov* vyd#n; Brava!",
+	CHANGE_CHARACTER,
+	"OK, jdu se tam pod;vat, ale nemysli si,",
+	NEW_LINE,
+	"{e m+ obel{e@.",
+	NEW_LINE,
+	"Norm#ln; utopenej po@[#k.",
+	DISPLAY_MESSAGE,
+	"Mo{n# te% budu m;t v+t@; @t+st;",
+	NEW_LINE,
+	"v basketu...",
+	END_DIALOG,
+};
+
+const static char *czechDialog18[] = {
+	"Dobr^ den, pane!",
+	CHANGE_CHARACTER,
+	"Dobr^ den, synku.",
+	CHANGE_CHARACTER,
+	"Jmenuju se Kevin, pane.",
+	CHANGE_CHARACTER,
+	"Skv+l*.",
+	DISPLAY_MESSAGE,
+	"Co chce@?",
+	CHANGE_CHARACTER,
+	"P>i@el jsem obdivovat va@e k>eslo.",
+	DISPLAY_MESSAGE,
+	"P+knej kousek.",
+	CHANGE_CHARACTER,
+	"P+knej a stylovej",
+	NEW_LINE,
+	"Taky pohodlnej.",
+	CHANGE_CHARACTER,
+	"A velkej.",
+	CHANGE_CHARACTER,
+	"Model pro dva.",
+	END_DIALOG,
+};
+
+const static char *czechDialog19[] = {
+	"Zn#te chlapce hraj;c;ho venku basket?",
+	NEW_LINE,
+	"Hopsaj;c;ho s m;$em.",
+	NEW_LINE,
+	"};k# si \'Synek\'",
+	CHANGE_CHARACTER,
+	"Samoz>ejm+,",
+	NEW_LINE,
+	"je to m]j vnuk.",
+	CHANGE_CHARACTER,
+	"P+knej kluk. Trochu jako buk (V hlav+).",
+	CHANGE_CHARACTER,
+	"Hodnej a chytrej.",
+	CHANGE_CHARACTER,
+	"Taky trochu malej (A tvrdej po d+dovi).",
+	CHANGE_CHARACTER,
+	"Vyroste.",
+	CHANGE_CHARACTER,
+	"A stane se z n+j tak slavnej basketbalovej",
+	NEW_LINE,
+	"hr#$ jako je Magic Johnson, {e?",
+	CHANGE_CHARACTER,
+	"No, to se, douf#m, nestane.",
+	CHANGE_CHARACTER,
+	"Tak mu >ekn+te, a[ p>estane hr#t!",
+	CHANGE_CHARACTER,
+	"Jo, to jo.",
+	DISPLAY_MESSAGE,
+	"Pozd+ji.",
+	DISPLAY_MESSAGE,
+	"Mo{n#.",
+	DISPLAY_MESSAGE,
+	"Te% si pot>ebuju trochu",
+	NEW_LINE,
+	"odpo$inout...",
+	END_DIALOG,
+};
+
+const static char *czechDialog20[] = {
+	"Budete tady sed+t celej den?",
+	NEW_LINE,
+	"Jenom si tak sed+t a d;vat se na vzduch?",
+	CHANGE_CHARACTER,
+	"To douf#m.",
+	CHANGE_CHARACTER,
+	"Kdy{ je venku tak kr#snej den?",
+	CHANGE_CHARACTER,
+	"To douf#m.",
+	CHANGE_CHARACTER,
+	"Copak v#s sv+t venku",
+	NEW_LINE,
+	"v]bec nezaj;m#?!",
+	CHANGE_CHARACTER,
+	"Ani ne.",
+	CHANGE_CHARACTER,
+	"A co to?",
+	CHANGE_CHARACTER,
+	"Nezaj;maj; m+ nov* v+ci.",
+	CHANGE_CHARACTER,
+	"Ale...",
+	CHANGE_CHARACTER,
+	"Jak se >;k#...",
+	DISPLAY_MESSAGE,
+	"Nejlep@; zpr#vy -",
+	NEW_LINE,
+	"{#dn* zpr#vy.",
+	CHANGE_CHARACTER,
+	"Ale lidi se mus; zaj;mat",
+	NEW_LINE,
+	"o pokrok nebo tak n+co!",
+	CHANGE_CHARACTER,
+	"Ani se nebudu obt+{ovat",
+	NEW_LINE,
+	"pt#t se t+, pro$ by to tak m+lo b^t...",
+	CHANGE_CHARACTER,
+	"Proto{e...",
+	DISPLAY_MESSAGE,
+	"Er...",
+	DISPLAY_MESSAGE,
+	"Proto{e...",
+	DISPLAY_MESSAGE,
+	"Umm...",
+	CHANGE_CHARACTER,
+	"Aha.",
+	NEW_LINE,
+	"    ",
+	END_DIALOG,
+};
+
+const static char *czechDialog21[] = {
+	"N+co nov*ho?",
+	CHANGE_CHARACTER,
+	"Douf#m, {e ne.",
+	END_DIALOG,
+};
+
+const static char *czechDialog22[] = {
+	"M]{u si p]j$it va@i brokovnici?",
+	CHANGE_CHARACTER,
+	"Vra[ se do hrobu.",
+	CHANGE_CHARACTER,
+	"P+kn+ prosim...",
+	CHANGE_CHARACTER,
+	"Mlad^ mu{i, tato zbra< je",
+	NEW_LINE,
+	"u{ velmi star# a je tuze nebezpe$n#...",
+	DISPLAY_MESSAGE,
+	"a j# jsem zodpov+dn^ $lov+k,",
+	NEW_LINE,
+	"ch#pe@?",
+	CHANGE_CHARACTER,
+	"Ale j# u{ dohr#l i Doom II...",
+	CHANGE_CHARACTER,
+	"Ne.",
+	END_DIALOG,
+};
+
+const static char *czechDialog23[] = {
+	"Mo{n# jste si to s tou pu@kou",
+	NEW_LINE,
+	"u{ rozmyslel, t>eba..",
+	CHANGE_CHARACTER,
+	"Ne.",
+	DISPLAY_MESSAGE,
+	"Nope.",
+	DISPLAY_MESSAGE,
+	"Niet.",
+	DISPLAY_MESSAGE,
+	"Nein.",
+	DISPLAY_MESSAGE,
+	"Niente.",
+	DISPLAY_MESSAGE,
+	"Nie.",
+	DISPLAY_MESSAGE,
+	"No.",
+	CHANGE_CHARACTER,
+	"OK, ch#pu to.",
+	END_DIALOG,
+};
+
+const static char *czechDialog24[] = {
+	"M]{u v#m prohledat @uplata?",
+	CHANGE_CHARACTER,
+	"Ano.",
+	CHANGE_CHARACTER,
+	"ANO?!?",
+	CHANGE_CHARACTER,
+	"Oh, zapomn+l jsem ti >;ct, {e jsou v@echna pr#zdn#.",
+	DISPLAY_MESSAGE,
+	"Jenom v prav*m horn;m je uschov#n kapesn;k.",
+	DISPLAY_MESSAGE,
+	"Jestli chce@, m]{e@ si ho vz;t, nepot>ebuju ho.",
+	CHANGE_CHARACTER,
+	"No, tak d+kuju.",
+	DISPLAY_MESSAGE,
+	"Jste velmi... posoplen..",
+	CHANGE_CHARACTER,
+	"Ale nemysli si, {e t+ nech#m",
+	NEW_LINE,
+	"vz;t si n+co dal@;ho.",
+	CHANGE_CHARACTER,
+	"Samoz>ejm+, to by m+ ani nenapadlo.",
+	END_DIALOG,
+};
+
+const static char *czechDialog25[] = {
+	"M]{u si p]j$it tenhle v+tr#k?",
+	CHANGE_CHARACTER,
+	"V {#dn*m p>;pad+, pr#v+ ho pou{;v#m.",
+	END_DIALOG,
+};
+
+const static char *czechDialog26[] = {
+	"Tenhleten v+tr#k...",
+	CHANGE_CHARACTER,
+	"P>ij% se zeptat a{ v zim+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog27[] = {
+	"To m#me dneska p+kn^",
+	NEW_LINE,
+	"po$as;..",
+	CHANGE_CHARACTER,
+	"Tak, tak, to m#me,",
+	NEW_LINE,
+	"m]j mil^.",
+	END_DIALOG,
+};
+
+const static char *czechDialog28[] = {
+	"To je va@e pra.. va@e dcera?",
+	CHANGE_CHARACTER,
+	"Je od tebe hezk*,",
+	NEW_LINE,
+	"m]j drah^, {e m+ d+l#@",
+	NEW_LINE,
+	"tak mladou,",
+	DISPLAY_MESSAGE,
+	"ale tahle",
+	NEW_LINE,
+	"d;vka je moje",
+	NEW_LINE,
+	"vnu$ka.",
+	CHANGE_CHARACTER,
+	"Aha, tak je to! Opravdu",
+	NEW_LINE,
+	"vypad# dob>e! (To je kus, co?)",
+	CHANGE_CHARACTER,
+	"Jednou jsem byla",
+	NEW_LINE,
+	"tak* takov#...",
+	CHANGE_CHARACTER,
+	"Ale to vy po>#d je@t+ jste!",
+	CHANGE_CHARACTER,
+	"To je od tebe sladk*, {e to >;k#@..",
+	DISPLAY_MESSAGE,
+	"ale nikdo u{ nezp;v#",
+	NEW_LINE,
+	"pod m^m oknem,",
+	DISPLAY_MESSAGE,
+	"jestli v;@",
+	NEW_LINE,
+	"co t;m mysl;m.",
+	CHANGE_CHARACTER,
+	"Errr...",
+	DISPLAY_MESSAGE,
+	"Ano...",
+	DISPLAY_MESSAGE,
+	"To vim...",
+	DISPLAY_MESSAGE,
+	"N+kdy m#m",
+	NEW_LINE,
+	"podobn* pocity...",
+	DISPLAY_MESSAGE,
+	"i j# s#m...",
+	DISPLAY_MESSAGE,
+	"asi...",
+	END_DIALOG,
+};
+
+const static char *czechDialog29[] = {
+	"M]{u se zeptat, co to",
+	NEW_LINE,
+	"d+l#te?",
+	CHANGE_CHARACTER,
+	"Ano, m]{e@,",
+	NEW_LINE,
+	"m]j drah^.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Co to d+l#te?",
+	CHANGE_CHARACTER,
+	"Pletu.",
+	CHANGE_CHARACTER,
+	"Ch#pu.",
+	DISPLAY_MESSAGE,
+	"Co pletete?",
+	CHANGE_CHARACTER,
+	"Tentokr#t ses",
+	NEW_LINE,
+	"m+ nezeptal, zdalipak",
+	NEW_LINE,
+	"se m]{e@ zeptat.",
+	CHANGE_CHARACTER,
+	"Oh, promi<te. M]{u se tedy zeptat?",
+	CHANGE_CHARACTER,
+	"Zeptat na co?",
+	CHANGE_CHARACTER,
+	"Na to, co pletete.",
+	NEW_LINE,
+	"(Za$;n# se to komplikovat)",
+	CHANGE_CHARACTER,
+	"Na to u{ ses",
+	NEW_LINE,
+	"m+ p>ed chv;l; ptal",
+	NEW_LINE,
+	"nebo ne?",
+	END_DIALOG,
+};
+
+const static char *czechDialog30[] = {
+	"Je v@echno v po>#dku, nebol; v#s b>icho?",
+	CHANGE_CHARACTER,
+	"Ano, v@echno je v naprost*m po>#dku.",
+	END_DIALOG,
+};
+
+const static char *czechDialog31[] = {
+	"Je v@echno v po>#dku, netla$; v#s lopatky?",
+	CHANGE_CHARACTER,
+	"V{dy[ v;@. V@echno je, jak m# b^t.",
+	END_DIALOG,
+};
+
+const static char *czechDialog32[] = {
+	"Je v@echno v po>#dku, nem#te nad^m#n;?",
+	CHANGE_CHARACTER,
+	"Je hezk*, {e se pt#@,",
+	NEW_LINE,
+	"ale u{ jsem ti to",
+	NEW_LINE,
+	">;kala n+kolikr#t.",
+	END_DIALOG,
+};
+
+const static char *czechDialog33[] = {
+	"Je v@echno v po>#dku, nec;t;te se mdle?",
+	CHANGE_CHARACTER,
+	"Neopakuj se.",
+	END_DIALOG,
+};
+
+const static char *czechDialog34[] = {
+	"Je v@echno v po>#dku, nep#l; v#s",
+	NEW_LINE,
+	"{#ha nebo nebol; chodidla?",
+	CHANGE_CHARACTER,
+	"Nep>eru@uj mou pr#ci.",
+	END_DIALOG,
+};
+
+const static char *czechDialog35[] = {
+	"Je v@echno v po>#dku?",
+	NEW_LINE,
+	"U@i, nos, \\sta, krk, h^{d+,",
+	NEW_LINE,
+	"n+co takov*ho?",
+	CHANGE_CHARACTER,
+	"Dr{ ml$.",
+	END_DIALOG,
+};
+
+const static char *czechDialog36[] = {
+	"Je v@echno v po>#dku?",
+	END_DIALOG,
+};
+
+const static char *czechDialog37[] = {
+	"Promi<te moji",
+	NEW_LINE,
+	"vlezlost...",
+	CHANGE_CHARACTER,
+	"Ano?...",
+	CHANGE_CHARACTER,
+	"...ale koupil jsem tuto",
+	NEW_LINE,
+	"nevinnou",
+	NEW_LINE,
+	"kv+tinu...",
+	DISPLAY_MESSAGE,
+	"...kter# symbolizuje",
+	NEW_LINE,
+	"moje pot+@en;",
+	NEW_LINE,
+	"{e jsem se s v#mi setkal.",
+	END_DIALOG,
+};
+
+const static char *czechDialog38[] = {
+	"Douf#m,",
+	NEW_LINE,
+	"{e se v#m bude l;bit...",
+	CHANGE_CHARACTER,
+	"Oh, mil^!",
+	DISPLAY_MESSAGE,
+	"C;t;m se opravdu",
+	NEW_LINE,
+	"@[astna...",
+	DISPLAY_MESSAGE,
+	"To je nejhez$; v+c,",
+	NEW_LINE,
+	"co pro mne n+kdo",
+	NEW_LINE,
+	"za posledn;ch deset let...",
+	DISPLAY_MESSAGE,
+	"...ud+lal!",
+	DISPLAY_MESSAGE,
+	"D+kuji ti!",
+	CHANGE_CHARACTER,
+	"Nen; za$. (ufff)",
+	END_DIALOG,
+};
+
+const static char *czechDialog39[] = {
+	"Cht+la byste je@t+",
+	NEW_LINE,
+	"jednu kv+tinu?",
+	CHANGE_CHARACTER,
+	"Jsi velmi hodn^,",
+	NEW_LINE,
+	"m]j mil^, ale ne,",
+	NEW_LINE,
+	"d+kuji.",
+	END_DIALOG,
+};
+
+const static char *czechDialog40[] = {
+	"Jste si jist#, {e",
+	NEW_LINE,
+	"nechcete dal@; kv+tinu?",
+	CHANGE_CHARACTER,
+	"Ano. Jsem si jist#.",
+	END_DIALOG,
+};
+
+const static char *czechDialog41[] = {
+	"Mohl bych si p]j$it tenhle",
+	NEW_LINE,
+	"opra@ova$?",
+	CHANGE_CHARACTER,
+	"Nezn#me se je@t+ tak dob>e,",
+	NEW_LINE,
+	"abych ti p]j$ovala",
+	NEW_LINE,
+	"v+ci na dobr* slovo...",
+	DISPLAY_MESSAGE,
+	"...mo{n# a{ se l*pe pozn#me",
+	NEW_LINE,
+	"nebudu m;t",
+	NEW_LINE,
+	"nic proti.",
+	CHANGE_CHARACTER,
+	"Copak vypad#m nespolehliv+?",
+	CHANGE_CHARACTER,
+	"U{ jsem >ekla.",
+	END_DIALOG,
+};
+
+const static char *czechDialog42[] = {
+	"Zm+nilo se n+co okolo kausy",
+	NEW_LINE,
+	"p]j$ov#n; opra@ova$e?",
+	CHANGE_CHARACTER,
+	"Docela se mi zamlouv# tam, kde je.",
+	END_DIALOG,
+};
+
+const static char *czechDialog43[] = {
+	"Mysl;te, {e bych si mohl",
+	NEW_LINE,
+	"p]j$it opra@ova$",
+	NEW_LINE,
+	"te%, kdy{...?",
+	CHANGE_CHARACTER,
+	"Ale samoz>ejm+,",
+	NEW_LINE,
+	"nevid;m d]vod, pro$ bych nemohla...",
+	DISPLAY_MESSAGE,
+	"...vypomoci takov*mu mil*mu",
+	NEW_LINE,
+	"mlad*mu mu{i jako jse@ ty!..",
+	CHANGE_CHARACTER,
+	"Mnohokr#t v#m d+kuji. (to ale trvalo, babo!)",
+	END_DIALOG,
+};
+
+const static char *czechDialog44[] = {
+	"Ha! Jsem p>ece rychlej@; ne{ pr]jem!",
+	CHANGE_CHARACTER,
+	"V@echno jsem to vid+la, chlap$e!",
+	END_DIALOG,
+};
+
+const static char *czechDialog45[] = {
+	"Er...",
+	DISPLAY_MESSAGE,
+	"Uh...",
+	DISPLAY_MESSAGE,
+	"J# jenom...",
+	CHANGE_CHARACTER,
+	"To je v po>#dku, jenom douf#m,",
+	NEW_LINE,
+	"{es\' tu mouchu alespo< zabil.",
+	END_DIALOG,
+};
+
+const static char *czechDialog46[] = {
+	"Promi<te, pan;, ale >ekl bych,",
+	NEW_LINE,
+	"{e je va@e pr#dlo u{ such*...",
+	DISPLAY_MESSAGE,
+	"...tak{e by ho te% slunko mohlo",
+	NEW_LINE,
+	"zbyte$n+ vykrabatit a nakrabatit...",
+	CHANGE_CHARACTER,
+	"Jak je mo{n*, {e uschnulo tak rychle?",
+	DISPLAY_MESSAGE,
+	"Rad@i se na to p]jdu pod;vat.",
+	END_DIALOG,
+};
+
+const static char *czechDialog47[] = {
+	CHANGE_CHARACTER,
+	"M+l jsi pravdu chlap$e.",
+	DISPLAY_MESSAGE,
+	"D+kuji ti.",
+	CHANGE_CHARACTER,
+	"Nen; za$.",
+	END_DIALOG,
+};
+
+const static char *czechDialog48[] = {
+	"Pot>ebujete to um+l* jablko?",
+	CHANGE_CHARACTER,
+	"Z#le{; na tom. O tom jablku bych",
+	NEW_LINE,
+	"toho mohla mnoho vypr#v+t.",
+	DISPLAY_MESSAGE,
+	"Vzpom;n#m si, jak jednoho dne",
+	NEW_LINE,
+	"moje mlad@; sestra Marie",
+	NEW_LINE,
+	"zkou@ela...",
+	CHANGE_CHARACTER,
+	"Er, jak je to pov;d#n; asi dlouh*?",
+	CHANGE_CHARACTER,
+	"Oh, nen; p>ece kam sp+chat.",
+	DISPLAY_MESSAGE,
+	"M#me na mluven; cel* hodiny,",
+	NEW_LINE,
+	"ne?",
+	CHANGE_CHARACTER,
+	"Jak tak o tom p>em^@l;m, j# to jablko",
+	NEW_LINE,
+	"vlastn+ ani nepot>ebuju.",
+	DISPLAY_MESSAGE,
+	"D+kuju.",
+	END_DIALOG,
+};
+
+const static char *czechDialog49[] = {
+	"To jabko...",
+	CHANGE_CHARACTER,
+	"~#dn^ p>;b+h, {#dn* jablko.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"~#dn* jablko.",
+	END_DIALOG,
+};
+
+const static char *czechDialog50[] = {
+	"Mohla by to bejt...",
+	DISPLAY_MESSAGE,
+	"...nev+t@; ko$ka ze v@ech ko$ek...",
+	DISPLAY_MESSAGE,
+	"na cel*m sv+t+?...",
+	END_DIALOG,
+};
+
+const static char *czechDialog51[] = {
+	"Mysl;m si, {e je nejvy@@; $as,",
+	NEW_LINE,
+	"abych se p>edstavil.",
+	DISPLAY_MESSAGE,
+	"J# jsem Kevin.",
+	CHANGE_CHARACTER,
+	"Anna.",
+	END_DIALOG,
+};
+
+const static char *czechDialog52[] = {
+	"Ten moment, co jsem zahl*dl ty o$i,",
+	NEW_LINE,
+	"to byla snad nejkr#sn+j@; chv;le",
+	NEW_LINE,
+	"m*ho {ivota.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Teda kdy{ nepo$;t#m,",
+	NEW_LINE,
+	"jak jsme hr#li na doktora",
+	NEW_LINE,
+	"se Zuzanou.",
+	END_DIALOG,
+};
+
+const static char *czechDialog53[] = {
+	"Uh...",
+	DISPLAY_MESSAGE,
+	"Ehm...",
+	DISPLAY_MESSAGE,
+	"J# jenom...",
+	DISPLAY_MESSAGE,
+	"Jenom jestli",
+	NEW_LINE,
+	"bys necht+la",
+	NEW_LINE,
+	"n+jak*...",
+	DISPLAY_MESSAGE,
+	"Er...",
+	DISPLAY_MESSAGE,
+	"toti{...",
+	DISPLAY_MESSAGE,
+	"M#m n+co",
+	NEW_LINE,
+	"co bych dal...",
+	NEW_LINE,
+	"teda tob+ dal, proto{e...",
+	DISPLAY_MESSAGE,
+	"Uh...",
+	DISPLAY_MESSAGE,
+	"Mysl;m, {e",
+	NEW_LINE,
+	"jsi... A...",
+	CHANGE_CHARACTER,
+	"Hej! J# nekou@u!",
+	DISPLAY_MESSAGE,
+	"evidentn+ mi chce@ >;ct n+co hezk^ho,",
+	NEW_LINE,
+	"tak jen do toho.",
+	DISPLAY_MESSAGE,
+	"}ekni to prost+ jednoduch^mi",
+	NEW_LINE,
+	"slovy...",
+	CHANGE_CHARACTER,
+	"Jednoduch^mi slovy?!",
+	CHANGE_CHARACTER,
+	"Ano, jednoduch# slova d+laj;",
+	NEW_LINE,
+	"v+ci jednodu@@;.",
+	CHANGE_CHARACTER,
+	"Oh, ano.",
+	DISPLAY_MESSAGE,
+	"OK.",
+	DISPLAY_MESSAGE,
+	"Jednoduch# slova.",
+	DISPLAY_MESSAGE,
+	"OK.",
+	DISPLAY_MESSAGE,
+	"Tak teda jo.",
+	DISPLAY_MESSAGE,
+	"J# t+ l;bit se a",
+	NEW_LINE,
+	"cht;t d#t kytku.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"}ekla bych, {e tohle bylo a{ moc",
+	NEW_LINE,
+	"zjednodu@en*, mohl bys zkusit...",
+	DISPLAY_MESSAGE,
+	"...n+co trochu komplikovan+j@;ho.",
+	CHANGE_CHARACTER,
+	"Uh...",
+	DISPLAY_MESSAGE,
+	"Promi<...",
+	DISPLAY_MESSAGE,
+	"J# jenom...",
+	DISPLAY_MESSAGE,
+	"jenom jsem ti donesl",
+	NEW_LINE,
+	"kytku.",
+	CHANGE_CHARACTER,
+	"Oh?...",
+	END_DIALOG,
+};
+
+const static char *czechDialog54[] = {
+	"L;b; se ti?",
+	CHANGE_CHARACTER,
+	"Se@ @armantn;.",
+	END_DIALOG,
+};
+
+const static char *czechDialog55[] = {
+	"J#, vlastn+...",
+	CHANGE_CHARACTER,
+	"Jednoduch# slova, chlap$e!",
+	NEW_LINE,
+	"Jednoduch# slova!",
+	END_DIALOG,
+};
+
+const static char *czechDialog56[] = {
+	"Oh, ano...",
+	DISPLAY_MESSAGE,
+	"Cht+l jsem jenom >;ci,",
+	NEW_LINE,
+	"{e jse@ velk#",
+	NEW_LINE,
+	"ko$ka.",
+	CHANGE_CHARACTER,
+	"No to bych asi m+la pod+kovat za poklonu,",
+	NEW_LINE,
+	"d+kuju.",
+	END_DIALOG,
+};
+
+const static char *czechDialog57[] = {
+	"(Ve$er bude sebetr^ze<)",
+	END_DIALOG,
+};
+
+const static char *czechDialog58[] = {
+	"M#m je@t+ jednu",
+	NEW_LINE,
+	"kv+tinu...",
+	CHANGE_CHARACTER,
+	"No, rad+ji to",
+	NEW_LINE,
+	"nep>eh#n+jme.",
+	DISPLAY_MESSAGE,
+	"A jak vid;@, j# tu nejsem jedin# {ena...",
+	DISPLAY_MESSAGE,
+	"...v tomto pokoji...",
+	END_DIALOG,
+};
+
+const static char *czechDialog59[] = {
+	"Tak{e ty nechce@",
+	NEW_LINE,
+	"dal@; kytku?",
+	CHANGE_CHARACTER,
+	"Ne, d+kuju.",
+	END_DIALOG,
+};
+
+const static char *czechDialog60[] = {
+	"Cht+la bys cukr#tko?",
+	CHANGE_CHARACTER,
+	"Se@ roztomilej, ale chci b^t",
+	NEW_LINE,
+	"@t;hl#, nej;m sladk*.",
+	CHANGE_CHARACTER,
+	"Ned+lej si s t;m takov* starosti",
+	NEW_LINE,
+	"i Hardy a Obelix maj; kamar#dy.",
+	CHANGE_CHARACTER,
+	"Hardy a Obelix?!",
+	CHANGE_CHARACTER,
+	"Er, zapome< na to. j# jenom, {e jsem",
+	NEW_LINE,
+	"tadyten bonb=n na@el...",
+	CHANGE_CHARACTER,
+	"Tys ho na@el?!",
+	CHANGE_CHARACTER,
+	"...na@el v jednom luxusn;m obchod+,",
+	NEW_LINE,
+	"le{el tam vystavenej.",
+	DISPLAY_MESSAGE,
+	"Nen; to {#dn# levn# pseudo $okol#da,",
+	NEW_LINE,
+	"ale maxim#ln+ kvalitn; zbo{;!",
+	DISPLAY_MESSAGE,
+	"Je to jenom z p>;rodn;ch v+c;.",
+	NEW_LINE,
+	"(A[ u{ si to sakra vezme,",
+	NEW_LINE,
+	"m#m z toho u{ bolen;).",
+	DISPLAY_MESSAGE,
+	"~#dn* prezervativy v tom nejsou,",
+	NEW_LINE,
+	"vlastn+ nen; v tom nic prezerv...",
+	CHANGE_CHARACTER,
+	"Tak dob>e, kdy{ tolik nal*h#@...",
+	END_DIALOG,
+};
+
+const static char *czechDialog61[] = {
+	ANIM_WAIT,
+	"Khm...",
+	CHANGE_CHARACTER,
+	"Jasn+, asi bych ti m+la",
+	NEW_LINE,
+	"taky n+co d#t...",
+	CHANGE_CHARACTER,
+	"Ale to n*... To samoz>ejm+",
+	NEW_LINE,
+	"nemus;@...",
+	CHANGE_CHARACTER,
+	"OK. Jak si p>eje@.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"No, kdy{ tak nad t;m p>em^@l;m...",
+	CHANGE_CHARACTER,
+	"Tu@ila jsem to. Vy kluci v{dycky",
+	NEW_LINE,
+	"\'n+co\' chcete.",
+	DISPLAY_MESSAGE,
+	"Zadarmo nehrabete nikdy,",
+	NEW_LINE,
+	"jste hor@; ne{ ku>ata.",
+	CHANGE_CHARACTER,
+	"Jednou jsem si uklidil pokoj.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Dob>e...",
+	DISPLAY_MESSAGE,
+	"Zapome< na to.",
+	DISPLAY_MESSAGE,
+	"Tady je m]j d#rek pro",
+	NEW_LINE,
+	"tebe.",
+	DISPLAY_MESSAGE,
+	"Je to moje stuha na vlasy.",
+	NEW_LINE,
+	"Mo{n# si na m+ n+kdy vzpomene@.",
+	END_DIALOG,
+};
+
+const static char *czechDialog62[] = {
+	"D+kuju.",
+	NEW_LINE,
+	"Ur$it+ se bude hodit.",
+	END_DIALOG,
+};
+
+const static char *czechDialog63[] = {
+	"Na@el jsem tvoje jm*no na bankovce,",
+	NEW_LINE,
+	"kterou mi dal n+jakej tlus[och.",
+	NEW_LINE,
+	"V;@ o tom n+co?",
+	CHANGE_CHARACTER,
+	"Uka{ mi tu bankovku.",
+	END_DIALOG,
+};
+
+const static char *czechDialog64[] = {
+	"Copak je?!",
+	CHANGE_CHARACTER,
+	"Oh, tohle!...",
+	CHANGE_CHARACTER,
+	"Pro$ bre$;@?!",
+	CHANGE_CHARACTER,
+	"Tahle... tahle...",
+	DISPLAY_MESSAGE,
+	"To jsem si nazaslou{ila!...",
+	DISPLAY_MESSAGE,
+	"N#@... soused, pan.",
+	NEW_LINE,
+	"Pankr#c Oblouk mi jednoho dne",
+	NEW_LINE,
+	"p#r pen+z...",
+	DISPLAY_MESSAGE,
+	"...a >;kal, {e kdy{ mu d#m",
+	NEW_LINE,
+	"pusu, tak {e mi d#",
+	NEW_LINE,
+	"v;c...a kdy{ mu d#m kalhotky, tak...",
+	DISPLAY_MESSAGE,
+	"...ale m+ se to nezd#lo,",
+	NEW_LINE,
+	"tak jsem mu ty...(smrk)",
+	NEW_LINE,
+	"pen;ze vr#tila.",
+	CHANGE_CHARACTER,
+	"Chce@ >;ct, {e se t+ to prase",
+	NEW_LINE,
+	"pokusilo koupit?!",
+	CHANGE_CHARACTER,
+	"Jsem tak ne@[astn#!",
+	CHANGE_CHARACTER,
+	"Tak a je vymalov#no.",
+	NEW_LINE,
+	"Ten chlap;k skon$il!",
+	END_DIALOG,
+};
+
+const static char *czechDialog65[] = {
+	"Hej, ty!",
+	DISPLAY_MESSAGE,
+	"Podala bys\' mi, pros;m ten o>ech,",
+	NEW_LINE,
+	"co le{; vedle tebe?",
+	END_DIALOG,
+};
+
+const static char *czechDialog66[] = {
+	"Tak sakra, pod#@ mi ten o>ech nebo ne?!",
+	END_DIALOG,
+};
+
+const static char *czechDialog67[] = {
+	"Tak jo.",
+	DISPLAY_MESSAGE,
+	"Dostane@, co si zaslou{;@.",
+	DISPLAY_MESSAGE,
+	"Budu ti nad#vat tak dlouho, a{ ti.",
+	DISPLAY_MESSAGE,
+	"studem vyra@; druhej ocas.",
+	DISPLAY_MESSAGE,
+	"Ty hnusn# veverko debiln; vypatlan#...",
+	END_DIALOG,
+};
+
+const static char *czechDialog68[] = {
+	"Ahoj, j# jsem z laborato>;.",
+	NEW_LINE,
+	"Sh#n;me vzorky vever$;ch ko{e@in...",
+	END_DIALOG,
+};
+
+const static char *czechDialog69[] = {
+	"Tak d;ky na o>ech, za to t+ neud#m.",
+	END_DIALOG,
+};
+
+const static char *czechDialog70[] = {
+	"Ale j# jsem se nikoho nezeptal,",
+	NEW_LINE,
+	"jestli si tenhle provaz m]{u p]j$it.",
+	DISPLAY_MESSAGE,
+	"|etl jsem v novin#ch, {e br#t si n+$; ",
+	NEW_LINE,
+	"majetek bez dovolen; je trestn*.",
+	DISPLAY_MESSAGE,
+	"Mohli by m+ p>i tom chytit,",
+	NEW_LINE,
+	"a bylo by zle.",
+	DISPLAY_MESSAGE,
+	"Taky by m+ pak @oupli do v+zen;",
+	NEW_LINE,
+	"a tam by m+ tr^znili malomocn; cik#ni.",
+	DISPLAY_MESSAGE,
+	"Mohl bych si t;m po[apat celej {ivot.",
+	END_DIALOG,
+};
+
+const static char *czechDialog71[] = {
+	"I kdy{, kdo krade, m# za t>i.",
+	END_DIALOG,
+};
+
+const static char *czechDialog72[] = {
+	"Posly@te, kamar#di, bu% odsud",
+	NEW_LINE,
+	"okam{it+ vypadnete,",
+	DISPLAY_MESSAGE,
+	"nebo budu muset st>;let.",
+	DISPLAY_MESSAGE,
+	"Opravdovou boucha$kou.",
+	DISPLAY_MESSAGE,
+	"A to bude v#@ Doom.",
+	END_DIALOG,
+};
+
+const static char *czechDialog73[] = {
+	"N+co jsem nachmatal...",
+	DISPLAY_MESSAGE,
+	"...je to...",
+	DISPLAY_MESSAGE,
+	"PAVOUK!!!",
+	END_DIALOG,
+};
+
+const static char *czechDialog74[] = {
+	"Ne, {e bych byl n+jakej srab.",
+	DISPLAY_MESSAGE,
+	"Ale m]{e to bejt n+jakej zmutovanej",
+	NEW_LINE,
+	"pavouk, kterej by m+ moh\'",
+	NEW_LINE,
+	"p+kn+ pokousat...",
+	DISPLAY_MESSAGE,
+	"...a j# bych pak byl taky mutant...",
+	DISPLAY_MESSAGE,
+	"...a @lo by po mn+ spousta",
+	NEW_LINE,
+	"mutantobijc]...",
+	DISPLAY_MESSAGE,
+	"...taky bych musel d+lat takov^ ty obli$eje...",
+	DISPLAY_MESSAGE,
+	"...co mutanti oby$ejn+ d+l#vaj;",
+	NEW_LINE,
+	"Vy i J# bych pak mohl p>ij;t k \\razu...",
+	DISPLAY_MESSAGE,
+	"...a ka{dej by m+ cht+l >ezat",
+	NEW_LINE,
+	"a pitvat a kr#jet...",
+	DISPLAY_MESSAGE,
+	"a \\chylov* by m+ dokonce cht+li DO POSTELE!",
+	END_DIALOG,
+};
+
+const static char *czechDialog75[] = {
+	"M#m v;tr z pavouka...",
+	END_DIALOG,
+};
+
+const static char *czechDialog76[] = {
+	"Hal=, mladej je{ku!",
+	DISPLAY_MESSAGE,
+	"M#m pro tebe jeden slu@nej n#vrh.",
+	DISPLAY_MESSAGE,
+	"Velk^ $erstv^ @[avnat^ jabko",
+	NEW_LINE,
+	"ti vym+nim za tu malou zpuch>elou",
+	DISPLAY_MESSAGE,
+	"@i@ku, co m#@ na z#dech.",
+	NEW_LINE,
+	"Jestli to bere@, kejvni $um#kem.",
+	END_DIALOG,
+};
+
+const static char *czechDialog77[] = {
+	"M+lo m+ napadnout, {e se n+co ur$it+",
+	NEW_LINE,
+	"pokaz; - p#dlo je zlomen^.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"A hned je o probl*m v;c.",
+	END_DIALOG,
+};
+
+const static char *czechDialog78[] = {
+	"Jak se m#@, velkej chlupatej P*-Es-E*?",
+	END_DIALOG,
+};
+
+const static char *czechDialog79[] = {
+	"P>esta< m+ laskav+ ignorovat.",
+	END_DIALOG,
+};
+
+const static char *czechDialog80[] = {
+	"Je s tebou t+{k# >e$, asi jsi byl",
+	NEW_LINE,
+	"v^>e$n+j@; jako @t+n+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog81[] = {
+	"Tak co? Nechce se ti na velkou bobkovou?",
+	END_DIALOG,
+};
+
+const static char *czechDialog82[] = {
+	"Ano, mohl bych si to vz;t...",
+	DISPLAY_MESSAGE,
+	"Jsem v tich*, klidn* vesni$ce...",
+	DISPLAY_MESSAGE,
+	"Nikde {#dn# policie...",
+	DISPLAY_MESSAGE,
+	"Nikdo neusly@; jejich n#>ek...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Ale j# nem#m {#dnou >eznickou z#st+ru.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"(ach jo)",
+	END_DIALOG,
+};
+
+const static char *czechDialog83[] = {
+	"Nedotknu s toho,",
+	NEW_LINE,
+	" jinak bych dostat amok.",
+	DISPLAY_MESSAGE,
+	"Nejd>;v bych pobil v@echny tady",
+	NEW_LINE,
+	"a pak bych vysko$il z obrazovky...",
+	END_DIALOG,
+};
+
+const static char *czechDialog84[] = {
+	"My@ p>ece nechyt;te jen tak.",
+	NEW_LINE,
+	"Bez sna{en;, b+dov#n; a zoufalstv;,",
+	NEW_LINE,
+	"to by p>eci nebyla",
+	DISPLAY_MESSAGE,
+	"{#dn# po>#dn# adventura, ne?",
+	END_DIALOG,
+};
+
+const static char *czechDialog85[] = {
+	"Norm#ln+ byl se pokusil ty pt#ky",
+	NEW_LINE,
+	"vystra@it ru$n+, ale kdy{ mi bylo",
+	NEW_LINE,
+	"deset let, vid+l jsem Hitchcook]v film",
+	DISPLAY_MESSAGE,
+	"\'Pt#ci\'. A od t* doby jsem s pt#ky kamar#d.",
+	DISPLAY_MESSAGE,
+	"Mus;me spole$n+ p>ij;t",
+	NEW_LINE,
+	"na n+co jin*ho, na n+jakou fintu.",
+	END_DIALOG,
+};
+
+const static char *czechDialog86[] = {
+	"Hmmm, je tam naps#na divn# v+c.",
+	DISPLAY_MESSAGE,
+	"\"Na konci d;ry najde@ zlato.\"",
+	END_DIALOG,
+};
+
+const static char *czechDialog87[] = {
+	"Vy jste pan Pankr#c Oblouk?",
+	CHANGE_CHARACTER,
+	"Ano, jak se m#te, p>;teli.",
+	DISPLAY_MESSAGE,
+	"Moji lid* m+ upozor<ovali,",
+	NEW_LINE,
+	"{e jste se pokou@el dostat",
+	NEW_LINE,
+	"do m* vily. Pro$pak?",
+	CHANGE_CHARACTER,
+	"Er... v;te...",
+	DISPLAY_MESSAGE,
+	"p>i@el jsem...",
+	NEW_LINE,
+	"se pod;vat na interi*ry dom]...",
+	DISPLAY_MESSAGE,
+	"M#m toti{ pr#zdniny a cht+l jsem",
+	NEW_LINE,
+	"nafotit n+jak* ty fotky, tak*",
+	NEW_LINE,
+	"bych t>eba vy$istil okna a ...",
+	DISPLAY_MESSAGE,
+	"...umyl psa nebo dohodil n+jakej ten",
+	NEW_LINE,
+	"k@eft s digit#ln;ma hodinkama...",
+	CHANGE_CHARACTER,
+	"Aha.Hmm.. Ch#pu t+, p>;teli",
+	NEW_LINE,
+	"je mi to jasn*.",
+	DISPLAY_MESSAGE,
+	"V;@, mal; $muchalov* mi n+kdy nevad;",
+	NEW_LINE,
+	"a n+kdy mi zase ned+laj; dob>e.",
+	NEW_LINE,
+	"Takov^ mal^ $muchal m]{e pracovat...",
+	DISPLAY_MESSAGE,
+	"t>eba pro n+jakou tajnou agenturu",
+	NEW_LINE,
+	"jako je t>eba Hurv;nkovo Osv;cen;",
+	NEW_LINE,
+	"a tak podobn+...",
+	DISPLAY_MESSAGE,
+	"Nem]{u ti dovolit vstoupit do m*ho",
+	NEW_LINE,
+	"domu, proto{e se tam pr#v+",
+	NEW_LINE,
+	"kon# sjezd masochist] a p>ijel",
+	DISPLAY_MESSAGE,
+	"i mark^z DeSade i se svoj; chot;",
+	NEW_LINE,
+	"pan; |achtickou, kter* bys jist+ nerad ru@il",
+	NEW_LINE,
+	"Ud+l#me to jinak.",
+	DISPLAY_MESSAGE,
+	"J# ti tady d#m n+jakej pen;z",
+	NEW_LINE,
+	"a ty si m]{e@ j;t koupit t>eba walkmana",
+	NEW_LINE,
+	"nebo zapou@t+c; $;pky proti",
+	NEW_LINE,
+	"bolestem hlavy.",
+	DISPLAY_MESSAGE,
+	"Co tomu >;k#@?",
+	CHANGE_CHARACTER,
+	"Za co m+ m#te?",
+	END_DIALOG,
+};
+
+const static char *czechDialog88[] = {
+	"No to si teda NIKDY nevezmu!",
+	DISPLAY_MESSAGE,
+	"NIKDY!",
+	CHANGE_CHARACTER,
+	"Neroz$iluj se tak.",
+	DISPLAY_MESSAGE,
+	"Hloupej d#v#, hloup+j@; nebere.",
+	DISPLAY_MESSAGE,
+	"J# u{ te% mus;m j;t, ty se uklidni",
+	NEW_LINE,
+	"a seber si ty prachy.",
+	DISPLAY_MESSAGE,
+	"Nikdo se to nemus; dozv+d+t...",
+	DISPLAY_MESSAGE,
+	"Sbohem, p>;teli.",
+	END_DIALOG,
+};
+
+const static char *czechDialog89[] = {
+	"Nem]{u uv+>it tomu, jak se mnou",
+	NEW_LINE,
+	"zach#zel.",
+	DISPLAY_MESSAGE,
+	"Mimochodem...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"J# ale nejsem hloup+j@;...",
+	END_DIALOG,
+};
+
+const static char *czechDialog90[] = {
+	"~]va...",
+	DISPLAY_MESSAGE,
+	"je $ern# jak smola...",
+	DISPLAY_MESSAGE,
+	"...a vypad# jako jednoro{ec,...",
+	DISPLAY_MESSAGE,
+	"...kter^mu n+kdo ust>ih\' zadn; nohy...",
+	DISPLAY_MESSAGE,
+	"...a prot#hl mu hlavu zadkem...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Kresli$ pozad; m+l asi t+{k^ den.",
+	END_DIALOG,
+};
+
+const static char *czechDialog91[] = {
+	"U{ zase musim prohled#vat ko@e?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"No dob>e, vy santus#ci, jsou tam",
+	NEW_LINE,
+	"n+jak^ pap;ry.",
+	END_DIALOG,
+};
+
+const static char *czechDialog92[] = {
+	"Stejn* jako v{dycky...",
+	DISPLAY_MESSAGE,
+	"Katastrofy...",
+	DISPLAY_MESSAGE,
+	"Multimedi#ln; b>e$ky...",
+	DISPLAY_MESSAGE,
+	"Brut#ln; vra{dy...",
+	DISPLAY_MESSAGE,
+	"Satanistick# kolonka...",
+	DISPLAY_MESSAGE,
+	"Polonah^ star^ baby...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"To si mus;m p>edplatit.",
+	END_DIALOG,
+};
+
+const static char *czechDialog93[] = {
+	ANIM_WAIT,
+	"Je{i@...",
+	CHANGE_CHARACTER,
+	"...Ja da d#, ja da d#..",
+	DISPLAY_MESSAGE,
+	"...tada d###, da da d###...",
+	CHANGE_CHARACTER,
+	"To je Oblouk!",
+	CHANGE_CHARACTER,
+	"...d*****@[!...",
+	CHANGE_CHARACTER,
+	"Zp;val n+co do kamery.",
+	CHANGE_CHARACTER,
+	"...cik####nsk^^^ bar==< jsem j###...",
+	CHANGE_CHARACTER,
+	"Byl asi \\pln+ namazanej.",
+	CHANGE_CHARACTER,
+	"...sou{en;;;...",
+	CHANGE_CHARACTER,
+	"To je ubohost. Je{i@.",
+	CHANGE_CHARACTER,
+	"...zase @[astn^^^^;;;;;;!..",
+	CHANGE_CHARACTER,
+	"Hr]za.",
+	CHANGE_CHARACTER,
+	"...a toho v>**da $apnul d+***da...",
+	CHANGE_CHARACTER,
+	"D]kaz o neexistenci boha.",
+	CHANGE_CHARACTER,
+	"...tak, tak, t###k!...",
+	CHANGE_CHARACTER,
+	"To mi sta$ilo.",
+	CHANGE_CHARACTER,
+	"...la, la! La, l###....",
+	END_DIALOG,
+};
+
+const static char *czechDialog94[] = {
+	"Sam^ kulov^...",
+	DISPLAY_MESSAGE,
+	"Toti{, velk^ kulov^, i kdy{, moment...",
+	DISPLAY_MESSAGE,
+	"N+co tam je! N+co se tam v#l;...",
+	END_DIALOG,
+};
+
+const static char *czechDialog95[] = {
+	"Nemysl;te si, pane kucha>, {e byste",
+	NEW_LINE,
+	"m+l p>idat malinko tady toho chilli,",
+	NEW_LINE,
+	"jen tak pro chu[?",
+	CHANGE_CHARACTER,
+	"P>idat?",
+	DISPLAY_MESSAGE,
+	"Pro$?",
+	CHANGE_CHARACTER,
+	"M#m takov^ pocit,",
+	NEW_LINE,
+	"{e nejste zrovna dvakr#t spokojen^",
+	NEW_LINE,
+	"s tou pol*vkou,",
+	DISPLAY_MESSAGE,
+	"kterou va>;te.",
+	NEW_LINE,
+	"Trochu toho ko>en; neu@kod; tolik",
+	NEW_LINE,
+	"jako t>eba p#r pan#k] ko<aku, nemysl;te?",
+	CHANGE_CHARACTER,
+	"N==...",
+	DISPLAY_MESSAGE,
+	"Nen; to @patnej n#pad.",
+	DISPLAY_MESSAGE,
+	"N#hodou taky jedno $ili m#m...",
+	END_DIALOG,
+};
+
+const static char *czechDialog96[] = {
+	CHANGE_CHARACTER,
+	"Tohle... hik!...",
+	DISPLAY_MESSAGE,
+	"Tohle chilllllleeeeee... hble!",
+	DISPLAY_MESSAGE,
+	"...muselo...",
+	DISPLAY_MESSAGE,
+	"...vykvasit...",
+	DISPLAY_MESSAGE,
+	"..je puuo puuol;vce...",
+	DISPLAY_MESSAGE,
+	"...mus;m se j;t proj;t po skle!",
+	DISPLAY_MESSAGE,
+	"Je to trest bo{;!",
+	END_DIALOG,
+};
+
+const static char *czechDialog97[] = {
+	"To r#dio nepot>ebuju,",
+	NEW_LINE,
+	"ale mohly by se hodit jeho baterie.",
+	DISPLAY_MESSAGE,
+	"Bohu{el nikdy nev;m, kudy vniknout",
+	NEW_LINE,
+	"do \\trob t+hle japonskejch",
+	NEW_LINE,
+	"ko$i$ek.",
+	END_DIALOG,
+};
+
+const static char *czechDialog98[] = {
+	CHANGE_CHARACTER,
+	"Kontroln; test: hlas, obraz, pach",
+	DISPLAY_MESSAGE,
+	"Hlas pozitivn+ analyzov#n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Yo, p+kn# p;sni$ka.",
+	END_DIALOG,
+};
+
+const static char *czechDialog99[] = {
+	CHANGE_CHARACTER,
+	"Kontroln; test: hlas, obraz, pach.",
+	DISPLAY_MESSAGE,
+	"Pach pozitivn+ analyzov#n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"M#lem mi to odpravilo $ichov# $idla.",
+	END_DIALOG,
+};
+
+const static char *czechDialog100[] = {
+	CHANGE_CHARACTER,
+	"Kontroln; test: hlas, obraz, pach.",
+	DISPLAY_MESSAGE,
+	"Obraz pozitivn+ analyzov#n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"A p>;@t+ si stoupni trochu bl;{, br#cho.",
+	END_DIALOG,
+};
+
+const static char *czechDialog101[] = {
+	"M]{u mluvit s...",
+	CHANGE_CHARACTER,
+	"Jdi pry$.",
+	DISPLAY_MESSAGE,
+	"M#m pr#ci.",
+	DISPLAY_MESSAGE,
+	"Va>;m.",
+	DISPLAY_MESSAGE,
+	"Ob+d bude brzy.",
+	DISPLAY_MESSAGE,
+	"Mus;m fachat.",
+	CHANGE_CHARACTER,
+	"Ano, kapit#ne .",
+	END_DIALOG,
+};
+
+const static char *czechDialog102[] = {
+	"Dob>e, ale mo{n#...",
+	CHANGE_CHARACTER,
+	"J#...",
+	DISPLAY_MESSAGE,
+	"...m#m...",
+	DISPLAY_MESSAGE,
+	"...pr#ci.",
+	DISPLAY_MESSAGE,
+	"nech...",
+	DISPLAY_MESSAGE,
+	"...m+...",
+	DISPLAY_MESSAGE,
+	"...NA POKOJI.",
+	DISPLAY_MESSAGE,
+	"OK?",
+	CHANGE_CHARACTER,
+	"Okaj, dokaj.",
+	END_DIALOG,
+};
+
+const static char *czechDialog103[] = {
+	"To je naposled, co se pt#m...",
+	CHANGE_CHARACTER,
+	"Pr#ce.",
+	DISPLAY_MESSAGE,
+	"P jako -censored-.",
+	DISPLAY_MESSAGE,
+	"R jako Rumburak.",
+	DISPLAY_MESSAGE,
+	"A jako Andrew.",
+	DISPLAY_MESSAGE,
+	"C jako Cip;sek",
+	DISPLAY_MESSAGE,
+	"a E jako...",
+	CHANGE_CHARACTER,
+	"Embl*m?",
+	CHANGE_CHARACTER,
+	"Ne. Jako...",
+	CHANGE_CHARACTER,
+	"Evangelium svat^ho Tetsua?",
+	CHANGE_CHARACTER,
+	"Ne, ne. Jako...",
+	CHANGE_CHARACTER,
+	"Emocion#ln+ p>et;{en; kucha>i?",
+	CHANGE_CHARACTER,
+	"Ano, to p>esn+ ono.",
+	DISPLAY_MESSAGE,
+	"A te% u{ m+ pros;mt+ nech b^t!",
+	CHANGE_CHARACTER,
+	"Dob>e, dob>e.",
+	END_DIALOG,
+};
+
+const static char *czechDialog104[] = {
+	"Er...",
+	CHANGE_CHARACTER,
+	"Wrrrr...",
+	CHANGE_CHARACTER,
+	"Vlastn+ nic.",
+	END_DIALOG,
+};
+
+const static char *czechDialog105[] = {
+	"Dobr^ den, pane robot.",
+	CHANGE_CHARACTER,
+	"Hej, yo, tak co m]j k#mo,",
+	NEW_LINE,
+	"sly@;@, co ti pov;d#m?",
+	DISPLAY_MESSAGE,
+	"V;@, j# jsem Ludv;k, yo,",
+	NEW_LINE,
+	"Co {e to poud#m?",
+	CHANGE_CHARACTER,
+	"Er...",
+	DISPLAY_MESSAGE,
+	"Je ur$it+ v@echno v po>#dku",
+	NEW_LINE,
+	"s tv^m programem...",
+	DISPLAY_MESSAGE,
+	"...nepozn#v#@, {e jsem Karel |apek?...",
+	CHANGE_CHARACTER,
+	"Co m#@ za probl*m, br#cho?!",
+	DISPLAY_MESSAGE,
+	"Nikdys\' nevid+l repuj;c;ho,",
+	NEW_LINE,
+	"sejf-robota, YO, pohoda, bahno?",
+	CHANGE_CHARACTER,
+	"Vlastn+, nikdy.",
+	CHANGE_CHARACTER,
+	"J# sem nimbl novej.",
+	DISPLAY_MESSAGE,
+	"Novinka, hork# v+c, jasn^?",
+	DISPLAY_MESSAGE,
+	"N+jak^ chytr^ lidi >ikaj, {e",
+	NEW_LINE,
+	"takovej robot m# bejt pro ka{d^ho.",
+	DISPLAY_MESSAGE,
+	"Je@t+ po>#d m+ st;h#@?",
+	NEW_LINE,
+	"Tak mi ty lidi dali lidskou",
+	NEW_LINE,
+	"osobnost, br#cho.",
+	DISPLAY_MESSAGE,
+	"Sleduje@?",
+	NEW_LINE,
+	"Cool, {e jo?",
+	CHANGE_CHARACTER,
+	"Khm... Jo, super.",
+	DISPLAY_MESSAGE,
+	"Tak{e ty jse@ n+jakj sejf?",
+	CHANGE_CHARACTER,
+	"Pozitivn;, br#cho.",
+	DISPLAY_MESSAGE,
+	"Tot#ln+ spolehlivej,",
+	NEW_LINE,
+	"je to jasn^?",
+	DISPLAY_MESSAGE,
+	"Kdy{ m+ bude@ cht;t otev>;t,",
+	NEW_LINE,
+	"mus;@ dok#zat, {e jse@ m]j majitel.",
+	DISPLAY_MESSAGE,
+	"A te% d#vej trojit^ho bacha:",
+	NEW_LINE,
+	"J# m]{u ROZSOUDIT, jestli se@",
+	NEW_LINE,
+	"m]j majitel podle t>ech v+c;:",
+	DISPLAY_MESSAGE,
+	"...obraz, pach a hlas.",
+	NEW_LINE,
+	"Ch#pe@ to, br#cho? YO!",
+	CHANGE_CHARACTER,
+	"A mohl by ses na chvilku otev>;t",
+	NEW_LINE,
+	"jenom abych se pod;val,",
+	NEW_LINE,
+	"co v sob+ m#@?",
+	CHANGE_CHARACTER,
+	"Sor#@, br#cho.",
+	DISPLAY_MESSAGE,
+	"nevypad#@ jako majitel...",
+	DISPLAY_MESSAGE,
+	"...nep#chne@ jako majitel...",
+	DISPLAY_MESSAGE,
+	"...a nezvu$;@ jako majitel.",
+	DISPLAY_MESSAGE,
+	"Tak{e vem rohy na ramena a vypadni!",
+	END_DIALOG,
+};
+
+const static char *czechDialog106[] = {
+	"Sesame, otev>i se...",
+	CHANGE_CHARACTER,
+	"Polib si ty -CENSORED-, skapanej -CENSORED-",
+	END_DIALOG,
+};
+
+const static char *czechDialog107[] = {
+	"Nazd#rek!",
+	CHANGE_CHARACTER,
+	"(Zde bylo tak stra@n* klen;,",
+	NEW_LINE,
+	" {e jsme ho museli",
+	NEW_LINE,
+	"p>ekladateli vyjmout - distribuce)",
+	END_DIALOG,
+};
+
+const static char *czechDialog108[] = {
+	"};k#m v#m, {e tentokr#t",
+	NEW_LINE,
+	"je to n+co velkolep*ho.",
+	CHANGE_CHARACTER,
+	"Je@t+ si vzpom;n#m, jak p>i@el o {ivot",
+	NEW_LINE,
+	"m]j slu{ebn^ p>i zkou@en;",
+	NEW_LINE,
+	"nepr]st>eln*ho tri$ka.",
+	CHANGE_CHARACTER,
+	"To u{ je d#vno...",
+	CHANGE_CHARACTER,
+	"Nebo jak jste mi vnutil @;len^",
+	NEW_LINE,
+	"RAPuj;c; robot-trezor,",
+	NEW_LINE,
+	"kter^ si >;k# Ludv;k...",
+	DISPLAY_MESSAGE,
+	"...a odm;t# se otev;rat.",
+	CHANGE_CHARACTER,
+	"Proto{e se k n+mu chov#te @patn+...",
+	CHANGE_CHARACTER,
+	"Nebo ten recept na l#m#n;",
+	NEW_LINE,
+	"{ensk^ch srdc;, co jste",
+	NEW_LINE,
+	"mi prodal.",
+	CHANGE_CHARACTER,
+	"Pen;ze nazabraly?",
+	CHANGE_CHARACTER,
+	"Negativn;.",
+	CHANGE_CHARACTER,
+	"Zvl#@tn;, v+t@inou zab;raj.",
+	CHANGE_CHARACTER,
+	"Nebo kdy{ jste...",
+	CHANGE_CHARACTER,
+	"DOB}E, DOB}E!",
+	DISPLAY_MESSAGE,
+	"Zapome<me na to!",
+	DISPLAY_MESSAGE,
+	"Ten novej vyn#lez u{ jsem",
+	NEW_LINE,
+	"tak jako tak otestovat s#m!",
+	CHANGE_CHARACTER,
+	"Opravdu?",
+	CHANGE_CHARACTER,
+	"Opravdu.",
+	DISPLAY_MESSAGE,
+	"A m]{u to p>edv*st.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ou kej, jsem sam* oko.",
+	END_DIALOG,
+};
+
+const static char *czechDialog109[] = {
+	ANIM_WAIT,
+	"Velkolep*.",
+	DISPLAY_MESSAGE,
+	"Vyr#b+dlo trpasl;k].",
+	CHANGE_CHARACTER,
+	"Uh, to je jen postrann; efekt.",
+	DISPLAY_MESSAGE,
+	"N+kdy se podobn* v+ci st#vaj;,",
+	NEW_LINE,
+	"tuhle jsem byl na chv;li {ena.",
+	DISPLAY_MESSAGE,
+	"Ale nem+jte obavy, cel* to trv#",
+	NEW_LINE,
+	"jen chvili$ku.",
+	CHANGE_CHARACTER,
+	"To douf#m.",
+	END_DIALOG,
+};
+
+const static char *czechDialog110[] = {
+	"Tak a jsem tady.",
+	DISPLAY_MESSAGE,
+	"Tak{e mi pov+zte, post>ehl jste",
+	NEW_LINE,
+	"n+co neobvykl*ho?",
+	CHANGE_CHARACTER,
+	"Ani co by se za p]l nehtu ve@lo.",
+	CHANGE_CHARACTER,
+	"Skv+l*!",
+	DISPLAY_MESSAGE,
+	"Tak{e ty pilulky skute$n+ funguj;!",
+	CHANGE_CHARACTER,
+	"Nepov;dejte.",
+	CHANGE_CHARACTER,
+	"Ano!",
+	DISPLAY_MESSAGE,
+	"Zkuste si zkontrolovat svoji pen+{enku!",
+	CHANGE_CHARACTER,
+	"Moje pen+{enka se m# dob>e jako v{dy...",
+	END_DIALOG,
+};
+
+const static char *czechDialog111[] = {
+	"Kde m#m pen+{enku?!",
+	DISPLAY_MESSAGE,
+	"Zlod+ji!",
+	DISPLAY_MESSAGE,
+	"Vra[ mi ji!",
+	CHANGE_CHARACTER,
+	"Zachovejte klid, tady ji m#te.",
+	END_DIALOG,
+};
+
+const static char *czechDialog112[] = {
+	"Vypro@uji si vysv+tlen;.",
+	CHANGE_CHARACTER,
+	"Ha!",
+	DISPLAY_MESSAGE,
+	"To je nejlep@; v+c, kterou jsem",
+	NEW_LINE,
+	"kdy vynalezl!",
+	CHANGE_CHARACTER,
+	"A co je to?",
+	CHANGE_CHARACTER,
+	"Nevid+l jste m+,",
+	NEW_LINE,
+	"jak jsem v#m ukradl pen+{enku",
+	DISPLAY_MESSAGE,
+	"...proto{e jsem spolknul...",
+	DISPLAY_MESSAGE,
+	"PILULKU |ASU!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Jakou pilulku $asu?",
+	CHANGE_CHARACTER,
+	"Yes!",
+	DISPLAY_MESSAGE,
+	"Ten kdo ji spolkne",
+	NEW_LINE,
+	"{ije tis;ckr#t rychleji",
+	NEW_LINE,
+	"ne{ zbytek sv+ta!",
+	CHANGE_CHARACTER,
+	"Co{ znamen#...",
+	CHANGE_CHARACTER,
+	"To znamen#, {e se sv+t",
+	NEW_LINE,
+	"pro tohoto $lov+ka h^be",
+	NEW_LINE,
+	"tis;ckr#t pomaleji!",
+	DISPLAY_MESSAGE,
+	"Ale jenom na p#r sekund,",
+	NEW_LINE,
+	"d*le to nevydr{;...",
+	CHANGE_CHARACTER,
+	"No... to je zaj;mav*.",
+	NEW_LINE,
+	"Ale na co je to dobr*?",
+	CHANGE_CHARACTER,
+	"O tom jsem nep>em^@lel.",
+	DISPLAY_MESSAGE,
+	"Zamyslete se nad t;m vy.",
+	DISPLAY_MESSAGE,
+	"Nap>;klad byste se mohl dostat",
+	NEW_LINE,
+	"do kina \\pln+ bez l;stku",
+	NEW_LINE,
+	"a nikdo by si toho ani nev@iml!",
+	CHANGE_CHARACTER,
+	"Jo tak, samoz>ejm+!",
+	DISPLAY_MESSAGE,
+	"Skv+l*!",
+	DISPLAY_MESSAGE,
+	"R#d bych si koupil patent!",
+	CHANGE_CHARACTER,
+	"A v tom je pr#v+ probl*m...",
+	DISPLAY_MESSAGE,
+	"Jak v;te, m]j str^$ek Eisler,",
+	NEW_LINE,
+	"v{dycky vynal*zal ty nejlep@; v+ci,",
+	NEW_LINE,
+	"kdy{ byl jaksi...",
+	CHANGE_CHARACTER,
+	"...namazanej...",
+	CHANGE_CHARACTER,
+	"...prost+ vo{ralej.",
+	DISPLAY_MESSAGE,
+	"A to sam* se te% st#v# m+. Bohu{el.",
+	DISPLAY_MESSAGE,
+	"Tak{e v$era ve$er jsem se vzbudil",
+	NEW_LINE,
+	"se sta@nou opic; a...",
+	NEW_LINE,
+	"na@el jsem tyhle pilulky.",
+	DISPLAY_MESSAGE,
+	"Nepamatuju si ani za m#k,",
+	NEW_LINE,
+	"jak jsem je vlastn+ vyrobil.",
+	CHANGE_CHARACTER,
+	"No to snad ne!",
+	CHANGE_CHARACTER,
+	"Ale mohu se pokusit je znovu vyrobit.",
+	DISPLAY_MESSAGE,
+	"Na to ale pot>ebuju va@e pen;ze.",
+	DISPLAY_MESSAGE,
+	"Domluvme se takto:",
+	DISPLAY_MESSAGE,
+	"vy mi postav;te novou",
+	NEW_LINE,
+	"laborato> s modern;m vybaven;m...",
+	DISPLAY_MESSAGE,
+	"...a v#m d#m u{;vac; pr#va.",
+	CHANGE_CHARACTER,
+	"Vy my tedy d#te patent?!",
+	CHANGE_CHARACTER,
+	"Ano.",
+	DISPLAY_MESSAGE,
+	"Jedin*, co m+ zaj;m# je",
+	NEW_LINE,
+	"respekt k v+d+",
+	NEW_LINE,
+	"utopenci s cibulkou.",
+	DISPLAY_MESSAGE,
+	"A Nobelova Cena.",
+	DISPLAY_MESSAGE,
+	"Ch#pete, v+c profesion#ln; cti",
+	NEW_LINE,
+	"rozhovory v novin#ch...",
+	CHANGE_CHARACTER,
+	"Ch#pu. Jsme domluveni.",
+	DISPLAY_MESSAGE,
+	"P>iprav smlouvu.",
+	CHANGE_CHARACTER,
+	"To ti V*na p;sk.",
+	END_DIALOG,
+};
+
+const static char *czechDialog113[] = {
+	"Ten bl#zen mi v+>;.",
+	DISPLAY_MESSAGE,
+	"Ale j# ho vyu{iju...",
+	DISPLAY_MESSAGE,
+	"A ty pilulky $asu...",
+	DISPLAY_MESSAGE,
+	"To bych byl magor,",
+	NEW_LINE,
+	"kdybych je prod#val lidem!",
+	DISPLAY_MESSAGE,
+	"Na patent se m]{u zvysoka",
+	NEW_LINE,
+	"vyzvr#tit!",
+	DISPLAY_MESSAGE,
+	"S pilulkami m]{u vykr#st jakoukoliv banku,",
+	NEW_LINE,
+	"ani{ by m+ n+kdo v]bec vid+l!",
+	DISPLAY_MESSAGE,
+	"Rychleji ne{ sv+tlo!",
+	DISPLAY_MESSAGE,
+	"Nejd>;v ale pot>ebuju ukr#st n+jak^",
+	NEW_LINE,
+	"pen;ze nebo zlato",
+	NEW_LINE,
+	"na vybaven; t* laborato>e.",
+	END_DIALOG,
+};
+
+const static char *czechDialog114[] = {
+	"Ale brzo...",
+	DISPLAY_MESSAGE,
+	"Budu bohatej.",
+	DISPLAY_MESSAGE,
+	"Stra@n+ bohatej.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Budu moci po>#dat orgie, hody, doprovody...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"...a nebo bych...",
+	END_DIALOG,
+};
+
+const static char *czechDialog115[] = {
+	ANIM_WAIT,
+	"MOHL KOUPIT PRAHU!...",
+	END_DIALOG,
+};
+
+const static char *czechDialog116[] = {
+	ANIM_WAIT,
+	"To je n#pad!",
+	END_DIALOG,
+};
+
+const static char *czechDialog117[] = {
+	"To u{ jsem zase j#.",
+	CHANGE_CHARACTER,
+	"Tak zase sbohem.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Dejme tomu, {e jsem tohle nesly@el.",
+	DISPLAY_MESSAGE,
+	"Je pan Pankr#c Oblouk doma?",
+	CHANGE_CHARACTER,
+	"Ano, ale >;kal, {e v#s nem#m pou@t+t dovnit>.",
+	CHANGE_CHARACTER,
+	"M+?! Pro$?!",
+	CHANGE_CHARACTER,
+	"V#@ posledn; vyn#lez ho st#l",
+	NEW_LINE,
+	"v@echny hodiny v dom+.",
+	CHANGE_CHARACTER,
+	"Oh, ten stroj $asu mysl;te...",
+	DISPLAY_MESSAGE,
+	"Ale te%ko m#m n+co...",
+	CHANGE_CHARACTER,
+	"A to ani nezmi<uju vypa>enou ko$ku.",
+	CHANGE_CHARACTER,
+	"Ta ko$ka je te% @[astn+j@; ne{",
+	NEW_LINE,
+	"my v@ichni ostatn;.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Tedy jestli sv+t je@t+ ve 25. stolet;",
+	NEW_LINE,
+	"v]bec existuje.",
+	DISPLAY_MESSAGE,
+	"Ale to je jedno.",
+	DISPLAY_MESSAGE,
+	"Prost+ m+ mus;te pustit dovnit>.",
+	CHANGE_CHARACTER,
+	"Mysl;te?",
+	CHANGE_CHARACTER,
+	"Nebo >eknu panu Obloukovi,",
+	NEW_LINE,
+	"{e pijete ve slu{b+.",
+	CHANGE_CHARACTER,
+	"Blafujete, nem#te {#dn^ d]kaz.",
+	CHANGE_CHARACTER,
+	"To je bohu{el jedna z v+c;,",
+	NEW_LINE,
+	"kterou si nem]{ete b^t jist^.",
+	END_DIALOG,
+};
+
+const static char *czechDialog118[] = {
+	"Ou Kej, tak teda vejdi ty @pinavej teroristo.",
+	DISPLAY_MESSAGE,
+	"Hlavn+ to nikomu ne>;kej.",
+	CHANGE_CHARACTER,
+	"Jasan. M#@ to u m+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog119[] = {
+	"Tak...",
+	DISPLAY_MESSAGE,
+	"Tak takhle se to v@echno stalo...",
+	DISPLAY_MESSAGE,
+	"Proto nikdo nevid+l kdo ty v+ci",
+	NEW_LINE,
+	"vlastn+ krade. Douf#m, {e m+ pr#v+ te%",
+	NEW_LINE,
+	"n+kdo sexu#ln+ nezneu{;v#...",
+	DISPLAY_MESSAGE,
+	"To je teda opravdu nebezpe$nej",
+	NEW_LINE,
+	"vyn#lez!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Musim Oblouka zastavit!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"N+jak.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Je{i@ ty pilulky co jsem na@el",
+	NEW_LINE,
+	"v Ludv;kovi musej bejt...",
+	DISPLAY_MESSAGE,
+	"Lejna!",
+	DISPLAY_MESSAGE,
+	"Sly@im n+koho p>ich#zet!",
+	END_DIALOG,
+};
+
+const static char *czechDialog120[] = {
+	"Mus;m se n+kam uklidit!",
+	DISPLAY_MESSAGE,
+	"Hned te%!",
+	END_DIALOG,
+};
+
+const static char *czechDialog121[] = {
+	"Budu si muset koupit klasick^ sejf.",
+	DISPLAY_MESSAGE,
+	"Ludv;kovi u{ zase stra@ilo na mozku.",
+	DISPLAY_MESSAGE,
+	"Svat# Panno!",
+	DISPLAY_MESSAGE,
+	"ZAV}I SE ty pod+lan# pixlo!",
+	END_DIALOG,
+};
+
+const static char *czechDialog122[] = {
+	"To u{ je tenhle t^den pot>et;.",
+	DISPLAY_MESSAGE,
+	"Ale dob>e, dob>e!...",
+	DISPLAY_MESSAGE,
+	"U{ jdu!...",
+	END_DIALOG,
+};
+
+const static char *czechDialog123[] = {
+	"...a[ je st>e{eno \\pln+ v@echno.",
+	DISPLAY_MESSAGE,
+	"Pot>ebuju v;c pen+z na bezpe$nostn; syst*m.",
+	DISPLAY_MESSAGE,
+	"M#m jenom dva mu{e a...",
+	CHANGE_CHARACTER,
+	"V;ce pen+z, v;c pen+z!",
+	DISPLAY_MESSAGE,
+	"Nic jin^ho nesly@im jenom v;c pen+z!",
+	CHANGE_CHARACTER,
+	"Dobr#, vysv+tl;m v#m to je@t+ jednou...",
+	END_DIALOG,
+};
+
+const static char *czechDialog124[] = {
+	"Pan Pankr#c Oblouk?",
+	DISPLAY_MESSAGE,
+	"Zrovna jsem dostal zpr#vu",
+	NEW_LINE,
+	"od profesora.",
+	DISPLAY_MESSAGE,
+	"Pros; v#s, zdalipak byste se",
+	NEW_LINE,
+	"nestavil v laborato>i.",
+	DISPLAY_MESSAGE,
+	"};k#, {e znova odhalil strukturu",
+	NEW_LINE,
+	"t+ch pilulek.",
+	END_DIALOG,
+};
+
+const static char *czechDialog125[] = {
+	"A to je v@echno?!",
+	CHANGE_CHARACTER,
+	"Jasn+ ...hik!... ano.",
+	CHANGE_CHARACTER,
+	"Hm, super.",
+	END_DIALOG,
+};
+
+const static char *czechDialog126[] = {
+	"Mus;m je zastavit!",
+	DISPLAY_MESSAGE,
+	"A nezb^v# u{ moc $asu!",
+	END_DIALOG,
+};
+
+const static char *czechDialog127[] = {
+	"Tak, tak...",
+	DISPLAY_MESSAGE,
+	"Za$;n#@ mi pomalu ale jist+ l*zt na nervy.",
+	DISPLAY_MESSAGE,
+	"Nebyl to v]bec @patn^ n#pad utratit",
+	NEW_LINE,
+	"tolik pen+z za bezpe$nostn; syst*m...",
+	DISPLAY_MESSAGE,
+	"Tohle silov* pole je nezni$iteln*!",
+	DISPLAY_MESSAGE,
+	"Cha Cha!",
+	END_DIALOG,
+};
+
+const static char *czechDialog128[] = {
+	"Ale stejn+ t+ musim zab;t.",
+	CHANGE_CHARACTER,
+	"N*, n*!",
+	CHANGE_CHARACTER,
+	"Dr{ hubu!",
+	CHANGE_CHARACTER,
+	"Nestoj; ti to za to!",
+	CHANGE_CHARACTER,
+	"Fakticky?",
+	CHANGE_CHARACTER,
+	"Nechci...",
+	END_DIALOG,
+};
+
+const static char *czechDialog129[] = {
+	CHANGE_CHARACTER,
+	"Chud#k profesor omdlel...",
+	CHANGE_CHARACTER,
+	"Ale... Jak...",
+	DISPLAY_MESSAGE,
+	"Nech#pu v]bec NIC!!!",
+	CHANGE_CHARACTER,
+	"Je to jednoduch*.",
+	DISPLAY_MESSAGE,
+	"P>ipevnili jsme malou mikrokameru",
+	NEW_LINE,
+	"na tvoj; $epici,",
+	DISPLAY_MESSAGE,
+	"tak{e jsme celou dobu v+d+li,",
+	NEW_LINE,
+	"co se d+je.",
+	CHANGE_CHARACTER,
+	"Vy jste vid+li, kdy{ jsem?...",
+	CHANGE_CHARACTER,
+	"Nechci t+ zbyte$n+ znepokojovat.",
+	DISPLAY_MESSAGE,
+	"Ud+lal jsi pro n#s dobrou pr#ci.",
+	CHANGE_CHARACTER,
+	"Ale Pankr#c Oblouk vzal roha!",
+	CHANGE_CHARACTER,
+	"Nen; dule{it^.",
+	DISPLAY_MESSAGE,
+	"M#me profesora a ty n#m d#@ pilulky.",
+	DISPLAY_MESSAGE,
+	"Promi<, ale asi ch#pe@,",
+	NEW_LINE,
+	" {e si je nem]{e@ nechat.",
+	CHANGE_CHARACTER,
+	"Dob>e, ale...",
+	DISPLAY_MESSAGE,
+	"D#te mi alespo< minutku?",
+	DISPLAY_MESSAGE,
+	"M#m s Pankr#cem je@t+ n+jak* osobn;",
+	NEW_LINE,
+	"nevy>e@en* \\$ty.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Dob>e, ale d+lej.",
+	END_DIALOG,
+};
+
+const static char *czechDialog130[] = {
+	ANIM_WAIT,
+	"(gulp)",
+	DISPLAY_MESSAGE,
+	"Ten $asovej efekt nevydr{;",
+	NEW_LINE,
+	"zrovna dvakr#t dlouho...",
+	END_DIALOG,
+};
+
+const static char *czechDialog131[] = {
+	"Prohr#l jste pane!",
+	DISPLAY_MESSAGE,
+	"Polici pr#v+ obklik$uje budovu!",
+	CHANGE_CHARACTER,
+	"Naivko.",
+	DISPLAY_MESSAGE,
+	"Copak ti nedo@lo, {e tu m#m",
+	NEW_LINE,
+	"tajnou \\nikovou chodbu?",
+	CHANGE_CHARACTER,
+	"Nepov;dej.",
+	DISPLAY_MESSAGE,
+	"A ta je jako kde?",
+	CHANGE_CHARACTER,
+	"To ti tak budu >;kat...",
+	DISPLAY_MESSAGE,
+	"Vypadni, ty malej srabe.",
+	DISPLAY_MESSAGE,
+	"M#m pr#ci.",
+	END_DIALOG,
+};
+
+const static char *czechDialog132[] = {
+	"Mus;m v#s odzbrojit.",
+	DISPLAY_MESSAGE,
+	"Bu%te hodnej a vzdejte se bez pot;{;.",
+	CHANGE_CHARACTER,
+	"Hele p>esta< s tim, jenom zdr{uje@.",
+	DISPLAY_MESSAGE,
+	"Prost+ odsud vypadni,",
+	NEW_LINE,
+	"ne{ na tebe vyt#hnu pu@ku.",
+	CHANGE_CHARACTER,
+	"Varuju v#s...",
+	CHANGE_CHARACTER,
+	"Kde se v]bec berou takov; nudn^",
+	NEW_LINE,
+	"lidi jako ty?",
+	END_DIALOG,
+};
+
+const static char *czechDialog133[] = {
+	"Dal@; @anci u{ nedostanete...",
+	CHANGE_CHARACTER,
+	"Dob>e.",
+	DISPLAY_MESSAGE,
+	"Te% vypadni.",
+	END_DIALOG,
+};
+
+const static char *czechDialog134[] = {
+	"Nechte u{ kone$n+ toho sb;r#n; pen+z!",
+	END_DIALOG,
+};
+
+const static char *czechDialog135[] = {
+	"Brej den!",
+	CHANGE_CHARACTER,
+	"Zdrav;$ko.",
+	DISPLAY_MESSAGE,
+	"S $;mpak jde@?",
+	CHANGE_CHARACTER,
+	"Poslali m+ sem na n+jak* @kolen;.",
+	CHANGE_CHARACTER,
+	"Dal@; r#doby tajn^ agent, co?",
+	CHANGE_CHARACTER,
+	"Sed;.",
+	CHANGE_CHARACTER,
+	"Uka{ mi pap;ry a pust;m t+ dovnit>.",
+	CHANGE_CHARACTER,
+	"Jasn+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog136[] = {
+	"Nem]{e@ m+ pustit dovnit> bez",
+	NEW_LINE,
+	"t* tup* byrokracie?",
+	CHANGE_CHARACTER,
+	"Bohu{el ne.",
+	DISPLAY_MESSAGE,
+	"Pravidla hry plat; (pou{ije@-pohne@ se).",
+	CHANGE_CHARACTER,
+	"A morousov* jsou morousov* v{dycky.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"A mrtv; lidi jsou mrtv; lidi. V{dycky.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"J=, jasn+. To m#me ale p+knej den, co?",
+	END_DIALOG,
+};
+
+const static char *czechDialog137[] = {
+	"PROSIM, m]{u proj;t?!",
+	CHANGE_CHARACTER,
+	"Samoz>ejm+!",
+	DISPLAY_MESSAGE,
+	"JENOM MI UKA~ SVOJE PAP;RY!",
+	END_DIALOG,
+};
+
+const static char *czechDialog138[] = {
+	"Pus[ m+ dovnit>!",
+	CHANGE_CHARACTER,
+	"Uka{ mi pap;ry!",
+	CHANGE_CHARACTER,
+	"Ty sv]j d{ob bere@ opravdu v#{n+,",
+	NEW_LINE,
+	"{e jo?",
+	CHANGE_CHARACTER,
+	"Jse@ slepej nebo co?",
+	DISPLAY_MESSAGE,
+	"|tu si p>ece $asopis ve slu{b+.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Oh, to jo.",
+	DISPLAY_MESSAGE,
+	"Promi<.",
+	END_DIALOG,
+};
+
+const static char *czechDialog139[] = {
+	"Musim...",
+	CHANGE_CHARACTER,
+	"Pap;ry!",
+	END_DIALOG,
+};
+
+const static char *czechDialog140[] = {
+	"Co to $tete?",
+	CHANGE_CHARACTER,
+	"\'Vojensk* noviny\', samoz>ejm+.",
+	CHANGE_CHARACTER,
+	"Vy se v t+ch vojenskejch v+cech,",
+	NEW_LINE,
+	"p>;mo vy{;v#te, {e?",
+	CHANGE_CHARACTER,
+	"Se@ bl#zen?",
+	DISPLAY_MESSAGE,
+	"Prohl;{;m si obr#zky n#dhern^ch mu{]...",
+	DISPLAY_MESSAGE,
+	"...taky lu@tim k>;{ovky...",
+	DISPLAY_MESSAGE,
+	"...chlemt#m se vtip]m...",
+	DISPLAY_MESSAGE,
+	"...$tu drby...",
+	DISPLAY_MESSAGE,
+	"...poln; a p>espoln; recepty...",
+	CHANGE_CHARACTER,
+	"Va>en;?!",
+	CHANGE_CHARACTER,
+	"No, ano. Noviny se t;m sna{;",
+	DISPLAY_MESSAGE,
+	"z;skat @ir@; okruh $ten#>].",
+	CHANGE_CHARACTER,
+	"Aha.",
+	DISPLAY_MESSAGE,
+	"Dobrej n#pad.",
+	DISPLAY_MESSAGE,
+	"A je tam taky n+co o pleten;?",
+	CHANGE_CHARACTER,
+	"M#m takov^ pocit, {e to byl pokus",
+	NEW_LINE,
+	"o n+jak^ trapn^ vtip.",
+	CHANGE_CHARACTER,
+	"J# a pokou@et se o trapn* vtipy?",
+	DISPLAY_MESSAGE,
+	"Nikdy.",
+	CHANGE_CHARACTER,
+	"Dobr#.",
+	END_DIALOG,
+};
+
+const static char *czechDialog141[] = {
+	"P]j$il byste mi ten $asopis pane?",
+	CHANGE_CHARACTER,
+	"A s $;m si mysl;@, {e potom",
+	NEW_LINE,
+	"budu zab;jet $as?",
+	CHANGE_CHARACTER,
+	"Hmmm...n=..",
+	DISPLAY_MESSAGE,
+	"M#te u sebe alespo< vojenskou kudli$ku, ne?",
+	CHANGE_CHARACTER,
+	"Str#nky $as#ku jsou ale ost>ej@;.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Oh-oh.",
+	END_DIALOG,
+};
+
+const static char *czechDialog142[] = {
+	"Co se d+je?",
+	CHANGE_CHARACTER,
+	"~ijeme. Nebo ne?",
+	END_DIALOG,
+};
+
+const static char *czechDialog143[] = {
+	"Jen tak d#l, pokra$uj ve sv* pr#ci.",
+	END_DIALOG,
+};
+
+const static char *czechDialog144[] = {
+	CHANGE_CHARACTER,
+	"HEJ! Ho% tam zp#te$ku!",
+	END_DIALOG,
+};
+
+const static char *czechDialog145[] = {
+	"Co je? Ho>; ti v budce?",
+	CHANGE_CHARACTER,
+	"Mus;@ mi uk#zat povolen; ke vstupu",
+	NEW_LINE,
+	"ne{ bude@ moci vstoupit",
+	NEW_LINE,
+	"do t#bora.",
+	CHANGE_CHARACTER,
+	"Co kdy{ ti uk#{u jenom z#da?",
+	CHANGE_CHARACTER,
+	"Tak t+ zast>elim.",
+	CHANGE_CHARACTER,
+	"(oh)",
+	END_DIALOG,
+};
+
+const static char *czechDialog146[] = {
+	CHANGE_CHARACTER,
+	"Varuju t+...",
+	DISPLAY_MESSAGE,
+	"Moje kulky jsou rychlej@; ne{ ty..",
+	END_DIALOG,
+};
+
+const static char *czechDialog147[] = {
+	CHANGE_CHARACTER,
+	"V po>#dku.",
+	DISPLAY_MESSAGE,
+	"Ohla@ se u kapit#na.",
+	DISPLAY_MESSAGE,
+	"M+l by tu n+kde b^t.",
+	CHANGE_CHARACTER,
+	"D+kuju. A pozor na datly.",
+	NEW_LINE,
+	"A[ ti nezaberou budku.",
+	END_DIALOG,
+};
+
+const static char *czechDialog148[] = {
+	CHANGE_CHARACTER,
+	"Tak{e my tady z tebe m#me ud+lat mu{e.",
+	NEW_LINE,
+	"Je to tak, Ml;$<#ku?!",
+	CHANGE_CHARACTER,
+	"Erm...",
+	CHANGE_CHARACTER,
+	"Po>#dn^ho tvr%#ka!...",
+	CHANGE_CHARACTER,
+	"Uh...",
+	CHANGE_CHARACTER,
+	"Kterej bude potit krev!",
+	CHANGE_CHARACTER,
+	"J# bych rad@i, t#hle jsou brabci...",
+	CHANGE_CHARACTER,
+	"R#d vid;m tvoje nad@en;, Ml;$<#ku!",
+	DISPLAY_MESSAGE,
+	"Ale neztr#cejme $as!",
+	DISPLAY_MESSAGE,
+	"}ekli mi, {e pot>ebuje@ n+jak* cvi$n* cvi$en;.",
+	DISPLAY_MESSAGE,
+	"Telefonn; seznam znalost; za$;naj;c;ho agenta!",
+	DISPLAY_MESSAGE,
+	"Bude@ muset proj;t t>emi zkou@kami!",
+	DISPLAY_MESSAGE,
+	"Za$neme tou jednodu@@;...",
+	END_DIALOG,
+};
+
+const static char *czechDialog149[] = {
+	CHANGE_CHARACTER,
+	"Tv]j \\kol je jednoduch^.",
+	DISPLAY_MESSAGE,
+	"Zamknu t+ tady...",
+	DISPLAY_MESSAGE,
+	"...a ty mus;@ ut*ct.",
+	DISPLAY_MESSAGE,
+	"Je to jasn*?!",
+	CHANGE_CHARACTER,
+	"Pane, j#...",
+	CHANGE_CHARACTER,
+	"SNA~ SE!!!",
+	END_DIALOG,
+};
+
+const static char *czechDialog150[] = {
+	ANIM_WAIT,
+	"Hal=?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Hm, super.",
+	END_DIALOG,
+};
+
+const static char *czechDialog151[] = {
+	"OK, bylo to vtipn^.",
+	DISPLAY_MESSAGE,
+	"A te% m+ pus[te ven!",
+	END_DIALOG,
+};
+
+const static char *czechDialog152[] = {
+	"Hej! Je tam n+kdo.",
+	NEW_LINE,
+	"Hal=, proboha je tam n+kdo?!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"POMOC!!!",
+	END_DIALOG,
+};
+
+const static char *czechDialog153[] = {
+	"M+jte slitov#n;!",
+	DISPLAY_MESSAGE,
+	"J# tu zhebnu! Hele, u{ heb#m!",
+	END_DIALOG,
+};
+
+const static char *czechDialog154[] = {
+	"Dost#v#m hlad!",
+	END_DIALOG,
+};
+
+const static char *czechDialog155[] = {
+	"U{ m+ nenapad#, co tam m#m je$et...",
+	END_DIALOG,
+};
+
+const static char *czechDialog156[] = {
+	"}ekl bych...",
+	DISPLAY_MESSAGE,
+	"...{e jsi pro@el prvn;...",
+	DISPLAY_MESSAGE,
+	"...zkou@kou...",
+	DISPLAY_MESSAGE,
+	"...hned se pust;me...",
+	DISPLAY_MESSAGE,
+	"...do zkou@ky dal@;...",
+	END_DIALOG,
+};
+
+const static char *czechDialog157[] = {
+	CHANGE_CHARACTER,
+	"Tak{e, voj#ku.",
+	DISPLAY_MESSAGE,
+	"P>edpokl#dejme,",
+	NEW_LINE,
+	"{e j# jsem te% tv]j zajatec...",
+	DISPLAY_MESSAGE,
+	"...a zn#m moc d]le{it* tajn* heslo.",
+	DISPLAY_MESSAGE,
+	"Tv^m \\kolem je ho ze m+ dostat.",
+	DISPLAY_MESSAGE,
+	"JASAN?!?",
+	CHANGE_CHARACTER,
+	"A jsou zde n+jak# omezen; jako...?",
+	CHANGE_CHARACTER,
+	"Ne.",
+	DISPLAY_MESSAGE,
+	"M]{e@ d+lat, co se ti zl;b;.",
+	CHANGE_CHARACTER,
+	"M]{u v#m taky plivat na $elo",
+	NEW_LINE,
+	"a tahat v#s za...",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ano.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"D+kuju, jenom si d+l#m ment#ln; pozn#mky.",
+	END_DIALOG,
+};
+
+const static char *czechDialog158[] = {
+	"Tak{e rad+ji mi >ekn+te heslo hned,",
+	NEW_LINE,
+	"abychom to m+li rychleji za sebou.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Promyslim si to.",
+	END_DIALOG,
+};
+
+const static char *czechDialog159[] = {
+	"Hej, tak mluvte.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Sly@;te m+?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Orel vol# kapit#na, orel vol# kapit#na!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Beznad+jn*.",
+	END_DIALOG,
+};
+
+const static char *czechDialog160[] = {
+	"Jste p>ipraven mluvit?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"OK, d#m v#m je@t+ p#r chvil.",
+	END_DIALOG,
+};
+
+const static char *czechDialog161[] = {
+	"Tak{e, co je to za heslo?",
+	CHANGE_CHARACTER,
+	"Di se zprznit, patetickej fracku.",
+	CHANGE_CHARACTER,
+	"Bu%te hezky hodnej nebo v#s polocht#m znova...",
+	CHANGE_CHARACTER,
+	"Jen do toho, budu jen r#d.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"V#m se to l;bilo, {e ano?",
+	CHANGE_CHARACTER,
+	"Nebylo te nejhor@;...",
+	CHANGE_CHARACTER,
+	"Aha, vymysl;m tedy n+co chyt>ej@;ho.",
+	END_DIALOG,
+};
+
+const static char *czechDialog162[] = {
+	"N+co jsem v#m p>inesl...",
+	CHANGE_CHARACTER,
+	"M+ neuplat;@.",
+	CHANGE_CHARACTER,
+	"Mysl;te?",
+	END_DIALOG,
+};
+
+const static char *czechDialog163[] = {
+	NEW_LINE,
+	"SEM S TIM!!!",
+	DISPLAY_MESSAGE,
+	"Ud+l#m COKOLIV!!!",
+	CHANGE_CHARACTER,
+	"Heslo...",
+	CHANGE_CHARACTER,
+	"Heslo je \'KAFE\'.",
+	DISPLAY_MESSAGE,
+	"}ekni to barmanovi a on ti n+co d#.",
+	DISPLAY_MESSAGE,
+	"Pak ti >ekne o t>et;m \\kolu.",
+	DISPLAY_MESSAGE,
+	"A te% m+ rozva{!!!",
+	CHANGE_CHARACTER,
+	"Promyslim si to...",
+	END_DIALOG,
+};
+
+const static char *czechDialog164[] = {
+	"Ty...",
+	DISPLAY_MESSAGE,
+	"...ty...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"...tys to dok#zal!",
+	END_DIALOG,
+};
+
+const static char *czechDialog165[] = {
+	"Zaj;mal by t+ tenhle m==c p+knej",
+	NEW_LINE,
+	"kaleidoskop?",
+	CHANGE_CHARACTER,
+	"Jednou jsem takovej taky m;val, ale",
+	NEW_LINE,
+	"kapit#n mi ho vzal, abych si s n;m",
+	DISPLAY_MESSAGE,
+	"nehr#l, te% si s n;m asi hraje,",
+	NEW_LINE,
+	"s#m, zloduch.",
+	CHANGE_CHARACTER,
+	"Kdy{ tak vid;m ty kr#sn* noviny napad# m+,",
+	NEW_LINE,
+	"{e bychom mohli ud+lat v^m+nu.",
+	CHANGE_CHARACTER,
+	"Ale nesm;@ nikomu vyzvonit, odkud je m#@...",
+	CHANGE_CHARACTER,
+	"Plat;.",
+	CHANGE_CHARACTER,
+	"...ale co kdy{ m+ s t;m kapit#n zase uvid;?",
+	CHANGE_CHARACTER,
+	"Neboj se, je p>iv#zanej k {idli.",
+	CHANGE_CHARACTER,
+	"Aha, test $;slo dv+, p>edpokl#d#m...",
+	CHANGE_CHARACTER,
+	"Jo.",
+	CHANGE_CHARACTER,
+	"Dobr#, tak co to v t* trubce m#me te%?",
+	END_DIALOG,
+};
+
+const static char *czechDialog166[] = {
+	"\'KAFE.",
+	END_DIALOG,
+};
+
+const static char *czechDialog167[] = {
+	CHANGE_CHARACTER,
+	"Hork*, {e?",
+	CHANGE_CHARACTER,
+	"Uh-huh.",
+	DISPLAY_MESSAGE,
+	"Kapit#n >;kal, {e mi pov;te n+co o",
+	NEW_LINE,
+	"t>et;m \\kolu.",
+	CHANGE_CHARACTER,
+	"Jsem sam^ ucho...",
+	DISPLAY_MESSAGE,
+	"No, je to takov# hra na schov#vanou.",
+	DISPLAY_MESSAGE,
+	"Kapit#n se schov# a ty hled#@.",
+	CHANGE_CHARACTER,
+	"Ale j# ho nechal p>iv#zan*ho k {idli!",
+	CHANGE_CHARACTER,
+	"Vy jste se bi$ovali, co?",
+	DISPLAY_MESSAGE,
+	"V posledn; dob+ to n+jak p>eh#n;!...",
+	DISPLAY_MESSAGE,
+	"Ale stejn+ - oklamal t+.",
+	DISPLAY_MESSAGE,
+	"Jdi se tam schv#ln+ pod;vat.",
+	DISPLAY_MESSAGE,
+	"Vsadim se, {e u{ je pry$.",
+	CHANGE_CHARACTER,
+	"Ale j# jsem mu sebral n]{!",
+	DISPLAY_MESSAGE,
+	"|;m by si p>e>ezal provazy?!",
+	CHANGE_CHARACTER,
+	"Mo{n# odhopsal s {idl; u zadku,",
+	NEW_LINE,
+	"u{ se to p#rkr#t stalo...",
+	CHANGE_CHARACTER,
+	"Rozumim.",
+	DISPLAY_MESSAGE,
+	"Na@ly by se n+jak^ Tipy a Triky?",
+	CHANGE_CHARACTER,
+	"Nic.",
+	CHANGE_CHARACTER,
+	"Ale no tak.",
+	CHANGE_CHARACTER,
+	"Ne, chlap$e. Hraje se f*r.",
+	END_DIALOG,
+};
+
+const static char *czechDialog168[] = {
+	"Na@la by se n+jak# ta rada?",
+	CHANGE_CHARACTER,
+	"Ne.",
+	END_DIALOG,
+};
+
+const static char *czechDialog169[] = {
+	"Zdrav;$ko pane, j# jsem Kevin.",
+	CHANGE_CHARACTER,
+	"To je @koda, {e nejse@ rad@i stokoruna.",
+	DISPLAY_MESSAGE,
+	"Co pro tebe m]{u ud+lat?",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"M]{ete mi d#t velkou spoustu pen+z...",
+	DISPLAY_MESSAGE,
+	"...nebo se m]{ete postavit na hlavu...",
+	DISPLAY_MESSAGE,
+	"...nebo mastur...",
+	CHANGE_CHARACTER,
+	"Dob>e, dob>e. D+l#m si b{undu.",
+	DISPLAY_MESSAGE,
+	"Tak{e?...",
+	CHANGE_CHARACTER,
+	"Kdo jin^ je tu je@t+ s n#mi v t#bo>e?",
+	CHANGE_CHARACTER,
+	"Ty jse@ novin#>?",
+	CHANGE_CHARACTER,
+	"Ne, jsem tajnej agent.",
+	CHANGE_CHARACTER,
+	"Ty taky?",
+	DISPLAY_MESSAGE,
+	"Jsme tady jenom t>i.",
+	DISPLAY_MESSAGE,
+	"J#, kapit#n a str#{n^.",
+	CHANGE_CHARACTER,
+	"~#dn* {ensk*?",
+	CHANGE_CHARACTER,
+	"Ani noha.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Erm, tak to bychom nem+li...",
+	END_DIALOG,
+};
+
+const static char *czechDialog170[] = {
+	"Nen; tu moc velkej provoz, co?",
+	CHANGE_CHARACTER,
+	"Chce@ si n+co objednat nebo ne?",
+	CHANGE_CHARACTER,
+	"Nem#m pen;ze.",
+	CHANGE_CHARACTER,
+	"Dnes je to zdarma.",
+	CHANGE_CHARACTER,
+	"Fakticky?",
+	CHANGE_CHARACTER,
+	"Fakticky.",
+	CHANGE_CHARACTER,
+	"Chci p#rek v rohl;ku.",
+	CHANGE_CHARACTER,
+	"N+t.",
+	CHANGE_CHARACTER,
+	"Pizza?",
+	CHANGE_CHARACTER,
+	"N+t.",
+	CHANGE_CHARACTER,
+	"Brambor#k?",
+	CHANGE_CHARACTER,
+	"N+t.",
+	CHANGE_CHARACTER,
+	"Cokoliv?",
+	CHANGE_CHARACTER,
+	"N+t.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ne, d+kuju.",
+	DISPLAY_MESSAGE,
+	"Nem#m hlad.",
+	END_DIALOG,
+};
+
+const static char *czechDialog171[] = {
+	"Co pijete?",
+	CHANGE_CHARACTER,
+	"|aj.",
+	CHANGE_CHARACTER,
+	"Aha.",
+	END_DIALOG,
+};
+
+const static char *czechDialog172[] = {
+	"Hezk^ po$as;.",
+	CHANGE_CHARACTER,
+	"Mhmmm...",
+	END_DIALOG,
+};
+
+const static char *czechDialog173[] = {
+	"N+kdy se c;t;m unaven+.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Jako kdyby m+ vedla slep# my@ (doslova).",
+	END_DIALOG,
+};
+
+const static char *czechDialog174[] = {
+	"Hele, Woodstock u{ skon$il!",
+	END_DIALOG,
+};
+
+const static char *czechDialog175[] = {
+	"D+kuju.",
+	END_DIALOG,
+};
+
+const static char *czechDialog176[] = {
+	CHANGE_CHARACTER,
+	"Co to sakra...",
+	END_DIALOG,
+};
+
+const static char *czechDialog177[] = {
+	"Hej, Nem#te {;ze<?",
+	DISPLAY_MESSAGE,
+	"Nezapomn+l jste na sv]j @#lek $aje?",
+	END_DIALOG,
+};
+
+const static char *czechDialog178[] = {
+	"Pane, byl jsem informov#n, {e...",
+	CHANGE_CHARACTER,
+	"Pozd+ji!",
+	DISPLAY_MESSAGE,
+	"Te% jsem zanepr#zdn+n!",
+	CHANGE_CHARACTER,
+	"Jak si p>ejete pane.",
+	END_DIALOG,
+};
+
+const static char *czechDialog179[] = {
+	"Pane, n+jak^ mlad^ chlapec se pokou@el",
+	NEW_LINE,
+	"dostat do vily.",
+	END_DIALOG,
+};
+
+const static char *czechDialog180[] = {
+	"Nem+jte strach.",
+	DISPLAY_MESSAGE,
+	"Mlad^ chlapci jsou zv+dav;...",
+	DISPLAY_MESSAGE,
+	"...a m]j d]m v nich zv+davost jenom podn+cuje.",
+	DISPLAY_MESSAGE,
+	"Ale m+jte ho na o$;ch.",
+	CHANGE_CHARACTER,
+	"Ano, pane!",
+	END_DIALOG,
+};
+
+const static char *czechDialog181[] = {
+	"Pane, ten chlapec se zase pokou@el dostat dovnit>.",
+	END_DIALOG,
+};
+
+const static char *czechDialog182[] = {
+	"Mysl;@, {e je to v#{n*?",
+	CHANGE_CHARACTER,
+	"Hmmm... Ne...",
+	DISPLAY_MESSAGE,
+	"To u{ je zvl#@tn;. Ale snad to bude OK,",
+	DISPLAY_MESSAGE,
+	"pokud to nen; n+jakej cvok.",
+	DISPLAY_MESSAGE,
+	"Mo{n# bychom m+li...",
+	CHANGE_CHARACTER,
+	"Ale n*.",
+	DISPLAY_MESSAGE,
+	"Jenom ho dr{ pry$ od vily.",
+	DISPLAY_MESSAGE,
+	"Ale >ekni mi, kdyby se o n+co pokou@el.",
+	DISPLAY_MESSAGE,
+	"Te% se vra[ do pr#ce.",
+	END_DIALOG,
+};
+
+const static char *czechDialog183[] = {
+	"Ne>;kej mi, {e u{ je to zase ten kluk...",
+	CHANGE_CHARACTER,
+	"Ob#v#m se, {e ano.",
+	DISPLAY_MESSAGE,
+	"Str#{n^ u br#ny >;k#,",
+	DISPLAY_MESSAGE,
+	"{e ten kluk je zoufalej.",
+	END_DIALOG,
+};
+
+const static char *czechDialog184[] = {
+	"U{ my za$;n# l*zt na nervy.",
+	DISPLAY_MESSAGE,
+	"A za co t+ asi plat;m? Pr#v+ od toho,",
+	DISPLAY_MESSAGE,
+	"aby pot;{e lezly po nervech tv^ch a ne m^ch!",
+	CHANGE_CHARACTER,
+	"Tak j# ho...",
+	CHANGE_CHARACTER,
+	"Je@t+ ne. D#me mu je@t+ posledn; @anci.",
+	DISPLAY_MESSAGE,
+	"U{ je to opravdu n+jak^ divn^. ",
+	END_DIALOG,
+};
+
+const static char *czechDialog185[] = {
+	"Pane...",
+	CHANGE_CHARACTER,
+	"Nech m+ h#dat...",
+	DISPLAY_MESSAGE,
+	"TEN Chlapec?!?...",
+	CHANGE_CHARACTER,
+	"Z#sah.",
+	CHANGE_CHARACTER,
+	"Pro$ se mus;m o v@echno starat j#?!",
+	DISPLAY_MESSAGE,
+	"copak nedok#{e@ nic vy>;dit s#m?",
+	CHANGE_CHARACTER,
+	"M#m ho zab;t nebo jenom rozb;t na kousky?",
+	CHANGE_CHARACTER,
+	"Stupidn; housko.",
+	DISPLAY_MESSAGE,
+	"Jsou zde... lep@; cesty...",
+	END_DIALOG,
+};
+
+const static char *czechDialog186[] = {
+	"Zvl#dnu to s#m.",
+	DISPLAY_MESSAGE,
+	"Te% vypadni!",
+	DISPLAY_MESSAGE,
+	"Musim se p>evl*knout.",
+	END_DIALOG,
+};
+
+const static char *czechDialog187[] = {
+	"Hele, ty tam naho>e!",
+	DISPLAY_MESSAGE,
+	"Okam{it+ slez dol]!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Nulov# reakce.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Je snad hluchej nebo co?",
+	END_DIALOG,
+};
+
+const static char *czechDialog188[] = {
+	"Hej, pt#ku, nesty% se.",
+	DISPLAY_MESSAGE,
+	"Poj% se sezn#mit...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"(ach jo)",
+	END_DIALOG,
+};
+
+const static char *czechDialog189[] = {
+	"Pu[a Ba[a, malej ope>enej...",
+	END_DIALOG,
+};
+
+const static char *czechDialog190[] = {
+	NEW_LINE,
+	"Hej, vypadni od t+ch dve>;!",
+	CHANGE_CHARACTER,
+	"Pro$?",
+	CHANGE_CHARACTER,
+	"Ty dve>e t+ nemaj r#dy,",
+	NEW_LINE,
+	"mohly by se na@tvat a zamknout.",
+	DISPLAY_MESSAGE,
+	"Prost+ se od nich dr{ d#l.",
+	END_DIALOG,
+};
+
+const static char *czechDialog191[] = {
+	CHANGE_CHARACTER,
+	"};kal jsem ti, abys tam ne$muchal!",
+	CHANGE_CHARACTER,
+	"OK, OK...",
+	END_DIALOG,
+};
+
+const static char *czechDialog192[] = {
+	"M#m pro v#s novou z#silku zlata.",
+	CHANGE_CHARACTER,
+	"Ano, v;m.",
+	DISPLAY_MESSAGE,
+	"Heslo?",
+	CHANGE_CHARACTER,
+	"M+s;$ky.",
+	CHANGE_CHARACTER,
+	"V po>#dku.",
+	DISPLAY_MESSAGE,
+	"M]{ete to odn*st dovnit>.",
+	CHANGE_CHARACTER,
+	"\'si pi@, @*fe.",
+	END_DIALOG,
+};
+
+const static char *czechDialog193[] = {
+	"Jak u{ jsem >ekl, na@e organizace",
+	NEW_LINE,
+	"se zab^v# nevy>e@iteln^mi z#hadami.",
+	DISPLAY_MESSAGE,
+	"Nap>;klad ned#vno jsme vy>e@ili spat>en;",
+	NEW_LINE,
+	"kor#bu UFO nad nudistpl#{i \'Amerika\'",
+	NEW_LINE,
+	"a{ kdesi v |esk* republice.",
+	CHANGE_CHARACTER,
+	"Nef;kejte!",
+	DISPLAY_MESSAGE,
+	"Jak?",
+	CHANGE_CHARACTER,
+	"Sest>elili jsme je.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ch#pu.",
+	DISPLAY_MESSAGE,
+	"A co bylo.. co bylo ufnitf?",
+	CHANGE_CHARACTER,
+	"Chcete to v+d+t?",
+	CHANGE_CHARACTER,
+	"O= ano, jako v+ftkyn+ jfem velmi",
+	NEW_LINE,
+	"zv+dav# a zv;dav# ofobnoft.",
+	CHANGE_CHARACTER,
+	"OPRAVDU to chcete v+d+t?",
+	CHANGE_CHARACTER,
+	"ANO!",
+	CHANGE_CHARACTER,
+	"Ale...",
+	DISPLAY_MESSAGE,
+	"...opravdu, OPRAVDU?",
+	CHANGE_CHARACTER,
+	"ANO!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Bohu{el, je to tajn*...",
+	DISPLAY_MESSAGE,
+	"Ka{dop#dn+, pot>ebujeme va@i pomoc.",
+	CHANGE_CHARACTER,
+	"J# nejsem {#dn^ agent, ale v+ftkyn+...",
+	CHANGE_CHARACTER,
+	"J# v;m.",
+	DISPLAY_MESSAGE,
+	"M#me tu velice slo{it^ p>;pad,",
+	NEW_LINE,
+	"se kter^m jsme za posledn;ch @est",
+	NEW_LINE,
+	"m+s;c] nedok#zali v]bec hnout.",
+	DISPLAY_MESSAGE,
+	"Jsme v beznad+jn* situaci.",
+	DISPLAY_MESSAGE,
+	"Tak{e jsem si >ekl, kdy{ u{ se zab^v#me",
+	NEW_LINE,
+	"zvl#@tn;mi p>;pady...",
+	DISPLAY_MESSAGE,
+	"...tak pro$ bychom nepou{ili",
+	NEW_LINE,
+	"i trochu nestandardn; metody?",
+	CHANGE_CHARACTER,
+	"A?...",
+	CHANGE_CHARACTER,
+	"Pod;vejte, uk#{u v#m Zlat* Str#nky.",
+	DISPLAY_MESSAGE,
+	"Za pou{it; sv^ch schopnost; vyberte jm*no.",
+	DISPLAY_MESSAGE,
+	"Mo{n# to bude pr#v+ ON,",
+	NEW_LINE,
+	"ten, kdo n#m pom]{e celou v+c vy>e@it.",
+	CHANGE_CHARACTER,
+	"Ale nev+f;te fnad, {e to bude fungovat?",
+	CHANGE_CHARACTER,
+	"Ne, to v]bec ne.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Fdy[ je to blboft!",
+	CHANGE_CHARACTER,
+	"J# vim.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ou key, tak mi ty Zlat^ Stf#nky uka{te.",
+	END_DIALOG,
+};
+
+const static char *czechDialog194[] = {
+	ANIM_WAIT,
+	"To jm*no je...",
+	DISPLAY_MESSAGE,
+	"...Kevin...",
+	DISPLAY_MESSAGE,
+	"...Kevin Hoppef...",
+	END_DIALOG,
+};
+
+const static char *czechDialog195[] = {
+	"T#mhle je.",
+	END_DIALOG,
+};
+
+const static char *czechDialog196[] = {
+	"Omlouv#m se za svoje mu{e.",
+	DISPLAY_MESSAGE,
+	"N+kdy jsou mali$ko nerv=zn;...",
+	DISPLAY_MESSAGE,
+	"Ale pros;m,",
+	DISPLAY_MESSAGE,
+	"poj%me si promluvit...",
+	END_DIALOG,
+};
+
+const static char *czechDialog197[] = {
+	"Poslouchej ty plesnivej d+dku...",
+	CHANGE_CHARACTER,
+	"Uklidni se.",
+	DISPLAY_MESSAGE,
+	"Dej mi p+t minut a j# se budu sna{it",
+	NEW_LINE,
+	"v@echno vysv+tlit.",
+	CHANGE_CHARACTER,
+	"Dob>e, p+t minut. Pak za$nu zu>it.",
+	CHANGE_CHARACTER,
+	"Tak{e...",
+	DISPLAY_MESSAGE,
+	"J# jsem @*f tajn* @pion#{n; organizace",
+	NEW_LINE,
+	"Hurv;nkovo spasen;.",
+	CHANGE_CHARACTER,
+	"Hurv;nkovo spasen;? Proboha pro$?",
+	CHANGE_CHARACTER,
+	"Ani s#m nev;m.",
+	DISPLAY_MESSAGE,
+	"Je to tajn*.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Tak to je teda n+co.",
+	CHANGE_CHARACTER,
+	"C;lem na@; organizace je >e@it v@echny",
+	NEW_LINE,
+	"z#hadn* a potenci#ln+ nebezpe$n* probl*my sv+ta.",
+	CHANGE_CHARACTER,
+	"Jako dan+?",
+	CHANGE_CHARACTER,
+	"Ne, jako UFO, vyn#lezy @;len^ch v+dc],",
+	NEW_LINE,
+	"o{ivl* mrtv*...",
+	CHANGE_CHARACTER,
+	"F;ha!",
+	CHANGE_CHARACTER,
+	"Ano, kdy{ si nev; rady ani policie a speci#ln;",
+	NEW_LINE,
+	"vl#dn; jednotky...",
+	DISPLAY_MESSAGE,
+	"...p>ed#v# se to n#m. Ale...",
+	DISPLAY_MESSAGE,
+	"Jinak. P>ed @esti m+s;ci za$alo mizet p>;mo",
+	NEW_LINE,
+	"z trezor] bank obrovsk* mno{stv; zlata,",
+	NEW_LINE,
+	"bankovek a cenn^ch pap;r].",
+	DISPLAY_MESSAGE,
+	"Doslova! Puf! A je to v@echno pry$.",
+	CHANGE_CHARACTER,
+	"Jako \'PUF\' a je to pry$...?",
+	CHANGE_CHARACTER,
+	"P>esn+ tak, zmiz; beze stopy,",
+	NEW_LINE,
+	" zn; to neuv+>iteln+, {e?",
+	DISPLAY_MESSAGE,
+	"Cel* se to v{dy odehraje za pouh^ch p#r sekund.",
+	DISPLAY_MESSAGE,
+	"Jsou tam v@ude kamery, ale neukazuj;",
+	NEW_LINE,
+	"v]bec nic, pouze miz;c; zlato.",
+	DISPLAY_MESSAGE,
+	"A proto jsme najmuli vizion#>ku,",
+	NEW_LINE,
+	"aby n#m na@la n+koho, kdo si s t;m",
+	NEW_LINE,
+	"bude v+d+t rady.",
+	DISPLAY_MESSAGE,
+	"Vybrala tebe.",
+	CHANGE_CHARACTER,
+	"Prosim?!",
+	DISPLAY_MESSAGE,
+	"};kal jste, {e jste najmuli vizion#>ku...",
+	DISPLAY_MESSAGE,
+	"...takovou tu, co vykl#d# budoucnost?!?",
+	CHANGE_CHARACTER,
+	"Ano, jsme v beznad+jn* situaci",
+	NEW_LINE,
+	"a pokou@;me se o ka{d* mo{n* >e@en;.",
+	CHANGE_CHARACTER,
+	"(o$i v sloup) Tohle je @;len^! Maminko, vzbu% m+.",
+	NEW_LINE,
+	"Je tu n+jakej @;lenej buzik a...",
+	CHANGE_CHARACTER,
+	"Uklidni se.",
+	DISPLAY_MESSAGE,
+	"M#me pro tebe n#vrh.",
+	DISPLAY_MESSAGE,
+	"Pokus se n#m pomoci a bude@ @t+d>e odm+n+n.",
+	CHANGE_CHARACTER,
+	"Jak?",
+	CHANGE_CHARACTER,
+	"Uspokojen;m z dob>e vykonan* pr#ce?",
+	END_DIALOG,
+};
+
+const static char *czechDialog198[] = {
+	CHANGE_CHARACTER,
+	"Slavnostn; poh>eb?",
+	END_DIALOG,
+};
+
+const static char *czechDialog199[] = {
+	CHANGE_CHARACTER,
+	"|estn# vyznamen#n;?",
+	END_DIALOG,
+};
+
+const static char *czechDialog200[] = {
+	CHANGE_CHARACTER,
+	"Holky?",
+	CHANGE_CHARACTER,
+	"HOLKY! Kde?.",
+	CHANGE_CHARACTER,
+	"Ka{d# holka miluje tajn^ agenty.",
+	END_DIALOG,
+};
+
+const static char *czechDialog201[] = {
+	"Dob>e, beru to. Co m#m tedy d+lat?",
+	CHANGE_CHARACTER,
+	"Ne{ p]jde@ do ostr* mise, doporu$uji",
+	NEW_LINE,
+	"alespo< kr#tk^ speci#ln; v^cvik",
+	NEW_LINE,
+	"v na@em tajn*m v^cvikov*m t#bo>e.",
+	DISPLAY_MESSAGE,
+	"P>iprav;m pro tebe propustku.",
+	DISPLAY_MESSAGE,
+	"Domluveno?",
+	CHANGE_CHARACTER,
+	"Domluveno!",
+	END_DIALOG,
+};
+
+const static char *czechDialog202[] = {
+	"...a byla to docela sranda.",
+	CHANGE_CHARACTER,
+	"To jsem r#d, {e se ti l;bily na@e",
+	NEW_LINE,
+	"tr*ninkov* metody.",
+	DISPLAY_MESSAGE,
+	"Ale k v+ci.",
+	DISPLAY_MESSAGE,
+	"Mus;m se p>iznat, {e jsem nev+>il,",
+	NEW_LINE,
+	"{e bys mohl b^t skute$n+ u{ite$n^.",
+	DISPLAY_MESSAGE,
+	"Nic osobn;ho.",
+	CHANGE_CHARACTER,
+	"To douf#m.",
+	CHANGE_CHARACTER,
+	"Ale p>inesl jsi n#m @t+st;.",
+	DISPLAY_MESSAGE,
+	"Na@i lid* zjistili, {e jak^si...",
+	DISPLAY_MESSAGE,
+	"...byznysnem utr#c; pen;ze jak @;len^",
+	NEW_LINE,
+	"kupuje nejen stovky prezervativ] a,",
+	NEW_LINE,
+	"ply@ov^ch medv;dk], ale tak*...",
+	DISPLAY_MESSAGE,
+	"...n+kter* velice podivn* suroviny.",
+	DISPLAY_MESSAGE,
+	"Mimoto jsou zde t>i velmi podivn*",
+	NEW_LINE,
+	"v+ci okolo tohoto chl#pka:",
+	DISPLAY_MESSAGE,
+	"...v{dy plat; bankovkami, co{ je v dne@n;",
+	NEW_LINE,
+	"dob+ platebn;ch karet dost divn*...",
+	DISPLAY_MESSAGE,
+	"...za druh*, p>ed p]l rokem se mu o bohatstv;",
+	NEW_LINE,
+	"jak* m# te% ani nesnilo...",
+	DISPLAY_MESSAGE,
+	"...a za t>et;, na co, sakra, pot>ebuje",
+	NEW_LINE,
+	"100 kilo tampax]?",
+	CHANGE_CHARACTER,
+	"Mo{n# je to transvestit a mysl; si...",
+	CHANGE_CHARACTER,
+	"Mo{n#.",
+	DISPLAY_MESSAGE,
+	"Ale j# chci, abys tam let+l,",
+	NEW_LINE,
+	"pokusil se dostat do jeho vily...",
+	DISPLAY_MESSAGE,
+	"...a pod;val se tam po zaj;mav^ch informac;ch.",
+	DISPLAY_MESSAGE,
+	"Co tomu >;k#@?",
+	CHANGE_CHARACTER,
+	"No...",
+	CHANGE_CHARACTER,
+	"Slibuji, {e bude@ ofici#ln; tajn^ agent",
+	NEW_LINE,
+	"kdy{ se vr#t;@ {iv^ zp#tky, ehm...",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Slibujete?",
+	CHANGE_CHARACTER,
+	"M#@ moje $estn* slovo.",
+	CHANGE_CHARACTER,
+	"Dob>e. Jsem p>ipravenej.",
+	DISPLAY_MESSAGE,
+	"Tak{e kam se to m#m vydat?",
+	CHANGE_CHARACTER,
+	"Je to mal# vesni$ka.",
+	DISPLAY_MESSAGE,
+	"Na map#ch ji ani nenajde@...",
+	DISPLAY_MESSAGE,
+	"Ale p>edt;m ne{ p]jde@, dostane@ jistou speci#ln;",
+	NEW_LINE,
+	"agentskou v^bavu.",
+	DISPLAY_MESSAGE,
+	"Dal bych n+jak* l*taj;c; sand#ly,",
+	NEW_LINE,
+	"ale bohu{el mi s nimi n+kdo ulet+l.",
+	DISPLAY_MESSAGE,
+	"~v^ka$ky zp]sobuj;c; mozkovou mrtvici",
+	NEW_LINE,
+	"u{ taky do@ly...",
+	DISPLAY_MESSAGE,
+	"vlastn+ jedin# speci#ln; v+c, kter# tu pr#v+ je",
+	NEW_LINE,
+	"je super lepidlo.",
+	DISPLAY_MESSAGE,
+	"No, lep@; ne{ dr#tem do oka...",
+	DISPLAY_MESSAGE,
+	"Zlom vaz!",
+	END_DIALOG,
+};
+
+const static char *czechDialog203[] = {
+	CHANGE_CHARACTER,
+	"~#dnej strach.",
+	DISPLAY_MESSAGE,
+	"Bude zase v po>#dku.",
+	DISPLAY_MESSAGE,
+	"Vida, my o vlku a tady ho pr#v+ vyn#@ej...",
+	END_DIALOG,
+};
+
+const static char *czechDialog204[] = {
+	CHANGE_CHARACTER,
+	"Dostal, co si zaslou{il.",
+	DISPLAY_MESSAGE,
+	"Ale konec tlach#n;, m#me m#lo $asu!",
+	CHANGE_CHARACTER,
+	"Ne! Po$kejte!",
+	DISPLAY_MESSAGE,
+	"Musim je@t+ za (P)Ani$kou!",
+	CHANGE_CHARACTER,
+	"Ermm... to nejde.",
+	CHANGE_CHARACTER,
+	"Jak to NEJDE?!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"V;@... Anna byla n#@ mu{.",
+	DISPLAY_MESSAGE,
+	"M+la za \\kol na tebe dohl;{et",
+	NEW_LINE,
+	"kdyby mikrokamera p>estala",
+	NEW_LINE,
+	"fungovat.",
+	DISPLAY_MESSAGE,
+	"A taky to byla tvoje motivace...",
+	CHANGE_CHARACTER,
+	"To v#m nev+>im!",
+	CHANGE_CHARACTER,
+	"U{ dokonce odjela na svou dal@; misi",
+	NEW_LINE,
+	"do Som#lska.",
+	DISPLAY_MESSAGE,
+	"Je mi l;to.",
+	CHANGE_CHARACTER,
+	"Chcete mi snad >;ct, {e i ta baba...?",
+	CHANGE_CHARACTER,
+	"Ne, ta je odtud, zaplatili jsme j;.",
+	CHANGE_CHARACTER,
+	"No to je teda zaj;mav^.",
+	DISPLAY_MESSAGE,
+	"Pro$ byste kv]li takov* hlouposti",
+	NEW_LINE,
+	"zab>edali do tolika probl*m]?...",
+	CHANGE_CHARACTER,
+	"Jde o tv]j adrenalin. Musel b^t na \\rovni.",
+	DISPLAY_MESSAGE,
+	"Po$;tali jsme s t;m, {e t+ to na@tve.",
+	DISPLAY_MESSAGE,
+	"A nem^lili jsme se, {e?",
+	CHANGE_CHARACTER,
+	"Zach#z;te s lidma jako se zv;>atama",
+	NEW_LINE,
+	"v pokusn* laborato>i.",
+	DISPLAY_MESSAGE,
+	"Jste nechutn;...",
+	CHANGE_CHARACTER,
+	"Ale fungovalo to, ne?",
+	CHANGE_CHARACTER,
+	"Je to v@echno a{ moc neuv+>iteln^.",
+	DISPLAY_MESSAGE,
+	"Mo{n# mi je@t+ >eknete, {e i ten pes",
+	NEW_LINE,
+	"byl maskovanej zakrn+lej agent...",
+	DISPLAY_MESSAGE,
+	"...{e m+ ten starek d+dek hl;dal...",
+	DISPLAY_MESSAGE,
+	"...a {e Delvita poskytuje kvalitn; slu{by?!",
+	END_DIALOG,
+};
+
+const static char *czechDialog205[] = {
+	CHANGE_CHARACTER,
+	"Nen; to jak v {#dnym b*$kovym filmu,",
+	NEW_LINE,
+	"prost+ b+{n# agentsk# pr#ce.",
+	DISPLAY_MESSAGE,
+	"Ale co, ml;$<#ku, p>idej se k n#m a mo{n#",
+	NEW_LINE,
+	"bude@ n+kdy pracovat s (P)Annou!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"No...",
+	DISPLAY_MESSAGE,
+	"Promyslim to...",
+	CHANGE_CHARACTER,
+	"B#je$n*.",
+	DISPLAY_MESSAGE,
+	"Bylo m^m pot+@en;m vid+t t+ v akci!",
+	END_DIALOG,
+};
+
+const static char *czechDialog206[] = {
+	CHANGE_CHARACTER,
+	"Ani mi to nemus;@ popisovat,",
+	DISPLAY_MESSAGE,
+	"u{ jsem si p>e$etl velice detailn; zpr#vu.",
+	CHANGE_CHARACTER,
+	"A co se stane s profesorem?",
+	CHANGE_CHARACTER,
+	"Ten chud#k u{ zase zapomn+l recept.",
+	NEW_LINE,
+	"Nat#hneme ho na sk>ipec.",
+	DISPLAY_MESSAGE,
+	"A pak mu d#me nejlep@; laborato>, co m#me.",
+	DISPLAY_MESSAGE,
+	"Te% m#me jen t+ch p#r pilulek,",
+	NEW_LINE,
+	"co jsi zachr#nil.",
+	CHANGE_CHARACTER,
+	"A Pankr#c Oblouk?",
+	CHANGE_CHARACTER,
+	"Ned+lej si starost, jeho hrabivost bude potrest#na.",
+	CHANGE_CHARACTER,
+	"To douf#m...",
+	DISPLAY_MESSAGE,
+	"A je@t+ jedna mali$kost...",
+	DISPLAY_MESSAGE,
+	"N+co jste mi sl;bil...",
+	END_DIALOG,
+};
+
+const static char *czechDialog207[] = {
+	CHANGE_CHARACTER,
+	"J#?...",
+	DISPLAY_MESSAGE,
+	"To si u{ nepamatuju...",
+	CHANGE_CHARACTER,
+	"};kal jste, {e m+ ud+l#te offici#ln;m agentem...",
+	DISPLAY_MESSAGE,
+	"\'Holky maj r#dy tajn^ agenty\'. Vzpom;n#te?",
+	END_DIALOG,
+};
+
+const static char *czechDialog208[] = {
+	CHANGE_CHARACTER,
+	"(sigh)",
+	DISPLAY_MESSAGE,
+	"Slib je slib..",
+	DISPLAY_MESSAGE,
+	"Mysl;@?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Tak jo, poj% sem.",
+	END_DIALOG,
+};
+
+const static char *czechDialog209[] = {
+	"Ve jm*nu...",
+	DISPLAY_MESSAGE,
+	"...bla...bla...bla...",
+	DISPLAY_MESSAGE,
+	"...bla...bla...",
+	DISPLAY_MESSAGE,
+	"...pro na@; zemi.",
+	END_DIALOG,
+};
+
+const static char *czechDialog210[] = {
+	"       No...       ",
+	DISPLAY_MESSAGE,
+	"a to je v@echno, chlapci!",
+	END_DIALOG,
+};
+
+const static char *czechDialog211[] = {
+	"Na@el jsem pilulku $asu!",
+	DISPLAY_MESSAGE,
+	"Musela vypadnout z lahvi$ky, mr@ka..",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"To je @t;gro.",
+	END_DIALOG,
+};
+
+const static char *czechDialog212[] = {
+	"J]ha!",
+	DISPLAY_MESSAGE,
+	"To je okouzluj;c;!...",
+	END_DIALOG,
+};	
+
+const static char *polishDialog0[] = {
+	ANIM_WAIT,
+	"Dzie= dobry.",
+	CHANGE_CHARACTER,
+	"Taaa.",
+	CHANGE_CHARACTER,
+	"Dlaczego pan tu stoi?",
+	CHANGE_CHARACTER,
+	"To kwestia grawitacji.",
+	CHANGE_CHARACTER,
+	"Niesamowicie $mieszny dowcip...",
+	NEW_LINE,
+	"Jak na <o%nierza.",
+	CHANGE_CHARACTER,
+	"Nie jestem <o%nierzem, cho^ kiedy$",
+	NEW_LINE,
+	"stara%em si# nim zosta^.",
+	DISPLAY_MESSAGE,
+	"Nie zda%em testu na intel...",
+	NEW_LINE,
+	"fizycznego.",
+	DISPLAY_MESSAGE,
+	"Kazali mi strzeli^ w rzucon@",
+	NEW_LINE,
+	"monet# podczas skoku z drzewa...",
+	DISPLAY_MESSAGE,
+	"...na konia.",
+	CHANGE_CHARACTER,
+	"No, kiepska sprawa...",
+	CHANGE_CHARACTER,
+	"Oddzia%y Specjalne to nie bu%ka",
+	NEW_LINE,
+	"z mas%em, no wiesz.",
+	CHANGE_CHARACTER,
+	"Szkoda, <e si# nie uda%o.",
+	CHANGE_CHARACTER,
+	"Taaa, nie trafi%em w konia.",
+	END_DIALOG,
+};
+
+const static char *polishDialog1[] = {
+	"Wi#c...",
+	CHANGE_CHARACTER,
+	"Chcesz us%ysze^ $mieszn@ odpowied>?",
+	CHANGE_CHARACTER,
+	"Odpu$^ pan sobie.",
+	CHANGE_CHARACTER,
+	"No dobra, ale wiesz, tu w okolicy nie",
+	NEW_LINE,
+	"ma za wiele rozrywki.",
+	DISPLAY_MESSAGE,
+	"Czasami lubi# sobie troch# po<artowa^.",
+	CHANGE_CHARACTER,
+	"Wi#c...",
+	CHANGE_CHARACTER,
+	"Pilnuj# tej posesji...",
+	CHANGE_CHARACTER,
+	"]a%. A to niespodzianka.",
+	CHANGE_CHARACTER,
+	"...i mam rozkaz zabi^ KOGOKOLWIEK,",
+	NEW_LINE,
+	"kto b#dzie chcia% wej$^.",
+	CHANGE_CHARACTER,
+	"\377 co z w%a$cicielem?",
+	CHANGE_CHARACTER,
+	"\377n to nie KTOKOLWIEK, no nie?",
+	CHANGE_CHARACTER,
+	"To chyba nie pozwoli pan MI wej$^?",
+	CHANGE_CHARACTER,
+	"Bingo.",
+	CHANGE_CHARACTER,
+	"Nawet jak poprosz#?",
+	CHANGE_CHARACTER,
+	"Bez szans, dzieciaku.",
+	CHANGE_CHARACTER,
+	"\377PROOOOOSZ[.",
+	CHANGE_CHARACTER,
+	"Zapomnij. Mam serce z kamienia.",
+	CHANGE_CHARACTER,
+	"Jak i m*zg.",
+	CHANGE_CHARACTER,
+	"\377Nie %api#.",
+	CHANGE_CHARACTER,
+	"Niewa<ne... Jak m*g%bym panu",
+	NEW_LINE,
+	"zmi#kczy^ serce?",
+	CHANGE_CHARACTER,
+	"Nie dasz rady. Jestem prawdziwym twardzielem.",
+	DISPLAY_MESSAGE,
+	"Ale podejd> no, mam dla ciebie",
+	NEW_LINE,
+	"co$ na pocieszenie...",
+	END_DIALOG,
+};
+
+const static char *polishDialog2[] = {
+	"Dzi#ki. Co to jest?",
+	CHANGE_CHARACTER,
+	"Ciastko z czekolady.",
+	DISPLAY_MESSAGE,
+	"M*j pracodawca da% mi kilka takich",
+	NEW_LINE,
+	"na podwieczorek...",
+	CHANGE_CHARACTER,
+	"To on jest w domu?!",
+	CHANGE_CHARACTER,
+	"Pan Ci@gwa? Tak, a dlaczego?",
+	CHANGE_CHARACTER,
+	"Och, nic... Ci@gwa...",
+	NEW_LINE,
+	"Chyba o nim s%ysza%em...",
+	CHANGE_CHARACTER,
+	"Musia%e$. Robi du<@ fors#, wiesz.",
+	NEW_LINE,
+	"Zw%aszcza ostatnio...",
+	CHANGE_CHARACTER,
+	"Taaa?...",
+	CHANGE_CHARACTER,
+	"Ale nie wiem jak.",
+	DISPLAY_MESSAGE,
+	"Mo<e ma to co$ wsp*lnego z tym",
+	NEW_LINE,
+	"postrzelonym profesorkiem, kt*ry",
+	NEW_LINE,
+	"wpad% tu pewnego dnia...",
+	DISPLAY_MESSAGE,
+	"Ah, wydaje ci si#, <e jeste$ cwany, co?!",
+	NEW_LINE,
+	"Jeste$ szpiegiem?!",
+	CHANGE_CHARACTER,
+	"Hej, ze mnie normalny go$^.",
+	NEW_LINE,
+	"Nie chcesz m*wi^, nie m*w.",
+	CHANGE_CHARACTER,
+	"Pan Ci@gwa kaza% mi uwa<a^",
+	NEW_LINE,
+	"na szpieg*w...",
+	CHANGE_CHARACTER,
+	"Czy ja wygl@dam na szpiega?",
+	CHANGE_CHARACTER,
+	"...I zabija^ ich bez pytania...",
+	CHANGE_CHARACTER,
+	"Hej, spoko...",
+	CHANGE_CHARACTER,
+	"...A ja nie zabi%em ju< nikogo",
+	NEW_LINE,
+	"od baaaaaardzo dawna...",
+	CHANGE_CHARACTER,
+	"To o to ciasteczko, no nie?",
+	NEW_LINE,
+	"Chcesz je z powrotem? Nie ma sprawy.",
+	CHANGE_CHARACTER,
+	"\377Sorry, troch# mnie ponios%o.",
+	CHANGE_CHARACTER,
+	"Rozumiem.",
+	NEW_LINE,
+	"Gor@co tutaj.",
+	CHANGE_CHARACTER,
+	"Taaa.",
+	END_DIALOG,
+};
+
+const static char *polishDialog3[] = {
+	"Panie stra<niku, ja...",
+	CHANGE_CHARACTER,
+	"Pos%uchaj, ch%opcze.",
+	DISPLAY_MESSAGE,
+	"Szpieg czy nie szpieg, to nie",
+	NEW_LINE,
+	"jest pytanie.",
+	DISPLAY_MESSAGE,
+	"I tak nie wejdziesz, bez wzgl#du na to...",
+	DISPLAY_MESSAGE,
+	"...czy chcesz sobie pozwiedza^, co$ ukra$^",
+	NEW_LINE,
+	"czy pogada^ z w%a$cicielem.",
+	DISPLAY_MESSAGE,
+	"I nie zmusisz mnie do gadania.",
+	DISPLAY_MESSAGE,
+	"Jeszcze jedna pr*ba, i zrobi# kilka",
+	NEW_LINE,
+	"autostrad dla robak*w.",
+	DISPLAY_MESSAGE,
+	"W twoim ciele.",
+	NEW_LINE,
+	"Ka pe wu?",
+	CHANGE_CHARACTER,
+	"Ka pe wu.",
+	END_DIALOG,
+};
+
+const static char *polishDialog4[] = {
+	"Fajny mundur.",
+	END_DIALOG,
+};
+
+const static char *polishDialog5[] = {
+	CHANGE_CHARACTER,
+	"O kurka! To tylko ty!...",
+	END_DIALOG,
+};
+
+const static char *polishDialog6[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Co?",
+	CHANGE_CHARACTER,
+	"Co jest w tej butelce?",
+	CHANGE_CHARACTER,
+	"Niczego nie udowodnisz!",
+	CHANGE_CHARACTER,
+	"Co$ \'gor@cego\', nie?..",
+	CHANGE_CHARACTER,
+	"Nie tw*j interes.",
+	CHANGE_CHARACTER,
+	"Pijemy na s%u<bie, co?",
+	CHANGE_CHARACTER,
+	"Wydaje ci si#, <e prawie mnie",
+	NEW_LINE,
+	"z%apa%e$, nie?... Zapomnij.",
+	END_DIALOG,
+};
+
+const static char *polishDialog7[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Nic nie widzia%e$.",
+	NEW_LINE,
+	"Jestem czysty.",
+	END_DIALOG,
+};
+
+const static char *polishDialog8[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Spadaj.",
+	END_DIALOG,
+};
+
+const static char *polishDialog9[] = {
+	"Co by pan powiedzia%, gdybym da% panu",
+	NEW_LINE,
+	"troch# z%ota?...",
+	CHANGE_CHARACTER,
+	"Powiedzia%bym dzi#kuj#.",
+	CHANGE_CHARACTER,
+	"A wpu$ci%by mnie pan?",
+	CHANGE_CHARACTER,
+	"No chyba...",
+	CHANGE_CHARACTER,
+	"Musi pan by^ pewien.",
+	CHANGE_CHARACTER,
+	"OK, jestem pewien. Wpuszcz# ci#.",
+	CHANGE_CHARACTER,
+	"W porz@dku. Jedziemy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog10[] = {
+	"A teraz prosz# otworzy^ drzwi.",
+	CHANGE_CHARACTER,
+	"Nie ma szans. Zmykaj.",
+	CHANGE_CHARACTER,
+	"Hej! Da%em panu z%oto, pami#ta pan?...",
+	CHANGE_CHARACTER,
+	"Jakie z%oto?",
+	CHANGE_CHARACTER,
+	"JAKIE Z]OTO?!?",
+	CHANGE_CHARACTER,
+	"Nic nie wiem o <adnym z%ocie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog11[] = {
+	"Ty... Ty...",
+	CHANGE_CHARACTER,
+	"Odjazd.",
+	CHANGE_CHARACTER,
+	"Mia% mnie pan wpu$ci^!",
+	NEW_LINE,
+	"Ale nie w maliny!",
+	CHANGE_CHARACTER,
+	"No tak, ale za to puszczam ci# wolno.",
+	END_DIALOG,
+};
+
+const static char *polishDialog12[] = {
+	"W dzisiejszych czasach nie mo<na wierzy^",
+	NEW_LINE,
+	"nawet skorumpowanym stra<nikom.",
+	END_DIALOG,
+};
+
+const static char *polishDialog13[] = {
+	"Siamanko.",
+	CHANGE_CHARACTER,
+	"Cze$^.",
+	CHANGE_CHARACTER,
+	"Jestem Marek. A ty jak",
+	NEW_LINE,
+	"masz na imi#?",
+	CHANGE_CHARACTER,
+	"Jak mam na imi#?",
+	CHANGE_CHARACTER,
+	"Nie wiem, to ty powiedz jak.",
+	CHANGE_CHARACTER,
+	"Jak.",
+	CHANGE_CHARACTER,
+	"Nie m*w \'jak\', tylko powiedz",
+	NEW_LINE,
+	"swoje imi#!",
+	CHANGE_CHARACTER,
+	"Swoje im..",
+	CHANGE_CHARACTER,
+	"Rany!... Jak na ciebie wo%a tata?",
+	CHANGE_CHARACTER,
+	"Synku.",
+	CHANGE_CHARACTER,
+	"No tak. A inni ludzie?",
+	CHANGE_CHARACTER,
+	"A inni ludzie nie.",
+	CHANGE_CHARACTER,
+	"A jak na ciebie wo%aj@ inni ludzie?",
+	CHANGE_CHARACTER,
+	"Ch%opczyku.",
+	CHANGE_CHARACTER,
+	"(westchnienie)",
+	END_DIALOG,
+};
+
+const static char *polishDialog14[] = {
+	"Sluchaj no, ma%y. Co ty pr*bujesz",
+	NEW_LINE,
+	"zrobi^ z t@ pi%k@?",
+	CHANGE_CHARACTER,
+	"No, dziadek powiedzia%, <e",
+	NEW_LINE,
+	"we>mie mnie do ZOO, jak",
+	NEW_LINE,
+	"trafi# do kosza.",
+	CHANGE_CHARACTER,
+	"Wydaje mi si#, <e powiniene$",
+	NEW_LINE,
+	"rzuca^ pi%k# troch# wy<ej.",
+	CHANGE_CHARACTER,
+	"Tak, wiem.",
+	CHANGE_CHARACTER,
+	"No wi#c?",
+	CHANGE_CHARACTER,
+	"No wi#c co?",
+	CHANGE_CHARACTER,
+	"No wi#c czemu tego nie robisz?!",
+	CHANGE_CHARACTER,
+	"To chyba co$ z moimi oczami.",
+	CHANGE_CHARACTER,
+	"Powiniene$ nosi^ okulary?",
+	CHANGE_CHARACTER,
+	"Nie, a dlaczego?",
+	CHANGE_CHARACTER,
+	"(westchnienie) A mo<e po prostu jeste$ zbyt...",
+	DISPLAY_MESSAGE,
+	"...s%aby, by dorzuci^ pi%k#",
+	NEW_LINE,
+	"wystarczaj@co wysoko?",
+	CHANGE_CHARACTER,
+	"Na pewno nie.",
+	CHANGE_CHARACTER,
+	"(westchnienie)",
+	END_DIALOG,
+};
+
+const static char *polishDialog15[] = {
+	"Hej, ma%y! Mam wspania%y pomys%!",
+	CHANGE_CHARACTER,
+	"Tak?",
+	CHANGE_CHARACTER,
+	"Id> do dziadka i powiedz",
+	NEW_LINE,
+	"mu, <e trafi%e$!",
+	CHANGE_CHARACTER,
+	"Mam sk%ama^?",
+	CHANGE_CHARACTER,
+	"No, tylko troch#...",
+	CHANGE_CHARACTER,
+	"NIGDY NIE K]AMI[!",
+	CHANGE_CHARACTER,
+	"Nigdy?!",
+	CHANGE_CHARACTER,
+	"NIGDY!",
+	CHANGE_CHARACTER,
+	"Dobre dziecko.",
+	END_DIALOG,
+};
+
+const static char *polishDialog16[] = {
+	"Hej...",
+	CHANGE_CHARACTER,
+	"Odejd>.",
+	END_DIALOG,
+};
+
+const static char *polishDialog17[] = {
+	"Ty, mikro! To niesamowite!",
+	CHANGE_CHARACTER,
+	"Co znowu?",
+	CHANGE_CHARACTER,
+	"Pomy$lisz, <e to <art, ale",
+	NEW_LINE,
+	"z jeziora wy%ania si# jaka$",
+	NEW_LINE,
+	"r#ka z mieczem!",
+	CHANGE_CHARACTER,
+	"Dobra, popatrz#, ale nie my$l ",
+	NEW_LINE,
+	"sobie, <e mnie nabra%e$.",
+	NEW_LINE,
+	"Ona pojawia si# co roku.",
+	DISPLAY_MESSAGE,
+	"Mo<e tym razem przyniesie",
+	NEW_LINE,
+	"mi szcz#$cie w koszyk*wce...",
+	END_DIALOG,
+};
+
+const static char *polishDialog18[] = {
+	"Dzie= dobry panu!",
+	CHANGE_CHARACTER,
+	"I tobie tak<e,",
+	NEW_LINE,
+	"m*j ch%opcze.",
+	CHANGE_CHARACTER,
+	"Na imi# mam Marek, prosz# pana.",
+	CHANGE_CHARACTER,
+	"Wspaniale. Co ci# tu sprowadza?",
+	CHANGE_CHARACTER,
+	"Tylko podziwiam pa=ski fotel. Fajny.",
+	CHANGE_CHARACTER,
+	"Fajny i ca%kiem",
+	NEW_LINE,
+	"komfortowy.",
+	CHANGE_CHARACTER,
+	"I du<y.",
+	CHANGE_CHARACTER,
+	"Model dwuosobowy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog19[] = {
+	"Zna pan mo<e ch%opca",
+	NEW_LINE,
+	"bawi@cego si# na zewn@trz",
+	NEW_LINE,
+	"pi%k@?",
+	CHANGE_CHARACTER,
+	"Oczywi$cie, to",
+	NEW_LINE,
+	"m*j wnuk.",
+	CHANGE_CHARACTER,
+	"Fajny dzieciak.",
+	CHANGE_CHARACTER,
+	"Fajny i m@dry.",
+	CHANGE_CHARACTER,
+	"Fajny i ma%y.",
+	CHANGE_CHARACTER,
+	"Uro$nie.",
+	CHANGE_CHARACTER,
+	"I zostanie s%awnym",
+	NEW_LINE,
+	"graczem w kosza?...",
+	CHANGE_CHARACTER,
+	"Mam nadziej#, <e nie.",
+	CHANGE_CHARACTER,
+	"To niech mu pan powie,",
+	NEW_LINE,
+	"<eby przesta%!",
+	CHANGE_CHARACTER,
+	"P*>niej... Mo<e... Teraz musz# troch#",
+	NEW_LINE,
+	"odpocz@^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog20[] = {
+	"Ma pan zamiar przesiedzie^",
+	NEW_LINE,
+	"tu ca%y dzie=?",
+	CHANGE_CHARACTER,
+	"Mam nadziej#.",
+	CHANGE_CHARACTER,
+	"Ca%y ten pi#kny dzionek?",
+	CHANGE_CHARACTER,
+	"Mam nadziej#.",
+	CHANGE_CHARACTER,
+	"Nie interesuje pana",
+	NEW_LINE,
+	"$wiat zewn#trzny?!",
+	CHANGE_CHARACTER,
+	"Nie za bardzo.",
+	CHANGE_CHARACTER,
+	"A to dlaczego?",
+	CHANGE_CHARACTER,
+	"Nie przepadam za",
+	NEW_LINE,
+	"nowo$ciami.",
+	CHANGE_CHARACTER,
+	"Ale...",
+	CHANGE_CHARACTER,
+	"Jak to m*wi@... Najlepsze wiadomo$ci",
+	NEW_LINE,
+	"to brak wiadomo$ci.",
+	CHANGE_CHARACTER,
+	"Ale ludzie musz@ wiedzie^",
+	NEW_LINE,
+	"o post#pie i w og*le!",
+	CHANGE_CHARACTER,
+	"Nawet nie b#d# si# trudzi%,",
+	NEW_LINE,
+	"by zapyta^ dlaczego...",
+	CHANGE_CHARACTER,
+	"Bo... Eeee...",
+	NEW_LINE,
+	"Bo... Uhm...",
+	CHANGE_CHARACTER,
+	"Racja.",
+	END_DIALOG,
+};
+
+const static char *polishDialog21[] = {
+	"Co nowego?",
+	CHANGE_CHARACTER,
+	"Mam nadziej#, <e nic.",
+	END_DIALOG,
+};
+
+const static char *polishDialog22[] = {
+	"Mog# po<yczy^ t# strzelb#?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	CHANGE_CHARACTER,
+	"Proooosz#...",
+	CHANGE_CHARACTER,
+	"M%odzie=cze, ta bro= jest",
+	NEW_LINE,
+	"bardzo stara i niebezpieczna...",
+	DISPLAY_MESSAGE,
+	"...a ja jestem odpowiedzialnym",
+	NEW_LINE,
+	"cz%owiekiem, rozumiesz?",
+	CHANGE_CHARACTER,
+	"Ale b#d#...",
+	CHANGE_CHARACTER,
+	"Nie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog23[] = {
+	"Mo<e zmieni pan jednak zdanie co",
+	NEW_LINE,
+	"do tej strzelby?...",
+	CHANGE_CHARACTER,
+	"Nie. Nope. Niet. Nein. Niente. No. Ne.",
+	CHANGE_CHARACTER,
+	"Dobra, rozumiem.",
+	END_DIALOG,
+};
+
+const static char *polishDialog24[] = {
+	"Mog# przeszuka^ sobie szuflady?",
+	CHANGE_CHARACTER,
+	"Tak.",
+	CHANGE_CHARACTER,
+	"TAK?!?",
+	CHANGE_CHARACTER,
+	"Och, zapomnia%em ci powiedzie^,",
+	NEW_LINE,
+	"<e s@ puste.",
+	DISPLAY_MESSAGE,
+	"Tylko w prawej g*rnej le<y chusteczka.",
+	DISPLAY_MESSAGE,
+	"Mo<esz sobie j@ wzi@^, nie potrzebuj# jej.",
+	CHANGE_CHARACTER,
+	"C*<, dzi#kuj#. Jest pan",
+	NEW_LINE,
+	"bardzo... uprzejmy...",
+	CHANGE_CHARACTER,
+	"Tylko sobie nie pomy$l, <e mo<esz",
+	NEW_LINE,
+	"wzi@^ cokolwiek innego.",
+	CHANGE_CHARACTER,
+	"Oczywi$cie, nawet o tym nie marz#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog25[] = {
+	"Mog# po<yczy^ wiatraczek?",
+	CHANGE_CHARACTER,
+	"O, nie. Dzi#ki niemu jako$ znosz#",
+	NEW_LINE,
+	"takie dni jak ten.",
+	END_DIALOG,
+};
+
+const static char *polishDialog26[] = {
+	"Co do tego wiatraka...",
+	CHANGE_CHARACTER,
+	"Wr*^ w zimie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog27[] = {
+	"]adn@ pogod# dzi$",
+	NEW_LINE,
+	"mamy...",
+	CHANGE_CHARACTER,
+	"W rzeczy samej,",
+	NEW_LINE,
+	"drogi ch%opcze.",
+	END_DIALOG,
+};
+
+const static char *polishDialog28[] = {
+	"Czy to pani c*rka?",
+	CHANGE_CHARACTER,
+	"Jeste$ bardzo mi%y,",
+	NEW_LINE,
+	"cukiereczku, tak",
+	NEW_LINE,
+	"mnie odm%adzaj@c...",
+	DISPLAY_MESSAGE,
+	"...ale oczywi$cie",
+	NEW_LINE,
+	"ta $licznotka to",
+	NEW_LINE,
+	"moja wnuczka.",
+	CHANGE_CHARACTER,
+	"O, tak! Naprawd# $licznotka!",
+	CHANGE_CHARACTER,
+	"C*<, i ja kiedy$",
+	NEW_LINE,
+	"taka by%am...",
+	CHANGE_CHARACTER,
+	"Wci@< pani jest!",
+	CHANGE_CHARACTER,
+	"To mi%o",
+	NEW_LINE,
+	"z twojej strony...",
+	CHANGE_CHARACTER,
+	"Eeee...",
+	END_DIALOG,
+};
+
+const static char *polishDialog29[] = {
+	"Mog# zapyta^, co pani",
+	NEW_LINE,
+	"robi?",
+	CHANGE_CHARACTER,
+	"Tak, mo<esz,",
+	NEW_LINE,
+	"cukiereczku.",
+	CHANGE_CHARACTER,
+	"\377Co pani robi?",
+	CHANGE_CHARACTER,
+	"Robi# na drutach.",
+	CHANGE_CHARACTER,
+	"Rozumiem. A co pani robi",
+	NEW_LINE,
+	"na drutach?",
+	CHANGE_CHARACTER,
+	"Tym razem nie",
+	NEW_LINE,
+	"zapyta%e$, czy",
+	NEW_LINE,
+	"mo<esz zapyta^.",
+	CHANGE_CHARACTER,
+	"Och, przepraszam. Mog# zapyta^?",
+	CHANGE_CHARACTER,
+	"Zapyta^ o co?",
+	CHANGE_CHARACTER,
+	"O to, co pani robi",
+	NEW_LINE,
+	"na drutach.",
+	CHANGE_CHARACTER,
+	"Ju< mnie przed chwil@",
+	NEW_LINE,
+	"o to pyta%e$, czy<",
+	NEW_LINE,
+	"nie?",
+	END_DIALOG,
+};
+
+const static char *polishDialog30[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"W rzeczy samej.",
+	END_DIALOG,
+};
+
+const static char *polishDialog31[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Przecie< wiesz.",
+	END_DIALOG,
+};
+
+const static char *polishDialog32[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Mi%o, <e pytasz,",
+	NEW_LINE,
+	"ale ju< ci",
+	NEW_LINE,
+	"odpowiedzia%am.",
+	END_DIALOG,
+};
+
+const static char *polishDialog33[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Nie powtarzaj",
+	NEW_LINE,
+	"si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog34[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Nie przeszkadzaj",
+	NEW_LINE,
+	"mi w pracy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog35[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Zamknij si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog36[] = {
+	"Wszystko w porz@dku?",
+	END_DIALOG,
+};
+
+const static char *polishDialog37[] = {
+	"Prosz# wybaczy^",
+	NEW_LINE,
+	"moj@ $mia%o$^...",
+	CHANGE_CHARACTER,
+	"Tak?...",
+	CHANGE_CHARACTER,
+	"...ale pomy$la%em,",
+	NEW_LINE,
+	"<e niewinny kwiat...",
+	DISPLAY_MESSAGE,
+	"...przeka<e moj@",
+	NEW_LINE,
+	"rado$^ z okazji",
+	NEW_LINE,
+	"poznania pani.",
+	END_DIALOG,
+};
+
+const static char *polishDialog38[] = {
+	"Mam nadziej#,",
+	NEW_LINE,
+	"<e si# spodoba%...",
+	CHANGE_CHARACTER,
+	"Och, kochanie!",
+	NEW_LINE,
+	"Jestem wzruszona...",
+	DISPLAY_MESSAGE,
+	"To najmilsza rzecz,",
+	NEW_LINE,
+	"jak@ ktokolwiek",
+	NEW_LINE,
+	"uczyni% dla mnie...",
+	DISPLAY_MESSAGE,
+	"...od dziesi#ciu lat!",
+	DISPLAY_MESSAGE,
+	"Dzi#kuj# ci",
+	NEW_LINE,
+	"z ca%ego serca!",
+	CHANGE_CHARACTER,
+	"Prosz# bardzo.",
+	END_DIALOG,
+};
+
+const static char *polishDialog39[] = {
+	"Chcia%aby pani jeszcze",
+	NEW_LINE,
+	"jeden kwiat?",
+	CHANGE_CHARACTER,
+	"Jeste$ bardzo mi%y,",
+	NEW_LINE,
+	"cukiereczku, ale nie,",
+	NEW_LINE,
+	"dzi#kuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog40[] = {
+	"Na pewno nie chce pani",
+	NEW_LINE,
+	"nast#pnego kwiatka?",
+	CHANGE_CHARACTER,
+	"Na pewno.",
+	END_DIALOG,
+};
+
+const static char *polishDialog41[] = {
+	"Mog# po<yczy^ t#",
+	NEW_LINE,
+	"miote%k#?",
+	CHANGE_CHARACTER,
+	"Nie znamy si# zbyt",
+	NEW_LINE,
+	"dobrze, a ja z regu%y",
+	NEW_LINE,
+	"nie po<yczam...",
+	DISPLAY_MESSAGE,
+	"...rzeczy ka<demu,",
+	NEW_LINE,
+	"kto o to poprosi.",
+	CHANGE_CHARACTER,
+	"Czy ja nie wygl@dam",
+	NEW_LINE,
+	"odpowiedzialnie?",
+	CHANGE_CHARACTER,
+	"Odpowiedzia%am",
+	NEW_LINE,
+	"wystarczaj@co",
+	NEW_LINE,
+	"jasno.",
+	END_DIALOG,
+};
+
+const static char *polishDialog42[] = {
+	"Jakie$ szanse na po<yczenie",
+	NEW_LINE,
+	"zmiotki?",
+	CHANGE_CHARACTER,
+	"Lubi#, gdy le<y",
+	NEW_LINE,
+	"tam, gdzie teraz.",
+	END_DIALOG,
+};
+
+const static char *polishDialog43[] = {
+	"Czy teraz mog%aby pani",
+	NEW_LINE,
+	"po<yczy^ mi t# miote%k#?",
+	CHANGE_CHARACTER,
+	"Ale< naturalnie, nie",
+	NEW_LINE,
+	"widz# powodu, dla",
+	NEW_LINE,
+	"kt*rego...",
+	DISPLAY_MESSAGE,
+	"...nie mia%abym pom*c tak",
+	NEW_LINE,
+	"mi%emu m%odzie=cowi!..",
+	CHANGE_CHARACTER,
+	"Dzi#kuj# pani bardzo.",
+	END_DIALOG,
+};
+
+const static char *polishDialog44[] = {
+	"Ha! Jestem szybszy ni< Indy`!",
+	CHANGE_CHARACTER,
+	"Wszystko widzia%am!",
+	END_DIALOG,
+};
+
+const static char *polishDialog45[] = {
+	"Eee... Uh... Ja tylko...",
+	CHANGE_CHARACTER,
+	"Nie martw si#. Mam",
+	NEW_LINE,
+	"nadziej#, <e zabi%e$",
+	NEW_LINE,
+	"t# much#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog46[] = {
+	"Przepraszam, ale wydaje mi si#,",
+	NEW_LINE,
+	"<e pani pranie ju< wysch%o...",
+	DISPLAY_MESSAGE,
+	"...a za du<o s%o=ca mo<e odbarwi^",
+	NEW_LINE,
+	"rzeczy...",
+	CHANGE_CHARACTER,
+	"Jakim cudem wysch%o",
+	NEW_LINE,
+	"tak szybko?",
+	DISPLAY_MESSAGE,
+	"Lepiej p*jd#",
+	NEW_LINE,
+	"i sprawdz#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog47[] = {
+	CHANGE_CHARACTER,
+	"Mia%e$ racj#, m%odzie=cze.",
+	NEW_LINE,
+	"Dzi#kuj#.",
+	CHANGE_CHARACTER,
+	"Prosz# bardzo.",
+	END_DIALOG,
+};
+
+const static char *polishDialog48[] = {
+	"Czy potrzebuje pani tego",
+	NEW_LINE,
+	"sztucznego jab%ka?",
+	CHANGE_CHARACTER,
+	"To zale<y. Ten owoc ma",
+	NEW_LINE,
+	"swoj@ histori#.",
+	DISPLAY_MESSAGE,
+	"Pami#tam, jak pewnego",
+	NEW_LINE,
+	"dnia moja siostra Maria",
+	NEW_LINE,
+	"robi%a...",
+	CHANGE_CHARACTER,
+	"Eee, jak d%uga jest ta opowie$^?",
+	CHANGE_CHARACTER,
+	"Och, nie ma si#",
+	NEW_LINE,
+	"gdzie spieszy^.",
+	DISPLAY_MESSAGE,
+	"Mamy ca%e godziny na",
+	NEW_LINE,
+	"pogaduszki, prawda?",
+	CHANGE_CHARACTER,
+	"W%a$nie zda%em sobie spraw#, <e nie",
+	NEW_LINE,
+	"potrzebuj# tego jab%ka.",
+	NEW_LINE,
+	"Dzi#ki.",
+	END_DIALOG,
+};
+
+const static char *polishDialog49[] = {
+	"To jab%ko...",
+	CHANGE_CHARACTER,
+	"Nie ma opowie$ci,",
+	NEW_LINE,
+	"nie ma jab%ka.",
+	CHANGE_CHARACTER,
+	"\377\377ie ma jab%ka.",
+	END_DIALOG,
+};
+
+const static char *polishDialog50[] = {
+	"\377Could she be ...the most beautiful girl...",
+	NEW_LINE,
+	"...in the world?...\"",
+	END_DIALOG,
+};
+
+const static char *polishDialog51[] = {
+	"Chyba najwy<szy czas si# przedstawi^.",
+	DISPLAY_MESSAGE,
+	"Jestem Marek.",
+	CHANGE_CHARACTER,
+	"Anna.",
+	END_DIALOG,
+};
+
+const static char *polishDialog52[] = {
+	"Moment, w kt*rym ujrza%em",
+	NEW_LINE,
+	"te oczy, by% najpi#kniejszym",
+	NEW_LINE,
+	"w moim <yciu.",
+	DISPLAY_MESSAGE,
+	"\377Nie licz@c czasu, kiedy",
+	NEW_LINE,
+	"bawi%em si# z Edytk@",
+	NEW_LINE,
+	"w doktora.",
+	END_DIALOG,
+};
+
+const static char *polishDialog53[] = {
+	"Uh... Eee...",
+	NEW_LINE,
+	"Zastanawiam si#...",
+	DISPLAY_MESSAGE,
+	"Zastanawiam si#, czy",
+	NEW_LINE,
+	"nie zechcia%aby$",
+	NEW_LINE,
+	"przyj@^...",
+	DISPLAY_MESSAGE,
+	"Ee... Znaczy...",
+	DISPLAY_MESSAGE,
+	"Mam co$, co chcia%bym",
+	NEW_LINE,
+	"ci da^, poniewa<, eee...",
+	NEW_LINE,
+	"...poniewa<...",
+	DISPLAY_MESSAGE,
+	"Eh... My$l#, <e jeste$... No i...",
+	CHANGE_CHARACTER,
+	"Hej! Ja nie gryz#!",
+	DISPLAY_MESSAGE,
+	"Widz#, <e chcesz powiedzie^",
+	NEW_LINE,
+	"mi co$ mi%ego.",
+	DISPLAY_MESSAGE,
+	"Po prostu u<yj",
+	NEW_LINE,
+	"najprostszych s%*w...",
+	CHANGE_CHARACTER,
+	"Najprostszych s%*w?!",
+	CHANGE_CHARACTER,
+	"Tak, proste s%owa czyni@",
+	NEW_LINE,
+	"rzeczy prostymi.",
+	CHANGE_CHARACTER,
+	"Och, tak. Okej. Proste s%owa.",
+	NEW_LINE,
+	"Okej. Uwaga:...",
+	DISPLAY_MESSAGE,
+	"Ja lubi^ twoja",
+	NEW_LINE,
+	"i chcie^ da^ kwiat.",
+	CHANGE_CHARACTER,
+	"\377C*<, mo<e jednak powiniene$",
+	NEW_LINE,
+	"wyra<a^ si# bardziej...",
+	DISPLAY_MESSAGE,
+	"...skomplikowanie.",
+	CHANGE_CHARACTER,
+	"Uh... Sorry...",
+	NEW_LINE,
+	"Ja po prostu...",
+	DISPLAY_MESSAGE,
+	"Po prostu przynios%em",
+	NEW_LINE,
+	"ci kwiatek.",
+	CHANGE_CHARACTER,
+	"Och?...",
+	END_DIALOG,
+};
+
+const static char *polishDialog54[] = {
+	"Podoba ci si#?",
+	CHANGE_CHARACTER,
+	"Jeste$ czaruj@cy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog55[] = {
+	"Reasumuj@c fakty...",
+	CHANGE_CHARACTER,
+	"Proste s%owa,",
+	NEW_LINE,
+	"ch%opcze!",
+	NEW_LINE,
+	"Proste s%owa!",
+	END_DIALOG,
+};
+
+const static char *polishDialog56[] = {
+	"Ah, tak... Chcia%em tylko doda^,",
+	NEW_LINE,
+	"<e i ty jeste$ czaruj@ca.",
+	CHANGE_CHARACTER,
+	"Chyba powinnam",
+	NEW_LINE,
+	"powiedzie^ dzi#kuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog57[] = {
+	"Nienawidz# si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog58[] = {
+	"Mam jeszcze jeden",
+	NEW_LINE,
+	"kwiat...",
+	CHANGE_CHARACTER,
+	"Nie przesadzajmy.",
+	DISPLAY_MESSAGE,
+	"Jak %atwo zauwa<y^, nie",
+	NEW_LINE,
+	"jestem jedyn@...",
+	DISPLAY_MESSAGE,
+	"...kobiet@ w tym pokoju...",
+	END_DIALOG,
+};
+
+const static char *polishDialog59[] = {
+	"Wi#c nie chcesz jeszcze",
+	NEW_LINE,
+	"jednego kwiatka?",
+	CHANGE_CHARACTER,
+	"Nie, dzi#kuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog60[] = {
+	"Mo<e ciasteczko?",
+	CHANGE_CHARACTER,
+	"Raczej nie, dzi#kuj#.",
+	NEW_LINE,
+	"Nie chc# uty^.",
+	CHANGE_CHARACTER,
+	"Tam zaraz uty^. Nawet",
+	NEW_LINE,
+	"Obelix ma przyjaci*%.",
+	CHANGE_CHARACTER,
+	"A kto to Obelix?!",
+	CHANGE_CHARACTER,
+	"Ee, niewa<ne. Po prostu mam",
+	NEW_LINE,
+	"tu ciastko, kt*re znalaz%em...",
+	CHANGE_CHARACTER,
+	"ZNALAZ]E|?!",
+	CHANGE_CHARACTER,
+	"...znalaz%em w pewnym",
+	NEW_LINE,
+	"sklepie, oczywi$cie.",
+	DISPLAY_MESSAGE,
+	"D%ugo szuka%em. To nie jaki$ wyr*b...",
+	DISPLAY_MESSAGE,
+	"...czekoladopodobny, ale sama...",
+	DISPLAY_MESSAGE,
+	"...esencja s%odko$ci! Luksus!",
+	DISPLAY_MESSAGE,
+	"Naturalne sk%adniki.",
+	DISPLAY_MESSAGE,
+	"Bez konserwant*w.",
+	CHANGE_CHARACTER,
+	"No dobra, skoro nalegasz...",
+	END_DIALOG,
+};
+
+const static char *polishDialog61[] = {
+	"\377Khm...",
+	CHANGE_CHARACTER,
+	"Och tak, chyba powinnam da^",
+	NEW_LINE,
+	"ci co$ w zamian...",
+	CHANGE_CHARACTER,
+	"Och, nie... Nie musisz, naprawd#...",
+	CHANGE_CHARACTER,
+	"Dobra. Jak chcesz.",
+	CHANGE_CHARACTER,
+	"\377Chocia< z drugiej strony...",
+	CHANGE_CHARACTER,
+	"Wiedzia%am. Wy ch%opcy zawsze",
+	NEW_LINE,
+	"czego$ chcecie.",
+	DISPLAY_MESSAGE,
+	"Nie mo<ecie zrobi^ niczego",
+	NEW_LINE,
+	"za darmo.",
+	CHANGE_CHARACTER,
+	"Kiedy$ posprz@ta%em pok*j.",
+	DISPLAY_MESSAGE,
+	"\377C*<... Zapomnijmy",
+	NEW_LINE,
+	"o tym.",
+	CHANGE_CHARACTER,
+	"Oto m*j prezent dla",
+	NEW_LINE,
+	"ciebie.",
+	DISPLAY_MESSAGE,
+	"To moja wst@<ka. Pomy$l",
+	NEW_LINE,
+	"o mnie czasami.",
+	END_DIALOG,
+};
+
+const static char *polishDialog62[] = {
+	"Dzi#ki. Nigdy jej nie",
+	NEW_LINE,
+	"wypior#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog63[] = {
+	"Znalaz%em do$^ interesuj@c@ notk#...",
+	DISPLAY_MESSAGE,
+	"...na pewnym banknocie. Wiesz mo<e",
+	NEW_LINE,
+	"co$ na ten temat?",
+	CHANGE_CHARACTER,
+	"Poka< mi banknot.",
+	END_DIALOG,
+};
+
+const static char *polishDialog64[] = {
+	"Hej, co jest?!",
+	CHANGE_CHARACTER,
+	"O, ja nieszcz#$liwa!...",
+	CHANGE_CHARACTER,
+	"Dlaczego p%aczesz?!",
+	CHANGE_CHARACTER,
+	"O, ja nieszcz#sna!...",
+	DISPLAY_MESSAGE,
+	"Nasz... nasz s@siad, pan...",
+	DISPLAY_MESSAGE,
+	"...Ci@gwa, da% mi wczoraj...",
+	DISPLAY_MESSAGE,
+	"...troch# pieni#dzy...",
+	DISPLAY_MESSAGE,
+	"...i powiedzia%, <e jak",
+	NEW_LINE,
+	"dam mu buziaka to da...",
+	DISPLAY_MESSAGE,
+	"...mi wi#cej...",
+	DISPLAY_MESSAGE,
+	"...ale przemy$la%am to",
+	NEW_LINE,
+	"i odda%am mu ca%@...",
+	DISPLAY_MESSAGE,
+	"...kwot# z powrotem.",
+	CHANGE_CHARACTER,
+	"To znaczy, ta $winia",
+	NEW_LINE,
+	"pr*bowa%a ci# kupi^?!",
+	CHANGE_CHARACTER,
+	"Jestem taka nieszcz#$liwa!",
+	CHANGE_CHARACTER,
+	"O, ludzie! Mam",
+	NEW_LINE,
+	"tego do$^!",
+	END_DIALOG,
+};
+
+const static char *polishDialog65[] = {
+	"Hej, ty! Mo<esz mi z %aski swojej",
+	NEW_LINE,
+	"poda^ ten orzech le<@cy obok?",
+	END_DIALOG,
+};
+
+const static char *polishDialog66[] = {
+	"Dasz mi ten orzech czy nie?!",
+	END_DIALOG,
+};
+
+const static char *polishDialog67[] = {
+	"W porz@chu. Wystarczy.",
+	DISPLAY_MESSAGE,
+	"Teraz dostaniesz, na co zas%u<y%a$.",
+	DISPLAY_MESSAGE,
+	"B#d# ci# wyzywa% tak d%ugo,",
+	NEW_LINE,
+	"a< dasz mi ten orzech.",
+	DISPLAY_MESSAGE,
+	"Ty brzydka wiewi*rko ty.",
+	END_DIALOG,
+};
+
+const static char *polishDialog68[] = {
+	"Nie wiesz, <e to noszenie futra nie",
+	NEW_LINE,
+	"jest politycznie poprawne?",
+	END_DIALOG,
+};
+
+const static char *polishDialog69[] = {
+	"Hej, raz jeszcze dzi#ki za orzech.",
+	END_DIALOG,
+};
+
+const static char *polishDialog70[] = {
+	"Nie zapyta%em, czy mog# j@ wzi@^.",
+	DISPLAY_MESSAGE,
+	"To naprawd# niegrzeczne bra^ czyj@$",
+	NEW_LINE,
+	"w%asno$^ bez pozwolenia.",
+	DISPLAY_MESSAGE,
+	"No i mog@ mnie z%apa^, oczywi$cie.",
+	DISPLAY_MESSAGE,
+	"I wsadz@ mnie do wi#zienia i nikt",
+	NEW_LINE,
+	"ju< nie b#dzie mnie szanowa%.",
+	DISPLAY_MESSAGE,
+	"Naprawd# mog# zmarnowa^ sobie <ycie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog71[] = {
+	"Bez pracy nie ma ko%aczy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog72[] = {
+	"S%uchajcie, wrony. Macie st@d",
+	NEW_LINE,
+	"spada^, ale ju<!",
+	DISPLAY_MESSAGE,
+	"Albo b#d# strzela%.",
+	DISPLAY_MESSAGE,
+	"Z prawdziwej broni.",
+	DISPLAY_MESSAGE,
+	"Zdaje si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog73[] = {
+	"Widz# ...<e jest tu... PAJ+K!!!",
+	END_DIALOG,
+};
+
+const static char *polishDialog74[] = {
+	"Nie to, <ebym stch*rzy%.",
+	DISPLAY_MESSAGE,
+	"Po prostu to m*g% by^",
+	NEW_LINE,
+	"zmutowany paj@k i m*g%by",
+	NEW_LINE,
+	"mnie ugry>^...",
+	DISPLAY_MESSAGE,
+	"...i ja te< zosta%bym mutantem...",
+	DISPLAY_MESSAGE,
+	"...i nosi%bym takie $mieszne",
+	NEW_LINE,
+	"r#kawice i w og*le...",
+	DISPLAY_MESSAGE,
+	"...i mia%bym podw*jne <ycie...",
+	DISPLAY_MESSAGE,
+	"...i musia%bym walczy^ z Venomem`",
+	DISPLAY_MESSAGE,
+	"i innymi i m*g%bym zosta^ ranny...",
+	DISPLAY_MESSAGE,
+	"...i ka<dy robi%by na tym fors#",
+	NEW_LINE,
+	"opr*cz mnie...",
+	DISPLAY_MESSAGE,
+	"Wi#c chyba sobie odpuszcz#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog75[] = {
+	"Ten paj@k przyprawia mnie o ciarki...",
+	END_DIALOG,
+};
+
+const static char *polishDialog76[] = {
+	"Hej, ma%y kolego!",
+	DISPLAY_MESSAGE,
+	"Mam dla ciebie MORALN+ PROPOZYCJ[.",
+	DISPLAY_MESSAGE,
+	"Du<e, $wie<e i soczyste jab%ko za t@ star@",
+	NEW_LINE,
+	"szyszk#, co ci uciska plecy.",
+	DISPLAY_MESSAGE,
+	"Jak masz ochot# na wymian#, to sta=",
+	NEW_LINE,
+	"tutaj i potrz@$nij pyszczkiem.",
+	END_DIALOG,
+};
+
+const static char *polishDialog77[] = {
+	"Powinieniem wiedzie^,",
+	NEW_LINE,
+	"ze gdzie$ tkwi haczyk.",
+	DISPLAY_MESSAGE,
+	"\377Wios%o jest z%amane.",
+	END_DIALOG,
+};
+
+const static char *polishDialog78[] = {
+	"Cze$^, facet.",
+	END_DIALOG,
+};
+
+const static char *polishDialog79[] = {
+	"Nie ignoruj mnie, prosz#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog80[] = {
+	"Pieskie <ycie, co?",
+	END_DIALOG,
+};
+
+const static char *polishDialog81[] = {
+	"Co s%ycha^?",
+	END_DIALOG,
+};
+
+const static char *polishDialog82[] = {
+	"Tak, m*g%bym j@ wzi@^...",
+	DISPLAY_MESSAGE,
+	"To cicha ma%a wioska...",
+	DISPLAY_MESSAGE,
+	"Bez policji...",
+	DISPLAY_MESSAGE,
+	"Nikt nie us%ysza%by ich krzyk*w...",
+	DISPLAY_MESSAGE,
+	"\377Ale nie mam hokejowej maski.",
+	DISPLAY_MESSAGE,
+	"\377(westchnienie)",
+	END_DIALOG,
+};
+
+const static char *polishDialog83[] = {
+	"Nie chc# zostawi^ na niej swoich",
+	NEW_LINE,
+	"odcisk*w palc*w.",
+	DISPLAY_MESSAGE,
+	"Kto wie, do czego by%a u<ywana.",
+	END_DIALOG,
+};
+
+const static char *polishDialog84[] = {
+	"Obawiam si#, <e troch# za trudno",
+	NEW_LINE,
+	"z%apa^ sobie mysz ot tak, po",
+	NEW_LINE,
+	"prostu.",
+	DISPLAY_MESSAGE,
+	"I co to by%oby za wyzwanie?",
+	END_DIALOG,
+};
+
+const static char *polishDialog85[] = {
+	"M*g%bym spr*bow^ odstraszy^ te ptaki",
+	NEW_LINE,
+	"samemu, gdybym nie ogl@da% tego filmu...",
+	DISPLAY_MESSAGE,
+	"...Hitchcocka, kiedy mia%em 5 lat.",
+	DISPLAY_MESSAGE,
+	"Moja mama nie powinna by%a mi pozwoli^.",
+	DISPLAY_MESSAGE,
+	"Teraz znosz# jajo nawet gdy widz# go%#bie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog86[] = {
+	"\"Z%oto oczekuje na ko=cu drogi.\"",
+	END_DIALOG,
+};
+
+const static char *polishDialog87[] = {
+	"Czy to pan jest Ci@gwa?",
+	CHANGE_CHARACTER,
+	"Jak si# masz, m*j przyjacielu.",
+	DISPLAY_MESSAGE,
+	"Moi ludzie twierdz@, <e",
+	NEW_LINE,
+	"pr*bujesz wedrze^ si# do",
+	NEW_LINE,
+	"mojej posiad%o$ci.",
+	DISPLAY_MESSAGE,
+	"Dlaczego?",
+	CHANGE_CHARACTER,
+	"Eee... Widzi pan...",
+	DISPLAY_MESSAGE,
+	"Jestem tu...",
+	NEW_LINE,
+	"Tu...",
+	DISPLAY_MESSAGE,
+	"Znaczy, jestem tu na wakacjach,",
+	NEW_LINE,
+	"ale zrobi%o mi si# niedobrze od...",
+	DISPLAY_MESSAGE,
+	"...wszystkich tych zielono$ci...",
+	DISPLAY_MESSAGE,
+	"...i po prostu chcia%em lizn@^",
+	NEW_LINE,
+	"troch# cywilizacji.",
+	CHANGE_CHARACTER,
+	"C*<... Dobrze ci# rozumiem,",
+	NEW_LINE,
+	"przyjacielu.",
+	DISPLAY_MESSAGE,
+	"Ja tak<e s@dz#, <e naturalne",
+	NEW_LINE,
+	"$rodowisko dla nas, ludzi...",
+	DISPLAY_MESSAGE,
+	"...dwudziestego wieku...",
+	DISPLAY_MESSAGE,
+	"..to telewizor i paczka snack*w.",
+	NEW_LINE,
+	"Ale m*wi@c o rzeczach zielonych...",
+	DISPLAY_MESSAGE,
+	"Nie mog# zezwoli^ ci na",
+	NEW_LINE,
+	"wej$cie do mego domu, bo... uh...",
+	DISPLAY_MESSAGE,
+	"...poniewa< jest...w%a$nie...",
+	DISPLAY_MESSAGE,
+	"...w remocie. Ale jako cz%owiek",
+	NEW_LINE,
+	"maj#tny dam ci sto dolc*w...",
+	DISPLAY_MESSAGE,
+	"...aby$ m*g% sobie kupi^ co$, co",
+	NEW_LINE,
+	"pomo<e ci tutaj prze<y^.",
+	DISPLAY_MESSAGE,
+	"Na przyk%ad walkmana.",
+	NEW_LINE,
+	"Co ty na to?",
+	CHANGE_CHARACTER,
+	"Za kogo pan mnie ma?!",
+	END_DIALOG,
+};
+
+const static char *polishDialog88[] = {
+	"NIGDY tego nie wezm#! NIGDY!",
+	CHANGE_CHARACTER,
+	"Nie podniecaj si# tak. Pecunia non olet.",
+	DISPLAY_MESSAGE,
+	"Teraz musz# ju< i$^. Nie b@d>",
+	NEW_LINE,
+	"wstydkiem i podnie$ banknot.",
+	DISPLAY_MESSAGE,
+	"Nikogo to nie wzburzy...",
+	DISPLAY_MESSAGE,
+	"Do widzenia, przyjacielu.",
+	END_DIALOG,
+};
+
+const static char *polishDialog89[] = {
+	"Nie mog# uwierzy^, <e mnie tak",
+	NEW_LINE,
+	"potraktowa%.",
+	DISPLAY_MESSAGE,
+	"Przy okazji...",
+	DISPLAY_MESSAGE,
+	"\377Pekunia nie omlet?...",
+	END_DIALOG,
+};
+
+const static char *polishDialog90[] = {
+	"Rany... Jest ca%a czarna ...i wygl@da jak facet...",
+	DISPLAY_MESSAGE,
+	"...z jak@$ d%ug@ lask@ ...i garnkiem na g%owie...",
+	DISPLAY_MESSAGE,
+	"\377Go$^ od grafiki powinien mniej pi^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog91[] = {
+	"Znowu szperanko w $mietnikach?",
+	DISPLAY_MESSAGE,
+	"\377No dobra, na szcz#$cie s@ tu tylko",
+	NEW_LINE,
+	"jakie$ papiery.",
+	END_DIALOG,
+};
+
+const static char *polishDialog92[] = {
+	"To samo, co zwykle...",
+	DISPLAY_MESSAGE,
+	"Katastrofy...",
+	DISPLAY_MESSAGE,
+	"Korupcja...",
+	DISPLAY_MESSAGE,
+	"Morderstwa...",
+	DISPLAY_MESSAGE,
+	"Krzy<*wki...",
+	DISPLAY_MESSAGE,
+	"Rozebrane panienki...",
+	DISPLAY_MESSAGE,
+	"\377Musz# zaprenumerowa^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog93[] = {
+	"\377S%odki Jezu...",
+	CHANGE_CHARACTER,
+	"...Sz%aaaaa dzieweczka...",
+	DISPLAY_MESSAGE,
+	"...doooo laseczka...",
+	CHANGE_CHARACTER,
+	"To Ci@gwa...",
+	CHANGE_CHARACTER,
+	"...dooo zielooooonego!...",
+	CHANGE_CHARACTER,
+	"...$piewaj@cy do kamery!",
+	CHANGE_CHARACTER,
+	"...doooo zielooonegooooooo!...",
+	CHANGE_CHARACTER,
+	"Chocia< stanowczo nie powinien.",
+	CHANGE_CHARACTER,
+	"...ho-ho-hooo...",
+	CHANGE_CHARACTER,
+	"Nie mog# w to uwierzy^.",
+	CHANGE_CHARACTER,
+	"...my$liweeeeeczka...",
+	CHANGE_CHARACTER,
+	"Co za horror.",
+	CHANGE_CHARACTER,
+	"...baaaaardzo $waaarnegooooo...",
+	CHANGE_CHARACTER,
+	"Pies mojego s@siada robi to lepiej.",
+	CHANGE_CHARACTER,
+	"...baaaaardzoooo...",
+	CHANGE_CHARACTER,
+	"Mam dosy^.",
+	CHANGE_CHARACTER,
+	"...ho-ho-hoooooooo!....",
+	END_DIALOG,
+};
+
+const static char *polishDialog94[] = {
+	"Nie ma tu nic intere...",
+	DISPLAY_MESSAGE,
+	"Nie, zaraz...",
+	DISPLAY_MESSAGE,
+	"Co$ jest pod spodem!",
+	END_DIALOG,
+};
+
+const static char *polishDialog95[] = {
+	"Nie wydaje si# panu,",
+	NEW_LINE,
+	"<e powinien doda^",
+	NEW_LINE,
+	">d>iebko chilli?",
+	CHANGE_CHARACTER,
+	"Doda^? Dlaczego?",
+	CHANGE_CHARACTER,
+	"Wci@< pan pr*buje swoj@",
+	NEW_LINE,
+	"potraw#. Co$ jest nie",
+	NEW_LINE,
+	"tak.",
+	DISPLAY_MESSAGE,
+	"Mo<e powinien pan j@",
+	NEW_LINE,
+	"ma%e conieco zaostrzy^?",
+	CHANGE_CHARACTER,
+	"No c*<... To chyba dobry pomys%.",
+	NEW_LINE,
+	"Na szcz#$cie mam tu co$.",
+	END_DIALOG,
+};
+
+const static char *polishDialog96[] = {
+	CHANGE_CHARACTER,
+	"To... hik!... To chillllllii ...musia%o",
+	NEW_LINE,
+	"by^ ...sfermentowane...",
+	DISPLAY_MESSAGE,
+	"Zupka si# schrzani%a iiiiii...",
+	DISPLAY_MESSAGE,
+	"...jestem zwolniony! Hik!",
+	END_DIALOG,
+};
+
+const static char *polishDialog97[] = {
+	"Radia nie potrzebuj#, ale",
+	NEW_LINE,
+	"mog# potrzebowa^ baterii.",
+	DISPLAY_MESSAGE,
+	"Pechowo nie mam poj#cia, jak",
+	NEW_LINE,
+	"si# otwiera te japo=skie",
+	NEW_LINE,
+	"cude=ka.",
+	END_DIALOG,
+};
+
+const static char *polishDialog98[] = {
+	CHANGE_CHARACTER,
+	"Test bezpiecze=stwa: g%os, zapach, wygl@d.",
+	DISPLAY_MESSAGE,
+	"G%os rozpoznany pozytywnie.",
+	DISPLAY_MESSAGE,
+	"\377Fajny kawa%ek, cz%owieku.",
+	END_DIALOG,
+};
+
+const static char *polishDialog99[] = {
+	CHANGE_CHARACTER,
+	"Test bezpiecze=stwa: g%os, zapach, wygl@d.",
+	DISPLAY_MESSAGE,
+	"Zapach rozpoznany pozytywnie.",
+	DISPLAY_MESSAGE,
+	"\377Ja te< nie lubi# wody, brachu.",
+	END_DIALOG,
+};
+
+const static char *polishDialog100[] = {
+	CHANGE_CHARACTER,
+	"Test bezpiecze=stwa: g%os, zapach, wygl@d.",
+	DISPLAY_MESSAGE,
+	"Wygl@d rozpoznany pozytywnie.",
+	DISPLAY_MESSAGE,
+	"\377Nast#pnym razem sta= troch# bli<ej.",
+	END_DIALOG,
+};
+
+const static char *polishDialog101[] = {
+	"Mog# rozmawia^ z...",
+	CHANGE_CHARACTER,
+	"Odejd>.",
+	DISPLAY_MESSAGE,
+	"Jestem zaj#ty. Praca. Obiad zaraz.",
+	NEW_LINE,
+	"Si# spiesz#.",
+	CHANGE_CHARACTER,
+	"Aye, kapitanie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog102[] = {
+	"Ale mo<e...",
+	CHANGE_CHARACTER,
+	"TERAZ ...JESTEM ...ZAJ[TY.",
+	NEW_LINE,
+	"NIE ...PRZESZKADZAJ ...MI.",
+	NEW_LINE,
+	"DOBRZE?",
+	CHANGE_CHARACTER,
+	"Okej, okej.",
+	END_DIALOG,
+};
+
+const static char *polishDialog103[] = {
+	"Ostatnio chcia%em...",
+	CHANGE_CHARACTER,
+	"ZAJ[TY. Z jak Zuzanna.",
+	NEW_LINE,
+	"A jak Artur.",
+	NEW_LINE,
+	"J jak Jadwiga.",
+	DISPLAY_MESSAGE,
+	"[ jak Eugeniusz.",
+	NEW_LINE,
+	"T jak Tomasz.",
+	DISPLAY_MESSAGE,
+	"Y jak...",
+	NEW_LINE,
+	"...jak...",
+	CHANGE_CHARACTER,
+	"Yeti?",
+	CHANGE_CHARACTER,
+	"Nie. Jak...",
+	CHANGE_CHARACTER,
+	"Yabbadabbadoo?",
+	CHANGE_CHARACTER,
+	"Nie, nie, nie. Jak...",
+	CHANGE_CHARACTER,
+	"Yoko?",
+	CHANGE_CHARACTER,
+	"Yoko. A teraz zostaw mnie w spokoju,",
+	NEW_LINE,
+	"PROSZ[!",
+	CHANGE_CHARACTER,
+	"Dobra ju<, dobra.",
+	END_DIALOG,
+};
+
+const static char *polishDialog104[] = {
+	"Ee...",
+	CHANGE_CHARACTER,
+	"Wrrrr...",
+	END_DIALOG,
+};
+
+const static char *polishDialog105[] = {
+	"Dzie= dobry, panie robocie.",
+	CHANGE_CHARACTER,
+	"Siamanko, cz%owieku,",
+	NEW_LINE,
+	"kumasz czacz#?",
+	DISPLAY_MESSAGE,
+	"M*w mi Czesiek, ju no% %ot",
+	NEW_LINE,
+	"ajm sejin?",
+	CHANGE_CHARACTER,
+	"Eee... Jeste$ pewien, <e wszystko",
+	NEW_LINE,
+	"w porz@dku z twoim ...programem?...",
+	CHANGE_CHARACTER,
+	"Masz jaki$ problem, cz%owieku?!",
+	DISPLAY_MESSAGE,
+	"Sie nie widzia%o nigdy rapuj@cego",
+	NEW_LINE,
+	"robo-sejfu, frajerze?",
+	CHANGE_CHARACTER,
+	"W%a$ciwie to nigdy.",
+	CHANGE_CHARACTER,
+	"Jestem n*wka, brachu.",
+	NEW_LINE,
+	"Gor@cy towar, jarzysz?",
+	DISPLAY_MESSAGE,
+	"M*zgole m*wi@, co roboty maj@",
+	NEW_LINE,
+	"by^ dla ka<dego, kumasz czacz#?",
+	DISPLAY_MESSAGE,
+	"Dali mi ludzk@ osobowo$^...",
+	DISPLAY_MESSAGE,
+	"...ju no% %ot aj min?",
+	DISPLAY_MESSAGE,
+	"Miodzio, no nie?",
+	CHANGE_CHARACTER,
+	"Khm... Tak, wspaniale.",
+	NEW_LINE,
+	"Znaczy, jeste$ rodzajem sejfu?",
+	CHANGE_CHARACTER,
+	"Racja, cz%owieku.",
+	DISPLAY_MESSAGE,
+	"Totalnie pewny, kumasz czacz#?",
+	DISPLAY_MESSAGE,
+	"Jak chcesz, cobym si# otworzy%,",
+	NEW_LINE,
+	"musisz udowodni^, <e$ w%a$ciciel.",
+	DISPLAY_MESSAGE,
+	"A teraz czek dis (OCENZUROWANE) a%t:",
+	NEW_LINE,
+	"Mog# os@dzi^, czy$ w%a$ciwy go$^...",
+	DISPLAY_MESSAGE,
+	"...po trzech rzeczach:",
+	DISPLAY_MESSAGE,
+	"\377..wygl@dzie, zapachu i g%osie.",
+	NEW_LINE,
+	"Ju no% %ot ajm sejin?",
+	CHANGE_CHARACTER,
+	"\377 nie otworzy%by$ ...si#...",
+	NEW_LINE,
+	"na chwil#, tylko <ebym zobaczy%...",
+	DISPLAY_MESSAGE,
+	"...co masz w $rodku?",
+	CHANGE_CHARACTER,
+	"Sorry, brachu.",
+	DISPLAY_MESSAGE,
+	"Nie wygl@dasz jak w%a$ciciel...",
+	DISPLAY_MESSAGE,
+	"...nie capisz, jak on...",
+	DISPLAY_MESSAGE,
+	"...i g%osik te< nie ten.",
+	DISPLAY_MESSAGE,
+	"Teraz (OCENZUROWANE), kumasz czacz#?",
+	END_DIALOG,
+};
+
+const static char *polishDialog106[] = {
+	"Sezamie, otw*rz si#.",
+	CHANGE_CHARACTER,
+	"(OCENZUROWANE), ty (OCENZUROWANE).",
+	END_DIALOG,
+};
+
+const static char *polishDialog107[] = {
+	"Cze$^!",
+	CHANGE_CHARACTER,
+	"(OSTRZE}ENIE DLA RODZIC{W: WULGARNE TEKSTY)",
+	END_DIALOG,
+};
+
+const static char *polishDialog108[] = {
+	"M*wi# ci, to co$ niesamowitego.",
+	CHANGE_CHARACTER,
+	"Pami#tam, jak zabi%e$ mojego",
+	NEW_LINE,
+	"s%u<@cego testuj@c kulo-odporny",
+	NEW_LINE,
+	"szalik.",
+	CHANGE_CHARACTER,
+	"To by%o dawno temu...",
+	CHANGE_CHARACTER,
+	"Albo jak zrobi%e$ rapuj@cy",
+	NEW_LINE,
+	"robo-sejf, kt*ry psuje si#",
+	NEW_LINE,
+	"$rednio co dwa dni.",
+	CHANGE_CHARACTER,
+	"Masz uprzedzenia...",
+	CHANGE_CHARACTER,
+	"Albo jak sprzeda%e$",
+	NEW_LINE,
+	"mi recept# na %amanie",
+	NEW_LINE,
+	"dziewcz#cych serc.",
+	CHANGE_CHARACTER,
+	"Forsa nie dzia%a?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	CHANGE_CHARACTER,
+	"Dziwne. Zwykle dzia%a.",
+	CHANGE_CHARACTER,
+	"Albo jak...",
+	CHANGE_CHARACTER,
+	"DOBRZE JU}, DOBRZE!",
+	DISPLAY_MESSAGE,
+	"Zapomnijmy o tym!",
+	DISPLAY_MESSAGE,
+	"M*j nowy wynalazek sprawdzi%em",
+	NEW_LINE,
+	"ju< na sobie samym!",
+	CHANGE_CHARACTER,
+	"Powa<nie?",
+	CHANGE_CHARACTER,
+	"Powa<nie. Mog# zademonstrowa^.",
+	CHANGE_CHARACTER,
+	"\377Dobra, zaryzykuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog109[] = {
+	"\377Cudownie. Super zamieniacz w gnoma.",
+	CHANGE_CHARACTER,
+	"Khm, to tylko efekt uboczny.",
+	DISPLAY_MESSAGE,
+	"Czasami nie kontroluj# swoich",
+	NEW_LINE,
+	"wynalazk*w.",
+	DISPLAY_MESSAGE,
+	"Ale nie b*j si#, to trwa tylko",
+	NEW_LINE,
+	"sekundk#.",
+	CHANGE_CHARACTER,
+	"No my$l#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog110[] = {
+	"I ju< jestem. Czy zauwa<y%e$ jakie$ inne",
+	NEW_LINE,
+	"niezwyk%e rzeczy?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	CHANGE_CHARACTER,
+	"Wspaniale! Wi#c pigu%ki wci@<",
+	NEW_LINE,
+	"dzia%aj@!",
+	CHANGE_CHARACTER,
+	"Taaak?",
+	CHANGE_CHARACTER,
+	"Tak! Sprawd> sw*j portfel!",
+	CHANGE_CHARACTER,
+	"M*j porftel jest wci@<...",
+	END_DIALOG,
+};
+
+const static char *polishDialog111[] = {
+	"Gdzie jest portfel?!",
+	NEW_LINE,
+	"Ty z%odzieju! Oddaj go!",
+	CHANGE_CHARACTER,
+	"Spokojnie, oto tw*j portfel.",
+	END_DIALOG,
+};
+
+const static char *polishDialog112[] = {
+	"}@dam wyja$nie=.",
+	CHANGE_CHARACTER,
+	"Ha! To najlepsza rzecz, jak@",
+	NEW_LINE,
+	"kiedykolwiek wynalaz%em!",
+	CHANGE_CHARACTER,
+	"Co to jest?",
+	CHANGE_CHARACTER,
+	"Nie widzia%e$, jak kradn# ci",
+	NEW_LINE,
+	"portfel,",
+	DISPLAY_MESSAGE,
+	"...poniewa< zjad%em...",
+	NEW_LINE,
+	"PIGU]K[ CZASU!",
+	CHANGE_CHARACTER,
+	"\377Pigu%k# czasu?",
+	CHANGE_CHARACTER,
+	"Tak! Ka<dy, kto j@ zje, <yje",
+	NEW_LINE,
+	"1000 razy szybciej ni<...",
+	DISPLAY_MESSAGE,
+	"...reszta $wiata!",
+	CHANGE_CHARACTER,
+	"To oznacza...",
+	CHANGE_CHARACTER,
+	"To oznacza, <e $wiat dla",
+	NEW_LINE,
+	"tej osoby rusza si# 1000",
+	NEW_LINE,
+	"razy wolniej!",
+	DISPLAY_MESSAGE,
+	"Chocia<, niestety, tylko",
+	NEW_LINE,
+	"przez kilka sekund...",
+	CHANGE_CHARACTER,
+	"C*<... To interesuj@ce.",
+	NEW_LINE,
+	"Ale jaki z tego po<ytek?",
+	CHANGE_CHARACTER,
+	"Nie dbam o to. Wymy$l co$.",
+	DISPLAY_MESSAGE,
+	"M*g%by$, dla przyk%adu, wchodzi^",
+	NEW_LINE,
+	"do kina bez biletu, i nikt by...",
+	DISPLAY_MESSAGE,
+	"...tego nie zauwa<y%.",
+	CHANGE_CHARACTER,
+	"Oczywi$cie! Wspaniale!",
+	NEW_LINE,
+	"Kupuj# patent!",
+	CHANGE_CHARACTER,
+	"To w%a$nie jest problem...",
+	DISPLAY_MESSAGE,
+	"Jak mo<e pami#tasz, m*j wuj Gallagher",
+	NEW_LINE,
+	"dokonywa% najlepszych wynalazk*w,",
+	DISPLAY_MESSAGE,
+	"kiedy by%... powiedzmy...",
+	CHANGE_CHARACTER,
+	"...pijany...",
+	CHANGE_CHARACTER,
+	"...zatruty.",
+	DISPLAY_MESSAGE,
+	"I to samo przydarzy%o si# mnie.",
+	NEW_LINE,
+	"(westchnienie).",
+	DISPLAY_MESSAGE,
+	"Tak wi#c ostatniej nocy obudzi%em",
+	NEW_LINE,
+	"si# z potwornym b*lem g%owy...",
+	DISPLAY_MESSAGE,
+	"...i z pigu%kami na stole.",
+	DISPLAY_MESSAGE,
+	"Nie pami#tam, jak je zrobi%em.",
+	CHANGE_CHARACTER,
+	"Och nie!",
+	CHANGE_CHARACTER,
+	"Ale mog# nad nimi popracowa^.",
+	DISPLAY_MESSAGE,
+	"Do tego potrzebuj# twoich pieni#dzy.",
+	NEW_LINE,
+	"Zawrzyjmy umow#.",
+	DISPLAY_MESSAGE,
+	"Ty sponsorujesz badania,",
+	NEW_LINE,
+	"budujesz laboratorium",
+	NEW_LINE,
+	"i w og*le...",
+	DISPLAY_MESSAGE,
+	"...a ja ci daj# swoje prawa.",
+	CHANGE_CHARACTER,
+	"Dasz mi patent?!",
+	CHANGE_CHARACTER,
+	"Tak. Wszystko, na czym mi zale<y, to",
+	NEW_LINE,
+	"szacunek $rodowiska naukowego.",
+	DISPLAY_MESSAGE,
+	"I Nobel.",
+	DISPLAY_MESSAGE,
+	"No wiesz, honoris causa tu",
+	NEW_LINE,
+	"i tam, wywiady...",
+	CHANGE_CHARACTER,
+	"Zgoda. Umowa stoi.",
+	DISPLAY_MESSAGE,
+	"Przygotuj list# potrzebnego",
+	NEW_LINE,
+	"wyposa<enia.",
+	CHANGE_CHARACTER,
+	"Znakomicie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog113[] = {
+	"Ten g%upiec mi ufa.",
+	DISPLAY_MESSAGE,
+	"Ale wykorzystam go...",
+	DISPLAY_MESSAGE,
+	"Pigu%ki czasu...",
+	DISPLAY_MESSAGE,
+	"Nie b#d# ich sprzedawa%",
+	NEW_LINE,
+	"tym g%upim ludziom!",
+	DISPLAY_MESSAGE,
+	"Mam gdzie$ patent!",
+	DISPLAY_MESSAGE,
+	"Mog# obrobi^ bank i nikt",
+	NEW_LINE,
+	"mnie nie zauwa<y!",
+	DISPLAY_MESSAGE,
+	"Szybciej ni< $wiat%o!",
+	DISPLAY_MESSAGE,
+	"Ukradn# najpierw troch# forsy",
+	NEW_LINE,
+	"lub z%ota na laboratorium",
+	NEW_LINE,
+	"dla tego szale=ca.",
+	END_DIALOG,
+};
+
+const static char *polishDialog114[] = {
+	"Ale wkr*tce...",
+	DISPLAY_MESSAGE,
+	"B#d# bogaty. Baaaardzo bogaty.",
+	DISPLAY_MESSAGE,
+	"\377Czuj#, jakbym m*g%...",
+	DISPLAY_MESSAGE,
+	"\377...jakbym m*g%...",
+	END_DIALOG,
+};
+
+const static char *polishDialog115[] = {
+	"\377PODBI\\ |WIAT!...",
+	END_DIALOG,
+};
+
+const static char *polishDialog116[] = {
+	"\377Zawsze chcia%em to powiedzie^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog117[] = {
+	"To ja, znowu.",
+	CHANGE_CHARACTER,
+	"Do widzenia, znowu.",
+	CHANGE_CHARACTER,
+	"\377Powiedzmy, <e tego nie s%ysza%em.",
+	DISPLAY_MESSAGE,
+	"Czy  jest w domu?",
+	CHANGE_CHARACTER,
+	"Tak, ale kaza% mi pana nie wpuszcza^.",
+	CHANGE_CHARACTER,
+	"Mnie?! Dlaczego?!",
+	CHANGE_CHARACTER,
+	"Pa=ski ostatni wynalazek kosztowa%",
+	NEW_LINE,
+	"go dwie $ciany.",
+	CHANGE_CHARACTER,
+	"Och, ten wehiku% czasu...",
+	DISPLAY_MESSAGE,
+	"Ale teraz mam...",
+	CHANGE_CHARACTER,
+	"}e nie wspomn# znikni#cia jego kota.",
+	CHANGE_CHARACTER,
+	"Kot jest teraz bardziej szcz#$liwy",
+	NEW_LINE,
+	"ni< ktokolwiek z nas!",
+	DISPLAY_MESSAGE,
+	"\377O ile $wiat wci@< istnieje",
+	NEW_LINE,
+	"w XXV wieku.",
+	DISPLAY_MESSAGE,
+	"Niewa<ne. Musisz mnie wpu$ci^.",
+	CHANGE_CHARACTER,
+	"Taaak?",
+	CHANGE_CHARACTER,
+	"Albo powiem Ci@gwie, <e pijesz na s%u<bie.",
+	CHANGE_CHARACTER,
+	"Blefujesz pan. Nie ma dowod*w.",
+	CHANGE_CHARACTER,
+	"Niby tak, ale nigdy nie wiesz na pewno.",
+	END_DIALOG,
+};
+
+const static char *polishDialog118[] = {
+	"Dobra, w%a>, ty obrzydliwy terrorysto.",
+	NEW_LINE,
+	"Tylko nikomu nic nie m*w.",
+	CHANGE_CHARACTER,
+	"Oczywi$cie. Dzi#kuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog119[] = {
+	"Ah... Wi#c to tak si# wszystko sta%o...",
+	DISPLAY_MESSAGE,
+	"To dlatego nikt nie widzia%,",
+	NEW_LINE,
+	"jak skarbce by%y ograbiane...",
+	DISPLAY_MESSAGE,
+	"To naprawd# niebezpieczny",
+	NEW_LINE,
+	"wynalazek!",
+	DISPLAY_MESSAGE,
+	"\377MUSZ[ zatrzyma^ Ci@gw#!",
+	DISPLAY_MESSAGE,
+	"\377Jako$.",
+	DISPLAY_MESSAGE,
+	"\377O rany! Te pigu%ki, kt*re",
+	NEW_LINE,
+	"wyj@%em z Cze$ka...",
+	DISPLAY_MESSAGE,
+	"Och, nie! Kto$ nadchodzi!",
+	END_DIALOG,
+};
+
+const static char *polishDialog120[] = {
+	"Musz# si# gdzie$ schowa^!",
+	NEW_LINE,
+	"Teraz!",
+	END_DIALOG,
+};
+
+const static char *polishDialog121[] = {
+	"Musz# kupi^ tradycyjny sejf.",
+	DISPLAY_MESSAGE,
+	"Ten g%upi robot znowu si# popsu%.",
+	DISPLAY_MESSAGE,
+	"Nienawidz# go. ZAMKNIJ SI[,",
+	NEW_LINE,
+	"TY KUPO Z]OMU!",
+	END_DIALOG,
+};
+
+const static char *polishDialog122[] = {
+	"Trzeci raz w tym tygodniu.",
+	NEW_LINE,
+	"Ju< dobrze, dobrze!...",
+	NEW_LINE,
+	"Id#!...",
+	END_DIALOG,
+};
+
+const static char *polishDialog123[] = {
+	"...pokry^ wszystko. Potrzebuj# wi#cej",
+	NEW_LINE,
+	"pieni#dzy na system ochronny.",
+	DISPLAY_MESSAGE,
+	"Mam tylko dw*ch ludzi i...",
+	CHANGE_CHARACTER,
+	"Wi#cej i wi#cej! Tylko to s%ysz#!",
+	CHANGE_CHARACTER,
+	"Wyja$ni# raz jeszcze...",
+	END_DIALOG,
+};
+
+const static char *polishDialog124[] = {
+	"Szefie? W%a$nie otrzyma%em informacj#",
+	NEW_LINE,
+	"od profesora.",
+	DISPLAY_MESSAGE,
+	"Prosi pana do laboratorium.",
+	DISPLAY_MESSAGE,
+	"M*wi, <e rozszyfrowa% struktur#",
+	NEW_LINE,
+	"pigu%ek.",
+	END_DIALOG,
+};
+
+const static char *polishDialog125[] = {
+	"Wi#c to jest to?!",
+	CHANGE_CHARACTER,
+	"Zdecydowanie ...hik!... tak.",
+	CHANGE_CHARACTER,
+	"Wspaniale!",
+	END_DIALOG,
+};
+
+const static char *polishDialog126[] = {
+	"Musz# ich powstrzyma^!",
+	DISPLAY_MESSAGE,
+	"Nie ma czasu do stracenia!",
+	END_DIALOG,
+};
+
+const static char *polishDialog127[] = {
+	"Prosz#, prosz#...",
+	DISPLAY_MESSAGE,
+	"Naprawd# dzia%asz mi na nerwy.",
+	DISPLAY_MESSAGE,
+	"Dobrze, <e nie oszcz#dza%em na",
+	NEW_LINE,
+	"systemie ochronnym...",
+	DISPLAY_MESSAGE,
+	"To pole si%owe jest niezniszczalne!",
+	DISPLAY_MESSAGE,
+	"Ha!",
+	END_DIALOG,
+};
+
+const static char *polishDialog128[] = {
+	"Ale i tak musz# ci# zabi^.",
+	// END_DIALOG,
+	CHANGE_CHARACTER,
+	"Nie, nie!",
+	CHANGE_CHARACTER,
+	"Cisza!",
+	CHANGE_CHARACTER,
+	"To nie jest tego warte!",
+	CHANGE_CHARACTER,
+	"Powa<nie?",
+	CHANGE_CHARACTER,
+	"Ja nie chc#...",
+	END_DIALOG,
+};
+
+const static char *polishDialog129[] = {
+	CHANGE_CHARACTER,
+	"Biedny profesor zemdla%...",
+	CHANGE_CHARACTER,
+	"Ale... Jak...",
+	NEW_LINE,
+	"NIC Z TEGO NIE ROZUMIEM!!!",
+	CHANGE_CHARACTER,
+	"To bardzo proste.",
+	DISPLAY_MESSAGE,
+	"Do twojej czapki przymocowali$my",
+	NEW_LINE,
+	"mikro-kamer#.",
+	DISPLAY_MESSAGE,
+	"W ten spos*b przez ca%y czas wiedzieli$my,",
+	NEW_LINE,
+	"co si# dzieje.",
+	CHANGE_CHARACTER,
+	"A widzieli$cie, jak ja?...",
+	CHANGE_CHARACTER,
+	"Nie chc# ci# zawstydza^.",
+	DISPLAY_MESSAGE,
+	"By%o nie by%o, odwali%e$ dla RGB kawa%",
+	NEW_LINE,
+	"dobrej roboty.",
+	CHANGE_CHARACTER,
+	"Ale Ci@gwa uciek%!",
+	CHANGE_CHARACTER,
+	"On jest niewa<ny. Mamy profesora,",
+	NEW_LINE,
+	"a ty dasz nam pigu%ki.",
+	DISPLAY_MESSAGE,
+	"Przepraszam, ale nie mo<esz ich zatrzyma^.",
+	CHANGE_CHARACTER,
+	"Okej, ale... Niech mi pan",
+	NEW_LINE,
+	"da tylko minut#...",
+	DISPLAY_MESSAGE,
+	"Mam pewien interes do za%atwienia",
+	NEW_LINE,
+	"z tym %ajdakiem.",
+	CHANGE_CHARACTER,
+	"\377W porz@dku. Ale pospiesz si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog130[] = {
+	"\377(gulp) Ten efekt czasowy naprawd#",
+	NEW_LINE,
+	"nie trwa d%ugo...",
+	END_DIALOG,
+};
+
+const static char *polishDialog131[] = {
+	"Przegra%e$, %otrze!",
+	NEW_LINE,
+	"Policja otacza budynek!",
+	CHANGE_CHARACTER,
+	"Nie wyg%upiaj si#.",
+	NEW_LINE,
+	"Chyba nie my$lisz, <e nie mam",
+	NEW_LINE,
+	"tajnej drogi ucieczki, co?",
+	CHANGE_CHARACTER,
+	"Taak? Jak@?",
+	CHANGE_CHARACTER,
+	"Jakbym mia% ci powiedzie^...",
+	NEW_LINE,
+	"Spadaj, robaku. Jestem zaj#ty.",
+	END_DIALOG,
+};
+
+const static char *polishDialog132[] = {
+	"Musz# pana rozbroi^.",
+	NEW_LINE,
+	"Prosz# by^ grzecznym i podda^ si#",
+	NEW_LINE,
+	"bez utrudnie=.",
+	CHANGE_CHARACTER,
+	"Nie mam czasu na <arty.",
+	DISPLAY_MESSAGE,
+	"Zje<d<aj st@d, albo znowu",
+	NEW_LINE,
+	"wyci@gn# sw*j pistolet.",
+	CHANGE_CHARACTER,
+	"Ostrzegam...",
+	CHANGE_CHARACTER,
+	"Gdzie oni sprzedaj@ takich",
+	NEW_LINE,
+	"nudziarzy jak ty?",
+	END_DIALOG,
+};
+
+const static char *polishDialog133[] = {
+	"Nie dam panu kolejnej szansy...",
+	CHANGE_CHARACTER,
+	"Fajnie. A teraz <egnam.",
+	END_DIALOG,
+};
+
+const static char *polishDialog134[] = {
+	"Niech pan przestanie pakowa^ t# fors#!",
+	END_DIALOG,
+};
+
+const static char *polishDialog135[] = {
+	"Witam.",
+	CHANGE_CHARACTER,
+	"No. O co chodzi?",
+	CHANGE_CHARACTER,
+	"Przys%ano mnie, <ebym tu nieco",
+	NEW_LINE,
+	"potrenowa%.",
+	CHANGE_CHARACTER,
+	"Kolejny napalony na bycie tajnym agentem,",
+	NEW_LINE,
+	"co?",
+	CHANGE_CHARACTER,
+	"U-hm.",
+	CHANGE_CHARACTER,
+	"Poka< mi jakie$ papiery, to ci# wpuszcz#.",
+	CHANGE_CHARACTER,
+	"Si# robi.",
+	END_DIALOG,
+};
+
+const static char *polishDialog136[] = {
+	"Nie m*g%bym wle>^ bez ca%ej tej",
+	NEW_LINE,
+	"biurokracji?",
+	CHANGE_CHARACTER,
+	"Przykro mi, ale nie.",
+	NEW_LINE,
+	"Rozkazy to rozkazy.",
+	CHANGE_CHARACTER,
+	"A barany to barany.",
+	CHANGE_CHARACTER,
+	"\377A martwi ludzie to martwi ludzie.",
+	CHANGE_CHARACTER,
+	"\377}ycz# mi%ego dnia, prosz# pana.",
+	END_DIALOG,
+};
+
+const static char *polishDialog137[] = {
+	"PROSZ[, MOG[ WEJ|\?!",
+	CHANGE_CHARACTER,
+	"TAK, MO}ESZ!",
+	NEW_LINE,
+	"POKA} TYLKO PRZEPUSTK[!",
+	END_DIALOG,
+};
+
+const static char *polishDialog138[] = {
+	"Wpu$^ mnie!",
+	CHANGE_CHARACTER,
+	"Poka< dokumenty!",
+	CHANGE_CHARACTER,
+	"Przejmujesz si# swoj@ prac@, no nie?",
+	CHANGE_CHARACTER,
+	"|lepy jeste$, czy co?",
+	NEW_LINE,
+	"Czytam gazet# na s%u<bie.",
+	CHANGE_CHARACTER,
+	"\377No tak. Sorry.",
+	END_DIALOG,
+};
+
+const static char *polishDialog139[] = {
+	"Musz#...",
+	CHANGE_CHARACTER,
+	"Dokumenty!",
+	END_DIALOG,
+};
+
+const static char *polishDialog140[] = {
+	"Co czytasz?",
+	CHANGE_CHARACTER,
+	"\'Tydzie= }o%nierza\', oczywi$cie.",
+	CHANGE_CHARACTER,
+	"Kochasz te wszystkie militaria,",
+	NEW_LINE,
+	"no nie?",
+	CHANGE_CHARACTER,
+	"Zg%upia%e$? Mam tu zdj#cia fajnych babek...",
+	DISPLAY_MESSAGE,
+	"...krzy<*wki ...stron# z dowcipami...",
+	DISPLAY_MESSAGE,
+	"...plotki ...przepisy...",
+	CHANGE_CHARACTER,
+	"PRZEPISY?!",
+	CHANGE_CHARACTER,
+	"Tak, staraj@ si# zwi#kszy^ nak%ad.",
+	NEW_LINE,
+	"Zdoby^ nowych czytelnik*w, no wiesz.",
+	CHANGE_CHARACTER,
+	"Ah tak. |wietny pomys%.",
+	NEW_LINE,
+	"A jest co$ o szyde%kowaniu?",
+	CHANGE_CHARACTER,
+	"Mam wra<enie, <e chcesz by^ dowcipny.",
+	CHANGE_CHARACTER,
+	"Eee, ja? Nigdy.",
+	CHANGE_CHARACTER,
+	"To dobrze.",
+	END_DIALOG,
+};
+
+const static char *polishDialog141[] = {
+	"Po<yczy%by$ mi to pismo?",
+	CHANGE_CHARACTER,
+	"A czym ja wtedy b#d# zabija% czas?",
+	CHANGE_CHARACTER,
+	"Eee... Mo<esz policzy^ li$cie na drzewach.",
+	CHANGE_CHARACTER,
+	"Jest tu 11034 li$ci.",
+	CHANGE_CHARACTER,
+	"\377]a%.",
+	END_DIALOG,
+};
+
+const static char *polishDialog142[] = {
+	"Co poza tym?",
+	CHANGE_CHARACTER,
+	"Nie marud>.",
+	END_DIALOG,
+};
+
+const static char *polishDialog143[] = {
+	"Tak trzymaj.",
+	END_DIALOG,
+};
+
+const static char *polishDialog144[] = {
+	CHANGE_CHARACTER,
+	"Ty tam, wracaj!",
+	END_DIALOG,
+};
+
+const static char *polishDialog145[] = {
+	"O co chodzi?",
+	CHANGE_CHARACTER,
+	"Musisz pokaza^ mi przepustk#.",
+	CHANGE_CHARACTER,
+	"A jak wejd# na chama?",
+	CHANGE_CHARACTER,
+	"B#d# musia% ci# zastrzeli^.",
+	CHANGE_CHARACTER,
+	"(gulp)",
+	END_DIALOG,
+};
+
+const static char *polishDialog146[] = {
+	CHANGE_CHARACTER,
+	"Ostrzegam... Moje naboje s@",
+	NEW_LINE,
+	"szybsze od ciebie...",
+	END_DIALOG,
+};
+
+const static char *polishDialog147[] = {
+	CHANGE_CHARACTER,
+	"W porz@dku. Zamelduj si# u kapitana.",
+	NEW_LINE,
+	"Powinien by^ w pobli<u.",
+	CHANGE_CHARACTER,
+	"Dzi#ki.",
+	END_DIALOG,
+};
+
+const static char *polishDialog148[] = {
+	CHANGE_CHARACTER,
+	"Zrobimy z ciebie m#<czyzn#,",
+	NEW_LINE,
+	"racja, synu?!",
+	CHANGE_CHARACTER,
+	"Eee...",
+	CHANGE_CHARACTER,
+	"Najlepszego z najlepszych!...",
+	CHANGE_CHARACTER,
+	"Uh...",
+	CHANGE_CHARACTER,
+	"Przez pot, krew i %zy!",
+	CHANGE_CHARACTER,
+	"Wola%bym...",
+	CHANGE_CHARACTER,
+	"Ciesz# si# z twojego entuzjazmu, synu!",
+	DISPLAY_MESSAGE,
+	"Nie tra^my czasu!",
+	DISPLAY_MESSAGE,
+	"Kazano mi odby^ z tob@ trening ekspresowy.",
+	DISPLAY_MESSAGE,
+	"W porz@dku, synu!",
+	DISPLAY_MESSAGE,
+	"Musisz przej$^ trzy testy!",
+	DISPLAY_MESSAGE,
+	"Zacznijmy od naj%atwiejszego!...",
+	END_DIALOG,
+};
+
+const static char *polishDialog149[] = {
+	CHANGE_CHARACTER,
+	"Zadanie jest proste.",
+	DISPLAY_MESSAGE,
+	"Zamkn# ci# tutaj...",
+	DISPLAY_MESSAGE,
+	"...i b#dziesz musia% si# jako$ wydosta^.",
+	DISPLAY_MESSAGE,
+	"Jasne?!",
+	CHANGE_CHARACTER,
+	"Prosz# pana, ja...",
+	CHANGE_CHARACTER,
+	"TO DOBRZE!!!",
+	END_DIALOG,
+};
+
+const static char *polishDialog150[] = {
+	"\377Halo?... Wspaniale.",
+	END_DIALOG,
+};
+
+const static char *polishDialog151[] = {
+	"No dobra, to by%o zabawne.",
+	NEW_LINE,
+	"Teraz prosz# mnie wypu$ci^!",
+	END_DIALOG,
+};
+
+const static char *polishDialog152[] = {
+	"Hej! Jest tam kto$?!",
+	DISPLAY_MESSAGE,
+	"\377POMOCY!!!",
+	END_DIALOG,
+};
+
+const static char *polishDialog153[] = {
+	"Lito$ci! Ja tu umr#!",
+	END_DIALOG,
+};
+
+const static char *polishDialog154[] = {
+	"Robi# si# g%odny!",
+	END_DIALOG,
+};
+
+const static char *polishDialog155[] = {
+	"Nie wiem, co teraz powiedzie^...",
+	END_DIALOG,
+};
+
+const static char *polishDialog156[] = {
+	"Chyba ...zda%e$ ...pierwszy test...",
+	DISPLAY_MESSAGE,
+	"...Przejd>my ...do nast#pnego...",
+	END_DIALOG,
+};
+
+const static char *polishDialog157[] = {
+	CHANGE_CHARACTER,
+	"Dobrze, <o%nierzu.",
+	DISPLAY_MESSAGE,
+	"Za%*<my, <e jestem twoim je=cem...",
+	DISPLAY_MESSAGE,
+	"\377..i znam jakie$ tajne has%o.",
+	DISPLAY_MESSAGE,
+	"\377usisz je ode mnie wydosta^.",
+	DISPLAY_MESSAGE,
+	"JASNE?!?",
+	CHANGE_CHARACTER,
+	"Jestem jako$ ograniczony?",
+	CHANGE_CHARACTER,
+	"Nie. R*b, co chcesz.",
+	CHANGE_CHARACTER,
+	"Mog# nawet splun@^ panu w oko?",
+	CHANGE_CHARACTER,
+	"\377Tak.",
+	CHANGE_CHARACTER,
+	"\377Dzi#ki, tylko sprawdza%em.",
+	END_DIALOG,
+};
+
+const static char *polishDialog158[] = {
+	"Prosz# powiedzie^ mi has%o...",
+	DISPLAY_MESSAGE,
+	"...i miejmy to ju< z g%owy.",
+	DISPLAY_MESSAGE,
+	"\377OK, niech pan o tym pomy$li.",
+	END_DIALOG,
+};
+
+const static char *polishDialog159[] = {
+	"Hej, przem*w pan do mnie.",
+	DISPLAY_MESSAGE,
+	"\377S%ycha^ mnie?",
+	DISPLAY_MESSAGE,
+	"\377ZIEMIA DO KAPITANA, ZIEMIA DO KAPITANA!",
+	DISPLAY_MESSAGE,
+	"\377Jest pan beznadziejny.",
+	END_DIALOG,
+};
+
+const static char *polishDialog160[] = {
+	"Gotowy do m*wienia?",
+	DISPLAY_MESSAGE,
+	"\377Dobra, jeszcze poczekam.",
+	END_DIALOG,
+};
+
+const static char *polishDialog161[] = {
+	"No, a teraz, jak brzmi has%o?",
+	CHANGE_CHARACTER,
+	"Spadaj, <a%osny $mieciu.",
+	CHANGE_CHARACTER,
+	"B@d> grzeczny, albo po%askocz# znowu.",
+	CHANGE_CHARACTER,
+	"Dalej, to b#dzie przyjemno$^.",
+	CHANGE_CHARACTER,
+	"\377Podoba%o si# panu to, no nie?",
+	CHANGE_CHARACTER,
+	"No wiesz...",
+	CHANGE_CHARACTER,
+	"Dobra, znajd# jaki$ inny spos*b.",
+	END_DIALOG,
+};
+
+const static char *polishDialog162[] = {
+	"Przynios%em panu co$...",
+	CHANGE_CHARACTER,
+	"Nie dam si# przekupi^.",
+	CHANGE_CHARACTER,
+	"Taaak?",
+	END_DIALOG,
+};
+
+const static char *polishDialog163[] = {
+	NEW_LINE,
+	"OH DAJMIDAJMIDAJMI!!!",
+	DISPLAY_MESSAGE,
+	"ZROBI[ WSZYSTKO!!!",
+	CHANGE_CHARACTER,
+	"Has%o...",
+	CHANGE_CHARACTER,
+	"Has%o brzmi \'KAWA\'.",
+	DISPLAY_MESSAGE,
+	"Powiedz je barmanowi, a co$ ci da.",
+	DISPLAY_MESSAGE,
+	"Potem opowie ci o trzecim te$cie.",
+	DISPLAY_MESSAGE,
+	"TERAZ UWOLNIJ MNIE!!!",
+	CHANGE_CHARACTER,
+	"Pomy$l# o tym.",
+	END_DIALOG,
+};
+
+const static char *polishDialog164[] = {
+	"Ty...",
+	DISPLAY_MESSAGE,
+	"...ty...",
+	DISPLAY_MESSAGE,
+	"\377...zda%e$!",
+	END_DIALOG,
+};
+
+const static char *polishDialog165[] = {
+	"Co powiesz na cudowny kalejdoskop?",
+	CHANGE_CHARACTER,
+	"Mia%em kiedy$ jeden, ale kapitan zobaczy%...",
+	DISPLAY_MESSAGE,
+	"...jak si# nim bawi# i zabra% mi go.",
+	DISPLAY_MESSAGE,
+	"My$l#, <e sam go chcia%, no wiesz...",
+	CHANGE_CHARACTER,
+	"Jak dasz mi gazet#, dam ci",
+	NEW_LINE,
+	"ten kalejdoskop.",
+	CHANGE_CHARACTER,
+	"Nawet nie chc# wiedzie^, sk@d go masz...",
+	CHANGE_CHARACTER,
+	"I dobrze.",
+	CHANGE_CHARACTER,
+	"...ale co, je$li kapitan mnie znowu zobaczy?",
+	CHANGE_CHARACTER,
+	"Nie martw si#, jest zwi@zany.",
+	CHANGE_CHARACTER,
+	"Och, test numer dwa, co?...",
+	CHANGE_CHARACTER,
+	"Yep.",
+	CHANGE_CHARACTER,
+	"Dobra, dawaj.",
+	END_DIALOG,
+};
+
+const static char *polishDialog166[] = {
+	"\'KAWA\'.",
+	END_DIALOG,
+};
+
+const static char *polishDialog167[] = {
+	"Gor@ca, nie?",
+	CHANGE_CHARACTER,
+	"Uh-huh.",
+	CHANGE_CHARACTER,
+	"Kapitan powiedzia%, <e opowie mi pan",
+	NEW_LINE,
+	"o trzecim te$cie.",
+	CHANGE_CHARACTER,
+	"Znowu...",
+	DISPLAY_MESSAGE,
+	"Dobra, to rodzaj chowanego.",
+	DISPLAY_MESSAGE,
+	"Kapitan si# chowa, ty szukasz.",
+	CHANGE_CHARACTER,
+	"Ale on jest wci@< przywi@zany do krzes%a!",
+	CHANGE_CHARACTER,
+	"Ten cz%owiek i te jego gierki...",
+	DISPLAY_MESSAGE,
+	"Prze<ywa je bardziej, ni< powinien!...",
+	DISPLAY_MESSAGE,
+	"Oszuka% ci#.",
+	DISPLAY_MESSAGE,
+	"Id> i sprawd>.",
+	DISPLAY_MESSAGE,
+	"Na pewno ju< si# uwolni%.",
+	CHANGE_CHARACTER,
+	"Ale zabra%em mu n*<!",
+	DISPLAY_MESSAGE,
+	"Jak m*g% rozci@^ wi#zy?!",
+	CHANGE_CHARACTER,
+	"Mo<e odszed% z krzes%em przywi@zanym do...",
+	DISPLAY_MESSAGE,
+	"Niewa<ne.",
+	CHANGE_CHARACTER,
+	"Jakie$ wskaz*wki co do miejsca jego ukrycia?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	CHANGE_CHARACTER,
+	"Och, daj pan spok*j.",
+	CHANGE_CHARACTER,
+	"Nie, ch%opcze. Graj uczciwie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog168[] = {
+	"Czas na ma%@ podpowied>?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog169[] = {
+	"Dzie= dobry. Jestem Marek.",
+	CHANGE_CHARACTER,
+	"A ja nie.",
+	DISPLAY_MESSAGE,
+	"Co mog# dla ciebie zrobi^?",
+	CHANGE_CHARACTER,
+	"\377Da^ mi mn*stwo forsy...",
+	DISPLAY_MESSAGE,
+	"...lub stan@^ na g%owie...",
+	DISPLAY_MESSAGE,
+	"...lub...",
+	CHANGE_CHARACTER,
+	"Okej, okej. Remis.",
+	DISPLAY_MESSAGE,
+	"Wi#c?...",
+	CHANGE_CHARACTER,
+	"Kto jeszcze jest w obozie?",
+	CHANGE_CHARACTER,
+	"Jeste$ dziennikarzem?",
+	CHANGE_CHARACTER,
+	"Nie, tajnym agentem.",
+	CHANGE_CHARACTER,
+	"Ty te<?... W ka<dym razie jest",
+	NEW_LINE,
+	"tu tylko nas trzech.",
+	DISPLAY_MESSAGE,
+	"Ja, kapitan i stra<nik.",
+	CHANGE_CHARACTER,
+	"Bez kobiet?",
+	CHANGE_CHARACTER,
+	"Bez p%aczu.",
+	CHANGE_CHARACTER,
+	"\377No c*<...",
+	END_DIALOG,
+};
+
+const static char *polishDialog170[] = {
+	"Ruch nie za wielki, nie?",
+	CHANGE_CHARACTER,
+	"Zamawiasz co$ czy nie?",
+	CHANGE_CHARACTER,
+	"Nie mam forsy.",
+	CHANGE_CHARACTER,
+	"Dzisiaj za darmo.",
+	CHANGE_CHARACTER,
+	"Powa<nie?",
+	CHANGE_CHARACTER,
+	"Powa<nie.",
+	CHANGE_CHARACTER,
+	"Chc# hot-doga.",
+	CHANGE_CHARACTER,
+	"Pud%o.",
+	CHANGE_CHARACTER,
+	"Pizz#?",
+	CHANGE_CHARACTER,
+	"Pud%o.",
+	CHANGE_CHARACTER,
+	"Tosta?",
+	CHANGE_CHARACTER,
+	"Pud%o.",
+	CHANGE_CHARACTER,
+	"Cokolwiek?",
+	CHANGE_CHARACTER,
+	"Pud%o.",
+	CHANGE_CHARACTER,
+	"\377Nie, dzi#kuj#. Nie jestem",
+	NEW_LINE,
+	"g%odny.",
+	END_DIALOG,
+};
+
+const static char *polishDialog171[] = {
+	"Co pan pije?",
+	CHANGE_CHARACTER,
+	"Herbat#.",
+	CHANGE_CHARACTER,
+	"Na pewno...",
+	END_DIALOG,
+};
+
+const static char *polishDialog172[] = {
+	"]adna pogoda.",
+	CHANGE_CHARACTER,
+	"Mhmmm...",
+	END_DIALOG,
+};
+
+const static char *polishDialog173[] = {
+	"Czasem czuj# si# zm#czony.",
+	DISPLAY_MESSAGE,
+	"\377Bardzo zm#czony.",
+	END_DIALOG,
+};
+
+const static char *polishDialog174[] = {
+	"Hej, Woodstock si# sko=czy%!",
+	END_DIALOG,
+};
+
+const static char *polishDialog175[] = {
+	"Dzi#ki.",
+	END_DIALOG,
+};
+
+const static char *polishDialog176[] = {
+	CHANGE_CHARACTER,
+	"Co u licha...",
+	END_DIALOG,
+};
+
+const static char *polishDialog177[] = {
+	"Hej, nie jest pan spraginony?",
+	DISPLAY_MESSAGE,
+	"Pana kubek le<y od%ogiem...",
+	END_DIALOG,
+};
+
+const static char *polishDialog178[] = {
+	"Sir, mamy sygna%y, <e...",
+	CHANGE_CHARACTER,
+	"P*<niej! Teraz jestem",
+	NEW_LINE,
+	"bardzo zaj#ty.",
+	CHANGE_CHARACTER,
+	"Jak pan sobie <yczy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog179[] = {
+	"Sir, jaki$ %epek pr*bowa% dosta^ si#",
+	NEW_LINE,
+	"do posiad%o$ci.",
+	END_DIALOG,
+};
+
+const static char *polishDialog180[] = {
+	"Nie przejmuj si#.",
+	DISPLAY_MESSAGE,
+	"M%odzi ch%opcy zawsze s@ ciekawi...",
+	DISPLAY_MESSAGE,
+	"...a moje domostwo musi dzia%a^ im na wyobra>ni#.",
+	DISPLAY_MESSAGE,
+	"Ale trzymaj na niego oko.",
+	CHANGE_CHARACTER,
+	"Tak jest, sir!",
+	END_DIALOG,
+};
+
+const static char *polishDialog181[] = {
+	"Sir, ten ch%opak zn*w pr*bowa%.",
+	END_DIALOG,
+};
+
+const static char *polishDialog182[] = {
+	"My$lisz, <e to powa<ne?",
+	CHANGE_CHARACTER,
+	"Hmmm... Nie...",
+	DISPLAY_MESSAGE,
+	"On nie wygl@da gro>nie.",
+	DISPLAY_MESSAGE,
+	"Ale mo<e powinni$my...",
+	CHANGE_CHARACTER,
+	"Nieee.",
+	DISPLAY_MESSAGE,
+	"Po prostu r*b dalej swoj@ robot#.",
+	DISPLAY_MESSAGE,
+	"Ale powiedz mi, jak si# znowu pojawi.",
+	DISPLAY_MESSAGE,
+	"Teraz wracaj do pracy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog183[] = {
+	"Nie m*w mi, <e to znowu ten szczyl...",
+	CHANGE_CHARACTER,
+	"Obawiam si#, <e tak.",
+	DISPLAY_MESSAGE,
+	"Stra<nik m*wi, <e ch%opiec jest zdesperowany.",
+	END_DIALOG,
+};
+
+const static char *polishDialog184[] = {
+	"Zaczyna mnie denerwowa^.",
+	DISPLAY_MESSAGE,
+	"Za co ja wam p%ac#?",
+	CHANGE_CHARACTER,
+	"Mam go?...",
+	CHANGE_CHARACTER,
+	"Jeszcze nie. Dajmy mu",
+	NEW_LINE,
+	"ostatni@ szans#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog185[] = {
+	"Sir...",
+	CHANGE_CHARACTER,
+	"Niech zgadn#...",
+	DISPLAY_MESSAGE,
+	"CH]OPAK?!?...",
+	CHANGE_CHARACTER,
+	"Bingo.",
+	CHANGE_CHARACTER,
+	"Dlaczego ja musz# troszczy^",
+	NEW_LINE,
+	"si# o wszystko?!",
+	DISPLAY_MESSAGE,
+	"Nie mo<esz zrobi^ niczego samemu?",
+	CHANGE_CHARACTER,
+	"Mam go zabi^, czy tylko st%uc?",
+	CHANGE_CHARACTER,
+	"Jeste$ g%upi. Istniej@",
+	NEW_LINE,
+	"...lepsze sposoby...",
+	END_DIALOG,
+};
+
+const static char *polishDialog186[] = {
+	"Zajm# si# tym osobi$cie.",
+	DISPLAY_MESSAGE,
+	"A teraz wyjd>!",
+	DISPLAY_MESSAGE,
+	"Musz# si# ubra^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog187[] = {
+	"Ty tam, na g*rze!",
+	DISPLAY_MESSAGE,
+	"Z%a> natychmiast!",
+	DISPLAY_MESSAGE,
+	"\377Zero reakcji.",
+	DISPLAY_MESSAGE,
+	"\377G%uchy czy co?",
+	END_DIALOG,
+};
+
+const static char *polishDialog188[] = {
+	"Ty, ptasiek, nie b*j si#.",
+	DISPLAY_MESSAGE,
+	"Chod> do tatusia...",
+	DISPLAY_MESSAGE,
+	"\377(westchnienie)",
+	END_DIALOG,
+};
+
+const static char *polishDialog189[] = {
+	"Chod> tu, ptaszku...",
+	END_DIALOG,
+};
+
+const static char *polishDialog190[] = {
+	NEW_LINE,
+	"Trzymaj si# z dala od tamtych drzwi!",
+	CHANGE_CHARACTER,
+	"Czemu?",
+	CHANGE_CHARACTER,
+	"Nie tw*j interes.",
+	DISPLAY_MESSAGE,
+	"Po prostu nie dotykaj ich.",
+	END_DIALOG,
+};
+
+const static char *polishDialog191[] = {
+	CHANGE_CHARACTER,
+	"M*wi%em, <eby$ trzyma% si# z dala, nie?",
+	CHANGE_CHARACTER,
+	"OK, OK...",
+	END_DIALOG,
+};
+
+const static char *polishDialog192[] = {
+	"Przywioz%em now@ dostaw# z%ota.",
+	CHANGE_CHARACTER,
+	"Tak, wiem. Has%o?",
+	CHANGE_CHARACTER,
+	"Grzyb.",
+	CHANGE_CHARACTER,
+	"W porz@dku. Mo<esz zacz@^ wnosi^",
+	NEW_LINE,
+	"depozyt do $rodka.",
+	CHANGE_CHARACTER,
+	"Znakomicie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog193[] = {
+	"Jak ju< powiedzia%em, nasza organizacja",
+	NEW_LINE,
+	"zajmuje si# niezwyk%ymi sprawami.",
+	DISPLAY_MESSAGE,
+	"Ostatnio na przyk%ad rozwi@zali$my problem",
+	NEW_LINE,
+	"UFO nad Bia%ym Domem.",
+	CHANGE_CHARACTER,
+	"Oh, naphawd#? Jak?",
+	CHANGE_CHARACTER,
+	"Zestrzelili$my go.",
+	CHANGE_CHARACTER,
+	"\377Hozumiem. I kto ...lub co",
+	NEW_LINE,
+	"by%o w $hodku?",
+	CHANGE_CHARACTER,
+	"Chce pani wiedzie^?",
+	CHANGE_CHARACTER,
+	"O, tak! Jako wh*<ka jestem",
+	NEW_LINE,
+	"bahdzo ciekawska.",
+	CHANGE_CHARACTER,
+	"NAPRAWD[ chce pani wiedzie^?",
+	CHANGE_CHARACTER,
+	"TAK!",
+	CHANGE_CHARACTER,
+	"Ale ...NAPRAWD[ NAPRAWD[?",
+	CHANGE_CHARACTER,
+	"TAK!",
+	CHANGE_CHARACTER,
+	"\377Przepraszam, ale nie mog# powiedzie^.",
+	DISPLAY_MESSAGE,
+	"W ka<dym razie... Potrzebujemy pani pomocy.",
+	CHANGE_CHARACTER,
+	"Nie jestem tajnym agentem, tylko wh*<k@...",
+	CHANGE_CHARACTER,
+	"Wiem. Ale mam tutaj bardzo",
+	NEW_LINE,
+	"trudn@ spraw#...",
+	DISPLAY_MESSAGE,
+	"...kt*rej nie mog# rozwi@za^ od p*% roku.",
+	DISPLAY_MESSAGE,
+	"Jestem w beznadziejnej sytuacji.",
+	DISPLAY_MESSAGE,
+	"Pomy$la%em wi#c sobie, <e skoro zajmujemy",
+	NEW_LINE,
+	"si# dziwnymi sprawami...",
+	DISPLAY_MESSAGE,
+	"...to czemu nie u<y^ dziwnych",
+	NEW_LINE,
+	"$rodk*w?",
+	CHANGE_CHARACTER,
+	"I?...",
+	CHANGE_CHARACTER,
+	"Poka<# pani ksi@<k# telefoniczn@.",
+	DISPLAY_MESSAGE,
+	"Niech pani u<yje swoich mocy i losowo",
+	NEW_LINE,
+	"wska<e nazwisko.",
+	DISPLAY_MESSAGE,
+	"Mo<e $wie<y umys% pomo<e nam w $ledztwie.",
+	CHANGE_CHARACTER,
+	"Pan nie wierzy, <e to zadzia%a, phawda?",
+	CHANGE_CHARACTER,
+	"Nie, nie wierz#.",
+	CHANGE_CHARACTER,
+	"\377To jest g%upie.",
+	CHANGE_CHARACTER,
+	"Wiem.",
+	CHANGE_CHARACTER,
+	"\377Dobrze. Phosz# pokaza^ mi ksi@<k#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog194[] = {
+	"\377Nazwisko brzmi...",
+	DISPLAY_MESSAGE,
+	"...Hoppeh...",
+	DISPLAY_MESSAGE,
+	"...Mahek Hoppeh...",
+	DISPLAY_MESSAGE,
+	"Hm...",
+	END_DIALOG,
+};
+
+const static char *polishDialog195[] = {
+	"Nadchodzi.",
+	END_DIALOG,
+};
+
+const static char *polishDialog196[] = {
+	"Och, przepraszam za moich ludzi.",
+	DISPLAY_MESSAGE,
+	"S@ ostatnio zbyt nerwowi...",
+	DISPLAY_MESSAGE,
+	"Ale, prosz#... Porozmawiajmy...",
+	END_DIALOG,
+};
+
+const static char *polishDialog197[] = {
+	"S%uchaj pan...",
+	CHANGE_CHARACTER,
+	"Wiem, wiem.",
+	DISPLAY_MESSAGE,
+	"Prosz# da^ mi pi#^ minut, a wszystko",
+	NEW_LINE,
+	"stanie si# jasne.",
+	CHANGE_CHARACTER,
+	"Wal pan, zawsze lubi%em zabaw#",
+	NEW_LINE,
+	"w konspiracj#.",
+	CHANGE_CHARACTER,
+	"C*<...",
+	DISPLAY_MESSAGE,
+	"Jestem szefem organizacji zwanej RGB.",
+	CHANGE_CHARACTER,
+	"A czemu RGB?",
+	CHANGE_CHARACTER,
+	"Nawet ja nie wiem.",
+	DISPLAY_MESSAGE,
+	"Jest tak tajna.",
+	CHANGE_CHARACTER,
+	"\377Miodzio.",
+	CHANGE_CHARACTER,
+	"Celem organizacji jest rozwi@zywanie",
+	NEW_LINE,
+	"wszystkich nadzwyczajnych problem*w",
+	NEW_LINE,
+	"$wiata.",
+	CHANGE_CHARACTER,
+	"Jak podatki?",
+	CHANGE_CHARACTER,
+	"Nie, jak UFO, dziwne wynalazki,",
+	NEW_LINE,
+	"duchy...",
+	CHANGE_CHARACTER,
+	"]a%!",
+	CHANGE_CHARACTER,
+	"Tak, kiedy policja, wywiad i inne s%u<by",
+	NEW_LINE,
+	"nie mog@ da^ sobie rady...",
+	DISPLAY_MESSAGE,
+	"...my wkraczamy. Ale...",
+	DISPLAY_MESSAGE,
+	"\377Sze$^ miesi#cy temu z%oto i got*wka",
+	NEW_LINE,
+	"zdeponowane w najlepszych bankach zacz#%y",
+	NEW_LINE,
+	"znika^.",
+	DISPLAY_MESSAGE,
+	"Dos%ownie. Pum! I nie ma!",
+	CHANGE_CHARACTER,
+	"No i?...",
+	CHANGE_CHARACTER,
+	"Nie mamy <adnych $lad*w.",
+	DISPLAY_MESSAGE,
+	"Ca%a rzecz odbywa si# w kilka sekund.",
+	DISPLAY_MESSAGE,
+	"Mamy nagrania wideo, ale one nic nie",
+	NEW_LINE,
+	"pomagaj@.",
+	DISPLAY_MESSAGE,
+	"Dlatego wynaj#li$my wr*<k#,",
+	NEW_LINE,
+	"aby wskaza%a nam kogo$...",
+	DISPLAY_MESSAGE,
+	"...kto mo<e sta^ si# naszym",
+	NEW_LINE,
+	"zbawieniem.",
+	DISPLAY_MESSAGE,
+	"Wybra%a ciebie.",
+	CHANGE_CHARACTER,
+	"Bardzo przepraszam...",
+	DISPLAY_MESSAGE,
+	"Pan powiedzia%, <e wynaj#li$cie...",
+	NEW_LINE,
+	"...WR{}K[?!?",
+	CHANGE_CHARACTER,
+	"Ton@cy brzytwy si# chwyta.",
+	CHANGE_CHARACTER,
+	"To jest szalone. Mamo, obud> mnie!",
+	CHANGE_CHARACTER,
+	"Spokojnie. Mamy dla ciebie",
+	NEW_LINE,
+	"propozycj#.",
+	DISPLAY_MESSAGE,
+	"Spr*buj nam pom*c, a zostaniesz nagrodzony.",
+	CHANGE_CHARACTER,
+	"Nie mam motywacji.",
+	CHANGE_CHARACTER,
+	"Samozadowolenie?",
+	END_DIALOG,
+};
+
+const static char *polishDialog198[] = {
+	CHANGE_CHARACTER,
+	"Nasz szacunek?",
+	END_DIALOG,
+};
+
+const static char *polishDialog199[] = {
+	CHANGE_CHARACTER,
+	"Patriotyzm?",
+	END_DIALOG,
+};
+
+const static char *polishDialog200[] = {
+	CHANGE_CHARACTER,
+	"Dziewczyny?",
+	CHANGE_CHARACTER,
+	"To znaczy?...",
+	CHANGE_CHARACTER,
+	"To proste. Ka<da dziewczyna zakocha si#",
+	NEW_LINE,
+	"w tajnym agencie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog201[] = {
+	"Dobra, zgadzam si#. Co mam robi^?",
+	CHANGE_CHARACTER,
+	"Zanim zaczniesz, sugeruj# kr*tki pobyt",
+	NEW_LINE,
+	"w naszym specjalnym tajnym obozie",
+	NEW_LINE,
+	"treningowym.",
+	DISPLAY_MESSAGE,
+	"Wydam ci przepustk#.",
+	DISPLAY_MESSAGE,
+	"Umowa stoi?",
+	CHANGE_CHARACTER,
+	"Stoi!",
+	END_DIALOG,
+};
+
+const static char *polishDialog202[] = {
+	"\377..i nawet mia%em niez%y ubaw.",
+	CHANGE_CHARACTER,
+	"\377iesz# si#, <e podobaj@ ci si# nasze metody.",
+	DISPLAY_MESSAGE,
+	"Ale przejd>my do rzeczy.",
+	DISPLAY_MESSAGE,
+	"Musz# przyzna^, i< nie wierzy%em, <e mo<e by^",
+	NEW_LINE,
+	"z ciebie jaki$ po<ytek.",
+	DISPLAY_MESSAGE,
+	"Nic osobistego.",
+	CHANGE_CHARACTER,
+	"Mam nadziej#.",
+	CHANGE_CHARACTER,
+	"Ale przynios%e$ nam szcz#$cie.",
+	DISPLAY_MESSAGE,
+	"Nasi ludzie dowiedzieli si#, <e",
+	NEW_LINE,
+	"pewien przeci#tny biznesmen...",
+	DISPLAY_MESSAGE,
+	"...niejaki Ci@gwa Jan...",
+	DISPLAY_MESSAGE,
+	"...wydaje fors# jak szalony...",
+	DISPLAY_MESSAGE,
+	"...na jakie$ dziwne materia%y.",
+	DISPLAY_MESSAGE,
+	"Zwi@zane s@ z tym trzy bardzo podejrzane",
+	NEW_LINE,
+	"rzeczy:",
+	DISPLAY_MESSAGE,
+	"...P%aci got*wk@...",
+	DISPLAY_MESSAGE,
+	"...co jest co najmniej bez sensu",
+	NEW_LINE,
+	"w erze kart kredytowych...",
+	DISPLAY_MESSAGE,
+	"...Po drugie, jeszcze p*% roku temu nie by% tak",
+	NEW_LINE,
+	"bogaty, jak jest dzi$...",
+	DISPLAY_MESSAGE,
+	"...Po trzecie, po diab%a mu sto kilogram*w",
+	NEW_LINE,
+	"saletry?",
+	CHANGE_CHARACTER,
+	"Mo<e to jaki$ dziwak.",
+	CHANGE_CHARACTER,
+	"Mo<e. Jednak chcia%bym, <eby$ w$lizgn@% si#",
+	NEW_LINE,
+	"jako$ do jego posiad%o$ci...",
+	DISPLAY_MESSAGE,
+	"...i rozejrza% si# co nieco.",
+	DISPLAY_MESSAGE,
+	"Co ty na to?",
+	CHANGE_CHARACTER,
+	"No, nie wiem...",
+	CHANGE_CHARACTER,
+	"Obiecuj#, <e po twojej misji zrobi# ci#",
+	NEW_LINE,
+	"oficjalnym tajnym agentem.",
+	CHANGE_CHARACTER,
+	"\377S%owo?",
+	CHANGE_CHARACTER,
+	"Moje s%owo honoru.",
+	CHANGE_CHARACTER,
+	"Okej. Jestem gotowy.",
+	NEW_LINE,
+	"Gdzie mam si# uda^?",
+	CHANGE_CHARACTER,
+	"To ma%a wioska. Nie znajdziesz jej",
+	NEW_LINE,
+	"na wielu mapach...",
+	DISPLAY_MESSAGE,
+	"Ale przed wyjazdem dam ci specjalne",
+	NEW_LINE,
+	"wyposa<enie agenta.",
+	DISPLAY_MESSAGE,
+	"Szkoda, <e lataj@ce buty s@ w%a$nie",
+	NEW_LINE,
+	"wypo<yczone.",
+	DISPLAY_MESSAGE,
+	"R#kawice o megamocy te< si# sko=czy%y.",
+	DISPLAY_MESSAGE,
+	"W%a$ciwie to mam tylko specjalny super klej.",
+	DISPLAY_MESSAGE,
+	"No, ale lepszy rydz ni< nic...",
+	DISPLAY_MESSAGE,
+	"Powodzenia!",
+	END_DIALOG,
+};
+
+const static char *polishDialog203[] = {
+	CHANGE_CHARACTER,
+	"Nie martw si#. Wyzdrowieje.",
+	DISPLAY_MESSAGE,
+	"Zreszt@... o, patrz, idzie...",
+	END_DIALOG,
+};
+
+const static char *polishDialog204[] = {
+	CHANGE_CHARACTER,
+	"Nale<a%o mu si#. Ale zmarnowali$my",
+	NEW_LINE,
+	"do$^ czasu. Chod>my!",
+	CHANGE_CHARACTER,
+	"Nie! Chwila!... Musz# zobaczy^ Ann#!",
+	CHANGE_CHARACTER,
+	"Eemm... Nie da rady.",
+	CHANGE_CHARACTER,
+	"A to niby dlaczego?!",
+	CHANGE_CHARACTER,
+	"\377Widzisz... Anna to nasz cz%owiek.",
+	DISPLAY_MESSAGE,
+	"Mia%a rozkaz trzyma^ na ciebie oko...",
+	DISPLAY_MESSAGE,
+	"Na wypadek, gdyby zawiod%a mikrokamera.",
+	DISPLAY_MESSAGE,
+	"Mia%a by^ tak<e twoim natchnieniem...",
+	CHANGE_CHARACTER,
+	"Nie wierz# panu!",
+	CHANGE_CHARACTER,
+	"Ona ju< odlecia%a na",
+	NEW_LINE,
+	"kolejn@ misj#.",
+	NEW_LINE,
+	"Sorry.",
+	CHANGE_CHARACTER,
+	"To babcia pewnie te< by%a w to zamieszana?",
+	CHANGE_CHARACTER,
+	"To tubylka. Op%acili$my j@.",
+	CHANGE_CHARACTER,
+	"To ciekawe. Bo skoro tak, to dlaczego",
+	NEW_LINE,
+	"mia%em tyle trudno$ci?...",
+	CHANGE_CHARACTER,
+	"Wzbudzali$my twoj@ determinacj#.",
+	DISPLAY_MESSAGE,
+	"Liczyli$my na to, <e masz charakter.",
+	DISPLAY_MESSAGE,
+	"No i nie pomylili$my si#.",
+	CHANGE_CHARACTER,
+	"Traktujecie ludzi jak zwierz@tka",
+	NEW_LINE,
+	"do$wiadczalne.",
+	DISPLAY_MESSAGE,
+	"Jeste$cie bez lito$ci...",
+	CHANGE_CHARACTER,
+	"Ale to dzia%a, nie?",
+	CHANGE_CHARACTER,
+	"To wszystko jest takie niewiarygodne.",
+	DISPLAY_MESSAGE,
+	"Mo<e jeszcze zaraz si# dowiem, <e pies to",
+	NEW_LINE,
+	"zamaskowany ninja...",
+	DISPLAY_MESSAGE,
+	"...staruszek by% moim gorylem...",
+	DISPLAY_MESSAGE,
+	"...a pan jest z Marsa?!",
+	END_DIALOG,
+};
+
+const static char *polishDialog205[] = {
+	CHANGE_CHARACTER,
+	"To nie \'Dynastia\', to zwyk%a",
+	NEW_LINE,
+	"praca agenta.",
+	DISPLAY_MESSAGE,
+	"Ale, ale... Wst@p do RGB i tam",
+	NEW_LINE,
+	"na pewno spotkasz Ann#!",
+	CHANGE_CHARACTER,
+	"\377C*<... Pomy$l# o tym...",
+	CHANGE_CHARACTER,
+	"Wspaniale. W ka<dym razie...",
+	DISPLAY_MESSAGE,
+	"To by%a przyjemno$^ z tob@ pracowa^!",
+	END_DIALOG,
+};
+
+const static char *polishDialog206[] = {
+	CHANGE_CHARACTER,
+	"Nie musisz mi m*wi^. W%a$nie przeczyta%em",
+	NEW_LINE,
+	"szczeg*%owy raport.",
+	CHANGE_CHARACTER,
+	"Ale co sta%o si# z profesorem?",
+	CHANGE_CHARACTER,
+	"Och, ten biedak znowu zapomnia% formu%y.",
+	DISPLAY_MESSAGE,
+	"Damy mu najlepsze laboratorium, jakie mo<emy.",
+	DISPLAY_MESSAGE,
+	"Obecnie mamy tylko tych kilka pigu%ek,",
+	NEW_LINE,
+	"kt*re nam przekaza%e$.",
+	CHANGE_CHARACTER,
+	"A Ci@gwa?",
+	CHANGE_CHARACTER,
+	"Nie b*j si#, jego chciwo$^ zostanie ukarana.",
+	DISPLAY_MESSAGE,
+	"Mam nadziej#...",
+	CHANGE_CHARACTER,
+	"Jeszcze tylko drobiazg...",
+	DISPLAY_MESSAGE,
+	"Obieca% mi pan co$...",
+	END_DIALOG,
+};
+
+const static char *polishDialog207[] = {
+	CHANGE_CHARACTER,
+	"Ja?... Nie pami#tam...",
+	CHANGE_CHARACTER,
+	"Powiedzia% pan, <e zrobi mnie",
+	NEW_LINE,
+	"oficjalnym agentem...",
+	DISPLAY_MESSAGE,
+	"\'Dziewczyny kochaj@ si# w agentach\'.",
+	NEW_LINE,
+	"Pami#ta pan?",
+	END_DIALOG,
+};
+
+const static char *polishDialog208[] = {
+	CHANGE_CHARACTER,
+	"(westchnienie)",
+	DISPLAY_MESSAGE,
+	"Obietnica to obietnica...",
+	DISPLAY_MESSAGE,
+	"Niech pomy$l#.",
+	DISPLAY_MESSAGE,
+	"\377W porz@dku. Podejd> tutaj.",
+	END_DIALOG,
+};
+
+const static char *polishDialog209[] = {
+	"W imieniu...",
+	DISPLAY_MESSAGE,
+	"...ple...ple...ple...",
+	NEW_LINE,
+	"...ple...ple...",
+	DISPLAY_MESSAGE,
+	"...dla naszego kraju.",
+	END_DIALOG,
+};
+
+const static char *polishDialog210[] = {
+	"       C*<...       ",
+	NEW_LINE,
+	"To wszystko, kochani!",
+	END_DIALOG,
+};
+
+const static char *polishDialog211[] = {
+	"Znalaz%em pigu%k# czasu!",
+	DISPLAY_MESSAGE,
+	"Musia%a wypa$^ ze s%oika!...",
+	DISPLAY_MESSAGE,
+	"\377Miodzio.",
+	END_DIALOG,
+};
+
+const static char *polishDialog212[] = {
+	"]a%! Uroczo",
+	NEW_LINE,
+	"tutaj!...",
+	END_DIALOG
+};
+
+const static char *russianDialog0[] = {
+	ANIM_WAIT,
+	"Eobq|j efn}.",
+	CHANGE_CHARACTER,
+	"Ada.",
+	CHANGE_CHARACTER,
+	"Poxfmt c| hefr} rsoisf?",
+	CHANGE_CHARACTER,
+	"Eflo c dqacisawii.",
+	CHANGE_CHARACTER,
+	"Oxfn} rmfyna\200 ytska.",
+	DISPLAY_MESSAGE,
+	"El\200 roleasa.",
+	CHANGE_CHARACTER,
+	"` nf roleas, no vosfl",
+	NEW_LINE,
+	"im rsas}.",
+	DISPLAY_MESSAGE,
+	"Nf pqoy>l sfrs na tmrs...",
+	NEW_LINE,
+	"uihpoedosockt.",
+	DISPLAY_MESSAGE,
+	"Mnf pqikahali poersqflis}",
+	NEW_LINE,
+	"poebqoyfnnt\177 monfskt c pq|gkf",
+	NEW_LINE,
+	"r efqfca na loyae}.",
+	CHANGE_CHARACTER,
+	"Odo, s\200gflocaso.",
+	CHANGE_CHARACTER,
+	"Rpfwnah - ~so sfbf nf",
+	NEW_LINE,
+	"vtvq|-mtvq|.",
+	CHANGE_CHARACTER,
+	"Roxtcrsct\177, xso nf c|ylo.",
+	CHANGE_CHARACTER,
+	"Ada, pqolfsfl mimo loyaei.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog1[] = {
+	"Nt i...",
+	DISPLAY_MESSAGE,
+	"Xfm rfjxar hanimafsfr}?",
+	CHANGE_CHARACTER,
+	"Voxfy} rmfynoj oscfs?",
+	CHANGE_CHARACTER,
+	"Nf tsqtgeajsfr}.",
+	CHANGE_CHARACTER,
+	"Laeno, no voxt sfbf rkahas},",
+	NEW_LINE,
+	"sts nf avsi rkol}ko qahclfxfnij.",
+	DISPLAY_MESSAGE,
+	"L\177bl\177, kodea qahdocoq ytskami nabis.",
+	NEW_LINE,
+	"Ili na bajs, vf-vf!",
+	CHANGE_CHARACTER,
+	"Nt konfxno...",
+	CHANGE_CHARACTER,
+	"` ovqan\200\177 ~so mfrso...",
+	CHANGE_CHARACTER,
+	"Odo. Kaka\200 nfogieannors}.",
+	CHANGE_CHARACTER,
+	"I pqirsqfl\177 l\177bodo, kso",
+	NEW_LINE,
+	"r\177ea rtnfsr\200.",
+	CHANGE_CHARACTER,
+	"A frli ~so claeflfw?",
+	CHANGE_CHARACTER,
+	"Sak on gf nf l\177boj, ram ponimafy}.",
+	CHANGE_CHARACTER,
+	"Polada\177, mfn\200 c| sogf nf ptrsisf?",
+	CHANGE_CHARACTER,
+	"Soxno.",
+	CHANGE_CHARACTER,
+	"A frli \200 rkagt \"pogaltjrsa\"?",
+	CHANGE_CHARACTER,
+	"Nf pqokasis, paqfn>k.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"POGA-A-ALTJRSA.",
+	CHANGE_CHARACTER,
+	"Habte}.",
+	NEW_LINE,
+	"T mfn\200 kamfnnof rfqewf.",
+	CHANGE_CHARACTER,
+	"Kak i mohdi.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nf pon\200l.",
+	CHANGE_CHARACTER,
+	"Pqofvali.",
+	NEW_LINE,
+	"Kak \200 modt rm\200dxis} cayf kamfnnof rfqewf?",
+	CHANGE_CHARACTER,
+	"Nikak. ` kqfmfn}.",
+	DISPLAY_MESSAGE,
+	"No poeojei,",
+	NEW_LINE,
+	"\200 sfb\200 tsfyt...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog2[] = {
+	"Rparibo. Xso ~so?",
+	CHANGE_CHARACTER,
+	"Yokolaena\200 konufsa.",
+	DISPLAY_MESSAGE,
+	"Moj qabosoeasfl} eal mnf paqoxkt",
+	NEW_LINE,
+	"na obfe i...",
+	CHANGE_CHARACTER,
+	"Cay qabosoeasfl} eoma?!",
+	CHANGE_CHARACTER,
+	"Mirsfq Egon Nosi? Ea, a xso?",
+	CHANGE_CHARACTER,
+	"O, nixfdo...",
+	DISPLAY_MESSAGE,
+	"Egon Nosi...",
+	DISPLAY_MESSAGE,
+	"Kagfsr\200, \200 o n>m rl|yal...",
+	CHANGE_CHARACTER,
+	"Nacfqn\200ka.",
+	NEW_LINE,
+	"On eflafs odqomn|f efn}di.",
+	DISPLAY_MESSAGE,
+	"Orobfnno c porlfenff cqfm\200...",
+	CHANGE_CHARACTER,
+	"Ea?..",
+	CHANGE_CHARACTER,
+	"Pqacea, \200 nf hna\177 kak.",
+	DISPLAY_MESSAGE,
+	"Mogfs, ~so kak-so rc\200hano",
+	NEW_LINE,
+	"r bfhtmn|m tx>n|m, kosoq|j",
+	NEW_LINE,
+	"havoeil na en\200v...",
+	DISPLAY_MESSAGE,
+	"O, etmafy}, s| ram|j tmn|j, ea?!",
+	NEW_LINE,
+	"S| ypion?!",
+	CHANGE_CHARACTER,
+	"^j, \200 ob|xn|j paqfn}.",
+	DISPLAY_MESSAGE,
+	"Nf vosisf docoqis} -",
+	NEW_LINE,
+	"nf naeo.",
+	CHANGE_CHARACTER,
+	"Mirsfq Hloefj cflfl mnf",
+	NEW_LINE,
+	"c|rmasqicas} ypionoc...",
+	CHANGE_CHARACTER,
+	"Nftgfli \200 povog na ypiona?",
+	CHANGE_CHARACTER,
+	"...I rsqfl\200s} iv na mfrsf...",
+	CHANGE_CHARACTER,
+	"^j, polfdxf...",
+	CHANGE_CHARACTER,
+	"...A \200 o-o-oxfn} eacno",
+	NEW_LINE,
+	"nikodo nf tbical...",
+	CHANGE_CHARACTER,
+	"^so ih-ha konufs|, ea?",
+	NEW_LINE,
+	"Oseas} f>? Nf copqor.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Pqorsi, nfmnodo qahdoq\200xilr\200.",
+	CHANGE_CHARACTER,
+	"Ponima\177.",
+	NEW_LINE,
+	"Sts eocol}no gaqko.",
+	CHANGE_CHARACTER,
+	"Ada.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog3[] = {
+	"Mirsfq ovqannik, \200...",
+	CHANGE_CHARACTER,
+	"Rltyaj, paqfn}.",
+	DISPLAY_MESSAGE,
+	"Ypion s| ili nfs -",
+	NEW_LINE,
+	"bfh qahniw|.",
+	DISPLAY_MESSAGE,
+	"` sfb\200 nf ptzt, i nf cagno, pqiy>l s|",
+	NEW_LINE,
+	"pqodtl\200s}r\200, xso-nibte} tkqars} ili",
+	NEW_LINE,
+	"pobolsas} r mirsfqom Nosi.",
+	DISPLAY_MESSAGE,
+	"I sfbf mfn\200 nf habolsas}.",
+	DISPLAY_MESSAGE,
+	"Fz> pop|ska, i \200 pqoefla\177 paqt",
+	NEW_LINE,
+	"noqok el\200 xfqcfj.",
+	DISPLAY_MESSAGE,
+	"C sco>m sflf.",
+	DISPLAY_MESSAGE,
+	"Pon\200l?",
+	CHANGE_CHARACTER,
+	"Pon\200l.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog4[] = {
+	"R idoloxki.",
+	CHANGE_CHARACTER,
+	"Ada.",
+	END_DIALOG
+};
+
+const static char *russianDialog5[] = {
+	CHANGE_CHARACTER,
+	"X>qs!",
+	DISPLAY_MESSAGE,
+	"A, ~so s|!..",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog6[] = {
+	"Pqicfs!",
+	CHANGE_CHARACTER,
+	"Xso?",
+	CHANGE_CHARACTER,
+	"Xso c bts|lkf?",
+	CHANGE_CHARACTER,
+	"S| nixfdo nf eokagfy}!",
+	CHANGE_CHARACTER,
+	"Xso pokqfpxf, polada\177?..",
+	CHANGE_CHARACTER,
+	"Nf sco> eflo.",
+	CHANGE_CHARACTER,
+	"P}>sf na porst, a?",
+	CHANGE_CHARACTER,
+	"Etmafy}, harstkal mfn\200,",
+	NEW_LINE,
+	"ea?",
+	DISPLAY_MESSAGE,
+	"Nf mfxsaj.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog7[] = {
+	"Pqicfs!",
+	CHANGE_CHARACTER,
+	"S| nixfdo nf ciefl.",
+	DISPLAY_MESSAGE,
+	"` xirs.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog8[] = {
+	"Pqicfs!",
+	CHANGE_CHARACTER,
+	"Rcali.",
+	END_DIALOG
+};
+
+const static char *russianDialog9[] = {
+	"Xso rkagfsf, frli \200 eam cam nfmnodo",
+	NEW_LINE,
+	"holosa?..",
+	CHANGE_CHARACTER,
+	"Rkagt rparibo.",
+	CHANGE_CHARACTER,
+	"A cojsi eaeisf?",
+	CHANGE_CHARACTER,
+	"Nacfqnof...",
+	CHANGE_CHARACTER,
+	"Rkagisf soxno.",
+	CHANGE_CHARACTER,
+	"Laeno, soxno. ` eam sfbf cojsi.",
+	CHANGE_CHARACTER,
+	"Oslixno. Cos.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog10[] = {
+	"Sfpfq} oskqojsf, pogaltjrsa, ecfq}.",
+	CHANGE_CHARACTER,
+	"Ni ha xso. Tvoei.",
+	CHANGE_CHARACTER,
+	"^! ` g holoso eal, pomnisf?..",
+	CHANGE_CHARACTER,
+	"Kakof holoso?",
+	CHANGE_CHARACTER,
+	"KAKOF HOLOSO?!",
+	CHANGE_CHARACTER,
+	"Nixfdo nf hna\177 ni o kakom holosf.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog11[] = {
+	"C|... C|...",
+	CHANGE_CHARACTER,
+	"Pqox}.",
+	CHANGE_CHARACTER,
+	"C| obfzali mfn\200 cptrsis}!",
+	DISPLAY_MESSAGE,
+	"No qfyili optrsis}!",
+	CHANGE_CHARACTER,
+	"Haso modt sfb\200 osptrsis}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog12[] = {
+	"N|nxf nfl}h\200 cfqis} eagf",
+	NEW_LINE,
+	"pqoeagn|m ovqannikam.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog13[] = {
+	"Pqicfs.",
+	CHANGE_CHARACTER,
+	"Pqicfs.",
+	CHANGE_CHARACTER,
+	"` Maqk.",
+	DISPLAY_MESSAGE,
+	"Kak sfb\200 hocts?",
+	CHANGE_CHARACTER,
+	"Kak mfn\200 hocts?",
+	CHANGE_CHARACTER,
+	"Nf hna\177, s| rkagi mnf.",
+	CHANGE_CHARACTER,
+	"Mnf.",
+	CHANGE_CHARACTER,
+	"Nf docoqi mnf \"mnf\", pqorso rkagi",
+	NEW_LINE,
+	"rco> im\200!",
+	CHANGE_CHARACTER,
+	"Rco> i...",
+	CHANGE_CHARACTER,
+	"Ut s|!",
+	DISPLAY_MESSAGE,
+	"Kak sfb\200 hoc>s osfw?",
+	CHANGE_CHARACTER,
+	"R|na.",
+	CHANGE_CHARACTER,
+	"R|na c rm|rlf im\200 ili r|na",
+	NEW_LINE,
+	"c rm|rlf r|n?",
+	CHANGE_CHARACTER,
+	"R|na.",
+	CHANGE_CHARACTER,
+	"S| etqak ili pqiscoq\200fy}r\200?",
+	CHANGE_CHARACTER,
+	"` R|na.",
+	CHANGE_CHARACTER,
+	"(cheov)",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog14[] = {
+	"Rl|y}, R|na ili kak sam sfb\200.",
+	DISPLAY_MESSAGE,
+	"Xso s| eflafy}",
+	NEW_LINE,
+	"r ~sim m\200xom?",
+	CHANGE_CHARACTER,
+	"Efetyka rkahal, xso rcoeis mfn\200 c hoopaqk,",
+	NEW_LINE,
+	"frli \200 popaet c koqhint.",
+	CHANGE_CHARACTER,
+	"Etma\177, sfbf ntgno poebqar|cas} m\200x",
+	NEW_LINE,
+	"nfmnodo c|yf.",
+	CHANGE_CHARACTER,
+	"Ram hna\177.",
+	CHANGE_CHARACTER,
+	"Nt i?",
+	CHANGE_CHARACTER,
+	"Nt i xso?",
+	CHANGE_CHARACTER,
+	"Nt i poxfmt s| sak nf eflafy}?!",
+	CHANGE_CHARACTER,
+	"Nacfqnof, ro hqfnifm",
+	NEW_LINE,
+	"xso-so.",
+	CHANGE_CHARACTER,
+	"S| oxki noriy}?",
+	CHANGE_CHARACTER,
+	"Nfs, haxfm?",
+	CHANGE_CHARACTER,
+	"(cheov)",
+	DISPLAY_MESSAGE,
+	"Mogfs, s| pqorso rlabocas, xsob",
+	NEW_LINE,
+	"eobqoris} m\200x poc|yf?",
+	CHANGE_CHARACTER,
+	"Nf pqikal|cajr\200.",
+	CHANGE_CHARACTER,
+	"(cheov)",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog15[] = {
+	"^, pawan!",
+	DISPLAY_MESSAGE,
+	"Frs} klarrna\200 ief\200!",
+	CHANGE_CHARACTER,
+	"Ea?",
+	CHANGE_CHARACTER,
+	"Iei rkagi,",
+	NEW_LINE,
+	"xso popal c koqhint!",
+	CHANGE_CHARACTER,
+	"So frs} rocqas}?",
+	CHANGE_CHARACTER,
+	"Sipa sodo...",
+	CHANGE_CHARACTER,
+	"` NIKODEA NF CQT!",
+	CHANGE_CHARACTER,
+	"Nikodea?!",
+	CHANGE_CHARACTER,
+	"NIKODEA!",
+	CHANGE_CHARACTER,
+	"Voqoyij mal}xik.",
+	END_DIALOG
+};
+
+const static char *russianDialog16[] = {
+	"Pqicfs...",
+	CHANGE_CHARACTER,
+	"Tjei.",
+	END_DIALOG
+};
+
+const static char *russianDialog17[] = {
+	"^j, paqfn}! Pqorso nfcfqo\200sno!",
+	CHANGE_CHARACTER,
+	"Xso?",
+	CHANGE_CHARACTER,
+	"^so mogfs pokahas}r\200 ytskoj,",
+	NEW_LINE,
+	"no ih ohfqa po\200cilar}",
+	NEW_LINE,
+	"qtka, rgima\177za\200 mfx!",
+	CHANGE_CHARACTER,
+	"Laeno, \200 chdl\200nt, no nf etmaj,",
+	NEW_LINE,
+	"xso oetqaxil mfn\200.",
+	NEW_LINE,
+	"^sa qtka kage|j doe po\200cl\200fsr\200.",
+	DISPLAY_MESSAGE,
+	"Mogfs, vos} c ~sos qah",
+	NEW_LINE,
+	"pocfh>s...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog18[] = {
+	"Eobq|j efn}, r~q!",
+	CHANGE_CHARACTER,
+	"I sfbf eobq|j,",
+	NEW_LINE,
+	"r|nok.",
+	CHANGE_CHARACTER,
+	"Mfn\200 hocts Maqk, r~q.",
+	CHANGE_CHARACTER,
+	"Heoqoco.",
+	DISPLAY_MESSAGE,
+	"Xfdo s| voxfy}?",
+	CHANGE_CHARACTER,
+	"Pqorso l\177bt\177r} cayim kqfrlom.",
+	DISPLAY_MESSAGE,
+	"Voqoyff.",
+	CHANGE_CHARACTER,
+	"Voqoyff i cfr}ma",
+	NEW_LINE,
+	"teobnof.",
+	CHANGE_CHARACTER,
+	"I bol}yof.",
+	CHANGE_CHARACTER,
+	"Ectvmfrsnof.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog19[] = {
+	"Hnafsf paqn\200, idqa\177zfdo",
+	NEW_LINE,
+	"r m\200xom",
+	NEW_LINE,
+	"na tliwf?",
+	CHANGE_CHARACTER,
+	"Konfxno, ~so",
+	NEW_LINE,
+	"moj cntk.",
+	CHANGE_CHARACTER,
+	"Voqoyij paqfn>k.",
+	CHANGE_CHARACTER,
+	"Voqoyij i tmn|j.",
+	CHANGE_CHARACTER,
+	"Voqoyij i malfn}kij.",
+	CHANGE_CHARACTER,
+	"On poeqars>s.",
+	CHANGE_CHARACTER,
+	"I rsanfs ram|m",
+	NEW_LINE,
+	"hnamfnis|m",
+	NEW_LINE,
+	"barkfsbolirsom?..",
+	CHANGE_CHARACTER,
+	"Naef\177r}, nfs.",
+	CHANGE_CHARACTER,
+	"Sodea rkagisf fmt, xso vcasis idqas}!",
+	CHANGE_CHARACTER,
+	"Ea.",
+	DISPLAY_MESSAGE,
+	"Pohgf.",
+	DISPLAY_MESSAGE,
+	"Cohmogno.",
+	DISPLAY_MESSAGE,
+	"Rfjxar \200 voxt",
+	NEW_LINE,
+	"oseovnts}.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog20[] = {
+	"C| robiqafsfr} riefs} hefr}",
+	NEW_LINE,
+	"cfr} efn}?",
+	CHANGE_CHARACTER,
+	"Vosflor} b|.",
+	CHANGE_CHARACTER,
+	"Cfr} ~sos hamfxasfl}n|j efn}?",
+	CHANGE_CHARACTER,
+	"Vosflor} b|.",
+	CHANGE_CHARACTER,
+	"Cam nf insfqfrfn",
+	NEW_LINE,
+	"okqtga\177zij miq?!",
+	CHANGE_CHARACTER,
+	"Nf oxfn}.",
+	CHANGE_CHARACTER,
+	"Poxfmt sak?",
+	CHANGE_CHARACTER,
+	"Mnf nf insfqfrn|",
+	NEW_LINE,
+	"nocorsi.",
+	CHANGE_CHARACTER,
+	"No...",
+	CHANGE_CHARACTER,
+	"Kak docoqisr\200...",
+	DISPLAY_MESSAGE,
+	"Ltxyif nocorsi -",
+	NEW_LINE,
+	"iv osrtsrscif.",
+	CHANGE_CHARACTER,
+	"No l\177ei eolgn| hnas} o",
+	NEW_LINE,
+	"pqodqfrrf i pqoxfm!",
+	CHANGE_CHARACTER,
+	"Eagf nf rsant",
+	NEW_LINE,
+	"rpqayicas} poxfmt...",
+	CHANGE_CHARACTER,
+	"Posomt xso...",
+	DISPLAY_MESSAGE,
+	"^...",
+	DISPLAY_MESSAGE,
+	"Posomt xso...",
+	DISPLAY_MESSAGE,
+	"^m...",
+	CHANGE_CHARACTER,
+	"Cfqno.",
+	NEW_LINE,
+"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog21[] = {
+	"Kakif nocorsi?",
+	CHANGE_CHARACTER,
+	"Nikakiv.",
+	END_DIALOG
+};
+
+const static char *russianDialog22[] = {
+	"Mogno ch\200s} ~so qtg}>?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	"Poga-a-altjrsa...",
+	CHANGE_CHARACTER,
+	"Moloeoj xflocfk, ~so oxfn}",
+	NEW_LINE,
+	"rsaqof i oparnof oqtgif...",
+	DISPLAY_MESSAGE,
+	"...a \200 oscfsrscfnn|j xflocfk,",
+	NEW_LINE,
+	"\200rno?",
+	CHANGE_CHARACTER,
+	"No \200...",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	END_DIALOG
+};
+
+const static char *russianDialog23[] = {
+	"Mogfs, pfqfetmafsf",
+	NEW_LINE,
+	"narx>s qtg}\200?...",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	DISPLAY_MESSAGE,
+	"Not.",
+	DISPLAY_MESSAGE,
+	"Najn.",
+	DISPLAY_MESSAGE,
+	"No.",
+	DISPLAY_MESSAGE,
+	"Naj.",
+	DISPLAY_MESSAGE,
+	"Nf.",
+	DISPLAY_MESSAGE,
+	"Ni.",
+	CHANGE_CHARACTER,
+	"Laeno, \200 pon\200l.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog24[] = {
+	"Mogno pokopas}r\200 c cayiv ykauxikav?",
+	CHANGE_CHARACTER,
+	"Ea.",
+	CHANGE_CHARACTER,
+	"EA?!",
+	CHANGE_CHARACTER,
+	"O, hab|l tsoxnis}, xso oni",
+	NEW_LINE,
+	"ptrs|f.",
+	DISPLAY_MESSAGE,
+	"Sol}ko norocoj plasok c",
+	NEW_LINE,
+	"cfqvnfm pqacom.",
+	DISPLAY_MESSAGE,
+	"Mogfy} ch\200s}, frli voxfy}, mnf on nf ntgfn.",
+	CHANGE_CHARACTER,
+	"Laeno, rparibo.",
+	DISPLAY_MESSAGE,
+	"C| oxfn}... eobq|...",
+	CHANGE_CHARACTER,
+	"Sol}ko nf poetmaj, xso \200 pohcol\177 pqikaqmanis}",
+	NEW_LINE,
+	"xso-nibte} fz>.",
+	CHANGE_CHARACTER,
+	"Konfxno, i c m|rl\200v nf b|lo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog25[] = {
+	"` coh}mt cfsqoetj?",
+	CHANGE_CHARACTER,
+	"Ni ha xso. R nim gaqa rfdoen\200",
+	NEW_LINE,
+	"xtska sfqpimff.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog26[] = {
+	"Narx>s cfsqoet\200...",
+	CHANGE_CHARACTER,
+	"Pqivoei himoj.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog27[] = {
+	"Voqoya\200 rfdoen\200",
+	NEW_LINE,
+	"podoeka...",
+	CHANGE_CHARACTER,
+	"Rodlarna,",
+	NEW_LINE,
+	"eoqodtya.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog28[] = {
+	"^so caya eox}?",
+	CHANGE_CHARACTER,
+	"Rparibo,",
+	NEW_LINE,
+	"pohcolil mnf rnoca oztsis}",
+	NEW_LINE,
+	"rfb\200 moloeoj..",
+	DISPLAY_MESSAGE,
+	"...no, ramo roboj,",
+	NEW_LINE,
+	"~sa qaeors} -",
+	NEW_LINE,
+	"mo\200 cntxka.",
+	CHANGE_CHARACTER,
+	"O, soxno! I kak gf \200",
+	NEW_LINE,
+	"nf eodaealr\200!",
+	CHANGE_CHARACTER,
+	"Kodea-so i \200 b|la",
+	NEW_LINE,
+	"sakoj gf...",
+	CHANGE_CHARACTER,
+	"C| i rfjxar saka\200!",
+	CHANGE_CHARACTER,
+	"O, kak milo r scofj rsoqon|...",
+	DISPLAY_MESSAGE,
+	"Nikso bol}yf",
+	NEW_LINE,
+	"nf po>s",
+	NEW_LINE,
+	"mnf poe oknom.",
+	DISPLAY_MESSAGE,
+	"Frli ponimafy},",
+	NEW_LINE,
+	"o x>m \200.",
+	CHANGE_CHARACTER,
+	"^-~-~...",
+	DISPLAY_MESSAGE,
+	"Ea...",
+	DISPLAY_MESSAGE,
+	"Ponima\177...",
+	DISPLAY_MESSAGE,
+	"T mfn\200 sf gf",
+	NEW_LINE,
+	"xtcrsca...",
+	DISPLAY_MESSAGE,
+	"Inodea...",
+	DISPLAY_MESSAGE,
+	"Nacfqnof...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog29[] = {
+	"Modt \200 rpqoris}, xfm c|",
+	NEW_LINE,
+	"hanimafsfr}?",
+	CHANGE_CHARACTER,
+	"Ea, mogfy},",
+	NEW_LINE,
+	"eoqodtya.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Xfm c| hanimafsfr}?",
+	CHANGE_CHARACTER,
+	"` c\200gt.",
+	CHANGE_CHARACTER,
+	"^so pon\200sno.",
+	DISPLAY_MESSAGE,
+	"Xso c| c\200gfsf?",
+	CHANGE_CHARACTER,
+	"A rfjxar s|",
+	NEW_LINE,
+	"nf rpqoril,",
+	NEW_LINE,
+	"mogno li rpqoris}.",
+	CHANGE_CHARACTER,
+	"Oj, pqorsisf. Modt \200 rpqoris}?",
+	CHANGE_CHARACTER,
+	"O x>m?",
+	CHANGE_CHARACTER,
+	"O som, xso c|",
+	NEW_LINE,
+	"c\200gfsf.",
+	CHANGE_CHARACTER,
+	"S| tgf rpqayical",
+	NEW_LINE,
+	"mfn\200 ob ~som,",
+	NEW_LINE,
+	"qahcf nfs?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog30[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Ea, cpolnf.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog31[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"S| ram hnafy}.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog32[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Rparibo, xso rpqorili,",
+	NEW_LINE,
+	"no \200 tgf cam",
+	NEW_LINE,
+	"oscfxala.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog33[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Nf",
+	NEW_LINE,
+	"pocsoq\200jr\200.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog34[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Nf osclfkaj",
+	NEW_LINE,
+	"mfn\200.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog35[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Ea hamolxi tgf.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog36[] = {
+	"Cr> voqoyo?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog37[] = {
+	"Pqorsisf",
+	NEW_LINE,
+	"mo\177 nadlors}...",
+	CHANGE_CHARACTER,
+	"Ea?..",
+	CHANGE_CHARACTER,
+	"...no \200 poetmal,",
+	NEW_LINE,
+	"xso ~sos nfcinn|j",
+	NEW_LINE,
+	"wcfsok...",
+	DISPLAY_MESSAGE,
+	"...c|qahis,",
+	NEW_LINE,
+	"narkol}ko \200 qae",
+	NEW_LINE,
+	"nayfj crsqfxf.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog38[] = {
+	"Naef\177r},",
+	NEW_LINE,
+	"on cam ponqacisr\200...",
+	CHANGE_CHARACTER,
+	"O, pqflfrs}!",
+	DISPLAY_MESSAGE,
+	"` oxfn}",
+	NEW_LINE,
+	"sqontsa...",
+	DISPLAY_MESSAGE,
+	"Mnf nikso",
+	NEW_LINE,
+	"nf eflal",
+	NEW_LINE,
+	"sak pqi\200sno...",
+	DISPLAY_MESSAGE,
+	"...cos tgf",
+	NEW_LINE,
+	"efr\200s} lfs!",
+	DISPLAY_MESSAGE,
+	"Rparibo",
+	NEW_LINE,
+	"os crfj etyi!",
+	CHANGE_CHARACTER,
+	"Pogaltjrsa.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog39[] = {
+	"Nf vosisf fz> oein",
+	NEW_LINE,
+	"wcfsok?",
+	CHANGE_CHARACTER,
+	"S| oxfn} eobq,",
+	NEW_LINE,
+	"moj mal}xik, no nfs,",
+	NEW_LINE,
+	"rparibo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog40[] = {
+	"Tcfqfn|, xso nf vosisf",
+	NEW_LINE,
+	"fz> wcfsok?",
+	CHANGE_CHARACTER,
+	"Ea, tcfqfna.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog41[] = {
+	"Modt \200 oeolgis}",
+	NEW_LINE,
+	"mfs>lkt?",
+	CHANGE_CHARACTER,
+	"M| nfeorsasoxno voqoyo",
+	NEW_LINE,
+	"hnakom|, k somt gf",
+	NEW_LINE,
+	"\200 nf...",
+	DISPLAY_MESSAGE,
+	"...oealgica\177 cfzi",
+	NEW_LINE,
+	"crfm,",
+	NEW_LINE,
+	"kso popqoris.",
+	CHANGE_CHARACTER,
+	"` nf c|h|ca\177 eocfqi\200?",
+	CHANGE_CHARACTER,
+	"Qahdocoq okonxfn.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog42[] = {
+	"Frs} yanr cr> gf",
+	NEW_LINE,
+	"oeolgis} mfs>lkt?",
+	CHANGE_CHARACTER,
+	"Mnf nqacisr\200, kak ona lfgis.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog43[] = {
+	"A sfpfq} c|",
+	NEW_LINE,
+	"mnf mfs>lkt",
+	NEW_LINE,
+	"nf oeolgisf?",
+	CHANGE_CHARACTER,
+	"Konfxno, poxfmt",
+	NEW_LINE,
+	"b| i nf...",
+	DISPLAY_MESSAGE,
+	"...pomox} sakomt milomt",
+	NEW_LINE,
+	"\177noyf, kak s|!..",
+	CHANGE_CHARACTER,
+	"Bol}yof rparibo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog44[] = {
+	"Va! ` eagf b|rsqff Inei!",
+	CHANGE_CHARACTER,
+	"` cr> ciefla, mal}xik!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog45[] = {
+	"^-~-~...",
+	DISPLAY_MESSAGE,
+	"M-m-m...",
+	DISPLAY_MESSAGE,
+	"`...",
+	CHANGE_CHARACTER,
+	"Trpokojr\200. Naef\177r}, s| tbil",
+	NEW_LINE,
+	"~st mtvt.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog46[] = {
+	"Pqorsisf, lfei, mnf kagfsr\200, xso cayf",
+	NEW_LINE,
+	"bfl}> tgf c|rovlo...",
+	DISPLAY_MESSAGE,
+	"...i na sakom rolnwf b|rsqo",
+	NEW_LINE,
+	"c|wcfsfs...",
+	CHANGE_CHARACTER,
+	"Kak bfl}> modlo c|rovnts}",
+	NEW_LINE,
+	"sak b|rsqo?",
+	DISPLAY_MESSAGE,
+	"Ltxyf rvogt pqocfq\177.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog47[] = {
+	CHANGE_CHARACTER,
+	"C| b|li pqac|, moloeoj xflocfk.",
+	DISPLAY_MESSAGE,
+	"Rparibo.",
+	CHANGE_CHARACTER,
+	"Nf ha xso.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog48[] = {
+	"Cam ntgno ~so corkocof \200bloko?",
+	CHANGE_CHARACTER,
+	"Kak rkahas}. T nfdo",
+	NEW_LINE,
+	"rco\200 irsoqi\200.",
+	DISPLAY_MESSAGE,
+	"Pomn\177, oenage|",
+	NEW_LINE,
+	"mo\200 mlaeya\200 rfrsqa M~qi",
+	NEW_LINE,
+	"hanimalar}...",
+	CHANGE_CHARACTER,
+	"A narkol}ko irsoqi\200 elinna\200?",
+	CHANGE_CHARACTER,
+	"O, nam nfktea rpfyis}.",
+	DISPLAY_MESSAGE,
+	"T nar gf rsol}ko cqfmfni,",
+	NEW_LINE,
+	"xsob| pobolsas}, cfqno?",
+	CHANGE_CHARACTER,
+	"` sol}ko xso pon\200l, mnf nf ntgno",
+	NEW_LINE,
+	"\200bloko.",
+	DISPLAY_MESSAGE,
+	"Rparibo.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog49[] = {
+	"`bloko...",
+	CHANGE_CHARACTER,
+	"Bfh irsoqii nfs \200bloka.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nf ntgno.",
+	END_DIALOG
+};
+
+const static char *russianDialog50[] = {
+	"Nftgfli crsqfsil...",
+	DISPLAY_MESSAGE,
+	"...ramt\177 kqarict\177 efctykt...",
+	DISPLAY_MESSAGE,
+	"...c miqf?..",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog51[] = {
+	"Etma\177, pqiylo cqfm\200",
+	NEW_LINE,
+	"pqfersacis}r\200.",
+	DISPLAY_MESSAGE,
+	"` Maqk.",
+	CHANGE_CHARACTER,
+	"Anna.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog52[] = {
+	"Sos momfns, kodea \200 tciefl f> dlaha,",
+	NEW_LINE,
+	"rsal ltxyim",
+	NEW_LINE,
+	"c mofj gihni.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Nf rxisa\200 sodo, kak \200",
+	NEW_LINE,
+	"idqal c eoksoqa",
+	NEW_LINE,
+	"r R}\177hi.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog53[] = {
+	"^m...",
+	DISPLAY_MESSAGE,
+	"Mnf...",
+	DISPLAY_MESSAGE,
+	"`...",
+	DISPLAY_MESSAGE,
+	"` sts poetmal,",
+	NEW_LINE,
+	"nf voxfy}",
+	NEW_LINE,
+	"kof-xfdo...",
+	DISPLAY_MESSAGE,
+	"^m...",
+	DISPLAY_MESSAGE,
+	"C rm|rlf...",
+	DISPLAY_MESSAGE,
+	"T mfn\200 kof-xso frs},",
+	NEW_LINE,
+	"i \200 vosfl b| eas}",
+	NEW_LINE,
+	"~so sfbf, posomt xso...",
+	DISPLAY_MESSAGE,
+	"^-~...",
+	DISPLAY_MESSAGE,
+	"` etma\177,",
+	NEW_LINE,
+	"s|... i...",
+	CHANGE_CHARACTER,
+	"^j! ` nf ktra\177r}!",
+	DISPLAY_MESSAGE,
+	"Cigt, s| p|safy}r\200 rkahas} mnf",
+	NEW_LINE,
+	"xso-so pqi\200snof.",
+	DISPLAY_MESSAGE,
+	"Docoqi pqors|mi",
+	NEW_LINE,
+	"rlocami...",
+	CHANGE_CHARACTER,
+	"Pqors|mi rlocami?!",
+	CHANGE_CHARACTER,
+	"Ea, pqors|f rloca",
+	NEW_LINE,
+	"cr> tpqoza\177s.",
+	CHANGE_CHARACTER,
+	"Nt ea.",
+	DISPLAY_MESSAGE,
+	"Soxno.",
+	DISPLAY_MESSAGE,
+	"Pqors|f rloca.",
+	DISPLAY_MESSAGE,
+	"Laeno.",
+	DISPLAY_MESSAGE,
+	"Naxal.",
+	DISPLAY_MESSAGE,
+	"` nqaciy}r\200 s|,",
+	NEW_LINE,
+	"i voxt eas} wcfsok.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Cohmogno, sfbf rsois",
+	NEW_LINE,
+	"docoqis}...",
+	DISPLAY_MESSAGE,
+	"...nfrkol}ko rlognff.",
+	CHANGE_CHARACTER,
+	"Ov...",
+	DISPLAY_MESSAGE,
+	"Pqorsi...",
+	DISPLAY_MESSAGE,
+	"Pqorso \200...",
+	DISPLAY_MESSAGE,
+	"Pqorso \200 pqin>r sfbf",
+	NEW_LINE,
+	"wcfsok.",
+	CHANGE_CHARACTER,
+	"O?..",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog54[] = {
+	"Nqacisr\200?",
+	CHANGE_CHARACTER,
+	"S| ramo oxaqocanif.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog55[] = {
+	"Coobzf,",
+	NEW_LINE,
+	"xfrsno docoq\200...",
+	CHANGE_CHARACTER,
+	"Pqors|f rloca, pomni!",
+	NEW_LINE,
+	"Pqors|f!",
+	END_DIALOG
+};
+
+const static char *russianDialog56[] = {
+	"Soxno...",
+	DISPLAY_MESSAGE,
+	"Pqorso vosfl rkahas},",
+	NEW_LINE,
+	"xso s| sogf",
+	NEW_LINE,
+	"oxaqocasfl}na\200.",
+	CHANGE_CHARACTER,
+	"Nt, rparibo,",
+	NEW_LINE,
+	"nacfqnof.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog57[] = {
+	"Nfnacigt rfb\200.",
+	END_DIALOG
+};
+
+const static char *russianDialog58[] = {
+	"T mfn\200 frs}",
+	NEW_LINE,
+	"fz> wcfsok...",
+	CHANGE_CHARACTER,
+	"O, ~so tgf",
+	NEW_LINE,
+	"liynff.",
+	DISPLAY_MESSAGE,
+	"Kak cieiy},",
+	NEW_LINE,
+	"\200 hefr}...",
+	DISPLAY_MESSAGE,
+	"...nf feinrscfnna\200 gfnzina...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog59[] = {
+	"Hnaxis, nf voxfy} fz>",
+	NEW_LINE,
+	"wcfsoxfk?",
+	CHANGE_CHARACTER,
+	"Nfs, rparibo.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog60[] = {
+	"Voxfy} konufskt?",
+	CHANGE_CHARACTER,
+	"Oxfn} milo, no nfs, rparibo.",
+	NEW_LINE,
+	"Nf voxt qarsolrsfs}.",
+	CHANGE_CHARACTER,
+	"^j, nf pfqfgicaj. Eagf t Obflikra",
+	NEW_LINE,
+	"b|li eqth}\200.",
+	CHANGE_CHARACTER,
+	"Kso sakoj Obflikr?!",
+	CHANGE_CHARACTER,
+	"M-m, habte}. Pqorso \200 nay>l",
+	NEW_LINE,
+	"konufst...",
+	CHANGE_CHARACTER,
+	"NAY<L?!",
+	CHANGE_CHARACTER,
+	"Nay>l f> oxfn} cktrnoj,",
+	NEW_LINE,
+	"qahtmffsr\200.",
+	DISPLAY_MESSAGE,
+	"^so nf kakoj-so efy>c|j yokolaeohamfnisfl},",
+	NEW_LINE,
+	"a pqoetks c|ryfdo kaxfrsca!",
+	DISPLAY_MESSAGE,
+	"Ihdosoclfn sol}ko ih",
+	NEW_LINE,
+	"nastqal}n|v komponfnsoc.",
+	DISPLAY_MESSAGE,
+	"Bfh konrfqcansoc.",
+	CHANGE_CHARACTER,
+	"O, laeno. Frli narsaicafy}...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog61[] = {
+	ANIM_WAIT,
+	"Kvm...",
+	CHANGE_CHARACTER,
+	"A, nt ea, polada\177, naeo eas} sfbf",
+	NEW_LINE,
+	"xso-nibte} chamfn...",
+	CHANGE_CHARACTER,
+	"Nfs-nfs... Cocrf",
+	NEW_LINE,
+	"nf ob\200hasfl}no...",
+	CHANGE_CHARACTER,
+	"Laeno, kak voxfy}.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Vos\200 r eqtdoj rsoqon|...",
+	CHANGE_CHARACTER,
+	"` sak i hnala. Paqni crfdea xfdo-so",
+	NEW_LINE,
+	"vos\200s.",
+	DISPLAY_MESSAGE,
+	"Nixfdo nf efla\177s",
+	NEW_LINE,
+	"pqorso sak.",
+	CHANGE_CHARACTER,
+	"Oenage| \200 tbqalr\200 c komnasf.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ada...",
+	DISPLAY_MESSAGE,
+	"Laeno, hab|li.",
+	DISPLAY_MESSAGE,
+	"Cos sfbf moj",
+	NEW_LINE,
+	"poeaqok.",
+	DISPLAY_MESSAGE,
+	"^so mo\200 lfnsa. Inodea",
+	NEW_LINE,
+	"crpominaj obo mnf.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog62[] = {
+	"Parib. Crfdea btet",
+	NEW_LINE,
+	"noris}.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog63[] = {
+	"` nay>l sco> im\200 na banknosf,",
+	NEW_LINE,
+	"kosoqt\177 mnf eal oein solrs\200k.",
+	NEW_LINE,
+	"Xso rkagfy}?",
+	CHANGE_CHARACTER,
+	"Pokagi mnf banknost.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog64[] = {
+	"^j, c x>m eflo?!",
+	CHANGE_CHARACTER,
+	"O, doqf mnf!..",
+	CHANGE_CHARACTER,
+	"Poxfmt s| plaxfy}?!",
+	CHANGE_CHARACTER,
+	"Poso... posomt...",
+	DISPLAY_MESSAGE,
+	"O, doqf mnf!..",
+	DISPLAY_MESSAGE,
+	"Nay... nay rorfe, mirsfq",
+	NEW_LINE,
+	"Egon Nosi, oenage| eal mnf",
+	NEW_LINE,
+	"nfmnodo efnfd...",
+	DISPLAY_MESSAGE,
+	"...i rkahal, xso frli",
+	NEW_LINE,
+	"\200 fdo powflt\177,",
+	NEW_LINE,
+	"so on ears mnf fz>...",
+	DISPLAY_MESSAGE,
+	"...no \200 oskahalar}",
+	NEW_LINE,
+	"i cfqntla fmt",
+	NEW_LINE,
+	"crf efn}di obqasno.",
+	CHANGE_CHARACTER,
+	"So frs} ~sa rcin}\200 p|salar}",
+	NEW_LINE,
+	"ktpis} sfb\200?!",
+	CHANGE_CHARACTER,
+	"` sak nfrxarsna!",
+	CHANGE_CHARACTER,
+	"Cos blin!",
+	NEW_LINE,
+	"Nt cr>!",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog65[] = {
+	"^j s|!",
+	DISPLAY_MESSAGE,
+	"Nf btefy} sak eobqa pfqfeas} mnf",
+	NEW_LINE,
+	"con sos oqfv?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog66[] = {
+	"Sak s| eay} mnf oqfv ili nfs?!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog67[] = {
+	"Laeno.",
+	DISPLAY_MESSAGE,
+	"Cr> \200rno.",
+	DISPLAY_MESSAGE,
+	"Rfjxar s| poltxiy} po harltdam.",
+	DISPLAY_MESSAGE,
+	"Btet obh|cas} sfb\200, poka nf poltxt oqfv.",
+	DISPLAY_MESSAGE,
+	"Mfqhka\200 bflka.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog68[] = {
+	"Qahcf s| nf hnafy}, xso noris} mfv",
+	NEW_LINE,
+	"nfpoliskoqqfksno, a?",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog69[] = {
+	"^j, fz> qah rparibo ha oqfv!",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog70[] = {
+	"` nf rpqoril na ~so qahqfyfni\200.",
+	DISPLAY_MESSAGE,
+	"Oxfn} plovo bqas} xtgt\177 cfz}",
+	NEW_LINE,
+	"bfh qahqfyfni\200.",
+	DISPLAY_MESSAGE,
+	"Mfn\200 modts pojmas} ha",
+	NEW_LINE,
+	"~sim eflom.",
+	DISPLAY_MESSAGE,
+	"I bqoris} c s\177q\200dt. Sodea crf",
+	NEW_LINE,
+	"pfqfrsants mfn\200 tcagas}.",
+	DISPLAY_MESSAGE,
+	"^sim porstpkom \200 modt tdqobis} rco\177 gihn}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog71[] = {
+	"Bfh qirka...",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog72[] = {
+	"Sak, qfb\200sa. Eqtgno crf",
+	NEW_LINE,
+	"irxfhli osr\177ea!",
+	DISPLAY_MESSAGE,
+	"Ili mnf pqie>sr\200 rsqfl\200s}.",
+	DISPLAY_MESSAGE,
+	"Ih narso\200zfdo oqtgi\200.",
+	DISPLAY_MESSAGE,
+	"Nacfqnof.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog73[] = {
+	"` cigt...",
+	DISPLAY_MESSAGE,
+	"...sam...",
+	DISPLAY_MESSAGE,
+	"PATKA!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog74[] = {
+	"Nf so xsob| \200 bo\177r}.",
+	DISPLAY_MESSAGE,
+	"Pqorso ~so mogfs okahas}r\200",
+	NEW_LINE,
+	"patk-mtsans, i frli on mfn\200",
+	NEW_LINE,
+	"tktris...",
+	DISPLAY_MESSAGE,
+	"...\200 sogf mtsiqt\177...",
+	DISPLAY_MESSAGE,
+	"...mnf pqie>sr\200 noris} habacn|f",
+	NEW_LINE,
+	"kors\177m| i pqoxt\177 miytqt...",
+	DISPLAY_MESSAGE,
+	"...cfrsi ecojnt\177 gihn}...",
+	DISPLAY_MESSAGE,
+	"...rqagas}r\200 r Cfnomom i eqtdimi,",
+	NEW_LINE,
+	"oni mfn\200 qanis} modts...",
+	DISPLAY_MESSAGE,
+	"...crf btets na mnf",
+	NEW_LINE,
+	"haqabas|cas}, a \200...",
+	DISPLAY_MESSAGE,
+	"Etma\177, \200 par.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog75[] = {
+	"Os ~sodo patka pqorso gtsko...",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog76[] = {
+	"^j, eqtgok!",
+	DISPLAY_MESSAGE,
+	"T mfn\200 k sfbf xfrsnof pqfelogfnif.",
+	DISPLAY_MESSAGE,
+	"Bol}yof, rcfgff, roxnof \200bloko ha rsaqt\177 yiykt",
+	NEW_LINE,
+	"t sfb\200 na rpinf.",
+	DISPLAY_MESSAGE,
+	"Frli rodlarfn, so crsan} i",
+	NEW_LINE,
+	"posq\200ri moqeoxkoj.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog77[] = {
+	"Naeo b|lo eodaeas}r\200,",
+	NEW_LINE,
+	"xso ~so qahcoe.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Cfrlo rlomano.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog78[] = {
+	"Pqicfs, eqtgok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog79[] = {
+	"Nt pormosqi gf na mfn\200.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog80[] = {
+	"Hnafy}, \200 trsal kak robaka",
+	NEW_LINE,
+	"bolsas} r soboj.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog81[] = {
+	"Kak efla?",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog82[] = {
+	"Ea, \200 mod b| fdo ch\200s}...",
+	DISPLAY_MESSAGE,
+	"Siva\200 efqfcfn}ka...",
+	DISPLAY_MESSAGE,
+	"Nikakoj poliwii...",
+	DISPLAY_MESSAGE,
+	"Nikso nf trl|yis iv kqiki...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"No t mfn\200 nfs vokkfjnoj marki.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"(cheov)",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog83[] = {
+	"Nf voxt orsacl\200s} rcoi ospfxaski.",
+	DISPLAY_MESSAGE,
+	"Kso hnafs, xso im eflali.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog84[] = {
+	"Bo\177r}, sak",
+	NEW_LINE,
+	"pojmas} m|ykt",
+	NEW_LINE,
+	"rliykom rlogno.",
+	DISPLAY_MESSAGE,
+	"I kakoj pqok c napqarn|v trili\200v?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog85[] = {
+	"` b| pop|salr\200 pqodnas} psiw,",
+	NEW_LINE,
+	"frli b| c p\200s} lfs nf pormosqfl",
+	NEW_LINE,
+	"sos uil}m Vixkoka.",
+	DISPLAY_MESSAGE,
+	"Hq\200 mama mnf ~so pohcolila.",
+	DISPLAY_MESSAGE,
+	"Mnf sfpfq} eagf \200jwa frs} rsqayno.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog86[] = {
+	"Heoqoco. Naeo pon\200s} nam>k.",
+	DISPLAY_MESSAGE,
+	"\"Holoso ogieafs c konwf eoqodi\".",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog87[] = {
+	"C| mirsfq Egon Nosi?",
+	CHANGE_CHARACTER,
+	"Kak pogicafy}, eqtd moj?",
+	DISPLAY_MESSAGE,
+	"Moi l\177ei rkahali, xso s| p|salr\200",
+	NEW_LINE,
+	"pqoniknts} c orobn\200k.",
+	NEW_LINE,
+	"Haxfm?",
+	CHANGE_CHARACTER,
+	"`... Ponimafsf...",
+	DISPLAY_MESSAGE,
+	"` sts,",
+	NEW_LINE,
+	"xsob|...",
+	DISPLAY_MESSAGE,
+	"C rm|rlf, \200 sts na kaniktlav,",
+	NEW_LINE,
+	"no mfn\200 tgf soynis os hflfni",
+	NEW_LINE,
+	"i efqfc}fc...",
+	DISPLAY_MESSAGE,
+	"...i mnf havosflor} cktris} nfmnodo",
+	NEW_LINE,
+	"wicilihawii.",
+	CHANGE_CHARACTER,
+	"Nt xso gf... ` ponima\177 sfb\200,",
+	NEW_LINE,
+	"\177n|j eqtd.",
+	DISPLAY_MESSAGE,
+	"Mnf sogf kagfsr\200, xso",
+	NEW_LINE,
+	"frsfrscfnna\200 rqfea el\200 nar,",
+	NEW_LINE,
+	"l\177efj 20-do cfka...",
+	DISPLAY_MESSAGE,
+	"...sflfcihoq i popkoqn.",
+	NEW_LINE,
+	"No k rloct o",
+	NEW_LINE,
+	"hflfni...",
+	DISPLAY_MESSAGE,
+	"` nf modt ptrsis} sfb\200",
+	NEW_LINE,
+	"c eom, posomt xso... ~m...",
+	NEW_LINE,
+	"posomt xso c n>m... ie>s...",
+	DISPLAY_MESSAGE,
+	"...qfmons, no kak rorso\200sfl}n|j",
+	NEW_LINE,
+	"xflocfk \200 eam sfbf",
+	NEW_LINE,
+	"rso bakroc...",
+	DISPLAY_MESSAGE,
+	"...mogfy} ktpis}",
+	NEW_LINE,
+	"xso-nibte}, xso pomogfs",
+	NEW_LINE,
+	"sfbf hefr} c|gis}.",
+	DISPLAY_MESSAGE,
+	"Plffq, napqimfq.",
+	NEW_LINE,
+	"Xso rkagfy}?",
+	CHANGE_CHARACTER,
+	"Ha kodo c| mfn\200 pqinimafsf?!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog88[] = {
+	"` nikodea iv nf coh}mt!",
+	DISPLAY_MESSAGE,
+	"Nikodea!",
+	CHANGE_CHARACTER,
+	"Nf nfqcnixaj sak.",
+	DISPLAY_MESSAGE,
+	"Pfktni\200 non olfs.",
+	DISPLAY_MESSAGE,
+	"` pojet, a s| nf rsfrn\200jr\200",
+	NEW_LINE,
+	"i coh}mi banknost.",
+	DISPLAY_MESSAGE,
+	"Nikso nf thnafs...",
+	DISPLAY_MESSAGE,
+	"Eo rcieani\200, eqtd moj.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog89[] = {
+	"Pocfqis} nf modt, kak on ro mnoj",
+	NEW_LINE,
+	"obqazalr\200.",
+	DISPLAY_MESSAGE,
+	"Krsasi...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Pfkt \200 omlfs?..",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog90[] = {
+	"O-o-o...",
+	DISPLAY_MESSAGE,
+	"Cr> x>qnof...",
+	DISPLAY_MESSAGE,
+	"...i povogf na xflocfka...",
+	DISPLAY_MESSAGE,
+	"...r elinnoj palkoj...",
+	DISPLAY_MESSAGE,
+	"...i r doqykom na dolocf...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Nf rsoilo eihajnfqt rsol}ko pis}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog91[] = {
+	"Rnoca kopas}r\200 c mtroqf?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"A, nt laeno, sts sol}ko kakif-so",
+	NEW_LINE,
+	"btmagki.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog92[] = {
+	"Cr> kak ob|xno...",
+	DISPLAY_MESSAGE,
+	"Kasarsqou|...",
+	DISPLAY_MESSAGE,
+	"Rkaneal|...",
+	DISPLAY_MESSAGE,
+	"Insqidi...",
+	DISPLAY_MESSAGE,
+	"Qarrlfeocani\200...",
+	DISPLAY_MESSAGE,
+	"Poltdol|f bab|...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Naeo poepiras}r\200.",
+	END_DIALOG
+};
+
+const static char *russianDialog93[] = {
+	ANIM_WAIT,
+	"Odo...",
+	CHANGE_CHARACTER,
+	"...\200 sanwt-t-t\177...",
+	DISPLAY_MESSAGE,
+	"...i po\177-\177-\177...",
+	CHANGE_CHARACTER,
+	"^so Egon Nosi...",
+	CHANGE_CHARACTER,
+	"...eoge>->->m!...",
+	CHANGE_CHARACTER,
+	"...po>s na kamfqt!",
+	CHANGE_CHARACTER,
+	"...kakof hamfxa-a-asfl}nof...",
+	CHANGE_CHARACTER,
+	"Vos\200 fmt \200cno nf rsoilo.",
+	CHANGE_CHARACTER,
+	"...xt-t-tcrsco...",
+	CHANGE_CHARACTER,
+	"Tyam nf cfq\177.",
+	CHANGE_CHARACTER,
+	"...rnoca rxa-a-arslic!..",
+	CHANGE_CHARACTER,
+	"Kakoj tgar.",
+	CHANGE_CHARACTER,
+	"...pqorso sanwt\200 poe eoge>->->m...",
+	CHANGE_CHARACTER,
+	"Rorferka\200 robaka rpo>s ltxyf.",
+	CHANGE_CHARACTER,
+	"...la-a-a-la-a-a!...",
+	CHANGE_CHARACTER,
+	"Vcasis tgf.",
+	CHANGE_CHARACTER,
+	"...la-la! La-la-a-a....",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog94[] = {
+	"Nixfdo insfqf...",
+	DISPLAY_MESSAGE,
+	"Rfktneoxkt...",
+	DISPLAY_MESSAGE,
+	"Poe eicanom xso-so frs}!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog95[] = {
+	"Cam nf kagfsr\200, xso",
+	NEW_LINE,
+	"rsois eobacis}",
+	NEW_LINE,
+	"nfmnodo xili?",
+	CHANGE_CHARACTER,
+	"Eobacis}?",
+	DISPLAY_MESSAGE,
+	"Haxfm?",
+	CHANGE_CHARACTER,
+	"Povogf, c| nf c corsoqdf",
+	NEW_LINE,
+	"os dosoc\200zfdor\200",
+	NEW_LINE,
+	"qadt.",
+	DISPLAY_MESSAGE,
+	"Cohmogno, rlfetfs",
+	NEW_LINE,
+	"pqibacis} fmt",
+	NEW_LINE,
+	"orsqos|?",
+	CHANGE_CHARACTER,
+	"Nt...",
+	DISPLAY_MESSAGE,
+	"Voqoya\200 m|rl}.",
+	DISPLAY_MESSAGE,
+	"K rxars}\177, t mfn\200 hefr} frs} nfmnodo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog96[] = {
+	CHANGE_CHARACTER,
+	"^sos... ik!..",
+	DISPLAY_MESSAGE,
+	"^sos xi-i-ili... ik!",
+	DISPLAY_MESSAGE,
+	"...cieimo...",
+	DISPLAY_MESSAGE,
+	"...habqoeil...",
+	DISPLAY_MESSAGE,
+	"Qadt irpoqxfno, i...",
+	DISPLAY_MESSAGE,
+	"...\200 tcolfn!",
+	DISPLAY_MESSAGE,
+	"Ik!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog97[] = {
+	"Qaeio mnf nf ntgno, a cos",
+	NEW_LINE,
+	"basaqfjki modts pqidoeis}r\200.",
+	DISPLAY_MESSAGE,
+	"K rogalfni\177, \200 nf tmf\177",
+	NEW_LINE,
+	"oskq|cas} ~si \200ponrkif",
+	NEW_LINE,
+	"ystki.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog98[] = {
+	CHANGE_CHARACTER,
+	"Pqocfqka bfhoparnorsi: dolor, hapav, cnfynors}.",
+	DISPLAY_MESSAGE,
+	"Dolor poescfqge>n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Kqtso rpfl.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog99[] = {
+	CHANGE_CHARACTER,
+	"Pqocfqka bfhoparnorsi: dolor, hapav, cnfynors}.",
+	DISPLAY_MESSAGE,
+	"Hapav poescfqge>n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"` sogf bo\177r} coe|, bqo.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog100[] = {
+	CHANGE_CHARACTER,
+	"Pqocfqka bfhoparnorsi: dolor, hapav, cnfynors}.",
+	DISPLAY_MESSAGE,
+	"Cnfynors} poescfqgefna.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"C eqtdoj qah rsoj bligf.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog101[] = {
+	"Mogno rpqoris}...",
+	CHANGE_CHARACTER,
+	"Tvoei.",
+	DISPLAY_MESSAGE,
+	"` han\200s.",
+	DISPLAY_MESSAGE,
+	"Qabosa\177.",
+	DISPLAY_MESSAGE,
+	"Rkoqo obfe.",
+	DISPLAY_MESSAGE,
+	"Naeo rpfyis}.",
+	CHANGE_CHARACTER,
+	"Frs}, kapisan.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog102[] = {
+	"Nt a mogfs...",
+	CHANGE_CHARACTER,
+	"`...",
+	DISPLAY_MESSAGE,
+	"...OXFN]...",
+	DISPLAY_MESSAGE,
+	"...HAN`S.",
+	DISPLAY_MESSAGE,
+	"NF...",
+	DISPLAY_MESSAGE,
+	"...MFYAJ...",
+	DISPLAY_MESSAGE,
+	"...MNF.",
+	DISPLAY_MESSAGE,
+	"LAENO?",
+	CHANGE_CHARACTER,
+	"Laeno, laeno.",
+	END_DIALOG
+};
+
+const static char *russianDialog103[] = {
+	"Porlfenij qah pqoyt...",
+	CHANGE_CHARACTER,
+	"CON.",
+	DISPLAY_MESSAGE,
+	"C kak cali.",
+	DISPLAY_MESSAGE,
+	"O kak osr\177ea.",
+	DISPLAY_MESSAGE,
+	"N kak...",
+	DISPLAY_MESSAGE,
+	"Kak...",
+	DISPLAY_MESSAGE,
+	"Kak na...",
+	CHANGE_CHARACTER,
+	"Nacrfdea?",
+	CHANGE_CHARACTER,
+	"Nfs. Kak...",
+	CHANGE_CHARACTER,
+	"Nacfki?",
+	CHANGE_CHARACTER,
+	"Nfs, nfs. Kak...",
+	CHANGE_CHARACTER,
+	"Nfmfelfnno?",
+	CHANGE_CHARACTER,
+	"Nfmfelfnno.",
+	DISPLAY_MESSAGE,
+	"Pogaltjrsa, orsac} mfn\200 oenodo!",
+	CHANGE_CHARACTER,
+	"Laeno, laeno.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog104[] = {
+	"^m...",
+	CHANGE_CHARACTER,
+	"Dq-q-q...",
+	CHANGE_CHARACTER,
+	"Ea nixfdo.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog105[] = {
+	"Eobq|j efn}, mirsfq Qobos.",
+	CHANGE_CHARACTER,
+	"^j, heoqoc, x> kak,",
+	NEW_LINE,
+	"rfx>y}?",
+	DISPLAY_MESSAGE,
+	"Hoci mfn\200 Majk, nt x>,",
+	NEW_LINE,
+	"rfx>y}?",
+	CHANGE_CHARACTER,
+	"^...",
+	DISPLAY_MESSAGE,
+	"S| tcfqfn, xso t sfb\200 cr>",
+	NEW_LINE,
+	"c poq\200ekf r...",
+	DISPLAY_MESSAGE,
+	"...pqodqammoj?..",
+	CHANGE_CHARACTER,
+	"A x> nf sak, xtcak?!",
+	DISPLAY_MESSAGE,
+	"Nikodea nf ciefl q~pt\177zij qobo-rfju,",
+	NEW_LINE,
+	"rfx>y}?",
+	CHANGE_CHARACTER,
+	"Xfrsno docoq\200, nikodea.",
+	CHANGE_CHARACTER,
+	"` nocinka, bqo.",
+	DISPLAY_MESSAGE,
+	"Rcfgak, rfx>y}?",
+	DISPLAY_MESSAGE,
+	"Tmn|f l\177ei dcq\200s,",
+	NEW_LINE,
+	"qobos| eolgn| b|s} crfm pon\200sn|.",
+	DISPLAY_MESSAGE,
+	"Rfx>y},",
+	NEW_LINE,
+	"cos mnf i pqieali xflocfxfrkt\177",
+	NEW_LINE,
+	"lixnors}.",
+	DISPLAY_MESSAGE,
+	"Rfx>y}?",
+	NEW_LINE,
+	"Kqtso, ea?",
+	CHANGE_CHARACTER,
+	"Kvm... Ada, heoqoco.",
+	DISPLAY_MESSAGE,
+	"So frs} s| sipa rfju, ea?",
+	CHANGE_CHARACTER,
+	"Cfqno, xtcak.",
+	DISPLAY_MESSAGE,
+	"Rcfqvnae>gn|j, rfx>y},",
+	NEW_LINE,
+	"ea?",
+	DISPLAY_MESSAGE,
+	"Frli voy}, xsob oskq|lr\200,",
+	NEW_LINE,
+	"eokagi, xso s| claeflfw.",
+	DISPLAY_MESSAGE,
+	"Sfq} hawfni ~st (WFNHTQA):",
+	NEW_LINE,
+	"` opqfefl\200\177, sos li",
+	NEW_LINE,
+	"s| xfl, po sq>m cfzam:",
+	DISPLAY_MESSAGE,
+	"...cnfynors}, hapav i dolor.",
+	NEW_LINE,
+	"Rfx>y}?",
+	CHANGE_CHARACTER,
+	"A nf btefy} sak eobq oskq|s}",
+	NEW_LINE,
+	"...rfb\200... i \200 pqorso hadl\200nt,",
+	NEW_LINE,
+	"xso sam cntsqi?",
+	CHANGE_CHARACTER,
+	"Pqorsi, bqo.",
+	DISPLAY_MESSAGE,
+	"Nf povog s| na claefl}wa...",
+	DISPLAY_MESSAGE,
+	"...nf pavnfy}, kak on...",
+	DISPLAY_MESSAGE,
+	"...i dolor t sfb\200 eqtdoj.",
+	DISPLAY_MESSAGE,
+	"Sfpfq}, (WFNHTQA), rfx>y}?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog106[] = {
+	"Rfham, oskqojr\200...",
+	CHANGE_CHARACTER,
+	"(WFNHTQA), s| (WFNHTQA).",
+	END_DIALOG
+};
+
+const static char *russianDialog107[] = {
+	"Vaj!",
+	CHANGE_CHARACTER,
+	"(QOEISFL]RKIJ KONSQOL]: DQTBA` LFKRIKA)",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog108[] = {
+	"Docoq\177 sfbf, ~so pqorso nfxso.",
+	CHANGE_CHARACTER,
+	"` pomn\177, kak s| tbil mofdo rltdt,",
+	NEW_LINE,
+	"sfrsiqt\200 ptlfnfpqobicafmt\177",
+	NEW_LINE,
+	"utsbolkt.",
+	CHANGE_CHARACTER,
+	"^so b|lo oxfn} eacno...",
+	CHANGE_CHARACTER,
+	"Ili kak s| reflal xisa\177zij",
+	NEW_LINE,
+	"q~p qobo-rfju, kosoq|j cfxno",
+	NEW_LINE,
+	"rvoeis r tma...",
+	DISPLAY_MESSAGE,
+	"...kodea \200 pqoyt fdo oskq|s}r\200.",
+	CHANGE_CHARACTER,
+	"Pqorso s| narsqofn na nfdasic...",
+	CHANGE_CHARACTER,
+	"Ili kak s| pqoeal",
+	NEW_LINE,
+	"mnf kl\177x k efcix}im",
+	NEW_LINE,
+	"rfqewam.",
+	CHANGE_CHARACTER,
+	"Efn}di nf rqabosali?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	"Rsqanno. Crfdea poltxalor}.",
+	CHANGE_CHARACTER,
+	"A kodea s|...",
+	CHANGE_CHARACTER,
+	"LAENO, LAENO!",
+	DISPLAY_MESSAGE,
+	"Hab|li!",
+	DISPLAY_MESSAGE,
+	"` tgf irp|sal nocof",
+	NEW_LINE,
+	"ihobqfsfnif na rfbf!",
+	CHANGE_CHARACTER,
+	"Pqacea?",
+	CHANGE_CHARACTER,
+	"Pqacea.",
+	DISPLAY_MESSAGE,
+	"Modt pqoefmonrsqiqocas}.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Laeno, qirkn>m.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog109[] = {
+	ANIM_WAIT,
+	"Heoqoco.",
+	DISPLAY_MESSAGE,
+	"Rocfqyfnn|j dnomoefl.",
+	CHANGE_CHARACTER,
+	"Vm, ~so poboxn|j ~uufks.",
+	DISPLAY_MESSAGE,
+	"Poqoj \200 nf konsqoliqt\177 rcoi",
+	NEW_LINE,
+	"ihobqfsfni\200.",
+	DISPLAY_MESSAGE,
+	"No nf colntjr\200, ~so elisr\200",
+	NEW_LINE,
+	"crfdo rfktnet.",
+	CHANGE_CHARACTER,
+	"Naef\177r}.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog110[] = {
+	"Cos i \200.",
+	DISPLAY_MESSAGE,
+	"Nt, hamfsil xso-nibte}",
+	NEW_LINE,
+	"nfob|xnof?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	"Heoqoco!",
+	DISPLAY_MESSAGE,
+	"Sablfski qabosa\177s!",
+	CHANGE_CHARACTER,
+	"Ea nftgfli?",
+	CHANGE_CHARACTER,
+	"Ea!",
+	DISPLAY_MESSAGE,
+	"Pqocfq} rcoj btmagnik!",
+	CHANGE_CHARACTER,
+	"Moj btmagnik pqi...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog111[] = {
+	"Def moj btmagnik?!",
+	DISPLAY_MESSAGE,
+	"Coqiyka!",
+	DISPLAY_MESSAGE,
+	"Cfqni fdo!",
+	CHANGE_CHARACTER,
+	"Polfdxf, cos scoj",
+	NEW_LINE,
+	"btmagnik.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog112[] = {
+	"` sqfbt\177 ob{\200rnfnij.",
+	CHANGE_CHARACTER,
+	"Va!",
+	DISPLAY_MESSAGE,
+	"^so mo> ramof",
+	NEW_LINE,
+	"ltxyff ihobqfsfnif!",
+	CHANGE_CHARACTER,
+	"Xso imfnno?",
+	CHANGE_CHARACTER,
+	"S| nf ciefl, kak \200 tkqal",
+	NEW_LINE,
+	"scoj btmagnik...",
+	DISPLAY_MESSAGE,
+	"...posomt xso \200 pqin\200l...",
+	DISPLAY_MESSAGE,
+	"SABLFSKI CQFMFNI!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Sablfski cqfmfni?",
+	CHANGE_CHARACTER,
+	"Ea!",
+	DISPLAY_MESSAGE,
+	"Sos, kso iv pqimfs, gic>s",
+	NEW_LINE,
+	"c 1000 qah b|rsqfj,",
+	NEW_LINE,
+	"xfm orsal}noj miq!",
+	CHANGE_CHARACTER,
+	"^so ohnaxafs...",
+	CHANGE_CHARACTER,
+	"^so ohnaxafs, xso miq el\200 nfdo",
+	NEW_LINE,
+	"ecigfsr\200 c 1000",
+	NEW_LINE,
+	"qah mfelfnnfj!",
+	DISPLAY_MESSAGE,
+	"Pqacea, liy} na",
+	NEW_LINE,
+	"nfrkol}ko rfktne...",
+	CHANGE_CHARACTER,
+	"Nt... Insfqfrno, konfxno.",
+	NEW_LINE,
+	"No haxfm ~so?",
+	CHANGE_CHARACTER,
+	"X>qs fdo hnafs.",
+	DISPLAY_MESSAGE,
+	"Ram poetmaj.",
+	DISPLAY_MESSAGE,
+	"Mogno, napqimfq, pqojsi",
+	NEW_LINE,
+	"c kino bfh bilfsa, i nikso",
+	NEW_LINE,
+	"sfb\200 nf hamfsis.",
+	CHANGE_CHARACTER,
+	"Cos ~so ea!",
+	DISPLAY_MESSAGE,
+	"Heoqoco!",
+	DISPLAY_MESSAGE,
+	"` voxt ktpis} pasfns!",
+	CHANGE_CHARACTER,
+	"A cos sts pqoblfma...",
+	DISPLAY_MESSAGE,
+	"Kak s| hnafy}, moj e\200e\200 Dalladfq",
+	NEW_LINE,
+	"pqietm|cal ltxyif ihobqfsfni\200,",
+	NEW_LINE,
+	"kodea b|l... rkagfm sak...",
+	CHANGE_CHARACTER,
+	"...p}\200n...",
+	CHANGE_CHARACTER,
+	"...c rorso\200nii insokrikawii.",
+	DISPLAY_MESSAGE,
+	"I so gf ramof ro mnoj",
+	NEW_LINE,
+	"(cheov).",
+	DISPLAY_MESSAGE,
+	"Pqoyloj nox}\177 \200 pqorntlr\200",
+	NEW_LINE,
+	"os tgarnoj dolocnoj boli i",
+	NEW_LINE,
+	"nay>l ~si sablfski.",
+	DISPLAY_MESSAGE,
+	"` nf pomn\177, kak ihdosocil iv.",
+	CHANGE_CHARACTER,
+	"O nfs!",
+	CHANGE_CHARACTER,
+	"No modt pop|sas}r\200 poqabosas} nae nimi.",
+	DISPLAY_MESSAGE,
+	"El\200 ~sodo mnf ntgn| scoi efn}di.",
+	DISPLAY_MESSAGE,
+	"Eacaj hakl\177xim reflkt.",
+	DISPLAY_MESSAGE,
+	"S| porsqoiy} mnf noct\177",
+	NEW_LINE,
+	"laboqasoqi\177...",
+	DISPLAY_MESSAGE,
+	"...a \200 pfqfeam sfbf pqaca.",
+	CHANGE_CHARACTER,
+	"S| eay} mnf pasfns?!",
+	CHANGE_CHARACTER,
+	"Ea.",
+	DISPLAY_MESSAGE,
+	"Mfn\200 insfqfrtfs sol}ko",
+	NEW_LINE,
+	"tcagfnif crfmiqnodo",
+	NEW_LINE,
+	"natxnodo roobzfrsca.",
+	DISPLAY_MESSAGE,
+	"I Nobflfcrka\200.",
+	DISPLAY_MESSAGE,
+	"Ram ponimafy}, crfobzij pox>s",
+	NEW_LINE,
+	"i tcagfnif, insfqc}\177...",
+	CHANGE_CHARACTER,
+	"Laeno. Ie>s.",
+	DISPLAY_MESSAGE,
+	"Poedosoc} rpirok nfobvoeimodo",
+	NEW_LINE,
+	"oboqteocani\200.",
+	CHANGE_CHARACTER,
+	"Xtefrno.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog113[] = {
+	"^sos etqak mnf cfqis.",
+	DISPLAY_MESSAGE,
+	"No \200 fdo irpol}ht\177...",
+	DISPLAY_MESSAGE,
+	"Sablfski cqfmfni...",
+	DISPLAY_MESSAGE,
+	"` nf rsant pqoeacas} iv",
+	NEW_LINE,
+	"dltp|m l\177eiykam!",
+	DISPLAY_MESSAGE,
+	"Plfcas} mnf na",
+	NEW_LINE,
+	"pasfns!",
+	DISPLAY_MESSAGE,
+	"` modt nfhamfsno",
+	NEW_LINE,
+	"dqabis} banki!",
+	DISPLAY_MESSAGE,
+	"B|rsqff rcfsa!",
+	DISPLAY_MESSAGE,
+	"Naeo tkqars} efnfd ili holosa",
+	NEW_LINE,
+	"na laboqasoqi\177 ~sodo",
+	NEW_LINE,
+	"bfhtmwa.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog114[] = {
+	"No rkoqo...",
+	DISPLAY_MESSAGE,
+	"\200 qahbodasf\177.",
+	DISPLAY_MESSAGE,
+	"Oxfn} ril}no.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"` xtcrsct\177, xso rmodt...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"...xso rmodt...",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog115[] = {
+	ANIM_WAIT,
+	"HAVCASIS] MIQ!..",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog116[] = {
+	ANIM_WAIT,
+	"Crfdea vosfl ~so rkahas}.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog117[] = {
+	"Rnoca \200.",
+	CHANGE_CHARACTER,
+	"Rnoca poka.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Reflafm cie, xso \200 nf rl|yal.",
+	DISPLAY_MESSAGE,
+	"Mirsfq Egon Nosi eoma?",
+	CHANGE_CHARACTER,
+	"Ea, no on cflfl nf ptrkas} sfb\200.",
+	CHANGE_CHARACTER,
+	"Mfn\200?! Poxfmt?!",
+	CHANGE_CHARACTER,
+	"Scoj porlfenij cihis rsoil fmt",
+	NEW_LINE,
+	"ectv rsfn.",
+	CHANGE_CHARACTER,
+	"A, sa mayina cqfmfni...",
+	DISPLAY_MESSAGE,
+	"No rfjxar \200...",
+	CHANGE_CHARACTER,
+	"Nf docoq\200 tgf o fdo koykf.",
+	CHANGE_CHARACTER,
+	"Koyka rfjxar rxarslicfj",
+	NEW_LINE,
+	"l\177bodo ih nar!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Frli miq fz> rtzfrsctfs c",
+	NEW_LINE,
+	"VV% cfkf.",
+	DISPLAY_MESSAGE,
+	"Nf bfqisf c doloct.",
+	DISPLAY_MESSAGE,
+	"C| ob\200han| mfn\200 cptrsis}.",
+	CHANGE_CHARACTER,
+	"Nftgfli?",
+	CHANGE_CHARACTER,
+	"` qarrkagt mirsfqt Nosi, xso c| p}>sf.",
+	CHANGE_CHARACTER,
+	"S| blfutfy}. T sfb\200 nfs eokahasfl}rsc.",
+	CHANGE_CHARACTER,
+	"Kak hnas}, kak hnas}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog118[] = {
+	"Laeno, cvoei, dq\200hn|j sfqqoqirs.",
+	DISPLAY_MESSAGE,
+	"Sol}ko nikomt ni rloca.",
+	CHANGE_CHARACTER,
+	"Konfxno. Rparibo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog119[] = {
+	"Hnaxis...",
+	DISPLAY_MESSAGE,
+	"Cos kak cr> pqoirvoeilo...",
+	DISPLAY_MESSAGE,
+	"Po~somt nikso nf ciefl,",
+	NEW_LINE,
+	"kak tkqali",
+	NEW_LINE,
+	"wfnnorsi...",
+	DISPLAY_MESSAGE,
+	"^so oxfn} oparnof",
+	NEW_LINE,
+	"ihobqfsfnif!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Mnf ntgno orsanocis} Egona Nosi!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Kak-so.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"^j! ^si sablfski, xso \200 habqal",
+	NEW_LINE,
+	"t Majka, cieimo...",
+	DISPLAY_MESSAGE,
+	"O nfs!",
+	DISPLAY_MESSAGE,
+	"` rl|yt x}i-so yadi!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog120[] = {
+	"Ntgno def-so tkq|s}r\200!",
+	DISPLAY_MESSAGE,
+	"B|rsqo!",
+	END_DIALOG
+};
+
+const static char *russianDialog121[] = {
+	"Pqie>sr\200 ktpis} ob|xn|j rfju.",
+	DISPLAY_MESSAGE,
+	"^sos etqawkij qobos op\200s} rp\200sil.",
+	DISPLAY_MESSAGE,
+	"Nfnacigt fdo.",
+	DISPLAY_MESSAGE,
+	"HAKQOJR`, VLAMA KTROK!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog122[] = {
+	"Sqfsij qah ha nfefl\177.",
+	DISPLAY_MESSAGE,
+	"Ov, laeno, laeno!...",
+	DISPLAY_MESSAGE,
+	"Iet!..",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog123[] = {
+	"...cr> pokq|s}.",
+	DISPLAY_MESSAGE,
+	"Mnf ntgno bol}yf efnfd na ovqannt\177 rirsfmt.",
+	DISPLAY_MESSAGE,
+	"T mfn\200 crfdo eca xflocfka i...",
+	CHANGE_CHARACTER,
+	"Bol}yf, bol}yf!",
+	DISPLAY_MESSAGE,
+	"^so cr>, xso rl|yt!",
+	CHANGE_CHARACTER,
+	"Laeno, ob{\200rn\177 fz> qah...",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog124[] = {
+	"Mirsfq Egon Nosi?",
+	DISPLAY_MESSAGE,
+	"` pqin>r roobzfnif",
+	NEW_LINE,
+	"os pqoufrroqa.",
+	DISPLAY_MESSAGE,
+	"On pqoris car hajsi c laboqasoqi\177.",
+	DISPLAY_MESSAGE,
+	"Docoqis, xso nay>l",
+	NEW_LINE,
+	"qfwfps sablfsok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog125[] = {
+	"Tgf cr>?!",
+	CHANGE_CHARACTER,
+	"Opqfefl>nno... ik!.. ea.",
+	CHANGE_CHARACTER,
+	"Heoqoco!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog126[] = {
+	"Naeo iv orsanocis}!",
+	DISPLAY_MESSAGE,
+	"Nfl}h\200 sfq\200s} cqfmfni!",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog127[] = {
+	"Sak-sak-sak...",
+	DISPLAY_MESSAGE,
+	"S| efjrsctfy} mnf na nfqc|.",
+	DISPLAY_MESSAGE,
+	"Nf galfs} efnfd na ovqannt\177 rirsfmt",
+	NEW_LINE,
+	"okahalor} pqacil}noj m|rl}\177...",
+	DISPLAY_MESSAGE,
+	"^so rilocof polf nftnixsogimo!",
+	DISPLAY_MESSAGE,
+	"Va!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog128[] = {
+	"No mnf cr> qacno pqie>sr\200 sfb\200 tbis}.",
+	CHANGE_CHARACTER,
+	"Nfs, nfs!",
+	CHANGE_CHARACTER,
+	"Hasknir}!",
+	CHANGE_CHARACTER,
+	"Ono sodo nf rsois!",
+	CHANGE_CHARACTER,
+	"Ea nt?",
+	CHANGE_CHARACTER,
+	"` nf voxt...",
+	END_DIALOG
+};
+
+const static char *russianDialog129[] = {
+	CHANGE_CHARACTER,
+	"Bfen\200da pqoufrroq liyilr\200 xtcrsc...",
+	CHANGE_CHARACTER,
+	"No... kak...",
+	DISPLAY_MESSAGE,
+	"` NIXFDO NF PONIMA_!",
+	CHANGE_CHARACTER,
+	"Oxfn} pqorso.",
+	DISPLAY_MESSAGE,
+	"M| pqikqfpili rfkqfsnt\177 mikqokamfqt",
+	NEW_LINE,
+	"k scofj kfpkf.",
+	DISPLAY_MESSAGE,
+	"Po~somt crfdea b|li c ktqrf",
+	NEW_LINE,
+	"pqoirvoe\200zfdo.",
+	CHANGE_CHARACTER,
+	"C| ciefli, kak \200?..",
+	CHANGE_CHARACTER,
+	"Nf voxt sfb\200 rmtzas}.",
+	DISPLAY_MESSAGE,
+	"S| ril}no pomod KCE.",
+	CHANGE_CHARACTER,
+	"No Egon Nosi rbfgal!",
+	CHANGE_CHARACTER,
+	"On nf pqfersacl\200fs insfqfra.",
+	DISPLAY_MESSAGE,
+	"Pqoufrroq t nar, a s| eay} nam sablfski.",
+	DISPLAY_MESSAGE,
+	"Pqorsi, no rfbf s| iv orsacis} nf mogfy}.",
+	CHANGE_CHARACTER,
+	"Laeno, no...",
+	DISPLAY_MESSAGE,
+	"Mogfsf eas} mnf mintskt?",
+	DISPLAY_MESSAGE,
+	"T mfn\200 k ~somt mfqhacwt",
+	NEW_LINE,
+	"lixnof eflo.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Voqoyo. No porpfyi.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog130[] = {
+	ANIM_WAIT,
+	"(rdlosntl)",
+	DISPLAY_MESSAGE,
+	"A cqfmfnnoj ~uufks i pqacea",
+	NEW_LINE,
+	"nfeoldij...",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog131[] = {
+	"C| pqoidqali, mirsfq!",
+	DISPLAY_MESSAGE,
+	"Poliwi\200 okqtgafs heanif!",
+	CHANGE_CHARACTER,
+	"Nf bte} etqakom.",
+	DISPLAY_MESSAGE,
+	"Nf etmal, xso t mfn\200 frs}",
+	NEW_LINE,
+	"caqians pqo hapar?",
+	CHANGE_CHARACTER,
+	"Av sak?",
+	DISPLAY_MESSAGE,
+	"I kakoj gf?",
+	CHANGE_CHARACTER,
+	"Sak \200 sfbf i qarrkahal...",
+	DISPLAY_MESSAGE,
+	"Oscali, btkayka.",
+	DISPLAY_MESSAGE,
+	"` han\200s.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog132[] = {
+	"Mnf pqie>sr\200 car qahoqtgis}.",
+	DISPLAY_MESSAGE,
+	"Bte}sf eobq|, reajsfr} eobqocol}no.",
+	CHANGE_CHARACTER,
+	"T mfn\200 nfs cqfmfni na ytski.",
+	DISPLAY_MESSAGE,
+	"Pqocalicaj osr\177ea,",
+	NEW_LINE,
+	"poka rnoca na sfb\200 ptykt",
+	NEW_LINE,
+	"nf narsacil.",
+	CHANGE_CHARACTER,
+	"Pqfetpqfgea\177...",
+	CHANGE_CHARACTER,
+	"Osktea bfqtsr\200 sakif",
+	NEW_LINE,
+	"hante|, kak s|?",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog133[] = {
+	"Bol}yf cohmognorsi nf btefs...",
+	CHANGE_CHARACTER,
+	"Oslixno.",
+	DISPLAY_MESSAGE,
+	"I pqozaj.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog134[] = {
+	"Vcasis pakocas} efn}di!",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog135[] = {
+	"Pqicfsik!",
+	CHANGE_CHARACTER,
+	"Pqicfs.",
+	DISPLAY_MESSAGE,
+	"Sfbf xfdo?",
+	CHANGE_CHARACTER,
+	"Mfn\200 napqacili r\177ea na sqfniqockt.",
+	CHANGE_CHARACTER,
+	"Oxfqfenoj c|rkoxka, mfs\200zij c adfns|?",
+	CHANGE_CHARACTER,
+	"Ada.",
+	CHANGE_CHARACTER,
+	"Pokagi eoktmfns|, i mogfy} cojsi.",
+	CHANGE_CHARACTER,
+	"Laetyki.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog136[] = {
+	"Mogfy} mfn\200 cptrsis} bfh crfj ~soj",
+	NEW_LINE,
+	"b\177qokqasii?",
+	CHANGE_CHARACTER,
+	"Pqorsi, nfs.",
+	DISPLAY_MESSAGE,
+	"Pqacila frs} pqacila.",
+	CHANGE_CHARACTER,
+	"Bolcan| frs} bolcan|.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"A mfqscfw| frs} mfqscfw|.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Voqoyfdo en\200, r~q.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog137[] = {
+	"MOGNO COJSI, POGALTJRSA?!",
+	CHANGE_CHARACTER,
+	"EA, MOGNO!",
+	DISPLAY_MESSAGE,
+	"PQORSO POKAGI EOKTMFNS\\!",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog138[] = {
+	"Pqoptrsi mfn\200!",
+	CHANGE_CHARACTER,
+	"Pokagi tgf eoktmfns|!",
+	CHANGE_CHARACTER,
+	"S| rliykom rfq}>hno osnoriy}r\200 k qabosf,",
+	NEW_LINE,
+	"nf kagfsr\200?",
+	CHANGE_CHARACTER,
+	"S| rlfpoj, xso li?",
+	DISPLAY_MESSAGE,
+	"` xisa\177 gtqnal na porst.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Soxno.",
+	DISPLAY_MESSAGE,
+	"Pqorsi.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog139[] = {
+	"Mnf naeo...",
+	CHANGE_CHARACTER,
+	"Eoktmfns|!",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog140[] = {
+	"Xso xisafy}?",
+	CHANGE_CHARACTER,
+	"\"Roleasrkif nocorsi\".",
+	CHANGE_CHARACTER,
+	"Nqac\200sr\200 crf ~si cofnn|f ystxki,",
+	NEW_LINE,
+	"ea?",
+	CHANGE_CHARACTER,
+	"Rp\200sil?",
+	DISPLAY_MESSAGE,
+	"Mnf nqac\200sr\200 uoski klarrn|v efcxonok...",
+	DISPLAY_MESSAGE,
+	"...kqorrcoqe|...",
+	DISPLAY_MESSAGE,
+	"...rsqanixka r \177moqom...",
+	DISPLAY_MESSAGE,
+	"...rplfsni...",
+	DISPLAY_MESSAGE,
+	"...qfwfps|...",
+	CHANGE_CHARACTER,
+	"KTLINAQN\\F?!",
+	CHANGE_CHARACTER,
+	"Ea, oni p|sa\177sr\200 poen\200s} rcoj pqfrsig.",
+	DISPLAY_MESSAGE,
+	"Pqiclfx} noc|v xisasflfj.",
+	CHANGE_CHARACTER,
+	"O ea.",
+	DISPLAY_MESSAGE,
+	"Klarrna\200 ief\200.",
+	DISPLAY_MESSAGE,
+	"Rsqanixka r c\200hanifm sogf frs}?",
+	CHANGE_CHARACTER,
+	"Mnf kagfsr\200, s|",
+	NEW_LINE,
+	"p|safy}r\200 ytsis}.",
+	CHANGE_CHARACTER,
+	"Kso, \200?",
+	DISPLAY_MESSAGE,
+	"Ea nikodea.",
+	CHANGE_CHARACTER,
+	"Oslixno.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog141[] = {
+	"Nf oeolgiy} mnf gtqnal?",
+	CHANGE_CHARACTER,
+	"I kak sodea",
+	NEW_LINE,
+	"\200 btet",
+	NEW_LINE,
+	"tbicas} cqfm\200?",
+	CHANGE_CHARACTER,
+	"^m...",
+	DISPLAY_MESSAGE,
+	"Mogfy} rxisas} lirs}\200.",
+	CHANGE_CHARACTER,
+	"Hefr} 11034 lirsa.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Odo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog142[] = {
+	"Xso eflafy}?",
+	CHANGE_CHARACTER,
+	"Sfbf oscfxa\177.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog143[] = {
+	"Sak efqgas}, moloefw.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog144[] = {
+	CHANGE_CHARACTER,
+	"^j, nahae!",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog145[] = {
+	"A xso sakof?",
+	CHANGE_CHARACTER,
+	"S| eolgfn pokahas} pqoptrk,",
+	NEW_LINE,
+	"pqfgef xfm \200 cptzt",
+	NEW_LINE,
+	"sfb\200 c ladfq}.",
+	CHANGE_CHARACTER,
+	"A inaxf?",
+	CHANGE_CHARACTER,
+	"Mnf pqie>sr\200 sfb\200 harsqflis}.",
+	CHANGE_CHARACTER,
+	"(rdlosntl)",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog146[] = {
+	CHANGE_CHARACTER,
+	"Pqfetpqfgea\177...",
+	DISPLAY_MESSAGE,
+	"Moi ptli b|rsqff sfb\200...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog147[] = {
+	CHANGE_CHARACTER,
+	"Laeno.",
+	DISPLAY_MESSAGE,
+	"Osxisajr\200 kapisant.",
+	DISPLAY_MESSAGE,
+	"On def-so poblihorsi.",
+	CHANGE_CHARACTER,
+	"Rparibo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog148[] = {
+	CHANGE_CHARACTER,
+	"M| reflafm ih sfb\200 narso\200zfdo mtgxint,",
+	NEW_LINE,
+	"cfqno, r|nok?!",
+	CHANGE_CHARACTER,
+	"^...",
+	CHANGE_CHARACTER,
+	"Ltxyfdo ih ltxyiv!..",
+	CHANGE_CHARACTER,
+	"A...",
+	CHANGE_CHARACTER,
+	"Rkcoh} pos, kqoc} i rl>h|!",
+	CHANGE_CHARACTER,
+	"` pqfepox>l b|...",
+	CHANGE_CHARACTER,
+	"Qae scofmt ~nsthiahmt, r|nok!",
+	DISPLAY_MESSAGE,
+	"Nf btefm sfq\200s} cqfmfni!",
+	DISPLAY_MESSAGE,
+	"Mnf pqikahali pqocfrsi trkoqfnnt\177 poedosockt.",
+	DISPLAY_MESSAGE,
+	"Isak, r|nok!",
+	DISPLAY_MESSAGE,
+	"S| eolgfn pqojsi sqi irp|sani\200!",
+	DISPLAY_MESSAGE,
+	"Naxn>m r l>dkodo!..",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog149[] = {
+	CHANGE_CHARACTER,
+	"Haeaxa pqorsa.",
+	DISPLAY_MESSAGE,
+	"` hapqt sfb\200 hefr}...",
+	DISPLAY_MESSAGE,
+	"...a s| eolgfn c|bqas}r\200.",
+	DISPLAY_MESSAGE,
+	"Cr> \200rno?!",
+	CHANGE_CHARACTER,
+	"R~q, \200...",
+	CHANGE_CHARACTER,
+	"OSLIXNO!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog150[] = {
+	ANIM_WAIT,
+	"^j?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Heoqoco.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog151[] = {
+	"Pohabacilir} i vcasis.",
+	DISPLAY_MESSAGE,
+	"C|ptrsisf!",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog152[] = {
+	"^j! Frs} kso",
+	NEW_LINE,
+	"rnaqtgi?!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"POMODISF!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog153[] = {
+	"Pozaeisf!",
+	DISPLAY_MESSAGE,
+	"` hefr} pomqt!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog154[] = {
+	"` pqodoloealr\200!",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog155[] = {
+	"` nf hna\177, xso fz> rkahas}...",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog156[] = {
+	"Etma\177...",
+	DISPLAY_MESSAGE,
+	"...s| pqoy>l...",
+	DISPLAY_MESSAGE,
+	"...pfqc|j sfrs...",
+	DISPLAY_MESSAGE,
+	"...Pfqfje>m...",
+	DISPLAY_MESSAGE,
+	"...k rlfet\177zfmt...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog157[] = {
+	CHANGE_CHARACTER,
+	"Voqoyo, roleas.",
+	DISPLAY_MESSAGE,
+	"Pqfersacim, xso \200 scoj plfnnik...",
+	DISPLAY_MESSAGE,
+	"...i hna\177 rfkqfsn|j paqol}.",
+	DISPLAY_MESSAGE,
+	"Sco\200 wfl} - c|cfeas} fdo t mfn\200.",
+	DISPLAY_MESSAGE,
+	"`RNO?!",
+	CHANGE_CHARACTER,
+	"` xfm-nibte} odqanixfn?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	DISPLAY_MESSAGE,
+	"Eflaj xso voxfy}.",
+	CHANGE_CHARACTER,
+	"Modt eagf c dlah pl\177nts}?",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ea.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Rparibo, pqorso tsoxnil.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog158[] = {
+	"Pogaltjrsa, rkagisf paqol},",
+	NEW_LINE,
+	"i pokonxim r ~sim.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Ea\177 cqfm\200 poetmas}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog159[] = {
+	"^j, podocoqisf ro mnoj.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"C| mfn\200 rl|yisf?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"HFML` C\\H\\CAFS KAPISANA, PQI<M!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Ea nt car.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog160[] = {
+	"Rohqfli el\200 qahdocoqa?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Laeno, eam cam fz> cqfmfni.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog161[] = {
+	"Nt sak kakoj paqol}?",
+	CHANGE_CHARACTER,
+	"Oscali, galkij n|sik.",
+	CHANGE_CHARACTER,
+	"Bte}sf pocfglicfj, a so rnoca hazfkoxt.",
+	CHANGE_CHARACTER,
+	"Eacaj, mnf eagf pqi\200sno.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Cam ~so nqacisr\200, ea?",
+	CHANGE_CHARACTER,
+	"Hnafy}...",
+	CHANGE_CHARACTER,
+	"Laeno, najet eqtdoj rporob.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog162[] = {
+	"` cam kof-xso pqin>r...",
+	CHANGE_CHARACTER,
+	"S| mfn\200 nf poektpiy}.",
+	CHANGE_CHARACTER,
+	"Cos kak?",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog163[] = {
+	NEW_LINE,
+	"O, VOXT-VOXT-VOXT!",
+	DISPLAY_MESSAGE,
+	"` REFLA_ XSO TDOENO!",
+	CHANGE_CHARACTER,
+	"Paqol}...",
+	CHANGE_CHARACTER,
+	"Paqol} \"KOUF\".",
+	DISPLAY_MESSAGE,
+	"Rkagi fdo baqmfnt,",
+	NEW_LINE,
+	"i on sfbf kof-xso ears.",
+	DISPLAY_MESSAGE,
+	"A posom qarrkagfs o sqfs}fm haeanii.",
+	DISPLAY_MESSAGE,
+	"SFPFQ] ORCOBOEI!",
+	CHANGE_CHARACTER,
+	"` fz> poetma\177.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog164[] = {
+	"S|...",
+	DISPLAY_MESSAGE,
+	"...c|...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"...pqoyli, r~q!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog165[] = {
+	"Voxfy} hamfxasfl}n|j kalfjeorkop?",
+	CHANGE_CHARACTER,
+	"T mfn\200 b|l sakoj, no kapisan tciefl,",
+	NEW_LINE,
+	"kak \200 r nim idqa\177, i habqal fdo.",
+	DISPLAY_MESSAGE,
+	"Kak mnf kagfsr\200,",
+	NEW_LINE,
+	"el\200 lixnodo pol}hocani\200.",
+	CHANGE_CHARACTER,
+	"Frli eay} mnf gtqnal,",
+	NEW_LINE,
+	"\200 eam sfbf kalfjeorkop.",
+	CHANGE_CHARACTER,
+	"Nf voxt hnas}, kak s| fdo eorsal...",
+	CHANGE_CHARACTER,
+	"Voqoyo.",
+	CHANGE_CHARACTER,
+	"...no ceqtd kapisan mfn\200 rnoca harstkafs?",
+	CHANGE_CHARACTER,
+	"Nf pfqfgicaj, t nfdo qtki rc\200han|.",
+	CHANGE_CHARACTER,
+	"O, sfrs nomfq eca, polada\177?..",
+	CHANGE_CHARACTER,
+	"Ada.",
+	CHANGE_CHARACTER,
+	"Laeno, eacaj pocfrflimr\200.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog166[] = {
+	"KOUF.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog167[] = {
+	CHANGE_CHARACTER,
+	"Doq\200xij, ea?",
+	CHANGE_CHARACTER,
+	"Oj-oj.",
+	DISPLAY_MESSAGE,
+	"Kapisan docoqil, c| eolgn| qarrkahas} mnf",
+	NEW_LINE,
+	"o sqfs}fm haeanii.",
+	CHANGE_CHARACTER,
+	"Op\200s}...",
+	DISPLAY_MESSAGE,
+	"Nt, ~so cqoef idq| c pq\200ski.",
+	DISPLAY_MESSAGE,
+	"Kapisan pq\200xfsr\200, a s| izfy}.",
+	CHANGE_CHARACTER,
+	"No on rieis pqic\200hann|j k rstlt!",
+	CHANGE_CHARACTER,
+	"Mtgik ro rcoimi bol}n|mi idqami...",
+	DISPLAY_MESSAGE,
+	"On tgf nfvilo c niv haidqalr\200!..",
+	DISPLAY_MESSAGE,
+	"On sfb\200 obmantl.",
+	DISPLAY_MESSAGE,
+	"Iei pqocfq}.",
+	DISPLAY_MESSAGE,
+	"Tcfqfn, on tgf orcoboeilr\200.",
+	CHANGE_CHARACTER,
+	"No \200 habqal fdo nog!",
+	DISPLAY_MESSAGE,
+	"Kak on mod pfqfqfhas} cfq>ckt?!",
+	CHANGE_CHARACTER,
+	"Mogfs, on sak i ty>l,",
+	NEW_LINE,
+	"pqic\200hann|j k rstlt...",
+	CHANGE_CHARACTER,
+	"Nf bfea!",
+	DISPLAY_MESSAGE,
+	"Nf c ktqrf, def on mogfs pq\200sas}r\200?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	"Oj, ea laeno.",
+	CHANGE_CHARACTER,
+	"Nfs, paqfn}. Idqaj xfrsno.",
+	END_DIALOG
+};
+
+const static char *russianDialog168[] = {
+	"Cqfm\200 el\200 poerkahki?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog169[] = {
+	"Pqicfs, r~q. ` Maqk.",
+	CHANGE_CHARACTER,
+	"Gal}, xso maqki nf eollaq|.",
+	DISPLAY_MESSAGE,
+	"Xso modt reflas}?",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Mogfsf eas} mnf ktxt efnfd...",
+	DISPLAY_MESSAGE,
+	"...ili crsas} na doloct...",
+	DISPLAY_MESSAGE,
+	"...ili...",
+	CHANGE_CHARACTER,
+	"Laeno, laeno. Kcis|.",
+	DISPLAY_MESSAGE,
+	"Nt?..",
+	CHANGE_CHARACTER,
+	"Kso fz> frs} c ladfqf?",
+	CHANGE_CHARACTER,
+	"S| gtqnalirs?",
+	CHANGE_CHARACTER,
+	"Nfs, \200 rfkqfsn|j adfns.",
+	CHANGE_CHARACTER,
+	"I s| sogf?",
+	DISPLAY_MESSAGE,
+	"Nt ea laeno, hefr} crfdo sqi xflocfka.",
+	DISPLAY_MESSAGE,
+	"`, kapisan i ovqannik.",
+	CHANGE_CHARACTER,
+	"Nfs gfnzin?",
+	CHANGE_CHARACTER,
+	"Nf plax}.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"^-~-~, laeno...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog170[] = {
+	"Ronnof waqrsco sts, a?",
+	CHANGE_CHARACTER,
+	"Voxfy} xso-nibte} hakahas} ili nfs?",
+	CHANGE_CHARACTER,
+	"T mfn\200 nfs efnfd.",
+	CHANGE_CHARACTER,
+	"Rfdoen\200 bfrplasno.",
+	CHANGE_CHARACTER,
+	"Pqacea?",
+	CHANGE_CHARACTER,
+	"Pqacea.",
+	CHANGE_CHARACTER,
+	"Eajsf vos-eod.",
+	CHANGE_CHARACTER,
+	"Nfst.",
+	CHANGE_CHARACTER,
+	"Piwwt?",
+	CHANGE_CHARACTER,
+	"Nfst.",
+	CHANGE_CHARACTER,
+	"Sors|?",
+	CHANGE_CHARACTER,
+	"Nfst.",
+	CHANGE_CHARACTER,
+	"Xfdo tdoeno?",
+	CHANGE_CHARACTER,
+	"Nfst.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nfs, rparibo.",
+	DISPLAY_MESSAGE,
+	"` nf doloefn.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog171[] = {
+	"Xso c| p}>sf?",
+	CHANGE_CHARACTER,
+	"Xaj.",
+	CHANGE_CHARACTER,
+	"Nt ea.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog172[] = {
+	"Voqoya\200 podoeka.",
+	CHANGE_CHARACTER,
+	"Vm...",
+	END_DIALOG
+};
+
+const static char *russianDialog173[] = {
+	"Poqoj \200 sak trsa\177.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Oxfn} trsa\177.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog174[] = {
+	"^, Ctersok tgf pqoy>l!",
+	END_DIALOG
+};
+
+const static char *russianDialog175[] = {
+	"Rparib.",
+	END_DIALOG
+};
+
+const static char *russianDialog176[] = {
+	CHANGE_CHARACTER,
+	"Xso ha...",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog177[] = {
+	"^j, pis} nf vosisf?",
+	DISPLAY_MESSAGE,
+	"Hab|li o rcofj kqtgkf?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog178[] = {
+	"R~q, nam roobzili, xso...",
+	CHANGE_CHARACTER,
+	"Pohgf!",
+	DISPLAY_MESSAGE,
+	"` rfjxar han\200s!",
+	CHANGE_CHARACTER,
+	"Kak rkagfsf, r~q.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog179[] = {
+	"R~q, kakoj-so poeqorsok p|safsr\200 halfhs}",
+	NEW_LINE,
+	"c orobn\200k.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog180[] = {
+	"Nixfdo rsqaynodo.",
+	DISPLAY_MESSAGE,
+	"_noyi l\177bop|sn|...",
+	DISPLAY_MESSAGE,
+	"...a moj eom poqagafs iv coobqagfnif.",
+	DISPLAY_MESSAGE,
+	"No cr> qacno pqirmasqicaj ha nim.",
+	CHANGE_CHARACTER,
+	"Ea, r~q!",
+	END_DIALOG
+};
+
+const static char *russianDialog181[] = {
+	"R~q, paqfn} op\200s} p|salr\200 halfhs}.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog182[] = {
+	"Etmafy}, ~so oparno?",
+	CHANGE_CHARACTER,
+	"Vm-m-m... Nfs...",
+	DISPLAY_MESSAGE,
+	"On c|dl\200eis bfhobieno.",
+	DISPLAY_MESSAGE,
+	"No, cohmogno, rsois fdo...",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	DISPLAY_MESSAGE,
+	"Pqorso nf poeptrkaj.",
+	DISPLAY_MESSAGE,
+	"No roobzi, frli on rnoca po\200cisr\200.",
+	DISPLAY_MESSAGE,
+	"A sfpfq} ha qabost.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog183[] = {
+	"Sol}ko nf docoqi, xso rnoca mal}xiyka...",
+	CHANGE_CHARACTER,
+	"Bo\177r}, xso sak.",
+	DISPLAY_MESSAGE,
+	"Ovqannik docoqis, on oxfn} nars|qn|j.",
+	END_DIALOG
+};
+
+const static char *russianDialog184[] = {
+	"On naxinafs mfn\200 bfris}.",
+	DISPLAY_MESSAGE,
+	"I ha xso \200 sfbf plaxt?",
+	CHANGE_CHARACTER,
+	"Mnf fdo...",
+	CHANGE_CHARACTER,
+	"Poka nfs.",
+	DISPLAY_MESSAGE,
+	"Eaeim fmt porlfenij yanr.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog185[] = {
+	"R~q...",
+	CHANGE_CHARACTER,
+	"Eaj tdaea\177...",
+	DISPLAY_MESSAGE,
+	"MAL]XIYKA?!",
+	CHANGE_CHARACTER,
+	"Soxno.",
+	CHANGE_CHARACTER,
+	"Poxfmt cr> pqivoeisr\200 eflas} mnf?!",
+	DISPLAY_MESSAGE,
+	"Mogfy} vos} xso-so reflas} ramorso\200sfl}no?",
+	CHANGE_CHARACTER,
+	"Mnf tbis} fdo ili pqorso na ktrki poqcas}?",
+	CHANGE_CHARACTER,
+	"S| ieios.",
+	DISPLAY_MESSAGE,
+	"Frs}... mfsoe| ltxyf...",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog186[] = {
+	"` ram qahbfqtr}.",
+	DISPLAY_MESSAGE,
+	"Sfpfq} tjei!",
+	DISPLAY_MESSAGE,
+	"Mnf ntgno pfqfoefs}r\200.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog187[] = {
+	"^j sam, nacfqvt!",
+	DISPLAY_MESSAGE,
+	"Rptrkajr\200!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Nikakoj qfakwii.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Ona dltva\200, xso li?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog188[] = {
+	"^j, psixka, nf rsfrn\200jr\200.",
+	DISPLAY_MESSAGE,
+	"Iei r\177ea...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"(cheov)",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog189[] = {
+	"R\177ea, psayka...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog190[] = {
+	NEW_LINE,
+	"^j, nf poevoei k ~soj ecfqi!",
+	CHANGE_CHARACTER,
+	"Poxfmt?",
+	CHANGE_CHARACTER,
+	"Nf sco> eflo.",
+	DISPLAY_MESSAGE,
+	"Pqorso nf poevoei.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog191[] = {
+	CHANGE_CHARACTER,
+	"` cqoef rkahal nf poevoeis}?",
+	CHANGE_CHARACTER,
+	"Laeno, laeno...",
+	END_DIALOG
+};
+
+const static char *russianDialog192[] = {
+	"` pqic>h noct\177 paqsi\177 holosa.",
+	CHANGE_CHARACTER,
+	"Ea, \200 c ktqrf.",
+	DISPLAY_MESSAGE,
+	"Paqol}?",
+	CHANGE_CHARACTER,
+	"Bimbo.",
+	CHANGE_CHARACTER,
+	"Cfqno.",
+	DISPLAY_MESSAGE,
+	"Hanorisf cntsq}.",
+	CHANGE_CHARACTER,
+	"Lae|.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog193[] = {
+	"Kak \200 tgf docoqil, naya oqdanihawi\200",
+	NEW_LINE,
+	"qfyafs nfrsaneaqsn|f pqoblfm|.",
+	DISPLAY_MESSAGE,
+	"Porlfenfj b|l NLO",
+	NEW_LINE,
+	"nae Bfl|m eomom.",
+	CHANGE_CHARACTER,
+	"Placea?",
+	DISPLAY_MESSAGE,
+	"I xso c|?",
+	CHANGE_CHARACTER,
+	"Rbili ~st ystkocint.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Pon\200sno.",
+	DISPLAY_MESSAGE,
+	"I kso... xso b|lo cntsli?",
+	CHANGE_CHARACTER,
+	"Vosisf hnas}?",
+	CHANGE_CHARACTER,
+	"O ea! ` gf ~krslarfnr,",
+	NEW_LINE,
+	"mnf oxfn} l\177bop|sno.",
+	CHANGE_CHARACTER,
+	"C| OXFN] vosisf hnas}?",
+	CHANGE_CHARACTER,
+	"EA!",
+	CHANGE_CHARACTER,
+	"No...",
+	DISPLAY_MESSAGE,
+	"OXFN]-OXFN]?",
+	CHANGE_CHARACTER,
+	"EA!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Pqorsisf, \200 nf modt qarrkahas}.",
+	DISPLAY_MESSAGE,
+	"C obzfm, nam ntgna caya pomoz}.",
+	CHANGE_CHARACTER,
+	"` nf rfklfsn|j adfns, \200 ~krslarfnr...",
+	CHANGE_CHARACTER,
+	"Hna\177.",
+	DISPLAY_MESSAGE,
+	"T nar oxfn} rlognof eflo,",
+	NEW_LINE,
+	"m| b}>mr\200 r nim",
+	NEW_LINE,
+	"tgf poldoea.",
+	DISPLAY_MESSAGE,
+	"M| c bfhc|voenom pologfnii.",
+	DISPLAY_MESSAGE,
+	"` sts poetmal, qah m| hanimafmr\200",
+	NEW_LINE,
+	"rsqann|mi eflami...",
+	DISPLAY_MESSAGE,
+	"...sak poxfmt b| nf irpol}hocas}",
+	NEW_LINE,
+	"rsqann|f mfsoe|?",
+	CHANGE_CHARACTER,
+	"I?..",
+	CHANGE_CHARACTER,
+	"Pohcol}sf, \200 eam cam sflfuonn|j rpqacoxnik.",
+	DISPLAY_MESSAGE,
+	"Corpol}htjsfr} rporobnors\200mi i c|bfqisf im\200.",
+	DISPLAY_MESSAGE,
+	"Cohmogno, rcfga\200 doloca qarkqofs ~so eflo.",
+	CHANGE_CHARACTER,
+	"C| cfe} nf cflisf, xso poltxisr\200?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"^so dltpo.",
+	CHANGE_CHARACTER,
+	"Hna\177.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Laeno. Eacajsf rplacoxnik.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog194[] = {
+	ANIM_WAIT,
+	"Im\200...",
+	DISPLAY_MESSAGE,
+	"...Voppfl...",
+	DISPLAY_MESSAGE,
+	"...Malk Voppfl...",
+	DISPLAY_MESSAGE,
+	"Vm...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog195[] = {
+	"On ie>s.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog196[] = {
+	"O, \200 ihcin\200\177r} ha rcoiv l\177efj.",
+	DISPLAY_MESSAGE,
+	"Poqoj oni rliykom nfqcn|f...",
+	DISPLAY_MESSAGE,
+	"Pogaltjrsa...",
+	DISPLAY_MESSAGE,
+	"Eacaj podocoqim...",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog197[] = {
+	"Porltyajsf, mirsfq...",
+	CHANGE_CHARACTER,
+	"Hna\177, hna\177.",
+	DISPLAY_MESSAGE,
+	"Pqoyt, eaj mnf p\200s} mints,",
+	NEW_LINE,
+	"i \200 cr> ob{\200rn\177.",
+	CHANGE_CHARACTER,
+	"Cal\200jsf, mnf crfdea nqacilir} rfkqfsn|f ystxki.",
+	CHANGE_CHARACTER,
+	"Isak...",
+	DISPLAY_MESSAGE,
+	"` dlaca rfkqfsnoj pqacisfl}rscfnnoj",
+	NEW_LINE,
+	"oqdanihawii poe nahcanifm KCE.",
+	CHANGE_CHARACTER,
+	"Xso hnaxis KCE?",
+	CHANGE_CHARACTER,
+	"` i ram nf hna\177.",
+	DISPLAY_MESSAGE,
+	"Narsol}ko ~so rfkqfsno.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Kqtso.",
+	CHANGE_CHARACTER,
+	"Haeaxa mofj oqdanihawii - qfyas}",
+	NEW_LINE,
+	"ram|f nfrsaneaqsn|f pqoblfm|",
+	NEW_LINE,
+	"po crfmt miqt.",
+	CHANGE_CHARACTER,
+	"Cqoef nalodoc?",
+	CHANGE_CHARACTER,
+	"Nfs, cqoef NLO, rsqann|v ihobqfsfnij,",
+	NEW_LINE,
+	"pqiciefnij...",
+	CHANGE_CHARACTER,
+	"Odo!",
+	CHANGE_CHARACTER,
+	"Ea, kodea poliwi\200, rfkqfsna\200 rltgba i pqoxif",
+	NEW_LINE,
+	"nf modts rpqacis}r\200...",
+	DISPLAY_MESSAGE,
+	"...oni ospqacl\200\177sr\200 k nam. No...",
+	DISPLAY_MESSAGE,
+	"Cieiy} li, poldoea nahae",
+	NEW_LINE,
+	"ih bankocrkiv rfjuoc naxali",
+	NEW_LINE,
+	"irxfhas} holoso i nalixka.",
+	DISPLAY_MESSAGE,
+	"C pq\200mom rm|rlf. Bav! I kak nf b|calo!",
+	CHANGE_CHARACTER,
+	"I?..",
+	CHANGE_CHARACTER,
+	"Pqopali bfh rlfea.",
+	DISPLAY_MESSAGE,
+	"Cr> pqoirvoeilo ha rfktne|.",
+	DISPLAY_MESSAGE,
+	"T nar frs} ciefohapiri, no na niv",
+	NEW_LINE,
+	"nixfdo nf cieno.",
+	DISPLAY_MESSAGE,
+	"Po~somt m| nan\200li ~krsqarfnra,",
+	NEW_LINE,
+	"xsob| ona tkahala na sodo, kso mod b| rsas}",
+	NEW_LINE,
+	"nayim rparisflfm.",
+	DISPLAY_MESSAGE,
+	"Ona c|bqala sfb\200.",
+	CHANGE_CHARACTER,
+	"Pqorsisf...",
+	DISPLAY_MESSAGE,
+	"C| rkahali, xso nan\200li...",
+	DISPLAY_MESSAGE,
+	"...^KRSQARFNRA?!",
+	CHANGE_CHARACTER,
+	"Ea, m| c osxa\200nii i",
+	NEW_LINE,
+	"dosoc| na cr>.",
+	CHANGE_CHARACTER,
+	"Bqfe kakoj-so. Mam, qahbtei mfn\200!",
+	CHANGE_CHARACTER,
+	"Trpokojr\200.",
+	DISPLAY_MESSAGE,
+	"T nar k sfbf pqfelogfnif.",
+	DISPLAY_MESSAGE,
+	"Pomodi i poltxiy} nadqaet.",
+	CHANGE_CHARACTER,
+	"R xfdo mnf pomodas}?",
+	CHANGE_CHARACTER,
+	"Xtcrsco robrscfnnodo eorsoinrsca?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog198[] = {
+	CHANGE_CHARACTER,
+	"Pqihnanif?",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog199[] = {
+	CHANGE_CHARACTER,
+	"Pasqiosihm?",
+	END_DIALOG
+};
+
+const static char *russianDialog200[] = {
+	CHANGE_CHARACTER,
+	"Efcxonki?",
+	CHANGE_CHARACTER,
+	"C| o x>m?",
+	CHANGE_CHARACTER,
+	"Efctyki oboga\177s adfnsoc.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog201[] = {
+	"Laeno, rodlarfn. Xso eflas}?",
+	CHANGE_CHARACTER,
+	"Pqfgef crfdo, pqfelada\177 sfbf",
+	NEW_LINE,
+	"rpfqca pqojsi poedosockt c nayfm",
+	NEW_LINE,
+	"orobom rfkqfsnom ladfqf.",
+	DISPLAY_MESSAGE,
+	"` c|eam sfbf pqoptrk.",
+	DISPLAY_MESSAGE,
+	"Ie>s?",
+	CHANGE_CHARACTER,
+	"Ie>s!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog202[] = {
+	"...i ~so eagf b|lo cfrflo.",
+	CHANGE_CHARACTER,
+	"Qae, xso sfbf ponqacilir} nayi mfsoe| obtxfni\200.",
+	DISPLAY_MESSAGE,
+	"No pfqfje>m k eflt.",
+	DISPLAY_MESSAGE,
+	"Eolgfn pqihnas}r\200, \200 nf cfq\177,",
+	NEW_LINE,
+	"xso s| rmogfy} pomox}.",
+	DISPLAY_MESSAGE,
+	"Nixfdo lixnodo.",
+	CHANGE_CHARACTER,
+	"Naef\177r}.",
+	CHANGE_CHARACTER,
+	"No s| pqin>r nam teaxt.",
+	DISPLAY_MESSAGE,
+	"Nayi l\177ei c|yli na oenodo",
+	NEW_LINE,
+	"bihnfrmfna, kosoq|j nf rxisafs",
+	NEW_LINE,
+	"efn}di pqi poktpkf...",
+	DISPLAY_MESSAGE,
+	"...cfr}ma nfob|xn|v cfzfj.",
+	DISPLAY_MESSAGE,
+	"Sqi momfnsa c|h|ca\177s poeohqfni\200",
+	NEW_LINE,
+	"na fdo rx>s:",
+	DISPLAY_MESSAGE,
+	"...On plasis nalixkoj, xso rsqanno",
+	NEW_LINE,
+	"c cfk plarsikoc|v kaqs...",
+	DISPLAY_MESSAGE,
+	"...Co-csoq|v, poldoea nahae on i blihko nf b|l",
+	NEW_LINE,
+	"sak bodas, kak rfjxar...",
+	DISPLAY_MESSAGE,
+	"...C-sqfs}iv, na koj x>qs fmt",
+	NEW_LINE,
+	"ponaeobilor} 100 kd btq|?",
+	CHANGE_CHARACTER,
+	"Cohmogno, on pqorso xteak.",
+	CHANGE_CHARACTER,
+	"Cohmogno.",
+	DISPLAY_MESSAGE,
+	"No s| eolgfn c|lfsfs} na mfrso",
+	NEW_LINE,
+	"i pop|sas}r\200 pqoniknts} c fdo orobn\200k...",
+	DISPLAY_MESSAGE,
+	"...xsob| qaheob|s} bol}yf inuoqmawii.",
+	DISPLAY_MESSAGE,
+	"Xso rkagfy}?",
+	CHANGE_CHARACTER,
+	"Nt...",
+	CHANGE_CHARACTER,
+	"Obfza\177, xso porlf ~sodo haeani\200 s|",
+	NEW_LINE,
+	"ouiwial}no rsanfy} rfkqfsn|m adfnsom.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Obfzafsf?",
+	CHANGE_CHARACTER,
+	"Xfrsnof rloco.",
+	CHANGE_CHARACTER,
+	"Laeno, \200 dosoc.",
+	DISPLAY_MESSAGE,
+	"Ktea ospqacl\200s}r\200?",
+	CHANGE_CHARACTER,
+	"C malfn}kt\177 efqfctykt.",
+	DISPLAY_MESSAGE,
+	"F> eagf na kaqsav nf naje>y}...",
+	DISPLAY_MESSAGE,
+	"No rpfqca \200 c|eam sfbf ornazfnif",
+	NEW_LINE,
+	"rpfwial}nodo adfnsa.",
+	DISPLAY_MESSAGE,
+	"` b| eal sfbf qfaksicn|f bosinki el\200 pol>soc,",
+	NEW_LINE,
+	"no tgf oseal iv komt-so.",
+	DISPLAY_MESSAGE,
+	"Mfdamozn|v pfqxasok",
+	NEW_LINE,
+	"sogf nf orsalor}.",
+	DISPLAY_MESSAGE,
+	"El\200 nayfdo efla t mfn\200 orsalr\200 sol}ko",
+	NEW_LINE,
+	"orob|j rtpfqklfj.",
+	DISPLAY_MESSAGE,
+	"Cr>-saki ~so ltxyf, xfm nixfdo...",
+	DISPLAY_MESSAGE,
+	"Teaxi!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog203[] = {
+	CHANGE_CHARACTER,
+	"Nf colntjr\200.",
+	DISPLAY_MESSAGE,
+	"On oklfmafsr\200.",
+	DISPLAY_MESSAGE,
+	"Con ~so stlocizf...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog204[] = {
+	CHANGE_CHARACTER,
+	"On poltxil po harltdam.",
+	DISPLAY_MESSAGE,
+	"No m| tgf posfq\200li tjmt cqfmfni. Cpfq>e!",
+	CHANGE_CHARACTER,
+	"Nfs! Rsojsf!",
+	DISPLAY_MESSAGE,
+	"Mnf ntgno tciefs}r\200 r Annoj!",
+	CHANGE_CHARACTER,
+	"^m... S| nf mogfy}.",
+	CHANGE_CHARACTER,
+	"^so fz> poxfmt?!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Cieiy} li... Anna b|la nayim adfnsom.",
+	DISPLAY_MESSAGE,
+	"Fj b|lo poqtxfno rlfeis} ha soboj,",
+	NEW_LINE,
+	"frli mikqokamfqa",
+	NEW_LINE,
+	"ceqtd rlomafsr\200.",
+	DISPLAY_MESSAGE,
+	"A fz> ona sfb\200 mosiciqocala...",
+	CHANGE_CHARACTER,
+	"` cam nf cfq\177!",
+	CHANGE_CHARACTER,
+	"Ona tgf ospqacilar}",
+	NEW_LINE,
+	"na eqtdof haeanif.",
+	DISPLAY_MESSAGE,
+	"Pqorsi.",
+	CHANGE_CHARACTER,
+	"Babtl\200, sak polada\177, sogf r cami?",
+	CHANGE_CHARACTER,
+	"Nfs, ona sam gic>s. M| fj haplasili.",
+	CHANGE_CHARACTER,
+	"A cos ~so insfqfrno.",
+	DISPLAY_MESSAGE,
+	"Frli cr> sak, poxfmt t mfn\200 b|lo",
+	NEW_LINE,
+	"rsol}ko sqtenorsfj?...",
+	CHANGE_CHARACTER,
+	"M| poers>dicali sco\177 qfyimors}.",
+	DISPLAY_MESSAGE,
+	"M| qarrxis|cali, xso t sfb\200 ril}na\200 col\200.",
+	DISPLAY_MESSAGE,
+	"M| cfe} nf oyiblir}?",
+	CHANGE_CHARACTER,
+	"C| osnorisfr} k l\177e\200m kak k poeop|sn|m",
+	NEW_LINE,
+	"kqolikam.",
+	DISPLAY_MESSAGE,
+	"C| gfrsokij...",
+	CHANGE_CHARACTER,
+	"No cfe} efjrsctfs?",
+	CHANGE_CHARACTER,
+	"^so pqorso nfm|rlimo.",
+	DISPLAY_MESSAGE,
+	"Mogfs, fz> rkagfsf, xso robaka -",
+	NEW_LINE,
+	"hamarkiqocann|j adfns...",
+	DISPLAY_MESSAGE,
+	"...rsaqixok - moj ovqannik...",
+	DISPLAY_MESSAGE,
+	"...a rami c| r Maqra?!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog205[] = {
+	CHANGE_CHARACTER,
+	"^so nf sflfrfqial, ~so",
+	NEW_LINE,
+	"ob|xn|f bteni adfnsa.",
+	DISPLAY_MESSAGE,
+	"No crstpaj c KCE i rmogfy}",
+	NEW_LINE,
+	"qabosas} r Annoj t nar!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nt...",
+	DISPLAY_MESSAGE,
+	"` poetma\177...",
+	CHANGE_CHARACTER,
+	"Heoqoco.",
+	DISPLAY_MESSAGE,
+	"Pqi\200sno b|lo nabl\177eas} ha scofj qabosoj!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog206[] = {
+	CHANGE_CHARACTER,
+	"Nixfdo nf qarrkah|caj.",
+	DISPLAY_MESSAGE,
+	"` tgf pqoxisal efsal}n|j osx>s.",
+	CHANGE_CHARACTER,
+	"A xso r pqoufrroqom?",
+	CHANGE_CHARACTER,
+	"O, bfen\200da rnoca hab|l qfwfps",
+	NEW_LINE,
+	"sablfsok.",
+	DISPLAY_MESSAGE,
+	"M| eaeim fmt nayt ltxyt\177 laboqasoqi\177.",
+	DISPLAY_MESSAGE,
+	"Rfjxar t nar liy} paqa sablfsok,",
+	NEW_LINE,
+	"kosoq|f s| nam eal.",
+	CHANGE_CHARACTER,
+	"A Egon Nosi?",
+	CHANGE_CHARACTER,
+	"Nf bfrpokojr\200, on poplasisr\200 ha rco\177 gaenors}.",
+	CHANGE_CHARACTER,
+	"Naef\177r}...",
+	DISPLAY_MESSAGE,
+	"I fz> oena mflox}...",
+	DISPLAY_MESSAGE,
+	"C| mnf kof-xso obfzali...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog207[] = {
+	CHANGE_CHARACTER,
+	"`?..",
+	DISPLAY_MESSAGE,
+	"Nf pomn\177...",
+	CHANGE_CHARACTER,
+	"C| rkahali, \200 rsant narso\200zim adfnsom...",
+	DISPLAY_MESSAGE,
+	"\"Efctyki oboga\177s adfnsoc\". Pomnisf?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog208[] = {
+	CHANGE_CHARACTER,
+	"(cheov)",
+	DISPLAY_MESSAGE,
+	"Obfzanif frs} obfzanif...",
+	DISPLAY_MESSAGE,
+	"Eaj poetmas}.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Laeno. Poeojei.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog209[] = {
+	"Imfnfm...",
+	DISPLAY_MESSAGE,
+	"...bla-bla-bla...",
+	DISPLAY_MESSAGE,
+	"...bla-bla...",
+	DISPLAY_MESSAGE,
+	"...ha nayt rsqant.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog210[] = {
+	"Nt...",
+	DISPLAY_MESSAGE,
+	"Cos i cr>, qfb\200sa!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog211[] = {
+	"` nay>l sablfskt cqfmfni!",
+	DISPLAY_MESSAGE,
+	"Nacfqnof, c|calilar} ih banki!..",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Kqtso.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog212[] = {
+	"Odo!",
+	DISPLAY_MESSAGE,
+	"Oxaqocasfl}no!..",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char **englishDialogs[] = {
+	englishDialog0,
+	englishDialog1,
+	englishDialog2,
+	englishDialog3,
+	englishDialog4,
+	englishDialog5,
+	englishDialog6,
+	englishDialog7,
+	englishDialog8,
+	englishDialog9,
+	englishDialog10,
+	englishDialog11,
+	englishDialog12,
+	englishDialog13,
+	englishDialog14,
+	englishDialog15,
+	englishDialog16,
+	englishDialog17,
+	englishDialog18,
+	englishDialog19,
+	englishDialog20,
+	englishDialog21,
+	englishDialog22,
+	englishDialog23,
+	englishDialog24,
+	englishDialog25,
+	englishDialog26,
+	englishDialog27,
+	englishDialog28,
+	englishDialog29,
+	englishDialog30,
+	englishDialog31,
+	englishDialog32,
+	englishDialog33,
+	englishDialog34,
+	englishDialog35,
+	englishDialog36,
+	englishDialog37,
+	englishDialog38,
+	englishDialog39,
+	englishDialog40,
+	englishDialog41,
+	englishDialog42,
+	englishDialog43,
+	englishDialog44,
+	englishDialog45,
+	englishDialog46,
+	englishDialog47,
+	englishDialog48,
+	englishDialog49,
+	englishDialog50,
+	englishDialog51,
+	englishDialog52,
+	englishDialog53,
+	englishDialog54,
+	englishDialog55,
+	englishDialog56,
+	englishDialog57,
+	englishDialog58,
+	englishDialog59,
+	englishDialog60,
+	englishDialog61,
+	englishDialog62,
+	englishDialog63,
+	englishDialog64,
+	englishDialog65,
+	englishDialog66,
+	englishDialog67,
+	englishDialog68,
+	englishDialog69,
+	englishDialog70,
+	englishDialog71,
+	englishDialog72,
+	englishDialog73,
+	englishDialog74,
+	englishDialog75,
+	englishDialog76,
+	englishDialog77,
+	englishDialog78,
+	englishDialog79,
+	englishDialog80,
+	englishDialog81,
+	englishDialog82,
+	englishDialog83,
+	englishDialog84,
+	englishDialog85,
+	englishDialog86,
+	englishDialog87,
+	englishDialog88,
+	englishDialog89,
+	englishDialog90,
+	englishDialog91,
+	englishDialog92,
+	englishDialog93,
+	englishDialog94,
+	englishDialog95,
+	englishDialog96,
+	englishDialog97,
+	englishDialog98,
+	englishDialog99,
+	englishDialog100,
+	englishDialog101,
+	englishDialog102,
+	englishDialog103,
+	englishDialog104,
+	englishDialog105,
+	englishDialog106,
+	englishDialog107,
+	englishDialog108,
+	englishDialog109,
+	englishDialog110,
+	englishDialog111,
+	englishDialog112,
+	englishDialog113,
+	englishDialog114,
+	englishDialog115,
+	englishDialog116,
+	englishDialog117,
+	englishDialog118,
+	englishDialog119,
+	englishDialog120,
+	englishDialog121,
+	englishDialog122,
+	englishDialog123,
+	englishDialog124,
+	englishDialog125,
+	englishDialog126,
+	englishDialog127,
+	englishDialog128,
+	englishDialog129,
+	englishDialog130,
+	englishDialog131,
+	englishDialog132,
+	englishDialog133,
+	englishDialog134,
+	englishDialog135,
+	englishDialog136,
+	englishDialog137,
+	englishDialog138,
+	englishDialog139,
+	englishDialog140,
+	englishDialog141,
+	englishDialog142,
+	englishDialog143,
+	englishDialog144,
+	englishDialog145,
+	englishDialog146,
+	englishDialog147,
+	englishDialog148,
+	englishDialog149,
+	englishDialog150,
+	englishDialog151,
+	englishDialog152,
+	englishDialog153,
+	englishDialog154,
+	englishDialog155,
+	englishDialog156,
+	englishDialog157,
+	englishDialog158,
+	englishDialog159,
+	englishDialog160,
+	englishDialog161,
+	englishDialog162,
+	englishDialog163,
+	englishDialog164,
+	englishDialog165,
+	englishDialog166,
+	englishDialog167,
+	englishDialog168,
+	englishDialog169,
+	englishDialog170,
+	englishDialog171,
+	englishDialog172,
+	englishDialog173,
+	englishDialog174,
+	englishDialog175,
+	englishDialog176,
+	englishDialog177,
+	englishDialog178,
+	englishDialog179,
+	englishDialog180,
+	englishDialog181,
+	englishDialog182,
+	englishDialog183,
+	englishDialog184,
+	englishDialog185,
+	englishDialog186,
+	englishDialog187,
+	englishDialog188,
+	englishDialog189,
+	englishDialog190,
+	englishDialog191,
+	englishDialog192,
+	englishDialog193,
+	englishDialog194,
+	englishDialog195,
+	englishDialog196,
+	englishDialog197,
+	englishDialog198,
+	englishDialog199,
+	englishDialog200,
+	englishDialog201,
+	englishDialog202,
+	englishDialog203,
+	englishDialog204,
+	englishDialog205,
+	englishDialog206,
+	englishDialog207,
+	englishDialog208,
+	englishDialog209,
+	englishDialog210,
+	englishDialog211,
+	englishDialog212
+};
+
+const static char **polishDialogs[] = {
+	polishDialog0,
+	polishDialog1,
+	polishDialog2,
+	polishDialog3,
+	polishDialog4,
+	polishDialog5,
+	polishDialog6,
+	polishDialog7,
+	polishDialog8,
+	polishDialog9,
+	polishDialog10,
+	polishDialog11,
+	polishDialog12,
+	polishDialog13,
+	polishDialog14,
+	polishDialog15,
+	polishDialog16,
+	polishDialog17,
+	polishDialog18,
+	polishDialog19,
+	polishDialog20,
+	polishDialog21,
+	polishDialog22,
+	polishDialog23,
+	polishDialog24,
+	polishDialog25,
+	polishDialog26,
+	polishDialog27,
+	polishDialog28,
+	polishDialog29,
+	polishDialog30,
+	polishDialog31,
+	polishDialog32,
+	polishDialog33,
+	polishDialog34,
+	polishDialog35,
+	polishDialog36,
+	polishDialog37,
+	polishDialog38,
+	polishDialog39,
+	polishDialog40,
+	polishDialog41,
+	polishDialog42,
+	polishDialog43,
+	polishDialog44,
+	polishDialog45,
+	polishDialog46,
+	polishDialog47,
+	polishDialog48,
+	polishDialog49,
+	polishDialog50,
+	polishDialog51,
+	polishDialog52,
+	polishDialog53,
+	polishDialog54,
+	polishDialog55,
+	polishDialog56,
+	polishDialog57,
+	polishDialog58,
+	polishDialog59,
+	polishDialog60,
+	polishDialog61,
+	polishDialog62,
+	polishDialog63,
+	polishDialog64,
+	polishDialog65,
+	polishDialog66,
+	polishDialog67,
+	polishDialog68,
+	polishDialog69,
+	polishDialog70,
+	polishDialog71,
+	polishDialog72,
+	polishDialog73,
+	polishDialog74,
+	polishDialog75,
+	polishDialog76,
+	polishDialog77,
+	polishDialog78,
+	polishDialog79,
+	polishDialog80,
+	polishDialog81,
+	polishDialog82,
+	polishDialog83,
+	polishDialog84,
+	polishDialog85,
+	polishDialog86,
+	polishDialog87,
+	polishDialog88,
+	polishDialog89,
+	polishDialog90,
+	polishDialog91,
+	polishDialog92,
+	polishDialog93,
+	polishDialog94,
+	polishDialog95,
+	polishDialog96,
+	polishDialog97,
+	polishDialog98,
+	polishDialog99,
+	polishDialog100,
+	polishDialog101,
+	polishDialog102,
+	polishDialog103,
+	polishDialog104,
+	polishDialog105,
+	polishDialog106,
+	polishDialog107,
+	polishDialog108,
+	polishDialog109,
+	polishDialog110,
+	polishDialog111,
+	polishDialog112,
+	polishDialog113,
+	polishDialog114,
+	polishDialog115,
+	polishDialog116,
+	polishDialog117,
+	polishDialog118,
+	polishDialog119,
+	polishDialog120,
+	polishDialog121,
+	polishDialog122,
+	polishDialog123,
+	polishDialog124,
+	polishDialog125,
+	polishDialog126,
+	polishDialog127,
+	polishDialog128,
+	polishDialog129,
+	polishDialog130,
+	polishDialog131,
+	polishDialog132,
+	polishDialog133,
+	polishDialog134,
+	polishDialog135,
+	polishDialog136,
+	polishDialog137,
+	polishDialog138,
+	polishDialog139,
+	polishDialog140,
+	polishDialog141,
+	polishDialog142,
+	polishDialog143,
+	polishDialog144,
+	polishDialog145,
+	polishDialog146,
+	polishDialog147,
+	polishDialog148,
+	polishDialog149,
+	polishDialog150,
+	polishDialog151,
+	polishDialog152,
+	polishDialog153,
+	polishDialog154,
+	polishDialog155,
+	polishDialog156,
+	polishDialog157,
+	polishDialog158,
+	polishDialog159,
+	polishDialog160,
+	polishDialog161,
+	polishDialog162,
+	polishDialog163,
+	polishDialog164,
+	polishDialog165,
+	polishDialog166,
+	polishDialog167,
+	polishDialog168,
+	polishDialog169,
+	polishDialog170,
+	polishDialog171,
+	polishDialog172,
+	polishDialog173,
+	polishDialog174,
+	polishDialog175,
+	polishDialog176,
+	polishDialog177,
+	polishDialog178,
+	polishDialog179,
+	polishDialog180,
+	polishDialog181,
+	polishDialog182,
+	polishDialog183,
+	polishDialog184,
+	polishDialog185,
+	polishDialog186,
+	polishDialog187,
+	polishDialog188,
+	polishDialog189,
+	polishDialog190,
+	polishDialog191,
+	polishDialog192,
+	polishDialog193,
+	polishDialog194,
+	polishDialog195,
+	polishDialog196,
+	polishDialog197,
+	polishDialog198,
+	polishDialog199,
+	polishDialog200,
+	polishDialog201,
+	polishDialog202,
+	polishDialog203,
+	polishDialog204,
+	polishDialog205,
+	polishDialog206,
+	polishDialog207,
+	polishDialog208,
+	polishDialog209,
+	polishDialog210,
+	polishDialog211,
+	polishDialog212
+};
+
+const static char **czechDialogs[] = {
+	czechDialog0,
+	czechDialog1,
+	czechDialog2,
+	czechDialog3,
+	czechDialog4,
+	czechDialog5,
+	czechDialog6,
+	czechDialog7,
+	czechDialog8,
+	czechDialog9,
+	czechDialog10,
+	czechDialog11,
+	czechDialog12,
+	czechDialog13,
+	czechDialog14,
+	czechDialog15,
+	czechDialog16,
+	czechDialog17,
+	czechDialog18,
+	czechDialog19,
+	czechDialog20,
+	czechDialog21,
+	czechDialog22,
+	czechDialog23,
+	czechDialog24,
+	czechDialog25,
+	czechDialog26,
+	czechDialog27,
+	czechDialog28,
+	czechDialog29,
+	czechDialog30,
+	czechDialog31,
+	czechDialog32,
+	czechDialog33,
+	czechDialog34,
+	czechDialog35,
+	czechDialog36,
+	czechDialog37,
+	czechDialog38,
+	czechDialog39,
+	czechDialog40,
+	czechDialog41,
+	czechDialog42,
+	czechDialog43,
+	czechDialog44,
+	czechDialog45,
+	czechDialog46,
+	czechDialog47,
+	czechDialog48,
+	czechDialog49,
+	czechDialog50,
+	czechDialog51,
+	czechDialog52,
+	czechDialog53,
+	czechDialog54,
+	czechDialog55,
+	czechDialog56,
+	czechDialog57,
+	czechDialog58,
+	czechDialog59,
+	czechDialog60,
+	czechDialog61,
+	czechDialog62,
+	czechDialog63,
+	czechDialog64,
+	czechDialog65,
+	czechDialog66,
+	czechDialog67,
+	czechDialog68,
+	czechDialog69,
+	czechDialog70,
+	czechDialog71,
+	czechDialog72,
+	czechDialog73,
+	czechDialog74,
+	czechDialog75,
+	czechDialog76,
+	czechDialog77,
+	czechDialog78,
+	czechDialog79,
+	czechDialog80,
+	czechDialog81,
+	czechDialog82,
+	czechDialog83,
+	czechDialog84,
+	czechDialog85,
+	czechDialog86,
+	czechDialog87,
+	czechDialog88,
+	czechDialog89,
+	czechDialog90,
+	czechDialog91,
+	czechDialog92,
+	czechDialog93,
+	czechDialog94,
+	czechDialog95,
+	czechDialog96,
+	czechDialog97,
+	czechDialog98,
+	czechDialog99,
+	czechDialog100,
+	czechDialog101,
+	czechDialog102,
+	czechDialog103,
+	czechDialog104,
+	czechDialog105,
+	czechDialog106,
+	czechDialog107,
+	czechDialog108,
+	czechDialog109,
+	czechDialog110,
+	czechDialog111,
+	czechDialog112,
+	czechDialog113,
+	czechDialog114,
+	czechDialog115,
+	czechDialog116,
+	czechDialog117,
+	czechDialog118,
+	czechDialog119,
+	czechDialog120,
+	czechDialog121,
+	czechDialog122,
+	czechDialog123,
+	czechDialog124,
+	czechDialog125,
+	czechDialog126,
+	czechDialog127,
+	czechDialog128,
+	czechDialog129,
+	czechDialog130,
+	czechDialog131,
+	czechDialog132,
+	czechDialog133,
+	czechDialog134,
+	czechDialog135,
+	czechDialog136,
+	czechDialog137,
+	czechDialog138,
+	czechDialog139,
+	czechDialog140,
+	czechDialog141,
+	czechDialog142,
+	czechDialog143,
+	czechDialog144,
+	czechDialog145,
+	czechDialog146,
+	czechDialog147,
+	czechDialog148,
+	czechDialog149,
+	czechDialog150,
+	czechDialog151,
+	czechDialog152,
+	czechDialog153,
+	czechDialog154,
+	czechDialog155,
+	czechDialog156,
+	czechDialog157,
+	czechDialog158,
+	czechDialog159,
+	czechDialog160,
+	czechDialog161,
+	czechDialog162,
+	czechDialog163,
+	czechDialog164,
+	czechDialog165,
+	czechDialog166,
+	czechDialog167,
+	czechDialog168,
+	czechDialog169,
+	czechDialog170,
+	czechDialog171,
+	czechDialog172,
+	czechDialog173,
+	czechDialog174,
+	czechDialog175,
+	czechDialog176,
+	czechDialog177,
+	czechDialog178,
+	czechDialog179,
+	czechDialog180,
+	czechDialog181,
+	czechDialog182,
+	czechDialog183,
+	czechDialog184,
+	czechDialog185,
+	czechDialog186,
+	czechDialog187,
+	czechDialog188,
+	czechDialog189,
+	czechDialog190,
+	czechDialog191,
+	czechDialog192,
+	czechDialog193,
+	czechDialog194,
+	czechDialog195,
+	czechDialog196,
+	czechDialog197,
+	czechDialog198,
+	czechDialog199,
+	czechDialog200,
+	czechDialog201,
+	czechDialog202,
+	czechDialog203,
+	czechDialog204,
+	czechDialog205,
+	czechDialog206,
+	czechDialog207,
+	czechDialog208,
+	czechDialog209,
+	czechDialog210,
+	czechDialog211,
+	czechDialog212
+};
+
+const static char **russianDialogs[] = {
+	russianDialog0,
+	russianDialog1,
+	russianDialog2,
+	russianDialog3,
+	russianDialog4,
+	russianDialog5,
+	russianDialog6,
+	russianDialog7,
+	russianDialog8,
+	russianDialog9,
+	russianDialog10,
+	russianDialog11,
+	russianDialog12,
+	russianDialog13,
+	russianDialog14,
+	russianDialog15,
+	russianDialog16,
+	russianDialog17,
+	russianDialog18,
+	russianDialog19,
+	russianDialog20,
+	russianDialog21,
+	russianDialog22,
+	russianDialog23,
+	russianDialog24,
+	russianDialog25,
+	russianDialog26,
+	russianDialog27,
+	russianDialog28,
+	russianDialog29,
+	russianDialog30,
+	russianDialog31,
+	russianDialog32,
+	russianDialog33,
+	russianDialog34,
+	russianDialog35,
+	russianDialog36,
+	russianDialog37,
+	russianDialog38,
+	russianDialog39,
+	russianDialog40,
+	russianDialog41,
+	russianDialog42,
+	russianDialog43,
+	russianDialog44,
+	russianDialog45,
+	russianDialog46,
+	russianDialog47,
+	russianDialog48,
+	russianDialog49,
+	russianDialog50,
+	russianDialog51,
+	russianDialog52,
+	russianDialog53,
+	russianDialog54,
+	russianDialog55,
+	russianDialog56,
+	russianDialog57,
+	russianDialog58,
+	russianDialog59,
+	russianDialog60,
+	russianDialog61,
+	russianDialog62,
+	russianDialog63,
+	russianDialog64,
+	russianDialog65,
+	russianDialog66,
+	russianDialog67,
+	russianDialog68,
+	russianDialog69,
+	russianDialog70,
+	russianDialog71,
+	russianDialog72,
+	russianDialog73,
+	russianDialog74,
+	russianDialog75,
+	russianDialog76,
+	russianDialog77,
+	russianDialog78,
+	russianDialog79,
+	russianDialog80,
+	russianDialog81,
+	russianDialog82,
+	russianDialog83,
+	russianDialog84,
+	russianDialog85,
+	russianDialog86,
+	russianDialog87,
+	russianDialog88,
+	russianDialog89,
+	russianDialog90,
+	russianDialog91,
+	russianDialog92,
+	russianDialog93,
+	russianDialog94,
+	russianDialog95,
+	russianDialog96,
+	russianDialog97,
+	russianDialog98,
+	russianDialog99,
+	russianDialog100,
+	russianDialog101,
+	russianDialog102,
+	russianDialog103,
+	russianDialog104,
+	russianDialog105,
+	russianDialog106,
+	russianDialog107,
+	russianDialog108,
+	russianDialog109,
+	russianDialog110,
+	russianDialog111,
+	russianDialog112,
+	russianDialog113,
+	russianDialog114,
+	russianDialog115,
+	russianDialog116,
+	russianDialog117,
+	russianDialog118,
+	russianDialog119,
+	russianDialog120,
+	russianDialog121,
+	russianDialog122,
+	russianDialog123,
+	russianDialog124,
+	russianDialog125,
+	russianDialog126,
+	russianDialog127,
+	russianDialog128,
+	russianDialog129,
+	russianDialog130,
+	russianDialog131,
+	russianDialog132,
+	russianDialog133,
+	russianDialog134,
+	russianDialog135,
+	russianDialog136,
+	russianDialog137,
+	russianDialog138,
+	russianDialog139,
+	russianDialog140,
+	russianDialog141,
+	russianDialog142,
+	russianDialog143,
+	russianDialog144,
+	russianDialog145,
+	russianDialog146,
+	russianDialog147,
+	russianDialog148,
+	russianDialog149,
+	russianDialog150,
+	russianDialog151,
+	russianDialog152,
+	russianDialog153,
+	russianDialog154,
+	russianDialog155,
+	russianDialog156,
+	russianDialog157,
+	russianDialog158,
+	russianDialog159,
+	russianDialog160,
+	russianDialog161,
+	russianDialog162,
+	russianDialog163,
+	russianDialog164,
+	russianDialog165,
+	russianDialog166,
+	russianDialog167,
+	russianDialog168,
+	russianDialog169,
+	russianDialog170,
+	russianDialog171,
+	russianDialog172,
+	russianDialog173,
+	russianDialog174,
+	russianDialog175,
+	russianDialog176,
+	russianDialog177,
+	russianDialog178,
+	russianDialog179,
+	russianDialog180,
+	russianDialog181,
+	russianDialog182,
+	russianDialog183,
+	russianDialog184,
+	russianDialog185,
+	russianDialog186,
+	russianDialog187,
+	russianDialog188,
+	russianDialog189,
+	russianDialog190,
+	russianDialog191,
+	russianDialog192,
+	russianDialog193,
+	russianDialog194,
+	russianDialog195,
+	russianDialog196,
+	russianDialog197,
+	russianDialog198,
+	russianDialog199,
+	russianDialog200,
+	russianDialog201,
+	russianDialog202,
+	russianDialog203,
+	russianDialog204,
+	russianDialog205,
+	russianDialog206,
+	russianDialog207,
+	russianDialog208,
+	russianDialog209,
+	russianDialog210,
+	russianDialog211,
+	russianDialog212
+};
+
+const static char *englishItem0[] = {
+	"feather",
+	"\n",
+	"It\'s kicking ass!",
+	"\n\n",
+};
+
+const static char *englishItem1[] = {
+	"shotgun",
+	"\n",
+	"Looks impressive...",
+	"\n\n",
+};
+
+const static char *englishItem2[] = {
+	"toolbox",
+	"\n",
+	"Doesn\'t seem to be locked!...",
+	"\n\n",
+};
+
+const static char *englishItem3[] = {
+	"toolbox",
+	// No description
+	"\n\n",
+};
+
+const static char *englishItem4[] = {
+	"spanner",
+	"\n",
+	"These things always come in handy.",
+	"\n\n",
+};
+
+const static char *englishItem5[] = {
+	"comb",
+	"\n",
+	"I\'ve heard that some people use these.",
+	"\n\n",
+};
+
+const static char *englishItem6[] = {
+	"fan",
+	"\n",
+	"Refreshing.",
+	"\n\n",
+};
+
+const static char *englishItem7[] = {
+	"broken paddle",
+	"\n",
+	"Too short to use.",
+	"\n\n",
+};
+
+const static char *englishItem8[] = {
+	"paddle",
+	"\n",
+	"The glue keeps the branch",
+	"\n",
+	"really hard.",
+	"\n\n",
+};
+
+const static char *englishItem9[] = {
+	"flower",
+	"\n",
+	"It really smells",
+	"\n",
+	"very nice.",
+	"\n\n",
+};
+
+const static char *englishItem10[] = {
+	"flower",
+	"\n",
+	"It\'s really beautiful.",
+	"\n\n",
+};
+
+const static char *englishItem11[] = {
+	"feather duster",
+	"\n",
+	"I can play janitor with this.",
+	"\n\n",
+};
+
+const static char *englishItem12[] = {
+	"chainsaw",
+	"\n",
+	"It\'s in good condition, but it has no fuel.",
+	"\n\n",
+};
+
+const static char *englishItem13[] = {
+	"drunken chainsaw",
+	"\n",
+	"A bit unsteady, but will work.",
+	"\n\n",
+};
+
+const static char *englishItem14[] = {
+	"branch",
+	"\n",
+	"The wood is very hard.",
+	"\n\n",
+};
+
+const static char *englishItem15[] = {
+	"whisky",
+	"\n",
+	"The label says this whisky is",
+	"\n",
+	"very strong.",
+	"\n\n",
+};
+
+const static char *englishItem16[] = {
+	"needle",
+	"\n",
+	"It\'s quite big for a needle...",
+	"\n\n",
+};
+
+const static char *englishItem17[] = {
+	"wrapper",
+	"\n",
+	"Nice design. Especially that \'LOVE CANDY\' label.",
+	"\n",
+	"And there\'s a heart painted on it.",
+	"\n",
+	"How SWEET...",
+	"\n\n",
+};
+
+const static char *englishItem18[] = {
+	"chocolate candy",
+	"\n",
+	"It\'s round chocolate candy.",
+	"\n",
+	"A great present.",
+	"\n\n",
+};
+
+const static char *englishItem19[] = {
+	"wild potatoe",
+	"\n",
+	"Wow! It\'s shaped like a grenade!..",
+	"\n\n",
+};
+
+const static char *englishItem20[] = {
+	"rake",
+	"\n",
+	"The space between the teeth is too large",
+	"\n",
+	"to make this rake an useful.",
+	"\n\n",
+};
+
+const static char *englishItem21[] = {
+	"heart-shaped candy",
+	"\n",
+	"I don\'t think this one improvement is enough.",
+	"\n\n",
+};
+
+const static char *englishItem22[] = {
+	"wrapped candy",
+	"\n",
+	"Brand new candy. At least it looks like it.",
+	"\n\n",
+};
+
+const static char *englishItem23[] = {
+	"ribbon",
+	"\n",
+	"It will remind me of that beatiful chick,",
+	"\n",
+	"I mean, female human being.",
+	"\n\n",
+};
+
+const static char *englishItem24[] = {
+	"rake",
+	"\n",
+	"Ready to work.",
+	"\n\n",
+};
+
+const static char *englishItem25[] = {
+	"nut",
+	"\n",
+	"A really big one.",
+	"\n\n",
+};
+
+const static char *englishItem26[] = {
+	"plastic apple",
+	"\n",
+	"It looks so real that I could",
+	"\n",
+	"even see the pips inside.",
+	"\n\n",
+};
+
+const static char *englishItem27[] = {
+	"cone",
+	"\n",
+	"It looks like one of those Havana goodies every",
+	"\n",
+	"self-respecting businessman is supposed to have",
+	"\n",
+	"glued to his smile.",
+	"\n\n",
+};
+
+const static char *englishItem28[] = {
+	"super glue",
+	"\n",
+	"It\'s turbo mega giga super ultra",
+	"\n",
+	"fast drying glue plus.",
+	"\n\n",
+};
+
+const static char *englishItem29[] = {
+	"cone & needle",
+	"\n",
+	"Something is still missing here...",
+	"\n\n",
+};
+
+const static char *englishItem30[] = {
+	"cone & feather",
+	"\n",
+	"Something is still missing here...",
+	"\n\n",
+};
+
+const static char *englishItem31[] = {
+	"dart",
+	"\n",
+	"Now all I need is a target!",
+	"\n\n",
+};
+
+const static char *englishItem32[] = {
+	"dirty feather duster",
+	"\n",
+	"It\'s clammy and soiled by soot.",
+	"\n\n",
+};
+
+const static char *englishItem33[] = {
+	"painted potatoe",
+	"\n",
+	"The only difference between this and a grenade",
+	"\n",
+	"is that potatoees usually don\'t blow up.",
+	"\n\n",
+};
+
+const static char *englishItem34[] = {
+	"car jack",
+	"\n",
+	"Looks reliable.",
+	"\n\n",
+};
+
+const static char *englishItem35[] = {
+	"dino bone",
+	"\n",
+	"It\'s big and well preserved. It must have been",
+	"\n",
+	"a really big, er..., animal, I think...",
+	"\n\n",
+};
+
+const static char *englishItem36[] = {
+	"shovel",
+	"\n",
+	"I can PLAY DIGGER with it. So to speak.",
+	"\n\n",
+};
+
+const static char *englishItem37[] = {
+	"rope",
+	"\n",
+	"Looks strong.",
+	"\n\n",
+};
+
+const static char *englishItem38[] = {
+	"mask",
+	"\n",
+	"It will help me see better underwater.",
+	"\n\n",
+};
+
+const static char *englishItem39[] = {
+	"fins",
+	"\n",
+	"They will help me feel more like my",
+	"\n",
+	"underwater brothers.",
+	"\n\n",
+};
+
+const static char *englishItem40[] = {
+	"diving equipment",
+	"\n",
+	"Watch out, water! Here I come!",
+	"\n\n",
+};
+
+const static char *englishItem41[] = {
+	"anchor",
+	"\n",
+	"Not big, but heavy enough to sink the boat.",
+	"\n\n",
+};
+
+const static char *englishItem42[] = {
+	"grappling hook",
+	"\n",
+	"Watch out, mountains, here I come!",
+	"\n\n",
+};
+
+const static char *englishItem43[] = {
+	"sickle",
+	"\n",
+	"It\'s so blunt, that I couldn\'t even cut",
+	"\n",
+	"butter with it.",
+	"\n\n",
+};
+
+const static char *englishItem44[] = {
+	"somewhat rotten cheese",
+	"\n",
+	"Reminds me of my room.",
+	"\n\n",
+};
+
+const static char *englishItem45[] = {
+	"sharpened sickle",
+	"\n",
+	"Lambs, be silent. Here comes the pain...",
+	"\n\n",
+};
+
+const static char *englishItem46[] = {
+	"handkerchief",
+	"\n",
+	"The owner must have such big nose that he needs",
+	"\n",
+	"to use a whole bar of soap just to wash it.",
+	"\n\n",
+};
+
+const static char *englishItem47[] = {
+	"mouse",
+	"\n",
+	"It\'s very active.",
+	"\n\n",
+};
+
+const static char *englishItem48[] = {
+	"rock",
+	"\n",
+	"It\'s very regular, just like the snowball.",
+	"\n\n",
+};
+
+const static char *englishItem49[] = {
+	"nugget",
+	"\n",
+	"Symbol: Au, atomic no: 79, atomic wt.: 196.97.",
+	"\n",
+	"In other words: GOLD!!! Yes! Yes!",
+	"\n\n",
+};
+
+const static char *englishItem50[] = {
+	"banknote",
+	// No description
+	"\n\n",
+};
+
+const static char *englishItem51[] = {
+	"dictaphone",
+	"\n",
+	"There are no batteries inside.",
+	"\n\n",
+};
+
+const static char *englishItem52[] = {
+	"polaroid",
+	"\n",
+	"It\'s ready to take a picture.",
+	"\n\n",
+};
+
+const static char *englishItem53[] = {
+	"video tape",
+	"\n",
+	"It has no label.",
+	"\n\n",
+};
+
+const static char *englishItem54[] = {
+	"sheet of paper",
+	"\n",
+	"There\'s nothing important about it.",
+	"\n\n",
+};
+
+const static char *englishItem55[] = {
+	"cognac",
+	"\n",
+	"Fancy name just for an excuse for drinking.",
+	"\n\n",
+};
+
+const static char *englishItem56[] = {
+	"remote control",
+	"\n",
+	"It has user-friendly interface.",
+	"\n",
+	"One can play and stop.",
+	"\n\n",
+};
+
+const static char *englishItem57[] = {
+	"ice tongs",
+	"\n",
+	"Very handy tool.",
+	"\n\n",
+};
+
+const static char *englishItem58[] = {
+	"cork",
+	"\n",
+	"It\'s a stopper kind of cork.",
+	"\n\n",
+};
+
+const static char *englishItem59[] = {
+	"wrapped cork",
+	"\n",
+	"Now it\'s more appropiate.",
+	"\n\n",
+};
+
+const static char *englishItem60[] = {
+	"photo",
+	"\n",
+	"It\'s a photo of John Noty. I caught him",
+	"\n",
+	"when he was singing the high C. Yuck!",
+	"\n\n",
+};
+
+const static char *englishItem61[] = {
+	"chilli",
+	"\n",
+	"The label on the bottle says it\'s",
+	"\n",
+	"\'ORIGINAL MEXICAN CHILLI\'. Sure.",
+	"\n\n",
+};
+
+const static char *englishItem62[] = {
+	"pastry roller",
+	"\n",
+	"It\'s made of very hard wood.",
+	"\n\n",
+};
+
+const static char *englishItem63[] = {
+	"fake chilli",
+	"\n",
+	"Now that\'s what I call strong seasoning.",
+	"\n\n",
+};
+
+const static char *englishItem64[] = {
+	"label",
+	"\n",
+	"\'ORIGINAL MEXICAN CHILLI\'.",
+	"\n\n",
+};
+
+const static char *englishItem65[] = {
+	"batteries",
+	"\n",
+	"It\'s a pair of new batteries.",
+	"\n\n",
+};
+
+const static char *englishItem66[] = {
+	"dictaphone",
+	"\n",
+	"\'One-two-one-two, it\'s me the one",
+	"\n",
+	"and only Mark MC....\'",
+	"\n",
+	"It works.",
+	"\n\n",
+};
+
+const static char *englishItem67[] = {
+	"burning paper",
+	"\n",
+	"Amazing, isn\'t it?",
+	"\n",
+	"(Not to mention: unbelievable).",
+	"\n\n",
+};
+
+const static char *englishItem68[] = {
+	"meat",
+	"\n",
+	"There\'s veal in the plastic bag.",
+	"\n\n",
+};
+
+const static char *englishItem69[] = {
+	"plastic bag",
+	"\n",
+	"Gee, I hope it\'s recyclable. I couldn\'t",
+	"\n",
+	"sleep otherwise.",
+	"\n\n",
+};
+
+const static char *englishItem70[] = {
+	"socks",
+	"\n",
+	"These socks suck.",
+	"\n\n",
+};
+
+const static char *englishItem71[] = {
+	"pills",
+	"\n",
+	"There are about twenty pills in this jar.",
+	"\n\n",
+};
+
+const static char *englishItem72[] = {
+	"handle",
+	"\n",
+	"It looks like a standard door handle...",
+	"\n\n",
+};
+
+const static char *englishItem73[] = {
+	"chilli",
+	"\n",
+	"Nice bottle. I like the shape.",
+	"\n\n",
+};
+
+const static char *englishItem74[] = {
+	"pass",
+	"\n",
+	"\"Let this guy in. RGB Chief.\"",
+	"\n\n",
+};
+
+const static char *englishItem75[] = {
+	"bulb",
+	"\n",
+	"It\'s completely useless.",
+	"\n\n",
+};
+
+const static char *englishItem76[] = {
+	"jail key",
+	"\n",
+	"Surprisingly, it\'s the key to the jail.",
+	"\n\n",
+};
+
+const static char *englishItem77[] = {
+	"delicate plant",
+	"\n",
+	"Whoa, it tickles!",
+	"\n\n",
+};
+
+const static char *englishItem78[] = {
+	"Swiss Army knife",
+	"\n",
+	"I wonder if it\'s got a TV on these too.",
+	"\n\n",
+};
+
+const static char *englishItem79[] = {
+	"spring",
+	"\n",
+	"I could launch a rocket with it!",
+	"\n\n",
+};
+
+const static char *englishItem80[] = {
+	"shovel",
+	"\n",
+	"Nice, handy tool.",
+	"\n\n",
+};
+
+const static char *englishItem81[] = {
+	"kaleidoscope",
+	"\n",
+	"I could spend my whole life looking through",
+	"\n",
+	"this. Well, let\'s say five minutes.",
+	"\n",
+	"Oh, all right, it\'s boring.",
+	"\n\n",
+};
+
+const static char *englishItem82[] = {
+	"\"Soldier News\"",
+	"\n",
+	"It\'s just the same as women\'s magazines,",
+	"\n",
+	"but there are guns instead of perfumes.",
+	"\n",
+	"It\'s cool anyway.",
+	"\n\n",
+};
+
+const static char *englishItem83[] = {
+	"grenade",
+	"\n",
+	"I must be crazy to put in my pocket.",
+	"\n",
+	"Something horrible might happen...",
+	"\n\n",
+};
+
+const static char *englishItem84[] = {
+	"mug",
+	"\n",
+	"It\'s empty.",
+	"\n\n",
+};
+
+const static char *englishItem85[] = {
+	"mug full of mud",
+	"\n",
+	"Why did I fill the mug with mud?",
+	// Remove extra byte
+	// "\n",
+	"\n",
+	"That makes no sense!",
+	"\n\n",
+};
+
+const static char *englishItem86[] = {
+	"crumbs",
+	"\n",
+	"These are some remains of bread.",
+	"\n\n",
+};
+
+const static char *englishItem87[] = {
+	"rope",
+	"\n",
+	"It\'s thin and long.",
+	"\n\n",
+};
+
+const static char *englishItem88[] = {
+	"rope tied to grenade",
+	"\n",
+	"My patent for a bombastic yoyo.",
+	"\n\n",
+};
+
+const static char *englishItem89[] = {
+	"medicine",
+	"\n",
+	"They look like sleeping pills.",
+	"\n",
+	"Although I don\'t have any idea why.",
+	"\n\n",
+};
+
+const static char *englishItem90[] = {
+	"drugged food",
+	"\n",
+	"Smells like Teen Spirit.",
+	"\n\n",
+};
+
+const static char *englishItem91[] = {
+	"bird",
+	"\n",
+	"It would make a great dinn... I mean",
+	"\n",
+	"friend, of course.",
+	"\n\n",
+};
+
+const static char *polishItem0[] = {
+	"pi*ro",
+	"\n",
+	"Troch# puszu i zostan# wodzem!",
+	"\n\n",
+};
+
+const static char *polishItem1[] = {
+	"strzelba",
+	"\n",
+	"Lufa jak tr@bka...",
+	"\n\n",
+};
+
+const static char *polishItem2[] = {
+	"skrzynka",
+	"\n",
+	"Chyba nie jest zamkni#ta na klucz!...",
+	"\n\n",
+};
+
+const static char *polishItem3[] = {
+	"skrzynka",
+	// No description
+	"\n\n",
+};
+
+const static char *polishItem4[] = {
+	"klucz francuski",
+	"\n",
+	"Takie rzeczy zawsze si# przydaj@.",
+	"\n\n",
+};
+
+const static char *polishItem5[] = {
+	"grzebie=",
+	"\n",
+	"Pono^ niekt*rzy tego u<ywaj@.",
+	"\n\n",
+};
+
+const static char *polishItem6[] = {
+	"wiatraczek",
+	"\n",
+	"Od$wie<aj@cy.",
+	"\n\n",
+};
+
+const static char *polishItem7[] = {
+	"kawa%ek wios%a",
+	"\n",
+	"Takie po%amane wios%o jest nieco za kr*tkie.",
+	"\n\n",
+};
+
+const static char *polishItem8[] = {
+	"wios%o",
+	"\n",
+	"Klej trzyma ga%@> naprawd#",
+	"\n",
+	"mocno.",
+	"\n\n",
+};
+
+const static char *polishItem9[] = {
+	"kwiat",
+	"\n",
+	"Doprawdy, pachnie",
+	"\n",
+	"bardzo %adnie.",
+	"\n\n",
+};
+
+const static char *polishItem10[] = {
+	"kwiat",
+	"\n",
+	"Jest przepi#kny.",
+	"\n\n",
+};
+
+const static char *polishItem11[] = {
+	"miote%ka",
+	"\n",
+	"Jak sobie j@ przymocuj# tam, gdzie plecy",
+	"\n",
+	"trac@ sw@ szlachetn@ nazw#, to mog#",
+	"\n",
+	"udawa^ kogucika.",
+	"\n\n",
+};
+
+const static char *polishItem12[] = {
+	"pi%a %a=cuchowa",
+	"\n",
+	"Jest w dobrym stanie, ale nie ma paliwa.",
+	"\n\n",
+};
+
+const static char *polishItem13[] = {
+	"pijana pi%a",
+	"\n",
+	"Troch# wierzga, ale dzia%a.",
+	"\n\n",
+};
+
+const static char *polishItem14[] = {
+	"ga%@>",
+	"\n",
+	"Drewno jest bardzo twarde.",
+	"\n\n",
+};
+
+const static char *polishItem15[] = {
+	"whisky",
+	"\n",
+	"Naklejka m*wi, <e ta whisky jest",
+	"\n",
+	"bardzo mocna.",
+	"\n\n",
+};
+
+const static char *polishItem16[] = {
+	"ig%a",
+	"\n",
+	"Ca%kiem du<a, jak na ig%#...",
+	"\n\n",
+};
+
+const static char *polishItem17[] = {
+	"celofan",
+	"\n",
+	"Fajne napisy. Zw%aszcza ten: \'CIASTECZKO",
+	"\n",
+	"MI]O|CI\'. I jest tu narysowane serduszko.",
+	"\n",
+	"Jakie to S]ODKIE...",
+	"\n\n",
+};
+
+const static char *polishItem18[] = {
+	"czekoladowe ciastko",
+	"\n",
+	"Jest to okr@g%e czekoladowe ciastko.",
+	"\n",
+	"Wspania%y prezent.",
+	"\n\n",
+};
+
+const static char *polishItem19[] = {
+	"dziki ziemniak",
+	"\n",
+	"O kurcz#! Ma kszta%t granatu!..",
+	"\n\n",
+};
+
+const static char *polishItem20[] = {
+	"grabie",
+	"\n",
+	"S@ bezu<yteczne, bo odst#py mi#dzy",
+	"\n",
+	"drutami s@ za du<e.",
+	"\n\n",
+};
+
+const static char *polishItem21[] = {
+	"ciastko-serduszko",
+	"\n",
+	"Chyba to jedno ulepszenie nie wystarczy.",
+	"\n\n",
+};
+
+const static char *polishItem22[] = {
+	"owini#te ciastko",
+	"\n",
+	"N*weczka. Przynajmniej tak wygl@da.",
+	"\n\n",
+};
+
+const static char *polishItem23[] = {
+	"wst@<ka",
+	"\n",
+	"B#dzie mi przypomina^ o tej niuni. To jest,",
+	"\n",
+	"chcia%em rzec, o owej istocie ludzkiej",
+	"\n",
+	"przeciwnej p%ci.",
+	"\n\n",
+};
+
+const static char *polishItem24[] = {
+	"grabie",
+	"\n",
+	"Gotowe do pracy.",
+	"\n\n",
+};
+
+const static char *polishItem25[] = {
+	"orzech",
+	"\n",
+	"Prawie tak du<y jak kokos.",
+	"\n\n",
+};
+
+const static char *polishItem26[] = {
+	"sztuczne jab%ko",
+	"\n",
+	"Wygl@da tak prawdziwie, <e prawie",
+	"\n",
+	"wida^ pestki w $rodku.",
+	"\n\n",
+};
+
+const static char *polishItem27[] = {
+	"szyszka",
+	"\n",
+	"Wygl@da jak jedna z tych Hawa=skich dziecinek,",
+	"\n",
+	"co to ka<dy szanuj@cy si# biznesmen musi mie^",
+	"\n",
+	"przyklejon@ do u$miechu.",
+	"\n\n",
+};
+
+const static char *polishItem28[] = {
+	"super klej",
+	"\n",
+	"Jest to turbo mega giga super ultra",
+	"\n",
+	"szybko-schn@cy klej plus.",
+	"\n\n",
+};
+
+const static char *polishItem29[] = {
+	"szyszka & ig%a",
+	"\n",
+	"Wci@< tu czego$ brakuje...",
+	"\n\n",
+};
+
+const static char *polishItem30[] = {
+	"szyszka & pi*ro",
+	"\n",
+	"Wci@< tu czego$ brakuje...",
+	"\n\n",
+};
+
+const static char *polishItem31[] = {
+	"strza%ka",
+	"\n",
+	"Teraz wszystko, czego potrzebuj#, to cel!",
+	"\n\n",
+};
+
+const static char *polishItem32[] = {
+	"brudna miote%ka",
+	"\n",
+	"Jest ca%a pomazana sadz@.",
+	"\n\n",
+};
+
+const static char *polishItem33[] = {
+	"malowany ziemniak",
+	"\n",
+	"Jedyna r*<nica mi#dzy tym a granatem jest taka,",
+	"\n",
+	"<e kartofle zwykle nie wybuchaj@.",
+	"\n\n",
+};
+
+const static char *polishItem34[] = {
+	"podno$nik",
+	"\n",
+	"Chyba mo<na mu zawierzy^.",
+	"\n\n",
+};
+
+const static char *polishItem35[] = {
+	"ko$^ dinozaura",
+	"\n",
+	"Du<a i dobrze zakonserwowana. To musia% by^",
+	"\n",
+	"naprawd# du<y, eee..., zwierz...",
+	"\n\n",
+};
+
+const static char *polishItem36[] = {
+	"%opata",
+	"\n",
+	"Prawdziwa podpora ludzi pracy.",
+	"\n\n",
+};
+
+const static char *polishItem37[] = {
+	"lina",
+	"\n",
+	"Wygl@da na siln@.",
+	"\n\n",
+};
+
+const static char *polishItem38[] = {
+	"maska",
+	"\n",
+	"Mo<e zmieni mnie w kogo$ nadzwyczajnego?",
+	"\n\n",
+};
+
+const static char *polishItem39[] = {
+	"p%etwy",
+	"\n",
+	"Pomo<e mi czu^ si# bli<ej moich",
+	"\n",
+	"podwodnych braci.",
+	"\n\n",
+};
+
+const static char *polishItem40[] = {
+	"sprz#t do nurkowania",
+	"\n",
+	"Uwaga, wodo! Oto nadchodz#!",
+	"\n\n",
+};
+
+const static char *polishItem41[] = {
+	"kotwiczka",
+	"\n",
+	"Niedu<a, ale mog%aby zatopi^ %*d>.",
+	"\n\n",
+};
+
+const static char *polishItem42[] = {
+	"sprz#t do wspinaczki",
+	"\n",
+	"Uwaga, g*ry! Oto nadchodz#!",
+	"\n\n",
+};
+
+const static char *polishItem43[] = {
+	"sierp",
+	"\n",
+	"Jest tak t#py, <e nie m*g%bym nim przeci@^",
+	"\n",
+	"nawet mas%a.",
+	"\n\n",
+};
+
+const static char *polishItem44[] = {
+	"cokolwiek zgni%y ser",
+	"\n",
+	"Zapach zupe%nie jak w moim pokoju.",
+	"\n\n",
+};
+
+const static char *polishItem45[] = {
+	"ostry sierp",
+	"\n",
+	"Owce, zamilknijcie. Oto nadchodzi b*l...",
+	"\n\n",
+};
+
+const static char *polishItem46[] = {
+	"chusteczka",
+	"\n",
+	"W%a$ciciel musia% mie^ tak du<y nos, <e na jego",
+	"\n",
+	"umycie zu<ywa% ca%e myd%o.",
+	"\n\n",
+};
+
+const static char *polishItem47[] = {
+	"mysz",
+	"\n",
+	"Ale< to ruchliwe, za przeproszeniem.",
+	"\n\n",
+};
+
+const static char *polishItem48[] = {
+	"kamie=",
+	"\n",
+	"Jest bardzo regularny, jak $nie<ka.",
+	"\n\n",
+};
+
+const static char *polishItem49[] = {
+	"samorodek",
+	"\n",
+	"Symbol: Au, nr atomowy: 79, waga at.: 196.97.",
+	"\n\n",
+};
+
+const static char *polishItem50[] = {
+	"banknot",
+	// No description
+	"\n\n",
+};
+
+const static char *polishItem51[] = {
+	"dyktafon",
+	"\n",
+	"Nie ma baterii.",
+	"\n\n",
+};
+
+const static char *polishItem52[] = {
+	"polaroid",
+	"\n",
+	"Gotowy do robienia zdj#^.",
+	"\n\n",
+};
+
+const static char *polishItem53[] = {
+	"kaseta wideo",
+	"\n",
+	"Nie jest oznaczona.",
+	"\n\n",
+};
+
+const static char *polishItem54[] = {
+	"kartka papieru",
+	"\n",
+	"Jest czysta i lekko pognieciona.",
+	"\n\n",
+};
+
+const static char *polishItem55[] = {
+	"koniak",
+	"\n",
+	"Wyszukana nazwa dla usprawiedliwienia picia.",
+	"\n\n",
+};
+
+const static char *polishItem56[] = {
+	"pilot",
+	"\n",
+	"Ma przyjazny interfejs: dwa klawisze",
+	"\n",
+	"do startu i zatrzymywania.",
+	"\n\n",
+};
+
+const static char *polishItem57[] = {
+	"szczypce",
+	"\n",
+	"Klak! Klak! Klak!",
+	"\n\n",
+};
+
+const static char *polishItem58[] = {
+	"korek",
+	"\n",
+	"Chyba nie pochodzi z butelki, bo jest gumowy.",
+	"\n\n",
+};
+
+const static char *polishItem59[] = {
+	"owin#ty korek",
+	"\n",
+	"Teraz jest bardziej odpowiedni.",
+	"\n\n",
+};
+
+const static char *polishItem60[] = {
+	"fotka",
+	"\n",
+	"To fotografia Ci@gwy. Z%apa%em go,",
+	"\n",
+	"gdy wyci@ga% g*rne C. Wida^, co jad%.",
+	"\n\n",
+};
+
+const static char *polishItem61[] = {
+	"chilli",
+	"\n",
+	"Nalepka na butelce twierdzi, <e jest to",
+	"\n",
+	"\'ORYGINALNE MEKSYKA;SKIE CHILLI\'. Pewnie.",
+	"\n\n",
+};
+
+const static char *polishItem62[] = {
+	"wa%ek",
+	"\n",
+	"Potencjalne narz#dzie zbrodni.",
+	"\n\n",
+};
+
+const static char *polishItem63[] = {
+	"fa%szywe chilli",
+	"\n",
+	"O, to jest dopiero mocna przyprawa.",
+	"\n\n",
+};
+
+const static char *polishItem64[] = {
+	"naklejka",
+	"\n",
+	"\'ORYGINALNE MEKSYKA;SKIE CHILLI\'.",
+	"\n\n",
+};
+
+const static char *polishItem65[] = {
+	"baterie",
+	"\n",
+	"Jest to para nowych baterii.",
+	"\n\n",
+};
+
+const static char *polishItem66[] = {
+	"dyktafon",
+	"\n",
+	"\'Raz-dwa-raz-dwa, super rapper",
+	"\n",
+	"MC Marek to ja...\'",
+	"\n",
+	"Dzia%a.",
+	"\n\n",
+};
+
+const static char *polishItem67[] = {
+	"p%on@cy papier",
+	"\n",
+	"Zadziwiaj@ce, nieprawda<?",
+	"\n",
+	"(}e nie wspomn#: niewiarygodne).",
+	"\n\n",
+};
+
+const static char *polishItem68[] = {
+	"mi#so",
+	"\n",
+	"To wo%owina zapakowana w nylonowy woreczek.",
+	"\n\n",
+};
+
+const static char *polishItem69[] = {
+	"nylonowa torba",
+	"\n",
+	"Rany, mam nadziej#, <e nadaje si# do wt*rnej",
+	"\n",
+	"przer*bki. Inaczej nie m*g%bym spa^.",
+	"\n\n",
+};
+
+const static char *polishItem70[] = {
+	"skarpety",
+	"\n",
+	"Lepsze ni< chloroform.",
+	"\n\n",
+};
+
+const static char *polishItem71[] = {
+	"pigu%ki",
+	"\n",
+	"W s%oiku jest oko%o dwudziestu pigu%ek.",
+	"\n\n",
+};
+
+const static char *polishItem72[] = {
+	"klamka",
+	"\n",
+	"Wygl@da jak zwyk%a klamka do drzwi...",
+	"\n\n",
+};
+
+const static char *polishItem73[] = {
+	"chilli",
+	"\n",
+	"Fajna butelka. Zw%aszcza kszta%t.",
+	"\n\n",
+};
+
+const static char *polishItem74[] = {
+	"przepustka",
+	"\n",
+	"\"Wpu$^ go. Szef RGB.\"",
+	"\n\n",
+};
+
+const static char *polishItem75[] = {
+	"<ar*wka",
+	"\n",
+	"Jest kompletnie bezu<yteczna.",
+	"\n\n",
+};
+
+const static char *polishItem76[] = {
+	"klucz do karceru",
+	"\n",
+	"Ku mojemu zaskoczeniu jest to klucz do",
+	"\n",
+	"karceru.",
+	"\n\n",
+};
+
+const static char *polishItem77[] = {
+	"trawa",
+	"\n",
+	"]a%, to %askocze!",
+	"\n\n",
+};
+
+const static char *polishItem78[] = {
+	"Rambo-n*<",
+	"\n",
+	"Ciekawe, czy ma wmontowany telewizor.",
+	"\n\n",
+};
+
+const static char *polishItem79[] = {
+	"spr#<yna",
+	"\n",
+	"M*g%bym ni@ wystartowa^ rakiet#!",
+	"\n\n",
+};
+
+const static char *polishItem80[] = {
+	"saperka",
+	"\n",
+	"Fajne, podr#czne narz#dzie.",
+	"\n\n",
+};
+
+const static char *polishItem81[] = {
+	"kalejdoskop",
+	"\n",
+	"M*g%bym bawi^ si# nim ca%e <ycie.",
+	"\n",
+	"No, powiedzmy pi#^ minut.",
+	"\n",
+	"Eee tam...",
+	"\n\n",
+};
+
+const static char *polishItem82[] = {
+	"\"Tydzie= }o%nierza\"",
+	"\n",
+	"Co$ jak te pisma dla kobiet, tylko <e mamy",
+	"\n",
+	"karabiny zamiast perfum. Jest fajny tak",
+	"\n",
+	"czy owak.",
+	"\n\n",
+};
+
+const static char *polishItem83[] = {
+	"granat",
+	"\n",
+	"Musz# by^ szalony, <eby wk%ada^ go do kieszeni.",
+	"\n",
+	"Mo<e si# zdarzy^ straszna rzecz...",
+	"\n\n",
+};
+
+const static char *polishItem84[] = {
+	"kubek",
+	"\n",
+	"Jest pusty.",
+	"\n\n",
+};
+
+const static char *polishItem85[] = {
+	"kubek z b%otem",
+	"\n",
+	"A po co ja go nape%ni%em b%otem?",
+	"\n",
+	"To jaki$ straszny nonsens!",
+	"\n\n",
+};
+
+const static char *polishItem86[] = {
+	"resztki",
+	"\n",
+	"To jakie$ okruszki chleba.",
+	"\n\n",
+};
+
+const static char *polishItem87[] = {
+	"lina",
+	"\n",
+	"Jest d%uga i cienka.",
+	"\n\n",
+};
+
+const static char *polishItem88[] = {
+	"lina z granatem",
+	"\n",
+	"M*j patent na bombowe jojo.",
+	"\n\n",
+};
+
+const static char *polishItem89[] = {
+	"lekarstwo",
+	"\n",
+	"Wygl@da na pigu%ki nasenne. Chocia<",
+	"\n",
+	"nie mam poj#cia dlaczego.",
+	"\n\n",
+};
+
+const static char *polishItem90[] = {
+	"zatrute okruchy",
+	"\n",
+	"Pachn@ krymina%em...",
+	"\n\n",
+};
+
+const static char *polishItem91[] = {
+	"ptak",
+	"\n",
+	"By%by z niego niez%y obi... To jest,",
+	"\n",
+	"przyjaciel, oc",
+	"\n\n",
+};
+
+const static char *czechItem0[] = {
+	"p;rko",
+	"\n",
+	"Je z pr.. z krku slepice.",
+	"\n\n"
+};
+
+const static char *czechItem1[] = {
+	"brokovnice",
+	"\n",
+	"M# r#{i, hned bych n+koho odd+lal...",
+	"\n\n"
+};
+
+const static char *czechItem2[] = {
+	"bedni$ka",
+	"\n",
+	"netv#>; se zam$en+...",
+	"\n\n"
+};
+
+const static char *czechItem3[] = {
+	"bedni$ka",
+	"\n\n",
+
+};
+
+const static char *czechItem4[] = {
+	"francouz#k",
+	"\n",
+	"Francouz#k se n+kdy hod;. Mlask!",
+	"\n\n"
+};
+
+const static char *czechItem5[] = {
+	"h>eben",
+	"\n",
+	"Sly@el jsem, {e ho n+kte>; lid* pou{;vaj;.",
+	"\n\n"
+};
+
+const static char *czechItem6[] = {
+	"v+tr#k",
+	"\n",
+	"V+truje. Asi m# v+try",
+	"\n\n"
+};
+
+const static char *czechItem7[] = {
+	"rozbit* p#dlo",
+	"\n",
+	"P>;li@ kr#tk*.",
+	"\n\n"
+};
+
+const static char *czechItem8[] = {
+	"p#dlo",
+	"\n",
+	"Lepidlo dr{; v+tev jako",
+	"\n",
+	"p>ibitou.",
+	"\n\n"
+};
+
+const static char *czechItem9[] = {
+	"kv+tina",
+	"\n",
+	"Von; omamn+.",
+	"\n",
+	"A moc hezky k tomu.",
+	"\n\n"
+};
+
+const static char *czechItem10[] = {
+	"kv+tina",
+	"\n",
+	"N#dhern#.",
+	"\n\n"
+};
+
+const static char *czechItem11[] = {
+	"opra@ova$",
+	"\n",
+	"M]{u se s n;m opra@ovat.",
+	"\n\n"
+};
+
+const static char *czechItem12[] = {
+	"motorov# pila",
+	"\n",
+	"Fe@n#, ale nem# palivo, aby mohla zp;vat.",
+	"\n\n"
+};
+
+const static char *czechItem13[] = {
+	"opil# pila",
+	"\n",
+	"Trochu nestabiln;, ale pou{iteln#.",
+	"\n\n"
+};
+
+const static char *czechItem14[] = {
+	"v+tev",
+	"\n",
+	"Velmi nepoddajn* d>evo.",
+	"\n\n"
+};
+
+const static char *czechItem15[] = {
+	"whiska",
+	"\n",
+	"Opilc]v feti@, zna$kov* balen;.",
+	"\n",
+	"Velmi siln*.",
+	"\n\n"
+};
+
+const static char *czechItem16[] = {
+	"jehla",
+	"\n",
+	"Trochu p>erostl# jehla...",
+	"\n\n"
+};
+
+const static char *czechItem17[] = {
+	"obal",
+	"\n",
+	"Hezkej, speci#ln+ ten n#pis \'Mlska z l#sky\'.",
+	"\n",
+	"A v@ude okolo malink# srd;$ka,",
+	"\n",
+	"roztomil*... str#{nej je asi teplej.",
+	"\n\n"
+};
+
+const static char *czechItem18[] = {
+	"bonb=n z l#sky",
+	"\n",
+	"Pracn+ vyrobenej bonb=n.",
+	"\n",
+	"Bezvadnej d#rek.",
+	"\n\n"
+};
+
+const static char *czechItem19[] = {
+	"brambora",
+	"\n",
+	"Fuj, sem se lek - vypad# jak gran#t!",
+	"\n\n"
+};
+
+const static char *czechItem20[] = {
+	"hr#b+",
+	"\n",
+	"M# p>;li@ velk* pot;{e s chrupem",
+	"\n",
+	"na to, aby se s n;m dalo hrabat.",
+	"\n\n"
+};
+
+const static char *czechItem21[] = {
+	"srdcoidn; bonb=n",
+	"\n",
+	"Mysl;m, {e tohle mal* vylep@en; nesta$;.",
+	"\n\n"
+};
+
+const static char *czechItem22[] = {
+	"bonb=n v pap;rku",
+	"\n",
+	"Vypad# jako novej, ale nev+>;m tomu.",
+	"\n\n"
+};
+
+const static char *czechItem23[] = {
+	"p#ska",
+	"\n",
+	"Von; (P)Annou, l*tem, @krobidlem a pudrem.",
+	"\n",
+	"A sexem. T;m hlavn+.",
+	"\n\n"
+};
+
+const static char *czechItem24[] = {
+	"hr#b+",
+	"\n",
+	"Cel* nadr{en* na hrab#n;.",
+	"\n\n"
+};
+
+const static char *czechItem25[] = {
+	"o>ech",
+	"\n",
+	"P+knej macek.",
+	"\n\n"
+};
+
+const static char *czechItem26[] = {
+	"um+l* jablko",
+	"\n",
+	"Vypad# skoro opravdov+.",
+	"\n",
+	"Proto se >;k# \'ni$emu nev+>\'.",
+	"\n\n"
+};
+
+const static char *czechItem27[] = {
+	"@i@ka",
+	"\n",
+	"Vypad# jako ta, co jsem narval mal*mu br#@kovi",
+	"\n",
+	"a{ do krku, kdy{ si po>#d necht+l spolknout,",
+	"\n",
+	"tak jsem mu j; tam nacpal prav;tkem.",
+	"\n\n"
+};
+
+const static char *czechItem28[] = {
+	"super lepidlo",
+	"\n",
+	"Je to turbo mega giga super ultra",
+	"\n",
+	"rychle schnouc; lepidlo plus.",
+	"\n\n"
+};
+
+const static char *czechItem29[] = {
+	"@i@ka & jehla",
+	"\n",
+	"N+co tu je@t+ chyb;...",
+	"\n\n"
+};
+
+const static char *czechItem30[] = {
+	"@i@ka & p;rko",
+	"\n",
+	"N+co tu je@t+ chyb;...",
+	"\n\n"
+};
+
+const static char *czechItem31[] = {
+	"@ipka",
+	"\n",
+	"Te% u{ mi chyb; jenom ter$!",
+	"\n\n"
+};
+
+const static char *czechItem32[] = {
+	"umoun+nej opra@ova$",
+	"\n",
+	"Je hnusn+ @pinavej od saz;.",
+	"\n\n"
+};
+
+const static char *czechItem33[] = {
+	"pomalovan# brambora",
+	"\n",
+	"Jedin^ rozd;l mezi t;mhle a gran#tem je v tom,",
+	"\n",
+	"{e brambory nemaj; ve zvyku vybuchovat.",
+	"\n\n"
+};
+
+const static char *czechItem34[] = {
+	"hever",
+	"\n",
+	"Vypad# spolehliv+.",
+	"\n\n"
+};
+
+const static char *czechItem35[] = {
+	"kost",
+	"\n",
+	"Zachoval#, ten komu pat>ila musel bejt asi",
+	"\n",
+	"velk^ zv;>e... jako kousav^ zv;>e, >ekl bych...",
+	"\n\n"
+};
+
+const static char *czechItem36[] = {
+	"r^$",
+	"\n",
+	"Jakmile ho jednou zabodnu do zem+,",
+	"\n",
+	"skon$;m a{ v Sydney.",
+	"\n\n"
+};
+
+const static char *czechItem37[] = {
+	"lano",
+	"\n",
+	"Vypad# pevn+.",
+	"\n\n"
+};
+
+const static char *czechItem38[] = {
+	"br^le",
+	"\n",
+	"Pom#haj; zejm*na jako maskov#n; p>ed rybami.",
+	"\n\n"
+};
+
+const static char *czechItem39[] = {
+	"ploutve",
+	"\n",
+	"Kdy{ se s nimi m#v# sem a tam tak pod",
+	"\n",
+	"vodou plavete a na sou@i tan$;te charlston.",
+	"\n\n"
+};
+
+const static char *czechItem40[] = {
+	"pot#p+$sk# v^stroj",
+	"\n",
+	"Pozor, vodo, jdu na tebe!",
+	"\n\n"
+};
+
+const static char *czechItem41[] = {
+	"kotva",
+	"\n",
+	"Dost t+{k# na to, aby potopila lo%.",
+	"\n\n"
+};
+
+const static char *czechItem42[] = {
+	"kotvi$ka",
+	"\n",
+	"Pozor, hory, jdu na v#s!",
+	"\n\n"
+};
+
+const static char *czechItem43[] = {
+	"srp",
+	"\n",
+	"Je tak tupej, {e by m+l dostat podporu",
+	"\n",
+	"pro t+lesn+ posti{en*.",
+	"\n\n"
+};
+
+const static char *czechItem44[] = {
+	"vyhnil^ s^r",
+	"\n",
+	"P>ipom;n# mi m]j pokoj.",
+	"\n\n"
+};
+
+const static char *czechItem45[] = {
+	"nabrou@en^ srp",
+	"\n",
+	"Jeh<#tka, rad@i ml$te, p>ich#z; bolest...",
+	"\n\n"
+};
+
+const static char *czechItem46[] = {
+	"kapesn;k",
+	"\n",
+	"Oby$ejnej, nudnej, f#dn;, nezaj;mavej, pou{itej,",
+	"\n",
+	"nechutnej, jednoduchej a starej kapesn;k.",
+	"\n\n"
+};
+
+const static char *czechItem47[] = {
+	"my@",
+	"\n",
+	"Neposedn#. To jsou ty nervy.",
+	"\n\n"
+};
+
+const static char *czechItem48[] = {
+	"k#men",
+	"\n",
+	"P>ipom;n# mi sn+hovou kouli,",
+	"\n",
+	"ale kaz; to ta barva.",
+	"\n\n"
+};
+
+const static char *czechItem49[] = {
+	"nugeta",
+	"\n",
+	"Zna$ka: AU, at. $;slo: 79, at. hmot.: 196.97.",
+	"\n",
+	"Jin^mi slovy: ZLATO!!! Cha-ch#!",
+	"\n\n"
+};
+
+const static char *czechItem50[] = {
+	"bankovka",
+	"\n\n",
+
+};
+
+const static char *czechItem51[] = {
+	"diktafon",
+	"\n",
+	"Nem# baterie.",
+	"\n\n"
+};
+
+const static char *czechItem52[] = {
+	"fo[#k",
+	"\n",
+	"P>ipravenej na focen;.",
+	"\n\n"
+};
+
+const static char *czechItem53[] = {
+	"videokazeta",
+	"\n",
+	"Nem# {#dnou n#lepku.",
+	"\n\n"
+};
+
+const static char *czechItem54[] = {
+	"list pap;ru",
+	"\n",
+	"Pr#zdnej jak o$i nirv#nisty.",
+	"\n\n"
+};
+
+const static char *czechItem55[] = {
+	"ko<ak",
+	"\n",
+	"M#te @t+st;, {e ko<ak nepiju, jinak...",
+	"\n\n"
+};
+
+const static char *czechItem56[] = {
+	"d#lkov* ovl#d#n;",
+	"\n",
+	"Bedni$ka s tla$;tky.",
+	"\n",
+	"Jednoduch* jak facka.",
+	"\n\n"
+};
+
+const static char *czechItem57[] = {
+	"kle@t+ na led",
+	"\n",
+	"Bezvadn* n#>ad;.",
+	"\n\n"
+};
+
+const static char *czechItem58[] = {
+	"korek",
+	"\n",
+	"Korkov^ @punt oby$ejn*ho vzez>en;.",
+	"\n\n"
+};
+
+const static char *czechItem59[] = {
+	"zabalen^ korek",
+	"\n",
+	"Takhle u{ vypad# zaj;mav+.",
+	"\n\n"
+};
+
+const static char *czechItem60[] = {
+	"fotografie",
+	"\n",
+	"Je to fotka Oblouka v moment+, kdy se",
+	"\n",
+	"pokou@; o vysok* C, nechutn# pod;van#!",
+	"\n\n"
+};
+
+const static char *czechItem61[] = {
+	"chilli",
+	"\n",
+	"N#lepka na lahvi prav;:",
+	"\n",
+	"\'P]vodn; mexick* CHILLI\'. To tak.",
+	"\n\n"
+};
+
+const static char *czechItem62[] = {
+	"v#le$ek",
+	"\n",
+	"Tvrd^ d>evo na brut#ln; vra{dy.",
+	"\n\n"
+};
+
+const static char *czechItem63[] = {
+	"fale@n* chilli",
+	"\n",
+	"P]vodn; Ml;$<#kovo chilli. Che.",
+	"\n\n"
+};
+
+const static char *czechItem64[] = {
+	"n#lepka",
+	"\n",
+	"\'P]vodn; mexick* CHILLI\'.",
+	"\n\n"
+};
+
+const static char *czechItem65[] = {
+	"baterky",
+	"\n",
+	"P#rek m^ch nov^ch bateri;.",
+	"\n\n"
+};
+
+const static char *czechItem66[] = {
+	"diktafon",
+	"\n",
+	"\'Jedna-dv+-jedna-dv+, opakuj..\'",
+	"\n",
+	"\'Dev+t, dvan#ct, t>i, osm...\'",
+	"\n",
+	"Funguje.",
+	"\n\n"
+};
+
+const static char *czechItem67[] = {
+	"ho>;c; pap;r",
+	"\n",
+	"Vzru@uj;c;, {e?",
+	"\n",
+	"(ale nesm; se to p>eh#n+t viz pyrotoman).",
+	"\n\n"
+};
+
+const static char *czechItem68[] = {
+	"maso",
+	"\n",
+	"Je pe$liv+ zabalen* v pr]hledn*m pytl;ku.",
+	"\n\n"
+};
+
+const static char *czechItem69[] = {
+	"plastick^ pytl;k",
+	"\n",
+	"Douf#m, {e je recyklovateln^, jinak",
+	"\n",
+	"bych m+l @patn* sny.",
+	"\n\n"
+};
+
+const static char *czechItem70[] = {
+	"pono{ky",
+	"\n",
+	"Ble, uhc, bl, bl****...",
+	"\n",
+	"J# >ikal, {e m#m slabej {aludek!",
+	"\n\n"
+};
+
+const static char *czechItem71[] = {
+	"pilulky",
+	"\n",
+	"Je jich tam asi dvacet.",
+	"\n",
+	"Tla$; se na sebe v hrozn* orgii.",
+	"\n\n"
+};
+
+const static char *czechItem72[] = {
+	"klika",
+	"\n",
+	"M# kliku, vypad# jako \\pln+ norm#ln; klika.",
+	"\n\n"
+};
+
+const static char *czechItem73[] = {
+	"chilli",
+	"\n",
+	"Hezk# lahev. Elegantn;.",
+	"\n\n"
+};
+
+const static char *czechItem74[] = {
+	"pas",
+	"\n",
+	"\"Pus[te tohoto chlapce dovnit>. Pytel.\"",
+	"\n\n"
+};
+
+const static char *czechItem75[] = {
+	"{#rovka",
+	"\n",
+	"Je na nic - aspo< n+co.",
+	"\n\n"
+};
+
+const static char *czechItem76[] = {
+	"kl;$ od v+zen;",
+	"\n",
+	"V]n+ svobody mi d#v# s;lu {;t.",
+	"\n\n"
+};
+
+const static char *czechItem77[] = {
+	"jem<ou$k# rostlinka",
+	"\n",
+	"Che ch**, locht#!",
+	"\n\n"
+};
+
+const static char *czechItem78[] = {
+	"arm#dn; n]{",
+	"\n",
+	"Mo{n# je na n+m i mali$k^ vibr#tor.",
+	"\n\n"
+};
+
+const static char *czechItem79[] = {
+	"p*ro",
+	"\n",
+	"Mohl bych fingovat permanentn; potenci.",
+	"\n\n"
+};
+
+const static char *czechItem80[] = {
+	"r^$",
+	"\n",
+	"Co kouk#te? Je p>ece v ka{d* adventu>e.",
+	"\n\n"
+};
+
+const static char *czechItem81[] = {
+	"kaleidoskop",
+	"\n",
+	"|um+l bych dovnit>,",
+	"\n",
+	"a{ by mi upadaly ruce a nohy.",
+	"\n",
+	"A pak bych toho asi nechal. V@eho s m;rou.",
+	"\n\n"
+};
+
+const static char *czechItem82[] = {
+	"\"Vojensk* noviny\"",
+	"\n",
+	"Je to n+co jako magaz;ny pro {eny",
+	"\n",
+	"nebo Excalibur.",
+	"\n",
+	"Spousta p;smenek, ale nic se nedo$te@.",
+	"\n\n"
+};
+
+const static char *czechItem83[] = {
+	"gran#t",
+	"\n",
+	"Voj#ci ho pou{;vaj; nam;sto @i@at*ho.",
+	"\n",
+	"rugby m;$e ve stavu nejvy@@; nouze...",
+	"\n\n"
+};
+
+const static char *czechItem84[] = {
+	"@#lek",
+	"\n",
+	"Pr#zdnej (zat;m).",
+	"\n\n"
+};
+
+const static char *czechItem85[] = {
+	"@#lek bahna",
+	"\n",
+	"Sou$#st som#lsk* sn;dan+.",
+	"\n",
+	"e@t+ t>i l;skov* o>;@ky a m#me ob+d.",
+	"\n\n"
+};
+
+const static char *czechItem86[] = {
+	"drobky",
+	"\n",
+	"N+kdo m; >;kal, {e poch#z; z chleba.",
+	"\n\n"
+};
+
+const static char *czechItem87[] = {
+	"provaz",
+	"\n",
+	"Tenk^ a dlouh^. N+co mi to p>ipom;n#, ehm.",
+	"\n\n"
+};
+
+const static char *czechItem88[] = {
+	"provaz p>iv#zan^ ke gran#tu",
+	"\n",
+	"M]j patent na \'bombastick*\' jojo.",
+	"\n\n"
+};
+
+const static char *czechItem89[] = {
+	"l*ky",
+	"\n",
+	"Mo{n# to jsou pilulky na span;.",
+	"\n",
+	"A{ m+ budete @tv#t, nasypu je do sebe!",
+	"\n\n"
+};
+
+const static char *czechItem90[] = {
+	"j;dlo s l*ky",
+	"\n",
+	"M]{e m;t oblouz<ovac; efekt.",
+	"\n\n"
+};
+
+const static char *czechItem91[] = {
+	"pt#k",
+	"\n",
+	"Douf#m, {e se bl;{e sp>#tel;me.",
+	"\n",
+	"Na pek#$i.",
+	"\n\n"
+};
+
+const static char *russianItem0[] = {
+	"pfqo",
+	"\n",
+	"Naeqali komt-so hae!",
+	"\n\n",
+};
+
+const static char *russianItem1[] = {
+	"qtg}>",
+	"\n",
+	"Cntyisfl}n|j cie...",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem2[] = {
+	"\200zik",
+	"\n",
+	"Povogf, nf hakq|s|!..",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem3[] = {
+	"\200zik",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem4[] = {
+	"kl\177x",
+	"\n",
+	"Poeobn|f cfziw| crfdea pqidoe\200sr\200.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem5[] = {
+	"qarx>rka",
+	"\n",
+	"Rl|yal, nfkosoq|f imi pol}ht\177sr\200.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem6[] = {
+	"cfsqoetj",
+	"\n",
+	"Rcfgo.",
+	"\n\n",
+};
+
+const static char *russianItem7[] = {
+	"rlomannof cfrlo",
+	"\n",
+	"Oxfn} koqoskof.",
+	"\n\n",
+};
+
+const static char *russianItem8[] = {
+	"cfrlo",
+	"\n",
+	"Klfj efqgis cfskt",
+	"\n",
+	"oxfn} kqfpko.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem9[] = {
+	"wcfsok",
+	"\n",
+	"On oxfn} pqi\200sno",
+	"\n",
+	"pavnfs.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem10[] = {
+	"wcfsok",
+	"\n",
+	"On oxfn} kqaric|j.",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem11[] = {
+	"mfs>lka",
+	"\n",
+	"R nfj mogno poidqas} c tboqzika.",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem12[] = {
+	"bfnhopila",
+	"\n",
+	"C voqoyfm rorso\200nii, no nfs soplica.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem13[] = {
+	"p}\200na\200 bfnhopila",
+	"\n",
+	"E>qdafsr\200, no qabosafs.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem14[] = {
+	"cfska",
+	"\n",
+	"Oxfn} sc>qeof efqfco.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem15[] = {
+	"cirki",
+	"\n",
+	"^sikfska dlaris \"Oxfn}",
+	"\n",
+	"kqfpkij cirki\".",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem16[] = {
+	"idla",
+	"\n",
+	"Ona cfr}ma elinna\200 el\200 idolki...",
+	"\n\n",
+};
+
+const static char *russianItem17[] = {
+	"ob>qska",
+	"\n",
+	"Kqarica\200. Orobfnno naepir} \"KONUFSA L_BCI\".",
+	"\n",
+	"A fz> na nfj ihobqagfno rfqewf.",
+	"\n",
+	"Kak milo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem18[] = {
+	"yokolae",
+	"\n",
+	"Kqtdla\200 yokolaena\200 konufsa.",
+	"\n",
+	"Oslixn|j poeaqok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem19[] = {
+	"eikij kaqsoufl}",
+	"\n",
+	"Odo! Povog uoqmoj na dqanast!..",
+	"\n\n",
+};
+
+const static char *russianItem20[] = {
+	"dqabli",
+	"\n",
+	"Qarrso\200nif mfget htb}\200mi rliykom bol}yof,",
+	"\n",
+	"xsob| xso-nibte} rdqfrsi.",
+	"\n\n",
+};
+
+const static char *russianItem21[] = {
+	"konufsa c uoqmf rfqewa",
+	"\n",
+	"Cq\200e li oenodo ~sodo tltxyfni\200 vcasis.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem22[] = {
+	"konufsa c ob>qskf",
+	"\n",
+	"Noca\200 konufsa. Nt, ili c|dl\200eis sakoj.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem23[] = {
+	"lfnsa",
+	"\n",
+	"Ona btefs napominas} mnf o soj s>lkf,",
+	"\n",
+	"c rm|rlf, xflocfxfrkoj ramkf.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem24[] = {
+	"dqabli",
+	"\n",
+	"Poqa dqfrsi.",
+	"\n\n",
+};
+
+const static char *russianItem25[] = {
+	"oqfv",
+	"\n",
+	"Bol}yoj oqfyfk.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem26[] = {
+	"plarsikocof \200bloko",
+	"\n",
+	"Sak povogf na narso\200zff,",
+	"\n",
+	"xso cieno rfmfxki cntsqi.",
+	"\n\n",
+};
+
+const static char *russianItem27[] = {
+	"yiyka",
+	"\n",
+	"Povoga na dacanrkt\177 ridaqt, kosoqa\200 eolgna",
+	"\n",
+	"b|s} pqiklffna k tl|bkf kageodo",
+	"\n",
+	"tcaga\177zfdo rfb\200 bihnfrmfna.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem28[] = {
+	"rtpfqklfj",
+	"\n",
+	"^so rtpfq-stqbo-mfda-tl}sqa",
+	"\n",
+	"b|rsqorovnt\177zij klfj-pl\177r.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem29[] = {
+	"yiyka i idla",
+	"\n",
+	"Xfdo-so cr> qacno nf vcasafs...",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem30[] = {
+	"yiyka i idla",
+	"\n",
+	"Xfdo-so cr> qacno nf vcasafs...",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem31[] = {
+	"eqosik",
+	"\n",
+	"Orsalor} liy} najsi wfl}!",
+	"\n\n",
+};
+
+const static char *russianItem32[] = {
+	"dq\200hna\200 mfs>lka",
+	"\n",
+	"Ona lipka\200 i pfqfpaxkana ragfj.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem33[] = {
+	"qarkqayfnn|j kaqsoufl}",
+	"\n",
+	"Feinrscfnnof fdo oslixif os dqanas| c som,",
+	"\n",
+	"xso kaqsoufl} ob|xno nf chq|cafsr\200.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem34[] = {
+	"eomkqas",
+	"\n",
+	"Na cie pqoxn|j.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem35[] = {
+	"kors} einohacqa",
+	"\n",
+	"Bol}ya\200 i voqoyo rovqanilar}.",
+	"\n",
+	"^so \200cno b|l odqomn|j... hcfq}, cieimo...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem36[] = {
+	"lopasa",
+	"\n",
+	"Mogno r|dqas} c EIDDFQa. Sak, k rloct.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem37[] = {
+	"cfq>cka",
+	"\n",
+	"Pqoxna\200.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem38[] = {
+	"marka",
+	"\n",
+	"Ona pomogfs ltxyf ciefs} poe coeoj.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem39[] = {
+	"lars|",
+	"\n",
+	"Oni pomodts mnf bol}yf povoeis}",
+	"\n",
+	"na poecoen|v bqas}fc.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem40[] = {
+	"coeolahnof rnaq\200gfnif",
+	"\n",
+	"Bfqfdir}, coea! ` iet!",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem41[] = {
+	"\200koq}",
+	"\n",
+	"Malfn}kij, no s\200g>l|j, mogfs posopis} loekt.",
+	"\n\n",
+};
+
+const static char *russianItem42[] = {
+	"kq\177k",
+	"\n",
+	"Bfqfdisfr}, doq|! ` iet!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem43[] = {
+	"rfqp",
+	"\n",
+	"On narsol}ko stpoj, xso eagf",
+	"\n",
+	"marlo poqfhas} nf tearsr\200.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem44[] = {
+	"haplfrnfcfl|j r|q",
+	"\n",
+	"Napominafs mo\177 komnast.",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem45[] = {
+	"hasoxfnn|j rfqp",
+	"\n",
+	"`dn\200sa, molxisf. Btefs bol}no...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem46[] = {
+	"norocoj plasok",
+	"\n",
+	"T claefl}wa sakoj odqomn|j nor, xso fmt ntgfn",
+	"\n",
+	"wfl|j ktrok m|la, xsob| fdo pom|s}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem47[] = {
+	"m|y}",
+	"\n",
+	"Ea ona nfporfea.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem48[] = {
+	"kamfn}",
+	"\n",
+	"Ram|j ob|xn|j, kak rnfgok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem49[] = {
+	"ramoqoeok",
+	"\n",
+	"Rimcol: A$, nomfq: 79, asomn|j cfr: 196,97.",
+	"\n",
+	"Eqtdimi rlocami: HOLOSO! Ea! Ea!",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem50[] = {
+	"banknosa",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem51[] = {
+	"eiksouon",
+	"\n",
+	"C n>m nfs basaqffk.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem52[] = {
+	"polaqoie",
+	"\n",
+	"On dosoc k r{>mkf.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem53[] = {
+	"ciefokarrfsa",
+	"\n",
+	"Nf poepirana.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem54[] = {
+	"kloxok btmadi",
+	"\n",
+	"Nixfdo cagnodo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem55[] = {
+	"kon}\200k",
+	"\n",
+	"Habacnof im\200 el\200 paqoeii na c|pickt.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem56[] = {
+	"ptl}s ET",
+	"\n",
+	"T nfdo eqtgfrscfnn|j insfqufjr.",
+	"\n",
+	"L\177boj mogfs pol}hocas}r\200.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem57[] = {
+	"zipw| el\200 l}ea",
+	"\n",
+	"Pqidoe\200sr\200.",
+	"\n\n",
+};
+
+const static char *russianItem58[] = {
+	"pqobka",
+	"\n",
+	"Pqobka el\200 haktpoqki.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem59[] = {
+	"obmosanna\200 pqobka",
+	"\n",
+	"Sfpfq} eqtdof eflo.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem60[] = {
+	"uoso",
+	"\n",
+	"^so uosodqaui\200 Egona Nosi. ` hapfxaslfl fdo,",
+	"\n",
+	"kodea on bqal nost ri. Tgar!",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem61[] = {
+	"xili",
+	"\n",
+	"Na ~sikfskf napirano",
+	"\n",
+	"\"Mfkrikanrkij xili\". Nt pq\200m.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem62[] = {
+	"rkalka",
+	"\n",
+	"Reflana ih oxfn} sc>qeoj eqfcfrin|.",
+	"\n\n",
+};
+
+const static char *russianItem63[] = {
+	"ual}yic|j xili",
+	"\n",
+	"Cos ~so \200 ponima\177 - eolda\200 c|efqgka.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem64[] = {
+	"~sikfska",
+	"\n",
+	"\"Mfkrikanrkij xili\".",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem65[] = {
+	"basaqfjki",
+	"\n",
+	"Paqa noc|v basaqffk.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem66[] = {
+	"eiksouon",
+	"\n",
+	"\"Qah-eca, qah-eca, dqomxf ckl\177xi,",
+	"\n",
+	"~so \200, Maqk ^mRi\"...",
+	"\n",
+	"Qabosafs.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem67[] = {
+	"doq\200za\200 btmada",
+	"\n",
+	"Posq\200ra\177zf, ea?",
+	"\n",
+	"(Eagf bol}yf - nfcfqo\200sno).",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem68[] = {
+	"m\200ro",
+	"\n",
+	"Sfl\200sina c plarsikocom pakfsf.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem69[] = {
+	"plarsikoc|j pakfs",
+	"\n",
+	"Naef\177r}, bioqahladafm|j. Inaxf",
+	"\n",
+	"nf rmodt rpas}.",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem70[] = {
+	"norki",
+	"\n",
+	"Osrsojn|f norki.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem71[] = {
+	"sablfski",
+	"\n",
+	"C bankf okolo ecaewasi sablfsok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem72[] = {
+	"qtxka",
+	"\n",
+	"Ob|xna\200 ecfqna\200 qtxka...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem73[] = {
+	"xili",
+	"\n",
+	"Mnf nqacisr\200 uoqma bts|loxki.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem74[] = {
+	"pqoptrk",
+	"\n",
+	"\"Cptrsisf fdo. Dlaca KCE.\"",
+	"\n\n",
+};
+
+const static char *russianItem75[] = {
+	"lampoxka",
+	"\n",
+	"Rocrfm bfrpolfhna.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem76[] = {
+	"kl\177x os kamfq|",
+	"\n",
+	"Kakoj r\177qpqih, kl\177x os kamfq|.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem77[] = {
+	"nfgnof qarsfnif",
+	"\n",
+	"Aj, zfkosno!",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem78[] = {
+	"ycfjwaqrkij nog",
+	"\n",
+	"Insfqfrno, frs} li c n>m sflfcihoq.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem79[] = {
+	"pqtgina",
+	"\n",
+	"R nfj \200 rmodt haptrsis} qakfst!",
+	"\n\n",
+};
+
+const static char *russianItem80[] = {
+	"lopasa",
+	"\n",
+	"Ntgna\200 cfz}.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem81[] = {
+	"kalfjeorkop",
+	"\n",
+	"Cr\177 gihn} b| c nfdo rmosqfl.",
+	"\n",
+	"Nt, ili mints p\200s}.",
+	"\n",
+	"Rktka.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem82[] = {
+	"\"Roleasrkif nocorsi\"",
+	"\n",
+	"So gf ramof, xso gtqnal| el\200 gfnzin,",
+	"\n",
+	"sol}ko cmfrso kormfsiki hefr} ptyki.",
+	"\n",
+	"Cr> qacno kqtso.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem83[] = {
+	"dqanasa",
+	"\n",
+	"Cieno, \200 rp\200sil, pologic f> c kaqman.",
+	"\n",
+	"Mogfs pqoihojsi nfxso tgarnof...",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem84[] = {
+	"kqtgka",
+	"\n",
+	"Ptrsa\200.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem85[] = {
+	"kqtgka r dq\200h}\177",
+	"\n",
+	"Haxfm \200 napolnil kqtgkt dq\200h}\177?",
+	"\n",
+	"Bfrrm|rliwa kaka\200-so!",
+	"\n\n",
+};
+
+const static char *russianItem86[] = {
+	"kqoyki",
+	"\n",
+	"Gmfn}ka vlfbn|v kqoyfk.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem87[] = {
+	"cfq>cka",
+	"\n",
+	"Sonka\200, elinna\200.",
+	"\n\n",
+};
+
+const static char *russianItem88[] = {
+	"cfq>cka r dqanasoj",
+	"\n",
+	"Mo> ihobqfsfnif - chq|cnoj jo-jo.",
+	"\n\n",
+};
+
+const static char *russianItem89[] = {
+	"sablfski",
+	"\n",
+	"Povogf na rnoscoqnof.",
+	"\n",
+	"Pqacea, pon\200si\200 nf imf\177 poxfmt.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem90[] = {
+	"naqkosixfrkif kqoyki",
+	"\n",
+	"Pocf\200lo \177nors}\177.",
+	"\n\n",
+};
+
+const static char *russianItem91[] = {
+	"psiwa",
+	"\n",
+	"Btefs oslixn|m obfeom... So frs}",
+	"\n",
+	"eqtdom, konfxno gf.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char **englishItems[] = {
+	englishItem0, englishItem1, englishItem2, englishItem3, englishItem4,
+	englishItem5, englishItem6, englishItem7, englishItem8, englishItem9,
+	englishItem10, englishItem11, englishItem12, englishItem13, englishItem14,
+	englishItem15, englishItem16, englishItem17, englishItem18, englishItem19,
+	englishItem20, englishItem21, englishItem22, englishItem23, englishItem24,
+	englishItem25, englishItem26, englishItem27, englishItem28, englishItem29,
+	englishItem30, englishItem31, englishItem32, englishItem33, englishItem34,
+	englishItem35, englishItem36, englishItem37, englishItem38, englishItem39,
+	englishItem40, englishItem41, englishItem42, englishItem43, englishItem44,
+	englishItem45, englishItem46, englishItem47, englishItem48, englishItem49,
+	englishItem50, englishItem51, englishItem52, englishItem53, englishItem54,
+	englishItem55, englishItem56, englishItem57, englishItem58, englishItem59,
+	englishItem60, englishItem61, englishItem62, englishItem63, englishItem64,
+	englishItem65, englishItem66, englishItem67, englishItem68, englishItem69,
+	englishItem70, englishItem71, englishItem72, englishItem73, englishItem74,
+	englishItem75, englishItem76, englishItem77, englishItem78, englishItem79,
+	englishItem80, englishItem81, englishItem82, englishItem83, englishItem84,
+	englishItem85, englishItem86, englishItem87, englishItem88, englishItem89,
+	englishItem90, englishItem91,
+};
+
+const static char **polishItems[] = {
+	polishItem0, polishItem1, polishItem2, polishItem3, polishItem4,
+	polishItem5, polishItem6, polishItem7, polishItem8, polishItem9,
+	polishItem10, polishItem11, polishItem12, polishItem13, polishItem14,
+	polishItem15, polishItem16, polishItem17, polishItem18, polishItem19,
+	polishItem20, polishItem21, polishItem22, polishItem23, polishItem24,
+	polishItem25, polishItem26, polishItem27, polishItem28, polishItem29,
+	polishItem30, polishItem31, polishItem32, polishItem33, polishItem34,
+	polishItem35, polishItem36, polishItem37, polishItem38, polishItem39,
+	polishItem40, polishItem41, polishItem42, polishItem43, polishItem44,
+	polishItem45, polishItem46, polishItem47, polishItem48, polishItem49,
+	polishItem50, polishItem51, polishItem52, polishItem53, polishItem54,
+	polishItem55, polishItem56, polishItem57, polishItem58, polishItem59,
+	polishItem60, polishItem61, polishItem62, polishItem63, polishItem64,
+	polishItem65, polishItem66, polishItem67, polishItem68, polishItem69,
+	polishItem70, polishItem71, polishItem72, polishItem73, polishItem74,
+	polishItem75, polishItem76, polishItem77, polishItem78, polishItem79,
+	polishItem80, polishItem81, polishItem82, polishItem83, polishItem84,
+	polishItem85, polishItem86, polishItem87, polishItem88, polishItem89,
+	polishItem90, polishItem91,
+};
+
+const static char **czechItems[] = {
+	czechItem0, czechItem1, czechItem2, czechItem3, czechItem4,
+	czechItem5, czechItem6, czechItem7, czechItem8, czechItem9,
+	czechItem10, czechItem11, czechItem12, czechItem13, czechItem14,
+	czechItem15, czechItem16, czechItem17, czechItem18, czechItem19,
+	czechItem20, czechItem21, czechItem22, czechItem23, czechItem24,
+	czechItem25, czechItem26, czechItem27, czechItem28, czechItem29,
+	czechItem30, czechItem31, czechItem32, czechItem33, czechItem34,
+	czechItem35, czechItem36, czechItem37, czechItem38, czechItem39,
+	czechItem40, czechItem41, czechItem42, czechItem43, czechItem44,
+	czechItem45, czechItem46, czechItem47, czechItem48, czechItem49,
+	czechItem50, czechItem51, czechItem52, czechItem53, czechItem54,
+	czechItem55, czechItem56, czechItem57, czechItem58, czechItem59,
+	czechItem60, czechItem61, czechItem62, czechItem63, czechItem64,
+	czechItem65, czechItem66, czechItem67, czechItem68, czechItem69,
+	czechItem70, czechItem71, czechItem72, czechItem73, czechItem74,
+	czechItem75, czechItem76, czechItem77, czechItem78, czechItem79,
+	czechItem80, czechItem81, czechItem82, czechItem83, czechItem84,
+	czechItem85, czechItem86, czechItem87, czechItem88, czechItem89,
+	czechItem90, czechItem91,
+};
+
+const static char **russianItems[] = {
+	russianItem0, russianItem1, russianItem2, russianItem3, russianItem4,
+	russianItem5, russianItem6, russianItem7, russianItem8, russianItem9,
+	russianItem10, russianItem11, russianItem12, russianItem13, russianItem14,
+	russianItem15, russianItem16, russianItem17, russianItem18, russianItem19,
+	russianItem20, russianItem21, russianItem22, russianItem23, russianItem24,
+	russianItem25, russianItem26, russianItem27, russianItem28, russianItem29,
+	russianItem30, russianItem31, russianItem32, russianItem33, russianItem34,
+	russianItem35, russianItem36, russianItem37, russianItem38, russianItem39,
+	russianItem40, russianItem41, russianItem42, russianItem43, russianItem44,
+	russianItem45, russianItem46, russianItem47, russianItem48, russianItem49,
+	russianItem50, russianItem51, russianItem52, russianItem53, russianItem54,
+	russianItem55, russianItem56, russianItem57, russianItem58, russianItem59,
+	russianItem60, russianItem61, russianItem62, russianItem63, russianItem64,
+	russianItem65, russianItem66, russianItem67, russianItem68, russianItem69,
+	russianItem70, russianItem71, russianItem72, russianItem73, russianItem74,
+	russianItem75, russianItem76, russianItem77, russianItem78, russianItem79,
+	russianItem80, russianItem81, russianItem82, russianItem83, russianItem84,
+	russianItem85, russianItem86, russianItem87, russianItem88, russianItem89,
+	russianItem90, russianItem91,
+};
+
+const uint kNumCredits = 7;
+
+const static char *englishCredits[kNumCredits] = {
+	"\xdd\xecPbackgrounds\niANDRZEJ DOBRZY;SKI",
+	"\xe3\xd2Pmusic\niRADEK SZAMREJ",
+	"\xd7\xe6Panimation and graphics\niGRZEGORZ MIECHOWSKI",
+	"\xd9\xe8Pprogramming and script\niADRIAN CHMIELARZ",
+	"\xdd\xec\\after the tiring journey...",
+	"\xdd\xec\\THE END",
+	"programming\nADRIAN CHMIELARZ\n \n \nanimation\nGRZEGORZ MIECHOWSKI\n \n \nadditional animations\nTOMASZ PILIK\n \n \nbackgrounds\nANDRZEJ DOBRZYNSKI\n \n \nmusic\nRADEK SZAMREJ\n \n \ncover art\nDARIUSZ ANACKI\n \n \ntranslation help\nPETER WELLS\n \n \nbetatesters\nTOMASZ FURMANIUK\nPATRYK SAWICKI\nPAWEL MIECHOWSKI\nMAREK CHMIELARZ\nJEDREK WICHA\nMR. JOHN DOE\nMARCIN DREWS\n \n \n \nideas\nADRIAN CHMIELARZ\nGRZEGORZ MIECHOWSKI\nANDRZEJ SAWICKI\n \n \n \nprint\nJAROS]AW WEISS\nAGENCJA STYL\n \n \n \nthanks\nHENRY KUTTNER\nU-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW\nEPIC MEGAGAMES\nXLAND SOFTWARE PUBLISHING\nKATARZYNA MIECHOWSKA\n \n \n \nspecial thanks\nANDRZEJ MICHALAK\n \n \n \n \n \n \n \n \n \nproduction\nMETROPOLIS SOFTWARE HOUSE\n(c) 1994-1995\n \n \n \nAll allusions and puns\nare intentional\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+};
+
+const static char *polishCredits[kNumCredits] = {
+	"\xdd\xecPrysunki\niANDRZEJ DOBRZY;SKI",
+	"\xe3\xd2Pmuzyka\niRADEK SZAMREJ",
+	"\xd7\xe6Panimacje i grafika\niGRZEGORZ MIECHOWSKI",
+	"\xd9\xe8Pprogramowanie i scenariusz\niADRIAN CHMIELARZ",
+	"\xdd\xec\\po wyczerpuj@cej podr*<y...",
+	"\xdd\xec\\KONIEC",
+	"programowanie\nADRIAN CHMIELARZ\n \n \n \nanimacje\nGRZEGORZ MIECHOWSKI\n \n \n \ndodatkowe animacje\nTOMASZ PILIK\n \n \n \nrysunki\nANDRZEJ DOBRZY;SKI\n \n \n \nmuzyka\nRADEK SZAMREJ\n \n \n \ng%os*w u<yczyli:AGNIESZKA\nBASIA\nGULASH\nMARTiNEZ\nALEX\nPAJA\nJOSEPH\nPAZDRO\nPIONST\nWICIK\nKOLA\n \n \n \nok%adka i plakat\nDARIUSZ ANACKI\n \n \n \nbetatesterzy\nTOMASZ FURMANIUK\nPATRYK SAWICKI\nPAWE] MIECHOWSKI\nMAREK CHMIELARZ\nANDRZEJ WICHA\nMR. JOHN DOE\nMARCIN DREWS\n \n \n \nbank pomys%*w\nADRIAN CHMIELARZ\nGRZEGORZ MIECHOWSKI\nANDRZEJ SAWICKI\n \n \n \npoligrafia\nJAROS]AW WEISS\nAGENCJA STYL\n \n \n \npodzi#kowania\nHENRY KUTTNER\nU-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW\nEPIC MEGAGAMES\nXLAND SOFTWARE PUBLISHING\nKATARZYNA MIECHOWSKA\n \n \n \nspecjalne podzi#kowania\nANDRZEJ MICHALAK\n \n \n \n \n \n \n \n \n \nprodukcja\nMETROPOLIS SOFTWARE HOUSE\n(c) 1994-1995\n \n \n \nWszelkie podobie=stwa i aluzje\nby%y zamierzone\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+};
+
+const static char *czechCredits[kNumCredits] = {
+	"\xdd\xecPkresby\niANDRZEJ DOBRZYNSKI",
+	"\xe3\xd2Phudba\niRADEK SZAMREJ",
+	"\xd7\xe6Panimace a grafika\niGRZEGORZ MIECHOWSKI",
+	"\xd9\xe8Pprogram a story\niADRIAN CHMIELARZ",
+	"\xdd\xeczZa moment...",
+	"\xdd\xec\\A to je konec...",
+	"program\nADRIAN CHMIELARZ\n \n \nanimace\nGRZEGORZ MIECHOWSKI\nTOMASZ PILIK\n \n \nkresby\nANDRZEJ DOBRZYNSKI\n \n \nhudba\nRADEK SZAMREJ\n \n \ntranslace\nANDREJ ANASTASOV\n \n \nbetatesters\nTOMASZ FURMANIUK\nPATRYK SAWICKI\nPAWEL MIECHOWSKI\nMAREK CHMIELARZ\nJEDREK WICHA\nMR. JOHN DOE\nMARCIN DREWS\n \n \n \nidey\nADRIAN CHMIELARZ\nGRZEGORZ MIECHOWSKI\nANDRZEJ SAWICKI\n \n \n \nthanxx to:\nHENRY KUTTNER\nU-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW\nEPIC MEGAGAMES\nXLAND SOFTWARE PUBLISHING\nKATARZYNA MIECHOWSKA\n \n \n \nCzech Republic distribution\nVochozka Trading\n \n \n \n \n \n \n \n \n \n \n \nprodukce\nMETROPOLIS SOFTWARE HOUSE\n(c) 1994-1995\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+};
+
+const static char *russianCredits[kNumCredits] = {
+	"\xdd\xecPharsacki\niANGFJ EOBGINRKI\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\xe3\xd2Pmth|ka\niQAEFK YAMQFJ",
+	"\xd7\xe6Panimawi\x80 i dqauika\niDGFDOG MFVOCRKI\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\xd9\xe8Pnapiranif koea i rwfnaqi\x80\niAEQIAN VMFLAG",
+	"\xdd\xec\\porlf eoldoj pofheki...\x1f\x1f\x1f\x1f",
+	"\xdd\xec\\KONFW\x1f\x1f",
+	"pqodqammiqocanif\nAEQIAN VMFLAG\n \n \nanimawi\x80\nDGFDOG MFVOCRKI\n \n \npomoz} r animawifj\nSOMAY PILIK\n \n \nharsacki\nANGFJ EOBGINRKI\n \n \nmth|ka\nQAEFK YAMQFJ\n \n \noblogka\nEAQITY ANAWKI\n \n \npomoz} r pfqfcoeom\nPISFQ T^LLR\n \n \nsfrsfq|\nSOMAY UTQMAN_K\nPASQ\\K RACIWKI\nPACFL MFVOCRKI\nMAQFK VMFLAG\nFEQFK CIVA\nM-Q EGON ET\nMAQWIN EQFCTR\n \n \n \nief\x80\nAEQIAN VMFLAG\nDGFDOG MFVOCRKI\nANGFJ RACIWKI\n \n \n \npfxas}\n`QORLAC CFJRR\nADFNWI` \"RSIL]\"\n \n \n \nrparibo\nDFNQI KASSNFQ\nC\\-HNAFSF-KSO-`-NO-LTXYF-ORSAS]R`-C-SFNI\n^PIK MFDADFJMR\nIKRL^NE PABLIYIND\nKASAGINA MFVOCRKA\n \n \n \norobof rparibo\nANGFJ MIVALAK\n \n \n \n \n \n \n \n \npqoihcoersco\nMFSQOPOLIR ROUSCFQ VATR\n(r) 1994-1995\n \n \n \nCrf osr|lki i kalambtq|\nnamfqfn|\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+};
+
+struct Object {
+	byte _id;
+	struct Rect {
+		int16 _left, _top, _right, _bottom;
+		void write(FILE *fp) {
+			writeUint16LE(fp, _left);
+			writeUint16LE(fp, _top);
+			writeUint16LE(fp, _right);
+			writeUint16LE(fp, _bottom);
+		}
+	};
+	Rect _rect;
+	Rect _actorRect;
+	byte _actorOrientation;
+	byte _enabled;
+
+public:
+	void write(FILE *fp) {
+		writeByte(fp, _id);
+		_rect.write(fp);
+		_actorRect.write(fp);
+		writeByte(fp, _actorOrientation);
+		writeByte(fp, _enabled);
+	}
+};
+
+Common::Array<Common::Array<Object>> sceneObjects = {
+	{},
+	{
+		{1, {0, 166, 56, 199}, {56, 180, 0, 180}, 4, 1},
+		{2, {182, 181, 272, 199}, {217, 193, 221, 199}, 3, 1},
+		{3, {288, 76, 303, 89}, {272, 100, 272, 100}, 1, 1},
+		{4, {241, 14, 319, 95}, {272, 100, 272, 100}, 1, 1},
+		{5, {64, 90, 185, 166}, {124, 183, 124, 183}, 1, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {240, 163, 240, 163}, 4, 1},
+		{2, {278, 85, 319, 122}, {290, 118, 319, 104}, 2, 1},
+		{3, {80, 189, 230, 199}, {218, 191, 214, 199}, 3, 1},
+		{4, {198, 35, 220, 150}, {209, 154, 209, 154}, 1, 1},
+		{5, {56, 101, 172, 188}, {115, 194, 115, 194}, 1, 1},
+		{6, {184, 144, 228, 160}, {240, 163, 220, 161}, 4, 0},
+	},
+	{
+		{1, {4, 119, 20, 141}, {202, 179, 202, 179}, 4, 1},
+		{2, {124, 170, 207, 192}, {202, 179, 202, 179}, 4, 1},
+		{3, {171, 99, 186, 151}, {225, 159, 225, 159}, 4, 1},
+		{4, {39, 83, 170, 161}, {202, 179, 202, 179}, 4, 1},
+		{5, {224, 122, 319, 155}, {275, 137, 319, 128}, 2, 1},
+		{6, {250, 156, 319, 199}, {280, 185, 319, 185}, 2, 1},
+		{7, {178, 161, 192, 180}, {203, 182, 203, 182}, 4, 0},
+	},
+	{
+		{1, {92, 180, 146, 199}, {128, 176, 116, 199}, 3, 1},
+		{2, {0, 156, 45, 182}, {35, 174, 0, 174}, 4, 1},
+		{3, {291, 0, 319, 130}, {300, 135, 300, 135}, 1, 1},
+		{4, {11, 71, 66, 155}, {40, 157, 40, 157}, 1, 1},
+		{5, {140, 71, 191, 155}, {166, 158, 166, 158}, 1, 1},
+		{6, {260, 53, 290, 148}, {290, 143, 276, 143}, 4, 1},
+		{7, {75, 101, 101, 160}, {109, 161, 109, 161}, 4, 1},
+	},
+	{
+		{1, {107, 156, 132, 169}, {145, 179, 145, 179}, 4, 1},
+		{2, {31, 156, 144, 187}, {80, 192, 80, 192}, 1, 1},
+		{3, {286, 113, 306, 126}, {265, 180, 265, 180}, 2, 1},
+		{4, {283, 135, 301, 146}, {265, 180, 265, 180}, 2, 0},
+		{5, {266, 170, 288, 190}, {266, 189, 266, 189}, 2, 0},
+		{6, {155, 90, 164, 107}, {159, 194, 159, 194}, 1, 1},
+		{7, {277, 98, 309, 189}, {265, 180, 265, 180}, 2, 1},
+		{8, {250, 147, 270, 173}, {242, 173, 242, 173}, 2, 1},
+		{9, {312, 138, 319, 145}, {306, 196, 306, 196}, 2, 1},
+		{10, {56, 122, 208, 154}, {153, 178, 153, 178}, 1, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {130, 195, 130, 195}, 1, 1},
+		{2, {0, 80, 35, 188}, {50, 184, 19, 184}, 4, 1},
+		{3, {44, 97, 78, 164}, {64, 166, 64, 166}, 1, 1},
+		{4, {107, 81, 205, 140}, {158, 168, 158, 168}, 1, 1},
+		{5, {140, 148, 214, 158}, {164, 198, 164, 198}, 1, 1},
+		{6, {238, 131, 319, 199}, {241, 181, 241, 181}, 2, 1},
+		{7, {191, 162, 217, 185}, {204, 194, 204, 194}, 1, 1},
+		{8, {213, 93, 232, 138}, {241, 181, 241, 181}, 1, 1},
+		{9, {239, 94, 277, 122}, {241, 181, 241, 181}, 1, 1},
+		{10, {45, 39, 83, 86}, {50, 181, 50, 181}, 1, 1},
+		{11, {222, 43, 285, 83}, {241, 181, 241, 181}, 1, 1},
+		{12, {123, 172, 137, 187}, {129, 191, 129, 191}, 1, 0},
+	},
+	{
+		{1, {187, 99, 196, 107}, {192, 152, 192, 152}, 1, 0},
+		{2, {0, 0, 0, 0}, {177, 152, 177, 152}, 1, 1},
+		{3, {94, 182, 206, 199}, {158, 184, 155, 199}, 3, 1},
+		{4, {16, 52, 38, 146}, {40, 152, 40, 152}, 1, 1},
+		{5, {52, 43, 89, 72}, {77, 152, 77, 152}, 1, 1},
+		{6, {266, 159, 279, 166}, {260, 194, 260, 194}, 2, 1},
+		{7, {98, 35, 117, 53}, {110, 152, 110, 152}, 1, 1},
+		{8, {126, 34, 256, 105}, {200, 152, 200, 152}, 1, 1},
+		{9, {65, 89, 91, 105}, {77, 152, 77, 152}, 1, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {50, 180, 50, 180}, 1, 1},
+		{2, {268, 85, 297, 170}, {240, 182, 240, 182}, 2, 1},
+		{3, {4, 108, 91, 178}, {50, 180, 50, 180}, 1, 1},
+		{4, {90, 95, 120, 168}, {112, 173, 112, 173}, 1, 1},
+		{5, {150, 107, 214, 164}, {183, 178, 183, 178}, 1, 1},
+		{6, {126, 143, 151, 170}, {141, 177, 141, 177}, 1, 1},
+		{7, {215, 129, 234, 170}, {224, 182, 224, 182}, 1, 1},
+	},
+	{
+		{1, {126, 95, 134, 105}, {139, 156, 132, 149}, 1, 0},
+		{2, {0, 0, 0, 0}, {139, 156, 139, 156}, 1, 1},
+		{3, {0, 111, 84, 162}, {83, 149, 83, 149}, 4, 1},
+		{4, {272, 149, 319, 199}, {269, 175, 319, 183}, 2, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {138, 163, 138, 163}, 2, 1},
+		{2, {112, 160, 123, 168}, {104, 171, 104, 171}, 2, 0},
+		{3, {210, 119, 246, 152}, {138, 163, 138, 163}, 2, 1},
+		{4, {265, 128, 303, 173}, {138, 163, 138, 163}, 2, 1},
+		{5, {274, 57, 291, 72}, {138, 163, 138, 163}, 2, 1},
+		{6, {252, 51, 306, 161}, {138, 163, 138, 163}, 2, 1},
+		{7, {229, 0, 319, 152}, {138, 163, 138, 163}, 2, 1},
+		{8, {0, 0, 0, 0}, {181, 176, 181, 176}, 1, 0},
+		{9, {156, 174, 319, 199}, {138, 163, 319, 198}, 2, 1},
+		{10, {0, 115, 70, 152}, {60, 171, 0, 124}, 1, 1},
+		{11, {0, 161, 57, 190}, {60, 171, 0, 171}, 4, 1},
+		{12, {140, 104, 228, 152}, {138, 163, 228, 109}, 2, 1},
+		{13, {191, 166, 200, 174}, {138, 163, 181, 176}, 2, 1},
+		{14, {0, 0, 228, 152}, {60, 171, 60, 171}, 1, 1},
+		{15, {120, 154, 133, 160}, {112, 163, 112, 163}, 2, 0},
+	},
+	{
+		{1, {0, 0, 0, 0}, {0, 0, 0, 0}, 0, 0},
+		{2, {260, 116, 275, 138}, {258, 189, 258, 189}, 1, 1},
+		{3, {208, 110, 248, 126}, {203, 171, 203, 171}, 2, 1},
+		{4, {228, 60, 301, 170}, {258, 189, 252, 171}, 1, 1},
+		{5, {12, 138, 51, 173}, {49, 172, 49, 172}, 4, 1},
+		{6, {0, 34, 260, 160}, {166, 189, 166, 189}, 1, 1},
+		{7, {293, 92, 319, 170}, {298, 175, 319, 152}, 1, 1},
+		{8, {0, 174, 60, 199}, {30, 189, 0, 189}, 4, 1},
+		{9, {208, 156, 236, 168}, {-1, -1, -1, -1}, 0, 0},
+	},
+	{
+		{1, {0, 0, 49, 157}, {18, 173, 18, 173}, 1, 1},
+		{2, {246, 124, 309, 166}, {261, 183, 261, 183}, 1, 1},
+		{3, {0, 158, 47, 186}, {18, 173, 0, 172}, 4, 1},
+		{4, {0, 32, 319, 166}, {197, 183, 197, 183}, 1, 1},
+		{5, {262, 166, 319, 199}, {261, 183, 319, 181}, 2, 1},
+		{6, {0, 0, 0, 0}, {103, 192, 103, 192}, 4, 1},
+		{7, {219, 186, 235, 195}, {215, 195, 215, 195}, 2, 1},
+	},
+	{
+		{1, {178, 36, 190, 54}, {188, 150, 188, 150}, 1, 1},
+		{2, {0, 0, 0, 0}, {188, 150, 188, 150}, 1, 1},
+		{3, {28, 93, 114, 193}, {63, 195, 63, 195}, 1, 1},
+		{4, {166, 118, 230, 141}, {188, 150, 188, 150}, 1, 1},
+		{5, {214, 180, 319, 199}, {219, 183, 270, 199}, 2, 1},
+	},
+	{
+		{1, {144, 15, 163, 29}, {157, 180, 157, 180}, 1, 1},
+		{2, {105, 0, 207, 39}, {157, 180, 157, 180}, 1, 1},
+		{3, {60, 136, 123, 167}, {107, 169, 107, 169}, 4, 1},
+		{4, {236, 164, 288, 195}, {236, 179, 236, 179}, 3, 1},
+		{5, {221, 150, 232, 162}, {200, 179, 200, 179}, 2, 1},
+		{6, {136, 183, 165, 199}, {157, 180, 153, 199}, 3, 1},
+		{7, {293, 150, 319, 182}, {262, 176, 319, 162}, 2, 1},
+		{8, {0, 150, 32, 181}, {30, 172, 0, 172}, 4, 1},
+	},
+	{
+		{1, {125, 59, 140, 89}, {123, 94, 123, 94}, 2, 1},
+		{2, {141, 59, 158, 87}, {160, 90, 160, 90}, 4, 1},
+		{3, {210, 76, 312, 123}, {236, 95, 236, 95}, 3, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {0, 0, 0, 0}, 2, 1},
+		{2, {0, 0, 0, 0}, {0, 0, 0, 0}, 2, 1},
+		{3, {0, 0, 0, 0}, {0, 0, 0, 0}, 2, 0},
+		{4, {0, 0, 0, 0}, {0, 0, 0, 0}, 2, 0},
+		{5, {33, 177, 43, 187}, {0, 0, 0, 0}, 2, 1},
+		{6, {41, 144, 153, 186}, {0, 0, 0, 0}, 2, 1},
+		{7, {0, 86, 34, 151}, {0, 0, 0, 0}, 2, 1},
+		{8, {15, 144, 45, 188}, {0, 0, 0, 0}, 2, 1},
+		{9, {206, 163, 252, 199}, {0, 0, 0, 0}, 2, 1},
+		{10, {222, 60, 264, 136}, {0, 0, 0, 0}, 2, 1},
+		{11, {152, 150, 187, 181}, {0, 0, 0, 0}, 2, 1},
+		{12, {104, 122, 224, 152}, {0, 0, 0, 0}, 2, 1},
+	},
+	{
+		{1, {189, 175, 319, 199}, {201, 192, 236, 199}, 2, 1},
+		{2, {55, 80, 80, 105}, {-1, -1, -1, -1}, 4, 1},
+		{3, {103, 70, 133, 93}, {-1, -1, -1, -1}, 2, 1},
+		{4, {0, 0, 0, 0}, {201, 192, 201, 192}, 1, 1},
+		{5, {146, 53, 153, 60}, {201, 192, 201, 192}, 1, 1},
+		{6, {140, 187, 146, 193}, {156, 194, 156, 194}, 4, 0},
+		{7, {72, 180, 170, 199}, {162, 194, 162, 194}, 4, 1},
+	},
+	{
+		{1, {144, 189, 319, 199}, {223, 193, 223, 199}, 3, 1},
+		{2, {204, 117, 224, 131}, {216, 167, 216, 167}, 1, 1},
+		{3, {0, 71, 28, 148}, {81, 167, 81, 167}, 4, 1},
+		{4, {46, 134, 114, 152}, {78, 164, 78, 164}, 1, 1},
+		{5, {129, 103, 154, 112}, {139, 165, 139, 165}, 1, 1},
+		{6, {125, 140, 158, 155}, {143, 164, 143, 164}, 1, 1},
+		{7, {137, 6, 182, 41}, {162, 187, 162, 187}, 1, 1},
+		{8, {275, 94, 319, 129}, {216, 167, 216, 167}, 2, 1},
+		{9, {273, 140, 293, 183}, {270, 182, 270, 182}, 2, 1},
+		{10, {185, 96, 232, 131}, {216, 167, 216, 167}, 1, 1},
+		{11, {55, 165, 140, 199}, {81, 167, 81, 167}, 3, 1},
+		{12, {104, 113, 111, 119}, {109, 164, 109, 164}, 1, 1},
+		{13, {169, 47, 319, 93}, {216, 167, 216, 167}, 1, 1},
+		{14, {162, 139, 182, 169}, {193, 164, 193, 164}, 4, 1},
+		{15, {45, 108, 114, 132}, {81, 167, 81, 167}, 1, 1},
+	},
+	{
+		{1, {285, 135, 315, 170}, {278, 189, 278, 189}, 2, 1},
+		{2, {191, 136, 230, 156}, {168, 179, 168, 179}, 2, 1},
+		{3, {80, 71, 100, 81}, {81, 181, 81, 181}, 1, 1},
+		{4, {101, 60, 105, 160}, {101, 181, 101, 181}, 1, 1},
+		{5, {144, 90, 183, 159}, {161, 165, 161, 165}, 1, 1},
+		{6, {190, 113, 197, 124}, {161, 165, 161, 165}, 2, 1},
+		{7, {208, 75, 253, 126}, {169, 174, 169, 174}, 2, 1},
+		{8, {272, 75, 317, 125}, {169, 174, 169, 174}, 2, 1},
+		{9, {75, 2, 88, 27}, {81, 181, 81, 181}, 1, 1},
+		{10, {0, 170, 33, 199}, {48, 187, 0, 187}, 4, 1},
+		{11, {279, 170, 319, 199}, {289, 190, 319, 190}, 2, 1},
+		{12, {0, 116, 28, 169}, {48, 187, 5, 131}, 1, 1},
+		{13, {0, 0, 0, 0}, {64, 187, 64, 187}, 1, 1},
+		{14, {285, 145, 291, 155}, {278, 189, 278, 189}, 2, 0},
+		{15, {286, 165, 292, 169}, {278, 189, 278, 189}, 2, 0},
+		{16, {294, 133, 315, 172}, {278, 189, 278, 189}, 2, 0},
+	},
+	{
+		{1, {0, 172, 43, 195}, {48, 190, 0, 187}, 4, 1},
+		{2, {176, 182, 221, 199}, {196, 194, 206, 199}, 3, 1},
+		{3, {80, 104, 121, 169}, {100, 176, 100, 176}, 1, 1},
+		{4, {0, 130, 63, 171}, {48, 190, 48, 190}, 4, 1},
+		{5, {141, 88, 186, 144}, {159, 189, 159, 189}, 1, 1},
+		{6, {206, 88, 251, 144}, {159, 189, 159, 189}, 2, 1},
+		{7, {277, 85, 310, 130}, {196, 194, 196, 194}, 2, 1},
+		{8, {282, 156, 312, 171}, {297, 181, 297, 178}, 1, 0},
+		{9, {267, 131, 319, 176}, {196, 194, 196, 194}, 2, 1},
+		{10, {0, 0, 0, 0}, {196, 194, 196, 194}, 2, 1},
+		{11, {124, 132, 129, 142}, {100, 176, 100, 176}, 2, 1},
+		{12, {0, 130, 63, 161}, {63, 187, 63, 187}, 1, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {230, 172, 230, 172}, 3, 1},
+		{2, {96, 94, 122, 127}, {109, 169, 109, 169}, 1, 1},
+		{3, {99, 131, 178, 151}, {163, 171, 163, 171}, 1, 1},
+		{4, {0, 183, 142, 199}, {99, 180, 99, 180}, 3, 1},
+		{5, {275, 81, 296, 146}, {244, 172, 244, 172}, 2, 1},
+		{6, {200, 135, 244, 155}, {210, 172, 210, 172}, 1, 1},
+		{7, {192, 104, 236, 127}, {210, 172, 210, 172}, 1, 1},
+		{8, {189, 56, 230, 101}, {210, 172, 210, 172}, 1, 1},
+		{9, {135, 71, 184, 106}, {150, 172, 150, 172}, 1, 1},
+		{10, {55, 86, 87, 137}, {70, 172, 70, 172}, 1, 1},
+		{11, {13, 96, 44, 172}, {61, 175, 61, 175}, 4, 1},
+		{12, {148, 4, 182, 55}, {163, 171, 163, 171}, 1, 1},
+		{13, {0, 0, 0, 0}, {183, 170, 183, 170}, 1, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {93, 186, 93, 186}, 4, 1},
+		{2, {0, 0, 0, 0}, {-1, -1, -1, -1}, 0, 1},
+		{3, {0, 188, 107, 199}, {94, 190, 76, 199}, 3, 1},
+		{4, {2, 72, 48, 132}, {93, 186, 93, 186}, 1, 1},
+		{5, {132, 72, 176, 132}, {155, 172, 155, 172}, 1, 1},
+		{6, {75, 10, 120, 56}, {93, 186, 93, 186}, 1, 1},
+		{7, {77, 97, 111, 165}, {93, 171, 93, 171}, 1, 1},
+		{8, {0, 0, 0, 0}, {0, 0, 0, 0}, 0, 0},
+		{9, {134, 159, 151, 173}, {158, 198, 158, 198}, 3, 1},
+		{10, {172, 159, 182, 174}, {158, 198, 158, 198}, 3, 1},
+		{11, {161, 137, 194, 158}, {158, 198, 158, 198}, 3, 1},
+		{12, {60, 161, 76, 168}, {93, 186, 78, 188}, 4, 1},
+		{13, {125, 167, 194, 199}, {158, 198, 158, 198}, 3, 1},
+		{14, {241, 96, 282, 148}, {258, 184, 258, 184}, 1, 1},
+		{15, {285, 62, 319, 104}, {258, 184, 258, 184}, 2, 1},
+		{16, {280, 161, 319, 199}, {245, 198, 245, 198}, 2, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {94, 170, 94, 170}, 4, 1},
+		{2, {56, 134, 78, 169}, {94, 170, 78, 170}, 4, 1},
+		{3, {213, 21, 248, 165}, {230, 170, 230, 170}, 1, 1},
+		{4, {247, 112, 254, 122}, {261, 168, 261, 168}, 1, 0},
+		{5, {5, 90, 30, 119}, {83, 180, 83, 180}, 4, 1},
+		{6, {284, 56, 296, 98}, {245, 178, 245, 178}, 2, 1},
+		{7, {302, 80, 310, 98}, {245, 178, 245, 178}, 2, 1},
+		{8, {107, 89, 204, 169}, {153, 176, 153, 176}, 1, 1},
+		{9, {279, 140, 319, 194}, {245, 178, 245, 178}, 2, 1},
+	},
+	{
+		{1, {225, 139, 246, 145}, {268, 145, 268, 145}, 4, 0},
+		{2, {144, 73, 203, 158}, {234, 152, 234, 152}, 4, 1},
+		{3, {121, 52, 174, 158}, {234, 152, 234, 152}, 4, 1},
+		{4, {277, 122, 319, 169}, {276, 147, 319, 147}, 2, 1},
+		{5, {221, 122, 254, 148}, {237, 152, 237, 152}, 1, 1},
+		{6, {0, 0, 0, 0}, {237, 152, 237, 152}, 1, 1},
+		{7, {0, 0, 0, 0}, {237, 152, 237, 152}, 1, 1},
+	},
+	{
+		{1, {259, 164, 285, 182}, {248, 169, 248, 169}, 3, 1},
+		{2, {63, 138, 92, 188}, {110, 170, 110, 170}, 3, 0},
+		{3, {273, 112, 319, 199}, {248, 169, 319, 169}, 2, 1},
+		{4, {151, 84, 173, 93}, {159, 170, 159, 170}, 1, 1},
+		{5, {154, 94, 166, 103}, {159, 170, 159, 170}, 1, 1},
+		{6, {249, 157, 255, 163}, {238, 168, 238, 168}, 2, 0},
+	},
+	{
+		{1, {0, 0, 0, 0}, {150, 195, 150, 195}, 2, 1},
+		{2, {0, 0, 0, 0}, {224, 135, 224, 135}, 1, 1},
+		{3, {0, 0, 0, 0}, {224, 135, 224, 135}, 1, 1},
+		{4, {0, 0, 0, 0}, {236, 142, 236, 142}, 4, 1},
+		{5, {219, 65, 233, 71}, {224, 135, 224, 135}, 1, 1},
+		{6, {201, 114, 241, 128}, {224, 135, 222, 143}, 1, 1},
+		{7, {200, 58, 245, 128}, {224, 135, 224, 135}, 1, 1},
+		{8, {122, 167, 135, 179}, {144, 181, 144, 181}, 4, 1},
+		{9, {61, 182, 141, 199}, {132, 190, 126, 199}, 3, 1},
+		{10, {123, 122, 153, 168}, {162, 181, 162, 181}, 4, 1},
+		{11, {106, 148, 125, 179}, {129, 191, 129, 191}, 4, 1},
+		{12, {162, 115, 182, 128}, {236, 142, 236, 142}, 4, 1},
+		{13, {165, 92, 191, 128}, {236, 142, 236, 142}, 4, 1},
+		{14, {174, 188, 180, 194}, {161, 195, 161, 195}, 2, 0},
+		{15, {81, 137, 112, 182}, {132, 190, 132, 190}, 4, 1},
+		{16, {260, 13, 319, 93}, {232, 134, 232, 134}, 2, 1},
+	},
+	{
+		{1, {85, 53, 121, 86}, {103, 143, 103, 143}, 1, 1},
+		{2, {170, 99, 189, 123}, {143, 143, 143, 143}, 2, 1},
+		{3, {198, 83, 240, 164}, {170, 153, 209, 153}, 2, 1},
+		{4, {0, 139, 34, 199}, {66, 167, 66, 167}, 4, 1},
+	},
+	{
+		{1, {0, 91, 26, 174}, {43, 170, 43, 170}, 4, 1},
+		{2, {232, 91, 279, 168}, {255, 178, 255, 166}, 1, 1},
+		{3, {43, 116, 79, 174}, {62, 183, 62, 183}, 1, 1},
+		{4, {130, 50, 171, 105}, {162, 173, 162, 173}, 1, 1},
+		{5, {30, 73, 157, 168}, {162, 173, 162, 173}, 1, 1},
+		{6, {287, 168, 319, 199}, {280, 188, 319, 188}, 2, 1},
+		{7, {0, 192, 319, 199}, {160, 188, 160, 199}, 3, 1},
+	},
+	{
+		{1, {0, 120, 81, 156}, {18, 159, 18, 159}, 1, 1},
+		{2, {20, 63, 85, 106}, {52, 165, 52, 165}, 1, 1},
+		{3, {297, 95, 319, 176}, {271, 174, 271, 174}, 2, 1},
+		{4, {207, 99, 218, 103}, {-1, -1, -1, -1}, 1, 0},
+		{5, {195, 84, 199, 93}, {208, 151, 208, 151}, 1, 1},
+		{6, {111, 47, 319, 110}, {221, 155, 221, 155}, 1, 1},
+		{7, {213, 171, 227, 189}, {234, 189, 234, 189}, 4, 1},
+		{8, {152, 141, 178, 193}, {165, 198, 165, 198}, 1, 1},
+		{9, {135, 134, 162, 153}, {136, 193, 136, 193}, 1, 1},
+		{10, {124, 158, 149, 166}, {136, 193, 136, 193}, 1, 1},
+		{11, {124, 168, 149, 175}, {136, 193, 136, 193}, 1, 1},
+		{12, {124, 177, 149, 184}, {136, 193, 136, 193}, 1, 1},
+		{13, {182, 158, 208, 166}, {196, 192, 196, 192}, 1, 1},
+		{14, {182, 168, 208, 175}, {196, 192, 196, 192}, 1, 1},
+		{15, {182, 177, 208, 184}, {196, 192, 196, 192}, 1, 1},
+		{16, {243, 113, 280, 152}, {262, 158, 262, 158}, 1, 1},
+	},
+	{
+		{1, {115, 91, 163, 167}, {140, 172, 140, 166}, 1, 1},
+		{2, {310, 140, 315, 145}, {300, 178, 300, 178}, 2, 1},
+		{3, {305, 139, 315, 145}, {300, 178, 300, 178}, 2, 0},
+		{4, {4, 63, 100, 97}, {59, 178, 59, 178}, 1, 1},
+		{5, {216, 77, 265, 121}, {243, 181, 243, 181}, 1, 1},
+		{6, {243, 145, 277, 199}, {243, 181, 243, 181}, 3, 1},
+		{7, {0, 168, 26, 199}, {40, 188, 0, 188}, 4, 1},
+		{8, {293, 95, 319, 182}, {273, 171, 273, 171}, 2, 1},
+		{9, {14, 90, 50, 176}, {40, 188, 40, 188}, 1, 1},
+	},
+	{
+		{1, {0, 0, 0, 0}, {82, 182, 82, 182}, 1, 1},
+		{2, {45, 117, 55, 131}, {51, 170, 51, 170}, 1, 0},
+		{3, {45, 117, 55, 131}, {51, 170, 51, 170}, 1, 0},
+		{4, {116, 45, 185, 126}, {152, 165, 152, 165}, 1, 1},
+		{5, {136, 136, 165, 159}, {152, 165, 152, 165}, 1, 1},
+		{6, {78, 189, 224, 199}, {139, 188, 139, 199}, 3, 1},
+		{7, {0, 199, 77, 199}, {139, 188, 57, 198}, 3, 0},
+		{8, {137, 126, 147, 133}, {143, 163, 143, 163}, 1, 0},
+	},
+	{
+		{1, {0, 0, 0, 0}, {141, 159, 141, 159}, 4, 1},
+		{2, {0, 0, 0, 0}, {-1, -1, -1, -1}, 4, 1},
+		{3, {38, 132, 48, 142}, {-1, -1, -1, -1}, 4, 1},
+		{4, {284, 156, 319, 199}, {267, 178, 319, 178}, 2, 1},
+		{5, {158, 127, 193, 155}, {192, 160, 192, 160}, 1, 1},
+		{6, {129, 116, 156, 124}, {141, 159, 141, 159}, 1, 1},
+		{7, {219, 112, 224, 124}, {221, 160, 221, 160}, 1, 1},
+		{8, {213, 119, 230, 126}, {221, 160, 221, 160}, 1, 0},
+		{9, {291, 119, 303, 126}, {296, 160, 296, 160}, 1, 1},
+		{10, {89, 112, 109, 125}, {-1, -1, -1, -1}, 1, 1},
+		{11, {180, 103, 213, 116}, {199, 162, 199, 162}, 1, 1},
+		{12, {173, 130, 184, 140}, {192, 160, 192, 160}, 1, 1},
+	},
+	{
+		{1, {0, 45, 35, 130}, {52, 133, 40, 128}, 4, 1},
+		{2, {277, 125, 310, 158}, {293, 166, 293, 166}, 1, 1},
+		{3, {286, 112, 300, 124}, {276, 159, 276, 159}, 2, 1},
+		{4, {85, 46, 118, 103}, {96, 140, 96, 140}, 1, 1},
+		{5, {74, 108, 116, 134}, {98, 135, 98, 135}, 1, 1},
+		{6, {122, 130, 255, 164}, {192, 174, 192, 174}, 1, 1},
+		{7, {52, 114, 58, 125}, {68, 129, 68, 129}, 4, 1},
+	},
+	{
+		{1, {82, 138, 94, 155}, {104, 181, 104, 181}, 4, 1},
+		{2, {82, 138, 94, 150}, {104, 181, 104, 181}, 4, 1},
+		{3, {113, 39, 145, 114}, {132, 175, 132, 175}, 1, 1},
+		{4, {108, 115, 158, 145}, {135, 171, 135, 171}, 1, 1},
+		{5, {120, 148, 146, 154}, {132, 175, 132, 175}, 1, 1},
+		{6, {185, 152, 203, 164}, {193, 169, 193, 169}, 1, 1},
+		{7, {210, 147, 228, 160}, {219, 170, 219, 170}, 1, 1},
+		{8, {192, 164, 319, 199}, {165, 196, 165, 196}, 2, 1},
+		{9, {0, 190, 191, 199}, {156, 189, 156, 199}, 3, 1},
+		{10, {173, 37, 293, 121}, {219, 170, 219, 170}, 1, 1},
+		{11, {161, 165, 172, 170}, {152, 173, 152, 173}, 2, 0},
+		{12, {47, 79, 87, 175}, {104, 181, 100, 181}, 4, 0},
+	},
+	{
+		{1, {273, 114, 319, 199}, {-1, -1, -1, -1}, 2, 1},
+		{2, {0, 115, 42, 199}, {46, 193, 46, 193}, 4, 1},
+		{3, {242, 137, 246, 142}, {-1, -1, -1, -1}, 0, 1},
+	},
+	{},
+	{
+		{1, {0, 0, 0, 0}, {120, 160, 120, 160}, 4, 1},
+		{2, {207, 108, 319, 193}, {193, 174, 193, 174}, 2, 1},
+		{3, {6, 92, 36, 150}, {88, 173, 88, 173}, 4, 1},
+		{4, {114, 94, 176, 141}, {140, 158, 140, 158}, 1, 1},
+		{5, {267, 54, 284, 71}, {193, 174, 193, 174}, 2, 1},
+	},
+	{},
+	{},
+	{},
+	{},
+
+};
+
+// Scene object names that are changed in runtime
+// by the game. Must be in the same order as in the engine.
+struct SettableObjectName {
+	const char *_initialName;
+	const char *_setName;
+};
+
+SettableObjectName englishSettableObjectNames[] = {
+	{"girl", "Anne"},
+	{"robot", "Mike"},
+	{"boy", "Sonny or whatever"},
+	{"bowl", "body"}
+};
+
+// Data segment start address - 0xB550
+SettableObjectName polishSettableObjectNames[] = {
+	{"dziewcz#", "Ania"}, // 0x9FB4
+	{"robot", "Czesiek"}, // 0xB441
+	{"ch%opiec", "denerwuj@cy bubek"}, // 0x995c
+	{"micha", "cia%o"} // 0x7CB4
+};
+
+// Data segment start address - 0xB660
+SettableObjectName czechSettableObjectNames[] = {
+	{"sami$ka", "Anna"}, // 0xA267
+	{"robot", "Ludv;k"}, // 0xB730
+	{"kluk jako buk", "Deb;lek"}, // 0x9CC0
+	{"miska", "t+lo"} // 0x80BC
+};
+
+SettableObjectName russianSettableObjectNames[] = {
+	{"efctyka", "Anna"},
+	{"qobos", "Majk"},
+	{"mal}xik", "R|na ili kak fdo\x1f"},
+	{"mirka", "sflo"}
+};
+
+struct ObjectNameDesc {
+	const char *_name;
+	const char *_description;
+};
+
+Common::Array<Common::Array<ObjectNameDesc>> englishSceneObjectNamesDescs = {
+	{},
+	{
+		{"path", "\001"},
+		{"path", "\001"},
+		{"mysterious object", "Boy, that could be some kind of treasure!"},
+		{"fence", "This is made of barbed wire,\nand it's rusty."},
+		{"tent", "The camouflage isn't quite state-of-the-art..."},
+	},
+	{
+		{"bird", "Big boy."},
+		{"path", "\001"},
+		{"path", "\001"},
+		{"post", "That looks easy to climb."},
+		{"mud pool", "Heaven for Woodstock fans, alligators\nand those tough women fighting on late TV\nshows."},
+		{"bird", "It took some drugs then fell 5 meters.\nWho wouldn't take a nap after that?"},
+	},
+	{
+		{"shovel", "It's a small military shovel."},
+		{"solid ground", "I've got a feeling I'm gonna need this\nsomehow..."},
+		{"plant", "It must have a very soft touch."},
+		{"brick wall", "The brick-layer must have been\na Pink Floyd fan."},
+		{"path", "\001"},
+		{"path", "\001"},
+		{"spring", "I've seen better things to sit on."},
+	},
+	{
+		{"path", "\001"},
+		{"path", "\001"},
+		{"path", "\001"},
+		{"canteenagent door", "Nice sign."},
+		{"door", "\001"},
+		{"jail door", "Now that's what\nI call a good\ndoor."},
+		{"trash can", "It stinks."},
+	},
+	{
+		{"spring", "Yeah, I definetely gotta spring."},
+		{"bed", "Looks bad."},
+		{"crates", "The world looks better\nfrom the other side."},
+		{"bowl", "It's made of aluminium."},
+		{"live cable", "The wires are exposed!"},
+		{"bulb", "It's naked and it's out of order."},
+		{"door", "Heavy and solid."},
+		{"trash can", "\001"},
+		{"switch", "\001"},
+		{"graffiti", "\001"},
+	},
+	{
+		{"captain", "He's sitting tight."},
+		{"door", "\001"},
+		{"locker", "It's closed. Not that\nI'm surprised."},
+		{"map", "Picasso?"},
+		{"desk", "That's just a load of old junk."},
+		{"bed", "That doesn't look comfortable."},
+		{"drawer", "It's closed!"},
+		{"sabres", "My grandpa had one of those once.\nI exchanged it for a joystick.\nGrandpa didn't like the idea."},
+		{"guns", "What a pity they are only\nmodels..."},
+		{"picture", "\001"},
+		{"picture", "Nice chopper."},
+		{" Swiss Army knife", "That's more like it."},
+	},
+	{
+		{"mug", "That's surprising, but there's tea\nin it."},
+		{"barman", "What a hard working citizen."},
+		{"exit", "\001"},
+		{"door", "This must lead to the store room."},
+		{"radio", "The radio looks like a radio, but the aerial\nis made of some kind of hanger."},
+		{"crumbs", "It's disgusting. People really should\nclean up after themselves."},
+		{"clock", "It looks like there's a problem with it."},
+		{"shelves", "I wonder why there's such a large choice\nof alcohol at the training camp.\nTo keep the troops happy?"},
+		{"cash register", "I love it."},
+	},
+	{
+		{"blinking hole", "That's weird..."},
+		{"door", "\001"},
+		{"barrels", "It's good to know our army is well equipped."},
+		{"locker", "It's a locked kind of locker."},
+		{"lots of drawers", "I hate bureaucracy."},
+		{"boxes", "'Pepa'"},
+		{"boxes", "'Salt'"},
+	},
+	{
+		{"grenade", "Wow! I always wanted one of these."},
+		{"guard", "I don't think he's making the right impression."},
+		{"way out", "Home, sweet home..."},
+		{"path", "\001"},
+	},
+	{
+		{"guard", "He looks like a peasant in\ndisguise."},
+		{"bottle", "It's whisky!.."},
+		{"gargoyle", "\001"},
+		{"gargoyle", "\001"},
+		{"sculpture", "Really sophisticated!"},
+		{"door", "Solid and massive."},
+		{"mansion wall", "It must be 3 kilometers thick..."},
+		{"John Noty", "Fatso."},
+		{"path around mansion", "\001"},
+		{"path to meadow", "It leads inside the dark and\nscary forest."},
+		{"path to shore", "\001"},
+		{"path around mansion", "\001"},
+		{"wrapper", "It's a cellophane wrapper from some candy\nor something."},
+		{"forest", "It gives me thrills..."},
+		{"banknote", "I'm really proud I didn't TAKE THAT."},
+	},
+	{
+		{"", ""},
+		{"hollow", "It's empty right now."},
+		{"branch", "It could be useful."},
+		{"tree", "It's higher than the mansion wall!"},
+		{"wild plant", "It's some wild potatoe."},
+		{"wall", "It's covered with something smooth."},
+		{"path around mansion", "\001"},
+		{"path around mansion", "\001"},
+		{"branch", "Gotcha."},
+	},
+	{
+		{"tree", "It's high."},
+		{"wild plant", "Ordinary green stuff."},
+		{"path around mansion", "\001"},
+		{"wall", "It's covered with something smooth."},
+		{"path around mansion", "\001"},
+		{"hedgehog", "Is has a cone on its back."},
+		{"rock", "\001"},
+	},
+	{
+		{"bees nest", "Honey balloon."},
+		{"bees", "I HATE THEM!"},
+		{"bush", "Nice place to hide."},
+		{"valve", "It's rusty and has no lock."},
+		{"path to mansion", "\001"},
+	},
+	{
+		{"flower", "It's the most beautiful flower I've seen\nin my entire life!"},
+		{"isle", "Neat place to start ecological life."},
+		{"boat", "I can't believe it, but the boat has no hole."},
+		{"well", "I refuse to tell cheap jokes with\nthe word \"well\"."},
+		{"handle", "I can handle this."},
+		{"path to village", "\001"},
+		{"path to mansion", "\001"},
+		{"path to forest", "\001"},
+	},
+	{
+		{"flower", "It's beautiful!"},
+		{"flower", "It smells very nice!"},
+		{"boat", "Nothing new. Literally."},
+	},
+	{
+		{"fish", ""},
+		{"fish", ""},
+		{"?", ""},
+		{"?", ""},
+		{"anchor", ""},
+		{"boat", ""},
+		{"seaweed", ""},
+		{"seaweed", ""},
+		{"seaweed", ""},
+		{"seaweed", ""},
+		{"plant", ""},
+		{"stones", ""},
+	},
+	{
+		{"path to lake shore", "\001"},
+		{"door", "There's no name on the\ndoor..."},
+		{"windows", "I prefer DOS."},
+		{"squirrel", "It's very fast."},
+		{"nut", "It's big."},
+		{"nut", "Gotcha."},
+		{"grass", "\001"},
+	},
+	{
+		{"way out", "\001"},
+		{"horn", "It must make a big impression on\nthe animals."},
+		{"window", "I'm not sure if it shouldn't be on\nthe other side of the wall..."},
+		{"cupboard", "\001"},
+		{"heart-shaped hole", "What a lovely hole."},
+		{"cupboard", "\001"},
+		{"chandelier", "\001"},
+		{"picture", "It looks almost like a window."},
+		{"fireplace", "There's a lot of soot in there."},
+		{"guns", "They are only plastic imitations."},
+		{"table", "\001"},
+		{"rotten cheese", "Pfui!"},
+		{"trophies", "\001"},
+		{"chainsaw", "I don't know why but it reminds of\nsome Texas guy I met once."},
+		{"porcelain", "I'm afraid even to breath around these\nthings."},
+	},
+	{
+		{"car door", "It's unlocked."},
+		{"trunk", "There's always something useful\nin a trunk..."},
+		{"basket", "It gives me ambivalent feelings:\nreminds me of school."},
+		{"pole", "About 4 meter long metal pole\nwith a basket screwed to it."},
+		{"door", "\001"},
+		{"door-bell", "One can use it to scare the people\nbehind the door."},
+		{"window", "\001"},
+		{"window", "\001"},
+		{"attic window", "\001"},
+		{"path to lake", "\001"},
+		{"path", "\001"},
+		{"path to field", "\001"},
+		{"boy", "He's trying hard to score,\nbut he's too weak to throw\nthe ball high enough!"},
+		{"comb", "Strange thing."},
+		{"lever", "I wonder what\nit's for?"},
+		{"car door", "\001"},
+	},
+	{
+		{"path", "\001"},
+		{"path to cave", "\001"},
+		{"door", "\001"},
+		{"laundry", "The air is too damp to dry\nthis wet laundry..."},
+		{"window", "\001"},
+		{"window", "\001"},
+		{"window", "\001"},
+		{"hole", "A way to the cellar."},
+		{"valve", "It's a heavy metal thing."},
+		{"dog", "Snoopy."},
+		{"bell", "\001"},
+		{"rope", "\001"},
+	},
+	{
+		{"old man", "He looks like a retired\nsea wolf."},
+		{"cupboard", "\001"},
+		{"drawers", "Boy! Lots of them!"},
+		{"bed", "Home, sweet home..."},
+		{"window", "A view of the field."},
+		{"table", "\001"},
+		{"shotgun", "Gee, it must be for\ndinosauruses!.."},
+		{"picture", "Charming."},
+		{"family pictures", "I wouldn't like having my ancestors hanging\nlike trophies..."},
+		{"flower", "It's green."},
+		{"door", "\001"},
+		{"chandelier", "\001"},
+		{"fan", "It's battery powered."},
+	},
+	{
+		{"old lady", "She knits in the national team."},
+		{"girl", "She's cool."},
+		{"way out", "\001"},
+		{"window", "\001"},
+		{"window", "\001"},
+		{"chandelier", "\001"},
+		{"clock", "Really great masterpiece."},
+		{"", ""},
+		{"imitation fruits", "The apple looks almost\nreal!"},
+		{"jug", "It holds the flowers."},
+		{"flowers", "I hope these are not from some\nadmirer..."},
+		{"feather duster", "It must be for the dust problem."},
+		{"table", "It's round, but I doubt it has anything to do\nwith the medieval legend..."},
+		{"mirror", "I can see the girl's\nface in it..."},
+		{"picture", "It's nice to live in a village and have village\nlandscapes on the walls."},
+		{"plant", "Impressive."},
+	},
+	{
+		{"spider", "It's..."},
+		{"shovel", "I could play digger with it."},
+		{"ladder", "Way out."},
+		{"switch", "It's little, but powerful."},
+		{"axe", "I hope these stains on the wall have\nnothing to do with this axe..."},
+		{"chain", "\001"},
+		{"tongs", "Gee, this place looks more like a\ntorture chamber than a cellar..."},
+		{"shelves", "Lots of jars and stuff. Nothing\nreally interesting."},
+		{"containers", "They're empty."},
+	},
+	{
+		{"bone", "Due to the age of the rock I think\nit must be some dinosaur bone...."},
+		{"bush", "It blocks the way to the cave.\nMaybe someone planted it here to\nkeep the cave secrets safe..."},
+		{"cave entrance", "\001"},
+		{"path", "\001"},
+		{"rock", "It must have fallen here ages ago.\nI wonder if anybody got hurt..."},
+		{"butterfly", "Isn't that lovely?"},
+		{"butterfly", "Isn't that lovely?"},
+	},
+	{
+		{"lizard", "\001"},
+		{"???", "What IS IT?!"},
+		{"way out", "\001"},
+		{"message", "This inscription is very old, but I can still\nread it."},
+		{"hole", "It looks very deep."},
+		{"nugget", "Pure gold!"},
+	},
+	{
+		{"hen", "A little strange..."},
+		{"crow", "Extremely unfriendly."},
+		{"crow", "Looks dangerous..."},
+		{"mouse", "It's very nervous."},
+		{"dive mask", "Yeah, it amazes me too."},
+		{"fins", "They will fit me perfectly."},
+		{"scarecrow", "A thing to scare the crows.\nAt least that's what the\ntheory says."},
+		{"sickle", "A very dangerous tool."},
+		{"path to village", "\001"},
+		{"hay stack", "There must be something metal inside,\nI can see it glittering!"},
+		{"rake", "It's very old and there aren't\nmany teeth left."},
+		{"mouse hole", "Home and pantry in one..."},
+		{"hay stack", "There's a mouse hole inside!"},
+		{"feather", "It must have been dropped by hen."},
+		{"hay stack", "\001"},
+		{"mansion", "Gee, some people really\nhave no taste."},
+	},
+	{
+		{"window", "There's a shutter, I can't see a thing."},
+		{"sculpture", "The owner is sick."},
+		{"door", "\001"},
+		{"way out of the mansion", "\001"},
+	},
+	{
+		{"door", "\001"},
+		{"door", "\001"},
+		{"flowers", "Surprise, surprise, they aren't\nplastic."},
+		{"plant", "How's it hangin', Robbie?"},
+		{"stairs", "They say every step makes your life\n3 seconds longer."},
+		{"other part of the corridor", "\001"},
+		{"way to porch", "\001"},
+	},
+	{
+		{"downstairs", "\001"},
+		{"picture", "It's some castle."},
+		{"armour", "The beta version of a tank."},
+		{"video tape", "What kind of movie must it be\nhidden so well?..."},
+		{"book", ""},
+		{"books", "Oh, boy!"},
+		{"trash can", "There are a lot of papers inside."},
+		{"chair", "Softy."},
+		{"lamp", "\001"},
+		{"drawer", "It's closed."},
+		{"drawer", "It's closed."},
+		{"drawer", "It's closed."},
+		{"drawer", "It's closed."},
+		{"drawer", "It's closed."},
+		{"drawer", "It's closed."},
+		{"ladder", "Indispensable addition to girls in skirts."},
+	},
+	{
+		{"door", "\001"},
+		{"hole", "It has a square shape."},
+		{"handle", "It fits in the hole perfectly."},
+		{"picture", "I always liked S`T`A`R` W`A`R`S`."},
+		{"picture", "And I tought I was weird."},
+		{"flowers", "Nice smell."},
+		{"other part of corridor", "\001"},
+		{"door", "\001"},
+		{"statue", "Bizarre."},
+	},
+	{
+		{"robot", "Impressive."},
+		{"jar", "This jar is full of pills."},
+		{"book", "It's big and looks\nlike some kind of\ndiary."},
+		{"picture", "That one's great. I'd like to have one myself."},
+		{"cabinet", "\001"},
+		{"exit", "\001"},
+		{"left lower edge of screen", "I could try to hide here!"},
+		{"door handle", "John Noty left it here."},
+	},
+	{
+		{"cook", "He's completely addicted to his work."},
+		{"stew", "It must be some kind of soup.\nNow with extra power."},
+		{"hot plate", "That's COOL."},
+		{"way out", "\001"},
+		{"refrigerator", "My favourite thing in the kitchen."},
+		{"radio", "It works with batteries. Just like\nthe walkman."},
+		{"chilli", "It's red, it's hot, it's ...CHILLI!"},
+		{"place where chilli bottle stood", "It's the place where... etc."},
+		{"pastry roller", "Men use guns. Women use this.\n1 : 0 for women."},
+		{"microwave", "It's a magic tool. It turns\nany dish into rubber."},
+		{"knives", "A very respectable collection."},
+		{"meat", "It's in a plastic bag which has frozen to\nthe shelf."},
+	},
+	{
+		{"door", "\001"},
+		{"sink", "It has a hole."},
+		{"tap", "\001"},
+		{"mirror", "It's covered in old dirt."},
+		{"cabinet", "\001"},
+		{"bath", "Whoa! It's big!"},
+		{"sock", "It must be John Noty's..."},
+	},
+	{
+		{"cognac", "Bottle as big as Napoleon himself."},
+		{"pincers", "There's a pair of pincers in the bucket."},
+		{"mask", "This is some kind of cool primitive art."},
+		{"TV", "One more thing to kill your time and\npersonality."},
+		{"video player", "It has no record function,\nbut that doesn't matter\nto me anyway."},
+		{"newspaper", "This is some kind of local newspaper."},
+		{"hi-fi", "What a baby! It could drive\nall my neighbours insane!..."},
+		{"couch", "I would never know where to place\na pillow."},
+		{"way out", "\001"},
+		{"picture", "That one is really imaginative."},
+		{"remote controller", "It was hidden between the newspaper pages."},
+		{"open wardrobe", "It's a secret passage!"},
+	},
+	{
+		{"door", "\001"},
+		{"door", "\001"},
+		{"switch", "\001"},
+	},
+	{},
+	{
+		{"John Noty", "He's obsessed with packing the money."},
+		{"tons of gold", "(gulp)"},
+		{"safe", "\001"},
+		{"safe", "\001"},
+		{"camera", "It must be a part of the security system."},
+	},
+	{},
+	{},
+	{},
+	{},
+};
+
+Common::Array<Common::Array<ObjectNameDesc>> polishSceneObjectNamesDescs = {
+	{},
+	{
+		{"$cie<ka", "\001"},
+		{"$cie<ka", "\001"},
+		{"tajemniczy przedmiot", "Rany, to mo<e by^ jaki$ skarb!"},
+		{"ogrodzenie", "Jest zrobione z zardzewia%ego\ndrutu kolczastego."},
+		{"namiot", "Elegancki, modny dese=."},
+	},
+	{
+		{"ptak", "A my$la%em, <e niebieskie ptaki znikn#%y\nz naszego krajobrazu."},
+		{"$cie<ka", "\001"},
+		{"$cie<ka", "\001"},
+		{"pal", "Wygl@da na %atwy do wdrapywania si#."},
+		{"b%oto", "Raj dla fan*w Woodstock , krokodyli i tych\ntwardych babek walcz@cych w TV o p*>nej\nporze."},
+		{"ptak", "Najad% si# lek*w i spad% z 5 metr*w. Kto nie\nchcia%by si# potem zdrzemn@^?"},
+	},
+	{
+		{"saperka", "Ciekawe, gdzie podzia% si# saper..."},
+		{"twarda ziemia", "Mam wra<enie, <e b#d# jej musia% jako$ u<y^..."},
+		{"trawa", "To tylko zwyk%e zielsko, niestety."},
+		{"ceglana $ciana", "Budowniczy za d%ugo s%ucha% Pink\nFloyd."},
+		{"$cie<ka", "\001"},
+		{"$cie<ka", "\001"},
+		{"spr#<yna", "Znam lepsze rzeczy do siedzenia."},
+	},
+	{
+		{"$cie<ka", "\001"},
+		{"$cie<ka", "\001"},
+		{"$cie<ka", "\001"},
+		{"drzwi do kantyny", "Neon chyba z Hamburga?"},
+		{"drzwi", "Zero zero jeden?!?"},
+		{"drzwi do karceru", "Chcia%bym mie^\ntakie do swojego\npokoju..."},
+		{"$mietnik", "Jest w po%owie pe%ny lub, jak kto woli,\nw po%owie pusty."},
+	},
+	{
+		{"spr#<yna", "O, tak, musz# st@d wyprysn@^."},
+		{"%*<ko", "Spanie na czym$ takim bez materaca musi by^\nniezapomnianym prze<yciem."},
+		{"kraty", "|wiat wygl@da lepiej\nz drugiej strony."},
+		{"micha", "Jest zrobiona z aluminium."},
+		{"ko=c*wka kabla", "Ostro<nie, jest pod pr@dem!"},
+		{"<ar*wka", "Jest samotna, go%a i zepsuta."},
+		{"drzwi", "Przeciwpancerne."},
+		{"$mietnik", "Przynajmniej mam nadziej#, <e to $mietnik..."},
+		{"w%@cznik", "Mam nadziej#, <e nie b#d#\nmusia% na niego plu^."},
+		{"graffiti", "\001"},
+	},
+	{
+		{"kapitan", "Jest bardzo przywi@zany do krzes%a."},
+		{"drzwi", "\001"},
+		{"szafka", "Zamkni#ta. Nie to, <ebym\nsi# zdziwi%."},
+		{"mapa", "Picasso?"},
+		{"biurko", "Le<y tu mn*stwo $mieci, ale\nnic interesuj@cego."},
+		{"%*<ko", "Nieco sparta=skie."},
+		{"szuflada", "Zamkni#ta!"},
+		{"szable", "M*j dziadek mia% kiedy$ jedn@.\nZamieni%em si# na d<ojstik.\nDziadek si# obrazi%."},
+		{"strzelby", "Szkoda, <e to tylko modele..."},
+		{"obraz", "\001"},
+		{"obraz", "Fajny helikopter."},
+		{"Rambo-n*<", "Robi wra<enie."},
+	},
+	{
+		{"kubek", "Niespodzianka, ale w $rodku jest\nherbata."},
+		{"barman", "C*< za ci#<ko pracuj@cy obywatel."},
+		{"wyj$cie", "\001"},
+		{"drzwi", "To chyba drzwi do jakiego$ magazynu."},
+		{"radio", "Radio jak radio, ale antena jest chyba\nzrobiona z wieszaka."},
+		{"resztki jedzenia", "Obrzydlistwo. Ludzie powinni po sobie\nsprz@ta^."},
+		{"zegar", "Chyba jest ma%e conieco zepsuty..."},
+		{"p*%ki", "A po co taki wyb*r alkoholi w obozie\ntreningowym? }eby ^wiczy^ siln@\nwol#?"},
+		{"kasa", "Kocham j@."},
+	},
+	{
+		{"mrugaj@ca dziurka", "To jest dziwaczne..."},
+		{"drzwi", "\001"},
+		{"beczki", "Dobrze wiedzie^, <e armia jest dobrze\nwyposa<ona."},
+		{"szafka", "To jest szafka z rodzaju zamkni#tych."},
+		{"mn*stwo szafek", "Nienawidz# biurokracji."},
+		{"pud%a", "\'Pieprz\'"},
+		{"pud%a", "\'Nie pieprz\'"},
+	},
+	{
+		{"granat", "Fiu! Zawsze chcia%em mie^ taki."},
+		{"stra<nik", "Raczej nie wywo%uje odpowiedniego wra<enia..."},
+		{"wyj$cie", "Dom, s%odki dom..."},
+		{"$cie<ka", "\001"},
+	},
+	{
+		{"stra<nik", "Wygl@da jak przebrany pastuszek."},
+		{"butelka", "To whisky!.."},
+		{"rze>ba", "Jakie$ dwa zwierzaczki musia%y si#\nkiedy$ ci#<ko pomyli^..."},
+		{"rze>ba", "Jakie$ dwa zwierzaczki musia%y si#\nkiedy$ ci#<ko pomyli^..."},
+		{"rze>ba", "Weso%e s%oneczko!"},
+		{"drzwi", "Pot#<ne i masywne."},
+		{"$ciana posiad%o$ci", "Musi mie^ w przekroju chyba z 3 kilometry..."},
+		{"Jan Ci@gwa", "Szczup%y inaczej."},
+		{"zakr#cona $cie<ka", "\001"},
+		{"$cie<ka do %@ki", "Prowadzi w g%@b ciemnego\ni strasznego lasu."},
+		{"$cie<ka do jeziora", "\001"},
+		{"zakr#cona $cie<ka", "\001"},
+		{"celofan", "To opakowanie z jakiego$ cukierka czy co$."},
+		{"las", "Tam gdzie$ zgubi%a si# moja nauka..."},
+		{"banknot", "Jestem dumny z siebie, <e go nie przyj@%em."},
+	},
+	{
+		{"", ""},
+		{"dziupla", "Teraz jest pusta."},
+		{"ga%@>", "Prowokuje mnie."},
+		{"drzewo", "Si#ga powy<ej szczytu muru!"},
+		{"dzika ro$lina", "To jaki$ rodzaj zdzicza%ego ziemniaka."},
+		{"mur", "Jest pokryty czym$ $liskim."},
+		{"zakr#cona $cie<ka", "\001"},
+		{"zakr#cona $cie<ka", "\001"},
+		{"ga%@>", "Odci#ta od reszty $wiata."},
+	},
+	{
+		{"drzewo", "Wysokie."},
+		{"dzika ro$lina", "Zwyk%e zielsko."},
+		{"zakr#cona $cie<ka", "\001"},
+		{"mur", "Zosta% pokryty czym$ $liskim."},
+		{"zakr#cona $cie<ka", "\001"},
+		{"je<", "Na grzbiecie ma szyszk#."},
+		{"kamyk", "\001"},
+	},
+	{
+		{"gniazdo", "Miodowy balon."},
+		{"pszczo%y", "SKRAJNIE NIEBEZPIECZNE!"},
+		{"krzak", "Niez%e miejsce na randk#."},
+		{"klapa", "Jest zardzewia%a i bez zamka."},
+		{"$cie<ka", "\001"},
+	},
+	{
+		{"kwiat", "To naj%adniejszy kwiat, jaki w <yciu\nwidzia%em!"},
+		{"wysepka", "Tam m*g%bym rozpocz@^ ekologiczne <ycie.\nBez Niny."},
+		{"%*dka", "Nie wierz#, ale %*d> wygl@da na ca%@!"},
+		{"studnia", "Ta przynajmniej, w odr*<nieniu\nod bud<etu, ma dno."},
+		{"uchwyt", "Znam lepsze."},
+		{"$cie<ka do wioski", "\001"},
+		{"$cie<ka do posiad%o$ci", "\001"},
+		{"$cie<ka do lasu", "\001"},
+	},
+	{
+		{"kwiat", "Jest $liczny!"},
+		{"kwiat", "Przepi#knie pachnie!"},
+		{"%*dka", "Nic nowego. Dos%ownie."},
+	},
+	{
+		{"ryba", ""},
+		{"ryba", ""},
+		{"?", ""},
+		{"?", ""},
+		{"kotwica", ""},
+		{"%*d>", ""},
+		{"wodorost", ""},
+		{"wodorost", ""},
+		{"wodorost", ""},
+		{"wodorost", ""},
+		{"ro$lina", ""},
+		{"kamienie", ""},
+	},
+	{
+		{"$cie<ka nad jezioro", "\001"},
+		{"drzwi", "Nie ma tu <adnego nazwiska..."},
+		{"okna", "Wol# DOS."},
+		{"wiewi*rka", "Jest szybka i zwinna."},
+		{"orzech", "Pi#kny okaz."},
+		{"orzech", "W ko=cu go mam."},
+		{"trawa", "~dziebko g#sta."},
+	},
+	{
+		{"wyj$cie", "\001"},
+		{"r*g", "Musi wywiera^ du<e wra<enie na\nzwierz#tach."},
+		{"okno", "Nie jestem pewien, ale ono powinno\nby^ chyba po drugiej stronie..."},
+		{"kredens", "A ten jest hebanowy, nie?"},
+		{"otw*r w kszta%cie serca", "Co za urocza dziurka."},
+		{"kredens", "Wygl@da na stary."},
+		{"<yrandol", "Elektryczno$^ w le$nicz*wce?!"},
+		{"obraz", "Wygl@da zupe%nie jak okno."},
+		{"kominek", "W $rodku jest mn*stwo sadzy."},
+		{"strzelby", "To kolejne plastikowe imitacje."},
+		{"st*%", "\001"},
+		{"nadgni%y ser", "Pfuj!"},
+		{"trofea", "Ka<dy ma jakiego$ bzika."},
+		{"pi%a", "Nie wiem dlaczego, ale kojarzy mi\nsi# z pewnym facetem z Texasu,\nkt*rego kiedy$ spotka%em."},
+		{"porcelana", "Obok takich rzeczy boj# si# nawet\noddycha^."},
+	},
+	{
+		{"drzwiczki", "Nie s@ zablokowane."},
+		{"baga<nik", "Za%o<# si#, <e w $rodku jest\nkupa u<ytecznych rzeczy..."},
+		{"kosz", "Powoduje u mnie mieszane uczucia:\nprzypomina mi o szkole."},
+		{"rura", "Niez%a, jak na metalow@ rur#."},
+		{"drzwi", "\001"},
+		{"dzwonek", "Zawsze lubi%em straszy^ czym$ takim\nludzi z drugiej strony drzwi."},
+		{"okno", "\001"},
+		{"okno", "I to te< miodzio."},
+		{"okno od strychu", "\001"},
+		{"$cie<ka do jeziora", "\001"},
+		{"$cie<ka", "\001"},
+		{"$cie<ka na pole", "\001"},
+		{"ch%opiec", "Ostro si# stara, ale jest\nza s%aby, by dorzuci^ pi%k#\nwystarczaj@co wysoko!"},
+		{"grzebie=", "Harmonijka dla ubogich."},
+		{"d>wigienka", "Ciekawe, do czego\nto s%u<y?"},
+		{"drzwiczki", "\001"},
+	},
+	{
+		{"$cie<ka", "\001"},
+		{"$cie<ka do jaskini", "\001"},
+		{"drzwi", "\001"},
+		{"pranie", "Powietrze jest gor@ce, ale wilgotne.\nTo pranie szybko nie wyschnie..."},
+		{"okno", "\001"},
+		{"okno", "\001"},
+		{"okno", "\001"},
+		{"czarna otch%a=", "Droga do piwnicy."},
+		{"klapa", "Heavy metal."},
+		{"pies", "Ciekawe, czy ma na imi# Bogu$."},
+		{"dzwonek", "Prawie jak starter do rakiety."},
+		{"lina", "Podoba mi si#, czemu nie."},
+	},
+	{
+		{"starszy pan", "Przypomina emerytowanego\nwilka morskiego."},
+		{"szafka", "\001"},
+		{"szuflady", "O kulka! Troch# ich jest!"},
+		{"%*<ko", "Jak w domciu..."},
+		{"okno", "Widok na pole."},
+		{"st*%", "Nie le<y na nim nic ciekawego."},
+		{"strzelba", "Rany, ona jest chyba\nna dinozaury!.."},
+		{"obraz", "Czaruj@cy."},
+		{"portrety rodzinne", "Nie chcia%bym, <eby moi\nprzodkowie wisieli jak\njakie$ trofea..."},
+		{"kwiat", "Jest zielony."},
+		{"drzwi", "\001"},
+		{"<yrandol", "Nieco nieprzemy$lany."},
+		{"wiatraczek", "Na szcz#$cie baterie czyni@ go\nprzeno$nym."},
+	},
+	{
+		{"starsza pani", "Dzierga jak na Olimpiadzie."},
+		{"dziewcz#", "Jest super."},
+		{"wyj$cie", "\001"},
+		{"okno", "\001"},
+		{"okno", "\001"},
+		{"<yrandol", "Co za brzydactwo."},
+		{"zegar", "Kawa%ek dobrej roboty, od razu czu^\nstarych mistrz*w."},
+		{"", ""},
+		{"sztuczne owoce", "Jab%ko wygl@da prawie jak\nprawdziwe!"},
+		{"dzban", "Jest pe%en kwiat*w."},
+		{"kwiaty", "Mam nadziej#, <e nie pochodz@ od\njakiego$ adoratora..."},
+		{"miote%ka", "Najpewniej do czyszczenia\nkurzu."},
+		{"st*%", "To, <e jest okr@g%y, to jeszcze chyba nie\nznaczy, <e ma co$ wsp*lnego z pewn@\n$redniowieczn@ legend@..."},
+		{"lustro", "Widz# w nim $liczn@ twarz\nniewie$ci@..."},
+		{"obraz", "Fajnie jest <y^ w wiosce i mie^\nna $cianach krajobrazy."},
+		{"ro$lina", "Pora<aj@ca."},
+	},
+	{
+		{"paj@k", "To jest..."},
+		{"%opata", "Zawsze my$la%em, <e kopie si#\nnogami, a tu prosz#, wynale>li\n%opat#."},
+		{"drabina", "Wyj$cie na $wiat."},
+		{"w%@cznik", "Jest ma%y, ale wszechmocny."},
+		{"siekiera", "Mam nadziej#, <e te $lady na niej\nto tylko ze staro$ci..."},
+		{"%a=cuch", "To powinien by^ szalik klubowy\nka<dego pseudokibica."},
+		{"obc#gi", "Rany, to miejsce przypomina bardziej\nsal# tortur ni< piwnic#..."},
+		{"p*%ki", "Mrowie s%oik*w i takich tam.\nNic rajcuj@cego."},
+		{"pojemniki", "Puste, niestety."},
+	},
+	{
+		{"ko$^", "S@dz@c po wieku kamienia, to jest\nto chyba ko$^ dinozaura..."},
+		{"krzak", "Blokuje drog# do jaskini. Mo<e\nkto$ go tutaj zasadzi%, aby trzyma^\nsekrety groty bezpiecznymi..."},
+		{"wej$cie do jaskini", "\001"},
+		{"$cie<ka", "\001"},
+		{"ska%a", "Musia%a tu spa$^ wiele tysi#cy lat temu.\nCiekawe, czy komu$ co$ si# sta%o..."},
+		{"motylek", "Czy< nie jest uroczy?"},
+		{"motylek", "Jakie< to rozkoszne..."},
+	},
+	{
+		{"jaszczurka", "Rozleniwiona, bestia."},
+		{"???", "CO TO MO}E BY\\?!"},
+		{"wyj$cie", "\001"},
+		{"napis", "Ta inskrypcja jest bardzo stara, ale wci@<\nmog# j@ odczyta^."},
+		{"otw*r", "Wygl@da na bardzo g%#boki."},
+		{"samorodek", "Czyste z%oto!"},
+	},
+	{
+		{"kura", "Mmmm... Roso%ek..."},
+		{"wrona", "Skrajnie nieprzyjazna."},
+		{"wrona", "Wygl@da niebezpiecznie..."},
+		{"mysz", "Jest bardzo nerwowa."},
+		{"maska p%etwonurka", "Tak, mnie te< zadziwia."},
+		{"p%etwy", "Pasowa%yby na mnie idealnie."},
+		{"strach na wr*ble", "Strach to on jest, niestety,\ntylko w teorii."},
+		{"sierp", "Bardzo niebezpieczne narz#dzie."},
+		{"$cie<ka", "\001"},
+		{"st*g", "W $rodku musi by^ co$ metalowego,\nwidz# jak si# b%yszczy!"},
+		{"grabie", "S@ bardzo stare, bez wielu z#b*w\ni nieco rozregulowane."},
+		{"mysia dziura", "Dom i spi<arnia w jednym..."},
+		{"st*g", "W $rodku jest mysia dziura!"},
+		{"pi*ro", "To chyba kura je upu$ci%a."},
+		{"st*g", "Sianko zawsze wzbudza we mnie\nciep%e uczucia."},
+		{"posiad%o$^", "Rany, niekt*rzy ludzie rzeczywi$cie\nnie maj@ smaku."},
+	},
+	{
+		{"okno", "Ma <aluzje, i nic nie widz#."},
+		{"rze>ba", "W%a$ciciel to psychol."},
+		{"drzwi", "\001"},
+		{"wyj$cie z posiad%o$ci", "\001"},
+	},
+	{
+		{"drzwi", "\001"},
+		{"drzwi", "\001"},
+		{"kwiaty", "Zdziwko, zdziwko, ale nie\ns@ plastikowe."},
+		{"ro$lina", "Wszystko jej wisi."},
+		{"schody", "M*wi@, <e ka<dy schodek wyd%u<a\n<ycie o trzy sekundy."},
+		{"dalsza cz#$^ korytarza", "\001"},
+		{"przej$cie na ganek", "\001"},
+	},
+	{
+		{"zej$cie", "\001"},
+		{"obraz", "To jaki$ zamek."},
+		{"zbroja", "Beta wersja czo%gu."},
+		{"kaseta wideo", "Jaki rodzaj filmu zosta% na niej\nnagrany, skoro zosta%a schowana\ntak g%#boko?"},
+		{"ksi@<ka", ""},
+		{"ksi@<ki", "O, ludzie!"},
+		{"kosz", "W $rodku jest mn*stwo papier*w."},
+		{"krzes%o", "Mi#ciutkie."},
+		{"lampka", "\001"},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"drabinka", "Nieod%@czny dodatek do dziewczyn w sp*dnicach."},
+	},
+	{
+		{"drzwi", "\001"},
+		{"otw*r", "Ma kwadratowy kszta%t."},
+		{"klamka", "Pasuje w tym miejscu idealnie."},
+		{"obraz", "Zawsze by%em fanem S`T`A`R` W`A`R`S`."},
+		{"obraz", "A my$la%em, <e to ja jestem dziwny."},
+		{"kwiaty", "]adny zapach."},
+		{"dalsza cz#$^ korytarza", "\001"},
+		{"drzwi", "\001"},
+		{"statua", "Dziwaczna."},
+	},
+	{
+		{"robot", "Jak dobry grzejnik."},
+		{"s%oik", "Ten s%oik jest pe%en jakich$ pigu%ek."},
+		{"ksi#ga", "Jest du<a i wygl@da\njakby by%a rodzajem\npami#tnika."},
+		{"obraz", "Ten jest $wietny. Chcia%bym mie^ taki."},
+		{"szafka", "\001"},
+		{"wyj$cie", "\001"},
+		{"lewy dolny brzeg ekranu", "Mog# spr*bowa^ skry^ si# tutaj!"},
+		{"klamka", "Ci@gwa j@ tu zostawi%."},
+	},
+	{
+		{"kucharz", "Ca%kowicie odda% si# swojej pracy."},
+		{"zupa", "To jaka$ warzywna. Teraz z ekstra dodatkami."},
+		{"gor@ca p%ytka", "Rozgrzana jak piec, czerwona\njak ma%y pionier."},
+		{"wyj$cie", "\001"},
+		{"lod*wka", "Moja ulubiona rzecz w kuchni."},
+		{"radio", "Jest na baterie, jak walkman."},
+		{"chilli", "Sproszkowany ogie=!"},
+		{"miejsce, gdzie sta%o chilli", "To miejsce, gdzie... itd."},
+		{"wa%ek", "Faceci u<ywaj@ karabin*w.\nKobiety tego. Stan meczu:\n1 : 0 dla kobiet."},
+		{"kuchenka mikrofalowa", "To magiczna rzecz. Zmieni\nka<de danie w gum#."},
+		{"no<e i no<yki", "Godna szacunku kolekcja."},
+		{"mi#so", "Jest w plastikowej torebce, kt*ra\nprzymarz%a do p*%ki."},
+	},
+	{
+		{"drzwi", "\001"},
+		{"zlew", "Ma odp%yw."},
+		{"kurek", "Kurek, to taki wyro$ni#ty\npisklak."},
+		{"lustro", "Jest ca%e pokryte kurzem."},
+		{"szafka", "\001"},
+		{"wanna", "Ho-ho! Pojemna!"},
+		{"skarpetki", "To chyba Ci@gwy..."},
+	},
+	{
+		{"koniak", "Butla du<a jak sam Napoleon."},
+		{"szczypce", "W wiadrze jest jeszcze para szczypiec."},
+		{"maska", "Oto przyk%ad prymitywnej sztuki."},
+		{"telewizor", "Jeszcze jeden morderca czasu i osobowo$ci."},
+		{"odtwarzacz wideo", "Nie ma funkcji nagrywania,\nale to i tak nie jest mi\npotrzebne."},
+		{"gazeta", "To tutejsza plotkorama."},
+		{"hi-fi", "Co za cudo! Doprowadzi%bym wszystkich\ns@siad*w do szale=stwa!..."},
+		{"kanapa", "Nie chcia%bym takiej, bo nie wiem,\ngdzie tu si# k%adzie poduszk#."},
+		{"wyj$cie", "\001"},
+		{"obraz", "Ten naprawd# dzia%a na wyobra>ni#."},
+		{"pilot", "By% schowany mi#dzy stronami gazety."},
+		{"otwarta szafa", "Sekretne przej$cie!"},
+	},
+	{
+		{"drzwi", "\001"},
+		{"drzwi", "\001"},
+		{"pstryczek", "\001"},
+	},
+	{},
+	{
+		{"Jan Ci@gwa", "Wpad% w obsesj# pakowania pieni#dzy."},
+		{"tony z%ota", "(gulp)"},
+		{"sejf", "\001"},
+		{"sejf", "\001"},
+		{"kamera", "To musi by^ cz#$^ systemu ochronnego."},
+	},
+	{},
+	{},
+	{},
+	{},
+};
+
+Common::Array<Common::Array<ObjectNameDesc>> czechSceneObjectNamesDescs = {
+	{},
+	{
+		{"cesta", "\001"},
+		{"cesta", "\001"},
+		{"z#hadn# v+c", "klidn+ mohl bejt n+jakej poklad!"},
+		{"plot", "Je z ostnat*ho dr#tu,\na nav;c rezavej."},
+		{"stan", "Nen; zrovna suprov+ maskovanej, ale ujde to..."},
+	},
+	{
+		{"pt#k", "Je to macek."},
+		{"cesta", "\001"},
+		{"cesta", "\001"},
+		{"sloup", "Vypad#, {e by se dal zdolat..."},
+		{"bahni@t+", "Nebe pro fandy Woodstock*ho koncertu, alig#tory\na ty tvrd^ {ensk^, co se perou v bahn+ a cpou\nsi ho do kalhotek, m<am!"},
+		{"pt#k", "Nadrogoval se a spadnul z p+ti metr],\nkdo by si po takovym v^konu nedal dvacet?"},
+	},
+	{
+		{"r^$", "Mali$k^ vojensk^ r^$ Rambo."},
+		{"pevn# p]da", "M#m takov^ pocit, {e pr#v+ tady bych se\nm+l trochu vzpru{it..."},
+		{"rostlinka", "Hmm, m# takov^ jem<ou$k^ dotek."},
+		{"zd+n# st+na", "Mistr zedn;k musel bejt asi fanda\nPink Floyd], co?"},
+		{"cesta", "\001"},
+		{"cesta", "\001"},
+		{"pru{ina", "Mohla by m+ navrtat jako sud v;na."},
+	},
+	{
+		{"cesta", "\001"},
+		{"cesta", "\001"},
+		{"cesta", "\001"},
+		{"dve>e do kant^ny", "P+kn# v^v+ska."},
+		{"dve>e", "\001"},
+		{"dve>e v+zen;", "N+jak takov^hle dve>e nem#m r#d,\ni kdy{ jsou to dve>e\ndocela byteln^."},
+		{"ko@ na odpadky", "Smrd;."},
+	},
+	{
+		{"pru{ina", "Jo, asi bych se m+l n+jak vzpru{it."},
+		{"postel", "Vypad# postelov+."},
+		{"m>;{e", "Vid;te to co j#.\nBedny, bedny a bedny."},
+		{"miska", "Je z hlin;ku."},
+		{"utr{en^ kabel", "Dr#ty jsou obna{en*!"},
+		{"{#rovka", "Lustr nikde a nav;c nefunguje."},
+		{"dve>e", "Tuh^ jak Me$iar."},
+		{"ko@ na odpadky", "\001"},
+		{"vyp;na$", "\001"},
+		{"n#pisy", "\001"},
+	},
+	{
+		{"kapit#n", "Je zauzlovanej."},
+		{"dve>e", "\001"},
+		{"sk>;<ka", "Zam$en#. Ne {e bych\nse tomu divil."},
+		{"mapa", "Picasso?"},
+		{"st]l", "Nacpanej haramp#d;m z doby protektor#tu."},
+		{"postel", "Vypad# sp;@ jako v+t@; prkno na v#len; t+sta."},
+		{"@uple", "Zam$en^, sakra!"},
+		{"@avle", "M]j d+da jednu takovou m;val.\nVym+nil jsem ji s n+k^m za joystick.\nD+dovi se to moc nel;bilo."},
+		{"zbran+", "Bohu{el jsou to jenom\nmod^lky..."},
+		{"obraz", "\001"},
+		{"obraz", "Mona Lisa ve vrtuln;ku."},
+		{"|esk^ arm#dn; n]{", "P+knej. P#dnej. Vostrej."},
+	},
+	{
+		{"hrne$ek", "Mo{n# mi to nebudete v+>it, ale je tam\nv#{n+ $aj."},
+		{"barman", "Nefal@ovanej $eskej pracant."},
+		{"v^chod", "\001"},
+		{"dve>e", "Stopro vedou do skladu."},
+		{"r#dio", "R#dio vypad# docela r#diov+, ale zato ta ant*na\nvypad# jako zmu$en* ram;nko."},
+		{"drobky", "To je nechutn^! N+kdy si >;k#m, {e by po sob+\nlidi mohli ukl;zet (a n+kdy taky ne)."},
+		{"hodiny", "Maj asi {alude$n; pot;{e."},
+		{"poli$ky", "Pro$ tady, ve vojenskym t#bo>e, maj tolik alkoholu?\nTr*nujou pit;?\nNebo na to l#kaj holky?"},
+		{"pokladna", "Pokladny miluju."},
+	},
+	{
+		{"mrkaj;c; d;rka", "Opravdu divn*..."},
+		{"dve>e", "\001"},
+		{"barely", "Asi louhov#n; arm#dn;ch pono{ek \'Stojanek\'."},
+		{"sk>;<ka", "N+kdo tu byl p>ede mnou a zamkl j;. To je pech."},
+		{"spousta @uplat", "Smrd; byrokraci;."},
+		{"bedny", "\'pepch>\'"},
+		{"bedny", "\'sch]l\'"},
+	},
+	{
+		{"gran#t", "Cha! V{dycky jsem jeden takovej cht+l."},
+		{"str#{", "Nevypad# spr#vn+ upnut+, m+l by\nspolknout prav;tko."},
+		{"cesta pry$", "Kde domov m]j..."},
+		{"cesta", "\001"},
+	},
+	{
+		{"str#{", "Vypad# jako Stallone\nkter^ V+tnamc]m neutekl."},
+		{"lahev", "Je to Whiska!.."},
+		{"so@ka", "\001"},
+		{"so@ka", "\001"},
+		{"busta", "Pokro$il* st#dium @;lenstv;."},
+		{"dve>e", "Solidn; a masivn;."},
+		{"ze% vily", "P>ibli{n+ t>i kilometry v pr]m+ru..."},
+		{"Pankr#c Oblouk", "Brzy pukne."},
+		{"cesta okolo vily", "\001"},
+		{"p+@inka na palouk", "Vede do temn*ho a stra@ideln*ho lesa. H\\\\\\.\nProhledat kalhoty - te%!"},
+		{"cesta na b>eh rybn;ka", "\001"},
+		{"cesta okolo vily", "\001"},
+		{"obal", "Je to celof#nov^ obal od n+jak*ho bonb=nu\n, kter^ u{ mezi n#mi nen;."},
+		{"les", "LES. LES! No, prost+ L-E-S, nerozum;te?"},
+		{"bankovka", "Sem py@nej, {e jsem si j; nevzal, i kdy{..."},
+	},
+	{
+		{"", ""},
+		{"d;ra", "Te% je zrovna pr#zdn#."},
+		{"v+tev", "Mohla by se hodit."},
+		{"strom", "Je vy@@; ne{ st+na vily, na tom n+co bude!"},
+		{"ke>;$ek pros[#$ek", "Asi n+jak^ plan^ bramborovn;k."},
+		{"st+na", "Je namazan# n+$;m hladk^m, asi to bude om;tka."},
+		{"cesta okolo vily", "\001"},
+		{"cesta okolo vily", "\001"},
+		{"v+tev", "A m#m t+."},
+	},
+	{
+		{"strom", "Vysokej nejalovec."},
+		{"lesn; kytka", "B+{n# zelen# hav+[."},
+		{"cesta okolo vily", "\001"},
+		{"st+na", "St+na obecn#."},
+		{"cesta okolo vily", "\001"},
+		{"je{ek", "Pe$e si @i@ku, nem]{u mu ji jen tak sebrat..."},
+		{"k#men", "\001"},
+	},
+	{
+		{"v$el; hn;zdo", "Nacpan* medem."},
+		{"v$ely", "Nejsou zrovna m]j typ."},
+		{"ke>", "P>i schov#van* bych ho pou{il."},
+		{"poklop", "Rezavej, ale nezam$enej. Hmmm."},
+		{"cesta k vile", "\001"},
+	},
+	{
+		{"kv+tina", "To je snad nejhez$; kytka, na kter* kdy\nspo$inul m]j orl; zrak!"},
+		{"ostr]vek", "Kde se tam vzal? Irituje m+."},
+		{"lo%ka", "Je to neuv+>iteln^, ale a$ jsme v adventu>e\ntak nem# {#dnou d;ru!"},
+		{"studna", "Co se v#m vybav; p>i slov+ \"Studna\",\nelektrickej pes nebo srp?"},
+		{"to$idlo", "Jsem z n+ho celej vyto$enej."},
+		{"cesta do vesnice", "\001"},
+		{"cesta k vile", "\001"},
+		{"cesta k h#jhovn+", "\001"},
+	},
+	{
+		{"kv+tina", "P>ekr#sn#!"},
+		{"kv+tina", "N###dhern+ von;... -hep$;;;"},
+		{"lo%ka", "Nic nov*ho. Doslova."},
+	},
+	{
+		{"ryba", ""},
+		{"ryba", ""},
+		{"?", ""},
+		{"?", ""},
+		{"kotva", ""},
+		{"vrak", ""},
+		{">;$n; >asy", ""},
+		{"mo>sk* >asy", ""},
+		{"poto$n; >asy", ""},
+		{"sladkovodn; >asy", ""},
+		{"rostliny", ""},
+		{"kameny", ""},
+	},
+	{
+		{"cesta k rybn;ku", "\001"},
+		{"dve>e", "Vizitka @la na sch]zi vizitek,\ntak{e NONAME"},
+		{"okna", "J# rad@i DOS."},
+		{"veverka", "nevon; j; pozad; aneb domyslete si sami."},
+		{"o>ech", "Povedenej"},
+		{"o>ech", "M#m t+."},
+		{"tr#va", "\001"},
+	},
+	{
+		{"v^chod", "\001"},
+		{"lesn; roh", "D>;v troubil jeho nositel,\nte% troub; jeho majitel."},
+		{"okno", "}ekl bych, {e by m+lo b^t sp;@ na\ndruh* stran+ zdi, co d+l# tady?"},
+		{"almara", "\001"},
+		{"d;ra ve tvaru srd;$ka", "Ve tvaru srd;$ka, ve tvaru.. srd;$ka.. hmmm"},
+		{"sk>;<ka", "\001"},
+		{"lustr", "\001"},
+		{"obraz", "Skoro jako okna, ale ne tak pomal^."},
+		{"krb", "Mo>e a mraky saz; dohromady. Asi n+jak* shrom#{d+n;"},
+		{"zbran+", "Jenom atrapy. Ale jedna prav# by ur$it+ bodla"},
+		{"st]l", "\001"},
+		{"vyhnil^ s^r", "Pfui!"},
+		{"trofeje", "\001"},
+		{"motorov# pila", "V >et+zu m# zara{en* lidsk* zuby,\njej; majitel je asi nerv=zn; $lov+k."},
+		{"porcel#n", "Rad@i nek^chat, a[ se to nerozsype,\na{ tak k>ehce se to tv#>;."},
+	},
+	{
+		{"dve>e auta", "Odem$eno, co v;c si m]{ete p>#t."},
+		{"kufr", "No jo, kufr, v tom b^v# v{dycky n+co\nmoc u{ite$n*ho..."},
+		{"ko@", "Bez s;[ky vypad# sp;@ jako zv^@en# toaleta, ale bylo\nby to nepraktick*, $lov+k by to nestihl v$as..."},
+		{"sloup", "Asi $ty>metrov^ stabiln; sloup,\nke kter*mu je p>i@roubovan# obru$."},
+		{"dve>e", "\001"},
+		{"zvonek", "M]{e se pou{;vat k vystra@en; lid;\nnach#zej;c;ch se za dve>mi."},
+		{"okno", "\001"},
+		{"okno", "\001"},
+		{"okno p]dy", "\001"},
+		{"cesta k jezeru", "\001"},
+		{"cesta", "\001"},
+		{"cesta na pole", "\001"},
+		{"kluk jako buk", "Sna{; se ud+lat boda,\nale je moc slabej, aby to dok#zal.\nKo@ je moc vysoko!"},
+		{"h>eben", "Zvl#@tn; v+c."},
+		{"p#$ka", "Na co asi\nm]{e b^t?"},
+		{"dve>e auta", "\001"},
+	},
+	{
+		{"cesta", "\001"},
+		{"cesta k jeskyni", "\001"},
+		{"dve>e", "\001"},
+		{"pr#dlo", "Je moc sychravo na to, aby to uschlo\nani v#nek nezafouk#..."},
+		{"okno", "\001"},
+		{"okno", "\001"},
+		{"okno", "\001"},
+		{"otvor", "Otvor do sklepa. Nen; tam moc tma?"},
+		{"poklop", "Po>#nej macek, tenhle poklop, jak to, {e tak narost?"},
+		{"pes", "Klidnej."},
+		{"zvonek", "\001"},
+		{"provaz", "\001"},
+	},
+	{
+		{"star^ mu{", "Vypad# jako by u{ snil\no dubov*m spac#ku."},
+		{"sk>;<ka", "\001"},
+		{"@uplata", "~]jo! T+ch je!"},
+		{"postel", "Nevad; mi, dokud si jen tak le{;..."},
+		{"okno", "V^hled na pole."},
+		{"st]l", "\001"},
+		{"brokovnice", "Asi na Impy nebo na Kakod*mony,\nmo{n# na Barony Bolesti?"},
+		{"obraz", "Klaus v mo>i pen+z."},
+		{"rodinn* obr#zky", "Necht+l bych m;t sv* p>edky vysteven* v ob^v#ku\njako trofeje..."},
+		{"kv+tina", "Zelen#, asi je j; zle."},
+		{"dve>e", "\001"},
+		{"lustr", "\001"},
+		{"v+tr#k", "Na baterky. Leze z n+j v;tr."},
+	},
+	{
+		{"babka", "Plete za n#rodn; ligu."},
+		{"sami$ka", "Je cool."},
+		{"v^chod", "\001"},
+		{"okno", "\001"},
+		{"okno", "\001"},
+		{"lustr", "\001"},
+		{"hodiny", "Um+leck^ kousek plus $ervy."},
+		{"", ""},
+		{"um+l* ovoce", "Jablko vypad# skoro jako prav*,\na{ na to, je na n+m s*riov* $;slo"},
+		{"v#zi$ka", "Muml# si s kv+tinami."},
+		{"kv+tiny", "Douf#m, {e nejsou od n+jak*ho\nn#padn;ka..."},
+		{"opra@ova$", "}e@i$ probl*m] s prachem."},
+		{"st]l", "Je sice kulat^, ale pochybuju {e m# co do $in+n;\ns kr#lem Artu@em a jeho ryt;>i..."},
+		{"zrcadlo", "Je v n+m n+$; obli$ej a\nnevypad# @patn+...ugh.."},
+		{"obraz", "Na tomto obrazu se odehr#v# tak stra@n* przn+n;\nnevi<#tek, {e ho prost+ nem]{u popsat..."},
+		{"kv+tina", "Depresivn;, promi<te, impresivn;"},
+	},
+	{
+		{"pavouk", "Pavou$; mu{ v klidov*m stavu!"},
+		{"r^$", "Je na n+m naps#no -Na kop#n; u zd;- Hmmm."},
+		{"{eb>;k", "Cesta ven."},
+		{"vyp;na$", "Mal^, ale s tmou dok#{e divy."},
+		{"sekera", "Douf#m, {e ty fleky na st+n+ s n;\nnemaj; nic spole$n*ho..."},
+		{">et+z", "\001"},
+		{"kle@t+", "N+komu bych s nimi stra@n+ r#d od n+$eho odleh$il,\nale nedos#hnu na n+..."},
+		{"poli$ky", "Hrn;$ky a sklenice\nsklenice a hrn;$ky."},
+		{"n#doby", "Pr#zdn* jak hlava po matu>e"},
+	},
+	{
+		{"kost", "M# n#b+h na dinosau>; velikost\nale na takov* st#>; je m#lo b;l#."},
+		{"ke>", "Stoj; mezi mnou a jeskyn;, mrcha.\nMo{n# ho tu n+kdo zasadil,\naby tajemstv; jeskyn+ z]stala zachov#na..."},
+		{"vchod do jeskyn+", "\001"},
+		{"cesta", "\001"},
+		{"k#men", "Spadl u{ asi dost d#vno.\nMo{n# pod n;m n+kdo le{;, douf#m,\n{e to nen; mamka nebo ta[ka."},
+		{"mot^lek", "Nen; sexy?"},
+		{"mot^lek", "Nen; frigidn;?"},
+	},
+	{
+		{"je@t+rka", "\001"},
+		{"???", "Co je to?!"},
+		{"cesta ven", "\001"},
+		{"zpr#va", "N#pis je ji{ velmi star^, ale mysl;m, {e ho\ns pomoc; bo{; rozlu@t;m."},
+		{"d;ra", "Vypad# bezedn+."},
+		{"nugeta", "Zlato! Sem boh#$! To je skoro na oslavu."},
+	},
+	{
+		{"slepice", "N+jak# divn#, asi m# mal#rii..."},
+		{"vr#na jedna", "Nebezpe$n# jako Jacksonovo Dangerous."},
+		{"vr#na dv+", "Nebezpe$n# jako Roxe[#ck* Dangerous"},
+		{"my@", "Je na nervy. Chv;li nepostoj;."},
+		{"pot#p+$sk* br^le", "Taky je mi divn#."},
+		{"ploutve", "Mo{n# by mi byly. Mo{n# taky ne."},
+		{"stra@#k", "V+c, kter# by m+la stra@it vr#ny.\nAlespo< tak to >;k# teorie.\nVr#ny o tom asi pr#v+ debatuj;."},
+		{"srp", "Je@t+ kladivo a seberou m+ pro pobu>ov#n;."},
+		{"cesta do vesnice", "\001"},
+		{"kupka sena", "Uvnit> je asi n+co kovov*ho,\nvid;m, jak se to bl^sk#!"},
+		{"hr#b+", "U{ jsou star* a vypadaly jim skoro\nv@echny zuby."},
+		{"my@; d;ra", "Vypad# a{ eroticky..."},
+		{"kupka sl#my", "P>i@el jsem, prozkoumal jsem\na na@el jsem my@; d;ru!"},
+		{"pe>;$ko", "Slepice ho v k>e$;ch vytla$ila z krku."},
+		{"kupka sl#my", "\001"},
+		{"vila", "Bl**, n+kter^ lidi v]bec nemaj vkus\nkdyby bylo sv+t+ tolik vkusu jako p>edkus]..."},
+	},
+	{
+		{"okno", "Je na n+m okenice, vid;m kulov^."},
+		{"so@ka", "Hnusn#. Majitel je asi cvok."},
+		{"dve>e", "\001"},
+		{"cesta z vily", "\001"},
+	},
+	{
+		{"dve>e", "\001"},
+		{"dve>e", "\001"},
+		{"kv+tiny", "P>ekv#p$o, nejsou um+lohmotn^,\nto bych teda ne$ekal."},
+		{"kv+tina", "Jak se ti roste, zele<#$ku? Vezmi to trochu doleva."},
+		{"schody", "Jsou na nich stopy nohou, n+kdo tudy @el.\nA mnohokr#t. Hmmm."},
+		{"druh# $#st koridoru", "\001"},
+		{"ven z domu", "\001"},
+	},
+	{
+		{"do p>;zem;", "\001"},
+		{"obraz", "Je na n+m tla$enice lid;.\nJmenuje se -Vy@lo Score-."},
+		{"brn+n;", "Beta verze tanku :-)))."},
+		{"videokazeta", "Je{i@ snad to neni n+jak^ P-$ko,\nkdy{ to bylo tak schovan^?"},
+		{"kniha", ""},
+		{"knihy", "Alespo< jedna by mohla b^t zaj;mav#."},
+		{"odpadkov^ ko@", "Mo>e pap;r]. |ist^ch jak sn;h."},
+		{"{idle", "Pohodln#."},
+		{"lampa", "\001"},
+		{"@uple", "Zav>en*."},
+		{"@uple", "Zav>en* jako v@echny ostatn;."},
+		{"@uple", "Pro zm+nu zav>en*."},
+		{"@uple", "Vypad# zav>en+."},
+		{"@uple", "P>ibouchnut* jak veden; p>i p;semce."},
+		{"@uple", "Tra la-l#, za-v>en*...."},
+		{"{eb>;k", "V+t@inou se vyskytuje v bl;zkosti d+v$at v minisukn;ch"},
+	},
+	{
+		{"dve>e", "\001"},
+		{"%uzna", "Oby$ejn# $tvercov# %uzna.\nJako vyst>i{en# z katalogu %uzen"},
+		{"klika", "Pasovala do %uzny jak.. jak..., ehm..."},
+		{"obraz", "Parodie na n+co, co nezn#m."},
+		{"obraz", "Orgie s d*mony."},
+		{"kv+tiny", "Fl#kaj; kveten;."},
+		{"do prvn; $#sti koridoru", "\001"},
+		{"dve>e", "\001"},
+		{"socha", "Na zlat*m @t;tku je vyryto -Velk^ pa>an Mamoulian-"},
+	},
+	{
+		{"robot", "|apkova stv]ra."},
+		{"lahvi$ka", "Lahvi$ka pln# pilulek."},
+		{"kniha", "Je hutn#, asi n+jak^ grafoman]v\ndi#>."},
+		{"obraz", "Nepopsateln* h>;chy zbyte$n+\nodv#d+j;c; pozornost."},
+		{"sk>;<", "\001"},
+		{"v^chod", "\001"},
+		{"levej doln; r]{ek obrazovky", "Tam bych se mohl schovat!"},
+		{"klika", "Pankr#c Oblouk si j; tu nechal. Sklerotik."},
+	},
+	{
+		{"kucha>", "Typickej kucha> co v kuchyni i sp;\na d+l# {en#m dob>e."},
+		{"pol*vka", "To mus; bejt lahoda\nte% s extra buj=nem."},
+		{"rozp#len# plotna", "Je COOL."},
+		{"v^chod", "\001"},
+		{"ledni$ka", "Douf#m, {e se tam neskr^v# zatoulanej eskym#k."},
+		{"r#dio", "Fach$; na baterky, douf#m, {e chyt#\nr#dio City."},
+		{"chilli", "Je $erven* a p#liv*, typicky p>;@ern* CHILLI!"},
+		{"m;sto, kde st#lo chilli", "Jednodu@e m;sto, kde st#lo chilli."},
+		{"v#le$ek", "Mu{i pou{;vaj; pu@ky a {eny tohle.\n1:0 pro {eny."},
+		{"mikrovlnka", "Magick* v+c. Z ka{d*ho j;dla ud+l# gumu."},
+		{"no{e", "No{a>ova chlouba, usekan* prsty\nzapomn+l vystavit."},
+		{"maso", "Maso v plastick*m pytli, kter^\np>imrzl k p>ihr#dce."},
+	},
+	{
+		{"dve>e", "\001"},
+		{"umyvadlo", "M# dole d;ru."},
+		{"kohoutek", "\001"},
+		{"zrcadlo", "Nejsem tam, jak to?"},
+		{"sk>;<ka", "\001"},
+		{"vana", "Asi na mro{e."},
+		{"pono{ka", "Obloukova, mohla by se pou{;vat jako kadidlo."},
+	},
+	{
+		{"ko<ak", "CO KDYBYCH SE VO~RAL? I kdy{... rad@i ne."},
+		{"kle@t+", "V kybl;ku si hov; kle@t+ na nab;r#n; ledu."},
+		{"maska", "Mo{n# podobenka zakladatele rodu Oblouk]?"},
+		{"televize", "Nen#vidim televizi, blbne lidi a jde\nv n; $asto Mraz;k."},
+		{"video", "Nem# funkci nahr#v#n;m ale,\nte% u{ mi to vlastn+ nevad;,\nkdy{ jsem na@el Annu."},
+		{"noviny", "Je v nich Cats a v n+m Score a v n+m...!"},
+		{"hi-fi", "Technics! M;t takovou v+{,\nsousedi jsou po smrti!"},
+		{"gau$", "Nikdy bych nev+d+l, kam polo{it\npol@t#>."},
+		{"v^chod", "\001"},
+		{"obraz", "N#dhern# lesn; v;la tan$;c; na louce. Nah#."},
+		{"d#lkov* ovl#d#n;", "Bylo schovan* v $asopisech."},
+		{"otev>en# p>evl*k#rna", "Vypad# to na tajn^ vchod nebo snad v^chod?"},
+	},
+	{
+		{"dve>e", "\001"},
+		{"dve>e", "\001"},
+		{"vyp;na$", "\001"},
+	},
+	{},
+	{
+		{"Pankr#c Oblouk", "Je v amoku ze sb;r#n; pen+z."},
+		{"tuny zlata", "(slint)"},
+		{"sejf", "\001"},
+		{"sejf", "\001"},
+		{"kamera", "Asi sou$#st bezpe$nostn;ho syst*mu."},
+	},
+	{},
+	{},
+	{},
+	{},
+};
+
+Common::Array<Common::Array<ObjectNameDesc>> russianSceneObjectNamesDescs = {
+	{},
+	{
+		{"sqopa", "\001"},
+		{"sqopa", "\001"},
+		{"sainrscfnn|j pqfemfs", "^j, ~so mogfs b|s} kakoj-so klae!\037\037\037\037\037"},
+		{"haboq", "Reflan ih kol\177xfj qgacoj\npqocoloki.\037\037\037\037\037\037\037\037\037"},
+		{"palaska", "Qahqirocanna\200, rlocno nflfpa\200 kaqsina...\037\037\037"},
+	},
+	{
+		{"psiwa", "Eqtgok."},
+		{"sqopa", "\001"},
+		{"sqopa", "\001"},
+		{"rsolb", "Halfhs} cqoef nfrlogno.\037"},
+		{"ltga dq\200hi", "Qaj el\200 uanasoc Ctersoka, allidasoqoc\ni kqfpkiv gfnzin, x}i boi pokah|ca\177s\nnox}\177.\037\037\037"},
+		{"psiwa", "Pofla sablfsok i pqolfsfla 5 mfsqoc.\nKso b| nf cheqfmntl porlf sakodo?\037\037\037"},
+	},
+	{
+		{"rap>qka", "Nfbol}ya\200 aqmfjrka\200 lopasa.\037"},
+		{"sc>qea\200 poxca", "Xtcrsct\177, rkoqo ona mnf btefs ntgna\nkak nikodea."},
+		{"qarsfnif", "Oxfn} pqi\200snof na oztp}.\037\037\037\037"},
+		{"kiqpixna\200 rsfna", "Povogf, kamfnzik\npoklonnik \"Pink Uloje\".\037\037\037"},
+		{"sqopa", "\001"},
+		{"sqopa", "\001"},
+		{"pqtgina", "` ciefl i bolff teobn|f riefn}\200.\037"},
+	},
+	{
+		{"sqopa", "\001"},
+		{"sqopa", "\001"},
+		{"sqopa", "\001"},
+		{"obzfpisfjna\200 ecfq}", "Ih\200zno.\037\037"},
+		{"ecfq}", "\001"},
+		{"s\177qfmna\200 ecfq}", "^so \200 nah|ca\177\nvoqoyfj\necfq}\177.\037"},
+		{"mtroqn|j bak", "Con\200fs."},
+	},
+	{
+		{"pqtgina", "Ada, cos i eopq|dalar}.\037\037\037\037\037\037\037\037"},
+		{"savsa", "Nf avsi."},
+		{"qfy>ska", "R eqtdoj rsoqon|\nmiq c|dl\200eis ltxyf.\037\037\037\037\037\037"},
+		{"mirka", "Reflana ih al\177mini\200."},
+		{"pqocoe", "Pqocoe poe napq\200gfnifm!\037\037\037"},
+		{"lampoxka", "Ona pfqfdoqfla i nf qabosafs."},
+		{"ecfq}", "Tcfqfnna\200.\037\037\037\037\037"},
+		{"tqna\037\037\037\037\037", "\001"},
+		{"knopka", "\001"},
+		{"dqauuisi", "\001"},
+	},
+	{
+		{"kapisan", "Nfm kak q|ba.\037\037\037\037\037\037"},
+		{"ecfq}", "\001"},
+		{"ykauxik", "Hapfqso. ` eagf\nnf teicl>n.\037\037\037\037\037\037\037\037"},
+		{"kaqsa", "Pikarro?"},
+		{"rsol", "Sts lfgis ktxa rsaqodo vlama.\037\037"},
+		{"kqocas}", "Nf c|dl\200eis teobnoj.\037\037\037\037\037\037"},
+		{"\200zik", "On hapfqs!\037\037\037\037"},
+		{"rabli", "T mofdo efea b|la povoga\200.\n` obmfn\200l f> na egojrsik.\nEfetl\200 nf pqonikr\200 ~soj hasffj.\037\037\037\037\037\037\037\037\037\037\037"},
+		{"oqtgif", "Kak gal}, xso ~so liy}\nmakfs|...\037"},
+		{"kaqsina", "\001"},
+		{"plakas", "Mil|j cfqsik.\037"},
+		{"ycfjwaqrkij nog", "Rocrfm eqtdof eflo.\037\037\037"},
+	},
+	{
+		{"kqtgka", "Cntsqi nfogieanno okahalr\200\nxaj.\037\037\037\037\037\037\037"},
+		{"baqmfn", "Kakoj sqteol\177bic|j socaqiz.\037"},
+		{"c|voe", "\001"},
+		{"ecfq}", "Ona eolgna cfrsi c klaeockt.\037\037\037\037"},
+		{"qaeio", "Qaeio c|dl\200eis kak qaeio, no ansfnna\nreflana ih kakoj-so cfyalki.\037\037\037\037\037\037\037\037\037\037\037"},
+		{"kqoyki", "Oscqasisfl}no. Coobzf-so l\177e\200m rsois\ntbiqas} ha roboj.\037\037\037\037\037\037\037\037\037\037"},
+		{"xar|", "Povogf, r nimi nf cr> c poq\200ekf.\037\037\037\037\037\037\037\037\037"},
+		{"polki", "Insfqfrno, osktea c sqfniqocoxnom ladfqf\nsakoj bol}yoj c|boq alkodol\200.\nEl\200 poen\200si\200 bofcodo etva?\037\037\037\037"},
+		{"karra", "Oboga\177.\037\037\037\037\037\037\037\037\037\037\037"},
+	},
+	{
+		{"moqda\177za\200 e|qa", "Rsqanno...\037\037\037\037"},
+		{"ecfq}", "\001"},
+		{"boxki", "Pqi\200sno, naya aqmi\200 polnors}\177 obfrpfxfna.\037\037\037\037\037"},
+		{"ykauxik", "Kakoj-so hapfqs|j ykauxik.\037\037"},
+		{"ktxa polok", "Nfnacigt b\177qokqasi\177.\037\037\037\037"},
+		{"\200ziki", "Pfqfw."},
+		{"\200ziki", "Rol}.\037"},
+	},
+	{
+		{"dqanasa", "Odo! Crfdea vosfl sakt\177.\037\037\037\037\037\037\037\037\037\037"},
+		{"ovqannik", "Cq\200e li on sakoj, kakim voxfs kahas}r\200.\037\037\037\037\037"},
+		{"c|voe", "Eom, mil|j eom...\037\037\037\037"},
+		{"sqopa", "\001"},
+	},
+	{
+		{"ovqannik", "Povog na pfqfoefst\177\nefqfcfnzint.\037"},
+		{"bts|lka", "^so cirki!..\037"},
+		{"daqdtl}\200", "\001"},
+		{"daqdtl}\200", "\001"},
+		{"rktl}pstqa", "Oxfn} nfsqicial}na\200!"},
+		{"ecfq}", "Bol}ya\200, pqoxna\200."},
+		{"rsfna orobn\200ka", "Solzinoj c sqi kilomfsqa...\037\037\037"},
+		{"Egon Nosi", "Pthan."},
+		{"sqopa t orobn\200ka\037\037\037", "\001"},
+		{"sqopa k ltdt", "Ona cfe>s c s>mn|j i\nrsqayn|j lfr.\037\037\037\037\037\037\037\037\037\037"},
+		{"pts} k bfqfdt", "\001"},
+		{"sqopa t orobn\200ka\037\037\037", "\001"},
+		{"ob>qska", "^so wfllouanoca\200 ob>qska os konufs|\nili sipa sodo.\037\037\037\037\037"},
+		{"lfr", "T mfn\200 os nfdo mtqayki..."},
+		{"banknosa", "` oxfn} doqe, xso NF CH`L f>.\037\037\037\037\037\037\037"},
+	},
+	{
+		{"\037", ""},
+		{"etplo", "Rfjxar ono ptrsof.\037\037\037\037"},
+		{"cfska", "Mogfs pqidoeis}r\200.\037\037"},
+		{"efqfco", "Ono c|yf rsfn| orobn\200ka!\037\037\037\037\037\037\037\037"},
+		{"eikof qarsfnif", "Eikij kaqsoufl}.\037\037\037"},
+		{"rsfna", "Pokq|sa xfm-so rocrfm qocn|m.\037\037\037\037\037"},
+		{"sqopa t orobn\200ka\037\037\037", "\001"},
+		{"sqopa t orobn\200ka\037\037\037", "\001"},
+		{"cfska", "Eorsal.\037"},
+	},
+	{
+		{"efqfco", "C|rokof."},
+		{"roqn\200k", "Ob|xna\200 hflfn}.\037\037\037\037\037\037\037\037\037\037"},
+		{"sqopa t orobn\200ka\037\037\037", "\001"},
+		{"rsfna", "Pokq|sa xfm-so rocrfm qocn|m.\037\037\037\037\037"},
+		{"sqopa t orobn\200ka\037\037\037", "\001"},
+		{">g", "T nfdo na rpinf yiyka.\037\037\037\037\037\037\037\037\037\037"},
+		{"kamfn}", "\001"},
+	},
+	{
+		{"tlfj", "Yaq r m>eom.\037\037\037\037\037\037\037"},
+		{"px>l|", "NFNACIGT!\037\037"},
+		{"ktrs", "Voqoyo pq\200sas}r\200.\037\037"},
+		{"l\177k", "Qgac|j i nfhapfqs|j.\037\037\037\037\037\037\037\037\037"},
+		{"pts} k orobn\200kt", "\001"},
+	},
+	{
+		{"wcfsok", "^so ram|j kqaric|j wcfsok, xso \200\nciefl c rcofj gihni!\037\037\037\037\037\037"},
+		{"orsqoc", "Hefr} voqoyo gis} osyfl}nikom.\037\037\037\037"},
+		{"loeka", "Nf modt pocfqis}, xso ona nf e|q\200ca\200.\037\037\037\037\037\037\037"},
+		{"koloefw", "Na andlijrkom \"koloefw\"\nimffs mnodo omonimoc.\037\037"},
+		{"qtxka", "Coh}mt f> c qtxkt.\037"},
+		{"sqopa c efqfcn\177", "\001"},
+		{"pts} k orobn\200kt", "\001"},
+		{"sqopa c lfr\037\037\037", "\001"},
+	},
+	{
+		{"wcfsok", "Kakoj kqaric|j!"},
+		{"wcfsok", "On pqi\200sno pavnfs!\037\037"},
+		{"loeka", "Nixfdo nocodo.\037\037\037\037\037\037\037\037"},
+	},
+	{
+		{"q|ba\037", ""},
+		{"q|ba\037", ""},
+		{"?\037", ""},
+		{"?\037", ""},
+		{"\200koq}\037\037", ""},
+		{"loeka", ""},
+		{"coeoqorli", ""},
+		{"coeoqorli", ""},
+		{"coeoqorli", ""},
+		{"coeoqorli", ""},
+		{"sqaca\037", ""},
+		{"kamni\037\037", ""},
+	},
+	{
+		{"pts} k ohfqt\037\037\037\037\037\037", "\001"},
+		{"ecfq}", "Na ecfqi nf napirano\nimfni..."},
+		{"okna", "EOR ltxyf.\037\037\037\037\037\037"},
+		{"bflka", "Ona oxfn} ytrsqa\200."},
+		{"oqfv", "Bol}yoj."},
+		{"oqfv", "Nay>l."},
+		{"sqaca", "\001"},
+	},
+	{
+		{"c|voe\037\037", "\001"},
+		{"qod", "On pqoihcoeis cpfxaslfnif na\ngicosn|v.\037\037\037\037\037\037\037\037"},
+		{"okno", "Po-mofmt, ono eolgno b|s}\nna pqosicopolognoj rsfnf...\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"btufs\037\037\037", "\001"},
+		{"e|qa c uoqmf rfqewa", "Qomansixna\200 e|qa."},
+		{"btufs\037\037\037", "\001"},
+		{"l\177rsqa\037\037\037\037", "\001"},
+		{"kaqsina", "Os okna poxsi nf oslixis}.\037\037\037\037"},
+		{"kamin", "C n>m polno ragi.\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"oqtgif", "^so liy} plarsikoc|f kopii.\037\037\037\037"},
+		{"rsol\037", "\001"},
+		{"r|q r plfrfn}\177", "Ut!\037"},
+		{"sqoufi\037\037", "\001"},
+		{"bfnhopila", "Nf hna\177 poxfmt, no ona napominafs\noenodo paqn\200 ih Sfvara.\037\037\037"},
+		{"uaquoq", "Cohlf sakiv cfzfj \200 eagf e|yas}\nbo\177r}.\037\037\037\037\037\037\037\037\037\037\037"},
+	},
+	{
+		{"ecfqwa", "Ona nf hapfqsa.\037"},
+		{"badagnik", "C badagnikf crfdea frs} xso-so\npolfhnof..."},
+		{"kol}wo", "T mfn\200 ecojrscfnn|f xtcrsca:\nono napominafs o ykolf.\037\037"},
+		{"yfrs", "Kol}wo pqikqtxfno k elinnomt\nmfsallixfrkomt yfrst.\037\037\037\037\037\037\037\037"},
+		{"ecfq}", "\001"},
+		{"ecfqnoj hconok", "Im mogno naptdas} l\177efj\nha ecfq}\177.\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"okno\037\037", "\001"},
+		{"okno\037\037", "\001"},
+		{"okno xfqeaka", "\001"},
+		{"pts} k ohfqt", "\001"},
+		{"sqopa", "\001"},
+		{"sqopa k pol\177\037", "\001"},
+		{"mal}xik", "On iho crfv ril rsaqafsr\x80\nhakints} m\x80x, no rlab,\nxsob| fdo eobqoris}!"},
+		{"qarx>rka", "Rsqanna\200.\037"},
+		{"q|xad", "Insfqfrno haxfm\non?\037\037\037\037"},
+		{"ecfqwa\037\037", "\001"},
+	},
+	{
+		{"sqopa", "\001"},
+		{"pts} k dqost", "\001"},
+		{"ecfq}", "\001"},
+		{"bfl}>", "Cohetv rliykom clagn|j,\nxsob| fdo c|rtyis}...\037\037\037"},
+		{"okno\037\037", "\001"},
+		{"okno\037\037", "\001"},
+		{"okno\037\037", "\001"},
+		{"pqovoe", "Pts} c poecal.\037\037\037\037"},
+		{"l\177k", "Mfsallixfrkij i s\200g>l|j.\037\037\037"},
+		{"p>r", "Rntpi.\037"},
+		{"hconok", "\001"},
+		{"cfq>cka", "\001"},
+	},
+	{
+		{"rsaqik", "Povog na moqrkodo colka\nna pfnrii."},
+		{"btufs\037\037\037", "\001"},
+		{"polki", "Odo! Iv sts ktxa!\037\037\037"},
+		{"kqocas}", "Eom, mil|j eom."},
+		{"okno", "Cie na polf.\037\037\037\037\037\037\037\037\037\037"},
+		{"rsol\037", "\001"},
+		{"qtg}>", "Va, r sakim sol}ko\nna einohacqoc!..\037\037"},
+		{"kaqsina", "Kqarosa.\037"},
+		{"rfmfjn|f uoso", "Nf vosflor} b|, xsob| moi pqfeki cirfli,\nkak sqoufi...\037\037\037\037\037\037\037\037"},
+		{"wcfsok", "On hfl>n|j."},
+		{"ecfq}", "\001"},
+		{"l\177rsqa\037\037\037\037", "\001"},
+		{"cfsqoetj", "Na basaqfjkav.\037\037"},
+	},
+	{
+		{"rsaqtva", "Ih rboqnoj rsqan| po c\200hani\177.\037\037\037"},
+		{"efctyka", "Klarr."},
+		{"c|voe\037\037", "\001"},
+		{"okno\037\037", "\001"},
+		{"okno\037\037", "\001"},
+		{"l\177rsqa\037\037\037\037", "\001"},
+		{"xar|", "Efjrscisfl}no yfefcq.\037\037\037\037\037"},
+		{"\037", ""},
+		{"nfnarso\200zif uqtks|", "`bloko kak\nnarso\200zff!\037\037\037\037\037"},
+		{"ktcyin", "C n>m wcfs|.\037\037\037\037\037\037"},
+		{"wcfs|", "Naef\177r}, nf os kakodo-so\npoklonnika...\037\037\037\037\037"},
+		{"mfs>lka", "Ona qfyafs pqoblfmt p|li.\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"rsol", "On kqtdl|j, no feca li rc\200han ro\nrqfenfcfkocoj lfdfneoj...\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"hfqkalo", "` nf cigt c n>m liwa\nefctyki...\037\037"},
+		{"kaqsina", "Voqoyo gis} c efqfcnf c eomf r efqfcfnrkimi\npfjhagami na rsfnav.\037\037\037\037\037\037\037\037"},
+		{"qarsfnif", "`qko.\037\037\037"},
+	},
+	{
+		{"patk", "^so...\037\037\037"},
+		{"lopasa", "Mogno poidqas} c eiddfqa.\037\037\037"},
+		{"lfrsniwa", "C|voe."},
+		{"knopka", "Malfn}ka\200, no mozna\200.\037\037\037\037\037"},
+		{"sopoq", "Naef\177r}, rlfe| na rsfnf r sopoqom\nnikak nf rc\200han|...\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"wfp}\037", "\001"},
+		{"zipw|", "Tv, ~sos poecal bol}yf povog\nna kamfqt p|sok...\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"polki", "Harsaclfn| bankami i vlamom.\nNixfdo insfqfrnodo.\037\037\037\037\037"},
+		{">mkorsi", "Oni ptrs|f.\037\037\037\037\037\037"},
+	},
+	{
+		{"kors}", "Rte\200 po cohqarst kamn\200, ~so\neolgna b|s} kors} einohacqa....\037\037\037\037\037\037\037\037"},
+		{"ktrs", "On mfyafs pqojsi c dqos.\nMogfs, kso-so poraeil fdo, xsob|\nrkq|s} sajn| ~sodo dqosa...\037\037\037\037\037\037\037\037"},
+		{"cvoe c dqos\037\037", "\001"},
+		{"sqopa", "\001"},
+		{"kamfn}", "On lfgis hefr} eacn|m-eacno.\nNaef\177r}, nikodo nf pqiyiblo...\037\037\037\037\037"},
+		{"baboxka", "Nt qahcf nf mila\200?\037\037"},
+		{"baboxka", "Nt qahcf nf mila\200?\037\037"},
+	},
+	{
+		{"idtana", "\001"},
+		{"???", "XSO ^SO?!\037\037\037"},
+		{"c|voe\037\037", "\001"},
+		{"roobzfnif", "Naepir} oxfn} rsaqa\200, no \200 fz> modt\nf> pqoxisas}.\037\037\037"},
+		{"e|qa", "Cqoef dltboka\200.\037\037\037\037"},
+		{"ramoqoeok", "Holoso!"},
+	},
+	{
+		{"pfstv", "Nfmnodo rsqann|j."},
+		{"coqona", "Tgarno cqagefbna\200.\037"},
+		{"coqona", "C|dl\200eis oparno."},
+		{"m|y}", ""},
+		{"poecoena\200 marka", "Nt nixfdo rfbf.\037\037"},
+		{"lars|", "Poevoe\200s mnf iefal}no.\037\037\037\037"},
+		{"ptdalo", "Ystka, ptda\177za\200 coqon.\nPo kqajnfj mfqf,\nc sfoqii.\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"rfqp", "Oparn|j inrsqtmfns.\037\037\037\037\037"},
+		{"sqopa c efqfcn\177", "\001"},
+		{"rsod rfna", "Cntsqi frs} xso-so mfsallixfrkof -\n\200 cigt, kak ono blfrsis!\037\037\037"},
+		{"dqabli", "Oni rsaq|f, i htb}fc orsalor}\nnf oxfn} mnodo."},
+		{"m|yina\200 noqa", "I eom, i rklae...\037\037\037\037\037\037"},
+		{"rsod rfna", "C n>m frs} m|yina\200 noqa!\037\037\037\037"},
+		{"pfqo", "Cieimo, fdo tqonil pfstv.\037\037\037\037\037\037\037\037\037\037\037"},
+		{"rsod rfna", "\001"},
+		{"orobn\200k", "Ba, t nfkosoq|v coobzf\nnfs cktra.\037\037\037\037\037"},
+	},
+	{
+		{"okno", "Ha ysoqoj nixfdo nf qahdl\200efs}.\037\037\037\037\037\037\037\037\037\037"},
+		{"rktl}pstqa", "Claeflfw bolfn.\037\037"},
+		{"ecfq}", "\001"},
+		{"c|voe ih orobn\200ka\037\037\037\037\037", "\001"},
+	},
+	{
+		{"ecfq}", "\001"},
+		{"ecfq}", "\001"},
+		{"wcfs|", "Cos sak r\177qpqih, oni\nnf irktrrscfnn|f.\037\037\037\037"},
+		{"qarsfnif", "Kak cfriyki, Qobbi?\037\037\037"},
+		{"lfrsniwa", "Docoq\200s, oein yad pqoelfcafs gihn}\nna sqi rfktne|.\037"},
+		{"eqtda\200 xars} koqieoqa\037\037\037\037\037", "\001"},
+		{"na kq|l}wo\037\037", "\001"},
+	},
+	{
+		{"cnih\037\037\037\037\037\037", "\001"},
+		{"kaqsina", "Kakoj-so hamok.\037\037"},
+		{"eorpfvi", "Qann\200\200 cfqri\200 sanka.\037\037\037\037\037\037"},
+		{"ciefokarrfsa", "I xso ha uil}m ntgno sak\nszasfl}no pq\200sas}?\037\037\037"},
+		{"knida", ""},
+		{"knidi", "Odo!\037\037\037\037"},
+		{"mtroqna\200 tqna", "Cntsqi mnodo btmad.\037\037\037\037\037\037\037\037\037\037"},
+		{"rstl", "M\200dkij."},
+		{"lampa", "\001"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"lfrsniwa", "I ~so nf efctyka, kosoqa\200 sfbf l}rsis.\037\037"},
+	},
+	{
+		{"ecfq}", "\001"},
+		{"oscfqrsif", "Ono kcaeqasnof.\037\037"},
+		{"qtxka", "Ona soxno coyla c oscfqrsif.\037\037\037"},
+		{"kaqsina", "Crfdea l\177bil \"Hc>hen|f cojn|\".\037\037\037"},
+		{"kaqsina", "Etmal, xso \200 rsqann|j.\037\037\037"},
+		{"wcfs|", "Boeqo pavnts."},
+		{"eqtda\200 xars} koqieoqa\037", "\001"},
+		{"ecfq}", "\001"},
+		{"rsast\200", "Rsqanno."},
+	},
+	{
+		{"qobos", "Cpfxasl\200fs."},
+		{"banka", "Ona polna sablfsok.\037\037\037\037\037"},
+		{"knida", "Ona odqomna\200 i povoga\nna kakoj-so\nenfcnik."},
+		{"kaqsina", "Ona cflikolfpna. ` sogf voxt sakt\177.\037\037\037\037\037\037\037\037\037\037\037"},
+		{"ykauxik", "\001"},
+		{"c|voe", "\001"},
+		{"lfc|j nignij tdol ~kqana", "Hefr} mogno rpq\200sas}r\200!\037\037\037"},
+		{"ecfqna\200 qtxka", "F> orsacil Egon Nosi."},
+	},
+	{
+		{"pocaq", "Wflikom tclfx>n rcofj qabosoj.\037\037\037\037\037\037"},
+		{"caqfco", "Nacfqn\200ka kakoj-so rtp.\nSfpfq} fz> cktrnff.\037\037\037\037\037\037"},
+		{"plisa", "Rcaqis ckqtst\177.\037"},
+		{"c|voe\037\037", "\001"},
+		{"voloeil}nik", "Mo\200 l\177bima\200 cfz} na ktvnf.\037\037\037\037\037\037\037\037\037"},
+		{"qaeio", "Qabosafs os basaqffk. Rocrfm kak\nplffq.\037\037\037\037\037\037\037\037"},
+		{"xili", "Kqarn|j i obgida\177zij... Xili!\037\037\037\037\037\037\037\037"},
+		{"mfrso el\200 bts|lki r xili", "Hefr} rso\200la... i s.e i s.p.\037\037\037\037\037\037\037"},
+		{"rkalka", "T mtgxin ptyki, t gfnzin - ~so.\n1:0 c pol}ht gfnzin.\037"},
+		{"mikqocolnocka", "Colyfbna\200 ystka, pqfcq\320\340afs\nfet c qfhint.\037\037\037\037"},
+		{"nogi", "Oxfn} roliena\200 kollfkwi\200.\037\037\037\037\037\037\037"},
+		{"m\200ro", "Ono c plarsikocom pakfsf i pqim>qhlo\nk polkf.\037\037\037\037\037\037\037"},
+	},
+	{
+		{"ecfq}", "\001"},
+		{"qakocina", "R e|qkoj.\037"},
+		{"kqan", "\001"},
+		{"hfqkalo", "Pokq|so rlofm dq\200hi.\037\037\037\037"},
+		{"ykauxik", "\001"},
+		{"canna", "Odo! Bol}ya\200!\037"},
+		{"norok", "Cfqo\200sno, Egona Nosi...\037"},
+	},
+	{
+		{"kon}\200k", "Qahmfq bts|lki r ramodo Napolfona."},
+		{"zipw|", "C cfeqf lfgas zipw|.\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"marka", "Kakof-so kqtsof pfqcob|snof irktrrsco.\037"},
+		{"sflfcihoq", "Cfz}, kosoqa\200 tbicafs cqfm\200 i\nlixnors}.\037\037\037"},
+		{"pqoidq|casfl}", "On nf tmffs hapir|cas},\nno mnf ~so nf\nntgno.\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"dahfsa", "Kaka\200-so mfrsna\200 dahfs>nka.\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"einamik", "Kaka\200 kqoyka! Pqicfe>s\nc irrstplfnif crfv rorfefj!\037\037\037\037"},
+		{"eican", "Rlogno pon\200s}, def sts klars}\npoetykt.\037\037\037\037\037"},
+		{"c|voe\037\037", "\001"},
+		{"kaqsina", "Cos ~so narso\200zff scoqxfrsco.\037\037"},
+		{"ptl}s ET", "On b|l rpq\200san mfget rsqaniwami dahfs|.\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"oskq|s|j ykau", "Sam sajn|j pqovoe!\037\037\037\037"},
+	},
+	{
+		{"ecfq}", "\001"},
+		{"ecfq}", "\001"},
+		{"knopka", "\001"},
+	},
+	{},
+	{
+		{"Egon Nosi", "On tclfx>n nabicanifm efnfd c rtmkt.\037"},
+		{"sonn| holosa", "(rson)"},
+		{"rfju", "\001"},
+		{"rfju", "\001"},
+		{"kamfqa", "Nacfqn\200ka ~so xars} rirsfm| bfhoparnorsi."},
+	},
+	{},
+	{},
+	{},
+	{},
+
 };
 
 #endif

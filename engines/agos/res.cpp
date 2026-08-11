@@ -1136,4 +1136,29 @@ void AGOSEngine::convertPC98Image(VC10_state &state) {
 	state.flags &= ~(kDFCompressedFlip | kDFCompressed);
 }
 
+// Simon 1 Acorn Floppy Demo: loads Simon's sprite palette from VGA 01/0191
+bool AGOSEngine_Simon1::loadSimonAcornFloppyDemoPalette(Common::Array<byte> &outPalette) {
+	Common::File f;
+	if (!f.open("01/0191")) {
+		warning("Acorn demo: could not open 01/0191");
+		return false;
+	}
+
+	byte raw[96];
+	f.seek(489);
+	if (f.read(raw, 96) != 96) {
+		warning("Acorn demo: 0191 block 5 read failed");
+		f.close();
+		return false;
+	}
+	f.close();
+
+	outPalette.resize(48);
+	memset(outPalette.data(), 0, 48);
+	for (uint32 i = 0; i < 45; ++i)
+		outPalette[i + 3] = raw[i] * 4;
+
+	return true;
+}
+
 } // End of namespace AGOS

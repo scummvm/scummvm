@@ -374,6 +374,9 @@ bool Combat::msgAction(const ActionMessage &msg) {
 }
 
 bool Combat::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button != MouseMessage::MB_LEFT)
+		return ScrollView::msgMouseUp(msg);
+
 	const KeybindingAction BTN_ACTIONS[8] = {
 		KEYBIND_COMBAT_ATTACK, KEYBIND_COMBAT_FIGHT,
 		KEYBIND_COMBAT_RETREAT, KEYBIND_COMBAT_EXCHANGE,
@@ -381,13 +384,17 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 		KEYBIND_COMBAT_SHOOT, KEYBIND_COMBAT_CAST
 	};
 
+	Common::Point localPos = msg._pos;
+	localPos.x -= _innerBounds.left;
+	localPos.y -= _innerBounds.top;
+
 	if (_mode == SELECT_OPTION && _option == OPTION_NONE) {
 		// Check for option buttons being pressed
 		for (int col = 0; col < 3; ++col) {
 			for (int row = 0; row < 3; ++row) {
 				if (col != 2 || row != 2) {
 					Common::Rect r = getOptionButtonRect(col, row);
-					if (r.contains(msg._pos)) {
+					if (r.contains(localPos)) {
 						msgAction(ActionMessage(BTN_ACTIONS[col * 3 + row]));
 						return true;
 					}
@@ -399,9 +406,9 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 	if (_mode == SELECT_OPTION && (_option == OPTION_SHOOT ||
 			_option == OPTION_FIGHT)) {
 		// Check for entries in the monster list being pressed
-		if (msg._pos.x >= MONSTERS_X && msg._pos.x < 310
-				&& msg._pos.y >= _innerBounds.top && msg._pos.y < 100) {
-			uint monsterNum = (msg._pos.y - _innerBounds.top) / MONSTER_H;
+		if (localPos.x >= MONSTERS_X && localPos.x < 310
+				&& localPos.y >= 0 && localPos.y < 100) {
+			uint monsterNum = localPos.y / MONSTER_H;
 			if (monsterNum < _remainingMonsters.size()) {
 				char c = 'a' + monsterNum;
 				msgKeypress(KeypressMessage(Common::KeyState(
@@ -544,7 +551,7 @@ void Combat::clearArea(const Common::Rect &r) {
 	area.right = MIN(area.right, _innerBounds.right);
 	area.bottom = MIN(area.bottom, _innerBounds.bottom);
 
-	s.fillRect(area, 0x99);
+	s.fillRect(area, SCROLL_BG_COLOR);
 }
 
 
@@ -656,6 +663,7 @@ void Combat::writeMonsters() {
 }
 
 void Combat::writeMonsterStatus(int monsterNum) {
+	auto *currMonster = _monsterP;
 	_monsterP = _remainingMonsters[monsterNum];
 	monsterIndexOf();
 	byte statusBits = _remainingMonsters[monsterNum]->_status;
@@ -678,6 +686,8 @@ void Combat::writeMonsterStatus(int monsterNum) {
 		writeDots();
 		writeString(STRING["dialogs.combat.status.wounded"]);
 	}
+
+	_monsterP = currMonster;
 }
 
 void Combat::writeDots() {

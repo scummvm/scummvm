@@ -83,11 +83,6 @@ struct retro_core_option_v2_category option_cats_us[] = {
 		"Configure cursor movement settings"
 	},
 	{
-		"frameskip",
-		"Frameskip",
-		"Configure frameskip settings"
-	},
-	{
 		"timing",
 		"Timing",
 		"Configure timing settings"
@@ -102,18 +97,23 @@ struct retro_core_option_v2_category option_cats_us[] = {
 
 struct retro_core_option_v2_definition option_defs_us[] = {
 	{
-		"scummvm_gamepad_cursor_only",
-		"Cursor > Exclusive cursor control with RetroPad",
-		"Exclusive cursor control with RetroPad",
-		"Allows the use of RetroPad only to control mouse cursor, excluding the other inputs (e.g. physical mouse, touch screen).",
+		"scummvm_pointer_device",
+		"Cursor > Pointer Device",
+		"Pointer Device",
+		"Select which device controls the cursor.",
 		NULL,
 		"cursor",
 		{
-			{"disabled", NULL},
-			{"enabled", NULL},
+			{"retropad", "RetroPad only"},
+			{"mouse", "RetroPad + RetroMouse"},
+			{"pointer", "RetroPad + Pointer"},
 			{NULL, NULL},
 		},
-		"disabled"
+#if defined(WIIU) || defined(__SWITCH__)
+		"pointer"
+#else
+		"mouse"
+#endif
 	},
 	{
 		"scummvm_gamepad_cursor_speed",
@@ -240,86 +240,10 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"4"
 	},
 	{
-		"scummvm_frameskip_type",
-		"Frameskip > Frameskip Mode",
-		"Frameskip Mode",
-		"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Threshold' uses the 'Frameskip Threshold (%)' setting. 'Fixed' uses the 'Fixed Frameskip' setting.",
-		NULL,
-		"frameskip",
-		{
-			{ "disabled", NULL },
-			{ "fixed", "Fixed" },
-			{ "auto", "Auto" },
-			{ "manual", "Threshold" },
-			{ NULL, NULL },
-		},
-		"auto"
-	},
-	{
-		"scummvm_frameskip_threshold",
-		"Frameskip > Frameskip Threshold (%)",
-		"Frameskip Threshold (%)",
-		"When 'Frameskip' is set to 'Threshold', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
-		NULL,
-		"frameskip",
-		{
-			{ "15", NULL },
-			{ "18", NULL },
-			{ "21", NULL },
-			{ "24", NULL },
-			{ "27", NULL },
-			{ "30", NULL },
-			{ "33", NULL },
-			{ "36", NULL },
-			{ "39", NULL },
-			{ "42", NULL },
-			{ "45", NULL },
-			{ "48", NULL },
-			{ "51", NULL },
-			{ "54", NULL },
-			{ "57", NULL },
-			{ "60", NULL },
-			{ NULL, NULL },
-		},
-		"33"
-	},
-	{
-		"scummvm_frameskip_no",
-		"Frameskip > Fixed Frameskip",
-		"Fixed Frameskip",
-		"When 'Frameskip' is set to 'Fixed', or if the frontend doesn't support the alternative 'Frameskip' mode, skip rendering at a fixed rate of X frames out of X+1",
-		NULL,
-		"frameskip",
-		{
-			{ "0", "No skipping" },
-			{ "1", "Skip rendering of 1 frames out of 2" },
-			{ "2", "Skip rendering of 2 frames out of 3" },
-			{ "3", "Skip rendering of 3 frames out of 4" },
-			{ "4", "Skip rendering of 4 frames out of 5" },
-			{ "5", "Skip rendering of 5 frames out of 6" },
-			{ NULL, NULL },
-		},
-		"0"
-	},
-	{
-		"scummvm_allow_timing_inaccuracies",
-		"Timing > Allow Timing Inaccuracies",
-		"Allow Timing Inaccuracies",
-		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
-		NULL,
-		"timing",
-		{
-			{"disabled", NULL},
-			{"enabled", NULL},
-			{NULL, NULL},
-		},
-		"disabled"
-	},
-	{
 		"scummvm_framerate",
 		"Timing > Frame rate cap",
 		"Frame rate cap",
-		"Set core frame rate upper limit. Changing this setting will reset the core.",
+		"Set core frame rate upper limit. Reducing the limit will improve the performance on lower end devices. Changing this setting will reset the core.",
 		NULL,
 		"timing",
 		{
@@ -336,7 +260,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_samplerate",
 		"Timing > Sample rate",
 		"Sample rate",
-		"Set core sample rate. Changing this setting will reset the core.",
+		"Set core sample rate. Reducing the rate will slightly improve the performance on lower end devices. Changing this setting will reset the core.",
 		NULL,
 		"timing",
 		{
@@ -649,13 +573,46 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 #ifdef USE_OPENGL
 			{"enabled", NULL},
 #endif
-			{NULL, NULL},		},
+			{NULL, NULL},
+		},
 #ifdef USE_OPENGL
 		"enabled"
 #else
 		"disabled"
 #endif
 	},
+#ifdef USE_HIGHRES
+	{
+		"scummvm_gui_aspect_ratio",
+		"Video > GUI aspect ratio",
+		"ScummVM Launcher aspect ratio",
+		"Set ScummVM Launcher aspect ratio.",
+		NULL,
+		"video",
+		{
+			{"0", "4:3"},
+			{"1", "16:9"},
+			{NULL, NULL},
+		},
+		"1"
+	},
+	{
+		"scummvm_gui_h_res",
+		"Video > GUI resolution",
+		"ScummVM Launcher resolution",
+		"Set ScummVM Launcher resolution.",
+		NULL,
+		"video",
+		{
+			{"240", "LD"},
+			{"480", "SD"},
+			{"720", "HD"},
+			{"1080", "FHD"},
+			{NULL, NULL},
+		},
+		"720"
+	},
+#endif
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
 

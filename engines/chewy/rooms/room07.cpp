@@ -56,7 +56,7 @@ void Room7::hook(int16 sibNr) {
 	cursorChoice(_G(menu_item));
 
 	if (_G(gameState).R7RHaken) {
-		_G(gameState).R7SeilOk = true;
+		_G(gameState).R7RopeOk = true;
 		if (sibNr == SIB_LHAKEN_R7) {
 			_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 			_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
@@ -65,7 +65,7 @@ void Room7::hook(int16 sibNr) {
 		_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATA);
 		diaNr = 9;
 	} else {
-		_G(gameState).R7SeilLeft = true;
+		_G(gameState).R7RopeLeft = true;
 		diaNr = 48;
 	}
 
@@ -78,14 +78,14 @@ void Room7::bell() {
 	hideCur();
 	
 	if ((!_G(gameState).R7BellCount) ||
-		(_G(gameState).R7BellCount >= 2 && _G(gameState).R7SeilLeft && !_G(gameState).R7SeilOk)) {
+		(_G(gameState).R7BellCount >= 2 && _G(gameState).R7RopeLeft && !_G(gameState).R7RopeOk)) {
 		_G(gameState)._personHide[P_CHEWY] = true;
-		start_aad(5, 0);
+		start_aad(5, 0, true);
 		startAniBlock(3, ABLOCK25);
 
 		_G(det)->showStaticSpr(7);
-		startSetAILWait(12, 1, ANI_FRONT);
-		startSetAILWait(11, 1, ANI_FRONT);
+		startDetailWait(12, 1, ANI_FRONT);
+		startDetailWait(11, 1, ANI_FRONT);
 		_G(det)->hideStaticSpr(7);
 		_G(det)->stopDetail(5);
 		setPersonPos(95, 94, P_CHEWY, P_RIGHT);
@@ -95,7 +95,7 @@ void Room7::bell() {
 		start_aad(6, 0);
 		startAniBlock(3, ABLOCK25);
 		_G(det)->showStaticSpr(7);
-		startSetAILWait(10, 1, ANI_FRONT);
+		startDetailWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(13, 1, ANI_FRONT);
 		setPersonPos(95, 94, P_CHEWY, P_RIGHT);
 		_G(det)->stopDetail(5);
@@ -106,7 +106,7 @@ void Room7::bell() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 
 		_G(det)->startDetail(0, 255, ANI_FRONT);
-		startSetAILWait(13, 1, ANI_FRONT);
+		startDetailWait(13, 1, ANI_FRONT);
 		flic_cut(FCUT_001);
 		_G(det)->stopDetail(0);
 		_G(gameState).scrollx = 0;
@@ -125,9 +125,9 @@ void Room7::bell() {
 		_G(flags).NoScroll = false;
 		_G(det)->hideStaticSpr(7);
 
-	} else if (!_G(gameState).R7SeilOk) {
+	} else if (!_G(gameState).R7RopeOk) {
 		_G(gameState)._personHide[P_CHEWY] = true;
-		start_aad(7, 0);
+		start_aad(7, 0, true);
 		startAniBlock(3, ABLOCK25);
 		_G(det)->showStaticSpr(7);
 		_G(det)->load_taf_seq(192, 74, nullptr);
@@ -149,11 +149,11 @@ void Room7::bell() {
 		_G(flags).NoScroll = false;
 		_G(det)->del_taf_tbl(192, 74, nullptr);
 
-	} else if (_G(gameState).R7SeilOk && !_G(gameState).R7BorkFlug) {
+	} else if (_G(gameState).R7RopeOk && !_G(gameState).R7BorkFlug) {
 		_G(gameState).R7BorkFlug = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
 		start_aad(8, 0);
-		startSetAILWait(1, 1, ANI_FRONT);
+		startDetailWait(1, 1, ANI_FRONT);
 		_G(obj)->set_rsi_flip_flop(SIB_TBUTTON2_R7, 255);
 		_G(obj)->hide_sib(SIB_KLINGEL_R7);
 		_G(flags).NoPalAfterFlc = false;
@@ -174,7 +174,7 @@ void Room7::gedAction(int index) {
 	if (index == 0 && _G(gameState).R7BorkFlug && _G(gameState).R7ChewyFlug) {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		setPersonPos(180, 124, P_CHEWY, P_LEFT);
-		startSetAILWait(20, 1, ANI_FRONT);
+		startDetailWait(20, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(10);
 		waitShowScreen(10 * _G(gameState).DelaySpeed);
 		_G(det)->hideStaticSpr(10);

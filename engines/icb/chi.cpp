@@ -480,7 +480,7 @@ bool8 _game_session::Process_chi() {
 					return TRUE8;
 				}
 
-				// if cant see the player but would expect to (he's moved) then forget this and catch him up
+				// if can't see the player but would expect to (he's moved) then forget this and catch him up
 				if (!g_oLineOfSight->ObjectToObject(cur_id, player.Fetch_player_id(), LIGHT, 0, _line_of_sight::USE_OBJECT_VALUE, TRUE8)) {
 					// exit this mode
 					PXreal x2 = logic_structs[player.Fetch_player_id()]->mega->actor_xyz.x;
@@ -536,7 +536,7 @@ bool8 _game_session::Process_chi() {
 						return TRUE8;
 					}
 				} else if (chi_has_target) {
-					// cant shoot
+					// can't shoot
 					chi_do_mode = __TURN_TO_FACE_OBJECT;
 				} else {
 					// no target
@@ -594,11 +594,11 @@ bool8 _game_session::Process_chi() {
 					if (!res) {                      // no interaction portal for chi - actually not possible now she can use the normal
 						                         // 'interact' script
 						chi_think_mode = __LOST; // oh dear, we must be lost. Not legal but lets handle it for now
-						Tdebug("chi.txt", "chi cant follow player via %d", history[next_room].id);
+						Tdebug("chi.txt", "chi can't follow player via %d", history[next_room].id);
 						return TRUE8;
 					} else {
 						// ok, back to script
-						// script interpretter shouldnt write a pc back
+						// script interpreter shouldn't write a pc back
 
 						chi_do_mode = __INTERACT_FOLLOW;
 
@@ -621,7 +621,7 @@ bool8 _game_session::Process_chi() {
 					// 4  0=no turn-on-spot   1=yes
 					// 5  end on stand
 					if (!Setup_route(result, (int32)x, (int32)z, run, __ENDB, TRUE8)) {
-						// route failed or was no route required which in theory cant happen - so we take it as
+						// route failed or was no route required which in theory can't happen - so we take it as
 						// route failed to build
 						Tdebug("chi.txt", "  route failed");
 						Setup_route(result, (int32)x, (int32)z, 1, __LASER, TRUE8);
@@ -649,7 +649,7 @@ bool8 _game_session::Process_chi() {
 					session_barriers->Clear_route_barrier_mask();
 
 					if (!route_res) {
-						// route failed or was no route required which in theory cant happen - so we take it as
+						// route failed or was no route required which in theory can't happen - so we take it as
 						// route failed to build
 						Tdebug("chi.txt", "  bumble route failed");
 
@@ -708,7 +708,7 @@ bool8 _game_session::Process_chi() {
 						session_barriers->Clear_route_barrier_mask();
 
 						if (!route_res) {
-							// route failed or was no route required which in theory cant happen - so we take it
+							// route failed or was no route required which in theory can't happen - so we take it
 							// as route failed to build
 							if (result == FALSE8)
 								Setup_route(result, (int32)x, (int32)z, run, __LASER, eos);

@@ -56,16 +56,16 @@ void Window::testFontScaling() {
 
 	Graphics::ManagedSurface surface;
 
-	surface.create(w, h, _wm->_pixelformat);
-	surface.clear(_wm->_colorWhite);
+	surface.create(w, h, _vm->_wm->_pixelformat);
+	surface.clear(_vm->_wm->_colorWhite);
 
 	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
 
-	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
+	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_vm->_wm->_fontMan->getFont(origFont);
 
 	Graphics::MacFONTFont::testBlit(font1, &surface, 0xff, x, y + 200, 500);
 
-	Graphics::MacFont bigFont(Graphics::kMacFontChicago, 12);
+	Graphics::MacFont bigFont(Graphics::kMacFontSystem, 12);
 
 	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
 
@@ -97,6 +97,8 @@ void Window::testFontScaling() {
 				for (y = y1; y < y1 + 6; y++)
 					if (_wm->_pixelformat.bytesPerPixel == 1)
 						*((byte *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
+					else if (_wm->_pixelformat.bytesPerPixel == 2)
+						*((uint16 *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
 					else
 						*((uint32 *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
 		}
@@ -119,9 +121,10 @@ void Window::testFontScaling() {
 		Image::PICTDecoder k;
 		k.loadStream(in);
 
-		Graphics::Surface *res = k.getSurface()->convertTo(_wm->_pixelformat, k.getPalette(), k.getPaletteSize(), _wm->getPalette(), _wm->getPaletteSize(), Graphics::kDitherNaive);
+		Graphics::Surface *res = k.getSurface()->convertTo(_wm->_pixelformat, k.getPalette().data(), k.getPalette().size(), _wm->getPalette(), _wm->getPaletteSize(), Graphics::kDitherNaive);
+		surface.blitFrom(*res, Common::Point(400, 280));
+		delete res;
 
-		surface.blitFrom(res, Common::Point(400, 280));
 		in.close();
 	} else {
 		warning("b_importFileInto(): Cannot open file %s", path.toString().c_str());
@@ -192,7 +195,7 @@ Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::Path 
 			}
 
 			warning("name: %s", i->getName().c_str());
-			Archive *arc = _vm->openArchive(i->getPathInArchive());
+			Common::SharedPtr<Archive> arc = _vm->openArchive(i->getPathInArchive());
 			Movie *m = new Movie(this);
 			m->setArchive(arc);
 			nameMap->setVal(m->getMacName(), m);
@@ -323,13 +326,14 @@ void Window::runTests() {
 
 	initGraphics(640, 480);
 
-	_mainArchive = new RIFXArchive();
-	g_director->_allSeenResFiles.setVal("test.dir", _mainArchive);
-	if (!_mainArchive->openStream(stream, 0)) {
+	Common::SharedPtr<Archive> mainArchive(new RIFXArchive());
+	g_director->setMainArchive(mainArchive);
+	g_director->_allSeenResFiles.setVal("test.dir", mainArchive);
+	if (!mainArchive->openStream(stream, 0)) {
 		error("DirectorEngine::runTests(): Bad movie data");
 	}
 	_currentMovie = new Movie(this);
-	_currentMovie->setArchive(_mainArchive);
+	_currentMovie->setArchive(mainArchive);
 	_currentMovie->loadArchive();
 
 	if (debugChannelSet(-1, kDebugText)) {

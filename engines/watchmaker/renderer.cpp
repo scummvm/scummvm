@@ -45,7 +45,7 @@ Renderer::Renderer(WGame *game, sdl_wrapper *wrapper) : _2dStuff(this), sdl(wrap
 }
 
 // blitter info
-Rect            gBlitterViewport;
+Common::Rect    gBlitterViewport;
 gTexture        gScreenBuffer;
 
 void Renderer::initGL() {
@@ -106,7 +106,7 @@ bool Renderer::createScreenBuffer() {
 
 void Renderer::initBlitterViewPort() {
 	auto info = getScreenInfos();
-	Rect viewport{0, 0, (int)info.width, (int)info.height};
+	Common::Rect viewport{0, 0, (int16)info.width, (int16)info.height};
 
 	// This is just leftover, as the original viewport-setting would default to the screenbuffer-size.
 	if ((viewport.top == 0) && (viewport.bottom == 0) && (viewport.left == 0) && (viewport.right == 0)) {
@@ -215,7 +215,7 @@ Math::Vector3d vector3Matrix4Mult(Math::Vector3d &vec, const Math::Matrix4 &m) {
 	// Since the query functions return a 4x4 Matrix, but we only really care
 	// about the 3D vector, we make our own version of the Vector-Matrix mult.
 	// In practice we could perhaps introduce an operator* in Vector4d, but
-	// since the w component is un-interesting that would be 4 unneccesary mults.
+	// since the w component is un-interesting that would be 4 unnecessary mults.
 	const float *d = m.getData();
 	return Math::Vector3d(vec.x() * d[0] + vec.y() * d[3] + vec.z() * d[6],
 	                      vec.x() * d[1] + vec.y() * d[4] + vec.z() * d[7],

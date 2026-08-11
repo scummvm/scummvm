@@ -29,10 +29,14 @@ namespace Riddle {
 namespace Rooms {
 
 class Room413 : public Room {
+private:
+	bool _buttonFlag = false;
+
 public:
 	Room413() : Room() {}
 	~Room413() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

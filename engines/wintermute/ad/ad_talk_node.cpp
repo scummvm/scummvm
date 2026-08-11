@@ -32,6 +32,8 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
+
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkNode, false)
@@ -52,19 +54,12 @@ AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkNode::~AdTalkNode() {
-	delete[] _spriteFilename;
-	delete _sprite;
-	delete[] _spriteSetFilename;
-	delete _spriteSet;
-	delete _comment;
-	_spriteFilename = nullptr;
-	_sprite = nullptr;
-	_spriteSetFilename = nullptr;
-	_spriteSet = nullptr;
-	_comment = nullptr;
+	SAFE_DELETE_ARRAY(_spriteFilename);
+	SAFE_DELETE(_sprite);
+	SAFE_DELETE_ARRAY(_spriteSetFilename);
+	SAFE_DELETE(_spriteSet);
+	SAFE_DELETE_ARRAY(_comment);
 }
-
-
 
 TOKEN_DEF_START
 TOKEN_DEF(ACTION)
@@ -93,11 +88,11 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ACTION) {
-			_gameRef->LOG(0, "'ACTION' keyword expected.");
+			_game->LOG(0, "'ACTION' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -118,11 +113,10 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_SPRITESET: {
-			delete _spriteSet;
-			_spriteSet = new AdSpriteSet(_gameRef);
+			SAFE_DELETE(_spriteSet);
+			_spriteSet = new AdSpriteSet(_game);
 			if (!_spriteSet || DID_FAIL(_spriteSet->loadBuffer(params, false))) {
-				delete _spriteSet;
-				_spriteSet = nullptr;
+				SAFE_DELETE(_spriteSet);
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -141,7 +135,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_COMMENT:
-			if (_gameRef->_editorMode) {
+			if (_game->_editorMode) {
 				BaseUtils::setString(&_comment, params);
 			}
 			break;
@@ -155,12 +149,12 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ACTION definition");
+		_game->LOG(0, "Syntax error in ACTION definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading ACTION definition");
+		_game->LOG(0, "Error loading ACTION definition");
 		return STATUS_FAILED;
 	}
 
@@ -170,17 +164,17 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 		_playToEnd = false;
 	}
 
-	if (_preCache && _spriteFilename) {
-		delete _sprite;
-		_sprite = new BaseSprite(_gameRef);
+	if (_preCache && _spriteFilename && _spriteFilename[0]) {
+		SAFE_DELETE(_sprite);
+		_sprite = new BaseSprite(_game);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			return STATUS_FAILED;
 		}
 	}
 
-	if (_preCache && _spriteSetFilename) {
-		delete _spriteSet;
-		_spriteSet = new AdSpriteSet(_gameRef);
+	if (_preCache && _spriteSetFilename && _spriteSetFilename[0]) {
+		SAFE_DELETE(_spriteSet);
+		_spriteSet = new AdSpriteSet(_game);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			return STATUS_FAILED;
 		}
@@ -202,6 +196,11 @@ bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_spriteSet));
 	persistMgr->transferCharPtr(TMEMBER(_spriteSetFilename));
 
+	// initialise to default
+	if (!persistMgr->getIsSaving()) {
+		_preCache = false;
+	}
+
 	return STATUS_OK;
 }
 
@@ -209,17 +208,17 @@ bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ACTION {\n");
-	if (_comment) {
+	if (_comment && _comment[0]) {
 		buffer->putTextIndent(indent + 2, "COMMENT=\"%s\"\n", _comment);
 	}
 	buffer->putTextIndent(indent + 2, "START_TIME=%d\n", _startTime);
 	if (!_playToEnd) {
 		buffer->putTextIndent(indent + 2, "END_TIME=%d\n", _endTime);
 	}
-	if (_spriteFilename) {
+	if (_spriteFilename && _spriteFilename[0]) {
 		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _spriteFilename);
 	}
-	if (_spriteSetFilename) {
+	if (_spriteSetFilename && _spriteSetFilename[0]) {
 		buffer->putTextIndent(indent + 2, "SPRITESET_FILE=\"%s\"\n", _spriteSetFilename);
 	} else if (_spriteSet) {
 		_spriteSet->saveAsText(buffer, indent + 2);
@@ -238,20 +237,18 @@ bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::loadSprite() {
-	if (_spriteFilename && !_sprite) {
-		_sprite = new BaseSprite(_gameRef);
+	if (_spriteFilename && _spriteFilename[0] && !_sprite) {
+		_sprite = new BaseSprite(_game);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
-			delete _sprite;
-			_sprite = nullptr;
+			SAFE_DELETE(_sprite);
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;
 		}
-	} else if (_spriteSetFilename && !_spriteSet) {
-		_spriteSet = new AdSpriteSet(_gameRef);
+	} else if (_spriteSetFilename && _spriteSetFilename[0] && !_spriteSet) {
+		_spriteSet = new AdSpriteSet(_game);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
-			delete _spriteSet;
-			_spriteSet = nullptr;
+			SAFE_DELETE(_spriteSet);
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;
@@ -266,9 +263,9 @@ bool AdTalkNode::loadSprite() {
 bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 	if (time >= _startTime) {
 		if (_playToEnd) {
-			if ((_spriteFilename && _sprite == nullptr) || (_sprite && _sprite->isFinished() == false)) {
+			if ((_spriteFilename && _spriteFilename[0] && _sprite == nullptr) || (_sprite && _sprite->_finished == false)) {
 				return true;
-			} else if ((_spriteSetFilename && _spriteSet == nullptr) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->isFinished() == false)) {
+			} else if ((_spriteSetFilename && _spriteSetFilename[0] && _spriteSet == nullptr) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->_finished == false)) {
 				return true;
 			} else {
 				return false;

@@ -22,7 +22,7 @@
 #ifndef COMMON_LIST_INTERN_H
 #define COMMON_LIST_INTERN_H
 
-#include "common/scummsys.h"
+#include "common/util.h"
 
 namespace Common {
 
@@ -43,6 +43,9 @@ namespace ListInternal {
 		T _data;
 
 		Node(const T &x) : _data(x) {}
+		Node(T &&x) : _data(Common::move(x)) {}
+		template<class... TArgs>
+		Node(TArgs&&... args) : _data(Common::forward<TArgs>(args)...) {}
 	};
 
 	template<typename T> struct ConstIterator;

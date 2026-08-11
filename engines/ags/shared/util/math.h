@@ -28,7 +28,9 @@
 #ifndef AGS_SHARED_UTIL_MATH_H
 #define AGS_SHARED_UTIL_MATH_H
 
-#include "ags/lib/std/limits.h"
+#include "common/std/limits.h"
+
+#include "ags/lib/std.h"
 
 namespace AGS3 {
 

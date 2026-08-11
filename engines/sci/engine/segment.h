@@ -214,9 +214,14 @@ struct List {
 	 * The current level of recursion of kListEachElementDo for this list.
 	 */
 	int numRecursions;
-
-	List() : numRecursions(0), first(NULL_REG), last(NULL_REG) {}
 #endif
+
+	List() : first(NULL_REG), last(NULL_REG) {
+#ifdef ENABLE_SCI32
+		memset(nextNodes, 0, sizeof(nextNodes));
+		numRecursions = 0;
+#endif
+	}
 };
 
 struct Hunk {
@@ -234,15 +239,14 @@ struct SegmentObjTable : public SegmentObj {
 	};
 	enum { HEAPENTRY_INVALID = -1 };
 
-	int first_free; /**< Beginning of a singly linked list for entries */
-	int entries_used; /**< Statistical information */
+	int first_free = HEAPENTRY_INVALID; /**< Beginning of a singly linked list for entries */
+	int entries_used = 0; /**< Statistical information */
 
 	typedef Common::Array<Entry> ArrayType;
 	ArrayType _table;
 
 public:
 	SegmentObjTable(SegmentType type) : SegmentObj(type) {
-		initTable();
 	}
 
 	~SegmentObjTable() override {
@@ -251,12 +255,6 @@ public:
 				freeEntry(i);
 			}
 		}
-	}
-
-	void initTable() {
-		entries_used = 0;
-		first_free = HEAPENTRY_INVALID;
-		_table.clear();
 	}
 
 	int allocEntry() {

@@ -81,7 +81,7 @@ public:
 
 private:
 	byte _priority;
-	uint32 _version;
+	uint32 _version{};
 	Common::Array<BasePackage *> _packages;
 	typedef Common::HashMap<Common::Path, Common::ArchiveMemberPtr, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FilesMap;
 	FilesMap _files;

@@ -26,24 +26,18 @@
 // System analog stick range is -0x8000 to 0x8000
 #define ANALOG_RANGE 0x8000
 
-/* TODO: remove the following definition when libretro-common
-will be updated to include it */
-#ifndef RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY
-#define RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY 79
-#endif
-
-#define DEFAULT_SAMPLE_RATE     	48000
-#define DEFAULT_REFRESH_RATE    	60
-#define FRAMESKIP_MAX           	DEFAULT_REFRESH_RATE / 2
-#define DEFAULT_SOUNDFONT_FILENAME	"Roland_SC-55.sf2"
+#define DEFAULT_SAMPLE_RATE         48000
+#define DEFAULT_REFRESH_RATE        60
+#define FRAMESKIP_MAX               DEFAULT_REFRESH_RATE / 2
+#define DEFAULT_SOUNDFONT_FILENAME  "Roland_SC-55.sf2"
 
 // Audio status
 #define AUDIO_STATUS_MUTE               (1 << 0)
-#define AUDIO_STATUS_BUFFER_SUPPORT     (1 << 1)
-#define AUDIO_STATUS_BUFFER_ACTIVE      (1 << 2)
-#define AUDIO_STATUS_BUFFER_UNDERRUN    (1 << 3)
-#define AUDIO_STATUS_UPDATE_LATENCY     (1 << 4)
-#define AUDIO_STATUS_UPDATE_AV_INFO	    (1 << 5)
+#define AUDIO_STATUS_UPDATE_LATENCY     (1 << 1)
+#define AV_STATUS_UPDATE_AV_INFO        (1 << 2)
+#define AV_STATUS_RESET_PENDING         (1 << 3)
+#define AV_STATUS_UPDATE_GEOMETRY       (1 << 4)
+#define AV_STATUS_UPDATE_GUI            (1 << 5)
 
 // Video status
 #define VIDEO_GRAPHIC_MODE_REQUEST_SW     (1 << 0)
@@ -58,6 +52,8 @@ will be updated to include it */
 #define TEST_GAME_OK_ID_AUTODETECTED     2
 #define TEST_GAME_KO_NOT_FOUND           3
 #define TEST_GAME_KO_MULTIPLE_RESULTS    4
+
+#define MIDI_QUEUE_SIZE 2048  /* MUST be power of two */
 
 #ifndef F_OK
 #define F_OK 0

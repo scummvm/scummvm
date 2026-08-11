@@ -23,7 +23,7 @@
 // File not present??
 #include "common/scummsys.h"
 #include "ags/shared/core/platform.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/debugging/debug_manager.h"

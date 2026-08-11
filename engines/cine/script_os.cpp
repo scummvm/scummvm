@@ -635,11 +635,10 @@ int FWScript::o2_stopObjectScript() {
 	byte param = getNextByte();
 
 	debugC(5, kCineDebugScript, "Line: %d: stopObjectScript(%d)", _line, param);
-	ScriptList::iterator it = g_cine->_objectScripts.begin();
 
-	for (; it != g_cine->_objectScripts.end(); ++it) {
-		if ((*it)->_index == param) {
-			(*it)->_index = -1;
+	for (auto &script : g_cine->_objectScripts) {
+		if (script->_index == param) {
+			script->_index = -1;
 		}
 	}
 	return 0;

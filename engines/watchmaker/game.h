@@ -23,12 +23,12 @@
 #define WATCHMAKER_GAME_H
 
 #include "common/random.h"
-#include "watchmaker/fonts.h"
-#include "watchmaker/schedule.h"
 #include "watchmaker/3d/loader.h"
+#include "watchmaker/fonts.h"
 #include "watchmaker/game_options.h"
 #include "watchmaker/ll/ll_ffile.h"
 #include "watchmaker/saveload.h"
+#include "watchmaker/schedule.h"
 #include "watchmaker/work_dirs.h"
 
 namespace Watchmaker {
@@ -38,7 +38,7 @@ class Renderer;
 
 struct GameVars {
 private:
-	int32 CurRoom;
+	int32 CurRoom = 0;
 
 public:
 	void setCurRoomId(int32 room) {
@@ -51,11 +51,12 @@ public:
 
 class MeshModifiers;
 class RoomManager;
+class CameraMan;
 
 class WGame {
-	bool g_bReady, g_bActive;
+	bool g_bReady = false, g_bActive = false;
 	//bool g_bSkipActive = false;
-	const char *CharName[32];
+	const char *CharName[32] = {};
 	uint32 LoadChar;
 	MeshModifiers *_meshModifiers;
 
@@ -71,6 +72,7 @@ public:
 	Fonts _fonts;
 	MessageSystem _messageSystem;
 	RoomManager *_roomManager;
+	CameraMan *_cameraMan;
 	WGame();
 	~WGame();
 
@@ -80,13 +82,16 @@ public:
 
 	Common::SharedPtr<Common::SeekableReadStream> resolveFile(const char *path, bool noFastFile = false);
 
-	void configLoaderFlags() {
+	void configLoaderFlags(bool debugMode) {
 		// TODO: Add back some of the configurability from the argument parsing.
 		LoadChar = 3;
 		LoaderFlags = T3D_STATIC_SET0;
 		LoaderFlags |= T3D_OUTDOORLIGHTS;
 		LoaderFlags |= T3D_PRELOADBASE;
 		LoaderFlags |= T3D_STATIC_SET1;
+		if (debugMode) {
+			LoaderFlags |= T3D_DEBUGMODE;
+		}
 
 		if (!(LoaderFlags & T3D_DEBUGMODE)) {
 			LoadChar = 3;

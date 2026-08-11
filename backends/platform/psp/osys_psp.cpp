@@ -37,6 +37,7 @@
 #include "backends/platform/psp/powerman.h"
 #include "backends/platform/psp/rtc.h"
 
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/psp/timer.h"
 #include "graphics/surface.h"
@@ -63,8 +64,7 @@ void OSystem_PSP::initBackend() {
 	ConfMan.registerDefault("gfx_mode", "Fit to Screen");
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 3);
-	ConfMan.registerDefault("gm_device", "null");
-	
+
 	// Instantiate real time clock
 	PspRtc::instance();
 
@@ -89,6 +89,7 @@ void OSystem_PSP::initBackend() {
 	_imageViewer.setInputHandler(&_inputHandler);
 	_imageViewer.setDisplayManager(&_displayManager);
 
+	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager(PSP_DEFAULT_SAVE_PATH);
 
 	_timerManager = new PspTimerManager();
@@ -98,7 +99,7 @@ void OSystem_PSP::initBackend() {
 
 	setupMixer();
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 // Let's us know an engine
@@ -275,11 +276,11 @@ void OSystem_PSP::copyRectToOverlay(const void *buf, int pitch, int x, int y, in
 	_overlay.copyFromRect(buf, pitch, x, y, w, h);
 }
 
-int16 OSystem_PSP::getOverlayWidth() {
+int16 OSystem_PSP::getOverlayWidth() const {
 	return (int16)_overlay.getWidth();
 }
 
-int16 OSystem_PSP::getOverlayHeight() {
+int16 OSystem_PSP::getOverlayHeight() const {
 	return (int16)_overlay.getHeight();
 }
 
@@ -306,7 +307,7 @@ void OSystem_PSP::warpMouse(int x, int y) {
 	_cursor.setXY(x, y);
 }
 
-void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	DEBUG_ENTER_FUNC();
 
 	if (mask)
@@ -315,7 +316,7 @@ void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, 
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
 
-	PSP_DEBUG_PRINT("pbuf[%p], w[%u], h[%u], hotspot:X[%d], Y[%d], keycolor[%d], scale[%d], pformat[%p]\n", buf, w, h, hotspotX, hotspotY, keycolor, !dontScale, format);
+	PSP_DEBUG_PRINT("pbuf[%p], w[%u], h[%u], hotspot:X[%d], Y[%d], keycolor[%d], pformat[%p], scaleX[%f], scaleY[%f]\n", buf, w, h, hotspotX, hotspotY, keycolor, format, fracToDouble(scaleX), fracToDouble(scaleY));
 	if (format) {
 		PSP_DEBUG_PRINT("format: bpp[%d], rLoss[%d], gLoss[%d], bLoss[%d], aLoss[%d], rShift[%d], gShift[%d], bShift[%d], aShift[%d]\n", format->bytesPerPixel, format->rLoss, format->gLoss, format->bLoss, format->aLoss, format->rShift, format->gShift, format->bShift, format->aShift);
 	}

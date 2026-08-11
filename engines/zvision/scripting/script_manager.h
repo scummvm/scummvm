@@ -22,13 +22,12 @@
 #ifndef ZVISION_SCRIPT_MANAGER_H
 #define ZVISION_SCRIPT_MANAGER_H
 
-#include "zvision/scripting/puzzle.h"
-#include "zvision/scripting/control.h"
-#include "zvision/scripting/scripting_effect.h"
-
+#include "common/events.h"
 #include "common/hashmap.h"
 #include "common/queue.h"
-#include "common/events.h"
+#include "zvision/scripting/control.h"
+#include "zvision/scripting/puzzle.h"
+#include "zvision/scripting/scripting_effect.h"
 
 namespace Common {
 class String;
@@ -74,17 +73,17 @@ enum StateKey {
 	StateKey_VenusEnable = 58,
 	StateKey_HighQuality = 59,
 	StateKey_VideoLineSkip = 65,
-	StateKey_Platform = 66,
+	StateKey_Platform = 66,	// 0 = Windows, !0 = DOS
 	StateKey_InstallLevel = 67,
 	StateKey_CountryCode = 68,
-	StateKey_CPU = 69,
+	StateKey_CPU = 69,	// !1 = 486, 1 = i586/Pentium
 	StateKey_MovieCursor = 70,
 	StateKey_NoTurnAnim = 71,
-	StateKey_WIN958 = 72,
+	StateKey_WIN958 = 72,	// 0 = high system RAM, !0 = low system RAM (<8MB)
 	StateKey_ShowErrorDlg = 73,
 	StateKey_DebugCheats = 74,
 	StateKey_JapanFonts = 75,
-	StateKey_ExecScopeStyle = 76,
+	StateKey_ExecScopeStyle = 76,	// 0 = ZGI, 1 = Nemesis
 	StateKey_Brightness = 77,
 	StateKey_MPEGMovies = 78,
 	StateKey_EF9_R = 91,
@@ -183,23 +182,31 @@ private:
 
 	EventList _controlEvents;
 
-	ScriptScope universe;
-	ScriptScope world;
-	ScriptScope room;
-	ScriptScope nodeview;
+	ScriptScope _universe;
+	ScriptScope _world;
+	ScriptScope _room;
+	ScriptScope _nodeview;
 
 	/** Holds the currently active timers, musics, other */
 	SideFXList _activeSideFx;
 
 	Location _currentLocation;
 	Location _nextLocation;
-	int _changeLocationDelayCycles;
+	const uint8 _changeLocationExtraCycles = 16;
 
 	uint32 _currentlyFocusedControl;
 
 public:
-	void initialize();
-	void update(uint deltaTimeMillis);
+	enum TransitionLevel {
+		NONE,
+		VIEW,
+		NODE,
+		ROOM,
+		WORLD
+	};
+
+	void initialize(bool restarted = false);
+	void process(uint deltaTimeMillis);
 	void queuePuzzles(uint32 key);
 
 	int getStateValue(uint32 key);
@@ -268,6 +275,8 @@ public:
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 	void changeLocation(const Location &_newLocation);
 
+	bool changingLocation() const;
+
 	void serialize(Common::WriteStream *stream);
 	void deserialize(Common::SeekableReadStream *stream);
 
@@ -289,9 +298,20 @@ private:
 	void addPuzzlesToReferenceTable(ScriptScope &scope);
 	void updateNodes(uint deltaTimeMillis);
 	void updateControls(uint deltaTimeMillis);
+	/**
+	 * Check a puzzle's criteria; execute its actions and set its state to 1 if these critera are met.
+	 * Will not check or execute if:
+	 *  Puzzle is disabled
+	 *  Puzzle has already triggered and has a state value of 1
+	 *  procCount has reached zero AND do_me_now is not set
+	 *
+	 * @param puzzle    puzzle to check
+	 * @param counter   procCount from this puzzle's scope container
+	 * Returns true if OK to keep calling this function this frame; false if we should break and start next frame (only used by RestoreGame action)
+	 */
 	bool checkPuzzleCriteria(Puzzle *puzzle, uint counter);
-	void cleanStateTable();
-	void cleanScriptScope(ScriptScope &scope);
+	void cleanStateTable();	// Set all global state values to zero
+	void cleanScriptScope(ScriptScope &scope);	// Resets everything in this scope, all lists empty, procCount to zero.
 	bool execScope(ScriptScope &scope);
 
 	/** Perform change location */
@@ -345,9 +365,10 @@ private:
 	 *
 	 * @param stream        Scr file stream
 	 * @param actionList    The list where the results will be added
+	 * @param key           Puzzle key (for workarounds)
 	 * @return              Created Results object
 	 */
-	void parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList) const;
+	void parseResults(Common::SeekableReadStream &stream, Common::List<ResultAction *> &actionList, uint32 key) const;
 
 	/**
 	 * Helper method for parsePuzzle. Parses the stream into a bitwise or of the StateFlags enum
@@ -366,13 +387,23 @@ private:
 	Control *parseControl(Common::String &line, Common::SeekableReadStream &stream);
 };
 
+/**
+ * Instances of this polymorphic class function either as a store of a single value, or as a "slot" that returns a StateValue
+ *
+ * @param line      The line initially read
+ * @param slotValue A text string containing a number, which may be enclosed within square braces.
+ *  If square braces are not present, getValue() will return slotValue.
+*  If square braces are present, getValue() will return the StateValue to which slotValue is the key.
+*
+* Once instantiated, the value and nature of slotValue may not be changed.
+ */
 class ValueSlot {
 public:
 	ValueSlot(ScriptManager *scriptManager, const char *slotValue);
 	int16 getValue();
 private:
-	int16 value;
-	bool slot;
+	int16 _value;
+	bool _slot;
 	ScriptManager *_scriptManager;
 };
 

@@ -247,29 +247,30 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	// using the optimized paths; for now, we pre-stretch to a temporary surface
 	Graphics::ManagedSurface cropped(const_cast<BITMAP *>(srcBitmap)->getSurface(), srcRect);
 	// We need to use Surface::scale, since ManagedSurface _always_ respects the source alpha, and thus skips transparent pixels
-	Graphics::ManagedSurface stretched(cropped.rawSurface().scale(dstRect.width(), dstRect.height()), DisposeAfterUse::YES);
-	BITMAP temp(&stretched);
-	auto optimizedArgs = DrawInnerArgs(this, &temp, stretched.getBounds(), dstRect, skipTrans, srcAlpha, false, false, -1, -1, -1, false);
+	Graphics::ManagedSurface *stretched = cropped.scale(dstRect.width(), dstRect.height());
+	BITMAP temp(stretched);
+	auto optimizedArgs = DrawInnerArgs(this, &temp, stretched->getBounds(), dstRect, skipTrans, srcAlpha, false, false, -1, -1, -1, false);
 
 #ifdef SCUMMVM_NEON
 	if (_G(simd_flags) & AGS3::Globals::SIMD_NEON) {
 		drawNEON<false>(optimizedArgs);
-		return;
-	}
+	} else
 #endif
 #ifdef SCUMMVM_AVX2
 	if (_G(simd_flags) & AGS3::Globals::SIMD_AVX2) {
 		drawAVX2<false>(optimizedArgs);
-		return;
-	}
+	} else
 #endif
 #ifdef SCUMMVM_SSE2
 	if (_G(simd_flags) & AGS3::Globals::SIMD_SSE2) {
 		drawSSE2<false>(optimizedArgs);
-		return;
-	}
+	} else
 #endif
-	drawGeneric<true>(optimizedArgs);
+	{
+		drawGeneric<true>(optimizedArgs);
+	}
+
+	delete stretched;
 }
 void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool useTint, byte *destVal) const {
 	switch (_G(_blender_mode)) {

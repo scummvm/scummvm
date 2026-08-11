@@ -27,6 +27,7 @@
 
 #include <Foundation/NSArray.h>
 #include <Foundation/NSBundle.h>
+#include <Foundation/NSDictionary.h>
 #include <Foundation/NSPathUtilities.h>
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CFString.h>
@@ -38,6 +39,17 @@ Common::String getDesktopPathMacOSX() {
 	// However it is only available in OS X 10.6+. So use NSSearchPathForDirectoriesInDomains instead (available since OS X 10.0)
 	// [NSArray firstObject] is also only available in OS X 10.6+. So we need to use [NSArray count] and [NSArray objectAtIndex:]
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
+	if ([paths count] == 0)
+		return Common::String();
+	NSString *path = [paths objectAtIndex:0];
+	if (path == nil)
+		return Common::String();
+	return Common::String([path fileSystemRepresentation]);
+}
+
+Common::String getDocumentsPathMacOSX() {
+	// See comment in getDesktopPathMacOSX()
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	if ([paths count] == 0)
 		return Common::String();
 	NSString *path = [paths objectAtIndex:0];

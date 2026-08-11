@@ -28,8 +28,8 @@
 #ifndef WINTERMUTE_BASE_RENDERER_H
 #define WINTERMUTE_BASE_RENDERER_H
 
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/coll_templ.h"
 
 #include "common/rect.h"
 #include "common/array.h"
@@ -50,24 +50,22 @@ class Camera3D;
  * this interface is mainly intended to wrap away any differencies between
  * software-rendering/hardware-rendering.
  */
-class BaseRenderer: public BaseClass {
+class BaseRenderer : public BaseClass {
 public:
 	int _realWidth;
 	int _realHeight;
 	int _drawOffsetX;
 	int _drawOffsetY;
 
-	virtual void dumpData(const char *filename) {}
+	void dumpData(const char *filename) {};
 	/**
 	 * Take a screenshot of the current screenstate
 	 *
 	 * @return a BaseImage containing the current screen-buffer.
 	 */
-	virtual BaseImage *takeScreenshot() = 0;
-	virtual bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0);
+	virtual BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) = 0;
 	virtual bool setViewport(int left, int top, int right, int bottom);
-	virtual bool setViewport(Rect32 *rect);
-	virtual Rect32 getViewPort() = 0;
+	virtual bool setViewport(Common::Rect32 *rect);
 	virtual bool setScreenViewport();
 	virtual void setWindowed(bool windowed) = 0;
 
@@ -77,7 +75,7 @@ public:
 	 *
 	 * @param alpha amount to fade by (alpha value of black)
 	 */
-	virtual void fade(uint16 alpha) = 0;
+	virtual bool fade(uint16 alpha) = 0;
 	/**
 	 * Fade a portion of the screen to a specific color
 	 *
@@ -87,10 +85,11 @@ public:
 	 * @param a the alpha component to fade too.
 	 * @param rect the portion of the screen to fade (if nullptr, the entire screen will be faded).
 	 */
-	virtual void fadeToColor(byte r, byte g, byte b, byte a) = 0;
+	virtual bool fadeToColor(byte r, byte g, byte b, byte a) = 0;
 
-	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); // Unused outside indicator-display
-	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); // Unused outside indicator-display
+	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
+	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1);
+	virtual bool fillRect(int x, int y, int w, int h, uint32 color); // Unused outside indicator-display
 	BaseRenderer(BaseGame *inGame = nullptr);
 	~BaseRenderer() override;
 	virtual bool setProjection() {
@@ -99,13 +98,9 @@ public:
 
 	virtual bool windowedBlt();
 	/**
-	 * Fill a portion of the screen with a specified color
-	 *
-	 * @param r the red component to fill with.
-	 * @param g the green component to fill with.
-	 * @param b the blue component to fill with.
+	 * Clear the screen
 	 */
-	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) = 0;
+	virtual bool clear() = 0;
 	virtual void onWindowChange();
 	virtual bool initRenderer(int width, int height, bool windowed);
 	/**
@@ -117,16 +112,15 @@ public:
 	virtual bool flip() = 0;
 	/**
 	 * Special flip for the indicator drawn during save/load
-	 * essentially, just copies the region defined by the _indicator-variables.
+	 * essentially, just copies the region defined by the indicator rectangle.
 	 */
-	virtual bool indicatorFlip() = 0;
+	virtual bool indicatorFlip(int32 x, int32 y, int32 width, int32 height) = 0;
 	virtual bool forcedFlip() = 0;
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
 #ifdef ENABLE_WME3D
 	virtual bool setup3D(Camera3D *camera = nullptr, bool force = false);
 #endif
-	virtual bool setupLines();
 
 	/**
 	 * Get the name of the current renderer
@@ -151,7 +145,7 @@ public:
 	/**
 	 * Create a Surface fit for use with the renderer.
 	 * As diverse implementations of BaseRenderer might have different solutions for storing surfaces
-	 * this allows for a common interface for creating surface-handles. (Mostly usefull to ease future
+	 * this allows for a common interface for creating surface-handles. (Mostly useful to ease future
 	 * implementation of hw-accelerated rendering, or readding 3D-support at some point).
 	 *
 	 * @return a surface that can be used with this renderer
@@ -170,77 +164,41 @@ public:
 	virtual bool endSpriteBatch() {
 		return STATUS_OK;
 	};
-	bool pointInViewport(Point32 *P);
+	bool pointInViewport(Common::Point32 *P);
+	uint32 _forceAlphaColor;
+	uint32 _window;
+	uint32 _clipperWindow;
 	bool _active;
 	bool _ready;
 
 	bool isReady() const { return _ready; }
 	bool isWindowed() const { return _windowed; }
 	int32 getBPP() const { return _bPP; }
-
-	uint32 _window;
-	uint32 _forceAlphaColor;
-
-	void addRectToList(BaseActiveRect *rect);
-
-	// Indicator & Save/Load-related functions
-	void initIndicator();
-	void setIndicatorVal(int value);
-	void setIndicator(int width, int height, int x, int y, uint32 color);
-	void persistSaveLoadImages(BasePersistenceManager *persistMgr);
-	void initSaveLoad(bool isSaving, bool quickSave = false);
-	virtual void endSaveLoad();
-	void setLoadingScreen(const char *filename, int x, int y);
-	void setSaveImage(const char *filename, int x, int y);
-
-	bool displayIndicator();
-
 	int32 getWidth() const { return _width; }
 	int32 getHeight() const { return _height; }
-protected:
+
+	virtual void endSaveLoad() {};
+
+	bool _windowed;
+
+	Common::Rect32 _windowRect;
+	Common::Rect32 _viewportRect;
+	Common::Rect32 _screenRect;
+	Common::Rect32 _monitorRect;
+	int32 _bPP;
 	int32 _height;
 	int32 _width;
 
-	bool _windowed;
-	int32 _bPP;
-
-	Common::String _loadImageName;
-	Common::String _saveImageName;
-	int32 _saveImageX;
-	int32 _saveImageY;
-	int32 _loadImageX;
-	int32 _loadImageY;
-	BaseSurface *_saveLoadImage;
-	bool _hasDrawnSaveLoadImage;
-
-	int32 _indicatorWidthDrawn;
-	uint32 _indicatorColor;
-	int32 _indicatorX;
-	int32 _indicatorY;
-	int32 _indicatorWidth;
-	int32 _indicatorHeight;
-	bool _loadInProgress;
-	bool _indicatorDisplay;
-	int32 _indicatorProgress;
-
-	uint32 _clipperWindow;
-
-	Rect32 _windowRect;
-	Rect32 _viewportRect;
-	Rect32 _screenRect;
-	Rect32 _monitorRect;
-private:
-	Common::Array<BaseActiveRect *> _rectList;
-	bool displaySaveloadImage();
-	bool displaySaveloadLines();
+	BaseArray<BaseActiveRect *> _rectList;
 };
 
-BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
+BaseRenderer *makeOSystemRenderer(BaseGame *inGame);
 #ifdef ENABLE_WME3D
 class BaseRenderer3D;
 
 BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame);
 BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame);
+BaseRenderer3D *makeTinyGL3DRenderer(BaseGame *inGame);
 #endif
 
 } // End of namespace Wintermute

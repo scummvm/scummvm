@@ -369,7 +369,9 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene300::signal() {
-	switch (_sceneMode) {
+	int sceneMode = _sceneMode;
+	++_sceneMode;
+	switch (sceneMode) {
 	case 300:
 		BF_GLOBALS._sound1.fadeSound(33);
 		BF_GLOBALS.clearFlag(onBike);
@@ -2371,6 +2373,13 @@ void Scene342::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
+	// seagull
+	_object2.postInit();
+	_object2.setVisage(340);
+	_object2.setStrip(2);
+	_object2.animate(ANIM_MODE_2, NULL);
+	_object2._numFrames = 4;
+	_object2._moveDiff = Common::Point(2, 2);
 	switch (BF_GLOBALS._randomSource.getRandomNumber(2)) {
 	case 0:
 		_object2.setPosition(Common::Point(46, 59));
@@ -3705,7 +3714,7 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene355::signal() {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 12:
@@ -3840,7 +3849,7 @@ void Scene355::signal() {
 	case 9981:
 		_sceneMode = 9994;
 		_green.animate(ANIM_MODE_5, NULL);
-		addFader((const byte *)&black, 10, this);
+		addFader(black, 10, this);
 		break;
 	case 9982:
 		_sceneMode = 9983;
@@ -4629,6 +4638,28 @@ void Scene360::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
+void Scene370::SpeakerLaura370::setText(const Common::String& msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(345);
+	_object1.setStrip2(5);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 38,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	_object2.postInit();
+	_object2.setVisage(345);
+	_object2.setStrip2(3);
+	_object2.fixPriority(255);
+
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 38,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
 bool Scene370::GreensGun::startAction(CursorType action, Event &event) {
 	Scene370 *scene = (Scene370 *)BF_GLOBALS._sceneManager._scene;
 
@@ -5262,10 +5293,14 @@ void Scene385::Action1::signal() {
 		case 3857:
 		case 3863:
 		case 3866: {
+			// NOTE: The 3866 seems unused (Hayley says "You know where to find me if you need me")
 			ADD_PLAYER_MOVER(187, 144);
 			break;
 		}
 		default: {
+			// Used in potentially untriggered 3868 (_talkAction value) case.
+			// Jake and Hayley greeting each other using their first names,
+			// but Jake walks up to Jim's location - a  bug?
 			ADD_PLAYER_MOVER(231, 158);
 			break;
 		}
@@ -5279,7 +5314,8 @@ void Scene385::Action1::signal() {
 		scene->_stripManager.start(scene->_talkAction, this);
 		break;
 	case 3:
-		if (scene->_talkAction)
+		// Hayley only points to her left (at Jim) when asked about the blueprints
+		if (scene->_talkAction == 3863)
 			scene->_dezi.animate(ANIM_MODE_5, NULL);
 		BF_GLOBALS._player.enableControl();
 		remove();
@@ -5294,6 +5330,7 @@ void Scene385::Action2::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
+		BF_GLOBALS._player.disableControl();
 		ADD_PLAYER_MOVER(231, 158);
 		break;
 	}
@@ -5363,7 +5400,9 @@ bool Scene385::Jim::startAction(CursorType action, Event &event) {
 				break;
 			default:
 				BF_GLOBALS._deziTopic = 3;
-				scene->_talkAction = 3868;
+				// Is this ever triggered? It would require a day number > 4
+				// In 3862 (more banter talk) Jake asks "How's life treating you today, Jim?"
+				scene->_talkAction = 3862;
 				break;
 			}
 
@@ -5395,7 +5434,6 @@ bool Scene385::Dezi::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._deziTopic == 3) {
 			scene->_talkAction = 3857;
 		} else {
-			BF_GLOBALS._deziTopic = 3;
 
 			switch (BF_GLOBALS._dayNumber) {
 			case 1:
@@ -5427,6 +5465,8 @@ bool Scene385::Dezi::startAction(CursorType action, Event &event) {
 				scene->_talkAction = 3856;
 				break;
 			default:
+				// Is this ever triggered? It would require a day number > 4
+				// In 3868 Jake and Hayley are greeting each other using their first names.
 				BF_GLOBALS._deziTopic = 3;
 				scene->_talkAction = 3868;
 				break;
@@ -5689,12 +5729,13 @@ bool Scene390::Green::startAction(CursorType action, Event &event) {
 
 bool Scene390::Object2::startAction(CursorType action, Event &event) {
 	Scene390 *scene = (Scene390 *)BF_GLOBALS._sceneManager._scene;
-
+	// Larry at the Jail
 	switch (action) {
 	case CURSOR_TALK:
-		if (!_flag)
+		if (_flag)
 			break;
 
+		BF_GLOBALS._player.disableControl();
 		if (!BF_GLOBALS.getFlag(onDuty)) {
 			scene->_sceneMode = 3917;
 		} else if (BF_GLOBALS.getFlag(fTalkedToBarry) && !BF_GLOBALS.getFlag(fTalkedToLarry)) {

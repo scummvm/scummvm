@@ -29,12 +29,43 @@ namespace Riddle {
 namespace Rooms {
 
 class Room408 : public Room {
+private:
+	int _val1 = 0;
+	int _val3 = 0;
+	int _ripleyTrigger = -1;
+	int _wolfTrigger = -1;
+	int _currentNode = 0;
+	int _ripleyMode = 0;
+	int _ripleyShould = 0;
+	int _wolfMode = 0;
+	int _wolfShould = 0;
+	machine *_exit = nullptr;
+	int _ripExits = 0;
+	machine *_edger = nullptr;
+	machine *_plank = nullptr;
+	int _wolf = 0;
+	machine *_wolfie = nullptr;
+	machine *_wolfWalker = nullptr;
+	int _ripLowReacher = 0;
+	int _ripHandsBehindBack = 0;
+	machine *_ripley = nullptr;
+	machine *_ripleyShadow = nullptr;
+	int _ripShadowSeries = 0;
+	int _ripTrekTwoHandTalk = 0;
+
+	void conv408a();
+	bool takePlank();
+	bool takeEdger();
+
 public:
 	Room408() : Room() {}
 	~Room408() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
+	void syncGame(Common::Serializer &s) override;
 };
 
 } // namespace Rooms

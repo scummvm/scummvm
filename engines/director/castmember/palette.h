@@ -30,7 +30,11 @@ class PaletteCastMember : public CastMember {
 public:
 	PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	PaletteCastMember(Cast *cast, uint16 castId, PaletteCastMember &source);
+	PaletteCastMember(Cast *cast, uint16 castId, byte *paletteData, PaletteV4 *palette);
 	~PaletteCastMember();
+
+	CastMember *duplicate(Cast *cast, uint16 castId) override;
+
 	CastMemberID getPaletteId();
 	void activatePalette();
 
@@ -38,6 +42,13 @@ public:
 
 	void load() override;
 	void unload() override;
+
+	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	bool canWriteCastData() override;
+
+	void writePaletteData(Common::SeekableWriteStream *writeStream, uint32 offset);
+	uint32 getPaletteDataSize();
 
 	PaletteV4 *_palette;
 };

@@ -65,7 +65,8 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene50::process(Event &event) {
-	if ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType != EVENT_KEYPRESS) && (event.eventType == EVENT_UNK27)) {
+	if ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType == EVENT_CUSTOM_ACTIONSTART)
+			&& (event.eventType != EVENT_KEYPRESS) && (event.eventType == EVENT_UNK27)) {
 		event.handled = true;
 		g_globals->_events.setCursor(CURSOR_ARROW);
 		HelpDialog::show();
@@ -1477,7 +1478,7 @@ void Scene160::remove() {
 }
 
 void Scene160::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 		event.handled = true;
 		HelpDialog::show();
 	}
@@ -1911,7 +1912,7 @@ void Scene180::setSceneDelay(int v) {
 }
 
 void Scene180::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 		event.handled = true;
 		if (_helpEnabled) {
 			if (R2_GLOBALS._scenePalette._listeners.size() == 0)
@@ -2408,7 +2409,7 @@ void Scene205::remove() {
 }
 
 void Scene205::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 		event.handled = true;
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._sceneManager._previousScene);
 	} else {
@@ -2584,7 +2585,7 @@ void Scene205Demo::remove() {
 }
 
 void Scene205Demo::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+	if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 		event.handled = true;
 		leaveScene();
 	} else {

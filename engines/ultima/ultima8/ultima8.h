@@ -23,16 +23,14 @@
 #ifndef ULTIMA8_ULTIMA8
 #define ULTIMA8_ULTIMA8
 
-#include "common/events.h"
 #include "common/random.h"
 #include "common/stream.h"
 #include "graphics/screen.h"
-#include "ultima/shared/std/containers.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/common_types.h"
+#include "ultima/detection.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/gfx/render_surface.h"
-#include "ultima/detection.h"
+#include "ultima/ultima8/metaengine.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -56,7 +54,6 @@ class AvatarMoverProcess;
 class Texture;
 class AudioMixer;
 class ConfigFileManager;
-struct GameInfo;
 
 #define GAME_IS_U8 (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8)
 #define GAME_IS_REMORSE (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REMORSE)
@@ -103,7 +100,7 @@ private:
 	InverterGump *_inverterGump;
 	AvatarMoverProcess *_avatarMoverProcess;
 
-	// Various dependancy flags
+	// Various dependency flags
 	// Timing stuff
 	int32 _lerpFactor;       //!< Interpolation factor for this frame (0-256)
 	bool _inBetweenFrame;    //!< Set true if we are doing an inbetween frame
@@ -119,8 +116,9 @@ private:
 
 	bool _avatarInStasis;    //!< If this is set to true, Avatar can't move,
 	//!< nor can Avatar start more usecode
-	bool _paintEditorItems;  //!< If true, paint items with the SI_EDITOR flag
-	bool _showTouching;          //!< If true, highlight items touching Avatar
+	bool _showEditorItems;   //!< If true, paint items with the SI_EDITOR flag
+	bool _showTouching;      //!< If true, highlight items touching Avatar
+	bool _hackMoverEnabled;  //!< If true, any item can be moved
 	int32 _timeOffset;
 	bool _hasCheated;
 	bool _cheatsEnabled;
@@ -181,7 +179,7 @@ public:
 	bool setupGame();
 	Common::Error startupGame();
 
-	void changeVideoMode(int width, int height);
+	Common::Error changeVideoMode(int width, int height);
 
 	//! Get current GameInfo struct
 	const GameInfo *getGameInfo() const {
@@ -196,6 +194,9 @@ public:
 
 	Common::Error runGame();
 	virtual void handleEvent(const Common::Event &event);
+
+	void handleActionDown(KeybindingAction action);
+	void handleActionUp(KeybindingAction action);
 
 	void paint();
 
@@ -232,20 +233,25 @@ public:
 	bool isAvatarInStasis() const {
 		return _avatarInStasis;
 	}
-	void toggleAvatarInStasis() {
-		_avatarInStasis = !_avatarInStasis;
+	bool isAvatarControlled() const;
+	bool isShowEditorItems() const {
+		return _showEditorItems;
 	}
-	bool isPaintEditorItems() const {
-		return _paintEditorItems;
-	}
-	void togglePaintEditorItems() {
-		_paintEditorItems = !_paintEditorItems;
+	void setShowEditorItems(bool flag) {
+		_showEditorItems = flag;
 	}
 	bool isShowTouchingItems() const {
 		return _showTouching;
 	}
-	void toggleShowTouchingItems() {
-		_showTouching = !_showTouching;
+	void setShowTouchingItems(bool flag) {
+		_showTouching = flag;
+	}
+
+	bool isHackMoverEnabled() const {
+		return _hackMoverEnabled;
+	}
+	void setHackMoverEnabled(bool flag) {
+		_hackMoverEnabled = flag;
 	}
 
 	bool isCrusaderTeleporting() const {

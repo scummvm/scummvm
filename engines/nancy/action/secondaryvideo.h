@@ -22,7 +22,9 @@
 #ifndef NANCY_ACTION_SECONDARYVIDEO_H
 #define NANCY_ACTION_SECONDARYVIDEO_H
 
-#include "engines/nancy/video.h"
+#include "engines/nancy/cursor.h"
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/movieplayer.h"
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
@@ -66,16 +68,36 @@ public:
 	uint16 _onHoverEndLastFrame = 0;
 	SceneChangeDescription _sceneChange;
 
+	// Nancy 10+: push current scene before the sceneChange target.
+	bool _pushSceneOnTrigger = false;
+
+	// Nancy 10+: set an event flag when playback reaches frameID.
+	struct FlagAtFrame {
+		int16 frameID;
+		FlagDescription flagDesc;
+	};
+	Common::Array<FlagAtFrame> _frameFlags;
+
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
-protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return "PlaySecondaryVideo"; }
 	bool isViewportRelative() const override { return true; }
+	// Ambient character animations stay on screen across a NO_ART_SCENE change
+	// (e.g. while a phone-call conversation is overlaid in front of them).
+	bool survivesSceneChange(bool nextSceneIsNoArt) const override { return nextSceneIsNoArt; }
+
+	CursorManager::CursorType getHoverCursor() const override {
+		return g_nancy->getGameType() >= kGameTypeNancy10 ? CursorManager::kHotspotTalk : CursorManager::kHotspot;
+	}
+
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlaySecondaryVideo"; }
 
 	Graphics::ManagedSurface _fullFrame;
 	HoverState _hoverState = kNoHover;
-	AVFDecoder _decoder;
+	MoviePlayer _decoder;
 	int _currentViewportFrame = -1;
 	int _currentViewportScroll = -1;
 	bool _isInFrame = false;

@@ -83,7 +83,7 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 
 	_vm->_noDirectionSense = true;
 	Common::String msg = Common::String::format("\x3""l\t000\x4%03d\x3""c", maxWidth);
-	_window->writeString(msg);
+	_window->writeString(msg, false);
 	_window->update();
 
 	while (!_vm->shouldExit()) {
@@ -135,11 +135,14 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 
 		if (refresh) {
 			msg = Common::String::format("\x3""l\t000\x4%03d\x3""c%s", maxWidth, line.c_str());
-			_window->writeString(msg);
+			_window->writeString(msg, false);
 			_window->update();
 		}
 	}
 
+#ifdef USE_TTS
+	_vm->sayText(line, Common::TextToSpeechManager::INTERRUPT);
+#endif
 	_vm->_noDirectionSense = false;
 	return line.size();
 }
@@ -163,7 +166,7 @@ Common::KeyState Input::waitForKey(const Common::String &msg) {
 
 		if (flag)
 			intf.draw3d(false);
-		_window->writeString(msg);
+		_window->writeString(msg, false);
 		animateCursor();
 		_window->update();
 
@@ -175,7 +178,7 @@ Common::KeyState Input::waitForKey(const Common::String &msg) {
 			break;
 	}
 
-	_window->writeString("");
+	_window->writeString("", false);
 	_window->update();
 
 	intf._tillMove = oldTillMove;

@@ -31,10 +31,6 @@ namespace M4 {
 bool player_been_init(int16 num_scenes) {
 	assert(num_scenes == TOTAL_SCENES);
 	_G(scene_list).table = (int16 *)mem_alloc(sizeof(int16) * num_scenes, "been_scenes");
-
-	if (!_G(scene_list).table)
-		error_show(FL, 'OOM!', "player_been_init");
-
 	_G(scene_list).total_scenes = num_scenes;
 	player_reset_been();
 
@@ -81,20 +77,18 @@ bool player_enters_scene(int16 scene_num) {
 	++_G(scene_list).tail;
 
 	if (_G(scene_list).tail > _G(scene_list).total_scenes)
-		error_show(FL, 'SLTS');
+		error_show(FL, "player_enters_scene()");
 
 	return false;
 }
 
 void player_forgets_scene(int16 scene_num) {
-	int i, j;
-
 	// Check the list
-	for (i = 0; i < _G(scene_list).tail; i++) {
+	for (int i = 0; i < _G(scene_list).tail; i++) {
 		// Found a match
 		if (_G(scene_list).table[i] == scene_num) {
 			// Close the table
-			for (j = i; j < _G(scene_list).tail; j++) {
+			for (int j = i; j < _G(scene_list).tail; j++) {
 				_G(scene_list).table[j] = _G(scene_list).table[j + 1];
 			}
 

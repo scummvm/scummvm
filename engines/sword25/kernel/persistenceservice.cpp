@@ -180,9 +180,13 @@ struct PersistenceService::Impl {
 	}
 };
 
+PersistenceService *persInstance = nullptr;
+
 PersistenceService &PersistenceService::getInstance() {
-	static PersistenceService instance;
-	return instance;
+	if (!persInstance)
+		persInstance = new PersistenceService;
+
+	return *persInstance;
 }
 
 PersistenceService::PersistenceService() : _impl(new Impl) {
@@ -190,6 +194,9 @@ PersistenceService::PersistenceService() : _impl(new Impl) {
 
 PersistenceService::~PersistenceService() {
 	delete _impl;
+
+	delete persInstance;
+	persInstance = nullptr;
 }
 
 void PersistenceService::reloadSlots() {

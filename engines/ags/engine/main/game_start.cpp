@@ -84,18 +84,21 @@ void start_game() {
 	_GP(mouse).SetPosition(Point(160, 100));
 	newmusic(0);
 
-	_G(our_eip) = -42;
+	set_our_eip(-42);
 
 	// skip ticks to account for initialisation or a restored game.
 	skipMissedTicks();
 
 	RunScriptFunctionInModules("game_start");
 
-	_G(our_eip) = -43;
+	set_our_eip(-43);
 
-	SetRestartPoint();
+	// Only auto-set first restart point in < 3.6.1 games,
+	// since 3.6.1+ users are suggested to set one manually in script.
+	if (_G(loaded_game_file_version) < kGameVersion_361_10)
+		SetRestartPoint();
 
-	_G(our_eip) = -3;
+	set_our_eip(-3);
 
 	if (_G(displayed_room) < 0) {
 		current_fade_out_effect();
@@ -110,7 +113,6 @@ void initialize_start_and_play_game(int override_start_room, int loadSave) {
 
 	set_cursor_mode(MODE_WALK);
 
-	::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
 	if (override_start_room)
 		_G(playerchar)->room = override_start_room;
 

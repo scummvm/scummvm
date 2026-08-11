@@ -19,9 +19,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/common_types.h"
-
 #include "ultima/ultima8/usecode/usecode.h"
+
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {

@@ -1799,18 +1799,20 @@ void Scene830::remove() {
 }
 
 void Scene830::signal() {
-	static uint32 black = 0;
+	static byte black[3] = { 0, 0, 0 };
+	static byte black2[3] = { 0, 0, 0 };
+	static byte black3[3] = { 0, 0, 0 };
 
 	switch (_sceneMode) {
 	case 11:
 		_sceneMode = 832;
 		BF_GLOBALS._scenePalette.clearListeners();
-		addFader((const byte *)&black, 5, this);
+		addFader(black, 5, this);
 		break;
 	case 12:
 		_sceneMode = 831;
 		BF_GLOBALS._scenePalette.clearListeners();
-		addFader((const byte *)&black, 5, this);
+		addFader(black2, 5, this);
 		break;
 	case 13:
 		BF_GLOBALS._sceneManager.changeScene(850);
@@ -1856,7 +1858,7 @@ void Scene830::signal() {
 	case 8300:
 		_sceneMode = 13;
 		BF_GLOBALS._scenePalette.clearListeners();
-		addFader((const byte *)&black, 5, this);
+		addFader(black3, 5, this);
 		break;
 	case 8305:
 		_object6.remove();
@@ -2226,7 +2228,7 @@ Scene840::Scene840(): PalettedScene() {
 	_field1AC0 = 0;
 	_field1AC2 = 0;
 	_field1AC4 = 0;
-	_field1AC6 = (BF_GLOBALS._dayNumber > 3) ? 1 : 0;
+	_field1AC6 = 0;
 	_field1ABA = 0;
 }
 
@@ -2246,6 +2248,7 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	PalettedScene::postInit(OwnerList);
 	BF_GLOBALS._sound1.changeSound(41);
 	loadScene(840);
+	BF_GLOBALS.clearFlag(fCanDrawGun);
 	_field1ABA = 0;
 
 	if (BF_GLOBALS._dayNumber == 0) {
@@ -2264,6 +2267,7 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_carterSpeaker);
 
 	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.disableControl();
 	BF_GLOBALS._player.changeZoom(-1);
 	BF_GLOBALS._player._moveDiff.x = BF_GLOBALS.getFlag(onDuty) ? 8 : 7;
 
@@ -2299,6 +2303,8 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	_item17.setDetails(5, 840, 26, 27, 28, 1);
 	_item12.setDetails(7, 840, 35, 36, 37, 1);
 	_item13.setDetails(Rect(0, 0, SCREEN_WIDTH - 1, UI_INTERFACE_Y), 840, 41, 42, 43, 1, NULL);
+
+	_field1AC6 = (BF_GLOBALS._dayNumber > 3) ? 1 : 0;
 
 	if (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) == 1) {
 		_boatKeys.postInit();

@@ -1,4 +1,0 @@
-[submodule "devtools/create_prince"]
-	path = devtools/create_prince
-	url = https://github.com/scummvm/game-translations
-	branch = prince-and-the-coward

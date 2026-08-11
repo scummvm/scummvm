@@ -40,13 +40,13 @@ public:
 	void destroy() override;
 	bool loadStream(Common::SeekableReadStream &stream) override;
 	Graphics::Surface *getSurface() const override { return _surface; }
-	const byte *getPalette() const override { return _palette; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 	uint16 getPaletteCount() const { return kPaletteColorCount; }
 	static const uint16 kPaletteColorCount = 256;
 
 private:
 	Graphics::Surface *_surface;
-	byte *_palette;
+	Graphics::Palette _palette;
 };
 
 } // End of namespace Prince

@@ -104,7 +104,7 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 		_log_to_vis_index = nullptr;
 		_vis_to_log_index = nullptr;
 	} else {
-		visual = U32String((uint32 *)visual_str, input.size());
+		visual = U32String((Common::u32char_type_t *)visual_str, input.size());
 		delete[] visual_str;
 	}
 	_pbase_dir = pbase_dir;

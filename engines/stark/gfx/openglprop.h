@@ -53,6 +53,7 @@ struct _PropVertex {
 	float r;
 	float g;
 	float b;
+	float a;
 };
 typedef _PropVertex PropVertex;
 

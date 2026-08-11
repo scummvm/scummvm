@@ -48,9 +48,14 @@ enum GameVariant {
 };
 
 struct HugoGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
 	GameType gameType;
 };
+
+#define GAMEOPTION_TTS               GUIO_GAMEOPTIONS1
+#define GAMEOPTION_WINDOWS_INTERFACE GUIO_GAMEOPTIONS2
 
 } // End of namespace Hugo
 

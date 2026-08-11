@@ -35,7 +35,6 @@ private:
 	int _elgusMode = 0;
 	KernelTriggerType _savedMode = (KernelTriggerType)0;
 	int _savedTrigger = 0;
-	//int _val7 = 0;
 	int _val8 = 0;
 	bool _flag1 = false;
 	bool _flag2 = false;
@@ -43,10 +42,10 @@ private:
 	bool _flag4 = false;
 	bool _flag5 = false;
 	const char *_digi1 = nullptr;
-	int _series1[12];
-	int _series2[4];
-	int _series3[12];
-	int _series4[5];
+	int _series1[12] = { 0 };
+	int _series2[4] = { 0 };
+	int _series3[12] = { 0 };
+	int _series4[5] = { 0 };
 	machine *_series5 = nullptr;
 	machine *_series6 = nullptr;
 	machine *_series7 = nullptr;

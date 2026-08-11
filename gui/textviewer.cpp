@@ -30,6 +30,9 @@
 #include "gui/ThemeEval.h"
 #include "gui/textviewer.h"
 #include "gui/widgets/scrollbar.h"
+#ifdef EMSCRIPTEN
+#include "backends/platform/sdl/emscripten/emscripten.h"
+#endif
 
 namespace GUI {
 
@@ -52,6 +55,9 @@ TextViewerDialog::TextViewerDialog(const Common::Path &fname)
 	// I18N: Close dialog button
 	_closeButton = new ButtonWidget(this, 0, 0, 1, 1, _("Close"), Common::U32String(), kCloseCmd);
 
+#ifdef EMSCRIPTEN
+	_downloadButton = new ButtonWidget(this, 0, 0, 1, 1, _("Download"), Common::U32String(), kDownloadFileCmd);
+#endif
 	_currentPos = 0;
 	_scrollLine = _linesPerPage - 1;
 
@@ -105,13 +111,18 @@ void TextViewerDialog::destroy() {
 }
 
 void TextViewerDialog::reflowLayout() {
+	int16 screenW, screenH;
+	const Common::Rect safeArea = g_system->getSafeOverlayArea(&screenW, &screenH);
+
 	// Calculate the real width/height (rounded to char/line multiples)
-	_w = (uint16)(kDialogWidthPercent * g_system->getOverlayWidth());
-	_h = (uint16)((kDialogHeightPercent * g_system->getOverlayHeight() - 2) / _lineHeight);
+	_w = (uint16)(kDialogWidthPercent * safeArea.width());
+	_h = (uint16)((kDialogHeightPercent * safeArea.height() - 2) / _lineHeight);
 	_h = _h * _lineHeight + 2;
 
-	_x = (g_system->getOverlayWidth() - _w) / 2;
-	_y = (g_system->getOverlayHeight() - _h) / 2;
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+	safeArea.constrain(_x, _y, _w, _h);
 
 	_padX = _w * kPadX;
 	_padY = _h * kPadY;
@@ -127,6 +138,11 @@ void TextViewerDialog::reflowLayout() {
 	_closeButton->setPos(_w - bW - padR, _h - buttonOffset);
 	_closeButton->setSize(bW, bH);
 
+#ifdef EMSCRIPTEN
+	_downloadButton->setPos(_w - 2 * bW - 2 * padR, _h - buttonOffset);
+	_downloadButton->setSize(bW, bH);
+#endif
+
 	// Calculate depending values
 	_lineWidth = (_w - scrollbarWidth - _padX * 2) / _charWidth;
 	_linesPerPage = (_h - _padY * 2 - buttonOffset) / _lineHeight;
@@ -139,8 +155,8 @@ void TextViewerDialog::open() {
 	Dialog::open();
 }
 
-void TextViewerDialog::drawDialog(DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void TextViewerDialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
 	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
 
@@ -190,6 +206,11 @@ void TextViewerDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 	case kCloseCmd:
 		close();
 		break;
+#ifdef EMSCRIPTEN
+	case kDownloadFileCmd: 
+		dynamic_cast<OSystem_Emscripten *>(g_system)->exportFile(_fname);
+		break; 
+#endif
 	default:
 		return;
 	}

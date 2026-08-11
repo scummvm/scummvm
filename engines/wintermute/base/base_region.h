@@ -35,9 +35,12 @@ namespace Wintermute {
 
 class BaseRegion : public BaseObject {
 public:
+	float _lastMimicScale;
+	int32 _lastMimicX;
+	int32 _lastMimicY;
 	void cleanup();
 	bool mimic(BaseRegion *region, float scale = 100.0f, int x = 0, int y = 0);
-	bool getBoundingRect(Rect32 *rect);
+	bool getBoundingRect(Common::Rect32 *rect);
 	bool ptInPolygon(int32 x, int32 y);
 	DECLARE_PERSISTENT(BaseRegion, BaseObject)
 	bool _active;
@@ -48,22 +51,18 @@ public:
 	bool createRegion();
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	Rect32 _rect;
+	Common::Rect32 _rect;
 	BaseArray<BasePoint *> _points;
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override { return saveAsText(buffer, indent, nullptr); }
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride);
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
-	Common::String debuggerToString() const override;
 
-private:
-	float _lastMimicScale;
-	int32 _lastMimicX;
-	int32 _lastMimicY;
+	Common::String debuggerToString() const override;
 };
 
 } // End of namespace Wintermute

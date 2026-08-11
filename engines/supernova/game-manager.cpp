@@ -29,6 +29,8 @@
 #include "supernova/supernova.h"
 #include "supernova/game-manager.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Supernova {
 
 bool GameManager::serialize(Common::WriteStream *out) {
@@ -247,11 +249,10 @@ bool GameManager::canSaveGameStateCurrently() {
 void GameManager::updateEvents() {
 }
 
-void GameManager::processInput(Common::KeyState &state) {
-	_key = state;
+void GameManager::processInput(Common::CustomEventType action) {
 
-	switch (state.keycode) {
-	case Common::KEYCODE_F1:
+	switch (action) {
+	case kActionHelp:
 		// help
 		if (!_guiEnabled)
 			return;
@@ -260,74 +261,72 @@ void GameManager::processInput(Common::KeyState &state) {
 		else if (_vm->_MSPart == 2)
 			_vm->showHelpScreen2();
 		break;
-	case Common::KEYCODE_F2:
+	case kActionInstr:
 		// show game manual
 		if (!_guiEnabled)
 			return;
 		_vm->showTextReader("doc");
 		break;
-	case Common::KEYCODE_F3:
+	case kActionInfo:
 		// show game info
 		if (!_guiEnabled)
 			return;
 		_vm->showTextReader("inf");
 		break;
-	case Common::KEYCODE_F4:
+	case kActionSpeed:
 		if (!_guiEnabled)
 			return;
 		_vm->setTextSpeed();
 		break;
-	case Common::KEYCODE_F5:
+	case kActionPause:
 		_vm->openMainMenuDialog();
 		break;
-	case Common::KEYCODE_x:
-		if (state.flags & Common::KBD_ALT) {
-			if (_vm->quitGameDialog())
-				_vm->quitGame();
-		}
+	case kActionQuit:
+		if (_vm->quitGameDialog())
+			_vm->quitGame();
 		break;
 	default:
 		break;
 	}
 	if (_vm->_improved && _guiEnabled) {
-		switch (state.keycode) {
-		case Common::KEYCODE_1:
+		switch (action) {
+		case kActionGo:
 			resetInputState();
 			_inputVerb = ACTION_WALK;
 			break;
-		case Common::KEYCODE_2:
+		case kActionLook:
 			resetInputState();
 			_inputVerb = ACTION_LOOK;
 			break;
-		case Common::KEYCODE_3:
+		case kActionTake:
 			resetInputState();
 			_inputVerb = ACTION_TAKE;
 			break;
-		case Common::KEYCODE_4:
+		case kActionOpen:
 			resetInputState();
 			_inputVerb = ACTION_OPEN;
 			break;
-		case Common::KEYCODE_5:
+		case kActionClose:
 			resetInputState();
 			_inputVerb = ACTION_CLOSE;
 			break;
-		case Common::KEYCODE_6:
+		case kActionPush:
 			resetInputState();
 			_inputVerb = ACTION_PRESS;
 			break;
-		case Common::KEYCODE_7:
+		case kActionPull:
 			resetInputState();
 			_inputVerb = ACTION_PULL;
 			break;
-		case Common::KEYCODE_8:
+		case kActionUse:
 			resetInputState();
 			_inputVerb = ACTION_USE;
 			break;
-		case Common::KEYCODE_9:
+		case kActionTalk:
 			resetInputState();
 			_inputVerb = ACTION_TALK;
 			break;
-		case Common::KEYCODE_0:
+		case kActionGive:
 			resetInputState();
 			_inputVerb = ACTION_GIVE;
 			break;
@@ -345,6 +344,7 @@ void GameManager::resetInputState() {
 	_mouseClicked = false;
 	_keyPressed = false;
 	_key.reset();
+	_action = kActionNone;
 	_mouseClickType = Common::EVENT_MOUSEMOVE;
 
 	processInput();
@@ -812,6 +812,10 @@ void GameManager::wait(int ticks, bool checkInput, bool waitForSpeech) {
 }
 
 bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode, bool waitForSpeech) {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("cutscene")->setEnabled(true);
+	
 	Common::TextToSpeechManager *ttsMan = nullptr;
 	if (waitForSpeech && ConfMan.getBool("tts_enabled"))
 		ttsMan = g_system->getTextToSpeechManager();
@@ -823,17 +827,31 @@ bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode, bool waitForS
 		updateEvents();
 		g_system->updateScreen();
 		if (_keyPressed) {
-			keycode = _key.keycode;
+			if (_action == kActionSkip) {
+				keycode = Common::KEYCODE_ESCAPE;
+			} else {
+				keycode = _key.keycode;
+			}
+			_action = kActionNone;
 			_key.reset();
 			if (ttsMan)
 				ttsMan->stop();
+			keymapper->getKeymap("cutscene")->setEnabled(false);
+			keymapper->getKeymap("supernova-default")->setEnabled(true);
+			keymapper->getKeymap("improved-mode")->setEnabled(true);
 			return true;
 		} else if (_mouseClicked) {
 			if (ttsMan)
 				ttsMan->stop();
+			keymapper->getKeymap("cutscene")->setEnabled(false);
+			keymapper->getKeymap("supernova-default")->setEnabled(true);
+			keymapper->getKeymap("improved-mode")->setEnabled(true);
 			return true;
 		}
 	} while ((_time < end || (ttsMan && ttsMan->isSpeaking()))  && !_vm->shouldQuit());
+	keymapper->getKeymap("cutscene")->setEnabled(false);
+	keymapper->getKeymap("supernova-default")->setEnabled(true);
+	keymapper->getKeymap("improved-mode")->setEnabled(true);
 	return false;
 }
 
@@ -894,6 +912,10 @@ void GameManager::animationOn() {
 }
 
 void GameManager::edit(Common::String &input, int x, int y, uint length) {
+	// turn off keymapper to allow full text input
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	bool isEditing = true;
 	uint cursorIndex = input.size();
 	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
@@ -969,6 +991,10 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 			break;
 		}
 	}
+	// turn on default keymapper
+	keymapper->getKeymap("supernova-default")->setEnabled(true);
+	keymapper->getKeymap("improved-mode")->setEnabled(true);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	_guiEnabled = true;
 }
 

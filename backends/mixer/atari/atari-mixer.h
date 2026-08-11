@@ -34,7 +34,7 @@ public:
 	AtariMixerManager();
 	virtual ~AtariMixerManager();
 
-	virtual void init() override;
+	void init() override;
 	void update();
 
 	void suspendAudio() override;

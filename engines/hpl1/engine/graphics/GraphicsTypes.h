@@ -70,17 +70,6 @@ typedef tFlag tAnimTransformFlag;
 const tAnimTransformFlag kvAnimTransformFlags[] = {eAnimTransformFlag_Translate,
 												   eAnimTransformFlag_Scale, eAnimTransformFlag_Rotate};
 
-//-----------------------------------------
-
-enum eColorDataFormat {
-	eColorDataFormat_RGB,
-	eColorDataFormat_RGBA,
-	eColorDataFormat_ALPHA,
-	eColorDataFormat_BGR,
-	eColorDataFormat_BGRA,
-	eColorDataFormat_LastEnum
-};
-
 //---------------------------------------
 
 enum eFontAlign {

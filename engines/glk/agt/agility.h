@@ -479,7 +479,7 @@ global rbool BATCH_MODE, make_test;
 	 -- Automatically send output to <gamename>.scr
 	 -- Automatically read/write input from <gamename>.log
 	  (depending on whether we are in BATCH_MODE or make_test mode,
-	  respectivly).
+	  respectively).
 */
 
 
@@ -495,7 +495,7 @@ global rbool mars_fix;
 global rbool fix_ascii_flag;  /* Translate IBM characters?
 				   Defaults to fix_ascii #define'd above */
 global rbool dbg_nomsg;  /* Causes printing of <msg> arguments by
-			   debug disassembler to be supressed */
+			   debug disassembler to be suppressed */
 
 global rbool irun_mode;  /* If true, all messages will be in 1st person */
 global rbool verboseflag;
@@ -781,7 +781,7 @@ global rbool open_as_binary;  /* Open text files as binary, anyhow. */
 				of "[obj].[prop].[prop].[flag]"
 				constructions. */
 
-#define AGT_LVAL   150  /* Used by the compiler in certain psuedo-ops */
+#define AGT_LVAL   150  /* Used by the compiler in certain pseudo-ops */
 
 
 #define AGT_DEFINE 256

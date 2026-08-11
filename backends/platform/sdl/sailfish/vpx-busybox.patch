@@ -1,0 +1,13 @@
+--- a/configure	2024-05-29 23:00:23.000000000 +0300
++++ b/configure	2024-10-07 01:08:17.028334535 +0300
+@@ -187,10 +187,6 @@
+     [ -f "${source_path}/${t}.mk" ] && enable_feature ${t}
+ done
+ 
+-if ! diff --version >/dev/null; then
+-  die "diff missing: Try installing diffutils via your package manager."
+-fi
+-
+ if ! perl --version >/dev/null; then
+     die "Perl is required to build"
+ fi

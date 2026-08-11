@@ -23,12 +23,12 @@
 #ifndef BAGEL_SPACEBAR_SRAF_COMPUTER_H
 #define BAGEL_SPACEBAR_SRAF_COMPUTER_H
 
-#include "bagel/boflib/gui/button.h"
-#include "bagel/boflib/gui/list_box.h"
-#include "bagel/boflib/gui/text_box.h"
-#include "bagel/boflib/gui/dialog.h"
-#include "bagel/boflib/file.h"
-#include "bagel/baglib/storage_dev_win.h"
+#include "bagel/spacebar/boflib/gui/button.h"
+#include "bagel/spacebar/boflib/gui/list_box.h"
+#include "bagel/spacebar/boflib/gui/text_box.h"
+#include "bagel/spacebar/boflib/gui/dialog.h"
+#include "bagel/spacebar/boflib/file.h"
+#include "bagel/spacebar/baglib/storage_dev_win.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -289,18 +289,18 @@ protected:
 	enum SrafCompModeC {
 		SC_ON, SC_OFF, SC_DONE
 	} _eMode;
-	
+
 	enum SrafCurScreen {
 		SC_MAIN, SC_DEAL, SC_BIDS, SC_BACKGROUND_DATA,
 		SC_SELLER_BIOS, SC_OTHER_BIOS, SC_STAFF_BIOS,
 		SC_DISPATCH, SC_EMAIL, SC_AUDIO, SC_ORDER,
 		SC_CHECK_TEAMS, SC_CODE_WORDS
 	} _eCurScreen;
-	
+
 	CBofBmpButton *_pButtons[NUM_SRAFCOMPBUTT];
-	RGBCOLOR _cTextColor;
-	RGBCOLOR _cTextHiliteColor;
-	RGBCOLOR _cTextLineColor;
+	COLORREF _cTextColor;
+	COLORREF _cTextHiliteColor;
+	COLORREF _cTextLineColor;
 
 	CBofListBox *_pLBox;               // Main screen list
 	CBofList<SrafCompItem> *_pMainList;

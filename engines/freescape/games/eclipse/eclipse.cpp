@@ -21,41 +21,56 @@
 
 #include "common/file.h"
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+#include "common/translation.h"
+
 #include "freescape/freescape.h"
+#include "freescape/wb.h"
+#include "freescape/games/eclipse/c64.music.h"
+#include "freescape/games/eclipse/c64.sfx.h"
+#include "freescape/games/eclipse/ay.music.h"
+#include "freescape/games/eclipse/opl.music.h"
 #include "freescape/games/eclipse/eclipse.h"
+#include "freescape/objects/entrance.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
+// Wally Beben table offsets for Total Eclipse Amiga TEMUSIC.AM
+const WBTableOffsets kEclipseAmigaMusicOffsets = {
+	0x0ACA, // periodTable
+	0x0C5E, // samplePtrTable
+	0x0CA6, // instrumentTable
+	0x0D16, // arpeggioIntervals
+	0x0D1E, // envelopeTable
+	0x0D8E, // songTable
+	0x0D9E, // patternPtrTable (songTable + 16, overlaps Song 2 like Dark Side)
+	14, 14, 14 // numSamples, numInstruments, numEnvelopes
+};
+
 EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	if (isDOS())
-		initDOS();
-	else if (isCPC())
-		initCPC();
-	else if (isSpectrum())
-		initZX();
-	else if (isAmiga() || isAtariST())
-		initAmigaAtari();
+	_ankhIndicatorMask = nullptr;
+	_ankhCollectedMask = nullptr;
+	_playerC64Sfx = nullptr;
+	_playerMusic = nullptr;
+	_c64UseSFX = false;
 
-	_playerHeightNumber = 1;
-	_playerHeights.push_back(32);
-	_playerHeights.push_back(48);
-	_playerHeight = _playerHeights[_playerHeightNumber];
+	// These sounds can be overriden by the class of each platform
+	_soundIndexStartFalling = -1;
+	_soundIndexEndFalling = -1;
 
-	_playerWidth = 8;
-	_playerDepth = 8;
-	_stepUpDistance = 32;
-
-	_playerStepIndex = 2;
-	_playerSteps.clear();
-	_playerSteps.push_back(1);
-	_playerSteps.push_back(10);
-	_playerSteps.push_back(25);
-
-	_angleRotationIndex = 1;
-	_angleRotations.push_back(5);
-	_angleRotations.push_back(10);
-	_angleRotations.push_back(15);
+	_soundIndexNoShield = -1;
+	_soundIndexNoEnergy = -1;
+	_soundIndexFallen = -1;
+	_soundIndexTimeout = -1;
+	_soundIndexForceEndGame = -1;
+	_soundIndexCrushed = -1;
+	_soundIndexMissionComplete = -1;
 
 	_maxEnergy = 27;
 	_maxShield = 50;
@@ -63,18 +78,107 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_initialEnergy = 16;
 	_initialShield = 50;
 
+	if (isDOS())
+		initDOS();
+	else if (isCPC())
+		initCPC();
+	else if (isC64())
+		initC64();
+	else if (isSpectrum())
+		initZX();
+	else if (isAmiga() || isAtariST())
+		initAmigaAtari();
+
+	_playerHeightNumber = 1;
+	_playerHeightMaxNumber = 1;
+
+	_playerWidth = 8;
+	_playerDepth = 8;
+	_stepUpDistance = 32;
+
+	_playerStepIndex = 2;
+	_playerSteps.clear();
+	_playerSteps.push_back(2);
+	_playerSteps.push_back(30);
+	_playerSteps.push_back(60);
+
+	_angleRotationIndex = 1;
+	_angleRotations.push_back(5);
+	_angleRotations.push_back(10);
+	_angleRotations.push_back(15);
+
 	_endArea = 1;
 	_endEntrance = 33;
 
 	_lastThirtySeconds = 0;
+	_lastFiveSeconds = 0;
+	_lastHeartbeatSoundTick = -1;
+	_lastHeartIndicatorFrame = 1;
+	_lastSecond = -1;
+	_compassBackground = nullptr;
+	_atariWaterBody = nullptr;
+	_atariCompassPhase = 0;
+	_atariCompassTargetPhase = 0;
+	_atariCompassTargetRemainder = 0.0f;
+	_atariCompassLastUpdateTick = -1;
+	_atariCompassPhaseInitialized = false;
+	_atariLanternLightFrame = -1;
+	_atariLanternAnimationDirection = 0;
+	_atariLanternLastUpdateTick = -1;
+	_lanternBatteryLevel = 5;
+	_atariAreaDark = false;
 	_resting = false;
+	_flashlightOn = false;
+
+	_soundFx = nullptr;
+}
+
+void EclipseEngine::stopBackgroundMusic() {
+	if (_playerMusic)
+		_playerMusic->stopMusic();
+	if (_mixer)
+		_mixer->stopHandle(_musicHandle);
+}
+
+void EclipseEngine::restartBackgroundMusic() {
+	if (_playerMusic) {
+		_playerMusic->startMusic();
+	} else if (isAmiga() && !_musicData.empty()) {
+		if (_mixer)
+			_mixer->stopHandle(_musicHandle);
+		Audio::AudioStream *musicStream = makeWallyBebenStream(
+			_musicData.data(), _musicData.size(), 1, 44100, true,
+			&kEclipseAmigaMusicOffsets);
+		if (musicStream) {
+			_mixer->playStream(Audio::Mixer::kMusicSoundType,
+				&_musicHandle, musicStream);
+		}
+	} else {
+		playMusic("Total Eclipse Theme");
+	}
+}
+
+EclipseEngine::~EclipseEngine() {
+	stopBackgroundMusic();
+	if (_atariWaterBody) {
+		_atariWaterBody->free();
+		delete _atariWaterBody;
+	}
+	if (_compassBackground) {
+		_compassBackground->free();
+		delete _compassBackground;
+	}
+	if (_soundFx)
+		delete _soundFx;
+	delete _playerMusic;
+	if (_sound != _playerC64Sfx)
+		delete _playerC64Sfx;
 }
 
 void EclipseEngine::initGameState() {
 	FreescapeEngine::initGameState();
 
 	_playerHeightNumber = 1;
-	_playerHeight = _playerHeights[_playerHeightNumber];
 
 	_gameStateVars[k8bitVariableEnergy] = _initialEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialShield;
@@ -82,28 +186,90 @@ void EclipseEngine::initGameState() {
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	_lastThirtySeconds = seconds / 30;
+	_lastFiveSeconds = seconds / 5;
+	_lastHeartbeatSoundTick = -1;
+	_lastHeartIndicatorFrame = 1;
+	_atariCompassPhase = 0;
+	_atariCompassTargetPhase = 0;
+	_atariCompassTargetRemainder = 0.0f;
+	_atariCompassLastUpdateTick = -1;
+	_atariCompassPhaseInitialized = false;
+	_atariLanternLightFrame = -1;
+	_atariLanternAnimationDirection = 0;
+	_atariLanternLastUpdateTick = -1;
+	_lanternBatteryLevel = 5;
+	_atariAreaDark = false;
 	_resting = false;
+	_flashlightOn = false;
+	restartBackgroundMusic();
 }
 
 void EclipseEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
+
+	Common::List<int> globalIds = _areaMap[255]->getEntranceIds();
+	for (auto &it : _areaMap) {
+		if (it._value->getAreaID() == 255)
+			continue;
+
+		it._value->addStructure(_areaMap[255]);
+
+		if (isDemo()) {
+			it._value->_name = "  NOW TRAINING  ";
+		}
+
+		for (auto &id : globalIds) {
+			if (it._value->entranceWithID(id))
+				continue;
+
+			Object *obj = _areaMap[255]->entranceWithID(id);
+			assert(obj);
+			assert(obj->getType() == ObjectType::kEntranceType);
+			// The entrance is not in the current area, so we need to add it
+			it._value->addObjectFromArea(id, _areaMap[255]);
+		}
+	}
 
 	_timeoutMessage = _messagesList[1];
 	_noShieldMessage = _messagesList[0];
 	//_noEnergyMessage = _messagesList[16];
 	_fallenMessage = _messagesList[3];
 	_crushedMessage = _messagesList[2];
+
 	_areaMap[1]->addFloor();
-	if (!isDemo())
+	if (isSpectrum())
+		_areaMap[1]->_paperColor = 1;
+
+	if (!isDemo() && !isEclipse2()) {
 		_areaMap[51]->addFloor();
+		_areaMap[51]->_paperColor = 1;
+
+		// Workaround for fixing some planar objects from area 9 that have null size
+		Object *obj = nullptr;
+		obj = _areaMap[9]->objectWithID(7);
+		assert(obj);
+		obj->_size = 32 * Math::Vector3d(3, 0, 2);
+
+		obj = _areaMap[9]->objectWithID(8);
+		assert(obj);
+		obj->_size = 32 * Math::Vector3d(3, 0, 2);
+
+		obj = _areaMap[9]->objectWithID(9);
+		assert(obj);
+		obj->_size = 32 * Math::Vector3d(3, 0, 2);
+	}
 }
 
 bool EclipseEngine::checkIfGameEnded() {
 	if (_gameStateControl == kFreescapeGameStatePlaying) {
 		if (_hasFallen && _avoidRenderingFrames == 0) {
 			_hasFallen = false;
-			playSoundFx(4, false);
+			if (isDOS())
+				playSoundFx(4, false);
+			else
+				playSound(_soundIndexStartFalling, false);
 
+			stopMovement();
 			// If shield is less than 11 after a fall, the game ends
 			if (_gameStateVars[k8bitVariableShield] > 15 + 11) {
 				_gameStateVars[k8bitVariableShield] -= 15;
@@ -122,7 +288,20 @@ bool EclipseEngine::checkIfGameEnded() {
 	return false;
 }
 
+bool EclipseEngine::triggerWinCondition() {
+	setGameBit(16);
+	_endGameDelayTicks = 0;
+	_endGameKeyPressed = false;
+	_endGamePlayerEndArea = false;
+	_gameStateControl = kFreescapeGameStateEnd;
+	return true;
+}
+
 void EclipseEngine::endGame() {
+	bool enteringEndArea = (_gameStateControl == kFreescapeGameStateEnd && !_endGamePlayerEndArea);
+	if (enteringEndArea)
+		restartBackgroundMusic();
+
 	FreescapeEngine::endGame();
 
 	if (!_endGamePlayerEndArea)
@@ -151,12 +330,94 @@ void EclipseEngine::endGame() {
 	_endGameKeyPressed = false;
 }
 
+void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
+	Common::Action *act;
+
+	act = new Common::Action("SAVE", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("s");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("l");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("QUIT", _("Quit game"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	if (isSpectrum())
+		act->addDefaultInputMapping("1");
+	else
+		act->addDefaultInputMapping("ESCAPE");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("TOGGLESOUND", _("Toggle sound"));
+	act->setCustomEngineActionEvent(kActionToggleSound);
+	act->addDefaultInputMapping("t");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("ROTL", _("Rotate left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("q");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROTR", _("Rotate right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping(_useWASDControls ? "e" : "w");
+	engineKeyMap->addAction(act);
+
+	// I18N: Illustrates the angle at which you turn left or right.
+	act = new Common::Action("CHNGANGLE", _("Change angle"));
+	act->setCustomEngineActionEvent(kActionIncreaseAngle);
+	act->addDefaultInputMapping(_useWASDControls ? "v" : "a");
+	engineKeyMap->addAction(act);
+
+	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+	act = new Common::Action("CHNGSTEPSIZE", _("Change step size"));
+	act->setCustomEngineActionEvent(kActionChangeStepSize);
+	act->addDefaultInputMapping(_useWASDControls ? "x" : "s");
+	engineKeyMap->addAction(act);
+
+	if (_useWASDControls) {
+		act = new Common::Action("RUNMOD", _("Sprint (hold)"));
+		act->setCustomEngineActionEvent(kActionRunModifier);
+		act->addDefaultInputMapping("LSHIFT");
+		act->addDefaultInputMapping("RSHIFT");
+		act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+		engineKeyMap->addAction(act);
+	}
+
+	act = new Common::Action("TGGLHEIGHT", _("Toggle height"));
+	act->setCustomEngineActionEvent(kActionToggleRiseLower);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("h");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("REST", _("Rest"));
+	act->setCustomEngineActionEvent(kActionRest);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("FACEFRWARD", _("Face forward"));
+	act->setCustomEngineActionEvent(kActionFaceForward);
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("FLASHLIGHT", _("Toggle flashlight"));
+	act->setCustomEngineActionEvent(kActionToggleFlashlight);
+	act->addDefaultInputMapping("t");
+	engineKeyMap->addAction(act);
+}
+
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
+	_atariAreaDark = (isAtariST() || isAmiga()) && isAtariDarkArea(areaID);
 
 	_currentAreaMessages.clear();
 	_currentAreaMessages.push_back(_currentArea->_name);
@@ -171,17 +432,12 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_lastPosition = _position;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		_yaw = 180;
-		_pitch = 0;
-
-		if (isSpectrum())
-			playSound(7, true);
-		else
-			playSound(9, true);
-
+		if (_pitch >= 180)
+			_pitch = 360 - _pitch;
+		playSound(_soundIndexStart, false);
 		if (isEclipse2()) {
-			_yaw = 120;
 			_gameStateControl = kFreescapeGameStateStart;
+			_pitch = -10;
 		}
 
 	} if (areaID == _endArea && entranceID == _endEntrance) {
@@ -191,19 +447,54 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		else
 			_pitch = 10;
 	} else {
-		if (isSpectrum())
-			playSound(7, false);
-		else
-			playSound(5, false);
+		playSound(_soundIndexAreaChange, false);
 	}
 
 	_gfx->_keyColor = 0;
+	if ((isAtariST() || isAmiga()) && isAtariDarkArea(areaID))
+		applyEclipseFadePalette(areaID, _lanternBatteryLevel);
 	swapPalette(areaID);
-	_currentArea->_usualBackgroundColor = isCPC() ? 1 : 0;
+	if (isCPC())
+		updateHeartFramesCPC();
+	else if (isDOS() && _renderMode == Common::kRenderCGA) {
+		updateHeartFrames(_gfx->_palette);
+		updateAnkhIndicator(_gfx->_palette);
+	}
 	if (isAmiga() || isAtariST())
 		_currentArea->_skyColor = 15;
 
+	if ((isAtariST() || isAmiga()) && entranceID > 0) {
+		Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
+		if (entrance) {
+			int phase = atariCompassPhaseFromRotationY(entrance->getRotation().y());
+			_atariCompassPhase = phase;
+			_atariCompassTargetPhase = phase;
+			_atariCompassTargetRemainder = 0.0f;
+			_atariCompassLastUpdateTick = _ticks;
+			_atariCompassPhaseInitialized = true;
+		}
+	}
+
+	// Start background music (Amiga)
+	if (isAmiga() && !_musicData.empty() && !_mixer->isSoundHandleActive(_musicHandle)) {
+		Audio::AudioStream *musicStream = makeWallyBebenStream(
+			_musicData.data(), _musicData.size(), 1, 44100, true,
+			&kEclipseAmigaMusicOffsets);
+		if (musicStream) {
+			_mixer->playStream(Audio::Mixer::kMusicSoundType,
+				&_musicHandle, musicStream);
+		}
+	}
+
 	resetInput();
+}
+
+bool EclipseEngine::isAtariDarkArea(uint16 areaID) const {
+	for (uint i = 0; i < _atariDarkAreas.size(); i++) {
+		if (_atariDarkAreas[i] == areaID)
+			return true;
+	}
+	return false;
 }
 
 void EclipseEngine::drawBackground() {
@@ -222,12 +513,19 @@ void EclipseEngine::drawBackground() {
 		uint8 color1 = 15;
 		uint8 color2 = 10;
 
-		if (isSpectrum() || isCPC()) {
+		if (isSpectrum() || isCPC() || isC64()) {
 			color1 = 2;
 			color2 = 10;
 		} else if (isAmiga() || isAtariST()) {
 			color1 = 8;
 			color2 = 14;
+		} else if (isDOS() && _renderMode == Common::kRenderCGA) {
+			color1 = 2;
+			color2 = 8;
+		} else if (isDOS() && _renderMode == Common::kRenderHercG) {
+			// A solid sun and a 50% moon, against the 75% sky
+			color1 = 2;
+			color2 = 12;
 		}
 
 		_gfx->drawEclipse(color1, color2, progress);
@@ -253,11 +551,8 @@ void EclipseEngine::borderScreen() {
 				drawFullscreenMessageAndWait(_messagesList[23]);
 			} else if (_variant & GF_ZX_DEMO_CRASH) {
 				drawFullscreenMessageAndWait(_messagesList[9]);
-				playSound(3, true);
 				drawFullscreenMessageAndWait(_messagesList[10]);
-				playSound(3, true);
 				drawFullscreenMessageAndWait(_messagesList[11]);
-				playSound(3, true);
 			}
 		} else {
 			FreescapeEngine::borderScreen();
@@ -267,6 +562,10 @@ void EclipseEngine::borderScreen() {
 
 void EclipseEngine::drawInfoMenu() {
 	PauseToken pauseToken = pauseEngine();
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
 	_savedScreen = _gfx->getScreenshot();
 	uint32 color = 0;
 	switch (_renderMode) {
@@ -309,30 +608,41 @@ void EclipseEngine::drawInfoMenu() {
 
 			// Events
 			switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_l) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionLoad) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					loadGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
-					playSound(6, true);
-				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_forceEndGame = true;
-					cont = false;
-				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
+				} else if (event.customType == kActionToggleSound) {
+					if (isC64() && _playerC64Sfx) {
+						toggleC64Sound();
+						_eventManager->purgeKeyboardEvents();
+					} else {
+						playSound(_soundIndexMenu, false);
+					}
+				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
 				} else
 					cont = false;
 				break;
+				case Common::EVENT_KEYDOWN:
+					cont = false;
+				break;
 			case Common::EVENT_SCREEN_CHANGED:
 				_gfx->computeScreenViewport();
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+			// fallthrough
+			case Common::EVENT_LBUTTONDOWN:
+				if (isTouchscreenActive())
+					cont = false;
 				break;
 
 			default:
@@ -349,6 +659,7 @@ void EclipseEngine::drawInfoMenu() {
 
 	_savedScreen->free();
 	delete _savedScreen;
+	_savedScreen = nullptr;
 	surface->free();
 	delete surface;
 	delete menuTexture;
@@ -356,66 +667,277 @@ void EclipseEngine::drawInfoMenu() {
 }
 
 void EclipseEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_q) {
-		rotate(-_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_w) {
-		rotate(_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_s) {
-		increaseStepSize();
-	} else if (keycode ==  Common::KEYCODE_x) {
-		decreaseStepSize();
-	} else if (keycode == Common::KEYCODE_h) {
+	if (keycode == kActionIncreaseAngle) {
+		changeAngle(1, true);
+	} else if (keycode == kActionChangeStepSize) {
+		changeStepSize();
+	} else if (keycode == kActionToggleRiseLower) {
 		if (_playerHeightNumber == 0)
 			rise();
 		else if (_playerHeightNumber == 1)
 			lower();
 		else
 			error("Invalid player height index: %d", _playerHeightNumber);
-	} else if (keycode == Common::KEYCODE_r) {
-		if (_currentArea->getAreaID() == 1) {
+	} else if (keycode == kActionRest) {
+		if (_currentArea->getAreaID() == 1 || _currentArea->getAreaID() == 51) {
 			playSoundFx(3, false);
-			if (_temporaryMessages.empty())
-				insertTemporaryMessage(_messagesList[6], _countdown - 2);
+			insertTemporaryMessage(_messagesList[6], _countdown - 2);
 		} else {
 			_resting = true;
-			if (_temporaryMessages.empty())
-				insertTemporaryMessage(_messagesList[7], _countdown - 2);
+			insertTemporaryMessage(_messagesList[7], _countdown - 2);
 			_countdown = _countdown - 5;
 		}
-	} else if (keycode == Common::KEYCODE_f) {
+	} else if (keycode == kActionFaceForward) {
 		_pitch = 0;
 		updateCamera();
+	} else if (keycode == kActionToggleFlashlight) {
+		if (isAtariST() || isAmiga()) {
+			if (_flashlightOn) {
+				_flashlightOn = false;
+				if (_atariLanternLightFrame < 0)
+					_atariLanternLightFrame = 0;
+				_atariLanternAnimationDirection = 1;
+			} else if (_lanternBatteryLevel >= 0) {
+				_flashlightOn = true;
+				if (_atariLanternLightFrame < 0 || _atariLanternLightFrame > 5)
+					_atariLanternLightFrame = 5;
+				_atariLanternAnimationDirection = -1;
+			}
+			_atariLanternLastUpdateTick = -1;
+		} else {
+			_flashlightOn = !_flashlightOn;
+		}
+	} else if (keycode == kActionRunModifier) {
+		// Shift-to-sprint: save current step, switch to max while held
+		if (_savedPlayerStepIndex < 0) {
+			_savedPlayerStepIndex = _playerStepIndex;
+			_playerStepIndex = (int)_playerSteps.size() - 1;
+		}
 	}
 }
 
+void EclipseEngine::onRotate(float xoffset, float yoffset, float zoffset) {
+	(void)yoffset;
+	(void)zoffset;
+
+	if ((!isAtariST() && !isAmiga()) || xoffset == 0.0f)
+		return;
+
+	if (!_atariCompassPhaseInitialized) {
+		int phase = atariCompassTargetPhaseFromYaw(_yaw, 0);
+		_atariCompassPhase = phase;
+		_atariCompassTargetPhase = phase;
+		_atariCompassTargetRemainder = 0.0f;
+		_atariCompassLastUpdateTick = _ticks;
+		_atariCompassPhaseInitialized = true;
+	}
+
+	_atariCompassTargetRemainder += xoffset / 5.0f;
+	int phaseDelta = 0;
+	while (_atariCompassTargetRemainder >= 1.0f) {
+		_atariCompassTargetRemainder -= 1.0f;
+		phaseDelta++;
+	}
+	while (_atariCompassTargetRemainder <= -1.0f) {
+		_atariCompassTargetRemainder += 1.0f;
+		phaseDelta--;
+	}
+
+	if (phaseDelta == 0)
+		return;
+
+	_atariCompassTargetPhase = _atariCompassTargetPhase + phaseDelta;
+
+	// The original ST draw routine at $1CC0 always moves by the shortest path
+	// to a stored target phase. Clamp the target so that queued ScummVM input
+	// cannot place it more than half a turn away, which would otherwise trigger
+	// a wraparound reversal the original transition-driven code never presents.
+	while (_atariCompassTargetPhase < 0)
+		_atariCompassTargetPhase += 72;
+	while (_atariCompassTargetPhase >= 72)
+		_atariCompassTargetPhase -= 72;
+
+	if (phaseDelta > 0) {
+		int forwardDistance = (_atariCompassTargetPhase - _atariCompassPhase + 72) % 72;
+		if (forwardDistance > 35)
+			_atariCompassTargetPhase = (_atariCompassPhase + 35) % 72;
+	} else {
+		int backwardDistance = (_atariCompassPhase - _atariCompassTargetPhase + 72) % 72;
+		if (backwardDistance > 35)
+			_atariCompassTargetPhase = (_atariCompassPhase + 72 - 35) % 72;
+	}
+}
+
+bool EclipseEngine::onScreenControls(Common::Point mouse) {
+	if (!isAmiga() && !isAtariST())
+		return false;
+
+	// Right-side arrow buttons
+	if (_lookUpArea.contains(mouse)) {
+		rotate(0, -5, 0);
+		return true;
+	} else if (_lookDownArea.contains(mouse)) {
+		rotate(0, 5, 0);
+		return true;
+	} else if (_turnLeftArea.contains(mouse)) {
+		rotate(-5, 0, 0);
+		return true;
+	} else if (_turnRightArea.contains(mouse)) {
+		rotate(5, 0, 0);
+		return true;
+	} else if (_uTurnArea.contains(mouse)) {
+		rotate(180, 0, 0);
+		return true;
+	} else if (_faceForwardArea.contains(mouse)) {
+		pressedKey(kActionFaceForward);
+		return true;
+	}
+
+	// Left-side buttons (movement buttons just consume click, like Driller)
+	if (_moveBackwardArea.contains(mouse)) {
+		return true;
+	} else if (_stepBackwardArea.contains(mouse)) {
+		return true;
+	} else if (_interactArea.contains(mouse)) {
+		activate();
+		return true;
+	} else if (_infoDisplayArea.contains(mouse)) {
+		drawInfoMenu();
+		return true;
+	}
+
+	// Center/functional areas
+	if (_lanternArea.contains(mouse)) {
+		pressedKey(kActionToggleFlashlight);
+		return true;
+	} else if (_restArea.contains(mouse)) {
+		pressedKey(kActionRest);
+		return true;
+	}
+
+	// Status bar indicators
+	if (_stepSizeArea.contains(mouse)) {
+		pressedKey(kActionChangeStepSize);
+		return true;
+	} else if (_heightArea.contains(mouse)) {
+		pressedKey(kActionToggleRiseLower);
+		return true;
+	}
+
+	// Save/load
+	if (_saveGameArea.contains(mouse)) {
+		_gfx->setViewport(_fullscreenViewArea);
+		saveGameDialog();
+		_gfx->setViewport(_viewArea);
+		return true;
+	} else if (_loadGameArea.contains(mouse)) {
+		_gfx->setViewport(_fullscreenViewArea);
+		loadGameDialog();
+		_gfx->setViewport(_viewArea);
+		return true;
+	}
+
+	return false;
+}
+
 void EclipseEngine::releasedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_r)
+	if (keycode == kActionRiseOrFlyUp)
 		_resting = false;
+	else if (keycode == kActionRunModifier) {
+		// Shift released: restore previous step size
+		if (_savedPlayerStepIndex >= 0) {
+			_playerStepIndex = _savedPlayerStepIndex;
+			_savedPlayerStepIndex = -1;
+		}
+	}
 }
 
 void EclipseEngine::drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack) {
+	// The Hercules border draws everything at twice the width
+	int scale = _renderMode == Common::kRenderHercG ? 2 : 1;
+
 	// These calls will cover the pixels of the hardcoded clock image
-	drawAnalogClockHand(surface, x, y, 6 * 6 - 90, 12, colorBack);
-	drawAnalogClockHand(surface, x, y, 7 * 6 - 90, 12, colorBack);
-	drawAnalogClockHand(surface, x, y, 41 * 6 - 90, 11, colorBack);
-	drawAnalogClockHand(surface, x, y, 42 * 6 - 90, 11, colorBack);
-	drawAnalogClockHand(surface, x, y, 0 * 6 - 90, 11, colorBack);
+	drawAnalogClockHand(surface, x, y, 6 * 6 - 90, 12 * scale, colorBack);
+	drawAnalogClockHand(surface, x, y, 7 * 6 - 90, 12 * scale, colorBack);
+	drawAnalogClockHand(surface, x, y, 41 * 6 - 90, 11 * scale, colorBack);
+	drawAnalogClockHand(surface, x, y, 42 * 6 - 90, 11 * scale, colorBack);
+	drawAnalogClockHand(surface, x, y, 0 * 6 - 90, 11 * scale, colorBack);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	hours = 7 + 2 - hours; // It's 7 o-clock when the game starts
 	minutes = 59 - minutes;
 	seconds = 59 - seconds;
-	drawAnalogClockHand(surface, x, y, hours * 30 - 90, 11, colorHand1);
-	drawAnalogClockHand(surface, x, y, minutes * 6 - 90, 11, colorHand1);
-	drawAnalogClockHand(surface, x, y, seconds * 6 - 90, 11, colorHand2);
+	drawAnalogClockHand(surface, x, y, hours * 30 - 90, 11 * scale, colorHand1);
+	drawAnalogClockHand(surface, x, y, minutes * 6 - 90, 11 * scale, colorHand1);
+	drawAnalogClockHand(surface, x, y, seconds * 6 - 90, 11 * scale, colorHand2);
 }
 
 void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color) {
 	const double degtorad = (M_PI * 2) / 360;
+	// Hercules panels are twice as wide but barely taller
+	double aspect = _renderMode == Common::kRenderHercG ? 0.63 : 1.0;
 	double w = magnitude * cos(degrees * degtorad);
-	double h = magnitude * sin(degrees * degtorad);
+	double h = magnitude * sin(degrees * degtorad) * aspect;
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
+	if (isC64() || _renderMode == Common::kRenderHercG) {
+		surface->drawLine(x+1, y, x+1+(int)w, y+(int)h, color);
+	}
+}
+
+void EclipseEngine::drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color) {
+	const double degtorad = (M_PI * 2) / 360;
+	// The needle keeps its height while the Hercules panel doubles in width
+	double aspect = _renderMode == Common::kRenderHercG ? 0.5 : 1.0;
+	double w = magnitude * cos(-degrees * degtorad);
+	double h = magnitude * sin(-degrees * degtorad) * aspect;
+
+	int dx = 0;
+	int dy = 0;
+
+	// Adjust dx and dy to make the compass look like a compass
+	if (degrees == 0 || degrees == 360) {
+		dx = 1;
+		dy = 2;
+	} else if (degrees > 0 && degrees < 90) {
+		dx = 2;
+		dy = 1;
+	} else if (degrees == 90) {
+		dx = 2;
+		dy = 1;
+	} else if (degrees > 90 && degrees < 180) {
+		dx = 2;
+		dy = -1;
+	} else if (degrees == 180) {
+		dx = 1;
+		dy = 2;
+	} else if (degrees > 180 && degrees < 270) {
+		dx = -2;
+		dy = -1;
+	} else if (degrees == 270) {
+		dx = 2;
+		dy = 1;
+	} else if (degrees > 270 && degrees < 360) {
+		dx = -2;
+		dy = 1;
+	}
+
+	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
+	surface->drawLine(x - dx, y - dy, x+(int)w, y+(int)h, color);
+	surface->drawLine(x + dx, y + dy, x+(int)w, y+(int)h, color);
+
+	surface->drawLine(x - dx, y - dy, x+(int)-w, y+(int)-h, color);
+	surface->drawLine(x + dx, y + dy, x+(int)-w, y+(int)-h, color);
+}
+
+// A circle sampled every `squash` rows, to keep the eclipse discs round on
+// Hercules where the pixels are much narrower than they are tall
+void fillSquashedCircle(Graphics::Surface *surface, int x, int y, int radius, int squash, int color) {
+	int rows = radius / squash;
+	for (int dy = -rows; dy <= rows; dy++) {
+		int span = (int)sqrt(double(radius * radius - squash * squash * dy * dy));
+		surface->hLine(x - span, y + dy, x + span, color);
+	}
 }
 
 // Copied from BITMAP::circlefill in engines/ags/lib/allegro/surface.cpp
@@ -455,20 +977,44 @@ void fillCircle(Graphics::Surface *surface, int x, int y, int radius, int color)
 	} while (cx <= cy);
 }
 
-void EclipseEngine::drawEclipseIndicator(Graphics::Surface *surface, int x, int y, uint32 color1, uint32 color2) {
+void EclipseEngine::drawEclipseIndicator(Graphics::Surface *surface, int x, int y, uint32 color1, uint32 color2, uint32 color3) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	bool isHercules = _renderMode == Common::kRenderHercG;
+	// Measured from the original: the moon is a bit smaller than the sun
+	int radius = isHercules ? 15 : 7;
+	int moonRadius = isHercules ? 13 : radius;
+	int squash = isHercules ? 2 : 1;
+	int spread = isHercules ? 28 : 14;
 
-	// These calls will cover the pixels of the hardcoded eclipse image
-	surface->fillRect(Common::Rect(x, y, x + 50, y + 20), black);
-
+	surface->fillRect(Common::Rect(x, y, x + (isHercules ? 100 : 50), y + 20), black);
 	float progress = 0;
 	if (_countdown >= 0)
 		progress = float(_countdown) / _initialCountdown;
-
-	int difference = 14 * progress;
-
-	fillCircle(surface, x + 7, y + 10, 7, color1); // Sun
-	fillCircle(surface, x + 7 + difference, y + 10, 7, color2); // Moon
+	int difference = spread * progress;
+	int sunX = x + (isHercules ? 29 : 7);
+	int sunY = y + 10;
+	int moonX = sunX + difference;
+	int moonY = sunY;
+	fillSquashedCircle(surface, sunX, sunY, radius, squash, color1);
+	if (color3 != 0) {
+		int rows = moonRadius / squash;
+		for (int dy = -rows; dy <= rows; ++dy) {
+			for (int dx = -moonRadius; dx <= moonRadius; ++dx) {
+				if (dx * dx + squash * squash * dy * dy <= moonRadius * moonRadius) {
+					int px = moonX + dx;
+					int py = moonY + dy;
+					// The checker follows unsquashed pixel pairs
+					if (((px + squash - 1) / squash + py) % 2 == 0) {
+						surface->setPixel(px, py, color2);
+					} else {
+						surface->setPixel(px, py, color3);
+					}
+				}
+			}
+		}
+	} else {
+		fillSquashedCircle(surface, moonX, moonY, moonRadius, squash, color2);
+	}
 }
 
 void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition, int separation) {
@@ -476,13 +1022,49 @@ void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int
 		return;
 
 	for (int i = 0; i < 5; i++) {
-		if (isSpectrum()) {
+		int frame = 0;
+		if (isSpectrum() || isC64()) {
 			if (_gameStateVars[kVariableEclipseAnkhs] <= i)
 				continue;
-		} else if (_gameStateVars[kVariableEclipseAnkhs] > i)
-			continue;
-		surface->copyRectToSurface(*_indicators[0], xPosition + separation * i, yPosition, Common::Rect(_indicators[0]->w, _indicators[0]->h));
+		} else if (_gameStateVars[kVariableEclipseAnkhs] > i) {
+			// DOS repaints these too: the border ankhs use another color
+			if (_indicators.size() < 2)
+				continue;
+			frame = 1;
+		}
+		surface->copyRectToSurface(*_indicators[frame], xPosition + separation * i, yPosition, Common::Rect(_indicators[frame]->w, _indicators[frame]->h));
 	}
+}
+
+void EclipseEngine::drawHeartIndicator(Graphics::Surface *surface, int x, int y) {
+	// Heartbeat animation shared across platforms.
+	// Timer counts down from shield at 50Hz (_ticks rate).
+	// Beat frame shown for last 5 ticks of each cycle, rest frame for the remainder.
+	// Lower shield = faster heartbeat. At shield <= 5, heart beats constantly.
+	if (_eclipseSprites.size() < 2)
+		return;
+
+	int shield = _gameStateVars[k8bitVariableShield];
+	int beatCycle = MAX(shield, 1);
+	int phase = _ticks % beatCycle;
+	int beatStart = MAX(beatCycle - 5, 0);
+	int frame = _lastHeartIndicatorFrame;
+
+	if (shield <= 5 || _avoidRenderingFrames > 0 || _hasFallen) {
+		frame = 1;
+		_lastHeartIndicatorFrame = frame;
+	} else if (!_inWaitLoop) {
+		frame = (phase >= beatStart) ? 0 : 1;
+		_lastHeartIndicatorFrame = frame;
+
+		if (!isPaused() && phase == beatStart && _lastHeartbeatSoundTick != _ticks) {
+			playSound(1, false);
+			_lastHeartbeatSoundTick = _ticks;
+		}
+	}
+
+	surface->copyRectToSurface(*_eclipseSprites[frame], x, y,
+		Common::Rect(_eclipseSprites[frame]->w, _eclipseSprites[frame]->h));
 }
 
 void EclipseEngine::drawSensorShoot(Sensor *sensor) {
@@ -553,6 +1135,60 @@ void EclipseEngine::drawSensorShoot(Sensor *sensor) {
 	}
 }
 
+void EclipseEngine::drawScoreString(int score, int x, int y, uint32 front, uint32 back, Graphics::Surface *surface) {
+	Common::String scoreStr = Common::String::format("%07d", score);
+
+	if (isDOS() || isCPC() || isSpectrum()) {
+		scoreStr = shiftStr(scoreStr, 'Z' - '0' + 1);
+		if (_renderMode == Common::RenderMode::kRenderEGA || isSpectrum()) {
+			drawStringInSurface(scoreStr, x, y, front, back, surface);
+			return;
+		}
+	}
+
+	// Atari ST: use Font B (_fontScore) with dedicated score digit glyphs.
+	// Font B has 10 glyphs (0-9) for digits. In the original, the score bytes
+	// have $2F subtracted to map '0'→glyph 0, '1'→glyph 1, etc.
+	// For drawChar: chr = glyph_index + 32, so digit '0' → chr 32, '9' → chr 41.
+	if (isAtariST() || isAmiga()) {
+		_fontScore.setBackground(back);
+		_fontScore.setSecondaryColor(front);
+		// Font B uses palette indices 1-4 like Font A
+		uint32 pal2 = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 182, 109, 36);
+		uint32 pal3 = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 218, 145, 36);
+		uint32 pal4 = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 255, 182, 36);
+		_fontScore.setSecondaryColor(pal2);
+		_fontScore.setTertiaryColor(pal3);
+		_fontScore.setQuaternaryColor(pal4);
+		for (int i = 0; i < int(scoreStr.size()); i++) {
+			int chr = (scoreStr[i] - '0') + 32;
+			_fontScore.drawChar(surface, chr, x, y, front);
+			x += 8;
+		}
+		return;
+	}
+
+	// Start in x,y and draw each digit, from left to right, adding a gap every 3 digits
+	bool isHercules = _renderMode == Common::kRenderHercG;
+	int gapSize = isC64() ? 8 : (isHercules ? 8 : 4);
+	int charStep = isHercules ? 16 : 8;
+
+	Font *scoreFont = &_font;
+	scoreFont->setBackground(back);
+	scoreFont->setSecondaryColor(front);
+
+	for (int i = 0; i < int(scoreStr.size()); i++) {
+		Common::String digit(scoreStr[i]);
+		if (!isCPC())
+			digit.toUppercase();
+		scoreFont->drawString(surface, digit, x, y, _screenW, front);
+		x += charStep;
+		if ((i - scoreStr.size() + 1) % 3 == 1)
+			x += gapSize;
+	}
+}
+
+
 void EclipseEngine::updateTimeVariables() {
 	if (isEclipse2() && _gameStateControl == kFreescapeGameStateStart) {
 		executeLocalGlobalConditions(false, true, false);
@@ -564,6 +1200,13 @@ void EclipseEngine::updateTimeVariables() {
 	// This function only executes "on collision" room/global conditions
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
+
+
+	if (_lastFiveSeconds != seconds / 5) {
+		_lastFiveSeconds = seconds / 5;
+		executeLocalGlobalConditions(false, false, true);
+	}
+
 	if (_lastThirtySeconds != seconds / 30) {
 		_lastThirtySeconds = seconds / 30;
 
@@ -575,7 +1218,30 @@ void EclipseEngine::updateTimeVariables() {
 			_gameStateVars[k8bitVariableShield] += 1;
 		}
 
-		executeLocalGlobalConditions(false, false, true);
+		// Lantern battery drain: non-rechargeable, one level per 30-second tick
+		// while the flashlight is on. ROM drains TeLanternBrightnessFrame ($7f6c)
+		// from 5 (brightest) down to -1 (dead). 6 levels total.
+		if ((isAtariST() || isAmiga()) && _flashlightOn && _lanternBatteryLevel >= 0) {
+			_lanternBatteryLevel--;
+			if (_lanternBatteryLevel < 0) {
+				_flashlightOn = false;
+				_atariLanternLightFrame = -1;
+				_atariLanternAnimationDirection = 0;
+			}
+			if (_atariAreaDark && _currentArea) {
+				applyEclipseFadePalette(_currentArea->getAreaID(), _lanternBatteryLevel);
+				swapPalette(_currentArea->getAreaID());
+			}
+		}
+	}
+
+	if (isEclipse() && isSpectrum() && _currentArea->getAreaID() == 42) {
+		if (_lastSecond != seconds) { // Swap ink and paper colors every second
+			_lastSecond = seconds;
+			int tmp = _gfx->_inkColor;
+			_gfx->_inkColor = _gfx->_paperColor;
+			_gfx->_paperColor = tmp;
+		}
 	}
 }
 
@@ -587,7 +1253,22 @@ void EclipseEngine::executePrint(FCLInstruction &instruction) {
 		drawFullscreenMessageAndWait(_messagesList[index]);
 		return;
 	}
-	insertTemporaryMessage(_messagesList[index], _countdown - 2);
+	Common::String message = _messagesList[index];
+	if (isEclipse2()) {
+		// Message 16 (1-based, index 15) contains the "NO. OF PARTS XX" placeholder.
+		// The original routine patches those two bytes immediately before drawing the string.
+		Common::String::size_type pos = message.find("XX");
+		if (pos != Common::String::npos) {
+			int parts = _gameStateVars[kVariableEclipse2SphinxParts];
+			Common::String replacement;
+			if (parts < 10)
+				replacement = Common::String::format("%d ", parts);
+			else
+				replacement = Common::String::format("%d", parts);
+			message.replace(pos, 2, replacement);
+		}
+	}
+	insertTemporaryMessage(message, _countdown - 2);
 }
 
 Common::Error EclipseEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
@@ -595,6 +1276,18 @@ Common::Error EclipseEngine::saveGameStreamExtended(Common::WriteStream *stream,
 }
 
 Common::Error EclipseEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	(void)stream;
+	_lastHeartbeatSoundTick = -1;
+	_lastHeartIndicatorFrame = 1;
+	_atariCompassPhase = 0;
+	_atariCompassTargetPhase = 0;
+	_atariCompassTargetRemainder = 0.0f;
+	_atariCompassLastUpdateTick = -1;
+	_atariCompassPhaseInitialized = false;
+	_atariLanternAnimationDirection = 0;
+	_atariLanternLightFrame = _flashlightOn ? 0 : -1;
+	_atariLanternLastUpdateTick = -1;
+	_atariAreaDark = (isAtariST() || isAmiga()) && _currentArea && isAtariDarkArea(_currentArea->getAreaID());
 	return Common::kNoError;
 }
 

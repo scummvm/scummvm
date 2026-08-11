@@ -74,13 +74,12 @@ void PopUpDialog::open() {
 	// FIXME - OSystem should send out notification messages when the screen
 	// resolution changes... we could generalize CommandReceiver and CommandSender.
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	Common::Rect safeArea = g_system->getSafeOverlayArea();
 
 	// HACK: For now, we do not do scrolling. Instead, we draw the dialog
 	// in two columns if it's too tall.
 
-	if (_h >= screenH) {
+	if (_h >= safeArea.height()) {
 		_twoColumns = true;
 		_entriesPerColumn = _entries.size() / 2;
 
@@ -104,19 +103,19 @@ void PopUpDialog::open() {
 		_w = MAX<uint16>(_boss->getWidth(), _w + 20);
 	}
 
-	if (_w >= screenW)
-		_w = screenW - 1;
-	if (_x < 0)
-		_x = 0;
-	if (_x + _w >= screenW)
-		_x = screenW - 1 - _w;
+	if (_w >= safeArea.width())
+		_w = safeArea.width() - 1;
+	if (_x < safeArea.left)
+		_x = safeArea.left;
+	if (_x + _w >= safeArea.right)
+		_x = safeArea.right - 1 - _w;
 
-	if (_h >= screenH)
-		_h = screenH - 1;
-	if (_y < 0)
-		_y = 0;
-	else if (_y + _h >= screenH)
-		_y = screenH - 1 - _h;
+	if (_h >= safeArea.height())
+		_h = safeArea.height() - 1;
+	if (_y < safeArea.top)
+		_y = safeArea.top;
+	else if (_y + _h >= safeArea.bottom)
+		_y = safeArea.bottom - 1 - _h;
 
 	// TODO - implement scrolling if we had to move the menu, or if there are too many entries
 
@@ -128,15 +127,16 @@ void PopUpDialog::open() {
 void PopUpDialog::reflowLayout() {
 }
 
-void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void PopUpDialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
+	int16 x = _x;
 	if (g_gui.useRTL()) {
-		_x = g_system->getOverlayWidth() - _x - _w + g_gui.getOverlayOffset();
+		x = g_system->getOverlayWidth() - _x - _w;
 	}
 
 	// Draw the menu border
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(x, _y, x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
 	/*if (_twoColumns)
 		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);*/
@@ -162,6 +162,12 @@ void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	int dist = (_clickX - absX) * (_clickX - absX) + (_clickY - absY) * (_clickY - absY);
 	if (dist > 3 * 3 || g_system->getMillis() - _openTime > 300) {
 		int item = findItem(x, y);
+
+		// treat separator item as if no item was clicked
+		if (item >= 0 && _entries[item].size() == 0) {
+			item = -1;
+		}
+
 		setResult(item);
 		close();
 	}
@@ -181,6 +187,7 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	// Compute over which item the mouse is...
 	int item = findItem(x, y);
 
+	// treat separator item as if no item was moused over
 	if (item >= 0 && _entries[item].size() == 0)
 		item = -1;
 
@@ -297,20 +304,15 @@ void PopUpDialog::clearEntries() {
 }
 
 int PopUpDialog::findItem(int x, int y) const {
+	int entry = -1;
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		if (_twoColumns) {
-			uint entry = (y - 2) / _lineHeight;
-			if (x > _w / 2) {
-				entry += _entriesPerColumn;
-
-				if (entry >= _entries.size())
-					return -1;
-			}
-			return entry;
-		}
-		return (y - 2) / _lineHeight;
+		entry = (y - 2) / _lineHeight;
+		if (_twoColumns && x > _w / 2)
+			entry += _entriesPerColumn;
+		if (entry >= static_cast<int>(_entries.size()))
+			entry = -1;
 	}
-	return -1;
+	return entry;
 }
 
 void PopUpDialog::setSelection(int item) {
@@ -398,11 +400,10 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	int pad = _leftPadding;
 
 	if (g_gui.useRTL()) {
-		if (_twoColumns) {
-			r1.translate(this->getWidth() - w, 0);		// Shift the line-separator to the "first" col of RTL popup
-		}
-
-		r2.left = g_system->getOverlayWidth() - r2.left - w + g_gui.getOverlayOffset();
+		const int16 screenW = g_system->getOverlayWidth();
+		r1.left = screenW - r1.left - w;
+		r1.right = r1.left + w;
+		r2.left = screenW - r2.left - w;
 		r2.right = r2.left + w;
 
 		alignment = Graphics::kTextAlignRight;

@@ -45,6 +45,18 @@
  */
 namespace Touche {
 
+enum TOUCHEAction {
+	kToucheActionNone,
+	kToucheActionYes,
+	kToucheActionSkipOrQuit,
+	kToucheActionOpenOptions,
+	kToucheActionEnableFastWalk,
+	kToucheActionDisableFastWalk,
+	kToucheActionToggleFastMode,
+	kToucheActionToggleTalkTextMode,
+	kToucheActionSkipDialogue
+};
+
 struct Area {
 	Common::Rect r;
 	int16 srcX, srcY;
@@ -286,12 +298,12 @@ struct ProgramConversationData {
 };
 
 enum {
-	kDebugEngine   = 1 << 0,
-	kDebugGraphics = 1 << 1,
-	kDebugResource = 1 << 2,
-	kDebugOpcodes  = 1 << 3,
-	kDebugMenu     = 1 << 4,
-	kDebugCharset  = 1 << 5
+	kDebugEngine = 1,
+	kDebugGraphics,
+	kDebugResource,
+	kDebugOpcodes,
+	kDebugMenu,
+	kDebugCharset,
 };
 
 enum ResourceType {
@@ -625,6 +637,10 @@ protected:
 		return Common::String::format("%s.%d", _targetName.c_str(), slot);
 	}
 
+	void getHotspotPositions(Common::Array< ::Graphics::HotspotInfo> &hotspots) override;
+	bool hotspotDirty() const override;
+	void rebuildHotspotSnapshot() const;
+
 	void setupOpcodes();
 	void op_nop();
 	void op_jnz();
@@ -898,6 +914,28 @@ protected:
 	uint8 _paletteBuffer[256 * 3];
 	Common::Rect _dirtyRectsTable[NUM_DIRTY_RECTS];
 	int _dirtyRectsTableCount;
+
+	struct HotspotSnapshot {
+		struct HitBoxEntry {
+			int16 item;
+			int16 lockedTop;
+			int16 str;
+			int16 defaultStr;
+			Common::Rect hitBox0;
+		};
+		struct CharEntry {
+			uint16 num;
+			uint16 flags;
+			Common::Rect prevBoundingRect;
+		};
+		int16 flag618;
+		int16 scrollX;
+		int16 scrollY;
+		int currentEpisodeNum;
+		Common::Array<HitBoxEntry> hitBoxes;
+		CharEntry chars[NUM_KEYCHARS];
+	};
+	mutable HotspotSnapshot _hotspotSnapshot;
 
 	static const uint8 _directionsTable[NUM_DIRECTIONS];
 };

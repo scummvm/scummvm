@@ -70,7 +70,7 @@ void SpiderEngine::showConversation() {
 	}
 
 	if (videos.size() > 0) {
-		runIntros(videos);
+		runIntrosWithSubtitles(videos);
 		videos.clear();
 	}
 
@@ -130,15 +130,14 @@ void SpiderEngine::showConversation() {
 		}
 
 		if (videos.size() > 0) {
-			runIntros(videos);
+			runIntrosWithSubtitles(videos);
 			videos.clear();
 		}
 
 		endConversation();
-		_music.clear();
 
 		if (shouldEscape) {
-			runIntros(_escapeSequentialVideoToPlay);
+			runIntrosWithSubtitles(_escapeSequentialVideoToPlay);
 			_escapeSequentialVideoToPlay.clear();
 
 			// HACK
@@ -203,8 +202,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 		_sceneState["GS_LEVELWON"] = true;
 	}
 
-	if (videos.size() > 0)
-		runIntros(videos);
+	runIntrosWithSubtitles(videos);
 }
 
 void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
@@ -222,8 +220,7 @@ void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
 			}
 		}
 	}
-	if (videos.size() > 0)
-		runIntros(videos);
+	runIntrosWithSubtitles(videos);
 }
 
 bool SpiderEngine::hoverConversation(const Common::Point &mousePos) {

@@ -55,11 +55,9 @@ bool f_stream_Init() {
 	return true;
 }
 
-void f_stream_Shutdown(void) {
-	strmRequest *myStream;
-
+void f_stream_Shutdown() {
 	// Loop through the list, closing all stream requests, which also deallocs the request
-	myStream = _G(firstStream);
+	strmRequest *myStream = _G(firstStream);
 	while (myStream) {
 		_G(firstStream) = _G(firstStream)->next;
 		f_stream_Close(myStream);
@@ -70,77 +68,26 @@ void f_stream_Shutdown(void) {
 strmRequest *f_stream_Open(SysFile *srcFile, int32 fileOffset, int32 strmMinBuffSize, int32 strmBuffSize,
 	int32 numBlocksToRead, int32 *blockSizeArray, int32 initialRead, bool wrapStream) {
 
-	strmRequest *newStream;
-	int32 bytesRead, i, bytesToRead;
-	bool finished;
-	void *bufferHandle;
-	int32 memAvail;
+	int32 bytesToRead;
 
 	// Parameter verification        
 	if (!srcFile) {
-		error_show(FL, 'FSF!');
+		error_show(FL,"f_stream_Open() failed - invalid FILE* given");
 	}
 
 	if (strmMinBuffSize < 0) {
-		error_show(FL, 'FSF1', "neg min buffsize: %d", strmMinBuffSize);
+		error_show(FL, "neg min buffsize: %d", strmMinBuffSize);
 	}
 
 	// Allocate a new stream request struct
-	if ((newStream = (strmRequest *)mem_alloc(sizeof(strmRequest), STR_STRMREQ)) == nullptr) {
-		error_show(FL, 'OOM!', "%d", sizeof(strmRequest));
-		return nullptr;
-	}
+	strmRequest *newStream = (strmRequest *)mem_alloc(sizeof(strmRequest), STR_STRMREQ);
 
-	// Try to get memory
+	// Get memory. If there's not enough memory, a exception will be triggered in NewHandle
 	newStream->strmHandle = NewHandle(strmBuffSize, "stream buff");
-	if (newStream->strmHandle) {
-		goto got_mem;
-	}
 
-	// Maximize available memory
-	MaxMem((Size *)&memAvail);	// param on PC is max mem avail in one block
-
-	// try to get requested size
-	if (memAvail >= strmBuffSize) {
-		/*
-				if ((newStream->strmBuff = (uint8*)mem_alloc(strmBuffSize, STR_STRMBUFF)) != nullptr) {
-					goto got_mem;
-				}
-		*/
-		// try to get memory
-		newStream->strmHandle = NewHandle(strmBuffSize, "stream buff");
-		if (newStream->strmHandle) {
-			goto got_mem;
-		}
-	}
-
-	// try to get what's left if it's enough
-	// get a compromise between free and requested.
-	// if we get it all, system gets unstable...
-	if (memAvail > strmMinBuffSize) {
-		int32 alloc_me = ((memAvail - strmMinBuffSize) / 2) + strmMinBuffSize;
-		/*
-				if ((newStream->strmBuff = (uint8*)mem_alloc(alloc_me, STR_STRMBUFF)) != nullptr) {
-					strmBuffSize = alloc_me;
-					goto got_mem;
-				}
-		*/
-		// try to get memory
-		newStream->strmHandle = NewHandle(alloc_me, "stream buff");
-		if (newStream->strmHandle) {
-			strmBuffSize = alloc_me;
-			goto got_mem;
-		}
-
-	}
-
-	// sorry, bud.
-	error_show(FL, 'FSOM', "want: %d, have: %d", strmMinBuffSize, memAvail);
-
-got_mem:
 	//lock the buffer - to be locked until the stream is closed
 	HLock(newStream->strmHandle);
-	newStream->strmBuff = (uint8 *) * (newStream->strmHandle);
+	newStream->strmBuff = (uint8 *) *(newStream->strmHandle);
 
 	// Initialize the stream request
 	newStream->strmSize = strmBuffSize;
@@ -156,8 +103,9 @@ got_mem:
 
 	// If the streaming should begin part way into the file, seek to the beginning of where to start streaming
 	if (fileOffset > 0) {
-		// If (fseek(newStream->srcFile, fileOffset, SEEK_SET) != 0) {
 		if (!newStream->srcFile->seek(fileOffset)) {
+			HUnLock(newStream->strmHandle);
+			DisposeHandle(newStream->strmHandle);
 			delete newStream->srcFile;
 			mem_free(newStream);
 			return nullptr;
@@ -170,9 +118,9 @@ got_mem:
 		if (newStream->blockSizeArray) {
 			// Calculate the total number of bytes to read in initially
 			initialRead = (int32)imath_min(initialRead, numBlocksToRead);
-			finished = false;
+			bool finished = false;
 			bytesToRead = 0;
-			i = 0;
+			int32 i = 0;
 			while ((i < initialRead) && (!finished)) {
 				if ((bytesToRead + blockSizeArray[i]) <= strmBuffSize) {
 					bytesToRead += blockSizeArray[i];
@@ -199,9 +147,7 @@ got_mem:
 		if (bytesToRead > 0) {
 
 			// Read in the initial bytes to read
-		//bytesRead = fread((void*)newStream->strmHead, 1, bytesToRead, newStream->srcFile);
-			bufferHandle = newStream->strmHead;
-			bytesRead = newStream->srcFile->read((MemHandle)&bufferHandle, bytesToRead);
+			int32 bytesRead = newStream->srcFile->read(newStream->strmHead, bytesToRead);
 
 			//did we actually read that many?  If not, close the file
 			if (bytesRead < bytesToRead) {
@@ -230,11 +176,10 @@ got_mem:
 
 
 static bool UnwrapStream(strmRequest *myStream) {
-	int32 bytesToMove = 0, bytesAvail;
-	uint8 *tempBuff;
+	int32 bytesToMove = 0;
 
 	// Using tempBuff as a flag to determine whether data needs to be temporarily stored
-	tempBuff = nullptr;
+	uint8 *tempBuff = nullptr;
 
 	// Since strmTail is never allowed to be equal to strmWrap if it is > strmHead, there must be a
 	// Non-zero amount of data at the end which we must move.
@@ -243,15 +188,13 @@ static bool UnwrapStream(strmRequest *myStream) {
 
 		// Calculate how many bytes to store and copy to a temporary buffer
 		bytesToMove = (byte *)myStream->strmHead - (byte *)myStream->strmBuff;
-
-		if ((tempBuff = (uint8 *)mem_alloc(bytesToMove, "stream temp buff")) == nullptr)
-			error_show(FL, 'OOM!', "UnwrapStream() failed - temp buff avail: %d", bytesToMove);
+		tempBuff = (uint8 *)mem_alloc(bytesToMove, "stream temp buff");
 
 		memcpy(tempBuff, myStream->strmBuff, bytesToMove);
 	}
 
 	// Move the data at the end of the buffer to the beginning and reset the strmWrap pointer
-	bytesAvail = (byte *)myStream->strmWrap - (byte *)myStream->strmTail;
+	int32 bytesAvail = (byte *)myStream->strmWrap - (byte *)myStream->strmTail;
 	memmove(myStream->strmBuff, myStream->strmTail, bytesAvail);
 	myStream->strmTail = myStream->strmBuff;
 	myStream->strmHead = (uint8 *)((byte *)(myStream->strmTail) + bytesAvail);
@@ -282,15 +225,12 @@ void f_stream_DumpPreviouslyRead(strmRequest *myStream) {
 
 
 int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
-	int32   bytesAvail, bytesNeeded, bytesRead;
-	void *bufferHandle;
-
 	// Parameter verification
 	if (!myStream)
-		error_show(FL, 'FSIS', "f_stream_Read() failed - invalid stream request");
+		error_show(FL, "f_stream_Read() failed - invalid stream request");
 
 	if ((numBytes <= 0) || (numBytes >= myStream->strmSize))
-		error_show(FL, 'FSR!', "%d stream size %d", numBytes, myStream->strmSize);
+		error_show(FL, "%d stream size %d", numBytes, myStream->strmSize);
 
 	// If the stream tail is > the stream head, and the number of bytes at the end of the buffer is < numBytes
 	// we must unwrap the stream, moving the data at the end of the buffer to the beginning, and slide the beginning down
@@ -301,6 +241,7 @@ int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
 	// Now either the strmHead is >= the strmTail, or there is enough data at the end of the buffer to fulfill numBytes      
 
 	// Calculate the number of bytes available
+	int32 bytesAvail;
 	if (myStream->strmTail <= myStream->strmHead) {
 		bytesAvail = (int32)(myStream->strmHead - myStream->strmTail);
 	} else {
@@ -324,54 +265,53 @@ int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
 		}
 
 		return numBytes;
-	} else {
-		// Else we will have to read more data from disc
-		// If this has happened, since we "unwrapped" the stream buff, we can guarantee that strmTail < strmHead
-
-		// Calculate how much more must be read in
-		bytesNeeded = numBytes - bytesAvail;
-
-		// Make sure we have enough room at the end of the buffer to accommodate
-		if ((int32)(myStream->endStrmBuff - myStream->strmHead) < bytesNeeded) {
-			// We need to memmove the contents of the stream to the beginning of the buff to allow
-			// F_stream_read() to return a pointer to a contiguous block
-
-			// Move the data to the beginning of the stream buffer, and reset the head and tail pointers
-			memmove((void *)myStream->strmBuff, myStream->strmTail, bytesAvail);
-			myStream->strmTail = myStream->strmBuff;
-			myStream->strmHead = (uint8 *)((byte *)myStream->strmTail + bytesAvail);
-		}
-
-		// If the client is using a blockSizeArray, hopefully bytesNeeded will be equal to the next blockSize
-		if (myStream->blockSizeArray && (*myStream->blockSizeArray == bytesNeeded) && (myStream->numBlocksToRead > 0)) {
-			myStream->blockSizeArray++;
-			myStream->numBlocksToRead--;
-		} else {
-			// Otherwise we just trashed the whole point of using a calculated blockSizeArray
-			myStream->blockSizeArray = nullptr;
-			myStream->numBlocksToRead = -1;
-			myStream->nextReadSize = numBytes;
-		}
-
-		// Read in the bytesNeeded
-		bufferHandle = myStream->strmHead;
-		bytesRead = myStream->srcFile->read((MemHandle)&bufferHandle, bytesNeeded);
-
-		if (bytesRead < bytesNeeded) {
-			// If we could not read that much in, close the srcFile
-			delete myStream->srcFile;
-			myStream->srcFile = nullptr;
-		}
-
-		// Set the destination pointer and update the stream pointers
-		*dest = (uint8 *)myStream->strmTail;
-		myStream->strmLastRead = myStream->strmTail;
-		myStream->strmHead += bytesRead;
-		myStream->strmTail = myStream->strmHead;
-
-		// Return the number of bytes successfully available
-		return (bytesRead + bytesAvail);
 	}
+
+	// Else we will have to read more data from disc
+	// If this has happened, since we "unwrapped" the stream buff, we can guarantee that strmTail < strmHead
+
+	// Calculate how much more must be read in
+	const int32 bytesNeeded = numBytes - bytesAvail;
+
+	// Make sure we have enough room at the end of the buffer to accommodate
+	if ((int32)(myStream->endStrmBuff - myStream->strmHead) < bytesNeeded) {
+		// We need to memmove the contents of the stream to the beginning of the buff to allow
+		// F_stream_read() to return a pointer to a contiguous block
+
+		// Move the data to the beginning of the stream buffer, and reset the head and tail pointers
+		memmove((void *)myStream->strmBuff, myStream->strmTail, bytesAvail);
+		myStream->strmTail = myStream->strmBuff;
+		myStream->strmHead = (uint8 *)((byte *)myStream->strmTail + bytesAvail);
+	}
+
+	// If the client is using a blockSizeArray, hopefully bytesNeeded will be equal to the next blockSize
+	if (myStream->blockSizeArray && (*myStream->blockSizeArray == bytesNeeded) && (myStream->numBlocksToRead > 0)) {
+		myStream->blockSizeArray++;
+		myStream->numBlocksToRead--;
+	} else {
+		// Otherwise we just trashed the whole point of using a calculated blockSizeArray
+		myStream->blockSizeArray = nullptr;
+		myStream->numBlocksToRead = -1;
+		myStream->nextReadSize = numBytes;
+	}
+
+	// Read in the bytesNeeded
+	const int32 bytesRead = myStream->srcFile->read(myStream->strmHead, bytesNeeded);
+
+	if (bytesRead < bytesNeeded) {
+		// If we could not read that much in, close the srcFile
+		delete myStream->srcFile;
+		myStream->srcFile = nullptr;
+	}
+
+	// Set the destination pointer and update the stream pointers
+	*dest = (uint8 *)myStream->strmTail;
+	myStream->strmLastRead = myStream->strmTail;
+	myStream->strmHead += bytesRead;
+	myStream->strmTail = myStream->strmHead;
+
+	// Return the number of bytes successfully available
+	return (bytesRead + bytesAvail);
 }
 
 void f_stream_Close(strmRequest *myStream) {
@@ -381,9 +321,7 @@ void f_stream_Close(strmRequest *myStream) {
 	}
 
 	// Close the stream and throw out the stream buffer
-	if (myStream->srcFile) {
-		delete myStream->srcFile;
-	}
+	delete myStream->srcFile;
 
 	// Kill the stream buffer
 	HUnLock(myStream->strmHandle);
@@ -408,11 +346,8 @@ void f_stream_Close(strmRequest *myStream) {
 }
 
 void f_stream_Process(int32 numToProcess) {
-	strmRequest *myStream;
 	int32 buffEndBytesAvail = 0, buffStartBytesAvail = 0;
 	int32 bytesRead, bytesAvail, nextReadSize;
-	bool buffWrap, useBlockSizeArray;
-	void *bufferHandle;
 
 	// No sense wasting time if there are no stream requests to process
 	if (!_G(firstStream)) {
@@ -420,13 +355,13 @@ void f_stream_Process(int32 numToProcess) {
 	}
 
 	// Loop through until either the end of the list of requests, or we've serviced the "numToProcess"
-	myStream = _G(firstStream);
+	strmRequest *myStream = _G(firstStream);
 	while (myStream && (numToProcess > 0)) {
 
 		// Make sure we still have an open srcFile
 		if (myStream->srcFile && (myStream->numBlocksToRead != 0)) {
-			buffWrap = false;
-			useBlockSizeArray = false;
+			bool buffWrap = false;
+			bool useBlockSizeArray = false;
 
 			// Calculate the amount of empty space in the stream buff
 			// If all the empty space in the stream buff is between the head and the lastRead...
@@ -468,8 +403,7 @@ void f_stream_Process(int32 numToProcess) {
 			if ((buffWrap && (buffEndBytesAvail >= nextReadSize)) ||
 					((!buffWrap) && (bytesAvail >= nextReadSize))) {
 				// Read the bytes into the stream buffer 
-				bufferHandle = myStream->strmHead;
-				bytesRead = myStream->srcFile->read((MemHandle)&bufferHandle, nextReadSize);
+				bytesRead = myStream->srcFile->read(myStream->strmHead, nextReadSize);
 
 				// If we could not read that much in, close the srcFile
 				if (bytesRead < nextReadSize) {
@@ -498,9 +432,7 @@ void f_stream_Process(int32 numToProcess) {
 						myStream->strmWrap = myStream->strmHead;
 
 						// Read the bytes into the stream buffer 
-			//bytesRead = (int32)fread((void*)myStream->strmBuff, 1, nextReadSize, myStream->srcFile);
-						bufferHandle = myStream->strmBuff;
-						bytesRead = myStream->srcFile->read((MemHandle)&bufferHandle, nextReadSize);
+						bytesRead = myStream->srcFile->read(myStream->strmBuff, nextReadSize);
 
 						// If we could not read that much in, close the srcFile
 						if (bytesRead < nextReadSize) {
@@ -524,8 +456,7 @@ void f_stream_Process(int32 numToProcess) {
 					if (buffEndBytesAvail > 0) {
 
 						// Read into the end of the buffer
-						bufferHandle = myStream->strmHead;
-						bytesRead = (int32)myStream->srcFile->read((MemHandle)&bufferHandle, buffEndBytesAvail);
+						bytesRead = (int32)myStream->srcFile->read(myStream->strmHead, buffEndBytesAvail);
 
 						// If we could not read that much in, close the srcFile and update the head pointer
 						if (bytesRead < buffEndBytesAvail) {
@@ -539,8 +470,7 @@ void f_stream_Process(int32 numToProcess) {
 					if (myStream->srcFile) {
 
 						// Read into the beginning of the buffer
-						bufferHandle = myStream->strmBuff;
-						bytesRead = myStream->srcFile->read((MemHandle)&bufferHandle, nextReadSize - buffEndBytesAvail);
+						bytesRead = myStream->srcFile->read(myStream->strmBuff, nextReadSize - buffEndBytesAvail);
 
 						// If we could not read that much in, close the srcFile
 						if (bytesRead < (nextReadSize - buffEndBytesAvail)) {
@@ -561,7 +491,7 @@ void f_stream_Process(int32 numToProcess) {
 			}
 		}
 
-		// If we were able, we serviced the above stream request. Get the next request and decriment the counter
+		// If we were able, we serviced the above stream request. Get the next request and decrement the counter
 		myStream = myStream->next;
 		numToProcess--;
 	}

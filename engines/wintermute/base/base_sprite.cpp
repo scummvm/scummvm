@@ -41,15 +41,16 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/detection.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSprite, false)
 
 //////////////////////////////////////////////////////////////////////
-BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *Owner) : BaseScriptHolder(inGame) {
+BaseSprite::BaseSprite(BaseGame *inGame, BaseObject *owner) : BaseScriptHolder(inGame) {
 	_editorAllFrames = false;
-	_owner = Owner;
+	_owner = owner;
 	setDefaults();
 }
 
@@ -89,13 +90,12 @@ void BaseSprite::setDefaults() {
 void BaseSprite::cleanup() {
 	BaseScriptHolder::cleanup();
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (int32 i = 0; i < _frames.getSize(); i++) {
 		delete _frames[i];
 	}
-	_frames.clear();
+	_frames.removeAll();
 
-	delete[] _editorBgFile;
-	_editorBgFile = nullptr;
+	SAFE_DELETE_ARRAY(_editorBgFile);
 
 	setDefaults();
 }
@@ -104,7 +104,7 @@ void BaseSprite::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, uint32 alpha) {
 	getCurrentFrame(zoomX, zoomY);
-	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
+	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) {
 		return STATUS_OK;
 	}
 
@@ -122,27 +122,15 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 	return display(x, y, registerOwner, zoomX, zoomY, alpha);
 }
 
-bool BaseSprite::isChanged() {
-	return _changed;
-}
-
-bool BaseSprite::isFinished() {
-	return _finished;
-}
-
 //////////////////////////////////////////////////////////////////////
-bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
-	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename);
-	if (!file) {
-		BaseEngine::LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename.c_str());
-		if (_gameRef->_debugDebugMode) {
+bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
+	if (!_game->_fileManager->hasFile(filename)) {
+		_game->LOG(0, "BaseSprite::loadFile failed for file '%s'", filename);
+		if (_game->_debugMode) {
 			return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		} else {
 			return loadFile("invalid.bmp", lifeTime, cacheType);
 		}
-	} else {
-		BaseFileManager::getEngineInstance()->closeFile(file);
-		file = nullptr;
 	}
 
 	bool ret = STATUS_FAILED;
@@ -151,27 +139,27 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 	AnsiString ext = PathUtil::getExtension(filename);
 	ext.toLowercase();
 	filePrefix.toLowercase();
-	if (filePrefix.hasPrefix("savegame:") || (ext == "bmp") || (ext == "tga") || (ext == "png") || (ext == "jpg")) {
-		BaseFrame *frame = new BaseFrame(_gameRef);
-		BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
+	if (filePrefix.hasPrefix("savegame:") || (ext == ".bmp") || (ext == ".tga") || (ext == ".png") || (ext == ".jpg")) {
+		BaseFrame *frame = new BaseFrame(_game);
+		BaseSubFrame *subframe = new BaseSubFrame(_game);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
 		if (subframe->_surface == nullptr) {
-			BaseEngine::LOG(0, "Error loading simple sprite '%s'", filename.c_str());
+			_game->LOG(0, "Error loading simple sprite '%s'", filename);
 			ret = STATUS_FAILED;
 			delete frame;
 			delete subframe;
 		} else {
-			subframe->setDefaultRect();
+			BasePlatform::setRect(&subframe->_rect, 0, 0, subframe->_surface->getWidth(), subframe->_surface->getHeight());
 			frame->_subframes.add(subframe);
 			_frames.add(frame);
 			_currentFrame = 0;
 			ret = STATUS_OK;
 		}
 	} else {
-		char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
+		char *buffer = (char *)_game->_fileManager->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
-				BaseEngine::LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
+				_game->LOG(0, "Error parsing SPRITE file '%s'", filename);
 			} else {
 				ret = STATUS_OK;
 			}
@@ -179,7 +167,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		}
 	}
 
-	setFilename(filename.c_str());
+	setFilename(filename);
 
 	return ret;
 }
@@ -225,14 +213,14 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	cleanup();
 
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SPRITE) {
-			BaseEngine::LOG(0, "'SPRITE' keyword expected.");
+			_game->LOG(0, "'SPRITE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -279,8 +267,8 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 			break;
 
 		case TOKEN_EDITOR_BG_FILE:
-			if (_gameRef->_editorMode) {
-				delete[] _editorBgFile;
+			if (_game->_editorMode) {
+				SAFE_DELETE_ARRAY(_editorBgFile);
 				size_t editorBgFileSize = strlen(params) + 1;
 				_editorBgFile = new char[editorBgFileSize];
 				Common::strcpy_s(_editorBgFile, editorBgFileSize, params);
@@ -307,11 +295,11 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 				frameLifeTime = -1;
 			}
 
-			frame = new BaseFrame(_gameRef);
+			frame = new BaseFrame(_game);
 
 			if (DID_FAIL(frame->loadBuffer(params, frameLifeTime, _streamedKeepLoaded))) {
 				delete frame;
-				BaseEngine::LOG(0, "Error parsing frame %d", frameCount);
+				_game->LOG(0, "Error parsing frame %d", frameCount);
 				return STATUS_FAILED;
 			}
 
@@ -333,7 +321,7 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		BaseEngine::LOG(0, "Syntax error in SPRITE definition");
+		_game->LOG(0, "Syntax error in SPRITE definition");
 		return STATUS_FAILED;
 	}
 	_canBreak = !_continuous;
@@ -344,7 +332,7 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 
 //////////////////////////////////////////////////////////////////////
 void BaseSprite::reset() {
-	if (_frames.size() > 0) {
+	if (_frames.getSize() > 0) {
 		_currentFrame = 0;
 	} else {
 		_currentFrame = -1;
@@ -368,7 +356,7 @@ void BaseSprite::reset() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
-	//if (_owner && _owner->_freezable && _gameRef->_state == GAME_FROZEN) return true;
+	//if (_owner && _owner->_freezable && _game->_state == GAME_FROZEN) return true;
 
 	if (_currentFrame == -1) {
 		return false;
@@ -376,19 +364,19 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 
 	uint32 timer;
 	if (_owner && _owner->_freezable) {
-		timer = _gameRef->getTimer()->getTime();
+		timer = _game->_timer;
 	} else {
-		timer = _gameRef->getLiveTimer()->getTime();
+		timer = _game->_liveTimer;
 	}
 
 	int lastFrame = _currentFrame;
 
 	// get current frame
 	if (!_paused && !_finished && timer >= _lastFrameTime + _frames[_currentFrame]->_delay && _lastFrameTime != 0) {
-		if (_currentFrame < (int32)_frames.size() - 1) {
+		if (_currentFrame < _frames.getSize() - 1) {
 			_currentFrame++;
 			if (_continuous) {
-				_canBreak = (_currentFrame == (int32)_frames.size() - 1);
+				_canBreak = (_currentFrame == _frames.getSize() - 1);
 			}
 		} else {
 			if (_looping) {
@@ -403,13 +391,13 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 		_lastFrameTime = timer;
 	}
 
-	_changed = (lastFrame != _currentFrame || (_looping && (int32)_frames.size() == 1));
+	_changed = (lastFrame != _currentFrame || (_looping && _frames.getSize() == 1));
 
 	if (_lastFrameTime == 0) {
 		_lastFrameTime = timer;
 		_changed = true;
 		if (_continuous) {
-			_canBreak = (_currentFrame == (int32)_frames.size() - 1);
+			_canBreak = (_currentFrame == _frames.getSize() - 1);
 		}
 	}
 
@@ -429,7 +417,7 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, float zoomY, uint32 alpha, float rotate, Graphics::TSpriteBlendMode blendMode) {
-	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
+	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) {
 		return STATUS_OK;
 	}
 
@@ -439,22 +427,22 @@ bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, flo
 			killAllSounds();
 		}
 		applyEvent("FrameChanged");
-		_frames[_currentFrame]->oneTimeDisplay(_owner, _gameRef->_editorMode && _editorMuted);
+		_frames[_currentFrame]->oneTimeDisplay(_owner, _game->_editorMode && _editorMuted);
 	}
 
 	// draw frame
-	return _frames[_currentFrame]->draw(x - _gameRef->_offsetX, y - _gameRef->_offsetY, registerVal, zoomX, zoomY, _precise, alpha, _editorAllFrames, rotate, blendMode);
+	return _frames[_currentFrame]->draw(x - _game->_offsetX, y - _game->_offsetY, registerVal, zoomX, zoomY, _precise, alpha, _editorAllFrames, rotate, blendMode);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 BaseSurface *BaseSprite::getSurface() {
 	// only used for animated textures for 3D models
-	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
+	if (_currentFrame < 0 || _currentFrame >= _frames.getSize()) {
 		return nullptr;
 	}
 	BaseFrame *frame = _frames[_currentFrame];
-	if (frame && frame->_subframes.size() > 0) {
+	if (frame && frame->_subframes.getSize() > 0) {
 		BaseSubFrame *subframe = frame->_subframes[0];
 		if (subframe) {
 			return subframe->_surface;
@@ -467,15 +455,15 @@ BaseSurface *BaseSprite::getSurface() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
+bool BaseSprite::getBoundingRect(Common::Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
 	}
 
-	rect->setEmpty();
-	for (uint32 i = 0; i < _frames.size(); i++) {
-		Rect32 frame;
-		Rect32 temp;
+	BasePlatform::setRectEmpty(rect);
+	for (int32 i = 0; i < _frames.getSize(); i++) {
+		Common::Rect32 frame;
+		Common::Rect32 temp;
 		BasePlatform::copyRect(&temp, rect);
 		_frames[i]->getBoundingRect(&frame, x, y, scaleX, scaleY);
 		BasePlatform::unionRect(rect, &temp, &frame);
@@ -486,7 +474,7 @@ bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITE {\n");
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "CONTINUOUS=%s\n", _continuous ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "PRECISE=%s\n", _precise ? "TRUE" : "FALSE");
@@ -502,7 +490,7 @@ bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "EDITOR_MUTED=%s\n", _editorMuted ? "TRUE" : "FALSE");
 	}
 
-	if (_editorBgFile) {
+	if (_editorBgFile && _editorBgFile[0]) {
 		buffer->putTextIndent(indent + 2, "EDITOR_BG_FILE=\"%s\"\n", _editorBgFile);
 		buffer->putTextIndent(indent + 2, "EDITOR_BG_OFFSET_X=%d\n", _editorBgOffsetX);
 		buffer->putTextIndent(indent + 2, "EDITOR_BG_OFFSET_Y=%d\n", _editorBgOffsetY);
@@ -512,11 +500,11 @@ bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	BaseScriptHolder::saveAsText(buffer, indent + 2);
 
 	// scripts
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (int32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->saveAsText(buffer, indent + 2);
 	}
 
@@ -569,7 +557,7 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	if (strcmp(name, "GetFrame") == 0) {
 		stack->correctParams(1);
 		int index = stack->pop()->getInt(-1);
-		if (index < 0 || index >= (int32)_frames.size()) {
+		if (index < 0 || index >= _frames.getSize()) {
 			script->runtimeError("Sprite.GetFrame: Frame index %d is out of range.", index);
 			stack->pushNULL();
 		} else {
@@ -586,18 +574,18 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *val = stack->pop();
 		if (val->isInt()) {
 			int index = val->getInt(-1);
-			if (index < 0 || index >= (int32)_frames.size()) {
+			if (index < 0 || index >= _frames.getSize()) {
 				script->runtimeError("Sprite.DeleteFrame: Frame index %d is out of range.", index);
 			}
 		} else {
 			BaseFrame *frame = (BaseFrame *)val->getNative();
-			for (uint32 i = 0; i < _frames.size(); i++) {
+			for (int32 i = 0; i < _frames.getSize(); i++) {
 				if (_frames[i] == frame) {
-					if (i == (uint32)_currentFrame) {
+					if (i == _currentFrame) {
 						_lastFrameTime = 0;
 					}
 					delete _frames[i];
-					_frames.remove_at(i);
+					_frames.removeAt(i);
 					break;
 				}
 			}
@@ -627,9 +615,9 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			filename = val->getString();
 		}
 
-		BaseFrame *frame = new BaseFrame(_gameRef);
+		BaseFrame *frame = new BaseFrame(_game);
 		if (filename != nullptr) {
-			BaseSubFrame *sub = new BaseSubFrame(_gameRef);
+			BaseSubFrame *sub = new BaseSubFrame(_game);
 			if (DID_SUCCEED(sub->setSurface(filename))) {
 				sub->setDefaultRect();
 				frame->_subframes.add(sub);
@@ -659,9 +647,9 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			filename = val->getString();
 		}
 
-		BaseFrame *frame = new BaseFrame(_gameRef);
+		BaseFrame *frame = new BaseFrame(_game);
 		if (filename != nullptr) {
-			BaseSubFrame *sub = new BaseSubFrame(_gameRef);
+			BaseSubFrame *sub = new BaseSubFrame(_game);
 			if (DID_SUCCEED(sub->setSurface(filename))) {
 				frame->_subframes.add(sub);
 			} else {
@@ -669,10 +657,10 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			}
 		}
 
-		if (index >= (int32)_frames.size()) {
+		if (index >= _frames.getSize()) {
 			_frames.add(frame);
 		} else {
-			_frames.insert_at(index, frame);
+			_frames.insertAt(index, frame);
 		}
 
 		stack->pushNative(frame, true);
@@ -704,13 +692,13 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseSprite::scGetProperty(const Common::String &name) {
+ScValue *BaseSprite::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("sprite");
 		return _scValue;
 	}
@@ -718,15 +706,15 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumFrames (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumFrames") {
-		_scValue->setInt(_frames.size());
+	else if (strcmp(name, "NumFrames") == 0) {
+		_scValue->setInt(_frames.getSize());
 		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "CurrentFrame") {
+	else if (strcmp(name, "CurrentFrame") == 0) {
 		_scValue->setInt(_currentFrame);
 		return _scValue;
 	}
@@ -734,7 +722,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PixelPerfect") {
+	else if (strcmp(name, "PixelPerfect") == 0) {
 		_scValue->setBool(_precise);
 		return _scValue;
 	}
@@ -742,7 +730,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Looping
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Looping") {
+	else if (strcmp(name, "Looping") == 0) {
 		_scValue->setBool(_looping);
 		return _scValue;
 	}
@@ -750,7 +738,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Owner (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Owner") {
+	else if (strcmp(name, "Owner") == 0) {
 		if (_owner == nullptr) {
 			_scValue->setNULL();
 		} else {
@@ -762,7 +750,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Finished (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Finished") {
+	else if (strcmp(name, "Finished") == 0) {
 		_scValue->setBool(_finished);
 		return _scValue;
 	}
@@ -770,7 +758,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Paused (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Paused") {
+	else if (strcmp(name, "Paused") == 0) {
 		_scValue->setBool(_paused);
 		return _scValue;
 	} else {
@@ -786,7 +774,7 @@ bool BaseSprite::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "CurrentFrame") == 0) {
 		_currentFrame = value->getInt(0);
-		if (_currentFrame >= (int32)_frames.size() || _currentFrame < 0) {
+		if (_currentFrame >= _frames.getSize() || _currentFrame < 0) {
 			_currentFrame = -1;
 		}
 		_lastFrameTime = 0;
@@ -821,13 +809,15 @@ const char *BaseSprite::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::killAllSounds() {
-	for (uint32 i = 0; i < _frames.size(); i++) {
-		_frames[i]->stopSound();
+	for (int32 i = 0; i < _frames.getSize(); i++) {
+		if (_frames[i]->_sound) {
+			_frames[i]->_sound->stop();
+		}
 	}
 	return STATUS_OK;
 }
 
 Common::String BaseSprite::debuggerToString() const {
-	return Common::String::format("%p: Sprite \"%s\"", (const void *)this, getName());
+	return Common::String::format("%p: Sprite \"%s\"", (const void *)this, _name);
 }
 } // End of namespace Wintermute

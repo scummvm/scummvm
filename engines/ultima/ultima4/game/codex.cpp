@@ -249,7 +249,7 @@ void Codex::handleWOP(const Common::String &word) {
 }
 
 void Codex::handleVirtues(const Common::String &virtue) {
-	static const char *codexImageNames[] = {
+	static const char *const codexImageNames[] = {
 		BKGD_HONESTY, BKGD_COMPASSN, BKGD_VALOR, BKGD_JUSTICE,
 		BKGD_SACRIFIC, BKGD_HONOR, BKGD_SPIRIT, BKGD_HUMILITY,
 		BKGD_TRUTH, BKGD_LOVE, BKGD_COURAGE

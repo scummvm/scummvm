@@ -19,25 +19,27 @@
  *
  */
 
+#include "base/version.h"
+
 #include "bagel/spacebar/master_win.h"
-#include "bagel/baglib/zoom_pda.h"
+#include "bagel/spacebar/baglib/zoom_pda.h"
 #include "bagel/spacebar/computer.h"
 #include "bagel/spacebar/sraf_computer.h"
-#include "bagel/boflib/std_keys.h"
-#include "bagel/baglib/storage_dev_bmp.h"
-#include "bagel/baglib/wield.h"
+#include "bagel/spacebar/boflib/std_keys.h"
+#include "bagel/spacebar/baglib/storage_dev_bmp.h"
+#include "bagel/spacebar/baglib/wield.h"
 #include "bagel/spacebar/bibble_window.h"
 #include "bagel/spacebar/nav_window.h"
-#include "bagel/baglib/chat_wnd.h"
+#include "bagel/spacebar/baglib/chat_wnd.h"
 #include "bagel/spacebar/game_defs.h"
 #include "bagel/spacebar/slot_wnd.h"
 #include "bagel/spacebar/vid_wnd.h"
 #include "bagel/spacebar/full_wnd.h"
 #include "bagel/spacebar/bib_odds_wnd.h"
-#include "bagel/baglib/inv.h"
-#include "bagel/baglib/moo.h"
-#include "bagel/baglib/log_msg.h"
-#include "bagel/baglib/event_sdev.h"
+#include "bagel/spacebar/baglib/inv.h"
+#include "bagel/spacebar/baglib/moo.h"
+#include "bagel/spacebar/baglib/log_msg.h"
+#include "bagel/spacebar/baglib/event_sdev.h"
 #include "bagel/boflib/log.h"
 #include "bagel/spacebar/filter.h"
 
@@ -45,7 +47,11 @@ namespace Bagel {
 namespace SpaceBar {
 
 static const char *GetBuildVersion() {
+#ifdef RELEASE_BUILD
+	return buildString("Version: %s", gScummVMVersion);
+#else
 	return buildString("Version: %s, %s", __DATE__, __TIME__);
+#endif
 }
 
 CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typeStr) {

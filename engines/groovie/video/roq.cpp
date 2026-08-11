@@ -34,13 +34,16 @@
 
 #include "image/jpeg.h"
 
-#ifdef USE_RGB_COLOR
 // Required for the YUV to RGB conversion
 #include "graphics/conversion.h"
-#endif
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+
+#ifdef USE_MPEG2
+#include "video/mpegps_decoder.h"
+#endif
 
 #include "common/file.h"
 #ifdef USE_PNG
@@ -109,7 +112,17 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	_currBuf = new Graphics::Surface();
 	_prevBuf = new Graphics::Surface();
 	_overBuf = new Graphics::Surface();	// Overlay buffer. Objects move behind this layer
+
+	// Allocate new buffers
+	_currBuf->create(_bg->w, _bg->h, _vm->_pixelFormat);
+	_prevBuf->create(_bg->w, _bg->h, _vm->_pixelFormat);
+	_overBuf->create(_bg->w, _bg->h, _vm->_pixelFormat);
+	_scaleX = MIN(_syst->getWidth() / _bg->w, 2);
+	_scaleY = MIN(_syst->getHeight() / _bg->h, 2);
+
 	_restoreArea = new Common::Rect();
+
+	_videoDecoder = nullptr;
 }
 
 ROQPlayer::~ROQPlayer() {
@@ -180,6 +193,23 @@ uint16 ROQPlayer::loadInternal() {
 	debugC(6, kDebugVideo, "Groovie::ROQ: First Block param = 0x%04X", blockHeader.param);
 
 	// Verify the file signature
+#ifdef USE_MPEG2
+	if (blockHeader.type == 0) {
+		_videoDecoder = new Video::MPEGPSDecoder();
+		_videoDecoder->setSoundType(Audio::Mixer::kSFXSoundType);
+		_videoDecoder->loadStream(_file);
+
+		_videoDecoder->start();
+
+		_isFileHandled = true;
+		return 24;
+	}
+
+	delete _videoDecoder;
+	_videoDecoder = nullptr;
+	_isFileHandled = false;
+#endif
+
 	if (blockHeader.type != 0x1084) {
 		return 0;
 	}
@@ -214,6 +244,16 @@ uint16 ROQPlayer::loadInternal() {
 		warning("Groovie::ROQ: Invalid header with size=%d and param=%d", blockHeader.size, blockHeader.param);
 		return 0;
 	}
+}
+
+void ROQPlayer::waitFrame() {
+#ifdef USE_MPEG2
+	if (_videoDecoder) {
+		uint32 wait = _videoDecoder->getTimeToNextFrame();
+		_syst->delayMillis(wait);
+	} else
+#endif
+		VideoPlayer::waitFrame();
 }
 
 void ROQPlayer::clearOverlay() {
@@ -281,7 +321,7 @@ void ROQPlayer::redrawRestoreArea(int screenOffset, bool force) {
 	_restoreArea->right = 0;
 }
 
-void writeImage(const Common::String filename, Graphics::Surface &surface) {
+void writeImage(const Common::String &filename, Graphics::Surface &surface) {
 	if (surface.h == 0 || surface.w == 0) {
 		return;
 	}
@@ -305,7 +345,7 @@ void writeImage(const Common::String filename, Graphics::Surface &surface) {
 #endif
 }
 
-void ROQPlayer::dumpAllSurfaces(const Common::String funcname) {
+void ROQPlayer::dumpAllSurfaces(const Common::String &funcname) {
 	TimeDate date;
 	int curMonth;
 	g_system->getTimeAndDate(date, true);
@@ -335,6 +375,7 @@ void ROQPlayer::buildShowBuf() {
 	if (_screen->h != 480) {
 		screenOffset = 80;
 	}
+	debugC(1, kDebugVideo, "scr: %d x %d screenOffset: %d  orig: %d, %d scale: %d %d", _screen->w, _screen->h, screenOffset, _origX, _origY, _scaleX, _scaleY);
 
 	if (_alpha) {
 		redrawRestoreArea(screenOffset, false);
@@ -431,6 +472,23 @@ void ROQPlayer::buildShowBuf() {
 bool ROQPlayer::playFrameInternal() {
 	debugC(5, kDebugVideo, "Groovie::ROQ: Playing frame");
 
+#ifdef USE_MPEG2
+	if (_videoDecoder) {
+		if (!_videoDecoder->needsUpdate())
+			return false;	// Video has not yet ended
+
+		const Graphics::Surface *srcSurf = _videoDecoder->decodeNextFrame();
+		_currBuf->free();
+		delete _currBuf;
+		_currBuf = new Graphics::Surface();
+		if (srcSurf) {
+			_currBuf->copyFrom(*srcSurf);
+			buildShowBuf();
+		}
+		return _videoDecoder->endOfVideo();
+	}
+#endif
+
 	// Process the needed blocks until the next video frame
 	bool endframe = false;
 	while (!endframe && !_file->eos()) {
@@ -484,6 +542,21 @@ bool ROQPlayer::readBlockHeader(ROQBlockHeader &blockHeader) {
 		debugC(10, kDebugVideo, "Groovie::ROQ: Block param = 0x%04X", blockHeader.param);
 
 		return true;
+	}
+}
+
+bool ROQPlayer::isValidBlockHeaderType(uint16 blockHeaderType) {
+	if (blockHeaderType == 0x1001
+		|| blockHeaderType == 0x1002
+		|| blockHeaderType == 0x1011
+		|| blockHeaderType == 0x1012
+		|| blockHeaderType == 0x1013
+		|| blockHeaderType == 0x1020
+		|| blockHeaderType == 0x1021
+		|| blockHeaderType == 0x1030) {
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -544,9 +617,41 @@ bool ROQPlayer::processBlock() {
 	}
 
 	if (endpos != _file->pos() && !_file->eos()) {
-		warning("Groovie::ROQ: BLOCK %04x Should have ended at %lld, and has ended at %lld", blockHeader.type, (long long)endpos, (long long)_file->pos());
+		warning("Groovie::ROQ: BLOCK 0x%04x Should have ended at %lld, and has ended at %lld", blockHeader.type, (long long)endpos, (long long)_file->pos());
 		warning("Ensure you've copied the files correctly according to the wiki.");
-		_file->seek(MIN(_file->pos(), endpos));
+		int64 currFilePos = _file->pos();
+		if (currFilePos < endpos) {
+			// In this case we stay at the current position,
+			// which is *before* the intended endpos (as calculated from its blockHeader.size) of the faulty block
+
+			// We "peek" ahead to see what type of block is next
+			bool foundValidBlockHeaderType = false;
+			uint16 blockHeaderType = _file->readUint16LE();
+			if (!_file->eos() && !isValidBlockHeaderType(blockHeaderType)) {
+				warning("Groovie::ROQ: Peek next BLOCK 0x%04x is of unknown type at %lld!", blockHeaderType, (long long)currFilePos);
+				// This means we were put at the start of an invalid block,
+				// so test what would happen if we instead seek to the indicated endpos of the faulty block
+				_file->seek(endpos);
+				blockHeaderType = _file->readUint16LE();
+				if (!_file->eos() && isValidBlockHeaderType(blockHeaderType)) {
+					debug("Groovie::ROQ: Peek next BLOCK 0x%04x is of KNOWN type at %lld!", blockHeaderType, (long long)endpos);
+					foundValidBlockHeaderType = true;
+					// Seek back to the intended endpos where we now know starts a block with valid block header type
+					_file->seek(endpos);
+				}
+			}
+			if (!foundValidBlockHeaderType) {
+				// As a fallback seek back to currFilePos and continue from there.
+				// This is likely to lead to a failure in processing in some future block.
+				// In practice this should not happen.
+				_file->seek(currFilePos);
+			}
+		} else {
+			// If the intended endpos of the faulty block is *before* the current file pos,
+			// just seek to the intended endpos and continue from there.
+			// We don't do any peeking here since this case is as of yet not connected to any known bugs.
+			_file->seek(endpos);
+		}
 	}
 	// End the frame when the graphics have been modified or when there's an error
 	return endframe || !ok;
@@ -981,7 +1086,7 @@ void ROQPlayer::createAudioStream(bool stereo) {
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
 }
 
-void ROQPlayer::drawString(Graphics::Surface *surface, const Common::String text, int posx, int posy, uint32 color, bool blackBackground) {
+void ROQPlayer::drawString(Graphics::Surface *surface, const Common::String &text, int posx, int posy, uint32 color, bool blackBackground) {
 	// TODO: fix redraw
 #if 0
 	int screenOffset = 0;

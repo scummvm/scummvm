@@ -28,10 +28,6 @@
 #include "engines/wintermute/math/math_util.h"
 #include "common/scummsys.h"
 
-#ifdef ENABLE_WME3D
-#include "common/util.h"
-#endif
-
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
@@ -51,79 +47,5 @@ float MathUtil::roundUp(float val) {
 	}
 	return result;
 }
-
-#ifdef ENABLE_WME3D
-bool lineIntersectsTriangle(const Math::Vector3d &origin, const Math::Vector3d &direction,
-							const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
-							float &t, float &u, float &v) {
-	const float epsilon = 0.0001f;
-
-	Math::Vector3d edge1 = v1 - v0;
-	Math::Vector3d edge2 = v2 - v0;
-
-	Math::Vector3d pVector = Math::Vector3d::crossProduct(direction, edge2);
-
-	float det = Math::Vector3d::dotProduct(edge1, pVector);
-
-	if (ABS(det) < epsilon) {
-		return false;
-	}
-
-	Math::Vector3d tVector = origin - v0;
-	u = Math::Vector3d::dotProduct(tVector, pVector) / det;
-
-	if (u < 0.0f || u > 1.0f) {
-		return false;
-	}
-
-	Math::Vector3d qVector = Math::Vector3d::crossProduct(tVector, edge1);
-	v = Math::Vector3d::dotProduct(direction, qVector) / det;
-
-	if (v < 0.0f || u + v > 1.0f) {
-		return false;
-	}
-
-	t = Math::Vector3d::dotProduct(edge2, qVector) / det;
-
-	Math::Vector3d intersectionPoint = origin + direction * t;
-	t = intersectionPoint.x();
-	u = intersectionPoint.y();
-	v = intersectionPoint.z();
-	return true;
-}
-
-bool lineSegmentIntersectsTriangle(const Math::Vector3d &lineStart, const Math::Vector3d &lineEnd,
-								   const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2,
-								   Math::Vector3d &intersection, float &distance) {
-	const float epsilon = 0.0001f;
-
-	Math::Vector3d edge1 = v1 - v0;
-	Math::Vector3d edge2 = v2 - v1;
-
-	Math::Vector3d planeNormal = Math::Vector3d::crossProduct(edge1, edge2);
-	planeNormal.normalize();
-
-	Math::Vector3d lineDirection = lineEnd - lineStart;
-
-	float lineLength = Math::Vector3d::dotProduct(lineDirection, planeNormal);
-
-	if (ABS(lineLength) < epsilon) {
-		return false;
-	}
-
-	float distFromPlane = Math::Vector3d::dotProduct(v0 - lineStart, planeNormal);
-	float relativeDistance = distFromPlane / lineLength;
-
-	if (relativeDistance < 0.0f || relativeDistance > 1.0f) {
-		return false;
-	}
-
-	distance = relativeDistance;
-	intersection = lineStart + lineDirection * relativeDistance;
-
-	return true;
-}
-
-#endif
 
 } // End of namespace Wintermute

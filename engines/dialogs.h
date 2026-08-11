@@ -43,6 +43,7 @@ public:
 		kPlayCmd = 'PLAY',
 		kOptionsCmd = 'OPTN',
 		kHelpCmd = 'HELP',
+		kMainHelpCmd = 'MHLP',
 		kAboutCmd = 'ABOU',
 		kQuitCmd = 'QUIT',
 		kLauncherCmd = 'LNCR',

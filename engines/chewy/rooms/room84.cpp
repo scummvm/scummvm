@@ -49,7 +49,7 @@ void Room84::entry() {
 		_G(gameState).room_e_obj[124].Attribut = EXIT_TOP;
 		_G(atds)->setControlBit(478, ATS_ACTIVE_BIT);
 		_G(atds)->setControlBit(479, ATS_ACTIVE_BIT);
-		_G(atds)->set_ats_str(485, 1, ATS_DATA);
+		_G(atds)->set_all_ats_str(485, 1, ATS_DATA);
 
 		_G(det)->showStaticSpr(7);
 		_G(atds)->delControlBit(481, ATS_ACTIVE_BIT);
@@ -60,13 +60,13 @@ void Room84::entry() {
 		_G(det)->startDetail(7, 255, false);
 		_G(atds)->delControlBit(504, ATS_ACTIVE_BIT);
 		_G(gameState).room_e_obj[124].Attribut = 255;
-		_G(atds)->set_ats_str(485, 2, ATS_DATA);
+		_G(atds)->set_all_ats_str(485, 2, ATS_DATA);
 	}
 
 	if (_G(gameState).flags32_40) {
 		_G(atds)->setControlBit(481, ATS_ACTIVE_BIT);
 		_G(atds)->setControlBit(482, ATS_ACTIVE_BIT);
-		_G(atds)->set_ats_str(485, 1, ATS_DATA);		
+		_G(atds)->set_all_ats_str(485, 1, ATS_DATA);		
 		_G(gameState).room_e_obj[124].Attribut = EXIT_TOP;
 	}
 
@@ -98,7 +98,7 @@ void Room84::entry() {
 		_G(gameState).flags32_20 = false;
 		_G(gameState).room_e_obj[124].Attribut = 255;
 		_G(gameState).room_e_obj[125].Attribut = 255;
-		_G(atds)->set_ats_str(485, 2, ATS_DATA);
+		_G(atds)->set_all_ats_str(485, 2, ATS_DATA);
 		startAadWait(477);
 		showCur();
 	} else {
@@ -144,7 +144,7 @@ void Room84::setup_func() {
 		startAadWait(455);
 		_G(det)->del_static_ani(4);
 		start_spz(62, 1, false, P_HOWARD);
-		startSetAILWait(5, 1, ANI_FRONT);
+		startDetailWait(5, 1, ANI_FRONT);
 		_G(det)->set_static_ani(3, -1);
 		startAadWait(456);
 		_G(flags).NoScroll = false;
@@ -192,7 +192,7 @@ int Room84::proc4() {
 
 	if (_G(gameState).flags32_10) {
 		_G(det)->stopDetail(7);
-		startSetAILWait(8, 1, ANI_FRONT);
+		startDetailWait(8, 1, ANI_FRONT);
 	} else {
 		_G(gameState)._personRoomNr[P_NICHELLE] = 88;
 	}

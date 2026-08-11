@@ -80,7 +80,7 @@ public:
 	/**
 	 * Provides scripts with information
 	 */
-	Common::String translate(Std::vector<Common::String> &parts) override {
+	Common::String translate(Common::Array<Common::String> &parts) override {
 		if (parts.size() == 1) {
 			if (parts[0] == "wind")
 				return getDirectionName(static_cast<Direction>(_windDirection));

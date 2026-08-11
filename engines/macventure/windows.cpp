@@ -81,8 +81,14 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 	offsets.titleBottom = -1;
 	offsets.titlePos = 0;
 	offsets.dark = false;
+	offsets.closeButtonTop = -1;
+	offsets.closeButtonLeft = -1;
+	offsets.closeButtonWidth = 0;
+	offsets.resizeButtonTop = -1;
+	offsets.resizeButtonHeight = 0;
 	offsets.upperScrollHeight = 0;
 	offsets.lowerScrollHeight = 0;
+	offsets.titlePadding = 0;
 
 	switch (type) {
 	case MacVenture::kDocument:
@@ -105,8 +111,11 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 		offsets.titleBottom = 0;
 		offsets.titlePos = 25;
 
-		offsets.upperScrollHeight = 20;
-		offsets.lowerScrollHeight = 20;
+		offsets.resizeButtonTop = 56;
+		offsets.resizeButtonHeight = 16;
+
+		offsets.upperScrollHeight = 16;
+		offsets.lowerScrollHeight = 16;
 		break;
 	case MacVenture::kZoomNoGrow:
 		offsets.titleTop = 0;
@@ -117,6 +126,10 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 		offsets.titleTop = 3;
 		offsets.titleBottom = 0;
 		offsets.titlePos = 36;
+
+		offsets.closeButtonTop = 15;
+		offsets.closeButtonLeft = 8;
+		offsets.closeButtonWidth = 11;
 
 		offsets.upperScrollHeight = 20;
 		offsets.lowerScrollHeight = 20;

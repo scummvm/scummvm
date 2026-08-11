@@ -431,7 +431,7 @@ namespace Graphics {
  */
 template<typename PixelType>
 void colorFill(PixelType *first, PixelType *last, PixelType color) {
-	STATIC_ASSERT(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, Unsupported_PixelType);
+	static_assert(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, "Unsupported PixelType");
 
 	int count = (last - first);
 
@@ -445,7 +445,7 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 
 template<typename PixelType>
 void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX, int realY, Common::Rect &clippingArea) {
-	STATIC_ASSERT(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, Unsupported_PixelType);
+	static_assert(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, "Unsupported PixelType");
 
 	if (realY < clippingArea.top || realY >= clippingArea.bottom)
 		return;
@@ -803,10 +803,11 @@ blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &
 		np = p;
 	}
 
-	if (alphaType != Graphics::ALPHA_OPAQUE) {
+	if (_activeSurface->format.bytesPerPixel == 1 && alphaType != Graphics::ALPHA_OPAQUE) {
+		// simpleBlitFrom doesn't currently support alpha blending to an RGB332 surface.
 		_activeSurface->transBlitFrom(*source, drawRect, np);
 	} else {
-		_activeSurface->simpleBlitFrom(*source, drawRect, np);
+		_activeSurface->simpleBlitFrom(*source, drawRect, np, Graphics::FLIP_NONE, alphaType != Graphics::ALPHA_OPAQUE);
 	}
 }
 

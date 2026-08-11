@@ -20,7 +20,7 @@
  */
 
 #include "ags/shared/core/platform.h"
-#include "ags/lib/std/set.h"
+#include "common/std/set.h"
 #include "ags/lib/allegro.h" // allegro_exit
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game_setup.h"
@@ -48,7 +48,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 void main_init(int argc, const char *argv[]) {
-	_G(our_eip) = -999;
+	set_our_eip(-999);
 
 	// Init libraries: set text encoding
 	set_uformat(U_UTF8);
@@ -128,9 +128,7 @@ void main_print_help() {
 	                          "                                 --log-file=all:warn\n"
 	                          "  --log-file-path=PATH         Define custom path for the log file\n"
 	                          //--------------------------------------------------------------------------------|
-#if AGS_PLATFORM_OS_WINDOWS
 	                          "  --no-message-box             Disable alerts as modal message boxes\n"
-#endif
 		                      "  --no-translation             Use default game language on start\n"
 	                          "  --noiface                    Don't draw game GUI\n"
 	                          "  --noscript                   Don't run room scripts; *WARNING:* unreliable\n"

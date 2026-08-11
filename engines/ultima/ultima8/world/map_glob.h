@@ -22,7 +22,11 @@
 #ifndef ULTIMA8_WORLD_MAPGLOB_H
 #define ULTIMA8_WORLD_MAPGLOB_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/array.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,7 +49,7 @@ public:
 	void read(Common::SeekableReadStream *rs);
 
 private:
-	Std::vector<GlobItem> _contents;
+	Common::Array<GlobItem> _contents;
 };
 
 } // End of namespace Ultima8

@@ -811,9 +811,9 @@ void AGOSEngine::o_saveUserGame() {
 			fileError(_windowArray[5], true);
 		}
 	} else {
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		enterSaveLoadScreen(true);
 		userGame(false);
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		enterSaveLoadScreen(false);
 	}
 }
 
@@ -826,9 +826,9 @@ void AGOSEngine::o_loadUserGame() {
 			fileError(_windowArray[5], false);
 		}
 	} else {
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		enterSaveLoadScreen(true);
 		userGame(true);
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		enterSaveLoadScreen(false);
 	}
 }
 
@@ -970,10 +970,19 @@ void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 	if (variable >= _numVars)
 		error("writeVariable: Variable %d out of range", variable);
 
+	const bool pnDayNightMode = isPNDayNightPaletteMode();
+	const uint16 oldValue = _variableArray[variable];
+	const bool pnDayNightVar = pnDayNightMode && variable == 249 && oldValue != contents;
+
 	if (getGameType() == GType_FF && getBitFlag(83))
 		_variableArray2[variable] = contents;
 	else
 		_variableArray[variable] = contents;
+
+	if (pnDayNightVar) {
+		const uint16 selectorMask = (contents == 2) ? 0xFFFF : 0x0000;
+		startPNDayNightController(selectorMask);
+	}
 }
 
 int AGOSEngine::runScript() {

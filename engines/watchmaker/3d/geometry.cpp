@@ -1477,33 +1477,33 @@ void t3dShowBounds(t3dPAN *p, uint32 numpan) {
 	rBuildLinesViewMatrix(t3dCurViewMatrix, tmp);
 
 	for (j = 0; j < numpan; j++) {
-		VertPointer->x = p[j].x1;
+		VertPointer->x = p[j].a.x;
 		VertPointer->y = CurFloorY + 1.0f;
-		VertPointer->z = p[j].z1;
+		VertPointer->z = p[j].a.z;
 		VertPointer->diffuse = RGBA_MAKE(250, 0, 0, 255);
 		rAddPointArray();
 		VertPointer++;
 //		t3dNumVertices++;
 
-		VertPointer->x = p[j].x2;
+		VertPointer->x = p[j].b.x;
 		VertPointer->y = CurFloorY + 1.0f;
-		VertPointer->z = p[j].z2;
+		VertPointer->z = p[j].b.z;
 		VertPointer->diffuse = RGBA_MAKE(250, 0, 0, 255);
 		rAddPointArray();
 		VertPointer++;
 //		t3dNumVertices++;
 
-		VertPointer->x = p[j].bx1;
+		VertPointer->x = p[j].backA.x;
 		VertPointer->y = CurFloorY + 1.0f;
-		VertPointer->z = p[j].bz1;
+		VertPointer->z = p[j].backA.z;
 		VertPointer->diffuse = RGBA_MAKE(250, 0, 0, 255);
 		rAddPointArray();
 		VertPointer++;
 //		t3dNumVertices++;
 
-		VertPointer->x = p[j].bx2;
+		VertPointer->x = p[j].backB.x;
 		VertPointer->y = CurFloorY + 1.0f;
-		VertPointer->z = p[j].bz2;
+		VertPointer->z = p[j].backB.z;
 		VertPointer->diffuse = RGBA_MAKE(250, 0, 0, 255);
 		rAddPointArray();
 		VertPointer++;
@@ -1610,7 +1610,7 @@ void t3dLightCharacter(t3dCHARACTER *Ch) {
 	for (j = 0; j < mesh->NumVerts; j++, gv++)
 		gv->diffuse = amb;
 
-	auto light = Ch->CurRoom->LightTable[0];
+	const auto &light = Ch->CurRoom->LightTable[0];
 	if (light.Type & T3D_LIGHT_ALLLIGHTSOFF) {
 		mesh->VBptr = nullptr;
 		return;
@@ -2320,7 +2320,7 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 		} else
 			T2 = -1;
 
-		if (Material->hasFlag(T3D_MATERIAL_ENVIROMENT)) {                                        // se ha l'enviroment
+		if (Material->hasFlag(T3D_MATERIAL_ENVIRONMENT)) {                                       // se ha l'environnement
 			t3dM3X3F    m;
 			t3dMatMul(&m, &mesh->Matrix, &t3dCurViewMatrix);
 
@@ -2809,8 +2809,7 @@ void t3dCheckMaterialVB(MaterialPtr mat) {
 //	gv = rLockVertexPtr(mat->VB, DDLOCK_WRITEONLY | DDLOCK_NOSYSLOCK);
 	mat->VBO->_buffer.clear();
 	for (int i = 0; i < mat->NumAllocatedVerts(); i++) {
-		auto vert = *mat->VertsList[i];
-		mat->VBO->_buffer.push_back(vert);
+		mat->VBO->_buffer.push_back(*mat->VertsList[i]);
 		//memcpy(gv, mat->VertsList[i], sizeof(gVertex));
 	}
 

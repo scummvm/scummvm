@@ -995,7 +995,7 @@ int MicroPather::Solve( void* startNode, void* endNode, Common::Array< void* >* 
 
 int MicroPather::SolveForNearStates( void* startState, Common::Array< StateCost >* near, float maxCost )
 {
-	/*	 http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+	/*	 https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 
 		 1  function Dijkstra(Graph, source):
 		 2      for each vertex v in Graph:           // Initializations

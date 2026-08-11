@@ -22,11 +22,10 @@
 #ifndef ZVISION_PUSH_TOGGLE_CONTROL_H
 #define ZVISION_PUSH_TOGGLE_CONTROL_H
 
-#include "zvision/scripting/control.h"
-
-#include "common/rect.h"
-#include "common/events.h"
 #include "common/array.h"
+#include "common/events.h"
+#include "common/rect.h"
+#include "zvision/scripting/control.h"
 
 namespace ZVision {
 

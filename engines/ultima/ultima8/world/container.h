@@ -22,9 +22,8 @@
 #ifndef ULTIMA8_WORLD_CONTAINER_H
 #define ULTIMA8_WORLD_CONTAINER_H
 
+#include "common/list.h"
 #include "ultima/ultima8/world/item.h"
-#include "ultima/shared/std/containers.h"
-
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/classtype.h"
 
@@ -92,7 +91,7 @@ public:
 	//! A simpler search of the container which just gets the
 	//! items with a given shape family, optionally recursively.
 	//! \return The first item with that shape, or nullptr if nothing found.
-	void getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 family, bool recurse);
+	void getItemsWithShapeFamily(Common::Array<Item *> &itemlist, uint16 family, bool recurse);
 
 	//! Get the weight of the container and its contents
 	//! \return weight
@@ -123,7 +122,7 @@ public:
 	INTRINSIC(I_destroyContents);
 
 protected:
-	Std::list<Item *> _contents;
+	Common::List<Item *> _contents;
 };
 
 } // End of namespace Ultima8

@@ -1,4 +1,4 @@
-in vec2 position;
+in vec3 position;
 
 uniform highp mat4 projMatrix;
 uniform vec4 color;
@@ -6,6 +6,6 @@ uniform vec4 color;
 out vec4 Color;
 
 void main() {
-	gl_Position = projMatrix * vec4(position, 0.0, 1.0);
+	gl_Position = projMatrix * vec4(position, 1.0);
 	Color = color;
 }

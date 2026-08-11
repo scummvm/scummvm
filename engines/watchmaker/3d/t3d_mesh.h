@@ -51,7 +51,7 @@ struct t3dMESH {
 	t3dNORMAL             BBoxNormal[6] = {};             // bound box normals
 	t3dF32                BBoxAverageZ = 0.0f;            // average distance from eye
 	t3dV3F                Intersection;                   // intersecton form eye
-	t3dM3X3F              Matrix;                         // transformation matrix (usefull only for 1st mesh in body)
+	t3dM3X3F              Matrix;                         // transformation matrix (useful only for 1st mesh in body)
 	uint16                LightmapDim = 0;                // lightmap texture dimensions
 	Common::Array<t3dMODVERTS> ModVertices;         // mod vertices list
 	t3dBONEANIM           DefaultAnim;                    // Default Animations
@@ -71,7 +71,7 @@ struct t3dMESH {
 	t3dV3F                SolarRGBVar[4];             // Override ambient color variation for solar movement
 
 	uint32                Flags;                      // Flags
-	t3dBODY              *PortalList;            // Pointer to portal connected
+	t3dBODY              *PortalList = nullptr;       // Pointer to portal connected
 	Common::Array<t3dMESH *> RejectedMeshes;      // rejected mesh from portal
 
 	void saveVertexBuffer() { // Scorre le mesh
@@ -141,6 +141,9 @@ struct t3dMESH {
 
 	t3dMESH() = default;
 	t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&ReceiveRipples, uint8 &Mirror);
+	t3dMESH(const t3dMESH &other);
+	t3dMESH(t3dMESH &&old);
+	t3dMESH& operator=(t3dMESH rhs);
 	~t3dMESH();
 	void loadFaces(t3dBODY *b, Common::SeekableReadStream &stream, int numFaces);
 	void release();

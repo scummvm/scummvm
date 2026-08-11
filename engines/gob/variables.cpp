@@ -90,6 +90,7 @@ void Variables::writeOff32(uint32 offset, uint32 value) {
 void Variables::writeOffString(uint32 offset, const char *value) {
 	uint32 length = strlen(value);
 	assert((offset + length + 1) < _size);
+	(void)length;
 
 	Common::strcpy_s((char *)(_vars + offset), _size - offset, value);
 }
@@ -309,6 +310,28 @@ VariableReference &VariableReference::operator*=(uint32 value) {
 	return (*this = (*this * value));
 }
 
+VariableReferenceArray::VariableReferenceArray(Variables &vars, uint32 offset, Variables::Type type) : _vars(&vars), _offset(offset), _type(type) {
+	switch (_type) {
+	case Variables::kVariableType8:
+		_fieldSize = 1;
+		break;
+	case Variables::kVariableType16:
+		_fieldSize = 2;
+		break;
+	case Variables::kVariableType32:
+	default:
+		_fieldSize = 4;
+		break;
+	}
+}
+
+VariableReference VariableReferenceArray::at(int32 i) {
+	return VariableReference(*_vars, _offset + i * _fieldSize, _type);
+}
+
+VariableReferenceArray VariableReferenceArray::arrayAt(int32 i) {
+	return VariableReferenceArray(*_vars, _offset + i * _fieldSize, _type);
+}
 
 VariableStack::VariableStack(uint32 size) : _size(size), _position(0) {
 	_stack = new byte[_size]();

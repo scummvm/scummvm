@@ -29,6 +29,8 @@
  * ScummVM Meta Engine interface
  */
 class GlkMetaEngineDetection : public MetaEngineDetection {
+private:
+	Common::String findFileByGameId(const Common::String &gameId);
 public:
 	GlkMetaEngineDetection() : MetaEngineDetection() {}
 
@@ -56,12 +58,14 @@ public:
 	 * (possibly empty) list of games supported by the engine which it was able
 	 * to detect amongst the given files.
 	 */
-	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipUnsupported*/, bool /*skipIncomplete*/) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0, bool skipIncomplete = false) override;
 
 	/**
 	 * Query the engine for a PlainGameDescriptor for the specified gameid, if any.
 	 */
 	PlainGameDescriptor findGame(const char *gameId) const override;
+
+	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override;
 
 	/**
 	 * Calls each sub-engine in turn to ensure no game Id accidentally shares the same Id
@@ -70,7 +74,7 @@ public:
 
 	uint getMD5Bytes() const override;
 
-	void dumpDetectionEntries() const override final {}
+	void dumpDetectionEntries() const override final;
 };
 
 namespace Glk {

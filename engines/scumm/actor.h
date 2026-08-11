@@ -29,6 +29,15 @@
 
 namespace Scumm {
 
+#define CHORE_REDIRECT_INIT        56
+#define CHORE_REDIRECT_WALK        57
+#define CHORE_REDIRECT_STAND       58
+#define CHORE_REDIRECT_START_TALK  59
+#define CHORE_REDIRECT_STOP_TALK   60
+#define CHORE_TURN_DIR             61
+#define CHORE_FACE_DIR             62
+#define CHORE_STOP                 63
+
 enum {
 	V12_X_MULTIPLIER = 8,
 	V12_Y_MULTIPLIER = 2,
@@ -61,9 +70,9 @@ struct CostumeData {
 	uint16 frame[16];
 
 	/* HE specific */
-	uint16 heJumpOffsetTable[16];
-	uint16 heJumpCountTable[16];
-	uint32 heCondMaskTable[16];
+	uint16 heJumpOffsetTable[16] = {};
+	uint16 heJumpCountTable[16] = {};
+	uint32 heCondMaskTable[16] = {};
 
 	void reset() {
 		animCounter = 0;
@@ -99,67 +108,67 @@ protected:
 	Common::Point _pos;
 
 public:
-	int _top, _bottom;
-	uint _width;
-	byte _number;
-	uint16 _costume;
-	byte _room;
+	int _top = 0, _bottom = 0;
+	uint _width = 0;
+	byte _number = 0;
+	uint16 _costume = 0;
+	byte _room = 0;
 
 public:
-	byte _talkColor;
-	int _talkFrequency;
-	byte _talkPan;
-	byte _talkVolume;
-	uint16 _boxscale;
-	byte _scalex, _scaley;
-	byte _charset;
-	byte _moving;
-	bool _ignoreBoxes;
-	byte _forceClip;
-	uint16 _lastValidX, _lastValidY;
+	byte _talkColor = 0;
+	int _talkFrequency = 0;
+	byte _talkPan = 0;
+	byte _talkVolume = 0;
+	uint16 _boxscale = 0;
+	byte _scalex = 0, _scaley = 0;
+	byte _charset = 0;
+	byte _moving = 0;
+	bool _ignoreBoxes = false;
+	byte _forceClip = 0;
+	uint16 _lastValidX = 0, _lastValidY = 0;
 
-	byte _initFrame;
-	byte _walkFrame;
-	byte _standFrame;
-	byte _talkStartFrame;
-	byte _talkStopFrame;
+	byte _initFrame = 0;
+	byte _walkFrame = 0;
+	byte _standFrame = 0;
+	byte _talkStartFrame = 0;
+	byte _talkStopFrame = 0;
 
-	bool _needRedraw, _needBgReset, _visible;
-	byte _shadowMode;
-	bool _flip;
-	byte _frame;
-	byte _walkbox;
-	int16 _talkPosX, _talkPosY;
-	uint16 _talkScript, _walkScript;
-	bool _ignoreTurns;
-	bool _drawToBackBuf;
-	int32 _layer;
-	uint16 _sound[32];
+	bool _needRedraw = false, _needBgReset = false, _visible = false;
+	byte _shadowMode = 0;
+	bool _flip = false;
+	byte _frame = 0;
+	byte _walkbox = 0;
+	int16 _talkPosX = 0, _talkPosY = 0;
+	uint16 _talkScript = 0, _walkScript = 0;
+	bool _ignoreTurns = false;
+	bool _drawToBackBuf = false;
+	int32 _layer = 0;
+	uint16 _sound[32] = {};
 	CostumeData _cost;
 
 	/* HE specific */
-	int _heOffsX, _heOffsY;
-	bool _heSkipLimbs;
-	uint32 _heCondMask;
-	uint32 _hePaletteNum;
-	uint32 _heShadow;
+	int _heOffsX = 0, _heOffsY = 0;
+	bool _heSkipLimbs = false;
+	uint32 _heCondMask = 0;
+	uint32 _hePaletteNum = 0;
+	uint32 _heShadow = 0;
 
 protected:
 	struct ActorWalkData {
 		Common::Point dest;           // Final destination point
-		byte destbox;                 // Final destination box
-		int16 destdir;                // Final destination, direction to face at
+		byte destbox = 0;             // Final destination box
+		int16 destdir = 0;            // Final destination, direction to face at
 
 		Common::Point cur;            // Last position
-		byte curbox;                  // Last box
+		byte curbox = 0;              // Last box
 
 		Common::Point next;           // Next position on our way to the destination, i.e. our intermediate destination
 
 		Common::Point point3;
-		int32 deltaXFactor, deltaYFactor;
-		uint16 xfrac, yfrac;
-		uint16 xAdd, yAdd;
-		int16 facing;
+		int32 deltaXFactor = 0, deltaYFactor = 0;
+		uint16 xfrac = 0, yfrac = 0;
+		uint16 xAdd = 0, yAdd = 0;
+		int16 facing = 0;
 
 		void reset() {
 			dest.x = dest.y = 0;
@@ -180,15 +189,15 @@ protected:
 	};
 
 
-	uint16 _palette[256];
-	int _elevation;
-	uint16 _facing;
-	uint16 _targetFacing;
-	uint _speedx, _speedy;
-	byte _animProgress, _animSpeed;
-	bool _costumeNeedsInit;
+	uint16 _palette[256] = {};
+	int _elevation = 0;
+	uint16 _facing = 0;
+	uint16 _targetFacing = 0;
+	uint _speedx = 0, _speedy = 0;
+	byte _animProgress = 0, _animSpeed = 0;
+	bool _costumeNeedsInit = false;
 	ActorWalkData _walkdata;
-	int16 _animVariable[27];
+	int16 _animVariable[27] = {};
 
 public:
 
@@ -217,8 +226,8 @@ public:
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
 	virtual int calcMovementFactor(const Common::Point& next);
-	int actorWalkStep();
-	int remapDirection(int dir, bool is_walking);
+	virtual int actorWalkStep();
+	virtual int remapDirection(int dir, bool is_walking);
 	virtual void setupActorScale();
 
 	void setBox(int box);
@@ -356,13 +365,12 @@ public:
 
 protected:
 	int calcMovementFactor(const Common::Point& next) override;
-	int actorWalkStep();
-
 	void setupActorScale() override;
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
-
+	uint _stepThreshold;
 private:
-	uint _stepX, _stepThreshold;
+	virtual int actorWalkStep() override;
+	uint _stepX;
 	const int _facingXYratio;
 };
 
@@ -377,6 +385,9 @@ public:
 protected:
 	bool isPlayer() override;
 	void prepareDrawActorCostume(BaseCostumeRenderer *bcr) override;
+private:
+	int actorWalkStep() override;
+	int remapDirection(int dir, bool is_walking) override;
 };
 
 class Actor_v7 final : public Actor {
@@ -409,38 +420,38 @@ public:
 
 	Common::Array<byte> _walkboxHistory;
 
-	byte _walkboxQueue[0x10];
-	byte _walkboxQueueIndex;
+	byte _walkboxQueue[0x10] = {};
+	byte _walkboxQueueIndex = 0;
 
-	byte _costCommandNew;
-	byte _costCommand;
-	byte _miscflags;
-	byte _speaking;
+	byte _costCommandNew = 0;
+	byte _costCommand = 0;
+	byte _miscflags = 0;
+	byte _speaking = 0;
 
-	byte _walkCountModulo;
-	bool _newWalkBoxEntered;
+	byte _walkCountModulo = 0;
+	bool _newWalkBoxEntered = false;
 
-	byte _walkDirX;
-	byte _walkDirY;
+	byte _walkDirX = 0;
+	byte _walkDirY = 0;
 
-	byte _walkYCountGreaterThanXCount;
-	byte _walkXCount;
-	byte _walkXCountInc;
-	byte _walkYCount;
-	byte _walkYCountInc;
+	byte _walkYCountGreaterThanXCount = 0;
+	byte _walkXCount = 0;
+	byte _walkXCountInc = 0;
+	byte _walkYCount = 0;
+	byte _walkYCountInc = 0;
 
-	byte _walkMaxXYCountInc;
+	byte _walkMaxXYCountInc = 0;
 
 	Common::Point _tmp_Pos;
 	Common::Point _tmp_NewPos;
-	byte _tmp_WalkBox;
-	bool _tmp_NewWalkBoxEntered;
+	byte _tmp_WalkBox = 0;
+	bool _tmp_NewWalkBoxEntered = false;
 
-	int8 _animFrameRepeat;
-	int8 _limbFrameRepeatNew[8];
-	int8 _limbFrameRepeat[8];
+	int8 _animFrameRepeat = 0;
+	int8 _limbFrameRepeatNew[8] = {};
+	int8 _limbFrameRepeat[8] = {};
 
-	bool _limb_flipped[8];
+	bool _limb_flipped[8] = {};
 
 private:
 

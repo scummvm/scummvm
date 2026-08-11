@@ -52,7 +52,7 @@ bool8 _game_session::Find_interact_marker_in_anim(__mega_set_names animation, PX
 
 	// first check anim file will exist
 	if (!I->IsAnimTable(animation))
-		Fatal_error("Find_interact_marker_in_anim finds [%s] doesnt have a [%s] animation", CGameObject::GetName(object), master_anim_name_table[animation].name);
+		Fatal_error("Find_interact_marker_in_anim finds [%s] doesn't have a [%s] animation", CGameObject::GetName(object), master_anim_name_table[animation].name);
 
 	// open the file
 	PXanim *pAnim = (PXanim *)rs_anims->Res_open(I->get_info_name(animation), I->info_name_hash[animation], I->base_path, I->base_path_hash);

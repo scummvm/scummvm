@@ -50,6 +50,10 @@
 #include "common/str.h"
 #include "common/rect.h"
 
+namespace Common {
+struct Event;
+}
+
 namespace Graphics {
 
 class Font;
@@ -80,11 +84,12 @@ typedef Common::Array<MacDialogButton *> MacDialogButtonArray;
 class MacDialog {
 public:
 	MacDialog(ManagedSurface *screen, MacWindowManager *wm,  int width, MacText *mactext, int maxTextWidth, MacDialogButtonArray *buttons, uint defaultButton);
-	~MacDialog();
+	virtual ~MacDialog();
 
 	int run();
+	virtual bool processEvent(const Common::Event &event) { return false; }
 
-private:
+protected:
 	ManagedSurface *_screen;
 	MacWindowManager *_wm;
 	ManagedSurface *_tempSurface;
@@ -97,6 +102,7 @@ private:
 	MacDialogButtonArray *_buttons;
 	uint _defaultButton;
 	bool _mouseOverPressedButton;
+	int _mouseOverButton;
 
 public:
 	int _pressedButton;
@@ -107,7 +113,8 @@ private:
 	void drawOutline(Common::Rect &bounds, int *spec, int speclen);
 
 public:
-	void paint();
+	virtual void paint();
+	void blit();
 	void mouseMove(int x, int y);
 	void mouseClick(int x, int y);
 	int mouseRaise(int x, int y);

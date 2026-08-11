@@ -144,13 +144,13 @@ const ANIFile *SEQFile::findANI(uint16 index, uint16 &animation) {
 	if (index == 0xFFFF)
 		return nullptr;
 
-	for (Animations::const_iterator a = _animations.begin(); a != _animations.end(); ++a) {
-		if (index < (*a)->getAnimationCount()) {
+	for (const auto &anim : _animations) {
+		if (index < anim->getAnimationCount()) {
 			animation = index;
-			return *a;
+			return anim;
 		}
 
-		index -= (*a)->getAnimationCount();
+		index -= anim->getAnimationCount();
 	}
 
 	return nullptr;
@@ -214,11 +214,11 @@ void SEQFile::play(bool abortable, uint16 endFrame, uint16 frameRate) {
 		// Loop
 
 		bool looped = false;
-		for (Loops::iterator l = _loops.begin(); l != _loops.end(); ++l) {
-			if ((l->endFrame == _frame) && (l->currentLoop < l->loopCount)) {
-				_frame = l->startFrame;
+		for (auto &loop : _loops) {
+			if ((loop.endFrame == _frame) && (loop.currentLoop < loop.loopCount)) {
+				_frame = loop.startFrame;
 
-				l->currentLoop++;
+				loop.currentLoop++;
 				looped = true;
 			}
 		}
@@ -241,39 +241,39 @@ void SEQFile::playFrame() {
 	clearAnims();
 
 	// Handle background keys, directly updating the background
-	for (BackgroundKeys::const_iterator b = _bgKeys.begin(); b != _bgKeys.end(); ++b) {
-		if (!b->background || (b->frame != _frame))
+	for (const auto &bg : _bgKeys) {
+		if (!bg.background || (bg.frame != _frame))
 			continue;
 
-		b->background->draw(*_vm->_draw->_backSurface);
+		bg.background->draw(*_vm->_draw->_backSurface);
 
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 0, 0, 319, 199);
 	}
 
 	// Handle the animation keys, updating the objects
-	for (AnimationKeys::const_iterator a = _animKeys.begin(); a != _animKeys.end(); ++a) {
-		if (a->frame != _frame)
+	for (const auto &anim : _animKeys) {
+		if (anim.frame != _frame)
 			continue;
 
-		Object &object = _objects[a->object];
+		Object &object = _objects[anim.object];
 
 		delete object.object;
 		object.object = nullptr;
 
 		// No valid animation => remove
-		if ((a->animation == 0xFFFF) || !a->ani)
+		if ((anim.animation == 0xFFFF) || !anim.ani)
 			continue;
 
 		// Change the animation
 
-		object.object = new ANIObject(*a->ani);
+		object.object = new ANIObject(*anim.ani);
 
-		object.object->setAnimation(a->animation);
-		object.object->setPosition(a->x, a->y);
+		object.object->setAnimation(anim.animation);
+		object.object->setPosition(anim.x, anim.y);
 		object.object->setVisible(true);
 		object.object->setPause(false);
 
-		object.order = a->order;
+		object.order = anim.order;
 	}
 
 	// Draw the animations
@@ -323,13 +323,13 @@ void SEQFile::drawAnims() {
 	Objects objects = getOrderedObjects();
 
 	// Draw the animation frames and advance the animation
-	for (Objects::iterator o = objects.begin(); o != objects.end(); ++o) {
+	for (auto &obj : objects) {
 		int16 left, top, right, bottom;
 
-		if (o->object->draw(*_vm->_draw->_backSurface, left, top, right, bottom))
+		if (obj.object->draw(*_vm->_draw->_backSurface, left, top, right, bottom))
 			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 
-		o->object->advance();
+		obj.object->advance();
 	}
 }
 

@@ -38,7 +38,7 @@ class GUI_Console : public GUI_Widget {
 	GUI_Font *font;
 	uint16 num_cols;
 	uint16 num_rows;
-	Std::list<Std::string> data;
+	Common::List<Common::String> data;
 
 public:
 	GUI_Console(uint16 x, uint16 y, uint16 w, uint16 h);
@@ -51,11 +51,11 @@ public:
 	void Display(bool full_redraw) override;
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDown(int x, int y, Events::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override;
 
-	virtual void AddLine(const Std::string &line);
+	virtual void AddLine(const Common::String &line);
 };
 
 } // End of namespace Nuvie

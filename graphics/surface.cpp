@@ -34,37 +34,114 @@
 namespace Graphics {
 
 template<typename T>
-static void plotPoint(int x, int y, int color, void *data) {
-	Surface *s = (Surface *)data;
-	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
-		T *ptr = (T *)s->getBasePtr(x, y);
-		*ptr = (T)color;
+class SurfacePrimitives final : public Primitives {
+public:
+        void drawPoint(int x, int y, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
+			T *ptr = (T *)s->getBasePtr(x, y);
+			*ptr = (T)color;
+		}
 	}
-}
+
+        void drawHLine(int x1, int x2, int y, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->hLine(x1, y, x2, color);
+	}
+
+        void drawVLine(int x, int y1, int y2, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->vLine(x, y1, y2, color);
+	}
+
+	void drawFilledRect(const Common::Rect &rect, uint32 color, void *data) override {
+		Surface *s = (Surface *)data;
+		s->fillRect(rect, color);
+	}
+
+	void drawFilledRect1(const Common::Rect &rect, uint32 color, void *data) override {
+		Common::Rect r(rect.left, rect.top, rect.right + 1, rect.bottom + 1);
+
+		Surface *s = (Surface *)data;
+		s->fillRect(r, color);
+	}
+};
 
 void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
-	if (format.bytesPerPixel == 1)
-		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<byte>, this);
-	else if (format.bytesPerPixel == 2)
-		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint16>, this);
-	else if (format.bytesPerPixel == 4)
-		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint32>, this);
-	else
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawLine(x0, y0, x1, y1, color, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawLine(x0, y0, x1, y1, color, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawLine(x0, y0, x1, y1, color, this);
+	} else
 		error("Surface::drawLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
 void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
-	if (format.bytesPerPixel == 1)
-		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<byte>, this);
-	else if (format.bytesPerPixel == 2)
-		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint16>, this);
-	else if (format.bytesPerPixel == 4)
-		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint32>, this);
-	else
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawThickLine(x0, y0, x1, y1, penX, penY, color, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawThickLine(x0, y0, x1, y1, penX, penY, color, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawThickLine(x0, y0, x1, y1, penX, penY, color, this);
+	} else
 		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
 }
 
-// see graphics/blit/blit-atari.cpp
+void Surface::drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled) {
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawRoundRect(rect, arc, color, filled, this);
+	} else
+		error("Surface::drawRoundRect: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
+}
+
+void Surface::drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color) {
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawPolygonScan(polyX, polyY, npoints, bbox, color, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawPolygonScan(polyX, polyY, npoints, bbox, color, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawPolygonScan(polyX, polyY, npoints, bbox, color, this);
+	} else
+		error("Surface::drawPolygonScan: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
+}
+
+void Surface::drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled) {
+	if (format.bytesPerPixel == 1) {
+		SurfacePrimitives<byte> primitives;
+		primitives.drawEllipse(x0, y0, x1, y1, color, filled, this);
+	} else if (format.bytesPerPixel == 2) {
+		SurfacePrimitives<uint16> primitives;
+		primitives.drawEllipse(x0, y0, x1, y1, color, filled, this);
+	} else if (format.bytesPerPixel == 4) {
+		SurfacePrimitives<uint32> primitives;
+		primitives.drawEllipse(x0, y0, x1, y1, color, filled, this);
+	} else
+		error("Surface::drawEllipse: bytesPerPixel must be 1, 2, or 4, got %d", format.bytesPerPixel);
+}
+
+Common::Rect Surface::getRect() const {
+	return Common::Rect(w, h);
+}
+
+// see backends/graphics/atari/atari-surface.cpp
 #ifndef ATARI
 void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 	assert(width >= 0 && height >= 0);
@@ -135,7 +212,7 @@ const Surface Surface::getSubArea(const Common::Rect &area) const {
 	return subSurface;
 }
 
-bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) const {
+bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds, uint src_w, uint src_h, byte flip) const {
 	if (destBounds.left >= this->w || destBounds.top >= this->h ||
 		destBounds.right <= 0 || destBounds.bottom <= 0)
 		return false;
@@ -161,6 +238,18 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) const {
 		destBounds.left = 0;
 	}
 
+	if (flip & FLIP_H) {
+		int tmp_w = srcBounds.width();
+		srcBounds.left = src_w - srcBounds.right;
+		srcBounds.right = srcBounds.left + tmp_w;
+	}
+
+	if (flip & FLIP_V) {
+		int tmp_h = srcBounds.height();
+		srcBounds.top = src_h - srcBounds.bottom;
+		srcBounds.bottom = srcBounds.top + tmp_h;
+	}
+
 	return true;
 }
 
@@ -178,7 +267,7 @@ void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int
 	copyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel);
 }
 
-void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
+void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &subRect) {
 	assert(srcSurface.format == format);
 
 	copyRectToSurface(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height());
@@ -198,7 +287,7 @@ void Surface::copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int des
 	Graphics::keyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel, key);
 }
 
-void Surface::copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key) {
+void Surface::copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect &subRect, uint32 key) {
 	assert(srcSurface.format == format);
 
 	copyRectToSurfaceWithKey(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height(), key);
@@ -465,15 +554,15 @@ AlphaType Surface::detectAlpha() const {
 	return alphaType;
 }
 
-Graphics::Surface *Surface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
+Graphics::Surface *Surface::scale(int16 newWidth, int16 newHeight, bool filtering, byte flip) const {
 	Graphics::Surface *target = new Graphics::Surface();
 
 	target->create(newWidth, newHeight, format);
 
 	if (filtering) {
-		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, flip);
 	} else {
-		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, flip);
 	}
 
 	return target;

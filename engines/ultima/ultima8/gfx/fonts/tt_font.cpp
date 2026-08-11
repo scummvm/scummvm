@@ -19,13 +19,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/gfx/fonts/tt_font.h"
+
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/gfx/fonts/ttf_rendered_text.h"
-#include "ultima/ultima8/gfx/texture.h"
 
-
-//include iomanip
+// include iomanip
 
 namespace Ultima {
 namespace Ultima8 {
@@ -74,19 +73,24 @@ int TTFont::getBaselineSkip() {
 }
 
 template<class T>
-static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
-	Std::string::size_type len = T::length(text);
+static Common::U32String toUnicode(const Common::String &text, uint16 bullet) {
+	Common::String::size_type len = T::length(text);
 	Common::U32String result = Common::U32String(text.c_str(), len);
 
-	for (uint idx = 0; idx < result.size(); ++idx) {
-		if (result[idx] == '@')
+	Common::String::const_iterator iter = text.begin();
+	for (uint idx = 0; idx < len; ++idx) {
+		uint32 u = T::unicode(iter);
+		if (u == '@') {
 			result.setChar(bullet, idx);
+		} else {
+			result.setChar(u, idx);
+		}
 	}
 
 	return result;
 }
 
-void TTFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
+void TTFont::getStringSize(const Common::String &text, int32 &width, int32 &height) {
 	// convert to unicode
 	Common::U32String unicodeText;
 	if (!_SJIS)
@@ -101,12 +105,12 @@ void TTFont::getStringSize(const Std::string &text, int32 &width, int32 &height)
 	height += 2 * _borderSize;
 }
 
-void TTFont::getTextSize(const Std::string &text,
+void TTFont::getTextSize(const Common::String &text,
 						 int32 &resultWidth, int32 &resultHeight,
 						 unsigned int &remaining,
 						 int32 width, int32 height, TextAlign align,
 						 bool u8specials, bool pagebreaks) {
-	Std::list<PositionedText> tmp;
+	Common::List<PositionedText> tmp;
 	if (!_SJIS)
 		tmp = typesetText<Traits>(this, text, remaining,
 		                          width, height, align, u8specials, pagebreaks,
@@ -118,7 +122,7 @@ void TTFont::getTextSize(const Std::string &text,
 }
 
 
-void TTFont::addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, const Ultima::Ultima8::Rect &dims, int32 resultWidth, int32 resultHeight, uint32 borderColor) {
+void TTFont::addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, const Common::Rect32 &dims, int32 resultWidth, int32 resultHeight, uint32 borderColor) {
 	uint8 bA, bR, bG, bB;
 	_PF_RGBA.colorToARGB(borderColor, bA, bR, bG, bB);
 
@@ -188,11 +192,11 @@ void TTFont::addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, c
 	}
 }
 
-RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remaining,
+RenderedText *TTFont::renderText(const Common::String &text, unsigned int &remaining,
 		int32 width, int32 height, TextAlign align, bool u8specials, bool pagebreaks,
-		Std::string::size_type cursor) {
+		Common::String::size_type cursor) {
 	int32 resultWidth, resultHeight, lineHeight;
-	Std::list<PositionedText> lines;
+	Common::List<PositionedText> lines;
 	if (!_SJIS)
 		lines = typesetText<Traits>(this, text, remaining, width, height, align, u8specials, pagebreaks,
 			resultWidth, resultHeight, cursor);
@@ -206,14 +210,13 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 	Graphics::ManagedSurface *texture = new Graphics::ManagedSurface(resultWidth, resultHeight, _PF_RGBA);
 	uint32 *texBuf = (uint32 *)texture->getPixels();
 
-	Std::list<PositionedText>::const_iterator iter;
-	for (iter = lines.begin(); iter != lines.end(); ++iter) {
+	for (const auto &line : lines) {
 		// convert to unicode
 		Common::U32String unicodeText;
 		if (!_SJIS)
-			unicodeText = toUnicode<Traits>(iter->_text, _bullet);
+			unicodeText = toUnicode<Traits>(line._text, _bullet);
 		else
-			unicodeText = toUnicode<SJISTraits>(iter->_text, _bullet);
+			unicodeText = toUnicode<SJISTraits>(line._text, _bullet);
 
 		// Create a surface and render the text
 		Graphics::ManagedSurface textSurf;
@@ -231,16 +234,16 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 
 		// Add border within radius. Pixels on the edge are alpha blended if antialiased
 		if (_borderSize > 0) {
-			addTextBorder(textSurf, texBuf, iter->_dims, resultWidth, resultHeight, borderColor);
+			addTextBorder(textSurf, texBuf, line._dims, resultWidth, resultHeight, borderColor);
 		}
 
 		// render the text surface into our texture buffer
 		for (int y = 0; y < textSurf.h; y++) {
 			const byte *surfrow = (const byte *)textSurf.getBasePtr(0, y);
 
-			int ty = iter->_dims.top + y + _borderSize;
+			int ty = line._dims.top + y + _borderSize;
 			for (int x = 0; x < textSurf.w; x++) {
-				int tx = iter->_dims.left + x + _borderSize;
+				int tx = line._dims.left + x + _borderSize;
 				if (_antiAliased) {
 					uint32 sColor = *((const uint32 *)(surfrow + x * 4));
 					uint8 sR, sG, sB, sA;
@@ -273,15 +276,15 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			}
 		}
 
-		if (iter->_cursor != Std::string::npos) {
-			assert(iter->_cursor <= iter->_text.size());
-			unicodeText = unicodeText.substr(0, iter->_cursor);
+		if (line._cursor != Common::String::npos) {
+			assert(line._cursor <= line._text.size());
+			unicodeText = unicodeText.substr(0, line._cursor);
 
 			int w = _ttfFont->getStringWidth(unicodeText);
 
-			for (int y = 0; y < iter->_dims.height(); y++) {
-				int tx = iter->_dims.left + w + _borderSize;
-				int ty = iter->_dims.top + y;
+			for (int y = 0; y < line._dims.height(); y++) {
+				int tx = line._dims.left + w + _borderSize;
+				int ty = line._dims.top + y;
 				texBuf[ty * resultWidth + tx] = borderColor;
 			}
 		}

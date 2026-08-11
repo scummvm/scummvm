@@ -31,15 +31,15 @@ namespace Riddle {
 
 #define FLAGS_COUNT 512
 
-enum {
+enum Flag {
 	V000 =   0,
 	V001 =   1,
 	V002 =   2,
 	V003 =   3,
 	V004 =   4,
-	V005 =   5,
-	V006 =   6,
-	V007 =   7,
+	V005 =   5, // Warning level from Feng Li
+	V006 =   6, // Number of trips Ripley has taken (technically: Times foreign Posh Express offices entered)
+	V007 =   7, // Marshall Matt is waiting at the exit of room 301
 	V008 =   8,
 	V009 =   9,
 	V010 =  10,
@@ -50,19 +50,19 @@ enum {
 	V015 =  15,
 	V016 =  16,
 	V017 =  17,
-	V018 =  18,
+	kWolfFled =  18,
 	V019 =  19,
 	V020 =  20,
 	V021 =  21,
 	V022 =  22,
-	kHarryComingToRoof =  23,
+	V023 =  23,
 	V024 =  24,
 	V025 =  25,
 	V026 =  26,
 	V027 =  27,
 	V028 =  28,
 	V029 =  29,
-	V030 =  30,
+	kLeftCastleUnderground =  30,
 	V031 =  31,
 	V032 =  32,
 	V033 =  33,
@@ -90,7 +90,7 @@ enum {
 	V055 =  55,
 	V056 =  56,
 	V057 =  57,
-	V058 =  58,
+	V058 =  58, // Room 207 - 0 = Wheel ; 1 = Wheel broken down to pieces
 	V059 =  59,
 	V060 =  60,
 	V061 =  61,
@@ -108,15 +108,15 @@ enum {
 	V073 =  73,
 	V074 =  74,
 	V075 =  75,
-	V076 =  76,
-	V077 =  77,
+	kChinshiCartoon =  76,
+	kTabletsCartoon =  77,
 	V078 =  78,
 	V079 =  79,
-	V080 =  80,
-	V081 =  81,
+	V080 =  80, // Room 303 Puffball : first look animation played
+	V081 =  81, // Room 303 Torso Tomato : first look animation played
 	V082 =  82,
 	V083 =  83,
-	V084 =  84,
+	V084 =  84, // Room 304: 1 if cobra is dead, 2 if cobra has been caught alive
 	V085 =  85,
 	V086 =  86,
 	V087 =  87,
@@ -126,14 +126,14 @@ enum {
 	V091 =  91,
 	V092 =  92,
 	V093 =  93,
-	V094 =  94,
+	kBridgeWheelPosition =  94, // 0 and 4 = horizontal and walkable
 	V095 =  95,
 	V096 =  96,
 	V097 =  97,
 	V098 =  98,
 	V099 =  99,
 
-	V100 = 100,
+	kBridgeLocked = 100,
 	V101 = 101,
 	V102 = 102,
 	V103 = 103,
@@ -147,9 +147,9 @@ enum {
 	V111 = 111,
 	V112 = 112,
 	V113 = 113,
-	V114 = 114,
+	V114 = 114, // Give marks to Wolf, room 402
 	V115 = 115,
-	V116 = 116,
+	V116 = 116, // Try to give to Wolf a foreign currency, room 402
 	V117 = 117,
 	V118 = 118,
 	V119 = 119,
@@ -162,18 +162,18 @@ enum {
 	V126 = 126,
 	V127 = 127,
 	V128 = 128,
-	V129 = 129,
-	V130 = 130,
-	V131 = 131,
+	kTravelDest = 129,
+	kCastleCartoon = 130,
+	kWolfLocation = 131,
 	V132 = 132,
 	V133 = 133,
 	V134 = 134,
 	V135 = 135,
-	V136 = 136,
-	V137 = 137,
-	V138 = 138,
+	kEmeraldCartoon = 136,
+	kEpitaphCartoon = 137,
+	kGraveyardCartoon = 138,
 	V139 = 139,
-	V140 = 140,
+	kMocaMocheCartoon = 140,
 	V141 = 141,
 	V142 = 142,
 	V143 = 143,
@@ -213,7 +213,7 @@ enum {
 	V177 = 177,
 	V178 = 178,
 	V179 = 179,
-	V180 = 180,
+	kEasterIslandCartoon = 180,
 	V181 = 181,
 	V182 = 182,
 	V183 = 183,
@@ -222,7 +222,7 @@ enum {
 	V186 = 186,
 	V187 = 187,
 	V188 = 188,
-	V189 = 189,
+	V189 = 189, // Room 604: 2= wire connected to pull 3= Also connected to the plug
 	V190 = 190,
 	V191 = 191,
 	V192 = 192,
@@ -249,13 +249,13 @@ enum {
 	V212 = 212,
 	V213 = 213,
 	V214 = 214,
-	V215 = 215,
+	kTempleCartoon = 215,
 	V216 = 216,
-	V217 = 217,
+	V217 = 217, // Prayer wheel in niche, room 703
 	V218 = 218,
-	V219 = 219,
-	V220 = 220,
-	V221 = 221,
+	V219 = 219, // Prayer wheel in niche, room 704 / 706
+	V220 = 220, // prayer wheel (left), room 705
+	V221 = 221, // prayer wheel (right), room 705
 	V222 = 222,
 	V223 = 223,
 	V224 = 224,
@@ -286,10 +286,10 @@ enum {
 	V249 = 249,
 	V250 = 250,
 	V251 = 251,
-	V252 = 252,
-	V253 = 253,
-	V254 = 254,
-	V255 = 255,
+	kTerracottaSoldiers = 252,
+	kRiceSackMoved = 253,
+	kDugInWall = 254,
+	kOpenedHoleInWall = 255,
 	V256 = 256,
 	V257 = 257,
 	V258 = 258,
@@ -297,7 +297,7 @@ enum {
 	V260 = 260,
 	V261 = 261,
 	V262 = 262,
-	V263 = 263,
+	V263 = 263, // Set after the first walk in room 809
 	V264 = 264,
 	V265 = 265,
 	V266 = 266,
@@ -311,15 +311,15 @@ enum {
 	V274 = 274,
 	V275 = 275,
 	V276 = 276,
-	V277 = 277,
-	V278 = 278,
+	V277 = 277, // look at "hole in chasm wall", 808 -> 1 when animation displayed once
+	V278 = 278, // look at "hole in bridge", 808 -> 1 when animation displayed once
 	V279 = 279,
 	V280 = 280,
 	V281 = 281,
 	V282 = 282,
 	V283 = 283,
 	V284 = 284,
-	V285 = 285,
+	V285 = 285,// empty translation table in journal
 	V286 = 286,
 	V287 = 287,
 	V288 = 288,
@@ -341,23 +341,23 @@ enum {
 	V303 = 303,
 	V304 = 304,
 	V305 = 305,
-	V306 = 306,
+	kGamesCabinetOpen = 306,
 	V307 = 307,
 	V308 = 308,
-	V309 = 309,
-	V310 = 310,
+	kWritingDeskDrawerOpen = 309,
+	kCardSwitchRevealed = 310,
 	V311 = 311,
-	V312 = 312,
+	kBilliardsTableState = 312,
 	V313 = 313,
 	V314 = 314,
 	V315 = 315,
-	V316 = 316,
-	V317 = 317,
+	kCrackedMirror = 316,
+	V317 = 317, // Look at the game cabinet for the first time after opening it, room 406
 	V318 = 318,
 	V319 = 319,
 	V320 = 320,
-	V321 = 321,
-	V322 = 322,
+	kBilliardBallInCabinet = 321,
+	kBilliardsFan = 322,
 	V323 = 323,
 	V324 = 324,
 	V325 = 325,
@@ -368,12 +368,12 @@ enum {
 	V330 = 330,
 	V331 = 331,
 	V332 = 332,
-	V333 = 333,
-	V334 = 334,
+	kPaintingOpen = 333,
+	kButlerSaidWolfFled = 334,
 	V335 = 335,
 	V336 = 336,
 	V337 = 337,
-	V338 = 338,
+	kGermanBanknoteFound = 338,
 	V339 = 339,
 	V340 = 340,
 	V341 = 341,
@@ -566,9 +566,9 @@ public:
 	size_t size() const {
 		return FLAGS_COUNT;
 	}
-	int32 &operator[](uint idx) {
-		assert(idx < FLAGS_COUNT);
-		return _flags[idx];
+	int32 &operator[](Flag flag) {
+		assert((int)flag < FLAGS_COUNT);
+		return _flags[flag];
 	}
 
 	/**

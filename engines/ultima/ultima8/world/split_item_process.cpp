@@ -19,10 +19,12 @@
  *
  */
 
-#include "ultima/ultima.h"
 #include "ultima/ultima8/world/split_item_process.h"
-#include "ultima/ultima8/world/item.h"
+
+#include "common/debug.h"
+#include "ultima/ultima.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {

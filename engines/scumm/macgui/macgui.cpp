@@ -26,6 +26,8 @@
 #include "scumm/macgui/macgui_impl.h"
 #include "scumm/macgui/macgui_indy3.h"
 #include "scumm/macgui/macgui_loom.h"
+#include "scumm/macgui/macgui_v5.h"
+#include "scumm/macgui/macgui_v6.h"
 
 namespace Scumm {
 
@@ -39,6 +41,26 @@ MacGui::MacGui(ScummEngine *vm, const Common::Path &resourceFile) {
 		_impl = new MacLoomGui(vm, resourceFile);
 		break;
 
+	case GID_MONKEY:
+	case GID_MONKEY2:
+		_impl = new MacV5Gui(vm, resourceFile);
+		break;
+
+	case GID_INDY4:
+		if (vm->_isModernMacVersion)
+			_impl = new MacV6Gui(vm, resourceFile);
+		else
+			_impl = new MacV5Gui(vm, resourceFile);
+		break;
+
+	case GID_TENTACLE:
+	case GID_MANIAC:
+	case GID_SAMNMAX:
+	case GID_DIG:
+	case GID_FT:
+		_impl = new MacV6Gui(vm, resourceFile);
+		break;
+
 	default:
 		error("MacGui: Invalid game id %d", vm->_game.id);
 		break;
@@ -49,8 +71,12 @@ MacGui::~MacGui() {
 	delete _impl;
 }
 
-void MacGui::initialize() {
-	_impl->initialize();
+int MacGui::getNumColors() const {
+	return _impl->getNumColors();
+}
+
+bool MacGui::initialize() {
+	return _impl->initialize();
 }
 
 void MacGui::reset() {
@@ -77,8 +103,8 @@ void MacGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, 
 	_impl->setupCursor(width, height, hotspotX, hotspotY, animate);
 }
 
-void MacGui::setPalette(const byte *palette, uint size) {
-	_impl->setPalette(palette, size);
+void MacGui::setPaletteDirty() {
+	_impl->setPaletteDirty();
 }
 
 const Graphics::Font *MacGui::getFontByScummId(int32 id) {

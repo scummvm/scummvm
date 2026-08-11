@@ -45,23 +45,23 @@ AdPath3D::~AdPath3D() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdPath3D::reset() {
-	for (uint i = 0; i < _points.size(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
 
-	_points.clear();
+	_points.removeAll();
 	_currIndex = -1;
 	_ready = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void AdPath3D::addPoint(Math::Vector3d point) {
-	_points.add(new Math::Vector3d(point));
+void AdPath3D::addPoint(DXVector3 point) {
+	_points.add(new DXVector3(point));
 }
 
 //////////////////////////////////////////////////////////////////////////
 void AdPath3D::addPoint(float x, float y, float z) {
-	_points.add(new Math::Vector3d(x, y, z));
+	_points.add(new DXVector3(x, y, z));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,8 +73,8 @@ bool AdPath3D::setReady(bool ready) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d *AdPath3D::getFirst() {
-	if (_points.size() > 0) {
+DXVector3 *AdPath3D::getFirst() {
+	if (_points.getSize() > 0) {
 		_currIndex = 0;
 		return _points[_currIndex];
 	} else {
@@ -83,9 +83,9 @@ Math::Vector3d *AdPath3D::getFirst() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d *AdPath3D::getNext() {
+DXVector3 *AdPath3D::getNext() {
 	_currIndex++;
-	if (static_cast<uint>(_currIndex) < _points.size()) {
+	if (_currIndex < _points.getSize()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;
@@ -93,8 +93,8 @@ Math::Vector3d *AdPath3D::getNext() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d *AdPath3D::getCurrent() {
-	if (_currIndex >= 0 && static_cast<uint>(_currIndex) < _points.size()) {
+DXVector3 *AdPath3D::getCurrent() {
+	if (_currIndex >= 0 && _currIndex < _points.getSize()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;
@@ -103,23 +103,23 @@ Math::Vector3d *AdPath3D::getCurrent() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdPath3D::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferPtr(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER(_game));
 
 	persistMgr->transferSint32(TMEMBER(_currIndex));
 	persistMgr->transferBool(TMEMBER(_ready));
 
 	if (persistMgr->getIsSaving()) {
-		int32 j = _points.size();
+		int32 j = _points.getSize();
 		persistMgr->transferSint32("ArraySize", &j);
-		for (int i = 0; i < j; i++) {
-			persistMgr->transferFloat("x", &_points[i]->x());
-			persistMgr->transferFloat("y", &_points[i]->y());
-			persistMgr->transferFloat("z", &_points[i]->z());
+		for (int32 i = 0; i < j; i++) {
+			persistMgr->transferFloat("x", &_points[i]->_x);
+			persistMgr->transferFloat("y", &_points[i]->_y);
+			persistMgr->transferFloat("z", &_points[i]->_z);
 		}
 	} else {
 		int32 j = 0;
 		persistMgr->transferSint32("ArraySize", &j);
-		for (int i = 0; i < j; i++) {
+		for (int32 i = 0; i < j; i++) {
 			float x, y, z;
 			persistMgr->transferFloat("x", &x);
 			persistMgr->transferFloat("y", &y);

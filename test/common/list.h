@@ -100,9 +100,15 @@ class ListTestSuite : public CxxTest::TestSuite
 		++iter;
 		++iter;
 
-		// Now insert some values here
+		// Insert a value before the final one
 		container.insert(iter, 42);
-		container.insert(iter, 43);
+
+		// Insert another value before the final one and check the return value
+		iter = container.insert(iter, 43);
+		TS_ASSERT_EQUALS(*iter, 43);
+
+		// Insert a value before the previously inserted one
+		container.insert(iter, 44);
 
 		// Verify contents are correct
 		iter = container.begin();
@@ -116,6 +122,10 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 		TS_ASSERT_EQUALS(*iter, 42);
+		++iter;
+		TS_ASSERT_DIFFERS(iter, container.end());
+
+		TS_ASSERT_EQUALS(*iter, 44);
 		++iter;
 		TS_ASSERT_DIFFERS(iter, container.end());
 

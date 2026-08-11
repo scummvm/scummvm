@@ -139,7 +139,6 @@ public:
 
 protected:
 	TeMatrix4x4 lerpElementsMatrix(uint weightNum, const Common::Array<TeMatrix4x4> &matricies);
-	void optimize();
 
 	Common::Path _texturePath;
 	TeIntrusivePtr<TeTiledTexture> _tiledTexture;

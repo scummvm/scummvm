@@ -258,7 +258,7 @@ void QuetzalWriter::addCommonChunks(const Common::String &saveName) {
 		else
 			ws.writeByte('\0');
 
-		Common::String md5 = g_vm->getGameMD5();
+		const auto &md5 = g_vm->getGameMD5();
 		ws.write(md5.c_str(), md5.size());
 		ws.writeByte('\0');
 	}

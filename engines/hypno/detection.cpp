@@ -111,6 +111,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"wetlands", // Wetlands Demo PC Spiel (October 1995)
+		"EarlyDemo",
+		AD_ENTRY2s("wetlands.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 641411,
+			  "c61.mis", "11e384b3abe0f42995bb61566d877e45", 18497),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"wetlands", // Wetlands Demo Disc (November 1995)
 		"Demo",
 		AD_ENTRY3s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231,
@@ -281,9 +291,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
+class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, sizeof(ADGameDescription), Hypno::hypnoGames) {
+	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, Hypno::hypnoGames) {
 		_guiOptions = GUIO6(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_CHEATS, GAMEOPTION_INFINITE_HEALTH, GAMEOPTION_INFINITE_AMMO, GAMEOPTION_UNLOCK_ALL_LEVELS, GAMEOPTION_RESTORED_CONTENT);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;

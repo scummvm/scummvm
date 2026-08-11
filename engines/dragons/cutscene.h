@@ -21,7 +21,7 @@
 #ifndef DRAGONS_CUTSCENE_H
 #define DRAGONS_CUTSCENE_H
 
-#include "common/system.h"
+#include "common/scummsys.h"
 
 namespace Dragons {
 

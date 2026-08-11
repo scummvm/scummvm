@@ -20,10 +20,11 @@
  */
 
 #include "bagel/spacebar/slot_wnd.h"
-#include "bagel/baglib/bagel.h"
-#include "bagel/boflib/sound.h"
+#include "bagel/spacebar/baglib/bagel.h"
 #include "bagel/bagel.h"
+#include "bagel/boflib/file_functions.h"
 #include "bagel/boflib/log.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace SpaceBar {
@@ -121,7 +122,7 @@ SBarSlotWnd::SBarSlotWnd() : CBagStorageDevWnd() {
 	_pLoseBmp = nullptr;
 	_pBkgSnd = nullptr;
 	_bLose = false;
-	
+
 	CBagStorageDevWnd::setHelpFilename(BuildSlotDir("SLOT.TXT"));
 
 	// Call this thing a closeup so that time won't go
@@ -268,13 +269,13 @@ ErrorCode  SBarSlotWnd::attach() {
 	_pBkgSnd = new CBofSound(this, BuildSlotDir(CASINO_AUDIO), SOUND_MIX, 99999);
 	_pBkgSnd->play();
 
-	CBofCursor::show();
+	CBagCursor::showSystemCursor();
 
 	return _errCode;
 }
 
 ErrorCode SBarSlotWnd::detach() {
-	CBofCursor::hide();
+	CBagCursor::hideSystemCursor();
 
 	// Put any credits left in machine back into you credit chip.
 	if (_nBet > 0) {
@@ -620,7 +621,7 @@ void SBarSlotWnd::slideSlots() {
 	assert(isValidObject(this));
 
 	if (!errorOccurred()) {
-		int nIncrement = 30;	// Number of pixels to move
+		int nIncrement = 30;    // Number of pixels to move
 		int nMaskClr = CBagel::getBagApp()->getChromaColor();
 
 		// Erase Previous game
@@ -838,8 +839,8 @@ void SBarSlotWnd::onBofButton(CBofObject *pObject, int nState) {
 			if (pWin != nullptr)
 				pWin->onHelp(BuildSlotDir("SLOT.TXT"));
 		}
-		}
-		break;
+	}
+	break;
 
 	default:
 		logWarning(buildString("Clicked Unknown Button with ID %d", pButton->getControlID()));
@@ -854,7 +855,7 @@ const char *BuildSlotDir(const char *pszFile) {
 	static char szBuf[MAX_DIRPATH];
 
 	// Where Slot assets
-	Common::sprintf_s(szBuf, "%s%s%s", BGCB_DIR, PATH_DELIMETER, pszFile);
+	Common::sprintf_s(szBuf, "%s%s", BGCB_DIR, pszFile);
 
 	CBofString sSlotDir(szBuf, MAX_DIRPATH);
 	fixPathName(sSlotDir);

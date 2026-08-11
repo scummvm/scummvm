@@ -58,6 +58,14 @@
 #include <cstring>
 #include <ctime>
 
+// We can't use the common/util.h header here, since create_project
+// is a standalone tool, and may be built individually from the rest
+// of the devtools.
+#ifdef ARRAYSIZE
+#undef ARRAYSIZE
+#endif
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+
 namespace {
 /**
  * Converts the given path to only use slashes as
@@ -104,6 +112,9 @@ enum ProjectType {
 
 std::map<std::string, bool> isEngineEnabled;
 
+static void fixupFeatures(ProjectType projectType, BuildSetup &setup);
+static void fixupComponents(BuildSetup &setup);
+
 int main(int argc, char *argv[]) {
 #ifndef USE_WIN32_API
 	// Initialize random number generator for UUID creation
@@ -132,6 +143,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	setup.features = getAllFeatures();
+	setup.components = getAllComponents(setup.srcDir, setup.features);
 
 	ProjectType projectType = kProjectNone;
 	const MSVCVersion *msvc = nullptr;
@@ -184,6 +196,10 @@ int main(int argc, char *argv[]) {
 			}
 
 			projectType = kProjectXcode;
+		} else if (!std::strcmp(argv[i], "--ios")) {
+			setup.appleEmbedded = true;
+		} else if (!std::strcmp(argv[i], "--tvos")) {
+			setup.appleEmbedded = true;
 #endif
 
 		} else if (!std::strcmp(argv[i], "--msvc-version")) {
@@ -296,9 +312,15 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
 		} else if (!std::strcmp(argv[i], "--sdl1")) {
-			setup.useSDL2 = false;
+			setup.useSDL = kSDLVersion1;
+		} else if (!std::strcmp(argv[i], "--sdl2")) {
+			setup.useSDL = kSDLVersion2;
+		} else if (!std::strcmp(argv[i], "--sdl3")) {
+			setup.useSDL = kSDLVersion3;
 		} else if (!std::strcmp(argv[i], "--use-canonical-lib-names")) {
 			// Deprecated: Kept here so it doesn't error
+		} else if (!std::strcmp(argv[i], "--use-slnx")) {
+			setup.useSlnx = true;
 		} else if (!std::strcmp(argv[i], "--use-windows-unicode")) {
 			setup.useWindowsUnicode = true;
 		} else if (!std::strcmp(argv[i], "--use-windows-ansi")) {
@@ -317,13 +339,18 @@ int main(int argc, char *argv[]) {
 			std::string libsDir = unifyPath(argv[++i]);
 			removeTrailingSlash(libsDir);
 			setup.libsDir = libsDir;
+		} else if (!std::strcmp(argv[i], "--list-components")) {
+			for (ComponentList::const_iterator j = setup.components.begin(); j != setup.components.end(); ++j)
+				cout << ' ' << j->description << "\n";
+
+			return 0;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
 		}
 	}
 
-	// When building tests, disable some features
+	// When building tests, disable some features and all engines
 	if (setup.tests) {
 		setup.useStaticDetection = false;
 		setFeatureBuildState("mt32emu", setup.features, false);
@@ -339,38 +366,60 @@ int main(int argc, char *argv[]) {
 		setup.useStaticDetection = false;
 	}
 
-	// HACK: Vorbis and Tremor can not be enabled simultaneously
-	if (getFeatureBuildState("tremor", setup.features)) {
-		setFeatureBuildState("vorbis", setup.features, false);
-	}
+	fixupFeatures(projectType, setup);
 
-	// HACK: Fluidsynth and Fluidlite can not be enabled simultaneously
-	if (getFeatureBuildState("fluidsynth", setup.features)) {
-		setFeatureBuildState("fluidlite", setup.features, false);
-	}
-
-	// HACK: These features depend on OpenGL
-	if (!getFeatureBuildState("opengl", setup.features)) {
-		setFeatureBuildState("opengl_game_classic", setup.features, false);
-		setFeatureBuildState("opengl_game_shaders", setup.features, false);
-	}
-
-	// Disable engines for which we are missing dependencies
+	// Disable engines for which we are missing dependencies and mark components as needed
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
-		if (i->enable) {
-			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
-				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
-				if (feature == setup.features.end()) {
-					std::cerr << "ERROR: Missing feature " << *ef << " from engine " << i->name << '\n';
-					return -1;
-				} else if (!feature->enable) {
-					setEngineBuildState(i->name, setup.engines, false);
-					break;
-				}
+		if (!i->enable) {
+			continue;
+		}
+
+		bool enabled = true;
+		std::list<FeatureList::iterator> missingFeatures;
+		for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
+			FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
+			if (feature == setup.features.end()) {
+				std::cerr << "ERROR: Missing feature " << *ef << " from engine " << i->name << '\n';
+				return -1;
+			} else if (!feature->enable) {
+				enabled = false;
+				missingFeatures.push_back(feature);
 			}
-			isEngineEnabled[i->name] = true;
+		}
+		isEngineEnabled[i->name] = enabled;
+		if (!enabled) {
+			setEngineBuildState(i->name, setup.engines, false);
+			std::cout << "WARNING: Disabling engine " << i->desc << " because the following dependencies are unmet:";
+			for (std::list<FeatureList::iterator>::iterator itr = missingFeatures.begin(); itr != missingFeatures.end(); itr++) {
+				std::cout << " " << (*itr)->description;
+			}
+			std::cout << "\n";
+			continue;
+		}
+		// Mark components as needed now the engine is definitely enabled
+		for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
+			ComponentList::iterator component = std::find(setup.components.begin(), setup.components.end(), *ef);
+			if (component == setup.components.end()) {
+				continue;
+			}
+			component->needed = true;
+		}
+		for (StringList::const_iterator ef = i->wishedComponents.begin(); ef != i->wishedComponents.end(); ++ef) {
+			ComponentList::iterator component = std::find(setup.components.begin(), setup.components.end(), *ef);
+			if (component == setup.components.end()) {
+				std::cerr << "ERROR: Missing component " << *ef << " from engine " << i->name << '\n';
+				return -1;
+			}
+			component->needed = true;
 		}
 	}
+
+	// Disable unused features / components
+	if (!setup.tests)
+		disableComponents(setup.components);
+
+	// Handle hard-coded component logic
+	fixupComponents(setup);
 
 	// Print status
 	cout << "Enabled engines:\n\n";
@@ -412,14 +461,22 @@ int main(int argc, char *argv[]) {
 
 	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
-		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
-		// correct target by the Xcode project provider.
-		// This define will help catching up target-dependent files, like "browser_osx.mm"
-		// The suffix ("_osx", or "_ios") will be used by the project provider to filter out
-		// the files, according to the target.
-		setup.defines.push_back("MACOSX");
-		setup.defines.push_back("IPHONE");
-		setup.defines.push_back("SCUMMVM_NEON");
+		if (setup.appleEmbedded) {
+			setup.defines.push_back("IPHONE");
+			setup.defines.push_back("IPHONE_IOS7");
+			setup.defines.push_back("SCUMMVM_NEON");
+		} else {
+			setup.defines.push_back("MACOSX");
+			// We have two TTS backends, one that is deprecated in macOS 11 and a newer one
+			// that requires macOS 10.14 minimum. Use the new one when compiling for ARM, and
+			// otherwise (PPC, Intel) use the old one. We assume the current arch to compile
+			// create_project is also the one we will be compiling ScummVM for.
+#if !defined(__aarch64__)
+			if (getFeatureBuildState("tts", setup.features)) {
+				setup.defines.push_back("USE_NS_SPEECH_SYNTHESIZER");
+			}
+#endif
+		}
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
 		setup.defines.push_back("WIN32");
 		setup.win32 = true;
@@ -445,12 +502,20 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	setup.defines.push_back("SDL_BACKEND");
-	if (!setup.useSDL2) {
-		cout << "\nBuilding against SDL 1.2\n\n";
-	} else {
-		cout << "\nBuilding against SDL 2.0\n\n";
-		setup.defines.push_back("USE_SDL2");
+	if (projectType != kProjectXcode || !setup.appleEmbedded) {
+		setup.defines.push_back("SDL_BACKEND");
+		if (setup.useSDL == kSDLVersion1) {
+			cout << "\nBuilding against SDL 1.2\n\n";
+		} else if (setup.useSDL == kSDLVersion2) {
+			cout << "\nBuilding against SDL 2\n\n";
+			setup.defines.push_back("USE_SDL2");
+		} else if (setup.useSDL == kSDLVersion3) {
+			cout << "\nBuilding against SDL 3\n\n";
+			setup.defines.push_back("USE_SDL3");
+		} else {
+			std::cerr << "ERROR: Unsupported SDL version\n";
+			return -1;
+		}
 	}
 
 	if (setup.useStaticDetection) {
@@ -459,6 +524,16 @@ int main(int argc, char *argv[]) {
 
 	if (getFeatureBuildState("opengl", setup.features)) {
 		setup.defines.push_back("USE_GLAD");
+	}
+
+	// HACK: Add IMGUI SDL Renderer support
+	if (getFeatureBuildState("imgui", setup.features)) {
+		// This needs SDL 2.0.18+
+		if (setup.useSDL == kSDLVersion2) {
+			setup.defines.push_back("USE_IMGUI_SDLRENDERER2");
+		} else if (setup.useSDL == kSDLVersion3) {
+			setup.defines.push_back("USE_IMGUI_SDLRENDERER3");
+		}
 	}
 
 	// List of global warnings and map of project-specific warnings
@@ -521,6 +596,11 @@ int main(int argc, char *argv[]) {
 			return -1;
 		}
 
+		if (setup.useSlnx && msvc->version < 17) {
+			std::cerr << "ERROR: Using SLNX solution files requires Visual Studio 2022 17.14 or higher\n";
+			return 1;
+		}
+
 		////////////////////////////////////////////////////////////////////////////
 		// For Visual Studio, all warnings are on by default in the project files,
 		// so we pass a list of warnings to disable globally or per-project
@@ -558,6 +638,9 @@ int main(int argc, char *argv[]) {
 		//
 		// 4351 (new behavior: elements of array 'array' will be default initialized)
 		//   a change in behavior in Visual Studio 2005. We want the new behavior, so it can be disabled
+		//
+		// 4505 ('function' : unreferenced local function has been removed)
+		//   libvpx triggers this warning a lot. The compiler eliminates the code and that's expected.
 		//
 		// 4512 ('class' : assignment operator could not be generated)
 		//   some classes use const items and the default assignment operator cannot be generated
@@ -617,6 +700,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4324");
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
+		globalWarnings.push_back("4505");
 		globalWarnings.push_back("4512");
 		globalWarnings.push_back("4589");
 		globalWarnings.push_back("4702");
@@ -642,6 +726,9 @@ int main(int argc, char *argv[]) {
 		globalErrors.push_back("4305"); // truncation of double to float or int to bool
 		globalErrors.push_back("4366"); // address taken of unaligned field
 		globalErrors.push_back("4315"); // unaligned field has constructor that expects to be aligned
+		globalErrors.push_back("4715"); // not all control paths return a value
+		globalErrors.push_back("4716"); // function must return a value
+
 
 		projectWarnings["agi"].push_back("4510");
 		projectWarnings["agi"].push_back("4610");
@@ -734,8 +821,8 @@ void displayHelp(const char *exe) {
 	        " --output-dir path          overwrite path, where the project files are placed\n"
 	        "                            By default this is \".\", i.e. the current working\n"
 	        "                            directory\n"
-			" --include-dir path         add a path to the include search path"
-			" --library-dir path         add a path to the library search path"
+			" --include-dir path         add a path to the include search path\n"
+			" --library-dir path         add a path to the library search path\n"
 	        "\n"
 	        "MSVC specific settings:\n"
 	        " --msvc-version version     set the targeted MSVC version. Possible values:\n";
@@ -755,15 +842,22 @@ void displayHelp(const char *exe) {
 	        " --tests                    Create project files for the tests\n"
 	        "                            (ignores --build-events and --installer, as well as engine settings)\n"
 	        "                            (default: false)\n"
-	        " --use-windows-unicode      Use Windows Unicode APIs\n"
+			" --use-slnx                 Use new XML-based Visual Studio solution format\n"
+			"                            (default: false)\n"
+			" --use-windows-unicode      Use Windows Unicode APIs\n"
 	        "                            (default: true)\n"
 	        " --use-windows-ansi         Use Windows ANSI APIs\n"
 	        "                            (default: false)\n"
 	        " --use-windows-subsystem    Use Windows subsystem instead of Console\n"
+	        "                            (default: false)\n"
 	        " --libs-path path           Specify the path of pre-built libraries instead of using the\n"
 			"                            " LIBS_DEFINE " environment variable\n "
 	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built libraries\n"
 	        "                            (default: false)\n"
+	        "\n"
+	        "XCode specific settings:\n"
+	        " --ios                      build for iOS or tvOS\n"
+	        " --tvos                     build for iOS or tvOS\n"
 	        "\n"
 	        "Engines settings:\n"
 	        " --list-engines             list all available engines and their default state\n"
@@ -777,7 +871,9 @@ void displayHelp(const char *exe) {
 	        " --disable-<name>           disable inclusion of the feature \"name\"\n"
 	        "\n"
 	        "SDL settings:\n"
-	        " --sdl1                     link to SDL 1.2, instead of SDL 2.0\n"
+	        " --sdl1                     link to SDL 1.2\n"
+			" --sdl2                     link to SDL 2 (default)\n"
+			" --sdl3                     link to SDL 3\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
@@ -971,7 +1067,7 @@ namespace {
  */
 bool parseEngine(const std::string &line, EngineDesc &engine) {
 	// Format:
-	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"] ["base games"] ["dependencies"]
+	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"] ["base games"] ["dependencies"] ["components"]
 	TokenList tokens = tokenize(line);
 
 	if (tokens.size() < 4)
@@ -994,8 +1090,12 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 		++token;
 		if (token != tokens.end())
 			++token;
-		if (token != tokens.end())
+		if (token != tokens.end()) {
 			engine.requiredFeatures = tokenize(*token);
+			++token;
+		}
+		if (token != tokens.end())
+			engine.wishedComponents = tokenize(*token);
 	}
 
 	return true;
@@ -1103,6 +1203,9 @@ const Feature s_features[] = {
 	{    "sdlnet",     "USE_SDL_NET", true, true,  "SDL_net support" },
 	{   "discord",     "USE_DISCORD", true, false, "Discord support" },
 	{ "retrowave",   "USE_RETROWAVE", true, false, "RetroWave OPL3 support" },
+	{       "nFM",         "USE_NFM", true, false, "Nokturnal nFM OPL2/OPL3 support" },
+	{       "a52",         "USE_A52", true, false, "ATSC A/52 support" },
+	{       "mpc",      "USE_MPCDEC", true, false, "Musepack support" },
 
 	// Feature flags
 	{               "bink",                      "USE_BINK", false, true,  "Bink video support" },
@@ -1111,20 +1214,23 @@ const Feature s_features[] = {
 	{        "edgescalers",              "USE_EDGE_SCALERS", false, true,  "Edge scalers" },
 	{             "aspect",                    "USE_ASPECT", false, true,  "Aspect ratio correction" },
 	{              "16bit",                 "USE_RGB_COLOR", false, true,  "16bit color support" },
+	{                 "3d",                              "", false, true,  "3D rendering" },
 	{            "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
 	{            "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
-	{                "lua",                       "USE_LUA", false, true,  "lua" },
 	{               "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{             "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support" },
 	{             "opengl",                    "USE_OPENGL", false, true,  "OpenGL support" },
 	{"opengl_game_classic",               "USE_OPENGL_GAME", false, true,  "OpenGL support (classic) in 3d games" },
 	{"opengl_game_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
+	{             "tinygl",                    "USE_TINYGL", false, true,  "TinyGL support (software) in 3d games" },
 	{            "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
+	{               "http",                      "USE_HTTP", false, true,  "HTTP client support" },
+	{          "basic-net",                 "USE_BASIC_NET", false, true,  "Basic network support" },
 	{              "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
 	{               "enet",                      "USE_ENET", false, true,  "ENet networking support" },
 	{        "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
 	{             "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
 	{      "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
+	{           "printing",           "USE_SYSTEM_PRINTING", false, true,  "Printing support"},
 	{            "updates",                   "USE_UPDATES", false, false, "Updates support"},
 	{            "dialogs",                "USE_SYSDIALOGS", false, true,  "System dialogs support"},
 	{         "langdetect",                "USE_DETECTLANG", false, true,  "System language detection support" }, // This feature actually depends on "translation", there
@@ -1153,19 +1259,46 @@ const Tool s_tools[] = {
 
 const MSVCVersion s_msvc[] = {
 //    Ver    Name                     Solution                     Project    Toolset    LLVM
-	{ 10,    "Visual Studio 2010",    "11.00",          "2010",     "4.0",    "v100",    "LLVM-vs2010" },
-	{ 11,    "Visual Studio 2012",    "11.00",          "2012",     "4.0",    "v110",    "LLVM-vs2012" },
-	{ 12,    "Visual Studio 2013",    "12.00",          "2013",    "12.0",    "v120",    "LLVM-vs2013" },
 	{ 14,    "Visual Studio 2015",    "12.00",            "14",    "14.0",    "v140",    "LLVM-vs2014" },
 	{ 15,    "Visual Studio 2017",    "12.00",            "15",    "15.0",    "v141",    "llvm"        },
 	{ 16,    "Visual Studio 2019",    "12.00",    "Version 16",    "16.0",    "v142",    "llvm"        },
-	{ 17,    "Visual Studio 2022",    "12.00",    "Version 17",    "17.0",    "v143",    "llvm"        }
+	{ 17,    "Visual Studio 2022",    "12.00",    "Version 17",    "17.0",    "v143",    "llvm"        },
+	{ 18,    "Visual Studio 2026",    "12.00",    "Version 18",    "18.0",    "v145",    "llvm"        }
 };
 
 const char *s_msvc_arch_names[] = {"arm64", "x86", "x64"};
 const char *s_msvc_config_names[] = {"arm64", "Win32", "x64"};
 // clang-format on
 } // End of anonymous namespace
+
+// An array of buffers for the features
+// created out of the components (which use char pointers)
+std::list<std::string> s_stash_features;
+FeatureList::iterator addDynamicFeature(FeatureList &features, const std::string &name, const std::string &description, const std::string &define) {
+	// Add a new entry in our stash and fill it
+	s_stash_features.push_back(std::string());
+	std::string &buffer = s_stash_features.back();
+
+	buffer += name;
+	buffer += '\0';
+	buffer += define;
+	buffer += '\0';
+	buffer += description;
+
+	// Starting from now the buffer must be read-only
+
+	const char *ptr = buffer.c_str();
+	Feature feature = {
+		ptr,
+		ptr + name.size() + 1,
+		false,
+		true,
+		ptr + name.size() + define.size() + 2
+	};
+
+	features.push_back(feature);
+	return --features.end();
+}
 
 std::string getMSVCArchName(MSVC_Architecture arch) {
 	return s_msvc_arch_names[arch];
@@ -1176,13 +1309,182 @@ std::string getMSVCConfigName(MSVC_Architecture arch) {
 }
 
 FeatureList getAllFeatures() {
-	const size_t featureCount = sizeof(s_features) / sizeof(s_features[0]);
+	const size_t featureCount = ARRAYSIZE(s_features);
 
 	FeatureList features;
 	for (size_t i = 0; i < featureCount; ++i)
 		features.push_back(s_features[i]);
 
 	return features;
+}
+
+/**
+ * Apply all the hardcoded logic for the features availability.
+ *
+ * This means disabling conflicting features, enabling meta-features, ...
+ */
+static void fixupFeatures(ProjectType projectType, BuildSetup &setup) {
+#ifdef ENABLE_XCODE
+	// IMGUI and NASM are not available on Xcode
+	if (projectType == kProjectXcode) {
+		setFeatureBuildState("imgui", setup.features, false);
+		setFeatureBuildState("nasm", setup.features, false);
+	}
+	// OpenGL classic is not available on iOS/tvOS
+	if (projectType == kProjectXcode && setup.appleEmbedded) {
+		setFeatureBuildState("opengl_game_classic", setup.features, false);
+	}
+#endif
+
+	// Vorbis and Tremor can not be enabled simultaneously
+	if (getFeatureBuildState("tremor", setup.features)) {
+		setFeatureBuildState("vorbis", setup.features, false);
+	}
+
+	// Fluidsynth and Fluidlite can not be enabled simultaneously
+	if (getFeatureBuildState("fluidlite", setup.features)) {
+		setFeatureBuildState("fluidsynth", setup.features, false);
+	}
+
+	// OpenMPT and Mikmod can not be enabled simultaneously
+	if (getFeatureBuildState("openmpt", setup.features)) {
+		setFeatureBuildState("mikmod", setup.features, false);
+	}
+
+	// Only libcurl provides basic network and HTTP client for now
+	// (or Emscripten and Android but they are not supported by create_project)
+	if (!getFeatureBuildState("libcurl", setup.features)) {
+		setFeatureBuildState("basic-net", setup.features, false);
+		setFeatureBuildState("http", setup.features, false);
+	}
+
+	// Without an HTTP client there is no cloud feature
+	if (!getFeatureBuildState("http", setup.features)) {
+		setFeatureBuildState("cloud", setup.features, false);
+	}
+
+	// These features depend on OpenGL
+	if (!getFeatureBuildState("opengl", setup.features)) {
+		setFeatureBuildState("opengl_game_classic", setup.features, false);
+		setFeatureBuildState("opengl_game_shaders", setup.features, false);
+	}
+
+	// Check IMGUI dependencies
+	if (getFeatureBuildState("imgui", setup.features) && (
+		!getFeatureBuildState("opengl", setup.features) ||
+		!getFeatureBuildState("freetype2", setup.features) ||
+		setup.useSDL == kSDLVersion1)) {
+		std::cerr << "WARNING: imgui requires opengl, freetype2 and sdl2+\n";
+		setFeatureBuildState("imgui", setup.features, false);
+	}
+
+	// Calculate 3D feature state
+	setFeatureBuildState("3d", setup.features,
+			getFeatureBuildState("tinygl", setup.features) ||
+			getFeatureBuildState("opengl_game_classic", setup.features) ||
+			getFeatureBuildState("opengl_game_shaders", setup.features));
+
+}
+
+ComponentList getAllComponents(const std::string &srcDir, FeatureList &features) {
+	std::string configureFile = srcDir + "/configure";
+
+	std::ifstream configure(configureFile.c_str());
+	if (!configure)
+		return ComponentList();
+
+	std::string line;
+	ComponentList components;
+	bool seenComponents = false;
+
+	for (;;) {
+		std::getline(configure, line);
+		if (configure.eof())
+			break;
+
+		if (configure.fail())
+			error("Failed while reading from " + configureFile);
+
+		TokenList tokens = tokenize(line);
+
+		if (tokens.size() < 5)
+			continue;
+
+		TokenList::const_iterator token = tokens.begin();
+
+		// add_component lua "lua" "_lua" "USE_LUA"
+		if (*token != "add_component") {
+			if (seenComponents)	// No need to read whole file
+				break;
+			else
+				continue;
+		}
+
+		seenComponents = true;
+		++token;
+		std::string name = *token;
+		++token;
+		std::string description = *token;
+		++token;
+		++token;
+		std::string define = *token;
+
+		FeatureList::iterator itr = std::find(features.begin(), features.end(), name);
+		if (itr == features.end()) {
+			// Create a new feature on the fly
+			itr = addDynamicFeature(features, name, description, define);
+		}
+
+		Component comp = { name, define, *itr, description, false };
+		components.push_back(comp);
+	}
+
+	return components;
+}
+
+void disableComponents(const ComponentList &components) {
+	bool disabled = false;
+	for (ComponentList::const_iterator i = components.begin(); i != components.end(); ++i) {
+		if (!i->needed) {
+			i->feature.enable = false;
+			disabled = true;
+			std::cout << "Feature " << i->feature.description << " is disabled as unused by enabled engines\n";
+		}
+	}
+	if (disabled) {
+		std::cout << "\n";
+	}
+}
+
+/**
+ * Apply all the hardcoded logic for the meta-components.
+ *
+ * This means disabling features not needed because their matching meta-component
+ * is not needed either
+ */
+static void fixupComponents(BuildSetup &setup) {
+	bool disabled = false;
+
+	// No MIDI, disable all MIDI implementations
+	if (!getFeatureBuildState("midi", setup.features)) {
+		disabled = true;
+		std::cout << "Disabling mt32emu, fluidsynth and fluidlite because MIDI is unused by enabled engines\n";
+		setFeatureBuildState("mt32emu",    setup.features, false);
+		setFeatureBuildState("fluidsynth", setup.features, false);
+		setFeatureBuildState("fluidlite",  setup.features, false);
+	}
+
+	// Not any tracker, disable all tracker implementations
+	if (!getFeatureBuildState("universaltracker", setup.features)) {
+		disabled = true;
+		std::cout << "Disabling MikMod and OpenMPT because Universal Tracker playback is unused by enabled engines\n";
+		setFeatureBuildState("mikmod",  setup.features, false);
+		setFeatureBuildState("openmpt", setup.features, false);
+	}
+
+	if (disabled) {
+		std::cout << "\n";
+	}
 }
 
 StringList getFeatureDefines(const FeatureList &features) {
@@ -1230,7 +1532,7 @@ BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature) 
 }
 
 ToolList getAllTools() {
-	const size_t toolCount = sizeof(s_tools) / sizeof(s_tools[0]);
+	const size_t toolCount = ARRAYSIZE(s_tools);
 
 	ToolList tools;
 	for (size_t i = 0; i < toolCount; ++i)
@@ -1240,7 +1542,7 @@ ToolList getAllTools() {
 }
 
 MSVCList getAllMSVCVersions() {
-	const size_t msvcCount = sizeof(s_msvc) / sizeof(s_msvc[0]);
+	const size_t msvcCount = ARRAYSIZE(s_msvc);
 
 	MSVCList msvcVersions;
 	for (size_t i = 0; i < msvcCount; ++i)
@@ -1250,7 +1552,7 @@ MSVCList getAllMSVCVersions() {
 }
 
 const MSVCVersion *getMSVCVersion(int version) {
-	const size_t msvcCount = sizeof(s_msvc) / sizeof(s_msvc[0]);
+	const size_t msvcCount = ARRAYSIZE(s_msvc);
 
 	for (size_t i = 0; i < msvcCount; ++i) {
 		if (s_msvc[i].version == version)
@@ -1615,8 +1917,8 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 //////////////////////////////////////////////////////////////////////////
 // Project Provider methods
 //////////////////////////////////////////////////////////////////////////
-ProjectProvider::ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version)
-	: _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings), _globalErrors(global_errors) {
+ProjectProvider::ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors)
+	: _globalWarnings(global_warnings), _projectWarnings(project_warnings), _globalErrors(global_errors) {
 }
 
 void ProjectProvider::createProject(BuildSetup &setup) {
@@ -1702,7 +2004,9 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		pchEx.clear();
 		// File list for the Project file
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
-		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		if (std::find(setup.defines.begin(), setup.defines.end(), "SDL_BACKEND") != setup.defines.end()) {
+			createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		}
 		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 		createModuleList(setup.srcDir + "/common/compression", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
@@ -1735,7 +2039,6 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.Apache");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.BSD");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.BSL");
-			in.push_back(setup.srcDir + "/LICENSES/COPYING.FREEFONT");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.GLAD");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.ISC");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.LGPL");
@@ -1761,7 +2064,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	// In case we create the main ScummVM project files we will need to
 	// generate engines/plugins_table.h & engines/detection_table.h
-	if (!setup.tests && !setup.devTools) {
+	if (!setup.devTools) {
 		createEnginePluginsTable(setup);
 	}
 }
@@ -2122,45 +2425,53 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 			++i;
 
 			while (i != tokens.end()) {
-				// Read input
-				std::string folder = unifyPath(*i);
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					// Read input
+					std::string folder = unifyPath(*i);
 
-				// Get include folder
-				const std::string source_dir = "$(srcdir)/";
-				const std::string selector = getLastPathComponent(folder);
-				const std::string module = getLastPathComponent(moduleDir);
+					// Get include folder
+					const std::string source_dir = "$(srcdir)/";
+					const std::string selector = getLastPathComponent(folder);
+					const std::string module = getLastPathComponent(moduleDir);
 
-				folder.replace(folder.find(source_dir), source_dir.length(), "");
-				folder.replace(folder.find(selector), selector.length(), "");
-				folder.replace(folder.find(module), module.length(), moduleDir);
+					folder.replace(folder.find(source_dir), source_dir.length(), "");
+					folder.replace(folder.find(selector), selector.length(), "");
+					folder.replace(folder.find(module), module.length(), moduleDir);
 
-				// Scan all files in the include folder
-				FileList files = listDirectory(folder);
+					// Scan all files in the include folder
+					FileList files = listDirectory(folder);
 
-				// Add to list of test folders
-				testDirs.push_back(folder);
-
-				for (FileList::const_iterator f = files.begin(); f != files.end(); ++f) {
-					if (f->isDirectory)
-						continue;
-
-					std::string filename = folder + f->name;
-
+					// Add to list of test folders
 					if (shouldInclude.top()) {
-						// In case we should include a file, we need to make
-						// sure it is not in the exclude list already. If it
-						// is we just drop it from the exclude list.
-						excludeList.remove(filename);
-
-						includeList.push_back(filename);
-					} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
-						// We only add the file to the exclude list in case it
-						// has not yet been added to the include list.
-						excludeList.push_back(filename);
+						testDirs.push_back(folder);
 					}
-				}
 
-				++i;
+					for (FileList::const_iterator f = files.begin(); f != files.end(); ++f) {
+						if (f->isDirectory)
+							continue;
+
+						std::string filename = folder + f->name;
+
+						if (shouldInclude.top()) {
+							// In case we should include a file, we need to make
+							// sure it is not in the exclude list already. If it
+							// is we just drop it from the exclude list.
+							excludeList.remove(filename);
+
+							includeList.push_back(filename);
+						} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
+							// We only add the file to the exclude list in case it
+							// has not yet been added to the include list.
+							excludeList.push_back(filename);
+						}
+					}
+
+					++i;
+				}
 			}
 		} else if (*i == "ifdef") {
 			if (tokens.size() < 2)
@@ -2481,10 +2792,18 @@ bool BuildSetup::featureEnabled(const std::string &feature) const {
 }
 
 Feature BuildSetup::getFeature(const std::string &feature) const {
-	for (FeatureList::const_iterator itr = features.begin(); itr != features.end(); ++itr) {
-		if (itr->name != feature)
-			continue;
-		return *itr;
+	FeatureList::const_iterator itr = std::find(features.begin(), features.end(), feature);
+	if (itr == features.end()) {
+		error("invalid feature request: " + feature);
 	}
-	error("invalid feature request: " + feature);
+
+	return *itr;
+}
+
+const char *BuildSetup::getSDLName() const {
+	switch (useSDL) {
+	case kSDLVersion2: return "SDL2";
+	case kSDLVersion3: return "SDL3";
+	default:           return "SDL";
+	}
 }

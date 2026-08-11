@@ -791,33 +791,33 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 			curState += 3;
 			break;
 		// case AKC_SoundStuff:
-		// 	break;
+		//	break;
 		// case AKC_Flip:
-		// 	break;
+		//	break;
 		// case AKC_StartActionOn:
-		// 	break;
+		//	break;
 		// case AKC_StartScriptVar:
-		// 	break;
+		//	break;
 		case AKC_StartSoundVar:
 			debugPrintf("START SOUND VAR[%d]\n", GB(2));
 			curState += 3;
 			break;
 		// case AKC_DisplayAuxFrame:
-		// 	break;
+		//	break;
 		// case AKC_IfVarEQDo:
-		// 	break;
+		//	break;
 		// case AKC_SkipNE:
-		// 	break;
+		//	break;
 		// case AKC_IfVarLTDo:
-		// 	break;
+		//	break;
 		// case AKC_IfVarLEDo:
-		// 	break;
+		//	break;
 		// case AKC_IfVarGTDo:
-		// 	break;
+		//	break;
 		// case AKC_IfVarGEDo:
-		// 	break;
+		//	break;
 		// case AKC_EndOfIfDo:
-		// 	break;
+		//	break;
 		case AKC_StartActorTalkie:
 			debugPrintf("START TALK %d {%d}\n", GB(2), GB(3));
 			curState += 4;
@@ -835,13 +835,13 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 			curState += 3;
 			break;
 		// case AKC_IfAnyTalkingGoTo:
-		// 	break;
+		//	break;
 		// case AKC_IfNotAnyTalkingGoTo:
-		// 	break;
+		//	break;
 		// case AKC_IfTalkingPickGoTo:
-		// 	break;
+		//	break;
 		// case AKC_IfNotTalkingPickGoTo:
-		// 	break;
+		//	break;
 		case AKC_EndSeq:
 			debugPrintf("STOP\n");
 			curState += 2;

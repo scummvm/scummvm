@@ -45,6 +45,9 @@ public:
 	/* Open a new zip archive, after closing the previous one. */
 	bool setImageArchive(const Common::Path &fname);
 
+	/* Allows to disable filtering to improve perfomance when loading an image */
+	void setFiltering(bool filtering) { _filtering = filtering; }
+
 	/* Retrieve an image from the cache, or load it from the archive if it hasn't been loaded previously. */
 	const Surface *getImageSurface(const Common::Path &fname) {
 		return getImageSurface(fname, 0, 0);
@@ -56,6 +59,7 @@ private:
 	Common::HashMap<Common::Path, Surface *, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _imageCache;
 #endif
 	Common::Archive *_imageArchive = nullptr;
+	bool _filtering = true;
 };
 
 } // End of namespace Graphics

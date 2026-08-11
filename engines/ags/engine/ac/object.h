@@ -43,7 +43,7 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-extern AGS_INLINE bool is_valid_object(int obj_id);
+extern bool is_valid_object(int obj_id);
 // Asserts the object ID is valid in the current room,
 // if not then prints a warning to the log; returns assertion result
 bool    AssertObject(const char *apiname, int obj_id);
@@ -57,7 +57,7 @@ void    Object_SetTransparency(ScriptObject *objj, int trans);
 int     Object_GetTransparency(ScriptObject *objj);
 void    Object_SetBaseline(ScriptObject *objj, int basel);
 int     Object_GetBaseline(ScriptObject *objj);
-void    Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction);
+void    Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction, int sframe = 0, int volume = 100);
 void    Object_StopAnimating(ScriptObject *objj);
 void    Object_MergeIntoBackground(ScriptObject *objj);
 void    Object_StopMoving(ScriptObject *objj);
@@ -100,21 +100,40 @@ const char *Object_GetTextProperty(ScriptObject *objj, const char *property);
 bool    Object_SetProperty(ScriptObject *objj, const char *property, int value);
 bool    Object_SetTextProperty(ScriptObject *objj, const char *property, const char *value);
 
+// Deduces room object's scale, accounting for both manual scaling and the room region effects;
+// calculates resulting sprite size.
+void    update_object_scale(int objid);
+// Deduces arbitrary object's scale, accounting for both manual scaling and the room region effects
+void    update_object_scale(int &res_zoom, int &res_width, int &res_height,
+						    int objx, int objy, int sprnum, int own_zoom, bool use_region_scaling);
 void    move_object(int objj, int tox, int toy, int spee, int ignwal);
 void    get_object_blocking_rect(int objid, int *x1, int *y1, int *width, int *y2);
 int     isposinbox(int mmx, int mmy, int lf, int tp, int rt, int bt);
-int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Shared::Bitmap *sprit, int spww, int sphh, int flipped = 0);
+// xx,yy is the position in room co-ordinates that we are checking
+// arx,ary,spww,sphh are the sprite's bounding box (including sprite scaling);
+// bitmap_original tells whether bitmap is an original sprite, or transformed version
+int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Shared::Bitmap *sprit, int spww, int sphh, int flipped, bool bitmap_original);
 // X and Y co-ordinates must be in native format
 // X and Y are ROOM coordinates
 int     check_click_on_object(int roomx, int roomy, int mood);
+
+// Shared functions that prepare or advance the view animation;
+// used by characters, room objects and buttons.
 // TODO: pick out some kind of "animation" struct
 // Tests if the standard animate parameters are in valid range, if not then clamps them and
 // reports a script warning.
-void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int &direction);
+void    ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int &direction);
+// Tests if the view, loop, frame animate params are in valid range,
+// errors in case of out-of-range view or loop, but clamps a frame to a range.
+// NOTE: assumes view is already in an internal 0-based range.
+void    ValidateViewAnimVLF(const char *apiname, int view, int loop, int &sframe);
+// Calculates the first shown frame for a view animation, depending on parameters.
+int     SetFirstAnimFrame(int view, int loop, int sframe, int direction);
 // General view animation algorithm: find next loop and frame, depending on anim settings;
 // loop and frame values are passed by reference and will be updated;
 // returns whether the animation should continue.
 bool    CycleViewAnim(int view, uint16_t &loop, uint16_t &frame, bool forwards, int repeat);
+void	CheckViewFrameForObject(RoomObject *obj);
 
 } // namespace AGS3
 

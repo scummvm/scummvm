@@ -190,7 +190,7 @@ void cCharacterMove::Update(float afTimeStep) {
 		cVector3f vPos = mpCharBody->GetPosition();
 
 		/////////////////////////////////////////
-		// Get the postion to move towards and current node if there is any.
+		// Get the position to move towards and current node if there is any.
 		if (mlstNodes.empty()) {
 			vGoal = mvGoalPos;
 		} else {
@@ -478,7 +478,7 @@ cAINode *cCharacterMove::GetAINodeAtPosInRange(const cVector3f &avPos, float afM
 
 				cVector3f vStart = pNode->GetPosition();
 
-				// Calculate a postion offset closer to the node.
+				// Calculate a position offset closer to the node.
 				float fDist = cMath::Vector3Dist(vStart, avPos);
 				fDist = fDist - afEndOffset;
 				if (fDist < 0)

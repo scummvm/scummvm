@@ -39,7 +39,7 @@ VideoPlayer::VideoPlayer(GroovieEngine *vm) :
 
 	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
 	_subtitles.setColor(0xff, 0xff, 0xff);
-	_subtitles.setFont("FreeSans.ttf");
+	_subtitles.setFont("LiberationSans-Regular.ttf");
 }
 
 bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {

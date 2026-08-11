@@ -46,6 +46,9 @@ static const char *const directoryGlobs[] = {
 	"M3Data",
 	"MYST3BIN",
 	"TEXT",
+	"Myst III Spanish", // For the DVD original layout
+	"Dutch",            // For the CD multilingual original layout
+	"Spanish",
 	nullptr
 };
 
@@ -56,7 +59,7 @@ static const char *const directoryGlobs[] = {
 		extra,                                                                  \
 		{                                                                       \
 			{ "RSRC.m3r", 0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },     \
-			{ langFile, 0, md5lang, -1 },                                       \
+			{ langFile, 0, md5lang, AD_NO_SIZE },                                       \
 		},                                                                      \
 		lang,                                                                   \
 		Common::kPlatformWindows,                                               \
@@ -74,7 +77,7 @@ static const char *const directoryGlobs[] = {
 		{                                                                       \
 			{ "RSRC.m3r",    0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },  \
 			{ "ENGLISH.m3t", 0, "74726de866c0594d3f2a05ff754c973d", 3407120 },  \
-			{ langFile, 0, md5lang, -1 },                                       \
+			{ langFile, 0, md5lang, AD_NO_SIZE },                                       \
 		},                                                                      \
 		lang,                                                                   \
 		Common::kPlatformWindows,                                               \
@@ -91,7 +94,7 @@ static const char *const directoryGlobs[] = {
 		0,                                                                      \
 		{                                                                       \
 			{ "RSRC.m3r", 0, "3de23eb5a036a62819186105478f9dde", 1226192 },     \
-			{ langFile, 0, md5lang, -1 },                                       \
+			{ langFile, 0, md5lang, AD_NO_SIZE },                                       \
 		},                                                                      \
 		lang,                                                                   \
 		Common::kPlatformXbox,                                                  \
@@ -135,11 +138,29 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "73db43aac3fe8671e2c4e227977fbb61", nullptr, kLocMulti6)
 	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "55ceb165dad02211ef2d25946c3aac8e", nullptr, kLocMulti6)
 
+	// Multilingual CD release (1.21, original layout)
+	{
+		{
+			"myst3",
+			nullptr,
+			{
+				{ "RSRC.m3r",     0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },
+				{ "SPANISH.m3u",  0, "55ceb165dad02211ef2d25946c3aac8e", 2604702 }, // Use the spanish language file
+				{ "DUTCH.m3u",    0, "c4a8d8fb0eb3fecb9c435a8517bc1f9a", 2607925 }, // and the dutch one to exclude Multi2 versions
+			},
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kLocMulti6 | kLayoutCD
+	},
+
 	{
 		// Chinese (Simplified) CD release (1.22LC)
 		{
 			"myst3",
-			_s("Missing game code"), // Lacks OVER101.m3o file
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Lacks OVER101.m3o file
 			{
 				{ "RSRC.m3r",      0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },
 				{ "localized.m3t", 0, "3a9f299f8d061ce3d2862d985edb84e3", 2341588 },
@@ -163,6 +184,24 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY_DVD(Common::DE_DEU, "GERMAN.m3u",   "09f32e6ceb414463e8fc22ca1a9564d3", "DVD", kLocMulti6)
 	MYST3ENTRY_DVD(Common::IT_ITA, "ITALIAN.m3u",  "51fb02f6bf37dde811d7cde648365260", "DVD", kLocMulti6)
 	MYST3ENTRY_DVD(Common::ES_ESP, "SPANISH.m3u",  "e27e610fe8ce35223a3239ff170a85ec", "DVD", kLocMulti6)
+
+	// DVD release (1.27, original layout)
+	{
+		{
+			"myst3",
+			"DVD",
+			{
+				{ "RSRC.m3r",     0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },
+				{ "ENGLISH.m3t",  0, "74726de866c0594d3f2a05ff754c973d", 3407120 },
+				{ "language.m3u", 0, "e27e610fe8ce35223a3239ff170a85ec", 2604318 }, // Use the spanish language file
+			},
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kLocMulti6 | kLayoutDVD
+	},
 
 	// Myst 3 Xbox (PAL)
 	MYST3ENTRY_XBOX(Common::EN_ANY, "ENGLISHX.m3t", "c4d012ab02b8ca7d0c7e79f4dbd4e676")
@@ -205,10 +244,10 @@ static const Myst3GameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
-class Myst3MetaEngineDetection : public AdvancedMetaEngineDetection {
+class Myst3MetaEngineDetection : public AdvancedMetaEngineDetection<Myst3GameDescription> {
 public:
-	Myst3MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(Myst3GameDescription), myst3Games) {
-		_guiOptions = GUIO5(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES, GAMEOPTION_WIDESCREEN_MOD);
+	Myst3MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, myst3Games) {
+		_guiOptions = GUIO4(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECHVOLUME, GAMEOPTION_WIDESCREEN_MOD);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -228,6 +267,27 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
+
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override {
+		DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);
+
+		// The AdvancedDetector model only allows specifying a single supported
+		// game language. The 10th anniversary edition Myst III is multilanguage.
+		// Here we amend the detected games to set the list of supported languages.
+		if ((reinterpret_cast<const Myst3::Myst3GameDescription *>(
+				adGame.desc)->flags & Myst3::kGameLayoutTypeMask) != Myst3::kLayoutFlattened) {
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
+		}
+
+		return game;
+	}
+
 };
 
 } // End of namespace Myst3

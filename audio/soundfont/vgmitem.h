@@ -43,7 +43,7 @@ class VGMItem {
 public:
 	VGMItem();
 	VGMItem(VGMFile *thevgmfile, uint32 theOffset, uint32 theLength = 0,
-			const Common::String theName = "");
+			const Common::String &theName = "");
 	virtual ~VGMItem(void);
 
 public:
@@ -66,7 +66,7 @@ class VGMContainerItem : public VGMItem {
 public:
 	VGMContainerItem();
 	VGMContainerItem(VGMFile *thevgmfile, uint32 theOffset, uint32 theLength = 0,
-					 const Common::String theName = "");
+					 const Common::String &theName = "");
 	virtual ~VGMContainerItem(void);
 
 	VGMHeader *AddHeader(uint32 offset, uint32 length, const Common::String &name = "Header");

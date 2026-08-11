@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_UTIL_BUFFEREDSTREAM_H
 #define AGS_SHARED_UTIL_BUFFEREDSTREAM_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/util/file_stream.h"
 #include "ags/shared/util/file.h" // TODO: extract filestream mode constants
 
@@ -65,7 +65,7 @@ public:
 	size_t  Write(const void *buffer, size_t size) override;
 	int32_t WriteByte(uint8_t b) override;
 
-	bool    Seek(soff_t offset, StreamSeek origin) override;
+	soff_t  Seek(soff_t offset, StreamSeek origin) override;
 
 protected:
 	soff_t _start = 0; // valid section starting offset

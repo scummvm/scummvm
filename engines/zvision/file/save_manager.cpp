@@ -19,21 +19,20 @@
  *
  */
 
+
+#include "common/config-manager.h"
+#include "common/file.h"
 #include "common/scummsys.h"
-
-#include "zvision/zvision.h"
-#include "zvision/file/save_manager.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
-
 #include "common/system.h"
 #include "common/translation.h"
-
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
-
 #include "gui/message.h"
 #include "gui/saveload.h"
+#include "zvision/zvision.h"
+#include "zvision/file/save_manager.h"
+#include "zvision/graphics/render_manager.h"
+#include "zvision/scripting/script_manager.h"
 
 namespace ZVision {
 
@@ -45,20 +44,20 @@ bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		dialog = new GUI::SaveLoadChooser(true);
 
 		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
 
 		if (desc.empty()) {
-			// create our own description for the saved game, the user didnt enter it
+			// create our own description for the saved game, the user didn't enter it
 			desc = dialog->createDefaultSaveDescription(slot);
 		}
 
 		if (desc.size() > 28)
 			desc = Common::String(desc.c_str(), 28);
 	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		dialog = new GUI::SaveLoadChooser(false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
 
@@ -66,14 +65,12 @@ bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
 
 	if (slot < 0)
 		return false;
-
-	if (isSave) {
-		saveGame(slot, desc, false);
-		return true;
-	} else {
+	if (!isSave) {
 		Common::ErrorCode result = loadGame(slot).getCode();
 		return (result == Common::kNoError);
 	}
+	saveGame(slot, desc, false);
+	return true;
 }
 
 void SaveManager::saveGame(uint slot, const Common::String &saveName, bool useSaveBuffer) {
@@ -129,60 +126,49 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 
 Common::Error SaveManager::loadGame(int slot) {
 	Common::SeekableReadStream *saveFile = NULL;
-
-	if (slot >= 0) {
-		saveFile = getSlotFile(slot);
-	} else {
-		saveFile = _engine->getSearchManager()->openFile("r.svr");
-		if (!saveFile) {
-			Common::File *restoreFile = new Common::File();
-			if (!restoreFile->open("r.svr")) {
-				delete restoreFile;
-				return Common::kPathDoesNotExist;
-			}
-
-			saveFile = restoreFile;
-		}
+	if (slot < 0) {
+		// Restart game, used by ZGI death screen only
+		_engine->getScriptManager()->initialize(true);
+		return Common::kNoError;
 	}
-
+	saveFile = getSlotFile(slot);
 	if (!saveFile)
 		return Common::kPathDoesNotExist;
-
 	// Read the header
 	SaveGameHeader header;
-	if (!readSaveGameHeader(saveFile, header)) {
+	if (!readSaveGameHeader(saveFile, header))
 		return Common::kUnknownError;
-	}
-
 	ScriptManager *scriptManager = _engine->getScriptManager();
 	// Update the state table values
 	scriptManager->deserialize(saveFile);
-
 	delete saveFile;
-
-	if (_engine->getGameId() == GID_NEMESIS && scriptManager->getCurrentLocation() == "tv2f") {
-		// WORKAROUND for script bug #6793: location tv2f (stairs) has two states:
-		// one at the top of the stairs, and one at the bottom. When the player
-		// goes to the bottom of the stairs, the screen changes, and hotspot
-		// 4652 (exit opposite the stairs) is enabled. However, the variable that
-		// controls the state (2408) is reset when the player goes down the stairs.
-		// Furthermore, the room's initialization script disables the stair exit
-		// control (4652). This leads to an impossible situation, where all the
-		// exit controls are disabled, and the player can't more anywhere. Thus,
-		// when loading a game in that room, we check for that impossible
-		// situation, which only occurs after the player has moved down the stairs,
-		// and fix it here by setting the correct background, and enabling the
-		// stair exit hotspot.
-		if ((scriptManager->getStateFlag(2411) & Puzzle::DISABLED) &&
-			(scriptManager->getStateFlag(2408) & Puzzle::DISABLED) &&
-			(scriptManager->getStateFlag(4652) & Puzzle::DISABLED)) {
-			_engine->getRenderManager()->setBackgroundImage("tv2fb21c.tga");
-			scriptManager->unsetStateFlag(4652, Puzzle::DISABLED);
+	if (_engine->getGameId() == GID_NEMESIS)  {
+		// Zork Nemesis has no in-game option to select panorama quality or animation options
+		// We set them here to ensure loaded games don't override current game configuration
+		scriptManager->setStateValue(StateKey_HighQuality, ConfMan.getBool("highquality"));
+		scriptManager->setStateValue(StateKey_NoTurnAnim, ConfMan.getBool("noanimwhileturning"));
+		if (scriptManager->getCurrentLocation() == "tv2f") {
+			// WORKAROUND for script bug #6793: location tv2f (stairs) has two states:
+			// one at the top of the stairs, and one at the bottom. When the player
+			// goes to the bottom of the stairs, the screen changes, and hotspot
+			// 4652 (exit opposite the stairs) is enabled. However, the variable that
+			// controls the state (2408) is reset when the player goes down the stairs.
+			// Furthermore, the room's initialization script disables the stair exit
+			// control (4652). This leads to an impossible situation, where all the
+			// exit controls are disabled, and the player can't more anywhere. Thus,
+			// when loading a game in that room, we check for that impossible
+			// situation, which only occurs after the player has moved down the stairs,
+			// and fix it here by setting the correct background, and enabling the
+			// stair exit hotspot.
+			if ((scriptManager->getStateFlag(2411) & Puzzle::DISABLED) &&
+							(scriptManager->getStateFlag(2408) & Puzzle::DISABLED) &&
+							(scriptManager->getStateFlag(4652) & Puzzle::DISABLED)) {
+				_engine->getRenderManager()->setBackgroundImage("tv2fb21c.tga");
+				scriptManager->unsetStateFlag(4652, Puzzle::DISABLED);
+			}
 		}
 	}
-
 	g_engine->setTotalPlayTime(header.playTime * 1000);
-
 	return Common::kNoError;
 }
 
@@ -219,10 +205,9 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 		GUI::MessageDialog dialog(
 			Common::U32String::format(
 				_("This saved game uses version %u, but this engine only "
-				  "supports up to version %d. You will need an updated version "
-				  "of the engine to use this saved game."), tempVersion, SAVE_VERSION
-			),
-		_("OK"));
+					"supports up to version %d. You will need an updated version "
+					"of the engine to use this saved game."), tempVersion, SAVE_VERSION
+			));
 		dialog.runModal();
 	}
 
@@ -260,18 +245,12 @@ Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
 		else if (_engine->getGameId() == GID_NEMESIS)
 			filename = Common::Path(Common::String::format("nemsav%u.sav", slot));
 
-		saveFile = _engine->getSearchManager()->openFile(filename);
-		if (saveFile == NULL) {
-			Common::File *tmpFile = new Common::File;
-			if (!tmpFile->open(filename)) {
-				delete tmpFile;
-			} else {
-				saveFile = tmpFile;
-			}
-		}
-
+		Common::File *tmpFile = new Common::File;
+		if (!tmpFile->open(filename))
+			delete tmpFile;
+		else
+			saveFile = tmpFile;
 	}
-
 	return saveFile;
 }
 

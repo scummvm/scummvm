@@ -1,3 +1,14 @@
+/*
+-------------------------------------------------------------------------
+ CxxTest: A lightweight C++ unit testing library.
+ Copyright (c) 2008 Sandia Corporation.
+ This software is distributed under the LGPL License v3
+ For more information, see the COPYING file in the top CxxTest directory.
+ Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
+ the U.S. Government retains certain rights in this software.
+-------------------------------------------------------------------------
+*/
+
 #ifndef __cxxtest__Flags_h__
 #define __cxxtest__Flags_h__
 
@@ -110,11 +121,32 @@
 #           define _CXXTEST_PARTIAL_TEMPLATE_SPECIALIZATION
 #       endif
 #   endif
+#   if defined(__LONG_LONG_MAX__) && !defined(__cplusplus)
+#      define _CXXTEST_LONGLONG long long
+#   endif
 #endif // __GNUC__
 
 #ifdef __DMC__ // Digital Mars
 #   ifndef _CXXTEST_OLD_STD
 #       define _CXXTEST_OLD_STD
+#   endif
+#endif
+
+#ifdef __SUNPRO_CC // Sun Studio C++
+#   if __SUNPRO_CC >= 0x510
+#       ifndef _CXXTEST_PARTIAL_TEMPLATE_SPECIALIZATION
+#           define _CXXTEST_PARTIAL_TEMPLATE_SPECIALIZATION
+#       endif
+#   endif
+#endif
+
+#ifdef __xlC__ // IBM XL C/C++
+// Partial specialization may be supported before 7.0.0.3, but it is
+// definitely supported after.
+#   if __xlC__ >= 0x0700
+#       ifndef _CXXTEST_PARTIAL_TEMPLATE_SPECIALIZATION
+#           define _CXXTEST_PARTIAL_TEMPLATE_SPECIALIZATION
+#       endif
 #   endif
 #endif
 

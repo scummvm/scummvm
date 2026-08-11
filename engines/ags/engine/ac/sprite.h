@@ -22,16 +22,21 @@
 #ifndef AGS_ENGINE_AC_SPRITE_H
 #define AGS_ENGINE_AC_SPRITE_H
 
+#include "ags/shared/ac/sprite_cache.h"
+#include "ags/shared/gfx/bitmap.h"
+
 namespace AGS3 {
 
-void get_new_size_for_sprite(int ee, int ww, int hh, int &newwid, int &newhit);
-// set any alpha-transparent pixels in the image to the appropriate
-// RGB mask value so that the ->Blit calls work correctly
-void set_rgb_mask_using_alpha_channel(Shared::Bitmap *image);
-// from is a 32-bit RGBA image, to is a 15/16/24-bit destination image
+// Converts from 32-bit RGBA image, to a 15/16/24-bit destination image,
+// replacing more than half-translucent alpha pixels with transparency mask pixels.
 Shared::Bitmap *remove_alpha_channel(Shared::Bitmap *from);
-void pre_save_sprite(Shared::Bitmap *bitmap);
-void initialize_sprite(int ee);
+Size get_new_size_for_sprite(const Size &size, const uint32_t sprite_flags);
+// Initializes a loaded sprite for use in the game, adjusts the sprite flags.
+// Returns a resulting bitmap, which may be a new or old bitmap; or null on failure.
+// Original bitmap **gets deleted** if a new bitmap had to be created,
+// or if failed to properly initialize one.
+Shared::Bitmap *initialize_sprite(Shared::sprkey_t index, Shared::Bitmap *image, uint32_t &sprite_flags);
+void post_init_sprite(Shared::sprkey_t index);
 
 } // namespace AGS3
 

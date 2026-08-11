@@ -36,6 +36,10 @@
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/textbox.h"
 #include "engines/nancy/ui/inventorybox.h"
+#include "engines/nancy/ui/inventorypopup.h"
+#include "engines/nancy/ui/notebookpopup.h"
+#include "engines/nancy/ui/cellphonepopup.h"
+#include "engines/nancy/ui/conversationpopup.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -60,6 +64,7 @@ class SpecialEffect;
 
 namespace UI {
 class Button;
+class Taskbar;
 class ViewportOrnaments;
 class TextboxOrnaments;
 class InventoryBoxOrnaments;
@@ -70,11 +75,6 @@ namespace State {
 
 // The game state that handles all of the gameplay
 class Scene : public State, public Common::Singleton<Scene> {
-	friend class Nancy::Action::ActionRecord;
-	friend class Nancy::Action::ActionManager;
-	friend class Nancy::NancyConsole;
-	friend class Nancy::NancyEngine;
-
 public:
 	struct SceneSummary {
 		// SSUM and TSUM
@@ -121,6 +121,20 @@ public:
 	void pushScene(int16 itemID = -1);
 	void popScene(bool inventory = false);
 
+	// Nancy 11+ "UI prep scenes": opening a taskbar popup first runs a hidden,
+	// videoless scene whose event-flag-gated ARs populate the popup's content;
+	// a UIPopupPrepScene AR (32) then calls finishUIPrepScene to restore the
+	// prior scene and open the (now populated) popup. startUIPrepScene saves
+	// the current scene and jumps to prepSceneID; uiType (a UIType) selects
+	// which popup finishUIPrepScene opens. No-op if a prep is already running
+	// or prepSceneID is kNoScene.
+	void startUIPrepScene(int16 uiType, int16 prepSceneID);
+	void finishUIPrepScene();
+	bool isUIPrepActive() const { return _uiPrep.active; }
+	uint16 getSceneCounts(int16 hours) const {
+		return _flags.sceneCounts.contains(hours) ? _flags.sceneCounts[hours] : 0;
+	}
+
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
 	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }
@@ -133,7 +147,10 @@ public:
 	void setNoHeldItem();
 	byte hasItem(int16 id) const;
 	byte getItemDisabledState(int16 id) const { return _flags.disabledItems[id]; }
-	void setItemDisabledState(int16 id, byte state) { _flags.disabledItems[id] = state; }
+	void setItemDisabledState(int16 id, byte state) {
+		if ((uint16)id < _flags.disabledItems.size())
+			_flags.disabledItems[id] = state;
+	}
 
 	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
 	void playItemCantSound(int16 itemID = -1, bool notHoldingSound = false);
@@ -143,9 +160,23 @@ public:
 	bool getEventFlag(int16 label, byte flag) const;
 	bool getEventFlag(FlagDescription eventFlag) const;
 
+	// Nancy 11+ software-timer queries used by timer dependencies.
+	bool isSoftwareTimerActive(uint16 index) const;
+	uint32 getSoftwareTimerElapsed(uint16 index) const;
+
+	// Nancy 12+ UI resource values (the UIRC boot chunk). Resource 0 is the
+	// coin purse amount in cents. Backed by the lazily-created, saved
+	// UIResourceData puzzle chunk, seeded from UIRC on first use and mutated by
+	// AR 132 (ResourceUse). Non-const because the first access creates/seeds it.
+	int32 getUIResource(uint index);
+	void setUIResource(uint index, int32 value);
+
 	void setLogicCondition(int16 label, byte flag);
 	bool getLogicCondition(int16 label, byte flag) const;
 	void clearLogicConditions();
+	Time getLogicConditionTimestamp(int16 label) const {
+		return _flags.logicConditions[label].timestamp;	
+	}
 
 	void setDifficulty(uint difficulty) { _difficulty = difficulty; }
 	uint16 getDifficulty() const { return _difficulty; }
@@ -161,6 +192,12 @@ public:
 
 	Time getMovementTimeDelta(bool fast) const { return fast ? _sceneState.summary.fastMoveTimeDelta : _sceneState.summary.slowMoveTimeDelta; }
 
+	// Nancy 11+ AR 30/31. Toggles whether the player may scroll/pan the viewport.
+	// Backed by a reserved event flag (so it persists across scene changes and
+	// is saved/restored with the rest of the event flags).
+	void setPlayerScrolling(bool enabled);
+	bool getPlayerScrolling() const;
+
 	void registerGraphics();
 
 	void synchronize(Common::Serializer &serializer);
@@ -169,7 +206,12 @@ public:
 	UI::Viewport &getViewport() { return _viewport; }
 	UI::Textbox &getTextbox() { return _textbox; }
 	UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
+	UI::InventoryPopup &getInventoryPopup() { return _inventoryPopup; }
+	UI::NotebookPopup &getNotebookPopup() { return _notebookPopup; }
+	UI::CellPhonePopup &getCellPhonePopup() { return _cellPhonePopup; }
+	UI::ConversationPopup &getConversationPopup() { return _conversationPopup; }
 	UI::Clock *getClock();
+	UI::Taskbar *getTaskbar() { return _taskbar; }
 
 	Action::ActionManager &getActionManager() { return _actionManager; }
 
@@ -179,6 +221,9 @@ public:
 
 	void setActiveMovie(Action::PlaySecondaryMovie *activeMovie);
 	Action::PlaySecondaryMovie *getActiveMovie();
+
+	// Called when a PSM(isRandom) AR is loaded — drives stale-chain cleanup.
+	void notifyRandomMovieARLoaded() { _hadRandomMovieARThisScene = true; }
 	void setActiveConversation(Action::ConversationSound *activeConversation);
 	Action::ConversationSound *getActiveConversation();
 
@@ -194,23 +239,56 @@ public:
 	// Get the persistent data for a given puzzle type
 	PuzzleData *getPuzzleData(const uint32 tag);
 
-private:
-	void init();
-	void load(bool fromSaveFile = false);
-	void run();
-	void handleInput();
-
-	void initStaticData();
-
-	void clearSceneData();
-	void clearPuzzleData();
-
 	enum State {
 		kInit,
 		kLoad,
 		kStartSound,
 		kRun
 	};
+
+	State getState() const { return _state; }
+	void setState(State state) { _state = state; }
+
+	// Close every open Nancy 10+ popup. Used before a script auto-opens one
+	// (e.g. the incoming game-over call) so two popups can't stack.
+	void closeActivePopups();
+
+	struct Timers {
+		Time pushedPlayTime;
+		Time lastTotalTime;
+		Time sceneTime;
+		Time timerTime;
+		bool timerIsActive = false;
+		Time playerTime;           // In-game time of day, adds a minute every 5 seconds
+		Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
+	};
+
+	Timers _timers;
+
+	RenderObject _hotspotDebug;
+
+private:
+	void init();
+	void load(bool fromSaveFile = false);
+	void run();
+	void handleInput();
+
+	// Nancy 11+ AR 69. Advances all running software timers (stored as TimerData
+	// puzzle data) and fires any whose configured duration has just elapsed.
+	void tickSoftwareTimers(uint32 deltaMs);
+	void fireSoftwareTimer(TimerData::Timer &timer);
+	void fireTimerTrigger(TimerData::Trigger &trigger);
+
+	// Rect of the open Nancy 10+ taskbar popup, or empty if none.
+	Common::Rect activePopupConfinement() const;
+
+	void initStaticData();
+
+	void clearSceneData(bool nextIsNoArt = false);
+	void clearPuzzleData();
+
+	// Maps an event flag label to its index in the eventFlags array
+	int16 eventFlagToIndex(int16 label) const;
 
 	struct SceneState {
 		SceneSummary summary;
@@ -221,16 +299,6 @@ private:
 		SceneChangeDescription pushedInvScene;
 		int16 pushedInvItemID = -1;
 		bool isInvScenePushed = false;
-	};
-
-	struct Timers {
-		Time pushedPlayTime;
-		Time lastTotalTime;
-		Time sceneTime;
-		Time timerTime;
-		bool timerIsActive = false;
-		Time playerTime; // In-game time of day, adds a minute every 5 seconds
-		Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
 	};
 
 	struct PlayFlags {
@@ -260,10 +328,19 @@ private:
 	UI::Viewport _viewport;
 	UI::Textbox _textbox;
 	UI::InventoryBox _inventoryBox;
+	UI::InventoryPopup _inventoryPopup;
+	UI::NotebookPopup _notebookPopup;
+	UI::CellPhonePopup _cellPhonePopup;
+	UI::ConversationPopup _conversationPopup;
 
 	UI::Button *_menuButton;
 	UI::Button *_helpButton;
+	UI::Taskbar *_taskbar;
 	Time _buttonPressActivationTime;
+
+	// A clicked MENU/HELP taskbar button whose state change is deferred until
+	// its click sound finishes playing (see handleInput). -1 = none pending.
+	int _pendingTaskbarButton;
 
 	UI::ViewportOrnaments *_viewportOrnaments;
 	UI::TextboxOrnaments *_textboxOrnaments;
@@ -275,7 +352,6 @@ private:
 	// General data
 	SceneState _sceneState;
 	PlayFlags _flags;
-	Timers _timers;
 	uint16 _difficulty;
 	Common::Array<uint16> _hintsRemaining;
 	int16 _lastHintCharacter;
@@ -292,13 +368,23 @@ private:
 	Action::PlaySecondaryMovie *_activeMovie;
 	Action::ConversationSound *_activeConversation;
 
+	// Set by notifyRandomMovieARLoaded; checked in clearSceneData to wind
+	// down a persistent random-movie whose scene chain is over.
+	bool _hadRandomMovieARThisScene = false;
+
 	// Contains a screenshot of the Scene state from the last time it was exited
 	Graphics::ManagedSurface _lastScreenshot;
 
-	RenderObject _hotspotDebug;
-
 	bool _destroyOnExit;
 	bool _isRunningAd;
+
+	// State for a running UI prep scene (see startUIPrepScene).
+	struct UIPrepState {
+		bool active = false;
+		int16 uiType = 0;   // UIType of the popup that requested the prep
+		SceneChangeDescription returnScene;
+		uint32 startMillis = 0;
+	} _uiPrep;
 
 	State _state;
 };

@@ -36,7 +36,7 @@ protected:
 	static const uint8 MAXIMUM_TRACK_BRANCHES = 128;
 
 	struct Loop {
-		byte *pos;
+		const byte *pos;
 		byte repeat;
 	};
 
@@ -47,7 +47,7 @@ protected:
 	 * The sequence branches defined for each track. These point to
 	 * positions in the MIDI data.
 	 */
-	byte *_trackBranches[MAXIMUM_TRACKS][MAXIMUM_TRACK_BRANCHES];
+	const byte *_trackBranches[MAXIMUM_TRACKS][MAXIMUM_TRACK_BRANCHES];
 
 	XMidiCallbackProc _callbackProc;
 	void *_callbackData;
@@ -59,18 +59,18 @@ protected:
 	// interface; otherwise it is null.
 	Audio::MidiDriver_Miles_Xmidi_Timbres *_newTimbreListDriver;
 
-	byte  *_tracksTimbreList[120]; ///< Timbre-List for each track.
-	uint32 _tracksTimbreListSize[120]; ///< Size of the Timbre-List for each track.
+	const byte  *_tracksTimbreList[120]; ///< Timbre-List for each track.
+	uint32 _tracksTimbreListSize[120];   ///< Size of the Timbre-List for each track.
 
 protected:
-	uint32 readVLQ2(byte * &data);
+	uint32 readVLQ2(const byte * &data);
 	/**
 	 * Platform independent LE uint32 read-and-advance.
 	 * This helper function reads Little Endian 32-bit numbers
 	 * from a memory pointer, at the same time advancing
 	 * the pointer.
 	 */
-	uint32 read4low(byte *&data);
+	uint32 read4low(const byte *&data);
 
 	void parseNextEvent(EventInfo &info) override;
 
@@ -94,14 +94,14 @@ public:
 	~MidiParser_XMIDI() { stopPlaying(); }
 
 	void setMidiDriver(MidiDriver_BASE *driver) override;
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 	bool hasJumpIndex(uint8 index) override;
 	bool jumpToIndex(uint8 index, bool stopNotes) override;
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 };
 
 // This is a special XMIDI variable length quantity
-uint32 MidiParser_XMIDI::readVLQ2(byte * &pos) {
+uint32 MidiParser_XMIDI::readVLQ2(const byte * &pos) {
 	uint32 value = 0;
 	while (!(pos[0] & 0x80)) {
 		value += *pos++;
@@ -109,7 +109,7 @@ uint32 MidiParser_XMIDI::readVLQ2(byte * &pos) {
 	return value;
 }
 
-uint32 MidiParser_XMIDI::read4low(byte *&data) {
+uint32 MidiParser_XMIDI::read4low(const byte *&data) {
 	uint32 val = READ_LE_UINT32(data);
 	data += 4;
 	return val;
@@ -136,7 +136,7 @@ bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
 	_jumpingToTick = true;
 
 	if (stopNotes) {
-		if (!_smartJump || !_position._playPos) {
+		if (!_smartJump || !_position.isTracking()) {
 			allNotesOff();
 		} else {
 			hangAllActiveNotes();
@@ -144,26 +144,29 @@ bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
 	}
 
 	resetTracking();
-	_position._playPos = _trackBranches[_activeTrack][index];
-	parseNextEvent(_nextEvent);
+	_position._subtracks[0]._playPos = _trackBranches[_activeTrack][index];
+	parseNextEvent(*_nextEvent);
 
 	_jumpingToTick = false;
 
 	return true;
 }
 
+static const byte TEMPO_500K[] = { 0x07, 0xA1, 0x20 };
+
 void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
-	info.start = _position._playPos;
-	info.delta = readVLQ2(_position._playPos);
+	const byte *playPos = _position._subtracks[0]._playPos;
+	info.start = playPos;
+	info.delta = readVLQ2(playPos);
 	info.loop = false;
 
 	// Process the next event.
-	info.event = *(_position._playPos++);
+	info.event = *(playPos++);
 	switch (info.event >> 4) {
 	case 0x9: // Note On
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
-		info.length = readVLQ(_position._playPos);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
+		info.length = readVLQ(playPos);
 		if (info.length == 0) {
 			// Notes with length 0 are played with a very short duration by the AIL driver.
 			// However, the MidiParser will treat notes with length 0 as "active notes"; i.e.
@@ -180,20 +183,20 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 
 	case 0xC:
 	case 0xD:
-		info.basic.param1 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
 		info.basic.param2 = 0;
 		break;
 
 	case 0x8:
 	case 0xA:
 	case 0xE:
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
 		break;
 
 	case 0xB:
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = *(_position._playPos++);
+		info.basic.param1 = *(playPos++);
+		info.basic.param2 = *(playPos++);
 
 		// This isn't a full XMIDI implementation, but it should
 		// hopefully be "good enough" for most things.
@@ -201,7 +204,7 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		switch (info.basic.param1) {
 		// Simplified XMIDI looping.
 		case 0x74: {	// XMIDI_CONTROLLER_FOR_LOOP
-				byte *pos = _position._playPos;
+				const byte *pos = playPos;
 				if (_loopCount < ARRAYSIZE(_loop) - 1)
 					_loopCount++;
 				else
@@ -223,11 +226,11 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 						if (--_loop[_loopCount].repeat == 0) {
 							_loopCount--;
 						} else {
-							_position._playPos = _loop[_loopCount].pos;
+							playPos = _loop[_loopCount].pos;
 							info.loop = true;
 						}
 					} else {
-						_position._playPos = _loop[_loopCount].pos;
+						playPos = _loop[_loopCount].pos;
 						info.loop = true;
 					}
 				}
@@ -273,12 +276,12 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	case 0xF: // Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
-			info.basic.param1 = *(_position._playPos++);
-			info.basic.param2 = *(_position._playPos++);
+			info.basic.param1 = *(playPos++);
+			info.basic.param2 = *(playPos++);
 			break;
 
 		case 0x3: // Song Select
-			info.basic.param1 = *(_position._playPos++);
+			info.basic.param1 = *(playPos++);
 			info.basic.param2 = 0;
 			break;
 
@@ -292,21 +295,19 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ(_position._playPos);
-			info.ext.data = _position._playPos;
-			_position._playPos += info.length;
+			info.length = readVLQ(playPos);
+			info.ext.data = playPos;
+			playPos += info.length;
 			break;
 
 		case 0xF: // META event
-			info.ext.type = *(_position._playPos++);
-			info.length = readVLQ(_position._playPos);
-			info.ext.data = _position._playPos;
-			_position._playPos += info.length;
+			info.ext.type = *(playPos++);
+			info.length = readVLQ(playPos);
+			info.ext.data = playPos;
+			playPos += info.length;
 			if (info.ext.type == 0x51 && info.length == 3) {
 				// Tempo event. We want to make these constant 500,000.
-				info.ext.data[0] = 0x07;
-				info.ext.data[1] = 0xA1;
-				info.ext.data[2] = 0x20;
+				info.ext.data = TEMPO_500K;
 			}
 			break;
 
@@ -319,6 +320,8 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	default:
 		break;
 	}
+
+	_position._subtracks[0]._playPos = playPos;
 }
 
 void MidiParser_XMIDI::setMidiDriver(MidiDriver_BASE *driver) {
@@ -326,9 +329,9 @@ void MidiParser_XMIDI::setMidiDriver(MidiDriver_BASE *driver) {
 	_newTimbreListDriver = dynamic_cast<Audio::MidiDriver_Miles_Xmidi_Timbres *>(driver);
 }
 
-bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
+bool MidiParser_XMIDI::loadMusic(const byte *data, uint32 size) {
 	uint32 i = 0;
-	byte *start;
+	const byte *start;
 	uint32 len;
 	uint32 chunkLen;
 	char buf[32];
@@ -336,7 +339,7 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 	_loopCount = -1;
 
 	unloadMusic();
-	byte *pos = data;
+	const byte *pos = data;
 
 	if (!memcmp(pos, "FORM", 4)) {
 		pos += 4;
@@ -454,17 +457,18 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 				pos += (len + 1) & ~1;
 			} else if (!memcmp(pos, "EVNT", 4)) {
 				// Ahh! What we're looking for at last.
-				_tracks[tracksRead] = pos + 8; // Skip the EVNT and length bytes
+				_tracks[tracksRead][0] = pos + 8; // Skip the EVNT and length bytes
+				_numSubtracks[tracksRead] = 1;
 				pos += 4;
 				len = read4high(pos);
 				pos += (len + 1) & ~1;
 				// Calculate branch index positions using the track position we just found
 				for (int j = 0; j < MAXIMUM_TRACK_BRANCHES; ++j) {
 					if (branchOffsets[j] != 0) {
-						byte *branchPos = _tracks[tracksRead] + branchOffsets[j];
+						const byte *branchPos = _tracks[tracksRead][0] + branchOffsets[j];
 						if (branchPos >= pos) {
 							warning("Invalid sequence branch position (after track end)");
-							branchPos = _tracks[tracksRead];
+							branchPos = _tracks[tracksRead][0];
 						}
 						_trackBranches[tracksRead][j] = branchPos;
 					}

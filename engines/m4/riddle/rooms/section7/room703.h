@@ -33,8 +33,35 @@ public:
 	Room703() : Room() {}
 	~Room703() override {}
 
+	void preload() override;
 	void init() override;
+	void pre_parser() override;
+	void parser() override;
 	void daemon() override;
+
+private:
+	static void callback(frac16 myMessage, machine *sender);
+	void conv703a();
+	void playCheckBrochureAnim(const char *digiName, int32 trigger);
+	void useWheelOnNiche(int32 trigger, int val1);
+	
+	machine *_monkMach = nullptr;
+	machine *_prayerWheelMach = nullptr;
+	machine *_ripStairsMach = nullptr;
+	
+	int32 _field5C_mode = 0;
+	int32 _field60_should = 0;
+
+	int32 _703Eye4aSeries = 0;
+	int32 _703RipGoesDownStairsSeries = 0;
+	int32 _monk1Series = 0;
+	int32 _monk2Series = 0;
+	int32 _monk3Series = 0;
+	int32 _monk4Series = 0;
+	int32 _ripChecksBrochureSeries = 0;
+	int32 _ripGoesUpStairsSeries = 0;
+	int32 _ripLooksDownSeries = 0;
+	int32 _ripTrekMedReachHandPos1Series = 0;
 };
 
 } // namespace Rooms

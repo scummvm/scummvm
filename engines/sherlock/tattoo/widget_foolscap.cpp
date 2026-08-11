@@ -25,6 +25,8 @@
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -124,6 +126,10 @@ void WidgetFoolscap::show() {
 	// Show the window
 	summonWindow();
 	ui._menuMode = FOOLSCAP_MODE;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-foolscap")->setEnabled(true);
 }
 
 void WidgetFoolscap::handleEvents() {
@@ -138,7 +144,7 @@ void WidgetFoolscap::handleEvents() {
 
 	// If they have not solved the puzzle, let them solve it here
 	if (!_vm->readFlags(299)) {
-		if (!ui._keyState.keycode) {
+		if (!ui._keyState.keycode && !ui._action) {
 			if (--_blinkCounter < 0) {
 				_blinkCounter = 3;
 				_blinkFlag = !_blinkFlag;
@@ -166,7 +172,7 @@ void WidgetFoolscap::handleEvents() {
 				}
 			}
 		} else {
-			// Handle keyboard events
+			// Handle keyboard and action events
 			handleKeyboardEvents();
 		}
 	}
@@ -182,11 +188,12 @@ void WidgetFoolscap::handleKeyboardEvents() {
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::KeyState keyState = ui._keyState;
+	Common::CustomEventType action = ui._action;
 
 	if ((toupper(keyState.ascii) >= 'A') && (toupper(keyState.ascii) <= 'Z')) {
 		// Visible key pressed, set it and set the keycode to move the caret to the right
 		_answers[_lineNum][_charNum] = keyState.ascii;
-		keyState.keycode = Common::KEYCODE_RIGHT;
+		action = kActionTattooFoolscapRight;
 	}
 
 	// Restore background
@@ -199,28 +206,7 @@ void WidgetFoolscap::handleKeyboardEvents() {
 	}
 
 	switch (keyState.keycode) {
-	case Common::KEYCODE_ESCAPE:
-		close();
-		break;
-
-	case Common::KEYCODE_UP:
-		if (_lineNum) {
-			--_lineNum;
-			if (_charNum >= (int)strlen(_solutions[_lineNum]))
-				_charNum = (int)strlen(_solutions[_lineNum]) - 1;
-		}
-		break;
-
-	case Common::KEYCODE_DOWN:
-		if (_lineNum < 2) {
-			++_lineNum;
-			if (_charNum >= (int)strlen(_solutions[_lineNum]))
-				_charNum = (int)strlen(_solutions[_lineNum]) - 1;
-		}
-		break;
-
 	case Common::KEYCODE_BACKSPACE:
-	case Common::KEYCODE_LEFT:
 		if (_charNum)
 			--_charNum;
 		else if (_lineNum) {
@@ -229,21 +215,55 @@ void WidgetFoolscap::handleKeyboardEvents() {
 			_charNum = strlen(_solutions[_lineNum]) - 1;
 		}
 
-		if (keyState.keycode == Common::KEYCODE_BACKSPACE)
-			_answers[_lineNum][_charNum] = ' ';
+		_answers[_lineNum][_charNum] = ' ';
 		break;
 
-	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_DELETE:
+		_answers[_lineNum][_charNum] = ' ';
+		break;
+
+	default:
+		break;
+	}
+
+	switch (action) {
+	case kActionTattooFoolscapExit:
+		close();
+		break;
+
+	case kActionTattooFoolscapUp:
+		if (_lineNum) {
+			--_lineNum;
+			if (_charNum >= (int)strlen(_solutions[_lineNum]))
+				_charNum = (int)strlen(_solutions[_lineNum]) - 1;
+		}
+		break;
+
+	case kActionTattooFoolscapDown:
+		if (_lineNum < 2) {
+			++_lineNum;
+			if (_charNum >= (int)strlen(_solutions[_lineNum]))
+				_charNum = (int)strlen(_solutions[_lineNum]) - 1;
+		}
+		break;
+
+	case kActionTattooFoolscapLeft:
+		if (_charNum)
+			--_charNum;
+		else if (_lineNum) {
+			--_lineNum;
+
+			_charNum = strlen(_solutions[_lineNum]) - 1;
+		}
+		break;
+
+	case kActionTattooFoolscapRight:
 		if (_charNum < (int)strlen(_solutions[_lineNum]) - 1)
 			++_charNum;
 		else if (_lineNum < 2) {
 			++_lineNum;
 			_charNum = 0;
 		}
-		break;
-
-	case Common::KEYCODE_DELETE:
-		_answers[_lineNum][_charNum] = ' ';
 		break;
 
 	default:
@@ -274,6 +294,10 @@ void WidgetFoolscap::close() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	delete _images;
 	_images = nullptr;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo-foolscap")->setEnabled(false);
+	keymapper->getKeymap("tattoo")->setEnabled(true);
 
 	// Close the window
 	banishWindow();

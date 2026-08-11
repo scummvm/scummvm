@@ -31,32 +31,36 @@ namespace Bagel {
  * Error reporting codes
  */
 enum ErrorCode {
-	ERR_NONE    =  0,   /* no error */
-	ERR_MEMORY  =  1,   /* not enough memory */
-	ERR_FOPEN   =  2,   /* error opening a file */
-	ERR_FREAD   =  4,   /* error reading a file */
-	ERR_FWRITE  =  5,   /* error writing a file */
-	ERR_FSEEK   =  6,   /* error seeking a file */
-	ERR_FFIND   =  8,   /* could not find file */
-	ERR_FTYPE   =  9,   /* invalid file type */
+	ERR_NONE = 0,   /* no error */
+	ERR_MEMORY = 1,   /* not enough memory */
+	ERR_FOPEN = 2,   /* error opening a file */
+	ERR_FREAD = 4,   /* error reading a file */
+	ERR_FWRITE = 5,   /* error writing a file */
+	ERR_FSEEK = 6,   /* error seeking a file */
+	ERR_FFIND = 8,   /* could not find file */
+	ERR_FTYPE = 9,   /* invalid file type */
 	ERR_UNKNOWN = 12,   /* unknown error */
-	ERR_CRC     = 13,   /* file or data failed CRC check */
+	ERR_CRC = 13,   /* file or data failed CRC check */
 };
 
+#define ERROR_CODE ErrorCode
 #define MAX_ERRORS 3
 
 extern const char *const g_errList[];
+#define errList g_errList
 
 class CBofError {
 protected:
 	static int _count;
 	ErrorCode _errCode;
 
-	virtual void bofMessageBox(const Common::String &content, const Common::String &title) {}
+	virtual void bofMessageBox(const Common::String &content, const Common::String &title) {
+	}
 
 public:
 	CBofError();
-	virtual ~CBofError() {}
+	virtual ~CBofError() {
+	}
 
 	/**
 	 * Logs specified error to log file.

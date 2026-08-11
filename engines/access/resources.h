@@ -34,9 +34,6 @@ namespace Access {
 
 extern const byte INITIAL_PALETTE[18 * 3];
 
-extern const char *const GENERAL_MESSAGES[];
-extern const char *const ESP_GENERAL_MESSAGES[];
-
 extern const int INVCOORDS[][4];
 
 class AccessEngine;
@@ -49,11 +46,6 @@ class Resources {
 		Common::Language _language;
 		uint _fileOffset;
 	};
-	struct RoomEntry {
-		Common::String _desc;
-		Common::Point _travelPos;
-		Common::Array<byte> _data;
-	};
 	struct DeathEntry {
 		byte _screenId;
 		Common::String _msg;
@@ -63,6 +55,12 @@ class Resources {
 		int _combo[4];
 	};
 protected:
+	struct RoomEntry {
+		Common::String _desc;
+		Common::Point _travelPos;
+		Common::Array<byte> _data;
+	};
+
 	AccessEngine *_vm;
 	Common::Array<DATEntry> _datIndex;
 
@@ -70,11 +68,6 @@ protected:
 	 * Locate a specified entry in the index and return it's file offset
 	 */
 	uint findEntry(byte gameId, byte discType, byte demoType, Common::Language language);
-
-	/**
-	 * Read a string in from the passed stream
-	 */
-	Common::String readString(Common::SeekableReadStream &s);
 
 	/**
 	 * Load data from the access.dat file
@@ -86,7 +79,6 @@ public:
 	Common::Array<RoomEntry> ROOMTBL;
 	Common::Array<DeathEntry> DEATHS;
 	Common::Array<InventoryEntry> INVENTORY;
-	Common::Array< Common::Array<byte> > CURSORS;
 	Common::String CANT_GET_THERE;
 public:
 	Resources(AccessEngine *vm) : _vm(vm) {}
@@ -97,6 +89,46 @@ public:
 	 * Load the access.dat file
 	 */
 	bool load(Common::U32String &errorMessage);
+
+	/**
+	 * Get the raw data for the given cursor number
+	 */
+	virtual const byte *getCursor(int num) const = 0;
+
+	/**
+	 * Get the width of the cursor data for a given cursor num.
+	 * In Martian and Amazon this is always 16.
+	 */
+	virtual int getCursorWidth(int num) const { return 16; }
+
+	/**
+	 * Get the height of the cursor data for a given cursor num
+	 * In Martian and Amazon this is always 16.
+	 */
+	virtual int getCursorHeight(int num) const { return 16; }
+
+	/**
+	 * Get the name of the lead character
+	 */
+	virtual const char *getEgoName() const = 0;
+
+	/**
+	 * Get the room mouse values
+	 */
+	virtual int getRMouse(int i, int j) const = 0;
+
+	/**
+	 * Find if the mouse X is inside the range for a button,
+	 * or -1 if no button range matches.
+	 */
+	virtual int inButtonXRange(int x) const = 0;
+
+	/**
+	 * Get the generic failure message for a command,
+	 * eg "THAT DOESN'T OPEN.".  Messages will be localized
+	 * as appropriate.
+	 */
+	virtual const char *getGeneralMessage(int command) const;
 };
 
 } // End of namespace Access

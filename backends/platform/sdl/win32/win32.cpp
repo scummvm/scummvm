@@ -48,6 +48,7 @@
 #include "backends/taskbar/win32/win32-taskbar.h"
 #include "backends/updates/win32/win32-updates.h"
 #include "backends/dialogs/win32/win32-dialogs.h"
+#include "backends/printing/win32/win32-printman.h"
 
 #include "common/memstream.h"
 #include "common/ustr.h"
@@ -83,6 +84,11 @@ void OSystem_Win32::init() {
 #if defined(USE_JPEG)
 	initializeJpegLibraryForWin95();
 #endif
+
+#if defined(USE_SYSTEM_PRINTING)
+	_printingManager = createWin32PrintingManager();
+#endif
+
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
 }
@@ -289,7 +295,7 @@ Common::Path OSystem_Win32::getDefaultDLCsPath() {
 		CreateDirectory(dlcsPath, nullptr);
 	}
 
-	return Common::Path(Win32::tcharToString(dlcsPath));
+	return Common::Path(Win32::tcharToString(dlcsPath), Common::Path::kNativeSeparator);
 }
 
 Common::Path OSystem_Win32::getScreenshotsPath() {
@@ -459,8 +465,8 @@ Win32ResourceArchive::Win32ResourceArchive() {
 }
 
 bool Win32ResourceArchive::hasFile(const Common::Path &path) const {
-	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		if (i->equalsIgnoreCase(path))
+	for (const auto &curPath : _files) {
+		if (curPath.equalsIgnoreCase(path))
 			return true;
 	}
 

@@ -23,7 +23,7 @@
 #define BACKENDS_CLOUD_ID_IDSTORAGE_H
 
 #include "backends/cloud/basestorage.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 /*
  * Id::IdStorage is a special base class, which is created
@@ -70,7 +70,7 @@ public:
 
 	/** Returns pointer to Networking::NetworkReadStream. */
 	Networking::Request *streamFile(const Common::String &path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) override;
-	virtual Networking::Request *streamFileById(const Common::String &id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) override = 0;
+	Networking::Request *streamFileById(const Common::String &id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) override = 0;
 
 	/** Calls the callback when finished. */
 	Networking::Request *download(const Common::String &remotePath, const Common::Path &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) override;

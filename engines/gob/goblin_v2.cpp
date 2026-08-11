@@ -102,6 +102,15 @@ void Goblin_v2::placeObject(Gob_Object *objDesc, char animated,
 			objAnim->isPaused = 0;
 			objAnim->isStatic = 0;
 			objAnim->newCycle = _vm->_scenery->getAnimLayer(animation, layer)->framesCount;
+
+			// WORKAROUND: In the brain level of Gob3, where Blount and Were-blount are
+			// separated, Blount may be declared as inactive and can't move when exiting
+			// and reentering the level - bug #5760.
+			// Change his animation type here to mark him as enabled
+			if (_vm->getGameType() == kGameTypeGob3 && _vm->isCurrentTot("EMAP1018.TOT") && index == 0 &&
+				x == 3 && y == 33 && state == 9 && layer == 27 && animation == 0 && objAnim->animType == 1)
+				objAnim->animType = 100;
+
 			_vm->_scenery->updateAnim(layer, 0, animation, 0, *obj->pPosX, *obj->pPosY, 0);
 			if (!_vm->_map->hasBigTiles())
 				*obj->pPosY = (y + 1) * _vm->_map->getTilesHeight()

@@ -26,6 +26,8 @@
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -52,7 +54,7 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 	Common::String line1 = str, line2;
 
 	// See if we need to split it into two lines
-	if (width > 150) {
+	if (width > kMaxTooltipWidth) {
 		// Yes, we do
 		const char *s = str.c_str();
 		const char *space = nullptr;
@@ -61,7 +63,14 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 		while (*s) {
 			s = strchr(s, ' ');
 
-			if (!s) {
+			// Some constructed sentences end with a trailing space character,
+			// eg. "Show Permission to Dressing Screen "
+			// so we need to check for that case here too and end the line splitting iterations.
+			// Any line splitting should have been made by now anyway.
+			// Note that it should be valid to look at the character after the space *(s+1),
+			// since if the space was a trailing space, it *should* be followed by a null terminator.
+			// Fixes bug #16580
+			if (!s || !(*(s + 1))) {
 				if (!space) {
 					height = _surface.stringHeight(str) + 2;
 				} else {
@@ -379,11 +388,11 @@ void WidgetInventoryVerbs::handleEvents() {
 	if (!innerBounds.contains(mousePos))
 		_outsideMenu = true;
 
-	if (events._released || events._rightReleased || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+	if (events._released || events._rightReleased || ui._action == kActionTattooInvExit) {
 		ui._scrollHighlight = SH_NONE;
 		banishWindow();
 
-		if (_outsideMenu || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+		if (_outsideMenu || ui._action == kActionTattooInvExit) {
 			_owner->_invVerbMode = 0;
 		} else if (innerBounds.contains(mousePos)) {
 			_outsideMenu = false;
@@ -506,6 +515,11 @@ void WidgetInventory::load(int mode) {
 		_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
 	}
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-scrolling")->setEnabled(true);
+	keymapper->getKeymap("tattoo-inv")->setEnabled(true);
+
 	// Ensure menu will be on-screen
 	restrictToScreen();
 
@@ -623,7 +637,7 @@ void WidgetInventory::handleEvents() {
 		highlightControls();
 
 	// See if they released a mouse button button
-	if (events._released || events._rightReleased || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+	if (events._released || events._rightReleased || ui._action == kActionTattooInvExit) {
 		ui._scrollHighlight = SH_NONE;
 
 		// See if they have a Verb List open for an Inventry Item
@@ -635,7 +649,7 @@ void WidgetInventory::handleEvents() {
 			_tooltipWidget.banishWindow();
 			close();
 
-			if (ui._keyState.keycode != Common::KEYCODE_ESCAPE) {
+			if (ui._action != kActionTattooInvExit) {
 				// If user pointed at an item, use the selected inventory item with this item
 				bool found = false;
 				if (ui._bgFound != -1) {
@@ -663,7 +677,7 @@ void WidgetInventory::handleEvents() {
 				if (!found)
 					ui.putMessage("%s", FIXED(NoEffect));
 			}
-		} else if ((_outsideMenu && !_bounds.contains(mousePos)) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+		} else if ((_outsideMenu && !_bounds.contains(mousePos)) || ui._action == kActionTattooInvExit) {
 			// Want to close the window (clicked outside of it). So close the window and return to Standard
 			close();
 
@@ -757,6 +771,11 @@ void WidgetInventory::highlightControls() {
 
 void WidgetInventory::banishWindow() {
 	WidgetBase::banishWindow();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo-scrolling")->setEnabled(false);
+	keymapper->getKeymap("tattoo-inv")->setEnabled(false);
+	keymapper->getKeymap("tattoo")->setEnabled(true);
 
 	_verbList.banishWindow();
 }

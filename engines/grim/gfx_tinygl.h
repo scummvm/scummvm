@@ -54,7 +54,7 @@ public:
 
 	void clearScreen() override;
 	void clearDepthBuffer() override;
-	void flipBuffer() override;
+	void flipBuffer(bool opportunistic = false) override;
 
 	bool isHardwareAccelerated() override;
 	bool supportsShaders() override;
@@ -120,6 +120,7 @@ public:
 	void drawPolygon(const PrimitiveObject *primitive) override;
 	void drawDimPlane() override;
 
+	const Graphics::PixelFormat getMovieFormat() const override;
 	void prepareMovieFrame(Graphics::Surface *frame) override;
 	void drawMovieFrame(int offsetX, int offsetY) override;
 	void releaseMovieFrame() override;

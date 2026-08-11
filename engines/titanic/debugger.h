@@ -37,10 +37,10 @@ class CViewItem;
 class TitanicEngine;
 
 enum TitanicDebugChannels {
-	kDebugCore      = 1 << 0,
-	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2,
-	kDebugStarfield = 1 << 3
+	kDebugCore = 1,
+	kDebugScripts,
+	kDebugGraphics,
+	kDebugStarfield,
 };
 
 class Debugger : public GUI::Debugger {

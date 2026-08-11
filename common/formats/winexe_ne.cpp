@@ -256,14 +256,14 @@ String NEResources::getResourceString(SeekableReadStream &exe, uint32 offset) {
 }
 
 const NEResources::Resource *NEResources::findResource(const WinResourceID &type, const WinResourceID &id) const {
-	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it) {
-		if (it->type == type &&
-			(it->id == id ||
+	for (const auto &resource : _resources) {
+		if (resource.type == type &&
+			(resource.id == id ||
 			 (!_nameTable.empty() &&
-			  _nameTable.contains(it->type) &&
-			  _nameTable[it->type].contains(it->id) &&
-			  _nameTable[it->type][it->id] == id.toString())))
-			return &*it;
+			  _nameTable.contains(resource.type) &&
+			  _nameTable[resource.type].contains(resource.id) &&
+			  _nameTable[resource.type][resource.id] == id.toString())))
+			return &resource;
 	}
 
 	return nullptr;
@@ -282,9 +282,9 @@ SeekableReadStream *NEResources::getResource(const WinResourceID &type, const Wi
 const Array<WinResourceID> NEResources::getIDList(const WinResourceID &type) const {
 	Array<WinResourceID> idArray;
 
-	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it)
-		if (it->type == type)
-			idArray.push_back(it->id);
+	for (const auto &resource : _resources)
+		if (resource.type == type)
+			idArray.push_back(resource.id);
 
 	return idArray;
 }

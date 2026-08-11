@@ -42,98 +42,64 @@ struct AgiPicture {
 	AgiPicture() { reset(); }
 };
 
-// AGI picture version
-enum AgiPictureVersion {
-	AGIPIC_C64,
-	AGIPIC_V1,
-	AGIPIC_V15,
-	AGIPIC_V2,
-	AGIPIC_256
-};
-
-enum AgiPictureFlags {
-	kPicFNone      = (1 << 0),
-	kPicFCircle    = (1 << 1),
-	kPicFStep      = (1 << 2),
-	kPicFf3Stop    = (1 << 3),
-	kPicFf3Cont    = (1 << 4),
-	kPicFTrollMode = (1 << 5)
-};
-
 class AgiBase;
 class GfxMgr;
 
 class PictureMgr {
-	AgiBase *_vm;
-	GfxMgr *_gfx;
-
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx);
+	virtual ~PictureMgr() { }
 
-	int16 getResourceNr() { return _resourceNr; };
+	int16 getResourceNr() const { return _resourceNr; };
 
-private:
-	void draw_xCorner(bool skipOtherCoords = false);
+protected:
+	virtual byte getInitialPriorityColor() const { return 4; }
+
+	void putVirtPixel(int16 x, int16 y);
+	void xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);
-	void plotBrush();
+	virtual void plotPattern(byte x, byte y);
+	virtual void plotBrush();
 
 	byte getNextByte();
+	bool getNextParamByte(byte &b);
 	byte getNextNibble();
 
-public:
-	void putVirtPixel(int x, int y);
+	virtual bool getNextXCoordinate(byte &x);
+	virtual bool getNextYCoordinate(byte &y);
+	bool getNextCoordinates(byte &x, byte &y);
 
-	int decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 pic_width = _DEFAULT_WIDTH, int16 pic_height = _DEFAULT_HEIGHT);
-	int decodePicture(byte *data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
-	int unloadPicture(int picNr);
-	void drawPicture();
-private:
-	void drawPictureC64();
-	void drawPictureV1();
-	void drawPictureV15();
-	void drawPictureV2();
-	void drawPictureAGI256();
+	virtual bool getGraphicsCoordinates(int16 &x, int16 &y);
+
+public:
+	void decodePicture(int16 resourceNr, bool clearScreen, bool agi256 = false, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
+	void decodePictureFromBuffer(byte *data, uint32 length, bool clearScreen, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
+
+protected:
+	virtual void drawPicture();
+	void drawPicture_AGI256();
 
 	void draw_SetColor();
 	void draw_SetPriority();
 	void draw_SetNibbleColor();
 	void draw_SetNibblePriority();
 
-	void draw_Line(int16 x1, int16 y1, int16 x2, int16 y2);
+	virtual void draw_Line(int16 x1, int16 y1, int16 x2, int16 y2);
 	void draw_LineShort();
 	void draw_LineAbsolute();
 
-	int  draw_FillCheck(int16 x, int16 y);
-	void draw_Fill(int16 x, int16 y);
-	void draw_Fill();
+	virtual bool draw_FillCheck(int16 x, int16 y, bool horizontalCheck);
+	virtual void draw_Fill(int16 x, int16 y);
+	virtual void draw_Fill();
 
 public:
-	void showPic(); // <-- for regular AGI games
-	void showPic(int16 x, int16 y, int16 pic_width, int16 pic_height); // <-- for preAGI games
-	void showPicWithTransition();
+	void showPicture(int16 x = 0, int16 y = 0, int16 width = _DEFAULT_WIDTH, int16 height = _DEFAULT_HEIGHT);
+	void showPictureWithTransition();
 
-	void plotPattern(int x, int y);     // public because it's used directly by preagi
+protected:
+	AgiBase *_vm;
+	GfxMgr *_gfx;
 
-	void setPattern(uint8 code, uint8 num);
-
-	void setPictureVersion(AgiPictureVersion version);
-	void setPictureData(uint8 *data, int len = 4096);
-
-	void setPictureFlags(int flags) { _flags = flags; }
-
-	void clear();
-
-	void setOffset(int offX, int offY) {
-		_xOffset = offX;
-		_yOffset = offY;
-	}
-
-	void setDimensions(int w, int h) {
-		_width = w;
-		_height = h;
-	}
-
-private:
 	int16  _resourceNr;
 	uint8 *_data;
 	uint32 _dataSize;
@@ -149,12 +115,8 @@ private:
 
 	uint8 _minCommand;
 
-	AgiPictureVersion _pictureVersion;
-	int16 _width, _height;
-	int16 _xOffset, _yOffset;
-
-	int _flags;
-	int _currentStep;
+	int16 _width;
+	int16 _height;
 };
 
 } // End of namespace Agi

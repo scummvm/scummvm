@@ -27,18 +27,18 @@
 namespace Crab {
 
 enum CrabDebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugPath = 1 << 1,
-	kDebugScan = 1 << 2,
-	kDebugFilePath = 1 << 3,
-	kDebugScript = 1 << 4,
+	kDebugGraphics = 1,
+	kDebugPath,
+	kDebugScan,
+	kDebugFilePath,
+	kDebugScript,
 };
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 
 } // End of namespace Crab
 
-class CrabMetaEngineDetection : public AdvancedMetaEngineDetection {
+class CrabMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

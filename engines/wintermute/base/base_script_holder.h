@@ -40,10 +40,11 @@ public:
 
 	BaseScriptHolder(BaseGame *inGame);
 	~BaseScriptHolder() override;
+
 	ScScript *invokeMethodThread(const char *methodName) override;
 	virtual void makeFreezable(bool freezable);
-	bool canHandleEvent(const char *eventName) const;
-	bool canHandleMethod(const char *eventMethod) const override;
+	bool canHandleEvent(const char *eventName);
+	bool canHandleMethod(const char *eventMethod) override;
 	bool cleanup();
 	bool removeScript(ScScript *script);
 	bool addScript(const char *filename);
@@ -51,21 +52,21 @@ public:
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	bool applyEvent(const char *eventName, bool unbreakable = false);
 	void setFilename(const char *filename);
-	const char *getFilename() { return _filename; }
 	bool parseProperty(char *buffer, bool complete = true);
-	bool _freezable;
-	bool _ready;
 
+	char *_filename;
+	bool _freezable;
+	bool _ready{};
 	BaseArray<ScScript *> _scripts;
+
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 	void scDebuggerDesc(char *buf, int bufSize) override;
+
 	// IWmeObject
-private:
-	char *_filename;
 public:
 	virtual bool sendEvent(const char *eventName);
 };

@@ -33,7 +33,7 @@ protected:
 	AbstractFSNode *makeNode() const override;
 	AbstractFSNode *makeNode(const Common::String &path) const override;
 
-	bool remove() override;
+	int remove() override;
 
 public:
 	AndroidPOSIXFilesystemNode(const Common::String &path, const Config &config)

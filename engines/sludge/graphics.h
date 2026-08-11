@@ -53,7 +53,7 @@ enum ELightMapMode {
 
 // Parallax
 struct ParallaxLayer {
-	Graphics::Surface surface;
+	Graphics::ManagedSurface surface;
 	int speedX, speedY;
 	bool wrapS, wrapT;
 	uint16 fileNum, fractionX, fractionY;
@@ -158,7 +158,7 @@ public:
 	void saveZBuffer(Common::WriteStream *stream);
 	bool loadZBuffer(Common::SeekableReadStream *stream);
 
-	void drawSpriteToZBuffer(int x, int y, uint8 depth, const Graphics::Surface &surface);
+	void drawSpriteToZBuffer(int x, int y, uint8 depth, const Graphics::ManagedSurface &surface);
 	void fillZBuffer(uint8 d);
 
 	// Colors
@@ -206,17 +206,17 @@ private:
 	uint _winWidth, _winHeight, _sceneWidth, _sceneHeight;
 
 	// renderSurface
-	Graphics::Surface _renderSurface;
+	Graphics::ManagedSurface _renderSurface;
 
 	// Z Buffer Surface
 	uint8 *_zBufferSurface = nullptr;
 
 	// Snapshot
-	Graphics::Surface _snapshotSurface;
+	Graphics::ManagedSurface _snapshotSurface;
 
 	// LightMap
 	int _lightMapNumber;
-	Graphics::Surface _lightMap;
+	Graphics::ManagedSurface _lightMap;
 
 	// Camera
 	float _cameraZoom;
@@ -224,20 +224,19 @@ private:
 
 	// Freeze
 	FrozenStuffStruct *_frozenStuff;
-	Graphics::Surface _freezeSurface;
+	Graphics::ManagedSurface _freezeSurface;
 	void freezeGraphics();
 
 	// Back drop
-	Graphics::Surface _backdropSurface;
-	Graphics::Surface _origBackdropSurface;
+	Graphics::ManagedSurface _backdropSurface;
 	bool _backdropExists;
 	bool reserveBackdrop();
 
 	// Sprites
 	void fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal);
-	Graphics::Surface *duplicateSurface(Graphics::Surface *surface);
-	void blendColor(Graphics::Surface * surface, uint32 color, Graphics::TSpriteBlendMode mode);
-	Graphics::Surface *applyLightmapToSprite(Graphics::Surface *&blitted, OnScreenPerson *thisPerson, bool mirror, int x, int y, int x1, int y1, int diffX, int diffY);
+	Graphics::ManagedSurface *duplicateSurface(Graphics::ManagedSurface *surface);
+	void blendColor(Graphics::ManagedSurface * surface, uint32 color, Graphics::TSpriteBlendMode mode);
+	Graphics::ManagedSurface *applyLightmapToSprite(Graphics::ManagedSurface *&blitted, OnScreenPerson *thisPerson, bool mirror, int x, int y, int x1, int y1, int diffX, int diffY);
 
 	// Sprite banks
 	LoadedSpriteBanks _allLoadedBanks;

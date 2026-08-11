@@ -445,7 +445,7 @@ public:
 	}
 
 	//  query functions:
-	ObjectID possessor();                // return actor posessing this object
+	ObjectID possessor();                // return actor possessing this object
 
 	//  Access functions
 	ProtoObj *proto() {

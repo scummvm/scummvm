@@ -23,8 +23,6 @@
 #ifndef M4_BURGER_CORE_CONV_H
 #define M4_BURGER_CORE_CONV_H
 
-#include "m4/m4_types.h"
-
 namespace M4 {
 namespace Burger {
 

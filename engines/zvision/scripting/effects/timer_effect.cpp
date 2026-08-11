@@ -20,13 +20,10 @@
  */
 
 #include "common/scummsys.h"
-
-#include "zvision/scripting/effects/timer_effect.h"
-
+#include "common/stream.h"
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
-
-#include "common/stream.h"
+#include "zvision/scripting/effects/timer_effect.h"
 
 namespace ZVision {
 

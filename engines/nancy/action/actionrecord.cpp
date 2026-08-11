@@ -55,7 +55,7 @@ void ActionRecord::finishExecution() {
 }
 
 void Unimplemented::execute() {
-	debugC(Nancy::kDebugActionRecord, "Unimplemented or changed ActionRecord type %u", _type);
+	debugC(kDebugActionRecord, "Unimplemented or changed ActionRecord type %u", _type);
 	_isDone = true;
 }
 

@@ -28,6 +28,7 @@
 #include "engines/wintermute/ad/ad_walkplane.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/gfx/3dmesh.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -40,7 +41,7 @@ AdWalkplane::AdWalkplane(BaseGame *inGame) : BaseScriptable(inGame, false, false
 
 //////////////////////////////////////////////////////////////////////////
 AdWalkplane::~AdWalkplane() {
-	delete _mesh;
+	SAFE_DELETE(_mesh);
 }
 
 //////////////////////////////////////////////////////////////////////////

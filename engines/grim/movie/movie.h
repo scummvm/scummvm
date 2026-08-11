@@ -38,6 +38,8 @@ protected:
 	Video::VideoDecoder *_videoDecoder;     //< Initialize this to your needed subclass of VideoDecoder in the constructor
 	const Graphics::Surface *_internalSurface;
 	Graphics::Surface *_externalSurface;
+	const byte *_internalPalette;
+	byte *_externalPalette;
 	int32 _frame;
 	bool _updateNeeded;
 	bool _showSubtitles;
@@ -72,6 +74,7 @@ public:
 	virtual bool isPlaying() { return !_videoFinished; }
 	virtual bool isUpdateNeeded() { return _updateNeeded; }
 	virtual Graphics::Surface *getDstSurface();
+	virtual const byte *getDstPalette();
 	virtual int getX() { return _x; }
 	virtual int getY() { return _y; }
 	virtual int getFrame() { return _frame; }
@@ -94,7 +97,7 @@ protected:
 	 * Handles basic stuff per frame, like copying the latest frame to
 	 * _externalBuffer, and updating the frame-counters.
 	 *
-	 * @return false if a frame wasnt drawn to _externalBuffer, true otherwise.
+	 * @return false if a frame wasn't drawn to _externalBuffer, true otherwise.
 	 * @see handleFrame
 	 */
 	virtual bool prepareFrame();

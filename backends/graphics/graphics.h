@@ -25,6 +25,8 @@
 #include "common/system.h"
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
+#include "common/rect.h"
+#include "common/rotationmode.h"
 
 #include "graphics/mode.h"
 #include "graphics/paletteman.h"
@@ -50,6 +52,8 @@ public:
 	virtual int getGraphicsMode() const { return 0; }
 #if defined(USE_IMGUI)
 	virtual void setImGuiCallbacks(const ImGuiCallbacks &callbacks) { }
+	virtual void *getImGuiTexture(const Graphics::Surface &image, const byte *palette, int palCount) { return nullptr; }
+	virtual void freeImGuiTexture(void *texture) { }
 #endif
 	virtual bool setShader(const Common::Path &fileName) { return false; }
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {
@@ -59,6 +63,7 @@ public:
 	virtual int getDefaultStretchMode() const { return 0; }
 	virtual bool setStretchMode(int mode) { return false; }
 	virtual int getStretchMode() const { return 0; }
+	virtual bool setRotationMode(Common::RotationMode rotation) { return false; }
 	virtual uint getDefaultScaler() const { return 0; }
 	virtual uint getDefaultScaleFactor() const { return 1; }
 	virtual bool setScaler(uint mode, int factor) { return false; }
@@ -78,14 +83,15 @@ public:
 
 	virtual int16 getHeight() const = 0;
 	virtual int16 getWidth() const = 0;
-	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
+	void setPalette(const byte *colors, uint start, uint num) override = 0;
+	void grabPalette(byte *colors, uint start, uint num) const override = 0;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual Graphics::Surface *lockScreen() = 0;
 	virtual void unlockScreen() = 0;
 	virtual void fillScreen(uint32 col) = 0;
 	virtual void fillScreen(const Common::Rect &r, uint32 col) = 0;
 	virtual void updateScreen() = 0;
+	virtual void presentBuffer() {}
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset) = 0;
 	virtual void setFocusRectangle(const Common::Rect& rect) = 0;
 	virtual void clearFocusRectangle() = 0;
@@ -99,11 +105,18 @@ public:
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual int16 getOverlayHeight() const = 0;
 	virtual int16 getOverlayWidth() const = 0;
+	virtual Common::Rect getSafeOverlayArea(int16 *width, int16 *height) const {
+		int16 w = getOverlayWidth(),
+			  h = getOverlayHeight();
+		if (width) *width = w;
+		if (height) *height = h;
+		return Common::Rect(w, h);
+	}
 	virtual float getHiDPIScreenFactor() const { return 1.0f; }
 
 	virtual bool showMouse(bool visible) = 0;
 	virtual void warpMouse(int x, int y) = 0;
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = nullptr, const byte *mask = nullptr) = 0;
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) = 0;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) = 0;
 
 	virtual void displayMessageOnOSD(const Common::U32String &msg) {}

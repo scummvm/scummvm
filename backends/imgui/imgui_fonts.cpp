@@ -80,17 +80,20 @@ ImFont *addTTFFontFromArchive(const char *filename, float size_pixels, const ImF
 	FontArchive archive;
 	FontReader reader(archive);
 
-	archive.openArchive("fonts.dat");
+	archive.openArchive("fonts-imgui.dat");
 	if (!reader.openFile(f, filename)) {
-		archive.openArchive("fonts-cjk.dat");
+		archive.openArchive("fonts.dat");
 		if (!reader.openFile(f, filename)) {
-			return nullptr;
+			archive.openArchive("fonts-cjk.dat");
+			if (!reader.openFile(f, filename)) {
+				return nullptr;
+			}
 		}
 	}
 
 	uint size = f.size();
 
-	uint8 *ttfFile = new uint8[size];
+	uint8 *ttfFile = (uint8 *)ImGui::MemAlloc(size);
 	f.read(ttfFile, size);
 	ImGuiIO &io = ImGui::GetIO();
 	return io.Fonts->AddFontFromMemoryTTF(ttfFile, size, size_pixels, font_cfg_template, glyph_ranges);

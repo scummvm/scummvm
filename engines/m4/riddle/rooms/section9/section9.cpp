@@ -31,6 +31,7 @@ Section9::Section9() : Rooms::Section() {
 	add(902, &_room902);
 	add(903, &_room903);
 	add(905, &_room905);
+	add(906, &_room906);
 	add(907, &_room907);
 	add(908, &_room908);
 	add(917, &_room917);

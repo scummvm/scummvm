@@ -226,7 +226,7 @@ void MortevielleEngine::setMousePos(const Common::Point &pt) {
 void MortevielleEngine::delay(int amount) {
 	uint32 endTime = g_system->getMillis() + amount;
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 	while (g_system->getMillis() < endTime) {
 		if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
 			_lastGameFrame = g_system->getMillis();
@@ -235,7 +235,7 @@ void MortevielleEngine::delay(int amount) {
 
 		g_system->delayMillis(10);
 	}
-	g_system->showMouse(true);
+	CursorMan.showMouse(true);
 }
 
 /**
@@ -1871,13 +1871,11 @@ Common::String MortevielleEngine::getString(int num) {
 	} else {
 		int hint = _dialogHintArray[num]._hintId;
 		byte point = _dialogHintArray[num]._point;
-		int length = 0;
 		bool endFl = false;
 		char let;
 		do {
 			endFl = decryptNextChar(let, hint, point);
 			wrkStr += let;
-			++length;
 		} while (!endFl);
 	}
 

@@ -50,7 +50,6 @@ protected:
 	int _destAC;
 	int _numberOfTimes;
 	int _attackerLevel;
-	int _advanceIndex;
 	int _handicapThreshold, _handicapParty;
 	int _handicapMonsters, _handicapDelta;
 	int _attackersCount;
@@ -135,7 +134,7 @@ protected:
 	void setupCanAttacks();
 
 	/**
-	 * Chooses the starting character to 
+	 * Chooses the starting character to
 	 */
 	void setupAttackersCount();
 
@@ -223,7 +222,7 @@ protected:
 	void setTreasure();
 	void clearArrays();
 	bool moveMonsters();
-	void monsterAdvances();
+	void monsterAdvances(uint index);
 	bool monsterChanges();
 	void proc2();
 	void checkParty();

@@ -45,7 +45,7 @@ Screen::Screen(const Configuration *cfg) : config(cfg), _rawSurface(nullptr),
 		non_square_pixels(false), shading_ambient(255), width(320), height(200) {
 	ARRAYCLEAR(shading_tile);
 
-	Std::string str_lighting_style;
+	Common::String str_lighting_style;
 	config->value("config/general/lighting", str_lighting_style);
 
 	if (str_lighting_style == "none")

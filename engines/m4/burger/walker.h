@@ -23,7 +23,6 @@
 #ifndef M4_BURGER_WALKER_H
 #define M4_BURGER_WALKER_H
 
-#include "common/array.h"
 #include "m4/adv_r/adv_walk.h"
 
 namespace M4 {
@@ -70,14 +69,14 @@ private:
 public:
 	~Walker() override {}
 
-	bool walk_load_walker_and_shadow_series() override;
+	void walk_load_walker_and_shadow_series() override;
 	machine *walk_initialize_walker() override;
 
 	void reset_walker_sprites();
 	static void unloadSprites();
 
 	void wilbur_speech(const char *name, int trigger = -1, int room = -1, byte flags = 0,
-		int vol = 256, int channel = 1);
+		int vol = 255, int channel = 1);
 	void wilbur_say();
 	void wilburs_speech_finished();
 
@@ -129,7 +128,7 @@ void wilbur_abduct(int trigger);
 void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigger = -1);
 void player_walk_to(int32 x, int32 y, int trigger = -1);
 void wilbur_speech(const char *name, int trigger = -1, int room = -1, byte flags = 0,
-	int vol = 256, int channel = 1);
+	int vol = 255, int channel = 1);
 
 } // namespace Burger
 } // namespace M4

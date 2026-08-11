@@ -41,7 +41,6 @@
 #include "watchmaker/renderer.h"
 
 // locals
-#define MAX_CAMERA_STEPS        500
 #define FIRST_PERSON_STEPS      8
 #define CAMERA_CARRELLO_DIST    800.0f
 #define MAX_CAMERA_MOVE         50.0f
@@ -50,24 +49,10 @@
 
 namespace Watchmaker {
 
-t3dCAMERA FirstPersonCamera, *DestCamera, *LastCamera, CameraCarrello;
-t3dCAMERA CameraStep[MAX_CAMERA_STEPS], AnimCamera;
-int16 CurCameraSubStep = 0, CurCameraStep = 0, NumCameraSteps = 0;
-t3dV3F OldCameraTarget, OldPlayerDir, FirstPersonTarget;
-t3dV3F SourceBlend, TargetBlend;
-
-t3dV3F HeadAngles;
-t3dF32 CamAngleX, CamAngleY;
-
-uint8 bForceDirectCamera = false, bCameraCarrello = false;
-
-uint8 t3dCurCameraIndex = 255;
-uint8 t3dLastCameraIndex = 255;
-
 /* -----------------20/10/98 10.40-------------------
  *                  PickCamera
  * --------------------------------------------------*/
-t3dCAMERA *PickCamera(t3dBODY *b, unsigned char in) {
+t3dCAMERA *CameraMan::PickCamera(t3dBODY *b, unsigned char in) {
 	// TODO: This is just here until we know when we can expect a nullptr
 	if (!b) {
 		return nullptr;
@@ -92,7 +77,7 @@ t3dCAMERA *t3dBODY::PickCamera(uint8 in) {
 /* -----------------06/07/98 16.55-------------------
  *                  GetRealCharPos
  * --------------------------------------------------*/
-void GetRealCharPos(Init &init, t3dV3F *Target, int32 oc, uint8 bn) {
+void CameraMan::GetRealCharPos(Init &init, t3dV3F *Target, int32 oc, uint8 bn) {
 	t3dCHARACTER *Ch = Character[oc];
 	t3dMESH *mesh = Ch->Mesh, *m;
 	t3dBONE *bone;
@@ -160,7 +145,7 @@ uint8 DistPointRect(t3dV3F *i, t3dF32 *dist, t3dV3F *a, t3dV3F *b, t3dV3F *c) {
 /* -----------------20/08/98 17.16-------------------
  *              HandleCameraCarrello
  * --------------------------------------------------*/
-void HandleCameraCarrello(t3dBODY *croom) {
+void CameraMan::HandleCameraCarrello(t3dBODY *croom) {
 	t3dCAMERAPATH *cp = nullptr;
 	t3dF32 dist, mindist;
 	t3dV3F pt, i, b;
@@ -221,10 +206,61 @@ void HandleCameraCarrello(t3dBODY *croom) {
 	}
 }
 
+void CameraMan::MoveHeadAngles(t3dF32 diffx, t3dF32 diffy) {
+	t3dF32 s;
+
+	if (((diffx == 0) && (diffy == 0)) || (bLPressed) || (bRPressed) || (bDialogActive)) return;
+
+	if (diffx < -10) diffx = -10;
+	else if (diffx > 10) diffx = 10;
+	if (diffy < -10) diffy = -10;
+	else if (diffy > 10) diffy = 10;
+
+	s = (t3dF32)bFirstPerson + 1.0f;
+	if (diffx > 0) {
+		if ((HeadAngles.x + diffx) >= MAX_HEAD_ANGLE_X * s) {
+			diffx = MAX_HEAD_ANGLE_X * s - HeadAngles.x;
+			HeadAngles.x = MAX_HEAD_ANGLE_X * s;
+		} else
+			HeadAngles.x += diffx;
+	} else {
+		if ((HeadAngles.x + diffx) < -MAX_HEAD_ANGLE_X * s) {
+			diffx = -MAX_HEAD_ANGLE_X * s - HeadAngles.x;
+			HeadAngles.x = -MAX_HEAD_ANGLE_X * s;
+		} else
+			HeadAngles.x += diffx;
+	}
+
+	if (diffy > 0) {
+		if ((HeadAngles.y + diffy) >= MAX_HEAD_ANGLE_Y * s) {
+			diffy = MAX_HEAD_ANGLE_Y * s - HeadAngles.y;
+			HeadAngles.y = MAX_HEAD_ANGLE_Y * s;
+		} else
+			HeadAngles.y += diffy;
+	} else {
+		if ((HeadAngles.y + diffy) < -MAX_HEAD_ANGLE_Y * s) {
+			diffy = -MAX_HEAD_ANGLE_Y * s - HeadAngles.y;
+			HeadAngles.y = -MAX_HEAD_ANGLE_Y * s;
+		} else
+			HeadAngles.y += diffy;
+	}
+
+	CamAngleX = ((t3dF32)diffy / 180.0f * T3D_PI);
+	CamAngleY = ((t3dF32)diffx / 180.0f * T3D_PI);
+	if (bFirstPerson && !bLockCamera && ((CamAngleX != 0.0f) || (CamAngleY != 0.0f)))
+		t3dRotateMoveCamera(t3dCurCamera, CamAngleX, CamAngleY, 0.0f);
+}
+
+void CameraMan::resetAngle() {
+	CamAngleX = 0.0f;
+	CamAngleY = 0.0f;
+	t3dVectFill(&HeadAngles, 0.0f);
+}
+
 /* -----------------30/09/98 11.13-------------------
  *                  GetCameraTaget
  * --------------------------------------------------*/
-void GetCameraTarget(Init &init, t3dV3F *Target) {
+void CameraMan::GetCameraTarget(Init &init, t3dV3F *Target) {
 	int32 i;
 
 	if (!Target) return;
@@ -247,7 +283,7 @@ void GetCameraTarget(Init &init, t3dV3F *Target) {
 /* -----------------05/06/98 15.34-------------------
  *                  NextCameraStep
  * --------------------------------------------------*/
-void NextCameraStep(WGame &game) {
+void CameraMan::NextCameraStep(WGame &game) {
 	t3dBONE *bone;
 	t3dV3F Target;
 	int16 i;
@@ -326,7 +362,7 @@ void NextCameraStep(WGame &game) {
 /* -----------------05/06/98 15.50-------------------
  *                      doCamera
  * --------------------------------------------------*/
-void doCamera(WGame &game) {
+void CameraMan::doCamera(WGame &game) {
 	t3dV3F Dest, Dir, ct;
 	t3dF32 dist;
 	int16 row, col, i;
@@ -523,15 +559,15 @@ void doCamera(WGame &game) {
 /* -----------------09/11/98 10.27-------------------
  *                  ResetCameraSource
  * --------------------------------------------------*/
-void ResetCameraSource() {
-	t3dLastCameraIndex = 255;
+void CameraMan::ResetCameraSource() {
+	resetLastCameraIndex();
 	t3dCurCameraIndex = 255;
 }
 
 /* -----------------09/11/98 10.27-------------------
  *                  ResetCameraTarget
  * --------------------------------------------------*/
-void ResetCameraTarget() {
+void CameraMan::ResetCameraTarget() {
 	t3dVectFill(&OldCameraTarget, 0.0f);
 }
 
@@ -579,7 +615,7 @@ uint8 ClipCameraMove(t3dV3F *NewT, t3dV3F *OldT, t3dV3F *Source) {
 /* -----------------05/06/98 10.36-------------------
  *                  ProcessCamera
  * --------------------------------------------------*/
-void ProcessCamera(WGame &game) {
+void CameraMan::ProcessCamera(WGame &game) {
 	t3dCAMERAPATH *cp = nullptr;
 	t3dBODY *croom;
 	int16 row, col, i;
@@ -605,7 +641,7 @@ void ProcessCamera(WGame &game) {
 		t3dVectFill(&OldCameraTarget, 0.0f);
 		bForceDirectCamera = TRUE;
 		t3dCurCameraIndex = 255;
-		t3dLastCameraIndex = 255;
+		resetLastCameraIndex();
 		_vm->_messageSystem.addWaitingMsgs(MP_WAIT_PORTAL);
 //		DebugLogFile("PortalCrossed %s",PortalCrossed->Name);
 //		PortalCrossed = nullptr;
@@ -816,7 +852,7 @@ void ProcessCamera(WGame &game) {
 /* -----------------16/12/00 15.20-------------------
  *                  GetCameraIndexUnderPlayer
  * --------------------------------------------------*/
-uint8 GetCameraIndexUnderPlayer(int32 pl) {
+uint8 CameraMan::GetCameraIndexUnderPlayer(int32 pl) {
 	t3dBODY *croom;
 	int16 row, col;
 	int32 a, b;
@@ -861,7 +897,7 @@ uint8 GetCameraIndexUnderPlayer(int32 pl) {
 /* -----------------08/10/98 18.08-------------------
  *                  StartAnimCamera
  * --------------------------------------------------*/
-void StartAnimCamera(WGame &game) {
+void CameraMan::StartAnimCamera(WGame &game) {
 	DebugLogFile("StartAnimCamera");
 	t3dLastCameraIndex = t3dCurCameraIndex;
 	if (ForcedCamera) t3dCurCameraIndex = ForcedCamera - 1;
@@ -884,7 +920,7 @@ void StartAnimCamera(WGame &game) {
 /* -----------------09/11/98 10.32-------------------
  *                  ClipGolfCameraMove
  * --------------------------------------------------*/
-uint8 ClipGolfCameraMove(t3dV3F *NewT, t3dV3F *OldT, t3dV3F *Source) {
+uint8 CameraMan::ClipGolfCameraMove(t3dV3F *NewT, t3dV3F *OldT, t3dV3F *Source) {
 	t3dV3F n, o;
 	t3dF32 a, d, l;
 

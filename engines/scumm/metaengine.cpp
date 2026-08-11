@@ -26,6 +26,9 @@
 #include "common/translation.h"
 #include "common/md5.h"
 
+#include "gui/dialog.h"
+#include "gui/message.h"
+
 #include "audio/mididrv.h"
 
 #include "backends/keymapper/action.h"
@@ -44,6 +47,10 @@
 #include "scumm/detection_tables.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+
+#if defined(ENABLE_REBEL2_PSX) && !defined(ENABLE_SCUMM_7_8)
+#error "SCUMM v7 & v8 games must be enabled for Rebel Assault II PlayStation. Specify --enable-engine=scumm-7-8,rebel2-psx"
+#endif
 
 namespace Scumm {
 
@@ -83,7 +90,7 @@ Common::Path ScummEngine::generateFilename(const int room) const {
 
 Common::Path ScummEngine_v60he::generateFilename(const int room) const {
 	Common::String result;
-	char id = 0;
+	char id;
 
 	switch (_filenamePattern.genMethod) {
 	case kGenHEMac:
@@ -197,10 +204,6 @@ Common::Path ScummEngine_v70he::generateFilename(const int room) const {
 	return Common::Path(result, Common::Path::kNoSeparator);
 }
 
-bool ScummEngine::isMacM68kIMuse() const {
-	return _game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && !(_game.features & GF_MAC_CONTAINER);
-}
-
 } // End of namespace Scumm
 
 #pragma mark -
@@ -235,6 +238,11 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool ScummEngine::hasFeature(EngineFeature f) const {
+#ifdef ENABLE_REBEL2_PSX
+	if (_game.id == GID_REBEL2 && _game.platform == Common::kPlatformPSX &&
+			(f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime))
+		return false;
+#endif
 	return
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
@@ -243,14 +251,19 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsHelp) ||
 		(
 			f == kSupportsChangingOptionsDuringRuntime &&
-			(Common::String(_game.guioptions).contains(GUIO_AUDIO_OVERRIDE) ||
-			 Common::String(_game.guioptions).contains(GUIO_NETWORK))
+			(Common::String(_game.guioptions).contains(GAMEOPTION_AUDIO_OVERRIDE) ||
+			 Common::String(_game.guioptions).contains(GAMEOPTION_NETWORK))
 		) ||
-		(f == kSupportsQuitDialogOverride && (_useOriginalGUI || !ChainedGamesMan.empty()));
+		(f == kSupportsQuitDialogOverride && (gameSupportsQuitDialogOverride() || !ChainedGamesMan.empty()));
 }
 
-bool Scumm::ScummEngine::enhancementEnabled(int32 cls) {
-	return _activeEnhancements & cls;
+bool ScummEngine::gameSupportsQuitDialogOverride() const {
+	bool supportsOverride = isUsingOriginalGUI();
+
+	supportsOverride &= !(_game.platform == Common::kPlatformNES);
+	supportsOverride &= !(_game.platform == Common::kPlatformSegaCD);
+
+	return supportsOverride;
 }
 
 
@@ -259,7 +272,8 @@ bool Scumm::ScummEngine::enhancementEnabled(int32 cls) {
  *
  * This is heavily based on our MD5 detection scheme.
  */
-Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
+Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
+	const DetectedGame &gameDescriptor, const void *metaEngineDescriptor) {
 	assert(syst);
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
@@ -360,6 +374,39 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
 
+	bool foundCorruptedFanTranslation = false;
+
+	// Some fan-made translations used bad tools or techniques which deeply
+	// corrupted the resources of the game, making them buggy or even crash.
+	//
+	// One such example is a French translation of Indy3 VGA (ca. 2001-2002),
+	// known as "ryf's Indy3act", which contains corrupted opcodes in at least
+	// 07.LFL, 34.LFL and 72.LFL. See bug #5597 as an example of the fatal
+	// errors it introduced.
+	if (res.md5 == "1875b90fade138c9253a8e967007031a" && !strcmp(res.game.gameid, "indy3") && res.game.platform == Common::kPlatformDOS && (res.game.features & GF_OLD256)) {
+		Common::String md5OtherRes;
+		Common::FSNode resFile;
+		Common::File f;
+
+		// Look for 07.LFL, since this translation shares the English 00.LFL file
+		if (searchFSNode(fslist, "07.LFL", resFile))
+			f.open(resFile);
+		if (f.isOpen()) {
+			md5OtherRes = Common::computeStreamMD5AsString(f, kMD5FileSizeLimit);
+			f.close();
+		}
+
+		if (!md5OtherRes.empty() && md5OtherRes == "0f08943f6cda84ae4fb9b1b1af4f3c58")
+			foundCorruptedFanTranslation = true;
+	}
+
+	if (foundCorruptedFanTranslation) {
+		// Like ADGF_UNSUPPORTED, but cheap
+		GUIErrorMessage(_("This fan-made translation is not supported, because it is known to contain\n"
+		                  "corrupted resources that might make it crash or seriously misbehave."));
+		return Common::kUnsupportedGameidError;
+	}
+
 	// We don't support the "Lite" version off puttzoo iOS because it contains
 	// the full game.
 	if (!strcmp(res.game.gameid, "puttzoo") && !strcmp(res.extra, "Lite")) {
@@ -368,9 +415,21 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 		return Common::kUnsupportedGameidError;
 	}
 
+	if (res.game.heversion != 0 && (res.extra && !strcmp(res.extra, "Steam"))) {
+		if (!strcmp(res.game.gameid, "baseball") ||
+			!strcmp(res.game.gameid, "soccer") ||
+			!strcmp(res.game.gameid, "baseball2001") ||
+			!strcmp(res.game.gameid, "basketball") ||
+			!strcmp(res.game.gameid, "football")) {
+			GUI::MessageDialog dialog(_("Warning: this re-release version contains patched game scripts,\n"
+										"and therefore it might crash or not work properly for the time being."));
+			dialog.runModal();
+		}
+	}
+
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
-	Common::updateGameGUIOptions(customizeGuiOptions(res), getGameGUIOptionsDescriptionLanguage(res.language));
+	Common::updateGameGUIOptions(customizeGuiOptions(res), getGameGUIOptionsDescriptionLanguage(res.language), getGameGUIOptionsDescriptionPlatform(res.game.platform));
 
 	// If the game was added really long ago, it may be missing its "extra"
 	// field. When adding game-specific options, it may be our only way of
@@ -390,10 +449,22 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 		res.language = Common::parseLanguage(ConfMan.get("language"));
 
 	// V3 FM-TOWNS games *always* should use the corresponding music driver,
-	// anything else makes no sense for them.
+	// anything else makes no sense for them. Same for Mac (but not limited to V3),
+	// except for the Steam macOS releases actually using DOS content.
 	// TODO: Maybe allow the null driver, too?
 	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3)
 		res.game.midi = MDT_TOWNS;
+	else if (res.game.platform == Common::kPlatformMacintosh && res.game.version < 7 && res.game.heversion == 0) {
+		if (!(res.extra && strcmp(res.extra, "Steam") == 0))
+			res.game.midi = MDT_MACINTOSH;
+	}
+
+#ifndef ENABLE_REBEL2_PSX
+	if (res.game.id == GID_REBEL2 && res.game.platform == Common::kPlatformPSX)
+		return Common::Error(Common::kUnsupportedGameidError,
+				_s("Rebel Assault II PlayStation support is not compiled in"));
+#endif
+
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
 	switch (res.game.version) {
@@ -530,9 +601,9 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
+bool ScummMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	return g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -580,10 +651,12 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObj
 	if (extra == "VGA")
 		return new Scumm::LoomVgaGameOptionsWidget(boss, name, target);
 
-	if (extra == "Steam")
+	if (extra == "Steam" && platform != Common::kPlatformMacintosh)
 		return MetaEngine::buildEngineOptionsWidget(boss, name, target);
+	else if (extra == "Steam" && platform == Common::kPlatformMacintosh)
+		return nullptr;
 	else if (platform == Common::kPlatformMacintosh)
-		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_LOOM);
+		return new Scumm::MacGameOptionsWidget(boss, name, target, GID_LOOM, extra);
 
 	// These EGA Loom settings are only relevant for the EGA
 	// version, since that is the only one that has an overture.
@@ -595,18 +668,19 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildMI1OptionsWidget(GUI::GuiObje
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
 	if (platform == Common::kPlatformMacintosh && extra != "Steam")
-		return new Scumm::LoomMonkeyMacGameOptionsWidget(boss, name, target, GID_MONKEY);
+		return new Scumm::MacGameOptionsWidget(boss, name, target, GID_MONKEY, extra);
 
-	if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
-		return nullptr;
+	if (extra == "CD" || platform == Common::kPlatformFMTowns || platform == Common::kPlatformSegaCD)
+		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
 
-	return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
+	return nullptr;
 }
 
 
 GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::String gameid = ConfMan.get("gameid", target);
 	Common::String extra = ConfMan.get("extra", target);
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
 	if (gameid == "loom") {
 		GUI::OptionsContainerWidget *widget = buildLoomOptionsWidget(boss, name, target);
@@ -614,6 +688,14 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiO
 			return widget;
 	} else if (gameid == "monkey") {
 		GUI::OptionsContainerWidget *widget = buildMI1OptionsWidget(boss, name, target);
+		if (widget)
+			return widget;
+	} else if (platform == Common::kPlatformMacintosh) {
+		GUI::OptionsContainerWidget *widget = nullptr;
+		if (gameid == "monkey2")
+			widget = new Scumm::MacGameOptionsWidget(boss, name, target, GID_MONKEY2, extra);
+		else if (gameid == "atlantis")
+			widget = new Scumm::MacGameOptionsWidget(boss, name, target, GID_INDY4, extra);
 		if (widget)
 			return widget;
 	}
@@ -640,7 +722,7 @@ static const ExtraGuiOption comiObjectLabelsOption = {
 	0
 };
 
-static const ExtraGuiOption mmnesObjectLabelsOption = {
+static const ExtraGuiOption mmnesClassicPaletteOption = {
 	_s("Use NES Classic Palette"),
 	_s("Use a more neutral color palette that closely emulates the NES Classic"),
 	"mm_nes_classic_palette",
@@ -713,9 +795,18 @@ static const ExtraGuiOption audioOverride {
 
 static const ExtraGuiOption enableOriginalGUI = {
 	_s("Enable the original GUI and Menu"),
-	_s("Allow the game to use the in-engine graphical interface and the original save/load menu. \
-		Use it together with the \"Ask for confirmation on exit\" for a more complete experience."),
+	_s("Allow the game to use the in-engine graphical interface and the original save/load menu. "
+	   "Use it together with the \"Ask for confirmation on exit\" for a more complete experience."),
 	"original_gui",
+	true,
+	0,
+	0
+};
+
+static const ExtraGuiOption enableMacintoshGamma = {
+	_s("Enable gamma correction"),
+	_s("Brighten the graphics to simulate a Macintosh monitor."),
+	"gamma_correction",
 	true,
 	0,
 	0
@@ -723,8 +814,8 @@ static const ExtraGuiOption enableOriginalGUI = {
 
 static const ExtraGuiOption enableLowLatencyAudio = {
 	_s("Enable low latency audio mode"),
-	_s("Allows the game to use low latency audio, at the cost of sound accuracy. \
-		It is recommended to enable this feature only if you incur in audio latency issues during normal gameplay."),
+	_s("Allows the game to use low latency audio, at the cost of sound accuracy. "
+	   "It is recommended to enable this feature only if you incur in audio latency issues during normal gameplay."),
 	"dimuse_low_latency_mode",
 	false,
 	0,
@@ -733,9 +824,124 @@ static const ExtraGuiOption enableLowLatencyAudio = {
 
 static const ExtraGuiOption enableCOMISong = {
 	_s("Enable the \"A Pirate I Was Meant To Be\" song"),
-	_s("Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was Meant To Be\", \
-		which was cut in international releases. Beware though: subtitles may not be fully translated."),
+	_s("Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was Meant To Be\", "
+	   "which was cut in international releases. Beware though: subtitles may not be fully translated."),
 	"enable_song",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption enableCopyProtection = {
+	_s("Enable copy protection"),
+	_s("Enable any copy protection that would otherwise be bypassed by default."),
+	"copy_protection",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption mmDemoModeOption = {
+	_s("Enable demo/kiosk mode"),
+	_s("Enable demo/kiosk mode in the full retail version of Maniac Mansion."),
+	"enable_demo_mode",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption mi2NIDemoModeDisable = {
+	_s("Disable Playback"),
+	_s("Disable the scripted part of the demo (dangerous!). This makes it interactive, but as this was never intended, expect frequent crashes!"),
+	"disable_mi2_ni_demo",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption useRemasteredAudio = {
+	_s("Use remastered audio"),
+	_s("Use the remastered speech and sound effects."),
+	"use_remastered_audio",
+	true,
+	0,
+	0
+};
+
+// TODO: Ambience sounds are disabled for now, as they require the following:
+// - WMA codec
+// - Read ambience track info from resource files
+#if 0
+static const ExtraGuiOption enableAmbienceSounds = {
+	_s("Enable ambience sounds"),
+	_s("Enable ambience sounds."),
+	"enable_ambience_sounds",
+	true,
+	0,
+	0
+};
+#endif
+
+#ifdef USE_TTS
+static const ExtraGuiOption enableTTS = {
+	_s("Enable Text to Speech"),
+	_s("Use TTS to read text in the game (if TTS is available)"),
+	"tts_enabled",
+	false,
+	0,
+	0
+};
+#endif
+
+static const ExtraGuiOption enableRebel2HiRes = {
+	_s("High resolution mode"),
+	_s("Run the game in 640x400 high resolution mode instead of 320x200"),
+	"rebel2_hires",
+	true,
+	0,
+	0
+};
+
+static const ExtraGuiOption enableRebel2UnlockAll = {
+	_s("Unlock all levels"),
+	_s("All levels will be available without requiring passwords"),
+	"rebel2_unlock_all",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption enableRebel2NoDamage = {
+	_s("No damage"),
+	_s("Disable player damage"),
+	"rebel2_no_damage",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption enableRebel2YodaMode = {
+	_s("Yoda mode"),
+	_s("Enable original Yoda mode shortcuts, including movie mode and auto play"),
+	"rebel2_yoda_mode",
+	false,
+	0,
+	0
+};
+
+const ExtraGuiOption enableRebel1UnlockAll = {
+	_s("Unlock all levels"),
+	_s("All levels will be available without requiring passwords"),
+	"rebel1_unlock_all",
+	false,
+	0,
+	0
+};
+
+const ExtraGuiOption enableRebel1NoDamage = {
+	_s("No damage"),
+	_s("Disable player damage"),
+	"rebel1_no_damage",
 	false,
 	0,
 	0
@@ -751,17 +957,54 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 	const Common::String language = ConfMan.get("language", target);
 
-	if (target.empty() || guiOptions.contains(GUIO_ORIGINALGUI)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_ORIGINALGUI)) {
 		options.push_back(enableOriginalGUI);
+
+		if (platform == Common::kPlatformMacintosh) {
+			options.push_back(enableMacintoshGamma);
+		}
 	}
-	if (target.empty() || guiOptions.contains(GUIO_ENHANCEMENTS)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_COPY_PROTECTION)) {
+		options.push_back(enableCopyProtection);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_ENHANCEMENTS)) {
 		options.push_back(enableEnhancements);
 	}
-	if (target.empty() || guiOptions.contains(GUIO_LOWLATENCYAUDIO)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_LOWLATENCYAUDIO)) {
 		options.push_back(enableLowLatencyAudio);
 	}
-	if (target.empty() || guiOptions.contains(GUIO_AUDIO_OVERRIDE)) {
+	if (target.empty() || guiOptions.contains(GAMEOPTION_AUDIO_OVERRIDE)) {
 		options.push_back(audioOverride);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_USE_REMASTERED_AUDIO)) {
+		options.push_back(useRemasteredAudio);
+#if 0
+		if (gameid == "monkey" || gameid == "monkey2")
+			options.push_back(enableAmbienceSounds);
+#endif
+	}
+#ifdef USE_TTS
+	if (target.empty() || guiOptions.contains(GAMEOPTION_TTS)) {
+		options.push_back(enableTTS);
+	}
+#endif
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_HIRES)) {
+		options.push_back(enableRebel2HiRes);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_UNLOCK_ALL)) {
+		options.push_back(enableRebel2UnlockAll);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_NO_DAMAGE)) {
+		options.push_back(enableRebel2NoDamage);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_YODA_MODE)) {
+		options.push_back(enableRebel2YodaMode);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_UNLOCK_ALL)) {
+		options.push_back(enableRebel1UnlockAll);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_NO_DAMAGE)) {
+		options.push_back(enableRebel1NoDamage);
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
@@ -771,20 +1014,30 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 		}
 	}
 	if (target.empty() || platform == Common::kPlatformNES) {
-		options.push_back(mmnesObjectLabelsOption);
+		options.push_back(mmnesClassicPaletteOption);
 	}
 	if (target.empty() || platform == Common::kPlatformFMTowns) {
 		options.push_back(smoothScrolling);
 		if (target.empty() || gameid == "loom")
 			options.push_back(semiSmoothScrolling);
-		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
+		if (guiOptions.contains(GAMEOPTION_TRIM_FMTOWNS_TO_200_PIXELS))
 			options.push_back(fmtownsTrimTo200);
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		if (platform == Common::kPlatformFMTowns && Common::parseLanguage(language) != Common::JA_JPN)
 			options.push_back(fmtownsForceHiResMode);
 #endif
 	}
+	if (target.empty() || gameid == "maniac") {
+		// The kiosk demo script is in V1/V2 DOS, V2 Atari ST and V2 Amiga.
+		bool isValidTarget = !extra.contains("Demo") &&
+			(platform == Common::kPlatformDOS   ||
+			 platform == Common::kPlatformAmiga ||
+			 platform == Common::kPlatformAtariST) &&
+			 !guiOptionsString.contains("lang_Italian");
 
+		if (isValidTarget)
+			options.push_back(mmDemoModeOption);
+	}
 	// The Steam Mac versions of Loom and Indy 3 are more akin to the VGA
 	// DOS versions, and that's how ScummVM usually sees them. But that
 	// rebranding does not happen until later.
@@ -794,6 +1047,17 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 
 	if (target.empty() || (gameid == "indy3" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
 		options.push_back(macV3LowQualityMusic);
+	}
+
+	// The DOS MI2 Demo runs via a pre-recorded stream of input,
+	// disabling this allows you to navigate the demo manually, 
+	// beware, the demo is stripped of a large number of assets 
+	// and the demo will crash frequently due to missing rooms.
+	if (target.empty() || gameid == "monkey2") {
+		bool isValidTarget = extra.contains("Demo") && platform == Common::kPlatformDOS;
+
+		if (isValidTarget)
+			options.push_back(mi2NIDemoModeDisable);
 	}
 
 	return options;
@@ -807,6 +1071,7 @@ void ScummMetaEngine::registerDefaultSettings(const Common::String &) const {
 		else
 			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
 	}
+	ConfMan.registerDefault("gamma_correction", true);
 }
 
 Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
@@ -817,10 +1082,22 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 	Action *act;
 
+	if (gameId == "rebel1" || gameId == "rebel2") {
+		for (uint i = 0; i < keymaps.size(); ++i) {
+			if (keymaps[i]->getId() == "engine-default") {
+				delete keymaps.remove_at(i);
+				Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymappings"));
+				engineKeyMap->setPartialMatchAllowed(false);
+				keymaps.insert_at(i, engineKeyMap);
+				break;
+			}
+		}
+	}
+
 	if (gameId == "ft") {
 		Keymap *insaneKeymap = new Keymap(Keymap::kKeymapTypeGame, insaneKeymapId, "SCUMM - Bike Fights");
 
-		act = new Action("DOWNLEFT", _("Down Left"));
+		act = new Action("DOWNLEFT", _("Down left"));
 		act->setCustomEngineActionEvent(kScummActionInsaneDownLeft);
 		act->addDefaultInputMapping("KP1");
 		act->addDefaultInputMapping("END");
@@ -833,7 +1110,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_DOWN");
 		insaneKeymap->addAction(act);
 
-		act = new Action("DOWNRIGHT", _("Down Right"));
+		act = new Action("DOWNRIGHT", _("Down right"));
 		act->setCustomEngineActionEvent(kScummActionInsaneDownRight);
 		act->addDefaultInputMapping("KP3");
 		act->addDefaultInputMapping("PAGEDOWN");
@@ -853,7 +1130,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_RIGHT");
 		insaneKeymap->addAction(act);
 
-		act = new Action("UPLEFT", _("Up Left"));
+		act = new Action("UPLEFT", _("Up left"));
 		act->setCustomEngineActionEvent(kScummActionInsaneUpLeft);
 		act->addDefaultInputMapping("KP7");
 		act->addDefaultInputMapping("INSERT");
@@ -866,7 +1143,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_UP");
 		insaneKeymap->addAction(act);
 
-		act = new Action("UPRIGHT", _("Up Right"));
+		act = new Action("UPRIGHT", _("Up right"));
 		act->setCustomEngineActionEvent(kScummActionInsaneUpRight);
 		act->addDefaultInputMapping("KP9");
 		act->addDefaultInputMapping("PAGEUP");
@@ -898,6 +1175,168 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		insaneKeymap->addAction(act);
 
 		keymaps.push_back(insaneKeymap);
+	}
+
+	if (gameId == "rebel1") {
+		Keymap *rebel1Keymap = new Keymap(Keymap::kKeymapTypeGame, "scumm-rebel1", _("Rebel Assault controls"));
+
+		act = new Action("RA1UP", _("Aim up / menu up"));
+		act->setCustomEngineActionEvent(kScummActionInsaneUp);
+		act->addDefaultInputMapping("JOY_UP");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1DOWN", _("Aim down / menu down"));
+		act->setCustomEngineActionEvent(kScummActionInsaneDown);
+		act->addDefaultInputMapping("JOY_DOWN");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1LEFT", _("Aim left / menu left"));
+		act->setCustomEngineActionEvent(kScummActionInsaneLeft);
+		act->addDefaultInputMapping("JOY_LEFT");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1RIGHT", _("Aim right / menu right"));
+		act->setCustomEngineActionEvent(kScummActionInsaneRight);
+		act->addDefaultInputMapping("JOY_RIGHT");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1STICKUP", _("Stick up"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisUp);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_HAT_Y-");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1STICKDOWN", _("Stick down"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisDown);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_HAT_Y+");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1STICKLEFT", _("Stick left"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisLeft);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_X-");
+		act->addDefaultInputMapping("JOY_HAT_X-");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1STICKRIGHT", _("Stick right"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisRight);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_X+");
+		act->addDefaultInputMapping("JOY_HAT_X+");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1FIRE", _("Fire / select"));
+		act->setCustomEngineActionEvent(kScummActionInsaneAttack);
+		act->addDefaultInputMapping("MOUSE_LEFT");
+		act->addDefaultInputMapping("JOY_A");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1CANCEL", _("Walk / menu back"));
+		act->setCustomEngineActionEvent(kScummActionInsaneSwitch);
+		act->addDefaultInputMapping("JOY_B");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1SKIP", _("Skip / menu back"));
+		act->setCustomEngineActionEvent(kScummActionInsaneSkip);
+		act->addDefaultInputMapping("JOY_X");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1BACK", _("Menu"));
+		act->setCustomEngineActionEvent(kScummActionInsaneBack);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_START");
+		act->addDefaultInputMapping("AC_BACK");
+		rebel1Keymap->addAction(act);
+
+		keymaps.push_back(rebel1Keymap);
+	}
+
+	if (gameId == "rebel2") {
+		const bool isRebel2PSX = parsePlatform(ConfMan.get("platform", target)) == kPlatformPSX;
+		Keymap *rebel2Keymap = new Keymap(Keymap::kKeymapTypeGame, "scumm-rebel2", _("Rebel Assault II controls"));
+
+		act = new Action("RA2UP", _("Aim up / menu up"));
+		act->setCustomEngineActionEvent(kScummActionInsaneUp);
+		act->addDefaultInputMapping("JOY_UP");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2DOWN", _("Aim down / menu down"));
+		act->setCustomEngineActionEvent(kScummActionInsaneDown);
+		act->addDefaultInputMapping("JOY_DOWN");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2LEFT", _("Aim left / menu left"));
+		act->setCustomEngineActionEvent(kScummActionInsaneLeft);
+		act->addDefaultInputMapping("JOY_LEFT");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2RIGHT", _("Aim right / menu right"));
+		act->setCustomEngineActionEvent(kScummActionInsaneRight);
+		act->addDefaultInputMapping("JOY_RIGHT");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2STICKUP", _("Stick up"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisUp);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_HAT_Y-");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2STICKDOWN", _("Stick down"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisDown);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_HAT_Y+");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2STICKLEFT", _("Stick left"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisLeft);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_X-");
+		act->addDefaultInputMapping("JOY_HAT_X-");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2STICKRIGHT", _("Stick right"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel2AxisRight);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK_X+");
+		act->addDefaultInputMapping("JOY_HAT_X+");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2FIRE", _("Fire / select"));
+		act->setCustomEngineActionEvent(kScummActionInsaneAttack);
+		act->addDefaultInputMapping("JOY_A");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2COVER", isRebel2PSX ? _("Change view") : _("Cover"));
+		act->setCustomEngineActionEvent(kScummActionInsaneSwitch);
+		if (isRebel2PSX) {
+			act->addDefaultInputMapping("TAB");
+			act->addDefaultInputMapping("JOY_Y");
+			act->addDefaultInputMapping("JOY_BACK");
+		} else {
+			act->addDefaultInputMapping("JOY_X");
+			act->addDefaultInputMapping("JOY_Y");
+		}
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2SKIP", _("Skip / back"));
+		act->setCustomEngineActionEvent(kScummActionInsaneSkip);
+		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+		act->addDefaultInputMapping("AC_BACK");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2BACK", _("Skip / menu"));
+		act->setCustomEngineActionEvent(kScummActionInsaneBack);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_START");
+		rebel2Keymap->addAction(act);
+
+		keymaps.push_back(rebel2Keymap);
 	}
 
 	return keymaps;

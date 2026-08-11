@@ -32,6 +32,8 @@
 #include "engines/wintermute/base/scriptables/script_ext_string.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/utils/string_util.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 #include "common/tokenizer.h"
 
@@ -55,6 +57,7 @@ SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 		_capacity = MAX(0, val->getInt());
 		if (_capacity > 0) {
 			_string = new char[_capacity]();
+			memset(_string, 0, _capacity);
 		}
 	} else {
 		setStringVal(val->getString());
@@ -79,9 +82,9 @@ void SXString::setStringVal(const char *val) {
 	int len = strlen(val);
 	if (len >= _capacity) {
 		_capacity = len + 1;
-		delete[] _string;
-		_string = nullptr;
+		SAFE_DELETE_ARRAY(_string);
 		_string = new char[_capacity]();
+		memset(_string, 0, _capacity);
 	}
 	Common::strcpy_s(_string, _capacity, val);
 }
@@ -119,7 +122,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		//try {
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
 		} else {
 			str = StringUtil::ansiToWide(_string);
@@ -127,7 +130,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		WideString subStr = str.substr(start, end - start + 1);
 
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(subStr).c_str());
 		} else {
 			stack->pushString(StringUtil::wideToAnsi(subStr).c_str());
@@ -160,7 +163,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 //		try {
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
 		} else {
 			str = StringUtil::ansiToWide(_string);
@@ -168,7 +171,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		WideString subStr = str.substr(start, len);
 
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(subStr).c_str());
 		} else {
 			stack->pushString(StringUtil::wideToAnsi(subStr).c_str());
@@ -187,7 +190,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
 		} else {
 			str = StringUtil::ansiToWide(_string);
@@ -195,7 +198,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		str.toUppercase();
 
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(str).c_str());
 		} else {
 			stack->pushString(StringUtil::wideToAnsi(str).c_str());
@@ -211,7 +214,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
 		} else {
 			str = StringUtil::ansiToWide(_string);
@@ -219,7 +222,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		str.toLowercase();
 
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(str).c_str());
 		} else {
 			stack->pushString(StringUtil::wideToAnsi(str).c_str());
@@ -238,14 +241,14 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int index = stack->pop()->getInt();
 
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
 		} else {
 			str = StringUtil::ansiToWide(_string);
 		}
 
 		WideString toFind;
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			toFind = StringUtil::utf8ToWide(strToFind);
 		} else {
 			toFind = StringUtil::ansiToWide(strToFind);
@@ -288,7 +291,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			Common::strlcpy(separators, val->getString(), MAX_PATH_LENGTH);
 		}
 
-		SXArray *array = new SXArray(_gameRef);
+		SXArray *array = new SXArray(_game);
 		if (!array) {
 			stack->pushNULL();
 			return STATUS_OK;
@@ -296,14 +299,14 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 		WideString str;
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			str = StringUtil::utf8ToWide(_string);
 		} else {
 			str = StringUtil::ansiToWide(_string);
 		}
 
 		WideString delims;
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			delims = StringUtil::utf8ToWide(separators);
 		} else {
 			delims = StringUtil::ansiToWide(separators);
@@ -329,15 +332,14 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		for (Common::Array<WideString>::iterator it = parts.begin(); it != parts.end(); ++it) {
 			WideString &part = (*it);
 
-			if (_gameRef->_textEncoding == TEXT_UTF8) {
-				val = new ScValue(_gameRef,  StringUtil::wideToUtf8(part).c_str());
+			if (_game->_textEncoding == TEXT_UTF8) {
+				val = new ScValue(_game,  StringUtil::wideToUtf8(part).c_str());
 			} else {
-				val = new ScValue(_gameRef,  StringUtil::wideToAnsi(part).c_str());
+				val = new ScValue(_game,  StringUtil::wideToAnsi(part).c_str());
 			}
 
 			array->push(val);
-			delete val;
-			val = nullptr;
+			SAFE_DELETE(val);
 		}
 
 		stack->pushNative(array, false);
@@ -349,21 +351,21 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXString::scGetProperty(const Common::String &name) {
+ScValue *SXString::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("string");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Length (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Length") {
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+	else if (strcmp(name, "Length") == 0) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::utf8ToWide(_string);
 			_scValue->setInt(wstr.size());
 		} else {
@@ -375,7 +377,7 @@ ScValue *SXString::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Capacity") {
+	else if (strcmp(name, "Capacity") == 0) {
 		_scValue->setInt(_capacity);
 		return _scValue;
 	} else {
@@ -392,12 +394,12 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 	if (strcmp(name, "Capacity") == 0) {
 		int32 newCap = (uint32)value->getInt();
 		if (newCap < (int32)(strlen(_string) + 1)) {
-			_gameRef->LOG(0, "Warning: cannot lower string capacity");
+			_game->LOG(0, "Warning: cannot lower string capacity");
 		} else if (newCap != _capacity) {
 			char *newStr = new char[newCap]();
 			if (newStr) {
 				Common::strcpy_s(newStr, newCap, _string);
-				delete[] _string;
+				SAFE_DELETE_ARRAY(_string);
 				_string = newStr;
 				_capacity = newCap;
 			}

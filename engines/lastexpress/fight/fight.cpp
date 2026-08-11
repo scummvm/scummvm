@@ -20,394 +20,379 @@
  */
 
 #include "lastexpress/fight/fight.h"
+#include "lastexpress/fight/fighter.h"
 
-#include "lastexpress/fight/fighter_anna.h"
-#include "lastexpress/fight/fighter_ivo.h"
-#include "lastexpress/fight/fighter_milos.h"
-#include "lastexpress/fight/fighter_salko.h"
-#include "lastexpress/fight/fighter_vesna.h"
-
-#include "lastexpress/data/cursor.h"
-#include "lastexpress/data/sequence.h"
-
-#include "lastexpress/game/entities.h"
-#include "lastexpress/game/inventory.h"
-#include "lastexpress/game/logic.h"
-#include "lastexpress/game/object.h"
-#include "lastexpress/game/scenes.h"
-#include "lastexpress/game/state.h"
-
-#include "lastexpress/sound/queue.h"
-
-#include "lastexpress/graphics.h"
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/resource.h"
 
 namespace LastExpress {
 
-Fight::FightData::FightData() {
-	player = nullptr;
-	opponent = nullptr;
+int LastExpressEngine::doFight(int fightId) {
+	int fightNode;
+	TBM *tbm;
 
-	index = 0;
+	if (_fightSkipCounter >= 5 && (fightId == 2004 || fightId == 2005)) {
+		_fightSkipCounter = 0;
+		return 0;
+	}
 
-	isFightRunning = false;
+	getLogicManager()->displayWaitIcon();
+	getMessageManager()->clearClickEvents();
 
-	memset(&sequences, 0, sizeof(sequences));
+	getLogicManager()->_doubleClickFlag = false;
+	mouseSetLeftClicked(false);
+	mouseSetRightClicked(false);
+
+	getOtisManager()->wipeAllGSysInfo();
+
+	switch (fightId) {
+	case 2001:
+		fightNode = 44 - (getLogicManager()->getModel(1) == 2);
+		break;
+	case 2002:
+		fightNode = 45;
+		break;
+	case 2003:
+		fightNode = 46;
+		break;
+	case 2004:
+		fightNode = 47;
+		break;
+	case 2005:
+		fightNode = 48;
+		break;
+	default:
+		fightNode = 820;
+		break;
+	}
+
+	if (getGraphicsManager()->canDrawMouse()) {
+		getGraphicsManager()->setMouseDrawable(false);
+		getGraphicsManager()->burstMouseArea();
+	}
+
+	char sceneName[12];
+	Common::strcpy_s(sceneName, getLogicManager()->_trainData[fightNode].sceneFilename);
+
+	int bgResult = getArchiveManager()->loadBG(sceneName);
+	if (bgResult <= 0) {
+		if (bgResult)
+			return 1;
+
+		tbm = &getGraphicsManager()->_renderBox1;
+	} else {
+		tbm = &getGraphicsManager()->_renderBox2;
+	}
+
+	getLogicManager()->_activeNode = fightNode;
+
+	(_characters->characters[kCharacterCath]).characterPosition = getLogicManager()->_trainData[fightNode].nodePosition;
+	getSoundManager()->_scanAnySoundLoopingSection = true;
+
+	if (getGraphicsManager()->acquireSurface()) {
+		getGraphicsManager()->copy(getGraphicsManager()->_frontBuffer, (PixMap *)getGraphicsManager()->_screenSurface.getPixels(), tbm->x, tbm->y, tbm->width, tbm->height);
+		getGraphicsManager()->unlockSurface();
+	}
+
+	getMemoryManager()->freeFX();
+
+	_fight = new CFight(this, fightId);
+
+	_fight->timer(0, 0);
+
+	getGraphicsManager()->burstBox(tbm->x, tbm->y, tbm->width, tbm->height);
+	getLogicManager()->restoreEggIcon();
+
+	int outcome = _fight->process();
+
+	delete _fight;
+	_fight = nullptr;
+
+	getMemoryManager()->lockFX();
+
+	return outcome;
 }
 
-Fight::FightData::~FightData() {
-	SAFE_DELETE(player);
-	SAFE_DELETE(opponent);
+void LastExpressEngine::abortFight() {
+	if (_fight)
+		_fight->setFightHappening(false);
 }
 
-Fight::Fight(LastExpressEngine *engine) : _engine(engine), _data(nullptr), _endType(kFightEndLost), _state(0), _handleTimer(false) {
-}
+CFight::CFight(LastExpressEngine *engine, int fightId) {
+	_engine = engine;
 
-Fight::~Fight() {
-	clearData();
-	_data = nullptr;
+	_currentSeqIdx = 0;
 
-	// Zero passed pointers
-	_engine = nullptr;
-}
+	switch (fightId) {
+	case 2001: // Cath vs Milos
+		_cath = new CCath1(_engine, this);
+		_opponent = new COpponent1(_engine, this);
+		break;
+	case 2002: // Cath vs Vesna (when saving Anna)
+		_cath = new CCath2(_engine, this);
+		_opponent = new COpponent2(_engine, this);
+		break;
+	case 2003: // Cath vs Ivo
+		_cath = new CCath3(_engine, this);
+		_opponent = new COpponent3(_engine, this);
+		break;
+	case 2004: // Cath vs Salko
+		_cath = new CCath4(_engine, this);
+		_opponent = new COpponent4(_engine, this);
+		break;
+	case 2005: // Cath vs Vesna (final fight)
+		_cath = new CCath5(_engine, this);
+		_opponent = new COpponent5(_engine, this);
+		break;
+	default:
+		break;
+	}
 
-//////////////////////////////////////////////////////////////////////////
-// Events
-//////////////////////////////////////////////////////////////////////////
-void Fight::eventMouse(const Common::Event &ev) {
-	if (!_data || _data->index)
-		return;
+	if (!_cath || !_opponent) {
+		error("Out of memory");
+	}
 
-	// TODO move all the egg handling to inventory functions
-
-	getFlags()->mouseLeftClick = false;
-	getFlags()->shouldRedraw = false;
-	getFlags()->mouseRightClick = false;
-
-	if (ev.mouse.x < 608 || ev.mouse.y < 448 || ev.mouse.x >= 640 || ev.mouse.x >= 480) {
-
-		// Handle right button click
-		if (ev.type == Common::EVENT_RBUTTONUP) {
-			getSoundQueue()->stop(kEntityTables0);
-			setStopped();
-
-			getGlobalTimer() ? _state = 0 : ++_state;
-
-			getFlags()->mouseRightClick = true;
-		}
-
-		if (_handleTimer) {
-			// Timer expired => show with full brightness
-			if (!getGlobalTimer())
-				getInventory()->drawBlinkingEgg();
-
-			_handleTimer = false;
-		}
-
-		// Check hotspots
-		Scene *scene = getScenes()->get(getState()->scene);
-		SceneHotspot *hotspot = nullptr;
-
-		if (!scene->checkHotSpot(ev.mouse, &hotspot)) {
-			_engine->getCursor()->setStyle(kCursorNormal);
+	if (_cath->init(_opponent) && _opponent->init(_cath)) {
+		_fightIsHappening = true;
+		if (_engine->_fightSkipCounter >= 5) {
+			switch (fightId) {
+			case 2001:
+				_opponent->setHitPoints(1);
+				_cath->doAction(4, 0);
+				_opponent->doAction(0, 0);
+				break;
+			case 2003:
+				_opponent->setHitPoints(1);
+				_cath->doAction(3, 0);
+				_opponent->doAction(6, 0);
+				break;
+			case 2005:
+				_opponent->setHitPoints(1);
+				_cath->doAction(0, 0);
+				_cath->doAction(3, 2);
+				_opponent->doAction(5, 0);
+				break;
+			}
 		} else {
-			_engine->getCursor()->setStyle((CursorStyle)hotspot->cursor);
+			_cath->doAction(0, 0);
+			_opponent->doAction(0, 0);
+		}
+	} else {
+		endFight(0);
+	}
 
-			// Call player function
-			if (_data->player->canInteract((Fighter::FightAction)hotspot->action)) {
-				if (ev.type == Common::EVENT_LBUTTONUP)
-					_data->player->handleAction((Fighter::FightAction)hotspot->action);
+	_savedMouseEventHandle = _engine->getMessageManager()->getEventHandle(1);
+	_savedTimerEventHandle = _engine->getMessageManager()->getEventHandle(3);
+
+	_engine->getMessageManager()->setEventHandle(kEventChannelMouse, &LastExpressEngine::fightMouseWrapper);
+	_engine->getMessageManager()->setEventHandle(kEventChannelTimer, &LastExpressEngine::fightTimerWrapper);
+
+	_engine->setEventTickInternal(false);
+}
+
+CFight::~CFight() {
+	if (_cath) {
+		delete _cath;
+		_cath = nullptr;
+	}
+
+	if (_opponent) {
+		delete _opponent;
+		_opponent = nullptr;
+	}
+
+	_engine->getMessageManager()->setEventHandle(kEventChannelMouse, _savedMouseEventHandle);
+	_engine->getMessageManager()->setEventHandle(kEventChannelTimer, _savedTimerEventHandle);
+}
+
+int CFight::process() {
+	setOutcome(1);
+
+	while (_fightIsHappening) {
+		do {
+			_engine->getSoundManager()->soundThread();
+		} while (_engine->getMessageManager()->process());
+
+		// Only wait and handle events if we've processed all messages, unlike the original which had a separate thread for input...
+		_engine->waitForTimer(5);
+	}
+
+	return _outcome;
+}
+
+void CFight::setOutcome(int outcome) {
+	_outcome = outcome;
+}
+
+void CFight::endFight(int outcome) {
+	_engine->_fightSkipCounter = 0;
+	setOutcome(outcome);
+	_engine->abortFight();
+}
+
+void CFight::timer(Event *event, bool isProcessing) {
+	_engine->setEventTickInternal(false);
+
+	if (_engine->_gracePeriodTimer) {
+		if ((_engine->getLogicManager()->_globals[kGlobalJacket] < 2 ? 225 : 450) == _engine->_gracePeriodTimer || _engine->_gracePeriodTimer == 900) {
+			_eggIconBrightness = 0;
+			_eggIconBrightnessStep = 1;
+		}
+
+		if (!_engine->_lockGracePeriod) // Gets set to true only by the debugger only...
+			_engine->_gracePeriodTimer--;
+
+		if (_engine->_gracePeriodTimer <= 500 ||
+			!(_engine->_gracePeriodTimer % 5)) {
+
+			if ((_engine->_gracePeriodTimer <= 500 && !(_engine->_gracePeriodTimer % ((_engine->_gracePeriodTimer + 100) / 100))) ||
+				(_engine->_gracePeriodTimer > 500 && !(_engine->_gracePeriodTimer % 5))) {
+				if (_eggIconBrightness) {
+					_engine->getGraphicsManager()->drawItemDim(_engine->_currentGameFileColorId + 39, 608, 448, _eggIconBrightness);
+				} else {
+					_engine->getGraphicsManager()->drawItem(_engine->_currentGameFileColorId + 39, 608, 448);
+				}
+
+				_engine->getGraphicsManager()->burstBox(608, 448, 32, 32);
+				_eggIconBrightness += _eggIconBrightnessStep;
+
+				if (!_eggIconBrightness || _eggIconBrightness == 3)
+					_eggIconBrightnessStep = -_eggIconBrightnessStep;
+			}
+		}
+
+		if (_engine->_gracePeriodTimer == 90) {
+			_engine->getSoundManager()->playSoundFile("TIMER.SND", kSoundTypeMenu | kVolumeFull, 0, 0);
+		}
+
+		if (_engine->_gracePeriodTimer < 90 && !_engine->getLogicManager()->dialogRunning("TIMER"))
+			_engine->_gracePeriodTimer = 0;
+
+		if (!_engine->_gracePeriodTimer) {
+			if (_engine->_cursorX < 608 || _engine->_cursorY < 448 || _engine->_cursorX >= 640 || _engine->_cursorY >= 480) {
+				_engine->getGraphicsManager()->drawItemDim(_engine->_currentGameFileColorId + 39, 608, 448, 1);
 			} else {
-				_engine->getCursor()->setStyle(kCursorNormal);
+				_engine->getGraphicsManager()->drawItem(_engine->_currentGameFileColorId + 39, 608, 448);
+			}
+
+			_engine->getGraphicsManager()->burstBox(608, 448, 32, 32);
+			_engine->getVCR()->makePermanent();
+		}
+	}
+
+	if (!_currentSeqIdx) {
+		Link *link = nullptr;
+		uint8 location = 0;
+
+		for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].link; i; i = i->next) {
+			if (_engine->getLogicManager()->pointIn(_engine->_cursorX, _engine->_cursorY, i) && location <= i->location) {
+				location = i->location;
+				link = i;
 			}
 		}
-	} else {
-		// Handle clicks on menu icon
 
-		if (!_handleTimer) {
-			// Timer expired => show with full brightness
-			if (!getGlobalTimer())
-				getInventory()->drawBlinkingEgg();
+		if (!link || (_engine->_cursorType = link->cursor, !_cath->actionAvailable(link->action)))
+			_engine->_cursorType = 0;
 
-			_handleTimer = true;
-		}
+		_cath->timer();
+		_opponent->timer();
 
-		// Stop fight if clicked
-		if (ev.type == Common::EVENT_LBUTTONUP) {
-			_handleTimer = false;
-			getSoundQueue()->stop(kEntityTables0);
-			bailout(kFightEndExit);
-		}
+		if (_fightIsHappening) {
+			if (isProcessing) {
+				_engine->getSpriteManager()->drawCycle();
+			} else if (_engine->getGraphicsManager()->acquireSurface()) {
+				_engine->getSpriteManager()->drawCycleSimple((PixMap *)_engine->getGraphicsManager()->_screenSurface.getPixels());
+				_engine->getGraphicsManager()->unlockSurface();
+			}
 
-		// Reset timer on right click
-		if (ev.type == Common::EVENT_RBUTTONUP) {
-			if (getGlobalTimer()) {
-				if (getSoundQueue()->isBuffered("TIMER"))
-					getSoundQueue()->stop("TIMER");
-
-				setGlobalTimer(900);
+			if (_currentSeqIdx) {
+				_currentSeqIdx--;
 			}
 		}
 	}
-
-	getFlags()->shouldRedraw = true;
 }
 
-void Fight::eventTick(const Common::Event &ev) {
-	handleTick(ev, true);
-}
+void CFight::mouse(Event *event) {
+	if (_currentSeqIdx == 0) {
+		_engine->mouseSetLeftClicked(false);
+		_engine->getGraphicsManager()->setMouseDrawable(false);
+		_engine->mouseSetRightClicked(false);
 
-void Fight::handleTick(const Common::Event &ev, bool isProcessing) {
-	// TODO move all the egg handling to inventory functions
+		_engine->getGraphicsManager()->burstMouseArea(false); // The original updated the screen, we don't to avoid flickering...
 
-	// Blink egg
-	if (getGlobalTimer()) {
-		warning("[Fight::handleTick] Egg blinking not implemented");
+		_engine->_cursorX = event->x;
+		_engine->_cursorY = event->y;
+
+		if (_engine->_cursorX < 608 || _engine->_cursorY < 448 || _engine->_cursorX >= 640 || _engine->_cursorY >= 480) {
+			if ((event->flags & kMouseFlagRightDown) != 0) {
+				_engine->getLogicManager()->endDialog(kCharacterTableA);
+				_engine->abortFight();
+
+				if (_engine->_gracePeriodTimer) {
+					_engine->_fightSkipCounter = 0;
+				} else {
+					_engine->_fightSkipCounter++;
+				}
+
+				_engine->mouseSetRightClicked(true);
+			}
+
+			if (_lowIconToggle) {
+				if (!_engine->_gracePeriodTimer) {
+					_engine->getGraphicsManager()->drawItemDim(_engine->_currentGameFileColorId + 39, 608, 448, 1);
+					_engine->getGraphicsManager()->burstBox(608, 448, 32, 32);
+				}
+
+				_lowIconToggle = false;
+			}
+
+			uint8 location = 0;
+			Link *link = nullptr;
+
+			for (Link *i = _engine->getLogicManager()->_trainData[_engine->getLogicManager()->_activeNode].link; i; i = i->next) {
+				if (_engine->getLogicManager()->pointIn(_engine->_cursorX, _engine->_cursorY, i) && location <= i->location) {
+					location = i->location;
+					link = i;
+				}
+			}
+
+			if (link) {
+				_engine->_cursorType = link->cursor;
+
+				if (_cath->actionAvailable(link->action)) {
+					if ((event->flags & kMouseFlagLeftDown) != 0)
+						_cath->send(link->action);
+				} else {
+					_engine->_cursorType = 0;
+				}
+			} else {
+				_engine->_cursorType = 0;
+			}
+		} else {
+			if (!_lowIconToggle) {
+				if (!_engine->_gracePeriodTimer) {
+					_engine->getGraphicsManager()->drawItem(_engine->_currentGameFileColorId + 39, 608, 448);
+					_engine->getGraphicsManager()->burstBox(608, 448, 32, 32);
+				}
+
+				_lowIconToggle = true;
+			}
+
+			if ((event->flags & kMouseFlagLeftDown) != 0) {
+				_lowIconToggle = false;
+				_engine->getLogicManager()->endDialog(kCharacterTableA);
+				endFight(2);
+			} else if ((event->flags & kMouseFlagRightDown) != 0 && _engine->_gracePeriodTimer) {
+				if (_engine->getLogicManager()->dialogRunning("TIMER"))
+					_engine->getLogicManager()->endDialog("TIMER");
+
+				_engine->_gracePeriodTimer = 900;
+			}
+		}
+
+		_engine->getGraphicsManager()->setMouseDrawable(true);
+		_engine->getGraphicsManager()->newMouseLoc();
+		_engine->getGraphicsManager()->burstMouseArea();
 	}
-
-	if (!_data || _data->index)
-		return;
-
-	SceneHotspot *hotspot = nullptr;
-	if (!getScenes()->get(getState()->scene)->checkHotSpot(ev.mouse, &hotspot) || !_data->player->canInteract((Fighter::FightAction)hotspot->action)) {
-		_engine->getCursor()->setStyle(kCursorNormal);
-	} else {
-		_engine->getCursor()->setStyle((CursorStyle)hotspot->cursor);
-	}
-
-	_data->player->update();
-	_data->opponent->update();
-
-	// Draw sequences
-	if (!_data->isFightRunning)
-		return;
-
-	if (isProcessing)
-		getScenes()->drawFrames(true);
-
-	if (_data->index) {
-		// Set next sequence name index
-		_data->index--;
-		_data->sequences[_data->index] = loadSequence(_data->names[_data->index]);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Setup
-//////////////////////////////////////////////////////////////////////////
-Fight::FightEndType Fight::setup(FightType type) {
-	if (_data)
-		error("[Fight::setup] Calling fight setup again while a fight is already in progress");
-
-	//////////////////////////////////////////////////////////////////////////
-	// Prepare UI & state
-	if (_state >= 5 && (type == kFightSalko || type == kFightVesna)) {
-		_state = 0;
-		return kFightEndWin;
-	}
-
-	getInventory()->showHourGlass();
-	// TODO events function
-	getFlags()->flag_0 = false;
-	getFlags()->mouseRightClick = false;
-	getEntities()->reset();
-
-	// Compute scene to use
-	SceneIndex sceneIndex;
-	switch(type) {
-	default:
-		sceneIndex = kSceneFightDefault;
-		break;
-
-	case kFightMilos:
-		sceneIndex = (getObjects()->get(kObjectCompartment1).model < kObjectModel3) ? kSceneFightMilos : kSceneFightMilosBedOpened;
-		break;
-
-	case kFightAnna:
-		sceneIndex = kSceneFightAnna;
-		break;
-
-	case kFightIvo:
-		sceneIndex = kSceneFightIvo;
-		break;
-
-	case kFightSalko:
-		sceneIndex = kSceneFightSalko;
-		break;
-
-	case kFightVesna:
-		sceneIndex = kSceneFightVesna;
-		break;
-	}
-
-	if (getFlags()->shouldRedraw) {
-		getFlags()->shouldRedraw = false;
-		askForRedraw();
-		//redrawScreen();
-	}
-
-	// Load the scene object
-	Scene *scene = getScenes()->get(sceneIndex);
-
-	// Update game entities and state
-	getEntityData(kEntityPlayer)->entityPosition = scene->entityPosition;
-	getEntityData(kEntityPlayer)->location = scene->location;
-
-	getState()->scene = sceneIndex;
-
-	getFlags()->flag_3 = true;
-
-	// Draw the scene
-	_engine->getGraphicsManager()->draw(scene, GraphicsManager::kBackgroundC);
-	// FIXME move to start of fight?
-	askForRedraw();
-	redrawScreen();
-
-	//////////////////////////////////////////////////////////////////////////
-	// Setup the fight
-	_data = new FightData;
-	loadData(type);
-
-	// Show opponents & egg button
-	Common::Event emptyEvent;
-	handleTick(emptyEvent, false);
-	getInventory()->drawEgg();
-
-	// Start fight
-	_endType = kFightEndLost;
-	while (_data->isFightRunning) {
-		if (_engine->handleEvents())
-			continue;
-
-		getSoundQueue()->updateQueue();
-	}
-
-	// Cleanup after fight is over
-	clearData();
-
-	return _endType;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Status
-//////////////////////////////////////////////////////////////////////////
-void Fight::setStopped() {
-	if (_data)
-		_data->isFightRunning = false;
-}
-
-void Fight::bailout(FightEndType type) {
-	_state = 0;
-	_endType = type;
-	setStopped();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Cleanup
-//////////////////////////////////////////////////////////////////////////
-void Fight::clearData() {
-	if (!_data)
-		return;
-
-	// Clear data
-	SAFE_DELETE(_data);
-
-	_engine->restoreEventHandlers();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Loading
-//////////////////////////////////////////////////////////////////////////
-void Fight::loadData(FightType type) {
-	if (!_data)
-		error("[Fight::loadData] Data not initialized");
-
-	switch (type) {
-	default:
-		break;
-
-	case kFightMilos:
-		_data->player   = new FighterPlayerMilos(_engine);
-		_data->opponent = new FighterOpponentMilos(_engine);
-		break;
-
-	case kFightAnna:
-		_data->player   = new FighterPlayerAnna(_engine);
-		_data->opponent = new FighterOpponentAnna(_engine);
-		break;
-
-	case kFightIvo:
-		_data->player   = new FighterPlayerIvo(_engine);
-		_data->opponent = new FighterOpponentIvo(_engine);
-		break;
-
-	case kFightSalko:
-		_data->player   = new FighterPlayerSalko(_engine);
-		_data->opponent = new FighterOpponentSalko(_engine);
-		break;
-
-	case kFightVesna:
-		_data->player   = new FighterPlayerVesna(_engine);
-		_data->opponent = new FighterOpponentVesna(_engine);
-		break;
-	}
-
-	if (!_data->player || !_data->opponent)
-		error("[Fight::loadData] Error loading fight data (type=%d)", type);
-
-	// Setup opponent pointers
-	setOpponents();
-
-	//////////////////////////////////////////////////////////////////////////
-	// Start running the fight
-	_data->isFightRunning = true;
-
-	if (_state < 5) {
-		_data->player->setSequenceAndDraw(0, Fighter::kFightSequenceType0);
-		_data->opponent->setSequenceAndDraw(0, Fighter::kFightSequenceType0);
-		goto end_load;
-	}
-
-	switch(type) {
-	default:
-		break;
-
-	case kFightMilos:
-		_data->opponent->setCountdown(1);
-		_data->player->setSequenceAndDraw(4, Fighter::kFightSequenceType0);
-		_data->opponent->setSequenceAndDraw(0, Fighter::kFightSequenceType0);
-		break;
-
-	case kFightIvo:
-		_data->opponent->setCountdown(1);
-		_data->player->setSequenceAndDraw(3, Fighter::kFightSequenceType0);
-		_data->opponent->setSequenceAndDraw(6, Fighter::kFightSequenceType0);
-		break;
-
-	case kFightVesna:
-		_data->opponent->setCountdown(1);
-		_data->player->setSequenceAndDraw(0, Fighter::kFightSequenceType0);
-		_data->player->setSequenceAndDraw(3, Fighter::kFightSequenceType2);
-		_data->opponent->setSequenceAndDraw(5, Fighter::kFightSequenceType0);
-		break;
-	}
-
-end_load:
-	// Setup event handlers
-	_engine->backupEventHandlers();
-	SET_EVENT_HANDLERS(Fight, this);
-}
-
-void Fight::setOpponents() {
-	if (!_data)
-		error("[Fight::setOpponents] Data not initialized");
-
-	_data->player->setOpponent(_data->opponent);
-	_data->opponent->setOpponent(_data->player);
-
-	_data->player->setFight(this);
-	_data->opponent->setFight(this);
 }
 
 } // End of namespace LastExpress

@@ -56,6 +56,7 @@ private:
 	bool Cmd_loadScene(int argc, const char **argv);
 	bool Cmd_sceneID(int argc, const char **argv);
 	bool Cmd_listActionRecords(int argc, const char **argv);
+	bool Cmd_actionRecordExport(int argc, const char **argv);
 	bool Cmd_scanForActionRecordType(int argc, const char **argv);
 	bool Cmd_getEventFlags(int argc, const char **argv);
 	bool Cmd_setEventFlags(int argc, const char **argv);
@@ -68,8 +69,8 @@ private:
 	bool Cmd_soundInfo(int argc, const char **argv);
 	bool Cmd_showHotspots(int argc, const char **argv);
 
-	void printActionRecord(const Nancy::Action::ActionRecord *record, bool noDependencies = false);
-	void recursePrintDependencies(const Nancy::Action::DependencyRecord &record);
+	void printActionRecord(const Action::ActionRecord *record, bool noDependencies = false);
+	void recursePrintDependencies(const Action::DependencyRecord &record);
 
 	Common::Path _videoFile;
 	Common::Path _imageFile;

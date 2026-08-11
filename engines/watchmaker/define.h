@@ -623,8 +623,10 @@ namespace Watchmaker {
 #define ocLASTCHAR                          24
 
 #define ocCURPLAYER                         25
+#define ocBOTH                              25
 
 #define oCAMERAMAX                          26
+#define ocNOTRANS							26
 
 #define oTOOLTIPS                           98
 #define oNEXTPORTAL                         99

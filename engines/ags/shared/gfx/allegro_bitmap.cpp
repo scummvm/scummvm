@@ -146,7 +146,7 @@ bool Bitmap::LoadFromFile(PACKFILE *pf) {
 }
 
 bool Bitmap::SaveToFile(Common::WriteStream &out, const void *palette) {
-	return save_bitmap(out, _alBitmap, (const RGB *)palette) == 0;
+	return save_bitmap(out, _alBitmap, (const RGB *)palette);
 }
 
 bool Bitmap::SaveToFile(const char *filename, const void *palette) {

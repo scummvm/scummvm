@@ -57,9 +57,6 @@ PLUGIN:=
 plugins: $(PLUGIN-$(MODULE))
 
 ifdef SPLIT_DWARF
-$(PLUGIN-$(MODULE)).dwp: $(PLUGIN-$(MODULE))
-	$(QUIET_DWP)$(DWP) -e $<
-
 plugins: $(PLUGIN-$(MODULE)).dwp
 endif
 

@@ -51,6 +51,7 @@ public:
 	virtual int GetWidth() const = 0;
 	virtual int GetHeight() const = 0;
 	virtual int GetColorDepth() const = 0;
+	virtual bool MatchesFormat(AGS::Shared::Bitmap *other) const = 0;
 
 protected:
 	IDriverDependantBitmap() {}

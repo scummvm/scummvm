@@ -93,7 +93,7 @@ enum eTextureFunc {
 	eTextureFunc_Modulate,
 	eTextureFunc_Replace,
 	eTextureFunc_Add,
-	eTextureFunc_Substract,
+	eTextureFunc_Subtract,
 	eTextureFunc_AddSigned,
 	eTextureFunc_Interpolate,
 	eTextureFunc_Dot3RGB,
