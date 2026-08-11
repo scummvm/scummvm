@@ -1212,9 +1212,6 @@ void Gui::closeDialog() {
 }
 
 void Gui::getTextFromUser(Common::String &title) {
-	if (_dialog) {
-		delete _dialog;
-	}
 	showPrebuiltDialog(kSpeakDialog, title);
 }
 
