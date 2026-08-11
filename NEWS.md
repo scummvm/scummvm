@@ -73,6 +73,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Improved cursor scale in early Windows HE games.
 
+ Sherlock:
+   - Vertical movement delta fix for Rose Tattoo
+
  SLUDGE:
    - Added detection for Shape-Shift Escape.
 
