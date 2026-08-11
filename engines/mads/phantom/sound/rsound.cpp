@@ -591,6 +591,10 @@ int RSound::command8() {
 	return result;
 }
 
+void RSound::callFunction(uint16 offset) {
+	error("Unsupported call to sound driver function at offset %.4x", offset);
+}
+
 /*-----------------------------------------------------------------------*/
 
 int RSound::readScriptByte(byte *&pSrc) {
@@ -744,15 +748,8 @@ dispatch:
 			goto dispatch;
 		}
 		case 0xC4: {
-			// TODO: NOT PORTABLE AS-IS - the disassembly calls the word
-			// operand as a raw code-address function pointer
-			// ("mov bx,ax; call bx"). There's no equivalent in a C++
-			// port without knowing what specific handful of sub_
-			// routines this is meant to invoke. error() (not warning())
-			// so this is impossible to miss if real game data ever
-			// actually triggers it, rather than silently no-opping.
-			readScriptWord(pSrc);
-			error("RSound::pollActiveChannel: opcode 0xC4 (function-pointer call) not portable as-is");
+			uint16 fnOffset = readScriptWord(pSrc);
+			callFunction(fnOffset);
 			ch->_pSrc += 3;
 			goto dispatch;
 		}

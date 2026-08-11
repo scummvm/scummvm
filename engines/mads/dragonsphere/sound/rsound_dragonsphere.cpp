@@ -2758,6 +2758,13 @@ int RSound6::command98() {
 RSound9::RSound9(Audio::Mixer *mixer) : RSound(mixer, "rsound.dr9", 0x2BC0, 0x52D0, 0x9A) {
 }
 
+void RSound9::callFunction(uint16 offset) {
+	if (offset == 0x23a0)
+		command32();
+	else
+		RSound::callFunction(offset);
+}
+
 int RSound9::command1() {
 	// Must call THIS driver's own command3()/command5() (not virtual in
 	// the base - see class comment).

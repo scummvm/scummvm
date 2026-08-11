@@ -821,6 +821,13 @@ private:
 	typedef int (RSound9:: *CommandPtr)();
 	static const CommandPtr _commandList[96];
 
+protected:
+	/**
+	 * Calls a function at a fixed offset within the sound driver.
+	 * @param offset		Offset of the function
+	 */
+	void callFunction(uint16 offset) override;
+
 public:
 	RSound9(Audio::Mixer *mixer);
 

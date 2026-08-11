@@ -460,6 +460,12 @@ protected:
 	int command7();
 	int command8();
 
+	/**
+	 * Calls a function at a fixed offset within the sound driver.
+	 * @param offset		Offset of the function
+	 */
+	virtual void callFunction(uint16 offset);
+
 	int nullCommand() {
 		return 0;
 	}
