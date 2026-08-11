@@ -204,6 +204,7 @@ void Room605::daemon() {
 			case 6:
 			case 7:
 				sendWSMessage_10000(1, _tt, _605tt, 58, 66, 200, _605tt, 67, 67, 0);
+				_ttMode = 6;
 				break;
 
 			case 8:
