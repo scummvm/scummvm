@@ -32,6 +32,7 @@
 #include "director/debugger.h"
 #include "director/lingo/lingo.h"
 #include "director/movie.h"
+#include "director/util.h"
 #include "director/window.h"
 #include "director/score.h"
 #include "director/channel.h"
@@ -602,10 +603,25 @@ bool Window::loadNextMovie() {
 	_soundManager->changingMovie();
 	_newMovieStarted = true;
 	_newMovieFirstDraw = true;
-	_currentPath = Common::firstPathComponents(_nextMovie.movie, g_director->_dirSeparator);
-
-	Common::Path archivePath = Common::Path(_currentPath, g_director->_dirSeparator);
-	archivePath.appendInPlace(Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+	// _nextMovie.movie is often a bare relative reference (e.g. "KUSAMURA\KUSA_F")
+	// meant to be resolved against the movies' common root, not just glued onto
+	// whatever the previous _currentPath happened to be. findMoviePath() already
+	// knows how to search up through parent folders to resolve this correctly
+	// (it's what actually locates the file we're about to open below), so reuse
+	// it here instead of naively splitting the raw string - otherwise
+	// _currentPath ends up missing leading folder components (e.g. "KUSAMURA\"
+	// instead of "CK_DATA\KUSAMURA\"), which breaks shared cast/asset lookups
+	// for the rest of the movie.
+	Common::Path resolvedMoviePath = findMoviePath(_nextMovie.movie, true, true, g_director->getCurrentPath());
+	Common::Path archivePath;
+	if (!resolvedMoviePath.empty()) {
+		archivePath = resolvedMoviePath;
+		_currentPath = Common::firstPathComponents(resolvedMoviePath.toString(g_director->_dirSeparator), g_director->_dirSeparator);
+	} else {
+		_currentPath = Common::firstPathComponents(_nextMovie.movie, g_director->_dirSeparator);
+		archivePath = Common::Path(_currentPath, g_director->_dirSeparator);
+		archivePath.appendInPlace(Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+	}
 
 	if (_currentMovie && archivePath == _currentMovie->getArchive()->getPathName()) {
 		debug(0, "Window::loadNextMovie: next movie '%s' is the same as current movie, skipping load", archivePath.toString(Common::Path::kNativeSeparator).c_str());
