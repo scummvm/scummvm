@@ -33,8 +33,14 @@ class Mixer;
 
 namespace MADS {
 
-SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag,
+	const uint32 SoundManager::UPDATE_DELTA = 1000000 / 60;
+
+	SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag,
 		bool supportsGeneralMidi) : _mixer(mixer), _soundFlag(soundFlag) {
+	_updateDeltaRemainder = 0;
+	_driverCallbackDelta = 0;
+	_midiDriver = nullptr;
+
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 	if ((musicType == MT_GM || musicType == MT_GS) && ConfMan.getBool("native_mt32"))
@@ -42,6 +48,15 @@ SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag,
 	switch (musicType) {
 	case MT_MT32:
 		_driverType = SOUND_MT32;
+		_midiDriver = new MidiDriver_MT32GM(MusicType::MT_MT32);
+		int returnCode;
+		returnCode = _midiDriver->open();
+		if (returnCode != 0)
+			error("RSound - Failed to open MIDI music driver - error code %d.", returnCode);
+
+		_driverCallbackDelta = _midiDriver->getBaseTempo();
+		_midiDriver->setTimerCallback(this, &timerCallback);
+
 		break;
 	case MT_GM:
 	case MT_GS:
@@ -57,9 +72,21 @@ SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag,
 }
 
 SoundManager::~SoundManager() {
-	if (_driver) {
+	if (_driver != nullptr) {
 		_driver->stop();
+	}
+	if (_midiDriver != nullptr) {
+		_midiDriver->setTimerCallback(nullptr, nullptr);
+		_midiDriver->close();
+	}
+
+	if (_driver != nullptr) {
 		delete _driver;
+		_driver = nullptr;
+	}
+	if (_midiDriver != nullptr) {
+		delete _midiDriver;
+		_midiDriver = nullptr;
 	}
 }
 
@@ -142,6 +169,23 @@ void SoundManager::stop() {
 void SoundManager::noise() {
 	if (_driver)
 		_driver->noise();
+}
+
+void SoundManager::onTimer() {
+	// The frequency of the callbacks is dependent on the underlying driver
+	// implementation and might not be 60Hz. Adjust to make sure poll() is called
+	// with the correct frequency.
+	_updateDeltaRemainder += _driverCallbackDelta;
+	while (_updateDeltaRemainder >= UPDATE_DELTA) {
+		if (_driver)
+			_driver->poll();
+		_updateDeltaRemainder -= UPDATE_DELTA;
+	}
+}
+
+void SoundManager::timerCallback(void *data) {
+	SoundManager *soundManager = (SoundManager *)data;
+	soundManager->onTimer();
 }
 
 //====================================================================

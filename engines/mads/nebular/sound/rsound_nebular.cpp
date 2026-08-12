@@ -25,17 +25,17 @@ namespace MADS {
 namespace RexNebular {
 namespace Sound {
 
-RSoundDemo::RSoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+RSoundDemo::RSoundDemo(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver, const Common::Path &filename,
 		int dataOffset, int dataSize, int sysExOffset,
 		int firstEffectChannel) :
-		RSound(mixer, filename, dataOffset, dataSize, sysExOffset,
+		RSound(mixer, midiDriver, filename, dataOffset, dataSize, sysExOffset,
 				kRSoundFadeCheckAlternating),
 		_firstEffectChannel(firstEffectChannel) {
 }
 
 void RSoundDemo::startVoice(int channelIndex, int sequenceOffset) {
 	assert(channelIndex >= 0 && channelIndex < RSOUND_CHANNEL_COUNT);
-	_channels[channelIndex].load(loadData(sequenceOffset));
+	_channels[channelIndex].playData(loadData(sequenceOffset));
 }
 
 int RSoundDemo::startVoiceInRange(int sequenceOffset, int firstChannel,
@@ -43,14 +43,14 @@ int RSoundDemo::startVoiceInRange(int sequenceOffset, int firstChannel,
 	assert(firstChannel >= 0 && firstChannel <= lastChannel && lastChannel < 8);
 
 	for (int channel = firstChannel; channel <= lastChannel; ++channel) {
-		if (!_channels[channel]._activeCount) {
+		if (!_channels[channel]._deltaCounter) {
 			startVoice(channel, sequenceOffset);
 			return channel;
 		}
 	}
 
 	for (int channel = lastChannel; channel >= firstChannel; --channel) {
-		if (_channels[channel]._pendingStop == 0xFF) {
+		if (_channels[channel]._fadeOutActive) {
 			startVoice(channel, sequenceOffset);
 			return channel;
 		}
@@ -73,7 +73,7 @@ void RSoundDemo::requestStopRange(int firstChannel, int channelCount) {
 			firstChannel + channelCount <= RSOUND_CHANNEL_COUNT);
 	for (int channel = firstChannel;
 			channel < firstChannel + channelCount; ++channel)
-		_channels[channel].enable(0xFF);
+		_channels[channel].setFadeOut(true);
 }
 
 void RSoundDemo::requestStopAll() {
@@ -112,8 +112,8 @@ const RSound1::CommandPtr RSound1::_commandList[42] = {
 	&RSound1::command40, &RSound1::command41
 };
 
-RSound1::RSound1(Audio::Mixer *mixer) : RSound(mixer, "rsound.001",
-		0x1350, 0x1A90, 0x67, kRSoundFadeCheckAlternating) {
+RSound1::RSound1(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.001", 0x1350, 0x1A90, 0x67, kRSoundFadeCheckAlternating) {
 }
 
 int RSound1::command(int commandId, int param) {
@@ -133,10 +133,10 @@ void RSound1::method1() {
 	byte *pData = loadData(0x1166);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[0].load(pData);
-		_channels[1].load(loadData(0x13BC));
-		_channels[2].load(loadData(0x155C));
-		_channels[3].load(loadData(0x15D8));
+		_channels[0].playData(pData);
+		_channels[1].playData(loadData(0x13BC));
+		_channels[2].playData(loadData(0x155C));
+		_channels[3].playData(loadData(0x15D8));
 	}
 }
 
@@ -148,10 +148,10 @@ int RSound1::command9() {
 int RSound1::command10() {
 	byte *pData = loadData(0xCE4);
 	if (!isSoundActive(pData)) {
-		_channels[0].load(pData);
-		_channels[1].load(loadData(0xD18));
-		_channels[2].load(loadData(0xE9C));
-		_channels[3].load(loadData(0xEE8));
+		_channels[0].playData(pData);
+		_channels[1].playData(loadData(0xD18));
+		_channels[2].playData(loadData(0xE9C));
+		_channels[3].playData(loadData(0xEE8));
 	}
 	return 0;
 }
@@ -192,9 +192,9 @@ int RSound1::command15() {
 	byte *pData = loadData(0xF3A);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[4].load(pData);
-		_channels[5].load(loadData(0x102A));
-		_channels[6].load(loadData(0x110E));
+		_channels[4].playData(pData);
+		_channels[5].playData(loadData(0x102A));
+		_channels[6].playData(loadData(0x110E));
 	}
 	return 0;
 }
@@ -258,7 +258,7 @@ int RSound1::command26() {
 	pData[8] = v1;
 	int v2 = clampParam() + 64;
 	pData[5] = v2;
-	_channels[7].load(pData);
+	_channels[7].playData(pData);
 	return 0;
 }
 
@@ -268,7 +268,7 @@ int RSound1::command27() {
 	pData[8] = v1;
 	int v2 = clampParam() + 64;
 	pData[5] = v2;
-	_channels[7].load(pData);
+	_channels[7].playData(pData);
 	return 0;
 }
 
@@ -355,11 +355,11 @@ int RSound1::command38() {
 int RSound1::command39() {
 	byte *pData = loadData(0x1818);
 	if (!isSoundActive(pData)) {
-		_channels[4].load(pData);
-		_channels[5].load(loadData(0x1848));
-		_channels[6].load(loadData(0x1874));
-		_channels[7].load(loadData(0x18B4));
-		_channels[8].load(loadData(0x18CE));
+		_channels[4].playData(pData);
+		_channels[5].playData(loadData(0x1848));
+		_channels[6].playData(loadData(0x1874));
+		_channels[7].playData(loadData(0x18B4));
+		_channels[8].playData(loadData(0x18CE));
 	}
 	return 0;
 }
@@ -376,8 +376,8 @@ int RSound1::command41() {
 
 /*-----------------------------------------------------------------------*/
 
-RSoundDemo1::RSoundDemo1(Audio::Mixer *mixer) :
-		RSoundDemo(mixer, "rsound.001", 0x12E0, 0x1D28, 0x67, 0),
+RSoundDemo1::RSoundDemo1(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
+		RSoundDemo(mixer, midiDriver, "rsound.001", 0x12E0, 0x1D28, 0x67, 0),
 		_command23Toggle(false) {
 }
 
@@ -609,8 +609,8 @@ const RSound2::CommandPtr RSound2::_commandList[44] = {
 	&RSound2::command40, &RSound2::command41, &RSound2::command42, &RSound2::command43
 };
 
-RSound2::RSound2(Audio::Mixer *mixer) : RSound(mixer, "rsound.002",
-		0x1390, 0x42F0, 0x87, kRSoundFadeCheckAlternating) {
+RSound2::RSound2(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.002", 0x1390, 0x42F0, 0x87, kRSoundFadeCheckAlternating) {
 }
 
 int RSound2::command(int commandId, int param) {
@@ -624,11 +624,11 @@ int RSound2::command(int commandId, int param) {
 
 int RSound2::command5() {
 	_pitchCycleCounter = 47;
-	_channels[3].enable(0xFF);
-	_channels[4].enable(0xFF);
-	_channels[5].enable(0xFF);
-	_channels[6].enable(0xFF);
-	_channels[7].enable(0xFF);
+	_channels[3].setFadeOut(true);
+	_channels[4].setFadeOut(true);
+	_channels[5].setFadeOut(true);
+	_channels[6].setFadeOut(true);
+	_channels[7].setFadeOut(true);
 	return 0;
 }
 
@@ -636,9 +636,9 @@ int RSound2::command9() {
 	byte *pData = loadData(0x103C);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[0].load(pData);
-		_channels[1].load(loadData(0x11B2));
-		_channels[8].load(loadData(0x127E));
+		_channels[0].playData(pData);
+		_channels[1].playData(loadData(0x11B2));
+		_channels[8].playData(loadData(0x127E));
 	}
 	return 0;
 }
@@ -647,8 +647,8 @@ int RSound2::command10() {
 	byte *pData = loadData(0x132E);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[2].load(pData);
-		_channels[8].load(loadData(0x1384));
+		_channels[2].playData(pData);
+		_channels[8].playData(loadData(0x1384));
 	}
 	return 0;
 }
@@ -657,8 +657,8 @@ int RSound2::command11() {
 	byte *pData = loadData(0x1548);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[2].load(pData);
-		_channels[8].load(loadData(0x1648));
+		_channels[2].playData(pData);
+		_channels[8].playData(loadData(0x1648));
 	}
 	return 0;
 }
@@ -690,7 +690,7 @@ int RSound2::command15() {
 		playSoundAny(0x1DFC);
 		playSoundAny(0x222E);
 		playSoundAny(0x2648);
-		_channels[8].load(loadData(0x26A2));
+		_channels[8].playData(loadData(0x26A2));
 	}
 	return 0;
 }
@@ -721,11 +721,11 @@ int RSound2::command17() {
 }
 
 int RSound2::command18() {
-	if (_channels[7]._activeCount)
+	if (_channels[7]._deltaCounter)
 		return 0;
 
 	int idx = (getRandomNumber() & 30) >> 1;
-	_channels[7].load(loadData(_table1[idx]));
+	_channels[7].playData(loadData(_table1[idx]));
 	return 0;
 }
 
@@ -784,11 +784,11 @@ int RSound2::command26() {
 int RSound2::command27() {
 	Channel *ch = playSound(0xFAC);
 	if (ch)
-		ch->_innerLoopPtr = loadData(0xFB8);
+		ch->_innerLoopStart = loadData(0xFB8);
 
 	ch = playSound(0xFB2);
 	if (ch)
-		ch->_innerLoopPtr = loadData(0xFB8);
+		ch->_innerLoopStart = loadData(0xFB8);
 
 	playSound(0xFB8);
 	return 0;
@@ -919,8 +919,8 @@ const RSound3::CommandPtr RSound3::_commandList[61] = {
 	&RSound3::command60
 };
 
-RSound3::RSound3(Audio::Mixer *mixer) : RSound(mixer, "rsound.003",
-		0x14E0, 0x4C60, 0x67, kRSoundFadeCheckProgrammable) {
+RSound3::RSound3(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.003", 0x14E0, 0x4C60, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound3::command(int commandId, int param) {
@@ -940,10 +940,10 @@ Channel *RSound3::method1(int offset, byte value) {
 
 void RSound3::resetUpperChannelsTail() {
 	setFadeCheckPeriod(1);
-	_channels[4].enable(0xFF);
-	_channels[5].enable(0xFF);
-	_channels[6].enable(0xFF);
-	_channels[7].enable(0xFF);
+	_channels[4].setFadeOut(true);
+	_channels[5].setFadeOut(true);
+	_channels[6].setFadeOut(true);
+	_channels[7].setFadeOut(true);
 }
 
 int RSound3::command1() {
@@ -973,11 +973,11 @@ int RSound3::command10() {
 	byte *pData = loadData(0x14FE);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[0].load(pData);
-		_channels[1].load(loadData(0x1630));
-		_channels[2].load(loadData(0x186E));
-		_channels[3].load(loadData(0x1A68));
-		_channels[8].load(loadData(0x1AA6));
+		_channels[0].playData(pData);
+		_channels[1].playData(loadData(0x1630));
+		_channels[2].playData(loadData(0x186E));
+		_channels[3].playData(loadData(0x1A68));
+		_channels[8].playData(loadData(0x1AA6));
 	}
 	return 0;
 }
@@ -992,13 +992,13 @@ void RSound3::setVariantByte(byte value) {
 int RSound3::command11() {
 	if (!isSoundActive(loadData(0x1AE6))) {
 		setVariantByte(0x64);
-		_channels[0].load(loadData(0x1AE6));
-		_channels[1].load(loadData(0x1E00));
-		_channels[2].load(loadData(0x1E66));
-		_channels[3].load(loadData(0x204A));
-		_channels[4].load(loadData(0x229C));
-		_channels[5].load(loadData(0x2748));
-		_channels[6].load(loadData(0x2C56));
+		_channels[0].playData(loadData(0x1AE6));
+		_channels[1].playData(loadData(0x1E00));
+		_channels[2].playData(loadData(0x1E66));
+		_channels[3].playData(loadData(0x204A));
+		_channels[4].playData(loadData(0x229C));
+		_channels[5].playData(loadData(0x2748));
+		_channels[6].playData(loadData(0x2C56));
 	}
 	return 0;
 }
@@ -1014,14 +1014,14 @@ int RSound3::command13() {
 }
 
 int RSound3::command14() {
-	_channels[0].load(loadData(0x32DC));
-	_channels[1].load(loadData(0x32FC));
-	_channels[2].load(loadData(0x331C));
-	_channels[3].load(loadData(0x333E));
-	_channels[4].load(loadData(0x335C));
-	_channels[5].load(loadData(0x339E));
-	_channels[6].load(loadData(0x33DE));
-	_channels[7].load(loadData(0x341E));
+	_channels[0].playData(loadData(0x32DC));
+	_channels[1].playData(loadData(0x32FC));
+	_channels[2].playData(loadData(0x331C));
+	_channels[3].playData(loadData(0x333E));
+	_channels[4].playData(loadData(0x335C));
+	_channels[5].playData(loadData(0x339E));
+	_channels[6].playData(loadData(0x33DE));
+	_channels[7].playData(loadData(0x341E));
 	return 0;
 }
 
@@ -1036,20 +1036,20 @@ int RSound3::command15() {
 	setVariantByte(0x60);
 	sendDualVolume(0x60);
 
-	if (_channels[3]._activeCount && _channels[3]._soundData == loadData(0x204A)) {
-		_channels[2]._pendingStop = 0xFF;
-		_channels[3]._pendingStop = 0xFF;
-		_channels[4]._pendingStop = 0xFF;
-		_channels[5]._pendingStop = 0xFF;
-		_channels[6]._pendingStop = 0xFF;
-		_channels[7]._pendingStop = 0xFF;
+	if (_channels[3]._deltaCounter && _channels[3]._soundData == loadData(0x204A)) {
+		_channels[2]._fadeOutActive = true;
+		_channels[3]._fadeOutActive = true;
+		_channels[4]._fadeOutActive = true;
+		_channels[5]._fadeOutActive = true;
+		_channels[6]._fadeOutActive = true;
+		_channels[7]._fadeOutActive = true;
 		setFadeCheckPeriod(1);
 		return 0;
 	}
 
 	command1();
-	_channels[0].load(loadData(0x1AE6));
-	_channels[1].load(loadData(0x1E00));
+	_channels[0].playData(loadData(0x1AE6));
+	_channels[1].playData(loadData(0x1E00));
 	return 0;
 }
 
@@ -1059,19 +1059,19 @@ int RSound3::command16() {
 	if (_command16AltFlag) {
 		byte *pData = loadData(0x345E);
 		if (!isSoundActive(pData)) {
-			_channels[0].load(pData);
-			_channels[1].load(loadData(0x364C));
-			_channels[2].load(loadData(0x3806));
-			_channels[3].load(loadData(0x399E));
+			_channels[0].playData(pData);
+			_channels[1].playData(loadData(0x364C));
+			_channels[2].playData(loadData(0x3806));
+			_channels[3].playData(loadData(0x399E));
 		}
 	} else {
 		byte *pData = loadData(0x3B26);
 		if (!isSoundActive(pData)) {
 			command1();
-			_channels[0].load(pData);
-			_channels[1].load(loadData(0x3BD8));
-			_channels[2].load(loadData(0x3CF8));
-			_channels[3].load(loadData(0x3E46));
+			_channels[0].playData(pData);
+			_channels[1].playData(loadData(0x3BD8));
+			_channels[2].playData(loadData(0x3CF8));
+			_channels[3].playData(loadData(0x3E46));
 		}
 	}
 	return 0;
@@ -1081,22 +1081,22 @@ int RSound3::command17() {
 	byte *pData = loadData(0x3F5C);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[0].load(pData);
-		_channels[1].load(loadData(0x4022));
-		_channels[2].load(loadData(0x41F0));
-		_channels[3].load(loadData(0x42F8));
+		_channels[0].playData(pData);
+		_channels[1].playData(loadData(0x4022));
+		_channels[2].playData(loadData(0x41F0));
+		_channels[3].playData(loadData(0x42F8));
 	}
 	return 0;
 }
 
 int RSound3::command18() {
 	command1();
-	_channels[0].load(loadData(0x4492));
-	_channels[1].load(loadData(0x45A4));
-	_channels[2].load(loadData(0x46A2));
-	_channels[3].load(loadData(0x47DC));
-	_channels[4].load(loadData(0x49C0));
-	_channels[5].load(loadData(0x4A4E));
+	_channels[0].playData(loadData(0x4492));
+	_channels[1].playData(loadData(0x45A4));
+	_channels[2].playData(loadData(0x46A2));
+	_channels[3].playData(loadData(0x47DC));
+	_channels[4].playData(loadData(0x49C0));
+	_channels[5].playData(loadData(0x4A4E));
 	return 0;
 }
 
@@ -1323,8 +1323,8 @@ const RSound4::CommandPtr RSound4::_commandList[60] = {
 	&RSound4::command56, &RSound4::command57, &RSound4::command58, &RSound4::command59
 };
 
-RSound4::RSound4(Audio::Mixer *mixer) : RSound(mixer, "rsound.004",
-		0x1340, 0x2E20, 0x67, kRSoundFadeCheckProgrammable) {
+RSound4::RSound4(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.004", 0x1340, 0x2E20, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound4::command(int commandId, int param) {
@@ -1367,31 +1367,31 @@ void RSound4::setCommand12Variant() {
 }
 
 int RSound4::command12() {
-	if (_channels[4]._soundData == loadData(0x1966) && _channels[4]._activeCount) {
+	if (_channels[4]._soundData == loadData(0x1966) && _channels[4]._deltaCounter) {
 		setCommand12Variant();
 		return 0;
 	}
 
 	setCommand12Variant();
 	command1();
-	_channels[4].load(loadData(0x1966));
-	_channels[5].load(loadData(0x1DC8));
-	_channels[6].load(loadData(0x1FBA));
-	_channels[7].load(loadData(0x211E));
-	_channels[8].load(loadData(0x24A8));
+	_channels[4].playData(loadData(0x1966));
+	_channels[5].playData(loadData(0x1DC8));
+	_channels[6].playData(loadData(0x1FBA));
+	_channels[7].playData(loadData(0x211E));
+	_channels[8].playData(loadData(0x24A8));
 	return 0;
 }
 
 void RSound4::loadIntroChannels() {
-	_channels[0].load(loadData(0x1274));
-	_channels[1].load(loadData(0x13A6));
-	_channels[2].load(loadData(0x15E4));
+	_channels[0].playData(loadData(0x1274));
+	_channels[1].playData(loadData(0x13A6));
+	_channels[2].playData(loadData(0x15E4));
 }
 
 int RSound4::command10() {
 	command1();
-	_channels[3].load(loadData(0x17DE));
-	_channels[8].load(loadData(0x181C));
+	_channels[3].playData(loadData(0x17DE));
+	_channels[8].playData(loadData(0x181C));
 	loadIntroChannels();
 	return 0;
 }
@@ -1458,7 +1458,7 @@ int RSound4::command52() {
 	_channels[0]._pSrc = loadData(0x1188);
 	_channels[1]._pSrc = loadData(0x1188);
 	_channels[2]._pSrc = loadData(0x1188);
-	_channels[4].load(loadData(0x2A0C));
+	_channels[4].playData(loadData(0x2A0C));
 	return 0;
 }
 
@@ -1534,8 +1534,8 @@ const RSound5::CommandPtr RSound5::_commandList[42] = {
 	&RSound5::command40, &RSound5::command41
 };
 
-RSound5::RSound5(Audio::Mixer *mixer) : RSound(mixer, "rsound.005",
-		0x12A0, 0x1FD0, 0x67, kRSoundFadeCheckProgrammable) {
+RSound5::RSound5(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.005", 0x12A0, 0x1FD0, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound5::command(int commandId, int param) {
@@ -1574,16 +1574,16 @@ int RSound5::command13() {
 }
 
 int RSound5::command14() {
-	_channels[7].load(loadData(0x1272));
+	_channels[7].playData(loadData(0x1272));
 	return 0;
 }
 
 int RSound5::command15() {
 	if (_channels[7]._soundData == loadData(0x1272)) {
 		byte *pData = loadData(0x1288);
-		_channels[7]._innerLoopPtr = pData;
-		_channels[7]._outerLoopPtr = pData;
-		_channels[7]._activeCount = 1;
+		_channels[7]._innerLoopStart = pData;
+		_channels[7]._outerLoopStart = pData;
+		_channels[7]._deltaCounter = 1;
 	}
 	return 0;
 }
@@ -1653,17 +1653,17 @@ int RSound5::command28() {
 }
 
 void RSound5::loadTailChannels() {
-	_channels[3].load(loadData(0x1688));
-	_channels[8].load(loadData(0x1882));
+	_channels[3].playData(loadData(0x1688));
+	_channels[8].playData(loadData(0x1882));
 }
 
 int RSound5::command29() {
 	byte *pData = loadData(0x1488);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[0].load(pData);
-		_channels[1].load(loadData(0x1534));
-		_channels[2].load(loadData(0x15EA));
+		_channels[0].playData(pData);
+		_channels[1].playData(loadData(0x1534));
+		_channels[2].playData(loadData(0x15EA));
 		loadTailChannels();
 	}
 	return 0;
@@ -1730,7 +1730,7 @@ int RSound5::command40() {
 
 int RSound5::command41() {
 	_channels[8]._pSrc = loadData(0x1182);
-	_channels[3].load(loadData(0x1BB6));
+	_channels[3].playData(loadData(0x1BB6));
 	return 0;
 }
 
@@ -1747,8 +1747,8 @@ const RSound6::CommandPtr RSound6::_commandList[30] = {
 	&RSound6::nullCommand, &RSound6::command28
 };
 
-RSound6::RSound6(Audio::Mixer *mixer) : RSound(mixer, "rsound.006",
-		0x12D0, 0x1EF0, 0x67, kRSoundFadeCheckProgrammable) {
+RSound6::RSound6(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.006", 0x12D0, 0x1EF0, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound6::command(int commandId, int param) {
@@ -1776,9 +1776,9 @@ void RSound6::reloadCommand24() {
 	command1();
 	_callbackCounter = 84;
 	_callbackPeriod = 84;
-	_channels[0].load(loadData(0x1A38));
-	_channels[1].load(loadData(0x1BBE));
-	_channels[8].load(loadData(0x1B90));
+	_channels[0].playData(loadData(0x1A38));
+	_channels[1].playData(loadData(0x1BBE));
+	_channels[8].playData(loadData(0x1B90));
 }
 
 void RSound6::reloadCommand28() {
@@ -1786,11 +1786,11 @@ void RSound6::reloadCommand28() {
 	command1();
 	_callbackCounter = 84;
 	_callbackPeriod = 84;
-	_channels[0].load(loadData(0x130A));
-	_channels[1].load(loadData(0x13B6));
-	_channels[2].load(loadData(0x146C));
-	_channels[3].load(loadData(0x150A));
-	_channels[8].load(loadData(0x1704));
+	_channels[0].playData(loadData(0x130A));
+	_channels[1].playData(loadData(0x13B6));
+	_channels[2].playData(loadData(0x146C));
+	_channels[3].playData(loadData(0x150A));
+	_channels[8].playData(loadData(0x1704));
 }
 
 int RSound6::command9() {
@@ -1858,7 +1858,7 @@ int RSound6::command20() {
 }
 
 int RSound6::command21() {
-	_channels[4].load(loadData(0x1282));
+	_channels[4].playData(loadData(0x1282));
 	playSound(0x1282);
 	playSound(0x1282);
 	playSound(0x12AA);
@@ -1866,10 +1866,10 @@ int RSound6::command21() {
 }
 
 int RSound6::command22() {
-	_channels[4].load(loadData(0x12CE));
-	_channels[5].load(loadData(0x12CE));
-	_channels[6].load(loadData(0x12CE));
-	_channels[7].load(loadData(0x12CE));
+	_channels[4].playData(loadData(0x12CE));
+	_channels[5].playData(loadData(0x12CE));
+	_channels[6].playData(loadData(0x12CE));
+	_channels[7].playData(loadData(0x12CE));
 	return 0;
 }
 
@@ -1879,7 +1879,7 @@ int RSound6::command23() {
 }
 
 int RSound6::command24() {
-	if (_channels[0]._activeCount && _channels[0]._soundData == loadData(0x130A)) {
+	if (_channels[0]._deltaCounter && _channels[0]._soundData == loadData(0x130A)) {
 		_callbackFnPtr = &RSound6::reloadCommand24;
 		return 0;
 	}
@@ -1889,7 +1889,7 @@ int RSound6::command24() {
 }
 
 int RSound6::command25() {
-	_channels[4].load(loadData(0x12FE));
+	_channels[4].playData(loadData(0x12FE));
 	return 0;
 }
 
@@ -1897,7 +1897,7 @@ int RSound6::command28() {
 	if (isSoundActive(loadData(0x130A)))
 		return 0;
 
-	if (_channels[0]._activeCount && _channels[0]._soundData == loadData(0x1A38)) {
+	if (_channels[0]._deltaCounter && _channels[0]._soundData == loadData(0x1A38)) {
 		_callbackFnPtr = &RSound6::reloadCommand28;
 		return 0;
 	}
@@ -1921,8 +1921,8 @@ const RSound7::CommandPtr RSound7::_commandList[38] = {
 	&RSound7::command36, &RSound7::command37
 };
 
-RSound7::RSound7(Audio::Mixer *mixer) : RSound(mixer, "rsound.007",
-		0x1240, 0x1EF0, 0x67, kRSoundFadeCheckProgrammable) {
+RSound7::RSound7(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.007", 0x1240, 0x1EF0, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound7::command(int commandId, int param) {
@@ -1936,10 +1936,10 @@ int RSound7::command(int commandId, int param) {
 
 int RSound7::command9() {
 	command1();
-	_channels[0].load(loadData(0x1C0E));
-	_channels[1].load(loadData(0x1C88));
-	_channels[2].load(loadData(0x1CD4));
-	_channels[3].load(loadData(0x1D4E));
+	_channels[0].playData(loadData(0x1C0E));
+	_channels[1].playData(loadData(0x1C88));
+	_channels[2].playData(loadData(0x1CD4));
+	_channels[3].playData(loadData(0x1D4E));
 	return 0;
 }
 
@@ -1959,16 +1959,16 @@ int RSound7::command17() {
 }
 
 int RSound7::command18() {
-	_channels[7].load(loadData(0x12FC));
+	_channels[7].playData(loadData(0x12FC));
 	return 0;
 }
 
 int RSound7::command19() {
 	if (_channels[7]._soundData == loadData(0x12FC)) {
 		byte *pData = loadData(0x1312);
-		_channels[7]._innerLoopPtr = pData;
-		_channels[7]._outerLoopPtr = pData;
-		_channels[7]._activeCount = 1;
+		_channels[7]._innerLoopStart = pData;
+		_channels[7]._outerLoopStart = pData;
+		_channels[7]._deltaCounter = 1;
 	}
 	return 0;
 }
@@ -1995,29 +1995,29 @@ int RSound7::command23() {
 }
 
 int RSound7::command24() {
-	_channels[0].load(loadData(0x137C));
-	_channels[1].load(loadData(0x1406));
-	_channels[2].load(loadData(0x1492));
-	_channels[3].load(loadData(0x1516));
-	_channels[4].load(loadData(0x1588));
+	_channels[0].playData(loadData(0x137C));
+	_channels[1].playData(loadData(0x1406));
+	_channels[2].playData(loadData(0x1492));
+	_channels[3].playData(loadData(0x1516));
+	_channels[4].playData(loadData(0x1588));
 	return 0;
 }
 
 int RSound7::command25() {
 	command1();
-	_channels[0].load(loadData(0x1612));
-	_channels[1].load(loadData(0x16C8));
-	_channels[2].load(loadData(0x177E));
-	_channels[3].load(loadData(0x1838));
+	_channels[0].playData(loadData(0x1612));
+	_channels[1].playData(loadData(0x16C8));
+	_channels[2].playData(loadData(0x177E));
+	_channels[3].playData(loadData(0x1838));
 	return 0;
 }
 
 int RSound7::command27() {
-	_channels[0].load(loadData(0x1932));
-	_channels[1].load(loadData(0x1986));
-	_channels[2].load(loadData(0x19EC));
-	_channels[3].load(loadData(0x1A66));
-	_channels[4].load(loadData(0x1B3C));
+	_channels[0].playData(loadData(0x1932));
+	_channels[1].playData(loadData(0x1986));
+	_channels[2].playData(loadData(0x19EC));
+	_channels[3].playData(loadData(0x1A66));
+	_channels[4].playData(loadData(0x1B3C));
 	return 0;
 }
 
@@ -2073,8 +2073,8 @@ const RSound8::CommandPtr RSound8::_commandList[38] = {
 	&RSound8::command36, &RSound8::command37
 };
 
-RSound8::RSound8(Audio::Mixer *mixer) : RSound(mixer, "rsound.008",
-		0x1290, 0x19A0, 0x67, kRSoundFadeCheckProgrammable) {
+RSound8::RSound8(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.008", 0x1290, 0x19A0, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound8::command(int commandId, int param) {
@@ -2092,10 +2092,10 @@ int RSound8::command9() {
 }
 
 int RSound8::command10() {
-	_channels[0].load(loadData(0x115A));
-	_channels[1].load(loadData(0x115A));
-	_channels[2].load(loadData(0x115A));
-	_channels[3].load(loadData(0x1150));
+	_channels[0].playData(loadData(0x115A));
+	_channels[1].playData(loadData(0x115A));
+	_channels[2].playData(loadData(0x115A));
+	_channels[3].playData(loadData(0x1150));
 	return 0;
 }
 
@@ -2175,10 +2175,10 @@ int RSound8::command22() {
 }
 
 int RSound8::command23() {
-	_channels[0].load(loadData(0x128E));
-	_channels[1].load(loadData(0x128E));
-	_channels[2].load(loadData(0x128E));
-	_channels[3].load(loadData(0x128E));
+	_channels[0].playData(loadData(0x128E));
+	_channels[1].playData(loadData(0x128E));
+	_channels[2].playData(loadData(0x128E));
+	_channels[3].playData(loadData(0x128E));
 	return 0;
 }
 
@@ -2206,9 +2206,9 @@ int RSound8::command28() {
 	byte *pData = loadData(0x130A);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[0].load(pData);
-		_channels[1].load(loadData(0x1480));
-		_channels[8].load(loadData(0x154C));
+		_channels[0].playData(pData);
+		_channels[1].playData(loadData(0x1480));
+		_channels[8].playData(loadData(0x154C));
 	}
 	return 0;
 }
@@ -2217,8 +2217,8 @@ int RSound8::command29() {
 	byte *pData = loadData(0x15FC);
 	if (!isSoundActive(pData)) {
 		command1();
-		_channels[2].load(pData);
-		_channels[8].load(loadData(0x1652));
+		_channels[2].playData(pData);
+		_channels[8].playData(loadData(0x1652));
 	}
 	return 0;
 }
@@ -2283,8 +2283,8 @@ const RSound9::CommandPtr RSound9::_commandList[52] = {
 	&RSound9::command48, &RSound9::command49, &RSound9::command50, &RSound9::command51
 };
 
-RSound9::RSound9(Audio::Mixer *mixer) : RSound(mixer, "rsound.009",
-		0x1520, 0x8920, 0x6F, kRSoundFadeCheckAlternating) {
+RSound9::RSound9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
+	RSound(mixer, midiDriver, "rsound.009", 0x1520, 0x8920, 0x6F, kRSoundFadeCheckAlternating) {
 	_callbackCounter = 0;
 	_callbackPeriod = 0;
 	_callbackFnPtr = nullptr;
@@ -2320,56 +2320,56 @@ int RSound9::command0() {
 int RSound9::command9() {
 	_callbackCounter = 1848;
 	_callbackPeriod = 84;
-	_channels[0].load(loadData(0x16E4));
-	_channels[1].load(loadData(0x1E9E));
-	_channels[2].load(loadData(0x2F9C));
-	_channels[3].load(loadData(0x2644));
-	_channels[4].load(loadData(0x1FF4));
-	_channels[5].load(loadData(0x2382));
-	_channels[6].load(loadData(0x1AAE));
+	_channels[0].playData(loadData(0x16E4));
+	_channels[1].playData(loadData(0x1E9E));
+	_channels[2].playData(loadData(0x2F9C));
+	_channels[3].playData(loadData(0x2644));
+	_channels[4].playData(loadData(0x1FF4));
+	_channels[5].playData(loadData(0x2382));
+	_channels[6].playData(loadData(0x1AAE));
 	return 0;
 }
 
 int RSound9::command10() {
-	_channels[0].load(loadData(0x31E2));
-	_channels[1].load(loadData(0x31FA));
-	_channels[2].load(loadData(0x3212));
-	_channels[3].load(loadData(0x322C));
+	_channels[0].playData(loadData(0x31E2));
+	_channels[1].playData(loadData(0x31FA));
+	_channels[2].playData(loadData(0x3212));
+	_channels[3].playData(loadData(0x322C));
 	return 0;
 }
 
 int RSound9::command11() {
-	_channels[7].load(loadData(0x33E2));
+	_channels[7].playData(loadData(0x33E2));
 	return 0;
 }
 
 int RSound9::command12() {
-	_channels[7].load(loadData(0x342E));
+	_channels[7].playData(loadData(0x342E));
 	return 0;
 }
 
 int RSound9::command13() {
-	_channels[7].load(loadData(0x343A));
+	_channels[7].playData(loadData(0x343A));
 	return 0;
 }
 
 int RSound9::command14() {
-	_channels[7].load(loadData(0x3442));
+	_channels[7].playData(loadData(0x3442));
 	return 0;
 }
 
 int RSound9::command15() {
-	_channels[7].load(loadData(0x3462));
+	_channels[7].playData(loadData(0x3462));
 	return 0;
 }
 
 int RSound9::command16() {
-	_channels[7].load(loadData(0x347A));
+	_channels[7].playData(loadData(0x347A));
 	return 0;
 }
 
 int RSound9::command17() {
-	_channels[7].load(loadData(0x3470));
+	_channels[7].playData(loadData(0x3470));
 	return 0;
 }
 
@@ -2410,15 +2410,15 @@ int RSound9::command22() {
 int RSound9::command23() {
 	Channel *chan = playSound(0x32B0);
 	if (chan)
-		chan->_innerLoopPtr = loadData(0x32CE);
+		chan->_innerLoopStart = loadData(0x32CE);
 
 	chan = playSound(0x32B6);
 	if (chan)
-		chan->_innerLoopPtr = loadData(0x32CE);
+		chan->_innerLoopStart = loadData(0x32CE);
 
 	chan = playSound(0x32C8);
 	if (chan)
-		chan->_innerLoopPtr = loadData(0x32CE);
+		chan->_innerLoopStart = loadData(0x32CE);
 	return 0;
 }
 
@@ -2446,7 +2446,7 @@ int RSound9::command28() {
 	int v = (getRandomNumber() & 28) + 15;
 	byte *pData = loadData(0x334A);
 	pData[6] = v & 0x7F;
-	_channels[7].load(pData);
+	_channels[7].playData(pData);
 	return 0;
 }
 
@@ -2489,11 +2489,11 @@ int RSound9::command34() {
 	*loadData(0x7DCD) = 2;
 	*loadData(0x8791) = 2;
 
-	_channels[0].load(loadData(0x4D2A));
-	_channels[1].load(loadData(0x51AA));
-	_channels[2].load(loadData(0x5634));
-	_channels[3].load(loadData(0x6844));
-	_channels[4].load(loadData(0x7DD0));
+	_channels[0].playData(loadData(0x4D2A));
+	_channels[1].playData(loadData(0x51AA));
+	_channels[2].playData(loadData(0x5634));
+	_channels[3].playData(loadData(0x6844));
+	_channels[4].playData(loadData(0x7DD0));
 	return 0;
 }
 
@@ -2507,11 +2507,11 @@ int RSound9::command36() {
 
 	Channel *chan = playSound(0x32C2);
 	if (chan)
-		chan->_innerLoopPtr = loadData(0x3378);
+		chan->_innerLoopStart = loadData(0x3378);
 
 	chan = playSound(0x32BC);
 	if (chan)
-		chan->_innerLoopPtr = loadData(0x3368);
+		chan->_innerLoopStart = loadData(0x3368);
 	return 0;
 }
 
@@ -2530,13 +2530,13 @@ int RSound9::command38() {
 
 void RSound9::loadCommand38() {
 	_callbackFnPtr = nullptr;
-	_channels[0].load(loadData(0x1878));
-	_channels[1].load(loadData(0x1F64));
-	_channels[2].load(loadData(0x308E));
-	_channels[3].load(loadData(0x2A10));
-	_channels[4].load(loadData(0x21C8));
-	_channels[5].load(loadData(0x2558));
-	_channels[6].load(loadData(0x1E9A));
+	_channels[0].playData(loadData(0x1878));
+	_channels[1].playData(loadData(0x1F64));
+	_channels[2].playData(loadData(0x308E));
+	_channels[3].playData(loadData(0x2A10));
+	_channels[4].playData(loadData(0x21C8));
+	_channels[5].playData(loadData(0x2558));
+	_channels[6].playData(loadData(0x1E9A));
 }
 
 int RSound9::command39() {
@@ -2546,13 +2546,13 @@ int RSound9::command39() {
 
 void RSound9::loadCommand39() {
 	_callbackFnPtr = nullptr;
-	_channels[0].load(loadData(0x1A24));
-	_channels[1].load(loadData(0x1FD0));
-	_channels[2].load(loadData(0x318A));
-	_channels[3].load(loadData(0x2E4A));
-	_channels[4].load(loadData(0x2380));
-	_channels[5].load(loadData(0x2642));
-	_channels[6].load(loadData(0x1E9C));
+	_channels[0].playData(loadData(0x1A24));
+	_channels[1].playData(loadData(0x1FD0));
+	_channels[2].playData(loadData(0x318A));
+	_channels[3].playData(loadData(0x2E4A));
+	_channels[4].playData(loadData(0x2380));
+	_channels[5].playData(loadData(0x2642));
+	_channels[6].playData(loadData(0x1E9C));
 }
 
 int RSound9::command40() {
@@ -2562,11 +2562,11 @@ int RSound9::command40() {
 
 void RSound9::loadCommand40() {
 	_callbackFnPtr = nullptr;
-	_channels[0].load(loadData(0x4F00));
-	_channels[1].load(loadData(0x534A));
-	_channels[2].load(loadData(0x5CDE));
-	_channels[3].load(loadData(0x6F8E));
-	_channels[4].load(loadData(0x8110));
+	_channels[0].playData(loadData(0x4F00));
+	_channels[1].playData(loadData(0x534A));
+	_channels[2].playData(loadData(0x5CDE));
+	_channels[3].playData(loadData(0x6F8E));
+	_channels[4].playData(loadData(0x8110));
 }
 
 int RSound9::command41() {
@@ -2576,11 +2576,11 @@ int RSound9::command41() {
 
 void RSound9::loadCommand41() {
 	_callbackFnPtr = nullptr;
-	_channels[0].load(loadData(0x4F26));
-	_channels[1].load(loadData(0x53BC));
-	_channels[2].load(loadData(0x5DFE));
-	_channels[3].load(loadData(0x747E));
-	_channels[4].load(loadData(0x8340));
+	_channels[0].playData(loadData(0x4F26));
+	_channels[1].playData(loadData(0x53BC));
+	_channels[2].playData(loadData(0x5DFE));
+	_channels[3].playData(loadData(0x747E));
+	_channels[4].playData(loadData(0x8340));
 }
 
 int RSound9::command42() {
@@ -2590,20 +2590,20 @@ int RSound9::command42() {
 
 void RSound9::loadCommand42() {
 	_callbackFnPtr = nullptr;
-	_channels[0].load(loadData(0x4F30));
-	_channels[1].load(loadData(0x555C));
-	_channels[2].load(loadData(0x6582));
-	_channels[3].load(loadData(0x7A2E));
-	_channels[4].load(loadData(0x8480));
+	_channels[0].playData(loadData(0x4F30));
+	_channels[1].playData(loadData(0x555C));
+	_channels[2].playData(loadData(0x6582));
+	_channels[3].playData(loadData(0x7A2E));
+	_channels[4].playData(loadData(0x8480));
 }
 
 int RSound9::command43() {
 	_callbackCounter = 80;
 	_callbackPeriod = 80;
-	_channels[0].load(loadData(0x34BE));
-	_channels[1].load(loadData(0x3A46));
-	_channels[2].load(loadData(0x3F52));
-	_channels[3].load(loadData(0x439A));
+	_channels[0].playData(loadData(0x34BE));
+	_channels[1].playData(loadData(0x3A46));
+	_channels[2].playData(loadData(0x3F52));
+	_channels[3].playData(loadData(0x439A));
 	return 0;
 }
 
@@ -2614,10 +2614,10 @@ int RSound9::command44_46() {
 
 void RSound9::loadCommand44_46() {
 	_callbackFnPtr = nullptr;
-	_channels[0].load(loadData(0x3518));
-	_channels[1].load(loadData(0x3AA2));
-	_channels[2].load(loadData(0x403A));
-	_channels[3].load(loadData(0x4486));
+	_channels[0].playData(loadData(0x3518));
+	_channels[1].playData(loadData(0x3AA2));
+	_channels[2].playData(loadData(0x403A));
+	_channels[3].playData(loadData(0x4486));
 }
 
 int RSound9::command45() {
@@ -2627,10 +2627,10 @@ int RSound9::command45() {
 
 void RSound9::loadCommand45() {
 	_callbackFnPtr = nullptr;
-	_channels[0].load(loadData(0x37AC));
-	_channels[1].load(loadData(0x3CF8));
-	_channels[2].load(loadData(0x41E6));
-	_channels[3].load(loadData(0x4630));
+	_channels[0].playData(loadData(0x37AC));
+	_channels[1].playData(loadData(0x3CF8));
+	_channels[2].playData(loadData(0x41E6));
+	_channels[3].playData(loadData(0x4630));
 }
 
 int RSound9::command47() {
@@ -2640,10 +2640,10 @@ int RSound9::command47() {
 
 void RSound9::loadCommand47() {
 	_callbackFnPtr = nullptr;
-	_channels[0].load(loadData(0x47D6));
-	_channels[1].load(loadData(0x48FA));
-	_channels[2].load(loadData(0x4A20));
-	_channels[3].load(loadData(0x4BAE));
+	_channels[0].playData(loadData(0x47D6));
+	_channels[1].playData(loadData(0x48FA));
+	_channels[2].playData(loadData(0x4A20));
+	_channels[3].playData(loadData(0x4BAE));
 }
 
 int RSound9::command48() {
@@ -2655,13 +2655,13 @@ int RSound9::command48() {
 }
 
 int RSound9::command49() {
-	_channels[0].load(loadData(0x12CA));
-	_channels[1].load(loadData(0x132A));
-	_channels[2].load(loadData(0x1384));
-	_channels[3].load(loadData(0x1666));
-	_channels[4].load(loadData(0x1682));
-	_channels[5].load(loadData(0x16A0));
-	_channels[6].load(loadData(0x16BE));
+	_channels[0].playData(loadData(0x12CA));
+	_channels[1].playData(loadData(0x132A));
+	_channels[2].playData(loadData(0x1384));
+	_channels[3].playData(loadData(0x1666));
+	_channels[4].playData(loadData(0x1682));
+	_channels[5].playData(loadData(0x16A0));
+	_channels[6].playData(loadData(0x16BE));
 	return 0;
 }
 
@@ -2677,11 +2677,11 @@ void RSound9::loadCommand50() {
 	*loadData(0x7DCD) = 0;
 	*loadData(0x8791) = 0;
 
-	_channels[0].load(loadData(0x50B8));
-	_channels[1].load(loadData(0x7DCE));
-	_channels[2].load(loadData(0x676A));
-	_channels[3].load(loadData(0x7D08));
-	_channels[4].load(loadData(0x85C4));
+	_channels[0].playData(loadData(0x50B8));
+	_channels[1].playData(loadData(0x7DCE));
+	_channels[2].playData(loadData(0x676A));
+	_channels[3].playData(loadData(0x7D08));
+	_channels[4].playData(loadData(0x85C4));
 }
 
 int RSound9::command51() {
@@ -2693,18 +2693,18 @@ int RSound9::command51() {
 	*loadData(0x7DCD) = 2;
 	*loadData(0x8791) = 2;
 
-	_channels[0].load(loadData(0x4D3C));
-	_channels[1].load(loadData(0x51EE));
-	_channels[2].load(loadData(0x5A62));
-	_channels[3].load(loadData(0x6986));
-	_channels[4].load(loadData(0x7E5C));
+	_channels[0].playData(loadData(0x4D3C));
+	_channels[1].playData(loadData(0x51EE));
+	_channels[2].playData(loadData(0x5A62));
+	_channels[3].playData(loadData(0x6986));
+	_channels[4].playData(loadData(0x7E5C));
 	return 0;
 }
 
 /*-----------------------------------------------------------------------*/
 
-RSoundDemo9::RSoundDemo9(Audio::Mixer *mixer) :
-		RSoundDemo(mixer, "rsound.009", 0x11D0, 0x3664, 0x69, 5) {
+RSoundDemo9::RSoundDemo9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
+		RSoundDemo(mixer, midiDriver, "rsound.009", 0x11D0, 0x3664, 0x69, 5) {
 }
 
 int RSoundDemo9::executeDemoCommonCommand(int commandId) {
@@ -2798,7 +2798,7 @@ int RSoundDemo9::command(int commandId, int param) {
 		for (uint index = 0; index < 3; ++index) {
 			const int channel = startEffectVoice(sequences[index]);
 			if (channel >= 0)
-				voice(channel)._innerLoopPtr = loadData(0x1340);
+				voice(channel)._innerLoopStart = loadData(0x1340);
 		}
 		break;
 	}
@@ -2856,11 +2856,11 @@ int RSoundDemo9::command(int commandId, int param) {
 
 		int channel = startEffectVoice(0x1334);
 		if (channel >= 0)
-			voice(channel)._innerLoopPtr = loadData(0x13EA);
+			voice(channel)._innerLoopStart = loadData(0x13EA);
 
 		channel = startEffectVoice(0x132E);
 		if (channel >= 0)
-			voice(channel)._innerLoopPtr = loadData(0x13DA);
+			voice(channel)._innerLoopStart = loadData(0x13DA);
 		break;
 	}
 	case 37: {

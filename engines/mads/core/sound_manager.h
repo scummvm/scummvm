@@ -22,6 +22,7 @@
 #ifndef MADS_CORE_SOUND_MANAGER_H
 #define MADS_CORE_SOUND_MANAGER_H
 
+#include "audio/mt32gm.h"
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/mutex.h"
@@ -98,9 +99,16 @@ protected:
 		int _param;
 	};
 
+	// Number of microseconds between driver updates (60 Hz frequency)
+	static const uint32 UPDATE_DELTA;
+
 	enum DriverType { SOUND_ADLIB, SOUND_MT32, SOUND_GM, SOUND_PCSPEAKER, SOUND_PAS };
 	Audio::Mixer *_mixer;
 	DriverType _driverType;
+	MidiDriver_MT32GM *_midiDriver;
+	uint32 _driverCallbackDelta;
+	uint32 _updateDeltaRemainder;
+
 	bool &_soundFlag;
 	SoundDriver *_driver = nullptr;
 	bool _newSoundsPaused = false;
@@ -193,6 +201,9 @@ public:
 	void noise();
 
 	//@}
+
+	void onTimer();
+	static void timerCallback(void *data);
 };
 
 } // namespace MADS

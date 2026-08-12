@@ -70,7 +70,7 @@ void RexSoundManager::validate() {
 }
 
 void RexSoundManager::loadDriver(int sectionNumber) {
-	removeDriver();
+	closeDriver();
 
 	if (_isDemo && _driverType == SOUND_ADLIB) {
 		switch (sectionNumber) {
@@ -93,39 +93,39 @@ void RexSoundManager::loadDriver(int sectionNumber) {
 			// The demo shares RSOUND.001 across numbered gameplay sections
 			// and uses RSOUND.009 only for its opening presentation.
 			if (sectionNumber == 9)
-				_driver = new RSoundDemo9(_mixer);
+				_driver = new RSoundDemo9(_mixer, _midiDriver);
 			else
-				_driver = new RSoundDemo1(_mixer);
+				_driver = new RSoundDemo1(_mixer, _midiDriver);
 			break;
 		}
 
 		switch (sectionNumber) {
 		case 1:
-			_driver = new RSound1(_mixer);
+			_driver = new RSound1(_mixer, _midiDriver);
 			break;
 		case 2:
-			_driver = new RSound2(_mixer);
+			_driver = new RSound2(_mixer, _midiDriver);
 			break;
 		case 3:
-			_driver = new RSound3(_mixer);
+			_driver = new RSound3(_mixer, _midiDriver);
 			break;
 		case 4:
-			_driver = new RSound4(_mixer);
+			_driver = new RSound4(_mixer, _midiDriver);
 			break;
 		case 5:
-			_driver = new RSound5(_mixer);
+			_driver = new RSound5(_mixer, _midiDriver);
 			break;
 		case 6:
-			_driver = new RSound6(_mixer);
+			_driver = new RSound6(_mixer, _midiDriver);
 			break;
 		case 7:
-			_driver = new RSound7(_mixer);
+			_driver = new RSound7(_mixer, _midiDriver);
 			break;
 		case 8:
-			_driver = new RSound8(_mixer);
+			_driver = new RSound8(_mixer, _midiDriver);
 			break;
 		case 9:
-			_driver = new RSound9(_mixer);
+			_driver = new RSound9(_mixer, _midiDriver);
 			break;
 		default:
 			return;

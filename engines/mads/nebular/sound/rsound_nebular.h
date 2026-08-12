@@ -34,7 +34,7 @@ private:
 	int _firstEffectChannel;
 
 protected:
-	RSoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+	RSoundDemo(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver, const Common::Path &filename,
 			int dataOffset, int dataSize, int sysExOffset,
 			int firstEffectChannel);
 
@@ -104,7 +104,7 @@ private:
 	int command40();
 	int command41();
 public:
-	RSound1(Audio::Mixer *mixer);
+	RSound1(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -119,7 +119,7 @@ private:
 	int executeDemoCommonCommand(int commandId);
 
 public:
-	explicit RSoundDemo1(Audio::Mixer *mixer);
+	explicit RSoundDemo1(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 	int command(int commandId, int param) override;
 };
 
@@ -186,7 +186,7 @@ private:
 	int command42();
 	int command43();
 public:
-	RSound2(Audio::Mixer *mixer);
+	RSound2(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -296,7 +296,7 @@ private:
 	int command59();
 	int command60();
 public:
-	RSound3(Audio::Mixer *mixer);
+	RSound3(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -366,7 +366,7 @@ private:
 	int command58();
 	int command59();
 public:
-	RSound4(Audio::Mixer *mixer);
+	RSound4(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -414,7 +414,7 @@ private:
 	int command40();
 	int command41();
 public:
-	RSound5(Audio::Mixer *mixer);
+	RSound5(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -467,7 +467,7 @@ private:
 	int command25();
 	int command28();
 public:
-	RSound6(Audio::Mixer *mixer);
+	RSound6(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -498,7 +498,7 @@ private:
 	int command36();
 	int command37();
 public:
-	RSound7(Audio::Mixer *mixer);
+	RSound7(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -544,7 +544,7 @@ private:
 	int command36();
 	int command37();
 public:
-	RSound8(Audio::Mixer *mixer);
+	RSound8(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -624,7 +624,7 @@ private:
 	void loadCommand47();
 	void loadCommand50();
 public:
-	RSound9(Audio::Mixer *mixer);
+	RSound9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
 	int command(int commandId, int param) override;
 };
@@ -635,7 +635,7 @@ private:
 	int executeDemoCommonCommand(int commandId);
 
 public:
-	explicit RSoundDemo9(Audio::Mixer *mixer);
+	explicit RSoundDemo9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 	int command(int commandId, int param) override;
 };
 
