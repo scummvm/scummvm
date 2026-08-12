@@ -103,8 +103,6 @@ protected:
 	DriverType _driverType;
 	bool &_soundFlag;
 	SoundDriver *_driver = nullptr;
-	bool _pollSoundEnabled = false;
-	bool _soundPollFlag = false;
 	bool _newSoundsPaused = false;
 	Common::Queue<QueuedCommand> _queuedCommands;
 	int _masterVolume = 255;
@@ -159,12 +157,6 @@ public:
 	 * Remove the driver
 	 */
 	void removeDriver();
-
-	/**
-	 * Sets the enabled status of the sound
-	 * @flag		True if sound should be enabled
-	 */
-	void setEnabled(bool flag);
 
 	/**
 	 * Temporarily pause the playback of any new sound commands

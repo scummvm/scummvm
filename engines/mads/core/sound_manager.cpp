@@ -80,7 +80,6 @@ bool SoundManager::isDriverActive() {
 void SoundManager::closeDriver() {
 	if (_driver) {
 		command(0);
-		setEnabled(false);
 		stop();
 
 		removeDriver();
@@ -90,11 +89,6 @@ void SoundManager::closeDriver() {
 void SoundManager::removeDriver() {
 	delete _driver;
 	_driver = nullptr;
-}
-
-void SoundManager::setEnabled(bool flag) {
-	_pollSoundEnabled = flag;
-	_soundPollFlag = false;
 }
 
 void SoundManager::pauseNewCommands() {
