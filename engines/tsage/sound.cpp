@@ -3242,10 +3242,7 @@ SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_groupData._pData = group_data;
 
 	_mixer = g_vm->_mixer;
-	_sampleRate = _mixer->getOutputRate();
-	_audioStream = NULL;
-	_channelData = NULL;
-	_channelVolume = 0;
+	_channelVolume = 127;
 }
 
 SoundBlasterDriver::~SoundBlasterDriver() {
@@ -3274,48 +3271,52 @@ int SoundBlasterDriver::setMasterVolume(int volume) {
 	return oldVolume;
 }
 
+byte SoundBlasterDriver::getVolume() const {
+	// tSAGE channel volumes use 0-127, while the mixer uses 0-255.
+	return _channelVolume * 2;
+}
+
+void SoundBlasterDriver::updateVolume() {
+	if (_mixer->isSoundHandleActive(_soundHandle))
+		_mixer->setChannelVolume(_soundHandle, getVolume());
+}
+
 void SoundBlasterDriver::playSound(const byte *channelData, int dataOffset, int program, int channel, int v0, int v1) {
 	if (program != -1)
 		return;
 
 	assert(channel == 0);
 
-	// If sound data has been previously set, then release it
-	if (_channelData)
-		updateVoice(channel);
-
-	// Set the new channel data
-	_channelData = channelData + dataOffset + 18;
-
-	// Make a copy of the buffer
-	int dataSize = g_vm->_memoryManager.getSize(channelData);
-	dataSize -= 18;
-
-	byte *soundData = (byte *)malloc(dataSize - dataOffset);
-	Common::copy(_channelData, _channelData + (dataSize - dataOffset), soundData);
-
-	_audioStream = Audio::makeQueuingAudioStream(11025, false);
-	_audioStream->queueBuffer(soundData, dataSize - dataOffset, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
-
-	// Start the new sound
-	if (!_mixer->isSoundHandleActive(_soundHandle))
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
-}
-
-void SoundBlasterDriver::updateVoice(int channel) {
-	// Stop the playing voice
 	if (_mixer->isSoundHandleActive(_soundHandle))
 		_mixer->stopHandle(_soundHandle);
 
-	_audioStream = NULL;
-	_channelData = NULL;
+	// Digitized tracks have an 18-byte header. The sample rate is a little-
+	// endian word at offset 4 and unsigned 8-bit PCM follows the header.
+	const byte *sampleHeader = channelData + dataOffset;
+	const int sampleHeaderSize = 18;
+	const int sampleRate = READ_LE_UINT16(sampleHeader + 4);
+	const byte *sampleData = sampleHeader + sampleHeaderSize;
+
+	// Make a copy of the buffer
+	const int dataSize = g_vm->_memoryManager.getSize(channelData) - dataOffset - sampleHeaderSize;
+	byte *soundData = (byte *)malloc(dataSize);
+	Common::copy(sampleData, sampleData + dataSize, soundData);
+	Audio::AudioStream *audioStream = Audio::makeRawStream(soundData, dataSize, sampleRate, Audio::FLAG_UNSIGNED);
+
+	// Start the new sound
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream, -1, getVolume());
+}
+
+void SoundBlasterDriver::updateVoice(int channel) {
+	// Digitized sounds play to completion after being triggered. A new sample
+	// stops the current one in playSound().
 }
 
 void SoundBlasterDriver::proc38(int channel, int cmd, int value) {
 	if (cmd == 7) {
 		// Set channel volume
 		_channelVolume = value;
-		_mixer->setChannelVolume(_soundHandle, (byte)MIN(255, value * 2));
+		updateVolume();
 	}
 }
 
@@ -3324,14 +3325,7 @@ void SoundBlasterDriver::proc42(int channel, int cmd, int value, int *v1, int *v
 	*v1 = 0;
 	*v2 = 0;
 
-	// Note: Checking whether a playing Fx sound had finished was originally done in another
-	// method in the sample playing code. But since we're using the ScummVM audio soundsystem,
-	// it's easier simply to do the check right here
-	if (_audioStream && (_audioStream->numQueuedStreams() == 0)) {
-		updateVoice(channel);
-	}
-
-	if (!_channelData)
+	if (!_mixer->isSoundHandleActive(_soundHandle))
 		// Flag that sound isn't playing
 		*v1 = 1;
 }
