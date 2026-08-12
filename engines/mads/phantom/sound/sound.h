@@ -39,9 +39,8 @@ protected:
 	void loadDriver(int sectionNum) override;
 
 public:
-	PhantomSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool isDemo) :
-		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
-	}
+	PhantomSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool usePas,
+			bool isDemo);
 	~PhantomSoundManager() override {}
 
 	/**
