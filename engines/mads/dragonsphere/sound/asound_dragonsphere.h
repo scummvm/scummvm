@@ -23,6 +23,7 @@
 #define MADS_DRAGONSPHERE_SOUND_ASOUND_DRAGONSPHERE_H
 
 #include "mads/dragonsphere/sound/asound.h"
+#include "mads/phantom/sound/asound.h"
 
 namespace MADS {
 namespace Dragonsphere {
@@ -59,6 +60,7 @@ private:
 	void loadCommand32();
 	void loadCommand33();
 	void loadCommand34();
+	void loadCallback1FBA();
 	void loadCommand35();
 	void loadCommand36();
 	void loadCommand37();
@@ -154,6 +156,8 @@ private:
 	int command100();
 	int command101();
 
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
+
 public:
 	ASound1(Audio::Mixer *mixer);
 	~ASound1() override {}
@@ -200,6 +204,8 @@ private:
 
 	int command64(); int command65(); int command66(); int command67();
 	int command68(); int command69_70(); int command71(); int command72();
+
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
 
 public:
 	ASound2(Audio::Mixer *mixer);
@@ -269,6 +275,8 @@ private:
 	int command71();
 	int command72();
 	int command73();
+
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
 
 public:
 	ASound3(Audio::Mixer *mixer);
@@ -359,6 +367,7 @@ private:
 
 	// Deferred loader callbacks (void, Pattern B)
 	void loadCommand16();
+	void loadCallback1B7B();
 	void loadCommand32();
 	void loadCommand33();
 	void loadCommand34();
@@ -384,6 +393,8 @@ private:
 	int command72(); int command73(); int command74(); int command75();
 	int command76(); int command77(); int command78();
 	int command80(); int command81();
+
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
 
 public:
 	ASound5(Audio::Mixer *mixer);
@@ -446,6 +457,8 @@ private:
 	int command96(); int command97(); int command98();
 	int command100(); int command101();
 
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
+
 public:
 	ASound6(Audio::Mixer *mixer);
 	~ASound6() override {}
@@ -453,22 +466,65 @@ public:
 };
 
 /**
+ * Shared runtime for the Dragonsphere demo ASOUND overlays.
+ *
+ * Both demo overlays use the older bytecode VM also used by Return of the
+ * Phantom rather than the grouped retail Dragonsphere VM. This adapter adds
+ * only the Dragonsphere demo controller callback used by their command
+ * handlers.
+ */
+class ASoundDemo : public MADS::Phantom::Sound::ASound {
+protected:
+	typedef void (ASoundDemo::*CallbackFunction)();
+
+private:
+	uint16 _callbackCounter;
+	uint16 _callbackPeriod;
+	CallbackFunction _callbackFnPtr;
+
+	void clearGameCallback();
+	void resetGameState() override;
+	void tickGameCallback() override;
+
+protected:
+	ASoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+		int dataOffset, int dataSize);
+
+	int isMusicChannelsActive() const;
+	void scheduleCallback(CallbackFunction fn) {
+		_callbackFnPtr = fn;
+	}
+	void resetCallbackTimer(uint16 period) {
+		_callbackFnPtr = nullptr;
+		_callbackCounter = period;
+		_callbackPeriod = period;
+	}
+	void resetCallbackTimerEx(uint16 counter, uint16 period) {
+		_callbackFnPtr = nullptr;
+		_callbackCounter = counter;
+		_callbackPeriod = period;
+	}
+};
+
+/**
  * ASoundDemo1  (asound.dr1 [demo], _dataOffset = 0x23e0, _dataSize = 0x4900)
  *
- * Dispatch table layout (four tables collapsed to flat [93]):
+ * Dispatch table layout (five tables collapsed to flat [93]):
  *   commands0:  commands  0– 8  (base=0,    max=8)
  *   commands16: command   16    (base=0x10, max=0x10, 1 entry)
- *   commands24: commands 24–43  (base=0x18, max=0x2B; slots 28,29,44 = no-op)
+ *   commands24: commands 24–29  (base=0x18, max=0x1D; slots 28,29 = no-op)
+ *   commands32: commands 32–46  (base=0x20, max=0x2E; slot 46 = no-op)
  *   commands64: commands 64–92  (base=0x40, max=0x5C; slots 64–89 = no-op)
  */
-class ASoundDemo1 : public ASound {
+class ASoundDemo1 : public ASoundDemo {
 private:
 	typedef int (ASoundDemo1::*CommandPtr)();
 	static const CommandPtr _commandList[93];
 
+	void callFunction(uint16 offset,
+		MADS::Phantom::Sound::AdlibChannel &channel) override;
+
 	void loadCommand16();
-	void loadCommand30();
-	void loadCommand31();
 	void loadCommand32();
 	void loadCommand33();
 	void loadCommand34();
@@ -481,6 +537,8 @@ private:
 	void loadCommand41();
 	void loadCommand42();
 	void loadCommand43();
+	void loadCommand44();
+	void loadCommand45();
 	void loadCommand92();
 
 	int command0(); int command1(); int command2(); int command3();
@@ -490,10 +548,10 @@ private:
 	int command16();
 
 	int command24(); int command25(); int command26(); int command27();
-	int command30(); int command31(); int command32(); int command33();
-	int command34(); int command35(); int command36(); int command37();
-	int command38(); int command39(); int command40(); int command41();
-	int command42(); int command43();
+	int command32(); int command33(); int command34(); int command35();
+	int command36(); int command37(); int command38(); int command39();
+	int command40(); int command41(); int command42(); int command43();
+	int command44(); int command45();
 
 	int command90(); int command91(); int command92();
 
@@ -544,14 +602,9 @@ private:
 	int command57(); int command58(); int command59();
 	int command61(); int command62(); int command63();
 
-	static const CommandPtr _commandList[65];
+	bool callFunction(uint16 offset, AdlibChannel &channel) override;
 
-protected:
-	/**
-	 * Calls a function at a fixed offset within the sound driver.
-	 * @param offset		Offset of the function
-	 */
-	void callFunction(uint16 offset) override;
+	static const CommandPtr _commandList[65];
 
 public:
 	ASound9(Audio::Mixer *mixer);
@@ -573,7 +626,7 @@ public:
  *     outside the array, not via separate array slots)
  *   commands 64+ are unreachable (dispatcher upper bound is 0 for that range)
  */
-class ASoundDemo9 : public ASound {
+class ASoundDemo9 : public ASoundDemo {
 private:
 	typedef int (ASoundDemo9::*CommandPtr)();
 	static const CommandPtr _commandList[51];

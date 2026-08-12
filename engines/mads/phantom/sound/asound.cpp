@@ -326,6 +326,7 @@ int ASound::command0() {
 
 	/* 6. Reset callback counters */
 	resetCallback();
+	resetGameState();
 
 	return 0;
 }
@@ -847,6 +848,7 @@ void ASound::update() {
 		++_frameNumber2;
 
 		pollAllChannels();
+		tickGameCallback();
 		updateAllChannels();
 		_anySweepActive = false;
 
