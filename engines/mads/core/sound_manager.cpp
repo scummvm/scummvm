@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "mads/core/sound_manager.h"
 
 namespace Audio {
@@ -68,6 +69,11 @@ void SoundManager::init(int sectionNumber) {
 	// Load the correct driver for the section
 	removeDriver();
 	loadDriver(sectionNumber);
+	if (!_driver) {
+		warning("No MADS sound driver is available for section %d",
+			sectionNumber);
+		return;
+	}
 
 	// Set volume for newly loaded driver
 	_driver->setVolume(_masterVolume);
