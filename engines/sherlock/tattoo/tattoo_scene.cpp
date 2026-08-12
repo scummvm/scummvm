@@ -37,6 +37,71 @@ const int FS_TRANS[8] = {
 	STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN, STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
 };
 
+/**
+ * Derives the AI-upscaled-sprite-override resource name (see
+ * tools/extract_rosetattoo_sprites.py's "WATSON.VGS" -> "watson_vgs"
+ * directory naming convention, also used inline in
+ * WidgetInventory::drawInventory()) from an object/person's currently
+ * selected ImageFrame and the ImageFile it was drawn from, plus that
+ * frame's index within the file (matching the "frame_NNN" numbering
+ * upscale_rosetattoo_sprites.py produces - see ImageFile::indexOf()).
+ * Returns false (leaving resourceName/frameIndex untouched) if images is
+ * null or imageFrame doesn't actually belong to it - e.g. Sprite/TattooPerson
+ * objects can draw from either _images or _altImages depending on which
+ * sequence is active, so callers with both should try each in turn.
+ */
+static bool resolveRoseTattooHiresSpriteOverride(ImageFile *images, ImageFrame *imageFrame,
+		Common::String &resourceName, int &frameIndex) {
+	if (!images || !imageFrame)
+		return false;
+
+	int idx = images->indexOf(imageFrame);
+	if (idx < 0)
+		return false;
+
+	resourceName = images->getFilename().baseName();
+	Common::replace(resourceName, ".", "_");
+	resourceName.toLowercase();
+	frameIndex = idx;
+	return true;
+}
+
+/**
+ * Queues an AI-upscaled scene-sprite override (see
+ * Screen::queueRoseTattooHiresSceneSprite()) for a bg-shape Object
+ * currently being drawn, if one is available for its current image/frame.
+ * A quiet no-op (matching the underlying queue call's own no-op behavior)
+ * when hires mode isn't active or no override asset exists for this
+ * object's resource/frame.
+ */
+static void queueRoseTattooHiresObjectOverride(Screen &screen, Object &obj) {
+	Common::String resourceName;
+	int frameIndex;
+	if (resolveRoseTattooHiresSpriteOverride(obj._images, obj._imageFrame, resourceName, frameIndex)) {
+		screen.queueRoseTattooHiresSceneSprite(resourceName, frameIndex, *obj._imageFrame, obj._position,
+			(obj._flags & OBJ_FLIPPED) != 0, obj._scaleVal);
+	}
+}
+
+/**
+ * Same as queueRoseTattooHiresObjectOverride(), but for a walking
+ * character (Sprite/TattooPerson). pt/horizFlip/scaleVal should be the
+ * exact same values the caller already computed for its adjacent
+ * SHtransBlitFrom(*p._imageFrame, pt, horizFlip, scaleVal) call. Tries
+ * p._images first, then p._altImages (used for alternate NPC sequences -
+ * see Sprite::_altImages), since _imageFrame may currently point into
+ * either depending on which sequence is active.
+ */
+static void queueRoseTattooHiresPersonOverride(Screen &screen, TattooPerson &p,
+		const Common::Point &pt, bool horizFlip, int scaleVal) {
+	Common::String resourceName;
+	int frameIndex;
+	if (resolveRoseTattooHiresSpriteOverride(p._images, p._imageFrame, resourceName, frameIndex) ||
+			resolveRoseTattooHiresSpriteOverride(p._altImages, p._imageFrame, resourceName, frameIndex)) {
+		screen.queueRoseTattooHiresSceneSprite(resourceName, frameIndex, *p._imageFrame, pt, horizFlip, scaleVal);
+	}
+}
+
 /*----------------------------------------------------------------*/
 
 struct ShapeEntry {
@@ -136,6 +201,12 @@ void TattooScene::drawAllShapes() {
 	ShapeList shapeList;
 	int ordering = 0;
 
+	// Start this frame's scene sprite/object hires overrides fresh - unlike
+	// the UI sprite layer (inventory icons etc.), bg-shapes/people can
+	// appear, disappear or move every single frame, so there's no
+	// incremental erase bookkeeping: just wipe and fully requeue below.
+	screen.clearRoseTattooHiresSceneSpriteLayer();
+
 	// Draw all objects and animations that are set to behind
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
@@ -148,6 +219,7 @@ void TattooScene::drawAllShapes() {
 				screen._backBuffer1.SHblitFrom(*obj._imageFrame, obj._position);
 			else
 				screen._backBuffer1.SHtransBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, obj._scaleVal);
+			queueRoseTattooHiresObjectOverride(screen, obj);
 		}
 	}
 
@@ -202,6 +274,7 @@ void TattooScene::drawAllShapes() {
 			else
 				screen._backBuffer1.SHtransBlitFrom(*se._shape->_imageFrame, se._shape->_position,
 					se._shape->_flags & OBJ_FLIPPED, se._shape->_scaleVal);
+			queueRoseTattooHiresObjectOverride(screen, *se._shape);
 		} else if (se._isAnimation) {
 			// It's an active animation
 			screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
@@ -216,8 +289,10 @@ void TattooScene::drawAllShapes() {
 
 			if (p._tempScaleVal == SCALE_THRESHOLD) {
 				p._tempX += adjust.x;
-				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
-					- p.frameHeight() - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, p._tempScaleVal);
+				Common::Point pt(p._tempX, p._position.y / FIXED_INT_MULTIPLIER - p.frameHeight() - adjust.y);
+				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, pt,
+					p._walkSequences[p._sequenceNumber]._horizFlip, p._tempScaleVal);
+				queueRoseTattooHiresPersonOverride(screen, p, pt, p._walkSequences[p._sequenceNumber]._horizFlip, p._tempScaleVal);
 			} else {
 				if (adjust.x) {
 					if (!p._tempScaleVal)
@@ -246,8 +321,11 @@ void TattooScene::drawAllShapes() {
 						++adjust.y;
 				}
 
-				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
-					- p._imageFrame->sDrawYSize(p._tempScaleVal) - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, p._tempScaleVal);
+				Common::Point pt(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
+					- p._imageFrame->sDrawYSize(p._tempScaleVal) - adjust.y);
+				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, pt,
+					p._walkSequences[p._sequenceNumber]._horizFlip, p._tempScaleVal);
+				queueRoseTattooHiresPersonOverride(screen, p, pt, p._walkSequences[p._sequenceNumber]._horizFlip, p._tempScaleVal);
 			}
 		}
 	}
@@ -262,6 +340,7 @@ void TattooScene::drawAllShapes() {
 				screen._backBuffer1.SHblitFrom(*obj._imageFrame, obj._position);
 			else
 				screen._backBuffer1.SHtransBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, obj._scaleVal);
+			queueRoseTattooHiresObjectOverride(screen, obj);
 		}
 	}
 

@@ -48,9 +48,37 @@ public:
 	 * Update the display of the widget on the screen
 	 */
 	void draw() override;
+
+	/**
+	 * Re-queues any cached hires TrueType text at the widget's current
+	 * position. No-op by default; overridden by WidgetTooltip. Must be
+	 * called from draw() (i.e. after doBgAnimRestoreUI()'s erase() pass
+	 * has already cleared the previous frame's hires text rect this
+	 * frame - see TattooScene::doBgAnim()'s call ordering), not from
+	 * handleEvents() (which runs before that erase() pass and would have
+	 * its queued text wiped out before ever reaching the screen).
+	 */
+	virtual void refreshHiresText() {}
 };
 
 class WidgetTooltip: public WidgetTooltipBase {
+private:
+	// Cached line-layout info from the last setText() call, replayed every
+	// frame from draw() (see refreshHiresText()) so hires text stays
+	// queued even when the tooltip repositions to follow the mouse
+	// without setText() being called again.
+	Common::String _line1, _line2;
+	int _line1X, _line2X, _line2Y;
+
+	/**
+	 * Re-queues the hires TrueType rendering of the currently cached
+	 * tooltip text at the tooltip's current _bounds position. Needed
+	 * because hires text (unlike the bitmap _surface, which is drawn once
+	 * and just re-blitted at a new position every frame) is only queued
+	 * when actually written via Fonts::writeString(), and repositioning
+	 * the tooltip to track the mouse doesn't call setText() again.
+	 */
+	void refreshHiresText() override;
 public:
 	int _offsetY;
 public:

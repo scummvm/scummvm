@@ -82,6 +82,26 @@ void Events::setCursor(CursorId cursorId) {
 		hotspotY = 0;
 	}
 
+	// Prefer an AI-upscaled, true-color cursor override if one is available
+	// (see tools/extract_rosetattoo_sprites.py / upscale_rosetattoo_sprites.py):
+	// the frame index in RMOUSE.VGS lines up 1:1 with CursorId, so no lookup
+	// table is needed. Falls back to the nearest-neighbor-scaled palettized
+	// cursor below when no override is configured/found.
+	if (!IS_3DO) {
+		const int hiresScale = _vm->_screen->roseTattooHiresScale();
+		if (hiresScale > 1 && cursorId >= 0) {
+			Graphics::Surface overrideSurface;
+			if (_vm->_screen->loadRoseTattooHiresCursorOverride(
+					"rmouse_vgs", (int)cursorId, overrideSurface)) {
+				CursorMan.replaceCursor(overrideSurface, hotspotX * hiresScale,
+					hotspotY * hiresScale, 0);
+				overrideSurface.free();
+				_cursorId = cursorId;
+				return;
+			}
+		}
+	}
+
 	// Set the cursor data
 	Graphics::Surface &s = (*_cursorImages)[cursorId]._frame;
 
@@ -96,7 +116,31 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 
 	if (!IS_3DO) {
 		// PC 8-bit palettized
-		CursorMan.replaceCursor(src, hotspotX, hotspotY, 0xff);
+		const int hiresScale = _vm->_screen->roseTattooHiresScale();
+
+		if (hiresScale > 1) {
+			// Upscale the cursor by the same factor as the hires composite,
+			// so it's proportioned correctly relative to the enlarged window
+			// (nearest-neighbor replication, matching the 3DO branch below).
+			Graphics::Surface tempSurface;
+			tempSurface.create(src.w * hiresScale, src.h * hiresScale, src.format);
+
+			for (int y = 0; y < src.h; ++y) {
+				const byte *srcP = (const byte *)src.getBasePtr(0, y);
+				for (int sy = 0; sy < hiresScale; ++sy) {
+					byte *destP = (byte *)tempSurface.getBasePtr(0, y * hiresScale + sy);
+					for (int x = 0; x < src.w; ++x) {
+						for (int sx = 0; sx < hiresScale; ++sx)
+							*destP++ = srcP[x];
+					}
+				}
+			}
+
+			CursorMan.replaceCursor(tempSurface, hotspotX * hiresScale, hotspotY * hiresScale, 0xff);
+			tempSurface.free();
+		} else {
+			CursorMan.replaceCursor(src, hotspotX, hotspotY, 0xff);
+		}
 	} else if (!_vm->_isScreenDoubled) {
 		CursorMan.replaceCursor(src, hotspotX, hotspotY, 0x0000);
 	} else {
@@ -229,6 +273,11 @@ void Events::pollEvents() {
 	_mousePos = g_system->getEventManager()->getMousePos();
 	if (_vm->_isScreenDoubled)
 		_mousePos = Common::Point(_mousePos.x / 2, _mousePos.y / 2);
+	else {
+		const int hiresScale = _vm->_screen->roseTattooHiresScale();
+		if (hiresScale > 1)
+			_mousePos = Common::Point(_mousePos.x / hiresScale, _mousePos.y / hiresScale);
+	}
 }
 
 void Events::pollEventsAndWait() {
@@ -237,12 +286,21 @@ void Events::pollEventsAndWait() {
 }
 
 void Events::warpMouse(const Common::Point &pt) {
-	Common::Point pos = pt;
-	if (_vm->_isScreenDoubled)
-		pos = Common::Point(pt.x / 2, pt.y);
+	// _mousePos is game-space, relative to the current scroll position (i.e. screen-space).
+	// g_system->warpMouse takes physical window coordinates.
+	_mousePos = pt - _vm->_screen->_currentScroll;
 
-	_mousePos = pos - _vm->_screen->_currentScroll;
-	g_system->warpMouse(_mousePos.x, _mousePos.y);
+	Common::Point sysPos = _mousePos;
+	if (_vm->_isScreenDoubled) {
+		sysPos.x /= 2;
+		// y is not halved on doubled screens (3DO portrait mode doubles width only)
+	} else {
+		const int hiresScale = _vm->_screen->roseTattooHiresScale();
+		if (hiresScale > 1)
+			sysPos = Common::Point(_mousePos.x * hiresScale, _mousePos.y * hiresScale);
+	}
+
+	g_system->warpMouse(sysPos.x, sysPos.y);
 }
 
 void Events::warpMouse() {

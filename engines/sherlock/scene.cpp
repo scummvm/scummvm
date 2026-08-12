@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+
 #include "sherlock/scene.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
@@ -30,8 +32,82 @@
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
+#include "common/file.h"
+#include "common/fs.h"
+#include "image/png.h"
+
+#include <cstdlib>
 
 namespace Sherlock {
+
+static int closestPaletteEntry(const byte *palette, byte r, byte g, byte b) {
+	int closest = 0;
+	int closestDistance = 256 * 256 * 3;
+
+	for (int idx = 0; idx < 256; ++idx) {
+		int dr = (int)r - palette[idx * 3];
+		int dg = (int)g - palette[idx * 3 + 1];
+		int db = (int)b - palette[idx * 3 + 2];
+		int distance = dr * dr + dg * dg + db * db;
+
+		if (distance < closestDistance) {
+			closest = idx;
+			closestDistance = distance;
+		}
+	}
+
+	return closest;
+}
+
+static bool loadRoseTattooBackgroundOverride(Screen &screen, int sceneNumber) {
+	const char *overrideDir = getenv("SCUMMVM_SHERLOCK_TATTOO_ASSET_OVERRIDES");
+	if (!overrideDir || !*overrideDir)
+		return false;
+
+	Common::Path overridePath(Common::String::format(
+		"%s/scene_%03d/background.png", overrideDir, sceneNumber), '/');
+	Common::File file;
+	if (!file.open(Common::FSNode(overridePath)))
+		return false;
+
+	Image::PNGDecoder decoder;
+	if (!decoder.loadStream(file)) {
+		warning("Could not decode Rose Tattoo background override: %s",
+			overridePath.toString(Common::Path::kNativeSeparator).c_str());
+		return false;
+	}
+
+	const Graphics::Surface *surface = decoder.getSurface();
+	if (!surface || surface->w != screen._backBuffer1.width() || surface->h != screen._backBuffer1.height()) {
+		warning("Ignoring Rose Tattoo background override with unexpected dimensions: %s",
+			overridePath.toString(Common::Path::kNativeSeparator).c_str());
+		return false;
+	}
+
+	const Graphics::Palette &sourcePalette = decoder.getPalette();
+	const byte *sourcePaletteData = sourcePalette.data();
+	byte *dst = (byte *)screen._backBuffer1.getPixels();
+
+	for (int y = 0; y < surface->h; ++y) {
+		byte *dstRow = dst + y * screen._backBuffer1.pitch;
+		for (int x = 0; x < surface->w; ++x) {
+			uint32 color = surface->getPixel(x, y);
+			byte r, g, b;
+
+			if (surface->format.bytesPerPixel == 1 && sourcePaletteData && color < sourcePalette.size()) {
+				r = sourcePaletteData[color * 3];
+				g = sourcePaletteData[color * 3 + 1];
+				b = sourcePaletteData[color * 3 + 2];
+			} else {
+				surface->format.colorToRGB(color, r, g, b);
+			}
+
+			dstRow[x] = closestPaletteEntry(screen._cMap, r, g, b);
+		}
+	}
+
+	return true;
+}
 
 BgFileHeader::BgFileHeader() {
 	_numStructs = -1;
@@ -373,6 +449,9 @@ bool Scene::loadScene(const Common::Path &filename) {
 				} else {
 					rrmStream->read(screen._backBuffer1.getPixels(), fullWidth * SHERLOCK_SCREEN_HEIGHT);
 				}
+
+				loadRoseTattooBackgroundOverride(screen, _currentScene);
+				screen.loadRoseTattooHiresBackgroundOverride(_currentScene);
 			}
 
 			// Read in the shapes header info

@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+
 #include "sherlock/sherlock.h"
 #include "sherlock/surface.h"
 #include "common/scummsys.h"
@@ -133,6 +135,15 @@ Common::Error SherlockEngine::run() {
 	if (_loadGameSlot != -1) {
 		_saves->loadGame(_loadGameSlot);
 		_loadGameSlot = -1;
+
+		// TEMP DEBUG: allow overriding the post-load scene for manual
+		// visual verification (e.g. jumping straight to the overhead map).
+		const char *postLoadScene = getenv("SCUMMVM_SHERLOCK_TATTOO_POSTLOAD_SCENE");
+		if (postLoadScene && *postLoadScene) {
+			int sceneNumber = atoi(postLoadScene);
+			if (sceneNumber > 0)
+				_scene->_goToScene = sceneNumber;
+		}
 	} else {
 		do {
 			showOpening();

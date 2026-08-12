@@ -328,6 +328,52 @@ void Fonts::writeString(BaseSurface *surface, const Common::String &str,
 			warning("Invalid character encountered - %d translated from %d", (int)translCurChar, (int)curChar);
 		}
 	}
+
+#ifdef USE_FREETYPE2
+	// Queue a crisp TrueType rendering of this same string on top of the
+	// blocky bitmap glyphs just drawn above, for hires mode (see
+	// Screen::queueRoseTattooHiresText()). Only for the plain-Latin case -
+	// the CJK/EUC-CN and Big5 paths above render single/double-byte glyphs
+	// from a completely different bitmap source with their own escape-code
+	// syntax that a Latin TTF font can't reproduce, so leave those as-is.
+	//
+	// Only queue hires text when we can compute a Screen-absolute position.
+	// Fonts::writeString() is called with surfaces of two very different
+	// kinds: the live Screen/backBuffer1 (a full native-resolution mirror of
+	// the screen, always blitted back at the same coordinates it was drawn
+	// at - so pt IS already screen-absolute), and small widget-local
+	// surfaces sized just to fit their content (tooltips, dialogs, journal
+	// pages, inventory descriptions), which get blitted to some other,
+	// dynamically-computed screen position later - for those, pt is local
+	// to that tiny surface (usually near (0, 0)), and the widget must have
+	// told us its origin (via BaseSurface::setHiresTextOrigin()) for us to
+	// translate pt into a real screen coordinate. Surfaces matching the
+	// live screen's native dimensions are assumed to be full-screen
+	// mirrors, so pt is used as-is; anything else without a known origin
+	// is skipped rather than rendering hires text at the wrong spot.
+	Common::Point hiresOrigin;
+	bool haveOrigin = surface->getHiresTextOrigin(hiresOrigin);
+	bool isFullScreenMirror = _vm && _vm->_screen &&
+		surface->w == _vm->_screen->w && surface->h == _vm->_screen->h;
+	if (_vm && _vm->_screen && !_isModifiedEucCn && !_isBig5 &&
+			(haveOrigin || isFullScreenMirror)) {
+		Common::Point absPt = haveOrigin ? (pt + hiresOrigin) : pt;
+		// overrideColor is a palette index; resolve it to a real RGB color via
+		// the screen's current palette mapping. A color of 0 is used by some
+		// callers (e.g. WidgetCredits) purely as a dark drop-shadow pass
+		// underneath a differently-colored main text pass, so approximate it
+		// as plain black rather than looking up palette index 0 (which may be
+        // an unrelated color, e.g. transparent/background).
+		uint32 rgbColor = 0;
+		if (overrideColor) {
+			const byte *cMap = _vm->_screen->_cMap;
+			rgbColor = ((uint32)cMap[overrideColor * 3] << 16) |
+				((uint32)cMap[overrideColor * 3 + 1] << 8) |
+				(uint32)cMap[overrideColor * 3 + 2];
+		}
+		_vm->_screen->queueRoseTattooHiresText(str, absPt, rgbColor, _fontHeight);
+	}
+#endif
 }
 
 int Fonts::stringWidth(const Common::String &str) {

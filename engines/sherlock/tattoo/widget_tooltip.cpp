@@ -43,12 +43,78 @@ void WidgetTooltipBase::draw() {
 		screen.slamRect(_bounds);
 
 		// Draw the widget directly onto the screen. Unlike other widgets, we don't draw to the back buffer,
-		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer
-		screen.SHtransBlitFrom(_surface, Common::Point(_bounds.left - screen._currentScroll.x,
-			_bounds.top - screen._currentScroll.y));
+		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer.
+		//
+		// Skip this bitmap blit entirely when hires TTF text will be queued
+		// for this same widget just below (refreshHiresText(), later in
+		// this same draw() call): the blocky bitmap glyphs it would put
+		// onto the native screen are otherwise blown up 2x/3x/etc. by the
+		// hires composite and become visible (however briefly) underneath,
+		// or peeking out past the edges of, the crisp TTF text that's
+		// meant to fully replace them - this is the actual root cause of
+		// the "blocky bitmap text bleed-through" ghost bug: no amount of
+		// restoring the background from underneath the bitmap text after
+		// the fact (see the registerRoseTattooHiresTextRect()/
+		// clearRoseTattooHiresTextRect() dance below) reliably beats the
+		// bitmap text to the punch every single frame, so it's better to
+		// just never draw it in the first place when it won't be seen.
+		bool skipBitmapBlit = false;
+#ifdef USE_FREETYPE2
+		skipBitmapBlit = screen.usesRoseTattooHiresText();
+#endif
+		if (!skipBitmapBlit) {
+			screen.SHtransBlitFrom(_surface, Common::Point(_bounds.left - screen._currentScroll.x,
+				_bounds.top - screen._currentScroll.y));
+		}
 
 		// Store a copy of the drawn area for later erasing
 		_oldBounds = _bounds;
+
+#ifdef USE_FREETYPE2
+		// Re-queue this frame's hires text now, after the erase() pass
+		// above (and TattooScene::doBgAnim()'s earlier
+		// doBgAnimEraseBackground()/doBgAnimRestoreUI() call, which runs
+		// before draw() and erases *last* frame's hires text rect) - see
+		// refreshHiresText()'s doc comment for why this can't be done any
+		// earlier in the frame.
+		//
+		// Also tell the screen this exact rect (the widget's own bitmap
+		// bounds, not the narrower TTF glyph metrics) will be covered by
+		// hires text, so it fully repaints the smooth background there
+		// before blending - otherwise the bitmap font's (usually wider)
+		// glyphs would keep peeking out past the TTF text's edges.
+		//
+		// Only do this when the native bitmap blit above actually ran
+		// (!skipBitmapBlit): when it was skipped, nothing was drawn onto
+		// the native low-res framebuffer for this tooltip at all, so
+		// there's no blocky glyph content left to clean up here - and the
+		// background-restore this triggers (see
+		// Screen::blendRoseTattooHiresTextLayer()) unconditionally repaints
+		// the plain hires background across the *entire* rect, which also
+		// wipes out any moving character sprite that's already been
+		// composited there this same frame (they get restored/hidden every
+		// frame the tooltip covers them, then reappear once it moves on -
+		// this was the root cause of the "background blinking over/seeing
+		// through moveable characters" bug).
+		if (!skipBitmapBlit)
+			screen.registerRoseTattooHiresTextRect(_bounds);
+
+		// Wipe any previously-queued hires glyphs for this same rect before
+		// re-queuing below. refreshHiresText() re-draws the *same* text at
+		// the *same* position every single frame the tooltip stays put
+		// (that's the whole point - see its doc comment), but
+		// queueRoseTattooHiresText() alpha-blends each draw onto the
+		// persistent _roseTattooHiresTextLayer rather than overwriting it.
+		// Without clearing first, semi-transparent anti-aliased edge pixels
+		// (and writeFancyString()'s 9 slightly-offset drop-shadow passes)
+		// re-accumulate opacity frame after frame, so a tooltip that stays
+		// on screen for a while visibly "grows"/smears outward well past
+		// its own glyph outlines - this is the actual cause of the
+		// intermittent blocky-text bleed-through bug, not insufficient
+        // background-restore coverage.
+		screen.clearRoseTattooHiresTextRect(_bounds);
+		refreshHiresText();
+#endif
 	}
 }
 
@@ -58,6 +124,16 @@ void WidgetTooltipBase::erase() {
 	if (_oldBounds.width() > 0) {
 		// Restore the affected area from the back buffer to the screen
 		screen.slamRect(_oldBounds);
+
+#ifdef USE_FREETYPE2
+		// The bitmap glyphs just restored away in _oldBounds are erased by
+		// slamRect() above (it just re-blits the plain background), but any
+		// hires TrueType text queued for that same area persists across
+		// frames on its own (see Screen::_roseTattooHiresTextLayer) and
+		// must be explicitly cleared here too, or it'll keep getting
+		// blended back in every frame even after the tooltip is gone.
+		screen.clearRoseTattooHiresTextRect(_oldBounds);
+#endif
 
 		// Reset the old bounds so it won't be erased again
 		_oldBounds = Common::Rect(0, 0, 0, 0);
@@ -127,18 +203,49 @@ void WidgetTooltip::setText(const Common::String &strIn) {
 		_surface.create(width, height);
 		_surface.clear(TRANSPARENCY);
 
+		// Deliberately do NOT call _surface.setHiresTextOrigin() here (and
+		// explicitly clear any origin left over from a previous
+		// refreshHiresText() call below), so the writeFancyString() calls
+		// below draw the bitmap glyphs into the small local _surface (used
+		// for sizing/native-res blitting) WITHOUT also queuing hires TTF
+		// text. setText() can run more than once per displayed frame -
+		// e.g. while the mouse is quickly passing over several hotspots in
+		// a row, _bgFound/_arrowZone (and hence the tooltip text) can
+		// change several times before doBgAnim() ever calls draw()/erase()
+		// for this widget again. If we queued hires text here, any of
+		// those "phantom" intermediate strings that never actually reach
+        // draw() would still leave their glyphs queued into
+		// Screen::_roseTattooHiresTextLayer at whatever position was
+		// current when setText() ran - and since only draw()'s erase() of
+		// the *previously drawn* _bounds ever clears that layer, those
+		// phantom glyphs are never cleared, bleeding through as a stray
+		// blocky text ghost. refreshHiresText() (called every frame from
+		// draw(), which is always properly paired with an erase() of
+		// whatever was drawn before) is the sole place that should queue
+		// hires text for this widget.
+		_surface.clearHiresTextOrigin();
+
 		if (line2.empty()) {
 			// Only a single line
 			_surface.writeFancyString(str, Common::Point(0, 0), BLACK, INFO_TOP);
+			_line1 = str;
+			_line2 = "";
+			_line1X = 0;
+			_line2X = _line2Y = 0;
 		} else {
 			// Two lines to display
 			int xp, yp;
 			xp = (width - _surface.stringWidth(line1) - 2) / 2;
 			_surface.writeFancyString(line1, Common::Point(xp, 0), BLACK, INFO_TOP);
+			_line1 = line1;
+			_line1X = xp;
 
 			xp = (width - _surface.stringWidth(line2) - 2) / 2;
 			yp = _surface.stringHeight(line1) + 2;
 			_surface.writeFancyString(line2, Common::Point(xp, yp), BLACK, INFO_TOP);
+			_line2 = line2;
+			_line2X = xp;
+			_line2Y = yp;
 		}
 
 		// Set the initial display position for the tooltip text
@@ -152,7 +259,47 @@ void WidgetTooltip::setText(const Common::String &strIn) {
 
 	if (reset && !_surface.empty()) {
 		_surface.free();
+		_line1 = _line2 = "";
+
+		// Also clear _bounds (not just the surface): draw()'s erase-if-
+		// moved check compares _oldBounds against _bounds, and _bounds
+		// was left untouched at its last non-empty position above. If we
+		// don't reset it here too, the next draw() call sees
+		// _oldBounds == _bounds (unchanged) and therefore never calls
+		// erase() - since the surface is now empty, draw() also skips its
+		// own drawing branch, so the previously-drawn tooltip (both its
+		// bitmap blit and, when USE_FREETYPE2 hires text is active, the
+		// registerRoseTattooHiresTextRect()'d smooth text) is left on
+		// screen forever, until the mouse happens to reach a *different*
+		// bounds later. This is the actual cause of tooltip text lingering
+		// on screen while the cursor moves off a hotspot/map icon.
+		_bounds = Common::Rect(0, 0, 0, 0);
 	}
+}
+
+void WidgetTooltip::refreshHiresText() {
+#ifdef USE_FREETYPE2
+	if (_surface.empty() || _line1.empty())
+		return;
+
+	// Recompute the origin from the tooltip's current (possibly just
+	// repositioned) _bounds, rather than the mouse position used when
+	// setText() first ran, since the tooltip may have moved since then.
+	Common::Point origin(_bounds.left - _vm->_screen->_currentScroll.x,
+		_bounds.top - _vm->_screen->_currentScroll.y);
+	_surface.setHiresTextOrigin(origin);
+
+	// Redraw the same text at the same local coordinates used in setText():
+	// this re-blits identical pixels onto the already-drawn bitmap surface
+	// (harmless no-op there), but critically also re-queues the hires TTF
+	// text (see Fonts::writeString()) at the refreshed origin above, which
+	// is the actual point of calling this every frame the tooltip is
+	// visible - queueRoseTattooHiresText() is otherwise only invoked once,
+	// when the text is first set.
+	_surface.writeFancyString(_line1, Common::Point(_line1X, 0), BLACK, INFO_TOP);
+	if (!_line2.empty())
+		_surface.writeFancyString(_line2, Common::Point(_line2X, _line2Y), BLACK, INFO_TOP);
+#endif
 }
 
 void WidgetTooltip::handleEvents() {

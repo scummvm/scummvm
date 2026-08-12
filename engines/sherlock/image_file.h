@@ -98,6 +98,32 @@ public:
 	uint size();
 	void push_back(const ImageFrame &frame);
 
+	/**
+	 * The resource path this image data was loaded from (e.g. "item01.vgs"),
+	 * used to look up AI-upscaled hires sprite overrides that are keyed by
+	 * resource name (see Screen::queueRoseTattooHiresSprite()).
+	 */
+	const Common::Path &getFilename() const { return _name; }
+
+	/**
+	 * Returns the index of the given frame within this file's frame array,
+	 * or -1 if frame doesn't belong to it. Used to recover the frame index
+	 * (matching the "frame_NNN" numbering in tools/extract_rosetattoo_sprites.py)
+	 * for an ImageFrame pointer already selected by scene/animation logic
+	 * (e.g. Object::_imageFrame, Person::_imageFrame) - see
+	 * Screen::queueRoseTattooHiresSprite() callers in tattoo_scene.cpp,
+	 * which need both the owning resource name (getFilename()) and this
+	 * index to look up the matching AI-upscaled override asset.
+	 */
+	int indexOf(const ImageFrame *frame) const {
+		if (!frame || _frames.empty())
+			return -1;
+		const ImageFrame *base = &_frames[0];
+		if (frame < base || frame >= base + _frames.size())
+			return -1;
+		return (int)(frame - base);
+	}
+
 	byte _palette[256 * 3];
 public:
 	ImageFile();

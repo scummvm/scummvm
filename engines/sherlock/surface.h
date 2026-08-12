@@ -125,6 +125,55 @@ public:
 	 * Draws a fancy version of the given string at the given position
 	 */
 	void writeFancyString(const Common::String &str, const Common::Point &pt, uint overrideColor1, uint overrideColor2);
+
+	/**
+	 * Records where on the live Screen this surface's contents will end up
+	 * being blitted to, so that Fonts::writeString() can compute a
+	 * Screen-absolute position for hires text rendering (see
+	 * Screen::queueRoseTattooHiresText()) even when this surface is a small,
+	 * widget-local buffer (e.g. a dialog/tooltip/inventory panel) rather
+	 * than a full-screen mirror like _backBuffer1. Defaults to "unknown"
+	 * (nullptr _hiresTextOrigin never having been set) so that surfaces
+	 * nobody has updated yet safely opt out of hires text instead of
+	 * rendering it at a wrong position.
+	 */
+	void setHiresTextOrigin(const Common::Point &pt) {
+		_hiresTextOrigin = pt;
+		_hiresTextOriginKnown = true;
+	}
+	bool getHiresTextOrigin(Common::Point &pt) const {
+		pt = _hiresTextOrigin;
+		return _hiresTextOriginKnown;
+	}
+
+	/**
+	 * Marks this surface's hires text origin as unknown again, so that any
+	 * writeString()/writeFancyString() calls made before the next
+	 * setHiresTextOrigin() are skipped for hires-text queueing purposes
+	 * (see Screen::queueRoseTattooHiresText()) rather than either using a
+	 * stale origin left over from a previous frame, or (for a widget like
+	 * WidgetTooltip whose bounds/text can be recomputed by setText() more
+	 * often than once per displayed frame - e.g. while the mouse is
+	 * quickly passing over several hotspots) queuing glyphs for content
+	 * that may never actually reach the screen via a properly-paired
+	 * draw()/erase() cycle. Those "phantom" queued glyphs would otherwise
+	 * sit in Screen::_roseTattooHiresTextLayer forever (it's only cleared
+	 * for the specific rects that erase()/draw() know about), silently
+	 * bleeding through as a stray blocky text ghost. Callers that build up
+	 * widget content outside of draw() (e.g. WidgetTooltip::setText())
+	 * should call this before writeFancyString(), and let draw()'s own
+	 * refresh call (which always runs immediately before or after any
+	 * frame that's actually shown, and is paired with an erase() call for
+	 * whatever was previously drawn) be the sole place hires text for that
+	 * widget gets queued.
+	 */
+	void clearHiresTextOrigin() {
+		_hiresTextOriginKnown = false;
+	}
+
+private:
+	Common::Point _hiresTextOrigin;
+	bool _hiresTextOriginKnown = false;
 };
 
 class Surface : public BaseSurface {

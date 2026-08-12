@@ -103,11 +103,41 @@ int TattooMap::show() {
 	screen.translatePalette(screen._cMap);
 	delete stream;
 
+	// The overhead map uses a much larger, double-size scrollable back buffer
+	// unlike normal room scenes, and it isn't loaded through Scene::loadScene(),
+	// so it never gets its own Rose Tattoo hires background override the
+	// normal way. If a previous room's hires composite/background buffers
+	// (sized for a single normal-size room) are left active, Screen::update()'s
+	// hires compositor samples them far out of bounds against the map's
+	// larger buffer, which renders as an all-black screen. Clear them first;
+	// _backBuffer1 is resized to the map's own dimensions below, then
+	// loadRoseTattooHiresMapOverride() (if a hires map asset is available)
+	// re-populates the hires background/composite buffers sized for the map
+	// instead. The next room reload after closing the map naturally reloads
+	// its own scene override via Scene::loadScene() ->
+	// loadRoseTattooHiresBackgroundOverride().
+	screen.clearRoseTattooHiresBackground();
+
+	// The AI-upscaled character/object scene-sprite layer (see
+	// Screen::_roseTattooHiresSceneSpriteLayer) is normally re-queued fresh
+	// every frame by TattooScene::drawAllShapes(), but the overhead map has
+	// its own separate render loop below that never calls drawAllShapes(),
+	// so it's never re-cleared or repopulated while the map is open. Left
+	// as-is, whatever characters were queued into it during the very last
+	// room frame before the map was opened (Holmes, Watson, NPCs, etc.)
+	// would stay frozen on top of the map composite for as long as the map
+	// stays up - the "characters hovering over the map" bug. Wipe it here
+	// so the map starts with a blank scene-sprite layer; the next room's
+	// first drawAllShapes() call naturally repopulates it after the map
+	// closes.
+	screen.clearRoseTattooHiresSceneSpriteLayer();
+
 	// Load the map image and draw it to the back buffer
 	ImageFile *map = new ImageFile("map.vgs");
 	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2);
 	screen._backBuffer1.SHblitFrom((*map)[0], Common::Point(0, 0));
 	screen.activateBackBuffer1();
+	screen.loadRoseTattooHiresMapOverride();
 	delete map;
 
 	screen.clear();
@@ -311,8 +341,17 @@ void TattooMap::drawMapIcons() {
 		if (_data[idx]._iconNum != -1 && _vm->readFlags(idx + 1)) {
 			MapEntry &mapEntry = _data[idx];
 			ImageFrame &img = (*_iconImages)[mapEntry._iconNum];
-			screen._backBuffer1.SHtransBlitFrom(img._frame, Common::Point(mapEntry.x - img._width / 2,
-				mapEntry.y - img._height / 2));
+			Common::Point iconPt(mapEntry.x - img._width / 2, mapEntry.y - img._height / 2);
+			screen._backBuffer1.SHtransBlitFrom(img._frame, iconPt);
+
+			// The overhead map's hires background is a persistent, full-
+			// world buffer (see loadRoseTattooHiresMapOverride()) rather
+			// than a per-frame screen-space composite, so location icons
+			// need to be baked into it directly here (once, right after
+			// the native low-res icon above) instead of queued as a
+			// screen-space sprite overlay - otherwise they'd never show up
+			// in hires mode at all, since nothing else redraws them.
+			screen.paintRoseTattooHiresWorldSprite("mapicons_vgs", mapEntry._iconNum, iconPt);
 		}
 	}
 

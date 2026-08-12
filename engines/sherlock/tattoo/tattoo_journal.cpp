@@ -50,25 +50,89 @@ void TattooJournal::show() {
 	Resources &res = *_vm->_res;
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	byte palette[Graphics::PALETTE_SIZE];
 
 	Common::Point oldScroll = screen._currentScroll;
 	screen._currentScroll = Common::Point(0, 0);
 
+	// The journal draws its own paper/text UI directly into _backBuffer1,
+	// completely replacing the current room's content, but it doesn't load
+	// (or need) its own hires background override the way rooms/the map do.
+	// If we don't clear the room's leftover hires background/composite
+	// buffers here, Screen::update()'s hires compositor keeps sampling the
+	// room's smooth background underneath the journal - and since the
+	// journal's paper texture and text can coincidentally match the room
+	// background's raw pixel values here and there (the per-pixel diff
+	// against _backBuffer2 that decides what to overlay isn't aware the
+	// screen no longer shows the room at all), stray patches of the room
+	// scenery bleed through the journal UI as visual noise/glitches. Clear
+	// it so update() instead does a clean full nearest-neighbor upscale of
+	// the actual journal framebuffer, with nothing left to bleed through;
+	// reload the room's own override again below once the journal closes.
+	//
+	// The persistent hires TTF text and sprite override layers (see their
+	// declarations in screen.h) are likewise NOT auto-cleared every frame -
+	// each widget that queues into them is responsible for erasing its own
+	// area when it changes. The journal doesn't use either layer itself,
+	// but since it's a full-screen overlay drawn independently of the
+	// normal room-widget lifecycle, any glyphs/sprites still queued from
+	// whatever was on screen just before the journal opened (tooltips,
+	// inventory icons, etc.) would otherwise keep being alpha-blended on
+	// top of the journal every frame - producing exactly the kind of
+	// flickering color-noise/ghosted-text glitches previously reported.
+	// Wipe both layers wholesale here since the journal has no use for
+	// them, and let whatever reopens afterwards re-queue its own content.
+	const int hiresScale = screen.roseTattooHiresScale();
+	if (hiresScale > 1) {
+		screen.clearRoseTattooHiresBackground();
+#ifdef USE_FREETYPE2
+		screen.clearRoseTattooHiresTextLayer();
+#endif
+		screen.clearRoseTattooHiresSpriteLayer();
+	}
+
 	// Load journal images
 	_journalImages = new ImageFile("journal.vgs");
 
-	// Load palette
+	// Load palette. This is read directly into screen._cMap (mirroring
+	// TattooMap::show()'s convention for the same reason) rather than a
+	// local buffer: _cMap is what the Rose Tattoo hires compositor's
+	// nearest-neighbor fallback path (see Screen::update()) uses to convert
+	// native palette-index pixels to RGB when producing the hires composite.
+	// Loading the journal's own distinct palette into a local-only buffer
+	// left _cMap holding the previous room's palette while the on-screen
+	// pixel indices now referred to the journal's own palette entries -
+	// each hires frame then looked up journal pixel indices in the wrong
+	// (room) palette, producing scrambled/staticky colors over the whole
+	// journal.
+	//
+	// Unlike TattooMap::show() - which always returns into a fresh
+	// Scene::loadScene() call that reloads the room's own palette into
+	// _cMap the normal way - closing the journal does NOT necessarily
+	// trigger a scene reload; TattooUserInterface::doJournal() simply calls
+	// screen.setPalette(screen._cMap) right after journal.show() returns,
+	// on the assumption that _cMap still holds the room's palette (true
+	// before this fix, since the journal used to load its palette into a
+	// separate local buffer and never touched _cMap). Now that we load the
+	// journal's palette into _cMap to fix the scrambled-journal-colors bug
+	// above, we must save the room's palette here and restore it into
+	// _cMap before returning, or the room keeps using the journal's palette
+	// after the journal closes - which manifests as the room's palette-
+	// cycled animations (candle flicker, shadow shimmer, etc.) blinking
+	// with wrong colors, since those effects rotate specific palette slots
+	// that now hold journal.pal's unrelated entries.
+	byte roomPalette[Graphics::PALETTE_SIZE];
+	Common::copy(screen._cMap, screen._cMap + Graphics::PALETTE_SIZE, roomPalette);
+
 	Common::SeekableReadStream *stream = res.load("journal.pal");
-	stream->read(palette, Graphics::PALETTE_SIZE);
-	ui.setupBGArea(palette);
-	screen.translatePalette(palette);
+	stream->read(screen._cMap, Graphics::PALETTE_SIZE);
+	ui.setupBGArea(screen._cMap);
+	screen.translatePalette(screen._cMap);
 	delete stream;
 
 	// Set screen to black, and set background
 	screen._backBuffer1.SHblitFrom((*_journalImages)[0], Common::Point(0, 0));
 	screen.clear();
-	screen.setPalette(palette);
+	screen.setPalette(screen._cMap);
 
 	if (_journal.empty()) {
 		_up = _down = false;
@@ -114,6 +178,21 @@ void TattooJournal::show() {
 
 	// Reset back to whatever scroll was active for the screen
 	screen._currentScroll = oldScroll;
+
+	// Restore the room's palette saved before we overwrote _cMap with the
+	// journal's own palette above. TattooUserInterface::doJournal() (the
+	// caller) restores the visible screen palette right after this method
+	// returns via screen.setPalette(screen._cMap) - so _cMap must be back
+	// to the room's palette by then, or the room's palette-cycled
+	// animations (candle flicker, shadow shimmer, etc.) keep reading
+	// journal.pal's unrelated entries and blink with wrong colors.
+	Common::copy(roomPalette, roomPalette + Graphics::PALETTE_SIZE, screen._cMap);
+
+	// Restore the room's own hires background override cleared above, now
+	// that the journal (which doesn't use one) is closing and the room's
+	// content is about to be redrawn again.
+	if (hiresScale > 1)
+		screen.loadRoseTattooHiresBackgroundOverride(_vm->_scene->_currentScene);
 }
 
 void TattooJournal::handleKeyboardEvents() {

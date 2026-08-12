@@ -19,8 +19,11 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+
 #include "common/config-manager.h"
 #include "engines/util.h"
+#include "graphics/pixelformat.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_resources.h"
@@ -30,6 +33,9 @@
 #include "sherlock/people.h"
 
 #include "backends/keymapper/keymapper.h"
+
+#include <cstdlib>
+#include <cstring>
 
 namespace Sherlock {
 
@@ -52,7 +58,24 @@ void TattooEngine::showOpening() {
 }
 
 void TattooEngine::initialize() {
-	initGraphics(640, 480);
+	const char *hiresScaleEnv = getenv("SCUMMVM_SHERLOCK_TATTOO_HIRES_SCALE");
+	const int hiresScale = hiresScaleEnv && *hiresScaleEnv ? atoi(hiresScaleEnv) : 1;
+	const char *hiresFormatEnv = getenv("SCUMMVM_SHERLOCK_TATTOO_HIRES_FORMAT");
+	const bool hiresRgb565 = hiresFormatEnv && !strcmp(hiresFormatEnv, "rgb565");
+	const bool hiresRgba32 = hiresFormatEnv && !strcmp(hiresFormatEnv, "rgba32");
+	if (hiresScale > 1) {
+		if (hiresRgb565) {
+			const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
+			initGraphics(640 * hiresScale, 480 * hiresScale, &format);
+		} else if (hiresRgba32) {
+			const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatRGBA32();
+			initGraphics(640 * hiresScale, 480 * hiresScale, &format);
+		} else {
+			initGraphics(640 * hiresScale, 480 * hiresScale);
+		}
+	} else {
+		initGraphics(640, 480);
+	}
 
 	// Initialize the base engine
 	SherlockEngine::initialize();
@@ -85,6 +108,18 @@ void TattooEngine::initialize() {
 
 	// Starting scene
 	_scene->_goToScene = STARTING_INTRO_SCENE;
+
+	const char *validationScene = getenv("SCUMMVM_SHERLOCK_TATTOO_START_SCENE");
+	if (validationScene && *validationScene) {
+		int sceneNumber = atoi(validationScene);
+		if (sceneNumber > 0) {
+			_runningProlog = false;
+			setFlagsDirect(-FLAG_PLAYER_IS_HOLMES);
+			setFlagsDirect(396);
+			keymapper->getKeymap("tattoo-prolog")->setEnabled(false);
+			_scene->_goToScene = sceneNumber;
+		}
+	}
 
 	// Load an initial palette
 	loadInitialPalette();

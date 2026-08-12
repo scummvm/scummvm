@@ -101,6 +101,13 @@ void WidgetTalk::load() {
 
 	_bounds.moveTo(pt);
 
+	// Tell Fonts::writeString() where this widget-local surface will end
+	// up on the live screen (see WidgetBase::draw(), which subtracts the
+	// same scroll offset when blitting), so hires text queued while
+	// writing into it below lands in the right spot.
+	_surface.setHiresTextOrigin(Common::Point(pt.x - _vm->_screen->_currentScroll.x,
+		pt.y - _vm->_screen->_currentScroll.y));
+
 	// Set up the surface
 	_surface.create(_bounds.width(), _bounds.height());
 	_surface.clear(TRANSPARENCY);

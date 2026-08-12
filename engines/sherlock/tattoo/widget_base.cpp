@@ -90,6 +90,14 @@ void WidgetBase::erase() {
 		screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
 		screen.slamRect(_oldBounds);
 
+#ifdef USE_FREETYPE2
+		// See WidgetTooltipBase::erase() for why hires text needs explicit
+		// clearing here too - it isn't erased just by restoring the
+		// bitmap-glyph area above, since it persists across frames on its
+		// own in a separate layer.
+		screen.clearRoseTattooHiresTextRect(_oldBounds);
+#endif
+
 		// Reset the old bounds so it won't be erased again
 		_oldBounds = Common::Rect(0, 0, 0, 0);
 	}

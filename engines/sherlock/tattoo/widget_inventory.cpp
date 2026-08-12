@@ -564,6 +564,15 @@ void WidgetInventory::drawBars() {
 
 void WidgetInventory::drawInventory() {
 	Inventory &inv = *_vm->_inventory;
+	Screen &screen = *_vm->_screen;
+
+	// Clear any previously-queued hires sprite overrides for the icon grid
+	// area before re-queuing this frame's items below - which items are
+	// visible (and where) can change between calls (scrolling, taking/
+	// using/dropping items), and the sprite layer isn't auto-cleared every
+	// frame (see Screen::_roseTattooHiresSpriteLayer's declaration).
+	screen.clearRoseTattooHiresSpriteRect(Common::Rect(_bounds.left, _bounds.top,
+		_bounds.left + _bounds.width(), _bounds.top + _bounds.height()));
 
 	// TODO: Refactor _invIndex into this widget class
 	for (int idx = 0, itemId = inv._invIndex; idx < NUM_INVENTORY_SHOWN; ++idx, ++itemId) {
@@ -579,8 +588,21 @@ void WidgetInventory::drawInventory() {
 		// Draw the item
 		if (itemId < inv._holdings) {
 			ImageFrame &img = (*inv._invShapes[idx])[0];
-			_surface.SHtransBlitFrom(img, Common::Point(pt.x + (INVENTORY_XSIZE - img._width) / 2,
-				pt.y + (INVENTORY_YSIZE - img._height) / 2));
+			Common::Point imgPt(pt.x + (INVENTORY_XSIZE - img._width) / 2,
+				pt.y + (INVENTORY_YSIZE - img._height) / 2);
+			_surface.SHtransBlitFrom(img, imgPt);
+
+			// Also queue an AI-upscaled true-color override for this item
+			// icon (see tools/extract_rosetattoo_sprites.py /
+			// upscale_rosetattoo_sprites.py's "item%02d.vgs" -> "itemNN_vgs"
+			// resource directory naming) - quietly falls back to the plain
+			// nearest-neighbor-upscaled native blit above when hires mode
+			// isn't active or no override asset exists for this item.
+			Common::String resourceName = inv._invShapes[idx]->getFilename().baseName();
+			Common::replace(resourceName, ".", "_");
+			resourceName.toLowercase();
+			screen.queueRoseTattooHiresSprite(resourceName, 0, img,
+				Common::Point(_bounds.left + imgPt.x, _bounds.top + imgPt.y));
 		}
 	}
 
@@ -771,6 +793,11 @@ void WidgetInventory::highlightControls() {
 
 void WidgetInventory::banishWindow() {
 	WidgetBase::banishWindow();
+
+	// Erase any queued hires item-icon overrides (see drawInventory()) -
+	// this window is closing, so nothing should be left behind in the
+	// persistent sprite layer.
+	_vm->_screen->clearRoseTattooHiresSpriteRect(_bounds);
 
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	keymapper->getKeymap("tattoo-scrolling")->setEnabled(false);
