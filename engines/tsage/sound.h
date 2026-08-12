@@ -534,12 +534,12 @@ private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	Audio::QueuingAudioStream *_audioStream;
-	int _sampleRate;
 
 	byte _masterVolume;
 	byte _channelVolume;
-	const byte *_channelData;
+
+	byte getVolume() const;
+	void updateVolume();
 public:
 	SoundBlasterDriver();
 	~SoundBlasterDriver() override;
