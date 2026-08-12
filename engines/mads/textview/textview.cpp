@@ -62,6 +62,9 @@ static Buffer room_picture[3];
 static Buffer *background_ptr;
 static int16 xPos;
 static byte line_slice[156];
+static int bufferHeight;
+static int visibleHeight;
+static bool drawBoundaryLines;
 
 static void read_line_slice(int xp) {
 	const byte *src = buffer_pointer(background_ptr, xp, 0);
@@ -445,6 +448,20 @@ static void animate() {
 }
 
 void textview_main(const char *resName) {
+	Presentation presentation;
+	presentation.bufferHeight = 156;
+	presentation.visibleHeight = 156;
+	presentation.drawBoundaryLines = true;
+	textview_main(resName, presentation);
+}
+
+void textview_main(const char *resName, const Presentation &presentation) {
+	bufferHeight = presentation.bufferHeight;
+	visibleHeight = presentation.visibleHeight;
+	drawBoundaryLines = presentation.drawBoundaryLines;
+	assert(bufferHeight >= 156 && visibleHeight > 0 &&
+		visibleHeight <= bufferHeight && visibleHeight <= 200);
+
 	active = false;
 	isGoing = flag2 = true;
 	isEnd = flag3 = false;
@@ -482,12 +499,12 @@ void textview_main(const char *resName) {
 	// Initialize surfaces
 	pal_init(8, 8);
 	pal_white(master_palette);
-	buffer_init(&scr_work, 320, 156);
-	buffer_init(&scr_depth, 320, 156);
-	buffer_init(&scr_orig, 320, 156);
+	buffer_init(&scr_work, 320, bufferHeight);
+	buffer_init(&scr_depth, 320, bufferHeight);
+	buffer_init(&scr_orig, 320, bufferHeight);
 	assert(scr_work.data && scr_depth.data && scr_orig.data);
 
-	viewing_at_y = (200 - scr_work.y) / 2;
+	viewing_at_y = (200 - visibleHeight) / 2;
 	room = nullptr;
 
 	// Clear buffers and palette
@@ -497,16 +514,17 @@ void textview_main(const char *resName) {
 	mcga_setpal(&master_palette);
 
 	mouse_set_work_buffer(scr_work.data, scr_work.x);
-	mouse_set_view_port_loc(0, viewing_at_y, scr_work.x, scr_work.y + viewing_at_y - 1);
+	mouse_set_view_port_loc(0, viewing_at_y, scr_work.x,
+		visibleHeight + viewing_at_y - 1);
 	mouse_set_view_port(0, 0);
 	timer_install();
 	matte_init(-1);
 	timer_activate_low_priority(cycle_colors);
 
 	// Draw boundary horizontal lines at top and bottom of the screen
-	if (viewing_at_y) {
+	if (drawBoundaryLines && viewing_at_y) {
 		screen.hLine(0, viewing_at_y - 2, 319, 2);
-		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 2);
+		screen.hLine(0, viewing_at_y + visibleHeight + 1, 319, 2);
 	}
 
 	// Clear the lines
