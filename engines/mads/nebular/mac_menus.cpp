@@ -31,6 +31,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/paletteman.h"
 #include "graphics/primitives.h"
+#include "gui/saveload.h"
 #include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/kernel.h"
@@ -418,6 +419,16 @@ void MacNebularMenu::updateState() {
 	setItemState(getMenuItem(kWindowMenu, 0), false, false);
 	setItemState(getMenuItem(kWindowMenu, 1), false, false);
 	setItemState(getMenuItem(kWindowMenu, 2), true, true);
+
+	if (_outerMenuActive) {
+		// CODE 133 disables New, Resume, Open, Save, and Save As while
+		// the native room-990 controller owns the application window.
+		setItemState(getMenuItem(kFileMenu, 0), false, false);
+		setItemState(getMenuItem(kFileMenu, 1), false, false);
+		setItemState(getMenuItem(kFileMenu, 2), false, false);
+		setItemState(getMenuItem(kFileMenu, 4), false, false);
+		setItemState(getMenuItem(kFileMenu, 5), false, false);
+	}
 }
 
 void MacNebularMenu::dispatchCommand(int commandId) {
@@ -507,6 +518,13 @@ void MacNebularMenu::draw() {
 	syncPalette();
 	updateState();
 	_menu->draw(&_screen, true);
+}
+
+byte MacNebularMenu::getBlackColor() {
+	if (!initializeWindowManager())
+		return 0;
+	syncPalette();
+	return (byte)_windowManager->_colorBlack;
 }
 
 void MacNebularMenu::menuCallback(int commandId, Common::String &, void *data) {
@@ -646,6 +664,11 @@ int MacNebularMenu::runDifficultyDialog() {
 		_engine.quitGame();
 
 	return difficultyForRadio(selectedRadio);
+}
+
+int MacNebularMenu::selectResumeSlot() {
+	GUI::SaveLoadChooser dialog(false);
+	return dialog.runModalWithCurrentTarget();
 }
 
 void selectMacintoshDifficulty(MacNebularMenu *menus) {

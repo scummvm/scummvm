@@ -55,6 +55,7 @@ enum {
 	kMacDesktopHeight = 480,
 	kMacMenuBarHeight = 20,
 	kMacDesktopSceneY = kMacMenuBarHeight + 20,
+	kMacFullFrameHeight = 400,
 	kMacDesktopSeparatorY = kMacDesktopSceneY + kMacSceneHeight,
 	kMacDesktopInterfaceY = kMacDesktopSeparatorY + 1,
 	kMacPanelPaletteColors = 10,
@@ -450,7 +451,25 @@ void MacNebular::selectDifficulty() {
 	selectMacintoshDifficulty(_menus);
 }
 
+int MacNebular::selectResumeSlot() {
+	return _menus ? _menus->selectResumeSlot() : -1;
+}
+
+void MacNebular::setOuterMenuActive(bool active) {
+	setFullFrameActive(active);
+	if (_menus)
+		_menus->setOuterMenuActive(active);
+}
+
 Common::Point MacNebular::screenToGame(const Common::Point &point) const {
+	if (_fullFrameActive) {
+		const int frameY = _useOriginalMenus ? kMacDesktopSceneY : 0;
+		if (point.y >= frameY && point.y < frameY + kMacFullFrameHeight)
+			return Common::Point(CLIP<int>(point.x / 2, 0, 319),
+				(point.y - frameY) / 2);
+		return Common::Point(-1, -1);
+	}
+
 	const int sceneY = _useOriginalMenus ? kMacDesktopSceneY : 0;
 	const int interfaceY = _useOriginalMenus ?
 		kMacDesktopInterfaceY : kMacSceneHeight;
@@ -472,6 +491,12 @@ Common::Point MacNebular::screenToGame(const Common::Point &point) const {
 }
 
 Common::Point MacNebular::gameToScreen(const Common::Point &point) const {
+	if (_fullFrameActive) {
+		const int frameY = _useOriginalMenus ? kMacDesktopSceneY : 0;
+		return Common::Point(point.x * 2,
+			frameY + point.y * 2);
+	}
+
 	const int sceneY = _useOriginalMenus ? kMacDesktopSceneY : 0;
 	const int interfaceY = _useOriginalMenus ?
 		kMacDesktopInterfaceY : kMacSceneHeight;
@@ -489,19 +514,22 @@ void MacNebular::setPalette(const RGBcolor *palette, int firstColor,
 	for (int color = firstColor; color < lastColor; ++color)
 		_palette[color] = palette[color];
 
-	const int sceneFirst = MAX<int>(firstColor, kMacScenePaletteStart);
-	if (sceneFirst >= lastColor)
+	// Full-frame viewers own the complete palette. Gameplay keeps the low
+	// colors available for the native interface.
+	const int outputFirst = _fullFrameActive ? firstColor :
+		MAX<int>(firstColor, kMacScenePaletteStart);
+	if (outputFirst >= lastColor)
 		return;
 
 	byte corrected[Graphics::PALETTE_SIZE];
-	for (int color = sceneFirst; color < lastColor; ++color) {
-		const int offset = (color - sceneFirst) * 3;
+	for (int color = outputFirst; color < lastColor; ++color) {
+		const int offset = (color - outputFirst) * 3;
 		corrected[offset] = macGammaCorrect(palette[color].r);
 		corrected[offset + 1] = macGammaCorrect(palette[color].g);
 		corrected[offset + 2] = macGammaCorrect(palette[color].b);
 	}
-	g_system->getPaletteManager()->setPalette(corrected, sceneFirst,
-		lastColor - sceneFirst);
+	g_system->getPaletteManager()->setPalette(corrected, outputFirst,
+		lastColor - outputFirst);
 }
 
 void MacNebular::getPalette(RGBcolor *palette, int firstColor,
@@ -513,6 +541,35 @@ void MacNebular::getPalette(RGBcolor *palette, int firstColor,
 }
 
 void MacNebular::presentScreen(int shakeOffset) {
+	if (_fullFrameActive) {
+		const int frameY = _useOriginalMenus ? kMacDesktopSceneY : 0;
+		const byte frameBlack = _useOriginalMenus && _menus ?
+			_menus->getBlackColor() : 0;
+		_output.fillRect(_output.getBounds(), frameBlack);
+		for (int y = 0; y < 200; ++y) {
+			const byte *source =
+				(const byte *)_engine._screen->getBasePtr(0, y);
+			byte *line1 = (byte *)_output.getBasePtr(
+				0, frameY + y * 2);
+			byte *line2 = (byte *)_output.getBasePtr(
+				0, frameY + y * 2 + 1);
+			for (int x = 0; x < 320; ++x) {
+				const byte color = source[(x + shakeOffset) % 320];
+				line1[x * 2] = color;
+				line1[x * 2 + 1] = color;
+			}
+			memcpy(line2, line1, kMacScreenWidth);
+		}
+
+		if (_useOriginalMenus && _menus)
+			_menus->draw();
+		g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
+			0, 0, kMacScreenWidth, _output.h);
+		g_system->updateScreen();
+		_engine._screen->clearDirtyRects();
+		return;
+	}
+
 	const int sceneY = _useOriginalMenus ? kMacDesktopSceneY : 0;
 	const int interfaceY = _useOriginalMenus ?
 		kMacDesktopInterfaceY : kMacSceneHeight;
@@ -772,6 +829,24 @@ bool RexNebularEngine::handleMacEvent(Common::Event &event) {
 void RexNebularEngine::selectMacintoshDifficulty() {
 	if (_macNebular)
 		_macNebular->selectDifficulty();
+}
+
+int RexNebularEngine::selectMacintoshResumeSlot() {
+	return _macNebular ? _macNebular->selectResumeSlot() : -1;
+}
+
+bool RexNebularEngine::usesOriginalMacintoshMenus() const {
+	return _macNebular && _macNebular->usesOriginalMenus();
+}
+
+void RexNebularEngine::setMacintoshOuterMenuActive(bool active) {
+	if (_macNebular)
+		_macNebular->setOuterMenuActive(active);
+}
+
+void RexNebularEngine::setMacintoshFullFrameActive(bool active) {
+	if (_macNebular)
+		_macNebular->setFullFrameActive(active);
 }
 
 bool RexNebularEngine::drawPopup() {

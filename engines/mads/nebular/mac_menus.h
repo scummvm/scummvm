@@ -52,6 +52,7 @@ private:
 	Graphics::MacMenu *_menu = nullptr;
 	byte _palette[256 * 3] = {};
 	bool _paletteValid = false;
+	bool _outerMenuActive = false;
 	int _pendingCommand = -1;
 
 	static void menuCallback(int commandId, Common::String &name, void *data);
@@ -73,7 +74,10 @@ public:
 	bool initialize();
 	bool processEvent(Common::Event &event);
 	void draw();
+	byte getBlackColor();
+	void setOuterMenuActive(bool active) { _outerMenuActive = active; }
 	int runDifficultyDialog();
+	int selectResumeSlot();
 };
 
 void selectMacintoshDifficulty(MacNebularMenu *menus);

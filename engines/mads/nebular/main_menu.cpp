@@ -21,6 +21,7 @@
 
 #include "mads/core/general.h"
 #include "mads/core/config.h"
+#include "mads/core/env.h"
 #include "mads/core/error.h"
 #include "mads/core/font.h"
 #include "mads/core/hspot.h"
@@ -149,11 +150,13 @@ static void load_title_screen() {
 	pal_white(master_palette);
 
 	// Set up mouse cursor
-	Graphics::Surface surf;
-	surf.format = Graphics::PixelFormat::createFormatCLUT8();
-	surf.w = surf.pitch = surf.h = 16;
-	surf.setPixels(const_cast<byte *>(&ARROW_CURSOR[0][0]));
-	mouse_cursor_surface(surf, 1, 1);
+	if (!env_set_cursor(1)) {
+		Graphics::Surface surf;
+		surf.format = Graphics::PixelFormat::createFormatCLUT8();
+		surf.w = surf.pitch = surf.h = 16;
+		surf.setPixels(const_cast<byte *>(&ARROW_CURSOR[0][0]));
+		mouse_cursor_surface(surf, 1, 1);
+	}
 	mouse_show();
 
 	// Load the title screen room
