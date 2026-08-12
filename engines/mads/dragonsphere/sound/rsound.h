@@ -22,6 +22,8 @@
 #ifndef MADS_DRAGONSPHERE_SOUND_RSOUND_H
 #define MADS_DRAGONSPHERE_SOUND_RSOUND_H
 
+#include "audio/mt32gm.h"
+#include "mads/core/native_sound_timer.h"
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
@@ -36,9 +38,10 @@ class RSound;
  * Represents the data for a channel on the Dragonsphere MT-32 / MPU-401
  * driver. Confirmed identical in layout (sizeof 0x27, same field offsets/
  * order/roles) to the equivalent Return of the Phantom RSound Channel
- * struct (engines/mads/phantom/rsound.h) - spot-checked directly against
- * this game's own rsound.dr1 disassembly at every anchor point that has an
- * IDA-resolved name or a distinctive access pattern: _activeCount(0x00),
+ * struct (engines/mads/phantom/rsound.h). The interpreter and callback
+ * audits checked every retail and demo overlay, while the structure itself
+ * was checked against this game's rsound.dr1 at every anchor point that has
+ * an IDA-resolved name or a distinctive access pattern: _activeCount(0x00),
  * the 0x00-0x01/0x02-0x03 word-pair zeroing in resetAllChannels, _program
  * (0x05, sendProgramChange), _velocity (0x06, the note-on helper),
  * field_9/_keyOnDelay (0x09, the countdown+flush at the top of
@@ -79,8 +82,8 @@ public:
 	byte *_pSrc = nullptr;         // current read pointer into the sound-data stream
 	byte *_innerLoopPtr = nullptr; // inner-loop restart address
 	byte *_outerLoopPtr = nullptr; // outer-loop restart address
-	int _innerLoopCount = 0;
-	int _outerLoopCount = 0;
+	uint16 _innerLoopCount = 0; // signed byte stored as a 16-bit loop count
+	uint16 _outerLoopCount = 0; // signed byte stored as a 16-bit loop count
 	byte *_soundData = nullptr;    // identity pointer used by RSound::isSoundActive()
 	byte *_branchTarget = nullptr; // resume-after-branch pointer, used by the call/return opcode pair
 	int _transpose = 0;            // added to note bytes before comparison/storage
@@ -111,13 +114,11 @@ public:
 
 /**
  * Base class for the Dragonsphere MT-32 / MPU-401 sound player resource
- * files (rsound.dr1-.dr6, .dr9). Ported from rsound.dr1's disassembly,
- * cross-checked wherever possible against the already-confirmed Return of
- * the Phantom RSound family (engines/mads/phantom/rsound.h/.cpp) - the two
- * games' RSound engines share an essentially identical Channel struct and
- * Channel_pollActive opcode VM (same 0xBE-0xFF opcode range; every
- * spot-checked opcode - the loop/restart/branch cluster, the dispatch
- * range itself - matched Phantom's confirmed implementation exactly).
+ * files (rsound.dr1-.dr6, .dr9). Ported from rsound.dr1's disassembly and
+ * audited across every retail and demo overlay. The family uses the same
+ * 0xBE-0xFF opcode range as Return of the Phantom, but the direct audit also
+ * found and preserves demo-specific arithmetic, random, and pitch-bend
+ * behavior instead of assuming that the two families are identical.
  * Genuine, CONFIRMED differences from Phantom's RSound base:
  *
  *  - command1/command3/command5 use a 6-channel "lower" group (1-5 AND 9)
@@ -151,21 +152,15 @@ public:
  *    _pendingStop is zero - Channel_checkFade's own separate fade-out
  *    mechanism otherwise takes precedence. No equivalent gate exists on
  *    Phantom's sendVolume().
- *  - sendReverbSysEx()'s exact byte layout (fixed 10 00 01h Roland System
- *    Area Reverb address) is INFERRED by strong structural analogy to
- *    Phantom's confirmed implementation (same 2/3/3-bit parameter
- *    masking, same "mutate 3 bytes then sendSysEx" shape found in
- *    Phantom's driver) - NOT independently confirmed by inspecting the literal
- *    bytes at rsound.dr1's offset 0x67 sysex template.
+ *  - sendReverbSysEx()'s exact byte layout is confirmed in every retail
+ *    and demo overlay: each native helper masks the parameters to 2/3/3
+ *    bits, writes them after the fixed 10 00 01h Roland System Area
+ *    Reverb address, and sends that SysEx template.
  *  - null_sound_data (see _silenceStream) is a fixed 2-byte (0, 0)
  *    silence marker referenced by BOTH Channel::enable() and
  *    Channel_checkFade() - same intent as Phantom's fixed 3-byte
  *    silence stream (2 bytes here, unlike Phantom's 3 - confirmed
  *    directly from this disassembly).
- *
- * NOTE: The actual MIDI transmission (sendMidiByte()) currently just logs
- * via warning() - it isn't hooked up to a real ScummVM MIDI/MT-32 output
- * yet, matching every other RSound/ASound driver in this codebase.
  *
  * NOTE: DOS-specific driver ceremony from the original (timer IRQ hooking,
  * MPU-401 hardware detection/reset, PIT-based SysEx delay calibration, the
@@ -174,24 +169,27 @@ public:
  */
 class RSound : public SoundDriver {
 	friend class Channel;
+private:
+	int _masterVolume = 255;
 public:
 	/**
 	 * Member-function pointer type for deferred sound-loader callbacks.
 	 * Returns int (the return value is discarded by tickCallback()) so
 	 * that MAKE_CALLBACK's reinterpret_cast only ever crosses the
-	 * enclosing-class boundary, never the return type as well - every
-	 * driver-specific callback target is required to return int to match.
+	 * enclosing-class boundary, never the return type as well. Every
+	 * driver-specific callback target returns int to match.
 	 * Public so driver subclasses can build a MAKE_CALLBACK-style cast
 	 * (reinterpret_cast<RSound::CallbackFunction>(&DerivedClass::fn)) to
 	 * pass to scheduleCallback().
 	 */
 	typedef int (RSound::*CallbackFunction)();
 
-private:
+	private:
 	uint16 _randomSeed;
-	byte _lastMidiStatus;         // running-status cache, avoids resending an unchanged status byte
-	byte _sysexChecksum;
 	int _stateChangedFlag;        // latches _pollResult=0xFFFF once per state change
+	MidiDriver_MT32GM *_midiDriver;
+	uint32 _driverCallbackDelta;
+	NativeSoundTimer _hostTimer;
 
 	/**
 	 * Per-MIDI-channel held-note slots (index 0 unused; channels are
@@ -244,21 +242,14 @@ private:
 	int _fadeCheckCounter;
 
 	/**
-	 * Cluster of globals written by opcodes 0xBE-0xC1, matching the
-	 * identically-shaped (and identically unconfirmed-purpose) cluster in
-	 * Phantom's RSound - see that class's comment for details. Ported by
-	 * structural analogy: the opcode dispatch range confirmed these same
-	 * four opcodes exist here, but their bodies were not independently
-	 * re-read for Dragonsphere.
+	 * Bytes written by opcodes 0xBE-0xC1. Their purpose remains unknown
+	 * because no reader exists in the checked overlays. Every retail and
+	 * demo overlay writes 0xBE and 0xBF to the same byte, and 0xC0 and
+	 * 0xC1 to separate bytes.
 	 */
-	int _clockMedTarget;
-	int _clockCoarseTarget;
-	int _clockUnknown;
-	int _clockCoarse;
-	int _clockMed;
-	int _clockFine;
-	int _clockEnabled1;
-	int _clockEnabled2;
+	byte _opcodeBeBfValue;
+	byte _opcodeC0Value;
+	byte _opcodeC1Value;
 
 	// ---- Deferred-callback subsystem - NEW vs. the
 	// Phantom RSound family, mirrors the sibling ASound driver's
@@ -275,9 +266,8 @@ private:
 
 	/**
 	 * Per-channel opcode interpreter (Channel_pollActive in the
-	 * disassembly). Implements the same bytecode VM as the Phantom
-	 * RSound family - see the class comment for what's been independently
-	 * re-confirmed vs. carried over by structural analogy.
+	 * disassembly). The common and demo-specific paths are based on the
+	 * direct retail/demo overlay audit described in the class comment.
 	 */
 	void pollActiveChannel(Channel *channel);
 
@@ -296,6 +286,19 @@ private:
 
 protected:
 	int _commandParam;
+
+	/**
+	 * The DR1 demo's 0xDC/0xDE handlers use their immediate divisor.
+	 * Retail drivers and the DR9 demo instead reproduce the Phantom
+	 * handlers' self-divisor bug.
+	 */
+	bool _usesImmediateArithmeticOperands;
+
+	/**
+	 * The demo VM omits the retail random mask and pending-stop pitch-bend
+	 * guard. Both demo overlays share those two differences.
+	 */
+	bool _usesDemoOpcodeSemantics;
 
 	byte *loadData(int offset) {
 		return &_soundData[offset];
@@ -443,9 +446,12 @@ protected:
 
 	int getRandomNumber();
 
+	/** Resolve native near callbacks embedded in section-specific streams. */
+	virtual bool callFunction(uint16, Channel &) {
+		return false;
+	}
+
 	// ---- Low-level MIDI send helpers -------------------------------
-	void sendMidiByte(byte value);
-	void sendStatus(int midiChannel, byte statusNibble);
 	void sendNoteOn(int midiChannel, int note, int velocity);
 	void sendProgramChange(int midiChannel, int program);
 
@@ -491,8 +497,9 @@ protected:
 	 * pointer to the terminating 0xFF byte (matching the disassembly's
 	 * own si register value on return), so callers walking a sequence
 	 * of consecutive messages can advance past it to find the next one.
+	 * Returns nullptr when no terminator occurs within maxLength bytes.
 	 */
-	const byte *sendSysExData(const byte *pData);
+	const byte *sendSysExData(const byte *pData, uint maxLength);
 
 	/** sendSysExData() for a block already in this driver's own loaded sound data. */
 	const byte *sendSysEx(int offset);
@@ -508,16 +515,28 @@ protected:
 	 */
 	void sendSysExSequence();
 
-	void sendPatchInitSequence();
+	/**
+	 * Restore all 128 MT-32 Patch Memory records to the standard A/B
+	 * timbre mapping. Native export 2 calls this during driver teardown,
+	 * after stopping playback. All checked Dragonsphere retail and demo
+	 * overlays use the same four-block, 32-record structure.
+	 *
+	 * ScummVM does not call the DOS hardware teardown path: opening each
+	 * MidiDriver_MT32GM resets the selected device, while closing follows
+	 * the shared MIDI-driver lifecycle. Keep the exact native translation
+	 * available without imposing its synchronous teardown sequence.
+	 */
+	void restorePatchMemory();
 
 	/**
 	 * Masks the 3 caller-supplied values to 2/3/3 bits (mode 0-3, time
 	 * 0-7, level 0-7) and sends them via the Roland MT-32 System Area
-	 * Reverb SysEx address (10 00 01h) - see class comment re: this
-	 * being inferred by analogy rather than independently confirmed for
-	 * Dragonsphere.
+	 * Reverb SysEx address (10 00 01h), matching the native retail and
+	 * demo templates.
 	 */
 	void sendReverbSysEx(int mode, int time, int level);
+	void onTimer();
+	static void timerCallback(void *data);
 
 	int command0();
 	int command1();
@@ -529,12 +548,6 @@ protected:
 	int command7();
 	int command8();
 
-	/**
-	 * Calls a function at a fixed offset within the sound driver.
-	 * @param offset		Offset of the function
-	 */
-	virtual void callFunction(uint16 offset);
-
 	int nullCommand() {
 		return 0;
 	}
@@ -542,7 +555,6 @@ protected:
 public:
 	Channel _channels[RSOUND_CHANNEL_COUNT];
 	int _frameCounter;
-	int _tickCounter; // incremented alongside _frameCounter every update() tick
 	bool _isDisabled;
 	int _pollResult;
 
@@ -562,10 +574,10 @@ public:
 	 * @param sysExOffset	Offset of this driver's own command0_array
 	 */
 	RSound(Audio::Mixer *mixer, const Common::Path &filename,
-		int dataOffset, int dataSize, int sysExOffset);
+		int dataOffset, int dataSize, int sysExOffset,
+		bool usesDemoOpcodeSemantics = false);
 
-	~RSound() override {
-	}
+	~RSound() override;
 
 	int stop() override;
 	int poll() override;
