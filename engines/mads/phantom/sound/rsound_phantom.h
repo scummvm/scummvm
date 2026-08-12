@@ -122,9 +122,10 @@ public:
  *                    random picker like RSound1's command16)
  *   commands 24-27  (this class)
  *   commands 32-35  (this class)
- *   commands 64-72  (this class); 73 is confirmed nullsub_1
- * All other indices in [0, 73] are confirmed or inferred unreachable
- * (nullCommand).
+ *   commands 64-72  (this class)
+ * The native bucket limits are 8, 16, 27, 35, and 72. A trailing table
+ * word points to nullsub_1, but command 73 is above the native limit and
+ * is rejected before dispatch. Its C++ slot remains an equivalent no-op.
  */
 class RSound2 : public RSound {
 private:
@@ -275,6 +276,7 @@ class RSound4 : public RSound {
 private:
 	typedef int (RSound4:: *CommandPtr)();
 	static const CommandPtr _commandList[72];
+	bool callFunction(uint16 targetOffset) override;
 
 	int command4() override;
 	int command5() override;
@@ -448,6 +450,32 @@ public:
 	RSound9(Audio::Mixer *mixer);
 
 	int command(int commandId, int param) override;
+};
+
+/** Shared control-command behavior of the Phantom demo RSOUND overlay. */
+class RSoundDemo : public RSound {
+protected:
+	RSoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+			   int dataOffset, int dataSize, int sysExOffset);
+
+	int dispatchCommonCommand(int commandId);
+	int command4() override;
+	int command5() override;
+};
+
+/** Controller for the exact RSOUND.PHA overlay shipped with the demo. */
+class RSoundDemoPHA final : public RSoundDemo {
+private:
+	bool callFunction(uint16 targetOffset) override;
+	void writeRandomizedPair(uint16 firstLowOffset, uint16 secondLowOffset,
+							 uint16 firstHighOffset, uint16 secondHighOffset,
+							 byte firstLow, byte secondLow, byte firstHigh, byte secondHigh);
+
+public:
+	explicit RSoundDemoPHA(Audio::Mixer *mixer);
+
+	int command(int commandId, int param) override;
+	static bool validate(Common::String *reason = nullptr);
 };
 
 } // namespace Sound

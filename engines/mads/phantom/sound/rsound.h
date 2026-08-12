@@ -22,6 +22,8 @@
 #ifndef MADS_PHANTOM_SOUND_RSOUND_H
 #define MADS_PHANTOM_SOUND_RSOUND_H
 
+#include "audio/mt32gm.h"
+#include "mads/core/native_sound_timer.h"
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
@@ -78,8 +80,8 @@ public:
 	byte *_pSrc = nullptr;         // current read pointer into the sound-data stream
 	byte *_innerLoopPtr = nullptr; // inner-loop restart address
 	byte *_outerLoopPtr = nullptr; // outer-loop restart address
-	int _innerLoopCount = 0;
-	int _outerLoopCount = 0;
+	uint16 _innerLoopCount = 0; // signed byte stored as a 16-bit loop count
+	uint16 _outerLoopCount = 0; // signed byte stored as a 16-bit loop count
 	byte *_soundData = nullptr;    // identity pointer used by RSound::isSoundActive()
 	byte *_branchTarget = nullptr; // resume-after-branch pointer, used by the call/return opcode pair (new to Phantom)
 	int _transpose = 0;            // added to note bytes before comparison/storage (new to Phantom)
@@ -118,11 +120,6 @@ public:
  * conditional branches, and a call/return pair, in addition to the shared
  * note/fade/loop mechanics.
  *
- * NOTE: The actual MIDI transmission (sendMidiByte()) currently just logs
- * via warning() - it isn't hooked up to a real ScummVM MIDI/MT-32 output
- * yet, matching the Rex Nebular RSound family. Every other MIDI-sending
- * helper funnels through sendMidiByte().
- *
  * NOTE: DOS-specific driver ceremony from the original (timer IRQ hooking,
  * MPU-401 hardware detection/reset, PIT-based SysEx delay calibration, the
  * system-clock save/restore around it) has no ScummVM equivalent and is not
@@ -133,32 +130,29 @@ class RSound : public SoundDriver {
 	friend class Channel;
 private:
 	uint16 _randomSeed;
-	byte _lastMidiStatus;         // running-status cache, avoids resending an unchanged status byte
-	byte _sysexChecksum;
+	int _masterVolume = 255;
 	int _stateChangedFlag;        // latches _pollResult=0xFFFF once per state change
+	MidiDriver_MT32GM *_midiDriver;
+	uint32 _driverCallbackDelta;
+	NativeSoundTimer _hostTimer;
 
 	/**
 	 * Per-MIDI-channel held-note slots (index 0 unused; channels are
-	 * 1-9; 4 = max chord polyphony). TODO/unconfirmed: the disassembly
-	 * shows TWO seemingly-parallel tables using the identical
-	 * "channel*4+slot" indexing and 0xFF-empty-slot convention - one
-	 * table (read/written directly by the chord-note-storing logic
-	 * in Channel_pollActive) and a second, unnamed array (used by
-	 * resetAllChannels's initialization and by the flush-held-notes
-	 * helper). The disassembly never resolves the second array to a named
-	 * symbol, so it's not confirmed whether these are the same underlying
-	 * memory (most likely, and what's implemented here) or two genuinely
-	 * separate tables - worth double-checking.
+	 * 1-9; 4 = max chord polyphony). The apparent second table in the
+	 * reset/flush helpers is this same storage expressed relative to the
+	 * overlay's data segment. Converting it using independently named
+	 * data-segment fields resolves to the absolute table read and written by
+	 * the chord interpreter, reset, and held-note flush paths.
 	 */
 	byte _heldNotes[RSOUND_CHANNEL_COUNT + 1][4];
 
 	/**
 	 * Data-segment offset of this driver's own "command0_array" (the
 	 * table sent by command0() via sendSysEx). Each driver has its own
-	 * copy of this table at its own offset within its own resource file -
-	 * matches the Rex Nebular RSound family's identical need. Not yet
-	 * confirmed for rsound.ph1 - the disassembly shows only the symbolic
-	 * "command0_array" label, not its numeric offset.
+	 * copy of this table at a verified offset within its resource file.
+	 *
+	 * The retail and demo subclasses supply that offset to the base
+	 * constructor.
 	 */
 	int _sysExOffset;
 
@@ -178,16 +172,18 @@ private:
 	int _fadeCheckCounter;
 
 	/**
-	 * Cluster of globals written by opcodes 0xBE-0xC1 but with no
-	 * confirmed reader anywhere in the disassembly seen so far (all
-	 * TENTATIVE names - see individual comments). _clockFine/_clockMed/
-	 * _clockCoarse default to 7/28/112, a clean 4x progression,
-	 * suggesting a coarse/medium/fine clock-division hierarchy (a common
-	 * shape for a MIDI-clock-like timing subdivision) rather than three
-	 * unrelated parameters. _tickCounter gates a one-time-only override:
-	 * opcodes 0xBF/0xC0 only take effect if executed before the first
-	 * update() tick ever runs, since _tickCounter increments
-	 * unconditionally every tick thereafter and the gate checks "== 0".
+	 * Cluster of globals written by opcodes 0xBE-0xC1. All supported retail
+	 * and demo overlays were checked: the values are stored, and 0xBF/0xC0
+	 * conditionally copy their targets before the first update tick, but no
+	 * later reader exists. Their native purpose therefore remains unresolved,
+	 * and the names below are descriptive rather than semantic.
+	 *
+	 * _clockFine/_clockMed/_clockCoarse default to 7/28/112, a clean 4x
+	 * progression that suggests a coarse/medium/fine clock-division hierarchy.
+	 * This remains an inference rather than implemented behavior because the
+	 * checked overlays never read those values. _tickCounter gates the only
+	 * observed copies: opcodes 0xBF/0xC0 can replace the coarse/medium values
+	 * before the first update tick, after which the counter is nonzero.
 	 */
 	int _tickCounter;
 	int _clockMedTarget;          // pending value for _clockMed, set by opcode 0xC0
@@ -296,6 +292,16 @@ protected:
 	void resultCheck();
 
 	/**
+	 * Handles a native C4 callback target embedded in a sequence. Controllers
+	 * override this only for statically identified native targets; the default
+	 * remains a fatal rejection in the bytecode interpreter.
+	 */
+	virtual bool callFunction(uint16 targetOffset) {
+		(void)targetOffset;
+		return false;
+	}
+
+	/**
 	 * Plays the specified sound, using any free channel from 6 to 8.
 	 * Matches the disassembly's playSound exactly (rsound_channel6-8).
 	 */
@@ -350,10 +356,6 @@ protected:
 	int getRandomNumber();
 
 	// ---- Low-level MIDI send helpers -------------------------------
-	// All funnel through sendMidiByte(), the single hook point for
-	// wiring up real MT-32/MIDI output.
-	void sendMidiByte(byte value);
-	void sendStatus(int midiChannel, byte statusNibble);
 	void sendNoteOn(int midiChannel, int note, int velocity);
 	void sendProgramChange(int midiChannel, int program);
 	void sendVolume(int midiChannel, int volume);
@@ -381,8 +383,9 @@ protected:
 	 * the terminating 0xFF byte (matching the disassembly's own si
 	 * register value on return), so callers walking a sequence of
 	 * consecutive messages can advance past it to find the next one.
+	 * Returns nullptr when no terminator occurs within maxLength bytes.
 	 */
-	const byte *sendSysExData(const byte *pData);
+	const byte *sendSysExData(const byte *pData, uint maxLength);
 
 	/** sendSysExData() for a block already in this driver's own loaded sound data. */
 	const byte *sendSysEx(int offset);
@@ -399,14 +402,17 @@ protected:
 	void sendSysExSequence();
 
 	/**
-	 * TENTATIVE: a nested loop (4 outer x 32 inner
-	 * iterations) building and sending a SysEx message each inner pass.
-	 * The overall shape (loop counters, accumulating base value, fixed
-	 * bytes 0x18/0x32/0x0C) is clear from the disassembly, but the exact
-	 * purpose (a bulk patch/rhythm-setup initialization sequence is the
-	 * working hypothesis) is not confirmed.
+	 * Restore all 128 MT-32 Patch Memory records to the standard A/B
+	 * timbre mapping. Native export 2 calls this during driver teardown,
+	 * after stopping playback. All checked Phantom retail and demo
+	 * overlays use the same four-block, 32-record structure.
+	 *
+	 * ScummVM does not call the DOS hardware teardown path: opening each
+	 * MidiDriver_MT32GM resets the selected device, while closing follows
+	 * the shared MIDI-driver lifecycle. Keep the exact native translation
+	 * available without imposing its synchronous teardown sequence.
 	 */
-	void sendPatchInitSequence();
+	void restorePatchMemory();
 
 	/**
 	 * CONFIRMED: masks the 3 caller-supplied values
@@ -416,6 +422,8 @@ protected:
 	 * hardware protocol address, not driver-specific sound data.
 	 */
 	void sendReverbSysEx(int mode, int time, int level);
+	void onTimer();
+	static void timerCallback(void *data);
 
 	/**
 	 * A confirmed no-op (reads one operand, does
@@ -460,12 +468,6 @@ protected:
 	int command7();
 	int command8();
 
-	/**
-	 * Calls a function at a fixed offset within the sound driver.
-	 * @param offset		Offset of the function
-	 */
-	virtual void callFunction(uint16 offset);
-
 	int nullCommand() {
 		return 0;
 	}
@@ -494,8 +496,7 @@ public:
 	RSound(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize, int sysExOffset);
 
-	~RSound() override {
-	}
+	~RSound() override;
 
 	int stop() override;
 	int poll() override;

@@ -28,9 +28,15 @@ namespace Phantom {
 namespace Sound {
 
 void PhantomSoundManager::validate() {
-	if (_driverType == SOUND_MT32 && !_isDemo) {
-		// MT32
-		RSound::validate();
+	if (_driverType == SOUND_MT32) {
+		if (_isDemo) {
+			Common::String reason;
+			if (!RSoundDemoPHA::validate(&reason))
+				error("Cannot use Phantom demo RSOUND.PHA: %s",
+						reason.c_str());
+		} else {
+			RSound::validate();
+		}
 	} else {
 		// Adlib
 		ASound::validate(_isDemo);
@@ -40,12 +46,11 @@ void PhantomSoundManager::validate() {
 void PhantomSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	if (_isDemo) {
-		_driver = new ASoundDemo(_mixer);
-
-	} else if (_driverType == SOUND_MT32) {
+	if (_driverType == SOUND_MT32) {
 		// MT32
-		switch (sectionNumber) {
+		if (_isDemo) {
+			_driver = new RSoundDemoPHA(_mixer);
+		} else switch (sectionNumber) {
 		case 1:
 			_driver = new RSound1(_mixer);
 			break;
@@ -68,6 +73,8 @@ void PhantomSoundManager::loadDriver(int sectionNumber) {
 			_driver = nullptr;
 			break;
 		}
+	} else if (_isDemo) {
+		_driver = new ASoundDemo(_mixer);
 	} else {
 		// Adlib
 		switch (sectionNumber) {
