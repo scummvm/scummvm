@@ -31,6 +31,7 @@ struct Presentation {
 	int bufferHeight;
 	int visibleHeight;
 	bool drawBoundaryLines;
+	bool macintoshFullFrame;
 };
 
 // Main textview function
