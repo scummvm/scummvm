@@ -238,7 +238,7 @@ public:
 class ASound4 : public ASound {
 private:
 	typedef int (ASound4:: *CommandPtr)();
-	static const CommandPtr _commandList[61];
+	static const CommandPtr _commandList[60];
 
 	int command10();
 	int command12();
@@ -264,8 +264,6 @@ private:
 	int command57();
 	int command58();
 	int command59();
-	int command60();
-
 	void method1();
 public:
 	ASound4(Audio::Mixer *mixer);

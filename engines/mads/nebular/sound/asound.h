@@ -24,6 +24,7 @@
 
 #include "audio/fmopl.h"
 #include "mads/core/sound_manager.h"
+#include "mads/core/native_sound_timer.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -57,8 +58,8 @@ public:
 	byte *_pSrc = nullptr;
 	byte *_innerLoopPtr = nullptr;	// inner-loop restart address (opcode 0)
 	byte *_outerLoopPtr = nullptr;	// outer-loop restart address (opcode 1)
-	int _innerLoopCount = 0;    // remaining inner-loop iterations (opcode 0)
-	int _outerLoopCount = 0;    // remaining outer-loop iterations (opcode 1)
+	uint16 _innerLoopCount = 0; // signed byte stored as a 16-bit inner-loop count
+	uint16 _outerLoopCount = 0; // signed byte stored as a 16-bit outer-loop count
 	byte *_soundData = nullptr;
 	int _transpose = 0;         // fine-tune offset added into the frequency table lookup
 	int _volumeOffset = 0;
@@ -138,6 +139,8 @@ private:
 	OPL::OPL *_opl;
 	uint16 _randomSeed;
 	int _masterVolume;
+	NativeSoundTimer _hostTimer;
+	bool _noiseEnabled;
 
 	/**
 	 * Does the initial Adlib initialisation
