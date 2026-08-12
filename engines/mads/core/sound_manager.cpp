@@ -105,8 +105,8 @@ void SoundManager::startQueuedCommands() {
 	_newSoundsPaused = false;
 
 	while (!_queuedCommands.empty()) {
-		int commandId = _queuedCommands.pop();
-		command(commandId);
+		const QueuedCommand queuedCommand = _queuedCommands.pop();
+		command(queuedCommand._commandId, queuedCommand._param);
 	}
 }
 
@@ -119,8 +119,10 @@ void SoundManager::setVolume(int volume) {
 
 int SoundManager::command(int commandId, int param) {
 	if (_newSoundsPaused) {
-		if (_queuedCommands.size() < 8)
-			_queuedCommands.push(commandId);
+		if (_queuedCommands.size() < 8) {
+			QueuedCommand queuedCommand = { commandId, param };
+			_queuedCommands.push(queuedCommand);
+		}
 		return _queuedCommands.size() - 1;
 	} else if (_driver) {
 		// Note: I don't know any way to identify music commands versus sfx

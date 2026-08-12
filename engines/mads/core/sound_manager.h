@@ -93,6 +93,11 @@ public:
 
 class SoundManager {
 protected:
+	struct QueuedCommand {
+		int _commandId;
+		int _param;
+	};
+
 	enum DriverType { SOUND_ADLIB, SOUND_MT32, SOUND_GM, SOUND_PCSPEAKER, SOUND_PAS };
 	Audio::Mixer *_mixer;
 	DriverType _driverType;
@@ -101,7 +106,7 @@ protected:
 	bool _pollSoundEnabled = false;
 	bool _soundPollFlag = false;
 	bool _newSoundsPaused = false;
-	Common::Queue<int> _queuedCommands;
+	Common::Queue<QueuedCommand> _queuedCommands;
 	int _masterVolume = 255;
 
 protected:
