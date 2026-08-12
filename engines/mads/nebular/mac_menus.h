@@ -55,6 +55,7 @@ private:
 	int _pendingCommand = -1;
 
 	static void menuCallback(int commandId, Common::String &name, void *data);
+	bool initializeWindowManager();
 	bool loadMenuResource(uint16 resourceID,
 		Graphics::MacMenuSubMenu *parent = nullptr, int parentItem = -1);
 	Graphics::MacMenuItem *getMenuItem(int menu, int item) const;
@@ -72,9 +73,10 @@ public:
 	bool initialize();
 	bool processEvent(Common::Event &event);
 	void draw();
+	int runDifficultyDialog();
 };
 
-void selectMacintoshDifficulty();
+void selectMacintoshDifficulty(MacNebularMenu *menus);
 void macintoshGameMenu();
 
 } // namespace RexNebular
