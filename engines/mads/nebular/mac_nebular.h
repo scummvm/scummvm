@@ -47,6 +47,7 @@ private:
 	Common::Rect _popupRect;
 	RGBcolor _palette[256];
 	bool _useOriginalMenus;
+	bool _fullFrameActive = false;
 	bool _popupActive = false;
 	bool _layoutLogged = false;
 
@@ -58,6 +59,10 @@ public:
 	bool initResources();
 	void applyGameSettings();
 	void selectDifficulty();
+	int selectResumeSlot();
+	bool usesOriginalMenus() const { return _useOriginalMenus; }
+	void setFullFrameActive(bool active) { _fullFrameActive = active; }
+	void setOuterMenuActive(bool active);
 	Common::Point screenToGame(const Common::Point &point) const;
 	Common::Point gameToScreen(const Common::Point &point) const;
 	bool handleMacEvent(Common::Event &event);

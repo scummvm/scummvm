@@ -250,6 +250,10 @@ MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::S
 		return { kGlobalContainer, MKTAG('M', 'e', 't', 'h'), 1000 };
 	if (name == "BTSPIN.SS")
 		return { kGlobalContainer, MKTAG('B', 't', 's', 'p'), 1000 };
+	if (name == "@REXOPEN")
+		return { kSection9Container, MKTAG('A', 'R', 'e', 's'), 1078 };
+	if (name == "CREDITS.TXR")
+		return { kGlobalContainer, MKTAG('C', 'R', 'E', 'D'), 1000 };
 
 	if (name.hasPrefix("ENDING") && name.hasSuffix(".TXR") && name.size() == 11 &&
 			name[6] >= '0' && name[6] <= '9') {

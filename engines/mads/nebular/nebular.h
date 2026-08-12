@@ -62,6 +62,10 @@ public:
 	Common::Error run() override;
 	void syncRoom(Common::Serializer &s) override;
 	void selectMacintoshDifficulty();
+	int selectMacintoshResumeSlot();
+	bool usesOriginalMacintoshMenus() const;
+	void setMacintoshOuterMenuActive(bool active);
+	void setMacintoshFullFrameActive(bool active);
 
 	int main_copy_verify() override;
 	void global_init_code() override;
