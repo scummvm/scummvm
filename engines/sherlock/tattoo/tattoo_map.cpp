@@ -132,6 +132,19 @@ int TattooMap::show() {
 	// closes.
 	screen.clearRoseTattooHiresSceneSpriteLayer();
 
+	// Similarly, any hires tooltip text still registered from the room
+	// scene just left (e.g. the exit-arrow "To the City" label, which is
+	// drawn by TattooUserInterface's own _tooltipWidget rather than the
+	// map's _mapTooltip) is never told to erase() when a click on an exit
+	// zone immediately triggers a scene-to-map transition - the click
+	// handler runs the exit's scene-change script without going through
+	// the usual freeMenu()/erase() path first. Left behind, that stale text
+	// keeps getting blended into every frame of the map view as a
+	// permanent ghost. Wipe the whole hires text layer on map entry so it
+	// always starts blank; _mapTooltip re-registers its own text fresh as
+	// soon as the mouse hovers a location icon.
+	screen.clearRoseTattooHiresTextLayer();
+
 	// Load the map image and draw it to the back buffer
 	ImageFile *map = new ImageFile("map.vgs");
 	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2);

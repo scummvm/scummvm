@@ -66,8 +66,19 @@ static bool loadRoseTattooBackgroundOverride(Screen &screen, int sceneNumber) {
 
 	Common::Path overridePath(Common::String::format(
 		"%s/scene_%03d/background.png", overrideDir, sceneNumber), '/');
+	// Most scenes/sprites/frames simply don't have an override file - that's
+	// the normal/expected case, not an error. Check existence first instead
+	// of letting File::open() attempt (and fail) the open itself: it
+	// unconditionally logs a "File::open: node does not exist!" warning for
+	// every missing node, which floods the log during ordinary play since
+	// this override-lookup path is probed constantly (once per scene/sprite
+	// frame that might have an override).
+	Common::FSNode overrideNode(overridePath);
+	if (!overrideNode.exists())
+		return false;
+
 	Common::File file;
-	if (!file.open(Common::FSNode(overridePath)))
+	if (!file.open(overrideNode))
 		return false;
 
 	Image::PNGDecoder decoder;
@@ -452,6 +463,20 @@ bool Scene::loadScene(const Common::Path &filename) {
 
 				loadRoseTattooBackgroundOverride(screen, _currentScene);
 				screen.loadRoseTattooHiresBackgroundOverride(_currentScene);
+
+				// Any hires tooltip text still registered from the room just
+				// left (e.g. an exit-arrow label like "To the City") is never
+				// told to erase() when hovering-then-clicking an exit zone
+				// immediately triggers this scene change - the click handler
+				// (TattooUserInterface::doEditControl()) runs the exit's
+				// scene-change script without going through the usual
+				// freeMenu()/erase() path first, since freeMenu() is only
+				// called when no exit/arrow zone is under the cursor. Left
+				// behind, that stale text would otherwise keep getting
+				// blended into every frame of the new scene as a permanent
+				// ghost. Wipe the whole hires text layer on every scene load
+				// so it always starts blank.
+				screen.clearRoseTattooHiresTextLayer();
 			}
 
 			// Read in the shapes header info

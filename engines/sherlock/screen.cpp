@@ -213,8 +213,17 @@ bool Screen::loadRoseTattooHiresBackgroundFromPath(const Common::Path &overrideP
 	if (_roseTattooHiresScale <= 1)
 		return false;
 
+	// Missing override files are the expected/normal case (not every scene
+	// has one), so check existence first rather than letting File::open()
+	// fail on its own - it unconditionally logs a "File::open: node does
+	// not exist!" warning per missed lookup, which floods the log given how
+	// often this path gets probed during ordinary play.
+	Common::FSNode overrideNode(overridePath);
+	if (!overrideNode.exists())
+		return false;
+
 	Common::File file;
-	if (!file.open(Common::FSNode(overridePath)))
+	if (!file.open(overrideNode))
 		return false;
 
 	Image::PNGDecoder decoder;
@@ -308,8 +317,15 @@ bool Screen::loadRoseTattooHiresCursorOverride(const Common::String &resourceNam
 	Common::Path overridePath(Common::String::format(
 		"%s/sprites/%s/frame_%03d@%dx.png", overrideDir, resourceName.c_str(), frameIndex,
 		_roseTattooHiresScale), '/');
+	// Same rationale as loadRoseTattooHiresBackgroundFromPath() above: most
+	// sprite frames don't have an override, so check existence first to
+	// avoid File::open()'s "node does not exist!" warning spam.
+	Common::FSNode overrideNode(overridePath);
+	if (!overrideNode.exists())
+		return false;
+
 	Common::File file;
-	if (!file.open(Common::FSNode(overridePath)))
+	if (!file.open(overrideNode))
 		return false;
 
 	Image::PNGDecoder decoder;
@@ -698,8 +714,17 @@ Graphics::Font *Screen::getRoseTattooHiresFont(int pixelHeight) {
 	}
 
 	Common::Path fontPath(Common::String::format("%s/fonts/hires_font.ttf", overrideDir), '/');
+	// Same rationale as the background/sprite override loaders above: avoid
+	// File::open()'s "node does not exist!" warning when the font override
+	// simply isn't present.
+	Common::FSNode fontNode(fontPath);
+	if (!fontNode.exists()) {
+		_roseTattooHiresFontMissing = true;
+		return nullptr;
+	}
+
 	Common::File file;
-	if (!file.open(Common::FSNode(fontPath))) {
+	if (!file.open(fontNode)) {
 		_roseTattooHiresFontMissing = true;
 		return nullptr;
 	}
