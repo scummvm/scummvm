@@ -367,6 +367,8 @@ MODULE_OBJS := \
 	dragonsphere/rooms/room909.o \
 	dragonsphere/sound/asound.o \
 	dragonsphere/sound/asound_dragonsphere.o \
+	dragonsphere/sound/gsound.o \
+	dragonsphere/sound/gsound_dragonsphere.o \
 	dragonsphere/sound/psound.o \
 	dragonsphere/sound/psound_dragonsphere.o \
 	dragonsphere/sound/rsound.o \

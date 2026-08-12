@@ -32,7 +32,8 @@ class Mixer;
 
 namespace MADS {
 
-SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag) : _mixer(mixer), _soundFlag(soundFlag) {
+SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag,
+		bool supportsGeneralMidi) : _mixer(mixer), _soundFlag(soundFlag) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 	if ((musicType == MT_GM || musicType == MT_GS) && ConfMan.getBool("native_mt32"))
@@ -40,6 +41,10 @@ SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag) : _mixer(mixer)
 	switch (musicType) {
 	case MT_MT32:
 		_driverType = SOUND_MT32;
+		break;
+	case MT_GM:
+	case MT_GS:
+		_driverType = supportsGeneralMidi ? SOUND_GM : SOUND_ADLIB;
 		break;
 	case MT_PCSPK:
 		_driverType = SOUND_PCSPEAKER;
