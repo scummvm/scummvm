@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "mads/core/magic.h"
 #include "mads/core/buffer.h"
 #include "mads/core/error.h"
@@ -271,6 +272,8 @@ void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 		}
 
 		mcga_setpal((Palette *)pal);
+		if (g_engine->hasMacintoshInterface())
+			g_system->updateScreen();
 
 		do {
 			now_timing = timer_read_600();
@@ -369,6 +372,8 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 		}
 
 		mcga_setpal((Palette *)pal);
+		if (g_engine->hasMacintoshInterface())
+			g_system->updateScreen();
 
 		do {
 			now_timing = timer_read_600();

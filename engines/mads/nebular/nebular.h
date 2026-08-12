@@ -78,6 +78,10 @@ public:
 	void onPopupDestroyed() override;
 	bool getInterfaceSentenceColors(byte &foreground, byte &shadow) const override;
 	bool hasMacintoshInterface() const override;
+	bool setMacintoshPalette(const RGBcolor *palette, int firstColor,
+		int numColors) override;
+	bool getMacintoshPalette(RGBcolor *palette, int firstColor,
+		int numColors) const override;
 };
 
 } // namespace RexNebular

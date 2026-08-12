@@ -105,6 +105,10 @@ void mcga_close_window(byte *inp) {
 }
 
 void mcga_getpal(Palette *pal) {
+	if (g_engine->getMacintoshPalette(&(*pal)[0], 0,
+			Graphics::PALETTE_COUNT))
+		return;
+
 	byte tmp[Graphics::PALETTE_COUNT * 3];
 	g_system->getPaletteManager()->grabPalette(tmp, 0, Graphics::PALETTE_COUNT);
 	for (int i = 0; i < Graphics::PALETTE_COUNT; i++) {
@@ -115,6 +119,9 @@ void mcga_getpal(Palette *pal) {
 }
 
 void mcga_setpal_range(Palette *pal, int first_color, int num_colors) {
+	if (g_engine->setMacintoshPalette(&(*pal)[0], first_color, num_colors))
+		return;
+
 	byte tmp[Graphics::PALETTE_COUNT * 3];
 	for (int i = 0; i < num_colors; i++) {
 		tmp[i * 3 + 0] = (*pal)[first_color + i].r * 255 / 63;

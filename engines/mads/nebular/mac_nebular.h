@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "graphics/managed_surface.h"
+#include "mads/core/general.h"
 
 namespace Common {
 struct Event;
@@ -44,6 +45,7 @@ private:
 	Graphics::ManagedSurface _output;
 	Graphics::ManagedSurface _popup;
 	Common::Rect _popupRect;
+	RGBcolor _palette[256];
 	bool _useOriginalMenus;
 	bool _popupActive = false;
 	bool _layoutLogged = false;
@@ -58,6 +60,8 @@ public:
 	Common::Point screenToGame(const Common::Point &point) const;
 	Common::Point gameToScreen(const Common::Point &point) const;
 	bool handleMacEvent(Common::Event &event);
+	void setPalette(const RGBcolor *palette, int firstColor, int numColors);
+	void getPalette(RGBcolor *palette, int firstColor, int numColors) const;
 	void presentScreen(int shakeOffset);
 	void showPopup();
 	void hidePopup();
