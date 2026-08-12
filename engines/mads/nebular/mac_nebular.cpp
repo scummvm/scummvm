@@ -564,6 +564,12 @@ void MacNebular::getPalette(RGBcolor *palette, int firstColor,
 }
 
 void MacNebular::presentScreen(int shakeOffset) {
+	// Keep the original Macintosh composition on its previous frame while
+	// the shared engine initializes the next room and interface.
+	if (_useOriginalMenus && !_fullFrameActive &&
+			kernel_mode != KERNEL_ACTIVE_CODE)
+		return;
+
 	if (_fullFrameActive) {
 		const int frameY = _useOriginalMenus ? kMacDesktopSceneY : 0;
 		const byte frameBlack = _useOriginalMenus && _menus ?
