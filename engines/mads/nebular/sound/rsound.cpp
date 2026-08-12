@@ -66,10 +66,10 @@ void Channel::load(byte *pData) {
 
 /*-----------------------------------------------------------------------*/
 
-const uint32 RSound::UPDATE_DELTA = 1000000 / 60;
-
 RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
-		int dataOffset, int dataSize, int sysExOffset) : SoundDriver(mixer, filename, dataOffset, dataSize) {
+		int dataOffset, int dataSize, int sysExOffset,
+		RSoundFadeCheckMode fadeCheckMode) :
+		SoundDriver(mixer, filename, dataOffset, dataSize) {
 	_commandParam = 0;
 	_frameCounter = 0;
 	_isDisabled = false;
@@ -80,7 +80,10 @@ RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 	_pollResult = 0;
 	_resultFlag = 0;
 	_sysExOffset = sysExOffset;
-	_updateDeltaRemainder = 0;
+	_fadeCheckMode = fadeCheckMode;
+	_fadeCheckAlternate = false;
+	_fadeCheckCounter = 0;
+	_fadeCheckPeriod = 0;
 
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i) {
 		_channels[i]._owner = this;
@@ -123,7 +126,7 @@ RSound::~RSound() {
 	}
 }
 
-void RSound::validate() {
+void RSound::validate(bool isDemo) {
 	Common::File f;
 	static const char *const MD5[] = {
 		"6b2f2f24b54ba0177938dde17baa6231",
@@ -136,15 +139,24 @@ void RSound::validate() {
 		"40a2a8bd0d49f1acbb0569f1b22ec9b2",
 		"2ae093b2ce06f739f200ca3e9ff2af85"
 	};
+	static const char *const MD5_DEMO[] = {
+		"ad14e2a1c900287737b9f43f1d8c3fb2",
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		"e2fafe292239be4afa2bf789bf4f496d"
+	};
+	const char *const *expectedMD5 = isDemo ? MD5_DEMO : MD5;
 
 	for (int i = 1; i <= 9; ++i) {
+		if (!expectedMD5[i - 1])
+			continue;
+
 		Common::Path filename(Common::String::format("RSOUND.00%d", i));
 		if (!f.open(filename))
 			error("Could not process - %s", filename.toString().c_str());
 		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
 		f.close();
 
-		if (md5str != MD5[i - 1])
+		if (md5str != expectedMD5[i - 1])
 			error("Invalid sound file - %s", filename.toString().c_str());
 	}
 }
@@ -220,13 +232,11 @@ int RSound::getRandomNumber() {
 void RSound::onTimer() {
 	Common::StackLock slock(_driverMutex);
 
-	// The frequency of the callbacks is dependent on the underlying driver
-	// implementation and might not be 60Hz. Adjust to make sure poll() is called
-	// with the correct frequency.
-	_updateDeltaRemainder += _driverCallbackDelta;
-	while (_updateDeltaRemainder >= UPDATE_DELTA) {
-		poll();
-		_updateDeltaRemainder -= UPDATE_DELTA;
+	uint32 serviceTicks = _hostTimer.advance(_driverCallbackDelta, 1000000);
+	while (serviceTicks--) {
+		// RSOUND export 4 is a return stub in every audited overlay.
+		if (_hostTimer.pollDue())
+			poll();
 	}
 }
 
@@ -236,29 +246,12 @@ void RSound::timerCallback(void* data) {
 }
 
 void RSound::setVolume(int volume) {
-	_masterVolume = volume;
-	if (!volume)
-		command0();
+	_masterVolume = CLIP(volume, 0, 255);
+	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
+		sendVolume(i + 1, _isDisabled ? 0 : _channels[i]._volume);
 }
 
 /*-----------------------------------------------------------------------*/
-// Low-level MIDI transmission. sendMidiByte() is the single point that
-// needs to change once the real MT-32/MIDI output interface is wired up;
-// everything else funnels through it.
-
-/*
-void RSound::sendMidiByte(byte value) {
-	warning("RSound: MIDI byte %02X", value);
-}
-
-void RSound::sendStatus(int midiChannel, byte statusNibble) {
-	byte status = statusNibble | midiChannel;
-	if (_lastMidiStatus != status) {
-		_lastMidiStatus = status;
-		sendMidiByte(status);
-	}
-}
-*/
 
 void RSound::sendNoteOn(int midiChannel, int note, int velocity) {
 	_midiDriver->send(MidiDriver::MIDI_COMMAND_NOTE_ON | midiChannel, note, velocity);
@@ -269,7 +262,9 @@ void RSound::sendProgramChange(int midiChannel, int program) {
 }
 
 void RSound::sendVolume(int midiChannel, int volume) {
-	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel, MidiDriver::MIDI_CONTROLLER_VOLUME, volume);
+	const int scaledVolume = CLIP(volume, 0, 127) * _masterVolume / 255;
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
+			MidiDriver::MIDI_CONTROLLER_VOLUME, scaledVolume);
 }
 
 void RSound::sendPitchBend(int midiChannel, int value) {
@@ -289,12 +284,14 @@ void RSound::restoreChannelVolume(int midiChannel, int volume) {
 	sendVolume(midiChannel, volume);
 }
 
-byte *RSound::sendSysExData(byte *pData) {
-	// FIXME If the data is malformed, this will read out of bounds. Not sure
-	// how the original code handles this.
-	uint16 length = 0;
-	for (int i = 0; pData[i] != 0xFF; ++i) {
-		length++;
+byte *RSound::sendSysExData(byte *pData, uint maxLength) {
+	uint length = 0;
+	while (length < maxLength && pData[length] != 0xFF)
+		++length;
+
+	if (length == maxLength) {
+		warning("RSound::sendSysExData: unterminated SysEx message");
+		return nullptr;
 	}
 
 	// FIXME This call adds the necessary delay for the MT-32 to process the
@@ -309,24 +306,37 @@ byte *RSound::sendSysExData(byte *pData) {
 
 byte *RSound::sendSysEx(int offset) {
 	if (offset < 0) {
-		// _sysExOffset wasn't given a confirmed value for this driver yet
-		// (see the constructor) - deliberately not scanning for a 0xFF
-		// terminator from an unconfirmed/arbitrary offset, since that
-		// could read well past the actual command0_array table.
+		// Defensive guard for future mappings. Every validated retail and
+		// demo constructor currently supplies a nonnegative table offset.
 		warning("RSound::sendSysEx: command0_array offset not yet known for this driver");
 		return nullptr;
 	}
+	if ((uint)offset >= _soundData.size()) {
+		warning("RSound::sendSysEx: offset %d is outside the sound data", offset);
+		return nullptr;
+	}
 
-	return sendSysExData(loadData(offset));
+	return sendSysExData(loadData(offset), _soundData.size() - offset);
 }
 
 void RSound::sendSysExSequence() {
-	byte *pData = loadData(_sysExOffset);
+	byte *pData = sendSysEx(_sysExOffset);
+	if (!pData)
+		return;
+
+	byte *const dataEnd = _soundData.end();
 	for (;;) {
-		pData = sendSysExData(pData);
 		++pData;
+		if (pData == dataEnd) {
+			warning("RSound::sendSysExSequence: unterminated SysEx sequence");
+			return;
+		}
 		if (*pData == 0xFF)
 			break;
+
+		pData = sendSysExData(pData, dataEnd - pData);
+		if (!pData)
+			return;
 	}
 }
 
@@ -367,6 +377,19 @@ void RSound::Channel_checkFade(Channel *channel) {
 }
 
 void RSound::checkFadingChannels() {
+	if (_fadeCheckMode == kRSoundFadeCheckAlternating) {
+		_fadeCheckAlternate = !_fadeCheckAlternate;
+		if (_fadeCheckAlternate)
+			return;
+	} else {
+		if (!_fadeCheckPeriod)
+			return;
+		if (--_fadeCheckCounter > 0)
+			return;
+
+		_fadeCheckCounter = _fadeCheckPeriod;
+	}
+
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
 		Channel_checkFade(&_channels[i]);
 }
@@ -541,13 +564,14 @@ void RSound::Channel_pollActive(Channel *channel) {
 						channel->_innerLoopCount = 0;
 						channel->_outerLoopCount = 0;
 					} else {
-						channel->_outerLoopCount = *pSrc;
+						channel->_outerLoopCount =
+								(uint16)(int16)(int8)*pSrc;
 						channel->_pSrc = channel->_outerLoopPtr;
 						channel->_innerLoopPtr = channel->_outerLoopPtr;
 					}
 				} else if (--channel->_outerLoopCount) {
-					channel->_outerLoopPtr = channel->_pSrc;
-					channel->_innerLoopPtr = channel->_pSrc;
+					channel->_pSrc = channel->_outerLoopPtr;
+					channel->_innerLoopPtr = channel->_outerLoopPtr;
 				} else {
 					channel->_pSrc += 2;
 					channel->_outerLoopPtr = channel->_pSrc;
@@ -562,7 +586,8 @@ void RSound::Channel_pollActive(Channel *channel) {
 						channel->_innerLoopPtr = channel->_pSrc;
 						channel->_innerLoopCount = 0;
 					} else {
-						channel->_innerLoopCount = *pSrc;
+						channel->_innerLoopCount =
+								(uint16)(int16)(int8)*pSrc;
 						channel->_pSrc = channel->_innerLoopPtr;
 					}
 				} else if (--channel->_innerLoopCount) {
@@ -665,6 +690,14 @@ void RSound::resetHeldNotes() {
 			_heldNotes[i][j] = 0xFF;
 }
 
+void RSound::resetHeldNotesRange(int firstChannel, int lastChannel) {
+	assert(firstChannel >= 1 && lastChannel <= RSOUND_CHANNEL_COUNT &&
+			firstChannel <= lastChannel);
+	for (int channel = firstChannel; channel <= lastChannel; ++channel)
+		for (int slot = 0; slot < 4; ++slot)
+			_heldNotes[channel][slot] = 0xFF;
+}
+
 /**
  * Resets all 9 channels and the held-notes table.
  * Called both from the constructor (mirroring rsound_init) and from
@@ -694,6 +727,7 @@ int RSound::command0() {
 	_isDisabled = true;
 
 	resetAllChannels();
+	setFadeCheckPeriod(0);
 	sendMidiChannelReset(1, RSOUND_CHANNEL_COUNT);
 
 	// Matches the tail of the original rsound_command0.
@@ -708,6 +742,7 @@ int RSound::command0() {
 }
 
 int RSound::command1() {
+	setFadeCheckPeriod(1);
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
 		_channels[i].enable(0xFF);
 	return 0;
@@ -718,11 +753,13 @@ int RSound::command2() {
 	// table) plus the MIDI channel reset for those same channels.
 	resetChannelRange(0, 5);
 	resetHeldNotes();
+	setFadeCheckPeriod(0);
 	sendMidiChannelReset(1, 5);
 	return 0;
 }
 
 int RSound::command3() {
+	setFadeCheckPeriod(1);
 	for (int i = 0; i < 5; ++i)
 		_channels[i].enable(0xFF);
 	return 0;
@@ -732,11 +769,13 @@ int RSound::command4() {
 	// Channels 6-9 (does NOT touch the held-notes
 	// table) plus the MIDI channel reset for those same channels.
 	resetChannelRange(5, RSOUND_CHANNEL_COUNT);
+	setFadeCheckPeriod(0);
 	sendMidiChannelReset(6, RSOUND_CHANNEL_COUNT);
 	return 0;
 }
 
 int RSound::command5() {
+	setFadeCheckPeriod(1);
 	for (int i = 5; i < RSOUND_CHANNEL_COUNT; ++i)
 		_channels[i].enable(0xFF);
 	return 0;

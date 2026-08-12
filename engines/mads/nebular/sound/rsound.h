@@ -23,6 +23,7 @@
 #define MADS_NEBULAR_SOUND_RSOUND_H
 
 #include "mads/core/sound_manager.h"
+#include "mads/core/native_sound_timer.h"
 
 #include "audio/mt32gm.h"
 
@@ -33,6 +34,11 @@ namespace Sound {
 class RSound;
 
 #define RSOUND_CHANNEL_COUNT 9
+
+enum RSoundFadeCheckMode {
+	kRSoundFadeCheckAlternating,
+	kRSoundFadeCheckProgrammable
+};
 
 /**
  * Represents the data for a channel on the Roland MT-32 / MPU-401 driver.
@@ -91,8 +97,8 @@ public:
 	byte *_pSrc = nullptr;         // current read pointer into the sound-data stream
 	byte *_innerLoopPtr = nullptr; // inner-loop restart address
 	byte *_outerLoopPtr = nullptr; // outer-loop restart address
-	int _innerLoopCount = 0;
-	int _outerLoopCount = 0;
+	uint16 _innerLoopCount = 0; // signed byte stored as a 16-bit loop count
+	uint16 _outerLoopCount = 0; // signed byte stored as a 16-bit loop count
 	byte *_soundData = nullptr;    // identity pointer used by RSound::isSoundActive()
 
 public:
@@ -123,24 +129,19 @@ public:
  * Mirrors the structure of ASound (the Adlib equivalent in asound.h), but
  * for a driver family that sends real MIDI messages instead of poking
  * OPL registers.
- *
- * NOTE: The actual MIDI transmission (sendMidiByte()) currently just logs
- * via warning() - it isn't hooked up to a real ScummVM MIDI/MT-32 output
- * yet. Every other MIDI-sending helper funnels through sendMidiByte(), so
- * that's the one place that needs to change once the real interface is
- * identified.
  */
 class RSound : public SoundDriver {
 	friend class Channel;
 private:
-	// Number of microseconds between driver updates (60 Hz frequency)
-	static const uint32 UPDATE_DELTA;
-
 	uint16 _randomSeed;
 	int _masterVolume;
 	byte _lastMidiStatus;             // running-status cache, avoids resending an unchanged status byte
 	bool _noteTriggeredThisPoll;      // throttles note-on dispatch to at most one per update() tick, across all channels
 	byte _heldNotes[RSOUND_CHANNEL_COUNT + 1][4]; // per-MIDI-channel held-note slots (index 0 unused; channels are 1-9)
+	RSoundFadeCheckMode _fadeCheckMode;
+	bool _fadeCheckAlternate;
+	int _fadeCheckCounter;
+	int _fadeCheckPeriod;
 
 	/**
 	 * Data-segment offset of this driver's own "command0_array" (the
@@ -156,7 +157,7 @@ private:
 
 	MidiDriver_MT32GM *_midiDriver;
 	uint32 _driverCallbackDelta;
-	uint32 _updateDeltaRemainder;
+	NativeSoundTimer _hostTimer;
 
 	void update();
 	void pollAllChannels();
@@ -166,22 +167,16 @@ private:
 	 * Zeroes _activeCount and the three fade-step fields for channels in
 	 * [first, last).
 	 */
-	void resetChannelRange(int first, int last);
-
-	/**
-	 * Resets the per-MIDI-channel held-note tracking table to empty.
-	 */
-	void resetHeldNotes();
-
 	/**
 	 * Resets all 9 channels and the held-notes table.
 	 */
 	void resetAllChannels();
 
 	/**
-	 * Runs every other update() tick (matches the original's half-rate
-	 * toggle). Decays the volume of any pending-stop channel by 1 and
-	 * resends it, until the channel goes fully silent and is recycled.
+	 * Run pending-stop volume decay using the scheduler embedded in the
+	 * loaded overlay. Sections 1, 2, and 9 and both demo overlays use a
+	 * fixed every-other-poll toggle. Sections 3-8 use a programmable
+	 * countdown; zero disables it and the counter reloads after each pass.
 	 */
 	void checkFadingChannels();
 	void Channel_checkFade(Channel *channel);
@@ -194,6 +189,20 @@ private:
 
 protected:
 	int _commandParam;
+
+	void setFadeCheckPeriod(int period) {
+		if (_fadeCheckMode == kRSoundFadeCheckProgrammable)
+			_fadeCheckPeriod = period;
+	}
+
+	/** Clear the active and fade state for channel indices in [first, last). */
+	void resetChannelRange(int first, int last);
+
+	/** Reset the per-MIDI-channel held-note tracking table to empty. */
+	void resetHeldNotes();
+
+	/** Reset held-note slots for the inclusive MIDI-channel range. */
+	void resetHeldNotesRange(int firstChannel, int lastChannel);
 
 	byte *loadData(int offset) {
 		return &_soundData[offset];
@@ -241,8 +250,7 @@ protected:
 	int getRandomNumber();
 
 	// ---- Low-level MIDI send helpers -------------------------------
-	// All funnel through sendMidiByte(), the single hook point for
-	// wiring up real MT-32/MIDI output.
+	// All send through the ScummVM MT-32/MIDI driver.
 	void sendNoteOn(int midiChannel, int note, int velocity);
 	void sendProgramChange(int midiChannel, int program);
 	void sendVolume(int midiChannel, int volume);
@@ -260,15 +268,12 @@ protected:
 
 	/**
 	 * Sends a single SysEx message: bytes from pData up to (but not
-	 * including) a 0xFF terminator, via the real MT32GM MIDI driver
-	 * (_midiDriver->sysExMT32()) - this part is a work in progress and
-	 * intentionally NOT shared with the Dragonsphere/Phantom RSound
-	 * families, which still route through the sendMidiByte() warning()
-	 * stub. Returns a pointer to the terminating 0xFF byte, so callers
-	 * walking a sequence of consecutive messages can advance past it to
-	 * find the next one.
+	 * including) a 0xFF terminator, via the MT32GM MIDI driver. Returns a
+	 * pointer to the terminating byte, so callers walking a sequence of
+	 * consecutive messages can advance past it. Returns nullptr when no
+	 * terminator occurs within maxLength bytes.
 	 */
-	byte *sendSysExData(byte *pData);
+	byte *sendSysExData(byte *pData, uint maxLength);
 
 	/** sendSysExData() for a block already in this driver's own loaded sound data. */
 	byte *sendSysEx(int offset);
@@ -306,7 +311,7 @@ public:
 	int _resultFlag;
 
 public:
-	static void validate();
+	static void validate(bool isDemo);
 
 public:
 	/**
@@ -316,9 +321,11 @@ public:
 	 * @param dataOffset	Offset in the file of the data segment
 	 * @param dataSize		Size of the data segment
 	 * @param sysExOffset	Offset of this driver's own command0_array
+	 * @param fadeCheckMode Native pending-stop fade scheduler
 	 */
 	RSound(Audio::Mixer *mixer, const Common::Path &filename,
-		int dataOffset, int dataSize, int sysExOffset);
+		int dataOffset, int dataSize, int sysExOffset,
+		RSoundFadeCheckMode fadeCheckMode);
 
 	~RSound() override;
 
