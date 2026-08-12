@@ -604,7 +604,7 @@ void ScriptEngine::op8bSGLO(EngineState *state, EngineFrame *frame) {
 
 void ScriptEngine::op8cRAND(EngineState *state, EngineFrame *frame) {
 	int16 max = state->pop();
-	state->push(_engine->randBetween(0, max));
+	state->push(max > 0 ? _engine->randBetween(0, max - 1) : 0);
 }
 
 void ScriptEngine::op8dCOPY(EngineState *state, EngineFrame *frame) {
