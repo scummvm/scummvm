@@ -595,7 +595,6 @@ int MacNebularMenu::runDifficultyDialog() {
 			g_system->copyRectToScreen(_screen.getBasePtr(dialog.bounds.left,
 				dialog.bounds.top), _screen.pitch, dialog.bounds.left,
 				dialog.bounds.top, dialog.bounds.width(), dialog.bounds.height());
-			g_system->updateScreen();
 			redraw = false;
 		}
 
@@ -656,8 +655,10 @@ int MacNebularMenu::runDifficultyDialog() {
 			}
 		}
 
-		if (!done)
+		if (!done) {
+			g_system->updateScreen();
 			g_system->delayMillis(10);
+		}
 	}
 
 	_screen.copyRectToSurface(saved.getPixels(), saved.pitch,
