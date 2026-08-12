@@ -186,6 +186,7 @@ public:
 	virtual bool getInterfaceSentenceColors(byte &, byte &) const {
 		return false;
 	}
+	virtual bool hasMacintoshInterface() const { return false; }
 
 	virtual void player_keep_walking();
 

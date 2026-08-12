@@ -77,6 +77,7 @@ public:
 	bool drawPopup() override;
 	void onPopupDestroyed() override;
 	bool getInterfaceSentenceColors(byte &foreground, byte &shadow) const override;
+	bool hasMacintoshInterface() const override;
 };
 
 } // namespace RexNebular
