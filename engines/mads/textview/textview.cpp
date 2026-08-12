@@ -65,6 +65,19 @@ static byte line_slice[156];
 static int bufferHeight;
 static int visibleHeight;
 static bool drawBoundaryLines;
+static bool macintoshFullFrame;
+
+static void present_matte_frame(int specialEffect, int fullScreen) {
+	if (!macintoshFullFrame) {
+		matte_frame(specialEffect, fullScreen);
+		return;
+	}
+
+	const int workHeight = scr_work.y;
+	scr_work.y = visibleHeight;
+	matte_frame(specialEffect, fullScreen);
+	scr_work.y = workHeight;
+}
 
 static void read_line_slice(int xp) {
 	const byte *src = buffer_pointer(background_ptr, xp, 0);
@@ -164,6 +177,24 @@ static void load_background(const char *value) {
 		&depth_resource, -1, -1, 0);
 	if (!room)
 		error("Could not load room %d", room_id);
+
+	if (macintoshFullFrame && scr_orig.y < visibleHeight) {
+		Buffer paddedBackground;
+		memset(&paddedBackground, 0, sizeof(paddedBackground));
+		buffer_init(&paddedBackground, scr_orig.x, visibleHeight);
+		assert(paddedBackground.data);
+		buffer_fill(paddedBackground, 0);
+		buffer_rect_copy_2(scr_orig, paddedBackground, 0, 0, 0, 0,
+			scr_orig.x, scr_orig.y);
+		buffer_free(&scr_orig);
+		scr_orig = paddedBackground;
+	}
+
+	if (macintoshFullFrame) {
+		buffer_rect_copy_2(scr_orig, scr_work, 0, 0, 0, 0,
+			MIN(scr_orig.x, scr_work.x),
+			MIN(scr_orig.y, visibleHeight));
+	}
 
 	image_marker = 1;
 	image_list[0].flags = IMAGE_REFRESH;
@@ -411,7 +442,7 @@ static void animate() {
 			curr_time = timer_read();
 
 			if (curr_time < timer2) {
-				matte_frame(0, 0);
+				present_matte_frame(0, 0);
 				mouse_hide();
 			}
 		}
@@ -436,7 +467,7 @@ static void animate() {
 			if (isEnd && total == 0)
 				isGoing = false;
 
-			matte_frame(has_background ? 2 : 0, 0);
+			present_matte_frame(has_background ? 2 : 0, 0);
 			mouse_hide();
 
 			flag3 = has_background = false;
@@ -452,6 +483,7 @@ void textview_main(const char *resName) {
 	presentation.bufferHeight = 156;
 	presentation.visibleHeight = 156;
 	presentation.drawBoundaryLines = true;
+	presentation.macintoshFullFrame = false;
 	textview_main(resName, presentation);
 }
 
@@ -459,6 +491,7 @@ void textview_main(const char *resName, const Presentation &presentation) {
 	bufferHeight = presentation.bufferHeight;
 	visibleHeight = presentation.visibleHeight;
 	drawBoundaryLines = presentation.drawBoundaryLines;
+	macintoshFullFrame = presentation.macintoshFullFrame;
 	assert(bufferHeight >= 156 && visibleHeight > 0 &&
 		visibleHeight <= bufferHeight && visibleHeight <= 200);
 

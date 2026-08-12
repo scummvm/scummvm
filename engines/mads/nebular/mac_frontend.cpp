@@ -36,6 +36,7 @@ void runAnimView(RexNebularEngine &engine, const char *resource) {
 	presentation.serviceFramesInline = true;
 
 	engine.setMacintoshFullFrameActive(true);
+	engine.getScreen()->clear();
 	AnimView::animview_main(resource, presentation);
 	engine.setMacintoshFullFrameActive(false);
 }
@@ -45,6 +46,7 @@ void runTextView(RexNebularEngine &engine, const char *resource) {
 	presentation.bufferHeight = 210;
 	presentation.visibleHeight = 200;
 	presentation.drawBoundaryLines = false;
+	presentation.macintoshFullFrame = true;
 
 	engine.setMacintoshFullFrameActive(true);
 	TextView::textview_main(resource, presentation);
