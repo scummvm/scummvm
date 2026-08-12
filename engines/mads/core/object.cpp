@@ -215,6 +215,8 @@ int object_examine(int number, long message, int speech) {
 	RGBcolor top_eight[8];
 	SeriesPtr object_series = nullptr;
 	bool isRex = g_engine->getGameID() == GType_RexNebular;
+	bool isMacRex = isRex &&
+		g_engine->getPlatform() == Common::kPlatformMacintosh;
 
 	// Wait cursor
 	cursor_id = 2;
@@ -225,6 +227,8 @@ int object_examine(int number, long message, int speech) {
 
 	inter_turn_off_object();
 	inter_screen_update();
+	if (isMacRex)
+		inter_hide_macintosh_sentence();
 
 	memcpy(top_eight, &master_palette[248].r, 8 * sizeof(RGBcolor));
 
@@ -411,6 +415,12 @@ int object_examine(int number, long message, int speech) {
 		if (refresh_flag) mouse_refresh_done();
 		mouse_thaw();
 
+		// Macintosh Rex composes the game screen into a separate output
+		// surface. Present the restored pixels before the palette-only fade;
+		// otherwise that surface still contains the object close-up.
+		if (isMacRex)
+			g_engine->updateDisplay();
+
 		// Finally, we can fade back to our original palette.
 		magic_fade_from_grey((RGBcolor *)greyed_master_palette, master_palette,
 			KERNEL_RESERVED_LOW_COLORS, num_colors,
@@ -437,6 +447,8 @@ int object_examine(int number, long message, int speech) {
 
 	tile_pan(&depth_map, picture_view_x, picture_view_y);
 	kernel_force_refresh();
+	if (isMacRex)
+		inter_restore_macintosh_sentence();
 	inter_spin_object(inven[active_inven]);
 
 	return restored_screen;

@@ -138,6 +138,7 @@ int  picked_word = 0;           /* Word most recently picked.         */
 char inter_sentence[64];                /* Sentence building buffer            */
 int  inter_sentence_handle = -1;       /* Sentence message handle (for matte) */
 static int inter_sentence_shadow_handle = -1;
+static bool inter_macintosh_sentence_hidden = false;
 int  inter_sentence_changed = false;    /* Mark if sentence contents changed   */
 
 int  inter_look_around;                 /* "Look around" command            */
@@ -246,6 +247,7 @@ void init_inter() {
 	memset(inter_sentence, 0, sizeof(inter_sentence));
 	inter_sentence_handle = -1;
 	inter_sentence_shadow_handle = -1;
+	inter_macintosh_sentence_hidden = false;
 	inter_sentence_changed = false;
 	inter_look_around = 0;
 	inter_command = 0;
@@ -1956,6 +1958,29 @@ void inter_screen_update() {
 	}
 }
 
+void inter_hide_macintosh_sentence() {
+	bool changed = false;
+	inter_macintosh_sentence_hidden = true;
+	if (inter_sentence_handle >= 0) {
+		matte_clear_message(inter_sentence_handle);
+		inter_sentence_handle = -1;
+		changed = true;
+	}
+	if (inter_sentence_shadow_handle >= 0) {
+		matte_clear_message(inter_sentence_shadow_handle);
+		inter_sentence_shadow_handle = -1;
+		changed = true;
+	}
+	if (changed)
+		matte_frame(false, false);
+	inter_sentence_changed = true;
+}
+
+void inter_restore_macintosh_sentence() {
+	inter_macintosh_sentence_hidden = false;
+	inter_sentence_changed = true;
+}
+
 static void inter_exec_function(void (*(target))()) {
 	target();
 }
@@ -2130,7 +2155,7 @@ void inter_main_loop(int allow_input) {
 		}
 	}
 
-	if (inter_sentence_changed) {
+	if (inter_sentence_changed && !inter_macintosh_sentence_hidden) {
 		if (inter_sentence_handle >= 0) {
 			matte_clear_message(inter_sentence_handle);
 			inter_sentence_handle = -1;

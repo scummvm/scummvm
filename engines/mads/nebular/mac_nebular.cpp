@@ -59,11 +59,12 @@ enum {
 	kMacDesktopInterfaceY = kMacDesktopSeparatorY + 1,
 	kMacPanelPaletteColors = 10,
 	kMacScenePaletteStart = 16,
+	kMacPopupGray = 39,
+	kMacPopupColor = 12,
 	kMacNormalTextColor = 15,
 	kMacLeftSelectColor = 13,
 	kMacRightSelectColor = 14,
-	kMacBlackColor = kMacRightSelectColor,
-	kMacPopupColor = REX_DIALOG_FE_COLOR
+	kMacBlackColor = kMacRightSelectColor
 };
 
 struct MacPopupLine {
@@ -107,6 +108,17 @@ static void setMacInterfacePalette(const MacResourceProvider *resources) {
 		g_system->getPaletteManager()->setPalette(panelPalette, 2,
 			kMacPanelPaletteColors);
 	}
+
+	const byte popupGray = macGammaCorrect(kMacPopupGray);
+	byte popupPalette[3] = { popupGray, popupGray, popupGray };
+	master_palette[kMacPopupColor].r =
+		macPaletteComponentToSixBit(popupGray);
+	master_palette[kMacPopupColor].g =
+		macPaletteComponentToSixBit(popupGray);
+	master_palette[kMacPopupColor].b =
+		macPaletteComponentToSixBit(popupGray);
+	g_system->getPaletteManager()->setPalette(popupPalette,
+		kMacPopupColor, 1);
 
 	byte normalR = 25;
 	byte normalG = 48;
@@ -660,8 +672,7 @@ void MacNebular::showPopup() {
 			width - 20, lines);
 
 	const int popupAreaY = _useOriginalMenus ? kMacDesktopSceneY : 0;
-	const int popupAreaHeight = _useOriginalMenus ?
-		kMacSceneHeight : kMacLegacyScreenHeight;
+	const int popupAreaHeight = kMacLegacyScreenHeight;
 	const int height = CLIP<int>((int)lines.size() * 12 + 20, 20,
 		popupAreaHeight - 2);
 	_popup.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
@@ -696,11 +707,17 @@ void MacNebular::showPopup() {
 		}
 	}
 
+	// CODE 9 centers a requested centered popup in the 640x400 content
+	// area. A popup with an explicit vertical position, as used by object
+	// examination, starts three pixels below the content midpoint.
+	const int logicalCenteredY = (video_y - box->ys) / 2;
+	const int popupY = box->y == logicalCenteredY ?
+		(popupAreaHeight - height) / 2 : popupAreaHeight / 2 + 3;
 	_popupRect = Common::Rect(
 		(kMacScreenWidth - width) / 2,
-		popupAreaY + (popupAreaHeight - height) / 2,
+		popupAreaY + popupY,
 		(kMacScreenWidth + width) / 2,
-		popupAreaY + (popupAreaHeight + height) / 2);
+		popupAreaY + popupY + height);
 	_popupActive = true;
 	presentScreen(0);
 }
@@ -711,7 +728,10 @@ void MacNebular::hidePopup() {
 
 	_popupActive = false;
 	_popup.free();
-	presentScreen(0);
+	// The popup owner resumes drawing after destruction. In particular,
+	// object examination still has a temporary work screen here and restores
+	// the room immediately afterwards, so presenting now would expose that
+	// intermediate buffer.
 }
 
 // -------------------------------------------------------------------------
