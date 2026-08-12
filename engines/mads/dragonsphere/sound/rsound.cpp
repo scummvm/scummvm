@@ -81,28 +81,23 @@ void Channel::load(byte *pData) {
 byte RSound::_silenceStream[2] = { 0, 0 };
 
 RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
-		int dataOffset, int dataSize, int sysExOffset) : SoundDriver(mixer, filename, dataOffset, dataSize) {
+		int dataOffset, int dataSize, int sysExOffset,
+		bool usesDemoOpcodeSemantics) :
+		SoundDriver(mixer, filename, dataOffset, dataSize) {
 	_commandParam = 0;
 	_frameCounter = 0;
-	_tickCounter = 0;
 	_isDisabled = false;
 	_randomSeed = 1234;
-	_lastMidiStatus = 0;
-	_sysexChecksum = 0;
 	_stateChangedFlag = 0;
 	_pollResult = 0;
 	_sysExOffset = sysExOffset;
 	_fadeCheckCounter = 0;
 	_fadeCheckPeriod = 0;
-
-	_clockMedTarget = 0;
-	_clockCoarseTarget = 0;
-	_clockUnknown = 0;
-	_clockCoarse = 112;
-	_clockMed = 28;
-	_clockFine = 7;
-	_clockEnabled1 = 0;
-	_clockEnabled2 = 0;
+	_opcodeBeBfValue = 0;
+	_opcodeC0Value = 0;
+	_opcodeC1Value = 0;
+	_usesImmediateArithmeticOperands = false;
+	_usesDemoOpcodeSemantics = usesDemoOpcodeSemantics;
 
 	_callbackCounter = 0;
 	_callbackPeriod = 0;
@@ -121,12 +116,33 @@ RSound::RSound(Audio::Mixer *mixer, const Common::Path &filename,
 	for (int i = 0; i < ARRAYSIZE(_scriptVariables); ++i)
 		_scriptVariables[i] = 0;
 
+	_midiDriver = new MidiDriver_MT32GM(MusicType::MT_MT32);
+	const int returnCode = _midiDriver->open();
+	if (returnCode != 0)
+		error("RSound - Failed to open MIDI music driver - error code %d.", returnCode);
+
+	_driverCallbackDelta = _midiDriver->getBaseTempo();
+
 	// Matches initDeviceOnce: command0() then sendSysExSequence(). The
 	// disassembly's _deviceInitialized guard flag is omitted - this
 	// constructor only ever runs once per driver instance, so there's
 	// nothing to guard against.
 	command0();
 	sendSysExSequence();
+
+	_midiDriver->setTimerCallback(this, &timerCallback);
+}
+
+RSound::~RSound() {
+	_isDisabled = true;
+	if (_midiDriver) {
+		_midiDriver->setTimerCallback(nullptr, nullptr);
+		_midiDriver->close();
+
+		Common::StackLock lock(_driverMutex);
+		delete _midiDriver;
+		_midiDriver = nullptr;
+	}
 }
 
 void RSound::validate() {
@@ -172,8 +188,25 @@ int RSound::poll() {
 	return result;
 }
 
+void RSound::onTimer() {
+	Common::StackLock lock(_driverMutex);
+
+	uint32 serviceTicks = _hostTimer.advance(_driverCallbackDelta, 1000000);
+	while (serviceTicks--) {
+		// Export 4 is a return stub in every audited Dragonsphere RSOUND overlay.
+		if (_hostTimer.pollDue())
+			poll();
+	}
+}
+
+void RSound::timerCallback(void *data) {
+	static_cast<RSound *>(data)->onTimer();
+}
+
 void RSound::setVolume(int volume) {
-	// TODO: no confirmed handler for this in the disassembly seen so far.
+	_masterVolume = CLIP(volume, 0, 255);
+	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
+		sendVolumeCC(i + 1, _isDisabled ? 0 : _channels[i]._volume);
 }
 
 void RSound::resultCheck() {
@@ -249,21 +282,6 @@ int RSound::isMusicChannelsActive() {
 }
 
 /*-----------------------------------------------------------------------*/
-// Low-level MIDI transmission. sendMidiByte() is the single point that
-// needs to change once the real MT-32/MIDI output interface is wired up;
-// everything else funnels through it.
-
-void RSound::sendMidiByte(byte value) {
-	warning("RSound: MIDI byte %02X", value);
-}
-
-void RSound::sendStatus(int midiChannel, byte statusNibble) {
-	byte status = statusNibble | midiChannel;
-	if (_lastMidiStatus != status) {
-		_lastMidiStatus = status;
-		sendMidiByte(status);
-	}
-}
 
 void RSound::sendNoteOn(int midiChannel, int note, int velocity) {
 	// The disassembly derives midiChannel/velocity from
@@ -271,14 +289,13 @@ void RSound::sendNoteOn(int midiChannel, int note, int velocity) {
 	// explicit call-site parameters, but the transmitted bytes are
 	// identical either way - kept parameterized here for API consistency
 	// with the rest of the class (and with the Phantom RSound family).
-	sendStatus(midiChannel, 0x90);
-	sendMidiByte(note);
-	sendMidiByte(velocity);
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_NOTE_ON | midiChannel,
+			note, velocity);
 }
 
 void RSound::sendProgramChange(int midiChannel, int program) {
-	sendStatus(midiChannel, 0xC0);
-	sendMidiByte(program);
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_PROGRAM_CHANGE | midiChannel,
+			program, 0);
 }
 
 void RSound::sendVolume(Channel *ch) {
@@ -288,26 +305,23 @@ void RSound::sendVolume(Channel *ch) {
 	// own fade-out mechanism takes over otherwise.
 	if (ch->_pendingStop)
 		return;
-	sendStatus(ch->_midiChannel, 0xB0);
-	sendMidiByte(7);
-	sendMidiByte(ch->_volume);
+	const int volume = CLIP(ch->_volume, 0, 127) * _masterVolume / 255;
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE |
+			ch->_midiChannel, MidiDriver::MIDI_CONTROLLER_VOLUME, volume);
 }
 
 void RSound::sendVolumeCC(int midiChannel, int volume) {
-	// Unlike sendVolume(), this sends the status byte UNCONDITIONALLY (no
-	// _lastMidiStatus dedup check) - used by command7 when restoring all
-	// 9 channels' volumes in a row.
-	byte status = 0xB0 | midiChannel;
-	_lastMidiStatus = status;
-	sendMidiByte(status);
-	sendMidiByte(7);
-	sendMidiByte(volume);
+	// Structured messages do not retain MIDI running status, so the native
+	// unconditional status write is equivalent to an ordinary volume event.
+	volume = CLIP(volume, 0, 127) * _masterVolume / 255;
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
+			MidiDriver::MIDI_CONTROLLER_VOLUME, volume);
 }
 
 void RSound::sendPitchBend(int midiChannel, int value) {
-	sendStatus(midiChannel, 0xE0);
-	sendMidiByte(0); // LSB always 0 - only coarse (MSB) control is used
-	sendMidiByte(value);
+	// The original only uses the coarse (MSB) component.
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_PITCH_BEND | midiChannel,
+			0, value);
 }
 
 void RSound::resetPitchBend(int midiChannel) {
@@ -317,17 +331,13 @@ void RSound::resetPitchBend(int midiChannel) {
 void RSound::sendPan(int midiChannel, int value) {
 	// CORRECTED naming - see rsound.h class comment: this is the function
 	// the disassembly auto-named "sendVolume", which actually sends CC#10.
-	sendStatus(midiChannel, 0xB0);
-	sendMidiByte(0x0A); // CC#10: Pan
-	sendMidiByte(value);
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
+			MidiDriver::MIDI_CONTROLLER_PANNING, value);
 }
 
 void RSound::muteChannel(int midiChannel) {
-	byte status = 0xB0 | midiChannel;
-	_lastMidiStatus = status;
-	sendMidiByte(status);
-	sendMidiByte(7);
-	sendMidiByte(0);
+	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
+			MidiDriver::MIDI_CONTROLLER_VOLUME, 0);
 }
 
 void RSound::sendGmReset(int count) {
@@ -340,92 +350,88 @@ void RSound::sendGmResetRange(int high, int low) {
 	for (int midiChannel = high; midiChannel >= low; --midiChannel) {
 		_fadeCheckPeriod = 0;
 
-		byte status = 0xB0 | midiChannel;
-		_lastMidiStatus = status;
-		sendMidiByte(status);
-		sendMidiByte(0x7B); // All Notes Off
-		sendMidiByte(0);
-		sendMidiByte(0x79); // Reset All Controllers
-		sendMidiByte(0);
-		sendMidiByte(7);    // Channel Volume
-		sendMidiByte(100);
-		sendMidiByte(0x0A); // Pan
-		sendMidiByte(0x40);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
+				MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
+				MidiDriver::MIDI_CONTROLLER_RESET_ALL_CONTROLLERS, 0);
+		sendVolumeCC(midiChannel, 100);
+		sendPan(midiChannel, 0x40);
 	}
 }
 
-const byte *RSound::sendSysExData(const byte *pData) {
-	static const byte header[] = { 0xF0, 0x41, 0x10, 0x16, 0x12 };
-	for (int i = 0; i < ARRAYSIZE(header); ++i)
-		sendMidiByte(header[i]);
+const byte *RSound::sendSysExData(const byte *pData, uint maxLength) {
+	uint length = 0;
+	while (length < maxLength && pData[length] != 0xFF)
+		++length;
 
-	_sysexChecksum = 0;
-	int i = 0;
-	for (; pData[i] != 0xFF; ++i) {
-		sendMidiByte(pData[i]);
-		_sysexChecksum += pData[i];
+	if (length == maxLength) {
+		warning("RSound::sendSysExData: unterminated SysEx message");
+		return nullptr;
 	}
 
-	sendMidiByte((~_sysexChecksum + 1) & 0x7F);
-	sendMidiByte(0xF7);
-
-	return &pData[i];
+	_midiDriver->sysExMT32(pData, length);
+	return &pData[length];
 }
 
 const byte *RSound::sendSysEx(int offset) {
-	return sendSysExData(loadData(offset));
+	if (offset < 0 || (uint)offset >= _soundData.size()) {
+		warning("RSound::sendSysEx: offset %d is outside the sound data", offset);
+		return nullptr;
+	}
+
+	return sendSysExData(loadData(offset), _soundData.size() - offset);
 }
 
 void RSound::sendSysExSequence() {
-	const byte *pData = loadData(_sysExOffset);
+	const byte *pData = sendSysEx(_sysExOffset);
+	if (!pData)
+		return;
+
+	const byte *const dataEnd = _soundData.end();
 	for (;;) {
-		pData = sendSysExData(pData);
 		++pData;
+		if (pData == dataEnd) {
+			warning("RSound::sendSysExSequence: unterminated SysEx sequence");
+			return;
+		}
 		if (*pData == 0xFF)
 			break;
+
+		pData = sendSysExData(pData, dataEnd - pData);
+		if (!pData)
+			return;
 	}
 }
 
-void RSound::sendPatchInitSequence() {
-	// Matches sendPatchInitSequence exactly: 4 outer iterations, each
-	// sending one SysEx message built from the fixed header at
-	// loadData(0x61) plus a computed payload.
+void RSound::restorePatchMemory() {
+	// Native export 2 uses this during teardown. Four blocks restore the
+	// complete MT-32 Patch Memory table; each block contains 32 records.
 	byte base = 0;
 	for (int outer = 0; outer < 4; ++outer) {
-		byte *header = loadData(0x61);
-		for (int i = 0; header[i] != 0xFF; ++i)
-			sendMidiByte(header[i]);
-
-		_sysexChecksum = 0;
-		byte b1 = 5;
-		_sysexChecksum += b1; sendMidiByte(b1);
-		byte b2 = (byte)(outer << 1);
-		_sysexChecksum += b2; sendMidiByte(b2);
-		byte b3 = 0;
-		_sysexChecksum += b3; sendMidiByte(b3);
+		byte message[3 + 32 * 8];
+		uint16 length = 0;
+		message[length++] = 5;
+		message[length++] = (byte)(outer << 1);
+		message[length++] = 0;
 
 		for (int inner = 0; inner < 0x20; ++inner) {
-			byte v1 = (byte)(outer >> 1);
-			_sysexChecksum += v1; sendMidiByte(v1);
-			byte v2 = (byte)(inner + base);
-			_sysexChecksum += v2; sendMidiByte(v2);
+			message[length++] = (byte)(outer >> 1);
+			message[length++] = (byte)(inner + base);
 			static const byte tail[] = { 0x18, 0x32, 0x0C, 0, 1, 0 };
-			for (int t = 0; t < ARRAYSIZE(tail); ++t) {
-				_sysexChecksum += tail[t];
-				sendMidiByte(tail[t]);
-			}
+			for (int t = 0; t < ARRAYSIZE(tail); ++t)
+				message[length++] = tail[t];
 		}
 
-		sendMidiByte((~_sysexChecksum + 1) & 0x7F);
-		sendMidiByte(0xF7);
+		_midiDriver->sysExMT32(message, length);
 
 		base = (byte)((base + 0x20) & 0x3F);
 	}
 }
 
 void RSound::sendReverbSysEx(int mode, int time, int level) {
+	// Native retail and demo helpers mutate this same fixed template.
 	byte buffer[7] = { 0x10, 0x00, 0x01, (byte)(mode & 3), (byte)(time & 7), (byte)(level & 7), 0xFF };
-	sendSysExData(buffer);
+	sendSysExData(buffer, ARRAYSIZE(buffer));
 }
 
 /*-----------------------------------------------------------------------*/
@@ -434,9 +440,7 @@ void RSound::Channel_flushHeldNotes(Channel *channel) {
 	byte *slots = _heldNotes[channel->_midiChannel];
 	for (int i = 0; i < 4; ++i) {
 		if (slots[i] != 0xFF) {
-			sendStatus(channel->_midiChannel, 0x90);
-			sendMidiByte(slots[i]);
-			sendMidiByte(0); // velocity 0 = note off
+			sendNoteOn(channel->_midiChannel, slots[i], 0);
 			slots[i] = 0xFF;
 		}
 	}
@@ -614,10 +618,6 @@ int RSound::command8() {
 	return result;
 }
 
-void RSound::callFunction(uint16 offset) {
-	error("Unsupported call to sound driver function at offset %.4x", offset);
-}
-
 /*-----------------------------------------------------------------------*/
 
 int RSound::readScriptByte(byte *&pSrc) {
@@ -652,7 +652,6 @@ void RSound::update() {
 		return;
 
 	++_frameCounter;
-	++_tickCounter;
 	pollAllChannels();
 	tickCallback();
 	checkFadingChannels();
@@ -664,11 +663,9 @@ void RSound::pollAllChannels() {
 }
 
 /*-----------------------------------------------------------------------*/
-// Per-channel opcode interpreter. Ported by structural analogy to the
-// already-confirmed Phantom RSound::pollActiveChannel() - see the class
-// comment in rsound.h for exactly which parts were independently
-// re-checked against THIS game's disassembly (the dispatch range and the
-// loop/restart/branch opcode cluster) versus carried over unchanged.
+// Per-channel opcode interpreter. Every opcode was rechecked against the
+// retail and demo overlays. The explicit demo switches below preserve the
+// differences found in DR1/DR9 instead of relying on Phantom by analogy.
 
 void RSound::pollActiveChannel(Channel *ch) {
 	int midiChannel = ch->_midiChannel;
@@ -689,7 +686,10 @@ dispatch:
 		byte *pSrc = ch->_pSrc;
 		byte b = *pSrc;
 
-		if (!(b & 0x80)) {
+		// The native signed comparison dispatches every value through 0xBD
+		// to the two-byte note path. Values 0x80-0xBD are therefore signed
+		// note values, not unknown control opcodes.
+		if (b <= 0xBD) {
 			// ---- Simple note event: [note][duration] ----
 			int note = (int8)pSrc[0] + ch->_transpose;
 			int duration = pSrc[1];
@@ -718,33 +718,25 @@ dispatch:
 			goto post_keyon;
 		}
 
-		if (b <= 0xBD)
-			goto post_keyon;
-
 		switch (b) {
 		case 0xBE: {
-			_clockUnknown = readScriptByte(pSrc);
+			_opcodeBeBfValue = readScriptByte(pSrc);
 			ch->_pSrc += 2;
 			goto dispatch;
 		}
 		case 0xBF: {
-			_clockCoarseTarget = readScriptWord(pSrc);
-			if (_tickCounter == 0)
-				_clockCoarse = _clockCoarseTarget;
-			_clockEnabled1 = 1;
-			_clockEnabled2 = 1;
+			_opcodeBeBfValue = readScriptByte(pSrc);
+			readScriptByte(pSrc); // Native helper skips this byte and returns.
 			ch->_pSrc += 3;
 			goto dispatch;
 		}
 		case 0xC0: {
-			_clockMedTarget = readScriptByte(pSrc);
-			if (_tickCounter == 0)
-				_clockMed = _clockMedTarget;
+			_opcodeC0Value = readScriptByte(pSrc);
 			ch->_pSrc += 2;
 			goto dispatch;
 		}
 		case 0xC1: {
-			_clockFine = readScriptByte(pSrc);
+			_opcodeC1Value = readScriptByte(pSrc);
 			ch->_pSrc += 2;
 			goto dispatch;
 		}
@@ -762,8 +754,9 @@ dispatch:
 			goto dispatch;
 		}
 		case 0xC4: {
-			uint16 fnOffset = readScriptWord(pSrc);
-			callFunction(fnOffset);
+			const uint16 targetOffset = readScriptWord(pSrc);
+			if (!callFunction(targetOffset, *ch))
+				error("Unknown Dragonsphere RSOUND callback 0x%04x", targetOffset);
 			ch->_pSrc += 3;
 			goto dispatch;
 		}
@@ -840,10 +833,12 @@ dispatch:
 		}
 		case 0xDC: {
 			int idx1 = readScriptByte(pSrc);
-			readScriptByte(pSrc); // operand read but unused, matching Phantom's confirmed same-shaped bug
-			byte self = _scriptVariables[idx1 & 0xFF];
-			if (self)
-				_scriptVariables[idx1 & 0xFF] = self % self;
+			int operand = readScriptByte(pSrc);
+			byte value = _scriptVariables[idx1 & 0xFF];
+			uint16 divisor = _usesImmediateArithmeticOperands ?
+					(uint16)(int16)operand : value;
+			if (divisor)
+				_scriptVariables[idx1 & 0xFF] = value % divisor;
 			ch->_pSrc += 3; goto dispatch;
 		}
 		case 0xDD: { // DIV, variable
@@ -855,10 +850,12 @@ dispatch:
 		}
 		case 0xDE: {
 			int idx1 = readScriptByte(pSrc);
-			readScriptByte(pSrc); // operand read but unused, matching Phantom's confirmed same-shaped bug
-			byte self = _scriptVariables[idx1 & 0xFF];
-			if (self)
-				_scriptVariables[idx1 & 0xFF] = self / self;
+			int operand = readScriptByte(pSrc);
+			byte value = _scriptVariables[idx1 & 0xFF];
+			uint16 divisor = _usesImmediateArithmeticOperands ?
+					(uint16)(int16)operand : value;
+			if (divisor)
+				_scriptVariables[idx1 & 0xFF] = value / divisor;
 			ch->_pSrc += 3; goto dispatch;
 		}
 		case 0xDF: { // MUL, variable
@@ -920,6 +917,10 @@ dispatch:
 			ch->_pSrc += 3; goto dispatch;
 		}
 		case 0xEA: {
+			// Selects a byte using a script variable as the table index,
+			// then writes it at the self-relative displacement stored after
+			// the table. The operation is confirmed, but its higher-level
+			// purpose remains unknown.
 			int idx1 = readScriptByte(pSrc);
 			int len2 = readScriptByte(pSrc);
 			byte *table1Base = pSrc + 1;
@@ -934,7 +935,10 @@ dispatch:
 			int rangeLow = readScriptByte(pSrc);
 			int rangeHigh = readScriptByte(pSrc);
 			int range = rangeHigh - rangeLow + 1;
-			int r = range ? (getRandomNumber() % range) : 0;
+			uint16 random = getRandomNumber();
+			if (!_usesDemoOpcodeSemantics)
+				random &= 0x7fff;
+			int r = range ? (random % range) : 0;
 			byte value = (byte)(rangeLow + r);
 			int tableByte = (int8)*(pSrc + 1);
 			(pSrc + 2 + tableByte)[0] = value;
@@ -943,7 +947,10 @@ dispatch:
 		}
 		case 0xEC: {
 			int len1 = readScriptByte(pSrc);
-			int r = len1 ? (getRandomNumber() % len1) : 0;
+			uint16 random = getRandomNumber();
+			if (!_usesDemoOpcodeSemantics)
+				random &= 0x7fff;
+			int r = len1 ? (random % len1) : 0;
 			byte *table1 = pSrc + 1;
 			byte v1 = table1[r];
 			byte *table2 = pSrc + 1 + len1 + 1;
@@ -951,6 +958,50 @@ dispatch:
 			table2[sizeByte] = v1;
 			ch->_pSrc += len1 + 3;
 			goto dispatch;
+		}
+		case 0xFE: {
+			// End an outer loop. A zero count establishes the next outer
+			// and inner loop anchors without repeating. The signed byte is
+			// stored in the native 16-bit counter, so 0xFF means 65535.
+			if (!ch->_outerLoopCount) {
+				ch->_outerLoopCount = (uint16)(int16)(int8)
+						readScriptByte(pSrc);
+				if (!ch->_outerLoopCount) {
+					ch->_pSrc += 2;
+					ch->_outerLoopPtr = ch->_pSrc;
+					ch->_innerLoopCount = 0;
+					ch->_outerLoopCount = 0;
+				} else {
+					ch->_pSrc = ch->_outerLoopPtr;
+				}
+			} else if (--ch->_outerLoopCount == 0) {
+				ch->_pSrc += 2;
+				ch->_outerLoopPtr = ch->_pSrc;
+			} else {
+				ch->_pSrc = ch->_outerLoopPtr;
+			}
+			ch->_innerLoopPtr = ch->_pSrc;
+			goto post_keyon;
+		}
+		case 0xFF: {
+			// End an inner loop. The restart pointer is the beginning of
+			// the current inner-loop region and advances after completion.
+			if (!ch->_innerLoopCount) {
+				ch->_innerLoopCount = (uint16)(int16)(int8)
+						readScriptByte(pSrc);
+				if (!ch->_innerLoopCount) {
+					ch->_pSrc += 2;
+					ch->_innerLoopPtr = ch->_pSrc;
+				} else {
+					ch->_pSrc = ch->_innerLoopPtr;
+				}
+			} else if (--ch->_innerLoopCount == 0) {
+				ch->_pSrc += 2;
+				ch->_innerLoopPtr = ch->_pSrc;
+			} else {
+				ch->_pSrc = ch->_innerLoopPtr;
+			}
+			goto post_keyon;
 		}
 
 		// ---- Loop / restart-pointer opcodes ----
@@ -1038,7 +1089,9 @@ dispatch:
 			goto post_keyon;
 		}
 		case 0xF1: {
-			ch->_pitchBend = readScriptByte(pSrc);
+			int pitchBend = readScriptByte(pSrc);
+			if (_usesDemoOpcodeSemantics || !ch->_pendingStop)
+				ch->_pitchBend = pitchBend;
 			ch->_pSrc += 2;
 			sendPitchBend(midiChannel, ch->_pitchBend);
 			goto post_keyon;

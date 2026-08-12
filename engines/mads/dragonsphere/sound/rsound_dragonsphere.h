@@ -58,6 +58,7 @@ private:
 
 	int command16();
 	int loadCommand16();
+	int loadCallback2478();
 
 	int command17();
 
@@ -103,7 +104,7 @@ private:
 	void command43_48Tail(byte variant);
 	int command43();
 	int command48();
-	int loadCommand43_48();
+	void loadCommand43_48();
 
 	int command44();
 	int loadCommand44();
@@ -149,6 +150,7 @@ private:
 	int command99();
 	int command100();
 	int command101();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound1(Audio::Mixer *mixer);
@@ -310,6 +312,7 @@ private:
 	int command71();
 	int command72();
 	int command73();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound3(Audio::Mixer *mixer);
@@ -421,6 +424,7 @@ private:
 	int command76();
 	int command77();
 	int command78();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound4(Audio::Mixer *mixer);
@@ -466,6 +470,7 @@ private:
 	int command16();
 	int loadCommand16A();
 	int loadCommand16B();
+	void dispatchCommand16B();
 
 	int command17();
 	int command18();
@@ -520,6 +525,7 @@ private:
 	/** Uses _commandParam: if 0, conditionally redirects channel 8's inner loop pointer; otherwise writes a clamped 7-bit value into the sound data at offset 0x20D6 (11 bytes into the block about to be played) and gate-loads channel 8. */
 	int command77();
 	int command78();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound5(Audio::Mixer *mixer);
@@ -561,6 +567,8 @@ public:
  */
 class RSound6 : public RSound {
 private:
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
+
 	int command1();
 	int command2();
 	int command3();
@@ -631,16 +639,23 @@ private:
 	void command34LoadRestOnly();
 
 	int command35();
+	int retryCommand35();
 
 	int command36();
+	int retryCommand36();
 	int command37();
+	int retryCommand37();
 	int command38();
+	int retryCommand38();
 	int command39();
+	int retryCommand39();
 	int command40();
+	int retryCommand40();
 
 	int command44();
 	int loadCommand44();
 	int command45();
+	int retryCommand45();
 
 	int command64();
 	int command65();
@@ -675,6 +690,7 @@ private:
 	int command94();
 	int command95();
 	int command96();
+	int retryCommand96();
 	int command97();
 	int command98();
 
@@ -712,17 +728,13 @@ public:
  *   commands 32-63  (this class); 44,56 confirmed nullsub_2. Two shared
  *                    handlers: commands 33 and 47 point to the exact
  *                    same function (command33Or47()); commands 34 and
- *                    54 likewise (command34Or54()). command53's body is
- *                    an unlabeled function in the disassembly (no proc
- *                    name/index shown) - assigned to index 53 by
- *                    elimination (the only index in this range with no
- *                    other confirmed body), not from an explicit label;
- *                    flag if that's wrong.
- *   commands 64-95  CONFIRMED by the user to be an exact duplicate of
- *                    the 32-63 table (index 64+N behaves identically to
- *                    index 32+N) - the flat _commandList[] below just
- *                    reuses the same function pointers for that range,
- *                    no separate implementation needed.
+ *                    54 likewise (command34Or54()). Command 53 maps
+ *                    directly to 0x22DA, which schedules command1 after
+ *                    1200 polls.
+ *   commands 64+    rejected. The native dispatcher enters a fifth
+ *                    bucket at command 64, but its maximum-command word
+ *                    is zero, so every command in that bucket is above
+ *                    the accepted maximum.
  */
 class RSound9 : public RSound {
 private:
@@ -769,13 +781,8 @@ private:
 	int command41();
 	int loadCommand41();
 
-	/**
-	 * Matches an unlabeled function immediately following command41() in
-	 * the disassembly - see class comment re: its index being inferred
-	 * by elimination.
-	 */
 	int command53();
-	int loadCommand53();
+	int command53Callback();
 
 	int command42();
 	int loadCommand42();
@@ -819,18 +826,106 @@ private:
 	int command63();
 
 	typedef int (RSound9:: *CommandPtr)();
-	static const CommandPtr _commandList[96];
-
-protected:
-	/**
-	 * Calls a function at a fixed offset within the sound driver.
-	 * @param offset		Offset of the function
-	 */
-	void callFunction(uint16 offset) override;
+	static const CommandPtr _commandList[64];
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
 
 public:
 	RSound9(Audio::Mixer *mixer);
 
+	int command(int commandId, int param) override;
+};
+
+/**
+ * Shared support for the Dragonsphere demo RSOUND overlays.
+ *
+ * The demos use the retail game's bytecode interpreter and host cadence, but
+ * have their own overlay layouts, dispatch tables and embedded sequence roots.
+ */
+class RSoundDemo : public RSound {
+protected:
+	RSoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+			int dataOffset, int dataSize, int sysExOffset);
+
+	int executeDemoCommonCommand(int commandId);
+	int queueDemoMusic(CallbackFunction callback, uint16 counter,
+			uint16 period);
+	Channel *playDemoSoundAny(int offset);
+
+public:
+	static void validate();
+};
+
+/** Demo RSOUND.DR1: `RLND DragonS07/21/93`. */
+class RSoundDemo1 : public RSoundDemo {
+private:
+	int command16();
+	int loadCommand16();
+	int command32();
+	int loadCommand32();
+	int command33();
+	int loadCommand33();
+	int command34();
+	int loadCommand34();
+	int command35();
+	int loadCommand35();
+	int command36();
+	int loadCommand36();
+	int command37();
+	int loadCommand37();
+	int command38();
+	int loadCommand38();
+	int command39();
+	int loadCommand39();
+	int command40();
+	int loadCommand40();
+	int command41();
+	int loadCommand41();
+	int command42();
+	int loadCommand42();
+	int command43();
+	int loadCommand43();
+	int command44();
+	int loadCommand44();
+	int command45();
+	int loadCommand45();
+	int command92();
+	int loadCommand92();
+	bool callFunction(uint16 targetOffset, Channel &channel) override;
+
+public:
+	explicit RSoundDemo1(Audio::Mixer *mixer);
+	int command(int commandId, int param) override;
+};
+
+/** Demo RSOUND.DR9: `RLND DragonS07/30/93`. */
+class RSoundDemo9 : public RSoundDemo {
+private:
+	int command32();
+	int command33Or47();
+	int loadCommand33Or47();
+	int command34();
+	int loadCommand34();
+	int command35();
+	int loadCommand35();
+	int command36();
+	int loadCommand36();
+	int command37();
+	int loadCommand37();
+	int command38();
+	int loadCommand38();
+	int command39();
+	int loadCommand39();
+	int command40();
+	int loadCommand40();
+	int command41();
+	int loadCommand41();
+	int command42();
+	int loadCommand42();
+	int command43();
+	int command44();
+
+public:
+	explicit RSoundDemo9(Audio::Mixer *mixer);
 	int command(int commandId, int param) override;
 };
 
