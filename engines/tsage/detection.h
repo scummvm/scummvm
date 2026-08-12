@@ -38,7 +38,8 @@ enum {
 	GF_CD			= 1 << 1,
 	GF_FLOPPY		= 1 << 2,
 	GF_ALT_REGIONS	= 1 << 3,
-	GF_UNINSTALLED	= 1 << 4
+	GF_UNINSTALLED	= 1 << 4,
+	GF_GENERAL_MIDI	= 1 << 5
 };
 
 struct tSageGameDescription {

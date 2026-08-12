@@ -21,6 +21,7 @@
 
 #include "audio/fmopl.h"
 #include "audio/decoders/raw.h"
+#include "audio/mididrv.h"
 #include "common/config-manager.h"
 #include "common/timer.h"
 #include "audio/audiostream.h"
@@ -33,6 +34,10 @@
 namespace TsAGE {
 
 static SoundManager *_soundManager = NULL;
+
+static bool supportsGeneralMidi() {
+	return g_vm->getFeatures() & GF_GENERAL_MIDI;
+}
 
 /*--------------------------------------------------------------------------*/
 
@@ -55,6 +60,8 @@ SoundManager::SoundManager() {
 
 SoundManager::~SoundManager() {
 	if (_sndmgrReady) {
+		g_system->getTimerManager()->removeTimerProc(&sfSoundServer);
+
 		Common::StackLock slock(_serverDisabledMutex);
 		g_vm->_mixer->stopAll();
 
@@ -69,8 +76,6 @@ SoundManager::~SoundManager() {
 			delete driver;
 		}
 		sfTerminate();
-
-		g_system->getTimerManager()->removeTimerProc(&sfSoundServer);
 	}
 
 	// Free any allocated voice type structures
@@ -146,8 +151,17 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 	assert(_sndmgrReady);
 	_availableDrivers.clear();
 
-	// Build up a list of available drivers. Currently we only implement an Adlib music
-	// and SoundBlaster FX driver
+	// Build up a list of available drivers
+	if (supportsGeneralMidi()) {
+		SoundDriverEntry sdMidi;
+		sdMidi._driverNum = GENERAL_MIDI_DRIVER_NUM;
+		sdMidi._status = detectFlag ? SNDSTATUS_DETECTED : SNDSTATUS_SKIPPED;
+		sdMidi._field2 = 0;
+		sdMidi._field6 = 10010;
+		sdMidi._shortDescription = "External General MIDI Device";
+		sdMidi._longDescription = "GenMidi";
+		_availableDrivers.push_back(sdMidi);
+	}
 
 	// Adlib driver
 	SoundDriverEntry sd;
@@ -174,7 +188,30 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 }
 
 void SoundManager::installConfigDrivers() {
-	installDriver(ADLIB_DRIVER_NUM);
+	if (supportsGeneralMidi()) {
+		const MidiDriver::DeviceHandle device =
+			MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+		const MusicType musicType = MidiDriver::getMusicType(device);
+
+		switch (musicType) {
+		case MT_GM:
+		case MT_GS:
+			if (!installDriver(GENERAL_MIDI_DRIVER_NUM, device)) {
+				warning("Could not initialize General MIDI output, falling back to AdLib");
+				installDriver(ADLIB_DRIVER_NUM);
+			}
+			break;
+		case MT_MT32:
+		case MT_ADLIB:
+			installDriver(ADLIB_DRIVER_NUM);
+			break;
+		default:
+			break;
+		}
+	} else {
+		installDriver(ADLIB_DRIVER_NUM);
+	}
+
 	installDriver(SBLASTER_DRIVER_NUM);
 }
 
@@ -192,15 +229,15 @@ void SoundManager::dumpDriverList() {
 /**
  * Install the specified driver number
  */
-void SoundManager::installDriver(int driverNum) {
+bool SoundManager::installDriver(int driverNum, MidiDriver::DeviceHandle midiDevice) {
 	// If driver is already installed, no need to install it
 	if (isInstalled(driverNum))
-		return;
+		return true;
 
 	// Instantiate the sound driver
-	SoundDriver *driver = instantiateDriver(driverNum);
+	SoundDriver *driver = instantiateDriver(driverNum, midiDevice);
 	if (!driver)
-		return;
+		return false;
 
 	assert((_ourDrvResVersion >= driver->_minVersion) && (_ourDrvResVersion <= driver->_maxVersion));
 
@@ -211,8 +248,15 @@ void SoundManager::installDriver(int driverNum) {
 		(*i)->mute(true);
 
 	// Install the driver
-	if (!sfInstallDriver(driver))
-		error("Sound driver initialization failed");
+	if (!sfInstallDriver(driver)) {
+		delete driver;
+
+		// Unmute currently active sounds
+		for (Common::List<Sound *>::iterator i = _playList.begin(); i != _playList.end(); ++i)
+			(*i)->mute(false);
+
+		return false;
+	}
 
 	switch (driverNum) {
 	case ROLAND_DRIVER_NUM:
@@ -236,17 +280,21 @@ void SoundManager::installDriver(int driverNum) {
 	default:
 		break;
 	}
+
+	return true;
 }
 
 /**
  * Instantiate a driver class for the specified driver number
  */
-SoundDriver *SoundManager::instantiateDriver(int driverNum) {
+SoundDriver *SoundManager::instantiateDriver(int driverNum, MidiDriver::DeviceHandle midiDevice) {
 	switch (driverNum) {
 	case ADLIB_DRIVER_NUM:
 		return new AdlibSoundDriver();
 	case SBLASTER_DRIVER_NUM:
 		return new SoundBlasterDriver();
+	case GENERAL_MIDI_DRIVER_NUM:
+		return new GeneralMidiSoundDriver(midiDevice);
 	default:
 		error("Unknown sound driver - %d", driverNum);
 	}
@@ -711,6 +759,7 @@ void SoundManager::sfRethinkSoundDrivers() {
 								VoiceStructEntry ve;
 								memset(&ve, 0, sizeof(VoiceStructEntry));
 
+								ve._voiceNum = byteVal & 0x7f;
 								ve._field1 = (byteVal & 0x80) ? 0 : 1;
 								ve._driver = driver;
 								ve._type0._sound = NULL;
@@ -741,7 +790,9 @@ void SoundManager::sfRethinkSoundDrivers() {
 							}
 						}
 					} else {
-						if (*groupData++ != 0) {
+						// Type 0 lists voices up to a 0xff terminator; type 1
+						// uses a fixed-size count/reserved pair.
+						if (*groupData++ == 0) {
 							while (*groupData != 0xff)
 								++groupData;
 						} else {
@@ -978,7 +1029,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 						vte._sound2 = sound;
 						vte._channelNum2 = foundIndex;
 						vte._priority2 = foundPriority;
-						vte._field12 = false;
+						vte._field12 = true;
 						continue;
 					}
 
@@ -1099,8 +1150,9 @@ void SoundManager::sfRethinkVoiceTypes() {
 		if (vs->_voiceType == VOICETYPE_0) {
 			// Type 0
 			for (uint idx = 0; idx < vs->_entries.size(); ++idx) {
-				VoiceStructEntryType0 &vse = vs->_entries[idx]._type0;
-				SoundDriver *driver = vs->_entries[idx]._driver;
+				VoiceStructEntry &voice = vs->_entries[idx];
+				VoiceStructEntryType0 &vse = voice._type0;
+				SoundDriver *driver = voice._driver;
 				assert(driver);
 
 				if (vse._field12) {
@@ -1118,15 +1170,15 @@ void SoundManager::sfRethinkVoiceTypes() {
 					vse._sound2 = NULL;
 
 					if ((total) && vse._sound) {
-						driver->proc24(vse._channelNum, idx, vse._sound, 123, 0);
-						driver->proc24(vse._channelNum, idx, vse._sound, 1, vse._sound->_chModulation[vse._channelNum]);
-						driver->proc24(vse._channelNum, idx, vse._sound, 7,
+						driver->controlChange(voice._voiceNum, 123, 0);
+						driver->controlChange(voice._voiceNum, 1, vse._sound->_chModulation[vse._channelNum]);
+						driver->controlChange(voice._voiceNum, 7,
 							vse._sound->_chVolume[vse._channelNum] * vse._sound->_volume / 127);
-						driver->proc24(vse._channelNum, idx, vse._sound, 10, vse._sound->_chPan[vse._channelNum]);
-						driver->proc24(vse._channelNum, idx, vse._sound, 64, vse._sound->_chDamper[vse._channelNum]);
+						driver->controlChange(voice._voiceNum, 10, vse._sound->_chPan[vse._channelNum]);
+						driver->controlChange(voice._voiceNum, 64, vse._sound->_chDamper[vse._channelNum]);
 
-						driver->setProgram(vse._channelNum, vse._sound->_chProgram[vse._channelNum]);
-						driver->setPitchBlend(vse._channelNum, vse._sound->_chPitchBlend[vse._channelNum]);
+						driver->setProgram(voice._voiceNum, vse._sound->_chProgram[vse._channelNum]);
+						driver->setPitchBlend(voice._voiceNum, vse._sound->_chPitchBlend[vse._channelNum]);
 
 						vse._sound3 = NULL;
 					}
@@ -1148,7 +1200,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 
 				for (uint entryIndex = 0; entryIndex < vs->_entries.size(); ++entryIndex) {
 					VoiceStructEntryType0 &vteCur = vs->_entries[entryIndex]._type0;
-					if ((vteCur._sound3 != sound) || (vteCur._channelNum3 != channelNum)) {
+					if ((vteCur._sound3 == sound) && (vteCur._channelNum3 == channelNum)) {
 						// Found match
 						vteCur._sound = sound;
 						vteCur._channelNum = channelNum;
@@ -1179,25 +1231,25 @@ void SoundManager::sfRethinkVoiceTypes() {
 				}
 				assert(foundIndex != -1);
 
-				VoiceStructEntryType0 &vseFound = vs->_entries[foundIndex]._type0;
+				VoiceStructEntry &voiceFound = vs->_entries[foundIndex];
+				VoiceStructEntryType0 &vseFound = voiceFound._type0;
 
 				vseFound._sound = vse._sound2;
 				vseFound._channelNum = vse._channelNum2;
 				vseFound._priority = vse._priority2;
 				vseFound._fieldA = false;
 
-				SoundDriver *driver = vs->_entries[foundIndex]._driver;
+				SoundDriver *driver = voiceFound._driver;
 				assert(driver);
 
-				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound, 123, 0);
-				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound,
-					1, vseFound._sound->_chModulation[vseFound._channelNum]);
-				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound,
-					7, vseFound._sound->_chVolume[vseFound._channelNum] * vseFound._sound->_volume / 127);
-				driver->proc24(vseFound._channelNum, voiceIndex, vseFound._sound,
-					10, vseFound._sound->_chPan[vseFound._channelNum]);
-				driver->setProgram(vseFound._channelNum, vseFound._sound->_chProgram[vseFound._channelNum]);
-				driver->setPitchBlend(vseFound._channelNum, vseFound._sound->_chPitchBlend[vseFound._channelNum]);
+				driver->controlChange(voiceFound._voiceNum, 123, 0);
+				driver->controlChange(voiceFound._voiceNum, 1, vseFound._sound->_chModulation[vseFound._channelNum]);
+				driver->controlChange(voiceFound._voiceNum, 7,
+					vseFound._sound->_chVolume[vseFound._channelNum] * vseFound._sound->_volume / 127);
+				driver->controlChange(voiceFound._voiceNum, 10, vseFound._sound->_chPan[vseFound._channelNum]);
+				driver->controlChange(voiceFound._voiceNum, 64, vseFound._sound->_chDamper[vseFound._channelNum]);
+				driver->setProgram(voiceFound._voiceNum, vseFound._sound->_chProgram[vseFound._channelNum]);
+				driver->setPitchBlend(voiceFound._voiceNum, vseFound._sound->_chPitchBlend[vseFound._channelNum]);
 			}
 
 			// Final loop
@@ -1207,7 +1259,7 @@ void SoundManager::sfRethinkVoiceTypes() {
 				if (!vse._sound && (vse._sound3)) {
 					SoundDriver *driver = vs->_entries[idx]._driver;
 					assert(driver);
-					driver->proc24(vs->_entries[idx]._voiceNum, voiceIndex, vse._sound3, 123, 0);
+					driver->controlChange(vs->_entries[idx]._voiceNum, 123, 0);
 				}
 			}
 
@@ -1445,7 +1497,7 @@ void SoundManager::sfDoUpdateVolume(Sound *sound) {
 			if (vs->_voiceType == VOICETYPE_0) {
 				if (vse._type0._sound && vse._type0._sound == sound) {
 					int vol = sound->_volume * sound->_chVolume[vse._type0._channelNum] / 127;
-					driver->proc24(vse._voiceNum, voiceIndex, sound, 7, vol);
+					driver->controlChange(vse._voiceNum, 7, vol);
 				}
 			} else {
 				if (vse._type1._sound && vse._type1._sound == sound ) {
@@ -1967,8 +2019,8 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 			voiceType = vtStruct->_voiceType;
 			if (voiceType == VOICETYPE_0) {
 				for (uint idx = 0; idx < vtStruct->_entries.size(); ++idx) {
-					if (!vtStruct->_entries[idx]._type0._sound &&
-							(vtStruct->_entries[idx]._type0._channelNum != channelNum)) {
+					if ((vtStruct->_entries[idx]._type0._sound == this) &&
+							(vtStruct->_entries[idx]._type0._channelNum == channelNum)) {
 						voiceNum = vtStruct->_entries[idx]._voiceNum;
 						driver = vtStruct->_entries[idx]._driver;
 						break;
@@ -1991,7 +2043,7 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 						soUpdateDamper(vtStruct, channelNum, chVoiceType, v);
 					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->proc18(voiceNum, chVoiceType);
+						driver->noteOff(voiceNum, v);
 					}
 				}
 			}
@@ -2014,7 +2066,7 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 							soPlaySound(vtStruct, channelData, channelNum, chVoiceType, v, b);
 					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->proc20(voiceNum, chVoiceType);
+						driver->noteOn(voiceNum, v, b);
 					}
 				}
 			} else {
@@ -2061,7 +2113,7 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 						soProc38(vtStruct, channelNum, chVoiceType, cmdVal, b);
 					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->proc24(voiceNum, chVoiceType, this, cmdVal, b);
+						driver->controlChange(voiceNum, cmdVal, b);
 					}
 				}
 			}
@@ -2092,7 +2144,7 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 						soProc38(vtStruct, channelNum, chVoiceType, cmd, value);
 					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->proc24(voiceNum, chVoiceType, this, cmd, value);
+						driver->controlChange(voiceNum, cmd, value);
 					}
 				}
 			} else if (soDoUpdateTracks(cmd, value)) {
@@ -2112,7 +2164,7 @@ void Sound::soServiceTrackType0(int trackIndex, const byte *channelData) {
 						soProc40(vtStruct, channelNum, pitchBlend);
 					} else if (voiceNum != -1) {
 						assert(driver);
-						driver->setPitchBlend(channel, pitchBlend);
+						driver->setPitchBlend(voiceNum, pitchBlend);
 					}
 				}
 			} else {
@@ -2709,6 +2761,169 @@ SoundDriver::SoundDriver() {
 
 /*--------------------------------------------------------------------------*/
 
+// Voice type 6 uses MIDI channels 0-9. The high bit on channel 9 is an
+// allocation flag from the original driver data; the two 0xff bytes terminate
+// the channel list and group table.
+const byte general_midi_group_data[] = {
+	6, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0x89, 0xff, 0xff
+};
+
+GeneralMidiSoundDriver::GeneralMidiSoundDriver(MidiDriver::DeviceHandle device) : SoundDriver(),
+		_midiDriver(NULL), _device(device), _masterVolume(127) {
+	_driverResID = GENERAL_MIDI_DRIVER_NUM;
+	_minVersion = _maxVersion = 0x10A;
+	_shortDescription = "External General MIDI Device";
+	_longDescription = "GenMidi";
+
+	_groupData._groupMask = 0x40;
+	_groupData._pData = general_midi_group_data;
+
+	Common::fill(_modulation, _modulation + SOUND_ARR_SIZE, 0xff);
+	Common::fill(_channelVolume, _channelVolume + SOUND_ARR_SIZE, 0xff);
+	Common::fill(_pan, _pan + SOUND_ARR_SIZE, 0xff);
+	Common::fill(_damper, _damper + SOUND_ARR_SIZE, 0xff);
+	Common::fill(_program, _program + SOUND_ARR_SIZE, 0xff);
+	Common::fill(_pitchBlend, _pitchBlend + SOUND_ARR_SIZE, 0xffff);
+	Common::fill(_active, _active + SOUND_ARR_SIZE, true);
+}
+
+GeneralMidiSoundDriver::~GeneralMidiSoundDriver() {
+	close();
+}
+
+bool GeneralMidiSoundDriver::open() {
+	assert(!_midiDriver);
+
+	_midiDriver = MidiDriver::createMidi(_device);
+	if (!_midiDriver) {
+		warning("Could not create MIDI device");
+		return false;
+	}
+
+	int result = _midiDriver->open();
+	if (result != 0) {
+		warning("Could not open MIDI device: %s", MidiDriver::getErrorName(result));
+		delete _midiDriver;
+		_midiDriver = NULL;
+		return false;
+	}
+
+	_midiDriver->sendGMReset();
+	return true;
+}
+
+void GeneralMidiSoundDriver::close() {
+	if (!_midiDriver)
+		return;
+
+	for (int channel = 0; channel < SOUND_ARR_SIZE; ++channel)
+		send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | channel,
+			MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
+
+	_midiDriver->close();
+	delete _midiDriver;
+	_midiDriver = NULL;
+}
+
+const GroupData *GeneralMidiSoundDriver::getGroupData() {
+	return &_groupData;
+}
+
+int GeneralMidiSoundDriver::setMasterVolume(int volume) {
+	int oldVolume = _masterVolume;
+	_masterVolume = CLIP<int>(volume, 0, 127);
+
+	for (int channel = 0; channel < SOUND_ARR_SIZE; ++channel) {
+		if (_channelVolume[channel] != 0xff)
+			send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | channel,
+				MidiDriver::MIDI_CONTROLLER_VOLUME,
+				_channelVolume[channel] * _masterVolume / 127);
+	}
+
+	return oldVolume;
+}
+
+void GeneralMidiSoundDriver::noteOff(int channel, int note) {
+	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
+	send(MidiDriver::MIDI_COMMAND_NOTE_ON | channel, CLIP<int>(note, 0, 127), 0);
+}
+
+void GeneralMidiSoundDriver::noteOn(int channel, int note, int velocity) {
+	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
+	_active[channel] = true;
+	send(MidiDriver::MIDI_COMMAND_NOTE_ON | channel, CLIP<int>(note, 0, 127),
+		CLIP<int>(velocity, 0, 127));
+}
+
+void GeneralMidiSoundDriver::controlChange(int channel, int controller, int value) {
+	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
+	value = CLIP<int>(value, 0, 127);
+
+	byte *currentValue;
+	switch (controller) {
+	case MidiDriver::MIDI_CONTROLLER_MODULATION:
+		currentValue = &_modulation[channel];
+		break;
+	case MidiDriver::MIDI_CONTROLLER_VOLUME:
+		currentValue = &_channelVolume[channel];
+		break;
+	case MidiDriver::MIDI_CONTROLLER_PANNING:
+		currentValue = &_pan[channel];
+		break;
+	case MidiDriver::MIDI_CONTROLLER_SUSTAIN:
+		currentValue = &_damper[channel];
+		break;
+	case MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF:
+		if (!_active[channel])
+			return;
+		_active[channel] = false;
+		currentValue = NULL;
+		break;
+	default:
+		return;
+	}
+
+	if (currentValue) {
+		if (*currentValue == value)
+			return;
+		*currentValue = value;
+	}
+
+	if (controller == MidiDriver::MIDI_CONTROLLER_VOLUME)
+		value = value * _masterVolume / 127;
+
+	send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | channel,
+		controller, value);
+}
+
+void GeneralMidiSoundDriver::setProgram(int channel, int program) {
+	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
+	program = CLIP<int>(program, 0, 127);
+	if (_program[channel] == program)
+		return;
+
+	_program[channel] = program;
+	send(MidiDriver::MIDI_COMMAND_PROGRAM_CHANGE | channel, program, 0);
+}
+
+void GeneralMidiSoundDriver::setPitchBlend(int channel, int pitchBlend) {
+	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
+	pitchBlend = CLIP<int>(pitchBlend, 0, 0x3fff);
+	if (_pitchBlend[channel] == pitchBlend)
+		return;
+
+	_pitchBlend[channel] = pitchBlend;
+	send(MidiDriver::MIDI_COMMAND_PITCH_BEND | channel,
+		pitchBlend & 0x7f, (pitchBlend >> 7) & 0x7f);
+}
+
+void GeneralMidiSoundDriver::send(byte status, byte firstOp, byte secondOp) {
+	if (_midiDriver)
+		_midiDriver->send(status, firstOp, secondOp);
+}
+
+/*--------------------------------------------------------------------------*/
+
 const byte adlib_group_data[] = { 1, 1, 9, 1, 0xff };
 
 const byte adlib_operator1_offset[] = { 0, 1, 2, 8, 9, 10, 16, 17, 18 };
@@ -2731,6 +2946,7 @@ const int v440D4[48] = {
 };
 
 AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
+	_driverResID = ADLIB_DRIVER_NUM;
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
 	_masterVolume = 0;
@@ -3016,11 +3232,12 @@ void AdlibSoundDriver::onTimer() {
 
 
 SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
+	_driverResID = SBLASTER_DRIVER_NUM;
 	_minVersion = 0x102;
 	_maxVersion = 0x10A;
 	_masterVolume = 0;
 
-	_groupData._groupMask = 1;
+	_groupData._groupMask = 8;
 	static byte const group_data[] = { 3, 1, 1, 0, 0xff };
 	_groupData._pData = group_data;
 
