@@ -128,7 +128,7 @@ int SoundManager::command(int commandId, int param) {
 		// Note: I don't know any way to identify music commands versus sfx
 		// commands, so if sfx is mute, then so is music
 		if (_soundFlag)
-			_driver->command(commandId, param);
+			return _driver->command(commandId, param);
 	}
 
 	return 0;
