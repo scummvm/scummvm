@@ -34,10 +34,10 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+			GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_MIDIADLIB, GUIO_MIDIMT32)
 		},
 		GType_Ringworld,
-		GF_CD | GF_ALT_REGIONS
+		GF_CD | GF_ALT_REGIONS | GF_MT32
 	},
 	// Ringworld Spanish Floppy and CD use the same files
 	{
@@ -90,10 +90,10 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+			GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_MIDIADLIB, GUIO_MIDIMT32)
 		},
 		GType_Ringworld,
-		GF_FLOPPY | GF_DEMO
+		GF_FLOPPY | GF_DEMO | GF_MT32
 	},
 
 	// Ringworld English Floppy Demo #2 version
@@ -105,10 +105,10 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+			GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_MIDIADLIB, GUIO_MIDIMT32)
 		},
 		GType_Ringworld,
-		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
+		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS | GF_MT32
 	},
 
 	// Found on Wacky Funsters!
@@ -240,10 +240,10 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO3(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM)
 		},
 		GType_Ringworld2,
-		GF_CD | GF_ALT_REGIONS
+		GF_CD | GF_ALT_REGIONS | GF_GENERAL_MIDI | GF_MT32
 	},
 	// Return to Ringworld - Demo
 	{
@@ -254,10 +254,10 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO3(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM)
 		},
 		GType_Ringworld2,
-		GF_CD | GF_ALT_REGIONS | GF_DEMO
+		GF_CD | GF_ALT_REGIONS | GF_DEMO | GF_GENERAL_MIDI | GF_MT32
 	},
 
 	// Return to Ringworld. Spanish fan translation.
