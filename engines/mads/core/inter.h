@@ -326,6 +326,9 @@ extern void inter_main_loop(int allow_input);
 
 extern void inter_screen_update();
 
+extern void inter_hide_macintosh_sentence();
+extern void inter_restore_macintosh_sentence();
+
 extern void inter_turn_off_object();
 extern void inter_spin_object(int object_id);
 extern int  inter_allocate_objects();
