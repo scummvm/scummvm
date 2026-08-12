@@ -91,6 +91,8 @@ static bool hasAnimInited;
 static int runVal1, runVal2, runVal3;
 static int runVal12;
 static int error_code;
+static int presentationBufferHeight;
+static bool presentationDrawBoundaryLines;
 
 /**
  * Initializes animview global variables
@@ -188,10 +190,11 @@ static void run_animation(int animIndex) {
 	}
 
 	auto &screen = *g_engine->getScreen();
-	if (viewing_at_y && anim_list[animIndex].show_bars) {
+	if (presentationDrawBoundaryLines && viewing_at_y &&
+			anim_list[animIndex].show_bars) {
 		screen.hLine(0, viewing_at_y - 2, 319, 253);
 		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 253);
-	} else if (viewing_at_y) {
+	} else if (presentationDrawBoundaryLines && viewing_at_y) {
 		screen.hLine(0, viewing_at_y - 2, 319, 0);
 		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 0);
 	}
@@ -538,7 +541,8 @@ static void animate() {
 		has_cycles = anim_cycle_list.num_cycles > 0;
 		current_anim_inter = (AnimInterPtr)current_anim;
 
-		int height = (scr_orig.y == 200) ? 200 : 156;
+		int height = presentationBufferHeight ? presentationBufferHeight :
+			((scr_orig.y == 200) ? 200 : 156);
 		buffer_init(&scr_work, 320, height);
 		scr_inter = scr_work;
 		assert(scr_work.data);
@@ -653,7 +657,16 @@ done:
 }
 
 void animview_main(const char *resName) {
+	Presentation presentation;
+	presentation.bufferHeight = 0;
+	presentation.drawBoundaryLines = true;
+	animview_main(resName, presentation);
+}
+
+void animview_main(const char *resName, const Presentation &presentation) {
 	char name[16];
+	presentationBufferHeight = presentation.bufferHeight;
+	presentationDrawBoundaryLines = presentation.drawBoundaryLines;
 
 	init_globals();
 
