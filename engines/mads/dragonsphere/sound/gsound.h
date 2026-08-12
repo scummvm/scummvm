@@ -157,7 +157,7 @@ private:
 	uint32 _driverCallbackDelta;
 	NativeSoundTimer _hostTimer;
 	uint16 _randomSeed;
-	uint16 _stateChanged;
+	//uint16 _stateChanged;
 	byte _heldNotes[GSOUND_CHANNEL_COUNT + 1][GSOUND_HELD_NOTE_COUNT];
 	byte _scriptVariables[GSOUND_SCRIPT_VARIABLE_COUNT];
 	byte _silenceStream[2];

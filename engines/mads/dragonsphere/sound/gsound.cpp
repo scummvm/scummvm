@@ -79,7 +79,7 @@ void GSoundChannel::enableFade(byte flag) {
 GSound::GSound(Audio::Mixer *mixer, const GSoundDriverData &driverData) :
 		SoundDriver(mixer),
 		_driverData(driverData), _midiDriver(nullptr),
-		_driverCallbackDelta(0), _randomSeed(1234), _stateChanged(0),
+		_driverCallbackDelta(0), _randomSeed(1234), /* _stateChanged(0), */
 		_callbackCounter(0), _callbackPeriod(0), _deferredCommand(-1),
 		_musicIndex(0), _fadeCounter(0), _fadePeriod(0), _clockUnknown(0),
 		_clockCoarseTarget(0), _clockMediumTarget(0), _clockFine(0),

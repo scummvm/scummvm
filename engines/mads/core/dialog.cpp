@@ -81,7 +81,7 @@ int alert_hilite_color = DD_DEFAULT_HILITE_COLOR;
 
 static Dialog say_dialog_box;
 static DialogPtr say_dialog = &say_dialog_box;
-static char say_dialog_work[SAY_DIALOG_SIZE];
+//static char say_dialog_work[SAY_DIALOG_SIZE];
 
 #define write_flag      0x01
 #define error_mask      0x06
