@@ -56,6 +56,7 @@ SoundManager::SoundManager() {
 	_needToRethink = false;
 
 	_soTimeIndexFlag = false;
+	_serverPaused = false;
 }
 
 SoundManager::~SoundManager() {
@@ -351,6 +352,11 @@ int SoundManager::getMasterVol() const {
 	return _masterVol;
 }
 
+void SoundManager::setPaused(bool paused) {
+	Common::StackLock slock(_serverSuspendedMutex);
+	_serverPaused = paused;
+}
+
 void SoundManager::loadSound(int soundNum, bool showErrors) {
 	// This method preloaded the data associated with a given sound, so is now redundant
 }
@@ -426,6 +432,9 @@ void SoundManager::rethinkVoiceTypes() {
 void SoundManager::sfSoundServer(void *) {
 	Common::StackLock slock1(SoundManager::sfManager()._serverDisabledMutex);
 	Common::StackLock slock2(SoundManager::sfManager()._serverSuspendedMutex);
+
+	if (SoundManager::sfManager()._serverPaused)
+		return;
 
 	if (sfManager()._needToRethink) {
 		sfRethinkVoiceTypes();
