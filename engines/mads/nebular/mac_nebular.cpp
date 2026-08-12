@@ -528,8 +528,31 @@ void MacNebular::setPalette(const RGBcolor *palette, int firstColor,
 		corrected[offset + 1] = macGammaCorrect(palette[color].g);
 		corrected[offset + 2] = macGammaCorrect(palette[color].b);
 	}
-	g_system->getPaletteManager()->setPalette(corrected, outputFirst,
-		lastColor - outputFirst);
+
+	if (!_fullFrameActive || !_useOriginalMenus || !_menus) {
+		g_system->getPaletteManager()->setPalette(corrected, outputFirst,
+			lastColor - outputFirst);
+		return;
+	}
+
+	// The native menu bar belongs to the Macintosh desktop, not to the
+	// game's indexed frame. Keep its system colors out of viewer fades.
+	byte menuBlack = 0;
+	byte menuWhite = 0;
+	_menus->getMenuColors(menuBlack, menuWhite);
+	int rangeFirst = outputFirst;
+	for (int color = outputFirst; color <= lastColor; ++color) {
+		if (color != lastColor && color != menuBlack &&
+			color != menuWhite)
+			continue;
+
+		if (rangeFirst < color) {
+			g_system->getPaletteManager()->setPalette(
+				corrected + (rangeFirst - outputFirst) * 3,
+				rangeFirst, color - rangeFirst);
+		}
+		rangeFirst = color + 1;
+	}
 }
 
 void MacNebular::getPalette(RGBcolor *palette, int firstColor,
