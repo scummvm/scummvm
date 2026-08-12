@@ -128,6 +128,19 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_PAS,
+		{
+			_s("Use Pro Audio Spectrum 16 instead of AdLib"),
+			_s("Use the Pro Audio Spectrum 16 driver for music and sound effects "
+				"instead of the AdLib driver."),
+			"use_pas",
+			false,
+			0,
+			0
+		}
+	},
+
 #ifdef USE_TTS
 	{
 		GAMEOPTION_TTS_NARRATOR,

@@ -304,7 +304,7 @@ Common::Error BonusEngine::run() {
 	art_hags_are_on_hd = true;
 
 	Sound::RexSoundManager *soundManager =
-			new Sound::RexSoundManager(_mixer, _soundFlag, false);
+			new Sound::RexSoundManager(_mixer, _soundFlag, false, false);
 	_soundManager = soundManager;
 	soundManager->validate();
 
