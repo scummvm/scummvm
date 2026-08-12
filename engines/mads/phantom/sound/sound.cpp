@@ -20,8 +20,11 @@
  */
 
 #include "mads/phantom/sound/sound.h"
+#include "audio/fmopl.h"
+#include "common/textconsole.h"
 #include "mads/phantom/sound/asound_phantom.h"
 #include "mads/phantom/sound/isound_phantom.h"
+#include "mads/phantom/sound/psound_phantom.h"
 #include "mads/phantom/sound/rsound_phantom.h"
 
 namespace MADS {
@@ -74,15 +77,70 @@ SoundDriver *createISound(Audio::Mixer *mixer, int sectionNumber) {
 	}
 }
 
+SoundDriver *createPSound(Audio::Mixer *mixer, int sectionNumber) {
+	switch (sectionNumber) {
+	case 1:
+		return new PSound1(mixer);
+	case 2:
+		return new PSound2(mixer);
+	case 3:
+		return new PSound3(mixer);
+	case 4:
+		return new PSound4(mixer);
+	case 5:
+		return new PSound5(mixer);
+	case 9:
+		return new PSound9(mixer);
+	default:
+		return nullptr;
+	}
+}
+
 } // namespace
 
+PhantomSoundManager::PhantomSoundManager(Audio::Mixer *mixer,
+		bool &soundFlag, bool usePas, bool isDemo) :
+		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
+	if (usePas && _driverType == SOUND_ADLIB) {
+		if (OPL::Config::detect(OPL::Config::kOpl3) >= 0) {
+			_driverType = SOUND_PAS;
+		} else {
+			warning("Pro Audio Spectrum 16 requires OPL3 output; "
+					"falling back to AdLib");
+		}
+	}
+}
+
 void PhantomSoundManager::validate() {
-	if (_driverType == SOUND_MT32) {
+	if (_driverType == SOUND_PAS) {
+		bool valid = true;
+		if (_isDemo) {
+			Common::String reason;
+			valid = validatePhantomPSoundFile(1, true, &reason);
+			if (!valid)
+				warning("Cannot use Phantom demo PSOUND: %s; using AdLib",
+						reason.c_str());
+		} else {
+			for (uint index = 0; index < ARRAYSIZE(kRetailSections); ++index) {
+				Common::String reason;
+				if (!validatePhantomPSoundFile(kRetailSections[index], false,
+						&reason)) {
+					warning("Cannot use Phantom PSOUND section %d: %s; "
+							"using AdLib", kRetailSections[index],
+							reason.c_str());
+					valid = false;
+				}
+			}
+		}
+		if (valid)
+			return;
+		_driverType = SOUND_ADLIB;
+		ASound::validate(_isDemo);
+	} else if (_driverType == SOUND_MT32) {
 		if (_isDemo) {
 			Common::String reason;
 			if (!RSoundDemoPHA::validate(&reason))
-				error("Cannot use Phantom demo RSOUND.PHA: %s",
-						reason.c_str());
+				error("Cannot use Phantom demo RSOUND.PHA: %s", reason.c_str());
 		} else {
 			RSound::validate();
 		}
@@ -108,32 +166,45 @@ void PhantomSoundManager::validate() {
 void PhantomSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	if (_driverType == SOUND_MT32) {
-		// MT32
+	if (_driverType == SOUND_PAS) {
+		if (_isDemo)
+			_driver = new PSoundDemo(_mixer);
+		else
+			_driver = createPSound(_mixer, sectionNumber);
+		if (_driver && !static_cast<PSound *>(_driver)->isReady()) {
+			warning("Could not initialize Pro Audio Spectrum 16 OPL3 output; "
+					"falling back to AdLib");
+			removeDriver();
+			_driverType = SOUND_ADLIB;
+			loadDriver(sectionNumber);
+		}
+	} else if (_driverType == SOUND_MT32) {
 		if (_isDemo) {
 			_driver = new RSoundDemoPHA(_mixer);
-		} else switch (sectionNumber) {
-		case 1:
-			_driver = new RSound1(_mixer);
-			break;
-		case 2:
-			_driver = new RSound2(_mixer);
-			break;
-		case 3:
-			_driver = new RSound3(_mixer);
-			break;
-		case 4:
-			_driver = new RSound4(_mixer);
-			break;
-		case 5:
-			_driver = new RSound5(_mixer);
-			break;
-		case 9:
-			_driver = new RSound9(_mixer);
-			break;
-		default:
-			_driver = nullptr;
-			break;
+		} else {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new RSound1(_mixer);
+				break;
+			case 2:
+				_driver = new RSound2(_mixer);
+				break;
+			case 3:
+				_driver = new RSound3(_mixer);
+				break;
+			case 4:
+				_driver = new RSound4(_mixer);
+				break;
+			case 5:
+				_driver = new RSound5(_mixer);
+				break;
+			case 9:
+				_driver = new RSound9(_mixer);
+				break;
+			default:
+				_driver = nullptr;
+				break;
+			}
 		}
 	} else if (_isDemo) {
 		_driver = new ASoundDemo(_mixer);

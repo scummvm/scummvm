@@ -20,6 +20,7 @@
  */
 
 #include "engines/util.h"
+#include "common/config-manager.h"
 #include "mads/console.h"
 #include "mads/core/conv.h"
 #include "mads/core/env.h"
@@ -63,7 +64,8 @@ Common::Error PhantomEngine::run() {
 	}
 
 	// Set up sound manager
-	_soundManager = new Sound::PhantomSoundManager(_mixer, _soundFlag, isDemo());
+	_soundManager = new Sound::PhantomSoundManager(_mixer, _soundFlag,
+			ConfMan.getBool("use_pas"), isDemo());
 	_soundManager->validate();
 
 	// Run the game
