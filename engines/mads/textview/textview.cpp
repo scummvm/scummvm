@@ -502,7 +502,8 @@ void textview_main(const char *resName, const Presentation &presentation) {
 	timer1 = timer2 = timer3 = 0;
 	has_background = pan_flag = false;
 	flag5 = 0;
-	text_x = text_y = 0;
+	text_x = -1;
+	text_y = 0;
 	font_auto_spacing = -1;
 	room_id = 0;
 	memset(spare, 0, sizeof(spare));
