@@ -26,6 +26,7 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "common/util.h"
+#include "mads/core/native_sound_timer.h"
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
@@ -71,8 +72,8 @@ struct AdlibChannel {
 
 	// ---- word counter fields (offsets 0x20 - 0x29) ----------------------
 
-	uint16 _innerLoopCount = 0; // 0x20  remaining inner-loop iterations (0 = infinite until opcode)
-	uint16 _outerLoopCount = 0; // 0x22  remaining outer-loop iterations (0 = infinite until opcode)
+	uint16 _innerLoopCount = 0; // 0x20  signed byte stored as a 16-bit loop count
+	uint16 _outerLoopCount = 0; // 0x22  signed byte stored as a 16-bit loop count
 	uint16 _noiseFreqMask = 0; // 0x24  AND mask applied to the random number in noise mode
 	uint16 _freqAccum = 0; // 0x26  frequency sweep accumulator (base frequency + swept offset)
 	uint16 _freqStep = 0; // 0x28  per-tick increment added to _freqAccum during a sweep
@@ -195,6 +196,8 @@ protected:
 
 private:
 	OPL::OPL *_opl;
+	NativeSoundTimer _hostTimer;
+	bool _noiseEnabled = false;
 
 	// ---- callback / tick state ------------------------------------------
 	uint16 _callbackCounter = 0;  // per-tick countdown
@@ -219,6 +222,7 @@ private:
 
 	// ---- driver-wide flags ----------------------------------------------
 	uint16 _isDisabled = 0; // non-zero while the engine is paused (command6)
+	int _masterVolume = 255;
 	uint8  _findChannelMode = 0; // 0=full search, 1=ch0-5 only, 2=ch6-8 then pending
 
 	// ---- per-channel sweep shadows (for channel 5 special-casing) -------
@@ -285,6 +289,7 @@ private:
 	 * so command7 can restore levels without a full recalculation.
 	 */
 	void writeVolume();
+	void refreshVolumes();
 
 	/**
 	 * Derives the OPL F-number and block (octave) from _note, _octaveTranspose,
@@ -587,10 +592,14 @@ protected:
 	int command8();
 
 	/**
-	 * Calls a function at a fixed offset within the sound driver.
+	 * Handles an opcode-A3 near call to a fixed offset in the native driver.
+	 * Derived overlays map only targets recovered from their sequence data;
+	 * unknown targets remain fatal.
 	 * @param offset		Offset of the function
+	 * @param channel	Channel which encountered the callback opcode
+	 * @return true to continue interpreting the current stream
 	 */
-	virtual void callFunction(uint16 offset);
+	virtual bool callFunction(uint16 offset, AdlibChannel &channel);
 
 	// =========================================================================
 	// Music-index launcher (called via command18)
@@ -642,9 +651,7 @@ public:
 	 */
 	void playSound(int offset);
 
-	void setVolume(int volume) override {
-		// TODO: implement if needed
-	}
+	void setVolume(int volume) override;
 };
 
 } // namespace Sound

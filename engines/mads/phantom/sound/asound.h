@@ -312,6 +312,18 @@ protected:
 	void pollAllChannels();
 
 	/**
+	 * Applies game-specific state reset alongside the shared driver reset.
+	 */
+	virtual void resetGameState() {
+	}
+
+	/**
+	 * Runs game-specific controller work after the channel poll.
+	 */
+	virtual void tickGameCallback() {
+	}
+
+	/**
 	 * Per-channel update, called once per frame by pollAllChannels.
 	 * Implements a bytecode interpreter : the sound data stream is a sequence of
 	 * (note, duration) pairs plus command bytes(0x80-0xFF). Commands with high

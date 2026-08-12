@@ -22,12 +22,15 @@
 #include "audio/fmopl.h"
 #include "common/file.h"
 #include "common/md5.h"
+#include "common/util.h"
 #include "mads/dragonsphere/sound/asound.h"
 
 namespace MADS {
 namespace Dragonsphere {
 namespace Sound {
 
+static const uint32 HOST_CALLBACK_RATE =
+	NativeSoundTimer::kPitClockHz / NativeSoundTimer::kHostTimerDivisor;
 
 bool AdlibChannel::_isDisabled;
 
@@ -247,7 +250,7 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename,
 	_opl = OPL::Config::create();
 	_opl->init();
 	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer),
-		CALLBACKS_PER_SECOND);
+		HOST_CALLBACK_RATE);
 
 	/* Standard OPL timer-reset sequence. */
 	write(4, 0x60);
@@ -319,7 +322,7 @@ int ASound::poll() {
 
 void ASound::noise() {
 	Common::StackLock slock(_driverMutex);
-	for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i)
+	for (int i = ADLIB_CHANNEL_COUNT - 1; i >= 0; --i)
 		noise_inner(i);
 }
 
@@ -442,6 +445,7 @@ int ASound::command7() {
 		signalSoundPlaying();
 
 	_isDisabled = 0;
+	refreshVolumes();
 	return 0;
 }
 
@@ -463,8 +467,9 @@ int ASound::command18() {
 	return command(_musicIndex, 0);
 }
 
-void ASound::callFunction(uint16 offset) {
+bool ASound::callFunction(uint16 offset, AdlibChannel &) {
 	error("Unsupported call to sound driver function at offset %.4x", offset);
+	return false;
 }
 
 void ASound::write(uint8 reg, uint8 value) {
@@ -474,7 +479,22 @@ void ASound::write(uint8 reg, uint8 value) {
 
 void ASound::onTimer() {
 	Common::StackLock slock(_driverMutex);
-	poll();
+
+	uint32 serviceTicks = _hostTimer.advance(1, HOST_CALLBACK_RATE);
+	while (serviceTicks--) {
+		// Both native hosts invoke export 4 before export 3. The poll result
+		// consequently changes noise service beginning with the next tick.
+		if (_noiseEnabled) {
+			for (int i = ADLIB_CHANNEL_COUNT - 1; i >= 0; --i)
+				noise_inner(i);
+		}
+
+		if (_hostTimer.pollDue()) {
+			const int result = poll();
+			if (result)
+				_noiseEnabled = result > 0;
+		}
+	}
 }
 
 uint16 ASound::getRandomNumber() {
@@ -540,6 +560,7 @@ void ASound::writeVolume() {
 	int16  volStep = (int16)(uint16)VOL_VEL_TO_ATTEN_STEP[volIdx];
 	int16  velStep = (int16)(uint16)VOL_VEL_TO_ATTEN_STEP[velIdx];
 	int16  var4 = volStep + velStep - 1;   /* var_4: combined step (shared) */
+	var4 = CLIP<int16>(var4, 0, 63) * _masterVolume / 255;
 
 	/* Check _alg of the first sample to determine loop count. */
 	AdlibSample *smpFirst = &_samples[ch->_sampleIndex * 2];
@@ -628,6 +649,30 @@ void ASound::writeVolume() {
 	 * In our C++ layout _savedFreqSweep is at 0x2B; we shadow the dh byte
 	 * into it only when writing volume, consistent with the original. */
 	ch->_savedFreqSweep = (uint8)(finalSi & 0x3F);
+}
+
+void ASound::refreshVolumes() {
+	AdlibChannel *savedChannel = _activeChannelPtr;
+	const uint8 savedChannelNumber = _activeChannelNumber;
+
+	if (!_isDisabled) {
+		for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i) {
+			if (_channels[i]->_activeCount == 0)
+				continue;
+
+			_activeChannelPtr = _channels[i];
+			_activeChannelNumber = i;
+			writeVolume();
+		}
+	}
+
+	_activeChannelPtr = savedChannel;
+	_activeChannelNumber = savedChannelNumber;
+}
+
+void ASound::setVolume(int volume) {
+	_masterVolume = CLIP(volume, 0, 255);
+	refreshVolumes();
 }
 
 void ASound::writeFrequency() {
@@ -1187,7 +1232,7 @@ op2_set_vol:
 				ch = _activeChannelPtr;
 				if (ch->_innerLoopCount == 0) {
 					pSrc++;   /* advance to count byte */
-					uint8 cnt = *pSrc;
+					uint16 cnt = (uint16)(int16)(int8)*pSrc;
 					if (cnt == 0) {
 						ch->_pSrc += 2;
 						ch = _activeChannelPtr;
@@ -1220,7 +1265,7 @@ op2_set_vol:
 				ch = _activeChannelPtr;
 				if (ch->_outerLoopCount == 0) {
 					pSrc++;
-					uint8 cnt = *pSrc;
+					uint16 cnt = (uint16)(int16)(int8)*pSrc;
 					if (cnt == 0) {
 						ch->_pSrc += 2;
 						ch = _activeChannelPtr;
@@ -1377,7 +1422,8 @@ op2_set_vol:
 			case 0x3: /* call function by address (near call in original) */
 			{
 				uint16 fnOffset = readWord_impl();
-				callFunction(fnOffset);
+				if (!callFunction(fnOffset, *ch))
+					return;
 				ch = _activeChannelPtr;
 				ch->_pSrc += 3;
 				goto dispatch;
