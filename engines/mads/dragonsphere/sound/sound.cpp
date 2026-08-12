@@ -23,6 +23,7 @@
 #include "audio/fmopl.h"
 #include "common/textconsole.h"
 #include "mads/dragonsphere/sound/asound_dragonsphere.h"
+#include "mads/dragonsphere/sound/gsound_dragonsphere.h"
 #include "mads/dragonsphere/sound/psound_dragonsphere.h"
 #include "mads/dragonsphere/sound/rsound_dragonsphere.h"
 
@@ -67,11 +68,24 @@ SoundDriver *createPSound(Audio::Mixer *mixer, int sectionNumber,
 	}
 }
 
+SoundDriver *createGSound(Audio::Mixer *mixer, int sectionNumber) {
+	switch (sectionNumber) {
+	case 1: return new GSound1(mixer);
+	case 2: return new GSound2(mixer);
+	case 3: return new GSound3(mixer);
+	case 4: return new GSound4(mixer);
+	case 5: return new GSound5(mixer);
+	case 6: return new GSound6(mixer);
+	case 9: return new GSound9(mixer);
+	default: return nullptr;
+	}
+}
+
 } // namespace
 
 DragonSoundManager::DragonSoundManager(Audio::Mixer *mixer,
 		bool &soundFlag, bool usePas, bool isDemo) :
-		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
+		SoundManager(mixer, soundFlag, !isDemo), _isDemo(isDemo) {
 	if (usePas && _driverType == SOUND_ADLIB) {
 		if (OPL::Config::detect(OPL::Config::kOpl3) >= 0) {
 			_driverType = SOUND_PAS;
@@ -83,7 +97,13 @@ DragonSoundManager::DragonSoundManager(Audio::Mixer *mixer,
 }
 
 void DragonSoundManager::validate() {
-	if (_driverType == SOUND_PAS) {
+	if (_driverType == SOUND_GM) {
+		if (!_isDemo && validateDragonsphereGSoundFiles())
+			return;
+		warning("Cannot use Dragonsphere General MIDI sound data; using AdLib");
+		_driverType = SOUND_ADLIB;
+		ASound::validate(_isDemo);
+	} else if (_driverType == SOUND_PAS) {
 		bool valid = true;
 		if (_isDemo) {
 			const int demoSections[] = { 1, 9 };
@@ -126,7 +146,16 @@ void DragonSoundManager::validate() {
 void DragonSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	if (_driverType == SOUND_PAS) {
+	if (_driverType == SOUND_GM) {
+		_driver = createGSound(_mixer, sectionNumber);
+		if (_driver && !static_cast<GSound *>(_driver)->isReady()) {
+			warning("Could not initialize Dragonsphere General MIDI output; "
+					"falling back to AdLib");
+			removeDriver();
+			_driverType = SOUND_ADLIB;
+			loadDriver(sectionNumber);
+		}
+	} else if (_driverType == SOUND_PAS) {
 		_driver = createPSound(_mixer, sectionNumber, _isDemo);
 		if (_driver && !static_cast<PSound *>(_driver)->isReady()) {
 			warning("Could not initialize Pro Audio Spectrum 16 OPL3 output; "
