@@ -25,10 +25,12 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "graphics/font.h"
+#include "graphics/macgamma.h"
 #include "graphics/managed_surface.h"
+#include "graphics/paletteman.h"
 #include "mads/core/env.h"
 #include "mads/core/inter.h"
-#include "mads/core/mcga.h"
+#include "mads/core/kernel.h"
 #include "mads/core/object.h"
 #include "mads/core/pal.h"
 #include "mads/core/screen.h"
@@ -55,14 +57,12 @@ enum {
 	kMacDesktopSceneY = kMacMenuBarHeight + 20,
 	kMacDesktopSeparatorY = kMacDesktopSceneY + kMacSceneHeight,
 	kMacDesktopInterfaceY = kMacDesktopSeparatorY + 1,
-	kMacBlackColor = 8,
+	kMacPanelPaletteColors = 10,
 	kMacNormalTextColor = 15,
 	kMacLeftSelectColor = 13,
 	kMacRightSelectColor = 14,
-	kMacPopupColor = REX_DIALOG_FE_COLOR,
-	kMacPanelTintR = 22,
-	kMacPanelTintG = 39,
-	kMacPanelTintB = 42
+	kMacBlackColor = kMacRightSelectColor,
+	kMacPopupColor = REX_DIALOG_FE_COLOR
 };
 
 struct MacPopupLine {
@@ -82,90 +82,74 @@ static void appendWrappedMacPopupText(const Graphics::Font &font,
 		lines.push_back(MacPopupLine(wrapped[i], tab));
 }
 
-static int macPanelColorDistance(int r1, int g1, int b1,
-		int r2, int g2, int b2) {
-	const int dr = r1 - r2;
-	const int dg = g1 - g2;
-	const int db = b1 - b2;
-	return dr * dr + dg * dg + db * db;
+static byte macGammaCorrect(byte color) {
+	return Graphics::macGammaCorrectionLookUp[color << 2];
 }
 
-static void buildMacPanelWashLUT(const byte *nativePalette, byte washLUT[256]) {
-	// The panel is still presented as CLUT8. Replace its first eight display
-	// colors with a uniform 25-percent source / 75-percent cyan blend, then
-	// map the completed panel to those colors. This models a translucent wash
-	// without the checkerboard pattern used by an earlier approximation.
-	Palette displayPalette;
-	for (int color = 0; color < 8; ++color) {
-		const int r = (nativePalette[color * 3 + 0] * 63 + 127) / 255;
-		const int g = (nativePalette[color * 3 + 1] * 63 + 127) / 255;
-		const int b = (nativePalette[color * 3 + 2] * 63 + 127) / 255;
-		displayPalette[color].r = (r + 3 * kMacPanelTintR + 2) / 4;
-		displayPalette[color].g = (g + 3 * kMacPanelTintG + 2) / 4;
-		displayPalette[color].b = (b + 3 * kMacPanelTintB + 2) / 4;
+static byte macPaletteComponentToSixBit(byte color) {
+	return (color * 63 + 127) / 255;
+}
+
+static void setMacInterfacePalette(const MacResourceProvider *resources) {
+	if (resources && resources->getNativeInterface()) {
+		const byte *panelPalette = resources->getNativeInterfacePalette();
+		// Keep MADS' six-bit palette state synchronized, but install the exact
+		// gamma-corrected colors in the backend.
+		for (int color = 0; color < kMacPanelPaletteColors; ++color) {
+			master_palette[color + 2].r =
+				macPaletteComponentToSixBit(panelPalette[color * 3]);
+			master_palette[color + 2].g =
+				macPaletteComponentToSixBit(panelPalette[color * 3 + 1]);
+			master_palette[color + 2].b =
+				macPaletteComponentToSixBit(panelPalette[color * 3 + 2]);
+		}
+		g_system->getPaletteManager()->setPalette(panelPalette, 2,
+			kMacPanelPaletteColors);
 	}
 
-	// Index 8 backs the side gutters, popup text, and caption shadow. The
-	// normal MADS interface palette makes it dark gray, not Macintosh black.
-	displayPalette[kMacBlackColor].r = 0;
-	displayPalette[kMacBlackColor].g = 0;
-	displayPalette[kMacBlackColor].b = 0;
-	mcga_setpal_range(&displayPalette, 0, kMacBlackColor + 1);
-
-	// CODE 7 draws normal and selected interface words with palette indexes
-	// 15, 13, and 14 respectively. Keep those roles independent of room
-	// palette changes and outside the panel wash below.
-	displayPalette[kMacLeftSelectColor].r =
-		(nativePalette[1 * 3 + 0] * 63 + 127) / 255;
-	displayPalette[kMacLeftSelectColor].g =
-		(nativePalette[1 * 3 + 1] * 63 + 127) / 255;
-	displayPalette[kMacLeftSelectColor].b =
-		(nativePalette[1 * 3 + 2] * 63 + 127) / 255;
-	displayPalette[kMacRightSelectColor].r =
-		(nativePalette[2 * 3 + 0] * 63 + 127) / 255;
-	displayPalette[kMacRightSelectColor].g =
-		(nativePalette[2 * 3 + 1] * 63 + 127) / 255;
-	displayPalette[kMacRightSelectColor].b =
-		(nativePalette[2 * 3 + 2] * 63 + 127) / 255;
-	displayPalette[kMacNormalTextColor].r = 63;
-	displayPalette[kMacNormalTextColor].g = 63;
-	displayPalette[kMacNormalTextColor].b = 63;
-	mcga_setpal_range(&displayPalette, kMacLeftSelectColor, 3);
-
-	for (int sourceColor = 0; sourceColor < 256; ++sourceColor) {
-		int sourceR, sourceG, sourceB;
-		if (sourceColor < 8 || sourceColor == kMacLeftSelectColor ||
-				sourceColor == kMacRightSelectColor) {
-			const int nativeColor = sourceColor == kMacLeftSelectColor ? 1 :
-				(sourceColor == kMacRightSelectColor ? 2 : sourceColor);
-			sourceR = (nativePalette[nativeColor * 3 + 0] * 63 + 127) / 255;
-			sourceG = (nativePalette[nativeColor * 3 + 1] * 63 + 127) / 255;
-			sourceB = (nativePalette[nativeColor * 3 + 2] * 63 + 127) / 255;
-		} else if (sourceColor == kMacNormalTextColor) {
-			sourceR = sourceG = sourceB = 63;
-		} else {
-			sourceR = master_palette[sourceColor].r;
-			sourceG = master_palette[sourceColor].g;
-			sourceB = master_palette[sourceColor].b;
-		}
-
-		const int washedR = (sourceR + 3 * kMacPanelTintR + 2) / 4;
-		const int washedG = (sourceG + 3 * kMacPanelTintG + 2) / 4;
-		const int washedB = (sourceB + 3 * kMacPanelTintB + 2) / 4;
-		int bestColor = 0;
-		int bestDistance = macPanelColorDistance(washedR, washedG, washedB,
-			displayPalette[0].r, displayPalette[0].g, displayPalette[0].b);
-		for (int candidate = 1; candidate < 8; ++candidate) {
-			const int distance = macPanelColorDistance(washedR, washedG, washedB,
-				displayPalette[candidate].r, displayPalette[candidate].g,
-				displayPalette[candidate].b);
-			if (distance < bestDistance) {
-				bestDistance = distance;
-				bestColor = candidate;
-			}
-		}
-		washLUT[sourceColor] = bestColor;
+	byte normalR = 25;
+	byte normalG = 48;
+	byte normalB = 51;
+	switch (section_id) {
+	case 2:
+	case 3:
+		normalR = 10;
+		normalG = 43;
+		normalB = 10;
+		break;
+	case 5:
+		normalR = 41;
+		normalG = 45;
+		normalB = 53;
+		break;
+	case 6:
+	case 7:
+		// Section 8 shares section 7's interface behavior in the port.
+	case 8:
+		normalR = 42;
+		normalG = 47;
+		normalB = 54;
+		break;
+	default:
+		break;
 	}
+
+	byte semanticPalette[3 * 3] = {
+		macGammaCorrect(63), macGammaCorrect(63), macGammaCorrect(63),
+		macGammaCorrect(0), macGammaCorrect(0), macGammaCorrect(0),
+		macGammaCorrect(normalR), macGammaCorrect(normalG),
+		macGammaCorrect(normalB)
+	};
+	for (int color = 0; color < 3; ++color) {
+		master_palette[color + kMacLeftSelectColor].r =
+			macPaletteComponentToSixBit(semanticPalette[color * 3]);
+		master_palette[color + kMacLeftSelectColor].g =
+			macPaletteComponentToSixBit(semanticPalette[color * 3 + 1]);
+		master_palette[color + kMacLeftSelectColor].b =
+			macPaletteComponentToSixBit(semanticPalette[color * 3 + 2]);
+	}
+	g_system->getPaletteManager()->setPalette(semanticPalette,
+		kMacLeftSelectColor, 3);
 }
 
 static bool getMacInterfaceSpot(int class_, int id, Common::Rect &rect) {
@@ -277,8 +261,7 @@ static byte getMacInterfaceTextColor(int class_, int id) {
 			(class_ == STROKE_ACTION && id == left_action) ||
 			(class_ == STROKE_DIALOG && id == left_command))
 		return kMacLeftSelectColor;
-	if ((class_ == STROKE_COMMAND && id == right_command) ||
-			(class_ == STROKE_INVEN && id == active_inven) ||
+	if ((class_ == STROKE_INVEN && id == active_inven) ||
 			(class_ == STROKE_ACTION && id == right_action))
 		return kMacRightSelectColor;
 	return kMacNormalTextColor;
@@ -519,6 +502,7 @@ void MacNebular::presentScreen(int shakeOffset) {
 	const int sceneY = _useOriginalMenus ? kMacDesktopSceneY : 0;
 	const int interfaceY = _useOriginalMenus ?
 		kMacDesktopInterfaceY : kMacSceneHeight;
+	setMacInterfacePalette(_resources);
 	_output.fillRect(_output.getBounds(), kMacBlackColor);
 
 	// Native large-window mode doubles the 320x156 scene in both axes.
@@ -568,23 +552,10 @@ void MacNebular::presentScreen(int shakeOffset) {
 				for (int x = 0; x < kMacInterfaceWidth; ++x) {
 					const int logicalX = x * 320 / kMacInterfaceWidth;
 					if (current[logicalX] != baseline[logicalX] &&
-							(!interfaceFont ||
-							!isMacInterfaceSemanticPixel(logicalX, logicalY)))
+							!isMacInterfaceSemanticPixel(logicalX, logicalY))
 						target[x] = current[logicalX];
 				}
 			}
-		}
-
-		// Apply the native blue layer to the panel artwork and non-semantic live
-		// state. CODE 7 draws the interface words afterward with distinct
-		// normal and selection colors, so they must not be quantized into the
-		// eight washed background colors.
-		byte washLUT[256];
-		buildMacPanelWashLUT(_resources->getNativeInterfacePalette(), washLUT);
-		for (int y = 0; y < kMacInterfaceHeight; ++y) {
-			byte *target = (byte *)panel.getBasePtr(0, y);
-			for (int x = 0; x < kMacInterfaceWidth; ++x)
-				target[x] = washLUT[target[x]];
 		}
 
 		if (interfaceFont)

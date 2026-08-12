@@ -93,7 +93,7 @@ private:
 	Graphics::MacFontManager *_fontManager = nullptr;
 	Graphics::ManagedSurface _nativeInterface;
 	Graphics::ManagedSurface _logicalInterface;
-	byte _nativeInterfacePalette[16 * 3] = {};
+	byte _nativeInterfacePalette[10 * 3] = {};
 	int _cursorID = 0;
 	int _waitCursorFrame = 0;
 	uint32 _nextCursorTime = 0;
