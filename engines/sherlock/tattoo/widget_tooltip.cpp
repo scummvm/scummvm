@@ -96,8 +96,28 @@ void WidgetTooltipBase::draw() {
 		// frame the tooltip covers them, then reappear once it moves on -
 		// this was the root cause of the "background blinking over/seeing
 		// through moveable characters" bug).
+		// registerRoseTattooHiresTextRect()/clearRoseTattooHiresTextRect()
+		// both expect a rect in *native screen-space* (i.e. relative to the
+		// current viewport, matching the fixed-size
+		// Screen::_roseTattooHiresTextLayer buffer) - but _bounds itself is
+		// in *world/scroll space* (see WidgetTooltip::setText(), which
+		// derives it from Events::mousePos(), which already adds
+		// Screen::_currentScroll). That distinction is invisible whenever
+        // the view is unscrolled (_currentScroll == (0, 0), as is normally
+		// the case in room scenes), but on the scrollable overhead map,
+		// passing the raw world-space _bounds here registers/clears
+		// completely the wrong rect of the hires text layer once the map
+		// has scrolled away from (0, 0) - leaving the *previous* tooltip's
+		// glyphs never cleared (they persist as a ghost) while the *new*
+		// tooltip's glyphs get queued at a location that doesn't match
+		// where its native bitmap glyphs were actually blitted. Convert to
+		// screen-space first, exactly like the SHtransBlitFrom() call above
+		// already does for the native bitmap blit.
+		Common::Rect nativeBounds = _bounds;
+		nativeBounds.translate(-screen._currentScroll.x, -screen._currentScroll.y);
+
 		if (!skipBitmapBlit)
-			screen.registerRoseTattooHiresTextRect(_bounds);
+			screen.registerRoseTattooHiresTextRect(nativeBounds);
 
 		// Wipe any previously-queued hires glyphs for this same rect before
 		// re-queuing below. refreshHiresText() re-draws the *same* text at
@@ -112,7 +132,7 @@ void WidgetTooltipBase::draw() {
 		// its own glyph outlines - this is the actual cause of the
 		// intermittent blocky-text bleed-through bug, not insufficient
         // background-restore coverage.
-		screen.clearRoseTattooHiresTextRect(_bounds);
+		screen.clearRoseTattooHiresTextRect(nativeBounds);
 		refreshHiresText();
 #endif
 	}
@@ -132,7 +152,16 @@ void WidgetTooltipBase::erase() {
 		// frames on its own (see Screen::_roseTattooHiresTextLayer) and
 		// must be explicitly cleared here too, or it'll keep getting
 		// blended back in every frame even after the tooltip is gone.
-		screen.clearRoseTattooHiresTextRect(_oldBounds);
+		//
+		// _oldBounds is in world/scroll space (see the matching comment in
+		// draw()), so it must be converted to native screen-space before
+		// being passed to clearRoseTattooHiresTextRect() - otherwise, once
+		// the view has scrolled away from (0, 0) (e.g. on the overhead
+		// map), this clears the wrong area of the hires text layer and the
+		// old tooltip's glyphs are left behind as a permanent ghost.
+		Common::Rect nativeOldBounds = _oldBounds;
+		nativeOldBounds.translate(-screen._currentScroll.x, -screen._currentScroll.y);
+		screen.clearRoseTattooHiresTextRect(nativeOldBounds);
 #endif
 
 		// Reset the old bounds so it won't be erased again
