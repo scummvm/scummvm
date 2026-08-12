@@ -47,7 +47,7 @@
 #include "mads/nebular/main_menu.h"
 #include "mads/nebular/mac_menus.h"
 #include "mads/nebular/menus.h"
-#include "mads/mads.h"
+#include "mads/nebular/nebular.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -257,8 +257,9 @@ static void game_main(int argc, const char **argv) {
 	game_cold_data_init();
 	main_cold_data_init();
 	if (g_engine->getPlatform() == Common::kPlatformMacintosh &&
+			savegame_slot == -1 &&
 			!ConfMan.hasKey("save_slot"))
-		selectMacintoshDifficulty();
+		((RexNebularEngine *)g_engine)->selectMacintoshDifficulty();
 	global_load_config_parameters();
 
 	if (argc >= 2) {

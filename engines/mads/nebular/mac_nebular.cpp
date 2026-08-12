@@ -424,11 +424,11 @@ bool MacNebular::initResources() {
 	_engine._soundManager = new Sound::MacSoundManager(
 		_engine._mixer, _engine._soundFlag, _resources);
 
+	_menus = new MacNebularMenu(_engine, *_resources, _output);
 	if (_useOriginalMenus) {
-		_menus = new MacNebularMenu(_engine, *_resources, _output);
 		if (!_menus->initialize()) {
 			delete _menus;
-			_menus = nullptr;
+			_menus = new MacNebularMenu(_engine, *_resources, _output);
 		}
 	}
 	return true;
@@ -444,6 +444,10 @@ void MacNebular::applyGameSettings() {
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
 		g_system->endGFXTransaction();
 	}
+}
+
+void MacNebular::selectDifficulty() {
+	selectMacintoshDifficulty(_menus);
 }
 
 Common::Point MacNebular::screenToGame(const Common::Point &point) const {
@@ -613,7 +617,7 @@ void MacNebular::presentScreen(int shakeOffset) {
 		_layoutLogged = true;
 	}
 
-	if (_menus)
+	if (_useOriginalMenus && _menus)
 		_menus->draw();
 
 	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
@@ -623,7 +627,7 @@ void MacNebular::presentScreen(int shakeOffset) {
 }
 
 bool MacNebular::handleMacEvent(Common::Event &event) {
-	return _menus && _menus->processEvent(event);
+	return _useOriginalMenus && _menus && _menus->processEvent(event);
 }
 
 void MacNebular::showPopup() {
@@ -763,6 +767,11 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 
 bool RexNebularEngine::handleMacEvent(Common::Event &event) {
 	return _macNebular && _macNebular->handleMacEvent(event);
+}
+
+void RexNebularEngine::selectMacintoshDifficulty() {
+	if (_macNebular)
+		_macNebular->selectDifficulty();
 }
 
 bool RexNebularEngine::drawPopup() {

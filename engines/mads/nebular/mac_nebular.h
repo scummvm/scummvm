@@ -57,6 +57,7 @@ public:
 	void initGraphics();
 	bool initResources();
 	void applyGameSettings();
+	void selectDifficulty();
 	Common::Point screenToGame(const Common::Point &point) const;
 	Common::Point gameToScreen(const Common::Point &point) const;
 	bool handleMacEvent(Common::Event &event);
