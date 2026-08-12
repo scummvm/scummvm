@@ -28,6 +28,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      devices.
    - Switched Nuked-OPL3 AdLib emulator to Nuked-OPL3-fast fork.
 
+ Asylum:
+   - Fixed missing or incorrect walking sounds in some scenes.
+
  AWE:
    - Fix sound code crash in OpenBSD.
 
