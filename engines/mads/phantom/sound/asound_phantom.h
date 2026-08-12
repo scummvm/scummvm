@@ -37,9 +37,7 @@ namespace Sound {
  *   Table 3: commands 24–27  (max=0x1B, base=0x18, 4 entries)
  *   Table 4: commands 32–39  (max=0x27, base=0x20, 8 entries)
  *
- * A fifth table (commands 64–76) exists but is encoded as raw
- * sound data bytes used as near-pointers — not reconstructible without the
- * binary.  Those commands are silently ignored.
+ *   Table 5: commands 64–76  (max=0x4C, base=0x40, 13 entries)
  *
  * command16: random background-music selector.  Checks whether
  * channel 0 is already playing one of the five known music pieces; if not,
@@ -49,7 +47,7 @@ namespace Sound {
 class ASound1 : public ASound {
 private:
 	typedef int (ASound1::*CommandPtr)();
-	static const CommandPtr _commandList[40];
+	static const CommandPtr _commandList[77];
 
 	// Tracks which music piece was last selected.
 	int _musicIndex = 0;
@@ -85,6 +83,19 @@ private:
 	int command37();
 	int command38();
 	int command39();
+	int command64();
+	int command65();
+	int command66();
+	int command67();
+	int command68();
+	int command69();
+	int command70();
+	int command71();
+	int command72();
+	int command73();
+	int command74();
+	int command75();
+	int command76();
 
 public:
 	ASound1(Audio::Mixer *mixer);
@@ -250,6 +261,8 @@ private:
 	int command69();
 	int command70();
 
+	void callFunction(uint16 offset, AdlibChannel &channel) override;
+
 public:
 	ASound4(Audio::Mixer *mixer);
 	~ASound4() override {}
@@ -405,6 +418,8 @@ private:
 	int command27();
 	int command28();
 	int command29();
+
+	void callFunction(uint16 offset, AdlibChannel &channel) override;
 
 	static const CommandPtr _commandList[30];
 
