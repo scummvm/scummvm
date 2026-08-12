@@ -51,6 +51,13 @@ protected:
 	explicit SoundDriver(Audio::Mixer *mixer) : _mixer(mixer) {}
 
 public:
+	/**
+	 * Loads a driver data block from an absolute file offset.
+	 *
+	 * For DOS MZ overlays, dataOffset includes the executable header. Offsets
+	 * passed to getDataStream() and stored in sequence data are relative to
+	 * the loaded block instead.
+	 */
 	SoundDriver(Audio::Mixer *mixer, const Common::Path &filename,
 		int dataOffset, int dataSize);
 	virtual ~SoundDriver() {}
