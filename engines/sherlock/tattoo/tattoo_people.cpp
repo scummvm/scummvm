@@ -479,7 +479,7 @@ void TattooPerson::setWalking() {
 			else
 				_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / delta.y;
 
-			if (_walkDest.x < _position.y / FIXED_INT_MULTIPLIER)
+			if (_walkDest.x < _position.x / FIXED_INT_MULTIPLIER)
 				_delta.x = -_delta.x;
 
 			// Set how many times we should add the delta's to the players position
