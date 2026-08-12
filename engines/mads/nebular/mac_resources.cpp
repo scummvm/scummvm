@@ -236,7 +236,7 @@ MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::S
 		return { kGlobalContainer, MKTAG('V', 'o', 'c', 'a'), 1000 };
 	if (name == "OBJECTS.DAT")
 		return { kGlobalContainer, MKTAG('O', 'b', 'j', 'e'), 1000 };
-	if (name == "QUOTES.DAT")
+	if (name == "QUOTES.DAT" || name == "QUOTES.TXR")
 		return { kGlobalContainer, MKTAG('Q', 'u', 'o', 't'), 1000 };
 	if (name == "HOGANUS.DAT")
 		return { kGlobalContainer, MKTAG('H', 'o', 'g', 'a'), 1000 };
@@ -252,6 +252,11 @@ MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::S
 		return { kGlobalContainer, MKTAG('B', 't', 's', 'p'), 1000 };
 	if (name == "@REXOPEN")
 		return { kSection9Container, MKTAG('A', 'R', 'e', 's'), 1078 };
+	if (name.hasPrefix("@REXEND") && name.size() == 8 &&
+			name[7] >= '1' && name[7] <= '3') {
+		return { kSection9Container, MKTAG('A', 'R', 'e', 's'),
+			(uint16)(1048 + name[7] - '0') };
+	}
 	if (name == "CREDITS.TXR")
 		return { kGlobalContainer, MKTAG('C', 'R', 'E', 'D'), 1000 };
 
