@@ -44,6 +44,7 @@
 #include "mads/core/speech.h"
 #include "mads/core/timer.h"
 #include "mads/core/video.h"
+#include "mads/nebular/mac_frontend.h"
 #include "mads/nebular/main_menu.h"
 #include "mads/nebular/mac_menus.h"
 #include "mads/nebular/menus.h"
@@ -317,9 +318,10 @@ static void run_full_frame_animview(RexNebularEngine *engine,
 
 static void run_full_frame_textview(RexNebularEngine *engine,
 		const char *resource) {
-	engine->setMacintoshFullFrameActive(true);
-	TextView::textview_main(resource);
-	engine->setMacintoshFullFrameActive(false);
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+		MacFrontend::runTextView(*engine, resource);
+	else
+		TextView::textview_main(resource);
 }
 
 void nebular_main() {
