@@ -40,9 +40,7 @@ protected:
 	void loadDriver(int sectionNum) override;
 
 public:
-	RexSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool isDemo) :
-		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
-	}
+	RexSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool usePas, bool isDemo);
 	~RexSoundManager() override {
 	}
 

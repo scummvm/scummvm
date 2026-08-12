@@ -20,16 +20,34 @@
  */
 
 #include "mads/nebular/sound/sound.h"
+
+#include "audio/fmopl.h"
+#include "common/textconsole.h"
 #include "mads/nebular/sound/asound_nebular.h"
 #include "mads/nebular/sound/isound_nebular.h"
+#include "mads/nebular/sound/psound_nebular.h"
 #include "mads/nebular/sound/rsound_nebular.h"
 
 namespace MADS {
 namespace RexNebular {
 namespace Sound {
 
+RexSoundManager::RexSoundManager(Audio::Mixer *mixer, bool &soundFlag,
+		bool usePas, bool isDemo) :
+		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
+	if (usePas && _driverType == SOUND_ADLIB) {
+		if (OPL::Config::detect(OPL::Config::kOpl3) >= 0) {
+			_driverType = SOUND_PAS;
+		} else {
+			warning("Pro Audio Spectrum 16 requires OPL3 output; "
+					"falling back to AdLib");
+		}
+	}
+}
+
 void RexSoundManager::validate() {
-	if (_isDemo && _driverType != SOUND_MT32)
+	// The demo has distinct AdLib, MT-32 and PAS overlays, but no ISOUND set.
+	if (_isDemo && _driverType == SOUND_PCSPEAKER)
 		_driverType = SOUND_ADLIB;
 
 	switch (_driverType) {
@@ -39,6 +57,10 @@ void RexSoundManager::validate() {
 
 	case SOUND_PCSPEAKER:
 		ISound::validate();
+		break;
+
+	case SOUND_PAS:
+		PSound::validate(_isDemo);
 		break;
 
 	default:
@@ -51,11 +73,16 @@ void RexSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
 	if (_isDemo && _driverType == SOUND_ADLIB) {
-		assert(sectionNumber == 1 || sectionNumber == 9);
-		if (sectionNumber == 1)
+		switch (sectionNumber) {
+		case 1:
 			_driver = new ASoundDemo1(_mixer);
-		else
+			break;
+		case 9:
 			_driver = new ASoundDemo9(_mixer);
+			break;
+		default:
+			return;
+		}
 		return;
 	}
 
@@ -135,6 +162,63 @@ void RexSoundManager::loadDriver(int sectionNumber) {
 			_driver = new ISound9(_mixer);
 			break;
 		default:
+			return;
+		}
+		break;
+
+	case SOUND_PAS:
+		// Pro Audio Spectrum drivers
+		if (_isDemo) {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new PSoundDemo1(_mixer);
+				break;
+			case 9:
+				_driver = new PSoundDemo9(_mixer);
+				break;
+			default:
+				return;
+			}
+		} else {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new PSound1(_mixer);
+				break;
+			case 2:
+				_driver = new PSound2(_mixer);
+				break;
+			case 3:
+				_driver = new PSound3(_mixer);
+				break;
+			case 4:
+				_driver = new PSound4(_mixer);
+				break;
+			case 5:
+				_driver = new PSound5(_mixer);
+				break;
+			case 6:
+				_driver = new PSound6(_mixer);
+				break;
+			case 7:
+				_driver = new PSound7(_mixer);
+				break;
+			case 8:
+				_driver = new PSound8(_mixer);
+				break;
+			case 9:
+				_driver = new PSound9(_mixer);
+				break;
+			default:
+				return;
+			}
+		}
+
+		if (_driver && !static_cast<PSound *>(_driver)->isReady()) {
+			warning("Could not initialize Pro Audio Spectrum 16 OPL3 output; "
+					"falling back to AdLib");
+			removeDriver();
+			_driverType = SOUND_ADLIB;
+			loadDriver(sectionNumber);
 			return;
 		}
 		break;

@@ -93,7 +93,7 @@ public:
 
 class SoundManager {
 protected:
-	enum DriverType { SOUND_ADLIB, SOUND_MT32, SOUND_PCSPEAKER };
+	enum DriverType { SOUND_ADLIB, SOUND_MT32, SOUND_PCSPEAKER, SOUND_PAS };
 	Audio::Mixer *_mixer;
 	DriverType _driverType;
 	bool &_soundFlag;
