@@ -453,11 +453,12 @@ public:
 
 #define ADLIB_CHANNEL_COUNT 9
 
-class GeneralMidiSoundDriver : public SoundDriver {
+class MidiSoundDriver : public SoundDriver {
 private:
 	GroupData _groupData;
 	MidiDriver *_midiDriver;
 	MidiDriver::DeviceHandle _device;
+	MusicType _musicType;
 	int _masterVolume;
 	byte _modulation[SOUND_ARR_SIZE];
 	byte _channelVolume[SOUND_ARR_SIZE];
@@ -468,13 +469,15 @@ private:
 	bool _active[SOUND_ARR_SIZE];
 
 	void send(byte status, byte firstOp, byte secondOp);
+	void sendMt32SysEx(uint32 address, const byte *data, uint16 size);
 public:
-	explicit GeneralMidiSoundDriver(MidiDriver::DeviceHandle device);
-	~GeneralMidiSoundDriver() override;
+	MidiSoundDriver(MidiDriver::DeviceHandle device, MusicType musicType);
+	~MidiSoundDriver() override;
 
 	bool open() override;
 	void close() override;
 	const GroupData *getGroupData() override;
+	void installPatch(const byte *data, int size) override;
 	int setMasterVolume(int volume) override;
 	void noteOff(int channel, int note) override;
 	void noteOn(int channel, int note, int velocity) override;

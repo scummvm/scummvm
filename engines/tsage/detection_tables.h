@@ -165,10 +165,10 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_MIDIADLIB, GUIO_MIDIGM)
+			GUIO5(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM)
 		},
 		GType_BlueForce,
-		GF_CD | GF_ALT_REGIONS | GF_GENERAL_MIDI
+		GF_CD | GF_ALT_REGIONS | GF_GENERAL_MIDI | GF_MT32
 	},
 
 	// Blue Force Spanish Floppy and CD use the same files
@@ -195,10 +195,10 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_MIDIADLIB, GUIO_MIDIGM)
+			GUIO5(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM)
 		},
 		GType_BlueForce,
-		GF_CD | GF_ALT_REGIONS | GF_GENERAL_MIDI
+		GF_CD | GF_ALT_REGIONS | GF_GENERAL_MIDI | GF_MT32
 	},
 
 	// Found on Wacky Funsters!
