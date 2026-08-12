@@ -20,15 +20,100 @@
  */
 
 #include "mads/dragonsphere/sound/sound.h"
+#include "audio/fmopl.h"
+#include "common/textconsole.h"
 #include "mads/dragonsphere/sound/asound_dragonsphere.h"
+#include "mads/dragonsphere/sound/psound_dragonsphere.h"
 #include "mads/dragonsphere/sound/rsound_dragonsphere.h"
 
 namespace MADS {
 namespace Dragonsphere {
 namespace Sound {
 
+namespace {
+
+const int kRetailSections[] = { 1, 2, 3, 4, 5, 6, 9 };
+
+SoundDriver *createPSound(Audio::Mixer *mixer, int sectionNumber,
+		bool isDemo) {
+	if (isDemo) {
+		switch (sectionNumber) {
+		case 1:
+			return new PSoundDemo1(mixer);
+		case 9:
+			return new PSoundDemo9(mixer);
+		default:
+			return nullptr;
+		}
+	}
+
+	switch (sectionNumber) {
+	case 1:
+		return new PSound1(mixer);
+	case 2:
+		return new PSound2(mixer);
+	case 3:
+		return new PSound3(mixer);
+	case 4:
+		return new PSound4(mixer);
+	case 5:
+		return new PSound5(mixer);
+	case 6:
+		return new PSound6(mixer);
+	case 9:
+		return new PSound9(mixer);
+	default:
+		return nullptr;
+	}
+}
+
+} // namespace
+
+DragonSoundManager::DragonSoundManager(Audio::Mixer *mixer,
+		bool &soundFlag, bool usePas, bool isDemo) :
+		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
+	if (usePas && _driverType == SOUND_ADLIB) {
+		if (OPL::Config::detect(OPL::Config::kOpl3) >= 0) {
+			_driverType = SOUND_PAS;
+		} else {
+			warning("Pro Audio Spectrum 16 requires OPL3 output; "
+					"falling back to AdLib");
+		}
+	}
+}
+
 void DragonSoundManager::validate() {
-	if (_driverType == SOUND_MT32) {
+	if (_driverType == SOUND_PAS) {
+		bool valid = true;
+		if (_isDemo) {
+			const int demoSections[] = { 1, 9 };
+			for (uint index = 0; index < ARRAYSIZE(demoSections); ++index) {
+				Common::String reason;
+				if (!validateDragonspherePSoundFile(demoSections[index], true,
+						&reason)) {
+					warning("Cannot use Dragonsphere demo PSOUND section %d: "
+							"%s; using AdLib", demoSections[index],
+							reason.c_str());
+					valid = false;
+				}
+			}
+		} else {
+			for (uint index = 0; index < ARRAYSIZE(kRetailSections); ++index) {
+				Common::String reason;
+				if (!validateDragonspherePSoundFile(kRetailSections[index], false,
+						&reason)) {
+					warning("Cannot use Dragonsphere PSOUND section %d: %s; "
+							"using AdLib", kRetailSections[index],
+							reason.c_str());
+					valid = false;
+				}
+			}
+		}
+		if (valid)
+			return;
+		_driverType = SOUND_ADLIB;
+		ASound::validate(_isDemo);
+	} else if (_driverType == SOUND_MT32) {
 		if (_isDemo)
 			RSoundDemo::validate();
 		else
@@ -41,7 +126,16 @@ void DragonSoundManager::validate() {
 void DragonSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	if (_driverType == SOUND_MT32) {
+	if (_driverType == SOUND_PAS) {
+		_driver = createPSound(_mixer, sectionNumber, _isDemo);
+		if (_driver && !static_cast<PSound *>(_driver)->isReady()) {
+			warning("Could not initialize Pro Audio Spectrum 16 OPL3 output; "
+					"falling back to AdLib");
+			removeDriver();
+			_driverType = SOUND_ADLIB;
+			loadDriver(sectionNumber);
+		}
+	} else if (_driverType == SOUND_MT32) {
 		// Roland MT32 drivers
 		if (_isDemo) {
 			switch (sectionNumber) {
