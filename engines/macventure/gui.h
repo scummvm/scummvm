@@ -344,6 +344,7 @@ private:
 
 	Common::Point _pos;
 	ClickState _state;
+	bool _shiftPressed;
 };
 
 

@@ -1372,7 +1372,7 @@ void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::R
 		}
 	}
 	if (child != 0 || data.refcon == kMainGameWindow) {
-		if (!isDoubleClick)
+		if (!isDoubleClick && !shiftPressed)
 			selectDraggable(child, ref, pos);
 		_engine->handleObjectSelect(child, ref, shiftPressed, isDoubleClick);
 		bringToFront(ref);
@@ -1934,8 +1934,10 @@ bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common:
 		WindowData &data = findWindowData((WindowReference)ref);
 
 		if (click == kBorderInner && !_draggedObjects.size()) {
-			_engine->unselectAll();
-			_engine->getSelectedObjects().clear();
+			if (!(g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT)) {
+				_engine->unselectAll();
+				_engine->getSelectedObjects().clear();
+			}
 
 			_lassoStart = event.mouse;
 			_lassoEnd = _lassoStart;
@@ -2012,7 +2014,7 @@ void Gui::select(Common::Point cursorPosition, bool shiftPressed, bool isDoubleC
 	WindowData &data = findWindowData((WindowReference)ref);
 
 	Common::Rect clickRect = calculateClickRect(cursorPosition + data.scrollPos, win->getInnerDimensions());
-	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref, isDoubleClick, shiftPressed);
+	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref, shiftPressed, isDoubleClick);
 }
 
 void Gui::handleSingleClick() {

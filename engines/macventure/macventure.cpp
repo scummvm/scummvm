@@ -401,7 +401,25 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 	const WindowData &windata = _gui->getWindowData(win);
 
 	if (shiftPressed) {
-		// TODO: Implement shift functionality.
+		if (objID == 0) {
+			objID = windata.objRef;
+		}
+		if (objID > 0) {
+			int selectedIndex = findObjectInArray(objID, _selectedObjs);
+			if (findObjectInArray(objID, _currentSelection) != -1) {
+				unselectObject(objID);
+				if (selectedIndex != -1) {
+					_selectedObjs.remove_at(selectedIndex);
+				}
+			} else {
+				selectObject(objID);
+				if (selectedIndex == -1) {
+					_selectedObjs.push_back(objID);
+				}
+			}
+			refreshReady();
+			preparedToRun();
+		}
 	} else {
 		if (_selectedControl && _currentSelection.size() > 0 && getInvolvedObjects() > 1) {
 			if (objID == 0) {
