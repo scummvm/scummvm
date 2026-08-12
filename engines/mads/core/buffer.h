@@ -243,9 +243,9 @@ extern void buffer_peel_vert(Buffer *target, int peel,
 extern int buffer_to_disk(Buffer *source, int x, int y, int xs, int ys);
 extern void buffer_from_disk(Buffer *source, int buffer_id, int x, int y, int xs, int ys);
 
-extern bool buffer_to_ems(Buffer *source, int page_handle,
+extern int buffer_to_ems(Buffer *source, int page_handle,
 	int source_ems_handle, int x, int y, int xs, int ys);
-extern bool buffer_from_ems(Buffer *source, int page_handle,
+extern int buffer_from_ems(Buffer *source, int page_handle,
 	int target_ems_handle, int x, int y, int xs, int ys);
 
 extern int buffer_preserve(Buffer *source, int flags,

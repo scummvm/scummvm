@@ -810,7 +810,7 @@ done:
 	;
 }
 
-bool buffer_to_ems(Buffer *source, int page_handle, int source_ems_handle,
+int buffer_to_ems(Buffer *source, int page_handle, int source_ems_handle,
 		int x, int y, int xs, int ys) {
 	int special_page_handle = 0;
 	Buffer ems_buffer = { video_y, video_x, NULL };
@@ -840,7 +840,7 @@ done:
 	return page_handle;
 }
 
-bool buffer_from_ems(Buffer *source, int page_handle, int target_ems_handle,
+int buffer_from_ems(Buffer *source, int page_handle, int target_ems_handle,
 		int x, int y, int xs, int ys) {
 	Buffer ems_buffer = { video_y, video_x, NULL };
 	int special_page_handle;
