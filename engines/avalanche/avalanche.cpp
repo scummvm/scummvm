@@ -181,7 +181,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 }
 
 bool AvalancheEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsSavingDuringRuntime) || (f == kSupportsLoadingDuringRuntime);
+	return (f == kSupportsSavingDuringRuntime) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsReturnToLauncher);
 }
 
 const char *AvalancheEngine::getCopyrightString() const {
