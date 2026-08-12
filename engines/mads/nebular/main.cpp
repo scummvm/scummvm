@@ -427,11 +427,15 @@ void nebular_main() {
 		case WIN_QUICK_DEATH + 16:
 			run_full_frame_animview(engine, "@rexend1");
 			run_full_frame_textview(engine, "ending1");
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+				MacFrontend::showCreditsAfterEnding(*engine);
 			return;
 
 		case WIN_SLOW_DEATH + 16:
 			run_full_frame_animview(engine, "@rexend2");
 			run_full_frame_textview(engine, "ending2");
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+				MacFrontend::showCreditsAfterEnding(*engine);
 			return;
 
 		case WIN_ALL_THE_MONEY + 16:
@@ -441,6 +445,8 @@ void nebular_main() {
 
 		case WIN_A_HEAD_POW + 16:
 			run_full_frame_textview(engine, "ending4");
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+				MacFrontend::showCreditsAfterEnding(*engine);
 			return;
 
 		case 5:

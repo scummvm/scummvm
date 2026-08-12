@@ -51,6 +51,11 @@ void runTextView(RexNebularEngine &engine, const char *resource) {
 	engine.setMacintoshFullFrameActive(false);
 }
 
+void showCreditsAfterEnding(RexNebularEngine &engine) {
+	// CODE 133 follows Endi 49, 50 and 52 with CRED 1000.
+	runTextView(engine, "credits");
+}
+
 } // namespace MacFrontend
 } // namespace RexNebular
 } // namespace MADS
