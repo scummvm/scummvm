@@ -159,6 +159,8 @@ void read_resource(Common::SeekableReadStream *src) {
 	while (!src->eos()) {
 		Common::String line = src->readLine();
 		line.trim();
+		if (line == "***")
+			break;
 		if (line.empty() || src->eos())
 			continue;
 
