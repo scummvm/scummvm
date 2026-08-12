@@ -361,7 +361,10 @@ void nebular_main() {
 			main_menu_main();
 			engine->setMacintoshOuterMenuActive(false);
 
-			if (selected_item >= 0) {
+			// Native CODE 133 performs this transition inside
+			// main_menu_main(), before dispatching the selected action.
+			if (selected_item >= 0 &&
+					!engine->usesOriginalMacintoshMenus()) {
 				Common::fill(magic_color_values, magic_color_values + 3, 0);
 				Common::fill(magic_color_flags, magic_color_flags + 3, 0);
 				mcga_getpal(&palette);
