@@ -278,6 +278,8 @@ MODULE_OBJS := \
 	phantom/rooms/room506.o \
 	phantom/sound/asound.o \
 	phantom/sound/asound_phantom.o \
+	phantom/sound/isound.o \
+	phantom/sound/isound_phantom.o \
 	phantom/sound/rsound.o \
 	phantom/sound/rsound_phantom.o \
 	phantom/sound/sound.o \
