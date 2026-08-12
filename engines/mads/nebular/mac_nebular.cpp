@@ -58,6 +58,7 @@ enum {
 	kMacDesktopSeparatorY = kMacDesktopSceneY + kMacSceneHeight,
 	kMacDesktopInterfaceY = kMacDesktopSeparatorY + 1,
 	kMacPanelPaletteColors = 10,
+	kMacScenePaletteStart = 16,
 	kMacNormalTextColor = 15,
 	kMacLeftSelectColor = 13,
 	kMacRightSelectColor = 14,
@@ -377,6 +378,7 @@ static bool isMacInterfaceScrollbarPixel(int x, int y) {
 
 MacNebular::MacNebular(RexNebularEngine &engine) :
 		_engine(engine), _useOriginalMenus(ConfMan.getBool("original_mac_menus")) {
+	memset(_palette, 0, sizeof(_palette));
 }
 
 MacNebular::~MacNebular() {
@@ -462,6 +464,36 @@ Common::Point MacNebular::gameToScreen(const Common::Point &point) const {
 
 	return Common::Point(kMacInterfaceX + point.x * kMacInterfaceWidth / 320,
 		interfaceY + (point.y - 156) * 2);
+}
+
+void MacNebular::setPalette(const RGBcolor *palette, int firstColor,
+		int numColors) {
+	const int lastColor = MIN(firstColor + numColors,
+		Graphics::PALETTE_COUNT);
+	for (int color = firstColor; color < lastColor; ++color)
+		_palette[color] = palette[color];
+
+	const int sceneFirst = MAX<int>(firstColor, kMacScenePaletteStart);
+	if (sceneFirst >= lastColor)
+		return;
+
+	byte corrected[Graphics::PALETTE_SIZE];
+	for (int color = sceneFirst; color < lastColor; ++color) {
+		const int offset = (color - sceneFirst) * 3;
+		corrected[offset] = macGammaCorrect(palette[color].r);
+		corrected[offset + 1] = macGammaCorrect(palette[color].g);
+		corrected[offset + 2] = macGammaCorrect(palette[color].b);
+	}
+	g_system->getPaletteManager()->setPalette(corrected, sceneFirst,
+		lastColor - sceneFirst);
+}
+
+void MacNebular::getPalette(RGBcolor *palette, int firstColor,
+		int numColors) const {
+	const int lastColor = MIN(firstColor + numColors,
+		Graphics::PALETTE_COUNT);
+	for (int color = firstColor; color < lastColor; ++color)
+		palette[color] = _palette[color];
 }
 
 void MacNebular::presentScreen(int shakeOffset) {
@@ -737,6 +769,24 @@ bool RexNebularEngine::getInterfaceSentenceColors(byte &foreground, byte &shadow
 
 bool RexNebularEngine::hasMacintoshInterface() const {
 	return _macNebular != nullptr;
+}
+
+bool RexNebularEngine::setMacintoshPalette(const RGBcolor *palette,
+		int firstColor, int numColors) {
+	if (!_macNebular)
+		return false;
+
+	_macNebular->setPalette(palette, firstColor, numColors);
+	return true;
+}
+
+bool RexNebularEngine::getMacintoshPalette(RGBcolor *palette,
+		int firstColor, int numColors) const {
+	if (!_macNebular)
+		return false;
+
+	_macNebular->getPalette(palette, firstColor, numColors);
+	return true;
 }
 
 bool RexNebularEngine::hasInterfaceAnimations() const {
