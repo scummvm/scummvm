@@ -25,6 +25,79 @@ namespace MADS {
 namespace RexNebular {
 namespace Sound {
 
+RSoundDemo::RSoundDemo(Audio::Mixer *mixer, const Common::Path &filename,
+		int dataOffset, int dataSize, int sysExOffset,
+		int firstEffectChannel) :
+		RSound(mixer, filename, dataOffset, dataSize, sysExOffset,
+				kRSoundFadeCheckAlternating),
+		_firstEffectChannel(firstEffectChannel) {
+}
+
+void RSoundDemo::startVoice(int channelIndex, int sequenceOffset) {
+	assert(channelIndex >= 0 && channelIndex < RSOUND_CHANNEL_COUNT);
+	_channels[channelIndex].load(loadData(sequenceOffset));
+}
+
+int RSoundDemo::startVoiceInRange(int sequenceOffset, int firstChannel,
+		int lastChannel) {
+	assert(firstChannel >= 0 && firstChannel <= lastChannel && lastChannel < 8);
+
+	for (int channel = firstChannel; channel <= lastChannel; ++channel) {
+		if (!_channels[channel]._activeCount) {
+			startVoice(channel, sequenceOffset);
+			return channel;
+		}
+	}
+
+	for (int channel = lastChannel; channel >= firstChannel; --channel) {
+		if (_channels[channel]._pendingStop == 0xFF) {
+			startVoice(channel, sequenceOffset);
+			return channel;
+		}
+	}
+
+	return -1;
+}
+
+int RSoundDemo::startAnyVoice(int sequenceOffset) {
+	// Both demo overlays exclude rhythm channel 9 from their melodic pools.
+	return startVoiceInRange(sequenceOffset, 0, 7);
+}
+
+int RSoundDemo::startEffectVoice(int sequenceOffset) {
+	return startVoiceInRange(sequenceOffset, _firstEffectChannel, 7);
+}
+
+void RSoundDemo::requestStopRange(int firstChannel, int channelCount) {
+	assert(firstChannel >= 0 && channelCount >= 0 &&
+			firstChannel + channelCount <= RSOUND_CHANNEL_COUNT);
+	for (int channel = firstChannel;
+			channel < firstChannel + channelCount; ++channel)
+		_channels[channel].enable(0xFF);
+}
+
+void RSoundDemo::requestStopAll() {
+	requestStopRange(0, RSOUND_CHANNEL_COUNT);
+}
+
+void RSoundDemo::stopAndResetRange(int firstChannel, int channelCount) {
+	assert(firstChannel >= 0 && channelCount > 0 &&
+			firstChannel + channelCount <= RSOUND_CHANNEL_COUNT);
+	resetChannelRange(firstChannel, firstChannel + channelCount);
+	resetHeldNotesRange(firstChannel + 1, firstChannel + channelCount);
+	sendMidiChannelReset(firstChannel + 1, firstChannel + channelCount);
+}
+
+void RSoundDemo::setVoiceVolume(int channelIndex, byte volume) {
+	assert(channelIndex >= 0 && channelIndex < RSOUND_CHANNEL_COUNT);
+	_channels[channelIndex]._volume = volume;
+	sendVolume(channelIndex + 1, volume);
+}
+
+bool RSoundDemo::isSequenceActive(int sequenceOffset) {
+	return isSoundActive(loadData(sequenceOffset));
+}
+
 const RSound1::CommandPtr RSound1::_commandList[42] = {
 	&RSound1::command0, &RSound1::command1, &RSound1::command2, &RSound1::command3,
 	&RSound1::command4, &RSound1::command5, &RSound1::command6, &RSound1::command7,
@@ -39,7 +112,8 @@ const RSound1::CommandPtr RSound1::_commandList[42] = {
 	&RSound1::command40, &RSound1::command41
 };
 
-RSound1::RSound1(Audio::Mixer *mixer) : RSound(mixer, "rsound.001", 0x1350, 0x1A90, 0x67) {
+RSound1::RSound1(Audio::Mixer *mixer) : RSound(mixer, "rsound.001",
+		0x1350, 0x1A90, 0x67, kRSoundFadeCheckAlternating) {
 }
 
 int RSound1::command(int commandId, int param) {
@@ -302,6 +376,220 @@ int RSound1::command41() {
 
 /*-----------------------------------------------------------------------*/
 
+RSoundDemo1::RSoundDemo1(Audio::Mixer *mixer) :
+		RSoundDemo(mixer, "rsound.001", 0x12E0, 0x1D28, 0x67, 0),
+		_command23Toggle(false) {
+}
+
+byte RSoundDemo1::adjustedCommandParam() const {
+	const byte value = (byte)_commandParam;
+	return value > 0x40 ? value - 0x40 : 0;
+}
+
+void RSoundDemo1::startCommand111213() {
+	if (isSequenceActive(0x1586))
+		return;
+
+	requestStopAll();
+	startVoice(0, 0x1586);
+	startVoice(1, 0x17DC);
+	startVoice(2, 0x197C);
+	startVoice(3, 0x19F8);
+}
+
+int RSoundDemo1::executeDemoCommonCommand(int commandId) {
+	switch (commandId) {
+	case 0:
+		return RSound::command0();
+	case 1:
+		requestStopAll();
+		return 0;
+	case 2:
+		stopAndResetRange(0, 4);
+		return 0;
+	case 3:
+		requestStopRange(0, 4);
+		return 0;
+	case 4:
+		stopAndResetRange(4, 5);
+		return 0;
+	case 5:
+		requestStopRange(4, 5);
+		return 0;
+	case 6:
+		return RSound::command6();
+	case 7:
+		return RSound::command7();
+	case 8:
+		return RSound::command8();
+	default:
+		return 0;
+	}
+}
+
+int RSoundDemo1::command(int commandId, int param) {
+	if (commandId < 0 || commandId > 40)
+		return 0;
+
+	_commandParam = param;
+	_frameCounter = 0;
+	if (commandId <= 8)
+		return executeDemoCommonCommand(commandId);
+
+	switch (commandId) {
+	case 9:
+		startAnyVoice(0x0F34);
+		break;
+	case 10:
+		if (!isSequenceActive(0x1104)) {
+			requestStopAll();
+			startVoice(4, 0x1104);
+			startVoice(5, 0x1138);
+			startVoice(6, 0x12BC);
+			startVoice(7, 0x1308);
+		}
+		break;
+	case 11:
+		startCommand111213();
+		setVoiceVolume(0, 0x00);
+		setVoiceVolume(1, 0x00);
+		break;
+	case 12:
+		startCommand111213();
+		setVoiceVolume(0, 0x50);
+		setVoiceVolume(1, 0x00);
+		break;
+	case 13:
+		startCommand111213();
+		setVoiceVolume(0, 0x50);
+		setVoiceVolume(1, 0x50);
+		break;
+	case 14:
+		startAnyVoice(0x1AE2);
+		break;
+	case 15:
+		if (!isSequenceActive(0x135A)) {
+			requestStopAll();
+			startVoice(4, 0x135A);
+			startVoice(5, 0x144A);
+			startVoice(6, 0x152E);
+		}
+		break;
+	case 16:
+		startAnyVoice(0x0F3E);
+		break;
+	case 17:
+		startAnyVoice(0x0F48);
+		break;
+	case 18:
+		startAnyVoice(0x0F52);
+		break;
+	case 19:
+		requestStopAll();
+		startAnyVoice(0x0F64);
+		break;
+	case 20:
+		startAnyVoice(0x0FBE);
+		break;
+	case 21:
+		startAnyVoice(0x0FAC);
+		break;
+	case 22: {
+		byte *data = sequenceData(0x0FCE);
+		data[6] = (getRandomNumber() & 0x07) + 0x73;
+		startAnyVoice(0x0FCE);
+		break;
+	}
+	case 23:
+		_command23Toggle = !_command23Toggle;
+		startAnyVoice(_command23Toggle ? 0x0FD8 : 0x0FE0);
+		break;
+	case 24:
+		startAnyVoice(0x0FE8);
+		break;
+	case 25:
+		startAnyVoice(0x0FF2);
+		break;
+	case 26:
+	case 27: {
+		const int sequenceOffset = commandId == 26 ? 0x10F8 : 0x10EC;
+		byte *data = sequenceData(sequenceOffset);
+		data[8] = (getRandomNumber() & 0x18) + 0x2D;
+		data[5] = adjustedCommandParam() + 0x40;
+		startVoice(7, sequenceOffset);
+		break;
+	}
+	case 28:
+		startAnyVoice(0x1002);
+		break;
+	case 29: {
+		byte *data = sequenceData(0x109A);
+		data[11] = (adjustedCommandParam() >> 1) + 0x20;
+		if (!isSequenceActive(0x109A))
+			startAnyVoice(0x109A);
+		break;
+	}
+	case 30: {
+		byte *data = sequenceData(0x10AE);
+		data[11] = adjustedCommandParam() + 0x3F;
+		if (!isSequenceActive(0x10AE))
+			startAnyVoice(0x10AE);
+		break;
+	}
+	case 31:
+		startAnyVoice(0x1022);
+		break;
+	case 32: {
+		const byte value = adjustedCommandParam() >> 1;
+		byte *data = sequenceData(0x10C4);
+		data[11] = data[23] = value + 0x44;
+		data[17] = data[29] = value + 0x14;
+		if (!isSequenceActive(0x10C4))
+			startAnyVoice(0x10C4);
+		break;
+	}
+	case 33:
+		startAnyVoice(0x1034);
+		startAnyVoice(0x103E);
+		break;
+	case 34: {
+		byte *data = sequenceData(0x104C);
+		data[9] = (getRandomNumber() & 0x0C) + 0x2D;
+		data[16] = data[9] + 0x24;
+		startAnyVoice(0x104C);
+		break;
+	}
+	case 35:
+		startAnyVoice(0x1060);
+		break;
+	case 36:
+		startAnyVoice(0x1078);
+		break;
+	case 37:
+		startAnyVoice(0x1086);
+		break;
+	case 38:
+		startAnyVoice(0x1090);
+		break;
+	case 39:
+		if (!isSequenceActive(0x1C38)) {
+			startVoice(4, 0x1C38);
+			startVoice(5, 0x1C68);
+			startVoice(6, 0x1C94);
+			startVoice(7, 0x1CD4);
+			startVoice(8, 0x1CEE);
+		}
+		break;
+	case 40:
+		startAnyVoice(0x106E);
+		break;
+	}
+
+	return 0;
+}
+
+/*-----------------------------------------------------------------------*/
+
 const uint16 RSound2::_table1[16] = {
 	0x3234, 0x3250, 0x326A, 0x3284, 0x329E, 0x32D6, 0x3304, 0x333C,
 	0x3352, 0x3378, 0x33B6, 0x33D0, 0x33EA, 0x3404, 0x341E, 0x343E
@@ -321,7 +609,8 @@ const RSound2::CommandPtr RSound2::_commandList[44] = {
 	&RSound2::command40, &RSound2::command41, &RSound2::command42, &RSound2::command43
 };
 
-RSound2::RSound2(Audio::Mixer *mixer) : RSound(mixer, "rsound.002", 0x1390, 0x42F0, 0x87) {
+RSound2::RSound2(Audio::Mixer *mixer) : RSound(mixer, "rsound.002",
+		0x1390, 0x42F0, 0x87, kRSoundFadeCheckAlternating) {
 }
 
 int RSound2::command(int commandId, int param) {
@@ -630,7 +919,8 @@ const RSound3::CommandPtr RSound3::_commandList[61] = {
 	&RSound3::command60
 };
 
-RSound3::RSound3(Audio::Mixer *mixer) : RSound(mixer, "rsound.003", 0x14E0, 0x4C60, 0x67) {
+RSound3::RSound3(Audio::Mixer *mixer) : RSound(mixer, "rsound.003",
+		0x14E0, 0x4C60, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound3::command(int commandId, int param) {
@@ -642,23 +932,14 @@ int RSound3::command(int commandId, int param) {
 	return (this->*_commandList[commandId])();
 }
 
-int RSound3::notImplemented() {
-	warning("RSound3::command: not yet implemented (missing disassembly)");
-	return 0;
-}
-
 Channel *RSound3::method1(int offset, byte value) {
 	byte *pData = loadData(offset);
 	pData[5] = value;
 	return playSound(offset);
 }
 
-void RSound3::sub1074E() {
-	_byte10742 = 1;
-}
-
 void RSound3::resetUpperChannelsTail() {
-	sub1074E();
+	setFadeCheckPeriod(1);
 	_channels[4].enable(0xFF);
 	_channels[5].enable(0xFF);
 	_channels[6].enable(0xFF);
@@ -671,15 +952,20 @@ int RSound3::command1() {
 	return 0;
 }
 
+int RSound3::command3() {
+	return RSound::command3();
+}
+
 int RSound3::command5() {
-	if (!isSoundActive(loadData(0x1AE6)))
-		resetUpperChannelsTail();
+	// The native driver performs an unused active-sequence probe before
+	// unconditionally entering the shared upper-channel reset tail.
+	resetUpperChannelsTail();
 	return 0;
 }
 
 int RSound3::command9() {
 	command1();
-	_byte10742 = (byte)_commandParam;
+	setFadeCheckPeriod((byte)_commandParam);
 	return 0;
 }
 
@@ -757,7 +1043,7 @@ int RSound3::command15() {
 		_channels[5]._pendingStop = 0xFF;
 		_channels[6]._pendingStop = 0xFF;
 		_channels[7]._pendingStop = 0xFF;
-		sub1074E();
+		setFadeCheckPeriod(1);
 		return 0;
 	}
 
@@ -856,8 +1142,10 @@ int RSound3::command24() {
 }
 
 int RSound3::command25() {
-	method1(0x11A6, 42);
-	method1(0x11C4, 42);
+	// The dispatcher's preceding xor leaves ZF set, so the native jz
+	// selects 0x25 for both calls.
+	method1(0x11A6, 0x25);
+	method1(0x11C4, 0x25);
 	return 0;
 }
 
@@ -1035,7 +1323,8 @@ const RSound4::CommandPtr RSound4::_commandList[60] = {
 	&RSound4::command56, &RSound4::command57, &RSound4::command58, &RSound4::command59
 };
 
-RSound4::RSound4(Audio::Mixer *mixer) : RSound(mixer, "rsound.004", 0x1340, 0x2E20, 0x67) {
+RSound4::RSound4(Audio::Mixer *mixer) : RSound(mixer, "rsound.004",
+		0x1340, 0x2E20, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound4::command(int commandId, int param) {
@@ -1060,7 +1349,7 @@ void RSound4::tickCallback() {
 
 int RSound4::command9() {
 	command1();
-	_byte10745 = (byte)_commandParam;
+	setFadeCheckPeriod((byte)_commandParam);
 	return 0;
 }
 
@@ -1245,7 +1534,8 @@ const RSound5::CommandPtr RSound5::_commandList[42] = {
 	&RSound5::command40, &RSound5::command41
 };
 
-RSound5::RSound5(Audio::Mixer *mixer) : RSound(mixer, "rsound.005", 0x12A0, 0x1FD0, 0x67) {
+RSound5::RSound5(Audio::Mixer *mixer) : RSound(mixer, "rsound.005",
+		0x12A0, 0x1FD0, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound5::command(int commandId, int param) {
@@ -1457,7 +1747,8 @@ const RSound6::CommandPtr RSound6::_commandList[30] = {
 	&RSound6::nullCommand, &RSound6::command28
 };
 
-RSound6::RSound6(Audio::Mixer *mixer) : RSound(mixer, "rsound.006", 0x12D0, 0x1EF0, 0x67) {
+RSound6::RSound6(Audio::Mixer *mixer) : RSound(mixer, "rsound.006",
+		0x12D0, 0x1EF0, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound6::command(int commandId, int param) {
@@ -1630,7 +1921,8 @@ const RSound7::CommandPtr RSound7::_commandList[38] = {
 	&RSound7::command36, &RSound7::command37
 };
 
-RSound7::RSound7(Audio::Mixer *mixer) : RSound(mixer, "rsound.007", 0x1240, 0x1EF0, 0x67) {
+RSound7::RSound7(Audio::Mixer *mixer) : RSound(mixer, "rsound.007",
+		0x1240, 0x1EF0, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound7::command(int commandId, int param) {
@@ -1781,7 +2073,8 @@ const RSound8::CommandPtr RSound8::_commandList[38] = {
 	&RSound8::command36, &RSound8::command37
 };
 
-RSound8::RSound8(Audio::Mixer *mixer) : RSound(mixer, "rsound.008", 0x1290, 0x19A0, 0x67) {
+RSound8::RSound8(Audio::Mixer *mixer) : RSound(mixer, "rsound.008",
+		0x1290, 0x19A0, 0x67, kRSoundFadeCheckProgrammable) {
 }
 
 int RSound8::command(int commandId, int param) {
@@ -1990,7 +2283,8 @@ const RSound9::CommandPtr RSound9::_commandList[52] = {
 	&RSound9::command48, &RSound9::command49, &RSound9::command50, &RSound9::command51
 };
 
-RSound9::RSound9(Audio::Mixer *mixer) : RSound(mixer, "rsound.009", 0x1520, 0x8920, 0x6F) {
+RSound9::RSound9(Audio::Mixer *mixer) : RSound(mixer, "rsound.009",
+		0x1520, 0x8920, 0x6F, kRSoundFadeCheckAlternating) {
 	_callbackCounter = 0;
 	_callbackPeriod = 0;
 	_callbackFnPtr = nullptr;
@@ -2404,6 +2698,185 @@ int RSound9::command51() {
 	_channels[2].load(loadData(0x5A62));
 	_channels[3].load(loadData(0x6986));
 	_channels[4].load(loadData(0x7E5C));
+	return 0;
+}
+
+/*-----------------------------------------------------------------------*/
+
+RSoundDemo9::RSoundDemo9(Audio::Mixer *mixer) :
+		RSoundDemo(mixer, "rsound.009", 0x11D0, 0x3664, 0x69, 5) {
+}
+
+int RSoundDemo9::executeDemoCommonCommand(int commandId) {
+	switch (commandId) {
+	case 0:
+		return RSound::command0();
+	case 1:
+		requestStopRange(0, 9);
+		return 0;
+	case 2:
+		stopAndResetRange(0, 5);
+		// The opening overlay repeats its first embedded DT1 record here.
+		sendSysEx(0x69);
+		return 0;
+	case 3:
+		requestStopRange(0, 5);
+		return 0;
+	case 4:
+		stopAndResetRange(5, 4);
+		return 0;
+	case 5:
+		requestStopRange(5, 4);
+		return 0;
+	case 6:
+		return RSound::command6();
+	case 7:
+		return RSound::command7();
+	case 8:
+		return RSound::command8();
+	default:
+		return 0;
+	}
+}
+
+int RSoundDemo9::command(int commandId, int param) {
+	if (commandId < 0 || commandId > 39)
+		return 0;
+
+	_commandParam = param;
+	_frameCounter = 0;
+	if (commandId <= 8)
+		return executeDemoCommonCommand(commandId);
+
+	switch (commandId) {
+	case 9:
+	case 10:
+		break;
+	case 11:
+		startVoice(7, 0x1454);
+		break;
+	case 12:
+		startVoice(7, 0x14A0);
+		break;
+	case 13:
+		startVoice(7, 0x14AC);
+		break;
+	case 14:
+		startVoice(7, 0x14B4);
+		break;
+	case 15:
+		startVoice(7, 0x14D4);
+		break;
+	case 16:
+		startVoice(7, 0x14EC);
+		break;
+	case 17:
+		startVoice(7, 0x14E2);
+		break;
+	case 18:
+		startEffectVoice(0x12BA);
+		break;
+	case 19:
+		startEffectVoice(0x12D4);
+		break;
+	case 20: {
+		byte *data = sequenceData(0x12F6);
+		data[6] = (byte)(((getRandomNumber() & 0x38) + 0x4D) & 0x7F);
+		startEffectVoice(0x12F6);
+		break;
+	}
+	case 21:
+	case 22: {
+		byte *data = sequenceData(0x130A);
+		data[9] = commandId == 21 ? 0x46 : 0x2D;
+		if (!isSequenceActive(0x130A))
+			startEffectVoice(0x130A);
+		break;
+	}
+	case 23: {
+		static const int sequences[] = { 0x1322, 0x1328, 0x133A };
+		for (uint index = 0; index < 3; ++index) {
+			const int channel = startEffectVoice(sequences[index]);
+			if (channel >= 0)
+				voice(channel)._innerLoopPtr = loadData(0x1340);
+		}
+		break;
+	}
+	case 24:
+		startEffectVoice(0x1352);
+		break;
+	case 25:
+		startEffectVoice(0x1368);
+		break;
+	case 26:
+		startEffectVoice(0x138C);
+		break;
+	case 27:
+		startEffectVoice(0x13A4);
+		break;
+	case 28: {
+		byte *data = sequenceData(0x13BC);
+		data[6] = (byte)(((getRandomNumber() & 0x1C) + 0x0F) & 0x7F);
+		startEffectVoice(0x13BC);
+		break;
+	}
+	case 29: {
+		byte *data = sequenceData(0x13D0);
+		data[6] = (byte)(((getRandomNumber() & 0x0C) + 0x21) & 0x7F);
+		startEffectVoice(0x13D0);
+		break;
+	}
+	case 30:
+		startEffectVoice(0x13F8);
+		break;
+	case 31:
+		startEffectVoice(0x1408);
+		startEffectVoice(0x1416);
+		startEffectVoice(0x1424);
+		break;
+	case 32:
+		startEffectVoice(0x1432);
+		break;
+	case 33:
+		startEffectVoice(0x143C);
+		break;
+	case 34:
+	case 39:
+		startVoice(0, 0x1522);
+		startVoice(1, 0x1700);
+		startVoice(2, 0x1892);
+		startVoice(3, 0x21F2);
+		startVoice(4, 0x2E4A);
+		break;
+	case 35:
+		startEffectVoice(0x14BE);
+		break;
+	case 36: {
+		startEffectVoice(0x13BC);
+
+		int channel = startEffectVoice(0x1334);
+		if (channel >= 0)
+			voice(channel)._innerLoopPtr = loadData(0x13EA);
+
+		channel = startEffectVoice(0x132E);
+		if (channel >= 0)
+			voice(channel)._innerLoopPtr = loadData(0x13DA);
+		break;
+	}
+	case 37: {
+		byte *data = sequenceData(0x150E);
+		data[6] = (byte)(((getRandomNumber() & 0x02) + 0x48) & 0x7F);
+		startEffectVoice(0x150E);
+		break;
+	}
+	case 38:
+		startVoice(0, 0x35C4);
+		startVoice(1, 0x35CE);
+		startVoice(2, 0x3612);
+		startVoice(3, 0x3656);
+		break;
+	}
+
 	return 0;
 }
 

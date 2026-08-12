@@ -29,12 +29,12 @@ namespace RexNebular {
 namespace Sound {
 
 void RexSoundManager::validate() {
-	if (_isDemo)
+	if (_isDemo && _driverType != SOUND_MT32)
 		_driverType = SOUND_ADLIB;
 
 	switch (_driverType) {
 	case SOUND_MT32:
-		RSound::validate();
+		RSound::validate(_isDemo);
 		break;
 
 	case SOUND_PCSPEAKER:
@@ -50,7 +50,7 @@ void RexSoundManager::validate() {
 void RexSoundManager::loadDriver(int sectionNumber) {
 	removeDriver();
 
-	if (_isDemo) {
+	if (_isDemo && _driverType == SOUND_ADLIB) {
 		assert(sectionNumber == 1 || sectionNumber == 9);
 		if (sectionNumber == 1)
 			_driver = new ASoundDemo1(_mixer);
@@ -62,6 +62,16 @@ void RexSoundManager::loadDriver(int sectionNumber) {
 	switch (_driverType) {
 	case SOUND_MT32:
 		// Roland MT32 drivers
+		if (_isDemo) {
+			// The demo shares RSOUND.001 across numbered gameplay sections
+			// and uses RSOUND.009 only for its opening presentation.
+			if (sectionNumber == 9)
+				_driver = new RSoundDemo9(_mixer);
+			else
+				_driver = new RSoundDemo1(_mixer);
+			break;
+		}
+
 		switch (sectionNumber) {
 		case 1:
 			_driver = new RSound1(_mixer);
