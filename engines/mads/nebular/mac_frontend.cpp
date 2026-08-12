@@ -21,12 +21,24 @@
 
 #include "mads/nebular/mac_frontend.h"
 
+#include "mads/animview/animview.h"
 #include "mads/nebular/nebular.h"
 #include "mads/textview/textview.h"
 
 namespace MADS {
 namespace RexNebular {
 namespace MacFrontend {
+
+void runAnimView(RexNebularEngine &engine, const char *resource) {
+	AnimView::Presentation presentation;
+	presentation.bufferHeight = 200;
+	presentation.drawBoundaryLines = false;
+	presentation.serviceFramesInline = true;
+
+	engine.setMacintoshFullFrameActive(true);
+	AnimView::animview_main(resource, presentation);
+	engine.setMacintoshFullFrameActive(false);
+}
 
 void runTextView(RexNebularEngine &engine, const char *resource) {
 	TextView::Presentation presentation;

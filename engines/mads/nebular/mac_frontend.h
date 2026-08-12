@@ -29,6 +29,7 @@ class RexNebularEngine;
 
 namespace MacFrontend {
 
+void runAnimView(RexNebularEngine &engine, const char *resource);
 void runTextView(RexNebularEngine &engine, const char *resource);
 
 } // namespace MacFrontend

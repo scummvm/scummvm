@@ -32,6 +32,7 @@ namespace AnimView {
 struct Presentation {
 	int bufferHeight;
 	bool drawBoundaryLines;
+	bool serviceFramesInline;
 };
 
 // Variables shared with other AnimView namespace files

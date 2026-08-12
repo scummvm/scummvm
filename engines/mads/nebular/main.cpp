@@ -311,9 +311,10 @@ done:
 
 static void run_full_frame_animview(RexNebularEngine *engine,
 		const char *resource) {
-	engine->setMacintoshFullFrameActive(true);
-	AnimView::animview_main(resource);
-	engine->setMacintoshFullFrameActive(false);
+	if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+		MacFrontend::runAnimView(*engine, resource);
+	else
+		AnimView::animview_main(resource);
 }
 
 static void run_full_frame_textview(RexNebularEngine *engine,

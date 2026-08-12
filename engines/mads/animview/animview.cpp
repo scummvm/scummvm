@@ -93,6 +93,7 @@ static int runVal12;
 static int error_code;
 static int presentationBufferHeight;
 static bool presentationDrawBoundaryLines;
+static bool presentationServiceFramesInline;
 
 /**
  * Initializes animview global variables
@@ -245,11 +246,16 @@ static void run_animation(int animIndex) {
 		runCtr1 = 0;
 		peelFlag = current_anim->misc_peel_x || current_anim->misc_peel_y;
 		timer2 = timer1;
-		timer_activate_low_priority(anim_timer);
+		timer_activate_low_priority(presentationServiceFramesInline ?
+			nullptr : anim_timer);
 	}
 
 	// Main animation loop
 	while (currentFrame < maxFrame && !current_error_code) {
+		if (presentationServiceFramesInline &&
+				current_anim->background_type != AA_INTERFACE)
+			anim_timer();
+
 		if (speechResourceId != -1) {
 			if (current_anim->load_flags & AA_LOAD_SPEECH) {
 				char buf[80];
@@ -660,6 +666,7 @@ void animview_main(const char *resName) {
 	Presentation presentation;
 	presentation.bufferHeight = 0;
 	presentation.drawBoundaryLines = true;
+	presentation.serviceFramesInline = false;
 	animview_main(resName, presentation);
 }
 
@@ -667,6 +674,7 @@ void animview_main(const char *resName, const Presentation &presentation) {
 	char name[16];
 	presentationBufferHeight = presentation.bufferHeight;
 	presentationDrawBoundaryLines = presentation.drawBoundaryLines;
+	presentationServiceFramesInline = presentation.serviceFramesInline;
 
 	init_globals();
 
