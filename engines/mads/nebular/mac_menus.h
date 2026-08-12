@@ -75,6 +75,7 @@ public:
 	bool processEvent(Common::Event &event);
 	void draw();
 	byte getBlackColor();
+	void getMenuColors(byte &menuBlack, byte &menuWhite);
 	void setOuterMenuActive(bool active) { _outerMenuActive = active; }
 	int runDifficultyDialog();
 	int selectResumeSlot();

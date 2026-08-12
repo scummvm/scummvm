@@ -521,10 +521,19 @@ void MacNebularMenu::draw() {
 }
 
 byte MacNebularMenu::getBlackColor() {
+	byte menuBlack, menuWhite;
+	getMenuColors(menuBlack, menuWhite);
+	return menuBlack;
+}
+
+void MacNebularMenu::getMenuColors(byte &menuBlack, byte &menuWhite) {
+	menuBlack = 0;
+	menuWhite = 0;
 	if (!initializeWindowManager())
-		return 0;
+		return;
 	syncPalette();
-	return (byte)_windowManager->_colorBlack;
+	menuBlack = (byte)_windowManager->_colorBlack;
+	menuWhite = (byte)_windowManager->_colorWhite;
 }
 
 void MacNebularMenu::menuCallback(int commandId, Common::String &, void *data) {
