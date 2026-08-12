@@ -247,14 +247,6 @@ static int macInterfaceY(int logicalY) {
 	return logicalY * 2;
 }
 
-static Common::Rect scaleMacInterfaceRect(const Common::Rect &logical) {
-	return Common::Rect(
-		CLIP<int>(macInterfaceX(logical.left), 0, kMacInterfaceWidth),
-		CLIP<int>(macInterfaceY(logical.top), 0, kMacInterfaceHeight),
-		CLIP<int>(macInterfaceX(logical.right), 0, kMacInterfaceWidth),
-		CLIP<int>(macInterfaceY(logical.bottom), 0, kMacInterfaceHeight));
-}
-
 static byte getMacInterfaceTextColor(int class_, int id) {
 	if ((class_ == STROKE_COMMAND && id == left_command) ||
 			(class_ == STROKE_INVEN && id == left_inven) ||
@@ -295,56 +287,23 @@ static Common::String getMacInterfaceWord(int wordId) {
 	return Common::String(text);
 }
 
-static void setMacInterfacePixel(Graphics::ManagedSurface &panel,
-		int x, int y, byte color) {
-	if (x >= 0 && x < panel.w && y >= 0 && y < panel.h)
-		*(byte *)panel.getBasePtr(x, y) = color;
-}
-
-static void drawMacInterfaceArrow(Graphics::ManagedSurface &panel,
-		const Common::Rect &rect, bool up, byte color) {
-	if (rect.isEmpty())
-		return;
-
-	const int centerX = (rect.left + rect.right - 1) / 2;
-	const int centerY = (rect.top + rect.bottom - 1) / 2;
-	const int radius = MAX(1, MIN((rect.width() - 1) / 2,
-		(rect.height() - 1) / 2));
-	for (int row = 0; row <= radius; ++row) {
-		const int y = up ? centerY - radius / 2 + row :
-			centerY + radius / 2 - row;
-		for (int x = centerX - row; x <= centerX + row; ++x)
-			setMacInterfacePixel(panel, x, y, color);
-	}
-}
-
-static Common::Rect getScaledMacInterfaceSpot(int class_, int id) {
-	Common::Rect logical;
-	return getMacInterfaceSpot(class_, id, logical) ?
-		scaleMacInterfaceRect(logical) : Common::Rect();
-}
-
 static void drawMacInterfaceScrollbar(Graphics::ManagedSurface &panel) {
-	const Common::Rect up = getScaledMacInterfaceSpot(STROKE_SCROLL, SCROLL_UP);
-	const Common::Rect down = getScaledMacInterfaceSpot(STROKE_SCROLL, SCROLL_DOWN);
-	const Common::Rect elevator =
-		getScaledMacInterfaceSpot(STROKE_SCROLL, SCROLL_ELEVATOR);
-	Common::Rect thumb = getScaledMacInterfaceSpot(STROKE_SCROLL, SCROLL_THUMB);
+	// CODE 7 draws this control directly in native coordinates. The arrow
+	// line pattern is invisible in the normal state; the three frames are
+	// the complete control until the inventory exceeds five items.
+	const Common::Rect scrollbar(120, 2, 136, 86);
+	const Common::Rect up(120, 2, 136, 18);
+	const Common::Rect down(120, 70, 136, 86);
+	panel.frameRect(scrollbar, kMacNormalTextColor);
+	panel.frameRect(up, kMacNormalTextColor);
+	panel.frameRect(down, kMacNormalTextColor);
 
-	if (!elevator.isEmpty())
-		panel.frameRect(elevator, scrollbar_active == SCROLL_ELEVATOR ?
-			kMacLeftSelectColor : kMacNormalTextColor);
-	drawMacInterfaceArrow(panel, up, true,
-		scrollbar_active == SCROLL_UP ? kMacLeftSelectColor : kMacNormalTextColor);
-	drawMacInterfaceArrow(panel, down, false,
-		scrollbar_active == SCROLL_DOWN ? kMacLeftSelectColor : kMacNormalTextColor);
-
-	if (!thumb.isEmpty() && !elevator.isEmpty()) {
-		thumb.left = MAX<int>(thumb.left, elevator.left + 2);
-		thumb.right = MIN<int>(thumb.right, elevator.right - 2);
-		if (!thumb.isEmpty())
-			panel.fillRect(thumb, scrollbar_active == SCROLL_ELEVATOR ?
-				kMacLeftSelectColor : kMacNormalTextColor);
+	if (inven_num_objects > 5) {
+		panel.fillRect(Common::Rect(121, 18, 135, 70), 4);
+		const int thumbTop = 18 +
+			(first_inven * 48) / (inven_num_objects - 5);
+		panel.frameRect(Common::Rect(121, thumbTop, 135, thumbTop + 4),
+			kMacNormalTextColor);
 	}
 }
 
@@ -407,6 +366,13 @@ static bool isMacInterfaceSemanticPixel(int x, int y) {
 			return true;
 	}
 	return false;
+}
+
+static bool isMacInterfaceScrollbarPixel(int x, int y) {
+	// Mask the union of the scaled compatibility glyph area and CODE 7's
+	// native control so FONTMISC's private a/b/c/d glyphs cannot leak out.
+	return Common::Rect(macInterfaceX(inter_scroll_x1), 2, 136, 86)
+		.contains(x, y);
 }
 
 MacNebular::MacNebular(RexNebularEngine &engine) :
@@ -552,7 +518,8 @@ void MacNebular::presentScreen(int shakeOffset) {
 				for (int x = 0; x < kMacInterfaceWidth; ++x) {
 					const int logicalX = x * 320 / kMacInterfaceWidth;
 					if (current[logicalX] != baseline[logicalX] &&
-							!isMacInterfaceSemanticPixel(logicalX, logicalY))
+							!isMacInterfaceSemanticPixel(logicalX, logicalY) &&
+							!isMacInterfaceScrollbarPixel(x, y))
 						target[x] = current[logicalX];
 				}
 			}
@@ -766,6 +733,10 @@ bool RexNebularEngine::getInterfaceSentenceColors(byte &foreground, byte &shadow
 	foreground = kMacNormalTextColor;
 	shadow = kMacBlackColor;
 	return true;
+}
+
+bool RexNebularEngine::hasMacintoshInterface() const {
+	return _macNebular != nullptr;
 }
 
 bool RexNebularEngine::hasInterfaceAnimations() const {

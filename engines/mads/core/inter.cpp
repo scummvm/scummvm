@@ -424,6 +424,8 @@ static void inter_show_word(int class_, int id) {
 	if (!inter_get_spot(class_, id, &x, &y, &junk, &junk)) {
 		goto done;
 	}
+	if (g_engine->hasMacintoshInterface())
+		goto done;
 
 	switch (class_) {
 	case STROKE_COMMAND:
