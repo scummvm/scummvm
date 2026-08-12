@@ -29,7 +29,7 @@ namespace Sound {
 /* ASound1  (asound.ph1)                                                  *
  *-----------------------------------------------------------------------*/
 
-const ASound1::CommandPtr ASound1::_commandList[40] = {
+const ASound1::CommandPtr ASound1::_commandList[77] = {
 	&ASound1::command0,  &ASound1::command1,  &ASound1::command2,  &ASound1::command3,
 	&ASound1::command4,  &ASound1::command5,  &ASound1::command6,  &ASound1::command7,
 	&ASound1::command8,  nullptr,             nullptr,             nullptr,
@@ -39,7 +39,19 @@ const ASound1::CommandPtr ASound1::_commandList[40] = {
 	&ASound1::command24, &ASound1::command25, &ASound1::command26, &ASound1::command27,
 	nullptr,             nullptr,             nullptr,             nullptr,
 	&ASound1::command32, &ASound1::command33, &ASound1::command34, &ASound1::command35,
-	&ASound1::command36, &ASound1::command37, &ASound1::command38, &ASound1::command39
+	&ASound1::command36, &ASound1::command37, &ASound1::command38, &ASound1::command39,
+	// commands 40-63 absent
+	nullptr,             nullptr,             nullptr,             nullptr,
+	nullptr,             nullptr,             nullptr,             nullptr,
+	nullptr,             nullptr,             nullptr,             nullptr,
+	nullptr,             nullptr,             nullptr,             nullptr,
+	nullptr,             nullptr,             nullptr,             nullptr,
+	nullptr,             nullptr,             nullptr,             nullptr,
+	// commands 64-76
+	&ASound1::command64, &ASound1::command65, &ASound1::command66, &ASound1::command67,
+	&ASound1::command68, &ASound1::command69, &ASound1::command70, &ASound1::command71,
+	&ASound1::command72, &ASound1::command73, &ASound1::command74, &ASound1::command75,
+	&ASound1::command76
 };
 
 ASound1::ASound1(Audio::Mixer *mixer)
@@ -51,7 +63,7 @@ ASound1::ASound1(Audio::Mixer *mixer)
 }
 
 int ASound1::command(int commandId, int param) {
-	if (commandId > 39 || !_commandList[commandId])
+	if (commandId > 76 || !_commandList[commandId])
 		return 0;
 	
 	return (this->*_commandList[commandId])();
@@ -283,6 +295,82 @@ int ASound1::command39() {
 		_channels[4]->load(loadData(0x46F9));
 		_channels[5]->load(loadData(0x48AF));
 	}
+	return 0;
+}
+
+int ASound1::command64() {
+	playSound(0x32BA);
+	return 0;
+}
+
+int ASound1::command65() {
+	playSound(0x32CC);
+	playSound(0x32DE);
+	return 0;
+}
+
+int ASound1::command66() {
+	playSound(0x32F2);
+	return 0;
+}
+
+int ASound1::command67() {
+	playSound(0x330A);
+	playSound(0x331B);
+	playSound(0x332C);
+	return 0;
+}
+
+int ASound1::command68() {
+	playSound(0x337A);
+	playSound(0x338B);
+	playSound(0x339C);
+	return 0;
+}
+
+int ASound1::command69() {
+	playSound(0x3336);
+	playSound(0x3342);
+	return 0;
+}
+
+int ASound1::command70() {
+	playSound(0x3350);
+	playSound(0x3360);
+	playSound(0x3370);
+	return 0;
+}
+
+int ASound1::command71() {
+	playSound(0x180D);
+	return 0;
+}
+
+int ASound1::command72() {
+	playSound(0x33AD);
+	return 0;
+}
+
+int ASound1::command73() {
+	playSound(0x33BC);
+	playSound(0x33BF);
+	return 0;
+}
+
+int ASound1::command74() {
+	playSound(0x33F9);
+	playSound(0x3407);
+	return 0;
+}
+
+int ASound1::command75() {
+	playSound(0x33D5);
+	playSound(0x33DB);
+	return 0;
+}
+
+int ASound1::command76() {
+	playSound(0x181C);
 	return 0;
 }
 
@@ -859,6 +947,25 @@ int ASound4::command5() { return ASound::command5(); }
 int ASound4::command6() { return ASound::command6(); }
 int ASound4::command7() { return ASound::command7(); }
 int ASound4::command8() { return ASound::command8(); }
+
+void ASound4::callFunction(uint16 offset, AdlibChannel &channel) {
+	if (offset != 0x1CB0) {
+		ASound::callFunction(offset, channel);
+		return;
+	}
+
+	// Keep the two related sequence fragments on the same random variant.
+	const uint16 tableIndex = (getRandomNumber() & 0x0F) * 2;
+	byte *source = loadData(0x0FD9 + tableIndex);
+	byte *destination = loadData(0x0C7F);
+	destination[0] = source[0];
+	destination[1] = source[1];
+
+	source = loadData(0x0FB9 + tableIndex);
+	destination = loadData(0x0C48);
+	destination[0] = source[0];
+	destination[1] = source[1];
+}
 
 // ---------------------------------------------------------------------------
 // command16 - isSoundActive guard, command1, load ch0-6
@@ -1545,6 +1652,50 @@ int ASoundDemo::command5() { return ASound::command5(); }
 int ASoundDemo::command6() { return ASound::command6(); }
 int ASoundDemo::command7() { return ASound::command7(); }
 int ASoundDemo::command8() { return ASound::command8(); }
+
+void ASoundDemo::callFunction(uint16 offset, AdlibChannel &channel) {
+	uint16 firstValue;
+	uint16 secondValue;
+	uint16 firstDestination;
+	uint16 secondDestination;
+
+	switch (offset) {
+	case 0x1E88:
+		firstValue = 0x325D;
+		secondValue = 0x641B;
+		firstDestination = 0x5F37;
+		secondDestination = 0x5FAC;
+		break;
+	case 0x1EB1:
+		firstValue = 0x4B0D;
+		secondValue = 0x5A0B;
+		firstDestination = 0x5F5D;
+		secondDestination = 0x5FC7;
+		break;
+	case 0x2031:
+		// The native callback writes one status character directly to CGA
+		// video memory. It has no effect on sound playback.
+		return;
+	default:
+		ASound::callFunction(offset, channel);
+		return;
+	}
+
+	// The demo chooses which member of each pair plays first from the high
+	// byte of the native random-number state.
+	if ((getRandomNumber() >> 8) <= 0x80) {
+		const uint16 value = firstValue;
+		firstValue = secondValue;
+		secondValue = value;
+	}
+
+	byte *destination = loadData(firstDestination);
+	destination[0] = firstValue & 0xFF;
+	destination[2] = firstValue >> 8;
+	destination = loadData(secondDestination);
+	destination[0] = secondValue & 0xFF;
+	destination[2] = secondValue >> 8;
+}
 
 int ASoundDemo::command9() {
 	ASound::command1();

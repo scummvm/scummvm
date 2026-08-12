@@ -22,6 +22,7 @@
 #include "audio/fmopl.h"
 #include "common/file.h"
 #include "common/md5.h"
+#include "common/util.h"
 #include "mads/phantom/sound/asound.h"
 
 namespace MADS {
@@ -29,6 +30,9 @@ namespace Phantom {
 namespace Sound {
 
 bool AdlibChannel::_isDisabled;
+
+static const uint32 HOST_CALLBACK_RATE =
+	NativeSoundTimer::kPitClockHz / NativeSoundTimer::kHostTimerDivisor;
 
 /* =========================================================================
  * Lookup tables
@@ -206,7 +210,8 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 	// Initialize the OPL
 	_opl = OPL::Config::create();
 	_opl->init();
-	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
+	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer),
+		HOST_CALLBACK_RATE);
 
 	write(4, 0x60);		// Mask off both adlib timers
 	write(4, 0x80);		// IRQ reset timer flags
@@ -450,6 +455,7 @@ int ASound::command7() {
 	}
 
 	_isDisabled = false;
+	refreshVolumes();
 	return 0;
 }
 
@@ -468,7 +474,7 @@ int ASound::command8() {
 	return result;
 }
 
-void ASound::callFunction(uint16 offset) {
+void ASound::callFunction(uint16 offset, AdlibChannel &) {
 	error("Unsupported call to sound driver function at offset %.4x", offset);
 }
 
@@ -483,7 +489,22 @@ void ASound::write(uint8 reg, uint8 value) {
 
 void ASound::onTimer() {
 	Common::StackLock slock(_driverMutex);
-	poll();
+
+	uint32 serviceTicks = _hostTimer.advance(1, HOST_CALLBACK_RATE);
+	while (serviceTicks--) {
+		// The native host invokes export 4 before export 3. A poll result
+		// therefore changes the noise service beginning with the next tick.
+		if (_noiseEnabled) {
+			for (int i = ADLIB_CHANNEL_COUNT - 1; i >= 0; --i)
+				noise_inner(i);
+		}
+
+		if (_hostTimer.pollDue()) {
+			const int result = poll();
+			if (result)
+				_noiseEnabled = result > 0;
+		}
+	}
 }
 
 uint16 ASound::getRandomNumber() {
@@ -535,6 +556,7 @@ void ASound::writeVolume() {
 	/* Step 2: map velocity through VOL_VEL_TO_ATTEN_STEP */
 	int16 velStep = (int16)VOL_VEL_TO_ATTEN_STEP[(int8)ch->_velocity];
 	int16 var8 = volStep + velStep - 1;   /* combined attenuation step */
+	var8 = CLIP<int16>(var8, 0, 63) * _masterVolume / 255;
 
 	/* Determine carrier operator register for this voice */
 	uint8 chanNum = _activeChannelNumber;
@@ -619,6 +641,30 @@ void ASound::writeVolume() {
 		write((uint8)(siReg2 + 2), (uint8)var4);
 		write((uint8)(siReg2 + 0), (uint8)var6);
 	}
+}
+
+void ASound::refreshVolumes() {
+	AdlibChannel *savedChannel = _activeChannelPtr;
+	const uint8 savedChannelNumber = _activeChannelNumber;
+
+	if (!_isDisabled) {
+		for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i) {
+			if (_channels[i]->_activeCount == 0)
+				continue;
+
+			_activeChannelPtr = _channels[i];
+			_activeChannelNumber = i;
+			writeVolume();
+		}
+	}
+
+	_activeChannelPtr = savedChannel;
+	_activeChannelNumber = savedChannelNumber;
+}
+
+void ASound::setVolume(int volume) {
+	_masterVolume = CLIP(volume, 0, 255);
+	refreshVolumes();
 }
 
 void ASound::writeFrequency() {
@@ -1003,7 +1049,7 @@ dispatch:
 			{
 				if (ch->_innerLoopCount == 0) {
 					pSrc++;
-					uint8 cnt = *pSrc;
+					uint16 cnt = (uint16)(int16)(int8)*pSrc;
 					if (cnt == 0) {
 						ch->_pSrc += 2;
 						ch->_innerLoopPtr = ch->_pSrc;
@@ -1027,7 +1073,7 @@ dispatch:
 			{
 				if (ch->_outerLoopCount == 0) {
 					pSrc++;
-					uint8 cnt = *pSrc;
+					uint16 cnt = (uint16)(int16)(int8)*pSrc;
 					if (cnt == 0) {
 						ch->_pSrc += 2;
 						ch->_outerLoopPtr = ch->_pSrc;
@@ -1751,7 +1797,7 @@ branch_skip5:
 			case 6:
 			{
 				uint16 fptr = readWord_impl();
-				callFunction(fptr);
+				callFunction(fptr, *ch);
 				ch->_pSrc += 3;
 				goto dispatch;
 			}
