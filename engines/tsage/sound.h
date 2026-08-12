@@ -172,6 +172,7 @@ public:
 class SoundManager : public SaveListener {
 private:
 	SoundDriver *instantiateDriver(int driverNum, MidiDriver::DeviceHandle midiDevice);
+	bool _serverPaused;
 public:
 	bool _sndmgrReady;
 	int _ourSndResVersion, _ourDrvResVersion;
@@ -226,6 +227,7 @@ public:
 	void updateSoundLoop(Sound *sound);
 	void setMasterVol(int volume);
 	int getMasterVol() const;
+	void setPaused(bool paused);
 	void loadSound(int soundNum, bool showErrors);
 	void unloadSound(int soundNum);
 	bool isFading();

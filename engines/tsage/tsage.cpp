@@ -191,4 +191,17 @@ void TSageEngine::syncSoundSettings() {
 	g_globals->_soundManager.syncSounds();
 }
 
+void TSageEngine::pauseEngineIntern(bool pause) {
+	// The sound server runs from a timer independently of the game loop. Stop it
+	// before pausing mixer channels so it cannot start a new stream while a
+	// modal dialog is open; reverse the order when resuming.
+	if (pause && g_globals)
+		g_globals->_soundManager.setPaused(true);
+
+	Engine::pauseEngineIntern(pause);
+
+	if (!pause && g_globals)
+		g_globals->_soundManager.setPaused(false);
+}
+
 } // End of namespace TsAGE
