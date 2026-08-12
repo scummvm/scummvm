@@ -39,6 +39,10 @@ static bool supportsGeneralMidi() {
 	return g_vm->getFeatures() & GF_GENERAL_MIDI;
 }
 
+static bool supportsMt32() {
+	return g_vm->getFeatures() & GF_MT32;
+}
+
 /*--------------------------------------------------------------------------*/
 
 SoundManager::SoundManager() {
@@ -153,6 +157,17 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 	_availableDrivers.clear();
 
 	// Build up a list of available drivers
+	if (supportsMt32()) {
+		SoundDriverEntry sdMt32;
+		sdMt32._driverNum = ROLAND_DRIVER_NUM;
+		sdMt32._status = detectFlag ? SNDSTATUS_DETECTED : SNDSTATUS_SKIPPED;
+		sdMt32._field2 = 0;
+		sdMt32._field6 = 10000;
+		sdMt32._shortDescription = "LAPC-I";
+		sdMt32._longDescription = "Roland LAPC-I / MT-32";
+		_availableDrivers.push_back(sdMt32);
+	}
+
 	if (supportsGeneralMidi()) {
 		SoundDriverEntry sdMidi;
 		sdMidi._driverNum = GENERAL_MIDI_DRIVER_NUM;
@@ -189,20 +204,27 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 }
 
 void SoundManager::installConfigDrivers() {
-	if (supportsGeneralMidi()) {
+	if (supportsGeneralMidi() || supportsMt32()) {
+		const MidiDriverFlags preferredMidiType =
+			supportsMt32() ? MDT_PREFER_MT32 : MDT_PREFER_GM;
 		const MidiDriver::DeviceHandle device =
-			MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+			MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | preferredMidiType);
 		const MusicType musicType = MidiDriver::getMusicType(device);
 
 		switch (musicType) {
 		case MT_GM:
 		case MT_GS:
-			if (!installDriver(GENERAL_MIDI_DRIVER_NUM, device)) {
+			if (!supportsGeneralMidi() || !installDriver(GENERAL_MIDI_DRIVER_NUM, device)) {
 				warning("Could not initialize General MIDI output, falling back to AdLib");
 				installDriver(ADLIB_DRIVER_NUM);
 			}
 			break;
 		case MT_MT32:
+			if (!supportsMt32() || !installDriver(ROLAND_DRIVER_NUM, device)) {
+				warning("Could not initialize MT-32 output, falling back to AdLib");
+				installDriver(ADLIB_DRIVER_NUM);
+			}
+			break;
 		case MT_ADLIB:
 			installDriver(ADLIB_DRIVER_NUM);
 			break;
@@ -290,12 +312,14 @@ bool SoundManager::installDriver(int driverNum, MidiDriver::DeviceHandle midiDev
  */
 SoundDriver *SoundManager::instantiateDriver(int driverNum, MidiDriver::DeviceHandle midiDevice) {
 	switch (driverNum) {
+	case ROLAND_DRIVER_NUM:
+		return new MidiSoundDriver(midiDevice, MT_MT32);
 	case ADLIB_DRIVER_NUM:
 		return new AdlibSoundDriver();
 	case SBLASTER_DRIVER_NUM:
 		return new SoundBlasterDriver();
 	case GENERAL_MIDI_DRIVER_NUM:
-		return new GeneralMidiSoundDriver(midiDevice);
+		return new MidiSoundDriver(midiDevice, MT_GM);
 	default:
 		error("Unknown sound driver - %d", driverNum);
 	}
@@ -2770,22 +2794,36 @@ SoundDriver::SoundDriver() {
 
 /*--------------------------------------------------------------------------*/
 
-// Voice type 6 uses MIDI channels 0-9. The high bit on channel 9 is an
+// Voice types 4 and 6 use MIDI channels 0-9. The high bit on channel 9 is an
 // allocation flag from the original driver data; the two 0xff bytes terminate
-// the channel list and group table.
+// the channel list and group table. MT-32 tracks use resource group 0x1000.
+const byte mt32_group_data[] = {
+	4, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0x89, 0xff, 0xff
+};
+
 const byte general_midi_group_data[] = {
 	6, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0x89, 0xff, 0xff
 };
 
-GeneralMidiSoundDriver::GeneralMidiSoundDriver(MidiDriver::DeviceHandle device) : SoundDriver(),
-		_midiDriver(NULL), _device(device), _masterVolume(127) {
-	_driverResID = GENERAL_MIDI_DRIVER_NUM;
-	_minVersion = _maxVersion = 0x10A;
-	_shortDescription = "External General MIDI Device";
-	_longDescription = "GenMidi";
+MidiSoundDriver::MidiSoundDriver(MidiDriver::DeviceHandle device, MusicType musicType) : SoundDriver(),
+		_midiDriver(NULL), _device(device), _musicType(musicType), _masterVolume(127) {
+	assert(_musicType == MT_MT32 || _musicType == MT_GM);
 
-	_groupData._groupMask = 0x40;
-	_groupData._pData = general_midi_group_data;
+	_minVersion = _maxVersion = 0x10A;
+
+	if (_musicType == MT_MT32) {
+		_driverResID = ROLAND_DRIVER_NUM;
+		_shortDescription = "LAPC-I";
+		_longDescription = "Roland LAPC-I / MT-32";
+		_groupData._groupMask = 0x1000;
+		_groupData._pData = mt32_group_data;
+	} else {
+		_driverResID = GENERAL_MIDI_DRIVER_NUM;
+		_shortDescription = "External General MIDI Device";
+		_longDescription = "GenMidi";
+		_groupData._groupMask = 0x40;
+		_groupData._pData = general_midi_group_data;
+	}
 
 	Common::fill(_modulation, _modulation + SOUND_ARR_SIZE, 0xff);
 	Common::fill(_channelVolume, _channelVolume + SOUND_ARR_SIZE, 0xff);
@@ -2796,11 +2834,11 @@ GeneralMidiSoundDriver::GeneralMidiSoundDriver(MidiDriver::DeviceHandle device) 
 	Common::fill(_active, _active + SOUND_ARR_SIZE, true);
 }
 
-GeneralMidiSoundDriver::~GeneralMidiSoundDriver() {
+MidiSoundDriver::~MidiSoundDriver() {
 	close();
 }
 
-bool GeneralMidiSoundDriver::open() {
+bool MidiSoundDriver::open() {
 	assert(!_midiDriver);
 
 	_midiDriver = MidiDriver::createMidi(_device);
@@ -2817,11 +2855,14 @@ bool GeneralMidiSoundDriver::open() {
 		return false;
 	}
 
-	_midiDriver->sendGMReset();
+	if (_musicType == MT_MT32)
+		_midiDriver->sendMT32Reset();
+	else
+		_midiDriver->sendGMReset();
 	return true;
 }
 
-void GeneralMidiSoundDriver::close() {
+void MidiSoundDriver::close() {
 	if (!_midiDriver)
 		return;
 
@@ -2834,13 +2875,62 @@ void GeneralMidiSoundDriver::close() {
 	_midiDriver = NULL;
 }
 
-const GroupData *GeneralMidiSoundDriver::getGroupData() {
+const GroupData *MidiSoundDriver::getGroupData() {
 	return &_groupData;
 }
 
-int GeneralMidiSoundDriver::setMasterVolume(int volume) {
+void MidiSoundDriver::installPatch(const byte *data, int size) {
+	if (_musicType != MT_MT32)
+		return;
+
+	// The MT-32 bank contains system settings, rhythm parameters, all 128
+	// patches and 64 custom timbres in the same layout used by the DOS driver.
+	static const int kPatchBankSize = 0x429a;
+	if (size < kPatchBankSize) {
+		warning("MT-32 patch bank is smaller than expected");
+		return;
+	}
+
+	struct PatchBlock {
+		uint16 offset;
+		uint16 size;
+		uint32 address;
+	};
+
+	static const PatchBlock patchBlocks[] = {
+		{ 0x0000, 0x0009, 0x100004 },
+		{ 0x002a, 0x00f0, 0x030110 },
+		{ 0x011a, 0x0100, 0x050000 },
+		{ 0x021a, 0x0100, 0x050200 },
+		{ 0x031a, 0x0100, 0x050400 },
+		{ 0x041a, 0x0100, 0x050600 }
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(patchBlocks); ++i) {
+		const PatchBlock &block = patchBlocks[i];
+		sendMt32SysEx(block.address, data + block.offset, block.size);
+	}
+
+	const byte *timbreData = data + 0x051a;
+	for (int timbre = 0; timbre < 64; ++timbre) {
+		sendMt32SysEx(0x080000 + (timbre << 9), timbreData, 0x00f6);
+		timbreData += 0x00f6;
+	}
+}
+
+int MidiSoundDriver::setMasterVolume(int volume) {
 	int oldVolume = _masterVolume;
 	_masterVolume = CLIP<int>(volume, 0, 127);
+
+	if (_musicType == MT_MT32) {
+		static const byte volumeTable[] = {
+			0, 5, 10, 16, 22, 26, 33, 37,
+			42, 48, 53, 58, 64, 69, 74, 80
+		};
+		const byte mt32Volume = volumeTable[_masterVolume >> 3];
+		sendMt32SysEx(0x100016, &mt32Volume, 1);
+		return oldVolume;
+	}
 
 	for (int channel = 0; channel < SOUND_ARR_SIZE; ++channel) {
 		if (_channelVolume[channel] != 0xff)
@@ -2852,19 +2942,19 @@ int GeneralMidiSoundDriver::setMasterVolume(int volume) {
 	return oldVolume;
 }
 
-void GeneralMidiSoundDriver::noteOff(int channel, int note) {
+void MidiSoundDriver::noteOff(int channel, int note) {
 	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
 	send(MidiDriver::MIDI_COMMAND_NOTE_ON | channel, CLIP<int>(note, 0, 127), 0);
 }
 
-void GeneralMidiSoundDriver::noteOn(int channel, int note, int velocity) {
+void MidiSoundDriver::noteOn(int channel, int note, int velocity) {
 	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
 	_active[channel] = true;
 	send(MidiDriver::MIDI_COMMAND_NOTE_ON | channel, CLIP<int>(note, 0, 127),
 		CLIP<int>(velocity, 0, 127));
 }
 
-void GeneralMidiSoundDriver::controlChange(int channel, int controller, int value) {
+void MidiSoundDriver::controlChange(int channel, int controller, int value) {
 	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
 	value = CLIP<int>(value, 0, 127);
 
@@ -2898,14 +2988,14 @@ void GeneralMidiSoundDriver::controlChange(int channel, int controller, int valu
 		*currentValue = value;
 	}
 
-	if (controller == MidiDriver::MIDI_CONTROLLER_VOLUME)
+	if (_musicType == MT_GM && controller == MidiDriver::MIDI_CONTROLLER_VOLUME)
 		value = value * _masterVolume / 127;
 
 	send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | channel,
 		controller, value);
 }
 
-void GeneralMidiSoundDriver::setProgram(int channel, int program) {
+void MidiSoundDriver::setProgram(int channel, int program) {
 	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
 	program = CLIP<int>(program, 0, 127);
 	if (_program[channel] == program)
@@ -2915,7 +3005,7 @@ void GeneralMidiSoundDriver::setProgram(int channel, int program) {
 	send(MidiDriver::MIDI_COMMAND_PROGRAM_CHANGE | channel, program, 0);
 }
 
-void GeneralMidiSoundDriver::setPitchBlend(int channel, int pitchBlend) {
+void MidiSoundDriver::setPitchBlend(int channel, int pitchBlend) {
 	assert(channel >= 0 && channel < SOUND_ARR_SIZE);
 	pitchBlend = CLIP<int>(pitchBlend, 0, 0x3fff);
 	if (_pitchBlend[channel] == pitchBlend)
@@ -2926,9 +3016,31 @@ void GeneralMidiSoundDriver::setPitchBlend(int channel, int pitchBlend) {
 		pitchBlend & 0x7f, (pitchBlend >> 7) & 0x7f);
 }
 
-void GeneralMidiSoundDriver::send(byte status, byte firstOp, byte secondOp) {
+void MidiSoundDriver::send(byte status, byte firstOp, byte secondOp) {
 	if (_midiDriver)
 		_midiDriver->send(status, firstOp, secondOp);
+}
+
+void MidiSoundDriver::sendMt32SysEx(uint32 address, const byte *data, uint16 size) {
+	assert(size <= 256);
+
+	byte message[264];
+	message[0] = 0x41;
+	message[1] = 0x10;
+	message[2] = 0x16;
+	message[3] = 0x12;
+	message[4] = (address >> 16) & 0x7f;
+	message[5] = (address >> 8) & 0x7f;
+	message[6] = address & 0x7f;
+	memcpy(message + 7, data, size);
+
+	byte checksum = 0;
+	for (uint16 i = 4; i < size + 7; ++i)
+		checksum -= message[i];
+	message[size + 7] = checksum & 0x7f;
+
+	if (_midiDriver)
+		_midiDriver->sysEx(message, size + 8);
 }
 
 /*--------------------------------------------------------------------------*/
