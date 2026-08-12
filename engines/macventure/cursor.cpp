@@ -46,6 +46,7 @@ static const ClickState _transitionTable[kCursorStateCount][kCursorInputCount] =
 Cursor::Cursor(Gui *gui) {
 	_gui = gui;
 	_state = kCursorIdle;
+	_shiftPressed = false;
 }
 Cursor::~Cursor() {}
 
@@ -59,6 +60,7 @@ bool Cursor::processEvent(const Common::Event &event) {
 		return true;
 	}
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		_shiftPressed = (g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) != 0;
 		changeState(kButtonDownCol);
 		return true;
 	}
@@ -91,11 +93,10 @@ void Cursor::executeStateIn() {
 	switch (_state) {
 	case kCursorSCStart:
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
-		_gui->select(_pos, false, false);
+		_gui->select(_pos, _shiftPressed, false);
 		break;
 	case kCursorDCStart:
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
-		_gui->select(_pos, false, true);
 		break;
 	case kCursorSCSink:
 		_gui->handleSingleClick();
