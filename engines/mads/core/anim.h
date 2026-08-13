@@ -247,6 +247,7 @@ typedef ImageInter *ImageInterPtr;
 struct MessageBuf {
 	char active;
 	char spacing;
+	char macintosh_font;
 	int x, y;
 	int xs, ys;
 	int status;

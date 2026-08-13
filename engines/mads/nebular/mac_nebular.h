@@ -109,6 +109,9 @@ public:
 	void showPopup();
 	int editPopup(char *target, int maxLength);
 	void hidePopup();
+	int getTextWidth(FontPtr font, const char *text, int spacing) const;
+	bool drawText(FontPtr font, Buffer *target, const char *text, int x,
+		int y, int color, int spacing) const;
 };
 
 } // namespace RexNebular

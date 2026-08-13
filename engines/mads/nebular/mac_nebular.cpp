@@ -28,7 +28,10 @@
 #include "graphics/macgamma.h"
 #include "graphics/managed_surface.h"
 #include "graphics/paletteman.h"
+#include "graphics/surface.h"
+#include "mads/core/buffer.h"
 #include "mads/core/env.h"
+#include "mads/core/font.h"
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
 #include "mads/core/object.h"
@@ -1005,6 +1008,33 @@ int MacNebular::editPopup(char *target, int maxLength) {
 	return _menus->runPopupEditor(bounds, target, maxLength);
 }
 
+int MacNebular::getTextWidth(FontPtr font, const char *text, int) const {
+	if (!_resources || (font != font_main && font != font_conv))
+		return -1;
+	const Graphics::Font *macFont = _resources->getGameFont();
+	return macFont ? macFont->getStringWidth(text) : -1;
+}
+
+bool MacNebular::drawText(FontPtr font, Buffer *target, const char *text,
+		int x, int y, int color, int) const {
+	if (!_resources || !target || !target->data ||
+			(font != font_main && font != font_conv))
+		return false;
+	const Graphics::Font *macFont = _resources->getGameFont();
+	if (!macFont)
+		return false;
+
+	// The MADS packed format stores one bitmap width as both the ink box and
+	// the character advance. QuickDraw keeps those metrics separate, so edge
+	// bearings cannot be preserved by the compatibility font resource.
+	Graphics::Surface surface;
+	surface.init(target->x, target->y, target->x, target->data,
+		Graphics::PixelFormat::createFormatCLUT8());
+	macFont->drawString(&surface, text, x, y, MAX(0, target->x - x),
+		(byte)color);
+	return true;
+}
+
 void MacNebular::hidePopup() {
 	if (!_popupActive)
 		return;
@@ -1136,6 +1166,17 @@ bool RexNebularEngine::drawPopup() {
 
 int RexNebularEngine::editMacintoshPopup(char *target, int maxLength) {
 	return _macNebular ? _macNebular->editPopup(target, maxLength) : -1;
+}
+
+int RexNebularEngine::getMacintoshTextWidth(FontPtr font, const char *text,
+		int spacing) const {
+	return _macNebular ? _macNebular->getTextWidth(font, text, spacing) : -1;
+}
+
+bool RexNebularEngine::drawMacintoshText(FontPtr font, Buffer *target,
+		const char *text, int x, int y, int color, int spacing) const {
+	return _macNebular && _macNebular->drawText(font, target, text,
+		x, y, color, spacing);
 }
 
 void RexNebularEngine::onPopupDestroyed() {

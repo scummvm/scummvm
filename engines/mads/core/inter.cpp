@@ -2168,7 +2168,10 @@ void inter_main_loop(int allow_input) {
 				((inter_input_mode == INTER_BUILDING_SENTENCES) || (inter_input_mode == INTER_LIMITED_SENTENCES))) {
 			use_font = font_main;
 			use_spacing = -1;
-			width = font_string_width(use_font, inter_sentence, use_spacing);
+			width = g_engine->getMacintoshTextWidth(use_font,
+				inter_sentence, use_spacing);
+			if (width < 0)
+				width = font_string_width(use_font, inter_sentence, use_spacing);
 
 			if (width > video_x) {
 				use_font = font_inter;
@@ -2185,11 +2188,11 @@ void inter_main_loop(int allow_input) {
 			if (g_engine->getInterfaceSentenceColors(sentenceColor, shadowColor)) {
 				inter_sentence_shadow_handle = matte_add_message(use_font,
 					inter_sentence, x + 1, y + 1, shadowColor,
-					use_spacing);
+					use_spacing, g_engine->hasMacintoshInterface());
 			}
 			inter_sentence_handle = matte_add_message(use_font, inter_sentence, x, y,
 				sentenceColor,
-				use_spacing);
+				use_spacing, g_engine->hasMacintoshInterface());
 		}
 		inter_sentence_changed = false;
 	}
