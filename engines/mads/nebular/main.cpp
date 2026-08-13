@@ -351,7 +351,9 @@ void nebular_main() {
 			engine->setMacintoshOuterMenuActive(
 				g_engine->getPlatform() == Common::kPlatformMacintosh);
 			main_menu_main();
-			engine->setMacintoshOuterMenuActive(false);
+			if (g_engine->getPlatform() != Common::kPlatformMacintosh ||
+					selected_item < 2 || selected_item > 4)
+				engine->setMacintoshOuterMenuActive(false);
 
 			// Native CODE 133 performs this transition inside
 			// main_menu_main(), before dispatching the selected action.
@@ -420,28 +422,41 @@ void nebular_main() {
 			break;
 
 		case WIN_QUICK_DEATH + 16:
-			run_full_frame_animview(engine, "@rexend1");
-			run_full_frame_textview(engine, "ending1");
 			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
-				MacFrontend::showCreditsAfterEnding(*engine);
+				MacFrontend::runEndingSequence(*engine, "@rexend1",
+					"ending1", true);
+			else {
+				run_full_frame_animview(engine, "@rexend1");
+				run_full_frame_textview(engine, "ending1");
+			}
 			return;
 
 		case WIN_SLOW_DEATH + 16:
-			run_full_frame_animview(engine, "@rexend2");
-			run_full_frame_textview(engine, "ending2");
 			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
-				MacFrontend::showCreditsAfterEnding(*engine);
+				MacFrontend::runEndingSequence(*engine, "@rexend2",
+					"ending2", true);
+			else {
+				run_full_frame_animview(engine, "@rexend2");
+				run_full_frame_textview(engine, "ending2");
+			}
 			return;
 
 		case WIN_ALL_THE_MONEY + 16:
-			run_full_frame_animview(engine, "@rexend3");
-			run_full_frame_textview(engine, "credits");
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+				MacFrontend::runEndingSequence(*engine, "@rexend3",
+					nullptr, true);
+			else {
+				run_full_frame_animview(engine, "@rexend3");
+				run_full_frame_textview(engine, "credits");
+			}
 			return;
 
 		case WIN_A_HEAD_POW + 16:
-			run_full_frame_textview(engine, "ending4");
 			if (g_engine->getPlatform() == Common::kPlatformMacintosh)
-				MacFrontend::showCreditsAfterEnding(*engine);
+				MacFrontend::runEndingSequence(*engine, nullptr,
+					"ending4", true);
+			else
+				run_full_frame_textview(engine, "ending4");
 			return;
 
 		case 5:

@@ -31,7 +31,8 @@ namespace MacFrontend {
 
 void runAnimView(RexNebularEngine &engine, const char *resource);
 void runTextView(RexNebularEngine &engine, const char *resource);
-void showCreditsAfterEnding(RexNebularEngine &engine);
+void runEndingSequence(RexNebularEngine &engine, const char *animation,
+	const char *ending, bool showCredits);
 
 } // namespace MacFrontend
 } // namespace RexNebular
