@@ -34,9 +34,14 @@
 #include "mads/core/font.h"
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
+#include "mads/core/magic.h"
+#include "mads/core/mcga.h"
+#include "mads/core/mem.h"
 #include "mads/core/object.h"
 #include "mads/core/pal.h"
+#include "mads/core/room.h"
 #include "mads/core/screen.h"
+#include "mads/nebular/extra.h"
 #include "mads/nebular/mac_menus.h"
 #include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/mac_resources.h"
@@ -44,7 +49,6 @@
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/popup.h"
 #include "mads/nebular/mads/words.h"
-#include "mads/nebular/sound/mac_sound.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -97,6 +101,83 @@ static byte macGammaCorrect(byte color) {
 
 static byte macPaletteComponentToSixBit(byte color) {
 	return (color * 63 + 127) / 255;
+}
+
+static bool loadMacAboutRoom(Graphics::ManagedSurface &picture,
+		Palette &palette) {
+	Palette savedMasterPalette;
+	dword savedColorStatus[256];
+	int savedFlagUsed[PAL_MAXFLAGS];
+	const int savedPaletteLocked = palette_locked;
+	const int savedLowSearchLimit = palette_low_search_limit;
+	const int savedHighSearchLimit = palette_high_search_limit;
+	const int savedManagerActive = pal_manager_active;
+	const int savedManagerColors = pal_manager_colors;
+	void (*savedManagerUpdate)() = pal_manager_update;
+	ShadowListPtr savedMasterShadow = master_shadow;
+	const int savedRoomLoadError = room_load_error;
+	const byte savedRoomLoadedDepth = room_loaded_depth;
+
+	memcpy(savedMasterPalette, master_palette, sizeof(Palette));
+	memcpy(savedColorStatus, color_status, sizeof(color_status));
+	memcpy(savedFlagUsed, flag_used, sizeof(flag_used));
+
+	for (int color = 0; color < 256; ++color)
+		color_status[color] &= PAL_RESERVED;
+	for (int flag = 2; flag < PAL_MAXFLAGS; ++flag)
+		flag_used[flag] = false;
+	palette_locked = false;
+	palette_low_search_limit = 0;
+	palette_high_search_limit = 256;
+	pal_manager_active = false;
+	pal_manager_colors = 0;
+	pal_manager_update = nullptr;
+	master_shadow = nullptr;
+
+	Buffer roomPicture = {};
+	Buffer roomDepth = {};
+	RoomPtr aboutRoom = RexNebular::room_load(990, 0, nullptr,
+		&roomPicture, &roomDepth, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, -1, -1, 0);
+	const bool loaded = aboutRoom && roomPicture.data &&
+		roomPicture.x == kMacLogicalSceneWidth &&
+		roomPicture.y == kMacLogicalSceneHeight;
+	if (loaded) {
+		picture.create(roomPicture.x, roomPicture.y,
+			Graphics::PixelFormat::createFormatCLUT8());
+		for (int y = 0; y < roomPicture.y; ++y)
+			memcpy(picture.getBasePtr(0, y),
+				roomPicture.data + y * roomPicture.x, roomPicture.x);
+		memcpy(palette, master_palette, sizeof(Palette));
+	}
+
+	if (aboutRoom) {
+		pal_deallocate(aboutRoom->color_handle);
+		mem_free(aboutRoom);
+	}
+	buffer_free(&roomPicture);
+	buffer_free(&roomDepth);
+
+	memcpy(master_palette, savedMasterPalette, sizeof(Palette));
+	memcpy(color_status, savedColorStatus, sizeof(color_status));
+	memcpy(flag_used, savedFlagUsed, sizeof(flag_used));
+	palette_locked = savedPaletteLocked;
+	palette_low_search_limit = savedLowSearchLimit;
+	palette_high_search_limit = savedHighSearchLimit;
+	pal_manager_active = savedManagerActive;
+	pal_manager_colors = savedManagerColors;
+	pal_manager_update = savedManagerUpdate;
+	master_shadow = savedMasterShadow;
+	room_load_error = savedRoomLoadError;
+	room_loaded_depth = savedRoomLoadedDepth;
+	return loaded;
+}
+
+static void drawMacAboutText(Graphics::ManagedSurface &surface,
+		const Graphics::Font &font, const Common::String &text,
+		int x, int baseline, byte color) {
+	font.drawString(&surface, text, x, baseline - font.getFontAscent(),
+		surface.w - x, color);
 }
 
 static void setMacInterfacePalette(const MacResourceProvider *resources) {
@@ -521,12 +602,204 @@ void MacNebular::setStoryLocked(bool locked,
 }
 
 void MacNebular::serviceUI() {
-	if (!_startupPreferencesReady || !_showPreferencesAtStartup || !_menus)
+	if (!_menus)
 		return;
 
-	_startupPreferencesReady = false;
-	_showPreferencesAtStartup = false;
-	_menus->runPreferencesDialog(true);
+	if (_startupPreferencesReady && _showPreferencesAtStartup) {
+		_startupPreferencesReady = false;
+		_showPreferencesAtStartup = false;
+		_menus->runPreferencesDialog(true);
+		_engine._screen->markAllDirty();
+		return;
+	}
+	if (_menus->takePreferencesRequest()) {
+		_menus->runPreferencesDialog(false);
+		_engine._screen->markAllDirty();
+		return;
+	}
+
+	if (_menus->takeAboutRequest())
+		showAbout();
+}
+
+void MacNebular::showAbout() {
+	if (!_useOriginalMenus || !_resources || !_menus)
+		return;
+
+	Graphics::ManagedSurface picture;
+	Palette aboutPalette;
+	if (!loadMacAboutRoom(picture, aboutPalette)) {
+		warning("Could not load Macintosh About room 990");
+		return;
+	}
+
+	int titleSize;
+	int textSize;
+	int titleX;
+	int titleY;
+	int textX;
+	int firstTextY;
+	int helpX;
+	int helpY;
+	int serviceX;
+	int serviceY;
+	int phoneX;
+	int phoneY;
+	switch (_displaySize) {
+	case kMacNebularDisplay100:
+		titleSize = 14;
+		textSize = 12;
+		titleX = 30;
+		titleY = 75;
+		textX = 45;
+		firstTextY = 100;
+		helpX = 60;
+		helpY = 115;
+		serviceX = 45;
+		serviceY = 135;
+		phoneX = 60;
+		phoneY = 150;
+		break;
+	case kMacNebularDisplay150:
+		titleSize = 20;
+		textSize = 18;
+		titleX = 45;
+		titleY = 112;
+		textX = 68;
+		firstTextY = 150;
+		helpX = 90;
+		helpY = 172;
+		serviceX = 68;
+		serviceY = 202;
+		phoneX = 90;
+		phoneY = 225;
+		break;
+	default:
+		titleSize = 28;
+		textSize = 24;
+		titleX = 60;
+		titleY = 150;
+		textX = 90;
+		firstTextY = 200;
+		helpX = 120;
+		helpY = 230;
+		serviceX = 90;
+		serviceY = 270;
+		phoneX = 120;
+		phoneY = 300;
+		break;
+	}
+
+	const Graphics::Font *titleFont = _resources->getAboutFont(titleSize);
+	const Graphics::Font *textFont = _resources->getAboutFont(textSize);
+	if (!titleFont || !textFont) {
+		warning("Could not load Macintosh About fonts");
+		return;
+	}
+
+	Graphics::ManagedSurface savedOutput;
+	savedOutput.copyFrom(_output);
+	Palette savedPalette;
+	memcpy(savedPalette, _palette, sizeof(Palette));
+	const bool savedFullFrameActive = _fullFrameActive;
+	_fullFrameActive = true;
+	PauseToken pauseToken = _engine.pauseEngine();
+
+	Palette transitionPalette;
+	memcpy(transitionPalette, savedPalette, sizeof(Palette));
+	magic_fade_to_grey(transitionPalette, nullptr,
+		0, 256, 0, 1, 1, 16);
+
+	const byte blackColor = _menus->getBlackColor();
+	_output.fillRect(_output.getBounds(), blackColor);
+	const int sceneX = getSceneX();
+	const int sceneY = getSceneY();
+	const int sceneWidth = getSceneWidth();
+	const int sceneHeight = getSceneHeight();
+	for (int y = 0; y < sceneHeight; ++y) {
+		const byte *source = (const byte *)picture.getBasePtr(
+			0, y * picture.h / sceneHeight);
+		byte *target = (byte *)_output.getBasePtr(sceneX, sceneY + y);
+		for (int x = 0; x < sceneWidth; ++x)
+			target[x] = source[x * picture.w / sceneWidth];
+	}
+
+	drawMacAboutText(_output, *titleFont, "From MicroProse Software.",
+		sceneX + titleX, sceneY + titleY, blackColor);
+	drawMacAboutText(_output, *textFont, "For hints and help call:",
+		sceneX + textX, sceneY + firstTextY, blackColor);
+	drawMacAboutText(_output, *textFont, "1 - 900 - 933 - PLAY",
+		sceneX + helpX, sceneY + helpY, blackColor);
+	drawMacAboutText(_output, *textFont, "For customer service call:",
+		sceneX + serviceX, sceneY + serviceY, blackColor);
+	drawMacAboutText(_output, *textFont, "1 - 410 - 771 - 1151",
+		sceneX + phoneX, sceneY + phoneY, blackColor);
+	_menus->draw();
+	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
+		0, 0, _output.w, _output.h);
+	g_system->updateScreen();
+	magic_fade_from_grey((RGBcolor *)transitionPalette, aboutPalette,
+		0, 256, 0, 1, 1, 16);
+
+	bool pressed = false;
+	bool released = false;
+	bool pressedMouse = false;
+	uint32 releaseTime = 0;
+	g_system->delayMillis(166);
+	while (!_engine.shouldQuit() &&
+			(!pressed || !released || g_system->getMillis() < releaseTime)) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				_engine.quitGame();
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				if (!pressed) {
+					pressed = true;
+					pressedMouse = true;
+					releaseTime = g_system->getMillis() + 333;
+				}
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (!pressed) {
+					pressed = true;
+					pressedMouse = false;
+					releaseTime = g_system->getMillis() + 333;
+				}
+				break;
+			case Common::EVENT_LBUTTONUP:
+				if (pressed && pressedMouse)
+					released = true;
+				break;
+			case Common::EVENT_KEYUP:
+				if (pressed && !pressedMouse)
+					released = true;
+				break;
+			default:
+				break;
+			}
+		}
+		g_system->delayMillis(10);
+	}
+
+	if (!_engine.shouldQuit()) {
+		memcpy(transitionPalette, aboutPalette, sizeof(Palette));
+		magic_fade_to_grey(transitionPalette, nullptr,
+			0, 256, 0, 1, 1, 16);
+	}
+	_output.copyFrom(savedOutput);
+	_menus->draw();
+	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
+		0, 0, _output.w, _output.h);
+	g_system->updateScreen();
+	if (!_engine.shouldQuit()) {
+		magic_fade_from_grey((RGBcolor *)transitionPalette, savedPalette,
+			0, 256, 0, 1, 1, 16);
+	} else {
+		mcga_setpal(&savedPalette);
+	}
+	_fullFrameActive = savedFullFrameActive;
 	_engine._screen->markAllDirty();
 }
 

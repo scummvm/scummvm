@@ -298,6 +298,7 @@ void MacNebularMenu::updateState() {
 				itemIndex < _menu->numberOfMenuItems(topLevel); ++itemIndex)
 			setItemState(_menu->getSubMenuItem(topLevel, itemIndex), false, false);
 	}
+	setItemState(getMenuItem(kAppleMenu, 0), true, false);
 	if (_activeDialog) {
 		setItemState(getMenuItem(kEditMenu, 0),
 			_activeDialog->isEditCommandEnabled(kMacDialogUndo), false);
@@ -359,6 +360,11 @@ void MacNebularMenu::updateState() {
 
 void MacNebularMenu::dispatchCommand(int commandId) {
 	switch (commandId) {
+	case kAppleAbout:
+		// Run the full-frame presentation after the menu event has unwound.
+		// Otherwise the closing menu window can be composited over room 990.
+		_aboutRequested = true;
+		break;
 	case kFileOpen:
 		if (_engine.canLoadGameStateCurrently(nullptr))
 			runOpenDialog();
@@ -372,7 +378,9 @@ void MacNebularMenu::dispatchCommand(int commandId) {
 			runSaveDialog(true);
 		break;
 	case kFilePreferences:
-		runPreferencesDialog(false);
+		// Like About, this opens a modal presentation. Defer it until the
+		// menu event and its transient window have been fully dismissed.
+		_preferencesRequested = true;
 		break;
 	case kFileQuit:
 		_engine.quitGame();
@@ -493,6 +501,18 @@ void MacNebularMenu::draw() {
 	_menu->draw(&_screen, true);
 }
 
+bool MacNebularMenu::takeAboutRequest() {
+	const bool requested = _aboutRequested;
+	_aboutRequested = false;
+	return requested;
+}
+
+bool MacNebularMenu::takePreferencesRequest() {
+	const bool requested = _preferencesRequested;
+	_preferencesRequested = false;
+	return requested;
+}
+
 byte MacNebularMenu::getBlackColor() {
 	byte menuBlack, menuWhite;
 	getMenuColors(menuBlack, menuWhite);
@@ -536,11 +556,8 @@ void MacNebularMenu::runPreferencesDialog(bool startup) {
 	dialog.setItemChecked(7, true);
 	dialog.setItemChecked(8,
 		_engine.getMacintoshPreferencesAtStartup());
-	if (startup)
-		dialog.setItemEnabled(2, false);
-
 	_activeDialog = &dialog;
-	const int result = dialog.runModal(1, startup ? 0 : 2);
+	const int result = dialog.runModal(1, 2);
 	_activeDialog = nullptr;
 	if (result != 1)
 		return;

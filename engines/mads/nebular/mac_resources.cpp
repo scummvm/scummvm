@@ -233,6 +233,14 @@ const Graphics::Font *MacResourceProvider::getGameFont() {
 		Graphics::kMacFontGeneva, 10, Graphics::kMacFontBold));
 }
 
+const Graphics::Font *MacResourceProvider::getAboutFont(int size) {
+	if (!_fontManager)
+		return nullptr;
+
+	return _fontManager->getFont(Graphics::MacFont(
+		Graphics::kMacFontGeneva, size, Graphics::kMacFontRegular));
+}
+
 MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::String &filename) {
 	Common::String name(filename);
 	name.toUppercase();
