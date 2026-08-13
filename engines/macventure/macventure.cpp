@@ -1167,7 +1167,7 @@ void MacVentureEngine::zoomObject(ObjID objID) {
 bool MacVentureEngine::isObjEnqueued(ObjID objID) {
 	Common::Array<QueuedObject>::const_iterator it;
 	for (it = _objQueue.begin(); it != _objQueue.end(); it++) {
-		if ((*it).object == objID) {
+		if ((*it).id == kUpdateObject && (*it).object == objID) {
 			return true;
 		}
 	}
