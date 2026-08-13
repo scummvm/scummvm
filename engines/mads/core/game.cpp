@@ -1013,6 +1013,14 @@ int game_parse_keystroke(int mykey) {
 		mouse_force(kernel.cursor_x[1 - current_mode], kernel.cursor_y[1 - current_mode]);
 		break;
 
+	case pgup_key:
+		inter_scroll_inventory(-1);
+		break;
+
+	case pgdn_key:
+		inter_scroll_inventory(1);
+		break;
+
 	case ctrl_k_key:
 		inter_report_hotspots = !inter_report_hotspots;
 		inter_init_sentence();
