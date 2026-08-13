@@ -223,6 +223,15 @@ void MacNebularDialog::setItemText(int itemNumber,
 	_redraw = true;
 }
 
+void MacNebularDialog::setItemMaxLength(int itemNumber, uint maxLength) {
+	Item *item = getItem(itemNumber);
+	if (!item)
+		return;
+	item->maxLength = maxLength;
+	if (maxLength && item->text.size() > maxLength)
+		setItemText(itemNumber, item->text.substr(0, maxLength));
+}
+
 Common::String MacNebularDialog::getItemText(int itemNumber) const {
 	const Item *item = getItem(itemNumber);
 	return item ? item->text : Common::String();
@@ -406,10 +415,15 @@ void MacNebularDialog::drawItem(Item &item, int itemNumber) {
 		drawRadioButton(item, bounds);
 		break;
 	case kStaticText: {
-		const int textY = bounds.top +
-			(bounds.height() - _font->getFontHeight()) / 2;
-		_font->drawString(&_screen, item.text, bounds.left, textY,
-			bounds.width(), _windowManager._colorBlack);
+		Common::Array<Common::String> lines;
+		_font->wordWrapText(item.text, bounds.width(), lines);
+		int textY = bounds.top;
+		for (uint line = 0; line < lines.size() &&
+				textY + _font->getFontHeight() <= bounds.bottom; ++line) {
+			_font->drawString(&_screen, lines[line], bounds.left, textY,
+				bounds.width(), _windowManager._colorBlack);
+			textY += _font->getFontHeight();
+		}
 		break;
 	}
 	case kEditableText:

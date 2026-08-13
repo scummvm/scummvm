@@ -136,6 +136,7 @@ public:
 	void setItemChecked(int itemNumber, bool checked);
 	bool isItemChecked(int itemNumber) const;
 	void setItemText(int itemNumber, const Common::String &text);
+	void setItemMaxLength(int itemNumber, uint maxLength);
 	Common::String getItemText(int itemNumber) const;
 	void setList(int itemNumber, const Common::StringArray &entries,
 		int selection);

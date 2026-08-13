@@ -55,6 +55,7 @@ enum {
 	kStoryPasswordDialog = 2006,
 	kSaveDialog = 3001,
 	kOpenDialog = 3010,
+	kCopyProtectionDialog = 4000,
 
 	kAppleMenu = 0,
 	kFileMenu = 1,
@@ -591,6 +592,33 @@ int MacNebularMenu::runPopupEditor(const Common::Rect &bounds,
 		return 1;
 
 	Common::strcpy_s(target, maxLength + 1, dialog.getItemText(1).c_str());
+	return 0;
+}
+
+int MacNebularMenu::runCopyProtectionDialog(const Common::String &title,
+		const Common::String &subtitle, const Common::String &prompt,
+		char *target, int maxLength) {
+	if (!initializeWindowManager() || !target || maxLength < 1)
+		return -1;
+
+	syncPalette();
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager);
+	if (!dialog.load(kCopyProtectionDialog))
+		return -1;
+	dialog.center();
+	dialog.setItemText(2, target);
+	dialog.setItemMaxLength(2, maxLength);
+	dialog.setItemText(3, title);
+	dialog.setItemText(4, subtitle);
+	dialog.setItemText(7, prompt);
+
+	_activeDialog = &dialog;
+	const int result = dialog.runModal(1, 0);
+	_activeDialog = nullptr;
+	if (result != 1)
+		return 1;
+
+	Common::strcpy_s(target, maxLength + 1, dialog.getItemText(2).c_str());
 	return 0;
 }
 
