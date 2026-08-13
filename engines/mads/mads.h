@@ -184,6 +184,7 @@ public:
 	// MADS rendering path used by DOS releases.
 	virtual bool hasInterfaceAnimations() const { return true; }
 	virtual bool drawPopup() { return false; }
+	virtual int editMacintoshPopup(char *, int) { return -1; }
 	virtual void onPopupDestroyed() {}
 	virtual bool getInterfaceSentenceColors(byte &, byte &) const {
 		return false;

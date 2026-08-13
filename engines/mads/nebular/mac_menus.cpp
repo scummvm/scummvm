@@ -551,6 +551,24 @@ void MacNebularMenu::runPreferencesDialog(bool startup) {
 		persist);
 }
 
+int MacNebularMenu::runPopupEditor(const Common::Rect &bounds,
+		char *target, int maxLength) {
+	if (!initializeWindowManager() || !target || maxLength < 1)
+		return -1;
+
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager,
+		this);
+	dialog.configureInlineEditable(bounds, target, maxLength);
+	_activeDialog = &dialog;
+	const int result = dialog.runModal(1, 2);
+	_activeDialog = nullptr;
+	if (result != 1)
+		return 1;
+
+	Common::strcpy_s(target, maxLength + 1, dialog.getItemText(1).c_str());
+	return 0;
+}
+
 bool MacNebularMenu::runStoryPasswordDialog(bool leavingLocked) {
 	if (!initializeWindowManager())
 		return false;

@@ -38,7 +38,8 @@ namespace RexNebular {
 
 MacNebularDialog::Item::Item() : type(kUserItem), enabled(false),
 		checked(false), listItem(false), hasUndo(false), listSelection(-1),
-		listTop(0), caret(0), selectionStart(0), selectionEnd(0) {
+		listTop(0), caret(0), selectionStart(0), selectionEnd(0),
+		maxLength(0) {
 }
 
 MacNebularDialog::MacNebularDialog(RexNebularEngine &engine,
@@ -48,7 +49,8 @@ MacNebularDialog::MacNebularDialog(RexNebularEngine &engine,
 		_resources(resources), _screen(screen), _windowManager(windowManager),
 		_menus(menus), _font(resources.getDialogFont()), _focusItem(0),
 		_pressedItem(0),
-		_defaultItem(0), _cancelItem(0), _redraw(true) {
+		_defaultItem(0), _cancelItem(0), _redraw(true),
+		_inlineEditable(false) {
 }
 
 MacNebularDialog::Item *MacNebularDialog::getItem(int itemNumber) {
@@ -153,12 +155,34 @@ bool MacNebularDialog::loadDialogItems(uint16 resourceID) {
 
 bool MacNebularDialog::load(uint16 resourceID) {
 	_items.clear();
+	_inlineEditable = false;
 	_focusItem = 0;
 	_pressedItem = 0;
 	_redraw = true;
 	uint16 itemResourceID = 0;
 	return _font && loadDialogResource(resourceID, itemResourceID) &&
 		loadDialogItems(itemResourceID);
+}
+
+void MacNebularDialog::configureInlineEditable(const Common::Rect &bounds,
+		const Common::String &text, uint maxLength) {
+	_bounds = bounds;
+	_items.clear();
+	Item item;
+	item.bounds = Common::Rect(0, 0, bounds.width(), bounds.height());
+	item.text = maxLength && text.size() > maxLength ?
+		text.substr(0, maxLength) : text;
+	item.type = kEditableText;
+	item.enabled = true;
+	item.caret = item.text.size();
+	item.selectionStart = item.caret;
+	item.selectionEnd = item.caret;
+	item.maxLength = maxLength;
+	_items.push_back(item);
+	_inlineEditable = true;
+	_focusItem = 0;
+	_pressedItem = 0;
+	_redraw = true;
 }
 
 void MacNebularDialog::center() {
@@ -401,8 +425,10 @@ void MacNebularDialog::draw() {
 	Graphics::MacPlotData plot(&_screen, nullptr,
 		&_windowManager.getBuiltinPatterns(), 1, 0, 0,
 		Common::Point(1, 1), _windowManager._colorWhite, false);
-	primitives.drawFilledRect1(_bounds, _windowManager._colorWhite, &plot);
-	primitives.drawRect1(_bounds, _windowManager._colorBlack, &plot);
+	if (!_inlineEditable) {
+		primitives.drawFilledRect1(_bounds, _windowManager._colorWhite, &plot);
+		primitives.drawRect1(_bounds, _windowManager._colorBlack, &plot);
+	}
 	for (uint index = 0; index < _items.size(); ++index)
 		drawItem(_items[index], index + 1);
 }
@@ -492,6 +518,10 @@ void MacNebularDialog::rememberUndo(Item &item) {
 }
 
 void MacNebularDialog::insertCharacter(Item &item, char character) {
+	const uint selected = MAX(item.selectionStart, item.selectionEnd) -
+		MIN(item.selectionStart, item.selectionEnd);
+	if (item.maxLength && item.text.size() - selected >= item.maxLength)
+		return;
 	rememberUndo(item);
 	deleteSelection(item);
 	item.text.insertChar(character, item.caret);
@@ -724,6 +754,9 @@ bool MacNebularDialog::handleEditCommand(MacDialogEditCommand command) {
 		for (uint index = 0; index < text.size(); ++index) {
 			const char character = text[index];
 			if (character >= 32 && character < 127) {
+				if (item->maxLength &&
+						item->text.size() >= item->maxLength)
+					break;
 				item->text.insertChar(character, item->caret);
 				++item->caret;
 			}

@@ -151,6 +151,8 @@ int popup_create(int horiz_pieces, int x, int y) {
 	box->cursor_x = 0;
 	box->text_x = 0;
 	box->text_y = 0;
+	box->ask_x = 0;
+	box->ask_y = 0;
 
 	box->dont_add_space = false;
 
@@ -999,6 +1001,17 @@ int popup_ask_string(char *target, int maxlen, int save_screen) {
 
 	if (popup_draw(save_screen, false))
 		goto done;
+	{
+		const int macintoshResult =
+			g_engine->editMacintoshPopup(temp_buf, maxlen);
+		if (macintoshResult >= 0) {
+			error_flag = macintoshResult;
+			popup_esc_key = macintoshResult != 0;
+			popup_destroy();
+			Common::strcpy_s(target, maxlen + 1, temp_buf);
+			return error_flag;
+		}
+	}
 
 	popup_update_ask(temp_buf, maxlen);
 

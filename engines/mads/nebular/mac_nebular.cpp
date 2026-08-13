@@ -893,9 +893,21 @@ void MacNebular::showPopup() {
 	Common::Array<MacPopupLine> lines;
 	Common::String paragraph;
 	word paragraphTab = 0;
+	_popupAskLine = -1;
+	const bool hasAsk = box->ask_x > 0;
 	for (int line = 0; line <= box->text_y; ++line) {
 		const word tab = box->tab[line];
 		const word plainTab = tab & ~(POPUP_UNDERLINE | POPUP_DOWNPIXEL);
+		if (hasAsk && line == box->ask_y) {
+			if (!paragraph.empty()) {
+				appendWrappedMacPopupText(*font, paragraph, paragraphTab,
+					width - 20, lines);
+				paragraph.clear();
+			}
+			_popupAskLine = lines.size();
+			lines.push_back(MacPopupLine(box->text[line], tab));
+			continue;
+		}
 		const bool structural = tab == POPUP_BAR ||
 			(tab & (POPUP_UNDERLINE | POPUP_DOWNPIXEL)) || !box->text[line][0];
 		if (structural || (!paragraph.empty() && plainTab != paragraphTab)) {
@@ -949,6 +961,10 @@ void MacNebular::showPopup() {
 				~(POPUP_UNDERLINE | POPUP_DOWNPIXEL)) * 3 / 4;
 		font->drawString(&_popup, lines[line].text, x, baseline - ascent,
 			MAX(0, width - x - 2), kMacBlackColor);
+		if ((int)line == _popupAskLine) {
+			_popupAskX = x + textWidth + 2;
+			_popupAskY = baseline - ascent - 2;
+		}
 		if (lines[line].tab & POPUP_UNDERLINE) {
 			_popup.fillRect(Common::Rect(x, baseline + 1,
 				MIN(width - 2, x + textWidth), baseline + 2),
@@ -969,6 +985,24 @@ void MacNebular::showPopup() {
 		popupAreaY + popupY + height);
 	_popupActive = true;
 	presentScreen(0);
+}
+
+int MacNebular::editPopup(char *target, int maxLength) {
+	if (!_popupActive || _popupAskLine < 0 || !_resources || !_menus)
+		return -1;
+
+	const Graphics::Font *font = _resources->getDialogFont();
+	if (!font)
+		return -1;
+	const int left = _popupRect.left + _popupAskX;
+	const int top = _popupRect.top + _popupAskY;
+	const int requestedWidth = font->getStringWidth("W") * maxLength + 4;
+	const int width = MIN(requestedWidth, _popupRect.right - left - 10);
+	if (width < 8)
+		return -1;
+	const Common::Rect bounds(left, top, left + width,
+		top + font->getFontHeight() + 4);
+	return _menus->runPopupEditor(bounds, target, maxLength);
 }
 
 void MacNebular::hidePopup() {
@@ -1098,6 +1132,10 @@ bool RexNebularEngine::drawPopup() {
 
 	_macNebular->showPopup();
 	return true;
+}
+
+int RexNebularEngine::editMacintoshPopup(char *target, int maxLength) {
+	return _macNebular ? _macNebular->editPopup(target, maxLength) : -1;
 }
 
 void RexNebularEngine::onPopupDestroyed() {

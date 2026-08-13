@@ -73,6 +73,7 @@ private:
 		uint caret;
 		uint selectionStart;
 		uint selectionEnd;
+		uint maxLength;
 
 		Item();
 	};
@@ -90,6 +91,7 @@ private:
 	int _defaultItem;
 	int _cancelItem;
 	bool _redraw;
+	bool _inlineEditable;
 
 	Item *getItem(int itemNumber);
 	const Item *getItem(int itemNumber) const;
@@ -127,6 +129,8 @@ public:
 		MacNebularMenu *menus = nullptr);
 
 	bool load(uint16 resourceID);
+	void configureInlineEditable(const Common::Rect &bounds,
+		const Common::String &text, uint maxLength);
 	void center();
 	void setItemEnabled(int itemNumber, bool enabled);
 	void setItemChecked(int itemNumber, bool checked);
