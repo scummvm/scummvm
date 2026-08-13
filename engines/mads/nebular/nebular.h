@@ -54,6 +54,7 @@ protected:
 	Common::Point gameToScreen(const Common::Point &point) const override;
 	void presentScreen(int shakeOffset) override;
 	bool handleMacEvent(Common::Event &event) override;
+	void serviceMacintoshUI() override;
 	void serviceMacintoshSound() override;
 
 public:
@@ -65,6 +66,12 @@ public:
 	void selectMacintoshDifficulty();
 	int selectMacintoshResumeSlot();
 	bool usesOriginalMacintoshMenus() const;
+	int getMacintoshDisplaySize() const;
+	bool getMacintoshHideMenuBar() const;
+	bool getMacintoshPreferencesAtStartup() const;
+	void setMacintoshDisplaySize(int displaySize, bool persist);
+	void setMacintoshHideMenuBar(bool hide, bool persist);
+	void setMacintoshPreferencesAtStartup(bool show, bool persist);
 	void setMacintoshOuterMenuActive(bool active);
 	void setMacintoshFullFrameActive(bool active);
 

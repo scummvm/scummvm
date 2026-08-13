@@ -55,6 +55,7 @@ private:
 	byte _palette[256 * 3] = {};
 	bool _paletteValid = false;
 	bool _outerMenuActive = false;
+	uint32 _windowManagerMode = 0;
 	int _pendingCommand = -1;
 
 	static void menuCallback(int commandId, Common::String &name, void *data);
@@ -78,6 +79,8 @@ public:
 	void draw();
 	byte getBlackColor();
 	void getMenuColors(byte &menuBlack, byte &menuWhite);
+	void setMenuBarHidden(bool hidden);
+	void runPreferencesDialog(bool startup);
 	void setOuterMenuActive(bool active) { _outerMenuActive = active; }
 	int runDifficultyDialog();
 	int selectResumeSlot();
