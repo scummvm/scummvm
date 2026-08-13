@@ -62,6 +62,7 @@ private:
 	bool _storyLocked;
 	Common::String _storyPassword;
 	bool _fullFrameActive = false;
+	bool _aboutActive = false;
 	bool _gameplayHandoffPending = false;
 	bool _gameplayHandoffEffectSeen = false;
 	bool _popupActive = false;

@@ -510,6 +510,50 @@ bool MacNebularMenu::takeAboutRequest() {
 	return requested;
 }
 
+void MacNebularMenu::waitForAboutDismissal() {
+	bool pressed = false;
+	bool released = false;
+	bool pressedMouse = false;
+	uint32 releaseTime = 0;
+	g_system->delayMillis(166);
+	while (!_engine.shouldQuit() &&
+			(!pressed || !released || g_system->getMillis() < releaseTime)) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				_engine.quitGame();
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				if (!pressed) {
+					pressed = true;
+					pressedMouse = true;
+					releaseTime = g_system->getMillis() + 333;
+				}
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (!pressed) {
+					pressed = true;
+					pressedMouse = false;
+					releaseTime = g_system->getMillis() + 333;
+				}
+				break;
+			case Common::EVENT_LBUTTONUP:
+				if (pressed && pressedMouse)
+					released = true;
+				break;
+			case Common::EVENT_KEYUP:
+				if (pressed && !pressedMouse)
+					released = true;
+				break;
+			default:
+				break;
+			}
+		}
+		g_system->delayMillis(10);
+	}
+}
+
 bool MacNebularMenu::takePreferencesRequest() {
 	const bool requested = _preferencesRequested;
 	_preferencesRequested = false;
