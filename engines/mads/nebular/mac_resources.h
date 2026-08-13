@@ -68,6 +68,7 @@ public:
 	bool load();
 	Common::SeekableReadStream *openResource(Container container, uint32 type,
 		uint16 id) const;
+	Common::String getApplicationVersion() const;
 	Common::SeekableReadStream *open(const char *filename) override;
 	bool exists(const char *filename) override;
 	bool allowsFallback(const char *filename) const override;

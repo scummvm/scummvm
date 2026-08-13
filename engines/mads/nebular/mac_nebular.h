@@ -93,6 +93,7 @@ public:
 	int getDisplaySize() const { return _displaySize; }
 	bool getHideMenuBar() const { return _hideMenuBar; }
 	bool getPreferencesAtStartup() const { return _preferencesAtStartup; }
+	Common::String getApplicationVersion() const;
 	bool getStoryLocked() const { return _storyLocked; }
 	bool verifyStoryPassword(const Common::String &password) const;
 	void setDisplaySize(int displaySize, bool persist);

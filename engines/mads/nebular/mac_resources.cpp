@@ -204,6 +204,25 @@ Common::SeekableReadStream *MacResourceProvider::openResource(
 	return resourceContainer ? resourceContainer->getResource(type, id) : nullptr;
 }
 
+Common::String MacResourceProvider::getApplicationVersion() const {
+	Common::SeekableReadStream *stream = openResource(kApplicationContainer,
+		MKTAG('R', 'X', 'g', 'm'), 0);
+	if (!stream)
+		return Common::String();
+
+	const uint length = stream->readByte();
+	char version[256];
+	if (length > stream->size() - stream->pos() ||
+			stream->read(version, length) != length) {
+		delete stream;
+		return Common::String();
+	}
+
+	version[length] = '\0';
+	delete stream;
+	return Common::String(version);
+}
+
 const Graphics::Font *MacResourceProvider::getDialogFont() {
 	if (!_fontManager)
 		return nullptr;
