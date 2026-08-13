@@ -575,7 +575,10 @@ void textview_main(const char *resName, const Presentation &presentation) {
 	g_engine->_soundManager->removeDriver();
 	pal_interface(master_palette);
 	mcga_setpal(&master_palette);
-	mcga_reset();
+	// Native CODE 133 returns after restoring the interface palette. The
+	// additional MCGA reset belongs to the DOS viewer teardown.
+	if (!macintoshFullFrame)
+		mcga_reset();
 
 	buffer_free(&scr_depth);
 	buffer_free(&scr_orig);
