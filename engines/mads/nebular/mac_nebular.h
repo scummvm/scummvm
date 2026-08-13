@@ -99,6 +99,7 @@ public:
 	void setStoryLocked(bool locked, const Common::String &password);
 	void setFullFrameActive(bool active) { _fullFrameActive = active; }
 	void setOuterMenuActive(bool active);
+	void notifyOuterMenuFrameReady();
 	Common::Point screenToGame(const Common::Point &point) const;
 	Common::Point gameToScreen(const Common::Point &point) const;
 	bool handleMacEvent(Common::Event &event);

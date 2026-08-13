@@ -77,6 +77,7 @@ public:
 	void setMacintoshStoryLocked(bool locked,
 		const Common::String &password);
 	void setMacintoshOuterMenuActive(bool active);
+	void notifyMacintoshOuterMenuFrameReady();
 	void setMacintoshFullFrameActive(bool active);
 
 	int main_copy_verify() override;
