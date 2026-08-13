@@ -101,6 +101,7 @@ public:
 	void setPreferencesAtStartup(bool show, bool persist);
 	void setStoryLocked(bool locked, const Common::String &password);
 	void setFullFrameActive(bool active);
+	bool isFullFrameActive() const { return _fullFrameActive; }
 	void setOuterMenuActive(bool active);
 	void notifyOuterMenuFrameReady();
 	Common::Point screenToGame(const Common::Point &point) const;

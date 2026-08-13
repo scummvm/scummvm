@@ -29,19 +29,30 @@ namespace MADS {
 namespace RexNebular {
 namespace MacFrontend {
 
-void runAnimView(RexNebularEngine &engine, const char *resource) {
+static bool acquireFullFrame(RexNebularEngine &engine) {
+	if (engine.isMacintoshFullFrameActive())
+		return false;
+	engine.setMacintoshFullFrameActive(true);
+	return true;
+}
+
+static void releaseFullFrame(RexNebularEngine &engine, bool acquired) {
+	if (acquired)
+		engine.setMacintoshFullFrameActive(false);
+}
+
+static void runAnimViewContent(RexNebularEngine &engine,
+		const char *resource) {
 	AnimView::Presentation presentation;
 	presentation.bufferHeight = 200;
 	presentation.drawBoundaryLines = false;
 	presentation.serviceFramesInline = true;
 
-	engine.setMacintoshFullFrameActive(true);
 	engine.getScreen()->clear();
 	AnimView::animview_main(resource, presentation);
-	engine.setMacintoshFullFrameActive(false);
 }
 
-void runTextView(RexNebularEngine &engine, const char *resource) {
+static void runTextViewContent(const char *resource) {
 	TextView::Presentation presentation;
 	presentation.bufferHeight = 210;
 	presentation.visibleHeight = 200;
@@ -49,14 +60,33 @@ void runTextView(RexNebularEngine &engine, const char *resource) {
 	presentation.drawBoundaryLines = false;
 	presentation.macintoshFullFrame = true;
 
-	engine.setMacintoshFullFrameActive(true);
 	TextView::textview_main(resource, presentation);
-	engine.setMacintoshFullFrameActive(false);
 }
 
-void showCreditsAfterEnding(RexNebularEngine &engine) {
-	// CODE 133 follows Endi 49, 50 and 52 with CRED 1000.
-	runTextView(engine, "credits");
+void runAnimView(RexNebularEngine &engine, const char *resource) {
+	const bool acquired = acquireFullFrame(engine);
+	runAnimViewContent(engine, resource);
+	releaseFullFrame(engine, acquired);
+}
+
+void runTextView(RexNebularEngine &engine, const char *resource) {
+	const bool acquired = acquireFullFrame(engine);
+	runTextViewContent(resource);
+	releaseFullFrame(engine, acquired);
+}
+
+void runEndingSequence(RexNebularEngine &engine, const char *animation,
+		const char *ending, bool showCredits) {
+	// CODE 133 retains its frontend window and palette ownership while it
+	// advances from an ending resource to CRED 1000.
+	const bool acquired = acquireFullFrame(engine);
+	if (animation)
+		runAnimViewContent(engine, animation);
+	if (ending)
+		runTextViewContent(ending);
+	if (showCredits)
+		runTextViewContent("credits");
+	releaseFullFrame(engine, acquired);
 }
 
 } // namespace MacFrontend

@@ -1503,6 +1503,10 @@ void RexNebularEngine::setMacintoshFullFrameActive(bool active) {
 		_macNebular->setFullFrameActive(active);
 }
 
+bool RexNebularEngine::isMacintoshFullFrameActive() const {
+	return _macNebular && _macNebular->isFullFrameActive();
+}
+
 int RexNebularEngine::runMacintoshCopyProtectionDialog(
 		const Common::String &title, const Common::String &subtitle,
 		const Common::String &prompt, char *target, int maxLength) {

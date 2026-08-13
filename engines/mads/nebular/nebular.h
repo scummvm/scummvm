@@ -80,6 +80,7 @@ public:
 	void setMacintoshOuterMenuActive(bool active);
 	void notifyMacintoshOuterMenuFrameReady();
 	void setMacintoshFullFrameActive(bool active);
+	bool isMacintoshFullFrameActive() const;
 	int runMacintoshCopyProtectionDialog(const Common::String &title,
 		const Common::String &subtitle, const Common::String &prompt,
 		char *target, int maxLength);
