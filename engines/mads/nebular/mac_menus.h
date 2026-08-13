@@ -91,6 +91,9 @@ public:
 	void runSaveDialog(bool saveAs);
 	int runPopupEditor(const Common::Rect &bounds, char *target,
 		int maxLength);
+	int runCopyProtectionDialog(const Common::String &title,
+		const Common::String &subtitle, const Common::String &prompt,
+		char *target, int maxLength);
 	bool runStoryPasswordDialog(bool leavingLocked);
 	void setOuterMenuActive(bool active) { _outerMenuActive = active; }
 	int runDifficultyDialog();

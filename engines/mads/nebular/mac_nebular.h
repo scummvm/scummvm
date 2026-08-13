@@ -113,6 +113,9 @@ public:
 	void presentScreen(int shakeOffset);
 	void showPopup();
 	int editPopup(char *target, int maxLength);
+	int runCopyProtectionDialog(const Common::String &title,
+		const Common::String &subtitle, const Common::String &prompt,
+		char *target, int maxLength);
 	void hidePopup();
 	int getTextWidth(FontPtr font, const char *text, int spacing) const;
 	bool drawText(FontPtr font, Buffer *target, const char *text, int x,

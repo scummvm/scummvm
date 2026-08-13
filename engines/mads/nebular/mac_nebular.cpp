@@ -1339,6 +1339,13 @@ int MacNebular::editPopup(char *target, int maxLength) {
 	return _menus->runPopupEditor(bounds, target, maxLength);
 }
 
+int MacNebular::runCopyProtectionDialog(const Common::String &title,
+		const Common::String &subtitle, const Common::String &prompt,
+		char *target, int maxLength) {
+	return _menus ? _menus->runCopyProtectionDialog(title, subtitle, prompt,
+		target, maxLength) : -1;
+}
+
 int MacNebular::getTextWidth(FontPtr font, const char *text, int) const {
 	if (!_resources || (font != font_main && font != font_conv))
 		return -1;
@@ -1494,6 +1501,13 @@ void RexNebularEngine::notifyMacintoshOuterMenuFrameReady() {
 void RexNebularEngine::setMacintoshFullFrameActive(bool active) {
 	if (_macNebular)
 		_macNebular->setFullFrameActive(active);
+}
+
+int RexNebularEngine::runMacintoshCopyProtectionDialog(
+		const Common::String &title, const Common::String &subtitle,
+		const Common::String &prompt, char *target, int maxLength) {
+	return _macNebular ? _macNebular->runCopyProtectionDialog(title,
+		subtitle, prompt, target, maxLength) : -1;
 }
 
 bool RexNebularEngine::drawPopup() {
