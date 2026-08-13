@@ -23,48 +23,11 @@
 #define MADS_CORE_HIMEM_H
 
 #include "mads/core/pack.h"
-#include "mads/core/ems.h"
 #include "mads/core/mem.h"
 
 namespace MADS {
 
-#define         HIMEM_MAX_RESIDENT        150
-
-struct HimemDirectory {
-	byte memory_type;                           /* Memory type       */
-	byte ems_page_handle;                       /* EMS paging info   */
-	byte level;                                 /* Preload level     */
-	char list[14];                              /* File name info    */
-	word xms_handle;                            /* Handle in XMS     */
-	long size;                                  /* Size in bytes     */
-	int num_packets;                            /* Number of packets */
-	long packet_size[PACK_MAX_LIST_LENGTH];     /* Sizes of packets  */
-};
-
-
-extern byte himem_preload_ems_disabled;
-extern byte himem_preload_xms_disabled;
-
-extern byte himem_directory_allocation;
-extern HimemDirectory himem_directory_save_area;
-extern HimemDirectory *himem_directory;
-extern HimemDirectory *himem_directory_entry;
-extern HimemDirectory *himem_ems_directory;
-
-extern int himem_directory_xms_handle;
-extern int himem_directory_ems_active;
-extern int himem_active;
-
-extern int himem_ems_preloaded;
-extern int himem_xms_preloaded;
-
-
-extern int himem_activate_directory();
-extern int himem_get_directory_entry(int id);
-extern int himem_put_directory_entry(int id);
-extern int  himem_resident(const char *filename);
 extern void himem_catalog();
-extern int himem_directory_setup();
 extern void himem_shutdown();
 extern void himem_startup();
 extern int himem_preload(char *filename, int level);

@@ -213,11 +213,6 @@ struct SpritePageInfo {
 	byte packing_mode;          /* Type of compression involved      */
 	Common::SeekableReadStream *handle; /* File handle for hard disk load    */
 	long base_sprite_offset;    /* Base file offset for sprite data  */
-	int  ems_handle;            /* EMS handle for preloaded sprites  */
-	int  ems_page_marker;       /* EMS page number of current read   */
-	int  ems_page_offset;       /* EMS page offset of current read   */
-	int  xms_handle;            /* XMS handle for preloaded sprites  */
-	long xms_offset;            /* XMS offset for current read       */
 };
 
 typedef SpritePageInfo *SpritePageInfoPtr;

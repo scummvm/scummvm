@@ -29,8 +29,6 @@ namespace MADS {
 
 #define MAX_PEEL_VALUE                  80
 
-#define BUFFER_CREATED_PAGE_HANDLE      16384   /* Mask if EMS page handle created on the fly */
-
 #define BUFFER_PRESERVE                 -1      /* Normal preserve attempt (EMS or disk) */
 #define BUFFER_PRESERVE_RAM             -2      /* Disallows disk preservation           */
 #define BUFFER_ATTEMPT_CONVENTIONAL     -8      /* Attempt conventional preserve         */
@@ -242,11 +240,6 @@ extern void buffer_peel_vert(Buffer *target, int peel,
 
 extern int buffer_to_disk(Buffer *source, int x, int y, int xs, int ys);
 extern void buffer_from_disk(Buffer *source, int buffer_id, int x, int y, int xs, int ys);
-
-extern int buffer_to_ems(Buffer *source, int page_handle,
-	int source_ems_handle, int x, int y, int xs, int ys);
-extern int buffer_from_ems(Buffer *source, int page_handle,
-	int target_ems_handle, int x, int y, int xs, int ys);
 
 extern int buffer_preserve(Buffer *source, int flags,
 	int source_ems_handle, int x, int y, int xs, int ys);

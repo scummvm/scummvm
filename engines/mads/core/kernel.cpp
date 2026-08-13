@@ -33,7 +33,6 @@
 #include "mads/core/error.h"
 #include "mads/core/screen.h"
 #include "mads/core/speech.h"
-#include "mads/core/ems.h"
 #include "mads/core/himem.h"
 #include "mads/core/echo.h"
 #include "mads/core/mcga.h"
@@ -44,7 +43,6 @@
 #include "mads/core/pack.h"
 #include "mads/core/room.h"
 #include "mads/core/sound.h"
-#include "mads/core/xms.h"
 #include "mads/core/tile.h"
 #include "mads/core/popup.h"
 #include "mads/core/pal.h"
@@ -233,8 +231,7 @@ void kernel_game_shutdown() {
 	font_inter = font_main = font_tele = NULL;
 
 	// Deallocate main screen buffer
-	if (work_screen_ems_handle < 0)
-		buffer_free(&scr_main);
+	buffer_free(&scr_main);
 
 	// Turn of speech system
 	if (speech_system_active)
@@ -271,57 +268,12 @@ void kernel_force_refresh() {
 int kernel_game_startup(int game_video_mode, int load_flag,
 		const char *release_version, const char *release_date) {
 	int error_flag = true;
-	int count, count2;
-	int ems_temp;
-	int pages;
-	int reserve[EMS_PAGING_CLASSES];
 	byte *interrupt_stack;
 
 	// Set up EMS/XMS paging system, if any
 	himem_startup();
 
 	speech_init();
-
-	if (ems_exists) {
-		if (load_flag & KERNEL_STARTUP_POPUP) {
-			object_ems_handle = ems_get_page_handle(4);
-
-			ems_temp = ems_get_page_handle(4);
-			if (ems_temp >= 0) popup_preserve_initiator[0] = ems_temp;
-
-			ems_temp = ems_get_page_handle(4);
-			if (ems_temp >= 0) popup_preserve_initiator[1] = ems_temp;
-
-			ems_temp = ems_get_page_handle(4);
-			if (ems_temp >= 0) popup_preserve_initiator[2] = ems_temp;
-		}
-	}
-
-
-	if (ems_exists) {
-		pages = ems_pages_free;
-		for (count = 0; count < EMS_PAGING_CLASSES; count++) {
-			reserve[count] = 0;
-		}
-		if (pages >= 4) {
-			reserve[EMS_PAGING_SYSTEM] = 4;
-			pages -= 4;
-		}
-		ems_temp = MIN(pages >> 1, 64);
-		reserve[EMS_PAGING_ROOM] = ems_temp;
-		pages -= ems_temp;
-
-		ems_temp = pages >> 2;
-		reserve[EMS_PAGING_SECTION] = ems_temp;
-		pages -= ems_temp;
-
-		for (count = 0; count < EMS_PAGING_CLASSES; count++) {
-			ems_paging_reserve[count] = 0;
-			for (count2 = count - 1; count2 >= 0; count2--) {
-				ems_paging_reserve[count] += reserve[count2];
-			}
-		}
-	}
 
 	timer_set_sound_flag(0);
 
@@ -335,14 +287,7 @@ int kernel_game_startup(int game_video_mode, int load_flag,
 	}
 
 	// Initialize the main screen work buffer & its sub-buffers
-	if (work_screen_ems_handle >= 0) {
-		scr_main.x = video_x;
-		scr_main.y = video_y;
-		scr_main.data = ems_page[0];
-		ems_map_buffer(work_screen_ems_handle);
-	} else {
-		buffer_init_name(&scr_main, video_x, video_y, "$scrmain");
-	}
+	buffer_init_name(&scr_main, video_x, video_y, "$scrmain");
 	if (scr_main.data == NULL) {
 		goto done;
 	}

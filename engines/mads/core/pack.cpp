@@ -21,7 +21,6 @@
 
 #include "mads/core/general.h"
 #include "mads/core/dialog.h"
-#include "mads/core/ems.h"
 #include "mads/core/error.h"
 #include "mads/core/fileio.h"
 #include "mads/core/implode.h"
@@ -42,10 +41,6 @@ long pack_write_size;           /* Size left to write  */
 long pack_write_count;          /* Size written so */
 
 int pack_default = PACK_NONE;
-
-int pack_ems_page_handle;
-int pack_ems_page_marker;
-int pack_ems_page_offset;
 
 Common::SeekableReadStream *pack_read_file_handle;
 Common::WriteStream *pack_write_file_handle;
@@ -315,7 +310,6 @@ long pack_data(int packing_flag, long size,
 	int explode_mode = 0;
 	long *loop_value;
 	long *return_value;
-	EmsPtr *ems_dest;
 	int result;
 
 	// Select the read data routine
@@ -329,13 +323,7 @@ long pack_data(int packing_flag, long size,
 	}
 
 	// Select the write data routine
-	if (dest_type == TO_EMS) {
-		pack_write_routine = pack_write_ems;
-		ems_dest = (EmsPtr *)dest;
-		pack_ems_page_handle = ems_dest->handle;
-		pack_ems_page_marker = ems_dest->page_marker;
-		pack_ems_page_offset = ems_dest->page_offset;
-	} else if (dest_type == TO_MEMORY) {
+	if (dest_type == TO_MEMORY) {
 		pack_write_routine = pack_write_memory;
 		pack_write_memory_ptr = (byte *)dest;
 	} else {
@@ -376,7 +364,7 @@ long pack_data(int packing_flag, long size,
 				return_value = &size;  // Fake return value
 				pack_buffer_size = PACK_PFABEXP2_SIZE;
 				explode_mode = 2;
-			} else if ((dest_type == TO_DISK) || (dest_type == TO_EMS)) {
+			} else if (dest_type == TO_DISK) {
 				return_value = &pack_write_count;  // Return value is # bytes written
 				pack_buffer_size = PACK_PFABEXP0_SIZE;
 				explode_mode = 0;
@@ -587,55 +575,6 @@ packed:
 	dx += 2;
 
 	return (long)dx;
-}
-
-word pack_write_ems(char *buffer, word *mysize) {
-	word write_this_time;
-	word write_left;
-	word write_this_loop;
-	byte *from_pointer;
-	byte *unto_pointer;
-
-	if (pack_write_size >= 0) {
-		write_this_time = (word)MIN((long)*mysize, pack_write_size);
-	} else {
-		write_this_time = *mysize;
-	}
-
-	if (write_this_time == 0) goto done;
-
-	write_left = write_this_time;
-	from_pointer = (byte *)buffer;
-	unto_pointer = ems_page[0];
-
-	do {
-		if (pack_ems_page_offset >= EMS_PAGE_SIZE) {
-			pack_ems_page_marker = ems_next_handle_page(pack_ems_page_handle,
-				pack_ems_page_marker);
-			pack_ems_page_offset = 0;
-			if (pack_ems_page_marker < 0) goto done;
-		}
-
-		write_this_loop = MIN((int)(EMS_PAGE_SIZE - pack_ems_page_offset), (int)write_left);
-
-		ems_map_page(0, pack_ems_page_marker);
-
-		memcpy(unto_pointer + pack_ems_page_offset, from_pointer, write_this_loop);
-
-		from_pointer = (byte *)mem_normalize(from_pointer + write_this_loop);
-
-		write_left -= write_this_loop;
-		pack_ems_page_offset += write_this_loop;
-
-		if (pack_write_size > 0) {
-			pack_write_size -= write_this_loop;
-		}
-		pack_write_count += write_this_loop;
-
-	} while (write_left > 0);
-
-done:
-	return write_this_time;
 }
 
 } // namespace MADS

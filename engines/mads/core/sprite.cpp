@@ -27,8 +27,6 @@
 #include "mads/core/pal.h"
 #include "mads/core/env.h"
 #include "mads/core/loader.h"
-#include "mads/core/ems.h"
-#include "mads/core/xms.h"
 #include "mads/core/fileio.h"
 
 namespace MADS {
@@ -588,32 +586,15 @@ SeriesPtr sprite_series_load(const char *filename, int load_flags) {
 		page_info->packing_mode = header.compression;
 		page_info->paging_source = (byte)load_handle.mode;
 
-		if ((page_info->paging_source == LOADER_EMS) ||
-			(page_info->paging_source == LOADER_XMS)) {
-			page_info->ems_handle = load_handle.ems_handle;
-			page_info->ems_page_marker = load_handle.ems_page_marker;
-			page_info->ems_page_offset = load_handle.ems_page_offset;
-			page_info->xms_handle = load_handle.xms_handle;
-			page_info->xms_offset = load_handle.xms_offset;
-			largest_block = 0;
-			total_offset = 0;
-			for (count = 0; count < target->num_sprites; count++) {
-				page_table[count].file_offset = total_offset;
-				page_table[count].memory_needed = sprite[count].memory_needed;
-				total_offset += page_table[count].memory_needed;
-				largest_block = MAX(largest_block, page_table[count].memory_needed);
-			}
-		} else {
-			page_info->handle = load_handle.handle;
-			total_offset = load_handle.handle->pos();
-			page_info->base_sprite_offset = total_offset;
+		page_info->handle = load_handle.handle;
+		total_offset = load_handle.handle->pos();
+		page_info->base_sprite_offset = total_offset;
 
-			largest_block = 0;
-			for (count = 0; count < target->num_sprites; count++) {
-				page_table[count].file_offset = sprite[count].file_offset;
-				page_table[count].memory_needed = sprite[count].memory_needed;
-				largest_block = MAX(largest_block, page_table[count].memory_needed);
-			}
+		largest_block = 0;
+		for (count = 0; count < target->num_sprites; count++) {
+			page_table[count].file_offset = sprite[count].file_offset;
+			page_table[count].memory_needed = sprite[count].memory_needed;
+			largest_block = MAX(largest_block, page_table[count].memory_needed);
 		}
 
 		if (!(load_flags & SPRITE_LOAD_HEADER_ONLY)) {
@@ -1081,13 +1062,8 @@ done:
 
 int sprite_data_load(SeriesPtr series, int id, byte *target) {
 	int error_flag = true;
-	int ems_page_marker = -1;
-	int ems_page_offset;
-	int count;
 	int already_unpacked = false;
 	long my_offset;
-	long my_ems_marker;
-	long my_ems_offset;
 	long decompress_size;
 	byte *decompress_buffer = NULL;
 	SpritePageInfoPtr  page_info;
@@ -1100,59 +1076,34 @@ int sprite_data_load(SeriesPtr series, int id, byte *target) {
 
 	if (page_table[id].memory_needed == 0) goto ok;
 
-	if (page_info->paging_source == LOADER_EMS) {
-		my_offset = page_table[id].file_offset;
-		my_ems_marker = my_offset / EMS_PAGE_SIZE;
-		my_ems_offset = my_offset - (my_ems_marker * EMS_PAGE_SIZE);
-		for (count = 0; count < (int)my_ems_marker; count++) {
-			ems_page_marker = ems_next_handle_page(page_info->ems_handle, ems_page_marker);
-		}
-		ems_page_offset = (int)my_ems_offset + page_info->ems_page_offset;
-		if (ems_page_offset >= EMS_PAGE_SIZE) {
-			ems_page_offset -= EMS_PAGE_SIZE;
-			ems_page_marker = ems_next_handle_page(page_info->ems_handle, ems_page_marker);
-		}
+	my_offset = page_info->base_sprite_offset +
+		page_table[id].file_offset;
 
-		if (!ems_copy_it_down(page_info->ems_handle,
-			&ems_page_marker,
-			&ems_page_offset,
-			target,
-			page_table[id].memory_needed)) goto done;
-	} else if (page_info->paging_source == LOADER_XMS) {
-		my_offset = page_table[id].file_offset;
-		if (!xms_copy(page_table[id].memory_needed,
-			page_info->xms_handle, (XMS)(page_info->xms_offset + my_offset),
-			MEM_CONV, target)) goto done;
-	} else {
-		my_offset = page_info->base_sprite_offset +
-			page_table[id].file_offset;
+	fileio_setpos(page_info->handle, my_offset);
 
-		fileio_setpos(page_info->handle, my_offset);
+	pack_strategy = (page_info->packing_mode == PACK_EXPLODE) ? PACK_PFAB : PACK_NONE;
 
-		pack_strategy = (page_info->packing_mode == PACK_EXPLODE) ? PACK_PFAB : PACK_NONE;
+	if (id < series->num_sprites - 1) {
+		decompress_size = page_table[id + 1].file_offset - page_table[id].file_offset;
+		decompress_buffer = (byte *)mem_get_name(decompress_size, "$sp_data");
+		if (decompress_buffer != NULL) {
+			if (!fileio_fread_f(decompress_buffer, decompress_size, 1, page_info->handle)) goto done;
 
-		if (id < series->num_sprites - 1) {
-			decompress_size = page_table[id + 1].file_offset - page_table[id].file_offset;
-			decompress_buffer = (byte *)mem_get_name(decompress_size, "$sp_data");
-			if (decompress_buffer != NULL) {
-				if (!fileio_fread_f(decompress_buffer, decompress_size, 1, page_info->handle)) goto done;
-
-				if (pack_data(page_info->packing_mode, page_table[id].memory_needed,
-					FROM_MEMORY, decompress_buffer,
-					TO_MEMORY, target) != page_table[id].memory_needed) goto done;
-
-				mem_free(decompress_buffer);
-				decompress_buffer = NULL;
-
-				already_unpacked = true;
-			}
-		}
-
-		if (!already_unpacked) {
 			if (pack_data(page_info->packing_mode, page_table[id].memory_needed,
-				FROM_DISK, page_info->handle,
+				FROM_MEMORY, decompress_buffer,
 				TO_MEMORY, target) != page_table[id].memory_needed) goto done;
+
+			mem_free(decompress_buffer);
+			decompress_buffer = NULL;
+
+			already_unpacked = true;
 		}
+	}
+
+	if (!already_unpacked) {
+		if (pack_data(page_info->packing_mode, page_table[id].memory_needed,
+			FROM_DISK, page_info->handle,
+			TO_MEMORY, target) != page_table[id].memory_needed) goto done;
 	}
 
 ok:

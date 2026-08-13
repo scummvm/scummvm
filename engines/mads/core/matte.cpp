@@ -31,7 +31,6 @@
 #include "mads/core/magic.h"
 #include "mads/core/mcga.h"
 #include "mads/core/tile.h"
-#include "mads/core/ems.h"
 #include "mads/core/keys.h"
 #include "mads/core/timer.h"
 #include "mads/core/sound.h"
@@ -97,16 +96,7 @@ Buffer scr_inter_orig = { 0, 0, NULL }; /* Interface original buffer */
 
 
 int matte_map_work_screen() {
-	int error_flag = false;
-
-	if (work_screen_ems_handle >= 0) {
-		if (ems_mapping_changed) {
-			error_flag = ems_map_buffer(work_screen_ems_handle);
-		}
-		ems_mapping_changed = false;
-	}
-
-	return error_flag;
+	return false;
 }
 
 static void matte_init_series() {

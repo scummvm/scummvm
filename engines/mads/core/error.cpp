@@ -26,7 +26,6 @@
 #include "mads/core/mouse.h"
 #include "mads/core/screen.h"
 #include "mads/core/echo.h"
-#include "mads/core/ems.h"
 #include "mads/core/himem.h"
 #include "mads/core/env.h"
 #include "mads/core/screen.h"

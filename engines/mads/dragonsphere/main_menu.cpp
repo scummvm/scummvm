@@ -45,8 +45,6 @@
 #include "mads/core/btype.h"
 #include "mads/core/hspot.h"
 #include "mads/core/magic.h"
-#include "mads/core/ems.h"
-#include "mads/core/xms.h"
 #include "mads/core/imath.h"
 #include "mads/core/kernel.h"
 #include "mads/core/game.h"

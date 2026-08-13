@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	core/cursor.o \
 	core/cycle.o \
 	core/dialog.o \
-	core/ems.o \
 	core/env.o \
 	core/error.o \
 	core/fileio.o \
@@ -66,7 +65,6 @@ MODULE_OBJS := \
 	core/video.o \
 	core/vocab.o \
 	core/window.o \
-	core/xms.o \
 	nebular/bonus/bonus.o \
 	nebular/bonus/bonus_exe_data.o \
 	nebular/bonus/bonus_text_ui.o \

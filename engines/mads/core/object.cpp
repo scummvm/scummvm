@@ -22,7 +22,6 @@
 #include "mads/core/general.h"
 #include "mads/core/buffer.h"
 #include "mads/core/cycle.h"
-#include "mads/core/ems.h"
 #include "mads/core/env.h"
 #include "mads/core/error.h"
 #include "mads/core/fileio.h"
