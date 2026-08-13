@@ -85,6 +85,7 @@ public:
 	const Graphics::Font *getDialogFont();
 	const Graphics::Font *getInterfaceFont();
 	const Graphics::Font *getGameFont();
+	const Graphics::Font *getAboutFont(int size);
 	const byte *getNativeInterfacePalette() const { return _nativeInterfacePalette; }
 
 	static ResourceID mapResource(const Common::String &filename);

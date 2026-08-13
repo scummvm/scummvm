@@ -56,6 +56,8 @@ private:
 	byte _palette[256 * 3] = {};
 	bool _paletteValid = false;
 	bool _outerMenuActive = false;
+	bool _aboutRequested = false;
+	bool _preferencesRequested = false;
 	uint32 _windowManagerMode = 0;
 	int _pendingCommand = -1;
 
@@ -82,6 +84,8 @@ public:
 	byte getBlackColor();
 	void getMenuColors(byte &menuBlack, byte &menuWhite);
 	void setMenuBarHidden(bool hidden);
+	bool takeAboutRequest();
+	bool takePreferencesRequest();
 	void runPreferencesDialog(bool startup);
 	void runOpenDialog();
 	void runSaveDialog(bool saveAs);

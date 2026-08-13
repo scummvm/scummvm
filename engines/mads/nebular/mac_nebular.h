@@ -77,6 +77,7 @@ private:
 	int getSceneX() const;
 	int getSceneY() const;
 	int getInterfaceY() const;
+	void showAbout();
 public:
 	explicit MacNebular(RexNebularEngine &engine);
 	~MacNebular();
