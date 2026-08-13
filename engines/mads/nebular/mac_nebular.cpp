@@ -180,6 +180,19 @@ static void drawMacAboutText(Graphics::ManagedSurface &surface,
 		surface.w - x, color);
 }
 
+static void drawMacAboutRoom(Graphics::ManagedSurface &output,
+		const Graphics::ManagedSurface &picture, int sceneX, int sceneY,
+		int sceneWidth, int sceneHeight, byte backgroundColor) {
+	output.fillRect(output.getBounds(), backgroundColor);
+	for (int y = 0; y < sceneHeight; ++y) {
+		const byte *source = (const byte *)picture.getBasePtr(
+			0, y * picture.h / sceneHeight);
+		byte *target = (byte *)output.getBasePtr(sceneX, sceneY + y);
+		for (int x = 0; x < sceneWidth; ++x)
+			target[x] = source[x * picture.w / sceneWidth];
+	}
+}
+
 static void setMacInterfacePalette(const MacResourceProvider *resources) {
 	if (resources && resources->getNativeInterface()) {
 		const byte *panelPalette = resources->getNativeInterfacePalette();
@@ -708,6 +721,7 @@ void MacNebular::showAbout() {
 	memcpy(savedPalette, _palette, sizeof(Palette));
 	const bool savedFullFrameActive = _fullFrameActive;
 	setFullFrameActive(true);
+	_aboutActive = true;
 	PauseToken pauseToken = _engine.pauseEngine();
 
 	Palette transitionPalette;
@@ -715,78 +729,45 @@ void MacNebular::showAbout() {
 	magic_fade_to_grey(transitionPalette, nullptr,
 		0, 256, 0, 1, 1, 16);
 
-	const byte blackColor = _menus->getBlackColor();
-	_output.fillRect(_output.getBounds(), blackColor);
 	const int sceneX = getSceneX();
-	const int sceneY = getSceneY();
 	const int sceneWidth = getSceneWidth();
 	const int sceneHeight = getSceneHeight();
-	for (int y = 0; y < sceneHeight; ++y) {
-		const byte *source = (const byte *)picture.getBasePtr(
-			0, y * picture.h / sceneHeight);
-		byte *target = (byte *)_output.getBasePtr(sceneX, sceneY + y);
-		for (int x = 0; x < sceneWidth; ++x)
-			target[x] = source[x * picture.w / sceneWidth];
-	}
-
-	drawMacAboutText(_output, *titleFont, "From MicroProse Software.",
-		sceneX + titleX, sceneY + titleY, blackColor);
-	drawMacAboutText(_output, *textFont, "For hints and help call:",
-		sceneX + textX, sceneY + firstTextY, blackColor);
-	drawMacAboutText(_output, *textFont, "1 - 900 - 933 - PLAY",
-		sceneX + helpX, sceneY + helpY, blackColor);
-	drawMacAboutText(_output, *textFont, "For customer service call:",
-		sceneX + serviceX, sceneY + serviceY, blackColor);
-	drawMacAboutText(_output, *textFont, "1 - 410 - 771 - 1151",
-		sceneX + phoneX, sceneY + phoneY, blackColor);
-	_menus->draw();
+	// About owns the full 320x200 viewer and has no inventory panel. Center
+	// its 320x156 room inside that viewer instead of using gameplay's
+	// panel-relative scene position.
+	const int sceneY = kMacDesktopSceneY +
+		(kMacFullFrameHeight - sceneHeight) / 2;
+	drawMacAboutRoom(_output, picture, sceneX, sceneY, sceneWidth,
+		sceneHeight, 0);
 	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
 		0, 0, _output.w, _output.h);
 	g_system->updateScreen();
 	magic_fade_from_grey((RGBcolor *)transitionPalette, aboutPalette,
 		0, 256, 0, 1, 1, 16);
 
-	bool pressed = false;
-	bool released = false;
-	bool pressedMouse = false;
-	uint32 releaseTime = 0;
-	g_system->delayMillis(166);
-	while (!_engine.shouldQuit() &&
-			(!pressed || !released || g_system->getMillis() < releaseTime)) {
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				_engine.quitGame();
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				if (!pressed) {
-					pressed = true;
-					pressedMouse = true;
-					releaseTime = g_system->getMillis() + 333;
-				}
-				break;
-			case Common::EVENT_KEYDOWN:
-				if (!pressed) {
-					pressed = true;
-					pressedMouse = false;
-					releaseTime = g_system->getMillis() + 333;
-				}
-				break;
-			case Common::EVENT_LBUTTONUP:
-				if (pressed && pressedMouse)
-					released = true;
-				break;
-			case Common::EVENT_KEYUP:
-				if (pressed && !pressedMouse)
-					released = true;
-				break;
-			default:
-				break;
-			}
-		}
-		g_system->delayMillis(10);
-	}
+	byte blackColor;
+	byte whiteColor;
+	_menus->getMenuColors(blackColor, whiteColor);
+	drawMacAboutRoom(_output, picture, sceneX, sceneY, sceneWidth,
+		sceneHeight, blackColor);
+	// CODE 6 selects Palette Manager entry zero before drawing the About
+	// strings. That semantic entry is the light text color; it is not the
+	// room picture's indexed-color slot zero, which is black in this port.
+	drawMacAboutText(_output, *titleFont, "From MicroProse Software.",
+		sceneX + titleX, sceneY + titleY, whiteColor);
+	drawMacAboutText(_output, *textFont, "For hints and help call:",
+		sceneX + textX, sceneY + firstTextY, whiteColor);
+	drawMacAboutText(_output, *textFont, "1 - 900 - 933 - PLAY",
+		sceneX + helpX, sceneY + helpY, whiteColor);
+	drawMacAboutText(_output, *textFont, "For customer service call:",
+		sceneX + serviceX, sceneY + serviceY, whiteColor);
+	drawMacAboutText(_output, *textFont, "1 - 410 - 771 - 1151",
+		sceneX + phoneX, sceneY + phoneY, whiteColor);
+	_menus->draw();
+	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
+		0, 0, _output.w, _output.h);
+	g_system->updateScreen();
+	_menus->waitForAboutDismissal();
 
 	if (!_engine.shouldQuit()) {
 		memcpy(transitionPalette, aboutPalette, sizeof(Palette));
@@ -794,7 +775,6 @@ void MacNebular::showAbout() {
 			0, 256, 0, 1, 1, 16);
 	}
 	_output.copyFrom(savedOutput);
-	_menus->draw();
 	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
 		0, 0, _output.w, _output.h);
 	g_system->updateScreen();
@@ -805,6 +785,7 @@ void MacNebular::showAbout() {
 		mcga_setpal(&savedPalette);
 	}
 	setFullFrameActive(savedFullFrameActive);
+	_aboutActive = false;
 	_engine._screen->markAllDirty();
 }
 
@@ -1017,6 +998,12 @@ void MacNebular::getPalette(RGBcolor *palette, int firstColor,
 }
 
 void MacNebular::presentScreen(int shakeOffset) {
+	// CODE 6 presents About through a separate game window after hiding the
+	// application's current window. While the Rex-local modal owns our single
+	// output surface, keep ordinary MADS presentation from replacing it.
+	if (_aboutActive)
+		return;
+
 	// Keep the original Macintosh composition on its previous frame while
 	// the shared engine initializes the next room and interface.
 	if (_useOriginalMenus && !_fullFrameActive &&
