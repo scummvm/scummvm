@@ -81,6 +81,8 @@ public:
 	void getMenuColors(byte &menuBlack, byte &menuWhite);
 	void setMenuBarHidden(bool hidden);
 	void runPreferencesDialog(bool startup);
+	void runOpenDialog();
+	void runSaveDialog(bool saveAs);
 	void setOuterMenuActive(bool active) { _outerMenuActive = active; }
 	int runDifficultyDialog();
 	int selectResumeSlot();

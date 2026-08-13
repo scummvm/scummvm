@@ -19,15 +19,18 @@
  *
  */
 
+#include "common/array.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
 #include "graphics/paletteman.h"
+#include "gui/message.h"
 #include "gui/saveload.h"
 #include "mads/core/config.h"
 #include "mads/core/game.h"
@@ -49,6 +52,8 @@ enum {
 	kDifficultyDialog = 2500,
 	kStartupPreferencesDialog = 2005,
 	kPreferencesDialog = 2105,
+	kSaveDialog = 3001,
+	kOpenDialog = 3010,
 
 	kFileMenu = 1,
 	kOptionsMenu = 3,
@@ -70,6 +75,43 @@ enum {
 	kWindow150 = (2000 << 16) | 1,
 	kWindow200 = (2000 << 16) | 2
 };
+
+void collectSaves(RexNebularEngine &engine, Common::StringArray &names,
+		Common::Array<int> &slots) {
+	const SaveStateList saves = engine.listSaves();
+	for (SaveStateList::const_iterator save = saves.begin();
+			save != saves.end(); ++save) {
+		if (save->getSaveSlot() < 1 || save->getSaveSlot() > 99)
+			continue;
+		names.push_back(save->getDescription());
+		slots.push_back(save->getSaveSlot());
+	}
+}
+
+int findSaveSlot(const Common::Array<int> &slots, int slot) {
+	for (uint index = 0; index < slots.size(); ++index) {
+		if (slots[index] == slot)
+			return index;
+	}
+	return -1;
+}
+
+int findSaveName(const Common::StringArray &names,
+		const Common::String &name) {
+	for (uint index = 0; index < names.size(); ++index) {
+		if (names[index].equalsIgnoreCase(name))
+			return index;
+	}
+	return -1;
+}
+
+int firstFreeSaveSlot(const Common::Array<int> &slots) {
+	for (int slot = 1; slot <= 99; ++slot) {
+		if (findSaveSlot(slots, slot) < 0)
+			return slot;
+	}
+	return -1;
+}
 
 struct MenuResourceItem {
 	Common::String text;
@@ -297,12 +339,15 @@ void MacNebularMenu::dispatchCommand(int commandId) {
 	switch (commandId) {
 	case kFileOpen:
 		if (_engine.canLoadGameStateCurrently(nullptr))
-			_engine.loadGameDialog();
+			runOpenDialog();
 		break;
 	case kFileSave:
+		if (_engine.canSaveGameStateCurrently(nullptr))
+			runSaveDialog(false);
+		break;
 	case kFileSaveAs:
 		if (_engine.canSaveGameStateCurrently(nullptr))
-			_engine.saveGameDialog();
+			runSaveDialog(true);
 		break;
 	case kFilePreferences:
 		runPreferencesDialog(false);
@@ -446,6 +491,103 @@ void MacNebularMenu::runPreferencesDialog(bool startup) {
 	_engine.setMacintoshHideMenuBar(dialog.isItemChecked(4), persist);
 	_engine.setMacintoshPreferencesAtStartup(dialog.isItemChecked(8),
 		persist);
+}
+
+void MacNebularMenu::runOpenDialog() {
+	if (!initializeWindowManager())
+		return;
+
+	Common::StringArray names;
+	Common::Array<int> slots;
+	collectSaves(_engine, names, slots);
+	if (slots.empty())
+		return;
+
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager);
+	if (!dialog.load(kOpenDialog))
+		return;
+	dialog.center();
+	dialog.setItemEnabled(5, false);
+	dialog.setItemEnabled(6, false);
+	int selection = findSaveSlot(slots, game.last_save + 1);
+	if (selection < 0)
+		selection = 0;
+	dialog.setList(7, names, selection);
+
+	_activeDialog = &dialog;
+	const int result = dialog.runModal(1, 3);
+	_activeDialog = nullptr;
+	if (result != 1)
+		return;
+
+	selection = dialog.getListSelection(7);
+	if (selection < 0 || (uint)selection >= slots.size())
+		return;
+	const int slot = slots[selection];
+	if (_engine.loadGameState(slot).getCode() == Common::kNoError)
+		game.last_save = slot - 1;
+}
+
+void MacNebularMenu::runSaveDialog(bool saveAs) {
+	Common::StringArray names;
+	Common::Array<int> slots;
+	collectSaves(_engine, names, slots);
+	const int currentSlot = game.last_save + 1;
+	const int currentIndex = findSaveSlot(slots, currentSlot);
+	if (!saveAs && currentIndex >= 0) {
+		const int previousLastSave = game.last_save;
+		game.last_save = currentSlot - 1;
+		if (_engine.saveGameState(currentSlot,
+				names[currentIndex]).getCode() != Common::kNoError)
+			game.last_save = previousLastSave;
+		return;
+	}
+
+	if (!initializeWindowManager())
+		return;
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager);
+	if (!dialog.load(kSaveDialog))
+		return;
+	dialog.center();
+	dialog.setItemEnabled(4, false);
+	dialog.setItemEnabled(5, false);
+	dialog.setList(8, names, currentIndex >= 0 ? currentIndex : 0);
+	if (currentIndex >= 0)
+		dialog.setItemText(7, names[currentIndex]);
+
+	_activeDialog = &dialog;
+	const int result = dialog.runModal(1, 2);
+	_activeDialog = nullptr;
+	if (result != 1)
+		return;
+
+	Common::String name = dialog.getItemText(7);
+	if (name.empty()) {
+		const int selection = dialog.getListSelection(8);
+		if (selection >= 0 && (uint)selection < names.size())
+			name = names[selection];
+	}
+	if (name.empty())
+		return;
+
+	const int matchingIndex = findSaveName(names, name);
+	int slot = matchingIndex >= 0 ? slots[matchingIndex] :
+		firstFreeSaveSlot(slots);
+	if (slot < 0)
+		return;
+	if (matchingIndex >= 0) {
+		GUI::MessageDialog replaceDialog(
+			Common::U32String::format(_("A saved game named '%s' already "
+				"exists. Replace it?"), name.c_str()),
+			_("Replace"), _("Cancel"));
+		if (replaceDialog.runModal() != GUI::kMessageOK)
+			return;
+	}
+
+	const int previousLastSave = game.last_save;
+	game.last_save = slot - 1;
+	if (_engine.saveGameState(slot, name).getCode() != Common::kNoError)
+		game.last_save = previousLastSave;
 }
 
 void MacNebularMenu::menuCallback(int commandId, Common::String &, void *data) {
