@@ -307,10 +307,16 @@ static Common::String getMacInterfaceWord(int wordId) {
 	return Common::String(text);
 }
 
+static void drawMacScrollbarArrow(Graphics::ManagedSurface &panel,
+		const int *x, const int *y, int count, const Common::Rect &bounds,
+		byte color) {
+	panel.drawPolygonScan(x, y, count, bounds, color);
+	for (int i = 0; i < count; ++i)
+		panel.drawLine(x[i], y[i], x[(i + 1) % count],
+			y[(i + 1) % count], color);
+}
+
 static void drawMacInterfaceScrollbar(Graphics::ManagedSurface &panel) {
-	// CODE 7 draws this control directly in native coordinates. The arrow
-	// line pattern is invisible in the normal state; the three frames are
-	// the complete control until the inventory exceeds five items.
 	const Common::Rect scrollbar(120, 2, 136, 86);
 	const Common::Rect up(120, 2, 136, 18);
 	const Common::Rect down(120, 70, 136, 86);
@@ -319,10 +325,28 @@ static void drawMacInterfaceScrollbar(Graphics::ManagedSurface &panel) {
 	panel.frameRect(down, kMacNormalTextColor);
 
 	if (inven_num_objects > 5) {
-		panel.fillRect(Common::Rect(121, 18, 135, 70), 4);
+		// CODE 7 records these QuickDraw line paths as regions, then paints
+		// them. The coordinates are native 512x88 panel coordinates.
+		const int upX[] = { 122, 127, 128, 133, 128, 128, 127, 127 };
+		const int upY[] = { 9, 4, 4, 9, 9, 15, 15, 9 };
+		const int downX[] = { 122, 127, 127, 128, 128, 133, 128, 127 };
+		const int downY[] = { 79, 79, 73, 73, 79, 79, 84, 84 };
+		drawMacScrollbarArrow(panel, upX, upY, ARRAYSIZE(upX),
+			Common::Rect(122, 4, 134, 16),
+			scrollbar_active == SCROLL_UP ? kMacLeftSelectColor :
+			kMacNormalTextColor);
+		drawMacScrollbarArrow(panel, downX, downY, ARRAYSIZE(downX),
+			Common::Rect(122, 73, 134, 85),
+			scrollbar_active == SCROLL_DOWN ? kMacLeftSelectColor :
+			kMacNormalTextColor);
+
+		const int lastPage = inven_num_objects - 5;
+		const int visibleFirst = MIN(first_inven, lastPage);
 		const int thumbTop = 18 +
-			(first_inven * 48) / (inven_num_objects - 5);
+			(visibleFirst * 48) / lastPage;
+		panel.fillRect(Common::Rect(122, thumbTop, 134, thumbTop + 4), 4);
 		panel.frameRect(Common::Rect(121, thumbTop, 135, thumbTop + 4),
+			scrollbar_active == SCROLL_ELEVATOR ? kMacLeftSelectColor :
 			kMacNormalTextColor);
 	}
 }
