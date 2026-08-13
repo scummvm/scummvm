@@ -45,7 +45,7 @@ void runTextView(RexNebularEngine &engine, const char *resource) {
 	TextView::Presentation presentation;
 	presentation.bufferHeight = 210;
 	presentation.visibleHeight = 200;
-	presentation.matteHeight = presentation.visibleHeight;
+	presentation.matteHeight = 156;
 	presentation.drawBoundaryLines = false;
 	presentation.macintoshFullFrame = true;
 
