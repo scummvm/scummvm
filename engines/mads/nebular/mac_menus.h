@@ -42,6 +42,7 @@ namespace RexNebular {
 
 class MacResourceProvider;
 class RexNebularEngine;
+class MacNebularDialog;
 
 class MacNebularMenu {
 private:
@@ -50,6 +51,7 @@ private:
 	Graphics::ManagedSurface &_screen;
 	Graphics::MacWindowManager *_windowManager = nullptr;
 	Graphics::MacMenu *_menu = nullptr;
+	MacNebularDialog *_activeDialog = nullptr;
 	byte _palette[256 * 3] = {};
 	bool _paletteValid = false;
 	bool _outerMenuActive = false;
