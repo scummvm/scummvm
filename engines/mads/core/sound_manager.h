@@ -166,7 +166,7 @@ public:
 	/**
 	 * Stop queueing sound commands, and execute any previously queued ones
 	 */
-	void startQueuedCommands();
+	virtual void startQueuedCommands();
 
 	/**
 	 * Set the master volume

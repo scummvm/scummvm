@@ -24,6 +24,7 @@
 #include "mads/core/pal.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/rooms/section1.h"
+#include "mads/nebular/sound/mac_sound.h"
 #include "mads/nebular/global.h"
 
 namespace MADS {
@@ -136,7 +137,9 @@ void section_1_music() {
 	if (config_file.music_flag) {
 		switch (new_room) {
 		case 101:
-			g_engine->_soundManager->command(11, 0);
+			if (!Sound::commandMacintoshSound(Sound::kMacSoundPlayPriority,
+					1011, 0, 0, 0, true))
+				g_engine->_soundManager->command(11, 0);
 			break;
 		case 102:
 			g_engine->_soundManager->command(12, 0);
