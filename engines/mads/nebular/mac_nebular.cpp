@@ -456,9 +456,22 @@ int MacNebular::selectResumeSlot() {
 }
 
 void MacNebular::setOuterMenuActive(bool active) {
+	const bool wasActive = _fullFrameActive;
 	setFullFrameActive(active);
 	if (_menus)
 		_menus->setOuterMenuActive(active);
+
+	if (wasActive && !active) {
+		const byte frameBlack = _useOriginalMenus && _menus ?
+			_menus->getBlackColor() : 0;
+		_output.fillRect(_output.getBounds(), frameBlack);
+		if (_useOriginalMenus && _menus)
+			_menus->draw();
+		g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
+			0, 0, kMacScreenWidth, _output.h);
+		g_system->updateScreen();
+		_engine._screen->markAllDirty();
+	}
 }
 
 Common::Point MacNebular::screenToGame(const Common::Point &point) const {

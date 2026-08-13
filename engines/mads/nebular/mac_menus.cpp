@@ -444,6 +444,7 @@ void MacNebularMenu::dispatchCommand(int commandId) {
 		break;
 	case kFileQuit:
 		_engine.quitGame();
+		game.going = false;
 		break;
 	case kOptionNoSound: {
 		const bool enableSound = !_engine._musicFlag && !_engine._soundFlag;
@@ -498,7 +499,7 @@ void MacNebularMenu::syncPalette() {
 }
 
 bool MacNebularMenu::processEvent(Common::Event &event) {
-	if (!_windowManager)
+	if (!_windowManager || !_menu)
 		return false;
 
 	updateState();
@@ -704,10 +705,14 @@ void macintoshGameMenu() {
 	const int requestedMenu = kernel.activate_menu;
 	kernel.activate_menu = GAME_NO_MENU;
 
-	if (requestedMenu == GAME_DIFFICULTY_MENU)
+	if (requestedMenu == GAME_DIFFICULTY_MENU) {
 		((RexNebularEngine *)g_engine)->selectMacintoshDifficulty();
-	else if (requestedMenu != GAME_NO_MENU)
+	} else if (requestedMenu != GAME_NO_MENU) {
 		g_engine->openMainMenuDialog();
+
+		if (g_engine->shouldQuit())
+			game.going = false;
+	}
 }
 
 } // namespace RexNebular
