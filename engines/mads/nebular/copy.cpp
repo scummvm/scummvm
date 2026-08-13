@@ -32,6 +32,7 @@
 #include "mads/core/video.h"
 #include "mads/nebular/copy.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/nebular.h"
 #include "mads/nebular/popup.h"
 #include "mads/mads.h"
 
