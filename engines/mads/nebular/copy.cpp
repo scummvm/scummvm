@@ -131,8 +131,21 @@ static int copy_pop_and_ask() {
 			goto finish;
 
 		if (!count) {
-			Common::strcpy_s(work_buf, "REX NEBULAR version ");
-			Common::strcat_s(work_buf, global_release_version);
+			if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
+				const char versionPrefix[] = "Rex Nebular v";
+				Common::String version =
+					static_cast<RexNebularEngine *>(g_engine)->
+					getMacintoshApplicationVersion();
+				if (version.hasPrefix(versionPrefix))
+					version = version.substr(sizeof(versionPrefix) - 1);
+
+				Common::strcpy_s(work_buf,
+					"Macintosh REX NEBULAR version ");
+				Common::strcat_s(work_buf, version.c_str());
+			} else {
+				Common::strcpy_s(work_buf, "REX NEBULAR version ");
+				Common::strcat_s(work_buf, global_release_version);
+			}
 			popup_center_string(work_buf, true);
 			popup_write_string("\n");
 			popup_center_string("(Copy Protection, for your convenience)", false);

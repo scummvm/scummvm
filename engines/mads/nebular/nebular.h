@@ -69,6 +69,7 @@ public:
 	int getMacintoshDisplaySize() const;
 	bool getMacintoshHideMenuBar() const;
 	bool getMacintoshPreferencesAtStartup() const;
+	Common::String getMacintoshApplicationVersion() const;
 	bool getMacintoshStoryLocked() const;
 	bool verifyMacintoshStoryPassword(const Common::String &password) const;
 	void setMacintoshDisplaySize(int displaySize, bool persist);

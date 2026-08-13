@@ -583,6 +583,10 @@ void MacNebular::setPreferencesAtStartup(bool show, bool persist) {
 	}
 }
 
+Common::String MacNebular::getApplicationVersion() const {
+	return _resources ? _resources->getApplicationVersion() : Common::String();
+}
+
 bool MacNebular::verifyStoryPassword(
 		const Common::String &password) const {
 	return password == _storyPassword || password == "hicuri" ||
@@ -1439,6 +1443,10 @@ bool RexNebularEngine::getMacintoshHideMenuBar() const {
 
 bool RexNebularEngine::getMacintoshPreferencesAtStartup() const {
 	return _macNebular && _macNebular->getPreferencesAtStartup();
+}
+
+Common::String RexNebularEngine::getMacintoshApplicationVersion() const {
+	return _macNebular ? _macNebular->getApplicationVersion() : Common::String();
 }
 
 bool RexNebularEngine::getMacintoshStoryLocked() const {
