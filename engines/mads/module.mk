@@ -75,6 +75,7 @@ MODULE_OBJS := \
 	nebular/main.o \
 	nebular/main_menu.o \
 	nebular/mac_frontend.o \
+	nebular/mac_dialogs.o \
 	nebular/mac_menus.o \
 	nebular/mac_nebular.o \
 	nebular/mac_resources.o \
