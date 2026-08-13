@@ -117,6 +117,22 @@ Room AvalancheEngine::_whereIs[29] = {
 void AvalancheEngine::handleKeyDown(Common::Event &event) {
 	_sound->click();
 
+	if (event.kbd.flags & Common::KBD_ALT) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_b:
+			callVerb(kVerbCodeBoss);
+			return;
+		case Common::KEYCODE_x:
+			callVerb(kVerbCodeQuit);
+			return;
+		case Common::KEYCODE_d:
+			_dialogs->displayText("Wrong game!");
+			return;
+		default:
+			break;
+		}
+	}
+
 	if ((Common::KEYCODE_F1 <= event.kbd.keycode) && (event.kbd.keycode <= Common::KEYCODE_F15))
 		_parser->handleFunctionKey(event);
 	else if ((32 <= event.kbd.ascii) && (event.kbd.ascii <= 128) && (event.kbd.ascii != 47))
