@@ -2113,7 +2113,11 @@ static void kernel_message_update(KernelMessagePtr my_message) {
 		}
 	}
 
-	width = font_string_width(kernel_message_font, my_message->message, kernel_message_spacing);
+	width = g_engine->getMacintoshTextWidth(kernel_message_font,
+		my_message->message, kernel_message_spacing);
+	if (width < 0)
+		width = font_string_width(kernel_message_font,
+			my_message->message, kernel_message_spacing);
 
 	if (my_message->flags & (KERNEL_MESSAGE_CENTER | KERNEL_MESSAGE_RIGHT)) {
 		if (my_message->flags & KERNEL_MESSAGE_CENTER) {
@@ -2139,7 +2143,9 @@ static void kernel_message_update(KernelMessagePtr my_message) {
 	}
 
 	if (my_message->matte_message_handle < 0) {
-		matte_id = matte_add_message(kernel_message_font, my_message->message, xx, yy, my_message->color, kernel_message_spacing);
+		matte_id = matte_add_message(kernel_message_font, my_message->message,
+			xx, yy, my_message->color, kernel_message_spacing,
+			g_engine->hasMacintoshInterface());
 		if (matte_id < 0) goto done;
 		my_message->matte_message_handle = matte_id;
 	}

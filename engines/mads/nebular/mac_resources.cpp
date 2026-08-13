@@ -225,6 +225,14 @@ const Graphics::Font *MacResourceProvider::getInterfaceFont() {
 		Graphics::kMacFontGeneva, 10, Graphics::kMacFontRegular));
 }
 
+const Graphics::Font *MacResourceProvider::getGameFont() {
+	if (!_fontManager)
+		return nullptr;
+
+	return _fontManager->getFont(Graphics::MacFont(
+		Graphics::kMacFontGeneva, 10, Graphics::kMacFontBold));
+}
+
 MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::String &filename) {
 	Common::String name(filename);
 	name.toUppercase();
@@ -400,8 +408,7 @@ Common::SeekableReadStream *MacResourceProvider::createFontResource() {
 	// The native executable consistently selects bold Geneva (font ID 3) at
 	// 10 points for in-game text. MADS' DOS renderer expects its own packed
 	// font format, so rasterize the native system font into that format.
-	const Graphics::Font *font = _fontManager->getFont(Graphics::MacFont(
-		Graphics::kMacFontGeneva, 10, Graphics::kMacFontBold));
+	const Graphics::Font *font = getGameFont();
 	if (!font)
 		return nullptr;
 

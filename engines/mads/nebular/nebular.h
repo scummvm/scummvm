@@ -94,6 +94,10 @@ public:
 	bool drawPopup() override;
 	int editMacintoshPopup(char *target, int maxLength) override;
 	void onPopupDestroyed() override;
+	int getMacintoshTextWidth(FontPtr font, const char *text,
+		int spacing) const override;
+	bool drawMacintoshText(FontPtr font, Buffer *target, const char *text,
+		int x, int y, int color, int spacing) const override;
 	bool getInterfaceSentenceColors(byte &foreground, byte &shadow) const override;
 	bool hasMacintoshInterface() const override;
 	bool setMacintoshPalette(const RGBcolor *palette, int firstColor,

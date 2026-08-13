@@ -133,7 +133,7 @@ extern void matte_deallocate_series(int id, int free_memory);
 extern int matte_allocate_series(SeriesPtr series, int bonus_series_number);
 
 extern int matte_add_message(FontPtr font, char *text, int x, int y,
-	int message_color, int auto_spacing);
+	int message_color, int auto_spacing, bool useMacintoshFont = false);
 extern void matte_clear_message(int handle);
 
 extern int matte_allocate_image();

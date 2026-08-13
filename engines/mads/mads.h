@@ -186,6 +186,11 @@ public:
 	virtual bool drawPopup() { return false; }
 	virtual int editMacintoshPopup(char *, int) { return -1; }
 	virtual void onPopupDestroyed() {}
+	virtual int getMacintoshTextWidth(FontPtr, const char *, int) const {
+		return -1;
+	}
+	virtual bool drawMacintoshText(FontPtr, Buffer *, const char *, int,
+		int, int, int) const { return false; }
 	virtual bool getInterfaceSentenceColors(byte &, byte &) const {
 		return false;
 	}
