@@ -64,6 +64,21 @@ extern int room_load_variant(Load *load_handle, Buffer *depth, Buffer *walk, Buf
  */
 extern int buffer_legal(const Buffer &special, int orig_wrap, int x1, int y1, int x2, int y2);
 
+/**
+ * Rex Nebular's version of sort_insertion_8() (see core/sort.h), called from it whenever
+ * the active game is Rex Nebular. Unlike the generic engine's version, this is a faithful,
+ * instruction-for-instruction port of Rex's own sort_insertion_8 disassembly, which is a
+ * genuinely different (and, unlike the generic version, stable) algorithm: on each pass it
+ * restarts the scan from index 0, and on finding an inversion extracts the earlier (larger)
+ * of the two out-of-order elements, closing the gap left behind, then re-inserts it just
+ * after the last remaining element that is <= it. This stability matters because
+ * magic_map_to_grey_ramp() (see core/magic.cpp) relies on tied elements keeping their
+ * original relative order to consistently bucket colors with identical grey-ramp hash
+ * values; the generic version's tie-breaking differs and produces a visibly different
+ * (incorrect) grey ramp for Rex.
+ */
+extern void sort_insertion_8(int elements, byte *id, byte *value);
+
 } // namespace RexNebular
 } // namespace MADS
 

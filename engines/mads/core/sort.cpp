@@ -20,6 +20,8 @@
  */
 
 #include "mads/core/general.h"
+#include "mads/mads.h"
+#include "mads/nebular/extra.h"
 
 namespace MADS {
 
@@ -121,6 +123,11 @@ void sort_insertion_16(int elements, byte *id, word *value) {
 }
 
 void sort_insertion_8(int elements, byte *id, byte *value) {
+	if (g_engine->getGameID() == GType_RexNebular) {
+		RexNebular::sort_insertion_8(elements, id, value);
+		return;
+	}
+
 	int  restart_mark = 0;
 	byte my_value;
 	byte my_id;
