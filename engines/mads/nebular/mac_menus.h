@@ -83,6 +83,7 @@ public:
 	void runPreferencesDialog(bool startup);
 	void runOpenDialog();
 	void runSaveDialog(bool saveAs);
+	bool runStoryPasswordDialog(bool leavingLocked);
 	void setOuterMenuActive(bool active) { _outerMenuActive = active; }
 	int runDifficultyDialog();
 	int selectResumeSlot();
