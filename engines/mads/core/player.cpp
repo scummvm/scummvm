@@ -31,7 +31,6 @@
 #include "mads/core/matte.h"
 #include "mads/core/error.h"
 #include "mads/core/pal.h"
-#include "mads/core/himem.h"
 #include "mads/core/object.h"
 #include "mads/mads.h"
 #include "mads/nebular/extra.h"
@@ -670,17 +669,6 @@ void player_preserve_palette() {
 }
 
 void player_himem_preload(const char *name, int level) {
-	char temp_buf[80];
-	int count;
-
-	for (count = 1; count <= 9; count++) {
-		if (count != 5) {
-			Common::strcpy_s(temp_buf, name);
-			Common::strcat_s(temp_buf, "_0");
-			temp_buf[strlen(temp_buf) - 1] += count;
-			himem_preload_series(kernel_full_name(0, 0, -1, temp_buf, KERNEL_SS), level);
-		}
-	}
 }
 
 /**

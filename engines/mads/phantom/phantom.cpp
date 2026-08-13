@@ -25,7 +25,6 @@
 #include "mads/core/conv.h"
 #include "mads/core/env.h"
 #include "mads/core/game.h"
-#include "mads/core/himem.h"
 #include "mads/core/imath.h"
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
@@ -152,18 +151,6 @@ void PhantomEngine::global_init_code() {
 	/* Global preload items */
 
 	player_himem_preload("RAL", GLOBAL);
-	himem_preload_series("*BOX", GLOBAL);
-	himem_preload_series("*LOGO", GLOBAL);
-	himem_preload_series("*MENU", GLOBAL);
-	himem_preload_series("*CURSOR", GLOBAL);
-	himem_preload_series("*FACERAL", GLOBAL);
-	himem_preload_series("*RRD_8", GLOBAL);
-	himem_preload_series("*RRD_9", GLOBAL);
-	himem_preload_series("*RDR_6", GLOBAL);
-	himem_preload_series("*RDR_9", GLOBAL);
-	himem_preload_series("*RTK_6", GLOBAL);
-	himem_preload_series("*RTK_9", GLOBAL);
-	himem_preload_series("*RALRH_9", GLOBAL);
 }
 
 void PhantomEngine::section_music(int section_num) {

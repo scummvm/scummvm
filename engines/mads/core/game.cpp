@@ -48,7 +48,6 @@
 #include "mads/core/error.h"
 #include "mads/core/popup.h"
 #include "mads/core/object.h"
-#include "mads/core/himem.h"
 #include "mads/core/magic.h"
 #include "mads/core/btype.h"
 #include "mads/core/pack.h"
@@ -1463,9 +1462,6 @@ void game_control() {
 
 			new_section = new_room / 100;
 
-			// Flush all EMS/XMS preloads at the room level
-			himem_flush(ROOM);
-
 			// Rex Nebular menu display
 			if (g_engine->getGameID() == GType_RexNebular && kernel.activate_menu != GAME_NO_MENU &&
 					player.commands_allowed && !global[RexNebular::kCopyProtectFailed]) {
@@ -1503,9 +1499,6 @@ void game_control() {
 
 		// Shut down current section
 		kernel_section_shutdown();
-
-		// Flush all EMS/XMS preloads at the section level
-		himem_flush(SECTION);
 	}
 
 	// Shut down the game

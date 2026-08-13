@@ -28,7 +28,6 @@
 #include "mads/core/error.h"
 #include "mads/core/fileio.h"
 #include "mads/core/game.h"
-#include "mads/core/himem.h"
 #include "mads/core/imath.h"
 #include "mads/core/keys.h"
 #include "mads/core/kernel.h"
@@ -290,10 +289,6 @@ static void game_main(int argc, const char **argv) {
 	} else {
 		art_hags_are_on_hd = false;
 	}
-
-	himem_startup();
-
-	himem_shutdown();
 
 	if (!mads_mode && (env_search_mode == ENV_SEARCH_MADS_PATH))
 		error("false start");

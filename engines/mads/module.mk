@@ -25,7 +25,6 @@ MODULE_OBJS := \
 	core/game.o \
 	core/global.o \
 	core/heap.o \
-	core/himem.o \
 	core/hspot.o \
 	core/image.o \
 	core/imath.o \

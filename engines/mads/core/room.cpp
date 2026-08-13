@@ -32,7 +32,6 @@
 #include "mads/core/matte.h"
 #include "mads/core/mads.h"
 #include "mads/core/mem.h"
-#include "mads/core/himem.h"
 #include "mads/core/sprite.h"
 #include "mads/core/loader.h"
 #include "mads/core/tile.h"
@@ -527,14 +526,6 @@ void room_file_name(char *target, const char *suffix, int code, char *main_name,
 }
 
 void room_himem_preload(int roomNum, int level) {
-	himem_preload_series(kernel_full_name(roomNum, 0, -1, NULL, KERNEL_DAT), level);
-	himem_preload_series(kernel_full_name(roomNum, 0, -1, NULL, KERNEL_HH), level);
-
-	himem_preload_series(kernel_full_name(roomNum, 0, -1, NULL, KERNEL_MM), level);
-	himem_preload_series(kernel_full_name(roomNum, 0, -1, NULL, KERNEL_WW), level);
-
-	himem_preload_series(kernel_full_name(roomNum, 0, 0, NULL, KERNEL_MM), level);
-	himem_preload_series(kernel_full_name(roomNum, 0, 0, NULL, KERNEL_WW), level);
 }
 
 int room_picture_load(int roomId, Buffer *picture, int load_flags) {

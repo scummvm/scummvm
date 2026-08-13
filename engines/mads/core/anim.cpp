@@ -22,7 +22,6 @@
 #include "common/algorithm.h"
 #include "common/memstream.h"
 #include "mads/core/anim.h"
-#include "mads/core/himem.h"
 #include "mads/core/env.h"
 #include "mads/core/sprite.h"
 #include "mads/core/room.h"
@@ -30,6 +29,7 @@
 #include "mads/core/fileio.h"
 #include "mads/core/buffer.h"
 #include "mads/core/matte.h"
+#include "mads/core/mem.h"
 #include "mads/core/inter.h"
 #include "mads/core/pal.h"
 #include "mads/core/mads.h"
@@ -581,54 +581,7 @@ int anim_get_header_info(char *file_name,
 }
 
 int anim_himem_preload(char *name, int level) {
-	int error_flag = true;
-	char temp_buf[80];
-	AnimFile anim_in;
-	int count2;
-	int mads_mode;
-
-	mads_mode = (name[0] == '*');
-
-	himem_preload_series(name, level);
-
-	if (anim_get_header_info(name, &anim_in)) goto done;
-
-	if (anim_in.load_flags & AA_LOAD_FONT) {
-		temp_buf[0] = 0;
-		if (mads_mode) Common::strcat_s(temp_buf, "*");
-		Common::strcat_s(temp_buf, anim_in.font_file);
-		himem_preload_series(temp_buf, level);
-	}
-
-	for (count2 = 0; count2 < anim_in.num_series; count2++) {
-		temp_buf[0] = 0;
-		if (mads_mode) Common::strcpy_s(temp_buf, "*");
-		Common::strcat_s(temp_buf, anim_in.series_name[count2]);
-		himem_preload_series(temp_buf, level);
-	}
-
-	if (anim_in.background_type == AA_ROOM) {
-		env_get_level_path(temp_buf, ROOM, ".DAT", 0, anim_in.background_room);
-		himem_preload_series(temp_buf, level);
-		env_get_level_path(temp_buf, ROOM, ".TT", 0, anim_in.background_room);
-		himem_preload_series(temp_buf, level);
-		env_get_level_path(temp_buf, ROOM, ".MM", 0, anim_in.background_room);
-		himem_preload_series(temp_buf, level);
-		env_get_level_path(temp_buf, ROOM, ".TT0", 0, anim_in.background_room);
-		himem_preload_series(temp_buf, level);
-		env_get_level_path(temp_buf, ROOM, ".MM0", 0, anim_in.background_room);
-		himem_preload_series(temp_buf, level);
-	} else if (anim_in.background_type == AA_INTERFACE) {
-		temp_buf[0] = 0;
-		if (mads_mode) Common::strcat_s(temp_buf, "*");
-		Common::strcat_s(temp_buf, anim_in.background_name);
-		himem_preload_series(temp_buf, level);
-	}
-
-	error_flag = false;
-
-done:
-	return error_flag;
+	return false;
 }
 
 void init_anim() {

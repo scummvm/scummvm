@@ -21,7 +21,6 @@
 
 #include "mads/core/config.h"
 #include "mads/core/game.h"
-#include "mads/core/himem.h"
 #include "mads/core/matte.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
@@ -461,10 +460,6 @@ void room_109_preload() {
 	room_pre_parser_code_pointer = room_109_pre_parser;
 	room_parser_code_pointer = room_109_parser;
 	room_daemon_code_pointer = room_109_daemon;
-
-	for (int count = 0; count < 4; ++count) {
-		himem_preload_series(kernel_full_name(109, 'H', count, nullptr, 0), 3);
-	}
 
 	vocab_make_active(words_dead_purple_monster);
 	vocab_make_active(words_monster_sludge);

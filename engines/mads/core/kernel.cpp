@@ -33,7 +33,6 @@
 #include "mads/core/error.h"
 #include "mads/core/screen.h"
 #include "mads/core/speech.h"
-#include "mads/core/himem.h"
 #include "mads/core/echo.h"
 #include "mads/core/mcga.h"
 #include "mads/core/timer.h"
@@ -243,9 +242,6 @@ void kernel_game_shutdown() {
 	mouse_init(false, text_mode);
 	video_init(text_mode, (check_mode != text_mode));
 
-	// Deallocate EMS/XMS memory
-	himem_shutdown();
-
 	// Remove timer interrupt stuff
 	timer_activate_low_priority(NULL);
 
@@ -269,9 +265,6 @@ int kernel_game_startup(int game_video_mode, int load_flag,
 		const char *release_version, const char *release_date) {
 	int error_flag = true;
 	byte *interrupt_stack;
-
-	// Set up EMS/XMS paging system, if any
-	himem_startup();
 
 	speech_init();
 
