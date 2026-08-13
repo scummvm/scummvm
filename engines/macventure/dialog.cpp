@@ -280,15 +280,30 @@ const Common::String &DialogElement::doGetText() {
 // CONCRETE DIALOG ELEMENTS
 
 DialogButton::DialogButton(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width, uint height):
-	DialogElement(dialog, title, action, position, width, height, Graphics::kTextAlignCenter) {}
+	DialogElement(dialog, title, action, position, width, height, Graphics::kTextAlignCenter),
+	_pressed(false), _mouseOverPressed(false) {}
 
 bool DialogButton::doProcessEvent(MacVenture::Dialog *dialog, Common::Event event) {
 	Common::Point mouse = event.mouse;
+	dialog->localize(mouse);
+
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
-		dialog->localize(mouse);
 		if (_bounds.contains(mouse)) {
-			debugC(2, kMVDebugGUI, "Click! Button: %s", _text.c_str());
-			dialog->handleDialogAction(this, _action);
+			_pressed = true;
+			_mouseOverPressed = true;
+			return true;
+		}
+	} else if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (_pressed) {
+			_mouseOverPressed = _bounds.contains(mouse);
+		}
+	} else if (event.type == Common::EVENT_LBUTTONUP) {
+		if (_pressed) {
+			_pressed = false;
+			if (_bounds.contains(mouse)) {
+				debugC(2, kMVDebugGUI, "Click! Button: %s", _text.c_str());
+				dialog->handleDialogAction(this, _action);
+			}
 			return true;
 		}
  	}
@@ -296,11 +311,13 @@ bool DialogButton::doProcessEvent(MacVenture::Dialog *dialog, Common::Event even
 }
 
 void DialogButton::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) {
-	target.fillRect(_bounds, kColorWhite);
+	bool invert = _pressed && _mouseOverPressed;
+
+	target.fillRect(_bounds, invert ? kColorBlack : kColorWhite);
 	target.frameRect(_bounds, kColorBlack);
 	// Draw title
 	dialog->getFont().drawString(
-		&target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack, Graphics::kTextAlignCenter);
+		&target, _text, _bounds.left, _bounds.top, _bounds.width(), invert ? kColorWhite : kColorBlack, Graphics::kTextAlignCenter);
 }
 
 DialogPlainText::DialogPlainText(Dialog *dialog, Common::String content, Common::Point position, int width, int height, Graphics::TextAlign alignment) :
