@@ -40,6 +40,7 @@ MODULE_OBJS := \
 	decoders/g711.o \
 	decoders/iff_sound.o \
 	decoders/mac_snd.o \
+	decoders/mac_snd_mace.o \
 	decoders/mp3.o \
 	decoders/qdm2.o \
 	decoders/quicktime.o \
