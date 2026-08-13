@@ -76,6 +76,7 @@ public:
 
 	bool initialize();
 	bool processEvent(Common::Event &event);
+	bool processDialogEvent(Common::Event &event);
 	void draw();
 	byte getBlackColor();
 	void getMenuColors(byte &menuBlack, byte &menuWhite);
