@@ -21,7 +21,6 @@
 
 #include "engines/util.h"
 #include "common/config-manager.h"
-#include "mads/core/mps_installer.h"
 #include "mads/core/attr.h"
 #include "mads/core/config.h"
 #include "mads/core/conv.h"
@@ -42,6 +41,7 @@
 #include "mads/nebular/global.h"
 #include "mads/nebular/main.h"
 #include "mads/nebular/mac_nebular.h"
+#include "mads/nebular/mps_installer.h"
 #include "mads/nebular/popup.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"

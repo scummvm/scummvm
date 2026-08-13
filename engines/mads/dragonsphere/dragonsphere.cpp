@@ -51,7 +51,6 @@
 #include "mads/dragonsphere/mads/inventory.h"
 #include "mads/dragonsphere/mads/sounds.h"
 #include "mads/dragonsphere/mads/words.h"
-#include "mads/core/mps_installer.h"
 
 namespace MADS {
 namespace Dragonsphere {

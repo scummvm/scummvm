@@ -40,7 +40,6 @@ MODULE_OBJS := \
 	core/mem.o \
 	core/mouse.o \
 	core/mps_archive.o \
-	core/mps_installer.o \
 	core/object.o \
 	core/pack.o \
 	core/pack_dcl.o \
@@ -80,6 +79,7 @@ MODULE_OBJS := \
 	nebular/mac_nebular.o \
 	nebular/mac_resources.o \
 	nebular/menus.o \
+	nebular/mps_installer.o \
 	nebular/popup.o \
 	nebular/mads/mads.o \
 	nebular/rooms/room101.o \
