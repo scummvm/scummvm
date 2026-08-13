@@ -772,8 +772,10 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 			_widget->_priority = _priority;
 			_widget->draw();
 
-			if (_sprite->_cast->_type == kCastText || _sprite->_cast->_type == kCastButton) {
-
+			// Only auto-expanding text (and buttons) size the sprite from the widget:
+			// fixed text would re-add its shadow chrome each rebuild and creep larger.
+			if (_sprite->_cast->_type == kCastButton ||
+					(_sprite->_cast->_type == kCastText && !((Graphics::MacText *)_widget)->getFixDims())) {
 				_sprite->_width = _widget->_dims.width();
 				_sprite->_height = _widget->_dims.height();
 			}
