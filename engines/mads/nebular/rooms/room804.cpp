@@ -143,6 +143,8 @@ static void room_804_daemon() {
 
 				if (global[kCopyProtectFailed]) {
 					copy_protection_fail_screen();
+					if (g_engine->getPlatform() == Common::kPlatformMacintosh)
+						win_status = WIN_A_HEAD_POW;
 				} else {
 					win_status = WIN_A_HEAD_POW;
 				}
