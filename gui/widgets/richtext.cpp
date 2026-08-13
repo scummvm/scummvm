@@ -45,6 +45,46 @@ const Graphics::TTFMap ttfFamily[] = {
 	{nullptr, 0}
 };
 
+const Graphics::TTFMap ttfFamilyJapanese[] = {
+	{"NotoSansJP-Regular.otf", Graphics::kMacFontRegular},
+	{"NotoSansJP-Bold.otf", Graphics::kMacFontBold},
+	{nullptr, 0}
+};
+
+const Graphics::TTFMap ttfFamilyKorean[] = {
+	{"NotoSansKR-Regular.otf", Graphics::kMacFontRegular},
+	{"NotoSansKR-Bold.otf", Graphics::kMacFontBold},
+	{nullptr, 0}
+};
+
+const Graphics::TTFMap ttfFamilySimplifiedChinese[] = {
+	{"NotoSansSC-Regular.otf", Graphics::kMacFontRegular},
+	{"NotoSansSC-Bold.otf", Graphics::kMacFontBold},
+	{nullptr, 0}
+};
+
+const Graphics::TTFMap ttfFamilyTraditionalChinese[] = {
+	{"NotoSansTC-Regular.otf", Graphics::kMacFontRegular},
+	{"NotoSansTC-Bold.otf", Graphics::kMacFontBold},
+	{nullptr, 0}
+};
+
+static const Graphics::TTFMap *getTTFFamily() {
+#ifdef USE_TRANSLATION
+	const Common::String language = TransMan.getCurrentLanguage();
+	if (language == "ja")
+		return ttfFamilyJapanese;
+	if (language == "ko")
+		return ttfFamilyKorean;
+	if (language == "zh_Hans" || language == "zh")
+		return ttfFamilySimplifiedChinese;
+	if (language == "zh_Hant")
+		return ttfFamilyTraditionalChinese;
+#endif
+
+	return ttfFamily;
+}
+
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip)
 	: Widget(boss, x, y, w, h, scale, tooltip), CommandSender(nullptr)  {
 
@@ -276,7 +316,7 @@ void RichTextWidget::createWidget() {
 #endif
 
 	if (useTTF)
-		newId = wm->_fontMan->registerTTFFont(ttfFamily);
+		newId = wm->_fontMan->registerTTFFont(getTTFFamily());
 	else
 		newId = Graphics::kMacFontNewYork;
 
