@@ -22,6 +22,7 @@
 #ifndef MADS_NEBULAR_MAC_MENUS_H
 #define MADS_NEBULAR_MAC_MENUS_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 namespace Common {
@@ -84,6 +85,8 @@ public:
 	void runPreferencesDialog(bool startup);
 	void runOpenDialog();
 	void runSaveDialog(bool saveAs);
+	int runPopupEditor(const Common::Rect &bounds, char *target,
+		int maxLength);
 	bool runStoryPasswordDialog(bool leavingLocked);
 	void setOuterMenuActive(bool active) { _outerMenuActive = active; }
 	int runDifficultyDialog();

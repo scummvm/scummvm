@@ -92,6 +92,7 @@ public:
 	void global_sound_driver() override;
 	bool hasInterfaceAnimations() const override;
 	bool drawPopup() override;
+	int editMacintoshPopup(char *target, int maxLength) override;
 	void onPopupDestroyed() override;
 	bool getInterfaceSentenceColors(byte &foreground, byte &shadow) const override;
 	bool hasMacintoshInterface() const override;

@@ -63,6 +63,9 @@ private:
 	Common::String _storyPassword;
 	bool _fullFrameActive = false;
 	bool _popupActive = false;
+	int _popupAskLine = -1;
+	int _popupAskX = 0;
+	int _popupAskY = 0;
 	bool _layoutLogged = false;
 	uint32 _lastMacintoshSoundTick = (uint32)-1;
 	uint32 _macintoshSoundPausedAt = 0;
@@ -104,6 +107,7 @@ public:
 	void getPalette(RGBcolor *palette, int firstColor, int numColors) const;
 	void presentScreen(int shakeOffset);
 	void showPopup();
+	int editPopup(char *target, int maxLength);
 	void hidePopup();
 };
 
