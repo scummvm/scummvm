@@ -63,6 +63,7 @@ private:
 	Common::String _storyPassword;
 	bool _fullFrameActive = false;
 	bool _gameplayHandoffPending = false;
+	bool _gameplayHandoffEffectSeen = false;
 	bool _popupActive = false;
 	int _popupAskLine = -1;
 	int _popupAskX = 0;

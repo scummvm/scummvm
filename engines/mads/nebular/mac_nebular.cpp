@@ -868,8 +868,10 @@ int MacNebular::selectResumeSlot() {
 
 void MacNebular::setFullFrameActive(bool active) {
 	_fullFrameActive = active;
-	if (active)
+	if (active) {
 		_gameplayHandoffPending = false;
+		_gameplayHandoffEffectSeen = false;
+	}
 }
 
 void MacNebular::setOuterMenuActive(bool active) {
@@ -881,7 +883,8 @@ void MacNebular::setOuterMenuActive(bool active) {
 		_menus->setOuterMenuActive(active);
 
 	if (wasActive && !active) {
-		_gameplayHandoffPending = _useOriginalMenus;
+		_gameplayHandoffPending = true;
+		_gameplayHandoffEffectSeen = false;
 		const byte frameBlack = _useOriginalMenus && _menus ?
 			_menus->getBlackColor() : 0;
 		_output.fillRect(_output.getBounds(), frameBlack);
@@ -1050,7 +1053,10 @@ void MacNebular::presentScreen(int shakeOffset) {
 	const int sceneWidth = getSceneWidth();
 	const int sceneHeight = getSceneHeight();
 	const int interfaceY = getInterfaceY();
-	const bool suppressPanel = _gameplayHandoffPending && kernel.fx;
+	if (_gameplayHandoffPending && kernel.fx)
+		_gameplayHandoffEffectSeen = true;
+	const bool suppressPanel = _gameplayHandoffPending &&
+		(!_gameplayHandoffEffectSeen || kernel.fx);
 	setMacInterfacePalette(_resources);
 	_output.fillRect(_output.getBounds(), kMacBlackColor);
 
@@ -1160,8 +1166,11 @@ void MacNebular::presentScreen(int shakeOffset) {
 		0, 0, kMacScreenWidth, _output.h);
 	g_system->updateScreen();
 	_engine._screen->clearDirtyRects();
-	if (_gameplayHandoffPending && !kernel.fx)
+	if (_gameplayHandoffPending && _gameplayHandoffEffectSeen &&
+			!kernel.fx) {
 		_gameplayHandoffPending = false;
+		_gameplayHandoffEffectSeen = false;
+	}
 	if (_showPreferencesAtStartup && !_startupPreferencesReady &&
 			kernel_mode == KERNEL_ACTIVE_CODE && !kernel.fx)
 		_startupPreferencesReady = true;
