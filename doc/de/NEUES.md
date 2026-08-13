@@ -28,6 +28,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      nicht überschrieben werden konnten
    - Der Nuked-OPL3 AdLib-Emulator wurden durch den Nuked-OPL3-fast-Fork ausgetauscht.
 
+ Asylum:
+   - Fehlende oder falsche Schrittegeräusche in einigen Szenen wurden behoben.
+
  AWE:
    - Absturz des Audio-Codes in OpenBSD korrigiert.
 
@@ -40,6 +43,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Freescape:
    - Unterstützung für das Laden von ZX Spectrum-Spielen von TAP/TZX-Tape-Images hinzugefügt.
+
+ Hopkins:
+   - Fehlender 3D-Shooter "Unterwasser-Basis" hinzugefügt.
 
  Kyra:
    - Unterstützung für die koreanische Fan-Übersetzung in Kyra1 hinzugefügt (in ScummVM 2026.3.0).
@@ -73,6 +79,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  SCUMM:
    - Cursor-Skalierung in frühen Windows HE-Spielen korrigiert.
+
+ Sherlock:
+   - Abweichung in der Darstellung der Bewegungen in Rose Tattoo korrigiert.
 
  SLUDGE:
    - Shape-Shift Escape wurde zur Spiele-Datenbank hinzugefügt.

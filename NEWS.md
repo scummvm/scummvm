@@ -45,7 +45,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for loading ZX Spectrum games directly from TAP/TZX tape images.
 
  Hopkins:
-   - Added the missing underwater base 3D first-person shooter
+   - Added the missing underwater base 3D first-person shooter.
 
  Kyra:
    - Added support for Korean fan-translation of kyra1 (added in 2026.3.0).
@@ -80,7 +80,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved cursor scale in early Windows HE games.
 
  Sherlock:
-   - Vertical movement delta fix for Rose Tattoo
+   - Vertical movement delta fix for Rose Tattoo.
 
  SLUDGE:
    - Added detection for Shape-Shift Escape.
