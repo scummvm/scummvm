@@ -1698,10 +1698,14 @@ void AvalancheEngine::openDoor(Room whither, byte ped, byte magicnum) {
 }
 
 void AvalancheEngine::setRoom(People persId, Room roomId) {
+	if (persId < kPeopleAvalot || persId > kPeopleWisewoman)
+		return;
 	_whereIs[persId - kPeopleAvalot] = roomId;
 }
 
 Room AvalancheEngine::getRoom(People persId) {
+	if (persId < kPeopleAvalot || persId > kPeopleWisewoman)
+		return kRoomNowhere;
 	return _whereIs[persId - kPeopleAvalot];
 }
 } // End of namespace Avalanche
