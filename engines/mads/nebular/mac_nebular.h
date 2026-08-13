@@ -62,6 +62,7 @@ private:
 	bool _storyLocked;
 	Common::String _storyPassword;
 	bool _fullFrameActive = false;
+	bool _gameplayHandoffPending = false;
 	bool _popupActive = false;
 	int _popupAskLine = -1;
 	int _popupAskX = 0;
@@ -97,7 +98,7 @@ public:
 	void setHideMenuBar(bool hide, bool persist);
 	void setPreferencesAtStartup(bool show, bool persist);
 	void setStoryLocked(bool locked, const Common::String &password);
-	void setFullFrameActive(bool active) { _fullFrameActive = active; }
+	void setFullFrameActive(bool active);
 	void setOuterMenuActive(bool active);
 	void notifyOuterMenuFrameReady();
 	Common::Point screenToGame(const Common::Point &point) const;
