@@ -1466,6 +1466,7 @@ void AvalancheEngine::newGame() {
 	enterRoom(kRoomYours, 1);
 	avvy->_visible = false;
 	drawScore();
+	drawToolbar();
 	_dropdown->setup();
 	_clock->update();
 	spriteRun();
