@@ -36,6 +36,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("walkable", WRAP_METHOD(Console, cmdWalkable));
 	registerCmd("quotes", WRAP_METHOD(Console, cmdQuotes));
+	registerCmd("playsound", WRAP_METHOD(Console, cmdPlaySound));
 	registerCmd("soundcommand", WRAP_METHOD(Console, cmdSoundCommand));
 	registerCmd("soundsection", WRAP_METHOD(Console, cmdSoundSection));
 	registerCmd("soundstop", WRAP_METHOD(Console, cmdSoundStop));
@@ -172,6 +173,38 @@ bool Console::cmdSoundCommand(int argc, const char **argv) {
 	const int result = g_engine->_soundManager->command(commandId, parameter);
 	debugPrintf("Sound command %d(%d) returned %d.\n",
 		commandId, parameter, result);
+	return true;
+}
+
+bool Console::cmdPlaySound(int argc, const char **argv) {
+	int section;
+	int commandId;
+	int parameter = 0;
+	char trailing;
+
+	if (argc != 2 ||
+			(sscanf(argv[1], "%d:%d:%d%c", &section, &commandId,
+				&parameter, &trailing) != 3 &&
+			sscanf(argv[1], "%d:%d%c", &section, &commandId,
+				&trailing) != 2)) {
+		debugPrintf("Usage: %s <section:command[:parameter]>\n", argv[0]);
+		return true;
+	}
+
+	if (section < 1 || section > 9) {
+		debugPrintf("Section must be between 1 and 9.\n");
+		return true;
+	}
+
+	g_engine->_soundManager->init(section);
+	if (!g_engine->_soundManager->isLoaded()) {
+		debugPrintf("No sound driver is available for section %d.\n", section);
+		return true;
+	}
+
+	const int result = g_engine->_soundManager->command(commandId, parameter);
+	debugPrintf("Loaded section %d and issued sound command %d(%d), returned %d.\n",
+		section, commandId, parameter, result);
 	return true;
 }
 
