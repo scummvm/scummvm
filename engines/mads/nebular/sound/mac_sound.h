@@ -86,6 +86,7 @@ private:
 	bool _ramping;
 	int _rampVolume;
 	uint32 _serviceTick;
+	uint32 _pausedAtTick;
 
 	void setPaused(bool paused);
 	void updateVoice(MacSoundVoice &voice);

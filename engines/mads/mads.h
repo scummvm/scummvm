@@ -93,6 +93,7 @@ protected:
 	virtual void presentScreen(int shakeOffset);
 
 	virtual bool handleMacEvent(Common::Event &event) { return false; }
+	virtual void serviceMacintoshSound() {}
 
 	bool hasFeature(EngineFeature f) const override;
 
