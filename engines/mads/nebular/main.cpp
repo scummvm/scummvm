@@ -331,10 +331,7 @@ void nebular_main() {
 	g_engine->readConfigFile();
 	RexNebularEngine *const engine = (RexNebularEngine *)g_engine;
 
-	if (g_engine->getPlatform() == Common::kPlatformMacintosh &&
-			!engine->usesOriginalMacintoshMenus())
-		selected_item = 0;
-	else if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
+	if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
 		selected_item = 0;
 	else if (g_engine->isDemo())
 		selected_item = 9;
@@ -352,7 +349,7 @@ void nebular_main() {
 			// selections as the existing MADS controller. Only its native
 			// window composition differs.
 			engine->setMacintoshOuterMenuActive(
-				engine->usesOriginalMacintoshMenus());
+				g_engine->getPlatform() == Common::kPlatformMacintosh);
 			main_menu_main();
 			engine->setMacintoshOuterMenuActive(false);
 
