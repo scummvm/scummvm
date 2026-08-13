@@ -761,6 +761,25 @@ static void inter_set_active_word(int class_, int *old, int new_) {
 	}
 }
 
+void inter_scroll_inventory(int direction) {
+	if (!direction || (inter_input_mode != INTER_BUILDING_SENTENCES &&
+			inter_input_mode != INTER_LIMITED_SENTENCES))
+		return;
+
+	const int lastPage = MAX(0, inven_num_objects - inter_columns);
+	const int newFirst = CLIP(first_inven + (direction < 0 ? -1 : 1),
+		0, lastPage);
+	if (newFirst == first_inven)
+		return;
+
+	int unused = 0;
+	first_inven = newFirst;
+	first_inven_changed = true;
+	inter_set_active_word(STROKE_INVEN, &unused, 0);
+	inter_scrollbar_refresh();
+	inter_force_rescan = true;
+}
+
 void inter_set_active_inven(int new_active) {
 	int new_verbs, old_verbs, max_verbs;
 	int x1, y1, xs, ys;
