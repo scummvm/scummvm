@@ -703,7 +703,7 @@ void MacNebular::showAbout() {
 	Palette savedPalette;
 	memcpy(savedPalette, _palette, sizeof(Palette));
 	const bool savedFullFrameActive = _fullFrameActive;
-	_fullFrameActive = true;
+	setFullFrameActive(true);
 	PauseToken pauseToken = _engine.pauseEngine();
 
 	Palette transitionPalette;
@@ -800,7 +800,7 @@ void MacNebular::showAbout() {
 	} else {
 		mcga_setpal(&savedPalette);
 	}
-	_fullFrameActive = savedFullFrameActive;
+	setFullFrameActive(savedFullFrameActive);
 	_engine._screen->markAllDirty();
 }
 
@@ -866,6 +866,12 @@ int MacNebular::selectResumeSlot() {
 	return _menus ? _menus->selectResumeSlot() : -1;
 }
 
+void MacNebular::setFullFrameActive(bool active) {
+	_fullFrameActive = active;
+	if (active)
+		_gameplayHandoffPending = false;
+}
+
 void MacNebular::setOuterMenuActive(bool active) {
 	const bool wasActive = _fullFrameActive;
 	if (active)
@@ -875,6 +881,7 @@ void MacNebular::setOuterMenuActive(bool active) {
 		_menus->setOuterMenuActive(active);
 
 	if (wasActive && !active) {
+		_gameplayHandoffPending = _useOriginalMenus;
 		const byte frameBlack = _useOriginalMenus && _menus ?
 			_menus->getBlackColor() : 0;
 		_output.fillRect(_output.getBounds(), frameBlack);
@@ -1043,6 +1050,7 @@ void MacNebular::presentScreen(int shakeOffset) {
 	const int sceneWidth = getSceneWidth();
 	const int sceneHeight = getSceneHeight();
 	const int interfaceY = getInterfaceY();
+	const bool suppressPanel = _gameplayHandoffPending && kernel.fx;
 	setMacInterfacePalette(_resources);
 	_output.fillRect(_output.getBounds(), kMacBlackColor);
 
@@ -1102,11 +1110,13 @@ void MacNebular::presentScreen(int shakeOffset) {
 		if (interfaceFont)
 			drawMacInterfaceState(panel, *interfaceFont);
 
-		for (int y = 0; y < kMacInterfaceHeight; ++y) {
-			memcpy(_output.getBasePtr(kMacInterfaceX, interfaceY + y),
-				panel.getBasePtr(0, y), kMacInterfaceWidth);
+		if (!suppressPanel) {
+			for (int y = 0; y < kMacInterfaceHeight; ++y) {
+				memcpy(_output.getBasePtr(kMacInterfaceX, interfaceY + y),
+					panel.getBasePtr(0, y), kMacInterfaceWidth);
+			}
 		}
-	} else {
+	} else if (!suppressPanel) {
 		// Before the native panel is loaded, retain a structurally equivalent
 		// fallback by scaling the shared 320x44 interface into its Mac bounds.
 		for (int y = 0; y < kMacInterfaceHeight; ++y) {
@@ -1150,6 +1160,8 @@ void MacNebular::presentScreen(int shakeOffset) {
 		0, 0, kMacScreenWidth, _output.h);
 	g_system->updateScreen();
 	_engine._screen->clearDirtyRects();
+	if (_gameplayHandoffPending && !kernel.fx)
+		_gameplayHandoffPending = false;
 	if (_showPreferencesAtStartup && !_startupPreferencesReady &&
 			kernel_mode == KERNEL_ACTIVE_CODE && !kernel.fx)
 		_startupPreferencesReady = true;
