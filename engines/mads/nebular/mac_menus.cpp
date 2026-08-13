@@ -36,6 +36,7 @@
 #include "mads/mads.h"
 #include "mads/nebular/mac_dialogs.h"
 #include "mads/nebular/mac_menus.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/mac_resources.h"
 #include "mads/nebular/nebular.h"
 
@@ -46,6 +47,8 @@ namespace {
 
 enum {
 	kDifficultyDialog = 2500,
+	kStartupPreferencesDialog = 2005,
+	kPreferencesDialog = 2105,
 
 	kFileMenu = 1,
 	kOptionsMenu = 3,
@@ -54,6 +57,7 @@ enum {
 	kFileOpen = (1001 << 16) | 2,
 	kFileSave = (1001 << 16) | 4,
 	kFileSaveAs = (1001 << 16) | 5,
+	kFilePreferences = (1001 << 16) | 7,
 	kFileQuit = (1001 << 16) | 9,
 	kOptionNoSound = (2001 << 16),
 	kOptionEasyInterface = (2001 << 16) | 1,
@@ -61,7 +65,10 @@ enum {
 	kFadeMedium = (101 << 16) | 1,
 	kFadeFast = (101 << 16) | 2,
 	kStoryNaughty = (102 << 16),
-	kStoryNice = (102 << 16) | 1
+	kStoryNice = (102 << 16) | 1,
+	kWindowStandard = (2000 << 16),
+	kWindow150 = (2000 << 16) | 1,
+	kWindow200 = (2000 << 16) | 2
 };
 
 struct MenuResourceItem {
@@ -127,11 +134,13 @@ bool MacNebularMenu::initializeWindowManager() {
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
-	const uint32 mode = Graphics::kWMModeNoDesktop |
+	_windowManagerMode = Graphics::kWMModeNoDesktop |
 		Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride |
 		Graphics::kWMModeForceMacFonts | Graphics::kWMModeNoSystemRedraw |
 		Graphics::kWMNoScummVMWallpaper;
-	_windowManager = new Graphics::MacWindowManager(mode);
+	if (_engine.getMacintoshHideMenuBar())
+		_windowManagerMode |= Graphics::kWMModeAutohideMenu;
+	_windowManager = new Graphics::MacWindowManager(_windowManagerMode);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	_windowManager->setEngine(&_engine);
 	_windowManager->setScreen(&_screen);
@@ -245,6 +254,7 @@ void MacNebularMenu::updateState() {
 	const bool canSave = _engine.canSaveGameStateCurrently(nullptr);
 	setItemState(getMenuItem(kFileMenu, 4), canSave, false);
 	setItemState(getMenuItem(kFileMenu, 5), canSave, false);
+	setItemState(getMenuItem(kFileMenu, 7), true, false);
 	setItemState(getMenuItem(kFileMenu, 9), true, false);
 
 	const bool noSound = !_engine._musicFlag && !_engine._soundFlag;
@@ -266,9 +276,11 @@ void MacNebularMenu::updateState() {
 	setItemState(getSubMenuItem(kOptionsMenu, 3, 2), false,
 		config_file.naughtiness != NAUGHTY && config_file.naughtiness != NICE);
 
-	setItemState(getMenuItem(kWindowMenu, 0), false, false);
-	setItemState(getMenuItem(kWindowMenu, 1), false, false);
-	setItemState(getMenuItem(kWindowMenu, 2), true, true);
+	const int displaySize = _engine.getMacintoshDisplaySize();
+	for (int size = kMacNebularDisplay100;
+			size <= kMacNebularDisplay200; ++size)
+		setItemState(getMenuItem(kWindowMenu, size), true,
+			displaySize == size);
 
 	if (_outerMenuActive) {
 		// CODE 133 disables New, Resume, Open, Save, and Save As while
@@ -291,6 +303,9 @@ void MacNebularMenu::dispatchCommand(int commandId) {
 	case kFileSaveAs:
 		if (_engine.canSaveGameStateCurrently(nullptr))
 			_engine.saveGameDialog();
+		break;
+	case kFilePreferences:
+		runPreferencesDialog(false);
 		break;
 	case kFileQuit:
 		_engine.quitGame();
@@ -329,6 +344,11 @@ void MacNebularMenu::dispatchCommand(int commandId) {
 		config_file.naughtiness = commandId == kStoryNaughty ? NAUGHTY : NICE;
 		ConfMan.setBool("naughtiness", config_file.naughtiness == NAUGHTY);
 		ConfMan.flushToDisk();
+		break;
+	case kWindowStandard:
+	case kWindow150:
+	case kWindow200:
+		_engine.setMacintoshDisplaySize(commandId - kWindowStandard, true);
 		break;
 	default:
 		break;
@@ -385,6 +405,47 @@ void MacNebularMenu::getMenuColors(byte &menuBlack, byte &menuWhite) {
 	syncPalette();
 	menuBlack = (byte)_windowManager->_colorBlack;
 	menuWhite = (byte)_windowManager->_colorWhite;
+}
+
+void MacNebularMenu::setMenuBarHidden(bool hidden) {
+	if (!initialize())
+		return;
+	if (hidden)
+		_windowManagerMode |= Graphics::kWMModeAutohideMenu;
+	else
+		_windowManagerMode &= ~Graphics::kWMModeAutohideMenu;
+	_windowManager->setMode(_windowManagerMode);
+	_menu->setVisible(!hidden, true);
+}
+
+void MacNebularMenu::runPreferencesDialog(bool startup) {
+	if (!initializeWindowManager())
+		return;
+
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager);
+	if (!dialog.load(startup ? kStartupPreferencesDialog :
+			kPreferencesDialog))
+		return;
+	dialog.center();
+	dialog.setItemChecked(4, _engine.getMacintoshHideMenuBar());
+	dialog.setItemEnabled(5, false);
+	dialog.setItemEnabled(6, false);
+	dialog.setItemChecked(7, true);
+	dialog.setItemChecked(8,
+		_engine.getMacintoshPreferencesAtStartup());
+	if (startup)
+		dialog.setItemEnabled(2, false);
+
+	_activeDialog = &dialog;
+	const int result = dialog.runModal(1, startup ? 0 : 2);
+	_activeDialog = nullptr;
+	if (result != 1)
+		return;
+
+	const bool persist = dialog.isItemChecked(7);
+	_engine.setMacintoshHideMenuBar(dialog.isItemChecked(4), persist);
+	_engine.setMacintoshPreferencesAtStartup(dialog.isItemChecked(8),
+		persist);
 }
 
 void MacNebularMenu::menuCallback(int commandId, Common::String &, void *data) {

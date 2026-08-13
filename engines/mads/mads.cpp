@@ -247,6 +247,7 @@ void MADSEngine::pollEvents() {
 	if (time >= _nextFrameTime) {
 		updateScreen();
 		_nextFrameTime = time + GAME_FRAME_TIME;
+		serviceMacintoshUI();
 	}
 
 	// Handle calling any set timer function

@@ -37,6 +37,12 @@ class MacResourceProvider;
 class MacNebularMenu;
 class RexNebularEngine;
 
+enum MacNebularDisplaySize {
+	kMacNebularDisplay100 = 0,
+	kMacNebularDisplay150 = 1,
+	kMacNebularDisplay200 = 2
+};
+
 class MacNebular {
 private:
 	RexNebularEngine &_engine;
@@ -47,6 +53,11 @@ private:
 	Common::Rect _popupRect;
 	RGBcolor _palette[256];
 	bool _useOriginalMenus;
+	int _displaySize;
+	bool _hideMenuBar;
+	bool _preferencesAtStartup;
+	bool _showPreferencesAtStartup;
+	bool _startupPreferencesReady = false;
 	bool _fullFrameActive = false;
 	bool _popupActive = false;
 	bool _layoutLogged = false;
@@ -55,6 +66,11 @@ private:
 	uint32 _macintoshSoundPausedTicks = 0;
 	bool _macintoshSoundPaused = false;
 
+	int getSceneWidth() const;
+	int getSceneHeight() const;
+	int getSceneX() const;
+	int getSceneY() const;
+	int getInterfaceY() const;
 public:
 	explicit MacNebular(RexNebularEngine &engine);
 	~MacNebular();
@@ -65,11 +81,18 @@ public:
 	void selectDifficulty();
 	int selectResumeSlot();
 	bool usesOriginalMenus() const { return _useOriginalMenus; }
+	int getDisplaySize() const { return _displaySize; }
+	bool getHideMenuBar() const { return _hideMenuBar; }
+	bool getPreferencesAtStartup() const { return _preferencesAtStartup; }
+	void setDisplaySize(int displaySize, bool persist);
+	void setHideMenuBar(bool hide, bool persist);
+	void setPreferencesAtStartup(bool show, bool persist);
 	void setFullFrameActive(bool active) { _fullFrameActive = active; }
 	void setOuterMenuActive(bool active);
 	Common::Point screenToGame(const Common::Point &point) const;
 	Common::Point gameToScreen(const Common::Point &point) const;
 	bool handleMacEvent(Common::Event &event);
+	void serviceUI();
 	void serviceSound();
 	void setPalette(const RGBcolor *palette, int firstColor, int numColors);
 	void getPalette(RGBcolor *palette, int firstColor, int numColors) const;
