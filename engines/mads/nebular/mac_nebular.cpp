@@ -1023,6 +1023,13 @@ void MacNebular::presentScreen(int shakeOffset) {
 			kernel_mode != KERNEL_ACTIVE_CODE)
 		return;
 
+	// The native application keeps the game window hidden while copy
+	// protection and difficulty selection run. Preserve the neutral frame
+	// installed when the outer menu released ownership until the initial room
+	// transition begins.
+	if (_gameplayHandoffPending && !_gameplayHandoffEffectSeen && !kernel.fx)
+		return;
+
 	if (_fullFrameActive) {
 		const int frameY = _useOriginalMenus ? kMacDesktopSceneY : 0;
 		const byte frameBlack = _useOriginalMenus && _menus ?
