@@ -606,9 +606,10 @@ void MacNebular::serviceUI() {
 		return;
 
 	if (_startupPreferencesReady && _showPreferencesAtStartup) {
+		if (!_menus->runPreferencesDialog(true))
+			return;
 		_startupPreferencesReady = false;
 		_showPreferencesAtStartup = false;
-		_menus->runPreferencesDialog(true);
 		_engine._screen->markAllDirty();
 		return;
 	}
@@ -867,6 +868,8 @@ int MacNebular::selectResumeSlot() {
 
 void MacNebular::setOuterMenuActive(bool active) {
 	const bool wasActive = _fullFrameActive;
+	if (active)
+		_startupPreferencesReady = false;
 	setFullFrameActive(active);
 	if (_menus)
 		_menus->setOuterMenuActive(active);
@@ -882,6 +885,11 @@ void MacNebular::setOuterMenuActive(bool active) {
 		g_system->updateScreen();
 		_engine._screen->markAllDirty();
 	}
+}
+
+void MacNebular::notifyOuterMenuFrameReady() {
+	if (_useOriginalMenus && _showPreferencesAtStartup)
+		_startupPreferencesReady = true;
 }
 
 Common::Point MacNebular::screenToGame(const Common::Point &point) const {
@@ -1027,7 +1035,6 @@ void MacNebular::presentScreen(int shakeOffset) {
 			0, 0, kMacScreenWidth, _output.h);
 		g_system->updateScreen();
 		_engine._screen->clearDirtyRects();
-		_startupPreferencesReady = true;
 		return;
 	}
 
@@ -1143,7 +1150,9 @@ void MacNebular::presentScreen(int shakeOffset) {
 		0, 0, kMacScreenWidth, _output.h);
 	g_system->updateScreen();
 	_engine._screen->clearDirtyRects();
-	_startupPreferencesReady = true;
+	if (_showPreferencesAtStartup && !_startupPreferencesReady &&
+			kernel_mode == KERNEL_ACTIVE_CODE && !kernel.fx)
+		_startupPreferencesReady = true;
 }
 
 bool MacNebular::handleMacEvent(Common::Event &event) {
@@ -1446,6 +1455,11 @@ void RexNebularEngine::setMacintoshStoryLocked(bool locked,
 void RexNebularEngine::setMacintoshOuterMenuActive(bool active) {
 	if (_macNebular)
 		_macNebular->setOuterMenuActive(active);
+}
+
+void RexNebularEngine::notifyMacintoshOuterMenuFrameReady() {
+	if (_macNebular)
+		_macNebular->notifyOuterMenuFrameReady();
 }
 
 void RexNebularEngine::setMacintoshFullFrameActive(bool active) {

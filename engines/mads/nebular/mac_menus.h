@@ -86,7 +86,7 @@ public:
 	void setMenuBarHidden(bool hidden);
 	bool takeAboutRequest();
 	bool takePreferencesRequest();
-	void runPreferencesDialog(bool startup);
+	bool runPreferencesDialog(bool startup);
 	void runOpenDialog();
 	void runSaveDialog(bool saveAs);
 	int runPopupEditor(const Common::Rect &bounds, char *target,

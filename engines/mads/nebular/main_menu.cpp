@@ -38,6 +38,7 @@
 #include "mads/nebular/main_menu.h"
 #include "mads/nebular/extra.h"
 #include "mads/nebular/mads/sounds.h"
+#include "mads/nebular/nebular.h"
 #include "mads/mads.h"
 
 namespace MADS {
@@ -331,6 +332,7 @@ static void process_sprites() {
 void menu_control() {
 	int fx;
 	int mykey;
+	bool outerMenuFrameReady = false;
 
 	menu_mode = MENU_APPEARING;
 	animating_item = 0;
@@ -425,6 +427,11 @@ void menu_control() {
 
 			fx = new_background ? 1 : 0;
 			matte_frame(fx, false);
+			if (!outerMenuFrameReady) {
+				static_cast<RexNebularEngine *>(g_engine)->
+					notifyMacintoshOuterMenuFrameReady();
+				outerMenuFrameReady = true;
+			}
 
 			if (fx) {
 				now_clock = timer_read();

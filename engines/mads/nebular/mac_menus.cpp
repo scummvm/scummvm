@@ -56,11 +56,13 @@ enum {
 	kSaveDialog = 3001,
 	kOpenDialog = 3010,
 
+	kAppleMenu = 0,
 	kFileMenu = 1,
 	kEditMenu = 2,
 	kOptionsMenu = 3,
 	kWindowMenu = 4,
 
+	kAppleAbout = (1000 << 16),
 	kFileOpen = (1001 << 16) | 2,
 	kFileSave = (1001 << 16) | 4,
 	kFileSaveAs = (1001 << 16) | 5,
@@ -540,16 +542,21 @@ void MacNebularMenu::setMenuBarHidden(bool hidden) {
 	_menu->setVisible(!hidden, true);
 }
 
-void MacNebularMenu::runPreferencesDialog(bool startup) {
+bool MacNebularMenu::runPreferencesDialog(bool startup) {
 	if (!initializeWindowManager())
-		return;
+		return false;
+
+	syncPalette();
+	if (_windowManager->_colorBlack == _windowManager->_colorWhite)
+		return false;
 
 	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager,
 		this);
 	if (!dialog.load(startup ? kStartupPreferencesDialog :
 			kPreferencesDialog))
-		return;
+		return false;
 	dialog.center();
+	dialog.setItemEnabled(2, !startup);
 	dialog.setItemChecked(4, _engine.getMacintoshHideMenuBar());
 	dialog.setItemEnabled(5, false);
 	dialog.setItemEnabled(6, false);
@@ -557,15 +564,16 @@ void MacNebularMenu::runPreferencesDialog(bool startup) {
 	dialog.setItemChecked(8,
 		_engine.getMacintoshPreferencesAtStartup());
 	_activeDialog = &dialog;
-	const int result = dialog.runModal(1, 2);
+	const int result = dialog.runModal(1, startup ? 0 : 2);
 	_activeDialog = nullptr;
-	if (result != 1)
-		return;
+	if (result == 1) {
+		const bool persist = dialog.isItemChecked(7);
+		_engine.setMacintoshHideMenuBar(dialog.isItemChecked(4), persist);
+		_engine.setMacintoshPreferencesAtStartup(dialog.isItemChecked(8),
+			persist);
+	}
 
-	const bool persist = dialog.isItemChecked(7);
-	_engine.setMacintoshHideMenuBar(dialog.isItemChecked(4), persist);
-	_engine.setMacintoshPreferencesAtStartup(dialog.isItemChecked(8),
-		persist);
+	return true;
 }
 
 int MacNebularMenu::runPopupEditor(const Common::Rect &bounds,
