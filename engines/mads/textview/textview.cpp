@@ -64,6 +64,7 @@ static int16 xPos;
 static byte line_slice[156];
 static int bufferHeight;
 static int visibleHeight;
+static int matteHeight;
 static bool drawBoundaryLines;
 static bool macintoshFullFrame;
 
@@ -74,7 +75,7 @@ static void present_matte_frame(int specialEffect, int fullScreen) {
 	}
 
 	const int workHeight = scr_work.y;
-	scr_work.y = visibleHeight;
+	scr_work.y = fullScreen ? visibleHeight : matteHeight;
 	matte_frame(specialEffect, fullScreen);
 	scr_work.y = workHeight;
 }
@@ -482,6 +483,7 @@ void textview_main(const char *resName) {
 	Presentation presentation;
 	presentation.bufferHeight = 156;
 	presentation.visibleHeight = 156;
+	presentation.matteHeight = presentation.visibleHeight;
 	presentation.drawBoundaryLines = true;
 	presentation.macintoshFullFrame = false;
 	textview_main(resName, presentation);
@@ -490,10 +492,12 @@ void textview_main(const char *resName) {
 void textview_main(const char *resName, const Presentation &presentation) {
 	bufferHeight = presentation.bufferHeight;
 	visibleHeight = presentation.visibleHeight;
+	matteHeight = presentation.matteHeight;
 	drawBoundaryLines = presentation.drawBoundaryLines;
 	macintoshFullFrame = presentation.macintoshFullFrame;
 	assert(bufferHeight >= 156 && visibleHeight > 0 &&
-		visibleHeight <= bufferHeight && visibleHeight <= 200);
+		visibleHeight <= bufferHeight && visibleHeight <= 200 &&
+		matteHeight > 0 && matteHeight <= visibleHeight);
 
 	active = false;
 	isGoing = flag2 = true;
