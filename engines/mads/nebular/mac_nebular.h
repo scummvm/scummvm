@@ -23,6 +23,7 @@
 #define MADS_NEBULAR_MAC_NEBULAR_H
 
 #include "common/rect.h"
+#include "common/str.h"
 #include "graphics/managed_surface.h"
 #include "mads/core/general.h"
 
@@ -58,6 +59,8 @@ private:
 	bool _preferencesAtStartup;
 	bool _showPreferencesAtStartup;
 	bool _startupPreferencesReady = false;
+	bool _storyLocked;
+	Common::String _storyPassword;
 	bool _fullFrameActive = false;
 	bool _popupActive = false;
 	bool _layoutLogged = false;
@@ -84,9 +87,12 @@ public:
 	int getDisplaySize() const { return _displaySize; }
 	bool getHideMenuBar() const { return _hideMenuBar; }
 	bool getPreferencesAtStartup() const { return _preferencesAtStartup; }
+	bool getStoryLocked() const { return _storyLocked; }
+	bool verifyStoryPassword(const Common::String &password) const;
 	void setDisplaySize(int displaySize, bool persist);
 	void setHideMenuBar(bool hide, bool persist);
 	void setPreferencesAtStartup(bool show, bool persist);
+	void setStoryLocked(bool locked, const Common::String &password);
 	void setFullFrameActive(bool active) { _fullFrameActive = active; }
 	void setOuterMenuActive(bool active);
 	Common::Point screenToGame(const Common::Point &point) const;

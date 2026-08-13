@@ -52,6 +52,7 @@ enum {
 	kDifficultyDialog = 2500,
 	kStartupPreferencesDialog = 2005,
 	kPreferencesDialog = 2105,
+	kStoryPasswordDialog = 2006,
 	kSaveDialog = 3001,
 	kOpenDialog = 3010,
 
@@ -71,6 +72,7 @@ enum {
 	kFadeFast = (101 << 16) | 2,
 	kStoryNaughty = (102 << 16),
 	kStoryNice = (102 << 16) | 1,
+	kStoryNiceLocked = (102 << 16) | 2,
 	kWindowStandard = (2000 << 16),
 	kWindow150 = (2000 << 16) | 1,
 	kWindow200 = (2000 << 16) | 2
@@ -309,14 +311,15 @@ void MacNebularMenu::updateState() {
 		setItemState(getSubMenuItem(kOptionsMenu, 2, fade), true,
 			kernel_screen_fade == fade);
 
+	const bool storyLocked = _engine.getMacintoshStoryLocked();
 	setItemState(getSubMenuItem(kOptionsMenu, 3, 0),
-		config_file.naughtiness != NAUGHTY,
-		config_file.naughtiness == NAUGHTY);
+		storyLocked || config_file.naughtiness != NAUGHTY,
+		!storyLocked && config_file.naughtiness == NAUGHTY);
 	setItemState(getSubMenuItem(kOptionsMenu, 3, 1),
-		config_file.naughtiness != NICE,
-		config_file.naughtiness == NICE);
-	setItemState(getSubMenuItem(kOptionsMenu, 3, 2), false,
-		config_file.naughtiness != NAUGHTY && config_file.naughtiness != NICE);
+		storyLocked || config_file.naughtiness != NICE,
+		!storyLocked && config_file.naughtiness == NICE);
+	setItemState(getSubMenuItem(kOptionsMenu, 3, 2), !storyLocked,
+		storyLocked);
 
 	const int displaySize = _engine.getMacintoshDisplaySize();
 	for (int size = kMacNebularDisplay100;
@@ -386,9 +389,20 @@ void MacNebularMenu::dispatchCommand(int commandId) {
 		break;
 	case kStoryNaughty:
 	case kStoryNice:
+		if (_engine.getMacintoshStoryLocked() &&
+				!runStoryPasswordDialog(true))
+			break;
+		_engine.setMacintoshStoryLocked(false, Common::String());
 		config_file.naughtiness = commandId == kStoryNaughty ? NAUGHTY : NICE;
 		ConfMan.setBool("naughtiness", config_file.naughtiness == NAUGHTY);
 		ConfMan.flushToDisk();
+		break;
+	case kStoryNiceLocked:
+		if (runStoryPasswordDialog(false)) {
+			config_file.naughtiness = NICE;
+			ConfMan.setBool("naughtiness", false);
+			ConfMan.flushToDisk();
+		}
 		break;
 	case kWindowStandard:
 	case kWindow150:
@@ -491,6 +505,39 @@ void MacNebularMenu::runPreferencesDialog(bool startup) {
 	_engine.setMacintoshHideMenuBar(dialog.isItemChecked(4), persist);
 	_engine.setMacintoshPreferencesAtStartup(dialog.isItemChecked(8),
 		persist);
+}
+
+bool MacNebularMenu::runStoryPasswordDialog(bool leavingLocked) {
+	if (!initializeWindowManager())
+		return false;
+
+	Common::String prompt = leavingLocked ?
+		"Enter the password needed to unlock NICE mode." :
+		"Enter your password for future unlocking of NICE mode.";
+	for (;;) {
+		MacNebularDialog dialog(_engine, _resources, _screen,
+			*_windowManager);
+		if (!dialog.load(kStoryPasswordDialog))
+			return false;
+		dialog.center();
+		dialog.setItemText(3, prompt);
+		dialog.setItemText(4, Common::String());
+
+		_activeDialog = &dialog;
+		const int result = dialog.runModal(1, 2);
+		_activeDialog = nullptr;
+		if (result != 1)
+			return false;
+
+		const Common::String password = dialog.getItemText(4);
+		if (!leavingLocked) {
+			_engine.setMacintoshStoryLocked(true, password);
+			return true;
+		}
+		if (_engine.verifyMacintoshStoryPassword(password))
+			return true;
+		prompt = "Incorrect password. Try again.";
+	}
 }
 
 void MacNebularMenu::runOpenDialog() {

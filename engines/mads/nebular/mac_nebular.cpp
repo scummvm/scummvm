@@ -395,10 +395,13 @@ static bool isMacInterfaceScrollbarPixel(int x, int y) {
 MacNebular::MacNebular(RexNebularEngine &engine) :
 		_engine(engine), _useOriginalMenus(ConfMan.getBool("original_mac_menus")),
 		_displaySize(kMacNebularDisplay200), _hideMenuBar(false),
-		_preferencesAtStartup(false), _showPreferencesAtStartup(false) {
+		_preferencesAtStartup(false), _showPreferencesAtStartup(false),
+		_storyLocked(false) {
 	ConfMan.registerDefault("mac_nebular_display_size", kMacNebularDisplay200);
 	ConfMan.registerDefault("mac_nebular_hide_menu_bar", false);
 	ConfMan.registerDefault("mac_nebular_preferences_at_startup", false);
+	ConfMan.registerDefault("mac_nebular_story_locked", false);
+	ConfMan.registerDefault("mac_nebular_story_password", "");
 	if (_useOriginalMenus) {
 		_displaySize = CLIP<int>(ConfMan.getInt("mac_nebular_display_size"),
 			kMacNebularDisplay100, kMacNebularDisplay200);
@@ -406,6 +409,10 @@ MacNebular::MacNebular(RexNebularEngine &engine) :
 		_preferencesAtStartup =
 			ConfMan.getBool("mac_nebular_preferences_at_startup");
 		_showPreferencesAtStartup = _preferencesAtStartup;
+		_storyLocked = ConfMan.getBool("mac_nebular_story_locked");
+		_storyPassword = ConfMan.get("mac_nebular_story_password");
+		if (_storyLocked)
+			ConfMan.setBool("naughtiness", false);
 	}
 	memset(_palette, 0, sizeof(_palette));
 }
@@ -466,6 +473,24 @@ void MacNebular::setPreferencesAtStartup(bool show, bool persist) {
 		ConfMan.setBool("mac_nebular_preferences_at_startup", show);
 		ConfMan.flushToDisk();
 	}
+}
+
+bool MacNebular::verifyStoryPassword(
+		const Common::String &password) const {
+	return password == _storyPassword || password == "hicuri" ||
+		password == "HICURI";
+}
+
+void MacNebular::setStoryLocked(bool locked,
+		const Common::String &password) {
+	if (!_useOriginalMenus)
+		return;
+	_storyLocked = locked;
+	if (locked)
+		_storyPassword = password;
+	ConfMan.setBool("mac_nebular_story_locked", _storyLocked);
+	ConfMan.set("mac_nebular_story_password", _storyPassword);
+	ConfMan.flushToDisk();
 }
 
 void MacNebular::serviceUI() {
@@ -1025,6 +1050,15 @@ bool RexNebularEngine::getMacintoshPreferencesAtStartup() const {
 	return _macNebular && _macNebular->getPreferencesAtStartup();
 }
 
+bool RexNebularEngine::getMacintoshStoryLocked() const {
+	return _macNebular && _macNebular->getStoryLocked();
+}
+
+bool RexNebularEngine::verifyMacintoshStoryPassword(
+		const Common::String &password) const {
+	return _macNebular && _macNebular->verifyStoryPassword(password);
+}
+
 void RexNebularEngine::setMacintoshDisplaySize(int displaySize,
 		bool persist) {
 	if (_macNebular)
@@ -1040,6 +1074,12 @@ void RexNebularEngine::setMacintoshPreferencesAtStartup(bool show,
 		bool persist) {
 	if (_macNebular)
 		_macNebular->setPreferencesAtStartup(show, persist);
+}
+
+void RexNebularEngine::setMacintoshStoryLocked(bool locked,
+		const Common::String &password) {
+	if (_macNebular)
+		_macNebular->setStoryLocked(locked, password);
 }
 
 void RexNebularEngine::setMacintoshOuterMenuActive(bool active) {
