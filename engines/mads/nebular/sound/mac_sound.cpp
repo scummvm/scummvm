@@ -78,12 +78,21 @@ MacSoundQueueEntry::MacSoundQueueEntry() : used(false) {
 MacSoundDriver::MacSoundDriver(Audio::Mixer *mixer, MacResourceProvider *resources, int section) :
 		SoundDriver(mixer), _resources(resources), _section(section),
 		_volume(Audio::Mixer::kMaxChannelVolume), _paused(false), _ramping(false),
-		_rampVolume(0), _serviceTick(0) {
+		_rampVolume(0), _serviceTick(0), _pausedAtTick(0) {
 }
 
 void MacSoundDriver::setPaused(bool paused) {
 	if (_paused == paused)
 		return;
+	if (paused) {
+		_pausedAtTick = _serviceTick;
+	} else {
+		const uint32 pausedTicks = _serviceTick - _pausedAtTick;
+		for (int i = 0; i < 2; ++i) {
+			if (_voices[i].delayed)
+				_voices[i].delayEndTick += pausedTicks;
+		}
+	}
 	_paused = paused;
 	for (int i = 0; i < 2; ++i) {
 		if (_mixer->isSoundHandleActive(_voices[i].handle))

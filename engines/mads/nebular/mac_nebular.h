@@ -50,6 +50,10 @@ private:
 	bool _fullFrameActive = false;
 	bool _popupActive = false;
 	bool _layoutLogged = false;
+	uint32 _lastMacintoshSoundTick = (uint32)-1;
+	uint32 _macintoshSoundPausedAt = 0;
+	uint32 _macintoshSoundPausedTicks = 0;
+	bool _macintoshSoundPaused = false;
 
 public:
 	explicit MacNebular(RexNebularEngine &engine);
@@ -66,6 +70,7 @@ public:
 	Common::Point screenToGame(const Common::Point &point) const;
 	Common::Point gameToScreen(const Common::Point &point) const;
 	bool handleMacEvent(Common::Event &event);
+	void serviceSound();
 	void setPalette(const RGBcolor *palette, int firstColor, int numColors);
 	void getPalette(RGBcolor *palette, int firstColor, int numColors) const;
 	void presentScreen(int shakeOffset);

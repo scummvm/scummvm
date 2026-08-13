@@ -37,6 +37,7 @@
 #include "mads/nebular/mac_menus.h"
 #include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/mac_resources.h"
+#include "mads/nebular/sound/mac_sound.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/popup.h"
 #include "mads/nebular/mads/words.h"
@@ -729,6 +730,31 @@ bool MacNebular::handleMacEvent(Common::Event &event) {
 	return _useOriginalMenus && _menus && _menus->processEvent(event);
 }
 
+void MacNebular::serviceSound() {
+	// Classic Macintosh TickCount advances at approximately 60.15 Hz. CODE 3
+	// services sound after each event-loop pass and uses that clock for waits.
+	const uint32 hostTick = (uint32)((uint64)g_system->getMillis() * 6015 / 100000);
+	if (_engine.isPaused()) {
+		if (!_macintoshSoundPaused) {
+			_macintoshSoundPaused = true;
+			_macintoshSoundPausedAt = hostTick;
+		}
+		return;
+	}
+
+	if (_macintoshSoundPaused) {
+		_macintoshSoundPausedTicks += hostTick - _macintoshSoundPausedAt;
+		_macintoshSoundPaused = false;
+	}
+
+	const uint32 soundTick = hostTick - _macintoshSoundPausedTicks;
+	if (soundTick == _lastMacintoshSoundTick)
+		return;
+	_lastMacintoshSoundTick = soundTick;
+	if (_engine._soundManager)
+		static_cast<Sound::MacSoundManager *>(_engine._soundManager)->service(soundTick);
+}
+
 void MacNebular::showPopup() {
 	if (!_resources || !box)
 		return;
@@ -866,6 +892,11 @@ void RexNebularEngine::presentScreen(int shakeOffset) {
 
 bool RexNebularEngine::handleMacEvent(Common::Event &event) {
 	return _macNebular && _macNebular->handleMacEvent(event);
+}
+
+void RexNebularEngine::serviceMacintoshSound() {
+	if (_macNebular)
+		_macNebular->serviceSound();
 }
 
 void RexNebularEngine::selectMacintoshDifficulty() {
