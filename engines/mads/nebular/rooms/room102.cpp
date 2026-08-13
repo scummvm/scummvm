@@ -26,6 +26,7 @@
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/rooms/section1.h"
+#include "mads/nebular/sound/mac_sound.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -121,8 +122,12 @@ static void room_102_init() {
 		g_sequence_ids[13] = kernel_seq_forward(g_sprite_ids[13], false, 6, 0, 0, 1);
 		kernel_seq_trigger(g_sequence_ids[13], KERNEL_TRIGGER_EXPIRE, 0, 72);
 		kernel_seq_depth(g_sequence_ids[13], 5);
-		g_engine->_soundManager->command(24, 0);
-		g_engine->_soundManager->command(28, 0);
+		if (!Sound::commandMacintoshSound(Sound::kMacSoundPlay, 1024,
+				0, 0, 0, true))
+			g_engine->_soundManager->command(24, 0);
+		if (!Sound::commandMacintoshSound(Sound::kMacSoundPlay, 1028,
+				0, 0, 0, true))
+			g_engine->_soundManager->command(28, 0);
 	}
 
 	local._fridgeOpenedFl = false;
@@ -137,8 +142,11 @@ static void room_102_init() {
 		quote + 0, quote + 1, quote + 2, quote + 3, quote + 4, quote + 5,
 		quote + 6, quote + 7, quote + 8, quote + 9, quote + 10, 0);
 
-	if (previous_room == 101)
-		g_engine->_soundManager->command(20, 0);
+	if (previous_room == 101) {
+		if (!Sound::commandMacintoshSound(Sound::kMacSoundPlay, 1020,
+				0, 0, 0, true))
+			g_engine->_soundManager->command(20, 0);
+	}
 }
 
 static void room_102_daemon() {

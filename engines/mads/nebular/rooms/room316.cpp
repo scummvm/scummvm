@@ -26,6 +26,7 @@
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/rooms/section3.h"
+#include "mads/nebular/sound/mac_sound.h"
 
 namespace MADS {
 namespace RexNebular {
@@ -295,7 +296,9 @@ static void room_316_init() {
 		player.facing = FACING_SOUTH;
 		player.commands_allowed = false;
 		player.walker_visible = false;
-		g_engine->_soundManager->command(44, 0);
+		if (!Sound::commandMacintoshSound(Sound::kMacSoundPlay, 3044,
+				0, 0, 0, true))
+			g_engine->_soundManager->command(44, 0);
 		int spriteIdx = (global[kSexOfRex] == REX_MALE) ? 1 : 2;
 		g_sequence_ids[1] = kernel_seq_backward(g_sprite_ids[spriteIdx], false, 6, 0, 0, 1);
 		kernel_seq_depth(g_sequence_ids[1], 2);

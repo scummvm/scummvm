@@ -25,6 +25,7 @@
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
 #include "mads/nebular/rooms/section7.h"
+#include "mads/nebular/sound/mac_sound.h"
 #include "mads/nebular/rooms/dialog.h"
 
 namespace MADS {
@@ -172,7 +173,9 @@ static void room_704_init() {
 	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
 
 	section_7_music();
-	g_engine->_soundManager->command(28, 0);
+	if (!Sound::commandMacintoshSound(Sound::kMacSoundPlay, 7028,
+			0, 0, 0, true))
+		g_engine->_soundManager->command(28, 0);
 }
 
 static void room_704_daemon() {
