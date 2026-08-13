@@ -36,6 +36,7 @@ namespace MADS {
 namespace RexNebular {
 
 class MacResourceProvider;
+class MacNebularMenu;
 class RexNebularEngine;
 
 enum MacDialogEditCommand {
@@ -80,6 +81,7 @@ private:
 	MacResourceProvider &_resources;
 	Graphics::ManagedSurface &_screen;
 	Graphics::MacWindowManager &_windowManager;
+	MacNebularMenu *_menus;
 	const Graphics::Font *_font;
 	Common::Rect _bounds;
 	Common::Array<Item> _items;
@@ -121,7 +123,8 @@ private:
 public:
 	MacNebularDialog(RexNebularEngine &engine,
 		MacResourceProvider &resources, Graphics::ManagedSurface &screen,
-		Graphics::MacWindowManager &windowManager);
+		Graphics::MacWindowManager &windowManager,
+		MacNebularMenu *menus = nullptr);
 
 	bool load(uint16 resourceID);
 	void center();
@@ -134,6 +137,7 @@ public:
 		int selection);
 	int getListSelection(int itemNumber) const;
 	bool hasEditableFocus() const;
+	bool isEditCommandEnabled(MacDialogEditCommand command) const;
 	bool handleEditCommand(MacDialogEditCommand command);
 	int runModal(int defaultItem, int cancelItem);
 };

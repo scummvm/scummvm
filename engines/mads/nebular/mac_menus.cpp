@@ -57,6 +57,7 @@ enum {
 	kOpenDialog = 3010,
 
 	kFileMenu = 1,
+	kEditMenu = 2,
 	kOptionsMenu = 3,
 	kWindowMenu = 4,
 
@@ -65,6 +66,11 @@ enum {
 	kFileSaveAs = (1001 << 16) | 5,
 	kFilePreferences = (1001 << 16) | 7,
 	kFileQuit = (1001 << 16) | 9,
+	kEditUndo = (1002 << 16),
+	kEditCut = (1002 << 16) | 2,
+	kEditCopy = (1002 << 16) | 3,
+	kEditPaste = (1002 << 16) | 4,
+	kEditClear = (1002 << 16) | 5,
 	kOptionNoSound = (2001 << 16),
 	kOptionEasyInterface = (2001 << 16) | 1,
 	kFadeSmooth = (101 << 16),
@@ -292,6 +298,19 @@ void MacNebularMenu::updateState() {
 				itemIndex < _menu->numberOfMenuItems(topLevel); ++itemIndex)
 			setItemState(_menu->getSubMenuItem(topLevel, itemIndex), false, false);
 	}
+	if (_activeDialog) {
+		setItemState(getMenuItem(kEditMenu, 0),
+			_activeDialog->isEditCommandEnabled(kMacDialogUndo), false);
+		setItemState(getMenuItem(kEditMenu, 2),
+			_activeDialog->isEditCommandEnabled(kMacDialogCut), false);
+		setItemState(getMenuItem(kEditMenu, 3),
+			_activeDialog->isEditCommandEnabled(kMacDialogCopy), false);
+		setItemState(getMenuItem(kEditMenu, 4),
+			_activeDialog->isEditCommandEnabled(kMacDialogPaste), false);
+		setItemState(getMenuItem(kEditMenu, 5),
+			_activeDialog->isEditCommandEnabled(kMacDialogClear), false);
+		return;
+	}
 
 	setItemState(getMenuItem(kFileMenu, 2),
 		_engine.canLoadGameStateCurrently(nullptr), false);
@@ -358,6 +377,26 @@ void MacNebularMenu::dispatchCommand(int commandId) {
 	case kFileQuit:
 		_engine.quitGame();
 		game.going = false;
+		break;
+	case kEditUndo:
+		if (_activeDialog)
+			_activeDialog->handleEditCommand(kMacDialogUndo);
+		break;
+	case kEditCut:
+		if (_activeDialog)
+			_activeDialog->handleEditCommand(kMacDialogCut);
+		break;
+	case kEditCopy:
+		if (_activeDialog)
+			_activeDialog->handleEditCommand(kMacDialogCopy);
+		break;
+	case kEditPaste:
+		if (_activeDialog)
+			_activeDialog->handleEditCommand(kMacDialogPaste);
+		break;
+	case kEditClear:
+		if (_activeDialog)
+			_activeDialog->handleEditCommand(kMacDialogClear);
 		break;
 	case kOptionNoSound: {
 		const bool enableSound = !_engine._musicFlag && !_engine._soundFlag;
@@ -441,6 +480,10 @@ bool MacNebularMenu::processEvent(Common::Event &event) {
 	return handled;
 }
 
+bool MacNebularMenu::processDialogEvent(Common::Event &event) {
+	return processEvent(event);
+}
+
 void MacNebularMenu::draw() {
 	if (!_menu)
 		return;
@@ -481,7 +524,8 @@ void MacNebularMenu::runPreferencesDialog(bool startup) {
 	if (!initializeWindowManager())
 		return;
 
-	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager);
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager,
+		this);
 	if (!dialog.load(startup ? kStartupPreferencesDialog :
 			kPreferencesDialog))
 		return;
@@ -516,7 +560,7 @@ bool MacNebularMenu::runStoryPasswordDialog(bool leavingLocked) {
 		"Enter your password for future unlocking of NICE mode.";
 	for (;;) {
 		MacNebularDialog dialog(_engine, _resources, _screen,
-			*_windowManager);
+			*_windowManager, this);
 		if (!dialog.load(kStoryPasswordDialog))
 			return false;
 		dialog.center();
@@ -550,7 +594,8 @@ void MacNebularMenu::runOpenDialog() {
 	if (slots.empty())
 		return;
 
-	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager);
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager,
+		this);
 	if (!dialog.load(kOpenDialog))
 		return;
 	dialog.center();
@@ -592,7 +637,8 @@ void MacNebularMenu::runSaveDialog(bool saveAs) {
 
 	if (!initializeWindowManager())
 		return;
-	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager);
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager,
+		this);
 	if (!dialog.load(kSaveDialog))
 		return;
 	dialog.center();
@@ -647,7 +693,8 @@ int MacNebularMenu::runDifficultyDialog() {
 	if (!initializeWindowManager())
 		return -1;
 
-	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager);
+	MacNebularDialog dialog(_engine, _resources, _screen, *_windowManager,
+		this);
 	if (!dialog.load(kDifficultyDialog))
 		return -1;
 	dialog.center();

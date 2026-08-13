@@ -29,6 +29,7 @@
 #include "graphics/primitives.h"
 #include "mads/mads.h"
 #include "mads/nebular/mac_dialogs.h"
+#include "mads/nebular/mac_menus.h"
 #include "mads/nebular/mac_resources.h"
 #include "mads/nebular/nebular.h"
 
@@ -42,9 +43,11 @@ MacNebularDialog::Item::Item() : type(kUserItem), enabled(false),
 
 MacNebularDialog::MacNebularDialog(RexNebularEngine &engine,
 		MacResourceProvider &resources, Graphics::ManagedSurface &screen,
-		Graphics::MacWindowManager &windowManager) : _engine(engine),
+		Graphics::MacWindowManager &windowManager, MacNebularMenu *menus) :
+		_engine(engine),
 		_resources(resources), _screen(screen), _windowManager(windowManager),
-		_font(resources.getDialogFont()), _focusItem(0), _pressedItem(0),
+		_menus(menus), _font(resources.getDialogFont()), _focusItem(0),
+		_pressedItem(0),
 		_defaultItem(0), _cancelItem(0), _redraw(true) {
 }
 
@@ -661,6 +664,26 @@ bool MacNebularDialog::hasEditableFocus() const {
 	return item && item->enabled && item->type == kEditableText;
 }
 
+bool MacNebularDialog::isEditCommandEnabled(
+		MacDialogEditCommand command) const {
+	const Item *item = getItem(_focusItem);
+	if (!item || !item->enabled || item->type != kEditableText)
+		return false;
+
+	const bool hasSelection = item->selectionStart != item->selectionEnd;
+	switch (command) {
+	case kMacDialogUndo:
+		return item->hasUndo;
+	case kMacDialogCut:
+	case kMacDialogCopy:
+	case kMacDialogClear:
+		return hasSelection;
+	case kMacDialogPaste:
+		return g_system->hasTextInClipboard();
+	}
+	return false;
+}
+
 bool MacNebularDialog::handleEditCommand(MacDialogEditCommand command) {
 	Item *item = getItem(_focusItem);
 	if (!item || !item->enabled || item->type != kEditableText)
@@ -764,6 +787,8 @@ int MacNebularDialog::runModal(int defaultItem, int cancelItem) {
 
 		Common::Event event;
 		while (!done && g_system->getEventManager()->pollEvent(event)) {
+			if (_menus && _menus->processDialogEvent(event))
+				continue;
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				_engine.quitGame();
