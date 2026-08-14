@@ -52,6 +52,14 @@ public:
 			Common::KeyState(Common::KEYCODE_a, 'a', Common::KBD_CTRL)), 0x01);
 	}
 
+	void testRetailPreviousSceneReplayUsesDosControlCharacter() {
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_r, 'r', Common::KBD_CTRL)),
+			Ripper::kReplayPreviousSceneCommand);
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_r, 'r')), (uint16)'r');
+	}
+
 	void testPrintableAndControlKeysRetainAscii() {
 		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
 			Common::KeyState(Common::KEYCODE_a, 'a')), (uint16)'a');

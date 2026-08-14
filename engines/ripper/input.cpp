@@ -33,10 +33,12 @@ InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(e
 uint16 translateKeyToCommand(const Common::KeyState &key) {
 	// PollInteractionAndResolveSelection at 0x13fc7 and
 	// ServiceMediaPresentationTextControl at 0x17014 consume the DOS control
-	// character values for the v1.05 text and auto-scroll toggles.
+	// character values for the v1.05 replay, text, and auto-scroll shortcuts.
 	if ((key.flags & Common::KBD_CTRL) != 0) {
 		if (key.keycode == Common::KEYCODE_a)
 			return 0x01;
+		if (key.keycode == Common::KEYCODE_r)
+			return kReplayPreviousSceneCommand;
 		if (key.keycode == Common::KEYCODE_t)
 			return 0x14;
 	}

@@ -288,6 +288,20 @@
   frame counters to one without calling `SeekSmackerPlaybackFrame`. ScummVM
   likewise rewinds the same decoder without clearing its surface, preserving
   the wrapped framebuffer required by skipped blocks in the first packet.
+- Retail Ctrl+R reaches `PollInteractionAndResolveSelection` as DOS control
+  command `0x12` (`0x13e41` in `RIPPER.LE`, `0x14181` in v1.05). It does not
+  rerun a script callback or change the active frame. The handler saves the
+  borrowed presentation origin, rebuilds the configured path from the
+  dedicated replay buffer, calls `RunMediaPresentation`, and restores the
+  origin. In v1.05 the replay buffer at `0x9b0e0` has only two code owners:
+  the `.AVI` branch of `ExecutePresentationEntry` at `0x1771d` writes it, and
+  the Ctrl+R branch at `0x141b1` reads it. WAV entries, direct Smacker media,
+  and interactive type-1 sequences therefore leave the previous AVI selected.
+  The buffer is process state rather than saved-game state, and the demo input
+  dispatcher at `0x1218a` has no Ctrl+R branch. ScummVM retains the same narrow
+  retail path, uses the controlled centered scene-media presentation without
+  authored subtitle text, and temporarily pauses an active interactive decoder
+  while the nested replay is on the stack.
 - Retail `RunMediaSequence` advances frames against its timer callback slot;
   nested presentation work explicitly suspends that slot and resumes it on
   return. ScummVM global dialogs instead enter `Engine::pauseEngine()` while the

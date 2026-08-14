@@ -566,6 +566,44 @@ void ScriptManager::markScenePlayed(const Common::String &scene) {
 	debugC(2, kDebugScene, "Ripper: marked scene played '%s'", scene.c_str());
 }
 
+void ScriptManager::retainPreviousInteractionScene(
+		const Common::String &mediaPath, const char *source) {
+	// ExecutePresentationEntry at 0x1754b copies only its .AVI path to the
+	// dedicated replay buffer at 0x9b0e0. WAV entries and direct type-1
+	// RunMediaSequence presentations leave the previous value unchanged.
+	if (_demoScriptAbi || !mediaPath.hasSuffixIgnoreCase(".avi"))
+		return;
+	_previousInteractionSceneMediaPath = mediaPath;
+	debugC(2, kDebugScene,
+		"Ripper: retained previous interaction scene media='%s' source=%s "
+		"route=ExecutePresentationEntry@0x1754b",
+		mediaPath.c_str(), source);
+}
+
+bool ScriptManager::replayPreviousInteractionScene(const char *source) {
+	if (_demoScriptAbi || _previousInteractionSceneMediaPath.empty()) {
+		debugC(2, kDebugScene,
+			"Ripper: ignored previous interaction scene replay source=%s "
+			"reason=%s",
+			source, _demoScriptAbi ? "demo has no Ctrl+R route" :
+				"no retained AVI presentation");
+		return false;
+	}
+
+	debugC(1, kDebugScene,
+		"Ripper: replaying previous interaction scene media='%s' source=%s "
+		"command=0x%04x route=PollInteractionAndResolveSelection@0x13fc7",
+		_previousInteractionSceneMediaPath.c_str(), source,
+		kReplayPreviousSceneCommand);
+	const bool replayed = _engine->getMedia()->play(
+		_previousInteractionSceneMediaPath, true, -1, -1, true);
+	debugC(1, kDebugScene,
+		"Ripper: completed previous interaction scene replay media='%s' "
+		"source=%s success=%d",
+		_previousInteractionSceneMediaPath.c_str(), source, replayed);
+	return replayed;
+}
+
 uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
 		const Common::String &label) const {
 	if (label.empty())
@@ -858,6 +896,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			// ExecutePresentationEntry at 0x1754b deactivates the UI selection
 			// presentation before media playback. The following frame activation
 			// restores the cursor after the callback finishes.
+			retainPreviousInteractionScene(mediaPath, "script-media-command");
 			_engine->getCursor()->setVisible(false);
 			if (!_engine->getMedia()->play(mediaPath, allowEscSpace, x, y, true,
 					presentationText))
@@ -1321,6 +1360,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				"presentationText=%d textLength=%u",
 				label.c_str(), mediaPath.c_str(), frame.x, frame.y,
 				!presentationText.empty(), presentationText.size());
+			if (frame.presentationType == 0)
+				retainPreviousInteractionScene(mediaPath, "scene-frame-presentation");
 			markScenePlayed(label);
 			const bool dialogueIdleCallback =
 				frame.idleCallbackOffset != 0 && _dialogue->hasChoices();
@@ -1646,6 +1687,12 @@ bool ScriptManager::serviceScene() {
 			_engine->getSettings()->handlePresentationTextCommand(
 				_engine->getInput()->peekKey(), "scene-runtime")) {
 		_engine->getInput()->consumeKey();
+		return true;
+	}
+	if (!_demoScriptAbi && _runtime.awaitingInteraction &&
+			_engine->getInput()->peekKey() == kReplayPreviousSceneCommand) {
+		_engine->getInput()->consumeKey();
+		replayPreviousInteractionScene("scene-runtime");
 		return true;
 	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
