@@ -35,7 +35,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_SKIP_INTRO)
+		GUIO2(GAMEOPTION_SKIP_INTRO, GAMEOPTION_SUBTITLE_AUTOSCROLL)
 	},
 	{
 		"ripper",

@@ -2470,7 +2470,11 @@
   text control. WAV entries then use
   `PlayBlockingAudioWithOptionalText` at `0x206e0`; IAVF entries install
   `ServiceMediaPresentationTextControl` at `0x17014`. Direct Smacker entries do
-  not consume the auxiliary string.
+  not consume the auxiliary string. ScummVM exposes this through its standard
+  `subtitles` setting. The engine-specific `ripper_subtitle_autoscroll` option
+  independently maps the retail auto-scroll setting at `0x9a593`; ScummVM's
+  launcher cannot group an engine checkbox under the standard Audio-tab
+  subtitle control, so the option remains available when subtitles are off.
 - `ResolvePresentationControlLayout` at `0x19a3d` selector `0x13` creates a
   centered 400-pixel wrapped chooser at active-display top plus 300. On a later
   packetized branch, `MoveMediaPresentationTextControl` at `0x17454` moves the
