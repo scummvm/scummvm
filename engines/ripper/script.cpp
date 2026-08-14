@@ -1311,9 +1311,16 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 
 		if (frame.presentationType == 0 || frame.presentationType == 1) {
 			const Common::String mediaPath = _runtime.activeScript.getString(frame.mediaNameOffset);
+			const Common::String presentationText =
+				frame.presentationType == 0 && !_demoScriptAbi &&
+				_engine->getSettings()->getSubtitles() && frame.textOffset != 0 ?
+				_runtime.activeScript.getPresentationText(frame.textOffset) :
+				Common::String();
 			debugC(2, kDebugScene,
-				"Ripper: frame presentation label='%s' media='%s' origin=%d,%d",
-				label.c_str(), mediaPath.c_str(), frame.x, frame.y);
+				"Ripper: frame presentation label='%s' media='%s' origin=%d,%d "
+				"presentationText=%d textLength=%u",
+				label.c_str(), mediaPath.c_str(), frame.x, frame.y,
+				!presentationText.empty(), presentationText.size());
 			markScenePlayed(label);
 			const bool dialogueIdleCallback =
 				frame.idleCallbackOffset != 0 && _dialogue->hasChoices();
@@ -1380,9 +1387,13 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			IdleMediaCallback idleCallback(this, _runtime.activeScript, frame.idleCallbackOffset,
 				idleWaitFrame, _runtime.activeFrame);
 			uint16 idleCommand = 0;
-			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
-				loopUntilInput, allowEscSpace,
-				idleTextRequest ? &idleCallback : nullptr, &idleCommand))
+			const bool played = frame.presentationType == 0 ?
+				_engine->getMedia()->play(mediaPath, allowEscSpace, frame.x,
+					frame.y, true, presentationText) :
+				_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
+					loopUntilInput, allowEscSpace,
+					idleTextRequest ? &idleCallback : nullptr, &idleCommand);
+			if (!played)
 				return false;
 			if (_runtimeRestorePending) {
 				// PollInteractionAndResolveSelection at 0x13c8d propagates the
@@ -1630,6 +1641,12 @@ bool ScriptManager::serviceScene() {
 			return true;
 		if (!_runtime.pendingSceneMember.empty())
 			return performPendingSceneTransition();
+	}
+	if (!_demoScriptAbi &&
+			_engine->getSettings()->handlePresentationTextCommand(
+				_engine->getInput()->peekKey(), "scene-runtime")) {
+		_engine->getInput()->consumeKey();
+		return true;
 	}
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	if (_runtime.cyberExitRequested)

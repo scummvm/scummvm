@@ -90,6 +90,8 @@ public:
 	bool drawRetainedTitlePanelText(const Common::String &title,
 		const Common::Rect &bounds, PresentationStyle style,
 		bool present = true);
+	bool drawRetainedPlainTextButton(uint titleResourceId,
+		const Common::Rect &bounds, bool present = true);
 	bool drawRetainedTextPanelLines(const Common::Array<Common::String> &lines,
 		const Common::Rect &bounds, uint firstVisible,
 		uint &maximumFirstVisible, uint &visibleRows, PresentationStyle style,

@@ -34,6 +34,8 @@ class RipperEngine;
 
 Common::Rect calculatePresentationTextBounds(uint sequenceId, uint videoMode,
 	bool largeMedia, int displayTop);
+Common::Rect calculatePresentationContinueBounds(
+	const Common::Rect &textBounds);
 uint calculatePresentationTextAutoScrollLine(uint progress, uint total,
 	uint maximumFirstVisible);
 
@@ -79,13 +81,10 @@ public:
 		uint width, uint height) override;
 	uint16 service(uint frame) override;
 	bool ownsInput() const override { return true; }
-	bool managesPalette() const override { return true; }
-	void transformPalette(byte *palette, uint colorCount) const override;
 	bool waitForDismissal() { return _control.waitForDismissal(); }
 	bool isDismissed() const { return _control.isDismissed(); }
 
 private:
-	RipperEngine *_engine;
 	PresentationTextControl _control;
 	uint _videoMode;
 };

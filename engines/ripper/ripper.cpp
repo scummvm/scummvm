@@ -67,7 +67,9 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_milestones(new Milestones()),
 		_milestoneOverlay(new MilestoneOverlay(*_milestones)),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
-		_scripts(new ScriptManager(this)), _settings(new RipperSettings(_mixer)),
+		_scripts(new ScriptManager(this)),
+		_settings(new RipperSettings(_mixer,
+			(gameDescription->flags & ADGF_DEMO) != 0)),
 		_toolbar(new ToolbarManager(this)),
 		_wac(new WacManager(this)), _worldMap(new WorldMap(this)),
 		_gameplayStarted(false), _puzzleHelpEnabled(false) {
@@ -81,6 +83,10 @@ bool RipperEngine::hasFeature(EngineFeature feature) const {
 	return feature == kSupportsReturnToLauncher ||
 		feature == kSupportsLoadingDuringRuntime ||
 		feature == kSupportsSavingDuringRuntime;
+}
+
+bool RipperEngine::isDemo() const {
+	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
 
 void RipperEngine::pauseEngineIntern(bool pause) {

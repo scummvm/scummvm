@@ -31,6 +31,16 @@ InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(e
 }
 
 uint16 translateKeyToCommand(const Common::KeyState &key) {
+	// PollInteractionAndResolveSelection at 0x13fc7 and
+	// ServiceMediaPresentationTextControl at 0x17014 consume the DOS control
+	// character values for the v1.05 text and auto-scroll toggles.
+	if ((key.flags & Common::KBD_CTRL) != 0) {
+		if (key.keycode == Common::KEYCODE_a)
+			return 0x01;
+		if (key.keycode == Common::KEYCODE_t)
+			return 0x14;
+	}
+
 	// RunWebGridShiftPuzzleScene at 0x2cdce handles the DOS BIOS Alt+H
 	// command (scan code 0x23, ASCII 0) as the solved-grid preview.
 	if ((key.flags & Common::KBD_ALT) != 0 &&
