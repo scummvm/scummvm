@@ -253,6 +253,9 @@ void MADSEngine::pollEvents() {
 	// Handle calling any set timer function
 	checkForTimerFunction();
 
+	// Slight delay to prevent throttling
+	g_system->delayMillis(5);
+
 	// Poll for events
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
