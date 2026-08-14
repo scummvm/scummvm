@@ -2502,9 +2502,9 @@
   `PollInteractionAndResolveSelection` at `0x13fc7` maps Ctrl+T's DOS control
   character `0x14` to the text byte and Ctrl+A's `0x01` to the auto-scroll byte;
   ScummVM accepts those shortcuts in the retail scene, media, and retained-text
-  input loops. All three retail engine checkboxes share the
-  established skip-intro GUI flag so targets stored before the subtitle options
-  were added enumerate the complete option set without requiring re-detection.
+  input loops. Retail detection advertises distinct `GAMEOPTION_SKIP_INTRO`,
+  `GAMEOPTION_SUBTITLES`, and `GAMEOPTION_SUBTITLE_AUTOSCROLL` flags so the
+  advanced detector filters each engine checkbox by the capability it controls.
 - `ResolvePresentationControlLayout` at `0x19a3d` selector `0x13` creates a
   centered 400-pixel wrapped chooser at active-display top plus 300.
   `InitializeSharedPresentationTemplates` at `0x11bd1` leaves this chooser
