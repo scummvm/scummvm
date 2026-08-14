@@ -2475,7 +2475,9 @@
   text is separate from the launcher's conventional speech/subtitle mode. The
   `ripper_subtitle_autoscroll` option maps the retail auto-scroll setting at
   `0x9a593` and is grouped under the subtitle checkbox, so the launcher disables
-  it while subtitles are off.
+  it while subtitles are off. All three retail engine checkboxes share the
+  established skip-intro GUI flag so targets stored before the subtitle options
+  were added enumerate the complete option set without requiring re-detection.
 - `ResolvePresentationControlLayout` at `0x19a3d` selector `0x13` creates a
   centered 400-pixel wrapped chooser at active-display top plus 300. On a later
   packetized branch, `MoveMediaPresentationTextControl` at `0x17454` moves the
