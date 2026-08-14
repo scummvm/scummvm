@@ -128,11 +128,11 @@ public:
 
 	void validate() override {}
 	void startQueuedCommands() override;
-	void commandMacintosh(const MacSoundCommand &command, bool queued);
+	void commandMacintosh(const MacSoundCommand &cmd, bool queued);
 	void service(uint32 tick);
 };
 
-bool commandMacintoshSound(const MacSoundCommand &command, bool queued = false);
+bool commandMacintoshSound(const MacSoundCommand &cmd, bool queued = false);
 bool commandMacintoshSound(MacSoundOperation operation, int resourceID,
 	int argument1 = 0, int argument2 = 0, int argument3 = 0,
 	bool queued = false);

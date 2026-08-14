@@ -427,13 +427,13 @@ void MacSoundManager::startQueuedCommands() {
 		getMacintoshDriver()->dispatchQueue();
 }
 
-void MacSoundManager::commandMacintosh(const MacSoundCommand &command, bool queued) {
+void MacSoundManager::commandMacintosh(const MacSoundCommand &cmd, bool queued) {
 	if (!_driver || !_soundFlag)
 		return;
 	if (queued)
-		getMacintoshDriver()->queueMacintosh(command);
+		getMacintoshDriver()->queueMacintosh(cmd);
 	else
-		getMacintoshDriver()->commandMacintosh(command);
+		getMacintoshDriver()->commandMacintosh(cmd);
 }
 
 void MacSoundManager::service(uint32 tick) {
@@ -441,24 +441,24 @@ void MacSoundManager::service(uint32 tick) {
 		getMacintoshDriver()->service(tick);
 }
 
-bool commandMacintoshSound(const MacSoundCommand &command, bool queued) {
+bool commandMacintoshSound(const MacSoundCommand &cmd, bool queued) {
 	if (!g_engine || g_engine->getPlatform() != Common::kPlatformMacintosh ||
 			!g_engine->_soundManager)
 		return false;
 	static_cast<MacSoundManager *>(g_engine->_soundManager)->commandMacintosh(
-		command, queued);
+		cmd, queued);
 	return true;
 }
 
 bool commandMacintoshSound(MacSoundOperation operation, int resourceID,
 		int argument1, int argument2, int argument3, bool queued) {
-	MacSoundCommand command;
-	command.operation = operation;
-	command.resourceID = resourceID;
-	command.argument1 = argument1;
-	command.argument2 = argument2;
-	command.argument3 = argument3;
-	return commandMacintoshSound(command, queued);
+	MacSoundCommand cmd;
+	cmd.operation = operation;
+	cmd.resourceID = resourceID;
+	cmd.argument1 = argument1;
+	cmd.argument2 = argument2;
+	cmd.argument3 = argument3;
+	return commandMacintoshSound(cmd, queued);
 }
 
 } // namespace Sound
