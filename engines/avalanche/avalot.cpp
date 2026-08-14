@@ -1316,6 +1316,7 @@ void AvalancheEngine::minorRedraw() {
 	for (int i = 0; i < 3; i++)
 		_scoreToDisplay[i] = -1; // impossible digits
 	drawScore();
+	drawToolbar();
 
 	fadeIn();
 }
