@@ -24,6 +24,7 @@
 #include "mads/core/matte.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -362,6 +363,7 @@ static void room_307_init() {
 
 	pal_change_color(252, 63, 30, 20);
 	pal_change_color(253, 45, 15, 12);
+	setMacintoshMessageColors(0, 30, 63, 0, 30, 63);
 
 	section_3_music();
 

@@ -22,6 +22,7 @@
 #include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -308,6 +309,7 @@ static void room_316_init() {
 		player.y = 126;
 	}
 
+	setMacintoshMessageColors(63, 63, 0, 63, 63, 0);
 	section_3_music();
 	kernel.quotes = quote_load(253, 0);
 }
@@ -491,6 +493,7 @@ static void room_316_parser() {
 	else
 		return;
 
+	setMacintoshMessageColors(63, 63, 0, 63, 63, 0);
 	player.command_ready = false;
 }
 

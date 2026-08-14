@@ -78,6 +78,18 @@ enum {
 	kMacBlackColor = kMacRightSelectColor
 };
 
+bool setMacintoshMessageColors(int primaryR, int primaryG, int primaryB,
+		int secondaryR, int secondaryG, int secondaryB) {
+	if (!g_engine->hasMacintoshInterface())
+		return false;
+
+	pal_change_color(KERNEL_MESSAGE_COLOR_BASE,
+		primaryR, primaryG, primaryB);
+	pal_change_color(KERNEL_MESSAGE_COLOR_BASE + 1,
+		secondaryR, secondaryG, secondaryB);
+	return true;
+}
+
 struct MacPopupLine {
 	Common::String text;
 	word tab;

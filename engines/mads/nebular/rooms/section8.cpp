@@ -25,6 +25,7 @@
 #include "mads/core/kernel.h"
 #include "mads/core/pal.h"
 #include "mads/core/player.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/rooms/section6.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/global.h"
@@ -53,8 +54,10 @@ void section_8_walker() {
 		Common::strcpy_s(player.series_name, global[kSexOfRex] == SEX_FEMALE ? "ROX" : "RXM");
 	}
 
-	pal_change_color(16, 0x0A, 0x3F, 0x3F);
-	pal_change_color(17, 0x0A, 0x2D, 0x2D);
+	if (!setMacintoshMessageColors(30, 63, 63, 10, 63, 63)) {
+		pal_change_color(16, 0x0A, 0x3F, 0x3F);
+		pal_change_color(17, 0x0A, 0x2D, 0x2D);
+	}
 }
 
 void section_8_interface() {

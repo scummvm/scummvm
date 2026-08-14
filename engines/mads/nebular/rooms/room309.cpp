@@ -22,6 +22,7 @@
 #include "mads/core/game.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -63,8 +64,10 @@ static void room_309_init() {
 
 	pal_change_color(252, 63, 37, 26);
 	pal_change_color(253, 45, 24, 17);
-	pal_change_color(16, 63, 63, 63);
-	pal_change_color(17, 45, 45, 45);
+	if (!setMacintoshMessageColors(63, 63, 0, 63, 63, 0)) {
+		pal_change_color(16, 63, 63, 63);
+		pal_change_color(17, 45, 45, 45);
+	}
 	pal_change_color(250, 63, 20, 20);
 	pal_change_color(251, 45, 10, 10);
 

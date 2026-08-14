@@ -22,6 +22,7 @@
 #include "math/utils.h"
 #include "mads/core/config.h"
 #include "mads/core/pal.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/rooms/section1.h"
 #include "mads/nebular/sound/mac_sound.h"
@@ -69,8 +70,10 @@ void section_1_walker() {
 	}
 
 	player.scaling_velocity = 0;
-	pal_change_color(16, 10, 63, 63);
-	pal_change_color(17, 10, 45, 45);
+	if (!setMacintoshMessageColors(63, 63, 0, 63, 63, 0)) {
+		pal_change_color(16, 10, 63, 63);
+		pal_change_color(17, 10, 45, 45);
+	}
 }
 
 void section_1_interface() {
