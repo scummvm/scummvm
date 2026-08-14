@@ -39,7 +39,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		}
 	},
 	{
-		GAMEOPTION_SUBTITLES,
+		GAMEOPTION_SKIP_INTRO,
 		{
 			_s("Subtitles"),
 			_s("Show authored subtitle text during supported videos and audio presentations."),
@@ -50,7 +50,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		}
 	},
 	{
-		GAMEOPTION_SUBTITLE_AUTOSCROLL,
+		GAMEOPTION_SKIP_INTRO,
 		{
 			_s("Automatically scroll subtitles"),
 			_s("Automatically advance authored subtitle text while supported videos and audio presentations play."),
