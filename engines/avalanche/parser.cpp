@@ -2304,7 +2304,7 @@ void Parser::doThat() {
 				temp.toUppercase();
 				int pwdId = _vm->_passwordNum + kFirstPassword;
 				for (uint j = 0; j < _vocabulary[pwdId]._word.size(); j++) {
-					if (_vocabulary[pwdId]._word[j] != temp[j])
+					if (_vocabulary[pwdId]._word[j] != ((j < temp.size()) ? temp[j] : '\0'))
 						ok = false;
 				}
 			}
