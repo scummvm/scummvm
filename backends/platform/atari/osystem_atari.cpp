@@ -283,6 +283,7 @@ OSystem_Atari::~OSystem_Atari() {
 
 		v_clsvwk(_vdi_handle);
 		appl_exit();
+		s_app_id = -1;
 	}
 
 	// graceful exit
@@ -299,6 +300,7 @@ void OSystem_Atari::initBackend() {
 		_vdi_handle = graf_handle(&dummy, &dummy, &dummy, &dummy);
 		if (_vdi_handle < 1) {
 			appl_exit();
+			s_app_id = -1;
 			error("graf_handle() failed");
 		}
 
@@ -310,6 +312,7 @@ void OSystem_Atari::initBackend() {
 
 		if (_vdi_handle == 0) {
 			appl_exit();
+			s_app_id = -1;
 			error("v_opnvwk() failed");
 		}
 
