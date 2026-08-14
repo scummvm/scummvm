@@ -69,6 +69,7 @@ private:
 	int _displayTop;
 	bool _dismissed;
 	bool _continuePressed;
+	bool _textColorPending;
 	ModalDialogManager::TextPanelScrollControl _hoveredScrollControl;
 };
 

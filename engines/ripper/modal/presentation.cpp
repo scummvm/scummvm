@@ -43,8 +43,10 @@ byte findNearestPaletteIndex(const byte *palette, byte red, byte green,
 		const int redDistance = palette[index * 3] - red;
 		const int greenDistance = palette[index * 3 + 1] - green;
 		const int blueDistance = palette[index * 3 + 2] - blue;
-		const uint distance = redDistance * redDistance +
-			greenDistance * greenDistance + blueDistance * blueDistance;
+		// FindNearestPaletteColorIndex at 0x56af1 minimizes the sum of the
+		// absolute channel differences rather than squared RGB distance.
+		const uint distance = ABS<int>(redDistance) +
+			ABS<int>(greenDistance) + ABS<int>(blueDistance);
 		if (distance < bestDistance) {
 			bestDistance = distance;
 			bestIndex = index;
@@ -67,6 +69,19 @@ const char *presentationStyleName(ModalDialogManager::PresentationStyle style) {
 }
 
 } // End of anonymous namespace
+
+void ModalDialogManager::resolveSceneEntryTextColor() {
+	// ServiceMediaPresentationTextControl at 0x17014 writes the palette entry
+	// nearest RGB white into the normal NF2T glyph template byte at 0x94338.
+	byte palette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	_sceneEntryTextColor = findNearestPaletteIndex(palette, 0xff, 0xff, 0xff);
+	const byte *color = palette + _sceneEntryTextColor * 3;
+	debugC(3, kDebugScene,
+		"Ripper: resolved scene-entry text color index=%u rgb=%u,%u,%u "
+		"target=255,255,255",
+		_sceneEntryTextColor, color[0], color[1], color[2]);
+}
 
 uint ModalDialogManager::measureText(const Common::String &text,
 		PresentationStyle style) const {
@@ -314,10 +329,10 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	const int rowHeight = primaryStyle ? kPrimaryRowHeight : kModalRowHeight;
 	const byte titleColor = primaryStyle ? kPrimaryTextColor :
 		(wacStyle ? kWacModalTitleColor :
-		(sceneEntryStyle ? kSceneEntryTextColor : kModalTitleColor));
+		(sceneEntryStyle ? _sceneEntryTextColor : kModalTitleColor));
 	const byte textColor = primaryStyle ? kPrimaryTextColor :
 		(wacStyle ? kWacModalTextColor :
-		(sceneEntryStyle ? kSceneEntryTextColor : kModalTextColor));
+		(sceneEntryStyle ? _sceneEntryTextColor : kModalTextColor));
 	if (primaryStyle) {
 		// RunCircuitChipPlacementPuzzleScene at 0x28aa4 constructs resource
 		// 0xb6 with g_primaryChooserPresentationTemplate at 0x8a284. The
@@ -328,8 +343,9 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 	} else if (sceneEntryStyle) {
 		// InitializeSharedPresentationTemplates at 0x11bd1 initializes the
 		// v1.05 media-text template at 0x9a78e without MENUB bitmap
-		// descriptors. Its client/background byte is palette index zero and
-		// both normal text-template bytes are palette index 14.
+		// descriptors. Its client/background byte is palette index zero.
+		// ServiceMediaPresentationTextControl at 0x17014 resolves the active
+		// NF2T glyph color to the palette entry nearest white for each branch.
 		for (int y = bounds.top; y < bounds.bottom; ++y)
 			memset(screen->getBasePtr(bounds.left, y),
 				kSceneEntryBackgroundColor, bounds.width());
@@ -602,7 +618,7 @@ bool ModalDialogManager::drawRetainedTextPanelLine(
 	const int clientWidth = bounds.width() - leftPadding - rightPadding;
 	const byte textColor = primaryStyle ? kPrimaryTextColor :
 		(wacStyle ? kWacModalTextColor :
-			(sceneEntryStyle ? kSceneEntryTextColor : kModalTextColor));
+			(sceneEntryStyle ? _sceneEntryTextColor : kModalTextColor));
 	if (!primaryStyle) {
 		const byte backgroundColor = wacStyle ?
 			kWacModalBackgroundColor : (sceneEntryStyle ?
