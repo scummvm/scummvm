@@ -500,11 +500,6 @@ bool ModalDialogManager::drawRetainedPlainTextButton(uint titleResourceId,
 		_engine->getCursor()->refresh();
 		presentScreen();
 	}
-	debugC(3, kDebugScene,
-		"Ripper: drew retained plain text button resource=%u title='%s' "
-		"bounds=%d,%d,%d,%d background=%u text=%u",
-		titleResourceId, title.c_str(), bounds.left, bounds.top,
-		bounds.width(), bounds.height(), backgroundColor, textColor);
 	return true;
 }
 
@@ -544,15 +539,19 @@ bool ModalDialogManager::drawRetainedTextPanelLines(
 		applyModalPalette();
 	drawDialog(Common::String(), lines, firstVisible, visibleRows, bounds, style,
 		hoveredScrollControl, present);
-	debugC(3, kDebugScene,
-		"Ripper: drew retained text panel lines style=%s lines=%u "
-		"firstLine=%u visibleRows=%u viewport=%d,%d,%d,%d bounds=%d,%d,%d,%d",
-		presentationStyleName(style), lines.size(),
-		firstVisible, visibleRows, bounds.left + leftPadding + horizontalInset,
-		bounds.top + topPadding + verticalInset,
-		bounds.width() - leftPadding - rightPadding - horizontalInset * 2,
-		visibleRows * rowHeight,
-		bounds.left, bounds.top, bounds.width(), bounds.height());
+	if (!sceneEntryStyle) {
+		debugC(3, kDebugScene,
+			"Ripper: drew retained text panel lines style=%s lines=%u "
+			"firstLine=%u visibleRows=%u viewport=%d,%d,%d,%d "
+			"bounds=%d,%d,%d,%d",
+			presentationStyleName(style), lines.size(),
+			firstVisible, visibleRows,
+			bounds.left + leftPadding + horizontalInset,
+			bounds.top + topPadding + verticalInset,
+			bounds.width() - leftPadding - rightPadding - horizontalInset * 2,
+			visibleRows * rowHeight,
+			bounds.left, bounds.top, bounds.width(), bounds.height());
+	}
 	return true;
 }
 

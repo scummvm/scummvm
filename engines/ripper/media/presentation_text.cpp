@@ -257,11 +257,16 @@ bool PresentationTextControl::waitForDismissal() {
 	_input->discardMouseTransitions();
 	_engine->getCursor()->update(kPresentationCursor);
 	_engine->getCursor()->setVisible(true);
+	const Common::Rect continueBounds =
+		calculatePresentationContinueBounds(_bounds);
 	debugC(1, kDebugVideo,
 		"Ripper: waiting for retail presentation text dismissal "
-		"sequence=%u firstLine=%u limit=%u continueResource=0x%x",
+		"sequence=%u firstLine=%u limit=%u textBounds=%d,%d,%d,%d "
+		"continueResource=0x%x continueBounds=%d,%d,%d,%d",
 		_sequenceId, _firstVisible, _maximumFirstVisible,
-		kPresentationContinueResource);
+		_bounds.left, _bounds.top, _bounds.width(), _bounds.height(),
+		kPresentationContinueResource, continueBounds.left,
+		continueBounds.top, continueBounds.width(), continueBounds.height());
 	while (!_engine->shouldQuit() && !_dismissed) {
 		if (_input->pollEvents()) {
 			_engine->quitGame();
