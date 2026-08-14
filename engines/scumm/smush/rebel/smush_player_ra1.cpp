@@ -270,23 +270,13 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 		if (_insane) {
 			InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 			if (rebel1->isInteractiveVideoActive()) {
-				const uint16 gameOp = rebel1->getActiveGameOpcode();
-				const bool fullWidthStoredPatch = (_storedFobjWidth == _vm->_screenWidth);
-				const bool projectedCockpitPatch = (gameOp == 0x0B &&
-					((rebel1->getCurrentLevel() == 4 && rebel1->getLevelGameplayPhase() == 2) ||
-						rebel1->getCurrentLevel() == 7));
-				// Most interactive patches follow the viewport directly; selected
-				// cockpit patches need projected center placement to keep indicators aligned.
-				if (fullWidthStoredPatch || (gameOp == 0x0B && !projectedCockpitPatch) ||
-						gameOp == 0x19 || gameOp == 0x1A) {
-					left += _ra1ViewportOffsetX;
-					top += _ra1ViewportOffsetY;
-				} else {
-					ra1ApplyCenteredFetchPlacement(rebel1, _storedFobjWidth, _storedFobjHeight, left, top);
-					// Convert projected presentation-space placement into the cropped buffer.
-					left += _ra1ViewportOffsetX;
-					top += _ra1ViewportOffsetY;
-				}
+				// DOS routes every FTCH through FUN_28D0A. It sets flag 0x0800
+				// before DispatchFobjCodec, applying quarter-projected placement to
+				// the stored patch regardless of the active GAME opcode or its size.
+				ra1ApplyCenteredFetchPlacement(rebel1, _storedFobjWidth, _storedFobjHeight, left, top);
+				// Convert fixed presentation-space placement into our cropped buffer.
+				left += _ra1ViewportOffsetX;
+				top += _ra1ViewportOffsetY;
 			}
 		}
 

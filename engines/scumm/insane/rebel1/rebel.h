@@ -153,7 +153,6 @@ public:
 	void setFrameHasGameChunk(bool hasGameChunk) { _frameHasGameChunk = hasGameChunk; }
 	void setCurrentSmushFrame(int32 frame);
 	int getCurrentLevel() const { return _currentLevel; }
-	int getLevelGameplayPhase() const { return _levelGameplayPhase; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
 	uint16 getEffectiveGameOpcode() const;
 	uint16 getTargetHitGameOpcode() const;
