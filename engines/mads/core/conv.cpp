@@ -1347,7 +1347,6 @@ static void conv_generate_message(Conv *convIn, ConvData *convData,
 		int16 *msgList, int msgListSize, int16 *voiceList, int voiceListSize) {
 	Box *priorBox = box;
 	box = &conv_box;
-	conv_control.has_text = 0;
 	int personSpeaking;
 	int messageId;
 	int lineStart, lineCount;
@@ -1703,8 +1702,6 @@ void conv_flush() {
 	for (i = 0; i < CONV_MAX_SLOTS; ++i) {
 		if (conv_indexes[i] >= 2) {
 			dest = conv_open_write(i);
-			if (!dest)
-				goto done;
 
 			ConvData *convData = conv_data[conv_indexes[i] - 2];
 			errCode = conv_write(dest, convData);
@@ -1803,8 +1800,6 @@ int conv_expand(Common::SeekableReadStream *handle) {
 
 		// Open a temporary file for the conversation
 		Common::WriteStream *dest = conv_open_write(index);
-		if (!dest)
-			break;
 
 		// Read it's data from the savegame
 		convData = conv_read(handle);

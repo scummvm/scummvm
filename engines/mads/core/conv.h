@@ -98,7 +98,7 @@ struct ConvVariable {
 
 	bool isPtr = false;
 	int16 val = 0, type = 0;
-	int16 *ptr;
+	int16 *ptr = nullptr;
 
 	static constexpr size_t SIZE = 2 * 3;
 	void load(Common::SeekableReadStream *src);
