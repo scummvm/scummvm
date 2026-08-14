@@ -269,6 +269,7 @@ public:
 	const Common::String &getPendingSceneMember() const { return _runtime.pendingSceneMember; }
 	const Common::String &getPendingSceneEntryLabel() const { return _runtime.pendingSceneEntryLabel; }
 	bool hasPlayedScene(const Common::String &scene) const { return isScenePlayed(scene); }
+	bool replayPreviousInteractionScene(const char *source);
 	void requestCyberExit(const char *source);
 	void suspendForCyber(SceneRuntimeState &snapshot);
 	void restoreFromCyber(SceneRuntimeState &snapshot);
@@ -306,6 +307,8 @@ private:
 	bool isScenePlayed(const Common::String &scene) const;
 	void setScenePlayed(const Common::String &scene, bool played);
 	void markScenePlayed(const Common::String &scene);
+	void retainPreviousInteractionScene(const Common::String &mediaPath,
+		const char *source);
 	static Common::String argumentString(const ScriptArgument &argument);
 	static bool textAnswersMatch(const Common::String &entered,
 		const Common::String &expected);
@@ -317,6 +320,7 @@ private:
 	bool _demoRuntimeComplete;
 	bool _runtimeRestorePending;
 	Common::Array<Common::String> _playedScenes;
+	Common::String _previousInteractionSceneMediaPath;
 	uint _sceneCallbackFrame;
 	IdleMediaCallback *_activeIdleMediaCallback;
 	byte _chooserTemplateMode;

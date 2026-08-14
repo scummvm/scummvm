@@ -26,6 +26,8 @@
 
 namespace Ripper {
 
+static const uint16 kReplayPreviousSceneCommand = 0x12;
+
 enum MouseButtonFlags {
 	kMouseButtonLeft = 1 << 0,
 	kMouseButtonRight = 1 << 1,
