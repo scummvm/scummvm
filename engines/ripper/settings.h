@@ -83,6 +83,7 @@ public:
 
 	bool getBufferedVideo() const { return _bufferedVideo; }
 	bool getSubtitles() const { return _subtitles; }
+	bool getSubtitleAutoScroll() const { return _subtitleAutoScroll; }
 	uint getVideoMode() const { return _videoMode; }
 	uint getCombatLevel() const { return _combatLevel; }
 	uint getPuzzleLevel() const { return _puzzleLevel; }
@@ -112,6 +113,7 @@ private:
 	uint _puzzleLevel;
 	bool _bufferedVideo;
 	bool _subtitles;
+	bool _subtitleAutoScroll;
 	bool _toolbarHelp;
 	bool _toolbarPermanent;
 	bool _demoReservedToggles[2];

@@ -24,6 +24,7 @@
 #include "engines/advancedDetector.h"
 
 #define GAMEOPTION_SKIP_INTRO GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SUBTITLE_AUTOSCROLL GUIO_GAMEOPTIONS2
 
 namespace Ripper {
 

@@ -28,6 +28,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
+#include "ripper/settings.h"
 
 namespace Ripper {
 
@@ -91,9 +92,10 @@ void PresentationTextControl::configureSegment(uint sequenceId,
 		largeMedia, _displayTop);
 	debugC(2, kDebugVideo,
 		"Ripper: configured retail presentation text sequence=%u frames=%u "
-		"media=%ux%u large=%d videoMode=%u bounds=%d,%d,%d,%d",
+		"media=%ux%u large=%d videoMode=%u autoScroll=%d bounds=%d,%d,%d,%d",
 		sequenceId, totalFrames, mediaWidth, mediaHeight, largeMedia,
-		videoMode, _bounds.left, _bounds.top, _bounds.width(),
+		videoMode, _engine->getSettings()->getSubtitleAutoScroll(),
+		_bounds.left, _bounds.top, _bounds.width(),
 		_bounds.height());
 }
 
@@ -231,12 +233,14 @@ uint16 PresentationTextControl::service(uint progress) {
 		return 1;
 	if (!draw(false))
 		return 1;
-	const uint automaticFirstVisible = calculatePresentationTextAutoScrollLine(
-		progress, _totalFrames, _maximumFirstVisible);
-	if (automaticFirstVisible > _firstVisible) {
-		scrollTo(automaticFirstVisible, "auto");
-		if (!draw(false))
-			return 1;
+	if (_engine->getSettings()->getSubtitleAutoScroll()) {
+		const uint automaticFirstVisible = calculatePresentationTextAutoScrollLine(
+			progress, _totalFrames, _maximumFirstVisible);
+		if (automaticFirstVisible > _firstVisible) {
+			scrollTo(automaticFirstVisible, "auto");
+			if (!draw(false))
+				return 1;
+		}
 	}
 	return 0;
 }
