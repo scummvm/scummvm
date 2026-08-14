@@ -125,6 +125,18 @@ MainMenuAction MainMenu::run() {
 	Audio::SoundHandle titleAudioHandle;
 	Audio::SoundHandle hoverAudioHandle;
 	Audio::SoundHandle selectionAudioHandle;
+	auto finishMenu = [&](MainMenuAction action) {
+		g_system->getMixer()->stopHandle(titleAudioHandle);
+		_engine->getCursor()->setVisible(false);
+		// RunStartupFrontEndLoop at 0x10778 funnels every menu result through
+		// display command 0x14 before returning. It clears the logical page but
+		// does not submit a dirty-region update, so the following controlled AVI
+		// saves a blank return page instead of the final RIP_OPEN.SMK frame.
+		g_system->fillScreen(0);
+		debugC(2, kDebugVideo,
+			"Ripper: cleared startup menu logical page action=%d", action);
+		return action;
+	};
 	playMenuAudio(_engine, "title0.wav", Audio::Mixer::kMusicSoundType,
 		titleAudioHandle, true);
 
@@ -141,9 +153,7 @@ MainMenuAction MainMenu::run() {
 			const uint16 command = _engine->getInput()->consumeKey();
 			if (command == 0x1b) {
 				debugC(1, kDebugInput, "Ripper: Escape selected startup menu quit");
-				g_system->getMixer()->stopHandle(titleAudioHandle);
-				_engine->getCursor()->setVisible(false);
-				return kMainMenuQuit;
+				return finishMenu(kMainMenuQuit);
 			}
 		}
 
@@ -164,9 +174,7 @@ MainMenuAction MainMenu::run() {
 			debugC(1, kDebugInput, "Ripper: startup menu selected action=%d", action);
 			playMenuAudio(_engine, "title2.wav", Audio::Mixer::kSFXSoundType,
 				selectionAudioHandle, false);
-			g_system->getMixer()->stopHandle(titleAudioHandle);
-			_engine->getCursor()->setVisible(false);
-			return action;
+			return finishMenu(action);
 		}
 
 		if (decoder.endOfVideo()) {
@@ -197,9 +205,7 @@ MainMenuAction MainMenu::run() {
 		g_system->delayMillis(MIN<uint32>(decoder.getTimeToNextFrame(), 10));
 	}
 
-	g_system->getMixer()->stopHandle(titleAudioHandle);
-	_engine->getCursor()->setVisible(false);
-	return kMainMenuQuit;
+	return finishMenu(kMainMenuQuit);
 }
 
 } // End of namespace Ripper
