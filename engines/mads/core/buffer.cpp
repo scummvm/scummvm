@@ -726,7 +726,7 @@ void buffer_peel_vert(Buffer *target, int peel, byte *work_memory, long work_siz
 		memcpy(deep_scan, work_area, peel_memory);
 	}
 
-	if (work_area != NULL && work_memory == NULL)
+	if (work_memory == NULL)
 		mem_free(work_area);
 }
 

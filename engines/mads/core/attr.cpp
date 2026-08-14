@@ -171,7 +171,7 @@ int attr_load(char *base_name,
 	env_catint(temp_buf, variant, 1);
 
 	if (!env_exist(temp_buf)) {
-		if (variant > 0) {
+		if (variant > 0 && strlen(temp_buf) != 0) {
 			temp_buf[strlen(temp_buf) - 1] = '0';
 		}
 
