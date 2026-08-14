@@ -18,24 +18,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ripper/diagnostics/milestone_overlay.h"
+#include "ripper/diagnostics/screen_presenter.h"
 
 #include <cxxtest/TestSuite.h>
 
-class RipperMilestoneOverlayTestSuite : public CxxTest::TestSuite {
+class RipperScreenPresenterTestSuite : public CxxTest::TestSuite {
 public:
-	void testNotificationsAreQueuedForFiveSecondLifetimes() {
-		Ripper::MilestoneOverlayQueue queue;
-		queue.enqueue(6, "Burton", true);
-		queue.update(100);
-		TS_ASSERT(!queue.hasActiveNotification());
-
-		queue.setEnabled(true);
-		queue.enqueue(6, "Burton", true);
-		queue.enqueue(84, "Audio Editor", false);
+	void testMessagesAreQueuedForFiveSecondLifetimes() {
+		Ripper::ScreenMessageQueue queue;
+		queue.enqueue("Subtitles: ON");
+		queue.enqueue("Subtitle autoscroll: OFF");
 		TS_ASSERT_EQUALS(queue.pendingCount(), 2U);
 		TS_ASSERT(queue.update(100));
-		TS_ASSERT_EQUALS(queue.message(), "Milestone 6: Burton [set]");
+		TS_ASSERT_EQUALS(queue.message(), "Subtitles: ON");
 		TS_ASSERT_EQUALS(queue.pendingCount(), 1U);
 		TS_ASSERT_EQUALS(queue.opacity(100), 0);
 		TS_ASSERT_EQUALS(queue.opacity(350), 255);
@@ -43,38 +38,35 @@ public:
 		TS_ASSERT(queue.opacity(5099) < 255);
 
 		TS_ASSERT(queue.update(5100));
-		TS_ASSERT_EQUALS(queue.message(), "Milestone 84: Audio Editor [unset]");
+		TS_ASSERT_EQUALS(queue.message(), "Subtitle autoscroll: OFF");
 		TS_ASSERT_EQUALS(queue.pendingCount(), 0U);
 		TS_ASSERT(queue.update(10100));
-		TS_ASSERT(!queue.hasActiveNotification());
+		TS_ASSERT(!queue.hasActiveMessage());
 	}
 
-	void testDisablingClearsTheActiveNotificationAndQueue() {
-		Ripper::MilestoneOverlayQueue queue;
-		queue.setEnabled(true);
-		queue.enqueue(212, "Eddie Photo", true);
-		queue.enqueue(213, "Magnotta Photo", true);
+	void testClearRemovesTheActiveMessageAndQueue() {
+		Ripper::ScreenMessageQueue queue;
+		queue.enqueue("Milestone 212: Eddie Photo [set]");
+		queue.enqueue("Milestone 213: Magnotta Photo [set]");
 		queue.update(200);
 
-		queue.setEnabled(false);
-		TS_ASSERT(!queue.isEnabled());
-		TS_ASSERT(!queue.hasActiveNotification());
+		queue.clear();
+		TS_ASSERT(!queue.hasActiveMessage());
 		TS_ASSERT_EQUALS(queue.pendingCount(), 0U);
 		TS_ASSERT(queue.message().empty());
 	}
 
-	void testPauseDoesNotConsumeTheActiveNotificationLifetime() {
-		Ripper::MilestoneOverlayQueue queue;
-		queue.setEnabled(true);
-		queue.enqueue(44, "Prologue Newsroom OPEN", true);
+	void testPauseDoesNotConsumeTheActiveMessageLifetime() {
+		Ripper::ScreenMessageQueue queue;
+		queue.enqueue("Milestone 44: Prologue Newsroom OPEN [set]");
 		queue.update(100);
 		queue.pause(1100);
 		TS_ASSERT(!queue.update(11100));
-		TS_ASSERT(queue.hasActiveNotification());
+		TS_ASSERT(queue.hasActiveMessage());
 		queue.resume(11100);
 		TS_ASSERT(!queue.update(15099));
-		TS_ASSERT(queue.hasActiveNotification());
+		TS_ASSERT(queue.hasActiveMessage());
 		TS_ASSERT(queue.update(15100));
-		TS_ASSERT(!queue.hasActiveNotification());
+		TS_ASSERT(!queue.hasActiveMessage());
 	}
 };

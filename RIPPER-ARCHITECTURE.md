@@ -561,16 +561,17 @@
   <ID>` flips and reports one store entry. The ScummVM-only
   `OVERLAY_MILESTONES` command toggles lower-left milestone-change
   notifications; `ON` and `OFF` select the state explicitly. Actual bit
-  transitions enter an isolated FIFO, and each red-on-black message has a
-  five-second dithered fade lifecycle before the next queued transition. The
-  engine-wide `presentScreen` boundary composites the notification with shared
-  interface red index 254 immediately before each backend update, then restores
-  its scoped backing without presenting it. This keeps the logical indexed
-  framebuffer clean across scene, media, and modal buffer changes. Presentation
-  timing is suspended through `RipperEngine::pauseEngineIntern`, so closing the
-  debugger with Escape does not consume a queued notification's lifetime.
-  Milestone storage and retail validation remain independent of this ScummVM-only
-  debug presentation.
+  transitions enqueue formatted messages in the shared `ScreenPresenter` FIFO.
+  Each red-on-black message has a five-second dithered fade lifecycle before the
+  next queued message. The engine-wide `presentScreen` boundary composites the
+  active message with shared interface red index 254 immediately before each
+  backend update, then restores its scoped backing without presenting it. This
+  keeps the logical indexed framebuffer clean across scene, media, and modal
+  buffer changes and lets other diagnostics reuse the same queue and renderer.
+  Presentation timing is suspended through `RipperEngine::pauseEngineIntern`,
+  so closing the debugger with Escape does not consume a queued message's
+  lifetime. Milestone storage and retail validation remain independent of this
+  ScummVM-only debug presentation.
   Flags 6 through 9 identify Magnotta, Falconetti, Burton, or Powell as the
   Ripper. `SeedRandomFreePersistentFlag6To9` at `0x106c0` counts zero-valued
   candidate bytes at persistent-settings offsets `+0x38` through `+0x3b`,
@@ -2502,7 +2503,9 @@
   `PollInteractionAndResolveSelection` at `0x13fc7` maps Ctrl+T's DOS control
   character `0x14` to the text byte and Ctrl+A's `0x01` to the auto-scroll byte;
   ScummVM accepts those shortcuts in the retail scene, media, and retained-text
-  input loops. Retail detection advertises distinct `GAMEOPTION_SKIP_INTRO`,
+  input loops. Each accepted shortcut also queues a ScummVM-only diagnostic
+  message containing the new ON/OFF state through the shared `ScreenPresenter`.
+  Retail detection advertises distinct `GAMEOPTION_SKIP_INTRO`,
   `GAMEOPTION_SUBTITLES`, and `GAMEOPTION_SUBTITLE_AUTOSCROLL` flags so the
   advanced detector filters each engine checkbox by the capability it controls.
 - `ResolvePresentationControlLayout` at `0x19a3d` selector `0x13` creates a
