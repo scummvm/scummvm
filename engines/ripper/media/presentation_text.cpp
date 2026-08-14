@@ -87,7 +87,7 @@ PresentationTextControl::PresentationTextControl(RipperEngine *engine,
 		_engine(engine), _input(input), _text(text), _bounds(),
 		_firstVisible(0), _maximumFirstVisible(0), _visibleRows(0),
 		_totalFrames(0), _sequenceId(0), _displayTop(displayTop),
-		_dismissed(false), _continuePressed(false),
+		_dismissed(false), _continuePressed(false), _textColorPending(true),
 		_hoveredScrollControl(ModalDialogManager::kTextPanelScrollNone) {
 }
 
@@ -95,6 +95,7 @@ void PresentationTextControl::configureSegment(uint sequenceId,
 		uint totalFrames, uint mediaWidth, uint mediaHeight, uint videoMode) {
 	_sequenceId = sequenceId;
 	_totalFrames = totalFrames;
+	_textColorPending = true;
 	const bool largeMedia = mediaWidth >= 321 || mediaHeight >= 201;
 	_bounds = calculatePresentationTextBounds(sequenceId, videoMode,
 		largeMedia, _displayTop);
@@ -112,6 +113,8 @@ void PresentationTextControl::applySharedPalettePatch() {
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 	_engine->applySharedPalettePatch(palette, 256);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	_engine->getModalDialog()->resolveSceneEntryTextColor();
+	_textColorPending = false;
 }
 
 void PresentationTextControl::scrollTo(uint firstVisible,
@@ -237,6 +240,10 @@ uint16 PresentationTextControl::service(uint progress) {
 	serviceInput(false);
 	if (_dismissed)
 		return 1;
+	if (_textColorPending) {
+		_engine->getModalDialog()->resolveSceneEntryTextColor();
+		_textColorPending = false;
+	}
 	if (!draw(false))
 		return 1;
 	if (_engine->getSettings()->getSubtitleAutoScroll()) {

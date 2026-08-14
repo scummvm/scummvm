@@ -2489,8 +2489,13 @@
 - `ResolvePresentationControlLayout` at `0x19a3d` selector `0x13` creates a
   centered 400-pixel wrapped chooser at active-display top plus 300.
   `InitializeSharedPresentationTemplates` at `0x11bd1` leaves this chooser
-  unskinned, with palette index 0 behind index 14 text and five-pixel client
-  margins. On a later
+  unskinned, with palette index 0 behind its text and five-pixel client
+  margins. The template's `0x0e` bytes are layout metrics, not the rendered
+  glyph color. The normal NF2T template's foreground byte at `0x94338`
+  defaults to index 251. At each packetized branch start,
+  `ServiceMediaPresentationTextControl` at `0x17014` resolves pure white
+  through `FindNearestPaletteColorIndex` at `0x56af1` and writes that active
+  palette index into the normal NF2T glyph template. On a later
   packetized branch, `MoveMediaPresentationTextControl` at `0x17454` moves the
   chooser to active-display top plus 260 for an unscaled small branch, or to
   y=400 for a large or scaled branch. The first branch calculates its automatic
