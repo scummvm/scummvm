@@ -193,7 +193,7 @@ public:
 	}
 	virtual bool drawMacintoshText(FontPtr, Buffer *, const char *, int,
 		int, int, int) const { return false; }
-	virtual bool getInterfaceSentenceColors(byte &, byte &) const {
+	virtual bool getInterfaceSentenceColor(byte &) const {
 		return false;
 	}
 	virtual bool hasMacintoshInterface() const { return false; }

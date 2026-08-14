@@ -1570,12 +1570,11 @@ void RexNebularEngine::onPopupDestroyed() {
 		_macNebular->hidePopup();
 }
 
-bool RexNebularEngine::getInterfaceSentenceColors(byte &foreground, byte &shadow) const {
+bool RexNebularEngine::getInterfaceSentenceColor(byte &foreground) const {
 	if (!_macNebular)
 		return false;
 
 	foreground = kMacNormalTextColor;
-	shadow = kMacBlackColor;
 	return true;
 }
 
