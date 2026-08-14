@@ -365,6 +365,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	bool toolbarPaused = false;
 	bool completed = true;
 	uint presentedFrames = 0;
+	byte decoderPaletteBase[256 * 3];
+	bool decoderPaletteBaseValid = false;
 	Common::Array<byte> transparentBacking;
 	if (transparentFirstPixel) {
 		Graphics::Surface *screen = g_system->lockScreen();
@@ -387,19 +389,41 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			name.c_str(), x, y, outputWidth, outputHeight);
 	}
 	auto applyDecoderPalette = [&](bool forcePalette) {
-		if (forcePalette || decoder.hasDirtyPalette()) {
+		const bool dirtyPalette = decoder.hasDirtyPalette();
+		if (forcePalette || dirtyPalette) {
+			if (dirtyPalette) {
+				const byte *decoderPalette = decoder.getPalette();
+				if (!decoderPalette) {
+					warning("Ripper: Smacker '%s' reported a dirty palette without data",
+						name.c_str());
+					completed = false;
+					return;
+				}
+				memcpy(decoderPaletteBase, decoderPalette,
+					sizeof(decoderPaletteBase));
+				decoderPaletteBaseValid = true;
+			} else if (!decoderPaletteBaseValid) {
+				// Packetized branches may omit an initial palette record and retain
+				// the palette installed by the preceding branch. Cache that inherited
+				// base before a callback applies temporary interface or combat colors.
+				g_system->getPaletteManager()->grabPalette(decoderPaletteBase, 0, 256);
+				decoderPaletteBaseValid = true;
+				debugC(3, kDebugVideo,
+					"Ripper: Smacker '%s' inherited display palette for callback base",
+					name.c_str());
+			}
 			byte palette[256 * 3];
 			if (sourcePalette) {
 				sourcePalette->resize(sizeof(palette));
-				memcpy(sourcePalette->data(), decoder.getPalette(), sizeof(palette));
+				memcpy(sourcePalette->data(), decoderPaletteBase, sizeof(palette));
 			}
 			if (preserveDisplayPalette)
 				return;
 			if (patchWacMediaPalette) {
 				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-				memcpy(palette + 10 * 3, decoder.getPalette() + 10 * 3, 140 * 3);
+				memcpy(palette + 10 * 3, decoderPaletteBase + 10 * 3, 140 * 3);
 			} else {
-				memcpy(palette, decoder.getPalette(), sizeof(palette));
+				memcpy(palette, decoderPaletteBase, sizeof(palette));
 			}
 			if (patchInterfacePalette && !patchWacMediaPalette)
 				_engine->applySharedPalettePatch(palette, 256);
