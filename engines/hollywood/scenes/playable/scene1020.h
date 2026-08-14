@@ -65,6 +65,13 @@ private:
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame = -1);
+	void runOverlaySequence(const ActionOverlaySpec &spec);
+	void runQuasimodoGrateCutscene();
+	void runGrateLiftShake();
+	void runQuasimodoLayerTransition(byte fromFrame, byte toFrame);
+	void runQuasimodoSpeechLine(byte frameIndex, bool bendToRope);
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void handleSceneEventFlag0();
 	void handleSceneEventFlag0Overlay();
 	void handleResourceBlockChoiceSpeech();
@@ -73,10 +80,13 @@ private:
 	void handleSpeech19AfterEventFlag1();
 	void handleResourceOverlayChunk18StateChange();
 	void handleResourceOverlayChunk19EventFlag();
+	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	bool isFirstEntryState() const;
 	bool isSpecialOverlayEntryState() const;
+
+	ResourceSpriteLayer _quasimodoLayer;
 };
 
 } // End of namespace Hollywood
