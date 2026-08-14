@@ -290,10 +290,8 @@ static void run_animation(int animIndex) {
 			if (seriesFlag2 && currentFrame <= seriesMinFrame && !picture_map.one_to_one)
 				flag1 = false;
 
-			if (flag1)
-				seriesFlag2 = false;
-
 			if (flag1) {
+				seriesFlag2 = false;
 				(void)sprite_data_load(animSeries, frameIndex, largeBuffer2);
 				largeBuffer2 += pageMemNeeded;
 				++seriesMinFrame;
@@ -478,7 +476,7 @@ static void animate() {
 
 		if ((!stop_music_at_end || found_sound) && !g_engine->_soundManager->isLoaded()) {
 			// Initialize the sound driver
-			char ext = sound_file_name[strlen(sound_file_name) - 1];
+			char ext = strlen(sound_file_name) > 0 ? sound_file_name[strlen(sound_file_name) - 1] : '0';
 			int section = (g_engine->isDemo() && !Common::isDigit(ext)) ? 1 : ext - '0';
 			g_engine->_soundManager->init(section);
 		}

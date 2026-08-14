@@ -65,10 +65,10 @@ void anim_timer_init() {
 	paletteHandle = 0;
 	palIndex1 = palIndex2 = 0;
 	matteId = 0;
-	normalTimer1 = messageCount = 0;
+	normalTimer1 = 0;
 	currentViewX = currentViewY = 0;
 	panningX = panningY = 0;
-	normalTimer1 = imageCount = 0;
+	messageCount = imageCount = 0;
 }
 
 void anim_timer_shutdown() {
