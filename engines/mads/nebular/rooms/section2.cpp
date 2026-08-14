@@ -22,6 +22,7 @@
 #include "mads/mads.h"
 #include "mads/core/config.h"
 #include "mads/core/pal.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/rooms/section2.h"
 #include "mads/nebular/global.h"
 
@@ -70,8 +71,10 @@ void section_2_walker() {
 	if ((new_room == 203 || new_room == 204) && global[kRhotundaStatus])
 		player.walker_loads_first = false;
 
-	pal_change_color(16, 10, 63, 63);
-	pal_change_color(17, 10, 45, 45);
+	if (!setMacintoshMessageColors(0, 0, 63, 0, 0, 63)) {
+		pal_change_color(16, 10, 63, 63);
+		pal_change_color(17, 10, 45, 45);
+	}
 }
 
 void section_2_interface() {

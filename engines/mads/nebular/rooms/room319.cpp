@@ -25,6 +25,7 @@
 #include "mads/core/mcga.h"
 #include "mads/core/pal.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -120,6 +121,7 @@ static void room_319_init() {
 
 	pal_change_color(252, 63, 30, 2);
 	pal_change_color(253, 45, 15, 1);
+	setMacintoshMessageColors(0, 0, 63, 0, 0, 63);
 
 	local._slachePosY = 0;
 	local._slacheInitFl = false;

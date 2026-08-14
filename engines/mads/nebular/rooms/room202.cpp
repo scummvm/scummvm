@@ -21,6 +21,7 @@
 
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -168,6 +169,7 @@ static void room_202_init() {
 
 	local._meteorologistSpecial = false;
 
+	setMacintoshMessageColors(63, 10, 0, 63, 10, 0);
 	section_2_music();
 }
 

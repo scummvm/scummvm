@@ -21,6 +21,7 @@
 
 #include "mads/core/game.h"
 #include "mads/nebular/global.h"
+#include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/mads/inventory.h"
 #include "mads/nebular/mads/words.h"
@@ -125,6 +126,7 @@ static void room_612_init() {
 		kernel_run_animation(kernel_name('R', 1), 70);
 	}
 
+	setMacintoshMessageColors(63, 63, 0, 63, 63, 0);
 	section_6_music();
 
 	if (kernel.teleported_in)

@@ -25,6 +25,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "graphics/managed_surface.h"
+#include "mads/core/font.h"
 #include "mads/core/general.h"
 
 namespace Common {
@@ -43,6 +44,10 @@ enum MacNebularDisplaySize {
 	kMacNebularDisplay150 = 1,
 	kMacNebularDisplay200 = 2
 };
+
+// Returns true when the Macintosh palette replaced the DOS defaults.
+bool setMacintoshMessageColors(int primaryR, int primaryG, int primaryB,
+	int secondaryR, int secondaryG, int secondaryB);
 
 class MacNebular {
 private:
