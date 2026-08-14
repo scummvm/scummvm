@@ -833,9 +833,12 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.arguments.size() < expectedArgumentCount)
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
+			// The retail compiler stores this optional authored text as an inline
+			// type-7 argument. An absent caption is encoded as a one-byte NUL
+			// payload; argument.value is not a string-table offset for this type.
 			const Common::String presentationText = !_demoScriptAbi &&
 				_engine->getSettings()->getSubtitles() ?
-				script.getString(command.arguments[1].value) : Common::String();
+				argumentString(command.arguments[1]) : Common::String();
 			// The demo's opcode handler at 0x13e46 calls FUN_000142bb with
 			// path, auxiliary text, Y, and X, and forces its scene-presentation
 			// control argument to one. The retail script command executor at
@@ -846,10 +849,12 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			const int y = (int32)command.arguments[_demoScriptAbi ? 2 : 4].value;
 			debugC(3, kDebugScripts,
 				"Ripper: media command ABI=%s path='%s' controls=%d "
-				"position=%d,%d presentationText=%d textLength=%u",
+				"position=%d,%d presentationText=%d textLength=%u "
+				"textArgumentType=%u textPayloadLength=%u",
 				_demoScriptAbi ? "demo" : "retail", mediaPath.c_str(),
 				allowEscSpace, x, y, !presentationText.empty(),
-				presentationText.size());
+				presentationText.size(), command.arguments[1].type,
+				command.arguments[1].data.size());
 			// ExecutePresentationEntry at 0x1754b deactivates the UI selection
 			// presentation before media playback. The following frame activation
 			// restores the cursor after the callback finishes.
