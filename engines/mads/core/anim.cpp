@@ -230,7 +230,7 @@ AnimPtr anim_load(const char *file_name, Buffer *orig, Buffer *depth,
 	char temp_buf[80];
 	char block_name[20];
 	char *mark;
-	int16 *color_slaves = (int16 *)temp_buf;
+	int16 color_slaves[40];
 	word num_color_slaves;
 	long image_size, frame_size, speech_size, anim_size;
 	AnimPtr anim = NULL;
