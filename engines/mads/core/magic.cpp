@@ -276,6 +276,7 @@ void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 			g_system->updateScreen();
 
 		do {
+			g_engine->getScreen()->update();
 			now_timing = timer_read_600();
 		} while (now_timing < (base_timing + tick_delay));
 		base_timing = now_timing;
@@ -376,6 +377,7 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 			g_system->updateScreen();
 
 		do {
+			g_engine->getScreen()->update();
 			now_timing = timer_read_600();
 		} while (now_timing < (base_timing + tick_delay));
 		base_timing = now_timing;
