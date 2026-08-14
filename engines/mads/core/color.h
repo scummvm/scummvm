@@ -141,18 +141,6 @@ extern byte color_thatch(int color, int thatching);
 extern void color_list_start_scan(byte *list_flags);
 
 /**
- * Updates a color list <list>, based on colors used in <scan_buf>
- * and defined in <scan_pal>.  Adds any colors used in picture but
- * not defined in list to the list; sets the corresponding color flag
- * for each color that is used in the buffer.
- *
- * @return		Returns # of colors in updated list, or negative for error.
- */
-extern int color_list_update(ColorListPtr list, Buffer *scan_buf,
-	Palette *scan_pal, byte *list_flags,
-	byte *palette_map, CycleListPtr cycle);
-
-/**
  * Removes from color list "list" any colors whose corresponding
  * flags are not set.  (Use after color_list_update to remove colors
  * no longer being used).  Voids any previously existing palette_map.
