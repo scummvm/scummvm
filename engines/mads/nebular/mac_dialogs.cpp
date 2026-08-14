@@ -284,13 +284,13 @@ void MacNebularDialog::drawCheckbox(const Item &item,
 		&_windowManager.getBuiltinPatterns(), 1, 0, 0,
 		Common::Point(1, 1), _windowManager._colorWhite, false);
 	const int boxTop = bounds.top + (bounds.height() - 12) / 2;
-	const Common::Rect box(bounds.left, boxTop, bounds.left + 12, boxTop + 12);
-	primitives.drawRect1(box, _windowManager._colorBlack, &plot);
+	const Common::Rect cbox(bounds.left, boxTop, bounds.left + 12, boxTop + 12);
+	primitives.drawRect1(cbox, _windowManager._colorBlack, &plot);
 	if (item.checked) {
-		primitives.drawLine(box.left + 2, box.top + 2,
-			box.right - 3, box.bottom - 3, _windowManager._colorBlack, &plot);
-		primitives.drawLine(box.left + 2, box.bottom - 3,
-			box.right - 3, box.top + 2, _windowManager._colorBlack, &plot);
+		primitives.drawLine(cbox.left + 2, cbox.top + 2,
+			cbox.right - 3, cbox.bottom - 3, _windowManager._colorBlack, &plot);
+		primitives.drawLine(cbox.left + 2, cbox.bottom - 3,
+			cbox.right - 3, cbox.top + 2, _windowManager._colorBlack, &plot);
 	}
 	const int textY = bounds.top +
 		(bounds.height() - _font->getFontHeight()) / 2;
@@ -708,14 +708,13 @@ bool MacNebularDialog::hasEditableFocus() const {
 	return item && item->enabled && item->type == kEditableText;
 }
 
-bool MacNebularDialog::isEditCommandEnabled(
-		MacDialogEditCommand command) const {
+bool MacNebularDialog::isEditCommandEnabled(MacDialogEditCommand commandId) const {
 	const Item *item = getItem(_focusItem);
 	if (!item || !item->enabled || item->type != kEditableText)
 		return false;
 
 	const bool hasSelection = item->selectionStart != item->selectionEnd;
-	switch (command) {
+	switch (commandId) {
 	case kMacDialogUndo:
 		return item->hasUndo;
 	case kMacDialogCut:
@@ -728,7 +727,7 @@ bool MacNebularDialog::isEditCommandEnabled(
 	return false;
 }
 
-bool MacNebularDialog::handleEditCommand(MacDialogEditCommand command) {
+bool MacNebularDialog::handleEditCommand(MacDialogEditCommand commandId) {
 	Item *item = getItem(_focusItem);
 	if (!item || !item->enabled || item->type != kEditableText)
 		return false;
@@ -739,7 +738,7 @@ bool MacNebularDialog::handleEditCommand(MacDialogEditCommand command) {
 	if (end > start)
 		selected = item->text.substr(start, end - start);
 
-	switch (command) {
+	switch (commandId) {
 	case kMacDialogUndo:
 		if (!item->hasUndo)
 			return false;

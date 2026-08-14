@@ -142,8 +142,8 @@ public:
 		int selection);
 	int getListSelection(int itemNumber) const;
 	bool hasEditableFocus() const;
-	bool isEditCommandEnabled(MacDialogEditCommand command) const;
-	bool handleEditCommand(MacDialogEditCommand command);
+	bool isEditCommandEnabled(MacDialogEditCommand commandId) const;
+	bool handleEditCommand(MacDialogEditCommand commandId);
 	int runModal(int defaultItem, int cancelItem);
 };
 
