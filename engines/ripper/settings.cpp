@@ -28,6 +28,7 @@
 #include "graphics/paletteman.h"
 
 #include "ripper/detection.h"
+#include "ripper/diagnostics/screen_presenter.h"
 
 namespace Ripper {
 
@@ -340,12 +341,17 @@ void RipperSettings::setSubtitleAutoScroll(bool enabled) {
 
 bool RipperSettings::handlePresentationTextCommand(uint16 command,
 		const char *source) {
-	if (command == 0x14)
+	if (command == 0x14) {
 		setSubtitles(!_subtitles);
-	else if (command == 0x01)
+		showScreenMessage(Common::String::format("Subtitles: %s",
+			_subtitles ? "ON" : "OFF"));
+	} else if (command == 0x01) {
 		setSubtitleAutoScroll(!_subtitleAutoScroll);
-	else
+		showScreenMessage(Common::String::format("Subtitle autoscroll: %s",
+			_subtitleAutoScroll ? "ON" : "OFF"));
+	} else {
 		return false;
+	}
 	debugC(1, kDebugInput,
 		"Ripper: retail presentation text shortcut source=%s command=%s "
 		"enabled=%d autoScroll=%d",

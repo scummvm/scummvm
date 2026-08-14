@@ -21,16 +21,69 @@
 #ifndef RIPPER_DIAGNOSTICS_SCREEN_PRESENTER_H
 #define RIPPER_DIAGNOSTICS_SCREEN_PRESENTER_H
 
+#include "common/array.h"
+#include "common/queue.h"
+#include "common/rect.h"
+#include "common/str.h"
+
 namespace Ripper {
+
+class ScreenMessageQueue {
+public:
+	enum {
+		kLifetimeMs = 5000,
+		kFadeMs = 250
+	};
+
+	ScreenMessageQueue();
+
+	void enqueue(const Common::String &message);
+	void clear();
+	void pause(uint32 now);
+	void resume(uint32 now);
+	bool update(uint32 now);
+	byte opacity(uint32 now) const;
+
+	bool hasActiveMessage() const { return _active; }
+	const Common::String &message() const { return _message; }
+	uint pendingCount() const { return (uint)_pending.size(); }
+
+private:
+	void startNext(uint32 now);
+
+	bool _active;
+	bool _paused;
+	uint32 _startedAt;
+	uint32 _pausedAt;
+	Common::Queue<Common::String> _pending;
+	Common::String _message;
+};
 
 class ScreenPresenter {
 public:
-	virtual ~ScreenPresenter() {}
-	virtual void presentScreen() = 0;
+	ScreenPresenter();
+	~ScreenPresenter();
+
+	void showMessage(const Common::String &message);
+	void clearMessages();
+	void pause(bool paused);
+	void presentScreen();
+	uint pendingMessageCount() const { return _queue.pendingCount(); }
+
+private:
+	bool rebuildMessageSurface();
+	void resetMessageSurface();
+
+	ScreenMessageQueue _queue;
+	Common::Rect _bounds;
+	Common::Array<byte> _backing;
+	Common::Array<byte> _messagePixels;
+	Common::String _renderedMessage;
+	int _messageWidth;
+	int _messageHeight;
 };
 
-void registerScreenPresenter(ScreenPresenter *presenter);
-void unregisterScreenPresenter(ScreenPresenter *presenter);
+void showScreenMessage(const Common::String &message);
 void presentScreen();
 
 } // End of namespace Ripper
