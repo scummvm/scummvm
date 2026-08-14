@@ -64,12 +64,45 @@ const byte kScene1020AmbientMusicCueCount = 5;
 const byte kScene1020AmbientSoundProbabilityModulus = 25;
 const byte kScene1020AmbientMusicProbabilityModulus = 50;
 const uint32 kScene1020OverlayFrameMillis = 75;
+// The cutscene is voiced from stage 107 row 0x10, not this room's own stage 102.
+const char *const kScene1020TextArchiveName = "RESOURCE.003";
+const uint kScene1020CutsceneStageIndex = 107;
+const byte kScene1020CutsceneSpeechRow = 0x10;
+const byte kScene1020QuasimodoSpeechRed = 0x20;
+const byte kScene1020QuasimodoSpeechGreen = 0x3f;
+const byte kScene1020QuasimodoSpeechBlue = 0;
+// Quasimodo speaks from the winch until he lets go, then from where he ends up.
+const uint16 kScene1020QuasimodoWinchSpeechCenterX = 0x118;
+const uint16 kScene1020QuasimodoWinchSpeechTopY = 0x0a5;
+const uint16 kScene1020QuasimodoExitSpeechCenterX = 0x104;
+const uint16 kScene1020QuasimodoExitSpeechTopY = 0x08c;
+// The grate slams up on this frame of the lift: sound, then a viewport shake.
+const byte kScene1020CutsceneHookId = 1;
+const uint kScene1020GrateSlamFrame = 6;
+const byte kScene1020GrateLiftSoundId = 0x0d;
+const uint kScene1020GrateShakeSteps = 0x14;
+const uint16 kScene1020GrateShakeOffset = 4;
+const uint32 kScene1020GrateShakeStepMillis = 4;
+// The lift pauses on this frame for the closing exchange, then resumes from it.
+const uint kScene1020LiftPauseFrame = 8;
+// Quasimodo is a sprite layer of his own, not part of the lift frames: upright at the
+// rope (0-8), bent over it (8-16), and the frame map's tail walks him back upright.
+const uint kScene1020ActionChunk20DescriptorCount = 0x11;
+const byte kScene1020QuasimodoUprightSpeechGroup = 1;
+const byte kScene1020QuasimodoBentSpeechGroup = 2;
+const byte kScene1020QuasimodoHiddenFrame = 0;
+const byte kScene1020QuasimodoUprightFrame = 4;
+const byte kScene1020QuasimodoBentEnterFrame = 8;
+const byte kScene1020QuasimodoBentFrame = 0x0c;
+const byte kScene1020QuasimodoBentLeaveFrame = 0x10;
+const byte kScene1020QuasimodoUprightRestoreFrame = 0x14;
 const uint kScene1020ActionChunk14DescriptorCount = 6;
 const uint kScene1020ActionChunk15DescriptorCount = 0x15;
 const uint kScene1020ActionChunk16DescriptorCount = 0x0b;
 const uint kScene1020ActionChunk17DescriptorCount = 0x15;
 const uint kScene1020ActionChunk18DescriptorCount = 0x12;
 const uint kScene1020ActionChunk19DescriptorCount = 0x0b;
+const uint kScene1020ActionChunk21DescriptorCount = 0x17;
 const uint kScene1020ActionChunk22DescriptorCount = 0x0d;
 
 const byte kScene1020ActorPathStepDeltaTable[] = {
@@ -133,17 +166,29 @@ const byte kScene1020Chunk19EventFrameMap[] = {
 	0
 };
 
+const byte kScene1020Chunk20SpeakerFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7,
+	8, 9, 10, 11, 12, 13, 14, 15,
+	16, 11, 10, 9, 4
+};
+
+const byte kScene1020Chunk21GrateLiftFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7,
+	8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22
+};
+
 const byte kScene1020Chunk22PickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6,
 	7, 8, 9, 10, 11, 12
 };
 
-// Chunks 15/16/17 animate the hook themselves, so their dirty rect must be cleaned
-// to the pristine background; cleaning it to _baseFramebuffer would restore the hook
-// block baked in there at the old position and show two hooks. Every other overlay
-// leaves the hook alone and must clean to _baseFramebuffer or the hook vanishes.
-static bool overlayRedrawsHookBlock(uint chunkIndex) {
-	return chunkIndex >= 15 && chunkIndex <= 17;
+// Chunks 15/16/17 animate the hook and 21 lifts the grate off it, so they repaint the
+// state blocks applyResourceBlockBackground() bakes into _baseFramebuffer: clean their
+// dirty rect to the pristine background or the baked-in copy shows through as a
+// duplicate. Every other overlay must clean to _baseFramebuffer or those blocks vanish.
+static bool overlayRedrawsSceneStateBlocks(uint chunkIndex) {
+	return (chunkIndex >= 15 && chunkIndex <= 17) || chunkIndex == 21;
 }
 
 static PlayableSceneConfig scene1020Config() {
@@ -225,11 +270,12 @@ void Scene1020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	if (_actionOverlayVisible) {
-		const Graphics::Surface &background = overlayRedrawsHookBlock(_actionOverlayLayer.chunkIndex) ?
+		const Graphics::Surface &background = overlayRedrawsSceneStateBlocks(_actionOverlayLayer.chunkIndex) ?
 			_baseFramebufferOriginal.rawSurface() : _baseFramebuffer.rawSurface();
 		restoreResourceSpriteLayerBackground(_actionOverlayLayer, background);
 	}
 	drawActionOverlayLayer();
+	drawResourceSpriteLayer(_quasimodoLayer);
 }
 
 bool Scene1020::hasCustomEntrySequence() const {
@@ -255,6 +301,130 @@ void Scene1020::runCustomEntrySequence() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	drawPlayableComposite();
 	presentFrame();
+	runQuasimodoGrateCutscene();
+}
+
+void Scene1020::runQuasimodoLayerTransition(byte fromFrame, byte toFrame) {
+	_quasimodoLayer.setFrame(fromFrame);
+	byte frame = fromFrame;
+	while (frame != toFrame && !Engine::shouldQuit()) {
+		frame = (byte)(toFrame > frame ? frame + 1 : frame - 1);
+		_quasimodoLayer.setFrame(frame);
+		if (waitSceneMillis(kScene1020OverlayFrameMillis))
+			return;
+	}
+}
+
+void Scene1020::runQuasimodoSpeechLine(byte frameIndex, bool bendToRope) {
+	runQuasimodoLayerTransition(kScene1020QuasimodoHiddenFrame, kScene1020QuasimodoUprightFrame);
+	if (bendToRope)
+		runQuasimodoLayerTransition(kScene1020QuasimodoBentEnterFrame, kScene1020QuasimodoBentFrame);
+	beginPrimarySpeechLineWithAnimationGroup(kScene1020CutsceneSpeechRow, frameIndex,
+		bendToRope ? kScene1020QuasimodoExitSpeechCenterX : kScene1020QuasimodoWinchSpeechCenterX,
+		bendToRope ? kScene1020QuasimodoExitSpeechTopY : kScene1020QuasimodoWinchSpeechTopY,
+		kScene1020QuasimodoSpeechRed, kScene1020QuasimodoSpeechGreen, kScene1020QuasimodoSpeechBlue,
+		bendToRope ? kScene1020QuasimodoBentSpeechGroup : kScene1020QuasimodoUprightSpeechGroup);
+	if (bendToRope)
+		runQuasimodoLayerTransition(kScene1020QuasimodoBentLeaveFrame, kScene1020QuasimodoUprightRestoreFrame);
+	runQuasimodoLayerTransition(kScene1020QuasimodoUprightFrame, kScene1020QuasimodoHiddenFrame);
+}
+
+byte Scene1020::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	if (animationGroup == kScene1020QuasimodoUprightSpeechGroup)
+		return kScene1020QuasimodoUprightFrame;
+	if (animationGroup == kScene1020QuasimodoBentSpeechGroup)
+		return kScene1020QuasimodoBentFrame;
+	return 0;
+}
+
+void Scene1020::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	if (animationGroup == kScene1020QuasimodoUprightSpeechGroup ||
+			animationGroup == kScene1020QuasimodoBentSpeechGroup)
+		_quasimodoLayer.setFrame(frameIndex);
+}
+
+void Scene1020::runGrateLiftShake() {
+	const uint16 baseOffset = _viewportXOffset;
+	for (uint step = 0; step < kScene1020GrateShakeSteps; ++step) {
+		_viewportXOffset = baseOffset + (_random.getRandomBit() != 0 ? kScene1020GrateShakeOffset : 0);
+		if (waitSceneMillis(kScene1020GrateShakeStepMillis))
+			break;
+	}
+	_viewportXOffset = baseOffset;
+}
+
+void Scene1020::runQuasimodoGrateCutscene() {
+	GameplayState &state = _vm->gameState();
+	if (state.scene1020GrateRaised)
+		return;
+
+	// Borrow stage 107's text for the spoken lines and put this room's back afterwards.
+	// Keep our own small rows: those are the hotspot captions, and the patch below
+	// snapshots them -- stage 107's item 3 is "Spencer McDundee", not "cinta de Sue".
+	const Common::Array<byte> roomHotspotCaptions = _textStore.stageSmallRows;
+	const bool spoken = _textStore.load(kScene1020TextArchiveName, sceneDebugName(),
+		kScene1020CutsceneStageIndex, resource003InventoryRowsOffsetIndex(),
+		speechCueDescriptorTableOffset());
+	_textStore.stageSmallRows = roomHotspotCaptions;
+	if (!spoken) {
+		warning("%s failed to load stage %u cutscene text", sceneDebugName(),
+			kScene1020CutsceneStageIndex);
+	}
+
+	_quasimodoLayer.configure(20, kScene1020ActionChunk20DescriptorCount,
+		kScene1020Chunk20SpeakerFrameMap, ARRAYSIZE(kScene1020Chunk20SpeakerFrameMap));
+	_quasimodoLayer.reset(kScene1020QuasimodoHiddenFrame);
+	_quasimodoLayer.visible = true;
+	drawPlayableComposite();
+	presentFrame();
+
+	if (spoken) {
+		beginSecondarySpeechLine(kScene1020CutsceneSpeechRow, 0);
+		runQuasimodoSpeechLine(1, false);
+	}
+
+	// The lift frames draw Quasimodo themselves, so his layer comes down for them.
+	_quasimodoLayer.visible = false;
+
+	// noRedrawAtEnd: do not present the still-unpatched base between the halves.
+	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,
+		kScene1020Chunk21GrateLiftFrameMap, ARRAYSIZE(kScene1020Chunk21GrateLiftFrameMap),
+		kScene1020OverlayFrameMillis)
+		.showActor()
+		.endAt(kScene1020LiftPauseFrame + 1)
+		.soundAt(kScene1020GrateSlamFrame, kScene1020GrateLiftSoundId)
+		.hookEveryFrame(kScene1020CutsceneHookId)
+		.noRedrawAtEnd());
+
+	state.scene1020GrateRaised = true;
+	if (!state.scene1020SueTapeNoticed) {
+		state.scene1020SueTapeNoticed = true;
+		state.scene1020SueTapeVisible = true;
+	}
+	applySceneStateToHotspotsAndPatches(0xff);
+
+	if (spoken) {
+		_quasimodoLayer.visible = true;
+		runQuasimodoSpeechLine(2, false);
+		// Frame 3 carries continuationCount 2, so it speaks both of Ron's lines.
+		beginSecondarySpeechLine(kScene1020CutsceneSpeechRow, 3);
+		runQuasimodoSpeechLine(4, true);
+		_quasimodoLayer.visible = false;
+	}
+
+	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,
+		kScene1020Chunk21GrateLiftFrameMap, ARRAYSIZE(kScene1020Chunk21GrateLiftFrameMap),
+		kScene1020OverlayFrameMillis)
+		.showActor()
+		.startAt(kScene1020LiftPauseFrame));
+
+	if (spoken && !loadStage003SceneRows())
+		warning("%s failed to restore stage %u text", sceneDebugName(), sceneStageIndex());
+}
+
+void Scene1020::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene1020CutsceneHookId && frame == kScene1020GrateSlamFrame)
+		runGrateLiftShake();
 }
 
 bool Scene1020::prepareCustomGameplayLoop() {
@@ -262,6 +432,9 @@ bool Scene1020::prepareCustomGameplayLoop() {
 }
 
 bool Scene1020::advanceCustomGameplayLoop(uint32 delta) {
+	// Returning true skips the base loop's speech advance, so drive Quasimodo's here.
+	if (_primaryDialogueSpeechActive)
+		advancePrimaryDialogueSpeechFrame(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -514,15 +687,19 @@ void Scene1020::copyStageSmallRow(byte sourceRow, byte destinationRow) {
 
 void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame) {
-	if (!shouldLoadArenaChunk(chunkIndex)) {
-		debugC(2, kDebugScene, "Scene1020 skipped unloaded overlay chunk %u", chunkIndex);
-		return;
-	}
-
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runOverlaySequence(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
 		.showActor()
 		.patchAt(patchFrame, 0xff));
+}
+
+void Scene1020::runOverlaySequence(const ActionOverlaySpec &spec) {
+	if (!shouldLoadArenaChunk(spec.chunkIndex)) {
+		debugC(2, kDebugScene, "Scene1020 skipped unloaded overlay chunk %u", spec.chunkIndex);
+		return;
+	}
+
+	runActionOverlay(spec);
 }
 
 void Scene1020::handleSceneEventFlag0() {
