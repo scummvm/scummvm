@@ -21,79 +21,25 @@
 #ifndef RIPPER_DIAGNOSTICS_MILESTONE_OVERLAY_H
 #define RIPPER_DIAGNOSTICS_MILESTONE_OVERLAY_H
 
-#include "common/array.h"
-#include "common/queue.h"
-#include "common/rect.h"
-#include "common/str.h"
-
 #include "ripper/diagnostics/screen_presenter.h"
 #include "ripper/milestones.h"
 
 namespace Ripper {
 
-class MilestoneOverlayQueue {
+class MilestoneOverlay : public MilestoneObserver {
 public:
-	enum {
-		kLifetimeMs = 5000,
-		kFadeMs = 250
-	};
-
-	MilestoneOverlayQueue();
+	MilestoneOverlay(Milestones &milestones, ScreenPresenter &presenter);
+	~MilestoneOverlay();
 
 	void setEnabled(bool enabled);
 	bool isEnabled() const { return _enabled; }
-	void pause(uint32 now);
-	void resume(uint32 now);
-	void enqueue(uint flag, const Common::String &label, bool value);
-	bool update(uint32 now);
-	byte opacity(uint32 now) const;
-
-	bool hasActiveNotification() const { return _active; }
-	const Common::String &message() const { return _message; }
-	uint pendingCount() const { return (uint)_pending.size(); }
-
-private:
-	struct Notification {
-		uint flag;
-		Common::String label;
-		bool value;
-	};
-
-	void startNext(uint32 now);
-
-	bool _enabled;
-	bool _active;
-	bool _paused;
-	uint32 _startedAt;
-	uint32 _pausedAt;
-	Common::Queue<Notification> _pending;
-	Common::String _message;
-};
-
-class MilestoneOverlay : public MilestoneObserver, public ScreenPresenter {
-public:
-	explicit MilestoneOverlay(Milestones &milestones);
-	~MilestoneOverlay() override;
-
-	void setEnabled(bool enabled);
-	bool isEnabled() const { return _queue.isEnabled(); }
-	void pause(bool paused);
-	void presentScreen() override;
 
 	void onMilestoneChanged(uint flag, bool value) override;
 
 private:
-	bool rebuildMessageSurface();
-	void resetMessageSurface();
-
 	Milestones &_milestones;
-	MilestoneOverlayQueue _queue;
-	Common::Rect _bounds;
-	Common::Array<byte> _backing;
-	Common::Array<byte> _messagePixels;
-	Common::String _renderedMessage;
-	int _messageWidth;
-	int _messageHeight;
+	ScreenPresenter &_presenter;
+	bool _enabled;
 };
 
 } // End of namespace Ripper

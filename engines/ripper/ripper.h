@@ -98,6 +98,7 @@ private:
 	Common::ScopedPtr<Inventory> _inventory;
 	Common::ScopedPtr<SceneAudioManager> _sceneAudio;
 	Common::ScopedPtr<MediaPlayer> _media;
+	Common::ScopedPtr<ScreenPresenter> _screenPresenter;
 	Common::ScopedPtr<Milestones> _milestones;
 	Common::ScopedPtr<MilestoneOverlay> _milestoneOverlay;
 	Common::ScopedPtr<ModalDialogManager> _modalDialog;

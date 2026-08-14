@@ -64,8 +64,9 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		_inventory(new Inventory(this)),
 		_sceneAudio(new SceneAudioManager(this, _mixer)),
 		_media(new MediaPlayer(this, _input.get(), _mixer)),
+		_screenPresenter(new ScreenPresenter()),
 		_milestones(new Milestones()),
-		_milestoneOverlay(new MilestoneOverlay(*_milestones)),
+		_milestoneOverlay(new MilestoneOverlay(*_milestones, *_screenPresenter)),
 		_modalDialog(new ModalDialogManager(this)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)),
 		_settings(new RipperSettings(_mixer,
@@ -93,15 +94,15 @@ void RipperEngine::pauseEngineIntern(bool pause) {
 	// ScummVM's global dialogs suspend this engine while its blocking media loop
 	// is still on the stack. Freeze the decoder before its wall clock can advance
 	// behind the dialog, then resume audio before releasing that clock.
-	if (pause && _milestoneOverlay)
-		_milestoneOverlay->pause(true);
+	if (pause && _screenPresenter)
+		_screenPresenter->pause(true);
 	if (pause && _media)
 		_media->pauseActiveMedia(true);
 	Engine::pauseEngineIntern(pause);
 	if (!pause && _media)
 		_media->pauseActiveMedia(false);
-	if (!pause && _milestoneOverlay)
-		_milestoneOverlay->pause(false);
+	if (!pause && _screenPresenter)
+		_screenPresenter->pause(false);
 }
 
 void RipperEngine::registerSearchPaths() {
