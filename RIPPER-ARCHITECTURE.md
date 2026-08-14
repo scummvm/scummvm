@@ -73,6 +73,10 @@
   setting does not create gameplay text there. The script runtime selects the
   matching argument ABI from the detected game variant and reserves authored
   auxiliary-text presentation for retail.
+- Packetized Smacker branches do not necessarily begin with a palette record;
+  such a branch retains the display palette installed by its predecessor.
+  ScummVM caches that inherited palette as the stable base for per-frame text
+  and combat callback transformations until the branch publishes a replacement.
 - Demo opcode `0x1d` likewise omits the retail concurrency selector.
   `FUN_000140dc` at `0x140dc` stores its target and entry-label pointers in the
   pending scene fields and returns `-3` unconditionally. Demo scene action 200
