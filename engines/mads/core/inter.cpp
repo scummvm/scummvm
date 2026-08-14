@@ -2186,10 +2186,8 @@ void inter_main_loop(int allow_input) {
 				((inter_input_mode == INTER_BUILDING_SENTENCES) || (inter_input_mode == INTER_LIMITED_SENTENCES))) {
 			use_font = font_main;
 			use_spacing = -1;
-			width = g_engine->getMacintoshTextWidth(use_font,
-				inter_sentence, use_spacing);
-			if (width < 0)
-				width = font_string_width(use_font, inter_sentence, use_spacing);
+			width = g_engine->getMessageTextWidth(use_font, inter_sentence,
+				use_spacing);
 
 			if (width > video_x) {
 				use_font = font_inter;

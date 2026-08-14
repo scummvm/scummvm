@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/mads.h"
 #include "mads/core/conv.h"
 #include "mads/core/game.h"
 #include "mads/core/imath.h"
@@ -1301,7 +1302,7 @@ static void process_conv_poem() {
 			local->lani_pid_action = PID_POEM;
 
 			if (local->working_on_line == 1) {
-				if (font_string_width(kernel_message_font, local->line_1, -1) > 278) {
+				if (g_engine->getMessageTextWidth(kernel_message_font, local->line_1, -1) > 278) {
 					++local->working_on_line;
 				} else {
 					if (local->line_1[0] != '\0') {
@@ -1315,7 +1316,7 @@ static void process_conv_poem() {
 			}
 
 			if (local->working_on_line == 2) {
-				if (font_string_width(kernel_message_font, local->line_2, -1) > 278) {
+				if (g_engine->getMessageTextWidth(kernel_message_font, local->line_2, -1) > 278) {
 					++local->working_on_line;
 				} else {
 					if (local->line_2[0] != '\0') {
@@ -1329,7 +1330,7 @@ static void process_conv_poem() {
 			}
 
 			if (local->working_on_line == 3) {
-				if (font_string_width(kernel_message_font, local->line_3, -1) > 278) {
+				if (g_engine->getMessageTextWidth(kernel_message_font, local->line_3, -1) > 278) {
 					++local->working_on_line;
 				} else {
 					if (local->line_3[0] != '\0') {

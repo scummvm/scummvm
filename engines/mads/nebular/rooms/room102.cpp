@@ -297,7 +297,7 @@ static void room_102_parser() {
 		local._fridgeFirstOpenFl = false;
 		int quoteId = g_engine->getRandomNumber(QUOTE_ID(0), QUOTE_ID(4));
 		char *curQuote = quote_string(kernel.quotes, quoteId);
-		int width = font_string_width(kernel_message_font, curQuote, -1);
+		int width = g_engine->getMessageTextWidth(kernel_message_font, curQuote, -1);
 		kernel_message_purge();
 		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 		kernel_message_add(curQuote, 210, 60, 0x1110, 120, 73, 0);
