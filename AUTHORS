@@ -165,6 +165,9 @@ ScummVM Team
        Kari Salminen
        Eugene Sandulenko
 
+    Colony:
+       Gustavo Grieco
+
     Composer:
        Alyssa Milburn
 
@@ -229,8 +232,14 @@ ScummVM Team
        Vladimir Menshakov
        Willem Jan Palenstijn
 
+    EEM:
+       Gustavo Grieco
+
     Efh:
        Arnaud Boutonne
+
+    Fool:
+       Scott Percival
 
     Freescape:
        Chris Allen                    - Sound engine programming
@@ -361,6 +370,7 @@ ScummVM Team
        Martin Gerhardy
 
     MacVenture:
+       Ion Andrei Cristian            - GSoC student
        Borja Lorente                  - GSoC student
 
     MADE:
@@ -1408,4 +1418,7 @@ Special thanks to
 
    Ron Davis for releasing the sources and generously giving away the three
    chapters of God of Thunder.
+
+   David A. Smith for releasing the source code of The Colony, which our
+   engine is based on.
 
