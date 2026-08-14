@@ -27,6 +27,11 @@
 - The same front-end loop loads `TITLE0.WAV`, `TITLE1.WAV`, and `TITLE2.WAV`
   from `SOUND.PL`. `TITLE0` loops under the menu, `TITLE1` is queued when the
   hovered control changes, and `TITLE2` is queued when a control is selected.
+- Every `RunStartupFrontEndLoop` result shares a teardown path that issues
+  display command `0x14` (`ClearGenericVideoLogicalPage` at `0x45ed8`) after
+  releasing the menu presentation and before returning to the coordinator. It
+  does not submit another dirty-region update, leaving a blank logical return
+  page for controlled startup media instead of the final `RIP_OPEN.SMK` frame.
 - `RunGameStartupAndMainLoop` handles those menu results: New Game resets game
   state and enters `RunSceneScriptLoop` at `0x124e9`, Continue restores the
   startup state, Restore Game opens the saved-game path, View Intro plays
