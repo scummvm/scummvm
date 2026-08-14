@@ -33,6 +33,14 @@ extern void popup_draw();
 extern void popup_setup_cycle();
 extern void popup_update_ask(const char *string, int maxlen);
 
+/**
+ * Shifts the dialog palette colors (see popup_setup_cycle()) by delta. Called by
+ * object_examine() (see core/object.cpp) with -10 before showing its item-description
+ * dialog and +10 afterwards, so the dialog temporarily borrows a different part of
+ * the palette than the object grey ramp it's drawn over.
+ */
+extern void popup_shift_dialog_colors(int delta);
+
 } // namespace RexNebular
 } // namespace MADS
 

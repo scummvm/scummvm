@@ -563,8 +563,8 @@ void pal_grey(Palette &fixpal, int base_color, int num_colors,
 	int level;
 	word accum = 0;
 
-	dif = (high_grey - low_grey);
-	level = low_grey;
+	dif = (low_grey - high_grey);
+	level = high_grey;
 
 	for (count = 0; count < num_colors; count++) {
 		fixpal[base_color + count].r = (byte)level;

@@ -38,20 +38,56 @@ namespace RexNebular {
 
 enum {
 	DIALOG_BLACK_COLOR		= 0,
-	PALETTE_CYCLING_AREA	= 6,
-	DIALOG_CONTENT1_COLOR	= 248,
-	DIALOG_CONTENT2_COLOR	= 249,
-	DIALOG_EDGE_COLOR		= 250,
-	DIALOG_BACKGROUND_COLOR	= 251,
-	DIALOG_FC_COLOR			= 252,
-	DIALOG_FD_COLOR			= 253,
-	DIALOG_FE_COLOR			= 254
+	PALETTE_CYCLING_AREA	= 8,
+
+	DIALOG_CONTENT1_IDX = 0,
+	DIALOG_CONTENT2_IDX,
+	DIALOG_EDGE_IDX,
+	DIALOG_BACKGROUND_IDX,
+	DIALOG_FC_IDX,
+	DIALOG_FD_IDX,
+	DIALOG_FE_IDX
 };
+
+// Rex's object_examine temporarily shifts these down by 10 (via
+// popup_shift_dialog_colors()) while its item-description dialog is on
+// screen, then shifts them back afterwards, so they must be mutable state
+// rather than fixed constants. PALETTE_CYCLING_AREA (8) covers one byte
+// beyond DIALOG_FE_COLOR that the original also shifts, though nothing
+// else in the engine names or uses it.
+byte dialog_colors[PALETTE_CYCLING_AREA];
+
+#define DIALOG_CONTENT1_COLOR    dialog_colors[DIALOG_CONTENT1_IDX]
+#define DIALOG_CONTENT2_COLOR    dialog_colors[DIALOG_CONTENT2_IDX]
+#define DIALOG_EDGE_COLOR        dialog_colors[DIALOG_EDGE_IDX]
+#define DIALOG_BACKGROUND_COLOR  dialog_colors[DIALOG_BACKGROUND_IDX]
+#define DIALOG_FC_COLOR          dialog_colors[DIALOG_FC_IDX]
+#define DIALOG_FD_COLOR          dialog_colors[DIALOG_FD_IDX]
+#define DIALOG_FE_COLOR          dialog_colors[DIALOG_FE_IDX]
 
 int dialog_content_seed;
 
 void popup_init() {
 	dialog_content_seed = -1;
+
+	dialog_colors[DIALOG_CONTENT1_IDX] = 248;
+	dialog_colors[DIALOG_CONTENT2_IDX] = 249;
+	dialog_colors[DIALOG_EDGE_IDX] = 250;
+	dialog_colors[DIALOG_BACKGROUND_IDX] = 251;
+	dialog_colors[DIALOG_FC_IDX] = 252;
+	dialog_colors[DIALOG_FD_IDX] = 253;
+	dialog_colors[DIALOG_FE_IDX] = 254;
+	dialog_colors[7] = 255;
+}
+
+// Shifts all of the dialog colors (including the one unnamed trailing byte -
+// see PALETTE_CYCLING_AREA above) by delta. Called by Rex's object_examine
+// with -10 before showing its item-description dialog and +10 afterwards,
+// so the dialog temporarily borrows a different part of the palette than
+// the object grey ramp it's being drawn over.
+void popup_shift_dialog_colors(int delta) {
+	for (int i = 0; i < PALETTE_CYCLING_AREA; ++i)
+		dialog_colors[i] = (byte)(dialog_colors[i] + delta);
 }
 
 static uint16 rotr16(uint16 value, int amount) {
@@ -110,18 +146,18 @@ void popup_draw() {
 	askY = (box_param.font->max_y_size + 1) * box->ask_y;
 
 	// Fill area
-	buffer_rect_fill(scr_main, box->x, box->y, box->xs, box->ys, REX_DIALOG_BACKGROUND_COLOR);
+	buffer_rect_fill(scr_main, box->x, box->y, box->xs, box->ys, DIALOG_BACKGROUND_COLOR);
 
 	// Edge lines
-	buffer_rect_fill(scr_main, box->x + 1, box->y + box->ys - 2, box->xs - 1, 1, REX_DIALOG_EDGE_COLOR);
-	buffer_rect_fill(scr_main, box->x, box->y + box->ys - 1, box->xs, 1, REX_DIALOG_EDGE_COLOR);
+	buffer_rect_fill(scr_main, box->x + 1, box->y + box->ys - 2, box->xs - 1, 1, DIALOG_EDGE_COLOR);
+	buffer_rect_fill(scr_main, box->x, box->y + box->ys - 1, box->xs, 1, DIALOG_EDGE_COLOR);
 
 	// Right edge
-	buffer_rect_fill(scr_main, box->x + box->xs - 2, box->y + 2, 1, box->ys - 2, REX_DIALOG_EDGE_COLOR);
-	buffer_rect_fill(scr_main, box->x + box->xs - 1, box->y + 1, 1, box->ys - 1, REX_DIALOG_EDGE_COLOR);
+	buffer_rect_fill(scr_main, box->x + box->xs - 2, box->y + 2, 1, box->ys - 2, DIALOG_EDGE_COLOR);
+	buffer_rect_fill(scr_main, box->x + box->xs - 1, box->y + 1, 1, box->ys - 1, DIALOG_EDGE_COLOR);
 
 	dialog_content_seed = popup_draw_content(box->x + 2, box->y + 2, box->xs - 4, askY, 0,
-		REX_DIALOG_CONTENT2_COLOR, REX_DIALOG_CONTENT1_COLOR, box->ys - 4, scr_main);
+		DIALOG_CONTENT2_COLOR, DIALOG_CONTENT1_COLOR, box->ys - 4, scr_main);
 
 	askY = box->y + 5;
 
