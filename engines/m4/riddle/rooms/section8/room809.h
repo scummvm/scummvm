@@ -46,7 +46,9 @@ private:
 
 	bool _field20Fl = false;
 
-	// CHECKME: The array and its index don't seem to be used
+	// _field24_index is the index of the position Mei Chen is standing at (or heading to).
+	// It selects the hotspot matching that position, see MEI_CHEN_HOTSPOTS in room809.cpp.
+	// CHECKME: The array itself doesn't seem to be used
 	byte _byte1A1990[4] = {0, 0, 0, 0};
 	int32 _field24_index = 0;
 
