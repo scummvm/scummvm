@@ -626,6 +626,11 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		break;
 
 	case kRoomSpludwicks:
+		if (!_talkedToCrapulus || _lustieIsAsleep)
+			_spludwickAtHome = true;
+		else
+			_spludwickAtHome = !((_roomCount[kRoomWiseWomans] % 3) == 1);
+
 		if (_spludwickAtHome) {
 			AnimationType *spr1 = _animation->_sprites[1];
 			if (ped > 0) {
@@ -1399,7 +1404,7 @@ void AvalancheEngine::resetVariables() {
 	_totalTime = 0;
 	_jumpStatus = 0;
 	_mushroomGrowing = false;
-	_spludwickAtHome = false;
+	_spludwickAtHome = true;
 	_lastRoom = kRoomDummy;
 	_lastRoomNotMap = kRoomDummy;
 	_crapulusWillTell = false;
