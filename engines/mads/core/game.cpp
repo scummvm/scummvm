@@ -960,6 +960,11 @@ int game_parse_keystroke(int mykey) {
 		}
 		break;
 
+	case f4_key:
+		kernel.activate_menu = GAME_OPTIONS_MENU;
+		break;
+
+	case f5_key:
 	case f2_key:
 	case alt_s_key:
 		if (room_id != 199 && section_id != 9) {
@@ -967,24 +972,9 @@ int game_parse_keystroke(int mykey) {
 		}
 		break;
 
+	case f7_key:
 	case f3_key:
 	case alt_r_key:
-		if (room_id != 199) {
-			kernel.activate_menu = GAME_RESTORE_MENU;
-		}
-		break;
-
-	case f4_key:
-		kernel.activate_menu = GAME_OPTIONS_MENU;
-		break;
-
-	case f5_key:
-		if (room_id != 199 && section_id != 9) {
-			kernel.activate_menu = GAME_SAVE_MENU;
-		}
-		break;
-
-	case f7_key:
 		if (room_id != 199 && section_id != 9) {
 			kernel.activate_menu = GAME_RESTORE_MENU;
 		}
@@ -2095,7 +2085,7 @@ static void game_palette_update() {
 	int count;
 	int count2;
 	int x, y;
-	long handle;
+	int handle;
 	long any_flag;
 	long walker_flag;
 	long picture_flag;

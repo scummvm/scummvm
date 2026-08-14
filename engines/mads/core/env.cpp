@@ -731,9 +731,7 @@ done:
 }
 
 int env_insert(char *environment, char *variable, char *value) {
-	int  error_flag = true;
 	int  new_size;
-	int  free;
 	int  copy_size;
 	char *target;
 	char *bottom;
@@ -752,10 +750,8 @@ int env_insert(char *environment, char *variable, char *value) {
 	Common::strcat_s(var_string, "=");
 	Common::strcat_s(var_string, value);
 
-	// Get size of string & check of there is space in the environment
+	// Get size of string
 	new_size = strlen(var_string) + 1;
-	free = env_free(environment);
-	if (new_size > free) goto done;
 
 	// Find end of environment (for new string).  Also find end of whole
 	// environment structure (must be moved out of the way).
@@ -772,10 +768,7 @@ int env_insert(char *environment, char *variable, char *value) {
 	memmove(new_home, target, copy_size);
 	memmove(target, var_string, new_size);
 
-	error_flag = false;
-
-done:
-	return error_flag;
+	return false;
 }
 
 } // namespace MADS
