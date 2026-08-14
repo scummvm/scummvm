@@ -107,7 +107,8 @@ void RipperSettings::load() {
 
 	_bufferedVideo = ConfMan.hasKey("ripper_buffered_video") ?
 		ConfMan.getBool("ripper_buffered_video") : false;
-	_subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
+	_subtitles = ConfMan.hasKey("ripper_subtitles") ?
+		ConfMan.getBool("ripper_subtitles") : true;
 	_subtitleAutoScroll = ConfMan.hasKey("ripper_subtitle_autoscroll") ?
 		ConfMan.getBool("ripper_subtitle_autoscroll") : true;
 	_toolbarHelp = ConfMan.hasKey("ripper_toolbar_help") ?
@@ -152,7 +153,7 @@ void RipperSettings::save() {
 	for (uint i = kBrightness; i <= kTint; ++i)
 		ConfMan.setInt(kVisualConfigKeys[i - kBrightness], _values[i]);
 	ConfMan.setBool("ripper_buffered_video", _bufferedVideo);
-	ConfMan.setBool("subtitles", _subtitles);
+	ConfMan.setBool("ripper_subtitles", _subtitles);
 	ConfMan.setBool("ripper_subtitle_autoscroll", _subtitleAutoScroll);
 	ConfMan.setBool("ripper_toolbar_help", _toolbarHelp);
 	ConfMan.setBool("ripper_toolbar_permanent", _toolbarPermanent);
