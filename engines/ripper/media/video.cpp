@@ -204,6 +204,32 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 		_input->consumeKey();
 		return true;
 	}
+	if (allowSceneHelp && !suppressSceneMouseStop && !_engine->isDemo() &&
+			_engine->getScripts()->isAwaitingInteraction() &&
+			_input->peekKey() == kReplayPreviousSceneCommand) {
+		_input->consumeKey();
+		const bool externalAudioActive = externalAudio &&
+			_mixer->isSoundHandleActive(*externalAudio);
+		decoder.pauseVideo(true);
+		if (externalAudioActive)
+			_mixer->pauseHandle(*externalAudio, true);
+		debugC(1, kDebugVideo,
+			"Ripper: Ctrl+R suspended interactive media='%s' frame=%d "
+			"paused=%d externalAudio=%d",
+			name.c_str(), decoder.getCurFrame(), paused,
+			externalAudioActive);
+		const bool replayed =
+			_engine->getScripts()->replayPreviousInteractionScene(
+				"interactive-media");
+		if (externalAudioActive)
+			_mixer->pauseHandle(*externalAudio, paused);
+		decoder.pauseVideo(paused);
+		debugC(1, kDebugVideo,
+			"Ripper: Ctrl+R restored interactive media='%s' frame=%d "
+			"paused=%d replayed=%d",
+			name.c_str(), decoder.getCurFrame(), paused, replayed);
+		return true;
+	}
 	if (allowSceneHelp && _input->peekKey() == kHelpCommand) {
 		_input->consumeKey();
 		decoder.pauseVideo(true);
