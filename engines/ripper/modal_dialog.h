@@ -66,6 +66,7 @@ public:
 
 	bool initialize(ResourceManager &resources, bool loadPrimaryPresentation);
 	void applySharedPalettePatch(byte *palette, uint colorCount) const;
+	void resolveSceneEntryTextColor();
 	bool run(uint bodyResourceId, bool retainSceneCursorRegions = false,
 		PresentationStyle style = kMenubPresentation,
 		PaletteBehavior paletteBehavior = kApplyModalPalette);
@@ -175,6 +176,7 @@ private:
 	bool _textEntryCaretVisible;
 	bool _textEntryActive;
 	bool _textEntryRestoreCursor;
+	byte _sceneEntryTextColor;
 	bool _initialized;
 };
 

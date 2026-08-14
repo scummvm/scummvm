@@ -68,7 +68,8 @@ static const int kTextEntryWidth = 194;
 static const int kTextEntryHeight = 20;
 static const int kTextEntryPadding = 5;
 static const byte kSceneEntryBackgroundColor = 0;
-static const byte kSceneEntryTextColor = 14;
+static const byte kDemoSceneEntryDefaultTextColor = 253;
+static const byte kRetailSceneEntryDefaultTextColor = 251;
 static const uint32 kTextEntryCaretBlinkMillis = 500;
 
 } // End of namespace Ripper

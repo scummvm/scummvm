@@ -41,7 +41,10 @@ ModalDialogManager::ModalDialogManager(RipperEngine *engine) :
 		_textEntryFirstVisible(0), _textEntryCursorPosition(0),
 		_textEntryNextCaretMillis(0), _textEntryOverwrite(false),
 		_textEntryCaretVisible(false), _textEntryActive(false),
-		_textEntryRestoreCursor(false), _initialized(false) {
+		_textEntryRestoreCursor(false),
+		_sceneEntryTextColor(engine->isDemo() ?
+			kDemoSceneEntryDefaultTextColor : kRetailSceneEntryDefaultTextColor),
+		_initialized(false) {
 }
 
 bool ModalDialogManager::initialize(ResourceManager &resources, bool loadPrimaryPresentation) {
@@ -176,7 +179,7 @@ void ModalDialogManager::drawTextEntry(const Common::String &prompt,
 	const byte backgroundColor = wacStyle ? kWacModalBackgroundColor :
 		kModalBackgroundColor;
 	const byte textColor = wacStyle ? kWacModalTextColor :
-		(sceneEntryStyle ? kSceneEntryTextColor : kModalTextColor);
+		(sceneEntryStyle ? _sceneEntryTextColor : kModalTextColor);
 	if (wacStyle) {
 		for (int y = bounds.top; y < bounds.bottom; ++y)
 			memset(screen->getBasePtr(bounds.left, y), backgroundColor,
