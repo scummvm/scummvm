@@ -70,7 +70,7 @@ public:
 		int defaultValue;
 	};
 
-	explicit RipperSettings(Audio::Mixer *mixer);
+	RipperSettings(Audio::Mixer *mixer, bool demo);
 
 	void load();
 	void save();
@@ -91,6 +91,9 @@ public:
 	bool getDemoToggle(DemoToggle toggle) const;
 	int getDemoSlider(DemoSlider slider) const;
 	void setBufferedVideo(bool enabled);
+	void setSubtitles(bool enabled);
+	void setSubtitleAutoScroll(bool enabled);
+	bool handlePresentationTextCommand(uint16 command, const char *source);
 	void setVideoMode(uint mode);
 	void setCombatLevel(uint level);
 	void setPuzzleLevel(uint level);
@@ -106,6 +109,7 @@ private:
 	static int percentToMixer(int volume);
 
 	Audio::Mixer *_mixer;
+	bool _demo;
 	int _values[kSliderCount];
 	uint16 _actionKeys[kActionKeyCount];
 	uint _videoMode;

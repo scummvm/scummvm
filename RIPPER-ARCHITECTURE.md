@@ -2463,11 +2463,13 @@
   declares 640x400.
 - Retail's text setting at `0x9a58f` controls authored auxiliary strings, not a
   generated transcript track. `ExecutePresentationEntry` at `0x1754b` copies a
-  nonempty opcode `0x1a` auxiliary string into presentation state and marks the
-  text callback active. The compiled script stores that string in the inline
-  type-7 argument payload; entries without authored text use a length-one NUL
-  payload, which fails the retail nonempty-string gate and must not create a
-  text control. WAV entries then use
+  nonempty auxiliary string into presentation state and marks the text callback
+  active. Opcode `0x1a` stores this string in an inline type-7 argument; a
+  type-0 scene frame supplies its encrypted `textOffset` field instead. The
+  retail SCR compiler bitwise-inverts each non-newline byte of that frame text.
+  Entries without authored text use a null pointer or length-one NUL payload,
+  which fails the retail nonempty-string gate and must not create a text
+  control. WAV entries then use
   `PlayBlockingAudioWithOptionalText` at `0x206e0`; IAVF entries install
   `ServiceMediaPresentationTextControl` at `0x17014`. Direct Smacker entries do
   not consume the auxiliary string. ScummVM exposes this through the
@@ -2475,11 +2477,20 @@
   text is separate from the launcher's conventional speech/subtitle mode. The
   `ripper_subtitle_autoscroll` option maps the retail auto-scroll setting at
   `0x9a593` and is grouped under the subtitle checkbox, so the launcher disables
-  it while subtitles are off. All three retail engine checkboxes share the
+  it while subtitles are off. The v1.05 retail defaults leave both bytes clear;
+  the separate demo settings record retains its confirmed enabled subtitle
+  default even though its presentation command has no authored-text body.
+  `PollInteractionAndResolveSelection` at `0x13fc7` maps Ctrl+T's DOS control
+  character `0x14` to the text byte and Ctrl+A's `0x01` to the auto-scroll byte;
+  ScummVM accepts those shortcuts in the retail scene, media, and retained-text
+  input loops. All three retail engine checkboxes share the
   established skip-intro GUI flag so targets stored before the subtitle options
   were added enumerate the complete option set without requiring re-detection.
 - `ResolvePresentationControlLayout` at `0x19a3d` selector `0x13` creates a
-  centered 400-pixel wrapped chooser at active-display top plus 300. On a later
+  centered 400-pixel wrapped chooser at active-display top plus 300.
+  `InitializeSharedPresentationTemplates` at `0x11bd1` leaves this chooser
+  unskinned, with palette index 0 behind index 14 text and five-pixel client
+  margins. On a later
   packetized branch, `MoveMediaPresentationTextControl` at `0x17454` moves the
   chooser to active-display top plus 260 for an unscaled small branch, or to
   y=400 for a large or scaled branch. The first branch calculates its automatic
@@ -2487,13 +2498,17 @@
   subsequent callback services advance one line at each interval when retail's
   auto-scroll setting at `0x9a593` is enabled.
 - `ConfigureMediaPresentationDisplayModeCallback` forces video mode zero to the
-  unscaled mode while authored text is active. The text callback services the
+  unscaled mode while authored text is active, selects the full 640x400 startup
+  display context, and `ExecutePresentationEntry` centers the packetized media
+  with coordinates `-1,-1`. The active video palette remains installed while
+  the text template uses its fixed indices. The text callback services the
   shared chooser during playback; Escape stops it. At media completion,
   `ServiceMediaPresentationTextOverlayCallback` at `0x16ca6` redraws remaining
-  text, appends startup resource `0x48` immediately to the chooser's right, and
-  waits for Escape or that control before destroying the chooser. ScummVM maps
-  this flow onto its retained wrapped-text renderer and shared palette patch,
-  preserving the packetized movie palette and the retail panel geometry.
+  text, appends startup resource `0x48` as a flat 60x25 control five pixels to
+  the chooser's right at the same top coordinate, and waits for Escape or that
+  control before destroying the chooser. ScummVM maps this flow onto its
+  retained wrapped-text renderer while preserving the packetized movie palette
+  and retail panel geometry.
 - The same callback switches branches at least 321 pixels wide or 201 pixels
   high from the scene display context to the full display context. A branch
   whose scaled output already fills the 640x400 display therefore does not

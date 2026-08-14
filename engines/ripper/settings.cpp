@@ -64,9 +64,10 @@ static const char *const kDemoReservedToggleConfigKeys[] = {
 	"ripper_demo_option_4", "ripper_demo_option_5"
 };
 
-RipperSettings::RipperSettings(Audio::Mixer *mixer) : _mixer(mixer), _videoMode(1),
-		_combatLevel(2), _puzzleLevel(2), _bufferedVideo(false), _subtitles(true),
-		_subtitleAutoScroll(true), _toolbarHelp(true), _toolbarPermanent(false),
+RipperSettings::RipperSettings(Audio::Mixer *mixer, bool demo) :
+		_mixer(mixer), _demo(demo), _videoMode(1),
+		_combatLevel(2), _puzzleLevel(2), _bufferedVideo(false), _subtitles(demo),
+		_subtitleAutoScroll(false), _toolbarHelp(true), _toolbarPermanent(false),
 		_mouseSensitivity(100) {
 	_demoReservedToggles[0] = true;
 	_demoReservedToggles[1] = true;
@@ -108,9 +109,9 @@ void RipperSettings::load() {
 	_bufferedVideo = ConfMan.hasKey("ripper_buffered_video") ?
 		ConfMan.getBool("ripper_buffered_video") : false;
 	_subtitles = ConfMan.hasKey("ripper_subtitles") ?
-		ConfMan.getBool("ripper_subtitles") : true;
+		ConfMan.getBool("ripper_subtitles") : _demo;
 	_subtitleAutoScroll = ConfMan.hasKey("ripper_subtitle_autoscroll") ?
-		ConfMan.getBool("ripper_subtitle_autoscroll") : true;
+		ConfMan.getBool("ripper_subtitle_autoscroll") : false;
 	_toolbarHelp = ConfMan.hasKey("ripper_toolbar_help") ?
 		ConfMan.getBool("ripper_toolbar_help") : true;
 	_toolbarPermanent = ConfMan.hasKey("ripper_toolbar_permanent") ?
@@ -323,6 +324,34 @@ void RipperSettings::setBufferedVideo(bool enabled) {
 	_bufferedVideo = enabled;
 	debugC(2, kDebugGeneral,
 		"Ripper: Options Panel bufferedVideo=%d", _bufferedVideo);
+}
+
+void RipperSettings::setSubtitles(bool enabled) {
+	_subtitles = enabled;
+	debugC(2, kDebugInput,
+		"Ripper: retail presentation text enabled=%d", _subtitles);
+}
+
+void RipperSettings::setSubtitleAutoScroll(bool enabled) {
+	_subtitleAutoScroll = enabled;
+	debugC(2, kDebugInput,
+		"Ripper: retail presentation text autoScroll=%d", _subtitleAutoScroll);
+}
+
+bool RipperSettings::handlePresentationTextCommand(uint16 command,
+		const char *source) {
+	if (command == 0x14)
+		setSubtitles(!_subtitles);
+	else if (command == 0x01)
+		setSubtitleAutoScroll(!_subtitleAutoScroll);
+	else
+		return false;
+	debugC(1, kDebugInput,
+		"Ripper: retail presentation text shortcut source=%s command=%s "
+		"enabled=%d autoScroll=%d",
+		source, command == 0x14 ? "CTRL+T" : "CTRL+A", _subtitles,
+		_subtitleAutoScroll);
+	return true;
 }
 
 void RipperSettings::setVideoMode(uint mode) {

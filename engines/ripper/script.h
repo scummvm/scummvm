@@ -197,6 +197,7 @@ public:
 	const Common::Array<ScriptFrame> &getFrames() const { return _frames; }
 	const Common::Array<ScriptInteraction> &getInteractions() const { return _interactions; }
 	Common::String getString(uint32 offset) const;
+	Common::String getPresentationText(uint32 offset) const;
 
 private:
 	bool parseHeader();

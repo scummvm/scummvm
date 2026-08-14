@@ -37,9 +37,8 @@ namespace {
 static const int kPresentationTextWidth = 400;
 static const int kPresentationTextInitialTop = 300;
 static const int kPresentationTextFollowingTop = 260;
-static const int kPresentationContinueTop = 25;
 static const int kPresentationContinueWidth = 60;
-static const int kPresentationContinueHeight = 27;
+static const int kPresentationContinueHeight = 25;
 static const int kPresentationContinueGap = 5;
 static const uint kPresentationContinueResource = 0x48;
 static const uint kPresentationCursor = 14;
@@ -63,6 +62,15 @@ Common::Rect calculatePresentationTextBounds(uint sequenceId, uint videoMode,
 		return Common::Rect(left, 400,
 			left + kPresentationTextWidth, 400);
 	return Common::Rect(left, top, left + kPresentationTextWidth, 400);
+}
+
+Common::Rect calculatePresentationContinueBounds(
+		const Common::Rect &textBounds) {
+	return Common::Rect(textBounds.right + kPresentationContinueGap,
+		textBounds.top,
+		textBounds.right + kPresentationContinueGap +
+			kPresentationContinueWidth,
+		textBounds.top + kPresentationContinueHeight);
 }
 
 uint calculatePresentationTextAutoScrollLine(uint progress, uint total,
@@ -122,6 +130,9 @@ bool PresentationTextControl::serviceInput(bool allowDismissal) {
 	bool stop = false;
 	while (_input->hasPendingKey()) {
 		const uint16 command = _input->consumeKey();
+		if (_engine->getSettings()->handlePresentationTextCommand(
+				command, "presentation-text"))
+			continue;
 		if (command == 0x1b) {
 			_dismissed = true;
 			stop = true;
@@ -182,10 +193,8 @@ bool PresentationTextControl::serviceInput(bool allowDismissal) {
 	}
 
 	if (allowDismissal) {
-		const Common::Rect continueBounds(_bounds.right + kPresentationContinueGap,
-			kPresentationContinueTop,
-			_bounds.right + kPresentationContinueGap + kPresentationContinueWidth,
-			kPresentationContinueTop + kPresentationContinueHeight);
+		const Common::Rect continueBounds =
+			calculatePresentationContinueBounds(_bounds);
 		if ((mouse.pressed & kMouseButtonLeft) != 0)
 			_continuePressed = continueBounds.contains(mouse.position);
 		if ((mouse.released & kMouseButtonLeft) != 0) {
@@ -213,13 +222,10 @@ bool PresentationTextControl::draw(bool includeContinueControl) {
 			return false;
 	}
 	if (includeContinueControl) {
-		const Common::Rect continueBounds(_bounds.right + kPresentationContinueGap,
-			kPresentationContinueTop,
-			_bounds.right + kPresentationContinueGap + kPresentationContinueWidth,
-			kPresentationContinueTop + kPresentationContinueHeight);
-		if (!modal->drawRetainedTitlePanel(kPresentationContinueResource,
-				continueBounds, ModalDialogManager::kSceneEntryPresentation,
-				false))
+		const Common::Rect continueBounds =
+			calculatePresentationContinueBounds(_bounds);
+		if (!modal->drawRetainedPlainTextButton(kPresentationContinueResource,
+				continueBounds, false))
 			return false;
 	}
 	return true;
@@ -277,7 +283,7 @@ bool PresentationTextControl::waitForDismissal() {
 
 PresentationTextMediaCallback::PresentationTextMediaCallback(
 		RipperEngine *engine, InputManager *input, const Common::String &text,
-		int displayTop, uint videoMode) : _engine(engine),
+		int displayTop, uint videoMode) :
 		_control(engine, input, text, displayTop), _videoMode(videoMode) {
 }
 
@@ -289,11 +295,6 @@ void PresentationTextMediaCallback::beginIavfSegment(uint sequenceId,
 
 uint16 PresentationTextMediaCallback::service(uint frame) {
 	return _control.service(frame);
-}
-
-void PresentationTextMediaCallback::transformPalette(byte *palette,
-		uint colorCount) const {
-	_engine->applySharedPalettePatch(palette, colorCount);
 }
 
 } // End of namespace Ripper
