@@ -2464,7 +2464,10 @@
 - Retail's text setting at `0x9a58f` controls authored auxiliary strings, not a
   generated transcript track. `ExecutePresentationEntry` at `0x1754b` copies a
   nonempty opcode `0x1a` auxiliary string into presentation state and marks the
-  text callback active. WAV entries then use
+  text callback active. The compiled script stores that string in the inline
+  type-7 argument payload; entries without authored text use a length-one NUL
+  payload, which fails the retail nonempty-string gate and must not create a
+  text control. WAV entries then use
   `PlayBlockingAudioWithOptionalText` at `0x206e0`; IAVF entries install
   `ServiceMediaPresentationTextControl` at `0x17014`. Direct Smacker entries do
   not consume the auxiliary string.
