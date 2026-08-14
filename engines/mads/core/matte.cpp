@@ -257,10 +257,9 @@ int matte_add_message(FontPtr font, char *text, int x, int y,
 			message_list[message_handle].y = y;
 			message_list[message_handle].font = font;
 			message_list[message_handle].text = text;
-			const int macintoshWidth = useMacintoshFont ?
-				g_engine->getMacintoshTextWidth(font, text, auto_spacing) : -1;
-			message_list[message_handle].xs = macintoshWidth >= 0 ?
-				macintoshWidth : font_string_width(font, text, auto_spacing);
+			message_list[message_handle].xs = useMacintoshFont ?
+				g_engine->getMessageTextWidth(font, text, auto_spacing) :
+				font_string_width(font, text, auto_spacing);
 			message_list[message_handle].ys = font ? font->max_y_size : 0;
 			message_list[message_handle].main_color = message_color;
 			message_list[message_handle].spacing = (char)auto_spacing;

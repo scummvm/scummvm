@@ -549,7 +549,7 @@ static void handleConversations() {
 		kernel_message_purge();
 		player.commands_allowed = false;
 		char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
+		if (g_engine->getMessageTextWidth(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 			static char line1[40], line2[40];
 			quote_split_string(curQuote, line1, line2);
 			Common::strcpy_s(local._subQuote2, line2);

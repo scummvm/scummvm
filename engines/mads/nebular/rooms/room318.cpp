@@ -56,7 +56,7 @@ static void handleRexDialogs(int quote) {
 	kernel_message_purge();
 
 	char *curQuote = quote_string(kernel.quotes, quote);
-	if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
+	if (g_engine->getMessageTextWidth(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 		static char subQuote1[34], subQuote2[34];
 		quote_split_string(curQuote, subQuote1, subQuote2);
 
@@ -78,7 +78,7 @@ static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 
 	int maxWidth = 0;
 	for (int i = 0; i < quoteNum; i++) {
-		maxWidth = MAX(maxWidth, font_string_width(kernel_message_font, quote_string(kernel.quotes, curQuoteId), -1));
+		maxWidth = MAX(maxWidth, g_engine->getMessageTextWidth(kernel_message_font, quote_string(kernel.quotes, curQuoteId), -1));
 		curQuoteId++;
 	}
 

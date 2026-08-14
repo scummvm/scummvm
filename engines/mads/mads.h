@@ -180,6 +180,8 @@ public:
 	virtual void global_game_main_loop() {}
 	virtual void global_verb_filter() {}
 
+	int getMessageTextWidth(FontPtr font, const char *text, int spacing) const;
+
 	// Optional Macintosh presentation hooks. Defaults preserve the shared
 	// MADS rendering path used by DOS releases.
 	virtual bool hasInterfaceAnimations() const { return true; }

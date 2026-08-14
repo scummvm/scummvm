@@ -2113,11 +2113,8 @@ static void kernel_message_update(KernelMessagePtr my_message) {
 		}
 	}
 
-	width = g_engine->getMacintoshTextWidth(kernel_message_font,
+	width = g_engine->getMessageTextWidth(kernel_message_font,
 		my_message->message, kernel_message_spacing);
-	if (width < 0)
-		width = font_string_width(kernel_message_font,
-			my_message->message, kernel_message_spacing);
 
 	if (my_message->flags & (KERNEL_MESSAGE_CENTER | KERNEL_MESSAGE_RIGHT)) {
 		if (my_message->flags & KERNEL_MESSAGE_CENTER) {

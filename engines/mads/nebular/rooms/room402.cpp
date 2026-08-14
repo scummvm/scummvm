@@ -401,7 +401,7 @@ static void handleDialogs() {
 		kernel_message_purge();
 		player.commands_allowed = false;
 		char *curQuote = quote_string(kernel.quotes, player2.words[0]);
-		if (font_string_width(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
+		if (g_engine->getMessageTextWidth(kernel_message_font, curQuote, kernel_message_spacing) > 200) {
 			static char subQuote1[34], subQuote2[34];
 			quote_split_string(curQuote, subQuote1, subQuote2);
 			kernel_message_add(subQuote1, 230, 42, 0x1110, 140, 0, 32);
