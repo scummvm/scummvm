@@ -66,7 +66,8 @@ static const char *const kDemoReservedToggleConfigKeys[] = {
 
 RipperSettings::RipperSettings(Audio::Mixer *mixer) : _mixer(mixer), _videoMode(1),
 		_combatLevel(2), _puzzleLevel(2), _bufferedVideo(false), _subtitles(true),
-		_toolbarHelp(true), _toolbarPermanent(false), _mouseSensitivity(100) {
+		_subtitleAutoScroll(true), _toolbarHelp(true), _toolbarPermanent(false),
+		_mouseSensitivity(100) {
 	_demoReservedToggles[0] = true;
 	_demoReservedToggles[1] = true;
 	for (uint i = 0; i < kSliderCount; ++i)
@@ -107,6 +108,8 @@ void RipperSettings::load() {
 	_bufferedVideo = ConfMan.hasKey("ripper_buffered_video") ?
 		ConfMan.getBool("ripper_buffered_video") : false;
 	_subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
+	_subtitleAutoScroll = ConfMan.hasKey("ripper_subtitle_autoscroll") ?
+		ConfMan.getBool("ripper_subtitle_autoscroll") : true;
 	_toolbarHelp = ConfMan.hasKey("ripper_toolbar_help") ?
 		ConfMan.getBool("ripper_toolbar_help") : true;
 	_toolbarPermanent = ConfMan.hasKey("ripper_toolbar_permanent") ?
@@ -135,8 +138,10 @@ void RipperSettings::load() {
 		_values[kVideoVolume], _values[kBrightness], _values[kColor],
 		_values[kContrast], _values[kTint]);
 	debugC(1, kDebugGeneral,
-		"Ripper: loaded Options Panel settings bufferedVideo=%d videoMode=%u combat=%u puzzle=%u",
-		_bufferedVideo, _videoMode, _combatLevel, _puzzleLevel);
+		"Ripper: loaded Options Panel settings bufferedVideo=%d subtitles=%d "
+		"subtitleAutoScroll=%d videoMode=%u combat=%u puzzle=%u",
+		_bufferedVideo, _subtitles, _subtitleAutoScroll, _videoMode,
+		_combatLevel, _puzzleLevel);
 }
 
 void RipperSettings::save() {
@@ -148,6 +153,7 @@ void RipperSettings::save() {
 		ConfMan.setInt(kVisualConfigKeys[i - kBrightness], _values[i]);
 	ConfMan.setBool("ripper_buffered_video", _bufferedVideo);
 	ConfMan.setBool("subtitles", _subtitles);
+	ConfMan.setBool("ripper_subtitle_autoscroll", _subtitleAutoScroll);
 	ConfMan.setBool("ripper_toolbar_help", _toolbarHelp);
 	ConfMan.setBool("ripper_toolbar_permanent", _toolbarPermanent);
 	for (uint i = 0; i < ARRAYSIZE(_demoReservedToggles); ++i)
@@ -160,8 +166,10 @@ void RipperSettings::save() {
 		ConfMan.setInt(kActionKeyConfigKeys[i], _actionKeys[i]);
 	ConfMan.flushToDisk();
 	debugC(1, kDebugGeneral,
-		"Ripper: saved settings remoteControl=1 optionsPanel=1 bufferedVideo=%d videoMode=%u combat=%u puzzle=%u",
-		_bufferedVideo, _videoMode, _combatLevel, _puzzleLevel);
+		"Ripper: saved settings remoteControl=1 optionsPanel=1 bufferedVideo=%d "
+		"subtitles=%d subtitleAutoScroll=%d videoMode=%u combat=%u puzzle=%u",
+		_bufferedVideo, _subtitles, _subtitleAutoScroll, _videoMode,
+		_combatLevel, _puzzleLevel);
 }
 
 void RipperSettings::resetDefaults() {
