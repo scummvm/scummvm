@@ -1024,7 +1024,7 @@ void Room806::parser() {
 		digi_play("com042", 1, 255, -1, 997);
 
 	else if (!gearFl && player_said_any("MEI CHEN", "MEI CHEN "))
-		digi_play("com017", 1, 255, 997);
+		digi_play("com017", 1, 255, -1, 997);
 
 	else if (((walkFl && player_said("    ")) || (!walkFl && player_said("east"))) && _G(flags)[V266] == 0) {
 		switch (_G(kernel).trigger) {
