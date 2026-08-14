@@ -104,7 +104,7 @@ public:
 		int spacing) const override;
 	bool drawMacintoshText(FontPtr font, Buffer *target, const char *text,
 		int x, int y, int color, int spacing) const override;
-	bool getInterfaceSentenceColors(byte &foreground, byte &shadow) const override;
+	bool getInterfaceSentenceColor(byte &foreground) const override;
 	bool hasMacintoshInterface() const override;
 	bool setMacintoshPalette(const RGBcolor *palette, int firstColor,
 		int numColors) override;

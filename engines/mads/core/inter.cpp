@@ -137,7 +137,6 @@ int  picked_word = 0;           /* Word most recently picked.         */
 
 char inter_sentence[64];                /* Sentence building buffer            */
 int  inter_sentence_handle = -1;       /* Sentence message handle (for matte) */
-static int inter_sentence_shadow_handle = -1;
 static bool inter_macintosh_sentence_hidden = false;
 int  inter_sentence_changed = false;    /* Mark if sentence contents changed   */
 
@@ -246,7 +245,6 @@ void init_inter() {
 	picked_word = 0;
 	memset(inter_sentence, 0, sizeof(inter_sentence));
 	inter_sentence_handle = -1;
-	inter_sentence_shadow_handle = -1;
 	inter_macintosh_sentence_hidden = false;
 	inter_sentence_changed = false;
 	inter_look_around = 0;
@@ -1984,11 +1982,6 @@ void inter_hide_macintosh_sentence() {
 		inter_sentence_handle = -1;
 		changed = true;
 	}
-	if (inter_sentence_shadow_handle >= 0) {
-		matte_clear_message(inter_sentence_shadow_handle);
-		inter_sentence_shadow_handle = -1;
-		changed = true;
-	}
 	if (changed)
 		matte_frame(false, false);
 	inter_sentence_changed = true;
@@ -2178,10 +2171,6 @@ void inter_main_loop(int allow_input) {
 			matte_clear_message(inter_sentence_handle);
 			inter_sentence_handle = -1;
 		}
-		if (inter_sentence_shadow_handle >= 0) {
-			matte_clear_message(inter_sentence_shadow_handle);
-			inter_sentence_shadow_handle = -1;
-		}
 		if (g_engine->getGameID() != GType_Forest && (strlen(inter_sentence) > 0) &&
 				((inter_input_mode == INTER_BUILDING_SENTENCES) || (inter_input_mode == INTER_LIMITED_SENTENCES))) {
 			use_font = font_main;
@@ -2200,12 +2189,7 @@ void inter_main_loop(int allow_input) {
 
 			byte sentenceColor = g_engine->getGameID() == GType_RexNebular ?
 				INTER_MESSAGE_COLOR_REX : INTER_MESSAGE_COLOR;
-			byte shadowColor = 0;
-			if (g_engine->getInterfaceSentenceColors(sentenceColor, shadowColor)) {
-				inter_sentence_shadow_handle = matte_add_message(use_font,
-					inter_sentence, x + 1, y + 1, shadowColor,
-					use_spacing, g_engine->hasMacintoshInterface());
-			}
+			g_engine->getInterfaceSentenceColor(sentenceColor);
 			inter_sentence_handle = matte_add_message(use_font, inter_sentence, x, y,
 				sentenceColor,
 				use_spacing, g_engine->hasMacintoshInterface());
