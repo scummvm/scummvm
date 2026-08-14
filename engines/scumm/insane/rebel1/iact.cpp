@@ -699,8 +699,11 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 		if (!_vm->_smushVideoShouldFinish &&
 			_pendingRouteCutoverFrame >= 0 &&
 			routeFrame >= (uint32)_pendingRouteCutoverFrame) {
-			if (_player && _currentLevel != 6)
-				_player->setPreserveGameVideoStateOnRelease(true);
+			// L7 destinations can contain no audio chunks at all. L8 preservation
+			// is decided by SmushPlayer at the actual stop, after the final frame
+			// has resolved whether the player or walker was destroyed.
+			if (_currentLevel == 6)
+				preserveInteractiveVideoAudioState();
 			_vm->_smushVideoShouldFinish = true;
 			const int32 resumeFrame = (_currentLevel == 6 && _pendingRouteStartFrame < 0) ?
 				0 : _pendingRouteStartFrame;

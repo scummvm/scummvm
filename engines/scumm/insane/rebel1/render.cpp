@@ -908,6 +908,9 @@ void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
 	if (_player)
 		_player->setPreserveGameVideoStateOnRelease(true);
 
+	// L14PLY2B continues L14PLAY2's audio stream and has no PSAD chunks of
+	// its own, matching the seamless route changes used by levels 7 and 8.
+	preserveInteractiveVideoAudioState();
 	clearFrameObjectPrimaryBits(1, 0x05);
 	clearFrameObjectPrimaryBits(2, 0x40);
 	_vm->_smushVideoShouldFinish = true;

@@ -148,6 +148,11 @@ public:
 	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 		byte *renderBitmap = nullptr, int width = 0, int height = 0);
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
+	bool shouldPreserveWalkerRouteVideoState() const {
+		return _interactiveVideoActive && _currentLevel == 7 && _health >= 0 &&
+			_walkerHealth > 0 && !_interactiveVideoCheatSkipped;
+	}
+	bool shouldPreserveWalkerRouteOnStop() const;
 	// Touch devices use absolute aiming instead of cursor locking.
 	bool isTouchscreenActive() const;
 	void setFrameHasGameChunk(bool hasGameChunk) { _frameHasGameChunk = hasGameChunk; }
@@ -238,7 +243,6 @@ private:
 	void playInteractiveVideo(const char *filename, int32 startFrame = 0);
 	void resetInteractiveVideoAudio();
 	void preserveInteractiveVideoAudioState();
-	void restoreInteractiveVideoAudioState();
 	void setupInteractiveVideoState(int32 startFrame);
 	void resolveSeek(const char *filename, int32 startFrame, int32 &videoOffset, int32 &videoStartFrame);
 	void captureInteractiveVideoInput();
@@ -528,10 +532,6 @@ private:
 
 	// Streamed SMUSH audio.
 	RebelAudio _audio;
-	bool _restoreInteractiveVideoAudioState;
-	int16 _savedInteractiveVideoTrackState[SMUSH_MAX_TRACKS];
-	int _savedInteractiveVideoTrackGroupId[SMUSH_MAX_TRACKS];
-	int _savedInteractiveVideoTrackCount;
 	static const int kNumSfx = 8;
 	enum SfxSlot {
 		kSfxLaserShot = 0,

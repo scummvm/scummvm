@@ -60,6 +60,7 @@ protected:
 	void handleGameUpdateScreen(const byte *src, int srcPitch, int width, int height) override;
 
 private:
+	void markLogicalEndOfStream();
 	void ra1HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra1HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b);
 	void ra1HandleFade(int32 subSize, Common::SeekableReadStream &b);

@@ -217,6 +217,12 @@ void SmushPlayerRebel1::initGameVideoState() {
 }
 
 void SmushPlayerRebel1::releaseGameVideoState() {
+	// Walker routes use a logical stream end at their terminal GAME counter.
+	// Retain the same state if a route instead reaches physical EOF.
+	if (_endOfFile && _insane &&
+			static_cast<InsaneRebel1 *>(_insane)->shouldPreserveWalkerRouteVideoState())
+		return;
+
 	free(_storedFobjData);
 	_storedFobjData = nullptr;
 	_storedFobjDataSize = 0;
@@ -520,6 +526,17 @@ bool SmushPlayerRebel1::handleGameAnimHeader(byte *headerContent) {
 
 void SmushPlayerRebel1::handleGameParseNextFrame() {
 	processDispatches(_smushAudioSampleRate / _speed);
+
+	// The DOS walker loop changes/replays its route without closing the logical
+	// SMUSH stream. Its files request a stop on GAME counter 2629, before physical
+	// EOF. Route this RA1-only continuation through the normal EOF exit, which
+	// leaves audio tracks alive; releaseGameVideoState() retains the STOR object.
+	if (_insane && static_cast<InsaneRebel1 *>(_insane)->shouldPreserveWalkerRouteOnStop())
+		markLogicalEndOfStream();
+}
+
+void SmushPlayerRebel1::markLogicalEndOfStream() {
+	_endOfFile = true;
 }
 
 bool SmushPlayerRebel1::handleGameFrameBufferSelect(int codec, int width, int height) {

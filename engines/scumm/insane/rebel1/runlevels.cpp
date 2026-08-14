@@ -28,7 +28,7 @@
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/rebel/anim_ra1.h"
-#include "scumm/smush/smush_player.h"
+#include "scumm/smush/rebel/smush_player_ra1.h"
 #include "scumm/insane/rebel1/rebel.h"
 
 namespace Scumm {
@@ -1540,45 +1540,20 @@ void InsaneRebel1::resetInteractiveVideoAudio() {
 
 void InsaneRebel1::preserveInteractiveVideoAudioState() {
 	SmushPlayer *splayer = _vm->_splayer;
-
-	_restoreInteractiveVideoAudioState = false;
-	_savedInteractiveVideoTrackCount = 0;
-	if (!splayer)
-		return;
-
-	_savedInteractiveVideoTrackCount = MIN<int>(splayer->_smushNumTracks, SMUSH_MAX_TRACKS);
-	for (int i = 0; i < _savedInteractiveVideoTrackCount; i++) {
-		_savedInteractiveVideoTrackState[i] = splayer->_smushTracks[i].state;
-		_savedInteractiveVideoTrackGroupId[i] = splayer->_smushTracks[i].groupId;
-	}
-
-	_restoreInteractiveVideoAudioState = true;
-}
-
-void InsaneRebel1::restoreInteractiveVideoAudioState() {
-	if (!_restoreInteractiveVideoAudioState)
-		return;
-
-	_restoreInteractiveVideoAudioState = false;
-	if (_vm->shouldQuit() || _vm->_saveLoadFlag)
-		return;
-
-	SmushPlayer *splayer = _vm->_splayer;
-	if (!splayer)
-		return;
-
-	const int trackCount = MIN<int>(_savedInteractiveVideoTrackCount, splayer->_smushNumTracks);
-	for (int i = 0; i < trackCount; i++) {
-		splayer->_smushTracks[i].state = _savedInteractiveVideoTrackState[i];
-		splayer->_smushTracks[i].groupId = _savedInteractiveVideoTrackGroupId[i];
-	}
+	// RA1's internal route changes are logical stream ends. Taking the existing
+	// EOF exit avoids the shared SMUSH forced-stop reset without changing it.
+	if (splayer)
+		static_cast<SmushPlayerRebel1 *>(splayer)->markLogicalEndOfStream();
 }
 
 void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
+	const bool walkerRouteReplay = (_currentLevel == 7 && _walkerRoundReplay);
 	const bool resumingRoute = startFrame > 0;
-	const bool preserveRuntimeState = _preserveInteractiveRuntimeState || resumingRoute || level7RouteSplice;
-	const bool preserveVideoState = !_preserveInteractiveRuntimeState && resumingRoute && !level7RouteSplice;
+	const bool preserveRuntimeState = _preserveInteractiveRuntimeState || resumingRoute ||
+		level7RouteSplice || walkerRouteReplay;
+	const bool preserveVideoState = walkerRouteReplay ||
+		(!_preserveInteractiveRuntimeState && resumingRoute && !level7RouteSplice);
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
@@ -1647,7 +1622,8 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 
 void InsaneRebel1::captureInteractiveVideoInput() {
 	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
-	const bool preserveInputState = _preserveInteractiveRuntimeState || level7RouteSplice;
+	const bool walkerRouteReplay = (_currentLevel == 7 && _walkerRoundReplay);
+	const bool preserveInputState = _preserveInteractiveRuntimeState || level7RouteSplice || walkerRouteReplay;
 
 	enableIOSGamepadController();
 
@@ -1681,7 +1657,6 @@ void InsaneRebel1::releaseInteractiveVideoInput() {
 void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame) {
 	_vm->_splayer->play(filename, 15, videoOffset, videoStartFrame);
 	restoreScreenFlashPalette();
-	restoreInteractiveVideoAudioState();
 	_interactiveVideoActive = false;
 }
 
@@ -1696,8 +1671,10 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	_interactiveVideoCheatSkipped = false;
 	int32 videoStartFrame = 0;
 	int32 videoOffset = 0;
+	const bool walkerRouteReplay = (_currentLevel == 7 && _walkerRoundReplay);
 	const bool preserveRuntimeState = _preserveInteractiveRuntimeState ||
-		(startFrame > 0) || (_currentLevel == 6 && _levelRouteIndex > 0);
+		(startFrame > 0) || (_currentLevel == 6 && _levelRouteIndex > 0) ||
+		walkerRouteReplay;
 
 	if (!preserveRuntimeState)
 		resetInteractiveVideoAudio();
