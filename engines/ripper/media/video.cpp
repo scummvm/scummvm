@@ -198,6 +198,12 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 		_engine->quitGame();
 		return false;
 	}
+	if (!_engine->isDemo() &&
+			_engine->getSettings()->handlePresentationTextCommand(
+				_input->peekKey(), "media-playback")) {
+		_input->consumeKey();
+		return true;
+	}
 	if (allowSceneHelp && _input->peekKey() == kHelpCommand) {
 		_input->consumeKey();
 		decoder.pauseVideo(true);
@@ -1077,8 +1083,15 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		plan.placement.originY = originY;
 		result = playValidatedSmacker(stream, path, "presentation", plan);
 	} else if (isIavf) {
-		const int originY = sceneViewport ? kScenePresentationTop : 0;
 		const bool hasPresentationText = !presentationText.empty();
+		// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3 forces a
+		// small authored-text AVI out of the scene viewport and onto the full
+		// startup display page. ExecutePresentationEntry at 0x1754b supplies
+		// centered (-1,-1) packetized coordinates on that portable branch.
+		const int originY = hasPresentationText ? 0 :
+			(sceneViewport ? kScenePresentationTop : 0);
+		const int presentationX = hasPresentationText ? -1 : x;
+		const int presentationY = hasPresentationText ? -1 : y;
 		PresentationTextMediaCallback textCallback(_engine, _input,
 			presentationText, originY, _engine->getSettings()->getVideoMode());
 		uint16 textCommand = 0;
@@ -1092,7 +1105,8 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		// returning to the restored WAC page. A presentation whose indexed page
 		// and palette will be restored must not replace the source palette later
 		// used to rebuild the surrounding scene and interface bands.
-		result = playIavf(*stream, path, allowEscSpace, x, y, originY, false,
+		result = playIavf(*stream, path, allowEscSpace, presentationX,
+			presentationY, originY, false,
 			rememberIavfPalette, textDisplayScale,
 			hasPresentationText ? &textCallback : nullptr,
 			hasPresentationText ? &textCommand : nullptr);

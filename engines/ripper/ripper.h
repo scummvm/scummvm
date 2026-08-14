@@ -78,6 +78,7 @@ public:
 	WacManager *getWac() const { return _wac.get(); }
 	WorldMap *getWorldMap() const { return _worldMap.get(); }
 	void applySharedPalettePatch(byte *palette, uint colorCount) const;
+	bool isDemo() const;
 	bool isPuzzleHelpEnabled() const { return _puzzleHelpEnabled; }
 	void setPuzzleHelpEnabled(bool enabled) { _puzzleHelpEnabled = enabled; }
 

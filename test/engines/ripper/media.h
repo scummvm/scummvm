@@ -90,6 +90,8 @@ public:
 
 	void testRetailPresentationTextLayoutTracksPacketizedBranch() {
 		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextBounds(
+			1, 1, false, 0), Common::Rect(120, 300, 520, 400));
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextBounds(
 			1, 1, false, 50), Common::Rect(120, 350, 520, 400));
 		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextBounds(
 			2, 1, false, 50), Common::Rect(120, 310, 520, 400));
@@ -97,6 +99,9 @@ public:
 			2, 2, false, 50), Common::Rect(120, 400, 520, 400));
 		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextBounds(
 			2, 1, true, 50), Common::Rect(120, 400, 520, 400));
+		TS_ASSERT_EQUALS(Ripper::calculatePresentationContinueBounds(
+			Common::Rect(120, 300, 520, 400)),
+			Common::Rect(525, 300, 585, 325));
 	}
 
 	void testRetailPresentationTextAutoScrollUsesPlaybackProgress() {

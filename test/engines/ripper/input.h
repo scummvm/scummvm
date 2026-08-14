@@ -45,6 +45,13 @@ public:
 			Common::KeyState(Common::KEYCODE_h, 'h')), (uint16)'h');
 	}
 
+	void testRetailPresentationTextShortcutsUseDosControlCharacters() {
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_t, 't', Common::KBD_CTRL)), 0x14);
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_a, 'a', Common::KBD_CTRL)), 0x01);
+	}
+
 	void testPrintableAndControlKeysRetainAscii() {
 		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
 			Common::KeyState(Common::KEYCODE_a, 'a')), (uint16)'a');
