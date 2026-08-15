@@ -73,9 +73,7 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 	Common::fill(&_cycleNext[0], &_cycleNext[4], (byte *)nullptr);
 	_cyclePtr = nullptr;
 
-	_leftClick = _rightClick = false;
-	_mouseClicked = _newMouseClicked = false;
-	_newLeftClick = _newRightClick = false;
+	resetEvents();
 
 	_videoDead = 0;
 
@@ -84,6 +82,12 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 
 	for (int i = 0; i < 4; i++)
 		_cycleNext[i] = nullptr;
+}
+
+void EventsManager::resetEvents() {
+	_leftClick = _rightClick = false;
+	_mouseClicked = _newMouseClicked = false;
+	_newLeftClick = _newRightClick = false;
 }
 
 void EventsManager::startMainClockInt() {
@@ -244,6 +248,10 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				_vm->openMainMenuDialog();
+				resetEvents();
+			}
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_newLeftClick = true;
