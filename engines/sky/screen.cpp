@@ -192,6 +192,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	if (!SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 		_system->getPaletteManager()->setPalette(tmpPal, 0, VGA_COLORS);
 	_currentPalette = 0;
+	_paletteDirty = true;
 
 	_seqInfo.nextFrame = _seqInfo.framesLeft = 0;
 	_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
@@ -251,32 +252,43 @@ Screen::~Screen() {
 	_iconSurface.free();
 }
 
-void Screen::update32BitScreen(uint8 *overrideBuffer) {
+void Screen::update32BitScreen(uint8 *overrideBuffer, uint16 x, uint16 y, uint16 width, uint16 height) {
 	if (!overrideBuffer)
 		return;
 
 	uint32 *dstPixels = (uint32 *)_screen32.getPixels();
 	uint32 dstPitch = _screen32.pitch / 4;
 
-	for (int y = 0; y < GAME_SCREEN_HEIGHT; y++) {
-		uint8 *srcRow = overrideBuffer + (y * GAME_SCREEN_WIDTH);
-		uint32 *dstRow = dstPixels + (y * dstPitch);
+	for (int yy = y; yy < y + height; yy++) {
+		uint8 *srcRow = overrideBuffer + (yy * GAME_SCREEN_WIDTH) + x;
+		uint32 *dstRow = dstPixels + (yy * dstPitch) + x;
 
-		for (int x = 0; x < GAME_SCREEN_WIDTH; x++) {
-			uint8 colorIdx = srcRow[x];
+		for (int xx = 0; xx < width; xx++) {
+			uint8 colorIdx = srcRow[xx];
 
 			uint8 r = _palette[colorIdx * 3 + 0];
 			uint8 g = _palette[colorIdx * 3 + 1];
 			uint8 b = _palette[colorIdx * 3 + 2];
 
-			dstRow[x] = _screen32.format.RGBToColor(r, g, b);
+			dstRow[xx] = _screen32.format.RGBToColor(r, g, b);
 		}
+	}
+}
+
+void Screen::renderRect(const uint8 *buffer, uint16 x, uint16 y, uint16 width, uint16 height) {
+	if (SkyEngine::isIbass()) {
+		update32BitScreen(_currentScreen, x, y, width, height);
+		if (_screen32.getPixels())
+			_system->copyRectToScreen(_screen32.getBasePtr(x, y), _screen32.pitch, x, y, width, height);
+	} else {
+		_system->copyRectToScreen(buffer, GAME_SCREEN_WIDTH, x, y, width, height);
 	}
 }
 
 void Screen::renderFinalFrame() {
 	if (SkyEngine::isIbass()) {
-		update32BitScreen(_currentScreen);
+		update32BitScreen(_currentScreen, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+		_paletteDirty = false;
 		setIcon(UI_ICON_INV, 0, GAME_SCREEN_HEIGHT - 35);
 		drawIbassIcon();
 		drawIbassInventory();
@@ -292,7 +304,7 @@ void Screen::renderFinalFrame() {
 
 void Screen::renderControlPanel(uint8 *buffer) {
 	if (SkyEngine::isIbass()) {
-		update32BitScreen(buffer);
+		update32BitScreen(buffer, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 		if (_screen32.getPixels())
 			_system->copyRectToScreen(_screen32.getPixels(), _screen32.pitch, 0, 0, _screen32.w, _screen32.h);
 	} else {
@@ -317,8 +329,9 @@ void Screen::setFocusRectangle(const Common::Rect& rect) {
 //set a new palette, pal is a pointer to dos vga rgb components 0..63
 void Screen::setPalette(uint8 *pal) {
 	convertPalette(pal, _palette);
+	_paletteDirty = true;
 	if (_system->getScreenFormat().bytesPerPixel == 1)
-	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
+		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 	_system->updateScreen();
 }
 
@@ -331,8 +344,9 @@ void Screen::setPaletteEndian(uint8 *pal) {
 #else
 	convertPalette(pal, _palette);
 #endif
+	_paletteDirty = true;
 	if (_system->getScreenFormat().bytesPerPixel == 1)
-	_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
+		_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 	_system->updateScreen();
 }
 
@@ -357,8 +371,7 @@ void Screen::setPalette(uint16 fileNum) {
 		warning("Screen::setPalette: can't load file nr. %d",fileNum);
 }
 
-  void Screen::showScreen(uint16 fileNum, bool fullscreen) {
-
+void Screen::showScreen(uint16 fileNum, bool fullscreen) {
 	if (SkyEngine::isIbass()) {
 		uint8 *imgData = _skyDisk->loadFile(fileNum);
 
@@ -443,22 +456,51 @@ void Screen::recreate() {
 }
 
 void Screen::flip(bool doUpdate) {
-	bool isDirty = false;
+	// iBASS renderer needs a full pass whenever the UI layer is visible
+	// or the palette changed
+	if (SkyEngine::isIbass() && (isUIOpen() || _paletteDirty)) {
+		bool isDirty = false;
 
-	// just clear the dirty grid flags and detect if anything changed
+		// just clear the dirty grid flags and detect if anything changed
+		for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
+			for (uint8 cntx = 0; cntx < GRID_X; cntx++) {
+				if (_gameGrid[cnty * GRID_X + cntx] & 1) {
+					_gameGrid[cnty * GRID_X + cntx] &= ~1;
+					isDirty = true;
+				}
+			}
+		}
+
+		if (isDirty || isUIOpen())
+			renderFinalFrame();
+		else if (doUpdate)
+			_system->updateScreen();
+		return;
+	}
+
+	bool copied = false;
+	uint32 copyX, copyWidth;
+	copyX = copyWidth = 0;
 	for (uint8 cnty = 0; cnty < GRID_Y; cnty++) {
 		for (uint8 cntx = 0; cntx < GRID_X; cntx++) {
 			if (_gameGrid[cnty * GRID_X + cntx] & 1) {
 				_gameGrid[cnty * GRID_X + cntx] &= ~1;
-				isDirty = true;
+				if (!copyWidth)
+					copyX = cntx * GRID_W;
+				copyWidth += GRID_W;
+			} else if (copyWidth) {
+				renderRect(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, copyX, cnty * GRID_H, copyWidth, GRID_H);
+				copied = true;
+				copyWidth = 0;
 			}
 		}
+		if (copyWidth) {
+			renderRect(_currentScreen + cnty * GRID_H * GAME_SCREEN_WIDTH + copyX, copyX, cnty * GRID_H, copyWidth, GRID_H);
+			copied = true;
+			copyWidth = 0;
+		}
 	}
-
-	// only perform the 32-bit conversion ONCE per frame
-	if (isDirty || isUIOpen())
-		renderFinalFrame();
-	 else if (doUpdate)
+	if (doUpdate || (SkyEngine::isIbass() && copied))
 		_system->updateScreen();
 }
 
@@ -478,6 +520,7 @@ void Screen::fnFadeDown(uint32 scroll) {
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
 			delayTime += 20;
 			palette_fadedown_helper(_palette, GAME_COLORS);
+			_paletteDirty = true;
 			if (!SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 				_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 			_system->updateScreen();
@@ -542,6 +585,7 @@ void Screen::paletteFadeUp(uint8 *pal) {
 			_palette[colCnt * 3 + 1] = (tmpPal[colCnt * 3 + 1] * cnt) >> 5;
 			_palette[colCnt * 3 + 2] = (tmpPal[colCnt * 3 + 2] * cnt) >> 5;
 		}
+		_paletteDirty = true;
 		if (!SkyEngine::isIbass() && _system->getScreenFormat().bytesPerPixel == 1)
 			_system->getPaletteManager()->setPalette(_palette, 0, GAME_COLORS);
 		_system->updateScreen();
@@ -723,21 +767,32 @@ void Screen::processSequence() {
 			}
 		} while (nrToDo == 0xFF);
 	} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
-	uint8 *gridPtr = _seqGrid;
-	uint8 rectWid = 0;
-	for (uint8 cnty = 0; cnty < 12; cnty++) {
-		for (uint8 cntx = 0; cntx < 20; cntx++) {
-			if (*gridPtr) {
-				rectWid++;
-			} else if (rectWid) {
-				renderFinalFrame();
+	if (SkyEngine::isIbass() && (isUIOpen() || _paletteDirty)) {
+		renderFinalFrame();
+	} else {
+		uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr = NULL;
+		uint8 rectWid = 0, rectX = 0, rectY = 0;
+		for (uint8 cnty = 0; cnty < 12; cnty++) {
+			for (uint8 cntx = 0; cntx < 20; cntx++) {
+				if (*gridPtr) {
+					if (!rectWid) {
+						rectX = cntx;
+						rectY = cnty;
+						rectPtr = scrPtr;
+					}
+					rectWid++;
+				} else if (rectWid) {
+					renderRect(rectPtr, rectX << 4, rectY << 4, rectWid << 4, 16);
+					rectWid = 0;
+				}
+				scrPtr += 16;
+				gridPtr++;
+			}
+			if (rectWid) {
+				renderRect(rectPtr, rectX << 4, rectY << 4, rectWid << 4, 16);
 				rectWid = 0;
 			}
-			gridPtr++;
-		}
-		if (rectWid) {
-			renderFinalFrame();
-			rectWid = 0;
+			scrPtr += 15 * GAME_SCREEN_WIDTH;
 		}
 	}
 	_system->updateScreen();
