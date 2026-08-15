@@ -684,22 +684,27 @@ public:
 	virtual bool getFeatureState(Feature f) { return false; }
 
 	/**
-	 * Acquire explicit engine-side control of native IME composition.
+	 * Acquire explicit client-side control of native IME composition.
 	 *
 	 * This opt-in is separate from the enabled state of
 	 * @ref OSystem::kFeatureImeComposition. Control starts with composition disabled,
 	 * after which @ref OSystem::setFeatureState() can enable or disable it for
-	 * the current input owner. This is a no-op on unsupported backends.
+	 * the current input owner. Calls may be nested; each acquisition saves the
+	 * current controlled composition and general text-input states and must be
+	 * paired with one call to @ref OSystem::releaseImeCompositionControl(). This
+	 * is a no-op on unsupported backends.
 	 */
 	virtual void acquireImeCompositionControl() {}
 
 	/**
-	 * Release explicit engine-side control of native IME composition.
+	 * Release explicit client-side control of native IME composition.
 	 *
-	 * This restores the native text input state captured by
-	 * @ref OSystem::acquireImeCompositionControl(). Backends may call this
-	 * automatically when the engine finishes. This is a no-op when control was
-	 * not acquired or the backend does not support native IME composition.
+	 * This restores the composition and general text-input states saved by the
+	 * matching acquisition. The native text-input state captured by the first
+	 * acquisition is restored only after the outermost control scope ends.
+	 * Backends may call this automatically when the engine finishes. This is a
+	 * no-op when control was not acquired or the backend does not support native
+	 * IME composition.
 	 */
 	virtual void releaseImeCompositionControl() {}
 

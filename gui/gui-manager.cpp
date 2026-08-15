@@ -101,6 +101,8 @@ GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled
 }
 
 GuiManager::~GuiManager() {
+	if (_imeCompositionControlActive)
+		_system->releaseImeCompositionControl();
 	delete _theme;
 	delete _wm;
 }
@@ -787,6 +789,11 @@ void GuiManager::restoreState() {
 }
 
 void GuiManager::openDialog(Dialog *dialog) {
+	if (_dialogStack.empty() && !_tooltip && !_imeCompositionControlActive) {
+		_system->acquireImeCompositionControl();
+		_imeCompositionControlActive = true;
+	}
+
 	if (!_dialogStack.empty())
 		_dialogStack.top()->lostFocus();
 
@@ -842,6 +849,11 @@ void GuiManager::closeTopDialog() {
 		// We need to reset it to nullptr here, else getTopDialog keeps
 		// returning us as top dialog and we never leave the tooltip event loop
 		_tooltip = nullptr;
+	}
+
+	if (!_tooltip && _dialogStack.empty() && _imeCompositionControlActive) {
+		_system->releaseImeCompositionControl();
+		_imeCompositionControlActive = false;
 	}
 }
 

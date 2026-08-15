@@ -78,7 +78,7 @@ void EditableWidget::drawWidget() {
 void EditableWidget::reflowLayout() {
 	Widget::reflowLayout();
 
-	_editScrollOffset = g_gui.getStringWidth(_editString, _font) - getEditRect().width();
+	_editScrollOffset = g_gui.getStringWidth(getDisplayedEditString(), _font) - getEditRect().width();
 	if (_editScrollOffset < 0) {
 		_editScrollOffset = 0;
 		_drawAlign = _align;
@@ -90,6 +90,7 @@ void EditableWidget::reflowLayout() {
 void EditableWidget::setEditString(const Common::U32String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
+	clearImeComposition();
 	_editString = str;
 	clearSelection();
 	setCaretPos(caretVisualPos(str.size()));
@@ -105,6 +106,103 @@ bool EditableWidget::tryInsertChar(Common::u32char_type_t c, int pos) {
 		return false;
 	_editString.insertChar(c, pos);
 	return true;
+}
+
+Common::U32String EditableWidget::getDisplayedEditString() const {
+	if (!hasImeComposition())
+		return _editString;
+
+	int baseBegin;
+	int baseEnd;
+	getImeCompositionBaseRange(baseBegin, baseEnd);
+	Common::U32String displayedText = _editString.substr(0, baseBegin);
+	displayedText += _imeComposition.text;
+	displayedText += _editString.substr(baseEnd);
+	return displayedText;
+}
+
+int EditableWidget::getDisplayedCaretPos() const {
+	if (!hasImeComposition())
+		return _caretPos;
+
+	int baseBegin;
+	int baseEnd;
+	getImeCompositionBaseRange(baseBegin, baseEnd);
+	const Common::U32String displayedText = getDisplayedEditString();
+	const int logicalPos = MAX(0, MIN(baseBegin + _imeComposition.start, static_cast<int>(displayedText.size())));
+	return static_cast<int>(Common::convertBiDiU32String(displayedText + " ").getVisualPosition(logicalPos));
+}
+
+void EditableWidget::getDisplayedSelection(int &selectionBegin, int &selectionEnd) const {
+	if (!hasImeComposition()) {
+		selectionBegin = _selCaretPos;
+		selectionEnd = _selCaretPos + _selOffset;
+	} else {
+		int baseBegin;
+		int baseEnd;
+		getImeCompositionBaseRange(baseBegin, baseEnd);
+		const Common::U32String displayedText = getDisplayedEditString();
+		const int logicalBegin = MAX(0, MIN(baseBegin + _imeComposition.start,
+											static_cast<int>(displayedText.size())));
+		const int logicalEnd = MAX(logicalBegin, MIN(logicalBegin + _imeComposition.length,
+											static_cast<int>(displayedText.size())));
+		const Common::UnicodeBiDiText bidi(displayedText + " ");
+		selectionBegin = static_cast<int>(bidi.getVisualPosition(logicalBegin));
+		selectionEnd = static_cast<int>(bidi.getVisualPosition(logicalEnd));
+	}
+
+	if (selectionBegin > selectionEnd)
+		SWAP(selectionBegin, selectionEnd);
+
+	const int displayedLength = static_cast<int>(getDisplayedEditString().size());
+	selectionBegin = MAX(0, MIN(selectionBegin, displayedLength));
+	selectionEnd = MAX(0, MIN(selectionEnd, displayedLength));
+}
+
+bool EditableWidget::hasImeComposition() const {
+	return _imeComposition.state == Common::ImeComposition::kCompositing && !_imeComposition.text.empty();
+}
+
+void EditableWidget::getImeCompositionBaseRange(int &baseBegin, int &baseEnd) const {
+	baseBegin = caretLogicalPos();
+	baseEnd = baseBegin;
+	if (_selCaretPos < 0 || _selOffset == 0)
+		return;
+
+	int selectionBegin = _selCaretPos;
+	int selectionEnd = _selCaretPos + _selOffset;
+	if (selectionBegin > selectionEnd)
+		SWAP(selectionBegin, selectionEnd);
+
+	const Common::UnicodeBiDiText bidi(_editString + " ");
+	const int logicalBegin = static_cast<int>(bidi.getLogicalPosition(selectionBegin));
+	const int logicalEnd = static_cast<int>(bidi.getLogicalPosition(selectionEnd));
+	baseBegin = MAX(0, MIN(MIN(logicalBegin, logicalEnd), static_cast<int>(_editString.size())));
+	baseEnd = MAX(baseBegin, MIN(MAX(logicalBegin, logicalEnd), static_cast<int>(_editString.size())));
+}
+
+bool EditableWidget::clearImeComposition() {
+	if (!hasImeComposition())
+		return false;
+
+	_imeComposition = Common::ImeComposition();
+	return true;
+}
+
+void EditableWidget::handleImeComposition(const Common::ImeComposition &composition) {
+	if (composition.state != Common::ImeComposition::kCompositing || composition.text.empty()) {
+		clearImeComposition();
+		return;
+	}
+
+	const int compositionLength = static_cast<int>(composition.text.size());
+	_imeComposition = composition;
+	if (_imeComposition.start < 0)
+		_imeComposition.start = compositionLength;
+	_imeComposition.start = MAX(0, MIN(_imeComposition.start, compositionLength));
+	if (_imeComposition.length < 0)
+		_imeComposition.length = 0;
+	_imeComposition.length = MIN(_imeComposition.length, compositionLength - _imeComposition.start);
 }
 
 int EditableWidget::caretVisualPos(int logicalPos) const {
@@ -126,6 +224,8 @@ void EditableWidget::handleTickle() {
 void EditableWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
+	if (clearImeComposition())
+		markAsDirty();
 
 	_isDragging = true;
 	// Select all text incase of double press
@@ -219,10 +319,21 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 
 	if (!isEnabled())
 		return false;
+	const bool imeCompositionActive = hasImeComposition();
+	if (imeCompositionActive && state.keycode != Common::KEYCODE_INVALID) {
+		// The native IME owns key interpretation until it completes or cancels
+		// the composition. Raw key events must not modify the committed text.
+		_shiftPressed = state.hasFlags(Common::KBD_SHIFT);
+		return true;
+	}
+	// SDL text input without a matching physical key uses KEYCODE_INVALID.
+	// Such an event commits the composition and is inserted below.
 
 	// First remove caret
 	if (_caretVisible)
 		drawCaret(true);
+	if (imeCompositionActive && clearImeComposition())
+		dirty = true;
 
 	_shiftPressed = state.hasFlags(Common::KBD_SHIFT);
 
@@ -433,30 +544,48 @@ void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 		drawCaret(true);
 
 	switch (evt.type) {
+	case Common::EVENT_IME_COMPOSITION:
+		handleImeComposition(evt.imeComposition);
+		dirty = true;
+		forcecaret = true;
+		break;
+	case Common::EVENT_FOCUS_LOST:
+		dirty = clearImeComposition();
+		break;
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch (evt.customType) {
 		case kActionHome:
+			if (clearImeComposition())
+				dirty = true;
 			moveCaretToStart(false);
 			forcecaret = true;
 			dirty = true;
 			break;
 		case kActionShiftHome:
+			if (clearImeComposition())
+				dirty = true;
 			moveCaretToStart(true);
 			forcecaret = true;
 			dirty = true;
 			break;
 		case kActionEnd:
+			if (clearImeComposition())
+				dirty = true;
 			moveCaretToEnd(false);
 			forcecaret = true;
 			dirty = true;
 			break;
 		case kActionShiftEnd:
+			if (clearImeComposition())
+				dirty = true;
 			moveCaretToEnd(true);
 			forcecaret = true;
 			dirty = true;
 			break;
 		case kActionCut:
 			if (!getEditString().empty() && _selOffset != 0) {
+				if (clearImeComposition())
+					dirty = true;
 				int selBegin = _selCaretPos;
 				int selEnd = _selCaretPos + _selOffset;
 				if (selBegin > selEnd)
@@ -485,6 +614,8 @@ void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 
 		case kActionPaste:
 			if (g_system->hasTextInClipboard()) {
+				if (clearImeComposition())
+					dirty = true;
 				Common::U32String text = g_system->getTextFromClipboard();
 				if (_selOffset != 0) {
 					int selBegin = _selCaretPos;
@@ -521,14 +652,20 @@ void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 }
 
 int EditableWidget::getCaretOffset() const {
-	Common::UnicodeBiDiText utxt(_editString);
-	Common::U32String substr(utxt.visual.begin(), utxt.visual.begin() + _caretPos);
+	const Common::U32String displayedText = getDisplayedEditString();
+	const Common::UnicodeBiDiText utxt(displayedText);
+	const int caretPos = getDisplayedCaretPos();
+	Common::U32String substr(utxt.visual.begin(), utxt.visual.begin() + caretPos);
 	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
 }
 
 int EditableWidget::getSelectionCarretOffset() const {
-	Common::UnicodeBiDiText utxt(_editString);
-	Common::U32String substr(utxt.visual.begin(), utxt.visual.begin() + _selCaretPos);
+	const Common::U32String displayedText = getDisplayedEditString();
+	const Common::UnicodeBiDiText utxt(displayedText);
+	int selectionBegin;
+	int selectionEnd;
+	getDisplayedSelection(selectionBegin, selectionEnd);
+	Common::U32String substr(utxt.visual.begin(), utxt.visual.begin() + selectionBegin);
 	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
 }
 
@@ -553,8 +690,11 @@ int EditableWidget::getSelectionCarretOffset() const {
 	int x = editRect.left;
 	int y = editRect.top;
 
+	const Common::U32String displayedText = getDisplayedEditString();
+	const int caretPos = getDisplayedCaretPos();
+
 	if (_align == Graphics::kTextAlignRight) {
-		int strVisibleWidth = g_gui.getStringWidth(_editString, _font) - _editScrollOffset;
+		int strVisibleWidth = g_gui.getStringWidth(displayedText, _font) - _editScrollOffset;
 		if (strVisibleWidth > editRect.width()) {
 			_drawAlign = Graphics::kTextAlignLeft;
 			strVisibleWidth = editRect.width();
@@ -582,13 +722,13 @@ int EditableWidget::getSelectionCarretOffset() const {
 		Common::U32String character;
 		int width;
 
-		if ((uint)_caretPos < _editString.size()) {
-			Common::UnicodeBiDiText utxt(_editString);
-			const Common::u32char_type_t chr = utxt.visual[_caretPos];
+		if ((uint)caretPos < displayedText.size()) {
+			Common::UnicodeBiDiText utxt(displayedText);
+			const Common::u32char_type_t chr = utxt.visual[caretPos];
 			width = g_gui.getCharWidth(chr, _font);
 			character = Common::U32String(chr);
 
-			const uint32 last = (_caretPos > 0) ?  utxt.visual[_caretPos - 1] : 0;
+			const uint32 last = (caretPos > 0) ?  utxt.visual[caretPos - 1] : 0;
 			x += g_gui.getKerningOffset(last, chr, _font);
 		} else {
 			// We draw a fake space here to assure that removing the caret
@@ -643,7 +783,7 @@ bool EditableWidget::adjustOffset() {
 		_editScrollOffset -= (editWidth - caretpos);
 		return true;
 	} else if (_editScrollOffset > 0) {
-		const int strWidth = g_gui.getStringWidth(_editString, _font);
+		const int strWidth = g_gui.getStringWidth(getDisplayedEditString(), _font);
 		if (strWidth - _editScrollOffset < editWidth) {
 			// scroll right
 			_editScrollOffset = (strWidth - editWidth);
