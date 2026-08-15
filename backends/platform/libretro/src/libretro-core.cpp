@@ -59,22 +59,6 @@
 #include "backends/platform/libretro/include/libretro-fs.h"
 #include "backends/platform/libretro/include/libretro-mapper.h"
 
-#ifndef RETRO_ENVIRONMENT_GET_VFS_AUTHORIZED_LOCATIONS
-#define RETRO_ENVIRONMENT_GET_VFS_AUTHORIZED_LOCATIONS (93 | RETRO_ENVIRONMENT_EXPERIMENTAL)
-
-struct retro_vfs_authorized_location {
-	const char *path;
-	const char *label;
-	unsigned flags;
-};
-
-struct retro_vfs_authorized_locations {
-	const struct retro_vfs_authorized_location *locations;
-	size_t count;
-};
-#endif
-
-
 static struct retro_game_info game_buf;
 static struct retro_game_info *game_buf_ptr;
 

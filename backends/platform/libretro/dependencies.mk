@@ -11,7 +11,7 @@ DEPS_COMMIT_libretro-deps   := bab7d258c451c0e7cba4b6a79f1b062c13efff38
 
 DEPS_FOLDER_libretro-common := libretro-common
 DEPS_URL_libretro-common    := https://github.com/libretro/libretro-common
-DEPS_COMMIT_libretro-common := 692124dbd8a0b2f5526b48f3bc2026421754e3c5
+DEPS_COMMIT_libretro-common := 879c8d507b0b52e77e27d759239c2b5df1e26dfd
 
 submodule_test  = $(if $(shell result=$$($(SCRIPTS_PATH)/configure_submodules.sh $(DEPS_URL_$(1)) $(DEPS_COMMIT_$(1)) $(DEPS_PATH) $(DEBUG_ALLOW_DIRTY_SUBMODULES) $(DEPS_FOLDER_$(1))) ; { [ -z $$result ] || [ ! $$result = 0 ] ; } && printf error),$(1))
 $(info Configuring submodules...)
