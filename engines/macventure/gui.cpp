@@ -117,6 +117,8 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_controlData = nullptr;
 	_dialog = nullptr;
 
+	_wm = new Graphics::MacWindowManager(Graphics::kWMNoScummVMWallpaper);
+
 	_activeWinRef = kNoWindow;
 
 	_cursor = new Cursor(this);
@@ -139,37 +141,25 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 }
 
 Gui::~Gui() {
-
-	if (_windowData)
-		delete _windowData;
-
-	if (_controlData)
-		delete _controlData;
-
-	if (_exitsData)
-		delete _exitsData;
-
-	if (_cursor)
-		delete _cursor;
-
-	if (_consoleText)
-		delete _consoleText;
-
-	if (_dialog)
-		delete _dialog;
+	delete _windowData;
+	delete _controlData;
+	delete _exitsData;
+	delete _cursor;
+	delete _consoleText;
+	delete _dialog;
 
 	clearAssets();
 
-	if (_graphics)
-		delete _graphics;
+	delete _graphics;
+	delete _wm;
 }
 
 void Gui::initGUI() {
 	_screen.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_wm.setScreen(&_screen);
+	_wm->setScreen(&_screen);
 
 	// Menu
-	_menu = _wm.addMenu();
+	_menu = _wm->addMenu();
 	if (!loadMenus())
 		error("GUI: Could not load menus");
 	_menu->setCommandsCallback(menuCommandsCallback, this);
@@ -198,14 +188,14 @@ void Gui::reloadInternals() {
 
 void Gui::draw() {
 	if (_needsRedraw) {
-		_wm.setFullRefresh(true);
+		_wm->setFullRefresh(true);
 
 		drawWindows();
 
 		_needsRedraw = false;
 	}
 
-	_wm.draw();
+	_wm->draw();
 
 	drawDraggedObjects();
 	drawDialog();
@@ -321,7 +311,7 @@ bool Gui::displayTitleScreenAndWait(uint32 ms) {
 void Gui::drawTitle() {
 	bool success = true;
 
-	_wm.pushCursor(Graphics::kMacCursorOff);
+	_wm->pushCursor(Graphics::kMacCursorOff);
 
 	if (decodeStartupScreen())
 		success = displayTitleScreenAndWait(4000);
@@ -331,7 +321,7 @@ void Gui::drawTitle() {
 			displayTitleScreenAndWait(4000);
 	}
 
-	_wm.popCursor();
+	_wm->popCursor();
 }
 
 void Gui::clearControls() {
@@ -348,7 +338,7 @@ void Gui::initWindows() {
 	Common::Rect bounds;
 	BorderBounds bbs(0 , 0, 0, 0, 0, 0);
 	// Game Controls Window
-	_controlsWindow = _wm.addWindow(false, false, false);
+	_controlsWindow = _wm->addWindow(false, false, false);
 
 
 	bounds = getWindowData(kCommandsWindow).bounds;
@@ -361,7 +351,7 @@ void Gui::initWindows() {
 	_controlsWindow->setCallback(commandsWindowCallback, this);
 
 	// Main Game Window
-	_mainGameWindow = _wm.addWindow(false, false, false);
+	_mainGameWindow = _wm->addWindow(false, false, false);
 	bounds = getWindowData(kMainGameWindow).bounds;
 	bbs = borderBounds(findWindowData(kMainGameWindow).type);
 
@@ -375,7 +365,7 @@ void Gui::initWindows() {
 	// In-game Output Console
 	bounds = getWindowData(kOutConsoleWindow).bounds;
 	bbs = borderBounds(findWindowData(kOutConsoleWindow).type);
-	_outConsoleWindow = _wm.addTextWindow(&getCurrentFont(), kColorBlack, kColorWhite,
+	_outConsoleWindow = _wm->addTextWindow(&getCurrentFont(), kColorBlack, kColorWhite,
 										  bounds.width() - bbs.rightScrollbarWidth, Graphics::kTextAlignLeft, _menu);
 	_outConsoleWindow->enableScrollbar(true);
 	_outConsoleWindow->setEditable(false);
@@ -387,7 +377,7 @@ void Gui::initWindows() {
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
 	_outConsoleWindow->setTitle("Untitled");
 	// Self Window
-	_selfWindow = _wm.addWindow(false, true, false);
+	_selfWindow = _wm->addWindow(false, true, false);
 
 	bounds = getWindowData(kSelfWindow).bounds;
 	bbs = borderBounds(findWindowData(kSelfWindow).type);
@@ -399,7 +389,7 @@ void Gui::initWindows() {
 	_selfWindow->setCallback(selfWindowCallback, this);
 
 	// Exits Window
-	_exitsWindow = _wm.addWindow(false, false, false);
+	_exitsWindow = _wm->addWindow(false, false, false);
 
 	bounds = getWindowData(kExitsWindow).bounds;
 	bbs = borderBounds(findWindowData(kExitsWindow).type);
@@ -418,21 +408,21 @@ const WindowData &Gui::getWindowData(WindowReference reference) {
 }
 
 const Graphics::Font &Gui::getCurrentFont() {
-	return *_wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12));
+	return *_wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12));
 }
 
 void Gui::bringToFront(WindowReference winID) {
 	if (winID != kNoWindow) {
-		_wm.setActiveWindow(findWindow(winID)->getId());
+		_wm->setActiveWindow(findWindow(winID)->getId());
 	}
 	_activeWinRef = winID;
 
 	Graphics::MacMenuItem *specialItem = _menu->getMenuItem("Special");
 
 	if (winID >= kInventoryStart && winID < 0x80) { // if inventory window
-		_wm.setMenuItemEnabled(specialItem, true);
+		_wm->setMenuItemEnabled(specialItem, true);
 	} else {
-		_wm.setMenuItemEnabled(specialItem, false);
+		_wm->setMenuItemEnabled(specialItem, false);
 	}
 }
 
@@ -498,7 +488,7 @@ void Gui::assignObjReferences() {
 }
 
 WindowReference Gui::createInventoryWindow(ObjID objRef) {
-	Graphics::MacWindow *newWindow = _wm.addWindow(true, true, false);
+	Graphics::MacWindow *newWindow = _wm->addWindow(true, true, false);
 	WindowData newData;
 	GlobalSettings settings = _engine->getGlobalSettings();
 	if (!_objToInvRef.contains(objRef)) {
@@ -634,7 +624,7 @@ void Gui::loadDiploma() {
 
 	// Diploma Window
 	closeAllWindows();
-	_diplomaWindow = _wm.addWindow(false, false, false);
+	_diplomaWindow = _wm->addWindow(false, false, false);
 	Common::Rect bounds = getWindowData(kDiplomaWindow).bounds;
 	BorderBounds bbs = borderBounds(findWindowData(kDiplomaWindow).type);
 	loadBorders(_diplomaWindow, findWindowData(kDiplomaWindow).type);
@@ -822,7 +812,7 @@ void Gui::drawDiplomaWindow() {
 		kBlitDirect);
 
 	if (!_diplomaNameBounds.isEmpty()) {
-		const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(_diplomaFontId, _diplomaFontSize));
+		const Graphics::Font *font = _wm->_fontMan->getFont(Graphics::MacFont(_diplomaFontId, _diplomaFontSize));
 		font->drawString(
 			_diplomaWindow->getWindowSurface(),
 			_diplomaName,
@@ -886,8 +876,8 @@ void Gui::drawInventories() {
 		if (data.refcon == _lassoWinRef && _lassoBeingDrawn) {
 			Common::Rect lassoRect = calculateLassoRect(win);
 
-			Graphics::MacPlotData plotData(srf, nullptr, &_wm.getBuiltinPatterns(), kPatternCheckers2, 0, 0, {1, 1}, kColorWhite, false);
-			Graphics::Primitives &primitives = _wm.getDrawPrimitives();
+			Graphics::MacPlotData plotData(srf, nullptr, &_wm->getBuiltinPatterns(), kPatternCheckers2, 0, 0, {1, 1}, kColorWhite, false);
+			Graphics::Primitives &primitives = _wm->getDrawPrimitives();
 			primitives.drawRect(lassoRect, kColorBlack, &plotData);
 		}
 
@@ -1189,7 +1179,7 @@ uint Gui::getConsoleVisibleRows() {
 }
 
 void Gui::setWaitCursor(bool wait) {
-	_wm.replaceCursor(wait ? Graphics::kMacCursorWatch : Graphics::kMacCursorArrow);
+	_wm->replaceCursor(wait ? Graphics::kMacCursorWatch : Graphics::kMacCursorArrow);
 	g_system->updateScreen();
 }
 
@@ -1261,7 +1251,7 @@ void Gui::moveDraggedObjects(Common::Point target) {
 
 WindowReference Gui::findWindowAtPoint(Common::Point point) {
 	Common::List<WindowData>::iterator it;
-	Graphics::MacWindow *win = _wm.findWindowAtPoint(point);
+	Graphics::MacWindow *win = _wm->findWindowAtPoint(point);
 	if (win != nullptr) {
 		for (it = _windowData->begin(); it != _windowData->end(); it++) {
 			if (win == findWindow(it->refcon) && it->refcon != kDiplomaWindow) { //HACK, diploma should be considered
@@ -1646,7 +1636,7 @@ bool Gui::tryCloseWindow(WindowReference winID) {
 	//WindowData data = findWindowData(winID);
 	Graphics::MacWindow *win = findWindow(winID);
 	if (win) {
-		_wm.removeWindow(win);
+		_wm->removeWindow(win);
 		if (winID < 0x80) {
 			removeInventoryWindow(winID);
 		}
@@ -1749,7 +1739,7 @@ bool Gui::processEvent(Common::Event &event) {
 		clearDraggedObjects();
 	}
 
-	processed |= _wm.processEvent(event);
+	processed |= _wm->processEvent(event);
 	return (processed);
 }
 
@@ -1885,7 +1875,7 @@ void Gui::printDiploma() {
 
 	Graphics::ManagedSurface diploma;
 	diploma.copyFrom(*_diplomaWindow->getWindowSurface());
-	diploma.setPalette(_wm.getPalette(), 0, _wm.getPaletteSize());
+	diploma.setPalette(_wm->getPalette(), 0, _wm->getPaletteSize());
 
 	g_gui.printImage(diploma);
 
@@ -1906,7 +1896,7 @@ bool Gui::processDiplomaKey(Common::Event &event) {
 	if (event.kbd.ascii < 0x20 || event.kbd.ascii > 0x7f)
 		return false;
 
-	const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(_diplomaFontId, _diplomaFontSize));
+	const Graphics::Font *font = _wm->_fontMan->getFont(Graphics::MacFont(_diplomaFontId, _diplomaFontSize));
 	Common::String candidate = _diplomaName + (char)event.kbd.ascii;
 	if (font->getStringWidth(candidate) > _diplomaNameBounds.width())
 		return true;
