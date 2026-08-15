@@ -4382,7 +4382,12 @@ msgstr ""
 msgid "Slow down virtual mouse"
 msgstr ""
 
-#: backends/midi/windows.cpp:168
+#. I18N: Shown while Windows detects MIDI output devices.
+#: backends/midi/windows.cpp:54
+msgid "Detecting MIDI devices..."
+msgstr ""
+
+#: backends/midi/windows.cpp:197
 msgid "Windows MIDI"
 msgstr ""
 
