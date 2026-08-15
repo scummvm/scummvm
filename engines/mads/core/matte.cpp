@@ -227,12 +227,10 @@ void matte_init(int init_series) {
 int matte_allocate_image() {
 	int result;
 
-	if (image_marker >= IMAGE_LIST_SIZE) {
-		result = -1;
-	} else {
-		result = image_marker++;
-	}
+	if (image_marker >= IMAGE_LIST_SIZE)
+		error("Out of image list space");
 
+	result = image_marker++;
 	return result;
 }
 

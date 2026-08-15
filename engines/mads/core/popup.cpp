@@ -2711,7 +2711,8 @@ static int popup_savelist_mouse(PopupItem *item) {
 				}
 			}
 
-			if (mouse_button) update_sign = update_sign << 2;
+			if (mouse_button)
+				update_sign = update_sign * 4;
 
 			if (update_sign && (force_update || (old_status != list->scroll.status))) {
 				list->base_element += update_sign;
