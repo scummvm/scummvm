@@ -118,9 +118,6 @@ enum EventType {
 	EVENT_FOCUS_GAINED = 36,
 	EVENT_FOCUS_LOST = 37,
 
-	/** An input method editor changed its in-progress composition. */
-	EVENT_IME_COMPOSITION = 38,
-
 	/**
 	 * Hotspot display, driven by a hold-to-show key. Bound as a keymapper
 	 * start/end pair (see Keymapper::convertStartToEnd), so SHOW is sent while
@@ -128,6 +125,9 @@ enum EventType {
 	 */
 	EVENT_HOTSPOTS_SHOW = 38,
 	EVENT_HOTSPOTS_HIDE = 39,
+
+	/** An input method editor changed its in-progress composition. */
+	EVENT_IME_COMPOSITION = 40,
 
 	/**
 	 * We reserve some event ids for custom events.

@@ -190,6 +190,7 @@ protected:
 	bool		_useRTL;
 
 	bool		_displayTopDialogOnly;
+	bool		_imeCompositionControlActive = false;
 
 	Common::Mutex _iconsMutex;
 	Common::SearchSet _iconsSet;
