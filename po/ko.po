@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-13 11:35+0000\n"
+"POT-Creation-Date: 2026-08-16 01:29+0900\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4649,7 +4649,12 @@ msgstr "가상 마우스 오른쪽"
 msgid "Slow down virtual mouse"
 msgstr "가상 마우스 속도 감소"
 
-#: backends/midi/windows.cpp:168
+#. I18N: Shown while Windows detects MIDI output devices.
+#: backends/midi/windows.cpp:54
+msgid "Detecting MIDI devices..."
+msgstr "MIDI 장치 조회 중..."
+
+#: backends/midi/windows.cpp:197
 msgid "Windows MIDI"
 msgstr "윈도우즈 미디"
 
