@@ -85,6 +85,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  SLUDGE:
    - Added detection for Shape-Shift Escape.
 
+ TsAGE:
+   - Added General MIDI and MT-32 support to the games
+   - Improved Sound Blaster sample playback
+   - Sound is properly paused when the engine is paused
+
  Atari port:
    - Added integration with nFM library.
 
