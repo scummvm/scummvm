@@ -39,37 +39,74 @@ SdlEventSource::~SdlEventSource() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void SdlEventSource::acquireImeCompositionControl() {
-	if (_imeCompositionControlActive)
-		return;
-
+	// Synchronize the first controlled scope with the existing native text-input
+	// state. SDL text input is also used for non-IME text such as dead keys and
+	// non-English layouts, so an acquisition must not unconditionally stop it.
+	if (_imeCompositionControlStateStack.empty()) {
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-	SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
-	_legacyTextInputEnabled = window && SDL_TextInputActive(window);
+		SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
+		_textInputEnabled = window && SDL_TextInputActive(window);
 #else
-	_legacyTextInputEnabled = SDL_IsTextInputActive() == SDL_TRUE;
+		_textInputEnabled = SDL_IsTextInputActive() == SDL_TRUE;
 #endif
-	_imeCompositionControlActive = true;
+	}
+
+	// Every nested owner starts with composition disabled. Preserve ordinary
+	// text input only when it was already active without composition. If the
+	// outer owner was composing, stopping text input below also cancels that
+	// unfinished native composition.
+	const ImeCompositionControlState previousState(_imeCompositionEnabled, _textInputEnabled);
+	const bool textInputEnabledWithoutComposition =
+		!previousState.compositionEnabled && previousState.textInputEnabled;
+	_imeCompositionControlStateStack.push(previousState);
 	_imeCompositionEnabled = false;
-	_textInputEnabled = false;
+	_textInputEnabled = textInputEnabledWithoutComposition;
 	applyNativeTextInputState();
 }
 
 void SdlEventSource::setImeCompositionEnabled(bool enable) {
-	if (!_imeCompositionControlActive)
+	// The feature state is meaningful only inside a controlled input scope.
+	// Enabling it does not acquire another scope.
+	if (_imeCompositionControlStateStack.empty())
 		return;
 
+	const ImeCompositionControlState &previousState = _imeCompositionControlStateStack.top();
+	const bool textInputEnabledWithoutComposition =
+		!previousState.compositionEnabled && previousState.textInputEnabled;
+
+	// SDL has no portable composition-only stop operation across the supported
+	// SDL 2 versions. When ordinary text input must remain active, stop and
+	// restart the native text-input session once so disabling composition also
+	// discards its unfinished native text.
+	if (!enable && _imeCompositionEnabled && textInputEnabledWithoutComposition) {
+		_imeCompositionEnabled = false;
+		_textInputEnabled = false;
+		applyNativeTextInputState();
+	}
+
 	_imeCompositionEnabled = enable;
-	_textInputEnabled = enable;
+	_textInputEnabled = enable || textInputEnabledWithoutComposition;
 	applyNativeTextInputState();
 }
 
 void SdlEventSource::releaseImeCompositionControl() {
-	if (!_imeCompositionControlActive)
+	if (_imeCompositionControlStateStack.empty())
 		return;
 
-	_imeCompositionEnabled = false;
-	_textInputEnabled = _legacyTextInputEnabled;
-	_imeCompositionControlActive = false;
+	const ImeCompositionControlState previousState = _imeCompositionControlStateStack.pop();
+
+	// Do not let an unfinished composition owned by the closing scope leak into
+	// an outer text-input session. Stop it before restoring an active session.
+	if (_imeCompositionEnabled && previousState.textInputEnabled) {
+		_imeCompositionEnabled = false;
+		_textInputEnabled = false;
+		applyNativeTextInputState();
+	}
+
+	// Restore both parts of the saved state. The outermost pop therefore returns
+	// SDL to the native text-input state observed by the first acquisition.
+	_imeCompositionEnabled = previousState.compositionEnabled;
+	_textInputEnabled = previousState.textInputEnabled;
 	applyNativeTextInputState();
 }
 
