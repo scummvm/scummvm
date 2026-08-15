@@ -35,6 +35,7 @@ const char *retro_get_playlist_dir(void);
 
 float retro_setting_get_frame_rate(void);
 uint16 retro_setting_get_sample_rate(void);
+bool retro_setting_get_browsing_mode_authorized(void);
 uint16 retro_setting_get_audio_samples_buffer_size(void);
 int retro_setting_get_analog_deadzone(void);
 bool retro_setting_get_analog_response_is_quadratic(void);

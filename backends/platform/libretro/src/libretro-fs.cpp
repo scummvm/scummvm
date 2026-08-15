@@ -45,9 +45,10 @@
 #include "common/algorithm.h"
 #include "common/array.h"
 #include "common/stream.h"
+#include "common/config-manager.h"
 
 static const char *kLibRetroAuthorizedRootPath = "libretro-authorized:///";
-static const char *kLibRetroAuthorizedRootLabel = "RetroArch authorized locations";
+static const char *kLibRetroAuthorizedRootLabel = "Authorized storage";
 
 struct LibRetroAuthorizedLocation {
 	Common::String path;
@@ -93,6 +94,8 @@ static bool libretroFsIsInsideAuthorizedLocation(const Common::String &path) {
 
 	return false;
 }
+
+static Common::String libretroFsPosixDefaultDir();
 
 static bool libretroFsHasUriScheme(const Common::String &path) {
 	return strstr(path.c_str(), "://") != nullptr;
@@ -681,10 +684,7 @@ bool LibRetroFilesystemNode::hasAuthorizedLocations(void) {
 	return !s_libretroAuthorizedLocations.empty();
 }
 
-Common::String LibRetroFilesystemNode::getDefaultDir(void) {
-	if (hasAuthorizedLocations())
-		return s_libretroAuthorizedLocations[0].path;
-
+static Common::String libretroFsPosixDefaultDir() {
 	const char *browserStartDir = retro_get_file_browser_start_dir();
 	if (browserStartDir && *browserStartDir) {
 		Common::String path(browserStartDir);
@@ -692,7 +692,7 @@ Common::String LibRetroFilesystemNode::getDefaultDir(void) {
 			return path;
 	}
 
-	Common::String homeDir(getHomeDir());
+	Common::String homeDir(LibRetroFilesystemNode::getHomeDir());
 
 	if (!homeDir.empty() && LibRetroFilesystemNode(homeDir).isDirectory())
 		return homeDir;
@@ -712,4 +712,18 @@ Common::String LibRetroFilesystemNode::getDefaultDir(void) {
 	}
 
 	return Common::String("/");
+}
+
+bool LibRetroFilesystemNode::useAuthorizedRoot(void) {
+	if (!hasAuthorizedLocations())
+		return false;
+
+	return retro_setting_get_browsing_mode_authorized();
+}
+
+Common::String LibRetroFilesystemNode::getDefaultDir(void) {
+	if (useAuthorizedRoot())
+		return getAuthorizedRootPath();
+
+	return libretroFsPosixDefaultDir();
 }

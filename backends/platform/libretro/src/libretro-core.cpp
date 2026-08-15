@@ -107,6 +107,7 @@ static retro_time_t audio_last_time_usec = 0; // timestamp of the previous audio
 static int16 *audio_sample_buffer = NULL; // pointer to output buffer
 
 static bool input_bitmask_supported = false;
+static bool browsing_mode_authorized = false;
 static bool updating_variables = false;
 
 #ifdef USE_OPENGL
@@ -365,6 +366,17 @@ static void update_variables(void) {
 		sample_rate = atoi(sample_rate_var);
 	} else
 		sample_rate = DEFAULT_SAMPLE_RATE;
+
+	var.key = "scummvm_browsing_mode";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+		browsing_mode_authorized = (strcmp(var.value, "authorized") == 0);
+	else
+#ifdef ANDROID
+		browsing_mode_authorized = true;
+#else
+		browsing_mode_authorized = false;
+#endif
 
 	var.key = "scummvm_mapper_up";
 	var.value = NULL;
@@ -643,6 +655,10 @@ bool retro_get_input_bitmask_supported(void) {
 
 uint16 retro_setting_get_sample_rate(void) {
 	return sample_rate;
+}
+
+bool retro_setting_get_browsing_mode_authorized(void) {
+	return browsing_mode_authorized;
 }
 
 
@@ -971,6 +987,13 @@ void retro_init(void) {
 		retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
 
 	update_variables();
+
+	if (retro_setting_get_browsing_mode_authorized() && !LibRetroFilesystemNode::hasAuthorizedLocations()) {
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_WARN, "[scummvm] Browsing mode set to 'Authorized storage' but no authorized locations are available; falling back to local filesystem. Authorize folders from the frontend and restart the core.\n");
+		retro_osd_notification("No authorized storage available, using local filesystem.");
+	}
+
 	max_width = gui_width > max_width ? gui_width : max_width;
 	max_height = gui_height > max_height ? gui_height : max_height;
 

@@ -219,7 +219,7 @@ void OSystem_libretro::applyBackendSettings() {
 
 	//Check current path settings
 	if (!checkPathSetting("savepath", s_saveDir)) {
-		ConfMan.setAndFlush("savepath", s_homeDir);
+		ConfMan.setAndFlush("savepath", s_systemDir);
 		retro_osd_notification("ScummVM save folder not found.");
 	}
 	if (!checkPathSetting("themepath", s_themeDir))
@@ -228,7 +228,7 @@ void OSystem_libretro::applyBackendSettings() {
 		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
 	checkPathSetting("soundfont", s_soundfontPath, false);
 	checkPathSetting("browser_lastpath", s_homeDir);
-	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_homeDir : s_playlistDir);
+	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_systemDir : s_playlistDir);
 	checkPathSetting("iconspath", "");
 }
 

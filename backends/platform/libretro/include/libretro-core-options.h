@@ -92,6 +92,11 @@ struct retro_core_option_v2_category option_cats_us[] = {
 		"RetroPad mapping",
 		"Configure RetroPad mapping"
 	},
+	{
+		"system",
+		"System",
+		"Configure system settings"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -613,6 +618,24 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"720"
 	},
 #endif
+	{
+		"scummvm_browsing_mode",
+		"System > Browsing mode",
+		"Browsing mode",
+		"Select how the ScummVM file browser lists locations. 'Authorized storage' shows the folders authorized through the frontend (e.g. Android SAF trees). 'Local filesystem' browses the standard local paths.",
+		NULL,
+		"system",
+		{
+			{"local", "Local filesystem"},
+			{"authorized", "Authorized storage"},
+			{NULL, NULL},
+		},
+#ifdef ANDROID
+		"authorized"
+#else
+		"local"
+#endif
+	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
 
