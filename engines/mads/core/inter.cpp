@@ -421,7 +421,6 @@ static void inter_show_word(int class_, int id) {
 	int x, y, junk;
 	int word_id = 0;
 	char temp_buf[80] = { 0 };
-	int write_it = true;
 
 	if (!inter_get_spot(class_, id, &x, &y, &junk, &junk)) {
 		goto done;
@@ -510,8 +509,7 @@ static void inter_show_word(int class_, int id) {
 	temp_buf[0] = (char)toupper((int)temp_buf[0]);
 
 write:
-	if (write_it)
-		font_write(font_inter, &scr_inter, temp_buf, x, y, 0);
+	font_write(font_inter, &scr_inter, temp_buf, x, y, 0);
 
 done:
 	;
@@ -1521,9 +1519,10 @@ static void inter_compile_sentence() {
 	}
 
 	len = strlen(inter_sentence);
-	if (strlen(inter_sentence)) {
+	if (len > 0) {
 		mark = &inter_sentence[len - 1];
-		if (*mark == ' ') *mark = 0;
+		if (*mark == ' ')
+			*mark = 0;
 	}
 
 done:

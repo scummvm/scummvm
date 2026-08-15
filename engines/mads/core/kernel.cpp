@@ -1646,8 +1646,7 @@ static void kernel_process_animation(int handle, int asynchronous) {
 			match = false;
 			for (count = 0; !match && (count < image_base); count++) {
 				if (image_list[count].segment_id == (byte)(KERNEL_SEGMENT_ANIMATION + handle)) {
-					if (memcmp(&image_list[count].series_id,
-						&kernel_anim[handle].anim->image[kernel_anim[handle].image].series_id, 9) == 0) {
+					if (image_list[count].equals(kernel_anim[handle].anim->image[kernel_anim[handle].image])) {
 						image_list[count].flags = 0;
 
 						if (hot >= 0) {
