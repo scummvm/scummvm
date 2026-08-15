@@ -892,14 +892,16 @@ bool InsaneRebel1::updateGamepadReticleAim(int16 &inputX, int16 &inputY, bool *u
 		(_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
 		(_vm->getActionState(kScummActionInsaneLeft) ? 1 : 0);
 	int dpadY =
-		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0) -
-		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0);
+		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0) -
+		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0);
 
 	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
 	const int16 analogAxisY = applyRebel1AnalogDeadzone(_joystickAxisY);
 	const int analogX = CLIP<int32>(((int32)analogAxisX * kRA1CenteredAxisMax) / Common::JOYAXIS_MAX,
 		-kRA1CenteredAxisMax, kRA1CenteredAxisMax);
-	int analogY = CLIP<int32>((-(int32)analogAxisY * kRA1Op0BVerticalAxisMax) / Common::JOYAXIS_MAX,
+	// DOS FUN_231BE leaves joystick-up negative, and the opcode 0x0B handler
+	// (FUN_1CDA7) negates Y when it computes the on-screen flight position.
+	int analogY = CLIP<int32>(((int32)analogAxisY * kRA1Op0BVerticalAxisMax) / Common::JOYAXIS_MAX,
 		-kRA1Op0BVerticalAxisMax, kRA1Op0BVerticalAxisMax);
 
 	if (_optControlsYFlip) {
