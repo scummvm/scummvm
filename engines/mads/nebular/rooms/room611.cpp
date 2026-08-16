@@ -620,7 +620,7 @@ static void displayHermitQuestions(int question) {
 
 static void handleSubDialog1() {
 	switch (player2.words[0]) {
-	case 0x287:
+	case words_air_purifier:
 		local._stickFingerFl = true;
 		local._nextFrame = 34;
 		local._hermitMovingFl = false;
@@ -636,7 +636,7 @@ static void handleSubDialog1() {
 		setDialogNode(2);
 		break;
 
-	case 0x288:
+	case words_dummy:
 		handleTalking(500);
 		displayHermitQuestions(6);
 		local._dialog1.write(0x288, false);
@@ -647,7 +647,7 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x289:
+	case words_picture:
 		handleTalking(500);
 		displayHermitQuestions(10);
 		local._dialog1.write(0x289, false);
@@ -656,14 +656,14 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x28A:
+	case words_baggage_check:
 		handleTalking(500);
 		displayHermitQuestions(11);
 		local._dialog1.write(0x28A, false);
 		setDialogNode(1);
 		break;
 
-	case 0x28B:
+	case words_departure_schedule:
 		handleTalking(500);
 		displayHermitQuestions(12);
 		local._dialog1.write(0x28C, true);
@@ -672,14 +672,14 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x28C:
+	case words_shade_of_pale:
 		handleTalking(500);
 		displayHermitQuestions(13);
 		local._dialog1.write(0x28C, false);
 		setDialogNode(1);
 		break;
 
-	case 0x28D:
+	case words_itinerary:
 		handleTalking(500);
 		displayHermitQuestions(14);
 		local._dialog1.write(0x290, true);
@@ -688,7 +688,7 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x28E:
+	case words_bargain_vat:
 		handleTalking(500);
 		displayHermitQuestions(15);
 		local._dialog1.write(0x295, true);
@@ -696,7 +696,7 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x290:
+	case words_pad_if_paper:
 		handleTalking(500);
 		displayHermitQuestions(17);
 		local._dialog1.write(0x290, false);
@@ -708,7 +708,7 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x291:
+	case words_deepest_depths:
 		handleTalking(500);
 		displayHermitQuestions(18);
 		local._dialog1.write(0x291, false);
@@ -727,7 +727,7 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x28F:
+	case words_pencils:
 		handleTalking(500);
 		displayHermitQuestions(16);
 		local._dialog1.write(0x28F, false);
@@ -737,14 +737,14 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x295:
+	case words_space_questing_viii:
 		handleTalking(500);
 		displayHermitQuestions(20);
 		local._dialog1.write(0x295, false);
 		setDialogNode(1);
 		break;
 
-	case 0x292:
+	case words_rolodex:
 		handleTalking(500);
 		displayHermitQuestions(19);
 		local._dialog1.write(0x292, false);
@@ -752,7 +752,7 @@ static void handleSubDialog1() {
 		setDialogNode(1);
 		break;
 
-	case 0x293:
+	case words_mona_tisa:
 	{
 		handleTalking(200);
 		kernel_message_purge();
@@ -772,7 +772,7 @@ static void handleSubDialog1() {
 	}
 	break;
 
-	case 0x294:
+	case words_abstract_art:
 	{
 		bool hermitPleasedFl = false;
 
@@ -813,7 +813,7 @@ static void handleSubDialog1() {
 	}
 	break;
 
-	case 0x296:
+	case words_theatrical_art:
 	{
 		kernel_message_purge();
 
@@ -834,25 +834,25 @@ static void handleSubDialog1() {
 
 static void handleSubDialog2() {
 	switch (player2.words[0]) {
-	case 0x29C:
+	case words_our_town:
 		displayHermitQuestions(7);
 		setDialogNode(1);
 		handleTalking(500);
 		break;
 
-	case 0x29D:
+	case words_embroidered_art:
 		displayHermitQuestions(8);
 		setDialogNode(1);
 		handleTalking(500);
 		break;
 
-	case 0x29E:
+	case words_george_bush_alike:
 		displayHermitQuestions(9);
 		setDialogNode(1);
 		handleTalking(500);
 		break;
 
-	case 0x29F:
+	case words_counter:
 	{
 		kernel_message_purge();
 		char *curQuote = quote_string(kernel.quotes, 0x2A7);
@@ -882,9 +882,9 @@ static void handleDialog() {
 			quote_split_string(curQuote, subQuote1, subQuote2);
 			kernel_message_add(subQuote1, 0, -14, 0x1110, 150, 0, 34);
 
-			if (player2.words[0] == 0x29D)
+			if (player2.words[0] == words_embroidered_art)
 				kernel_message_add(subQuote2, -18, 0, 0x1110, 150, 1, 34);
-			else if (player2.words[0] == 0x28A)
+			else if (player2.words[0] == words_baggage_check)
 				kernel_message_add(subQuote2, -10, 0, 0x1110, 150, 1, 34);
 			else
 				kernel_message_add(subQuote2, 0, 0, 0x1110, 150, 1, 34);

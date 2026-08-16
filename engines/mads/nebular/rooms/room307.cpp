@@ -200,15 +200,15 @@ static void setDialogNode(int node) {
 
 static void handlePrisonerEncounter() {
 	switch (player2.words[0]) {
-	case 275:
+	case words_plunger:
 		setDialogNode(5);
 		break;
 
-	case 277:
+	case words_polycement:
 		setDialogNode(4);
 		break;
 
-	case 276:
+	case words_poison_darts:
 		setDialogNode(6);
 		break;
 
@@ -219,39 +219,39 @@ static void handlePrisonerEncounter() {
 
 static void handlePrisonerDialog() {
 	switch (player2.words[0]) {
-	case 0x11A:
+	case words_press:
 		setDialogNode(7);
 		break;
 
-	case 0x11B:
+	case words_pressure_gauge:
 		setDialogNode(8);
 		break;
 
-	case 0x11C:
+	case words_pry:
 		setDialogNode(12);
 		break;
 
-	case 0x11D:
+	case words_raging_river:
 		setDialogNode(9);
 		break;
 
-	case 0x11E:
+	case words_ramolyan_rugby_rats:
 		setDialogNode(10);
 		break;
 
-	case 0x11F:
+	case words_read:
 		setDialogNode(11);
 		break;
 
-	case 0x120:
+	case words_rearview_mirror:
 		setDialogNode(13);
 		break;
 
-	case 0x121:
+	case words_rebreather:
 		setDialogNode(14);
 		break;
 
-	case 0x122:
+	case words_refrigerator:
 		setDialogNode(15);
 		break;
 

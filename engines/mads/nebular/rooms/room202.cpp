@@ -452,7 +452,7 @@ static void room_202_pre_parser() {
 		}
 	}
 
-	if (player_said_2(look, binoculars) && (player2.words[2] > 0)) {
+	if (player_said_2(look, binoculars) && (player2.words[2] > words_none)) {
 		if (!player.ready_to_walk || local._ladderTopFl)
 			player.need_to_walk = false;
 		else

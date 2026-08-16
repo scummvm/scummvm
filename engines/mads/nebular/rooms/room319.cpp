@@ -372,7 +372,7 @@ static void room_319_parser() {
 		player.commands_allowed = false;
 		handleRexDialogues(player2.words[0]);
 	} else {
-		if ((player2.words[0] == 0x165) || (player2.words[0] == 0x166)) {
+		if ((player2.words[0] == words_tape_player) || (player2.words[0] == words_target_computer)) {
 			if (kernel.trigger == 1) {
 				local._nextAction1 = 3;
 				local._slacheTalkingFl = false;
@@ -389,7 +389,7 @@ static void room_319_parser() {
 			}
 		}
 
-		if ((player2.words[0] == 0x171) || (player2.words[0] == 0x172)) {
+		if ((player2.words[0] == words_timebomb) || (player2.words[0] == words_timer)) {
 			if (kernel.trigger == 1) {
 				local._nextAction1 = 2;
 				local._slacheTalkingFl = false;
@@ -406,7 +406,7 @@ static void room_319_parser() {
 			}
 		}
 
-		if ((player2.words[0] == 0x17D) || (player2.words[0] == 0x17E)) {
+		if ((player2.words[0] == words_vase) || (player2.words[0] == words_video_game)) {
 			if (kernel.trigger == 1) {
 				local._nextAction1 = 3;
 				local._slacheTalkingFl = false;
@@ -430,18 +430,18 @@ static void room_319_parser() {
 			}
 		}
 
-		if ((player2.words[0] == 0x168) || (player2.words[0] == 0x174) ||
-			(player2.words[0] == 0x180) || (player2.words[0] == 0x169) ||
-			(player2.words[0] == 0x175) || (player2.words[0] == 0x181) ||
-			(player2.words[0] == 0x16A) || (player2.words[0] == 0x176) ||
-			(player2.words[0] == 0x182) || (player2.words[0] == 0x183) ||
-			(player2.words[0] == 0x167) || (player2.words[0] == 0x173) ||
-			(player2.words[0] == 0x17F)) {
+		if ((player2.words[0] == words_targetting_computer) || (player2.words[0] == words_tree) ||
+			(player2.words[0] == words_view_screen) || (player2.words[0] == words_tasmanian_devil) ||
+			(player2.words[0] == words_trees) || (player2.words[0] == words_viewport) ||
+			(player2.words[0] == words_tasty_turkey) || (player2.words[0] == words_trodden_path) ||
+			(player2.words[0] == words_village_area) || (player2.words[0] == words_village_to_west) ||
+			(player2.words[0] == words_target_module) || (player2.words[0] == words_timer_module) ||
+			(player2.words[0] == words_view)) {
 
-			bool addDialogLine = !((player2.words[0] == 0x167) || (player2.words[0] == 0x173) ||
-				(player2.words[0] == 0x17F) || (player2.words[0] == 0x16A) ||
-				(player2.words[0] == 0x176) || (player2.words[0] == 0x182) ||
-				(player2.words[0] == 0x183));
+			bool addDialogLine = !((player2.words[0] == words_target_module) || (player2.words[0] == words_timer_module) ||
+				(player2.words[0] == words_view) || (player2.words[0] == words_tasty_turkey) ||
+				(player2.words[0] == words_trodden_path) || (player2.words[0] == words_village_area) ||
+				(player2.words[0] == words_village_to_west));
 
 			int addVerbId = player2.words[0] + 1;
 			if ((addVerbId == 0x182) && (config_file.naughtiness != NAUGHTY))
@@ -458,10 +458,10 @@ static void room_319_parser() {
 				} else {
 					Dialog *curDialog;
 					int nextDocQuote;
-					if ((player2.words[0] == 0x168) || (player2.words[0] == 0x167)) {
+					if ((player2.words[0] == words_targetting_computer) || (player2.words[0] == words_target_module)) {
 						curDialog = &local._dialog1;
 						nextDocQuote = 0x161;
-					} else if ((player2.words[0] == 0x174) || (player2.words[0] == 0x173)) {
+					} else if ((player2.words[0] == words_tree) || (player2.words[0] == words_timer_module)) {
 						nextDocQuote = 0x16D;
 						curDialog = &local._dialog2;
 					} else {
@@ -490,10 +490,10 @@ static void room_319_parser() {
 				} else {
 					Dialog *curDialog;
 					int nextDocQuote;
-					if ((player2.words[0] == 0x168) || (player2.words[0] == 0x169) || (player2.words[0] == 0x167)) {
+					if ((player2.words[0] == words_targetting_computer) || (player2.words[0] == words_tasmanian_devil) || (player2.words[0] == words_target_module)) {
 						curDialog = &local._dialog1;
 						nextDocQuote = 0x163;
-					} else if ((player2.words[0] == 0x174) || (player2.words[0] == 0x175) || (player2.words[0] == 0x173)) {
+					} else if ((player2.words[0] == words_tree) || (player2.words[0] == words_trees) || (player2.words[0] == words_timer_module)) {
 						nextDocQuote = 0x16F;
 						curDialog = &local._dialog2;
 					} else {
