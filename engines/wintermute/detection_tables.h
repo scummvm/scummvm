@@ -894,7 +894,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Twilight: Dark Summer (Ario) (Persian)
 	WME_WINENTRY("darksummer", "",
-		WME_ENTRY1s("data.dcp", "da1142983240a5bb62c32f79a863eac5", 1030873185), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "da1142983240a5bb62c32f79a863eac5", 1030873185), Common::FA_IRN, GF_3D, WME_1_9_3),
 
 	// Dead City (Czech) (25.06.2004)
 	WME_WINENTRY("deadcity", "v1.0.1",
