@@ -29,6 +29,7 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/mainmenu.h"
 #include "avalanche/intro.h"
+#include "titlescreen.h"
 
 namespace Avalanche {
 
@@ -39,7 +40,7 @@ MainMenu::MainMenu(AvalancheEngine *vm) {
 }
 
 void MainMenu::run() {
-	_vm->_intro->run();
+	_vm->_titleScreen->run();
 	_vm->_graphics->menuInitialize();
 	_vm->_graphics->menuLoadPictures();
 	loadRegiInfo();
