@@ -27,6 +27,7 @@
 #include "common/memstream.h"
 #include "common/mutex.h"
 #include "common/queue.h"
+#include "native_sound_timer.h"
 
 namespace Audio {
 class Mixer;
@@ -114,6 +115,8 @@ protected:
 	bool _newSoundsPaused = false;
 	Common::Queue<QueuedCommand> _queuedCommands;
 	int _masterVolume = 255;
+
+	NativeSoundTimer _hostTimer;
 
 protected:
 	/**

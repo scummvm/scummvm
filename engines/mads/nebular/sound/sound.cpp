@@ -43,6 +43,17 @@ RexSoundManager::RexSoundManager(Audio::Mixer *mixer, bool &soundFlag,
 					"falling back to AdLib");
 		}
 	}
+	if (_driverType == SOUND_MT32) {
+		// TODO Move to SoundManager superclass when other sound drivers have been reworked
+		_midiDriver = new MidiDriver_MT32GM(MusicType::MT_MT32);
+		int returnCode;
+		returnCode = _midiDriver->open();
+		if (returnCode != 0)
+			error("SoundManager - Failed to open MIDI music driver - error code %d.", returnCode);
+
+		_driverCallbackDelta = _midiDriver->getBaseTempo();
+		_midiDriver->setTimerCallback(this, &timerCallback);
+	}
 }
 
 void RexSoundManager::validate() {

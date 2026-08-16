@@ -43,9 +43,10 @@ enum RSoundFadeCheckMode {
 /**
  * Represents the data for a channel on the Roland MT-32 / MPU-401 driver.
  * Ported from the Channel struct identified in rsound.009's disassembly;
- * field names/roles were derived by tracing Channel_pollActive() (the
+ * field names/roles were derived by tracing Channel_processTick() (the
  * per-channel opcode interpreter) and cross-referencing against the
  * equivalent AdlibChannel fields in asound.h.
+ * Note: fields have been renamed here; this will be done in asound.* too.
  *
  * Confirmed against the real DOS struct layout (IDA struct dump,
  * sizeof=0x22): every field below from _deltaCounter through _soundData
@@ -139,9 +140,9 @@ class RSound : public SoundDriver {
 private:
 	uint16 _randomSeed;
 	int _masterVolume;
-	byte _lastMidiStatus;             // running-status cache, avoids resending an unchanged status byte
-	bool _noteTriggeredThisPoll;      // throttles note-on dispatch to at most one per update() tick, across all channels
-	byte _heldNotes[RSOUND_CHANNEL_COUNT + 1][4]; // per-MIDI-channel held-note slots (index 0 unused; channels are 1-9)
+	byte _runningStatus;							// running-status cache, avoids resending an unchanged status byte
+													// Note that the ScummVM MIDI drivers do not use this; they always send the status byte
+	byte _activeNotes[RSOUND_CHANNEL_COUNT + 1][4];	// The note(s) currently playing on each MIDI channel (index 0 unused; channels are 1-9)
 	RSoundFadeCheckMode _fadeCheckMode;
 	bool _fadeCheckAlternate;
 	int _fadeCheckCounter;
@@ -151,8 +152,7 @@ private:
 	 * Data-segment offset of this driver's own "command0_array" (the
 	 * MT-32 title-display + patch-init SysEx table sent by command0()).
 	 * Each driver has its own copy of this table at its own offset
-	 * within its own resource file - unlike the fixed 5-byte SysEx
-	 * header (_sysExHeader below), the table's content differs per
+	 * within its own resource file. The table's contents differs per
 	 * driver beyond a shared prefix, so it can't be hardcoded once;
 	 * parameterizing the offset via the constructor avoids needing a
 	 * command0() override in every derived class.
@@ -161,11 +161,10 @@ private:
 
 	MidiDriver_MT32GM *_midiDriver;
 	uint32 _driverCallbackDelta;
-	NativeSoundTimer _hostTimer;
 
-	void update();
-	void pollAllChannels();
-	void Channel_pollActive(Channel *channel);
+	void processTick();
+	void processTickAllChannels();
+	void Channel_processTick(Channel *channel);
 
 	/**
 	 * Resets all 9 channels and the held-notes table.
@@ -173,19 +172,20 @@ private:
 	void resetAllChannels();
 
 	/**
-	 * Run pending-stop volume decay using the scheduler embedded in the
-	 * loaded overlay. Sections 1, 2, and 9 and both demo overlays use a
-	 * fixed every-other-poll toggle. Sections 3-8 use a programmable
+	 * Process channels fading out to stop. Not to be confused with the
+	 * volume fade event 0xF8.
+	 * Sections 1, 2, and 9 and both demo overlays use a fixed
+	 * every-other-poll toggle. Sections 3-8 use a programmable
 	 * countdown; zero disables it and the counter reloads after each pass.
 	 */
-	void checkFadingChannels();
-	void Channel_checkFade(Channel *channel);
+	void processChannelFadeOuts();
+	void Channel_processFadeOut(Channel *channel);
 
 	/**
-	 * Sends Note-Off (velocity 0) for all currently-held notes on the
-	 * given channel's MIDI channel, then clears the held-note table for it.
+	 * Sends Note-Off (velocity 0) for all active notes on the
+	 * given channel's MIDI channel, then clears the active note table for it.
 	 */
-	void Channel_flushHeldNotes(Channel *channel);
+	void Channel_turnOffActiveNotes(Channel *channel);
 
 protected:
 	int _commandParam;
@@ -195,21 +195,24 @@ protected:
 			_fadeCheckPeriod = period;
 	}
 
-	/** Clear the active and fade state for channel indices in [first, last). */
-	void resetChannelRange(int first, int last);
+	/**
+	 * Clear the active and fade state for MIDI channels in [first, last].
+	 * Specify includeChannel9 to also reset MIDI channel 9.
+	 */
+	void resetChannelRange(int firstChannel, int lastChannel, bool includeChannel9 = false);
 
-	/** Reset the per-MIDI-channel held-note tracking table to empty. */
-	void resetHeldNotes();
+	/** Reset the per-MIDI-channel active note tracking table to empty. */
+	void clearActiveNotes();
 
-	/** Reset held-note slots for the inclusive MIDI-channel range. */
-	void resetHeldNotesRange(int firstChannel, int lastChannel);
+	/** Reset active note slots for the inclusive MIDI-channel range. */
+	void clearActiveNotesRange(int firstChannel, int lastChannel);
 
 	byte *loadData(int offset) {
 		return &_soundData[offset];
 	}
 
 	/**
-	 * Hook called once per update() frame, immediately after the disabled
+	 * Hook called once per processTick() frame, immediately after the disabled
 	 * check and before channel polling. Only RSound9's driver data makes
 	 * use of a recurring deferred-callback timer (g_callbackCounter/
 	 * g_callbackPeriod/_soundPtr in the original disassembly, mirroring
@@ -222,42 +225,43 @@ protected:
 	void resultCheck();
 
 	/**
-	 * Play the specified sound, using any free channel from 6 to 8.
-	 * Channel 9 is deliberately never touched here - matches the
-	 * disassembly, which never includes it in this scan. Returns the
-	 * channel that was used (or nullptr if none was free), since some
-	 * commands poke the just-loaded channel's loop pointer directly
-	 * afterward.
+	 * Play the specified sound using any free channel from 5 to 8.
+	 * Returns the channel that was used (or nullptr if none was free),
+	 * since some commands poke the just-loaded channel's loop pointer
+	 * directly afterward.
 	 */
-	Channel *playSound(int offset);
+	Channel *playSoundCh5To8(int offset);
 
 	/**
-	 * Play the specified sound using any channel from 0 to 8, including
-	 * channel 9 - confirmed distinct from playSound() by rsound.001's
-	 * disassembly (rsound_command30/32/38).
+	 * Play the specified sound using any free channel from 1 to 8.
 	 */
-	Channel *playSoundAny(int offset) {
-		return playSoundData(loadData(offset), 0);
-	}
+	Channel *playSoundCh1To8(int offset);
 
-	Channel *playSoundData(byte *pData, int startingChannel = 5);
+	/**
+	 * Allocates a MIDI channel, loads the specified sound data into it
+	 * and starts playback. Allocation will look for a free channel in
+	 * the range starting with the specified channel (default 5) and
+	 * ending with channel 8. If no suitable channel could be found,
+	 * nullptr is returned and the sound data is not played.
+	 */
+	Channel *allocateAndPlay(byte *pData, int startingChannel = 5);
 
 	/**
 	 * Checks to see whether the given block of data is already loaded into a channel.
 	 */
-	bool isSoundActive(byte *pData);
+	bool isSoundPlaying(byte *pData);
 
-	int getRandomNumber();
+	int generateRandomNumber();
 
 	// ---- Low-level MIDI send helpers -------------------------------
-	// All send through the ScummVM MT-32/MIDI driver.
+	// All send through the ScummVM MT-32 / General MIDI driver.
 	void sendNoteOn(int midiChannel, int note, int velocity);
 	void sendProgramChange(int midiChannel, int program);
 	void sendVolume(int midiChannel, int volume);
 	void sendPitchBend(int midiChannel, int value);
-	void sendPan(int midiChannel, int value);
+	void sendPanning(int midiChannel, int value);
 	void muteChannel(int midiChannel);
-	void restoreChannelVolume(int midiChannel, int volume);
+	void unmuteChannel(int midiChannel, int volume);
 
 	/**
 	 * Resets the MIDI channel state (all notes off, reset all
@@ -305,8 +309,9 @@ protected:
 
 public:
 	Channel _channels[RSOUND_CHANNEL_COUNT];
-	int _frameCounter;
-	bool _isDisabled;
+	int _ticksSinceLastCommand;
+	bool _ticksProcessingDisabled;
+	bool _mute;
 	int _pollResult;
 	int _resultFlag;
 
@@ -317,6 +322,7 @@ public:
 	/**
 	 * Constructor
 	 * @param mixer			Mixer
+	 * @param midiDriver	MIDI driver instance used for MIDI message output
 	 * @param filename		Specifies the Roland sound player file to use
 	 * @param dataOffset	Offset in the file of the data segment
 	 * @param dataSize		Size of the data segment
@@ -335,8 +341,8 @@ public:
 	}
 	void setVolume(int volume) override;
 
-	int getFrameCounter() {
-		return _frameCounter;
+	int getTicksSinceLastCommand() {
+		return _ticksSinceLastCommand;
 	}
 };
 

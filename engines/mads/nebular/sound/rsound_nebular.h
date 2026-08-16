@@ -59,7 +59,7 @@ private:
 
 	/**
 	 * Shared loader for command11/12/13 - matches method1 in the
-	 * disassembly (isSoundActive-gated command1() + 4-channel load).
+	 * disassembly (isSoundPlaying-gated command1() + 4-channel load).
 	 */
 	void method1();
 
@@ -243,7 +243,7 @@ private:
 	/**
 	 * Shared tail used by both command1
 	 * (falls through into it after calling command3()) and command5
-	 * (jumps straight into it after its isSoundActive gate). Enables
+	 * (jumps straight into it after its isSoundPlaying gate). Enables
 	 * channels 5-8 (1-based; indices 4-7) - notably never reaches
 	 * channel 9.
 	 */

@@ -33,9 +33,9 @@ class Mixer;
 
 namespace MADS {
 
-	const uint32 SoundManager::UPDATE_DELTA = 1000000 / 60;
+const uint32 SoundManager::UPDATE_DELTA = 1000000 / 60;
 
-	SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag,
+SoundManager::SoundManager(Audio::Mixer *mixer, bool &soundFlag,
 		bool supportsGeneralMidi) : _mixer(mixer), _soundFlag(soundFlag) {
 	_updateDeltaRemainder = 0;
 	_driverCallbackDelta = 0;
@@ -48,15 +48,6 @@ namespace MADS {
 	switch (musicType) {
 	case MT_MT32:
 		_driverType = SOUND_MT32;
-		_midiDriver = new MidiDriver_MT32GM(MusicType::MT_MT32);
-		int returnCode;
-		returnCode = _midiDriver->open();
-		if (returnCode != 0)
-			error("RSound - Failed to open MIDI music driver - error code %d.", returnCode);
-
-		_driverCallbackDelta = _midiDriver->getBaseTempo();
-		_midiDriver->setTimerCallback(this, &timerCallback);
-
 		break;
 	case MT_GM:
 	case MT_GS:
@@ -175,11 +166,20 @@ void SoundManager::onTimer() {
 	// The frequency of the callbacks is dependent on the underlying driver
 	// implementation and might not be 60Hz. Adjust to make sure poll() is called
 	// with the correct frequency.
+	/*
 	_updateDeltaRemainder += _driverCallbackDelta;
 	while (_updateDeltaRemainder >= UPDATE_DELTA) {
 		if (_driver)
 			_driver->poll();
 		_updateDeltaRemainder -= UPDATE_DELTA;
+	}
+	*/
+
+	uint32 serviceTicks = _hostTimer.advance(_driverCallbackDelta, 1000000);
+	while (serviceTicks--) {
+		// RSOUND export 4 is a return stub in every audited overlay.
+		if (_driver && _hostTimer.pollDue())
+			_driver->poll();
 	}
 }
 
