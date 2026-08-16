@@ -4867,7 +4867,7 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 		_accessTTSTalk = true;
 		_accessTTSCaptions = true;
 		_accessTTSKeypress = true;
-		_accessKeyboardEnabled = false;
+		_accessKeyboardEnabled = true;//false;
 		_accessKeyboardCursorSkip = true;
 		_accessKeyboardPause = false;
 		_accessGlobalPaused = false;
