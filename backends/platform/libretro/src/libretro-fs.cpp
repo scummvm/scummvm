@@ -721,6 +721,18 @@ bool LibRetroFilesystemNode::useAuthorizedRoot(void) {
 	return retro_setting_get_browsing_mode_authorized();
 }
 
+bool LibRetroFilesystemNode::isBrowserLastPathCompatible(const Common::String &path) {
+	if (path.empty())
+		return false;
+
+	bool isAuthorizedPath = path.equals(kLibRetroAuthorizedRootPath) || libretroFsIsInsideAuthorizedLocation(path);
+
+	if (useAuthorizedRoot())
+		return isAuthorizedPath;
+
+	return !isAuthorizedPath;
+}
+
 Common::String LibRetroFilesystemNode::getDefaultDir(void) {
 	if (useAuthorizedRoot())
 		return getAuthorizedRootPath();

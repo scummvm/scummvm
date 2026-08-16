@@ -97,6 +97,7 @@ public:
 	static void addAuthorizedLocation(const Common::String &path, const Common::String &label);
 	static bool hasAuthorizedLocations(void);
 	static bool useAuthorizedRoot(void);
+	static bool isBrowserLastPathCompatible(const Common::String &path);
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.

@@ -227,7 +227,18 @@ void OSystem_libretro::applyBackendSettings() {
 	if (!checkPathSetting("extrapath", s_extraDir))
 		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
 	checkPathSetting("soundfont", s_soundfontPath, false);
-	checkPathSetting("browser_lastpath", s_homeDir);
+	{
+		Common::String lastPath;
+		if (ConfMan.hasKey("browser_lastpath"))
+			lastPath = Common::Path::fromConfig(ConfMan.get("browser_lastpath")).toString();
+
+		if (lastPath.empty() || !LibRetroFilesystemNode::isBrowserLastPathCompatible(lastPath)) {
+			if (s_homeDir.empty())
+				ConfMan.removeKey("browser_lastpath", Common::ConfigManager::kApplicationDomain);
+			else
+				ConfMan.setPath("browser_lastpath", Common::Path::fromConfig(s_homeDir));
+		}
+	}
 	checkPathSetting("libretro_playlist_path", s_playlistDir.empty() ? s_systemDir : s_playlistDir);
 	checkPathSetting("iconspath", "");
 }
