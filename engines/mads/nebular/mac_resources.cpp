@@ -252,12 +252,13 @@ const Graphics::Font *MacResourceProvider::getGameFont() {
 		Graphics::kMacFontGeneva, 10, Graphics::kMacFontBold));
 }
 
-const Graphics::Font *MacResourceProvider::getAboutFont(int size) {
+const Graphics::Font *MacResourceProvider::getAboutFont(int size, bool bold) {
 	if (!_fontManager)
 		return nullptr;
 
 	return _fontManager->getFont(Graphics::MacFont(
-		Graphics::kMacFontGeneva, size, Graphics::kMacFontRegular));
+		Graphics::kMacFontGeneva, size,
+		bold ? Graphics::kMacFontBold : Graphics::kMacFontRegular));
 }
 
 MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::String &filename) {
