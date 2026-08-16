@@ -269,6 +269,36 @@ static const char *const helpTabs[] = {
 	    "Operation status will be shown in the same dialog, while details will be given in frontend logs."
 	),
 
+#ifdef ANDROID
+	_s("Android storage"),
+	"",
+	_s(
+	    "## Android storage access\n"
+	    "On Android modern versions apps can only access folders that have been explicitly authorized by the user through the system file picker (Storage Access Framework, SAF).\n"
+	    "\n"
+	    "The core can browse both the standard local filesystem and the folders authorized through the frontend (e.g. RetroArch). The starting location of the file browser is controlled by the **Browsing mode** core option.\n"
+	    "\n"
+	    "## Browsing mode\n"
+	    "This core option is available in the frontend core options (e.g. RetroArch 'Quick Menu > Core Options > System').\n"
+	    "\n"
+	    "  - **Authorized storage**: the file browser starts from a virtual root listing only the folders authorized through the frontend. This is the default on Android.\n"
+	    "\n"
+	    "  - **Local filesystem**: the file browser starts from the standard local path.\n"
+	    "\n"
+	    "## Authorizing folders\n"
+	    "  - Open the frontend file browser (e.g. in RetroArch, 'Load Content') and use the option to open/add a folder; the system file picker will appear.\n"
+	    "\n"
+	    "  - Grant access to the folder(s) that contain your games and exit the file browser (no need to actually select any content at this time). The authorization is persistent across reboots.\n"
+	    "\n"
+	    "  - Start the core; the authorized folders will be listed by the ScummVM file browser when **Browsing mode** is set to 'Authorized storage'.\n"
+	    "\n"
+	    "## Notes\n"
+	    "  - The authorized folder list is read when the core starts. If you authorize new folders while the core is running, restart (reload) the core to make them available.\n"
+	    "\n"
+	    "  - If **Browsing mode** is set to 'Authorized storage' but no folders have been authorized, the core falls back to the local filesystem and shows a notification.\n"
+	),
+#endif
+
 	0 // End of list
 };
 
