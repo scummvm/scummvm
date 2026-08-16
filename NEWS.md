@@ -90,6 +90,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved Sound Blaster sample playback
    - Sound is properly paused when the engine is paused
 
+ Voyeur:
+   - Match original first person movement with mouse when looking at mansion
+
  Atari port:
    - Added integration with nFM library.
 
