@@ -1662,7 +1662,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kObjDrawer:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002f, 1.0f);
-			draw3DPrism(obj, kDrawerParts[i], false, -1, true, false);
+			draw3DPrism(obj, kDrawerParts[i], false, -1, true, i == 1);
 		}
 		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
