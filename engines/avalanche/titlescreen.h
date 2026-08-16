@@ -22,6 +22,9 @@
 #ifndef AVALANCHE_TITLESCREEN_H
 #define AVALANCHE_TITLESCREEN_H
 
+#include "common/array.h"
+#include "common/str.h"
+
 namespace Avalanche {
 
 class AvalancheEngine;
@@ -34,6 +37,7 @@ public:
 
 private:
 	AvalancheEngine *_vm;
+	void loadCredits(Common::Array<Common::String> &lines);
 };
 
 } // End of namespace Avalanche
