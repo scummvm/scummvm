@@ -535,9 +535,6 @@ int kernel_room_startup(int newRoom, int initial_variant, const char *interface,
 	viewing_at_y = 0;
 	inter_viewing_at_y = inter_base_y;
 
-	// Mark the boundary between interface and room sprite series
-	kernel_room_series_marker = series_list_marker;
-
 	if (barebones) {
 		room_spots = nullptr;
 		goto finish;
@@ -571,6 +568,9 @@ int kernel_room_startup(int newRoom, int initial_variant, const char *interface,
 			inter_anim = nullptr;
 		}
 	}
+
+	// Mark the boundary between interface and room sprite series
+	kernel_room_series_marker = series_list_marker;
 
 	// Set up interface background screen
 	kernel_set_interface_mode(inter_input_mode);
