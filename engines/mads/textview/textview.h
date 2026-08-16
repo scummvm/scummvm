@@ -33,6 +33,8 @@ struct Presentation {
 	int matteHeight;
 	bool drawBoundaryLines;
 	bool macintoshFullFrame;
+	RGBcolor textColor;
+	RGBcolor shadowColor;
 };
 
 // Main textview function
