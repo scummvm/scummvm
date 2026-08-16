@@ -59,6 +59,11 @@ static void runTextViewContent(const char *resource) {
 	presentation.matteHeight = 156;
 	presentation.drawBoundaryLines = false;
 	presentation.macintoshFullFrame = true;
+	// CODE 133 initializes both TextView drawing colors to yellow.
+	presentation.textColor.r = 63;
+	presentation.textColor.g = 63;
+	presentation.textColor.b = 0;
+	presentation.shadowColor = presentation.textColor;
 
 	TextView::textview_main(resource, presentation);
 }
