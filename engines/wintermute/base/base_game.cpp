@@ -4946,12 +4946,12 @@ bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 		return true;
 	}
 
-	if (handleAccessKey(event, printable)) {
+	_keyboardState->readKey(event);
+	_keyboardState->handleKeyPress(event);
+
+	if (handleAccessKey(event, _keyboardState->isCurrentPrintable())) {
 		return true;
 	}
-
-	_keyboardState->handleKeyPress(event);
-	_keyboardState->readKey(event);
 
 	if (_focusedWindow) {
 		if (!_game->_focusedWindow->handleKeypress(event, _keyboardState->isCurrentPrintable())) {
@@ -4995,7 +4995,7 @@ bool BaseGame::handleAccessKey(Common::Event *event, bool printable) {
 		}
 	}
 	if (printable && _accessKeyboardPause) {
-		if (event->kbd.keycode == Common::KEYCODE_SPACE &&
+		if (event->kbd.keycode == Common::KEYCODE_p &&
 		   (event->kbd.flags & Common::KBD_CTRL)) {
 			_accessGlobalPaused = !_accessGlobalPaused;
 			if (_accessGlobalPaused) {
@@ -5028,7 +5028,7 @@ bool BaseGame::accessPause() {
 	UIText *sta = new UIText(_game);
 	sta->_parent = _accessShieldWin;
 	_accessShieldWin->_widgets.add(sta);
-	sta->setText(_stringTable->expandStatic("/SYSENG0040/Game paused. Press Ctrl+Space to resume."));
+	sta->setText(_stringTable->expandStatic("/SYSENG0040/Game paused. Press Ctrl+p to resume."));
 	sta->_sharedFonts = true;
 	sta->_font = _systemFont;
 	sta->sizeToFit();
