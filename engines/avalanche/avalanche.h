@@ -61,6 +61,7 @@ class RandomSource;
 namespace Avalanche {
 
 struct AvalancheGameDescription;
+class TitleScreen;
 class Intro;
 
 class Outro;
@@ -95,6 +96,7 @@ public:
 	HighScore *_highscore;
 	Intro *_intro;
 	Outro *_outro;
+	TitleScreen *_titleScreen;
 
 	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine() override;
