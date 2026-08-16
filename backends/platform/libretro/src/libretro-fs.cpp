@@ -101,6 +101,50 @@ static bool libretroFsHasUriScheme(const Common::String &path) {
 	return strstr(path.c_str(), "://") != nullptr;
 }
 
+static Common::String libretroFsPercentDecode(const Common::String &s) {
+	Common::String out;
+	for (uint i = 0; i < s.size(); ++i) {
+		if (s[i] == '%' && i + 2 < s.size()) {
+			char h1 = s[i + 1], h2 = s[i + 2];
+			int v1 = (h1 >= '0' && h1 <= '9') ? h1 - '0' : (h1 >= 'A' && h1 <= 'F') ? h1 - 'A' + 10 : (h1 >= 'a' && h1 <= 'f') ? h1 - 'a' + 10 : -1;
+			int v2 = (h2 >= '0' && h2 <= '9') ? h2 - '0' : (h2 >= 'A' && h2 <= 'F') ? h2 - 'A' + 10 : (h2 >= 'a' && h2 <= 'f') ? h2 - 'a' + 10 : -1;
+			if (v1 >= 0 && v2 >= 0) {
+				out += (char)((v1 << 4) | v2);
+				i += 2;
+				continue;
+			}
+		}
+		out += s[i];
+	}
+	return out;
+}
+
+static Common::String libretroFsSafDisplayName(const Common::String &path) {
+	Common::String decoded(path);
+	// SAF paths are double-encoded (e.g. %252F). Decode up to twice to reveal real separators.
+	for (int pass = 0; pass < 2; ++pass) {
+		if (decoded.contains('%'))
+			decoded = libretroFsPercentDecode(decoded);
+		else
+			break;
+	}
+
+	while (decoded.size() > 1 && decoded.lastChar() == '/')
+		decoded.erase(decoded.size() - 1);
+
+	// Take the part after the last '/'.
+	size_t slash = decoded.findLastOf('/');
+	if (slash != Common::String::npos)
+		decoded = decoded.substr(slash + 1);
+
+	// Take the part after the last ':' (e.g. 'primary:Games' -> 'Games').
+	size_t colon = decoded.findLastOf(':');
+	if (colon != Common::String::npos)
+		decoded = decoded.substr(colon + 1);
+
+	return decoded.empty() ? path : decoded;
+}
+
 static Common::String libretroFsUriDisplayName(const Common::String &path) {
 	Common::String trimmed(path);
 
@@ -672,10 +716,10 @@ void LibRetroFilesystemNode::addAuthorizedLocation(const Common::String &path, c
 	LibRetroAuthorizedLocation location;
 	location.path = path;
 
-	if (!label.empty())
-		location.label = label;
-	else
-		location.label = libretroFsUriDisplayName(path);
+	// The frontend may pass a generic label (e.g. "Removable storage") for all
+	// SAF trees; derive a readable name from the path instead.
+	(void)label;
+	location.label = libretroFsSafDisplayName(path);
 
 	s_libretroAuthorizedLocations.push_back(location);
 }
