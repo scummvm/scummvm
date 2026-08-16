@@ -35,13 +35,11 @@
 #include "mads/core/inter.h"
 #include "mads/core/kernel.h"
 #include "mads/core/magic.h"
+#include "mads/core/matte.h"
 #include "mads/core/mcga.h"
-#include "mads/core/mem.h"
 #include "mads/core/object.h"
 #include "mads/core/pal.h"
-#include "mads/core/room.h"
 #include "mads/core/screen.h"
-#include "mads/nebular/extra.h"
 #include "mads/nebular/mac_menus.h"
 #include "mads/nebular/mac_nebular.h"
 #include "mads/nebular/mac_resources.h"
@@ -113,76 +111,6 @@ static byte macGammaCorrect(byte color) {
 
 static byte macPaletteComponentToSixBit(byte color) {
 	return (color * 63 + 127) / 255;
-}
-
-static bool loadMacAboutRoom(Graphics::ManagedSurface &picture,
-		Palette &palette) {
-	Palette savedMasterPalette;
-	dword savedColorStatus[256];
-	int savedFlagUsed[PAL_MAXFLAGS];
-	const int savedPaletteLocked = palette_locked;
-	const int savedLowSearchLimit = palette_low_search_limit;
-	const int savedHighSearchLimit = palette_high_search_limit;
-	const int savedManagerActive = pal_manager_active;
-	const int savedManagerColors = pal_manager_colors;
-	void (*savedManagerUpdate)() = pal_manager_update;
-	ShadowListPtr savedMasterShadow = master_shadow;
-	const int savedRoomLoadError = room_load_error;
-	const byte savedRoomLoadedDepth = room_loaded_depth;
-
-	memcpy(savedMasterPalette, master_palette, sizeof(Palette));
-	memcpy(savedColorStatus, color_status, sizeof(color_status));
-	memcpy(savedFlagUsed, flag_used, sizeof(flag_used));
-
-	for (int color = 0; color < 256; ++color)
-		color_status[color] &= PAL_RESERVED;
-	for (int flag = 2; flag < PAL_MAXFLAGS; ++flag)
-		flag_used[flag] = false;
-	palette_locked = false;
-	palette_low_search_limit = 0;
-	palette_high_search_limit = 256;
-	pal_manager_active = false;
-	pal_manager_colors = 0;
-	pal_manager_update = nullptr;
-	master_shadow = nullptr;
-
-	Buffer roomPicture = {};
-	Buffer roomDepth = {};
-	RoomPtr aboutRoom = RexNebular::room_load(990, 0, nullptr,
-		&roomPicture, &roomDepth, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, -1, -1, 0);
-	const bool loaded = aboutRoom && roomPicture.data &&
-		roomPicture.x == kMacLogicalSceneWidth &&
-		roomPicture.y == kMacLogicalSceneHeight;
-	if (loaded) {
-		picture.create(roomPicture.x, roomPicture.y,
-			Graphics::PixelFormat::createFormatCLUT8());
-		for (int y = 0; y < roomPicture.y; ++y)
-			memcpy(picture.getBasePtr(0, y),
-				roomPicture.data + y * roomPicture.x, roomPicture.x);
-		memcpy(palette, master_palette, sizeof(Palette));
-	}
-
-	if (aboutRoom) {
-		pal_deallocate(aboutRoom->color_handle);
-		mem_free(aboutRoom);
-	}
-	buffer_free(&roomPicture);
-	buffer_free(&roomDepth);
-
-	memcpy(master_palette, savedMasterPalette, sizeof(Palette));
-	memcpy(color_status, savedColorStatus, sizeof(color_status));
-	memcpy(flag_used, savedFlagUsed, sizeof(flag_used));
-	palette_locked = savedPaletteLocked;
-	palette_low_search_limit = savedLowSearchLimit;
-	palette_high_search_limit = savedHighSearchLimit;
-	pal_manager_active = savedManagerActive;
-	pal_manager_colors = savedManagerColors;
-	pal_manager_update = savedManagerUpdate;
-	master_shadow = savedMasterShadow;
-	room_load_error = savedRoomLoadError;
-	room_loaded_depth = savedRoomLoadedDepth;
-	return loaded;
 }
 
 static void drawMacAboutText(Graphics::ManagedSurface &surface,
@@ -525,6 +453,26 @@ static bool isMacInterfaceScrollbarPixel(int x, int y) {
 		.contains(x, y);
 }
 
+static byte getMacAboutTextColor(const Palette &palette, byte menuBlack,
+		byte menuWhite) {
+	int bestColor = 0;
+	int bestDistance = 3 * 63 * 63 + 1;
+	for (int color = 0; color < Graphics::PALETTE_COUNT; ++color) {
+		if (color == menuBlack || color == menuWhite)
+			continue;
+		const int redDistance = 63 - palette[color].r;
+		const int greenDistance = 63 - palette[color].g;
+		const int blueDistance = 63 - palette[color].b;
+		const int distance = redDistance * redDistance +
+			greenDistance * greenDistance + blueDistance * blueDistance;
+		if (distance < bestDistance) {
+			bestColor = color;
+			bestDistance = distance;
+		}
+	}
+	return bestColor;
+}
+
 MacNebular::MacNebular(RexNebularEngine &engine) :
 		_engine(engine), _useOriginalMenus(ConfMan.getBool("original_mac_menus")),
 		_displaySize(kMacNebularDisplay200), _hideMenuBar(false),
@@ -546,6 +494,7 @@ MacNebular::MacNebular(RexNebularEngine &engine) :
 			ConfMan.setBool("naughtiness", false);
 	}
 	memset(_palette, 0, sizeof(_palette));
+	memset(_aboutPalette, 0, sizeof(_aboutPalette));
 }
 
 int MacNebular::getSceneWidth() const {
@@ -651,9 +600,7 @@ void MacNebular::showAbout() {
 	if (!_useOriginalMenus || !_resources || !_menus)
 		return;
 
-	Graphics::ManagedSurface picture;
-	Palette aboutPalette;
-	if (!loadMacAboutRoom(picture, aboutPalette)) {
+	if (!_aboutRoomLoaded) {
 		warning("Could not load Macintosh About room 990");
 		return;
 	}
@@ -715,12 +662,16 @@ void MacNebular::showAbout() {
 		break;
 	}
 
-	const Graphics::Font *titleFont = _resources->getAboutFont(titleSize);
-	const Graphics::Font *textFont = _resources->getAboutFont(textSize);
+	const Graphics::Font *titleFont = _resources->getAboutFont(titleSize, true);
+	const Graphics::Font *textFont = _resources->getAboutFont(textSize, false);
 	if (!titleFont || !textFont) {
 		warning("Could not load Macintosh About fonts");
 		return;
 	}
+
+	bool cursorWasVisible;
+	bool cursorPushed;
+	_menus->beginAboutPresentation(cursorWasVisible, cursorPushed);
 
 	Graphics::ManagedSurface savedOutput;
 	savedOutput.copyFrom(_output);
@@ -739,61 +690,59 @@ void MacNebular::showAbout() {
 	const int sceneX = getSceneX();
 	const int sceneWidth = getSceneWidth();
 	const int sceneHeight = getSceneHeight();
-	// About owns the full 320x200 viewer and has no inventory panel. Center
-	// its 320x156 room inside that viewer instead of using gameplay's
-	// panel-relative scene position.
-	const int sceneY = kMacDesktopSceneY +
-		(kMacFullFrameHeight - sceneHeight) / 2;
-	drawMacAboutRoom(_output, picture, sceneX, sceneY, sceneWidth,
+	// CODE 6 opens About from gameplay and uses the current game-window size.
+	// It does not use the outer front-end's centered full-frame placement.
+	const int sceneY = getSceneY();
+	drawMacAboutRoom(_output, _aboutPicture, sceneX, sceneY, sceneWidth,
 		sceneHeight, 0);
+	_menus->draw();
 	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
 		0, 0, _output.w, _output.h);
 	g_system->updateScreen();
-	magic_fade_from_grey((RGBcolor *)transitionPalette, aboutPalette,
+	magic_fade_from_grey((RGBcolor *)transitionPalette, _aboutPalette,
 		0, 256, 0, 1, 1, 16);
 
 	byte blackColor;
 	byte whiteColor;
 	_menus->getMenuColors(blackColor, whiteColor);
-	drawMacAboutRoom(_output, picture, sceneX, sceneY, sceneWidth,
+	const byte textColor = getMacAboutTextColor(_aboutPalette, blackColor,
+		whiteColor);
+	drawMacAboutRoom(_output, _aboutPicture, sceneX, sceneY, sceneWidth,
 		sceneHeight, blackColor);
 	// CODE 6 selects Palette Manager entry zero before drawing the About
 	// strings. That semantic entry is the light text color; it is not the
 	// room picture's indexed-color slot zero, which is black in this port.
+	// Use the closest light room color rather than the menu's reserved white
+	// entry so the text participates in the game-window palette fades.
 	drawMacAboutText(_output, *titleFont, "From MicroProse Software.",
-		sceneX + titleX, sceneY + titleY, whiteColor);
+		sceneX + titleX, sceneY + titleY, textColor);
 	drawMacAboutText(_output, *textFont, "For hints and help call:",
-		sceneX + textX, sceneY + firstTextY, whiteColor);
+		sceneX + textX, sceneY + firstTextY, textColor);
 	drawMacAboutText(_output, *textFont, "1 - 900 - 933 - PLAY",
-		sceneX + helpX, sceneY + helpY, whiteColor);
+		sceneX + helpX, sceneY + helpY, textColor);
 	drawMacAboutText(_output, *textFont, "For customer service call:",
-		sceneX + serviceX, sceneY + serviceY, whiteColor);
+		sceneX + serviceX, sceneY + serviceY, textColor);
 	drawMacAboutText(_output, *textFont, "1 - 410 - 771 - 1151",
-		sceneX + phoneX, sceneY + phoneY, whiteColor);
+		sceneX + phoneX, sceneY + phoneY, textColor);
 	_menus->draw();
 	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
 		0, 0, _output.w, _output.h);
 	g_system->updateScreen();
 	_menus->waitForAboutDismissal();
 
-	if (!_engine.shouldQuit()) {
-		memcpy(transitionPalette, aboutPalette, sizeof(Palette));
-		magic_fade_to_grey(transitionPalette, nullptr,
-			0, 256, 0, 1, 1, 16);
-	}
+	// Native CODE 6 returns by showing the saved game window. There is no
+	// second fade: restore its palette and composition before submitting one
+	// complete frame, so menu palette entries cannot expose partial panel data.
+	mcga_setpal(&savedPalette);
 	_output.copyFrom(savedOutput);
+	_menus->draw();
 	g_system->copyRectToScreen(_output.getPixels(), _output.pitch,
 		0, 0, _output.w, _output.h);
 	g_system->updateScreen();
-	if (!_engine.shouldQuit()) {
-		magic_fade_from_grey((RGBcolor *)transitionPalette, savedPalette,
-			0, 256, 0, 1, 1, 16);
-	} else {
-		mcga_setpal(&savedPalette);
-	}
 	setFullFrameActive(savedFullFrameActive);
 	_aboutActive = false;
 	_engine._screen->markAllDirty();
+	_menus->endAboutPresentation(cursorWasVisible, cursorPushed);
 }
 
 MacNebular::~MacNebular() {
@@ -890,6 +839,18 @@ void MacNebular::setOuterMenuActive(bool active) {
 }
 
 void MacNebular::notifyOuterMenuFrameReady() {
+	if (_useOriginalMenus && !_aboutRoomLoaded && scr_orig.data &&
+			scr_orig.x == kMacLogicalSceneWidth &&
+			scr_orig.y == kMacLogicalSceneHeight) {
+		_aboutPicture.create(scr_orig.x, scr_orig.y,
+			Graphics::PixelFormat::createFormatCLUT8());
+		for (int y = 0; y < scr_orig.y; ++y)
+			memcpy(_aboutPicture.getBasePtr(0, y),
+				scr_orig.data + y * scr_orig.x, scr_orig.x);
+		memcpy(_aboutPalette, master_palette, sizeof(Palette));
+		_aboutRoomLoaded = true;
+	}
+
 	if (_useOriginalMenus && _showPreferencesAtStartup)
 		_startupPreferencesReady = true;
 }

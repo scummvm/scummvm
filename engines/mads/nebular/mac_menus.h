@@ -85,7 +85,9 @@ public:
 	void getMenuColors(byte &menuBlack, byte &menuWhite);
 	void setMenuBarHidden(bool hidden);
 	bool takeAboutRequest();
+	void beginAboutPresentation(bool &cursorWasVisible, bool &cursorPushed);
 	void waitForAboutDismissal();
+	void endAboutPresentation(bool cursorWasVisible, bool cursorPushed);
 	bool takePreferencesRequest();
 	bool runPreferencesDialog(bool startup);
 	void runOpenDialog();

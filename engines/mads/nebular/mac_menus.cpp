@@ -26,6 +26,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "graphics/cursorman.h"
 #include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
@@ -35,6 +36,7 @@
 #include "mads/core/config.h"
 #include "mads/core/game.h"
 #include "mads/core/kernel.h"
+#include "mads/core/player.h"
 #include "mads/core/sound_manager.h"
 #include "mads/mads.h"
 #include "mads/nebular/mac_dialogs.h"
@@ -305,7 +307,10 @@ void MacNebularMenu::updateState() {
 				itemIndex < _menu->numberOfMenuItems(topLevel); ++itemIndex)
 			setItemState(_menu->getSubMenuItem(topLevel, itemIndex), false, false);
 	}
-	setItemState(getMenuItem(kAppleMenu, 0), true, false);
+	const bool canShowAbout = !_outerMenuActive && !_activeDialog &&
+		kernel_mode == KERNEL_ACTIVE_CODE && !kernel.fx &&
+		player.commands_allowed && cursor_id != CURSOR_WAIT;
+	setItemState(getMenuItem(kAppleMenu, 0), canShowAbout, false);
 	if (_activeDialog) {
 		setItemState(getMenuItem(kEditMenu, 0),
 			_activeDialog->isEditCommandEnabled(kMacDialogUndo), false);
@@ -368,9 +373,11 @@ void MacNebularMenu::updateState() {
 void MacNebularMenu::dispatchCommand(int commandId) {
 	switch (commandId) {
 	case kAppleAbout:
-		// Run the full-frame presentation after the menu event has unwound.
-		// Otherwise the closing menu window can be composited over room 990.
-		_aboutRequested = true;
+		if (!_outerMenuActive) {
+			// Run the presentation after the menu event has unwound. Otherwise
+			// the closing menu window can be composited over room 990.
+			_aboutRequested = true;
+		}
 		break;
 	case kFileOpen:
 		if (_engine.canLoadGameStateCurrently(nullptr))
@@ -554,8 +561,31 @@ void MacNebularMenu::waitForAboutDismissal() {
 				break;
 			}
 		}
+		// Software cursors are presented by updateScreen(). Keep the native
+		// arrow responsive while waiting for the press-and-release dismissal.
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
+}
+
+void MacNebularMenu::beginAboutPresentation(bool &cursorWasVisible,
+		bool &cursorPushed) {
+	cursorWasVisible = CursorMan.isVisible();
+	cursorPushed = initializeWindowManager();
+	if (cursorPushed) {
+		_windowManager->clearHandlingWidgets();
+		_windowManager->pushCursor(Graphics::kMacCursorArrow);
+	}
+	CursorMan.showMouse(true);
+}
+
+void MacNebularMenu::endAboutPresentation(bool cursorWasVisible,
+		bool cursorPushed) {
+	if (cursorPushed) {
+		_windowManager->clearHandlingWidgets();
+		_windowManager->popCursor();
+	}
+	CursorMan.showMouse(cursorWasVisible);
 }
 
 bool MacNebularMenu::takePreferencesRequest() {

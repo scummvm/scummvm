@@ -56,8 +56,10 @@ private:
 	MacNebularMenu *_menus = nullptr;
 	Graphics::ManagedSurface _output;
 	Graphics::ManagedSurface _popup;
+	Graphics::ManagedSurface _aboutPicture;
 	Common::Rect _popupRect;
 	RGBcolor _palette[256];
+	RGBcolor _aboutPalette[256];
 	bool _useOriginalMenus;
 	int _displaySize;
 	bool _hideMenuBar;
@@ -68,6 +70,7 @@ private:
 	Common::String _storyPassword;
 	bool _fullFrameActive = false;
 	bool _aboutActive = false;
+	bool _aboutRoomLoaded = false;
 	bool _gameplayHandoffPending = false;
 	bool _gameplayHandoffEffectSeen = false;
 	bool _popupActive = false;
