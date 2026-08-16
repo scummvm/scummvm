@@ -225,7 +225,8 @@ int object_examine(int number, long message, int speech) {
 		cursor_last = cursor_id;
 	}
 
-	inter_turn_off_object();
+	if (!isRex)
+		inter_turn_off_object();
 	inter_screen_update();
 	if (isMacRex)
 		inter_hide_macintosh_sentence();
