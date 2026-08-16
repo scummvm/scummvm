@@ -3273,7 +3273,7 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	// AccKeyboardEnabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccKeyboardEnabled") == 0) {
-		_scValue->setBool(_accessKeyboardEnabled);
+		//_scValue->setBool(_accessKeyboardEnabled);
 		return _scValue;
 	}
 
