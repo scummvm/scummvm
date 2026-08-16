@@ -73,7 +73,7 @@ public:
 	bool getMacintoshStoryLocked() const;
 	bool verifyMacintoshStoryPassword(const Common::String &password) const;
 	void setMacintoshDisplaySize(int displaySize, bool persist);
-	void setMacintoshHideMenuBar(bool hide, bool persist);
+	void setMacintoshHideMenuBar(bool hide);
 	void setMacintoshPreferencesAtStartup(bool show, bool persist);
 	void setMacintoshStoryLocked(bool locked,
 		const Common::String &password);
