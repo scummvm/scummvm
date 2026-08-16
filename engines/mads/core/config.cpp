@@ -102,7 +102,7 @@ void write_config_file() {
 
 void global_load_config_parameters() {
 	inter_report_hotspots = (config_file.interface_hotspots == INTERFACE_BRAINDEAD);
-	inter_spinning_objects = true;
+	inter_spinning_objects = (config_file.inventory_mode == INVENTORY_SPINNING);
 	inter_animation_running = true;
 
 	kernel_panning_speed = config_file.panning_speed;
