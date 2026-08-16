@@ -248,6 +248,7 @@ static void room_704_daemon() {
 				break;
 
 			case 90:
+			case 98:
 				if (local._takeBottleFl) {
 					kernel_seq_delete(g_sequence_ids[1]);
 					kernel_delete_dynamic(local._bottleHotspotId);
@@ -262,16 +263,6 @@ static void room_704_daemon() {
 				if (!player.commands_allowed && !local._takeBottleFl) {
 					kernel_timing_trigger(30, 70);
 					player.commands_allowed = true;
-				}
-				break;
-
-			case 98:
-				if (local._takeBottleFl) {
-					kernel_seq_delete(g_sequence_ids[1]);
-					kernel_delete_dynamic(local._bottleHotspotId);
-					inter_give_to_player(OBJ_BOTTLE);
-					g_engine->_soundManager->command(15, 0);
-					object_examine(OBJ_BOTTLE, 70415, 0);
 				}
 				break;
 

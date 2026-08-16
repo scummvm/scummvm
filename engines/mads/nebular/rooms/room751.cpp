@@ -77,7 +77,6 @@ static void room_751_init() {
 		player.commands_allowed = false;
 		kernel_timing_trigger(60, 60);
 	} else if (local._rexHandingLine) {
-		player.walker_visible = false;
 		player.x = 268;
 		player.y = 140;
 		player.facing = FACING_NORTHWEST;

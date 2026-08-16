@@ -87,12 +87,9 @@ static void room_610_daemon() {
 		local._lastFrameTimer = kernel.clock;
 	}
 
-	// CHECKME: local._checkVal is always false, could be removed
-	if ((local._cellChargingTimer >= 60) && !local._checkVal) {
-		local._checkVal = true;
+	if (local._cellChargingTimer >= 3600) {
 		global[kHandsetCellStatus] = 1;
 		local._cellCharging = false;
-		local._checkVal = false;
 		local._cellChargingTimer = 0;
 	}
 }
