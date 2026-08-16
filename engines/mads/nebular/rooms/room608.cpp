@@ -391,7 +391,6 @@ static void room_608_daemon() {
 	}
 
 	if (local._dogRunTimer >= 480 && !local._checkFl && !local._buttonPressedonTimeFl && !local._dogFirstEncounter && local._dogUnderCar && local._dogActiveFl) {
-		local._checkFl = true;
 		local._dogSquashFl = false;
 		local._dogSafeFl = true;
 		local._checkFl = false;
@@ -828,7 +827,6 @@ static void room_608_parser() {
 			else if (local._dogDeathMode == 2) {
 				global[kCarStatus] = CAR_SQUASHES_DOG_AGAIN;
 				local._carMode = 3;
-				local._dogDeathMode = 2;
 			}
 			kernel_delete_dynamic(local._carHotspotId);
 			int idx = kernel_add_dynamic(words_car, words_walkto, 0, -1, 99, 69, 82, 25);
@@ -868,15 +866,12 @@ static void room_608_parser() {
 		|| player_said_3(throw, bones, danger_zone) || player_said_3(throw, bone, danger_zone)) {
 		player.commands_allowed = true;
 		if ((global[kCarStatus] == CAR_UP) && local._dogActiveFl) {
-			if (local._dogActiveFl) {
-				if (kernel.trigger == 0) {
-					kernel_message_purge();
-					kernel_message_add(quote_string(kernel.quotes, 0x301), 0, 0, 0x1110, 120, 0, 34);
-				}
-				local._throwMode = 6;
-				handleThrowingBone();
-			} else
-				text_show(60841);
+			if (kernel.trigger == 0) {
+				kernel_message_purge();
+				kernel_message_add(quote_string(kernel.quotes, 0x301), 0, 0, 0x1110, 120, 0, 34);
+			}
+			local._throwMode = 6;
+			handleThrowingBone();
 		} else
 			text_show(60842);
 	} else if (player_said_2(take, polycement) && (kernel.trigger || !player_has(OBJ_POLYCEMENT))) {
