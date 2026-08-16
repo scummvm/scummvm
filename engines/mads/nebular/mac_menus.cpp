@@ -259,7 +259,11 @@ bool MacNebularMenu::loadMenuResource(uint16 resourceID,
 		const char shortcut = item.key == 0x1b ? 0 : item.key;
 		const int itemIndex = _menu->addMenuItem(submenu, item.text,
 			(resource.id << 16) | index, item.style, shortcut, item.enabled);
-		submenu->items[itemIndex]->checkSymbol = item.mark;
+		// Resource mark 18 is the native checkmark character. Let MacGUI
+		// select its equivalent built-in glyph, while preserving hierarchical
+		// submenu IDs stored in the same byte.
+		submenu->items[itemIndex]->checkSymbol =
+			item.mark == 18 ? 0 : item.mark;
 	}
 
 	return true;
