@@ -186,6 +186,7 @@ static void room_319_daemon() {
 				break;
 
 			case 29:
+			case 115:
 				local._slacheReady = true;
 				break;
 
@@ -212,10 +213,6 @@ static void room_319_daemon() {
 						local._slacheTalkingFl = true;
 					nextFrame = 40;
 				}
-				break;
-
-			case 115:
-				local._slacheReady = true;
 				break;
 
 			case 129:

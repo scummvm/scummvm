@@ -1488,7 +1488,7 @@ static void room_402_daemon() {
 		break;
 
 	case 62:
-	{
+	case 72: {
 		int seqIdx = g_sequence_ids[13];
 		g_sequence_ids[13] = kernel_seq_stamp(g_sprite_ids[13], false, 2);
 		kernel_seq_timeout(seqIdx, g_sequence_ids[13]);
@@ -1585,15 +1585,6 @@ static void room_402_daemon() {
 		if (!player_has(OBJ_REPAIR_LIST))
 			local._activeArrows = true;
 		break;
-
-	case 72:
-	{
-		int seqIdx = g_sequence_ids[13];
-		g_sequence_ids[13] = kernel_seq_stamp(g_sprite_ids[13], false, 2);
-		kernel_seq_timeout(seqIdx, g_sequence_ids[13]);
-		kernel_seq_depth(g_sequence_ids[13], 8);
-	}
-	break;
 
 	case 73:
 		kernel_message_purge();

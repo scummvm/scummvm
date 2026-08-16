@@ -70,7 +70,7 @@ static void room_351_init() {
 		case 1:
 			suffixNum = 0;
 			trigger = 60;
-			global[kTeleporterCommand] = true;
+			global[kTeleporterUnderstood] = true;
 			break;
 
 		case 2:
@@ -83,7 +83,6 @@ static void room_351_init() {
 			player.walker_visible = true;
 			player.commands_allowed = true;
 			player.turn_to_facing = FACING_SOUTH;
-			suffixNum = -1;
 			break;
 
 		default:
