@@ -531,14 +531,12 @@ MacNebular::MacNebular(RexNebularEngine &engine) :
 		_preferencesAtStartup(false), _showPreferencesAtStartup(false),
 		_storyLocked(false) {
 	ConfMan.registerDefault("mac_nebular_display_size", kMacNebularDisplay200);
-	ConfMan.registerDefault("mac_nebular_hide_menu_bar", false);
 	ConfMan.registerDefault("mac_nebular_preferences_at_startup", false);
 	ConfMan.registerDefault("mac_nebular_story_locked", false);
 	ConfMan.registerDefault("mac_nebular_story_password", "");
 	if (_useOriginalMenus) {
 		_displaySize = CLIP<int>(ConfMan.getInt("mac_nebular_display_size"),
 			kMacNebularDisplay100, kMacNebularDisplay200);
-		_hideMenuBar = ConfMan.getBool("mac_nebular_hide_menu_bar");
 		_preferencesAtStartup =
 			ConfMan.getBool("mac_nebular_preferences_at_startup");
 		_showPreferencesAtStartup = _preferencesAtStartup;
@@ -586,16 +584,13 @@ void MacNebular::setDisplaySize(int displaySize, bool persist) {
 	}
 }
 
-void MacNebular::setHideMenuBar(bool hide, bool persist) {
+void MacNebular::setHideMenuBar(bool hide) {
 	if (!_useOriginalMenus)
 		return;
 	_hideMenuBar = hide;
 	if (_menus)
 		_menus->setMenuBarHidden(hide);
-	if (persist) {
-		ConfMan.setBool("mac_nebular_hide_menu_bar", hide);
-		ConfMan.flushToDisk();
-	}
+	// TODO: Persist this once startup can safely restore an autohidden menu.
 }
 
 void MacNebular::setPreferencesAtStartup(bool show, bool persist) {
@@ -1499,9 +1494,9 @@ void RexNebularEngine::setMacintoshDisplaySize(int displaySize,
 		_macNebular->setDisplaySize(displaySize, persist);
 }
 
-void RexNebularEngine::setMacintoshHideMenuBar(bool hide, bool persist) {
+void RexNebularEngine::setMacintoshHideMenuBar(bool hide) {
 	if (_macNebular)
-		_macNebular->setHideMenuBar(hide, persist);
+		_macNebular->setHideMenuBar(hide);
 }
 
 void RexNebularEngine::setMacintoshPreferencesAtStartup(bool show,

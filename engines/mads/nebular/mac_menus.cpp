@@ -613,7 +613,7 @@ bool MacNebularMenu::runPreferencesDialog(bool startup) {
 	_activeDialog = nullptr;
 	if (result == 1) {
 		const bool persist = dialog.isItemChecked(7);
-		_engine.setMacintoshHideMenuBar(dialog.isItemChecked(4), persist);
+		_engine.setMacintoshHideMenuBar(dialog.isItemChecked(4));
 		_engine.setMacintoshPreferencesAtStartup(dialog.isItemChecked(8),
 			persist);
 	}

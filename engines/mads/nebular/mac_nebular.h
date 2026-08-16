@@ -103,7 +103,7 @@ public:
 	bool getStoryLocked() const { return _storyLocked; }
 	bool verifyStoryPassword(const Common::String &password) const;
 	void setDisplaySize(int displaySize, bool persist);
-	void setHideMenuBar(bool hide, bool persist);
+	void setHideMenuBar(bool hide);
 	void setPreferencesAtStartup(bool show, bool persist);
 	void setStoryLocked(bool locked, const Common::String &password);
 	void setFullFrameActive(bool active);
