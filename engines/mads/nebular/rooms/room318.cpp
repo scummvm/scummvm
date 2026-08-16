@@ -412,7 +412,7 @@ static void room_318_daemon() {
 	}
 
 	uint32 tmpFrame = timer_read();
-	long diffFrame = tmpFrame - local._lastFrameCounter;
+	int32 diffFrame = tmpFrame - local._lastFrameCounter;
 	local._lastFrameCounter = tmpFrame;
 
 	if ((local._animMode == 2) && !local._internVisibleFl && player.commands_allowed) {

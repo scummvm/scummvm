@@ -83,7 +83,6 @@ static void room_201_init() {
 		case 3:
 			player.walker_visible = true;
 			player.commands_allowed = true;
-			suffixNum = -1;
 			break;
 		case 4:
 			suffixNum = 2;

@@ -461,7 +461,7 @@ static void room_319_parser() {
 					if ((player2.words[0] == 0x168) || (player2.words[0] == 0x167)) {
 						curDialog = &local._dialog1;
 						nextDocQuote = 0x161;
-					} else if ((player2.words[0] == 0x174) || (player2.words[0] == 0x1753)) {
+					} else if ((player2.words[0] == 0x174) || (player2.words[0] == 0x173)) {
 						nextDocQuote = 0x16D;
 						curDialog = &local._dialog2;
 					} else {

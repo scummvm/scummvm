@@ -195,7 +195,7 @@ void popup_setup_cycle() {
 
 	memcpy(&cycling_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
 		&master_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-		PALETTE_CYCLING_AREA * 3);
+		PALETTE_CYCLING_AREA * sizeof(RGBcolor));
 	pal_grey(master_palette, DIALOG_CONTENT1_COLOR, 2, 36, 32);
 	pal_grey(master_palette, DIALOG_EDGE_COLOR, 2, 39, 28);
 	pal_grey(master_palette, DIALOG_FC_COLOR, 2, 36, 32);

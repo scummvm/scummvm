@@ -159,7 +159,6 @@ static void room_106_daemon() {
 			break;
 
 		default:
-			msgId = -1;
 			player.commands_allowed = true;
 			break;
 		}
