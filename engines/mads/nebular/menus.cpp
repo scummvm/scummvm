@@ -1311,10 +1311,7 @@ static void game_menu_save() {
 					image_marker = 0;
 					first_time = 0;
 
-					if (special_sprite >= 0) {
-						image_list[special_sprite].flags = IMAGE_ERASE;
-					}
-
+					image_list[special_sprite].flags = IMAGE_ERASE;
 					game_menu_changed = false;
 				}
 
@@ -1505,10 +1502,7 @@ static void game_menu_restore() {
 					image_marker = 0;
 					first_time = 0;
 
-					if (special_sprite >= 0) {
-						image_list[special_sprite].flags = IMAGE_ERASE;
-					}
-
+					image_list[special_sprite].flags = IMAGE_ERASE;
 					game_menu_changed = false;
 				}
 

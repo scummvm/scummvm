@@ -321,11 +321,12 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 	bool sceneFlag = id >= 0;
 	int width, height;
 	SeriesPtr sprites[10] = { nullptr };
-	int16 spritesHandles[10] = { -1 };
+	int16 spritesHandles[10];
 
 	// Initialize structures
 	mem_last_alloc_loader = MODULE_ROOM_LOADER;
 	load_handle.open = false;
+	Common::fill(spritesHandles, spritesHandles + 10, -1);
 
 	// Open the room data file
 	room_resolve_base(base, temp_buf, id, base_path);

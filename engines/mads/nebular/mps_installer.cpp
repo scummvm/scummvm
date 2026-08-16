@@ -105,8 +105,6 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Pa
 		Common::Path volumePath = _baseName.append(Common::String::format(".%03d", vol));
 		if (!fvol.open(volumePath)) {
 			error("Failed to open volume %s.%03d", volumePath.toString(Common::Path::kNativeSeparator).c_str(), vol);
-			delete[] compressedBuf;
-			return Common::SharedArchiveContents();
 		}
 		fvol.seek(off);
 		int32 actual = fvol.read(outptr, rem);

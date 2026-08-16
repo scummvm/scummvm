@@ -89,7 +89,7 @@ bool MacNebularDialog::loadDialogResource(uint16 resourceID,
 		stream->skip(10);
 		itemResourceID = stream->readUint16BE();
 		/* Common::String title = */ stream->readPascalString();
-		valid = valid && !stream->err() && _bounds.isValidRect();
+		valid = !stream->err() && _bounds.isValidRect();
 	}
 	delete stream;
 	return valid;

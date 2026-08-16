@@ -344,8 +344,6 @@ void menu_control() {
 	going = true;
 	must_perform_matte = false;
 
-	frame_clock = 0;
-
 	g_engine->_soundManager->init(7);
 	sound_queue(N_TitleScreen);
 
