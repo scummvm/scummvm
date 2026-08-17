@@ -2345,7 +2345,8 @@ void InsaneRebel2::updateGameplayTimedTick(int32 curFrame) {
 
 	if (_rebelHandler != 25 && _playerDamage > 0) {
 		_playerDamage--;
-		_playerShield = 255 - _playerDamage;
+		// Damage is uncapped, so an overshoot must not read back as shield.
+		_playerShield = (_playerDamage < 255) ? (int16)(255 - _playerDamage) : 0;
 	}
 }
 
@@ -4262,7 +4263,7 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 	bool targetLocked = false;
 
 	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
-		if (it->active && !it->destroyed && it->rect.contains(worldMousePos)) {
+		if (it->active && !it->destroyed && isTargetUnderAim(*it, worldMousePos)) {
 			targetLocked = true;
 			break;
 		}

@@ -1319,9 +1319,9 @@ bool InsaneRebel2::applyPlayerDamage(int damage) {
 	if (_noDamage || _rebelAutoPlay || damage <= 0)
 		return false;
 
+	// Uncapped like the original: a cap here would let the every-16th-frame
+	// recovery tick undo a fatal blow landing on such a frame.
 	_playerDamage += damage;
-	if (_playerDamage > 255)
-		_playerDamage = 255;
 
 	return true;
 }
@@ -1627,6 +1627,40 @@ Common::Error InsaneRebel2::loadGameState(int slot, bool startupLoad) {
 	return Common::kNoError;
 }
 
+Common::Point InsaneRebel2::getTargetHitHalfExtents(const enemy &target) const {
+	// snapDistance is the aim assist; turret levels clamp the half-size to
+	// specialDamage/2 first.
+	const LevelDifficultyParams params = getDifficultyParams();
+
+	int halfW = target.rect.width() / 2;
+	int halfH = target.rect.height() / 2;
+
+	if (_rebelHandler == 0x26 && params.specialDamage > 0) {
+		halfW = MIN<int>(halfW, params.specialDamage / 2);
+		halfH = MIN<int>(halfH, params.specialDamage / 2);
+	}
+
+	halfW += params.snapDistance;
+	halfH += params.snapDistance;
+
+	if (_rebelHandler == 25 && target.type == 100) {
+		halfW *= 2;
+		halfH *= 2;
+	}
+
+	return Common::Point(halfW, halfH);
+}
+
+bool InsaneRebel2::isTargetUnderAim(const enemy &target, const Common::Point &aim) const {
+	const Common::Point half = getTargetHitHalfExtents(target);
+	const int centerX = target.rect.left + target.rect.width() / 2;
+	const int centerY = target.rect.top + target.rect.height() / 2;
+
+	// Half-open, as in the original: c - h <= p < c + h.
+	return aim.x >= centerX - half.x && aim.x < centerX + half.x &&
+	       aim.y >= centerY - half.y && aim.y < centerY + half.y;
+}
+
 int32 InsaneRebel2::processMouse() {
 	int32 buttons = 0;
 
@@ -1703,25 +1737,22 @@ int32 InsaneRebel2::processMouse() {
 
 		Common::List<enemy>::iterator it;
 		for (it = _enemies.begin(); it != _enemies.end(); ++it) {
-			debugC(DEBUG_INSANE, "  Enemy ID=%d active=%d destroyed=%d rect=(%d,%d)-(%d,%d) contains=%d",
+			debugC(DEBUG_INSANE, "  Enemy ID=%d active=%d destroyed=%d rect=(%d,%d)-(%d,%d) hit=%d",
 				it->id, it->active, it->destroyed,
 				it->rect.left, it->rect.top, it->rect.right, it->rect.bottom,
-				it->rect.contains(worldMousePos));
+				isTargetUnderAim(*it, worldMousePos));
 
-			if (it->active && it->rect.contains(worldMousePos)) {
+			if (it->active && isTargetUnderAim(*it, worldMousePos)) {
 				it->active = false;
 				it->destroyed = true;
 				debugC(DEBUG_INSANE, "HIT enemy ID=%d type=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)",
 					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
-				int explosionHalfWidth = it->rect.width() / 2;
-				if (_rebelHandler == 25) {
-					LevelDifficultyParams dparams = getDifficultyParams();
-					explosionHalfWidth += dparams.snapDistance;
-					if (it->type == 100)
-						explosionHalfWidth *= 2;
-				}
+				// Only handler 25 reuses its padded hit box as the blast size.
+				int explosionHalfWidth = (_rebelHandler == 25)
+					? getTargetHitHalfExtents(*it).x
+					: it->rect.width() / 2;
 
 				if (_rebelHandler != 8 && _rebelHandler != 25) {
 					spawnExplosion((it->rect.left + it->rect.right) / 2,
