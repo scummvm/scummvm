@@ -67,6 +67,29 @@ public:
 		TS_ASSERT_EQUALS(stream->readByte(), 0xbb);
 	}
 
+	void testIavfParseFailurePreservesOutput() {
+		Common::Array<byte> data;
+		data.resize(0x91);
+		memset(data.data(), 0, data.size());
+		memcpy(data.data(), "IAVF2.00", 8);
+		WRITE_LE_UINT16(data.data() + 0x1c, 11025);
+		data[0x1e] = 1;
+		data[0x1f] = 16;
+		WRITE_LE_UINT32(data.data() + 0x20, 22050);
+		WRITE_LE_UINT32(data.data() + 0x24, 2);
+		WRITE_LE_UINT16(data.data() + 0x2f, 200);
+		WRITE_LE_UINT16(data.data() + 0x31, 320);
+		Common::MemoryReadStream stream(data.data(), data.size(), DisposeAfterUse::NO);
+		Ripper::IavfMovie movie;
+		movie.sampleRate = 123;
+		movie.audio.push_back(0xaa);
+
+		TS_ASSERT(!Ripper::parseIavf(stream, "incomplete.iavf", movie));
+		TS_ASSERT_EQUALS(movie.sampleRate, 123);
+		TS_ASSERT_EQUALS(movie.audio.size(), 1U);
+		TS_ASSERT_EQUALS(movie.audio[0], 0xaa);
+	}
+
 	void testSmackerPlaybackPlanDefaults() {
 		const Ripper::SmackerPlaybackPlan plan;
 

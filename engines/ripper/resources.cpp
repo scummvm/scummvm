@@ -156,11 +156,14 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 	}
 
 	// DecodeCustomBitmapAsset at 0x53f60 stores descriptor height first and width second.
-	frame.height = READ_LE_UINT16(header + 0x16);
-	frame.width = READ_LE_UINT16(header + 0x18);
-	const uint32 pixelCount = (uint32)frame.width * frame.height;
-	if (frame.width == 0 || frame.height == 0 || rawTailSize > pixelCount ||
-		payloadSize == 0 || payloadSize > (uint64)stream.size() - stream.pos())
+	const uint16 height = READ_LE_UINT16(header + 0x16);
+	const uint16 width = READ_LE_UINT16(header + 0x18);
+	const uint32 pixelCount = (uint32)width * height;
+	const int64 streamSize = stream.size();
+	const int64 streamPosition = stream.pos();
+	if (width == 0 || height == 0 || rawTailSize > pixelCount ||
+			payloadSize == 0 || streamPosition < 0 || streamSize < streamPosition ||
+			payloadSize > (uint64)(streamSize - streamPosition))
 		return false;
 
 	Common::Array<byte> payload;
@@ -168,14 +171,17 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 	if (stream.read(payload.data(), payload.size()) != payload.size())
 		return false;
 
-	frame.palette.clear();
+	BitmapAssetFrame decodedFrame;
+	decodedFrame.width = width;
+	decodedFrame.height = height;
 	if ((flags & 1) != 0) {
 		const uint32 paletteSize = paletteColorCount * 3;
-		frame.palette.resize(paletteSize);
-		if (stream.read(frame.palette.data(), paletteSize) != paletteSize)
+		decodedFrame.palette.resize(paletteSize);
+		if (stream.read(decodedFrame.palette.data(), paletteSize) != paletteSize)
 			return false;
-		for (uint i = 0; i < frame.palette.size(); ++i)
-			frame.palette[i] = (frame.palette[i] << 2) | (frame.palette[i] >> 4);
+		for (uint i = 0; i < decodedFrame.palette.size(); ++i)
+			decodedFrame.palette[i] =
+				(decodedFrame.palette[i] << 2) | (decodedFrame.palette[i] >> 4);
 	}
 
 	byte colorMap[256];
@@ -192,11 +198,14 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 			colorMap[i] = i;
 	}
 
-	frame.transparentColor = colorMap[transparentColor];
-	frame.pixels.resize(pixelCount);
+	decodedFrame.transparentColor = colorMap[transparentColor];
+	decodedFrame.pixels.resize(pixelCount);
 	// ExpandCustomBitmapCompressedPixels at 0x53de0 consumes low nibbles before high nibbles.
-	return expandCustomBitmap(payload, header + 5, colorCount, rawTailSize, compressionMode,
-		colorMap, frame.pixels);
+	if (!expandCustomBitmap(payload, header + 5, colorCount, rawTailSize, compressionMode,
+			colorMap, decodedFrame.pixels))
+		return false;
+	frame = Common::move(decodedFrame);
+	return true;
 }
 
 static bool copyIndexedSurface(const Graphics::Surface *surface,
