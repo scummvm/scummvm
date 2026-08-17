@@ -369,9 +369,10 @@ other version. With one exception: if you have a native MIDI device able to
 replay the given game's MIDI notes (using the STMIDI plugin).
 
 MIDI emulation (synthesis) can easily eat as much as 50% of all used CPU time
-(on the CT60). By default, this port uses the MAME OPL emulation (which is said
-to be fastest but also least accurate) but some engines require the DOSBOX one
-which is even more demanding. By the way, you can put "FM_high_quality=true" or
+(on the CT60 and even if no OPL music is produced at the moment). By default,
+this port uses the MAME OPL emulation (which is said to be fastest but also
+least accurate) but some engines require the DOSBOX one which is even more
+demanding. By the way, you can put "FM_high_quality=true" or
 "FM_medium_quality=true" into scummvm.ini if you want to experiment with a
 better quality synthesis, otherwise the lowest quality will be used (applies
 for MAME OPL only).
