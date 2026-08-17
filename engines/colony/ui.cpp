@@ -1003,6 +1003,27 @@ void ColonyEngine::drawAutomapCryoMarker(int x, int y, int halfSize, uint32 colo
 		_gfx->fillEllipse(x, y, cr, cr, color);
 }
 
+// Octagon with a waistband, echoing the booth shape drawn in the 3D view.
+void ColonyEngine::drawAutomapTeleportMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
+	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
+		return;
+
+	const int r = MAX(halfSize, 3);
+	const int k = MAX(r * 2 / 5, 1);
+	const int dx[8] = { -k,  k,  r,  r,  k, -k, -r, -r };
+	const int dy[8] = { -r, -r, -k,  k,  r,  r,  k, -k };
+	for (int i = 0; i < 8; i++) {
+		int x1 = x + dx[i], y1 = y + dy[i];
+		int x2 = x + dx[(i + 1) & 7], y2 = y + dy[(i + 1) & 7];
+		if (clipLineToRect(x1, y1, x2, y2, clip))
+			_gfx->drawLine(x1, y1, x2, y2, color);
+	}
+
+	int bx1 = x - r, by1 = y, bx2 = x + r, by2 = y;
+	if (clipLineToRect(bx1, by1, bx2, by2, clip))
+		_gfx->drawLine(bx1, by1, bx2, by2, color);
+}
+
 void ColonyEngine::drawAutomap() {
 	if (_level < 1 || _level > 8)
 		return;
@@ -1045,6 +1066,7 @@ void ColonyEngine::drawAutomap() {
 	const int markerR = scaleR(isMac ? 5 : 3, 2);
 	const int foodR = scaleR(isMac ? 3 : 2, 1);
 	const int cryoR = scaleR(isMac ? 7 : 5, 3);
+	const int teleR = scaleR(isMac ? 6 : 4, 3);
 
 	for (int dy = -radius; dy <= radius; dy++) {
 		for (int dx = -radius; dx <= radius; dx++) {
@@ -1072,12 +1094,15 @@ void ColonyEngine::drawAutomap() {
 
 			const int mx = (x0 + x2) >> 1;
 			const int my = (y0 + y2) >> 1;
-			// Cryo pods are static, so they map beyond the robot/egg radar range.
+			// Cryo pods and teleporters are static, so they map beyond the
+			// robot/egg radar range.
 			const bool inRadar = (ABS(dx) <= 6 && ABS(dy) <= 6);
 			const uint8 rnum = _robotArray[cx][cy];
 			if (rnum > 0 && rnum != kMeNum && rnum <= _objects.size() && _objects[rnum - 1].alive) {
 				if (_objects[rnum - 1].type == kObjCryo)
 					drawAutomapCryoMarker(mx, my, cryoR, lineColor, vp);
+				else if (_objects[rnum - 1].type == kObjTeleport)
+					drawAutomapTeleportMarker(mx, my, teleR, lineColor, vp);
 				else if (inRadar)
 					drawMiniMapMarker(mx, my, markerR, lineColor, isMac, &vp);
 			}
