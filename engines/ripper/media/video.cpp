@@ -943,7 +943,15 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		// IAVF header, then PreparePacketizedMediaPlaybackBranchSetup at 0x5b237
 		// assigns ids one and above to the actual media branches.
 		const uint sequenceId = i + 1;
-		Common::SeekableReadStream *smacker = rebuildSmackerStream(movie.segments[i]);
+		IavfSegment &segment = movie.segments[i];
+		Common::SeekableReadStream *smacker = rebuildSmackerStream(segment);
+		if (smacker) {
+			// The decoder owns the contiguous reconstruction. These packet arrays
+			// are no longer consulted after the stream has been built.
+			segment.setup.clear();
+			segment.frameSizes.clear();
+			segment.framePayloads.clear();
+		}
 		uint branchWidth = movie.presentationWidth;
 		uint branchHeight = movie.presentationHeight;
 		if (smacker && smacker->size() >= 12) {
@@ -954,14 +962,14 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		}
 		if (callback)
 			callback->beginIavfSegment(sequenceId,
-				movie.segments[i].expectedFrames, branchWidth, branchHeight);
+				segment.expectedFrames, branchWidth, branchHeight);
 		debugC(2, kDebugVideo,
 			"Ripper: IAVF '%s' entered packetized branch segment=%u "
 			"sequence=%u callback=%d size=%ux%u",
 			name.c_str(), i, sequenceId, callback != nullptr,
 			branchWidth, branchHeight);
-		const int segmentX = overrideX != -1 ? overrideX : movie.segments[i].x;
-		const int segmentY = overrideY != -1 ? overrideY : movie.segments[i].y;
+		const int segmentX = overrideX != -1 ? overrideX : segment.x;
+		const int segmentY = overrideY != -1 ? overrideY : segment.y;
 		const int segmentOriginY = overrideY != -1 ? overrideOriginY : 0;
 		if (overrideX != -1 || overrideY != -1) {
 			// PreparePacketizedMediaPlaybackBranchSetup at 0x5b237 replaces each
@@ -969,14 +977,14 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			// an override. Scene-space Y receives the retained viewport origin once.
 			debugC(2, kDebugVideo,
 				"Ripper: IAVF '%s' segment=%u coordinate override raw=%d,%d caller=%d,%d originY=%d effective=%d,%d",
-				name.c_str(), i, movie.segments[i].x, movie.segments[i].y,
+				name.c_str(), i, segment.x, segment.y,
 				overrideX, overrideY, segmentOriginY, segmentX,
 				segmentY + segmentOriginY);
 		}
 		bool stoppedByUser = false;
 		bool advanceSegment = false;
 		Common::Array<uint32> relativeAudioOffsets;
-		const Common::Array<uint32> *frameAudioOffsets = &movie.segments[i].frameAudioOffsets;
+		const Common::Array<uint32> *frameAudioOffsets = &segment.frameAudioOffsets;
 		if (audioTimelineOffset != 0) {
 			relativeAudioOffsets.reserve(frameAudioOffsets->size());
 			for (uint frame = 0; frame < frameAudioOffsets->size(); ++frame) {
