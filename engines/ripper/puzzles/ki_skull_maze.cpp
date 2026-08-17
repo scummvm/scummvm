@@ -35,6 +35,7 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/ini.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
@@ -113,26 +114,6 @@ static const int kManXOffsets[5] = {-6, -7, -32, -21, 3};
 static const uint kSkullForegroundCells[10] = {
 	45, 52, 53, 54, 58, 59, 60, 61, 62, 63
 };
-
-static Common::String stripIniComment(const Common::String &source) {
-	const size_t comment = source.find(';');
-	Common::String value = comment == Common::String::npos ?
-		source : source.substr(0, comment);
-	value.trim();
-	return value;
-}
-
-static bool readIniUint(const Common::INIFile &ini, const char *key,
-		uint &value) {
-	Common::String text;
-	if (!ini.getKey(key, "setting", text))
-		return false;
-	text = stripIniComment(text);
-	if (text.empty())
-		return false;
-	value = (uint)text.asUint64();
-	return true;
-}
 
 } // End of anonymous namespace
 
@@ -304,14 +285,14 @@ bool KiSkullMazePuzzle::loadConfiguration() {
 	if (!ini.loadFromStream(file))
 		return false;
 	_config = Config();
-	readIniUint(ini, "randomiser", _config.randomizer);
-	readIniUint(ini, "frame rate", _config.frameRate);
-	readIniUint(ini, "door delay", _config.doorDelayTicks);
-	readIniUint(ini, "start pos", _config.startPosition);
-	readIniUint(ini, "init delay", _config.initialHazardDelayTicks);
-	readIniUint(ini, "pieces 2 dec", _config.hazardsPerDecrease);
-	readIniUint(ini, "decrement", _config.hazardDelayDecrementTicks);
-	readIniUint(ini, "min delay", _config.minimumHazardDelayTicks);
+	readIniUint(ini, "setting", "randomiser", _config.randomizer);
+	readIniUint(ini, "setting", "frame rate", _config.frameRate);
+	readIniUint(ini, "setting", "door delay", _config.doorDelayTicks);
+	readIniUint(ini, "setting", "start pos", _config.startPosition);
+	readIniUint(ini, "setting", "init delay", _config.initialHazardDelayTicks);
+	readIniUint(ini, "setting", "pieces 2 dec", _config.hazardsPerDecrease);
+	readIniUint(ini, "setting", "decrement", _config.hazardDelayDecrementTicks);
+	readIniUint(ini, "setting", "min delay", _config.minimumHazardDelayTicks);
 	if (_config.frameRate == 0 || _config.doorDelayTicks == 0 ||
 			_config.startPosition >= KiSkullMazeModel::kCellCount ||
 			_config.initialHazardDelayTicks == 0 ||

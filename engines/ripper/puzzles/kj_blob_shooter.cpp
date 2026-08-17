@@ -31,6 +31,7 @@
 #include "ripper/detection.h"
 #include "ripper/display.h"
 #include "ripper/input.h"
+#include "ripper/ini.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
@@ -68,17 +69,6 @@ static const int kBlobY[5] = { 0, 0, 62, 0, 0 };
 static const int kScriptedHitX[5] = { 239, 75, 36, 164, 267 };
 static const int kScriptedHitY[5] = { 48, 68, 104, 46, 113 };
 
-static Common::String stripIniComment(Common::String value) {
-	for (uint i = 0; i < value.size(); ++i) {
-		if (value[i] == ';') {
-			value = value.substr(0, i);
-			break;
-		}
-	}
-	value.trim();
-	return value;
-}
-
 static uint32 ticksToMillis(int ticks) {
 	return (uint32)MAX<int>(0, ticks) * kDosTickMillis;
 }
@@ -106,11 +96,7 @@ KjBlobShooter::KjBlobShooter(RipperEngine *engine) :
 
 int KjBlobShooter::configInt(const Common::INIFile &ini,
 		const char *section, const char *key, int fallback) const {
-	Common::String value;
-	if (!ini.getKey(key, section, value))
-		return fallback;
-	value = stripIniComment(value);
-	return value.empty() ? fallback : (int)value.asUint64();
+	return getIniInt(ini, section, key, fallback);
 }
 
 bool KjBlobShooter::loadConfig(uint difficulty) {
