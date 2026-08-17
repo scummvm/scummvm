@@ -19,14 +19,54 @@
  */
 
 #include "ripper/media.h"
+#include "ripper/iavf.h"
 #include "ripper/media/presentation_text.h"
 
+#include "common/endian.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 
 #include <cxxtest/TestSuite.h>
 
 class RipperMediaTestSuite : public CxxTest::TestSuite {
 public:
+	void testIavfSmackerRebuildRejectsIncompleteSegment() {
+		Ripper::IavfSegment segment;
+		TS_ASSERT_EQUALS(Ripper::rebuildSmackerStream(segment), nullptr);
+
+		initializeIavfSegment(segment);
+		TS_ASSERT_EQUALS(Ripper::rebuildSmackerStream(segment), nullptr);
+
+		segment.frameSizes.push_back(2);
+		Common::Array<byte> payload;
+		payload.push_back(0xaa);
+		segment.framePayloads.push_back(payload);
+		segment.frameAudioOffsets.push_back(0);
+		TS_ASSERT_EQUALS(Ripper::rebuildSmackerStream(segment), nullptr);
+	}
+
+	void testIavfSmackerRebuildProducesOwnedStream() {
+		Ripper::IavfSegment segment;
+		initializeIavfSegment(segment);
+		segment.frameSizes.push_back(2);
+		Common::Array<byte> payload;
+		payload.push_back(0xaa);
+		payload.push_back(0xbb);
+		segment.framePayloads.push_back(payload);
+		segment.frameAudioOffsets.push_back(0);
+
+		Common::ScopedPtr<Common::SeekableReadStream> stream(
+			Ripper::rebuildSmackerStream(segment));
+		TS_ASSERT(stream);
+		TS_ASSERT_EQUALS(stream->size(), 111);
+		TS_ASSERT_EQUALS(stream->readUint32BE(), MKTAG('S', 'M', 'K', '2'));
+		stream->seek(104);
+		TS_ASSERT_EQUALS(stream->readUint32LE(), 2U);
+		TS_ASSERT_EQUALS(stream->readByte(), 0x40);
+		TS_ASSERT_EQUALS(stream->readByte(), 0xaa);
+		TS_ASSERT_EQUALS(stream->readByte(), 0xbb);
+	}
+
 	void testSmackerPlaybackPlanDefaults() {
 		const Ripper::SmackerPlaybackPlan plan;
 
@@ -115,5 +155,15 @@ public:
 			100, 100, 3), 3U);
 		TS_ASSERT_EQUALS(Ripper::calculatePresentationTextAutoScrollLine(
 			50, 0, 3), 0U);
+	}
+
+private:
+	static void initializeIavfSegment(Ripper::IavfSegment &segment) {
+		segment.setup.resize(105);
+		memset(segment.setup.data(), 0, segment.setup.size());
+		WRITE_BE_UINT32(segment.setup.data(), MKTAG('S', 'M', 'K', '2'));
+		WRITE_LE_UINT32(segment.setup.data() + 12, 1);
+		segment.setup[104] = 0x40;
+		segment.expectedFrames = 1;
 	}
 };
