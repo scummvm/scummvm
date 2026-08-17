@@ -106,6 +106,7 @@ static bool parseIavfInternal(Common::SeekableReadStream &stream, const Common::
 	}
 	if (movie.presentationWidth == 0 || movie.presentationHeight == 0)
 		return false;
+	movie.audio.reserve((uint32)stream.size());
 
 	Common::HashMap<uint32, Common::Array<byte> > setupCache;
 	Common::HashMap<uint32, uint32> audioEndOffsets;
@@ -173,7 +174,8 @@ static bool parseIavfInternal(Common::SeekableReadStream &stream, const Common::
 			if (descriptor.arg0 != 0 || descriptor.arg1 != 0 || descriptor.arg2 != 0)
 				return false;
 			// RunPacketizedMediaPlaybackCore at 0x5b592 prebuffers the packet
-			// stream here. Eager parsing needs no separate prebuffer operation.
+			// stream here. playIavf reconstructs every parsed branch before it
+			// starts the shared audio timeline.
 			debugC(2, kDebugVideo, "Ripper: IAVF '%s' reached prebuffer command 0x75", name.c_str());
 			break;
 

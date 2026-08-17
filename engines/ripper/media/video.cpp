@@ -900,6 +900,25 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		warning("Ripper: invalid IAVF presentation '%s'", name.c_str());
 		return false;
 	}
+	Common::Array<Common::ScopedPtr<Common::SeekableReadStream> > smackerStreams;
+	smackerStreams.reserve(movie.segments.size());
+	uint64 bufferedVideoBytes = 0;
+	for (uint i = 0; i < movie.segments.size(); ++i) {
+		Common::ScopedPtr<Common::SeekableReadStream> smacker(
+			rebuildSmackerStream(movie.segments[i]));
+		if (!smacker) {
+			warning("Ripper: could not prebuffer IAVF Smacker branch '%s#%u'",
+				name.c_str(), i);
+			return false;
+		}
+		bufferedVideoBytes += smacker->size();
+		smackerStreams.push_back(Common::move(smacker));
+	}
+	debugC(2, kDebugVideo,
+		"Ripper: prebuffered IAVF '%s' videoBranches=%u videoBytes=%llu audioBytes=%u",
+		name.c_str(), smackerStreams.size(),
+		(unsigned long long)bufferedVideoBytes,
+		movie.audio.size());
 
 	Audio::SoundHandle audioHandle;
 	bool audioActive = false;
@@ -950,14 +969,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		// assigns ids one and above to the actual media branches.
 		const uint sequenceId = i + 1;
 		IavfSegment &segment = movie.segments[i];
-		Common::SeekableReadStream *smacker = rebuildSmackerStream(segment);
-		if (smacker) {
-			// The decoder owns the contiguous reconstruction. These packet arrays
-			// are no longer consulted after the stream has been built.
-			segment.setup.clear();
-			segment.frameSizes.clear();
-			segment.framePayloads.clear();
-		}
+		Common::SeekableReadStream *smacker = smackerStreams[i].release();
 		uint branchWidth = movie.presentationWidth;
 		uint branchHeight = movie.presentationHeight;
 		if (smacker && smacker->size() >= 12) {
