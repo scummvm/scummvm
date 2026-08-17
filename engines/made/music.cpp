@@ -182,8 +182,10 @@ void DOSMusicPlayer::resume() {
 }
 
 void DOSMusicPlayer::stop() {
+	// The parser reads the resource buffer directly, so unload it before the
+	// resource is freed below.
 	if (_parser)
-		_parser->stopPlaying();
+		_parser->unloadMusic();
 
 	if (_musicRes) {
 		_vm->_res->freeResource(_musicRes);
