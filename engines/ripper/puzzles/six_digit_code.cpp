@@ -318,8 +318,7 @@ bool SixDigitCodePuzzle::activateControl(uint control, uint completionFlag,
 }
 
 void SixDigitCodePuzzle::stopAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 SixDigitCodePuzzle::Result SixDigitCodePuzzle::run(uint completionFlag) {

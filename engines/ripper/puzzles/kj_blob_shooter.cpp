@@ -242,10 +242,8 @@ void KjBlobShooter::stopCue(uint index) {
 }
 
 void KjBlobShooter::stopAllAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		stopCue(cue);
-	for (uint type = 0; type < kBlobTypeCount; ++type)
-		_engine->getMedia()->stopSoundEffect(_movementHandles[type]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
+	stopAudioHandles(_movementHandles, ARRAYSIZE(_movementHandles));
 }
 
 void KjBlobShooter::applyCursor() {

@@ -801,8 +801,7 @@ void KkTileMatchPuzzle::stopCue(uint cue) {
 }
 
 void KkTileMatchPuzzle::stopAudio() {
-	for (uint cue = 0; cue < kCueCount; ++cue)
-		stopCue(cue);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 uint KkTileMatchPuzzle::activeTileCount() const {
