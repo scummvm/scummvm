@@ -109,21 +109,44 @@ void IndexedDisplaySnapshot::clear() {
 	_palette.clear();
 }
 
-void IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
-		const BitmapAssetFrame &bitmap, int x, int y) {
-	for (uint row = 0; row < bitmap.height; ++row) {
-		for (uint column = 0; column < bitmap.width; ++column) {
-			const byte pixel = bitmap.pixels[row * bitmap.width + column];
+bool IndexedBitmapRenderer::drawBitmap(byte *pixels, uint pitch,
+		const BitmapAssetFrame &bitmap, int x, int y,
+		const Common::Rect &clip) {
+	const uint32 expectedPixels = (uint32)bitmap.width * bitmap.height;
+	if (!pixels || pitch == 0 || bitmap.width == 0 || bitmap.height == 0 ||
+			bitmap.pixels.size() != expectedPixels || clip.isEmpty() ||
+			clip.left < 0 || clip.top < 0 || (uint)clip.right > pitch)
+		return false;
+
+	const int64 bitmapRight = (int64)x + bitmap.width;
+	const int64 bitmapBottom = (int64)y + bitmap.height;
+	if (bitmapRight <= clip.left || bitmapBottom <= clip.top ||
+			x >= clip.right || y >= clip.bottom)
+		return true;
+
+	const int destinationLeft = MAX<int64>(x, clip.left);
+	const int destinationTop = MAX<int64>(y, clip.top);
+	const int destinationRight = MIN<int64>(bitmapRight, clip.right);
+	const int destinationBottom = MIN<int64>(bitmapBottom, clip.bottom);
+	for (int destinationY = destinationTop; destinationY < destinationBottom;
+			++destinationY) {
+		const uint sourceY = destinationY - y;
+		for (int destinationX = destinationLeft;
+				destinationX < destinationRight; ++destinationX) {
+			const uint sourceX = destinationX - x;
+			const byte pixel = bitmap.pixels[sourceY * bitmap.width + sourceX];
 			if (pixel != bitmap.transparentColor)
-				pixels[(y + row) * pitch + x + column] = pixel;
+				pixels[destinationY * pitch + destinationX] = pixel;
 		}
 	}
+	return true;
 }
 
 bool IndexedBitmapRenderer::drawNineSlice(byte *pixels, uint pitch,
 		const Common::Array<BitmapAssetFrame> &skin,
-		const Common::Rect &bounds) {
-	if (skin.size() < 9 || skin[0].width == 0 || skin[0].height == 0)
+		const Common::Rect &bounds, const Common::Rect &clip) {
+	if (skin.size() < 9 || skin[0].width == 0 || skin[0].height == 0 ||
+			bounds.isEmpty())
 		return false;
 
 	const int columns = (bounds.width() + skin[0].width - 1) / skin[0].width;
@@ -138,7 +161,8 @@ bool IndexedBitmapRenderer::drawNineSlice(byte *pixels, uint pitch,
 			const uint rowBand = row == 0 ? 0 :
 				(row == rows - 1 ? 2 : 1);
 			const BitmapAssetFrame &tile = skin[rowBand * 3 + columnBand];
-			drawBitmap(pixels, pitch, tile, x, y);
+			if (!drawBitmap(pixels, pitch, tile, x, y, clip))
+				return false;
 			lastTile = &tile;
 			// TileChooserControlFrame at 0x54fbe snaps the final column and
 			// row after rendering their penultimate tiles.

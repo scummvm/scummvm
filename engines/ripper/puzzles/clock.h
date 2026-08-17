@@ -43,8 +43,6 @@ private:
 	bool loadFrames(const char *pattern, uint count,
 		Common::Array<BitmapAssetFrame> &frames);
 	bool loadFrame(const Common::String &name, BitmapAssetFrame &frame);
-	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
 	void render() const;
 	void playCue(uint cue);
 	void stopAudio();

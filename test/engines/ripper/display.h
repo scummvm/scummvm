@@ -67,10 +67,46 @@ public:
 		byte pixels[9];
 		memset(pixels, 3, sizeof(pixels));
 
-		Ripper::IndexedBitmapRenderer::drawBitmap(pixels, 3, bitmap, 1, 1);
+		TS_ASSERT(Ripper::IndexedBitmapRenderer::drawBitmap(pixels, 3, bitmap,
+			1, 1, Common::Rect(0, 0, 3, 3)));
 
 		TS_ASSERT_EQUALS(pixels[1 * 3 + 1], 3);
 		TS_ASSERT_EQUALS(pixels[1 * 3 + 2], 7);
+	}
+
+	void testIndexedBitmapRenderingClipsNegativeDestination() {
+		Ripper::BitmapAssetFrame bitmap;
+		bitmap.width = 3;
+		bitmap.height = 2;
+		bitmap.transparentColor = 0;
+		for (uint pixel = 1; pixel <= 6; ++pixel)
+			bitmap.pixels.push_back(pixel);
+		byte pixels[9];
+		memset(pixels, 0, sizeof(pixels));
+
+		TS_ASSERT(Ripper::IndexedBitmapRenderer::drawBitmap(pixels, 3, bitmap,
+			-1, 1, Common::Rect(0, 0, 3, 3)));
+
+		TS_ASSERT_EQUALS(pixels[1 * 3 + 0], 2);
+		TS_ASSERT_EQUALS(pixels[1 * 3 + 1], 3);
+		TS_ASSERT_EQUALS(pixels[2 * 3 + 0], 5);
+		TS_ASSERT_EQUALS(pixels[2 * 3 + 1], 6);
+	}
+
+	void testIndexedBitmapRenderingRejectsMalformedFrame() {
+		Ripper::BitmapAssetFrame bitmap;
+		bitmap.width = 2;
+		bitmap.height = 2;
+		bitmap.transparentColor = 0;
+		bitmap.pixels.push_back(7);
+		byte pixels[4];
+		memset(pixels, 3, sizeof(pixels));
+
+		TS_ASSERT(!Ripper::IndexedBitmapRenderer::drawBitmap(pixels, 2, bitmap,
+			0, 0, Common::Rect(0, 0, 2, 2)));
+
+		for (uint i = 0; i < ARRAYSIZE(pixels); ++i)
+			TS_ASSERT_EQUALS(pixels[i], 3);
 	}
 
 	void testIndexedBitmapNineSliceUsesRowMajorFrameTiles() {
@@ -87,7 +123,8 @@ public:
 		memset(pixels, 0, sizeof(pixels));
 
 		TS_ASSERT(Ripper::IndexedBitmapRenderer::drawNineSlice(
-			pixels, 5, skin, Common::Rect(1, 1, 4, 4)));
+			pixels, 5, skin, Common::Rect(1, 1, 4, 4),
+			Common::Rect(0, 0, 5, 5)));
 
 		for (uint row = 0; row < 3; ++row) {
 			for (uint column = 0; column < 3; ++column)

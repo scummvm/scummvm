@@ -518,14 +518,8 @@ void DialogueChooser::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) c
 			g_system->unlockScreen();
 		return;
 	}
-	for (uint row = 0; row < bitmap.height; ++row) {
-		byte *destination = (byte *)screen->getBasePtr(x, y + row);
-		const byte *source = bitmap.pixels.data() + row * bitmap.width;
-		for (uint column = 0; column < bitmap.width; ++column) {
-			if (source[column] != bitmap.transparentColor)
-				destination[column] = source[column];
-		}
-	}
+	IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch,
+		bitmap, x, y, Common::Rect(0, 0, screen->w, screen->h));
 	g_system->unlockScreen();
 }
 

@@ -139,7 +139,8 @@ void ModalDialogManager::drawFrame(byte *screen, uint pitch,
 	// RIPPER stores bitmap dimensions and presentation coordinates in
 	// vertical/horizontal order. Translating ResolveChooserFrameTileIndex at
 	// 0x55250 to screen x/y makes MENUB0..8 row-major.
-	IndexedBitmapRenderer::drawNineSlice(screen, pitch, skin, bounds);
+	IndexedBitmapRenderer::drawNineSlice(screen, pitch, skin, bounds,
+		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
 
 void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
@@ -162,9 +163,11 @@ void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
 		const Common::Rect downBounds = textPanelScrollControlBounds(bounds,
 			kTextPanelScrollDown, firstVisible, maximumFirstVisible, style);
 		IndexedBitmapRenderer::drawBitmap(screen, pitch, up,
-			upBounds.left, upBounds.top);
+			upBounds.left, upBounds.top,
+			Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 		IndexedBitmapRenderer::drawBitmap(screen, pitch, down,
-			downBounds.left, downBounds.top);
+			downBounds.left, downBounds.top,
+			Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 		return;
 	}
 	const Common::Array<BitmapAssetFrame> &skin =
@@ -201,11 +204,14 @@ void ModalDialogManager::drawOverflowBar(byte *screen, uint pitch,
 		}
 	}
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, thumb,
-		thumbBounds.left, thumbBounds.top);
+		thumbBounds.left, thumbBounds.top,
+		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, up,
-		upBounds.left, upBounds.top);
+		upBounds.left, upBounds.top,
+		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 	IndexedBitmapRenderer::drawBitmap(screen, pitch, down,
-		downBounds.left, downBounds.top);
+		downBounds.left, downBounds.top,
+		Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 }
 
 Common::Rect ModalDialogManager::textPanelScrollControlBounds(

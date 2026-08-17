@@ -170,23 +170,6 @@ bool ClockPuzzle::loadAssets() {
 	return true;
 }
 
-void ClockPuzzle::drawBitmap(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
-	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
-		const int destinationY = y + sourceY;
-		if (destinationY < 0 || destinationY >= 400)
-			continue;
-		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
-			const int destinationX = x + sourceX;
-			if (destinationX < 0 || destinationX >= 640)
-				continue;
-			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
-			if (pixel != frame.transparentColor)
-				screen[destinationY * pitch + destinationX] = pixel;
-		}
-	}
-}
-
 void ClockPuzzle::render() const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 ||
@@ -199,43 +182,50 @@ void ClockPuzzle::render() const {
 		memcpy(screen->getBasePtr(0, y),
 			_backgroundDisplay.pixels().data() + y * screen->w, screen->w);
 	byte *pixels = (byte *)screen->getPixels();
-	drawBitmap(pixels, screen->pitch, _clockFace, 296, 88 + kSceneOriginY);
+	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
+	IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _clockFace,
+		296, 88 + kSceneOriginY, screenBounds);
 	if (_dialIndices[0] >= 0 && _dialIndices[0] < (int)_minuteFrames.size()) {
 		const Common::Point &position = kDialPositions[_dialIndices[0]];
-		drawBitmap(pixels, screen->pitch, _minuteFrames[_dialIndices[0]],
-			position.x, position.y + kSceneOriginY);
+		IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch,
+			_minuteFrames[_dialIndices[0]], position.x,
+			position.y + kSceneOriginY, screenBounds);
 	}
 	if (_dialIndices[1] >= 0 && _dialIndices[1] < (int)_hourFrames.size()) {
 		const Common::Point &position = kDialPositions[_dialIndices[1]];
-		drawBitmap(pixels, screen->pitch, _hourFrames[_dialIndices[1]],
-			position.x, position.y + kSceneOriginY);
+		IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch,
+			_hourFrames[_dialIndices[1]], position.x,
+			position.y + kSceneOriginY, screenBounds);
 	}
 
-	drawBitmap(pixels, screen->pitch, _armyBackdrop, 492, 206 + kSceneOriginY);
+	IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _armyBackdrop,
+		492, 206 + kSceneOriginY, screenBounds);
 	for (uint i = 0; i < 4; ++i) {
 		const int digit = _firstClockDigits[i];
 		if (digit >= 0 && digit < (int)_armyFrames.size())
-			drawBitmap(pixels, screen->pitch, _armyFrames[digit],
-				kArmyPositions[i].x, kArmyPositions[i].y + kSceneOriginY);
+			IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch,
+				_armyFrames[digit], kArmyPositions[i].x,
+				kArmyPositions[i].y + kSceneOriginY, screenBounds);
 	}
-	drawBitmap(pixels, screen->pitch, _armyFrames[10],
-		kArmyPositions[4].x, kArmyPositions[4].y + kSceneOriginY);
+	IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _armyFrames[10],
+		kArmyPositions[4].x, kArmyPositions[4].y + kSceneOriginY, screenBounds);
 
 	for (uint i = 0; i < 4; ++i) {
 		const int digit = _secondClockDigits[i];
 		if (digit >= 0 && digit < 10)
-			drawBitmap(pixels, screen->pitch, _egyptFrames[digit],
-				kEgyptPositions[i].x, kEgyptPositions[i].y + kSceneOriginY);
+			IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch,
+				_egyptFrames[digit], kEgyptPositions[i].x,
+				kEgyptPositions[i].y + kSceneOriginY, screenBounds);
 	}
-	drawBitmap(pixels, screen->pitch, _egyptFrames[10],
-		kEgyptPositions[4].x, kEgyptPositions[4].y + kSceneOriginY);
+	IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _egyptFrames[10],
+		kEgyptPositions[4].x, kEgyptPositions[4].y + kSceneOriginY, screenBounds);
 	if (_halfDay)
-		drawBitmap(pixels, screen->pitch, _egyptFrames[11],
-			kEgyptPositions[5].x, kEgyptPositions[5].y + kSceneOriginY);
+		IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _egyptFrames[11],
+			kEgyptPositions[5].x, kEgyptPositions[5].y + kSceneOriginY, screenBounds);
 
 	for (uint i = 0; i < 2; ++i)
-		drawBitmap(pixels, screen->pitch, _markerButtons[i],
-			kControls[i + 5].x, kControls[i + 5].y + kSceneOriginY);
+		IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, _markerButtons[i],
+			kControls[i + 5].x, kControls[i + 5].y + kSceneOriginY, screenBounds);
 	g_system->unlockScreen();
 	_backgroundDisplay.restorePalette();
 	presentScreen();

@@ -147,17 +147,6 @@ void RemoteControlManager::applyPalette() {
 	_savedDisplay.restorePalette();
 }
 
-void RemoteControlManager::drawBitmap(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
-	for (uint row = 0; row < frame.height; ++row) {
-		for (uint column = 0; column < frame.width; ++column) {
-			const byte pixel = frame.pixels[row * frame.width + column];
-			if (pixel != frame.transparentColor)
-				screen[(y + row) * pitch + x + column] = pixel;
-		}
-	}
-}
-
 void RemoteControlManager::drawControls() const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
@@ -166,9 +155,11 @@ void RemoteControlManager::drawControls() const {
 		return;
 	}
 	byte *pixels = (byte *)screen->getPixels();
+	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
 	for (uint i = 0; i < _controls.size(); ++i)
-		drawBitmap(pixels, screen->pitch, _controls[i].frame,
-			_controls[i].bounds.left, _controls[i].bounds.top);
+		IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch,
+			_controls[i].frame, _controls[i].bounds.left,
+			_controls[i].bounds.top, screenBounds);
 	g_system->unlockScreen();
 }
 
