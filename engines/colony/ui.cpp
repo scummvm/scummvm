@@ -937,26 +937,14 @@ void ColonyEngine::automapDrawWall(const Common::Rect &vp, int x1, int y1, int x
 	}
 }
 
+// Own side only: a feature opens from the cell that records it, so the far side
+// is a plain wall with nothing to use.
 int ColonyEngine::automapWallFeature(int fx, int fy, int dir) {
-	if (fx >= 0 && fx < 31 && fy >= 0 && fy < 31) {
-		int feat = _mapData[fx][fy][dir][0];
-		if (isPassableFeature(feat))
-			return feat;
-	}
-	int nx = fx, ny = fy, opp = -1;
-	switch (dir) {
-	case kDirNorth: ny = fy + 1; opp = kDirSouth; break;
-	case kDirSouth: ny = fy - 1; opp = kDirNorth; break;
-	case kDirEast:  nx = fx + 1; opp = kDirWest;  break;
-	case kDirWest:  nx = fx - 1; opp = kDirEast;  break;
-	default: return 0;
-	}
-	if (nx >= 0 && nx < 31 && ny >= 0 && ny < 31) {
-		int feat = _mapData[nx][ny][opp][0];
-		if (isPassableFeature(feat))
-			return feat;
-	}
-	return 0;
+	if (fx < 0 || fx >= 31 || fy < 0 || fy >= 31)
+		return 0;
+
+	const int feat = _mapData[fx][fy][dir][0];
+	return isPassableFeature(feat) ? feat : 0;
 }
 
 void ColonyEngine::automapDrawWallWithFeature(const Common::Rect &vp, int wx1, int wy1, int wx2, int wy2, int feat, int lExt, uint32 color) {
@@ -970,6 +958,21 @@ void ColonyEngine::automapDrawWallWithFeature(const Common::Rect &vp, int wx1, i
 		if (plen > 0) {
 			const int tx = (ppx * tickLen) / plen;
 			const int ty = (ppy * tickLen) / plen;
+			if (feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs) {
+				// A flight of steps, as on a floor plan.
+				const int mx = (wx1 + wx2) / 2;
+				const int my = (wy1 + wy2) / 2;
+				const int hx = (wx2 - wx1) / 4;
+				const int hy = (wy2 - wy1) / 4;
+				for (int i = -2; i <= 2; i++) {
+					if (i == 0)
+						continue;
+					const int ox = mx + tx * i;
+					const int oy = my + ty * i;
+					automapDrawWall(vp, ox - hx, oy - hy, ox + hx, oy + hy, color);
+				}
+				return;
+			}
 			const int ax = wx1 + (wx2 - wx1) / 4;
 			const int ay = wy1 + (wy2 - wy1) / 4;
 			const int bx = wx1 + 3 * (wx2 - wx1) / 4;
