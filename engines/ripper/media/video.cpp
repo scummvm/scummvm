@@ -339,16 +339,21 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
 		return false;
 	}
+	const uint frameCount = decoder.getFrameCount();
+	if (frameCount == 0) {
+		warning("Ripper: invalid Smacker segment '%s' frames=%u..%u count=0",
+			name.c_str(), firstFrame, lastFrame);
+		return false;
+	}
 	const bool boundedSegment = firstFrame != 0 || lastFrame != 0xffffffff;
 	const bool boundedLoop = boundedLoopStartFrame != 0xffffffff;
 	if (lastFrame == 0xffffffff)
-		lastFrame = decoder.getFrameCount() - 1;
-	if (decoder.getFrameCount() == 0 || firstFrame > lastFrame ||
-			lastFrame >= decoder.getFrameCount() ||
+		lastFrame = frameCount - 1;
+	if (firstFrame > lastFrame || lastFrame >= frameCount ||
 			(boundedLoop && (!boundedSegment || boundedLoopStartFrame < firstFrame ||
 				boundedLoopStartFrame > lastFrame))) {
 		warning("Ripper: invalid Smacker segment '%s' frames=%u..%u count=%u",
-			name.c_str(), firstFrame, lastFrame, decoder.getFrameCount());
+			name.c_str(), firstFrame, lastFrame, frameCount);
 		return false;
 	}
 	// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3 is invoked for
@@ -1553,8 +1558,11 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		const bool repeatedLoopPass = pass++ != 0;
 		if (repeatedLoopPass) {
 			stream = openSource(path, kSourceConfiguredPath, source);
-			if (!stream)
-				return false;
+			if (!stream) {
+				warning("Ripper: could not reopen looping scene media '%s'", path.c_str());
+				result = false;
+				break;
+			}
 		}
 	if (isSmacker) {
 		SmackerPlaybackPlan plan;
