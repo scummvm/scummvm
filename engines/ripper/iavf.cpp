@@ -290,6 +290,18 @@ bool parseIavf(Common::SeekableReadStream &stream, const Common::String &name,
 }
 
 Common::SeekableReadStream *rebuildSmackerStream(const IavfSegment &segment) {
+	uint32 setupFrameCount = 0;
+	if (!validateSmackerSetup(segment.setup, setupFrameCount) ||
+			setupFrameCount != segment.expectedFrames ||
+			segment.frameSizes.size() != segment.expectedFrames ||
+			segment.framePayloads.size() != segment.expectedFrames ||
+			segment.frameAudioOffsets.size() != segment.expectedFrames)
+		return nullptr;
+	for (uint i = 0; i < segment.frameSizes.size(); ++i) {
+		if (segment.frameSizes[i] != segment.framePayloads[i].size())
+			return nullptr;
+	}
+
 	uint64 totalSize = 104 + (uint64)segment.frameSizes.size() * 4 +
 		segment.setup.size() - 104;
 	for (uint i = 0; i < segment.framePayloads.size(); ++i)
@@ -297,7 +309,10 @@ Common::SeekableReadStream *rebuildSmackerStream(const IavfSegment &segment) {
 	if (totalSize > 0xffffffffULL)
 		return nullptr;
 
-	byte *output = new byte[(uint32)totalSize];
+	// MemoryReadStream disposes owned buffers with free().
+	byte *output = (byte *)malloc((uint32)totalSize);
+	if (!output)
+		return nullptr;
 	uint32 cursor = 0;
 	memcpy(output + cursor, segment.setup.data(), 104);
 	cursor += 104;
