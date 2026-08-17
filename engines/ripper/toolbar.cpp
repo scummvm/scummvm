@@ -26,6 +26,7 @@
 #include "graphics/surface.h"
 
 #include "ripper/detection.h"
+#include "ripper/diagnostics/screen_presenter.h"
 #include "ripper/display.h"
 #include "ripper/input.h"
 #include "ripper/modal_dialog.h"
@@ -33,6 +34,7 @@
 #include "ripper/remote_control.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
+#include "ripper/settings.h"
 #include "ripper/wac/wac.h"
 
 namespace Ripper {
@@ -469,6 +471,49 @@ void ToolbarManager::dispatchAction(uint actionIndex) {
 		"Ripper: toolbar action=%u id=0x%x label='%s' handler=%s is stubbed",
 		actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),
 		kToolbarHandlerNames[actionIndex]);
+}
+
+int ToolbarManager::resolveActionKey(uint16 command, uint enabledActionMask) const {
+	if (command == 0)
+		return -1;
+
+	// ResolveFrontEndActionIdFromInput at 0x14001 scans the persistent retail
+	// command words in action order and accepts the first match whose bit is set
+	// in the active scene mask. The demo resolver at 0x1241e uses its shifted
+	// eight-word table without a mask parameter.
+	for (uint actionIndex = 0; actionIndex < _actions.size(); ++actionIndex) {
+		const uint settingsIndex = _demoVariant ? actionIndex + 1 : actionIndex;
+		if ((!_demoVariant && (enabledActionMask & (1 << actionIndex)) == 0) ||
+				_engine->getSettings()->getActionKey(settingsIndex) != command)
+			continue;
+		debugC(3, kDebugInput,
+			"Ripper: resolved toolbar key command=0x%04x action=%u id=0x%x "
+			"enabledMask=0x%03x demo=%d",
+			command, actionIndex + 1, actionIndex + 0x514,
+			enabledActionMask, _demoVariant);
+		return actionIndex;
+	}
+	return -1;
+}
+
+bool ToolbarManager::dispatchActionKey(uint actionIndex, uint16 command,
+		const char *source) {
+	if (actionIndex >= _actions.size())
+		return false;
+
+	const Common::String keyLabel = formatKeyCommandLabel(command);
+	const Common::String actionLabel = _actions[actionIndex].label;
+	leave();
+	debugC(1, kDebugInput,
+		"Ripper: toolbar hotkey triggered command=0x%04x key='%s' action=%u "
+		"id=0x%x label='%s' source=%s",
+		command, keyLabel.c_str(), actionIndex + 1, actionIndex + 0x514,
+		actionLabel.c_str(), source ? source : "unknown");
+	showScreenMessage(Common::String::format("Toolbar hotkey %s: %s",
+		keyLabel.c_str(), actionLabel.c_str()));
+	presentScreen();
+	dispatchAction(actionIndex);
+	return true;
 }
 
 bool ToolbarManager::service(const MouseState &mouse, uint enabledActionMask,

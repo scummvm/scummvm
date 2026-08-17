@@ -311,31 +311,7 @@ void OptionsPanelManager::drawText(byte *screen, uint pitch, int x, int y,
 }
 
 Common::String OptionsPanelManager::formatKeyLabel(uint16 command) const {
-	if ((command & 0xff00) == 0 && (command & 0xff) >= 0x20 && (command & 0xff) <= 0x7e) {
-		char character = command & 0xff;
-		if (character >= 'a' && character <= 'z')
-			character -= 'a' - 'A';
-		return Common::String(character);
-	}
-	if ((command & 0xff00) >= 0x3b00 && (command & 0xff00) <= 0x4400)
-		return Common::String::format("F%u", ((command >> 8) - 0x3b) + 1);
-	switch (command) {
-	case 0x0008: return "BACKSPACE";
-	case 0x0009: return "TAB";
-	case 0x000d: return "ENTER";
-	case 0x001b: return "ESC";
-	case 0x4700: return "HOME";
-	case 0x4800: return "UP";
-	case 0x4900: return "PAGE UP";
-	case 0x4b00: return "LEFT";
-	case 0x4d00: return "RIGHT";
-	case 0x4f00: return "END";
-	case 0x5000: return "DOWN";
-	case 0x5100: return "PAGE DOWN";
-	case 0x5200: return "INSERT";
-	case 0x5300: return "DELETE";
-	default: return Common::String::format("0x%04X", command);
-	}
+	return formatKeyCommandLabel(command);
 }
 
 void OptionsPanelManager::clearKeyLabel() {
