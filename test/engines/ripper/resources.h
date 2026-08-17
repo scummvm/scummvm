@@ -173,6 +173,27 @@ public:
 		TS_ASSERT_EQUALS(frame.pixels[0], 7);
 	}
 
+	void testCustomBitmapFailurePreservesOutput() {
+		byte data[0x1c];
+		memset(data, 0, sizeof(data));
+		data[1] = 1;
+		data[4] = 1;
+		WRITE_LE_UINT16(data + 0x16, 1);
+		WRITE_LE_UINT16(data + 0x18, 2);
+		WRITE_LE_UINT16(data + 0x1a, 3);
+		Common::MemoryReadStream stream(data, sizeof(data), DisposeAfterUse::NO);
+		Ripper::BitmapAssetFrame frame;
+		frame.width = 7;
+		frame.height = 8;
+		frame.pixels.push_back(0xaa);
+
+		TS_ASSERT(!Ripper::decodeBitmapAsset(stream, frame));
+		TS_ASSERT_EQUALS(frame.width, 7);
+		TS_ASSERT_EQUALS(frame.height, 8);
+		TS_ASSERT_EQUALS(frame.pixels.size(), 1U);
+		TS_ASSERT_EQUALS(frame.pixels[0], 0xaa);
+	}
+
 	void testPcxAssetUsesIndexedPixelsAndVgaPalette() {
 		Common::Array<byte> data;
 		data.resize(128 + 2 + 1 + 256 * 3);
