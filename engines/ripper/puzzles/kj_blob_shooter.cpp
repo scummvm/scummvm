@@ -255,7 +255,7 @@ void KjBlobShooter::applyCursor() {
 bool KjBlobShooter::markSolved(const char *reason) {
 	if (_result == kSolved)
 		return true;
-	if (!_engine->getMilestones()->set(_completionFlag, true, reason)) {
+	if (!Puzzle::markSolved(_completionFlag, reason)) {
 		_result = kLoadFailed;
 		return false;
 	}

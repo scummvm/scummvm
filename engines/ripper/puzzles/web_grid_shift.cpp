@@ -491,8 +491,7 @@ bool WebGridShiftPuzzle::isSolved() const {
 }
 
 bool WebGridShiftPuzzle::complete(uint completionFlag) {
-	if (!_engine->getMilestones()->set(completionFlag, true,
-			"web-grid-shift-puzzle"))
+	if (!markSolved(completionFlag, "web-grid-shift-puzzle"))
 		return false;
 	debugC(1, kDebugPuzzles,
 		"Ripper: solved web grid shift puzzle milestone=%u "

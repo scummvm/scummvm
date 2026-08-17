@@ -446,8 +446,7 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 						removeFeedbackMarker(_random.getRandomNumber(
 							kFeedbackMarkerCount - 1));
 					} else if (correctEntries == kSequenceLength) {
-						if (!_engine->getMilestones()->set(completionFlag, true,
-								"cd-in-book-puzzle")) {
+						if (!markSolved(completionFlag, "cd-in-book-puzzle")) {
 							result = kLoadFailed;
 						} else {
 							result = kSolved;

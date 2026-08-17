@@ -515,7 +515,7 @@ TableGatePuzzle::Result TableGatePuzzle::serviceMarker(uint completionFlag) {
 		_currentPathNode, terminal);
 	if (terminal == -2) {
 		_markerActive = false;
-		if (!_engine->getMilestones()->set(completionFlag, true, "table-gate-puzzle"))
+		if (!markSolved(completionFlag, "table-gate-puzzle"))
 			return kLoadFailed;
 		debugC(1, kDebugPuzzles,
 			"Ripper: solved table gate puzzle milestone=%u terminalNode=%u",

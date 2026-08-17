@@ -477,8 +477,8 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 						"Ripper: solved tarot puzzle milestone=%u held=%u state=[%s]",
 						completionFlag, _model.heldCard(),
 						stateString().c_str());
-					result = _engine->getMilestones()->set(completionFlag, true,
-						"tarot-card-puzzle") ? kSolved : kLoadFailed;
+					result = markSolved(completionFlag, "tarot-card-puzzle") ?
+						kSolved : kLoadFailed;
 					active = false;
 				}
 			}

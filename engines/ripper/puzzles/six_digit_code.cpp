@@ -287,8 +287,7 @@ bool SixDigitCodePuzzle::validateEntry(uint completionFlag, Result &result) {
 			"Ripper: six-digit code success flash phase=%u visible=%d",
 			phase, visible);
 	}
-	if (!_engine->getMilestones()->set(completionFlag, true,
-			"six-digit-code-puzzle")) {
+	if (!markSolved(completionFlag, "six-digit-code-puzzle")) {
 		result = kLoadFailed;
 		return false;
 	}

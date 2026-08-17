@@ -860,8 +860,7 @@ Scene::Result KdShootingGallery::run(uint completionFlag) {
 
 	stopAllAudio();
 	if (_result == kSolved &&
-			!_engine->getMilestones()->set(
-				completionFlag, true, "kd-shooting-gallery"))
+			!markSolved(completionFlag, "kd-shooting-gallery"))
 		_result = kLoadFailed;
 	finish("kd-shooting-gallery-exit", 0, true);
 	debugC(_result == kLoadFailed ? 1 : 2, kDebugPuzzles,
