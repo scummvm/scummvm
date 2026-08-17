@@ -1745,7 +1745,7 @@ void room_205_init() {
 		kernel_flip_hotspot(words_Monsieur_Richard, true);
 		conv_run(CONV_RICHARD_18);
 
-	} else if (previous_room != KERNEL_RESTORING_GAME) {
+	} else {
 
 		if (global[jacques_status] == JACQUES_IS_DEAD) {
 			aa[0]                 = kernel_run_animation(kernel_name('b', 9), 1);

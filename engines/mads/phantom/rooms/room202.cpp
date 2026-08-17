@@ -514,7 +514,7 @@ void room_202_init() {
 		seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
 		kernel_seq_depth(seq[fx_left_door], 14);
 
-	} else if (previous_room == KERNEL_RESTORING_GAME) {
+	} else {
 		seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_left_door], 14);
 	}

@@ -124,7 +124,7 @@ void room_109_init() {
 		kernel_seq_depth(seq[fx_middle_door], 14);
 		local->on_floor = 2;
 
-	} else if (previous_room == KERNEL_RESTORING_GAME) {
+	} else {
 		if (local->on_floor == 2) {
 			camera_jump_to(0, MIDDLE_FLOOR);
 			kernel_room_scale(311, 95, 286, 78);

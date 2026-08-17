@@ -999,7 +999,7 @@ void room_204_init() {
 		conv_run(CONV_END_22);
 		conv_export_pointer(&global[player_score]);
 
-	} else if (previous_room != KERNEL_RESTORING_GAME) {
+	} else {
 		player_first_walk(WALK_TO_X_BEHIND_DOOR - 10, WALK_TO_Y_BEHIND_DOOR, FACING_EAST,
 		                  WALK_TO_X_FROM_203, WALK_TO_Y_FROM_203, FACING_EAST, true);
 		player_walk_trigger(ROOM_204_DOOR_CLOSES);
