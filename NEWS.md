@@ -61,6 +61,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed original game bug where conversations with Wolf could freeze the game.
    - Added original game cheat codes for bypassing the maze.
 
+ MADE:
+   - Added support for the ReelMagic MPEG release of Return to Zork.
+
  MM:
    - Fix multiple M&M1 classic combat crashes.
    - Implement M&M1 classic PC speaker sound.

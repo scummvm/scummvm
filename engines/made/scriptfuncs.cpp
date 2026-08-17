@@ -25,6 +25,7 @@
 #include "made/music.h"
 #include "made/database.h"
 #include "made/pmvplayer.h"
+#include "made/mpegplayer.h"
 
 #include "audio/sine.h"
 
@@ -166,6 +167,18 @@ void ScriptFunctions::setupExternalsTable() {
 		External(sfSetSoundVolume);
 		External(sfGetSynthType);
 		External(sfIsSlowSystem);
+
+		// The ReelMagic release appends seven MPEG playback functions to the
+		// table; everything below index 100 is shared with the other releases.
+		if (_vm->getFeatures() & GF_REELMAGIC) {
+			External(sfPlayMpegMovie);
+			External(sfMpegMovieGetState);
+			External(sfMpegMovieClose);
+			External(sfMpegDriverInit);
+			External(sfMpegDriverShutdown);
+			External(sfMpegMoviePause);
+			External(sfMpegMovieGetUserData);
+		}
 	}
 
 }
@@ -1149,6 +1162,112 @@ int16 ScriptFunctions::sfIsSlowSystem(int16 argc, int16 *argv) {
 	// An example is FINTRO00.PMV (with sound) and FINTRO01.PMV (without sound)
 	// One could maybe think about returning 1 here on actually slower systems.
 	return _vm->_introMusicDigital ? 0 : 1;
+}
+
+int16 ScriptFunctions::sfPlayMpegMovie(int16 argc, int16 *argv) {
+	if (argc < 3) {
+		warning("sfPlayMpegMovie: expected 3 arguments, got %d", argc);
+		return 0;
+	}
+
+	// The original builds the file name by prefixing the string of the object
+	// in argv[2] with the path given by the "-P:" command line switch. Under
+	// ScummVM the game directory is searched instead, so the name is enough.
+	const char *movieName = _vm->_dat->getObjectString(argv[2]);
+	if (!movieName || !*movieName) {
+		// The original prints "** Plaympegmovie nil" in this case
+		warning("sfPlayMpegMovie: object %d holds no movie name", argv[2]);
+		return 0;
+	}
+
+	debug(1, "sfPlayMpegMovie(%d, %d, '%s')", argv[0], argv[1], movieName);
+
+	// argv[1] is the play mode the card's driver took per handle: 2 loops the
+	// movie, 1 runs it through once and leaves its last picture standing, which
+	// is how the still room backgrounds are done. It cannot be worked out from
+	// the file, since FLHILK20 is a program stream with audio and still loops.
+	// Playback runs on in the background; the script polls sfMpegMovieGetState to
+	// find out when it has finished.
+	if (!_vm->_mpegPlayer->start(movieName, argv[1]))
+		return 0;
+
+	// Mode 3 is played out here and now. The original interpreter does not hand
+	// control back for this one: it loops on the card's play state until the
+	// movie is no longer running. Returning straight away instead lets the
+	// script run on and the movie is replaced before it is ever seen.
+	if (argv[1] == MpegPlayer::kPlayBlocking) {
+		// Only ever wait for the movie just started. Escape can end it and bring
+		// an overlay back in its place, and waiting on that one would never
+		// return, since an overlay loops for as long as it is left alone.
+		const uint32 token = _vm->_mpegPlayer->playToken();
+		while (_vm->_mpegPlayer->playToken() == token &&
+			_vm->_mpegPlayer->isPlaying() && !_vm->shouldQuit()) {
+			_vm->handleEvents();
+			_vm->_mpegPlayer->update();
+			_vm->_system->delayMillis(10);
+		}
+	}
+
+	return 1;
+}
+
+int16 ScriptFunctions::sfMpegMovieGetState(int16 argc, int16 *argv) {
+	// Polled in a loop while a movie runs, and the only one of the seven whose
+	// return value the original passes through untransformed: a "still playing?"
+	// query. Decode whatever is due before answering, so that the picture keeps
+	// moving while the script waits here. Events are pumped as well, since a
+	// script that does nothing but poll would otherwise never see the Escape
+	// key that ends a cutscene.
+	_vm->handleEvents();
+	_vm->_mpegPlayer->update();
+
+	return _vm->_mpegPlayer->playState();
+}
+
+// The remaining five are what the ReelMagic interpreter does with the card's
+// driver, read out of MADERM.EXE: each is a thin wrapper around one driver_call
+// (BH command, BL media handle, CX subfunction), and the commands are the ones
+// documented for FMPDRV.EXE. None of them takes an argument.
+
+int16 ScriptFunctions::sfMpegMovieClose(int16 argc, int16 *argv) {
+	// Command 02h, close the media handle, after which the interpreter forgets
+	// it. Closing the card's handle is what stopped playback, so the player is
+	// stopped here too. The original returns 0 and every caller discards it.
+	debug(1, "sfMpegMovieClose: close media handle");
+	_vm->_mpegPlayer->close();
+	return 0;
+}
+
+int16 ScriptFunctions::sfMpegDriverInit(int16 argc, int16 *argv) {
+	// Brings the driver up: command 0Eh reset, then a 16K buffer is allocated
+	// and the whole thing fails if that cannot be had. Nothing to do here, but
+	// the answer matters: the script clears its own MPEG flag if this says 0.
+	debug(1, "sfMpegDriverInit");
+	return 1;
+}
+
+int16 ScriptFunctions::sfMpegDriverShutdown(int16 argc, int16 *argv) {
+	// Shuts the driver down: closes the handle through the very same code as
+	// 102, resets the driver and frees the buffer 103 allocated.
+	debug(1, "sfMpegDriverShutdown");
+	_vm->_mpegPlayer->close();
+	return 1;
+}
+
+int16 ScriptFunctions::sfMpegMoviePause(int16 argc, int16 *argv) {
+	// Command 04h pauses the media handle on its current picture. The wrapper
+	// hands back 1 regardless of the driver's result.
+	debug(1, "sfMpegMoviePause");
+	_vm->_mpegPlayer->pause();
+	return 1;
+}
+
+int16 ScriptFunctions::sfMpegMovieGetUserData(int16 argc, int16 *argv) {
+	// Reads back the arbitrary "user data" kept against the handle (command 0Ah
+	// subfunction 0208h). Nothing ever stores any, and the wrapper returns 1
+	// regardless of what comes back.
+	debug(1, "sfMpegMovieGetUserData");
+	return 1;
 }
 
 } // End of namespace Made
