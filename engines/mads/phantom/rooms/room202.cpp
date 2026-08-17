@@ -274,13 +274,10 @@ static void handle_animation_degas() {
 				degas_reset_frame = 1;
 				break; /* do talk */
 
-			case 2:
+			case 2: /* pull bag up under arm (new node) */
+			case 3: /* pull bag up under arm (new node) while shutting up */
 				degas_reset_frame = 58;
-				break; /* pull bag up under arm (new node) */
-
-			case 3:
-				degas_reset_frame = 58;
-				break; /* pull bag up under arm (new node) while shutting up */
+				break; 
 
 			default:
 				degas_reset_frame = 0;

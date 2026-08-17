@@ -162,10 +162,6 @@ static void handle_animation_flor() {
 			local->raoul_action = CONV22_RAOUL_SHUT_UP;
 			break;
 
-		case 86:  /* a few frames just after kiss (where Florent leaves) */
-			conv_release();
-			break;
-
 		case 173: /* end of leave */
 			flor_reset_frame = 172;
 			break;
@@ -187,6 +183,7 @@ static void handle_animation_flor() {
 
 		case 21:  /* end of Raoul awaking          */
 		case 180: /* end of Raoul glancing to case */
+		case 86:  /* a few frames just after kiss (where Florent leaves) */
 			conv_release();
 			break;
 

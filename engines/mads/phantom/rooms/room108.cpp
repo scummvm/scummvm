@@ -397,14 +397,13 @@ static void process_conversation_charles() {
 	/* ==================== Set up me and you triggers ============== */
 
 	if ((player_verb != conv002_nomore_first) &&
-	    (player_verb != conv002_saytwo_abc) &&
-	    (player_verb != conv002_sayone_abc) &&
-	    (player_verb != conv002_interrogate_chandelier) &&
-	    (player_verb != conv002_interrogate_giry) &&
-	    (player_verb != conv002_interrogate_phantom) &&
-	    (player_verb != conv002_answers_job) &&
-	    (local->char_action != CONV2_CHAR_WRITE) &&
-	    (player_verb != conv002_sayone_abc)) {
+			(player_verb != conv002_saytwo_abc) &&
+			(player_verb != conv002_sayone_abc) &&
+			(player_verb != conv002_interrogate_chandelier) &&
+			(player_verb != conv002_interrogate_giry) &&
+			(player_verb != conv002_interrogate_phantom) &&
+			(player_verb != conv002_answers_job) &&
+			(local->char_action != CONV2_CHAR_WRITE)) {
 		conv_you_trigger(ROOM_108_CHAR_TALK);
 		conv_me_trigger(ROOM_108_CHAR_SHUT_UP);
 	}
