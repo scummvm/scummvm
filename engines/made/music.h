@@ -50,6 +50,14 @@ public:
 
 	virtual bool isPlaying() = 0;
 	virtual void syncSoundSettings() = 0;
+
+	/**
+	 * The synthesiser type the game scripts should see, using the values the
+	 * sfGetSynthType() script external is expected to return: 0 default,
+	 * 1 PC speaker, 2 AdLib / Sound Blaster FM, 3 AdLib Gold, 4 MT-32 on an
+	 * MPU-401. Return to Zork picks different music resources depending on it.
+	 */
+	virtual int16 getSynthType() const { return 0; }
 };
 
 class DOSMusicPlayer : public MusicPlayer {
@@ -70,6 +78,8 @@ public:
 
 	bool isPlaying() override;
 	void syncSoundSettings() override;
+
+	int16 getSynthType() const override;
 
 private:
 	MadeEngine *_vm;
