@@ -575,10 +575,8 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 	Result result = kExited;
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
 			if (command == 0x1b) {

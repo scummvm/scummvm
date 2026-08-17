@@ -549,10 +549,8 @@ bool BoardGamePuzzle::animateMove(const BoardGameModel::Move &move,
 		start.y, start.x, destination.y, destination.x);
 
 	while (!_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		const uint elapsedMillis = MIN<uint32>(
 			g_system->getMillis(true) - startMillis, durationMillis);
 		_movingAnchor.x = start.x +
@@ -768,10 +766,8 @@ BoardGamePuzzle::Result BoardGamePuzzle::run(uint completionFlag) {
 	Result result = kExited;
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		if (_debugHelper.sync(*this))
 			render();
 

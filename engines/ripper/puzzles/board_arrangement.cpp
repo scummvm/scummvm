@@ -433,10 +433,8 @@ BoardArrangementPuzzle::Result BoardArrangementPuzzle::run(uint completionFlag) 
 	render();
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 
 		if (_draggedPiece < 0) {
 			while (_engine->getInput()->hasPendingKey()) {

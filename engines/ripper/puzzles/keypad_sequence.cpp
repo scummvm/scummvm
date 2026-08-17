@@ -302,10 +302,8 @@ bool KeypadSequencePuzzle::waitFeedbackTicks(uint ticks) {
 	const uint32 target = g_system->getMillis() + ticks * kDosTickMillis;
 	while (!_engine->shouldQuit() &&
 			(int32)(target - g_system->getMillis()) > 0) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		serviceBlink();
 		g_system->delayMillis(10);
 	}
@@ -444,10 +442,8 @@ KeypadSequencePuzzle::Result KeypadSequencePuzzle::run(uint completionFlag) {
 	Result result = kExited;
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();

@@ -257,10 +257,8 @@ bool WebGridShiftPuzzle::animateShift(uint targetCell, bool autoPlay) {
 	_engine->getCursor()->setVisible(false);
 	for (uint progress = kAnimationStep; progress <= extent;
 			progress += kAnimationStep) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		renderShift(targetCell, MIN<uint>(progress, extent));
 		g_system->delayMillis(kAnimationFrameMillis);
 	}
@@ -394,10 +392,8 @@ bool WebGridShiftPuzzle::waitTicks(uint ticks) {
 	const uint32 end = g_system->getMillis() + ticks * kDosTickMillis;
 	while (!_engine->shouldQuit() &&
 			(int32)(end - g_system->getMillis()) > 0) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();
@@ -428,10 +424,8 @@ bool WebGridShiftPuzzle::showPreview() {
 		kPreviewHoldTicks * kDosTickMillis;
 	while (!_engine->shouldQuit() &&
 			(int32)(end - g_system->getMillis()) > 0) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		if (_engine->getInput()->hasPendingKey())
 			break;
 		const MouseState mouse = _engine->getInput()->publishMouseState();
@@ -584,10 +578,8 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 	Result result = kExited;
 	bool active = runAutoPlay(autoMoveLimit, completionFlag, result);
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 
 		int targetCell = -1;
 		uint16 command = 0;

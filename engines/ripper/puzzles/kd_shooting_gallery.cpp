@@ -762,10 +762,8 @@ bool KdShootingGallery::animateResultsUntilInput() {
 	_engine->getInput()->drainKeys();
 	_engine->getInput()->discardMouseTransitions();
 	while (!_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		if (_engine->getInput()->hasPendingKey()) {
 			_engine->getInput()->drainKeys();
 			break;

@@ -219,10 +219,8 @@ bool GcCshPuzzle::waitForCue(uint cue) {
 		return false;
 	while (!_engine->shouldQuit() &&
 			_engine->getMedia()->isSoundEffectActive(_audioHandles[cue])) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();
@@ -352,10 +350,8 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 		kDefaultCursor, _engine->getCursor()->isVisible());
 
 	while (!_engine->shouldQuit() && result == kExited) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		const uint16 command = serviceInput();
 		// ServiceUiControlStateSelection at 0x4a912 runs while the original UI
 		// selection presentation is active, so cursor changes are flushed as part

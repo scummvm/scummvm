@@ -487,10 +487,8 @@ CalculatorPuzzle::Result CalculatorPuzzle::run(uint completionFlag) {
 	Result result = kExited;
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 
 		while (_engine->getInput()->hasPendingKey()) {
 			if (processCommand(_engine->getInput()->consumeKey(), completionFlag, result)) {
