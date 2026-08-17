@@ -46,7 +46,6 @@ void room_101_init() {
 		local->execute_wipe = RESET;
 		local->start_walking = false;
 		local->start_walking_0 = false;
-		local->anim_0_running = false;
 		local->anim_0_running = true;
 
 		/* ======== When false, camera hasn't panned past 208 ======== */
