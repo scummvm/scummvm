@@ -746,6 +746,10 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 	if (targetMap == 0 && targetX == 0 && targetY == 0)
 		return 1;
 
+	// GOTOMAP.C GoTo(): robots never follow a destination.
+	if (pobject->type == 0)
+		return 0;
+
 	if (targetMap == 127) {
 		if (pobject != &_me)
 			return 0;
@@ -814,8 +818,10 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 
 	switch (map[0]) {
 	case kWallFeatureDoor:
+		// GOTOMAP.C OpenDoor(): a door carries a destination like any other
+		// feature, so opening one can warp instead of stepping through.
 		if (map[1] == 0)
-			return 1; // already open  pass through
+			return goToDestination(map, pobject);
 		if (pobject != &_me)
 			return 0; // robots can't open doors
 		// DOS DoDoor: play door animation, player clicks handle to open
@@ -833,7 +839,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 			playAnimation();
 			if (_animationResult) {
 				setDoorState(fromX, fromY, direction, 0);
-				return 1; // pass through
+				return goToDestination(map, pobject);
 			}
 			return 0; // player didn't open the door
 		}
