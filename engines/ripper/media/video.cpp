@@ -26,6 +26,7 @@
 #include "audio/decoders/raw.h"
 #include "common/array.h"
 #include "common/debug.h"
+#include "common/ptr.h"
 #include "common/system.h"
 #include "graphics/blit.h"
 #include "graphics/paletteman.h"
@@ -1124,7 +1125,8 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 	}
 
 	Common::String source;
-	Common::SeekableReadStream *stream = openSource(path, kSourceDirectFile, source);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		openSource(path, kSourceDirectFile, source));
 	if (!stream) {
 		warning("Ripper: could not open media '%s'", path.c_str());
 		return false;
@@ -1160,7 +1162,7 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		plan.placement.x = x;
 		plan.placement.y = y;
 		plan.placement.originY = originY;
-		result = playValidatedSmacker(stream, path, "presentation", plan);
+		result = playValidatedSmacker(stream.release(), path, "presentation", plan);
 	} else if (isIavf) {
 		const bool hasPresentationText = !presentationText.empty();
 		// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3 forces a
@@ -1192,11 +1194,9 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		if (result && hasPresentationText && textCommand == 0 &&
 				!_engine->shouldQuit())
 			result = textCallback.waitForDismissal();
-		delete stream;
 	} else {
 		warning("Ripper: unsupported media format for '%s' format=%s",
 			path.c_str(), mediaFormatName(format));
-		delete stream;
 	}
 	if (displayContextCaptured && !_engine->shouldQuit()) {
 		const bool restored = displayContext.restore();
@@ -1241,21 +1241,20 @@ bool MediaPlayer::playWacPresentation(const Common::String &path, int x, int y) 
 		"Ripper: entering WAC packetized presentation media='%s' position=%d,%d scale=1",
 		path.c_str(), x, y);
 	Common::String source;
-	Common::SeekableReadStream *stream = openSource(path, kSourceDirectFile, source);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		openSource(path, kSourceDirectFile, source));
 	if (!stream) {
 		warning("Ripper: could not open WAC packetized presentation '%s'", path.c_str());
 		return false;
 	}
 	if (detectMediaFormat(*stream) != kMediaFormatIavf) {
 		warning("Ripper: unsupported WAC presentation format for '%s'", path.c_str());
-		delete stream;
 		return false;
 	}
 
 	IndexedDisplaySnapshot displayContext;
 	const bool captured = displayContext.capture();
 	bool result = playIavf(*stream, path, true, x, y, 0, false, !captured, 1);
-	delete stream;
 	if (captured && !_engine->shouldQuit()) {
 		const bool restored = displayContext.restore();
 		debugC(restored ? 2 : 1, kDebugVideo,
@@ -1374,13 +1373,13 @@ bool MediaPlayer::playPuzzleSequenceStream(Common::SeekableReadStream *stream,
 
 bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 		const Common::String &name, int x, int y, bool allowEscSpace) {
-	if (!stream)
+	Common::ScopedPtr<Common::SeekableReadStream> ownedStream(stream);
+	if (!ownedStream)
 		return false;
-	const MediaFormat format = detectMediaFormat(*stream);
+	const MediaFormat format = detectMediaFormat(*ownedStream);
 	if (format != kMediaFormatSmacker && format != kMediaFormatIavf) {
 		warning("Ripper: unsupported archived scene media '%s' format=%s",
 			name.c_str(), mediaFormatName(format));
-		delete stream;
 		return false;
 	}
 
@@ -1395,7 +1394,7 @@ bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 		plan.placement.x = x;
 		plan.placement.y = y;
 		plan.placement.originY = kScenePresentationTop;
-		result = playValidatedSmacker(stream, name,
+		result = playValidatedSmacker(ownedStream.release(), name,
 			"archived scene", plan);
 	} else {
 		// RunShockLeverPuzzleScene at 0x3affb passes each archived outcome
@@ -1403,9 +1402,8 @@ bool MediaPlayer::playSceneStream(Common::SeekableReadStream *stream,
 		// path restores the puzzle page after the presentation completes.
 		IndexedDisplaySnapshot displayContext;
 		const bool captured = displayContext.capture();
-		result = playIavf(*stream, name, allowEscSpace, x, y,
+		result = playIavf(*ownedStream, name, allowEscSpace, x, y,
 			kScenePresentationTop, false, !captured);
-		delete stream;
 		if (captured && !_engine->shouldQuit()) {
 			const bool restored = displayContext.restore();
 			debugC(restored ? 2 : 1, kDebugVideo,
@@ -1504,14 +1502,14 @@ bool MediaPlayer::playTransparentSmackerOverlay(const Common::String &path, int 
 bool MediaPlayer::playInteractiveIavf(const Common::String &path,
 		MediaSequenceCallback *callback, uint16 *command) {
 	Common::String source;
-	Common::SeekableReadStream *stream = openSource(path, kSourceDirectFile, source);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		openSource(path, kSourceDirectFile, source));
 	if (!stream) {
 		warning("Ripper: could not open interactive IAVF media '%s'", path.c_str());
 		return false;
 	}
 	if (detectMediaFormat(*stream) != kMediaFormatIavf) {
 		warning("Ripper: interactive media '%s' is not IAVF", path.c_str());
-		delete stream;
 		return false;
 	}
 
@@ -1520,7 +1518,6 @@ bool MediaPlayer::playInteractiveIavf(const Common::String &path,
 		path.c_str(), callback != nullptr);
 	const bool result = playIavf(*stream, path, false, -1, -1, 0, false,
 		true, kAutoPacketizedDisplayScale, callback, command);
-	delete stream;
 	_input->drainKeys();
 	return result;
 }
@@ -1532,8 +1529,8 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		"Ripper: entering scene presentation media='%s' firstFrameOnly=%d loopUntilInput=%d controls=%d callback=%d",
 		path.c_str(), firstFrameOnly, loopUntilInput, allowEscSpace, callback != nullptr);
 	Common::String source;
-	Common::SeekableReadStream *stream =
-		openSource(path, kSourceConfiguredPath, source);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		openSource(path, kSourceConfiguredPath, source));
 	if (!stream) {
 		warning("Ripper: could not open scene media '%s'", path.c_str());
 		return false;
@@ -1557,7 +1554,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	do {
 		const bool repeatedLoopPass = pass++ != 0;
 		if (repeatedLoopPass) {
-			stream = openSource(path, kSourceConfiguredPath, source);
+			stream.reset(openSource(path, kSourceConfiguredPath, source));
 			if (!stream) {
 				warning("Ripper: could not reopen looping scene media '%s'", path.c_str());
 				result = false;
@@ -1575,7 +1572,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		plan.loop.loopFromStart = loop;
 		plan.callback.sequenceCallback = callback;
 		plan.callback.sequenceCommand = command;
-		result = playValidatedSmacker(stream, path, "scene", plan);
+		result = playValidatedSmacker(stream.release(), path, "scene", plan);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
 			debugC(1, kDebugVideo,
@@ -1585,17 +1582,16 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		if (callback) {
 			warning("Ripper: scene callback is unsupported for packetized media '%s'",
 				path.c_str());
-			delete stream;
 			result = false;
 			break;
 		}
 		result = playIavf(*stream, path, allowEscSpace, x, y,
 			kScenePresentationTop, true, true);
-		delete stream;
+		stream.reset();
 	} else {
 		warning("Ripper: unsupported scene media mode for '%s' format=%s",
 			path.c_str(), mediaFormatName(format));
-		delete stream;
+		stream.reset();
 	}
 	} while (loop && isIavf && !_input->peekMouseState().pressed &&
 		!_engine->shouldQuit() && result &&
