@@ -418,6 +418,24 @@
   Controls 1010 through 1017 invoke `RunOptionsKeyCaptureLoop` at `0x1d753`
   for action slots 0 through 6 and 8; slot 7 retains F1 help. Escape cancels an
   active key capture but exits and commits when the panel itself owns input.
+- Retail `InitializeDefaultSettingsBlob` at `0x1db0e` (`RIPPER.LE`) and
+  `0x1eea2` (v1.05) initializes the nine action command words to
+  `[0x2e00,0x1100,0x1700,0x0077,0x1f00,0x1300,0x1800,0x3b00,0x1000]`:
+  Alt+C, Alt+W, Alt+I, W, Alt+S, Alt+R, Alt+O, F1, and Alt+Q. These map in
+  order to remote setup, world map, inventory, WAC, save, restore, options,
+  help, and quit. `PollKeyboardCommand` at `0x4d364` returns the BIOS AX word,
+  so an Alt-letter stores its Set 1 scan code in the high byte and zero in the
+  low byte; ordinary printable keys store their character in the low byte.
+  `RunOptionsKeyCaptureLoop` accepts any nonzero command except Escape and
+  writes it back to the selected staged slot.
+- `ResolveFrontEndActionIdFromInput` at `0x14001` (`RIPPER.LE`) and `0x1442d`
+  (v1.05) scans those command words in toolbar order. It returns the first
+  matching action whose bit is enabled in the active scene mask. ScummVM uses
+  the same resolver for both the ordinary scene loop and interactive scene
+  media, pauses an active media clock around a nested action, and reports an
+  accepted command through `ScreenPresenter` before dispatch. That transient
+  hotkey message is a ScummVM integration aid; it does not add another action
+  or change the original resolver ordering.
 - `DispatchSceneEntryAction` at `0x36892` routes action 2 to the same
   `HandleSceneSelectionAction` at `0x191e2` used by toolbar action `0x515`.
   `RunSceneSelectionMenu` at `0x20808` groups the 25 travel-entry flags 20

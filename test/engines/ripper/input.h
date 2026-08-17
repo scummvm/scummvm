@@ -45,6 +45,39 @@ public:
 			Common::KeyState(Common::KEYCODE_h, 'h')), (uint16)'h');
 	}
 
+	void testRetailToolbarDefaultsUseBiosCommands() {
+		const Common::KeyCode keycodes[] = {
+			Common::KEYCODE_c, Common::KEYCODE_w, Common::KEYCODE_i,
+			Common::KEYCODE_s, Common::KEYCODE_r, Common::KEYCODE_o,
+			Common::KEYCODE_q
+		};
+		const uint16 commands[] = {
+			0x2e00, 0x1100, 0x1700, 0x1f00, 0x1300, 0x1800, 0x1000
+		};
+		for (uint i = 0; i < ARRAYSIZE(keycodes); ++i) {
+			TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+				Common::KeyState(keycodes[i], keycodes[i], Common::KBD_ALT)), commands[i]);
+		}
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_w, 'w')), 0x0077);
+	}
+
+	void testModifiedFunctionKeysUseBiosCommands() {
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_F1, 0, Common::KBD_SHIFT)), 0x5400);
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_F1, 0, Common::KBD_CTRL)), 0x5e00);
+		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
+			Common::KeyState(Common::KEYCODE_F1, 0, Common::KBD_ALT)), 0x6800);
+	}
+
+	void testKeyCommandLabelsDescribeModifiers() {
+		TS_ASSERT_EQUALS(Ripper::formatKeyCommandLabel(0x1300), "ALT+R");
+		TS_ASSERT_EQUALS(Ripper::formatKeyCommandLabel(0x0012), "CTRL+R");
+		TS_ASSERT_EQUALS(Ripper::formatKeyCommandLabel(0x3b00), "F1");
+		TS_ASSERT_EQUALS(Ripper::formatKeyCommandLabel(0x6800), "ALT+F1");
+	}
+
 	void testRetailPresentationTextShortcutsUseDosControlCharacters() {
 		TS_ASSERT_EQUALS(Ripper::translateKeyToCommand(
 			Common::KeyState(Common::KEYCODE_t, 't', Common::KBD_CTRL)), 0x14);

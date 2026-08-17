@@ -235,11 +235,42 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 		decoder.pauseVideo(true);
 		_mixer->pauseAll(true);
 		logPlaybackPause("Help", true, decoder, name, externalAudio);
-		const bool helpDisplayed = _engine->getScripts()->showHelp("interactive-media");
+		const bool helpDisplayed =
+			_engine->getScripts()->triggerHelpHotkey("interactive-media");
 		_mixer->pauseAll(false);
 		decoder.pauseVideo(false);
 		logPlaybackPause("Help", false, decoder, name, externalAudio);
 		return helpDisplayed;
+	}
+	if (allowSceneHelp) {
+		const uint16 command = _input->peekKey();
+		const int actionIndex =
+			_engine->getScripts()->resolveToolbarActionKey(command);
+		if (actionIndex >= 0) {
+			_input->consumeKey();
+			const bool externalAudioActive = externalAudio &&
+				_mixer->isSoundHandleActive(*externalAudio);
+			decoder.pauseVideo(true);
+			if (externalAudioActive)
+				_mixer->pauseHandle(*externalAudio, true);
+			debugC(2, kDebugVideo,
+				"Ripper: toolbar hotkey suspended interactive media='%s' frame=%d "
+				"command=0x%04x action=%u paused=%d toolbarPaused=%d externalAudio=%d",
+				name.c_str(), decoder.getCurFrame(), command, actionIndex + 1,
+				paused, suppressSceneMouseStop, externalAudioActive);
+			const bool dispatched = _engine->getScripts()->dispatchToolbarActionKey(
+				actionIndex, command, "interactive-media");
+			const bool restorePaused = paused || suppressSceneMouseStop;
+			if (externalAudioActive)
+				_mixer->pauseHandle(*externalAudio, restorePaused);
+			decoder.pauseVideo(restorePaused);
+			debugC(2, kDebugVideo,
+				"Ripper: toolbar hotkey restored interactive media='%s' frame=%d "
+				"command=0x%04x action=%u paused=%d dispatched=%d",
+				name.c_str(), decoder.getCurFrame(), command, actionIndex + 1,
+				restorePaused, dispatched);
+			return dispatched;
+		}
 	}
 	if (!allowEscSpace || !_input->hasPendingKey())
 		return !(_stopSceneOnMouse && !suppressSceneMouseStop &&
@@ -700,7 +731,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		if (!servicePlaybackInput(decoder, allowEscSpace && !callbackOwnsInput,
 				advanceSegment != nullptr,
 				paused, skipToEnd, advanceToNextSegment,
-				externalAudio, toolbarOwnsInput, serviceSceneUi, name)) {
+				externalAudio, toolbarOwnsInput,
+				serviceSceneUi && !callbackOwnsInput, name)) {
 			completed = false;
 			if (advanceToNextSegment) {
 				if (advanceSegment)
@@ -727,6 +759,14 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			}
 			if (!advanceToNextSegment && stoppedByUser && !_engine->shouldQuit())
 				*stoppedByUser = true;
+			break;
+		}
+		if (_engine->getScripts()->hasPendingRuntimeRestore() ||
+				(serviceSceneUi && !callbackOwnsInput &&
+					_engine->getScripts()->hasPendingSceneTransition())) {
+			debugC(1, kDebugScene,
+				"Ripper: interactive media '%s' returning hotkey runtime transition",
+				name.c_str());
 			break;
 		}
 		uint32 audioElapsedMs = 0;

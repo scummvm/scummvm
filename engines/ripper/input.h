@@ -23,6 +23,7 @@
 
 #include "common/events.h"
 #include "common/queue.h"
+#include "common/str.h"
 
 namespace Ripper {
 
@@ -45,6 +46,7 @@ struct MouseState {
 };
 
 uint16 translateKeyToCommand(const Common::KeyState &key);
+Common::String formatKeyCommandLabel(uint16 command);
 
 class InputManager {
 public:
