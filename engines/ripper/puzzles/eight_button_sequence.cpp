@@ -399,8 +399,7 @@ uint16 EightButtonSequencePuzzle::pressButton(uint button) {
 			"Ripper: eight-button sequence success flash phase=%u visible=%d",
 			phase, (phase & 1) != 0);
 	}
-	if (!_engine->getMilestones()->set(
-			_completionFlag, true, "eight-button-sequence-puzzle")) {
+	if (!markSolved(_completionFlag, "eight-button-sequence-puzzle")) {
 		_result = kLoadFailed;
 		return kLoadFailedCommand;
 	}

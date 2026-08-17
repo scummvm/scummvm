@@ -340,7 +340,7 @@ bool KeyGroupPuzzle::isSolved() const {
 }
 
 bool KeyGroupPuzzle::complete(uint completionFlag, const char *source) {
-	if (!_engine->getMilestones()->set(completionFlag, true, source))
+	if (!markSolved(completionFlag, source))
 		return false;
 	debugC(1, kDebugPuzzles,
 		"Ripper: solved key group puzzle milestone=%u target=[%s] source='%s'",

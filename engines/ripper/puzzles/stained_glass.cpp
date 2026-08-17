@@ -693,8 +693,7 @@ StainedGlassPuzzle::Result StainedGlassPuzzle::run(uint completionFlag) {
 				continue;
 			}
 			if (serviceKeyword(command)) {
-				if (!_engine->getMilestones()->set(completionFlag, true,
-						"stained-glass-keyword")) {
+				if (!markSolved(completionFlag, "stained-glass-keyword")) {
 					result = kLoadFailed;
 				} else {
 					result = kSolved;
@@ -715,8 +714,7 @@ StainedGlassPuzzle::Result StainedGlassPuzzle::run(uint completionFlag) {
 					result = kLoadFailed;
 					active = false;
 				} else if (isSolved()) {
-					if (!_engine->getMilestones()->set(completionFlag, true,
-							"stained-glass-puzzle")) {
+					if (!markSolved(completionFlag, "stained-glass-puzzle")) {
 						result = kLoadFailed;
 					} else {
 						result = kSolved;

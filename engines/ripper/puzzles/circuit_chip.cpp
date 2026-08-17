@@ -540,8 +540,7 @@ uint CircuitChipPuzzle::countCorrectGroups(bool logGroups) const {
 }
 
 bool CircuitChipPuzzle::complete(uint completionFlag) {
-	if (!_engine->getMilestones()->set(completionFlag, true,
-			"circuit-chip-puzzle"))
+	if (!markSolved(completionFlag, "circuit-chip-puzzle"))
 		return false;
 	debugC(1, kDebugPuzzles,
 		"Ripper: solved circuit chip puzzle milestone=%u "

@@ -346,8 +346,7 @@ DateSelectionPuzzle::Result DateSelectionPuzzle::run(uint completionFlag) {
 			_engine->getMilestones()->isSet(kFirstDateFlag) &&
 			_engine->getMilestones()->isSet(kSecondDateFlag) &&
 			_engine->getMilestones()->isSet(kRemainingDatesFlag)) {
-		if (!_engine->getMilestones()->set(
-				completionFlag, true, "date-selection-puzzle")) {
+		if (!markSolved(completionFlag, "date-selection-puzzle")) {
 			_result = kLoadFailed;
 		} else {
 			_result = kSolved;

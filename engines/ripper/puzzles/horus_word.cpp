@@ -643,8 +643,7 @@ HorusWordPuzzle::Result HorusWordPuzzle::run(uint completionFlag) {
 		if (stepAnimation(now))
 			render();
 		if (_wordSolved && _settleDeadline == 0) {
-			if (!_engine->getMilestones()->set(completionFlag, true,
-					"horus-word-puzzle")) {
+			if (!markSolved(completionFlag, "horus-word-puzzle")) {
 				result = kLoadFailed;
 			} else {
 				result = kSolved;

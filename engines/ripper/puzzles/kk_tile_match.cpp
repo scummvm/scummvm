@@ -896,8 +896,7 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 				continue;
 			}
 			if (serviceKeyword(command)) {
-				if (!_engine->getMilestones()->set(completionFlag, true,
-						"kk-tile-match-keyword")) {
+				if (!markSolved(completionFlag, "kk-tile-match-keyword")) {
 					result = kLoadFailed;
 				} else {
 					result = kSolved;
@@ -925,8 +924,7 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 						"Ripper: KK tile-match evaluated active=%u matchingFirst=%u states=[%s]",
 						activeTileCount(), matching, slotStateString().c_str());
 					if (matching == 3) {
-						if (!_engine->getMilestones()->set(completionFlag, true,
-								"kk-tile-match-puzzle")) {
+						if (!markSolved(completionFlag, "kk-tile-match-puzzle")) {
 							result = kLoadFailed;
 						} else {
 							result = kSolved;

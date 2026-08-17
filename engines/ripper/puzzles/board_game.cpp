@@ -721,8 +721,7 @@ bool BoardGamePuzzle::runAiTurn() {
 BoardGamePuzzle::Result BoardGamePuzzle::finishResult(uint completionFlag) {
 	Result result = kExited;
 	if (_model.result() > 0) {
-		if (!_engine->getMilestones()->set(
-				completionFlag, true, "board-game-puzzle"))
+		if (!markSolved(completionFlag, "board-game-puzzle"))
 			result = kLoadFailed;
 		else
 			result = kSolved;

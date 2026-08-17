@@ -695,8 +695,7 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 			result = kSolved;
 			// RunShockLeverPuzzleScene at 0x3b90b sets the supplied flag
 			// before presenting M_2 on the hidden-keyword path.
-			if (!_engine->getMilestones()->set(
-					completionFlag, true, "shock-lever-keyword")) {
+			if (!markSolved(completionFlag, "shock-lever-keyword")) {
 				result = kLoadFailed;
 			} else {
 				_completionRecorded = true;
@@ -718,8 +717,7 @@ ShockLeverPuzzle::Result ShockLeverPuzzle::run(uint completionFlag) {
 
 	stopAudio();
 	if (_solved && !_completionRecorded && result != kLoadFailed) {
-		if (!_engine->getMilestones()->set(
-				completionFlag, true, "shock-lever-puzzle")) {
+		if (!markSolved(completionFlag, "shock-lever-puzzle")) {
 			result = kLoadFailed;
 		} else {
 			_completionRecorded = true;
