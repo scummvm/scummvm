@@ -239,7 +239,8 @@ uint16 GymScene::service(uint frame) {
 			_pressedControl, mouse.position.x, mouse.position.y, frame);
 	}
 
-	if ((mouse.released & kMouseButtonLeft) != 0 && _pressedControl >= 0) {
+	if ((mouse.released & kMouseButtonLeft) != 0 && _pressedControl >= 0 &&
+			_pressedControl < (int)ARRAYSIZE(kButtonCommand)) {
 		const int releasedControl = _pressedControl;
 		if (!playControlCue(1))
 			return kFailureCommand;
