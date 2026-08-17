@@ -48,8 +48,6 @@ private:
 	bool captureBackground();
 	void restoreBackground() const;
 	bool loadAssets();
-	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
 	void drawDisplay(byte *screen, uint pitch) const;
 	void render() const;
 	void showButtonFeedback(uint16 command) const;

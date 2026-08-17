@@ -246,9 +246,10 @@ void WacDatabaseSession::drawDatabase() const {
 		return;
 	}
 
-	for (int y = bounds.top; y < bounds.bottom; ++y)
+		for (int y = bounds.top; y < bounds.bottom; ++y)
 		memset(screen->getBasePtr(bounds.left, y), kWacDatabaseBackground,
 			bounds.width());
+	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
 	// TileChooserControlFrame at 0x54fbe walks the original presentation's
 	// transposed coordinate pair. In screen coordinates WACMNU0..8 are the
 	// row-major top, middle, and bottom frame tiles.
@@ -268,7 +269,8 @@ void WacDatabaseSession::drawDatabase() const {
 				const int y = row == rows - 1 ? bounds.bottom - tile.height :
 					bounds.top + row * tileHeight;
 				IndexedBitmapRenderer::drawBitmap(
-					(byte *)screen->getPixels(), screen->pitch, tile, x, y);
+					(byte *)screen->getPixels(), screen->pitch, tile, x, y,
+					screenBounds);
 			}
 		}
 	}
@@ -276,7 +278,7 @@ void WacDatabaseSession::drawDatabase() const {
 		IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(),
 			screen->pitch,
 			_wac->_databaseSkin[_databaseCornerAlternate ? 15 : 0],
-			bounds.left, bounds.top);
+			bounds.left, bounds.top, screenBounds);
 	const Common::String &title = _wac->resourceString(0x4e);
 	const int titleX = client.left + (client.width() - _wac->measureText(title)) / 2;
 	_wac->drawText((byte *)screen->getPixels(), screen->pitch, titleX,

@@ -52,8 +52,6 @@ private:
 	void restoreDisplay();
 	void applyPalette();
 	void drawControls() const;
-	void drawBitmap(byte *screen, uint pitch, const BitmapAssetFrame &frame,
-		int x, int y) const;
 	void drawText(byte *screen, uint pitch, int x, int y,
 		const Common::String &text) const;
 	int findControl(const Common::Point &point) const;

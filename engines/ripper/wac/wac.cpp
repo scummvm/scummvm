@@ -175,7 +175,7 @@ void WacManager::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const 
 		return;
 	}
 	IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(),
-		screen->pitch, bitmap, x, y);
+		screen->pitch, bitmap, x, y, Common::Rect(0, 0, screen->w, screen->h));
 	g_system->unlockScreen();
 }
 

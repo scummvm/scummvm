@@ -137,23 +137,6 @@ bool CalculatorPuzzle::loadAssets() {
 	return true;
 }
 
-void CalculatorPuzzle::drawBitmap(byte *screen, uint pitch,
-		const BitmapAssetFrame &frame, int x, int y) const {
-	for (uint sourceY = 0; sourceY < frame.height; ++sourceY) {
-		const int destinationY = y + sourceY;
-		if (destinationY < 0 || destinationY >= 400)
-			continue;
-		for (uint sourceX = 0; sourceX < frame.width; ++sourceX) {
-			const int destinationX = x + sourceX;
-			if (destinationX < 0 || destinationX >= 640)
-				continue;
-			const byte pixel = frame.pixels[sourceY * frame.width + sourceX];
-			if (pixel != frame.transparentColor)
-				screen[destinationY * pitch + destinationX] = pixel;
-		}
-	}
-}
-
 void CalculatorPuzzle::drawDisplay(byte *screen, uint pitch) const {
 	if (!_poweredOn)
 		return;
@@ -169,7 +152,8 @@ void CalculatorPuzzle::drawDisplay(byte *screen, uint pitch) const {
 		}
 		const BitmapAssetFrame &glyph = _glyphs[glyphIndex];
 		glyphX -= glyph.width - kGlyphOverlap;
-		drawBitmap(screen, pitch, glyph, glyphX, kDisplayY);
+		IndexedBitmapRenderer::drawBitmap(screen, pitch, glyph, glyphX, kDisplayY,
+			Common::Rect(0, 0, kRipperScreenWidth, kRipperScreenHeight));
 	}
 }
 
@@ -207,8 +191,10 @@ void CalculatorPuzzle::showButtonFeedback(uint16 command) const {
 				g_system->unlockScreen();
 			return;
 		}
-		drawBitmap((byte *)screen->getPixels(), screen->pitch, _buttons[i],
-			kButtonLayouts[i].x, kButtonLayouts[i].y + kSceneOriginY);
+		IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch,
+			_buttons[i], kButtonLayouts[i].x,
+			kButtonLayouts[i].y + kSceneOriginY,
+			Common::Rect(0, 0, screen->w, screen->h));
 		g_system->unlockScreen();
 		presentScreen();
 		debugC(3, kDebugPuzzles,

@@ -267,7 +267,9 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 		return;
 	}
 	byte *pixels = (byte *)screen->getPixels();
-	IndexedBitmapRenderer::drawNineSlice(pixels, screen->pitch, _skin, _menuBounds);
+	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
+	IndexedBitmapRenderer::drawNineSlice(pixels, screen->pitch, _skin,
+		_menuBounds, screenBounds);
 	// DrawPromptChooserTemplateLabelCallback at 0x16d0f confines its title
 	// pass to the label strip over the tiled MNU frame. Preserve those frame
 	// pixels here instead of replacing the full heading interior.
@@ -292,7 +294,8 @@ void Inventory::draw(bool usePressed, bool donePressed) const {
 			const BitmapAssetFrame &bitmap = _itemBitmaps[entry.bitmapIndex];
 			IndexedBitmapRenderer::drawBitmap(pixels, screen->pitch, bitmap,
 				bounds.left + kItemImageInset,
-				bounds.top + (bounds.height() - bitmap.height) / 2);
+				bounds.top + (bounds.height() - bitmap.height) / 2,
+				screenBounds);
 		}
 		drawText(pixels, screen->pitch, bounds.left + kItemTextInset,
 			bounds.top + (bounds.height() - _font.lineHeight) / 2,
