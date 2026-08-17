@@ -494,7 +494,6 @@ uint16 CombatEncounter::service(uint frame) {
 	updateMeter(kCreatureMeter, now, true, true);
 	applyIncomingAttack(state.attack, shieldHeld, now, frameIndex);
 	if (_meterPercent[kShieldMeter] == 0 && shieldHeld) {
-		shieldHeld = false;
 		_shieldHeld = false;
 		stopAudio(_shieldHandle);
 		_paletteEffect = kPaletteNormal;

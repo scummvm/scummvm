@@ -185,11 +185,12 @@ bool CombatEncounter::loadBitmapAssets() {
 		const Common::String name = Common::String::format("combat%u.bbm", i);
 		if (!resources->loadBitmapSequence(name, sequence) || sequence.frames.empty())
 			return false;
-		_combatFrames.push_back(sequence.frames[0]);
+		_combatFrames.push_back(Common::move(sequence.frames[0]));
+		const BitmapAssetFrame &frame = _combatFrames.back();
 		debugC(3, kDebugCombat,
 			"Ripper: loaded combat overlay bitmap index=%u size=%ux%u transparent=%u paletteColors=%u",
-			i, sequence.frames[0].width, sequence.frames[0].height,
-			sequence.frames[0].transparentColor, sequence.frames[0].palette.size() / 3);
+			i, frame.width, frame.height, frame.transparentColor,
+			frame.palette.size() / 3);
 	}
 	for (uint i = 0; i < 4; ++i) {
 		BitmapAssetSequence sequence;
@@ -197,7 +198,7 @@ bool CombatEncounter::loadBitmapAssets() {
 			_definition.crosshairPrefix, i);
 		if (!resources->loadBitmapSequence(name, sequence) || sequence.frames.empty())
 			return false;
-		_crosshairFrames.push_back(sequence.frames[0]);
+		_crosshairFrames.push_back(Common::move(sequence.frames[0]));
 	}
 	for (uint i = 0; i < kEffectGroupCount; ++i) {
 		if (!resources->loadBitmapLibrary(_definition.effectLibraries[i], _effectFrames[i]))
@@ -245,7 +246,7 @@ bool CombatEncounter::loadResources(const Common::String &configName, uint diffi
 		scene.basename = basenameFromPath(basename);
 		if (!loadSceneData(scene))
 			return false;
-		_scenes.push_back(scene);
+		_scenes.push_back(Common::move(scene));
 	}
 	if (_scenes.empty()) {
 		warning("Ripper: combat configuration '%s' has no scenes", configName.c_str());

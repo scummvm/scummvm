@@ -220,12 +220,12 @@ void WacDatabaseSession::buildDatabaseEntries() {
 		DatabaseEntry entry;
 		entry.catalog = catalog;
 		entry.label = _wac->resourceString(catalog->textResourceId);
-		_databaseEntries.push_back(entry);
+		_databaseEntries.push_back(Common::move(entry));
 		debugC(2, kDebugWac,
 			"Ripper: WAC database visibleRow=%u entry=%u flag=0x%x textId=0x%x label='%s'",
 			_databaseEntries.size() - 1, catalog->originalIndex,
 			catalog->milestoneFlag, catalog->textResourceId,
-			entry.label.c_str());
+			_databaseEntries.back().label.c_str());
 	}
 	debugC(1, kDebugWac, "Ripper: built WAC database visibleEntries=%u scannedFlags=%u",
 		_databaseEntries.size(), catalogEntryCount);

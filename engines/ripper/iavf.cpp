@@ -185,7 +185,7 @@ static bool parseIavfInternal(Common::SeekableReadStream &stream, const Common::
 			if (!readBlob(stream, descriptor.arg1, setup) ||
 					!validateSmackerSetup(setup, frameCount))
 				return false;
-			setupCache[descriptor.arg0] = setup;
+			setupCache[descriptor.arg0] = Common::move(setup);
 			break;
 		}
 

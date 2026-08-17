@@ -61,7 +61,7 @@ bool DialogueChooser::initialize(ResourceManager &resources, bool retailPresenta
 					Common::String::format("mnarrow%u.bbm", i), sequence) ||
 					sequence.frames.empty())
 				return false;
-			_arrowFrames[i] = sequence.frames[0];
+			_arrowFrames[i] = Common::move(sequence.frames[0]);
 		}
 	}
 	debugC(2, kDebugDialogue,
@@ -230,7 +230,7 @@ void DialogueChooser::appendChoice(const Common::String &text, uint16 result) {
 	Choice choice;
 	choice.text = text;
 	choice.result = result;
-	_choices.push_back(choice);
+	_choices.push_back(Common::move(choice));
 }
 
 bool DialogueChooser::activateChoices(const char *source) {
