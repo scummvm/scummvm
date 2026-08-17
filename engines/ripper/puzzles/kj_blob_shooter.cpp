@@ -84,7 +84,7 @@ KjBlobShooter::Config::Config() :
 }
 
 KjBlobShooter::KjBlobShooter(RipperEngine *engine) :
-		Scene(engine), _random("ripper-kj-blob-shooter"),
+		Puzzle(engine), _random("ripper-kj-blob-shooter"),
 		_completionFlag(0), _keywordIndex(0), _presentationTicks(0),
 		_phase(0), _ambientCue(7), _spawnDelayTicks(0),
 		_missedBlobs(0), _destroyedBlobs(0), _weaponEnergyPercent(100),

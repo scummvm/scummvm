@@ -80,7 +80,7 @@ static uint cellIndex(uint row, uint column) {
 } // End of anonymous namespace
 
 WebGridShiftPuzzle::WebGridShiftPuzzle(RipperEngine *engine) :
-		_engine(engine), _random("ripper-web-grid-shift"),
+		Puzzle(engine), _random("ripper-web-grid-shift"),
 		_currentRow(0), _currentCol(4), _keywordProgress(0),
 		_hoveredCell(-1) {
 	for (uint cell = 0; cell < kCellCount; ++cell)

@@ -77,7 +77,7 @@ static Common::Rect textEntryBounds() {
 } // End of anonymous namespace
 
 DateSelectionPuzzle::DateSelectionPuzzle(RipperEngine *engine) :
-		_engine(engine), _mediaIndex(0),
+		Puzzle(engine), _mediaIndex(0),
 		_textEntryActive(false), _result(kExited) {
 }
 

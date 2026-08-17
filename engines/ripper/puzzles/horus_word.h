@@ -26,23 +26,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class HorusWordPuzzle {
+class HorusWordPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit HorusWordPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	class DebugHelper {
@@ -82,7 +77,6 @@ private:
 	bool hasVisibleLetters() const;
 	Common::String selectedWord() const;
 
-	RipperEngine *_engine;
 	AssetLibrary _library;
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _mask;

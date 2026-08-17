@@ -27,23 +27,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class CrystalPuzzle {
+class CrystalPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit CrystalPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool captureBackground();
@@ -68,7 +63,6 @@ private:
 	Common::Point trayPosition(uint piece) const;
 	Common::Point gridPosition(uint cell, const BitmapAssetFrame &frame) const;
 
-	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _placedFrames;
 	Common::Array<BitmapAssetFrame> _trayFrames;
 	Common::Array<BitmapAssetFrame> _blankingFrames;

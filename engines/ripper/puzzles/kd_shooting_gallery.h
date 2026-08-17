@@ -27,8 +27,8 @@
 
 #include "ripper/display.h"
 #include "ripper/media.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
-#include "ripper/scenes/scene.h"
 
 namespace Common {
 class INIFile;
@@ -36,7 +36,7 @@ class INIFile;
 
 namespace Ripper {
 
-class KdShootingGallery : public Scene, public MediaSequenceCallback {
+class KdShootingGallery : public Puzzle, public MediaSequenceCallback {
 public:
 	explicit KdShootingGallery(RipperEngine *engine);
 

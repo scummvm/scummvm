@@ -147,7 +147,7 @@ static Common::Rect circuitManualMediaBounds() {
 } // End of anonymous namespace
 
 CircuitChipPuzzle::CircuitChipPuzzle(RipperEngine *engine) :
-		_engine(engine), _draggedChip(-1), _hoveredControl(-1),
+		Puzzle(engine), _draggedChip(-1), _hoveredControl(-1),
 		_correctGroupCount(0), _idleMeterFrame(0), _keywordProgress(0),
 		_lastMeterTick(0), _manualFirstVisible(0),
 		_manualMaximumFirstVisible(0), _manualVisibleRows(0),

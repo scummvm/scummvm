@@ -26,23 +26,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class GcCshPuzzle {
+class GcCshPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit GcCshPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool captureBackground();
@@ -63,7 +58,6 @@ private:
 	bool isExitRegion(const Common::Point &point) const;
 	void updateCursor(const Common::Point &point);
 
-	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _choiceFrames[4];
 	IndexedDisplaySnapshot _backgroundDisplay;
 	Audio::SoundHandle _audioHandles[2];

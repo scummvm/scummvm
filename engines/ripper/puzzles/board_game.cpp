@@ -246,7 +246,7 @@ void BoardGamePuzzle::DebugHelper::draw(const BoardGamePuzzle &puzzle,
 }
 
 BoardGamePuzzle::BoardGamePuzzle(RipperEngine *engine) :
-		_engine(engine), _random("ripper-board-game"), _movingAnchor(0, 0),
+		Puzzle(engine), _random("ripper-board-game"), _movingAnchor(0, 0),
 		_selectedCell(-1), _hoveredCode(-1), _movingSource(-1), _movingPiece(0),
 		_keywordIndex(0), _searchDepth(1), _savedSelectionIndex(0),
 		_savedCursorVisible(true), _movingActive(false) {

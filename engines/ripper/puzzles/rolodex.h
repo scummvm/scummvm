@@ -25,22 +25,17 @@
 #include "common/rect.h"
 
 #include "ripper/media.h"
+#include "ripper/puzzles/puzzle.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class RolodexPuzzle : public MediaSequenceCallback {
+class RolodexPuzzle : public Puzzle, public MediaSequenceCallback {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit RolodexPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 	uint16 service(uint frame) override;
 
 private:
@@ -51,7 +46,6 @@ private:
 	void stopAllAudio();
 	void startAudio(uint index, uint volumePercent = 50, bool loop = false);
 
-	RipperEngine *_engine;
 	Audio::SoundHandle _audioHandles[4];
 	uint _activeSequence;
 	bool _acceptInput;

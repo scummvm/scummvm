@@ -102,7 +102,7 @@ static bool isExitPoint(const Common::Point &point) {
 } // End of anonymous namespace
 
 EightButtonSequencePuzzle::EightButtonSequencePuzzle(RipperEngine *engine) :
-		_engine(engine), _completionFlag(0), _hoveredButton(-1),
+		Puzzle(engine), _completionFlag(0), _hoveredButton(-1),
 		_result(kExited) {
 }
 

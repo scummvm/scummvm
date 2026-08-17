@@ -24,23 +24,18 @@
 
 #include "ripper/display.h"
 #include "ripper/media.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class ShockLeverPuzzle : public MediaSequenceCallback {
+class ShockLeverPuzzle : public Puzzle, public MediaSequenceCallback {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit ShockLeverPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 	uint16 service(uint frame) override;
 	bool ownsInput() const override { return true; }
 
@@ -75,7 +70,6 @@ private:
 	uint countCorrect(bool logState) const;
 	uint16 serviceKeyboard();
 
-	RipperEngine *_engine;
 	AssetLibrary _library;
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _submit;

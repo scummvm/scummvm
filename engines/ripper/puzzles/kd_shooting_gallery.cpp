@@ -116,7 +116,7 @@ KdShootingGallery::Config::Config() : frameRate(0), goal(0),
 	}
 }
 
-KdShootingGallery::KdShootingGallery(RipperEngine *engine) : Scene(engine),
+KdShootingGallery::KdShootingGallery(RipperEngine *engine) : Puzzle(engine),
 		_activeTargetGroup(0), _targetGroupSerial(0),
 		_lastHitTargetGroupSerial(-1), _hitsInCurrentTargetGroup(0),
 		_weaponEnergyPercent(100), _visibleTargetMask(0),

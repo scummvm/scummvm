@@ -70,7 +70,7 @@ static bool isInsideExitControl(const Common::Point &point) {
 
 } // End of anonymous namespace
 
-RolodexPuzzle::RolodexPuzzle(RipperEngine *engine) : _engine(engine),
+RolodexPuzzle::RolodexPuzzle(RipperEngine *engine) : Puzzle(engine),
 		_activeSequence(0), _acceptInput(false) {
 }
 

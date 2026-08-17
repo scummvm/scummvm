@@ -26,23 +26,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class SixDigitCodePuzzle {
+class SixDigitCodePuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit SixDigitCodePuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool loadFrame(const Common::String &path, BitmapAssetFrame &frame);
@@ -60,7 +55,6 @@ private:
 	void stopAudio();
 	Common::String enteredCode() const;
 
-	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _numberFrames;
 	Common::Array<BitmapAssetFrame> _controlFrames;
 	IndexedDisplaySnapshot _baseDisplay;
