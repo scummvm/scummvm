@@ -312,7 +312,7 @@ void room_201_init() {
 
 	/* ========================= Previous Rooms ===================== */
 
-	if ((previous_room == 202) || (previous_room != KERNEL_RESTORING_GAME)) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_202;
 		player.y = PLAYER_Y_FROM_202;
 		player_walk(WALK_TO_X_FROM_202, WALK_TO_Y_FROM_202, FACING_SOUTHWEST);

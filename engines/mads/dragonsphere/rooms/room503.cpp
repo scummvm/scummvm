@@ -241,7 +241,7 @@ static void room_503_init() {
 			WALK_TO_X_FROM_504, WALK_TO_Y_FROM_504, FACING_SOUTHEAST, true);
 		camera_jump_to(160, 0);
 
-	} else if ((previous_room == 502) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_502, PLAYER_Y_FROM_502, FACING_WEST,
 			WALK_TO_X_FROM_502, WALK_TO_Y_FROM_502, FACING_WEST, true);
 		camera_jump_to(320, 0);

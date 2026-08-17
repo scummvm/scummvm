@@ -326,7 +326,7 @@ static void room_614_init() {
 		player.y = WALK_TO_Y_FROM_613;
 		player.facing = FACING_EAST;
 
-	} else if ((previous_room == 613) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 

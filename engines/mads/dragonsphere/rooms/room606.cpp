@@ -542,7 +542,7 @@ static void room_606_init() {
 		kernel_seq_loc(seq[fx_elevator], ELEV_TOP_X, ELEV_TOP_Y);
 		kernel_timing_trigger(1, ROOM_606_RAT_TEXT);
 
-	} else if ((previous_room == 609) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_609, PLAYER_Y_FROM_609, FACING_SOUTH,
 		                  WALK_TO_X_FROM_609, WALK_TO_Y_FROM_609, FACING_SOUTH, true);
 		camera_jump_to(0, BOTTOM_FLOOR);

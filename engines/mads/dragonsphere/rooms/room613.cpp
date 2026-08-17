@@ -157,7 +157,7 @@ static void room_613_init() {
 		seq[fx_right_coal] = kernel_seq_stamp(ss[fx_right_coal], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_right_coal], 14);
 
-	} else if ((previous_room == 606) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 
 		if (global[floor_is_cool]) {
 			ss[fx_left_coal] = kernel_load_series(kernel_name('c', 0), false);

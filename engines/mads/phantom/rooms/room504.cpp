@@ -227,7 +227,7 @@ void room_504_init() {
 		player.y = PLAYER_Y_FROM_502;
 		player.facing = FACING_EAST;
 
-	} else if ((previous_room == 502) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 
 		seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
 		kernel_seq_depth(seq[fx_left_door], 14);

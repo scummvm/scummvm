@@ -111,7 +111,7 @@ void room_109_init() {
 		kernel_seq_depth(seq[fx_top_door], 14);
 		local->on_floor = 3;
 
-	} else if ((previous_room == 110) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x      = PLAYER_X_FROM_110;
 		player.y      = PLAYER_Y_FROM_110;
 		player.facing = FACING_EAST;

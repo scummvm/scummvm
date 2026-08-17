@@ -575,7 +575,7 @@ void room_502_init() {
 
 	/* ========================= Previous Rooms ================== */
 
-	if ((previous_room == 501) || (previous_room != KERNEL_RESTORING_GAME)) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 
 		if (!player.been_here_before) {
 

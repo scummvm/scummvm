@@ -165,7 +165,7 @@ static void room_612_init() {
 		aa[0] = kernel_run_animation(kernel_name('w', 1), 0);
 		kernel_reset_animation(aa[0], 37);
 
-	} else if ((previous_room == 606) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_606;
 		player.y = PLAYER_Y_FROM_606;
 		player.facing = FACING_NORTH;

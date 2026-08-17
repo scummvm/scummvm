@@ -128,7 +128,7 @@ void room_505_init() {
 		}
 	}
 
-	if ((previous_room == 504) || (previous_room != KERNEL_RESTORING_GAME)) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = PLAYER_X_FROM_504;
 		player.y = PLAYER_Y_FROM_504;
 		player.facing = FACING_EAST;

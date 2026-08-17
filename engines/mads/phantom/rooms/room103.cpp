@@ -398,7 +398,7 @@ void room_103_init() {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 1);
 		kernel_seq_depth(seq[fx_door], 14);
 
-	} else if ((previous_room == 105) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x                = PLAYER_X_FROM_105;
 		player.y                = PLAYER_Y_FROM_105;
 		player.facing           = FACING_WEST;
@@ -408,7 +408,7 @@ void room_103_init() {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 6);
 		kernel_seq_depth(seq[fx_door], 14);
 
-	} else if (previous_room == KERNEL_RESTORING_GAME) {
+	} else {
 		if (local->top_of_stand == YES_LEFT) {
 			player.walker_visible = false;
 			aa[5]                 = kernel_run_animation(kernel_name('w', 3), 0);

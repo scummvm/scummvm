@@ -210,7 +210,7 @@ void room_207_init() {
 
 	/* Previous Rooms */
 
-	if ((previous_room == 205) || (previous_room != KERNEL_RESTORING_GAME)) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x      = PLAYER_X_FROM_205;
 		player.y      = PLAYER_Y_FROM_205;
 		player.facing = FACING_NORTH;

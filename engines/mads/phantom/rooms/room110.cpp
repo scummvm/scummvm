@@ -82,7 +82,7 @@ void room_110_init() {
 		player.facing = FACING_SOUTH;
 		player_walk(WALK_TO_X_FROM_112, WALK_TO_Y_FROM_112, FACING_SOUTH);
 
-	} else if ((previous_room == 109) || (previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(OFF_SCREEN_X_FROM_109, OFF_SCREEN_Y_FROM_109, FACING_WEST,
 		                  PLAYER_X_FROM_109, PLAYER_Y_FROM_109, FACING_WEST, true);
 	}
