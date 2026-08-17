@@ -106,7 +106,6 @@ bool parseIavf(Common::SeekableReadStream &stream, const Common::String &name,
 	}
 	if (movie.presentationWidth == 0 || movie.presentationHeight == 0)
 		return false;
-	movie.audio.reserve((uint32)stream.size());
 
 	Common::HashMap<uint32, Common::Array<byte> > setupCache;
 	Common::HashMap<uint32, uint32> audioEndOffsets;
