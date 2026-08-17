@@ -395,8 +395,7 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 					result = kLoadFailed;
 					break;
 				}
-				if (!_engine->getMilestones()->set(completionFlag, true,
-						"gc-csh-puzzle")) {
+				if (!markSolved(completionFlag, "gc-csh-puzzle")) {
 					result = kLoadFailed;
 					break;
 				}

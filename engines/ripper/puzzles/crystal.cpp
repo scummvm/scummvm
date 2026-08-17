@@ -324,7 +324,7 @@ void CrystalPuzzle::seedInitialPieces(uint puzzleLevel) {
 }
 
 bool CrystalPuzzle::complete(uint completionFlag) {
-	if (!_engine->getMilestones()->set(completionFlag, true, "crystal-puzzle"))
+	if (!markSolved(completionFlag, "crystal-puzzle"))
 		return false;
 	_engine->getMedia()->playSoundEffect("crystal2.wav", _audioHandles[2]);
 	_engine->getMedia()->playSoundEffect("crystal3.wav", _audioHandles[3]);

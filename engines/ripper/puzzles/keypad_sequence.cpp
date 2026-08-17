@@ -388,8 +388,7 @@ bool KeypadSequencePuzzle::pressKey(uint key, uint completionFlag,
 	}
 
 	animateClear(true);
-	if (!_engine->getMilestones()->set(completionFlag, true,
-			"keypad-sequence-puzzle")) {
+	if (!markSolved(completionFlag, "keypad-sequence-puzzle")) {
 		result = kLoadFailed;
 		return false;
 	}

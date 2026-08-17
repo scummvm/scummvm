@@ -354,7 +354,7 @@ bool CalculatorPuzzle::advanceUnlockSequence(uint command, uint completionFlag, 
 			"Ripper: calculator unlock sequence matched step=%u command=0x%04x",
 			_unlockSequenceProgress, command);
 		if (_unlockSequenceProgress == ARRAYSIZE(kUnlockSequence) - 1) {
-			if (!_engine->getMilestones()->set(completionFlag, true, "calculator-puzzle")) {
+			if (!markSolved(completionFlag, "calculator-puzzle")) {
 				result = kLoadFailed;
 				return true;
 			}

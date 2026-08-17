@@ -392,8 +392,7 @@ bool BoardArrangementPuzzle::isSolved(bool logPairs) const {
 bool BoardArrangementPuzzle::complete(uint completionFlag) {
 	if (_engine->getMilestones()->isSet(completionFlag))
 		return true;
-	if (!_engine->getMilestones()->set(completionFlag, true,
-			"board-arrangement-puzzle"))
+	if (!markSolved(completionFlag, "board-arrangement-puzzle"))
 		return false;
 	debugC(1, kDebugPuzzles,
 		"Ripper: solved board arrangement puzzle milestone=%u order=1,0,3,6,2",

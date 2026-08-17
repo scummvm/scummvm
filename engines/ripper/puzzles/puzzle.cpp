@@ -14,6 +14,7 @@
 
 #include "ripper/input.h"
 #include "ripper/media.h"
+#include "ripper/milestones.h"
 #include "ripper/ripper.h"
 
 namespace Ripper {
@@ -26,6 +27,10 @@ bool Puzzle::serviceEngineEvents() {
 		return true;
 	_engine->quitGame();
 	return false;
+}
+
+bool Puzzle::markSolved(uint completionFlag, const char *source) {
+	return _engine->getMilestones()->set(completionFlag, true, source);
 }
 
 void Puzzle::stopAudioHandles(Audio::SoundHandle *handles, uint count) {

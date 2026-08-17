@@ -492,7 +492,7 @@ ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 	if (!playOverlay(0) && !_engine->shouldQuit())
 		result = kLoadFailed;
 	if (result == kSolved &&
-			!_engine->getMilestones()->set(completionFlag, true, "clock-puzzle"))
+			!markSolved(completionFlag, "clock-puzzle"))
 		result = kLoadFailed;
 	stopAudio();
 	restoreBackground();
