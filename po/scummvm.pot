@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-08-17 08:20+0000\n"
+"POT-Creation-Date: 2026-08-17 11:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7599,6 +7599,14 @@ msgstr ""
 
 #: engines/colony/metaengine.cpp:195 engines/ultima/ultima8/metaengine.cpp:89
 msgid "Fire weapon"
+msgstr ""
+
+#: engines/colony/metaengine.cpp:201
+msgid "Zoom in (map)"
+msgstr ""
+
+#: engines/colony/metaengine.cpp:208
+msgid "Zoom out (map)"
 msgstr ""
 
 #: engines/colony/savegame.cpp:291
