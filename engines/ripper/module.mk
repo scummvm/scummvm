@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	diagnostics/screen_presenter.o \
 	dialogue.o \
 	display.o \
+	ini.o \
 	iavf.o \
 	iff.o \
 	input.o \

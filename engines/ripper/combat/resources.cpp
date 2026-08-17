@@ -25,24 +25,10 @@
 #include "common/formats/ini-file.h"
 
 #include "ripper/detection.h"
+#include "ripper/ini.h"
 #include "ripper/ripper.h"
 
 namespace Ripper {
-
-namespace {
-
-static Common::String stripIniComment(Common::String value) {
-	for (uint i = 0; i < value.size(); ++i) {
-		if (value[i] == ';') {
-			value = value.substr(0, i);
-			break;
-		}
-	}
-	value.trim();
-	return value;
-}
-
-} // End of anonymous namespace
 
 CombatEncounter::MeterConfig::MeterConfig() : charge(0), discharge(0),
 		chargeTicks(0), dischargeTicks(0) {
@@ -52,17 +38,12 @@ CombatEncounter::MeterConfig::MeterConfig() : charge(0), discharge(0),
 
 Common::String CombatEncounter::configString(const Common::INIFile &ini,
 		const char *section, const char *key, const Common::String &fallback) const {
-	Common::String value;
-	if (!ini.getKey(key, section, value))
-		return fallback;
-	value = stripIniComment(value);
-	return value.empty() ? fallback : value;
+	return getIniString(ini, section, key, fallback);
 }
 
 int CombatEncounter::configInt(const Common::INIFile &ini, const char *section,
 		const char *key, int fallback) const {
-	const Common::String value = configString(ini, section, key);
-	return value.empty() ? fallback : (int)value.asUint64();
+	return getIniInt(ini, section, key, fallback);
 }
 
 bool CombatEncounter::loadConfig(const Common::String &name, Common::INIFile &ini) {
