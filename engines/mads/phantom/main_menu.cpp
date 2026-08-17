@@ -265,13 +265,6 @@ static void process_sprites() {
 				}
 			} else {
 				sprite = 1;
-				/*
-				if (count != selected_item) {
-				  sprite = 1;
-				} else {
-				  sprite = 2;
-				}
-				*/
 			}
 
 			image.series_id = (byte)menu_item[series].handle;
@@ -283,7 +276,7 @@ static void process_sprites() {
 			image.depth = 0;
 			image.scale = 100;
 
-			match = !(sprite <= MENU_HIGH_SPRITE);
+			match = false;
 
 			for (look = 0; !match && (look < (int)image_marker); look++) {
 				if (image_list[look].segment_id == image.segment_id) {
