@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/ptr.h"
 
 #include "ripper/detection.h"
 #include "ripper/resources.h"
@@ -36,12 +37,11 @@ Common::SeekableReadStream *MediaPlayer::openSource(const Common::String &path,
 
 	if (policy == kSourceDirectFile || policy == kSourceSoundEffect ||
 			policy == kSourceBlockingAudio) {
-		Common::File *file = new Common::File();
+		Common::ScopedPtr<Common::File> file(new Common::File());
 		if (file->open(Common::Path(path))) {
 			source = "filesystem";
-			return file;
+			return file.release();
 		}
-		delete file;
 	}
 
 	if (policy == kSourceConfiguredPath || policy == kSourceBlockingAudio) {
@@ -93,23 +93,23 @@ Common::SeekableReadStream *MediaPlayer::openSource(const Common::String &path,
 bool MediaPlayer::playValidatedSmacker(Common::SeekableReadStream *stream,
 		const Common::String &name, const char *description,
 		const SmackerPlaybackPlan &plan) {
-	if (!stream) {
+	Common::ScopedPtr<Common::SeekableReadStream> ownedStream(stream);
+	if (!ownedStream) {
 		warning("Ripper: could not open %s Smacker '%s'", description, name.c_str());
 		return false;
 	}
 
-	const MediaFormat format = detectMediaFormat(*stream);
+	const MediaFormat format = detectMediaFormat(*ownedStream);
 	if (format != kMediaFormatSmacker) {
 		warning("Ripper: unsupported %s media '%s' format=%s",
 			description, name.c_str(), mediaFormatName(format));
-		delete stream;
 		return false;
 	}
 
 	debugC(3, kDebugVideo,
 		"Ripper: validated %s Smacker media='%s' route=%s",
 		description, name.c_str(), plan.retailRoute);
-	return playSmacker(stream, name, plan);
+	return playSmacker(ownedStream.release(), name, plan);
 }
 
 } // End of namespace Ripper
