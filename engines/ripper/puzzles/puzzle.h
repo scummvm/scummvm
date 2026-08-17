@@ -20,6 +20,9 @@ namespace Ripper {
 class Puzzle : public Scene {
 public:
 	explicit Puzzle(RipperEngine *engine);
+
+protected:
+	bool serviceEngineEvents();
 };
 
 } // End of namespace Ripper
