@@ -196,7 +196,7 @@ bool CompiledScript::parseHeader() {
 			warning("Ripper: script '%s' has invalid interaction callback %u", _memberName.c_str(), i);
 			return false;
 		}
-		_interactions.push_back(interaction);
+		_interactions.push_back(Common::move(interaction));
 	}
 
 	return true;
@@ -284,14 +284,14 @@ bool CompiledScript::decodeCallback(uint32 offset, bool decodeText, Common::Arra
 					_memberName.c_str(), type, command.opcode, command.offset);
 				return false;
 			}
-			command.arguments.push_back(argument);
+			command.arguments.push_back(Common::move(argument));
 		}
 
 		debugC(3, kDebugScripts,
 			"Ripper: script='%s' callback=0x%x opcode=0x%02x selector=%u arguments=%u next=0x%x",
 			_memberName.c_str(), command.offset, command.opcode, command.selector,
 			command.arguments.size(), cursor);
-		commands.push_back(command);
+		commands.push_back(Common::move(command));
 	}
 
 	warning("Ripper: unterminated callback at 0x%x in '%s'", offset, _memberName.c_str());

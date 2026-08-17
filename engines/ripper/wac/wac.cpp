@@ -84,7 +84,7 @@ bool WacManager::initialize(ResourceManager &resources, bool demoVariant) {
 		if (!resources.loadInterfaceBitmapSequence(
 			Common::String::format("wac%u.bbm", i), sequence) || sequence.frames.empty())
 			return false;
-		_controlBitmaps.push_back(sequence.frames[0]);
+		_controlBitmaps.push_back(Common::move(sequence.frames[0]));
 		const BitmapAssetFrame &bitmap = _controlBitmaps.back();
 		const Common::Rect bounds(kWacControlX[i], kWacControlY,
 			kWacControlX[i] + bitmap.width, kWacControlY + bitmap.height);
@@ -110,7 +110,7 @@ bool WacManager::initialize(ResourceManager &resources, bool demoVariant) {
 		if (!resources.loadInterfaceBitmapSequence(
 			Common::String::format("wacmnu%u", i), sequence) || sequence.frames.empty())
 			return false;
-		_databaseSkin.push_back(sequence.frames[0]);
+		_databaseSkin.push_back(Common::move(sequence.frames[0]));
 	}
 
 	_databaseScrollArrows.resize(_demoVariant ? 0 : 4);
@@ -120,7 +120,7 @@ bool WacManager::initialize(ResourceManager &resources, bool demoVariant) {
 				Common::String::format("mnarrow%u.bbm", i), sequence) ||
 				sequence.frames.empty())
 			return false;
-		_databaseScrollArrows[i] = sequence.frames[0];
+		_databaseScrollArrows[i] = Common::move(sequence.frames[0]);
 	}
 
 	_initialized = true;

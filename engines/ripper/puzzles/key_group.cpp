@@ -497,7 +497,7 @@ KeyGroupPuzzle::Result KeyGroupPuzzle::run(uint completionFlag) {
 			} else {
 				const SlotHit slot = findSlot(mouse.position);
 				bool changed = false;
-				const char *operation = "none";
+				const char *operation;
 				if (_heldPiece < 0) {
 					changed = pickUp(slot, mouse.position);
 					operation = "pick";

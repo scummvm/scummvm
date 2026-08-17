@@ -458,7 +458,6 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 			debugC(1, kDebugPuzzles,
 				"Ripper: tarot puzzle timed out elapsedMs=%u limitMs=%u",
 				g_system->getMillis(true) - startTick, timeLimitMillis);
-			active = false;
 			break;
 		}
 
