@@ -417,8 +417,7 @@ void room_504_init() {
 			kernel_draw_to_background(ss[fx_trap_door], 1, KERNEL_HOME, KERNEL_HOME, 0, 100);
 			seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
 			kernel_seq_depth(seq[fx_left_door], 14);
-			seq[fx_left_door] = kernel_seq_stamp(ss[fx_left_door], false, 1);
-			kernel_seq_depth(seq[fx_left_door], 14);
+
 			if (!global[he_listened]) {
 				kernel_timing_trigger(HALF_SECOND, ROOM_504_FROM_502 + 2);
 				/* start listen conversation */
@@ -1047,8 +1046,6 @@ static void handle_animation_play_organ() {
 static void handle_animation_phantom_1() {
 	int phan_reset_frame;
 
-
-
 	if (kernel_anim[aa[3]].frame != local->phan_frame) {
 		local->phan_frame = kernel_anim[aa[3]].frame;
 		phan_reset_frame = -1;
@@ -1154,7 +1151,6 @@ static void handle_animation_phantom_1() {
 			aa[3] = kernel_run_animation(kernel_name('p', 2), ROOM_504_RUN_PART_3);
 
 			kernel_reset_animation(aa[3], 27);
-			phan_reset_frame = -1;
 			local->anim_3_running = false;
 			local->anim_4_running = true;  /* still keep aa[3], though */
 			break;
@@ -1167,8 +1163,6 @@ static void handle_animation_phantom_1() {
 		}
 	}
 }
-
-
 
 static void handle_animation_phantom_2() {
 	int phan_reset_frame;
@@ -1324,7 +1318,6 @@ static void handle_animation_chair() {
 			break;
 
 		case 47:
-			chair_reset_frame = -1;
 			player.commands_allowed = true;
 			player.walker_visible = true;
 			player.ready_to_walk = true;
@@ -1340,7 +1333,6 @@ static void handle_animation_chair() {
 		}
 	}
 }
-
 
 void room_504_daemon() {
 	int id;

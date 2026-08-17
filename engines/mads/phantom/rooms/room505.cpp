@@ -217,9 +217,6 @@ static void process_conversation_coffin() {
 		break;
 
 	case ROOM_505_END_CONV + 1:
-		conv_release();
-		break;
-
 	case ROOM_505_START_CONV:
 		conv_release();
 		break;

@@ -407,6 +407,7 @@ static void handle_animation_raoul_fight() {
 
 		switch (local->raoul_fight_frame) {
 		case 22:  /* almost end of climbing down rope */
+		case 45:
 			conv_release();
 			break;
 
@@ -430,10 +431,6 @@ static void handle_animation_raoul_fight() {
 
 		case 28:
 			local->raoul_fight_action = CONV23_RAOUL_TALK;
-			break;
-
-		case 45:
-			conv_release();
 			break;
 
 		case 46:  /* end of jumping down to second level and talk 1 */
