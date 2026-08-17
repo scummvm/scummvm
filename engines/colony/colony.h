@@ -493,6 +493,8 @@ public:
 	void checkCenter();
 	void fallThroughHole();
 	void playTunnelEffect(bool falling);
+	int rideTunnel(const uint8 *map, Locate *pobject);
+	void doDnStairs();
 
 	void doText(int entry, int center);
 	void inform(const char *text, bool hold);

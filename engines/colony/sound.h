@@ -67,6 +67,7 @@ public:
 		kStop,
 		kTeleport,
 		kSlug,
+		kTunnel1,
 		kTunnel2,
 		kLift,
 		kDrop,

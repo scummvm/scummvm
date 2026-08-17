@@ -364,6 +364,7 @@ bool Sound::playMacSound(int soundID, bool loop) {
 	case kStop: resID = 29382; break;   // FULLSTOP
 	case kTeleport: resID = 9757; break;
 	case kSlug: resID = 8347; break;
+	case kTunnel1: resID = 16403; break;
 	case kTunnel2: resID = 17354; break;
 	case kLift: resID = 28521; break;
 	case kGlass: resID = 19944; break;

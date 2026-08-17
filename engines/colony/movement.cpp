@@ -880,19 +880,32 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		}
 
 	case kWallFeatureUpStairs:
-	case kWallFeatureDnStairs:
-	case kWallFeatureTunnel: {
+	case kWallFeatureDnStairs: {
 		if (pobject != &_me)
-			return 0; // robots don't use stairs/tunnels
+			return 0; // robots don't use stairs
 
-		// Play appropriate sound
-		if (map[0] == kWallFeatureDnStairs)
-			_sound->play(Sound::kClatter);
+		// UpStairs(): the forklift cannot be driven up a staircase.
+		if (map[0] == kWallFeatureUpStairs && _fl)
+			return 0;
+
 		const int result = goToDestination(map, pobject);
+		if (map[0] == kWallFeatureDnStairs && _fl)
+			doDnStairs();
 		if (result == 2) {
 			debugC(1, kColonyDebugMove, "Level change via %s: level=%d pos=(%d,%d)",
-				map[0] == kWallFeatureUpStairs ? "upstairs" :
-				map[0] == kWallFeatureDnStairs ? "downstairs" : "tunnel",
+				map[0] == kWallFeatureUpStairs ? "upstairs" : "downstairs",
+				_level, pobject->xindex, pobject->yindex);
+		}
+		return result;
+	}
+
+	case kWallFeatureTunnel: {
+		if (pobject != &_me)
+			return 0;
+
+		const int result = rideTunnel(map, pobject);
+		if (result == 2) {
+			debugC(1, kColonyDebugMove, "Level change via tunnel: level=%d pos=(%d,%d)",
 				_level, pobject->xindex, pobject->yindex);
 		}
 		return result;
@@ -1071,11 +1084,12 @@ void ColonyEngine::playTunnelEffect(bool falling) {
 	int counter = falling ? 2 : kTunnelST[0];
 	int spd = 180 / counter;
 
-	_sound->play(Sound::kTunnel2);
+	// Tunnel1 runs under the ride, Tunnel2 on arrival.
+	_sound->play(Sound::kTunnel1);
 
 	for (int remaining = tunnelFrames; remaining > 0 && !shouldQuit(); ) {
 		if (!_sound->isPlaying())
-			_sound->play(Sound::kTunnel2);
+			_sound->play(Sound::kTunnel1);
 
 		if (macColor) {
 			fillTunnelPattern(_gfx, effectRect, fillFg, fillBg, _macColors[tunnelColor].pattern);
@@ -1187,6 +1201,28 @@ void ColonyEngine::playTunnelEffect(bool falling) {
 	}
 
 	_sound->stop();
+	_sound->play(Sound::kTunnel2);
+}
+
+// TUNNEL.C tunnel(FALSE): ride the subway, then arrive at the far station.
+int ColonyEngine::rideTunnel(const uint8 *map, Locate *pobject) {
+	const bool hasDestination = (map[2] || map[3] || map[4]);
+
+	playTunnelEffect(false);
+	const int result = goToDestination(map, pobject);
+
+	if (!hasDestination) {
+		terminateGame(false);
+		return 0;
+	}
+	return result;
+}
+
+// DoDnStairs(): only the forklift clatters down the steps.
+void ColonyEngine::doDnStairs() {
+	_sound->play(Sound::kClatter);
+	_gfx->fillRect(_screenR, _gfx->black());
+	_gfx->copyToScreen();
 }
 
 void ColonyEngine::fallThroughHole() {
