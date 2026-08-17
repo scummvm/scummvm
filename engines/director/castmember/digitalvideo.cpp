@@ -577,7 +577,7 @@ uint DigitalVideoCastMember::getMovieCurrentTimeMillis() {
 	if (!_video)
 		return 0;
 	int ticks = _video->getTime();
-	int stamp = MIN<int>(ticks, getMovieTotalTime());
+	int stamp = MIN<int>(ticks, getMovieTotalTimeMillis());
 
 	return stamp;
 }
