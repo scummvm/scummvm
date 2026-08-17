@@ -75,7 +75,7 @@ static bool readDescriptor(Common::SeekableReadStream &stream, IavfDescriptor &d
 
 } // End of anonymous namespace
 
-bool parseIavf(Common::SeekableReadStream &stream, const Common::String &name,
+static bool parseIavfInternal(Common::SeekableReadStream &stream, const Common::String &name,
 		IavfMovie &movie) {
 	if (stream.size() < 0x91 || (uint64)stream.size() > 0xffffffffULL)
 		return false;
@@ -285,6 +285,15 @@ bool parseIavf(Common::SeekableReadStream &stream, const Common::String &name,
 		name.c_str(), movie.presentationWidth, movie.presentationHeight,
 		movie.segments.size(), observedGateCount, movie.audioPayloadBytes, movie.audio.size(),
 		(uint32)((uint64)movie.audio.size() * 1000 / movie.audioByteRate));
+	return true;
+}
+
+bool parseIavf(Common::SeekableReadStream &stream, const Common::String &name,
+		IavfMovie &movie) {
+	IavfMovie parsedMovie;
+	if (!parseIavfInternal(stream, name, parsedMovie))
+		return false;
+	movie = Common::move(parsedMovie);
 	return true;
 }
 
