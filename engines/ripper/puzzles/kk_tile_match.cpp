@@ -584,10 +584,8 @@ bool KkTileMatchPuzzle::waitMillis(uint32 duration, bool interruptible) {
 	const uint32 deadline = g_system->getMillis(true) + duration;
 	while (!_engine->shouldQuit() &&
 			(int32)(deadline - g_system->getMillis(true)) > 0) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		if (interruptible &&
 				(_engine->getInput()->hasPendingKey() ||
 				 _engine->getInput()->peekMouseState().pressed != 0 ||
@@ -875,10 +873,8 @@ KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 		renderBoard();
 	}
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		if (_debugHelper.sync(*this))
 			renderBoard();
 

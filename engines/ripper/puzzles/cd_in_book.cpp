@@ -321,10 +321,8 @@ void CdInBookPuzzle::stopAudio() {
 bool CdInBookPuzzle::waitMillis(uint32 duration) {
 	const uint32 target = g_system->getMillis() + duration;
 	while (!_engine->shouldQuit() && (int32)(g_system->getMillis() - target) < 0) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();
@@ -335,10 +333,8 @@ bool CdInBookPuzzle::waitForCue(uint cue) {
 		return false;
 	while (!_engine->shouldQuit() &&
 			g_system->getMixer()->isSoundHandleActive(_audioHandles[cue])) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();
@@ -387,10 +383,8 @@ CdInBookPuzzle::Result CdInBookPuzzle::run(uint completionFlag) {
 	uint correctEntries = 0;
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
 			if (command == kEscapeCommand) {

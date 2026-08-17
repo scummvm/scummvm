@@ -475,10 +475,8 @@ bool StainedGlassPuzzle::animateTo(const uint *targetOrder,
 		orderString(targetOrder).c_str(), movementCue);
 
 	for (uint step = 1; step <= kTransitionSteps; ++step) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		renderTransition(previousOrder, targetOrder, step);
 		g_system->delayMillis(kTransitionStepMillis);
 	}
@@ -503,10 +501,8 @@ bool StainedGlassPuzzle::waitForPreview(uint32 duration) {
 	const uint32 deadline = g_system->getMillis() + duration;
 	while (!_engine->shouldQuit() &&
 			(int32)(g_system->getMillis() - deadline) < 0) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		if (_engine->getInput()->hasPendingKey()) {
 			_engine->getInput()->drainKeys();
 			break;
@@ -662,10 +658,8 @@ StainedGlassPuzzle::Result StainedGlassPuzzle::run(uint completionFlag) {
 	if (!active && !_engine->shouldQuit())
 		result = kLoadFailed;
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();

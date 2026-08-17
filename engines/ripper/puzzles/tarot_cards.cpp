@@ -327,10 +327,8 @@ bool TarotCardsPuzzle::animateRemainingCards() {
 		playSceneCue(1);
 		for (uint step = 0; step <= kDepartureStepCount; ++step) {
 			renderDeparture(slot, step);
-			if (_engine->getInput()->pollEvents()) {
-				_engine->quitGame();
+			if (!serviceEngineEvents())
 				return false;
-			}
 			g_system->delayMillis(kDepartureStepMillis);
 		}
 		_departed[slot] = true;
@@ -438,10 +436,8 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 	Result result = kExited;
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		while (_engine->getInput()->hasPendingKey()) {
 			if (_engine->getInput()->consumeKey() == kEscapeCommand) {
 				debugC(1, kDebugPuzzles,

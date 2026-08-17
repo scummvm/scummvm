@@ -481,10 +481,8 @@ bool ShockLeverPuzzle::waitForCue(uint cue) {
 		return false;
 	while (!_engine->shouldQuit() &&
 			g_system->getMixer()->isSoundHandleActive(_audioHandles[cue])) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			return false;
-		}
 		g_system->delayMillis(10);
 	}
 	return !_engine->shouldQuit();

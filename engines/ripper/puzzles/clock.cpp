@@ -427,10 +427,8 @@ ClockPuzzle::Result ClockPuzzle::run(uint completionFlag) {
 	Result result = kExited;
 	bool finished = false;
 	while (!_engine->shouldQuit() && !finished) {
-		if (_engine->getInput()->pollEvents()) {
-			_engine->quitGame();
+		if (!serviceEngineEvents())
 			break;
-		}
 		const uint16 keyboardCommand = serviceKeyboard();
 		if (keyboardCommand == kExitCommand) {
 			finished = true;
