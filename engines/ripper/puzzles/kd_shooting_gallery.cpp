@@ -407,8 +407,7 @@ void KdShootingGallery::stopCue(uint index) {
 }
 
 void KdShootingGallery::stopAllAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		stopCue(cue);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 void KdShootingGallery::serviceFrameCue(uint frameIndex) {

@@ -133,8 +133,7 @@ bool DateSelectionPuzzle::playCue(uint cue, uint volumePercent, bool loop) {
 }
 
 void DateSelectionPuzzle::stopAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 DateSelectionPuzzle::DateGroup DateSelectionPuzzle::matchDate(

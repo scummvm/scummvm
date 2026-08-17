@@ -545,8 +545,7 @@ void TableGatePuzzle::resetAfterFailedRun() {
 }
 
 void TableGatePuzzle::stopAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {

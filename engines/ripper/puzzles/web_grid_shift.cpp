@@ -532,8 +532,7 @@ void WebGridShiftPuzzle::playMoveCue() {
 }
 
 void WebGridShiftPuzzle::stopAudio() {
-	for (uint cue = 0; cue < ARRAYSIZE(_audioHandles); ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 Common::String WebGridShiftPuzzle::orderString() const {

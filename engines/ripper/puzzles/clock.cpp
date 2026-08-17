@@ -241,8 +241,7 @@ void ClockPuzzle::playCue(uint cue) {
 }
 
 void ClockPuzzle::stopAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 bool ClockPuzzle::playOverlay(uint index) {
