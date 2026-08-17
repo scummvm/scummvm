@@ -255,6 +255,7 @@ public:
 	bool openInventory(int initialUnlockFlag = -1, bool grantItem = false);
 	bool hasActivePrompt() const;
 	bool showHelp(const char *source);
+	bool triggerHelpHotkey(const char *source);
 	bool hasPendingSceneTransition() const {
 		return _runtimeRestorePending || !_runtime.pendingSceneMember.empty() ||
 			_runtime.cyberExitRequested ||
@@ -269,6 +270,8 @@ public:
 	const Common::String &getPendingSceneMember() const { return _runtime.pendingSceneMember; }
 	const Common::String &getPendingSceneEntryLabel() const { return _runtime.pendingSceneEntryLabel; }
 	bool hasPlayedScene(const Common::String &scene) const { return isScenePlayed(scene); }
+	int resolveToolbarActionKey(uint16 command) const;
+	bool dispatchToolbarActionKey(uint actionIndex, uint16 command, const char *source);
 	bool replayPreviousInteractionScene(const char *source);
 	void requestCyberExit(const char *source);
 	void suspendForCyber(SceneRuntimeState &snapshot);
@@ -293,6 +296,7 @@ private:
 	bool acceptConcurrentRuntimeExit(int result, const char *callbackPhase);
 	bool captureCyberKeyboardCommand();
 	bool serviceCyberKeyboardCommand();
+	bool serviceToolbarActionKey(const char *source, bool &handled);
 	void bindBa0Frame(uint frameIndex);
 	void initializeBa0InteractionState(const ScriptFrame &frame);
 	void beginBa0InteractionWait(const Common::String &frameLabel, uint interactionCount);

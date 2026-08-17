@@ -27,6 +27,63 @@
 
 namespace Ripper {
 
+namespace {
+
+uint16 altLetterScanCode(Common::KeyCode keycode) {
+	switch (keycode) {
+	case Common::KEYCODE_a: return 0x1e;
+	case Common::KEYCODE_b: return 0x30;
+	case Common::KEYCODE_c: return 0x2e;
+	case Common::KEYCODE_d: return 0x20;
+	case Common::KEYCODE_e: return 0x12;
+	case Common::KEYCODE_f: return 0x21;
+	case Common::KEYCODE_g: return 0x22;
+	case Common::KEYCODE_h: return 0x23;
+	case Common::KEYCODE_i: return 0x17;
+	case Common::KEYCODE_j: return 0x24;
+	case Common::KEYCODE_k: return 0x25;
+	case Common::KEYCODE_l: return 0x26;
+	case Common::KEYCODE_m: return 0x32;
+	case Common::KEYCODE_n: return 0x31;
+	case Common::KEYCODE_o: return 0x18;
+	case Common::KEYCODE_p: return 0x19;
+	case Common::KEYCODE_q: return 0x10;
+	case Common::KEYCODE_r: return 0x13;
+	case Common::KEYCODE_s: return 0x1f;
+	case Common::KEYCODE_t: return 0x14;
+	case Common::KEYCODE_u: return 0x16;
+	case Common::KEYCODE_v: return 0x2f;
+	case Common::KEYCODE_w: return 0x11;
+	case Common::KEYCODE_x: return 0x2d;
+	case Common::KEYCODE_y: return 0x15;
+	case Common::KEYCODE_z: return 0x2c;
+	default: return 0;
+	}
+}
+
+char letterForAltScanCode(uint16 scanCode) {
+	for (uint keycode = Common::KEYCODE_a; keycode <= Common::KEYCODE_z; ++keycode) {
+		if (altLetterScanCode((Common::KeyCode)keycode) == scanCode)
+			return 'A' + keycode - Common::KEYCODE_a;
+	}
+	return 0;
+}
+
+uint16 functionKeyCommand(Common::KeyCode keycode, byte flags) {
+	if (keycode < Common::KEYCODE_F1 || keycode > Common::KEYCODE_F10)
+		return 0;
+	const uint functionIndex = keycode - Common::KEYCODE_F1;
+	if ((flags & Common::KBD_ALT) != 0)
+		return (0x68 + functionIndex) << 8;
+	if ((flags & Common::KBD_CTRL) != 0)
+		return (0x5e + functionIndex) << 8;
+	if ((flags & Common::KBD_SHIFT) != 0)
+		return (0x54 + functionIndex) << 8;
+	return (0x3b + functionIndex) << 8;
+}
+
+} // End of anonymous namespace
+
 InputManager::InputManager(Common::EventManager *eventManager) : _eventManager(eventManager) {
 }
 
@@ -34,46 +91,34 @@ uint16 translateKeyToCommand(const Common::KeyState &key) {
 	// PollInteractionAndResolveSelection at 0x13fc7 and
 	// ServiceMediaPresentationTextControl at 0x17014 consume the DOS control
 	// character values for the v1.05 replay, text, and auto-scroll shortcuts.
-	if ((key.flags & Common::KBD_CTRL) != 0) {
-		if (key.keycode == Common::KEYCODE_a)
-			return 0x01;
-		if (key.keycode == Common::KEYCODE_r)
-			return kReplayPreviousSceneCommand;
-		if (key.keycode == Common::KEYCODE_t)
-			return 0x14;
+	if ((key.flags & Common::KBD_CTRL) != 0 &&
+			key.keycode >= Common::KEYCODE_a && key.keycode <= Common::KEYCODE_z)
+		return key.keycode - Common::KEYCODE_a + 1;
+
+	// PollKeyboardCommand at 0x4d364 returns the BIOS AX command. Alt-letter
+	// commands therefore carry the physical Set 1 scan code in the high byte
+	// and zero in the low byte. InitializeDefaultSettingsBlob at 0x1eea2 uses
+	// this representation for all retail Alt toolbar defaults, including Alt+R
+	// as 0x1300. The same translation also preserves Alt+H for the web puzzle.
+	if ((key.flags & Common::KBD_ALT) != 0) {
+		const uint16 letterScanCode = altLetterScanCode(key.keycode);
+		if (letterScanCode != 0)
+			return letterScanCode << 8;
+		if (key.keycode >= Common::KEYCODE_1 && key.keycode <= Common::KEYCODE_9)
+			return (key.keycode - Common::KEYCODE_1 + 2) << 8;
+		if (key.keycode == Common::KEYCODE_0)
+			return 0x0b00;
 	}
 
-	// RunWebGridShiftPuzzleScene at 0x2cdce handles the DOS BIOS Alt+H
-	// command (scan code 0x23, ASCII 0) as the solved-grid preview.
-	if ((key.flags & Common::KBD_ALT) != 0 &&
-			key.keycode == Common::KEYCODE_h)
-		return 0x2300;
+	const uint16 functionCommand = functionKeyCommand(key.keycode, key.flags);
+	if (functionCommand != 0)
+		return functionCommand;
 
 	// ScummVM backends may publish navigation keys in both keycode and ascii
 	// (for example, Right Arrow arrives with ascii 0x0113). Resolve mapped
 	// non-printing keys first so they retain the BIOS command values consumed by
 	// the original input paths.
 	switch (key.keycode) {
-	case Common::KEYCODE_F1:
-		return 0x3b00;
-	case Common::KEYCODE_F2:
-		return 0x3c00;
-	case Common::KEYCODE_F3:
-		return 0x3d00;
-	case Common::KEYCODE_F4:
-		return 0x3e00;
-	case Common::KEYCODE_F5:
-		return 0x3f00;
-	case Common::KEYCODE_F6:
-		return 0x4000;
-	case Common::KEYCODE_F7:
-		return 0x4100;
-	case Common::KEYCODE_F8:
-		return 0x4200;
-	case Common::KEYCODE_F9:
-		return 0x4300;
-	case Common::KEYCODE_F10:
-		return 0x4400;
 	case Common::KEYCODE_HOME:
 		return 0x4700;
 	case Common::KEYCODE_UP:
@@ -97,6 +142,57 @@ uint16 translateKeyToCommand(const Common::KeyState &key) {
 	default:
 		return key.ascii;
 	}
+}
+
+Common::String formatKeyCommandLabel(uint16 command) {
+	switch (command) {
+	case 0x0008: return "BACKSPACE";
+	case 0x0009: return "TAB";
+	case 0x000d: return "ENTER";
+	case 0x001b: return "ESC";
+	case 0x4700: return "HOME";
+	case 0x4800: return "UP";
+	case 0x4900: return "PAGE UP";
+	case 0x4b00: return "LEFT";
+	case 0x4d00: return "RIGHT";
+	case 0x4f00: return "END";
+	case 0x5000: return "DOWN";
+	case 0x5100: return "PAGE DOWN";
+	case 0x5200: return "INSERT";
+	case 0x5300: return "DELETE";
+	default:
+		break;
+	}
+
+	if ((command & 0xff00) == 0) {
+		const byte character = command & 0xff;
+		if (character >= 1 && character <= 26)
+			return Common::String::format("CTRL+%c", 'A' + character - 1);
+		if (character >= 0x20 && character <= 0x7e) {
+			char printable = character;
+			if (printable >= 'a' && printable <= 'z')
+				printable -= 'a' - 'A';
+			return Common::String(printable);
+		}
+	}
+
+	const uint16 scanCode = command >> 8;
+	const char altLetter = letterForAltScanCode(scanCode);
+	if ((command & 0xff) == 0 && altLetter != 0)
+		return Common::String::format("ALT+%c", altLetter);
+	if ((command & 0xff) == 0 && scanCode >= 0x02 && scanCode <= 0x0a)
+		return Common::String::format("ALT+%u", scanCode - 1);
+	if (command == 0x0b00)
+		return "ALT+0";
+	if (scanCode >= 0x3b && scanCode <= 0x44)
+		return Common::String::format("F%u", scanCode - 0x3a);
+	if (scanCode >= 0x54 && scanCode <= 0x5d)
+		return Common::String::format("SHIFT+F%u", scanCode - 0x53);
+	if (scanCode >= 0x5e && scanCode <= 0x67)
+		return Common::String::format("CTRL+F%u", scanCode - 0x5d);
+	if (scanCode >= 0x68 && scanCode <= 0x71)
+		return Common::String::format("ALT+F%u", scanCode - 0x67);
+	return Common::String::format("0x%04X", command);
 }
 
 void InputManager::updateMousePosition(const Common::Event &event) {

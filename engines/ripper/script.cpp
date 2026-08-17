@@ -1661,6 +1661,43 @@ bool ScriptManager::serviceCyberKeyboardCommand() {
 	return advanceBa0ToFrame(nextFrame);
 }
 
+int ScriptManager::resolveToolbarActionKey(uint16 command) const {
+	if (_runtime.cyberActive || !_runtime.awaitingInteraction)
+		return -1;
+	return _engine->getToolbar()->resolveActionKey(command,
+		_runtime.frontEndActionMask);
+}
+
+bool ScriptManager::dispatchToolbarActionKey(uint actionIndex, uint16 command,
+		const char *source) {
+	return _engine->getToolbar()->dispatchActionKey(actionIndex, command, source);
+}
+
+bool ScriptManager::serviceToolbarActionKey(const char *source, bool &handled) {
+	handled = false;
+	const uint16 command = _engine->getInput()->peekKey();
+	const int actionIndex = resolveToolbarActionKey(command);
+	if (actionIndex < 0)
+		return true;
+
+	_engine->getInput()->consumeKey();
+	handled = true;
+	if (!dispatchToolbarActionKey(actionIndex, command, source))
+		return false;
+	if (!_runtime.pendingSceneMember.empty())
+		return performPendingSceneTransition();
+	return true;
+}
+
+bool ScriptManager::triggerHelpHotkey(const char *source) {
+	debugC(1, kDebugInput,
+		"Ripper: help hotkey triggered command=0x%04x key='F1' source=%s",
+		kHelpCommand, source ? source : "unknown");
+	showScreenMessage("Hotkey F1: Help");
+	presentScreen();
+	return showHelp(source);
+}
+
 bool ScriptManager::serviceScene() {
 	if (_runtimeRestorePending) {
 		_runtimeRestorePending = false;
@@ -1703,9 +1740,16 @@ bool ScriptManager::serviceScene() {
 		return serviceCyberKeyboardCommand();
 	if (_engine->getInput()->peekKey() == kHelpCommand) {
 		_engine->getInput()->consumeKey();
-		if (!showHelp("scene"))
+		if (!triggerHelpHotkey("scene"))
 			return false;
 		return true;
+	}
+	if (!_dialogue->isPending()) {
+		bool hotkeyHandled = false;
+		if (!serviceToolbarActionKey("scene-runtime", hotkeyHandled))
+			return false;
+		if (hotkeyHandled)
+			return true;
 	}
 	const BriefingServiceResult briefingResult = _briefing->service(mouse);
 	if (briefingResult == kBriefingFailed)
@@ -1730,6 +1774,11 @@ bool ScriptManager::serviceScene() {
 				return advanceBa0ToFrame(dialogueFrame);
 			}
 		}
+		bool hotkeyHandled = false;
+		if (!serviceToolbarActionKey("dialogue-runtime", hotkeyHandled))
+			return false;
+		if (hotkeyHandled)
+			return true;
 		if (!_runtime.cyberActive && _engine->getToolbar()->service(mouse, _runtime.frontEndActionMask)) {
 			if (!_runtime.pendingSceneMember.empty())
 				return performPendingSceneTransition();

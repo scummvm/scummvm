@@ -44,6 +44,8 @@ public:
 	bool initialize(ResourceManager &resources, bool demoVariant);
 	bool service(const MouseState &mouse, uint enabledActionMask = 0x1ff,
 		int *selectedAction = nullptr);
+	int resolveActionKey(uint16 command, uint enabledActionMask) const;
+	bool dispatchActionKey(uint actionIndex, uint16 command, const char *source);
 	void leave();
 
 private:
