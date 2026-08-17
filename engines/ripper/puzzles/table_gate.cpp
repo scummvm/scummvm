@@ -31,6 +31,7 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/ini.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/modal_dialog.h"
@@ -138,15 +139,6 @@ static const Common::Point kActivationPositions[kLeverCount] = {
 	Common::Point(537, 108 + kSceneOriginY),
 	Common::Point(537, 118 + kSceneOriginY)
 };
-
-static bool readIniUint(Common::INIFile &ini, const Common::String &section,
-		const Common::String &key, uint &result) {
-	Common::String value;
-	if (!ini.getKey(key, section, value))
-		return false;
-	result = (uint)value.asUint64();
-	return true;
-}
 
 } // End of anonymous namespace
 

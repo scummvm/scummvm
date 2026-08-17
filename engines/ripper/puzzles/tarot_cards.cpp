@@ -32,6 +32,7 @@
 #include "ripper/detection.h"
 #include "ripper/diagnostics/screen_presenter.h"
 #include "ripper/input.h"
+#include "ripper/ini.h"
 #include "ripper/media.h"
 #include "ripper/milestones.h"
 #include "ripper/resources.h"
@@ -102,9 +103,8 @@ bool TarotCardsPuzzle::loadConfiguration() {
 			name.c_str());
 		return false;
 	}
-	Common::String value;
-	_timeLimitSeconds = ini.getKey("timelimit", "start", value) ?
-		(uint)value.asUint64() : 0;
+	_timeLimitSeconds = 0;
+	readIniUint(ini, "start", "timelimit", _timeLimitSeconds);
 	debugC(2, kDebugPuzzles,
 		"Ripper: loaded tarot configuration path='%s' difficulty=%u timeLimitSeconds=%u",
 		name.c_str(), puzzleLevel, _timeLimitSeconds);
