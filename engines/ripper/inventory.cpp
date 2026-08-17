@@ -159,7 +159,7 @@ bool Inventory::buildEntries(int initialUnlockFlag) {
 		entry.unlockFlag = unlockFlag;
 		entry.bitmapIndex = choiceId;
 		entry.label = _gameText[kLabelResourceBase + choiceId - 1];
-		_entries.push_back(entry);
+		_entries.push_back(Common::move(entry));
 	}
 	if (_entries.empty()) {
 		debugC(2, kDebugScene, "Ripper: inventory has no available items");

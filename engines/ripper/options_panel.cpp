@@ -740,10 +740,8 @@ bool OptionsPanelManager::runRetail() {
 			debugC(1, kDebugGeneral,
 				"Ripper: Options Panel opening help resource=0x%x", kHelpResource);
 			_engine->getModalDialog()->run(kHelpResource);
-			command = 0;
 		} else if (captureSlot < 0 && command == 0x1b) {
 			active = false;
-			command = 0;
 		}
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();

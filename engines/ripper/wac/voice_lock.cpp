@@ -463,7 +463,6 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 				playbackProgressActive = started && playbackDuration != 0;
 				playbackProgressColumn =
 					playbackProgressActive ? 0 : -1;
-				redraw = true;
 				break;
 			}
 		case 1:
@@ -471,7 +470,6 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 			state.clearEditor();
 				debugC(2, kDebugWac,
 					"Ripper: WAC voice-lock cleared assembled audio");
-				redraw = true;
 				break;
 			case 2: {
 				playbackProgressActive = false;
@@ -494,7 +492,6 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 						selections.size(), assembledAudio.size(),
 						puzzleHelpEnabled,
 						kWacVoiceLockSelectionTolerance);
-					redraw = true;
 				} else {
 					warning("Ripper: could not load WAC voice-lock quantized source 'voxlok1.wav'");
 				}
