@@ -773,6 +773,7 @@ private:
 	void changeAutomapZoom(bool zoomIn);
 	void drawAutomapCryoMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip);
 	void drawAutomapTeleportMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip);
+	void drawAutomapForkliftMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip);
 	void markVisited();
 	void automapCellCorner(int dx, int dy, int xloc, int yloc, int lExt, int tsin, int tcos, int ccx, int ccy, int &sx, int &sy);
 	void automapDrawWall(const Common::Rect &vp, int x1, int y1, int x2, int y2, uint32 color);

@@ -1024,6 +1024,26 @@ void ColonyEngine::drawAutomapTeleportMarker(int x, int y, int halfSize, uint32 
 		_gfx->drawLine(bx1, by1, bx2, by2, color);
 }
 
+// Open-topped carriage: the only marker with a gap, so it reads at any zoom.
+void ColonyEngine::drawAutomapForkliftMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
+	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
+		return;
+
+	const int r = MAX(halfSize, 3);
+	const int seg[4][4] = {
+		{ -r, -r, -r,  r },
+		{  r, -r,  r,  r },
+		{ -r,  r,  r,  r },
+		{ -r,  0,  r,  0 }
+	};
+	for (int i = 0; i < 4; i++) {
+		int x1 = x + seg[i][0], y1 = y + seg[i][1];
+		int x2 = x + seg[i][2], y2 = y + seg[i][3];
+		if (clipLineToRect(x1, y1, x2, y2, clip))
+			_gfx->drawLine(x1, y1, x2, y2, color);
+	}
+}
+
 void ColonyEngine::drawAutomap() {
 	if (_level < 1 || _level > 8)
 		return;
@@ -1067,6 +1087,7 @@ void ColonyEngine::drawAutomap() {
 	const int foodR = scaleR(isMac ? 3 : 2, 1);
 	const int cryoR = scaleR(isMac ? 7 : 5, 3);
 	const int teleR = scaleR(isMac ? 6 : 4, 3);
+	const int forkR = scaleR(isMac ? 6 : 4, 3);
 
 	for (int dy = -radius; dy <= radius; dy++) {
 		for (int dx = -radius; dx <= radius; dx++) {
@@ -1094,8 +1115,8 @@ void ColonyEngine::drawAutomap() {
 
 			const int mx = (x0 + x2) >> 1;
 			const int my = (y0 + y2) >> 1;
-			// Cryo pods and teleporters are static, so they map beyond the
-			// robot/egg radar range.
+			// Cryo pods, teleporters and the forklift are static, so they map
+			// beyond the robot/egg radar range.
 			const bool inRadar = (ABS(dx) <= 6 && ABS(dy) <= 6);
 			const uint8 rnum = _robotArray[cx][cy];
 			if (rnum > 0 && rnum != kMeNum && rnum <= _objects.size() && _objects[rnum - 1].alive) {
@@ -1103,6 +1124,8 @@ void ColonyEngine::drawAutomap() {
 					drawAutomapCryoMarker(mx, my, cryoR, lineColor, vp);
 				else if (_objects[rnum - 1].type == kObjTeleport)
 					drawAutomapTeleportMarker(mx, my, teleR, lineColor, vp);
+				else if (_objects[rnum - 1].type == kObjForkLift)
+					drawAutomapForkliftMarker(mx, my, forkR, lineColor, vp);
 				else if (inRadar)
 					drawMiniMapMarker(mx, my, markerR, lineColor, isMac, &vp);
 			}
