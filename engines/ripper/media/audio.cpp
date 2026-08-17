@@ -24,6 +24,8 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 #include "common/debug.h"
+#include "common/memstream.h"
+#include "common/ptr.h"
 #include "common/system.h"
 
 #include "ripper/cursor.h"
@@ -144,21 +146,23 @@ bool MediaPlayer::playRawSoundEffect(const Common::Array<byte> &data,
 	if (data.empty() || sampleRate == 0)
 		return false;
 
-	byte *copy = (byte *)malloc(data.size());
-	if (!copy)
+	Common::SharedPtr<byte> copy(new byte[data.size()],
+		Common::ArrayDeleter<byte>());
+	memcpy(copy.get(), data.data(), data.size());
+	Common::ScopedPtr<Common::SeekableReadStream> source(
+		new Common::MemoryReadStream(copy, data.size()));
+	Common::ScopedPtr<Audio::SeekableAudioStream> stream(
+		Audio::makeRawStream(source.get(), sampleRate, flags,
+			DisposeAfterUse::YES));
+	if (!stream)
 		return false;
-	memcpy(copy, data.data(), data.size());
-	Audio::SeekableAudioStream *stream = Audio::makeRawStream(copy,
-		data.size(), sampleRate, flags, DisposeAfterUse::YES);
-	if (!stream) {
-		free(copy);
-		return false;
-	}
+	source.release();
 
 	stopSoundEffect(handle);
 	const byte volume = (byte)(MIN<uint>(volumePercent, 100) *
 		Audio::Mixer::kMaxChannelVolume / 100);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle,
+		stream.release(), -1, volume);
 	debugC(2, kDebugAudio,
 		"Ripper: started raw sound effect bytes=%u rate=%u flags=0x%x volume=%u",
 		data.size(), sampleRate, flags, volumePercent);
