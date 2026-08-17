@@ -611,17 +611,17 @@ Common::SeekableReadStream *AssetLibrary::createReadStreamForMember(const Common
 			entry->size, DisposeAfterUse::NO);
 	}
 
-	Common::File *file = new Common::File();
+	Common::ScopedPtr<Common::File> file(new Common::File());
 	if (!file->open(_filename)) {
 		warning("Ripper: could not reopen asset library '%s' for member '%s'",
 			_filename.toString().c_str(), memberName.c_str());
-		delete file;
 		return nullptr;
 	}
 
 	debugC(2, kDebugResources, "Ripper: opening member '%s' from '%s' offset=%u size=%u",
 		memberName.c_str(), _filename.toString().c_str(), entry->offset, entry->size);
-	return new Common::SeekableSubReadStream(file, entry->offset, entry->offset + entry->size,
+	return new Common::SeekableSubReadStream(file.release(), entry->offset,
+		entry->offset + entry->size,
 		DisposeAfterUse::YES);
 }
 
