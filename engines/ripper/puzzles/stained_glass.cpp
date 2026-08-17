@@ -101,7 +101,7 @@ static Common::String orderString(const uint *order) {
 } // End of anonymous namespace
 
 StainedGlassPuzzle::StainedGlassPuzzle(RipperEngine *engine) :
-		_engine(engine), _random("ripper-stained-glass-puzzle"),
+		Puzzle(engine), _random("ripper-stained-glass-puzzle"),
 		_hoveredTile(-1), _keywordIndex(0) {
 	for (uint row = 0; row < kTileCount; ++row) {
 		_initialOrder[row] = row;

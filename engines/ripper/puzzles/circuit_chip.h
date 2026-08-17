@@ -24,23 +24,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class CircuitChipPuzzle {
+class CircuitChipPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit CircuitChipPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool loadAssets();
@@ -67,7 +62,6 @@ private:
 	void stopAudio();
 	Common::String placementString() const;
 
-	RipperEngine *_engine;
 	BitmapAssetFrame _background;
 	Common::Array<BitmapAssetFrame> _chips;
 	Common::Array<BitmapAssetFrame> _idleMeterFrames;

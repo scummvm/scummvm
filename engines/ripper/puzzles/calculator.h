@@ -26,23 +26,18 @@
 #include "common/str.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class CalculatorPuzzle {
+class CalculatorPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit CalculatorPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool captureBackground();
@@ -61,7 +56,6 @@ private:
 	void resetEntry();
 	bool advanceUnlockSequence(uint command, uint completionFlag, Result &result);
 
-	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _buttons;
 	Common::Array<BitmapAssetFrame> _glyphs;
 	IndexedDisplaySnapshot _backgroundDisplay;

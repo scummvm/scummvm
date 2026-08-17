@@ -93,7 +93,7 @@ enum AudioCue {
 
 } // End of anonymous namespace
 
-CdInBookPuzzle::CdInBookPuzzle(RipperEngine *engine) : _engine(engine),
+CdInBookPuzzle::CdInBookPuzzle(RipperEngine *engine) : Puzzle(engine),
 		_random("ripper-cd-in-book-puzzle"), _pressedButton(-1),
 		_hoveredButton(-1), _exitPressed(false) {
 }

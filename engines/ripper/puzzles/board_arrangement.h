@@ -24,23 +24,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class BoardArrangementPuzzle {
+class BoardArrangementPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit BoardArrangementPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool loadAssets();
@@ -63,7 +58,6 @@ private:
 	bool isExitPoint(const Common::Point &point) const;
 	void bringPieceToFront(uint piece);
 
-	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _largePieces;
 	Common::Array<BitmapAssetFrame> _smallPieces;
 	BitmapAssetFrame _template;

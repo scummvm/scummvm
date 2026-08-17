@@ -25,23 +25,18 @@
 #include "common/str.h"
 
 #include "ripper/media.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class DateSelectionPuzzle : public MediaSequenceCallback {
+class DateSelectionPuzzle : public Puzzle, public MediaSequenceCallback {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit DateSelectionPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 	uint16 service(uint frame) override;
 	bool ownsInput() const override { return true; }
 
@@ -61,7 +56,6 @@ private:
 	bool drawFeedback();
 	bool waitTicks(uint ticks);
 
-	RipperEngine *_engine;
 	BitmapAssetFrame _waitFrame;
 	Audio::SoundHandle _audioHandles[5];
 	Common::String _submittedText;

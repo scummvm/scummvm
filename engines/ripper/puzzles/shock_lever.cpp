@@ -93,7 +93,7 @@ static bool isExitPoint(const Common::Point &point) {
 } // End of anonymous namespace
 
 ShockLeverPuzzle::ShockLeverPuzzle(RipperEngine *engine) :
-		_engine(engine), _draggedLever(-1), _hoveredLever(-1),
+		Puzzle(engine), _draggedLever(-1), _hoveredLever(-1),
 		_hoveredControl(kHoverNone), _keywordIndex(0),
 		_lastLeverStepMillis(0), _puzzleHelpFontLoadAttempted(false),
 		_puzzleHelpEnabled(false), _solved(false),

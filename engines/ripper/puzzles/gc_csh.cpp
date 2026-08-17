@@ -96,7 +96,7 @@ static const int kTargetSequence[kSequenceLength] = {1, 2, 3, 1};
 } // End of anonymous namespace
 
 GcCshPuzzle::GcCshPuzzle(RipperEngine *engine) :
-		_engine(engine), _hoveredChoice(-1) {
+		Puzzle(engine), _hoveredChoice(-1) {
 }
 
 bool GcCshPuzzle::captureBackground() {

@@ -99,7 +99,7 @@ static bool isExitRegion(const Common::Point &point) {
 } // End of anonymous namespace
 
 KeypadSequencePuzzle::KeypadSequencePuzzle(RipperEngine *engine) :
-		_engine(engine), _slotMask(0), _lastBlinkMillis(0),
+		Puzzle(engine), _slotMask(0), _lastBlinkMillis(0),
 		_hoveredKey(-1), _pressedKey(-1), _hoveredControl(kHoverNone),
 		_keypadOpen(false), _blinkLit(false) {
 }

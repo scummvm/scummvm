@@ -101,7 +101,7 @@ static bool sHalfDay = false;
 
 } // End of anonymous namespace
 
-ClockPuzzle::ClockPuzzle(RipperEngine *engine) : _engine(engine),
+ClockPuzzle::ClockPuzzle(RipperEngine *engine) : Puzzle(engine),
 		_hoveredControl(-1), _dragDial(-1), _lastDragIndex(-1),
 		_halfDay(false) {
 	memset(_dialIndices, 0, sizeof(_dialIndices));

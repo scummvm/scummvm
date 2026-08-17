@@ -91,7 +91,7 @@ static bool isInsideExitControl(const Common::Point &point) {
 
 } // End of anonymous namespace
 
-CalculatorPuzzle::CalculatorPuzzle(RipperEngine *engine) : _engine(engine),
+CalculatorPuzzle::CalculatorPuzzle(RipperEngine *engine) : Puzzle(engine),
 		_accumulator(0.0), _currentOperand(0.0), _pendingOperator(0xff),
 		_entryMode(0), _unlockSequenceProgress(0), _hoveredButton(-1),
 		_poweredOn(false), _displayCleared(false), _decimalPointEntered(false),

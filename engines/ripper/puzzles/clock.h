@@ -18,23 +18,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class ClockPuzzle {
+class ClockPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit ClockPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool captureBackground();
@@ -57,7 +52,6 @@ private:
 	void loadPersistentState();
 	void storePersistentState() const;
 
-	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _hourFrames;
 	Common::Array<BitmapAssetFrame> _minuteFrames;
 	Common::Array<BitmapAssetFrame> _armyFrames;

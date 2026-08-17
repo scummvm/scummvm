@@ -26,23 +26,18 @@
 #include "common/rect.h"
 
 #include "ripper/media.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class EightButtonSequencePuzzle : public MediaSequenceCallback {
+class EightButtonSequencePuzzle : public Puzzle, public MediaSequenceCallback {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit EightButtonSequencePuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 	uint16 service(uint frame) override;
 	bool continueAfterEnd() const override { return true; }
 	bool ownsInput() const override { return true; }
@@ -66,7 +61,6 @@ private:
 	void stopAudio();
 	Common::String enteredSequence() const;
 
-	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _buttonFrames;
 	Common::Array<BitmapAssetFrame> _feedbackFrames;
 	BitmapAssetFrame _successDark;
