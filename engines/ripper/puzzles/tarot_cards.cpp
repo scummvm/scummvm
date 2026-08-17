@@ -76,7 +76,7 @@ static const Common::Point kSlotPositions[TarotCardsModel::kSlotCount] = {
 } // End of anonymous namespace
 
 TarotCardsPuzzle::TarotCardsPuzzle(RipperEngine *engine) :
-		_engine(engine), _hoveredSlot(-1), _timeLimitSeconds(0) {
+		Puzzle(engine), _hoveredSlot(-1), _timeLimitSeconds(0) {
 	for (uint slot = 0; slot < TarotCardsModel::kSlotCount; ++slot)
 		_departed[slot] = false;
 }

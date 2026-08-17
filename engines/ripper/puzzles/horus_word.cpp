@@ -203,7 +203,7 @@ void HorusWordPuzzle::DebugHelper::draw(
 }
 
 HorusWordPuzzle::HorusWordPuzzle(RipperEngine *engine) :
-		_engine(engine), _hoveredLetter(-1), _lastAnimationTick(0),
+		Puzzle(engine), _hoveredLetter(-1), _lastAnimationTick(0),
 		_settleDeadline(0), _wordComplete(false), _wordSolved(false),
 		_exitRequested(false) {
 }

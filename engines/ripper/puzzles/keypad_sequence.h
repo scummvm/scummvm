@@ -24,23 +24,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class KeypadSequencePuzzle {
+class KeypadSequencePuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit KeypadSequencePuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	enum HoverControl {
@@ -69,7 +64,6 @@ private:
 	Common::String enteredSequence() const;
 	void stopAudio();
 
-	RipperEngine *_engine;
 	Common::Array<BitmapAssetFrame> _extraFrames;
 	Common::Array<BitmapAssetFrame> _keyFrames;
 	IndexedDisplaySnapshot _baseDisplay;

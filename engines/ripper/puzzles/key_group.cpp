@@ -86,7 +86,7 @@ static int sTargetSlots[kTargetSlotCount];
 } // End of anonymous namespace
 
 KeyGroupPuzzle::KeyGroupPuzzle(RipperEngine *engine) :
-		_engine(engine), _maxPieceWidth(0), _maxPieceHeight(0),
+		Puzzle(engine), _maxPieceWidth(0), _maxPieceHeight(0),
 		_heldPiece(-1), _heldPosition(0, 0), _heldOffset(0, 0),
 		_keywordIndex(0) {
 	for (uint index = 0; index < kSourceSlotCount; ++index)

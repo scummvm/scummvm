@@ -88,7 +88,7 @@ static const char kCompletionKeyword[] = "pisces";
 
 } // End of anonymous namespace
 
-CrystalPuzzle::CrystalPuzzle(RipperEngine *engine) : _engine(engine),
+CrystalPuzzle::CrystalPuzzle(RipperEngine *engine) : Puzzle(engine),
 		_random("ripper-crystal-puzzle"), _draggedPiece(-1), _hoveredPiece(-1),
 		_keywordIndex(0) {
 	for (uint piece = 0; piece < kPieceCount; ++piece)

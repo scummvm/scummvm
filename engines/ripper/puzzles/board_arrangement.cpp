@@ -88,7 +88,7 @@ static Common::Point sBoardPositions[kPieceCount];
 } // End of anonymous namespace
 
 BoardArrangementPuzzle::BoardArrangementPuzzle(RipperEngine *engine) :
-		_engine(engine), _draggedPiece(-1), _hoveredPiece(-1) {
+		Puzzle(engine), _draggedPiece(-1), _hoveredPiece(-1) {
 	for (uint piece = 0; piece < kPieceCount; ++piece) {
 		_positions[piece] = kInitialPositions[piece];
 		_zOrder[piece] = piece;

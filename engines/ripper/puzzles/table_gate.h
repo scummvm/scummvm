@@ -27,23 +27,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class TableGatePuzzle {
+class TableGatePuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit TableGatePuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	struct LineState {
@@ -83,7 +78,6 @@ private:
 	void playCue(uint cue);
 	void stopAudio();
 
-	RipperEngine *_engine;
 	BitmapAssetFrame _markerFrame;
 	Common::Array<BitmapAssetFrame> _launchFrames;
 	Common::Array<BitmapAssetFrame> _gateFrames;

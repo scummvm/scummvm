@@ -277,7 +277,7 @@ void KkTileMatchPuzzle::DebugHelper::draw(
 }
 
 KkTileMatchPuzzle::KkTileMatchPuzzle(RipperEngine *engine) :
-		_engine(engine), _random("ripper-kk-tile-match-puzzle"),
+		Puzzle(engine), _random("ripper-kk-tile-match-puzzle"),
 		_hoveredTile(-1), _keywordIndex(0) {
 	for (uint row = 0; row < kTileCount; ++row) {
 		_visibleTiles[row] = false;

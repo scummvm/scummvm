@@ -95,7 +95,7 @@ static bool isExitPoint(const Common::Point &point) {
 } // End of anonymous namespace
 
 SixDigitCodePuzzle::SixDigitCodePuzzle(RipperEngine *engine) :
-		_engine(engine), _hoveredControl(-1) {
+		Puzzle(engine), _hoveredControl(-1) {
 }
 
 bool SixDigitCodePuzzle::loadFrame(const Common::String &path,

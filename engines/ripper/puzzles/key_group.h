@@ -24,23 +24,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class KeyGroupPuzzle {
+class KeyGroupPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit KeyGroupPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	enum SlotBank {
@@ -81,7 +76,6 @@ private:
 	bool setNavigationFlags(bool previous, bool next, bool cancelled);
 	Common::String targetStateString() const;
 
-	RipperEngine *_engine;
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _pieces[20];
 	IndexedDisplaySnapshot _incomingDisplay;

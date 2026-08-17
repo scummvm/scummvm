@@ -24,6 +24,7 @@
 #include "audio/mixer.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/puzzles/tarot_cards_model.h"
 #include "ripper/resources.h"
 
@@ -31,17 +32,11 @@ namespace Ripper {
 
 class RipperEngine;
 
-class TarotCardsPuzzle {
+class TarotCardsPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit TarotCardsPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool loadConfiguration();
@@ -64,7 +59,6 @@ private:
 	void stopAudio();
 	Common::String stateString() const;
 
-	RipperEngine *_engine;
 	AssetLibrary _library;
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _smallCards[TarotCardsModel::kCardCount];

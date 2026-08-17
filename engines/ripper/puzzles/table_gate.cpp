@@ -142,7 +142,7 @@ static const Common::Point kActivationPositions[kLeverCount] = {
 
 } // End of anonymous namespace
 
-TableGatePuzzle::TableGatePuzzle(RipperEngine *engine) : _engine(engine),
+TableGatePuzzle::TableGatePuzzle(RipperEngine *engine) : Puzzle(engine),
 		_random("ripper-table-gate-puzzle"), _allowMultipleLeverUse(false),
 		_markerActive(false), _segmentAudioPending(false),
 		_leverActivationsBeforeStart(0), _leverActivationCount(0),

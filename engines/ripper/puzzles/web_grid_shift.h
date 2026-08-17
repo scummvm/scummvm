@@ -25,6 +25,7 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 
 namespace Graphics {
 struct Surface;
@@ -34,17 +35,11 @@ namespace Ripper {
 
 class RipperEngine;
 
-class WebGridShiftPuzzle {
+class WebGridShiftPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit WebGridShiftPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool loadResources();
@@ -68,7 +63,6 @@ private:
 	void stopAudio();
 	Common::String orderString() const;
 
-	RipperEngine *_engine;
 	Common::RandomSource _random;
 	IndexedDisplaySnapshot _backgroundDisplay;
 	Common::Array<byte> _tiles[25];

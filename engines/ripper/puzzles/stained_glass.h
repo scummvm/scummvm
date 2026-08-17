@@ -25,23 +25,18 @@
 #include "common/rect.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class StainedGlassPuzzle {
+class StainedGlassPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit StainedGlassPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool loadConfiguration();
@@ -70,7 +65,6 @@ private:
 	void applyPalette();
 	void clearDisplay();
 
-	RipperEngine *_engine;
 	AssetLibrary _library;
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _transitionMask;

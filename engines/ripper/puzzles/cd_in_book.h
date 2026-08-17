@@ -25,23 +25,18 @@
 #include "common/random.h"
 
 #include "ripper/display.h"
+#include "ripper/puzzles/puzzle.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 class RipperEngine;
 
-class CdInBookPuzzle {
+class CdInBookPuzzle : public Puzzle {
 public:
-	enum Result {
-		kExited,
-		kSolved,
-		kLoadFailed
-	};
-
 	explicit CdInBookPuzzle(RipperEngine *engine);
 
-	Result run(uint completionFlag);
+	Result run(uint completionFlag) override;
 
 private:
 	bool loadAssets();
@@ -62,7 +57,6 @@ private:
 	bool waitForCue(uint cue);
 	bool resetFailedAttempt();
 
-	RipperEngine *_engine;
 	AssetLibrary _library;
 	BitmapAssetFrame _background;
 	BitmapAssetFrame _buttonFrames[6];
