@@ -164,6 +164,7 @@ void ColonyEngine::loadMap(int mnum) {
 	delete[] buffer;
 	_dynamicObjectBase = kStaticObjectStartIndex;
 	_robotNum = MAX<int>(_robotNum, (int)_objects.size() + 1);
+	_bumpedObject = 0; // object numbers are per-level
 	_level = mnum;
 	_me.type = kMeNum;
 

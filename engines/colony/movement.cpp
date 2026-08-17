@@ -348,6 +348,15 @@ void ColonyEngine::setPlayerCellMarker() {
 	_robotArray[_me.xindex][_me.yindex] = kMeNum;
 }
 
+// CHCKWALL.C never blocks a move that stays inside the cell you already occupy.
+// Footprints let the player be in one, so they must be able to walk back out.
+bool ColonyEngine::playerStartsInsideObject(int rnum) const {
+	if (rnum <= 0 || rnum > (int)_objects.size())
+		return false;
+	const Thing &obj = _objects[rnum - 1];
+	return obj.alive && playerIntersectsObjectFootprint(obj, _me.xloc, _me.yloc);
+}
+
 bool ColonyEngine::playerIntersectsObjectFootprint(const Thing &obj, int xloc, int yloc) const {
 	ObjectFootprint fp;
 	if (!objectFootprintForType(obj.type, fp))
@@ -550,7 +559,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (yind2 == pobject->yindex) {
 			if (pobject == &_me) {
 				const int rnum = occupiedObjectAt(xnew, ynew, xind2, yind2, pobject);
-				if (rnum)
+				if (rnum && !playerStartsInsideObject(rnum))
 					return rnum;
 			}
 			pobject->dx = xnew - pobject->xloc;
@@ -1301,17 +1310,94 @@ void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 	const int oldYIndex = _me.yindex;
 	const bool sameCellAttempt = ((xnew >> 8) == oldXIndex && (ynew >> 8) == oldYIndex);
 	const int robot = checkwall(xnew, ynew, &_me);
-	if (robot > 0 && allowInteraction)
-		interactWithObject(robot);
-	else if (robot)
-		playCollisionSound();
-	else if (sameCellAttempt && _me.xindex == oldXIndex && _me.yindex == oldYIndex &&
-			(_me.xloc != xnew || _me.yloc != ynew))
-		playCollisionSound();
+	if (robot > 0 && allowInteraction) {
+		// CCommand() ran once per key event; movement here is continuous, so latch
+		// the object until contact breaks or its message reopens every frame.
+		if (robot != _bumpedObject) {
+			_bumpedObject = robot;
+			interactWithObject(robot);
+		} else {
+			playCollisionSound();
+		}
+	} else {
+		_bumpedObject = 0;
+		if (robot)
+			playCollisionSound();
+		else if (sameCellAttempt && _me.xindex == oldXIndex && _me.yindex == oldYIndex &&
+				(_me.xloc != xnew || _me.yloc != ynew))
+			playCollisionSound();
+	}
 
 	setPlayerCellMarker();
 
 	_suppressCollisionSound = false;
+}
+
+// DOS Forward(): inch ahead along _me.ang until the player leaves the cell.
+bool ColonyEngine::stepOutOfCell() {
+	const int xindex = _me.xindex;
+	const int yindex = _me.yindex;
+
+	// clampToWalls() can pin the player short of the boundary, so cap the walk.
+	int guard = 16;
+	_me.type = 2; // temporary small collision type
+	while (_me.xindex == xindex && _me.yindex == yindex) {
+		if (--guard < 0 || checkwall(_me.xloc + _cost[_me.ang], _me.yloc + _sint[_me.ang], &_me)) {
+			_sound->play(Sound::kChime);
+			_me.type = kMeNum;
+			return false;
+		}
+	}
+	_me.type = kMeNum;
+	return true;
+}
+
+// DOS ExitTeleport(): walk clear of the arrival booth, trying each quarter turn,
+// then leave a booth behind. False = all four directions blocked.
+bool ColonyEngine::exitTeleport() {
+	const int xloc = _me.xloc;
+	const int yloc = _me.yloc;
+	const int xindex = _me.xindex;
+	const int yindex = _me.yindex;
+
+	// goToDestination() stamped this cell as the player's; occupiedObjectAt()
+	// would read that marker back as a blocker.
+	clearPlayerCellMarker();
+
+	_me.ang = 48;
+	bool out = false;
+	for (int tries = 0; tries < 4 && !out; tries++) {
+		out = stepOutOfCell();
+		if (!out) {
+			_me.xloc = xloc;
+			_me.yloc = yloc;
+			_me.xindex = xindex;
+			_me.yindex = yindex;
+			_me.ang += 64;
+		}
+	}
+	if (!out)
+		return false;
+
+	if (xindex < 0 || xindex >= 32 || yindex < 0 || yindex >= 32)
+		return true;
+
+	// The original always rebuilds the booth because it reloads the map; the port
+	// keeps its object table, so relink an existing one instead of duplicating it.
+	if (_robotArray[xindex][yindex] != 0)
+		return true;
+
+	for (uint i = 0; i < _objects.size() && i < 255; i++) {
+		const Thing &obj = _objects[i];
+		if (obj.alive && obj.type == kObjTeleport &&
+				obj.where.xindex == xindex && obj.where.yindex == yindex) {
+			_robotArray[xindex][yindex] = (uint8)(i + 1);
+			return true;
+		}
+	}
+
+	createObject(kObjTeleport, (xindex << 8) + 128, (yindex << 8) + 128, 0);
+	return true;
 }
 
 // DOS ExitFL(): step back one cell and drop the forklift.

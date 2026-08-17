@@ -197,6 +197,7 @@ const AnimColorEntry kAnimColors[] = {
 	{ "vanity",      kBMC_Vanity,     ARRAYSIZE(kBMC_Vanity) },
 	{ "reactor",     kBMC_Reactor,    ARRAYSIZE(kBMC_Reactor) },
 	{ "security",    kBMC_Security,   ARRAYSIZE(kBMC_Security) },
+	{ "tele",        kBMC_Teleport,   ARRAYSIZE(kBMC_Teleport) },
 	{ "teleporter",  kBMC_Teleport,   ARRAYSIZE(kBMC_Teleport) },
 	{ "teleporter2", kBMC_Teleport,   ARRAYSIZE(kBMC_Teleport) },
 	{ "slides",      kBMC_Creatures,  ARRAYSIZE(kBMC_Creatures) },
@@ -283,6 +284,7 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 		{ "elev",   "elevator" },
 		{ "slides", "slideshow" },
 		{ "lift",   "lifter" },
+		{ "tele",   "teleporter" },
 		{ nullptr,  nullptr }
 	};
 
@@ -1449,6 +1451,8 @@ void ColonyEngine::handleAnimationClick(int item) {
 		handleAirlockClick(item);
 	} else if (_animationName == "elev" || _animationName == "elevator" || _animationName == "elevator2") {
 		handleElevatorClick(item);
+	} else if (_animationName == "tele" || _animationName == "teleporter2") {
+		handleTeleportClick(item);
 	} else if (_animationName == "controls") {
 		handleControlsClick(item);
 	} else if (_animationName == "forklift") {
@@ -2023,6 +2027,72 @@ void ColonyEngine::handleElevatorClick(int item) {
 			// Exit elevator
 			_animationRunning = false;
 		}
+	}
+}
+
+// DoTeleport(): the screen inverts while the transport sound runs.
+void ColonyEngine::flashTeleportBooth() {
+	int ox = _screenR.left + (_screenR.width() - 416) / 2;
+	ox = (ox / 8) * 8;
+	const int oy = _screenR.top + (_screenR.height() - 264) / 2;
+	const Common::Rect booth(ox, oy, ox + 416, oy + 264);
+
+	for (int i = 0; i < 8; i++) {
+		_gfx->fillRect(booth, (i & 1) ? _gfx->black() : _gfx->white());
+		_gfx->copyToScreen();
+		responsiveAnimationDelay(_system, 60);
+	}
+	drawAnimation();
+	_gfx->copyToScreen();
+}
+
+// DoTeleport(): stepping in and closing the door are separate clicks, and the
+// player can leave either stage without being transported.
+void ColonyEngine::handleTeleportClick(int item) {
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		if (_animationName == "teleporter2") {
+			if (item == 2 && !_teleportDone) {
+				_sound->play(Sound::kTeleport);
+				flashTeleportBooth();
+				_teleportDone = true;
+				teleportPlayer();
+			} else if (item == 1 && objectState(2) == 6) {
+				_animationRunning = false;
+			}
+			return;
+		}
+
+		if (item == 1) {
+			if (!loadAnimation("teleporter2")) {
+				_animationRunning = false;
+				return;
+			}
+			setObjectState(2, 6);
+			drawAnimation();
+			_gfx->copyToScreen();
+		}
+		return;
+	}
+
+	// DOS keeps both stages in one file.
+	if (!_teleportInside) {
+		if (item == 3) {
+			_teleportInside = true;
+			setObjectOnOff(3, false);
+			setObjectOnOff(1, false);
+			drawAnimation();
+			_gfx->copyToScreen();
+		}
+		return;
+	}
+
+	if (item == 4 && !_teleportDone) {
+		_sound->play(Sound::kTeleport);
+		flashTeleportBooth();
+		_teleportDone = true;
+		teleportPlayer();
+	} else if (item == 2) {
+		_animationRunning = false;
 	}
 }
 

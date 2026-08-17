@@ -484,6 +484,7 @@ public:
 	void clearPlayerCellMarker();
 	void setPlayerCellMarker();
 	bool playerIntersectsObjectFootprint(const Thing &obj, int xloc, int yloc) const;
+	bool playerStartsInsideObject(int rnum) const;
 	void cCommand(int xnew, int ynew, bool allowInteraction);
 	bool scrollInfo(const Graphics::Font *macFont = nullptr);
 	bool checkSkipRequested();
@@ -587,6 +588,7 @@ private:
 	uint32 _lastAnimUpdate = 0;
 	uint32 _lastWarningChimeTime = 0;
 	uint32 _lastCollisionSoundTime = 0;
+	int _bumpedObject = 0;
 	int _action0 = 0, _action1 = 0;
 	int _creature = 0;
 	bool _allGrow = false;
@@ -744,6 +746,9 @@ private:
 	bool patchMapFrom(const PassPatch &from, uint8 *mapdata);
 	void exitForklift();
 	void dropCarriedObject();
+	bool stepOutOfCell();
+	bool exitTeleport();
+	void teleportPlayer();
 	bool setDoorState(int x, int y, int direction, int state);
 	int openAdjacentDoors(int x, int y);
 	int goToDestination(const uint8 *map, Locate *pobject);
@@ -840,6 +845,10 @@ private:
 	int _airlockY = -1;
 	int _airlockDirection = -1;
 	bool _airlockTerminate = false;
+	int _teleportX = -1;
+	int _teleportY = -1;
+	bool _teleportInside = false;
+	bool _teleportDone = false;
 
 	void playIntro();
 	bool makeStars(const Common::Rect &r, int btn);
@@ -879,6 +888,8 @@ private:
 	void handleDoorClick(int item);
 	void handleAirlockClick(int item);
 	void handleElevatorClick(int item);
+	void handleTeleportClick(int item);
+	void flashTeleportBooth();
 	void handleControlsClick(int item);
 	void dolSprite(int index);
 	void moveObject(int index);
