@@ -196,7 +196,7 @@ void BrokenMugPuzzle::render() {
 	for (int y = kViewportTop; y < kViewportBottom; ++y)
 		memset(screen->getBasePtr(kViewportLeft, y), kViewportFillColor,
 			kViewportRight - kViewportLeft);
-	for (int order = _frontToBack.size() - 1; order >= 0; --order) {
+	for (int order = (int)_frontToBack.size() - 1; order >= 0; --order) {
 		const Piece &piece = _pieces[_frontToBack[order]];
 		drawPiece((byte *)screen->getPixels(), screen->pitch, piece, currentFrame(piece));
 	}
