@@ -61,11 +61,12 @@ private:
 
 class IndexedBitmapRenderer {
 public:
-	static void drawBitmap(byte *pixels, uint pitch,
-		const BitmapAssetFrame &bitmap, int x, int y);
+	static bool drawBitmap(byte *pixels, uint pitch,
+		const BitmapAssetFrame &bitmap, int x, int y,
+		const Common::Rect &clip);
 	static bool drawNineSlice(byte *pixels, uint pitch,
 		const Common::Array<BitmapAssetFrame> &skin,
-		const Common::Rect &bounds);
+		const Common::Rect &bounds, const Common::Rect &clip);
 };
 
 class BitmapFontRenderer {

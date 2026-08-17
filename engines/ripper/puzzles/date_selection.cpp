@@ -183,7 +183,8 @@ bool DateSelectionPuzzle::drawFeedback() {
 		return false;
 	}
 	IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch,
-		_waitFrame, kWaitPosition.x, kWaitPosition.y);
+		_waitFrame, kWaitPosition.x, kWaitPosition.y,
+		Common::Rect(0, 0, screen->w, screen->h));
 	g_system->unlockScreen();
 	presentScreen();
 

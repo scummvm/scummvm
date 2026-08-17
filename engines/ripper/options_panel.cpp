@@ -274,16 +274,8 @@ void OptionsPanelManager::drawBitmap(const BitmapAssetFrame &frame, int x, int y
 			g_system->unlockScreen();
 		return;
 	}
-	for (uint row = 0; row < frame.height && y + (int)row < screen->h; ++row) {
-		if (y + (int)row < 0)
-			continue;
-		byte *destination = (byte *)screen->getBasePtr(0, y + row);
-		const byte *source = frame.pixels.data() + row * frame.width;
-		for (uint column = 0; column < frame.width && x + (int)column < screen->w; ++column) {
-			if (x + (int)column >= 0 && source[column] != frame.transparentColor)
-				destination[x + column] = source[column];
-		}
-	}
+	IndexedBitmapRenderer::drawBitmap((byte *)screen->getPixels(), screen->pitch,
+		frame, x, y, Common::Rect(0, 0, screen->w, screen->h));
 	g_system->unlockScreen();
 }
 
