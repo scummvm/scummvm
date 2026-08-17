@@ -210,8 +210,7 @@ void GcCshPuzzle::playCue(uint cue) {
 }
 
 void GcCshPuzzle::stopAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 bool GcCshPuzzle::waitForCue(uint cue) {

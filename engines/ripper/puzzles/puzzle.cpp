@@ -13,6 +13,7 @@
 #include "ripper/puzzles/puzzle.h"
 
 #include "ripper/input.h"
+#include "ripper/media.h"
 #include "ripper/ripper.h"
 
 namespace Ripper {
@@ -25,6 +26,11 @@ bool Puzzle::serviceEngineEvents() {
 		return true;
 	_engine->quitGame();
 	return false;
+}
+
+void Puzzle::stopAudioHandles(Audio::SoundHandle *handles, uint count) {
+	for (uint i = 0; i < count; ++i)
+		_engine->getMedia()->stopSoundEffect(handles[i]);
 }
 
 } // End of namespace Ripper

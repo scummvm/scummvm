@@ -621,8 +621,7 @@ bool CircuitChipPuzzle::updateCursor(const Common::Point &point) {
 }
 
 void CircuitChipPuzzle::stopAudio() {
-	for (uint cue = 0; cue < ARRAYSIZE(_audioHandles); ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 Common::String CircuitChipPuzzle::placementString() const {

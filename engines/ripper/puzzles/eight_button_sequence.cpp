@@ -448,8 +448,7 @@ uint16 EightButtonSequencePuzzle::service(uint frame) {
 }
 
 void EightButtonSequencePuzzle::stopAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 EightButtonSequencePuzzle::Result EightButtonSequencePuzzle::run(

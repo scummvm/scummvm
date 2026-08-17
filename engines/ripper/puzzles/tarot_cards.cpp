@@ -381,10 +381,8 @@ bool TarotCardsPuzzle::playCardCue(uint card) {
 }
 
 void TarotCardsPuzzle::stopAudio() {
-	for (uint cue = 0; cue < ARRAYSIZE(kSceneCueNames); ++cue)
-		_engine->getMedia()->stopSoundEffect(_sceneCueHandles[cue]);
-	for (uint card = 0; card < TarotCardsModel::kCardCount; ++card)
-		_engine->getMedia()->stopSoundEffect(_cardCueHandles[card]);
+	stopAudioHandles(_sceneCueHandles, ARRAYSIZE(_sceneCueHandles));
+	stopAudioHandles(_cardCueHandles, ARRAYSIZE(_cardCueHandles));
 	_engine->getMedia()->stopSoundEffect(_musicHandle);
 }
 

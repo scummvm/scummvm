@@ -433,8 +433,7 @@ bool HorusWordPuzzle::playCue(uint cue, uint volume, bool loop) {
 }
 
 void HorusWordPuzzle::stopAudio() {
-	for (uint cue = 0; cue < kAudioCueCount; ++cue)
-		_engine->getMedia()->stopSoundEffect(_audioHandles[cue]);
+	stopAudioHandles(_audioHandles, ARRAYSIZE(_audioHandles));
 }
 
 Common::String HorusWordPuzzle::selectedWord() const {

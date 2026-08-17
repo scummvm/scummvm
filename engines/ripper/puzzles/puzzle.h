@@ -23,6 +23,7 @@ public:
 
 protected:
 	bool serviceEngineEvents();
+	void stopAudioHandles(Audio::SoundHandle *handles, uint count);
 };
 
 } // End of namespace Ripper
