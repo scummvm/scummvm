@@ -980,6 +980,29 @@ void ColonyEngine::automapDrawWallWithFeature(const Common::Rect &vp, int wx1, i
 	}
 }
 
+void ColonyEngine::changeAutomapZoom(bool zoomIn) {
+	_automapZoom = CLIP<float>(zoomIn ? _automapZoom * 1.25f : _automapZoom / 1.25f, 0.25f, 4.0f);
+}
+
+void ColonyEngine::drawAutomapCryoMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
+	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
+		return;
+
+	const int r = MAX(halfSize, 2);
+	const int dx[4] = { x, x + r, x, x - r };
+	const int dy[4] = { y - r, y, y + r, y };
+	for (int i = 0; i < 4; i++) {
+		int x1 = dx[i], y1 = dy[i];
+		int x2 = dx[(i + 1) & 3], y2 = dy[(i + 1) & 3];
+		if (clipLineToRect(x1, y1, x2, y2, clip))
+			_gfx->drawLine(x1, y1, x2, y2, color);
+	}
+
+	const int cr = MAX(r / 3, 1);
+	if (x - cr >= clip.left && x + cr < clip.right && y - cr >= clip.top && y + cr < clip.bottom)
+		_gfx->fillEllipse(x, y, cr, cr, color);
+}
+
 void ColonyEngine::drawAutomap() {
 	if (_level < 1 || _level > 8)
 		return;
@@ -999,9 +1022,12 @@ void ColonyEngine::drawAutomap() {
 	_gfx->fillRect(vp, macColor ? 0xFFA0D0FF : (isMac ? packRGB(255, 255, 255) : 15));
 	_gfx->drawRect(vp, 0);
 
-	const int lExt = MIN(vpW, vpH) / 12;
-	if (lExt < 8)
+	const int baseExt = MIN(vpW, vpH) / 12;
+	if (baseExt < 8)
 		return;
+
+	// Cells are projected relative to the player, so scaling lExt zooms about him.
+	const int lExt = CLIP<int>((int)(baseExt * _automapZoom + 0.5f), 4, MIN(vpW, vpH));
 
 	const int xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
 	const int yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
@@ -1012,11 +1038,13 @@ void ColonyEngine::drawAutomap() {
 	const int tcos = _cost[mapAngle];
 	const uint32 lineColor = 0;
 
-	const int radius = (int)(sqrtf((float)(vpW * vpW + vpH * vpH)) / (2.0f * lExt)) + 2;
+	const int radius = MIN(31, (int)(sqrtf((float)(vpW * vpW + vpH * vpH)) / (2.0f * lExt)) + 2);
 	const int px = _me.xindex;
 	const int py = _me.yindex;
-	const int markerR = isMac ? 5 : 3;
-	const int foodR = isMac ? 3 : 2;
+	auto scaleR = [&](int r, int minR) { return CLIP<int>(r * lExt / baseExt, minR, r * 2); };
+	const int markerR = scaleR(isMac ? 5 : 3, 2);
+	const int foodR = scaleR(isMac ? 3 : 2, 1);
+	const int cryoR = scaleR(isMac ? 7 : 5, 3);
 
 	for (int dy = -radius; dy <= radius; dy++) {
 		for (int dx = -radius; dx <= radius; dx++) {
@@ -1042,20 +1070,19 @@ void ColonyEngine::drawAutomap() {
 			if (cx + 1 < 32 && (_wall[cx + 1][cy] & 0x02))
 				automapDrawWallWithFeature(vp, x1, y1, x2, y2, automapWallFeature(cx, cy, kDirEast), lExt, lineColor);
 
-			if (ABS(dx) <= 6 && ABS(dy) <= 6) {
-				int mx, my;
-				automapCellCorner(dx, dy, xloc, yloc, lExt, tsin, tcos, ccx, ccy, mx, my);
-				int mx2, my2;
-				automapCellCorner(dx + 1, dy + 1, xloc, yloc, lExt, tsin, tcos, ccx, ccy, mx2, my2);
-				mx = (mx + mx2) >> 1;
-				my = (my + my2) >> 1;
-
-				const uint8 rnum = _robotArray[cx][cy];
-				if (rnum > 0 && rnum != kMeNum && rnum <= _objects.size() && _objects[rnum - 1].alive)
+			const int mx = (x0 + x2) >> 1;
+			const int my = (y0 + y2) >> 1;
+			// Cryo pods are static, so they map beyond the robot/egg radar range.
+			const bool inRadar = (ABS(dx) <= 6 && ABS(dy) <= 6);
+			const uint8 rnum = _robotArray[cx][cy];
+			if (rnum > 0 && rnum != kMeNum && rnum <= _objects.size() && _objects[rnum - 1].alive) {
+				if (_objects[rnum - 1].type == kObjCryo)
+					drawAutomapCryoMarker(mx, my, cryoR, lineColor, vp);
+				else if (inRadar)
 					drawMiniMapMarker(mx, my, markerR, lineColor, isMac, &vp);
-				if (_foodArray[cx][cy] > 0)
-					drawMiniMapMarker(mx, my, foodR, lineColor, isMac, &vp);
 			}
+			if (inRadar && _foodArray[cx][cy] > 0)
+				drawMiniMapMarker(mx, my, foodR, lineColor, isMac, &vp);
 		}
 	}
 

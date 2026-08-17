@@ -92,7 +92,9 @@ enum ColonyAction {
 	kActionToggleWireframe,
 	kActionToggleFullscreen,
 	kActionEscape,
-	kActionFire
+	kActionFire,
+	kActionAutomapZoomIn,
+	kActionAutomapZoomOut
 };
 
 enum GameMode {
@@ -509,6 +511,7 @@ private:
 	uint8 _dirXY[32][32];
 	bool _visited[8][32][32];  // per-level fog-of-war: _visited[level-1][x][y]
 	bool _showAutomap;
+	float _automapZoom;        // automap scale factor, 1.0 = default cell size
 
 	Locate _me;
 	Common::Array<Thing> _objects;
@@ -760,6 +763,8 @@ private:
 	bool hasFoodAt(int x, int y) const;
 	void drawMiniMap(uint32 lineColor);
 	void drawAutomap();
+	void changeAutomapZoom(bool zoomIn);
+	void drawAutomapCryoMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip);
 	void markVisited();
 	void automapCellCorner(int dx, int dy, int xloc, int yloc, int lExt, int tsin, int tcos, int ccx, int ccy, int &sx, int &sy);
 	void automapDrawWall(const Common::Rect &vp, int x1, int y1, int x2, int y2, uint32 color);

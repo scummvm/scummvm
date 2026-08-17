@@ -198,6 +198,19 @@ Common::KeymapArray ColonyMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
+	act = new Common::Action("MAPIN", _("Zoom in (map)"));
+	act->setCustomEngineActionEvent(kActionAutomapZoomIn);
+	act->addDefaultInputMapping("PLUS");
+	act->addDefaultInputMapping("EQUALS");
+	act->addDefaultInputMapping("KP_PLUS");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MAPOUT", _("Zoom out (map)"));
+	act->setCustomEngineActionEvent(kActionAutomapZoomOut);
+	act->addDefaultInputMapping("MINUS");
+	act->addDefaultInputMapping("KP_MINUS");
+	engineKeyMap->addAction(act);
+
 	return Common::Keymap::arrayOf(engineKeyMap);
 }
 

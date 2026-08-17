@@ -188,6 +188,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	memset(_dirXY, 0, sizeof(_dirXY));
 	memset(_visited, 0, sizeof(_visited));
 	_showAutomap = false;
+	_automapZoom = 1.0f;
 
 	// PATCH.C init
 	memset(_levelData, 0, sizeof(_levelData));
@@ -1053,6 +1054,14 @@ Common::Error ColonyEngine::run() {
 					break;
 				case kActionFire:
 					cShoot();
+					break;
+				case kActionAutomapZoomIn:
+					if (_showAutomap)
+						changeAutomapZoom(true);
+					break;
+				case kActionAutomapZoomOut:
+					if (_showAutomap)
+						changeAutomapZoom(false);
 					break;
 				case kActionEscape:
 					_system->lockMouse(false);
