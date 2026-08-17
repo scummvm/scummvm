@@ -23,6 +23,7 @@ namespace Ultima {
 
 #define GUI_OPTIONS_ULTIMA0	GUIO0()
 #define GUI_OPTIONS_ULTIMA1	GUIO0()
+#define GUI_OPTIONS_ULTIMA2	GUIO0()
 #define GUI_OPTIONS_ULTIMA4	GUIO1(GUIO_NOSPEECH)
 #define GUI_OPTIONS_ULTIMA6	GUIO0()
 #define GUI_OPTIONS_ULTIMA8	GUIO9(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FRAME_SKIPPING, GAMEOPTION_FRAME_LIMITING, GAMEOPTION_CHEATS, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_FOOTSTEP_SOUNDS, GAMEOPTION_JUMP_TO_MOUSE, GAMEOPTION_FONT_REPLACEMENT, GAMEOPTION_FONT_ANTIALIASING)
@@ -51,6 +52,7 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 #ifndef RELEASE_BUILD
 	{ "ultima1", "Ultima I: The First Age of Darkness" },
 #endif
+	{ "ultima2", "Ultima II: Revenge of the Enchantress" },
 	{ "ultima4", "Ultima IV: Quest of the Avatar" },
 	{ "ultima4_enh", "Ultima IV: Quest of the Avatar - Enhanced" },
 	{ "ultima6", "Ultima VI: The False Prophet" },
@@ -130,6 +132,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_ULTIMA1
 		},
 		GAME_ULTIMA1,
+		0
+	},
+
+	{
+		// Ultima II - Revenge of the Enchantress
+		{
+			"ultima2",
+			0,
+			AD_ENTRY1s("mapx00", "86cd98e2f576cfab697a4cfd72dfd83e", 4224),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA2
+		},
+		GAME_ULTIMA2,
 		0
 	},
 

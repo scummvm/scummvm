@@ -1,0 +1,81 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/scummsys.h"
+#include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/events.h"
+#include "common/system.h"
+#include "engines/util.h"
+#include "graphics/paletteman.h"
+#include "ultima/ultima2/ultima2.h"
+#include "ultima/ultima2/console.h"
+#include "ultima/ultima2/metaengine.h"
+
+namespace Ultima {
+namespace Ultima2 {
+
+Ultima2Engine *g_engine;
+
+Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : Engine(syst),
+_gameDescription(gameDesc), _randomSource("Ultima2") {
+	g_engine = this;
+}
+
+
+Ultima2Engine::~Ultima2Engine() {
+}
+
+uint32 Ultima2Engine::getFeatures() const {
+	return _gameDescription->desc.flags;
+}
+
+Common::String Ultima2Engine::getGameId() const {
+	return _gameDescription->desc.gameId;
+}
+
+Common::Error Ultima2Engine::run() {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+
+	// Initialize 320x200 paletted graphics mode
+	initGraphics(320, 200);
+
+	// Set the engine's debugger console
+	setDebugger(new Console());
+
+	runGame();
+
+	return Common::kNoError;
+}
+
+Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {
+	// The Serializer has methods isLoading() and isSaving()
+	// if you need to specific steps; for example setting
+	// an array size after reading it's length, whereas
+	// for saving it would write the existing array's length
+	int dummy = 0;
+	s.syncAsUint32LE(dummy);
+
+	return Common::kNoError;
+}
+
+} // namespace Ultima2
+} // namespace Ultima

@@ -34,6 +34,10 @@
 #ifdef ENABLE_ULTIMA1
 #include "ultima/shared/early/ultima_early.h"
 #endif
+#ifdef ENABLE_ULTIMA2
+#include "ultima/ultima2/ultima2.h"
+#include "ultima/ultima2/metaengine.h"
+#endif
 #ifdef ENABLE_ULTIMA4
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/metaengine.h"
@@ -195,6 +199,11 @@ Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 		*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
 		break;
 #endif
+#ifdef ENABLE_ULTIMA2
+	case Ultima::GAME_ULTIMA2:
+		*engine = new Ultima::Ultima2::Ultima2Engine(syst, gd);
+		break;
+#endif
 #ifdef ENABLE_ULTIMA4
 	case Ultima::GAME_ULTIMA4:
 		*engine = new Ultima::Ultima4::Ultima4Engine(syst, gd);
@@ -255,13 +264,17 @@ SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int
 }
 
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
-#if defined(ENABLE_AKALABETH) || defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA6) || defined(ENABLE_ULTIMA8)
+#if defined(ENABLE_AKALABETH) || defined(ENABLE_ULTIMA2) || defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA6) || defined(ENABLE_ULTIMA8)
 	const Common::String gameId = getGameId(target);
 #endif
 
 #ifdef ENABLE_AKALABETH
 	if (gameId == "akalabeth")
 		return Ultima::Ultima0::MetaEngine::initKeymaps();
+#endif
+#ifdef ENABLE_ULTIMA2
+	if (gameId == "ultima2")
+		return Ultima::Ultima2::MetaEngine::initKeymaps();
 #endif
 #ifdef ENABLE_ULTIMA4
 	if (gameId == "ultima4" || gameId == "ultima4_enh")

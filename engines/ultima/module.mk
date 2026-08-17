@@ -162,6 +162,19 @@ MODULE_OBJS += \
 	ultima1/game.o
 endif
 
+ifdef ENABLE_ULTIMA2
+MODULE_OBJS += \
+	ultima2/ultima2.o \
+	ultima2/console.o \
+	ultima2/events.o \
+	ultima2/messages.o \
+	ultima2/metaengine.o \
+	ultima2/gfx/gfx_surface.o \
+	ultima2/gfx/pic_decoder.o \
+	ultima2/views/view.o \
+	ultima2/views/startup.o
+endif
+
 ifdef ENABLE_ULTIMA4
 MODULE_OBJS += \
 	ultima4/controllers/alpha_action_controller.o \
