@@ -111,6 +111,12 @@ void MainMenu::wait() {
 				_vm->_graphics->menuLoadPictures();
 				drawMenu();
 				break;
+			case Common::KEYCODE_3:
+				showPreview();
+				_vm->_graphics->menuInitialize();
+				_vm->_graphics->menuLoadPictures();
+				drawMenu();
+				break;
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_6: // Falltroughs are inteded.
 				// Exit back to DOS
@@ -122,6 +128,68 @@ void MainMenu::wait() {
 			}
 		}
 	}
+}
+
+void MainMenu::showPreview() {
+	Common::File file;
+	if (!file.open("preview2.avd")) {
+		warning("AVALANCHE: File not found: preview2.avd");
+		return;
+	}
+
+	_vm->_graphics->menuInitialize();
+	Graphics::Surface &preview = _vm->_graphics->getMenuSurface();
+	preview.fillRect(Common::Rect(0, 0, 640, 350), kColorBlack);
+
+	file.seek(177);
+
+	byte planes[4][151 * 80];
+	for (int plane = 0; plane < 4; plane++)
+		file.read(planes[plane], 151 * 80);
+	file.close();
+
+	for (int y = 0; y < 151; y++) {
+		int destY1 = 10 + (y * 4) / 3;
+		int destY2 = 10 + ((y + 1) * 4) / 3;
+		for (int x = 0; x < 640; x++) {
+			int byteIdx = y * 80 + (x / 8);
+			int bitIdx = 7 - (x % 8);
+
+			byte color = 0;
+			for (int plane = 0; plane < 4; plane++) {
+				byte bit = (planes[plane][byteIdx] >> bitIdx) & 1;
+				color |= (bit << plane);
+			}
+			for (int dy = destY1; dy < destY2 && dy < preview.h; dy++)
+				*(byte *)preview.getBasePtr(x, dy) = color;
+		}
+	}
+
+	_vm->_graphics->drawText(preview, "...This is a preview of things to come...", _font, 16, 320 - 20 * 8, 225, kColorCyan);
+	_vm->_graphics->drawText(preview, "AVAROID", _font, 16, 320 - 4 * 8, 245, kColorYellow);
+	_vm->_graphics->drawText(preview, "(a space so dizzy)", _font, 16, 320 - 9 * 8, 263, kColorYellow);
+	_vm->_graphics->drawText(preview, "the next Avvy adventure-- in 256 colours.", _font, 16, 320 - 20 * 8, 283, kColorLightblue);
+	_vm->_graphics->drawText(preview, "Any key...", _font, 16, 540, 318, kColorLightgray);
+
+	_vm->_graphics->menuRefreshScreen();
+	CursorMan.showMouse(false);
+
+	uint32 startTime = g_system->getMillis();
+	while (!_vm->shouldQuit()) {
+		if (g_system->getMillis() - startTime >= 15000)
+			break;
+
+		Common::Event event;
+		while (_vm->getEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
+				CursorMan.showMouse(true);
+				return;
+			}
+		}
+		g_system->delayMillis(10);
+	}
+
+	CursorMan.showMouse(true);
 }
 
 } // End of namespace Avalanche
