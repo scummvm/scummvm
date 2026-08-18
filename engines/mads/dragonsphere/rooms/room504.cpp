@@ -889,8 +889,10 @@ static void handle_animation_heal() {
 static void room_504_init() {
 	int id;
 
-	if (!player.been_here_before) ++global[dragon_high_scene];
-	if (!player.been_here_before) ++global[player_score];
+	if (!player.been_here_before) {
+		++global[dragon_high_scene];
+		++global[player_score];
+	}
 
 	if (global[monster_is_dead]) {
 		global[found_lani_504] = true;
