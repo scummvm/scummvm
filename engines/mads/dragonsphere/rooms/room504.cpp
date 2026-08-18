@@ -1884,8 +1884,7 @@ static void room_504_parser() {
 				player.command_ready = false;
 				return;
 
-			} else if (global[said_poem_in_504] && global[put_bundle_on_llanie_504] &&
-			           global[llanie_status] != IS_SAVED) {
+			} else if (global[llanie_status] != IS_SAVED) {
 				text_show(50437);
 				player.command_ready = false;
 				return;

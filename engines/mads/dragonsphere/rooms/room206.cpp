@@ -696,7 +696,7 @@ static void room_206_parser() {
 
 	if (player_said_1(shack)) {
 		if ((inter_point_x < 182) ||
-		   (inter_point_x > 166 && inter_point_y < 54)) {
+		   (inter_point_y < 54)) {
 			text_show(20618);
 			goto handled;
 		}

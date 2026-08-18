@@ -222,8 +222,7 @@ static void room_105_get_random() {
 		local->new_action = SCRUB;
 		local->good_number = true;
 
-	} else if ((random > RANDOM_DIP_ALLOWED_LOW) &&
-		(random < RANDOM_DIP_ALLOWED_HIGH) && (local->last_action != DIP)) {
+	} else if ((random < RANDOM_DIP_ALLOWED_HIGH) && (local->last_action != DIP)) {
 		local->new_action = DIP;
 		local->good_number = true;
 

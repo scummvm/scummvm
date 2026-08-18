@@ -2012,7 +2012,7 @@ static void room_201_pre_parser() {
 				}
 
 			} else {
-				if (global[player_persona] == PLAYER_IS_KING && !local->activate_timer) {
+				if (!local->activate_timer) {
 					player_walk(WALK_TO_X_FROM_120, WALK_TO_Y_FROM_120, FACING_NORTHEAST);
 
 				} else {

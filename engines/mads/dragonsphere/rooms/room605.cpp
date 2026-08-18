@@ -1174,8 +1174,7 @@ static void room_605_parser() {
 			    game.difficulty == HARD_MODE) {
 				text_show(60551);
 
-			} else if ((global[object_is_in_freezer_605] != NEVER_USED_FREEZER) &&
-			           (game.difficulty == EASY_MODE)) {
+			} else if (game.difficulty == EASY_MODE) {
 				text_show(60554);
 			}
 		}
@@ -1240,9 +1239,7 @@ static void room_605_parser() {
 			} else if (last_removed == dead_rat) {
 				text_show(60556);
 
-			} else if (last_removed != bone && last_removed != fruit && last_removed != bottle_of_flies &&
-			           last_removed != feathers && last_removed != dead_rat && last_removed != partly_built_bundle &&
-			           last_removed != dates && last_removed != tentacle_parts) {
+			} else {
 				text_show(60552);
 			}
 
