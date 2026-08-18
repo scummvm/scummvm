@@ -638,8 +638,6 @@ static void room_508_daemon() {
 }
 
 static void process_conv_lani() {
-	int you_trig_flag = false;
-
 	if (player_verb == conv037_next_b_b) {
 		local->beast_action = BEAST_WAIT;
 		sound_play(N_Battle);
@@ -658,9 +656,8 @@ static void process_conv_lani() {
 		local->lani_action = LANI_TALK;
 	}
 
-	if (!you_trig_flag) {
-		conv_you_trigger(ROOM_508_YOU_TALK);
-	}
+	/* !you_trig_flag */
+	conv_you_trigger(ROOM_508_YOU_TALK);
 
 	local->lani_count = 0;
 }

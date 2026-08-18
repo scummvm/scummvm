@@ -1472,9 +1472,6 @@ static void process_conv_lani_pid() {
 }
 
 static void process_conv_king() {
-	int you_trig_flag = false;
-	int me_trig_flag  = false;
-
 	if (player_verb == conv026_exit_b_b) {
 		if (local->pid_is_kneeling) {
 			local->lani_pid_action = BOTH_SHUT_UP;
@@ -1493,13 +1490,11 @@ static void process_conv_king() {
 		local->poking_action = TOM_SHUT_UP;
 	}
 
-	if (!you_trig_flag) {
-		conv_you_trigger(ROOM_504_YOU_TALK);
-	}
+	/* !you_trig_flag */
+	conv_you_trigger(ROOM_504_YOU_TALK);
 
-	if (!me_trig_flag) {
-		conv_me_trigger(ROOM_504_ME_TALK);
-	}
+	/* !me_trig_flag */
+	conv_me_trigger(ROOM_504_ME_TALK);
 
 	local->poking_talk_count = 0;
 }

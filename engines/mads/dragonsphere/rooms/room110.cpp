@@ -1773,15 +1773,12 @@ static void room_110_daemon() {
 }
 
 static void handle_conv_guard_king() {
-	int you_trig_flag = false;
-
 	if (kernel.trigger == ROOM_110_YOU_TALK) {
 		local->guard_king_action = CONV7_TALK;
 	}
 
-	if (!you_trig_flag) {
-		conv_you_trigger(ROOM_110_YOU_TALK);
-	} /* if you_trig_flag == true, then a you trigger is called from above, not here. */
+	/* !you_trig_flag */
+	conv_you_trigger(ROOM_110_YOU_TALK);
 
 	local->guard_king_talk_count = 0;
 }
