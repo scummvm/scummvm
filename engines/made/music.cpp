@@ -203,15 +203,9 @@ void DOSMusicPlayer::syncSoundSettings() {
 int16 DOSMusicPlayer::getSynthType() const {
 	switch (_driverType) {
 	case MT_MT32:
-	case MT_GM:
-		// The MIDI path always supplies MT-32 data. MidiDriver_MT32GM
-		// translates it when the selected output device is GM.
 		return 4;
 	case MT_ADLIB:
 		return 2;
-	case MT_PCSPK:
-	case MT_PCJR:
-		return 1;
 	default:
 		return 0;
 	}
