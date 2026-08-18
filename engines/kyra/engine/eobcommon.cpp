@@ -785,7 +785,7 @@ void EoBCoreEngine::runLoop() {
 		snd_updateLevelScore();
 		snd_updateEnvironmentalSfx(0);
 		turnUndeadAuto();
-		delayUntil(frameEnd);
+		delayUntil(frameEnd, false, false, true);
 	}
 }
 
