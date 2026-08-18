@@ -27,11 +27,12 @@
 namespace Made {
 
 enum MadeGameID {
-	GID_RTZ		= 0,
-	GID_MANHOLE	= 1,
-	GID_LGOP2	= 2,
-	GID_RODNEY	= 3,
-	GID_RSBNDE	= 4,
+	GID_RTZ			= 0,
+	GID_MANHOLE		= 1,
+	GID_LGOP2		= 2,
+	GID_RODNEY		= 3,
+	GID_RSBESTNDE	= 4,
+	GID_RSBUSYNDE	= 5
 };
 
 enum MadeGameFeatures {

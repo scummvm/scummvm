@@ -31,7 +31,8 @@ static const PlainGameDescriptor madeGames[] = {
 	{"rtz", "Return to Zork"},
 	{"lgop2", "Leather Goddesses of Phobos 2"},
 	{"rodney", "Rodney's Funscreen"},
-	{"rsbnde", "Richard Scarry's Best Neighborhood Disc Ever!"},
+	{"rsbestnde", "Richard Scarry's Best Neighborhood Disc Ever!"},
+	{"rsbusynde", "Richard Scarry's Busiest Neighborhood Disc Ever!"},
 	{nullptr, nullptr}
 };
 

@@ -139,7 +139,7 @@ void ScriptFunctions::setupExternalsTable() {
 	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
 		External(sfAddScreenMask);
 		External(sfSetSpriteMask);
-	} else if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBNDE) {
+	} else if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
 		External(sfSetClipArea);
 		External(sfSetSpriteClip);
 	}
@@ -148,7 +148,8 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfStopSound);
 	External(sfPlayVoice);
 
-	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RODNEY || _vm->getGameID() == GID_RSBNDE) {
+	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RTZ ||
+		_vm->getGameID() == GID_RODNEY || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
 		External(sfPlayCd);
 		External(sfStopCd);
 		External(sfGetCdStatus);
@@ -156,7 +157,7 @@ void ScriptFunctions::setupExternalsTable() {
 		External(sfPlayCdSegment);
 	}
 
-	if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBNDE) {
+	if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
 		External(sfPrintf);
 		External(sfClearMono);
 		External(sfGetSoundEnergy);
@@ -202,7 +203,7 @@ void ScriptFunctions::setupExternalsTable() {
 		External(sfIsSlowSystem);
 	}
 
-	if (_vm->getGameID() == GID_RSBNDE) {
+	if (_vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
 		External(sfMovieCall);
 		External(sfCursorXY);
 		External(sfSoundFile);

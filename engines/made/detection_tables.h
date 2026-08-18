@@ -636,18 +636,15 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Richard Scarry's Best Neighborhood Disc Ever!
 		// Hybrid CD, this is the MS-DOS version
 		{
-			"rsbnde",
+			"rsbestnde",
 			"",
-			{
-				{"best.dat", 0, "9c36e7ee85df0d049a106196683e0134", 38400},
-				{"best.prj", 0, "1aee8bb58c663fed120ff50856c83f16", 4316121},
-			 AD_LISTEND
-			},
+			AD_ENTRY1s("best.dat", "9c36e7ee85df0d049a106196683e0134", 38400),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()},
-		GID_RSBNDE,
+			GUIO0()
+		},
+		GID_RSBESTNDE,
 		0,
 		0,
 		3, 1,
@@ -657,16 +654,35 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Richard Scarry's Best Neighborhood Disc Ever! demo
 		// This is found on the Activision 1.1 RTZ CD-ROM for MS-DOS
 		{
-			"rsbnde",
+			"rsbestnde",
 			"Demo",
 			AD_ENTRY1s("bestdemo.dat", "6ef50ec61799d37ed75eada90a76d0e7", 12800),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()},
-		GID_RSBNDE,
+			GUIO0()
+		},
+		GID_RSBESTNDE,
 		0,
 		GF_DEMO,
+		3, 1,
+	},
+
+	{
+		// Richard Scarry's Busiest Neighborhood Disc Ever!
+		// MS-DOS version
+		{
+			"rsbusynde",
+			"",
+			AD_ENTRY1s("busy.dat", "df793b06adb7944684e63f2af08bd48b", 43520),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_RSBUSYNDE,
+		0,
+		0,
 		3, 1,
 	},
 
