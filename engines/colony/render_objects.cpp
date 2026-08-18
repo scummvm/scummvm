@@ -2195,10 +2195,16 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			_gfx->setDepthRange(0.0f, 1.0f);
 		}
 		break;
-	case kRobSnoop:
+	case kRobSnoop: {
+		// think.c raises and drops the snout tip as the snoop sniffs.
+		int headPts[4][3];
+		memcpy(headPts, kSnoopHeadPts, sizeof(headPts));
+		headPts[1][2] = _snoopSnoutZ;
+		const PrismPartDef headDef = {4, headPts, 3, kSnoopHeadSurf};
 		draw3DPrism(obj, kSnoopAbdomenDef, false, -1, true, false);
-		draw3DPrism(obj, kSnoopHeadDef, false, -1, true, false);
+		draw3DPrism(obj, headDef, false, -1, true, false);
 		break;
+	}
 	default:
 		return false;
 	}

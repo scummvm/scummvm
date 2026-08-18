@@ -206,7 +206,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 					newPatch(kObjForkLift, from, _carryPatch[0], _mapData[CLIP<int>(from.xindex, 0, 30)][CLIP<int>(from.yindex, 0, 30)][4]);
 					_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 					_objects[objNum - 1].alive = 0;
-					_me.look = _me.ang = obj.where.ang;
+					_me.look = _me.ang = objWorldAng(obj.where.ang);
 					_me.lookY = 0;
 					_fl = 1;
 				}
@@ -516,7 +516,7 @@ void ColonyEngine::destroyRobot(int num) {
 		obj.opcode = 4; // FSHOOT
 
 	// Face robot towards player
-	obj.where.look = obj.where.ang = (uint8)(_me.ang + 128);
+	obj.where.look = obj.where.ang = objAngFromPlayer((uint8)(_me.ang + 128));
 
 	obj.where.power[1] -= damage;
 	debugC(1, kColonyDebugAnimation, "DestroyRobot(%d): type=%d damage=%d remaining_hp=%d",

@@ -317,6 +317,12 @@ enum MenuIndex {
 	kMenuOptions
 };
 
+// Object and robot angles keep the original's convention, where the sine table's
+// own 45-degree phase supplied the last 32 steps; player angles are already
+// world-absolute. Convert whenever one is used as the other.
+uint8 objWorldAng(uint8 objectAng);
+uint8 objAngFromPlayer(uint8 playerAng);
+
 static const int kBaseObject = 20;
 static const int kMeNum = 101;
 
@@ -645,6 +651,10 @@ private:
 	int _direction = 0;
 
 	float _eyeDepthPull = 0.0f; // world units the eye parts are pulled at the camera
+	// think.c: the snoop's snout bobs while it hunts (sniff/csniff).
+	int _snoopSnoutZ = 0;
+	int _snoopSniff = 5;
+	int _snoopSniffCount = 0;
 
 	Common::Rect _clip;
 	Common::Rect _screenR;

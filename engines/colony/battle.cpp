@@ -884,8 +884,9 @@ void ColonyEngine::battleDrawTanks() {
 
 void ColonyEngine::battleThink() {
 	if (_projon) {
-		const int fx = battleNormalizeCoord(_battleProj.xloc + (_cost[_battleProj.ang] * 4));
-		const int fy = battleNormalizeCoord(_battleProj.yloc + (_sint[_battleProj.ang] * 4));
+		const uint8 pang = objWorldAng(_battleProj.ang);
+		const int fx = battleNormalizeCoord(_battleProj.xloc + (_cost[pang] * 4));
+		const int fy = battleNormalizeCoord(_battleProj.yloc + (_sint[pang] * 4));
 		if (0 == (_pcount--))
 			_projon = false;
 		battleProjCommand(fx, fy);
@@ -924,7 +925,7 @@ void ColonyEngine::battleThink() {
 			tooFar = true;
 		}
 
-		int32 dir = dx * _sint[ang] - dy * _cost[ang];
+		int32 dir = dx * _sint[objWorldAng(ang)] - dy * _cost[objWorldAng(ang)];
 		if (!tooFar) {
 			distance = (int32)sqrt((double)(dx * dx + dy * dy));
 			if (distance > 0) {
@@ -954,8 +955,8 @@ void ColonyEngine::battleThink() {
 				ang += 4;
 		}
 
-		const int fx = _bfight[i].xloc + (_cost[ang] >> 2);
-		const int fy = _bfight[i].yloc + (_sint[ang] >> 2);
+		const int fx = _bfight[i].xloc + (_cost[objWorldAng(ang)] >> 2);
+		const int fy = _bfight[i].yloc + (_sint[objWorldAng(ang)] >> 2);
 		if (distance > 250 || tooFar) {
 			if ((!_orbit) &&
 				fx > _battleShip.xloc - 2 * kBattleSize &&
@@ -984,8 +985,8 @@ void ColonyEngine::battleThink() {
 		_sound->play(Sound::kShoot);
 		_battleProj.ang = _bfight[shooter].ang;
 		_battleProj.look = _bfight[shooter].look;
-		_battleProj.xloc = battleNormalizeCoord(_bfight[shooter].xloc + (_cost[_battleProj.ang] * 2));
-		_battleProj.yloc = battleNormalizeCoord(_bfight[shooter].yloc + (_sint[_battleProj.ang] * 2));
+		_battleProj.xloc = battleNormalizeCoord(_bfight[shooter].xloc + (_cost[objWorldAng(_battleProj.ang)] * 2));
+		_battleProj.yloc = battleNormalizeCoord(_bfight[shooter].yloc + (_sint[objWorldAng(_battleProj.ang)] * 2));
 		debugC(1, kColonyDebugCombat,
 			"battleEnemyShoot: enemy=%d pos=(%d,%d) ang=%d proj=(%d,%d)",
 			shooter, _bfight[shooter].xloc, _bfight[shooter].yloc, _battleProj.ang,

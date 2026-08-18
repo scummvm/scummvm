@@ -517,7 +517,7 @@ bool Debugger::cmdSpawn(int argc, const char **argv) {
 
 	int xloc = (targetX << 8) + 128;
 	int yloc = (targetY << 8) + 128;
-	uint8 ang = _vm->_me.ang + 128; // face the player
+	uint8 ang = objAngFromPlayer((uint8)(_vm->_me.ang + 128)); // face the player
 
 	if (!_vm->createObject(type, xloc, yloc, ang)) {
 		debugPrintf("Failed to create object (no free slot?)\n");

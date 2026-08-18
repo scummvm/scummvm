@@ -389,7 +389,7 @@ int ColonyEngine::occupiedObjectAt(int xnew, int ynew, int x, int y, const Locat
 				!playerIntersectsObjectFootprint(obj, xnew, ynew))
 			return 0;
 		if (obj.type <= kBaseObject)
-			obj.where.look = obj.where.ang = _me.ang + 128;
+			obj.where.look = obj.where.ang = objAngFromPlayer((uint8)(_me.ang + 128));
 	}
 	return rnum;
 }
