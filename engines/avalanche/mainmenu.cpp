@@ -117,8 +117,14 @@ void MainMenu::wait() {
 				_vm->_graphics->menuLoadPictures();
 				drawMenu();
 				break;
+			case Common::KEYCODE_4:
+				showDoc("avalot.doc", 0, false);
+				_vm->_graphics->menuInitialize();
+				_vm->_graphics->menuLoadPictures();
+				drawMenu();
+				break;
 			case Common::KEYCODE_5:
-				showDoc("avalot.doc", 1094);
+				showDoc("avalot.doc", 1094, true);
 				_vm->_graphics->menuInitialize();
 				_vm->_graphics->menuLoadPictures();
 				drawMenu();
@@ -136,7 +142,7 @@ void MainMenu::wait() {
 	}
 }
 
-void MainMenu::showDoc(const Common::String &filename, int startLine) {
+void MainMenu::showDoc(const Common::String &filename, int startLine, bool isRegi) {
 	Common::File file;
 	if (!file.open(filename.c_str())) {
 		warning("AVALANCHE: File not found: %s", filename.c_str());
@@ -165,15 +171,38 @@ void MainMenu::showDoc(const Common::String &filename, int startLine) {
 	if (lines.empty())
 		return;
 
-	int currentLine = startLine;
-	if (currentLine >= (int)lines.size())
-		currentLine = (int)lines.size() - 1;
-	if (currentLine < 0)
-		currentLine = 0;
+	Common::Array<DocSection> sections;
+	DocSection startSec;
+	startSec.name = "Start of documentation";
+	startSec.line = 0;
+	sections.push_back(startSec);
 
+	for (int i = 1; i < (int)lines.size(); i++) {
+		Common::String trimmed = lines[i];
+		trimmed.trim();
+		if (trimmed.size() >= 3 && trimmed[0] == '"' && trimmed[1] == '"' && trimmed[2] == '"') {
+			Common::String headerStr = lines[i - 1];
+			headerStr.trim();
+			if (!headerStr.empty()) {
+				DocSection sec;
+				sec.name = headerStr;
+				sec.line = i - 1;
+				sections.push_back(sec);
+			}
+		}
+	}
+
+	int currentLine = startLine;
 	_vm->_graphics->menuInitialize();
 	Graphics::Surface &menu = _vm->_graphics->getMenuSurface();
 	CursorMan.showMouse(false);
+
+	if (!isRegi && startLine == 0) {
+		// Show Table of Contents index screen
+		int tocLine = showDocTOC(lines, sections);
+		if (tocLine >= 0)
+			currentLine = tocLine;
+	}
 
 	const int linesPerPage = 23;
 
@@ -189,7 +218,7 @@ void MainMenu::showDoc(const Common::String &filename, int startLine) {
 			if (line.size() > 78)
 				line = Common::String(line.c_str(), 78);
 
-			_vm->_graphics->drawText(menu, line, _font, 14, 8, 4 + i * 14, kColorLightgray);
+			_vm->_graphics->drawText(menu, line, _font, 14, 8, 4 + i * 14, kColorCyan);
 		}
 
 		int pct = (currentLine + linesPerPage) * 100 / lines.size();
@@ -197,7 +226,13 @@ void MainMenu::showDoc(const Common::String &filename, int startLine) {
 			pct = 100;
 		else if (pct <= 1)
 			pct = 0;
-		Common::String statusStr = Common::String::format("Doc lister: PgUp, PgDn, Home & End to move. Esc exits to main menu.|%d%% through", pct);
+
+		Common::String statusStr;
+		if (isRegi)
+			statusStr = Common::String::format("Doc lister: PgUp, PgDn, Home & End to move. Esc exits to main menu. | %d %% through", pct);
+		else
+			statusStr = Common::String::format("Doc lister: PgUp, PgDn, Home & End to move. Esc exits. C=→contents |%d %% through", pct);
+
 		menu.fillRect(Common::Rect(0, 332, 640, 350), kColorLightgray);
 		_vm->_graphics->drawText(menu, statusStr, _vm->_font, 8, 4, 336, kColorBlack);
 
@@ -211,6 +246,14 @@ void MainMenu::showDoc(const Common::String &filename, int startLine) {
 				case Common::KEYCODE_ESCAPE:
 					CursorMan.showMouse(true);
 					return;
+				case Common::KEYCODE_c:
+					if (!isRegi) {
+						int tocLine = showDocTOC(lines, sections);
+						if (tocLine >= 0)
+							currentLine = tocLine;
+						redraw = true;
+					}
+					break;
 				case Common::KEYCODE_PAGEUP:
 				case Common::KEYCODE_UP:
 					currentLine -= linesPerPage;
@@ -249,6 +292,54 @@ void MainMenu::showDoc(const Common::String &filename, int startLine) {
 	}
 
 	CursorMan.showMouse(true);
+}
+
+int MainMenu::showDocTOC(const Common::Array<Common::String> &lines, const Common::Array<DocSection> &sections) {
+	Graphics::Surface &menu = _vm->_graphics->getMenuSurface();
+	menu.fillRect(Common::Rect(0, 0, 640, 332), kColorBlue);
+
+	Common::String header = "-=- The contents of the Lord AVALOT D'Argent (version 1.3) documentation -=-";
+	_vm->_graphics->drawText(menu, header, _font, 14, 320 - (header.size() * 4), 4, kColorCyan);
+
+	for (int i = 0; i < (int)sections.size() && i < 26; i++) {
+		char keyChar = (i < 9) ? ('1' + i) : ('A' + (i - 9));
+		Common::String itemStr = Common::String::format("%c. %s", keyChar, sections[i].name.c_str());
+		if (itemStr.size() > 76)
+			itemStr = Common::String(itemStr.c_str(), 76);
+
+		int x = 12;
+		int y = 20 + i * 11;
+
+		_vm->_graphics->drawText(menu, itemStr, _vm->_font, 8, x, y, kColorCyan);
+	}
+
+	Common::String tocStatus = "Esc=to doc lister | Press the key listed next to the section you wish to jump to";
+	menu.fillRect(Common::Rect(0, 332, 640, 350), kColorLightgray);
+	_vm->_graphics->drawText(menu, tocStatus, _vm->_font, 8, 4, 338, kColorBlack);
+
+	_vm->_graphics->menuRefreshScreen();
+
+	while (!_vm->shouldQuit()) {
+		Common::Event event;
+		while (_vm->getEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return -1;
+
+				char c = toupper(event.kbd.ascii);
+				int targetSec = -1;
+				if (c >= '1' && c <= '9')
+					targetSec = c - '1';
+				else if (c >= 'A' && c <= 'Z')
+					targetSec = 9 + (c - 'A');
+
+				if (targetSec >= 0 && targetSec < (int)sections.size())
+					return sections[targetSec].line;
+			}
+		}
+		g_system->delayMillis(15);
+	}
+	return -1;
 }
 
 void MainMenu::showPreview() {
