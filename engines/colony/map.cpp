@@ -166,6 +166,9 @@ void ColonyEngine::loadMap(int mnum) {
 	_robotNum = MAX<int>(_robotNum, (int)_objects.size() + 1);
 	_bumpedObject = 0; // object numbers are per-level
 	_level = mnum;
+	// gamefile.c load_mapnum(): coreindex follows the map, so every route into a
+	// level picks up the right reactor.
+	_coreIndex = (mnum == 1) ? 0 : 1;
 	_me.type = kMeNum;
 
 	getWall();  // restore saved wall state changes (airlocks)

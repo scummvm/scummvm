@@ -2099,26 +2099,27 @@ void ColonyEngine::handleTeleportClick(int item) {
 void ColonyEngine::handleControlsClick(int item) {
 	switch (item) {
 	case 4: // Accelerator
+		// GANIMATE.C: if(corepower<2) DoStopSound(); else if(corestate!=0) DoStopSound();
 		if (_corePower[_coreIndex] < 2 || _coreState[_coreIndex] != 0) {
-			// GANIMATE.C: if(corepower<2) DoStopSound(); else if(corestate!=0) DoStopSound();
 			_sound->play(Sound::kStop);
 			debugC(1, kColonyDebugAnimation, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
 			setObjectState(4, 1);
-			for (int i = 6; i > 0; i--) {
-				setObjectState(4, i);
-				drawAnimation();
-				_gfx->copyToScreen();
-				responsiveAnimationDelay(_system, 20);
-			}
-			break;
-		}
-
-		_animationRunning = false;
-		if (_orbit) {
+		} else if (_orbit) {
+			_animationRunning = false;
 			gameOver(false);
+			return;
 		} else {
 			takeOff();
 			_orbit = 1;
+		}
+
+		// The lever sweeps whether or not it fired, and the console stays open
+		// so the next press can launch.
+		for (int i = 6; i > 0; i--) {
+			setObjectState(4, i);
+			drawAnimation();
+			_gfx->copyToScreen();
+			responsiveAnimationDelay(_system, 20);
 		}
 		break;
 	case 5: // Emergency power

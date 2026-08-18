@@ -122,7 +122,6 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 	// Load the target level
 	if (level != _vm->_level)
 		_vm->loadMap(level);
-	_vm->_coreIndex = (level == 1) ? 0 : 1;
 
 	// If no coordinates given, scan for an entry point (stairs/tunnel/elevator)
 	if (targetX < 0) {

@@ -798,10 +798,8 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 		pobject->yindex = targetY;
 	}
 
-	if (targetMap > 0 && targetMap != _level) {
+	if (targetMap > 0 && targetMap != _level)
 		loadMap(targetMap);
-		_coreIndex = (targetMap == 1) ? 0 : 1;
-	}
 
 	if (pobject->xindex >= 0 && pobject->xindex < 32 &&
 		pobject->yindex >= 0 && pobject->yindex < 32)
@@ -949,10 +947,8 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 				pobject->look = pobject->ang;
 			}
 
-			if (targetMap > 0 && targetMap != _level) {
+			if (targetMap > 0 && targetMap != _level)
 				loadMap(targetMap);
-				_coreIndex = (targetMap == 1) ? 0 : 1;
-			}
 
 			if (pobject->xindex >= 0 && pobject->xindex < 32 &&
 				pobject->yindex >= 0 && pobject->yindex < 32)

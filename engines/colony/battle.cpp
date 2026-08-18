@@ -1006,7 +1006,6 @@ void ColonyEngine::enterColonyFromBattle(int mapNum, int xloc, int yloc) {
 	_me.xindex = _me.xloc >> 8;
 	_me.yindex = _me.yloc >> 8;
 	loadMap(mapNum);
-	_coreIndex = (mapNum == 1) ? 0 : 1;
 }
 
 void ColonyEngine::battleCommand(int xnew, int ynew) {
