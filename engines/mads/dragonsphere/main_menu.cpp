@@ -166,7 +166,7 @@ static void start_series() {
 		if (handle < 0) goto done;
 
 		menu_item[count].handle = handle;
-		menu_item[count].active = count != 6;	// Quotes button was never implemented
+		menu_item[count].active = true;
 		menu_item[count].status = 0;
 	}
 
@@ -276,8 +276,7 @@ static void process_sprites() {
 			image.depth = 0;
 			image.scale = 100;
 
-			match = !(sprite <= MENU_HIGH_SPRITE);
-
+			match = false;
 			for (look = 0; !match && (look < (int)image_marker); look++) {
 				if (image_list[look].segment_id == image.segment_id) {
 					if (image_list[look].equals(image)) {
