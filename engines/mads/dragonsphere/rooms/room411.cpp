@@ -370,7 +370,7 @@ static void room_411_init() {
 		kernel_reset_animation(aa[0], 21);
 	}
 
-	if (previous_room == 410 || previous_room != KERNEL_RESTORING_GAME) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_410, PLAYER_Y_FROM_410, FACING_EAST,
 		                  WALK_TO_X_FROM_410, WALK_TO_Y_FROM_410, FACING_EAST, true);
 	}

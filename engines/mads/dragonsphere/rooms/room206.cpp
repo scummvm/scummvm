@@ -478,7 +478,7 @@ static void room_206_init() {
 		local->lady_action    = FREEZE;
 		local->anim_2_running = true;
 
-		if (previous_room == 205 || previous_room != KERNEL_RESTORING_GAME) {
+		if (previous_room != KERNEL_RESTORING_GAME) {
 			player.x      = PLAYER_X_FROM_205;
 			player.y      = PLAYER_Y_FROM_205;
 			player.facing = FACING_NORTHEAST;

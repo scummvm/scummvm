@@ -306,7 +306,7 @@ static void room_510_init() {
 		kernel_timing_trigger(1, ROOM_510_JUMP);
 		player.commands_allowed = false;
 
-	} else if (previous_room == 509 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		aa[0] = kernel_run_animation(kernel_name('p', 1), 0);
 		player.commands_allowed = false;
 		local->anim_0_running   = true;

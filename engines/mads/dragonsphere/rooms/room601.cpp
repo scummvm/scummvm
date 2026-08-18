@@ -852,7 +852,7 @@ static void room_601_init() {
 		player_walk(WALK_TO_X_FROM_603, WALK_TO_Y_FROM_603, FACING_SOUTH);
 		player_walk_trigger(ROOM_601_DOOR_CLOSES);
 
-	} else if (previous_room == 508 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_508, PLAYER_Y_FROM_508, FACING_EAST,
 		                  WALK_TO_X_FROM_508, WALK_TO_Y_FROM_508, FACING_EAST, true);
 	}

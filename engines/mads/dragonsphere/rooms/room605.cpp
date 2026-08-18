@@ -478,7 +478,7 @@ static void room_605_init() {
 			player_walk_trigger(ROOM_605_RUN_ANIM);
 		}
 
-	} else if (previous_room == 604 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		player_first_walk(PLAYER_X_FROM_604, PLAYER_Y_FROM_604, FACING_EAST,
 		                  WALK_TO_X_FROM_604, WALK_TO_Y_FROM_604, FACING_EAST, true);
 	}

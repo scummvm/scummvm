@@ -478,7 +478,7 @@ static void room_409_init() {
 		local->new_x = ENTER_410_X_BOTTOM;
 		local->new_y = ENTER_410_Y_BOTTOM;
 
-	} else if (previous_room == 408 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		aa[0] = kernel_run_animation(kernel_name('l', -1), 0);
 		kernel_reset_animation(aa[0], 36);
 		player.commands_allowed = false;

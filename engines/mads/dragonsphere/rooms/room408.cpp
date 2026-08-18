@@ -160,7 +160,7 @@ static void room_408_init() {
 
 		global[perform_displacements] = false;
 
-	} else if (previous_room == 409 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 
 		kernel_reset_animation(aa[0], 41);
 		kernel_reset_animation(aa[1], 8);

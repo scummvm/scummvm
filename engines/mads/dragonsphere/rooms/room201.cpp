@@ -549,7 +549,7 @@ static void room_201_init() {
 		local->crossed_line = false;
 	}
 
-	if (previous_room == 120 || previous_room == 201 || previous_room != KERNEL_RESTORING_GAME) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		local->prevent = false;
 	} else {
 		local->prevent = true;
@@ -757,7 +757,7 @@ static void room_201_init() {
 			WALK_TO_X_FROM_203, WALK_TO_Y_FROM_203, FACING_SOUTHWEST, true);
 		camera_jump_to(480, 0);  /* jump to right half */
 
-	} else if ((previous_room == 120 || previous_room == 201 || previous_room != KERNEL_RESTORING_GAME)) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 
 		if (global[player_persona] == PLAYER_IS_KING) {
 			if (global[king_got_stabbed] == 1) {

@@ -142,7 +142,7 @@ static void room_103_init() {
 		player.y      = START_Y_ROOM_105;
 		player.facing = FACING_NORTHWEST;
 		camera_jump_to(RIGHT_HALLWAY, 0);
-	} else if (previous_room == 101 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		seq[fx_door_102] = kernel_seq_stamp(ss[fx_door_102], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[fx_door_102], 6);
 		seq[fx_door_101] = kernel_seq_stamp(ss[fx_door_101], false, KERNEL_LAST);

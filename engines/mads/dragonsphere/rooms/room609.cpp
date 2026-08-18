@@ -147,7 +147,7 @@ static void room_609_init() {
 		local->anim_1_running = true;
 		kernel_flip_hotspot(words_torch, false);
 
-	} else if (previous_room == 606 || previous_room != KERNEL_RESTORING_GAME) {
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
 		if (global[torch_is_in_609]) {
 			player.x = PLAYER_X_FROM_606;
 			player.y = PLAYER_Y_FROM_606;
