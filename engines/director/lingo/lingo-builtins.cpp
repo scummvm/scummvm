@@ -3855,8 +3855,15 @@ void LB::b_inside(int nargs) {
 	Datum d;
 	Datum r2 = g_lingo->pop();
 	Datum p1 = g_lingo->pop();
-	TYPECHECK(r2, RECT);
-	TYPECHECK(p1, POINT);
+
+	// A sprite reference can be void before its init handler runs, giving a void
+	// rect; return FALSE rather than aborting the builtin with no value.
+	if (p1.type != POINT || r2.type != RECT) {
+		warning("LB::b_inside(): expected a point and a rect, got %s and %s", p1.type2str(), r2.type2str());
+		d = 0;
+		g_lingo->push(d);
+		return;
+	}
 
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 	Common::Point point1(p1.u.farr->arr[0].asInt(), p1.u.farr->arr[1].asInt());
