@@ -232,6 +232,13 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 }
 
 void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
+	if (SkyEngine::isIbass() && frameNum == MOUSE_BLANK) {
+		if (Logic::_scriptVariables[MOUSE_STATUS] & (1 << 1)) {
+			frameNum = MOUSE_NORMAL;
+			mouseX = 0;
+			mouseY = 0;
+		}
+	}
 	_currentCursor = frameNum;
 
 	byte *newCursor = _miceData;
@@ -305,12 +312,15 @@ void Mouse::mouseEngineIBASS() {
 
 		_mMode = INVENTORY;
 		break;
-	case INVENTORY:
+	case INVENTORY: {
+		uint16 invX = (_mouseX * 3) / 2;
+		uint16 invY = (_mouseY * 8) / 5;
 		if (isLincInv())
-			lincInvMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+			lincInvMouse(invX + TOP_LEFT_X, invY + TOP_LEFT_Y);
 		else
-			invMouse(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
+			invMouse(invX + TOP_LEFT_X, invY + TOP_LEFT_Y);
 		break;
+	}
 	case INVENTORY_USE_ON:
 		invUseOn(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
 		break;
@@ -415,7 +425,9 @@ int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
 		_proxFrame = 0;
 
 	// near inv button?
-	if (yPos > HOTSPOT_INVY && xPos < HOTSPOT_INVX)
+	uint16 osX = (xPos - TOP_LEFT_X) * 3 / 2;
+	uint16 osY = (yPos - TOP_LEFT_Y) * 8 / 5;
+	if (osX < HOTSPOT_INVX && osY > HOTSPOT_INVY)
 		return 0;
 
 	// not on same as last time, or was not on anything previously, so re-scan all objects
@@ -914,7 +926,8 @@ int Mouse::touchingFloor(uint16 xPos, uint16 yPos) {
 	uint16 itemNum;
 
 	// do not detect floors beyond a certain depth
-	if (yPos > (HOTSPOT_INVY + 8)) return 0;
+	uint16 osY = (yPos - TOP_LEFT_Y) * 8 / 5;
+	if (osY > HOTSPOT_INVY) return 0;
 	if (yPos < (20 + TOP_LEFT_Y)) return 0;
 
 	do {
@@ -992,6 +1005,34 @@ void Mouse::pointerEngineIBASS(uint16 xPos, uint16 yPos) {
 	int d = 0;
 	if (yPos < (TOP_LEFT_Y + 5))
 		return;
+	// not touching a game object - but what about HU buttons, such as Inv?
+	if (_mouseB && !_prevMouseOn && 101 != Logic::_scriptVariables[SCREEN] && Logic::_scriptVariables[LOGIC_LIST_NO] != 24765) {
+		uint16 osX = (xPos - TOP_LEFT_X) * 3 / 2;
+		uint16 osY = (yPos - TOP_LEFT_Y) * 8 / 5;
+		if (osX < HOTSPOT_INVX && osY > HOTSPOT_INVY) {
+			_skyLogic->startInventory();
+			_touchId = 0;
+			_holding = false;
+			_mMode = PRE_INVENTORY;
+			_skyScreen->clearAllProximityIcons(false);
+			_skyScreen->clearAllIbassIcons(false);
+			return;
+		}
+		// control panel
+		if (osX < 20 && osY < 20) {
+			_skyControl->doControlPanel();
+			_skyScreen->clearAllProximityIcons(false);
+			_skyScreen->clearAllIbassIcons(false);
+			_mouseB = 0;
+		}
+		// help screen
+		if (osX > 460 && osY < 20) {
+			_skyScreen->clearAllProximityIcons(false);
+			_skyScreen->clearAllIbassIcons(false);
+			_mouseB = 0;
+		}
+	}
+
 	// mouse must be down to search for stuff
 	if (_mouseB) {
 		debug(1, "Clicked");
@@ -1246,31 +1287,6 @@ void Mouse::pointerEngineIBASS(uint16 xPos, uint16 yPos) {
 			if (_fadeOut)
 				_fadeOut = 0;
 		}
-		// not touching a game object - but what about HU buttons, such as Inv?
-		if (!_prevMouseOn && 101 != Logic::_scriptVariables[SCREEN] && Logic::_scriptVariables[LOGIC_LIST_NO] != 24765) {
-			if (xPos < HOTSPOT_INVX && yPos > HOTSPOT_INVY) {
-				_skyLogic->startInventory();
-				_touchId = 0;
-				_holding = false;
-				_mMode = PRE_INVENTORY;
-				_skyScreen->clearAllProximityIcons(false);
-				_skyScreen->clearAllIbassIcons(false);
-				return;
-			}
-			// control panel
-			if (xPos < HOTSPOT_OPTIONSX && yPos < HOTSPOT_OPTIONSY) {
-				_skyControl->doControlPanel();
-				_skyScreen->clearAllProximityIcons(false);
-				_skyScreen->clearAllIbassIcons(false);
-				_mouseB = 0;
-			}
-			// help screen
-			if (xPos > HOTSPOT_helpx && yPos < HOTSPOT_helpy) {
-				_skyScreen->clearAllProximityIcons(false);
-				_skyScreen->clearAllIbassIcons(false);
-				_mouseB = 0;
-			}
-		}
 		// mouse on
 		_prevMouseOn = true;
 		debug(1, "floor returned = %d", floor);
@@ -1433,8 +1449,13 @@ void Mouse::buttonPressed(uint8 button) {
 }
 
 void Mouse::mouseMoved(uint16 mouseX, uint16 mouseY) {
-	_mouseX = mouseX;
-	_mouseY = mouseY;
+	if (SkyEngine::isIbass()) {
+		_mouseX = (mouseX * 2) / 3;
+		_mouseY = (mouseY * 5) / 8;
+	} else {
+		_mouseX = mouseX;
+		_mouseY = mouseY;
+	}
 }
 
 void Mouse::buttonEngine1() {
