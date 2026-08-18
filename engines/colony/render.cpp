@@ -719,19 +719,36 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 	float dx = wx1 - wx0, dy = wy1 - wy0, dz = wz1 - wz0;
 	float radius = sqrtf(dx * dx + dy * dy + dz * dz);
 
-	// Billboard: create a polygon perpendicular to the camera direction.
+	// Billboard turned to face the camera in 3D. The original drew the ball as a
+	// screen-space oval and never tilted the view; keeping the disc upright in
+	// world Z instead flattens it to a sliver when looking down at a floor egg.
 	// Camera is at (_me.xloc, _me.yloc, 0).
-	float viewDx = cx - (float)_me.xloc;
-	float viewDy = cy - (float)_me.yloc;
-	float viewLen = sqrtf(viewDx * viewDx + viewDy * viewDy);
+	float viewX = cx - (float)_me.xloc;
+	float viewY = cy - (float)_me.yloc;
+	float viewZ = cz;
+	float viewLen = sqrtf(viewX * viewX + viewY * viewY + viewZ * viewZ);
 	if (viewLen < 0.001f)
 		return;
+	viewX /= viewLen;
+	viewY /= viewLen;
+	viewZ /= viewLen;
 
-	// "right" vector: perpendicular to view in XY plane
-	float rightX = -viewDy / viewLen;
-	float rightY = viewDx / viewLen;
-	// "up" vector: world Z axis
-	float upZ = 1.0f;
+	// right = worldUp x view, collapsing to +X when looking straight down.
+	float rightX = -viewY;
+	float rightY = viewX;
+	float rightLen = sqrtf(rightX * rightX + rightY * rightY);
+	if (rightLen < 0.001f) {
+		rightX = 1.0f;
+		rightY = 0.0f;
+		rightLen = 1.0f;
+	}
+	rightX /= rightLen;
+	rightY /= rightLen;
+
+	// up = view x right; right has no Z component, so two terms drop out.
+	const float upX = -viewZ * rightY;
+	const float upY = viewZ * rightX;
+	const float upZ = viewX * rightY - viewY * rightX;
 
 	// Create 12-sided polygon
 	const int N = 12;
@@ -740,8 +757,8 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 		float a = (float)i * 2.0f * (float)M_PI / (float)N;
 		float cosA = cosf(a);
 		float sinA = sinf(a);
-		px[i] = cx + radius * (cosA * rightX);
-		py[i] = cy + radius * (cosA * rightY);
+		px[i] = cx + radius * (cosA * rightX + sinA * upX);
+		py[i] = cy + radius * (cosA * rightY + sinA * upY);
 		pz[i] = cz + radius * (sinA * upZ);
 	}
 
