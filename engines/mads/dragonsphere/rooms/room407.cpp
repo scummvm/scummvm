@@ -204,8 +204,6 @@ static void room_407_init() {
 		if (object[soptus_soporific].location == 406) local->stuff_to_give[4] = CAN_GIVE; else local->stuff_to_give[4] = NOT_THERE;
 
 		local->var_to_conv = 0;
-		local->his_score_int = 0;
-		local->my_score_int = 0;
 		local->number_of_spins = 0;
 		local->whos_turn = MY_TURN;
 		local->num_of_red = 12;
