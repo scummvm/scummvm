@@ -193,6 +193,10 @@ void Events::addKeypress(const Common::KeyCode kc) {
 	focusedView()->msgKeypress(KeypressMessage(ks));
 }
 
+void Events::pauseMillis(uint millis) {
+	g_system->delayMillis(millis);
+}
+
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :

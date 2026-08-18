@@ -33,7 +33,7 @@ TextInput::TextInput(const Common::String &name, UIElement *parent) : UIElement(
 
 TextInput::TextInput(const Common::String &name, UIElement *parent, const Common::Point &pos,
 	int maxChars, bool isNumeric) : UIElement(name, parent) {
-	setBounds(TextRect(pos.x, pos.y, pos.x + maxChars, pos.y + 1));
+	setBounds(TextRect(pos.x, pos.y, pos.x + maxChars - 1, pos.y));
 	_isNumeric = isNumeric;
 }
 

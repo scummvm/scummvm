@@ -178,8 +178,13 @@ MODULE_OBJS += \
 	ultima2/events.o \
 	ultima2/messages.o \
 	ultima2/metaengine.o \
+	ultima2/data/game.o \
+	ultima2/data/map.o \
+	ultima2/data/player.o \
+	ultima2/data/tiles.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/views/view.o \
+	ultima2/views/create_character.o \
 	ultima2/views/startup.o \
 	ultima2/views/title.o
 endif

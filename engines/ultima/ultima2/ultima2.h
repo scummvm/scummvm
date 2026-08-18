@@ -36,6 +36,10 @@
 #include "graphics/screen.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima2/data/game.h"
+#include "ultima/ultima2/data/map.h"
+#include "ultima/ultima2/data/player.h"
+#include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -45,7 +49,7 @@ struct Ultima2GameDescription;
 class Ultima2Engine : public Engine, public Shared::Events {
 private:
 	const Ultima::UltimaGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -58,7 +62,10 @@ protected:
 	}
 
 public:
-	Graphics::Palette _palette;
+	Data::Game _game;
+	Data::Map _map;
+	Data::Player _player;
+	Graphics::ManagedSurface _tiles[Data::TILE_COUNT];
 
 public:
 	Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
@@ -70,13 +77,6 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
-
-	/**
-	 * Gets a random number
-	 */
-	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
 
 	bool hasFeature(EngineFeature f) const override {
 		return

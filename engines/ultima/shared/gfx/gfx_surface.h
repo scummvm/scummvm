@@ -35,6 +35,8 @@ private:
 	Graphics::DosFont _font;
 	Common::Point _textPos;
 	byte _textColor = 15;
+	byte _bgColor = 0;
+	bool _scrollable = false;
 
 	void newLine();
 
@@ -53,6 +55,11 @@ public:
 
 	void setTextPos(const Common::Point &pt);
 	byte setColor(byte color);
+	void setColor(byte fgColor, byte bgColor);
+	void reverseColor();
+	bool setScrollable(bool flag) {
+		_scrollable = flag;
+	}
 };
 
 } // namespace Gfx

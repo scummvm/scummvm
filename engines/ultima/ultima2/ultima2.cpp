@@ -37,7 +37,7 @@ namespace Ultima2 {
 Ultima2Engine *g_engine;
 
 Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : Engine(syst),
-_gameDescription(gameDesc), _randomSource("Ultima2") {
+_gameDescription(gameDesc) {
 	g_engine = this;
 }
 

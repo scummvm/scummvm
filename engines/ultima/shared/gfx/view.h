@@ -23,6 +23,7 @@
 #define ULTIMA_SHARED_GFX_VIEW_H
 
 #include "ultima/shared/engine/events.h"
+#include "ultima/shared/gfx/rect.h"
 
 namespace Ultima {
 namespace Shared {

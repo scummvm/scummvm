@@ -37,54 +37,18 @@ struct KeybindingRecord {
 };
 
 static const KeybindingRecord MINIMAL_KEYS[] = {
-	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", "JOY_Y" },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord MENU_KEYS[] = {
-	{ KEYBIND_UP, "UP", _s("Up"), "UP", "JOY_UP" },
-	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN" },
-	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", nullptr },
-	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
-	{ KEYBIND_SWING, "SWING", _s("Swing"), "s", nullptr },
-	{ KEYBIND_THROW, "THROW", _s("Throw"), "t", nullptr },
-	{ KEYBIND_FOOD, "FOOD", _s("Food"), "f", nullptr },
-	{ KEYBIND_RAPIER, "RAPIER", _s("Rapier"), "r", nullptr },
-	{ KEYBIND_AXE, "AXE", _s("Axe"), "a", nullptr },
-	{ KEYBIND_SHIELD, "SHIELD", _s("Shield"), "s", nullptr },
-	{ KEYBIND_BOW, "BOW", _s("Bow & arrow"), "b", nullptr },
-	{ KEYBIND_AMULET, "AMULET", _s("Magic amulet"), "m", nullptr },
-	{ KEYBIND_AMULET1, "AMULET1", _s("Amulet option 1"), "1", nullptr },
-	{ KEYBIND_AMULET2, "AMULET2", _s("Amulet option 2"), "2", nullptr },
-	{ KEYBIND_AMULET3, "AMULET3", _s("Amulet option 3"), "3", nullptr },
-	{ KEYBIND_AMULET4, "AMULET4", _s("Amulet option 4"), "4", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord OVERWORLD_KEYS[] = {
-	{ KEYBIND_UP, "UP", _s("North"), "UP", "JOY_UP" },
-	{ KEYBIND_DOWN, "DOWN", _s("South"), "DOWN", "JOY_DOWN" },
-	{ KEYBIND_LEFT, "LEFT", _s("West"), "LEFT", "JOY_LEFT" },
-	{ KEYBIND_RIGHT, "RIGHT", _s("East"), "RIGHT", "JOY_RIGHT" },
-	{ KEYBIND_ENTER, "ENTER", _s("Enter / Exit"), "e", "JOY_B" },
-	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
-	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
-	{ KEYBIND_PASS, "PASS", _s("Pass / Wait"), "SPACE", nullptr },
-	{ KEYBIND_MINIMAP, "MINIMAP", _s("Minimap"), "m", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord DUNGEON_KEYS[] = {
-	{ KEYBIND_UP, "UP", _s("Move forward"), "UP", "JOY_UP" },
-	{ KEYBIND_DOWN, "DOWN", _s("Turn around"), "DOWN", "JOY_DOWN" },
-	{ KEYBIND_LEFT, "LEFT", _s("Turn left"), "LEFT", "JOY_LEFT" },
-	{ KEYBIND_RIGHT, "RIGHT", _s("Turn right"), "RIGHT", "JOY_RIGHT" },
-	{ KEYBIND_ATTACK, "ATTACK", _s("Attack"), "a", "JOY_A" },
-	{ KEYBIND_ENTER, "ENTER", _s("Enter / Exit"), "e", "JOY_B" },
-	{ KEYBIND_INFO, "INFO", _s("Info"), "z", "JOY_X" },
-	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
-	{ KEYBIND_PASS, "PASS", _s("Pass / Wait"), "SPACE", nullptr },
-	{ KEYBIND_MINIMAP, "MINIMAP", _s("Minimap"), "m", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 

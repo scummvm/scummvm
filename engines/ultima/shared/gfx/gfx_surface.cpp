@@ -61,12 +61,13 @@ void GfxSurface::writeString(const Common::String &str, Graphics::TextAlign alig
 }
 
 void GfxSurface::writeChar(uint32 chr) {
-	const int charW = _font.getMaxCharWidth();
-	const int charH = _font.getFontHeight();
-	const int textW = this->w / charW;
+	const int fontW = _font.getMaxCharWidth();
+	const int fontH = _font.getFontHeight();
+	const int textW = this->w / fontW;
 
 	if (chr >= ' ') {
-		_font.drawChar(this, chr, _textPos.x * charW, _textPos.y * charH, _textColor);
+		fillRect(Common::Rect(_textPos.x * fontW, _textPos.y * fontH, (_textPos.x + 1) * fontW, (_textPos.y + 1) * fontH), _bgColor);
+		_font.drawChar(this, chr, _textPos.x * fontW, _textPos.y * fontH, _textColor);
 		_textPos.x++;
 	}
 
@@ -80,18 +81,24 @@ void GfxSurface::newLine() {
 	_textPos.y++;
 
 	const int fontH = _font.getFontHeight();
-	const int textH = fontH / _font.getFontHeight();
+	const int textH = this->h / fontH;
 	if (_textPos.y >= textH) {
 		_textPos.y = textH - 1;
 
-		// Scroll the screen contents up
-		blitFrom(*this, Common::Rect(0, fontH, this->w, this->h), Common::Point(0, 0));
-		fillRect(Common::Rect(0, this->h - fontH, this->w, this->h), 0);
+		if (_scrollable) {
+			// Scroll the screen contents up
+			blitFrom(*this, Common::Rect(0, fontH, this->w, this->h), Common::Point(0, 0));
+			fillRect(Common::Rect(0, this->h - fontH, this->w, this->h), 0);
+		}
 	}
 }
 
 void GfxSurface::setTextPos(const Common::Point &pt) {
 	_textPos = pt;
+}
+
+int GfxSurface::getStringWidth(const Common::String &str) const {
+	return str.size() * _font.getMaxCharWidth();
 }
 
 byte GfxSurface::setColor(byte color) {
@@ -100,8 +107,13 @@ byte GfxSurface::setColor(byte color) {
 	return oldColor;
 }
 
-int GfxSurface::getStringWidth(const Common::String &str) const {
-	return str.size() * _font.getMaxCharWidth();
+void GfxSurface::setColor(byte fgColor, byte bgColor) {
+	_textColor = fgColor;
+	_bgColor = bgColor;
+}
+
+void GfxSurface::reverseColor() {
+	SWAP(_textColor, _bgColor);
 }
 
 } // namespace Gfx

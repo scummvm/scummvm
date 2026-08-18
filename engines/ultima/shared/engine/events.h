@@ -428,6 +428,13 @@ public:
 	int getRandomNumber(int maxNumber) {
 		return _randomSource.getRandomNumber(maxNumber);
 	}
+
+	/**
+	 * Delays by a given number of milliseconds.
+	 * This shouldn't normally be used directly, since it freezes the
+	 * entire event loop and screen updates.
+	 */
+	void pauseMillis(uint millis = 10);
 };
 
 extern Events *g_events;
