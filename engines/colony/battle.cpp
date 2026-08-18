@@ -721,8 +721,8 @@ void ColonyEngine::battleDrawTanks() {
 
 		// Build animated left pincer vertices
 		int lPincerPts[4][3];
-		int nabs_lookx = (drone.lookx > 0) ? -drone.lookx : drone.lookx; // nabs
-		int lLook = nabs_lookx - 32;
+		// BATTLE.C's -32 is the phase-shifted table's, not an angle.
+		int lLook = (drone.lookx > 0) ? -drone.lookx : drone.lookx; // nabs
 		if (lLook < 0)
 			lLook += 256;
 		for (int j = 0; j < 4; j++) {
@@ -740,7 +740,7 @@ void ColonyEngine::battleDrawTanks() {
 
 		// Build animated right pincer vertices
 		int rPincerPts[4][3];
-		int rLook = ABS(drone.lookx) - 32;
+		int rLook = ABS(drone.lookx);
 		if (rLook < 0)
 			rLook += 256;
 		for (int j = 0; j < 4; j++) {

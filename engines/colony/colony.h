@@ -644,6 +644,8 @@ private:
 	int _front = 0, _side = 0;
 	int _direction = 0;
 
+	float _eyeDepthPull = 0.0f; // world units the eye parts are pulled at the camera
+
 	Common::Rect _clip;
 	Common::Rect _screenR;
 	Common::Rect _dashBoardRect;
@@ -687,6 +689,9 @@ private:
 	void drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride, bool forceVisible = false);
 	void drawEyeOverlays3D(Thing &thing, const PrismPartDef &irisDef, int irisColorOverride,
 		const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook);
+	void drawBodyEye3D(Thing &obj, int eyeballColor, int pupilColor, float pull);
+	void drawEnemyEye3D(Thing &obj, Thing &eye, int eyeballColor, int irisColor, int pupilColor);
+	void pullTowardCamera(float *px, float *py, float *pz, int count) const;
 	float growRenderTickFraction() const;
 	bool drawInterpolatedGrowRobot(Thing &obj, int eyeballColor, int pupilColor);
 	void drawInterpolatedGrowPrism(Thing &obj, const PrismPartDef &fromDef, const PrismPartDef &toDef, float progress);

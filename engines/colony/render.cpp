@@ -251,7 +251,7 @@ int mapObjColorToMacColor(int colorIdx, int level) {
 	case kColorDroneEye:  return 51;  // c_edrone
 	case kColorSoldierBody: return 52; // c_soldier
 	case kColorSoldierEye: return 53; // c_esoldier
-	case kColorQueenBody: return 43 + CLIP(level - 2, 0, 4); // c_queen1..c_queen5
+	case kColorQueenBody: return 43 + CLIP(level - 2, 0, 5); // c_queen1..c_queenP
 	case kColorQueenEye:  return 49;  // c_equeen
 	case kColorQueenWingRed: return 48; // unused in Mac mode
 	case kColorTopSnoop:  return 56;  // c_snooper1
@@ -669,6 +669,23 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 	}
 }
 
+// Each vertex stays on its own view ray, so only the depth test moves.
+void ColonyEngine::pullTowardCamera(float *px, float *py, float *pz, int count) const {
+	if (_eyeDepthPull <= 0.0f)
+		return;
+	for (int i = 0; i < count; i++) {
+		const float dx = px[i] - (float)_me.xloc;
+		const float dy = py[i] - (float)_me.yloc;
+		const float d = sqrtf(dx * dx + dy * dy + pz[i] * pz[i]);
+		if (d <= _eyeDepthPull)
+			continue;
+		const float k = (d - _eyeDepthPull) / d;
+		px[i] = (float)_me.xloc + dx * k;
+		py[i] = (float)_me.yloc + dy * k;
+		pz[i] *= k;
+	}
+}
+
 void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 	int pt1x, int pt1y, int pt1z,
 	uint32 fillColor, uint32 outlineColor, bool accumulateBounds) {
@@ -741,6 +758,8 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 			}
 		}
 	}
+
+	pullTowardCamera(px, py, pz, N);
 
 	if (isMacColorMode()) {
 		// Mac color: map fillColor to Mac color index and use RGB
