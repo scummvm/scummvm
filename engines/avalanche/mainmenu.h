@@ -48,6 +48,7 @@ private:
 	void drawMenu();
 	void centre(int16 y, Common::String text);
 	void wait();
+	void showPreview();
 };
 
 } // End of namespace Avalanche
