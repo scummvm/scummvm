@@ -22,13 +22,14 @@
 #ifndef ULTIMA2_VIEWS_H
 #define ULTIMA2_VIEWS_H
 
+#include "ultima/shared/engine/events.h"
 #include "ultima/ultima2/views/startup.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-struct Views {
+struct Views : public Shared::Views {
 	Startup _startup;
 };
 

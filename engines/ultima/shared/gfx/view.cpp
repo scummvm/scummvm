@@ -19,11 +19,11 @@
  *
  */
 
-#include "ultima/ultima2/views/view.h"
+#include "ultima/shared/gfx/view.h"
 
 namespace Ultima {
-namespace Ultima2 {
-namespace Views {
+namespace Shared {
+namespace Gfx {
 
 void View::checkFocusedControl(const Common::Point &mousePos) {
 	if (_focusedElement) {
@@ -80,6 +80,6 @@ bool View::msgMouseUp(const MouseUpMessage &msg) {
 	return child ? child->send(msg) : false;
 }
 
-} // namespace Views
-} // namespace Ultima2
+} // namespace Gfx
+} // namespace Shared
 } // namespace Ultima

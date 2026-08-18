@@ -19,14 +19,14 @@
  *
  */
 
-#ifndef ULTIMA2_VIEW_H
-#define ULTIMA2_VIEW_H
+#ifndef ULTIMA_SHARED_GFX_VIEW_H
+#define ULTIMA_SHARED_GFX_VIEW_H
 
-#include "ultima/ultima2/events.h"
+#include "ultima/shared/engine/events.h"
 
 namespace Ultima {
-namespace Ultima2 {
-namespace Views {
+namespace Shared {
+namespace Gfx {
 
 /**
  * Base view class for screens and dialogs that appear on-screen.
@@ -70,8 +70,8 @@ public:
 	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
-} // namespace Views
-} // namespace Ultima2
+} // namespace Gfx
+} // namespace Shared
 } // namespace Ultima
 
 #endif

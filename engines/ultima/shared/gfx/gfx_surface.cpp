@@ -61,10 +61,13 @@ void GfxSurface::writeString(const Common::String &str, Graphics::TextAlign alig
 }
 
 void GfxSurface::writeChar(uint32 chr) {
-	int textW = this->w / _font.getMaxCharWidth();
+	const int charW = _font.getMaxCharWidth();
+	const int charH = _font.getFontHeight();
+	const int textW = this->w / charW;
 
 	if (chr >= ' ') {
-		// TODO
+		_font.drawChar(this, chr, _textPos.x * charW, _textPos.y * charH, _textColor);
+		_textPos.x++;
 	}
 
 	if (_textPos.x >= textW || chr == '\n') {

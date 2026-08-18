@@ -19,10 +19,11 @@
  *
  */
 
-#include "ultima/ultima2/messages.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
-namespace Ultima2 {
+namespace Shared {
+namespace Messages {
 
 MouseMessage::MouseMessage(Common::EventType type,
 	const Common::Point &pos) : Message(), _pos(pos) {
@@ -41,5 +42,6 @@ MouseMessage::MouseMessage(Common::EventType type,
 	}
 }
 
-} // namespace Ultima2
+} // namespace Messages
+} // namespace Shared
 } // namespace Ultima

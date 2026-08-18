@@ -22,13 +22,15 @@
 #ifndef ULTIMA2_VIEWS_STARTUP_H
 #define ULTIMA2_VIEWS_STARTUP_H
 
-#include "ultima/ultima2/views/view.h"
+#include "ultima/shared/gfx/view.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-class Startup : public View {
+using namespace Shared::Messages;
+
+class Startup : public Shared::Gfx::View {
 private:
 	int _pageCtr = 0;
 

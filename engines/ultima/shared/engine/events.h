@@ -19,20 +19,23 @@
  *
  */
 
-#ifndef ULTIMA2_EVENTS_H
-#define ULTIMA2_EVENTS_H
+#ifndef ULTIMA_SHARED_ENGINE_EVENTS_H
+#define ULTIMA_SHARED_ENGINE_EVENTS_H
 
 #include "common/array.h"
+#include "common/random.h"
 #include "common/stack.h"
 #include "graphics/screen.h"
-#include "ultima/ultima2/messages.h"
+#include "ultima/shared/engine/messages.h"
 #include "ultima/shared/gfx/gfx_surface.h"
 
 namespace Ultima {
-namespace Ultima2 {
+namespace Shared {
 
 #define FRAME_RATE 20
 #define FRAME_DELAY (1000 / FRAME_RATE)
+
+using namespace Messages;
 
 class Events;
 
@@ -67,6 +70,12 @@ public:
 	int16 height() const {
 		return _bounds.height();
 	}
+};
+
+/**
+ * Base for container of all the game views
+ */
+struct Views {
 };
 
 /**
@@ -273,6 +282,7 @@ public:
  */
 class Events : public UIElement {
 private:
+	Common::RandomSource _randomSource;
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
 protected:
@@ -310,7 +320,7 @@ public:
 	/**
 	 * Main game loop
 	 */
-	void runGame();
+	void runGame(Views &views);
 
 	/**
 	 * Sets the focus to a new view
@@ -408,11 +418,21 @@ public:
 	void close() override {
 		focusedView()->close();
 	}
+
+	/**
+	 * Returns a random number
+	 */
+	int getRandomNumber(int minNumber, int maxNumber) {
+		return _randomSource.getRandomNumberRng(minNumber, maxNumber);
+	}
+	int getRandomNumber(int maxNumber) {
+		return _randomSource.getRandomNumber(maxNumber);
+	}
 };
 
 extern Events *g_events;
 
-} // namespace Ultima2
+} // namespace Shared
 } // namespace Ultima
 
 #endif

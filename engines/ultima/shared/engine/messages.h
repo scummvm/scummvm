@@ -19,17 +19,18 @@
  *
  */
 
-#ifndef ULTIMA2_MESSAGES_H
-#define ULTIMA2_MESSAGES_H
+#ifndef ULTIMA_SHARED_ENGINE_MESSAGES_H
+#define ULTIMA_SHARED_ENGINE_MESSAGES_H
 
 #include "common/array.h"
 #include "common/events.h"
-#include "common/str.h"
 
 namespace Ultima {
-namespace Ultima2 {
+namespace Shared {
 
 class UIElement;
+
+namespace Messages {
 
 struct Message {};
 
@@ -127,7 +128,8 @@ struct ActionMessage : public Message {
 	}
 };
 
-} // namespace Ultima2
+} // namespace Messages
+} // namespace Shared
 } // namespace Ultima
 
 #endif

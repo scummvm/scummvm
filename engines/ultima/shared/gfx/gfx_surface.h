@@ -30,14 +30,11 @@ namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-constexpr int TEXT_WIDTH = 40;
-constexpr int TEXT_HEIGHT = 25;
-
 class GfxSurface : public Graphics::ManagedSurface {
 private:
 	Graphics::DosFont _font;
 	Common::Point _textPos;
-	byte _textColor = 255;
+	byte _textColor = 15;
 
 	void newLine();
 

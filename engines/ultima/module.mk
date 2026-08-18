@@ -7,7 +7,10 @@ MODULE_OBJS := \
 
 ifdef ENABLE_ULTIMA2
 MODULE_OBJS += \
-	shared/gfx/gfx_surface.o
+	shared/engine/events.o \
+	shared/engine/messages.o \
+	shared/gfx/gfx_surface.o \
+	shared/gfx/view.o
 endif
 
 ifdef ENABLE_AKALABETH

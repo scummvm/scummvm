@@ -35,14 +35,14 @@
 #include "graphics/palette.h"
 #include "graphics/screen.h"
 #include "ultima/detection.h"
-#include "ultima/ultima2/events.h"
+#include "ultima/shared/engine/events.h"
 
 namespace Ultima {
 namespace Ultima2 {
 
 struct Ultima2GameDescription;
 
-class Ultima2Engine : public Engine, public Events {
+class Ultima2Engine : public Engine, public Shared::Events {
 private:
 	const Ultima::UltimaGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;

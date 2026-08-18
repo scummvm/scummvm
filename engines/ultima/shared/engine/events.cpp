@@ -20,35 +20,37 @@
  */
 
 #include "common/config-manager.h"
+#include "common/system.h"
+#include "graphics/paletteman.h"
 #include "graphics/screen.h"
-#include "ultima/ultima2/events.h"
-#include "ultima/ultima2/ultima2.h"
-#include "ultima/ultima2/views/views.h"
+#include "ultima/shared/engine/events.h"
+#include "engines/engine.h"
 
 namespace Ultima {
-namespace Ultima2 {
+namespace Shared {
 
 Events *g_events;
 
-Events::Events() : UIElement("Root", nullptr) {
+Events::Events() : UIElement("Root", nullptr), _randomSource("Ultima") {
 	g_events = this;
+
+	// Setup palette
+	Graphics::Palette ega = Graphics::Palette::createEGAPalette();
+	g_system->getPaletteManager()->setPalette(ega);
 }
 
 Events::~Events() {
 	g_events = nullptr;
 }
 
-void Events::runGame() {
+void Events::runGame(Views &views) {
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
-	Views::Views views;	// Loads all views in the structure
 
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		g_engine->loadGameState(saveSlot);
-
-	addView("Startup");
 
 	Common::Event e;
 	while (!_views.empty() && !shouldQuit()) {
@@ -216,8 +218,8 @@ void Bounds::setBorderSize(size_t borderSize) {
 /*------------------------------------------------------------------------*/
 
 UIElement::UIElement(const Common::String &name) :
-	_name(name), _parent(g_engine), _bounds(_innerBounds) {
-	g_engine->_children.push_back(this);
+	_name(name), _parent(g_events), _bounds(_innerBounds) {
+	g_events->_children.push_back(this);
 }
 
 UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
@@ -323,11 +325,11 @@ Shared::Gfx::GfxSurface UIElement::getSurface() const {
 }
 
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {
-	return g_engine->getRandomNumber(maxNumber - minNumber + 1) + minNumber;
+	return g_events->getRandomNumber(maxNumber - minNumber + 1) + minNumber;
 }
 
 int UIElement::getRandomNumber(int maxNumber) {
-	return g_engine->getRandomNumber(maxNumber);
+	return g_events->getRandomNumber(maxNumber);
 }
 
 void UIElement::delaySeconds(uint seconds) {
@@ -342,5 +344,5 @@ void UIElement::timeout() {
 	redraw();
 }
 
-} // namespace Ultima2
+} // namespace Shared
 } // namespace Ultima
