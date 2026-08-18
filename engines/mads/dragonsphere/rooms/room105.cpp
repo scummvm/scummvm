@@ -364,6 +364,7 @@ static void room_105_daemon() {
 				break;
 
 			case 57:
+			case 63:
 				if (local->new_action == SCRUB) {
 					reset_frame = 1;
 				}
@@ -375,12 +376,6 @@ static void room_105_daemon() {
 				}
 				if (local->new_action == DIP) {
 					reset_frame = 16;
-				}
-				break;
-
-			case 63:
-				if (local->new_action == SCRUB) {
-					reset_frame = 1;
 				}
 				break;
 

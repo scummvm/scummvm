@@ -380,6 +380,7 @@ static void global_menu_options() {
 			break;
 
 		case f1_key:
+		case f5_key:
 			kernel.activate_menu = GAME_MAIN_MENU;
 			break;
 
@@ -393,10 +394,6 @@ static void global_menu_options() {
 
 		case f4_key:
 			kernel.activate_menu = GAME_SCORE_MENU;
-			break;
-
-		case f5_key:
-			kernel.activate_menu = GAME_MAIN_MENU;
 			break;
 
 		default:
@@ -542,6 +539,7 @@ static void global_menu_cdrom() {
 			break;
 
 		case f1_key:
+		case f5_key:
 			kernel.activate_menu = GAME_MAIN_MENU;
 			break;
 
@@ -555,10 +553,6 @@ static void global_menu_cdrom() {
 
 		case f4_key:
 			kernel.activate_menu = GAME_SCORE_MENU;
-			break;
-
-		case f5_key:
-			kernel.activate_menu = GAME_MAIN_MENU;
 			break;
 
 		default:

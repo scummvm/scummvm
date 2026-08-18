@@ -150,9 +150,6 @@ static void handle_anim_top_slime() {
 				break;
 
 			case 17: /* end of heal */
-				top_slime_reset_frame = 26;
-				break;
-
 			case 27: /* end of invislbe */
 				top_slime_reset_frame = 26;
 				break;

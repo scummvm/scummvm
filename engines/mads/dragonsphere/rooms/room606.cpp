@@ -244,9 +244,6 @@ static void handle_anim_up() {
 
 		switch (local->up_frame) {
 		case 290:
-			camera_pan_to(&camera_y, picture_view_y - 155);
-			break;
-
 		case 81:
 			camera_pan_to(&camera_y, picture_view_y - 155);
 			break;

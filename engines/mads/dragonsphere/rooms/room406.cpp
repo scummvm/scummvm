@@ -514,6 +514,7 @@ static void handle_animation_pid() {
 
 		case 61:
 		case 78:
+		case 56:
 			conv_release();
 			break;
 
@@ -548,10 +549,6 @@ static void handle_animation_pid() {
 			}
 			local->cal_action             = FREEZE;
 			global[prizes_owed_to_player] = 0;
-			break;
-
-		case 56:
-			conv_release();
 			break;
 
 		case 57:

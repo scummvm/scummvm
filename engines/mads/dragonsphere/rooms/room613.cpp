@@ -251,11 +251,6 @@ static void room_613_daemon() {
 
 	switch (kernel.trigger) {
 	case 1:
-		player.x = local->old_x;
-		player.y = local->old_y;
-		new_room = 606;
-		break;
-
 	case 10:
 		player.x = local->old_x;
 		player.y = local->old_y;

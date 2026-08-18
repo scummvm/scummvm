@@ -1248,6 +1248,7 @@ static void room_601_daemon() {
 		break;
 
 	case 23:
+	case 33:
 		conv_release();
 		break;
 
@@ -1347,10 +1348,6 @@ static void room_601_daemon() {
 		                   218, 33, MESSAGE_COLOR, time, 33, 0);
 		clear_all();
 		local->vine_4_action = TALK;
-		break;
-
-	case 33:
-		conv_release();
 		break;
 	}
 
