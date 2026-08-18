@@ -290,7 +290,6 @@ static void handle_animation_lani_0() {
 
 			local->anim_0_running         = false;
 			local->anim_1_running         = true;
-			lani_reset_frame              = -1;
 			player.commands_allowed       = true;
 			local->lani_location          = AGAINST_ROCK;
 			global[done_talking_lani_502] = true;
@@ -356,8 +355,6 @@ static void handle_animation_lani_0() {
 				if (local->lani_talk_count > 17) {
 					lani_reset_frame       = imath_random(101, 102);
 					local->lani_talk_count = 0;
-				} else {
-					lani_reset_frame = 101;
 				}
 				break;
 

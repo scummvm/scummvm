@@ -221,7 +221,6 @@ static void handle_animation_stairway() {
 				if (!global[statue_is_on_stairway_114]) {
 					kernel_abort_animation(aa[0]);
 					aa[1] = kernel_run_animation(kernel_name('d', 2), 0);
-					stairway_reset_frame = -1;
 					local->anim_0_running = false;
 					local->anim_1_running = true;
 					kernel_reset_animation(aa[1], 60);

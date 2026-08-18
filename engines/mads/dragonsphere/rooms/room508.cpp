@@ -250,7 +250,6 @@ static void handle_animation_beast() {
 				}
 
 			} else {
-				beast_reset_frame     = -1;
 				local->anim_1_running = false;
 				local->activate_timer = false;
 				kernel_abort_animation(aa[1]);

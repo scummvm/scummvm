@@ -204,7 +204,6 @@ static void handle_animation_tele() {
 
 		case 86:  /* end of walking out of water */
 			kernel_abort_animation(aa[0]);
-			tele_reset_frame = -1;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.walker_visible = true;
 			player.commands_allowed = true;

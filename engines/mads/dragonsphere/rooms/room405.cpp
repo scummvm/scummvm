@@ -232,7 +232,6 @@ static void handle_animation_king_tent() {
 
 			case LEAVE:
 				local->anim_1_running   = false;
-				king_tent_reset_frame   = -1;
 				player.walker_visible   = true;
 				player.commands_allowed = true;
 				king_tent_reset_frame   = 19;
@@ -274,7 +273,6 @@ static void handle_animation_pid_tent() {
 
 			case LEAVE:
 				local->anim_2_running   = false;
-				pid_tent_reset_frame    = -1;
 				player.walker_visible   = true;
 				player.commands_allowed = true;
 				pid_tent_reset_frame    = 19;

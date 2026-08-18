@@ -338,7 +338,6 @@ static void handle_animation_seal() {
 			player.walker_visible = true;
 			kernel_abort_animation(aa[0]);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			seal_reset_frame = -1;
 			local->side_of_room = LEFT_SIDE;
 			player.commands_allowed = true;
 			local->anim_0_running = false;
@@ -353,7 +352,6 @@ static void handle_animation_seal() {
 			sound_play(N_UnderGroundMus);
 			kernel_abort_animation(aa[0]);
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			seal_reset_frame = -1;
 			local->side_of_room = RIGHT_SIDE;
 			player.commands_allowed = true;
 			local->anim_0_running = false;

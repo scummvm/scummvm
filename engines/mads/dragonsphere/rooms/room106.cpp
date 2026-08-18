@@ -491,7 +491,6 @@ static void handle_animation_mac() {
 			kernel_abort_animation(aa[0]);
 			player.commands_allowed = true;
 			local->anim_0_running = false;
-			mac_reset_frame = -1;
 			break;
 
 		case 115:

@@ -276,7 +276,6 @@ static void handle_animation_pid() {
 		case 48:
 			kernel_abort_animation(aa[2]);
 			local->anim_2_running = false;
-			pid_reset_frame       = -1;
 
 			if (player_said_2(take_magic_from, rope)) {
 				player.walker_visible = true;

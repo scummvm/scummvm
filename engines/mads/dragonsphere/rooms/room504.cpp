@@ -535,7 +535,6 @@ static void handle_animation_tom_poking() {
 				local->tom_talk_action = TOM_TALK;
 				local->anim_3_running  = true;
 				local->anim_1_running  = false;
-				poking_reset_frame     = -1;
 				break;
 
 			default:
@@ -586,7 +585,6 @@ static void handle_animation_tom_poking() {
 
 					kernel_abort_animation(aa[1]);
 					local->anim_1_running  = false;
-					poking_reset_frame     = -1;
 					local->ready_to_heal   = false;
 					player.walker_visible  = false;
 					local->lani_pid_action = PID_HEAL;
@@ -779,7 +777,6 @@ static void handle_animation_tom_talk() {
 				local->poking_action  = TOM_SHUT_UP;
 				local->anim_3_running = true;
 				local->anim_4_running = false;
-				tom_talk_reset_frame  = -1;
 				break;
 			}
 			break;

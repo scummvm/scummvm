@@ -909,7 +909,6 @@ static void handle_animation_mac_2() {
 			kernel_abort_animation(aa[1]);
 			matte_deallocate_series(ss[fx_e3], true);
 			local->anim_5_running = false;
-			mac_reset_frame = -1;
 
 			text_show(10426);
 			sound_play(N_QueenMother);

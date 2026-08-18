@@ -443,9 +443,7 @@ static void which_pillar(int *it, int *new_x, int *new_y, int *adjoining) {
 		}
 
 	} else if (*adjoining == 1) {
-		if ((*it == 2) || (*it == 6)) {
-			*adjoining = true;
-		} else {
+		if (!((*it == 2) || (*it == 6))) {
 			*adjoining = false;
 		}
 

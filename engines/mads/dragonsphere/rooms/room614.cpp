@@ -490,7 +490,6 @@ static void handle_animation_pid_float() {
 				local->anim_2_running = false;
 				local->anim_3_running = false;
 				local->anim_7_running = true;
-				pid_float_reset_frame = -1;
 				break;
 
 			case DIE:

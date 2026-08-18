@@ -343,7 +343,6 @@ static void handle_animation_king() {
 				kernel_reset_animation(aa[1], 106);
 				local->anim_3_running = false;
 				local->anim_1_running = true;
-				king_reset_frame      = -1;
 				break;
 
 			case KING_CLIMB_UP:
@@ -352,7 +351,6 @@ static void handle_animation_king() {
 				kernel_synch(KERNEL_ANIM, aa[2], KERNEL_NOW, 0);
 				local->anim_3_running = false;
 				local->anim_2_running = true;
-				king_reset_frame      = -1;
 				break;
 
 			case KING_TALK:
