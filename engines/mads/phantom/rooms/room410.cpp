@@ -321,9 +321,7 @@ void room_410_parser() {
 
 				if ((global[flicked_1] == 5) && (global[flicked_2] == 18) &&
 					(global[flicked_3] == 9) && (global[flicked_4] == 11)) {
-					if (!global[door_in_409_is_open]) {
-						sound_play(N_DoorGong);
-					}
+					sound_play(N_DoorGong);
 				} /* a 'gong' sound if player was successfull */
 
 				if (global[flicked_1] && global[flicked_2] &&
