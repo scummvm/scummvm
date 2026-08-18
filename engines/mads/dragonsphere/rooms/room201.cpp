@@ -2189,12 +2189,11 @@ static void room_201_parser() {
 				conv_export_value(0);
 				conv_export_value(1);
 			}
-			goto handled;
-
-		} if (global[guards_are_asleep]) {
+		} else if (global[guards_are_asleep]) {
 			text_show(20152);
-			goto handled;
 		}
+
+		goto handled;
 	}
 
 	id = object_named(player_main_noun);
