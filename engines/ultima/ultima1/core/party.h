@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_CORE_PARTY_H
 #define ULTIMA_ULTIMA1_CORE_PARTY_H
 
-#include "ultima/shared/core/party.h"
+#include "ultima/u1shared/core/party.h"
 #include "ultima/ultima1/spells/blink.h"
 #include "ultima/ultima1/spells/create.h"
 #include "ultima/ultima1/spells/destroy.h"

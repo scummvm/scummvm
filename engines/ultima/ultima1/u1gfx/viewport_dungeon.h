@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_U1GFX_VIEWPORT_DUNGEON_H
 #define ULTIMA_ULTIMA1_U1GFX_VIEWPORT_DUNGEON_H
 
-#include "ultima/shared/gfx/viewport_dungeon.h"
+#include "ultima/u1shared/gfx/viewport_dungeon.h"
 
 namespace Ultima {
 namespace Ultima1 {

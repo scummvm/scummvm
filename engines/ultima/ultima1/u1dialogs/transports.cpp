@@ -28,8 +28,8 @@
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/core/str.h"
+#include "ultima/u1shared/engine/messages.h"
+#include "ultima/u1shared/core/str.h"
 
 namespace Ultima {
 namespace Ultima1 {

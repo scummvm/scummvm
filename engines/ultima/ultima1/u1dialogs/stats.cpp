@@ -26,7 +26,7 @@
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
-#include "ultima/shared/engine/messages.h"
+#include "ultima/u1shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {

@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_GFX_VIEWPORT_MAP_H
 #define ULTIMA_ULTIMA1_GFX_VIEWPORT_MAP_H
 
-#include "ultima/shared/gfx/viewport_map.h"
+#include "ultima/u1shared/gfx/viewport_map.h"
 #include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {

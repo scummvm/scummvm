@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_CORE_GAME_STATE_H
 #define ULTIMA_ULTIMA1_CORE_GAME_STATE_H
 
-#include "ultima/shared/core/game_state.h"
+#include "ultima/u1shared/core/game_state.h"
 
 namespace Ultima {
 namespace Ultima1 {

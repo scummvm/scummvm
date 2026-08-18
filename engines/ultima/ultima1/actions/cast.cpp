@@ -22,7 +22,7 @@
 #include "ultima/ultima1/actions/cast.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/core/character.h"
+#include "ultima/u1shared/core/character.h"
 
 namespace Ultima {
 namespace Ultima1 {

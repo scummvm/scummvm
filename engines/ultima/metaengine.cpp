@@ -32,7 +32,7 @@
 #include "ultima/ultima0/metaengine.h"
 #endif
 #ifdef ENABLE_ULTIMA1
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/u1shared/early/ultima_early.h"
 #endif
 #ifdef ENABLE_ULTIMA2
 #include "ultima/ultima2/ultima2.h"

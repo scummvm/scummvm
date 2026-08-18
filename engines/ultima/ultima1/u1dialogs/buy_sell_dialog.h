@@ -23,7 +23,7 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_BUY_SELL_DIALOG_H
 
 #include "ultima/ultima1/u1dialogs/dialog.h"
-#include "ultima/shared/gfx/character_input.h"
+#include "ultima/u1shared/gfx/character_input.h"
 
 namespace Ultima {
 namespace Ultima1 {

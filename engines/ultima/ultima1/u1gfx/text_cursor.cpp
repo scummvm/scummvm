@@ -20,8 +20,8 @@
  */
 
 #include "ultima/ultima1/u1gfx/text_cursor.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/gfx/screen.h"
+#include "ultima/u1shared/early/ultima_early.h"
+#include "ultima/u1shared/gfx/screen.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
 

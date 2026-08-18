@@ -23,7 +23,7 @@
 #define ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_MONSTER_H
 
 #include "ultima/ultima1/widgets/overworld_widget.h"
-#include "ultima/shared/maps/creature.h"
+#include "ultima/u1shared/maps/creature.h"
 
 namespace Ultima {
 namespace Ultima1 {

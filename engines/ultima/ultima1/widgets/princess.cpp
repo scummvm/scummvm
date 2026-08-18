@@ -21,7 +21,7 @@
 
 #include "ultima/ultima1/widgets/princess.h"
 #include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/shared/core/utils.h"
+#include "ultima/u1shared/core/utils.h"
 
 namespace Ultima {
 namespace Ultima1 {

@@ -23,7 +23,7 @@
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map.h"
-#include "ultima/shared/gfx/visual_surface.h"
+#include "ultima/u1shared/gfx/visual_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {

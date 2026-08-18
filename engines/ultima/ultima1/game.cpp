@@ -29,10 +29,10 @@
 #include "ultima/ultima1/u1gfx/text_cursor.h"
 #include "ultima/ultima1/u6gfx/game_view.h"
 #include "ultima/ultima1/spells/prayer.h"
-#include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/gfx/popup.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/u1shared/early/font_resources.h"
+#include "ultima/u1shared/gfx/popup.h"
+#include "ultima/u1shared/engine/messages.h"
+#include "ultima/u1shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {

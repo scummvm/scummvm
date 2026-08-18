@@ -23,7 +23,7 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_COMBAT_H
 
 #include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
-#include "ultima/shared/maps/map_widget.h"
+#include "ultima/u1shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {

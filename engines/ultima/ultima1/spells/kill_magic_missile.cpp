@@ -25,7 +25,7 @@
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"
-#include "ultima/shared/maps/map_widget.h"
+#include "ultima/u1shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {

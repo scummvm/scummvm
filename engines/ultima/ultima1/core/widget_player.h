@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_CORE_WIDGET_PLAYER_H
 #define ULTIMA_ULTIMA1_CORE_WIDGET_PLAYER_H
 
-#include "ultima/shared/core/map.h"
+#include "ultima/u1shared/core/map.h"
 
 namespace Ultima {
 namespace Ultima1 {

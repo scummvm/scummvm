@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_U1GFX_DRAWING_SUPPORT_H
 #define ULTIMA_ULTIMA1_U1GFX_DRAWING_SUPPORT_H
 
-#include "ultima/shared/gfx/visual_surface.h"
+#include "ultima/u1shared/gfx/visual_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {

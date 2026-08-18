@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_HIT_H
 #define ULTIMA_ULTIMA1_WIDGETS_HIT_H
 
-#include "ultima/shared/maps/map_widget.h"
+#include "ultima/u1shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {

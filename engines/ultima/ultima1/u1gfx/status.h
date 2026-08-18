@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_U1GFX_STATUS_H
 #define ULTIMA_ULTIMA1_U1GFX_STATUS_H
 
-#include "ultima/shared/gfx/visual_item.h"
+#include "ultima/u1shared/gfx/visual_item.h"
 
 namespace Ultima {
 namespace Ultima1 {

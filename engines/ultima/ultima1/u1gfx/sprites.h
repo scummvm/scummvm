@@ -22,10 +22,10 @@
 #ifndef ULTIMA_ULTIMA1_U1GFX_SPRITES_H
 #define ULTIMA_ULTIMA1_U1GFX_SPRITES_H
 
-#include "ultima/shared/gfx/sprites.h"
-#include "ultima/shared/core/tree_item.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/engine/messages.h"
+#include "ultima/u1shared/gfx/sprites.h"
+#include "ultima/u1shared/core/tree_item.h"
+#include "ultima/u1shared/early/ultima_early.h"
+#include "ultima/u1shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {

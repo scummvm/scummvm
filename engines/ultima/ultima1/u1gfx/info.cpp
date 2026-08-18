@@ -21,7 +21,7 @@
 
 #include "ultima/ultima1/u1gfx/info.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
-#include "ultima/shared/early/game.h"
+#include "ultima/u1shared/early/game.h"
 
 namespace Ultima {
 namespace Ultima1 {

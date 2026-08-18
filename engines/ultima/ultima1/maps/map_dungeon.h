@@ -23,7 +23,7 @@
 #define ULTIMA_ULTIMA1_MAP_MAP_DUNGEON_H
 
 #include "ultima/ultima1/maps/map_base.h"
-#include "ultima/shared/core/rect.h"
+#include "ultima/u1shared/core/rect.h"
 #include "common/random.h"
 
 namespace Ultima {

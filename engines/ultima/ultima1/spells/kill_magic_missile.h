@@ -23,7 +23,7 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_KILL_MAGIC_MISSILE_H
 
 #include "ultima/ultima1/spells/spell.h"
-#include "ultima/shared/engine/messages.h"
+#include "ultima/u1shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {

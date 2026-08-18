@@ -5,6 +5,11 @@ MODULE_OBJS := \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o
 
+ifdef ENABLE_ULTIMA2
+MODULE_OBJS += \
+	shared/gfx/gfx_surface.o
+endif
+
 ifdef ENABLE_AKALABETH
 MODULE_OBJS += \
 	ultima0/ultima0.o \
@@ -38,51 +43,51 @@ endif
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
-	shared/actions/action.o \
-	shared/actions/huh.o \
-	shared/actions/pass.o \
-	shared/core/base_object.o \
-	shared/core/character.o \
-	shared/core/file.o \
-	shared/core/lzw.o \
-	shared/core/map.o \
-	shared/core/message_target.o \
-	shared/core/mouse_cursor.o \
-	shared/core/named_item.o \
-	shared/core/party.o \
-	shared/core/str.o \
-	shared/core/tree_item.o \
-	shared/core/utils.o \
-	shared/core/widgets.o \
-	shared/early/font_resources.o \
-	shared/early/game.o \
-	shared/early/game_base.o \
-	shared/early/ultima_early.o \
-	shared/engine/events.o \
-	shared/engine/input_handler.o \
-	shared/engine/input_translator.o \
-	shared/engine/messages.o \
-	shared/engine/resources.o \
-	shared/gfx/bitmap.o \
-	shared/gfx/character_input.o \
-	shared/gfx/dungeon_surface.o \
-	shared/gfx/font.o \
-	shared/gfx/info.o \
-	shared/gfx/popup.o \
-	shared/gfx/screen.o \
-	shared/gfx/sprites.o \
-	shared/gfx/text_cursor.o \
-	shared/gfx/text_input.o \
-	shared/gfx/viewport_dungeon.o \
-	shared/gfx/viewport_map.o \
-	shared/gfx/visual_container.o \
-	shared/gfx/visual_item.o \
-	shared/gfx/visual_surface.o \
-	shared/maps/map.o \
-	shared/maps/map_base.o \
-	shared/maps/map_tile.o \
-	shared/maps/map_widget.o \
-	shared/maps/creature.o \
+	u1shared/actions/action.o \
+	u1shared/actions/huh.o \
+	u1shared/actions/pass.o \
+	u1shared/core/base_object.o \
+	u1shared/core/character.o \
+	u1shared/core/file.o \
+	u1shared/core/lzw.o \
+	u1shared/core/map.o \
+	u1shared/core/message_target.o \
+	u1shared/core/mouse_cursor.o \
+	u1shared/core/named_item.o \
+	u1shared/core/party.o \
+	u1shared/core/str.o \
+	u1shared/core/tree_item.o \
+	u1shared/core/utils.o \
+	u1shared/core/widgets.o \
+	u1shared/early/font_resources.o \
+	u1shared/early/game.o \
+	u1shared/early/game_base.o \
+	u1shared/early/ultima_early.o \
+	u1shared/engine/events.o \
+	u1shared/engine/input_handler.o \
+	u1shared/engine/input_translator.o \
+	u1shared/engine/messages.o \
+	u1shared/engine/resources.o \
+	u1shared/gfx/bitmap.o \
+	u1shared/gfx/character_input.o \
+	u1shared/gfx/dungeon_surface.o \
+	u1shared/gfx/font.o \
+	u1shared/gfx/info.o \
+	u1shared/gfx/popup.o \
+	u1shared/gfx/screen.o \
+	u1shared/gfx/sprites.o \
+	u1shared/gfx/text_cursor.o \
+	u1shared/gfx/text_input.o \
+	u1shared/gfx/viewport_dungeon.o \
+	u1shared/gfx/viewport_map.o \
+	u1shared/gfx/visual_container.o \
+	u1shared/gfx/visual_item.o \
+	u1shared/gfx/visual_surface.o \
+	u1shared/maps/map.o \
+	u1shared/maps/map_base.o \
+	u1shared/maps/map_tile.o \
+	u1shared/maps/map_widget.o \
+	u1shared/maps/creature.o \
 	ultima1/actions/action.o \
 	ultima1/actions/attack.o \
 	ultima1/actions/move.o \
@@ -169,7 +174,6 @@ MODULE_OBJS += \
 	ultima2/events.o \
 	ultima2/messages.o \
 	ultima2/metaengine.o \
-	ultima2/gfx/gfx_surface.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/views/view.o \
 	ultima2/views/startup.o

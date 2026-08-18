@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_CORE_RESOURCES_H
 #define ULTIMA_ULTIMA1_CORE_RESOURCES_H
 
-#include "ultima/shared/engine/resources.h"
+#include "ultima/u1shared/engine/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {

@@ -20,9 +20,9 @@
  */
 
 #include "ultima/ultima1/core/debugger.h"
-#include "ultima/shared/early/game.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/maps/map.h"
+#include "ultima/u1shared/early/game.h"
+#include "ultima/u1shared/early/ultima_early.h"
+#include "ultima/u1shared/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {

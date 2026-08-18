@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_GFX_INFO_H
 #define ULTIMA_ULTIMA1_GFX_INFO_H
 
-#include "ultima/shared/gfx/info.h"
+#include "ultima/u1shared/gfx/info.h"
 
 namespace Ultima {
 namespace Ultima1 {

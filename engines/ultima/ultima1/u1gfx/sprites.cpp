@@ -20,8 +20,8 @@
  */
 
 #include "ultima/ultima1/u1gfx/sprites.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/early/game.h"
+#include "ultima/u1shared/early/ultima_early.h"
+#include "ultima/u1shared/early/game.h"
 
 namespace Ultima {
 namespace Ultima1 {

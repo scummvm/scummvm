@@ -22,8 +22,8 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
 
-#include "ultima/shared/maps/map.h"
-#include "ultima/shared/maps/dungeon_widget.h"
+#include "ultima/u1shared/maps/map.h"
+#include "ultima/u1shared/maps/dungeon_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {

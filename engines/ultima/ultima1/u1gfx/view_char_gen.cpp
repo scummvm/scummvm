@@ -25,9 +25,9 @@
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/u1gfx/text_cursor.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/gfx/text_input.h"
-#include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/u1shared/gfx/text_input.h"
+#include "ultima/u1shared/early/font_resources.h"
+#include "ultima/u1shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {

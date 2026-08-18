@@ -24,7 +24,7 @@
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/u1shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {

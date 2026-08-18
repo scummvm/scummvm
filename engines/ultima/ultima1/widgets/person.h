@@ -26,7 +26,7 @@
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_base.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/maps/creature.h"
+#include "ultima/u1shared/maps/creature.h"
 
 namespace Ultima {
 namespace Ultima1 {

@@ -21,7 +21,7 @@
 
 #include "ultima/ultima1/widgets/guard.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/shared/core/utils.h"
+#include "ultima/u1shared/core/utils.h"
 
 namespace Ultima {
 namespace Ultima1 {

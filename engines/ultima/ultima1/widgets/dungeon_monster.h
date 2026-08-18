@@ -23,8 +23,8 @@
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_MONSTER_H
 
 #include "ultima/ultima1/widgets/dungeon_widget.h"
-#include "ultima/shared/maps/creature.h"
-#include "ultima/shared/maps/dungeon_creature.h"
+#include "ultima/u1shared/maps/creature.h"
+#include "ultima/u1shared/maps/dungeon_creature.h"
 
 namespace Ultima {
 namespace Ultima1 {

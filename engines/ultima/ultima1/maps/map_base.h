@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_MAPS_MAP_BASE_H
 #define ULTIMA_ULTIMA1_MAPS_MAP_BASE_H
 
-#include "ultima/shared/maps/map_base.h"
+#include "ultima/u1shared/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {

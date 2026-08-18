@@ -23,7 +23,7 @@
 #define ULTIMA_ULTIMA1_ACTIONS_QUIT_H
 
 #include "ultima/ultima1/actions/action.h"
-#include "ultima/shared/engine/messages.h"
+#include "ultima/u1shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {

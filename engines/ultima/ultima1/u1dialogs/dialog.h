@@ -22,9 +22,9 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_DIALOG_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_DIALOG_H
 
-#include "ultima/shared/gfx/popup.h"
-#include "ultima/shared/gfx/character_input.h"
-#include "ultima/shared/core/str.h"
+#include "ultima/u1shared/gfx/popup.h"
+#include "ultima/u1shared/gfx/character_input.h"
+#include "ultima/u1shared/core/str.h"
 
 namespace Ultima {
 namespace Ultima1 {

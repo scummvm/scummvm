@@ -20,9 +20,9 @@
  */
 
 #include "ultima/ultima1/u6gfx/game_view.h"
-#include "ultima/shared/actions/pass.h"
-#include "ultima/shared/maps/map.h"
-#include "ultima/shared/gfx/info.h"
+#include "ultima/u1shared/actions/pass.h"
+#include "ultima/u1shared/maps/map.h"
+#include "ultima/u1shared/gfx/info.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/ultima1/u1gfx/status.h"
@@ -30,8 +30,8 @@
 #include "ultima/ultima1/u1gfx/viewport_map.h"
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/gfx/bitmap.h"
+#include "ultima/u1shared/engine/messages.h"
+#include "ultima/u1shared/gfx/bitmap.h"
 
 namespace Ultima {
 namespace Ultima1 {

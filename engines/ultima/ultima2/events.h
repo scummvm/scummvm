@@ -26,7 +26,7 @@
 #include "common/stack.h"
 #include "graphics/screen.h"
 #include "ultima/ultima2/messages.h"
-#include "ultima/ultima2/gfx/gfx_surface.h"
+#include "ultima/shared/gfx/gfx_surface.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -197,7 +197,7 @@ public:
 	/**
 	 * Returns a surface for drawing the element
 	 */
-	Gfx::GfxSurface getSurface() const;
+	Shared::Gfx::GfxSurface getSurface() const;
 
 	/**
 	 * Clear the surface

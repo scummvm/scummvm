@@ -24,8 +24,8 @@
 #include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/maps/map_widget.h"
-#include "ultima/shared/core/utils.h"
+#include "ultima/u1shared/maps/map_widget.h"
+#include "ultima/u1shared/core/utils.h"
 
 namespace Ultima {
 namespace Ultima1 {

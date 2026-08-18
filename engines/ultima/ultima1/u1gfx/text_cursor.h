@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_U1GFX_TEXT_CURSOR_H
 #define ULTIMA_ULTIMA1_U1GFX_TEXT_CURSOR_H
 
-#include "ultima/shared/gfx/text_cursor.h"
+#include "ultima/u1shared/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima1 {

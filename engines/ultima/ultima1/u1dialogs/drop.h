@@ -23,7 +23,7 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
 
 #include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
-#include "ultima/shared/gfx/text_input.h"
+#include "ultima/u1shared/gfx/text_input.h"
 
 namespace Ultima {
 namespace Ultima1 {

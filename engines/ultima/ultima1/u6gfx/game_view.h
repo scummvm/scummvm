@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_U6GFX_GAME_VIEW_H
 #define ULTIMA_ULTIMA1_U6GFX_GAME_VIEW_H
 
-#include "ultima/shared/gfx/visual_container.h"
+#include "ultima/u1shared/gfx/visual_container.h"
 
 namespace Ultima {
 namespace Shared {

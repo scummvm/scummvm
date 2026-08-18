@@ -22,7 +22,7 @@
 #ifndef ULTIMA_ULTIMA1_ACTIONS_ACTION_H
 #define ULTIMA_ULTIMA1_ACTIONS_ACTION_H
 
-#include "ultima/shared/actions/action.h"
+#include "ultima/u1shared/actions/action.h"
 
 namespace Ultima {
 namespace Ultima1 {

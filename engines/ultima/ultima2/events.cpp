@@ -318,8 +318,8 @@ void UIElement::addView() {
 	g_events->addView(this);
 }
 
-Gfx::GfxSurface UIElement::getSurface() const {
-	return Gfx::GfxSurface(*g_events->getScreen(), _bounds);
+Shared::Gfx::GfxSurface UIElement::getSurface() const {
+	return Shared::Gfx::GfxSurface(*g_events->getScreen(), _bounds);
 }
 
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {

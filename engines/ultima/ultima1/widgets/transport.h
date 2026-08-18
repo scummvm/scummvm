@@ -23,7 +23,7 @@
 #define ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
 
 #include "ultima/ultima1/widgets/overworld_widget.h"
-#include "ultima/shared/maps/map_base.h"
+#include "ultima/u1shared/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {

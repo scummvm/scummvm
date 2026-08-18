@@ -22,9 +22,9 @@
 #ifndef ULTIMA_ULTIMA1_GFX_VIEW_CHAR_GEN_H
 #define ULTIMA_ULTIMA1_GFX_VIEW_CHAR_GEN_H
 
-#include "ultima/shared/gfx/visual_container.h"
-#include "ultima/shared/gfx/text_input.h"
-#include "ultima/shared/core/party.h"
+#include "ultima/u1shared/gfx/visual_container.h"
+#include "ultima/u1shared/gfx/text_input.h"
+#include "ultima/u1shared/core/party.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {
