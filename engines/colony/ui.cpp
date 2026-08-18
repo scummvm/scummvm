@@ -1047,6 +1047,88 @@ void ColonyEngine::drawAutomapForkliftMarker(int x, int y, int halfSize, uint32 
 	}
 }
 
+// display.c: the queen's glyph is a box with one side left open.
+void ColonyEngine::drawAutomapQueenMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
+	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
+		return;
+
+	const int r = MAX(halfSize, 2);
+	const int seg[3][4] = {
+		{ -r, -r,  r, -r },
+		{ -r,  r,  r,  r },
+		{ -r, -r, -r,  r }
+	};
+	for (int i = 0; i < 3; i++) {
+		int x1 = x + seg[i][0], y1 = y + seg[i][1];
+		int x2 = x + seg[i][2], y2 = y + seg[i][3];
+		if (clipLineToRect(x1, y1, x2, y2, clip))
+			_gfx->drawLine(x1, y1, x2, y2, color);
+	}
+}
+
+// display.c: the snoop is the one robot plotted at its exact position and with
+// a whisker showing where it is headed.
+void ColonyEngine::drawAutomapSnoopMarker(int x, int y, int halfSize, int dirX, int dirY, uint32 color, const Common::Rect &clip) {
+	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
+		return;
+
+	const int r = MAX(halfSize, 2);
+	const int dx[4] = { 0,  r, 0, -r };
+	const int dy[4] = { -r, 0, r,  0 };
+	for (int i = 0; i < 4; i++) {
+		int x1 = x + dx[i], y1 = y + dy[i];
+		int x2 = x + dx[(i + 1) & 3], y2 = y + dy[(i + 1) & 3];
+		if (clipLineToRect(x1, y1, x2, y2, clip))
+			_gfx->drawLine(x1, y1, x2, y2, color);
+	}
+
+	int hx1 = x, hy1 = y, hx2 = x + dirX, hy2 = y + dirY;
+	if (clipLineToRect(hx1, hy1, hx2, hy2, clip))
+		_gfx->drawLine(hx1, hy1, hx2, hy2, color);
+}
+
+// display.c drawmap(): drones and soldiers are an X, every other robot a cross.
+void ColonyEngine::drawAutomapDroneMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
+	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
+		return;
+
+	const int r = MAX(halfSize, 2);
+	int x1 = x - r, y1 = y - r, x2 = x + r, y2 = y + r;
+	if (clipLineToRect(x1, y1, x2, y2, clip))
+		_gfx->drawLine(x1, y1, x2, y2, color);
+	x1 = x - r; y1 = y + r; x2 = x + r; y2 = y - r;
+	if (clipLineToRect(x1, y1, x2, y2, clip))
+		_gfx->drawLine(x1, y1, x2, y2, color);
+}
+
+void ColonyEngine::drawAutomapRobotMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
+	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
+		return;
+
+	const int r = MAX(halfSize, 2);
+	int x1 = x - r, y1 = y, x2 = x + r, y2 = y;
+	if (clipLineToRect(x1, y1, x2, y2, clip))
+		_gfx->drawLine(x1, y1, x2, y2, color);
+	x1 = x; y1 = y - r; x2 = x; y2 = y + r;
+	if (clipLineToRect(x1, y1, x2, y2, clip))
+		_gfx->drawLine(x1, y1, x2, y2, color);
+}
+
+// Furniture is the most numerous mark, so it stays a quiet solid pip rather than
+// another outline competing with the robot and vehicle glyphs.
+void ColonyEngine::drawAutomapObjectMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
+	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
+		return;
+
+	const int r = MAX(halfSize, 1);
+	const int l = MAX<int>(clip.left, x - r);
+	const int t = MAX<int>(clip.top, y - r);
+	const int rt = MIN<int>(clip.right, x + r + 1);
+	const int b = MIN<int>(clip.bottom, y + r + 1);
+	if (l < rt && t < b)
+		_gfx->fillRect(Common::Rect(l, t, rt, b), color);
+}
+
 void ColonyEngine::drawAutomap() {
 	if (_level < 1 || _level > 8)
 		return;
@@ -1091,6 +1173,9 @@ void ColonyEngine::drawAutomap() {
 	const int cryoR = scaleR(isMac ? 7 : 5, 3);
 	const int teleR = scaleR(isMac ? 6 : 4, 3);
 	const int forkR = scaleR(isMac ? 6 : 4, 3);
+	const int queenR = scaleR(isMac ? 5 : 3, 2);
+	const int snoopR = scaleR(isMac ? 4 : 3, 2);
+	const int objR = scaleR(isMac ? 2 : 2, 1);
 
 	for (int dy = -radius; dy <= radius; dy++) {
 		for (int dx = -radius; dx <= radius; dx++) {
@@ -1118,19 +1203,39 @@ void ColonyEngine::drawAutomap() {
 
 			const int mx = (x0 + x2) >> 1;
 			const int my = (y0 + y2) >> 1;
-			// Cryo pods, teleporters and the forklift are static, so they map
-			// beyond the robot/egg radar range.
 			const bool inRadar = (ABS(dx) <= 6 && ABS(dy) <= 6);
 			const uint8 rnum = _robotArray[cx][cy];
 			if (rnum > 0 && rnum != kMeNum && rnum <= _objects.size() && _objects[rnum - 1].alive) {
-				if (_objects[rnum - 1].type == kObjCryo)
-					drawAutomapCryoMarker(mx, my, cryoR, lineColor, vp);
-				else if (_objects[rnum - 1].type == kObjTeleport)
-					drawAutomapTeleportMarker(mx, my, teleR, lineColor, vp);
-				else if (_objects[rnum - 1].type == kObjForkLift)
-					drawAutomapForkliftMarker(mx, my, forkR, lineColor, vp);
-				else if (inRadar)
-					drawMiniMapMarker(mx, my, markerR, lineColor, isMac, &vp);
+				const Thing &mapObj = _objects[rnum - 1];
+				// Robots and eggs are radar contacts; furniture never moves, so it
+				// keeps its mark in every cell already visited.
+				const bool isRobot = mapObj.type >= kRobEye && mapObj.type <= kRobSnoop;
+				if (!isRobot || inRadar) {
+					if (mapObj.type == kObjCryo)
+						drawAutomapCryoMarker(mx, my, cryoR, lineColor, vp);
+					else if (mapObj.type == kObjTeleport)
+						drawAutomapTeleportMarker(mx, my, teleR, lineColor, vp);
+					else if (mapObj.type == kObjForkLift)
+						drawAutomapForkliftMarker(mx, my, forkR, lineColor, vp);
+					else if (mapObj.type == kRobQueen)
+						drawAutomapQueenMarker(mx, my, queenR, lineColor, vp);
+					else if (mapObj.type == kRobSnoop) {
+						const int32 sox = xloc + ((((int32)dx << 8) + (mapObj.where.xloc - (cx << 8))) * lExt >> 8);
+						const int32 soy = yloc + ((((int32)dy << 8) + (mapObj.where.yloc - (cy << 8))) * lExt >> 8);
+						const int sx = ccx + (int)((sox * tsin - soy * tcos) >> 8);
+						const int sy = ccy - (int)((soy * tsin + sox * tcos) >> 8);
+						const uint8 sa = (uint8)(mapObj.where.ang + 32);
+						const int ux = (_cost[sa] * tsin - _sint[sa] * tcos) >> 8;
+						const int uy = -((_sint[sa] * tsin + _cost[sa] * tcos) >> 8);
+						const int len = MAX(snoopR * 4 / 3, 2);
+						drawAutomapSnoopMarker(sx, sy, snoopR, ux * len / 64, uy * len / 64, lineColor, vp);
+					} else if (mapObj.type == kRobDrone || mapObj.type == kRobSoldier)
+						drawAutomapDroneMarker(mx, my, markerR, lineColor, vp);
+					else if (isRobot)
+						drawAutomapRobotMarker(mx, my, markerR, lineColor, vp);
+					else
+						drawAutomapObjectMarker(mx, my, objR, lineColor, vp);
+				}
 			}
 			if (inRadar && _foodArray[cx][cy] > 0)
 				drawMiniMapMarker(mx, my, foodR, lineColor, isMac, &vp);

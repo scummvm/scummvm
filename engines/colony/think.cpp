@@ -307,7 +307,8 @@ void ColonyEngine::queenThink(int num) {
 
 	updatedObj.alive = 0;
 	_allGrow = false;
-	_sound->play(Sound::kExplode);
+	// Both builds strobe the viewport here; the silent fallback differs.
+	explodeFlash(isMacRenderMode() ? 16 : 4);
 
 	for (uint i = 0; i < _objects.size(); ++i) {
 		Thing &other = _objects[i];
@@ -337,7 +338,7 @@ void ColonyEngine::droneThink(int num) {
 			_robotArray[obj.where.xindex][obj.where.yindex] == num)
 			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 		obj.alive = 0;
-		_sound->play(Sound::kExplode);
+		explodeFlash(16);
 		copyOverflowObjectToSlot(num);
 	} else {
 		obj.type = kRobDrone;
@@ -852,9 +853,8 @@ void ColonyEngine::meEat() {
 	_foodArray[_me.xindex][_me.yindex] = 0;
 	obj.alive = 0;
 	_sound->play(Sound::kEat);
-	if (foodNum <= getColonyActiveRobotLimit())
-		copyOverflowObjectToSlot(foodNum);
 
+	// Read the type before CopyMax(), which can move another object into the slot.
 	switch (obj.type) {
 	case kRobMUPyramid:
 	case kRobFUPyramid:
@@ -879,6 +879,9 @@ void ColonyEngine::meEat() {
 	default:
 		break;
 	}
+
+	if (foodNum <= getColonyActiveRobotLimit())
+		copyOverflowObjectToSlot(foodNum);
 }
 
 } // End of namespace Colony
