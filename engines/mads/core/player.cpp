@@ -531,8 +531,7 @@ void player_set_image() {
 		new_image.depth = depth;
 		new_image.scale = (byte)scale;
 
-		if ((old_image_number >= 0) && memcmp(&new_image.segment_id, &image_list[old_image_number].segment_id,
-			sizeof(Image) - sizeof(int)) == 0) {
+		if ((old_image_number >= 0) && new_image.equals(image_list[old_image_number])) {
 			image_list[old_image_number].flags = 0;
 		} else {
 			image_list[image_marker] = new_image;
