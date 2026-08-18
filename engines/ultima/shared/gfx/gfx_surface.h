@@ -49,6 +49,7 @@ public:
 		Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	void writeString(const Common::String &str, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	void writeChar(uint32 chr);
+	int getStringWidth(const Common::String &str) const;
 
 	void setTextPos(const Common::Point &pt);
 	byte setColor(byte color);

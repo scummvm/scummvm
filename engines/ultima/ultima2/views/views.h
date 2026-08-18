@@ -24,6 +24,7 @@
 
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima2/views/startup.h"
+#include "ultima/ultima2/views/title.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -31,6 +32,7 @@ namespace Views {
 
 struct Views : public Shared::Views {
 	Startup _startup;
+	Title _title;
 };
 
 } // namespace Views

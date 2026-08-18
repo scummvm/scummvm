@@ -106,6 +106,11 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	/**
+	 * Returns true if any savegames exist
+	 */
+	bool savegamesExist() const;
 };
 
 extern Ultima2Engine *g_engine;

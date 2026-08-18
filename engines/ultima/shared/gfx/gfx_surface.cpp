@@ -100,6 +100,10 @@ byte GfxSurface::setColor(byte color) {
 	return oldColor;
 }
 
+int GfxSurface::getStringWidth(const Common::String &str) const {
+	return str.size() * _font.getMaxCharWidth();
+}
+
 } // namespace Gfx
 } // namespace Shared
 } // namespace Ultima

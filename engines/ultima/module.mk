@@ -10,6 +10,7 @@ MODULE_OBJS += \
 	shared/engine/events.o \
 	shared/engine/messages.o \
 	shared/gfx/gfx_surface.o \
+	shared/gfx/text_input.o \
 	shared/gfx/view.o
 endif
 
@@ -179,7 +180,8 @@ MODULE_OBJS += \
 	ultima2/metaengine.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/views/view.o \
-	ultima2/views/startup.o
+	ultima2/views/startup.o \
+	ultima2/views/title.o
 endif
 
 ifdef ENABLE_ULTIMA4

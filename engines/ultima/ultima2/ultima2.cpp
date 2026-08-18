@@ -19,10 +19,10 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
@@ -78,6 +78,15 @@ Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+
+bool Ultima2Engine::savegamesExist() const {
+	Common::String slotName = getSaveStateName(1);
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
+	bool result = saveFile != nullptr;
+
+	delete saveFile;
+	return result;
 }
 
 } // namespace Ultima2
