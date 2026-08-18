@@ -117,6 +117,12 @@ void MainMenu::wait() {
 				_vm->_graphics->menuLoadPictures();
 				drawMenu();
 				break;
+			case Common::KEYCODE_5:
+				showDoc("avalot.doc", 1094);
+				_vm->_graphics->menuInitialize();
+				_vm->_graphics->menuLoadPictures();
+				drawMenu();
+				break;
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_6: // Falltroughs are inteded.
 				// Exit back to DOS
@@ -128,6 +134,121 @@ void MainMenu::wait() {
 			}
 		}
 	}
+}
+
+void MainMenu::showDoc(const Common::String &filename, int startLine) {
+	Common::File file;
+	if (!file.open(filename.c_str())) {
+		warning("AVALANCHE: File not found: %s", filename.c_str());
+		return;
+	}
+
+	Common::Array<Common::String> lines;
+	while (!file.eos()) {
+		Common::String line;
+		while (!file.eos()) {
+			char ch = file.readByte();
+			if (ch == '\n')
+				break;
+			if (ch == '\t') {
+				int spaces = 8 - (line.size() % 8);
+				for (int s = 0; s < spaces; s++)
+					line += ' ';
+			} else if ((byte)ch >= 32 && (byte)ch <= 126) {
+				line += ch;
+			}
+		}
+		lines.push_back(line);
+	}
+	file.close();
+
+	if (lines.empty())
+		return;
+
+	int currentLine = startLine;
+	if (currentLine >= (int)lines.size())
+		currentLine = (int)lines.size() - 1;
+	if (currentLine < 0)
+		currentLine = 0;
+
+	_vm->_graphics->menuInitialize();
+	Graphics::Surface &menu = _vm->_graphics->getMenuSurface();
+	CursorMan.showMouse(false);
+
+	const int linesPerPage = 23;
+
+	while (!_vm->shouldQuit()) {
+		menu.fillRect(Common::Rect(0, 0, 640, 332), kColorBlue);
+
+		for (int i = 0; i < linesPerPage; i++) {
+			int lineIdx = currentLine + i;
+			if (lineIdx >= (int)lines.size())
+				break;
+
+			Common::String line = lines[lineIdx];
+			if (line.size() > 78)
+				line = Common::String(line.c_str(), 78);
+
+			_vm->_graphics->drawText(menu, line, _font, 14, 8, 4 + i * 14, kColorLightgray);
+		}
+
+		int pct = (currentLine + linesPerPage) * 100 / lines.size();
+		if (pct > 100)
+			pct = 100;
+		else if (pct <= 1)
+			pct = 0;
+		Common::String statusStr = Common::String::format("Doc lister: PgUp, PgDn, Home & End to move. Esc exits to main menu.|%d%% through", pct);
+		menu.fillRect(Common::Rect(0, 332, 640, 350), kColorLightgray);
+		_vm->_graphics->drawText(menu, statusStr, _vm->_font, 8, 4, 336, kColorBlack);
+
+		_vm->_graphics->menuRefreshScreen();
+
+		Common::Event event;
+		bool redraw = false;
+		while (_vm->getEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN) {
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					CursorMan.showMouse(true);
+					return;
+				case Common::KEYCODE_PAGEUP:
+				case Common::KEYCODE_UP:
+					currentLine -= linesPerPage;
+					if (currentLine < 0)
+						currentLine = 0;
+					redraw = true;
+					break;
+				case Common::KEYCODE_PAGEDOWN:
+				case Common::KEYCODE_DOWN:
+				case Common::KEYCODE_SPACE:
+					if (currentLine + linesPerPage < (int)lines.size())
+						currentLine += linesPerPage;
+					redraw = true;
+					break;
+				case Common::KEYCODE_HOME:
+					currentLine = 0;
+					redraw = true;
+					break;
+				case Common::KEYCODE_END:
+					currentLine = (int)lines.size() - linesPerPage;
+					if (currentLine < 0)
+						currentLine = 0;
+					redraw = true;
+					break;
+				default:
+					break;
+				}
+			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+				CursorMan.showMouse(true);
+				return;
+			}
+		}
+
+		if (!redraw)
+			g_system->delayMillis(15);
+	}
+
+	CursorMan.showMouse(true);
 }
 
 void MainMenu::showPreview() {

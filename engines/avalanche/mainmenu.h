@@ -49,6 +49,7 @@ private:
 	void centre(int16 y, Common::String text);
 	void wait();
 	void showPreview();
+	void showDoc(const Common::String &filename, int startLine);
 };
 
 } // End of namespace Avalanche
