@@ -404,6 +404,21 @@ uint8 ColonyEngine::wallAt(int x, int y) const {
 	return _wall[x][y];
 }
 
+bool ColonyEngine::isRecessFeature(int x, int y, int direction) const {
+	const uint8 *map = mapFeatureAt(x, y, direction);
+	if (!map)
+		return false;
+	return map[0] == kWallFeatureUpStairs || map[0] == kWallFeatureDnStairs;
+}
+
+// Bit 0x01 spans (x,y-1)/(x,y); bit 0x02 spans (x-1,y)/(x,y). Either side may
+// record the well.
+bool ColonyEngine::wallSegmentIsOpenWell(int x, int y, uint8 bit) const {
+	if (bit == 0x01)
+		return isRecessFeature(x, y, kDirSouth) || isRecessFeature(x, y - 1, kDirNorth);
+	return isRecessFeature(x, y, kDirWest) || isRecessFeature(x - 1, y, kDirEast);
+}
+
 const uint8 *ColonyEngine::mapFeatureAt(int x, int y, int direction) const {
 	if (x < 0 || x >= 31 || y < 0 || y >= 31 || direction < 0 || direction >= 5)
 		return nullptr;
@@ -986,10 +1001,11 @@ void ColonyEngine::renderCorridor3D() {
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 32; x++) {
 			uint8 w = _wall[x][y];
-			if (w & 0x01) {
+			// A stair well is a hole: the feature draws the opening itself.
+			if ((w & 0x01) && !wallSegmentIsOpenWell(x, y, 0x01)) {
 				_gfx->draw3DWall(x, y, x + 1, y, wallColor);
 			}
-			if (w & 0x02) {
+			if ((w & 0x02) && !wallSegmentIsOpenWell(x, y, 0x02)) {
 				_gfx->draw3DWall(x, y, x, y + 1, wallColor);
 			}
 		}

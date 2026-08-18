@@ -80,6 +80,9 @@ public:
 	void setMacColors(uint32 fg, uint32 bg) override;
 	void setDepthState(bool testEnabled, bool writeEnabled) override;
 	void setDepthRange(float nearVal, float farVal) override;
+	void setFeatureClipX(int left, int right) override;
+	void clearFeatureClipX() override;
+	void applyScissorRect(const Common::Rect &logical);
 	void computeScreenViewport() override;
 
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
@@ -116,6 +119,7 @@ private:
 	void drawWireframeable3D(const float *positions, int vertCount, uint32 color);
 
 	OSystem *_system = nullptr;
+	Common::Rect _active3DViewport;
 	int _width = 0;
 	int _height = 0;
 	byte _palette[256 * 3] = {};
@@ -722,6 +726,32 @@ void OpenGLShaderRenderer::setDepthRange(float nearVal, float farVal) {
 	setGLDepthRange(nearVal, farVal);
 }
 
+void OpenGLShaderRenderer::applyScissorRect(const Common::Rect &logical) {
+	const float scaleX = (float)_screenViewport.width() / (float)_width;
+	const float scaleY = (float)_screenViewport.height() / (float)_height;
+	const int sysH = _system->getHeight();
+	const int vpX = _screenViewport.left + (int)(logical.left * scaleX);
+	const int vpY = sysH - (_screenViewport.top + (int)(logical.bottom * scaleY));
+	const int vpW = (int)(logical.width() * scaleX);
+	const int vpH = (int)(logical.height() * scaleY);
+	glScissor(vpX, vpY, vpW > 0 ? vpW : 0, vpH > 0 ? vpH : 0);
+}
+
+void OpenGLShaderRenderer::setFeatureClipX(int left, int right) {
+	Common::Rect clipped = _active3DViewport;
+	if (left > clipped.left)
+		clipped.left = left;
+	if (right < clipped.right)
+		clipped.right = right;
+	if (clipped.left >= clipped.right)
+		clipped.right = clipped.left;
+	applyScissorRect(clipped);
+}
+
+void OpenGLShaderRenderer::clearFeatureClipX() {
+	applyScissorRect(_active3DViewport);
+}
+
 void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY,
 		const Common::Rect &viewport) {
 	glEnable(GL_DEPTH_TEST);
@@ -738,6 +768,7 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 	const int vpH = (int)(viewport.height() * scaleY);
 	glViewport(vpX, vpY, vpW, vpH);
 	glScissor(vpX, vpY, vpW, vpH);
+	_active3DViewport = viewport;
 	glEnable(GL_SCISSOR_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);

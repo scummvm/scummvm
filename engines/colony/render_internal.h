@@ -33,6 +33,12 @@
 
 namespace Colony {
 
+// render.cpp; shared with the wall-feature renderer.
+void projectCorridorPointClamped(const Common::Rect &screenR, int look, int lookY,
+	const int *sint, const int *cost, int camX, int camY,
+	float worldX, float worldY, float worldZ,
+	int &screenX, int &screenY);
+
 // Mac Classic dither patterns (from colorize.c cColor[].pattern).
 // Mac Classic was a 1-bit B&W display. QuickDraw used 8x8 dither patterns
 // to simulate grayscale: WHITE, LTGRAY, GRAY, DKGRAY, BLACK, CLEAR.

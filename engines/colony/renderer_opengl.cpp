@@ -93,6 +93,30 @@ public:
 	void setDepthRange(float nearVal, float farVal) override {
 		glDepthRange(nearVal, farVal);
 	}
+
+	void applyScissorRect(const Common::Rect &logical) {
+		const float scaleX = (float)_screenViewport.width() / (float)_width;
+		const float scaleY = (float)_screenViewport.height() / (float)_height;
+		const int sysH = _system->getHeight();
+		const int vpX = _screenViewport.left + (int)(logical.left * scaleX);
+		const int vpY = sysH - (_screenViewport.top + (int)(logical.bottom * scaleY));
+		const int vpW = (int)(logical.width() * scaleX);
+		const int vpH = (int)(logical.height() * scaleY);
+		glScissor(vpX, vpY, vpW > 0 ? vpW : 0, vpH > 0 ? vpH : 0);
+	}
+	void setFeatureClipX(int left, int right) override {
+		Common::Rect clipped = _active3DViewport;
+		if (left > clipped.left)
+			clipped.left = left;
+		if (right < clipped.right)
+			clipped.right = right;
+		if (clipped.left >= clipped.right)
+			clipped.right = clipped.left;
+		applyScissorRect(clipped);
+	}
+	void clearFeatureClipX() override {
+		applyScissorRect(_active3DViewport);
+	}
 	void computeScreenViewport() override;
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
 	Graphics::Surface *getScreenshot() override;
@@ -110,6 +134,7 @@ private:
 	GLuint _overlayTexId = 0;
 
 	OSystem *_system = nullptr;
+	Common::Rect _active3DViewport;
 	int _width = 0;
 	int _height = 0;
 	byte _palette[256 * 3] = {};
@@ -274,6 +299,7 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
  
 	glViewport(vpX, vpY, vpW, vpH);
 	glScissor(vpX, vpY, vpW, vpH);
+	_active3DViewport = viewport;
 	glEnable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);

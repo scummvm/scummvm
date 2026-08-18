@@ -70,6 +70,9 @@ public:
 	virtual void setMacColors(uint32 fg, uint32 bg) {}
 	virtual void setDepthState(bool testEnabled, bool writeEnabled) {}
 	virtual void setDepthRange(float nearVal, float farVal) {}
+	// features.c clipped each wall feature to its own wall (ClipRect(&rClip)).
+	virtual void setFeatureClipX(int left, int right) {}
+	virtual void clearFeatureClipX() {}
 	virtual void computeScreenViewport() = 0;
 
 	// Window-pixel rect the logical canvas is drawn into: the whole window

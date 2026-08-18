@@ -713,6 +713,17 @@ private:
 	void drawWallFeature3D(int cellX, int cellY, int direction);
 	void drawCellFeature3D(int cellX, int cellY);
 	void getWallFace3D(int cellX, int cellY, int direction, float corners[4][3]);
+	bool isRecessFeature(int x, int y, int direction) const;
+	bool wallSegmentIsOpenWell(int x, int y, uint8 bit) const;
+	void getWallRecess3D(const float corners[4][3], float farC[4][3]) const;
+	void recessPoint(const float nearC[4][3], const float farC[4][3], float u, float v, float depth, float out[3]) const;
+	void recessLine(const float nearC[4][3], const float farC[4][3], float u1, float v1, float d1,
+		float u2, float v2, float d2, uint32 color);
+	void recessQuad(const float nearC[4][3], const float farC[4][3], const float *u, const float *v,
+		const float *d, int count, uint32 color);
+	void clipToWallFace(const float corners[4][3]);
+	void macFillRecess(const float nearC[4][3], const float farC[4][3], const float *u, const float *v,
+		const float *d, int count, int macIdx, bool macColors);
 	void getCellFace3D(int cellX, int cellY, bool ceiling, float corners[4][3]);
 
 	int occupiedObjectAt(int xnew, int ynew, int x, int y, const Locate *pobject);

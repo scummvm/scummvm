@@ -1141,7 +1141,6 @@ const int kSnoopHeadSurf[3][8] = {
 };
 
 const Colony::ColonyEngine::PrismPartDef kSnoopAbdomenDef = {4, kSnoopAbdomenPts, 2, kSnoopAbdomenSurf};
-const Colony::ColonyEngine::PrismPartDef kSnoopHeadDef = {4, kSnoopHeadPts, 3, kSnoopHeadSurf};
 
 int wrapAngle256(int angle) {
 	angle %= 256;

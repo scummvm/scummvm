@@ -87,6 +87,122 @@ void wallPoint(const float corners[4][3], float u, float v, float out[3]) {
 	out[2] = botZ + (topZ - botZ) * v;
 }
 
+// Far mouth of a one-cell recess. Taking the direction from the quad's own normal
+// keeps it in step with whichever face getWallFace3D() built.
+void ColonyEngine::getWallRecess3D(const float corners[4][3], float farC[4][3]) const {
+	const float ux = corners[1][0] - corners[0][0];
+	const float uy = corners[1][1] - corners[0][1];
+	const float uz = corners[1][2] - corners[0][2];
+	const float vx = corners[3][0] - corners[0][0];
+	const float vy = corners[3][1] - corners[0][1];
+	const float vz = corners[3][2] - corners[0][2];
+
+	float nx = uy * vz - uz * vy;
+	float ny = uz * vx - ux * vz;
+	float nz = ux * vy - uy * vx;
+	const float len = sqrtf(nx * nx + ny * ny + nz * nz);
+	if (len < 0.001f) {
+		memcpy(farC, corners, sizeof(float) * 12);
+		return;
+	}
+	nx /= len;
+	ny /= len;
+	nz /= len;
+
+	const float awayX = corners[0][0] - (float)_me.xloc;
+	const float awayY = corners[0][1] - (float)_me.yloc;
+	const float awayZ = corners[0][2];
+	if (nx * awayX + ny * awayY + nz * awayZ < 0.0f) {
+		nx = -nx;
+		ny = -ny;
+		nz = -nz;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		farC[i][0] = corners[i][0] + nx * 256.0f;
+		farC[i][1] = corners[i][1] + ny * 256.0f;
+		farC[i][2] = corners[i][2] + nz * 256.0f;
+	}
+}
+
+// Depth 0 at the wall face, 1 a cell in. renderCorridor3D() drops the wall
+// segment, so this needs no depth trickery.
+void ColonyEngine::recessPoint(const float nearC[4][3], const float farC[4][3],
+		float u, float v, float depth, float out[3]) const {
+	float pn[3];
+	float pf[3];
+	wallPoint(nearC, u, v, pn);
+	wallPoint(farC, u, v, pf);
+	for (int i = 0; i < 3; i++)
+		out[i] = pn[i] + (pf[i] - pn[i]) * depth;
+}
+
+void ColonyEngine::recessLine(const float nearC[4][3], const float farC[4][3],
+		float u1, float v1, float d1, float u2, float v2, float d2, uint32 color) {
+	float p1[3];
+	float p2[3];
+	recessPoint(nearC, farC, u1, v1, d1, p1);
+	recessPoint(nearC, farC, u2, v2, d2, p2);
+	_gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], color);
+}
+
+void ColonyEngine::recessQuad(const float nearC[4][3], const float farC[4][3],
+		const float *u, const float *v, const float *d, int count, uint32 color) {
+	float px[8];
+	float py[8];
+	float pz[8];
+	if (count > 8)
+		count = 8;
+	for (int i = 0; i < count; i++) {
+		float p[3];
+		recessPoint(nearC, farC, u[i], v[i], d[i], p);
+		px[i] = p[0];
+		py[i] = p[1];
+		pz[i] = p[2];
+	}
+	_gfx->draw3DPolygon(px, py, pz, count, color);
+}
+
+// A well legitimately projects outside its opening, so it needs the original's
+// per-wall clip or it paints over the neighbours.
+void ColonyEngine::clipToWallFace(const float corners[4][3]) {
+	int minX = 0;
+	int maxX = 0;
+	for (int i = 0; i < 4; i++) {
+		int sx = 0;
+		int sy = 0;
+		projectCorridorPointClamped(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+			corners[i][0], corners[i][1], corners[i][2], sx, sy);
+		if (i == 0) {
+			minX = sx;
+			maxX = sx;
+			continue;
+		}
+		if (sx < minX)
+			minX = sx;
+		if (sx > maxX)
+			maxX = sx;
+	}
+	_gfx->setFeatureClipX(minX, maxX + 1);
+}
+
+void ColonyEngine::macFillRecess(const float nearC[4][3], const float farC[4][3],
+		const float *u, const float *v, const float *d, int count, int macIdx, bool macColors) {
+	if (macColors) {
+		uint32 fg = packMacColor(_macColors[macIdx].fg);
+		uint32 bg = packMacColor(_macColors[macIdx].bg);
+		const byte *stipple = setupMacPattern(_gfx, _macColors[macIdx].pattern, fg, bg);
+		recessQuad(nearC, farC, u, v, d, count, fg);
+		if (stipple)
+			_gfx->setStippleData(nullptr);
+		return;
+	}
+
+	_gfx->setStippleData(kStippleGray);
+	recessQuad(nearC, farC, u, v, d, count, 0);
+	_gfx->setStippleData(nullptr);
+}
+
 // Draw a line on a wall face using normalized (u,v) coordinates
 void ColonyEngine::wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color) {
 	float p1[3], p2[3];
@@ -649,130 +765,116 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureUpStairs: {
-		// DOS: draw_up_stairs  staircase ascending into the wall with perspective
+		// wallftrs.c draw_up_stairs(): a well one cell deep, so it recedes for real.
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
+		float farC[4][3];
+		getWallRecess3D(corners, farC);
+		clipToWallFace(corners);
 
-		// Mac: fill entire wall face (c_upstairs)
-		if (isMacRenderMode()) {
-			float uf[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-			float vf2[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-			if (macColors) {
-				macFillPoly(uf, vf2, 4, 19); // c_upstairs1
-			} else {
-				_gfx->setStippleData(kStippleGray);
-				wallPolygon(corners, uf, vf2, 4, 0);
-				_gfx->setStippleData(nullptr);
-			}
-		}
-
-		// Perspective convergence: back of passage at ~1/3 width (1 cell deep)
-		float ul[7], ur[7], vf[7], vc[7];
+		float dep[7];
+		float hgt[7];
 		for (int i = 0; i < 7; i++) {
-			float f = (i + 1) / 8.0f;
-			float inset = f * (1.0f / 3.0f);
-			ul[i] = inset;
-			ur[i] = 1.0f - inset;
-			vf[i] = inset;        // floor rises toward center
-			vc[i] = 1.0f - inset; // ceiling drops toward center
-		}
-		// Back of passage (full depth)
-		float bi = 1.0f / 3.0f; // back inset
-		float bu = bi, bur = 1.0f - bi, bvc = 1.0f - bi;
-
-		// 1. Side wall verticals at back of passage
-		wallLine(corners, bu, bvc, bu, 0.5f, col);
-		wallLine(corners, bur, 0.5f, bur, bvc, col);
-
-		// 2. Back wall landing (depth 6 to full depth)
-		wallLine(corners, ul[6], stairStepHeight(vf, vc, 6, 6), bu, bvc, col);
-		wallLine(corners, bu, bvc, bur, bvc, col);
-		wallLine(corners, bur, bvc, ur[6], stairStepHeight(vf, vc, 6, 6), col);
-		wallLine(corners, ur[6], stairStepHeight(vf, vc, 6, 6), ul[6], stairStepHeight(vf, vc, 6, 6), col);
-
-		// 3. First step tread (floor from wall face to depth 0)
-		wallLine(corners, 0.0f, 0.0f, ul[0], vf[0], col);
-		wallLine(corners, ul[0], vf[0], ur[0], vf[0], col);
-		wallLine(corners, ur[0], vf[0], 1.0f, 0.0f, col);
-		wallLine(corners, 1.0f, 0.0f, 0.0f, 0.0f, col);
-
-		// 4. First step riser (at depth 0)
-		wallLine(corners, ul[0], stairStepHeight(vf, vc, 0, 0), ul[0], vf[0], col);
-		wallLine(corners, ur[0], vf[0], ur[0], stairStepHeight(vf, vc, 0, 0), col);
-		wallLine(corners, ur[0], stairStepHeight(vf, vc, 0, 0), ul[0], stairStepHeight(vf, vc, 0, 0), col);
-
-		// 5. Step treads (i=3..0: depth i to depth i+1)
-		for (int i = 3; i >= 0; i--) {
-			wallLine(corners, ul[i], stairStepHeight(vf, vc, i, i), ul[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
-			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
-			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i], stairStepHeight(vf, vc, i, i), col);
-			wallLine(corners, ur[i], stairStepHeight(vf, vc, i, i), ul[i], stairStepHeight(vf, vc, i, i), col);
+			dep[i] = (float)(i + 1) / 8.0f;
+			hgt[i] = (float)(i + 1) / 8.0f;
 		}
 
-		// 6. Step risers (i=5..0: vertical face at depth i+1)
-		for (int i = 5; i >= 0; i--) {
-			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), ul[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
-			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
-			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), col);
-			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), ul[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), col);
+		// ColorWall(), now the back of the hole.
+		if (isMacRenderMode()) {
+			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			const float vw[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			macFillRecess(corners, farC, uw, vw, dw, 4, 19, macColors); // c_upstairs1
+
+			// Treads c_upstairs1, risers c_upstairs2, back to front.
+			for (int i = 6; i >= 0; i--) {
+				const float lowV = (i > 0) ? hgt[i - 1] : 0.0f;
+				const float backD = (i > 0) ? dep[i - 1] : 0.0f;
+				const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float vRiser[4] = {hgt[i], lowV, lowV, hgt[i]};
+				const float dRiser[4] = {dep[i], dep[i], dep[i], dep[i]};
+				macFillRecess(corners, farC, uq, vRiser, dRiser, 4, 20, macColors);
+
+				const float vTread[4] = {lowV, lowV, lowV, lowV};
+				const float dTread[4] = {backD, dep[i], dep[i], backD};
+				macFillRecess(corners, farC, uq, vTread, dTread, 4, 19, macColors);
+			}
+
+			const float ub[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
+			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
+			macFillRecess(corners, farC, ub, vb, db, 4, 19, macColors);
 		}
 
-		// 7. Handrails: from center of wall edges up to near-ceiling at mid-depth
-		wallLine(corners, 0.0f, 0.5f, ul[3], vc[0], col);
-		wallLine(corners, 1.0f, 0.5f, ur[3], vc[0], col);
+		// Back landing and far mouth
+		recessLine(corners, farC, 0.0f, hgt[6], dep[6], 0.0f, hgt[6], 1.0f, col);
+		recessLine(corners, farC, 0.0f, hgt[6], 1.0f, 1.0f, hgt[6], 1.0f, col);
+		recessLine(corners, farC, 1.0f, hgt[6], 1.0f, 1.0f, hgt[6], dep[6], col);
+		recessLine(corners, farC, 0.0f, hgt[6], 1.0f, 0.0f, 1.0f, 1.0f, col);
+		recessLine(corners, farC, 1.0f, hgt[6], 1.0f, 1.0f, 1.0f, 1.0f, col);
+
+		// Treads and risers
+		for (int i = 6; i >= 0; i--) {
+			const float lowV = (i > 0) ? hgt[i - 1] : 0.0f;
+			const float backD = (i > 0) ? dep[i - 1] : 0.0f;
+			recessLine(corners, farC, 0.0f, lowV, backD, 0.0f, lowV, dep[i], col);
+			recessLine(corners, farC, 1.0f, lowV, backD, 1.0f, lowV, dep[i], col);
+			recessLine(corners, farC, 0.0f, lowV, dep[i], 1.0f, lowV, dep[i], col);
+			recessLine(corners, farC, 0.0f, lowV, dep[i], 0.0f, hgt[i], dep[i], col);
+			recessLine(corners, farC, 1.0f, lowV, dep[i], 1.0f, hgt[i], dep[i], col);
+			recessLine(corners, farC, 0.0f, hgt[i], dep[i], 1.0f, hgt[i], dep[i], col);
+		}
+
+		// Handrails
+		recessLine(corners, farC, 0.0f, 0.5f, 0.0f, 0.0f, 1.0f, dep[3], col);
+		recessLine(corners, farC, 1.0f, 0.5f, 0.0f, 1.0f, 1.0f, dep[3], col);
+		_gfx->clearFeatureClipX();
 		break;
 	}
 	case kWallFeatureDnStairs: {
-		// DOS: draw_dn_stairs  staircase descending into the wall with perspective
+		// wallftrs.c draw_dn_stairs(): the same well, dropping away.
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
+		float farC[4][3];
+		getWallRecess3D(corners, farC);
+		clipToWallFace(corners);
 
-		// Mac: fill entire wall face (c_dnstairs)
+		float dep[7];
+		for (int i = 0; i < 7; i++)
+			dep[i] = (float)(i + 1) / 8.0f;
+
 		if (isMacRenderMode()) {
-			float uf[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-			float vf2[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-			if (macColors) {
-				macFillPoly(uf, vf2, 4, 21); // c_dnstairs
-			} else {
-				_gfx->setStippleData(kStippleGray);
-				wallPolygon(corners, uf, vf2, 4, 0);
-				_gfx->setStippleData(nullptr);
-			}
+			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			const float vw[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			macFillRecess(corners, farC, uw, vw, dw, 4, 21, macColors); // c_dnstairs
+
+			// Well floor
+			const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vFloor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+			const float dFloor[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			macFillRecess(corners, farC, uq, vFloor, dFloor, 4, 21, macColors);
 		}
 
-		float ul[7], ur[7], vf[7], vc[7];
-		for (int i = 0; i < 7; i++) {
-			float f = (i + 1) / 8.0f;
-			float inset = f * (1.0f / 3.0f);
-			ul[i] = inset;
-			ur[i] = 1.0f - inset;
-			vf[i] = inset;
-			vc[i] = 1.0f - inset;
-		}
-		float bi = 1.0f / 3.0f;
-		float bu = bi, bur = 1.0f - bi;
+		// Ceiling, then the slant to the far mouth
+		recessLine(corners, farC, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, dep[3], col);
+		recessLine(corners, farC, 0.0f, 1.0f, dep[3], 1.0f, 1.0f, dep[3], col);
+		recessLine(corners, farC, 1.0f, 1.0f, dep[3], 1.0f, 1.0f, 0.0f, col);
+		recessLine(corners, farC, 0.0f, 1.0f, dep[3], 0.0f, 0.5f, 1.0f, col);
+		recessLine(corners, farC, 0.0f, 0.5f, 1.0f, 1.0f, 0.5f, 1.0f, col);
+		recessLine(corners, farC, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f, dep[3], col);
 
-		// 1. Ceiling: front ceiling slopes down to mid-depth
-		wallLine(corners, 0.0f, 1.0f, ul[3], vc[3], col);
-		wallLine(corners, ul[3], vc[3], ur[3], vc[3], col);
-		wallLine(corners, ur[3], vc[3], 1.0f, 1.0f, col);
+		// Side walls down to the well floor
+		recessLine(corners, farC, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, col);
+		recessLine(corners, farC, 1.0f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f, col);
+		recessLine(corners, farC, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, col);
+		recessLine(corners, farC, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, col);
 
-		// 2. Slant: from mid-depth ceiling down to center at back
-		wallLine(corners, ul[3], vc[3], bu, 0.5f, col);
-		wallLine(corners, bu, 0.5f, bur, 0.5f, col);
-		wallLine(corners, bur, 0.5f, ur[3], vc[3], col);
+		// First step
+		recessLine(corners, farC, 0.0f, 0.0f, dep[0], 1.0f, 0.0f, dep[0], col);
 
-		// 3. Side wall verticals: from center at back down to floor level
-		wallLine(corners, bu, 0.5f, bu, vf[0], col);
-		wallLine(corners, bur, 0.5f, bur, vf[0], col);
-
-		// 4. First step (floor from wall face to depth 0)
-		wallLine(corners, 0.0f, 0.0f, ul[0], vf[0], col);
-		wallLine(corners, ul[0], vf[0], ur[0], vf[0], col);
-		wallLine(corners, ur[0], vf[0], 1.0f, 0.0f, col);
-		wallLine(corners, 1.0f, 0.0f, 0.0f, 0.0f, col);
-
-		// 5. Handrails: from center of wall edges down to floor at mid-depth
-		wallLine(corners, 0.0f, 0.5f, ul[3], vf[3], col);
-		wallLine(corners, 1.0f, 0.5f, ur[3], vf[3], col);
+		// Handrails
+		recessLine(corners, farC, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, dep[3], col);
+		recessLine(corners, farC, 1.0f, 0.5f, 0.0f, 1.0f, 0.0f, dep[3], col);
+		_gfx->clearFeatureClipX();
 		break;
 	}
 	case kWallFeatureChar:
