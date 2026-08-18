@@ -66,10 +66,11 @@ void TitleScreen::loadCredits(Common::Array<Common::String> &lines) {
 void TitleScreen::run() {
 	_vm->_sound->playMod("avalot2.mod");
 
+	FontType avalotFont;
 	Common::File fontFile;
 	if (fontFile.open("avalot.fnt")) {
 		for (int i = 0; i < 256; i++)
-			fontFile.read(_vm->_font[i], 16);
+			fontFile.read(avalotFont[i], 16);
 		fontFile.close();
 	}
 
@@ -168,7 +169,7 @@ void TitleScreen::run() {
 		menu.fillRect(Common::Rect(0, kBandBottom - 3, 640, kBandBottom - 1), kColorGreen);
 
 		int textY = kBandTop + (kBandHalfH * 2 - 16) / 2;
-		_vm->_graphics->drawText(menu, scrollStr, _vm->_font, 16, scrollX, textY, kColorWhite);
+		_vm->_graphics->drawText(menu, scrollStr, avalotFont, 16, scrollX, textY, kColorWhite);
 		_vm->_graphics->menuRefreshScreen();
 
 		uint32 now = g_system->getMillis();
