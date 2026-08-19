@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <libretro.h>
 #include "base/main.h"
+#include "backends/platform/libretro/include/libretro-core.h"
+#include "backends/platform/libretro/include/libretro-gl-context-handoff.h"
 #include "backends/platform/libretro/include/libretro-threads.h"
 
 extern char cmd_params[20][200];
@@ -135,8 +137,11 @@ static void retro_wrap_emulator(void *args) {
 	while (turn != TURN_EMU)
 		scond_wait(emu_cond, state_lock);
 	slock_unlock(state_lock);
+	retro_gl_context_acquire();
 
 	scummvm_res = retro_run_emulator();
+
+	retro_gl_context_release();
 
 	/* Hand control back and return, rather than parking on emu_cond: the
 	 * thread has to actually exit so that retro_free_emu_thread() can join
@@ -173,21 +178,25 @@ void retro_switch_to_emu_thread(void) {
 	if (retro_emu_thread_exited() || !retro_emu_thread_initialized())
 		return;
 
+	retro_gl_context_release();
 	slock_lock(state_lock);
 	turn = TURN_EMU;
 	scond_signal(emu_cond);
 	while (turn != TURN_MAIN)
 		scond_wait(main_cond, state_lock);
 	slock_unlock(state_lock);
+	retro_gl_context_acquire();
 }
 
 void retro_switch_to_main_thread(void) {
+	retro_gl_context_release();
 	slock_lock(state_lock);
 	turn = TURN_MAIN;
 	scond_signal(main_cond);
 	while (turn != TURN_EMU)
 		scond_wait(emu_cond, state_lock);
 	slock_unlock(state_lock);
+	retro_gl_context_acquire();
 }
 
 bool retro_emu_thread_initialized(void) {

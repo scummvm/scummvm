@@ -287,6 +287,8 @@ ifeq ($(or $(HAVE_OPENGL), $(HAVE_OPENGLES2)), 1)
 	LIBRETRO_OBJS += $(CORE_PATH)/libretro-graphics-opengl.o
 endif
 
+LIBRETRO_OBJS += $(CORE_PATH)/libretro-gl-context-handoff.o
+
 OBJS += $(LIBRETRO_OBJS)
 
 ######################################################################

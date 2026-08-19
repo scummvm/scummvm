@@ -53,6 +53,7 @@
 
 #include "backends/platform/libretro/include/libretro-defs.h"
 #include "backends/platform/libretro/include/libretro-core.h"
+#include "backends/platform/libretro/include/libretro-gl-context-handoff.h"
 #include "backends/platform/libretro/include/libretro-threads.h"
 #include "backends/platform/libretro/include/libretro-core-options.h"
 #include "backends/platform/libretro/include/libretro-os.h"
@@ -150,6 +151,17 @@ static void setup_hw_rendering(void) {
 
 	enum retro_pixel_format pixel_fmt;
 #ifdef USE_OPENGL
+	/* ScummVM issues its GL calls from the emulation thread, so the frontend's
+	   context has to travel with control at every thread switch. Without a
+	   backend for that handoff those calls would land on a thread with no
+	   current context, so stay on the software renderer instead. */
+	if ((video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_HW) && !retro_gl_context_handoff_available()) {
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_WARN, "No GL context handoff backend available, falling back to software.\n");
+		retro_osd_notification("HW rendering unavailable on this platform.");
+		video_hw_mode = VIDEO_GRAPHIC_MODE_REQUEST_SW;
+	}
+
 	if (video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_HW) {
 		pixel_fmt = RETRO_PIXEL_FORMAT_XRGB8888;
 		if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &pixel_fmt) && retro_log_cb)
