@@ -3817,7 +3817,15 @@ void LB::b_intersect(int nargs) {
 	Common::Rect rect1(r1.u.farr->arr[0].asInt(), r1.u.farr->arr[1].asInt(), r1.u.farr->arr[2].asInt(), r1.u.farr->arr[3].asInt());
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 
-	d = rect1.intersects(rect2);
+	// Return the overlapping area as a rect (rect(0,0,0,0) if none).
+	Common::Rect inter = rect1.findIntersectingRect(rect2);
+
+	d.type = RECT;
+	d.u.farr = new FArray;
+	d.u.farr->arr.push_back(Datum((int)inter.left));
+	d.u.farr->arr.push_back(Datum((int)inter.top));
+	d.u.farr->arr.push_back(Datum((int)inter.right));
+	d.u.farr->arr.push_back(Datum((int)inter.bottom));
 
 	g_lingo->push(d);
 }
