@@ -253,8 +253,6 @@ bool AdvancedMetaEngineDetectionBase::cleanupPirated(ADDetectedGames &matched) c
 }
 
 DetectedGames AdvancedMetaEngineDetectionBase::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
-	FileMap allFiles;
-
 	if (fslist.empty())
 		return DetectedGames();
 
@@ -262,21 +260,29 @@ DetectedGames AdvancedMetaEngineDetectionBase::detectGames(const Common::FSList 
 	// the _directoryGlobsMap
 	preprocessDescriptions();
 
-	// Compose a hashmap of all files in fslist. Engines which do not descend
-	// into subdirectories and match plain file names compose an identical one,
-	// so it is composed once per detection run and shared between them.
-	FileMap *files = &allFiles;
+	// Compose a hashmap of all files in fslist. Every engine composes the very
+	// same one for the game directory itself, so it is composed once per
+	// detection run and shared between them; engines descending into
+	// subdirectories take a copy and add those on top of it.
+	FileMap *files = ADCacheMan.getFileMap();
 
-	if (_globsMap.empty() && !(_flags & kADFlagMatchFullPaths)) {
-		files = ADCacheMan.getFileMap();
+	if (!files) {
+		files = &ADCacheMan.createFileMap();
 
-		if (!files) {
-			files = &ADCacheMan.createFileMap();
+		composeFileHashMap(*files, fslist, 1);
+	}
 
-			composeFileHashMap(*files, fslist, 1);
-		}
-	} else {
-		composeFileHashMap(*files, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
+	// Copy of the shared map, extended by this engine's subdirectories
+	FileMap subdirFiles;
+
+	if (!_globsMap.empty()) {
+		// The subdirectories must not be added to the shared map, otherwise
+		// every other engine would see the subdirectories of this one.
+		subdirFiles = *files;
+
+		composeFileHashMap(subdirFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth), Common::Path(), true);
+
+		files = &subdirFiles;
 	}
 
 	// Run the detector on this
@@ -462,7 +468,7 @@ Common::Error AdvancedMetaEngineDetectionBase::identifyGame(DetectedGame &game, 
 	return Common::kNoError;
 }
 
-void AdvancedMetaEngineDetectionBase::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName) const {
+void AdvancedMetaEngineDetectionBase::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName, bool subdirsOnly) const {
 	if (depth <= 0)
 		return;
 
@@ -470,6 +476,9 @@ void AdvancedMetaEngineDetectionBase::composeFileHashMap(FileMap &allFiles, cons
 		return;
 
 	for (const auto &file : fslist) {
+		if (subdirsOnly && !file.isDirectory())
+			continue;
+
 		Common::String efname = Common::punycode_encodefilename(file.getName());
 		Common::Path tstr = (_flags & kADFlagMatchFullPaths) ? parentName.appendComponent(efname) : Common::Path(efname, Common::Path::kNoSeparator);
 

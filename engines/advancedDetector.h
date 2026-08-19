@@ -594,7 +594,7 @@ protected:
 	 *
 	 * Removes trailing dots and ignores case in the process.
 	 */
-	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName = Common::Path()) const;
+	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName = Common::Path(), bool subdirsOnly = false) const;
 
 	/** Get the properties (size and MD5) of this file. */
 	bool getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::Path &fname, FileProperties &fileProps) const;
