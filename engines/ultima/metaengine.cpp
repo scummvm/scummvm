@@ -32,7 +32,7 @@
 #include "ultima/ultima0/metaengine.h"
 #endif
 #ifdef ENABLE_ULTIMA1
-#include "ultima/u1shared/early/ultima_early.h"
+#include "ultima/ultima1/ultima1.h"
 #endif
 #ifdef ENABLE_ULTIMA2
 #include "ultima/ultima2/ultima2.h"
@@ -196,7 +196,7 @@ Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 #endif
 #ifdef ENABLE_ULTIMA1
 	case Ultima::GAME_ULTIMA1:
-		*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
+		*engine = new Ultima::Ultima1::Ultima1Engine(syst, gd);
 		break;
 #endif
 #ifdef ENABLE_ULTIMA2

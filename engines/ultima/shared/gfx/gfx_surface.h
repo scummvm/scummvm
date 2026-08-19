@@ -57,9 +57,11 @@ public:
 	byte setColor(byte color);
 	void setColor(byte fgColor, byte bgColor);
 	void reverseColor();
-	bool setScrollable(bool flag) {
+	void setScrollable(bool flag) {
 		_scrollable = flag;
 	}
+
+	void xorBlitFrom(const ManagedSurface &src, const Common::Point &destPos);
 };
 
 } // namespace Gfx

@@ -114,7 +114,6 @@ public:
 };
 
 extern Ultima2Engine *g_engine;
-#define SHOULD_QUIT ::Ultima2::g_engine->shouldQuit()
 
 } // namespace Ultima2
 } // namespace Ultima

@@ -5,7 +5,7 @@ MODULE_OBJS := \
 	shared/conf/xml_node.o \
 	shared/conf/xml_tree.o
 
-ifdef ENABLE_ULTIMA2
+ifdef ENABLE_ULTIMA1 || ENABLE_ULTIMA2
 MODULE_OBJS += \
 	shared/engine/events.o \
 	shared/engine/messages.o \
@@ -47,128 +47,25 @@ endif
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
-	u1shared/actions/action.o \
-	u1shared/actions/huh.o \
-	u1shared/actions/pass.o \
-	u1shared/core/base_object.o \
-	u1shared/core/character.o \
-	u1shared/core/file.o \
-	u1shared/core/lzw.o \
-	u1shared/core/map.o \
-	u1shared/core/message_target.o \
-	u1shared/core/mouse_cursor.o \
-	u1shared/core/named_item.o \
-	u1shared/core/party.o \
-	u1shared/core/str.o \
-	u1shared/core/tree_item.o \
-	u1shared/core/utils.o \
-	u1shared/core/widgets.o \
-	u1shared/early/font_resources.o \
-	u1shared/early/game.o \
-	u1shared/early/game_base.o \
-	u1shared/early/ultima_early.o \
-	u1shared/engine/events.o \
-	u1shared/engine/input_handler.o \
-	u1shared/engine/input_translator.o \
-	u1shared/engine/messages.o \
-	u1shared/engine/resources.o \
-	u1shared/gfx/bitmap.o \
-	u1shared/gfx/character_input.o \
-	u1shared/gfx/dungeon_surface.o \
-	u1shared/gfx/font.o \
-	u1shared/gfx/info.o \
-	u1shared/gfx/popup.o \
-	u1shared/gfx/screen.o \
-	u1shared/gfx/sprites.o \
-	u1shared/gfx/text_cursor.o \
-	u1shared/gfx/text_input.o \
-	u1shared/gfx/viewport_dungeon.o \
-	u1shared/gfx/viewport_map.o \
-	u1shared/gfx/visual_container.o \
-	u1shared/gfx/visual_item.o \
-	u1shared/gfx/visual_surface.o \
-	u1shared/maps/map.o \
-	u1shared/maps/map_base.o \
-	u1shared/maps/map_tile.o \
-	u1shared/maps/map_widget.o \
-	u1shared/maps/creature.o \
-	ultima1/actions/action.o \
-	ultima1/actions/attack.o \
-	ultima1/actions/move.o \
-	ultima1/actions/quit.o \
-	ultima1/actions/ready.o \
-	ultima1/actions/stats.o \
-	ultima1/core/debugger.o \
-	ultima1/core/party.o \
-	ultima1/core/quests.o \
-	ultima1/core/resources.o \
-	ultima1/maps/map.o \
-	ultima1/maps/map_base.o \
-	ultima1/maps/map_city_castle.o \
-	ultima1/maps/map_dungeon.o \
-	ultima1/maps/map_overworld.o \
-	ultima1/maps/map_tile.o \
-	ultima1/spells/blink.o \
-	ultima1/spells/create.o \
-	ultima1/spells/destroy.o \
-	ultima1/spells/kill_magic_missile.o \
-	ultima1/spells/ladder_down.o \
-	ultima1/spells/ladder_up.o \
-	ultima1/spells/open_unlock.o \
-	ultima1/spells/prayer.o \
-	ultima1/spells/spell.o \
-	ultima1/spells/steal.o \
-	ultima1/u1dialogs/armoury.o \
-	ultima1/u1dialogs/buy_sell_dialog.o \
-	ultima1/u1dialogs/combat.o \
-	ultima1/u1dialogs/dialog.o \
-	ultima1/u1dialogs/drop.o \
-	ultima1/u1dialogs/full_screen_dialog.o \
-	ultima1/u1dialogs/grocery.o \
-	ultima1/u1dialogs/king.o \
-	ultima1/u1dialogs/magic.o \
-	ultima1/u1dialogs/ready.o \
-	ultima1/u1dialogs/stats.o \
-	ultima1/u1dialogs/tavern.o \
-	ultima1/u1dialogs/transports.o \
-	ultima1/u1dialogs/weaponry.o \
-	ultima1/u1gfx/drawing_support.o \
-	ultima1/u1gfx/info.o \
-	ultima1/u1gfx/sprites.o \
-	ultima1/u1gfx/status.o \
-	ultima1/u1gfx/text_cursor.o \
-	ultima1/u1gfx/view_char_gen.o \
-	ultima1/u1gfx/view_game.o \
-	ultima1/u1gfx/view_title.o \
-	ultima1/u1gfx/viewport_dungeon.o \
-	ultima1/u1gfx/viewport_map.o \
-	ultima1/u6gfx/game_view.o \
-	ultima1/widgets/attack_effect.o \
-	ultima1/widgets/bard.o \
-	ultima1/widgets/dungeon_chest.o \
-	ultima1/widgets/dungeon_coffin.o \
-	ultima1/widgets/dungeon_item.o \
-	ultima1/widgets/dungeon_monster.o \
-	ultima1/widgets/dungeon_player.o \
-	ultima1/widgets/dungeon_widget.o \
-	ultima1/widgets/guard.o \
-	ultima1/widgets/king.o \
-	ultima1/widgets/merchant.o \
-	ultima1/widgets/merchant_armour.o \
-	ultima1/widgets/merchant_grocer.o \
-	ultima1/widgets/merchant_magic.o \
-	ultima1/widgets/merchant_tavern.o \
-	ultima1/widgets/merchant_transport.o \
-	ultima1/widgets/merchant_weapons.o \
-	ultima1/widgets/overworld_monster.o \
-	ultima1/widgets/overworld_widget.o \
-	ultima1/widgets/person.o \
-	ultima1/widgets/princess.o \
-	ultima1/widgets/transport.o \
-	ultima1/widgets/urban_player.o \
-	ultima1/widgets/urban_widget.o \
-	ultima1/widgets/wench.o \
-	ultima1/game.o
+	ultima1/ultima1.o \
+	ultima1/console.o \
+	ultima1/events.o \
+	ultima1/messages.o \
+	ultima1/metaengine.o \
+	ultima1/data/game.o \
+	ultima1/data/map.o \
+	ultima1/data/player.o \
+	ultima1/data/tiles.o \
+	ultima1/gfx/pic_decoder.o \
+	ultima1/views/view.o \
+	ultima1/views/commands.o \
+	ultima1/views/create_character.o \
+	ultima1/views/dead.o \
+	ultima1/views/overworld.o \
+	ultima1/views/overworld_map.o \
+	ultima1/views/stats.o \
+	ultima1/views/startup.o \
+	ultima1/views/title.o
 endif
 
 ifdef ENABLE_ULTIMA2
@@ -184,7 +81,13 @@ MODULE_OBJS += \
 	ultima2/data/tiles.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/views/view.o \
+	ultima2/views/commands.o \
 	ultima2/views/create_character.o \
+	ultima2/views/dead.o \
+	ultima2/views/demo.o \
+	ultima2/views/overworld.o \
+	ultima2/views/overworld_map.o \
+	ultima2/views/stats.o \
 	ultima2/views/startup.o \
 	ultima2/views/title.o
 endif

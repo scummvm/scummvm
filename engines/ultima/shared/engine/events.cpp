@@ -329,7 +329,7 @@ Shared::Gfx::GfxSurface UIElement::getSurface() const {
 }
 
 int UIElement::getRandomNumber(int minNumber, int maxNumber) {
-	return g_events->getRandomNumber(maxNumber - minNumber + 1) + minNumber;
+	return g_events->getRandomNumber(minNumber, maxNumber);
 }
 
 int UIElement::getRandomNumber(int maxNumber) {

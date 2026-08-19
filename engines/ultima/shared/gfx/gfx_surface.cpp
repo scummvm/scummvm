@@ -116,6 +116,19 @@ void GfxSurface::reverseColor() {
 	SWAP(_textColor, _bgColor);
 }
 
+void GfxSurface::xorBlitFrom(const ManagedSurface &src, const Common::Point &destPos) {
+	Graphics::Surface area = getSubArea(Common::Rect(destPos.x, destPos.y,
+		destPos.x + src.w, destPos.y + src.h));
+
+	for (int yCtr = 0; yCtr < src.h; ++yCtr) {
+		const byte *pSrc = (const byte *)src.getBasePtr(0, yCtr);
+		byte *pDest = (byte *)area.getBasePtr(0, yCtr);
+
+		for (int xCtr = 0; xCtr < src.w; ++xCtr, ++pSrc, ++pDest)
+			*pDest ^= *pSrc;
+	}
+}
+
 } // namespace Gfx
 } // namespace Shared
 } // namespace Ultima
