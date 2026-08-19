@@ -145,6 +145,15 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
 	},
+	{
+		"toon", "Demo",
+		{
+			{"local.pak", 0, "64910d4803d320a21f8c6639fedbecbb", 2679536},
+			{"generic.svl", 0, "5c42724bb93b360dca7044d6b7ef26e5", 7739319},
+			AD_LISTEND
+		},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO1(GUIO_NOMIDI)
+	},
 
 	AD_TABLE_END_MARKER
 };
