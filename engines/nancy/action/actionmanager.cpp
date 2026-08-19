@@ -721,7 +721,7 @@ void ActionManager::debugDrawHotspots() {
 					font->drawString(&obj._drawSurface, Common::String::format("%u, %s", i, rec->getRecordTypeName().c_str()),
 					hotspot.left, hotspot.bottom - font->getFontHeight() - 2, hotspot.width(), 0,
 					Graphics::kTextAlignCenter, 0, true);
-					obj._drawSurface.frameRect(hotspot, 0xFFFFFF);
+					obj._drawSurface.frameRect(hotspot, g_nancy->getGameType() <= kGameTypeNancy12 ? 0xFFFFFF : 0xFFFFFFFF);
 				}
 			}
 		}
