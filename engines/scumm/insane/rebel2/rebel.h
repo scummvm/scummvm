@@ -393,6 +393,7 @@ public:
 
 	int32 processMouse() override;
 	Common::Point getGameplayAimPoint();
+	Common::Point getGameplayPointerPos();
 	Common::Point getRebelAutoPlayAimPoint();
 	void resetMenuGamepadAxis();
 	bool handleMenuGamepadAxisEvent(const Common::Event &event);
