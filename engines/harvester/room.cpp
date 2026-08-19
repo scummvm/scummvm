@@ -1348,7 +1348,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 
 			scene.state = updatedState;
-			monsterCombatStates = updatedMonsterCombatStates;
+			monsterCombatStates = Common::move(updatedMonsterCombatStates);
 			scene.sceneObjects = updatedScene.sceneObjects;
 			scene.sceneAnimations = updatedScene.sceneAnimations;
 			scene.sceneRegions = updatedScene.sceneRegions;
