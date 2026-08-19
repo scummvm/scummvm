@@ -262,11 +262,25 @@ DetectedGames AdvancedMetaEngineDetectionBase::detectGames(const Common::FSList 
 	// the _directoryGlobsMap
 	preprocessDescriptions();
 
-	// Compose a hashmap of all files in fslist.
-	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
+	// Compose a hashmap of all files in fslist. Engines which do not descend
+	// into subdirectories and match plain file names compose an identical one,
+	// so it is composed once per detection run and shared between them.
+	FileMap *files = &allFiles;
+
+	if (_globsMap.empty() && !(_flags & kADFlagMatchFullPaths)) {
+		files = ADCacheMan.getFileMap();
+
+		if (!files) {
+			files = &ADCacheMan.createFileMap();
+
+			composeFileHashMap(*files, fslist, 1);
+		}
+	} else {
+		composeFileHashMap(*files, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
+	}
 
 	// Run the detector on this
-	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags, skipIncomplete);
+	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), *files, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags, skipIncomplete);
 
 	cleanupPirated(matches);
 
@@ -289,7 +303,7 @@ DetectedGames AdvancedMetaEngineDetectionBase::detectGames(const Common::FSList 
 	if (!foundKnownGames) {
 		// Use fallback detector if there were no matches by other means
 		ADDetectedGameExtraInfo *extraInfo = nullptr;
-		ADDetectedGame fallbackDetectionResult = fallbackDetect(allFiles, fslist, &extraInfo);
+		ADDetectedGame fallbackDetectionResult = fallbackDetect(*files, fslist, &extraInfo);
 
 		if (fallbackDetectionResult.desc) {
 			DetectedGame fallbackDetectedGame = toDetectedGame(fallbackDetectionResult, extraInfo);

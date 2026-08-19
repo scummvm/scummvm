@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 
 #include "common/hash-str.h"
+#include "common/ptr.h"
 
 #include "common/gui_options.h" // Keep it here, so detection tables can refer to them
 
@@ -785,6 +786,16 @@ public:
 		return archiveHashMap.getValOrDefault(node.getPath(), nullptr);
 	}
 
+	AdvancedMetaEngineBase::FileMap *getFileMap() const {
+		return fileMap.get();
+	}
+
+	AdvancedMetaEngineBase::FileMap &createFileMap() {
+		fileMap.reset(new AdvancedMetaEngineBase::FileMap());
+
+		return *fileMap;
+	}
+
 	AdvancedDetectorCacheManager() {
 		clear();
 	}
@@ -799,6 +810,7 @@ public:
 	void clear() {
 		md5HashMap.clear(true);
 		sizeHashMap.clear(true);
+		fileMap.reset();
 		clearArchives();
 	}
 
@@ -811,6 +823,7 @@ private:
 	FileHashMap md5HashMap;
 	SizeHashMap sizeHashMap;
 	ArchiveHashMap archiveHashMap;
+	Common::ScopedPtr<AdvancedMetaEngineBase::FileMap> fileMap;
 };
 
 /** Convenience shortcut for accessing the MD5CacheManager. */
