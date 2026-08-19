@@ -137,8 +137,18 @@ void Textbox::handleInput(NancyInput &input) {
 	if (!isVisible())
 		return;
 
-	if (_scrollbar)
+	if (_scrollbar) {
+		Common::Rect wheelArea = _screenPosition;
+		wheelArea.extend(_scrollbar->getTrackRect());
+
+		float scrollPos = _scrollbar->getPos();
+		if (scrollWithMouseWheel(input, wheelArea, scrollPos,
+				wheelScrollStep(_screenPosition.height(), getInnerHeight()))) {
+			_scrollbar->setPosition(scrollPos);
+		}
+
 		_scrollbar->handleInput(input);
+	}
 
 	bool hasHighlight = false;
 	for (uint i = 0; i < _hotspots.size(); ++i) {

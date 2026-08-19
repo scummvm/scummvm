@@ -181,6 +181,9 @@ private:
 	// surface (+ text height, image/link hotspots). Called by drawContentView
 	// only when the page key changes.
 	void renderContentPage(int surfaceWidth);
+	// The LCD area the content view renders into: the small screen for the help
+	// page, the taller zoomed-in one for browser / email articles.
+	const Common::Rect &contentViewScreenRect() const;
 	// Per-click scroll amount (pixels) for the article/help content view.
 	uint contentScrollStep() const;
 	// Enter the content view for a list entry whose AUTOTEXT key is `key`.

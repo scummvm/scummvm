@@ -27,6 +27,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/scrollbar.h"
+
 #include "engines/nancy/ui/conversationpopup.h"
 
 namespace Nancy {
@@ -271,6 +273,11 @@ void ConversationPopup::handleInput(NancyInput &input) {
 			}
 			input.eatMouseInput();
 			return;
+		}
+
+		if (scrollWithMouseWheel(input, _screenPosition, _scrollPos,
+				wheelScrollStep(getLocalTextRect().height(), getInnerHeight()))) {
+			redrawScroll();
 		}
 
 		if (overThumb != _scrollbarHovered) {

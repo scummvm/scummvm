@@ -29,6 +29,38 @@
 namespace Nancy {
 namespace UI {
 
+// A single mouse wheel notch scrolls this much of the visible height
+static const float kWheelScrollPageFraction = 0.25f;
+
+int wheelScrollPixels(int visibleHeight) {
+	return (int)(visibleHeight * kWheelScrollPageFraction);
+}
+
+float wheelScrollStep(int visibleHeight, int contentHeight) {
+	const int scrollableHeight = contentHeight - visibleHeight;
+	if (visibleHeight <= 0 || scrollableHeight <= 0) {
+		return 0.0f;
+	}
+
+	return (float)wheelScrollPixels(visibleHeight) / (float)scrollableHeight;
+}
+
+bool scrollWithMouseWheel(NancyInput &input, const Common::Rect &hotspot, float &scrollPos, float step) {
+	if (!(input.input & NancyInput::kMouseWheel) || step <= 0.0f || !hotspot.contains(input.mousePos)) {
+		return false;
+	}
+
+	const float newPos = CLIP<float>(scrollPos + (input.input & NancyInput::kMouseWheelUp ? -step : step), 0.0f, 1.0f);
+	input.eatMouseWheelInput();
+
+	if (newPos == scrollPos) {
+		return false;
+	}
+
+	scrollPos = newPos;
+	return true;
+}
+
 Scrollbar::Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical) :
 	Scrollbar(zOrder, srcBounds, g_nancy->_graphics->_object0, topPosition, scrollDistance, isVertical) {}
 
@@ -109,6 +141,19 @@ void Scrollbar::handleInput(NancyInput &input) {
 	if (wasClicked) {
 		input.eatMouseInput();
 	}
+}
+
+Common::Rect Scrollbar::getTrackRect() const {
+	Common::Rect track = _screenPosition;
+	track.moveTo(_startPosition);
+
+	if (_isVertical) {
+		track.bottom += _maxDist;
+	} else {
+		track.right += _maxDist;
+	}
+
+	return track;
 }
 
 void Scrollbar::setPosition(float pos) {

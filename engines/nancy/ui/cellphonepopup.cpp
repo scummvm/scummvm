@@ -1173,6 +1173,12 @@ void CellPhonePopup::renderContentPage(int surfaceWidth) {
 	_contentCacheHotspots = ht.hotspots();
 }
 
+const Common::Rect &CellPhonePopup::contentViewScreenRect() const {
+	return (isHelpContentView() || _uiclData->emailListContainer.isEmpty())
+			? _uiclData->welcomeScreen.destRect
+			: _uiclData->emailListContainer;
+}
+
 uint CellPhonePopup::contentScrollStep() const {
 	const Font *font = g_nancy->_graphics->getFont(_uiclData->fontId2);
 	if (!font) {
@@ -1181,11 +1187,7 @@ uint CellPhonePopup::contentScrollStep() const {
 
 	// Original: one click scrolls ~1/10th of the article (capped near a full
 	// page), plus 1.25 line heights.
-	const Common::Rect &ws =
-		(isHelpContentView() || _uiclData->emailListContainer.isEmpty())
-			? _uiclData->welcomeScreen.destRect
-			: _uiclData->emailListContainer;
-	const int viewH = MAX(0, ws.height() - 2);
+	const int viewH = MAX(0, contentViewScreenRect().height() - 2);
 	int page = MIN((int)_contentCacheTextHeight / 10, MAX(0, viewH - 30));
 	return (font->getFontHeight() * 5) / 4 + page;
 }
@@ -1204,10 +1206,7 @@ void CellPhonePopup::drawContentView() {
 	// blits fullEmptyScreenSrc), so the keypad is no longer visible underneath
 	// and we render into the larger LCD area that emailListContainer defines.
 	// The help page keeps the regular chrome, so it renders into the small LCD.
-	const Common::Rect &ws =
-		(isHelpContentView() || _uiclData->emailListContainer.isEmpty())
-			? _uiclData->welcomeScreen.destRect
-			: _uiclData->emailListContainer;
+	const Common::Rect &ws = contentViewScreenRect();
 	const int lcdLeft = ws.left - _screenPosition.left;
 	const int lcdTop  = ws.top  - _screenPosition.top;
 	const int lcdW    = ws.width();
@@ -2686,6 +2685,25 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		// overlapping fallthrough hit (e.g. the back hotspot).
 		const Common::Point popupMouseLink(chunkMouse.x - _screenPosition.left,
 											chunkMouse.y - _screenPosition.top);
+
+		// The mouse wheel scrolls the page over the LCD itself, by the same
+		// amount as a click on the up/down arrows. drawContentView() clamps.
+		if ((input.input & NancyInput::kMouseWheel) &&
+				contentViewScreenRect().contains(chunkMouse)) {
+			const uint wheelStep = contentScrollStep();
+			const uint oldScroll = _contentScroll;
+			if (input.input & NancyInput::kMouseWheelUp) {
+				_contentScroll = _contentScroll > wheelStep ? _contentScroll - wheelStep : 0;
+			} else {
+				_contentScroll += wheelStep;
+			}
+
+			input.eatMouseWheelInput();
+
+			if (_contentScroll != oldScroll) {
+				drawScreenContent();
+			}
+		}
 
 		// The main browser page carries the top-row SEARCH button (subButtons[8])
 		// which opens the search list; it highlights green while hovered.

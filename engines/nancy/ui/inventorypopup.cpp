@@ -29,6 +29,7 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/inventorypopup.h"
+#include "engines/nancy/ui/scrollbar.h"
 #include "engines/nancy/ui/taskbar.h"
 
 namespace Nancy {
@@ -425,6 +426,13 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			}
 			input.eatMouseInput();
 			return;
+		}
+
+		// The mouse wheel moves a whole page of items at a time
+		const uint numPages = (_visibleItems.size() + kSlotsPerPage - 1) / kSlotsPerPage;
+		if (numPages > 1 && scrollWithMouseWheel(input, _screenPosition, _scrollPos, 1.0f / (float)(numPages - 1))) {
+			updatePageFromScroll();
+			refreshGrid();
 		}
 
 		if (overScrollbar != _scrollbarHovered) {

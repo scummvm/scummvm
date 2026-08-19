@@ -33,6 +33,7 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/scrollbar.h"
 #include "engines/nancy/ui/taskbar.h"
 
 #include "engines/nancy/ui/notebookpopup.h"
@@ -313,6 +314,11 @@ void NotebookPopup::handleInput(NancyInput &input) {
 			}
 			input.eatMouseInput();
 			return;
+		}
+
+		if (scrollWithMouseWheel(input, _screenPosition, _scrollPos,
+				wheelScrollStep(toPopupLocal(_uinbData->textRect, false).height(), _drawnTextHeight))) {
+			redrawScroll();
 		}
 
 		if (overThumb != _scrollbarHovered) {

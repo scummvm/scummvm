@@ -98,6 +98,17 @@ void InventoryBox::handleInput(NancyInput &input) {
 	}
 
 	if (_order.size()) {
+		// The mouse wheel scrolls a whole page of items at a time, both over the
+		// item grid and over the scrollbar itself
+		const uint numPages = (_order.size() - 1) / 4 + 1;
+		Common::Rect wheelArea = _screenPosition;
+		wheelArea.extend(_scrollbar->getTrackRect());
+
+		float scrollPos = _scrollbar->getPos();
+		if (scrollWithMouseWheel(input, wheelArea, scrollPos, 1.0f / (float)numPages)) {
+			_scrollbar->setPosition(scrollPos);
+		}
+
 		_scrollbar->handleInput(input);
 	}
 
