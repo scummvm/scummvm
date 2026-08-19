@@ -23,6 +23,7 @@
 #define MADE_PMVPLAYER_H
 
 #include "audio/mixer.h"
+#include "made/sound.h"
 
 namespace Common {
 class File;
@@ -44,23 +45,42 @@ class PmvPlayer {
 public:
 	PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer);
 	~PmvPlayer();
-	// Returns true if the movie was played till the end
+
+	// individual file actions
+	bool load(const char *filename);
+	bool decode_frame();
+	void close();
+
+	// wrapper for all three above - Returns true if the movie was played till the end
 	bool play(const char *filename);
+
+	// info about currently playing movie
+	uint16 frameDelay, frameCount, frameNumber, soundFreq;
+
 protected:
+	// ptrs to caller objects
 	MadeEngine *_vm;
 	Audio::Mixer *_mixer;
+
+	// currently open file
 	Common::File *_fd;
-	Audio::QueuingAudioStream *_audioStream;
-	Audio::SoundHandle _audioStreamHandle;
+
+	// decode destination objects
+	//  image
 	byte _paletteRGB[768];
 	Graphics::Surface *_surface;
-	bool _aborted;
+	byte *frameData;
+	uint32 frameDataSize;
+	//  audio
+	Audio::QueuingAudioStream *_audioStream;
+	Audio::SoundHandle _audioStreamHandle;
+	SoundDecoderData *soundDecoderData;
+
+	// helper funcs
 	void readChunk(uint32 &chunkType, uint32 &chunkSize);
-	void handleEvents();
-	void updateScreen();
 	void decompressPalette(byte *palData, byte *outPal, uint32 palDataSize);
 };
 
 }
 
-#endif
+#endif /* MADE_PMVPLAYER_H */

@@ -112,26 +112,27 @@ enum IntroTextFrame {
 
 #endif
 
-PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(nullptr), _vm(vm), _mixer(mixer) {
-	_audioStream = nullptr;
-	_surface = nullptr;
-	_aborted = false;
-}
+PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(nullptr), _vm(vm), _mixer(mixer),
+	_audioStream(nullptr), _surface(nullptr), frameData(nullptr), soundDecoderData(nullptr) {}
 
 PmvPlayer::~PmvPlayer() {
+	// make sure to clean up any currently playing video at exit
+	close();
 }
 
-bool PmvPlayer::play(const char *filename) {
-	_aborted = false;
-	_surface = nullptr;
+bool PmvPlayer::load(const char* filename) {
 
+	// open file. sometimes the script uses slashes for subdir,
+	//  this should make it OS agnostic
 	_fd = new Common::File();
 	if (!_fd->open(Common::Path(filename, '\\'))) {
+		warning("Failed to open movie file '%s'", filename);
 		delete _fd;
 		return false;
 	}
 
-	uint32 chunkType, chunkSize, prevChunkSize = 0;
+	// expected IFF blocks at start of a PMV
+	uint32 chunkType, chunkSize;
 
 	readChunk(chunkType, chunkSize);	// "MOVE"
 	if (chunkType != MKTAG('M','O','V','E')) {
@@ -147,12 +148,12 @@ bool PmvPlayer::play(const char *filename) {
 		return false;
 	}
 
-	uint frameDelay = _fd->readUint16LE();
+	frameDelay = _fd->readUint16LE();
 	_fd->skip(4);	// always 0?
-	uint frameCount = _fd->readUint16LE();
+	frameCount = _fd->readUint16LE();
 	_fd->skip(4);	// always 0?
 
-	uint soundFreq = _fd->readUint16LE();
+	soundFreq = _fd->readUint16LE();
 	// Note: There seem to be weird sound frequencies in PMV videos.
 	// Not sure why, but leaving those original frequencies intact
 	// results to sound being choppy. Therefore, we set them to more
@@ -169,107 +170,102 @@ bool PmvPlayer::play(const char *filename) {
 		debug(2, "%i ", unk);
 	}
 
-	_mixer->stopAll();
-
-	// Read palette
+	// Read and set initial palette
 	_fd->read(_paletteRGB, 768);
 	_vm->_screen->setRGBPalette(_paletteRGB);
-
-	uint32 frameNumber = 0;
-	uint16 chunkCount = 0;
-	uint32 soundSize = 0;
-	uint32 soundChunkOfs = 0, palChunkOfs = 0;
-	uint32 palSize = 0;
-	byte *frameData = nullptr, *audioData, *soundData, *palData, *imageData;
-	bool firstTime = true;
-
-	uint32 skipFrames = 0;
-
-	uint32 bytesRead;
-	uint16 width, height, cmdOffs, pixelOffs, maskOffs, lineSize;
 
 	// TODO: Sound can still be a little choppy. A bug in the decoder or -
 	// perhaps more likely - do we have to implement double buffering to
 	// get it to work well?
+	_mixer->stopAll();
 	_audioStream = Audio::makeQueuingAudioStream(soundFreq, false);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle, _audioStream);
 
-	SoundDecoderData *soundDecoderData = new SoundDecoderData();
+	soundDecoderData = new SoundDecoderData();
 
 	// First cutscene after the opening credits finish
 	if (strcmp(filename, "FWIZ01X1.PMV") == 0) {
 		_vm->_openingCreditsOpen = false;
 	}
 
-	while (!_vm->shouldQuit() && !_aborted && !_fd->eos() && frameNumber < frameCount) {
+	// ready to go!
+	frameNumber = 0;
 
-		int32 frameTime = _vm->getTotalPlayTime();
+	return true;
+}
 
-		readChunk(chunkType, chunkSize);
-		if (chunkType != MKTAG('M','F','R','M')) {
-			warning("Unknown chunk type");
-		}
+bool PmvPlayer::decode_frame() {
+	// Decode one frame, updating 'destinations' with new contents
 
-		// Only reallocate the frame data buffer if its size has changed
-		if (prevChunkSize != chunkSize || !frameData) {
-			delete[] frameData;
-			frameData = new byte[chunkSize];
-		}
+	uint32 chunkType, chunkSize;
 
-		prevChunkSize = chunkSize;
+	readChunk(chunkType, chunkSize);
+	if (chunkType != MKTAG('M','F','R','M')) {
+		warning("Unknown chunk type");
+		return false;
+	}
 
-		bytesRead = _fd->read(frameData, chunkSize);
+	// Only reallocate the frame data buffer if it needs to grow
+	if (frameDataSize < chunkSize || !frameData) {
+		delete[] frameData;
 
-		if (bytesRead < chunkSize || _fd->eos())
-			break;
+		frameDataSize = chunkSize;
+		frameData = new byte[frameDataSize];
+	}
 
-		soundChunkOfs = READ_LE_UINT32(frameData + 8);
-		uint32 imageDataOfs = READ_LE_UINT32(frameData + 12) - 8;
-		palChunkOfs = READ_LE_UINT32(frameData + 16);
+	uint32 bytesRead = _fd->read(frameData, chunkSize);
+	if (bytesRead < chunkSize || _fd->eos())
+		return false;
 
-		// Handle audio
-		if (soundChunkOfs) {
-			audioData = frameData + soundChunkOfs - 8;
-			uint16 soundChunkSize = READ_LE_UINT16(audioData + 4);
-			chunkCount = READ_LE_UINT16(audioData + 6);
+	uint32 soundChunkOfs = READ_LE_UINT32(frameData + 8);
+	uint32 imageDataOfs = READ_LE_UINT32(frameData + 12);
+	uint32 palChunkOfs = READ_LE_UINT32(frameData + 16);
 
-			debug(2, "SOUND: chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, soundChunkSize, chunkCount * soundChunkSize);
+	// Handle audio
+	if (soundChunkOfs) {
+		byte *audioData = frameData + soundChunkOfs - 8;
+		uint16 soundChunkSize = READ_LE_UINT16(audioData + 4);
+		uint16 chunkCount = READ_LE_UINT16(audioData + 6);
 
-			soundSize = chunkCount * soundChunkSize;
-			soundData = (byte *)malloc(soundSize);
-			decompressSound(audioData + 8, soundData, soundChunkSize, chunkCount, nullptr, soundDecoderData);
-			_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
-		}
+		debug(2, "SOUND: chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, soundChunkSize, chunkCount * soundChunkSize);
 
-		// Handle palette
-		if (palChunkOfs) {
-			palData = frameData + palChunkOfs - 8;
-			palSize = READ_LE_UINT32(palData + 4);
-			decompressPalette(palData + 8, _paletteRGB, palSize);
-			_vm->_screen->setRGBPalette(_paletteRGB);
-		}
+		uint32 soundSize = chunkCount * soundChunkSize;
+		byte *soundData = (byte *)malloc(soundSize);
+		decompressSound(audioData + 8, soundData, soundChunkSize, chunkCount, nullptr, soundDecoderData);
+		_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+	}
 
-		// Handle video
-		imageData = frameData + imageDataOfs;
+	// Handle palette changes
+	if (palChunkOfs) {
+		byte *palData = frameData + palChunkOfs - 8;
+		uint32 palSize = READ_LE_UINT32(palData + 4);
+		decompressPalette(palData + 8, _paletteRGB, palSize);
+		_vm->_screen->setRGBPalette(_paletteRGB);
+	}
+
+	// Handle video
+	if (imageDataOfs) {
+		byte *imageData = frameData + imageDataOfs - 8;
 
 		// frameNum @0
 		uint32 imageChunkSize = READ_LE_UINT32(imageData) + 4;
 		// uint32 unknown = READ_LE_UINT32(imageData); // zero?
-		width = READ_LE_UINT16(imageData + 8);
-		height = READ_LE_UINT16(imageData + 10);
+		uint16 width = READ_LE_UINT16(imageData + 8);
+		uint16 height = READ_LE_UINT16(imageData + 10);
 
-		cmdOffs = READ_LE_UINT16(imageData + 12);
+		uint16 cmdOffs = READ_LE_UINT16(imageData + 12);
 		uint16 cmdFlags = READ_LE_UINT16(imageData + 14);
 
-		pixelOffs = READ_LE_UINT16(imageData + 16);
+		uint16 pixelOffs = READ_LE_UINT16(imageData + 16);
 		uint16 pixelFlags = READ_LE_UINT16(imageData + 18);
 
-		maskOffs = READ_LE_UINT16(imageData + 20);
+		uint16 maskOffs = READ_LE_UINT16(imageData + 20);
 		uint16 maskFlags = READ_LE_UINT16(imageData + 22);
 
-		lineSize = READ_LE_UINT16(imageData + 24);
+		uint16 lineSize = READ_LE_UINT16(imageData + 24);
 
 		debug(2, "width = %d; height = %d; cmdOffs = %04X; cmdFlags = %04X; pixelOffs = %04X; pixelFlags = %04X; maskOffs = %04X; maskFlags = %04X; lineSize = %d\n",
-			width, height, cmdOffs, cmdFlags, pixelOffs, pixelFlags, maskOffs, maskFlags, lineSize);
+			  width, height, cmdOffs, cmdFlags, pixelOffs, pixelFlags, maskOffs, maskFlags, lineSize);
 
 		if (!_surface) {
 			_surface = new Graphics::Surface();
@@ -277,116 +273,148 @@ bool PmvPlayer::play(const char *filename) {
 		}
 
 		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs,
-							pixelOffs - cmdOffs, maskOffs - pixelOffs, imageChunkSize - maskOffs, lineSize,
-							cmdFlags, pixelFlags, maskFlags);
+							 pixelOffs - cmdOffs, maskOffs - pixelOffs, imageChunkSize - maskOffs, lineSize,
+							 cmdFlags, pixelFlags, maskFlags);
 
-		if (firstTime) {
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle, _audioStream);
-			skipFrames = 0;
-			firstTime = false;
-		}
-
-		handleEvents();
-		updateScreen();
-
-		if (skipFrames == 0) {
-			uint32 soundElapsedTime = _vm->_mixer->getElapsedTime(_audioStreamHandle).msecs();
-			int32 waitTime = (frameNumber * frameDelay) -
-				soundElapsedTime - (_vm->getTotalPlayTime() - frameTime);
-
-			if (waitTime < 0) {
-				skipFrames = -waitTime / frameDelay;
-				warning("Video A/V sync broken, skipping %d frame(s)", skipFrames + 1);
-			} else if (waitTime > 0)
-				g_system->delayMillis(waitTime);
-
-		} else
-			skipFrames--;
-
-#ifdef USE_TTS
-		if (strcmp(filename, "fintro00.pmv") == 0 || strcmp(filename, "fintro01.pmv") == 0) {
-			const char **texts;
-
-			switch (_vm->getLanguage()) {
-			case Common::EN_ANY:
-				if (frameNumber < kDesign) {
-					texts = introOpeningLines;
-				} else {
-					texts = openingCreditsEnglish;
-				}
-				break;
-			case Common::DE_DEU:
-				texts = openingCreditsGerman;
-				break;
-			case Common::IT_ITA:
-				texts = openingCreditsItalian;
-				break;
-			case Common::FR_FRA:
-				texts = openingCreditsFrench;
-				break;
-			case Common::JA_JPN:
-				texts = openingCreditsJapanese;
-				break;
-			case Common::KO_KOR:
-				texts = openingCreditsEnglish;
-				break;
-			default:
-				texts = openingCreditsEnglish;
-			}
-
-			int index = -1;
-
-			switch (frameNumber) {
-			case kStandingByHouse:
-			case kDesign:
-				index = 0;
-				break;
-			case kBehindHouse:
-			case kArtDirection:
-				index = 1;
-				break;
-			case kGoSouthwest:
-			case kTechnicalDirection:
-				index = 2;
-				break;
-			case kWestOfHouse:
-			case kScreenplay:
-				index = 3;
-				break;
-			case kOpenMailbox:
-			case kMusic:
-				index = 4;
-				break;
-			case kProducer:
-				index = 5;
-			}
-
-			if (index != -1 && (_vm->getLanguage() == Common::EN_ANY || frameNumber >= kDesign)) {
-				_vm->sayText(texts[index], Common::TextToSpeechManager::QUEUE);
-			}
-		}
-#endif
-
-		frameNumber++;
-
+		_vm->_system->copyRectToScreen(_surface->getPixels(), _surface->pitch,
+									   (320 - _surface->w) / 2, (200 - _surface->h) / 2, _surface->w, _surface->h);
 	}
 
-	delete soundDecoderData;
-	delete[] frameData;
+	frameNumber++;
 
-	_audioStream->finish();
-	_mixer->stopHandle(_audioStreamHandle);
+	return true;
+}
 
-	//delete _audioStream;
-	delete _fd;
-
-	if(_surface)
+void PmvPlayer::close() {
+	// tear down video
+	if (_surface)
 		_surface->free();
-
 	delete _surface;
+	_surface = nullptr;
 
-	return !_aborted;
+	delete[] frameData;
+	frameData = nullptr;
+	frameDataSize = 0;
 
+	// tear down audio
+	delete soundDecoderData;
+	soundDecoderData = nullptr;
+	if (_audioStream)
+		_audioStream->finish();
+	_mixer->stopHandle(_audioStreamHandle);
+	// delete _audioStream;
+	_audioStream = nullptr;
+
+	// close file
+	delete _fd;
+	_fd = nullptr;
+}
+
+bool PmvPlayer::play(const char *filename) {
+	bool aborted = false;
+
+	if (load(filename)) {
+		int32 pmvStartTime = _vm->getTotalPlayTime();
+
+		while (!_vm->shouldQuit() && ! aborted && !_fd->eos() && frameNumber < frameCount) {
+			// Decode and stage the next audio / video frame
+			if (!decode_frame()) {
+				break;
+			}
+
+			// delay until time has passed, then flip screen
+			int32 delayTime = (frameNumber - 1) * frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
+			if (delayTime < 0)
+				warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / frameDelay) + 1);
+			else
+				g_system->delayMillis(delayTime);
+
+			_vm->_system->updateScreen();
+			
+#ifdef USE_TTS
+			if (strcmp(filename, "fintro00.pmv") == 0 || strcmp(filename, "fintro01.pmv") == 0) {
+				const char **texts;
+
+				switch (_vm->getLanguage()) {
+				case Common::EN_ANY:
+					if (frameNumber < kDesign) {
+						texts = introOpeningLines;
+					} else {
+						texts = openingCreditsEnglish;
+					}
+					break;
+				case Common::DE_DEU:
+					texts = openingCreditsGerman;
+					break;
+				case Common::IT_ITA:
+					texts = openingCreditsItalian;
+					break;
+				case Common::FR_FRA:
+					texts = openingCreditsFrench;
+					break;
+				case Common::JA_JPN:
+					texts = openingCreditsJapanese;
+					break;
+				case Common::KO_KOR:
+					texts = openingCreditsEnglish;
+					break;
+				default:
+					texts = openingCreditsEnglish;
+				}
+
+				int index = -1;
+
+				switch (frameNumber) {
+				case kStandingByHouse:
+				case kDesign:
+					index = 0;
+					break;
+				case kBehindHouse:
+				case kArtDirection:
+					index = 1;
+					break;
+				case kGoSouthwest:
+				case kTechnicalDirection:
+					index = 2;
+					break;
+				case kWestOfHouse:
+				case kScreenplay:
+					index = 3;
+					break;
+				case kOpenMailbox:
+				case kMusic:
+					index = 4;
+					break;
+				case kProducer:
+					index = 5;
+				}
+
+				if (index != -1 && (_vm->getLanguage() == Common::EN_ANY || frameNumber >= kDesign)) {
+					_vm->sayText(texts[index], Common::TextToSpeechManager::QUEUE);
+				}
+			}
+#endif
+
+			// Check and handle events - user can press ESC to exit early
+			Common::Event event;
+			while (_vm->_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						aborted = true;
+						_vm->stopTextToSpeech();
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		close();
+	}
+
+	return !aborted;
 }
 
 void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
@@ -398,28 +426,6 @@ void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
 		(chunkType >> 24) & 0xFF, (chunkType >> 16) & 0xFF, (chunkType >> 8) & 0xFF, chunkType & 0xFF,
 		chunkSize);
 
-}
-
-void PmvPlayer::handleEvents() {
-	Common::Event event;
-	while (_vm->_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				_aborted = true;
-				_vm->stopTextToSpeech();
-			}
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-void PmvPlayer::updateScreen() {
-	_vm->_system->copyRectToScreen(_surface->getPixels(), _surface->pitch,
-									(320 - _surface->w) / 2, (200 - _surface->h) / 2, _surface->w, _surface->h);
-	_vm->_system->updateScreen();
 }
 
 void PmvPlayer::decompressPalette(byte *palData, byte *outPal, uint32 palDataSize) {
