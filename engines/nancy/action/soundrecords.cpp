@@ -211,7 +211,9 @@ void PlaySound::readDataNancy13(Common::SeekableReadStream &stream) {
 void PlaySound::execute() {
 	switch (_state) {
 	case kBegin:
-		g_nancy->_sound->loadSound(_sound, &_soundEffect);
+		// The channel is always unloaded and reloaded, so a sound that is still
+		// playing restarts from the beginning instead of being left alone
+		g_nancy->_sound->loadSound(_sound, &_soundEffect, true);
 		g_nancy->_sound->playSound(_sound);
 
 		// Nancy13+ shows the sound's subtitle (resolved from its name) in the
@@ -239,17 +241,13 @@ void PlaySound::execute() {
 			break;
 		}
 
-		if (_changeSceneImmediately) {
-			applyAfterSoundAction();
-			NancySceneState.changeScene(_sceneChange);
-			finishExecution();
-			break;
-		}
-
 		_state = kRun;
 		break;
 	case kRun:
-		if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+		// changeSceneImmediately means the record doesn't wait for the sound to
+		// end, not that the scene changes within this same pass; the records
+		// between this one and the end of the list still get to run first
+		if (_changeSceneImmediately || !g_nancy->_sound->isSoundPlaying(_sound)) {
 			_state = kActionTrigger;
 		}
 
@@ -262,7 +260,9 @@ void PlaySound::execute() {
 			NancySceneState.setEventFlag(_flag);
 		}
 
-		g_nancy->_sound->stopSound(_sound);
+		if (!_changeSceneImmediately) {
+			g_nancy->_sound->stopSound(_sound);
+		}
 
 		finishExecution();
 		break;
