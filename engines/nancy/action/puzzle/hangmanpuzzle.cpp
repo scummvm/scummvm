@@ -201,23 +201,6 @@ Common::Rect HangmanPuzzle::glyphForLetter(char letter) const {
 	return Common::Rect();
 }
 
-// Blits srcRect from src at destPos, clipping srcRect to the source image so an
-// out-of-bounds sprite rect (or an image that failed to load) can't read past
-// the surface.
-void HangmanPuzzle::safeBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, const Common::Point &destPos) {
-	if (src.w == 0 || src.h == 0 || srcRect.isEmpty()) {
-		return;
-	}
-
-	Common::Rect clipped = srcRect.findIntersectingRect(Common::Rect(src.w, src.h));
-	if (clipped.isEmpty()) {
-		return;
-	}
-
-	Common::Point dst(destPos.x + (clipped.left - srcRect.left), destPos.y + (clipped.top - srcRect.top));
-	_drawSurface.blitFrom(src, clipped, dst);
-}
-
 void HangmanPuzzle::redraw() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
@@ -228,21 +211,21 @@ void HangmanPuzzle::redraw() {
 	// the puzzle sheet) onto the tile's alphabet position (1st tile rect).
 	for (const LetterTile &tile : _letters) {
 		if (tile.used) {
-			safeBlit(_puzzleImage, tile.hoverRect, Common::Point(tile.idleRect.left, tile.idleRect.top));
+			_drawSurface.blitFrom(_puzzleImage, tile.hoverRect, Common::Point(tile.idleRect.left, tile.idleRect.top));
 		}
 	}
 
 	// Guessed-letters row: each played letter's glyph (from the letters sheet)
 	// at its slot in the row.
 	for (uint i = 0; i < _guessed.size() && i < _guessedRowRects.size(); ++i) {
-		safeBlit(_lettersImage, glyphForLetter(_guessed[i]),
+		_drawSurface.blitFrom(_lettersImage, glyphForLetter(_guessed[i]),
 			Common::Point(_guessedRowRects[i].left, _guessedRowRects[i].top));
 	}
 
 	// Revealed word letters in their blanks.
 	for (uint i = 0; i < _revealed.size() && i < _letterSlotRects.size(); ++i) {
 		if (_revealed[i]) {
-			safeBlit(_lettersImage, glyphForLetter(_word[i]),
+			_drawSurface.blitFrom(_lettersImage, glyphForLetter(_word[i]),
 				Common::Point(_letterSlotRects[i].left, _letterSlotRects[i].top));
 		}
 	}
@@ -250,7 +233,7 @@ void HangmanPuzzle::redraw() {
 	// The hang figure: the current cumulative stage sprite (from the sheet's
 	// stage strip) drawn at the board position.
 	if (_wrongCount > 0 && _wrongCount <= (int)_hangPieceRects.size()) {
-		safeBlit(_puzzleImage, _hangPieceRects[_wrongCount - 1],
+		_drawSurface.blitFrom(_puzzleImage, _hangPieceRects[_wrongCount - 1],
 			Common::Point(_boardRect.left, _boardRect.top));
 	}
 

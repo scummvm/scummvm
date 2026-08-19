@@ -80,7 +80,6 @@ protected:
 	Common::Rect glyphForLetter(char letter) const;	// glyph rect of the tile for this letter, or empty
 	int tileAtCursor(const Common::Point &mousePos) const;
 	void commitGuess(uint tileIndex);
-	void safeBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, const Common::Point &destPos);
 	void redraw();
 	void applyOutcome(const SceneOutcome &outcome);
 
