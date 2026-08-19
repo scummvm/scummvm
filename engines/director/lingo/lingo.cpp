@@ -1465,6 +1465,17 @@ int Datum::equalTo(const Datum &d, bool ignoreCase) const {
 		} else {
 			return compareStringEquality(asString(), d.asString());
 		}
+	case ARRAY:
+	case POINT:
+	case RECT:
+		// Compare element by element.
+		if (u.farr->arr.size() != d.u.farr->arr.size())
+			return 0;
+		for (uint i = 0; i < u.farr->arr.size(); i++) {
+			if (!u.farr->arr[i].equalTo(d.u.farr->arr[i], ignoreCase))
+				return 0;
+		}
+		return 1;
 	case MEDIA:
 	case OBJECT:
 		return u.obj == d.u.obj;
