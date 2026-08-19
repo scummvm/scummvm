@@ -16,6 +16,7 @@ MODULE_OBJS = \
   action/overlay.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
+  action/puzzle/adjustpuzzle.o \
   action/puzzle/angletosspuzzle.o \
   action/puzzle/arcadepuzzle.o \
   action/puzzle/assemblypuzzle.o \

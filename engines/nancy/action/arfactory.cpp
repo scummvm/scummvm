@@ -32,6 +32,7 @@
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"
 
+#include "engines/nancy/action/puzzle/adjustpuzzle.h"
 #include "engines/nancy/action/puzzle/angletosspuzzle.h"
 #include "engines/nancy/action/puzzle/arcadepuzzle.h"
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
@@ -509,9 +510,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	// -- Nancy14 new puzzles (types 177-182) --
 	case 177:
 		return new HangmanPuzzle();
-	case 178:	// AdjustPuzzle
-		// TODO: not yet implemented
-		return nullptr;
+	case 178:
+		return new AdjustPuzzle();
 	case 179:	// MeterPuzzle
 		// TODO: not yet implemented
 		return nullptr;
