@@ -178,16 +178,13 @@ bool RipperEngine::selectRandomRipperIdentity(const char *source) {
 }
 
 Common::Error RipperEngine::runRiperBatEasterEgg() {
-	// This emulates starting the game through RIPER.BAT, not an alternate
-	// RIPPER.EXE entry point. The batch file runs "player scenes.avi" and then
+	// This emulates starting the game through RIPER.BAT.
+	// The batch file runs "player scenes.avi" and then
 	// prints this farewell after the standalone player exits.
 	debugC(1, kDebugVideo,
 		"Ripper: RIPER.BAT route playing standalone media 'scenes.avi'");
 	const bool played = _media->play("scenes.avi", true);
 	g_system->logMessage(LogMessageType::kInfo, kRiperBatFarewell);
-	debugC(1, kDebugVideo,
-		"Ripper: RIPER.BAT route completed played=%d quit=%d",
-		played, shouldQuit());
 	return played || shouldQuit() ? Common::kNoError : Common::kReadingFailed;
 }
 
