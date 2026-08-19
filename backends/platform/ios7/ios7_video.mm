@@ -92,6 +92,15 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	UILongPressGestureRecognizer *oneFingerLongPressGesture;
 	UILongPressGestureRecognizer *twoFingerLongPressGesture;
 	UILongPressGestureRecognizer *pencilTwoTapLongTouchGesture;
+	UIPinchGestureRecognizer *pinchKeyboard;
+	UISwipeGestureRecognizer *swipeRight;
+	UISwipeGestureRecognizer *swipeLeft;
+	UISwipeGestureRecognizer *swipeUp;
+	UISwipeGestureRecognizer *swipeDown;
+	UISwipeGestureRecognizer *swipeRight3;
+	UISwipeGestureRecognizer *swipeLeft3;
+	UISwipeGestureRecognizer *swipeUp3;
+	UISwipeGestureRecognizer *swipeDown3;
 	CGPoint touchesBegan;
 #endif
 }
@@ -255,51 +264,51 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[pencilTwoTapLongTouchGesture setDelaysTouchesEnded:NO];
 	[pencilTwoTapLongTouchGesture setCancelsTouchesInView:NO];
 
-	UIPinchGestureRecognizer *pinchKeyboard = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardPinch:)];
+	pinchKeyboard = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardPinch:)];
 
-	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
+	swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
 	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
 	swipeRight.numberOfTouchesRequired = 2;
 	swipeRight.delaysTouchesBegan = NO;
 	swipeRight.delaysTouchesEnded = NO;
 
-	UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeLeft:)];
+	swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeLeft:)];
 	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
 	swipeLeft.numberOfTouchesRequired = 2;
 	swipeLeft.delaysTouchesBegan = NO;
 	swipeLeft.delaysTouchesEnded = NO;
 
-	UISwipeGestureRecognizer *swipeUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeUp:)];
+	swipeUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeUp:)];
 	swipeUp.direction = UISwipeGestureRecognizerDirectionUp;
 	swipeUp.numberOfTouchesRequired = 2;
 	swipeUp.delaysTouchesBegan = NO;
 	swipeUp.delaysTouchesEnded = NO;
 
-	UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeDown:)];
+	swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeDown:)];
 	swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
 	swipeDown.numberOfTouchesRequired = 2;
 	swipeDown.delaysTouchesBegan = NO;
 	swipeDown.delaysTouchesEnded = NO;
 
-	UISwipeGestureRecognizer *swipeRight3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeRight:)];
+	swipeRight3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeRight:)];
 	swipeRight3.direction = UISwipeGestureRecognizerDirectionRight;
 	swipeRight3.numberOfTouchesRequired = 3;
 	swipeRight3.delaysTouchesBegan = NO;
 	swipeRight3.delaysTouchesEnded = NO;
 
-	UISwipeGestureRecognizer *swipeLeft3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeLeft:)];
+	swipeLeft3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeLeft:)];
 	swipeLeft3.direction = UISwipeGestureRecognizerDirectionLeft;
 	swipeLeft3.numberOfTouchesRequired = 3;
 	swipeLeft3.delaysTouchesBegan = NO;
 	swipeLeft3.delaysTouchesEnded = NO;
 
-	UISwipeGestureRecognizer *swipeUp3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeUp:)];
+	swipeUp3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeUp:)];
 	swipeUp3.direction = UISwipeGestureRecognizerDirectionUp;
 	swipeUp3.numberOfTouchesRequired = 3;
 	swipeUp3.delaysTouchesBegan = NO;
 	swipeUp3.delaysTouchesEnded = NO;
 
-	UISwipeGestureRecognizer *swipeDown3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeDown:)];
+	swipeDown3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeDown:)];
 	swipeDown3.direction = UISwipeGestureRecognizerDirectionDown;
 	swipeDown3.numberOfTouchesRequired = 3;
 	swipeDown3.delaysTouchesBegan = NO;
@@ -583,6 +592,15 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[twoFingerLongPressGesture setEnabled:enabled];
 	[pencilThreeTapGesture setEnabled:enabled];
 	[pencilTwoTapLongTouchGesture setEnabled:enabled];
+	[pinchKeyboard setEnabled:enabled];
+	[swipeLeft setEnabled:enabled];
+	[swipeRight setEnabled:enabled];
+	[swipeUp setEnabled:enabled];
+	[swipeDown setEnabled:enabled];
+	[swipeLeft3 setEnabled:enabled];
+	[swipeRight3 setEnabled:enabled];
+	[swipeUp3 setEnabled:enabled];
+	[swipeDown3 setEnabled:enabled];
 }
 #endif
 
