@@ -19,19 +19,14 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/util.h"
-
 #include "engines/nancy/state/scene.h"
-
-#include "engines/nancy/ui/viewport.h"
-
-#include "common/config-manager.h"
 
 namespace Nancy {
 namespace UI {
@@ -255,16 +250,7 @@ void Viewport::setFrame(uint frameNr) {
 
 	// Format 1 uses quarter-size images, while format 2 uses full-size ones
 	// Videos in TVD are always upside-down
-	if (newFrame->format != _fullFrame.format && newFrame->format.bytesPerPixel == _fullFrame.format.bytesPerPixel) {
-		// Character closeups are in a different format than the main viewport
-		// in Nancy10+, so convert them before copying to the main surface.
-		Graphics::Surface *converted = newFrame->convertTo(_fullFrame.format);
-		GraphicsManager::copyToManaged(*converted, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
-		converted->free();
-		delete converted;
-	} else {
-		GraphicsManager::copyToManaged(*newFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
-	}
+	GraphicsManager::copyToManaged(*newFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
 
 	_needsRedraw = true;
 	_currentFrame = frameNr;
