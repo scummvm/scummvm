@@ -202,6 +202,17 @@ void DOSMusicPlayer::syncSoundSettings() {
 		_driver->syncSoundSettings();
 }
 
+SynthType DOSMusicPlayer::getSynthType() const {
+	switch (_driverType) {
+	case MT_MT32:
+		return kSynthTypeMT32;
+	case MT_ADLIB:
+		return kSynthTypeAdLib;
+	default:
+		return kSynthTypeDefault;
+	}
+}
+
 void DOSMusicPlayer::onTimer() {
 	if (_parser)
 		_parser->onTimer();

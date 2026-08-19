@@ -36,6 +36,15 @@ namespace Made {
 
 class GenericResource;
 
+/** Synthesizer types reported to game scripts. */
+enum SynthType {
+	kSynthTypeDefault = 0,
+	kSynthTypePCSpeaker = 1,
+	kSynthTypeAdLib = 2,
+	kSynthTypeAdLibGold = 3,
+	kSynthTypeMT32 = 4
+};
+
 class MusicPlayer {
 public:
 	virtual ~MusicPlayer() {}
@@ -50,6 +59,8 @@ public:
 
 	virtual bool isPlaying() = 0;
 	virtual void syncSoundSettings() = 0;
+
+	virtual SynthType getSynthType() const { return kSynthTypeDefault; }
 };
 
 class DOSMusicPlayer : public MusicPlayer {
@@ -70,6 +81,8 @@ public:
 
 	bool isPlaying() override;
 	void syncSoundSettings() override;
+
+	SynthType getSynthType() const override;
 
 private:
 	MadeEngine *_vm;

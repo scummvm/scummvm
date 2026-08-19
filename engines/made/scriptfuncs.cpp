@@ -1128,16 +1128,7 @@ int16 ScriptFunctions::sfSetSoundVolume(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfGetSynthType(int16 argc, int16 *argv) {
-	// 0 = Default
-	// 1 = PCSPKR
-	// 2 = SBFM/ADLIB
-	// 3 = ADLIBG
-	// 4 = MT32MPU
-
-	// There doesn't seem to be any difference in the music no matter what this returns
-
-	//warning("Unimplemented opcode: sfGetSynthType");
-	return 0;
+	return _vm->_music ? _vm->_music->getSynthType() : kSynthTypeDefault;
 }
 
 int16 ScriptFunctions::sfIsSlowSystem(int16 argc, int16 *argv) {
