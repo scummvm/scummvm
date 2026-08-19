@@ -42,6 +42,31 @@ int retro_get_scummvm_res() {
 
 #include <libco.h>
 
+#ifndef EMU_THREAD_STACK_SIZE
+#define EMU_THREAD_STACK_SIZE (1024 * 1024)
+#endif
+
+/* Since there is no guard page, the only warning available is a watermark. */
+static const char *stack_anchor = NULL;
+static bool stack_warned = false;
+
+static void check_stack_headroom(void) {
+	char probe;
+	size_t used;
+
+	if (!stack_anchor || stack_warned)
+		return;
+
+	used = (size_t)(stack_anchor - &probe);
+	if (used < (EMU_THREAD_STACK_SIZE / 4) * 3)
+		return;
+
+	stack_warned = true;
+	if (retro_log_cb)
+		retro_log_cb(RETRO_LOG_WARN, "[scummvm] Emulation stack at %u KB of %u KB; libco stacks have no guard page.\n",
+		             (unsigned)(used / 1024), (unsigned)(EMU_THREAD_STACK_SIZE / 1024));
+}
+
 #define EMU_WAITING    (1 << 0)
 #define MAIN_WAITING   (1 << 1)
 #define EMU_STARTED    (1 << 2)
@@ -52,10 +77,14 @@ static cothread_t main_thread;
 static cothread_t emu_thread;
 
 static void retro_exit_to_main_thread(void) {
+	check_stack_headroom();
 	co_switch(main_thread);
 }
 
 static void retro_wrap_emulator(void) {
+	char anchor;
+	stack_anchor = &anchor;
+
 	status &= ~EMU_EXITED;
 	status |= EMU_STARTED;
 	scummvm_res = retro_run_emulator();
@@ -97,7 +126,7 @@ bool retro_init_emu_thread(void) {
 		return true;
 
 	main_thread = co_active();
-	emu_thread = co_create(65536 * sizeof(void *), retro_wrap_emulator);
+	emu_thread = co_create(EMU_THREAD_STACK_SIZE, retro_wrap_emulator);
 	if (!emu_thread) {
 		retro_free_emu_thread();
 		return false;
