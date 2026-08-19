@@ -19,7 +19,7 @@
  *
  */
 #include "comfy/comfy.h"
-#include "comfy/midiplyr/midiplyr.h"
+#include "comfy/midiplyr.h"
 
 #include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
