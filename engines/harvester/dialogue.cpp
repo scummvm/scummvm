@@ -1105,7 +1105,7 @@ private:
 
 		IndexedBitmap updatedBitmap;
 		if (loadDialogueHeadBitmap(_engine, speakerId, headVariant, updatedBitmap)) {
-			*targetBitmap = updatedBitmap;
+			*targetBitmap = Common::move(updatedBitmap);
 			*targetSpeakerId = headId;
 		} else {
 			warning("Harvester: unable to load dialogue head for '%s'", headId.c_str());
