@@ -76,6 +76,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Generic flags are no longer cleared when saving or auto-saving. Clearing
      them introduced issues when auto-saving was done in some scenes.
    - Loading from the GMM is now possible before starting a new scene.
+   - It's now possible to skip cutscenes and dialog lines with escape.
+   - Mouse wheel functionality has been added to several UI widgets.
+   - Fixed issues with the memory puzzle in Nancy9.
+   - Fixed issues with the "I can't" item sound.
+   - Answers entered in password kind of puzzles are now more forgiving (e.g. "Xoc" and "Lady Xoc" are now both acceptable answers).
 
  SCUMM:
    - Improved cursor scale in early Windows HE games.
