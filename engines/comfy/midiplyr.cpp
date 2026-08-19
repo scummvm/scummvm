@@ -19,7 +19,7 @@
  *
  */
 
-#include "comfy/midiplyr/midiplyr.h"
+#include "comfy/midiplyr.h"
 
 #include "audio/mididrv.h"
 #include "common/endian.h"

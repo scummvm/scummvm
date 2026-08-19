@@ -37,7 +37,7 @@
 #include "audio/mixer.h"
 
 #include "comfy/detection.h"
-#include "comfy/midiplyr/midiplyr.h"
+#include "comfy/midiplyr.h"
 
 namespace Audio {
 class QueuingAudioStream;

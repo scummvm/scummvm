@@ -20,7 +20,7 @@
  */
 
 #include "comfy/comfy.h"
-#include "comfy/midiplyr/midiplyr.h"
+#include "comfy/midiplyr.h"
 
 
 namespace Comfy {
