@@ -44,7 +44,6 @@ static char _msgText2[256];
 
 void teleporter_init() {
 	_buttonTyped = -1;
-	_digitCount = -1;
 	_curMessageId = -1;
 	_handSequenceId = -1;
 	_meteorologistNextPlace = -1;

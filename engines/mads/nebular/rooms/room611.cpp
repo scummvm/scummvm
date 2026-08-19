@@ -113,11 +113,7 @@ static void setDialogNode(int node) {
 }
 
 static bool check2ChargedBatteries() {
-	if ((player_has(OBJ_DURAFAIL_CELLS) && !player_has(OBJ_PHONE_CELLS))
-		|| (!player_has(OBJ_DURAFAIL_CELLS) && player_has(OBJ_PHONE_CELLS)))
-		return true;
-
-	return false;
+	return bool(player_has(OBJ_DURAFAIL_CELLS)) != bool(player_has(OBJ_PHONE_CELLS));
 }
 
 static bool check4ChargedBatteries() {

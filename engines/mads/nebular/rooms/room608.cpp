@@ -675,7 +675,7 @@ static void room_608_daemon() {
 			break;
 
 		case 85:
-			if (local._rexBeingEaten && (local._animationMode == 1)) {
+			if (local._animationMode == 1) {
 				g_engine->_soundManager->command(12, 0);
 				kernel_timing_trigger(10, 85);
 			}

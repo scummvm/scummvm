@@ -415,7 +415,7 @@ static void room_307_daemon() {
 		}
 		local._lastFrameTime = kernel.clock;
 
-		if ((local._guardTime > 3000) && !local._duringPeeingFl && (kernel_anim[0].anim == nullptr)
+		if ((local._guardTime > 3000) && (kernel_anim[0].anim == nullptr)
 			&& (inter_input_mode != INTER_CONVERSATION) && global[kMetBuddyBeast] && !local._activePrisonerFl) {
 			if (!player_has(OBJ_SCALPEL) && !local._grateOpenedFl) {
 				player.commands_allowed = false;
