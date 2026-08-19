@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GLK_JACL_PROTOTYPES_H
+#define GLK_JACL_PROTOTYPES_H
+
 namespace Glk {
 namespace JACL {
 
@@ -198,3 +201,5 @@ extern void jacl_sleep(unsigned int mseconds);
 
 } // End of namespace JACL
 } // End of namespace Glk
+
+#endif // GLK_JACL_PROTOTYPES_H

@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef TEENAGENT_ACTOR_H
+#define TEENAGENT_ACTOR_H
+
 #include "teenagent/animation.h"
 #include "common/rect.h"
 
@@ -45,3 +48,5 @@ public:
 };
 
 } // End of namespace TeenAgent
+
+#endif // TEENAGENT_ACTOR_H

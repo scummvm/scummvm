@@ -19,12 +19,13 @@
  *
  */
 
+#ifndef ZVISION_VOLUME_MANAGER
+#define ZVISION_VOLUME_MANAGER
+
 #include "common/scummsys.h"
 #include "math/angle.h"
 #include "zvision/zvision.h"
 
-#ifndef ZVISION_VOLUME_MANAGER
-#define ZVISION_VOLUME_MANAGER
 
 namespace ZVision {
 
@@ -63,4 +64,4 @@ private:
 
 } // End of namespace ZVision
 
-#endif
+#endif // ZVISION_VOLUME_MANAGER

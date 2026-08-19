@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef VIDEO_4XM_UTILS_H
+#define VIDEO_4XM_UTILS_H
+
 #include "common/array.h"
 #include "common/compression/huffman.h"
 #include "common/debug.h"
@@ -106,3 +109,5 @@ inline int readInt(BitStream &bs, size_t n) {
 
 } // namespace FourXM
 } // namespace Video
+
+#endif // VIDEO_4XM_UTILS_H

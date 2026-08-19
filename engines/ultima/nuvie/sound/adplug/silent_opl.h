@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef ULTIMA_SILENT_OPL_H
+#define ULTIMA_SILENT_OPL_H
+
 #include "ultima/nuvie/sound/adplug/opl.h"
 
 namespace Ultima {
@@ -32,3 +35,5 @@ public:
 
 } // End of namespace Nuvie
 } // End of namespace Ultima
+
+#endif // ULTIMA_SILENT_OPL_H

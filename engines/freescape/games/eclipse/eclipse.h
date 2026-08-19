@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef FREESCAPE_ECLIPSE_H
+#define FREESCAPE_ECLIPSE_H
+
 #include "common/file.h"
 
 #include "freescape/music.h"
@@ -197,3 +200,5 @@ private:
 };
 
 }
+
+#endif // FREESCAPE_ECLIPSE_H

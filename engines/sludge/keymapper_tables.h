@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef SLUDGE_KEYMAPPER_TABLES_H
+#define SLUDGE_KEYMAPPER_TABLES_H
+
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
@@ -601,3 +604,5 @@ inline Common::KeymapArray getSludgeKeymaps(const char *target, const Common::St
 }
 
 } // End of namespace Sludge
+
+#endif // SLUDGE_KEYMAPPER_TABLES_H

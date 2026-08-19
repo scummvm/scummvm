@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GRAPHICS_BLIT_BLIT_ALPHA_H
+#define GRAPHICS_BLIT_BLIT_ALPHA_H
+
 #include "graphics/blit.h"
 
 namespace Graphics {
@@ -499,3 +502,5 @@ void BlendBlit::fillT(Args &args, const TSpriteBlendMode &blendMode) {
 }
 
 } // End of namespace Graphics
+
+#endif // GRAPHICS_BLIT_BLIT_ALPHA_H

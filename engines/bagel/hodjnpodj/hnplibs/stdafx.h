@@ -19,5 +19,10 @@
  *
  */
 
+#ifndef BAGEL_HNPLIBS_STDAFX_H
+#define BAGEL_HNPLIBS_STDAFX_H
+
 #include "bagel/afxwin.h"
 //
+
+#endif // BAGEL_HNPLIBS_STDAFX_H

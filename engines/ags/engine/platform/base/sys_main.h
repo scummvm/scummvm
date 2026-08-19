@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef AGS_SYS_MAIN_H
+#define AGS_SYS_MAIN_H
+
 //=============================================================================
 //
 // The main backend interface.
@@ -100,3 +103,5 @@ void *sys_win_get_window();
 #endif
 
 } // namespace AGS3
+
+#endif // AGS_SYS_MAIN_H

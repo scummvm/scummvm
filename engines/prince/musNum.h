@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef PRINCE_MUSNUM_H
+#define PRINCE_MUSNUM_H
+
 namespace Prince {
 
 enum RoomMus {
@@ -84,3 +87,5 @@ enum RoomMus {
 };
 
 } // End of namespace Prince
+
+#endif // PRINCE_MUSNUM_H
