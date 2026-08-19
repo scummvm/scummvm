@@ -214,8 +214,8 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 	}
 
 	// Recognition ("secondary") movie: its name followed by its own blt
-	// descriptors. Stored for future playback; the descriptors are consumed to
-	// keep the stream aligned (no home in the struct yet).
+	// descriptors. The descriptors are consumed to keep the stream aligned
+	// (no home in the struct yet).
 	readFilename(ser, _secondaryMovie.name);
 	uint16 numSecondaryDescs = 0;
 	ser.syncAsUint16LE(numSecondaryDescs);
@@ -229,7 +229,6 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 
 void PlaySecondaryMovie::applyStartingRandomSequence() {
 	// "RandomMovie" picks any sequence; otherwise look up by name.
-	// Only the first sequence is played; chained playback is TODO.
 	if (!_sequences.empty()) {
 		int startIdx = -1;
 		if (_startingSequenceName == "RandomMovie") {
@@ -561,7 +560,11 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	if (g_nancy->getGameType() >= kGameTypeNancy7) {
 		uint16 videoType = 0;
 		ser.syncAsUint16LE(videoType);
-		_videoPlaytype = videoType == kVideoPlaytypeBink ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
+
+		// Nancy13 dropped AVF altogether, so the slot no longer selects a container.
+		if (g_nancy->getGameType() <= kGameTypeNancy12) {
+			_videoPlaytype = videoType == kVideoPlaytypeBink ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
+		}
 	}
 
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy9); // videoPlaySource
