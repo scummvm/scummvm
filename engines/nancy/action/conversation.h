@@ -50,6 +50,10 @@ public:
 	virtual bool isVideoDonePlaying() { return true; }
 	bool isViewportRelative() const override { return true; }
 
+	// Enhancement: cut the currently playing line short, as if its sound and
+	// video had just finished. Any available responses still get shown.
+	void skipLine();
+
 protected:
 	struct ConversationFlag {
 		byte type;
@@ -137,6 +141,7 @@ protected:
 
 	bool _hasDrawnTextbox;
 	int16 _pickedResponse;
+	bool _isSkipped = false;
 
 	const byte _noResponse;
 };

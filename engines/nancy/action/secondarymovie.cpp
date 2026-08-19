@@ -917,6 +917,21 @@ void PlaySecondaryMovie::execute() {
 	}
 }
 
+void PlaySecondaryMovie::skip() {
+	if (_isRandom || _state != kRun || _playerCursorAllowed != kNoPlayerCursorAllowed) {
+		return;
+	}
+
+	g_nancy->_sound->stopSound(_sound);
+
+	if (!_isFinished) {
+		_decoder.pauseVideo(true);
+		_isFinished = true;
+	}
+
+	_state = kActionTrigger;
+}
+
 // --- PlayRandomMovieControl --------------------------------------------
 
 void PlayRandomMovieControl::readData(Common::SeekableReadStream &stream) {

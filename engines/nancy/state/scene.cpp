@@ -36,6 +36,7 @@
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/map.h"
 
+#include "engines/nancy/action/conversation.h"
 #include "engines/nancy/action/secondarymovie.h"
 
 #include "engines/nancy/ui/button.h"
@@ -1566,9 +1567,21 @@ void Scene::handleInput() {
 				g_nancy->_cursor->warpCursor(input.mousePos);
 			}
 		}
-	} else if (!_activeMovie) {
-		// Check if player has pressed esc
-		if (input.input & NancyInput::kOpenMainMenu) {
+	}
+
+	// Check if player has pressed esc. While a dialogue line or a cinematic is
+	// playing, esc skips it instead of opening the main menu. Only the initial
+	// press counts, so holding the key down doesn't skip line after line.
+	const bool escPressed = (input.input & NancyInput::kOpenMainMenu) != 0;
+	const bool escJustPressed = escPressed && !_escHeld;
+	_escHeld = escPressed;
+
+	if (escJustPressed) {
+		if (_activeConversation) {
+			_activeConversation->skipLine();
+		} else if (_activeMovie) {
+			_activeMovie->skip();
+		} else {
 			g_nancy->setState(NancyState::kMainMenu);
 			return;
 		}
