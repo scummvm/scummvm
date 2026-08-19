@@ -36,6 +36,15 @@ namespace Made {
 
 class GenericResource;
 
+/** Synthesizer types reported to game scripts. */
+enum SynthType {
+	kSynthTypeDefault = 0,
+	kSynthTypePCSpeaker = 1,
+	kSynthTypeAdLib = 2,
+	kSynthTypeAdLibGold = 3,
+	kSynthTypeMT32 = 4
+};
+
 class MusicPlayer {
 public:
 	virtual ~MusicPlayer() {}
@@ -51,13 +60,7 @@ public:
 	virtual bool isPlaying() = 0;
 	virtual void syncSoundSettings() = 0;
 
-	/**
-	 * The synthesiser type the game scripts should see, using the values the
-	 * sfGetSynthType() script external is expected to return: 0 default,
-	 * 1 PC speaker, 2 AdLib / Sound Blaster FM, 3 AdLib Gold, 4 MT-32 on an
-	 * MPU-401. Return to Zork picks different music resources depending on it.
-	 */
-	virtual int16 getSynthType() const { return 0; }
+	virtual SynthType getSynthType() const { return kSynthTypeDefault; }
 };
 
 class DOSMusicPlayer : public MusicPlayer {
@@ -79,7 +82,7 @@ public:
 	bool isPlaying() override;
 	void syncSoundSettings() override;
 
-	int16 getSynthType() const override;
+	SynthType getSynthType() const override;
 
 private:
 	MadeEngine *_vm;
