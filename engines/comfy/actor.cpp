@@ -1662,16 +1662,10 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 					ComfyRect &currentRect = _keymaskRects[i];
 					ComfyRect &previousRect = _keymaskOldRects[i];
 
-					bool equal = currentRect.left == previousRect.left &&
-						currentRect.top == previousRect.top &&
-						currentRect.right == previousRect.right &&
-						currentRect.bottom == previousRect.bottom &&
-						currentRect.area == previousRect.area;
-
-					if (!equal)
+					if (!currentRect.equals(previousRect))
 						renderAddDirtyRect(previousRect);
 
-					renderQueueDrawCommand(currentRect.left, currentRect.top, currentRect.area, equal ? 1 : 0, actorIndex);
+					renderQueueDrawCommand(currentRect.left, currentRect.top, currentRect.area, currentRect.equals(previousRect) ? 1 : 0, actorIndex);
 				}
 			}
 
@@ -1681,10 +1675,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			return;
 		}
 
-		bool changed = oldSelector != selector || oldRect.left != newRect.left ||
-			oldRect.top != newRect.top || oldRect.right != newRect.right ||
-			oldRect.bottom != newRect.bottom || oldRect.area != newRect.area ||
-			oldVisible != (visible ? 1 : 0);
+		bool changed = oldSelector != selector || !oldRect.equals(newRect) || oldVisible != (visible ? 1 : 0);
 
 		if (changed) {
 			if (visible && selector) {
@@ -1863,8 +1854,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 		byte newVisible = visible ? 1 : 0;
 		bool changed = oldSelector != selector || oldVisible != newVisible;
 
-		if (oldRect.left  != newRect.left  || oldRect.top    != newRect.top    ||
-			oldRect.right != newRect.right || oldRect.bottom != newRect.bottom || oldRect.area != newRect.area)
+		if (!oldRect.equals(newRect))
 			changed = true;
 
 		uint16 oldScriptedLastRect = 0xFFFF;
@@ -1888,8 +1878,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				for (uint i = 0; i <= last; i++) {
 					ComfyRect *oldItem = i <= oldScriptedLastRect ? &_keymaskOldRects[i] : nullptr;
 					ComfyRect *newItem = i <= scriptedLastRect ? &_keymaskRects[i] : nullptr;
-					bool equal = oldItem && newItem && oldItem->left == newItem->left && oldItem->top == newItem->top &&
-						oldItem->right == newItem->right && oldItem->bottom == newItem->bottom && oldItem->area == newItem->area;
+					bool equal = oldItem && newItem && oldItem->equals(*newItem);
 
 					if (!equal) {
 						if (oldItem) {
