@@ -2882,13 +2882,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (!entityManager)
 			return Common::kNoError;
 
-		Script *script = _engine.getScript();
+		Script &script = *_engine.getScript();
 		const uint32 now = Player::getRuntimeClockTicks();
 		const uint32 moveInterval = MAX<uint32>(1, 100U / (uint32)kRoomMonsterAnimationRate);
 		const int horizontalStepBase = 8;
 		const int depthStep = MAX<int>(1, roundRoomCombatFloat(
 			scene.state.roomZVelocityStep > 0.0f ? scene.state.roomZVelocityStep : 1.0f));
-		bool playerAlive = script && script->getPlayerCurrentHitPoints() > 0;
+		bool playerAlive = script.getPlayerCurrentHitPoints() > 0;
 
 		if (npcCombatStates.size() != scene.state.roomNpcs.size())
 			npcCombatStates.resize(scene.state.roomNpcs.size());
@@ -2945,7 +2945,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					entity->setAnimationFrameRange(monster.runtimeState, monster.runtimeState, false);
 					entity->setCurrentFrame(monster.runtimeState);
 					entity->setAnimationEnabled(false);
-					(void)script->syncRuntimeMonsterRecord(monster);
+					(void)script.syncRuntimeMonsterRecord(monster);
 					debugC(1, kDebugCombat,
 						"Harvester: combat monster death complete target='%s' damage_type=%d corpse_frame=%d on_death='%s'",
 						monster.monsterName.c_str(), combatState.deathDamageType,
@@ -2957,9 +2957,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					InteractionResult interaction;
 					interaction.mutatedRuntimeState = true;
 					interaction.visualRuntimeStateChanged = true;
-					if (script && !monster.onDeathActionTag.empty()) {
+					if (!monster.onDeathActionTag.empty()) {
 						InteractionResult deathInteraction;
-						if (script->executeActionTag(
+						if (script.executeActionTag(
 								monster.onDeathActionTag, deathInteraction, true, monster.roomName)) {
 							interaction = Common::move(deathInteraction);
 							interaction.mutatedRuntimeState = true;
@@ -3006,7 +3006,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (monster.posX != previousX) {
 						(void)applyRoomActorPlacement(
 							scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
-						(void)script->syncRuntimeMonsterRecord(monster);
+						(void)script.syncRuntimeMonsterRecord(monster);
 						debugC(1, kDebugCombat,
 							"Harvester: combat monster hit knockback target='%s' from_x=%d to_x=%d remaining=%d",
 							monster.monsterName.c_str(), previousX, monster.posX,
@@ -3042,18 +3042,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						playerState.entity &&
 						!combatState.attackTargetName.empty() &&
 						playerState.entity->getName().equalsIgnoreCase(combatState.attackTargetName);
-					if (!script) {
-						debugC(1, kDebugCombat,
-							"Harvester: combat monster attack contact monster='%s' frame=%d skipped reason='no startup script'",
-							monster.monsterName.c_str(), currentFrame);
-					} else if (!playerAlive || !hasTrackedPlayerTarget) {
+					if (!playerAlive || !hasTrackedPlayerTarget) {
 						debugC(1, kDebugCombat,
 							"Harvester: combat monster attack miss monster='%s' frame=%d player_hp=%d reason='no live target'",
-							monster.monsterName.c_str(), currentFrame, script->getPlayerCurrentHitPoints());
+							monster.monsterName.c_str(), currentFrame, script.getPlayerCurrentHitPoints());
 					} else {
-						const int playerHitPointsBefore = script->getPlayerCurrentHitPoints();
-						const bool changed = script->adjustPlayerCurrentHitPoints(-monster.damageAmount);
-						const int playerHitPointsAfter = script->getPlayerCurrentHitPoints();
+						const int playerHitPointsBefore = script.getPlayerCurrentHitPoints();
+						const bool changed = script.adjustPlayerCurrentHitPoints(-monster.damageAmount);
+						const int playerHitPointsAfter = script.getPlayerCurrentHitPoints();
 						const int damageLanded = playerHitPointsBefore - playerHitPointsAfter;
 						debugC(1, kDebugCombat,
 							"Harvester: combat monster attack hit monster='%s' frame=%d damage=%d damage_type='%s' player_hp=%d->%d changed=%d",
@@ -3160,8 +3156,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				(void)applyRoomActorPlacement(scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
 				if (monster.posZ != previousZ)
 					entityManager->reinsertSceneEntity(entity);
-				if (script)
-					(void)script->syncRuntimeMonsterRecord(monster);
+				(void)script.syncRuntimeMonsterRecord(monster);
 				debugC(1, kDebugCombat,
 					"Harvester: combat monster chase move monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d from=(%d,%d,z=%d) to=(%d,%d,z=%d) facing=%d",
 					monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
