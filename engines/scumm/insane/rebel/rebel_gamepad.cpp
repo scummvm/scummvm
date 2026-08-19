@@ -32,7 +32,7 @@ namespace {
 const char *const kIOSGamepadControllerKey = "gamepad_controller";
 const char *const kIOSGamepadControllerMinimalLayoutKey = "gamepad_controller_minimal_layout";
 const char *const kIOSGamepadControllerDirectionalInputKey = "gamepad_controller_directional_input";
-const int kIOSGamepadControllerDirectionalInputDpad = 1;
+const int kIOSGamepadControllerDirectionalInputThumbstick = 0;
 
 void saveDomainSetting(RebelIOSGamepadControllerState::SavedSetting &setting,
 		const Common::ConfigManager::Domain *domain, const char *key) {
@@ -84,10 +84,10 @@ void RebelIOSGamepadControllerState::enable() {
 	saveDomainSetting(_gamepadControllerMinimalLayout, domain, kIOSGamepadControllerMinimalLayoutKey);
 	saveDomainSetting(_gamepadControllerDirectionalInput, domain, kIOSGamepadControllerDirectionalInputKey);
 
-	// Same iOS virtual-controller profile used by Freescape: compact d-pad overlay.
+	// Same iOS virtual-controller profile used by Freescape: with thumbstick input for Rebel.
 	ConfMan.setBool(kIOSGamepadControllerKey, true, _domainName);
 	ConfMan.setBool(kIOSGamepadControllerMinimalLayoutKey, true, _domainName);
-	ConfMan.setInt(kIOSGamepadControllerDirectionalInputKey, kIOSGamepadControllerDirectionalInputDpad, _domainName);
+	ConfMan.setInt(kIOSGamepadControllerDirectionalInputKey, kIOSGamepadControllerDirectionalInputThumbstick, _domainName);
 	g_system->applyBackendSettings();
 	_active = true;
 #endif
