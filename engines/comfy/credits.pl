@@ -1,3 +1,3 @@
 begin_section("Comfy");
-	add_person("Name 1", "Handle 1", "");
+	add_person("Andrea Boscarino", "Bosca", "");
 end_section();
