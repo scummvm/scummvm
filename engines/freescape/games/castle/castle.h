@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef FREESCAPE_CASTLE_H
+#define FREESCAPE_CASTLE_H
+
 namespace Freescape {
 
 // Offsets of the assets inside a Castle Master Amiga game image
@@ -259,3 +262,5 @@ private:
 };
 
 }
+
+#endif // FREESCAPE_CASTLE_H

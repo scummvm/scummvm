@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef DIRECTOR_GRAPHICS_DATA_H
+#define DIRECTOR_GRAPHICS_DATA_H
+
 // The following builtin palettes are extracted from the resource forks
 // in the Director for Windows 4 projector executable.
 
@@ -1111,3 +1114,5 @@ struct TileStruct {
 	{ 16, 16, tile7, ARRAYSIZE(tile7) },
 	{ 16, 16, tile8, ARRAYSIZE(tile8) },
 };
+
+#endif // DIRECTOR_GRAPHICS_DATA_H

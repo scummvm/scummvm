@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef IMGUI_IMGUI_UTILS_H
+#define IMGUI_IMGUI_UTILS_H
+
 #include "backends/imgui/IconsMaterialSymbols.h"
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
@@ -45,3 +48,5 @@ void Palette(const Graphics::Palette &palette);
 bool toggleButton(const char *label, bool *p_value, bool inverse = false);
 
 } // namespace ImGuiEx
+
+#endif // IMGUI_IMGUI_UTILS_H

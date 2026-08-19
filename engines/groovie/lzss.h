@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GROOVIE_LZSS_H
+#define GROOVIE_LZSS_H
+
 #include "common/stream.h"
 
 namespace Groovie {
@@ -40,3 +43,5 @@ public:
 };
 
 } // End of Groovie namespace
+
+#endif // GROOVIE_LZSS_H
