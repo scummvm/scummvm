@@ -531,7 +531,12 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	readFilename(ser, _paletteName, kGameTypeVampire, kGameTypeVampire);
 	readFilename(ser, _bitmapOverlayName, kGameTypeVampire, kGameTypeNancy9);
 
-	ser.skip(2, kGameTypeNancy7);	// videoType
+	if (g_nancy->getGameType() >= kGameTypeNancy7) {
+		uint16 videoType = 0;
+		ser.syncAsUint16LE(videoType);
+		_videoPlaytype = videoType == kVideoPlaytypeBink ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
+	}
+
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy9); // videoPlaySource
 	ser.syncAsUint16LE(_videoFormat);
 	if (g_nancy->getGameType() >= kGameTypeNancy10)
@@ -593,7 +598,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 
 void PlaySecondaryMovie::init() {
 	if (!_decoder.isVideoLoaded()) {
-		if (!_decoder.loadFile(_videoName)) {
+		if (!_decoder.loadFile(_videoName, _videoPlaytype)) {
 			error("Couldn't load video file %s", _videoName.toString().c_str());
 		}
 

@@ -49,22 +49,38 @@ MoviePlayer::MoviePlayer() {}
 
 MoviePlayer::~MoviePlayer() {}
 
-bool MoviePlayer::loadFile(const Common::Path &name, bool bidirectionalCache) {
+byte MoviePlayer::resolvePlaytype(byte videoPlaytype) {
+	if (videoPlaytype != kVideoPlaytypeAuto) {
+		return videoPlaytype;
+	}
+
+	// Scene backgrounds only look for .bik from Nancy10 on.
+	return g_nancy->getGameType() >= kGameTypeNancy10 ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
+}
+
+bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bidirectionalCache) {
 	freeFrameCache();
 
 	const Common::Path avfPath = name.append(".avf");
 	const Common::Path bikPath = name.append(".bik");
 
-	// Detect the format from which file exists. Bink wins if both do.
-	if (Common::File::exists(bikPath)) {
-		_videoType = kVideoPlaytypeBink;
-		_decoder.reset(new Video::BinkDecoder());
-	} else if (Common::File::exists(avfPath)) {
-		_videoType = kVideoPlaytypeAVF;
-		_decoder.reset(new AVFDecoder(bidirectionalCache ? AVFDecoder::kLoadBidirectional : AVFDecoder::kLoadForward));
+	// Use the requested container, the other one only if its file is missing.
+	const byte preferred = resolvePlaytype(videoPlaytype);
+	const byte fallback = preferred == kVideoPlaytypeBink ? kVideoPlaytypeAVF : kVideoPlaytypeBink;
+
+	if (Common::File::exists(preferred == kVideoPlaytypeBink ? bikPath : avfPath)) {
+		_videoType = preferred;
+	} else if (Common::File::exists(fallback == kVideoPlaytypeBink ? bikPath : avfPath)) {
+		_videoType = fallback;
 	} else {
 		_decoder.reset();
 		return false;
+	}
+
+	if (_videoType == kVideoPlaytypeBink) {
+		_decoder.reset(new Video::BinkDecoder());
+	} else {
+		_decoder.reset(new AVFDecoder(bidirectionalCache ? AVFDecoder::kLoadBidirectional : AVFDecoder::kLoadForward));
 	}
 
 	_currentSurface = nullptr;

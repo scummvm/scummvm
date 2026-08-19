@@ -38,7 +38,8 @@ void PlaySecondaryVideo::init() {
 		_decoder.close();
 	}
 
-	if (!_decoder.loadFile(_filename)) {
+	// The secondary video channels are AVF-only, even when a .bik exists.
+	if (!_decoder.loadFile(_filename, kVideoPlaytypeAVF)) {
 		error("Couldn't load video file %s", _filename.toString().c_str());
 	}
 

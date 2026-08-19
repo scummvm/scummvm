@@ -95,6 +95,9 @@ public:
 	Common::Path _paletteName;
 	Common::Path _bitmapOverlayName;
 
+	// Container the record asks for; only present from Nancy7 to Nancy13.
+	byte _videoPlaytype = kVideoPlaytypeAuto;
+
 	uint16 _videoFormat = kLargeVideoFormat;
 	uint16 _videoSceneChange = kMovieNoSceneChange;
 	byte _playerCursorAllowed = kPlayerCursorAllowed;

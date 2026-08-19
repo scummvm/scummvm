@@ -101,8 +101,10 @@ static const byte kPlayerDuskDawn					= 2;
 static const byte kSmallVideoFormat					= 1;
 static const byte kLargeVideoFormat					= 2;
 
+// Video container. Auto picks per game type.
 static const byte kVideoPlaytypeAVF					= 0;
 static const byte kVideoPlaytypeBink				= 1;
+static const byte kVideoPlaytypeAuto				= 2;
 
 // Overlay transparency mode. 1 = opaque, anything >= kPlayOverlayTransparent is
 // drawn transparent (the original engine is 16bpp color-key, with no alpha/blend
