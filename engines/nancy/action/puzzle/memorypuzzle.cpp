@@ -63,10 +63,14 @@ void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
 		for (int slot = 0; slot < 3; ++slot)
 			readRect(stream, _tabHotspots[tab][slot]);
 
-	// 0x4b1: flipDelay (uint32), numPairs (uint32), requiredPairs (uint32)
-	_flipDelay     = stream.readUint32LE();
-	_numPairs      = stream.readUint32LE();
-	_requiredPairs = stream.readUint32LE();
+	// 0x4b1: flipDelay, then two percentages - the share of the faces to deal out, and
+	// the share of the board's pairs needed to win
+	_flipDelay = stream.readUint32LE();
+	int32 pairsPercent   = stream.readSint32LE(); // 0x4b5
+	int32 requirePercent = stream.readSint32LE(); // 0x4b9
+
+	_numPairs      = (uint32)(pairsPercent * _numTypes / 100);
+	_requiredPairs = (uint32)(requirePercent * (_numTabs * _cardsPerTab / 2) / 100);
 
 	// 0x4bd: cursor flag (ignored in ScummVM)
 	stream.skip(1);
@@ -74,9 +78,9 @@ void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
 	// 0x4be: shuffle flag
 	_shuffleGlobal = (stream.readByte() != 0);
 
-	// 0x4bf: match sound; 0x4f0: card flip sound
+	// 0x4bf: match sound; 0x4f0: no-match sound
 	_matchSound.readNormal(stream);
-	_cardFlipSound.readNormal(stream);
+	_noMatchSound.readNormal(stream);
 
 	// 0x521: win scene + flag
 	_winScene.readData(stream);
@@ -85,9 +89,6 @@ void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	// 0x53b: win sound
 	_winSound.readNormal(stream);
-
-	// 0x56c: exit hotspot
-	readRect(stream, _exitHotspot);
 }
 
 // Nancy 11 reworked the layout: fewer (12) face rects, a configurable grid/page count,
@@ -109,32 +110,43 @@ void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
 			readRect(stream, _tabHotspots[tab][slot]);
 
 	_flipDelay = stream.readUint32LE();     // 0x331
-	stream.skip(4);                         // 0x335 (second timing value, unused)
+	int32 pairsPercent   = stream.readSint32LE(); // 0x335 (percentage of the faces to deal out)
 	int32 requirePercent = stream.readSint32LE(); // 0x339 (-1 = use the fixed count below)
 	int32 requireCount   = stream.readSint32LE(); // 0x33d
 	stream.skip(4);                         // 0x341 (unused)
 
-	_shuffleGlobal = (stream.readByte() != 0); // 0x345
-	stream.skip(1);                         // 0x346 (flag, unused)
+	stream.skip(1);                         // 0x345 (cursor flag, ignored in ScummVM)
+	_shuffleGlobal = (stream.readByte() != 0); // 0x346
 
 	int32 pages      = stream.readSint32LE(); // 0x347
 	int32 gridsWide  = stream.readSint32LE(); // 0x34b
 	int32 gridsTall  = stream.readSint32LE(); // 0x34f
 	int32 srcWide    = stream.readSint32LE(); // 0x353
 	int32 srcTall    = stream.readSint32LE(); // 0x357
-	stream.skip(1);                         // 0x35b (tabs flag)
+	_hasPageTabs = (stream.readByte() != 0); // 0x35b
 
 	_numTabs     = CLIP<int>(pages, 1, kNumTabs);
 	_cardsPerTab = CLIP<int>(gridsWide * gridsTall, 1, kCardsPerTab);
 	_numTypes    = CLIP<int>(srcWide * srcTall, 1, kMaxTypes);
-	_numPairs    = _numTypes;
-	_requiredPairs = (requirePercent < 0) ? (uint32)requireCount
-	                                       : (uint32)(_numPairs * requirePercent / 100);
 
-	// 27 fixed 0xb6-byte voice-clip blocks: [0] is the card-flip sound, [17] starts the
-	// per-card match sounds (used here as a single match sound; per-type audio is a TODO).
-	_cardFlipSound.readNormal(stream);             // block 0 @ 0x35c
-	stream.skip(17 * 0xb6 - 0x31);                 // advance to block 17 @ 0xf72
+	// A single page can only ever pair within itself
+	if (_numTabs == 1)
+		_shuffleGlobal = false;
+
+	// Both counts are percentages: the faces to deal out are a share of the available
+	// faces, the pairs needed to win a share of every pair on the board.
+	int halfBoard = _numTabs * _cardsPerTab / 2;
+	_numPairs = (uint32)(pairsPercent * _numTypes / 100);
+	_requiredPairs = (requirePercent == -1) ? (uint32)requireCount
+	                                        : (uint32)(requirePercent * halfBoard / 100);
+
+	// 27 fixed 0xb6-byte voice-clip blocks: [0] and [1] are the sounds for flipping the
+	// first and second card of a pair, [17] starts the per-card match sounds (used here
+	// as a single match sound; per-type audio is a TODO).
+	_firstFlipSound.readNormal(stream);            // block 0 @ 0x35c
+	stream.skip(0xb6 - 0x31);                      // advance to block 1 @ 0x412
+	_secondFlipSound.readNormal(stream);           // block 1
+	stream.skip(16 * 0xb6 - 0x31);                 // advance to block 17 @ 0xf72
 	_matchSound.readNormal(stream);                // block 17
 	stream.skip((27 - 17) * 0xb6 - 0x31);          // advance to the scenes @ 0x168e
 	// Nancy 11 has no win sound; _winSound keeps its default "NO SOUND".
@@ -148,9 +160,32 @@ void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
 	stream.skip(g_nancy->getGameType() >= kGameTypeNancy12 ? 24 : 26);	// alternate scene
 }
 
-// Shuffles type IDs (0..numPairs-1) into the 72-card array so that every type
-// appears exactly twice. numPairs is clamped to [4, 36]; cards beyond numPairs
-// remain typeId -1 (unassigned, unselectable). requiredPairs is clamped to [2, totalCards/2].
+// Picks the type ID for the next pair. Types that haven't been handed out yet are
+// preferred; once all of them are used, a random type is reused, so the same face
+// can end up on more than one pair.
+int MemoryPuzzle::pickCardType() {
+	bool allUsed = true;
+	for (uint32 i = 0; i < _numPairs; ++i) {
+		if (!_typeUsed[i]) {
+			allUsed = false;
+			break;
+		}
+	}
+
+	if (allUsed)
+		return g_nancy->_randomSource->getRandomNumber(_numPairs - 1);
+
+	int type;
+	do {
+		type = g_nancy->_randomSource->getRandomNumber(_numPairs - 1);
+	} while (_typeUsed[type]);
+
+	_typeUsed[type] = true;
+	return type;
+}
+
+// Shuffles type IDs into the card array, two cards at a time, until every card slot
+// is filled. numPairs is clamped to [4, 36] and requiredPairs to [2, totalCards/2].
 void MemoryPuzzle::initCards() {
 	_numPairs = CLIP<uint32>(_numPairs, 4, (uint32)_numTypes);
 
@@ -169,7 +204,8 @@ void MemoryPuzzle::initCards() {
 	_secondFlip      = -1;
 	_flipTimerActive = false;
 
-	int nextType = 0;
+	for (int i = 0; i < kMaxTypes; ++i)
+		_typeUsed[i] = false;
 
 	if (!_shuffleGlobal) {
 		// By-tab: pairs are always within the same tab.
@@ -178,19 +214,16 @@ void MemoryPuzzle::initCards() {
 			for (int i = 0; i < _cardsPerTab; ++i) {
 				if (_cards[base + i].typeId != -1)
 					continue;
-				if (static_cast<uint32>(nextType) >= _numPairs)
-					break; // all types used up for this tab
 
-				_cards[base + i].typeId = nextType;
+				int type = pickCardType();
+				_cards[base + i].typeId = type;
 
 				// Find a random unassigned slot in the same tab for the pair
 				int partner;
 				do {
 					partner = g_nancy->_randomSource->getRandomNumber(_cardsPerTab - 1);
 				} while (_cards[base + partner].typeId != -1);
-				_cards[base + partner].typeId = nextType;
-
-				++nextType;
+				_cards[base + partner].typeId = type;
 			}
 		}
 	} else {
@@ -198,19 +231,16 @@ void MemoryPuzzle::initCards() {
 		for (int i = 0; i < totalCards; ++i) {
 			if (_cards[i].typeId != -1)
 				continue;
-			if (static_cast<uint32>(nextType) >= _numPairs)
-				break;
 
-			_cards[i].typeId = nextType;
+			int type = pickCardType();
+			_cards[i].typeId = type;
 
 			// Find a random unassigned slot anywhere
 			int partner;
 			do {
 				partner = g_nancy->_randomSource->getRandomNumber(totalCards - 1);
 			} while (_cards[partner].typeId != -1);
-			_cards[partner].typeId = nextType;
-
-			++nextType;
+			_cards[partner].typeId = type;
 		}
 	}
 }
@@ -237,10 +267,14 @@ void MemoryPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
-		if (_cardFlipSound.name != "NO SOUND")
-			g_nancy->_sound->loadSound(_cardFlipSound);
+		if (_firstFlipSound.name != "NO SOUND")
+			g_nancy->_sound->loadSound(_firstFlipSound);
+		if (_secondFlipSound.name != "NO SOUND")
+			g_nancy->_sound->loadSound(_secondFlipSound);
 		if (_matchSound.name != "NO SOUND")
 			g_nancy->_sound->loadSound(_matchSound);
+		if (_noMatchSound.name != "NO SOUND")
+			g_nancy->_sound->loadSound(_noMatchSound);
 		_state = kRun;
 		// fall through
 
@@ -275,8 +309,10 @@ void MemoryPuzzle::execute() {
 		break;
 
 	case kActionTrigger:
-		g_nancy->_sound->stopSound(_cardFlipSound);
+		g_nancy->_sound->stopSound(_firstFlipSound);
+		g_nancy->_sound->stopSound(_secondFlipSound);
 		g_nancy->_sound->stopSound(_matchSound);
+		g_nancy->_sound->stopSound(_noMatchSound);
 		g_nancy->_sound->stopSound(_winSound);
 		_winScene.execute();
 		finishExecution();
@@ -291,30 +327,15 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpScreen = NancySceneState.getViewport().getScreenPosition();
 	Common::Point mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
 
-	// Exit hotspot
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-		if (input.input & NancyInput::kLeftMouseButtonUp)
-			_state = kActionTrigger;
-		return;
-	}
-
 	// Tab switching: _tabHotspots[currentTab][slot] where slot is the target tab
-	for (int slot = 0; slot < _numTabs; ++slot) {
+	for (int slot = 0; _hasPageTabs && slot < _numTabs; ++slot) {
 		if (_tabHotspots[_currentTab][slot].contains(mouseVP)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			if ((input.input & NancyInput::kLeftMouseButtonUp) && slot != _currentTab) {
-				// Cancel any pending flip-back timer and flip both cards back
-				if (_flipTimerActive)
-					flipBackCards();
-				// Also flip back any lone first-flip card
-				if (_firstFlip != -1) {
-					_cards[_firstFlip].flipState = 0;
-					_firstFlip = -1;
-				}
+				// Changing pages keeps any pending flip state, so a pair can be
+				// matched across two different pages
 				_currentTab = slot;
-				if (_cardFlipSound.name != "NO SOUND")
-					g_nancy->_sound->playSound(_cardFlipSound);
+				g_nancy->_sound->playSound("BUOK");
 				redrawCards();
 			}
 			return;
@@ -344,15 +365,24 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 
 		// Flip this card face-up
 		card.flipState = 1;
-		if (_cardFlipSound.name != "NO SOUND")
-			g_nancy->_sound->playSound(_cardFlipSound);
 		redrawCards();
 
 		if (_firstFlip == -1) {
 			// First card of a potential pair
 			_firstFlip = idx;
+
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				if (_firstFlipSound.name != "NO SOUND")
+					g_nancy->_sound->playSound(_firstFlipSound);
+			} else {
+				g_nancy->_sound->playSound("BUOK");
+			}
 		} else {
-			// Second card flipped: check for match
+			// Second card. Up to Nancy 10 this one is silent, and the match or no-match
+			// sound answers it instead.
+			if (_secondFlipSound.name != "NO SOUND")
+				g_nancy->_sound->playSound(_secondFlipSound);
+
 			CardState &first = _cards[_firstFlip];
 			if (first.typeId == card.typeId && first.typeId != -1) {
 				// Match! Mark both as matched
@@ -370,6 +400,8 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 				_secondFlip      = idx;
 				_flipTimerActive = true;
 				_flipTimerEnd    = g_system->getMillis() + _flipDelay;
+				if (_noMatchSound.name != "NO SOUND")
+					g_nancy->_sound->playSound(_noMatchSound);
 			}
 		}
 		return;
