@@ -41,6 +41,7 @@
 #endif
 
 #include <features/features_cpu.h> // cpu_features_get_time_usec()
+#include <retro_atomic.h>
 
 /**
  * Include base/internal_version.h to allow access to SCUMMVM_VERSION.
@@ -143,9 +144,15 @@ static void retro_gui_res_reset() {
 }
 #endif
 
+/* Single-producer / single-consumer ring. The producer is ScummVM's MIDI
+   driver, the consumer is retro_midi_queue_drain() in retro_run(). With
+   USE_LIBCO those are the same OS thread and the fences below cost nothing;
+   without it they are two threads, and 'volatile' does not order the payload
+   stores against the cursor publish - the consumer could see an index before
+   the event it points at. */
 static retro_midi_event_t midi_queue[MIDI_QUEUE_SIZE];
-static volatile uint32 midi_head = 0; /* producer writes */
-static volatile uint32 midi_tail = 0; /* consumer writes */
+static retro_atomic_int_t midi_head = RETRO_ATOMIC_INT_INITIALIZER(0); /* published by producer */
+static retro_atomic_int_t midi_tail = RETRO_ATOMIC_INT_INITIALIZER(0); /* published by consumer */
 
 static void setup_hw_rendering(void) {
 
@@ -922,16 +929,22 @@ const char *retro_get_playlist_dir(void) {
 }
 
 void retro_midi_queue_push(uint8 byte, uint32 delta_us) {
-	uint32 next = (midi_head + 1) & (MIDI_QUEUE_SIZE - 1);
+	/* The producer owns head, so it can read it plainly; tail needs an
+	   acquire load to pair with the consumer's release below. */
+	int head = retro_atomic_load_acquire_int(&midi_head);
+	int next = (head + 1) & (MIDI_QUEUE_SIZE - 1);
 
-	if (next == midi_tail) {
+	if (next == retro_atomic_load_acquire_int(&midi_tail)) {
 		/* Queue full → drop event (acceptable for MIDI) */
 		return;
 	}
 
-	midi_queue[midi_head].byte     = byte;
-	midi_queue[midi_head].delta_us = delta_us;
-	midi_head = next;
+	midi_queue[head].byte     = byte;
+	midi_queue[head].delta_us = delta_us;
+
+	/* Release: the two stores above are visible to any thread that
+	   acquire-loads this index. */
+	retro_atomic_store_release_int(&midi_head, next);
 }
 
 static void retro_midi_queue_drain(void) {
@@ -943,17 +956,23 @@ static void retro_midi_queue_drain(void) {
 		return;
 
 	bool did_write = false;
+	int tail = retro_atomic_load_acquire_int(&midi_tail);
+	int head = retro_atomic_load_acquire_int(&midi_head);
 
-	while (midi_tail != midi_head) {
-		retro_midi_event_t ev = midi_queue[midi_tail];
-		midi_tail = (midi_tail + 1) & (MIDI_QUEUE_SIZE - 1);
+	while (tail != head) {
+		retro_midi_event_t ev = midi_queue[tail];
+		tail = (tail + 1) & (MIDI_QUEUE_SIZE - 1);
 
 		retro_midi_interface->write(ev.byte, ev.delta_us);
 		did_write = true;
 	}
 
-	if (did_write)
+	if (did_write) {
+		/* Publish once: the producer only needs to know the slots are
+		   free, not how far along the drain got. */
+		retro_atomic_store_release_int(&midi_tail, tail);
 		retro_midi_interface->flush();
+	}
 }
 
 void retro_init(void) {
