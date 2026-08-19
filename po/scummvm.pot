@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-08-17 13:00+0000\n"
+"POT-Creation-Date: 2026-08-19 21:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3653,7 +3653,7 @@ msgstr ""
 #: engines/kyra/engine/lol.cpp:505 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:137 engines/mads/metaengine.cpp:258
 #: engines/mm/metaengine.cpp:186 engines/mtropolis/metaengine.cpp:161
-#: engines/nancy/input.cpp:181 engines/parallaction/metaengine.cpp:138
+#: engines/nancy/input.cpp:189 engines/parallaction/metaengine.cpp:138
 #: engines/saga/metaengine.cpp:278 engines/sludge/keymapper_tables.h:561
 #: engines/sludge/keymapper_tables.h:580 engines/stark/metaengine.cpp:189
 #: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
@@ -3686,7 +3686,7 @@ msgstr ""
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:506
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:144
 #: engines/mads/metaengine.cpp:264 engines/mm/metaengine.cpp:192
-#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:188
+#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:196
 #: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
 #: engines/sludge/keymapper_tables.h:567 engines/sludge/keymapper_tables.h:586
 #: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
@@ -5804,7 +5804,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
 #: engines/hypno/metaengine.cpp:363 engines/hypno/metaengine.cpp:411
-#: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
+#: engines/nancy/input.cpp:203 engines/tinsel/metaengine.cpp:263
 #: engines/titanic/metaengine.cpp:324 engines/ultima/ultima8/metaengine.cpp:52
 msgid "Move up"
 msgstr ""
@@ -5814,7 +5814,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
 #: engines/hypno/metaengine.cpp:351 engines/hypno/metaengine.cpp:399
-#: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
+#: engines/nancy/input.cpp:209 engines/tinsel/metaengine.cpp:269
 #: engines/titanic/metaengine.cpp:330 engines/ultima/ultima8/metaengine.cpp:53
 msgid "Move down"
 msgstr ""
@@ -5826,7 +5826,7 @@ msgstr ""
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:345 engines/hypno/metaengine.cpp:393
 #: engines/kyra/engine/eobcommon.cpp:373 engines/lure/metaengine.cpp:218
-#: engines/nancy/input.cpp:207 engines/tinsel/metaengine.cpp:275
+#: engines/nancy/input.cpp:215 engines/tinsel/metaengine.cpp:275
 #: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
 #: engines/ultima/ultima8/metaengine.cpp:54
 msgid "Move left"
@@ -5839,7 +5839,7 @@ msgstr ""
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:357 engines/hypno/metaengine.cpp:405
 #: engines/kyra/engine/eobcommon.cpp:374 engines/lure/metaengine.cpp:226
-#: engines/nancy/input.cpp:213 engines/tinsel/metaengine.cpp:281
+#: engines/nancy/input.cpp:221 engines/tinsel/metaengine.cpp:281
 #: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
 #: engines/ultima/ultima8/metaengine.cpp:55
 msgid "Move right"
@@ -7919,7 +7919,7 @@ msgstr ""
 
 #: engines/draci/metaengine.cpp:243 engines/hopkins/metaengine.cpp:302
 #: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
-#: engines/nancy/input.cpp:225
+#: engines/nancy/input.cpp:233
 msgid "Open main menu"
 msgstr ""
 
@@ -10962,19 +10962,19 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/input.cpp:178
+#: engines/nancy/input.cpp:186
 msgid "Nancy Drew"
 msgstr ""
 
-#: engines/nancy/input.cpp:219
+#: engines/nancy/input.cpp:227
 msgid "Fast move modifier"
 msgstr ""
 
-#: engines/nancy/input.cpp:234
+#: engines/nancy/input.cpp:242
 msgid "Nancy Drew - Maze"
 msgstr ""
 
-#: engines/nancy/input.cpp:236
+#: engines/nancy/input.cpp:244
 msgid "Show / hide maze map"
 msgstr ""
 
