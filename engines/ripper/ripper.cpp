@@ -54,6 +54,8 @@ namespace {
 
 static const uint32 kDosTickDurationMs = 55;
 static const uint32 kDemoEndingHoldTicks = 0x48;
+static const int kRiperBatBootParam = 1;
+static const char kRiperBatFarewell[] = "Thank you for playing  R I P E R !\n";
 
 } // End of anonymous namespace
 
@@ -175,11 +177,32 @@ bool RipperEngine::selectRandomRipperIdentity(const char *source) {
 		_randomSource.getRandomNumber(candidateCount - 1), source);
 }
 
+Common::Error RipperEngine::runRiperBatEasterEgg() {
+	// This emulates starting the game through RIPER.BAT, not an alternate
+	// RIPPER.EXE entry point. The batch file runs "player scenes.avi" and then
+	// prints this farewell after the standalone player exits.
+	debugC(1, kDebugVideo,
+		"Ripper: RIPER.BAT route playing standalone media 'scenes.avi'");
+	const bool played = _media->play("scenes.avi", true);
+	g_system->logMessage(LogMessageType::kInfo, kRiperBatFarewell);
+	debugC(1, kDebugVideo,
+		"Ripper: RIPER.BAT route completed played=%d quit=%d",
+		played, shouldQuit());
+	return played || shouldQuit() ? Common::kNoError : Common::kReadingFailed;
+}
+
 Common::Error RipperEngine::run() {
 	const bool isDemo = (_gameDescription->flags & ADGF_DEMO) != 0;
 	registerSearchPaths();
 	initGraphics(640, 400);
 	_settings->load();
+	if (ConfMan.getInt("boot_param") == kRiperBatBootParam) {
+		if (isDemo) {
+			warning("Ripper: RIPER.BAT boot parameter is unavailable for the demo");
+			return Common::kUnsupportedGameidError;
+		}
+		return runRiperBatEasterEgg();
+	}
 	if (!_resources->initialize(!isDemo))
 		return Common::kReadingFailed;
 	if (!_milestones->initialize(*_resources))

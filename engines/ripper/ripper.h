@@ -89,6 +89,7 @@ private:
 	bool runDemoEnding();
 	bool waitForDemoEndingInput();
 	bool selectRandomRipperIdentity(const char *source);
+	Common::Error runRiperBatEasterEgg();
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
