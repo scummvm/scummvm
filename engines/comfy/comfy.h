@@ -146,6 +146,14 @@ struct ComfyRect {
 		bottom = 0;
 		area = 0;
 	}
+
+	bool equals(ComfyRect otherRect) {
+		return left == otherRect.left &&
+			   top == otherRect.top &&
+			   right == otherRect.right &&
+			   bottom == otherRect.bottom &&
+			   area == otherRect.area;
+	}
 };
 
 class ComfyEngine : public Engine {
