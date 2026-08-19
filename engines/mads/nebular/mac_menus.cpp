@@ -157,7 +157,7 @@ bool readMenuResource(Common::SeekableReadStream &stream, MenuResource &resource
 		if (stream.pos() + 4 > stream.size())
 			return false;
 
-		/* byte icon = */ stream.readByte();
+		/* byte icon = */ (void)stream.readByte();
 		item.key = stream.readByte();
 		item.mark = stream.readByte();
 		item.style = stream.readByte();
@@ -874,8 +874,7 @@ void selectMacintoshDifficulty(MacNebularMenu *menus) {
 
 	const int nativeDifficulty = menus ? menus->runDifficultyDialog() :
 		DIFFICULTY_MEDIUM;
-	if (nativeDifficulty >= DIFFICULTY_HARD &&
-			nativeDifficulty <= DIFFICULTY_EASY) {
+	if (nativeDifficulty != -1) {
 		game.difficulty = nativeDifficulty;
 		return;
 	}

@@ -365,8 +365,6 @@ MacResourceProvider::ResourceID MacResourceProvider::mapResource(const Common::S
 		return result;
 
 	const int section = room / 100;
-	if (section < 1 || section > 9)
-		return result;
 	result.container = (Container)(kSection1Container + section - 1);
 
 	const int extensionAt = name.findLastOf('.');
@@ -641,7 +639,8 @@ bool MacResourceProvider::setCursor(int id) {
 		_nextCursorTime = g_system->getMillis() + 15;
 		return installCursorResource(1000);
 	}
-	if (id >= 3 && id <= 6)
+
+	if (id <= 6)
 		return installCursorResource(3000 + id);
 	return false;
 }

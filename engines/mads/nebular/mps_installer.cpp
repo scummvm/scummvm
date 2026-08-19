@@ -145,7 +145,6 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::Pa
 	} break;
 	default:
 		error("Unsupported compression algorithm");
-		uncompressedBuf = nullptr;
 		break;
 	}
 

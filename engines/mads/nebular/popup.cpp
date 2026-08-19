@@ -193,9 +193,7 @@ void popup_draw() {
 void popup_setup_cycle() {
 	font_set_colors(-1, DIALOG_BLACK_COLOR, DIALOG_BLACK_COLOR, DIALOG_BLACK_COLOR);
 
-	memcpy(&cycling_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-		&master_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-		PALETTE_CYCLING_AREA * sizeof(RGBcolor));
+	memcpy(&cycling_palette[248].r, &master_palette[248].r, 8 * sizeof(RGBcolor));
 	pal_grey(master_palette, DIALOG_CONTENT1_COLOR, 2, 36, 32);
 	pal_grey(master_palette, DIALOG_EDGE_COLOR, 2, 39, 28);
 	pal_grey(master_palette, DIALOG_FC_COLOR, 2, 36, 32);
