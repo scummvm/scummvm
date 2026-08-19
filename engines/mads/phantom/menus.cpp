@@ -437,8 +437,6 @@ static void global_menu_options() {
 
 	result = popup_execute();
 
-	kernel.activate_menu = GAME_MAIN_MENU;
-
 	if (result == cancel_button) {
 		switch (game_menu_popup->key) {
 		case alt_x_key:
