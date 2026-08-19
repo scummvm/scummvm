@@ -23,8 +23,6 @@
 
 #include "common/endian.h"
 
-#include <cstdarg>
-
 namespace Comfy {
 
 byte ComfyEngine::scriptReadByte(uint32 pc) {
