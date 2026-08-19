@@ -29,6 +29,7 @@
 #include "scumm/insane/insane.h"
 #include "scumm/insane/rebel/rebel_audio.h"
 #include "scumm/insane/rebel/rebel_gamepad.h"
+#include "scumm/insane/rebel/rebel_touch.h"
 
 #include "common/keyboard.h"
 #include "common/list.h"
@@ -370,6 +371,7 @@ public:
 	void centerGameplayAim();
 	bool _gameplaySectionActive;
 	RebelIOSGamepadControllerState _iosGamepadControllerState;
+	RebelTouchTapDetector _touchTapDetector;
 
 	int _currentPhase;
 	int _deathFrame;
@@ -392,6 +394,8 @@ public:
 
 
 	int32 processMouse() override;
+	bool isTouchscreenActive() const;
+	bool isSkippableVideoState() const;
 	Common::Point getGameplayAimPoint();
 	Common::Point getGameplayPointerPos();
 	Common::Point getRebelAutoPlayAimPoint();

@@ -28,6 +28,7 @@
 #include "scumm/insane/insane.h"
 #include "scumm/insane/rebel/rebel_audio.h"
 #include "scumm/insane/rebel/rebel_gamepad.h"
+#include "scumm/insane/rebel/rebel_touch.h"
 #include "scumm/smush/rebel/smush_player_ra1.h"
 
 namespace Scumm {
@@ -551,6 +552,7 @@ private:
 	bool _preserveInteractiveRuntimeState;
 	bool _interactiveVideoCheatSkipped;
 	RebelIOSGamepadControllerState _iosGamepadControllerState;
+	RebelTouchTapDetector _touchTapDetector;
 
 	// Path branching for levels with left/right alternative videos.
 	static const int32 kPathBranchCounter = 394;

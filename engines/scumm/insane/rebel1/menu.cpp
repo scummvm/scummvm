@@ -682,7 +682,8 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 
 	if (isTouchscreenActive() && !_interactiveVideoActive && !_menuActive &&
 			event.type == Common::EVENT_LBUTTONDOWN) {
-		_vm->_smushVideoShouldFinish = true;
+		if (_touchTapDetector.addTap(event.mouse.x, event.mouse.y, _vm->_system->getMillis()))
+			_vm->_smushVideoShouldFinish = true;
 		return true;
 	}
 

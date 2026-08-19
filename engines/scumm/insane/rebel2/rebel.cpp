@@ -147,6 +147,18 @@ bool isRebel2MenuState(InsaneRebel2::GameState state) {
 	       state == InsaneRebel2::kStateTopPilots;
 }
 
+bool InsaneRebel2::isTouchscreenActive() const {
+	return g_system->hasFeature(OSystem::kFeatureTouchscreen);
+}
+
+// Not a menu, where taps pick items, and not gameplay, where a tap fires.
+bool InsaneRebel2::isSkippableVideoState() const {
+	if (_menuInputActive || isRebel2MenuState(_gameState))
+		return false;
+
+	return _gameState != kStateGameplay || _rebelHandler == 0;
+}
+
 InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_vm = scumm;
 
@@ -767,6 +779,14 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	// remain paused for the dialog/focus interval.
 	if (_vm->isPaused())
 		return false;
+
+	if (isTouchscreenActive() && event.type == Common::EVENT_LBUTTONDOWN &&
+			isSkippableVideoState() &&
+			_touchTapDetector.addTap(event.mouse.x, event.mouse.y, _vm->_system->getMillis())) {
+		debugC(DEBUG_INSANE, "Double tap - skipping video");
+		_vm->_smushVideoShouldFinish = true;
+		return true;
+	}
 
 	if (_rebelYodaMode && event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat && event.kbd.hasFlags(Common::KBD_ALT)) {
 		switch (event.kbd.keycode) {
