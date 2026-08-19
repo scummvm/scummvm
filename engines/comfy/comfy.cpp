@@ -21,7 +21,6 @@
 
 #include "comfy/comfy.h"
 #include "comfy/detection.h"
-#include "comfy/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -138,7 +137,6 @@ Common::String ComfyEngine::getGameId() const {
 }
 
 Common::Error ComfyEngine::run() {
-	setDebugger(new Console());
 	return gameInit();
 }
 

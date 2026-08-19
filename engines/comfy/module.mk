@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	anim_file.o \
 	comfy.o \
 	comfy_keyboard_ui.o \
-	console.o \
 	debug.o \
 	expr.o \
 	game.o \
@@ -14,7 +13,7 @@ MODULE_OBJS = \
 	memory.o \
 	metaengine.o \
 	midi.o \
-	midiplyr/midiplyr.o \
+	midiplyr.o \
 	object_file.o \
 	palette.o \
 	scene.o \
