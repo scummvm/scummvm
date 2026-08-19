@@ -164,6 +164,16 @@ public:
 	bool _isHovered = false;
 	bool _playingSecondary = false;
 
+	// Rewind state for the recognition movie. When the mouse leaves the
+	// character the movie is played backwards to its first frame so the
+	// character turns away again instead of snapping back to its idle pose.
+	// Bink can't be played in reverse by the decoder, so the frames are
+	// stepped through by hand.
+	bool _secondaryRewinding = false;
+	int _rewindFrame = 0;
+	uint32 _rewindLastFrameTime = 0;
+	uint32 _rewindFrameDelay = 66;
+
 	// Called by PlayRandomMovieControl::execute() to wind down the AR.
 	void stopRandom() { _randomStopRequested = true; }
 
@@ -211,6 +221,12 @@ protected:
 
 	// Load & start the recognition (secondary) movie in place of the idle loop.
 	bool activateSecondaryMovie();
+
+	// Start playing the recognition movie backwards from wherever it is now.
+	void beginSecondaryRewind();
+	// Advance the manual rewind; returns the frame to draw, or nullptr when
+	// the next frame isn't due yet.
+	const Graphics::Surface *updateSecondaryRewind();
 
 	// A Nancy13 talkable character: has a conversation scene and a recognition
 	// movie to swap to on hover.
