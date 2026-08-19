@@ -325,6 +325,8 @@ static void room_303_anim7() {
 
 	switch (idx) {
 	case 0:
+	case 4:
+	case 8:
 		aainfo[7]._val3 = 0;
 		kernel_timing_trigger(30, 28);
 		scratch._a8++;
@@ -335,6 +337,7 @@ static void room_303_anim7() {
 		scratch._a8++;
 		break;
 	case 2:
+	case 6:
 		aainfo[6]._val3 = 0;
 		kernel_timing_trigger(30, 28);
 		scratch._a8++;
@@ -344,29 +347,14 @@ static void room_303_anim7() {
 		digi_play_build(303, 'f', 2, 1);
 		scratch._a8++;
 		break;
-	case 4:
-		aainfo[7]._val3 = 0;
-		kernel_timing_trigger(30, 28);
-		scratch._a8++;
-		break;
 	case 5:
 		aainfo[6]._val3 = 2;
 		digi_play_build(303, 'e', 1, 1);
 		scratch._a8++;
 		break;
-	case 6:
-		aainfo[6]._val3 = 0;
-		kernel_timing_trigger(30, 28);
-		scratch._a8++;
-		break;
 	case 7:
 		aainfo[7]._val3 = 3;
 		digi_play_build(303, 'f', 3, 1);
-		scratch._a8++;
-		break;
-	case 8:
-		aainfo[7]._val3 = 0;
-		kernel_timing_trigger(30, 28);
 		scratch._a8++;
 		break;
 	case 9:

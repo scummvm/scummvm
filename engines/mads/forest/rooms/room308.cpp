@@ -412,7 +412,6 @@ static void room_308_anim12() {
 				aainfo[9]._val3 = (scratch._c0 != 0) ? 11 : 10;
 				do_e0 = true;
 			} else if (scratch._b8 == 0) {
-				aainfo[8]._val3 = 0;
 				scratch._b6 = 1;
 				aainfo[8]._val3 = 7;
 				kernel_reset_animation(aa[6], 10);
@@ -622,7 +621,7 @@ static void room_308_anim15() {
 		if (scratch._c0 <= 3) {
 			scratch._c2 = 6;
 		} else {
-			if (aainfo[13]._val3 != 0 || scratch._c0 == 0 || scratch._c2 != 0 || imath_random(1, 15) != 1) {
+			if (aainfo[13]._val3 != 0 || scratch._c2 != 0 || imath_random(1, 15) != 1) {
 				result = 6;
 			} else {
 				result = 7;

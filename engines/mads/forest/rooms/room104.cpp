@@ -107,10 +107,6 @@ static void room_104_init() {
 		room_104_init1();
 		return;
 	case -2:
-		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
-		flags[2] = -3;
-		room_104_init1();
-		return;
 	case -1:
 		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
 		flags[2] = -3;
@@ -130,7 +126,6 @@ static void room_104_init() {
 		room_104_init2();
 		return;
 	case 5:
-		if (previous_room == 107) flags[2] = 5;
 		room_104_init2();
 		return;
 	case 6:
