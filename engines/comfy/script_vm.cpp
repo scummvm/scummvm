@@ -754,10 +754,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case O_ANIMATION_CONTROL:
+	case O_ANIMATION_CONTROL: {
 		if (!_usesAnimFile)
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
-	{
+
 		byte subop = scriptReadByte(pc++);
 		switch (subop) {
 		case SO_ANIM_SHUTDOWN:
@@ -806,168 +806,205 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case O_SET_LAST_VOC_ARGUMENTS:
-	case O_UNUSED_32:
-	case O_SKIP_TABLE_BLOCK:
-	case O_CONFIG_STRING_COMMAND:
-	case O_MOUSE_SET_ACTOR:
-	case O_HOST_MEDIA_CONTROL:
-	{
-		switch (opcode) {
-		case O_SET_LAST_VOC_ARGUMENTS: { // Added in version 2
-			uint16 count = scriptReadStringIndex(pc);
-			pc += 2;
-			if (_animUsesWaveVocCounter) {
-				uint16 slot = _soundEventMaximum ? _soundEventMaximum - 1 : _vocQueueCapacity - 1;
-				if (_engineVersion == 3) {
-					VocQueueEntryV3 &entry = _vocQueueV3[slot];
-					entry.argumentCount = MIN<uint16>(count, COMFY_VOC_ARG_CAPACITY_V3);
-					for (uint i = 0; i < entry.argumentCount; i++)
-						entry.arguments[i] = scriptReadWord(pc + i * 2);
-				} else {
-					VocQueueEntry &entry = _vocQueue[slot];
-					entry.argumentCount = MIN<uint16>(count, COMFY_VOC_ARG_CAPACITY);
-					for (uint i = 0; i < entry.argumentCount; i++)
-						entry.arguments[i] = scriptReadWord(pc + i * 2);
-				}
+	case O_SET_LAST_VOC_ARGUMENTS: { // Added in version 2
+		uint16 count = scriptReadStringIndex(pc);
+		pc += 2;
+		if (_animUsesWaveVocCounter) {
+			uint16 slot = _soundEventMaximum ? _soundEventMaximum - 1 : _vocQueueCapacity - 1;
+			if (_engineVersion == 3) {
+				VocQueueEntryV3 &entry = _vocQueueV3[slot];
+				entry.argumentCount = MIN<uint16>(count, COMFY_VOC_ARG_CAPACITY_V3);
+				for (uint i = 0; i < entry.argumentCount; i++)
+					entry.arguments[i] = scriptReadWord(pc + i * 2);
+			} else {
+				VocQueueEntry &entry = _vocQueue[slot];
+				entry.argumentCount = MIN<uint16>(count, COMFY_VOC_ARG_CAPACITY);
+				for (uint i = 0; i < entry.argumentCount; i++)
+					entry.arguments[i] = scriptReadWord(pc + i * 2);
 			}
+		}
 
-			pc += (uint32)count * 2;
+		pc += (uint32)count * 2;
+
+		return kScriptContinue;
+	}
+
+	case O_UNUSED_32: // Added in version 2 (Panther only)
+		scriptReadStringIndex(pc);
+		scriptReadStringIndex(pc + 2);
+		pc += 4;
+		return kScriptContinue;
+
+	case O_SKIP_TABLE_BLOCK: { // Added in version 2 (First Step 1997 only)
+		pc += 4;
+		byte inlineBytes = scriptReadByte(pc++);
+		byte tripleCount = scriptReadByte(pc++);
+		pc += inlineBytes + (uint32)tripleCount * 3;
+		return kScriptContinue;
+	}
+
+	case O_CONFIG_STRING_COMMAND: {
+		byte subop = scriptReadByte(pc++);
+		uint16 value = scriptReadWord(pc);
+		pc += 2;
+		Common::String key;
+		for (byte character = scriptReadByte(pc++); character; character = scriptReadByte(pc++))
+			key += (char)character;
+
+		switch (subop) {
+		case SO_CONFIG_READ_INT:
+			if (value < _stringTable.size())
+				_stringTable[value] = ConfMan.hasKey(key) ? ConfMan.getInt(key) : 0;
 
 			break;
+		case SO_CONFIG_WRITE_INT:
+			ConfMan.setInt(key, value);
+			if (key.equalsIgnoreCase("SENSITIVITY"))
+				_v3Sensitivity = value;
+
+			ConfMan.flushToDisk();
+			break;
+		case SO_CONFIG_SUSPEND_ACTOR:
+		case SO_CONFIG_RUN_COMMAND:
+			_v3ConfigCommandPending = true;
+			_v3ConfigCommandSubop = subop;
+			_v3ConfigCommandValue = value;
+			_v3ConfigCommandText = key;
+
+			if (subop == SO_CONFIG_SUSPEND_ACTOR) {
+				Actor *configActor = actorGetPtr(sceneGetHandle(1));
+				if (configActor)
+					configActor->active = 0;
+			} else {
+				configRunPendingCommand();
+			}
+
+			break;
+		case SO_CONFIG_TEST_VALUE:
+			if (ConfMan.hasKey(key) && !ConfMan.get(key).equalsIgnoreCase("?????"))
+				keyBitSet(value);
+			else
+				keyBitClear(value);
+
+			break;
+		case SO_CONFIG_TEST_FILE: {
+			Common::SeekableReadStream *stream = pathFOpen(Common::Path(key), true);
+			if (stream)
+				keyBitSet(value);
+			else
+				keyBitClear(value);
+
+			delete stream;
+			break;
 		}
-		case O_UNUSED_32: // Added in version 2 (Panther only)
-			scriptReadStringIndex(pc);
-			scriptReadStringIndex(pc + 2);
+		case SO_CONFIG_SET_LANGUAGE_DATA_SUBDIRECTORY:
+			if (value < _stringTable.size())
+				_stringTable[value] = languageSetDataSubdirectory(key);
+
+			break;
+		default:
+			error("Unknown script opcode 0x34 subopcode 0x%02X near script PC 0x%08X", subop, pc);
+		}
+
+		return kScriptContinue;
+	}
+
+	case O_MOUSE_SET_ACTOR: {
+		uint32 opcodePc = pc - 1;
+		byte subop = 0;
+		Actor *mouseActor = nullptr;
+		pc = scriptReadArgs(pc, _currentActor, "CO", &subop, &mouseActor);
+		switch (subop) {
+		case SO_MOUSE_SET_ACTOR:
+			mouseSetActor(mouseActor);
+			break;
+		case SO_MOUSE_CLEAR_ACTOR:
+			mouseSetActor(nullptr);
+			break;
+		default:
+			error("Unknown script opcode 0x35 subopcode 0x%02X at script PC 0x%08X", subop, opcodePc);
+		}
+
+		return kScriptContinue;
+	}
+
+	case O_HOST_MEDIA_CONTROL: {
+		byte subop = scriptReadByte(pc++);
+		switch (subop) {
+		case SO_HOST_MEDIA_START_INPUT:
+			setMediaMode(subop);
+			break;
+		case SO_HOST_MEDIA_STOP_INPUT:
+			setMediaMode(subop);
+			_v3MediaRecording = false;
+			break;
+		case SO_HOST_MEDIA_START_RECORDING_2_ARGS:
+		case SO_HOST_MEDIA_START_RECORDING_3_ARGS:
+		case SO_HOST_MEDIA_START_RECORDING_4_ARGS:
+			_v3MediaRecordingArg0 = scriptReadStringIndex(pc);
+			_v3MediaRecordingArg1 = scriptReadWord(pc + 2);
 			pc += 4;
+			_v3MediaRecording = true;
+			if (!_v3SceneMediaModeEnabled)
+				setMediaMode(SO_HOST_MEDIA_START_INPUT);
+
+			if (subop != SO_HOST_MEDIA_START_RECORDING_2_ARGS) {
+				_v3MediaRecordingArg2 = scriptReadStringIndex(pc);
+				pc += 2;
+			}
+
+			if (subop == SO_HOST_MEDIA_START_RECORDING_4_ARGS) {
+				_v3MediaRecordingArg3 = scriptReadStringIndex(pc);
+				pc += 2;
+			}
+
 			break;
-		case O_SKIP_TABLE_BLOCK: { // Added in version 2 (First Step 1997 only)
-			pc += 4;
-			byte inlineBytes = scriptReadByte(pc++);
-			byte tripleCount = scriptReadByte(pc++);
-			pc += inlineBytes + (uint32)tripleCount * 3;
-			break;
+		default:
+			error("Unknown script opcode 0x36 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
 		}
-		case O_CONFIG_STRING_COMMAND: {
-			byte subop = scriptReadByte(pc++);
-			uint16 value = scriptReadWord(pc);
+
+		return kScriptContinue;
+	}
+
+	case O_ANIMATION_AUDIO_CONTROL: {
+		if (_engineVersion != 3)
+			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
+
+		byte subop = scriptReadByte(pc++);
+		if (subop < SO_ANIMATION_INDEX_OFFSET || subop > SO_MIXER_VOLUME)
+			error("Unknown script opcode 0x46 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
+
+		switch (subop) {
+		case SO_ANIMATION_INDEX_OFFSET:
+			_v3AnimIndexOffset = scriptReadStringIndex(pc);
 			pc += 2;
-			Common::String key;
-			for (byte character = scriptReadByte(pc++); character; character = scriptReadByte(pc++))
-				key += (char)character;
-
-			switch (subop) {
-			case SO_CONFIG_READ_INT:
-				if (value < _stringTable.size())
-					_stringTable[value] = ConfMan.hasKey(key) ? ConfMan.getInt(key) : 0;
-
-				break;
-			case SO_CONFIG_WRITE_INT:
-				ConfMan.setInt(key, value);
-				if (key.equalsIgnoreCase("SENSITIVITY"))
-					_v3Sensitivity = value;
-
-				ConfMan.flushToDisk();
-				break;
-			case SO_CONFIG_SUSPEND_ACTOR:
-			case SO_CONFIG_RUN_COMMAND:
-				_v3ConfigCommandPending = true;
-				_v3ConfigCommandSubop = subop;
-				_v3ConfigCommandValue = value;
-				_v3ConfigCommandText = key;
-
-				if (subop == SO_CONFIG_SUSPEND_ACTOR) {
-					Actor *configActor = actorGetPtr(sceneGetHandle(1));
-					if (configActor)
-						configActor->active = 0;
-				} else {
-					configRunPendingCommand();
-				}
-
-				break;
-			case SO_CONFIG_TEST_VALUE:
-				if (ConfMan.hasKey(key) && !ConfMan.get(key).equalsIgnoreCase("?????"))
-					keyBitSet(value);
-				else
-					keyBitClear(value);
-
-				break;
-			case SO_CONFIG_TEST_FILE: {
-				Common::SeekableReadStream *stream = pathFOpen(Common::Path(key), true);
-				if (stream)
-					keyBitSet(value);
-				else
-					keyBitClear(value);
-
-				delete stream;
-				break;
-			}
-			case SO_CONFIG_SET_LANGUAGE_DATA_SUBDIRECTORY:
-				if (value < _stringTable.size())
-					_stringTable[value] = languageSetDataSubdirectory(key);
-
-				break;
-			default:
-				error("Unknown script opcode 0x34 subopcode 0x%02X near script PC 0x%08X", subop, pc);
-			}
-
 			break;
-		}
-		case O_MOUSE_SET_ACTOR: {
-			uint32 opcodePc = pc - 1;
-			byte subop = 0;
-			Actor *mouseActor = nullptr;
-			pc = scriptReadArgs(pc, _currentActor, "CO", &subop, &mouseActor);
-			switch (subop) {
-			case SO_MOUSE_SET_ACTOR:
-				mouseSetActor(mouseActor);
-				break;
-			case SO_MOUSE_CLEAR_ACTOR:
-				mouseSetActor(nullptr);
-				break;
-			default:
-				error("Unknown script opcode 0x35 subopcode 0x%02X at script PC 0x%08X", subop, opcodePc);
-			}
-
+		case SO_WAVE_BALANCE:
+			setWaveBalancePercent(scriptReadStringIndex(pc));
+			pc += 2;
 			break;
-		}
-		case O_HOST_MEDIA_CONTROL: {
-			byte subop = scriptReadByte(pc++);
-			switch (subop) {
-			case SO_HOST_MEDIA_START_INPUT:
-				setMediaMode(subop);
-				break;
-			case SO_HOST_MEDIA_STOP_INPUT:
-				setMediaMode(subop);
-				_v3MediaRecording = false;
-				break;
-			case SO_HOST_MEDIA_START_RECORDING_2_ARGS:
-			case SO_HOST_MEDIA_START_RECORDING_3_ARGS:
-			case SO_HOST_MEDIA_START_RECORDING_4_ARGS:
-				_v3MediaRecordingArg0 = scriptReadStringIndex(pc);
-				_v3MediaRecordingArg1 = scriptReadWord(pc + 2);
-				pc += 4;
-				_v3MediaRecording = true;
-				if (!_v3SceneMediaModeEnabled)
-					setMediaMode(SO_HOST_MEDIA_START_INPUT);
-
-				if (subop != SO_HOST_MEDIA_START_RECORDING_2_ARGS) {
-					_v3MediaRecordingArg2 = scriptReadStringIndex(pc);
-					pc += 2;
-				}
-
-				if (subop == SO_HOST_MEDIA_START_RECORDING_4_ARGS) {
-					_v3MediaRecordingArg3 = scriptReadStringIndex(pc);
-					pc += 2;
-				}
-
-				break;
-			default:
-				error("Unknown script opcode 0x36 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
-			}
-
+		case SO_ANIMATION_ACTOR_SCENE:
+			_v3AnimActorSceneHandle = scriptReadWord(pc);
+			pc += 2;
 			break;
-		}
+		case SO_WAVE_LEFT:
+			setWaveLeftPercent(scriptReadStringIndex(pc));
+			pc += 2;
+			break;
+		case SO_WAVE_RIGHT:
+			setWaveRightPercent(scriptReadStringIndex(pc));
+			pc += 2;
+			break;
+		case SO_ANIMATION_AUDIO_NOOP:
+			break;
+		case SO_HOST_MEDIA_RANGE:
+			setMediaRangePercent(scriptReadStringIndex(pc));
+			pc += 2;
+			break;
+		case SO_MIXER_VOLUME:
+			setMixerVolumePercent(scriptReadStringIndex(pc));
+			pc += 2;
+			break;
 		default:
 			break;
 		}
@@ -975,66 +1012,15 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	case O_ANIMATION_AUDIO_CONTROL:
-	case O_PRELOAD_SPRITE_CONV_RANGE:
+	case O_PRELOAD_SPRITE_CONV_RANGE: {
 		if (_engineVersion != 3)
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
-	{
-		switch (opcode) {
-		case O_ANIMATION_AUDIO_CONTROL: {
-			byte subop = scriptReadByte(pc++);
-			if (subop < SO_ANIMATION_INDEX_OFFSET || subop > SO_MIXER_VOLUME)
-				error("Unknown script opcode 0x46 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
 
-			switch (subop) {
-			case SO_ANIMATION_INDEX_OFFSET:
-				_v3AnimIndexOffset = scriptReadStringIndex(pc);
-				pc += 2;
-				break;
-			case SO_WAVE_BALANCE:
-				setWaveBalancePercent(scriptReadStringIndex(pc));
-				pc += 2;
-				break;
-			case SO_ANIMATION_ACTOR_SCENE:
-				_v3AnimActorSceneHandle = scriptReadWord(pc);
-				pc += 2;
-				break;
-			case SO_WAVE_LEFT:
-				setWaveLeftPercent(scriptReadStringIndex(pc));
-				pc += 2;
-				break;
-			case SO_WAVE_RIGHT:
-				setWaveRightPercent(scriptReadStringIndex(pc));
-				pc += 2;
-				break;
-			case SO_ANIMATION_AUDIO_NOOP:
-				break;
-			case SO_HOST_MEDIA_RANGE:
-				setMediaRangePercent(scriptReadStringIndex(pc));
-				pc += 2;
-				break;
-			case SO_MIXER_VOLUME:
-				setMixerVolumePercent(scriptReadStringIndex(pc));
-				pc += 2;
-				break;
-			default:
-				break;
-			}
-
-			break;
-		}
-		case O_PRELOAD_SPRITE_CONV_RANGE: {
-			uint16 first = scriptReadStringIndex(pc);
-			uint16 last = scriptReadStringIndex(pc + 2);
-			pc += 4;
-			for (uint16 spriteId = first; (int16)spriteId <= (int16)last; spriteId++)
-				spriteGetConvPtr((int16)spriteId);
-
-			break;
-		}
-		default:
-			break;
-		}
+		uint16 first = scriptReadStringIndex(pc);
+		uint16 last = scriptReadStringIndex(pc + 2);
+		pc += 4;
+		for (uint16 spriteId = first; (int16)spriteId <= (int16)last; spriteId++)
+			spriteGetConvPtr((int16)spriteId);
 
 		return kScriptContinue;
 	}
@@ -1129,10 +1115,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	case O_JUMP_IF_KEY_CLEAR_V3:
-	case O_JUMP_IF_KEY_SET_V3:
+	case O_JUMP_IF_KEY_SET_V3: {
 		if (_engineVersion != 3)
 			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
-	{
+
 		uint16 key = scriptReadWord(pc);
 		uint32 targetPc = scriptReadDword(pc + 2);
 		bool jumpWhenSet = opcode == O_JUMP_IF_KEY_SET_V3;
@@ -1350,6 +1336,5 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptStep(Actor &actor, uint32 &
 
 	return status;
 }
-
 
 } // End of namespace Comfy
