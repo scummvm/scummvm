@@ -25,6 +25,7 @@
 #include "made/music.h"
 #include "made/database.h"
 #include "made/pmvplayer.h"
+#include "made/script.h"
 
 #include "audio/sine.h"
 
@@ -1162,10 +1163,40 @@ int16 ScriptFunctions::sfIsSlowSystem(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
-	warning("Unimplemented opcode: sfMovieCall (%d, %d)", argv[0], argv[1]);
-	// TODO: This is incorrect: it is supposed to play the movie in the _background_
-	//  rather than pausing the script and playing in the foreground
-	return sfPlayMovie(argc, argv);
+	// Plays a movie, but also calls a script function on every frame.
+	// The script function returns a uint16 which indicates
+	//  whether to keep playing the movie, or abort early.
+	const char *filename = _vm->_dat->getObjectString(argv[1]);
+
+	if (_vm->_pmvPlayer->load(filename)) {
+		// set up a script interpreter for calling the sub
+		ScriptInterpreter *si = new ScriptInterpreter(_vm);
+		int16 playing = true;
+
+		int32 pmvStartTime = _vm->getTotalPlayTime() + _vm->_pmvPlayer->frameDelay;
+
+		while (!_vm->shouldQuit() && !_vm->_pmvPlayer->_fd->eos() && _vm->_pmvPlayer->frameNumber < _vm->_pmvPlayer->frameCount && playing) {
+			// Decode and stage the next audio / video frame
+			if (!_vm->_pmvPlayer->decode_frame())
+				break;
+
+			// delay until time has passed, then flip screen
+			int32 delayTime = (_vm->_pmvPlayer->frameNumber - 1) * _vm->_pmvPlayer->frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
+			if (delayTime < 0)
+				warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / _vm->_pmvPlayer->frameDelay) + 1);
+			else
+				g_system->delayMillis(delayTime);
+
+			// call subroutine each frame
+			playing = si->runScript(argv[0]);
+			debug(3, "Call script return code: %04X (%d)", playing, playing);
+		}
+
+		_vm->_pmvPlayer->close();
+		return true;
+	}
+
+	return false;
 }
 
 int16 ScriptFunctions::sfCursorXY(int16 argc, int16 *argv) {

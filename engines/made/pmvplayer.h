@@ -54,6 +54,8 @@ public:
 	// wrapper for all three above - Returns true if the movie was played till the end
 	bool play(const char *filename);
 
+	// currently open file
+	Common::File *_fd;
 	// info about currently playing movie
 	uint16 frameDelay, frameCount, frameNumber, soundFreq;
 
@@ -61,9 +63,6 @@ protected:
 	// ptrs to caller objects
 	MadeEngine *_vm;
 	Audio::Mixer *_mixer;
-
-	// currently open file
-	Common::File *_fd;
 
 	// decode destination objects
 	//  image

@@ -500,7 +500,8 @@ Common::Error MadeEngine::run() {
 	if (! _useWinCursors)
 		_screen->setDefaultMouseCursor();
 
-	_script->runScript(_dat->getMainCodeObjectIndex());
+	int16 scriptReturn = _script->runScript(_dat->getMainCodeObjectIndex());
+	debug(3, "Main script return code: %04X (%d)", scriptReturn, scriptReturn);
 #endif
 
 	if (_music)
