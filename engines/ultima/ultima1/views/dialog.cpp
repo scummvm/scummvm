@@ -1,0 +1,69 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/util.h"
+#include "ultima/ultima1/views/dialog.h"
+
+namespace Ultima {
+namespace Ultima1 {
+namespace Views {
+
+// Colors used
+constexpr int COLOR_BORDER = 1;  // blue - thick outer band
+constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
+constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
+
+void Dialog::drawFrame() {
+	auto s = getSurface();
+
+	// Thick outer border band
+	s.fillRect(Common::Rect(0, 0, 316, 6), COLOR_BORDER);
+	s.fillRect(Common::Rect(0, 6, 6, 199), COLOR_BORDER);
+	s.fillRect(Common::Rect(313, 2, 319, 199), COLOR_BORDER);
+	s.fillRect(Common::Rect(0, 193, 319, 199), COLOR_BORDER);
+
+	// Thin inner highlight line
+	s.drawLine(7, 7, 312, 7, COLOR_EDGE);
+	s.drawLine(7, 7, 7, 192, COLOR_EDGE);
+	s.drawLine(312, 7, 312, 192, COLOR_EDGE);
+	s.drawLine(7, 192, 312, 192, COLOR_EDGE);
+
+	// Diagonal-notched corners, cut as a growing staircase into each corner
+	for (int idx = 1; idx <= 4; ++idx) {
+		s.drawLine(idx, 0, 0, idx, COLOR_NOTCH);
+		s.drawLine(319 - idx, 0, 319, idx, COLOR_NOTCH);
+		s.drawLine(0, 199 - idx, idx, 199, COLOR_NOTCH);
+		s.drawLine(319, 199 - idx, 319 - idx, 199, COLOR_NOTCH);
+	}
+
+	static const Common::Point NOTCH_POINTS[] = {
+		Common::Point(0, 0), Common::Point(0, 5), Common::Point(5, 0),
+		Common::Point(319, 0), Common::Point(314, 0), Common::Point(319, 5),
+		Common::Point(0, 199), Common::Point(0, 194), Common::Point(5, 199),
+		Common::Point(319, 199), Common::Point(319, 194), Common::Point(314, 199)
+	};
+	for (int i = 0; i < ARRAYSIZE(NOTCH_POINTS); ++i)
+		s.drawLine(NOTCH_POINTS[i].x, NOTCH_POINTS[i].y, NOTCH_POINTS[i].x, NOTCH_POINTS[i].y, COLOR_NOTCH);
+}
+
+} // namespace Views
+} // namespace Ultima1
+} // namespace Ultima

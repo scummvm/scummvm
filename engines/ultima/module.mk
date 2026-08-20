@@ -57,10 +57,13 @@ MODULE_OBJS += \
 	ultima1/data/player.o \
 	ultima1/data/tiles.o \
 	ultima1/gfx/pic_decoder.o \
+	ultima1/gfx/text_cursor.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \
 	ultima1/views/create_character.o \
 	ultima1/views/dead.o \
+	ultima1/views/dialog.o \
+	ultima1/views/main_menu.o \
 	ultima1/views/overworld.o \
 	ultima1/views/overworld_map.o \
 	ultima1/views/stats.o \

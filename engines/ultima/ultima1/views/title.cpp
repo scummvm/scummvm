@@ -33,12 +33,11 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-// Colors from ULTIMA.EXE's init_video, EGA branch
-constexpr int COLOR_FOREGROUND = 15;	// white - used by showTrademarks' credits text
-constexpr int COLOR_TEXT       = 11;	// light cyan - used by showTitle1/showTitle2's blurb text
+// Colors used
+constexpr int COLOR_FOREGROUND = 15;	// white - used by the credits text
+constexpr int COLOR_TEXT       = 11;	// light cyan - used by blurb text
 
-// Flag pole x positions either side of the castle gate, matching the
-// animateFlagRandom(123)/animateFlagRandom(196) calls in OUT.EXE's showCastle
+// Flag pole x positions either side of the castle gate
 constexpr int FLAG_X1 = 123;
 constexpr int FLAG_X2 = 196;
 constexpr int FLAG_Y  = 55;
@@ -215,8 +214,7 @@ static const uint32 FLAGS_MAP[] = { 11, 10 };
 constexpr int LOGO_STEPS_PER_FRAME = 4000;
 
 // Number of lines drawn from the top and bottom on the credits screen
-// before they meet in the middle, matching slideInLogo's "cmp arg_4, 32"
-// in ULTIMA.EXE (half the logo's 64-pixel height)
+// before they meet in the middle (half the logo's 64-pixel height)
 constexpr int CREDITS_LOGO_LINES = 32;
 
 // Lines revealed per draw() call from each end - 2 rather than 1 doubles
@@ -369,9 +367,9 @@ void Title::revealLogoPixels(Shared::Gfx::GfxSurface &s) {
 }
 
 void Title::drawCreditsLogo(Shared::Gfx::GfxSurface &s) {
-	// Replicates slideInLogo: new lines are revealed from the top
-	// (growing downward) and bottom (growing upward) each call, meeting
-	// in the middle after CREDITS_LOGO_LINES steps
+	// New lines are revealed from the top (growing downward) and bottom
+	// (growing upward) each call, meeting in the middle after
+	// CREDITS_LOGO_LINES steps
 	for (int i = 0; i < CREDITS_LOGO_STEP && _creditsLine < CREDITS_LOGO_LINES; ++i, ++_creditsLine) {
 		int topRow = _creditsLine;
 		int bottomRow = _logo.h - 1 - _creditsLine;
@@ -422,7 +420,7 @@ void Title::timeout() {
 			_creditsTextShown = true;
 			delaySeconds(3);
 		} else {
-			showCreateCharacter();
+			showMainMenu();
 			return;
 		}
 		break;
@@ -443,13 +441,13 @@ void Title::showCredits() {
 	delayFrames(1);
 }
 
-void Title::showCreateCharacter() {
-	replaceView("CreateCharacter");
+void Title::showMainMenu() {
+	replaceView("MainMenu");
 }
 
 bool Title::msgKeypress(const KeypressMessage &msg) {
 	if (_state == CREDITS)
-		showCreateCharacter();
+		showMainMenu();
 	else
 		showCredits();
 	return true;
@@ -457,7 +455,7 @@ bool Title::msgKeypress(const KeypressMessage &msg) {
 
 bool Title::msgMouseDown(const MouseDownMessage &msg) {
 	if (_state == CREDITS)
-		showCreateCharacter();
+		showMainMenu();
 	else
 		showCredits();
 	return true;
@@ -465,7 +463,7 @@ bool Title::msgMouseDown(const MouseDownMessage &msg) {
 
 bool Title::msgAction(const ActionMessage &msg) {
 	if (_state == CREDITS)
-		showCreateCharacter();
+		showMainMenu();
 	else
 		showCredits();
 	return true;

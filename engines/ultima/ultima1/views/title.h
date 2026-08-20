@@ -60,7 +60,7 @@ private:
 	Graphics::Palette _castlePalette;
 
 	void showCredits();
-	void showCreateCharacter();
+	void showMainMenu();
 	void drawCastleFlag(Shared::Gfx::GfxSurface &s, int xp);
 	void resetLogoReveal();
 	void revealLogoPixels(Shared::Gfx::GfxSurface &s);

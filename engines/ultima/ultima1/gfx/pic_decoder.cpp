@@ -26,8 +26,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Gfx {
 
-// ULTIMA.EXE's castlePalette - 16 six-bit EGA palette register values
-// (the picture's pixel data assumes this palette, not the standard one)
+// 16 six-bit EGA palette register values for the castle picture
+// (its pixel data assumes this palette, not the standard one)
 static const byte CASTLE_PALETTE_REGISTERS[16] = {
 	0, 24, 7, 63, 63, 34, 58, 14, 20, 7, 61, 59, 1, 57, 7, 63
 };

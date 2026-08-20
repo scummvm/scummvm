@@ -38,8 +38,8 @@ namespace Gfx {
  * https://moddingwiki.shikadi.net/wiki/Ultima_I_Full_Screen_Graphic_Format
  *
  * The pixel data assumes a custom "cross-over" palette rather than the
- * engine's standard EGA one (see ULTIMA.EXE's castlePalette/setCastlePalette),
- * which loadStream() decodes into getPalette() for the caller to apply.
+ * engine's standard EGA one, which loadStream() decodes into getPalette()
+ * for the caller to apply.
  */
 class PicDecoder : public Image::ImageDecoder {
 private:
