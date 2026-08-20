@@ -125,6 +125,7 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	_runningScriptObjectIndex = 0;
 	_codeBase = nullptr;
 	_codeIp = nullptr;
+	_running = false;
 
 #undef COMMAND
 }
@@ -133,7 +134,7 @@ ScriptInterpreter::~ScriptInterpreter() {
 	delete _functions;
 }
 
-void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
+int16 ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 
 	uint32 opcodeSleepCounter = 0;
 
@@ -143,8 +144,9 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
+	_running = true;
 
-	while (!_vm->shouldQuit()) {
+	while (_running && !_vm->shouldQuit()) {
 		byte opcode = readByte();
 
 		if (opcode >= 1 && opcode <= _commandsMax) {
@@ -160,8 +162,11 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 			_vm->_screen->updateScreenAndWait(5);
 			opcodeSleepCounter = 0;
 		}
-
 	}
+
+	int16 retval = _stack.pop();
+	_stack.pop(); // pop junk value and discard
+	return retval;
 }
 
 byte ScriptInterpreter::readByte() {
@@ -380,9 +385,7 @@ void ScriptInterpreter::cmd_return() {
 
 	// Check if returning from main function
 	if (_localStackPos == kScriptStackSize) {
-		_vm->quitGame();
-		// Make sure the "quit" event is handled immediately
-		_vm->handleEvents();
+		_running = false;
 		return;
 	}
 
