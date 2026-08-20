@@ -160,8 +160,32 @@ static bool probeCGL(void) {
 
 #elif defined(CONTEXT_BACKEND_WGL)
 
-static HDC _wgl_dc = NULL;
+/* Resolved from opengl32.dll at runtime, like the dlopen backends above, so
+ * the core does not need to be linked against opengl32. */
+typedef HDC   (WINAPI *wglGetCurrentDC_t)(void);
+typedef HGLRC (WINAPI *wglGetCurrentContext_t)(void);
+typedef BOOL  (WINAPI *wglMakeCurrent_t)(HDC, HGLRC);
+
+static wglGetCurrentDC_t      _wglGetCurrentDC      = NULL;
+static wglGetCurrentContext_t _wglGetCurrentContext = NULL;
+static wglMakeCurrent_t       _wglMakeCurrent       = NULL;
+
+static HDC   _wgl_dc  = NULL;
 static HGLRC _wgl_ctx = NULL;
+
+static bool probeWGL(void) {
+	HMODULE lib = GetModuleHandleA("opengl32.dll");
+	if (!lib)
+		lib = LoadLibraryA("opengl32.dll");
+	if (!lib)
+		return false;
+
+	_wglGetCurrentDC      = (wglGetCurrentDC_t)(void *)GetProcAddress(lib, "wglGetCurrentDC");
+	_wglGetCurrentContext = (wglGetCurrentContext_t)(void *)GetProcAddress(lib, "wglGetCurrentContext");
+	_wglMakeCurrent       = (wglMakeCurrent_t)(void *)GetProcAddress(lib, "wglMakeCurrent");
+
+	return _wglGetCurrentDC && _wglGetCurrentContext && _wglMakeCurrent;
+}
 
 #endif
 
@@ -175,7 +199,7 @@ static ContextBackend probeBackend(void) {
 #elif defined(CONTEXT_BACKEND_CGL)
 	return probeCGL() ? kBackendCGL : kBackendNone;
 #elif defined(CONTEXT_BACKEND_WGL)
-	return kBackendWGL;
+	return probeWGL() ? kBackendWGL : kBackendNone;
 #else
 	return kBackendNone;
 #endif
@@ -227,11 +251,11 @@ void retro_gl_context_release(void) {
 		return;
 #elif defined(CONTEXT_BACKEND_WGL)
 	case kBackendWGL:
-		_wgl_dc = wglGetCurrentDC();
-		_wgl_ctx = wglGetCurrentContext();
+		_wgl_dc = _wglGetCurrentDC();
+		_wgl_ctx = _wglGetCurrentContext();
 		if (!_wgl_dc || !_wgl_ctx)
 			return;
-		wglMakeCurrent(NULL, NULL);
+		_wglMakeCurrent(NULL, NULL);
 		_held = true;
 		return;
 #endif
@@ -261,7 +285,7 @@ void retro_gl_context_acquire(void) {
 		return;
 #elif defined(CONTEXT_BACKEND_WGL)
 	case kBackendWGL:
-		wglMakeCurrent(_wgl_dc, _wgl_ctx);
+		_wglMakeCurrent(_wgl_dc, _wgl_ctx);
 		return;
 #endif
 	default:
