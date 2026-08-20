@@ -28,6 +28,10 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
+/**
+ * The always-visible Hits/Food/Exp./Coin display in the corner of the
+ * game screen. Shared between the overworld/town and dungeon views.
+ */
 class Stats : public Shared::UIElement {
 public:
 	Stats(UIElement *parent) : Shared::UIElement("Stats", parent) {}

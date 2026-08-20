@@ -22,32 +22,28 @@
 #ifndef ULTIMA1_VIEWS_OVERWORLD_H
 #define ULTIMA1_VIEWS_OVERWORLD_H
 
-#include "ultima/shared/gfx/view.h"
-#include "ultima/ultima1/views/overworld_map.h"
-#include "ultima/ultima1/views/commands.h"
+#include "ultima/ultima1/views/dialog.h"
 #include "ultima/ultima1/views/stats.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-class Overworld : public Shared::Gfx::View {
-	enum Mode { kModePreCommand, kModeCommand, kModeAttackDirection };
+/**
+ * The main in-game screen. Draws the outer frame around the map
+ * viewport, and hosts the map, stats, and command/message log
+ * sub-views. For now, only the frame and stats display are implemented
+ * - the map viewport and command log areas are just left blank.
+ */
+class Overworld : public Dialog {
 private:
-	OverworldMap _map = OverworldMap(this);
-	Commands _commands = Commands(this);
-	Stats _stats = Stats(this);
-	Mode _mode = kModeCommand;
+	Stats _stats;
 
 public:
 	Overworld();
 	~Overworld() override {}
 
 	void draw() override;
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	void timeout() override;
 };
 
 } // namespace Views

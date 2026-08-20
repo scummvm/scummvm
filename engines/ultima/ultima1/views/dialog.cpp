@@ -34,11 +34,12 @@ constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
 void Dialog::drawFrame() {
 	auto s = getSurface();
 
-	// Thick outer border band
-	s.fillRect(Common::Rect(0, 0, 316, 6), COLOR_BORDER);
-	s.fillRect(Common::Rect(0, 6, 6, 199), COLOR_BORDER);
-	s.fillRect(Common::Rect(313, 2, 319, 199), COLOR_BORDER);
-	s.fillRect(Common::Rect(0, 193, 319, 199), COLOR_BORDER);
+	// Thick outer border band - each edge flush against both the screen edge
+	// and the inner highlight line drawn just inside it
+	s.fillRect(Common::Rect(0, 0, 320, 7), COLOR_BORDER);
+	s.fillRect(Common::Rect(0, 7, 7, 193), COLOR_BORDER);
+	s.fillRect(Common::Rect(313, 7, 320, 193), COLOR_BORDER);
+	s.fillRect(Common::Rect(0, 193, 320, 200), COLOR_BORDER);
 
 	// Thin inner highlight line
 	s.drawLine(7, 7, 312, 7, COLOR_EDGE);
@@ -62,6 +63,30 @@ void Dialog::drawFrame() {
 	};
 	for (int i = 0; i < ARRAYSIZE(NOTCH_POINTS); ++i)
 		s.drawLine(NOTCH_POINTS[i].x, NOTCH_POINTS[i].y, NOTCH_POINTS[i].x, NOTCH_POINTS[i].y, COLOR_NOTCH);
+}
+
+void Dialog::drawGameDividers() {
+	auto s = getSurface();
+
+	// Erase the frame's bottom section (its border band, the lower
+	// portion of the side bands, and the bottom corners) - the dividers
+	// below replace it, running all the way to the screen edges
+	s.fillRect(Common::Rect(0, 153, 320, 200), 0);
+
+	// Horizontal divider separating the map viewport (above) from the
+	// command/message log and stats panel (below). The bar and its
+	// bottom edge span the full screen width, but the top edge stops at
+	// the viewport's own inner border, meeting up with its side edges
+	s.fillRect(Common::Rect(0, 153, 320, 159), COLOR_BORDER);
+	s.drawLine(7, 152, 312, 152, COLOR_EDGE);
+	s.drawLine(0, 159, 240, 159, COLOR_EDGE);
+	s.drawLine(247, 159, 319, 159, COLOR_EDGE);
+
+	// Vertical divider between the command/message log (left) and the
+	// stats panel (right), running to the bottom of the screen
+	s.fillRect(Common::Rect(241, 153, 247, 200), COLOR_BORDER);
+	s.drawLine(240, 159, 240, 199, COLOR_EDGE);
+	s.drawLine(247, 159, 247, 199, COLOR_EDGE);
 }
 
 // Per-column vertical extent of an 8x8 right-pointing triangle, tip at

@@ -39,6 +39,13 @@ protected:
 	void drawFrame();
 
 	/**
+	 * Draws the dividers splitting the interior of the frame into a map
+	 * viewport (above) and a command/message log and stats panel (below).
+	 * Shared by the overworld, dungeon, and outer space views
+	 */
+	void drawGameDividers();
+
+	/**
 	 * Draws a small triangular right-arrow glyph, in text-cell coordinates
 	 */
 	void drawRightArrow(const Common::Point &pt);

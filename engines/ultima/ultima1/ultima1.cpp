@@ -70,6 +70,9 @@ Common::Error Ultima1Engine::run() {
 Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
 	_player.synchronize(s);
 
+	if (s.isLoading())
+		_game.startGame();
+
 	return Common::kNoError;
 }
 
