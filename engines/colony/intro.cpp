@@ -1458,6 +1458,10 @@ void ColonyEngine::fullOfStars() {
 }
 
 void ColonyEngine::gameOver(bool kill) {
+	gameOver(kill, countSavedCryos());
+}
+
+void ColonyEngine::gameOver(bool kill, int savedCryos) {
 	Common::Rect savedScreenR = _screenR;
 	Common::Rect savedClip = _clip;
 	int savedCenterX = _centerX;
@@ -1473,7 +1477,6 @@ void ColonyEngine::gameOver(bool kill) {
 	CursorMan.setDefaultArrowCursor(true);
 	CursorMan.showMouse(true);
 
-	const int savedCryos = countSavedCryos();
 	int textEntry;
 
 	if (kill)

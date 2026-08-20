@@ -898,6 +898,7 @@ private:
 	void takeOff();
 	void fullOfStars();
 	void gameOver(bool kill);
+	void gameOver(bool kill, int savedCryos);
 	int countSavedCryos() const;
 	void playAnimation();
 	void updateAnimation();

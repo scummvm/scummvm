@@ -74,10 +74,47 @@ const char *featureTypeName(int type) {
 	}
 }
 
+const char *reactorStateName(int state) {
+	switch (state) {
+	case 0: return "closed, core installed";
+	case 1: return "open, core installed";
+	case 2: return "open, core removed";
+	default: return "unknown";
+	}
+}
+
+const char *reactorPowerName(int power) {
+	switch (power) {
+	case 0: return "off";
+	case 1: return "emergency";
+	case 2: return "full";
+	default: return "unknown";
+	}
+}
+
+struct NumberedTeleporter {
+	int x;
+	int y;
+	int destination;
+};
+
+// MAP.7 contains the four working booths. Their destinations establish the
+// original numbering: 1 -> 2 -> 3 -> 4 -> nowhere.
+const NumberedTeleporter kNumberedTeleporters[] = {
+	{9, 3, 2},
+	{3, 3, 3},
+	{3, 9, 4},
+	{9, 9, 0}
+};
+
 Debugger::Debugger(ColonyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("teleport", WRAP_METHOD(Debugger, cmdTeleport));
+	registerCmd("teleporter", WRAP_METHOD(Debugger, cmdTeleporter));
+	registerCmd("teleporters", WRAP_METHOD(Debugger, cmdTeleporters));
 	registerCmd("pos", WRAP_METHOD(Debugger, cmdPos));
 	registerCmd("info", WRAP_METHOD(Debugger, cmdInfo));
+	registerCmd("goals", WRAP_METHOD(Debugger, cmdGoals));
+	registerCmd("win", WRAP_METHOD(Debugger, cmdWin));
 	registerCmd("robots", WRAP_METHOD(Debugger, cmdRobots));
 	registerCmd("map", WRAP_METHOD(Debugger, cmdMap));
 	registerCmd("give", WRAP_METHOD(Debugger, cmdGive));
@@ -87,6 +124,192 @@ Debugger::Debugger(ColonyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("colony", WRAP_METHOD(Debugger, cmdColony));
 	registerCmd("forklift", WRAP_METHOD(Debugger, cmdForklift));
 	registerCmd("spawn", WRAP_METHOD(Debugger, cmdSpawn));
+}
+
+void Debugger::postEnter() {
+	GUI::Debugger::postEnter();
+
+	if (_pendingEnding == 0)
+		return;
+
+	const int ending = _pendingEnding;
+	_pendingEnding = 0;
+	const bool destroyPlanet = ending <= 3;
+	const int savedCryos = (ending == 1 || ending == 4) ? 6 :
+		((ending == 2 || ending == 5) ? 1 : 0);
+	_vm->gameOver(destroyPlanet, savedCryos);
+}
+
+bool Debugger::getTeleporterLocation(int number, int &level, int &x, int &y) const {
+	const NumberedTeleporter &teleporter = kNumberedTeleporters[number - 1];
+	level = 7;
+	x = teleporter.x;
+	y = teleporter.y;
+
+	for (uint i = 0; i < _vm->_patches.size(); i++) {
+		const PatchEntry &patch = _vm->_patches[i];
+		if (patch.type == kObjTeleport && patch.from.level == 7 &&
+				patch.from.xindex == teleporter.x && patch.from.yindex == teleporter.y) {
+			level = patch.to.level;
+			x = patch.to.xindex;
+			y = patch.to.yindex;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Debugger::cmdTeleporters(int argc, const char **argv) {
+	debugPrintf("Numbered teleporter series (1 -> 2 -> 3 -> 4):\n");
+	for (uint i = 0; i < ARRAYSIZE(kNumberedTeleporters); i++) {
+		int level, x, y;
+		getTeleporterLocation(i + 1, level, x, y);
+		if (level == 100) {
+			debugPrintf("  %u: carried by the forklift", i + 1);
+		} else {
+			debugPrintf("  %u: level %d at (%d, %d)", i + 1, level, x, y);
+		}
+
+		if (kNumberedTeleporters[i].destination != 0)
+			debugPrintf(" -> %d\n", kNumberedTeleporters[i].destination);
+		else
+			debugPrintf(" -> nowhere\n");
+	}
+	return true;
+}
+
+bool Debugger::cmdTeleporter(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: teleporter <number>\n");
+		debugPrintf("Recalls working teleporter 1-4 into the cell in front of the player.\n");
+		debugPrintf("Use 'teleporters' to list their current locations.\n");
+		return true;
+	}
+
+	char *end = nullptr;
+	const long number = strtol(argv[1], &end, 10);
+	if (!argv[1][0] || *end != '\0' || number < 1 || number > (long)ARRAYSIZE(kNumberedTeleporters)) {
+		debugPrintf("Invalid teleporter number '%s' (must be 1-4)\n", argv[1]);
+		return true;
+	}
+
+	if (_vm->_gameMode != kModeColony || _vm->_level < 1 || _vm->_level > 7) {
+		debugPrintf("Must be in colony mode to recall a teleporter\n");
+		return true;
+	}
+
+	int level, x, y;
+	const bool relocated = getTeleporterLocation((int)number, level, x, y);
+	if (level != 100 && (level < 1 || level > 7 || x < 0 || x > 31 || y < 0 || y > 31)) {
+		debugPrintf("Teleporter %ld has an invalid location: level %d at (%d, %d)\n",
+			number, level, x, y);
+		return true;
+	}
+
+	const int facingX = _vm->_cost[_vm->_me.ang];
+	const int facingY = _vm->_sint[_vm->_me.ang];
+	const bool horizontal = ABS(facingX) >= ABS(facingY);
+	const int stepX = horizontal ? (facingX >= 0 ? 1 : -1) : 0;
+	const int stepY = horizontal ? 0 : (facingY >= 0 ? 1 : -1);
+	const int targetX = _vm->_me.xindex + stepX;
+	const int targetY = _vm->_me.yindex + stepY;
+	if (targetX < 1 || targetX > 30 || targetY < 1 || targetY > 30) {
+		debugPrintf("Target cell (%d, %d) is out of bounds\n", targetX, targetY);
+		return true;
+	}
+
+	if (level == _vm->_level && x == targetX && y == targetY) {
+		debugPrintf("Teleporter %ld is already in front of the player at (%d, %d)\n",
+			number, targetX, targetY);
+		return false;
+	}
+
+	if (_vm->_robotArray[targetX][targetY] != 0) {
+		debugPrintf("Target cell (%d, %d) is already occupied\n", targetX, targetY);
+		return true;
+	}
+
+	bool blocked = false;
+	if (stepX > 0)
+		blocked = (_vm->_wall[targetX][targetY] & 2) != 0;
+	else if (stepX < 0)
+		blocked = (_vm->_wall[_vm->_me.xindex][_vm->_me.yindex] & 2) != 0;
+	else if (stepY > 0)
+		blocked = (_vm->_wall[targetX][targetY] & 1) != 0;
+	else
+		blocked = (_vm->_wall[_vm->_me.xindex][_vm->_me.yindex] & 1) != 0;
+	if (blocked) {
+		debugPrintf("A wall blocks target cell (%d, %d)\n", targetX, targetY);
+		return true;
+	}
+
+	if (!relocated && _vm->_patches.size() >= 100) {
+		debugPrintf("Cannot recall teleporter %ld: relocation table is full\n", number);
+		return true;
+	}
+
+	int oldObject = -1;
+	if (level == _vm->_level) {
+		for (uint i = 0; i < _vm->_objects.size(); i++) {
+			const Thing &obj = _vm->_objects[i];
+			if (obj.alive && obj.type == kObjTeleport &&
+					obj.where.xindex == x && obj.where.yindex == y) {
+				oldObject = i;
+				break;
+			}
+		}
+	}
+
+	if (oldObject >= 0) {
+		if (_vm->_robotArray[x][y] == oldObject + 1)
+			_vm->_robotArray[x][y] = 0;
+		_vm->_objects[oldObject].alive = 0;
+	}
+
+	const int targetXLoc = (targetX << 8) + 128;
+	const int targetYLoc = (targetY << 8) + 128;
+	if (!_vm->createObject(kObjTeleport, targetXLoc, targetYLoc, 0)) {
+		if (oldObject >= 0) {
+			_vm->_objects[oldObject].alive = 1;
+			_vm->_robotArray[x][y] = oldObject + 1;
+		}
+		debugPrintf("Failed to place teleporter %ld at (%d, %d)\n", number, targetX, targetY);
+		return true;
+	}
+
+	PassPatch from = {};
+	from.level = level;
+	from.xindex = x;
+	from.yindex = y;
+
+	PassPatch to = {};
+	to.level = _vm->_level;
+	to.xindex = targetX;
+	to.yindex = targetY;
+	to.xloc = targetXLoc;
+	to.yloc = targetYLoc;
+	to.ang = 0;
+
+	uint8 mapdata[5] = {6, kObjTeleport - kBaseObject, 0, 0, 0};
+	const int destination = kNumberedTeleporters[number - 1].destination;
+	if (destination != 0) {
+		mapdata[2] = 7;
+		mapdata[3] = kNumberedTeleporters[destination - 1].x;
+		mapdata[4] = kNumberedTeleporters[destination - 1].y;
+	}
+	_vm->newPatch(kObjTeleport, from, to, mapdata);
+
+	if (level == 100 && _vm->_carryType == kObjTeleport) {
+		_vm->_carryType = 0;
+		if (_vm->_fl == 2)
+			_vm->_fl = 1;
+	}
+	_vm->_bumpedObject = 0;
+	_vm->setPlayerCellMarker();
+
+	debugPrintf("Recalled teleporter %ld to level %d at (%d, %d)\n",
+		number, _vm->_level, targetX, targetY);
+	return false;
 }
 
 bool Debugger::cmdTeleport(int argc, const char **argv) {
@@ -188,6 +411,63 @@ bool Debugger::cmdInfo(int argc, const char **argv) {
 		_vm->_orbit, _vm->_fl, _vm->_carryType);
 	debugPrintf("Robots: %d  Speed: %d\n", _vm->_robotNum, _vm->_speedShift);
 	return true;
+}
+
+bool Debugger::cmdGoals(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: goals\n");
+		return true;
+	}
+
+	const int savedCryos = _vm->countSavedCryos();
+	debugPrintf("=== Mission Goals ===\n");
+	debugPrintf("Cryogenic chambers recovered: %d / 6%s\n",
+		savedCryos, savedCryos == 6 ? " (complete)" : "");
+
+	const char *reactorNames[] = {"Ship", "Colony"};
+	for (int i = 0; i < 2; i++) {
+		debugPrintf("%s reactor: %s; power %s (%d)\n",
+			reactorNames[i], reactorStateName(_vm->_coreState[i]),
+			reactorPowerName(_vm->_corePower[i]), _vm->_corePower[i]);
+	}
+
+	if (_vm->_fl == 2 && _vm->_carryType == kObjReactor) {
+		debugPrintf("Reactor core in forklift: yes; power %s (%d)\n",
+			reactorPowerName(_vm->_corePower[2]), _vm->_corePower[2]);
+	} else {
+		debugPrintf("Reactor core in forklift: no\n");
+	}
+	return true;
+}
+
+bool Debugger::cmdWin(int argc, const char **argv) {
+	static const char *const endingDescriptions[] = {
+		"planet destroyed, all 6 cryos recovered",
+		"planet destroyed, some cryos recovered",
+		"planet destroyed, no cryos recovered",
+		"planet spared, all 6 cryos recovered",
+		"planet spared, some cryos recovered",
+		"planet spared, no cryos recovered"
+	};
+
+	if (argc != 2) {
+		debugPrintf("Usage: win <ending>\n");
+		for (uint i = 0; i < ARRAYSIZE(endingDescriptions); i++)
+			debugPrintf("  %u: %s\n", i + 1, endingDescriptions[i]);
+		return true;
+	}
+
+	char *end = nullptr;
+	const long ending = strtol(argv[1], &end, 10);
+	if (!argv[1][0] || *end != '\0' || ending < 1 || ending > (long)ARRAYSIZE(endingDescriptions)) {
+		debugPrintf("Invalid ending number '%s' (must be 1-6)\n", argv[1]);
+		return true;
+	}
+
+	debugPrintf("Playing ending %ld: %s\n", ending, endingDescriptions[ending - 1]);
+	_pendingEnding = (int)ending;
+	detach();
+	return false;
 }
 
 bool Debugger::cmdRobots(int argc, const char **argv) {
