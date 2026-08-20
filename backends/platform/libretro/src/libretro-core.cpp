@@ -115,10 +115,25 @@ static bool updating_variables = false;
 #ifdef USE_OPENGL
 static struct retro_hw_render_callback hw_render;
 
+static bool context_reset_pending = false;
+
+void retro_set_context_reset_pending(void) {
+	context_reset_pending = true;
+}
+
+bool retro_consume_context_reset(void) {
+	bool pending = context_reset_pending;
+	context_reset_pending = false;
+	return pending;
+}
+
 static void context_reset(void) {
 	retro_log_cb(RETRO_LOG_DEBUG, "HW context reset\n");
+	/* The reset re-creates the GL context and reloads all GL entry points,
+	   which must happen on the emulation thread where the context is current.
+	   Defer it instead of calling it here on the frontend thread. */
 	if (retro_emu_thread_started())
-		LIBRETRO_G_SYSTEM->resetGraphicsContext();
+		retro_set_context_reset_pending();
 }
 
 static void context_destroy(void) {

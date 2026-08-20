@@ -63,5 +63,12 @@ int retro_get_scummvm_res(void);
  */
 bool retro_emu_thread_started(void);
 
+
+/* Set from the frontend's context_reset (main thread); consumed on the
+ * emulation thread, where the GL context is current, to run the actual
+ * graphics-context reset. */
+void retro_set_context_reset_pending(void);
+bool retro_consume_context_reset(void);
+
 #endif
 
