@@ -912,10 +912,8 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 	case kWallFeatureElevator: {
 		if (pobject != &_me)
 			return 0;
-		if (_corePower[1] == 0) {
-			inform("ELEVATOR HAS NO POWER.", true);
+		if (_corePower[1] == 0)
 			return 0;
-		}
 
 		// DOS DoElevator: play elevator animation with floor selection
 		if (!loadAnimation("elev"))

@@ -605,6 +605,7 @@ void ColonyEngine::playAnimation() {
 				needsDraw = true;
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 				const Common::Point pt = eventMouseToLogical(event.mouse);
+				_messageSourceRect = Common::Rect();
 				if (handleColonyCoderClick(pt)) {
 					needsDraw = true;
 				} else if (!_animExitStrip.isEmpty() && _animExitStrip.contains(pt)) {
@@ -617,6 +618,7 @@ void ColonyEngine::playAnimation() {
 					int item = whichSprite(pt);
 					if (item > 0) {
 						handleAnimationClick(item);
+						_messageSourceRect = Common::Rect();
 						needsDraw = true;
 					}
 				}
@@ -692,6 +694,7 @@ void ColonyEngine::playAnimation() {
 				}
 
 				if (item > 0) {
+					_messageSourceRect = Common::Rect();
 					handleAnimationClick(item);
 					needsDraw = true;
 				}
@@ -1390,6 +1393,8 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 
 		debugC(1, kColonyDebugAnimation, "Sprite %d HIT. type=%d frozen=%d Frame %d, Sprite %d. Box: (%d,%d,%d,%d)",
 			i + 1, ls->type, ls->frozen, cnum, spriteIdx, r.left, r.top, r.right, r.bottom);
+		r.translate(ox, oy);
+		_messageSourceRect = r;
 		return i + 1;
 	}
 

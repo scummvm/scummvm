@@ -62,6 +62,7 @@ public:
 		kPShot,
 		kTest,
 		kDit,
+		kDiDit,
 		kSink,
 		kClatter,
 		kStop,

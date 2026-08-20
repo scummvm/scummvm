@@ -31,6 +31,7 @@
 #include "common/macresman.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/dosfont.h"
 #include "graphics/macgui/macfontmanager.h"
@@ -45,11 +46,72 @@
 
 namespace Colony {
 
-bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
+enum MacTextPopupStyle {
+	kMacTextWindow,
+	kMacInformWindow
+};
+
+static Graphics::ManagedSurface *captureMessageBackground(Renderer *gfx, int width, int height) {
+	if (!gfx)
+		return nullptr;
+
+	Graphics::Surface *screenshot = gfx->getScreenshot();
+	if (!screenshot)
+		return nullptr;
+
+	Graphics::ManagedSurface *saved = new Graphics::ManagedSurface();
+	saved->create(width, height, screenshot->format);
+	saved->blitFrom(*screenshot, Common::Rect(screenshot->w, screenshot->h), Common::Rect(width, height));
+	screenshot->free();
+	delete screenshot;
+	return saved;
+}
+
+static void restoreMessageBackground(Renderer *gfx, Graphics::ManagedSurface *saved) {
+	if (!saved)
+		return;
+	if (gfx) {
+		gfx->drawSurface(&saved->rawSurface(), 0, 0);
+		gfx->copyToScreen();
+	}
+	saved->free();
+	delete saved;
+}
+
+static void animateMacZoom(Renderer *gfx, OSystem *system, const Common::Rect &from, const Common::Rect &to) {
+	if (!gfx || !system || from.isEmpty() || to.isEmpty())
+		return;
+
+	const bool cursorWasVisible = CursorMan.isVisible();
+	CursorMan.showMouse(false);
+	gfx->setXorMode(true);
+	const int steps = 8;
+	for (int i = 0; i <= steps; ++i) {
+		Common::Rect r;
+		r.left = (from.left * (steps - i) + to.left * i) / steps;
+		r.top = (from.top * (steps - i) + to.top * i) / steps;
+		r.right = (from.right * (steps - i) + to.right * i) / steps;
+		r.bottom = (from.bottom * (steps - i) + to.bottom * i) / steps;
+		gfx->drawRect(r, 0xFFFFFFFF);
+		gfx->copyToScreen();
+		system->delayMillis(12);
+		gfx->drawRect(r, 0xFFFFFFFF);
+	}
+	gfx->setXorMode(false);
+	gfx->copyToScreen();
+	CursorMan.showMouse(cursorWasVisible);
+}
+
+static bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 		int screenWidth, int screenHeight, int centerX, int centerY,
-		const Common::Array<Common::String> &lines, Graphics::TextAlign align, bool macColor) {
+		const Common::Array<Common::String> &lines, Graphics::TextAlign align, bool macColor,
+		int visibleLineCount = -1, Common::Rect *popupBounds = nullptr,
+		bool measureOnly = false, MacTextPopupStyle style = kMacTextWindow) {
 	if (!gfx || lines.empty())
 		return false;
+	uint visibleLines = lines.size();
+	if (visibleLineCount >= 0 && (uint)visibleLineCount < visibleLines)
+		visibleLines = visibleLineCount;
 
 	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
 	const Graphics::Font *font = (wm && wm->_fontMan) ? wm->_fontMan->getFont(systemFont) : nullptr;
@@ -65,15 +127,17 @@ bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 		textWidth = MAX<int>(textWidth, font->getStringWidth(lines[i]));
 
 	const int fontHeight = MAX<int>(1, font->getFontHeight());
-	const int fontLeading = MAX<int>(0, font->getFontLeading());
-	const int topPad = 8;
-	const int bottomPad = 8;
-	const int sidePad = 12;
-	const int lineGap = MAX<int>(2, fontLeading);
-	const int lineStep = fontHeight + lineGap;
-	int popupWidth = CLIP<int>(textWidth + sidePad * 2, 96, MAX<int>(96, screenWidth - 16));
-	int popupHeight = topPad + bottomPad + fontHeight +
-		MAX<int>(0, (int)lines.size() - 1) * lineStep;
+	const int sidePad = 8;
+	const int lineStep = align == Graphics::kTextAlignCenter ? 18 : 20;
+	const int contentWidth = style == kMacInformWindow ? 370 : textWidth + 16;
+	const int contentHeight = style == kMacInformWindow ? 72 : 4 + ((int)lines.size() + 1) * 18;
+	Common::Rect contentRect;
+	if (style == kMacInformWindow)
+		contentRect = Common::Rect(56, 60, 56 + contentWidth, 60 + contentHeight);
+	else
+		contentRect = Common::Rect(centerX - contentWidth / 2, centerY - contentHeight / 2,
+			centerX - contentWidth / 2 + contentWidth, centerY - contentHeight / 2 + contentHeight);
+
 	Common::Rect bounds(8, 24, screenWidth - 8, screenHeight - 8);
 	if (wm) {
 		Graphics::MacWindowBorder border;
@@ -81,14 +145,12 @@ bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 		border.setBorderType(Graphics::kWindowWindow);
 		if (border.hasBorder(Graphics::kWindowBorderActive) && border.hasOffsets()) {
 			const Graphics::BorderOffsets &offsets = border.getOffset();
-			popupWidth = MAX<int>(border.getMinWidth(Graphics::kWindowBorderActive),
-				textWidth + sidePad * 2 + offsets.left + offsets.right);
-			popupHeight = MAX<int>(border.getMinHeight(Graphics::kWindowBorderActive),
-				topPad + bottomPad + fontHeight + MAX<int>(0, (int)lines.size() - 1) * lineStep +
-				offsets.top + offsets.bottom);
-
-			Common::Rect r(centerX - popupWidth / 2, centerY - popupHeight / 2,
-				centerX - popupWidth / 2 + popupWidth, centerY - popupHeight / 2 + popupHeight);
+			const int popupWidth = MAX<int>(border.getMinWidth(Graphics::kWindowBorderActive),
+				contentWidth + offsets.left + offsets.right);
+			const int popupHeight = MAX<int>(border.getMinHeight(Graphics::kWindowBorderActive),
+				contentHeight + offsets.top + offsets.bottom);
+			Common::Rect r(contentRect.left - offsets.left, contentRect.top - offsets.top,
+				contentRect.left - offsets.left + popupWidth, contentRect.top - offsets.top + popupHeight);
 			if (r.left < bounds.left)
 				r.translate(bounds.left - r.left, 0);
 			if (r.right > bounds.right)
@@ -97,6 +159,10 @@ bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 				r.translate(0, bounds.top - r.top);
 			if (r.bottom > bounds.bottom)
 				r.translate(0, bounds.bottom - r.bottom);
+			if (popupBounds)
+				*popupBounds = r;
+			if (measureOnly)
+				return true;
 
 			Graphics::ManagedSurface popup;
 			popup.create(popupWidth, popupHeight, wm->_pixelformat);
@@ -108,9 +174,10 @@ bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 			border.blitBorderInto(popup, Graphics::kWindowBorderActive);
 
 			const int textX = inner.left + sidePad;
-			const int textY = inner.top + topPad;
+			const int textY = style == kMacInformWindow ?
+				inner.top + (inner.height() - fontHeight) / 2 : inner.top + MAX<int>(0, 14 - fontHeight);
 			const int textW = MAX<int>(1, inner.width() - sidePad * 2);
-			for (uint i = 0; i < lines.size(); ++i)
+			for (uint i = 0; i < visibleLines; ++i)
 				font->drawString(&popup, lines[i], textX, textY + (int)i * lineStep, textW, wm->_colorBlack, align);
 
 			gfx->drawSurface(&popup.rawSurface(), r.left, r.top);
@@ -120,8 +187,7 @@ bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 		}
 	}
 
-	Common::Rect r(centerX - popupWidth / 2, centerY - popupHeight / 2,
-		centerX - popupWidth / 2 + popupWidth, centerY - popupHeight / 2 + popupHeight);
+	Common::Rect r = contentRect;
 	if (r.left < bounds.left)
 		r.translate(bounds.left - r.left, 0);
 	if (r.right > bounds.right)
@@ -130,6 +196,10 @@ bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 		r.translate(0, bounds.top - r.top);
 	if (r.bottom > bounds.bottom)
 		r.translate(0, bounds.bottom - r.bottom);
+	if (popupBounds)
+		*popupBounds = r;
+	if (measureOnly)
+		return true;
 
 	const uint32 colBlack = macColor ? packRGB(0, 0, 0) : 0;
 	const uint32 colWhite = macColor ? packRGB(255, 255, 255) : 15;
@@ -148,8 +218,9 @@ bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 	const int textLeft = r.left + sidePad;
 	const int textRight = r.right - sidePad;
 	const int textCenter = (textLeft + textRight) / 2;
-	const int startY = r.top + topPad;
-	for (uint i = 0; i < lines.size(); ++i) {
+	const int startY = style == kMacInformWindow ?
+		r.top + (r.height() - fontHeight) / 2 : r.top + MAX<int>(0, 14 - fontHeight);
+	for (uint i = 0; i < visibleLines; ++i) {
 		const int y = startY + (int)i * lineStep;
 		if (align == Graphics::kTextAlignCenter)
 			gfx->drawString(font, lines[i], textCenter, y, colBlack, Graphics::kTextAlignCenter);
@@ -1415,6 +1486,22 @@ void ColonyEngine::drawCrosshair() {
 }
 
 void ColonyEngine::inform(const char *text, bool hold) {
+	if (isMacRenderMode()) {
+		Common::Array<Common::String> lines;
+		lines.push_back(text);
+		Graphics::ManagedSurface *background = hold ? captureMessageBackground(_gfx, _width, _height) : nullptr;
+		if (drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY, lines,
+				Graphics::kTextAlignCenter, isMacColorMode(), -1, nullptr, false, kMacInformWindow)) {
+			if (hold) {
+				waitForMessageInput();
+				restoreMessageBackground(_gfx, background);
+			}
+			return;
+		}
+		restoreMessageBackground(_gfx, background);
+		background = nullptr;
+	}
+
 	const char *msg[3];
 	msg[0] = text;
 	msg[1] = hold ? "-Press Any Key to Continue-" : nullptr;
@@ -1436,21 +1523,21 @@ void ColonyEngine::printMessage(const char *text[], bool hold) {
 		numLines++;
 	}
 
+	Graphics::ManagedSurface *background = hold ? captureMessageBackground(_gfx, _width, _height) : nullptr;
 	if (isMacRenderMode() && drawMacTextPopup(_wm, _gfx,
 			_width, _height, _centerX, _centerY, lines, Graphics::kTextAlignCenter, isMacColorMode())) {
-		if (hold)
-			waitForInput();
+		if (hold) {
+			waitForMessageInput();
+			restoreMessageBackground(_gfx, background);
+		}
 		return;
 	}
 
-	int pxPerInchX = 72;
-	int pxPerInchY = 72;
-
 	Common::Rect rr;
-	rr.top = _centerY - (numLines + 1) * (pxPerInchY / 4);
-	rr.bottom = _centerY + (numLines + 1) * (pxPerInchY / 4);
-	rr.left = _centerX - width / 2 - (pxPerInchX / 2);
-	rr.right = _centerX + width / 2 + (pxPerInchX / 2);
+	rr.top = _centerY - (numLines + 1) * _pQy;
+	rr.bottom = _centerY + (numLines + 1) * _pQy;
+	rr.left = _centerX - width / 2 - 2 * _pQx;
+	rr.right = _centerX + width / 2 + 2 * _pQx;
 
 	_gfx->fillDitherRect(_screenR, 0, 15);
 	makeMessageRect(rr);
@@ -1458,8 +1545,8 @@ void ColonyEngine::printMessage(const char *text[], bool hold) {
 	int start;
 	int step;
 	if (numLines > 1) {
-		start = rr.top + (pxPerInchY / 4) * 2;
-		step = (rr.height() - (pxPerInchY / 4) * 4) / (numLines - 1);
+		start = rr.top + _pQy * 2;
+		step = (rr.height() - _pQy * 4) / (numLines - 1);
 	} else {
 		start = (rr.top + rr.bottom) / 2;
 		step = 0;
@@ -1471,8 +1558,10 @@ void ColonyEngine::printMessage(const char *text[], bool hold) {
 
 	_gfx->copyToScreen();
 
-	if (hold)
-		waitForInput();
+	if (hold) {
+		waitForMessageInput();
+		restoreMessageBackground(_gfx, background);
+	}
 }
 
 void ColonyEngine::makeMessageRect(Common::Rect &rr) {
@@ -1484,6 +1573,11 @@ void ColonyEngine::makeMessageRect(Common::Rect &rr) {
 }
 
 void ColonyEngine::doText(int entry, int center) {
+	Common::Rect messageSource = _messageSourceRect;
+	_messageSourceRect = Common::Rect();
+	if (messageSource.isEmpty())
+		messageSource = _screenR;
+
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(Common::Path("T.DAT"));
 	if (!file)
 		file = Common::MacResManager::openFileOrDataFork(Common::Path("Tdata"));
@@ -1502,7 +1596,7 @@ void ColonyEngine::doText(int entry, int center) {
 	file->seek(4 + entry * 8);
 	uint32 offset = file->readUint32BE();
 	uint16 ch = file->readUint16BE();
-	file->readUint16BE(); // lines (unused)
+	uint16 textLineCount = file->readUint16BE();
 
 	if (ch == 0) {
 		delete file;
@@ -1525,14 +1619,96 @@ void ColonyEngine::doText(int entry, int center) {
 	int start = 0;
 	for (int i = 0; i < ch; i++) {
 		if (p[i] == '\r' || p[i] == '\n') {
-			p[i] = 0;
-			if (p[start])
-				lineArray.push_back(&p[start]);
+			lineArray.push_back(Common::String(&p[start], i - start));
+			if (p[i] == '\r' && i + 1 < ch && p[i + 1] == '\n')
+				i++;
 			start = i + 1;
 		}
 	}
-	if (start < ch && p[start])
-		lineArray.push_back(&p[start]);
+	if (start < ch)
+		lineArray.push_back(Common::String(&p[start], ch - start));
+
+	// Preserve indexed blank lines without adding a trailing empty field.
+	if (textLineCount > 0) {
+		lineArray.resize(textLineCount);
+	}
+
+	Graphics::ManagedSurface *background = captureMessageBackground(_gfx, _width, _height);
+	auto restoreBackground = [&]() {
+		if (background) {
+			restoreMessageBackground(_gfx, background);
+			background = nullptr;
+		} else {
+			_gfx->fillRect(_screenR, 0);
+			_gfx->copyToScreen();
+		}
+	};
+
+	auto waitForLineSound = [&]() {
+		while (_sound->isPlaying() && !shouldQuit()) {
+			Common::Event event;
+			while (_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_QUIT:
+				case Common::EVENT_RETURN_TO_LAUNCHER:
+					quitGame();
+					return false;
+				case Common::EVENT_SCREEN_CHANGED:
+					_gfx->computeScreenViewport();
+					break;
+				default:
+					break;
+				}
+			}
+			_system->updateScreen();
+			_system->delayMillis(10);
+		}
+		return !shouldQuit();
+	};
+
+	if (isMacRenderMode()) {
+		const Graphics::TextAlign align = center == 1 ?
+			Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+		Common::Rect popupBounds;
+
+		if (drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY,
+				lineArray, align, isMacColorMode(), 0, &popupBounds, true)) {
+			animateMacZoom(_gfx, _system, messageSource, popupBounds);
+
+			if (center == 2) {
+				// PlayDiDit waits for the previous cue before each line.
+				drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY,
+					lineArray, align, isMacColorMode(), 0);
+				for (uint i = 0; i < lineArray.size(); ++i) {
+					if (!waitForLineSound()) {
+						restoreBackground();
+						delete[] page;
+						return;
+					}
+					_sound->play(Sound::kDiDit);
+					drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY,
+						lineArray, align, isMacColorMode(), i + 1);
+				}
+			} else {
+				drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY,
+					lineArray, align, isMacColorMode());
+			}
+
+			waitForMessageInput();
+			restoreBackground();
+			if (!shouldQuit())
+				animateMacZoom(_gfx, _system, popupBounds, messageSource);
+			delete[] page;
+			return;
+		}
+	}
+
+	const bool cursorWasVisible = CursorMan.isVisible();
+	CursorMan.showMouse(false);
+	auto finishDosMessage = [&]() {
+		restoreBackground();
+		CursorMan.showMouse(cursorWasVisible);
+	};
 
 	Graphics::DosFont font;
 	int width = 0;
@@ -1542,29 +1718,15 @@ void ColonyEngine::doText(int entry, int center) {
 			width = w;
 	}
 	const char *kpress = "-Press Any Key to Continue-";
-	const char *kmore = "-More-";
 	int kw = font.getStringWidth(kpress);
 	if (kw > width)
 		width = kw;
 	width += 12;
 
 	int lineheight = 14;
-	int maxlines = (_screenR.height() / lineheight) - 2;
+	int maxlines = MAX(1, (_screenR.height() / lineheight) - 1);
 	if (maxlines > (int)lineArray.size())
 		maxlines = lineArray.size();
-
-	if (isMacRenderMode()) {
-		Common::Array<Common::String> popupLines;
-		for (int i = 0; i < maxlines; ++i)
-			popupLines.push_back(lineArray[i]);
-		popupLines.push_back((int)lineArray.size() > maxlines ? kmore : kpress);
-		if (drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY, popupLines,
-				center == 1 ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, isMacColorMode())) {
-			waitForInput();
-			delete[] page;
-			return;
-		}
-	}
 
 	// DOS DOTEXT.C: r positioned at (cX ± wdth, cY ± ((maxlines+1)*7 + 4))
 	// then offset by (+3,+3) for shadow. 3 nested FrameRects shrinking by 1.
@@ -1585,13 +1747,20 @@ void ColonyEngine::doText(int entry, int center) {
 	}
 	_gfx->fillRect(r, 15);
 	_gfx->drawRect(r, 0);
+	if (center == 2)
+		_gfx->copyToScreen();
 
 	// Draw first page of text
 	for (int i = 0; i < maxlines; i++) {
 		_gfx->drawString(&font, lineArray[i], r.left + 3, r.top + 4 + i * lineheight, 0);
 		if (center == 2) {
+			_gfx->copyToScreen();
 			_sound->play(Sound::kDit);
-			_system->delayMillis(20);
+			if (!waitForLineSound()) {
+				finishDosMessage();
+				delete[] page;
+				return;
+			}
 		}
 	}
 
@@ -1600,28 +1769,44 @@ void ColonyEngine::doText(int entry, int center) {
 	_gfx->drawString(&font, hasMore ? "-Press Any Key For More...-" : kpress,
 		(r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
 	_gfx->copyToScreen();
-	waitForInput();
+	if (!waitForMessageInput()) {
+		finishDosMessage();
+		delete[] page;
+		return;
+	}
 
 	// Second page: if text was truncated, show remainder
 	// DOS DOTEXT.C: starts from maxlines-1 (repeats last line of page 1 for context)
 	if (hasMore) {
 		_gfx->fillRect(r, 15);
 		_gfx->drawRect(r, 0);
+		if (center == 2)
+			_gfx->copyToScreen();
 		int pageStart = maxlines - 1;
 		for (int i = pageStart; i < (int)lineArray.size() && (i - pageStart) < maxlines; i++) {
 			_gfx->drawString(&font, lineArray[i], r.left + 3,
 				r.top + 6 + (1 + i - pageStart) * lineheight, 0);
 			if (center == 2) {
+				_gfx->copyToScreen();
 				_sound->play(Sound::kDit);
-				_system->delayMillis(20);
+				if (!waitForLineSound()) {
+					finishDosMessage();
+					delete[] page;
+					return;
+				}
 			}
 		}
 		_gfx->drawString(&font, kpress,
 			(r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
 		_gfx->copyToScreen();
-		waitForInput();
+		if (!waitForMessageInput()) {
+			finishDosMessage();
+			delete[] page;
+			return;
+		}
 	}
 
+	finishDosMessage();
 	delete[] page;
 }
 

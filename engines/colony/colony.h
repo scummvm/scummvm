@@ -496,6 +496,7 @@ public:
 	bool checkSkipRequested();
 	bool checkClickRequested();
 	bool waitForInput();
+	bool waitForMessageInput();
 	void checkCenter();
 	void fallThroughHole();
 	void playTunnelEffect(bool falling);
@@ -864,6 +865,7 @@ private:
 	bool _animExitInside = false;
 	Common::Rect _animExitStrip;
 	Common::Rect _animExitButton;
+	Common::Rect _messageSourceRect;
 	int _coderPick[4] = {};
 	int _coderCursor = 0;
 	int _coderPressed = -1;
@@ -891,7 +893,7 @@ private:
 	bool makeStars(const Common::Rect &r, int btn);
 	bool makeBlackHole();
 	bool makePlanet();
-	bool timeSquare(const Common::String &str, const Graphics::Font *macFont = nullptr);
+	bool timeSquare(const Common::String &str, const Graphics::Font *macFont = nullptr, bool gameOver = false);
 	bool drawPict(int resID);
 	bool loadAnimation(const Common::String &name);
 	void deleteAnimation();

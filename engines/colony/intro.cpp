@@ -38,7 +38,6 @@
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
-#include "gui/message.h"
 #include "image/pict.h"
 
 #include "colony/colony.h"
@@ -1050,7 +1049,7 @@ bool ColonyEngine::makePlanet() {
 	return false;
 }
 
-bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *macFont) {
+bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *macFont, bool gameOver) {
 	// Original: TimeSquare() in intro.c
 	// Mac and DOS use different presentation here. DOS is a monochrome/gray
 	// warning band with 16-pixel blits and white text; Mac uses the colorful
@@ -1059,13 +1058,18 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	_gfx->clear(_gfx->black());
 
 	Graphics::DosFont dosFont;
-	const Graphics::Font *font = macFont ? macFont : (const Graphics::Font *)&dosFont;
+	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
+	const bool macStyle = isMacRenderMode();
+	const Graphics::Font *fallbackMacFont = macStyle && _wm && _wm->_fontMan ?
+		_wm->_fontMan->getFont(systemFont) : nullptr;
+	const Graphics::Font *font = macStyle ? (macFont ? macFont : fallbackMacFont) : nullptr;
+	if (!font)
+		font = &dosFont;
 	int swidth = font->getStringWidth(str);
 
 	int centery = _height / 2 - 10;
 
-	const bool bwMac = (macFont && !isMacColorMode());
-	const bool macStyle = (macFont != nullptr);
+	const bool bwMac = macStyle && !isMacColorMode();
 	const uint32 grayIndex = 160;
 	const uint32 textIndex = 176;
 	const Common::Rect textBand(0, centery + 1, _width, centery + 16);
@@ -1112,7 +1116,7 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	// DOS uses 16-pixel blits of a black text box; Mac scrolls smoothly.
 	int targetX = (_width - swidth) / 2;
 	const int startX = macStyle ? _width : (_width + 16);
-	const int stepX = macStyle ? 2 : 16;
+	const int stepX = macStyle ? 1 : 16;
 	const int endX = macStyle ? -swidth : (-swidth - 16);
 	const uint32 scrollDelayMs = macStyle ? 8 : (1000 / 60);
 
@@ -1126,38 +1130,34 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 		_system->delayMillis(scrollDelayMs);
 	}
 
-	// Phase 2: Klaxon flash — original intro.c lines 312-322.
-	// DOS does 4 full klaxon cycles here; Mac uses the longer 6-flash variant.
+	// Wait for each cue before the next flash.
 	_sound->stop();
 	_gfx->setXorMode(true);
 	const int klaxonCount = macStyle ? 6 : 4;
-	const uint32 dosKlaxonFlashMs = 12 * 1000 / 60;
 	for (int i = 0; i < klaxonCount; i++) {
+		while (_sound->isPlaying() && !shouldQuit()) {
+			if (checkSkipRequested()) {
+				_gfx->setXorMode(false);
+				return true;
+			}
+			_system->delayMillis(10);
+		}
+		_sound->stop();
+
+		_sound->play(macStyle && gameOver ? Sound::kChime : Sound::kKlaxon);
+		_gfx->fillRect(textBand, 0xFFFFFFFF);
+		_gfx->copyToScreen();
+		if (!_sound->isPlaying())
+			_system->delayMillis(100);
+	}
+	while (_sound->isPlaying() && !shouldQuit()) {
 		if (checkSkipRequested()) {
 			_gfx->setXorMode(false);
 			return true;
 		}
-
-		// InvertRect(&invrt) — XOR the text band
-		_gfx->fillRect(textBand, 0xFFFFFFFF);
-		_gfx->copyToScreen();
-
-		_sound->play(Sound::kKlaxon);
-		if (macStyle) {
-			// Keep the snappier Mac timing.
-			_system->delayMillis(200);
-		} else {
-			// At modern frame rates, waiting for the synthesized klaxon to end
-			// drags these warning cards out too long. Keep a short fixed flash.
-			_system->delayMillis(dosKlaxonFlashMs);
-		}
+		_system->delayMillis(10);
 	}
 	_gfx->setXorMode(false);
-	if (macStyle) {
-		// Wait for last klaxon to finish
-		while (_sound->isPlaying() && !shouldQuit())
-			_system->delayMillis(10);
-	}
 	_sound->stop();
 
 	// Phase 3: Mac resumes Mars here; DOS scrolls out silently.
@@ -1299,12 +1299,6 @@ void ColonyEngine::terminateGame(bool blowup) {
 	_gfx->clear(_gfx->black());
 	_gfx->copyToScreen();
 
-	const char *msg[] = {
-		"YOU HAVE BEEN TERMINATED",
-		nullptr
-	};
-	printMessage(msg, true);
-
 	_screenR = savedScreenR;
 	_clip = savedClip;
 	_centerX = savedCenterX;
@@ -1333,28 +1327,71 @@ void ColonyEngine::terminateGame(bool blowup) {
 		return;
 	}
 
-	while (!shouldQuit()) {
-		Common::U32StringArray altButtons;
-		altButtons.push_back(_("Load Game"));
-		altButtons.push_back(_("Quit"));
-		GUI::MessageDialog prompt(_("You have been terminated."), _("New Game"), altButtons);
+	const char *msg[] = {
+		"   YOU HAVE BEEN TERMINATED!   ",
+		" Type 'n' to start a new game. ",
+		" Type 'l' to load a game.      ",
+		" Type 'q' to quit the game.    ",
+		nullptr
+	};
+	Common::EventManager *eventMan = _system->getEventManager();
 
-		switch (runDialog(prompt)) {
-		case GUI::kMessageOK:
+	while (!shouldQuit()) {
+		printMessage(msg, false);
+		eventMan->purgeKeyboardEvents();
+		int choice = 0;
+		while (!choice && !shouldQuit()) {
+			Common::Event event;
+			while (eventMan->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_QUIT:
+				case Common::EVENT_RETURN_TO_LAUNCHER:
+					choice = 'q';
+					break;
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_n)
+						choice = 'n';
+					else if (event.kbd.keycode == Common::KEYCODE_l)
+						choice = 'l';
+					else if (event.kbd.keycode == Common::KEYCODE_q)
+						choice = 'q';
+					break;
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+					// Q is mapped to rotate left.
+					if (event.customType == kActionRotateLeft || event.customType == kActionEscape)
+						choice = 'q';
+					break;
+				case Common::EVENT_SCREEN_CHANGED:
+					_gfx->computeScreenViewport();
+					printMessage(msg, false);
+					break;
+				default:
+					break;
+				}
+			}
+			_system->updateScreen();
+			_system->delayMillis(10);
+		}
+
+		switch (choice) {
+		case 'n':
+			inform("New Game!", false);
 			startNewGame();
 			_mouseLocked = savedMouseLocked;
 			updateMouseCapture(true);
 			return;
-		case GUI::kMessageAlt:
+		case 'l':
 			if (loadGameDialog()) {
 				_mouseLocked = savedMouseLocked;
 				updateMouseCapture(true);
 				return;
 			}
 			break;
-		default:
+		case 'q':
 			quitGame();
 			return;
+		default:
+			break;
 		}
 	}
 }
@@ -1510,36 +1547,68 @@ void ColonyEngine::gameOver(bool kill, int savedCryos) {
 	_gfx->copyToScreen();
 	doText(textEntry, 2);
 
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-	_sound->play(Sound::kStars4);
-	makeStars(_screenR, 0);
-	_sound->stop();
-
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-	timeSquare("...THE END...", nullptr);
-
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-	_sound->play(Sound::kExplode);
-	if (_sound->isPlaying()) {
-		while (_sound->isPlaying() && !shouldQuit()) {
-			_gfx->clear(_gfx->white());
-			_gfx->copyToScreen();
-			_system->delayMillis(50);
-			_gfx->clear(_gfx->black());
-			_gfx->copyToScreen();
-			_system->delayMillis(50);
+	auto playFinalExplosion = [&]() {
+		_gfx->clear(_gfx->black());
+		_gfx->copyToScreen();
+		_sound->play(Sound::kExplode);
+		if (_sound->isPlaying()) {
+			while (_sound->isPlaying() && !shouldQuit()) {
+				_gfx->clear(_gfx->white());
+				_gfx->copyToScreen();
+				_system->delayMillis(50);
+				_gfx->clear(_gfx->black());
+				_gfx->copyToScreen();
+				_system->delayMillis(50);
+			}
+		} else {
+			for (int i = 0; i < 4; i++) {
+				_gfx->clear((i & 1) ? _gfx->black() : _gfx->white());
+				_gfx->copyToScreen();
+				_system->delayMillis(50);
+			}
 		}
+		_sound->stop();
+	};
+
+	if (isMacRenderMode()) {
+		_gfx->clear(_gfx->black());
+		_gfx->copyToScreen();
+		_sound->play(Sound::kMars, true);
+		makeStars(_screenR, 0);
+
+		Graphics::MacFONTFont *macFont = nullptr;
+		if (_resMan) {
+			const uint16 fontResID = 24332; // FOND 190, 12pt
+			Common::SeekableReadStream *fontStream = _resMan->getResource(MKTAG('N', 'F', 'N', 'T'), fontResID);
+			if (!fontStream)
+				fontStream = _resMan->getResource(MKTAG('F', 'O', 'N', 'T'), fontResID);
+			if (fontStream) {
+				macFont = new Graphics::MacFONTFont();
+				if (!macFont->loadFont(*fontStream)) {
+					delete macFont;
+					macFont = nullptr;
+				}
+				delete fontStream;
+			}
+		}
+		timeSquare("...THE END...", macFont, true);
+		delete macFont;
+
+		_gfx->clear(_gfx->black());
+		_gfx->copyToScreen();
+		makeStars(_screenR, 0);
+		_sound->stop();
+		playFinalExplosion();
 	} else {
-		for (int i = 0; i < 4; i++) {
-			_gfx->clear((i & 1) ? _gfx->black() : _gfx->white());
-			_gfx->copyToScreen();
-			_system->delayMillis(50);
-		}
+		// DOS uses Inform here, not TimeSquare.
+		_gfx->clear(_gfx->black());
+		_gfx->copyToScreen();
+		_sound->play(Sound::kStars4);
+		makeStars(_screenR, 0);
+		_sound->stop();
+		playFinalExplosion();
+		inform("THE END", true);
 	}
-	_sound->stop();
 
 	_screenR = savedScreenR;
 	_clip = savedClip;

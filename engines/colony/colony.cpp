@@ -1357,4 +1357,63 @@ bool ColonyEngine::waitForInput() {
 	return false;
 }
 
+bool ColonyEngine::waitForMessageInput() {
+	// Ignore the input that opened the message.
+	_moveForward = _moveBackward = false;
+	_strafeLeft = _strafeRight = false;
+	_rotateLeft = _rotateRight = false;
+	_sprint = false;
+
+	Common::EventManager *eventMan = _system->getEventManager();
+	auto handleSystemEvent = [&](const Common::Event &event) {
+		if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+			quitGame();
+			return false;
+		}
+		if (event.type == Common::EVENT_SCREEN_CHANGED)
+			_gfx->computeScreenViewport();
+		return true;
+	};
+
+	while (eventMan->getButtonState() && !shouldQuit()) {
+		Common::Event event;
+		while (eventMan->pollEvent(event)) {
+			if (!handleSystemEvent(event))
+				return false;
+		}
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
+
+	{
+		Common::Event event;
+		while (eventMan->pollEvent(event)) {
+			if (!handleSystemEvent(event))
+				return false;
+		}
+	}
+
+	eventMan->purgeMouseEvents();
+	eventMan->purgeKeyboardEvents();
+
+	while (!shouldQuit()) {
+		Common::Event event;
+		while (eventMan->pollEvent(event)) {
+			if (!handleSystemEvent(event))
+				return false;
+
+			if (event.type == Common::EVENT_LBUTTONDOWN ||
+					event.type == Common::EVENT_RBUTTONDOWN ||
+					event.type == Common::EVENT_KEYDOWN ||
+					event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				return true;
+			}
+		}
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
+
+	return false;
+}
+
 } // End of namespace Colony

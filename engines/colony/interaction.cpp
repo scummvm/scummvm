@@ -82,7 +82,6 @@ void ColonyEngine::interactWithObject(int objNum) {
 				playAnimation();
 			break;
 		default:
-			inform("IT DOES NOT SEEM TO BE WORKING.", true);
 			break;
 		}
 		break;
@@ -97,7 +96,6 @@ void ColonyEngine::interactWithObject(int objNum) {
 				playAnimation();
 			break;
 		default:
-			inform("PROJECTOR OFFLINE", true);
 			break;
 		}
 		break;
@@ -167,16 +165,13 @@ void ColonyEngine::interactWithObject(int objNum) {
 	case kObjToilet:
 	case kObjPToilet:
 		_sound->play(Sound::kToilet);
-		inform("IT'S A TOILET.", true);
 		break;
 	case kObjTub:
 		_sound->play(Sound::kBath);
-		inform("A BATHTUB. NO TIME FOR A SOAK.", true);
 		break;
 
 	case kObjSink:
 		_sound->play(Sound::kSink);
-		inform("A SINK. IT'S DRY.", true);
 		break;
 	case kObjTV:
 		if (_level == 1)
