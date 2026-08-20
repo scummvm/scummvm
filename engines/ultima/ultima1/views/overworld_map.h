@@ -32,8 +32,24 @@ using namespace Shared::Messages;
 
 class OverworldMap : public Shared::UIElement {
 private:
+	int _animIndex = 0;
+
 	void prepareMapForDrawing();
-	void animateTile(Graphics::ManagedSurface &tile);
+
+	/**
+	 * Shifts the ocean tile's bitmap down by one pixel row (the bottom
+	 * row wraps around to become the new top row), to give a rippling
+	 * water effect
+	 */
+	void animateWater();
+
+	/**
+	 * Returns the tile to draw for a given raw map tile, substituting
+	 * in the appropriate animation frame for the castle and city flags.
+	 * Returns -1 if the tile shouldn't be redrawn this tick (the castle
+	 * flag is only redrawn on 2 of every 6 ticks)
+	 */
+	int animatedTileId(byte tileId) const;
 
 public:
 	OverworldMap(Shared::UIElement *parent) : Shared::UIElement("OverworldMap", parent) {}
@@ -42,11 +58,6 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	void timeout() override;
-
-	/**
-	 * Flash a circle at a specified tile delta to the map center
-	 */
-	void flashCircle(int deltaX, int deltaY);
 };
 
 } // namespace Views

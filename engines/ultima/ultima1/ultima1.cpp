@@ -28,6 +28,7 @@
 #include "graphics/paletteman.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/console.h"
+#include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/views/views.h"
 
 namespace Ultima {
@@ -59,6 +60,9 @@ Common::Error Ultima1Engine::run() {
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
+
+	// Load the overworld tile sheet
+	Data::loadTiles(_tiles);
 
 	Views::Views views;
 	addView("Startup");

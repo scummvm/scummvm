@@ -20,77 +20,47 @@
  */
 
 #include "common/file.h"
-#include "common/memstream.h"
 #include "ultima/ultima1/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-// Ultima II has 64 tiles, each 16x16 pixels in CGA Linear format
-const int TILE_DATA_OFFSET = 31808;
-const int TILE2_DATA_OFFSET = 21640;
+constexpr int BYTES_PER_ROW = 8;	// 4 planes x 2 bytes/plane = 16 pixels
+constexpr int BYTES_PER_TILE = BYTES_PER_ROW * TILE_HEIGHT;
 
-const Common::ArchiveMemberPtr Tiles::getMember(const Common::Path &path) const {
-	if (!hasFile(path))
-		return Common::ArchiveMemberPtr();
-
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
-}
-
-Common::SeekableReadStream *Tiles::createReadStreamForMember(const Common::Path &path) const {
-	if (!hasFile(path))
-		return nullptr;
-
+void loadTiles(Graphics::ManagedSurface tiles[TILE_COUNT]) {
 	Common::File f;
-	if (!f.open("ultimaii.exe"))
-		error("Could not open ultimaii.exe");
+	if (!f.open("EgaTiles.Bin"))
+		error("Could not open EgaTiles.Bin");
 
-	// Seek to the tile data
-	f.seek(TILE_DATA_OFFSET);
+	byte data[BYTES_PER_TILE];
 
-	Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::NO);
+	for (int tileNum = 0; tileNum < TILE_COUNT; ++tileNum) {
+		if (f.read(data, BYTES_PER_TILE) != (uint32)BYTES_PER_TILE)
+			error("Unexpected end of EgaTiles.Bin");
 
-	// Process each tile
-	for (int tileNumber = 0; tileNumber < TILE_COUNT; tileNumber++) {
-		if (tileNumber == (TILE_COUNT - 1))
-			f.seek(TILE2_DATA_OFFSET);
+		Graphics::ManagedSurface &tile = tiles[tileNum];
+		tile.create(TILE_WIDTH, TILE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
-		byte tileW = f.readByte() * 4;
-		byte tileH = f.readByte();
-		assert(tileW == TILE_WIDTH && tileH == TILE_HEIGHT);
+		for (int y = 0; y < TILE_HEIGHT; ++y) {
+			const byte *row = &data[y * BYTES_PER_ROW];
+			byte *destRow = (byte *)tile.getBasePtr(0, y);
 
-		// Read the tile data (16 rows, 4 bytes per row)
-		for (int y = 0; y < TILE_HEIGHT; y++) {
-			for (int x = 0; x < TILE_WIDTH / 4; x++) {
-				// Read one byte (contains 4 pixels in CGA Linear format)
-				byte pixelByte = f.readByte();
+			for (int x = 0; x < TILE_WIDTH; ++x) {
+				int byteIdx = x / 8;
+				int bitMask = 0x80 >> (x % 8);
 
-				// Extract 4 pixels from this byte
-				// CGA Linear: bits 7-6 = first pixel, 5-4 = second, 3-2 = third, 1-0 = fourth
-				for (int offset = 0; offset < 4; offset++) {
-					int colorBit = 7 - (offset * 2);  // Start at bit 7, then 5, 3, 1
-
-					// Extract 2-bit color value
-					int colorIndex = 0;
-					if (pixelByte & (1 << colorBit))
-						colorIndex |= 2;
-					if (pixelByte & (1 << (colorBit - 1)))
-						colorIndex |= 1;
-
-					// Map the 2-bit value to palette index (0-3)
-					byte paletteIndex = colorIndex;
-
-					// Write the palette index to the buffer
-					buf.writeByte(paletteIndex);
+				byte colorIndex = 0;
+				for (int plane = 0; plane < 4; ++plane) {
+					if (row[plane * 2 + byteIdx] & bitMask)
+						colorIndex |= (1 << plane);
 				}
+
+				destRow[x] = colorIndex;
 			}
 		}
 	}
-
-	f.close();
-
-	return new Common::MemoryReadStream(buf.getData(), buf.size(), DisposeAfterUse::YES);
 }
 
 } // namespace Data

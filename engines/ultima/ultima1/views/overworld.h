@@ -23,6 +23,7 @@
 #define ULTIMA1_VIEWS_OVERWORLD_H
 
 #include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/views/overworld_map.h"
 #include "ultima/ultima1/views/stats.h"
 
 namespace Ultima {
@@ -32,11 +33,11 @@ namespace Views {
 /**
  * The main in-game screen. Draws the outer frame around the map
  * viewport, and hosts the map, stats, and command/message log
- * sub-views. For now, only the frame and stats display are implemented
- * - the map viewport and command log areas are just left blank.
+ * sub-views. For now, the command/message log area is just left blank.
  */
 class Overworld : public Dialog {
 private:
+	OverworldMap _map;
 	Stats _stats;
 
 public:

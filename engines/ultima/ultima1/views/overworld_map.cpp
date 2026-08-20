@@ -33,36 +33,47 @@ bool OverworldMap::msgFocus(const FocusMessage &msg) {
 }
 
 void OverworldMap::timeout() {
-	// Animate the water and forcefield tiles
-	animateTile(g_engine->_tiles[0]);
-	animateTile(g_engine->_tiles[23]);
+	animateWater();
+	++_animIndex;
 	redraw();
 
-	// Wait briefly before next tile animation
+	// Wait briefly before the next animation tick
 	delayFrames(1);
 }
 
-void OverworldMap::animateTile(Graphics::ManagedSurface &tile) {
+void OverworldMap::animateWater() {
+	Graphics::ManagedSurface &tile = g_engine->_tiles[Data::kTileOcean];
 	assert(tile.w == Data::TILE_WIDTH && tile.h == Data::TILE_HEIGHT);
 
-	// Rotate 2 rows upward (top 2 rows move to bottom)
-	const int ROWS_TO_ROTATE = 2;
-	const int BYTES_TO_ROTATE = Data::TILE_WIDTH * ROWS_TO_ROTATE;
-
-	// Temporary buffer to hold the rows being rotated
-	byte tempBuffer[Data::TILE_WIDTH * ROWS_TO_ROTATE];
-
+	byte lastRow[Data::TILE_WIDTH];
 	byte *pixels = (byte *)tile.getPixels();
 
-	// Save the first ROWS_TO_ROTATE rows to temp buffer
-	memcpy(tempBuffer, pixels, BYTES_TO_ROTATE);
+	// The bottom row wraps around to become the new top row, with
+	// every other row shifting down by one to make way for it
+	memcpy(lastRow, pixels + (Data::TILE_HEIGHT - 1) * Data::TILE_WIDTH, Data::TILE_WIDTH);
+	memmove(pixels + Data::TILE_WIDTH, pixels, (Data::TILE_HEIGHT - 1) * Data::TILE_WIDTH);
+	memcpy(pixels, lastRow, Data::TILE_WIDTH);
+}
 
-	// Shift all remaining rows up
-	int remainingBytes = (tile.w * tile.h) - BYTES_TO_ROTATE;
-	memmove(pixels, pixels + BYTES_TO_ROTATE, remainingBytes);
+int OverworldMap::animatedTileId(byte tileId) const {
+	if (tileId == Data::kTileCastle) {
+		// Only redrawn on 2 of every 6 ticks; the other 4 ticks leave
+		// whichever frame was last drawn untouched
+		int offset = 2;
+		if ((_animIndex % 6) == 0)
+			offset = 0;
+		else if ((_animIndex % 3) == 0)
+			offset = 1;
 
-	// Copy saved rows to the end
-	memcpy(pixels + remainingBytes, tempBuffer, BYTES_TO_ROTATE);
+		return (offset == 2) ? -1 : Data::kTileCastle + offset;
+	}
+
+	if (tileId == Data::kTileCity) {
+		// Redrawn every tick, biased 3:1 toward the waving-flag frame
+		return Data::kTileCity + (((_animIndex % 4) == 0) ? 0 : 1);
+	}
+
+	return tileId;
 }
 
 void OverworldMap::draw() {
@@ -74,81 +85,44 @@ void OverworldMap::draw() {
 	// Draw the visible map contents
 	for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
 		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
-			uint8 tileId = map._mapTilesId[oy][ox];
-			if (!(tileId & 0x80)) {
-				const Graphics::ManagedSurface &tileImg = g_engine->_tiles[tileId / 2];
+			int tileId = animatedTileId(map._mapTilesId[oy][ox]);
+			if (tileId != -1) {
+				const Graphics::ManagedSurface &tileImg = g_engine->_tiles[tileId];
 				s.blitFrom(tileImg, Common::Point(ox * Data::TILE_WIDTH, oy * Data::TILE_HEIGHT));
 			}
 		}
 	}
-
-	// Copy rendered tile IDs for next frame's dirty comparison
-	for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++)
-		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++)
-			map._priorTileIds[oy][ox] = map._mapTilesId[oy][ox] & 0x7F;
 }
 
 void OverworldMap::prepareMapForDrawing() {
-	// Load the map if it's not already active
 	auto &map = g_engine->_map;
-
-	//int mapOffsetX = 0, mapOffsetY = 0;
 	int mapLeft, mapTop;
 
 	if (map._outsideMapTile != -1) {
 		// Non-wrapping draw (used for indoor maps/dungeons with a border tile)
-		mapLeft = (map._mapX - 9) + 1;
-		mapTop = (map._mapY - 5) + 1;
+		mapLeft = (map._mapX - Data::MAP_VISIBLE_CENTER_X) + 1;
+		mapTop = (map._mapY - Data::MAP_VISIBLE_CENTER_Y) + 1;
 
 		for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
 			for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
 				uint8 x = mapLeft + ox;
 				uint8 y = mapTop + oy;
 
-				uint8 tile;
-				if (x >= 64 || y >= 64) {
-					// Out of bounds: fill with the designated outside tile
-					tile = map._outsideMapTile;
-				} else {
-					tile = (map._tiles[y][x] / 2) & 0xfe;
-				}
-
-				if (tile == map._priorTileIds[oy][ox]) {
-					if (tile == 0) {
-						if (map._flag1 == 0xFF)
-							tile |= 0x80;
-					} else {
-						if (tile != 46)
-							tile |= 0x80;
-					}
-				}
-
-				map._mapTilesId[oy][ox] = tile;
+				map._mapTilesId[oy][ox] = (x >= Data::MAP_WIDTH || y >= Data::MAP_HEIGHT) ?
+					map._outsideMapTile : map._tiles[y][x];
 			}
 		}
 
 	} else {
 		// Normal (wrapping) draw - overworld map
-		mapTop = (map._mapY - 5) & 63;
-		mapLeft = (map._mapX - 9) & 63;
+		mapTop = (map._mapY - Data::MAP_VISIBLE_CENTER_Y) & 63;
+		mapLeft = (map._mapX - Data::MAP_VISIBLE_CENTER_X) & 63;
 
 		for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
 			for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
 				uint8 x = (mapLeft + ox) & 63;
 				uint8 y = (mapTop + oy) & 63;
-				uint8 tile = (map._tiles[y][x] / 2) & 0xfe;
-
-				if (tile == map._priorTileIds[oy][ox]) {
-					if (tile == 0) {
-						if (map._flag1 == 0xFF)
-							tile |= 0x80;
-					} else {
-						if (tile != 46)
-							tile |= 0x80;
-					}
-				}
-
-				map._mapTilesId[oy][ox] = tile;
+				map._mapTilesId[oy][ox] = map._tiles[y][x];
 			}
 		}
 	}
@@ -163,24 +137,6 @@ void OverworldMap::prepareMapForDrawing() {
 	// Place the player tile at the center
 	map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X] = map._playerTileId;
 }
-
-void OverworldMap::flashCircle(int deltaX, int deltaY) {
-	Common::Point pt((Data::MAP_VISIBLE_CENTER_X + deltaX) * Data::TILE_WIDTH,
-		(Data::MAP_VISIBLE_CENTER_Y + deltaY) * Data::TILE_HEIGHT);
-	auto s = getSurface();
-
-	// Show the circle
-	s.xorBlitFrom(g_engine->_tiles[Data::kTileCircle], pt);
-	g_engine->getScreen()->update();
-
-	// Brief pause
-	g_engine->pauseMillis();
-
-	// Remove it
-	s.xorBlitFrom(g_engine->_tiles[Data::kTileCircle], pt);
-	g_engine->getScreen()->update();
-}
-
 
 } // namespace Views
 } // namespace Ultima1

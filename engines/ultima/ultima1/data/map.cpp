@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "ultima/ultima1/data/map.h"
+#include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
@@ -43,34 +44,28 @@ void Map::load(int mapNum) {
 	// Set up copies of the map position and player tile to use
 	_mapX = player._position.x;
 	_mapY = player._position.y;
-	_playerTileId = (player._class + Data::PLAYER_TILES_OFFSET) * 2;
+	_playerTileId = kTileParty;
 	clearTiles();
 }
 
 void Map::clearTiles() {
 	Common::fill(&_mapTilesId[0][0], &_mapTilesId[0][0] + sizeof(VisibleTiles), 0);
-	Common::fill(&_priorTileIds[0][0], &_priorTileIds[0][0] + sizeof(VisibleTiles), 0);
 }
 
 bool Map::canMoveToTile(int tileNum) {
-	auto &game = g_engine->_game;
-	int tileId = (tileNum & 0x7f) / 2;
+	int tileId = tileNum & 0x7f;
 
 	if ((uint)_mapX < Data::MAP_WIDTH && (uint)_mapY < Data::MAP_HEIGHT) {
 		// Within the bounds of the map
-		if (tileId == kTileSwamp) {
-			game.subtractHp(5);
-		}
-
-		switch (_playerTileId / 2) {
-		case kTileRocket * 2:
+		switch (_playerTileId) {
+		case kTileTimeMachine:
 			return true;
-		case kTileAirplane:
+		case kTileAircar:
 			// TODO
-			error("TODO: airplane");
+			error("TODO: aircar");
 			break;
-		case kTileShip:
-			if (tileId != kTileWater)
+		case kTileFrigate:
+			if (tileId != kTileOcean)
 				return true;
 
 			goto update_xy;

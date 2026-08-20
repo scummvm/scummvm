@@ -30,11 +30,10 @@ namespace Data {
 
 constexpr int MAP_WIDTH = 64;
 constexpr int MAP_HEIGHT = 66;
-constexpr int MAP_VISIBLE_WIDTH = 20;
-constexpr int MAP_VISIBLE_HEIGHT = 10;
+constexpr int MAP_VISIBLE_WIDTH = 19;
+constexpr int MAP_VISIBLE_HEIGHT = 9;
 constexpr int MAP_VISIBLE_CENTER_X = 9;
 constexpr int MAP_VISIBLE_CENTER_Y = 4;
-constexpr int PLAYER_TILES_OFFSET = 60;
 typedef byte MapTiles[MAP_HEIGHT][MAP_WIDTH];
 typedef byte VisibleTiles[MAP_VISIBLE_HEIGHT][MAP_VISIBLE_WIDTH];
 
@@ -51,9 +50,6 @@ public:
 	byte _tilePlayerUp = 0, _tilePlayerDown = 0,
 		_tilePlayerLeft = 0, _tilePlayerRight = 0;
 	VisibleTiles _mapTilesId = {};		// Calculated visible on-screen tiles
-	VisibleTiles _priorTileIds = {};	// Prior on-screen tiles, used to determine which to draw
-
-	const byte _flag1 = 0;
 
 	void load(int mapNum);
 	void clearTiles();

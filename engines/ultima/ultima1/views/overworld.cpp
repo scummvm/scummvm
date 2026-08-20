@@ -20,13 +20,17 @@
  */
 
 #include "ultima/ultima1/views/overworld.h"
+#include "ultima/ultima1/data/map.h"
+#include "ultima/ultima1/data/tiles.h"
 #include "ultima/shared/gfx/rect.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-Overworld::Overworld() : Dialog("Overworld"), _stats(this) {
+Overworld::Overworld() : Dialog("Overworld"), _map(this), _stats(this) {
+	_map.setBounds(Common::Rect(7, 7, 7 + Data::MAP_VISIBLE_WIDTH * Data::TILE_WIDTH,
+		7 + Data::MAP_VISIBLE_HEIGHT * Data::TILE_HEIGHT));
 	_stats.setBounds(TextRect(31, 21, 39, 24));
 }
 
