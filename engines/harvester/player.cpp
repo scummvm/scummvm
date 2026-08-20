@@ -1817,16 +1817,36 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 		playerState, playerState.centerX + horizontalInput * horizontalStep);
 	int candidateBottomY = playerState.bottomY;
 	float candidateZ = playerState.z;
+	bool depthBoundaryReached = false;
 	if (verticalInput != 0) {
-		candidateBottomY = clampRoomMovementY(state,
-			playerState.bottomY + verticalInput * verticalStep);
-		// Native room-combat movement advances screen Y and room depth independently:
-		// down-walk states apply -z_velocity_step while up-walk states apply +z_velocity_step.
-		candidateZ = clampRoomDepth(state, playerState.z - verticalInput * depthStep);
+		// update_actor_runtime_state (0x4d750) only emits the paired screen-Y and Z
+		// steps for state 0x04 while min_z < z and state 0x0b while z < max_z.
+		// At either depth limit it zeros both steps and returns to the facing idle state.
+		depthBoundaryReached = verticalInput < 0
+			? playerState.z >= (float)state.roomMaxZ
+			: playerState.z <= (float)state.roomMinZ;
+		if (!depthBoundaryReached) {
+			candidateBottomY = clampRoomMovementY(state,
+				playerState.bottomY + verticalInput * verticalStep);
+			candidateZ = clampRoomDepth(state, playerState.z - verticalInput * depthStep);
+		}
 	}
 	if (candidateCenterX == playerState.centerX &&
 			candidateBottomY == playerState.bottomY &&
 			fabsf(candidateZ - playerState.z) <= kRoomDepthCompareEpsilon) {
+		playerState.hasMoveTarget = false;
+		if (depthBoundaryReached) {
+			const bool stopped = setIdleAnimation(
+				playerState, playerState.facing >= 0 ? playerState.facing : 0);
+			if (stopped) {
+				debugC(3, kDebugPathfinding,
+					"Harvester: player keyboard depth boundary room='%s' input_y=%d pos=(%d,%d,z=%.2f) bounds=(%d,%d)",
+					state.roomName.c_str(), verticalInput,
+					playerState.centerX, playerState.bottomY, (double)playerState.z,
+					state.roomMinZ, state.roomMaxZ);
+			}
+			return stopped;
+		}
 		return false;
 	}
 
