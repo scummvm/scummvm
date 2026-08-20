@@ -28,10 +28,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-#define IS_PLANET(MAPNUM) ((MAPNUM % 10) == 0)
-#define IS_CITY(MAPNUM) ((MAPNUM % 10) >= 1 && (MAPNUM % 10) <= 3)
-#define IS_DUNGEON(MAPNUM) ((MAPNUM % 10) >= 4)
-
 constexpr int MAP_WIDTH = 64;
 constexpr int MAP_HEIGHT = 66;
 constexpr int MAP_VISIBLE_WIDTH = 20;

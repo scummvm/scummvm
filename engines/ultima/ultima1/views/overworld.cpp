@@ -43,9 +43,8 @@ void Overworld::draw() {
 }
 
 bool Overworld::msgFocus(const FocusMessage &msg) {
-	const auto &player = g_engine->_player;
 	auto &map = g_engine->_map;
-	map.load(player._mapNum);
+	map.load(0); // TODO: Ultima I's overworld is a single fixed map
 
 	return View::msgFocus(msg);
 }

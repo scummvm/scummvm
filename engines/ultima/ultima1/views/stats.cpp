@@ -32,9 +32,9 @@ void Stats::draw() {
 	s.clear();
 
 	s.writeString("H.P.=");
-	if (p._hp < 100) s.reverseColor();
-	s.writeString(Common::String::format("%.4d", p._hp));
-	if (p._hp < 100) s.reverseColor();
+	if (p._hits < 100) s.reverseColor();
+	s.writeString(Common::String::format("%.4d", p._hits));
+	if (p._hits < 100) s.reverseColor();
 
 	s.writeString(Common::Point(0, 1), "FOOD=");
 	if (p._food < 100) s.reverseColor();
@@ -42,7 +42,7 @@ void Stats::draw() {
 	if (p._food < 100) s.reverseColor();
 
 	s.writeString(Common::Point(0, 2), Common::String::format("EXP.=%.4d", p._experience));
-	s.writeString(Common::Point(0, 3), Common::String::format("GOLD=%.4d", p._gold));
+	s.writeString(Common::Point(0, 3), Common::String::format("GOLD=%.4d", p._coins));
 }
 
 } // namespace Views

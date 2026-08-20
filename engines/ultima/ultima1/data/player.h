@@ -22,73 +22,119 @@
 #ifndef ULTIMA1_DATA_PLAYER_H
 #define ULTIMA1_DATA_PLAYER_H
 
+#include "common/rect.h"
 #include "common/serializer.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-constexpr int MAX_NAME_LENGTH = 12;
+constexpr int MAX_NAME_LENGTH = 14;
+constexpr int QUEST_COUNT = 9;
 
-extern const char *SEX[];
-extern const char *RACE[];
-extern const char *CLASS[];
+extern const char *SEX_NAMES[];
+extern const char *RACE_NAMES[];
+extern const char *CLASS_NAMES[];
 
 enum Sex {
-	SEX_MALE, SEX_FEMALE
+	SEX_MALE = 0, SEX_FEMALE = 1
 };
 enum Race {
-	RACE_HUMAN = 1, RACE_ELF = 2, RACE_DWARF = 3, RACE_HOBBIT = 4
+	RACE_HUMAN = 1, RACE_ELF = 2, RACE_DWARF = 3, RACE_BOBBIT = 4
 };
-enum Class {
+enum CharClass {
 	CLASS_FIGHTER = 1, CLASS_CLERIC = 2, CLASS_WIZARD = 3, CLASS_THIEF = 4
 };
 
+// Indexes into _armor. Index 0 isn't a real item - it mirrors the
+// unexplained sentinel field seen immediately before the named item
+// slots in the original armor/weapon/spell/transport lists
+enum ArmorType {
+	ARMOR_NONE = 0, ARMOR_LEATHER = 1, ARMOR_CHAINMAIL = 2, ARMOR_PLATE_MAIL = 3,
+	ARMOR_VACUUM_SUIT = 4, ARMOR_REFLECT_SUIT = 5, ARMOR_COUNT = 6
+};
+
+// Indexes into _weapons
+enum WeaponType {
+	WEAPON_NONE = 0, WEAPON_DAGGER = 1, WEAPON_MACE = 2, WEAPON_AXE = 3,
+	WEAPON_ROPE_AND_SPIKES = 4, WEAPON_SWORD = 5, WEAPON_GREAT_SWORD = 6, WEAPON_BOW = 7,
+	WEAPON_AMULET = 8, WEAPON_WAND = 9, WEAPON_STAFF = 10, WEAPON_TRIANGLE = 11,
+	WEAPON_PISTOL = 12, WEAPON_LIGHT_SWORD = 13, WEAPON_PHAZOR = 14, WEAPON_BLASTER = 15,
+	WEAPON_COUNT = 16
+};
+
+// Indexes into _spells
+enum SpellType {
+	SPELL_NONE = 0, SPELL_OPEN = 1, SPELL_UNLOCK = 2, SPELL_MAGIC_MISSILE = 3, SPELL_STEAL = 4,
+	SPELL_LADDER_DOWN = 5, SPELL_LADDER_UP = 6, SPELL_BLINK = 7, SPELL_CREATE = 8,
+	SPELL_DESTROY = 9, SPELL_KILL = 10, SPELL_COUNT = 11
+};
+
+// Indexes into _transports
+enum TransportType {
+	TRANSPORT_FOOT = 0, TRANSPORT_HORSE = 1, TRANSPORT_CART = 2, TRANSPORT_RAFT = 3,
+	TRANSPORT_FRIGATE = 4, TRANSPORT_AIRCAR = 5, TRANSPORT_SHUTTLE = 6, TRANSPORT_TIME_MACHINE = 7,
+	TRANSPORT_COUNT = 8
+};
+
+/**
+ * The player character's savegame data
+ */
 struct Player {
-private:
-	/**
-	 * Synchronizes a byte value. In original Ultima II, byte values store
-	 * the tens in the upper 4 bits, and the 0-9 portion in the low 4 bits.
-	 */
-	void syncByte(Common::Serializer &s, byte &v);
-
-	/**
-	 * Synchronizes a uint16 value. In original Ultima II, uint16 values store
-	 * 4 digits each in 4-bit portions of their own.
-	 */
-	void syncWord(Common::Serializer &s, uint16 &v);
-
-public:
-	char _name[MAX_NAME_LENGTH + 1] = {};
-	byte _sex = SEX_MALE;
-	byte _class = CLASS_FIGHTER;
+	// Identity
+	char _name[MAX_NAME_LENGTH + 2] = {};
 	byte _race = RACE_HUMAN;
-	byte _mapNum = 20;
+	byte _class = CLASS_FIGHTER;
+	byte _sex = SEX_MALE;
 
-	byte _strength = 0;
-	byte _agility = 0;
-	byte _stamina = 0;
-	byte _charisma = 0;
-	byte _wisdom = 0;
-	byte _intelligence = 0;
-	uint16 _hp = 400;
-	uint16 _food = 400;
-	byte _foodSubCtr = 87;
-	uint16 _experience = 0;
-	uint16 _gold = 400;
+	// Attributes
+	int16 _hits = 0;
+	int16 _strength = 0;
+	int16 _agility = 0;
+	int16 _stamina = 0;
+	int16 _charisma = 0;
+	int16 _wisdom = 0;
+	int16 _intelligence = 0;
 
-	byte _mapX = 20;
-	byte _mapY = 20;
-	byte _field3E = 0xff;
+	// Resources
+	int16 _coins = 0;
+	int16 _experience = 0;
+	int16 _food = 0;
 
-	bool _hasRing = false;
+	// Currently equipped/readied items
+	int16 _equippedWeapon = WEAPON_NONE;
+	int16 _equippedSpell = SPELL_NONE;
+	int16 _equippedArmor = ARMOR_NONE;
+	int16 _transportType = TRANSPORT_FOOT;
 
-	// Runtime only fields
-	byte _paralyzedFlag = 0;
+	int16 _randomSeed = 0;
+	Common::Point _position;
+	bool _soundOn = true;
+
+	// Quest completion flags, one per town/dungeon
+	int16 _quests[QUEST_COUNT] = {};
+
+	// Gems
+	int16 _redGems = 0;
+	int16 _greenGems = 0;
+	int16 _blueGem = 0;
+	int16 _whiteGem = 0;
+
+	// Inventory quantities owned, indexed by the enums above. Index 0 of
+	// each isn't a real item quantity
+	int16 _armor[ARMOR_COUNT] = {};
+	int16 _weapons[WEAPON_COUNT] = {};
+	int16 _spells[SPELL_COUNT] = {};
+	int16 _transports[TRANSPORT_COUNT] = {};
+
+	int16 _enemyVessels = 0;
+	int16 _signMarker = -1;
+	int16 _moveCount = 0;
 
 	void synchronize(Common::Serializer &s);
+
 	bool isDead() const {
-		return _hp > 0;
+		return _hits <= 0;
 	}
 };
 

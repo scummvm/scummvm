@@ -59,7 +59,7 @@ public:
 	void endOfTurn();
 
 	/**
-	 * Subtract food fraction from the player
+	 * Subtract food from the player
 	 */
 	void subtractFoodCtr(int amount);
 

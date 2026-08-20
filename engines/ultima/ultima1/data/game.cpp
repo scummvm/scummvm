@@ -28,12 +28,8 @@ namespace Ultima1 {
 namespace Data {
 
 void Game::startGame() {
-	const auto &player = g_engine->_player;
-
-	if (IS_DUNGEON(player._mapNum))
-		g_engine->replaceView("Dungeon");
-	else
-		g_engine->replaceView("Overworld");
+	// TODO: dungeons aren't implemented yet, so always start on the overworld
+	g_engine->replaceView("Overworld");
 
 	promptForCommand();
 }
@@ -78,30 +74,28 @@ void Game::endOfTurn() {
 
 void Game::subtractFoodCtr(int amount) {
 	auto &player = g_engine->_player;
-	if (player._hp == 0)
+	if (player.isDead())
 		return;		// Already dead
 
-	bool foodFlag = player._foodSubCtr < amount;
-	player._foodSubCtr -= amount;
-	if (foodFlag && --player._food == 0)
+	player._food = MAX((int)player._food - amount, 0);
+	if (player._food == 0)
 		dead();
 }
 
 void Game::subtractHp(int amount) {
 	auto &player = g_engine->_player;
-	player._hp = MAX((int)player._hp - amount, 0);
+	player._hits = MAX((int)player._hits - amount, 0);
 
-	if (player._hp == 0)
+	if (player._hits == 0)
 		dead();
 }
 
 void Game::dead() {
 	auto &player = g_engine->_player;
-	player._hp = 0;
+	player._hits = 0;
 	player._food = 0;
-	player._foodSubCtr = 0;
 	player._experience = 0;
-	player._gold = 0;
+	player._coins = 0;
 
 	message("DEAD");
 }

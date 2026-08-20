@@ -25,75 +25,58 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-const char *SEX[] = { "MALE", "FEMALE", "YES PLEASE" };
-const char *RACE[] = { nullptr, "HUMAN", "ELF", "DWARF", "HOBBIT" };
-const char *CLASS[] = { nullptr, "FIGHTER", "CLERIC", "WIZARD", "THIEF" };
+const char *SEX_NAMES[] = { "Male", "Female" };
+const char *RACE_NAMES[] = { nullptr, "Human", "Elf", "Dwarf", "Bobbit" };
+const char *CLASS_NAMES[] = { nullptr, "Fighter", "Cleric", "Wizard", "Thief" };
 
 void Player::synchronize(Common::Serializer &s) {
-	// Sync name
-	s.syncBytes((byte *)_name, MAX_NAME_LENGTH + 1);
-	s.skip(16 - (MAX_NAME_LENGTH + 1));
-
-	// Sex
-	byte sex = (_sex == SEX_MALE) ? 'M' : 'F';
-	s.syncAsByte(sex);
-	if (s.isLoading())
-		_sex = (sex == 'M') ? SEX_MALE : SEX_FEMALE;
-
-	// Class and race
-	s.syncAsByte(_class);
+	s.syncBytes((byte *)_name, MAX_NAME_LENGTH + 2);
 	s.syncAsByte(_race);
+	s.syncAsByte(_class);
+	s.syncAsByte(_sex);
 
-	// Map number is saved as two separate bytes
-	byte map1 = _mapNum / 10, map2 = _mapNum % 10;
-	s.syncAsByte(map1);
-	s.syncAsByte(map2);
-	if (s.isLoading())
-		_mapNum = (map1 * 10) + map2;
+	s.syncAsSint16LE(_hits);
+	s.syncAsSint16LE(_strength);
+	s.syncAsSint16LE(_agility);
+	s.syncAsSint16LE(_stamina);
+	s.syncAsSint16LE(_charisma);
+	s.syncAsSint16LE(_wisdom);
+	s.syncAsSint16LE(_intelligence);
 
-	// Attributes
-	syncByte(s, _strength);
-	syncByte(s, _agility);
-	syncByte(s, _stamina);
-	syncByte(s, _charisma);
-	syncByte(s, _wisdom);
-	syncByte(s, _intelligence);
-	syncWord(s, _hp);
-	syncWord(s, _food);
-	s.syncAsByte(_foodSubCtr);
-	s.skip(1);
-	syncWord(s, _experience);
-	syncWord(s, _gold);
-	syncWord(s, _food);
+	s.syncAsSint16LE(_coins);
+	s.syncAsSint16LE(_experience);
+	s.syncAsSint16LE(_food);
 
-	syncByte(s, _mapX);
-	syncByte(s, _mapY);
+	s.syncAsSint16LE(_equippedWeapon);
+	s.syncAsSint16LE(_equippedSpell);
+	s.syncAsSint16LE(_equippedArmor);
+	s.syncAsSint16LE(_transportType);
 
-	s.syncAsByte(_hasRing);
+	s.syncAsSint16LE(_randomSeed);
+	s.syncAsSint16LE(_position.x);
+	s.syncAsSint16LE(_position.y);
+	s.syncAsByte(_soundOn);
 
-	if (s.isLoading()) {
-		_paralyzedFlag = 0;
-	}
-}
+	for (int i = 0; i < QUEST_COUNT; ++i)
+		s.syncAsSint16LE(_quests[i]);
 
-void Player::syncByte(Common::Serializer &s, byte &v) {
-	byte tmp = ((v / 10) << 4) | (v % 10);
-	s.syncAsByte(tmp);
-	if (s.isLoading())
-		v = ((tmp >> 4) * 10) + (tmp & 0xf);
-}
+	s.syncAsSint16LE(_redGems);
+	s.syncAsSint16LE(_greenGems);
+	s.syncAsSint16LE(_blueGem);
+	s.syncAsSint16LE(_whiteGem);
 
-void Player::syncWord(Common::Serializer &s, uint16 &v) {
-	byte tmp[2];
-	if (s.isLoading()) {
-		s.syncBytes(tmp, 2);
-		v = ((tmp[0] >> 4) * 1000) + ((tmp[0] & 0xf) * 100) +
-			((tmp[1] >> 4) * 10) + (tmp[1] & 0xf);
-	} else {
-		tmp[0] = ((v / 1000) << 4) | ((v % 1000) / 100);
-		tmp[1] = ((v / 10) << 4) | (v % 10);
-		s.syncBytes(tmp, 2);
-	}
+	for (int i = 0; i < ARMOR_COUNT; ++i)
+		s.syncAsSint16LE(_armor[i]);
+	for (int i = 0; i < WEAPON_COUNT; ++i)
+		s.syncAsSint16LE(_weapons[i]);
+	for (int i = 0; i < SPELL_COUNT; ++i)
+		s.syncAsSint16LE(_spells[i]);
+	for (int i = 0; i < TRANSPORT_COUNT; ++i)
+		s.syncAsSint16LE(_transports[i]);
+
+	s.syncAsSint16LE(_enemyVessels);
+	s.syncAsSint16LE(_signMarker);
+	s.syncAsSint16LE(_moveCount);
 }
 
 } // namespace Data

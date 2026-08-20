@@ -22,33 +22,72 @@
 #ifndef ULTIMA1_VIEWS_CREATE_CHARACTER_H
 #define ULTIMA1_VIEWS_CREATE_CHARACTER_H
 
-#include "ultima/shared/gfx/view.h"
-#include "ultima/shared/gfx/text_input.h"
+#include "ultima/ultima1/gfx/text_cursor.h"
+#include "ultima/ultima1/gfx/text_input.h"
+#include "ultima/ultima1/views/dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-constexpr int POINTS_REMAINING = 90;
-
 using namespace Shared::Messages;
 
-class CreateCharacter : public Shared::Gfx::View {
-private:
-	Shared::Gfx::TextInput _cursor = Shared::Gfx::TextInput("Cursor", this);
-	int _pointsRemaining = POINTS_REMAINING;
-	int _cursorIndex = 0;	// Which figure waiting input for
+constexpr int ATTRIBUTE_COUNT = 6;
+constexpr int STARTING_POINTS = 30;
 
+/**
+ * Character generation - attribute point-buy, then race/sex/class
+ * selection, name entry, and a final save confirmation.
+ */
+class CreateCharacter : public Dialog {
+private:
+	enum State {
+		ATTRIBUTES, RACE, SEX, CLASS, NAME, SAVE
+	};
+	State _state = ATTRIBUTES;
+	int _pointsRemaining = STARTING_POINTS;
+	int _selectedAttribute = 0;
+
+	Gfx::TextCursor _cursor;
+	Gfx::TextInput _nameInput;
+
+	void drawAttributes(Shared::Gfx::GfxSurface &s);
+	void drawHelp(Shared::Gfx::GfxSurface &s);
+	void drawConfirmedRace(Shared::Gfx::GfxSurface &s);
+	void drawConfirmedSex(Shared::Gfx::GfxSurface &s);
+	void drawConfirmedClass(Shared::Gfx::GfxSurface &s);
+
+	bool msgAttributesKey(const KeypressMessage &msg);
+	bool msgRaceKey(const KeypressMessage &msg);
+	bool msgSexKey(const KeypressMessage &msg);
+	bool msgClassKey(const KeypressMessage &msg);
+	bool msgSaveKey(const KeypressMessage &msg);
+
+	void selectRace(int race);
+	void selectSex(int sex);
+	void selectClass(int charClass);
+
+	int16 &attribute(int index);
+
+	/**
+	 * Resets to a freshly-generated character with default attributes
+	 */
 	void reset();
-	void done();
+
+	/**
+	 * Fills in the rest of a new character's starting stats/inventory
+	 * and saves the game
+	 */
+	void confirmAndSave();
 
 public:
-	CreateCharacter() : View("CreateCharacter") {}
+	CreateCharacter();
 	~CreateCharacter() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 
+	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 };
 

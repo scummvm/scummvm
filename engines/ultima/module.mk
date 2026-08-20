@@ -58,6 +58,7 @@ MODULE_OBJS += \
 	ultima1/data/tiles.o \
 	ultima1/gfx/pic_decoder.o \
 	ultima1/gfx/text_cursor.o \
+	ultima1/gfx/text_input.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \
 	ultima1/views/create_character.o \

@@ -41,8 +41,8 @@ void Map::load(int mapNum) {
 	f.read(_tiles, MAP_WIDTH * MAP_HEIGHT);
 
 	// Set up copies of the map position and player tile to use
-	_mapX = player._mapX;
-	_mapY = player._mapY;
+	_mapX = player._position.x;
+	_mapY = player._position.y;
 	_playerTileId = (player._class + Data::PLAYER_TILES_OFFSET) * 2;
 	clearTiles();
 }
@@ -54,29 +54,12 @@ void Map::clearTiles() {
 
 bool Map::canMoveToTile(int tileNum) {
 	auto &game = g_engine->_game;
-	const auto &player = g_engine->_player;
 	int tileId = (tileNum & 0x7f) / 2;
 
-	if (IS_PLANET(player._mapNum) || ((uint)_mapX < Data::MAP_WIDTH && (uint)_mapY < Data::MAP_HEIGHT)) {
+	if ((uint)_mapX < Data::MAP_WIDTH && (uint)_mapY < Data::MAP_HEIGHT) {
 		// Within the bounds of the map
 		if (tileId == kTileSwamp) {
 			game.subtractHp(5);
-		} else if (tileId == kTileForcefield) {
-			if (player._hasRing) {
-				game.message("INFO", "\x8D""FIELD CAUSES 1000 DAMAGE!");
-				game.message("CIRCLE");		// Flash damage circle
-
-				game.subtractHp(1000);
-			} else {
-				game.message("INFO", "RING PROTECTS FROM FIELD!");
-				g_engine->pauseMillis();
-			}
-		}
-
-		// Check paralyzed
-		if (player._paralyzedFlag) {
-			game.message("INFO", "--PARALIZED!");
-			return true;
 		}
 
 		switch (_playerTileId / 2) {
