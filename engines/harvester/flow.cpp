@@ -1151,8 +1151,18 @@ bool doesPlayerOverlapRegion(const Entity &playerEntity, const RegionRecord &reg
 	const Common::Rect regionBounds = getRegionBounds(region);
 	if (regionBounds.isEmpty())
 		return false;
-	if (!playerEntity.getScreenRect().intersects(regionBounds))
+
+	// Native do_entity_screen_bounds_overlap (0x4b700) compares each entity's
+	// origin plus width/height and rejects only when one edge is strictly before
+	// the other. Common::Rect uses exclusive right/bottom edges, so intersects()
+	// would incorrectly reject the edge contact that activates narrow exits.
+	const Common::Rect playerBounds = playerEntity.getScreenRect();
+	if (playerBounds.right < regionBounds.left ||
+			regionBounds.right < playerBounds.left ||
+			playerBounds.bottom < regionBounds.top ||
+			regionBounds.bottom < playerBounds.top) {
 		return false;
+	}
 
 	const float playerMaxZ = playerEntity.getZ() + playerEntity.getZExtent();
 	return playerMaxZ >= (float)region.minZ && (float)region.maxZ >= playerEntity.getZ();

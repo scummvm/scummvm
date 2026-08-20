@@ -3438,6 +3438,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		InteractionResult interaction;
 		if (!_engine.getScript()->resolveRegionInteraction(region, interaction, scene.state.roomName))
 			return Common::kNoError;
+		debugC(2, kDebugRoom,
+			"Harvester: region interaction room='%s' region='%s' action='%s' player=(%d,%d,z=%.2f) next_room='%s'",
+			scene.state.roomName.c_str(), region.regionName.c_str(), region.actionTag.c_str(),
+			playerState.centerX, playerState.bottomY, (double)playerState.z,
+			interaction.nextRoomName.c_str());
 
 		bool didTransition = false;
 		Common::Error interactionError =
@@ -3473,29 +3478,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		stopPlayerRegionInteraction();
 		return runRegionInteraction(*region);
 	};
-	auto tryActivateHoveredRegion = [&]() -> Common::Error {
-		if (!playerState.entity)
-			return Common::kNoError;
-
-		const RoomHoverState hoverState = resolveRoomHoverState(
-			_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
-			scene.sceneRegions, _mousePos, &flow._dialogue);
-		if (!hoverState.region || !hoverState.region->startEnabled)
-			return Common::kNoError;
-		if (!doesPlayerOverlapRegion(*playerState.entity, *hoverState.region))
-			return Common::kNoError;
-		if (!doesPlayerFacingMatchRegion(playerState.facing, *hoverState.region))
-			return Common::kNoError;
-
-		stopPlayerRegionInteraction();
-		return runRegionInteraction(*hoverState.region);
-	};
 	auto tryActivatePassiveRegion = [&]() -> Common::Error {
 		if (!playerState.entity)
 			return Common::kNoError;
 
 		for (const RegionRecord &region : scene.sceneRegions) {
-			if (!region.startEnabled || region.cursorEnabled)
+			if (!region.startEnabled)
 				continue;
 			if (!doesPlayerOverlapRegion(*playerState.entity, region))
 				continue;
@@ -4316,7 +4304,36 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			stopPlayerRegionInteraction();
 		}
 
-		bool playerAdvancedThisFrame = false;
+		// Native run_harvester_main_loop checks player/region overlap before
+		// update_actor_runtime_state. This is significant when a wide walk frame
+		// reaches a narrow exit: the actor update may otherwise satisfy the X
+		// target and replace that frame with a narrower idle frame first.
+		Common::Error pendingRegionError =
+			isPlayerCombatLocked()
+				? Common::kNoError
+				: tryActivatePendingRegion();
+		if (pendingRegionError.getCode() != Common::kNoError)
+			return pendingRegionError;
+		if (flow.hasPendingMainMenuReturn())
+			return Common::kNoError;
+		if (!pendingRoomChange.empty()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
+			break;
+		}
+		if (!isPlayerCombatLocked()) {
+			pendingRegionError = tryActivatePassiveRegion();
+			if (pendingRegionError.getCode() != Common::kNoError)
+				return pendingRegionError;
+			if (flow.hasPendingMainMenuReturn())
+				return Common::kNoError;
+			if (!pendingRoomChange.empty()) {
+				if (!stowCarriedRoomItemToInventory())
+					return Common::kReadingFailed;
+				break;
+			}
+		}
+
 		Common::Error combatError = Common::kNoError;
 		if (!playerControlPaused) {
 			combatError = resolvePlayerAttackContact();
@@ -4333,7 +4350,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				needsRedraw = true;
 			if (Player::updateHitAnimationState(
 					_engine, scene.state, scene.sceneObjects, scene.sceneAnimations, playerState)) {
-				playerAdvancedThisFrame = true;
 				needsRedraw = true;
 			}
 		}
@@ -4367,7 +4383,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		}
 		if (playerCanAct && !playerState.attackActive && !playerState.hitActive &&
 				Player::updateTurnAnimationState(playerState)) {
-			playerAdvancedThisFrame = true;
 			needsRedraw = true;
 		}
 
@@ -4376,13 +4391,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				!keyboardAttackRequested && !idleState.active && !idleState.exiting) {
 			if (Player::stepKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
-				playerAdvancedThisFrame = true;
 				notePlayerActivity();
 				needsRedraw = true;
 			} else if (Player::stepMoveTarget(
 					_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState)) {
-				playerAdvancedThisFrame = true;
 				notePlayerActivity();
 				needsRedraw = true;
 			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
@@ -4414,43 +4427,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return Common::kReadingFailed;
 			break;
 		}
-		Common::Error pendingRegionError =
-			isPlayerCombatLocked()
-				? Common::kNoError
-				: tryActivatePendingRegion();
-		if (pendingRegionError.getCode() != Common::kNoError)
-			return pendingRegionError;
-		if (flow.hasPendingMainMenuReturn())
-			return Common::kNoError;
-		if (!pendingRoomChange.empty()) {
-			if (!stowCarriedRoomItemToInventory())
-				return Common::kReadingFailed;
-			break;
-		}
-		if (playerAdvancedThisFrame && !isPlayerCombatLocked()) {
-			pendingRegionError = tryActivatePassiveRegion();
-			if (pendingRegionError.getCode() != Common::kNoError)
-				return pendingRegionError;
-			if (flow.hasPendingMainMenuReturn())
-				return Common::kNoError;
-			if (!pendingRoomChange.empty()) {
-				if (!stowCarriedRoomItemToInventory())
-					return Common::kReadingFailed;
-				break;
-			}
-
-			pendingRegionError = tryActivateHoveredRegion();
-			if (pendingRegionError.getCode() != Common::kNoError)
-				return pendingRegionError;
-			if (flow.hasPendingMainMenuReturn())
-				return Common::kNoError;
-			if (!pendingRoomChange.empty()) {
-				if (!stowCarriedRoomItemToInventory())
-					return Common::kReadingFailed;
-				break;
-			}
-		}
-
 		if (flow.tickRuntimeEntities())
 			needsRedraw = true;
 		syncAnimatedRoomActorPlacement();
