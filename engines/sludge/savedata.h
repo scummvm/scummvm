@@ -21,6 +21,14 @@
 #ifndef SLUDGE_SAVEDATA_H
 #define SLUDGE_SAVEDATA_H
 
+#include "common/types.h"
+
+namespace Common {
+class SeekableReadStream;
+class String;
+class WriteStream;
+}
+
 namespace Sludge {
 
 struct StackHandler;

@@ -21,6 +21,14 @@
 #ifndef SLUDGE_OBJTYPES_H
 #define SLUDGE_OBJTYPES_H
 
+#include "common/list.h"
+#include "common/str.h"
+
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Sludge {
 
 class SludgeEngine;

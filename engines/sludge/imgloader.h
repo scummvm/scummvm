@@ -24,6 +24,14 @@
 
 #include "common/file.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace Sludge {
 
 class ImgLoader {

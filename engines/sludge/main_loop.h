@@ -21,6 +21,10 @@
 #ifndef SLUDGE_MAIN_LOOP_H
 #define SLUDGE_MAIN_LOOP_H
 
+namespace Common { 
+class String; 
+}
+
 namespace Sludge {
 
 int main_loop(Common::String filename);

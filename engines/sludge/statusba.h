@@ -21,7 +21,16 @@
 #ifndef SLUDGE_STATUSBA_H
 #define SLUDGE_STATUSBA_H
 
+#include "sludge/sprites.h"
+
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Sludge {
+
+class SludgeEngine;
 
 struct StatusBar {
 	Common::String text;
