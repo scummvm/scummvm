@@ -21,9 +21,18 @@
 #ifndef SLUDGE_REGION_H
 #define SLUDGE_REGION_H
 
+#include "common/list.h"
+
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Sludge {
 
+struct FrozenStuffStruct;
 struct ObjectType;
+class SludgeEngine;
 
 struct ScreenRegion {
 	int x1, y1, x2, y2, sX, sY, di;

@@ -21,6 +21,12 @@
 #ifndef SLUDGE_MOREIO_H
 #define SLUDGE_MOREIO_H
 
+namespace Common {
+class SeekableReadStream;
+class String;
+class WriteStream;
+}
+
 namespace Sludge {
 
 // Read & Write

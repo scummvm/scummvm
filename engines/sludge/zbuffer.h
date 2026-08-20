@@ -21,6 +21,8 @@
 #ifndef SLUDGE_ZBUFFER_H
 #define SLUDGE_ZBUFFER_H
 
+#include "common/types.h"
+
 namespace Sludge {
 
 struct ZBufferData {

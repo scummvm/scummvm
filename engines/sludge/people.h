@@ -23,6 +23,11 @@
 
 #include "common/list.h"
 
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Sludge {
 
 struct FrozenStuffStruct;
