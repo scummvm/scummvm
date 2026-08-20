@@ -3212,8 +3212,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			entity->setAnimationRate(kNativeMonsterAttackAnimationRate);
 			entity->setAnimationEnabled(true);
 			entity->setCurrentFrame(range.firstFrame);
-			debugC(1, kDebugCombat,
-				"Harvester: combat monster attack start monster='%s' target='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d rate=%d attack_seed_tick=%u close_bypass=%d",
+			debugC(2, kDebugCombat,
+				"Harvester: combat monster attack start monster='%s' target='%s'",
+				monster.monsterName.c_str(), combatState.attackTargetName.c_str());
+			debugC(3, kDebugCombat,
+				"Harvester: combat monster attack timing monster='%s' target='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d rate=%d attack_seed_tick=%u close_bypass=%d",
 				monster.monsterName.c_str(), combatState.attackTargetName.c_str(), range.firstFrame, range.lastFrame,
 				combatState.attackContactFrame, range.resumeFacing, liveCenterDx, (double)zDelta,
 				engageDistance, kNativeMonsterAttackAnimationRate, combatState.attackCooldownSeedTick,
