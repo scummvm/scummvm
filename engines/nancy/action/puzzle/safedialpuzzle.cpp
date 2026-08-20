@@ -74,15 +74,18 @@ void SafeDialPuzzle::updateGraphics() {
 		g_nancy->_sound->playSound(_resetSound);
 	}
 
-	if (_animState == kResetAnim) {
-		// Framerate-dependent animation. We're restricting the engine to ~60fps so it shouldn't be too fast
+	if (_animState == kResetAnim && _nextAnim < g_nancy->getTotalPlayTime()) {
 		_drawSurface.blitFrom(_resetImage, _resetDialSrcs[_current % _resetDialSrcs.size()], _dialDest);
 		++_current;
 		if (_current >= _resetDialSrcs.size() * _resetTurns) {
 			_animState = kNone;
 			_current = 0;
 			drawDialFrame(_current);
+		} else {
+			// Nancy 12 and up step the animation on a timer, earlier games do so every frame
+			_nextAnim = g_nancy->getTotalPlayTime() + (g_nancy->getGameType() >= kGameTypeNancy12 ? 100 : 0); // hardcoded
 		}
+
 		_needsRedraw = true;
 	}
 }
@@ -97,6 +100,11 @@ void SafeDialPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_numInbetweens = (!_imageName2.empty() ? 1 : 0);
 
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// The second image doubles as the one holding the reset spinning frames
+		_resetImageName = _imageName2;
+	}
+
 	uint16 num = 10;
 	if (g_nancy->getGameType() >= kGameTypeNancy4) {
 		num = stream.readUint16LE();
@@ -104,7 +112,7 @@ void SafeDialPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 
 	readRect(stream, _dialDest);
-	readRectArray(stream, _dialSrcs, num * (1 + _numInbetweens), 20);
+	readRectArray(stream, _dialSrcs, num * (1 + _numInbetweens), g_nancy->getGameType() >= kGameTypeNancy12 ? 24 : 20);
 
 	readRect(stream, _resetDest);
 	readRect(stream, _resetSrc);
@@ -112,6 +120,11 @@ void SafeDialPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _arrowSrc);
 
 	readRectArray(stream, _resetDialSrcs, g_nancy->getGameType() >= kGameTypeNancy12 ? 12 : 10);
+
+	// Trailing empty rects are unused slots, and are skipped while animating
+	while (_resetDialSrcs.size() && _resetDialSrcs.back().isEmpty()) {
+		_resetDialSrcs.pop_back();
+	}
 
 	_resetTurns = stream.readUint16LE();
 
@@ -171,7 +184,7 @@ void SafeDialPuzzle::execute() {
 			if (_playerSequence == _correctSequence) {
 				_solved = true;
 				_state = kActionTrigger;
-				_nextAnim = g_nancy->getTotalPlayTime() + 1000 * _solveSoundDelay;
+				_nextAnim = g_nancy->getTotalPlayTime() + (g_nancy->getGameType() >= kGameTypeNancy12 ? 300 : 1000) * _solveSoundDelay;
 			}
 		}
 
@@ -273,7 +286,10 @@ void SafeDialPuzzle::handleInput(NancyInput &input) {
 		g_nancy->_cursor->setCursorType(buttonCursor);
 
 		if (!g_nancy->_sound->isSoundPlaying(_resetSound) && input.input & NancyInput::kLeftMouseButtonUp) {
-			_drawSurface.blitFrom(_image1, _resetSrc, _resetDest);
+			if (!_resetSrc.isEmpty()) {
+				_drawSurface.blitFrom(_image1, _resetSrc, _resetDest);
+			}
+
 			g_nancy->_sound->playSound(_selectSound);
 			_animState = kReset;
 			_nextAnim = g_nancy->getTotalPlayTime() + 500; // hardcoded
