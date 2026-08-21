@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
 #include "common/unicode-bidi.h"
 #include "gui/widgets/edittext.h"
 #include "gui/gui-manager.h"
@@ -141,6 +142,19 @@ Common::Rect EditTextWidget::getEditRect() const {
 	Common::Rect r(2 + _leftPadding, 1, 2 + _leftPadding + editWidth, 1 + editHeight);
 
 	return r;
+}
+
+Common::U32String EditTextWidget::getSpokenDescription() const {
+	// Prefer the tooltip, which names the field. Fall back on naming the kind
+	// of control only when there is no label to give, so that an unlabelled
+	// field is still audible rather than silent.
+	// I18N: Spoken by text-to-speech to name an unlabelled text entry field
+	Common::U32String description = _tooltip.empty() ? _("edit text") : _tooltip;
+
+	if (!_editString.empty())
+		description += Common::U32String(", ") + _editString;
+
+	return description;
 }
 
 void EditTextWidget::receivedFocusWidget() {
