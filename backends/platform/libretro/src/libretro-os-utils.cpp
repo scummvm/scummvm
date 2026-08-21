@@ -170,9 +170,7 @@ bool OSystem_libretro::checkPathSetting(const char *setting, Common::String cons
 	Common::String setPath;
 	if (ConfMan.hasKey(setting))
 		setPath = Common::Path::fromConfig(ConfMan.get(setting)).toString();
-	if (!strcmp(setting, "browser_lastpath") && setPath == "/" && !defaultPath.empty() && defaultPath != "/")
-		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
-	else if (setPath.empty() || !(isDirectory ? LibRetroFilesystemNode(setPath).isDirectory() : LibRetroFilesystemNode(setPath).exists()))
+	if (setPath.empty() || !(isDirectory ? LibRetroFilesystemNode(setPath).isDirectory() : LibRetroFilesystemNode(setPath).exists()))
 		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
 
 	if (! ConfMan.hasKey(setting))
