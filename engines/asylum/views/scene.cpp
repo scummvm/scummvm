@@ -316,6 +316,15 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 	case EVENT_ASYLUM_INIT:
 		return init();
 
+	case EVENT_ASYLUM_DEINIT:
+		// Keyboard movement is a ScummVM extension. Reset it when the scene
+		// loses input focus so another handler cannot swallow the key release.
+		if (_keyState) {
+			_keyState = 0;
+			activate();
+		}
+		break;
+
 	case EVENT_ASYLUM_ACTIVATE:
 		activate();
 		break;
@@ -769,6 +778,10 @@ bool Scene::updateScene() {
 void Scene::updateMouse() {
 	Actor *player = getActor();
 	Common::Point mouse = getCursor()->position();
+	bool rightButtonDown = (_vm->getEventManager()->getButtonState() & Common::EventManager::RBUTTON) != 0;
+
+	if (_rightButtonDown != rightButtonDown)
+		_rightButtonDown = rightButtonDown;
 
 	Common::Point pt;
 	player->adjustCoordinates(&pt);
@@ -1321,10 +1334,10 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	if (index == -1) {
 		if (_ws->chapter != kChapter2 || getSharedData()->getPlayerIndex() != 10) {
 			if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->getAnimation())
-				getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
+				getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass], 0, kCursorAnimationNone);
 		} else {
 			if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->getAnimation())
-				getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2]);
+				getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2], 0, kCursorAnimationNone);
 		}
 
 		return;
@@ -1352,21 +1365,29 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	if (actionType & kActionTypeFind) {
 		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->getAnimation() != kCursorAnimationMirror)
 			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
-	} else if (actionType & kActionTypeTalk) {
-		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceTalkNPC])
-			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC]);
 	} else if (actionType & kActionTypeGrab) {
 		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceHand])
 			getCursor()->set(_ws->cursorResources[kCursorResourceHand]);
+	} else if (actionType & kActionTypeTalk) {
+		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceTalkNPC])
+			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC]);
 	} else if (actionType & kActionType16) {
 		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->getAnimation() != kCursorAnimationMirror)
 			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2]);
-	} else if (_ws->chapter != kChapter2 && getSharedData()->getPlayerIndex() != 10) {
-		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceMagnifyingGlass] || getCursor()->getAnimation())
-			getCursor()->set(_ws->cursorResources[kCursorResourceMagnifyingGlass]);
 	} else {
-		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceTalkNPC2] || getCursor()->getAnimation())
-			getCursor()->set(_ws->cursorResources[kCursorResourceTalkNPC2]);
+		// SelectGameplayCursorResource (sntrm.exe 0x0040D580) reserves the
+		// alternate cursor for Chapter 2's special player only.
+		bool useAlternateCursor = _ws->chapter == kChapter2 && getSharedData()->getPlayerIndex() == 10;
+		CursorResourceType cursorType = useAlternateCursor ? kCursorResourceTalkNPC2 : kCursorResourceMagnifyingGlass;
+		ResourceId resourceId = _ws->cursorResources[cursorType];
+
+		if (getCursor()->getResourceId() != resourceId || getCursor()->getAnimation()) {
+			debugC(3, kDebugLevelScene,
+					"[Scene::updateCursor] Fallback cursor: hit type %d, index %d, action 0x%X, "
+					"chapter %d, player %d, resource 0x%08X",
+					type, index, actionType, _ws->chapter, getSharedData()->getPlayerIndex(), (uint32)resourceId);
+			getCursor()->set(resourceId, 0, kCursorAnimationNone);
+		}
 	}
 }
 
