@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-08-19 21:53+0000\n"
+"POT-Creation-Date: 2026-08-21 08:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -10265,31 +10265,31 @@ msgid ""
 "graphical/audio glitches."
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:54 engines/scumm/dialogs.cpp:1172
+#: engines/macs2/dialogs.cpp:55 engines/scumm/dialogs.cpp:1172
 msgid "Audio-visual improvements"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:55 engines/scumm/dialogs.cpp:1173
+#: engines/macs2/dialogs.cpp:56
 msgid ""
-"Makes adjustments not related to bugs for certain audio and graphics "
-"elements (e.g. version consistency changes)."
+"Optional generated dialogue speech (SPEECH/*.wav) and other audio/visual "
+"polish."
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:58 engines/scumm/dialogs.cpp:1176
+#: engines/macs2/dialogs.cpp:60 engines/scumm/dialogs.cpp:1176
 msgid "Restored content"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:59 engines/scumm/dialogs.cpp:1177
+#: engines/macs2/dialogs.cpp:61 engines/scumm/dialogs.cpp:1177
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:63 engines/scumm/dialogs.cpp:1180
+#: engines/macs2/dialogs.cpp:65 engines/scumm/dialogs.cpp:1180
 msgid "Modern UI/UX adjustments"
 msgstr ""
 
-#: engines/macs2/dialogs.cpp:64
+#: engines/macs2/dialogs.cpp:66
 msgid "Activates some modern comforts for a smoother user experience."
 msgstr ""
 
@@ -11932,6 +11932,12 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1056
 msgid "Expert"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1173
+msgid ""
+"Makes adjustments not related to bugs for certain audio and graphics "
+"elements (e.g. version consistency changes)."
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1181
