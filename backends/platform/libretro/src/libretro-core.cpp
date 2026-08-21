@@ -115,16 +115,19 @@ static bool updating_variables = false;
 #ifdef USE_OPENGL
 static struct retro_hw_render_callback hw_render;
 
-static bool context_reset_pending = false;
+/* Set on the frontend thread by context_reset(), consumed on the emulation
+ * thread by retro_consume_context_reset(). */
+static retro_atomic_int_t context_reset_pending = RETRO_ATOMIC_INT_INITIALIZER(0);
 
 void retro_set_context_reset_pending(void) {
-	context_reset_pending = true;
+	retro_atomic_store_release_int(&context_reset_pending, 1);
 }
 
 bool retro_consume_context_reset(void) {
-	bool pending = context_reset_pending;
-	context_reset_pending = false;
-	return pending;
+	if (!retro_atomic_load_acquire_int(&context_reset_pending))
+		return false;
+	retro_atomic_store_release_int(&context_reset_pending, 0);
+	return true;
 }
 
 static void context_reset(void) {
