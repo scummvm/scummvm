@@ -29,6 +29,7 @@
 
 #include "buried/buried.h"
 #include "buried/detection.h"
+#include "buried/dialogs.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
@@ -56,7 +57,8 @@ bool BuriedEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher)
 		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
+		|| (f == kSupportsSavingDuringRuntime)
+		|| (f == kSupportsSubtitleOptions);
 }
 
 bool BuriedEngine::isDemo() const {
@@ -112,6 +114,11 @@ public:
 		return AdvancedMetaEngine::getSavegameFile(saveGameIdx, "buried");
 	}
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	// Add widget for font size selection.
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override {
+		return new Buried::BuriedOptionsWidget(boss, name, target);
+	}
 };
 
 bool BuriedMetaEngine::hasFeature(MetaEngineFeature f) const {
