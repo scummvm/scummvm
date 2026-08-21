@@ -41,6 +41,8 @@
 	<string name="local_net_permission_denied">Local network access permission was denied: Web server won\'t be reachable</string>
 	<string name="http_service_description">ScummVM Web server</string>
 
+	<string name="tts_voice_name">Default voice</string>
+
 	<string name="ini_parsing_error">Configuration file could not be parsed</string>
 	<string name="shortcut_creator_title">Run a game</string>
 	<string name="shortcut_creator_search_game">Search a game</string>

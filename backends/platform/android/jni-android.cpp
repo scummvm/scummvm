@@ -102,6 +102,7 @@ jmethodID JNI::_MID_getScummVMConfigPath;
 jmethodID JNI::_MID_getScummVMLogPath;
 jmethodID JNI::_MID_setCurrentGame = 0;
 jmethodID JNI::_MID_notifyHTTPService = 0;
+jmethodID JNI::_MID_getTTSManager = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -596,6 +597,21 @@ void JNI::notifyHTTPService(int localPort, bool minimal) {
 	}
 }
 
+jobject JNI::getTTSManager() {
+	JNIEnv *env = JNI::getEnv();
+
+	jobject ttsManager = env->CallObjectMethod(_jobj, _MID_getTTSManager);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error getting TTS manager");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
+	return ttsManager;
+}
+
 // The following adds assets folder to search set.
 // However searching and retrieving from "assets" on Android this is slow
 // so we also make sure to add the base directory, with a higher priority
@@ -739,6 +755,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getScummVMLogPath, "()Ljava/lang/String;");
 	FIND_METHOD(, setCurrentGame, "(Ljava/lang/String;)V");
 	FIND_METHOD(, notifyHTTPService, "(IZ)V");
+	FIND_METHOD(, getTTSManager, "()Lorg/scummvm/scummvm/TextToSpeechManager;");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");

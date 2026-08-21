@@ -52,14 +52,14 @@ TestExitStatus Speechtests::testMale() {
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
 	Testsuite::clearScreen();
-	Common::String info = "Male voice test. You should expect a male voice to say \"Testing text to speech with male voice.\"";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing male TTS voice", pt);
 
-	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : testMale\n");
-		return kTestSkipped;
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
 	}
 
 	Common::Array<int> maleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::MALE);
@@ -68,13 +68,29 @@ TestExitStatus Speechtests::testMale() {
 		return kTestFailed;
 	}
 	ttsMan->setVoice(maleVoices[0]);
-	ttsMan->say("Testing text to speech with male voice.");
+
+	Common::TTSVoice currentVoice = ttsMan->getVoice();
+
+	Common::String gender = "a male";
+	Common::String msg = "Testing text to speech with male voice.";
+	if (currentVoice.getGender() != Common::TTSVoice::MALE) {
+		gender = "an unknown gender";
+		msg = "No male voice was available. Here is an unknown gender voice instead.";
+	}
+
+	Common::String info = Common::String::format("Male voice test. You should expect %s voice to say \"%s\"", gender.c_str(), msg.c_str());
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : testMale\n");
+		return kTestSkipped;
+	}
+
+	ttsMan->say(msg);
 	if (!ttsMan->isSpeaking()) {
 		Testsuite::logDetailedPrintf("Male TTS failed\n");
 		return kTestFailed;
 	}
 	waitForSpeechEnd(ttsMan);
-	Common::String prompt = "Did you hear male voice saying: \"Testing text to speech with male voice.\" ?";
+	Common::String prompt = Common::String::format("Did you hear %s voice saying: \"%s\" ?", gender.c_str(), msg.c_str());
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("Male TTS failed\n");
 		return kTestFailed;
@@ -89,29 +105,45 @@ TestExitStatus Speechtests::testFemale() {
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
 	Testsuite::clearScreen();
-	Common::String info = "Female voice test. You should expect a female voice to say \"Testing text to speech with female voice.\"";
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing female TTS voice", pt);
 
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
+
+	Common::Array<int> femaleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
+	if (femaleVoices.size() == 0) {
+		Testsuite::displayMessage("No female voice available");
+		return kTestFailed;
+	}
+	ttsMan->setVoice(femaleVoices[0]);
+
+	Common::TTSVoice currentVoice = ttsMan->getVoice();
+
+	Common::String gender = "a female";
+	Common::String msg = "Testing text to speech with female voice.";
+	if (currentVoice.getGender() != Common::TTSVoice::FEMALE) {
+		gender = "an unknown gender";
+		msg = "No female voice was available. Here is an unknown gender voice instead.";
+	}
+
+	Common::String info = Common::String::format("Female voice test. You should expect %s voice to say \"%s\"", gender.c_str(), msg.c_str());
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testFemale\n");
 		return kTestSkipped;
 	}
 
-	Common::Array<int> femaleVoices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
-	if (femaleVoices.size() == 0) {
-		Testsuite::logDetailedPrintf("Female TTS failed\n");
-		return kTestFailed;
-	}
-	ttsMan->setVoice(femaleVoices[0]);
-	ttsMan->say("Testing text to speech with female voice.");
+	ttsMan->say(msg);
 	if (!ttsMan->isSpeaking()) {
 		Testsuite::logDetailedPrintf("Female TTS failed\n");
 		return kTestFailed;
 	}
 	waitForSpeechEnd(ttsMan);
-	Common::String prompt = "Did you hear female voice saying: \"Testing text to speech with female voice.\" ?";
+	Common::String prompt = Common::String::format("Did you hear %s voice saying: \"%s\" ?", gender.c_str(), msg.c_str());
 	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
 		Testsuite::logDetailedPrintf("Female TTS failed\n");
 		return kTestFailed;
@@ -131,6 +163,12 @@ TestExitStatus Speechtests::testStop() {
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS stop", pt);
+
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testStop\n");
@@ -168,6 +206,12 @@ TestExitStatus Speechtests::testStopAndSpeak() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS stop and speak", pt);
 
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testStop\n");
 		return kTestSkipped;
@@ -204,6 +248,12 @@ TestExitStatus Speechtests::testPauseResume() {
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS pause", pt);
+
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testPauseResume\n");
@@ -250,6 +300,12 @@ TestExitStatus Speechtests::testRate() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS rate", pt);
 
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testRate\n");
 		return kTestSkipped;
@@ -283,6 +339,12 @@ TestExitStatus Speechtests::testVolume() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS volume", pt);
 
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testVolume\n");
 		return kTestSkipped;
@@ -315,6 +377,12 @@ TestExitStatus Speechtests::testPitch() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS pitch", pt);
 
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testPitch\n");
 		return kTestSkipped;
@@ -346,6 +414,12 @@ TestExitStatus Speechtests::testStateStacking() {
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS state stacking", pt);
+
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testStateStacking\n");
@@ -401,6 +475,12 @@ TestExitStatus Speechtests::testQueueing() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS queue", pt);
 
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testQueueing\n");
 		return kTestSkipped;
@@ -429,6 +509,12 @@ TestExitStatus Speechtests::testInterrupting() {
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS interrupt", pt);
+
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testInterrupting\n");
@@ -460,6 +546,12 @@ TestExitStatus Speechtests::testDroping() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS drop", pt);
 
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testDroping\n");
 		return kTestSkipped;
@@ -488,6 +580,12 @@ TestExitStatus Speechtests::testInterruptNoRepeat() {
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS Interrupt No Repeat", pt);
+
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testInterruptNoRepeat\n");
@@ -526,6 +624,12 @@ TestExitStatus Speechtests::testQueueNoRepeat() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS Queue No Repeat", pt);
 
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
+
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testQueueNoRepeat\n");
 		return kTestSkipped;
@@ -560,6 +664,12 @@ TestExitStatus Speechtests::testQueueEmptyString() {
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Testing TTS Queue No Repeat", pt);
+
+	waitForSpeechEnd(ttsMan);
+	if (!ttsMan->isReady()) {
+		Testsuite::logDetailedPrintf("TTS engine is not ready\n");
+		return kTestFailed;
+	}
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : testQueueNoRepeat\n");
