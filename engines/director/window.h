@@ -138,7 +138,14 @@ public:
 	// so getCurrentMovie()-based context (go, globals, events) points at it.
 	void setCurrentMovie(Movie *movie) { _currentMovie = movie; }
 	Common::String getCurrentPath() const { return _currentPath; }
-	DirectorSound *getSoundManager() const { return _soundManager; }
+	// Sound channels are shared by the Stage and every MIAW (Director in a Nutshell),
+	// so route every window through the Stage's manager.
+	DirectorSound *getSoundManager() const {
+		Window *stage = g_director->getStage();
+		if (stage && stage != this)
+			return stage->getSoundManager();
+		return _soundManager;
+	}
 
 	void setVisible(bool visible, bool silent = false);
 	bool setNextMovie(Common::String &movieFilenameRaw);
