@@ -132,6 +132,8 @@ public:
 
 	const Common::U32String getSelectedString() const	{ return stripGUIformatting(_list[_selectedItem]); }
 
+	Common::U32String getSpokenDescription() const override;
+
 	/// Get visual position (index in filtered list) from real data index
 	int getVisualPos(int dataIndex) const;
 
