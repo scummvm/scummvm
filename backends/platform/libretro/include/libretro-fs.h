@@ -50,7 +50,7 @@ protected:
 	/**
 	 * Plain constructor, for internal use only (hence protected).
 	 */
-	LibRetroFilesystemNode() : _isDirectory(false), _isValid(false) {}
+	LibRetroFilesystemNode() : _isDirectory(false), _isValid(false), _isReadable(false), _isWritable(false) {}
 
 public:
 	/**
