@@ -232,7 +232,7 @@
 		AD_ENTRY1s("intro.stk", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSTABLE,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kFeaturesTrueColor | kFeatures640x480,
