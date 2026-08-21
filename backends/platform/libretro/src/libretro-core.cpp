@@ -1304,7 +1304,8 @@ void retro_unload_game(void) {
 void retro_reset(void) {
 	close_emu_thread();
 	init_command_params();
-	retro_load_game(game_buf_ptr);
+	if (!retro_load_game(game_buf_ptr) && retro_log_cb)
+		retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to reinitialize emulation thread on reset.\n");
 	LIBRETRO_G_SYSTEM->resetQuit();
 }
 
