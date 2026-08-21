@@ -28,6 +28,9 @@
  *
  */
 
+#ifndef SWORD25_TIMEDRENDEROBJECT_H
+#define SWORD25_TIMEDRENDEROBJECT_H
+
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
 
@@ -53,3 +56,5 @@ public:
 };
 
 } // End of namespace Sword25
+
+#endif // SWORD25_TIMEDRENDEROBJECT_H

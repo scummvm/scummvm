@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef ULTIMA_MID_H
+#define ULTIMA_MID_H
+
 #include "ultima/nuvie/sound/adplug/adplug_player.h"
 
 namespace Ultima {
@@ -113,3 +116,5 @@ public:
 
 } // End of namespace Nuvie
 } // End of namespace Ultima
+
+#endif // ULTIMA_MID_H
