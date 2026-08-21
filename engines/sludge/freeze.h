@@ -21,10 +21,7 @@
 #ifndef SLUDGE_FREEZE_H
 #define SLUDGE_FREEZE_H
 
-#include "common/list.h"
-#include "graphics/managed_surface.h"
-
-#include "sludge/graphics.h"
+#include "graphics/surface.h"
 
 namespace Sludge {
 

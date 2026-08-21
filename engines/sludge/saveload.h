@@ -23,7 +23,6 @@
 
 namespace Common {
 class OutSaveFile;
-class String;
 }
 
 namespace Sludge {

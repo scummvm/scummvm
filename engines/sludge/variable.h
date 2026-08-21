@@ -21,11 +21,8 @@
 #ifndef SLUDGE_VARIABLE_H
 #define SLUDGE_VARIABLE_H
 
-#include "common/types.h"
-
 namespace Common {
 class SeekableReadStream;
-class String;
 class WriteStream;
 }
 

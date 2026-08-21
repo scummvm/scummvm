@@ -21,8 +21,6 @@
 #ifndef SLUDGE_TIMING_H
 #define SLUDGE_TIMING_H
 
-#include "common/types.h"
-
 namespace Sludge {
 
 class Timer {

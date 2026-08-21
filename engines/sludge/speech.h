@@ -23,17 +23,9 @@
 
 #include "sludge/sprites.h"
 
-namespace Common {
-class SeekableReadStream;
-class WriteStream;
-}
-
 namespace Sludge {
 
-struct FrozenStuffStruct;
 struct ObjectType;
-struct OnScreenPerson;
-class SludgeEngine;
 
 struct SpeechLine {
 	Common::String textLine;
