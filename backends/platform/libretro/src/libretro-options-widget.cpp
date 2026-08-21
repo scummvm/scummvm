@@ -203,7 +203,7 @@ bool LibretroOptionsWidget::generatePlaylist(Common::String playlistPath) {
 
 		title = iter->_key;
 		iter->_value.tryGetVal("description", title);
-		hookFilePath = hookPath + + "/" + iter->_key.c_str() + "." + CORE_EXTENSIONS;
+		hookFilePath = hookPath + "/" + iter->_key.c_str() + "." + CORE_EXTENSIONS;
 
 		if (ConfMan.getInt("libretro_playlist_version", _domain) != kPlaylistFormat6lines) {
 			Common::JSONObject item;
