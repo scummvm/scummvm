@@ -836,6 +836,10 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		markAsDirty();
 
 	if (_selectedItem != oldSelectedItem) {
+		if (_selectedItem >= 0 && _selectedItem < (int)_list.size())
+			read(stripGUIformatting(_list[_selectedItem]));
+		_lastRead = -1;
+
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 		// also draw scrollbar
 		_scrollBar->markAsDirty();
