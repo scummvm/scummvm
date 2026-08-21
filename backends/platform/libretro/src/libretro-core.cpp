@@ -63,6 +63,10 @@
 
 static struct retro_game_info game_buf;
 static struct retro_game_info *game_buf_ptr;
+/* retro_game_info::path is a frontend-owned pointer; retro_reset() reuses
+ * game_buf_ptr to relaunch, so it must not depend on that pointer staying
+ * valid after the initial retro_load_game() call. Own a stable copy instead. */
+static char game_buf_path[RETRO_PATH_MAX];
 
 retro_log_printf_t retro_log_cb = NULL;
 retro_input_state_t retro_input_cb = NULL;
@@ -1127,6 +1131,13 @@ bool retro_load_game(const struct retro_game_info *game) {
 	if (game) {
 		game_buf_ptr = &game_buf;
 		memcpy(game_buf_ptr, game, sizeof(retro_game_info));
+		if (game->path) {
+			strncpy(game_buf_path, game->path, sizeof(game_buf_path) - 1);
+			game_buf_path[sizeof(game_buf_path) - 1] = '\0';
+		} else {
+			game_buf_path[0] = '\0';
+		}
+		game_buf.path = game_buf_path;
 		// Retrieve the game path.
 		Common::FSNode detect_target = Common::FSNode(game->path);
 		Common::FSNode parent_dir = detect_target.getParent();
