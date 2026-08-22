@@ -54,15 +54,9 @@ public:
 	void markSeen(uint16 block, int8 dir);
 	bool isSeen(uint16 block) const;
 
-	void tagTransition(int fromLevel, uint16 fromBlock, int toLevel); // TODO: REMOVE
-	void collectCellInfo(int level, uint16 block, int teleporterWallId); // TODO: REMOVE
-
 	void mainLoopProcess(EoBCoreEngine *vm, int inputFlag); // TODO: REMOVE
 	bool isVisible() const { return _visible; } // TODO: REMOVE
 	void draw(EoBCoreEngine *vm);
-
-	void saveStrings(Common::OutSaveFile *out) const;
-	void loadStrings(Common::SeekableReadStreamEndianWrapper *in);
 
 private:
 	// Geometry shared by drawing and click hit-testing.
@@ -86,10 +80,6 @@ private:
 	uint32 noteKey(uint lvl, uint16 block) const { return (lvl << 16) | block; }
 
 	void moveSelection(int dx, int dy);
-	void handleClick(EoBCoreEngine *vm);
-	void editNote(EoBCoreEngine *vm);
-
-	Common::String listItems(EoBCoreEngine *vm, uint16 block) const; // TODO: remove
 
 	void drawIcon(Graphics::Surface *surf, int sx, int sy, int cell, uint8 icon, uint32 color) const;
 
@@ -108,13 +98,9 @@ private:
 		kAmTeleport = 3
 	};
 
-	bool _editing;                    // TODO: remove
-	Common::String _editBuffer;            // TODO: remove
+
 	uint16 _selectedBlock; // TODO: remove
-	Common::HashMap<uint32, uint8> _automapIcons; // TODO: remove
-	Common::HashMap<uint32, Common::String> _automapAutoInfo; // TODO: remove
 	Common::HashMap<uint32, uint8> _automapDoorBits; // TODO: remove
-	Common::HashMap<uint32, Common::String> _automapNotes; // TODO: remove
 
 	static const TranslateableStrings _stringTable[];
 	const char * const *_legendStrings;

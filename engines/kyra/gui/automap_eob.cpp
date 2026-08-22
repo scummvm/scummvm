@@ -235,7 +235,7 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 };
 
 Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, int gameID, int lang, bool featureEnabled) :
-	_system(system), _blockData(*blockData), _wllWallFlags(wllFlags), _enabled(featureEnabled), _visible(false), _selectedBlock(0xFFFF), _editing(false), _automapBg(nullptr),
+	_system(system), _blockData(*blockData), _wllWallFlags(wllFlags), _enabled(featureEnabled), _visible(false), _selectedBlock(0xFFFF), _automapBg(nullptr),
 	_automapFrame(nullptr), _levelNames(nullptr), _legendStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)) {
 	_automapBg = new Graphics::Surface();
 	_automapFrame = new Graphics::Surface();
@@ -244,6 +244,7 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	uint gameIndex = gameID - GI_EOB1;
 
 	switch (lang) {
+	// TODO: Add remaining languages here.
 	case Common::EN_ANY:
 	default:
 		break;
@@ -308,6 +309,7 @@ bool Automap_EoB::isSeen(uint16 block) const {
 	return (_blockData[block].direction & 1) != 0;
 }
 
+/*
 void Automap_EoB::tagTransition(int fromLevel, uint16 fromBlock, int toLevel) {
 	// On a script-driven level change, tag the cell we left with a stairs/teleport
 	// glyph and a "to level N" note (deeper level = down).
@@ -326,8 +328,8 @@ void Automap_EoB::tagTransition(int fromLevel, uint16 fromBlock, int toLevel) {
 		icon = kAmTeleport;
 		info = Common::String::format("Teleport to level %d", toLevel);
 	}
-	_automapIcons[k] = icon;
-	_automapAutoInfo[k] = info;
+	//_automapIcons[k] = icon;
+	//_automapAutoInfo[k] = info;
 }
 
 void Automap_EoB::collectCellInfo(int level, uint16 block, int teleporterWallId) {
@@ -345,7 +347,7 @@ void Automap_EoB::collectCellInfo(int level, uint16 block, int teleporterWallId)
 		}
 	}
 }
-
+*/
 void Automap_EoB::mainLoopProcess(EoBCoreEngine *vm, int inputFlag) {
 	if (!_enabled)
 		return;
@@ -359,15 +361,15 @@ void Automap_EoB::mainLoopProcess(EoBCoreEngine *vm, int inputFlag) {
 			_system->hideOverlay();
 			vm->_sceneUpdateRequired = true;
 		}
-	} else if (_visible && inputFlag == 199) {
+	} /* else if (_visible && inputFlag == 199) {
 		handleClick(vm);
 	} else if (_visible && inputFlag && inputFlag == vm->_keyMap[Common::KEYCODE_n]) {
 		_selectedBlock = vm->_currentBlock;
 		editNote(vm);
-	} else if (_visible && inputFlag &&
+	} */else if (_visible && inputFlag &&
 		(inputFlag == (vm->_keyMap[Common::KEYCODE_UP] | 0x100) || inputFlag == (vm->_keyMap[Common::KEYCODE_DOWN] | 0x100) ||
 			inputFlag == (vm->_keyMap[Common::KEYCODE_LEFT] | 0x100) || inputFlag == (vm->_keyMap[Common::KEYCODE_RIGHT] | 0x100))) {
-		// Shift+arrows move the map selection cursor (place notes without a mouse).
+
 		if (inputFlag == (vm->_keyMap[Common::KEYCODE_UP] | 0x100))
 			moveSelection(0, -1);
 		else if (inputFlag == (vm->_keyMap[Common::KEYCODE_DOWN] | 0x100))
@@ -572,7 +574,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			// should still draw as a door.
 			const LevelBlockProperty *bp = &_blockData[block];
 			const uint32 bkey = noteKey(vm->_currentLevel, block);
-			uint8 dbits = _automapDoorBits.contains(bkey) ? _automapDoorBits[bkey] : 0;
+			int8 dbits = _automapDoorBits.contains(bkey) ? _automapDoorBits[bkey] : 0;
 			if ((_wllWallFlags[bp->walls[0]] & 8) || (_wllWallFlags[bp->walls[2]] & 8))
 				dbits |= 1;
 			if ((_wllWallFlags[bp->walls[1]] & 8) || (_wllWallFlags[bp->walls[3]] & 8))
@@ -640,18 +642,18 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 				surf.fillRect(Common::Rect(px, py, px + ps, py + ps), pcol);
 			}
 
-			if (_automapIcons.contains(bkey)) {
+			/* if (_automapIcons.contains(bkey)) {
 				const uint8 ic = _automapIcons[bkey];
 				uint32 col = (ic == kAmTeleport) ? cTele : cStair;
 				if (!visited)
 					col = cWallSeen;
 				drawIcon(&surf, sx, sy, cell, ic, col);
-			}
+			}*/
 
-			if (_automapNotes.contains(bkey)) {
+			/* if (_automapNotes.contains(bkey)) {
 				const int ds = MAX(2, cell / 3);
 				surf.fillRect(Common::Rect(sx + cell - ds, sy, sx + cell, sy + ds), cNote);
-			}
+			}*/
 		}
 	}
 
@@ -710,7 +712,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 				   l1X + (gx - l1X) / 4, l1Y + (gy - l1Y) / 4,
 				   l2X + (gx - l2X) / 4, l2Y + (gy - l2Y) / 4, cParty);
 
-	// Plaque text: area name over coords, in two size-fitted bands so they never overlap.
+
 	if (bigFont) {
 		const uint16 cb = (_selectedBlock != 0xFFFF) ? _selectedBlock : vm->_currentBlock;
 		const Common::String lvl = _levelNames[vm->_currentLevel - 1];
@@ -732,7 +734,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 	// Footer: the selected cell's note / auto-info (the KEYS panel documents N).
 	if (bigFont) {
 		Common::String foot;
-		if (_editing) {
+		/* if (_editing) {
 			const char *caret = ((_system->getMillis() / 400) & 1) ? "_" : " ";
 			foot = Common::String("Note: ") + _editBuffer + caret;
 		} else if (_selectedBlock != 0xFFFF) {
@@ -750,6 +752,9 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			if (!body.empty())
 				foot = Common::String("Selected: ") + body;
 		}
+
+
+		*/
 		if (!foot.empty()) {
 			const int footH = (L.mapY + L.mapH) - L.footY;
 			const int fpad = MAX(2, footH / 6);
@@ -763,48 +768,6 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 
 	_system->copyRectToOverlay(surf.getPixels(), surf.pitch, 0, 0, ow, oh);
 	_system->updateScreen();
-}
-
-void Automap_EoB::saveStrings(Common::OutSaveFile *out) const {
-	auto writeStringMap = [&out](const Common::HashMap<uint32, Common::String> &map) {
-		out->writeUint32BE(map.size());
-		for (Common::HashMap<uint32, Common::String>::const_iterator it = map.begin(); it != map.end(); ++it) {
-			out->writeUint32BE(it->_key);
-			out->writeString(it->_value);
-			out->writeByte(0);
-		}
-	};
-
-	writeStringMap(_automapNotes);
-	out->writeUint32BE(_automapIcons.size());
-	for (Common::HashMap<uint32, uint8>::const_iterator it = _automapIcons.begin(); it != _automapIcons.end(); ++it) {
-		out->writeUint32BE(it->_key);
-		out->writeByte(it->_value);
-	}
-	writeStringMap(_automapAutoInfo);
-}
-
-void Automap_EoB::loadStrings(Common::SeekableReadStreamEndianWrapper *in) {
-	_automapNotes.clear();
-	_automapIcons.clear();
-	_automapAutoInfo.clear();
-	_automapDoorBits.clear();
-
-	auto readStringMap = [&in](Common::HashMap<uint32, Common::String> &map) {
-		uint32 n = in->readUint32BE();
-		for (uint32 i = 0; i < n; ++i) {
-			uint32 k = in->readUint32BE();
-			map[k] = in->readString();
-		}
-	};
-
-	readStringMap(_automapNotes);
-	uint32 numIcons = in->readUint32BE();
-	for (uint32 i = 0; i < numIcons; ++i) {
-		uint32 k = in->readUint32BE();
-		_automapIcons[k] = in->readByte();
-	}
-	readStringMap(_automapAutoInfo);
 }
 
 Automap_EoB::AutomapLayout Automap_EoB::createLayout() const {
@@ -853,102 +816,12 @@ void Automap_EoB::moveSelection(int dx, int dy) {
 	_selectedBlock = (by << 5) | bx;
 }
 
-void Automap_EoB::handleClick(EoBCoreEngine *vm) {
-	const Common::Point p = vm->_eventMan->getMousePos();
-	const AutomapLayout l = createLayout();
-	if (p.x < l.offX || p.y < l.offY)
-		return;
-	const int bx = (p.x - l.offX) / l.cell;
-	const int by = (p.y - l.offY) / l.cell;
-	if (bx < 0 || bx >= 32 || by < 0 || by >= 32)
-		return;
-	const uint16 block = (by << 5) | bx;
-	if (isVisited(block) || isSeen(block))
-		_selectedBlock = block;
-}
-
-void Automap_EoB::editNote(EoBCoreEngine *vm) {
-	uint16 block = _selectedBlock;
-	if (!(isVisited(block) || isSeen(block)))
-		return;
-	_selectedBlock = block;
-
-	Common::Keymap *km = vm->_eventMan->getKeymapper()->getKeymap(vm->kKeymapName);
-	km->setEnabled(false);
-
-	const uint32 key = noteKey(vm->_currentLevel, block);
-	_editBuffer = _automapNotes.contains(key) ? _automapNotes[key] : Common::String();
-	_editing = true;
-
-	const uint kMaxLen = 40;
-	bool done = false, cancel = false;
-	while (!done && !vm->shouldQuit()) {
-		draw(vm);
-		vm->updateInput();
-		for (Common::List<KyraEngine_v1::Event>::const_iterator e = vm->_eventList.begin(); e != vm->_eventList.end(); ++e) {
-			if (e->event.type != Common::EVENT_KEYDOWN)
-				continue;
-			const Common::KeyCode kc = e->event.kbd.keycode;
-			const uint16 asc = e->event.kbd.ascii;
-			if (kc == Common::KEYCODE_RETURN || kc == Common::KEYCODE_KP_ENTER)
-				done = true;
-			else if (kc == Common::KEYCODE_ESCAPE)
-				done = cancel = true;
-			else if (kc == Common::KEYCODE_BACKSPACE) {
-				if (!_editBuffer.empty())
-					_editBuffer.deleteLastChar();
-			} else if (asc >= 32 && asc < 127 && _editBuffer.size() < kMaxLen) {
-				_editBuffer += (char)asc;
-			}
-		}
-		vm->_eventList.clear();
-		_system->delayMillis(12);
-	}
-
-	if (!cancel) {
-		_editBuffer.trim();
-		if (_editBuffer.empty())
-			_automapNotes.erase(key);
-		else
-			_automapNotes[key] = _editBuffer;
-	}
-
-	_editing = false;
-	_editBuffer.clear();
-	km->setEnabled(true);
-}
-
-Common::String Automap_EoB::listItems(EoBCoreEngine *vm, uint16 block) const {
-	if (block >= 1024)
-		return Common::String();
-	Common::String out;
-	const uint16 head = _blockData[block].drawObjects;
-	uint16 o = head;
-	int guard = 0;
-	while (o && guard++ < 64) {
-		const EoBItem *it = &vm->_items[o];
-		const char *nm = vm->_itemNames[it->nameUnid];
-		if (nm && *nm) {
-			if (!out.empty())
-				out += ", ";
-			out += nm;
-		}
-		o = it->next;
-		if (o == head)
-			break;
-	}
-	return out;
-}
-
 uint16 Automap_EoB::calcNewBlockPosition(uint16 block, int8 dir) const {
 	static const int16 blockPosTable[] = {-32, 1, 32, -1};
 	return (block + blockPosTable[dir & 3]) & 0x3FF;
 }
 
 static void automapFillTri(Graphics::Surface &s, int ax, int ay, int bx, int by, int cx, int cy, uint32 color);
-
-// Comma-separated names of the items currently on `block`. "" if none.
-
 
 void Automap_EoB::drawIcon(Graphics::Surface *surf, int sx, int sy, int cell, uint8 icon, uint32 color) const {
 	const int cx = sx + cell / 2;
