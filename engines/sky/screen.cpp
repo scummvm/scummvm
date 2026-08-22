@@ -68,6 +68,13 @@ void Screen::setIcon(int idx, int x, int y) {
 }
 
 void Screen::drawIbassIcon() {
+	for (int i = 0; i < NUM_PROXIMITY_ICONS; i ++) {
+		if (_proximityIcon[i]._visible || _proximityIcon[i]._alpha > 0.0f) {
+			Graphics::Surface *currentFrame = _proximityIcon[i]._anim->_frames[_proximityIcon[i]._curFrame];
+			if ((_proximityIcon[i]._x + currentFrame->w) <= _screen32.w)
+				Graphics::alphaBlit((byte *)_screen32.getBasePtr(_proximityIcon[i]._x, _proximityIcon[i]._y), (const byte *)currentFrame->getPixels(), _screen32.pitch, currentFrame->pitch, currentFrame->w, currentFrame->h, _screen32.format, currentFrame->format, 0, (uint8)(_proximityIcon[i]._alpha * 255));
+		}
+	}
 	for (int i = 0; i < NUM_UI_ICONS; i++) {
 		if (_uiIcon[i]._visible) {
 
@@ -242,6 +249,10 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 		initIbassIcon(UI_ICON_LEFT, "exit_left.tex");
 		initIbassIcon(UI_ICON_RIGHT, "exit_right.tex");
 	}
+
+	Animation *proximityAnimation = _skyDisk->loadAnim("search.tex", _screen32.format);
+	for (int i = 0; i < NUM_PROXIMITY_ICONS; i++)
+		_proximityIcon[i]._anim = proximityAnimation;
 }
 
 Screen::~Screen() {
