@@ -231,7 +231,7 @@ void MainMenu::showDoc(const Common::String &filename, int startLine, bool isReg
 		if (isRegi)
 			statusStr = Common::String::format("Doc lister: PgUp, PgDn, Home & End to move. Esc exits to main menu. | %d %% through", pct);
 		else
-			statusStr = Common::String::format("Doc lister: PgUp, PgDn, Home & End to move. Esc exits. C=→contents |%d %% through", pct);
+			statusStr = Common::String::format("Doc lister: PgUp, PgDn, Home & End to move. Esc exits. C=contents |%d %% through", pct);
 
 		menu.fillRect(Common::Rect(0, 332, 640, 350), kColorLightgray);
 		_vm->_graphics->drawText(menu, statusStr, _vm->_font, 8, 4, 336, kColorBlack);
