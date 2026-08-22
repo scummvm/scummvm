@@ -755,11 +755,6 @@ void EoBCoreEngine::moveParty(uint16 block) {
 
 	_automap->markVisited(block);
 
-	// Note the level before running scripts: if one moves the party elsewhere, the
-	// automap tags this cell as an exit.
-	const int preLevel = _currentLevel;
-	const uint16 trigBlock = block;
-
 	runLevelScript(old, 2);
 
 	if (++_moveCounter > 3) {
@@ -768,11 +763,6 @@ void EoBCoreEngine::moveParty(uint16 block) {
 	}
 
 	runLevelScript(block, 1);
-
-	if (_currentLevel != preLevel)
-		_automap->tagTransition(preLevel, trigBlock, _currentLevel);
-	else
-		_automap->collectCellInfo(preLevel, trigBlock, _teleporterWallId);
 
 	if (_flags.gameID == GI_EOB2 && _levelBlockProperties[block].walls[0] == 26)
 		memset(_levelBlockProperties[block].walls, 0, 4);

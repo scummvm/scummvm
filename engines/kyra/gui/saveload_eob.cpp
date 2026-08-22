@@ -294,9 +294,6 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		}
 	}
 
-	if (header.version >= 25)
-		_automap->loadStrings(&in);
-
 	loadLevel(_currentLevel, _currentSub);
 	if (_flags.platform == Common::kPlatformFMTowns && _gameToLoad != -1)
 		_screen->setScreenPalette(_screen->getPalette(0));
