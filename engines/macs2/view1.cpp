@@ -851,16 +851,16 @@ void View1::drawPath(Graphics::ManagedSurface &s) {
 }
 
 void View1::layoutActionBarButtons() {
+	_mainMenuButtonLocations.resize(9);
 	uint16 maxW = 0, maxH = 0;
-	for (int i = 0; i < 9 && i < (int)g_engine->_imageResources.size(); i++) {
+	for (int i = 0; i < (int)_mainMenuButtonLocations.size() && i < (int)g_engine->_imageResources.size(); i++) {
 		maxW = MAX(maxW, g_engine->_imageResources[i]._width);
 		maxH = MAX(maxH, g_engine->_imageResources[i]._height);
 	}
 	const uint16 btnW = maxW + 6;
 	const uint16 btnH = maxH + 6;
 
-	_mainMenuButtonLocations.resize(9);
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < (int)_mainMenuButtonLocations.size(); i++) {
 		const int col = i % 3;
 		const int row = i / 3;
 		const uint16 cellX = _mainMenuRect.left + 4 + col * (btnW + 4);
@@ -959,7 +959,7 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 	drawBorderSide(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), s);
 	drawNinePatchBorder(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), kBorderRaised, false, false, s);
 
-	for (int i = 0; i < 9 && i < (int)g_engine->_imageResources.size(); i++) {
+	for (int i = 0; i < (int)_mainMenuButtonLocations.size() && i < (int)g_engine->_imageResources.size(); i++) {
 		const Common::Rect &cell = _mainMenuButtonLocations[i];
 		const bool pressed = (_clickedButtonIndex == (uint16)(i + 1));
 		const BorderStyle &border = pressed ? kBorderPressed : kBorderRaised;
