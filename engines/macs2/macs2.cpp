@@ -250,11 +250,14 @@ void Macs2Engine::loadResourceFileV2() {
 	memset(_mapSceneOffsets, 0, sizeof(_mapSceneOffsets));
 	_imageResources.clear();
 	_imageResources.resize(33);
-	for (int i = 0; i < 33; i++)
+	for (int i = 0; i < ARRAYSIZE(_cursorHotspots); i++) {
 		_cursorHotspots[i] = Common::Point(0, 0);
+	}
 	_hudButtons.clear();
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < ARRAYSIZE(_hudMegapicLoaded); i++) {
 		_hudMegapicLoaded[i] = false;
+	}
+	for (int i = 0; i < ARRAYSIZE(_hudMegapics); i++) {
 		_hudMegapics[i].free();
 	}
 	_panelTopY = 0;
@@ -274,8 +277,9 @@ void Macs2Engine::loadResourceFileV2() {
 	_fileStream->read(_palVanilla, 0x300);
 	memcpy(_pal, _palVanilla, 0x300);
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < ARRAYSIZE(_hudTextRecolor); i++) {
 		_hudTextRecolor[i] = _fileStream->readUint16LE();
+	}
 
 	_panelTopY = _fileStream->readUint16LE();
 	_panelHeight = _fileStream->readUint16LE();
@@ -285,7 +289,7 @@ void Macs2Engine::loadResourceFileV2() {
 		_panelHeight = 146;
 	}
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < ARRAYSIZE(_hudMegapicLoaded); i++) {
 		const uint16 flag = _fileStream->readUint16LE();
 		if (flag == 0)
 			continue;
@@ -451,7 +455,7 @@ void Macs2Engine::loadResourceFileV2() {
 	if (!loadSizedFont(_panelGlyphs, numPanelGlyphs, maxPanelGlyphHeight))
 		warning("readGlobalAssetsV2: failed loading SysFont");
 
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < ARRAYSIZE(_mapSceneOffsets); i++)
 		_mapSceneOffsets[i] = _fileStream->readUint32LE();
 
 	_saveListScroll = 1;
@@ -463,7 +467,7 @@ void Macs2Engine::loadResourceFileV2() {
 			installed++;
 	}
 	uint megas = 0;
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < ARRAYSIZE(_hudMegapicLoaded); i++) {
 		if (_hudMegapicLoaded[i])
 			megas++;
 	}

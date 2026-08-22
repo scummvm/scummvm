@@ -491,7 +491,7 @@ void Music::updateDebugState() {
 	_debug.masterVolume = _masterVolume;
 	_debug.numOplChannels = _numOplChannels;
 
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < ARRAYSIZE(_debug.voices); i++) {
 		_debug.voices[i].note = _voiceNote[i];
 		_debug.voices[i].channel = _voiceMidiChannel[i];
 		_debug.voices[i].active = (_voiceAge[i] == 0);

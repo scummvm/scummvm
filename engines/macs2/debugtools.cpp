@@ -26,6 +26,7 @@
 #include "common/str-enc.h"
 #include "common/system.h"
 #include "common/ustr.h"
+#include "common/util.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
@@ -2050,7 +2051,7 @@ static void showSoundWindow() {
 	// Channel selector
 	static int selectedVoice = 0;
 	if (ImGui::BeginCombo("Voice", Common::String::format("Voice %d", selectedVoice).c_str())) {
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < ARRAYSIZE(ds.voices); i++) {
 			bool selected = (selectedVoice == i);
 			const char *label = ds.voices[i].active
 									? Common::String::format("Voice %d [CH%d N%02X]", i, ds.voices[i].channel, ds.voices[i].note).c_str()
@@ -2080,7 +2081,7 @@ static void showSoundWindow() {
 	// All voices overview
 	ImGui::Separator();
 	ImGui::TextUnformatted("All Voices:");
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < ARRAYSIZE(ds.regHistory); i++) {
 		float voiceData[Music::kDebugRingSize];
 		for (int j = 0; j < Music::kDebugRingSize; j++) {
 			voiceData[j] = ds.regHistory[i][(ringPos + j) % Music::kDebugRingSize];
