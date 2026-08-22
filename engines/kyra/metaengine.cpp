@@ -193,6 +193,18 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_EOB_AUTOMAP,
+		{
+			_s("Automap"),
+			_s("Enable the in-game automap overlay (toggle in-game with Tab)"),
+			"automap",
+			true,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
