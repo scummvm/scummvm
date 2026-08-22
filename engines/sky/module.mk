@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	disk.o \
 	grid.o \
 	hufftext.o \
+	ibasstext.o \
 	intro.o \
 	inventory.o \
 	logic.o \

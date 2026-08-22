@@ -1266,6 +1266,7 @@ void Mouse::pointerEngineIBASS(uint16 xPos, uint16 yPos) {
 			}
 			// help screen
 			if (xPos > HOTSPOT_helpx && yPos < HOTSPOT_helpy) {
+				_skyControl->doHelpPanel();
 				_skyScreen->clearAllProximityIcons(false);
 				_skyScreen->clearAllIbassIcons(false);
 				_mouseB = 0;

@@ -73,8 +73,7 @@ void Screen::drawIbassIcon() {
 
 			// get the current animation frame
 			Graphics::Surface *currentFrame = _uiIcon[i]._anim->_frames[_uiIcon[i]._curFrame];
-			if ((_uiIcon[i]._x + currentFrame->w) <= _screen32.w)
-				Graphics::alphaBlit((byte *)_screen32.getBasePtr(_uiIcon[i]._x, _uiIcon[i]._y), (const byte *)currentFrame->getPixels(), _screen32.pitch, currentFrame->pitch, currentFrame->w, currentFrame->h, _screen32.format, currentFrame->format, 0, 255);
+			Graphics::alphaBlit((byte *)_screen32.getBasePtr(_uiIcon[i]._x, _uiIcon[i]._y), (const byte *)currentFrame->getPixels(), _screen32.pitch, currentFrame->pitch, currentFrame->w, currentFrame->h, _screen32.format, currentFrame->format, 0, 255);
 		}
 
 	}
@@ -290,6 +289,8 @@ void Screen::renderFinalFrame() {
 		update32BitScreen(_currentScreen, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 		_paletteDirty = false;
 		setIcon(UI_ICON_INV, 0, GAME_SCREEN_HEIGHT - 35);
+		setIcon(UI_ICON_OPTIONS, 4, 4);
+		setIcon(UI_ICON_HELP, FULL_SCREEN_WIDTH - 30, 2);
 		drawIbassIcon();
 		drawIbassInventory();
 		if (_screen32.getPixels()) {
