@@ -360,6 +360,8 @@ Chamber
 .. list-table::
    :widths: 35 65
 
+   * - Ion Andrei Cristian
+     -
    * - Retro-Junk;
      -
    * - Eugene Sandulenko
@@ -395,6 +397,15 @@ Cine
    * - Kari Salminen
      -
    * - Eugene Sandulenko
+     -
+
+Colony
+^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gustavo Grieco
      -
 
 Composer
@@ -564,6 +575,15 @@ DreamWeb
    * - Willem Jan Palenstijn
      -
 
+EEM
+^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gustavo Grieco
+     -
+
 Efh
 ^^^
 
@@ -571,6 +591,15 @@ Efh
    :widths: 35 65
 
    * - Arnaud Boutonné
+     -
+
+Fool
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Scott Percival
      -
 
 Freescape
@@ -916,6 +945,8 @@ MacVenture
 .. list-table::
    :widths: 35 65
 
+   * - Ion Andrei Cristian
+     - GSoC student
    * - Borja Lorente
      - GSoC student
 
@@ -3193,4 +3224,6 @@ Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily from.
 Fabrizio Lagorio from Trecision S.p.A., for finding and providing the source code of many of their games.
 
 Ron Davis for releasing the sources and generously giving away the three chapters of God of Thunder.
+
+David A. Smith for releasing the source code of The Colony, which our engine is based on.
 
