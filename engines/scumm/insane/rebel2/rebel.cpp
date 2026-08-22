@@ -161,6 +161,9 @@ bool InsaneRebel2::isSkippableVideoState() const {
 
 InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_vm = scumm;
+	// Rebel Assault II skips ScummEngine::resetScumm(), which normally clears this state.
+	for (int i = 0; i < kScummActionCount; i++)
+		_vm->_actionMap[i] = false;
 
 	_smush_roadrashRip = nullptr;
 	_smush_roadrsh2Rip = nullptr;

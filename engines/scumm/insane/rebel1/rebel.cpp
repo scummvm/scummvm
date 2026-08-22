@@ -462,6 +462,9 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 
 InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	Insane::_vm = scumm;
+	// Rebel Assault skips ScummEngine::resetScumm(), which normally clears this state.
+	for (int i = 0; i < kScummActionCount; i++)
+		_vm->_actionMap[i] = false;
 
 	_screenWidth = 384;
 	_screenHeight = 242;
