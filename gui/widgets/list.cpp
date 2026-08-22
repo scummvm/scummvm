@@ -341,9 +341,9 @@ void ListWidget::scrollTo(int item) {
 
 	if (_currentPos != item) {
 		_currentPos = item;
+		checkBounds();
 		_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
 		_fluidScroller->setPosition(_scrollPos, false);
-		checkBounds();
 		scrollBarRecalc();
 		markAsDirty();
 	}
