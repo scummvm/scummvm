@@ -25,11 +25,13 @@
 #include "made/music.h"
 #include "made/database.h"
 #include "made/pmvplayer.h"
+#include "made/script.h"
 
 #include "audio/sine.h"
 
 #include "backends/audiocd/audiocd.h"
 
+#include "common/file.h"
 #include "common/config-manager.h"
 
 #include "graphics/wincursor.h"
@@ -46,6 +48,39 @@ ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false)
 ScriptFunctions::~ScriptFunctions() {
 	for (uint i = 0; i < _externalFuncs.size(); ++i)
 		delete _externalFuncs[i];
+}
+
+// An inner function for playing a sound resource, either from a resource file
+//  or loaded externally
+void ScriptFunctions::playSound(SoundResource *soundRes, bool externalFile) {
+	_vm->_autoStopSound = false;
+	stopSound();
+
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
+							soundRes->getAudioStream(_vm->_soundRate, false), -1, _gameAudioVolume);
+	_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
+	_vm->_soundEnergyIndex = 0;
+	_soundStarted = true;
+	_soundWasPlaying = true;
+	_soundResource = soundRes;
+	_soundExternalFile = externalFile;
+
+	// The sound length in milliseconds for purpose of checking if the
+	// sound is still playing. This is 100 ms shorter than the actual
+	// length (see sfSoundPlaying).
+	uint32 soundLength = (_soundResource->getSoundSize() * 1000 / _vm->_soundRate);
+	_soundCheckLength = soundLength > 100 ? soundLength - 100 : 0;
+}
+
+void ScriptFunctions::stopSound() {
+	_vm->_mixer->stopHandle(_audioStreamHandle);
+	if (_soundStarted) {
+		if (_soundExternalFile)
+			delete _soundResource;
+		else
+			_vm->_res->freeResource(_soundResource);
+		_soundStarted = false;
+	}
 }
 
 typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctions> ExternalScriptFunc;
@@ -105,7 +140,7 @@ void ScriptFunctions::setupExternalsTable() {
 	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_LGOP2 || _vm->getGameID() == GID_RODNEY) {
 		External(sfAddScreenMask);
 		External(sfSetSpriteMask);
-	} else if (_vm->getGameID() == GID_RTZ) {
+	} else if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
 		External(sfSetClipArea);
 		External(sfSetSpriteClip);
 	}
@@ -114,7 +149,8 @@ void ScriptFunctions::setupExternalsTable() {
 	External(sfStopSound);
 	External(sfPlayVoice);
 
-	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RODNEY) {
+	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RTZ ||
+		_vm->getGameID() == GID_RODNEY || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
 		External(sfPlayCd);
 		External(sfStopCd);
 		External(sfGetCdStatus);
@@ -122,7 +158,7 @@ void ScriptFunctions::setupExternalsTable() {
 		External(sfPlayCdSegment);
 	}
 
-	if (_vm->getGameID() == GID_RTZ) {
+	if (_vm->getGameID() == GID_RTZ || _vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
 		External(sfPrintf);
 		External(sfClearMono);
 		External(sfGetSoundEnergy);
@@ -168,6 +204,11 @@ void ScriptFunctions::setupExternalsTable() {
 		External(sfIsSlowSystem);
 	}
 
+	if (_vm->getGameID() == GID_RSBESTNDE || _vm->getGameID() == GID_RSBUSYNDE) {
+		External(sfMovieCall);
+		External(sfCursorXY);
+		External(sfSoundFile);
+	}
 }
 #undef External
 
@@ -248,21 +289,10 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 		soundNum = argv[1];
 		_vm->_autoStopSound = (argv[0] == 1);
 	}
-	_soundWasPlaying = true;
-	if (soundNum > 0) {
-		SoundResource *soundRes = _vm->_res->getSound(soundNum);
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
-			soundRes->getAudioStream(_vm->_soundRate, false), -1, _gameAudioVolume);
-		_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
-		_vm->_soundEnergyIndex = 0;
-		_soundStarted = true;
-		_soundResource = soundRes;
-		// The sound length in milliseconds for purpose of checking if the
-		// sound is still playing. This is 100 ms shorter than the actual
-		// length (see sfSoundPlaying).
-		uint32 soundLength = (_soundResource->getSoundSize() * 1000 / _vm->_soundRate);
-		_soundCheckLength = soundLength > 100 ? soundLength - 100 : 0;
-	}
+
+	if (soundNum > 0)
+		playSound(_vm->_res->getSound(soundNum), false);
+
 	return 0;
 }
 
@@ -714,16 +744,6 @@ int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
 
 }
 
-void ScriptFunctions::stopSound() {
-	_vm->_mixer->stopHandle(_audioStreamHandle);
-	if (_soundStarted) {
-		_vm->_res->freeResource(_soundResource);
-		_soundStarted = false;
-	}
-
-}
-
-
 int16 ScriptFunctions::sfStopSound(int16 argc, int16 *argv) {
 	stopSound();
 	_vm->_autoStopSound = false;
@@ -1140,6 +1160,75 @@ int16 ScriptFunctions::sfIsSlowSystem(int16 argc, int16 *argv) {
 	// An example is FINTRO00.PMV (with sound) and FINTRO01.PMV (without sound)
 	// One could maybe think about returning 1 here on actually slower systems.
 	return _vm->_introMusicDigital ? 0 : 1;
+}
+
+int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
+	// Plays a movie, but also calls a script function on every frame.
+	// The script function returns a uint16 which indicates
+	//  whether to keep playing the movie, or abort early.
+	const char *filename = _vm->_dat->getObjectString(argv[1]);
+
+	if (_vm->_pmvPlayer->load(filename)) {
+		// set up a script interpreter for calling the sub
+		ScriptInterpreter *si = new ScriptInterpreter(_vm);
+		int16 playing = true;
+
+		int32 pmvStartTime = _vm->getTotalPlayTime() + _vm->_pmvPlayer->frameDelay;
+
+		while (!_vm->shouldQuit() && !_vm->_pmvPlayer->_fd->eos() && _vm->_pmvPlayer->frameNumber < _vm->_pmvPlayer->frameCount && playing) {
+			// Decode and stage the next audio / video frame
+			if (!_vm->_pmvPlayer->decode_frame())
+				break;
+
+			// delay until time has passed, then flip screen
+			int32 delayTime = (_vm->_pmvPlayer->frameNumber - 1) * _vm->_pmvPlayer->frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
+			if (delayTime < 0)
+				warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / _vm->_pmvPlayer->frameDelay) + 1);
+			else
+				g_system->delayMillis(delayTime);
+
+			// call subroutine each frame
+			playing = si->runScript(argv[0]);
+			debug(3, "Call script return code: %04X (%d)", playing, playing);
+		}
+
+		_vm->_pmvPlayer->close();
+		return true;
+	}
+
+	return false;
+}
+
+int16 ScriptFunctions::sfCursorXY(int16 argc, int16 *argv) {
+	g_system->warpMouse(argv[1], argv[0]);
+	return 0;
+}
+
+int16 ScriptFunctions::sfSoundFile(int16 argc, int16 *argv) {
+	// Loads an external sound file (i.e. not from PRJ) and plays it
+	const char *soundName = _vm->_dat->getObjectString(argv[0]);
+
+	debug(1, "Playing external sound '%s'", soundName);
+
+	Common::File *_fd = new Common::File();
+	if (!_fd->open(Common::Path(soundName, '\\'))) {
+		delete _fd;
+		warning("Failed to open sound file '%s", soundName);
+		return 0;
+	}
+	byte *srcBuf = new byte[_fd->size()];
+	_fd->read(srcBuf, _fd->size());
+
+	// wrap this in a SoundResource
+	SoundResource *soundRes = new SoundResource();
+	soundRes->load(srcBuf, _fd->size());
+
+	// safe to free source now
+	delete[] srcBuf;
+
+	playSound(soundRes, true);
+
+	return 0;
 }
 
 } // End of namespace Made

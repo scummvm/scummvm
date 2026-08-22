@@ -45,7 +45,7 @@ public:
 		_stackPos = kScriptStackSize;
 	}
 	~ScriptStack() {}
-	inline int16 top() { return _stack[_stackPos]; }
+	inline int16 top() const { return _stack[_stackPos]; }
 	inline int16 pop() {
 		if (_stackPos == kScriptStackSize)
 			error("ScriptStack::pop() Stack underflow");
@@ -57,7 +57,7 @@ public:
 		_stack[--_stackPos] = value;
 	}
 	inline void setTop(int16 value) { _stack[_stackPos] = value; }
-	inline int16 peek(int16 index) { return _stack[index]; }
+	inline int16 peek(int16 index) const { return _stack[index]; }
 	inline void poke(int16 index, int16 value) { _stack[index] = value; }
 	inline void alloc(int16 count) { _stackPos -= count; }
 	inline void free(int16 count) { _stackPos += count; }
@@ -73,9 +73,12 @@ class ScriptInterpreter {
 public:
 	ScriptInterpreter(MadeEngine *vm);
 	~ScriptInterpreter();
-	void runScript(int16 scriptObjectIndex);
+	int16 runScript(int16 scriptObjectIndex);
+#ifdef DUMP_SCRIPTS
 	void dumpScript(int16 objectIndex, int *opcodeStats, int *externStats);
+	void dumpObject(int16 objectIndex);
 	void dumpAllScripts();
+#endif
 protected:
 	MadeEngine *_vm;
 
@@ -83,6 +86,7 @@ protected:
 	int16 _localStackPos;
 	int16 _runningScriptObjectIndex;
 	byte *_codeBase, *_codeIp;
+	bool _running;
 
 	ScriptFunctions *_functions;
 

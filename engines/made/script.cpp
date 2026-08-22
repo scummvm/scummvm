@@ -125,6 +125,7 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	_runningScriptObjectIndex = 0;
 	_codeBase = nullptr;
 	_codeIp = nullptr;
+	_running = false;
 
 #undef COMMAND
 }
@@ -133,7 +134,7 @@ ScriptInterpreter::~ScriptInterpreter() {
 	delete _functions;
 }
 
-void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
+int16 ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 
 	uint32 opcodeSleepCounter = 0;
 
@@ -143,8 +144,9 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
+	_running = true;
 
-	while (!_vm->shouldQuit()) {
+	while (_running && !_vm->shouldQuit()) {
 		byte opcode = readByte();
 
 		if (opcode >= 1 && opcode <= _commandsMax) {
@@ -160,8 +162,11 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 			_vm->_screen->updateScreenAndWait(5);
 			opcodeSleepCounter = 0;
 		}
-
 	}
+
+	int16 retval = _stack.pop();
+	_stack.pop(); // pop junk value and discard
+	return retval;
 }
 
 byte ScriptInterpreter::readByte() {
@@ -169,6 +174,8 @@ byte ScriptInterpreter::readByte() {
 }
 
 int16 ScriptInterpreter::readInt16() {
+	// Scripts are processed byte-by-byte,
+	//  so embedded values (constants, etc) are universally LE
 	int16 temp = (int16)READ_LE_UINT16(_codeIp);
 	_codeIp += 2;
 	debug(4, "readInt16() value = %04X", temp);
@@ -378,9 +385,7 @@ void ScriptInterpreter::cmd_return() {
 
 	// Check if returning from main function
 	if (_localStackPos == kScriptStackSize) {
-		_vm->quitGame();
-		// Make sure the "quit" event is handled immediately
-		_vm->handleEvents();
+		_running = false;
 		return;
 	}
 
@@ -670,6 +675,9 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 					valueType = 2;
 					value = *code++;
 					break;
+				default:
+					error("Unknown signature '%c'", sig);
+					return;
 				}
 
 				Common::String tempStr;
@@ -688,6 +696,9 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 						tempStr = Common::String::format("invalid: %d", value);
 					}
 					break;
+				default:
+					error("Unknown valuetype '%d'", valueType);
+					return;
 				}
 				codeLine += tempStr;
 			}
@@ -696,11 +707,55 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 			error("ScriptInterpreter::dumpScript(%d) Unknown opcode %02X", objectIndex, opcode);
 		}
 	}
-	debug(1, "-------------------------------------------");
+}
+
+void ScriptInterpreter::dumpObject(int16 objectIndex) {
+
+	debug(1, "Dumping object %04X", objectIndex);
+
+	Object *obj = _vm->_dat->getObject(objectIndex);
+	debug(1, "Flags = %d[%04x], Size = %d[%04x]", obj->getFlags(), obj->getFlags(), obj->getSize(), obj->getSize());
+	debug(1, "Class = %d[%04x]", obj->getClass(), obj->getClass());
+	if (obj->getClass() == 0x7FFF) {
+		// byte array
+		bool looksLikeAscii = true;
+		Common::String bArray = "byteArray = [";
+		for (int i = 0; i < obj->getVectorSize(); i++) {
+			int16 c = obj->getVectorItem(i);
+			if (i == obj->getVectorSize() - 1) {
+				if (c != 0)
+					looksLikeAscii = false;
+			} else {
+				if (c != 10 && (c < 32 || c > 126))
+					looksLikeAscii = false;
+			}
+			bArray += Common::String::format("%d,", c);
+		}
+		bArray += "]";
+		debug(1, "%s", bArray.c_str());
+
+		if (looksLikeAscii)
+			debug(1, "ASCII = '%s'", obj->getData());
+	} else if (obj->getClass() == 0x7FFE) {
+		// word array
+		Common::String bArray = "wordArray = [";
+		for (int i = 0; i < obj->getVectorSize(); i++)
+			bArray += Common::String::format("%d,", obj->getVectorItem(i));
+		bArray += " ]";
+		debug(1, "%s", bArray.c_str());
+	} else {
+		debug(1, "Raw Data for object %04X (count1 = %d, count2 = %d)", objectIndex, obj->getCount1(), obj->getCount2());
+		Common::String bArray = "";
+		// NOTE: for 3.1 objects, use the commented line here instead
+		//for (byte *i = obj->getData(); i < obj->getData() + obj->getSize() * 4; i++)
+		for (byte *i = obj->getData(); i < obj->getData() + (obj->getCount1() + obj->getCount2()) * 2; i++)
+			bArray += Common::String::format("%02X", *i);
+		debug(1, "%s", bArray.c_str());
+	}
 }
 
 void ScriptInterpreter::dumpAllScripts() {
-	int *opcodeStats = new int[_commandsMax - 1];
+	int *opcodeStats = new int[_commandsMax];
 	int *externStats = new int[_functions->getCount()];
 
 	for (int i = 0; i < _commandsMax; i++)
@@ -710,14 +765,21 @@ void ScriptInterpreter::dumpAllScripts() {
 
 	for (uint objectIndex = 1; objectIndex <= _vm->_dat->getObjectCount(); objectIndex++) {
 		Object *obj = _vm->_dat->getObject(objectIndex);
+
+		debug(1, "-------------------------------------------");
+
 		// Check if it's a byte array which might contain code
-		if (obj->getClass() != 0x7FFF)
+		if (obj->getClass() != 0x7FFF) {
+			dumpObject(objectIndex);
 			continue;
+		}
 		// Code objects aren't excplicitly marked as such, we need to check if
 		// the last byte is a cmd_return opcode.
 		byte *retByte = obj->getData() + obj->getSize() - 1;
 		if (*retByte == 0x1F) {
 			dumpScript(objectIndex, opcodeStats, externStats);
+		} else {
+			dumpObject(objectIndex);
 		}
 	}
 
