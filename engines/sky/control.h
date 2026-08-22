@@ -188,6 +188,7 @@ public:
 	uint16 quickXRestore(uint16 slot);
 	bool loadSaveAllowed();
 	bool isControlPanelOpen();
+	void scaleCoordinates(Common::Point &mouse);
 
 	SkyEngine *_vm;
 
