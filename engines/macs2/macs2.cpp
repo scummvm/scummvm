@@ -416,8 +416,9 @@ void Macs2Engine::loadResourceFileV2() {
 	_inventSlotW = _fileStream->readUint16LE();
 	_inventSlotH = _fileStream->readUint16LE();
 	_inventLayoutMode = _fileStream->readUint16LE();
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < ARRAYSIZE(_hudTextLayout); i++) {
 		_hudTextLayout[i] = _fileStream->readUint16LE();
+	}
 
 	if (_inventCols == 0)
 		_inventCols = 4;

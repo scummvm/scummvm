@@ -1334,7 +1334,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 		return true;
 	}
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < (int)_inventoryButtonLocations.size(); i++) {
 		const Common::Rect &current = _inventoryButtonLocations[i];
 		if (!current.contains(msg._pos)) {
 			continue;
@@ -1482,7 +1482,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 		return true;
 	}
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < (int)_inventoryButtonLocations.size(); i++) {
 		const Common::Rect &current = _inventoryButtonLocations[i];
 		if (!current.contains(msg._pos)) {
 			continue;
@@ -2270,7 +2270,7 @@ void View1::draw() {
 	}
 
 	if (_uiPanelState == kUiPanelInventory && g_engine->enhancementEnabled(kEnhUIUX)) {
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < (int)_inventoryButtonLocations.size(); i++) {
 			if (_inventoryButtonLocations[i].contains(mousePos)) {
 				static const char *const buttonNames[] = {
 					"Schauen", "Benutzen", "Hoch", "Runter", "Ablegen", "Schliessen"};
@@ -2291,7 +2291,7 @@ void View1::draw() {
 	}
 
 	if (_uiPanelState == kUiPanelSaveLoad && g_engine->enhancementEnabled(kEnhUIUX)) {
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < ARRAYSIZE(_saveLoadButtonRects); i++) {
 			if (_saveLoadButtonRects[i].contains(mousePos)) {
 				static const char *const buttonNames[] = {
 					"Laden", "Speichern", "Musik an/aus",

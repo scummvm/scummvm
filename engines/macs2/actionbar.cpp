@@ -120,7 +120,7 @@ void ActionBar::syncActiveVerbFromCursorMode() {
 		return;
 	}
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < ARRAYSIZE(kVerbs); i++) {
 		if (kVerbs[i].mode == mode) {
 			_activeVerbIndex = i;
 			return;
@@ -202,7 +202,7 @@ void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
 }
 
 void ActionBar::drawVerbBar(Graphics::ManagedSurface &s) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < ARRAYSIZE(kVerbs); i++) {
 		const Common::Rect r = getVerbRect(i);
 		const bool isActive = (i == _activeVerbIndex);
 		const bool isHovered = (i == _hoveredVerb);
@@ -298,7 +298,7 @@ bool ActionBar::handleClick(const Common::Point &pos, bool scriptsRunning) {
 }
 
 bool ActionBar::handleClickScumm(const Common::Point &pos, bool scriptsRunning) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < ARRAYSIZE(kVerbs); i++) {
 		if (getVerbRect(i).contains(pos)) {
 			_activeVerbIndex = i;
 			g_engine->setCursorMode(kVerbs[i].mode);
@@ -410,7 +410,7 @@ void ActionBar::handleMouseMoveScumm(const Common::Point &pos) {
 	_hoveredScrollButton = -1;
 	clearSentenceObject();
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < ARRAYSIZE(kVerbs); i++) {
 		if (getVerbRect(i).contains(pos)) {
 			_hoveredVerb = i;
 			break;
