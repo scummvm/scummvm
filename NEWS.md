@@ -62,6 +62,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added original game cheat codes for bypassing the maze.
    - Added translation of message log entries
 
+ MADE:
+   - Added support for the ReelMagic MPEG release of Return to Zork.
+
  MM:
    - Fix multiple M&M1 classic combat crashes.
    - Implement M&M1 classic PC speaker sound.
