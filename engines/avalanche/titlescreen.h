@@ -19,38 +19,27 @@
  *
  */
 
-#ifndef AVALANCHE_SOUND_H
-#define AVALANCHE_SOUND_H
+#ifndef AVALANCHE_TITLESCREEN_H
+#define AVALANCHE_TITLESCREEN_H
 
-#include "audio/mixer.h"
-
-namespace Audio {
-class PCSpeaker;
-}
+#include "common/array.h"
+#include "common/str.h"
 
 namespace Avalanche {
 
-class SoundHandler {
+class AvalancheEngine;
+
+class TitleScreen {
 public:
-	bool _soundFl;
-
-	SoundHandler(AvalancheEngine *vm);
-	~SoundHandler();
-
-	void toggleSound();
-	void playNote(int freq, int length);
-	void click();
-	void blip();
-	void syncVolume();
-	void stopSound();
-	void playMod(const Common::Path &filename);
-	void stopMod();
+	TitleScreen(AvalancheEngine *vm);
+	~TitleScreen();
+	void run();
 
 private:
 	AvalancheEngine *_vm;
-	Audio::PCSpeaker *_speaker;
+	void loadCredits(Common::Array<Common::String> &lines);
 };
 
 } // End of namespace Avalanche
 
-#endif // AVALANCHE_SOUND_H
+#endif // AVALANCHE_TITLESCREEN_H

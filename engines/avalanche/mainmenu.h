@@ -46,8 +46,16 @@ private:
 	void loadRegiInfo();
 	void option(byte which, Common::String what);
 	void drawMenu();
+	struct DocSection {
+		Common::String name;
+		int line;
+	};
+
 	void centre(int16 y, Common::String text);
 	void wait();
+	void showPreview();
+	void showDoc(const Common::String &filename, int startLine, bool isRegi = false);
+	int showDocTOC(const Common::Array<Common::String> &lines, const Common::Array<DocSection> &sections);
 };
 
 } // End of namespace Avalanche

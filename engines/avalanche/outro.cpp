@@ -38,6 +38,7 @@ namespace Avalanche {
     }
 
     void Outro::run() {
+        _vm->_graphics->menuRestoreScreen();
         CursorMan.showMouse(false);
         _vm->_graphics->blackOutScreen();
         _vm->_graphics->drawQuittingPic();

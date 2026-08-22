@@ -258,13 +258,7 @@ void Intro::run() {
 	_vm->_graphics->menuRestoreScreen();
 
     // Load and play music (glover.mod)
-    Common::File musicFile;
-    if (musicFile.open("glover.mod")) {
-        Audio::AudioStream *stream = Audio::makeProtrackerStream(&musicFile);
-        if (stream) {
-            _vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, _musicHandle, stream);
-        }
-    }
+    _vm->_sound->playMod("glover.mod");
 
     loadText();
     resetPlanes();
@@ -340,7 +334,7 @@ void Intro::run() {
 		Common::Event event;
 		while (_vm->getEvent(event)) {
 			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
-                _vm->_mixer->stopHandle(*_musicHandle);
+				_vm->_sound->stopMod();
 				CursorMan.showMouse(true);
 				return;
 			}
@@ -351,7 +345,7 @@ void Intro::run() {
 			g_system->delayMillis(55 - delay);
 	}
 
-    _vm->_mixer->stopHandle(*_musicHandle);
+	_vm->_sound->stopMod();
 	CursorMan.showMouse(true);
 }
 
