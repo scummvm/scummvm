@@ -797,17 +797,17 @@ void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
 		yOffset = xData._height / 2;
 	}
 	for (int i = 0; i < 16; i++) {
-		PathfindingPoint &current = g_engine->pathfindingPoints[i];
+		PathfindingPoint &current = g_engine->_pathfindingPoints[i];
 		renderString(current._position.x - xOffset, current._position.y - yOffset, "x");
 
 		Common::String number = Common::String::format("%u", i);
 		renderString(current._position.x - xOffset + 10, current._position.y - yOffset + 10, number.c_str());
 
 		for (uint8 adjacentIndex : current._adjacentPoints) {
-			if (adjacentIndex >= g_engine->pathfindingPoints.size()) {
+			if (adjacentIndex >= g_engine->_pathfindingPoints.size()) {
 				continue;
 			}
-			PathfindingPoint &other = g_engine->pathfindingPoints[adjacentIndex - 1];
+			PathfindingPoint &other = g_engine->_pathfindingPoints[adjacentIndex - 1];
 			s.drawLine(current._position.x, current._position.y, other._position.x, other._position.y, 0xFFFFFFFF);
 		}
 	}
@@ -3636,7 +3636,7 @@ bool Character::calculatePath(Common::Point target) {
 	// scene[i + 0x50C2] = isPathWalkable(finalDest, node[i])
 	bool reachable[MAX_NODES + 1] = {};
 	for (int i = 1; i <= nodeCount; i++) {
-		const Common::Point &nodePos = g_engine->pathfindingPoints[i - 1]._position;
+		const Common::Point &nodePos = g_engine->_pathfindingPoints[i - 1]._position;
 		reachable[i] = g_engine->isPathWalkable(target.y, target.x, nodePos.y, nodePos.x);
 	}
 
@@ -3644,7 +3644,7 @@ bool Character::calculatePath(Common::Point target) {
 	int bestCost = 0x7777;
 	int bestNode = 0;
 	for (int i = 1; i <= nodeCount; i++) {
-		const Common::Point &nodePos = g_engine->pathfindingPoints[i - 1]._position;
+		const Common::Point &nodePos = g_engine->_pathfindingPoints[i - 1]._position;
 		int costToDest = g_engine->euclideanDistance(nodePos, target);
 		int costToChar = g_engine->euclideanDistance(nodePos, charPos);
 		if (costToDest + costToChar < bestCost) {
@@ -3681,7 +3681,7 @@ bool Character::calculatePath(Common::Point target) {
 	_path.push_back(bestNode);
 	int currentNode = bestNode;
 	while (!reachable[currentNode]) {
-		const PathfindingPoint &curPt = g_engine->pathfindingPoints[currentNode - 1];
+		const PathfindingPoint &curPt = g_engine->_pathfindingPoints[currentNode - 1];
 		int localBestCost = 0x7777;
 		int nextNode = currentNode;
 		for (uint a = 0; a < curPt._adjacentPoints.size(); a++) {
@@ -3701,8 +3701,8 @@ bool Character::calculatePath(Common::Point target) {
 
 	// Step 4: Validate path - consecutive nodes must be walkable to each other
 	for (uint i = 0; i + 1 < _path.size(); i++) {
-		const Common::Point &p1 = g_engine->pathfindingPoints[_path[i + 1] - 1]._position;
-		const Common::Point &p2 = g_engine->pathfindingPoints[_path[i] - 1]._position;
+		const Common::Point &p1 = g_engine->_pathfindingPoints[_path[i + 1] - 1]._position;
+		const Common::Point &p2 = g_engine->_pathfindingPoints[_path[i] - 1]._position;
 		if (!g_engine->isPathWalkable(p1.y, p1.x, p2.y, p2.x)) {
 			// Path invalid - abort, go directly to target
 			_path.clear();
@@ -3717,14 +3717,14 @@ bool Character::calculatePath(Common::Point target) {
 	// is actually the character position.
 	_currentPathIndex = 0;
 	while (_currentPathIndex + 1 < (int16)_path.size()) {
-		const Common::Point &nextNodePos = g_engine->pathfindingPoints[_path[_currentPathIndex + 1] - 1]._position;
+		const Common::Point &nextNodePos = g_engine->_pathfindingPoints[_path[_currentPathIndex + 1] - 1]._position;
 		if (!g_engine->isPathWalkable(nextNodePos.y, nextNodePos.x, charPos.y, charPos.x))
 			break;
 		_currentPathIndex++;
 	}
 
 	// Set immediate target to the current path node
-	const Common::Point &firstTarget = g_engine->pathfindingPoints[_path[_currentPathIndex] - 1]._position;
+	const Common::Point &firstTarget = g_engine->_pathfindingPoints[_path[_currentPathIndex] - 1]._position;
 	_targetPosition = firstTarget;
 	return true;
 }
@@ -3735,7 +3735,7 @@ bool Character::canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Poi
 	// 1. Node must be able to see the target
 	// 2. Flood-fill connected component from node
 	// 3. Some node in component must see target AND some node must be seen from source
-	const Common::Point &nodePos = g_engine->pathfindingPoints[nodeIndex - 1]._position;
+	const Common::Point &nodePos = g_engine->_pathfindingPoints[nodeIndex - 1]._position;
 	if (!g_engine->isPathWalkable(nodePos.y, nodePos.x, target.y, target.x))
 		return false;
 
@@ -3749,7 +3749,7 @@ bool Character::canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Poi
 	for (int i = 1; i <= nodeCount; i++) {
 		if (!visited[i])
 			continue;
-		const Common::Point &p = g_engine->pathfindingPoints[i - 1]._position;
+		const Common::Point &p = g_engine->_pathfindingPoints[i - 1]._position;
 		if (g_engine->isPathWalkable(p.y, p.x, target.y, target.x))
 			anySeesTarget = true;
 		if (g_engine->isPathWalkable(charPos.y, charPos.x, p.y, p.x))
@@ -3764,7 +3764,7 @@ void Character::floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCo
 	if (visited[nodeIndex])
 		return;
 	visited[nodeIndex] = true;
-	const PathfindingPoint &pt = g_engine->pathfindingPoints[nodeIndex - 1];
+	const PathfindingPoint &pt = g_engine->_pathfindingPoints[nodeIndex - 1];
 	for (uint i = 0; i < pt._adjacentPoints.size(); i++) {
 		floodFillConnectedNodes(pt._adjacentPoints[i], visited, nodeCount);
 	}
@@ -3802,7 +3802,7 @@ bool Character::walkAlongPath() {
 	// Binary: if (pathNodeIndex != 0) posX/Y = nodeCoords[pathNodes[pathNodeIndex]]
 	if (_currentPathIndex >= 0 && _currentPathIndex < (int16)_path.size()) {
 		const uint16 snapIdx = _path[_currentPathIndex];
-		const Common::Point &snapPos = g_engine->pathfindingPoints[snapIdx - 1]._position;
+		const Common::Point &snapPos = g_engine->_pathfindingPoints[snapIdx - 1]._position;
 		_gameObject->_position = snapPos;
 	}
 	_currentPathIndex++;
@@ -3816,7 +3816,7 @@ bool Character::walkAlongPath() {
 		return false; // No more path segments after this
 	}
 	const uint16 nodeIdx = _path[_currentPathIndex];
-	const Common::Point &nodePos = g_engine->pathfindingPoints[nodeIdx - 1]._position;
+	const Common::Point &nodePos = g_engine->_pathfindingPoints[nodeIdx - 1]._position;
 	_targetPosition = nodePos;
 	_stepDeltaX = abs(_targetPosition.x - _gameObject->_position.x);
 	_stepDeltaY = abs(_targetPosition.y - _gameObject->_position.y);

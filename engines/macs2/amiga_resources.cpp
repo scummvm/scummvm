@@ -166,7 +166,7 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 	// load_scene_mxmm @ 00221d90). Without nodes, calculatePath always fails and
 	// walkAlongPath cancels with finalDest=current - waitForWalk then completes
 	// immediately while the actor is still short of the script target.
-	pathfindingPoints.clear();
+	_pathfindingPoints.clear();
 	_numPathfindingPoints = 0;
 	uint16 numPfPoints = 0;
 	Common::Array<AmigaPathfindingNode> pfNodes;
@@ -183,7 +183,7 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 				if (pfNodes[i].adjacent[j] != 0)
 					current._adjacentPoints.push_back(pfNodes[i].adjacent[j]);
 			}
-			pathfindingPoints.push_back(current);
+			_pathfindingPoints.push_back(current);
 		}
 	}
 

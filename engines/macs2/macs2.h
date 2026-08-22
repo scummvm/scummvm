@@ -380,8 +380,7 @@ public:
 	Common::Array<PathfindingAreaOverride> _pathfindingOverrides;
 	// Area override table at scene+value*5+0x4EA8 (for getAreaAtPoint)
 	uint16 _areaOverrides[AREA_OVERRIDE_COUNT] = {0};
-	uint16 _pathfindingPoints[32];
-	Common::Array<PathfindingPoint> pathfindingPoints;
+	Common::Array<PathfindingPoint> _pathfindingPoints;
 	Common::Array<Common::Point> _path;
 
 	bool getPathfindingOverride(uint16 index, uint16 &result);

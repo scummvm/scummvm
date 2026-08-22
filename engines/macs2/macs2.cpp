@@ -1002,7 +1002,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 
 	// Pretty sure that this is the pathfinding points. We address them starting
 	// Load pathfinding nodes (16 entries x 10 bytes at scene+0x5023)
-	pathfindingPoints.clear();
+	_pathfindingPoints.clear();
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint current;
 		current._index = i;
@@ -1014,7 +1014,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 		current._adjacentPoints.clear();
 		for (uint16 j = 0; j < numConnections && j < 4; j++)
 			current._adjacentPoints.push_back(adj[j]);
-		pathfindingPoints.push_back(current);
+		_pathfindingPoints.push_back(current);
 	}
 
 	_numHotspots = _fileStream->readUint16LE();
@@ -1133,7 +1133,7 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 		return false;
 	upscaleHalfRes(half, _hotspotMap);
 
-	pathfindingPoints.clear();
+	_pathfindingPoints.clear();
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint current;
 		current._index = i;
@@ -1146,7 +1146,7 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 		current._adjacentPoints.clear();
 		for (uint16 j = 0; j < numConnections && j < 4; j++)
 			current._adjacentPoints.push_back(adj[j]);
-		pathfindingPoints.push_back(current);
+		_pathfindingPoints.push_back(current);
 	}
 	stream->skip(0x2c0 - 0x160);
 
@@ -2104,8 +2104,8 @@ int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &
 // Binary walkableDistance (1008:1293): distance between two nodes IF walkable, else 0x500.
 // Uses binary search on precomputed squared-distance table (scene+0x61DC) for O(log n) sqrt.
 int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
-	const Common::Point &a = pathfindingPoints[nodeA - 1]._position;
-	const Common::Point &b = pathfindingPoints[nodeB - 1]._position;
+	const Common::Point &a = _pathfindingPoints[nodeA - 1]._position;
+	const Common::Point &b = _pathfindingPoints[nodeB - 1]._position;
 	if (!isPathWalkable(a.y, a.x, b.y, b.x))
 		return 0x500;
 	// Binary search for integer sqrt(dx^2 + dy^2), matching binary at 1008:1293
@@ -2139,7 +2139,7 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 	visitedStack[visitedCount] = nodeIndex;
 
 	int result;
-	const Common::Point &nodePos = pathfindingPoints[nodeIndex - 1]._position;
+	const Common::Point &nodePos = _pathfindingPoints[nodeIndex - 1]._position;
 
 	if (reachable[nodeIndex]) {
 		// Terminal: return walkable distance from this node to finalDest
@@ -2168,7 +2168,7 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 
 	int bestCost = 0x7777;
 	int bestAdj = 0;
-	const PathfindingPoint &pt = pathfindingPoints[nodeIndex - 1];
+	const PathfindingPoint &pt = _pathfindingPoints[nodeIndex - 1];
 	int adjCount = (int)pt._adjacentPoints.size();
 
 	if (adjCount > 0) {
