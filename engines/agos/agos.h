@@ -1019,7 +1019,7 @@ protected:
 	void drawEdging();
 
 	void skipSpeech();
-
+	void simon2DjinniAnimationFix(uint speechId);
 	const char *getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels);
 	bool printNameOf(Item *item, uint x, uint y);
 	bool printTextOf(uint a, uint x, uint y);
