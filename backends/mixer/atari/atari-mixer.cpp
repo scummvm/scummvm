@@ -128,15 +128,9 @@ void AtariMixerManager::init() {
 	_samples = obtained.samples;
 	_downsample = (obtained.format == USoundFormatSigned8);
 
-	ConfMan.setInt("output_rate", _outputRate, Common::ConfigManager::kApplicationDomain);
-	ConfMan.setInt("output_channels", _outputChannels, Common::ConfigManager::kApplicationDomain);
-	ConfMan.setInt("audio_buffer_size", _samples, Common::ConfigManager::kApplicationDomain);
-
 	debug("setting %d Hz mixing frequency (%d-bit, %s)",
 		  _outputRate, obtained.format == USoundFormatSigned8 ? 8 : 16, _outputChannels == 1 ? "mono" : "stereo");
 	debug("sample buffer size: %d", _samples);
-
-	ConfMan.flushToDisk();
 
 	_atariSampleBuffer = (byte*)Mxalloc(obtained.size * 2, MX_STRAM);
 	if (!_atariSampleBuffer)
