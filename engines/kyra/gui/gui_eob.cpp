@@ -828,6 +828,9 @@ void EoBCoreEngine::gui_toggleButtons() {
 void EoBCoreEngine::gui_setPlayFieldButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_updateFlags ? _buttonList2 : _buttonList1);
+		
+	if (_configAutomap)
+		gui_initButton(99);
 }
 
 void EoBCoreEngine::gui_setInventoryButtons() {
@@ -857,7 +860,7 @@ void EoBCoreEngine::gui_initButton(int index, int, int, int) {
 	Button *b = 0;
 	int cnt = 1;
 
-	if ((_flags.gameID == GI_EOB1 && !(_flags.platform == Common::kPlatformSegaCD && index >= 95) && index > 92) || (_flags.gameID == GI_EOB2 && _buttonDefs[index].x == 0x7fff))
+	if ((_flags.gameID == GI_EOB1 && !(_flags.platform == Common::kPlatformSegaCD && index >= 95) && index > 92 && index < 99) || (_flags.gameID == GI_EOB2 && _buttonDefs[index].x == 0x7fff))
 		return;
 
 	if (_activeButtons) {

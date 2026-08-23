@@ -803,6 +803,7 @@ protected:
 	int clickedSceneSpecial(Button *button);
 	int clickedSpellbookAbort(Button *button);
 	int clickedSpellbookScroll(Button *button);
+	int clickedAutomap(Button *button);
 	int clickedButtonReturnIndex(Button *button);
 
 	void gui_processCharPortraitClick(int index);

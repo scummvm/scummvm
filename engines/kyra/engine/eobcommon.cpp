@@ -385,13 +385,12 @@ Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 
 	// Non-original: the automap overlay (toggle) and its note editor.
 	addKeymapAction(keyMap, "AMAP", _("Toggle automap"), Common::KeyState(Common::KEYCODE_TAB, '\t'), "TAB", "");
-	addKeymapAction(keyMap, "NOTE", _("Edit map note (while map open)"), Common::KeyState(Common::KEYCODE_n, 'n'), "n", "");
+
 	addKeymapAction(keyMap, "INV", _("Open / Close inventory"), Common::KeyState(Common::KEYCODE_i, 'i'), "i", "JOY_X");
 	addKeymapAction(keyMap, "SCE", _("Switch inventory / Character screen"), Common::KeyState(Common::KEYCODE_p, 'p'), "p", "JOY_Y");
 	addKeymapAction(keyMap, "CMP", _("Camp"), Common::KeyState(Common::KEYCODE_c, 'c'), "c", "");
 	addKeymapAction(keyMap, "CSP", _("Cast spell"), Common::KeyState(Common::KEYCODE_SPACE, ' '), "SPACE", "JOY_LEFT_SHOULDER");
-	// TODO: Spell cursor, but this needs more thought, since different
-	// game versions use different keycodes.
+	// TODO: Spell cursor, but this needs more thought, since different game versions use different keycodes.
 	addKeymapAction(keyMap, "SL1", _("Spell level 1"), Common::KeyState(Common::KEYCODE_1, '1'), "1", "");
 	addKeymapAction(keyMap, "SL2", _("Spell level 2"), Common::KeyState(Common::KEYCODE_2, '2'), "2", "");
 	addKeymapAction(keyMap, "SL3", _("Spell level 3"), Common::KeyState(Common::KEYCODE_3, '3'), "3", "");
@@ -586,7 +585,8 @@ Common::Error EoBCoreEngine::init() {
 
 	// Always create this, regardless of whether the launcher option is enabled or not. Otherwise the map would
 	// be incomplete if the option is enabled later on in the game.
-	_automap = new Automap_EoB(_system, &_levelBlockProperties, _wllWallFlags, _flags.gameID, _flags.lang, true);
+	_automap = new Automap_EoB(_system, &_levelBlockProperties, _wllWallFlags, _flags.gameID, _flags.lang, _configAutomap);
+	assert(_automap);
 
 	return Common::kNoError;
 }
@@ -718,6 +718,7 @@ void EoBCoreEngine::registerDefaultSettings() {
 	ConfMan.registerDefault("importOrigSaves", true);
 	if (_flags.gameID == GI_EOB1)
 		ConfMan.registerDefault("npcpatch", false);
+	ConfMan.registerDefault("automap", _flags.platform != Common::kPlatformSegaCD);
 }
 
 void EoBCoreEngine::readSettings() {
@@ -783,11 +784,9 @@ void EoBCoreEngine::runLoop() {
 	while (!shouldQuit() && _runFlag) {
 		uint32 frameEnd = _system->getMillis() + 8;
 		checkPartyStatus(true);
-		// While the map is up, suppress the play-field buttons so clicks hit the map.
-		int inputFlag = checkInput(_automap->isVisible() ? 0 : _activeButtons, true, 0);
-		removeInputTop();
 
-		_automap->mainLoopProcess(this, inputFlag);
+		checkInput(_activeButtons, true, 0);
+		removeInputTop();
 
 		if (!_runFlag)
 			break;
@@ -796,16 +795,8 @@ void EoBCoreEngine::runLoop() {
 		updateScriptTimers();
 		updateWallOfForceTimers();
 
-		bool sceneRedraw = _sceneUpdateRequired && !_sceneShakeCountdown;
-		// On any view change, mark the now-visible blocks "seen" for the map.
-		if (sceneRedraw)
+		if (_sceneUpdateRequired && !_sceneShakeCountdown) {
 			_automap->markSeen(_currentBlock, _currentDirection);
-
-		if (_automap->isVisible()) {
-			// Opaque overlay: skip the dungeon redraw behind it (redrawn on close).
-			_sceneUpdateRequired = false;
-			_automap->draw(this);
-		} else if (sceneRedraw) {
 			drawScene(1);
 		}
 

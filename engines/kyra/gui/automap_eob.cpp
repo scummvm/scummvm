@@ -27,10 +27,9 @@
 #include "kyra/engine/kyra_rpg.h"
 #include "kyra/gui/automap_eob.h"
 
-#include "common/hashmap.h"	// TODO: REMOVE
-#include "common/savefile.h" // TODO: REMOVE
 #include "backends/keymapper/keymapper.h"         // TODO: REMOVE
 #include "kyra/engine/eobcommon.h" // TODO: REMOVE
+
 
 namespace Kyra {
 
@@ -174,6 +173,12 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 			"Note"
 		},
 
+		{
+			"- KEYS -",
+			"Select Level",
+			"Exit"
+		},
+
 		// Area names for the plaque. The games have no level names in their data and the file
 		// names of the graphics and sound data files provide only vague hints. So we hardcode
 		// the level names here. The Sega CD version of EOBI has an automap, but it doesn't use
@@ -224,6 +229,9 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 			"", "", "", "", "", "", "", "", ""
 		},
 		{
+			"", "", ""
+		},
+		{
 			{
 				"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
 			},
@@ -235,8 +243,8 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 };
 
 Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, int gameID, int lang, bool featureEnabled) :
-	_system(system), _blockData(*blockData), _wllWallFlags(wllFlags), _enabled(featureEnabled), _visible(false), _selectedBlock(0xFFFF), _automapBg(nullptr),
-	_automapFrame(nullptr), _levelNames(nullptr), _legendStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)) {
+	_system(system), _blockData(*blockData), _wllWallFlags(wllFlags), _enabled(featureEnabled), _visible(false), _automapBg(nullptr), _automapFrame(nullptr),
+		_levelNames(nullptr), _legendStrings(nullptr), _controlStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)) {
 	_automapBg = new Graphics::Surface();
 	_automapFrame = new Graphics::Surface();
 
@@ -254,6 +262,7 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	assert(gameIndex < ARRAYSIZE(_stringTable[0].levelNames));
 
 	_legendStrings = _stringTable[langIndex].legendStrings;
+	_controlStrings = _stringTable[langIndex].controlStrings;
 	_levelNames = _stringTable[langIndex].levelNames[gameIndex];
 }
 
@@ -347,7 +356,7 @@ void Automap_EoB::collectCellInfo(int level, uint16 block, int teleporterWallId)
 		}
 	}
 }
-*/
+
 void Automap_EoB::mainLoopProcess(EoBCoreEngine *vm, int inputFlag) {
 	if (!_enabled)
 		return;
@@ -366,7 +375,7 @@ void Automap_EoB::mainLoopProcess(EoBCoreEngine *vm, int inputFlag) {
 	} else if (_visible && inputFlag && inputFlag == vm->_keyMap[Common::KEYCODE_n]) {
 		_selectedBlock = vm->_currentBlock;
 		editNote(vm);
-	} */else if (_visible && inputFlag &&
+	} else if (_visible && inputFlag &&
 		(inputFlag == (vm->_keyMap[Common::KEYCODE_UP] | 0x100) || inputFlag == (vm->_keyMap[Common::KEYCODE_DOWN] | 0x100) ||
 			inputFlag == (vm->_keyMap[Common::KEYCODE_LEFT] | 0x100) || inputFlag == (vm->_keyMap[Common::KEYCODE_RIGHT] | 0x100))) {
 
@@ -398,11 +407,9 @@ void Automap_EoB::mainLoopProcess(EoBCoreEngine *vm, int inputFlag) {
 		else
 			vm->clickedTurnRightArrow(&dummy);
 	}
-}
+}*/
 
 void Automap_EoB::draw(EoBCoreEngine *vm) {
-	markVisited(vm->_currentBlock);
-
 	const int ow = _system->getOverlayWidth();
 	const int oh = _system->getOverlayHeight();
 	const Graphics::PixelFormat fmt = _system->getOverlayFormat();
@@ -529,18 +536,18 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 		}
 
 		cyy += MAX(6, sc * 5);
-		automapDrawBigString(bg, bigFont, "- KEYS -", lx, cyy, colW, cGoldDim, sc);
+		automapDrawBigString(bg, bigFont, _controlStrings[0], lx, cyy, colW, cGoldDim, sc);
 		cyy += fh * sc + MAX(4, sc * 3);
 		bg.hLine(lx, cyy, lx + colW - 1, cStoneHi);
 		bg.hLine(lx, cyy + 1, lx + colW - 1, cStoneEdge);
 		cyy += MAX(6, sc * 4);
 		const int chipPad = MAX(2, sc * 2);
-		const int chipW = (bigFont ? bigFont->getStringWidth("N") * sc : 6 * sc) + chipPad * 2;
+		const int chipW = (bigFont ? bigFont->getStringWidth("Up/Down") * sc : 6 * sc) + chipPad * 2;	// TODO: Use actual up/down arrow symbols. Our font doesn't have these.
 		const int chipH = fh * sc + chipPad;
 		bg.fillRect(Common::Rect(lx, cyy, lx + chipW, cyy + chipH), cPlaqueEd);
 		bg.fillRect(Common::Rect(lx + 1, cyy + 1, lx + chipW - 1, cyy + chipH - 1), cPlaqueBg);
-		automapDrawBigString(bg, bigFont, "N", lx, cyy + chipPad / 2, chipW, cGold, sc);
-		automapDrawBigString(bg, bigFont, "Add note", lx + chipW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2,
+		automapDrawBigString(bg, bigFont, "Up/Down", lx, cyy + chipPad / 2, chipW, cGold, sc);			// TODO: see above
+		automapDrawBigString(bg, bigFont, _controlStrings[1], lx + chipW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2,
 							 colW - chipW - MAX(4, sc * 3), cPanelTxt, sc, Graphics::kTextAlignLeft);
 	}
 
@@ -573,9 +580,9 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			// Cache the door bits: an open door loses its wall flag mid-animation but
 			// should still draw as a door.
 			const LevelBlockProperty *bp = &_blockData[block];
-			const uint32 bkey = noteKey(vm->_currentLevel, block);
-			int8 dbits = _automapDoorBits.contains(bkey) ? _automapDoorBits[bkey] : 0;
-			if ((_wllWallFlags[bp->walls[0]] & 8) || (_wllWallFlags[bp->walls[2]] & 8))
+			//const uint32 bkey = noteKey(vm->_currentLevel, block);
+			//int8 dbits = _automapDoorBits.contains(bkey) ? _automapDoorBits[bkey] : 0;
+			/* if ((_wllWallFlags[bp->walls[0]] & 8) || (_wllWallFlags[bp->walls[2]] & 8))
 				dbits |= 1;
 			if ((_wllWallFlags[bp->walls[1]] & 8) || (_wllWallFlags[bp->walls[3]] & 8))
 				dbits |= 2;
@@ -586,7 +593,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			if (doorNS)
 				wall[0] = wall[2] = false;
 			if (doorEW)
-				wall[1] = wall[3] = false;
+				wall[1] = wall[3] = false;*/
 
 			surf.fillRect(Common::Rect(sx, sy, sx + cell, sy + cell), visited ? cFloor : cFloorSeen);
 			if (visited) {
@@ -603,7 +610,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			if (wall[3])
 				surf.fillRect(Common::Rect(sx, sy, sx + wt, sy + cell), wc);
 
-			if (doorNS || doorEW) {
+			/* if (doorNS || doorEW) {
 				const int dt = MAX(2, wt + 1);
 				const int dm = MAX(1, cell / 5);
 				const int dcx = sx + cell / 2, dcy = sy + cell / 2;
@@ -611,7 +618,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 					surf.fillRect(Common::Rect(sx + dm, dcy - dt / 2, sx + cell - dm, dcy - dt / 2 + dt), cDoor);
 				if (doorEW)
 					surf.fillRect(Common::Rect(dcx - dt / 2, sy + dm, dcx - dt / 2 + dt, sy + cell - dm), cDoor);
-			}
+			}*/
 
 			// Special-wall pip on the carrying side (skip door types 5/6; 10 = niche).
 			for (int d = 0; d < 4; ++d) {
@@ -657,12 +664,12 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 		}
 	}
 
-	if (_selectedBlock != 0xFFFF) {
+	/* if (_selectedBlock != 0xFFFF) {
 		const int sx = offX + (_selectedBlock & 0x1F) * cell;
 		const int sy = offY + (_selectedBlock >> 5) * cell;
 		surf.frameRect(Common::Rect(sx, sy, sx + cell, sy + cell), cSel);
 		surf.frameRect(Common::Rect(sx + 1, sy + 1, sx + cell - 1, sy + cell - 1), cSel);
-	}
+	}*/
 
 	const int mx = offX + (vm->_currentBlock & 0x1F) * cell;
 	const int my = offY + (vm->_currentBlock >> 5) * cell;
@@ -714,7 +721,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 
 
 	if (bigFont) {
-		const uint16 cb = (_selectedBlock != 0xFFFF) ? _selectedBlock : vm->_currentBlock;
+		const uint16 cb = (vm->_currentBlock != 0xFFFF) ? vm->_currentBlock : 0;
 		const Common::String lvl = _levelNames[vm->_currentLevel - 1];
 		const Common::String crd = Common::String::format("X %d   Y %d", cb & 0x1F, cb >> 5);
 		const int pm = MAX(3, sc * 2);
@@ -810,12 +817,6 @@ Automap_EoB::AutomapLayout Automap_EoB::createLayout() const {
 	return l;
 }
 
-void Automap_EoB::moveSelection(int dx, int dy) {
-	const int bx = CLIP<int>((_selectedBlock & 0x1F) + dx, 0, 31);
-	const int by = CLIP<int>((_selectedBlock >> 5) + dy, 0, 31);
-	_selectedBlock = (by << 5) | bx;
-}
-
 uint16 Automap_EoB::calcNewBlockPosition(uint16 block, int8 dir) const {
 	static const int16 blockPosTable[] = {-32, 1, 32, -1};
 	return (block + blockPosTable[dir & 3]) & 0x3FF;
@@ -841,6 +842,112 @@ void Automap_EoB::drawIcon(Graphics::Surface *surf, int sx, int sy, int cell, ui
 	default:
 		break;
 	}
+}
+
+int EoBCoreEngine::clickedAutomap(Button *button) {
+	gui_updateControls();
+	removeInputTop();
+	disableSysTimer(2);
+
+	txt()->removePageBreakFlag();
+	_screen->copyRegion(0, 120, 0, 0, 176, 48, 0, Screen_EoB::kCampMenuBackupPage, Screen::CR_NO_P_CHECK);
+
+	for (int i = 0; i < 6; i++) {
+		if (!testCharacter(i, 1))
+			continue;
+		_characters[i].damageTaken = 0;
+		_characters[i].slotStatus[0] = _characters[i].slotStatus[1] = 0;
+		gui_drawCharPortraitWithStats(i);
+	}
+
+	bool update = true;
+	bool firstPage = true;
+	int currentLevel = _currentLevel;
+	int currentSub = _currentSub;
+	int currentBlock = _currentBlock;
+	int currentDirection = _currentDirection;
+	int numLevels = (_flags.gameID == GI_EOB2) ? 16 : 12;
+
+	_automap->markSeen(_currentBlock, _currentDirection);
+	_automap->markVisited(_currentBlock);
+
+	_system->showOverlay();
+
+	for (bool runLoop = true; runLoop && !shouldQuit();) {
+		uint32 frameEnd = _system->getMillis() + 8;
+
+		int inputFlag = checkInput(nullptr, false, 0) & 0x80FF;
+		removeInputTop();
+
+		if (!_system->isOverlayVisible()) // restore overlay if the GMM or the debugger was used on the map screen
+			_system->showOverlay(); 
+
+		int lvl = _currentLevel;
+
+		if (inputFlag == _keyMap[Common::KEYCODE_ESCAPE] || inputFlag == _keyMap[Common::KEYCODE_TAB]) {
+			runLoop = false;
+		} else if (inputFlag == _keyMap[Common::KEYCODE_UP]) {
+			for (int i = lvl; lvl == _currentLevel && i <= numLevels; ++i) {
+				if (_hasTempDataFlags & (1 << (i - 1)))
+					lvl = i;
+			}
+		} else if (inputFlag == _keyMap[Common::KEYCODE_DOWN]) {
+			for (int i = lvl; lvl == _currentLevel && i > 0; --i) {
+				if (_hasTempDataFlags & (1 << (i - 1)))
+					lvl = i;
+			}
+		}
+
+		if (lvl != _currentLevel) {
+			if (firstPage) {
+				completeDoorOperations();
+				generateTempData();
+				firstPage = false;
+			}
+
+			loadLevel(lvl, 0);
+
+			_currentBlock = (currentLevel == lvl) ? currentBlock : 0xFFFF;
+			update = true;
+		}
+
+		if (update)
+			_automap->draw(this);
+
+		delayUntil(frameEnd);
+	}
+
+	if (currentLevel != _currentLevel || currentSub != _currentSub)
+		loadLevel(currentLevel, currentSub);
+
+	_currentBlock = currentBlock;
+	_currentDirection = currentDirection;
+
+	_system->hideOverlay();
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		setLevelPalettes(_currentLevel);
+		_screen->sega_selectPalette(-1, 2, true);
+		gui_setupPlayFieldHelperPages(true);
+		gui_drawAllCharPortraitsWithStats();
+	}
+
+	drawScene(0);
+
+	_screen->setCurPage(0);
+	const ScreenDim *dm = _screen->getScreenDim(10);
+	_screen->copyRegion(0, 0, 0, 120, 176, 48, Screen_EoB::kCampMenuBackupPage, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
+
+	_screen->updateScreen();
+
+	enableSysTimer(2);
+	advanceTimers(_restPartyElapsedTime);
+	_restPartyElapsedTime = 0;
+
+	checkPartyStatus(true);
+
+	return button->arg;
 }
 
 } // End of namespace Kyra

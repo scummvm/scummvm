@@ -742,7 +742,9 @@ void EoBCoreEngine::initButtonData() {
 
 		{ 101, 96, 0x1100, 248, 152, 64, 14, 65535 },
 		{ 103, 98, 0x1100, 248, 168, 64, 14, 1 },
-		{ 110, 0, 0x1100, 248, 184, 64, 14, 2 }
+		{ 110, 0, 0x1100, 248, 184, 64, 14, 2 },
+
+		{ 16, 0, 0, 0, 0, 0, 0, 0 }
 	};
 
 	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
@@ -813,7 +815,7 @@ void EoBCoreEngine::initButtonData() {
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		static const uint16 keyCodesFMTowns[] = {
 			93, 94, 95, 96, 67, 27, 24, 349, 350, 351, 352, 80, 27, 24, 30, 0, 31, 0, 29, 0, 28, 0, 127, 18, 27, 93, 94, 95, 96,
-			49, 50, 51, 52, 53, 93, 94, 95, 96, 60, 62, 32, 353, 354, 97, 98, 27, 27, 97, 98, 97, 98, 54, 49, 50, 51, 52, 53, 27
+			49, 50, 51, 52, 53, 93, 94, 95, 96, 60, 62, 32, 353, 354, 97, 98, 27, 27, 97, 98, 97, 98, 54, 18, 30, 0, 31, 27, 16
 		};
 
 		const uint16 *c = keyCodesFMTowns;
@@ -822,6 +824,7 @@ void EoBCoreEngine::initButtonData() {
 				_buttonDefs[i].keyCode = *c++;
 			if (_buttonDefs[i].keyCode2)
 				_buttonDefs[i].keyCode2 = *c++;
+			assert(c <= &keyCodesFMTowns[ARRAYSIZE(keyCodesFMTowns)]);
 		}
 	}
 
@@ -915,6 +918,7 @@ void EoBCoreEngine::initButtonData() {
 	EOB_CBN(1, clickedSpellbookScroll);
 	EOB_CBI(1, 21);
 	EOB_CBN(3, clickedButtonReturnIndex);
+	EOB_CBN(1, clickedAutomap);
 #undef EOB_CBI
 #undef EOB_CBN
 }

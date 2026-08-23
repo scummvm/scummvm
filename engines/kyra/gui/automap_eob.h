@@ -25,7 +25,6 @@
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
 #include "common/scummsys.h"
-#include "common/hashmap.h" // TODO: REMOVE
 #include "common/str.h" // TODO: REMOVE
 
 namespace Common {
@@ -54,8 +53,6 @@ public:
 	void markSeen(uint16 block, int8 dir);
 	bool isSeen(uint16 block) const;
 
-	void mainLoopProcess(EoBCoreEngine *vm, int inputFlag); // TODO: REMOVE
-	bool isVisible() const { return _visible; } // TODO: REMOVE
 	void draw(EoBCoreEngine *vm);
 
 private:
@@ -72,17 +69,12 @@ private:
 
 	struct TranslateableStrings {
 		const char *const legendStrings[9];
+		const char *const controlStrings[3];
 		const char *const levelNames[2][16];
 	};
 
 	AutomapLayout createLayout() const;
-
-	uint32 noteKey(uint lvl, uint16 block) const { return (lvl << 16) | block; }
-
-	void moveSelection(int dx, int dy);
-
 	void drawIcon(Graphics::Surface *surf, int sx, int sy, int cell, uint8 icon, uint32 color) const;
-
 	uint16 calcNewBlockPosition(uint16 block, int8 dir) const;
 
 	bool _visible;
@@ -98,13 +90,10 @@ private:
 		kAmTeleport = 3
 	};
 
-
-	uint16 _selectedBlock; // TODO: remove
-	Common::HashMap<uint32, uint8> _automapDoorBits; // TODO: remove
-
 	static const TranslateableStrings _stringTable[];
-	const char * const *_legendStrings;
-	const char * const *_levelNames;
+	const char *const *_legendStrings;
+	const char *const *_controlStrings;
+	const char *const *_levelNames;
 	const int _numLevelNames;
 
 	OSystem *_system;
