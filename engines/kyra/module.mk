@@ -127,6 +127,7 @@ MODULE_OBJS += \
 	graphics/screen_eob_pc98.o \
 	graphics/screen_eob_segacd.o \
 	graphics/screen_eob_towns.o \
+	gui/automap_eob.o \
 	gui/gui_eob.o \
 	gui/gui_eob_segacd.o \
 	gui/saveload_eob.o \

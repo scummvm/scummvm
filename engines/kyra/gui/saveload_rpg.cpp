@@ -38,22 +38,20 @@ void KyraRpgEngine::generateTempData() {
 		releaseMonsterTempData(_lvlTempData[l]);
 		releaseFlyingObjectTempData(_lvlTempData[l]);
 		releaseWallOfForceTempData(_lvlTempData[l]);
+		releaseAutoMapTempData(_lvlTempData[l]);
 		delete _lvlTempData[l];
 	}
 
 	_lvlTempData[l] = new LevelTempData;
 
-	_lvlTempData[l]->wallsXorData = new uint8[4096];
-	_lvlTempData[l]->flags = new uint16[1024];
-
 	const uint8 *p = getBlockFileData(_currentLevel);
 	uint16 len = READ_LE_UINT16(p + 4);
 	p += 6;
 
-	memset(_lvlTempData[l]->wallsXorData, 0, 4096);
-	memset(_lvlTempData[l]->flags, 0, 1024 * sizeof(uint16));
-	uint8 *d = _lvlTempData[l]->wallsXorData;
-	uint16 *df = _lvlTempData[l]->flags;
+	uint8 *d = new uint8[4096]();
+	_lvlTempData[l]->wallsXorData = d;
+	uint16 *df = new uint16[1024]();
+	_lvlTempData[l]->flags = df;
 
 	for (int i = 0; i < 1024; i++) {
 		for (int ii = 0; ii < 4; ii++)
@@ -61,9 +59,10 @@ void KyraRpgEngine::generateTempData() {
 		*df++ = _levelBlockProperties[i].flags;
 	}
 
-	_lvlTempData[l]->monsters = generateMonsterTempData(_lvlTempData[l]);
-	_lvlTempData[l]->flyingObjects = generateFlyingObjectTempData(_lvlTempData[l]);
-	_lvlTempData[l]->wallsOfForce = generateWallOfForceTempData(_lvlTempData[l]);
+	_lvlTempData[l]->monsters = generateMonsterTempData(_lvlTempData[l]->monsterDifficulty);
+	_lvlTempData[l]->flyingObjects = generateFlyingObjectTempData();
+	_lvlTempData[l]->wallsOfForce = generateWallOfForceTempData();
+	_lvlTempData[l]->automapExploreState = generateAutoMapTempData();
 
 	_hasTempDataFlags |= (1 << l);
 }
@@ -76,8 +75,8 @@ void KyraRpgEngine::restoreBlockTempData(int levelIndex) {
 
 	memset(_levelBlockProperties, 0, 1024 * sizeof(LevelBlockProperty));
 
-	uint8 *t = _lvlTempData[l]->wallsXorData;
-	uint16 *t2 = _lvlTempData[l]->flags;
+	const uint8 *t = _lvlTempData[l]->wallsXorData;
+	const uint16 *t2 = _lvlTempData[l]->flags;
 
 	for (int i = 0; i < 1024; i++) {
 		for (int ii = 0; ii < 4; ii++)
@@ -88,6 +87,7 @@ void KyraRpgEngine::restoreBlockTempData(int levelIndex) {
 	restoreMonsterTempData(_lvlTempData[l]);
 	restoreFlyingObjectTempData(_lvlTempData[l]);
 	restoreWallOfForceTempData(_lvlTempData[l]);
+	restoreAutoMapTempData(_lvlTempData[l]);
 }
 
 void KyraRpgEngine::releaseTempData() {
@@ -98,13 +98,14 @@ void KyraRpgEngine::releaseTempData() {
 			releaseMonsterTempData(_lvlTempData[i]);
 			releaseFlyingObjectTempData(_lvlTempData[i]);
 			releaseWallOfForceTempData(_lvlTempData[i]);
+			releaseAutoMapTempData(_lvlTempData[i]);
 			delete _lvlTempData[i];
 			_lvlTempData[i] = 0;
 		}
 	}
 }
 
-void *KyraRpgEngine::generateFlyingObjectTempData(LevelTempData *tmp) {
+const void *KyraRpgEngine::generateFlyingObjectTempData() const {
 	assert(_flyingObjectStructSize == sizeof(EoBFlyingObject));
 	EoBFlyingObject *f = new EoBFlyingObject[_numFlyingObjects];
 	memcpy(f, _flyingObjectsPtr,  sizeof(EoBFlyingObject) * _numFlyingObjects);
@@ -117,8 +118,7 @@ void KyraRpgEngine::restoreFlyingObjectTempData(LevelTempData *tmp) {
 }
 
 void KyraRpgEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
-	EoBFlyingObject *p = (EoBFlyingObject *)tmp->flyingObjects;
-	delete[] p;
+	delete[] reinterpret_cast<const EoBFlyingObject*>(tmp->flyingObjects);
 }
 
 } // End of namespace Kyra

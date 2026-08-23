@@ -1313,7 +1313,7 @@ private:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) override;
 
-	void *generateMonsterTempData(LevelTempData *tmp) override;
+	const void *generateMonsterTempData(uint8 &monsterDifficulty) const override;
 	void restoreBlockTempData(int levelIndex) override;
 	void restoreMonsterTempData(LevelTempData *tmp) override;
 	void releaseMonsterTempData(LevelTempData *tmp) override;

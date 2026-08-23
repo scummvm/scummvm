@@ -28,6 +28,7 @@
 #include "kyra/script/script_eob.h"
 #include "kyra/engine/timer.h"
 #include "kyra/gui/debugger.h"
+#include "kyra/gui/automap_eob.h"
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -113,11 +114,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_preventMonsterFlash = false;
 	_sceneShakeCountdown = 0;
 
-	memset(_automapVisited, 0, sizeof(_automapVisited));
-	memset(_automapSeen, 0, sizeof(_automapSeen));
-	_automapVisible = false;
-	_automapSelectedBlock = 0xFFFF;
-	_automapEditing = false;
+	_automap = nullptr;
+	_hasTempDataMapFlags = 0;
 
 	_teleporterPulse = 0;
 
@@ -146,6 +144,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_configADDRuleEnhancements = false;
 	_configEnhancedReload = false;
 	_configNPCPatch = false;
+	_configAutomap = false;
 
 	_npcSequenceSub = 0;
 	_moveCounter = 0;
@@ -284,9 +283,6 @@ EoBCoreEngine::~EoBCoreEngine() {
 	releaseItemsAndDecorationsShapes();
 	releaseTempData();
 
-	_automapBg.free();
-	_automapFrame.free();
-
 	if (_faceShapes) {
 		for (int i = 0; i < 44; i++) {
 			if (_characters) {
@@ -370,6 +366,9 @@ EoBCoreEngine::~EoBCoreEngine() {
 	_timer = 0;
 	delete _txt;
 	_txt = 0;
+
+	delete _automap;
+	_automap = nullptr;
 }
 
 Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
@@ -585,6 +584,10 @@ Common::Error EoBCoreEngine::init() {
 	memset(_monsterStoneOverlay, (_flags.platform == Common::kPlatformAmiga) ? guiSettings()->colors.guiColorWhite : 0x0D, 16 * sizeof(uint8));
 	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
+	// Always create this, regardless of whether the launcher option is enabled or not. Otherwise the map would
+	// be incomplete if the option is enabled later on in the game.
+	_automap = new Automap_EoB(_system, &_levelBlockProperties, _wllWallFlags, _flags.gameID, _flags.lang, true);
+
 	return Common::kNoError;
 }
 
@@ -781,50 +784,10 @@ void EoBCoreEngine::runLoop() {
 		uint32 frameEnd = _system->getMillis() + 8;
 		checkPartyStatus(true);
 		// While the map is up, suppress the play-field buttons so clicks hit the map.
-		int inputFlag = checkInput(_automapVisible ? 0 : _activeButtons, true, 0);
+		int inputFlag = checkInput(_automap->isVisible() ? 0 : _activeButtons, true, 0);
 		removeInputTop();
 
-		if (inputFlag && inputFlag == _keyMap[Common::KEYCODE_TAB]) {
-			if (_configAutomap)         // non-original automap, opt-out via game options
-				automapToggle();
-		} else if (_automapVisible && inputFlag && inputFlag == _keyMap[Common::KEYCODE_ESCAPE]) {
-			automapToggle();            // Esc also closes the map (only while it is open)
-		} else if (_automapVisible && inputFlag == 199) {
-			automapHandleClick();
-		} else if (_automapVisible && inputFlag && inputFlag == _keyMap[Common::KEYCODE_n]) {
-			automapEditNote();
-		} else if (_automapVisible && inputFlag &&
-		           (inputFlag == (_keyMap[Common::KEYCODE_UP] | 0x100) || inputFlag == (_keyMap[Common::KEYCODE_DOWN] | 0x100) ||
-		            inputFlag == (_keyMap[Common::KEYCODE_LEFT] | 0x100) || inputFlag == (_keyMap[Common::KEYCODE_RIGHT] | 0x100))) {
-			// Shift+arrows move the map selection cursor (place notes without a mouse).
-			if (inputFlag == (_keyMap[Common::KEYCODE_UP] | 0x100))
-				automapMoveSelection(0, -1);
-			else if (inputFlag == (_keyMap[Common::KEYCODE_DOWN] | 0x100))
-				automapMoveSelection(0, 1);
-			else if (inputFlag == (_keyMap[Common::KEYCODE_LEFT] | 0x100))
-				automapMoveSelection(-1, 0);
-			else
-				automapMoveSelection(1, 0);
-		} else if (_automapVisible && inputFlag &&
-		           (inputFlag == _keyMap[Common::KEYCODE_UP] || inputFlag == _keyMap[Common::KEYCODE_DOWN] ||
-		            inputFlag == _keyMap[Common::KEYCODE_LEFT] || inputFlag == _keyMap[Common::KEYCODE_RIGHT] ||
-		            inputFlag == _keyMap[Common::KEYCODE_HOME] || inputFlag == _keyMap[Common::KEYCODE_PAGEUP])) {
-			// Movement is normally button-driven, but those are suppressed now, so
-			// dispatch the keys here. The handlers only read button->index, so a dummy is fine.
-			Button dummy;
-			if (inputFlag == _keyMap[Common::KEYCODE_UP])
-				clickedUpArrow(&dummy);
-			else if (inputFlag == _keyMap[Common::KEYCODE_DOWN])
-				clickedDownArrow(&dummy);
-			else if (inputFlag == _keyMap[Common::KEYCODE_LEFT])
-				clickedLeftArrow(&dummy);
-			else if (inputFlag == _keyMap[Common::KEYCODE_RIGHT])
-				clickedRightArrow(&dummy);
-			else if (inputFlag == _keyMap[Common::KEYCODE_HOME])
-				clickedTurnLeftArrow(&dummy);
-			else
-				clickedTurnRightArrow(&dummy);
-		}
+		_automap->mainLoopProcess(this, inputFlag);
 
 		if (!_runFlag)
 			break;
@@ -836,12 +799,12 @@ void EoBCoreEngine::runLoop() {
 		bool sceneRedraw = _sceneUpdateRequired && !_sceneShakeCountdown;
 		// On any view change, mark the now-visible blocks "seen" for the map.
 		if (sceneRedraw)
-			automapMarkSeenFromCurrent();
+			_automap->markSeen(_currentBlock, _currentDirection);
 
-		if (_automapVisible) {
+		if (_automap->isVisible()) {
 			// Opaque overlay: skip the dungeon redraw behind it (redrawn on close).
 			_sceneUpdateRequired = false;
-			automapDraw();
+			_automap->draw(this);
 		} else if (sceneRedraw) {
 			drawScene(1);
 		}

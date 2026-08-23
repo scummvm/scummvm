@@ -21,6 +21,8 @@
 
 #ifdef ENABLE_EOB
 
+#include "kyra/kyra_v1.h"
+#include "kyra/gui/automap_eob.h"
 #include "kyra/resource/resource.h"
 #include "kyra/script/script_eob.h"
 
@@ -33,24 +35,6 @@
 #include "gui/message.h"
 
 namespace Kyra {
-
-// Automap key->string maps: a count, then key + null-terminated string per entry.
-static void automapReadStringMap(Common::ReadStream &in, Common::HashMap<uint32, Common::String> &map) {
-	uint32 n = in.readUint32BE();
-	for (uint32 i = 0; i < n; ++i) {
-		uint32 k = in.readUint32BE();
-		map[k] = in.readString();
-	}
-}
-
-static void automapWriteStringMap(Common::WriteStream *out, const Common::HashMap<uint32, Common::String> &map) {
-	out->writeUint32BE(map.size());
-	for (Common::HashMap<uint32, Common::String>::const_iterator it = map.begin(); it != map.end(); ++it) {
-		out->writeUint32BE(it->_key);
-		out->writeString(it->_value);
-		out->writeByte(0);
-	}
-}
 
 Common::Error EoBCoreEngine::loadGameState(int slot) {
 	// Special slot id -1 for EOB1 party transfer
@@ -141,6 +125,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_currentDirection = in.readUint16BE();
 		_itemInHand = in.readSint16BE();
 		_hasTempDataFlags = in.readUint32BE();
+		_hasTempDataMapFlags = (header.version >= 25) ? in.readUint32BE() : 0;
 		_partyEffectFlags = in.readUint32BE();
 
 		_updateFlags = in.readUint16BE();
@@ -222,13 +207,16 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 			releaseMonsterTempData(_lvlTempData[i]);
 			releaseFlyingObjectTempData(_lvlTempData[i]);
 			releaseWallOfForceTempData(_lvlTempData[i]);
+			releaseAutoMapTempData(_lvlTempData[i]);
 			delete _lvlTempData[i];
 		}
 
 		_lvlTempData[i] = new LevelTempData;
 		LevelTempData *l = _lvlTempData[i];
-		l->wallsXorData = new uint8[4096];
-		l->flags = new uint16[1024];
+		uint8 *d = new uint8[4096]();
+		l->wallsXorData = d;
+		uint16 *bflags = new uint16[1024]();
+		l->flags = bflags;
 		EoBMonsterInPlay *lm = new EoBMonsterInPlay[30];
 		l->monsters = lm;
 		EoBFlyingObject *lf = new EoBFlyingObject[_numFlyingObjects];
@@ -236,9 +224,17 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		WallOfForce *lw = new WallOfForce[5];
 		l->wallsOfForce = lw;
 
-		in.read(l->wallsXorData, 4096);
+		in.read(d, 4096);
 		for (int ii = 0; ii < 1024; ii++)
-			l->flags[ii] = in.readByte();
+			bflags[ii] = in.readByte();
+
+		l->automapExploreState = nullptr;
+		if (_hasTempDataMapFlags & (1 << i)) {
+			uint32 *e = new uint32[64]();
+			l->automapExploreState = e;
+			for (int ii = 0; ii < 64; ii++)
+				*e++ = in.readUint32BE();
+		}
 
 		for (int ii = 0; ii < 30; ii++) {
 			EoBMonsterInPlay *m = &lm[ii];
@@ -298,25 +294,8 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		}
 	}
 
-	// Automap data (save version >= 25). Clear first (incl. the transient door-bit
-	// cache, which must not carry over) and only read when the save is new enough.
-	memset(_automapVisited, 0, sizeof(_automapVisited));
-	memset(_automapSeen, 0, sizeof(_automapSeen));
-	_automapNotes.clear();
-	_automapIcons.clear();
-	_automapAutoInfo.clear();
-	_automapDoorBits.clear();
-	if (header.version >= 25) {
-		in.read(_automapVisited, sizeof(_automapVisited));
-		in.read(_automapSeen, sizeof(_automapSeen));
-		automapReadStringMap(in, _automapNotes);
-		uint32 numIcons = in.readUint32BE();
-		for (uint32 i = 0; i < numIcons; ++i) {
-			uint32 k = in.readUint32BE();
-			_automapIcons[k] = in.readByte();
-		}
-		automapReadStringMap(in, _automapAutoInfo);
-	}
+	if (header.version >= 25)
+		_automap->loadStrings(&in);
 
 	loadLevel(_currentLevel, _currentSub);
 	if (_flags.platform == Common::kPlatformFMTowns && _gameToLoad != -1)
@@ -453,6 +432,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeUint16BE(_currentDirection);
 	out->writeSint16BE(_itemInHand);
 	out->writeUint32BE(_hasTempDataFlags);
+	out->writeUint32BE(_hasTempDataMapFlags);
 	out->writeUint32BE(_partyEffectFlags);
 
 	out->writeUint16BE(_updateFlags);
@@ -520,12 +500,19 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		for (int ii = 0; ii < 1024; ii++)
 			out->writeByte(l->flags[ii] & 0xFF);
 
-		EoBMonsterInPlay *lm = (EoBMonsterInPlay *)_lvlTempData[i]->monsters;
-		EoBFlyingObject *lf = (EoBFlyingObject *)_lvlTempData[i]->flyingObjects;
-		WallOfForce *lw = (WallOfForce *)_lvlTempData[i]->wallsOfForce;
+		if (_hasTempDataMapFlags & (1 << i)) {
+			const uint32 *e = reinterpret_cast<const uint32*>(l->automapExploreState);
+			assert(e);
+			for (int ii = 0; ii < 64; ii++)
+				out->writeUint32BE(*e++);
+		}
+
+		const EoBMonsterInPlay *lm = reinterpret_cast<const EoBMonsterInPlay*>(_lvlTempData[i]->monsters);
+		const EoBFlyingObject *lf = reinterpret_cast<const EoBFlyingObject*>(_lvlTempData[i]->flyingObjects);
+		const WallOfForce *lw = reinterpret_cast<const WallOfForce*>(_lvlTempData[i]->wallsOfForce);
 
 		for (int ii = 0; ii < 30; ii++) {
-			EoBMonsterInPlay *m = &lm[ii];
+			const EoBMonsterInPlay *m = &lm[ii];
 			out->writeByte(m->type);
 			out->writeByte(m->unit);
 			out->writeUint16BE(m->block);
@@ -553,7 +540,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		}
 
 		for (int ii = 0; ii < _numFlyingObjects; ii++) {
-			EoBFlyingObject *m = &lf[ii];
+			const EoBFlyingObject *m = &lf[ii];
 			out->writeByte(m->enable);
 			out->writeByte(m->objectType);
 			out->writeSint16BE(m->attackerId);
@@ -570,7 +557,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		}
 
 		for (int ii = 0; ii < 5; ii++) {
-			WallOfForce *w = &lw[ii];
+			const WallOfForce *w = &lw[ii];
 			out->writeUint16BE(w->block);
 			out->writeUint32BE(w->duration);
 		}
@@ -911,28 +898,28 @@ Common::String EoBCoreEngine::readOriginalSaveFile(const Common::Path &file) {
 
 		_lvlTempData[i] = new LevelTempData;
 		LevelTempData *l = _lvlTempData[i];
-		l->wallsXorData = new uint8[4096];
-		l->flags = new uint16[1024];
-		memset(l->flags, 0, 1024 * sizeof(uint16));
+		uint16 *bflags = new uint16[1024]();
+		l->flags = bflags;
 		EoBMonsterInPlay *lm = new EoBMonsterInPlay[30]();
 		l->monsters = lm;
 		EoBFlyingObject *lf = new EoBFlyingObject[_numFlyingObjects]();
 		l->flyingObjects = lf;
 		WallOfForce *lw = new WallOfForce[5]();
 		l->wallsOfForce = lw;
+		uint8 *d = new uint8[4096];
+		l->wallsXorData = d;
 
 		if (sourcePlatform == Common::kPlatformFMTowns) {
-			in.read(l->wallsXorData, 4096);
+			in.read(d, 4096);
 		} else {
 			in.read(cmpData, 1200);
-			_screen->decodeFrame4(cmpData, l->wallsXorData, 4096);
+			_screen->decodeFrame4(cmpData, d, 4096);
 		}
 		_curBlockFile = getBlockFileName(i + 1, 0);
 		const uint8 *p = getBlockFileData(i + 1);
 		uint16 len = READ_LE_UINT16(p + 4);
 		p += 6;
 
-		uint8 *d = l->wallsXorData;
 		for (int ii = 0; ii < 1024; ii++) {
 			for (int iii = 0; iii < 4; iii++)
 				*d++ ^= p[ii * len + iii];
@@ -978,7 +965,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(const Common::Path &file) {
 				m->sub = in.readByte();
 			}
 
-			l->flags[m->block]++;
+			bflags[m->block]++;
 		}
 
 		if (_flags.gameID == GI_EOB1)
@@ -1372,7 +1359,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			out->writeUint32BE(0);
 
 		for (int ii = 0; ii < 30; ii++) {
-			EoBMonsterInPlay *m = &((EoBMonsterInPlay*)l->monsters)[ii];
+			const EoBMonsterInPlay *m = &(reinterpret_cast<const EoBMonsterInPlay*>(l->monsters)[ii]);
 			out->writeByte(m->type);
 			out->writeByte(m->unit);
 			if (_flags.platform == Common::kPlatformAmiga)
@@ -1426,7 +1413,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			continue;
 
 		for (int ii = 0; ii < 5; ii++) {
-			WallOfForce *w= &((WallOfForce*)l->wallsOfForce)[ii];
+			const WallOfForce *w= &(reinterpret_cast<const WallOfForce*>(l->wallsOfForce)[ii]);
 			if (_flags.platform == Common::kPlatformAmiga) {
 				out->writeUint16BE(w->block);
 				out->writeUint32BE(w->duration / _tickLength);
@@ -1477,7 +1464,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 	return true;
 }
 
-void *EoBCoreEngine::generateMonsterTempData(LevelTempData *tmp) {
+const void *EoBCoreEngine::generateMonsterTempData(uint8 &monsterDifficulty) const {
 	EoBMonsterInPlay *m = new EoBMonsterInPlay[30];
 	memcpy(m, _monsters,  sizeof(EoBMonsterInPlay) * 30);
 	return m;
@@ -1488,11 +1475,10 @@ void EoBCoreEngine::restoreMonsterTempData(LevelTempData *tmp) {
 }
 
 void EoBCoreEngine::releaseMonsterTempData(LevelTempData *tmp) {
-	EoBMonsterInPlay *p = (EoBMonsterInPlay *)tmp->monsters;
-	delete[] p;
+	delete[] reinterpret_cast<const EoBMonsterInPlay*>(tmp->monsters);
 }
 
-void *EoBCoreEngine::generateWallOfForceTempData(LevelTempData *tmp) {
+const void *EoBCoreEngine::generateWallOfForceTempData() const {
 	WallOfForce *w = new WallOfForce[5];
 	memcpy(w, _wallsOfForce,  sizeof(WallOfForce) * 5);
 	uint32 ct = _system->getMillis();
@@ -1509,8 +1495,28 @@ void EoBCoreEngine::restoreWallOfForceTempData(LevelTempData *tmp) {
 }
 
 void EoBCoreEngine::releaseWallOfForceTempData(LevelTempData *tmp) {
-	WallOfForce *p = (WallOfForce *)tmp->wallsOfForce;
-	delete[] p;
+	delete[] reinterpret_cast<const WallOfForce*>(tmp->wallsOfForce);
+}
+
+const void *EoBCoreEngine::generateAutoMapTempData() {
+	uint32 *e = new uint32[64]();
+	for (int i = 0; i < 1024; i++)
+		e[i >> 4] |= (_levelBlockProperties[i].direction & 3) << ((i << 1) & 0x1E);
+	_hasTempDataMapFlags |= (1 << (_currentLevel - 1));
+	return e;
+}
+
+void EoBCoreEngine::restoreAutoMapTempData(LevelTempData *tmp) {
+	const uint32 *e = reinterpret_cast<const uint32*>(tmp->automapExploreState);
+	if (e == nullptr)
+		return;
+
+	for (int i = 0; i < 1024; i++)
+		_levelBlockProperties[i].direction = (e[i >> 4] >> ((i << 1) & 0x1E)) & 3;
+}
+
+void EoBCoreEngine::releaseAutoMapTempData(LevelTempData *tmp) {
+	delete[] reinterpret_cast<const uint32*>(tmp->automapExploreState);
 }
 
 } // End of namespace Kyra
