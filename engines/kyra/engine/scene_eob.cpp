@@ -769,8 +769,6 @@ void EoBCoreEngine::moveParty(uint16 block) {
 
 	if (_currentLevel != preLevel)
 		automapTagTransition(preLevel, trigBlock, _currentLevel);
-	else if (_currentBlock != trigBlock)
-		automapLinkTeleport(trigBlock, _currentBlock); // a script moved us within the level
 	else
 		automapCollectCellInfo(block);
 
