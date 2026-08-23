@@ -305,6 +305,20 @@
 // 11-12 years
 
 // 12-13 years
+{
+	{
+		"adi4anglais1213",
+		"",
+		AD_ENTRY2s("A52RAN.STK", "5a55f6ceb6e7b197e9da909f71ac47b3", 91078,
+				   "ADIA52.STK", "ced8138cb3aee93093c62d2b91ffc9d2", 12256800),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
 
 // 13-14 years
 

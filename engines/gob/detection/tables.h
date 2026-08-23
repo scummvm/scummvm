@@ -82,7 +82,7 @@ static const PlainGameDescriptor gobGames[] = {
 	// {"adi4anglais79", "ADI 4 Anglais 7-9 years"},
 	{"adi4anglais911", "ADI 4 Anglais 9-11 years"},
 	// {"adi4anglais1112", "ADI 4 Anglais 11-12 years"},
-	// {"adi4anglais1213", "ADI 4 Anglais 12-13 years"},
+	{"adi4anglais1213", "ADI 4 Anglais 12-13 years"},
 	// {"adi4anglais1314", "ADI 4 Anglais 13-14 years"},
 	// {"adi4anglais1415", "ADI 4 Anglais 14-15 years"},
 	{"adi4geo", "ADI 4 Geography"},
