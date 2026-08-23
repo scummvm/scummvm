@@ -284,7 +284,7 @@ protected:
 	 */
 	byte *getDataPtr(int nearPtr);
 
-	int command0();
+	virtual int command0();
 	int command1();
 	int command2();
 	int command3();

@@ -130,7 +130,7 @@ private:
 	typedef int (ASound2:: *CommandPtr)();
 	static const CommandPtr _commandList[44];
 
-	int command0();
+	int command0() override;
 	int command9();
 	int command10();
 	int command11();

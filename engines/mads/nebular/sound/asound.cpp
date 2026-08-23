@@ -172,9 +172,6 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 
 	// Initialize the Adlib
 	adlibInit();
-
-	// Reset the adlib
-	command0();
 }
 
 ASound::~ASound() {

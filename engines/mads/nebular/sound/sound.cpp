@@ -83,20 +83,6 @@ void RexSoundManager::validate() {
 void RexSoundManager::loadDriver(int sectionNumber) {
 	closeDriver();
 
-	if (_isDemo && _driverType == SOUND_ADLIB) {
-		switch (sectionNumber) {
-		case 1:
-			_driver = new ASoundDemo1(_mixer);
-			break;
-		case 9:
-			_driver = new ASoundDemo9(_mixer);
-			break;
-		default:
-			return;
-		}
-		return;
-	}
-
 	switch (_driverType) {
 	case SOUND_MT32:
 		// Roland MT32 drivers
@@ -236,37 +222,53 @@ void RexSoundManager::loadDriver(int sectionNumber) {
 
 	default:
 		// Adlib drivers
-		switch (sectionNumber) {
-		case 1:
-			_driver = new ASound1(_mixer);
-			break;
-		case 2:
-			_driver = new ASound2(_mixer);
-			break;
-		case 3:
-			_driver = new ASound3(_mixer);
-			break;
-		case 4:
-			_driver = new ASound4(_mixer);
-			break;
-		case 5:
-			_driver = new ASound5(_mixer);
-			break;
-		case 6:
-			_driver = new ASound6(_mixer);
-			break;
-		case 7:
-			_driver = new ASound7(_mixer);
-			break;
-		case 8:
-			_driver = new ASound8(_mixer);
-			break;
-		case 9:
-			_driver = new ASound9(_mixer);
-			break;
-		default:
-			return;
+		if (_isDemo) {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new ASoundDemo1(_mixer);
+				break;
+			case 9:
+				_driver = new ASoundDemo9(_mixer);
+				break;
+			default:
+				return;
+			}
+		} else {
+			switch (sectionNumber) {
+			case 1:
+				_driver = new ASound1(_mixer);
+				break;
+			case 2:
+				_driver = new ASound2(_mixer);
+				break;
+			case 3:
+				_driver = new ASound3(_mixer);
+				break;
+			case 4:
+				_driver = new ASound4(_mixer);
+				break;
+			case 5:
+				_driver = new ASound5(_mixer);
+				break;
+			case 6:
+				_driver = new ASound6(_mixer);
+				break;
+			case 7:
+				_driver = new ASound7(_mixer);
+				break;
+			case 8:
+				_driver = new ASound8(_mixer);
+				break;
+			case 9:
+				_driver = new ASound9(_mixer);
+				break;
+			default:
+				return;
+			}
 		}
+
+		// Reset the driver
+		_driver->command(0, 0);
 	}
 }
 
