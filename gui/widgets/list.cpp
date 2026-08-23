@@ -471,10 +471,10 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void ListWidget::handleMouseMoved(int x, int y, int button) {
-	if (!isEnabled() || !_scrollBar->isVisible())
+	if (!isEnabled())
 		return;
 
-	if (_isMouseDown && _dragLastY != 0) {
+	if (_isMouseDown && _dragLastY != 0 && _scrollBar->isVisible()) {
 		if (!_isDragging && ABS(y - _dragStartY) > kDragThreshold)
 			_isDragging = true;
 
