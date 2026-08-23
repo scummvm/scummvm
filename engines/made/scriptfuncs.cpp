@@ -1173,7 +1173,7 @@ int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
 		ScriptInterpreter *si = new ScriptInterpreter(_vm);
 		int16 playing = true;
 
-		int32 pmvStartTime = _vm->getTotalPlayTime() + _vm->_pmvPlayer->frameDelay;
+		int32 pmvStartTime = _vm->getTotalPlayTime();
 
 		while (!_vm->shouldQuit() && !_vm->_pmvPlayer->_fd->eos() && _vm->_pmvPlayer->frameNumber < _vm->_pmvPlayer->frameCount && playing) {
 			// Decode and stage the next audio / video frame
@@ -1181,11 +1181,13 @@ int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
 				break;
 
 			// delay until time has passed, then flip screen
-			int32 delayTime = (_vm->_pmvPlayer->frameNumber - 1) * _vm->_pmvPlayer->frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
-			if (delayTime < 0)
-				warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / _vm->_pmvPlayer->frameDelay) + 1);
-			else
-				g_system->delayMillis(delayTime);
+			if (_vm->_pmvPlayer->frameNumber > 1) {
+				int32 delayTime = (_vm->_pmvPlayer->frameNumber - 1) * _vm->_pmvPlayer->frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
+				if (delayTime < 0)
+					warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / _vm->_pmvPlayer->frameDelay) + 1);
+				else
+					g_system->delayMillis(delayTime);
+			}
 
 			// call subroutine each frame
 			playing = si->runScript(argv[0]);

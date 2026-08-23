@@ -249,7 +249,7 @@ bool PmvPlayer::decode_frame() {
 
 		// frameNum @0
 		uint32 imageChunkSize = READ_LE_UINT32(imageData) + 4;
-		// uint32 unknown = READ_LE_UINT32(imageData); // zero?
+		// uint32 unknown = READ_LE_UINT32(imageData + 4); // zero?
 		uint16 width = READ_LE_UINT16(imageData + 8);
 		uint16 height = READ_LE_UINT16(imageData + 10);
 
@@ -314,7 +314,7 @@ bool PmvPlayer::play(const char *filename) {
 	bool aborted = false;
 
 	if (load(filename)) {
-		int32 pmvStartTime = _vm->getTotalPlayTime();
+		uint32 pmvStartTime = _vm->getTotalPlayTime();
 
 		while (!_vm->shouldQuit() && ! aborted && !_fd->eos() && frameNumber < frameCount) {
 			// Decode and stage the next audio / video frame
@@ -323,11 +323,13 @@ bool PmvPlayer::play(const char *filename) {
 			}
 
 			// delay until time has passed, then flip screen
-			int32 delayTime = (frameNumber - 1) * frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
-			if (delayTime < 0)
-				warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / frameDelay) + 1);
-			else
-				g_system->delayMillis(delayTime);
+			if (frameNumber > 1) {
+				int32 delayTime = (frameNumber - 1) * frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
+				if (delayTime < 0)
+					warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / frameDelay) + 1);
+				else
+					g_system->delayMillis(delayTime);
+			}
 
 			_vm->_system->updateScreen();
 			
