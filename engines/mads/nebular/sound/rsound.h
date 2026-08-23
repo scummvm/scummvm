@@ -160,7 +160,6 @@ private:
 	int _sysExOffset;
 
 	MidiDriver_MT32GM *_midiDriver;
-	uint32 _driverCallbackDelta;
 
 	void processTick();
 	void processTickAllChannels();

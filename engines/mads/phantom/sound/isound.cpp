@@ -531,6 +531,7 @@ bool ISound::processControl(byte opcode) {
 	case 0xf4:
 	case 0xf1:
 	case 0xf0:
+	case 0xc3:
 		_position = (uint16)(_position + 2);
 		break;
 	case 0xf3:
@@ -682,9 +683,6 @@ bool ISound::processControl(byte opcode) {
 		if (!readControlWord(1, w)) return false;
 		warning("Phantom ISOUND ignored native callback 0x%04x", w);
 		_position = (uint16)(_position + 3);
-		break;
-	case 0xc3:
-		_position = (uint16)(_position + 2);
 		break;
 	case 0xc2:
 		_position = (uint16)(_position + 4);

@@ -1552,8 +1552,7 @@ bool RSoundDemoPHA::validate(Common::String *reason) {
 			*reason = "file size does not match";
 		return false;
 	}
-	if (kDemoDataOffset + kDemoInitializedDataSize != file.size() ||
-		kDemoInitializedDataSize > kDemoDeclaredDataSize) {
+	if (kDemoDataOffset + kDemoInitializedDataSize != file.size()) {
 		if (reason)
 			*reason = "declared data segment is inconsistent";
 		return false;

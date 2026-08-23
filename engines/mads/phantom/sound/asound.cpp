@@ -221,7 +221,6 @@ ASound::ASound(Audio::Mixer *mixer, const Common::Path &filename, int dataOffset
 	write(4, 0x80);
 
 	Common::fill(_adlibPorts, _adlibPorts + 256, 0);
-	command0();
 }
 
 ASound::~ASound() {
@@ -1900,7 +1899,6 @@ post_keyon:
 
 		if (ch->_fadePeriodCounter == 0) {
 			ch->_fadePeriodCounter = ch->_fadePeriodReload;
-			ch = _activeChannelPtr;
 
 			if (ch->_volumeFadeStep != 0) {
 				if (ch->_pendingStop != 0) {
@@ -1908,7 +1906,6 @@ post_keyon:
 					if (ch->_velocity > 0) {
 						ch->_velocity += ch->_volumeFadeStep; /* step is signed */
 					}
-					ch = _activeChannelPtr;
 					if (ch->_volume != 0) {
 						ch->_volume += ch->_volumeFadeStep;
 					}
@@ -1916,12 +1913,10 @@ post_keyon:
 					/* Normal fade: clamp velocity at 0..127 */
 					if ((int8)ch->_volumeFadeStep > 0) {
 						ch->_velocity += ch->_volumeFadeStep;
-						ch = _activeChannelPtr;
 						if ((int16)ch->_velocity > 0x7F)
 							ch->_velocity = 0x7F;
 					} else {
 						ch->_velocity += ch->_volumeFadeStep;
-						ch = _activeChannelPtr;
 						if ((int8)ch->_velocity < 0)
 							ch->_velocity = 0;
 					}
@@ -1933,11 +1928,9 @@ post_keyon:
 		/* ---- Vibrato ---- */
 		ch = _activeChannelPtr;
 		ch->_vibPeriodCounter--;
-		ch = _activeChannelPtr;
 
 		if (ch->_vibPeriodCounter == 0) {
 			ch->_vibPeriodCounter = ch->_vibPeriodReload;
-			ch = _activeChannelPtr;
 
 			if ((int8)ch->_vibratoDepth != 0) {
 				int16 pa = (int16)(int8)ch->_patchAttenuation;
@@ -1954,7 +1947,6 @@ post_keyon:
 						ch->_vibratoDepth = (uint8)(-ch->_vibratoDepth);
 				}
 
-				ch = _activeChannelPtr;
 				ch->_patchAttenuation += ch->_vibratoDepth;
 				var_8 = 1;
 			}

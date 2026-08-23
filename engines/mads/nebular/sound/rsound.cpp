@@ -597,14 +597,15 @@ void RSound::Channel_processTick(Channel *channel) {
 	if (channel->_volumeFadeStepSize) {
 		if (!--channel->_volumeFadeCounter) {
 			channel->_volumeFadeCounter = channel->_volumeFadeSpeed;
-			int8 newVolume = (int8)channel->_volume + (int8)channel->_volumeFadeStepSize;
-			if (newVolume < 0) {
+			int volumeSum = (int8)channel->_volume + (int8)channel->_volumeFadeStepSize;
+			if (volumeSum < 0) {
 				channel->_volumeFadeStepSize = 0;
-				newVolume = 0;
-			} else if (newVolume >= 0x7F) {
+				volumeSum = 0;
+			} else if (volumeSum >= 0x7F) {
 				channel->_volumeFadeStepSize = 0;
-				newVolume = 0x7F;
+				volumeSum = 0x7F;
 			}
+			int8 newVolume = (int8)volumeSum;
 			channel->_volume = newVolume;
 			sendVolume(midiChannel, newVolume);
 		}

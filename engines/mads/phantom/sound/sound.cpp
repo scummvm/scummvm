@@ -208,6 +208,7 @@ void PhantomSoundManager::loadDriver(int sectionNumber) {
 		}
 	} else if (_isDemo) {
 		_driver = new ASoundDemo(_mixer);
+		_driver->command(0, 0);
 	} else if (_driverType == SOUND_PCSPEAKER) {
 		const Common::Path filename = getISoundFilename(sectionNumber);
 		Common::String reason;
@@ -217,10 +218,14 @@ void PhantomSoundManager::loadDriver(int sectionNumber) {
 			warning("Cannot use %s: %s; using AdLib for section %d",
 				filename.toString().c_str(), reason.c_str(), sectionNumber);
 			_driver = createASound(_mixer, sectionNumber);
+			if (_driver)
+				_driver->command(0, 0);
 		}
 	} else {
 		// Adlib
 		_driver = createASound(_mixer, sectionNumber);
+		if (_driver)
+			_driver->command(0, 0);
 	}
 }
 

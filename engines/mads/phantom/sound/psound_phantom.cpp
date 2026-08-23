@@ -515,7 +515,8 @@ int PSound3::executeCommand(int commandId) {
 	case 0x25:
 		playSound(0x0653);
 		break;
-	case 0x40: {
+	case 0x40:
+	case 0x4b: {
 		static const uint16 sounds[] = {0x0622, 0x0627};
 		playSounds(sounds, ARRAYSIZE(sounds));
 		break;
@@ -556,11 +557,6 @@ int PSound3::executeCommand(int commandId) {
 	case 0x4a:
 		playSound(0x0757);
 		break;
-	case 0x4b: {
-		static const uint16 sounds[] = {0x0622, 0x0627};
-		playSounds(sounds, ARRAYSIZE(sounds));
-		break;
-	}
 	default:
 		break;
 	}

@@ -169,12 +169,8 @@ bool ISoundSection::validateSectionLayout(int sectionNumber,
 
 	const bool lateLayout = sectionNumber >= 3 && sectionNumber <= 5;
 	const uint16 noteTableOffset = lateLayout ? 0x00e0 : 0x00f4;
-	const uint16 nullSequenceOffset = lateLayout ? 0x00ba : 0x00ce;
-	const uint16 randomSeedOffset = lateLayout ? 0x00c8 : 0x00dc;
 	const uint32 noteTableEnd = noteTableOffset + (0x00ba + 1) * 2U;
-	if (noteTableEnd > layout.initializedDataSize ||
-		(uint32)nullSequenceOffset + 1 >= layout.initializedDataSize ||
-		(uint32)randomSeedOffset + 1 >= layout.initializedDataSize) {
+	if (noteTableEnd > layout.initializedDataSize) {
 		if (reason)
 			*reason = "overlay data does not contain the selected section layout";
 		return false;
