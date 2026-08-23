@@ -113,11 +113,11 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_preventMonsterFlash = false;
 	_sceneShakeCountdown = 0;
 
-	automapReset();
-	_automapFullOpen = false;
-	_automapHudOn = false;
+	memset(_automapVisited, 0, sizeof(_automapVisited));
+	memset(_automapSeen, 0, sizeof(_automapSeen));
+	_automapVisible = false;
+	_automapSelectedBlock = 0xFFFF;
 	_automapEditing = false;
-	_automapNextRefresh = 0;
 
 	_teleporterPulse = 0;
 
@@ -384,10 +384,9 @@ Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 	addKeymapAction(keyMap, "TL", _("Turn left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
 	addKeymapAction(keyMap, "TR", _("Turn right"), Common::KeyState(Common::KEYCODE_PAGEUP), "PAGEUP", "JOY_RIGHT");
 
-	// Non-original: the automap overlay (toggle), its note editor and the mini-map HUD.
+	// Non-original: the automap overlay (toggle) and its note editor.
 	addKeymapAction(keyMap, "AMAP", _("Toggle automap"), Common::KeyState(Common::KEYCODE_TAB, '\t'), "TAB", "");
 	addKeymapAction(keyMap, "NOTE", _("Edit map note (while map open)"), Common::KeyState(Common::KEYCODE_n, 'n'), "n", "");
-	addKeymapAction(keyMap, "HUDM", _("Toggle mini-map (replaces the compass)"), Common::KeyState(Common::KEYCODE_m, 'm'), "m", "");
 	addKeymapAction(keyMap, "INV", _("Open / Close inventory"), Common::KeyState(Common::KEYCODE_i, 'i'), "i", "JOY_X");
 	addKeymapAction(keyMap, "SCE", _("Switch inventory / Character screen"), Common::KeyState(Common::KEYCODE_p, 'p'), "p", "JOY_Y");
 	addKeymapAction(keyMap, "CMP", _("Camp"), Common::KeyState(Common::KEYCODE_c, 'c'), "c", "");
@@ -725,10 +724,6 @@ void EoBCoreEngine::readSettings() {
 	_configEnhancedReload = ConfMan.getBool("mreload");
 	_configNPCPatch = (_flags.gameID == GI_EOB1) ? ConfMan.getBool("npcpatch") : false;
 	_configAutomap = ConfMan.getBool("automap");
-	// The mini-map HUD state survives restarts; SegaCD renders its play field
-	// through its own tile pipeline, so the HUD is not available there.
-	_automapHudOn = _configAutomap && _flags.platform != Common::kPlatformSegaCD &&
-		ConfMan.hasKey("automap_hud") && ConfMan.getBool("automap_hud");
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 	_configMusic = (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
@@ -764,9 +759,6 @@ void EoBCoreEngine::writeSettings() {
 }
 
 void EoBCoreEngine::startupNew() {
-	// A new game must not inherit automap data, in particular from the EOB1 save
-	// that a party transfer imports via loadGameState(-1).
-	automapReset();
 	gui_setPlayFieldButtons();
 	_screen->_curPage = 0;
 	gui_drawPlayField(false);
@@ -788,41 +780,37 @@ void EoBCoreEngine::runLoop() {
 	while (!shouldQuit() && _runFlag) {
 		uint32 frameEnd = _system->getMillis() + 8;
 		checkPartyStatus(true);
-		// While the full map is up, suppress the play-field buttons so clicks hit the
-		// map. The mini-map HUD is non-modal: the game plays on unchanged beneath it.
-		const bool mapFull = _automapFullOpen;
-		int inputFlag = checkInput(mapFull ? 0 : _activeButtons, true, 0);
+		// While the map is up, suppress the play-field buttons so clicks hit the map.
+		int inputFlag = checkInput(_automapVisible ? 0 : _activeButtons, true, 0);
 		removeInputTop();
 
 		if (inputFlag && inputFlag == _keyMap[Common::KEYCODE_TAB]) {
 			if (_configAutomap)         // non-original automap, opt-out via game options
 				automapToggle();
-		} else if (inputFlag && inputFlag == _keyMap[Common::KEYCODE_m] && !mapFull) {
-			if (_configAutomap)
-				automapToggleHud();     // non-original: mini-map in the compass slot
-		} else if (mapFull && inputFlag && inputFlag == _keyMap[Common::KEYCODE_ESCAPE]) {
-			automapToggle();            // Esc closes the map (only while it is open)
-		} else if (mapFull && inputFlag == 199) {
+		} else if (_automapVisible && inputFlag && inputFlag == _keyMap[Common::KEYCODE_ESCAPE]) {
+			automapToggle();            // Esc also closes the map (only while it is open)
+		} else if (_automapVisible && inputFlag == 199) {
 			automapHandleClick();
-		} else if (mapFull && inputFlag && inputFlag == _keyMap[Common::KEYCODE_n]) {
+		} else if (_automapVisible && inputFlag && inputFlag == _keyMap[Common::KEYCODE_n]) {
 			automapEditNote();
-		} else if (mapFull && inputFlag && inputFlag == _keyMap[Common::KEYCODE_SPACE]) {
-			// Space jumps the selection back to the party.
-			_automapSelectedBlock = _currentBlock;
-		// Shift+arrows move the map selection cursor (place notes without a mouse);
-		// the 0x100 tag makes each value non-zero, so no separate inputFlag guard.
-		} else if (mapFull && inputFlag == (_keyMap[Common::KEYCODE_UP] | 0x100)) {
-			automapMoveSelection(0, -1);
-		} else if (mapFull && inputFlag == (_keyMap[Common::KEYCODE_DOWN] | 0x100)) {
-			automapMoveSelection(0, 1);
-		} else if (mapFull && inputFlag == (_keyMap[Common::KEYCODE_LEFT] | 0x100)) {
-			automapMoveSelection(-1, 0);
-		} else if (mapFull && inputFlag == (_keyMap[Common::KEYCODE_RIGHT] | 0x100)) {
-			automapMoveSelection(1, 0);
-		} else if (mapFull && inputFlag) {
+		} else if (_automapVisible && inputFlag &&
+		           (inputFlag == (_keyMap[Common::KEYCODE_UP] | 0x100) || inputFlag == (_keyMap[Common::KEYCODE_DOWN] | 0x100) ||
+		            inputFlag == (_keyMap[Common::KEYCODE_LEFT] | 0x100) || inputFlag == (_keyMap[Common::KEYCODE_RIGHT] | 0x100))) {
+			// Shift+arrows move the map selection cursor (place notes without a mouse).
+			if (inputFlag == (_keyMap[Common::KEYCODE_UP] | 0x100))
+				automapMoveSelection(0, -1);
+			else if (inputFlag == (_keyMap[Common::KEYCODE_DOWN] | 0x100))
+				automapMoveSelection(0, 1);
+			else if (inputFlag == (_keyMap[Common::KEYCODE_LEFT] | 0x100))
+				automapMoveSelection(-1, 0);
+			else
+				automapMoveSelection(1, 0);
+		} else if (_automapVisible && inputFlag &&
+		           (inputFlag == _keyMap[Common::KEYCODE_UP] || inputFlag == _keyMap[Common::KEYCODE_DOWN] ||
+		            inputFlag == _keyMap[Common::KEYCODE_LEFT] || inputFlag == _keyMap[Common::KEYCODE_RIGHT] ||
+		            inputFlag == _keyMap[Common::KEYCODE_HOME] || inputFlag == _keyMap[Common::KEYCODE_PAGEUP])) {
 			// Movement is normally button-driven, but those are suppressed now, so
-			// dispatch the arrow/turn keys here (the handlers only read button->index,
-			// so a dummy is fine); any other key falls through untouched.
+			// dispatch the keys here. The handlers only read button->index, so a dummy is fine.
 			Button dummy;
 			if (inputFlag == _keyMap[Common::KEYCODE_UP])
 				clickedUpArrow(&dummy);
@@ -834,7 +822,7 @@ void EoBCoreEngine::runLoop() {
 				clickedRightArrow(&dummy);
 			else if (inputFlag == _keyMap[Common::KEYCODE_HOME])
 				clickedTurnLeftArrow(&dummy);
-			else if (inputFlag == _keyMap[Common::KEYCODE_PAGEUP])
+			else
 				clickedTurnRightArrow(&dummy);
 		}
 
@@ -850,21 +838,10 @@ void EoBCoreEngine::runLoop() {
 		if (sceneRedraw)
 			automapMarkSeenFromCurrent();
 
-		if (_automapFullOpen) {
+		if (_automapVisible) {
 			// Opaque overlay: skip the dungeon redraw behind it (redrawn on close).
 			_sceneUpdateRequired = false;
-			// Redraw on activity only, plus a slow heartbeat so passive changes
-			// (live floor items, an overlay resize) still show up.
-			bool mapRedraw = inputFlag || sceneRedraw || _system->getMillis() >= _automapNextRefresh;
-			const uint16 hover = automapBlockAtMouse();
-			if (hover != _automapHoverBlock) {
-				_automapHoverBlock = hover; // hovered cell's info shows in the footer
-				mapRedraw = true;
-			}
-			if (mapRedraw) {
-				automapDraw();
-				_automapNextRefresh = _system->getMillis() + 250;
-			}
+			automapDraw();
 		} else if (sceneRedraw) {
 			drawScene(1);
 		}
