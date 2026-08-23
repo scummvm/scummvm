@@ -91,7 +91,7 @@ void rail_connect_node(int id) {
 
 	for (count = 0; count < (int)rail_num_nodes; count++) {
 		if (count != id) {
-			if (rail_active[count] && rail_active[id]) {
+			if (rail_active[count]) {
 				x1 = room->rail[count].x;
 				y1 = room->rail[count].y;
 				if (player.walk_anywhere) {

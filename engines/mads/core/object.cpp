@@ -231,7 +231,7 @@ int object_examine(int number, long message, int speech) {
 	if (isMacRex)
 		inter_hide_macintosh_sentence();
 
-	memcpy(&top_eight[0].r, &master_palette[248].r, 8 * sizeof(RGBcolor));
+	memcpy(&top_eight[0], &master_palette[248], 8 * sizeof(RGBcolor));
 
 	// Use attribute buffer to cheat on memory requirements a bit
 	old_master_palette = scr_depth.data;
@@ -346,7 +346,7 @@ int object_examine(int number, long message, int speech) {
 		if (isRex)
 			RexNebular::popup_shift_dialog_colors(-10);
 
-		memcpy(&cycling_palette[248].r, &master_palette[248].r, 8 * sizeof(RGBcolor));
+		memcpy(&cycling_palette[248], &master_palette[248], 8 * sizeof(RGBcolor));
 
 		if (speech) {
 			if (speech_system_active && speech_on) {
@@ -438,7 +438,7 @@ int object_examine(int number, long message, int speech) {
 	}
 
 	// Turn color cycling back on.
-	memcpy(&cycling_palette[248].r, top_eight, 8 * sizeof(RGBcolor));
+	memcpy(&cycling_palette[248], top_eight, 8 * sizeof(RGBcolor));
 	mcga_setpal_range(&cycling_palette, 248, 8);
 
 	cycling_active = cycling_save;

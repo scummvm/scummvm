@@ -1029,7 +1029,6 @@ int popup_ask_string(char *target, int maxlen, int save_screen) {
 		while (!g_engine->shouldQuit() && !keys_any()) {
 			mouse_begin_cycle(false);
 			if (mouse_stop_stroke) {
-				error_flag = 1;
 				popup_esc_key = true;
 				going = false;
 				goto done;
@@ -1043,7 +1042,6 @@ int popup_ask_string(char *target, int maxlen, int save_screen) {
 		case alt_q_key:
 		case ctrl_q_key:
 		case ctrl_x_key:
-			error_flag = 1;
 			popup_esc_key = true;
 			going = false;
 			goto done;
@@ -1123,7 +1121,8 @@ int popup_ask_number(long *value, int maxlen, int save_screen) {
 
 	if (popup_ask_string(temp_buf, maxlen, save_screen)) goto done;
 
-	*value = atol(temp_buf);
+	if (value)
+		*value = atol(temp_buf);
 
 	error_flag = false;
 

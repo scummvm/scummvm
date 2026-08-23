@@ -1160,8 +1160,7 @@ void game_control() {
 			if (gameId == GType_RexNebular)
 				game.going = !kernel_section_startup(new_section);
 
-			if (gameId != GType_Forest)
-				kernel.activate_menu = GAME_DIFFICULTY_MENU;
+			kernel.activate_menu = GAME_DIFFICULTY_MENU;
 			game_exec_function(game_menu_routine);
 			if (!game.going)
 				return;
@@ -2135,13 +2134,13 @@ static void game_palette_update() {
 			item = 'c';
 		} else if (color_status[count]) {
 			handle = picture_resource.color_handle;
-			picture_flag = 1 << handle;
+			picture_flag = 1L << handle;
 			any_flag = picture_flag;
 
 			walker_flag = 0;
 			for (count2 = 0; count2 < player.num_series; count2++) {
 				handle = series_list[count2 + player.series_base]->color_handle;
-				walker_flag |= 1 << handle;
+				walker_flag |= 1L << handle;
 			}
 
 			any_flag |= walker_flag;

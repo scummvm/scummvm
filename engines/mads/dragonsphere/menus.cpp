@@ -381,7 +381,6 @@ static void global_menu_options() {
 		case f1_key:
 		case f5_key:
 		default:
-			kernel.activate_menu = GAME_MAIN_MENU;
 			break;
 
 		case f2_key:
@@ -537,7 +536,6 @@ static void global_menu_cdrom() {
 		case f1_key:
 		case f5_key:
 		default:
-			kernel.activate_menu = GAME_MAIN_MENU;
 			break;
 
 		case f2_key:

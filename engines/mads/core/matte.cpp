@@ -978,8 +978,10 @@ void matte_refresh_inter() {
 	int id;
 
 	id = matte_allocate_inter_image();
-	image_inter_list[id].flags = IMAGE_REFRESH;
-	image_inter_list[id].segment_id = (byte)-1;
+	if (id >= 0) {
+		image_inter_list[id].flags = IMAGE_REFRESH;
+		image_inter_list[id].segment_id = (byte)-1;
+	}
 }
 
 static void make_inter_matte(ImageInterPtr image, MattePtr matte) {

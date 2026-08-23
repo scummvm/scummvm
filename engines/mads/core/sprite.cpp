@@ -542,14 +542,14 @@ SeriesPtr sprite_series_load(const char *filename, int load_flags) {
 			for (count = 0; count < color_list->num_colors; count++) {
 				found = false;
 				for (low_color = 0; !found && (low_color < 4); low_color++) {
-					if (memcmp(&color_list->table[count].r, &master_palette[low_color].r, sizeof(RGBcolor)) == 0) {
+					if (memcmp(&color_list->table[count], &master_palette[low_color], sizeof(RGBcolor)) == 0) {
 						found = true;
 						color_list->table[count].x16 = (byte)low_color;
 					}
 				}
 				if (!found) {
-					memcpy(&master_palette[color_table[color_pointer]].r,
-						&color_list->table[count].r, sizeof(RGBcolor));
+					memcpy(&master_palette[color_table[color_pointer]],
+						&color_list->table[count], sizeof(RGBcolor));
 					color_list->table[count].x16 = (byte)color_table[color_pointer];
 					color_pointer = MIN(6, color_pointer + 1);
 				}
