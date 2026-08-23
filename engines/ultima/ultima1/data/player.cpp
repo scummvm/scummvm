@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima1/data/player.h"
+#include "ultima/ultima1/data/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -29,7 +30,7 @@ const char *SEX_NAMES[] = { "Male", "Female" };
 const char *RACE_NAMES[] = { nullptr, "Human", "Elf", "Dwarf", "Bobbit" };
 const char *CLASS_NAMES[] = { nullptr, "Fighter", "Cleric", "Wizard", "Thief" };
 
-void Player::synchronize(Common::Serializer &s) {
+void Player::synchronizeBasic(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, MAX_NAME_LENGTH + 2);
 	s.syncAsByte(_race);
 	s.syncAsByte(_class);
@@ -77,6 +78,22 @@ void Player::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_enemyVessels);
 	s.syncAsSint16LE(_signMarker);
 	s.syncAsSint16LE(_moveCount);
+}
+
+void Player::synchronizeExtra(Common::Serializer &s) {
+	s.syncAsSint16LE(_mapNum);
+	s.syncAsSint16LE(_locationPosition.x);
+	s.syncAsSint16LE(_locationPosition.y);
+}
+
+void Player::synchronize(Common::Serializer &s) {
+	synchronizeBasic(s);
+	synchronizeExtra(s);
+}
+
+void Player::synchronizeOriginal(Common::Serializer &s) {
+	synchronizeBasic(s);
+	_mapNum = MAP_OVERWORLD;
 }
 
 } // namespace Data

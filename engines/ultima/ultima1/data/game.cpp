@@ -28,6 +28,8 @@ namespace Ultima1 {
 namespace Data {
 
 void Game::startGame() {
+	_G(map).load(_G(player)._mapNum);
+
 	// TODO: dungeons aren't implemented yet, so always start on the overworld
 	g_engine->replaceView("Overworld");
 

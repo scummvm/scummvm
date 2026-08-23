@@ -28,22 +28,88 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
+constexpr int OVERWORLD_WIDTH = 168;
+constexpr int OVERWORLD_HEIGHT = 168;
+constexpr int OVERWORLD_SIZE = OVERWORLD_WIDTH * OVERWORLD_HEIGHT;
+constexpr int CITY_WIDTH = 38;
+constexpr int CITY_HEIGHT = 18;
+constexpr int CITY_SIZE = CITY_WIDTH * CITY_HEIGHT;
+
+void Map::init() {
+	// Load the overworld map
+	Common::File ow;
+	byte v;
+	byte *offset;
+
+	if (!ow.open("map.bin"))
+		error("Could not open map.bin");
+	_overworldMap.reserve(OVERWORLD_SIZE);
+
+	for (int i = 0; i < OVERWORLD_SIZE / 2; ++i) {
+		v = ow.readByte();
+		_overworldMap.push_back(v >> 4);
+		_overworldMap.push_back(v & 0xf);
+	}
+
+	ow.close();
+
+	// Load the city/castle maps
+	Common::File tc;
+	if (!tc.open("tcd.bin"))
+		error("Could not open tcd.bin");
+
+	for (int i = 0; i < 10; ++i) {
+		auto &m = _cityMap[i];
+		m.resize(CITY_SIZE);
+
+		// Individual cities are top-to-bottom first, then left-to-right. For consistency
+		// with the overworld, we switch them to left-to-right, top-to-bottom
+		for (int x = 0; x < CITY_WIDTH; ++x) {
+			offset = &m[x];
+
+			for (int y = 0; y < CITY_HEIGHT; ++y, offset += CITY_WIDTH)
+				*offset = tc.readByte();
+		}
+	}
+
+	// Load the overworld map by default
+	load(MAP_OVERWORLD);
+}
+
 void Map::load(int mapNum) {
 	const auto &player = g_engine->_player;
 
-	if (mapNum == _currentMap)
-		return;
 	_currentMap = mapNum;
 
-	Common::File f;
-	if (!f.open(Common::String::format("MAPX%.2d", mapNum).c_str()))
-		error("Could not open map %d", mapNum);
+	if (mapNum == MAP_OVERWORLD) {
+		_mapWidth = OVERWORLD_WIDTH;
+		_mapHeight = OVERWORLD_HEIGHT;
+		_outsideMapTile = 0xff;
 
-	f.read(_tiles, MAP_WIDTH * MAP_HEIGHT);
+		_mapRows.clear();
+		_mapRows.reserve(OVERWORLD_HEIGHT);
+		for (int y = 0; y < OVERWORLD_HEIGHT; ++y)
+			_mapRows.push_back(Row(this, &_overworldMap[y * OVERWORLD_WIDTH]));
+
+		_mapX = player._position.x;
+		_mapY = player._position.y;
+
+	} else {
+		_mapWidth = CITY_WIDTH;
+		_mapHeight = CITY_HEIGHT;
+		_outsideMapTile = 0;
+
+		_mapRows.clear();
+		_mapRows.reserve(CITY_HEIGHT + 1);		// One extra row for out-of-bounds y access
+		for (int y = 0; y < OVERWORLD_HEIGHT; ++y)
+			_mapRows.push_back(Row(this, &_cityMap[mapNum - 1][y * CITY_WIDTH]));
+		_mapRows.push_back(Row(this, nullptr));
+
+		_mapX = 19;
+		_mapY = 17;
+	}
 
 	// Set up copies of the map position and player tile to use
-	_mapX = player._position.x;
-	_mapY = player._position.y;
 	_playerTileId = kTileParty;
 	clearTiles();
 }
@@ -55,7 +121,7 @@ void Map::clearTiles() {
 bool Map::canMoveToTile(int tileNum) {
 	int tileId = tileNum & 0x7f;
 
-	if ((uint)_mapX < Data::MAP_WIDTH && (uint)_mapY < Data::MAP_HEIGHT) {
+	if (_mapX < _mapWidth && _mapY < _mapHeight) {
 		// Within the bounds of the map
 		switch (_playerTileId) {
 		case kTileTimeMachine:

@@ -114,7 +114,7 @@ public:
 };
 
 extern Ultima1Engine *g_engine;
-#define _G(X) (::Ultima1::g_engine->X)
+#define _G(X) (Ultima1::g_engine->_##X)
 
 } // namespace Ultima1
 } // namespace Ultima

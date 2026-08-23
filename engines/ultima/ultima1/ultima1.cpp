@@ -30,6 +30,7 @@
 #include "ultima/ultima1/console.h"
 #include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/views/views.h"
+#include "ultima/ultima1/metaengine.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -54,6 +55,8 @@ Common::String Ultima1Engine::getGameId() const {
 }
 
 Common::Error Ultima1Engine::run() {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 	g_system->getPaletteManager()->setPalette(Graphics::Palette::createEGAPalette());
@@ -61,8 +64,9 @@ Common::Error Ultima1Engine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	// Load the overworld tile sheet
+	// Load needed data
 	Data::loadTiles(_tiles);
+	_map.init();
 
 	Views::Views views;
 	addView("Startup");

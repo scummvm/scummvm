@@ -98,32 +98,15 @@ void OverworldMap::prepareMapForDrawing() {
 	auto &map = g_engine->_map;
 	int mapLeft, mapTop;
 
-	if (map._outsideMapTile != -1) {
-		// Non-wrapping draw (used for indoor maps/dungeons with a border tile)
-		mapLeft = (map._mapX - Data::MAP_VISIBLE_CENTER_X) + 1;
-		mapTop = (map._mapY - Data::MAP_VISIBLE_CENTER_Y) + 1;
+	mapLeft = (map._mapX - Data::MAP_VISIBLE_CENTER_X) + 1;
+	mapTop = (map._mapY - Data::MAP_VISIBLE_CENTER_Y) + 1;
 
-		for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
-			for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
-				uint8 x = mapLeft + ox;
-				uint8 y = mapTop + oy;
+	for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
+		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
+			int x = mapLeft + ox;
+			int y = mapTop + oy;
 
-				map._mapTilesId[oy][ox] = (x >= Data::MAP_WIDTH || y >= Data::MAP_HEIGHT) ?
-					map._outsideMapTile : map._tiles[y][x];
-			}
-		}
-
-	} else {
-		// Normal (wrapping) draw - overworld map
-		mapTop = (map._mapY - Data::MAP_VISIBLE_CENTER_Y) & 63;
-		mapLeft = (map._mapX - Data::MAP_VISIBLE_CENTER_X) & 63;
-
-		for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
-			for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
-				uint8 x = (mapLeft + ox) & 63;
-				uint8 y = (mapTop + oy) & 63;
-				map._mapTilesId[oy][ox] = map._tiles[y][x];
-			}
+			map._mapTilesId[oy][ox] = map[y][x];
 		}
 	}
 

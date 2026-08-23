@@ -22,6 +22,7 @@
 #include "ultima/ultima1/views/overworld.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/tiles.h"
+#include "ultima/ultima1/metaengine.h"
 #include "ultima/shared/gfx/rect.h"
 
 namespace Ultima {
@@ -29,9 +30,19 @@ namespace Ultima1 {
 namespace Views {
 
 Overworld::Overworld() : Dialog("Overworld"), _map(this), _stats(this) {
-	_map.setBounds(Common::Rect(7, 7, 7 + Data::MAP_VISIBLE_WIDTH * Data::TILE_WIDTH,
-		7 + Data::MAP_VISIBLE_HEIGHT * Data::TILE_HEIGHT));
+	_map.setBounds(Common::Rect(8, 8, 8 + Data::MAP_VISIBLE_WIDTH * Data::TILE_WIDTH,
+		8 + Data::MAP_VISIBLE_HEIGHT * Data::TILE_HEIGHT));
 	_stats.setBounds(TextRect(31, 21, 39, 24));
+}
+
+bool Overworld::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_OVERWORLD);
+	return View::msgFocus(msg);
+}
+
+bool Overworld::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return View::msgUnfocus(msg);
 }
 
 void Overworld::draw() {

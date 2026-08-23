@@ -81,6 +81,18 @@ enum TransportType {
  * The player character's savegame data
  */
 struct Player {
+private:
+	/**
+	 * Synchronizes the basic fields that the original's savegame format had.
+	 */
+	void synchronizeBasic(Common::Serializer &s);
+
+	/**
+	 * Synchronize extra fields specific to ScummVM, which allows saving in more than just the overworld
+	 */
+	void synchronizeExtra(Common::Serializer &s);
+
+public:
 	// Identity
 	char _name[MAX_NAME_LENGTH + 2] = {};
 	byte _race = RACE_HUMAN;
@@ -131,8 +143,22 @@ struct Player {
 	int16 _signMarker = -1;
 	int16 _moveCount = 0;
 
+	// Extra fields
+	int16 _mapNum = 0;
+	Common::Point _locationPosition;
+
+	/**
+	 * Synchronize savegame data
+	*/
 	void synchronize(Common::Serializer &s);
 
+	/**
+	 * Used for loading in original savegames
+	 */
+	void synchronizeOriginal(Common::Serializer &s);
+	/**
+	 * Returns true if the player is dead.
+	 */
 	bool isDead() const {
 		return _hits <= 0;
 	}
