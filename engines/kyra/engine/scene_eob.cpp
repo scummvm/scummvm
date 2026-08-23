@@ -22,6 +22,7 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/eobcommon.h"
+#include "kyra/gui/automap_eob.h"
 #include "kyra/resource/resource.h"
 #include "kyra/script/script_eob.h"
 #include "kyra/engine/timer.h"
@@ -751,7 +752,8 @@ void EoBCoreEngine::moveParty(uint16 block) {
 	updateAllMonsterDests();
 	uint16 old = _currentBlock;
 	_currentBlock = block;
-	automapMarkVisited(block);
+
+	_automap->markVisited(block);
 
 	// Note the level before running scripts: if one moves the party elsewhere, the
 	// automap tags this cell as an exit.
@@ -768,9 +770,9 @@ void EoBCoreEngine::moveParty(uint16 block) {
 	runLevelScript(block, 1);
 
 	if (_currentLevel != preLevel)
-		automapTagTransition(preLevel, trigBlock, _currentLevel);
+		_automap->tagTransition(preLevel, trigBlock, _currentLevel);
 	else
-		automapCollectCellInfo(block);
+		_automap->collectCellInfo(preLevel, trigBlock, _teleporterWallId);
 
 	if (_flags.gameID == GI_EOB2 && _levelBlockProperties[block].walls[0] == 26)
 		memset(_levelBlockProperties[block].walls, 0, 4);
