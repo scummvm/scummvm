@@ -20,6 +20,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chamber of the Sci-Mutant Priestess.
    - Added support for Star Wars: Rebel Assault.
    - Added support for Star Wars: Rebel Assault II: The Hidden Empire.
+   - Added support for Dragonsphere.
+   - Added support for Return of the Phantom.
+   - Added support for Once Upon a Forest.
 
  General:
    - Optimised mixing and rate converters, for better performance.
