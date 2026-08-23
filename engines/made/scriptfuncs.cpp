@@ -1190,7 +1190,8 @@ int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
 			}
 
 			// call subroutine each frame
-			playing = si->runScript(argv[0]);
+			//  pass the movie ID as the one arg
+			playing = si->runScript(argv[0], 1, &argv[1]);
 			debug(3, "Call script return code: %04X (%d)", playing, playing);
 		}
 
