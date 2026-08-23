@@ -1504,12 +1504,14 @@ const void *EoBCoreEngine::generateAutoMapTempData() {
 }
 
 void EoBCoreEngine::restoreAutoMapTempData(LevelTempData *tmp) {
-	const uint32 *e = reinterpret_cast<const uint32*>(tmp->automapExploreState);
-	if (e == nullptr)
-		return;
-
-	for (int i = 0; i < 1024; i++)
-		_levelBlockProperties[i].direction = (e[i >> 4] >> ((i << 1) & 0x1E)) & 3;
+	const uint32 *e = reinterpret_cast<const uint32 *>(tmp->automapExploreState);
+	if (!(_hasTempDataMapFlags & (1 << (_currentLevel - 1))) || e == nullptr) {
+		for (int i = 0; i < 1024; i++)
+			_levelBlockProperties[i].direction = 0;
+	} else {
+		for (int i = 0; i < 1024; i++)
+			_levelBlockProperties[i].direction = (e[i >> 4] >> ((i << 1) & 0x1E)) & 3;
+	}
 }
 
 void EoBCoreEngine::releaseAutoMapTempData(LevelTempData *tmp) {
