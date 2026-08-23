@@ -55,6 +55,7 @@ void SpeechDir::load(Common::SeekableReadStream *src) {
 
 void speech_init() {
 	speech_system_active = true;
+	speech_on = true;
 }
 
 void speech_shutdown() {
