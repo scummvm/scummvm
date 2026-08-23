@@ -21,6 +21,7 @@
 
 #include "made/graphics.h"
 
+#include <common/array.h>
 #include "common/endian.h"
 #include "common/textconsole.h"
 #include "common/debug.h"
@@ -63,29 +64,30 @@ void ValueReader::resetNibbleSwitch() {
 	_nibbleSwitch = false;
 }
 
-byte *rleDecompress(byte *source, const byte *end, const int maxSize) {
-	byte *dest = new byte[maxSize];
-	byte *o = dest;
+static uint rleDecompress(byte *source, const byte *end, Common::Array<byte> &dest) {
+	dest.resize(0);
 
 	while (source < end) {
-		byte val = *source;
+		byte count = *source;
 		source++;
-		if (val < 0x80) {
+		if (count < 0x80) {
 			// copy
-			val++;
-			memcpy(o, source, val);
-			o += val;
-			source += val;
+			for (count++; count > 0; count--) {
+				dest.push_back(*source);
+				source++;
+			}
 		} else {
 			// repeat
-			val = 257 - val;
-			memset(o, *source, val);
-			o += val;
+			for (count = 257 - count; count > 0; count --)
+				dest.push_back(*source);
 			source++;
 		}
 	}
 
-	return dest;
+	if (source > end)
+		warning("graphics::rleDecompress(): input stream over-read by %d bytes!", end - source);
+
+	return dest.size();
 }
 
 void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, byte cmdFlags, byte pixelFlags, byte maskFlags, bool deltaFrame) {
@@ -218,27 +220,38 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 		uint16 cmdSize, uint16 pixelSize, uint16 maskSize, uint16 lineSize,
 		byte cmdFlags, byte pixelFlags, byte maskFlags) {
 
+	// RLE decompression buffers
+	static Common::Array<byte> cmdArray = Common::Array<byte>(4800);
+	static Common::Array<byte> pixelArray = Common::Array<byte>();
+	static Common::Array<byte> maskArray = Common::Array<byte>();
+
+	if ((maskFlags & 0b11111110) || (pixelFlags & 0b11111110) || (cmdFlags & 0b11111110))
+		error("decompressMovieImage() Unsupported flags: cmdFlags = %02X; maskFlags = %02X, pixelFlags = %02X", cmdFlags, maskFlags, pixelFlags);
+
 	uint16 width = surface.w;
 	uint16 height = surface.h;
-	uint16 bx = 0, by = 0, bw = ((width + 3) / 4) * 4, bh = ((height + 3) / 4) * 4;
+	uint16 bx = 0, by = 0, bw = ((width + 3) / 4) * 4;
 
-	// RLE decompress the buffers as needed (remember to free later!)
+	// RLE decompress the buffers as needed
 	byte *cmdBuffer;
-	if (cmdFlags & 1)
-		cmdBuffer = rleDecompress(source + cmdOffs, source + cmdOffs + cmdSize, 4800);
-	else
+	if (cmdFlags & 1) {
+		rleDecompress(source + cmdOffs, source + cmdOffs + cmdSize, cmdArray);
+		cmdBuffer = cmdArray.data();
+	} else
 		cmdBuffer = source + cmdOffs;
 
 	byte *pixelBuffer;
-	if (pixelFlags & 1)
-		pixelBuffer = rleDecompress(source + pixelOffs, source + pixelOffs + pixelSize, bw * bh);
-	else
+	if (pixelFlags & 1) {
+		rleDecompress(source + pixelOffs, source + pixelOffs + pixelSize, pixelArray);
+		pixelBuffer = pixelArray.data();
+	} else
 		pixelBuffer = source + pixelOffs;
 
 	byte *maskBuffer;
-	if (maskFlags & 1)
-		maskBuffer = rleDecompress(source + maskOffs, source + maskOffs + maskSize, bw * bh);
-	else
+	if (maskFlags & 1) {
+		rleDecompress(source + maskOffs, source + maskOffs + maskSize, maskArray);
+		maskBuffer = maskArray.data();
+	} else
 		maskBuffer = source + maskOffs;
 
 	//
@@ -279,12 +292,14 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 				switch (cmd) {
 
 				case 0:
+					// solid color fill of block
 					pixels[0] = *pPixelBuf++;
 					for (int i = 0; i < 16; i++)
 						block[i] = pixels[0];
 					break;
 
 				case 1:
+					// 2-color block
 					pixels[0] = *pPixelBuf++;
 					pixels[1] = *pPixelBuf++;
 					mask = READ_LE_UINT16(pMaskBuf);
@@ -296,6 +311,7 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 					break;
 
 				case 2:
+					// 4 colors
 					pixels[0] = *pPixelBuf++;
 					pixels[1] = *pPixelBuf++;
 					pixels[2] = *pPixelBuf++;
@@ -308,10 +324,9 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 					}
 					break;
 
-				case 3:
-					break;
-
+				// case 3:
 				default:
+					// "Skip" (delta frame optimization)
 					break;
 				}
 
@@ -340,14 +355,6 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 		height -= 4;
 
 	}
-
-	// cleanup RLE buffers
-	if (cmdFlags & 1)
-		delete[] cmdBuffer;
-	if (maskFlags & 1)
-		delete[] maskBuffer;
-	if (pixelFlags & 1)
-		delete[] pixelBuffer;
 }
 
 } // End of namespace Made
