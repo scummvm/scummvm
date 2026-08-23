@@ -585,7 +585,7 @@ Common::Error EoBCoreEngine::init() {
 
 	// Always create this, regardless of whether the launcher option is enabled or not. Otherwise the map would
 	// be incomplete if the option is enabled later on in the game.
-	_automap = new Automap_EoB(_system, &_levelBlockProperties, _wllWallFlags, _flags.gameID, _flags.lang, _configAutomap);
+	_automap = new Automap_EoB(_system, &_levelBlockProperties, _wllWallFlags, _specialWallTypes, _flags.gameID, _flags.lang, _configAutomap);
 	assert(_automap);
 
 	return Common::kNoError;
@@ -783,8 +783,8 @@ void EoBCoreEngine::runLoop() {
 
 	while (!shouldQuit() && _runFlag) {
 		uint32 frameEnd = _system->getMillis() + 8;
-		checkPartyStatus(true);
 
+		checkPartyStatus(true);
 		checkInput(_activeButtons, true, 0);
 		removeInputTop();
 
@@ -812,6 +812,7 @@ void EoBCoreEngine::runLoop() {
 		snd_updateLevelScore();
 		snd_updateEnvironmentalSfx(0);
 		turnUndeadAuto();
+
 		delayUntil(frameEnd, false, false, true);
 	}
 }

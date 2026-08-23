@@ -25,7 +25,6 @@
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
 #include "common/scummsys.h"
-#include "common/str.h" // TODO: REMOVE
 
 namespace Common {
 class OutSaveFile;
@@ -45,7 +44,7 @@ class EoBCoreEngine; // TODO: REMOVE
 
 class Automap_EoB {
 public:
-	Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, int gameID, int lang, bool featureEnabled);
+	Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, int gameID, int lang, bool featureEnabled);
 	~Automap_EoB();
 
 	void markVisited(uint16 block);
@@ -68,27 +67,23 @@ private:
 	};
 
 	struct TranslateableStrings {
-		const char *const legendStrings[9];
+		const char *const legendStrings[12];
 		const char *const controlStrings[3];
 		const char *const levelNames[2][16];
 	};
 
 	AutomapLayout createLayout() const;
-	void drawIcon(Graphics::Surface *surf, int sx, int sy, int cell, uint8 icon, uint32 color) const;
 	uint16 calcNewBlockPosition(uint16 block, int8 dir) const;
 
 	bool _visible;
 
 	LevelBlockProperty *&_blockData;
 	const uint8 *const _wllWallFlags;
+	const uint8 *const _specialWallTypes;
+	const uint8 *_specialBlockIDs;
+	int _numSpecialBlockIDs;
 	const bool _enabled;
-
-	enum AutomapIcon {
-		kAmNone = 0,
-		kAmStairsDown = 1,
-		kAmStairsUp = 2,
-		kAmTeleport = 3
-	};
+	const bool _gameSupportsBreakables;
 
 	static const TranslateableStrings _stringTable[];
 	const char *const *_legendStrings;
