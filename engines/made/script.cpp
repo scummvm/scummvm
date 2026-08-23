@@ -121,6 +121,7 @@ ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 	_functions = new ScriptFunctions(_vm);
 	_functions->setupExternalsTable();
 
+	_entryStackPos = 0;
 	_localStackPos = 0;
 	_runningScriptObjectIndex = 0;
 	_codeBase = nullptr;
@@ -134,13 +135,21 @@ ScriptInterpreter::~ScriptInterpreter() {
 	delete _functions;
 }
 
-int16 ScriptInterpreter::runScript(int16 scriptObjectIndex) {
+int16 ScriptInterpreter::runScript(int16 scriptObjectIndex, int16 argc, int16 *argv) {
 
 	uint32 opcodeSleepCounter = 0;
 
 	_runningScriptObjectIndex = scriptObjectIndex;
 
-	_localStackPos = _stack.getStackPos();
+	// push optional args and other starting info of a cmd_call
+	for (int16 i = argc - 1; i >= 0; i --)
+		_stack.push(argv[i]);
+	_stack.push(argc);
+	_stack.push(0); // codeIp - codeBase
+	_stack.push(scriptObjectIndex);
+	_stack.push(0); // stack usage
+
+	_entryStackPos = _localStackPos = _stack.getStackPos();
 
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
@@ -164,8 +173,8 @@ int16 ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 		}
 	}
 
-	int16 retval = _stack.pop();
-	_stack.pop(); // pop junk value and discard
+	int16 retval = _stack.top();
+	_stack.setStackPos(kScriptStackSize);
 	return retval;
 }
 
@@ -384,7 +393,7 @@ void ScriptInterpreter::cmd_exit() {
 void ScriptInterpreter::cmd_return() {
 
 	// Check if returning from main function
-	if (_localStackPos == kScriptStackSize) {
+	if (_localStackPos == _entryStackPos) {
 		_running = false;
 		return;
 	}
