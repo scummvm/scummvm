@@ -38,7 +38,7 @@ Audio::AudioStream *speech_stream;
 
 
 struct SpeechDir {
-	int16 field0 = 0;
+	int16 sampleRate = 0;
 	int16 compression = 0;
 	int16 field4 = 0, field6 = 0, field8 = 0;
 	int32 size = 0;
@@ -50,7 +50,8 @@ struct SpeechDir {
 
 
 void SpeechDir::load(Common::SeekableReadStream *src) {
-	src->readMultipleLE(field0, compression, field4, field6, field8, size, offset);
+	src->readMultipleLE(sampleRate, compression, field4, field6, field8, size,
+		offset);
 }
 
 void speech_init() {
@@ -108,7 +109,7 @@ Audio::AudioStream *speech_load(const char *resName, int id, bool) {
 
 	// At this point we have valid data
 	memStream = new Common::MemoryReadStream(load_buf, speechDir.size, DisposeAfterUse::YES);
-	audioStream = Audio::makeRawStream(memStream, g_engine->getGameID() == GType_RexNebular ? 8192 : 11025,
+	audioStream = Audio::makeRawStream(memStream, speechDir.sampleRate,
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
 done:
