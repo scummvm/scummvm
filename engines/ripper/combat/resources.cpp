@@ -202,10 +202,8 @@ Common::String CombatEncounter::selectConfigName(uint difficulty) const {
 	if (!Common::File::exists(Common::Path(fallback)))
 		return requested;
 
-	// RunCombatEncounterScene at 0x31563 always formats the configured level.
-	// Some retail data layouts only contain ATKINI1.INI and RATINI1.INI, so
-	// retain the original lookup first and use the packaged definition when its
-	// numbered peer is absent.
+	// Some installations contain only ATKINI1.INI and RATINI1.INI. Try the
+	// configured level first, then fall back to the packaged definition.
 	debugC(2, kDebugCombat,
 		"Ripper: combat configuration fallback type='%s' requested='%s' selected='%s' reason=missing-numbered-config",
 		_definition.name, requested.c_str(), fallback.c_str());

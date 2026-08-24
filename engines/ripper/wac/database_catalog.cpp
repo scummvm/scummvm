@@ -27,8 +27,8 @@
 namespace Ripper {
 
 // BuildWacInventorySelectionMenu at 0x22c91 scans this 30-entry range.
-// The milestone and text-resource columns are sequential in the retail table;
-// the handler column records the complete retail dispatch recovered from
+// The milestone and text-resource columns are sequential in RIPPER.LE's table;
+// the handler column records the dispatch recovered from
 // RunWacInventorySelectionLoop at 0x2252a.
 static const WacDatabaseCatalogEntry kWacDatabaseCatalog[] = {
 	{  0, 0x46, 0xdc, kWacDatabaseHandlerStillImage,          0 },

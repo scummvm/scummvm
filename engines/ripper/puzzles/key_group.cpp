@@ -74,7 +74,6 @@ static const int kTargetY[kTargetSlotCount] = {
 	192, 213, 233, 254, 275, 296, 317
 };
 
-// g_keyGroupPuzzleSolvedTargetPieces at 0x84cfa.
 static const int kSolvedTargetPieces[kTargetSlotCount] = {
 	0, 4, 10, 15, 1, 13, 16, 5, 9, 7, 18, 19, 14, 11
 };

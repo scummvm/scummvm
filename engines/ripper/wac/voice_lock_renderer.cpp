@@ -186,10 +186,8 @@ static void drawWaveform(Graphics::Surface &screen,
 		bounds.left, bounds.right - 1);
 	const int end = CLIP<int>(selection->end,
 		start + 1, bounds.right);
-	// RunWacVoiceLockPuzzleScene selects display write mode 3 at 0x25006
-	// before filling the span with 0xff. Reapplying the old span at 0x25265
-	// restores its pixels before the changed span is drawn, identifying the
-	// operation as an XOR highlight rather than an opaque fill.
+	// RIPPER.LE write mode 3 at 0x25006 uses XOR; redrawing the old span at
+	// 0x25265 restores its pixels before the new span is drawn.
 	xorRect(screen, Common::Rect(start, bounds.top, end, bounds.bottom),
 		kWacDatabaseBackground ^ kWacVoiceLockSelectionColor);
 }

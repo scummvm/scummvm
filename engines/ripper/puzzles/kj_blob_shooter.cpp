@@ -61,9 +61,7 @@ static const uint16 kScreenshotCommand = 0x1900;
 static const uint kHelpSelectionTable = 0x1a8;
 static const byte kBlobTransparentColor = 4;
 
-// RunBlobShooterScene at 0x338a4 copies the vertical origins from 0x31383
-// and the horizontal origins from 0x31397. Its original selection-point
-// globals use vertical/horizontal ordering, so expose them here as x/y.
+// RIPPER.LE tables 0x31383 and 0x31397 store Y and X separately.
 static const int kBlobX[5] = { 185, 0, 0, 0, 210 };
 static const int kBlobY[5] = { 0, 0, 62, 0, 0 };
 static const int kScriptedHitX[5] = { 239, 75, 36, 164, 267 };
@@ -104,8 +102,7 @@ bool KjBlobShooter::loadConfig(uint difficulty) {
 	Common::File file;
 	Common::INIFile ini;
 	if (!file.open(Common::Path(name))) {
-		// Some retail installations contain the shared KJ1 tuning file even
-		// when the Options Panel retains another combat level.
+		// Some installations contain only the shared KJ1 tuning file.
 		const Common::String fallbackName("kj1.ini");
 		if (difficulty == 1 || !file.open(Common::Path(fallbackName))) {
 			warning("Ripper: could not open KJ blob-shooter configuration '%s'",
@@ -687,11 +684,8 @@ uint16 KjBlobShooter::service(uint frame) {
 }
 
 Scene::Result KjBlobShooter::run(uint completionFlag) {
-	// RunBlobShooterScene at 0x338a4 enters a separate scene display context
-	// through InitializeSceneDisplayModeAndContext and restores the startup
-	// context on every exit. Preserve the script page independently of the
-	// full-screen KJ.SMK presentation so later 640x300 scene media cannot expose
-	// shooter pixels in the top and bottom bands.
+	// KJ.SMK replaces the full display, but later scene media covers only
+	// 640x300. Preserve the caller so shooter pixels cannot remain in the bands.
 	IndexedDisplaySnapshot savedDisplay;
 	if (!savedDisplay.capture()) {
 		warning("Ripper: could not preserve the scene display for the KJ blob shooter");

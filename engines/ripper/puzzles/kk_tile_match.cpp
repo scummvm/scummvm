@@ -840,7 +840,7 @@ Common::String KkTileMatchPuzzle::slotStateString() const {
 
 KkTileMatchPuzzle::Result KkTileMatchPuzzle::run(uint completionFlag) {
 	// DispatchSceneEntryAction at 0x36892 routes action 25 to
-	// RunKkTileMatchPuzzleScene at 0x2fa31. The retail controller owns KK.PL,
+	// RunKkTileMatchPuzzleScene at 0x2fa31. RIPPER.LE owns KK.PL,
 	// reads KK%d.INI, and creates controls 0x672..0x681 over this 4x4 grid.
 	if (!_incomingDisplay.capture() || !loadConfiguration() || !loadAssets()) {
 		_incomingDisplay.restore();

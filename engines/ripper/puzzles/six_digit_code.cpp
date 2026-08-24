@@ -56,7 +56,6 @@ static const uint kDosTickMillis = 55;
 static const int kSceneOriginY = 50;
 static const int kSceneHeight = 300;
 
-// g_awSixDigitCodeSolution at 0x84d50.
 static const byte kSolution[kDigitCount] = {1, 8, 5, 6, 2, 1};
 
 // g_astSixDigitControlLayouts at 0x84d5c stores scene-space Y/X/control-id

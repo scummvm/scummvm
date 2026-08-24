@@ -98,8 +98,6 @@ static const Common::Point kTargetPositions[kChipCount] = {
 	Common::Point(324, 269)
 };
 
-// g_circuitPuzzleChipConnectorTypes at 0x8437e and
-// g_circuitPuzzleSlotConnectorTypes at 0x8439e.
 static const uint kChipConnectorTypes[kChipCount] = {
 	12, 16, 9, 6, 12, 6, 9, 9, 6, 6, 12, 12, 16, 16, 16, 9
 };
@@ -114,7 +112,6 @@ static const uint kExpectedChipBySlot[kChipCount] = {
 	13, 3, 10, 5, 14, 15, 4, 0, 6, 11, 8, 1, 12, 7, 2, 9
 };
 
-// g_circuitPuzzleMeterSlotGroups at 0x25dd1.
 static const uint kMeterSlotGroups[kChipCount] = {
 	0, 14, 7, 15,
 	1, 11, 8, 2,

@@ -58,7 +58,7 @@ static const uint16 kHelpCommand = 0x3b00;
 static const uint kHelpSelectionTable = 0x1a3;
 
 // g_gcCshPuzzleChoiceControlRecords at 0x84700 stores y, x, width,
-// and height in the original display's vertical/horizontal order.
+// and height in display-service Y/X order.
 static const ChoiceLayout kChoiceLayouts[kChoiceCount] = {
 	{52,  91, 10, 10},
 	{54, 111, 10, 10},
@@ -82,7 +82,7 @@ static const int kSequenceBackingWidth = 98;
 static const int kSequenceBackingHeight = 5;
 
 // The two Escape controls created by RunGcCshFourChoiceSequencePuzzleScene
-// at 0x38871 use these original y/x/width/height values.
+// at 0x38871 use these Y/X/width/height values.
 static const int kLeftExitY = 0x9a + kSceneOriginY;
 static const int kLeftExitWidth = 0x9f;
 static const int kLeftExitHeight = 0x92;
@@ -335,12 +335,8 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 	uint enteredChoiceCount = 0;
 	Result result = kExited;
 	_engine->getInput()->discardMouseTransitions();
-	// RunGcCshFourChoiceSequencePuzzleScene activates the UI-selection
-	// presentation at 0x38986, then stores and dispatches row 14 at
-	// 0x38993..0x389a2.
-	// GCZ1 has just hidden the cursor and replaced the display palette, so the
-	// current frame and cursor palette must be reinstalled even when row 14 was
-	// already active before the movie.
+	// GCZ1 hides the cursor and replaces its palette. Reinstall row 14 even if
+	// it was selected before the movie (RIPPER.LE 0x38986..0x389a2).
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	_engine->getCursor()->refresh();
@@ -352,10 +348,7 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 		if (!serviceEngineEvents())
 			break;
 		const uint16 command = serviceInput();
-		// ServiceUiControlStateSelection at 0x4a912 runs while the original UI
-		// selection presentation is active, so cursor changes are flushed as part
-		// of each poll. ScummVM's software cursor needs an explicit presentation
-		// from this private puzzle loop.
+		// This private loop must present every poll so CursorMan tracks changes.
 		presentScreen();
 		_engine->getInput()->drainKeys();
 		if (command == kHelpCommand) {
@@ -389,8 +382,7 @@ GcCshPuzzle::Result GcCshPuzzle::run(uint completionFlag) {
 					solved = false;
 			}
 			if (solved) {
-				// The original takes the shared four-entry reset path even after
-				// a match, then observes the retained solved flag at the loop head.
+				// RIPPER.LE resets all four entries after a match; solved state survives.
 				if (!resetSequence(enteredChoices, enteredChoiceCount)) {
 					result = kLoadFailed;
 					break;

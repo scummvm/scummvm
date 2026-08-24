@@ -71,7 +71,6 @@ static const Common::Point kLeverPositions[kLeverCount] = {
 	Common::Point(342, 100 + kSceneOriginY)
 };
 
-// g_shockLeverPuzzleTargetFrames at 0x3ac1f.
 static const uint kTargetFrames[kLeverCount] = {7, 14, 9};
 
 static const char *const kOutcomeMediaNames[4] = {

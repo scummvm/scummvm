@@ -125,7 +125,7 @@ bool BrokenMugPuzzle::loadPiece(uint pieceIndex) {
 	}
 
 	// RunWacMugSelectionScene stores the first coordinate in UiControlState +0
-	// and the second at +2. The original WAC display path consumes that pair in
+	// and the second at +2. RIPPER.LE's WAC display path consumes that pair in
 	// transposed screen order, as it does for the chooser frame controls.
 	piece.position = Common::Point(kInitialY[pieceIndex], kInitialX[pieceIndex]);
 	piece.orientation = kInitialOrientation;

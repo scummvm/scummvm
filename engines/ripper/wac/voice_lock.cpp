@@ -120,13 +120,8 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 	ResourceManager *resources = _database->engine()->getResources();
 	const Common::Rect sourcePanel(50, 50, 390, 166);
 	const Common::Rect editorPanel(50, 176, 390, 292);
-	// CreateWrappedTextPanelControl at 0x58fb6 stores the client rectangle
-	// separately from the 340-by-116 outer control. The tertiary WAC template
-	// metrics installed at 0x11b38 leave a 20-pixel heading, 5-pixel left
-	// inset, 20-pixel right inset and 6-pixel bottom inset. The original
-	// control record stores axes in the opposite order from Common::Rect;
-	// DrawAudioDescriptorWaveform at 0x25b73 confirms that +0x0a/+0x0e are
-	// the horizontal origin and width consumed by the waveform.
+	// The control record stores axes opposite to Common::Rect. Its +0x0a and
+	// +0x0e fields are client X and width (RIPPER.LE 0x25b73).
 	const Common::Rect sourceWaveform(
 		sourcePanel.left + kWacVoiceLockClientLeftInset,
 		sourcePanel.top + kWacVoiceLockClientTopInset,
@@ -151,8 +146,6 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		kMilestoneWacAudioEditorAvailable);
 	WacVoiceLockEditorState state;
 	state.puzzleHelpEnabled = _database->engine()->isPuzzleHelpEnabled();
-	// Keep local names aligned with RunWacVoiceLockPuzzleScene while placing
-	// every mutable editor value in one state object shared with the renderer.
 	Common::Array<WacVoiceLockSelection> &selections = state.selections;
 	Common::Array<WacVoiceLockEditorSegment> &editorSegments =
 		state.editorSegments;
@@ -377,7 +370,7 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		} else if (draggingSourceSelection &&
 				(mouse.released & kMouseButtonLeft) != 0) {
 			state.resetSourceDrag();
-			// The retail transient overlay is destroyed at 0x252d6 and its
+			// RIPPER.LE destroys the transient overlay at 0x252d6; its
 			// audio span is appended only after the editor-control bounds
 			// check at 0x25307 succeeds.
 			if (sourceSelectionActive &&
@@ -581,11 +574,8 @@ uint16 WacVoiceLockPuzzle::run(byte entryIndex,
 		warning("Ripper: could not restore WAC voice-lock transient drag backing");
 	if (solved) {
 		_database->engine()->getCursor()->setVisible(false);
-		// RunWacVoiceLockPuzzleScene at 0x24ba4 dispatches display command
-		// 0x14 to ClearGenericVideoLogicalPage at 0x45ed8 immediately before
-		// ACCESED.AVI. The movie owns only the middle 640x300 viewport, so clear
-		// the retained 640x400 page first instead of leaving WAC pixels in the
-		// uncovered top and bottom bands.
+		// ACCESED.AVI covers only 640x300. RIPPER.LE clears the full logical page
+		// at 0x45ed8 first so WAC pixels do not remain in the outer bands.
 		g_system->fillScreen(0);
 		presentScreen();
 		debugC(2, kDebugWac,

@@ -79,7 +79,6 @@ static const Common::Point kInitialPositions[kPieceCount] = {
 	Common::Point(103, 126 + kSceneOriginY)
 };
 
-// g_boardArrangementPuzzleValidationPieceOrder at 0x374b1.
 static const uint kValidationOrder[5] = {1, 0, 3, 6, 2};
 
 static RipperEngine *sBoardStateOwner = nullptr;
