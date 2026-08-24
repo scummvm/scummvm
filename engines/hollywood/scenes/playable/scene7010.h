@@ -65,13 +65,14 @@ private:
 	void runJuniorSpeech();
 	void advanceChunk8Cycle();
 	void advanceChunk10IdleFrames();
+	void advanceDoghouseSpeechFrame(uint32 delta);
 	void advanceDialogueOverlay(uint32 delta);
 	void handleActionSlot00TransitionToG03();
 	void handleActionSlot01SecondarySpeech();
 	void handleActionSlot02SecondarySpeech();
 	void handleActionSlot03DialogueSequence();
 	void handleActionSlot04Item06Speech();
-	void handleActionSlot06FrankensteinNoteSequence();
+	void handleActionSlot06DoghouseSequence();
 	void handleActionSlot07DialogueAndReturn();
 	void handleActionSlot08CommonSpeech();
 	void runHannoverDialogueMenuRow98();
@@ -90,8 +91,9 @@ private:
 	void runChunk11ExtendedFrames();
 	void runChunk13Item09PickupOverlaySequence();
 	void runChunk14FrameRange(byte startFrame, byte endFrame, bool restoreChunk11AtEnd);
-	void runChunk15ItemSequence();
-	void runEmbeddedClipChunk19Sequence();
+	void runDoghouseDepartureSequence();
+	void runDoghouseSpeechLine(byte frameIndex);
+	void runDogCloseupSequence();
 	void runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode);
 	void updateG01AmbientAudioAndMusicCues(uint32 delta);
 	void resetTransientOverlayLayers();
@@ -114,8 +116,10 @@ private:
 	byte _dialogueOverlayMode;
 	byte _chunk11RightSpeechPoseVariant;
 	byte _chunk11RightSpeechLastRandomFrame;
+	byte _doghouseSpeechLastRandomFrame;
 	bool _chunk8SpecialSequenceActive;
 	bool _chunk11RightSpeechActive;
+	bool _doghouseSpeechActive;
 	bool _chunk10IdlePairAAltPhase;
 	bool _chunk10IdlePairBAltPhase;
 	byte _chunk10IdlePairATicksRemaining;
@@ -123,6 +127,7 @@ private:
 	uint32 _chunk8TimerAccumulator;
 	uint32 _chunk10TimerAccumulator;
 	uint32 _chunk11RightSpeechTimerAccumulator;
+	uint32 _doghouseSpeechTimerAccumulator;
 	uint32 _dialogueOverlayTimerAccumulator;
 	TransientLayerCompositor _backTransientLayers;
 	TransientLayerCompositor _frontTransientLayers;

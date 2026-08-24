@@ -52,8 +52,9 @@ const uint16 kScene7010Chunk13DescriptorCount = 0x0d;
 const uint16 kScene7010Chunk14DescriptorCount = 0x20;
 const uint16 kScene7010Chunk15DescriptorCount = 0x17;
 const uint kScene7010HannoverDialogueChoiceRecordCount = 10 * 10 * 7;
-const uint16 kScene7010EmbeddedClipFirstChunk = 19;
-const uint16 kScene7010EmbeddedClipLastChunk = 21;
+const uint16 kScene7010EmbeddedClipBaseChunk = 19;
+const uint16 kScene7010EmbeddedClipPaletteChunk = 20;
+const uint16 kScene7010EmbeddedClipFramesChunk = 21;
 const uint16 kScene7010EmbeddedClipFrameCount = 0x0c;
 const uint16 kScene7010DialogueOverlayMode1DescriptorCount = 3;
 const uint16 kScene7010DialogueOverlayMode2DescriptorCount = 0x1b;
@@ -84,8 +85,9 @@ const uint32 kScene7010Chunk11SpeechFrameMillis = 125;
 const uint32 kScene7010Chunk14WindowFrameMillis = 60;
 const uint32 kScene7010EmbeddedClipFrameMillis = 60;
 const uint32 kScene7010DialogueOverlayFrameMillis = 60;
-const uint32 kScene7010EmbeddedClipPaletteOffset = 0x4bb42;
-const uint32 kScene7010EmbeddedClipFrameTableOffset = 0x4be42;
+const uint32 kScene7010DoghouseSpeechFrameMillis = 150;
+const byte kScene7010DoghouseSpeechBaseFrame = 10;
+const byte kScene7010DoghouseSpeechFrameCount = 5;
 const byte kScene7010Chunk8FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 5, 7, 8, 9, 10, 11, 12, 13, 21,
 	9, 8, 7, 0, 14, 15, 16, 17, 18, 19, 20
@@ -152,8 +154,10 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_dialogueOverlayMode(0),
 		_chunk11RightSpeechPoseVariant(0),
 		_chunk11RightSpeechLastRandomFrame(0),
+		_doghouseSpeechLastRandomFrame(0),
 		_chunk8SpecialSequenceActive(false),
 		_chunk11RightSpeechActive(false),
+		_doghouseSpeechActive(false),
 		_chunk10IdlePairAAltPhase(false),
 		_chunk10IdlePairBAltPhase(false),
 		_chunk10IdlePairATicksRemaining(10),
@@ -161,6 +165,7 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_chunk8TimerAccumulator(0),
 		_chunk10TimerAccumulator(0),
 		_chunk11RightSpeechTimerAccumulator(0),
+		_doghouseSpeechTimerAccumulator(0),
 		_dialogueOverlayTimerAccumulator(0),
 		_backTransientLayers(),
 		_frontTransientLayers() {
@@ -181,10 +186,12 @@ void Scene7010::initializeCustomPreviewState() {
 	_dialogueOverlayMode = 0;
 	_chunk11RightSpeechPoseVariant = 0;
 	_chunk11RightSpeechLastRandomFrame = 0;
+	_doghouseSpeechLastRandomFrame = 0;
 	_primaryLeftSpeechLastFrame = 0;
 	resetTransientOverlayLayers();
 	_chunk8SpecialSequenceActive = false;
 	_chunk11RightSpeechActive = false;
+	_doghouseSpeechActive = false;
 	_chunk10IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
 	_chunk10IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
 	_primaryLeftSpeechActive = false;
@@ -196,6 +203,7 @@ void Scene7010::initializeCustomPreviewState() {
 	_chunk10TimerAccumulator = 0;
 	_secondaryActorTimerAccumulator = 0;
 	_chunk11RightSpeechTimerAccumulator = 0;
+	_doghouseSpeechTimerAccumulator = 0;
 	_dialogueOverlayTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
@@ -455,16 +463,19 @@ bool Scene7010::prepareCustomGameplayLoop() {
 	resetTransientOverlayLayers();
 	_chunk8SpecialSequenceActive = false;
 	_chunk11RightSpeechActive = false;
+	_doghouseSpeechActive = false;
 	setDialogueOverlayMode(0, 0);
 	_chunk8TimerAccumulator = 0;
 	_chunk10TimerAccumulator = 0;
 	_chunk11RightSpeechTimerAccumulator = 0;
+	_doghouseSpeechTimerAccumulator = 0;
 	_dialogueOverlayTimerAccumulator = 0;
 	return true;
 }
 
 bool Scene7010::advanceCustomGameplayLoop(uint32 delta) {
 	updateG01AmbientAudioAndMusicCues(delta);
+	advanceDoghouseSpeechFrame(delta);
 
 	if (_primaryLeftSpeechActive && _primarySpeechOverlay.visible) {
 		_primaryLeftSpeechTimerAccumulator += delta;
@@ -525,7 +536,7 @@ bool Scene7010::dispatchCustomSceneAction(uint16 handlerId) {
 		handleActionSlot04Item06Speech();
 		break;
 	case 307: // Usar hueso con caseta de perro (use bone with doghouse)
-		handleActionSlot06FrankensteinNoteSequence();
+		handleActionSlot06DoghouseSequence();
 		break;
 	case 308: // Hablar con Junior (talk to Junior)
 		handleActionSlot07DialogueAndReturn();
@@ -698,18 +709,35 @@ void Scene7010::advanceChunk10IdleFrames() {
 	}
 }
 
+void Scene7010::advanceDoghouseSpeechFrame(uint32 delta) {
+	if (!_doghouseSpeechActive) {
+		_doghouseSpeechTimerAccumulator = 0;
+		return;
+	}
+
+	_doghouseSpeechTimerAccumulator += delta;
+	while (_doghouseSpeechTimerAccumulator >= kScene7010DoghouseSpeechFrameMillis) {
+		_doghouseSpeechTimerAccumulator -= kScene7010DoghouseSpeechFrameMillis;
+
+		byte nextFrame = _doghouseSpeechLastRandomFrame;
+		for (uint attempt = 0; attempt < 8 && nextFrame == _doghouseSpeechLastRandomFrame; ++attempt)
+			nextFrame = (byte)_random.getRandomNumber(kScene7010DoghouseSpeechFrameCount - 1);
+		if (nextFrame == _doghouseSpeechLastRandomFrame)
+			nextFrame = (byte)((_doghouseSpeechLastRandomFrame + 1) % kScene7010DoghouseSpeechFrameCount);
+
+		_doghouseSpeechLastRandomFrame = nextFrame;
+		_actionOverlayPlayer.setFrame(kScene7010DoghouseSpeechBaseFrame + nextFrame);
+	}
+}
+
 void Scene7010::advanceDialogueOverlay(uint32 delta) {
-	if (_dialogueOverlayMode == 0)
+	if (_dialogueOverlayMode != 1 || _doghouseSpeechActive)
 		return;
 
 	_dialogueOverlayTimerAccumulator += delta;
 	while (_dialogueOverlayTimerAccumulator >= kScene7010DialogueOverlayFrameMillis) {
 		_dialogueOverlayTimerAccumulator -= kScene7010DialogueOverlayFrameMillis;
-		if (_dialogueOverlayMode == 1) {
-			setDialogueOverlayFrame(_dialogueOverlayFrameIndex == 3 ? 0 : _dialogueOverlayFrameIndex + 1);
-		} else {
-			setDialogueOverlayFrame(_dialogueOverlayFrameIndex == 0x1b ? 5 : _dialogueOverlayFrameIndex + 1);
-		}
+		setDialogueOverlayFrame(_dialogueOverlayFrameIndex == 3 ? 0 : _dialogueOverlayFrameIndex + 1);
 	}
 }
 
@@ -817,7 +845,7 @@ void Scene7010::handleActionSlot04Item06Speech() {
 	beginSecondarySpeechLine(4, hasInventoryItem(6) ? 2 : 1);
 }
 
-void Scene7010::handleActionSlot06FrankensteinNoteSequence() {
+void Scene7010::handleActionSlot06DoghouseSequence() {
 	// Payoff for the Frankenstein-note condition. Without the primed overlay,
 	// the original only plays row 6 frame 0 and does not consume Húmero's bone.
 	if (_sceneStateFlags[1] == 0) {
@@ -825,9 +853,14 @@ void Scene7010::handleActionSlot06FrankensteinNoteSequence() {
 		return;
 	}
 
-	runChunk15ItemSequence();
+	runDoghouseDepartureSequence();
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
 	removeInventoryItem(0x0b);
+	_soundBank0.playSample(1, 100);
 	runDialogueOverlayFrames(5, 0x1b, 0);
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
 	beginSecondarySpeechLine(6, 4);
 	_vm->gameState().reviewedFrankensteinNote = true;
 }
@@ -1065,74 +1098,101 @@ void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame, bool restor
 		setChunk11Visible(true);
 }
 
-void Scene7010::runChunk15ItemSequence() {
+void Scene7010::runDoghouseDepartureSequence() {
 	const bool previousHideActiveActor = _actionOverlayPlayer.applyActorVisibility(kActionOverlayHideActiveActor);
 	_actionOverlayPlayer.begin(15, kScene7010Chunk15DescriptorCount,
 		kScene7010Chunk15FrameMap, ARRAYSIZE(kScene7010Chunk15FrameMap));
+	_doghouseSpeechLastRandomFrame = 0xff;
 
 	for (byte frame = 1; frame <= 0x17 && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayPlayer.setFrame(frame);
-		if (waitSceneMillis(kScene7010Chunk8FrameMillis))
+		if (waitSceneMillis(kScene7010Chunk8FrameMillis, false))
 			break;
 		if (frame == 10) {
-			beginPrimarySpeechLine(6, 1, 0x20e, 0x109, 0x3f, 0x28, 0x32);
-			beginPrimarySpeechLine(6, 2, 0x20e, 0x109, 0x3f, 0x28, 0x32);
+			runDoghouseSpeechLine(1);
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				break;
+			runDoghouseSpeechLine(2);
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				break;
 			runDialogueOverlayFrames(0, 5, 2);
-			beginPrimarySpeechLine(6, 3, 0x20e, 0x109, 0x3f, 0x28, 0x32);
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				break;
+			runDoghouseSpeechLine(3);
 		}
 	}
 
-	_actionOverlayPlayer.setFrame(0);
-	runEmbeddedClipChunk19Sequence();
-	_actionOverlayPlayer.finish(previousHideActiveActor);
-}
-
-void Scene7010::runEmbeddedClipChunk19Sequence() {
-	Common::Array<byte> clipData;
-	for (uint chunkIndex = kScene7010EmbeddedClipFirstChunk;
-			chunkIndex <= kScene7010EmbeddedClipLastChunk; ++chunkIndex) {
-		Common::Array<byte> chunkData;
-		if (!loadVariableChunk(chunkIndex, chunkData)) {
-			warning("Scene 7010 failed to load embedded doghouse clip chunk %u",
-				chunkIndex);
-			return;
-		}
-
-		const uint oldSize = clipData.size();
-		clipData.resize(oldSize + chunkData.size());
-		memcpy(clipData.data() + oldSize, chunkData.data(), chunkData.size());
-	}
-
-	const uint32 paletteEnd = kScene7010EmbeddedClipPaletteOffset + 0x300;
-	const uint32 frameTableEnd = kScene7010EmbeddedClipFrameTableOffset +
-		(uint32)kScene7010EmbeddedClipFrameCount * 4;
-	if (clipData.size() < paletteEnd || clipData.size() < frameTableEnd) {
-		warning("Scene 7010 embedded doghouse clip chunks %u..%u are too small: %u bytes",
-			kScene7010EmbeddedClipFirstChunk, kScene7010EmbeddedClipLastChunk,
-			clipData.size());
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested()) {
+		_actionOverlayPlayer.finish(previousHideActiveActor);
 		return;
 	}
 
-	const Common::Array<byte> savedPalette = _paletteCurrent;
-	memset(framebufferPixels(_sceneFramebuffer), 0, framebufferByteCount());
-	drawResourceBlockList(clipData, 0, _sceneFramebuffer);
+	_actionOverlayPlayer.setFrame(0);
+	runDogCloseupSequence();
+	_actionOverlayPlayer.finish(previousHideActiveActor);
+}
 
-	const uint paletteByteCount = MIN<uint>(_paletteCurrent.size(), 0x300);
-	memcpy(_paletteCurrent.data(), clipData.data() + kScene7010EmbeddedClipPaletteOffset,
-		paletteByteCount);
+void Scene7010::runDoghouseSpeechLine(byte frameIndex) {
+	_doghouseSpeechActive = true;
+	_doghouseSpeechTimerAccumulator = 0;
+	_actionOverlayPlayer.setFrame(kScene7010DoghouseSpeechBaseFrame);
+	beginPrimarySpeechLine(6, frameIndex, 0x20e, 0x109, 0x3f, 0x28, 0x32);
+	_doghouseSpeechActive = false;
+	_doghouseSpeechTimerAccumulator = 0;
+	_skipRequested = false;
+	_actionOverlayPlayer.setFrame(kScene7010DoghouseSpeechBaseFrame);
+}
+
+void Scene7010::runDogCloseupSequence() {
+	Common::Array<byte> base;
+	Common::Array<byte> palette;
+	Common::Array<byte> frames;
+	if (!loadVariableChunk(kScene7010EmbeddedClipBaseChunk, base) ||
+			!loadVariableChunk(kScene7010EmbeddedClipPaletteChunk, palette) ||
+			!loadVariableChunk(kScene7010EmbeddedClipFramesChunk, frames)) {
+		warning("Scene 7010 failed to load the dog close-up clip");
+		return;
+	}
+	if (palette.size() != kPaletteSize ||
+			frames.size() < (uint32)kScene7010EmbeddedClipFrameCount * 4) {
+		warning("Scene 7010 dog close-up clip has invalid resources");
+		return;
+	}
+
+	Graphics::ManagedSurface savedScene;
+	savedScene.copyFrom(_sceneFramebuffer);
+	const Common::Array<byte> savedPalette = _paletteCurrent;
+	const uint16 savedViewportX = _viewportXOffset;
+	Common::Array<byte> blackPalette;
+	blackPalette.resize(kPaletteSize);
+	memset(blackPalette.data(), 0, blackPalette.size());
+
+	_paletteCurrent = blackPalette;
+	_displayPalette.markAllDirty();
+	presentFrame();
+
+	_viewportXOffset = 0;
+	memset(framebufferPixels(_sceneFramebuffer), 0, framebufferByteCount());
+	drawResourceBlockList(base, 0, _sceneFramebuffer);
+	presentFrame();
+
+	_paletteCurrent = palette;
+	_displayPalette.markAllDirty();
 	presentFrame();
 
 	for (byte frame = 0; frame < kScene7010EmbeddedClipFrameCount && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested(); ++frame) {
-		const uint32 deltaChunkSize = clipData.size() - kScene7010EmbeddedClipFrameTableOffset;
-		ResourceDeltaClipPlayer::drawFrame(clipData, kScene7010EmbeddedClipFrameTableOffset,
-			deltaChunkSize, kScene7010EmbeddedClipFrameCount, frame,
-			framebufferPixels(_sceneFramebuffer), framebufferByteCount());
+		if (!ResourceDeltaClipPlayer::drawFrame(frames, 0, frames.size(),
+				kScene7010EmbeddedClipFrameCount, frame,
+				framebufferPixels(_sceneFramebuffer), framebufferByteCount())) {
+			warning("Scene 7010 failed to decode dog close-up frame %u", frame);
+			break;
+		}
 		presentFrame();
 
 		uint32 remaining = kScene7010EmbeddedClipFrameMillis;
 		while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-			if (pollEvents(true)) {
+			if (pollEvents(false)) {
 				remaining = 0;
 				break;
 			}
@@ -1141,12 +1201,22 @@ void Scene7010::runEmbeddedClipChunk19Sequence() {
 			updateG01AmbientAudioAndMusicCues(slice);
 			remaining -= slice;
 		}
-		if (_skipRequested)
-			break;
 	}
 
-	_paletteCurrent = savedPalette;
+	_paletteCurrent = blackPalette;
+	_displayPalette.markAllDirty();
+	presentFrame();
+
+	_sceneFramebuffer.copyRectToSurface(savedScene.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+	_viewportXOffset = savedViewportX;
+	presentFrame();
+	_actionOverlayPlayer.setFrame(0);
 	drawPlayableComposite();
+	presentFrame();
+
+	_paletteCurrent = savedPalette;
+	_displayPalette.markAllDirty();
 	presentFrame();
 }
 
@@ -1156,10 +1226,16 @@ void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte fi
 	_sceneStateFlags[1] = 2;
 	_vm->gameState().frankensteinNoteOverlayMode = 2;
 	setDialogueOverlayMode(2, startFrame);
-	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
-		setDialogueOverlayFrame(frame);
-		waitSceneMillis(kScene7010DialogueOverlayFrameMillis);
+	for (uint frame = startFrame + 1; frame <= endFrame && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
+		setDialogueOverlayFrame((byte)frame);
+		if (frame == 0x0e || frame == 0x15 || frame == 0x1b)
+			_soundBank0.playSample(0x13, 80);
+		if (waitSceneMillis(kScene7010DialogueOverlayFrameMillis, false))
+			break;
 	}
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
 	_sceneStateFlags[1] = finalMode;
 	_vm->gameState().frankensteinNoteOverlayMode = finalMode;
 	setDialogueOverlayMode(finalMode, finalMode == 0 ? 0 : endFrame);
