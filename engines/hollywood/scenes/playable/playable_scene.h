@@ -68,7 +68,7 @@ class HollywoodEngine;
  *
  * - load() loads the scene resources.
  * - initializePreviewState() prepares preview and runtime state.
- * - Unless restoring a saved pose, draw and present the preview, then runEntryCutscene().
+ * - Unless restoring a saved pose, draw the preview, optionally present it, then runEntryCutscene().
  * - runBasicGameplayLoop() runs until the configured main-flow state changes.
  * - Unless restarting, invalidate stale saved poses and run optional exit hooks.
  *
@@ -106,6 +106,10 @@ protected:
 		kSecondaryActorDescriptorSize = 16,
 		kSecondaryActorFramesPerFacing = 5,
 		kSecondaryActorFacingRunStride = 16000,
+		kActorPaletteFirstColor = 0xd0,
+		kActorPaletteColorCount = 0x19,
+		kActorPaletteBaseBytes = kActorPaletteColorCount * 3,
+		kActorPaletteAdjustmentClassCount = (kRouteBoundaryPoints - kPaletteAdjustTable) / 2,
 		kActorPaletteBytes = 0x90,
 		kStage003DecodeKeySize = 0x141,
 		kStage003StageOffsetTableSize = 0xff4,
@@ -155,6 +159,10 @@ protected:
 	virtual bool shouldLoadArenaChunk(uint index) const;
 	virtual bool shouldRunExitSideEffectsAfterLoop() const;
 	virtual void runExitSideEffectsAfterLoop();
+	// Returning false lets a custom entry sequence own the first presentation.
+	virtual bool shouldPresentPreviewBeforeEntrySequence() const;
+	// Allows scene geometry to disable actor depth masking in specific regions.
+	virtual bool shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const;
 
 	// Scene hooks
 	// Each hasCustom*() method gates the corresponding initialization, composite, or entry hook.
@@ -211,6 +219,7 @@ protected:
 	bool loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable);
 	bool loadResource000ActorBank(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable);
 	bool loadResource000ActorPalette(const Common::Array<byte> &offsetTable);
+	void captureActorPaletteBase();
 	bool loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable);
 	bool loadStage003SceneRows();
 	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
@@ -234,11 +243,12 @@ protected:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		int minimumYExclusive);
 	void drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive);
+	void updateActorPaletteForWorldPoint(int worldX, int worldY);
 	int drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
 	int drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY, uint *nextCursor = nullptr);
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldX, int actorWorldY, uint *nextCursor = nullptr);
 	int drawActorPaletteRemapRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY);
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldX, int actorWorldY);
 	void runEntryCutscene();
 	void runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY);
 
@@ -370,6 +380,8 @@ protected:
 		uint firstFrame = 0);
 	// Polls events without advancing or redrawing the scene; returns true if playback should stop.
 	bool waitDeltaClipFrameMillis(uint32 millis);
+	bool fadePaletteFromBlack();
+	bool fadePaletteToBlack();
 
 	// Speech playback
 	// The begin*() helpers block until speech finishes. startSecondarySpeechLine() does not and
@@ -444,6 +456,7 @@ protected:
 	SceneSurfaceState _surfaceState;
 	Common::Array<byte> &_paletteResource;
 	Common::Array<byte> &_paletteCurrent;
+	Common::Array<byte> &_actorPaletteBase;
 	Graphics::ManagedSurface &_baseFramebufferOriginal;
 	Graphics::ManagedSurface &_baseFramebuffer;
 	Graphics::ManagedSurface &_sceneFramebuffer;
@@ -526,7 +539,7 @@ protected:
 	uint16 _viewportXOffset;
 	uint16 _viewportMinXOffset;
 	uint16 _viewportMaxXOffset;
-	uint32 _viewportScrollTimerAccumulator;
+	int _lastViewportScrollActorWorldX;
 	bool _actorPathPlaybackActive;
 	int _activeActorWorldX;
 	int _activeActorWorldY;

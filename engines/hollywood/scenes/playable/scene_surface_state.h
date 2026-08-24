@@ -33,6 +33,9 @@ namespace Hollywood {
 /**
  * Owns the palettes, masks, and indexed surfaces used by a playable scene.
  *
+ * paletteResource is the room palette, paletteCurrent is the mutable display
+ * palette, and actorPaletteBase holds the actor colors before scene lighting.
+ *
  * baseFramebufferOriginal is the restoration copy of the selected room image;
  * baseFramebuffer carries persistent scene patches; sceneFramebuffer is the
  * per-frame composite. savedFramebuffer is a separate resource-derived image
@@ -42,7 +45,7 @@ namespace Hollywood {
 class SceneSurfaceState {
 public:
 	void initialize(uint paletteSize, uint paletteMaskOriginalSize, uint paletteMaskUsedBytes,
-		uint paletteMapPageSize, uint paletteRegionCount);
+		uint paletteMapPageSize, uint paletteRegionCount, uint actorPaletteBaseSize);
 	void initializeFramebuffers();
 	uint framebufferByteCount() const;
 	byte *framebufferPixels(Graphics::ManagedSurface &surface);
@@ -57,6 +60,7 @@ public:
 
 	Common::Array<byte> paletteResource;
 	Common::Array<byte> paletteCurrent;
+	Common::Array<byte> actorPaletteBase;
 	Graphics::ManagedSurface baseFramebufferOriginal;
 	Graphics::ManagedSurface baseFramebuffer;
 	Graphics::ManagedSurface sceneFramebuffer;

@@ -271,16 +271,20 @@ bool Scene7090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 void Scene7090::darkenActorPaletteRange() {
-	if (_paletteCurrent.size() < kScene7090ActorPaletteOffset + kScene7090ActorPaletteColorCount * 3)
+	const uint byteCount = kScene7090ActorPaletteColorCount * 3;
+	if (_actorPaletteBase.size() < byteCount ||
+			_paletteCurrent.size() < kScene7090ActorPaletteOffset + byteCount)
 		return;
 
 	for (uint color = 0; color < kScene7090ActorPaletteColorCount; ++color) {
-		const uint offset = kScene7090ActorPaletteOffset + color * 3;
+		const uint offset = color * 3;
 		for (uint component = 1; component < 3; ++component) {
 			const uint paletteOffset = offset + component;
-			_paletteCurrent[paletteOffset] -= _paletteCurrent[paletteOffset] >> 2;
+			_actorPaletteBase[paletteOffset] -= _actorPaletteBase[paletteOffset] >> 2;
 		}
 	}
+	memcpy(_paletteCurrent.data() + kScene7090ActorPaletteOffset,
+		_actorPaletteBase.data(), byteCount);
 }
 
 void Scene7090::rebuildWalkableMask() {

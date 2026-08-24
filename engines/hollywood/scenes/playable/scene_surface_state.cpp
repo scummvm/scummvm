@@ -30,9 +30,11 @@
 namespace Hollywood {
 
 void SceneSurfaceState::initialize(uint paletteSize, uint paletteMaskOriginalSize,
-		uint paletteMaskUsedBytes, uint paletteMapPageSize, uint paletteRegionCount) {
+		uint paletteMaskUsedBytes, uint paletteMapPageSize, uint paletteRegionCount,
+		uint actorPaletteBaseSize) {
 	paletteResource.resize(paletteSize);
 	paletteCurrent.resize(paletteSize);
+	actorPaletteBase.resize(actorPaletteBaseSize);
 	initializeFramebuffers();
 	paletteMaskOriginal.resize(paletteMaskOriginalSize);
 	fullPaletteRegionMask.resize(paletteMaskUsedBytes);
