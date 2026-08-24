@@ -97,6 +97,14 @@ public:
 	virtual void handleRightClick(const GameplayLoopCursorState &state);
 };
 
+/**
+ * Owns interactive input and the per-frame delegate lifecycle.
+ *
+ * run() prepares the delegate once and presents an initial frame. Each
+ * subsequent iteration polls input, advances the delegate, and draws and
+ * presents the next frame until the engine quits or the delegate requests an
+ * exit.
+ */
 class GameplayLoop {
 public:
 	GameplayLoop(HollywoodEngine *vm, GameplayLoopDelegate *delegate);

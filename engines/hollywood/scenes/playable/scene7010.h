@@ -35,6 +35,14 @@ class HollywoodEngine;
 // Saved GameplayState fields written:
 // mainFlowStateId, reviewedFrankensteinNote, frankensteinNoteOverlayMode,
 // hannoverCourtyardFollowUpSeen.
+
+/**
+ * Uses separate transient-layer stacks behind and in front of the actors.
+ *
+ * Its custom tick advances primary speech, ambient audio, idle animation, and
+ * the dialogue overlay. The base still advances secondary speech, viewport
+ * scrolling, and actor-pose persistence.
+ */
 class Scene7010 : public PlayableScene {
 public:
 	Scene7010(HollywoodEngine *vm);
