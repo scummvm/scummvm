@@ -917,6 +917,11 @@ bool dispatchInventoryFixedAction(HollywoodEngine *vm, GameplayLoopDelegate *del
 	if (state.relationModeActive || !state.inventoryItemSelected)
 		return false;
 
+	// The original main callback table forwards these handlers into Scene 3070.
+	if (vm->gameState().mainFlowStateId / 10 == 307 &&
+			(state.inventoryActionHandlerId == 81 || state.inventoryActionHandlerId == 127))
+		return false;
+
 	return dispatchSharedInventoryAction(vm, delegate, state.inventoryActionHandlerId,
 		state.inventoryOwner);
 }

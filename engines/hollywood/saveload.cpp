@@ -163,8 +163,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene3070FrankensteinBodyState);
 	syncStateBool(s, state.scene3070SurgicalNeedleThreadTaken);
 	syncStateBool(s, state.scene3070OperatingTableAlternateDescription);
-	syncStateBool(s, state.scene3070FrankensteinRevivalAlternateResponse);
-	syncStateBool(s, state.scene3070MachineRunning);
+	s.syncAsByte(state.scene3070StoryPhase);
+	s.syncAsByte(state.scene3070SerumIngredientCount);
 	syncStateBool(s, state.scene3070OperatingTableForegroundAlternate);
 	syncStateBool(s, state.scene3070WindowForegroundPatchActive);
 	syncStateBool(s, state.scene3070InterludeCutsceneSeen);
@@ -499,6 +499,10 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene3070SurgicalNeedleThreadState = 0;
 	if (state.scene3070FrankensteinBodyState > 2)
 		state.scene3070FrankensteinBodyState = 0;
+	if (state.scene3070StoryPhase > 2)
+		state.scene3070StoryPhase = 0;
+	if (state.scene3070SerumIngredientCount > 5)
+		state.scene3070SerumIngredientCount = 0;
 	if (state.scene3090SecretDiaryPuzzleStage > 2)
 		state.scene3090SecretDiaryPuzzleStage = 0;
 	if (state.scene3090WindowOpenSequenceState > 2)
