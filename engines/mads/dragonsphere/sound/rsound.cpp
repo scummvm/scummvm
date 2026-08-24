@@ -981,7 +981,7 @@ dispatch:
 				ch->_pSrc = ch->_outerLoopPtr;
 			}
 			ch->_innerLoopPtr = ch->_pSrc;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xFF: {
 			// End an inner loop. The restart pointer is the beginning of
@@ -1001,7 +1001,7 @@ dispatch:
 			} else {
 				ch->_pSrc = ch->_innerLoopPtr;
 			}
-			goto post_keyon;
+			goto dispatch;
 		}
 
 		// ---- Loop / restart-pointer opcodes ----
@@ -1014,7 +1014,7 @@ dispatch:
 				ch->_innerLoopPtr = ch->_soundData;
 				ch->_outerLoopPtr = ch->_soundData;
 			}
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xFC: {
 			byte *ptr = loadData(readScriptWord(pSrc));
@@ -1023,17 +1023,17 @@ dispatch:
 			ch->_innerLoopPtr = ptr;
 			ch->_outerLoopPtr = ptr;
 			ch->_soundData = ptr;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xFB: { // unconditional jump, no bookkeeping
 			ch->_pSrc = loadData(readScriptWord(pSrc));
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xFA: { // "call": jump, saving a resume point
 			byte *target = loadData(readScriptWord(pSrc));
 			ch->_branchTarget = ch->_pSrc + 3;
 			ch->_pSrc = target;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xF9: { // "return"
 			if (ch->_branchTarget) {
@@ -1042,25 +1042,25 @@ dispatch:
 			} else {
 				ch->_pSrc++;
 			}
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xF8: {
 			ch->_program = readScriptByte(pSrc);
 			ch->_pSrc += 2;
 			sendProgramChange(midiChannel, ch->_program);
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xF7: {
 			ch->_noteOffset = readScriptByte(pSrc);
 			ch->_keyOnDelayOverride = 0;
 			ch->_pSrc += 2;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xF6: {
 			ch->_keyOnDelayOverride = readScriptByte(pSrc);
 			ch->_noteOffset = 0;
 			ch->_pSrc += 2;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xF5: {
 			ch->_pitchBendFadeReload = readScriptByte(pSrc);
@@ -1068,51 +1068,50 @@ dispatch:
 			ch->_pitchBendFadeCount = readScriptByte(pSrc);
 			ch->_pitchBendFadeCounter = 1;
 			ch->_pSrc += 4;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xF4: {
-			ch->_volume = readScriptByte(pSrc);
-			ch->_pSrc += 2;
-			sendVolume(ch);
-			goto post_keyon;
-		}
-		case 0xF3: {
 			ch->_velocity = readScriptByte(pSrc);
 			ch->_pSrc += 2;
-			goto post_keyon;
+			goto dispatch;
 		}
-		case 0xF2: {
+		case 0xF3: {
 			ch->_volumeFadeReload = readScriptByte(pSrc);
 			ch->_volumeFadeStep = readScriptByte(pSrc);
 			ch->_volumeFadeCounter = 1;
 			ch->_pSrc += 3;
-			goto post_keyon;
+			goto dispatch;
 		}
-		case 0xF1: {
-			int pitchBend = readScriptByte(pSrc);
-			if (_usesDemoOpcodeSemantics || !ch->_pendingStop)
-				ch->_pitchBend = pitchBend;
+		case 0xF2: {
+			ch->_pitchBend = readScriptByte(pSrc);
 			ch->_pSrc += 2;
 			sendPitchBend(midiChannel, ch->_pitchBend);
-			goto post_keyon;
+			goto dispatch;
+		}
+		case 0xF1: {
+			if (!ch->_pendingStop)
+				ch->_volume = readScriptByte(pSrc);
+			ch->_pSrc += 2;
+			sendVolume(ch);
+			goto dispatch;
 		}
 		case 0xF0: {
 			ch->_pan = readScriptByte(pSrc);
 			sendPan(midiChannel, ch->_pan);
 			ch->_pSrc += 2;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xEF: {
 			ch->_panFadeReload = readScriptByte(pSrc);
 			ch->_panFadeStep = readScriptByte(pSrc);
 			ch->_panFadeCounter = 1;
 			ch->_pSrc += 3;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xEE: {
 			ch->_transpose = readScriptByte(pSrc);
 			ch->_pSrc += 2;
-			goto post_keyon;
+			goto dispatch;
 		}
 		case 0xED: {
 			// ---- Chord event: [count][note1..noteN][duration] ----
