@@ -27,7 +27,13 @@
 
 namespace Hollywood {
 
-// Decodes resource delta frames that patch an already prepared scene framebuffer.
+/**
+ * Applies one resource delta frame to an existing indexed framebuffer.
+ *
+ * Frames contain bounded rows of literal or repeated pixel runs. drawFrame()
+ * validates resource and destination bounds and clips runs to the row width;
+ * pixels outside those runs retain their previous values.
+ */
 class ResourceDeltaClipPlayer {
 public:
 	static bool drawFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,

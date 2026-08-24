@@ -30,7 +30,15 @@
 
 namespace Hollywood {
 
-// Owns scene palettes, masks, framebuffers, and presentation surfaces.
+/**
+ * Owns the palettes, masks, and indexed surfaces used by a playable scene.
+ *
+ * baseFramebufferOriginal is the restoration copy of the selected room image;
+ * baseFramebuffer carries persistent scene patches; sceneFramebuffer is the
+ * per-frame composite. savedFramebuffer is a separate resource-derived image
+ * used for region, hotspot, and depth lookup and panel restoration, not a
+ * save-game snapshot. screen is the cropped presentation surface.
+ */
 class SceneSurfaceState {
 public:
 	void initialize(uint paletteSize, uint paletteMaskOriginalSize, uint paletteMaskUsedBytes,

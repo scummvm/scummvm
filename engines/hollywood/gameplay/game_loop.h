@@ -68,6 +68,13 @@ struct GameplayPanelState {
 	Common::String captionText;
 };
 
+/**
+ * Supplies scene behavior to GameplayLoop.
+ *
+ * GameplayLoop polls input and owns cursor and panel state, forwarding resolved
+ * actions here. The delegate advances and draws the scene, presents the composed
+ * frame, and reports scene-driven exit conditions.
+ */
 class GameplayLoopDelegate {
 public:
 	virtual ~GameplayLoopDelegate();
@@ -98,12 +105,11 @@ public:
 };
 
 /**
- * Owns interactive input and the per-frame delegate lifecycle.
+ * Runs the blocking interactive loop for one playable scene.
  *
- * run() prepares the delegate once and presents an initial frame. Each
- * subsequent iteration polls input, advances the delegate, and draws and
- * presents the next frame until the engine quits or the delegate requests an
- * exit.
+ * run() prepares the delegate and presents an initial frame, then polls input
+ * and advances, draws, and presents through the delegate until the engine quits
+ * or the delegate requests an exit.
  */
 class GameplayLoop {
 public:

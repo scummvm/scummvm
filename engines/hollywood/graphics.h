@@ -43,6 +43,12 @@ uint16 readUint16LE(const Common::Array<byte> &source, uint offset);
 int16 readSint16LE(const Common::Array<byte> &source, uint offset);
 uint32 readUint32LE(const Common::Array<byte> &source, uint offset);
 
+/**
+ * Converts the game's 256-entry RGB palette to backend 8-bit components.
+ *
+ * setFrom6Bit() scales each component by four and extends one dirty range.
+ * upload() sends only that range; markAllDirty() forces a complete upload.
+ */
 class Palette6Bit {
 public:
 	Palette6Bit();
