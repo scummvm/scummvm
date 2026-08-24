@@ -24,6 +24,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 
@@ -39,6 +40,7 @@ const uint16 kScene3010LastState = 0x0bcb;
 const uint16 kScene3010EntryFromScene3020State = 0x0bc3;
 const uint16 kScene3010EntryFromPathState = 0x0bc4;
 const uint16 kScene3020State = 0x0bcc;
+const uint16 kScene3040State = 0x0be0;
 const uint16 kScene3050State = 0x0bea;
 const uint16 kScene3010ViewportXOffset = 0x0078;
 const uint kScene3010ActorBankTableEntry = 0x0000;
@@ -50,6 +52,13 @@ const uint32 kScene3010ForestIdleFrameMillis = 75;
 const uint kScene3010WindmillDescriptorCount = 0x1e;
 const uint kScene3010ForestIdleDescriptorCount = 0x0f;
 const uint kScene3010ExitDescriptorCount = 6;
+const uint kScene3010DepartureFirstChunk = 10;
+const uint kScene3010DepartureFirstFrameCount = 0x76;
+const uint kScene3010DepartureSecondChunk = 11;
+const uint kScene3010DepartureSecondFrameCount = 0x51;
+const uint32 kScene3010DeparturePauseMillis = 2000;
+const uint kScene3010ClimbChunk = 13;
+const uint kScene3010ClimbDescriptorCount = 0x12;
 const byte kScene3010InitialWindmillFrame = 4;
 
 const byte kScene3010ActorPathStepDeltaTable[] = {
@@ -73,6 +82,11 @@ const byte kScene3010ForestIdleFrameMap[] = {
 };
 
 const byte kScene3010ExitFrameMap[] = { 1, 2, 3, 4, 5 };
+
+const byte kScene3010ClimbFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
+	9, 10, 11, 12, 13, 14, 15, 16, 17
+};
 
 static PlayableSceneConfig scene3010Config() {
 	PlayableSceneConfig config;
@@ -106,7 +120,8 @@ Scene3010::Scene3010(HollywoodEngine *vm) :
 		_forestIdleChannel(),
 		_windmillLayer(),
 		_forestIdleLayer(),
-		_forestIdleState(0) {
+		_forestIdleState(0),
+		_climbOverlayActive(false) {
 	_windmillLayer.configure(7, kScene3010WindmillDescriptorCount,
 		kScene3010WindmillFrameMap, ARRAYSIZE(kScene3010WindmillFrameMap));
 	_forestIdleLayer.configure(9, kScene3010ForestIdleDescriptorCount,
@@ -158,6 +173,12 @@ void Scene3010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)activeWorldX;
 
 	copyBaseFramebufferToSceneFramebuffer();
+	if (_climbOverlayActive) {
+		drawResourceSpriteLayer(_windmillLayer);
+		drawActionOverlayLayer();
+		drawResourceSpriteLayer(_forestIdleLayer);
+		return;
+	}
 	if (_actionOverlayVisible) {
 		drawForegroundBlocks(activeWorldY);
 		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebuffer);
@@ -224,9 +245,8 @@ bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 304: // Usar aspas/molino (use blades/windmill): Ron has no idea yet.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Ir a bosque/camino (go to forest/path): transition toward scene 3020.
-		beginSecondarySpeechLine(4, 0);
-		_vm->gameState().mainFlowStateId = kScene3020State;
+	case 305: // Ir al bosque (go to the forest): play the departure and enter scene 3020.
+		runExitToScene3020();
 		return true;
 	case 306: // Mirar molino (look at windmill).
 		beginSecondarySpeechLine(5, 0);
@@ -243,8 +263,8 @@ bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 310: // Mirar hacha (look at axe): Frankie's axe.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311: // Usar hacha con aspas/molino (use axe with blades/windmill), gated later.
-		beginSecondarySpeechLine(10, 2);
+	case 311: // Usar paraguas con aspas (use umbrella with blades): climb to scene 3040.
+		runUmbrellaClimb();
 		return true;
 	default:
 		return false;
@@ -339,6 +359,173 @@ void Scene3010::runExitToScene3050() {
 		.noRedrawAtEnd());
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene3050State;
+}
+
+void Scene3010::runExitToScene3020() {
+	GameplayState &state = _vm->gameState();
+	beginSecondarySpeechLine(4, state.scene3010ForestExitSeen ? 1 : 0);
+	runDepartureTransition();
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+	state.scene3010ForestExitSeen = true;
+	state.mainFlowStateId = kScene3020State;
+}
+
+void Scene3010::runUmbrellaClimb() {
+	GameplayState &state = _vm->gameState();
+	if (!state.scene3030MachineActivated) {
+		beginSecondarySpeechLine(10, 2);
+		return;
+	}
+
+	beginSecondarySpeechLine(10, 0);
+	runDepartureTransition();
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	runWindmillClimbOverlay();
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+	state.mainFlowStateId = kScene3040State;
+}
+
+void Scene3010::runDepartureTransition() {
+	Graphics::ManagedSurface transitionBackground;
+	transitionBackground.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	copyBaseFramebufferToSceneFramebuffer();
+	drawActiveAndSecondaryActorFrames(true, _activeActorFacing, _activeActorCel,
+		_activeActorWorldX, _activeActorWorldY, false, 0, 0, 0, 0, -1);
+	drawForegroundBlocks(_activeActorWorldY);
+	transitionBackground.copyRectToSurface(_sceneFramebuffer.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+
+	bool skipWaits = false;
+	Common::Array<byte> clipData;
+	if (loadVariableChunk(kScene3010DepartureFirstChunk, clipData))
+		skipWaits = playDepartureClip(clipData, kScene3010DepartureFirstFrameCount,
+			transitionBackground, skipWaits, 0);
+
+	clipData.clear();
+	if (loadVariableChunk(kScene3010DepartureSecondChunk, clipData))
+		playDepartureClip(clipData, kScene3010DepartureSecondFrameCount,
+			transitionBackground, skipWaits, kScene3010DeparturePauseMillis);
+
+	_baseFramebuffer.copyRectToSurface(transitionBackground.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+}
+
+bool Scene3010::playDepartureClip(const Common::Array<byte> &clipData, uint tableEntryCount,
+		Graphics::ManagedSurface &transitionBackground, bool skipWaits, uint32 firstFrameHoldMillis) {
+	if (tableEntryCount == 0)
+		return skipWaits;
+
+	drawDepartureFrame(clipData, tableEntryCount, 0, transitionBackground, true);
+	bool waitBeforeNextFrame = firstFrameHoldMillis == 0;
+	if (!skipWaits && firstFrameHoldMillis != 0)
+		skipWaits = waitDepartureFrame(firstFrameHoldMillis, clipData, tableEntryCount, 0,
+			transitionBackground);
+
+	for (uint frame = 1; frame < tableEntryCount && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
+		if (!skipWaits && waitBeforeNextFrame)
+			skipWaits = waitDepartureFrame(kScene3010ForestIdleFrameMillis, clipData,
+				tableEntryCount, (byte)(frame - 1), transitionBackground);
+		waitBeforeNextFrame = true;
+		drawDepartureFrame(clipData, tableEntryCount, (byte)frame, transitionBackground, true);
+	}
+
+	return skipWaits;
+}
+
+bool Scene3010::waitDepartureFrame(uint32 millis, const Common::Array<byte> &clipData,
+		uint tableEntryCount, byte frameIndex, Graphics::ManagedSurface &transitionBackground) {
+	uint32 remaining = millis;
+	uint32 redrawAccumulator = 0;
+	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (pollEvents(true))
+			return true;
+
+		const uint32 slice = MIN<uint32>(remaining, 10);
+		g_system->delayMillis(slice);
+		if (_vm->gameState().windmillBladesMoving)
+			advanceWindmillLayer(slice);
+		advanceForestIdleLayer(slice);
+		remaining -= slice;
+		redrawAccumulator += slice;
+		if (remaining != 0 && redrawAccumulator >= kScene3010ForestIdleFrameMillis) {
+			drawDepartureFrame(clipData, tableEntryCount, frameIndex, transitionBackground, false);
+			redrawAccumulator = 0;
+		}
+	}
+
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+}
+
+void Scene3010::drawDepartureFrame(const Common::Array<byte> &clipData, uint tableEntryCount,
+		byte frameIndex, Graphics::ManagedSurface &transitionBackground, bool applyFrame) {
+	if (applyFrame) {
+		ResourceDeltaClipPlayer::drawFrame(clipData, 0, clipData.size(), tableEntryCount,
+			frameIndex, (byte *)transitionBackground.getPixels(), transitionBackground.w,
+			transitionBackground.h, transitionBackground.pitch,
+			transitionBackground.pitch * transitionBackground.h);
+	}
+
+	_sceneFramebuffer.copyRectToSurface(transitionBackground.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+	drawResourceSpriteLayer(_windmillLayer);
+	drawResourceSpriteLayer(_forestIdleLayer);
+	ResourceDeltaClipPlayer::drawFrame(clipData, 0, clipData.size(), tableEntryCount,
+		frameIndex, (byte *)_sceneFramebuffer.getPixels(), _sceneFramebuffer.w,
+		_sceneFramebuffer.h, _sceneFramebuffer.pitch,
+		_sceneFramebuffer.pitch * _sceneFramebuffer.h);
+	presentFrame();
+}
+
+void Scene3010::runWindmillClimbOverlay() {
+	_climbOverlayActive = true;
+	const bool previousHideActiveActor =
+		_actionOverlayPlayer.applyActorVisibility(kActionOverlayHideActiveActor);
+	_actionOverlayPlayer.begin(kScene3010ClimbChunk, kScene3010ClimbDescriptorCount,
+		kScene3010ClimbFrameMap, ARRAYSIZE(kScene3010ClimbFrameMap));
+
+	for (uint frame = 0; frame < 7 && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
+		_actionOverlayPlayer.setFrame(frame);
+		drawPlayableComposite();
+		presentFrame();
+		if (waitSceneMillis(kScene3010ForestIdleFrameMillis, false))
+			break;
+	}
+
+	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		_actionOverlayPlayer.setFrame(7);
+		drawPlayableComposite();
+		presentFrame();
+		while (_vm->gameState().windmillBladesMoving &&
+				_windmillChannel.frameIndex != 9 && _windmillChannel.frameIndex != 24 &&
+				!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+			if (waitSceneMillis(10, false))
+				break;
+		}
+	}
+
+	for (uint frame = 8; frame + 1 < ARRAYSIZE(kScene3010ClimbFrameMap) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
+		_actionOverlayPlayer.setFrame(frame);
+		drawPlayableComposite();
+		presentFrame();
+		if (waitSceneMillis(kScene3010WindmillFrameMillis, false))
+			break;
+	}
+
+	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		_actionOverlayPlayer.setFrame(ARRAYSIZE(kScene3010ClimbFrameMap) - 1);
+		drawPlayableComposite();
+		presentFrame();
+	}
+	_actionOverlayPlayer.finish(previousHideActiveActor);
+	_climbOverlayActive = false;
 }
 
 } // End of namespace Hollywood

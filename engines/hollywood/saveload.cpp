@@ -143,6 +143,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.ronPendingMabusePillsInMagnetPillbox);
 	syncStateBool(s, state.ronLampFueled);
 	syncStateBool(s, state.scene3010EntryLineSeen);
+	syncStateBool(s, state.scene3010ForestExitSeen);
 	syncStateBool(s, state.windmillBladesMoving);
 	syncStateBool(s, state.scene3020MaceTaken);
 	syncStateBool(s, state.scene3030MachineActivated);
