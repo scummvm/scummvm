@@ -23,9 +23,7 @@
 
 #include "common/system.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
-#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 
@@ -34,13 +32,17 @@ const char *const kScene2000MusicArchiveName = "RESOURCE.M02";
 const char *const kScene2000SoundArchiveName = "RESOURCE.S02";
 const uint16 kScene2000MusicCueId = 0x000b;
 const uint16 kScene2000NextState = 0x07ee;
-const uint32 kScene2000FrameMillis = 75;
+const uint32 kScene2000PhaseMillis = 1000;
+const uint32 kScene2000PaletteCycleMillis = 75;
+const uint32 kScene2000SpriteFrameMillis = 75;
+const uint32 kScene2000ClipFrameMillis = 75;
 const uint kScene2000EndTick = 0x32;
 const uint kScene2000PatchTick = 3;
 const uint kScene2000ClipStartTick = 5;
 const uint kScene2000BackgroundRefreshTick = 8;
 const uint kScene2000SmallSpriteDescriptorCount = 0x1e;
 const uint kScene2000ClipDescriptorCount = 0x81;
+const uint kScene2000BackgroundRefreshBytes = 0x10000;
 const byte kScene2000ClipFinalMapIndex = 0xa0;
 
 const byte kScene2000ClipFrameMap[] = {
@@ -66,18 +68,15 @@ const byte kScene2000ClipFrameMap[] = {
 Scene2000::Scene2000(HollywoodEngine *vm) :
 		ChapterIntroScene(vm, "scene 2000"),
 		_random("scene2000"),
-		_loopSound(),
-		_presentationBackground(),
-		_clipMapIndex(0),
-		_patchVisible(false) {
+		_presentationSound(),
+		_clipMapIndex(0) {
 	memset(_spriteStates, 0, sizeof(_spriteStates));
 	memset(_spriteDeltas, 0, sizeof(_spriteDeltas));
-	_presentationBackground.resize(kFrameBufferSize);
-	_loopSound.setArchive(Common::Path(kScene2000SoundArchiveName));
+	_presentationSound.setArchive(Common::Path(kScene2000SoundArchiveName));
 }
 
 Scene2000::~Scene2000() {
-	_loopSound.stop();
+	_presentationSound.stop();
 }
 
 const char *Scene2000::resourceArchiveName() const {
@@ -117,17 +116,19 @@ void Scene2000::adjustPaletteAfterLoad() {
 }
 
 void Scene2000::drawInitialFrame() {
-	resetPresentationBackground();
-	drawPresentationFrame();
+	presentFrame();
 }
 
 void Scene2000::runPresentation() {
 	uint tick = 0;
-	uint32 frameAccumulator = 0;
+	uint32 phaseAccumulator = 0;
+	uint32 paletteAccumulator = 0;
+	uint32 spriteAccumulator = 0;
+	uint32 clipAccumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
-	bool frameDirty = true;
+	bool spriteDirty = false;
 
-	_loopSound.playSampleLooping(0x29, 30);
+	_presentationSound.playSample(0x29, 30);
 
 	while (tick < kScene2000EndTick && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -136,50 +137,63 @@ void Scene2000::runPresentation() {
 		const uint32 now = g_system->getMillis();
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
-		frameAccumulator += delta;
+		phaseAccumulator += delta;
+		paletteAccumulator += delta;
+		spriteAccumulator += delta;
+		clipAccumulator += delta;
 
-		while (frameAccumulator >= kScene2000FrameMillis && tick < kScene2000EndTick) {
-			frameAccumulator -= kScene2000FrameMillis;
+		while (paletteAccumulator >= kScene2000PaletteCycleMillis) {
+			paletteAccumulator -= kScene2000PaletteCycleMillis;
+			rotatePaletteRange(0xf0, 0xf8);
+		}
+
+		while (spriteAccumulator >= kScene2000SpriteFrameMillis) {
+			spriteAccumulator -= kScene2000SpriteFrameMillis;
+			advanceSmallSprites();
+			spriteDirty = true;
+		}
+
+		while (phaseAccumulator >= kScene2000PhaseMillis && tick < kScene2000EndTick) {
+			phaseAccumulator -= kScene2000PhaseMillis;
 			++tick;
 
-			if (tick == kScene2000PatchTick && !_patchVisible) {
+			if (tick == kScene2000PatchTick) {
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[3],
-					_presentationBackground.managedSurface());
-				_patchVisible = true;
+					_sceneFramebuffer.managedSurface());
 			}
 
-			if (tick == kScene2000BackgroundRefreshTick) {
-				memcpy(_presentationBackground.data(), _baseFramebuffer.data(), 0x10000);
-				if (_patchVisible)
-					drawResourceBlockList(_resourceArena, _resourceChunkOffsets[3],
-						_presentationBackground.managedSurface());
-			}
+			if (tick == kScene2000BackgroundRefreshTick)
+				memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(),
+					kScene2000BackgroundRefreshBytes);
 
-			if (tick >= kScene2000ClipStartTick && _clipMapIndex < kScene2000ClipFinalMapIndex) {
+		}
+
+		const byte previousClipMapIndex = _clipMapIndex;
+		if (tick < kScene2000ClipStartTick) {
+			clipAccumulator %= kScene2000ClipFrameMillis;
+		} else {
+			while (clipAccumulator >= kScene2000ClipFrameMillis &&
+					_clipMapIndex < kScene2000ClipFinalMapIndex) {
+				clipAccumulator -= kScene2000ClipFrameMillis;
 				++_clipMapIndex;
-				drawClipFrameDeltaToBackground(
-					kScene2000ClipFrameMap[MIN<uint>(_clipMapIndex, ARRAYSIZE(kScene2000ClipFrameMap) - 1)]);
 				if (_clipMapIndex == kScene2000ClipFinalMapIndex)
 					tick = kScene2000EndTick - 1;
 			}
-
-			advanceSmallSprites();
-			frameDirty = true;
 		}
 
-		if (frameDirty) {
-			drawPresentationFrame();
-			frameDirty = false;
+		if (!spriteDirty && previousClipMapIndex != _clipMapIndex) {
+			advanceSmallSprites();
+			spriteDirty = true;
+		}
+		if (spriteDirty || previousClipMapIndex != _clipMapIndex) {
+			drawPresentationFrame(previousClipMapIndex);
+			spriteDirty = false;
 		}
 
 		g_system->delayMillis(10);
 	}
 
-	_loopSound.stop();
-}
-
-void Scene2000::resetPresentationBackground() {
-	memcpy(_presentationBackground.data(), _baseFramebuffer.data(), _presentationBackground.size());
+	_presentationSound.stop();
 }
 
 void Scene2000::advanceSmallSprites() {
@@ -192,22 +206,23 @@ void Scene2000::advanceSmallSprites() {
 	}
 }
 
-void Scene2000::drawPresentationFrame() {
-	memcpy(_sceneFramebuffer.data(), _presentationBackground.data(), _sceneFramebuffer.size());
+void Scene2000::drawPresentationFrame(byte previousClipMapIndex) {
+	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[2], 0,
+		kScene2000SmallSpriteDescriptorCount, 0, _baseFramebuffer.surface(),
+		_sceneFramebuffer.surface());
 
 	for (uint i = 0; i < ARRAYSIZE(_spriteStates); ++i) {
 		const byte descriptor = (byte)(_spriteStates[i] + i * 5);
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[2], 0,
 			kScene2000SmallSpriteDescriptorCount, descriptor, _sceneFramebuffer.managedSurface());
 	}
+	for (uint clipMapIndex = previousClipMapIndex + 1; clipMapIndex <= _clipMapIndex; ++clipMapIndex) {
+		const byte frame = kScene2000ClipFrameMap[MIN<uint>(clipMapIndex,
+			ARRAYSIZE(kScene2000ClipFrameMap) - 1)];
+		drawClipFrameDelta(4, kScene2000ClipDescriptorCount, frame);
+	}
 
 	presentFrame();
-}
-
-void Scene2000::drawClipFrameDeltaToBackground(byte frameIndex) {
-	ResourceDeltaClipPlayer::drawFrame(_resourceArena, _resourceChunkOffsets[4],
-		_chunkTable.sizes[4], kScene2000ClipDescriptorCount, frameIndex,
-		_presentationBackground.data(), _presentationBackground.size());
 }
 
 } // End of namespace Hollywood

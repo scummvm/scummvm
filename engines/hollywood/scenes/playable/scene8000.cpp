@@ -34,6 +34,7 @@ const char *const kScene8000SoundArchiveName = "RESOURCE.S08";
 const uint16 kScene8000MusicCueId = 0x000b;
 const uint16 kScene8000NextState = 0x1f4a;
 const uint32 kScene8000SecondMillis = 1000;
+const uint32 kScene8000PaletteCycleMillis = 300;
 const uint32 kScene8000MainSpriteMillis = 75;
 const uint32 kScene8000SecondarySpriteMillis = 60;
 const uint kScene8000EndTick = 0x31;
@@ -43,6 +44,7 @@ const byte kScene8000SecondaryCompleteFrame = 0x2a;
 const uint kScene8000NearEndTickAfterSecondaryComplete = 0x2f;
 const uint kScene8000MainDescriptorCount = 0x18;
 const uint kScene8000SecondaryDescriptorCount = 0x2a;
+const uint kScene8000BackgroundRefreshBytes = 0x10000;
 
 const byte kScene8000MainFrameMap[] = {
 	0, 23, 1, 2, 3, 4, 5, 6,
@@ -59,20 +61,22 @@ const byte kScene8000SecondaryFrameMap[] = {
 
 Scene8000::Scene8000(HollywoodEngine *vm) :
 		ChapterIntroScene(vm, "scene 8000"),
-		_soundBank0(),
+		_backgroundSound(),
+		_secondarySound(),
 		_random("scene8000"),
 		_mainFrame(0),
 		_mainState(0),
 		_mainRepeatCount(0),
 		_secondaryFrame(0),
 		_tick(0),
-		_patchVisible(false),
 		_secondaryVisible(false) {
-	_soundBank0.setArchive(Common::Path(kScene8000SoundArchiveName));
+	_backgroundSound.setArchive(Common::Path(kScene8000SoundArchiveName));
+	_secondarySound.setArchive(Common::Path(kScene8000SoundArchiveName));
 }
 
 Scene8000::~Scene8000() {
-	_soundBank0.stop();
+	_backgroundSound.stop();
+	_secondarySound.stop();
 }
 
 const char *Scene8000::resourceArchiveName() const {
@@ -104,18 +108,20 @@ uint Scene8000::sceneArenaLastChunk() const {
 }
 
 void Scene8000::drawInitialFrame() {
-	drawPresentationFrame();
+	drawPresentationFrame(true, false);
+	_backgroundSound.playSample(0x1e, 100);
 }
 
 void Scene8000::runPresentation() {
 	_vm->gameState().currentAmbientMusicCueId = kScene8000MusicCueId;
-	_soundBank0.playSample(0x1e, 100, true);
 
 	uint32 secondAccumulator = 0;
+	uint32 paletteAccumulator = 0;
 	uint32 mainAccumulator = 0;
 	uint32 secondaryAccumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
-	bool frameDirty = true;
+	bool mainDirty = false;
+	bool secondaryDirty = false;
 
 	while (_tick < kScene8000EndTick && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -125,75 +131,81 @@ void Scene8000::runPresentation() {
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
 		secondAccumulator += delta;
+		paletteAccumulator += delta;
 		mainAccumulator += delta;
-		secondaryAccumulator += delta;
+		if (_secondaryVisible)
+			secondaryAccumulator += delta;
 
-		while (secondAccumulator >= kScene8000SecondMillis && _tick < kScene8000EndTick) {
-			secondAccumulator -= kScene8000SecondMillis;
-			++_tick;
-			if (_tick == kScene8000PatchTick) {
-				_patchVisible = true;
-				_secondaryVisible = true;
-				_soundBank0.stop();
-				_soundBank0.playSample(0x1d, 50);
-			}
-			if (_tick == kScene8000BackgroundRefreshTick) {
-				memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-				frameDirty = true;
-			}
-			frameDirty = true;
+		while (paletteAccumulator >= kScene8000PaletteCycleMillis) {
+			paletteAccumulator -= kScene8000PaletteCycleMillis;
+			rotatePaletteRange(0xd0, 0xe7);
 		}
 
 		while (mainAccumulator >= kScene8000MainSpriteMillis) {
 			mainAccumulator -= kScene8000MainSpriteMillis;
-			advanceMainSprite();
-			frameDirty = true;
+			mainDirty |= advanceMainSprite();
 		}
 
-		while (secondaryAccumulator >= kScene8000SecondarySpriteMillis) {
+		while (_secondaryVisible && secondaryAccumulator >= kScene8000SecondarySpriteMillis) {
 			secondaryAccumulator -= kScene8000SecondarySpriteMillis;
-			if (!_secondaryVisible)
-				continue;
+			if (_secondaryFrame == 0)
+				_secondarySound.playSample(0x1d, 50);
 
 			if (_secondaryFrame < kScene8000SecondaryCompleteFrame) {
 				++_secondaryFrame;
 				if (_secondaryFrame == kScene8000SecondaryCompleteFrame)
 					_tick = kScene8000NearEndTickAfterSecondaryComplete;
-				frameDirty = true;
+				secondaryDirty = true;
 			}
 		}
 
-		if (frameDirty) {
-			drawPresentationFrame();
-			frameDirty = false;
+		while (secondAccumulator >= kScene8000SecondMillis && _tick < kScene8000EndTick) {
+			secondAccumulator -= kScene8000SecondMillis;
+			++_tick;
+			if (_tick == kScene8000PatchTick) {
+				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2],
+					_sceneFramebuffer.managedSurface());
+				_secondaryVisible = true;
+				secondaryAccumulator = kScene8000SecondarySpriteMillis;
+			}
+			if (_tick == kScene8000BackgroundRefreshTick)
+				memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(),
+					kScene8000BackgroundRefreshBytes);
+		}
+
+		if (mainDirty || secondaryDirty) {
+			drawPresentationFrame(mainDirty, secondaryDirty);
+			mainDirty = false;
+			secondaryDirty = false;
 		}
 
 		g_system->delayMillis(10);
 	}
 
-	_soundBank0.stop();
+	_backgroundSound.stop();
+	_secondarySound.stop();
 }
 
-void Scene8000::advanceMainSprite() {
+bool Scene8000::advanceMainSprite() {
 	if (_mainState == 0) {
 		if (_random.getRandomNumber(49) == 0) {
 			_mainFrame = 9;
 			_mainState = 3;
-			return;
+			return true;
 		}
 		if (_random.getRandomNumber(49) == 0) {
 			_mainFrame = 2;
 			_mainState = 1;
 			_mainRepeatCount = (byte)_random.getRandomNumber(5);
-			return;
+			return true;
 		}
 		if (_random.getRandomNumber(49) == 0) {
 			_mainFrame = 8;
 			_mainState = 2;
 			_mainRepeatCount = (byte)_random.getRandomNumber(5);
-			return;
+			return true;
 		}
-		return;
+		return false;
 	}
 
 	if (_mainState == 1) {
@@ -205,10 +217,10 @@ void Scene8000::advanceMainSprite() {
 				_mainFrame = 2;
 				--_mainRepeatCount;
 			}
-			return;
+			return true;
 		}
 		++_mainFrame;
-		return;
+		return true;
 	}
 
 	if (_mainState == 2) {
@@ -220,10 +232,10 @@ void Scene8000::advanceMainSprite() {
 				_mainFrame = 8;
 				--_mainRepeatCount;
 			}
-			return;
+			return true;
 		}
 		--_mainFrame;
-		return;
+		return true;
 	}
 
 	if (_mainFrame == 0x0f) {
@@ -232,15 +244,23 @@ void Scene8000::advanceMainSprite() {
 	} else {
 		++_mainFrame;
 	}
+	return true;
 }
 
-void Scene8000::drawPresentationFrame() {
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-
-	if (_patchVisible)
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2], _sceneFramebuffer.managedSurface());
-
+void Scene8000::drawPresentationFrame(bool mainDirty, bool secondaryDirty) {
 	const byte mainFrame = kScene8000MainFrameMap[MIN<uint>(_mainFrame, ARRAYSIZE(kScene8000MainFrameMap) - 1)];
+	if (mainDirty) {
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[3], 0,
+			kScene8000MainDescriptorCount, mainFrame, _baseFramebuffer.surface(),
+			_sceneFramebuffer.surface());
+	}
+	if (secondaryDirty) {
+		const byte secondaryFrame = kScene8000SecondaryFrameMap[MIN<uint>(_secondaryFrame,
+			ARRAYSIZE(kScene8000SecondaryFrameMap) - 1)];
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[4], 0,
+			kScene8000SecondaryDescriptorCount, secondaryFrame, _baseFramebuffer.surface(),
+			_sceneFramebuffer.surface());
+	}
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[3], 0,
 		kScene8000MainDescriptorCount, mainFrame, _sceneFramebuffer.managedSurface());
 	drawSecondarySpriteIfVisible();

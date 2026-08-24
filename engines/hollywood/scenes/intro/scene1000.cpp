@@ -32,30 +32,33 @@ const char *const kTitleFrontEndArchiveName = "RESOURCE.A00";
 const char *const kChapter1MusicArchiveName = "RESOURCE.M01";
 const uint16 kTitleFrontEndMusicCueId = 0x000b;
 const uint16 kTitleFrontEndNextState = 0x03f4;
-const uint32 kTitleFrontEndDurationMillis = 11250;
-const uint32 kTitlePatchTimeMillis = 3000;
-const uint32 kSecondaryStartTimeMillis = 5000;
+const uint32 kTitlePhaseMillis = 1000;
+const uint32 kTitlePaletteCycleMillis = 75;
 const uint32 kBlinkFrameMillis = 75;
 const uint32 kSecondaryFrameMillis = 75;
+const uint kTitlePatchPhase = 3;
+const uint kSecondaryStartPhase = 5;
+const uint kTitleBackgroundRefreshPhase = 7;
+const uint kTitleEndPhase = 0x32;
+const uint kTitleNearEndPhase = 0x31;
+const uint kTitleBackgroundRefreshBytes = 0x10000;
 
 const byte kTitleBlinkDescriptorFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 5,
-	4, 3, 2, 1, 0, 1, 2, 3,
-	4, 5, 6, 7, 8, 9, 10, 11,
-	10, 9, 8, 7, 6, 5, 4, 0
+	0, 11, 0, 1, 2, 1, 0, 0,
+	1, 2, 3, 4, 5, 6, 7, 8,
+	9, 10, 10, 10, 10, 10, 9, 8,
+	7, 6, 5, 4, 3, 2, 1, 0
 };
 
 Scene1000::Scene1000(HollywoodEngine *vm) :
 		ChapterIntroScene(vm, "title front-end"),
 		_random("hollywood_scene1000"),
-		_lastBlinkMillis(0),
 		_blinkPatternMode(0),
 		_blinkFrameIndex(0),
 		_secondaryFrameIndex(0),
 		_blinkDirty(true),
 		_secondaryDirty(false),
-		_secondaryVisible(false),
-		_titlePatchApplied(false) {
+		_secondaryVisible(false) {
 }
 
 const char *Scene1000::resourceArchiveName() const {
@@ -100,39 +103,66 @@ void Scene1000::drawInitialFrame() {
 }
 
 void Scene1000::runPresentation() {
-	uint32 elapsed = 0;
-	uint32 secondaryElapsed = 0;
+	uint phase = 0;
+	uint32 phaseAccumulator = 0;
+	uint32 paletteAccumulator = 0;
+	uint32 blinkAccumulator = 0;
+	uint32 secondaryAccumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
 
-	while (elapsed < kTitleFrontEndDurationMillis && !_skipRequested && !Engine::shouldQuit()) {
+	while (phase < kTitleEndPhase && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
 
 		const uint32 now = g_system->getMillis();
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
-		elapsed += delta;
+		phaseAccumulator += delta;
+		paletteAccumulator += delta;
+		blinkAccumulator += delta;
+		if (_secondaryVisible)
+			secondaryAccumulator += delta;
 
-		if (!_titlePatchApplied && elapsed >= kTitlePatchTimeMillis)
-			applyTitlePatch();
+		while (paletteAccumulator >= kTitlePaletteCycleMillis) {
+			paletteAccumulator -= kTitlePaletteCycleMillis;
+			rotatePaletteRange(0xf0, 0xfb);
+		}
 
-		if (!_secondaryVisible && elapsed >= kSecondaryStartTimeMillis) {
-			_secondaryVisible = true;
-			_secondaryDirty = true;
+		while (blinkAccumulator >= kBlinkFrameMillis) {
+			blinkAccumulator -= kBlinkFrameMillis;
+			advanceBlinkFrame();
 		}
 
 		if (_secondaryVisible && _secondaryFrameIndex < kSecondaryDescriptorCount - 1) {
-			secondaryElapsed += delta;
-			while (secondaryElapsed >= kSecondaryFrameMillis && _secondaryFrameIndex < kSecondaryDescriptorCount - 1) {
-				secondaryElapsed -= kSecondaryFrameMillis;
+			while (secondaryAccumulator >= kSecondaryFrameMillis &&
+					_secondaryFrameIndex < kSecondaryDescriptorCount - 1) {
+				secondaryAccumulator -= kSecondaryFrameMillis;
 				++_secondaryFrameIndex;
 				_secondaryDirty = true;
+				if (_secondaryFrameIndex == kSecondaryDescriptorCount - 1)
+					phase = kTitleNearEndPhase;
 			}
 		}
 
-		if (now - _lastBlinkMillis >= kBlinkFrameMillis) {
-			_lastBlinkMillis = now;
-			advanceBlinkFrame();
+		while (phaseAccumulator >= kTitlePhaseMillis && phase < kTitleEndPhase) {
+			phaseAccumulator -= kTitlePhaseMillis;
+			++phase;
+			if (phase == kTitlePatchPhase) {
+				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2],
+					_sceneFramebuffer.managedSurface());
+				_blinkDirty = true;
+			}
+			if (phase == kSecondaryStartPhase) {
+				_secondaryVisible = true;
+				_secondaryDirty = true;
+				secondaryAccumulator = kSecondaryFrameMillis;
+			}
+			if (phase == kTitleBackgroundRefreshPhase) {
+				memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(),
+					kTitleBackgroundRefreshBytes);
+				_blinkDirty = true;
+				_secondaryDirty = _secondaryVisible;
+			}
 		}
 
 		renderOverlayFrame(false);
@@ -140,18 +170,16 @@ void Scene1000::runPresentation() {
 	}
 }
 
-void Scene1000::applyTitlePatch() {
-	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2], _sceneFramebuffer.managedSurface());
-	_titlePatchApplied = true;
-	renderOverlayFrame(true);
-}
-
 void Scene1000::advanceBlinkFrame() {
 	if (_blinkPatternMode != 0) {
 		if (_blinkPatternMode == 1 && _blinkFrameIndex > 5) {
 			_blinkPatternMode = 0;
+			_blinkDirty = true;
+			return;
 		} else if (_blinkPatternMode == 2 && _blinkFrameIndex > 0x1e) {
 			_blinkPatternMode = 0;
+			_blinkDirty = true;
+			return;
 		} else {
 			++_blinkFrameIndex;
 			_blinkDirty = true;

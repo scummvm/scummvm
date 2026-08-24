@@ -33,6 +33,7 @@ class HollywoodEngine;
 class Scene5000 : public ChapterIntroScene {
 public:
 	Scene5000(HollywoodEngine *vm);
+	~Scene5000() override;
 
 private:
 	const char *resourceArchiveName() const override;
@@ -46,16 +47,15 @@ private:
 	void drawInitialFrame() override;
 	void runPresentation() override;
 
-	void resetPresentationBackground();
-	void drawPresentationFrame(bool drawSprite);
-	void drawClipFrameDeltaToBackground(byte frameIndex);
+	void drawPresentationFrame(bool spriteDirty, int previousClipFrame);
 	void advanceSpriteFrame();
+	void updateAmbientSound();
 
-	IndexedSurfaceBuffer _presentationBackground;
+	SoundBank0Player _ambientSound;
 	Common::RandomSource _random;
+	byte _lastAmbientCue;
 	byte _spriteFrame;
 	byte _spriteMode;
-	byte _spriteRepeatCount;
 	byte _clipFrame;
 };
 

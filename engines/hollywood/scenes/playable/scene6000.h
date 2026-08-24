@@ -46,8 +46,6 @@ private:
 	void drawAnimatedSpriteFrame(bool drawSprite);
 
 	byte _spriteFrameIndex;
-	uint16 _previousSpriteDescriptor;
-	bool _hasPreviousSpriteDescriptor;
 };
 
 } // End of namespace Hollywood

@@ -47,18 +47,18 @@ private:
 	void drawInitialFrame() override;
 	void runPresentation() override;
 
-	void advanceMainSprite();
-	void drawPresentationFrame();
+	bool advanceMainSprite();
+	void drawPresentationFrame(bool mainDirty, bool secondaryDirty);
 	void drawSecondarySpriteIfVisible();
 
-	SoundBank0Player _soundBank0;
+	SoundBank0Player _backgroundSound;
+	SoundBank0Player _secondarySound;
 	Common::RandomSource _random;
 	byte _mainFrame;
 	byte _mainState;
 	byte _mainRepeatCount;
 	byte _secondaryFrame;
 	uint _tick;
-	bool _patchVisible;
 	bool _secondaryVisible;
 };
 

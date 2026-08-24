@@ -64,6 +64,11 @@ bool Scene9000::play() {
 		}
 	}
 
+	while (_music.isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
+		if (delay(10))
+			break;
+	}
+
 	_music.stop();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
@@ -140,7 +145,7 @@ bool Scene9000::runChunk() {
 		}
 
 		if (!fadeInComplete) {
-			for (uint i = 0; i < _paletteSource.size(); ++i) {
+			for (uint i = 0; i < kAnimatedPaletteByteCount; ++i) {
 				if (_paletteSource[i] >= fadeThreshold)
 					_paletteCurrent[i] = MIN<byte>(_paletteSource[i], _paletteCurrent[i] + 3);
 			}
@@ -174,7 +179,7 @@ bool Scene9000::runChunk() {
 		}
 
 		if (!fadeOutComplete) {
-			for (uint i = 0; i < _paletteSource.size(); ++i) {
+			for (uint i = 0; i < kAnimatedPaletteByteCount; ++i) {
 				if (_paletteSource[i] >= fadeThreshold)
 					_paletteCurrent[i] = _paletteCurrent[i] >= 3 ? _paletteCurrent[i] - 3 : 0;
 			}

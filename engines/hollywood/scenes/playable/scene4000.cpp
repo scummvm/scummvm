@@ -39,8 +39,11 @@ const uint32 kScene4000ClipFrameMillis = 55;
 const uint kScene4000PatchPhase = 3;
 const uint kScene4000LateSoundPhase = 5;
 const uint kScene4000ClipStartPhase = 6;
+const uint kScene4000BackgroundRefreshPhase = 8;
 const uint kScene4000EndPhase = 0x32;
+const uint kScene4000NearEndPhase = 0x31;
 const uint kScene4000ClipDescriptorCount = 0xad;
+const uint kScene4000BackgroundRefreshBytes = 0x10000;
 const byte kScene4000ClipFinalFrame = 0xc5;
 
 const byte kScene4000ClipFrameMap[] = {
@@ -56,7 +59,7 @@ const byte kScene4000ClipFrameMap[] = {
 	88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
 	97, 97, 97, 97, 97, 97, 97, 97, 97, 97,
 	97, 97, 97, 97, 97, 97, 97, 97, 97, 97,
-	97, 97, 97, 97, 98, 99, 100, 101, 102, 103,
+	97, 97, 97, 98, 99, 100, 101, 102, 103,
 	104, 105, 106, 107, 108, 109, 110, 111, 112, 113,
 	114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
 	124, 125, 126, 127, 128, 129, 130, 131, 132, 133,
@@ -69,16 +72,15 @@ const byte kScene4000ClipFrameMap[] = {
 Scene4000::Scene4000(HollywoodEngine *vm) :
 		ChapterIntroScene(vm, "scene 4000"),
 		_random("scene4000"),
-		_loopSound(),
+		_baseSound(),
 		_ambientSound(),
 		_lateSound(),
 		_lastAmbientCue(0xff),
 		_lastLateCue(0xff),
 		_clipFrame(0),
 		_clipActive(false),
-		_lateSoundEnabled(false),
-		_patchVisible(false) {
-	_loopSound.setArchive(Common::Path(kScene4000SoundArchiveName));
+		_lateSoundEnabled(false) {
+	_baseSound.setArchive(Common::Path(kScene4000SoundArchiveName));
 	_ambientSound.setArchive(Common::Path(kScene4000SoundArchiveName));
 	_lateSound.setArchive(Common::Path(kScene4000SoundArchiveName));
 }
@@ -120,7 +122,7 @@ uint16 Scene4000::sceneViewportXOffset() const {
 }
 
 void Scene4000::drawInitialFrame() {
-	drawPresentationFrame();
+	presentFrame();
 }
 
 void Scene4000::runPresentation() {
@@ -128,7 +130,7 @@ void Scene4000::runPresentation() {
 	uint32 phaseAccumulator = 0;
 	uint32 clipAccumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
-	bool frameDirty = true;
+	bool frameDirty = false;
 
 	while (phase < kScene4000EndPhase && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -138,36 +140,50 @@ void Scene4000::runPresentation() {
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
 		phaseAccumulator += delta;
-		clipAccumulator += delta;
+		if (_clipActive)
+			clipAccumulator += delta;
 
 		updateSoundCues();
+
+		const byte previousClipFrame = _clipFrame;
+		while (_clipActive && clipAccumulator >= kScene4000ClipFrameMillis &&
+				_clipFrame < kScene4000ClipFinalFrame) {
+			clipAccumulator -= kScene4000ClipFrameMillis;
+			++_clipFrame;
+			if (_clipFrame == kScene4000ClipFinalFrame)
+				phase = kScene4000NearEndPhase;
+		}
 
 		while (phaseAccumulator >= kScene4000PhaseMillis && phase < kScene4000EndPhase) {
 			phaseAccumulator -= kScene4000PhaseMillis;
 			++phase;
 			if (phase == kScene4000PatchPhase) {
-				_patchVisible = true;
-				frameDirty = true;
+				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2],
+					_sceneFramebuffer.managedSurface());
+				presentFrame();
 			}
 			if (phase == kScene4000LateSoundPhase) {
 				_lateSound.playSample(0x2a, 100);
 				_lateSoundEnabled = true;
 			}
-			if (phase == kScene4000ClipStartPhase)
+			if (phase == kScene4000ClipStartPhase) {
 				_clipActive = true;
+				clipAccumulator = kScene4000ClipFrameMillis;
+			}
+			if (phase == kScene4000BackgroundRefreshPhase)
+				memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(),
+					kScene4000BackgroundRefreshBytes);
 		}
 
-		while (_clipActive && clipAccumulator >= kScene4000ClipFrameMillis &&
-				_clipFrame < kScene4000ClipFinalFrame) {
-			clipAccumulator -= kScene4000ClipFrameMillis;
-			++_clipFrame;
-			if (_clipFrame >= kScene4000ClipFinalFrame)
-				phase = kScene4000EndPhase - 1;
+		for (uint clipFrame = previousClipFrame + 1; clipFrame <= _clipFrame; ++clipFrame) {
+			const byte frame = kScene4000ClipFrameMap[MIN<uint>(clipFrame,
+				ARRAYSIZE(kScene4000ClipFrameMap) - 1)];
+			drawClipFrameDelta(4, kScene4000ClipDescriptorCount, frame);
 			frameDirty = true;
 		}
 
 		if (frameDirty) {
-			drawPresentationFrame();
+			presentFrame();
 			frameDirty = false;
 		}
 
@@ -178,8 +194,8 @@ void Scene4000::runPresentation() {
 }
 
 void Scene4000::updateSoundCues() {
-	if (!_loopSound.isPlaying())
-		_loopSound.playSampleLooping(0x29, 100);
+	if (!_baseSound.isPlaying())
+		_baseSound.playSample(0x29, 100);
 
 	if (!_ambientSound.isPlaying()) {
 		byte cue = _lastAmbientCue;
@@ -192,7 +208,7 @@ void Scene4000::updateSoundCues() {
 	if (!_lateSoundEnabled || _lateSound.isPlaying() || _random.getRandomNumber(99) != 0)
 		return;
 
-	if (_random.getRandomNumber(9) == 0) {
+	if (_random.getRandomNumber(0x7fff) == 0) {
 		_lateSound.playSample(0x0e, 100);
 		return;
 	}
@@ -204,20 +220,8 @@ void Scene4000::updateSoundCues() {
 	_lateSound.playSample(cue, 25);
 }
 
-void Scene4000::drawPresentationFrame() {
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-	if (_patchVisible && _chunkTable.isValidChunk(2))
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2], _sceneFramebuffer.managedSurface());
-	if (_clipActive && _chunkTable.isValidChunk(4)) {
-		const byte frame = kScene4000ClipFrameMap[MIN<uint>(_clipFrame,
-			ARRAYSIZE(kScene4000ClipFrameMap) - 1)];
-		drawClipFrameDelta(4, kScene4000ClipDescriptorCount, frame);
-	}
-	presentFrame();
-}
-
 void Scene4000::stopSoundCues() {
-	_loopSound.stop();
+	_baseSound.stop();
 	_ambientSound.stop();
 	_lateSound.stop();
 }

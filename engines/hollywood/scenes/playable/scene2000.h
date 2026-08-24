@@ -48,18 +48,14 @@ private:
 	void drawInitialFrame() override;
 	void runPresentation() override;
 
-	void resetPresentationBackground();
 	void advanceSmallSprites();
-	void drawPresentationFrame();
-	void drawClipFrameDeltaToBackground(byte frameIndex);
+	void drawPresentationFrame(byte previousClipMapIndex);
 
 	Common::RandomSource _random;
-	SoundBank0Player _loopSound;
-	IndexedSurfaceBuffer _presentationBackground;
+	SoundBank0Player _presentationSound;
 	byte _spriteStates[6];
 	int8 _spriteDeltas[6];
 	byte _clipMapIndex;
-	bool _patchVisible;
 };
 
 } // End of namespace Hollywood

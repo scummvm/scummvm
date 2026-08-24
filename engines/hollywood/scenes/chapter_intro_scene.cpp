@@ -59,6 +59,8 @@ bool ChapterIntroScene::play() {
 	if (!_skipRequested && !Engine::shouldQuit())
 		runPresentation();
 
+	// Fade the palette currently on screen, including cycled entries.
+	memcpy(_paletteResource.data(), _paletteCurrent.data(), _paletteResource.size());
 	fadeOutPalette();
 	_music.stop();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
@@ -232,6 +234,20 @@ void ChapterIntroScene::fadeOutPalette() {
 
 void ChapterIntroScene::presentFrame() {
 	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette, 0, sceneViewportXOffset());
+}
+
+void ChapterIntroScene::rotatePaletteRange(uint firstIndex, uint lastIndex) {
+	if (firstIndex >= lastIndex || lastIndex >= _paletteCurrent.size() / 3)
+		return;
+
+	byte lastColor[3];
+	memcpy(lastColor, _paletteCurrent.data() + lastIndex * 3, sizeof(lastColor));
+	for (uint index = lastIndex; index > firstIndex; --index) {
+		memcpy(_paletteCurrent.data() + index * 3,
+			_paletteCurrent.data() + (index - 1) * 3, sizeof(lastColor));
+	}
+	memcpy(_paletteCurrent.data() + firstIndex * 3, lastColor, sizeof(lastColor));
+	_displayPalette.uploadFrom6Bit(_paletteCurrent);
 }
 
 bool ChapterIntroScene::delay(uint32 millis) {
