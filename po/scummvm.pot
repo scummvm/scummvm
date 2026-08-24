@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-08-22 10:00+0000\n"
+"POT-Creation-Date: 2026-08-24 14:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3307,32 +3307,36 @@ msgid "ScummVM Web server"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:52
-msgid "Configuration file could not be parsed"
+msgid "Default voice"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:53
-msgid "Run a game"
+msgid "Configuration file could not be parsed"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:54
-msgid "Search a game"
+msgid "Run a game"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:55
+msgid "Search a game"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:56
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:57
 msgid "Game icon"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:58
 msgid "Shortcut label"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:59
 msgid "Shortcut icon"
 msgstr ""
 
@@ -4746,12 +4750,12 @@ msgstr ""
 msgid "Magnify Mode Off"
 msgstr ""
 
-#: backends/platform/android/android.cpp:930
+#: backends/platform/android/android.cpp:944
 #: backends/platform/ios7/ios7_osys_misc.mm:246
 msgid "Getting help"
 msgstr ""
 
-#: backends/platform/android/android.cpp:933
+#: backends/platform/android/android.cpp:947
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4773,13 +4777,13 @@ msgid ""
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:942
+#: backends/platform/android/android.cpp:956
 #: backends/platform/ios7/ios7_osys_misc.mm:258
 #: backends/platform/ios7/ios7_osys_misc.mm:354
 msgid "Touch Controls"
 msgstr ""
 
-#: backends/platform/android/android.cpp:945
+#: backends/platform/android/android.cpp:959
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4848,13 +4852,13 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1001
+#: backends/platform/android/android.cpp:1015
 #: backends/platform/ios7/ios7_osys_misc.mm:333
 #: backends/platform/ios7/ios7_osys_misc.mm:377
 msgid "Adding Games"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1004
+#: backends/platform/android/android.cpp:1018
 msgid ""
 "## Adding Games \n"
 "\n"
