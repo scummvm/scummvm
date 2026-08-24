@@ -42,6 +42,7 @@
 
 #include <features/features_cpu.h> // cpu_features_get_time_usec()
 #include <retro_atomic.h>
+#include <retro_miscellaneous.h> // PATH_MAX_LENGTH
 
 /**
  * Include base/internal_version.h to allow access to SCUMMVM_VERSION.
@@ -66,7 +67,7 @@ static struct retro_game_info *game_buf_ptr;
 /* retro_game_info::path is a frontend-owned pointer; retro_reset() reuses
  * game_buf_ptr to relaunch, so it must not depend on that pointer staying
  * valid after the initial retro_load_game() call. Own a stable copy instead. */
-static char game_buf_path[RETRO_PATH_MAX];
+static char game_buf_path[PATH_MAX_LENGTH];
 
 retro_log_printf_t retro_log_cb = NULL;
 retro_input_state_t retro_input_cb = NULL;
@@ -733,6 +734,28 @@ int retro_get_input_device(void) {
 	return retro_input_device;
 }
 
+/* Bounds-checked append to cmd_params: silently drops parameters past the
+ * fixed-size array capacity/width instead of overflowing them. */
+static bool append_command_param(const char *param) {
+	if (cmd_params_num >= ARRAYSIZE(cmd_params)) {
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Too many command line parameters, ignoring '%s'.\n", param);
+		return false;
+	}
+
+	size_t param_len = strlen(param);
+
+	if (param_len >= sizeof(cmd_params[cmd_params_num])) {
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Command line parameter too long, ignoring '%s'.\n", param);
+		return false;
+	}
+
+	memcpy(cmd_params[cmd_params_num], param, param_len + 1);
+	cmd_params_num++;
+	return true;
+}
+
 void parse_command_params(char *cmdline) {
 	int j = 0;
 	int cmdlen = strlen(cmdline);
@@ -750,8 +773,7 @@ void parse_command_params(char *cmdline) {
 		case '\"':
 			if (quotes) {
 				cmdline[i] = '\0';
-				strcpy(cmd_params[cmd_params_num], cmdline + j);
-				cmd_params_num++;
+				append_command_param(cmdline + j);
 				quotes = false;
 			} else
 				quotes = true;
@@ -762,8 +784,7 @@ void parse_command_params(char *cmdline) {
 			if (!quotes) {
 				if (i != j && !quotes) {
 					cmdline[i] = '\0';
-					strcpy(cmd_params[cmd_params_num], cmdline + j);
-					cmd_params_num++;
+					append_command_param(cmdline + j);
 				}
 				j = i + 1;
 			}
@@ -1123,8 +1144,7 @@ bool retro_load_game(const struct retro_game_info *game) {
 	}
 
 #ifdef LIBRETRO_DEBUG
-	char debug_buf [20];
-	sprintf(debug_buf, "--debuglevel=11");
+	char debug_buf[] = "--debuglevel=11";
 	parse_command_params(debug_buf);
 #endif
 
@@ -1192,15 +1212,15 @@ bool retro_load_game(const struct retro_game_info *game) {
 		// Preliminary game scan results
 		switch (test_game_status) {
 		case TEST_GAME_OK_ID_FOUND:
-			sprintf(buffer, "-p \"%s\" %s", parent_dir.getPath().toString().c_str(), target_id);
+			snprintf(buffer, sizeof(buffer), "-p \"%s\" %s", parent_dir.getPath().toString().c_str(), target_id);
 			retro_log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via target id and game dir\n");
 			break;
 		case TEST_GAME_OK_TARGET_FOUND:
-			sprintf(buffer, "%s", target_id);
+			snprintf(buffer, sizeof(buffer), "%s", target_id);
 			retro_log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via target id and scummvm.ini\n");
 			break;
 		case TEST_GAME_OK_ID_AUTODETECTED:
-			sprintf(buffer, "-p \"%s\" --auto-detect", parent_dir.getPath().toString().c_str());
+			snprintf(buffer, sizeof(buffer), "-p \"%s\" --auto-detect", parent_dir.getPath().toString().c_str());
 			retro_log_cb(RETRO_LOG_DEBUG, "[scummvm] launch via autodetect\n");
 			break;
 		case TEST_GAME_KO_MULTIPLE_RESULTS:
