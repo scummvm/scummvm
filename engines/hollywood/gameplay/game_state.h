@@ -94,6 +94,7 @@ struct GameplayState {
 		ronTravelScreenUnlocked = false;
 		travelScreenCurrentChapterId = 0;
 		scene3010EntryLineSeen = false;
+		scene3010ForestExitSeen = false;
 		windmillBladesMoving = false;
 		scene3020MaceTaken = false;
 		scene3030MachineActivated = false;
@@ -827,6 +828,7 @@ struct GameplayState {
 	bool ronTravelScreenUnlocked;
 	byte travelScreenCurrentChapterId;
 	bool scene3010EntryLineSeen;
+	bool scene3010ForestExitSeen;
 	bool windmillBladesMoving;
 	bool scene3020MaceTaken;
 	bool scene3030MachineActivated;

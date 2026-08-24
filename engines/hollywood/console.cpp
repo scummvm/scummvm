@@ -85,10 +85,9 @@ bool Console::cmdGet(int argc, const char **argv) {
 		}
 
 		uint addedCount = 0;
-		if (!state.scene3030MachineActivated) {
+		addedCount += addInventoryItemIfMissing(state, owner, kFrankieUmbrellaItem);
+		if (!state.scene3030MachineActivated)
 			addedCount += addInventoryItemIfMissing(state, owner, kFrankieMachineActivatorItem);
-			addedCount += addInventoryItemIfMissing(state, owner, kFrankieUmbrellaItem);
-		}
 		if (!state.frankensteinDiaryRead)
 			addedCount += addInventoryItemIfMissing(state, owner, kFrankieDiaryItem);
 
