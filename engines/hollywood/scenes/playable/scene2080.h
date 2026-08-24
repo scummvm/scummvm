@@ -41,6 +41,13 @@ class HollywoodEngine;
 // scene2080ForegroundState, scene2080ExitBackSequenceSeen,
 // scene2080PrincessHairSearchState, scene2080FirstRow09LookSeen,
 // scene2080DialogueBranchBUnlocked.
+
+/**
+ * Gives the foreground character a separate dialogue-time animation path.
+ * While the dialogue menu is open, its custom tick advances that pose, the
+ * ambient layer and audio, and viewport scrolling without running the normal
+ * scene tick.
+ */
 class Scene2080 : public PlayableScene {
 public:
 	Scene2080(HollywoodEngine *vm);
