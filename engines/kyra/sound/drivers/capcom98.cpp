@@ -63,6 +63,7 @@ public:
 	void setMusicVolume (int vol);
 	void setSoundEffectVolume (int vol);
 
+	void updateQueue();
 	void nextTick();
 	virtual void processSounds() = 0;
 
@@ -101,6 +102,15 @@ private:
 
 	Common::Array<uint32> _storedEvents;
 
+	struct EnqueuedTrack {
+		EnqueuedTrack(const uint8 *d, uint8 v, bool l) : data(d), volume(v), loop(l) {}
+		const uint8 *data;
+		uint8 volume;
+		bool loop;
+	};
+	Common::Array<EnqueuedTrack> _enqueuedTracks;
+
+	const int _queueLen;
 	const bool _playerPrio;
 	const uint16 _playFlags;
 };
@@ -320,15 +330,24 @@ private:
 uint16 CapcomPC98Player::_flags = 0;
 
 CapcomPC98Player::CapcomPC98Player(bool playerPrio, uint16 playFlags, uint16 chanReserveFlags, uint16 chanDisableFlags) : _playerPrio(playerPrio), _playFlags(playFlags), _chanReserveFlags(chanReserveFlags), _chanDisableFlags(chanDisableFlags),
-	_data(nullptr), _curPos(nullptr), _numEventsTotal(0), _numEventsLeft(0), _volume(0), _midiTicker(0), _loop(false), _fadeState(0), _fadeSpeed(1), _fadeTicker(0), _musicVolume(0), _sfxVolume(0) {
+	_data(nullptr), _curPos(nullptr), _numEventsTotal(0), _numEventsLeft(0), _volume(0), _midiTicker(0), _loop(false), _fadeState(0), _fadeSpeed(1), _fadeTicker(0), _musicVolume(0), _sfxVolume(0), _queueLen(1) {
 	memset(_soundMarkers, 0, sizeof(_soundMarkers));
 	_flags = 0;
 }
 
 void CapcomPC98Player::startSound(const uint8 *data, uint8 volume, bool loop) {
-	stopSound();
-
 	PC98AudioCore::MutexLock lock = lockMutex();
+
+	if (!(_flags & stopFlag()))
+		stopSound();
+
+	if ((_flags & playFlag())) {
+		if (_enqueuedTracks.size() >= _queueLen)
+			_enqueuedTracks.remove_at(0);
+		_enqueuedTracks.push_back(EnqueuedTrack(data, volume, loop));
+		return;
+	}
+
 	_numEventsTotal = _numEventsLeft = READ_LE_UINT16(data);
 	_data = _curPos = data + 2;
 	_volume = volume & 0x7F;
@@ -345,12 +364,8 @@ void CapcomPC98Player::startSound(const uint8 *data, uint8 volume, bool loop) {
 }
 
 void CapcomPC98Player::stopSound() {
-	while (_flags & playFlag()) {
-		g_system->delayMillis(4);
-		PC98AudioCore::MutexLock lock = lockMutex();
-		_flags |= stopFlag();
-	}
-	g_system->delayMillis(8);
+	PC98AudioCore::MutexLock lock = lockMutex();
+	_flags |= stopFlag();
 }
 
 void CapcomPC98Player::fadeOut(uint16 speed) {
@@ -382,6 +397,13 @@ void CapcomPC98Player::setSoundEffectVolume (int vol) {
 	PC98AudioCore::MutexLock lock = lockMutex();
 	_sfxVolume = vol;
 	updateMasterVolume();
+}
+
+void CapcomPC98Player::updateQueue() {
+	if (!(_flags & playFlag()) && _enqueuedTracks.size()) {
+		EnqueuedTrack t = _enqueuedTracks.remove_at(0);
+		startSound(t.data, t.volume, t.loop);
+	}
 }
 
 void CapcomPC98Player::nextTick() {
@@ -1448,8 +1470,10 @@ void CapcomPC98AudioDriverInternal::setSoundEffectVolume(int volume) {
 }
 
 void CapcomPC98AudioDriverInternal::timerCallback() {
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 2; ++i) {
+		_players[i]->updateQueue();
 		_players[i]->nextTick();
+	}
 }
 
 PC98AudioCore::MutexLock CapcomPC98AudioDriverInternal::lockMutex() {
