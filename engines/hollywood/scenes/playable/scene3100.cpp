@@ -277,7 +277,7 @@ AmbientAudioProfile Scene3100::ambientAudioProfile() const {
 	profile.checkMillis = 250;
 	profile.soundMode = kAmbientSoundLoop;
 	profile.soundCueId = 0x18;
-	profile.soundVolumePercent = 0x78;
+	profile.soundVolumePercent = 1; // Legacy 0x78 is about -40 dB.
 	profile.musicMode = kAmbientMusicRandomRange;
 	profile.musicFirstCueId = 0x0b;
 	profile.musicCueCount = 5;

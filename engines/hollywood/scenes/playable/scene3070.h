@@ -33,6 +33,7 @@ public:
 	Scene3070(HollywoodEngine *vm);
 
 private:
+	bool shouldLoadArenaChunk(uint index) const override;
 	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
 	bool hasCustomComposite() const override;
@@ -44,28 +45,46 @@ private:
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	bool shouldAnimatePrimarySpeechLine() const override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
-	void resetAnimationLayers();
+	void resetCutsceneLayers();
 	void rebuildWalkableMask();
 	void removeColorMapItem(byte itemId);
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
-	void advanceBackLayer(uint32 delta);
-	void advanceSmallIdleLayer(uint32 delta);
+	void fixControlPanelInteractionPoint();
+	void copySpecialStepDeltas(uint firstOffset, uint lastOffset);
 	void runEntryFromSecretPassage();
 	void runEntryFromOtherSide();
 	void runLateCutsceneBranch();
 	void runInterludeCutscene();
 	void runDoorPatchOverlay(bool open);
 	void runItemPatchPickup();
-	void drawForegroundBlocks(int activeWorldY, byte actorDrawOrderMode);
+	void runFrankensteinRevival();
+	void runBrainInstallation();
+	void runBodyAssembly();
+	void addSerumIngredient(byte itemId, uint16 speechRow, bool speakBefore, bool useSyringeAnimation);
+	void applyActionPatchChunk(uint chunkIndex);
+	bool runCurtainRevealFromBlack();
+	void runCurtainClearToBlack();
+	void drawForegroundBlocks(int activeWorldY, byte actorDrawOrderMode, bool drawNearForeground);
+	bool playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame, uint32 frameMillis);
 
-	TimedAnimationChannel _backChannel;
-	TimedAnimationChannel _smallIdleChannel;
-	ResourceSpriteLayer _backLayer;
-	ResourceSpriteLayer _smallIdleLayer;
-	byte _smallIdleMode;
+	ResourceSpriteLayer _interludeLeftLayer;
+	ResourceSpriteLayer _interludeRightLayer;
+	ResourceSpriteLayer _lateCutsceneLayer;
+	bool _interludeActive;
+	bool _interludeAlternatePose;
+	bool _lateCutsceneActive;
 };
 
 } // End of namespace Hollywood
