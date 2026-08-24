@@ -29,6 +29,7 @@
 #include "common/types.h"
 
 #include "hollywood/gameplay/hotspots.h"
+#include "hollywood/gameplay/inventory_media.h"
 
 namespace Graphics {
 struct Surface;
@@ -73,7 +74,8 @@ struct GameplayPanelState {
  *
  * GameplayLoop polls input and owns cursor and panel state, forwarding resolved
  * actions here. The delegate advances and draws the scene, presents the composed
- * frame, and reports scene-driven exit conditions.
+ * frame, runs blocking auxiliary viewers with scene-safe restoration, and
+ * reports scene-driven exit conditions.
  */
 class GameplayLoopDelegate {
 public:
@@ -99,6 +101,9 @@ public:
 	virtual byte randomSharedInventorySpeechFrame(byte maxFrameIndex);
 	virtual void playSharedInventorySound(byte sampleId);
 	virtual void showTravelScreenViewer();
+	// Returns false only when the requested media cannot be loaded.
+	virtual bool showInventoryMedia(InventoryMediaId mediaId);
+	virtual bool playSueTapeRecording();
 	virtual void handleLeftClick(const GameplayLoopCursorState &state);
 	virtual void handleInventoryItemClick(const GameplayLoopCursorState &state);
 	virtual void handleRightClick(const GameplayLoopCursorState &state);
