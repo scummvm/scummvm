@@ -50,11 +50,15 @@ const uint32 kScene3080SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene3080LargeFrameMillis = 125;
 const uint32 kScene3080SmallIdleFrameMillis = 100;
 const uint32 kScene3080OverlayFrameMillis = 75;
+const byte kScene3080MusicVolumePercent = 50;
 const uint kScene3080LargeLayerDescriptorCount = 0x10;
 const uint kScene3080SmallIdleDescriptorCount = 0x16;
 const uint kScene3080DiaryOverlayDescriptorCount = 0x0e;
 const uint kScene3080StickOverlayDescriptorCount = 0x0d;
-const uint kScene3080BranchExchangeDescriptorCount = 9;
+const uint kScene3080FlyerOverlayDescriptorCount = 9;
+const byte kScene3080DiaryPatchHook = 1;
+const byte kScene3080StickPatchHook = 2;
+const byte kScene3080FlyerSoundHook = 3;
 
 const byte kScene3080ActorPathStepDeltaTable[] = {
 	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
@@ -71,7 +75,7 @@ const byte kScene3080LargeLayerFrameMap[] = {
 };
 
 const byte kScene3080SmallIdleFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7,
 	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 };
 
@@ -83,7 +87,7 @@ const byte kScene3080StickOverlayFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 };
 
-const byte kScene3080BranchExchangeFrameMap[] = {
+const byte kScene3080FlyerOverlayFrameMap[] = {
 	8, 8, 7, 6, 5, 4, 3, 2, 1, 0,
 	0, 1, 1, 0, 0, 1, 1, 0, 0, 1,
 	1, 0, 0, 1, 1, 0, 0, 1, 2, 3,
@@ -171,12 +175,16 @@ void Scene3080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawResourceSpriteLayer(_largeLayer);
-	drawActionOverlayLayer();
-	if (activeWorldY <= 0x165)
-		drawForegroundBlocks(activeWorldY);
+	if (_actionOverlayVisible) {
+		drawActionOverlayLayer();
+		drawResourceSpriteLayer(_smallIdleLayer);
+		return;
+	}
+
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	if (activeWorldY <= 0x165) {
+		drawForegroundBlocks();
 		const uint chunkIndex = _vm->gameState().scene3080WindowOpened ? 16 : 6;
 		if (_sceneChunkTable.isValidChunk(chunkIndex))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
@@ -194,12 +202,11 @@ void Scene3080::runCustomEntrySequence() {
 		runEntryFromCabin();
 	else if (stateId == kScene3080EntryFromBrookState)
 		runEntryFromBrook();
-	else
+	else if (stateId == kScene3080EntryFromForestState)
 		runEntryFromForest();
 }
 
 bool Scene3080::prepareCustomGameplayLoop() {
-	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
 	return true;
 }
@@ -266,12 +273,74 @@ bool Scene3080::dispatchCustomSceneAction(uint16 handlerId) {
 	case 315: // Mirar palo/rama (look at stick/branch).
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 316: // Usar rama en ventana/chimenea (use branch exchange overlay).
-		runBranchExchangeOverlay();
+	case 316: // Usar folleto en árbol (use flyer on tree): make the flyer sticky.
+		runFlyerCoatingOverlay();
 		return true;
 	default:
 		return false;
 	}
+}
+
+bool Scene3080::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	targetX = CLIP<int>(targetX, 0x08a, 0x220);
+	if (targetY < 0x1df)
+		++targetY;
+
+	while (targetY <= 0x1df) {
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
+		++targetY;
+	}
+
+	targetY = 0x1df;
+	while (targetY > 0) {
+		--targetY;
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
+	}
+	return true;
+}
+
+bool Scene3080::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+
+	if (currentRegion == 6 && nextRegion == 7) {
+		for (uint offset = 0x0c; offset <= 0x17; ++offset)
+			_actorPathStepDeltas[offset] = kScene3080ActorPathStepDeltaTable[offset];
+		requestedFacing = 1;
+		restoredStepDeltas = true;
+		return true;
+	}
+	if (currentRegion == 6 && nextRegion == 5) {
+		for (uint offset = 0x30; offset <= 0x3b; ++offset)
+			_actorPathStepDeltas[offset] = kScene3080ActorPathStepDeltaTable[offset];
+		requestedFacing = 4;
+		restoredStepDeltas = true;
+		return true;
+	}
+	if ((currentRegion == 8 && nextRegion == 7) ||
+			(currentRegion == 7 && nextRegion == 6)) {
+		requestedFacing = 4;
+		restoredStepDeltas = true;
+		return true;
+	}
+	return false;
+}
+
+bool Scene3080::customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)targetRegion;
+	(void)restoredStepDeltas;
+
+	const byte previousRegion = state.drawOrderMode;
+	if (currentRegion == 8 ||
+			(currentRegion == 4 && ((targetX == 0x13d && targetY == 0x164) || previousRegion == 3))) {
+		requestedFacing = 1;
+		return true;
+	}
+	return false;
 }
 
 bool Scene3080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
@@ -301,19 +370,51 @@ AmbientAudioProfile Scene3080::ambientAudioProfile() const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = 250;
 	profile.musicMode = kAmbientMusicRandomRange;
-	profile.musicFirstCueId = 0x10;
-	profile.musicCueCount = 2;
-	profile.musicVolumePercent = 100;
-	profile.musicProbabilityModulus = 50;
+	profile.musicFirstCueId = _vm->gameState().scene3090BlindManPlayingSaxophone ? 0x11 : 0x10;
+	profile.musicCueCount = 1;
+	profile.musicVolumePercent = kScene3080MusicVolumePercent;
+	profile.musicProbabilityModulus = 1;
 	return profile;
 }
 
+void Scene3080::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene3080DiaryPatchHook) {
+		if (_sceneChunkTable.isValidChunk(12))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[12], _baseFramebuffer);
+		return;
+	}
+	if (hookId == kScene3080StickPatchHook) {
+		if (_sceneChunkTable.isValidChunk(8))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
+		return;
+	}
+	if (hookId != kScene3080FlyerSoundHook)
+		return;
+
+	if (frame == 8)
+		_soundBank0.playSampleLooping(0x1b, 75);
+	else if (frame == 28)
+		_soundBank0.stop();
+}
+
+bool Scene3080::shouldRunExitSideEffectsAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
+}
+
+void Scene3080::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+	if (_vm->gameState().mainFlowStateId != kScene3090State)
+		_vm->gameplayMusic()->stop();
+}
+
 void Scene3080::resetAnimationLayers() {
-	_largeChannel.reset(0, kScene3080LargeFrameMillis);
+	const byte largeFrame = _vm->gameState().scene3080ChimneySmokeAnimationChanged ? 8 : 0;
+	_largeChannel.reset(largeFrame, kScene3080LargeFrameMillis);
 	_smallIdleChannel.reset(0, kScene3080SmallIdleFrameMillis);
 	_largeLayer.visible = true;
 	_smallIdleLayer.visible = true;
-	_largeLayer.reset(0);
+	_largeLayer.reset(largeFrame);
 	_smallIdleLayer.reset(0);
 	_smallIdleMode = 0;
 }
@@ -366,50 +467,54 @@ void Scene3080::advanceSmallIdleLayer(uint32 delta) {
 	const uint frameCount = _smallIdleChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
 		if (_smallIdleMode == 0) {
-			if (_smallIdleChannel.frameIndex < 7) {
-				++_smallIdleChannel.frameIndex;
-			} else if (_random.getRandomNumber(14) == 0) {
+			++_smallIdleChannel.frameIndex;
+			if (_smallIdleChannel.frameIndex == 7)
 				_smallIdleMode = 1;
-				_smallIdleChannel.frameIndex = 8;
-			} else if (_random.getRandomNumber(29) == 0) {
-				_smallIdleMode = 2;
-				_smallIdleChannel.frameIndex = 12;
-			} else {
-				_smallIdleChannel.frameIndex = 0;
-			}
 		} else if (_smallIdleMode == 1) {
 			if (_smallIdleChannel.frameIndex < 11) {
 				++_smallIdleChannel.frameIndex;
+			} else if (_random.getRandomNumber(19) == 0) {
+				_smallIdleMode = 2;
+				_smallIdleChannel.frameIndex = 12;
 			} else {
-				_smallIdleMode = 0;
-				_smallIdleChannel.frameIndex = 0;
+				_smallIdleChannel.frameIndex = 8;
 			}
 		} else if (_smallIdleMode == 2) {
-			if (_smallIdleChannel.frameIndex < 21) {
-				++_smallIdleChannel.frameIndex;
-			} else {
-				_smallIdleMode = 0;
-				_smallIdleChannel.frameIndex = 0;
-			}
+			++_smallIdleChannel.frameIndex;
+			if (_smallIdleChannel.frameIndex == 22)
+				_smallIdleMode = 3;
+		} else if (_random.getRandomNumber(99) == 0) {
+			_smallIdleMode = 0;
+			_smallIdleChannel.frameIndex = 0;
 		}
 		_smallIdleLayer.setFrame(_smallIdleChannel.frameIndex);
 	}
 }
 
 void Scene3080::runEntryFromForest() {
+	startEntryMusic();
 	runEntryPath(0x0b4, 0x1df, 1, 0x150, 0x1bf);
-	if (!_vm->gameState().scene3080EntryLineSeen) {
+	GameplayState &state = _vm->gameState();
+	if (!state.scene3080EntryLineSeen) {
+		state.scene3080EntryLineSeen = true;
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().scene3080EntryLineSeen = true;
 	}
 }
 
 void Scene3080::runEntryFromCabin() {
+	startEntryMusic();
 	runEntryPath(0x13d, 0x164, 4, 0x12c, 0x1c2);
 }
 
 void Scene3080::runEntryFromBrook() {
+	_vm->gameplayMusic()->setVolume(kScene3080MusicVolumePercent);
 	runEntryPath(0x1db, 0x137, 4, 0x1c0, 0x17e);
+}
+
+void Scene3080::startEntryMusic() {
+	GameplayState &state = _vm->gameState();
+	state.currentAmbientMusicCueId = state.scene3090BlindManPlayingSaxophone ? 0x11 : 0x10;
+	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, kScene3080MusicVolumePercent);
 }
 
 void Scene3080::runDiaryPickup() {
@@ -419,15 +524,16 @@ void Scene3080::runDiaryPickup() {
 		return;
 	}
 
-	state.scene3080FrankensteinDiaryTaken = true;
-	state.scene3080FrankensteinDiaryRevealed = false;
 	runActionOverlay(ActionOverlaySpec(10, kScene3080DiaryOverlayDescriptorCount,
 		kScene3080DiaryOverlayFrameMap, ARRAYSIZE(kScene3080DiaryOverlayFrameMap), kScene3080OverlayFrameMillis)
 		.hideActor()
-		.patchAt(7, 2)
-		.soundAt(7, 1));
-	addInventoryItem(0x33);
+		.hookAt(10, kScene3080DiaryPatchHook)
+		.noRedrawAtEnd());
+	state.scene3080FrankensteinDiaryTaken = true;
+	state.scene3080FrankensteinDiaryRevealed = false;
 	applySceneStateToHotspotsAndPatches(2);
+	addInventoryItem(0x33);
+	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(5, 0);
 }
 
@@ -438,28 +544,30 @@ void Scene3080::runStickPickup() {
 		return;
 	}
 
-	state.scene3080BranchTaken = true;
 	runActionOverlay(ActionOverlaySpec(9, kScene3080StickOverlayDescriptorCount,
 		kScene3080StickOverlayFrameMap, ARRAYSIZE(kScene3080StickOverlayFrameMap), kScene3080OverlayFrameMillis)
 		.hideActor()
-		.patchAt(7, 4)
-		.soundAt(7, 1));
-	addInventoryItem(0x35);
+		.hookAt(10, kScene3080StickPatchHook)
+		.noRedrawAtEnd());
+	state.scene3080BranchTaken = true;
 	applySceneStateToHotspotsAndPatches(4);
+	addInventoryItem(0x35);
+	_soundBank0.playSample(1, 100);
 	dispatchGenericSceneAction(21);
 }
 
-void Scene3080::runBranchExchangeOverlay() {
-	runActionOverlay(ActionOverlaySpec(14, kScene3080BranchExchangeDescriptorCount,
-		kScene3080BranchExchangeFrameMap, ARRAYSIZE(kScene3080BranchExchangeFrameMap), kScene3080OverlayFrameMillis)
+void Scene3080::runFlyerCoatingOverlay() {
+	runActionOverlay(ActionOverlaySpec(14, kScene3080FlyerOverlayDescriptorCount,
+		kScene3080FlyerOverlayFrameMap, ARRAYSIZE(kScene3080FlyerOverlayFrameMap), kScene3080OverlayFrameMillis)
 		.hideActor()
-		.soundAt(8, 0x1b));
-	removeInventoryItem(0x58);
+		.hookEveryFrame(kScene3080FlyerSoundHook));
+	_soundBank0.stop();
 	addInventoryItem(0x34);
+	removeInventoryItem(0x58);
+	_soundBank0.playSample(1, 100);
 }
 
-void Scene3080::drawForegroundBlocks(int activeWorldY) {
-	(void)activeWorldY;
+void Scene3080::drawForegroundBlocks() {
 	const uint chunkIndex = _vm->gameState().scene3080BranchTaken ? 5 : 13;
 	if (_sceneChunkTable.isValidChunk(chunkIndex))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);

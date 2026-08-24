@@ -56,8 +56,9 @@ private:
 	void runEntryFromPath();
 	void runExitToScene3050();
 	void runExitToScene3020();
+	void runExitToScene3080();
 	void runUmbrellaClimb();
-	void runDepartureTransition();
+	void runDepartureTransition(bool includeSecondClip);
 	bool playDepartureClip(const Common::Array<byte> &clipData, uint tableEntryCount,
 		Graphics::ManagedSurface &transitionBackground, bool skipWaits, uint32 firstFrameHoldMillis);
 	bool waitDepartureFrame(uint32 millis, const Common::Array<byte> &clipData,
