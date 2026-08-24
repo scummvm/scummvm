@@ -22,11 +22,34 @@
 #include "hollywood/console.h"
 
 #include "common/str.h"
+#include "common/util.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
+
+const byte kFrankieMachineActivatorItem = 0x1f;
+const byte kFrankieBrainItem = 0x25;
+const byte kFrankieRemoteControlItem = 0x27;
+const byte kFrankieDiaryItem = 0x33;
+const byte kFrankieUmbrellaItem = 0x5b;
+
+const byte kFrankieBodyAssemblyItems[] = {
+	0x30, 0x42, 0x4c, 0x32
+};
+
+const byte kFrankieSerumItems[] = {
+	0x44, 0x3e, 0x38, 0x5d, 0x57
+};
+
+static bool addInventoryItemIfMissing(GameplayState &state, byte owner, byte itemId) {
+	if (state.hasInventoryItem(owner, itemId))
+		return false;
+
+	state.addInventoryItem(owner, itemId);
+	return state.hasInventoryItem(owner, itemId);
+}
 
 Console::Console(HollywoodEngine *vm) :
 		GUI::Debugger(),
@@ -36,7 +59,7 @@ Console::Console(HollywoodEngine *vm) :
 
 bool Console::cmdGet(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Usage: %s <item id|all>\n", argv[0]);
+		debugPrintf("Usage: %s <item id|all|frankie>\n", argv[0]);
 		return true;
 	}
 
@@ -48,17 +71,57 @@ bool Console::cmdGet(int argc, const char **argv) {
 	else if (owner == 1)
 		state.initializeSueItemResourcePages();
 
-	if (Common::String(argv[1]).equalsIgnoreCase("all")) {
+	const Common::String argument(argv[1]);
+	if (argument.equalsIgnoreCase("all")) {
 		const byte itemCount = state.giveInventoryItemsWithResourcePages(owner);
 		debugPrintf("Added %u inventory items with resource pages to owner %u\n",
 			itemCount, owner);
+		return true;
+	}
+	if (argument.equalsIgnoreCase("frankie")) {
+		if (owner != 0) {
+			debugPrintf("Frankenstein revival items can only be given to Ron\n");
+			return true;
+		}
+
+		uint addedCount = 0;
+		if (!state.scene3030MachineActivated) {
+			addedCount += addInventoryItemIfMissing(state, owner, kFrankieMachineActivatorItem);
+			addedCount += addInventoryItemIfMissing(state, owner, kFrankieUmbrellaItem);
+		}
+		if (!state.frankensteinDiaryRead)
+			addedCount += addInventoryItemIfMissing(state, owner, kFrankieDiaryItem);
+
+		if (state.scene3070FrankensteinBodyState == 0) {
+			for (uint i = 0; i < ARRAYSIZE(kFrankieBodyAssemblyItems); ++i)
+				addedCount += addInventoryItemIfMissing(state, owner,
+					kFrankieBodyAssemblyItems[i]);
+		}
+		if (state.scene3070FrankensteinBodyState < 2)
+			addedCount += addInventoryItemIfMissing(state, owner, kFrankieBrainItem);
+
+		const uint serumItemCount = ARRAYSIZE(kFrankieSerumItems);
+		uint serumProgress = MIN<uint>(state.scene3070SerumIngredientCount, serumItemCount);
+		for (uint i = 0; i < serumItemCount; ++i) {
+			if (state.hasInventoryItem(owner, kFrankieSerumItems[i]))
+				++serumProgress;
+		}
+		for (uint i = 0; i < serumItemCount && serumProgress < serumItemCount; ++i) {
+			if (addInventoryItemIfMissing(state, owner, kFrankieSerumItems[i])) {
+				++addedCount;
+				++serumProgress;
+			}
+		}
+
+		addedCount += addInventoryItemIfMissing(state, owner, kFrankieRemoteControlItem);
+		debugPrintf("Added %u inventory items needed for Frankenstein's revival\n", addedCount);
 		return true;
 	}
 
 	uint itemId = 0;
 	if (!parseItemId(argv[1], itemId)) {
 		debugPrintf("Invalid inventory item id '%s'\n", argv[1]);
-		debugPrintf("Usage: %s <item id|all>\n", argv[0]);
+		debugPrintf("Usage: %s <item id|all|frankie>\n", argv[0]);
 		return true;
 	}
 
