@@ -72,7 +72,7 @@ const byte kScene3010ForestIdleFrameMap[] = {
 	5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 };
 
-const byte kScene3010ExitFrameMap[] = { 0, 1, 2, 3, 4, 5 };
+const byte kScene3010ExitFrameMap[] = { 1, 2, 3, 4, 5 };
 
 static PlayableSceneConfig scene3010Config() {
 	PlayableSceneConfig config;
@@ -158,8 +158,16 @@ void Scene3010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)activeWorldX;
 
 	copyBaseFramebufferToSceneFramebuffer();
+	if (_actionOverlayVisible) {
+		drawForegroundBlocks(activeWorldY);
+		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebuffer);
+		drawResourceSpriteLayer(_windmillLayer);
+		drawActionOverlayLayer();
+		drawResourceSpriteLayer(_forestIdleLayer);
+		return;
+	}
+
 	drawResourceSpriteLayer(_windmillLayer);
-	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
@@ -204,10 +212,10 @@ bool Scene3010::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Mirar puerta del molino (look at windmill door).
+	case 301: // Mirar puerta de la casa de Frankenstein (look at the front door).
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302: // Usar/abrir puerta del molino (use/open windmill door): enter scene 3050.
+	case 302: // Usar/abrir puerta de la casa de Frankenstein (use/open front door): enter scene 3050.
 		runExitToScene3050();
 		return true;
 	case 303: // Mirar aspas (look at windmill blades): blocked/stopped state-aware line.
@@ -325,8 +333,10 @@ void Scene3010::runEntryFromPath() {
 }
 
 void Scene3010::runExitToScene3050() {
-	runActionOverlay(8, kScene3010ExitDescriptorCount, kScene3010ExitFrameMap,
-		ARRAYSIZE(kScene3010ExitFrameMap), kScene3010ForestIdleFrameMillis);
+	runActionOverlay(ActionOverlaySpec(8, kScene3010ExitDescriptorCount, kScene3010ExitFrameMap,
+		ARRAYSIZE(kScene3010ExitFrameMap), kScene3010ForestIdleFrameMillis)
+		.hideActor()
+		.noRedrawAtEnd());
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene3050State;
 }
