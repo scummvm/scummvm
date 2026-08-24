@@ -25,23 +25,33 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
+Commands::Commands(UIElement *parent) : Shared::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
+}
+
 bool Commands::msgFocus(const FocusMessage &msg) {
+	return true;
+}
+
+void Commands::draw() {
 	// Get a surface. We'll maintain a persistent copy to maintain
 	// the text pos across multiple calls
 	_surface = getSurface();
 	_surface.clear();
-	_surface.setTextPos(Common::Point(0, 3));
+	_surface.setTextPos(Common::Point(0, 4));
 	_surface.setScrollable(true);
 
-	return true;
+	prompt();
 }
 
 void Commands::writeString(const Common::String &msg) {
+	_textCursor.hide();
 	_surface.writeString(msg);
 }
 
 void Commands::prompt() {
-	writeString("CMD: ");
+	writeString("\x10");
+	_textCursor.setPosition(Common::Point(1, 24));
+	_textCursor.show();
 }
 
 } // namespace Views

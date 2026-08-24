@@ -23,6 +23,7 @@
 #define ULTIMA1_VIEWS_COMMANDS_H
 
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima1/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -33,12 +34,14 @@ using namespace Shared::Messages;
 class Commands : public Shared::UIElement {
 private:
 	Shared::Gfx::GfxSurface _surface;
+	Gfx::TextCursor _textCursor;
 
 public:
-	Commands(UIElement *parent) : Shared::UIElement("Commands", parent) {}
+	Commands(UIElement *parent);
 	~Commands() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
 	void writeString(const Common::String &msg);
 
 	void prompt();

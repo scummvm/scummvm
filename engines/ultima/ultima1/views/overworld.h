@@ -24,6 +24,7 @@
 
 #include "ultima/ultima1/views/dialog.h"
 #include "ultima/ultima1/views/overworld_map.h"
+#include "ultima/ultima1/views/commands.h"
 #include "ultima/ultima1/views/stats.h"
 
 namespace Ultima {
@@ -38,6 +39,7 @@ namespace Views {
 class Overworld : public Dialog {
 private:
 	OverworldMap _map;
+	Commands _commands;
 	Stats _stats;
 
 public:

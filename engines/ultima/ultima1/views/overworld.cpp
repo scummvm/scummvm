@@ -29,9 +29,9 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-Overworld::Overworld() : Dialog("Overworld"), _map(this), _stats(this) {
-	_map.setBounds(Common::Rect(8, 8, 8 + Data::MAP_VISIBLE_WIDTH * Data::TILE_WIDTH,
-		8 + Data::MAP_VISIBLE_HEIGHT * Data::TILE_HEIGHT));
+Overworld::Overworld() : Dialog("Overworld"), _map(this), _commands(this), _stats(this) {
+	_map.setBounds(TextRect(1, 1, 38, 19));
+	_commands.setBounds(TextRect(0, 20, 29, 24));
 	_stats.setBounds(TextRect(31, 21, 39, 24));
 }
 

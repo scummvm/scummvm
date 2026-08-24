@@ -52,8 +52,6 @@ void GfxSurface::writeString(const Common::String &str, Graphics::TextAlign alig
 		if (*p == '\n') {
 			assert(align == Graphics::kTextAlignLeft);
 			newLine();
-		} else if (*p < 32) {
-			setColor((byte)*p);
 		} else {
 			writeChar(*p);
 		}
@@ -65,7 +63,7 @@ void GfxSurface::writeChar(uint32 chr) {
 	const int fontH = _font.getFontHeight();
 	const int textW = this->w / fontW;
 
-	if (chr >= ' ') {
+	if (chr != '\n') {
 		fillRect(Common::Rect(_textPos.x * fontW, _textPos.y * fontH, (_textPos.x + 1) * fontW, (_textPos.y + 1) * fontH), _bgColor);
 		_font.drawChar(this, chr, _textPos.x * fontW, _textPos.y * fontH, _textColor);
 		_textPos.x++;
