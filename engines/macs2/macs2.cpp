@@ -759,8 +759,9 @@ void Macs2Engine::readBackgroundAnimations(Common::SeekableReadStream *stream) {
 				break;
 			current._frames[j]._width = fi.width;
 			current._frames[j]._height = fi.height;
-			current._frames[j]._data.resize(fi.width * fi.height);
-			memcpy(current._frames[j]._data.data(), fi.pixels, fi.width * fi.height);
+			const uint32 pix = (uint32)fi.width * (uint32)fi.height;
+			current._frames[j]._data.resize(pix);
+			memcpy(current._frames[j]._data.data(), fi.pixels, pix);
 		}
 
 		// The blob's internal frame pointer is stored in the resource file data.

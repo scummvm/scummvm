@@ -2151,11 +2151,11 @@ OpcodeResult Script::ScriptExecutor::scriptLoadSpecialAnim() {
 
 	while (object->_blobs.size() < animSlot)
 		object->_blobs.push_back(Common::Array<uint8>());
-	object->_blobs[animSlot - 1] = animData;
+	object->_blobs[animSlot - 1] = Common::move(animData);
 
 	// Keep V1 overload mirror fields in sync when targeting the classic overload slot.
 	if (animSlot == 0x15 || animSlot == _engine->overloadAnimSlot()) {
-		object->_overloadAnimation = animData;
+		object->_overloadAnimation = object->_blobs[animSlot - 1];
 		object->_overloadAnimationMirrored = (shouldMirror != 0);
 	}
 	return OpcodeResult::Continue;
