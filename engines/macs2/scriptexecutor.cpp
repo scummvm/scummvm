@@ -3368,8 +3368,8 @@ OpcodeResult ScriptExecutor::scriptStopSong() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetMainActor() {
-	const uint32 objectID = scriptReadValue32() - 0x400;
-	debugC(kDebugScript, "SCRIPT::setMainActor(objectID=%u)", objectID);
+	const int32 objectID = (int32)scriptReadValue32() - 0x400;
+	debugC(kDebugScript, "SCRIPT::setMainActor(objectID=%d)", objectID);
 
 	clearScriptError();
 	if (objectID < 1 || objectID > 0x200) {
@@ -3510,10 +3510,10 @@ OpcodeResult ScriptExecutor::scriptScreenShot() {
 }
 
 OpcodeResult ScriptExecutor::scriptWaitObjectAnimStep() {
-	const uint32 objectID = scriptReadValue32() - 0x400;
+	const int32 objectID = (int32)scriptReadValue32() - 0x400;
 	const uint16 animNr = scriptReadValue16();
 	const uint16 animStep = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::waitObjectAnimStep(objectID=%u, animNr=%u, animStep=%u)",
+	debugC(kDebugScript, "SCRIPT::waitObjectAnimStep(objectID=%d, animNr=%u, animStep=%u)",
 		   objectID, animNr, animStep);
 	scriptSkipOpcodeRemainder(0x56);
 
@@ -3547,14 +3547,14 @@ OpcodeResult ScriptExecutor::scriptWaitObjectAnimStep() {
 }
 
 OpcodeResult ScriptExecutor::scriptWaitSpecialAnimStep() {
-	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const int32 sceneAnimIndex = (int32)scriptReadValue32() - 0x1000;
 	const uint16 animStep = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::waitSpecialAnimStep(sceneAnimIndex=%u, animStep=%u)",
+	debugC(kDebugScript, "SCRIPT::waitSpecialAnimStep(sceneAnimIndex=%d, animStep=%u)",
 		   sceneAnimIndex, animStep);
 	scriptSkipOpcodeRemainder(0x57);
 
 	clearScriptError();
-	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+	if (sceneAnimIndex == 0 || sceneAnimIndex > (int32)_engine->_backgroundAnimationsBlobs.size()) {
 		setScriptError(8);
 		return OpcodeResult::Continue;
 	}
@@ -3569,10 +3569,10 @@ OpcodeResult ScriptExecutor::scriptWaitSpecialAnimStep() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetObjectAdjust() {
-	const uint32 objectID = scriptReadValue32() - 0x400;
+	const int32 objectID = (int32)scriptReadValue32() - 0x400;
 	const uint16 adjust1 = scriptReadValue16();
 	const uint16 adjust2 = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::setObjectAdjust(objectID=%u, adjust1=%u, adjust2=%u)",
+	debugC(kDebugScript, "SCRIPT::setObjectAdjust(objectID=%d, adjust1=%u, adjust2=%u)",
 		   objectID, adjust1, adjust2);
 
 	clearScriptError();
@@ -3595,12 +3595,12 @@ OpcodeResult ScriptExecutor::scriptSetObjectAdjust() {
 }
 
 OpcodeResult ScriptExecutor::scriptReloadSpecialAnim() {
-	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const int32 sceneAnimIndex = (int32)scriptReadValue32() - 0x1000;
 	const uint8 resourceIndex = readByte();
-	debugC(kDebugScript, "SCRIPT::reloadSpecialAnim(anim=%u res=%u)", sceneAnimIndex, resourceIndex);
+	debugC(kDebugScript, "SCRIPT::reloadSpecialAnim(anim=%d res=%u)", sceneAnimIndex, resourceIndex);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x59);
-	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+	if (sceneAnimIndex == 0 || sceneAnimIndex > (int32)_engine->_backgroundAnimationsBlobs.size()) {
 		setScriptError(8);
 		return OpcodeResult::Continue;
 	}
@@ -3684,10 +3684,10 @@ OpcodeResult ScriptExecutor::scriptSetWaveVolume() {
 }
 
 OpcodeResult ScriptExecutor::scriptLoadSpecialAnimSlot() {
-	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const int32 sceneAnimIndex = (int32)scriptReadValue32() - 0x1000;
 	const uint16 slot = scriptReadValue16();
 	const uint8 resourceIndex = readByte();
-	debugC(kDebugScript, "SCRIPT::loadSpecialAnimSlot(anim=%u slot=%u res=%u)",
+	debugC(kDebugScript, "SCRIPT::loadSpecialAnimSlot(anim=%d slot=%u res=%u)",
 		   sceneAnimIndex, slot, resourceIndex);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x5E);
@@ -3695,7 +3695,7 @@ OpcodeResult ScriptExecutor::scriptLoadSpecialAnimSlot() {
 		setScriptError(0x31);
 		return OpcodeResult::Continue;
 	}
-	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+	if (sceneAnimIndex == 0 || sceneAnimIndex > (int32)_engine->_backgroundAnimationsBlobs.size()) {
 		setScriptError(8);
 		return OpcodeResult::Continue;
 	}
@@ -3708,16 +3708,16 @@ OpcodeResult ScriptExecutor::scriptLoadSpecialAnimSlot() {
 }
 
 OpcodeResult ScriptExecutor::scriptSetSpecialAnimSlot() {
-	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const int32 sceneAnimIndex = (int32)scriptReadValue32() - 0x1000;
 	const uint16 slot = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::setSpecialAnimSlot(anim=%u slot=%u)", sceneAnimIndex, slot);
+	debugC(kDebugScript, "SCRIPT::setSpecialAnimSlot(anim=%d slot=%u)", sceneAnimIndex, slot);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x5F);
 	if (slot > 8) {
 		setScriptError(0x31);
 		return OpcodeResult::Continue;
 	}
-	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+	if (sceneAnimIndex == 0 || sceneAnimIndex > (int32)_engine->_backgroundAnimationsBlobs.size()) {
 		setScriptError(8);
 		return OpcodeResult::Continue;
 	}
@@ -3731,16 +3731,16 @@ OpcodeResult ScriptExecutor::scriptSetSpecialAnimSlot() {
 }
 
 OpcodeResult ScriptExecutor::scriptClearSpecialAnimSlot() {
-	const uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
+	const int32 sceneAnimIndex = (int32)scriptReadValue32() - 0x1000;
 	const uint16 slot = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::clearSpecialAnimSlot(anim=%u slot=%u)", sceneAnimIndex, slot);
+	debugC(kDebugScript, "SCRIPT::clearSpecialAnimSlot(anim=%d slot=%u)", sceneAnimIndex, slot);
 	clearScriptError();
 	scriptSkipOpcodeRemainder(0x60);
 	if (slot > 8) {
 		setScriptError(0x31);
 		return OpcodeResult::Continue;
 	}
-	if (sceneAnimIndex == 0 || sceneAnimIndex > _engine->_backgroundAnimationsBlobs.size()) {
+	if (sceneAnimIndex == 0 || sceneAnimIndex > (int32)_engine->_backgroundAnimationsBlobs.size()) {
 		setScriptError(8);
 		return OpcodeResult::Continue;
 	}
