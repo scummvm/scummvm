@@ -533,7 +533,10 @@ void Scene4010::runFirstEntrySequence() {
 	runEntryPath(0x004c, 0x01c2, 2, 0x00c8, 0x01ae);
 
 	if (!state.scene4010FirstEntryConversationSeen && !alternateBackgroundActive()) {
+		setHeckerFrame(0);
+		_heckerAnimationState = 0;
 		setActiveActorPose(0x00c8, 0x01ae, 1);
+		runHeckerDialoguePoseStart();
 		beginPrimarySpeechLine(0x61, 0, 0x0154, 0x00be, 0x20, 0x30, 0x3f);
 		runEntryPath(0x00c8, 0x01ae, 1, 0x011a, 0x018d);
 		setActiveActorPose(0x011a, 0x018d, 1);
