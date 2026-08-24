@@ -499,81 +499,6 @@ void ScummEngine_v6::o6_pushByteVar() {
 }
 
 void ScummEngine_v6::o6_pushWordVar() {
-// BACKYARD BASEBALL 2001 ONLINE CHANGES
-#if defined(USE_ENET) && defined(USE_BASIC_NET)
-	if (_enableHECompetitiveOnlineMods) {
-		// Sprinting in competitive Backyard Baseball is considered too weak in its current state. This will increase how effective
-		// it is, limiting the highest speed characters enough to where they cannot go TOO fast.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && currentScriptSlotIs(2095) && readVar(399) == 1) {
-			int offset = _scriptPointer - _scriptOrgPointer;
-			int sprintCounter = readArray(344, vm.localvar[_currentScript][0], 1);
-			int sprintGain = vm.localvar[_currentScript][4];
-			int playerSpeed = vm.localvar[_currentScript][5];
-			if (offset == 42273) {
-				if (sprintCounter >= 21) {
-					if (playerSpeed >= 8) {
-						sprintGain = 2;
-					} else if (playerSpeed == 6 || playerSpeed == 7) {
-						sprintGain = 3;
-					} else {
-						sprintGain = 4;
-					}
-				} else if (sprintCounter >= 15) {
-					if (playerSpeed >= 6) {
-						sprintGain = 2;
-					} else {
-						sprintGain = 3;
-					}
-				} else if (sprintCounter >= 9) {
-						sprintGain = 2;
-				} else {
-					sprintGain = 1;
-				}
-				writeVar(0x4000 + 4, sprintGain);
-			}
-		}
-
-		// This code will change the velocity of the hit based on the pitch thrown, and the location of the pitch itself.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && currentScriptSlotIs(2090) && readVar(399) == 1) {
-			int offset = _scriptPointer - _scriptOrgPointer;
-			int powerAdjustment = vm.localvar[_currentScript][4];
-			int pitchSelected = readVar(ROOM_VAL(10));
-
-			// Checks if the swing is either Power or Line Drive
-			if (offset == 102789 && (readVar(387) == 1||readVar(387) == 2)) {
-				// Checks if the current pitch type is the same as that of the "remembered" pitch type
-				if (readArray(346, 0, 0) == readArray(346, 1, 0)) {
-					// Checks if the current pitch is either a Heat or a Fireball. The reason it adds 0 instead of 5 is because
-					// in the actual calculation it adds 5 to these two anyway, so this should help balance them out.
-					if (pitchSelected == 14 || pitchSelected == 21) {
-						powerAdjustment = powerAdjustment + 0;
-					} else {
-						powerAdjustment = powerAdjustment + 5;
-					}
-				}
-				// Checks if the zone location is the same as that of the previous one. This should slightly reduce the amount of pitching to the exact same location.
-				// Can also be adjusted later if necessary.
-				if (readArray(346, 0, 1) == readArray(346, 1, 1)) {
-					powerAdjustment = powerAdjustment + 15;
-				}
-				// write the power adjustment to the result
-				writeVar(0x4000 + 4, powerAdjustment);
-			}
-		}
-
-		// Remember the previous pitch thrown and the previous pitch "zone location", then set those two values to the "remembered" values for later use.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && currentScriptSlotIs(2201) && readVar(399) == 1) {
-			writeArray(346, 1, 0, readArray(346, 0, 0));
-			writeArray(346, 1, 1, readArray(346, 0, 1));
-		}
-		// This sets the base cost of a slow ball to 2. Previously it costed the least of every pitch to throw, which resulted in people only using that pitch.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && currentScriptSlotIs(2057) && readVar(399) == 1) {
-			if (readVar(0x4000 + 1) == 15) {
-				writeVar(0x4000 + 2, 2);
-			}
-		}
-	}
-#endif
 	push(readVar(fetchScriptWord()));
 }
 
@@ -636,123 +561,6 @@ void ScummEngine_v6::o6_eq() {
 
 // BACKYARD BASEBALL 2001 ONLINE CHANGES
 #if defined(USE_ENET) && defined(USE_BASIC_NET)
-	// The player stat adjustments that should get applied in certain conditions (i.e. when two siblings are on the same team)
-	// don't get applied properly for the away (peer) team in online play. This results in each team's game using a different
-	// version of players' stats, leading to unfair play and potential desyncs. This hack ensures the away team's game doesn't
-	// exit the script before applying these stat adjustments. The script checks whether the game is being played online before
-	// this, such that this code doesn't execute for offline play.
-	if (_game.id == GID_BASEBALL2001 && _currentRoom == 27 && currentScriptSlotIs(2346)) {
-		int offset = _scriptPointer - _scriptOrgPointer;
-		if (offset == 196137) {
-			push(0);
-			return;
-		}
-	}
-
-	if (_enableHECompetitiveOnlineMods) {
-		int pitchXValue = readVar(ROOM_VAL(11));
-		int pitchYValue = readVar(ROOM_VAL(12));
-		int strikeZoneTop = readVar(ROOM_VAL(29));
-		int strikeZoneBottom = readVar(ROOM_VAL(30));
-
-		// People have been complaining about strikes being visually unclear during online games. This is because the strike zone's visual is not
-		// equal length compared to the actual range in which a strike can be called. These changes should fix that, with some extra leniency in
-		// the corners in particular since they are especially difficult to see visually, due to having four large corner pieces blocking the view.
-
-		// This checks if the pitch's y location is either:
-		// a. at least 2 pixels lower than the top of the zone/at least 3 pixels above the bottom of the zone
-		// b. at least 2 pixels lower than the top of the zone/at least 3 pixels above the bottom of the zone
-		// If either of these are true AND the x value is less than or equal to 279 OR greater than or equal to 354, make the game read as a ball.
-		// The strike zone should be much more lenient in the corners, as well as removing the small advantage of throwing to the farthest right side of the zone.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && (currentScriptSlotIs(2202) || currentScriptSlotIs(2192)) && readVar(399) == 1) {
-			if (((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue <= 279) ||
-				((pitchYValue <= strikeZoneTop + 2 || pitchYValue >= strikeZoneBottom - 3) && pitchXValue >= 354)) {
-				writeVar(ROOM_VAL(16), 2);
-			}
-			// if the ball's y location is 1 pixel higher than the bottom of the zone, then it will be a ball.
-			// This removes the small advantage of throwing at the very bottom of the zone.
-			if (pitchYValue > strikeZoneBottom - 1) {
-				writeVar(ROOM_VAL(16), 2);
-			}
-		}
-
-		// This change affects the angle adjustment for each batting stance when timing your swing. There are complaints that
-		// the game does not give you enough control when batting, resulting in a lot of hits going to the same area. This should
-		// give players more agency on where they want to hit the ball, which will also increase the skill ceiling.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && currentScriptSlotIs(2087) && readVar(399) == 1) {
-			int offset = _scriptPointer - _scriptOrgPointer;
-			// OPEN STANCE ADJUSTMENTS (1 being earliest, 5 being latest)
-			if (offset == 101898 && readVar(447) == 1) {
-				switch (readVar(ROOM_VAL(1))) {
-				case 1:
-					writeVar(0x4000 + 0, -13);
-					break;
-				case 2:
-					writeVar(0x4000 + 0, -2);
-					break;
-				case 3:
-					writeVar(0x4000 + 0, 10);
-					break;
-				case 4:
-					writeVar(0x4000 + 0, 40);
-					break;
-				case 5:
-					writeVar(0x4000 + 0, 63);
-					break;
-				}
-			}
-			// SQUARED STANCE ADJUSTMENTS (1 being earliest, 5 being latest)
-			if (offset == 101898 && readVar(447) == 2) {
-				switch (readVar(ROOM_VAL(1))) {
-				case 1:
-					writeVar(0x4000 + 0, -30);
-					break;
-				case 2:
-					writeVar(0x4000 + 0, -7);
-					break;
-				case 3:
-					writeVar(0x4000 + 0, 10);
-					break;
-				case 4:
-					writeVar(0x4000 + 0, 27);
-					break;
-				case 5:
-					writeVar(0x4000 + 0, 45);
-					break;
-				}
-			}
-			// CLOSED STANCE ADJUSTMENTS (1 being earliest, 5 being latest)
-			if (offset == 101898 && readVar(447) == 3) {
-				switch (readVar(ROOM_VAL(1))) {
-				case 1:
-					writeVar(0x4000 + 0, -47);
-					break;
-				case 2:
-					writeVar(0x4000 + 0, -32);
-					break;
-				case 3:
-					writeVar(0x4000 + 0, 0);
-					break;
-				case 4:
-					writeVar(0x4000 + 0, 15);
-					break;
-				case 5:
-					writeVar(0x4000 + 0, 28);
-					break;
-				}
-			}
-		}
-
-		// This code makes it so that generic players (and Mr. Clanky) play pro player music when hitting home runs.
-		// This is a purely aesthetic change, as they have no home run music by default.
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && currentScriptSlotIs(11) && vm.localvar[_currentScript][0] > 61 && readVar(399) == 1) {
-			// this local variable checks for player ID
-			writeVar(0x4000 + 0, 60);
-		}
-	}
-#endif
-
-#if defined(USE_ENET) && defined(USE_BASIC_NET)
 	int offset = _scriptPointer - _scriptOrgPointer;
 	// WORKAROUND: In Backyard Baseball 2001, The special rules of the Mountain Aire and Wilderness neighborhoods
 	// are incorrect.  They were set to "3 innings" and "no swing spot" respectively, while they were supposed to be set to
@@ -774,13 +582,6 @@ void ScummEngine_v6::o6_eq() {
 		fetchScriptWord();
 		pop();
 		stopObjectCode();
-
-	// HACK: This script doesn't allow Super Colossal Dome to be chosen for online play, by checking if the selected
-	// field's value is 5 (SCD's number) and incrementing/decrementing if it is. To allow SCD to be used, we return 0
-	// for those checks.
-	} else if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 40 &&
-		currentScriptSlotIs(2106) && a == 5 && (offset == 16754 || offset == 16791)) {
-		push(0);
 
 	// WORKAROUND: Online play is disabled in the Macintosh versions of Backyard Football and Backyard Baseball 2001
 	// because the original U32 makes use of DirectPlay, a Windows exclusive API; we now have our own implementation
@@ -856,14 +657,6 @@ void ScummEngine_v6::o6_le() {
 void ScummEngine_v6::o6_ge() {
 	int a = pop();
 	int b = pop();
-#if defined(USE_ENET) && defined(USE_BASIC_NET)
-	// Mod for Backyard Baseball 2001 online competitive play: Reduce sprints
-	// required to reach top speed
-	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 &&
-		_currentRoom == 3 && currentScriptSlotIs(2095) && readVar(399) == 1) {
-		a -= 1;  // If sprint counter (b) is higher than a, runner gets 1 extra speed
-	}
-#endif
 	push(b >= a);
 }
 
@@ -887,21 +680,6 @@ void ScummEngine_v6::o6_div() {
 	if (a == 0)
 		error("division by zero");
 	int b = pop();
-#if defined(USE_ENET) && defined(USE_BASIC_NET)
-	// Mod for Backyard Baseball 2001 online competitive play: Allow full sprinting while
-	// running half-speed on a popup
-	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 3 &&
-		currentScriptSlotIs(2095) && readVar(399) == 1 && a == 2) {
-		// Normally divides speed by two here
-		int runnerIdx = readVar(0x4000);
-		int runnerReSprint = readArray(344, runnerIdx, 1);
-		// But if the runner is sprinting, don't divide by two
-		if (runnerReSprint > 1) {
-			push(b);
-			return;
-		}
-	}
-#endif
 	push(b / a);
 }
 
@@ -1144,66 +922,6 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 	int script;
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
-#if defined(USE_ENET) && defined(USE_BASIC_NET)
-	// Mod for Backyard Baseball 2001 online competitive play: change effect of
-	// pitch location on hit quality
-	if (_enableHECompetitiveOnlineMods && _game.id == GID_BASEBALL2001 && _currentRoom == 4 && script == 2085 && readVar(399) == 1) {
-		int zone = _roomVars[2];
-		int stance = readVar(447);
-		int handedness = _roomVars[0];
-		int hitQuality = -2;
-		if (stance == 2) {  // Batter is in a squared stance
-			switch (zone) {
-			case 25:
-				hitQuality = 3;
-				break;
-			case 18: case 24: case 26: case 32:
-				hitQuality = 2;
-				break;
-			case 10: case 11: case 12: case 17: case 19: case 23: case 27: case 31: case 33: case 38: case 39: case 40:
-				hitQuality = 1;
-				break;
-			case 4: case 16: case 20: case 30: case 34: case 46:
-				hitQuality = 0;
-				break;
-			case 3: case 5: case 9: case 13: case 15: case 21: case 22: case 28: case 29: case 35: case 37: case 41: case 45: case 47:
-				hitQuality = -1;
-				break;
-			default:
-				break;
-			}
-			push(hitQuality);
-			return;
-		}
-		if (
-			(handedness == 2 && stance == 1)  // Left-handed batter in open stance
-			|| (handedness == 1 && stance == 3)  // Right-handed batter in closed stance
-		) {
-			zone  = ((zone - 1) / 7) * 7 + (6 - ((zone - 1) % 7)) + 1;  // "Flip" zone horizontally across center
-		}
-		switch (zone) {
-		case 24:
-			hitQuality = 3;
-			break;
-		case 17: case 23: case 25: case 31:
-			hitQuality = 2;
-			break;
-		case 9: case 10: case 16: case 18: case 22: case 26: case 30: case 32: case 37: case 38:
-			hitQuality = 1;
-			break;
-		case 3: case 11: case 15: case 19: case 29: case 33: case 39: case 45:
-			hitQuality = 0;
-			break;
-		case 2: case 4: case 8: case 12: case 20: case 27: case 34: case 36: case 40: case 44: case 46:
-			hitQuality = -1;
-			break;
-		default:
-			break;
-		}
-		push(hitQuality);
-		return;
-	}
-#endif
 	runScript(script, 0, 1, args);
 }
 
