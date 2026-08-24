@@ -147,10 +147,9 @@ bool RipperEngine::waitForDemoEndingInput() {
 }
 
 bool RipperEngine::runDemoEnding() {
-	// After RunSceneScriptLoop returns -4, demo RunGameStartupAndMainLoop at
-	// 0x100d7 presents SOON.PCX, waits 0x48 DOS ticks or a key, presents
-	// RIPBOX.PCX, blocks on RIPBOX.WAV, then waits another 0x48 ticks or a key.
-	// The two PCX members live in INTERFAC.PL and the WAV in SOUND.PL.
+	// RIP.EXE 0x100d7 shows SOON.PCX, waits 0x48 ticks or a key, shows
+	// RIPBOX.PCX, plays RIPBOX.WAV, then waits again. The PCX files are in
+	// INTERFAC.PL and the WAV is in SOUND.PL.
 	_cursor->setVisible(false);
 	_toolbar->leave();
 	_sceneAudio->clearAll(true);
@@ -204,7 +203,7 @@ Common::Error RipperEngine::run() {
 		return Common::kReadingFailed;
 	if (!_milestones->initialize(*_resources))
 		return Common::kReadingFailed;
-	// Retail initializes a provisional identity before the front end; restoring
+	// RIPPER.LE initializes a provisional identity before the front end; loading
 	// a save later replaces it with the identity serialized in that game.
 	if (!isDemo && !selectRandomRipperIdentity("startup-initialization"))
 		return Common::kUnknownError;
@@ -228,7 +227,7 @@ Common::Error RipperEngine::run() {
 	bool startGameplay = isDemo;
 	if (isDemo) {
 		// The demo RIP.EXE entry path calls FUN_000113cf with RIPPER.RUN directly;
-		// it has neither the retail LOGO.AVI presentation nor front-end menu loop.
+		// it has neither the full game's LOGO.AVI nor its front-end menu loop.
 		debugC(1, kDebugGeneral,
 			"Ripper: demo startup entering loose RIPPER.RUN directly");
 	} else {

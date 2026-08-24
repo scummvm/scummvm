@@ -62,7 +62,7 @@ struct ControlLayout {
 };
 
 // g_optionsMenuControlLayoutRows at 0x1be40 stores ordinary controls in the
-// original display service's vertical/horizontal order. RunOptionsMenu at
+// display-service Y/X order. RunOptionsMenu at
 // 0x1c001 supplies the two special rows directly.
 static const ControlLayout kControlLayouts[] = {
 	{ 77, 71, 23, 16 },

@@ -231,10 +231,8 @@ bool ScriptManager::canSaveGame() const {
 void ScriptManager::requestCyberExit(const char *source) {
 	if (!_runtime.cyberActive)
 		return;
-	// CleanupCurrentSceneFrameInteractions at 0x13832 dispatches phase 3 to
-	// HandleSceneEntryChoiceListLifecycle at 0x1523d before any nested-runtime
-	// exit is returned. Retire the shared chooser here for Escape, toolbar, and
-	// script exits alike so its saved display region cannot survive the unwind.
+	// RIPPER.LE dismisses the chooser during phase-3 cleanup before any nested
+	// exit. Retire it before its saved display region can survive the unwind.
 	_dialogue->dismissForSceneTransition("cyber-runtime-exit");
 	_runtime.cyberExitRequested = true;
 	debugC(1, kDebugCyber, "Ripper: Cyber nested runtime exit requested source=%s", source);
@@ -350,10 +348,8 @@ bool ScriptManager::syncGame(Common::Serializer &serializer) {
 			!restoredConcurrent.load(_engine->getResources()->scripts(), concurrentMember))
 		return false;
 
-	// RestoreSavedRunState at 0x1b8dd replaces the retail scene runtime only
-	// after RunSaveRestoreSlotMenu's -5 result has unwound the current frame.
-	// ScummVM loads from inside its modal toolbar, so mark the replacement before
-	// invalidating any frame references held by the active presentation stack.
+	// ScummVM loads inside the modal toolbar, before the current frame unwinds.
+	// Mark replacement before moving scripts invalidates presentation references.
 	_runtimeRestorePending = true;
 	_runtime.activeScript = Common::move(restoredBa0);
 	_runtime.concurrentScript = Common::move(restoredConcurrent);
@@ -478,10 +474,8 @@ bool ScriptManager::runWorldMapCheckpoint(uint chapter) {
 		return false;
 	}
 
-	// HandleSceneSelectionAction at 0x191e2 records the selected destination,
-	// then RunFrontEndActionMenu at 0x18b3a runs WMAP*.RUN before entering it.
-	// The shipped checkpoint scripts perform their work in the sole frame's
-	// entry callback; the exit callback only terminates that nested runtime.
+	// WMAP checkpoint scripts perform their work in the sole entry callback;
+	// the exit callback only terminates the nested runtime.
 	const ScriptFrame &frame = checkpoint.getFrames()[0];
 	int result = 0;
 	if (!executeCallback(checkpoint, frame.enterCallbackOffset, result) ||
@@ -629,7 +623,7 @@ uint ScriptManager::resolveFrameIndex(const CompiledScript &script,
 
 void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
 		uint interactionCount) {
-	// ExecuteSceneFrameAndInteractions at 0x13277 (retail) and 0x11be0 (demo)
+	// RIPPER.LE 0x13277 and RIP.EXE 0x11be0
 	// service the new controls once after type-0 frame media, discarding that
 	// result before starting the blocking chooser loop.
 	if (_engine->getInput()->pollEvents())
@@ -871,7 +865,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.arguments.size() < expectedArgumentCount)
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
-			// The retail compiler stores this optional authored text as an inline
+			// RIPPER.LE's compiler stores this optional authored text as an inline
 			// type-7 argument. An absent caption is encoded as a one-byte NUL
 			// payload; argument.value is not a string-table offset for this type.
 			const Common::String presentationText = !_demoScriptAbi &&
@@ -879,7 +873,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				argumentString(command.arguments[1]) : Common::String();
 			// The demo's opcode handler at 0x13e46 calls FUN_000142bb with
 			// path, auxiliary text, Y, and X, and forces its scene-presentation
-			// control argument to one. The retail script command executor at
+			// control argument to one. RIPPER.LE's command executor at
 			// 0x1357f inserts a separate keyboard-control argument before its
 			// placement pair.
 			const bool allowEscSpace = _demoScriptAbi || command.arguments[2].value == 0;
@@ -901,7 +895,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (!_engine->getMedia()->play(mediaPath, allowEscSpace, x, y, true,
 					presentationText))
 				return false;
-			// The retail script command executor at 0x1357f marks the presentation
+			// RIPPER.LE's command executor at 0x1357f marks the presentation
 			// basename only after ExecutePresentationEntry returns.
 			const size_t extension = mediaPath.findFirstOf('.');
 			const Common::String playedKey = mediaPath.substr(0, extension);
@@ -944,7 +938,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			const Common::String entryLabel = argumentString(command.arguments[1]);
 			// The demo handler at 0x140dc has only the target and entry-label
 			// arguments. It stores both pending pointers and returns -3
-			// unconditionally; the retail handler adds the concurrency selector.
+			// unconditionally; RIPPER.LE adds the concurrency selector.
 			if (_demoScriptAbi) {
 				_runtime.pendingSceneMember = compiledScriptMemberName(target);
 				_runtime.pendingSceneEntryLabel = entryLabel;
@@ -1157,12 +1151,9 @@ bool ScriptManager::handleActiveRuntimeExit(int result, const CompiledScript &sc
 	if (result != -4)
 		return false;
 
-	// DispatchSceneEntryAction returns -4 for action 9999, and both scene loops
-	// treat it as a normal active-runtime exit regardless of which frame callback
-	// produced it. Demo RunSceneScriptLoop at 0x113cf returns to the coordinator
-	// at 0x100d7, which owns the SOON/RIPBOX ending presentations. Retail nested
-	// Cyber restores its suspended caller; a retail top-level runtime returns to
-	// RunGameStartupAndMainLoop at 0x100c2.
+	// -4 is a normal active-runtime exit. RIP.EXE returns to its ending
+	// coordinator; Cyber restores its caller; top-level RIPPER.LE returns to
+	// the startup loop.
 	if (_runtime.cyberActive) {
 		if (!_runtime.cyberExitRequested)
 			return false;
@@ -1216,10 +1207,8 @@ bool ScriptManager::runStartupPath() {
 		return false;
 	}
 
-	// Demo RunSceneScriptLoop at 0x113cf copies the opcode-0x1d target after
-	// RIPPER.RUN returns -3, destroys that runtime, and creates BA0.RUN before
-	// executing its first frame. Use the normal transition path so no pending
-	// handoff can abort BA0's first-frame presentation.
+	// RIP.EXE destroys RIPPER.RUN before creating BA0.RUN. Use the normal
+	// transition path so a pending handoff cannot preempt BA0's first frame.
 	return performPendingSceneTransition();
 }
 
@@ -1309,9 +1298,8 @@ bool ScriptManager::performPendingSceneTransition() {
 bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 	_engine->getCursor()->setVisible(false);
 	_runtime.hoveredInteraction = -1;
-	// RunSceneScriptLoop at 0x124e9 has no frame-count bound here. A -2 result
-	// re-enters the loop so the concurrent runtime is serviced before the next
-	// active frame, even when opcode 0x14 selected that same frame again.
+	// -2 re-enters this unbounded loop so the concurrent runtime runs before the
+	// next active frame, even when opcode 0x14 selects the same frame again.
 	while (!_engine->shouldQuit()) {
 		if (!executeConcurrentFrame())
 			return false;
@@ -1412,11 +1400,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				dialoguePending || idleTextRequest;
 			if (activatesInputDuringMedia && !_runtime.awaitingInteraction)
 				beginBa0InteractionWait(label, frame.interactionCount);
-			// ExecuteSceneFrameAndInteractions at 0x13277 enters
-			// PollInteractionAndResolveSelection at 0x13c8d when either scene
-			// controls or the frame's idle callback are active. A dialogue
-			// chooser created by that callback therefore holds the type-1
-			// presentation instead of falling through to the exit callback.
+			// An idle callback may create a dialogue chooser. Keep type-1 media
+			// active while either the frame controls or that chooser await input.
 			const bool loopUntilInput = frame.presentationType == 1 &&
 				(frame.interactionCount != 0 || dialoguePending);
 			const bool allowEscSpace = frame.presentationType == 0;
@@ -1476,11 +1461,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			}
 			if (frame.idleCallbackOffset != 0 && !dialogueIdleCallback &&
 					!idleTextRequest) {
-				// PollInteractionAndResolveSelection at 0x13c8d calls
-				// StepFrameIdleCallbackCommandStream at 0x143af before reading
-				// chooser input. Type-0 frames reach that poll after their media
-				// completes. EE2.RUN frame EEZ1 relies on this ordering to play
-				// Q2_V5.WAV once before its unzoom hotspot becomes interactive.
+				// EE2.RUN frame EEZ1 relies on the idle callback running before
+				// chooser input so Q2_V5.WAV plays before its hotspot becomes active.
 				result = 0;
 				callbackFrame = _runtime.activeFrame;
 				if (!executeCallback(_runtime.activeScript,
@@ -1510,11 +1492,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					_runtime.pendingSceneMember.c_str(), _runtime.pendingSceneEntryLabel.c_str());
 				return performPendingSceneTransition();
 			}
-			// ExecutePresentationEntry at 0x1754b routes .AVI through
-			// RunMediaPresentation at 0x17917, whose controlled path restores
-			// the surrounding display. Other extensions enter RunMediaSequence
-			// at 0x1e516 and retain their final frame, including full-screen
-			// document presentations such as KK_Z12.SMK.
+			// Controlled AVI restores the surrounding display. Other media keeps
+			// its final frame, including full-screen documents such as KK_Z12.SMK.
 			if (allowEscSpace && mediaPath.hasSuffixIgnoreCase(".avi")) {
 				_dialogue->rebuildPresentationBands("controlled-avi-complete");
 			} else if (allowEscSpace) {
@@ -1571,11 +1550,8 @@ bool ScriptManager::captureCyberKeyboardCommand() {
 	if (command != kCyberLeftCommand && command != kCyberRightCommand &&
 			command != kCyberChooseCommand && command != kCyberEscapeCommand)
 		return false;
-	// PollInteractionAndResolveSelection at 0x13c8d consumes chooser input but
-	// only returns when the command matches an enabled frame interaction. This
-	// matters while an IC_P* idle callback is waiting to open its text control:
-	// those frames have no interactions, so Left, Right, and Enter must not stop
-	// the media sequence before HandleSceneEntryAsyncTextRequest at 0x157a1 runs.
+	// IC_P* idle callbacks may wait to open text with no frame interactions.
+	// Left, Right, and Enter must not stop media before that callback runs.
 	if (command != kCyberEscapeCommand) {
 		bool hasBoundInteraction = false;
 		if (_runtime.activeFrame < _runtime.activeScript.getFrames().size()) {
@@ -1962,10 +1938,8 @@ bool ScriptManager::updateInteractiveCursor(const Common::Point &point, bool *fa
 }
 
 void ScriptManager::updateModalSceneCursor(const Common::Point &point) {
-	// RunModalSelectionTableDialogWithRestore at 0x1f7f8 retains the scene
-	// selection-state list while the modal chooser is active. Outside the modal
-	// rectangle, ProcessChooserControlInput at 0x57372 services that retained
-	// list so hotspot cursors continue to animate without dispatching actions.
+	// The modal borrows the scene's selection list. Outside its rectangle,
+	// service hotspot cursors without dispatching their actions.
 	const ScriptInteraction *interaction = _runtime.awaitingInteraction ?
 		findBa0Interaction(point) : nullptr;
 	uint cursorIndex = interaction ?

@@ -79,7 +79,7 @@ Common::String CompiledScript::getPresentationText(uint32 offset) const {
 	while (offset < _data.size() && _data[offset] != 0) {
 		byte character = _data[offset++];
 		// ExecutePresentationEntry at 0x1754b receives the frame's auxiliary
-		// string pointer. Retail SCR compilation stores those bytes inverted,
+		// string pointer. RIPPER.LE SCR compilation stores those bytes inverted,
 		// preserving line feeds just like inline type-7 command arguments.
 		if (character != '\n')
 			character ^= 0xff;

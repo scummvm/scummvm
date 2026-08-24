@@ -128,10 +128,8 @@ MainMenuAction MainMenu::run() {
 	auto finishMenu = [&](MainMenuAction action) {
 		g_system->getMixer()->stopHandle(titleAudioHandle);
 		_engine->getCursor()->setVisible(false);
-		// RunStartupFrontEndLoop at 0x10778 funnels every menu result through
-		// display command 0x14 before returning. It clears the logical page but
-		// does not submit a dirty-region update, so the following controlled AVI
-		// saves a blank return page instead of the final RIP_OPEN.SMK frame.
+		// RIPPER.LE clears without presenting, so the next controlled AVI captures
+		// a blank backing instead of the final RIP_OPEN.SMK frame.
 		g_system->fillScreen(0);
 		debugC(2, kDebugVideo,
 			"Ripper: cleared startup menu logical page action=%d", action);

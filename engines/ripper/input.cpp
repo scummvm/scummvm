@@ -95,11 +95,8 @@ uint16 translateKeyToCommand(const Common::KeyState &key) {
 			key.keycode >= Common::KEYCODE_a && key.keycode <= Common::KEYCODE_z)
 		return key.keycode - Common::KEYCODE_a + 1;
 
-	// PollKeyboardCommand at 0x4d364 returns the BIOS AX command. Alt-letter
-	// commands therefore carry the physical Set 1 scan code in the high byte
-	// and zero in the low byte. InitializeDefaultSettingsBlob at 0x1eea2 uses
-	// this representation for all retail Alt toolbar defaults, including Alt+R
-	// as 0x1300. The same translation also preserves Alt+H for the web puzzle.
+	// RIPPER.LE uses BIOS AX commands: Alt letters carry the Set 1 scan code in
+	// the high byte. Toolbar shortcuts and the web puzzle depend on this form.
 	if ((key.flags & Common::KBD_ALT) != 0) {
 		const uint16 letterScanCode = altLetterScanCode(key.keycode);
 		if (letterScanCode != 0)
@@ -114,10 +111,8 @@ uint16 translateKeyToCommand(const Common::KeyState &key) {
 	if (functionCommand != 0)
 		return functionCommand;
 
-	// ScummVM backends may publish navigation keys in both keycode and ascii
-	// (for example, Right Arrow arrives with ascii 0x0113). Resolve mapped
-	// non-printing keys first so they retain the BIOS command values consumed by
-	// the original input paths.
+	// Some backends put navigation keys in both keycode and ascii. Resolve
+	// non-printing keys first so Right Arrow does not become ascii 0x0113.
 	switch (key.keycode) {
 	case Common::KEYCODE_HOME:
 		return 0x4700;
@@ -305,9 +300,8 @@ uint16 InputManager::consumeKey() {
 void InputManager::drainKeys() {
 	const int count = _pendingKeys.size();
 	_pendingKeys.clear();
-	// Blocking original loops, including the action-9 GC/CSH chooser at
-	// 0x38871, drain after every empty poll. Keep that input ordering without
-	// flooding normal diagnostics while the loop waits for a mouse selection.
+	// RIPPER.LE blocking loops drain after every empty poll. Log empty drains at
+	// level 3 so mouse-only waits do not flood normal diagnostics.
 	debugC(count == 0 ? 3 : 2, kDebugInput,
 		"Ripper: drained %d pending keyboard commands", count);
 }

@@ -258,7 +258,7 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 	const Common::String &label = _actions[_hoveredAction].label;
 	const int width = measureText(label) + 4;
 	const int height = _font.lineHeight + 4;
-	// RunFrontEndActionMenu publishes the original coordinates in transposed
+	// RunFrontEndActionMenu publishes coordinates in transposed
 	// fields. RenderFrontEndActionPreviewSprite therefore adds 20 to the
 	// vertical coordinate, placing the preview below the pointer.
 	int x = point.x;
@@ -296,8 +296,8 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 void ToolbarManager::dispatchAction(uint actionIndex) {
 	if (_demoVariant) {
 		// The demo's DispatchFrontEndAction at 0x16a2f uses eight controls with
-		// a different mapping from retail. Preserve its two explicit no-op rows
-		// rather than shifting the retail action table over the demo icons.
+		// a different mapping from RIPPER.LE. Preserve its two explicit no-op rows
+		// rather than shifting the full-game action table over the demo icons.
 		if (actionIndex == 0) {
 			debugC(1, kDebugScene,
 				"Ripper: demo toolbar action=1 id=0x514 label='%s' entering RunSceneSelectionMenu",
@@ -477,7 +477,7 @@ int ToolbarManager::resolveActionKey(uint16 command, uint enabledActionMask) con
 	if (command == 0)
 		return -1;
 
-	// ResolveFrontEndActionIdFromInput at 0x14001 scans the persistent retail
+	// ResolveFrontEndActionIdFromInput at 0x14001 scans RIPPER.LE's persistent
 	// command words in action order and accepts the first match whose bit is set
 	// in the active scene mask. The demo resolver at 0x1241e uses its shifted
 	// eight-word table without a mask parameter.
