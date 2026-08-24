@@ -55,12 +55,23 @@ private:
 	void runEntryFromScene3020();
 	void runEntryFromPath();
 	void runExitToScene3050();
+	void runExitToScene3020();
+	void runUmbrellaClimb();
+	void runDepartureTransition();
+	bool playDepartureClip(const Common::Array<byte> &clipData, uint tableEntryCount,
+		Graphics::ManagedSurface &transitionBackground, bool skipWaits, uint32 firstFrameHoldMillis);
+	bool waitDepartureFrame(uint32 millis, const Common::Array<byte> &clipData,
+		uint tableEntryCount, byte frameIndex, Graphics::ManagedSurface &transitionBackground);
+	void drawDepartureFrame(const Common::Array<byte> &clipData, uint tableEntryCount,
+		byte frameIndex, Graphics::ManagedSurface &transitionBackground, bool applyFrame);
+	void runWindmillClimbOverlay();
 
 	TimedAnimationChannel _windmillChannel;
 	TimedAnimationChannel _forestIdleChannel;
 	ResourceSpriteLayer _windmillLayer;
 	ResourceSpriteLayer _forestIdleLayer;
 	byte _forestIdleState;
+	bool _climbOverlayActive;
 };
 
 } // End of namespace Hollywood
