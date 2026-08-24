@@ -429,6 +429,8 @@ void Scene3070::runLateCutsceneBranch() {
 	beginSecondarySpeechLine(0x0d, 10);
 	GameplayState &state = _vm->gameState();
 	state.scene3070LateCutscenePlayed = true;
+	state.scene6010EndgameTravelExitBlocked = true;
+	state.scene6010StudioEntryUnlocked = false;
 	state.scene9140VariantIndex = 3;
 	state.scene9140ReturnStateId = 6000;
 	state.mainFlowStateId = kScene3070LaterUnimplementedCutsceneState;

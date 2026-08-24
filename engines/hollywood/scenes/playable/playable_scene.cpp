@@ -65,11 +65,24 @@ const uint32 kSecondaryActorSpeechFrameMillis = 150;
 const byte kInvalidFacing = 0xff;
 const byte kInvalidCel = 0xff;
 const byte kInvalidPrimarySpeechAnimationGroup = 0xff;
-const uint32 kViewportScrollTickMillis = 10;
 const uint16 kViewportScrollRightThreshold = 0x144;
 const uint16 kViewportScrollLeftThreshold = 0x13c;
 const uint16 kViewportScrollStep = 2;
 const uint32 kSueTapeFrameMillis = 100;
+const uint32 kPaletteFadeStepMillis = 10;
+
+// Five base shades followed by the two alternate shade sets used by actor sprites.
+const byte kActorPaletteAdjustmentSources[] = {
+	0xd1, 0xd2, 0xd3, 0xd4, 0xd5
+};
+
+const byte kActorPaletteAdjustmentDestinations[][5] = {
+	{ 0xe0, 0xe1, 0xe2, 0xe3, 0xd6 },
+	{ 0xe4, 0xe5, 0xe6, 0xe7, 0xe8 }
+};
+
+const byte kActorPaletteAdjustmentCopyColor = 0xdc;
+const uint kActorPaletteAdjustmentCopyColorCount = 4;
 
 struct SueTapeSpeechCue {
 	uint16 rowIndex;
@@ -106,6 +119,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_surfaceState(),
 		_paletteResource(_surfaceState.paletteResource),
 		_paletteCurrent(_surfaceState.paletteCurrent),
+		_actorPaletteBase(_surfaceState.actorPaletteBase),
 		_baseFramebufferOriginal(_surfaceState.baseFramebufferOriginal),
 		_baseFramebuffer(_surfaceState.baseFramebuffer),
 		_sceneFramebuffer(_surfaceState.sceneFramebuffer),
@@ -162,7 +176,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_viewportXOffset(0),
 		_viewportMinXOffset(0),
 		_viewportMaxXOffset(0),
-		_viewportScrollTimerAccumulator(0),
+		_lastViewportScrollActorWorldX(defaultActorX),
 		_actorPathPlaybackActive(false),
 		_activeActorWorldX(defaultActorX),
 		_activeActorWorldY(defaultActorY),
@@ -173,7 +187,8 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_lastInventoryActionItemId(0),
 		_lastInventoryPrimaryItemId(0),
 		_skipRequested(false) {
-	_surfaceState.initialize(kPaletteSize, 0x700, kPaletteMaskUsedBytes, kScenePaletteMapPageSize, kScenePaletteRegionCount);
+	_surfaceState.initialize(kPaletteSize, 0x700, kPaletteMaskUsedBytes, kScenePaletteMapPageSize,
+		kScenePaletteRegionCount, kActorPaletteBaseBytes);
 	_speechController.initialize(secondarySpeechTextColor, primarySpeechTextColor);
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
@@ -260,7 +275,8 @@ bool PlayableScene::play() {
 	initializePreviewState();
 	if (!resumeGameplayPose) {
 		drawPreviewComposite();
-		presentFrame();
+		if (shouldPresentPreviewBeforeEntrySequence())
+			presentFrame();
 		runEntryCutscene();
 		if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 			return true;
@@ -460,6 +476,16 @@ bool PlayableScene::shouldRunExitSideEffectsAfterLoop() const {
 }
 
 void PlayableScene::runExitSideEffectsAfterLoop() {
+}
+
+bool PlayableScene::shouldPresentPreviewBeforeEntrySequence() const {
+	return true;
+}
+
+bool PlayableScene::shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const {
+	(void)actorWorldX;
+	(void)actorWorldY;
+	return usesActorDepthTest();
 }
 
 bool PlayableScene::usesActorDepthTest() const {
@@ -917,8 +943,18 @@ bool PlayableScene::loadResource000ActorPalette(const Common::Array<byte> &offse
 		warning("Failed to read %s actor palette", kResource000Name);
 		return false;
 	}
+	captureActorPaletteBase();
 
 	return true;
+}
+
+void PlayableScene::captureActorPaletteBase() {
+	const uint paletteOffset = kActorPaletteFirstColor * 3;
+	if (_paletteCurrent.size() < paletteOffset + _actorPaletteBase.size())
+		return;
+
+	memcpy(_actorPaletteBase.data(), _paletteCurrent.data() + paletteOffset,
+		_actorPaletteBase.size());
 }
 
 bool PlayableScene::loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable) {
@@ -1104,11 +1140,64 @@ void PlayableScene::drawActiveAndSecondaryActorFrames(bool drawActiveActor, byte
 			secondaryWorldX, secondaryWorldY);
 		if (drawActiveActor)
 			drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, secondaryActorBottomY);
-		return;
+	} else if (drawActiveActor) {
+		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, minimumYExclusive);
 	}
 
-	if (drawActiveActor)
-		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, minimumYExclusive);
+	if (drawActiveActor || drawSecondaryActor)
+		updateActorPaletteForWorldPoint(activeWorldX, activeWorldY);
+}
+
+void PlayableScene::updateActorPaletteForWorldPoint(int worldX, int worldY) {
+	const uint paletteOffset = kActorPaletteFirstColor * 3;
+	if (_actorPaletteBase.size() != kActorPaletteBaseBytes ||
+			_paletteCurrent.size() < paletteOffset + _actorPaletteBase.size() ||
+			_paletteMask.size() < kSceneColorToActorPaletteAdjustmentClassMap + kScenePaletteMapPageSize ||
+			_metadata.size() < kPaletteAdjustTable + kActorPaletteAdjustmentClassCount * 2)
+		return;
+
+	memcpy(_paletteCurrent.data() + paletteOffset, _actorPaletteBase.data(),
+		_actorPaletteBase.size());
+	if (worldX < 0 || worldX >= HollywoodEngine::kSceneBufferWidth ||
+			worldY < 0 || worldY >= HollywoodEngine::kSceneBufferHeight)
+		return;
+
+	const byte sceneColor = *(const byte *)_savedFramebuffer.getBasePtr(worldX, worldY);
+	const byte deltaClass = _paletteMask[kSceneColorToActorPaletteDeltaClassMap + sceneColor];
+	int paletteDelta = 0;
+	if (deltaClass < kScenePaletteRegionCount)
+		paletteDelta = (int8)_metadata[kPaletteDeltaTable + deltaClass];
+
+	for (uint i = 0; i < _actorPaletteBase.size(); ++i) {
+		_paletteCurrent[paletteOffset + i] =
+			(byte)CLIP<int>((int)_actorPaletteBase[i] + paletteDelta, 0, 0x3f);
+	}
+
+	const byte adjustmentClass =
+		_paletteMask[kSceneColorToActorPaletteAdjustmentClassMap + sceneColor];
+	if (adjustmentClass >= kActorPaletteAdjustmentClassCount)
+		return;
+
+	const uint adjustmentOffset = kPaletteAdjustTable + adjustmentClass * 2;
+	const byte specialPaletteSet = _metadata[adjustmentOffset];
+	if (specialPaletteSet == 0 || specialPaletteSet > ARRAYSIZE(kActorPaletteAdjustmentDestinations))
+		return;
+
+	const int adjustmentDelta = paletteDelta + (int8)_metadata[adjustmentOffset + 1];
+	const byte *destinations = kActorPaletteAdjustmentDestinations[specialPaletteSet - 1];
+	for (uint color = 0; color < ARRAYSIZE(kActorPaletteAdjustmentSources); ++color) {
+		const uint sourceOffset = (kActorPaletteAdjustmentSources[color] - kActorPaletteFirstColor) * 3;
+		const uint destinationOffset = destinations[color] * 3;
+		for (uint component = 0; component < 3; ++component) {
+			_paletteCurrent[destinationOffset + component] = (byte)CLIP<int>(
+				(int)_actorPaletteBase[sourceOffset + component] + adjustmentDelta, 0, 0x3f);
+		}
+	}
+
+	const byte copySourceColor = destinations[0];
+	memcpy(_paletteCurrent.data() + kActorPaletteAdjustmentCopyColor * 3,
+		_paletteCurrent.data() + copySourceColor * 3,
+		kActorPaletteAdjustmentCopyColorCount * 3);
 }
 
 void PlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
@@ -1208,6 +1297,50 @@ bool PlayableScene::waitDeltaClipFrameMillis(uint32 millis) {
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
+bool PlayableScene::fadePaletteFromBlack() {
+	const Common::Array<byte> targetPalette = _paletteCurrent;
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+
+	byte threshold = 0x3f;
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		for (uint i = 0; i < _paletteCurrent.size(); ++i) {
+			if (targetPalette[i] >= threshold)
+				_paletteCurrent[i] = MIN<byte>(targetPalette[i], _paletteCurrent[i] + 3);
+		}
+		presentFrame();
+		if (threshold == 0)
+			return false;
+
+		threshold = threshold > 3 ? threshold - 3 : 0;
+		if (pollEvents(false))
+			return true;
+		g_system->delayMillis(kPaletteFadeStepMillis);
+	}
+
+	return true;
+}
+
+bool PlayableScene::fadePaletteToBlack() {
+	const Common::Array<byte> sourcePalette = _paletteCurrent;
+	byte threshold = 0;
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		for (uint i = 0; i < _paletteCurrent.size(); ++i) {
+			if (sourcePalette[i] >= threshold)
+				_paletteCurrent[i] = _paletteCurrent[i] >= 3 ? _paletteCurrent[i] - 3 : 0;
+		}
+		presentFrame();
+		if (threshold >= 0x3f)
+			return false;
+
+		threshold = MIN<byte>(0x3f, threshold + 3);
+		if (pollEvents(false))
+			return true;
+		g_system->delayMillis(kPaletteFadeStepMillis);
+	}
+
+	return true;
+}
+
 void PlayableScene::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive) {
 	if (facing >= kActorFacingCount || cel >= kActorCelsPerFacing)
 		return;
@@ -1223,9 +1356,9 @@ void PlayableScene::drawActiveActorFrame(byte facing, byte cel, int worldX, int 
 	const uint paletteRunCursor = skipActorRunStream(_activeActorRunStreams,
 		descriptor.runStreamOffset, runBase, descriptor.opaqueRunCount);
 	drawActorPaletteRemapRun(_activeActorRunStreams, paletteRunCursor, runBase,
-		descriptor.paletteRunCount, spriteX, spriteY, minimumYExclusive, worldY);
+		descriptor.paletteRunCount, spriteX, spriteY, minimumYExclusive, worldX, worldY);
 	drawActorRun(_activeActorRunStreams, descriptor.runStreamOffset, runBase,
-		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive, worldY);
+		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive, worldX, worldY);
 }
 
 int PlayableScene::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY) {
@@ -1240,12 +1373,12 @@ int PlayableScene::drawSecondaryActorFrame(byte facing, byte frame, int worldX, 
 	const int spriteX = worldX - descriptor.anchorX;
 	const int spriteY = worldY - descriptor.anchorY;
 	return drawActorRun(_secondaryActorRunStreams, descriptor.runStreamOffset, facing * kSecondaryActorFacingRunStride,
-		descriptor.runCount, spriteX, spriteY, -1, worldY);
+		descriptor.runCount, spriteX, spriteY, -1, worldX, worldY);
 }
 
 int PlayableScene::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY, uint *nextCursor) {
-	if (usesActorDepthTest()) {
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldX, int actorWorldY, uint *nextCursor) {
+	if (shouldUseActorDepthTest(actorWorldX, actorWorldY)) {
 		ActorDepthTest depthTest;
 		depthTest.enabled = true;
 		depthTest.savedFramebuffer = &_savedFramebuffer.rawSurface();
@@ -1262,8 +1395,8 @@ int PlayableScene::drawActorRun(const Common::Array<byte> &runStreams, uint curs
 }
 
 int PlayableScene::drawActorPaletteRemapRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY) {
-	if (usesActorDepthTest()) {
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldX, int actorWorldY) {
+	if (shouldUseActorDepthTest(actorWorldX, actorWorldY)) {
 		ActorDepthTest depthTest;
 		depthTest.enabled = true;
 		depthTest.savedFramebuffer = &_savedFramebuffer.rawSurface();
@@ -1300,6 +1433,7 @@ void PlayableScene::runEntryPath(int startX, int startY, byte startFacing, int t
 	presentFrame();
 
 	queueActorPathWithPaletteRegionRouting(startX, startY, targetX, targetY, kInvalidFacing, 0);
+	_lastViewportScrollActorWorldX = _activeActorWorldX;
 	_actorPathPlaybackActive = true;
 	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !_skipRequested && !Engine::shouldQuit(); ++frameIndex) {
 		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
@@ -1353,6 +1487,7 @@ void PlayableScene::prepareGameplayLoop() {
 	resetAmbientAudioState();
 	prepareCustomGameplayLoop();
 	restoreActiveActorPoseFromGameState();
+	_lastViewportScrollActorWorldX = _activeActorWorldX;
 	syncActiveActorPoseToGameState();
 }
 
@@ -1632,6 +1767,7 @@ bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing
 		return true;
 	}
 
+	_lastViewportScrollActorWorldX = _activeActorWorldX;
 	_actorPathPlaybackActive = true;
 	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !Engine::shouldQuit(); ++frameIndex) {
 		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
@@ -1931,41 +2067,28 @@ void PlayableScene::resetViewportFromScene() {
 		_viewportMaxXOffset = _viewportMinXOffset;
 
 	_viewportXOffset = CLIP<uint16>(sceneViewportXOffset(), _viewportMinXOffset, _viewportMaxXOffset);
-	_viewportScrollTimerAccumulator = 0;
+	_lastViewportScrollActorWorldX = _activeActorWorldX;
 }
 
 void PlayableScene::advanceViewportScroll(uint32 delta) {
-	if (_actorPathPlaybackActive) {
-		_viewportScrollTimerAccumulator = 0;
+	(void)delta;
+	if (!_actorPathPlaybackActive || _viewportMinXOffset >= _viewportMaxXOffset) {
+		_lastViewportScrollActorWorldX = _activeActorWorldX;
 		return;
 	}
 
-	if (_viewportMinXOffset >= _viewportMaxXOffset) {
-		_viewportScrollTimerAccumulator = 0;
-		return;
+	const int actorScreenX = _activeActorWorldX - _viewportXOffset;
+	if (_lastViewportScrollActorWorldX < _activeActorWorldX &&
+			actorScreenX > kViewportScrollRightThreshold && _viewportXOffset < _viewportMaxXOffset) {
+		_viewportXOffset = MIN<uint16>(_viewportXOffset + kViewportScrollStep, _viewportMaxXOffset);
+	} else if (_activeActorWorldX < _lastViewportScrollActorWorldX &&
+			actorScreenX < kViewportScrollLeftThreshold && _viewportMinXOffset < _viewportXOffset) {
+		if (_viewportXOffset > _viewportMinXOffset + kViewportScrollStep)
+			_viewportXOffset -= kViewportScrollStep;
+		else
+			_viewportXOffset = _viewportMinXOffset;
 	}
-
-	_viewportScrollTimerAccumulator += delta;
-	while (_viewportScrollTimerAccumulator >= kViewportScrollTickMillis) {
-		_viewportScrollTimerAccumulator -= kViewportScrollTickMillis;
-		const int actorScreenX = _activeActorWorldX - _viewportXOffset;
-
-		if (actorScreenX > kViewportScrollRightThreshold && _viewportXOffset < _viewportMaxXOffset) {
-			_viewportXOffset = MIN<uint16>(_viewportXOffset + kViewportScrollStep, _viewportMaxXOffset);
-			continue;
-		}
-
-		if (actorScreenX < kViewportScrollLeftThreshold && _viewportMinXOffset < _viewportXOffset) {
-			if (_viewportXOffset > _viewportMinXOffset + kViewportScrollStep)
-				_viewportXOffset -= kViewportScrollStep;
-			else
-				_viewportXOffset = _viewportMinXOffset;
-			continue;
-		}
-
-		_viewportScrollTimerAccumulator = 0;
-		break;
-	}
+	_lastViewportScrollActorWorldX = _activeActorWorldX;
 }
 
 void PlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
