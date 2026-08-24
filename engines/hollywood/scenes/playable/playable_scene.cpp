@@ -1904,10 +1904,10 @@ void PlayableScene::primarySpeechAnimationRestored(byte animationGroup, byte bas
 	(void)baseFrame;
 }
 
-bool PlayableScene::waitSceneMillis(uint32 millis) {
+bool PlayableScene::waitSceneMillis(uint32 millis, bool allowSkip) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (pollEvents(true))
+		if (pollEvents(allowSkip))
 			return true;
 
 		const uint32 slice = MIN<uint32>(remaining, 10);

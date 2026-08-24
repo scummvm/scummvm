@@ -341,7 +341,7 @@ protected:
 
 	// Timing
 	// Pumps gameplay and redraws while waiting; returns true if playback should stop.
-	bool waitSceneMillis(uint32 millis);
+	bool waitSceneMillis(uint32 millis, bool allowSkip = true);
 
 	// Viewport
 	void resetViewportFromScene();
