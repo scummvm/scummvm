@@ -217,6 +217,11 @@ int8 GSound::readSignedByte(byte *&pSrc) {
 	return (int8)readByte(pSrc);
 }
 
+int GSound::readCenteredValue(byte *&pSrc) {
+	const int value = readSignedByte(pSrc);
+	return 64 + (value >= 0 ? value / 2 : (value - 1) / 2);
+}
+
 byte GSound::readByte(byte *&pSrc) {
 	if (!contains(pSrc + 1))
 		error("GSOUND bytecode read outside %s", _driverData.filename);
@@ -875,24 +880,24 @@ dispatch:
 			sendPan(channel);
 			goto dispatch;
 		case 0xF1:
+			channel._volume = readCenteredValue(pSrc);
+			channel._pSrc += 2;
+			sendVolume(channel);
+			goto dispatch;
+		case 0xF2:
 			channel._pitchBend = readByte(pSrc);
 			channel._pSrc += 2;
 			sendPitchBend(midiChannel, channel._pitchBend);
 			goto dispatch;
-		case 0xF2:
+		case 0xF3:
 			channel._volumeFadeReload = readByte(pSrc);
 			channel._volumeFadeStep = readSignedByte(pSrc);
 			channel._volumeFadeCounter = 1;
 			channel._pSrc += 3;
 			goto dispatch;
-		case 0xF3:
-			channel._velocity = readByte(pSrc);
-			channel._pSrc += 2;
-			goto dispatch;
 		case 0xF4:
-			channel._volume = readByte(pSrc);
+			channel._velocity = readCenteredValue(pSrc);
 			channel._pSrc += 2;
-			sendVolume(channel);
 			goto dispatch;
 		case 0xF5:
 			channel._pitchBendFadeReload = readByte(pSrc);
