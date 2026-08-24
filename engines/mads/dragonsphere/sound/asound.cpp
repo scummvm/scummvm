@@ -681,13 +681,10 @@ void ASound::writeFrequency() {
 	uint16 aReg = (uint16)chanNum + 0xA0;
 	uint16 bReg = (uint16)chanNum + 0xB0;
 
-	/* Note is 1-based; _octaveTranspose shifts by whole octaves. */
-	int note = (int)ch->_note + (int)ch->_octaveTranspose - 1;
+	/* The native driver performs this addition in an 8-bit register. */
+	byte note = (byte)(ch->_note + ch->_octaveTranspose - 1);
 	int octave = note / 12;
 	int semi = note % 12;
-	if (semi < 0) {
-		semi += 12; --octave;
-	}
 
 	/* F-number from table, with optional signed transpose offset. */
 	int16 fnum = (int16)SEMITONE_FREQ_TABLE[semi] + (int16)(int8)ch->_transpose;
@@ -726,14 +723,11 @@ void ASound::writeArpeggio() {
 	uint16 aReg = (uint16)chanNum + 0xA0;
 	uint16 bReg = (uint16)chanNum + 0xB0;
 
-	/* dl = _note + _octaveTranspose + _writeVolumePending - 1 */
-	int note = (int)ch->_note + (int)ch->_octaveTranspose
-		+ (int)ch->_writeVolumePending - 1;
+	/* The native driver performs these additions in an 8-bit register. */
+	byte note = (byte)(ch->_note + ch->_octaveTranspose
+		+ ch->_writeVolumePending - 1);
 	int octave = note / 12;
 	int semi = note % 12;
-	if (semi < 0) {
-		semi += 12; --octave;
-	}
 
 	uint16 freqEntry = SEMITONE_FREQ_TABLE[semi];
 	uint8  fnHigh = (uint8)((freqEntry >> 8) & 0x03);
