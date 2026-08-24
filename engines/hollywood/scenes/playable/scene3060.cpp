@@ -42,10 +42,12 @@ const uint kScene3060ActorBankTableEntry = 0x0000;
 const uint kScene3060ActorPaletteTableEntry = 0x00cc;
 const uint kScene3060Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene3060SpeechCueDescriptorTableOffset = 0x1135;
-const uint32 kScene3060FrontFrameMillis = 100;
-const uint32 kScene3060GlobeFrameMillis = 125;
+const uint32 kScene3060FrontFrameMillis = 75;
 const uint32 kScene3060ButtonFrameMillis = 75;
-const uint32 kScene3060RedButtonFrameMillis = 30;
+const uint32 kScene3060SecretDoorFrameMillis = 125;
+const uint32 kScene3060RedGlobeInitialStepMillis = 30;
+const uint32 kScene3060RedGlobeAccelerationMillis = 5;
+const byte kScene3060RedGlobeRevolutionCount = 6;
 const uint kScene3060FrontDescriptorCount = 0x13;
 const uint kScene3060GlobeDescriptorCount = 0x1e;
 const uint kScene3060ButtonDescriptorCount = 5;
@@ -96,7 +98,7 @@ static PlayableSceneConfig scene3060Config() {
 	config.speechCueDescriptorTableOffset = kScene3060SpeechCueDescriptorTableOffset;
 	config.actorPathStepDeltaTable = kScene3060ActorPathStepDeltaTable;
 	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene3060ActorPathStepDeltaTable);
-	config.walkablePaletteMaxRegion = 20;
+	config.walkablePaletteMaxRegion = 3;
 	config.musicArchiveName = kScene3060MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3060SoundArchiveName;
 	config.useActorDepthTest = true;
@@ -108,13 +110,11 @@ static PlayableSceneConfig scene3060Config() {
 Scene3060::Scene3060(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3060Config(), "scene3060", 0x22d, 0x156, 4, 0xfd, 0xfb),
 		_frontChannel(),
-		_globeChannel(),
 		_frontLayer(),
 		_globeLayer(),
 		_buttonLayer(),
 		_frontLayerMode(0),
-		_frontLayerPauseCounter(0),
-		_globeSpinDelta(0) {
+		_secretDoorRevealActive(false) {
 	_frontLayer.configure(5, kScene3060FrontDescriptorCount,
 		kScene3060FrontFrameMap, ARRAYSIZE(kScene3060FrontFrameMap));
 	_globeLayer.configure(6, kScene3060GlobeDescriptorCount,
@@ -153,6 +153,16 @@ void Scene3060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
+	updateSceneDepthThresholds(actorDrawOrderMode);
+
+	if (_secretDoorRevealActive) {
+		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+		drawResourceSpriteLayer(_frontLayer);
+		drawActionOverlayLayer();
+		drawResourceSpriteLayer(_globeLayer);
+		return;
+	}
 
 	if (actorDrawOrderMode < 4)
 		drawResourceSpriteLayer(_globeLayer);
@@ -162,8 +172,8 @@ void Scene3060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceSpriteLayer(_globeLayer);
 
 	drawActionOverlayLayer();
-	drawResourceSpriteLayer(_buttonLayer);
 	drawResourceSpriteLayer(_frontLayer);
+	drawResourceSpriteLayer(_buttonLayer);
 }
 
 bool Scene3060::hasCustomEntrySequence() const {
@@ -178,76 +188,91 @@ void Scene3060::runCustomEntrySequence() {
 }
 
 bool Scene3060::prepareCustomGameplayLoop() {
-	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
 	return true;
 }
 
 bool Scene3060::advanceCustomGameplayLoop(uint32 delta) {
-	advanceFrontLayer(delta);
-	advanceGlobeLayer(delta);
+	if (_secretDoorRevealActive)
+		return true;
+
 	updateAmbientAudioAndMusicCues(delta);
+	advanceFrontLayer(delta);
 	return true;
 }
 
 bool Scene3060::dispatchCustomSceneAction(uint16 handlerId) {
 	GameplayState &state = _vm->gameState();
 	switch (handlerId) {
-	case 301: // Ir a recibidor (go to hall): return to the library/living room.
+	case 301: // Ir a recibidor (go to the hall): return to Scene 3050.
 		state.mainFlowStateId = kScene3050EntryFromScene3060State;
 		return true;
-	case 302: // Mirar puerta secreta / recibidor hidden exit (look at secret door / hall exit).
+	case 302: // Mirar recibidor (look toward the hall).
 		beginSecondarySpeechLine(0, 0);
 		return true;
 	case 303: // Ir a puerta secreta / cuadro central (go to secret passage).
-		if (state.scene3060SecretDoorRevealState != 0)
-			runEntryPath(_activeActorWorldX, _activeActorWorldY, _activeActorFacing, 0x1aa, 0x161);
+		if (state.scene3060SecretDoorRevealState == 1) {
+			if (!walkActiveActorTo(0x0f8, 0x149, 5, 0))
+				return true;
+			beginSecondarySpeechLine(1, 0);
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				return true;
+			if (!walkActiveActorTo(0x08a, 0x184, 0xff, 0))
+				return true;
+			state.scene3060SecretDoorRevealState = 2;
+		}
 		state.mainFlowStateId = kScene3070State;
 		return true;
 	case 304: // Mirar puerta secreta / cuadro central (look at secret door / painting).
-		beginSecondarySpeechLine(1, state.scene3060SecretDoorRevealState != 0 ? 0 : 1);
+		beginSecondarySpeechLine(2, state.scene3060SecretDoorRevealState == 1 ? 0 : 1);
 		return true;
-	case 305: // Coger cuadro/libros/título (take painting/books/title): fixed refusal.
+	case 305: // Coger cuadro/título (take a painting/degree): fixed refusal.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 306: // Mirar cuadro superior izquierdo (look at upper-left painting/certificate).
+	case 306: // Mirar el primer título (look at the first degree).
 		beginSecondarySpeechLine(4, 0);
-		state.scene3060InspectedTitleFlags |= 1;
-		applySceneStateToHotspotsAndPatches(1);
+		if ((state.scene3060InspectedTitleFlags & 1) == 0) {
+			state.scene3060InspectedTitleFlags |= 1;
+			applySceneStateToHotspotsAndPatches(1);
+		}
 		return true;
-	case 307: // Mirar cuadro superior derecho (look at upper-right painting/certificate).
+	case 307: // Mirar el segundo título (look at the second degree).
 		beginSecondarySpeechLine(5, 0);
-		state.scene3060InspectedTitleFlags |= 2;
-		applySceneStateToHotspotsAndPatches(1);
+		if ((state.scene3060InspectedTitleFlags & 2) == 0) {
+			state.scene3060InspectedTitleFlags |= 2;
+			applySceneStateToHotspotsAndPatches(2);
+		}
 		return true;
-	case 308: // Mirar cuadro inferior izquierdo (look at lower-left painting/certificate).
+	case 308: // Mirar el tercer título (look at the third degree).
 		beginSecondarySpeechLine(6, 0);
-		state.scene3060InspectedTitleFlags |= 4;
-		applySceneStateToHotspotsAndPatches(1);
+		if ((state.scene3060InspectedTitleFlags & 4) == 0) {
+			state.scene3060InspectedTitleFlags |= 4;
+			applySceneStateToHotspotsAndPatches(3);
+		}
 		return true;
-	case 309: // Mirar libros (look at books).
+	case 309: // Mirar el cuarto título (look at the fourth degree).
 		beginSecondarySpeechLine(7, 0);
-		state.scene3060InspectedTitleFlags |= 8;
-		applySceneStateToHotspotsAndPatches(1);
+		if ((state.scene3060InspectedTitleFlags & 8) == 0) {
+			state.scene3060InspectedTitleFlags |= 8;
+			applySceneStateToHotspotsAndPatches(4);
+		}
 		return true;
-	case 310: // Mirar bola del mundo (look at globe).
+	case 310: // Ir a/Mirar libros (go to/look at the books).
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 311: // Coger/abrir bola del mundo (take/open globe).
+	case 311: // Coger/Abrir libros (take/open the books).
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 312: // Usar bola del mundo (use globe): enables the button controls.
+	case 312: // Usar libros (use the books).
 		beginSecondarySpeechLine(10, 0);
-		state.scene3060GlobeButtonsDiscovered = true;
-		applySceneStateToHotspotsAndPatches(5);
 		return true;
-	case 313: // Mirar botón izquierdo / estante detail (look at left-button area).
+	case 313: // Mirar bola del mundo (look at the globe).
 		beginSecondarySpeechLine(11, 0);
 		return true;
-	case 314: // Mirar restos/adorno de la fiesta (look at party remains/decor).
+	case 314: // Usar bola del mundo (use the globe).
 		beginSecondarySpeechLine(12, 0);
 		return true;
-	case 315: // Mirar título (look at title/certificate).
+	case 315: // Mirar cualquiera de los botones (look at any button).
 		beginSecondarySpeechLine(13, 0);
 		return true;
 	case 316: // Usar botón izquierdo (use left button): rotate globe forward.
@@ -265,23 +290,89 @@ bool Scene3060::dispatchCustomSceneAction(uint16 handlerId) {
 }
 
 bool Scene3060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
-	if (selector == 0xff || selector == 0 || selector == 1 || selector == 5) {
+	bool reloadHotspots = false;
+	if (selector == 0xff || selector == 0) {
 		restoreBaseFramebufferFromOriginal();
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 		promoteSecretDoorHotspots();
-		updateTitleCaptionRows();
-		updateGlobeButtonDefaultStrips();
 
 		if (_vm->gameState().scene3060SecretDoorRevealState != 0 &&
 				_sceneChunkTable.isValidChunk(9))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
 
 		rebuildWalkableMask();
-		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+		reloadHotspots = true;
 	}
 
+	if (selector == 0xff || (selector >= 1 && selector <= 4)) {
+		updateTitleCaptionRows(selector);
+		reloadHotspots = true;
+	}
+
+	if (selector == 0xff || selector == 5) {
+		updateGlobeButtonDefaultStrips();
+		reloadHotspots = true;
+	}
+
+	if (reloadHotspots) {
+		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+		patchSecretDoorMovementModes();
+	}
+
+	return true;
+}
+
+bool Scene3060::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	if (targetX < 0x067)
+		targetX = 0x067;
+
+	while (targetY < 0x1df) {
+		++targetY;
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
+	}
+
+	while (targetY > 0) {
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
+		--targetY;
+	}
+
+	return true;
+}
+
+bool Scene3060::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+
+	if (currentRegion != 5 || nextRegion != 4)
+		return false;
+
+	for (uint i = 0; i < 0x0c && 0x18 + i < _actorPathStepDeltas.size(); ++i)
+		_actorPathStepDeltas[0x18 + i] = kScene3060ActorPathStepDeltaTable[i];
+	requestedFacing = 2;
+	restoredStepDeltas = true;
+	return true;
+}
+
+bool Scene3060::customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)targetRegion;
+	(void)targetY;
+
+	if (currentRegion != 5)
+		return false;
+
+	const uint sourceOffset = targetX < state.x ? 0x24 : 0;
+	const uint destinationOffset = targetX < state.x ? 0x3c : 0x18;
+	for (uint i = 0; i < 0x0c && sourceOffset + i < ARRAYSIZE(kScene3060ActorPathStepDeltaTable) &&
+			destinationOffset + i < _actorPathStepDeltas.size(); ++i)
+		_actorPathStepDeltas[destinationOffset + i] = kScene3060ActorPathStepDeltaTable[sourceOffset + i];
+	requestedFacing = targetX < state.x ? 5 : 2;
+	restoredStepDeltas = true;
 	return true;
 }
 
@@ -296,23 +387,17 @@ AmbientAudioProfile Scene3060::ambientAudioProfile() const {
 	return profile;
 }
 
-void Scene3060::handleActionOverlayFrameHook(byte hookId, uint frame) {
-	if (hookId != 1 || _globeSpinDelta == 0)
-		return;
+bool Scene3060::shouldRunExitSideEffectsAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
+}
 
-	GameplayState &state = _vm->gameState();
-	if ((frame % 2) == 0) {
-		int nextFrame = (int)state.scene3060GlobeFrame + (int)_globeSpinDelta;
-		while (nextFrame < 0)
-			nextFrame += kScene3060GlobeDescriptorCount;
-		state.scene3060GlobeFrame = (byte)(nextFrame % kScene3060GlobeDescriptorCount);
-		_globeLayer.setFrame(state.scene3060GlobeFrame);
-	}
+void Scene3060::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
 }
 
 void Scene3060::resetAnimationLayers() {
 	_frontChannel.reset(0, kScene3060FrontFrameMillis);
-	_globeChannel.reset(_vm->gameState().scene3060GlobeFrame, kScene3060GlobeFrameMillis);
 	_frontLayer.visible = true;
 	_globeLayer.visible = true;
 	_buttonLayer.visible = false;
@@ -320,8 +405,7 @@ void Scene3060::resetAnimationLayers() {
 	_globeLayer.reset(_vm->gameState().scene3060GlobeFrame);
 	_buttonLayer.reset(0);
 	_frontLayerMode = 0;
-	_frontLayerPauseCounter = 0;
-	_globeSpinDelta = 0;
+	_secretDoorRevealActive = false;
 }
 
 void Scene3060::rebuildWalkableMask() {
@@ -339,10 +423,10 @@ void Scene3060::copySmallRow(byte sourceRow, byte destinationRow) {
 		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
 }
 
-void Scene3060::updateTitleCaptionRows() {
+void Scene3060::updateTitleCaptionRows(byte selector) {
 	const byte flags = _vm->gameState().scene3060InspectedTitleFlags;
 	for (byte index = 0; index < 4; ++index) {
-		if ((flags & (1 << index)) != 0)
+		if ((selector == 0xff || selector == index + 1) && (flags & (1 << index)) != 0)
 			copySmallRow(12, (byte)(3 + index));
 	}
 }
@@ -377,51 +461,103 @@ void Scene3060::updateGlobeButtonDefaultStrips() {
 	_metadata[kSceneItemDefaultStrip + 11] = 5;
 }
 
+void Scene3060::patchSecretDoorMovementModes() {
+	const byte state = _vm->gameState().scene3060SecretDoorRevealState;
+	if (state == 0)
+		return;
+
+	_hotspots.setVerbMovementModeByGlobalRecordIndex(0x11, state == 1 ? 0 : 1);
+	_hotspots.setVerbMovementModeByGlobalRecordIndex(0x4d, 0);
+	_hotspots.setVerbMovementModeByGlobalRecordIndex(0x55, 0);
+	_hotspots.setVerbMovementModeByGlobalRecordIndex(0x5d, 0);
+}
+
+void Scene3060::updateSceneDepthThresholds(byte actorDrawOrderMode) {
+	if (_drawActorDepthYThresholds.size() <= 3)
+		return;
+
+	if (actorDrawOrderMode == 5) {
+		_drawActorDepthYThresholds[2] = 0x03e7;
+		_drawActorDepthYThresholds[3] = 0x03e7;
+	} else {
+		_drawActorDepthYThresholds[2] = 0x0172;
+		_drawActorDepthYThresholds[3] = 0;
+	}
+}
+
 void Scene3060::advanceFrontLayer(uint32 delta) {
 	const uint frameCount = _frontChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
-		if (_frontLayerMode == 0) {
-			if (_frontLayerPauseCounter > 0) {
-				--_frontLayerPauseCounter;
-			} else if (_random.getRandomNumber(24) == 0) {
+		switch (_frontLayerMode) {
+		case 0: // Advance to frame 9.
+			if (_frontChannel.frameIndex < 9)
+				++_frontChannel.frameIndex;
+			else
 				_frontLayerMode = 1;
+			break;
+		case 1: // Wait at frame 9.
+			if (_random.getRandomNumber(199) == 0) {
+				_frontLayerMode = 3;
+			} else if (_random.getRandomNumber(39) == 0) {
 				_frontChannel.frameIndex = 10;
-			} else if (_random.getRandomNumber(14) == 0) {
 				_frontLayerMode = 2;
-				_frontChannel.frameIndex = 1;
 			}
-		} else if (_frontLayerMode == 1) {
-			if (_frontChannel.frameIndex < 18) {
+			break;
+		case 2: // Wait at frame 10.
+			if (_random.getRandomNumber(199) == 0) {
+				_frontLayerMode = 3;
+			} else if (_random.getRandomNumber(39) == 0) {
+				_frontChannel.frameIndex = 9;
+				_frontLayerMode = 1;
+			}
+			break;
+		case 3: // Advance to frame 18.
+			if (_frontChannel.frameIndex < 18)
 				++_frontChannel.frameIndex;
-			} else {
+			else
+				_frontLayerMode = 4;
+			break;
+		case 4: // Wait at frame 18.
+			if (_random.getRandomNumber(199) == 0) {
 				_frontLayerMode = 0;
-				_frontLayerPauseCounter = (byte)(_random.getRandomNumber(7) + 2);
 				_frontChannel.frameIndex = 0;
 			}
-		} else if (_frontLayerMode == 2) {
-			if (_frontChannel.frameIndex < 9) {
-				++_frontChannel.frameIndex;
-			} else {
-				_frontLayerMode = 0;
-				_frontChannel.frameIndex = 0;
-			}
+			break;
 		}
 		_frontLayer.setFrame(_frontChannel.frameIndex);
 	}
 }
 
-void Scene3060::advanceGlobeLayer(uint32 delta) {
-	const uint frameCount = _globeChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame)
-		_globeLayer.setFrame(_vm->gameState().scene3060GlobeFrame);
-}
-
 void Scene3060::runEntryFromScene3050() {
+	_frontChannel.frameIndex = 18;
+	_frontLayerMode = 4;
+	_frontLayer.setFrame(18);
 	runEntryPath(0x2e3, 0x128, 4, 0x22d, 0x156);
 }
 
 void Scene3060::runEntryFromSecretPassage() {
+	_frontChannel.frameIndex = 18;
+	_frontLayerMode = 4;
+	_frontLayer.setFrame(18);
 	runEntryPath(0x08a, 0x184, 2, 0x1aa, 0x161);
+}
+
+void Scene3060::rotateGlobe(int delta) {
+	GameplayState &state = _vm->gameState();
+	int nextFrame = (int)state.scene3060GlobeFrame + delta;
+	while (nextFrame < 0)
+		nextFrame += kScene3060GlobeDescriptorCount;
+	state.scene3060GlobeFrame = (byte)(nextFrame % kScene3060GlobeDescriptorCount);
+	_globeLayer.setFrame(state.scene3060GlobeFrame);
+}
+
+void Scene3060::markGlobeButtonsDiscovered() {
+	GameplayState &state = _vm->gameState();
+	if (state.scene3060GlobeButtonsDiscovered)
+		return;
+
+	state.scene3060GlobeButtonsDiscovered = true;
+	applySceneStateToHotspotsAndPatches(5);
 }
 
 void Scene3060::recordGlobeButton(byte button) {
@@ -471,18 +607,17 @@ void Scene3060::runGlobeButtonSequence(byte button, const byte *frameMap, uint f
 	_buttonLayer.visible = true;
 	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
 		_buttonLayer.setFrame(frame);
-		if (frame == 3) {
-			int nextFrame = (int)state.scene3060GlobeFrame + globeDelta;
-			while (nextFrame < 0)
-				nextFrame += kScene3060GlobeDescriptorCount;
-			state.scene3060GlobeFrame = (byte)(nextFrame % kScene3060GlobeDescriptorCount);
-			_globeLayer.setFrame(state.scene3060GlobeFrame);
-		}
-		if (waitSceneMillis(kScene3060ButtonFrameMillis))
+		if (frame == 3)
+			rotateGlobe(globeDelta);
+		if (waitSceneMillis(kScene3060ButtonFrameMillis, false))
 			break;
 	}
 	_buttonLayer.visible = false;
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
 	recordGlobeButton(button);
+	markGlobeButtonsDiscovered();
 	drawPlayableComposite();
 	presentFrame();
 }
@@ -494,29 +629,91 @@ void Scene3060::runRedButtonSequence() {
 		return;
 	}
 
-	_globeSpinDelta = -1;
-	runActionOverlay(ActionOverlaySpec(7, kScene3060ButtonDescriptorCount,
-		kScene3060RedButtonFrameMap, ARRAYSIZE(kScene3060RedButtonFrameMap),
-		kScene3060RedButtonFrameMillis)
-		.showActor()
-		.hookEveryFrame(1));
-	_globeSpinDelta = 0;
+	_buttonLayer.configure(7, kScene3060ButtonDescriptorCount,
+		kScene3060RedButtonFrameMap, ARRAYSIZE(kScene3060RedButtonFrameMap));
+	_buttonLayer.visible = true;
+	_buttonLayer.setFrame(0);
+	drawPlayableComposite();
+	presentFrame();
+
+	uint buttonFrame = 0;
+	uint32 buttonRemaining = kScene3060ButtonFrameMillis;
+	bool spinning = false;
+	uint32 spinRemaining = 0;
+	uint32 spinDelay = kScene3060RedGlobeInitialStepMillis;
+	byte remainingRevolutions = kScene3060RedGlobeRevolutionCount;
+
+	while ((buttonFrame + 1 < ARRAYSIZE(kScene3060RedButtonFrameMap) || spinning) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		const bool buttonAnimating = buttonFrame + 1 < ARRAYSIZE(kScene3060RedButtonFrameMap);
+		uint32 waitMillis = buttonAnimating ? buttonRemaining : spinRemaining;
+		if (spinning && (!buttonAnimating || spinRemaining < waitMillis))
+			waitMillis = spinRemaining;
+
+		if (waitMillis != 0 && waitSceneMillis(waitMillis, false))
+			break;
+		if (buttonAnimating)
+			buttonRemaining -= waitMillis;
+		if (spinning)
+			spinRemaining -= waitMillis;
+
+		if (buttonAnimating && buttonRemaining == 0) {
+			++buttonFrame;
+			_buttonLayer.setFrame((byte)buttonFrame);
+			buttonRemaining = kScene3060ButtonFrameMillis;
+			if (buttonFrame == 3) {
+				spinning = true;
+				spinRemaining = 0;
+			}
+		}
+
+		if (spinning && spinRemaining == 0) {
+			const bool wrapped = state.scene3060GlobeFrame == 0;
+			rotateGlobe(-1);
+			if (wrapped) {
+				--remainingRevolutions;
+				if (remainingRevolutions == 0) {
+					spinning = false;
+				} else {
+					spinDelay -= kScene3060RedGlobeAccelerationMillis;
+					spinRemaining = spinDelay;
+				}
+			} else {
+				spinRemaining = spinDelay;
+			}
+		}
+	}
+
+	_buttonLayer.visible = false;
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
 
 	if (matchesGlobePuzzle()) {
 		runSecretDoorReveal();
 	} else {
 		resetGlobePuzzleHistory();
 	}
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	markGlobeButtonsDiscovered();
+	drawPlayableComposite();
+	presentFrame();
 }
 
 void Scene3060::runSecretDoorReveal() {
 	_soundBank0.playSample(0x10, 100);
+	_secretDoorRevealActive = true;
 	runActionOverlay(ActionOverlaySpec(8, kScene3060SecretDoorDescriptorCount,
-		kScene3060SecretDoorRevealFrameMap, ARRAYSIZE(kScene3060SecretDoorRevealFrameMap), kScene3060ButtonFrameMillis)
+		kScene3060SecretDoorRevealFrameMap, ARRAYSIZE(kScene3060SecretDoorRevealFrameMap), kScene3060SecretDoorFrameMillis)
 		.showActor()
-		.patchAt(7, 0));
+		.noRedrawAtEnd());
+	_secretDoorRevealActive = false;
+	_soundBank0.stop();
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
 	_vm->gameState().scene3060SecretDoorRevealState = 1;
-	resetGlobePuzzleHistory();
 	applySceneStateToHotspotsAndPatches(0);
 	beginSecondarySpeechLine(14, 0);
 }

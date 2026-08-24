@@ -44,20 +44,29 @@ private:
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 
 	void resetAnimationLayers();
 	void rebuildWalkableMask();
 	void copySmallRow(byte sourceRow, byte destinationRow);
-	void updateTitleCaptionRows();
+	void updateTitleCaptionRows(byte selector);
 	void promoteSecretDoorHotspots();
 	void updateGlobeButtonDefaultStrips();
+	void patchSecretDoorMovementModes();
+	void updateSceneDepthThresholds(byte actorDrawOrderMode);
 	void advanceFrontLayer(uint32 delta);
-	void advanceGlobeLayer(uint32 delta);
 	void runEntryFromScene3050();
 	void runEntryFromSecretPassage();
+	void rotateGlobe(int delta);
+	void markGlobeButtonsDiscovered();
 	void recordGlobeButton(byte button);
 	void resetGlobePuzzleHistory();
 	bool matchesGlobePuzzle() const;
@@ -66,13 +75,11 @@ private:
 	void runSecretDoorReveal();
 
 	TimedAnimationChannel _frontChannel;
-	TimedAnimationChannel _globeChannel;
 	ResourceSpriteLayer _frontLayer;
 	ResourceSpriteLayer _globeLayer;
 	ResourceSpriteLayer _buttonLayer;
 	byte _frontLayerMode;
-	byte _frontLayerPauseCounter;
-	byte _globeSpinDelta;
+	bool _secretDoorRevealActive;
 };
 
 } // End of namespace Hollywood

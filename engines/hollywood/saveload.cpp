@@ -487,7 +487,7 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1040GorillaCordState = 0;
 	if (state.scene6040WireState > 2)
 		state.scene6040WireState = 0;
-	if (state.scene3060SecretDoorRevealState > 1)
+	if (state.scene3060SecretDoorRevealState > 2)
 		state.scene3060SecretDoorRevealState = 0;
 	if (state.scene3060GlobeFrame >= 0x1e)
 		state.scene3060GlobeFrame = 0;
