@@ -243,6 +243,17 @@ bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {
 	}
 }
 
+AmbientAudioProfile Scene3010::ambientAudioProfile() const {
+	AmbientAudioProfile profile;
+	profile.checkMillis = 250;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = 0x0b;
+	profile.musicCueCount = 5;
+	profile.musicVolumePercent = 100;
+	profile.musicProbabilityModulus = 50;
+	return profile;
+}
+
 void Scene3010::resetAnimationLayers() {
 	_windmillChannel.reset(kScene3010InitialWindmillFrame, kScene3010WindmillFrameMillis);
 	_forestIdleChannel.reset(0, kScene3010ForestIdleFrameMillis);

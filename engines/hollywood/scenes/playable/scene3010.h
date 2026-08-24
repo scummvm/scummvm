@@ -45,6 +45,7 @@ private:
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
 	void advanceWindmillLayer(uint32 delta);
