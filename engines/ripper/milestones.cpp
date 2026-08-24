@@ -129,7 +129,7 @@ bool Milestones::hasRipperIdentity() const {
 
 bool Milestones::selectRipperIdentity(uint candidate, const char *source) {
 	// SeedRandomFreePersistentFlag6To9 at 0x106c0 chooses among candidate
-	// bytes 0x38..0x3b in the persistent settings blob. Retail defaults all
+	// bytes 0x38..0x3b in the persistent settings blob. RIPPER.LE defaults all
 	// four bytes to zero, making flags 6 through 9 equally eligible.
 	const uint candidateCount =
 		kMilestoneLastRipperIdentity - kMilestoneFirstRipperIdentity + 1;
@@ -160,7 +160,7 @@ bool Milestones::syncGame(Common::Serializer &serializer) {
 		memset(_flags, 0, sizeof(_flags));
 
 	uint setCount = 0;
-	// The original game packs this store into 125 bytes. Ripper's existing
+	// RIPPER.LE packs this store into 125 bytes. Ripper's existing
 	// ScummVM save format writes one byte per flag, so retain that layout.
 	for (uint flag = 0; flag < kFlagCount; ++flag) {
 		byte value = isSet(flag) ? 1 : 0;

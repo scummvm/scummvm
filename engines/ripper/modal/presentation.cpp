@@ -340,18 +340,11 @@ void ModalDialogManager::drawDialog(const Common::String &title,
 		(wacStyle ? kWacModalTextColor :
 		(sceneEntryStyle ? _sceneEntryTextColor : kModalTextColor));
 	if (primaryStyle) {
-		// RunCircuitChipPlacementPuzzleScene at 0x28aa4 constructs resource
-		// 0xb6 with g_primaryChooserPresentationTemplate at 0x8a284. The
-		// wrapped control has no frame or client fill: ED_WAC.SMK supplies
-		// the backing, while RenderChooserTextRow at 0x58651 selects the
-		// active-row style at template offset +0xc. Startup points that style
-		// at palette index 254, the shared interface red.
+		// ED_WAC.SMK supplies the backing; the primary chooser has no frame or
+		// client fill. Template +0xc selects the red active-text style.
 	} else if (sceneEntryStyle) {
-		// InitializeSharedPresentationTemplates at 0x11bd1 initializes the
-		// v1.05 media-text template at 0x9a78e without MENUB bitmap
-		// descriptors. Its client/background byte is palette index zero.
-		// ServiceMediaPresentationTextControl at 0x17014 resolves the active
-		// NF2T glyph color to the palette entry nearest white for each branch.
+		// v1.05 media text has no MENUB descriptors. Its client uses palette
+		// index zero and resolves the glyph color to nearest white per branch.
 		for (int y = bounds.top; y < bounds.bottom; ++y)
 			memset(screen->getBasePtr(bounds.left, y),
 				kSceneEntryBackgroundColor, bounds.width());

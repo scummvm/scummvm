@@ -30,18 +30,16 @@ static const byte kRetailSelectedTextColor = 4;
 static const byte kDemoNormalBackgroundColor = 0;
 static const byte kDemoNormalTextColor = 253;
 static const byte kDemoSelectedBackgroundColor = 250;
-// The demo passes lookup template 0x62151 to the original indexed blitter.
-// Its displayed selected glyphs resolve to the MENUB gray ramp at index 7;
-// writing the template's byte 254 directly instead produces red text.
+// RIP.EXE template byte 254 is a glyph lookup, not a palette index; MENUB
+// resolves it to gray index 7.
 static const byte kDemoSelectedTextColor = 7;
 static const uint16 kEnterCommand = 0x0d;
 static const uint16 kUpCommand = 0x4800;
 static const uint16 kDownCommand = 0x5000;
 
 bool DialogueChooser::initialize(ResourceManager &resources, bool retailPresentation) {
-	// The demo's InitializeSharedPresentationTemplates at 0x10c9d builds the
-	// scene-dialogue template at 0x68d08 with different indexed presentation
-	// from the retail template initialized at 0x1196f.
+	// RIP.EXE template 0x68d08 has a different palette mapping from RIPPER.LE's
+	// template initialized at 0x1196f.
 	_normalBackgroundColor = retailPresentation ?
 		kRetailNormalBackgroundColor : kDemoNormalBackgroundColor;
 	_normalTextColor = retailPresentation ?
@@ -495,12 +493,8 @@ void DialogueChooser::rebuildPresentationBands(const char *reason) const {
 		return;
 	}
 
-	// HandleSceneEntryChoiceListLifecycle at 0x1523d and the controlled AVI
-	// branch of RunMediaPresentation at 0x17917 restore the display around
-	// chooser activation and packetized-media completion. Rebuild the uncovered
-	// indexed bands instead of retaining response pixels under the next scene
-	// palette. ExecutePresentationEntry at 0x1754b does not take this path for
-	// SMK sequences; those retain their complete final frame.
+	// Controlled AVI restores only the 640x300 scene page. Clear the uncovered
+	// indexed bands before the next palette; SMK keeps its complete final frame.
 	for (int y = 0; y < kSceneTop; ++y)
 		memset(screen->getBasePtr(0, y), 0, 640);
 	for (int y = kSceneBottom; y < 400; ++y)

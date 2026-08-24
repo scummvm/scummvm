@@ -90,12 +90,8 @@ public:
 
 protected:
 	void repairEfw4FrameTable(const Common::String &name) {
-		// LoadSmackerPlaybackState at 0x4f140 and
-		// AdvanceSmackerPlaybackFrame at 0x4ffe8 consume each frame-table
-		// DWORD as an ordinary byte count. The extracted EFW4.SMK has one
-		// damaged entry: frame 62 says 0x2000a070, while 0x8070 makes the
-		// declared payload end exactly at EOF and matches its neighboring
-		// frame sizes. Restrict the repair to the complete known signature.
+		// RIPPER.LE treats frame-table DWORDs as byte counts. EFW4 frame 62's
+		// 0x2000a070 crosses EOF; 0x8070 ends there. Match the full signature.
 		const uint kFrame = 62;
 		const uint32 kDamagedSize = 0x2000a070;
 		const uint32 kRepairedSize = 0x8070;
@@ -357,11 +353,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			name.c_str(), firstFrame, lastFrame, frameCount);
 		return false;
 	}
-	// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3 is invoked for
-	// each packetized branch, not only for the IAVF container dimensions. In the
-	// original 640x400 mode every branch smaller than 321x201 receives the 2:1
-	// display descriptor, including PROLOG2.AVI's 320x200 branches inside a
-	// 640x400 container.
+	// RIPPER.LE chooses scale per packetized branch, not from the IAVF container.
+	// In 640x400 mode, branches smaller than 321x201 use 2:1 scaling.
 	if (displayScale == kAutoPacketizedDisplayScale)
 		displayScale = decoder.getHeight() < 0xc9 && decoder.getWidth() < 0x141 ? 2 : 1;
 	const uint outputWidth = decoder.getWidth() * displayScale;
@@ -390,10 +383,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			y *= displayScale;
 			if (originY != 0 && y + originY + (int)outputHeight > displayHeight &&
 					y + (int)outputHeight <= displayHeight) {
-				// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3
-				// switches a full-size packetized branch from the scene viewport
-				// to the full display context. Do not retain the viewport origin
-				// when the scaled branch already fills that display.
+				// A full-display branch must not retain the scene viewport origin
+				// selected before RIPPER.LE 0x16ae3 switches display context.
 				debugC(2, kDebugVideo,
 					"Ripper: suppressed Smacker scene origin media='%s' originY=%d "
 					"output=%ux%u display=%dx%d",
@@ -549,15 +540,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			_engine->getScripts()->drawDialogueOverlay(true);
 			_engine->getScripts()->drawBriefingOverlay();
 		}
-		// Sequence callbacks may add puzzle or dialogue overlays. Defer their
-		// screen submission until the callback completes so an undecorated movie
-		// frame is never visible between the frame blit and overlay composition.
+		// Callbacks may add overlays; present only after they finish composing.
 		if (!sequenceCallback)
 			presentScreen();
 	};
-	// ExecutePresentationEntry at 0x1754b normally deactivates the shared
-	// selection presentation before packetized AVI playback. Packetized branch
-	// callbacks may explicitly preserve a cursor for the active branch.
+	// RIPPER.LE 0x1754b hides the shared cursor before AVI playback, but a
+	// branch callback may own a cursor during playback.
 	if (!serviceSceneUi &&
 			(!sequenceCallback || !sequenceCallback->keepsCursorVisible()))
 		_engine->getCursor()->setVisible(false);
@@ -596,9 +584,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		}
 		if (sequenceCallback && sequenceCallback->managesPalette()) {
 			byte palette[256 * 3];
-			// RunCombatEncounterScene at 0x31436 derives its temporary hit and
-			// shield palettes from the active Smacker palette on every frame.
-			// Rebuild that base before asking the encounter callback to transform it.
+			// Combat transforms the active Smacker palette each frame; restore that
+			// base before applying the next callback transform.
 			applyDecoderPalette(true);
 			g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 			sequenceCallback->transformPalette(palette, 256);
@@ -611,10 +598,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		return stopSequence;
 	};
 	if (firstFrame != 0) {
-		// RunTubeSwitchScene at 0x25e18 advances a newly loaded GA_TUBE decoder
-		// through frames 0..14 before presenting frame 15. Decode from the start
-		// here as well so delta-coded pixels and palette entries are based on the
-		// complete initial surface rather than a blank seek surface.
+		// RIPPER.LE decodes GA_TUBE frames 0..14 before showing frame 15. Starting
+		// from a seek surface would lose delta-coded pixels and palette state.
 		const Graphics::Surface *frame = nullptr;
 		while (decoder.getCurFrame() < (int)firstFrame && !decoder.endOfVideo())
 			frame = decoder.decodeNextFrame();
@@ -641,10 +626,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	while (!_engine->shouldQuit()) {
 		if (decoder.endOfVideo()) {
 			if (loopFromStart) {
-				// RunMediaSequence at 0x1e516 resets its one-based frame counters
-				// to one when the loop flag is set with a zero loop-start. It does
-				// not reload or seek the Smacker state, so skipped blocks in the
-				// first packet continue from the decoder's wrapped framebuffer.
+				// A zero loop-start resets RIPPER.LE's counter without replacing the
+				// wrapped Smacker surface, so rewind without clearing decoder state.
 				if (!decoder.rewind()) {
 					warning("Ripper: could not rewind looping scene Smacker '%s'",
 						name.c_str());
@@ -674,10 +657,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				completed = false;
 				break;
 			}
-			// SeekSmackerPlaybackFrame at 0x50a88 resumes at the requested packet
-			// over the retail decoder's wrapped framebuffer. ScummVM's offscreen
-			// decoder does not reproduce that surface state after an arbitrary seek,
-			// so rebuild the exact loop-start frame from a cleared initial surface.
+			// RIPPER.LE 0x50a88 seeks over its wrapped framebuffer. ScummVM cannot
+			// reproduce that state directly, so rebuild from a cleared first frame.
 			const Graphics::Surface *frame =
 				decoder.restartAtFrame(loopStartFrame - 1);
 			if (!frame) {
@@ -695,10 +676,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				break;
 			continue;
 		}
-		// ExecuteSceneFrameAndInteractions at 0x13277 passes
-		// PollInteractionAndResolveSelection at 0x13c8d as RunMediaSequence's
-		// per-frame callback. RunFrontEndActionMenu blocks that callback while the
-		// pointer remains in the toolbar band, so no Smacker frame advances.
+		// The toolbar blocks RIPPER.LE's per-frame callback while it owns the
+		// pointer, so Smacker playback must pause too.
 		const bool callbackOwnsInput = sequenceCallback && sequenceCallback->ownsInput();
 		if (callbackOwnsInput != callbackOwnedInput) {
 			debugC(2, kDebugVideo,
@@ -1062,11 +1041,8 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		}
 		completedFinalSegment = i + 1 == movie.segments.size();
 	}
-	// RunPacketizedMediaPlaybackCore at 0x5b592 does not tear down the
-	// presentation when opcode 0x70 ends packet dispatch. It waits until
-	// GetManagedAudioTriggerActiveDescriptor reports that the managed-audio
-	// tail has completed. Some IAVF files, including KA_BOOK.AVI, have several
-	// seconds of audio after their final rendered frame.
+	// Opcode 0x70 ends packet dispatch, not presentation lifetime. RIPPER.LE
+	// keeps the final frame until managed audio ends; KA_BOOK.AVI relies on it.
 	if (result && completedFinalSegment && audioActive &&
 			!_engine->shouldQuit() && !_engine->getScripts()->hasPendingSceneTransition() &&
 			_mixer->isSoundHandleActive(audioHandle)) {
@@ -1121,11 +1097,8 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 
 bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, int y,
 		bool sceneViewport, const Common::String &presentationText) {
-	// ExecutePresentationEntry at 0x1754b routes WAV entries to
-	// PlayBlockingAudioWithOptionalText at 0x206e0 before considering either
-	// video path.
-	// The original blocking-audio loop always permits Escape, independently of
-	// the presentation control argument used by AVI and Smacker playback.
+	// RIPPER.LE routes WAV entries through blocking audio before either video
+	// path. That loop always permits Escape, independent of AVI controls.
 	if (path.hasSuffixIgnoreCase(".wav")) {
 		debugC(2, kDebugAudio,
 			"Ripper: dispatching media presentation '%s' as blocking audio",
@@ -1164,10 +1137,8 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 
 	bool result = false;
 	if (isSmacker) {
-		// RunMediaSequence at 0x1e516 draws direct scene-script Smackers against
-		// the active scene display descriptor. Its logical y=0 is the top of the
-		// 640x300 scene page, which begins at physical y=50 in ScummVM's retained
-		// 640x400 framebuffer.
+		// Direct scene Smackers use a 640x300 page whose logical y=0 is physical
+		// y=50 in ScummVM's 640x400 framebuffer.
 		const int originY = sceneViewport ? kScenePresentationTop : 0;
 		SmackerPlaybackPlan plan;
 		plan.input.allowEscSpace = allowEscSpace;
@@ -1177,10 +1148,8 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		result = playValidatedSmacker(stream.release(), path, "presentation", plan);
 	} else if (isIavf) {
 		const bool hasPresentationText = !presentationText.empty();
-		// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3 forces a
-		// small authored-text AVI out of the scene viewport and onto the full
-		// startup display page. ExecutePresentationEntry at 0x1754b supplies
-		// centered (-1,-1) packetized coordinates on that portable branch.
+		// Authored-text AVI uses the full display and centered coordinates rather
+		// than the active scene viewport (RIPPER.LE 0x16ae3).
 		const int originY = hasPresentationText ? 0 :
 			(sceneViewport ? kScenePresentationTop : 0);
 		const int presentationX = hasPresentationText ? -1 : x;
@@ -1188,16 +1157,12 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		PresentationTextMediaCallback textCallback(_engine, _input,
 			presentationText, originY, _engine->getSettings()->getVideoMode());
 		uint16 textCommand = 0;
-		// ConfigureMediaPresentationDisplayModeCallback at 0x16ae3 forces
-		// video mode zero to the unscaled mode while authored text is active.
-		// Mode one is already unscaled; modes two and three retain their
-		// configured scaling and move later text branches offscreen.
+		// Authored text is unscaled in modes zero and one. Modes two and three
+		// retain their scale and move later text branches offscreen.
 		const uint textDisplayScale = hasPresentationText &&
 			_engine->getSettings()->getVideoMode() < 2 ? 1 : 0;
-		// RunWacVoiceLockPuzzleScene at 0x24ba4 fades ACCESED.AVI out before
-		// returning to the restored WAC page. A presentation whose indexed page
-		// and palette will be restored must not replace the source palette later
-		// used to rebuild the surrounding scene and interface bands.
+		// Restoring an indexed page also requires its source palette; ACCESED.AVI
+		// must not replace the palette used to rebuild the surrounding WAC page.
 		result = playIavf(*stream, path, allowEscSpace, presentationX,
 			presentationY, originY, false,
 			rememberIavfPalette, textDisplayScale,

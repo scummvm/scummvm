@@ -58,10 +58,8 @@ BriefingManager::~BriefingManager() {
 }
 
 bool BriefingManager::initialize(ResourceManager &resources, bool demoVariant) {
-	// Retail LoadFrontEndToolbarResources at 0x18678 stores toolbar action four at
-	// g_frontEndToolbarResources+0xc, which ArmBriefingMediaTrigger at 0x1929a
-	// reuses for the lower-band message control. The demo's corresponding helper
-	// at 0x16b39 instead reads the third toolbar frame set at 0x698fc.
+	// RIPPER.LE uses toolbar4.pl; RIP.EXE reads the third toolbar3.pl frame set
+	// at 0x698fc for the same lower-band control.
 	const char *assetName = demoVariant ? "toolbar3.pl" : "toolbar4.pl";
 	if (!resources.loadInterfaceBitmapSequence(assetName, _frames) ||
 			_frames.frames.empty())
@@ -236,14 +234,10 @@ bool BriefingManager::activate() {
 		}
 		break;
 	case 2:
-		// ServiceBriefingMediaTrigger at 0x1945b clears selector 2 without
-		// presenting media or changing milestone state.
 		debugC(1, kDebugScene,
 			"Ripper: completed briefing selector=2 without media or state changes");
 		break;
 	case 3:
-		// The selector jump-table entry at 0x19624 presents RIP_WAC2.AVI
-		// without changing milestone state.
 		result = _engine->getMedia()->play("rip_wac2.avi", true, 0, 0);
 		if (result) {
 			debugC(1, kDebugScene,
@@ -267,8 +261,6 @@ bool BriefingManager::activate() {
 		}
 		break;
 	case 5:
-		// ServiceBriefingMediaTrigger at 0x1945b presents VF2_2_P1.AVI,
-		// records milestone 0x133, and opens travel location 0x14.
 		result = _engine->getMedia()->play("vf2_2_p1.avi", true, 0, 0);
 		if (result)
 			result = _engine->getMilestones()->set(
@@ -285,8 +277,6 @@ bool BriefingManager::activate() {
 		}
 		break;
 	case 6:
-		// ServiceBriefingMediaTrigger at 0x1945b presents RIP_WAC3.AVI
-		// and records milestone 0x13a after the presentation returns.
 		result = _engine->getMedia()->play("rip_wac3.avi", true, 0, 0);
 		if (result)
 			result = _engine->getMilestones()->set(
@@ -298,8 +288,6 @@ bool BriefingManager::activate() {
 		}
 		break;
 	case 7:
-		// The selector branch at 0x19739 presents RIPWAC31.AVI
-		// without changing milestone state.
 		result = _engine->getMedia()->play("ripwac31.avi", true, 0, 0);
 		if (result) {
 			debugC(1, kDebugScene,
@@ -307,10 +295,6 @@ bool BriefingManager::activate() {
 		}
 		break;
 	case 8: {
-		// ServiceBriefingMediaTrigger at 0x1945b saves the current palette,
-		// presents WACGAMBI.AVI with both presentation-control flags clear,
-		// sets flags 0x196 and 0x135, waits for any keyboard command or a
-		// left-button transition, and then rebuilds the prior display.
 		IndexedDisplaySnapshot displayContext;
 		if (!displayContext.capture()) {
 			warning("Ripper: could not capture display for briefing selector 8");

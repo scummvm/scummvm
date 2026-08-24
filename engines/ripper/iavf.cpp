@@ -89,8 +89,7 @@ static bool parseIavfInternal(Common::SeekableReadStream &stream, const Common::
 	movie.bitsPerSample = header[0x1f];
 	const uint32 headerByteRate = READ_LE_UINT32(header.data() + 0x20);
 	const uint32 headerBlockAlign = READ_LE_UINT32(header.data() + 0x24);
-	// The retail assets store height before width, contrary to the field order
-	// previously documented for IAVF.
+	// Shipped IAVF assets store height before width.
 	movie.presentationHeight = READ_LE_UINT16(header.data() + 0x2f);
 	movie.presentationWidth = READ_LE_UINT16(header.data() + 0x31);
 	if (movie.channels != 1 || movie.bitsPerSample != 16 || movie.sampleRate == 0) {

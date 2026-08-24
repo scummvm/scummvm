@@ -543,18 +543,13 @@ bool SceneActionDispatcher::dispatch(ScriptManager &manager, const CompiledScrip
 	if (action == kSceneActionAppendNotebookText)
 		return engine->getWac()->appendNotebookResourceString(argument);
 	if (manager._demoScriptAbi && action == 200) {
-		// The demo initializer at 0x10794 loads R_P_L1.WAV into its persistent
-		// audio descriptor. DispatchSceneEntryAction at 0x13a52 enqueues that
-		// descriptor for action 200 and applies the normal 0x2fff volume. Its
-		// global handle at 0x68e0a survives the RIPPER.RUN-to-BA0.RUN handoff;
-		// the descriptor has no repeat setup, and the adjacent action-201 branch
-		// is responsible for stopping it if the one-shot cue is still active.
+		// RIP.EXE action 200 starts one-shot R_P_L1.WAV from persistent handle
+		// 0x68e0a. It survives the scene handoff; action 201 stops it.
 		SceneAudioManager *sceneAudio = engine->getSceneAudio();
 		return sceneAudio->load("r_p_l1.wav", true) &&
 			sceneAudio->configure("r_p_l1", 100, 0, 0);
 	}
 	if (manager._demoScriptAbi && action == 201) {
-		// The adjacent action-201 branch at 0x13bf5 stops the retained handle.
 		engine->getSceneAudio()->stop("r_p_l1");
 		return true;
 	}

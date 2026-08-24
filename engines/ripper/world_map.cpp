@@ -42,10 +42,7 @@ static const uint kTravelLocationNameResource = 100;
 static const uint kTravelDetailResource = 116;
 static const uint kTravelTargetResource = 150;
 static const uint kWorldMapCursor = 16;
-// RunSceneSelectionMenu at 0x20808 passes (305, 45) through the original
-// transposed presentation coordinates, producing screen position (45, 305).
-// The companion detail control uses screen position (330, 305); both are
-// 190x80. Layout rows 15 and 16 at 0x207ac place the 23x15 scroll controls.
+// RIPPER.LE layout 0x207ac stores these controls in display-service Y/X order.
 static const int kLocationListLeft = 45;
 static const int kLocationListTop = 305;
 static const int kLocationListRight = 235;

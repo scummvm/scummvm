@@ -137,7 +137,7 @@ void ModalDialogManager::applySharedPalettePatch(byte *palette, uint colorCount)
 		return;
 
 	// InitializeSharedPresentationTemplates at 0x10c9d (demo) and 0x1196f
-	// (retail) capture these ranges from the MENUB palette through
+	// (RIPPER.LE) capture these ranges from the MENUB palette through
 	// CaptureSharedDisplayPalettePatch at 0x1b176/0x205a9. The corresponding
 	// ApplySharedDisplayPalettePatch functions at 0x1b1bd/0x205d0 restore them
 	// for chooser text and frame pixels without replacing the active scene palette.
@@ -402,7 +402,7 @@ void ModalDialogManager::finishTextEntry(Common::String &text) {
 	_engine->getInput()->discardMouseTransitions();
 	_engine->getCursor()->setVisible(_textEntryRestoreCursor);
 	if (_textEntryBacking.isValid()) {
-		// ReleaseChooserControlVisualState at 0x5489f restores the original
+		// ReleaseChooserControlVisualState at 0x5489f restores the saved
 		// chooser backing before freeing its display snapshots.
 		_textEntryBacking.restorePixels();
 		_textEntryBacking.clear();
