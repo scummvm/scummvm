@@ -28,10 +28,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId, egyptLabyrinthPositionIndex, egyptSealPuzzleProgress.
-// Saved GameplayState fields written:
-// mainFlowStateId, egyptLabyrinthPositionIndex.
 class Scene2060 : public PlayableScene {
 public:
 	Scene2060(HollywoodEngine *vm);

@@ -29,13 +29,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId, currentAmbientMusicCueId, frankensteinNoteOverlayMode,
-// hannoverCourtyardDialogueState, hannoverCourtyardFollowUpSeen.
-// Saved GameplayState fields written:
-// mainFlowStateId, reviewedFrankensteinNote, frankensteinNoteOverlayMode,
-// hannoverCourtyardFollowUpSeen.
-
 /**
  * Uses separate transient-layer stacks behind and in front of the actors.
  *

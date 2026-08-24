@@ -28,15 +28,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId, reviewedFrankensteinNote, seenJosephGuestListGreeting,
-// officeStatueActionProgress, officeNotePickupState, openedOfficeClosetDoor,
-// currentInventoryOwnerIndex.
-// Saved GameplayState fields written:
-// mainFlowStateId, reviewedFrankensteinNote, seenJosephGuestListGreeting,
-// officeStatueActionProgress, frankensteinNoteOverlayMode,
-// officeNotePickupState, openedOfficeClosetDoor.
-
 /**
  * Supports mutually exclusive resource modes based on whether the Frankenstein
  * note has been reviewed. That state selects an alternate palette and animation

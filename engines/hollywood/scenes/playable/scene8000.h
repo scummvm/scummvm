@@ -31,14 +31,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// inventoryItemCountByOwner.
-// Saved GameplayState fields written:
-// mainFlowStateId, activeAudioChapterIndex, currentInventoryOwnerIndex,
-// currentAmbientMusicCueId, inventoryItemCountByOwner,
-// inventoryFirstVisibleSlotByOwner, inventorySlotItemIdByOwner,
-// inventoryItemSlotByOwnerAndItemId, inventoryItemResourcePageByOwnerAndItemId,
-// ronTravelScreenUnlocked.
 class Scene8000 : public ChapterIntroScene {
 public:
 	Scene8000(HollywoodEngine *vm);
