@@ -45,6 +45,8 @@ private:
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
@@ -52,6 +54,7 @@ private:
 	void copyCaptionRow(byte sourceRow, byte destinationRow);
 	void advanceBackgroundLayer(uint32 delta);
 	void advanceForegroundActorLayer(uint32 delta);
+	void advanceDialogueActorLayer(uint32 delta);
 	void updateForegroundActorIdleSpeech(uint32 delta);
 	bool canStartForegroundActorIdleSpeech() const;
 	void startForegroundActorIdleSpeech(byte frameIndex);
@@ -70,6 +73,7 @@ private:
 
 	TimedAnimationChannel _backgroundChannel;
 	TimedAnimationChannel _foregroundActorChannel;
+	TimedAnimationChannel _dialogueActorChannel;
 	ResourceSpriteLayer _backgroundLayer;
 	ResourceSpriteLayer _foregroundActorLayer;
 	byte _foregroundActorMode;

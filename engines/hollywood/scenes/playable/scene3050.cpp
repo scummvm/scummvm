@@ -47,8 +47,9 @@ const uint kScene3050ActorBankTableEntry = 0x0000;
 const uint kScene3050ActorPaletteTableEntry = 0x00cc;
 const uint kScene3050Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene3050SpeechCueDescriptorTableOffset = 0x1135;
-const uint32 kScene3050BackgroundFrameMillis = 125;
+const uint32 kScene3050BackgroundFrameMillis = 25;
 const uint32 kScene3050ForegroundFrameMillis = 100;
+const uint32 kScene3050DialogueFrameMillis = 125;
 const uint kScene3050BackgroundDescriptorCount = 0x1e;
 const uint kScene3050ForegroundActorDescriptorCount = 0x17;
 const byte kScene3050DialogueStageId = 0x62;
@@ -58,6 +59,9 @@ const byte kScene3050CaptionSourceRow = 10;
 const byte kScene3050CaptionDestinationRow = 3;
 const byte kScene3050IgorIdleSpeechRow = 0x0b;
 const byte kScene3050IgorIdleSpeechFrameCount = 5;
+const byte kScene3050IgorInitialIdleCounter = 7;
+const byte kScene3050DialogueBaseFrame = 0x18;
+const byte kScene3050DialogueBlinkFrame = 0x1c;
 const byte kScene3050PrimarySpeechTextColor = 0xfb;
 const byte kScene3050InvalidPrimarySpeechGroup = 0xff;
 const byte kScene3050DefaultPrimarySpeechFrame = 7;
@@ -115,6 +119,7 @@ Scene3050::Scene3050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3050Config(), "scene3050", 0x2a4, 0x19e, 5, 0xfd, 0xfb),
 		_backgroundChannel(),
 		_foregroundActorChannel(),
+		_dialogueActorChannel(),
 		_backgroundLayer(),
 		_foregroundActorLayer(),
 		_foregroundActorMode(0),
@@ -192,9 +197,10 @@ bool Scene3050::prepareCustomGameplayLoop() {
 bool Scene3050::advanceCustomGameplayLoop(uint32 delta) {
 	advanceBackgroundLayer(delta);
 	updateForegroundActorIdleSpeech(delta);
-	advanceForegroundActorLayer(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
+	if (_dialogueMenuActive)
+		advanceDialogueActorLayer(delta);
+	else
+		advanceForegroundActorLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -212,10 +218,10 @@ bool Scene3050::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 304: // Mirar sala (look at room): identifies it as biblioteca (library).
-		beginSecondarySpeechLine(1, 2);
+		beginSecondarySpeechLine(2, 0);
 		if (!state.scene3050LibraryCaptionRevealed) {
 			state.scene3050LibraryCaptionRevealed = true;
-			applySceneStateToHotspotsAndPatches(0);
+			applySceneStateToHotspotsAndPatches(1);
 		}
 		return true;
 	case 305: // Ir a sala/biblioteca (go to room/library): transition toward scene 3060.
@@ -254,7 +260,7 @@ bool Scene3050::dispatchCustomSceneAction(uint16 handlerId) {
 }
 
 bool Scene3050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
-	if (selector == 0 || selector == 0xff) {
+	if (selector == 1 || selector == 0xff) {
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 		if (_vm->gameState().scene3050LibraryCaptionRevealed)
@@ -264,6 +270,18 @@ bool Scene3050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	}
 
 	return true;
+}
+
+byte Scene3050::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene3050DialogueBaseFrame;
+}
+
+void Scene3050::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	(void)animationGroup;
+	_dialogueActorChannel.frameIndex = frameIndex;
+	_foregroundActorChannel.frameIndex = frameIndex;
+	_foregroundActorLayer.setFrame(frameIndex);
 }
 
 AmbientAudioProfile Scene3050::ambientAudioProfile() const {
@@ -280,12 +298,13 @@ AmbientAudioProfile Scene3050::ambientAudioProfile() const {
 void Scene3050::resetAnimationLayers() {
 	_backgroundChannel.reset(0, kScene3050BackgroundFrameMillis);
 	_foregroundActorChannel.reset(0, kScene3050ForegroundFrameMillis);
+	_dialogueActorChannel.reset(kScene3050DialogueBaseFrame, kScene3050DialogueFrameMillis);
 	_backgroundLayer.visible = true;
 	_foregroundActorLayer.visible = true;
 	_backgroundLayer.reset(0);
 	_foregroundActorLayer.reset(0);
 	_foregroundActorMode = 0;
-	_foregroundActorIdleCounter = 0;
+	_foregroundActorIdleCounter = kScene3050IgorInitialIdleCounter;
 	_foregroundActorIdleSpeechFrame = 0;
 	_foregroundActorIdleSpeechActive = false;
 	_foregroundActorManualSequenceActive = false;
@@ -347,14 +366,6 @@ void Scene3050::advanceForegroundActorLayer(uint32 delta) {
 			continue;
 		}
 
-		if (_speech.isPlaying() || _speechOverlay.visible || _primarySpeechOverlay.visible) {
-			_foregroundActorMode = 0;
-			_foregroundActorChannel.frameIndex = _foregroundActorChannel.frameIndex < 0x13 ?
-				_foregroundActorChannel.frameIndex + 1 : 0;
-			_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
-			continue;
-		}
-
 		if (_foregroundActorMode == 1) {
 			if (_foregroundActorChannel.frameIndex == 2) {
 				if (_random.getRandomNumber(14) == 0) {
@@ -393,15 +404,28 @@ void Scene3050::advanceForegroundActorLayer(uint32 delta) {
 
 		if (_foregroundActorChannel.frameIndex == 2) {
 			_foregroundActorMode = 1;
-			_foregroundActorIdleCounter = 0;
 		} else if (_foregroundActorChannel.frameIndex == 0x0c) {
 			_foregroundActorMode = 2;
-			_foregroundActorIdleCounter = 0;
 		} else {
 			_foregroundActorChannel.frameIndex = _foregroundActorChannel.frameIndex < 0x13 ?
 				_foregroundActorChannel.frameIndex + 1 : 0;
 		}
 		_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
+	}
+}
+
+void Scene3050::advanceDialogueActorLayer(uint32 delta) {
+	const uint frameCount = _dialogueActorChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame) {
+		byte nextFrame = kScene3050DialogueBaseFrame;
+		if (_primaryDialogueSpeechActive) {
+			nextFrame = _speechController.advancePrimaryDialogueSpeechFrame(
+				_random, kScene3050DialogueBaseFrame);
+		} else if (_dialogueActorChannel.frameIndex == kScene3050DialogueBaseFrame &&
+				_random.getRandomNumber(14) == 0) {
+			nextFrame = kScene3050DialogueBlinkFrame;
+		}
+		setPrimarySpeechAnimationFrame(0, nextFrame);
 	}
 }
 
@@ -534,16 +558,17 @@ void Scene3050::runDialogueMenuRow98() {
 	byte nodeIndex = 0;
 	bool finished = false;
 
+	_dialogueMenuActive = true;
+	_dialogueActorChannel.reset(kScene3050DialogueBaseFrame, kScene3050DialogueFrameMillis);
 	beginDialogueResponse(0);
 
 	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		DialogueMenu menu(_vm, this);
-		_dialogueMenuActive = true;
 		const byte selectedChoice = menu.choose(kScene3050DialogueStageId, records, depthIndex, nodeIndex);
-		_dialogueMenuActive = false;
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene3050DialogueStageId, 7);
 			beginDialogueResponse(7);
+			_dialogueMenuActive = false;
 			return;
 		}
 
@@ -582,6 +607,7 @@ void Scene3050::runDialogueMenuRow98() {
 			break;
 		}
 	}
+	_dialogueMenuActive = false;
 }
 
 void Scene3050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
