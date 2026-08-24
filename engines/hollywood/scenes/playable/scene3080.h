@@ -44,8 +44,16 @@ private:
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 
 	void resetAnimationLayers();
 	void rebuildWalkableMask();
@@ -56,10 +64,11 @@ private:
 	void runEntryFromForest();
 	void runEntryFromCabin();
 	void runEntryFromBrook();
+	void startEntryMusic();
 	void runDiaryPickup();
 	void runStickPickup();
-	void runBranchExchangeOverlay();
-	void drawForegroundBlocks(int activeWorldY);
+	void runFlyerCoatingOverlay();
+	void drawForegroundBlocks();
 
 	TimedAnimationChannel _largeChannel;
 	TimedAnimationChannel _smallIdleChannel;

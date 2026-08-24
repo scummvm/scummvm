@@ -42,6 +42,7 @@ const uint16 kScene3010EntryFromPathState = 0x0bc4;
 const uint16 kScene3020State = 0x0bcc;
 const uint16 kScene3040State = 0x0be0;
 const uint16 kScene3050State = 0x0bea;
+const uint16 kScene3080EntryFromScene3010State = 0x0c08;
 const uint16 kScene3010ViewportXOffset = 0x0078;
 const uint kScene3010ActorBankTableEntry = 0x0000;
 const uint kScene3010ActorPaletteTableEntry = 0x00cc;
@@ -251,8 +252,8 @@ bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 306: // Mirar molino (look at windmill).
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307: // Mirar camino/bosque (look at path/forest), state-aware.
-		beginSecondarySpeechLine(6, 0);
+	case 307: // Ir por el camino del bosque (take the forest path): enter scene 3080.
+		runExitToScene3080();
 		return true;
 	case 308: // Mirar bosque (look at forest): dense forest.
 		beginSecondarySpeechLine(7, 0);
@@ -364,11 +365,20 @@ void Scene3010::runExitToScene3050() {
 void Scene3010::runExitToScene3020() {
 	GameplayState &state = _vm->gameState();
 	beginSecondarySpeechLine(4, state.scene3010ForestExitSeen ? 1 : 0);
-	runDepartureTransition();
+	runDepartureTransition(true);
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 	state.scene3010ForestExitSeen = true;
 	state.mainFlowStateId = kScene3020State;
+}
+
+void Scene3010::runExitToScene3080() {
+	GameplayState &state = _vm->gameState();
+	beginSecondarySpeechLine(6, state.scene3080EntryLineSeen ? 1 : 0);
+	runDepartureTransition(false);
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+	state.mainFlowStateId = kScene3080EntryFromScene3010State;
 }
 
 void Scene3010::runUmbrellaClimb() {
@@ -379,7 +389,7 @@ void Scene3010::runUmbrellaClimb() {
 	}
 
 	beginSecondarySpeechLine(10, 0);
-	runDepartureTransition();
+	runDepartureTransition(true);
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
@@ -389,7 +399,7 @@ void Scene3010::runUmbrellaClimb() {
 	state.mainFlowStateId = kScene3040State;
 }
 
-void Scene3010::runDepartureTransition() {
+void Scene3010::runDepartureTransition(bool includeSecondClip) {
 	Graphics::ManagedSurface transitionBackground;
 	transitionBackground.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -406,10 +416,12 @@ void Scene3010::runDepartureTransition() {
 		skipWaits = playDepartureClip(clipData, kScene3010DepartureFirstFrameCount,
 			transitionBackground, skipWaits, 0);
 
-	clipData.clear();
-	if (loadVariableChunk(kScene3010DepartureSecondChunk, clipData))
-		playDepartureClip(clipData, kScene3010DepartureSecondFrameCount,
-			transitionBackground, skipWaits, kScene3010DeparturePauseMillis);
+	if (includeSecondClip) {
+		clipData.clear();
+		if (loadVariableChunk(kScene3010DepartureSecondChunk, clipData))
+			playDepartureClip(clipData, kScene3010DepartureSecondFrameCount,
+				transitionBackground, skipWaits, kScene3010DeparturePauseMillis);
+	}
 
 	_baseFramebuffer.copyRectToSurface(transitionBackground.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
