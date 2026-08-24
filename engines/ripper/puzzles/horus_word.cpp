@@ -95,7 +95,7 @@ static const Common::Point kLetterPositions[kLetterCount] = {
 };
 
 // g_astHorusFallingLetterStates at 0x84dbc stores the five final letter
-// anchors. Retail applies EGYPT.RTP at phase * 10 over this display region.
+// anchors. RIPPER.LE applies EGYPT.RTP at phase * 10 over this display region.
 static const Common::Point kWordPositions[kWordLength] = {
 	Common::Point(228, 347), Common::Point(264, 347),
 	Common::Point(299, 347), Common::Point(334, 347),

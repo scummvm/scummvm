@@ -373,11 +373,8 @@ void StainedGlassPuzzle::renderTransition(const uint *previousOrder,
 			(int)kTransitionSteps;
 		drawFrame(pixels, screen->pitch, _tiles[tile], x, y);
 	}
-	// AnimateStainedGlassPuzzleTileTransition at 0x2dc23 attaches the
-	// FRAME3.PCX descriptor to the scratch update after composing the moving
-	// tiles. It acts as a stencil rather than a color source: color-zero
-	// openings expose the moving pieces, while all other pixels retain the
-	// existing GLASS.PCX backdrop and lattice.
+	// FRAME3.PCX is a stencil: transparent pixels expose moving pieces; other
+	// pixels restore the GLASS.PCX lattice (RIPPER.LE 0x2dc23).
 	for (uint y = 0; y < _transitionMask.height; ++y) {
 		for (uint x = 0; x < _transitionMask.width; ++x) {
 			const uint offset = y * _transitionMask.width + x;

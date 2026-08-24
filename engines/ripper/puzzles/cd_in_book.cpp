@@ -76,7 +76,7 @@ static const Position kButtonPositions[kButtonCount] = {
 };
 
 // The eight dirty-region origins at 0x25d59 identify the P07.BBM feedback
-// markers. The original chooses GenerateRandomInt15() & 7 after each of the
+// markers. RIPPER.LE chooses GenerateRandomInt15() & 7 after each of the
 // first five button presses, so the same marker may be removed more than once.
 static const Position kFeedbackPositions[kFeedbackMarkerCount] = {
 	{366, 262}, {372, 264}, {371, 269}, {378, 271},

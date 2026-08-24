@@ -74,7 +74,7 @@ static const uint16 kHelpAction = 0x3b00;
 static const uint kHelpSelectionTable = 0x1a1;
 static const uint kNoLaunchFrame = 0xffffffff;
 
-// RunTableGateLeverPuzzleScene at 0x38eb8 normalizes the original 1-based
+// RunTableGateLeverPuzzleScene at 0x38eb8 normalizes RIPPER.LE's 1-based
 // records at 0x84720 once. These are the resulting zero-based links.
 static const PathNode kPathNodes[kPathNodeCount] = {
 	{22, 486, 1}, {72, 486, 6}, {185, 487, 3}, {263, 485, -2},
@@ -130,7 +130,7 @@ static const Common::Point kLeverPositions[kLeverCount] = {
 	Common::Point(533, 179 + kSceneOriginY)
 };
 
-// Dirty-region coordinates at 0x84ae4. The original reveals one indicator
+// Dirty-region coordinates at 0x84ae4. RIPPER.LE reveals one indicator
 // after each lever activation and restores all five after a failed traversal.
 static const Common::Point kActivationPositions[kLeverCount] = {
 	Common::Point(537, 97 + kSceneOriginY),
@@ -597,7 +597,7 @@ TableGatePuzzle::Result TableGatePuzzle::run(uint completionFlag) {
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		updateCursor(mouse.position);
-		// ServiceUiControlStateSelection at 0x393f6 runs under the original
+		// ServiceUiControlStateSelection at 0x393f6 runs under RIPPER.LE's
 		// active UI-selection presentation. Present each translated cursor tick
 		// explicitly for ScummVM's software cursor.
 		presentScreen();

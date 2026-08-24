@@ -86,7 +86,6 @@ static Common::Rect feedbackBounds() {
 		233 + 180, 36 + kSceneOriginY + 30);
 }
 
-// g_awEightButtonSolution at 0x84e25.
 static const byte kSolution[kSequenceLength] = {2, 2, 6, 4, 8, 1};
 
 static const char *const kFeedbackNames[kSequenceLength] = {

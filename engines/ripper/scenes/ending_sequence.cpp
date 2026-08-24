@@ -61,11 +61,8 @@ struct ThrowTarget {
 	int cursorXMax;
 };
 
-// g_endingSelectionThrowTargetRegions at 0x84fe4 stores frame-gated
-// coordinates in RIPMID.AVI's logical 320x200 space. Each 28-byte record
-// stores Y min at +0x08, X min at +0x0c, Y max at +0x10, and X max at +0x14;
-// HandleEndingSelectionThrowTargetCallback at 0x438cf reads those exact
-// offsets. The packetized movie is presented at 2:1 in retail 640x400 mode.
+// RIPPER.LE table 0x84fe4 stores Y/X bounds at +0x08/+0x0c/+0x10/+0x14 in
+// RIPMID.AVI's 320x200 space. Playback scales them 2:1.
 static const ThrowTarget kThrowTargets[kThrowTargetCount] = {
 	{ 42, 79, 53, 139, 136, 179 },
 	{ 84, 122, 53, 124, 136, 173 },
@@ -86,7 +83,7 @@ static const char *const kCorrectEpilogueMedia[4] = {
 };
 
 // RunEndingSelectionEpiloguesAndCredits at 0x43adb maps the story flags to
-// these ending indices. The names preserve the retail diagnostic strings.
+// these ending indices. The names preserve RIPPER.LE's diagnostic strings.
 static const char *const kEndingNames[4] = {
 	"Burton", "Eddie", "Powel", "Magnotta"
 };
@@ -207,8 +204,7 @@ private:
 				_overlayPaletteIndex = index;
 		}
 
-		// The retail comparison is strict at every edge. Draw only pixels whose
-		// logical mouse coordinates can actually satisfy that comparison.
+		// RIPPER.LE uses strict edge comparisons; exclude pixels no click can hit.
 		const Common::Rect bounds(
 			(region.cursorXMin + 1) * kEndingSelectionDisplayScale,
 			(region.cursorYMin + 1) * kEndingSelectionDisplayScale,
@@ -282,9 +278,8 @@ public:
 		_sequenceId = sequenceId;
 		_selectionActive = sequenceId == kEndingSelectionSequenceId;
 		if (_selectionActive) {
-			// InitializeEndingSelectionPlaybackCallback at 0x43840 installs
-			// the 2:1 display descriptor and moves the retail selection point
-			// to logical (100,160) as branch sequence 3 begins.
+			// Sequence 3 starts at logical (100,160) under the 2:1 descriptor
+			// installed by RIPPER.LE at 0x43840.
 			_engine->getInput()->warpMousePosition(Common::Point(
 				kEndingSelectionCursorX * kEndingSelectionDisplayScale,
 				kEndingSelectionCursorY * kEndingSelectionDisplayScale));

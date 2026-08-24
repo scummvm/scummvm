@@ -74,10 +74,8 @@ bool WacStillImageViewer::load(const Common::String &path) {
 		return false;
 
 	_image = Common::move(image);
-	// RunWacStillImageScreenWithOptionalAudio at 0x22f1f initializes the
-	// retail scroll registry to zero, whose bitmap-presentation path opens a
-	// tall PCX on its final 0x11a-row slice. BitmapAssetFrame is top-down, so
-	// translate that presentation boundary to its source-row offset here.
+	// RIPPER.LE opens a tall PCX on its final 0x11a-row slice. The top-down
+	// buffer therefore begins at height minus the viewport height.
 	_scrollOffset = _image.height > kWacMediaHeight ?
 		_image.height - kWacMediaHeight : 0;
 	_scrollControl = 0;
@@ -204,13 +202,8 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 		const Common::String &entryLabel, const Common::String &imagePath,
 		const Common::String &mediaPath, uint presentationFlag,
 		uint completionFlag) {
-	// RunWacStillImageScreenWithOptionalAudio at 0x22f1f owns the decoded
-	// bitmap, palette patch, optional scroll controls, and nested WAC input
-	// loop. RunWacInventorySelectionLoop at 0x2252a normalizes Escape (0x1b)
-	// after this function returns and resumes the database chooser.
-	// RunWacStillImageScreenWithOptionalPresentation at 0x22a32 shares that
-	// ownership, aligns the image X coordinate to four pixels, and gates its
-	// WACVID1A/B control on flag 0x57.
+	// RIPPER.LE's presentation variant aligns X to four pixels and exposes its
+	// WACVID1A/B control only while flag 0x57 is set.
 	const bool hasOptionalPresentation = !mediaPath.empty();
 	const bool presentationAvailable = hasOptionalPresentation &&
 		_database->engine()->getMilestones()->isSet(presentationFlag);
@@ -311,7 +304,7 @@ uint16 WacStillImageViewer::runInternal(byte entryIndex,
 				_database->drawBitmap(presentationFrames[0],
 					presentationBounds.left, presentationBounds.top);
 				if (presentationHover) {
-					// The retail control temporarily forces video mode 1 around
+					// RIPPER.LE temporarily forces video mode 1 around
 					// RunMediaPresentation, then sets the caller-supplied EBX flag.
 					RipperSettings *settings =
 						_database->engine()->getSettings();

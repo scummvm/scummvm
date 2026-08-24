@@ -59,7 +59,7 @@ static const char *const kBackgroundName = "bkgrnd2";
 static const char *const kMusicName = "reapsong";
 static const char *const kSceneCueNames[2] = { "tarot0", "tarot2" };
 
-// g_tarotCardSlotLayoutRows at 0x3e78d stores X/Y/card rows. The retail
+// g_tarotCardSlotLayoutRows at 0x3e78d stores X/Y/card rows. RIPPER.LE
 // controller subtracts 90 from every Y coordinate before constructing
 // controls 0x672 through 0x680.
 static const Common::Point kSlotPositions[TarotCardsModel::kSlotCount] = {

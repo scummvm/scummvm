@@ -250,7 +250,7 @@ void WacDatabaseSession::drawDatabase() const {
 		memset(screen->getBasePtr(bounds.left, y), kWacDatabaseBackground,
 			bounds.width());
 	const Common::Rect screenBounds(0, 0, screen->w, screen->h);
-	// TileChooserControlFrame at 0x54fbe walks the original presentation's
+	// TileChooserControlFrame at 0x54fbe walks RIPPER.LE's presentation
 	// transposed coordinate pair. In screen coordinates WACMNU0..8 are the
 	// row-major top, middle, and bottom frame tiles.
 	if (_wac->_databaseSkin.size() >= kWacDatabaseFrameTileCount) {
@@ -660,7 +660,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		if (result == BrokenMugPuzzle::kSolved) {
 			// RunWacMugSelectionScene at 0x236b9 replaces the active row's text
 			// pointer with resource 0xde after setting flags 0x47 and 0x48. The
-			// visible row keeps original dispatch entry 1 for this chooser session.
+			// visible row keeps dispatch entry 1 for this chooser session.
 			const WacDatabaseCatalogEntry *completedCatalog =
 				getWacDatabaseCatalogEntry(2);
 			const Common::String &completedLabel =
@@ -721,13 +721,8 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 			entry.catalog->presentationFlag, entry.catalog->completionFlag);
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerLoopingMedia) {
-		// RunWacInventorySelectionLoop at 0x2252a cases 9, 13, 14, 17,
-		// 19 through 23, and 26 resolve their WACINV*.SMK members from
-		// INTERFAC.PL and enter
-		// RunStaticMediaScreenWithOptionalVoiceover at 0x2339d without audio.
-		// The retail viewer centers each decoded sequence in the 350x282 WAC
-		// viewport and loops from frame one while the persistent controls stay
-		// active.
+		// RIPPER.LE loads these WACINV sequences from INTERFAC.PL, centers them
+		// in the 350x282 viewport, and loops while persistent controls stay active.
 		const Common::String path = Common::String::format(
 			"wacinv%u.smk", entry.originalIndex());
 		WacDatabaseMediaCallback callback(this, entry.originalIndex());
@@ -757,7 +752,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		return kNoAction;
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerConfiguredMediaWithVoiceover) {
-		// Retail case 25 combines both RIP_GAME names with the configured scene
+		// RIPPER.LE case 25 combines both RIP_GAME names with the configured scene
 		// path at 0x22971..0x229a5, then passes the optional scene-library handle
 		// to RunStaticMediaScreenWithOptionalVoiceover at 0x2339d. The installed
 		// data keeps both files loose under PATHS/scene.
@@ -795,7 +790,7 @@ uint16 WacDatabaseSession::dispatchDatabaseEntry(DatabaseEntry &entry) {
 		return runDatabaseTextPanel(entry, entry.catalog->contentResourceId);
 	}
 	if (entry.catalog->handler == kWacDatabaseHandlerRetailNoOp) {
-		// The retail switch has no cases for entries 18 and 27 through 29;
+		// RIPPER.LE has no cases for entries 18 and 27 through 29;
 		// only the shared viewport clear above is observable.
 		debugC(2, kDebugWac,
 			"Ripper: WAC database entry=%u label='%s' completed retail no-op",

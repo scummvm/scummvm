@@ -56,7 +56,7 @@ static const uint16 kFirstChoiceCommand = 0x672;
 static const uint16 kSecondChoiceCommand = 0x673;
 static const uint16 kFailureCommand = 0x7ffd;
 
-// g_woffordControlLayoutRows at 0x2a824 stores the original controls in
+// g_woffordControlLayoutRows at 0x2a824 stores the controls in
 // transposed scene coordinates. The first row must retain priority because it
 // lies inside the second row's full-presentation rectangle.
 static bool isFirstChoicePoint(const Common::Point &point) {

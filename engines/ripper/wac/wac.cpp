@@ -395,7 +395,7 @@ bool WacManager::dispatchAction(uint16 action) {
 	if (result == kDatabaseAction) {
 		if (_demoVariant) {
 			// The demo RunWacFrontEndLoop at 0x1c085 routes 0x2000 directly to
-			// RunWacMugSelectionScene at 0x1c58e; it has no retail database list.
+			// RunWacMugSelectionScene at 0x1c58e; the demo has no database list.
 			BrokenMugPuzzle puzzle(_engine);
 			const BrokenMugPuzzle::Result puzzleResult = puzzle.run();
 			drawFrontEnd();

@@ -325,7 +325,7 @@ bool WebGridShiftPuzzle::shiftToCell(uint targetCell, bool autoPlay) {
 }
 
 int WebGridShiftPuzzle::targetForDirection(uint direction) const {
-	// Retail maps the DOS arrow commands to the opposite physical direction:
+	// RIPPER.LE maps the DOS arrow commands to the opposite physical direction:
 	// Up grows the row, Down shrinks it, Left grows the column, and Right
 	// shrinks it. The autoplay direction ids 1..4 use the same mapping.
 	switch (direction) {
@@ -636,7 +636,7 @@ WebGridShiftPuzzle::Result WebGridShiftPuzzle::run(uint completionFlag) {
 		} else if (cursorChanged) {
 			presentScreen();
 		} else {
-			// ServiceUiControlStateSelection runs every retail input tick.
+			// Present unchanged frames so CursorMan flushes per-tick cursor updates.
 			presentScreen();
 		}
 		g_system->delayMillis(10);

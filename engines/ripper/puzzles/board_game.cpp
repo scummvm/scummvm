@@ -382,10 +382,6 @@ void BoardGamePuzzle::drawPiece(byte *screen, uint pitch, int piece,
 	const uint side = piece > 0 ? 0 : 1;
 	const uint type = ABS(piece) - 1;
 	const Common::Point position = anchor - kPieceOrigins[side][type];
-	// RenderBoardPieceVisual at 0x4186c attaches BOARDPAL with strength 0xa0
-	// when the cell matches the selected-source global at 0x84f68. The asset
-	// stores a 0x300-byte palette followed by a 12-bit RGB color cube used
-	// to quantize the source/background blend back into the board palette.
 	drawFrame(screen, pitch, _pieces[side][type], position.x, position.y,
 		selected);
 }

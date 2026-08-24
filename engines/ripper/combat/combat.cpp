@@ -384,7 +384,7 @@ void CombatEncounter::drawOverlay(const Common::Point &point, bool targetActive,
 	// 320 - bitmapWidth. The meter anchors are local to that right-hand panel.
 	const int panelX = _combatFrames.empty() ? 0 :
 		(int)kLogicalWidth - (int)_combatFrames[0].width;
-	// The retail loop composites effects and crosshairs first, then presents
+	// RIPPER.LE composites effects and crosshairs first, then presents
 	// the already-composed COMBAT0 status surface over them at 0x32790.
 	drawEffects(pixels, screen->pitch);
 	drawCrosshair(pixels, screen->pitch, point);

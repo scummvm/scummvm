@@ -78,7 +78,6 @@ static const Common::Point kKeyPositions[kKeyCount] = {
 	Common::Point(244, 128 + kSceneOriginY)
 };
 
-// g_keypadSequenceSolutionDigits at 0x84b7c.
 static const byte kSolution[kSequenceLength] = {
 	4, 5, 0, 1, 4, 4, 2, 8, 6
 };
@@ -147,8 +146,8 @@ bool KeypadSequencePuzzle::loadAssets() {
 }
 
 bool KeypadSequencePuzzle::captureEntryDisplay() {
-	// Retail clears logical page 1 at 0x3bd64, not the visible page containing
-	// the retained JB_DOOR frame. ScummVM presents both through one framebuffer.
+	// RIPPER.LE clears an off-screen page at 0x3bd64. Clearing ScummVM's one
+	// framebuffer here would erase the retained JB_DOOR frame.
 	return _baseDisplay.capture();
 }
 
@@ -350,7 +349,7 @@ bool KeypadSequencePuzzle::pressKey(uint key, uint completionFlag,
 	_pressedKey = -1;
 	_engine->getMedia()->playSoundEffect(kReleaseAudio, _releaseAudioHandle);
 
-	// Controls 0x67d (EX) and 0x67f (RV) both run the retail reject/clear sweep.
+		// Controls 0x67d (EX) and 0x67f (RV) share the reject/clear sweep.
 	if (key == 9 || key == 11) {
 		debugC(2, kDebugPuzzles,
 			"Ripper: keypad sequence clear key=%u entered=%u",

@@ -45,7 +45,7 @@ static const uint16 kFailureCommand = 0x7ffd;
 
 // RunCainDialogueScene at 0x2c160 uses one contiguous choice-progress range.
 // There is no choice ID two because 0x15b stores conversation-started state;
-// choice ID three resumes the retail mapping at 0x15c.
+// choice ID three resumes RIPPER.LE's mapping at 0x15c.
 static const uint kFirstChoiceFlag = 0x159;
 static const uint kConversationStartedFlag = 0x15b;
 static const uint kChoiceZeroGateFlag = 0x5c;

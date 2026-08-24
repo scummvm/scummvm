@@ -108,7 +108,7 @@ bool LibrarianScene::initialize() {
 
 void LibrarianScene::rebuildChoices() {
 	// RunKaDialogueScene at 0x2aef5 builds this list from GAMETEXT.TF entries
-	// 0xaa..0xad and the original 0x14a..0x14d progress bits, then passes the
+	// 0xaa..0xad and RIPPER.LE's 0x14a..0x14d progress bits, then passes the
 	// resulting item model to the same chooser control 0x4e2 used by opcode 0x17.
 	if (_chooser.isPending())
 		_chooser.dismissForSceneTransition("ka-choice-rebuild");
@@ -202,7 +202,7 @@ bool LibrarianScene::serviceVoiceCompletion() {
 }
 
 void LibrarianScene::serviceLoopAudio(uint frame) {
-	// The original Ka loop queues descriptors 2, 1, and 0 at frames 1, 28,
+	// RIPPER.LE's Ka loop queues descriptors 2, 1, and 0 at frames 1, 28,
 	// and 45, using the packed 25%, 20%, and 10% volumes initialized at entry.
 	for (uint i = 0; i < ARRAYSIZE(kLoopCueFrames); ++i) {
 		if (frame != kLoopCueFrames[i])
