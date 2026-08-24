@@ -168,6 +168,9 @@ bool GSound::validateOverlay(const GSoundDriverData &driverData) {
 	if (file.read(identity, 21) != 21)
 		return false;
 	identity[21] = 0;
+	if (identity[11] != '0' + driverData.section)
+		return false;
+	identity[11] = 'N';
 	if (Common::String(identity) != "Dragon GM  N12-21-93")
 		return false;
 
