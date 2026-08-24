@@ -49,11 +49,10 @@ private:
 	void runPresentation() override;
 
 	void updateSoundCues();
-	void drawPresentationFrame();
 	void stopSoundCues();
 
 	Common::RandomSource _random;
-	SoundBank0Player _loopSound;
+	SoundBank0Player _baseSound;
 	SoundBank0Player _ambientSound;
 	SoundBank0Player _lateSound;
 	byte _lastAmbientCue;
@@ -61,7 +60,6 @@ private:
 	byte _clipFrame;
 	bool _clipActive;
 	bool _lateSoundEnabled;
-	bool _patchVisible;
 };
 
 } // End of namespace Hollywood

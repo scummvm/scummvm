@@ -44,16 +44,11 @@ private:
 	void drawInitialFrame() override;
 	void runPresentation() override;
 
-	void drawPresentationFrame(bool clipDirty);
+	void drawPresentationFrame(bool largeDirty, bool smallDirty, int previousClipFrame);
 
 	byte _largeFrame;
 	byte _smallFrame;
 	byte _clipFrame;
-	uint16 _previousLargeDescriptor;
-	uint16 _previousSmallDescriptor;
-	bool _hasPreviousLargeDescriptor;
-	bool _hasPreviousSmallDescriptor;
-	bool _patchVisible;
 };
 
 } // End of namespace Hollywood

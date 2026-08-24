@@ -58,6 +58,7 @@ private:
 		kIntroChunkCount = 4,
 		kIntroFrameDescriptorCount = 21,
 		kIntroFrameDescriptorSize = 14,
+		kAnimatedPaletteByteCount = 0xff * 3,
 		kFrameStepMillis = 50,
 		kPaletteStepMillis = 50,
 		kHoldStepMillis = 1000,

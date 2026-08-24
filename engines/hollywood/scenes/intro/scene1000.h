@@ -46,7 +46,6 @@ private:
 	void drawInitialFrame() override;
 	void runPresentation() override;
 
-	void applyTitlePatch();
 	void advanceBlinkFrame();
 	void renderOverlayFrame(bool forceDirty);
 
@@ -56,14 +55,12 @@ private:
 	};
 
 	Common::RandomSource _random;
-	uint32 _lastBlinkMillis;
 	byte _blinkPatternMode;
 	byte _blinkFrameIndex;
 	byte _secondaryFrameIndex;
 	bool _blinkDirty;
 	bool _secondaryDirty;
 	bool _secondaryVisible;
-	bool _titlePatchApplied;
 };
 
 } // End of namespace Hollywood
