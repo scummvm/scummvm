@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	gameplay/dialogue_menu.o \
 	gameplay/game_loop.o \
 	gameplay/hotspots.o \
+	gameplay/inventory_media.o \
 	gameplay/inventory_actions.o \
 	gameplay/options_menu.o \
 	gameplay/panel_art.o \

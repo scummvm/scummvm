@@ -47,6 +47,15 @@ void GameplayLoopDelegate::playSharedInventorySound(byte sampleId) {
 void GameplayLoopDelegate::showTravelScreenViewer() {
 }
 
+bool GameplayLoopDelegate::showInventoryMedia(InventoryMediaId mediaId) {
+	(void)mediaId;
+	return false;
+}
+
+bool GameplayLoopDelegate::playSueTapeRecording() {
+	return false;
+}
+
 void beginRonSpeechLine(GameplayLoopDelegate *delegate, uint16 rowIndex, byte frameIndex) {
 	delegate->beginSharedInventorySpeechLine(rowIndex, frameIndex);
 }
@@ -548,9 +557,6 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 	case 210: // Abrir maletin de Charlie.
 		beginRonSpeechLine(delegate, 0xc4, 0);
 		return true;
-	case 211: // Mirar pase trucado: original opens pass viewer, then says it looks real.
-		beginRonSpeechLine(delegate, 0xc5, 0);
-		return true;
 	case 213: // Mirar foto de Robert Feynman.
 		beginRonSpeechLine(delegate, 0xc6, 0);
 		return true;
@@ -716,6 +722,7 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		gameState.removeInventoryItem(owner, 0x67);
 		gameState.removeInventoryItem(owner, 0x68);
 		gameState.addInventoryItem(owner, 0x66);
+		gameState.ronPosterPhotoRemoved = true;
 		playRonInventoryChange(delegate);
 		beginRonSpeechLine(delegate, 0x40, 0);
 		break;
@@ -739,8 +746,15 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		if (gameState.ronTapeRecorderState < 2) {
 			beginRonSpeechLine(delegate, 0x50, 1);
 		} else {
-			for (byte frame = 0; frame < 10; ++frame)
-				beginRonSpeechLine(delegate, 0x51, frame);
+			const bool firstPlayback = !gameState.ronTravelScreenUnlocked;
+			if (firstPlayback)
+				beginRonSpeechLine(delegate, 0x51, 0);
+			if (delegate->playSueTapeRecording() && !Engine::shouldQuit() &&
+					!delegate->shouldExitGameplayLoop()) {
+				if (firstPlayback)
+					beginRonSpeechLine(delegate, 0x51, 9);
+				gameState.ronTravelScreenUnlocked = true;
+			}
 		}
 		break;
 	case 87:
@@ -822,8 +836,9 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		beginRonSpeechLine(delegate, 0x7a, 0);
 		break;
 	case 147:
-		// Mirar/usar/abrir diario de Frankenstein: original opens the diary viewer.
-		beginRonSpeechLine(delegate, 0xdd, 0);
+		if (delegate->showInventoryMedia(kInventoryMediaFrankensteinDiary) &&
+				!Engine::shouldQuit() && !delegate->shouldExitGameplayLoop())
+			gameState.frankensteinDiaryRead = true;
 		break;
 	case 184:
 		// Abrir libro de Karl: grants the letter hidden inside once.
@@ -844,10 +859,16 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		grantRonItem(gameState, delegate, owner, 0x67);
 		break;
 	case 207:
-		// Mirar poster: original opens a full-screen poster viewer; no speech row.
+		delegate->showInventoryMedia(gameState.ronPosterPhotoRemoved ?
+			kInventoryMediaPosterWithoutPhoto : kInventoryMediaPoster);
+		break;
+	case 211:
+		if (delegate->showInventoryMedia(kInventoryMediaForgedPass) &&
+				!Engine::shouldQuit() && !delegate->shouldExitGameplayLoop())
+			beginRonSpeechLine(delegate, 0xc5, 0);
 		break;
 	case 212:
-		// Mirar pase de Taffy: original opens the pass viewer; no speech row.
+		delegate->showInventoryMedia(kInventoryMediaTaffyPass);
 		break;
 	case 217:
 		// Abrir cartera: grants money once.

@@ -434,6 +434,9 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.speechTextSpeedLevel);
 	s.syncAsByte(state.actorSpeechTextMode);
 
+	syncStateBool(s, state.frankensteinDiaryRead);
+	syncStateBool(s, state.ronPosterPhotoRemoved);
+
 	return s.err() ? Common::kReadingFailed : Common::kNoError;
 }
 

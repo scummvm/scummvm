@@ -32,8 +32,8 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Handles RESOURCE.I04, used both as Ron's notebook viewer and as the
-// interactive destination selector entered through main-flow state 0xffff.
+// Handles the notebook chunks of RESOURCE.I04, both as an inventory viewer and
+// as the interactive destination selector entered through state 0xffff.
 class TravelScreen {
 public:
 	TravelScreen(HollywoodEngine *vm);

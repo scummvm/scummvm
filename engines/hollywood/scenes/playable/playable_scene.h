@@ -263,6 +263,8 @@ protected:
 	byte randomSharedInventorySpeechFrame(byte maxFrameIndex) override;
 	void playSharedInventorySound(byte sampleId) override;
 	void showTravelScreenViewer() override;
+	bool showInventoryMedia(InventoryMediaId mediaId) override;
+	bool playSueTapeRecording() override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
 
@@ -398,6 +400,14 @@ protected:
 		int actorWorldY);
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
 	bool waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft);
+	bool runSueTapeSpeechLine(InventoryMediaPlayer &media, uint16 rowIndex, byte frameIndex,
+		byte red, byte green, byte blue, byte &animationFrame, uint32 &animationMillis);
+	bool waitForFullscreenMediaDismissal();
+	bool pollFullscreenMediaEvents(bool &dismissed);
+	void installFullscreenInventoryMedia(const InventoryMediaPlayer &media,
+		Graphics::ManagedSurface &savedScene, Common::Array<byte> &savedPalette, uint16 &savedViewportX);
+	void restoreFullscreenInventoryMedia(const Graphics::ManagedSurface &savedScene,
+		const Common::Array<byte> &savedPalette, uint16 savedViewportX);
 
 	// Palette
 	void setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue);

@@ -31,6 +31,7 @@
 #include "hollywood/font.h"
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/gameplay/game_state.h"
+#include "hollywood/gameplay/inventory_media.h"
 #include "hollywood/gameplay/travel_screen.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -68,6 +69,28 @@ const uint32 kViewportScrollTickMillis = 10;
 const uint16 kViewportScrollRightThreshold = 0x144;
 const uint16 kViewportScrollLeftThreshold = 0x13c;
 const uint16 kViewportScrollStep = 2;
+const uint32 kSueTapeFrameMillis = 100;
+
+struct SueTapeSpeechCue {
+	uint16 rowIndex;
+	byte frameIndex;
+	byte red;
+	byte green;
+	byte blue;
+};
+
+// The recording starts at row 0xe7; row 0x51 frames 0 and 9 are Ron's bookends.
+const SueTapeSpeechCue kSueTapeSpeechCues[] = {
+	{ 0xe7, 0, 0x20, 0x00, 0x3f },
+	{ 0x51, 1, 0x3f, 0x28, 0x32 },
+	{ 0x51, 2, 0x3f, 0x00, 0x00 },
+	{ 0x51, 3, 0x3f, 0x28, 0x32 },
+	{ 0x51, 4, 0x20, 0x00, 0x3f },
+	{ 0x51, 5, 0x3f, 0x3f, 0x00 },
+	{ 0x51, 6, 0x3f, 0x00, 0x00 },
+	{ 0x51, 7, 0x3f, 0x3f, 0x00 },
+	{ 0x51, 8, 0x3f, 0x00, 0x00 }
+};
 
 PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config, const char *randomName,
 		int defaultActorX, int defaultActorY,
@@ -1418,6 +1441,185 @@ void PlayableScene::showTravelScreenViewer() {
 
 	_displayPalette.markAllDirty();
 	presentFrame();
+}
+
+bool PlayableScene::showInventoryMedia(InventoryMediaId mediaId) {
+	InventoryMediaPlayer media(_vm);
+	if (!media.loadStill(mediaId))
+		return false;
+
+	Graphics::ManagedSurface savedScene;
+	Common::Array<byte> savedPalette;
+	uint16 savedViewportX = 0;
+	installFullscreenInventoryMedia(media, savedScene, savedPalette, savedViewportX);
+	presentFrame();
+	waitForFullscreenMediaDismissal();
+	restoreFullscreenInventoryMedia(savedScene, savedPalette, savedViewportX);
+	return true;
+}
+
+bool PlayableScene::playSueTapeRecording() {
+	InventoryMediaPlayer media(_vm);
+	if (!media.loadSueTape())
+		return false;
+
+	Graphics::ManagedSurface savedScene;
+	Common::Array<byte> savedPalette;
+	uint16 savedViewportX = 0;
+	installFullscreenInventoryMedia(media, savedScene, savedPalette, savedViewportX);
+	presentFrame();
+
+	byte animationFrame = 0;
+	uint32 animationMillis = 0;
+	for (uint cueIndex = 0; cueIndex < ARRAYSIZE(kSueTapeSpeechCues) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++cueIndex) {
+		const SueTapeSpeechCue &cue = kSueTapeSpeechCues[cueIndex];
+		if (runSueTapeSpeechLine(media, cue.rowIndex, cue.frameIndex,
+				cue.red, cue.green, cue.blue, animationFrame, animationMillis))
+			break;
+	}
+
+	_speech.stop();
+	clearAllSpeechOverlays();
+	restoreFullscreenInventoryMedia(savedScene, savedPalette, savedViewportX);
+	return true;
+}
+
+void PlayableScene::installFullscreenInventoryMedia(const InventoryMediaPlayer &media,
+		Graphics::ManagedSurface &savedScene, Common::Array<byte> &savedPalette, uint16 &savedViewportX) {
+	savedScene.copyFrom(_sceneFramebuffer);
+	savedPalette = _paletteCurrent;
+	savedViewportX = _viewportXOffset;
+
+	_vm->gameplayMusic()->stop();
+	_speech.stop();
+	_soundBank0.stop();
+	_ambientSoundBank0.stop();
+	clearAllSpeechOverlays();
+	_skipRequested = false;
+
+	_sceneFramebuffer.copyRectToSurface(media.framebuffer(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+	_paletteCurrent = media.palette();
+	_viewportXOffset = 0;
+	_displayPalette.markAllDirty();
+}
+
+void PlayableScene::restoreFullscreenInventoryMedia(const Graphics::ManagedSurface &savedScene,
+		const Common::Array<byte> &savedPalette, uint16 savedViewportX) {
+	_sceneFramebuffer.copyRectToSurface(savedScene.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+	_paletteCurrent = savedPalette;
+	_viewportXOffset = savedViewportX;
+	_skipRequested = false;
+	_displayPalette.markAllDirty();
+	presentFrame();
+}
+
+bool PlayableScene::waitForFullscreenMediaDismissal() {
+	bool dismissed = false;
+	while (!dismissed && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (pollFullscreenMediaEvents(dismissed))
+			break;
+		if (!dismissed)
+			g_system->delayMillis(10);
+	}
+	return dismissed;
+}
+
+bool PlayableScene::pollFullscreenMediaEvents(bool &dismissed) {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			Engine::quitGame();
+			return true;
+		case Common::EVENT_MAINMENU:
+			_vm->openMainMenuDialog();
+			if (_vm->isSceneRestartRequested())
+				return true;
+			_displayPalette.markAllDirty();
+			presentFrame();
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+					event.kbd.keycode == Common::KEYCODE_RETURN ||
+					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					event.kbd.keycode == Common::KEYCODE_SPACE)
+				dismissed = true;
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_vm->cursor()->updatePosition(event.mouse);
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			dismissed = true;
+			break;
+		default:
+			break;
+		}
+	}
+
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+}
+
+bool PlayableScene::runSueTapeSpeechLine(InventoryMediaPlayer &media, uint16 rowIndex, byte frameIndex,
+		byte red, byte green, byte blue, byte &animationFrame, uint32 &animationMillis) {
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (!getStaticSpeechCue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
+		return false;
+
+	const byte lineCount = MAX<byte>(1, continuationCount);
+	for (byte part = 0; part < lineCount && !Engine::shouldQuit(); ++part) {
+		const Common::String text = getResource003LargeTextRecord(textRecordId + part);
+		if (text.empty())
+			continue;
+
+		setPaletteEntry6Bit(kDefaultPrimarySpeechTextColor, red, green, blue);
+		_primarySpeechOverlay.visible = true;
+		_primarySpeechOverlay.colorIndex = kDefaultPrimarySpeechTextColor;
+		wrapActorSpeechText(text, 0x140, _primarySpeechOverlay.lines);
+		calculateSpeechOverlayBounds(_primarySpeechOverlay, 0x140, 0x64, true, _activeActorWorldY);
+
+		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
+		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
+		uint32 elapsed = 0;
+		bool dismissed = false;
+		presentFrame();
+
+		while (!dismissed && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+			if (!_speech.isPlaying() && elapsed >= duration)
+				break;
+			if (pollFullscreenMediaEvents(dismissed))
+				break;
+
+			const uint32 slice = 10;
+			g_system->delayMillis(slice);
+			elapsed += slice;
+			animationMillis += slice;
+			if (animationMillis >= kSueTapeFrameMillis) {
+				animationMillis %= kSueTapeFrameMillis;
+				media.drawSueTapeFrame(animationFrame);
+				animationFrame = (byte)((animationFrame + 1) % InventoryMediaPlayer::kSueTapeFrameCount);
+				_sceneFramebuffer.copyRectToSurface(media.framebuffer(), 0, 0,
+					Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+				presentFrame();
+			}
+		}
+
+		_speech.stop();
+		_primarySpeechOverlay.visible = false;
+		_primarySpeechOverlay.lines.clear();
+		if (dismissed || Engine::shouldQuit() || _vm->isSceneRestartRequested())
+			return true;
+	}
+
+	return false;
 }
 
 bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip) {
