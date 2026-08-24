@@ -91,8 +91,6 @@ uint Scene1000::sceneArenaLastChunk() const {
 
 void Scene1000::initializeChapterState() {
 	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	state.initializeRonInventoryItems();
 	state.currentInventoryOwnerIndex = 0;
 	state.activeAudioChapterIndex = activeAudioChapterIndex();
 	state.currentAmbientMusicCueId = musicCueId();
