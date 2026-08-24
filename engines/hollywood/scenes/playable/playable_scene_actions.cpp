@@ -214,7 +214,7 @@ void PlayableScene::dispatchSceneAction(uint16 handlerId) {
 }
 
 bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
-	// Shared callback table installed by InstallSceneActionCallbackTable.
+	// Shared callbacks used directly by scene action tables.
 	switch (handlerId) {
 	case 0:  // Shared no-op/default action slot.
 	case 1:  // Usar/Dar inventory relation starter; no direct speech.
@@ -435,6 +435,9 @@ bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 		return true;
 	case 69: // Door/lock condition: no key needed, it is not locked.
 		beginStaticSecondarySpeechLine(0x44, 0);
+		return true;
+	case 227: // Ron cannot take that object.
+		beginStaticSecondarySpeechLine(0xd6, (byte)_random.getRandomNumber(1));
 		return true;
 	default:
 		return false;

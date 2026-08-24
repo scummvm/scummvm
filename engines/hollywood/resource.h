@@ -78,6 +78,8 @@ enum ScenePaletteMapOffset {
 	kScenePaletteRegionMap = 0x000,
 	kSceneColorToItemMap = 0x100,
 	kSceneColorToActorDepthClassMap = 0x200,
+	kSceneColorToActorPaletteDeltaClassMap = 0x300,
+	kSceneColorToActorPaletteAdjustmentClassMap = 0x400,
 	kScenePaletteMapPageSize = 0x100
 };
 

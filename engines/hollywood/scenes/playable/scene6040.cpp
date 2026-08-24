@@ -161,7 +161,20 @@ bool Scene6040::hasCustomEntrySequence() const {
 	return true;
 }
 
+bool Scene6040::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
 void Scene6040::runCustomEntrySequence() {
+	_activeActorWorldX = 100;
+	_activeActorWorldY = 0x1dc;
+	_activeActorFacing = 2;
+	_activeActorCel = 0;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	drawPlayableComposite();
+	if (fadePaletteFromBlack())
+		return;
+
 	runEntryPath(100, 0x1dc, 2, 0x172, 0x1c2);
 	if (!_vm->gameState().scene6040EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);

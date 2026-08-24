@@ -54,8 +54,11 @@ const uint kScene6010Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene6010SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene6010FrameMillis = 75;
 const uint32 kScene6010ClipFrameMillis = 50;
-const uint kScene6010ClipChunkIndex = 7;
-const uint kScene6010ClipDescriptorCount = 0xda;
+const uint kScene6010StudioExitClipChunkIndex = 7;
+const uint kScene6010StudioExitClipDescriptorCount = 0xda;
+const uint kScene6010EntryClipChunkIndex = 8;
+const uint kScene6010EntryClipDescriptorCount = 0xdb;
+const uint kScene6010ClipTimelineFrameCount = 0x113;
 const uint kScene6010DoorRevealPrimaryDescriptorCount = 4;
 const uint kScene6010DoorRevealSecondaryDescriptorCount = 0x13;
 const uint kScene6010ExitDescriptorCount = 6;
@@ -82,12 +85,12 @@ const byte kScene6010ActorPathStepDeltaTableSet87[] = {
 };
 
 const byte kScene6010PendingItem69FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
 const byte kScene6010DoorRevealPrimaryFrameMap[] = {
-	0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 1, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0
 };
 
@@ -106,8 +109,7 @@ const byte kScene6010Pickup59FrameMap[] = {
 const byte kScene6010Pickup58FrameMap[] = {
 	0, 8, 7, 6, 5, 4, 3, 2, 1, 0,
 	1, 2, 1, 0, 1, 2, 1, 0, 1, 2,
-	1, 0, 1, 2, 1, 0, 1, 2, 3, 4,
-	5, 6, 7, 8, 9
+	3, 4, 5, 6, 7, 8, 9
 };
 
 static PlayableSceneConfig scene6010Config() {
@@ -356,6 +358,8 @@ bool Scene6010::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 }
 
 bool Scene6010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	// Restoring the original framebuffer requires replaying every persistent patch.
+	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
@@ -365,48 +369,35 @@ bool Scene6010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	GameplayState &state = _vm->gameState();
-	if (selector == 0 || selector == 0xff) {
-		if (!state.scene6010StudioEntryUnlocked) {
-			if (_sceneChunkTable.isValidChunk(5))
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
-			if (_sceneChunkTable.isValidChunk(6))
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
-			for (uint i = 0; i < kScenePaletteMapPageSize && i < _paletteMask.size(); ++i) {
-				if (_paletteMask[i] == 9) {
-					_paletteMask[i] = 1;
-					_fullPaletteRegionMask[i] = 1;
-				}
+	if (!state.scene6010StudioEntryUnlocked) {
+		if (_sceneChunkTable.isValidChunk(5))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
+		if (_sceneChunkTable.isValidChunk(6))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
+		for (uint i = 0; i < kScenePaletteMapPageSize && i < _paletteMask.size(); ++i) {
+			if (_paletteMask[i] == 9) {
+				_paletteMask[i] = 1;
+				_fullPaletteRegionMask[i] = 1;
 			}
-			replaceColorMapItemFromOriginal(4, 0);
-		} else {
-			for (uint i = 0; i < kScenePaletteMapPageSize && i < _paletteMask.size(); ++i) {
-				if (_paletteMask[i] == 9) {
-					_paletteMask[i] = 0;
-					_fullPaletteRegionMask[i] = 0;
-				}
+		}
+		replaceColorMapItemFromOriginal(4, 0);
+	} else {
+		for (uint i = 0; i < kScenePaletteMapPageSize && i < _paletteMask.size(); ++i) {
+			if (_paletteMask[i] == 9) {
+				_paletteMask[i] = 0;
+				_fullPaletteRegionMask[i] = 0;
 			}
-			_hotspots.setVerbMovementModeByGlobalRecordIndex(0x11, 0);
 		}
 	}
 
-	if (selector == 1 || selector == 0xff) {
-		replaceColorMapItemFromOriginal(6, state.scene6010Item59Visible ? 6 : 0);
-		const uint patchChunk = state.scene6010Item59Visible ? 14 : 15;
-		if (_sceneChunkTable.isValidChunk(patchChunk))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[patchChunk], _baseFramebuffer);
-	}
+	replaceColorMapItemFromOriginal(6, state.scene6010Item59Visible ? 6 : 0);
+	const uint item59PatchChunk = state.scene6010Item59Visible ? 14 : 15;
+	if (_sceneChunkTable.isValidChunk(item59PatchChunk))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[item59PatchChunk], _baseFramebuffer);
 
-	if ((selector == 2 || selector == 0xff) && state.scene6010DoorActionState == 2)
-		_hotspots.setVerbMovementModeByGlobalRecordIndex(9, 0);
-
-	if ((selector == 4 || selector == 0xff) && state.scene6010EndgameTravelExitBlocked)
-		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x39, 0);
-
-	if (selector == 5 || selector == 0xff) {
-		const uint patchChunk = state.scene6011PendingItem69Visible ? 10 : 11;
-		if (_sceneChunkTable.isValidChunk(patchChunk))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[patchChunk], _baseFramebuffer);
-	}
+	const uint item69PatchChunk = state.scene6011PendingItem69Visible ? 10 : 11;
+	if (_sceneChunkTable.isValidChunk(item69PatchChunk))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[item69PatchChunk], _baseFramebuffer);
 
 	rebuildStudioWalkableMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
@@ -430,12 +421,30 @@ AmbientAudioProfile Scene6010::ambientAudioProfile() const {
 	return profile;
 }
 
+bool Scene6010::shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const {
+	if ((_activeActorDrawOrderMode == 1 && actorWorldX > 0x21d) ||
+			(_activeActorDrawOrderMode == 2 && actorWorldX < 0x370))
+		return false;
+
+	return PlayableScene::shouldUseActorDepthTest(actorWorldX, actorWorldY);
+}
+
+bool Scene6010::shouldRunExitSideEffectsAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
+}
+
+void Scene6010::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 void Scene6010::updateSceneDepthThresholds(byte actorDrawOrderMode, int activeWorldX, int activeWorldY) {
+	(void)activeWorldY;
 	_drawActorDepthYThresholds = _actorDepthYThresholds;
 	if (_drawActorDepthYThresholds.size() <= 3)
 		return;
 
-	if (actorDrawOrderMode == 1 && activeWorldY <= 0x21d && activeWorldX < 0x240) {
+	if (actorDrawOrderMode == 1 && activeWorldX < 0x240) {
 		_drawActorDepthYThresholds[1] = 0x03e7;
 		_drawActorDepthYThresholds[2] = 0x03e7;
 		_drawActorDepthYThresholds[3] = 0x03e7;
@@ -500,6 +509,13 @@ void Scene6010::copyStepDeltasFromSet87(uint firstOffset, uint lastOffset) {
 
 void Scene6010::runEntryFromTravel() {
 	runEntryPath(0x3b0, 0x1df, 5, 0x327, 0x1c5);
+
+	GameplayState &state = _vm->gameState();
+	if (state.scene3070LateCutscenePlayed && !state.scene6010EndgameTravelExitBlocked) {
+		beginSecondarySpeechLine(0, 0);
+		state.scene6010EndgameTravelExitBlocked = true;
+		applySceneStateToHotspotsAndPatches(4);
+	}
 }
 
 void Scene6010::runEntryAndPendingPickup() {
@@ -528,23 +544,48 @@ void Scene6010::runStudioClipSequence(bool exitAfterPlayback) {
 	presentFrame();
 
 	Common::Array<byte> frameMap;
-	frameMap.resize(0x113);
+	frameMap.resize(kScene6010ClipTimelineFrameCount);
+	memset(frameMap.data(), 0xff, frameMap.size());
+
 	for (uint i = 0; i < frameMap.size(); ++i) {
-		frameMap[i] = 0xff;
-		if (i >= 0x10 && i <= 0x70)
-			frameMap[i] = (byte)(i - 0x10);
-		else if (i >= 0x9b)
-			frameMap[i] = (byte)(i - 0x3a);
+		if (exitAfterPlayback) {
+			if (i >= 0x10 && i <= 0x70)
+				frameMap[i] = (byte)(i - 0x10);
+			else if (i >= 0x9b)
+				frameMap[i] = (byte)(i - 0x3a);
+		} else if (i <= 0x77) {
+			frameMap[i] = (byte)i;
+		} else if (i >= 0xa0 && i <= 0x102) {
+			frameMap[i] = (byte)(i - 0x28);
+		}
 	}
 
-	for (uint i = 0; i < frameMap.size() && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++i) {
+	const uint chunkIndex = exitAfterPlayback ? kScene6010StudioExitClipChunkIndex : kScene6010EntryClipChunkIndex;
+	const uint descriptorCount = exitAfterPlayback ?
+		kScene6010StudioExitClipDescriptorCount : kScene6010EntryClipDescriptorCount;
+	uint firstTimelineFrame = 0;
+	if (!exitAfterPlayback) {
+		drawClipFrameDelta(chunkIndex, descriptorCount, 0);
+		presentFrame();
+		firstTimelineFrame = 1;
+	}
+
+	bool fastForward = false;
+	for (uint i = firstTimelineFrame;
+			i < frameMap.size() && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++i) {
 		if (frameMap[i] != 0xff) {
-			drawClipFrameDelta(kScene6010ClipChunkIndex, kScene6010ClipDescriptorCount, frameMap[i]);
+			drawClipFrameDelta(chunkIndex, descriptorCount, frameMap[i]);
 			presentFrame();
 		}
-		if (waitDeltaClipFrameMillis(kScene6010ClipFrameMillis))
-			break;
+		if (!fastForward && waitDeltaClipFrameMillis(kScene6010ClipFrameMillis)) {
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				return;
+			_skipRequested = false;
+			fastForward = true;
+		}
 	}
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
 
 	if (exitAfterPlayback) {
 		_vm->gameState().mainFlowStateId = kScene6050State;
@@ -585,13 +626,14 @@ void Scene6010::runDoorRevealOverlay() {
 void Scene6010::runExitToScene6020Overlay() {
 	runActionOverlay(ActionOverlaySpec(9, kScene6010ExitDescriptorCount,
 		kScene6010ExitFrameMap, ARRAYSIZE(kScene6010ExitFrameMap), kScene6010FrameMillis)
-		.hideActor()
-		.soundAt(ARRAYSIZE(kScene6010ExitFrameMap) - 1, 3));
+		.hideActor());
+	_soundBank0.playSample(3, 100);
 	_vm->gameState().scene6010ExitOverlayPlayed = true;
 	_vm->gameState().mainFlowStateId = kScene6020State;
 }
 
 void Scene6010::runPickupItem59Overlay() {
+	dispatchGenericSceneAction(21);
 	runLayeredOverlay(18, kScene6010Pickup59DescriptorCount,
 		kScene6010Pickup59FrameMap, ARRAYSIZE(kScene6010Pickup59FrameMap),
 		0, 0, nullptr, 0, kScene6010FrameMillis);
