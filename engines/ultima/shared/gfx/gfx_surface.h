@@ -38,6 +38,8 @@ private:
 	byte _bgColor = 0;
 	bool _scrollable = false;
 
+	void drawRightArrow();
+	void drawLeftArrow();
 	void newLine();
 
 public:

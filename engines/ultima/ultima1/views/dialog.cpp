@@ -68,58 +68,19 @@ void Dialog::drawFrame() {
 void Dialog::drawGameDividers() {
 	auto s = getSurface();
 
-	// Erase the frame's bottom section (its border band, the lower
-	// portion of the side bands, and the bottom corners) - the dividers
-	// below replace it, running all the way to the screen edges
+	// Erase the frame's bottom section
 	s.fillRect(Common::Rect(0, 153, 320, 200), 0);
 
-	// Horizontal divider separating the map viewport (above) from the
-	// command/message log and stats panel (below). The bar and its
-	// bottom edge span the full screen width, but the top edge stops at
-	// the viewport's own inner border, meeting up with its side edges
+	// Horizontal divider separating the map viewport (above) from the command/message log and stats panel
 	s.fillRect(Common::Rect(0, 153, 320, 159), COLOR_BORDER);
 	s.drawLine(7, 152, 312, 152, COLOR_EDGE);
 	s.drawLine(0, 159, 240, 159, COLOR_EDGE);
 	s.drawLine(247, 159, 319, 159, COLOR_EDGE);
 
-	// Vertical divider between the command/message log (left) and the
-	// stats panel (right), running to the bottom of the screen
+	// Vertical divider between the command/message log (left) and the stats panel (right)
 	s.fillRect(Common::Rect(241, 153, 247, 200), COLOR_BORDER);
 	s.drawLine(240, 159, 240, 199, COLOR_EDGE);
 	s.drawLine(247, 159, 247, 199, COLOR_EDGE);
-}
-
-// Per-column vertical extent of an 8x8 right-pointing triangle, tip at
-// column 7 - column 0 is the full-height flat edge, tapering down to a
-// single pixel at the tip. Used to fill the triangle solid before the
-// diagonal edge highlights are drawn on top
-static const byte ARROW_TOP[8] = { 0, 0, 1, 1, 2, 2, 3, 3 };
-static const byte ARROW_BOTTOM[8] = { 7, 6, 6, 5, 5, 4, 4, 3 };
-
-void Dialog::drawRightArrow(const Common::Point &pt) {
-	auto s = getSurface();
-	int px = pt.x * 8, py = pt.y * 8;
-
-	s.fillRect(TextRect(pt.x, pt.y, pt.x, pt.y), COLOR_NOTCH);
-
-	for (int i = 0; i < 8; ++i)
-		s.drawLine(px + i, py + ARROW_TOP[i], px + i, py + ARROW_BOTTOM[i], COLOR_BORDER);
-
-	s.drawLine(px, py, px + 7, py + 3, COLOR_EDGE);
-	s.drawLine(px + 7, py + 3, px, py + 7, COLOR_EDGE);
-}
-
-void Dialog::drawLeftArrow(const Common::Point &pt) {
-	auto s = getSurface();
-	int px = pt.x * 8, py = pt.y * 8;
-
-	s.fillRect(TextRect(pt.x, pt.y, pt.x, pt.y), COLOR_NOTCH);
-
-	for (int i = 0; i < 8; ++i)
-		s.drawLine(px + 7 - i, py + ARROW_TOP[i], px + 7 - i, py + ARROW_BOTTOM[i], COLOR_BORDER);
-
-	s.drawLine(px + 7, py, px, py + 3, COLOR_EDGE);
-	s.drawLine(px, py + 3, px + 7, py + 7, COLOR_EDGE);
 }
 
 } // namespace Views

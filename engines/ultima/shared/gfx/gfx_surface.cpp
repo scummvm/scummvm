@@ -25,6 +25,10 @@ namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
+constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
+constexpr int COLOR_BORDER = 1;  // blue - thick outer band
+constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
+
 void GfxSurface::writeString(const Common::Point &pt, const Common::String &str,
 		Graphics::TextAlign align) {
 	_textPos = pt;
@@ -65,13 +69,47 @@ void GfxSurface::writeChar(uint32 chr) {
 
 	if (chr != '\n') {
 		fillRect(Common::Rect(_textPos.x * fontW, _textPos.y * fontH, (_textPos.x + 1) * fontW, (_textPos.y + 1) * fontH), _bgColor);
-		_font.drawChar(this, chr, _textPos.x * fontW, _textPos.y * fontH, _textColor);
+
+		if (chr == 16)
+			drawRightArrow();
+		else if (chr == 17)
+			drawLeftArrow();
+		else
+			_font.drawChar(this, chr, _textPos.x * fontW, _textPos.y * fontH, _textColor);
+
 		_textPos.x++;
 	}
 
 	if (_textPos.x >= textW || chr == '\n') {
 		newLine();
 	}
+}
+
+// Per-column vertical extent of an 8x8 right-pointing triangle, tip at
+// column 7 - column 0 is the full-height flat edge, tapering down to a
+// single pixel at the tip. Used to fill the triangle solid before the
+// diagonal edge highlights are drawn on top
+static const byte ARROW_TOP[8] = { 0, 0, 1, 1, 2, 2, 3, 3 };
+static const byte ARROW_BOTTOM[8] = { 7, 6, 6, 5, 5, 4, 4, 3 };
+
+void GfxSurface::drawRightArrow() {
+	int px = _textPos.x * 8, py = _textPos.y * 8;
+
+	for (int i = 0; i < 8; ++i)
+		drawLine(px + i, py + ARROW_TOP[i], px + i, py + ARROW_BOTTOM[i], COLOR_BORDER);
+
+	drawLine(px, py, px + 7, py + 3, COLOR_EDGE);
+	drawLine(px + 7, py + 3, px, py + 7, COLOR_EDGE);
+}
+
+void GfxSurface::drawLeftArrow() {
+	int px = _textPos.x * 8, py = _textPos.y * 8;
+
+	for (int i = 0; i < 8; ++i)
+		drawLine(px + 7 - i, py + ARROW_TOP[i], px + 7 - i, py + ARROW_BOTTOM[i], COLOR_BORDER);
+
+	drawLine(px + 7, py, px, py + 3, COLOR_EDGE);
+	drawLine(px, py + 3, px + 7, py + 7, COLOR_EDGE);
 }
 
 void GfxSurface::newLine() {

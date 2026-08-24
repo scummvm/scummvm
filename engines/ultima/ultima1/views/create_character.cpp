@@ -81,10 +81,8 @@ void CreateCharacter::draw() {
 	s.clear();
 	drawFrame();
 
-	drawRightArrow(Common::Point(8, 0));
-	s.setColor(COLOR_EDGE);
-	s.writeString(Common::Point(9, 0), " Character Generation ");
-	drawLeftArrow(Common::Point(31, 0));
+	s.setTextPos(Point(8, 0));
+	s.writeString(Common::Point(8, 0), "\x10 Character Generation \x11");
 
 	drawAttributes(s);
 
@@ -94,8 +92,10 @@ void CreateCharacter::draw() {
 		s.writeString(Common::Point(6, 4),
 			Common::String::format("Points left to distribute: %d", _pointsRemaining));
 		drawHelp(s);
-		drawRightArrow(Common::Point(11, _selectedAttribute + 6));
-		drawLeftArrow(Common::Point(30, _selectedAttribute + 6));
+		s.setTextPos(Point(11, _selectedAttribute + 6));
+		s.writeChar(16);	// Right arrow
+		s.setTextPos(Point(30, _selectedAttribute + 6));
+		s.writeChar(17);	// Left arrow
 		break;
 
 	case RACE:

@@ -45,16 +45,6 @@ protected:
 	 */
 	void drawGameDividers();
 
-	/**
-	 * Draws a small triangular right-arrow glyph, in text-cell coordinates
-	 */
-	void drawRightArrow(const Common::Point &pt);
-
-	/**
-	 * Draws a small triangular left-arrow glyph, in text-cell coordinates
-	 */
-	void drawLeftArrow(const Common::Point &pt);
-
 public:
 	Dialog(const Common::String &name) : View(name) {}
 	~Dialog() override {}
