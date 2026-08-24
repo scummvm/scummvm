@@ -62,7 +62,15 @@ struct ActionOverlayOptions {
 	byte hookId;
 };
 
-// Named specification for a temporary action overlay and its timed side effects.
+/**
+ * Describes an overlay that PlayableScene plays synchronously.
+ *
+ * Playback blocks its caller while scene events, animation, and drawing continue
+ * between frames. The clamped frame range is [firstFrame, endFrame), with zero
+ * endFrame meaning the end of frameMap. Negative patch and sound frames disable
+ * those events; a nonzero hookId runs at hookFrame, or every frame when
+ * hookFrame is negative. Actor visibility is restored after playback.
+ */
 struct ActionOverlaySpec {
 	ActionOverlaySpec(uint newChunkIndex, uint newDescriptorCount,
 			const byte *newFrameMap, uint newFrameMapSize, uint32 newFrameMillis) :

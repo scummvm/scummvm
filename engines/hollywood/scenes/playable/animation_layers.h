@@ -82,31 +82,12 @@ struct ResourceSpriteLayer {
 	bool hasPreviousDescriptor;
 };
 
-// Owns an ordered stack of resource sprite layers for short-lived overlays,
-// scripted transitions, and compact background animation groups.
-//
-// The compositor only stores layer state and order. It does not choose where
-// the stack belongs in the scene. A scene should normally create one compositor
-// per draw stratum, for example "behind actors", "actor replacement", or "in
-// front of actors", then call drawTransientLayers() at the exact point where
-// that stratum belongs in drawCustomComposite().
-//
-// Usage pattern:
-// - Define named layer-slot constants in the scene file.
-// - configureLayer() or addLayer() binds each slot to a chunk, descriptor count,
-//   and optional frame map.
-// - setLayerVisible() controls whether the slot is drawn.
-// - setLayerFrame() advances visible layers during playback.
-// - setLayerFramePreservingVisibility() primes a hidden layer without making it
-//   visible; use this when a later state change reveals an already selected
-//   frame.
-// - setLayerFrameClamped() is useful when one frame counter drives multiple
-//   layers with different frame counts.
-//
-// Keep scene-specific ordering, foreground blocks, actor visibility, palette
-// patches, and background restore decisions in the scene. If those rules matter,
-// use several small compositors rather than one large compositor with hidden
-// ordering assumptions.
+/**
+ * Stores an ordered set of transient resource-sprite layers.
+ *
+ * It owns layer state and order only; the scene chooses the draw stratum by
+ * calling drawTransientLayers() at the appropriate point in its composite.
+ */
 class TransientLayerCompositor {
 public:
 	enum {

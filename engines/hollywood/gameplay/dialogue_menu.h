@@ -64,6 +64,12 @@ struct DialogueMenuState {
 	byte highlightedLineIndex;
 };
 
+/**
+ * Supplies scene callbacks while DialogueMenu owns the choice loop.
+ *
+ * The delegate keeps the underlying scene advancing and drawing; presentation
+ * combines that frame with the supplied menu state.
+ */
 class DialogueMenuDelegate {
 public:
 	virtual ~DialogueMenuDelegate();
@@ -74,6 +80,12 @@ public:
 	virtual void presentDialogueMenuFrame(const DialogueMenuState &state) = 0;
 };
 
+/**
+ * Resolves a dialogue choice, entering a blocking UI loop only when needed.
+ *
+ * While waiting, the menu owns input and cursor state and calls its delegate on
+ * every tick so the underlying scene does not freeze.
+ */
 class DialogueMenu {
 public:
 	enum {
