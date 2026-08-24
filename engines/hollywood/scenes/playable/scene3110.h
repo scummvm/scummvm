@@ -32,10 +32,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId.
-// Saved GameplayState fields written:
-// mainFlowStateId, activeAudioChapterIndex, currentInventoryOwnerIndex.
 class Scene3110 {
 public:
 	Scene3110(HollywoodEngine *vm);

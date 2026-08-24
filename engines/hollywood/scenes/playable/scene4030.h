@@ -33,12 +33,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId, scene4030InitialEntryLineSeen, scene4030RopeTaken,
-// scene4030LooseBoneState, scene4030ImprovisedLeverInstalled.
-// Saved GameplayState fields written:
-// mainFlowStateId, scene4030InitialEntryLineSeen, scene4030RopeTaken,
-// scene4030LooseBoneState, scene4030ImprovisedLeverInstalled.
 class Scene4030 : public PlayableScene {
 public:
 	Scene4030(HollywoodEngine *vm);
