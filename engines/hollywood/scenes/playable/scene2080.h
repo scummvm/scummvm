@@ -28,20 +28,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId, scene2070InnerPassagePatchState,
-// scene2070HiddenItemPatchState, scene2080EntryLineSeen,
-// scene2080ForegroundState, scene2080ExitBackSequenceSeen,
-// scene2080PrincessHairSearchState, scene2080FirstRow09LookSeen,
-// scene2080DialogueBranchBUnlocked, scene2080DialogueBranchAIndex,
-// scene2080DialogueBranchBIndex, scene2080DialogueTerminalIndex.
-// Saved GameplayState fields written:
-// mainFlowStateId, scene2070InnerPassagePatchState,
-// scene2070HiddenItemPatchState, scene2080EntryLineSeen,
-// scene2080ForegroundState, scene2080ExitBackSequenceSeen,
-// scene2080PrincessHairSearchState, scene2080FirstRow09LookSeen,
-// scene2080DialogueBranchBUnlocked.
-
 /**
  * Gives the foreground character a separate dialogue-time animation path.
  * While the dialogue menu is open, its custom tick advances that pose, the

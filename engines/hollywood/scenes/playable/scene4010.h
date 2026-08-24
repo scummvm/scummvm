@@ -30,17 +30,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId, scene4010AlternateBackgroundState, scene4010FirstEntryConversationSeen,
-// scene4010EntryPathSpeechState, scene4010ProgressiveExitSpeechState,
-// scene4010Item3APickupState, scene4010PillboxPickupState,
-// scene4010DestinationUnlocked, scene1050CharlieBogWerewolfClueHeard,
-// scene4070SlimmingTreatmentApplied.
-// Saved GameplayState fields written:
-// mainFlowStateId, scene4010FirstEntryConversationSeen, scene4010EntryPathSpeechState,
-// scene4010ProgressiveExitSpeechState, scene4010Item3APickupState,
-// scene4010PillboxPickupState, scene4010DestinationUnlocked.
-
 /**
  * Switches between normal and alternate background modes at runtime. The
  * normal framebuffer is preserved before the alternate resource is loaded so

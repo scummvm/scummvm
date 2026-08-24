@@ -29,19 +29,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId, travelScreenSlotIds, scene1020HookPositionState,
-// scene1020ChainAttachedToGrate, scene1020GrateRaised, scene1070DoorOpened,
-// scene1070ChainRemoved, scene1070SpiritBlockingHotspot,
-// scene1070QuasimodoConversationSeen, scene1070SpencerConversationSeen,
-// scene1070SpencerTravelClueProgress, scene1070SpencerCocktailRecipeLearned,
-// scene1070MicrophoneStandTaken, scene1070MicrophoneTaken.
-// Saved GameplayState fields written:
-// mainFlowStateId, travelScreenSlotIds, scene1070ChainRemoved,
-// scene1070SpiritBlockingHotspot, scene1070QuasimodoConversationSeen,
-// scene1070SpencerConversationSeen, scene1070SpencerTravelClueProgress,
-// scene1070SpencerCocktailRecipeLearned, scene1070MicrophoneStandTaken,
-// scene1070MicrophoneTaken.
 class Scene1070 : public PlayableScene {
 public:
 	Scene1070(HollywoodEngine *vm);

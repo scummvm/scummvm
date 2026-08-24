@@ -28,13 +28,6 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Saved GameplayState fields read:
-// mainFlowStateId, travelScreenSlotIds, scene1050SuitcaseTaken,
-// scene1050CloakroomAttendantConversationSeen, scene1050JackLookedAt.
-// Saved GameplayState fields written:
-// mainFlowStateId, travelScreenSlotIds, scene1050SuitcaseTaken,
-// scene1050CloakroomAttendantConversationSeen, scene1050JackLookedAt,
-// scene1050CharlieBogWerewolfClueHeard.
 class Scene1050 : public PlayableScene {
 public:
 	Scene1050(HollywoodEngine *vm);
