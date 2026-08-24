@@ -190,6 +190,7 @@ private:
 	void applyFades(GSoundChannel &channel);
 
 	int8 readSignedByte(byte *&pSrc);
+	int readCenteredValue(byte *&pSrc);
 	byte readByte(byte *&pSrc);
 	uint16 readWord(byte *&pSrc);
 	byte *readRoot(byte *&pSrc);
