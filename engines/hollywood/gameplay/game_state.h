@@ -88,6 +88,8 @@ struct GameplayState {
 		ronEgyptianMoneyAmount = 0;
 		ronPendingMabusePillsInMagnetPillbox = false;
 		ronLampFueled = false;
+		frankensteinDiaryRead = false;
+		ronPosterPhotoRemoved = false;
 		initializeTravelScreenSlots();
 		ronTravelScreenUnlocked = false;
 		travelScreenCurrentChapterId = 0;
@@ -529,7 +531,6 @@ struct GameplayState {
 		inventoryItemSlotByOwnerAndItemId[owner][0x01] = 3;
 		inventoryItemCountByOwner[owner] = 3;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(3);
-		ronTravelScreenUnlocked = true;
 		inventoryPanelDirty = true;
 	}
 
@@ -820,6 +821,8 @@ struct GameplayState {
 	uint16 ronEgyptianMoneyAmount;
 	bool ronPendingMabusePillsInMagnetPillbox;
 	bool ronLampFueled;
+	bool frankensteinDiaryRead;
+	bool ronPosterPhotoRemoved;
 	byte travelScreenSlotIds[kTravelScreenSlotCount];
 	bool ronTravelScreenUnlocked;
 	byte travelScreenCurrentChapterId;
