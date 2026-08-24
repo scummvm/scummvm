@@ -26,6 +26,14 @@
 
 namespace Hollywood {
 
+/**
+ * Holds gameplay state shared across scene instances.
+ *
+ * Serialized fields cover the current flow and actor pose, inventory, puzzle
+ * progression, travel unlocks, and user settings. reset() establishes new-game
+ * defaults. Runtime-only caches are rebuilt or dirtied after loading; per-frame
+ * animation remains owned by scene objects.
+ */
 struct GameplayState {
 	enum {
 		kInventoryOwnerCount = 2,

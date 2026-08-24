@@ -30,6 +30,13 @@
 
 namespace Hollywood {
 
+/**
+ * Supplies scene-dependent region lookup and route adjustments.
+ *
+ * Segment hooks may request a facing or temporarily alter the shared step-delta
+ * table. Setting restoredStepDeltas asks the controller to restore the base table
+ * after that segment.
+ */
 class ActorPathControllerDelegate {
 public:
 	virtual ~ActorPathControllerDelegate() {}
@@ -41,7 +48,13 @@ public:
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) = 0;
 };
 
-// Owns route tables, actor walk frames, and palette-region path expansion.
+/**
+ * Expands resource-defined palette-region routes into actor animation frames.
+ *
+ * Resource route tables select intermediate regions and candidate boundary
+ * points. The delegate maps coordinates to regions and may customize each
+ * intermediate and final segment.
+ */
 class ActorPathController {
 public:
 	ActorPathController();
