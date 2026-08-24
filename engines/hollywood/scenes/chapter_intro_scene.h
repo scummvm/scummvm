@@ -61,6 +61,7 @@ protected:
 	void fadeInPalette();
 	void fadeOutPalette();
 	void presentFrame();
+	void rotatePaletteRange(uint firstIndex, uint lastIndex);
 	bool delay(uint32 millis);
 	bool pollEvents();
 	void drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex);

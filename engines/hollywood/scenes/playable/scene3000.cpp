@@ -33,8 +33,9 @@ const char *const kScene3000MusicArchiveName = "RESOURCE.M03";
 const uint16 kScene3000MusicCueId = 0x000b;
 const uint16 kScene3000NextState = 0x0bc2;
 const uint16 kScene3000ViewportXOffset = 0x00c0;
-const uint32 kScene3000LargeFrameMillis = 300;
-const uint32 kScene3000SmallFrameMillis = 350;
+const uint32 kScene3000LargePaletteCycleMillis = 300;
+const uint32 kScene3000SmallPaletteCycleMillis = 350;
+const uint32 kScene3000SpriteFrameMillis = 125;
 const uint32 kScene3000ClipFrameMillis = 60;
 const uint kScene3000LargeDescriptorCount = 0x1e;
 const uint kScene3000SmallDescriptorCount = 8;
@@ -43,17 +44,15 @@ const byte kScene3000InitialLargeFrame = 4;
 const byte kScene3000ClipFinalFrame = 0x6d;
 const uint kScene3000PatchTick = 100;
 const uint kScene3000ClipDelayTicks = 200;
+const uint kScene3000BackgroundRefreshFrame = 100;
+const uint kScene3000BackgroundRefreshBytes = 0x10000;
+const int kScene3000BeforeFirstClipFrame = -1;
 
 Scene3000::Scene3000(HollywoodEngine *vm) :
 		ChapterIntroScene(vm, "scene 3000"),
 		_largeFrame(kScene3000InitialLargeFrame),
 		_smallFrame(0),
-		_clipFrame(0),
-		_previousLargeDescriptor(0),
-		_previousSmallDescriptor(0),
-		_hasPreviousLargeDescriptor(false),
-		_hasPreviousSmallDescriptor(false),
-		_patchVisible(false) {
+		_clipFrame(0) {
 }
 
 const char *Scene3000::resourceArchiveName() const {
@@ -89,17 +88,19 @@ uint16 Scene3000::sceneViewportXOffset() const {
 }
 
 void Scene3000::drawInitialFrame() {
-	drawPresentationFrame(true);
+	drawPresentationFrame(true, true, kScene3000BeforeFirstClipFrame);
 }
 
 void Scene3000::runPresentation() {
 	uint delayedClipTick = 0;
+	uint32 largePaletteAccumulator = 0;
+	uint32 smallPaletteAccumulator = 0;
 	uint32 largeAccumulator = 0;
 	uint32 smallAccumulator = 0;
 	uint32 clipAccumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
-	bool frameDirty = true;
-	bool clipDirty = true;
+	bool largeDirty = false;
+	bool smallDirty = false;
 
 	while (!_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -108,44 +109,58 @@ void Scene3000::runPresentation() {
 		const uint32 now = g_system->getMillis();
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
+		largePaletteAccumulator += delta;
+		smallPaletteAccumulator += delta;
 		largeAccumulator += delta;
 		smallAccumulator += delta;
 		clipAccumulator += delta;
 
-		while (largeAccumulator >= kScene3000LargeFrameMillis) {
-			largeAccumulator -= kScene3000LargeFrameMillis;
-			_largeFrame = _largeFrame < 0x1d ? _largeFrame + 1 : 0;
-			frameDirty = true;
+		while (largePaletteAccumulator >= kScene3000LargePaletteCycleMillis) {
+			largePaletteAccumulator -= kScene3000LargePaletteCycleMillis;
+			rotatePaletteRange(0xf0, 0xfa);
 		}
 
-		while (smallAccumulator >= kScene3000SmallFrameMillis) {
-			smallAccumulator -= kScene3000SmallFrameMillis;
+		while (smallPaletteAccumulator >= kScene3000SmallPaletteCycleMillis) {
+			smallPaletteAccumulator -= kScene3000SmallPaletteCycleMillis;
+			rotatePaletteRange(0xfb, 0xfd);
+		}
+
+		while (largeAccumulator >= kScene3000SpriteFrameMillis) {
+			largeAccumulator -= kScene3000SpriteFrameMillis;
+			if (_vm->gameState().windmillBladesMoving) {
+				_largeFrame = _largeFrame < 0x1d ? _largeFrame + 1 : 0;
+				largeDirty = true;
+			}
+		}
+
+		while (smallAccumulator >= kScene3000SpriteFrameMillis) {
+			smallAccumulator -= kScene3000SpriteFrameMillis;
 			_smallFrame = _smallFrame < 7 ? _smallFrame + 1 : 0;
-			frameDirty = true;
+			smallDirty = true;
 		}
 
+		const byte previousClipFrame = _clipFrame;
 		while (clipAccumulator >= kScene3000ClipFrameMillis) {
 			clipAccumulator -= kScene3000ClipFrameMillis;
 			if (delayedClipTick < kScene3000ClipDelayTicks) {
 				++delayedClipTick;
 				if (delayedClipTick == kScene3000PatchTick) {
-					_patchVisible = true;
 					drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2], _sceneFramebuffer.managedSurface());
-					frameDirty = true;
 				}
 				continue;
 			}
 			if (_clipFrame < kScene3000ClipFinalFrame) {
 				++_clipFrame;
-				clipDirty = true;
-				frameDirty = true;
+				if (_clipFrame == kScene3000BackgroundRefreshFrame)
+					memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(),
+						kScene3000BackgroundRefreshBytes);
 			}
 		}
 
-		if (frameDirty) {
-			drawPresentationFrame(clipDirty);
-			frameDirty = false;
-			clipDirty = false;
+		if (largeDirty || smallDirty || previousClipFrame != _clipFrame) {
+			drawPresentationFrame(largeDirty, smallDirty, previousClipFrame);
+			largeDirty = false;
+			smallDirty = false;
 		}
 
 		if (_clipFrame >= kScene3000ClipFinalFrame)
@@ -155,38 +170,25 @@ void Scene3000::runPresentation() {
 	}
 }
 
-void Scene3000::drawPresentationFrame(bool clipDirty) {
-	if (_hasPreviousLargeDescriptor) {
+void Scene3000::drawPresentationFrame(bool largeDirty, bool smallDirty, int previousClipFrame) {
+	if (largeDirty) {
 		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[3], 0,
-			kScene3000LargeDescriptorCount, _previousLargeDescriptor,
+			kScene3000LargeDescriptorCount, _largeFrame,
 			_baseFramebuffer.surface(), _sceneFramebuffer.surface());
 	}
-	if (_hasPreviousSmallDescriptor) {
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[4], 0,
-			kScene3000SmallDescriptorCount, _previousSmallDescriptor,
+	const uint smallChunkIndex = _vm->gameState().scene3080ChimneySmokeAnimationChanged ? 5 : 4;
+	if (smallDirty) {
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[smallChunkIndex], 0,
+			kScene3000SmallDescriptorCount, _smallFrame,
 			_baseFramebuffer.surface(), _sceneFramebuffer.surface());
 	}
-
-	if (_patchVisible)
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2], _sceneFramebuffer.managedSurface());
-
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[3], 0,
-		kScene3000LargeDescriptorCount, _largeFrame,
-		_baseFramebuffer.surface(), _sceneFramebuffer.surface());
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[4], 0,
-		kScene3000SmallDescriptorCount, _smallFrame,
-		_baseFramebuffer.surface(), _sceneFramebuffer.surface());
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[3], 0,
 		kScene3000LargeDescriptorCount, _largeFrame, _sceneFramebuffer.managedSurface());
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[4], 0,
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[smallChunkIndex], 0,
 		kScene3000SmallDescriptorCount, _smallFrame, _sceneFramebuffer.managedSurface());
-	if (clipDirty)
-		drawClipFrameDelta(6, kScene3000ClipDescriptorCount, _clipFrame);
+	for (int clipFrame = previousClipFrame + 1; clipFrame <= _clipFrame; ++clipFrame)
+		drawClipFrameDelta(6, kScene3000ClipDescriptorCount, clipFrame);
 
-	_previousLargeDescriptor = _largeFrame;
-	_previousSmallDescriptor = _smallFrame;
-	_hasPreviousLargeDescriptor = true;
-	_hasPreviousSmallDescriptor = true;
 	presentFrame();
 }
 

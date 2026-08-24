@@ -32,10 +32,15 @@ const char *const kScene6000ArchiveName = "RESOURCE.F00";
 const char *const kScene6000MusicArchiveName = "RESOURCE.M06";
 const uint16 kScene6000MusicCueId = 0x000b;
 const uint16 kScene6000NextState = 0x177a;
-const uint32 kScene6000FrameTickMillis = 75;
-const uint32 kScene6000SpriteTickMillis = 1000;
+const uint32 kScene6000SceneTickMillis = 1000;
+const uint32 kScene6000SpriteFrameMillis = 75;
 const uint kScene6000SpriteDescriptorCount = 0x2b;
+const uint kScene6000PatchTick = 3;
+const uint kScene6000SpriteStartTick = 5;
+const uint kScene6000BackgroundRefreshTick = 8;
+const uint kScene6000BackgroundRefreshBytes = 0x10000;
 const uint kScene6000EndTick = 0x32;
+const uint kScene6000NearEndTick = 0x31;
 
 const byte kScene6000SpriteFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -48,9 +53,7 @@ const byte kScene6000SpriteFrameMap[] = {
 
 Scene6000::Scene6000(HollywoodEngine *vm) :
 		ChapterIntroScene(vm, "scene 6000"),
-		_spriteFrameIndex(0),
-		_previousSpriteDescriptor(0),
-		_hasPreviousSpriteDescriptor(false) {
+		_spriteFrameIndex(0) {
 }
 
 const char *Scene6000::resourceArchiveName() const {
@@ -95,7 +98,7 @@ void Scene6000::runPresentation() {
 	uint32 spriteAccumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
 	bool spriteVisible = false;
-	bool spriteDirty = true;
+	bool spriteDirty = false;
 
 	while (tick < kScene6000EndTick && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -105,24 +108,29 @@ void Scene6000::runPresentation() {
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
 		frameAccumulator += delta;
-		spriteAccumulator += delta;
+		if (spriteVisible)
+			spriteAccumulator += delta;
 
-		while (frameAccumulator >= kScene6000FrameTickMillis && tick < kScene6000EndTick) {
-			frameAccumulator -= kScene6000FrameTickMillis;
+		while (frameAccumulator >= kScene6000SceneTickMillis && tick < kScene6000EndTick) {
+			frameAccumulator -= kScene6000SceneTickMillis;
 			++tick;
-			if (tick == 3)
+			if (tick == kScene6000PatchTick)
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2], _sceneFramebuffer.managedSurface());
-			if (tick == 5) {
+			if (tick == kScene6000SpriteStartTick) {
 				spriteVisible = true;
-				spriteDirty = true;
+				spriteAccumulator = kScene6000SpriteFrameMillis;
 			}
+			if (tick == kScene6000BackgroundRefreshTick)
+				memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), kScene6000BackgroundRefreshBytes);
 		}
 
-		while (spriteVisible && spriteAccumulator >= kScene6000SpriteTickMillis) {
-			spriteAccumulator -= kScene6000SpriteTickMillis;
+		while (spriteVisible && spriteAccumulator >= kScene6000SpriteFrameMillis) {
+			spriteAccumulator -= kScene6000SpriteFrameMillis;
 			if (_spriteFrameIndex + 1 < ARRAYSIZE(kScene6000SpriteFrameMap)) {
 				++_spriteFrameIndex;
 				spriteDirty = true;
+				if (_spriteFrameIndex + 1 == ARRAYSIZE(kScene6000SpriteFrameMap))
+					tick = kScene6000NearEndTick;
 			}
 		}
 
@@ -135,12 +143,6 @@ void Scene6000::runPresentation() {
 }
 
 void Scene6000::drawAnimatedSpriteFrame(bool drawSprite) {
-	if (_hasPreviousSpriteDescriptor) {
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[3], 0,
-			kScene6000SpriteDescriptorCount, _previousSpriteDescriptor,
-			_baseFramebuffer.surface(), _sceneFramebuffer.surface());
-	}
-
 	const uint mapIndex = MIN<uint>(_spriteFrameIndex, ARRAYSIZE(kScene6000SpriteFrameMap) - 1);
 	const uint16 descriptor = kScene6000SpriteFrameMap[mapIndex];
 	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[3], 0,
@@ -151,8 +153,6 @@ void Scene6000::drawAnimatedSpriteFrame(bool drawSprite) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[3], 0,
 			kScene6000SpriteDescriptorCount, descriptor, _sceneFramebuffer.surface());
 
-	_previousSpriteDescriptor = descriptor;
-	_hasPreviousSpriteDescriptor = true;
 	presentFrame();
 }
 

@@ -778,6 +778,7 @@ void Scene3090::runUseStrawInFireplace() {
 		kScene3090PrimarySpeechRed, kScene3090PrimarySpeechGreen, kScene3090PrimarySpeechBlue);
 	endBlindManSpeechAnimation();
 	state.scene3080WindowOpened = true;
+	state.scene3080ChimneySmokeAnimationChanged = true;
 	state.scene3090WindowOpenSequenceState = 1;
 	_puzzleChannel.frameIndex = 0x1b;
 	_puzzleLayer.setFrame(_puzzleChannel.frameIndex);
