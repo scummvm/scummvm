@@ -115,8 +115,8 @@ struct GameplayState {
 		scene3070FrankensteinBodyState = 0;
 		scene3070SurgicalNeedleThreadTaken = false;
 		scene3070OperatingTableAlternateDescription = false;
-		scene3070FrankensteinRevivalAlternateResponse = false;
-		scene3070MachineRunning = false;
+		scene3070StoryPhase = 0;
+		scene3070SerumIngredientCount = 0;
 		scene3070OperatingTableForegroundAlternate = false;
 		scene3070WindowForegroundPatchActive = false;
 		scene3070InterludeCutsceneSeen = false;
@@ -847,8 +847,8 @@ struct GameplayState {
 	byte scene3070FrankensteinBodyState;
 	bool scene3070SurgicalNeedleThreadTaken;
 	bool scene3070OperatingTableAlternateDescription;
-	bool scene3070FrankensteinRevivalAlternateResponse;
-	bool scene3070MachineRunning;
+	byte scene3070StoryPhase;
+	byte scene3070SerumIngredientCount;
 	bool scene3070OperatingTableForegroundAlternate;
 	bool scene3070WindowForegroundPatchActive;
 	bool scene3070InterludeCutsceneSeen;
