@@ -28,13 +28,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-constexpr int OVERWORLD_WIDTH = 168;
-constexpr int OVERWORLD_HEIGHT = 168;
-constexpr int OVERWORLD_SIZE = OVERWORLD_WIDTH * OVERWORLD_HEIGHT;
-constexpr int CITY_WIDTH = 38;
-constexpr int CITY_HEIGHT = 18;
-constexpr int CITY_SIZE = CITY_WIDTH * CITY_HEIGHT;
-
 void Map::init() {
 	// Load the overworld map
 	Common::File ow;
@@ -110,7 +103,7 @@ void Map::load(int mapNum) {
 	}
 
 	// Set up copies of the map position and player tile to use
-	_playerTileId = kTileParty;
+	_playerTileId = TILE_PLAYER;
 	clearTiles();
 }
 
@@ -124,18 +117,18 @@ bool Map::canMoveToTile(int tileNum) {
 	if (_mapX < _mapWidth && _mapY < _mapHeight) {
 		// Within the bounds of the map
 		switch (_playerTileId) {
-		case kTileTimeMachine:
+		case TILE_TIME_MACHINE:
 			return true;
-		case kTileAircar:
+		case TILE_AIRCAR:
 			// TODO
 			error("TODO: aircar");
 			break;
-		case kTileFrigate:
-			if (tileId != kTileOcean)
+		case TILE_FRIGATE1:
+			if (tileId != TILE_OCEAN)
 				return true;
 
 			goto update_xy;
-		case kTileHorse:
+		case TILE_HORSE:
 			// TODO
 			break;
 		default:
@@ -151,6 +144,19 @@ update_xy:
 	_mapY &= 63;
 
 	return false;
+}
+
+int Map::getMapTile(int x, int y) const {
+	int tile = (*this)[y][x];
+
+	// I honestly have no idea what this does
+	if (tile > TILE_CASTLE1) {
+		++tile;
+		if (tile == TILE_CITY2)
+			++tile;
+	}
+
+	return tile;
 }
 
 } // namespace Data

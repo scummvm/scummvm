@@ -40,6 +40,7 @@
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/player.h"
 #include "ultima/ultima1/data/tiles.h"
+#include "ultima/ultima1/logic/logic.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -66,6 +67,7 @@ public:
 	Data::Map _map;
 	Data::Player _player;
 	Graphics::ManagedSurface _tiles[Data::TILE_COUNT];
+	Logic::Logic *_logic = nullptr;
 
 public:
 	Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

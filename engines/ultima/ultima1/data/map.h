@@ -28,6 +28,13 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
+constexpr int OVERWORLD_WIDTH = 168;
+constexpr int OVERWORLD_HEIGHT = 168;
+constexpr int OVERWORLD_SIZE = OVERWORLD_WIDTH * OVERWORLD_HEIGHT;
+constexpr int CITY_WIDTH = 38;
+constexpr int CITY_HEIGHT = 18;
+constexpr int CITY_SIZE = CITY_WIDTH * CITY_HEIGHT;
+
 constexpr int MAP_VISIBLE_WIDTH = 19;
 constexpr int MAP_VISIBLE_HEIGHT = 9;
 constexpr int MAP_VISIBLE_CENTER_X = 9;
@@ -132,6 +139,8 @@ public:
 	void clearTiles();
 
 	bool canMoveToTile(int tileNum);
+
+	int getMapTile(int x, int y) const;
 };
 
 } // namespace Data

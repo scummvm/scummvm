@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima1/data/game.h"
+#include "ultima/ultima1/logic/overworld_logic.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/metaengine.h"
 
@@ -32,8 +33,8 @@ void Game::startGame() {
 
 	// TODO: dungeons aren't implemented yet, so always start on the overworld
 	g_engine->replaceView("Overworld");
-
-	promptForCommand();
+	delete g_engine->_logic;
+	g_engine->_logic = new Logic::OverworldLogic();
 }
 
 void Game::message(const Common::String &name, const char *param) {

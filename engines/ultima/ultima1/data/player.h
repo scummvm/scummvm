@@ -162,6 +162,8 @@ public:
 	bool isDead() const {
 		return _hits <= 0;
 	}
+
+	int getCreatureAt(int x, int y, int creatureIndex) const;
 };
 
 } // namespace Data

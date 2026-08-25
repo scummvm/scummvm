@@ -33,24 +33,26 @@ constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
 
 enum TileId {
-	kTileOcean = 0,
-	kTileGrass = 1,
-	kTileWoods = 2,
-	kTileCastle = 4,
-	kTileCastleFlag = 5,
-	kTileSignpost = 6,
-	kTileCity = 7,
-	kTileCityFlag = 8,
-	kTileParty = 10,
-	kTileHorse = 11,
-	kTileCart = 12,
-	kTileRaft = 13,
-	kTileFrigate = 14,
-	kTileAircar = 16,
-	kTileShuttle = 17,
-	kTileTimeMachine = 18,
-	kTileFirstMonster = 19,
-	kTileLastMonster = 47
+	TILE_OCEAN = 0,
+	TILE_GRASS = 1,
+	TILE_WOODS = 2,
+	TILE_MOUNTAINS = 3,
+	TILE_CASTLE1 = 4,
+	TILE_CASTLE2 = 5,
+	TILE_SIGNPOST = 6,
+	TILE_CITY1 = 7,
+	TILE_CITY2 = 8,
+	TILE_PLAYER = 10,
+	TILE_HORSE = 11,
+	TILE_CART = 12,
+	TILE_RAFT = 13,
+	TILE_FRIGATE1 = 14,
+	TILE_FRIGATE2 = 15,
+	TILE_AIRCAR = 16,
+	TILE_SHUTTLE = 17,
+	TILE_TIME_MACHINE = 18,
+	TILE_FIRST_MONSTER = 19,
+	TILE_LAST_MONSTER = 47
 };
 
 /**

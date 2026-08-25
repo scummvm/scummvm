@@ -42,7 +42,7 @@ void OverworldMap::timeout() {
 }
 
 void OverworldMap::animateWater() {
-	Graphics::ManagedSurface &tile = g_engine->_tiles[Data::kTileOcean];
+	Graphics::ManagedSurface &tile = g_engine->_tiles[Data::TILE_OCEAN];
 	assert(tile.w == Data::TILE_WIDTH && tile.h == Data::TILE_HEIGHT);
 
 	byte lastRow[Data::TILE_WIDTH];
@@ -56,7 +56,7 @@ void OverworldMap::animateWater() {
 }
 
 int OverworldMap::animatedTileId(byte tileId) const {
-	if (tileId == Data::kTileCastle) {
+	if (tileId == Data::TILE_CASTLE1) {
 		// Only redrawn on 2 of every 6 ticks; the other 4 ticks leave
 		// whichever frame was last drawn untouched
 		int offset = 2;
@@ -65,12 +65,12 @@ int OverworldMap::animatedTileId(byte tileId) const {
 		else if ((_animIndex % 3) == 0)
 			offset = 1;
 
-		return (offset == 2) ? -1 : Data::kTileCastle + offset;
+		return (offset == 2) ? -1 : Data::TILE_CASTLE1 + offset;
 	}
 
-	if (tileId == Data::kTileCity) {
+	if (tileId == Data::TILE_CITY1) {
 		// Redrawn every tick, biased 3:1 toward the waving-flag frame
-		return Data::kTileCity + (((_animIndex % 4) == 0) ? 0 : 1);
+		return Data::TILE_CITY1 + (((_animIndex % 4) == 0) ? 0 : 1);
 	}
 
 	return tileId;

@@ -96,6 +96,11 @@ void Player::synchronizeOriginal(Common::Serializer &s) {
 	_mapNum = MAP_OVERWORLD;
 }
 
+int Player::getCreatureAt(int x, int y, int creatureIndex) const {
+	// TODO
+	return -1;
+}
+
 } // namespace Data
 } // namespace Ultima1
 } // namespace Ultima
