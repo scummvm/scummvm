@@ -1017,6 +1017,9 @@ void global_midi_play(int num) {
 	};
 
 	assert(num >= 1 && num <= 15);
+	if (!config_file.music_flag)
+		return;
+
 	Common::String name = Common::String::format("*%s.hmi", NAMES[num - 1]);
 
 	midi_play(name.c_str());
