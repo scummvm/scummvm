@@ -306,6 +306,9 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene6070SuePresent);
 	syncStateBool(s, state.scene6070CellDoorOpen);
 	syncStateBool(s, state.scene6080Visited);
+	syncStateBool(s, state.scene6100EntryLineSeen);
+	s.syncAsByte(state.scene6100CharlieState);
+	syncStateBool(s, state.scene6100BriefcasePresent);
 	syncStateBool(s, state.seenScene8010EntryLine);
 	s.syncAsByte(state.scene8010FishermanConversationState);
 	syncStateBool(s, state.seenScene8020EntryLine);
@@ -491,6 +494,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1040GorillaCordState = 0;
 	if (state.scene6040WireState > 2)
 		state.scene6040WireState = 0;
+	if (state.scene6100CharlieState > 2)
+		state.scene6100CharlieState = 1;
 	if (state.scene3060SecretDoorRevealState > 2)
 		state.scene3060SecretDoorRevealState = 0;
 	if (state.scene3060GlobeFrame >= 0x1e)
