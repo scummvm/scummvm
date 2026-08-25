@@ -55,7 +55,8 @@ private:
 	void promoteMachineHotspots();
 	void runEntryFromScene3020();
 	void runExitToScene3020();
-	void runDeltaTransitionClip(uint chunkIndex, uint tableEntryCount, byte finalFrameIndex);
+	void runDeltaTransitionClip(uint chunkIndex, uint tableEntryCount, byte finalFrameIndex,
+		bool drawActorInBackground);
 	void drawDeltaTransitionFrame(const Common::Array<byte> &clipData, uint tableEntryCount,
 		byte frameIndex, Graphics::Surface &transitionBackground);
 	void drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
