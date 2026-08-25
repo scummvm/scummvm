@@ -180,6 +180,8 @@ protected:
 	virtual bool advanceCustomGameplayLoop(uint32 delta);
 	// Returning true suppresses generic action dispatch.
 	virtual bool dispatchCustomSceneAction(uint16 handlerId);
+	// Controls actor paths started by scene clicks, including free walk and item relations.
+	virtual bool shouldPlayGameplayClickPath() const;
 	// Returning true validates the adjusted target instead of running the default floor-mask search.
 	virtual bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,

@@ -69,6 +69,8 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 		_lastSceneActionItemId = 0;
 		if (state.currentStrip != 1)
 			return;
+		if (!shouldPlayGameplayClickPath())
+			return;
 
 		int targetX = state.sceneX;
 		int targetY = state.sceneY;
@@ -94,6 +96,10 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 	if (actionRecord.actionHandlerId == 0)
 		return;
 	_lastSceneActionItemId = itemId;
+	if (!shouldPlayGameplayClickPath()) {
+		dispatchSceneAction(actionRecord.actionHandlerId);
+		return;
+	}
 
 	const SceneActionTarget target = _hotspots.actionTarget(itemId);
 	int targetX = target.interactionPoint.x;
@@ -138,6 +144,10 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 	_lastSceneActionItemId = itemId;
 	_lastInventoryActionItemId = 0;
 	_lastInventoryPrimaryItemId = state.primaryInventoryItem;
+	if (!shouldPlayGameplayClickPath()) {
+		dispatchSceneAction(actionRecord.actionHandlerId);
+		return;
+	}
 
 	const SceneActionTarget target = _hotspots.actionTarget(itemId);
 	int targetX = _activeActorWorldX;

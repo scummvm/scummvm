@@ -550,6 +550,10 @@ bool PlayableScene::dispatchCustomSceneAction(uint16 handlerId) {
 	return false;
 }
 
+bool PlayableScene::shouldPlayGameplayClickPath() const {
+	return true;
+}
+
 bool PlayableScene::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	(void)targetX;
 	(void)targetY;
