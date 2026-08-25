@@ -140,7 +140,7 @@ void Scene3030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)activeWorldY;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	if (_vm->gameState().windmillBladesMoving)
+	if (_vm->gameState().windmillBladesMoving || _machineSequenceActive)
 		drawResourceSpriteLayer(_loopLayer);
 	if (_machineSequenceActive) {
 		drawTransientLayers(_machineLayers);
