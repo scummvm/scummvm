@@ -39,7 +39,7 @@ const uint kScene9160PanelHeight = 0x200;
 const uint kScene9160PanelSize = kScene9160PanelWidth * kScene9160PanelHeight;
 const uint kScene9160FirstOverlayChunk = 3;
 const uint kScene9160LastOverlayChunk = 24;
-const uint kScene9160WaitMillis = 7000;
+const uint kScene9160WaitMillis = 8000;
 const uint kScene9160ScrollFrameMillis = 50;
 
 const byte kScene9160ScrollDeltaByStep[] = {
@@ -49,6 +49,7 @@ const byte kScene9160ScrollDeltaByStep[] = {
 Scene9160::Scene9160(HollywoodEngine *vm) :
 		IntroSceneBase(vm, "Scene 9160", kScene9160TallFramebufferSize, kFrameBufferSize),
 		_resources(),
+		_music(vm->introMusic()),
 		_paletteResource(),
 		_panelA(),
 		_panelB(),
@@ -60,6 +61,7 @@ bool Scene9160::play() {
 	if (!load())
 		return false;
 
+	_music->setVolume(100);
 	buildInitialFrame();
 	_rowOffset = 0;
 	presentFrame();
@@ -81,9 +83,10 @@ bool Scene9160::play() {
 	}
 
 	if (!_skipRequested && !Engine::shouldQuit())
-		waitBeforeScroll();
+		waitForMusicEnd();
 
 	fadeOutPalette();
+	_music->stop();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
 
@@ -243,8 +246,23 @@ bool Scene9160::waitBeforeScroll() {
 	return _skipRequested || Engine::shouldQuit();
 }
 
+bool Scene9160::waitForMusicEnd() {
+	while (_music->isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return true;
+		presentFrame();
+		g_system->delayMillis(50);
+	}
+
+	return _skipRequested || Engine::shouldQuit();
+}
+
 uint Scene9160::presentRowOffset() const {
 	return _rowOffset;
+}
+
+void Scene9160::stopAudio() {
+	_music->stop();
 }
 
 } // End of namespace Hollywood

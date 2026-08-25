@@ -22,6 +22,8 @@
 #ifndef HOLLYWOOD_SCENES_INTRO_SCENE9180_H
 #define HOLLYWOOD_SCENES_INTRO_SCENE9180_H
 
+#include "common/random.h"
+
 #include "hollywood/music.h"
 #include "hollywood/scenes/intro/intro_resource_set.h"
 #include "hollywood/scenes/intro/intro_scene.h"
@@ -76,14 +78,15 @@ private:
 	SoundBank0Player _loopSound;
 	SoundBank0Player _effectSound;
 	IntroTextStore _text;
+	Common::RandomSource _random;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _normalPalette;
 	Common::Array<byte> _brightPalette;
 	IndexedSurfaceBuffer _baseFramebuffer;
 	SubtitleOverlay _subtitle;
 	byte _frameMapIndex;
+	byte _flickerModulus;
 	bool _brightPaletteActive;
-	uint _flickerCounter;
 };
 
 } // End of namespace Hollywood

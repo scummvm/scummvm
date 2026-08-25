@@ -84,10 +84,13 @@ const byte kScene9170ScrollUpB[] = {
 Scene9170::Scene9170(HollywoodEngine *vm) :
 		IntroSceneBase(vm, "Scene 9170", kScene9170TallFramebufferSize, kFrameBufferSize),
 		_resources(),
-		_music(),
+		_music(vm->introMusic()),
 		_speech(),
+		_ambientSpeech(),
 		_sound(),
+		_ambientSound(),
 		_text(),
+		_random("hollywood_scene9170"),
 		_paletteResource(),
 		_baseFramebuffer(),
 		_staticFramebuffer(),
@@ -99,7 +102,9 @@ Scene9170::Scene9170(HollywoodEngine *vm) :
 		_lowerFrame(0),
 		_effectFrame(0),
 		_eventFrame(0),
-		_animationStep(0) {
+		_animationStep(0),
+		_shakeActive(false),
+		_shakeRowOffset(0) {
 	_paletteResource.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
 	_staticFramebuffer.resize(kScene9170TallFramebufferSize);
@@ -116,9 +121,10 @@ bool Scene9170::play() {
 
 	runSequence();
 
-	stopAudio();
+	_speech.stop();
+	_sound.stop();
+	stopLowerRoomAmbience();
 	clearSubtitle();
-	fadeOutPalette();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	composeFrame();
 	presentFrame();
@@ -162,8 +168,8 @@ bool Scene9170::loadArenaChunk(uint index) {
 
 void Scene9170::runSequence() {
 	buildInitialStaticFrame();
-	_music.setArchive(Common::Path(kScene9170MusicArchiveName));
-	_music.playMusicCue(kScene9170MusicCueId, 50);
+	_music->setArchive(Common::Path(kScene9170MusicArchiveName));
+	_music->playMusicCue(kScene9170MusicCueId, 50);
 
 	_rowOffset = 0;
 	addBlockListToStatic(2, 0);
@@ -201,6 +207,7 @@ void Scene9170::runSequence() {
 	_upperActorsEnabled = false;
 	_lowerFrame = 2;
 	_effectFrame = 0;
+	startLowerRoomAmbience();
 	waitWithComposite(2000);
 	runSpeechLine(4, 0, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
 	waitWithComposite(2000);
@@ -389,16 +396,19 @@ void Scene9170::fadeInPalette() {
 	presentFrame();
 }
 
-void Scene9170::fadeOutPalette() {
-	for (byte threshold = 1; threshold < 0x40 && !_skipRequested && !Engine::shouldQuit(); ++threshold) {
-		for (uint i = 0; i < _paletteResource.size(); ++i) {
-			if (_paletteResource[i] >= threshold)
-				_paletteCurrent[i] = _paletteCurrent[i] == 0 ? 0 : _paletteCurrent[i] - 1;
-		}
-		presentFrame();
-		if (delay(10))
-			return;
-	}
+void Scene9170::startLowerRoomAmbience() {
+	_ambientSound.playSample(0x1b, 100, true);
+
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (_text.getStageCue(3, 5, textRecordId, continuationCount, voiceSampleId) && voiceSampleId != 0)
+		_ambientSpeech.playSample(voiceSampleId, 50, true);
+}
+
+void Scene9170::stopLowerRoomAmbience() {
+	_ambientSpeech.stop();
+	_ambientSound.stop();
 }
 
 void Scene9170::runSpeechLine(byte rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
@@ -536,25 +546,32 @@ void Scene9170::runEventOverlayFrames() {
 }
 
 void Scene9170::runShake() {
+	stopLowerRoomAmbience();
 	_sound.playSample(0x1e, 100);
+	_shakeActive = true;
 	for (uint i = 0; i < 0x32 && !_skipRequested && !Engine::shouldQuit(); ++i) {
 		if (pollEvents())
-			return;
+			break;
+		_shakeRowOffset = _random.getRandomNumber(2) * 4;
 		composeFrame();
 		presentFrame();
 		if (delay(20))
-			return;
+			break;
 	}
+	_shakeActive = false;
+	_shakeRowOffset = 0;
 }
 
 uint Scene9170::presentRowOffset() const {
-	return _rowOffset;
+	return _rowOffset + (_shakeActive ? _shakeRowOffset : 0);
 }
 
 void Scene9170::stopAudio() {
 	_speech.stop();
+	_ambientSpeech.stop();
 	_sound.stop();
-	_music.stop();
+	_ambientSound.stop();
+	_music->stop();
 }
 
 void Scene9170::clearSubtitle() {
