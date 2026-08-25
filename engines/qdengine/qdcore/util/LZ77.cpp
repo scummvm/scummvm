@@ -84,7 +84,7 @@ void CLZ77::encode(byte *target, int32 &tlen, const byte *source, int32 slen) {
 
 	block = 0;              // block - bit in single flag byte
 	shift = 16;             // shift offset to most significant bits
-	border = 1;             // offset can`t be more then border
+	border = 1;             // offset can't be more than border
 	flag = target;          // flag for every 8 entities
 	tlen++;                 // byte for first flag
 	*flag = 0;
@@ -142,7 +142,7 @@ int32 CLZ77::decode(byte *target, int32 &tlen, const byte *source, int32 slen) {
 	flag = (const byte *)source;
 	block = 0;              // block - bit in single flag byte
 	shift = 16;             // shift offset to most significant bits
-	border = 1;             // offset can`t be more then border
+	border = 1;             // offset can't be more than border
 	for (s = (const byte *)source + 1; (s < source + slen) && (t - target < tlen);) {
 		if (shift > BITS_LEN)
 			while (t - target >= (int)border) {
