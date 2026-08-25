@@ -393,8 +393,6 @@ void PlayableScene::initializeInventoryOwnerState() {
 	GameplayState &state = _vm->gameState();
 	if (_config.inventoryOwnerIndex == 0) {
 		state.initializeRonItemResourcePages();
-		if (state.inventoryItemCountByOwner[0] == 0)
-			state.initializeRonInventoryItems();
 	} else {
 		state.initializeSueItemResourcePages();
 	}

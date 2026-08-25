@@ -135,6 +135,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 		GameplayState::kInventoryItemRelationTableEntryCount);
 	syncUint16Table(s, state.dialogueRelationMode2HandlerIdsByItemPair,
 		GameplayState::kInventoryItemRelationTableEntryCount);
+	syncStateBool(s, state.ronInventoryInitialized);
 	syncStateBool(s, state.sueInventoryInitialized);
 	s.syncAsByte(state.multiToolKnifeState);
 	s.syncAsByte(state.ronTapeRecorderState);

@@ -79,7 +79,7 @@ uint16 ChapterIntroScene::sceneViewportXOffset() const {
 void ChapterIntroScene::initializeChapterState() {
 	GameplayState &state = _vm->gameState();
 	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
+	if (!state.ronInventoryInitialized)
 		state.initializeRonInventoryItems();
 	state.currentInventoryOwnerIndex = 0;
 	state.activeAudioChapterIndex = activeAudioChapterIndex();

@@ -495,6 +495,9 @@ int gameplayStateForBootParam(int bootParam) {
 }
 
 void prepareGameplayStateForBootParam(GameplayState &state, int bootParam) {
+	state.initializeRonItemResourcePages();
+	state.initializeRonInventoryItems();
+
 	switch (bootParam) {
 	case 2070:
 		// Direct B07 boots bypass the chamber/maze setup. Match the normal
