@@ -610,7 +610,7 @@ static void update_variables(void) {
 		av_status |= AUDIO_STATUS_UPDATE_LATENCY;
 		audio_buffer_init(sample_rate, (uint16) frame_rate);
 		if (g_system)
-			av_status |= (AV_STATUS_UPDATE_AV_INFO & AV_STATUS_RESET_PENDING);
+			av_status |= (AV_STATUS_UPDATE_AV_INFO | AV_STATUS_RESET_PENDING);
 	}
 
 	if (video_hw_mode & VIDEO_GRAPHIC_MODE_RESET_PENDING) {
