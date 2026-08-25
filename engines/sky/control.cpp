@@ -1149,7 +1149,16 @@ void Control::initHelpPanel() {
 
 	int destX = (GAME_SCREEN_WIDTH - newW) / 2;
 	int destY = (FULL_SCREEN_HEIGHT - newH) / 2;
-	Graphics::Font *font = Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 12);
+	Graphics::Font *font = nullptr;
+#ifdef USE_FREETYPE2
+	font = Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 12);
+#endif
+	if (!font) {
+		warning("Cannot load font, hints disabled");
+		scaled->free();
+		delete scaled;
+		return;
+	}
 	Common::Array<Hint> hints = buildHints();
 	Common::Array<Common::Rect> hintRects;
 	TappableAnswer currentTappable;
