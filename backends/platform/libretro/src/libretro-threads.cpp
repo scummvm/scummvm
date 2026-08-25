@@ -52,12 +52,15 @@ static bool stack_warned = false;
 
 static void check_stack_headroom(void) {
 	char probe;
+	ptrdiff_t diff;
 	size_t used;
 
 	if (!stack_anchor || stack_warned)
 		return;
 
-	used = (size_t)(stack_anchor - &probe);
+	diff = stack_anchor - &probe;
+	used = (size_t)(diff < 0 ? -diff : diff);
+
 	if (used < (EMU_THREAD_STACK_SIZE / 4) * 3)
 		return;
 
