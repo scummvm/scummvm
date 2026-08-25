@@ -58,8 +58,9 @@ const byte kScene9170EffectFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 4, 3, 2, 1
 };
 
+// The callback increments past idle state 0 before selecting descriptors 0-3.
 const byte kScene9170EventFrameMap[] = {
-	0, 1, 2, 3
+	0, 0, 1, 2, 3
 };
 
 const byte kScene9170ScrollDownA[] = {
@@ -98,11 +99,16 @@ Scene9170::Scene9170(HollywoodEngine *vm) :
 		_rowOffset(0),
 		_upperActorsEnabled(false),
 		_lowerActorsEnabled(false),
-		_eventOverlayVisible(false),
+		_lowerDirty(false),
+		_effectDirty(false),
+		_eventDirty(false),
 		_lowerFrame(0),
 		_effectFrame(0),
 		_eventFrame(0),
-		_animationStep(0),
+		_lastTalkingFrame(0xff),
+		_channelCanvasOffset(0),
+		_ambientEffectsEnabled(false),
+		_ambientSpeechSampleId(0),
 		_shakeActive(false),
 		_shakeRowOffset(0) {
 	_paletteResource.resize(kPaletteSize);
@@ -113,6 +119,7 @@ Scene9170::Scene9170(HollywoodEngine *vm) :
 	_subtitle.centerX = 0;
 	_subtitle.topY = 0;
 	_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
+	_upperDirty[0] = _upperDirty[1] = _upperDirty[2] = false;
 }
 
 bool Scene9170::play() {
@@ -126,6 +133,7 @@ bool Scene9170::play() {
 	stopLowerRoomAmbience();
 	clearSubtitle();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	_rowOffset = 0;
 	composeFrame();
 	presentFrame();
 
@@ -172,16 +180,14 @@ void Scene9170::runSequence() {
 	_music->playMusicCue(kScene9170MusicCueId, 50);
 
 	_rowOffset = 0;
-	addBlockListToStatic(2, 0);
-	composeFrame();
+	addBlockListToCanvas(2, 0);
 	fadeInPalette();
-	waitWithComposite(7000);
+	if (delay(7000))
+		return;
 
 	scrollByTable(kScene9170ScrollDownA, ARRAYSIZE(kScene9170ScrollDownA), true);
-	_upperActorsEnabled = true;
-	_lowerActorsEnabled = false;
-	composeFrame();
-	presentFrame();
+	if (_skipRequested || Engine::shouldQuit())
+		return;
 
 	for (byte frameIndex = 0; frameIndex < 6 && !_skipRequested && !Engine::shouldQuit(); ++frameIndex) {
 		runSpeechLine(1, frameIndex, 0x0e8, 0x0cc, 0x20, 0x30, 0x3f, 0);
@@ -192,92 +198,118 @@ void Scene9170::runSequence() {
 			runSpeechLine(3, frameIndex, 0x140, 0x08c, 0x20, 0x30, 0x3f, 5);
 	}
 	runSpeechLine(3, 5, 0x140, 0x08c, 0x20, 0x30, 0x3f, 5);
+	if (_skipRequested || Engine::shouldQuit())
+		return;
 
 	for (uint i = 0; i < ARRAYSIZE(kScene9170ScrollUpA) && !_skipRequested && !Engine::shouldQuit(); ++i) {
+		if (pollEvents())
+			return;
 		_rowOffset = _rowOffset > kScene9170ScrollUpA[i] ? _rowOffset - kScene9170ScrollUpA[i] : 0;
+		presentFrame();
 		if (i == 0x0f)
 			switchToLowerRoomFrame();
-		composeFrame();
-		presentFrame();
-		if (delay(kScene9170ScrollFrameMillis))
+		if (i + 1 < ARRAYSIZE(kScene9170ScrollUpA) && delay(kScene9170ScrollFrameMillis))
 			return;
 	}
+	if (_skipRequested || Engine::shouldQuit())
+		return;
 
-	_lowerActorsEnabled = true;
-	_upperActorsEnabled = false;
-	_lowerFrame = 2;
-	_effectFrame = 0;
 	startLowerRoomAmbience();
-	waitWithComposite(2000);
+	waitWithAnimations(2000, 3, true);
 	runSpeechLine(4, 0, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
-	waitWithComposite(2000);
-	runEventOverlayFrames();
-
-	clearStaticRows(0x1e0, HollywoodEngine::kScreenHeight);
-	addBlockListToStatic(4, 0x220);
-	_rowOffset = 0x220;
-	runShake();
-	_rowOffset = 0;
-	runSpeechLine(4, 1, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
-	waitWithComposite(1000);
-	scrollByTable(kScene9170ScrollDownB, ARRAYSIZE(kScene9170ScrollDownB), true);
-	waitWithComposite(3000);
-	scrollByTable(kScene9170ScrollUpB, ARRAYSIZE(kScene9170ScrollUpB), false);
-	runSpeechLine(4, 2, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
-	waitWithComposite(2000);
-	scrollTo(0x140, 4);
-	waitWithComposite(3000);
-
-	_lowerFrame = 7;
+	_lowerFrame = 0;
+	_lowerDirty = true;
 	composeFrame();
 	presentFrame();
+	waitWithAnimations(2000, 3, true);
+	runEventOverlayFrames();
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+
+	clearCanvasRows(0x1e0, HollywoodEngine::kScreenHeight);
+	addBlockListToCanvas(4, 0x220);
+	runShake();
+	runSpeechLine(4, 1, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
+	_lowerFrame = 0;
+	_lowerDirty = true;
+	composeFrame();
+	presentFrame();
+	waitWithAnimations(1000, 3, false);
+	scrollByTable(kScene9170ScrollDownB, ARRAYSIZE(kScene9170ScrollDownB), true);
+	if (delay(3000))
+		return;
+	scrollByTable(kScene9170ScrollUpB, ARRAYSIZE(kScene9170ScrollUpB), false);
+	runSpeechLine(4, 2, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
+	_lowerFrame = 0;
+	_lowerDirty = true;
+	composeFrame();
+	presentFrame();
+	waitWithAnimations(2000, 3, false);
+	scrollTo(0x140, 4);
+	if (delay(3000))
+		return;
+
+	_lowerFrame = 7;
+	_lowerDirty = true;
+	composeFrame();
 	scrollTo(0x0a0, -4);
-	waitWithComposite(1000);
+	waitWithAnimations(1000, 4, false, false);
 	runSpeechLine(4, 3, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 4);
-	waitWithComposite(2000);
+	waitWithAnimations(2000, 4, false);
 	scrollTo(0x140, 4);
 }
 
 void Scene9170::buildInitialStaticFrame() {
 	_staticFramebuffer.clear(0);
+	_sceneFramebuffer.clear(0);
 	_baseFramebuffer.clear(0);
 	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[3], _baseFramebuffer.surface());
-	copyBaseToStaticAtYOffset(0x1e0);
+	copyBaseToCanvasAtYOffset(0x1e0);
 
 	_upperActorsEnabled = true;
 	_lowerActorsEnabled = false;
-	_eventOverlayVisible = false;
 	_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
+	_upperDirty[0] = _upperDirty[1] = _upperDirty[2] = true;
 	_lowerFrame = 0;
 	_effectFrame = 0;
 	_eventFrame = 0;
+	_lowerDirty = false;
+	_effectDirty = false;
+	_eventDirty = false;
+	_channelCanvasOffset = 0x1e0;
+	composeFrame();
 }
 
 void Scene9170::switchToLowerRoomFrame() {
 	_baseFramebuffer.clear(0);
 	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[1], _baseFramebuffer.surface());
-	copyBaseToStaticAtYOffset(_rowOffset);
+	copyBaseToCanvasAtYOffset(0);
 	_upperActorsEnabled = false;
 	_lowerActorsEnabled = true;
-	_eventOverlayVisible = false;
+	_upperDirty[0] = _upperDirty[1] = _upperDirty[2] = false;
 	_lowerFrame = 0;
 	_effectFrame = 0;
+	_lowerDirty = true;
+	_effectDirty = true;
+	_eventDirty = false;
+	_channelCanvasOffset = 0;
 	composeFrame();
-	presentFrame();
 
-	clearStaticRows(0x1e0, HollywoodEngine::kScreenHeight);
+	clearCanvasRows(0x1e0, HollywoodEngine::kScreenHeight);
 	_rowOffset = 0x1e0;
-	addBlockListToStatic(2, 0x1e0);
+	addBlockListToCanvas(2, 0x1e0);
 }
 
-void Scene9170::addBlockListToStatic(uint chunkIndex, int yOffset) {
+void Scene9170::addBlockListToCanvas(uint chunkIndex, int yOffset) {
 	if (chunkIndex >= IntroResourceSet::kResourceChunkCount)
 		return;
 	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
 		_staticFramebuffer.surface(), yOffset);
+	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
+		_sceneFramebuffer.surface(), yOffset);
 }
 
-void Scene9170::copyBaseToStaticAtYOffset(int yOffset) {
+void Scene9170::copyBaseToCanvasAtYOffset(int yOffset) {
 	for (int row = 0; row < HollywoodEngine::kScreenHeight; ++row) {
 		const int destinationRow = row + yOffset;
 		if (destinationRow < 0 || destinationRow >= _staticFramebuffer.surface().h)
@@ -285,21 +317,46 @@ void Scene9170::copyBaseToStaticAtYOffset(int yOffset) {
 		memcpy(_staticFramebuffer.data() + destinationRow * HollywoodEngine::kSceneBufferWidth,
 			_baseFramebuffer.data() + row * HollywoodEngine::kSceneBufferWidth,
 			HollywoodEngine::kSceneBufferWidth);
+		memcpy(_sceneFramebuffer.data() + destinationRow * HollywoodEngine::kSceneBufferWidth,
+			_baseFramebuffer.data() + row * HollywoodEngine::kSceneBufferWidth,
+			HollywoodEngine::kSceneBufferWidth);
 	}
 }
 
-void Scene9170::clearStaticRows(int yOffset, int rowCount) {
+void Scene9170::clearCanvasRows(int yOffset, int rowCount) {
 	for (int row = 0; row < rowCount; ++row) {
 		const int destinationRow = yOffset + row;
 		if (destinationRow < 0 || destinationRow >= _staticFramebuffer.surface().h)
 			continue;
 		memset(_staticFramebuffer.data() + destinationRow * HollywoodEngine::kSceneBufferWidth,
 			0, HollywoodEngine::kSceneBufferWidth);
+		memset(_sceneFramebuffer.data() + destinationRow * HollywoodEngine::kSceneBufferWidth,
+			0, HollywoodEngine::kSceneBufferWidth);
 	}
 }
 
 void Scene9170::composeFrame() {
-	memcpy(_sceneFramebuffer.data(), _staticFramebuffer.data(), _staticFramebuffer.size());
+	const bool drawEvent = _lowerActorsEnabled && _eventDirty;
+	if (!_upperDirty[0] && !_upperDirty[1] && !_upperDirty[2] &&
+			!_lowerDirty && !_effectDirty && !_eventDirty)
+		return;
+
+	if (_upperActorsEnabled) {
+		for (uint i = 0; i < 3; ++i) {
+			if (_upperDirty[i])
+				restoreSpriteChannel(8, 0x0f, kScene9170UpperFrameMaps[i],
+					ARRAYSIZE(kScene9170UpperFrameMaps[i]), _upperFrames[i]);
+		}
+	}
+
+	if (_lowerActorsEnabled) {
+		if (_lowerDirty)
+			restoreSpriteChannel(6, 9, kScene9170LowerFrameMap, ARRAYSIZE(kScene9170LowerFrameMap), _lowerFrame);
+		if (_effectDirty)
+			restoreSpriteChannel(5, 6, kScene9170EffectFrameMap, ARRAYSIZE(kScene9170EffectFrameMap), _effectFrame);
+		if (_eventDirty)
+			restoreSpriteChannel(7, 4, kScene9170EventFrameMap, ARRAYSIZE(kScene9170EventFrameMap), _eventFrame);
+	}
 
 	if (_upperActorsEnabled) {
 		for (uint i = 0; i < 3; ++i)
@@ -310,9 +367,25 @@ void Scene9170::composeFrame() {
 	if (_lowerActorsEnabled) {
 		drawSpriteChannel(6, 9, kScene9170LowerFrameMap, ARRAYSIZE(kScene9170LowerFrameMap), _lowerFrame);
 		drawSpriteChannel(5, 6, kScene9170EffectFrameMap, ARRAYSIZE(kScene9170EffectFrameMap), _effectFrame);
-		if (_eventOverlayVisible)
+		if (drawEvent)
 			drawSpriteChannel(7, 4, kScene9170EventFrameMap, ARRAYSIZE(kScene9170EventFrameMap), _eventFrame);
 	}
+
+	_upperDirty[0] = _upperDirty[1] = _upperDirty[2] = false;
+	_lowerDirty = false;
+	_effectDirty = false;
+	_eventDirty = false;
+}
+
+void Scene9170::restoreSpriteChannel(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, byte frameIndex) {
+	if (chunkIndex >= IntroResourceSet::kResourceChunkCount || frameMapSize == 0)
+		return;
+
+	const byte mappedFrame = frameMap[MIN<uint>(frameIndex, frameMapSize - 1)];
+	restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[chunkIndex], 0,
+		descriptorCount, mappedFrame, _staticFramebuffer.surface(), _sceneFramebuffer.surface(),
+		_channelCanvasOffset);
 }
 
 void Scene9170::drawSpriteChannel(uint chunkIndex, uint descriptorCount, const byte *frameMap,
@@ -321,9 +394,8 @@ void Scene9170::drawSpriteChannel(uint chunkIndex, uint descriptorCount, const b
 		return;
 
 	const byte mappedFrame = frameMap[MIN<uint>(frameIndex, frameMapSize - 1)];
-	const int yOffset = (_rowOffset == 0x0a0 || _rowOffset == 0x140) ? 0 : (int)_rowOffset;
 	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[chunkIndex], 0,
-		descriptorCount, mappedFrame, _sceneFramebuffer.surface(), yOffset);
+		descriptorCount, mappedFrame, _sceneFramebuffer.surface(), _channelCanvasOffset);
 }
 
 void Scene9170::scrollByTable(const byte *table, uint tableSize, bool add) {
@@ -334,9 +406,8 @@ void Scene9170::scrollByTable(const byte *table, uint tableSize, bool add) {
 			_rowOffset += table[i];
 		else
 			_rowOffset = _rowOffset > table[i] ? _rowOffset - table[i] : 0;
-		composeFrame();
 		presentFrame();
-		if (delay(kScene9170ScrollFrameMillis))
+		if (i + 1 < tableSize && delay(kScene9170ScrollFrameMillis))
 			return;
 	}
 }
@@ -352,29 +423,44 @@ void Scene9170::scrollTo(uint targetRowOffset, int step) {
 			_rowOffset = MIN<uint>(targetRowOffset, _rowOffset + step);
 		else
 			_rowOffset = _rowOffset > (uint)-step ? _rowOffset - (uint)-step : 0;
-		composeFrame();
 		presentFrame();
-		if (delay(kScene9170ScrollFrameMillis))
+		if (_rowOffset != targetRowOffset && delay(kScene9170ScrollFrameMillis))
 			return;
 	}
 }
 
-void Scene9170::waitWithComposite(uint32 millis) {
+void Scene9170::waitWithAnimations(uint32 millis, byte speakerGroup, bool animateAmbient,
+		bool presentChanges) {
 	uint32 elapsed = 0;
-	uint32 animationElapsed = 0;
+	uint32 speakerElapsed = 0;
+	uint32 effectElapsed = 0;
 	while (elapsed < millis && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
-		if (animationElapsed >= kScene9170EffectFrameMillis) {
-			animationElapsed %= kScene9170EffectFrameMillis;
-			advanceIdleAnimation(3);
+
+		bool dirty = false;
+		if (speakerElapsed >= kScene9170SpeechFrameMillis) {
+			speakerElapsed %= kScene9170SpeechFrameMillis;
+			advanceSpeakerIdleAnimation(speakerGroup);
+			advanceUpperIdleAnimations(speakerGroup);
+			dirty = true;
 		}
-		composeFrame();
-		presentFrame();
+		if (animateAmbient && effectElapsed >= kScene9170EffectFrameMillis) {
+			effectElapsed %= kScene9170EffectFrameMillis;
+			advanceLowerRoomAmbience();
+			dirty = true;
+		}
+		if (dirty) {
+			composeFrame();
+			if (presentChanges)
+				presentFrame();
+		}
+
 		const uint32 slice = MIN<uint32>(millis - elapsed, 10);
 		g_system->delayMillis(slice);
 		elapsed += slice;
-		animationElapsed += slice;
+		speakerElapsed += slice;
+		effectElapsed += slice;
 	}
 }
 
@@ -397,18 +483,30 @@ void Scene9170::fadeInPalette() {
 }
 
 void Scene9170::startLowerRoomAmbience() {
-	_ambientSound.playSample(0x1b, 100, true);
-
+	_ambientEffectsEnabled = true;
+	_ambientSpeechSampleId = 0;
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
-	uint16 voiceSampleId = 0;
-	if (_text.getStageCue(3, 5, textRecordId, continuationCount, voiceSampleId) && voiceSampleId != 0)
-		_ambientSpeech.playSample(voiceSampleId, 50, true);
+	_text.getStageCue(3, 5, textRecordId, continuationCount, _ambientSpeechSampleId);
 }
 
 void Scene9170::stopLowerRoomAmbience() {
+	_ambientEffectsEnabled = false;
+	_ambientSpeechSampleId = 0;
 	_ambientSpeech.stop();
 	_ambientSound.stop();
+}
+
+void Scene9170::advanceLowerRoomAmbience() {
+	if (!_ambientEffectsEnabled)
+		return;
+
+	_effectFrame = (_effectFrame + 1) % ARRAYSIZE(kScene9170EffectFrameMap);
+	_effectDirty = true;
+	if (_ambientSpeechSampleId != 0 && !_ambientSpeech.isPlaying())
+		_ambientSpeech.playSample(_ambientSpeechSampleId, 50);
+	if (!_ambientSound.isPlaying())
+		_ambientSound.playSample(0x1b, 100);
 }
 
 void Scene9170::runSpeechLine(byte rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
@@ -433,9 +531,8 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 		if (!text.empty()) {
 			_subtitle.visible = true;
 			_subtitle.colorIndex = kScene9170BlueSpeechColor;
-			_subtitle.centerX = centerX;
-			_subtitle.topY = topY;
 			wrapSubtitleText(text, centerX, _subtitle.lines);
+			calculateSubtitleBounds(centerX, topY);
 		}
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
@@ -445,22 +542,29 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 		uint32 elapsed = 0;
 		uint32 speechElapsed = 0;
 		uint32 effectElapsed = 0;
-		_animationStep = 0;
+		composeFrame();
+		presentFrame();
 		while (elapsed < duration && !_skipRequested && !Engine::shouldQuit()) {
 			if (pollEvents())
 				return;
 
+			bool dirty = false;
 			if (speechElapsed >= kScene9170SpeechFrameMillis) {
 				speechElapsed %= kScene9170SpeechFrameMillis;
 				advanceSpeechAnimation(speakerGroup);
+				advanceUpperIdleAnimations(speakerGroup);
+				dirty = true;
 			}
-			if (effectElapsed >= kScene9170EffectFrameMillis) {
+			if (_ambientEffectsEnabled && effectElapsed >= kScene9170EffectFrameMillis) {
 				effectElapsed %= kScene9170EffectFrameMillis;
-				advanceIdleAnimation(speakerGroup);
+				advanceLowerRoomAmbience();
+				dirty = true;
+			}
+			if (dirty) {
+				composeFrame();
+				presentFrame();
 			}
 
-			composeFrame();
-			presentFrame();
 			const uint32 slice = MIN<uint32>(duration - elapsed, 10);
 			g_system->delayMillis(slice);
 			elapsed += slice;
@@ -468,28 +572,8 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 			effectElapsed += slice;
 		}
 
-		switch (speakerGroup) {
-		case 0:
-			_upperFrames[0] = 0;
-			break;
-		case 1:
-			_upperFrames[1] = 0;
-			break;
-		case 2:
-			_upperFrames[2] = 0;
-			break;
-		case 3:
-			_lowerFrame = 2;
-			break;
-		case 4:
-			_lowerFrame = 7;
-			break;
-		case 5:
-			_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
-			break;
-		default:
-			break;
-		}
+		_speech.stop();
+		resetSpeakerFrame(speakerGroup);
 		clearSubtitle();
 		composeFrame();
 		presentFrame();
@@ -497,52 +581,125 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 }
 
 void Scene9170::advanceSpeechAnimation(byte speakerGroup) {
-	++_animationStep;
-	const byte frame = _animationStep % 5;
+	const byte frame = nextTalkingFrame();
 	switch (speakerGroup) {
 	case 0:
 		_upperFrames[0] = frame;
+		_upperDirty[0] = true;
 		break;
 	case 1:
 		_upperFrames[1] = frame;
+		_upperDirty[1] = true;
 		break;
 	case 2:
 		_upperFrames[2] = frame;
+		_upperDirty[2] = true;
 		break;
 	case 3:
 		_lowerFrame = 2 + frame;
+		_lowerDirty = true;
 		break;
 	case 4:
 		_lowerFrame = 7 + frame;
+		_lowerDirty = true;
 		break;
 	case 5:
 		_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = frame;
+		_upperDirty[0] = _upperDirty[1] = _upperDirty[2] = true;
 		break;
 	default:
 		break;
 	}
 }
 
-void Scene9170::advanceIdleAnimation(byte speakerGroup) {
-	if (_lowerActorsEnabled) {
-		_effectFrame = (_effectFrame + 1) % ARRAYSIZE(kScene9170EffectFrameMap);
-		if (speakerGroup == 3 || speakerGroup == 4)
-			return;
-		_lowerFrame = _lowerFrame == 0 ? 1 : 0;
+void Scene9170::advanceSpeakerIdleAnimation(byte speakerGroup) {
+	switch (speakerGroup) {
+	case 0:
+	case 1:
+	case 2:
+		if (_upperFrames[speakerGroup] == 4)
+			_upperFrames[speakerGroup] = 0;
+		else
+			_upperFrames[speakerGroup] = _random.getRandomNumber(14) == 0 ? 4 : 0;
+		_upperDirty[speakerGroup] = true;
+		break;
+	case 3:
+		if (_lowerFrame == 1)
+			_lowerFrame = 0;
+		else
+			_lowerFrame = _random.getRandomNumber(14) == 0 ? 1 : 0;
+		_lowerDirty = true;
+		break;
+	case 4:
+		if (_lowerFrame == 11)
+			_lowerFrame = 7;
+		else
+			_lowerFrame = _random.getRandomNumber(14) == 0 ? 11 : 7;
+		_lowerDirty = true;
+		break;
+	default:
+		break;
 	}
 }
 
+void Scene9170::advanceUpperIdleAnimations(byte speakerGroup) {
+	if (!_upperActorsEnabled || speakerGroup > 2)
+		return;
+
+	for (byte actor = 0; actor < 3; ++actor) {
+		if (actor == speakerGroup)
+			continue;
+		if (_upperFrames[actor] == 4)
+			_upperFrames[actor] = 0;
+		else
+			_upperFrames[actor] = _random.getRandomNumber(14) == 0 ? 4 : 0;
+		_upperDirty[actor] = true;
+	}
+}
+
+void Scene9170::resetSpeakerFrame(byte speakerGroup) {
+	switch (speakerGroup) {
+	case 0:
+	case 1:
+	case 2:
+		_upperFrames[speakerGroup] = 0;
+		_upperDirty[speakerGroup] = true;
+		break;
+	case 3:
+		_lowerFrame = 2;
+		_lowerDirty = true;
+		break;
+	case 4:
+		_lowerFrame = 7;
+		_lowerDirty = true;
+		break;
+	case 5:
+		_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
+		_upperDirty[0] = _upperDirty[1] = _upperDirty[2] = true;
+		break;
+	default:
+		break;
+	}
+}
+
+byte Scene9170::nextTalkingFrame() {
+	byte frame = 0;
+	do {
+		frame = (byte)_random.getRandomNumber(4);
+	} while (frame == _lastTalkingFrame);
+	_lastTalkingFrame = frame;
+	return frame;
+}
+
 void Scene9170::runEventOverlayFrames() {
-	_eventOverlayVisible = true;
-	for (byte frame = 0; frame < ARRAYSIZE(kScene9170EventFrameMap) && !_skipRequested && !Engine::shouldQuit(); ++frame) {
+	for (byte frame = 1; frame < ARRAYSIZE(kScene9170EventFrameMap) && !_skipRequested && !Engine::shouldQuit(); ++frame) {
 		_eventFrame = frame;
+		_eventDirty = true;
 		composeFrame();
 		presentFrame();
-		if (delay(kScene9170SpeechFrameMillis))
+		if (frame + 1 < ARRAYSIZE(kScene9170EventFrameMap) && delay(kScene9170EffectFrameMillis))
 			return;
 	}
-	_eventOverlayVisible = false;
-	_eventFrame = 0;
 }
 
 void Scene9170::runShake() {
@@ -553,10 +710,7 @@ void Scene9170::runShake() {
 		if (pollEvents())
 			break;
 		_shakeRowOffset = _random.getRandomNumber(2) * 4;
-		composeFrame();
 		presentFrame();
-		if (delay(20))
-			break;
 	}
 	_shakeActive = false;
 	_shakeRowOffset = 0;
@@ -593,7 +747,9 @@ void Scene9170::drawFrameOverlays() {
 			x = 0;
 		if (x + lineWidth > HollywoodEngine::kScreenWidth)
 			x = MAX<int>(0, HollywoodEngine::kScreenWidth - lineWidth);
-		const int y = (int)_subtitle.topY + lineIndex * kScene9170SpeechLineHeight;
+		int y = (int)_subtitle.topY + lineIndex * kScene9170SpeechLineHeight;
+		if (_rowOffset == 0x0a0 || _rowOffset == 0x140)
+			y -= (int)_rowOffset;
 		font->drawString(_screen.surfacePtr(), line, x, y, lineWidth, _subtitle.colorIndex,
 			Graphics::kTextAlignLeft, 0, false, true);
 	}
@@ -605,7 +761,11 @@ void Scene9170::wrapSubtitleText(const Common::String &text, uint16 anchorSceneX
 	if (text.empty())
 		return;
 
-	uint maxChars = anchorSceneX < 0xa0 || HollywoodEngine::kScreenWidth - anchorSceneX < 0xa0 ? 0x24 : 0x32;
+	const int anchorX = CLIP<int>(anchorSceneX, 10, HollywoodEngine::kScreenWidth - 10);
+	const int edgeDistance = MIN<int>(anchorX, HollywoodEngine::kScreenWidth - anchorX);
+	uint maxChars = edgeDistance < 0xa0 ? edgeDistance * 0x32 / 0xa0 : 0x32;
+	maxChars = MAX<uint>(maxChars, 0x18);
+	const uint lineWidthReduction = maxChars < 0x2a ? (maxChars > 0x20 ? 2 : 1) : 3;
 	const char *source = text.c_str();
 	const uint textLength = text.size();
 	uint cursor = 0;
@@ -624,8 +784,28 @@ void Scene9170::wrapSubtitleText(const Common::String &text, uint16 anchorSceneX
 		cursor = end;
 		while (cursor < textLength && (byte)source[cursor] == 0x20)
 			++cursor;
-		maxChars = maxChars > 2 ? maxChars - 2 : 1;
+		maxChars = maxChars > lineWidthReduction ? maxChars - lineWidthReduction : 1;
 	}
+}
+
+void Scene9170::calculateSubtitleBounds(uint16 anchorCenterX, uint16 anchorTopY) {
+	uint maxWidth = 0;
+	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex)
+		maxWidth = MAX<uint>(maxWidth, subtitleTextWidth(_subtitle.lines[lineIndex]));
+
+	const int width = (int)maxWidth;
+	const int halfWidth = width >> 1;
+	int centerX = anchorCenterX;
+	if (centerX - halfWidth - 1 + width > 0x27e) {
+		centerX = 0x27d - halfWidth;
+		if ((maxWidth & 1) == 0)
+			centerX = 0x27e - halfWidth;
+	}
+	if (centerX - halfWidth < 1)
+		centerX = halfWidth + 1;
+
+	_subtitle.centerX = centerX;
+	_subtitle.topY = MAX<int>(1, (int)anchorTopY - _subtitle.lines.size() * kScene9170SpeechLineHeight);
 }
 
 uint Scene9170::subtitleTextWidth(const Common::String &text) const {
