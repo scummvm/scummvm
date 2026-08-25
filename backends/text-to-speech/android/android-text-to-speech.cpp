@@ -47,7 +47,6 @@
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
 
-#include "common/translation.h"
 #include "common/ustr.h"
 
 jmethodID AndroidTextToSpeechManager::_MID_shutdown = 0;
