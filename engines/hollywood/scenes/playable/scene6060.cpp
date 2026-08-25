@@ -39,7 +39,7 @@ const uint16 kScene6060LastState = 0x17ad;
 const uint16 kScene6100EntryState = 0x17d4;
 const uint16 kScene6050ReturnState = 0x17a3;
 const uint16 kScene6060EntryFromLobbyViewportX = 0x0080;
-const uint16 kScene6060EntryFromScene6090ViewportX = 0x0000;
+const uint16 kScene6060EntryFromScene6100ViewportX = 0x0000;
 const uint16 kScene6060ViewportMinX = 0x0080;
 const uint16 kScene6060ViewportMaxX = 0x0100;
 const uint kScene6060ActorBankTableEntry = 0x0000;
@@ -101,8 +101,8 @@ void Scene6060::initializeCustomPreviewState() {
 		_activeActorWorldX = 0x168;
 		_activeActorWorldY = 0x188;
 		_activeActorFacing = 2;
-		// Scene 6090 is unscrollable and leaves the original viewport at zero.
-		_viewportXOffset = kScene6060EntryFromScene6090ViewportX;
+		// The upper-floor return begins at the left edge of the lower museum room.
+		_viewportXOffset = kScene6060EntryFromScene6100ViewportX;
 	} else {
 		_activeActorWorldX = 0x2d0;
 		_activeActorWorldY = 0x192;
