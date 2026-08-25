@@ -452,6 +452,9 @@ bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 	case 227: // Ron cannot take that object.
 		beginStaticSecondarySpeechLine(0xd6, (byte)_random.getRandomNumber(1));
 		return true;
+	case 230: // The world's largest diamond cannot cut this glass.
+		beginStaticSecondarySpeechLine(0xd9, 0);
+		return true;
 	case 231: // Generic item-on-room combination failure.
 		beginStaticSecondarySpeechLine(0xda, (byte)_random.getRandomNumber(1));
 		return true;
