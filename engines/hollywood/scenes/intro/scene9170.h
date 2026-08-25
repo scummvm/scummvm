@@ -33,6 +33,8 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Renders the ending as a viewport over a tall canvas whose animated channels
+// restore clean rectangles before redrawing.
 class Scene9170 : public IntroSceneBase {
 public:
 	Scene9170(HollywoodEngine *vm);
@@ -54,24 +56,31 @@ private:
 	void runSequence();
 	void buildInitialStaticFrame();
 	void switchToLowerRoomFrame();
-	void addBlockListToStatic(uint chunkIndex, int yOffset);
-	void copyBaseToStaticAtYOffset(int yOffset);
-	void clearStaticRows(int yOffset, int rowCount);
+	void addBlockListToCanvas(uint chunkIndex, int yOffset);
+	void copyBaseToCanvasAtYOffset(int yOffset);
+	void clearCanvasRows(int yOffset, int rowCount);
 	void composeFrame();
+	void restoreSpriteChannel(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, byte frameIndex);
 	void drawSpriteChannel(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, byte frameIndex);
 	void scrollByTable(const byte *table, uint tableSize, bool add);
 	void scrollTo(uint targetRowOffset, int step);
-	void waitWithComposite(uint32 millis);
+	void waitWithAnimations(uint32 millis, byte speakerGroup, bool animateAmbient,
+		bool presentChanges = true);
 	void fadeInPalette();
 	void startLowerRoomAmbience();
 	void stopLowerRoomAmbience();
+	void advanceLowerRoomAmbience();
 	void runSpeechLine(byte rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue, byte speakerGroup);
 	void runSpeechCue(uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
 		uint16 centerX, uint16 topY, byte speakerGroup);
 	void advanceSpeechAnimation(byte speakerGroup);
-	void advanceIdleAnimation(byte speakerGroup);
+	void advanceSpeakerIdleAnimation(byte speakerGroup);
+	void advanceUpperIdleAnimations(byte speakerGroup);
+	void resetSpeakerFrame(byte speakerGroup);
+	byte nextTalkingFrame();
 	void runEventOverlayFrames();
 	void runShake();
 	uint presentRowOffset() const override;
@@ -80,6 +89,7 @@ private:
 	void drawFrameOverlays() override;
 	void wrapSubtitleText(const Common::String &text, uint16 anchorSceneX,
 		Common::Array<Common::String> &lines) const;
+	void calculateSubtitleBounds(uint16 anchorCenterX, uint16 anchorTopY);
 	uint subtitleTextWidth(const Common::String &text) const;
 
 	IntroResourceSet _resources;
@@ -97,12 +107,18 @@ private:
 	uint _rowOffset;
 	bool _upperActorsEnabled;
 	bool _lowerActorsEnabled;
-	bool _eventOverlayVisible;
+	bool _upperDirty[3];
+	bool _lowerDirty;
+	bool _effectDirty;
+	bool _eventDirty;
 	byte _upperFrames[3];
 	byte _lowerFrame;
 	byte _effectFrame;
 	byte _eventFrame;
-	uint _animationStep;
+	byte _lastTalkingFrame;
+	int _channelCanvasOffset;
+	bool _ambientEffectsEnabled;
+	uint16 _ambientSpeechSampleId;
 	bool _shakeActive;
 	uint _shakeRowOffset;
 };
