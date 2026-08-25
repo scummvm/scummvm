@@ -36,7 +36,6 @@ const uint kScene5100ArenaFirstChunk = 5;
 const uint kScene5100ArenaLastChunk = 9;
 const uint kScene5100StageIndex = 510;
 const uint16 kScene5100FirstState = 0x13ec;
-const uint16 kScene5100LastState = 0x13f5;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5110FirstState = 0x13f6;
 const uint16 kScene5120FirstState = 0x1400;
@@ -108,17 +107,11 @@ static PlayableSceneConfig scene5100Config() {
 	config.soundBank0ArchiveName = kScene5100SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene5100FirstState;
-	config.mainFlowLastState = kScene5100LastState;
 	return config;
 }
 
 Scene5100::Scene5100(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5100Config(), "scene5100", 0x1c0, 0x199, 2, 0xfd, 0xfb) {
-}
-
-bool Scene5100::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene5100::initializeCustomPreviewState() {
@@ -138,10 +131,6 @@ void Scene5100::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene5100::hasCustomComposite() const {
-	return true;
-}
-
 void Scene5100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -157,18 +146,10 @@ void Scene5100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 }
 
-bool Scene5100::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene5100::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
 	if (state.mainFlowStateId == kScene5100ReturnFrom5110State) {
-		_activeActorWorldX = 0x163;
-		_activeActorWorldY = 0x173;
-		_activeActorFacing = 2;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(0x163, 0x173, 2);
 		drawPlayableComposite();
 		presentFrame();
 		runReturnEntryClip();
@@ -177,11 +158,7 @@ void Scene5100::runCustomEntrySequence() {
 		return;
 	}
 
-	_activeActorWorldX = 0x3b0;
-	_activeActorWorldY = 0x1ae;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x3b0, 0x1ae, 4);
 	drawPlayableComposite();
 	presentFrame();
 

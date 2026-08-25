@@ -38,8 +38,6 @@ const uint kScene2030InitialRequiredChunkCount = 11;
 const uint kScene2030ArenaFirstChunk = 5;
 const uint kScene2030ArenaLastChunk = 10;
 const uint kScene2030StageIndex = 203;
-const uint16 kScene2030FirstState = 0x07ee;
-const uint16 kScene2030LastState = 0x07f7;
 const uint16 kScene2030PyramidExitState = 0x07da;
 const uint16 kScene2030SphinxExitState = 0x07f8;
 const uint16 kScene2030EntryFromPyramidState = 0x07ef;
@@ -161,8 +159,6 @@ static PlayableSceneConfig scene2030Config() {
 	config.soundBank0ArchiveName = kScene2030SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2030FirstState;
-	config.mainFlowLastState = kScene2030LastState;
 	return config;
 }
 
@@ -183,10 +179,6 @@ Scene2030::Scene2030(HollywoodEngine *vm) :
 		kScene2030LeftMerchantFrameMap, ARRAYSIZE(kScene2030LeftMerchantFrameMap));
 	_rightMerchantLayer.configure(6, kScene2030RightMerchantDescriptorCount,
 		kScene2030RightMerchantFrameMap, ARRAYSIZE(kScene2030RightMerchantFrameMap));
-}
-
-bool Scene2030::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2030::initializeCustomPreviewState() {
@@ -215,10 +207,6 @@ void Scene2030::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2030::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -230,10 +218,6 @@ void Scene2030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-}
-
-bool Scene2030::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2030::runCustomEntrySequence() {

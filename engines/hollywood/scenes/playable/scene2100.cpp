@@ -36,10 +36,8 @@ const uint kScene2100InitialRequiredChunkCount = 17;
 const uint kScene2100ArenaFirstChunk = 5;
 const uint kScene2100ArenaLastChunk = 16;
 const uint kScene2100StageIndex = 210;
-const uint16 kScene2100FirstState = 0x0834;
 const uint16 kScene2100ReturnFromTreasureState = 0x0835;
 const uint16 kScene2100LeftPassageState = 0x0836;
-const uint16 kScene2100LastState = 0x083d;
 const uint16 kScene2110EntryState = 0x083e;
 const uint16 kScene2110ScriptedReturnState = 0x083f;
 const uint16 kScene2100ViewportXOffset = 0x00c8;
@@ -134,8 +132,6 @@ static PlayableSceneConfig scene2100Config() {
 	config.soundBank0ArchiveName = kScene2100SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2100FirstState;
-	config.mainFlowLastState = kScene2100LastState;
 	return config;
 }
 
@@ -148,10 +144,6 @@ Scene2100::Scene2100(HollywoodEngine *vm) :
 		kScene2100ForegroundFrameMap, ARRAYSIZE(kScene2100ForegroundFrameMap));
 	_transitionLayer.configure(kScene2100TransitionChunk, kScene2100TransitionDescriptorCount,
 		kScene2100TransitionFrameMap, ARRAYSIZE(kScene2100TransitionFrameMap));
-}
-
-bool Scene2100::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2100::initializeCustomPreviewState() {
@@ -178,10 +170,6 @@ void Scene2100::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2100::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -193,10 +181,6 @@ void Scene2100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-}
-
-bool Scene2100::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2100::runCustomEntrySequence() {
@@ -364,11 +348,7 @@ void Scene2100::runEntryFromLeftPassage() {
 
 void Scene2100::runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel) {
-	_activeActorWorldX = startX;
-	_activeActorWorldY = startY;
-	_activeActorFacing = startFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(startX, startY, startFacing);
 
 	drawPlayableComposite();
 	presentFrame();

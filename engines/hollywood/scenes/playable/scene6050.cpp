@@ -37,7 +37,6 @@ const uint kScene6050ArenaFirstChunk = 5;
 const uint kScene6050ArenaLastChunk = 15;
 const uint kScene6050StageIndex = 605;
 const uint16 kScene6050FirstState = 0x17a2;
-const uint16 kScene6050LastState = 0x17ab;
 const uint16 kScene6010ReturnFromScene6050State = 0x177d;
 const uint16 kScene6060EntryState = 0x17ac;
 const uint16 kScene6070EntryState = 0x17b6;
@@ -98,8 +97,6 @@ static PlayableSceneConfig scene6050Config() {
 	config.walkablePaletteMaxRegion = 2;
 	config.musicArchiveName = kScene6050MusicArchiveName;
 	config.soundBank0ArchiveName = kScene6050SoundArchiveName;
-	config.mainFlowFirstState = kScene6050FirstState;
-	config.mainFlowLastState = kScene6050LastState;
 	return config;
 }
 
@@ -113,10 +110,6 @@ Scene6050::Scene6050(HollywoodEngine *vm) :
 		_guardConversationActive(false) {
 	_guardLayer.configure(7, kScene6050GuardDescriptorCount,
 		kScene6050GuardFrameMap, ARRAYSIZE(kScene6050GuardFrameMap));
-}
-
-bool Scene6050::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene6050::initializeCustomPreviewState() {
@@ -141,10 +134,6 @@ void Scene6050::initializeCustomPreviewState() {
 	}
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene6050::hasCustomComposite() const {
-	return true;
 }
 
 void Scene6050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -173,11 +162,6 @@ void Scene6050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 }
 
-bool Scene6050::hasCustomEntrySequence() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return stateId >= kScene6050FirstState && stateId <= kScene6050FirstState + 2;
-}
-
 void Scene6050::runCustomEntrySequence() {
 	switch (_vm->gameState().mainFlowStateId) {
 	case kScene6050FirstState:
@@ -193,6 +177,7 @@ void Scene6050::runCustomEntrySequence() {
 		presentFrame();
 		break;
 	default:
+		PlayableScene::runCustomEntrySequence();
 		break;
 	}
 }

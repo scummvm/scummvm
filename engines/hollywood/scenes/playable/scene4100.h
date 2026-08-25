@@ -33,9 +33,7 @@ public:
 	Scene4100(HollywoodEngine *vm);
 
 private:
-	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
-	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;

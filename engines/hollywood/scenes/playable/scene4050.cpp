@@ -34,8 +34,6 @@ const uint kScene4050InitialRequiredChunkCount = 5;
 const uint kScene4050ArenaFirstChunk = 5;
 const uint kScene4050ArenaLastChunk = 11;
 const uint kScene4050StageIndex = 405;
-const uint16 kScene4050FirstState = 0x0fd2;
-const uint16 kScene4050LastState = 0x0fdb;
 const uint16 kScene4050D09ReturnTransitionState = 0x0fd3;
 const uint16 kScene4040ReturnState = 0x0fc9;
 const uint16 kScene4060FirstState = 0x0fdc;
@@ -109,8 +107,6 @@ PlayableSceneConfig scene4050Config() {
 	config.soundBank0ArchiveName = kScene4050SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene4050FirstState;
-	config.mainFlowLastState = kScene4050LastState;
 	return config;
 }
 
@@ -127,23 +123,11 @@ Scene4050::Scene4050(HollywoodEngine *vm) :
 		_ronManualSequenceActive(false) {
 }
 
-bool Scene4050::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene4050::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	restoreSceneObjectPaletteRange();
 	resetAnimationLayers();
-	_activeActorWorldX = kScene4050RonWorldX;
-	_activeActorWorldY = kScene4050RonWorldY;
-	_activeActorFacing = kScene4050RonFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene4050::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(kScene4050RonWorldX, kScene4050RonWorldY, kScene4050RonFacing);
 }
 
 void Scene4050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -166,21 +150,13 @@ void Scene4050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
-bool Scene4050::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene4050::runCustomEntrySequence() {
 	if (_vm->gameState().mainFlowStateId == kScene4050D09ReturnTransitionState) {
 		runD09ReturnTransitionSequence();
 		return;
 	}
 
-	_activeActorWorldX = kScene4050RonWorldX;
-	_activeActorWorldY = kScene4050RonWorldY;
-	_activeActorFacing = kScene4050RonFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene4050RonWorldX, kScene4050RonWorldY, kScene4050RonFacing);
 	_backgroundLayer.setFrame(0);
 	setRonResourceFrame(0);
 	drawPlayableComposite();

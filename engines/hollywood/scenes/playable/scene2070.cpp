@@ -36,8 +36,6 @@ const uint kScene2070InitialRequiredChunkCount = 11;
 const uint kScene2070ArenaFirstChunk = 5;
 const uint kScene2070ArenaLastChunk = 10;
 const uint kScene2070StageIndex = 207;
-const uint16 kScene2070FirstState = 0x0816;
-const uint16 kScene2070LastState = 0x0817;
 const uint16 kScene2050LabyrinthReturnState = 0x0803;
 const uint16 kScene2060RightPassageState = 0x080f;
 const uint16 kScene2080FirstState = 0x0820;
@@ -117,8 +115,6 @@ static PlayableSceneConfig scene2070Config() {
 	config.soundBank0ArchiveName = kScene2070SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2070FirstState;
-	config.mainFlowLastState = kScene2070LastState;
 	return config;
 }
 
@@ -128,10 +124,6 @@ Scene2070::Scene2070(HollywoodEngine *vm) :
 		_foregroundLayer() {
 	_foregroundLayer.configure(7, kScene2070ForegroundDescriptorCount,
 		kScene2070ForegroundFrameMap, ARRAYSIZE(kScene2070ForegroundFrameMap));
-}
-
-bool Scene2070::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2070::initializeCustomPreviewState() {
@@ -160,10 +152,6 @@ void Scene2070::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2070::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -174,10 +162,6 @@ void Scene2070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-}
-
-bool Scene2070::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2070::runCustomEntrySequence() {
@@ -376,11 +360,7 @@ void Scene2070::advanceForegroundLayer(uint32 delta) {
 }
 
 void Scene2070::runEntryFromLabyrinth() {
-	_activeActorWorldX = 0x04b;
-	_activeActorWorldY = 0x110;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x04b, 0x110, 2);
 	_foregroundLayer.setFrame(0);
 	drawPlayableComposite();
 	presentFrame();
@@ -401,11 +381,7 @@ void Scene2070::runEntryFromLabyrinth() {
 }
 
 void Scene2070::runEntryFromRightPassage() {
-	_activeActorWorldX = 0x30e;
-	_activeActorWorldY = 0x0ee;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x30e, 0x0ee, 4);
 	_foregroundLayer.setFrame(0);
 	drawPlayableComposite();
 	presentFrame();
@@ -423,11 +399,7 @@ void Scene2070::runEntryFromRightPassage() {
 
 void Scene2070::runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel) {
-	_activeActorWorldX = startX;
-	_activeActorWorldY = startY;
-	_activeActorFacing = startFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(startX, startY, startFacing);
 
 	drawPlayableComposite();
 	presentFrame();

@@ -37,8 +37,6 @@ const uint kScene4010InitialRequiredChunkCount = 5;
 const uint kScene4010ArenaFirstChunk = 6;
 const uint kScene4010ArenaLastChunk = 17;
 const uint kScene4010StageIndex = 401;
-const uint16 kScene4010FirstState = 0x0faa;
-const uint16 kScene4010LastState = 0x0fb3;
 const uint16 kScene4010EntryFromRightSideState = 0x0fab;
 const uint16 kScene4010EntryFromLeftSideState = 0x0fac;
 const uint16 kScene4010ExitState4020 = 0x0fb4;
@@ -143,8 +141,6 @@ static PlayableSceneConfig scene4010Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene4010MusicArchiveName;
 	config.soundBank0ArchiveName = kScene4010SoundArchiveName;
-	config.mainFlowFirstState = kScene4010FirstState;
-	config.mainFlowLastState = kScene4010LastState;
 	return config;
 }
 
@@ -160,10 +156,6 @@ Scene4010::Scene4010(HollywoodEngine *vm) :
 		_heckerManualSequenceActive(false) {
 	_normalBaseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
-}
-
-bool Scene4010::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene4010::initializeCustomPreviewState() {
@@ -183,10 +175,6 @@ void Scene4010::initializeCustomPreviewState() {
 	}
 }
 
-bool Scene4010::hasCustomComposite() const {
-	return true;
-}
-
 void Scene4010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -199,10 +187,6 @@ void Scene4010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
 	drawActionOverlayLayer();
-}
-
-bool Scene4010::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene4010::runCustomEntrySequence() {

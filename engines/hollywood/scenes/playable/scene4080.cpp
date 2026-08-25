@@ -35,8 +35,6 @@ const uint kScene4080InitialRequiredChunkCount = 5;
 const uint kScene4080ArenaFirstChunk = 5;
 const uint kScene4080ArenaLastChunk = 22;
 const uint kScene4080StageIndex = 408;
-const uint16 kScene4080FirstState = 0x0ff0;
-const uint16 kScene4080LastState = 0x0ff0;
 const uint16 kScene4080ExitState = 0x1006;
 const int kScene4080DefaultActorX = 0x0121;
 const int kScene4080DefaultActorY = 0x012e;
@@ -205,8 +203,6 @@ PlayableSceneConfig scene4080Config() {
 	config.soundBank0ArchiveName = kScene4080SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene4080FirstState;
-	config.mainFlowLastState = kScene4080LastState;
 	return config;
 }
 
@@ -221,25 +217,13 @@ Scene4080::Scene4080(HollywoodEngine *vm) :
 		_originalColorToItemMap() {
 }
 
-bool Scene4080::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene4080::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 	rememberOriginalColorMap();
 
-	_activeActorWorldX = kScene4080DefaultActorX;
-	_activeActorWorldY = kScene4080DefaultActorY;
-	_activeActorFacing = kScene4080DefaultActorFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene4080DefaultActorX, kScene4080DefaultActorY, kScene4080DefaultActorFacing);
 	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-bool Scene4080::hasCustomComposite() const {
-	return true;
 }
 
 void Scene4080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -287,10 +271,6 @@ void Scene4080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_sceneChunkTable.isValidChunk(kScene4080ForegroundBlockChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4080ForegroundBlockChunk], _sceneFramebuffer);
 	drawActionOverlayLayer();
-}
-
-bool Scene4080::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene4080::runCustomEntrySequence() {

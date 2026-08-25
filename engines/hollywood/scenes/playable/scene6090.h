@@ -40,15 +40,12 @@ private:
 		kEscapeComposite
 	};
 
-	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
-	bool hasCustomComposite() const override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
 		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
 		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	bool shouldApplyGameplayPanelObjectPalette() const override;
-	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	bool prepareCustomGameplayLoop() override;

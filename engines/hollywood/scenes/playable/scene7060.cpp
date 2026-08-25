@@ -29,7 +29,6 @@
 
 namespace Hollywood {
 
-const uint16 kScene7060FirstState = 0x1b94;
 const uint16 kScene7060ReturnState = 0x1b95;
 const uint16 kScene7060ReturnToG04State = 0x1b82;
 const uint16 kScene7060ExitToG07State = 0x1b9e;
@@ -104,8 +103,6 @@ static PlayableSceneConfig scene7060Config() {
 	config.viewportXOffset = kScene7060ViewportXOffset;
 	config.viewportMinXOffset = kScene7060ViewportXOffset;
 	config.viewportMaxXOffset = kScene7060ViewportMaxXOffset;
-	config.mainFlowFirstState = kScene7060FirstState;
-	config.mainFlowLastState = 0x1b9d;
 	return config;
 }
 
@@ -117,10 +114,6 @@ Scene7060::Scene7060(HollywoodEngine *vm) :
 		_colorMapItem8Promoted(false) {
 	_chunk6Animation.configure(kScene7060Chunk6FrameMillis, 1, 2, 3, 0x16, 0x0e, 0x31);
 	initializeChunk6FrameMap();
-}
-
-bool Scene7060::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene7060::initializeCustomPreviewState() {
@@ -153,10 +146,6 @@ void Scene7060::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-bool Scene7060::hasCustomComposite() const {
-	return true;
-}
-
 void Scene7060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -183,10 +172,6 @@ void Scene7060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
-}
-
-bool Scene7060::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene7060::runCustomEntrySequence() {

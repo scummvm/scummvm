@@ -37,8 +37,6 @@ const uint kScene5110InitialRequiredChunkCount = 5;
 const uint kScene5110ArenaFirstChunk = 5;
 const uint kScene5110ArenaLastChunk = 0x19;
 const uint kScene5110StageIndex = 511;
-const uint16 kScene5110FirstState = 0x13f6;
-const uint16 kScene5110LastState = 0x13ff;
 const uint16 kScene5100ReturnState = 0x13ed;
 const uint16 kScene5120FirstState = 0x1400;
 const uint16 kScene5110ViewportXOffset = 0x0068;
@@ -110,8 +108,6 @@ static PlayableSceneConfig scene5110Config() {
 	config.soundBank0ArchiveName = kScene5110SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene5110FirstState;
-	config.mainFlowLastState = kScene5110LastState;
 	return config;
 }
 
@@ -119,23 +115,11 @@ Scene5110::Scene5110(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5110Config(), "scene5110", 0x0b4, 0x174, 5, 0xfd, 0xfb) {
 }
 
-bool Scene5110::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene5110::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	applySceneStateToHotspotsAndPatches(0xff);
 
-	_activeActorWorldX = 0x0b4;
-	_activeActorWorldY = 0x174;
-	_activeActorFacing = 5;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene5110::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x0b4, 0x174, 5);
 }
 
 void Scene5110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -150,16 +134,8 @@ void Scene5110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
-bool Scene5110::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene5110::runCustomEntrySequence() {
-	_activeActorWorldX = 0x084;
-	_activeActorWorldY = 0x169;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x084, 0x169, 2);
 	drawPlayableComposite();
 	presentFrame();
 

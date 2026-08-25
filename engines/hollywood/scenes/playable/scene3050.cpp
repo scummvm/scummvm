@@ -34,8 +34,6 @@ const uint kScene3050InitialRequiredChunkCount = 8;
 const uint kScene3050ArenaFirstChunk = 5;
 const uint kScene3050ArenaLastChunk = 7;
 const uint kScene3050StageIndex = 305;
-const uint16 kScene3050FirstState = 0x0bea;
-const uint16 kScene3050LastState = 0x0bf3;
 const uint16 kScene3050EntryFromScene3010State = 0x0bea;
 const uint16 kScene3050EntryFromScene3060State = 0x0beb;
 const uint16 kScene3010EntryFromScene3050State = 0x0bc4;
@@ -110,8 +108,6 @@ static PlayableSceneConfig scene3050Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene3050MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3050SoundArchiveName;
-	config.mainFlowFirstState = kScene3050FirstState;
-	config.mainFlowLastState = kScene3050LastState;
 	return config;
 }
 
@@ -136,10 +132,6 @@ Scene3050::Scene3050(HollywoodEngine *vm) :
 		kScene3050ForegroundActorFrameMap, ARRAYSIZE(kScene3050ForegroundActorFrameMap));
 }
 
-bool Scene3050::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene3050::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
@@ -158,10 +150,6 @@ void Scene3050::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene3050::hasCustomComposite() const {
-	return true;
-}
-
 void Scene3050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -176,13 +164,14 @@ void Scene3050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawForegroundBlocks();
 }
 
-bool Scene3050::hasCustomEntrySequence() const {
-	return _vm->gameState().mainFlowStateId == kScene3050EntryFromScene3010State ||
-		_vm->gameState().mainFlowStateId == kScene3050EntryFromScene3060State;
-}
-
 void Scene3050::runCustomEntrySequence() {
-	if (_vm->gameState().mainFlowStateId == kScene3050EntryFromScene3060State)
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	if (stateId != kScene3050EntryFromScene3010State && stateId != kScene3050EntryFromScene3060State) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
+	if (stateId == kScene3050EntryFromScene3060State)
 		runEntryFromScene3060();
 	else
 		runEntryFromScene3010();

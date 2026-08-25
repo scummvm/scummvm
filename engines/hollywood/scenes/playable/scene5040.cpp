@@ -36,7 +36,6 @@ const uint kScene5040ArenaFirstChunk = 5;
 const uint kScene5040ArenaLastChunk = 17;
 const uint kScene5040StageIndex = 504;
 const uint16 kScene5040FirstState = 0x13b0;
-const uint16 kScene5040LastState = 0x13b9;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5050EntryFromKarlGalleryState = 0x13bb;
 const uint kScene5040ActorBankTableEntry = 0x0000;
@@ -127,8 +126,6 @@ PlayableSceneConfig scene5040Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene5040MusicArchiveName;
 	config.soundBank0ArchiveName = kScene5040SoundArchiveName;
-	config.mainFlowFirstState = kScene5040FirstState;
-	config.mainFlowLastState = kScene5040LastState;
 	return config;
 }
 
@@ -143,24 +140,12 @@ Scene5040::Scene5040(HollywoodEngine *vm) :
 		kScene5040KarlFrameMap, ARRAYSIZE(kScene5040KarlFrameMap));
 }
 
-bool Scene5040::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene5040::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
 
-	_activeActorWorldX = _vm->gameState().scene5040EntryLineSeen ? 0x19e : 0x218;
-	_activeActorWorldY = _vm->gameState().scene5040EntryLineSeen ? 0x172 : 0x161;
-	_activeActorFacing = _vm->gameState().scene5040EntryLineSeen ? 4 : 5;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene5040::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(_vm->gameState().scene5040EntryLineSeen ? 0x19e : 0x218, _vm->gameState().scene5040EntryLineSeen ? 0x172 : 0x161, _vm->gameState().scene5040EntryLineSeen ? 4 : 5);
 }
 
 void Scene5040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -183,19 +168,11 @@ void Scene5040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
-bool Scene5040::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene5040::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
 
 	if (state.scene5040SpecialTransitionState == 1) {
-		_activeActorWorldX = 0x32d;
-		_activeActorWorldY = 0x12c;
-		_activeActorFacing = 4;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(0x32d, 0x12c, 4);
 		drawPlayableComposite();
 		presentFrame();
 		runMineCartEntryClip();
@@ -213,11 +190,7 @@ void Scene5040::runCustomEntrySequence() {
 	}
 
 	if (state.mainFlowStateId == kScene5040FirstState) {
-		_activeActorWorldX = 0x32d;
-		_activeActorWorldY = 0x110;
-		_activeActorFacing = 4;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(0x32d, 0x110, 4);
 		drawPlayableComposite();
 		presentFrame();
 

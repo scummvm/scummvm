@@ -36,7 +36,6 @@ const uint kScene5120ArenaFirstChunk = 5;
 const uint kScene5120ArenaLastChunk = 0x15;
 const uint kScene5120StageIndex = 512;
 const uint16 kScene5120FirstState = 0x1400;
-const uint16 kScene5120LastState = 0x1409;
 const uint16 kScene5120UseShakerExitState = 0x140a;
 const uint16 kScene5110ReturnState = 0x13f7;
 const uint16 kScene5100ReturnState = 0x13ed;
@@ -150,8 +149,6 @@ static PlayableSceneConfig scene5120Config() {
 	config.soundBank0ArchiveName = kScene5120SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene5120FirstState;
-	config.mainFlowLastState = kScene5120LastState;
 	return config;
 }
 
@@ -159,10 +156,6 @@ Scene5120::Scene5120(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5120Config(), "scene5120", 0x127, 0x12c, 5, 0xfd, 0xfb),
 		_transformedRoomLayers() {
 	initializeTransformedRoomLayers();
-}
-
-bool Scene5120::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene5120::initializeCustomPreviewState() {
@@ -183,10 +176,6 @@ void Scene5120::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene5120::hasCustomComposite() const {
-	return true;
-}
-
 void Scene5120::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -201,10 +190,6 @@ void Scene5120::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (foregroundActorMode)
 		drawTransformedRoomLayers();
 	drawActionOverlayLayer();
-}
-
-bool Scene5120::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene5120::runCustomEntrySequence() {
@@ -439,11 +424,7 @@ void Scene5120::handleActionOverlayFrameHook(byte hookId, uint frame) {
 }
 
 void Scene5120::runFirstEntrySequence() {
-	_activeActorWorldX = 0x08e;
-	_activeActorWorldY = 0x0f5;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x08e, 0x0f5, 2);
 	drawPlayableComposite();
 	presentFrame();
 
@@ -471,11 +452,7 @@ void Scene5120::runFirstEntrySequence() {
 }
 
 void Scene5120::runAlternateEntrySequence() {
-	_activeActorWorldX = 0x169;
-	_activeActorWorldY = 0x113;
-	_activeActorFacing = 5;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x169, 0x113, 5);
 	drawPlayableComposite();
 	presentFrame();
 }
@@ -491,11 +468,7 @@ void Scene5120::runElevatorReturnSequence() {
 	runElevatorDoorClip(false);
 	runElevatorDoorClip(true);
 
-	_activeActorWorldX = 0x08e;
-	_activeActorWorldY = 0x0f5;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x08e, 0x0f5, 2);
 	walkActiveActorTo(0x127, 0x12c, 0xff, 0, false);
 }
 
