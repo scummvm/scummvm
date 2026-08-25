@@ -29,14 +29,16 @@
 
 namespace Hollywood {
 
+const byte kFrankieDrMoscaMachineItem = 0x0a;
 const byte kFrankieMachineActivatorItem = 0x1f;
 const byte kFrankieBrainItem = 0x25;
-const byte kFrankieRemoteControlItem = 0x27;
+const byte kFrankieRemoteControlItem = 0x05;
+const byte kFrankieSunglassesItem = 0x27;
 const byte kFrankieDiaryItem = 0x33;
 const byte kFrankieUmbrellaItem = 0x5b;
 
 const byte kFrankieBodyAssemblyItems[] = {
-	0x30, 0x42, 0x4c, 0x32
+	0x30, 0x42, 0x4c
 };
 
 const byte kFrankieSerumItems[] = {
@@ -55,6 +57,7 @@ Console::Console(HollywoodEngine *vm) :
 		GUI::Debugger(),
 		_vm(vm) {
 	registerCmd("get", WRAP_METHOD(Console, cmdGet));
+	registerCmd("open", WRAP_METHOD(Console, cmdOpen));
 }
 
 bool Console::cmdGet(int argc, const char **argv) {
@@ -86,6 +89,8 @@ bool Console::cmdGet(int argc, const char **argv) {
 
 		uint addedCount = 0;
 		addedCount += addInventoryItemIfMissing(state, owner, kFrankieUmbrellaItem);
+		if (!state.scene3040HiddenObjectVisible && !state.scene3030MachineActivated)
+			addedCount += addInventoryItemIfMissing(state, owner, kFrankieDrMoscaMachineItem);
 		if (!state.scene3030MachineActivated)
 			addedCount += addInventoryItemIfMissing(state, owner, kFrankieMachineActivatorItem);
 		if (!state.frankensteinDiaryRead)
@@ -113,6 +118,7 @@ bool Console::cmdGet(int argc, const char **argv) {
 		}
 
 		addedCount += addInventoryItemIfMissing(state, owner, kFrankieRemoteControlItem);
+		addedCount += addInventoryItemIfMissing(state, owner, kFrankieSunglassesItem);
 		debugPrintf("Added %u inventory items needed for Frankenstein's revival\n", addedCount);
 		return true;
 	}
@@ -146,6 +152,28 @@ bool Console::cmdGet(int argc, const char **argv) {
 		debugPrintf("Added inventory item %u to owner %u\n", itemId, owner);
 	else
 		debugPrintf("Could not add inventory item %u to owner %u\n", itemId, owner);
+	return true;
+}
+
+bool Console::cmdOpen(int argc, const char **argv) {
+	if (argc != 2 || !Common::String(argv[1]).equalsIgnoreCase("frankie")) {
+		debugPrintf("Usage: %s frankie\n", argv[0]);
+		return true;
+	}
+
+	GameplayState &state = _vm->gameState();
+	if (state.scene3060SecretDoorRevealState != 0) {
+		debugPrintf("The secret passage to Frankie's laboratory is already open\n");
+		return true;
+	}
+
+	state.scene3060SecretDoorRevealState = 1;
+	if (state.mainFlowStateId / 10 == 306) {
+		_vm->requestSceneRestart();
+		debugPrintf("Opened the secret passage; close the debugger to refresh the scene\n");
+	} else {
+		debugPrintf("Opened the secret passage to Frankie's laboratory\n");
+	}
 	return true;
 }
 

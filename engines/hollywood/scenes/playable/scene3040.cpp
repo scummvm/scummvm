@@ -220,6 +220,7 @@ bool Scene3040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 305: // Usar artilugio del Dr. Mosca (use Dr. Mosca's device).
 		beginSecondarySpeechLine(4, 0);
 		return true;
+	case 89: // Usar artilugio del Dr. Mosca (use device from inventory): install it here.
 	case 306: // Usar artilugio del Dr. Mosca con tejado (use device on roof): install it.
 		runInventoryPatchAction();
 		return true;

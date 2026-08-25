@@ -81,6 +81,7 @@ public:
 	void captureLastGameplayThumbnail();
 	bool copyLastGameplayThumbnail(Graphics::Surface &thumbnail) const;
 	bool isSceneRestartRequested() const { return _sceneRestartRequested; }
+	void requestSceneRestart() { _sceneRestartRequested = true; }
 	void clearSceneRestartRequest() { _sceneRestartRequested = false; }
 	bool canSave() const { return _canSave; }
 	void setCanSave(bool canSave) { _canSave = canSave; }
