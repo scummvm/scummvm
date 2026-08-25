@@ -200,6 +200,7 @@ public:
 	uint16 quickXRestore(uint16 slot);
 	bool loadSaveAllowed();
 	bool isControlPanelOpen();
+	void scaleCoordinates(Common::Point &mouse);
 	int drawHintList(Graphics::Surface *scaled, int destX, int destY, int newW, Graphics::Font *font, const Common::Array<Hint> &hints, Common::Array<Common::Rect> &hintRects, int scrollOffset);
 	TappableAnswer drawHintDetail(Graphics::Surface *scaled, int destX, int destY, int newW, Graphics::Font *font, const Hint &hint, int detailScrollOffset, int &detailContentBottom);
 	void drawScrollButtons(Graphics::Font *font, Graphics::Surface &screen, int destX, int destY, int newW, int panelBottom, int scrollOffset, int contentBottom, uint32 colorGray, Common::Rect &scrollUpRect, Common::Rect &scrollDownRect);
