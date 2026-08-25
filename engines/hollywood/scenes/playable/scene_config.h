@@ -22,31 +22,86 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE_CONFIG_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE_CONFIG_H
 
+#include "common/str.h"
 #include "common/types.h"
 
 namespace Hollywood {
 
 enum {
-	kSceneConfigUseViewportOffset = 0xffff,
 	kSceneConfigNoAudioChapter = 0xff
 };
 
+struct SceneResourceLayout {
+	SceneResourceLayout(uint requiredChunks, uint firstArenaChunk, uint lastArenaChunk) :
+			initialRequiredChunkCount(requiredChunks),
+			arenaFirstChunk(firstArenaChunk),
+			arenaLastChunk(lastArenaChunk) {
+	}
+
+	uint initialRequiredChunkCount;
+	uint arenaFirstChunk;
+	uint arenaLastChunk;
+};
+
+struct SceneViewport {
+	explicit SceneViewport(uint16 initialXOffset) :
+			xOffset(initialXOffset),
+			minXOffset(initialXOffset),
+			maxXOffset(initialXOffset) {
+	}
+
+	SceneViewport(uint16 initialXOffset, uint16 minimumXOffset, uint16 maximumXOffset) :
+			xOffset(initialXOffset),
+			minXOffset(minimumXOffset),
+			maxXOffset(maximumXOffset) {
+	}
+
+	uint16 xOffset;
+	uint16 minXOffset;
+	uint16 maxXOffset;
+};
+
+struct SceneActorPose {
+	SceneActorPose(int actorX, int actorY, byte actorFacing) :
+			x(actorX),
+			y(actorY),
+			facing(actorFacing) {
+	}
+
+	int x;
+	int y;
+	byte facing;
+};
+
 /*
- * Static scene metadata used by the default PlayableScene accessors. Scenes
- * can fill this once in their constructor and override only unusual behavior.
+ * Static resource and presentation metadata for a playable scene. The scene
+ * number supplies conventional archive names, stage index, and chapter-wide
+ * defaults; scene factories only describe their layout and exceptions.
  */
 struct PlayableSceneConfig {
-	PlayableSceneConfig();
+	PlayableSceneConfig(uint16 sceneNumber, const SceneResourceLayout &resourceLayout,
+		const SceneViewport &sceneViewport, const SceneActorPose &actorPose);
 
-	const char *resourceArchiveName;
+	void setActorResources(uint bankTableEntry, uint paletteTableEntry);
+	void setTextResources(uint rowsOffsetIndex, uint32 cueDescriptorTableOffset);
+
+	template<uint size>
+	void setActorPathStepDeltas(const byte (&table)[size]) {
+		actorPathStepDeltaTable = table;
+		actorPathStepDeltaTableSize = size;
+	}
+
+	uint16 sceneId;
+	Common::String resourceArchiveName;
 	uint initialRequiredChunkCount;
 	uint arenaFirstChunk;
 	uint arenaLastChunk;
 	uint stageIndex;
-	const char *debugName;
+	Common::String debugName;
 	uint16 viewportXOffset;
 	uint16 viewportMinXOffset;
 	uint16 viewportMaxXOffset;
+	SceneActorPose defaultActorPose;
 	byte inventoryOwnerIndex;
 	byte activeAudioChapterIndex;
 	uint actorBankTableEntry;
@@ -58,8 +113,8 @@ struct PlayableSceneConfig {
 	const byte *actorPathStepDeltaTable;
 	uint actorPathStepDeltaTableSize;
 	byte walkablePaletteMaxRegion;
-	const char *musicArchiveName;
-	const char *soundBank0ArchiveName;
+	Common::String musicArchiveName;
+	Common::String soundBank0ArchiveName;
 	bool loadInventoryActionTables;
 	bool loadActorDepthTables;
 	bool useActorDepthTest;

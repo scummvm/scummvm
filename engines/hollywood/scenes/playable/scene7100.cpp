@@ -34,10 +34,6 @@ const uint16 kScene7100DialogueEntryState = 0x1bbd;
 const uint16 kScene7100ExitState6072 = 0x17b8;
 const uint16 kScene7100ExitState6075 = 0x17bb;
 const uint16 kScene7100RescueExitState6074 = 0x17ba;
-const uint kScene7100InitialRequiredChunkCount = 21;
-const uint kScene7100ArenaFirstChunk = 5;
-const uint kScene7100ArenaLastChunk = 20;
-const uint kScene7100StageIndex = 710;
 const uint16 kScene7100ViewportXOffset = 0x0a8;
 const int kScene7100EntryX = 0x2e0;
 const int kScene7100EntryY = 0x145;
@@ -143,20 +139,15 @@ const Scene7100DialogueSeedRecord kScene7100RescueDialogueSeedRecords[] = {
 };
 
 static PlayableSceneConfig scene7100Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = "RESOURCE.G10";
-	config.initialRequiredChunkCount = kScene7100InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene7100ArenaFirstChunk;
-	config.arenaLastChunk = kScene7100ArenaLastChunk;
-	config.stageIndex = kScene7100StageIndex;
-	config.debugName = "Scene 7100";
-	config.viewportXOffset = kScene7100ViewportXOffset;
+	PlayableSceneConfig config(7100,
+		SceneResourceLayout(21, 5, 20),
+		SceneViewport(kScene7100ViewportXOffset),
+		SceneActorPose(kScene7100EntryX, kScene7100EntryY, kScene7100EntryFacing));
 	return config;
 }
 
 Scene7100::Scene7100(HollywoodEngine *vm) :
-		PlayableScene(vm, scene7100Config(), "scene7100", kScene7100EntryX, kScene7100EntryY,
-			kScene7100EntryFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene7100Config()),
 		_primaryTimerAccumulator(0),
 		_environmentTimerAccumulator(0),
 		_primaryMode(0),

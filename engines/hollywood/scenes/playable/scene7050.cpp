@@ -65,19 +65,15 @@ const byte kScene7050Chunk11PickupItem10FrameMap[] = {
 };
 
 static PlayableSceneConfig scene7050Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = "RESOURCE.G05";
-	config.initialRequiredChunkCount = 12;
-	config.arenaFirstChunk = 5;
-	config.arenaLastChunk = 11;
-	config.stageIndex = 705;
-	config.debugName = "Scene 7050";
-	config.viewportXOffset = 0x68;
+	PlayableSceneConfig config(7050,
+		SceneResourceLayout(12, 5, 11),
+		SceneViewport(0x68),
+		SceneActorPose(0x0a1, 0x158, 2));
 	return config;
 }
 
 Scene7050::Scene7050(HollywoodEngine *vm) :
-		PlayableScene(vm, scene7050Config(), "scene7050", 0x0a1, 0x158, 2, 0xfd, 0xfb),
+		PlayableScene(vm, scene7050Config()),
 		_cloakroomAttendantRepeatCount(0),
 		_cloakroomAttendantLayer() {
 	_cloakroomAttendantAnimation.configure(kScene7050FrameMillis, 1, 5, 6, 0x0e, 0x0e, 0x31);

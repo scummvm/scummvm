@@ -31,10 +31,6 @@
 namespace Hollywood {
 
 const uint16 kScene7020ExitState9101 = 0x238d;
-const uint kScene7020InitialRequiredChunkCount = 8;
-const uint kScene7020ArenaFirstChunk = 5;
-const uint kScene7020ArenaLastChunk = 7;
-const uint kScene7020StageIndex = 702;
 const uint16 kScene7020ViewportXOffset = 0;
 const uint16 kScene7020Chunk6DescriptorCount = 0x21;
 const uint16 kScene7020Chunk7DescriptorCount = 10;
@@ -63,22 +59,17 @@ const byte kScene7020Chunk7RevealFrameMap[] = {
 };
 
 static PlayableSceneConfig scene7020Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = "RESOURCE.G02";
-	config.initialRequiredChunkCount = kScene7020InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene7020ArenaFirstChunk;
-	config.arenaLastChunk = kScene7020ArenaLastChunk;
-	config.stageIndex = kScene7020StageIndex;
-	config.debugName = "Scene 7020";
-	config.viewportXOffset = kScene7020ViewportXOffset;
+	PlayableSceneConfig config(7020,
+		SceneResourceLayout(8, 5, 7),
+		SceneViewport(kScene7020ViewportXOffset),
+		SceneActorPose(kScene7020SueTargetX, kScene7020SueTargetY, kScene7020SueDialogueFacing));
 	config.loadInventoryActionTables = false;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene7020::Scene7020(HollywoodEngine *vm) :
-		PlayableScene(vm, scene7020Config(), "scene7020", kScene7020SueTargetX, kScene7020SueTargetY,
-			kScene7020SueDialogueFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene7020Config()),
 		_chunk6FrameMapIndex(0),
 		_primaryPoseMode(0),
 		_drawChunk7OverlayInsteadOfActor(false),

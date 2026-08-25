@@ -29,13 +29,6 @@
 
 namespace Hollywood {
 
-const char *const kScene1010ArchiveName = "RESOURCE.A01";
-const char *const kScene1010MusicArchiveName = "RESOURCE.M01";
-const char *const kScene1010SoundArchiveName = "RESOURCE.S01";
-const uint kScene1010InitialRequiredChunkCount = 9;
-const uint kScene1010ArenaFirstChunk = 5;
-const uint kScene1010ArenaLastChunk = 8;
-const uint kScene1010StageIndex = 101;
 const uint16 kScene1010LeftEntryState = 0x03f2;
 const uint16 kScene1010RightEntryState = 0x03f3;
 const uint16 kScene1010CenterEntryState = 0x03f4;
@@ -78,24 +71,6 @@ const int kScene1010ForegroundRightYThreshold = 0x1cb;
 const uint32 kScene1010SceneActorBlinkFrameMillis = 75;
 const uint kScene1010SceneActorBlinkDescriptorCount = 0x0c;
 
-const byte kActorPathStepDeltaTableSetB4[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
-
-const byte kActorPathStepDeltaTableSet87[] = {
-	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
-	3, 2, 8, 6, 6, 7, 6, 4, 10, 3, 2, 9,
-	8, 8, 7, 5, 10, 6, 10, 10, 4, 6, 4, 10,
-	4, 3, 3, 4, 0, 4, 4, 2, 0, 4, 2, 5,
-	6, 10, 10, 4, 6, 4, 10, 8, 8, 7, 5, 10,
-	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7
-};
-
 const byte kScene1010SceneActorBlinkFrameMap[] = {
 	0, 11, 0, 1, 2, 1, 0, 0,
 	1, 2, 3, 4, 5, 6, 7, 8,
@@ -104,35 +79,19 @@ const byte kScene1010SceneActorBlinkFrameMap[] = {
 };
 
 static PlayableSceneConfig scene1010Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene1010ArchiveName;
-	config.initialRequiredChunkCount = kScene1010InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene1010ArenaFirstChunk;
-	config.arenaLastChunk = kScene1010ArenaLastChunk;
-	config.stageIndex = kScene1010StageIndex;
-	config.debugName = "Scene 1010";
-	config.viewportXOffset = kScene1010ViewportXOffset;
-	config.viewportMinXOffset = kScene1010ViewportMinXOffset;
-	config.viewportMaxXOffset = kScene1010ViewportMaxXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 1;
-	config.actorBankTableEntry = kScene1010ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene1010ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene1010Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene1010SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kActorPathStepDeltaTableSetB4;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kActorPathStepDeltaTableSetB4);
+	PlayableSceneConfig config(1010,
+		SceneResourceLayout(9, 5, 8),
+		SceneViewport(kScene1010ViewportXOffset, kScene1010ViewportMinXOffset, kScene1010ViewportMaxXOffset),
+		SceneActorPose(kScene1010CenterEntryTargetX, kScene1010CenterEntryTargetY, kScene1010CenterEntryFacing));
+	config.setActorResources(kScene1010ActorBankTableEntry, kScene1010ActorPaletteTableEntry);
+	config.setTextResources(kScene1010Resource003RowsOffsetIndex, kScene1010SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
-	config.musicArchiveName = kScene1010MusicArchiveName;
-	config.soundBank0ArchiveName = kScene1010SoundArchiveName;
 	config.loadActorDepthTables = false;
 	return config;
 }
 
 Scene1010::Scene1010(HollywoodEngine *vm) :
-		PlayableScene(vm, scene1010Config(), "scene1010", kScene1010CenterEntryTargetX, kScene1010CenterEntryTargetY,
-			kScene1010CenterEntryFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene1010Config()),
 		_sceneActorBlinkTimerAccumulator(0),
 		_sceneActorBlinkFrameIndex(0),
 		_sceneActorBlinkPatternMode(0) {

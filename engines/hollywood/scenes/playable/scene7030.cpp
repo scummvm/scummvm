@@ -30,11 +30,6 @@
 
 namespace Hollywood {
 
-const char *const kScene7030ArchiveName = "RESOURCE.G03";
-const uint kScene7030InitialRequiredChunkCount = 12;
-const uint kScene7030ArenaFirstChunk = 5;
-const uint kScene7030ArenaLastChunk = 11;
-const uint kScene7030StageIndex = 703;
 const uint16 kScene7030ViewportXOffset = 0x60;
 const uint16 kScene7030State7031 = 0x1b77;
 const uint16 kScene7030ExitState7040 = 0x1b80;
@@ -84,20 +79,16 @@ const byte kScene7030Route6StepDeltas[] = {
 };
 
 static PlayableSceneConfig scene7030Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene7030ArchiveName;
-	config.initialRequiredChunkCount = kScene7030InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene7030ArenaFirstChunk;
-	config.arenaLastChunk = kScene7030ArenaLastChunk;
-	config.stageIndex = kScene7030StageIndex;
-	config.debugName = "Scene 7030";
-	config.viewportXOffset = kScene7030ViewportXOffset;
+	PlayableSceneConfig config(7030,
+		SceneResourceLayout(12, 5, 11),
+		SceneViewport(kScene7030ViewportXOffset),
+		SceneActorPose(0x1fa, 0x142, 4));
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene7030::Scene7030(HollywoodEngine *vm) :
-		PlayableScene(vm, scene7030Config(), "scene7030", 0x1fa, 0x142, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene7030Config()),
 		_chunk5FrameIndex(1),
 		_chunk6IdleFrameA(0),
 		_chunk6IdleFrameB(4),

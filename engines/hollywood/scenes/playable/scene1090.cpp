@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene1090ArchiveName = "RESOURCE.A09";
-const char *const kScene1090MusicArchiveName = "RESOURCE.M01";
-const char *const kScene1090SoundArchiveName = "RESOURCE.S01";
-const uint kScene1090InitialRequiredChunkCount = 14;
-const uint kScene1090ArenaFirstChunk = 5;
-const uint kScene1090ArenaLastChunk = 13;
-const uint kScene1090StageIndex = 109;
 const uint16 kScene1090ExitStateKitchen = 0x0439;
 const uint16 kScene1090ExitStateBallroom = 0x042f;
 const uint16 kScene1090ViewportXOffset = 0x0028;
@@ -48,48 +41,24 @@ const uint kScene1090SwitchDescriptorCount = 6;
 const uint kScene1090WrappedBrainPickupDescriptorCount = 0x0e;
 const byte kScene1090LightSwitchHook = 1;
 
-const byte kScene1090ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
-
 const byte kScene1090SwitchFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0, 5 };
 const byte kScene1090WrappedBrainPickupFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
 static PlayableSceneConfig scene1090Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene1090ArchiveName;
-	config.initialRequiredChunkCount = kScene1090InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene1090ArenaFirstChunk;
-	config.arenaLastChunk = kScene1090ArenaLastChunk;
-	config.stageIndex = kScene1090StageIndex;
-	config.debugName = "Scene 1090";
-	config.viewportXOffset = kScene1090ViewportXOffset;
-	config.viewportMinXOffset = kScene1090ViewportMinXOffset;
-	config.viewportMaxXOffset = kScene1090ViewportMaxXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 1;
-	config.actorBankTableEntry = kScene1090ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene1090ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene1090Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene1090SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene1090ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene1090ActorPathStepDeltaTable);
+	PlayableSceneConfig config(1090,
+		SceneResourceLayout(14, 5, 13),
+		SceneViewport(kScene1090ViewportXOffset, kScene1090ViewportMinXOffset, kScene1090ViewportMaxXOffset),
+		SceneActorPose(0x101, 0x15b, 2));
+	config.setActorResources(kScene1090ActorBankTableEntry, kScene1090ActorPaletteTableEntry);
+	config.setTextResources(kScene1090Resource003RowsOffsetIndex, kScene1090SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
-	config.musicArchiveName = kScene1090MusicArchiveName;
-	config.soundBank0ArchiveName = kScene1090SoundArchiveName;
 	return config;
 }
 
 Scene1090::Scene1090(HollywoodEngine *vm) :
-		PlayableScene(vm, scene1090Config(), "scene1090", 0x101, 0x15b, 2, 0xfd, 0xfb),
+		PlayableScene(vm, scene1090Config()),
 		_darkPaletteResource(),
 		_darkPaletteMask() {
 }

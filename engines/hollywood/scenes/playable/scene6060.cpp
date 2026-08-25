@@ -26,14 +26,7 @@
 
 namespace Hollywood {
 
-const char *const kScene6060ArchiveName = "RESOURCE.F06";
-const char *const kScene6060MusicArchiveName = "RESOURCE.M06";
-const char *const kScene6060SoundArchiveName = "RESOURCE.S06";
-const uint kScene6060InitialRequiredChunkCount = 5;
 // F06 contains only the five fixed scene chunks, so its arena range is empty.
-const uint kScene6060ArenaFirstChunk = 5;
-const uint kScene6060ArenaLastChunk = 4;
-const uint kScene6060StageIndex = 606;
 const uint16 kScene6060LastState = 0x17ad;
 const uint16 kScene6100EntryState = 0x17d4;
 const uint16 kScene6050ReturnState = 0x17a3;
@@ -46,45 +39,20 @@ const uint kScene6060ActorPaletteTableEntry = 0x00cc;
 const uint kScene6060Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene6060SpeechCueDescriptorTableOffset = 0x1135;
 
-const byte kScene6060ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
-
 static PlayableSceneConfig scene6060Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene6060ArchiveName;
-	config.initialRequiredChunkCount = kScene6060InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene6060ArenaFirstChunk;
-	config.arenaLastChunk = kScene6060ArenaLastChunk;
-	config.stageIndex = kScene6060StageIndex;
-	config.debugName = "Scene 6060";
-	config.viewportXOffset = kScene6060EntryFromLobbyViewportX;
-	config.viewportMinXOffset = kScene6060ViewportMinX;
-	config.viewportMaxXOffset = kScene6060ViewportMaxX;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 6;
-	config.actorBankTableEntry = kScene6060ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene6060ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene6060Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene6060SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene6060ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene6060ActorPathStepDeltaTable);
+	PlayableSceneConfig config(6060,
+		SceneResourceLayout(5, 5, 4),
+		SceneViewport(kScene6060EntryFromLobbyViewportX, kScene6060ViewportMinX, kScene6060ViewportMaxX),
+		SceneActorPose(0x2d0, 0x192, 5));
+	config.setActorResources(kScene6060ActorBankTableEntry, kScene6060ActorPaletteTableEntry);
+	config.setTextResources(kScene6060Resource003RowsOffsetIndex, kScene6060SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
-	config.musicArchiveName = kScene6060MusicArchiveName;
-	config.soundBank0ArchiveName = kScene6060SoundArchiveName;
-	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene6060::Scene6060(HollywoodEngine *vm) :
-		PlayableScene(vm, scene6060Config(), "scene6060", 0x2d0, 0x192, 5, 0xfd, 0xfb) {
+		PlayableScene(vm, scene6060Config()) {
 }
 
 void Scene6060::initializeCustomPreviewState() {
@@ -153,7 +121,7 @@ bool Scene6060::customizeRouteSegment(byte currentRegion, byte nextRegion, const
 		return false;
 
 	for (uint i = 0; i < 0x0c; ++i)
-		_actorPathStepDeltas[0x18 + i] = kScene6060ActorPathStepDeltaTable[0x24 + i];
+		_actorPathStepDeltas[0x18 + i] = kActorPathStepDeltaTableSetB4[0x24 + i];
 	requestedFacing = 2;
 	restoredStepDeltas = true;
 	return true;
@@ -170,7 +138,7 @@ bool Scene6060::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 		return false;
 
 	for (uint i = 0; i < 0x0c; ++i)
-		_actorPathStepDeltas[0x3c + i] = kScene6060ActorPathStepDeltaTable[i];
+		_actorPathStepDeltas[0x3c + i] = kActorPathStepDeltaTableSetB4[i];
 	requestedFacing = 5;
 	restoredStepDeltas = true;
 	return true;

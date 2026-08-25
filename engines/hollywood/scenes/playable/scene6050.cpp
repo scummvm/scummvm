@@ -29,13 +29,6 @@
 
 namespace Hollywood {
 
-const char *const kScene6050ArchiveName = "RESOURCE.F05";
-const char *const kScene6050MusicArchiveName = "RESOURCE.M06";
-const char *const kScene6050SoundArchiveName = "RESOURCE.S06";
-const uint kScene6050InitialRequiredChunkCount = 16;
-const uint kScene6050ArenaFirstChunk = 5;
-const uint kScene6050ArenaLastChunk = 15;
-const uint kScene6050StageIndex = 605;
 const uint16 kScene6050FirstState = 0x17a2;
 const uint16 kScene6010ReturnFromScene6050State = 0x177d;
 const uint16 kScene6060EntryState = 0x17ac;
@@ -56,15 +49,6 @@ const byte kScene6050DialogueTransitionStay = 3;
 const byte kScene6050DialogueNoResponseFrame = 0xff;
 const byte kScene6050GuardPassInventoryItem = 0x62;
 
-const byte kScene6050ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
-
 const byte kScene6050GuardFrameMap[] = {
 	0, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
 	21, 21, 21, 21, 21, 21, 21, 21, 20, 20, 20, 20, 20, 20, 20, 20,
@@ -75,33 +59,18 @@ const byte kScene6050GuardFrameMap[] = {
 };
 
 static PlayableSceneConfig scene6050Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene6050ArchiveName;
-	config.initialRequiredChunkCount = kScene6050InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene6050ArenaFirstChunk;
-	config.arenaLastChunk = kScene6050ArenaLastChunk;
-	config.stageIndex = kScene6050StageIndex;
-	config.debugName = "Scene 6050";
-	config.viewportXOffset = kScene6050ViewportXOffset;
-	config.viewportMinXOffset = kScene6050ViewportMinXOffset;
-	config.viewportMaxXOffset = kScene6050ViewportXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 6;
-	config.actorBankTableEntry = kScene6050ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene6050ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene6050Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene6050SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene6050ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene6050ActorPathStepDeltaTable);
+	PlayableSceneConfig config(6050,
+		SceneResourceLayout(16, 5, 15),
+		SceneViewport(kScene6050ViewportXOffset, kScene6050ViewportMinXOffset, kScene6050ViewportXOffset),
+		SceneActorPose(0x307, 0x176, 4));
+	config.setActorResources(kScene6050ActorBankTableEntry, kScene6050ActorPaletteTableEntry);
+	config.setTextResources(kScene6050Resource003RowsOffsetIndex, kScene6050SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 2;
-	config.musicArchiveName = kScene6050MusicArchiveName;
-	config.soundBank0ArchiveName = kScene6050SoundArchiveName;
 	return config;
 }
 
 Scene6050::Scene6050(HollywoodEngine *vm) :
-		PlayableScene(vm, scene6050Config(), "scene6050", 0x307, 0x176, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene6050Config()),
 		_originalColorToItemMap(),
 		_guardChannel(),
 		_guardLayer(),

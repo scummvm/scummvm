@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene5080ArchiveName = "RESOURCE.E08";
-const char *const kScene5080MusicArchiveName = "RESOURCE.M05";
-const char *const kScene5080SoundArchiveName = "RESOURCE.S05";
-const uint kScene5080InitialRequiredChunkCount = 5;
-const uint kScene5080ArenaFirstChunk = 5;
-const uint kScene5080ArenaLastChunk = 8;
-const uint kScene5080StageIndex = 508;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5080ViewportXOffset = 0x0050;
 const uint kScene5080ActorBankTableEntrySet5A = 0x0070;
@@ -46,24 +39,6 @@ const uint kScene5080BookPickupDescriptorCount = 0x0d;
 const uint kScene5080SofaDescriptorCount = 6;
 const byte kScene5080BookInventoryItem = 0x51;
 const byte kScene5080ClosedPatchSourceItem = 10;
-
-const byte kScene5080ActorPathStepDeltaTableSet5A[] = {
-	4, 1, 1, 2, 2, 2, 5, 1, 0, 0, 3, 2,
-	2, 1, 6, 4, 4, 5, 4, 3, 7, 2, 1, 6,
-	6, 6, 5, 4, 7, 4, 7, 7, 3, 4, 3, 7,
-	3, 2, 2, 3, 0, 3, 3, 1, 0, 3, 1, 4,
-	4, 7, 7, 3, 4, 3, 7, 6, 6, 5, 4, 7,
-	4, 3, 7, 2, 1, 6, 2, 1, 6, 4, 4, 5
-};
-
-const byte kScene5080ActorPathStepDeltaTableSetB4[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
 
 const byte kScene5080BookPickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
@@ -82,35 +57,20 @@ static Common::Array<byte> sequentialFrameMap(uint frameCount) {
 }
 
 static PlayableSceneConfig scene5080Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene5080ArchiveName;
-	config.initialRequiredChunkCount = kScene5080InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene5080ArenaFirstChunk;
-	config.arenaLastChunk = kScene5080ArenaLastChunk;
-	config.stageIndex = kScene5080StageIndex;
-	config.debugName = "Scene 5080";
-	config.viewportXOffset = kScene5080ViewportXOffset;
-	config.viewportMinXOffset = kScene5080ViewportXOffset;
-	config.viewportMaxXOffset = kScene5080ViewportXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 5;
-	config.actorBankTableEntry = kScene5080ActorBankTableEntrySet5A;
-	config.actorPaletteTableEntry = kScene5080ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = 0;
-	config.speechCueDescriptorTableOffset = kScene5080SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene5080ActorPathStepDeltaTableSet5A;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene5080ActorPathStepDeltaTableSet5A);
+	PlayableSceneConfig config(5080,
+		SceneResourceLayout(5, 5, 8),
+		SceneViewport(kScene5080ViewportXOffset, kScene5080ViewportXOffset, kScene5080ViewportXOffset),
+		SceneActorPose(0x2b8, 0x188, 5));
+	config.setActorResources(kScene5080ActorBankTableEntrySet5A, kScene5080ActorPaletteTableEntry);
+	config.setTextResources(0, kScene5080SpeechCueDescriptorTableOffset);
+	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet5A);
 	config.walkablePaletteMaxRegion = 20;
-	config.musicArchiveName = kScene5080MusicArchiveName;
-	config.soundBank0ArchiveName = kScene5080SoundArchiveName;
-	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene5080::Scene5080(HollywoodEngine *vm) :
-		PlayableScene(vm, scene5080Config(), "scene5080", 0x2b8, 0x188, 5, 0xfd, 0xfb) {
+		PlayableScene(vm, scene5080Config()) {
 }
 
 uint Scene5080::resource000ActorBankTableEntry() const {
@@ -120,12 +80,12 @@ uint Scene5080::resource000ActorBankTableEntry() const {
 
 const byte *Scene5080::actorPathStepDeltaTable() const {
 	return _vm->gameState().scene5080AlternatePassageSide ?
-		kScene5080ActorPathStepDeltaTableSetB4 : kScene5080ActorPathStepDeltaTableSet5A;
+		kActorPathStepDeltaTableSetB4 : kActorPathStepDeltaTableSet5A;
 }
 
 uint Scene5080::actorPathStepDeltaTableSize() const {
 	return _vm->gameState().scene5080AlternatePassageSide ?
-		ARRAYSIZE(kScene5080ActorPathStepDeltaTableSetB4) : ARRAYSIZE(kScene5080ActorPathStepDeltaTableSet5A);
+		ARRAYSIZE(kActorPathStepDeltaTableSetB4) : ARRAYSIZE(kActorPathStepDeltaTableSet5A);
 }
 
 void Scene5080::initializeCustomPreviewState() {

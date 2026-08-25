@@ -29,13 +29,6 @@
 
 namespace Hollywood {
 
-const char *const kScene1030ArchiveName = "RESOURCE.A03";
-const char *const kScene1030MusicArchiveName = "RESOURCE.M01";
-const char *const kScene1030SoundArchiveName = "RESOURCE.S01";
-const uint kScene1030InitialRequiredChunkCount = 15;
-const uint kScene1030ArenaFirstChunk = 5;
-const uint kScene1030ArenaLastChunk = 14;
-const uint kScene1030StageIndex = 103;
 const uint16 kScene1030FirstEntryState = 0x0406;
 const uint16 kScene1030LeftEntryState = 0x0407;
 const uint16 kScene1030ExitState1040 = 0x0412;
@@ -80,24 +73,6 @@ const uint kScene1030GreasyCottonDescriptorCount = 0x10;
 const uint kScene1030EntryPaletteByteCount = 0x210;
 const byte kScene1030EntryLeftSpeechGroup = 0;
 const byte kScene1030EntryRightSpeechGroup = 1;
-
-const byte kScene1030ActorPathStepDeltaTableSetB4[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
-
-const byte kScene1030ActorPathStepDeltaTableSet87[] = {
-	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
-	3, 2, 8, 6, 6, 7, 6, 4, 10, 3, 2, 9,
-	8, 8, 7, 5, 10, 6, 10, 10, 4, 6, 4, 10,
-	4, 3, 3, 4, 0, 4, 4, 2, 0, 4, 2, 5,
-	6, 10, 10, 4, 6, 4, 10, 8, 8, 7, 5, 10,
-	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7
-};
 
 const byte kScene1030LargeForegroundFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
@@ -147,33 +122,19 @@ const byte kScene1030GreasyCottonFrameMap[] = {
 };
 
 static PlayableSceneConfig scene1030Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene1030ArchiveName;
-	config.initialRequiredChunkCount = kScene1030InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene1030ArenaFirstChunk;
-	config.arenaLastChunk = kScene1030ArenaLastChunk;
-	config.stageIndex = kScene1030StageIndex;
-	config.debugName = "Scene 1030";
-	config.viewportXOffset = kScene1030ViewportXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 1;
-	config.actorBankTableEntry = kScene1030ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene1030ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene1030Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene1030SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene1030ActorPathStepDeltaTableSetB4;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene1030ActorPathStepDeltaTableSetB4);
+	PlayableSceneConfig config(1030,
+		SceneResourceLayout(15, 5, 14),
+		SceneViewport(kScene1030ViewportXOffset),
+		SceneActorPose(kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY, kScene1030FirstEntryFacing));
+	config.setActorResources(kScene1030ActorBankTableEntry, kScene1030ActorPaletteTableEntry);
+	config.setTextResources(kScene1030Resource003RowsOffsetIndex, kScene1030SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 5;
-	config.musicArchiveName = kScene1030MusicArchiveName;
-	config.soundBank0ArchiveName = kScene1030SoundArchiveName;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene1030::Scene1030(HollywoodEngine *vm) :
-		PlayableScene(vm, scene1030Config(), "scene1030", kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY,
-			kScene1030FirstEntryFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene1030Config()),
 		_largeForegroundChannel(),
 		_smallForegroundChannel(),
 		_largeForegroundLayer(),
@@ -449,7 +410,7 @@ bool Scene1030::customizeRouteSegment(byte currentRegion, byte nextRegion, const
 	(void)boundary;
 	if (currentRegion == 1 && nextRegion == 2) {
 		for (uint offset = 0x30; offset <= 0x3b && offset < _actorPathStepDeltas.size(); ++offset)
-			_actorPathStepDeltas[offset] = kScene1030ActorPathStepDeltaTableSet87[offset];
+			_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
 		requestedFacing = 4;
 		restoredStepDeltas = true;
 		return true;
@@ -466,7 +427,7 @@ bool Scene1030::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 	(void)targetY;
 	if (currentRegion == 1) {
 		for (uint offset = 0x0c; offset <= 0x17 && offset < _actorPathStepDeltas.size(); ++offset)
-			_actorPathStepDeltas[offset] = kScene1030ActorPathStepDeltaTableSet87[offset];
+			_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
 		requestedFacing = 1;
 		restoredStepDeltas = true;
 	}
