@@ -59,10 +59,10 @@ private:
 	void drawFrameOverlays() override;
 	void wrapSubtitleText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
 	uint subtitleTextWidth(const Common::String &text) const;
-	void fadeInPalette();
-	void fadeOutPalette();
+	void stopAudio() override;
 
 	IntroResourceSet _resources;
+	MusicPlayer *_music;
 	SpeechPlayer _speech;
 	IntroTextStore _text;
 	Common::Array<byte> _paletteResource;

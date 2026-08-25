@@ -63,14 +63,15 @@ Scene9180::Scene9180(HollywoodEngine *vm) :
 		_loopSound(),
 		_effectSound(),
 		_text(),
+		_random("hollywood_scene9180"),
 		_paletteResource(),
 		_normalPalette(),
 		_brightPalette(),
 		_baseFramebuffer(),
 		_subtitle(),
 		_frameMapIndex(0),
-		_brightPaletteActive(false),
-		_flickerCounter(0) {
+		_flickerModulus(10),
+		_brightPaletteActive(false) {
 	_paletteResource.resize(kPaletteSize);
 	_normalPalette.resize(kPaletteSize);
 	_brightPalette.resize(kPaletteSize);
@@ -145,6 +146,7 @@ void Scene9180::runSequence() {
 	presentFrame();
 
 	waitWithEffects(3000);
+	_flickerModulus = 3;
 	animateFrameRange(0, 0x34, 1);
 	runSpeechLine(0);
 	animateFrameRange(0x58, 0x3a, -1);
@@ -189,6 +191,7 @@ void Scene9180::animateFrameRange(byte firstFrameMapIndex, byte lastFrameMapInde
 	while (!_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
+		updateFlickerPalette();
 		_frameMapIndex = (byte)frame;
 		drawComposite();
 		presentFrame();
@@ -282,8 +285,8 @@ void Scene9180::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 }
 
 void Scene9180::updateFlickerPalette() {
-	++_flickerCounter;
-	if ((_flickerCounter % 10) != 0 && !_brightPaletteActive)
+	if (!_brightPaletteActive &&
+			_random.getRandomNumber(MAX<byte>(1, _flickerModulus) - 1) != 0)
 		return;
 
 	const uint speechColorOffset = kScene9180SpeechColor * 3;
