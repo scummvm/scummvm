@@ -199,6 +199,13 @@ bool GSound::validateOverlay(const GSoundDriverData &driverData) {
 }
 
 bool GSound::contains(const byte *ptr, uint32 count) const {
+	// Fade completion redirects the channel to this native { 0, 0 }
+	// termination stream before the poller makes the channel inactive.
+	if (ptr == _silenceStream)
+		return count <= sizeof(_silenceStream);
+	if (ptr == _silenceStream + 1)
+		return count <= sizeof(_silenceStream) - 1;
+
 	if (_soundData.empty())
 		return false;
 	const byte *start = &_soundData[0];
