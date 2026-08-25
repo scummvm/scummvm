@@ -168,11 +168,7 @@ static void retro_gui_res_reset() {
 #endif
 
 /* Single-producer / single-consumer ring. The producer is ScummVM's MIDI
-   driver, the consumer is retro_midi_queue_drain() in retro_run(). With
-   USE_LIBCO those are the same OS thread and the fences below cost nothing;
-   without it they are two threads, and 'volatile' does not order the payload
-   stores against the cursor publish - the consumer could see an index before
-   the event it points at. */
+   driver, the consumer is retro_midi_queue_drain() in retro_run(). */
 static retro_midi_event_t midi_queue[MIDI_QUEUE_SIZE];
 static retro_atomic_int_t midi_head = RETRO_ATOMIC_INT_INITIALIZER(0); /* published by producer */
 static retro_atomic_int_t midi_tail = RETRO_ATOMIC_INT_INITIALIZER(0); /* published by consumer */
@@ -1018,6 +1014,30 @@ static void retro_midi_queue_drain(void) {
 	}
 }
 
+/* Authorized storage roots (e.g. Android SAF trees) as granted through the
+ * frontend. */
+static void refresh_authorized_locations(void) {
+	LibRetroFilesystemNode::clearAuthorizedLocations();
+
+	struct retro_vfs_authorized_locations locations;
+	memset(&locations, 0, sizeof(locations));
+
+	if (environ_cb && environ_cb(RETRO_ENVIRONMENT_GET_VFS_AUTHORIZED_LOCATIONS, &locations) &&
+			locations.locations) {
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_DEBUG, "SAF locations count: %zu\n", locations.count);
+		for (size_t i = 0; i < locations.count; ++i) {
+			const char *path = locations.locations[i].path;
+			const char *label = locations.locations[i].label;
+
+			if (path && *path)
+				LibRetroFilesystemNode::addAuthorizedLocation(
+						Common::String(path),
+						label ? Common::String(label) : Common::String());
+		}
+	}
+}
+
 void retro_init(void) {
 	struct retro_log_callback log;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
@@ -1040,27 +1060,7 @@ void retro_init(void) {
 		dirent_vfs_init(&vfs_iface);
 	}
 
-	LibRetroFilesystemNode::clearAuthorizedLocations();
-
-	{
-		struct retro_vfs_authorized_locations locations;
-		memset(&locations, 0, sizeof(locations));
-
-		if (environ_cb && environ_cb(RETRO_ENVIRONMENT_GET_VFS_AUTHORIZED_LOCATIONS, &locations) &&
-				locations.locations) {
-			if (retro_log_cb)
-				retro_log_cb(RETRO_LOG_DEBUG, "SAF locations count: %zu\n", locations.count);
-			for (size_t i = 0; i < locations.count; ++i) {
-				const char *path = locations.locations[i].path;
-				const char *label = locations.locations[i].label;
-
-				if (path && *path)
-					LibRetroFilesystemNode::addAuthorizedLocation(
-							Common::String(path),
-							label ? Common::String(label) : Common::String());
-			}
-		}
-	}
+	refresh_authorized_locations();
 
 	update_variables();
 
@@ -1337,6 +1337,7 @@ void retro_unload_game(void) {
 void retro_reset(void) {
 	close_emu_thread();
 	init_command_params();
+	refresh_authorized_locations();
 	if (!retro_load_game(game_buf_ptr) && retro_log_cb)
 		retro_log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to reinitialize emulation thread on reset.\n");
 	LIBRETRO_G_SYSTEM->resetQuit();
