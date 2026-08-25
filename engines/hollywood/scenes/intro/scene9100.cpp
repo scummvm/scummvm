@@ -482,7 +482,7 @@ bool Scene9100::loadActorResources() {
 		loadI10ActorBank(kI10SueActorRunChunk, kI10SueActorDescriptorChunk, _actorBankI10Sue);
 }
 
-bool Scene9100::loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkIndex, ActorBank &bank) {
+bool Scene9100::loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkIndex, ActorSpriteBank &bank) {
 	Common::ScopedPtr<Common::SeekableReadStream> runStream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), runStreamChunkIndex));
 	if (!runStream) {
 		warning("Failed to open %s actor run chunk %u", kI10ArchiveName, runStreamChunkIndex);
@@ -581,7 +581,7 @@ void Scene9100::showSueEntryActor() {
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 }
 
-void Scene9100::playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer) {
+void Scene9100::playEntryActorAnimation(const ActorSpriteBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer) {
 	const byte kFacingTurnToCamera = 5;
 	const byte kTurnCel = 2;
 	const byte kFinalCel = 0;
@@ -595,7 +595,7 @@ void Scene9100::playEntryActorAnimation(const ActorBank &bank, int worldX, int w
 
 	for (uint i = 0; i < ARRAYSIZE(kFrames) && !_skipRequested && !Engine::shouldQuit(); ++i) {
 		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
-		drawActorSpriteFrame(bank, kFrames[i][0], kFrames[i][1], worldX, worldY);
+		drawActorFrame(bank, kFrames[i][0], kFrames[i][1], worldX, worldY);
 		presentFrame();
 		if (delay(kActorEntryFrameDelayMillis))
 			return;
@@ -710,7 +710,7 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const bool finalFrame = clampedElapsed >= pathDurationMillis;
 	const byte facing = kI10SceneActorFacing;
 	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
-	drawActorSpriteFrame(_actorBankI10Ron, facing, cel, x, y);
+	drawActorFrame(_actorBankI10Ron, facing, cel, x, y);
 }
 
 void Scene9100::runSueEntrySequence() {
@@ -801,31 +801,12 @@ void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const bool finalFrame = clampedElapsed >= pathDurationMillis;
 	const byte facing = kI10SceneActorFacing;
 	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
-	drawActorSpriteFrame(_actorBankI10Sue, facing, cel, x, y);
+	drawActorFrame(_actorBankI10Sue, facing, cel, x, y);
 }
 
-void Scene9100::drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY) {
-	if (facing >= kActorFacingCount || cel >= kActorCelsPerFacing)
-		return;
-
-	const uint descriptorIndex = facing * kActorCelsPerFacing + cel;
-	if (descriptorIndex >= bank.descriptors.size())
-		return;
-
-	const ActorSpriteDescriptor &descriptor = bank.descriptors[descriptorIndex];
-	const uint runBase = facing * kActorFacingRunStride;
-	if (runBase + descriptor.runStreamOffset >= bank.runStreams.size())
-		return;
-
-	const int spriteX = worldX - descriptor.anchorX;
-	const int spriteY = worldY - descriptor.anchorY;
-	const uint paletteRunCursor = skipActorRunStream(bank.runStreams,
-		descriptor.runStreamOffset, runBase, descriptor.opaqueRunCount);
-	drawActorPaletteRemapRunStream(bank.runStreams, paletteRunCursor, runBase,
-		descriptor.paletteRunCount, spriteX, spriteY, -1, _sceneFramebuffer.surface(),
-		_presentationPaletteRemapTable, nullptr);
-	drawActorRunStream(bank.runStreams, descriptor.runStreamOffset, runBase,
-		descriptor.opaqueRunCount, spriteX, spriteY, -1, _sceneFramebuffer.surface(), nullptr);
+void Scene9100::drawActorFrame(const ActorSpriteBank &bank, byte facing, byte cel, int worldX, int worldY) {
+	drawActorSpriteFrame(bank, facing, cel, worldX, worldY, -1,
+		_sceneFramebuffer.surface(), _presentationPaletteRemapTable);
 }
 
 void Scene9100::runOpeningPrelude() {

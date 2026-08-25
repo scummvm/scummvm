@@ -30,6 +30,9 @@ namespace Hollywood {
 const uint kPaletteRemapTableSize = 256;
 const uint kPaletteTripletSize = 3;
 const uint kActorPaletteFirstColor = 0xd0;
+const uint kActorFacingCount = 6;
+const uint kActorCelsPerFacing = 13;
+const uint kActorFacingRunStride = 160000;
 const uint kShadowDarkenNumerator = 3;
 const uint kShadowDarkenDenominator = 4;
 
@@ -223,6 +226,32 @@ int drawActorPaletteRemapRunStream(const Common::Array<byte> &runStreams, uint c
 	}
 
 	return lastRunY;
+}
+
+void drawActorSpriteFrame(const ActorSpriteBank &bank, byte facing, byte cel, int worldX, int worldY,
+		int minimumYExclusive, Graphics::Surface &destination, const Common::Array<byte> &paletteRemapTable,
+		const ActorDepthTest *depthTest) {
+	if (facing >= kActorFacingCount || cel >= kActorCelsPerFacing)
+		return;
+
+	const uint descriptorIndex = facing * kActorCelsPerFacing + cel;
+	if (descriptorIndex >= bank.descriptors.size())
+		return;
+
+	const ActorSpriteDescriptor &descriptor = bank.descriptors[descriptorIndex];
+	const uint runBase = facing * kActorFacingRunStride;
+	if (runBase + descriptor.runStreamOffset >= bank.runStreams.size())
+		return;
+
+	const int spriteX = worldX - descriptor.anchorX;
+	const int spriteY = worldY - descriptor.anchorY;
+	const uint paletteRunCursor = skipActorRunStream(bank.runStreams,
+		descriptor.runStreamOffset, runBase, descriptor.opaqueRunCount);
+	drawActorPaletteRemapRunStream(bank.runStreams, paletteRunCursor, runBase,
+		descriptor.paletteRunCount, spriteX, spriteY, minimumYExclusive, destination,
+		paletteRemapTable, depthTest);
+	drawActorRunStream(bank.runStreams, descriptor.runStreamOffset, runBase,
+		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive, destination, depthTest);
 }
 
 void buildPresentationPaletteRemapTable(const Common::Array<byte> &palette, Common::Array<byte> &paletteRemapTable) {

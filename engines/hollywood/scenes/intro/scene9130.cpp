@@ -62,6 +62,7 @@ const Scene9130SpeechStyle kScene9130SpeechStyles[] = {
 Scene9130::Scene9130(HollywoodEngine *vm) :
 		IntroSceneBase(vm, "Scene 9130"),
 		_resources(),
+		_music(vm->introMusic()),
 		_speech(),
 		_text(),
 		_paletteResource(),
@@ -94,6 +95,7 @@ bool Scene9130::play() {
 	presentFrame();
 
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
+	_music->setVolume(100);
 	revealSavedFramebufferWithCurtain();
 
 	if (!_skipRequested && !Engine::shouldQuit())
@@ -101,7 +103,6 @@ bool Scene9130::play() {
 
 	clearSubtitle();
 	clearSceneFramebufferWithCurtain();
-	fadeOutPalette();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
 	_speech.stop();
@@ -162,6 +163,8 @@ void Scene9130::runClipAndDialogue() {
 		const uint32 now = g_system->getMillis();
 		if (now - lastFrameMillis >= kScene9130ClipFrameIntervalMillis) {
 			lastFrameMillis = now;
+			if ((frameIndex - 1) % 12 == 0)
+				_speech.setVolume(85);
 			drawClipFrame(frameIndex);
 			presentFrame();
 			++frameIndex;
@@ -312,28 +315,9 @@ uint Scene9130::subtitleTextWidth(const Common::String &text) const {
 	return _vm->font()->getStringWidth(text) + 2;
 }
 
-void Scene9130::fadeInPalette() {
-	for (byte threshold = 0x3f; threshold != 0 && !_skipRequested && !Engine::shouldQuit(); --threshold) {
-		for (uint i = 0; i < _paletteResource.size(); ++i) {
-			if (_paletteResource[i] >= threshold)
-				_paletteCurrent[i] = MIN<byte>(_paletteResource[i], _paletteCurrent[i] + 1);
-		}
-		presentFrame();
-		if (delay(10))
-			return;
-	}
-}
-
-void Scene9130::fadeOutPalette() {
-	for (byte threshold = 1; threshold < 0x40 && !_skipRequested && !Engine::shouldQuit(); ++threshold) {
-		for (uint i = 0; i < _paletteResource.size(); ++i) {
-			if (_paletteResource[i] >= threshold)
-				_paletteCurrent[i] = _paletteCurrent[i] == 0 ? 0 : _paletteCurrent[i] - 1;
-		}
-		presentFrame();
-		if (delay(10))
-			return;
-	}
+void Scene9130::stopAudio() {
+	_speech.stop();
+	_music->stop();
 }
 
 } // End of namespace Hollywood

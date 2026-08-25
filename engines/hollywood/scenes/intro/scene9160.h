@@ -22,6 +22,7 @@
 #ifndef HOLLYWOOD_SCENES_INTRO_SCENE9160_H
 #define HOLLYWOOD_SCENES_INTRO_SCENE9160_H
 
+#include "hollywood/music.h"
 #include "hollywood/scenes/intro/intro_resource_set.h"
 #include "hollywood/scenes/intro/intro_scene.h"
 
@@ -49,9 +50,12 @@ private:
 	void fadeInPalette();
 	void fadeOutPalette();
 	bool waitBeforeScroll();
+	bool waitForMusicEnd();
 	uint presentRowOffset() const override;
+	void stopAudio() override;
 
 	IntroResourceSet _resources;
+	MusicPlayer *_music;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _panelA;
 	Common::Array<byte> _panelB;

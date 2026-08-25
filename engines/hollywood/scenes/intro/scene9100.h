@@ -27,6 +27,7 @@
 #include "common/random.h"
 #include "common/str.h"
 
+#include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
@@ -85,21 +86,6 @@ private:
 		Common::Array<Common::String> lines;
 	};
 
-	struct ActorSpriteDescriptor {
-		uint32 runStreamOffset;
-		uint32 opaqueRunCount;
-		uint32 paletteRunCount;
-		int16 anchorX;
-		int16 anchorY;
-		uint16 width;
-		uint16 height;
-	};
-
-	struct ActorBank {
-		Common::Array<byte> runStreams;
-		Common::Array<ActorSpriteDescriptor> descriptors;
-	};
-
 	bool load(bool dialogueBranch);
 	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
@@ -110,18 +96,18 @@ private:
 	bool loadScratchChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset);
 	bool loadStage003Descriptors();
 	bool loadActorResources();
-	bool loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkIndex, ActorBank &bank);
+	bool loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkIndex, ActorSpriteBank &bank);
 
 	void applyActorHighlightColor(byte highlightRed, byte highlightGreen, byte highlightBlue);
 	void runEntryActorAnimations();
 	void showSueEntryActor();
-	void playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer);
+	void playEntryActorAnimation(const ActorSpriteBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer);
 	void runRonEntryConversation();
 	void drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
 	void runSueEntrySequence();
 	void runSueEntryPath();
 	void drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
-	void drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY);
+	void drawActorFrame(const ActorSpriteBank &bank, byte facing, byte cel, int worldX, int worldY);
 	void runOpeningPrelude();
 	void runCinematicSequence();
 	void initializeDialogueBranchOfficeState();
@@ -234,8 +220,8 @@ private:
 	Common::Array<byte> _stage003Descriptors;
 	Common::Array<byte> _stage003LargeRows;
 	uint16 _stage003LargeRowBaseIndex;
-	ActorBank _actorBankI10Ron;
-	ActorBank _actorBankI10Sue;
+	ActorSpriteBank _actorBankI10Ron;
+	ActorSpriteBank _actorBankI10Sue;
 	SubtitleOverlay _subtitle;
 	uint32 _resourceArenaCursor;
 	uint32 _lastClockFrameMillis;

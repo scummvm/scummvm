@@ -22,6 +22,8 @@
 #ifndef HOLLYWOOD_SCENES_INTRO_SCENE9170_H
 #define HOLLYWOOD_SCENES_INTRO_SCENE9170_H
 
+#include "common/random.h"
+
 #include "hollywood/music.h"
 #include "hollywood/scenes/intro/intro_resource_set.h"
 #include "hollywood/scenes/intro/intro_scene.h"
@@ -62,7 +64,8 @@ private:
 	void scrollTo(uint targetRowOffset, int step);
 	void waitWithComposite(uint32 millis);
 	void fadeInPalette();
-	void fadeOutPalette();
+	void startLowerRoomAmbience();
+	void stopLowerRoomAmbience();
 	void runSpeechLine(byte rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue, byte speakerGroup);
 	void runSpeechCue(uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
@@ -80,10 +83,13 @@ private:
 	uint subtitleTextWidth(const Common::String &text) const;
 
 	IntroResourceSet _resources;
-	MusicPlayer _music;
+	MusicPlayer *_music;
 	SpeechPlayer _speech;
+	SpeechPlayer _ambientSpeech;
 	SoundBank0Player _sound;
+	SoundBank0Player _ambientSound;
 	IntroTextStore _text;
+	Common::RandomSource _random;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _baseFramebuffer;
 	IndexedSurfaceBuffer _staticFramebuffer;
@@ -97,6 +103,8 @@ private:
 	byte _effectFrame;
 	byte _eventFrame;
 	uint _animationStep;
+	bool _shakeActive;
+	uint _shakeRowOffset;
 };
 
 } // End of namespace Hollywood

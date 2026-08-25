@@ -31,6 +31,23 @@ struct Surface;
 
 namespace Hollywood {
 
+// Full-body actor cels use this bank; speech overlays are separate resources
+// that callers composite over the body.
+struct ActorSpriteDescriptor {
+	uint32 runStreamOffset;
+	uint32 opaqueRunCount;
+	uint32 paletteRunCount;
+	int16 anchorX;
+	int16 anchorY;
+	uint16 width;
+	uint16 height;
+};
+
+struct ActorSpriteBank {
+	Common::Array<byte> runStreams;
+	Common::Array<ActorSpriteDescriptor> descriptors;
+};
+
 struct ActorDepthTest {
 	bool enabled;
 	const Graphics::Surface *savedFramebuffer;
@@ -46,6 +63,9 @@ uint skipActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint
 int drawActorPaletteRemapRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 	int spriteX, int spriteY, int minimumYExclusive, Graphics::Surface &destination,
 	const Common::Array<byte> &paletteRemapTable, const ActorDepthTest *depthTest);
+void drawActorSpriteFrame(const ActorSpriteBank &bank, byte facing, byte cel, int worldX, int worldY,
+	int minimumYExclusive, Graphics::Surface &destination, const Common::Array<byte> &paletteRemapTable,
+	const ActorDepthTest *depthTest = nullptr);
 void buildPresentationPaletteRemapTable(const Common::Array<byte> &palette, Common::Array<byte> &paletteRemapTable);
 
 } // End of namespace Hollywood
