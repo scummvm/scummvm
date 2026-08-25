@@ -21,7 +21,7 @@
 
 #include "common/config-manager.h"
 #include "engines/util.h"
-#include "mads/console.h"
+#include "mads/forest/console.h"
 #include "mads/core/attr.h"
 #include "mads/core/config.h"
 #include "mads/core/conv.h"
