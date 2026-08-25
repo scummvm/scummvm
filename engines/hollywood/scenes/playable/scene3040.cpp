@@ -185,7 +185,7 @@ void Scene3040::runCustomEntrySequence() {
 	presentFrame();
 
 	if (!_vm->gameState().scene3040EntryLineSeen) {
-		beginSecondarySpeechLine(1, 0);
+		beginSecondarySpeechLine(0, 0);
 		_vm->gameState().scene3040EntryLineSeen = true;
 	}
 }
@@ -205,27 +205,31 @@ bool Scene3040::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene3040::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Mirar/Hablar con actor de escena (look/talk to foreground actor), row 1.
+	case 301: // Mirar tejado (look at roof).
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302: // Ir a exterior/camino (go outside/path): return toward scene 3010.
+	case 302: // Ir al suelo (go to ground): return toward scene 3010.
 		runExitToScene3010();
 		return true;
-	case 303: // Mirar objeto de escena (look at scene object), row 2.
+	case 303: // Coger artilugio del Dr. Mosca (pick up Dr. Mosca's device).
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Mirar objeto de escena (look at scene object), row 3.
+	case 304: // Mirar artilugio del Dr. Mosca (look at Dr. Mosca's device).
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Mirar objeto de escena (look at scene object), row 4.
+	case 305: // Usar artilugio del Dr. Mosca (use Dr. Mosca's device).
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306: // Usar objeto de inventario con hotspot condicional: reveal scene object.
+	case 306: // Usar artilugio del Dr. Mosca con tejado (use device on roof): install it.
 		runInventoryPatchAction();
 		return true;
 	default:
 		return false;
 	}
+}
+
+bool Scene3040::shouldPlayGameplayClickPath() const {
+	return false;
 }
 
 bool Scene3040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
