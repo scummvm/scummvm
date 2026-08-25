@@ -34,6 +34,7 @@ const uint16 kScene7100FirstState = 0x1bbc;
 const uint16 kScene7100DialogueEntryState = 0x1bbd;
 const uint16 kScene7100LastState = 0x1bc5;
 const uint16 kScene7100ExitState6072 = 0x17b8;
+const uint16 kScene7100ExitState6075 = 0x17bb;
 const uint kScene7100InitialRequiredChunkCount = 21;
 const uint kScene7100ArenaFirstChunk = 5;
 const uint kScene7100ArenaLastChunk = 20;
@@ -58,6 +59,7 @@ const uint16 kScene7100Chunk20DescriptorCount = 0x18;
 const uint32 kScene7100FrameMillis = 75;
 const byte kScene7100PrimarySpeechGroupA = 0;
 const byte kScene7100PrimarySpeechGroupB = 1;
+const byte kScene7100RonEscapeResponseFrame = 4;
 const byte kScene7100PrimaryFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 6, 5
 };
@@ -104,6 +106,26 @@ const byte kScene7100Extended337FrameMap[] = {
 };
 const byte kScene7100TransferFrameMap[] = {
 	0, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0
+};
+
+struct Scene7100DialogueSeedRecord {
+	uint16 index;
+	byte enabled;
+	byte nextNodeIndex;
+	byte transitionMode;
+	byte playerTextRowId;
+	byte responseFrameIndex;
+	byte disableAfterUse;
+	byte reserved;
+};
+
+const Scene7100DialogueSeedRecord kScene7100RonDialogueSeedRecords[] = {
+	{ 0, 1, 0, 0, 4, 4, 1, 0xff },
+	{ 1, 1, 0, 3, 1, 1, 1, 0xff },
+	{ 2, 1, 0, 3, 2, 2, 1, 0xff },
+	{ 3, 1, 0, 3, 3, 3, 1, 0xff },
+	{ 4, 1, 0, 3, 5, 5, 1, 0xff },
+	{ 5, 1, 0, 0, 6, 6, 1, 0xff }
 };
 
 static PlayableSceneConfig scene7100Config() {
@@ -244,7 +266,7 @@ bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 303: // Hablar con Ron (talk to Ron)
-		handleG10DialogueStub();
+		runRonDialogue();
 		return true;
 	case 304: // Mirar Ron (look at Ron)
 		beginSecondarySpeechLine(3, 0);
@@ -512,10 +534,114 @@ void Scene7100::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 		.soundAt(soundFrame, soundId));
 }
 
-void Scene7100::handleG10DialogueStub() {
+void Scene7100::runRonDialogue() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeRonDialogueRecords(records);
+
 	beginSecondarySpeechLine(0x62, 0);
 	beginPrimarySpeechLineWithAnimationGroup(99, 0, 0x310, 0x8a,
 		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(0x62, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(0x62, 6);
+			beginPrimarySpeechLineWithAnimationGroup(99, 6, 0x310, 0x8a,
+				0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
+			return;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			return;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(0x62, record.playerTextRowId);
+		if (record.responseFrameIndex != 0 && record.responseFrameIndex != 0xff) {
+			beginPrimarySpeechLineWithAnimationGroup(99, record.responseFrameIndex, 0x310, 0x8a,
+				0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
+		}
+		if (record.disableAfterUse == 1)
+			record.enabled = 0;
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case 0:
+			if (record.responseFrameIndex == kScene7100RonEscapeResponseFrame) {
+				runCurtainClearToBlack();
+				_vm->gameState().mainFlowStateId = kScene7100ExitState6075;
+			}
+			return;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth != 0 ? (byte)(previousDepth - 1) : 0;
+			break;
+		case 3:
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
+			break;
+		default:
+			return;
+		}
+	}
+}
+
+void Scene7100::initializeRonDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(10 * 10 * 7);
+	for (uint i = 0; i < ARRAYSIZE(kScene7100RonDialogueSeedRecords); ++i) {
+		const Scene7100DialogueSeedRecord &seed = kScene7100RonDialogueSeedRecords[i];
+		DialogueChoiceRecord &record = records[seed.index];
+		record.enabled = seed.enabled;
+		record.nextNodeIndex = seed.nextNodeIndex;
+		record.transitionMode = seed.transitionMode;
+		record.playerTextRowId = seed.playerTextRowId;
+		record.responseFrameIndex = seed.responseFrameIndex;
+		record.disableAfterUse = seed.disableAfterUse;
+		record.reserved = seed.reserved;
+	}
+}
+
+void Scene7100::runCurtainClearToBlack() {
+	byte *pixels = framebufferPixels(_sceneFramebuffer);
+	if (!pixels)
+		return;
+
+	for (uint sweep = 0; sweep < 0xf0 && !_vm->isSceneRestartRequested(); sweep += 0x14) {
+		const uint bandWidth = 0x14;
+		const uint innerWidth = HollywoodEngine::kScreenWidth - 2 * sweep;
+		const uint middleInset = sweep + bandWidth;
+		const uint middleHeight = HollywoodEngine::kScreenHeight - 2 * middleInset;
+		const uint leftX = _viewportXOffset + sweep;
+		const uint rightX = leftX + innerWidth - bandWidth;
+
+		for (uint row = 0; row < bandWidth; ++row) {
+			memset(pixels + (sweep + row) * HollywoodEngine::kSceneBufferWidth + leftX, 0, innerWidth);
+			memset(pixels + (HollywoodEngine::kScreenHeight - bandWidth - sweep + row) *
+				HollywoodEngine::kSceneBufferWidth + leftX, 0, innerWidth);
+		}
+		for (uint row = 0; row < middleHeight; ++row) {
+			const uint y = middleInset + row;
+			memset(pixels + y * HollywoodEngine::kSceneBufferWidth + leftX, 0, bandWidth);
+			memset(pixels + y * HollywoodEngine::kSceneBufferWidth + rightX, 0, bandWidth);
+		}
+		presentFrame();
+		if (pollEvents(false))
+			break;
+	}
+
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	_displayPalette.markAllDirty();
+	presentFrame();
 }
 
 void Scene7100::handlePickupItem15() {

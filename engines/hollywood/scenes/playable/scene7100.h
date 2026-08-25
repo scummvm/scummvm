@@ -58,7 +58,9 @@ private:
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int patchFrame = -1, byte patchSelector = 0xff,
 		int soundFrame = -1, byte soundId = 0);
-	void handleG10DialogueStub();
+	void runRonDialogue();
+	void initializeRonDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void runCurtainClearToBlack();
 	void handlePickupItem15();
 	void handleActionHandler315();
 	void handleExtendedAction337();

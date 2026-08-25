@@ -154,7 +154,7 @@ const Scene4070DialogueSeedRecord kScene4070DialogueSeedRecords[] = {
 	{ 72, 1, 0, 3, 10, 10, 1, 0xff }, // Sueno/descanso (sleep/rest).
 	{ 73, 1, 0, 2, 11, 11, 0, 0xff }, // Peso y edad (weight and age): return to main menu.
 	{ 77, 0, 1, 3, 12, 12, 1, 0xff }, // Sherilyn: enabled after meeting Sherilyn.
-	{ 78, 0, 1, 3, 13, 13, 1, 0xff }, // Gwendolyn: enabled by the original RESOURCE.B06 text state.
+	{ 78, 0, 1, 3, 13, 13, 1, 0xff }, // Gwendolyn: enabled after meeting Gwendolyn.
 	{ 79, 1, 1, 3, 14, 14, 1, 0xff }, // Esqueletos (skeletons).
 	{ 80, 1, 0, 2, 15, 15, 0, 0xff }, // Hablar de otra cosa (talk about something else): return to main menu.
 	{ 84, 1, 2, 3, 16, 16, 1, 0xff }, // Frankenstein.
@@ -704,9 +704,10 @@ void Scene4070::initializeDraculaDialogueRecords(Common::Array<DialogueChoiceRec
 	}
 
 	const GameplayState &state = _vm->gameState();
-	// The original also enables the Gwendolyn branch from RESOURCE.B06's text
-	// variant state. That scene state is not implemented yet, so only the
-	// Sherilyn gate can currently unlock the conditional companion branch.
+	if (state.scene4080GwendolynNameState != 0) {
+		records[3].enabled = 1;
+		records[78].enabled = 1;
+	}
 	if (state.scene4060SherilynDialogueIntroSeen) {
 		records[3].enabled = 1;
 		records[77].enabled = 1;
