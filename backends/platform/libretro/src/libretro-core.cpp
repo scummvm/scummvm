@@ -1257,6 +1257,12 @@ void retro_run(void) {
 	except in case of core options reset to defaults, for which the following call is needed*/
 	retro_update_options_display();
 
+	if (av_status & AV_STATUS_RESET_PENDING) {
+		av_status &= ~AV_STATUS_RESET_PENDING;
+		retro_reset();
+		return;
+	}
+
 #ifdef USE_HIGHRES
 	if (av_status & AV_STATUS_UPDATE_GUI) {
 		retro_gui_res_reset();
@@ -1285,12 +1291,6 @@ void retro_run(void) {
 		/* This can only be called from within retro_run() */
 		environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY, &audio_latency);
 		av_status &= ~AUDIO_STATUS_UPDATE_LATENCY;
-	}
-
-	if (av_status & AV_STATUS_RESET_PENDING) {
-		av_status &= ~AV_STATUS_RESET_PENDING;
-		retro_reset();
-		return;
 	}
 
 	/* Setting RA's video or audio driver to null will disable video/audio bits */
