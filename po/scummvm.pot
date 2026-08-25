@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-08-24 14:14+0000\n"
+"POT-Creation-Date: 2026-08-25 20:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -327,8 +327,8 @@ msgstr ""
 #: engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:362 engines/grim/grim.cpp:366
-#: engines/hypno/metaengine.cpp:249 engines/kyra/gui/saveload_eob.cpp:611
-#: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
+#: engines/hypno/metaengine.cpp:249 engines/kyra/gui/saveload_eob.cpp:633
+#: engines/kyra/gui/saveload_eob.cpp:666 engines/lab/metaengine.cpp:197
 #: engines/mm/mm1/metaengine.cpp:54 engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4511
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1244
@@ -347,8 +347,8 @@ msgstr ""
 #: engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:368 engines/grim/grim.cpp:366
-#: engines/hypno/metaengine.cpp:255 engines/kyra/gui/saveload_eob.cpp:611
-#: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
+#: engines/hypno/metaengine.cpp:255 engines/kyra/gui/saveload_eob.cpp:633
+#: engines/kyra/gui/saveload_eob.cpp:666 engines/lab/metaengine.cpp:204
 #: engines/mm/mm1/metaengine.cpp:52 engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4511
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1250
@@ -3653,7 +3653,7 @@ msgstr ""
 #: engines/draci/metaengine.cpp:200 engines/fool/metaengine.cpp:137
 #: engines/groovie/metaengine.cpp:205 engines/hdb/metaengine.cpp:207
 #: engines/hopkins/metaengine.cpp:213 engines/hugo/metaengine.cpp:134
-#: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:369
+#: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:377
 #: engines/kyra/engine/lol.cpp:505 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:137 engines/mads/metaengine.cpp:258
 #: engines/mm/metaengine.cpp:186 engines/mtropolis/metaengine.cpp:161
@@ -3687,7 +3687,7 @@ msgstr ""
 #: engines/draci/metaengine.cpp:206 engines/fool/metaengine.cpp:148
 #: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:219
 #: engines/hugo/metaengine.cpp:141 engines/illusions/metaengine.cpp:101
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:506
+#: engines/kyra/engine/eobcommon.cpp:378 engines/kyra/engine/lol.cpp:506
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:144
 #: engines/mads/metaengine.cpp:264 engines/mm/metaengine.cpp:192
 #: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:196
@@ -5829,7 +5829,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:345 engines/hypno/metaengine.cpp:393
-#: engines/kyra/engine/eobcommon.cpp:373 engines/lure/metaengine.cpp:218
+#: engines/kyra/engine/eobcommon.cpp:381 engines/lure/metaengine.cpp:218
 #: engines/nancy/input.cpp:215 engines/tinsel/metaengine.cpp:275
 #: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
 #: engines/ultima/ultima8/metaengine.cpp:54
@@ -5842,7 +5842,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:357 engines/hypno/metaengine.cpp:405
-#: engines/kyra/engine/eobcommon.cpp:374 engines/lure/metaengine.cpp:226
+#: engines/kyra/engine/eobcommon.cpp:382 engines/lure/metaengine.cpp:226
 #: engines/nancy/input.cpp:221 engines/tinsel/metaengine.cpp:281
 #: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
 #: engines/ultima/ultima8/metaengine.cpp:55
@@ -6364,7 +6364,7 @@ msgid "Turn backward"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/dm/metaengine.cpp:132
-#: engines/hopkins/metaengine.cpp:269 engines/kyra/engine/eobcommon.cpp:375
+#: engines/hopkins/metaengine.cpp:269 engines/kyra/engine/eobcommon.cpp:383
 #: engines/kyra/engine/lol.cpp:517 engines/lab/metaengine.cpp:257
 #: engines/mm/mm1/metaengine.cpp:102 engines/mohawk/riven.cpp:901
 #: engines/pegasus/pegasus.cpp:2740 engines/twine/metaengine.cpp:353
@@ -6379,7 +6379,7 @@ msgid "Turn left"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:234 engines/dm/metaengine.cpp:152
-#: engines/hopkins/metaengine.cpp:275 engines/kyra/engine/eobcommon.cpp:376
+#: engines/hopkins/metaengine.cpp:275 engines/kyra/engine/eobcommon.cpp:384
 #: engines/kyra/engine/lol.cpp:518 engines/lab/metaengine.cpp:271
 #: engines/mm/mm1/metaengine.cpp:103 engines/mohawk/riven.cpp:907
 #: engines/pegasus/pegasus.cpp:2747 engines/twine/metaengine.cpp:346
@@ -6836,7 +6836,7 @@ msgstr ""
 #: engines/bladerunner/detection_tables.h:101
 #: engines/bladerunner/detection_tables.h:205
 #: engines/bladerunner/detection_tables.h:216
-#: engines/kyra/detection_tables.h:77
+#: engines/kyra/detection_tables.h:89
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -7213,7 +7213,7 @@ msgstr ""
 
 #: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:110
 #: engines/dm/metaengine.cpp:142 engines/hopkins/metaengine.cpp:257
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:513
+#: engines/kyra/engine/eobcommon.cpp:379 engines/kyra/engine/lol.cpp:513
 #: engines/mohawk/riven.cpp:881 engines/titanic/metaengine.cpp:336
 #: engines/titanic/metaengine.cpp:378 engines/twine/metaengine.cpp:332
 #: engines/ultima/ultima0/metaengine.cpp:78
@@ -7881,7 +7881,7 @@ msgstr ""
 msgid "Toggle champion 4 inventory"
 msgstr ""
 
-#: engines/dm/metaengine.cpp:172 engines/kyra/engine/eobcommon.cpp:372
+#: engines/dm/metaengine.cpp:172 engines/kyra/engine/eobcommon.cpp:380
 #: engines/kyra/engine/lol.cpp:514 engines/mohawk/riven.cpp:895
 #: engines/titanic/metaengine.cpp:343 engines/titanic/metaengine.cpp:384
 #: engines/twine/metaengine.cpp:339 engines/wintermute/keymapper_tables.h:179
@@ -9781,26 +9781,26 @@ msgstr ""
 msgid "Abort"
 msgstr ""
 
-#: engines/kyra/detection_tables.h:75
+#: engines/kyra/detection_tables.h:87
 msgid "Missing language specific game code and/or resources."
 msgstr ""
 
-#: engines/kyra/detection_tables.h:76
+#: engines/kyra/detection_tables.h:88
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
 
-#: engines/kyra/detection_tables.h:78
+#: engines/kyra/detection_tables.h:90
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr ""
 
-#: engines/kyra/detection_tables.h:1470
+#: engines/kyra/detection_tables.h:1482
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1486
+#: engines/kyra/detection_tables.h:1498
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
@@ -9907,52 +9907,80 @@ msgid ""
 "backpack inventory slots, with thrown weapons only"
 msgstr ""
 
-#: engines/kyra/metaengine.cpp:275
+#: engines/kyra/metaengine.cpp:199 engines/kyra/metaengine.cpp:211
+msgid "Automap (ScummVM feature)"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:200 engines/kyra/metaengine.cpp:212
+msgid "Enable the in-game automap overlay (toggle in-game with Tab)"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:299
 msgid "Lands of Lore support is not compiled in"
 msgstr ""
 
-#: engines/kyra/metaengine.cpp:289
+#: engines/kyra/metaengine.cpp:313
 msgid "Eye of Beholder support is not compiled in"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:377
-msgid "Open / Close inventory"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:378
-msgid "Switch inventory / Character screen"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:379
-msgid "Camp"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:380 engines/mm/mm1/metaengine.cpp:107
-msgid "Cast spell"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:383
-msgid "Spell level 1"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:384
-msgid "Spell level 2"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:385
-msgid "Spell level 3"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:386
-msgid "Spell level 4"
-msgstr ""
-
 #: engines/kyra/engine/eobcommon.cpp:387
-msgid "Spell level 5"
+msgid "Toggle automap"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:389
+msgid "Open / Close inventory"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:390
+msgid "Switch inventory / Character screen"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:391
+msgid "Camp"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:392 engines/mm/mm1/metaengine.cpp:107
+msgid "Cast spell"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:394
+msgid "Spell level 1"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:395
+msgid "Spell level 2"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:396
+msgid "Spell level 3"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:397
+msgid "Spell level 4"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:398
+msgid "Spell level 5"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:400
 msgid "Spell level 6"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:403
+msgid "Map cursor up"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:404
+msgid "Map cursor down"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:405
+msgid "Map cursor left"
+msgstr ""
+
+#: engines/kyra/engine/eobcommon.cpp:406
+msgid "Map cursor right"
 msgstr ""
 
 #: engines/kyra/engine/lol.cpp:509
@@ -9994,7 +10022,7 @@ msgstr ""
 msgid "Choose spell"
 msgstr ""
 
-#: engines/kyra/gui/saveload_eob.cpp:611
+#: engines/kyra/gui/saveload_eob.cpp:633
 #, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
@@ -10005,14 +10033,14 @@ msgid ""
 "\n"
 msgstr ""
 
-#: engines/kyra/gui/saveload_eob.cpp:644
+#: engines/kyra/gui/saveload_eob.cpp:666
 #, c-format
 msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
 
-#: engines/kyra/gui/saveload_eob.cpp:677
+#: engines/kyra/gui/saveload_eob.cpp:699
 #, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
