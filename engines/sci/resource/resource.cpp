@@ -1415,9 +1415,10 @@ ResVersion ResourceManager::detectVolVersion() {
 	ResVersion curVersion = kResVersionSci0Sci1Early;
 	bool failed = false;
 	bool sci11Align = false;
+	const int64 fileSizeLimit = MIN<int64>(0x100000, fileStream->size());
 
 	// Check for SCI0, SCI1, SCI1.1, SCI32 v2 (Gabriel Knight 1 CD) and SCI32 v3 (LSL7) formats
-	while (!fileStream->eos() && fileStream->pos() < 0x100000) {
+	while (fileStream->pos() < fileSizeLimit) {
 		if (curVersion > kResVersionSci0Sci1Early)
 			fileStream->readByte();
 		fileStream->skip(2);	// resId
