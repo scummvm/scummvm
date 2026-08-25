@@ -184,6 +184,8 @@ protected:
 	virtual bool shouldPlayGameplayClickPath() const;
 	// Returning true validates the adjusted target instead of running the default floor-mask search.
 	virtual bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const;
+	// Called before route lookup so a scene can adjust resource routes for this path origin.
+	virtual void prepareCustomActorPathRoute(int startX, int startY);
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
@@ -347,6 +349,10 @@ protected:
 
 	// Speech animation hooks
 	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
+	// Allows resource-specific actor layers to retain their original mouth-frame cadence.
+	virtual uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const;
+	// Preserves a speaker group's original level relative to the configured speech volume.
+	virtual byte primarySpeechVolumePercent(byte animationGroup) const;
 	virtual void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
 	virtual void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame);
 	virtual void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame);

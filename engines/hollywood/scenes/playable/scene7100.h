@@ -41,6 +41,7 @@ private:
 		byte actorDrawOrderMode) override;
 	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
@@ -60,6 +61,10 @@ private:
 		int soundFrame = -1, byte soundId = 0);
 	void runRonDialogue();
 	void initializeRonDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void runRescueEntrySequence();
+	bool runRescueDialogue();
+	void initializeRescueDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	bool runCurtainRevealFromBlack();
 	void runCurtainClearToBlack();
 	void handlePickupItem15();
 	void handleActionHandler315();
@@ -75,6 +80,7 @@ private:
 	byte _primaryAltFrame;
 	byte _environmentState;
 	byte _environmentFrame;
+	bool _manualPrimaryAnimationActive;
 };
 
 } // End of namespace Hollywood
