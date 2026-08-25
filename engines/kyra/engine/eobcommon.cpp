@@ -399,12 +399,6 @@ Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 	if (gameId == "eob2")
 		addKeymapAction(keyMap, "SL6", _("Spell level 6"), Common::KeyState(Common::KEYCODE_6, '6'), "6", "");
 
-	// Non-original: Shift+arrows move the automap selection cursor (handled in runLoop).
-	addKeymapAction(keyMap, "MSU", _("Map cursor up"), Common::KeyState(Common::KEYCODE_UP, 0, Common::KBD_SHIFT), "S+UP", "");
-	addKeymapAction(keyMap, "MSD", _("Map cursor down"), Common::KeyState(Common::KEYCODE_DOWN, 0, Common::KBD_SHIFT), "S+DOWN", "");
-	addKeymapAction(keyMap, "MSL", _("Map cursor left"), Common::KeyState(Common::KEYCODE_LEFT, 0, Common::KBD_SHIFT), "S+LEFT", "");
-	addKeymapAction(keyMap, "MSR", _("Map cursor right"), Common::KeyState(Common::KEYCODE_RIGHT, 0, Common::KBD_SHIFT), "S+RIGHT", "");
-
 	return Common::Keymap::arrayOf(keyMap);
 }
 
