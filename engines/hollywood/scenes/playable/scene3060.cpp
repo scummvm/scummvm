@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene3060ArchiveName = "RESOURCE.C06";
-const char *const kScene3060MusicArchiveName = "RESOURCE.M03";
-const char *const kScene3060SoundArchiveName = "RESOURCE.S03";
-const uint kScene3060InitialRequiredChunkCount = 10;
-const uint kScene3060ArenaFirstChunk = 5;
-const uint kScene3060ArenaLastChunk = 9;
-const uint kScene3060StageIndex = 306;
 const uint16 kScene3060EntryFromSecretPassageState = 0x0bf5;
 const uint16 kScene3050EntryFromScene3060State = 0x0beb;
 const uint16 kScene3070State = 0x0bfe;
@@ -51,15 +44,6 @@ const uint kScene3060FrontDescriptorCount = 0x13;
 const uint kScene3060GlobeDescriptorCount = 0x1e;
 const uint kScene3060ButtonDescriptorCount = 5;
 const uint kScene3060SecretDoorDescriptorCount = 0x0e;
-
-const byte kScene3060ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
 
 const byte kScene3060FrontFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -80,32 +64,18 @@ const byte kScene3060SecretDoorRevealFrameMap[] = {
 };
 
 static PlayableSceneConfig scene3060Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene3060ArchiveName;
-	config.initialRequiredChunkCount = kScene3060InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene3060ArenaFirstChunk;
-	config.arenaLastChunk = kScene3060ArenaLastChunk;
-	config.stageIndex = kScene3060StageIndex;
-	config.debugName = "Scene 3060";
-	config.viewportXOffset = 0;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 3;
-	config.actorBankTableEntry = kScene3060ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene3060ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene3060Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene3060SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene3060ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene3060ActorPathStepDeltaTable);
-	config.walkablePaletteMaxRegion = 3;
-	config.musicArchiveName = kScene3060MusicArchiveName;
-	config.soundBank0ArchiveName = kScene3060SoundArchiveName;
+	PlayableSceneConfig config(3060,
+		SceneResourceLayout(10, 5, 9),
+		SceneViewport(0),
+		SceneActorPose(0x22d, 0x156, 4));
+	config.setActorResources(kScene3060ActorBankTableEntry, kScene3060ActorPaletteTableEntry);
+	config.setTextResources(kScene3060Resource003RowsOffsetIndex, kScene3060SpeechCueDescriptorTableOffset);
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene3060::Scene3060(HollywoodEngine *vm) :
-		PlayableScene(vm, scene3060Config(), "scene3060", 0x22d, 0x156, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene3060Config()),
 		_frontChannel(),
 		_frontLayer(),
 		_globeLayer(),
@@ -337,7 +307,7 @@ bool Scene3060::customizeRouteSegment(byte currentRegion, byte nextRegion, const
 		return false;
 
 	for (uint i = 0; i < 0x0c && 0x18 + i < _actorPathStepDeltas.size(); ++i)
-		_actorPathStepDeltas[0x18 + i] = kScene3060ActorPathStepDeltaTable[i];
+		_actorPathStepDeltas[0x18 + i] = kActorPathStepDeltaTableSetB4[i];
 	requestedFacing = 2;
 	restoredStepDeltas = true;
 	return true;
@@ -353,9 +323,9 @@ bool Scene3060::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 
 	const uint sourceOffset = targetX < state.x ? 0x24 : 0;
 	const uint destinationOffset = targetX < state.x ? 0x3c : 0x18;
-	for (uint i = 0; i < 0x0c && sourceOffset + i < ARRAYSIZE(kScene3060ActorPathStepDeltaTable) &&
+	for (uint i = 0; i < 0x0c && sourceOffset + i < ARRAYSIZE(kActorPathStepDeltaTableSetB4) &&
 			destinationOffset + i < _actorPathStepDeltas.size(); ++i)
-		_actorPathStepDeltas[destinationOffset + i] = kScene3060ActorPathStepDeltaTable[sourceOffset + i];
+		_actorPathStepDeltas[destinationOffset + i] = kActorPathStepDeltaTableSetB4[sourceOffset + i];
 	requestedFacing = targetX < state.x ? 5 : 2;
 	restoredStepDeltas = true;
 	return true;

@@ -33,10 +33,6 @@ const uint16 kScene7060ReturnState = 0x1b95;
 const uint16 kScene7060ReturnToG04State = 0x1b82;
 const uint16 kScene7060ExitToG07State = 0x1b9e;
 const uint16 kScene7060ShortExitToG07State = 0x1b9f;
-const uint kScene7060InitialRequiredChunkCount = 11;
-const uint kScene7060ArenaFirstChunk = 5;
-const uint kScene7060ArenaLastChunk = 10;
-const uint kScene7060StageIndex = 706;
 const uint16 kScene7060ViewportXOffset = 0x50;
 const uint16 kScene7060ViewportMaxXOffset = 0x100;
 const int kScene7060EntryFromG04StartX = 0x3b0;
@@ -93,22 +89,15 @@ const byte kScene7060ShortExitFrameMap[] = {
 };
 
 static PlayableSceneConfig scene7060Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = "RESOURCE.G06";
-	config.initialRequiredChunkCount = kScene7060InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene7060ArenaFirstChunk;
-	config.arenaLastChunk = kScene7060ArenaLastChunk;
-	config.stageIndex = kScene7060StageIndex;
-	config.debugName = "Scene 7060";
-	config.viewportXOffset = kScene7060ViewportXOffset;
-	config.viewportMinXOffset = kScene7060ViewportXOffset;
-	config.viewportMaxXOffset = kScene7060ViewportMaxXOffset;
+	PlayableSceneConfig config(7060,
+		SceneResourceLayout(11, 5, 10),
+		SceneViewport(kScene7060ViewportXOffset, kScene7060ViewportXOffset, kScene7060ViewportMaxXOffset),
+		SceneActorPose(kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY, kScene7060EntryFromG04Facing));
 	return config;
 }
 
 Scene7060::Scene7060(HollywoodEngine *vm) :
-		PlayableScene(vm, scene7060Config(), "scene7060", kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY,
-			kScene7060EntryFromG04Facing, 0xfd, 0xfb),
+		PlayableScene(vm, scene7060Config()),
 		_chunk8FrameIndex(3),
 		_chunk6RandomIdlePaused(false),
 		_colorMapItem8Promoted(false) {

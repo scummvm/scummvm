@@ -30,12 +30,6 @@
 
 namespace Hollywood {
 
-const char *const kScene2060ArchiveName = "RESOURCE.B06";
-const char *const kScene2060MusicArchiveName = "RESOURCE.M02";
-const char *const kScene2060SoundArchiveName = "RESOURCE.S02";
-const uint kScene2060InitialRequiredChunkCount = 32;
-const uint kScene2060ArenaFirstChunk = 5;
-const uint kScene2060ArenaLastChunk = 31;
 const uint kScene2060StageIndex = 205;
 const uint16 kScene2060FirstState = 0x080c;
 const uint16 kScene2050LabyrinthReturnState = 0x0803;
@@ -116,34 +110,21 @@ static_assert(ARRAYSIZE(kScene2060ClosedPassageChunks) == ARRAYSIZE(kScene2060Pa
 static_assert(ARRAYSIZE(kScene2060GuideRoute) == 20, "Scene 2060 guide route size changed");
 
 static PlayableSceneConfig scene2060Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene2060ArchiveName;
-	config.initialRequiredChunkCount = kScene2060InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene2060ArenaFirstChunk;
-	config.arenaLastChunk = kScene2060ArenaLastChunk;
+	PlayableSceneConfig config(2060,
+		SceneResourceLayout(32, 5, 31),
+		SceneViewport(kScene2060ViewportXOffset, kScene2060ViewportXOffset, kScene2060ViewportXOffset),
+		SceneActorPose(0x0f9, 0x0f4, 2));
 	config.stageIndex = kScene2060StageIndex;
-	config.debugName = "Scene 2060";
-	config.viewportXOffset = kScene2060ViewportXOffset;
-	config.viewportMinXOffset = kScene2060ViewportXOffset;
-	config.viewportMaxXOffset = kScene2060ViewportXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 2;
 	config.actorPaletteTableEntry = kScene2060ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene2060Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene2060SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene2060ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene2060ActorPathStepDeltaTable);
+	config.setTextResources(kScene2060Resource003RowsOffsetIndex, kScene2060SpeechCueDescriptorTableOffset);
+	config.setActorPathStepDeltas(kScene2060ActorPathStepDeltaTable);
 	config.walkablePaletteMaxRegion = 1;
-	config.musicArchiveName = kScene2060MusicArchiveName;
-	config.soundBank0ArchiveName = kScene2060SoundArchiveName;
-	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene2060::Scene2060(HollywoodEngine *vm) :
-		PlayableScene(vm, scene2060Config(), "scene2060", 0x0f9, 0x0f4, 2, 0xfd, 0xfb),
+		PlayableScene(vm, scene2060Config()),
 		_sceneActorBankInstalled(false),
 		_guideEffectPrepared(false),
 		_guideEffectActive(false),

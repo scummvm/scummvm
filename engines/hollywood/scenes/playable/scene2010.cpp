@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene2010ArchiveName = "RESOURCE.B01";
-const char *const kScene2010MusicArchiveName = "RESOURCE.M02";
-const char *const kScene2010SoundArchiveName = "RESOURCE.S02";
-const uint kScene2010InitialRequiredChunkCount = 11;
-const uint kScene2010ArenaFirstChunk = 5;
-const uint kScene2010ArenaLastChunk = 10;
-const uint kScene2010StageIndex = 201;
 const uint16 kScene2010EntryFromB02State = 0x07db;
 const uint16 kScene2010PatchedEntryState = 0x07dc;
 const uint16 kScene2020EntryFromPyramidExteriorState = 0x07e4;
@@ -48,15 +41,6 @@ const uint32 kScene2010OverlayFrameMillis = 75;
 const uint kScene2010FirstOverlayDescriptorCount = 0x0a;
 const uint kScene2010SecondOverlayDescriptorCount = 0x10;
 const uint kScene2010ActorOverlayDescriptorCount = 0x1c;
-
-const byte kScene2010ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
 
 const byte kScene2010FirstOverlayFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
@@ -80,35 +64,19 @@ static_assert(kScene2010SecondOverlayDescriptorCount > 15, "Scene 2010 anilla se
 static_assert(kScene2010ActorOverlayDescriptorCount > 27, "Scene 2010 anilla actor overlay descriptor count is too small");
 
 static PlayableSceneConfig scene2010Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene2010ArchiveName;
-	config.initialRequiredChunkCount = kScene2010InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene2010ArenaFirstChunk;
-	config.arenaLastChunk = kScene2010ArenaLastChunk;
-	config.stageIndex = kScene2010StageIndex;
-	config.debugName = "Scene 2010";
-	config.viewportXOffset = kScene2010ViewportXOffset;
-	config.viewportMinXOffset = kScene2010ViewportXOffset;
-	config.viewportMaxXOffset = kScene2010ViewportXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 2;
-	config.actorBankTableEntry = kScene2010ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene2010ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene2010Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene2010SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene2010ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene2010ActorPathStepDeltaTable);
+	PlayableSceneConfig config(2010,
+		SceneResourceLayout(11, 5, 10),
+		SceneViewport(kScene2010ViewportXOffset, kScene2010ViewportXOffset, kScene2010ViewportXOffset),
+		SceneActorPose(0x2e9, 0x1a0, 4));
+	config.setActorResources(kScene2010ActorBankTableEntry, kScene2010ActorPaletteTableEntry);
+	config.setTextResources(kScene2010Resource003RowsOffsetIndex, kScene2010SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 6;
-	config.musicArchiveName = kScene2010MusicArchiveName;
-	config.soundBank0ArchiveName = kScene2010SoundArchiveName;
-	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene2010::Scene2010(HollywoodEngine *vm) :
-		PlayableScene(vm, scene2010Config(), "scene2010", 0x2e9, 0x1a0, 4, 0xfd, 0xfb) {
+		PlayableScene(vm, scene2010Config()) {
 }
 
 void Scene2010::initializeCustomPreviewState() {
@@ -314,9 +282,9 @@ void Scene2010::copyStepDeltasFromB4(uint targetFirstOffset, uint targetLastOffs
 	for (uint targetOffset = targetFirstOffset, sourceOffset = sourceFirstOffset;
 			targetOffset <= targetLastOffset &&
 			targetOffset < _actorPathStepDeltas.size() &&
-			sourceOffset < ARRAYSIZE(kScene2010ActorPathStepDeltaTable);
+			sourceOffset < ARRAYSIZE(kActorPathStepDeltaTableSetB4);
 			++targetOffset, ++sourceOffset) {
-		_actorPathStepDeltas[targetOffset] = kScene2010ActorPathStepDeltaTable[sourceOffset];
+		_actorPathStepDeltas[targetOffset] = kActorPathStepDeltaTableSetB4[sourceOffset];
 	}
 }
 

@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene2020ArchiveName = "RESOURCE.B02";
-const char *const kScene2020MusicArchiveName = "RESOURCE.M02";
-const char *const kScene2020SoundArchiveName = "RESOURCE.S02";
-const uint kScene2020InitialRequiredChunkCount = 19;
-const uint kScene2020ArenaFirstChunk = 5;
-const uint kScene2020ArenaLastChunk = 18;
-const uint kScene2020StageIndex = 202;
 const uint16 kScene2020PrincessExitState = 0x07e5;
 const uint16 kScene2010ReturnFromScene2020State = 0x07db;
 const uint16 kScene2020PrincessExitNextState = 0x082b;
@@ -65,15 +58,6 @@ enum Scene2020OverlayHook {
 	kScene2020HatPickupPatchHook = 1,
 	kScene2020SunglassesPickupPatchHook = 2,
 	kScene2020TigerToothPickupPatchHook = 3
-};
-
-const byte kScene2020ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
 };
 
 const byte kScene2020PoolFrameMap[] = {
@@ -113,35 +97,19 @@ static_assert(ARRAYSIZE(kScene2020TigerToothPickupFrameMap) == 14, "Scene 2020 t
 static_assert(ARRAYSIZE(kScene2020TigerItemOverlayFrameMap) == 11, "Scene 2020 tiger item overlay frame map size changed");
 
 static PlayableSceneConfig scene2020Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene2020ArchiveName;
-	config.initialRequiredChunkCount = kScene2020InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene2020ArenaFirstChunk;
-	config.arenaLastChunk = kScene2020ArenaLastChunk;
-	config.stageIndex = kScene2020StageIndex;
-	config.debugName = "Scene 2020";
-	config.viewportXOffset = 0;
-	config.viewportMinXOffset = 0;
-	config.viewportMaxXOffset = 0;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 2;
-	config.actorBankTableEntry = kScene2020ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene2020ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene2020Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene2020SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene2020ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene2020ActorPathStepDeltaTable);
+	PlayableSceneConfig config(2020,
+		SceneResourceLayout(19, 5, 18),
+		SceneViewport(0),
+		SceneActorPose(0x320, 0x1b1, 4));
+	config.setActorResources(kScene2020ActorBankTableEntry, kScene2020ActorPaletteTableEntry);
+	config.setTextResources(kScene2020Resource003RowsOffsetIndex, kScene2020SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 6;
-	config.musicArchiveName = kScene2020MusicArchiveName;
-	config.soundBank0ArchiveName = kScene2020SoundArchiveName;
-	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene2020::Scene2020(HollywoodEngine *vm) :
-		PlayableScene(vm, scene2020Config(), "scene2020", 0x320, 0x1b1, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene2020Config()),
 		_poolChannel(),
 		_tigerChannel(),
 		_princessChannel(),

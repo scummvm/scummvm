@@ -32,13 +32,6 @@
 
 namespace Hollywood {
 
-const char *const kScene8010ArchiveName = "RESOURCE.H01";
-const char *const kScene8010MusicArchiveName = "RESOURCE.M08";
-const char *const kScene8010SoundArchiveName = "RESOURCE.S08";
-const uint kScene8010InitialRequiredChunkCount = 5;
-const uint kScene8010ArenaFirstChunk = 5;
-const uint kScene8010ArenaLastChunk = 9;
-const uint kScene8010StageIndex = 801;
 const uint16 kScene8010FirstState = 0x1f4a;
 const uint16 kScene8010ReturnEntryState = 0x1f4b;
 const uint16 kScene8020State = 0x1f54;
@@ -110,33 +103,19 @@ static void appendFishermanPromptFragment(Common::String &text, const Common::St
 }
 
 PlayableSceneConfig scene8010Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene8010ArchiveName;
-	config.initialRequiredChunkCount = kScene8010InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene8010ArenaFirstChunk;
-	config.arenaLastChunk = kScene8010ArenaLastChunk;
-	config.stageIndex = kScene8010StageIndex;
-	config.debugName = "Scene 8010";
-	config.viewportXOffset = 0;
-	config.viewportMinXOffset = 0;
-	config.viewportMaxXOffset = 0x00d0;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 8;
-	config.actorBankTableEntry = kScene8010ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene8010ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene8010Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene8010SpeechCueDescriptorTableOffset;
-	config.walkablePaletteMaxRegion = 3;
-	config.musicArchiveName = kScene8010MusicArchiveName;
-	config.soundBank0ArchiveName = kScene8010SoundArchiveName;
+	PlayableSceneConfig config(8010,
+		SceneResourceLayout(5, 5, 9),
+		SceneViewport(0, 0, 0x00d0),
+		SceneActorPose(kScene8010EntryTargetX, kScene8010EntryTargetY, kScene8010EntryFacing));
+	config.setActorResources(kScene8010ActorBankTableEntry, kScene8010ActorPaletteTableEntry);
+	config.setTextResources(kScene8010Resource003RowsOffsetIndex, kScene8010SpeechCueDescriptorTableOffset);
+	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet00);
 	config.loadActorDepthTables = false;
 	return config;
 }
 
 Scene8010::Scene8010(HollywoodEngine *vm) :
-		PlayableScene(vm, scene8010Config(), "scene8010", kScene8010EntryTargetX, kScene8010EntryTargetY,
-			kScene8010EntryFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene8010Config()),
 		_fishermanLayer(),
 		_boatLayer(),
 		_fishermanChannel(),

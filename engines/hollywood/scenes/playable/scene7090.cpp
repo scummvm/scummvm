@@ -31,10 +31,6 @@
 namespace Hollywood {
 
 const uint16 kScene7090BackToG07State = 0x1ba0;
-const uint kScene7090InitialRequiredChunkCount = 11;
-const uint kScene7090ArenaFirstChunk = 5;
-const uint kScene7090ArenaLastChunk = 10;
-const uint kScene7090StageIndex = 709;
 const uint16 kScene7090ViewportXOffset = 0x68;
 const int kScene7090EntryX = 0x1dd;
 const int kScene7090EntryY = 0x101;
@@ -62,20 +58,15 @@ const byte kScene7090GatedActionFrameMap[] = {
 };
 
 static PlayableSceneConfig scene7090Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = "RESOURCE.G09";
-	config.initialRequiredChunkCount = kScene7090InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene7090ArenaFirstChunk;
-	config.arenaLastChunk = kScene7090ArenaLastChunk;
-	config.stageIndex = kScene7090StageIndex;
-	config.debugName = "Scene 7090";
-	config.viewportXOffset = kScene7090ViewportXOffset;
+	PlayableSceneConfig config(7090,
+		SceneResourceLayout(11, 5, 10),
+		SceneViewport(kScene7090ViewportXOffset),
+		SceneActorPose(kScene7090EntryX, kScene7090EntryY, kScene7090EntryFacing));
 	return config;
 }
 
 Scene7090::Scene7090(HollywoodEngine *vm) :
-		PlayableScene(vm, scene7090Config(), "scene7090", kScene7090EntryX, kScene7090EntryY,
-			kScene7090EntryFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene7090Config()),
 		_prePatchChunk7Visible(false) {
 }
 

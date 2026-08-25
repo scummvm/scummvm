@@ -42,8 +42,6 @@ namespace Hollywood {
 
 const char *const kResource000Name = "RESOURCE.000";
 const char *const kStage003ArchiveName = "RESOURCE.003";
-const char *const kDefaultGameplayMusicArchiveName = "RESOURCE.M07";
-const char *const kDefaultGameplaySoundBank0ArchiveName = "RESOURCE.S07";
 const byte kAmbientMusicCueStillFrame = 0x0f;
 const byte kAmbientMusicCueFirstRandomTrack = 0x0c;
 const byte kAmbientMusicCueRandomTrackCount = 3;
@@ -106,9 +104,7 @@ const SueTapeSpeechCue kSueTapeSpeechCues[] = {
 	{ 0x51, 8, 0x3f, 0x00, 0x00 }
 };
 
-PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config, const char *randomName,
-		int defaultActorX, int defaultActorY,
-		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
+PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config) :
 		_vm(vm),
 		_config(config),
 		_sceneStateId(vm->gameState().mainFlowStateId),
@@ -150,7 +146,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_routeSteps(_pathController.routeSteps),
 		_actorPathFrames(_pathController.frames),
 		_actorPathStepDeltas(_pathController.stepDeltas),
-		_random(randomName),
+		_random(Common::String::format("scene%u", config.sceneId)),
 		_speechController(),
 		_speech(_speechController.player),
 		_speechOverlay(_speechController.secondaryOverlay),
@@ -178,11 +174,11 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_viewportXOffset(0),
 		_viewportMinXOffset(0),
 		_viewportMaxXOffset(0),
-		_lastViewportScrollActorWorldX(defaultActorX),
+		_lastViewportScrollActorWorldX(config.defaultActorPose.x),
 		_actorPathPlaybackActive(false),
-		_activeActorWorldX(defaultActorX),
-		_activeActorWorldY(defaultActorY),
-		_activeActorFacing(defaultActorFacing),
+		_activeActorWorldX(config.defaultActorPose.x),
+		_activeActorWorldY(config.defaultActorPose.y),
+		_activeActorFacing(config.defaultActorPose.facing),
 		_activeActorCel(0),
 		_activeActorDrawOrderMode(0),
 		_lastSceneActionItemId(0),
@@ -191,7 +187,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_skipRequested(false) {
 	_surfaceState.initialize(kPaletteSize, 0x700, kPaletteMaskUsedBytes, kScenePaletteMapPageSize,
 		kScenePaletteRegionCount, kActorPaletteBaseBytes);
-	_speechController.initialize(secondarySpeechTextColor, primarySpeechTextColor);
+	_speechController.initialize(kDefaultSecondarySpeechTextColor, kDefaultPrimarySpeechTextColor);
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
@@ -205,32 +201,47 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 }
 
-PlayableSceneConfig::PlayableSceneConfig() :
-		resourceArchiveName(nullptr),
-		initialRequiredChunkCount(0),
-		arenaFirstChunk(0),
-		arenaLastChunk(0),
-		stageIndex(0),
-		debugName("Playable scene"),
-		viewportXOffset(0),
-		viewportMinXOffset(kSceneConfigUseViewportOffset),
-		viewportMaxXOffset(kSceneConfigUseViewportOffset),
-		inventoryOwnerIndex(1),
-		activeAudioChapterIndex(kSceneConfigNoAudioChapter),
+PlayableSceneConfig::PlayableSceneConfig(uint16 sceneNumber, const SceneResourceLayout &resourceLayout,
+		const SceneViewport &sceneViewport, const SceneActorPose &actorPose) :
+		sceneId(sceneNumber),
+		resourceArchiveName(Common::String::format("RESOURCE.%c%02u",
+			(char)('A' + sceneNumber / 1000 - 1), (sceneNumber % 1000) / 10)),
+		initialRequiredChunkCount(resourceLayout.initialRequiredChunkCount),
+		arenaFirstChunk(resourceLayout.arenaFirstChunk),
+		arenaLastChunk(resourceLayout.arenaLastChunk),
+		stageIndex(sceneNumber / 10),
+		debugName(Common::String::format("Scene %u", sceneNumber)),
+		viewportXOffset(sceneViewport.xOffset),
+		viewportMinXOffset(sceneViewport.minXOffset),
+		viewportMaxXOffset(sceneViewport.maxXOffset),
+		defaultActorPose(actorPose),
+		inventoryOwnerIndex(sceneNumber / 1000 == 7 ? 1 : 0),
+		activeAudioChapterIndex(sceneNumber / 1000 == 7 ? kSceneConfigNoAudioChapter : sceneNumber / 1000),
 		actorBankTableEntry(0xd0),
 		actorBankSegmentCount(14),
 		actorPaletteTableEntry(0x108),
-		inventoryActionTableExtraOffset(kResource000FixedInventoryVerbTableOffset),
+		inventoryActionTableExtraOffset(sceneNumber / 1000 == 7 ? kResource000FixedInventoryVerbTableOffset : 0),
 		inventoryRowsOffsetIndex(0x32),
 		speechCueDescriptorTableOffset(0x5f58),
-		actorPathStepDeltaTable(defaultActorPathStepDeltaTable()),
-		actorPathStepDeltaTableSize(defaultActorPathStepDeltaTableSize()),
+		actorPathStepDeltaTable(sceneNumber / 1000 == 7 ?
+			kActorPathStepDeltaTableSet00 : kActorPathStepDeltaTableSetB4),
+		actorPathStepDeltaTableSize(kActorPathStepDeltaTableSize),
 		walkablePaletteMaxRegion(3),
-		musicArchiveName(kDefaultGameplayMusicArchiveName),
-		soundBank0ArchiveName(kDefaultGameplaySoundBank0ArchiveName),
+		musicArchiveName(Common::String::format("RESOURCE.M%02u", sceneNumber / 1000)),
+		soundBank0ArchiveName(Common::String::format("RESOURCE.S%02u", sceneNumber / 1000)),
 		loadInventoryActionTables(true),
 		loadActorDepthTables(true),
 		useActorDepthTest(false) {
+}
+
+void PlayableSceneConfig::setActorResources(uint bankTableEntry, uint paletteTableEntry) {
+	actorBankTableEntry = bankTableEntry;
+	actorPaletteTableEntry = paletteTableEntry;
+}
+
+void PlayableSceneConfig::setTextResources(uint rowsOffsetIndex, uint32 cueDescriptorTableOffset) {
+	inventoryRowsOffsetIndex = rowsOffsetIndex;
+	speechCueDescriptorTableOffset = cueDescriptorTableOffset;
 }
 
 void PlayableScene::initializeFramebuffers() {
@@ -354,7 +365,7 @@ void PlayableScene::syncActiveActorPoseToGameState() {
 }
 
 const char *PlayableScene::resourceArchiveName() const {
-	return _config.resourceArchiveName;
+	return _config.resourceArchiveName.c_str();
 }
 
 uint PlayableScene::sceneInitialRequiredChunkCount() const {
@@ -374,7 +385,7 @@ uint PlayableScene::sceneStageIndex() const {
 }
 
 const char *PlayableScene::sceneDebugName() const {
-	return _config.debugName;
+	return _config.debugName.c_str();
 }
 
 uint16 PlayableScene::sceneViewportXOffset() const {
@@ -382,14 +393,10 @@ uint16 PlayableScene::sceneViewportXOffset() const {
 }
 
 uint16 PlayableScene::sceneViewportMinXOffset() const {
-	if (_config.viewportMinXOffset == kSceneConfigUseViewportOffset)
-		return sceneViewportXOffset();
 	return _config.viewportMinXOffset;
 }
 
 uint16 PlayableScene::sceneViewportMaxXOffset() const {
-	if (_config.viewportMaxXOffset == kSceneConfigUseViewportOffset)
-		return sceneViewportXOffset();
 	return _config.viewportMaxXOffset;
 }
 
@@ -445,11 +452,11 @@ byte PlayableScene::walkablePaletteMaxRegion() const {
 }
 
 const char *PlayableScene::musicArchiveName() const {
-	return _config.musicArchiveName;
+	return _config.musicArchiveName.c_str();
 }
 
 const char *PlayableScene::soundBank0ArchiveName() const {
-	return _config.soundBank0ArchiveName;
+	return _config.soundBank0ArchiveName.c_str();
 }
 
 int PlayableScene::alternatePaletteResourceChunkIndex() const {

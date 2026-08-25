@@ -30,13 +30,6 @@
 
 namespace Hollywood {
 
-const char *const kScene6010ArchiveName = "RESOURCE.F01";
-const char *const kScene6010MusicArchiveName = "RESOURCE.M06";
-const char *const kScene6010SoundArchiveName = "RESOURCE.S06";
-const uint kScene6010InitialRequiredChunkCount = 19;
-const uint kScene6010ArenaFirstChunk = 5;
-const uint kScene6010ArenaLastChunk = 18;
-const uint kScene6010StageIndex = 601;
 const uint16 kScene6010EntryState = 0x177a;
 const uint16 kScene6011EntryState = 0x177b;
 const uint16 kScene6012EntryState = 0x177c;
@@ -63,24 +56,6 @@ const uint kScene6010ExitDescriptorCount = 6;
 const uint kScene6010Pickup59DescriptorCount = 0x0d;
 const uint kScene6010Pickup58DescriptorCount = 0x0a;
 const uint kScene6010PendingItem69DescriptorCount = 0x0e;
-
-const byte kScene6010ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
-
-const byte kScene6010ActorPathStepDeltaTableSet87[] = {
-	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
-	3, 2, 8, 6, 6, 7, 6, 4, 10, 3, 2, 9,
-	8, 8, 7, 5, 10, 6, 10, 10, 4, 6, 4, 10,
-	4, 3, 3, 4, 0, 4, 4, 2, 0, 4, 2, 5,
-	6, 10, 10, 4, 6, 4, 10, 8, 8, 7, 5, 10,
-	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7
-};
 
 const byte kScene6010PendingItem69FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
@@ -111,34 +86,19 @@ const byte kScene6010Pickup58FrameMap[] = {
 };
 
 static PlayableSceneConfig scene6010Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene6010ArchiveName;
-	config.initialRequiredChunkCount = kScene6010InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene6010ArenaFirstChunk;
-	config.arenaLastChunk = kScene6010ArenaLastChunk;
-	config.stageIndex = kScene6010StageIndex;
-	config.debugName = "Scene 6010";
-	config.viewportXOffset = kScene6010ViewportXOffset;
-	config.viewportMinXOffset = kScene6010ViewportMinXOffset;
-	config.viewportMaxXOffset = kScene6010ViewportMaxXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 6;
-	config.actorBankTableEntry = kScene6010ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene6010ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene6010Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene6010SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene6010ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene6010ActorPathStepDeltaTable);
+	PlayableSceneConfig config(6010,
+		SceneResourceLayout(19, 5, 18),
+		SceneViewport(kScene6010ViewportXOffset, kScene6010ViewportMinXOffset, kScene6010ViewportMaxXOffset),
+		SceneActorPose(0x327, 0x1c5, 5));
+	config.setActorResources(kScene6010ActorBankTableEntry, kScene6010ActorPaletteTableEntry);
+	config.setTextResources(kScene6010Resource003RowsOffsetIndex, kScene6010SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 9;
-	config.musicArchiveName = kScene6010MusicArchiveName;
-	config.soundBank0ArchiveName = kScene6010SoundArchiveName;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene6010::Scene6010(HollywoodEngine *vm) :
-		PlayableScene(vm, scene6010Config(), "scene6010", 0x327, 0x1c5, 5, 0xfd, 0xfb),
+		PlayableScene(vm, scene6010Config()),
 		_originalColorToItemMap(),
 		_temporaryOverlayLayers() {
 }
@@ -485,8 +445,8 @@ void Scene6010::replaceColorMapItemFromOriginal(byte sourceItem, byte destinatio
 void Scene6010::copyStepDeltasFromSet87(uint firstOffset, uint lastOffset) {
 	for (uint offset = firstOffset; offset <= lastOffset &&
 			offset < _actorPathStepDeltas.size() &&
-			offset < ARRAYSIZE(kScene6010ActorPathStepDeltaTableSet87); ++offset) {
-		_actorPathStepDeltas[offset] = kScene6010ActorPathStepDeltaTableSet87[offset];
+			offset < ARRAYSIZE(kActorPathStepDeltaTableSet87); ++offset) {
+		_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
 	}
 }
 

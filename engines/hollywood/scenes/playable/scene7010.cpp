@@ -32,11 +32,6 @@
 
 namespace Hollywood {
 
-const char *const kScene7010ArchiveName = "RESOURCE.G01";
-const uint kScene7010InitialRequiredChunkCount = 19;
-const uint kScene7010ArenaFirstChunk = 5;
-const uint kScene7010ArenaLastChunk = 18;
-const uint kScene7010StageIndex = 701;
 const uint16 kScene7010ViewportXOffset = 0;
 const uint16 kScene7010ViewportMaxXOffset = 0xd0;
 const uint16 kScene7010ReturnState = 0x1b63;
@@ -124,22 +119,17 @@ const byte kScene7010DialogueTransitionStay = 3;
 const byte kScene7010DialogueTransitionUpTwo = 4;
 
 static PlayableSceneConfig scene7010Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene7010ArchiveName;
-	config.initialRequiredChunkCount = kScene7010InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene7010ArenaFirstChunk;
-	config.arenaLastChunk = kScene7010ArenaLastChunk;
-	config.stageIndex = kScene7010StageIndex;
-	config.debugName = "Scene 7010";
-	config.viewportXOffset = kScene7010ViewportXOffset;
-	config.viewportMaxXOffset = kScene7010ViewportMaxXOffset;
+	PlayableSceneConfig config(7010,
+		SceneResourceLayout(19, 5, 18),
+		SceneViewport(kScene7010ViewportXOffset, kScene7010ViewportXOffset, kScene7010ViewportMaxXOffset),
+		SceneActorPose(0x184, 0x1c6, 1));
 	config.loadInventoryActionTables = false;
 	config.loadActorDepthTables = false;
 	return config;
 }
 
 Scene7010::Scene7010(HollywoodEngine *vm) :
-		PlayableScene(vm, scene7010Config(), "scene7010", 0x184, 0x1c6, 1, 0xfd, 0xfb),
+		PlayableScene(vm, scene7010Config()),
 		_chunk8FrameIndex(0),
 		_chunk9AmbientOverlayFrameIndex(0),
 		_chunk10IdleFrameA(0),

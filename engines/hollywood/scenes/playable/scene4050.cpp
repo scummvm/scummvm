@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene4050ArchiveName = "RESOURCE.D05";
-const char *const kScene4050MusicArchiveName = "RESOURCE.M04";
-const char *const kScene4050SoundArchiveName = "RESOURCE.S04";
-const uint kScene4050InitialRequiredChunkCount = 5;
-const uint kScene4050ArenaFirstChunk = 5;
-const uint kScene4050ArenaLastChunk = 11;
-const uint kScene4050StageIndex = 405;
 const uint16 kScene4050D09ReturnTransitionState = 0x0fd3;
 const uint16 kScene4040ReturnState = 0x0fc9;
 const uint16 kScene4060FirstState = 0x0fdc;
@@ -73,46 +66,19 @@ const byte kScene4050D09ReturnTransitionFrameMap[] = {
 	8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 1, 0, 1, 0
 };
 
-const byte kScene4050ActorPathStepDeltaTableSetB4[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
-
 PlayableSceneConfig scene4050Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene4050ArchiveName;
-	config.initialRequiredChunkCount = kScene4050InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene4050ArenaFirstChunk;
-	config.arenaLastChunk = kScene4050ArenaLastChunk;
-	config.stageIndex = kScene4050StageIndex;
-	config.debugName = "Scene 4050";
-	config.viewportXOffset = 0;
-	config.viewportMinXOffset = 0;
-	config.viewportMaxXOffset = 0;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 4;
-	config.actorBankTableEntry = kScene4050ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene4050ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene4050Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene4050SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene4050ActorPathStepDeltaTableSetB4;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene4050ActorPathStepDeltaTableSetB4);
+	PlayableSceneConfig config(4050,
+		SceneResourceLayout(5, 5, 11),
+		SceneViewport(0),
+		SceneActorPose(kScene4050RonWorldX, kScene4050RonWorldY, kScene4050RonFacing));
+	config.setActorResources(kScene4050ActorBankTableEntry, kScene4050ActorPaletteTableEntry);
+	config.setTextResources(kScene4050Resource003RowsOffsetIndex, kScene4050SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
-	config.musicArchiveName = kScene4050MusicArchiveName;
-	config.soundBank0ArchiveName = kScene4050SoundArchiveName;
-	config.loadActorDepthTables = true;
-	config.useActorDepthTest = false;
 	return config;
 }
 
 Scene4050::Scene4050(HollywoodEngine *vm) :
-		PlayableScene(vm, scene4050Config(), "scene4050", kScene4050RonWorldX, kScene4050RonWorldY,
-			kScene4050RonFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene4050Config()),
 		_backgroundChannel(),
 		_flagPaletteChannel(),
 		_ronSpeechChannel(),

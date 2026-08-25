@@ -29,13 +29,8 @@
 
 namespace Hollywood {
 
-const char *const kScene1020ArchiveName = "RESOURCE.A02";
-const char *const kScene1020MusicArchiveName = "RESOURCE.M01";
-const char *const kScene1020SoundArchiveName = "RESOURCE.S01";
-const uint kScene1020InitialRequiredChunkCount = 23;
 const uint kScene1020ArenaFirstChunk = 5;
 const uint kScene1020ArenaLastChunk = 22;
-const uint kScene1020StageIndex = 102;
 const uint16 kScene1020RightEntryState = 0x03fc;
 const uint16 kScene1020OverlayEntryState = 0x03fd;
 const uint16 kScene1020ExitState1010RightEntry = 0x03f3;
@@ -102,15 +97,6 @@ const uint kScene1020ActionChunk18DescriptorCount = 0x12;
 const uint kScene1020ActionChunk19DescriptorCount = 0x0b;
 const uint kScene1020ActionChunk21DescriptorCount = 0x17;
 const uint kScene1020ActionChunk22DescriptorCount = 0x0d;
-
-const byte kScene1020ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
 
 const byte kScene1020Chunk14ForwardFrameMap[] = {
 	0, 1, 2, 3, 4, 5
@@ -190,33 +176,19 @@ static bool overlayRedrawsSceneStateBlocks(uint chunkIndex) {
 }
 
 static PlayableSceneConfig scene1020Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene1020ArchiveName;
-	config.initialRequiredChunkCount = kScene1020InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene1020ArenaFirstChunk;
-	config.arenaLastChunk = kScene1020ArenaLastChunk;
-	config.stageIndex = kScene1020StageIndex;
-	config.debugName = "Scene 1020";
-	config.viewportXOffset = kScene1020ViewportXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 1;
-	config.actorBankTableEntry = kScene1020ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene1020ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene1020Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene1020SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene1020ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene1020ActorPathStepDeltaTable);
+	PlayableSceneConfig config(1020,
+		SceneResourceLayout(23, 5, 22),
+		SceneViewport(kScene1020ViewportXOffset),
+		SceneActorPose(kScene1020DefaultActorX, kScene1020DefaultActorY, kScene1020DefaultActorFacing));
+	config.setActorResources(kScene1020ActorBankTableEntry, kScene1020ActorPaletteTableEntry);
+	config.setTextResources(kScene1020Resource003RowsOffsetIndex, kScene1020SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 2;
-	config.musicArchiveName = kScene1020MusicArchiveName;
-	config.soundBank0ArchiveName = kScene1020SoundArchiveName;
 	config.useActorDepthTest = true;
 	return config;
 }
 
 Scene1020::Scene1020(HollywoodEngine *vm) :
-		PlayableScene(vm, scene1020Config(), "scene1020", kScene1020DefaultActorX, kScene1020DefaultActorY,
-			kScene1020DefaultActorFacing, 0xfd, 0xfb) {
+		PlayableScene(vm, scene1020Config()) {
 }
 
 bool Scene1020::shouldLoadArenaChunk(uint index) const {

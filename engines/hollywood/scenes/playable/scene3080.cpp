@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene3080ArchiveName = "RESOURCE.C08";
-const char *const kScene3080MusicArchiveName = "RESOURCE.M03";
-const char *const kScene3080SoundArchiveName = "RESOURCE.S03";
-const uint kScene3080InitialRequiredChunkCount = 18;
-const uint kScene3080ArenaFirstChunk = 5;
-const uint kScene3080ArenaLastChunk = 17;
-const uint kScene3080StageIndex = 308;
 const uint16 kScene3080EntryFromForestState = 0x0c08;
 const uint16 kScene3080EntryFromCabinState = 0x0c09;
 const uint16 kScene3080EntryFromBrookState = 0x0c0a;
@@ -57,15 +50,6 @@ const uint kScene3080FlyerOverlayDescriptorCount = 9;
 const byte kScene3080DiaryPatchHook = 1;
 const byte kScene3080StickPatchHook = 2;
 const byte kScene3080FlyerSoundHook = 3;
-
-const byte kScene3080ActorPathStepDeltaTable[] = {
-	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
-	3, 2, 8, 6, 6, 7, 6, 4, 10, 3, 2, 9,
-	8, 8, 7, 5, 10, 6, 10, 10, 4, 6, 4, 10,
-	4, 3, 3, 4, 0, 4, 4, 2, 0, 4, 2, 5,
-	6, 10, 10, 4, 6, 4, 10, 8, 8, 7, 5, 10,
-	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7
-};
 
 const byte kScene3080LargeLayerFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7,
@@ -93,31 +77,19 @@ const byte kScene3080FlyerOverlayFrameMap[] = {
 };
 
 static PlayableSceneConfig scene3080Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene3080ArchiveName;
-	config.initialRequiredChunkCount = kScene3080InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene3080ArenaFirstChunk;
-	config.arenaLastChunk = kScene3080ArenaLastChunk;
-	config.stageIndex = kScene3080StageIndex;
-	config.debugName = "Scene 3080";
-	config.viewportXOffset = kScene3080ViewportXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 3;
-	config.actorBankTableEntry = kScene3080ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene3080ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene3080Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene3080SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene3080ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene3080ActorPathStepDeltaTable);
+	PlayableSceneConfig config(3080,
+		SceneResourceLayout(18, 5, 17),
+		SceneViewport(kScene3080ViewportXOffset),
+		SceneActorPose(0x150, 0x1bf, 1));
+	config.setActorResources(kScene3080ActorBankTableEntry, kScene3080ActorPaletteTableEntry);
+	config.setTextResources(kScene3080Resource003RowsOffsetIndex, kScene3080SpeechCueDescriptorTableOffset);
+	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet87);
 	config.walkablePaletteMaxRegion = 20;
-	config.musicArchiveName = kScene3080MusicArchiveName;
-	config.soundBank0ArchiveName = kScene3080SoundArchiveName;
 	return config;
 }
 
 Scene3080::Scene3080(HollywoodEngine *vm) :
-		PlayableScene(vm, scene3080Config(), "scene3080", 0x150, 0x1bf, 1, 0xfd, 0xfb),
+		PlayableScene(vm, scene3080Config()),
 		_largeChannel(),
 		_smallIdleChannel(),
 		_largeLayer(),
@@ -292,14 +264,14 @@ bool Scene3080::customizeRouteSegment(byte currentRegion, byte nextRegion, const
 
 	if (currentRegion == 6 && nextRegion == 7) {
 		for (uint offset = 0x0c; offset <= 0x17; ++offset)
-			_actorPathStepDeltas[offset] = kScene3080ActorPathStepDeltaTable[offset];
+			_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
 		requestedFacing = 1;
 		restoredStepDeltas = true;
 		return true;
 	}
 	if (currentRegion == 6 && nextRegion == 5) {
 		for (uint offset = 0x30; offset <= 0x3b; ++offset)
-			_actorPathStepDeltas[offset] = kScene3080ActorPathStepDeltaTable[offset];
+			_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
 		requestedFacing = 4;
 		restoredStepDeltas = true;
 		return true;

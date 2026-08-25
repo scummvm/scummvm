@@ -30,6 +30,16 @@
 
 namespace Hollywood {
 
+enum {
+	kActorPathStepDeltaTableSize = 72
+};
+
+// Canonical six-facing, twelve-cel movement tables shared by scene resources.
+extern const byte kActorPathStepDeltaTableSet00[kActorPathStepDeltaTableSize];
+extern const byte kActorPathStepDeltaTableSetB4[kActorPathStepDeltaTableSize];
+extern const byte kActorPathStepDeltaTableSet87[kActorPathStepDeltaTableSize];
+extern const byte kActorPathStepDeltaTableSet5A[kActorPathStepDeltaTableSize];
+
 /**
  * Supplies scene-dependent region lookup and route adjustments.
  *
