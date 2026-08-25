@@ -45,7 +45,7 @@ const uint kScene3030ActorBankTableEntry = 0x0000;
 const uint kScene3030ActorPaletteTableEntry = 0x00cc;
 const uint kScene3030Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene3030SpeechCueDescriptorTableOffset = 0x1135;
-const uint32 kScene3030LoopFrameMillis = 75;
+const uint32 kScene3030LoopFrameMillis = 150;
 const uint32 kScene3030MachineFrameMillis = 75;
 const uint32 kScene3030TransitionFrameMillis = 75;
 const uint kScene3030LoopDescriptorCount = 0x0c;
@@ -311,20 +311,25 @@ void Scene3030::promoteMachineHotspots() {
 }
 
 void Scene3030::runEntryFromScene3020() {
-	runEntryPath(0x110, 0x18a, 2, 0x110, 0x18a);
+	_activeActorWorldX = 0x110;
+	_activeActorWorldY = 0x18a;
+	_activeActorFacing = 2;
+	_activeActorCel = 0;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	runDeltaTransitionClip(kScene3030EntryTransitionChunk,
-		kScene3030EntryTransitionTableEntryCount, kScene3030EntryTransitionFinalFrame);
+		kScene3030EntryTransitionTableEntryCount, kScene3030EntryTransitionFinalFrame, false);
 }
 
 void Scene3030::runExitToScene3020() {
 	drawPlayableComposite();
 	presentFrame();
 	runDeltaTransitionClip(kScene3030ReturnTransitionChunk,
-		kScene3030ReturnTransitionTableEntryCount, kScene3030ReturnTransitionFinalFrame);
+		kScene3030ReturnTransitionTableEntryCount, kScene3030ReturnTransitionFinalFrame, true);
 	_vm->gameState().mainFlowStateId = kScene3020EntryFromScene3030State;
 }
 
-void Scene3030::runDeltaTransitionClip(uint chunkIndex, uint tableEntryCount, byte finalFrameIndex) {
+void Scene3030::runDeltaTransitionClip(uint chunkIndex, uint tableEntryCount, byte finalFrameIndex,
+		bool drawActorInBackground) {
 	Common::Array<byte> clipData;
 	if (!loadVariableChunk(chunkIndex, clipData))
 		return;
@@ -333,8 +338,11 @@ void Scene3030::runDeltaTransitionClip(uint chunkIndex, uint tableEntryCount, by
 	transitionBackground.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	copyBaseFramebufferToSceneFramebuffer();
-	drawActiveAndSecondaryActorFrames(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
-		false, 0, 0, 0, 0, -1);
+	// Only the return delta is encoded over the regular actor's starting pose.
+	if (drawActorInBackground) {
+		drawActiveAndSecondaryActorFrames(true, _activeActorFacing, _activeActorCel,
+			_activeActorWorldX, _activeActorWorldY, false, 0, 0, 0, 0, -1);
+	}
 	drawForegroundBlocks();
 	transitionBackground.copyRectToSurface(_sceneFramebuffer.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
@@ -359,16 +367,17 @@ void Scene3030::runDeltaTransitionClip(uint chunkIndex, uint tableEntryCount, by
 		updateAmbientAudioAndMusicCues(delta);
 
 		bool frameDirty = false;
+		// Each frame patches the previous result, so catch-up must apply every delta.
 		while (frameAccumulator >= kScene3030TransitionFrameMillis && frameIndex < finalFrameIndex) {
 			frameAccumulator -= kScene3030TransitionFrameMillis;
 			++frameIndex;
+			drawDeltaTransitionFrame(clipData, tableEntryCount, frameIndex,
+				*transitionBackground.surfacePtr());
 			frameDirty = true;
 		}
 
-		if (frameDirty) {
-			drawDeltaTransitionFrame(clipData, tableEntryCount, frameIndex, *transitionBackground.surfacePtr());
+		if (frameDirty)
 			presentFrame();
-		}
 
 		g_system->delayMillis(10);
 	}
@@ -404,37 +413,48 @@ void Scene3030::runMachineActivationSequence() {
 
 	beginSecondarySpeechLine(11, 0);
 	_machineSequenceActive = true;
-	_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, false);
+	_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, true);
 	_machineLayers.setLayerVisible(kScene3030MachineActionLayer, true);
+	_machineLayers.setLayerFrame(kScene3030MachineEffectLayer, 0);
+	_machineLayers.setLayerFrame(kScene3030MachineActionLayer, 0);
 
-	uint machineEffectFrame = 0;
-	for (uint frame = 0; frame < ARRAYSIZE(kScene3030MachineActionFrameMap) && !Engine::shouldQuit(); ++frame) {
-		_machineLayers.setLayerFrame(kScene3030MachineActionLayer, (byte)frame);
-		if (frame == 15) {
+	byte actionFrame = 0;
+	byte effectFrame = 0;
+	bool effectStarted = false;
+	bool actionReleased = false;
+	// Ron holds frame 15 until the machine effect reaches frame 5.
+	while ((actionFrame + 1 < ARRAYSIZE(kScene3030MachineActionFrameMap) ||
+			effectFrame + 1 < ARRAYSIZE(kScene3030MachineEffectFrameMap)) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (actionFrame + 1 < ARRAYSIZE(kScene3030MachineActionFrameMap) &&
+				(actionFrame < 15 || actionReleased)) {
+			++actionFrame;
+			_machineLayers.setLayerFrame(kScene3030MachineActionLayer, actionFrame);
+			if (actionFrame == 15) {
+				effectStarted = true;
+				if (_sceneChunkTable.isValidChunk(8))
+					drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 			_soundBank0.playSample(0x1d, 100);
-			state.scene3030MachineActivated = true;
-			applySceneStateToHotspotsAndPatches(0);
+			}
 		}
-		if (frame >= 15 && machineEffectFrame < ARRAYSIZE(kScene3030MachineEffectFrameMap)) {
-			_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, true);
-			_machineLayers.setLayerFrame(kScene3030MachineEffectLayer, (byte)machineEffectFrame);
-			if (machineEffectFrame == 5)
+
+		if (effectStarted && effectFrame + 1 < ARRAYSIZE(kScene3030MachineEffectFrameMap)) {
+			++effectFrame;
+			_machineLayers.setLayerFrame(kScene3030MachineEffectLayer, effectFrame);
+			if (effectFrame == 5) {
+				actionReleased = true;
+				state.scene3030MachineActivated = true;
 				state.windmillBladesMoving = true;
-			++machineEffectFrame;
+				advanceLoopingLayer(kScene3030LoopFrameMillis);
+			}
 		}
+
 		drawMachineSequenceFrame();
-		if (waitSceneMillis(kScene3030MachineFrameMillis))
+		if (waitSceneMillis(kScene3030MachineFrameMillis, false))
 			break;
 	}
 
-	while (machineEffectFrame < ARRAYSIZE(kScene3030MachineEffectFrameMap) && !Engine::shouldQuit()) {
-		_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, true);
-		_machineLayers.setLayerFrame(kScene3030MachineEffectLayer, (byte)machineEffectFrame++);
-		drawMachineSequenceFrame();
-		if (waitSceneMillis(kScene3030MachineFrameMillis))
-			break;
-	}
-
+	applySceneStateToHotspotsAndPatches(0);
 	_machineSequenceActive = false;
 	_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, false);
 	_machineLayers.setLayerVisible(kScene3030MachineActionLayer, false);
@@ -447,8 +467,6 @@ void Scene3030::runMachineActivationSequence() {
 }
 
 void Scene3030::drawMachineSequenceFrame() {
-	if (_vm->gameState().windmillBladesMoving)
-		advanceLoopingLayer(kScene3030MachineFrameMillis);
 	drawPlayableComposite();
 	presentFrame();
 }
