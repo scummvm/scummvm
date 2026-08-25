@@ -24,20 +24,28 @@
 #define ULTIMA2_LOGIC_H
 
 #include "common/events.h"
+#include "ultima/ultima1/data/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
-
-enum Direction {
-	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4
-};
 
 /**
  * Base class for gameplay handling logic used by the Commands class to respond to player actions
  * or other miscellaneous keypresses.
  */
 class Logic {
+protected:
+	/**
+	 * Dispatches some text to be shown in the Commands window
+	 */
+	void writeString(const Common::String &msg);
+
+	/**
+	 * Triggers a prompt display in the Commands window
+	 */
+	void prompt();
+
 public:
 	virtual ~Logic() {
 	}

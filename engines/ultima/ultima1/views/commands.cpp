@@ -43,6 +43,18 @@ void Commands::draw() {
 	prompt();
 }
 
+bool Commands::msgGame(const GameMessage &msg) {
+	if (msg._name == "TEXT") {
+		writeString(msg._stringValue);
+		return true;
+	} else if (msg._name == "PROMPT") {
+		prompt();
+		return true;
+	}
+
+	return false;
+}
+
 void Commands::writeString(const Common::String &msg) {
 	_textCursor.hide();
 	_surface.writeString(msg);

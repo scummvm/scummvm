@@ -52,6 +52,8 @@ MODULE_OBJS += \
 	ultima1/events.o \
 	ultima1/messages.o \
 	ultima1/metaengine.o \
+	ultima1/core/strings.o \
+	ultima1/data/entity.o \
 	ultima1/data/game.o \
 	ultima1/data/map.o \
 	ultima1/data/player.o \
@@ -59,6 +61,7 @@ MODULE_OBJS += \
 	ultima1/gfx/pic_decoder.o \
 	ultima1/gfx/text_cursor.o \
 	ultima1/gfx/text_input.o \
+	ultima1/logic/logic.o \
 	ultima1/logic/overworld_logic.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \

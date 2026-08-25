@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "common/serializer.h"
+#include "ultima/ultima1/data/entity.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -76,20 +77,6 @@ enum TransportType {
 	TRANSPORT_FOOT = 0, TRANSPORT_HORSE = 1, TRANSPORT_CART = 2, TRANSPORT_RAFT = 3,
 	TRANSPORT_FRIGATE = 4, TRANSPORT_AIRCAR = 5, TRANSPORT_SHUTTLE = 6, TRANSPORT_TIME_MACHINE = 7,
 	TRANSPORT_COUNT = 8
-};
-
-/**
- * Entity on the overworld map, such as vechiles or creatures
- */
-struct OverworldEntity {
-	int16 _type;
-	int16 _data;
-	int16 _x;
-	int16 _y;
-	int16 _hits;
-	int16 _unused1, _unused2, _unused3;
-
-	void synchronize(Common::Serializer &s);
 };
 
 /**

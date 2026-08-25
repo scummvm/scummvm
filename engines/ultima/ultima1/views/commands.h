@@ -42,8 +42,9 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
-	void writeString(const Common::String &msg);
+	bool msgGame(const GameMessage &msg) override;
 
+	void writeString(const Common::String &msg);
 	void prompt();
 };
 

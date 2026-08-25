@@ -45,6 +45,10 @@ enum {
 	MAP_CITY1 = 1
 };
 
+enum Direction {
+	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4
+};
+
 typedef Common::Array< Common::Array<byte> > MapTiles;
 typedef byte VisibleTiles[MAP_VISIBLE_HEIGHT][MAP_VISIBLE_WIDTH];
 

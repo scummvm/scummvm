@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/logic/overworld_logic.h"
+#include "ultima/ultima1/core/strings.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/metaengine.h"
@@ -35,16 +36,16 @@ const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 void OverworldLogic::action(int action) {
 	switch (action) {
 	case KEYBIND_UP:
-		move(DIR_UP);
+		move(Data::DIR_UP);
 		break;
 	case KEYBIND_DOWN:
-		move(DIR_DOWN);
+		move(Data::DIR_DOWN);
 		break;
 	case KEYBIND_LEFT:
-		move(DIR_LEFT);
+		move(Data::DIR_LEFT);
 		break;
 	case KEYBIND_RIGHT:
-		move(DIR_RIGHT);
+		move(Data::DIR_RIGHT);
 		break;
 	default:
 		break;
@@ -55,7 +56,7 @@ void OverworldLogic::keypress(Common::KeyCode keycode) {
 
 }
 
-void OverworldLogic::move(Direction dir) {
+void OverworldLogic::move(Data::Direction dir) {
 	int xp = getViewportX(Data::MAP_VISIBLE_CENTER_X + DELTA_X[dir]);
 	int yp = getViewportY(Data::MAP_VISIBLE_CENTER_Y + DELTA_Y[dir]);
 	int tile = getTileAt(xp, yp, 1);
@@ -68,7 +69,7 @@ void OverworldLogic::move(Direction dir) {
 	}
 }
 
-bool OverworldLogic::moveCheck(Direction dir) {
+bool OverworldLogic::moveCheck(Data::Direction dir) {
 	return false;
 }
 

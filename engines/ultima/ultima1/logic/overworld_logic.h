@@ -24,6 +24,7 @@
 #define ULTIMA2_LOGIC_OVERWORLD_LOGIC_H
 
 #include "ultima/ultima1/logic/logic.h"
+#include "ultima/ultima1/data/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -34,12 +35,12 @@ private:
 	/**
 	 * Check for movement
 	 */
-	bool moveCheck(Direction dir);
+	bool moveCheck(Data::Direction dir);
 
 	/**
 	 * Handle movement
 	 */
-	void move(Direction dir);
+	void move(Data::Direction dir);
 
 	/**
 	 * Get the X co-ordinate for a tile within the map, offset from the left edge of the visible map area

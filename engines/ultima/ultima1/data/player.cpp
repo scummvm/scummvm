@@ -31,10 +31,6 @@ const char *SEX_NAMES[] = { "Male", "Female" };
 const char *RACE_NAMES[] = { nullptr, "Human", "Elf", "Dwarf", "Bobbit" };
 const char *CLASS_NAMES[] = { nullptr, "Fighter", "Cleric", "Wizard", "Thief" };
 
-void OverworldEntity::synchronize(Common::Serializer &s) {
-	s.syncMultipleLE(_type, _data, _x, _y, _hits, _unused1, _unused2, _unused3);
-}
-
 void Player::synchronizeBasic(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, MAX_NAME_LENGTH + 2);
 	s.syncAsByte(_race);
