@@ -65,6 +65,7 @@ void speech_shutdown() {
 		speech_stream = nullptr;
 	}
 
+	global_speech_ready = -1;
 	speech_system_active = false;
 }
 
@@ -128,6 +129,7 @@ void speech_play(const char *resName, int id) {
 		g_engine->playSpeech(speech);
 
 	speech_stream = nullptr;
+	global_speech_ready = -1;
 }
 
 void speech_all_off() {
@@ -143,6 +145,7 @@ void speech_go() {
 		g_engine->playSpeech(speech_stream);
 		speech_stream = nullptr;
 	}
+	global_speech_ready = -1;
 }
 
 void global_speech(int id) {
