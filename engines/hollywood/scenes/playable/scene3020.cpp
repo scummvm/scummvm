@@ -47,7 +47,7 @@ const uint kScene3020ActorBankTableEntry = 0x0000;
 const uint kScene3020ActorPaletteTableEntry = 0x00cc;
 const uint kScene3020Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene3020SpeechCueDescriptorTableOffset = 0x1135;
-const uint32 kScene3020LoopFrameMillis = 75;
+const uint32 kScene3020LoopFrameMillis = 150;
 const uint32 kScene3020PickupFrameMillis = 75;
 const uint32 kScene3020TransitionFrameMillis = 75;
 const uint kScene3020LoopDescriptorCount = 0x1e;
@@ -316,7 +316,11 @@ void Scene3020::runEntryFromScene3010() {
 }
 
 void Scene3020::runEntryFromScene3030() {
-	runEntryPath(0x13d, 0x138, 4, 0x13d, 0x138);
+	_activeActorWorldX = 0x13d;
+	_activeActorWorldY = 0x138;
+	_activeActorFacing = 4;
+	_activeActorCel = 0;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	runDescriptorTransitionClip(kScene3020ReturnTransitionChunk,
 		kScene3020ReturnTransitionDescriptorCount, kScene3020ReturnTransitionFinalFrame);
 }
@@ -364,9 +368,7 @@ void Scene3020::runDescriptorTransitionClip(uint chunkIndex, uint descriptorCoun
 void Scene3020::drawDescriptorTransitionFrame(const Common::Array<byte> &clipData, uint descriptorCount, byte frameIndex) {
 	copyBaseFramebufferToSceneFramebuffer();
 	drawResourceSpriteLayer(_loopLayer);
-	drawActiveAndSecondaryActorFrames(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
-		false, 0, 0, 0, 0, -1);
-	drawForegroundBlocks(_activeActorWorldY);
+	// The continuation descriptors contain Ron and their own occlusion.
 	drawStripSpriteFrame(clipData, 0, 0, descriptorCount, frameIndex, _sceneFramebuffer);
 }
 

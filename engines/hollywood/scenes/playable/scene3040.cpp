@@ -58,7 +58,7 @@ const byte kScene3040ForegroundFrameMap[] = {
 };
 
 const byte kScene3040LoopFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+	0, 1, 2, 3, 4, 5, 6, 7
 };
 
 static PlayableSceneConfig scene3040Config() {
@@ -157,14 +157,21 @@ bool Scene3040::hasCustomComposite() const {
 void Scene3040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
+	(void)drawActiveActor;
+	(void)activeFacing;
+	(void)activeCel;
+	(void)activeWorldX;
+	(void)activeWorldY;
+	(void)drawSecondaryActor;
+	(void)secondaryFacing;
+	(void)secondaryFrame;
+	(void)secondaryWorldX;
+	(void)secondaryWorldY;
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawLooseResourceSpriteLayer(_foregroundActorLayer);
 	drawLooseResourceSpriteLayer(_loopLayer);
-	drawActionOverlayLayer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 }
 
 bool Scene3040::hasCustomEntrySequence() const {
@@ -274,15 +281,16 @@ void Scene3040::advanceLoopingLayer(uint32 delta) {
 }
 
 void Scene3040::advanceForegroundActorLayer(uint32 delta) {
-	if (_foregroundActionActive)
+	if (_foregroundActionActive || _actorPathPlaybackActive)
 		return;
 
 	const uint frameCount = _foregroundActorChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
 		if (_speechOverlay.visible) {
-			byte nextFrame = (byte)_random.getRandomNumber(3);
-			if (nextFrame == _foregroundActorLayer.frameIndex)
-				nextFrame = (byte)((nextFrame + 1) & 3);
+			byte nextFrame;
+			do {
+				nextFrame = (byte)_random.getRandomNumber(4);
+			} while (nextFrame == _foregroundActorLayer.frameIndex);
 			_foregroundActorLayer.setFrame(nextFrame);
 			_foregroundActorBlinkActive = false;
 			continue;
