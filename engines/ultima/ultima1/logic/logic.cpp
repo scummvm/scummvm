@@ -37,6 +37,10 @@ void Logic::prompt() {
 	g_engine->send("Commands", GameMessage("PROMPT"));
 }
 
+void Logic::playFX(int num) {
+	g_engine->playFX(num);
+}
+
 } // namespace Logic
 } // namespace Ultima1
 } // namespace Ultima

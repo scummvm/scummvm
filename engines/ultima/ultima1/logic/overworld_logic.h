@@ -61,6 +61,31 @@ private:
 	 */
 	int getTileAt(int x, int y, int creatureIndex) const;
 
+	/**
+	 * Impassable tile
+	 */
+	void impassable(int reason);
+
+	/**
+	 * Move left
+	 */
+	void moveLeft();
+
+	/**
+	 * Move right
+	 */
+	void moveRight();
+
+	/**
+	 * Move up
+	 */
+	void moveUp();
+
+	/**
+	 * Move down
+	 */
+	void moveDown();
+
 public:
 	~OverworldLogic() override {
 	}

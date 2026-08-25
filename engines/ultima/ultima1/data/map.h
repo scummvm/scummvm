@@ -23,13 +23,14 @@
 #define ULTIMA1_DATA_MAP_H
 
 #include "common/archive.h"
+#include "common/rect.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
 constexpr int OVERWORLD_WIDTH = 168;
-constexpr int OVERWORLD_HEIGHT = 168;
+constexpr int OVERWORLD_HEIGHT = 156;
 constexpr int OVERWORLD_SIZE = OVERWORLD_WIDTH * OVERWORLD_HEIGHT;
 constexpr int CITY_WIDTH = 38;
 constexpr int CITY_HEIGHT = 18;
@@ -51,6 +52,8 @@ enum Direction {
 
 typedef Common::Array< Common::Array<byte> > MapTiles;
 typedef byte VisibleTiles[MAP_VISIBLE_HEIGHT][MAP_VISIBLE_WIDTH];
+
+extern const char *DIRECTION_NAMES[4];
 
 struct Map {
 private:
@@ -144,7 +147,21 @@ public:
 
 	bool canMoveToTile(int tileNum);
 
+	/**
+	 * Get a tile at a given position.
+	 * @param x		X position
+	 * @param y		Y position
+	 * @return		Tile Id
+	 */
 	int getMapTile(int x, int y) const;
+
+	/**
+	 * Returns the continent number at a given position
+	 */
+	int getContinentAt(int x, int y) const;
+	int getContinentAt(const Common::Point &pt) const {
+		return getContinentAt(pt.x, pt.y);
+	}
 };
 
 } // namespace Data

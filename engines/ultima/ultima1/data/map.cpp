@@ -28,6 +28,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
+const char *DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
+
 void Map::init() {
 	// Load the overworld map
 	Common::File ow;
@@ -157,6 +159,10 @@ int Map::getMapTile(int x, int y) const {
 	}
 
 	return tile;
+}
+
+int Map::getContinentAt(int x, int y) const {
+	return (y > 77 ? 2 : 0) + (x > 83 ? 1 : 0);
 }
 
 } // namespace Data

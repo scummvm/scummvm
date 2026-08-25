@@ -23,8 +23,9 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Data {
 
-const char *OVErWORLD_MONSTERS[] = {
+const char *OVERWORLD_MONSTERS[] = {
 	"Ness creature",
 	"Giant squid",
 	"Dragon turtle",
@@ -46,5 +47,6 @@ void OverworldEntity::synchronize(Common::Serializer &s) {
 	s.syncMultipleLE(_type, _data, _x, _y, _hits, _unused1, _unused2, _unused3);
 }
 
+} // namespace Data
 } // namespace Ultima1
 } // namespace Ultima

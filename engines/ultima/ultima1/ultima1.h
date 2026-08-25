@@ -114,6 +114,11 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savegamesExist() const;
+
+	/**
+	 * Play a sound effect
+	 */
+	void playFX(int num);
 };
 
 extern Ultima1Engine *g_engine;

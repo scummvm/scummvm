@@ -27,8 +27,9 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Data {
 
-extern const char *OVErWORLD_MONSTERS[];
+extern const char *OVERWORLD_MONSTERS[];
 
 /**
  * Entity on the overworld map, such as vechiles or creatures
@@ -44,6 +45,7 @@ struct OverworldEntity {
 	void synchronize(Common::Serializer &s);
 };
 
+} // namespace Data
 } // namespace Ultima1
 } // namespace Ultima
 

@@ -46,6 +46,11 @@ protected:
 	 */
 	void prompt();
 
+	/**
+	 * Play a sound effect
+	 */
+	void playFX(int num);
+
 public:
 	virtual ~Logic() {
 	}

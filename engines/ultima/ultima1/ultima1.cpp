@@ -93,5 +93,9 @@ bool Ultima1Engine::savegamesExist() const {
 	return result;
 }
 
+void Ultima1Engine::playFX(int num) {
+	warning("TODO: playFX(%d)", num);
+}
+
 } // namespace Ultima1
 } // namespace Ultima
