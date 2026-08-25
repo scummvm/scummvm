@@ -163,7 +163,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	int sdx = _screen->curDimIndex();
 
 	bool sjisTextMode = (_pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
-	Screen::FontId of = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? _screen->setFont(Screen::FID_8_FNT) : _screen->_currentFont;
+	Screen::FontId of = (_vm->game() == GI_EOB2 && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) ? _screen->setFont(Screen::FID_8_FNT) : _screen->_currentFont;
 
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charSpacing);
 
