@@ -422,9 +422,6 @@ void Scene3010::runDepartureTransition(bool includeSecondClip) {
 			playDepartureClip(clipData, kScene3010DepartureSecondFrameCount,
 				transitionBackground, skipWaits, kScene3010DeparturePauseMillis);
 	}
-
-	_baseFramebuffer.copyRectToSurface(transitionBackground.rawSurface(), 0, 0,
-		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 }
 
 bool Scene3010::playDepartureClip(const Common::Array<byte> &clipData, uint tableEntryCount,
