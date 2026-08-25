@@ -34,8 +34,6 @@ const uint kScene1090InitialRequiredChunkCount = 14;
 const uint kScene1090ArenaFirstChunk = 5;
 const uint kScene1090ArenaLastChunk = 13;
 const uint kScene1090StageIndex = 109;
-const uint16 kScene1090FirstState = 0x0442;
-const uint16 kScene1090LastState = 0x044b;
 const uint16 kScene1090ExitStateKitchen = 0x0439;
 const uint16 kScene1090ExitStateBallroom = 0x042f;
 const uint16 kScene1090ViewportXOffset = 0x0028;
@@ -87,8 +85,6 @@ static PlayableSceneConfig scene1090Config() {
 	config.walkablePaletteMaxRegion = 1;
 	config.musicArchiveName = kScene1090MusicArchiveName;
 	config.soundBank0ArchiveName = kScene1090SoundArchiveName;
-	config.mainFlowFirstState = kScene1090FirstState;
-	config.mainFlowLastState = kScene1090LastState;
 	return config;
 }
 
@@ -96,23 +92,6 @@ Scene1090::Scene1090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene1090Config(), "scene1090", 0x101, 0x15b, 2, 0xfd, 0xfb),
 		_darkPaletteResource(),
 		_darkPaletteMask() {
-}
-
-bool Scene1090::hasCustomPreviewState() const {
-	return true;
-}
-
-void Scene1090::initializeCustomPreviewState() {
-	initializeDefaultPreviewState();
-	_activeActorWorldX = 0x101;
-	_activeActorWorldY = 0x15b;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene1090::hasCustomComposite() const {
-	return true;
 }
 
 void Scene1090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -124,10 +103,6 @@ void Scene1090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-}
-
-bool Scene1090::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene1090::runCustomEntrySequence() {

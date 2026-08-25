@@ -34,7 +34,6 @@ const uint kScene3060InitialRequiredChunkCount = 10;
 const uint kScene3060ArenaFirstChunk = 5;
 const uint kScene3060ArenaLastChunk = 9;
 const uint kScene3060StageIndex = 306;
-const uint16 kScene3060EntryFromScene3050State = 0x0bf4;
 const uint16 kScene3060EntryFromSecretPassageState = 0x0bf5;
 const uint16 kScene3050EntryFromScene3060State = 0x0beb;
 const uint16 kScene3070State = 0x0bfe;
@@ -102,8 +101,6 @@ static PlayableSceneConfig scene3060Config() {
 	config.musicArchiveName = kScene3060MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3060SoundArchiveName;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene3060EntryFromScene3050State;
-	config.mainFlowLastState = kScene3060EntryFromSecretPassageState;
 	return config;
 }
 
@@ -123,10 +120,6 @@ Scene3060::Scene3060(HollywoodEngine *vm) :
 		kScene3060LeftButtonFrameMap, ARRAYSIZE(kScene3060LeftButtonFrameMap));
 }
 
-bool Scene3060::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene3060::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
@@ -143,10 +136,6 @@ void Scene3060::initializeCustomPreviewState() {
 	}
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene3060::hasCustomComposite() const {
-	return true;
 }
 
 void Scene3060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -174,10 +163,6 @@ void Scene3060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawResourceSpriteLayer(_frontLayer);
 	drawResourceSpriteLayer(_buttonLayer);
-}
-
-bool Scene3060::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene3060::runCustomEntrySequence() {

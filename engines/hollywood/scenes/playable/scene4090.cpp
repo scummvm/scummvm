@@ -34,7 +34,6 @@ const uint kScene4090ArenaFirstChunk = 5;
 const uint kScene4090ArenaLastChunk = 18;
 const uint kScene4090StageIndex = 409;
 const uint16 kScene4090FirstState = 0x0ffa;
-const uint16 kScene4090LastState = 0x1003;
 const uint16 kScene4090DoorExitState = 0x1007;
 const uint16 kScene4090FinalReturnState = 0x0fd3;
 const int kScene4090DefaultActorX = 0x013b;
@@ -162,8 +161,6 @@ PlayableSceneConfig scene4090Config() {
 	config.soundBank0ArchiveName = kScene4090SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene4090FirstState;
-	config.mainFlowLastState = kScene4090LastState;
 	return config;
 }
 
@@ -177,25 +174,13 @@ Scene4090::Scene4090(HollywoodEngine *vm) :
 		_scriptHidesActiveActor(false) {
 }
 
-bool Scene4090::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene4090::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 	rememberOriginalColorMap();
 
-	_activeActorWorldX = kScene4090DefaultActorX;
-	_activeActorWorldY = kScene4090DefaultActorY;
-	_activeActorFacing = kScene4090DefaultActorFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene4090DefaultActorX, kScene4090DefaultActorY, kScene4090DefaultActorFacing);
 	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-bool Scene4090::hasCustomComposite() const {
-	return true;
 }
 
 void Scene4090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -220,10 +205,6 @@ void Scene4090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
-bool Scene4090::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene4090::runCustomEntrySequence() {
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -231,11 +212,7 @@ void Scene4090::runCustomEntrySequence() {
 
 	GameplayState &state = _vm->gameState();
 	if (state.mainFlowStateId == kScene4090FirstState) {
-		_activeActorWorldX = kScene4090DefaultActorX;
-		_activeActorWorldY = kScene4090DefaultActorY;
-		_activeActorFacing = state.scene4090InitialGreetingSeen ? kScene4090DefaultActorFacing : 1;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(kScene4090DefaultActorX, kScene4090DefaultActorY, state.scene4090InitialGreetingSeen ? kScene4090DefaultActorFacing : 1);
 		drawPlayableComposite();
 		presentFrame();
 		if (!state.scene4090InitialGreetingSeen) {
@@ -483,11 +460,7 @@ void Scene4090::runOrganRevealSequence() {
 		beginSecondarySpeechLine(3, 2);
 	}
 
-	_activeActorWorldX = 0x01fc;
-	_activeActorWorldY = 0x015b;
-	_activeActorFacing = 5;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x01fc, 0x015b, 5);
 	drawPlayableComposite();
 	presentFrame();
 	waitSceneMillis(1000);

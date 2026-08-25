@@ -42,7 +42,6 @@ const uint16 kScene6070ArrivalCutsceneState = 0x17b8;
 const uint16 kScene6070AlternateCutsceneState = 0x17b9;
 const uint16 kScene6070ReturnAfterRescueState = 0x17ba;
 const uint16 kScene6070ReturnFromDialogueState = 0x17bb;
-const uint16 kScene6070LastState = 0x17bf;
 const uint16 kScene6050ReturnState = 0x17a4;
 const uint16 kScene6080EntryState = 0x17c0;
 const uint16 kScene6090EntryState = 0x17ca;
@@ -167,8 +166,6 @@ static PlayableSceneConfig scene6070Config(HollywoodEngine *vm) {
 	config.musicArchiveName = kScene6070MusicArchiveName;
 	config.soundBank0ArchiveName = kScene6070SoundArchiveName;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene6070FirstState;
-	config.mainFlowLastState = kScene6070LastState;
 	return config;
 }
 
@@ -212,10 +209,6 @@ bool Scene6070::shouldLoadArenaChunk(uint index) const {
 	return index <= 10 || isScene6070AlternateCutscene(_vm);
 }
 
-bool Scene6070::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene6070::initializeCustomPreviewState() {
 	GameplayState &state = _vm->gameState();
 	const uint16 stateId = state.mainFlowStateId;
@@ -254,10 +247,6 @@ void Scene6070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 }
 
-bool Scene6070::hasCustomComposite() const {
-	return true;
-}
-
 void Scene6070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
 									int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
 									byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
@@ -285,10 +274,6 @@ void Scene6070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	const int orderY = drawActiveActor ? activeWorldY : _activeActorWorldY;
 	const byte orderMode = drawActiveActor ? actorDrawOrderMode : _activeActorDrawOrderMode;
 	drawNormalForeground(orderX, orderY, orderMode);
-}
-
-bool Scene6070::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene6070::runCustomEntrySequence() {

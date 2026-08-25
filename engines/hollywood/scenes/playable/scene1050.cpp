@@ -34,8 +34,6 @@ const uint kScene1050InitialRequiredChunkCount = 14;
 const uint kScene1050ArenaFirstChunk = 5;
 const uint kScene1050ArenaLastChunk = 13;
 const uint kScene1050StageIndex = 105;
-const uint16 kScene1050FirstState = 0x041a;
-const uint16 kScene1050LastState = 0x0423;
 const uint16 kScene1050ExitState1040FromDoor = 0x0411;
 const uint16 kScene1050ViewportXOffset = 0x0068;
 const uint16 kScene1050ViewportMinXOffset = 0x0068;
@@ -157,8 +155,6 @@ static PlayableSceneConfig scene1050Config() {
 	config.walkablePaletteMaxRegion = 6;
 	config.musicArchiveName = kScene1050MusicArchiveName;
 	config.soundBank0ArchiveName = kScene1050SoundArchiveName;
-	config.mainFlowFirstState = kScene1050FirstState;
-	config.mainFlowLastState = kScene1050LastState;
 	return config;
 }
 
@@ -178,10 +174,6 @@ Scene1050::Scene1050(HollywoodEngine *vm) :
 	_largeOverlayLayer.visible = true;
 }
 
-bool Scene1050::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene1050::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	_smallOverlayChannel.reset(0, kScene1050SmallOverlayFrameMillis);
@@ -192,15 +184,7 @@ void Scene1050::initializeCustomPreviewState() {
 	_largeOverlayLayer.visible = true;
 	_largeOverlayMode = 0;
 	_largeOverlayActionLocked = false;
-	_activeActorWorldX = 0x07f;
-	_activeActorWorldY = 0x174;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene1050::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x07f, 0x174, 2);
 }
 
 void Scene1050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -221,10 +205,6 @@ void Scene1050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	if (_sceneChunkTable.isValidChunk(6))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
-}
-
-bool Scene1050::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene1050::runCustomEntrySequence() {

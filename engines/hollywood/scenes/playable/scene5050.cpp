@@ -35,7 +35,6 @@ const uint kScene5050ArenaFirstChunk = 5;
 const uint kScene5050ArenaLastChunk = 8;
 const uint kScene5050StageIndex = 505;
 const uint16 kScene5050FirstState = 0x13ba;
-const uint16 kScene5050LastState = 0x13c3;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5050ViewportXOffset = 0x00c8;
 const uint kScene5050ActorBankTableEntry = 0x0000;
@@ -87,30 +86,11 @@ PlayableSceneConfig scene5050Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene5050MusicArchiveName;
 	config.soundBank0ArchiveName = kScene5050SoundArchiveName;
-	config.mainFlowFirstState = kScene5050FirstState;
-	config.mainFlowLastState = kScene5050LastState;
 	return config;
 }
 
 Scene5050::Scene5050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5050Config(), "scene5050", 0x134, 0x192, 2, 0xfd, 0xfb) {
-}
-
-bool Scene5050::hasCustomPreviewState() const {
-	return true;
-}
-
-void Scene5050::initializeCustomPreviewState() {
-	initializeDefaultPreviewState();
-	_activeActorWorldX = 0x134;
-	_activeActorWorldY = 0x192;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene5050::hasCustomComposite() const {
-	return true;
 }
 
 void Scene5050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -126,10 +106,6 @@ void Scene5050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_sceneChunkTable.isValidChunk(6))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 	drawActionOverlayLayer();
-}
-
-bool Scene5050::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene5050::runCustomEntrySequence() {
@@ -189,11 +165,7 @@ AmbientAudioProfile Scene5050::ambientAudioProfile() const {
 }
 
 void Scene5050::runSpecialTransitionToMineSwitches() {
-	_activeActorWorldX = 0x069;
-	_activeActorWorldY = 0x157;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x069, 0x157, 2);
 	drawPlayableComposite();
 	presentFrame();
 

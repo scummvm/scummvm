@@ -36,8 +36,6 @@ const uint kScene6020InitialRequiredChunkCount = 21;
 const uint kScene6020ArenaFirstChunk = 5;
 const uint kScene6020ArenaLastChunk = 20;
 const uint kScene6020StageIndex = 602;
-const uint16 kScene6020FirstState = 0x1784;
-const uint16 kScene6020LastState = 0x178d;
 const uint16 kScene6020EntryFromScene6030State = 0x1785;
 const uint16 kScene6010ReturnFromScene6020State = 0x177b;
 const uint16 kScene6030EntryState = 0x178e;
@@ -167,8 +165,6 @@ static PlayableSceneConfig scene6020Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene6020MusicArchiveName;
 	config.soundBank0ArchiveName = kScene6020SoundArchiveName;
-	config.mainFlowFirstState = kScene6020FirstState;
-	config.mainFlowLastState = kScene6020LastState;
 	return config;
 }
 
@@ -192,10 +188,6 @@ Scene6020::Scene6020(HollywoodEngine *vm) :
 		kScene6020TaffyFrameMap, ARRAYSIZE(kScene6020TaffyFrameMap));
 }
 
-bool Scene6020::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene6020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetTaffyLayer();
@@ -212,10 +204,6 @@ void Scene6020::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene6020::hasCustomComposite() const {
-	return true;
-}
-
 void Scene6020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -229,10 +217,6 @@ void Scene6020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
-}
-
-bool Scene6020::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene6020::runCustomEntrySequence() {

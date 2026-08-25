@@ -20,6 +20,7 @@
  */
 
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/scene_registry.h"
 
 #include "common/debug.h"
 #include "common/serializer.h"

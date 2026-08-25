@@ -34,13 +34,10 @@ public:
 	Scene4020(HollywoodEngine *vm);
 
 private:
-	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
-	bool hasCustomComposite() const override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
-	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;

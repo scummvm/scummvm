@@ -33,9 +33,7 @@ const uint kScene4020InitialRequiredChunkCount = 5;
 const uint kScene4020ArenaFirstChunk = 5;
 const uint kScene4020ArenaLastChunk = 7;
 const uint kScene4020StageIndex = 402;
-const uint16 kScene4020FirstState = 0x0fb4;
 const uint16 kScene4020ReturnState = 0x0fb5;
-const uint16 kScene4020LastState = 0x0fb5;
 const uint16 kScene4010ReturnState = 0x0fac;
 const uint16 kScene4030FirstState = 0x0fbe;
 const uint16 kScene4020ViewportXOffset = 0x0080;
@@ -114,8 +112,6 @@ static PlayableSceneConfig scene4020Config() {
 	config.musicArchiveName = kScene4020MusicArchiveName;
 	config.soundBank0ArchiveName = kScene4020SoundArchiveName;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene4020FirstState;
-	config.mainFlowLastState = kScene4020LastState;
 	return config;
 }
 
@@ -123,10 +119,6 @@ Scene4020::Scene4020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4020Config(), "scene4020", 0x50, 0x173, 2, 0xfd, 0xfb),
 		_idleLayer(),
 		_idleChannel() {
-}
-
-bool Scene4020::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene4020::initializeCustomPreviewState() {
@@ -139,10 +131,6 @@ void Scene4020::initializeCustomPreviewState() {
 		setActiveActorPose(0x50, 0x173, 2);
 }
 
-bool Scene4020::hasCustomComposite() const {
-	return true;
-}
-
 void Scene4020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -153,10 +141,6 @@ void Scene4020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
-}
-
-bool Scene4020::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene4020::runCustomEntrySequence() {

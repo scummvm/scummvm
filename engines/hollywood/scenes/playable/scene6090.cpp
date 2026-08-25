@@ -36,7 +36,6 @@ const uint kScene6090InitialRequiredChunkCount = 25;
 const uint kScene6090ArenaFirstChunk = 5;
 const uint kScene6090ArenaLastChunk = 18;
 const uint kScene6090StageIndex = 609;
-const uint16 kScene6090State = 0x17ca;
 const uint16 kScene9150State = 0x23be;
 const uint kScene6090ActorBankTableEntry = 0x0038;
 const uint kScene6090ActorPaletteTableEntry = 0x00cc;
@@ -141,8 +140,6 @@ static PlayableSceneConfig scene6090Config() {
 	config.musicArchiveName = kScene6090MusicArchiveName;
 	config.soundBank0ArchiveName = kScene6090SoundArchiveName;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene6090State;
-	config.mainFlowLastState = kScene6090State;
 	return config;
 }
 
@@ -227,10 +224,6 @@ Scene6090::Scene6090(HollywoodEngine *vm) :
 	_specialEffectLayer.configure(16, 5, kScene6090SpecialEffectFrameMap,
 		ARRAYSIZE(kScene6090SpecialEffectFrameMap));
 	_secondaryEffectSound.setArchive(Common::Path(kScene6090SoundArchiveName));
-}
-
-bool Scene6090::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene6090::initializeCustomPreviewState() {
@@ -329,10 +322,6 @@ void Scene6090::resetSceneLayers() {
 	_escapePaletteSource.clear();
 }
 
-bool Scene6090::hasCustomComposite() const {
-	return true;
-}
-
 void Scene6090::drawActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel,
 		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
 		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY) {
@@ -403,17 +392,9 @@ bool Scene6090::shouldApplyGameplayPanelObjectPalette() const {
 	return false;
 }
 
-bool Scene6090::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene6090::runCustomEntrySequence() {
 	_manualSequenceActive = true;
-	_activeActorWorldX = 0x1e2;
-	_activeActorWorldY = 0x10e;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x1e2, 0x10e, 4);
 
 	restoreTiedSequencePalette();
 	resetSceneLayers();

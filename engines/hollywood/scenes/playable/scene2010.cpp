@@ -34,8 +34,6 @@ const uint kScene2010InitialRequiredChunkCount = 11;
 const uint kScene2010ArenaFirstChunk = 5;
 const uint kScene2010ArenaLastChunk = 10;
 const uint kScene2010StageIndex = 201;
-const uint16 kScene2010FirstState = 0x07da;
-const uint16 kScene2010LastState = 0x07dc;
 const uint16 kScene2010EntryFromB02State = 0x07db;
 const uint16 kScene2010PatchedEntryState = 0x07dc;
 const uint16 kScene2020EntryFromPyramidExteriorState = 0x07e4;
@@ -106,17 +104,11 @@ static PlayableSceneConfig scene2010Config() {
 	config.soundBank0ArchiveName = kScene2010SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2010FirstState;
-	config.mainFlowLastState = kScene2010LastState;
 	return config;
 }
 
 Scene2010::Scene2010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2010Config(), "scene2010", 0x2e9, 0x1a0, 4, 0xfd, 0xfb) {
-}
-
-bool Scene2010::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2010::initializeCustomPreviewState() {
@@ -145,10 +137,6 @@ void Scene2010::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2010::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -158,10 +146,6 @@ void Scene2010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-}
-
-bool Scene2010::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2010::runCustomEntrySequence() {

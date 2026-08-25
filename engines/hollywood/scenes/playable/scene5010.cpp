@@ -38,7 +38,6 @@ const uint kScene5010ArenaFirstChunk = 5;
 const uint kScene5010ArenaLastChunk = 27;
 const uint kScene5010StageIndex = 501;
 const uint16 kScene5010FirstState = 0x1392;
-const uint16 kScene5010LastState = 0x139b;
 const uint16 kScene5010ViewportXOffset = 0x00a8;
 const uint16 kScene5010ViewportMinXOffset = 0x0068;
 const uint16 kScene5010ViewportMaxXOffset = 0x00a8;
@@ -91,18 +90,12 @@ static PlayableSceneConfig scene5010Config() {
 	config.walkablePaletteMaxRegion = 8;
 	config.musicArchiveName = kScene5010MusicArchiveName;
 	config.soundBank0ArchiveName = kScene5010SoundArchiveName;
-	config.mainFlowFirstState = kScene5010FirstState;
-	config.mainFlowLastState = kScene5010LastState;
 	return config;
 }
 
 Scene5010::Scene5010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5010Config(), "scene5010", 0x263, 0x172, 4, 0xfd, 0xfb),
 		_switchLayer() {
-}
-
-bool Scene5010::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene5010::initializeCustomPreviewState() {
@@ -121,10 +114,6 @@ void Scene5010::initializeCustomPreviewState() {
 	}
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene5010::hasCustomComposite() const {
-	return true;
 }
 
 void Scene5010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -149,10 +138,6 @@ void Scene5010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (activeWorldY < 0x138 && _sceneChunkTable.isValidChunk(5))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	drawActionOverlayLayer();
-}
-
-bool Scene5010::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene5010::runCustomEntrySequence() {
@@ -360,11 +345,7 @@ void Scene5010::runReturnEntrySequence() {
 }
 
 void Scene5010::runEntryPathWithFinalFacing(int startX, int startY, byte startFacing, int targetX, int targetY, byte finalFacing) {
-	_activeActorWorldX = startX;
-	_activeActorWorldY = startY;
-	_activeActorFacing = startFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(startX, startY, startFacing);
 	drawPlayableComposite();
 	presentFrame();
 

@@ -34,7 +34,6 @@ const uint kScene5070InitialRequiredChunkCount = 5;
 const uint kScene5070ArenaFirstChunk = 5;
 const uint kScene5070ArenaLastChunk = 11;
 const uint kScene5070StageIndex = 507;
-const uint16 kScene5070State = 0x13ce;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5070ViewportXOffset = 0x00a0;
 const uint16 kScene5070ViewportMaxXOffset = 0x00c8;
@@ -107,8 +106,6 @@ PlayableSceneConfig scene5070Config() {
 	config.soundBank0ArchiveName = kScene5070SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene5070State;
-	config.mainFlowLastState = kScene5070State;
 	return config;
 }
 
@@ -116,23 +113,11 @@ Scene5070::Scene5070(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5070Config(), "scene5070", 0x2e3, 0x1d6, 5, 0xfd, 0xfb) {
 }
 
-bool Scene5070::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene5070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	applySceneStateToHotspotsAndPatches(0xff);
 
-	_activeActorWorldX = 0x2e3;
-	_activeActorWorldY = 0x1d6;
-	_activeActorFacing = 5;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene5070::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x2e3, 0x1d6, 5);
 }
 
 void Scene5070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -147,25 +132,13 @@ void Scene5070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawHangingItemForeground();
 }
 
-bool Scene5070::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene5070::runCustomEntrySequence() {
-	_activeActorWorldX = 0x3ab;
-	_activeActorWorldY = 0x1df;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x3ab, 0x1df, 4);
 	drawPlayableComposite();
 	presentFrame();
 
 	runMineCartEntryClip();
-	_activeActorWorldX = 0x2e3;
-	_activeActorWorldY = 0x1d6;
-	_activeActorFacing = 5;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x2e3, 0x1d6, 5);
 	drawPlayableComposite();
 	presentFrame();
 }

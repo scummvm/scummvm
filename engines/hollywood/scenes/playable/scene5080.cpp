@@ -34,7 +34,6 @@ const uint kScene5080InitialRequiredChunkCount = 5;
 const uint kScene5080ArenaFirstChunk = 5;
 const uint kScene5080ArenaLastChunk = 8;
 const uint kScene5080StageIndex = 508;
-const uint16 kScene5080State = 0x13d8;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5080ViewportXOffset = 0x0050;
 const uint kScene5080ActorBankTableEntrySet5A = 0x0070;
@@ -107,8 +106,6 @@ static PlayableSceneConfig scene5080Config() {
 	config.soundBank0ArchiveName = kScene5080SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene5080State;
-	config.mainFlowLastState = kScene5080State;
 	return config;
 }
 
@@ -131,10 +128,6 @@ uint Scene5080::actorPathStepDeltaTableSize() const {
 		ARRAYSIZE(kScene5080ActorPathStepDeltaTableSetB4) : ARRAYSIZE(kScene5080ActorPathStepDeltaTableSet5A);
 }
 
-bool Scene5080::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene5080::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	copyStepDeltasForCurrentSide();
@@ -154,10 +147,6 @@ void Scene5080::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene5080::hasCustomComposite() const {
-	return true;
-}
-
 void Scene5080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -169,10 +158,6 @@ void Scene5080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
-bool Scene5080::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene5080::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
 	if (state.scene5080AlternatePassageSide) {
@@ -181,11 +166,7 @@ void Scene5080::runCustomEntrySequence() {
 		return;
 	}
 
-	_activeActorWorldX = 0x348;
-	_activeActorWorldY = 0x15e;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x348, 0x15e, 4);
 	drawPlayableComposite();
 	presentFrame();
 
@@ -396,20 +377,12 @@ void Scene5080::runPassageSideSwitch() {
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	if (state.scene5080AlternatePassageSide) {
-		_activeActorWorldX = 0x230;
-		_activeActorWorldY = 0x157;
-		_activeActorFacing = 4;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(0x230, 0x157, 4);
 		drawPlayableComposite();
 		presentFrame();
 		walkActiveActorTo(0x166, 0x0d6, 0xff, 0, false);
 	} else {
-		_activeActorWorldX = 0x258;
-		_activeActorWorldY = 0x0fd;
-		_activeActorFacing = 2;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(0x258, 0x0fd, 2);
 		drawPlayableComposite();
 		presentFrame();
 		walkActiveActorTo(0x2b8, 0x188, 0xff, 0, false);

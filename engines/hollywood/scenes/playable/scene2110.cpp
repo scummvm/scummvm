@@ -35,7 +35,6 @@ const uint kScene2110InitialRequiredChunkCount = 8;
 const uint kScene2110ArenaFirstChunk = 5;
 const uint kScene2110ArenaLastChunk = 7;
 const uint kScene2110StageIndex = 211;
-const uint16 kScene2110FirstState = 0x083e;
 const uint16 kScene2110ScriptedReturnState = 0x083f;
 const uint16 kScene2100ReturnFromTreasureState = 0x0835;
 const uint16 kScene2100LeftPassageState = 0x0836;
@@ -121,8 +120,6 @@ static PlayableSceneConfig scene2110Config() {
 	config.soundBank0ArchiveName = kScene2110SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2110FirstState;
-	config.mainFlowLastState = kScene2110ScriptedReturnState;
 	return config;
 }
 
@@ -138,10 +135,6 @@ Scene2110::Scene2110(HollywoodEngine *vm) :
 		kScene2110AmbientFrameMap, ARRAYSIZE(kScene2110AmbientFrameMap));
 	_treasureLayer.configure(kScene2110TreasureChunk, kScene2110TreasureDescriptorCount,
 		kScene2110TreasureFrameMap, ARRAYSIZE(kScene2110TreasureFrameMap));
-}
-
-bool Scene2110::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2110::initializeCustomPreviewState() {
@@ -162,10 +155,6 @@ void Scene2110::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2110::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -182,10 +171,6 @@ void Scene2110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	}
-}
-
-bool Scene2110::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2110::runCustomEntrySequence() {
@@ -278,11 +263,7 @@ void Scene2110::runEntryFromScene2100() {
 }
 
 void Scene2110::runScriptedReturnToScene2100() {
-	_activeActorWorldX = 0x320;
-	_activeActorWorldY = 0x118;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x320, 0x118, 4);
 	_entryLayer.visible = true;
 	_entryLayer.reset(0);
 	drawPlayableComposite();
@@ -340,11 +321,7 @@ void Scene2110::runTreasureGrantAction() {
 
 void Scene2110::runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel) {
-	_activeActorWorldX = startX;
-	_activeActorWorldY = startY;
-	_activeActorFacing = startFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(startX, startY, startFacing);
 
 	drawPlayableComposite();
 	presentFrame();

@@ -36,7 +36,6 @@ const uint kScene8020InitialRequiredChunkCount = 5;
 const uint kScene8020ArenaFirstChunk = 5;
 const uint kScene8020ArenaLastChunk = 11;
 const uint kScene8020StageIndex = 802;
-const uint16 kScene8020State = 0x1f54;
 const uint16 kScene8010ReturnEntryState = 0x1f4b;
 const uint kScene8020ActorBankTableEntry = 0x0000;
 const uint kScene8020ActorPaletteTableEntry = 0x00cc;
@@ -107,8 +106,6 @@ PlayableSceneConfig scene8020Config() {
 	config.musicArchiveName = kScene8020MusicArchiveName;
 	config.soundBank0ArchiveName = kScene8020SoundArchiveName;
 	config.loadActorDepthTables = false;
-	config.mainFlowFirstState = kScene8020State;
-	config.mainFlowLastState = kScene8020State;
 	return config;
 }
 
@@ -123,22 +120,10 @@ Scene8020::Scene8020(HollywoodEngine *vm) :
 		_foregroundSequenceLocked(false) {
 }
 
-bool Scene8020::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene8020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetForegroundLayer();
-	_activeActorWorldX = kScene8020EntryTargetX;
-	_activeActorWorldY = kScene8020EntryTargetY;
-	_activeActorFacing = kScene8020EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene8020::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(kScene8020EntryTargetX, kScene8020EntryTargetY, kScene8020EntryFacing);
 }
 
 void Scene8020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -152,10 +137,6 @@ void Scene8020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
-}
-
-bool Scene8020::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene8020::runCustomEntrySequence() {

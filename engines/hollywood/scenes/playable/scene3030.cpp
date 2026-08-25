@@ -38,7 +38,6 @@ const uint kScene3030ArenaFirstChunk = 5;
 const uint kScene3030ArenaLastChunk = 10;
 const uint kScene3030StageIndex = 303;
 const uint16 kScene3030FirstState = 0x0bd6;
-const uint16 kScene3030LastState = 0x0bdf;
 const uint16 kScene3020EntryFromScene3030State = 0x0bcd;
 const uint16 kScene3030ViewportXOffset = 0x0060;
 const uint kScene3030ActorBankTableEntry = 0x0000;
@@ -99,8 +98,6 @@ PlayableSceneConfig scene3030Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene3030MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3030SoundArchiveName;
-	config.mainFlowFirstState = kScene3030FirstState;
-	config.mainFlowLastState = kScene3030LastState;
 	return config;
 }
 
@@ -114,23 +111,11 @@ Scene3030::Scene3030(HollywoodEngine *vm) :
 		kScene3030LoopFrameMap, ARRAYSIZE(kScene3030LoopFrameMap));
 }
 
-bool Scene3030::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene3030::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 
-	_activeActorWorldX = 0x110;
-	_activeActorWorldY = 0x18a;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene3030::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x110, 0x18a, 2);
 }
 
 void Scene3030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -154,11 +139,12 @@ void Scene3030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawForegroundBlocks();
 }
 
-bool Scene3030::hasCustomEntrySequence() const {
-	return _vm->gameState().mainFlowStateId == kScene3030FirstState;
-}
-
 void Scene3030::runCustomEntrySequence() {
+	if (_vm->gameState().mainFlowStateId != kScene3030FirstState) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
 	runEntryFromScene3020();
 }
 
@@ -311,11 +297,7 @@ void Scene3030::promoteMachineHotspots() {
 }
 
 void Scene3030::runEntryFromScene3020() {
-	_activeActorWorldX = 0x110;
-	_activeActorWorldY = 0x18a;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x110, 0x18a, 2);
 	runDeltaTransitionClip(kScene3030EntryTransitionChunk,
 		kScene3030EntryTransitionTableEntryCount, kScene3030EntryTransitionFinalFrame, false);
 }

@@ -34,8 +34,6 @@ const uint kScene6030InitialRequiredChunkCount = 12;
 const uint kScene6030ArenaFirstChunk = 5;
 const uint kScene6030ArenaLastChunk = 11;
 const uint kScene6030StageIndex = 603;
-const uint16 kScene6030FirstState = 0x178e;
-const uint16 kScene6030LastState = 0x1797;
 const uint16 kScene6020ReturnFromScene6030State = 0x1785;
 const uint16 kScene6030ViewportXOffset = 0x0064;
 const uint kScene6030ActorBankTableEntry = 0x0000;
@@ -105,8 +103,6 @@ static PlayableSceneConfig scene6030Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene6030MusicArchiveName;
 	config.soundBank0ArchiveName = kScene6030SoundArchiveName;
-	config.mainFlowFirstState = kScene6030FirstState;
-	config.mainFlowLastState = kScene6030LastState;
 	return config;
 }
 
@@ -128,22 +124,10 @@ Scene6030::Scene6030(HollywoodEngine *vm) :
 		kScene6030TaffyEntranceFrameMap, ARRAYSIZE(kScene6030TaffyEntranceFrameMap));
 }
 
-bool Scene6030::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene6030::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
-	_activeActorWorldX = 0x1e5;
-	_activeActorWorldY = 0x186;
-	_activeActorFacing = 5;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene6030::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x1e5, 0x186, 5);
 }
 
 void Scene6030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -160,10 +144,6 @@ void Scene6030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
-}
-
-bool Scene6030::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene6030::runCustomEntrySequence() {

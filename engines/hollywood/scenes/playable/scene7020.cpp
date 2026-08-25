@@ -30,7 +30,6 @@
 
 namespace Hollywood {
 
-const uint16 kScene7020State = 0x1b6c;
 const uint16 kScene7020ExitState9101 = 0x238d;
 const uint kScene7020InitialRequiredChunkCount = 8;
 const uint kScene7020ArenaFirstChunk = 5;
@@ -74,8 +73,6 @@ static PlayableSceneConfig scene7020Config() {
 	config.viewportXOffset = kScene7020ViewportXOffset;
 	config.loadInventoryActionTables = false;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene7020State;
-	config.mainFlowLastState = kScene7020State;
 	return config;
 }
 
@@ -109,10 +106,6 @@ bool Scene7020::play() {
 	return true;
 }
 
-bool Scene7020::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene7020::initializeCustomPreviewState() {
 	_chunk6FrameMapIndex = 0;
 	_primaryPoseMode = 0;
@@ -120,17 +113,9 @@ void Scene7020::initializeCustomPreviewState() {
 	_drawChunk7OverlayInsteadOfActor = false;
 	_chunk7TimerAccumulator = 0;
 	_primaryTimerAccumulator = 0;
-	_activeActorWorldX = kScene7020SueStartX;
-	_activeActorWorldY = kScene7020SueStartY;
-	_activeActorFacing = kScene7020SueStartFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7020SueStartX, kScene7020SueStartY, kScene7020SueStartFacing);
 	_secondaryActorFrame = 0;
 	clearAllSpeechOverlays();
-}
-
-bool Scene7020::hasCustomComposite() const {
-	return true;
 }
 
 void Scene7020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,

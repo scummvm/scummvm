@@ -35,7 +35,6 @@ const uint kScene5020InitialRequiredChunkCount = 5;
 const uint kScene5020ArenaFirstChunk = 5;
 const uint kScene5020ArenaLastChunk = 10;
 const uint kScene5020StageIndex = 502;
-const uint16 kScene5020State = 0x139c;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5020ViewportXOffset = 0x0048;
 const uint16 kScene5020ViewportMinXOffset = 0x0000;
@@ -87,8 +86,6 @@ PlayableSceneConfig scene5020Config() {
 	config.walkablePaletteMaxRegion = 3;
 	config.musicArchiveName = kScene5020MusicArchiveName;
 	config.soundBank0ArchiveName = kScene5020SoundArchiveName;
-	config.mainFlowFirstState = kScene5020State;
-	config.mainFlowLastState = kScene5020State;
 	return config;
 }
 
@@ -96,23 +93,11 @@ Scene5020::Scene5020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5020Config(), "scene5020", 0x27d, 0x16c, 4, 0xfd, 0xfb) {
 }
 
-bool Scene5020::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene5020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	applySceneStateToHotspotsAndPatches(0xff);
 
-	_activeActorWorldX = 0x27d;
-	_activeActorWorldY = 0x16c;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene5020::hasCustomEntrySequence() const {
-	return true;
+	setActiveActorPose(0x27d, 0x16c, 4);
 }
 
 void Scene5020::runCustomEntrySequence() {

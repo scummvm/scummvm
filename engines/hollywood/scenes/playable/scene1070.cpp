@@ -35,7 +35,6 @@ const uint kScene1070ArenaFirstChunk = 5;
 const uint kScene1070ArenaLastChunk = 18;
 const uint kScene1070StageIndex = 107;
 const uint16 kScene1070FirstState = 0x042e;
-const uint16 kScene1070LastState = 0x0437;
 const uint16 kScene1070ExitState1060 = 0x0425;
 const uint16 kScene1070ExitStateNext = 0x0438;
 const uint16 kScene1070ViewportXOffset = 0x00a0;
@@ -148,8 +147,6 @@ static PlayableSceneConfig scene1070Config() {
 	config.walkablePaletteMaxRegion = 6;
 	config.musicArchiveName = kScene1070MusicArchiveName;
 	config.soundBank0ArchiveName = kScene1070SoundArchiveName;
-	config.mainFlowFirstState = kScene1070FirstState;
-	config.mainFlowLastState = kScene1070LastState;
 	return config;
 }
 
@@ -179,10 +176,6 @@ Scene1070::Scene1070(HollywoodEngine *vm) :
 		kScene1070SpencerFrameMap, ARRAYSIZE(kScene1070SpencerFrameMap));
 }
 
-bool Scene1070::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene1070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
@@ -199,10 +192,6 @@ void Scene1070::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene1070::hasCustomComposite() const {
-	return true;
-}
-
 void Scene1070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -216,10 +205,6 @@ void Scene1070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
-}
-
-bool Scene1070::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene1070::runCustomEntrySequence() {

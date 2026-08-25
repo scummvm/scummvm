@@ -35,7 +35,6 @@ const uint kScene6100InitialRequiredChunkCount = 10;
 const uint kScene6100ArenaFirstChunk = 5;
 const uint kScene6100ArenaLastChunk = 9;
 const uint kScene6100StageIndex = 610;
-const uint16 kScene6100State = 0x17d4;
 const uint16 kScene6060ReturnState = 0x17ad;
 const uint kScene6100ActorBankTableEntry = 0;
 const uint kScene6100ActorPaletteTableEntry = 0x00cc;
@@ -102,8 +101,6 @@ static PlayableSceneConfig scene6100Config() {
 	config.soundBank0ArchiveName = kScene6100SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene6100State;
-	config.mainFlowLastState = kScene6100State;
 	return config;
 }
 
@@ -123,10 +120,6 @@ Scene6100::Scene6100(HollywoodEngine *vm) :
 	_letterLayer.configure(8, 0x0c, kScene6100LetterFrameMap,
 		ARRAYSIZE(kScene6100LetterFrameMap));
 	_departureLayer.configure(6, 0x17, nullptr, 0);
-}
-
-bool Scene6100::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene6100::initializeCustomPreviewState() {
@@ -153,10 +146,6 @@ void Scene6100::resetSceneLayers() {
 	_charlieConversationActive = false;
 }
 
-bool Scene6100::hasCustomComposite() const {
-	return true;
-}
-
 void Scene6100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
 		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
 		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
@@ -178,10 +167,6 @@ void Scene6100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawResourceSpriteLayer(_charlieLayer);
 	drawResourceSpriteLayer(_letterLayer);
 	drawActionOverlayLayer();
-}
-
-bool Scene6100::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene6100::runCustomEntrySequence() {

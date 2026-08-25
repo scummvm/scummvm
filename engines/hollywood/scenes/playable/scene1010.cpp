@@ -36,8 +36,6 @@ const uint kScene1010InitialRequiredChunkCount = 9;
 const uint kScene1010ArenaFirstChunk = 5;
 const uint kScene1010ArenaLastChunk = 8;
 const uint kScene1010StageIndex = 101;
-const uint16 kScene1010FirstState = 0x03f2;
-const uint16 kScene1010LastState = 0x03fb;
 const uint16 kScene1010LeftEntryState = 0x03f2;
 const uint16 kScene1010RightEntryState = 0x03f3;
 const uint16 kScene1010CenterEntryState = 0x03f4;
@@ -129,8 +127,6 @@ static PlayableSceneConfig scene1010Config() {
 	config.musicArchiveName = kScene1010MusicArchiveName;
 	config.soundBank0ArchiveName = kScene1010SoundArchiveName;
 	config.loadActorDepthTables = false;
-	config.mainFlowFirstState = kScene1010FirstState;
-	config.mainFlowLastState = kScene1010LastState;
 	return config;
 }
 
@@ -140,10 +136,6 @@ Scene1010::Scene1010(HollywoodEngine *vm) :
 		_sceneActorBlinkTimerAccumulator(0),
 		_sceneActorBlinkFrameIndex(0),
 		_sceneActorBlinkPatternMode(0) {
-}
-
-bool Scene1010::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene1010::initializeCustomPreviewState() {
@@ -166,10 +158,6 @@ void Scene1010::initializeCustomPreviewState() {
 	}
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene1010::hasCustomComposite() const {
-	return true;
 }
 
 void Scene1010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -198,15 +186,15 @@ void Scene1010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawSceneActorBlinkFrame();
 }
 
-bool Scene1010::hasCustomEntrySequence() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return stateId == kScene1010LeftEntryState ||
-		stateId == kScene1010RightEntryState ||
-		stateId == kScene1010CenterEntryState;
-}
-
 void Scene1010::runCustomEntrySequence() {
 	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	if (stateId != kScene1010LeftEntryState &&
+		stateId != kScene1010RightEntryState &&
+		stateId != kScene1010CenterEntryState) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
 	if (stateId == kScene1010LeftEntryState) {
 		runEntryPath(kScene1010LeftEntryStartX, kScene1010LeftEntryStartY,
 			kScene1010LeftEntryFacing, kScene1010LeftEntryTargetX, kScene1010LeftEntryTargetY);

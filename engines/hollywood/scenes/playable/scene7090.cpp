@@ -30,8 +30,6 @@
 
 namespace Hollywood {
 
-const uint16 kScene7090FirstState = 0x1bb2;
-const uint16 kScene7090LastState = 0x1bbb;
 const uint16 kScene7090BackToG07State = 0x1ba0;
 const uint kScene7090InitialRequiredChunkCount = 11;
 const uint kScene7090ArenaFirstChunk = 5;
@@ -72,8 +70,6 @@ static PlayableSceneConfig scene7090Config() {
 	config.stageIndex = kScene7090StageIndex;
 	config.debugName = "Scene 7090";
 	config.viewportXOffset = kScene7090ViewportXOffset;
-	config.mainFlowFirstState = kScene7090FirstState;
-	config.mainFlowLastState = kScene7090LastState;
 	return config;
 }
 
@@ -81,10 +77,6 @@ Scene7090::Scene7090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7090Config(), "scene7090", kScene7090EntryX, kScene7090EntryY,
 			kScene7090EntryFacing, 0xfd, 0xfb),
 		_prePatchChunk7Visible(false) {
-}
-
-bool Scene7090::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene7090::initializeCustomPreviewState() {
@@ -100,19 +92,11 @@ void Scene7090::initializeCustomPreviewState() {
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_previousAmbientMusicTrackId = 0;
 	_prePatchChunk7Visible = false;
-	_activeActorWorldX = kScene7090EntryX;
-	_activeActorWorldY = kScene7090EntryY;
-	_activeActorFacing = kScene7090EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7090EntryX, kScene7090EntryY, kScene7090EntryFacing);
 	_secondaryActorFrame = 0;
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	applySceneStateToHotspotsAndPatches(0xff);
 	darkenActorPaletteRange();
-}
-
-bool Scene7090::hasCustomComposite() const {
-	return true;
 }
 
 void Scene7090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -135,17 +119,9 @@ void Scene7090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 }
 
-bool Scene7090::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene7090::runCustomEntrySequence() {
 	_soundBank0.playSample(4, 100);
-	_activeActorWorldX = kScene7090EntryX;
-	_activeActorWorldY = kScene7090EntryY;
-	_activeActorFacing = kScene7090EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7090EntryX, kScene7090EntryY, kScene7090EntryFacing);
 	drawPlayableComposite();
 	presentFrame();
 

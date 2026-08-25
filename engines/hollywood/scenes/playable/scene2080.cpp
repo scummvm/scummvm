@@ -36,7 +36,6 @@ const uint kScene2080InitialRequiredChunkCount = 13;
 const uint kScene2080ArenaFirstChunk = 5;
 const uint kScene2080ArenaLastChunk = 12;
 const uint kScene2080StageIndex = 208;
-const uint16 kScene2080FirstState = 0x0820;
 const uint16 kScene2080LastState = 0x0821;
 const uint16 kScene2070ReturnState = 0x0817;
 const uint16 kScene2090FirstState = 0x082a;
@@ -156,8 +155,6 @@ static PlayableSceneConfig scene2080Config() {
 	config.soundBank0ArchiveName = kScene2080SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene2080FirstState;
-	config.mainFlowLastState = kScene2080LastState;
 	return config;
 }
 
@@ -174,10 +171,6 @@ Scene2080::Scene2080(HollywoodEngine *vm) :
 		kScene2080AmbientFrameMap, ARRAYSIZE(kScene2080AmbientFrameMap));
 	_foregroundActorLayer.configure(kScene2080ForegroundActorChunk, kScene2080ForegroundActorDescriptorCount,
 		kScene2080ForegroundActorFrameMap, ARRAYSIZE(kScene2080ForegroundActorFrameMap));
-}
-
-bool Scene2080::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2080::initializeCustomPreviewState() {
@@ -200,10 +193,6 @@ void Scene2080::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2080::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -220,10 +209,6 @@ void Scene2080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		kScene2080ForegroundLeftChunk : kScene2080ForwardExitClipChunk;
 	if (_sceneChunkTable.isValidChunk(foregroundChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[foregroundChunk], _sceneFramebuffer);
-}
-
-bool Scene2080::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2080::runCustomEntrySequence() {
@@ -546,11 +531,7 @@ void Scene2080::runEntryFromScene2090() {
 
 void Scene2080::runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel) {
-	_activeActorWorldX = startX;
-	_activeActorWorldY = startY;
-	_activeActorFacing = startFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(startX, startY, startFacing);
 
 	drawPlayableComposite();
 	presentFrame();

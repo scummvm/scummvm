@@ -39,8 +39,6 @@ const uint kScene7010ArenaLastChunk = 18;
 const uint kScene7010StageIndex = 701;
 const uint16 kScene7010ViewportXOffset = 0;
 const uint16 kScene7010ViewportMaxXOffset = 0xd0;
-const uint16 kScene7010FirstState = 0x1b62;
-const uint16 kScene7010LastState = 0x1b6b;
 const uint16 kScene7010ReturnState = 0x1b63;
 const uint16 kScene7010ExitState7020 = 0x1b6c;
 const uint16 kScene7010ExitState7030 = 0x1b76;
@@ -137,8 +135,6 @@ static PlayableSceneConfig scene7010Config() {
 	config.viewportMaxXOffset = kScene7010ViewportMaxXOffset;
 	config.loadInventoryActionTables = false;
 	config.loadActorDepthTables = false;
-	config.mainFlowFirstState = kScene7010FirstState;
-	config.mainFlowLastState = kScene7010LastState;
 	return config;
 }
 
@@ -169,10 +165,6 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_dialogueOverlayTimerAccumulator(0),
 		_backTransientLayers(),
 		_frontTransientLayers() {
-}
-
-bool Scene7010::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene7010::initializeCustomPreviewState() {
@@ -226,10 +218,6 @@ void Scene7010::initializeCustomPreviewState() {
 	_sceneStateFlags[6] = state.hannoverCourtyardFollowUpSeen ? 1 : 0;
 	setDialogueOverlayMode(_sceneStateFlags[1], 0);
 	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-bool Scene7010::hasCustomComposite() const {
-	return true;
 }
 
 void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -293,10 +281,6 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {
 	return _speechOverlay.visible && !_actionOverlayVisible;
-}
-
-bool Scene7010::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene7010::runCustomEntrySequence() {

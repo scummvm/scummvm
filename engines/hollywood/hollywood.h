@@ -49,8 +49,6 @@ enum HollywoodDebugChannels {
 class ResourceManager;
 class HollywoodFont;
 
-bool isImplementedGameplayState(int stateId);
-
 class HollywoodEngine : public Engine {
 public:
 	HollywoodEngine(OSystem *syst, const ADGameDescription *gameDesc);

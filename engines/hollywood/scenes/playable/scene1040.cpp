@@ -34,8 +34,6 @@ const uint kScene1040InitialRequiredChunkCount = 17;
 const uint kScene1040ArenaFirstChunk = 5;
 const uint kScene1040ArenaLastChunk = 16;
 const uint kScene1040StageIndex = 104;
-const uint16 kScene1040FirstState = 0x0410;
-const uint16 kScene1040LastState = 0x0419;
 const uint16 kScene1040LeftEntryState = 0x0410;
 const uint16 kScene1040CloakroomReturnState = 0x0411;
 const uint16 kScene1040BanquetEntryState = 0x0412;
@@ -128,8 +126,6 @@ static PlayableSceneConfig scene1040Config() {
 	config.walkablePaletteMaxRegion = 6;
 	config.musicArchiveName = kScene1040MusicArchiveName;
 	config.soundBank0ArchiveName = kScene1040SoundArchiveName;
-	config.mainFlowFirstState = kScene1040FirstState;
-	config.mainFlowLastState = kScene1040LastState;
 	return config;
 }
 
@@ -141,10 +137,6 @@ Scene1040::Scene1040(HollywoodEngine *vm) :
 	_gorillaLayer.configure(7, kScene1040GorillaDescriptorCount,
 		kScene1040GorillaFrameMap, ARRAYSIZE(kScene1040GorillaFrameMap));
 	_gorillaLayer.visible = true;
-}
-
-bool Scene1040::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene1040::initializeCustomPreviewState() {
@@ -172,10 +164,6 @@ void Scene1040::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene1040::hasCustomComposite() const {
-	return true;
-}
-
 void Scene1040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -191,15 +179,15 @@ void Scene1040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 }
 
-bool Scene1040::hasCustomEntrySequence() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return stateId == kScene1040LeftEntryState ||
-		stateId == kScene1040CloakroomReturnState ||
-		stateId == kScene1040BanquetEntryState;
-}
-
 void Scene1040::runCustomEntrySequence() {
 	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	if (stateId != kScene1040LeftEntryState &&
+		stateId != kScene1040CloakroomReturnState &&
+		stateId != kScene1040BanquetEntryState) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
 	if (stateId == kScene1040LeftEntryState) {
 		runEntryPath(0x118, 0x10b, 2, 0x163, 0x130);
 		return;

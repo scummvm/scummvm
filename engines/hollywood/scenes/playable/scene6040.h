@@ -33,13 +33,10 @@ public:
 	Scene6040(HollywoodEngine *vm);
 
 private:
-	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
-	bool hasCustomComposite() const override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
-	bool hasCustomEntrySequence() const override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool prepareCustomGameplayLoop() override;

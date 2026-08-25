@@ -39,7 +39,6 @@ const uint kScene4030ArenaFirstChunk = 7;
 const uint kScene4030ArenaLastChunk = 20;
 const uint kScene4030StageIndex = 403;
 const uint16 kScene4030FirstState = 0x0fbe;
-const uint16 kScene4030LastState = 0x0fc7;
 const uint16 kScene4020ReturnState = 0x0fb5;
 const uint16 kScene4040FirstState = 0x0fc8;
 const uint16 kScene4030ViewportXOffset = 0x0060;
@@ -163,8 +162,6 @@ PlayableSceneConfig scene4030Config() {
 	config.musicArchiveName = kScene4030MusicArchiveName;
 	config.soundBank0ArchiveName = kScene4030SoundArchiveName;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene4030FirstState;
-	config.mainFlowLastState = kScene4030LastState;
 	return config;
 }
 
@@ -176,10 +173,6 @@ Scene4030::Scene4030(HollywoodEngine *vm) :
 		_leftPropChannel(),
 		_rightPropChannel(),
 		_rightPropState(0) {
-}
-
-bool Scene4030::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene4030::initializeCustomPreviewState() {
@@ -201,10 +194,6 @@ void Scene4030::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene4030::hasCustomComposite() const {
-	return true;
-}
-
 void Scene4030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -219,18 +208,10 @@ void Scene4030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
-bool Scene4030::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene4030::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
 	if (state.mainFlowStateId == kScene4030FirstState) {
-		_activeActorWorldX = kScene4030EntryWorldX;
-		_activeActorWorldY = kScene4030EntryWorldY;
-		_activeActorFacing = kScene4030EntryFacing;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(kScene4030EntryWorldX, kScene4030EntryWorldY, kScene4030EntryFacing);
 		_viewportXOffset = kScene4030EntryViewportXOffset;
 
 		drawPlayableComposite();

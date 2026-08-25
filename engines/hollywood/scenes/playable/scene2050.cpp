@@ -37,7 +37,6 @@ const uint kScene2050InitialRequiredChunkCount = 15;
 const uint kScene2050ArenaFirstChunk = 5;
 const uint kScene2050ArenaLastChunk = 14;
 const uint kScene2050StageIndex = 205;
-const uint16 kScene2050FirstState = 0x0802;
 const uint16 kScene2050LastState = 0x0803;
 const uint16 kScene2040EntryFromInteriorState = 0x07f9;
 const uint16 kScene2060EntryState = 0x080e;
@@ -141,8 +140,6 @@ static PlayableSceneConfig scene2050Config() {
 	config.soundBank0ArchiveName = kScene2050SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2050FirstState;
-	config.mainFlowLastState = kScene2050LastState;
 	return config;
 }
 
@@ -155,10 +152,6 @@ Scene2050::Scene2050(HollywoodEngine *vm) :
 		_muralSelectedTile(0) {
 	_ambientLayer.configure(10, kScene2050AmbientDescriptorCount,
 		kScene2050AmbientFrameMap, ARRAYSIZE(kScene2050AmbientFrameMap));
-}
-
-bool Scene2050::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2050::initializeCustomPreviewState() {
@@ -180,10 +173,6 @@ void Scene2050::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2050::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -194,10 +183,6 @@ void Scene2050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-}
-
-bool Scene2050::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2050::runCustomEntrySequence() {

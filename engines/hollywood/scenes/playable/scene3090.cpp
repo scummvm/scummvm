@@ -34,8 +34,6 @@ const uint kScene3090InitialRequiredChunkCount = 20;
 const uint kScene3090ArenaFirstChunk = 5;
 const uint kScene3090ArenaLastChunk = 19;
 const uint kScene3090StageIndex = 309;
-const uint16 kScene3090FirstState = 0x0c12;
-const uint16 kScene3090LastState = 0x0c1b;
 const uint16 kScene3080ReturnFromScene3090State = 0x0c0a;
 const uint16 kScene3090ViewportXOffset = 0x0098;
 const uint16 kScene3090ViewportMinXOffset = 0x0068;
@@ -143,8 +141,6 @@ static PlayableSceneConfig scene3090Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene3090MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3090SoundArchiveName;
-	config.mainFlowFirstState = kScene3090FirstState;
-	config.mainFlowLastState = kScene3090LastState;
 	return config;
 }
 
@@ -170,24 +166,12 @@ Scene3090::Scene3090(HollywoodEngine *vm) :
 		kScene3090PuzzleFrameMap, ARRAYSIZE(kScene3090PuzzleFrameMap));
 }
 
-bool Scene3090::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene3090::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
 
-	_activeActorWorldX = 600;
-	_activeActorWorldY = 0x145;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene3090::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(600, 0x145, 4);
 }
 
 void Scene3090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -205,10 +189,6 @@ void Scene3090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
-}
-
-bool Scene3090::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene3090::runCustomEntrySequence() {

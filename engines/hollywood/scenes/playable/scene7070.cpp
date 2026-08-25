@@ -30,7 +30,6 @@
 
 namespace Hollywood {
 
-const uint16 kScene7070FirstState = 0x1b9e;
 const uint16 kScene7070ShortEntryState = 0x1b9f;
 const uint16 kScene7070ReturnState = 0x1ba0;
 const uint16 kScene7070BackToG06State = 0x1b95;
@@ -84,18 +83,12 @@ static PlayableSceneConfig scene7070Config() {
 	config.stageIndex = kScene7070StageIndex;
 	config.debugName = "Scene 7070";
 	config.viewportXOffset = kScene7070ViewportXOffset;
-	config.mainFlowFirstState = kScene7070FirstState;
-	config.mainFlowLastState = kScene7070ReturnState;
 	return config;
 }
 
 Scene7070::Scene7070(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7070Config(), "scene7070", kScene7070EntryFromG06TargetX, kScene7070EntryFromG06TargetY,
 			kScene7070EntryFromG06Facing, 0xfd, 0xfb) {
-}
-
-bool Scene7070::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene7070::initializeCustomPreviewState() {
@@ -127,10 +120,6 @@ void Scene7070::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-bool Scene7070::hasCustomComposite() const {
-	return true;
-}
-
 void Scene7070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -148,10 +137,6 @@ void Scene7070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	} else if (activeWorldY < 0x134) {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	}
-}
-
-bool Scene7070::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene7070::runCustomEntrySequence() {

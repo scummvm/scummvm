@@ -36,7 +36,6 @@ const uint kScene4040ArenaLastChunk = 15;
 const uint kScene4040StageIndex = 404;
 const uint16 kScene4040FirstState = 0x0fc8;
 const uint16 kScene4040ReturnFromUpperExitState = 0x0fc9;
-const uint16 kScene4040LastState = 0x0fd1;
 const uint16 kScene4030ReturnState = 0x0fbf;
 const uint16 kScene4050FirstState = 0x0fd2;
 const uint16 kScene4040ViewportXOffset = 0x0068;
@@ -111,8 +110,6 @@ PlayableSceneConfig scene4040Config() {
 	config.soundBank0ArchiveName = kScene4040SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene4040FirstState;
-	config.mainFlowLastState = kScene4040LastState;
 	return config;
 }
 
@@ -124,10 +121,6 @@ Scene4040::Scene4040(HollywoodEngine *vm) :
 		_randomBackgroundLayer(),
 		_randomBackgroundState(0),
 		_randomBackgroundRepeatCount(0) {
-}
-
-bool Scene4040::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene4040::initializeCustomPreviewState() {
@@ -147,10 +140,6 @@ void Scene4040::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene4040::hasCustomComposite() const {
-	return true;
-}
-
 void Scene4040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -166,10 +155,6 @@ void Scene4040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
 	drawActionOverlayLayer();
-}
-
-bool Scene4040::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene4040::runCustomEntrySequence() {

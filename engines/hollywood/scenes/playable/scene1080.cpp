@@ -35,7 +35,6 @@ const uint kScene1080ArenaFirstChunk = 5;
 const uint kScene1080ArenaLastChunk = 11;
 const uint kScene1080StageIndex = 108;
 const uint16 kScene1080FirstState = 0x0438;
-const uint16 kScene1080LastState = 0x0441;
 const uint16 kScene1080ExitStateBallroom = 0x042f;
 const uint16 kScene1080ExitStatePantry = 0x0442;
 const uint16 kScene1080ViewportXOffset = 0x00a0;
@@ -94,8 +93,6 @@ static PlayableSceneConfig scene1080Config() {
 	config.walkablePaletteMaxRegion = 6;
 	config.musicArchiveName = kScene1080MusicArchiveName;
 	config.soundBank0ArchiveName = kScene1080SoundArchiveName;
-	config.mainFlowFirstState = kScene1080FirstState;
-	config.mainFlowLastState = kScene1080LastState;
 	return config;
 }
 
@@ -111,10 +108,6 @@ Scene1080::Scene1080(HollywoodEngine *vm) :
 		kScene1080ForegroundFrameMap, ARRAYSIZE(kScene1080ForegroundFrameMap));
 	_francoisLayer.configure(8, kScene1080FrancoisDescriptorCount,
 		kScene1080FrancoisFrameMap, ARRAYSIZE(kScene1080FrancoisFrameMap));
-}
-
-bool Scene1080::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene1080::initializeCustomPreviewState() {
@@ -133,10 +126,6 @@ void Scene1080::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene1080::hasCustomComposite() const {
-	return true;
-}
-
 void Scene1080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -150,10 +139,6 @@ void Scene1080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
 	drawResourceSpriteLayer(_foregroundLayer);
-}
-
-bool Scene1080::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene1080::runCustomEntrySequence() {

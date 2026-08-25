@@ -36,8 +36,6 @@ const uint kScene6040InitialRequiredChunkCount = 14;
 const uint kScene6040ArenaFirstChunk = 5;
 const uint kScene6040ArenaLastChunk = 13;
 const uint kScene6040StageIndex = 604;
-const uint16 kScene6040FirstState = 0x1798;
-const uint16 kScene6040LastState = 0x17a1;
 const uint16 kScene6010ReturnFromScene6040State = 0x177c;
 const uint16 kScene6040ViewportXOffset = 0x00c8;
 const uint16 kScene6040ViewportMaxXOffset = 0x0110;
@@ -107,8 +105,6 @@ static PlayableSceneConfig scene6040Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene6040MusicArchiveName;
 	config.soundBank0ArchiveName = kScene6040SoundArchiveName;
-	config.mainFlowFirstState = kScene6040FirstState;
-	config.mainFlowLastState = kScene6040LastState;
 	return config;
 }
 
@@ -125,22 +121,10 @@ Scene6040::Scene6040(HollywoodEngine *vm) :
 		kScene6040ToggleFrameMap, ARRAYSIZE(kScene6040ToggleFrameMap));
 }
 
-bool Scene6040::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene6040::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
-	_activeActorWorldX = 0x172;
-	_activeActorWorldY = 0x1c2;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene6040::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x172, 0x1c2, 2);
 }
 
 void Scene6040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -157,20 +141,12 @@ void Scene6040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawForegroundBlocks(activeWorldY);
 }
 
-bool Scene6040::hasCustomEntrySequence() const {
-	return true;
-}
-
 bool Scene6040::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
 void Scene6040::runCustomEntrySequence() {
-	_activeActorWorldX = 100;
-	_activeActorWorldY = 0x1dc;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(100, 0x1dc, 2);
 	drawPlayableComposite();
 	if (fadePaletteFromBlack())
 		return;

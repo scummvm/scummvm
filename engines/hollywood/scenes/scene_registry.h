@@ -19,37 +19,27 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4100_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4100_H
+#ifndef HOLLYWOOD_SCENES_SCENE_REGISTRY_H
+#define HOLLYWOOD_SCENES_SCENE_REGISTRY_H
 
-#include "hollywood/scenes/playable/playable_scene.h"
+#include "common/scummsys.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene4100 : public PlayableScene {
-public:
-	Scene4100(HollywoodEngine *vm);
-
-private:
-	void initializeCustomPreviewState() override;
-	void runCustomEntrySequence() override;
-	bool prepareCustomGameplayLoop() override;
-	bool advanceCustomGameplayLoop(uint32 delta) override;
-	bool dispatchCustomSceneAction(uint16 handlerId) override;
-	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
-	AmbientAudioProfile ambientAudioProfile() const override;
-
-	void applyD10PaletteDimming();
-	void resetPaletteCycle();
-	void advancePaletteCycle(uint32 delta);
-	void rotatePaletteCycle();
-	void runDoorTransition(uint chunkIndex, uint descriptorCount, uint16 targetState);
-
-	TimedAnimationChannel _paletteCycleChannel;
+enum GameplaySceneResult {
+	kGameplaySceneNotFound,
+	kGameplaySceneCompleted,
+	kGameplaySceneFailed
 };
+
+// State validation, direct boot mapping, and runtime dispatch share one scene table.
+bool isImplementedGameplayState(int stateId);
+bool isGameplayStateInScene(uint16 sceneStateId, uint16 stateId);
+int gameplayStateForBootParam(int bootParam);
+GameplaySceneResult runGameplayScene(HollywoodEngine *vm, uint16 stateId);
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4100_H
+#endif // HOLLYWOOD_SCENES_SCENE_REGISTRY_H

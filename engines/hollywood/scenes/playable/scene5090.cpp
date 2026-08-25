@@ -34,8 +34,6 @@ const uint kScene5090InitialRequiredChunkCount = 5;
 const uint kScene5090ArenaFirstChunk = 5;
 const uint kScene5090ArenaLastChunk = 7;
 const uint kScene5090StageIndex = 509;
-const uint16 kScene5090FirstState = 0x13e2;
-const uint16 kScene5090LastState = 0x13eb;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5090ViewportXOffset = 0x0068;
 const uint kScene5090ActorBankTableEntrySet5A = 0x0070;
@@ -96,8 +94,6 @@ static PlayableSceneConfig scene5090Config() {
 	config.soundBank0ArchiveName = kScene5090SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene5090FirstState;
-	config.mainFlowLastState = kScene5090LastState;
 	return config;
 }
 
@@ -105,23 +101,11 @@ Scene5090::Scene5090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5090Config(), "scene5090", 0x0b5, 0x076, 2, 0xfd, 0xfb) {
 }
 
-bool Scene5090::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene5090::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	applySceneStateToHotspotsAndPatches(0xff);
 
-	_activeActorWorldX = 0x0b5;
-	_activeActorWorldY = 0x076;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene5090::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x0b5, 0x076, 2);
 }
 
 void Scene5090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -135,16 +119,8 @@ void Scene5090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 }
 
-bool Scene5090::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene5090::runCustomEntrySequence() {
-	_activeActorWorldX = 0x054;
-	_activeActorWorldY = 0x068;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x054, 0x068, 2);
 	drawPlayableComposite();
 	presentFrame();
 

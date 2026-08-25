@@ -116,8 +116,6 @@ static PlayableSceneConfig scene2090Config() {
 	config.soundBank0ArchiveName = kScene2090SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2090FirstState;
-	config.mainFlowLastState = kScene2090SpecialEntryState;
 	return config;
 }
 
@@ -126,10 +124,6 @@ Scene2090::Scene2090(HollywoodEngine *vm) :
 		_foregroundLayer() {
 	_foregroundLayer.configure(kScene2090ForegroundChunk, kScene2090ForegroundDescriptorCount,
 		kScene2090ForegroundFrameMap, ARRAYSIZE(kScene2090ForegroundFrameMap));
-}
-
-bool Scene2090::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2090::initializeCustomPreviewState() {
@@ -152,10 +146,6 @@ void Scene2090::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2090::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -166,10 +156,6 @@ void Scene2090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawResourceSpriteLayer(_foregroundLayer);
-}
-
-bool Scene2090::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2090::runCustomEntrySequence() {
@@ -307,11 +293,7 @@ void Scene2090::setForegroundFrame(byte frameIndex) {
 
 void Scene2090::runEntryFromScene2080() {
 	resetForegroundLayer(false, 0);
-	_activeActorWorldX = 0x152;
-	_activeActorWorldY = 0x194;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x152, 0x194, 4);
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawClipFrameDelta(kScene2090EntryClipChunk, kScene2090EntryClipDescriptorCount, 0);
@@ -330,11 +312,7 @@ void Scene2090::runEntryFromScene2080() {
 }
 
 void Scene2090::runEntryFromScene2020() {
-	_activeActorWorldX = 0x151;
-	_activeActorWorldY = 0x0df;
-	_activeActorFacing = 1;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x151, 0x0df, 1);
 
 	resetForegroundLayer(true, kScene2090SpecialEntryStartForegroundFrame);
 	drawPlayableComposite();
@@ -356,11 +334,7 @@ void Scene2090::runEntryFromScene2020() {
 
 void Scene2090::runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel) {
-	_activeActorWorldX = startX;
-	_activeActorWorldY = startY;
-	_activeActorFacing = startFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(startX, startY, startFacing);
 
 	drawPlayableComposite();
 	presentFrame();

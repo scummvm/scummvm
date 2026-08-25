@@ -34,8 +34,6 @@ const uint kScene6080InitialRequiredChunkCount = 10;
 const uint kScene6080ArenaFirstChunk = 5;
 const uint kScene6080ArenaLastChunk = 9;
 const uint kScene6080StageIndex = 608;
-const uint16 kScene6080FirstState = 0x17c0;
-const uint16 kScene6080LastState = 0x17c9;
 const uint16 kScene6070ReturnState = 0x17b7;
 const uint16 kScene6070EscapeState = 0x17b9;
 const uint16 kScene6080ViewportXOffset = 0x00a8;
@@ -102,8 +100,6 @@ static PlayableSceneConfig scene6080Config() {
 	config.musicArchiveName = kScene6080MusicArchiveName;
 	config.soundBank0ArchiveName = kScene6080SoundArchiveName;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene6080FirstState;
-	config.mainFlowLastState = kScene6080LastState;
 	return config;
 }
 
@@ -141,20 +137,12 @@ Scene6080::Scene6080(HollywoodEngine *vm) :
 		ARRAYSIZE(kScene6080WaxBallFrameMap));
 }
 
-bool Scene6080::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene6080::initializeCustomPreviewState() {
 	_activeActorWorldX = 0x305;
 	_activeActorWorldY = 0x14d;
 	_activeActorFacing = 4;
 	resetSceneLayers();
 	initializeDefaultPreviewState();
-}
-
-bool Scene6080::hasCustomComposite() const {
-	return true;
 }
 
 void Scene6080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
@@ -171,10 +159,6 @@ void Scene6080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawResourceSpriteLayer(_waxBallLayer);
 	drawResourceSpriteLayer(_guardNormalLayer);
 	drawResourceSpriteLayer(_guardAlternateLayer);
-}
-
-bool Scene6080::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene6080::runCustomEntrySequence() {
