@@ -529,6 +529,10 @@ bool PlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {
 	return _speechOverlay.visible && !_actionOverlayVisible;
 }
 
+bool PlayableScene::shouldApplyGameplayPanelObjectPalette() const {
+	return true;
+}
+
 bool PlayableScene::hasCustomEntrySequence() const {
 	return false;
 }
@@ -2531,7 +2535,8 @@ void PlayableScene::applyGameplayPanelPalette() {
 	if (_paletteCurrent.size() <= kPanelTextColor * 3 + 2)
 		return;
 
-	const bool originalPaletteApplied = _panelArt.applyInteractiveObjectPalette(_paletteCurrent);
+	const bool originalPaletteApplied = !shouldApplyGameplayPanelObjectPalette() ||
+		_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
 	if (!originalPaletteApplied) {
 		const byte colors[] = {
 			kPanelDarkColor, 0x05, 0x06, 0x08,

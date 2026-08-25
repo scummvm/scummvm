@@ -173,6 +173,7 @@ protected:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode);
 	virtual bool shouldDrawSecondaryActorInPlayableComposite() const;
+	virtual bool shouldApplyGameplayPanelObjectPalette() const;
 	virtual bool hasCustomEntrySequence() const;
 	virtual void runCustomEntrySequence();
 	virtual bool prepareCustomGameplayLoop();
