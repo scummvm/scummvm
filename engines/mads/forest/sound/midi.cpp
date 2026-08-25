@@ -90,11 +90,12 @@ int MidiPlayer::open() {
 
 		break;
 	case MT_GM:
-	case MT_MT32:
-		// Forest sends GM data through this driver even when the selected
-		// backend is MT-32, so use the native MPU-401 track mapping.
 		hmiDevice = MidiParser_HMP::kHmiDeviceMpu401;
 		_driver = new MidiDriver_MT32GM(MusicType::MT_GM);
+		break;
+	case MT_MT32:
+		hmiDevice = MidiParser_HMP::kHmiDeviceMt32;
+		_driver = new MidiDriver_MT32GM(MusicType::MT_MT32);
 		break;
 	default:
 		_driver = new MidiDriver_NULL_Multisource();
