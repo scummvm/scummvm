@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-08-25 20:51+0000\n"
+"POT-Creation-Date: 2026-08-25 20:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -9965,22 +9965,6 @@ msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:400
 msgid "Spell level 6"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:403
-msgid "Map cursor up"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:404
-msgid "Map cursor down"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:405
-msgid "Map cursor left"
-msgstr ""
-
-#: engines/kyra/engine/eobcommon.cpp:406
-msgid "Map cursor right"
 msgstr ""
 
 #: engines/kyra/engine/lol.cpp:509
