@@ -79,6 +79,7 @@ struct GameplayState {
 		clearInventoryActionTables();
 		sharedActorSpriteBankLoaded = false;
 		sueInventoryResourceTablesLoaded = false;
+		ronInventoryInitialized = false;
 		sueInventoryInitialized = false;
 		sceneActionCallbacksInstalled = false;
 		inventoryPanelDirty = false;
@@ -538,6 +539,7 @@ struct GameplayState {
 		inventoryItemSlotByOwnerAndItemId[owner][0x01] = 3;
 		inventoryItemCountByOwner[owner] = 3;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(3);
+		ronInventoryInitialized = true;
 		inventoryPanelDirty = true;
 	}
 
@@ -819,6 +821,7 @@ struct GameplayState {
 	uint16 dialogueRelationMode2HandlerIdsByItemPair[kInventoryItemRelationTableEntryCount];
 	bool sharedActorSpriteBankLoaded;
 	bool sueInventoryResourceTablesLoaded;
+	bool ronInventoryInitialized;
 	bool sueInventoryInitialized;
 	bool sceneActionCallbacksInstalled;
 	bool inventoryPanelDirty;
