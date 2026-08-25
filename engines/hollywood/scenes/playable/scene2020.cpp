@@ -34,8 +34,6 @@ const uint kScene2020InitialRequiredChunkCount = 19;
 const uint kScene2020ArenaFirstChunk = 5;
 const uint kScene2020ArenaLastChunk = 18;
 const uint kScene2020StageIndex = 202;
-const uint16 kScene2020FirstState = 0x07e4;
-const uint16 kScene2020LastState = 0x07ed;
 const uint16 kScene2020PrincessExitState = 0x07e5;
 const uint16 kScene2010ReturnFromScene2020State = 0x07db;
 const uint16 kScene2020PrincessExitNextState = 0x082b;
@@ -139,8 +137,6 @@ static PlayableSceneConfig scene2020Config() {
 	config.soundBank0ArchiveName = kScene2020SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2020FirstState;
-	config.mainFlowLastState = kScene2020LastState;
 	return config;
 }
 
@@ -163,23 +159,11 @@ Scene2020::Scene2020(HollywoodEngine *vm) :
 		kScene2020PrincessFrameMap, ARRAYSIZE(kScene2020PrincessFrameMap));
 }
 
-bool Scene2020::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene2020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 
-	_activeActorWorldX = 0x190;
-	_activeActorWorldY = 0x1b1;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene2020::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x190, 0x1b1, 4);
 }
 
 void Scene2020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -194,10 +178,6 @@ void Scene2020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-}
-
-bool Scene2020::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2020::runCustomEntrySequence() {
@@ -477,11 +457,7 @@ void Scene2020::runEntryFromExterior() {
 
 void Scene2020::runPrincessExitCutscene() {
 	resetAnimationLayers();
-	_activeActorWorldX = 0x320;
-	_activeActorWorldY = 0x1b1;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x320, 0x1b1, 4);
 
 	drawPlayableComposite();
 	presentFrame();

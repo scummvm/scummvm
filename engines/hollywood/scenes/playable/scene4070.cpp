@@ -35,8 +35,6 @@ const uint kScene4070InitialRequiredChunkCount = 5;
 const uint kScene4070ArenaFirstChunk = 5;
 const uint kScene4070ArenaLastChunk = 15;
 const uint kScene4070StageIndex = 407;
-const uint16 kScene4070FirstState = 0x0fe6;
-const uint16 kScene4070LastState = 0x0fef;
 const uint16 kScene4100EntryFromScene4070State = 0x1008;
 const int kScene4070EntryStartX = 0x03a7;
 const int kScene4070EntryStartY = 0x013a;
@@ -189,8 +187,6 @@ PlayableSceneConfig scene4070Config() {
 	config.soundBank0ArchiveName = kScene4070SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene4070FirstState;
-	config.mainFlowLastState = kScene4070LastState;
 	return config;
 }
 
@@ -209,26 +205,14 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 	_loopingSoundBank0.setArchive(Common::Path(kScene4070SoundArchiveName));
 }
 
-bool Scene4070::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene4070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 	rememberOriginalColorMap();
 
-	_activeActorWorldX = kScene4070EntryTargetX;
-	_activeActorWorldY = kScene4070EntryTargetY;
-	_activeActorFacing = kScene4070EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene4070EntryTargetX, kScene4070EntryTargetY, kScene4070EntryFacing);
 	_rightSidePatchActive = _activeActorWorldX >= kScene4070SidePatchThresholdX;
 	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-bool Scene4070::hasCustomComposite() const {
-	return true;
 }
 
 void Scene4070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -247,10 +231,6 @@ void Scene4070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4070ForegroundHighChunk], _sceneFramebuffer);
 	if (_sceneChunkTable.isValidChunk(kScene4070ForegroundBlockChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4070ForegroundBlockChunk], _sceneFramebuffer);
-}
-
-bool Scene4070::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene4070::runCustomEntrySequence() {

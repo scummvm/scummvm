@@ -30,9 +30,7 @@
 
 namespace Hollywood {
 
-const uint16 kScene7100FirstState = 0x1bbc;
 const uint16 kScene7100DialogueEntryState = 0x1bbd;
-const uint16 kScene7100LastState = 0x1bc5;
 const uint16 kScene7100ExitState6072 = 0x17b8;
 const uint16 kScene7100ExitState6075 = 0x17bb;
 const uint16 kScene7100RescueExitState6074 = 0x17ba;
@@ -153,8 +151,6 @@ static PlayableSceneConfig scene7100Config() {
 	config.stageIndex = kScene7100StageIndex;
 	config.debugName = "Scene 7100";
 	config.viewportXOffset = kScene7100ViewportXOffset;
-	config.mainFlowFirstState = kScene7100FirstState;
-	config.mainFlowLastState = kScene7100LastState;
 	return config;
 }
 
@@ -169,10 +165,6 @@ Scene7100::Scene7100(HollywoodEngine *vm) :
 		_environmentState(2),
 		_environmentFrame(0),
 		_manualPrimaryAnimationActive(false) {
-}
-
-bool Scene7100::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene7100::initializeCustomPreviewState() {
@@ -212,10 +204,6 @@ void Scene7100::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-bool Scene7100::hasCustomComposite() const {
-	return true;
-}
-
 void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
 		int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
@@ -237,19 +225,11 @@ void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawEnvironmentOverlayAfterForeground();
 }
 
-bool Scene7100::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene7100::runCustomEntrySequence() {
 	if (_vm->gameState().mainFlowStateId == kScene7100DialogueEntryState) {
 		runRescueEntrySequence();
 	} else {
-		_activeActorWorldX = kScene7100EntryX;
-		_activeActorWorldY = kScene7100EntryY;
-		_activeActorFacing = kScene7100EntryFacing;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(kScene7100EntryX, kScene7100EntryY, kScene7100EntryFacing);
 		drawPlayableComposite();
 		presentFrame();
 	}

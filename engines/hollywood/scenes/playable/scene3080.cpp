@@ -34,8 +34,6 @@ const uint kScene3080InitialRequiredChunkCount = 18;
 const uint kScene3080ArenaFirstChunk = 5;
 const uint kScene3080ArenaLastChunk = 17;
 const uint kScene3080StageIndex = 308;
-const uint16 kScene3080FirstState = 0x0c08;
-const uint16 kScene3080LastState = 0x0c11;
 const uint16 kScene3080EntryFromForestState = 0x0c08;
 const uint16 kScene3080EntryFromCabinState = 0x0c09;
 const uint16 kScene3080EntryFromBrookState = 0x0c0a;
@@ -115,8 +113,6 @@ static PlayableSceneConfig scene3080Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene3080MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3080SoundArchiveName;
-	config.mainFlowFirstState = kScene3080FirstState;
-	config.mainFlowLastState = kScene3080LastState;
 	return config;
 }
 
@@ -131,10 +127,6 @@ Scene3080::Scene3080(HollywoodEngine *vm) :
 		kScene3080LargeLayerFrameMap, ARRAYSIZE(kScene3080LargeLayerFrameMap));
 	_smallIdleLayer.configure(7, kScene3080SmallIdleDescriptorCount,
 		kScene3080SmallIdleFrameMap, ARRAYSIZE(kScene3080SmallIdleFrameMap));
-}
-
-bool Scene3080::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene3080::initializeCustomPreviewState() {
@@ -164,10 +156,6 @@ void Scene3080::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene3080::hasCustomComposite() const {
-	return true;
-}
-
 void Scene3080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -190,10 +178,6 @@ void Scene3080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 	}
 	drawResourceSpriteLayer(_smallIdleLayer);
-}
-
-bool Scene3080::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene3080::runCustomEntrySequence() {

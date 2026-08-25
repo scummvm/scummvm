@@ -33,8 +33,6 @@ const uint kScene4100InitialRequiredChunkCount = 5;
 const uint kScene4100ArenaFirstChunk = 5;
 const uint kScene4100ArenaLastChunk = 7;
 const uint kScene4100StageIndex = 410;
-const uint16 kScene4100FirstState = 0x1004;
-const uint16 kScene4100LastState = 0x100d;
 const uint16 kScene4070ReturnState = 0x0fe6;
 const uint16 kScene4080ReturnState = 0x0ff0;
 const uint16 kScene4090ReturnState = 0x0ffa;
@@ -93,17 +91,11 @@ static PlayableSceneConfig scene4100Config() {
 	config.soundBank0ArchiveName = kScene4100SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene4100FirstState;
-	config.mainFlowLastState = kScene4100LastState;
 	return config;
 }
 
 Scene4100::Scene4100(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4100Config(), "scene4100", 0x017e, 0x0138, 2, 0xfd, 0xfb) {
-}
-
-bool Scene4100::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene4100::initializeCustomPreviewState() {
@@ -145,10 +137,6 @@ void Scene4100::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene4100::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene4100::runCustomEntrySequence() {
 	applyD10PaletteDimming();
 	resetPaletteCycle();
@@ -161,11 +149,7 @@ void Scene4100::runCustomEntrySequence() {
 		break;
 	case 0x1005:
 		_soundBank0.playSample(5, 100);
-		_activeActorWorldX = 0x0093;
-		_activeActorWorldY = 0x00a4;
-		_activeActorFacing = 2;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(0x0093, 0x00a4, 2);
 		drawPlayableComposite();
 		presentFrame();
 		if (!state.scene4100EntryLineSeen) {
@@ -175,21 +159,13 @@ void Scene4100::runCustomEntrySequence() {
 		break;
 	case 0x1006:
 		_soundBank0.playSample(5, 100);
-		_activeActorWorldX = 0x0166;
-		_activeActorWorldY = 0x0075;
-		_activeActorFacing = 3;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(0x0166, 0x0075, 3);
 		drawPlayableComposite();
 		presentFrame();
 		break;
 	case 0x1007:
 		_soundBank0.playSample(5, 100);
-		_activeActorWorldX = 0x01f1;
-		_activeActorWorldY = 0x0077;
-		_activeActorFacing = 3;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(0x01f1, 0x0077, 3);
 		drawPlayableComposite();
 		presentFrame();
 		break;

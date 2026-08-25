@@ -36,8 +36,6 @@ const uint kScene1020InitialRequiredChunkCount = 23;
 const uint kScene1020ArenaFirstChunk = 5;
 const uint kScene1020ArenaLastChunk = 22;
 const uint kScene1020StageIndex = 102;
-const uint16 kScene1020FirstState = 0x03fc;
-const uint16 kScene1020LastState = 0x0405;
 const uint16 kScene1020RightEntryState = 0x03fc;
 const uint16 kScene1020OverlayEntryState = 0x03fd;
 const uint16 kScene1020ExitState1010RightEntry = 0x03f3;
@@ -213,8 +211,6 @@ static PlayableSceneConfig scene1020Config() {
 	config.musicArchiveName = kScene1020MusicArchiveName;
 	config.soundBank0ArchiveName = kScene1020SoundArchiveName;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene1020FirstState;
-	config.mainFlowLastState = kScene1020LastState;
 	return config;
 }
 
@@ -231,10 +227,6 @@ bool Scene1020::shouldLoadArenaChunk(uint index) const {
 	if (isFirstEntryState())
 		return index >= 14 && index <= 19;
 	return index >= 20 && index <= 22;
-}
-
-bool Scene1020::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene1020::initializeCustomPreviewState() {
@@ -257,10 +249,6 @@ void Scene1020::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene1020::hasCustomComposite() const {
-	return true;
-}
-
 void Scene1020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -278,11 +266,12 @@ void Scene1020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawResourceSpriteLayer(_quasimodoLayer);
 }
 
-bool Scene1020::hasCustomEntrySequence() const {
-	return isFirstEntryState() || isSpecialOverlayEntryState();
-}
-
 void Scene1020::runCustomEntrySequence() {
+	if (!isFirstEntryState() && !isSpecialOverlayEntryState()) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
 	GameplayState &state = _vm->gameState();
 	if (isFirstEntryState()) {
 		runEntryPath(kScene1020RightEntryStartX, kScene1020RightEntryStartY,
@@ -294,11 +283,7 @@ void Scene1020::runCustomEntrySequence() {
 		return;
 	}
 
-	_activeActorWorldX = kScene1020OverlayEntryX;
-	_activeActorWorldY = kScene1020OverlayEntryY;
-	_activeActorFacing = kScene1020OverlayEntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene1020OverlayEntryX, kScene1020OverlayEntryY, kScene1020OverlayEntryFacing);
 	drawPlayableComposite();
 	presentFrame();
 	runQuasimodoGrateCutscene();

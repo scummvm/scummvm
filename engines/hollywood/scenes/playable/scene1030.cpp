@@ -168,8 +168,6 @@ static PlayableSceneConfig scene1030Config() {
 	config.musicArchiveName = kScene1030MusicArchiveName;
 	config.soundBank0ArchiveName = kScene1030SoundArchiveName;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene1030FirstEntryState;
-	config.mainFlowLastState = kScene1030LeftEntryState;
 	return config;
 }
 
@@ -197,10 +195,6 @@ Scene1030::Scene1030(HollywoodEngine *vm) :
 	_rightEntryActorLayer.configure(10, kScene1030RightEntryActorDescriptorCount,
 		kScene1030RightEntryActorFrameMap, ARRAYSIZE(kScene1030RightEntryActorFrameMap));
 	_largeForegroundLayer.visible = true;
-}
-
-bool Scene1030::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene1030::initializeCustomPreviewState() {
@@ -242,10 +236,6 @@ void Scene1030::initializeCustomPreviewState() {
 	}
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene1030::hasCustomComposite() const {
-	return true;
 }
 
 void Scene1030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -297,11 +287,12 @@ void Scene1030::applyActorDepthClipForDrawOrder(byte actorDrawOrderMode) {
 		_drawActorDepthYThresholds[3] = actorDrawOrderMode < 3 ? 0x1e0 : 0;
 }
 
-bool Scene1030::hasCustomEntrySequence() const {
-	return isFirstEntryState() || isLeftEntryState();
-}
-
 void Scene1030::runCustomEntrySequence() {
+	if (!isFirstEntryState() && !isLeftEntryState()) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
 	GameplayState &state = _vm->gameState();
 
 	if (isLeftEntryState()) {
@@ -600,11 +591,7 @@ void Scene1030::runFirstEntryConversation() {
 }
 
 void Scene1030::startFirstEntryActorPath() {
-	_activeActorWorldX = kScene1030FirstEntryStartX;
-	_activeActorWorldY = kScene1030FirstEntryStartY;
-	_activeActorFacing = kScene1030FirstEntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene1030FirstEntryStartX, kScene1030FirstEntryStartY, kScene1030FirstEntryFacing);
 
 	queueActorPathWithPaletteRegionRouting(kScene1030FirstEntryStartX, kScene1030FirstEntryStartY,
 		kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY, kScene1030InvalidActorFacing, 0);
@@ -645,11 +632,7 @@ void Scene1030::finishFirstEntryActorPath() {
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
 	} else {
-		_activeActorWorldX = kScene1030FirstEntryTargetX;
-		_activeActorWorldY = kScene1030FirstEntryTargetY;
-		_activeActorFacing = kScene1030FirstEntryFacing;
-		_activeActorCel = 0;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		setActiveActorPose(kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY, kScene1030FirstEntryFacing);
 	}
 
 	_entryActorPathFrameIndex = 0;

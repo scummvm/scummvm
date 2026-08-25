@@ -30,8 +30,6 @@
 
 namespace Hollywood {
 
-const uint16 kScene7080FirstState = 0x1ba8;
-const uint16 kScene7080LastState = 0x1bb1;
 const uint16 kScene7080BackToG07State = 0x1ba0;
 const uint kScene7080InitialRequiredChunkCount = 9;
 const uint kScene7080ArenaFirstChunk = 5;
@@ -63,18 +61,12 @@ static PlayableSceneConfig scene7080Config() {
 	config.stageIndex = kScene7080StageIndex;
 	config.debugName = "Scene 7080";
 	config.viewportXOffset = kScene7080ViewportXOffset;
-	config.mainFlowFirstState = kScene7080FirstState;
-	config.mainFlowLastState = kScene7080LastState;
 	return config;
 }
 
 Scene7080::Scene7080(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7080Config(), "scene7080", kScene7080EntryX, kScene7080EntryY,
 			kScene7080EntryFacing, 0xfd, 0xfb) {
-}
-
-bool Scene7080::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene7080::initializeCustomPreviewState() {
@@ -89,18 +81,10 @@ void Scene7080::initializeCustomPreviewState() {
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_previousAmbientMusicTrackId = 0;
-	_activeActorWorldX = kScene7080EntryX;
-	_activeActorWorldY = kScene7080EntryY;
-	_activeActorFacing = kScene7080EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7080EntryX, kScene7080EntryY, kScene7080EntryFacing);
 	_secondaryActorFrame = 0;
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-bool Scene7080::hasCustomComposite() const {
-	return true;
 }
 
 void Scene7080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -118,17 +102,9 @@ void Scene7080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 }
 
-bool Scene7080::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene7080::runCustomEntrySequence() {
 	_soundBank0.playSample(4, 100);
-	_activeActorWorldX = kScene7080EntryX;
-	_activeActorWorldY = kScene7080EntryY;
-	_activeActorFacing = kScene7080EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7080EntryX, kScene7080EntryY, kScene7080EntryFacing);
 	drawPlayableComposite();
 	presentFrame();
 

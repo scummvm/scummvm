@@ -33,9 +33,7 @@ const uint kScene4110InitialRequiredChunkCount = 5;
 const uint kScene4110ArenaFirstChunk = 5;
 const uint kScene4110ArenaLastChunk = 9;
 const uint kScene4110StageIndex = 411;
-const uint16 kScene4110FirstState = 0x100e;
 const uint16 kScene4110SecondEntryState = 0x100f;
-const uint16 kScene4110LastState = 0x1017;
 const uint16 kScene4010EntryFromRightSideState = 0x0fab;
 const uint16 kScene4100FirstState = 0x1004;
 const uint16 kScene4110ViewportXOffset = 0x00c0;
@@ -122,8 +120,6 @@ static PlayableSceneConfig scene4110Config() {
 	config.soundBank0ArchiveName = kScene4110SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene4110FirstState;
-	config.mainFlowLastState = kScene4110LastState;
 	return config;
 }
 
@@ -149,10 +145,6 @@ Scene4110::Scene4110(HollywoodEngine *vm) :
 	_ambientLoopSound.setArchive(Common::Path(kScene4110SoundArchiveName));
 }
 
-bool Scene4110::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene4110::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetBackgroundLayer();
@@ -170,10 +162,6 @@ void Scene4110::initializeCustomPreviewState() {
 	}
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene4110::hasCustomComposite() const {
-	return true;
 }
 
 void Scene4110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -208,10 +196,6 @@ void Scene4110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawTransientLayers(_backgroundLayers);
 	drawActionOverlayLayer();
-}
-
-bool Scene4110::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene4110::runCustomEntrySequence() {
@@ -428,11 +412,7 @@ void Scene4110::runAlternateStateSequence() {
 	if (_sceneChunkTable.isValidChunk(kScene4110AlternateFinalPatchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4110AlternateFinalPatchChunk], _baseFramebuffer);
 
-	_activeActorWorldX = 0x0221;
-	_activeActorWorldY = 0x011c;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x0221, 0x011c, 4);
 	walkActiveActorTo(0x01e6, 0x011c, 5, 0);
 
 	state.scene4010AlternateBackgroundState = 1;

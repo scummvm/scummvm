@@ -33,9 +33,7 @@ public:
 	Scene6060(HollywoodEngine *vm);
 
 private:
-	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
-	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,

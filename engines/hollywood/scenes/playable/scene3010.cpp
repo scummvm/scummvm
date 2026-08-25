@@ -36,7 +36,6 @@ const uint kScene3010ArenaFirstChunk = 5;
 const uint kScene3010ArenaLastChunk = 13;
 const uint kScene3010StageIndex = 301;
 const uint16 kScene3010FirstState = 0x0bc2;
-const uint16 kScene3010LastState = 0x0bcb;
 const uint16 kScene3010EntryFromScene3020State = 0x0bc3;
 const uint16 kScene3010EntryFromPathState = 0x0bc4;
 const uint16 kScene3020State = 0x0bcc;
@@ -110,8 +109,6 @@ static PlayableSceneConfig scene3010Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene3010MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3010SoundArchiveName;
-	config.mainFlowFirstState = kScene3010FirstState;
-	config.mainFlowLastState = kScene3010LastState;
 	return config;
 }
 
@@ -131,10 +128,6 @@ Scene3010::Scene3010(HollywoodEngine *vm) :
 
 bool Scene3010::shouldLoadArenaChunk(uint index) const {
 	return index < 10 || index == 13;
-}
-
-bool Scene3010::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene3010::initializeCustomPreviewState() {
@@ -161,10 +154,6 @@ void Scene3010::initializeCustomPreviewState() {
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene3010::hasCustomComposite() const {
-	return true;
 }
 
 void Scene3010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -194,11 +183,6 @@ void Scene3010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
 	drawResourceSpriteLayer(_forestIdleLayer);
-}
-
-bool Scene3010::hasCustomEntrySequence() const {
-	return _vm->gameState().mainFlowStateId >= kScene3010FirstState &&
-		_vm->gameState().mainFlowStateId <= kScene3010EntryFromPathState;
 }
 
 void Scene3010::runCustomEntrySequence() {

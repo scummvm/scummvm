@@ -36,6 +36,7 @@
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 #include "hollywood/scenes/resource_delta_clip_player.h"
+#include "hollywood/scenes/scene_registry.h"
 
 namespace Hollywood {
 
@@ -110,6 +111,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
 		_vm(vm),
 		_config(config),
+		_sceneStateId(vm->gameState().mainFlowStateId),
 		_resources(),
 		_sceneChunkTable(_resources.chunkTable),
 		_resourceChunkOffsets(_resources.chunkOffsets),
@@ -228,9 +230,7 @@ PlayableSceneConfig::PlayableSceneConfig() :
 		soundBank0ArchiveName(kDefaultGameplaySoundBank0ArchiveName),
 		loadInventoryActionTables(true),
 		loadActorDepthTables(true),
-		useActorDepthTest(false),
-		mainFlowFirstState(kSceneConfigNoMainFlowRangeStart),
-		mainFlowLastState(kSceneConfigNoMainFlowRangeEnd) {
+		useActorDepthTest(false) {
 }
 
 void PlayableScene::initializeFramebuffers() {
@@ -298,6 +298,14 @@ bool PlayableScene::hasSavedActiveActorPoseForCurrentState() const {
 	return state.activeActorPoseValid &&
 		state.activeActorPoseStateId == state.mainFlowStateId &&
 		isMainFlowStateInScene(state.mainFlowStateId);
+}
+
+void PlayableScene::setActiveActorPose(int worldX, int worldY, byte facing, byte cel) {
+	_activeActorWorldX = worldX;
+	_activeActorWorldY = worldY;
+	_activeActorFacing = facing;
+	_activeActorCel = cel;
+	_activeActorDrawOrderMode = paletteRegionAt(worldX, worldY);
 }
 
 void PlayableScene::restoreActiveActorPoseFromGameState() {
@@ -491,36 +499,21 @@ bool PlayableScene::usesActorDepthTest() const {
 }
 
 bool PlayableScene::isMainFlowStateInScene(uint16 stateId) const {
-	if (_config.mainFlowFirstState > _config.mainFlowLastState)
-		return false;
-	return stateId >= _config.mainFlowFirstState && stateId <= _config.mainFlowLastState;
-}
-
-bool PlayableScene::hasCustomPreviewState() const {
-	return false;
+	return isGameplayStateInScene(_sceneStateId, stateId);
 }
 
 void PlayableScene::initializeCustomPreviewState() {
-}
-
-bool PlayableScene::hasCustomComposite() const {
-	return false;
+	initializeDefaultPreviewState();
 }
 
 void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	(void)drawActiveActor;
-	(void)activeFacing;
-	(void)activeCel;
-	(void)activeWorldX;
-	(void)activeWorldY;
-	(void)drawSecondaryActor;
-	(void)secondaryFacing;
-	(void)secondaryFrame;
-	(void)secondaryWorldX;
-	(void)secondaryWorldY;
 	(void)actorDrawOrderMode;
+	copyBaseFramebufferToSceneFramebuffer();
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	drawActionOverlayLayer();
 }
 
 bool PlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {
@@ -531,11 +524,9 @@ bool PlayableScene::shouldApplyGameplayPanelObjectPalette() const {
 	return true;
 }
 
-bool PlayableScene::hasCustomEntrySequence() const {
-	return false;
-}
-
 void PlayableScene::runCustomEntrySequence() {
+	drawPlayableComposite();
+	presentFrame();
 }
 
 bool PlayableScene::prepareCustomGameplayLoop() {
@@ -1091,12 +1082,7 @@ bool PlayableScene::initializeScenePathTables() {
 }
 
 void PlayableScene::initializePreviewState() {
-	if (hasCustomPreviewState()) {
-		initializeCustomPreviewState();
-		return;
-	}
-
-	initializeDefaultPreviewState();
+	initializeCustomPreviewState();
 }
 
 void PlayableScene::initializeDefaultPreviewState() {
@@ -1120,19 +1106,9 @@ void PlayableScene::drawPreviewComposite() {
 void PlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	if (hasCustomComposite()) {
-		drawCustomComposite(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY,
-			actorDrawOrderMode);
-		return;
-	}
-
-	(void)actorDrawOrderMode;
-	copyBaseFramebufferToSceneFramebuffer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-
-	drawActionOverlayLayer();
+	drawCustomComposite(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY,
+		actorDrawOrderMode);
 }
 
 void PlayableScene::drawPlayableComposite() {
@@ -1424,13 +1400,7 @@ int PlayableScene::drawActorPaletteRemapRun(const Common::Array<byte> &runStream
 }
 
 void PlayableScene::runEntryCutscene() {
-	if (hasCustomEntrySequence()) {
-		runCustomEntrySequence();
-		return;
-	}
-
-	drawPlayableComposite();
-	presentFrame();
+	runCustomEntrySequence();
 }
 
 void PlayableScene::runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY) {

@@ -144,8 +144,6 @@ static PlayableSceneConfig scene7040Config() {
 	config.stageIndex = 704;
 	config.debugName = "Scene 7040";
 	config.viewportXOffset = 0xc8;
-	config.mainFlowFirstState = 0x1b80;
-	config.mainFlowLastState = 0x1b89;
 	return config;
 }
 
@@ -177,10 +175,6 @@ bool Scene7040::shouldRunExitSideEffectsAfterLoop() const {
 	return true;
 }
 
-bool Scene7040::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene7040::initializeCustomPreviewState() {
 	_primaryLeftSpeechLastFrame = 0;
 	_primaryDialogueSpeechLastFrame = 7;
@@ -204,19 +198,11 @@ void Scene7040::initializeCustomPreviewState() {
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_previousAmbientMusicTrackId = 0;
-	_activeActorWorldX = kScene7040Entry7040FirstTargetX;
-	_activeActorWorldY = kScene7040Entry7040FirstTargetY;
-	_activeActorFacing = kScene7040Entry7040Facing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7040Entry7040FirstTargetX, kScene7040Entry7040FirstTargetY, kScene7040Entry7040Facing);
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-bool Scene7040::hasCustomComposite() const {
-	return true;
 }
 
 void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -255,10 +241,6 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	}
 	if (blockChunk != 0)
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
-}
-
-bool Scene7040::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene7040::runCustomEntrySequence() {
@@ -935,11 +917,7 @@ void Scene7040::runMajorHotspotFrankensteinBranch() {
 }
 
 void Scene7040::runMajorHotspotReturnPath(byte finalFacing) {
-	_activeActorWorldX = kScene7040MajorHotspotOverlayEndX;
-	_activeActorWorldY = kScene7040MajorHotspotOverlayEndY;
-	_activeActorFacing = kScene7040MajorHotspotOverlayEndFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7040MajorHotspotOverlayEndX, kScene7040MajorHotspotOverlayEndY, kScene7040MajorHotspotOverlayEndFacing);
 
 	walkActiveActorTo(kScene7040MajorHotspotOverlayEndX, kScene7040MajorHotspotOverlayEndY,
 		kScene7040MajorHotspotReturnStartFacing, 0, false);

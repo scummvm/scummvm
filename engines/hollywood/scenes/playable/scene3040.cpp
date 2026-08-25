@@ -82,8 +82,6 @@ static PlayableSceneConfig scene3040Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene3040MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3040SoundArchiveName;
-	config.mainFlowFirstState = kScene3040State;
-	config.mainFlowLastState = kScene3040State;
 	return config;
 }
 
@@ -135,23 +133,11 @@ Scene3040::Scene3040(HollywoodEngine *vm) :
 		kScene3040LoopFrameMap, ARRAYSIZE(kScene3040LoopFrameMap));
 }
 
-bool Scene3040::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene3040::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 
-	_activeActorWorldX = 0x210;
-	_activeActorWorldY = 0x139;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene3040::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x210, 0x139, 2);
 }
 
 void Scene3040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -174,11 +160,12 @@ void Scene3040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawLooseResourceSpriteLayer(_loopLayer);
 }
 
-bool Scene3040::hasCustomEntrySequence() const {
-	return _vm->gameState().mainFlowStateId == kScene3040State;
-}
-
 void Scene3040::runCustomEntrySequence() {
+	if (_vm->gameState().mainFlowStateId != kScene3040State) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
 	runEntryPath(0x210, 0x139, 2, 0x210, 0x139);
 	resetAnimationLayers();
 	drawPlayableComposite();

@@ -34,7 +34,6 @@ const uint kScene6060InitialRequiredChunkCount = 5;
 const uint kScene6060ArenaFirstChunk = 5;
 const uint kScene6060ArenaLastChunk = 4;
 const uint kScene6060StageIndex = 606;
-const uint16 kScene6060FirstState = 0x17ac;
 const uint16 kScene6060LastState = 0x17ad;
 const uint16 kScene6100EntryState = 0x17d4;
 const uint16 kScene6050ReturnState = 0x17a3;
@@ -81,17 +80,11 @@ static PlayableSceneConfig scene6060Config() {
 	config.soundBank0ArchiveName = kScene6060SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene6060FirstState;
-	config.mainFlowLastState = kScene6060LastState;
 	return config;
 }
 
 Scene6060::Scene6060(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6060Config(), "scene6060", 0x2d0, 0x192, 5, 0xfd, 0xfb) {
-}
-
-bool Scene6060::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene6060::initializeCustomPreviewState() {
@@ -112,10 +105,6 @@ void Scene6060::initializeCustomPreviewState() {
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene6060::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene6060::runCustomEntrySequence() {

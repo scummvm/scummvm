@@ -33,9 +33,7 @@ const uint kScene4060InitialRequiredChunkCount = 5;
 const uint kScene4060ArenaFirstChunk = 5;
 const uint kScene4060ArenaLastChunk = 20;
 const uint kScene4060StageIndex = 406;
-const uint16 kScene4060FirstState = 0x0fdc;
 const uint16 kScene4060ReturnState = 0x0fdd;
-const uint16 kScene4060LastState = 0x0fe5;
 const uint16 kScene4100EntryFromScene4060State = 0x1005;
 const int kScene4060EntryRonWorldX = 0x0064;
 const int kScene4060EntryRonWorldY = 0x0145;
@@ -258,8 +256,6 @@ PlayableSceneConfig scene4060Config() {
 	config.soundBank0ArchiveName = kScene4060SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = false;
-	config.mainFlowFirstState = kScene4060FirstState;
-	config.mainFlowLastState = kScene4060LastState;
 	return config;
 }
 
@@ -289,10 +285,6 @@ Scene4060::Scene4060(HollywoodEngine *vm) :
 		_sherilynSpeechPoseMode(kScene4060SherilynSpeechPoseNone) {
 }
 
-bool Scene4060::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene4060::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetForegroundLayer();
@@ -309,10 +301,6 @@ void Scene4060::initializeCustomPreviewState() {
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene4060::hasCustomComposite() const {
-	return true;
 }
 
 void Scene4060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -349,10 +337,6 @@ void Scene4060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	}
 
 	drawSceneForegroundBlocks(activeWorldY);
-}
-
-bool Scene4060::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene4060::runCustomEntrySequence() {
@@ -616,11 +600,7 @@ void Scene4060::drawSceneForegroundBlocks(int activeWorldY) {
 }
 
 void Scene4060::runFirstEntrySequence() {
-	_activeActorWorldX = kScene4060EntryRonWorldX;
-	_activeActorWorldY = kScene4060EntryRonWorldY;
-	_activeActorFacing = kScene4060EntryRonFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene4060EntryRonWorldX, kScene4060EntryRonWorldY, kScene4060EntryRonFacing);
 	drawPlayableComposite();
 	presentFrame();
 
@@ -636,11 +616,7 @@ void Scene4060::runFirstEntrySequence() {
 }
 
 void Scene4060::runReturnEntrySequence() {
-	_activeActorWorldX = kScene4060ReturnRonWorldX;
-	_activeActorWorldY = kScene4060ReturnRonWorldY;
-	_activeActorFacing = kScene4060ReturnRonFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene4060ReturnRonWorldX, kScene4060ReturnRonWorldY, kScene4060ReturnRonFacing);
 	_soundBank0.playSample(5, 100);
 	drawPlayableComposite();
 	presentFrame();

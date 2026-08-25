@@ -35,8 +35,6 @@ const uint kScene5030InitialRequiredChunkCount = 5;
 const uint kScene5030ArenaFirstChunk = 5;
 const uint kScene5030ArenaLastChunk = 16;
 const uint kScene5030StageIndex = 503;
-const uint16 kScene5030FirstState = 0x13a6;
-const uint16 kScene5030LastState = 0x13af;
 const uint16 kScene5010ReturnState = 0x1393;
 const uint16 kScene5030ViewportXOffset = 0x00c8;
 const uint16 kScene5030ViewportMaxXOffset = 0x0108;
@@ -152,8 +150,6 @@ PlayableSceneConfig scene5030Config() {
 	config.soundBank0ArchiveName = kScene5030SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene5030FirstState;
-	config.mainFlowLastState = kScene5030LastState;
 	return config;
 }
 
@@ -173,24 +169,12 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		kScene5030Chunk10FrameMap, ARRAYSIZE(kScene5030Chunk10FrameMap));
 }
 
-bool Scene5030::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene5030::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
 
-	_activeActorWorldX = 0x152;
-	_activeActorWorldY = 0x16b;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene5030::hasCustomComposite() const {
-	return true;
+	setActiveActorPose(0x152, 0x16b, 2);
 }
 
 void Scene5030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -220,16 +204,8 @@ void Scene5030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
-bool Scene5030::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene5030::runCustomEntrySequence() {
-	_activeActorWorldX = 0x061;
-	_activeActorWorldY = 0x19b;
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x061, 0x19b, 2);
 	drawPlayableComposite();
 	presentFrame();
 

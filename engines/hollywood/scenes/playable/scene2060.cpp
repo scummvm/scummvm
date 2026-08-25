@@ -38,7 +38,6 @@ const uint kScene2060ArenaFirstChunk = 5;
 const uint kScene2060ArenaLastChunk = 31;
 const uint kScene2060StageIndex = 205;
 const uint16 kScene2060FirstState = 0x080c;
-const uint16 kScene2060LastState = 0x0811;
 const uint16 kScene2050LabyrinthReturnState = 0x0803;
 const uint16 kScene2070LabyrinthExitState = 0x0816;
 const uint16 kScene2060ViewportXOffset = 0x0068;
@@ -140,8 +139,6 @@ static PlayableSceneConfig scene2060Config() {
 	config.soundBank0ArchiveName = kScene2060SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2060FirstState;
-	config.mainFlowLastState = kScene2060LastState;
 	return config;
 }
 
@@ -153,10 +150,6 @@ Scene2060::Scene2060(HollywoodEngine *vm) :
 		_guideDirection(0),
 		_guideFrameIndex(0),
 		_guideFrameCount(0) {
-}
-
-bool Scene2060::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2060::initializeCustomPreviewState() {
@@ -202,10 +195,6 @@ void Scene2060::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2060::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -218,10 +207,6 @@ void Scene2060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawGuideLayer();
 	drawActionOverlayLayer();
-}
-
-bool Scene2060::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2060::runCustomEntrySequence() {

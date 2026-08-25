@@ -34,8 +34,6 @@ const uint kScene2040InitialRequiredChunkCount = 18;
 const uint kScene2040ArenaFirstChunk = 5;
 const uint kScene2040ArenaLastChunk = 17;
 const uint kScene2040StageIndex = 204;
-const uint16 kScene2040FirstState = 0x07f8;
-const uint16 kScene2040LastState = 0x0801;
 const uint16 kScene2030EntryFromSphinxState = 0x07f0;
 const uint16 kScene2050EntryState = 0x0802;
 const uint16 kScene2040EntryFromInteriorState = 0x07f9;
@@ -130,8 +128,6 @@ static PlayableSceneConfig scene2040Config() {
 	config.soundBank0ArchiveName = kScene2040SoundArchiveName;
 	config.loadActorDepthTables = true;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene2040FirstState;
-	config.mainFlowLastState = kScene2040LastState;
 	return config;
 }
 
@@ -141,10 +137,6 @@ Scene2040::Scene2040(HollywoodEngine *vm) :
 		_foregroundLayer() {
 	_foregroundLayer.configure(5, kScene2040ForegroundDescriptorCount,
 		kScene2040ForegroundFrameMap, ARRAYSIZE(kScene2040ForegroundFrameMap));
-}
-
-bool Scene2040::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene2040::initializeCustomPreviewState() {
@@ -169,10 +161,6 @@ void Scene2040::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2040::hasCustomComposite() const {
-	return true;
-}
-
 void Scene2040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -183,10 +171,6 @@ void Scene2040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
 	drawResourceSpriteLayer(_foregroundLayer);
-}
-
-bool Scene2040::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene2040::runCustomEntrySequence() {

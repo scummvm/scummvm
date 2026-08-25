@@ -28,9 +28,7 @@ namespace Hollywood {
 
 enum {
 	kSceneConfigUseViewportOffset = 0xffff,
-	kSceneConfigNoAudioChapter = 0xff,
-	kSceneConfigNoMainFlowRangeStart = 0xffff,
-	kSceneConfigNoMainFlowRangeEnd = 0
+	kSceneConfigNoAudioChapter = 0xff
 };
 
 /*
@@ -65,8 +63,6 @@ struct PlayableSceneConfig {
 	bool loadInventoryActionTables;
 	bool loadActorDepthTables;
 	bool useActorDepthTest;
-	uint16 mainFlowFirstState;
-	uint16 mainFlowLastState;
 };
 
 } // End of namespace Hollywood

@@ -35,7 +35,6 @@ const uint kScene3070ArenaFirstChunk = 5;
 const uint kScene3070ArenaLastChunk = 36;
 const uint kScene3070StageIndex = 307;
 const uint16 kScene3070FirstState = 0x0bfe;
-const uint16 kScene3070LastState = 0x0c07;
 const uint16 kScene3070EntryFromOtherSideState = 0x0bff;
 const uint16 kScene3070LateCutsceneState = 0x0c00;
 const uint16 kScene3060ReturnFromScene3070State = 0x0bf5;
@@ -180,8 +179,6 @@ static PlayableSceneConfig scene3070Config() {
 	config.walkablePaletteMaxRegion = 2;
 	config.musicArchiveName = kScene3070MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3070SoundArchiveName;
-	config.mainFlowFirstState = kScene3070FirstState;
-	config.mainFlowLastState = kScene3070LastState;
 	return config;
 }
 
@@ -205,10 +202,6 @@ bool Scene3070::shouldLoadArenaChunk(uint index) const {
 	return (index >= 5 && index <= 23) || index == 35 || index == 36;
 }
 
-bool Scene3070::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene3070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetCutsceneLayers();
@@ -228,10 +221,6 @@ void Scene3070::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene3070::hasCustomComposite() const {
-	return true;
-}
-
 void Scene3070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -249,10 +238,6 @@ void Scene3070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY, actorDrawOrderMode, !_lateCutsceneActive);
 	drawActionOverlayLayer();
-}
-
-bool Scene3070::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene3070::runCustomEntrySequence() {
@@ -640,11 +625,7 @@ void Scene3070::runEntryFromSecretPassage() {
 
 void Scene3070::runEntryFromOtherSide() {
 	GameplayState &state = _vm->gameState();
-	_activeActorWorldX = 0x0dc;
-	_activeActorWorldY = 0x1b6;
-	_activeActorFacing = 1;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x0dc, 0x1b6, 1);
 	drawPlayableComposite();
 	if (runCurtainRevealFromBlack())
 		return;

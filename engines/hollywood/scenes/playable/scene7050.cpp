@@ -73,8 +73,6 @@ static PlayableSceneConfig scene7050Config() {
 	config.stageIndex = 705;
 	config.debugName = "Scene 7050";
 	config.viewportXOffset = 0x68;
-	config.mainFlowFirstState = 0x1b8a;
-	config.mainFlowLastState = 0x1b8a;
 	return config;
 }
 
@@ -87,10 +85,6 @@ Scene7050::Scene7050(HollywoodEngine *vm) :
 	_cloakroomAttendantLayer.configure(7, kScene7050Chunk7DescriptorCount,
 		kScene7050Chunk7FrameMap, ARRAYSIZE(kScene7050Chunk7FrameMap));
 	_cloakroomAttendantLayer.visible = true;
-}
-
-bool Scene7050::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene7050::initializeCustomPreviewState() {
@@ -108,19 +102,11 @@ void Scene7050::initializeCustomPreviewState() {
 	_cloakroomAttendantAnimation.reset();
 	_cloakroomAttendantLayer.reset(_cloakroomAttendantAnimation.channel.frameIndex);
 	_cloakroomAttendantLayer.visible = true;
-	_activeActorWorldX = kScene7050EntryX;
-	_activeActorWorldY = kScene7050EntryY;
-	_activeActorFacing = kScene7050EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7050EntryX, kScene7050EntryY, kScene7050EntryFacing);
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-bool Scene7050::hasCustomComposite() const {
-	return true;
 }
 
 void Scene7050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -142,17 +128,9 @@ void Scene7050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
 }
 
-bool Scene7050::hasCustomEntrySequence() const {
-	return true;
-}
-
 void Scene7050::runCustomEntrySequence() {
 	_soundBank0.playSample(4, 100);
-	_activeActorWorldX = kScene7050EntryX;
-	_activeActorWorldY = kScene7050EntryY;
-	_activeActorFacing = kScene7050EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7050EntryX, kScene7050EntryY, kScene7050EntryFacing);
 	_cloakroomAttendantAnimation.reset();
 	drawPlayableComposite();
 	presentFrame();

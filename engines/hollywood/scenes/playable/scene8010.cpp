@@ -131,8 +131,6 @@ PlayableSceneConfig scene8010Config() {
 	config.musicArchiveName = kScene8010MusicArchiveName;
 	config.soundBank0ArchiveName = kScene8010SoundArchiveName;
 	config.loadActorDepthTables = false;
-	config.mainFlowFirstState = kScene8010FirstState;
-	config.mainFlowLastState = kScene8010ReturnEntryState;
 	return config;
 }
 
@@ -148,18 +146,10 @@ Scene8010::Scene8010(HollywoodEngine *vm) :
 		_fishermanQuizAlternatePattern(_random.getRandomBit() != 0) {
 }
 
-bool Scene8010::hasCustomPreviewState() const {
-	return true;
-}
-
 void Scene8010::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetSceneAnimations();
 	setActiveActorPose(kScene8010EntryTargetX, kScene8010EntryTargetY, kScene8010EntryFacing);
-}
-
-bool Scene8010::hasCustomComposite() const {
-	return true;
 }
 
 void Scene8010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -177,13 +167,14 @@ void Scene8010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
-bool Scene8010::hasCustomEntrySequence() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return stateId == kScene8010FirstState || stateId == kScene8010ReturnEntryState;
-}
-
 void Scene8010::runCustomEntrySequence() {
-	if (_vm->gameState().mainFlowStateId == kScene8010ReturnEntryState) {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	if (stateId != kScene8010FirstState && stateId != kScene8010ReturnEntryState) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
+	if (stateId == kScene8010ReturnEntryState) {
 		runReturnEntryTransition();
 		return;
 	}

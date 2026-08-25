@@ -165,16 +165,12 @@ protected:
 	virtual bool shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const;
 
 	// Scene hooks
-	// Each hasCustom*() method gates the corresponding initialization, composite, or entry hook.
-	virtual bool hasCustomPreviewState() const;
 	virtual void initializeCustomPreviewState();
-	virtual bool hasCustomComposite() const;
 	virtual void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode);
 	virtual bool shouldDrawSecondaryActorInPlayableComposite() const;
 	virtual bool shouldApplyGameplayPanelObjectPalette() const;
-	virtual bool hasCustomEntrySequence() const;
 	virtual void runCustomEntrySequence();
 	virtual bool prepareCustomGameplayLoop();
 	// Returning true skips the shared primary-speech and ambient updates for this frame.
@@ -208,6 +204,7 @@ protected:
 	bool hasSavedActiveActorPoseForCurrentState() const;
 	void restoreActiveActorPoseFromGameState();
 	void syncActiveActorPoseToGameState();
+	void setActiveActorPose(int worldX, int worldY, byte facing, byte cel = 0);
 
 	// Framebuffers
 	void initializeFramebuffers();
@@ -449,6 +446,7 @@ protected:
 	// Engine and resources
 	HollywoodEngine *_vm;
 	PlayableSceneConfig _config;
+	uint16 _sceneStateId;
 
 	// In helper-backed groups, reference members alias storage owned by the first object
 	// in the group, preserving the protected names used by scene-specific hooks.

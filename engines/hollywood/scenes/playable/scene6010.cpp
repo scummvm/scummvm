@@ -37,8 +37,6 @@ const uint kScene6010InitialRequiredChunkCount = 19;
 const uint kScene6010ArenaFirstChunk = 5;
 const uint kScene6010ArenaLastChunk = 18;
 const uint kScene6010StageIndex = 601;
-const uint16 kScene6010FirstState = 0x177a;
-const uint16 kScene6010LastState = 0x1783;
 const uint16 kScene6010EntryState = 0x177a;
 const uint16 kScene6011EntryState = 0x177b;
 const uint16 kScene6012EntryState = 0x177c;
@@ -136,8 +134,6 @@ static PlayableSceneConfig scene6010Config() {
 	config.musicArchiveName = kScene6010MusicArchiveName;
 	config.soundBank0ArchiveName = kScene6010SoundArchiveName;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene6010FirstState;
-	config.mainFlowLastState = kScene6010LastState;
 	return config;
 }
 
@@ -145,10 +141,6 @@ Scene6010::Scene6010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6010Config(), "scene6010", 0x327, 0x1c5, 5, 0xfd, 0xfb),
 		_originalColorToItemMap(),
 		_temporaryOverlayLayers() {
-}
-
-bool Scene6010::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene6010::initializeCustomPreviewState() {
@@ -175,10 +167,6 @@ void Scene6010::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene6010::hasCustomComposite() const {
-	return true;
-}
-
 void Scene6010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -188,11 +176,6 @@ void Scene6010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-}
-
-bool Scene6010::hasCustomEntrySequence() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return stateId >= kScene6010EntryState && stateId <= kScene6013EntryState;
 }
 
 void Scene6010::runCustomEntrySequence() {

@@ -36,8 +36,6 @@ const uint kScene3020InitialRequiredChunkCount = 11;
 const uint kScene3020ArenaFirstChunk = 5;
 const uint kScene3020ArenaLastChunk = 10;
 const uint kScene3020StageIndex = 302;
-const uint16 kScene3020FirstState = 0x0bcc;
-const uint16 kScene3020LastState = 0x0bd5;
 const uint16 kScene3020EntryFromScene3010State = 0x0bcc;
 const uint16 kScene3020EntryFromScene3030State = 0x0bcd;
 const uint16 kScene3010EntryFromScene3020State = 0x0bc3;
@@ -89,8 +87,6 @@ PlayableSceneConfig scene3020Config() {
 	config.walkablePaletteMaxRegion = 20;
 	config.musicArchiveName = kScene3020MusicArchiveName;
 	config.soundBank0ArchiveName = kScene3020SoundArchiveName;
-	config.mainFlowFirstState = kScene3020FirstState;
-	config.mainFlowLastState = kScene3020LastState;
 	return config;
 }
 
@@ -100,10 +96,6 @@ Scene3020::Scene3020(HollywoodEngine *vm) :
 		_loopLayer() {
 	_loopLayer.configure(7, kScene3020LoopDescriptorCount,
 		kScene3020LoopFrameMap, ARRAYSIZE(kScene3020LoopFrameMap));
-}
-
-bool Scene3020::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene3020::initializeCustomPreviewState() {
@@ -124,10 +116,6 @@ void Scene3020::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene3020::hasCustomComposite() const {
-	return true;
-}
-
 void Scene3020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
@@ -141,13 +129,14 @@ void Scene3020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawForegroundBlocks(activeWorldY);
 }
 
-bool Scene3020::hasCustomEntrySequence() const {
-	return _vm->gameState().mainFlowStateId == kScene3020EntryFromScene3010State ||
-		_vm->gameState().mainFlowStateId == kScene3020EntryFromScene3030State;
-}
-
 void Scene3020::runCustomEntrySequence() {
-	if (_vm->gameState().mainFlowStateId == kScene3020EntryFromScene3030State)
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	if (stateId != kScene3020EntryFromScene3010State && stateId != kScene3020EntryFromScene3030State) {
+		PlayableScene::runCustomEntrySequence();
+		return;
+	}
+
+	if (stateId == kScene3020EntryFromScene3030State)
 		runEntryFromScene3030();
 	else
 		runEntryFromScene3010();
@@ -316,11 +305,7 @@ void Scene3020::runEntryFromScene3010() {
 }
 
 void Scene3020::runEntryFromScene3030() {
-	_activeActorWorldX = 0x13d;
-	_activeActorWorldY = 0x138;
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(0x13d, 0x138, 4);
 	runDescriptorTransitionClip(kScene3020ReturnTransitionChunk,
 		kScene3020ReturnTransitionDescriptorCount, kScene3020ReturnTransitionFinalFrame);
 }

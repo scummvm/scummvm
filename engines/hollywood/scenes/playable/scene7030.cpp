@@ -36,8 +36,6 @@ const uint kScene7030ArenaFirstChunk = 5;
 const uint kScene7030ArenaLastChunk = 11;
 const uint kScene7030StageIndex = 703;
 const uint16 kScene7030ViewportXOffset = 0x60;
-const uint16 kScene7030FirstState = 0x1b76;
-const uint16 kScene7030LastState = 0x1b7f;
 const uint16 kScene7030State7031 = 0x1b77;
 const uint16 kScene7030ExitState7040 = 0x1b80;
 const uint16 kScene7030ReturnState7011 = 0x1b63;
@@ -95,8 +93,6 @@ static PlayableSceneConfig scene7030Config() {
 	config.debugName = "Scene 7030";
 	config.viewportXOffset = kScene7030ViewportXOffset;
 	config.useActorDepthTest = true;
-	config.mainFlowFirstState = kScene7030FirstState;
-	config.mainFlowLastState = kScene7030LastState;
 	return config;
 }
 
@@ -116,10 +112,6 @@ Scene7030::Scene7030(HollywoodEngine *vm) :
 		_chunk5TimerAccumulator(0),
 		_chunk6TimerAccumulator(0),
 		_chunk5FrameMillis(kScene7030Chunk5FrameMillis) {
-}
-
-bool Scene7030::hasCustomPreviewState() const {
-	return true;
 }
 
 void Scene7030::initializeCustomPreviewState() {
@@ -152,11 +144,7 @@ void Scene7030::initializeCustomPreviewState() {
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_previousAmbientMusicTrackId = 0;
-	_activeActorWorldX = kScene7030Entry7030TargetX;
-	_activeActorWorldY = kScene7030Entry7030TargetY;
-	_activeActorFacing = kScene7030Entry7030Facing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	setActiveActorPose(kScene7030Entry7030TargetX, kScene7030Entry7030TargetY, kScene7030Entry7030Facing);
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
@@ -169,10 +157,6 @@ void Scene7030::initializeCustomPreviewState() {
 		state.punchBowlGlassPatchState = _sceneStateFlags[2];
 	}
 	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-bool Scene7030::hasCustomComposite() const {
-	return true;
 }
 
 void Scene7030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -205,10 +189,6 @@ void Scene7030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 bool Scene7030::shouldDrawSecondaryActorInPlayableComposite() const {
 	return _speechOverlay.visible && !_actionOverlayVisible;
-}
-
-bool Scene7030::hasCustomEntrySequence() const {
-	return true;
 }
 
 void Scene7030::runCustomEntrySequence() {
