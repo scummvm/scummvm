@@ -31,6 +31,7 @@ namespace Data {
 
 constexpr int MAX_NAME_LENGTH = 14;
 constexpr int QUEST_COUNT = 9;
+constexpr int OVERWORLD_ENTITY_COUNT = 40;
 
 extern const char *SEX_NAMES[];
 extern const char *RACE_NAMES[];
@@ -75,6 +76,20 @@ enum TransportType {
 	TRANSPORT_FOOT = 0, TRANSPORT_HORSE = 1, TRANSPORT_CART = 2, TRANSPORT_RAFT = 3,
 	TRANSPORT_FRIGATE = 4, TRANSPORT_AIRCAR = 5, TRANSPORT_SHUTTLE = 6, TRANSPORT_TIME_MACHINE = 7,
 	TRANSPORT_COUNT = 8
+};
+
+/**
+ * Entity on the overworld map, such as vechiles or creatures
+ */
+struct OverworldEntity {
+	int16 _type;
+	int16 _data;
+	int16 _x;
+	int16 _y;
+	int16 _hits;
+	int16 _unused1, _unused2, _unused3;
+
+	void synchronize(Common::Serializer &s);
 };
 
 /**
@@ -124,7 +139,7 @@ public:
 	bool _soundOn = true;
 
 	// Quest completion flags, one per town/dungeon
-	int16 _quests[QUEST_COUNT] = {};
+	int16 _questStatus[QUEST_COUNT] = {};
 
 	// Gems
 	int16 _redGems = 0;
@@ -141,7 +156,12 @@ public:
 
 	int16 _enemyVessels = 0;
 	int16 _signMarker = -1;
-	int16 _moveCount = 0;
+	int16 _overworldEntityCount = 0;
+	uint32 _moveCount = 0;
+	uint16 _shipFuel = 0;
+	uint16 _shipShield = 0;
+
+	OverworldEntity _overworldEntities[OVERWORLD_ENTITY_COUNT];
 
 	// Extra fields
 	int16 _mapNum = 0;
@@ -163,7 +183,14 @@ public:
 		return _hits <= 0;
 	}
 
-	int getCreatureAt(int x, int y, int creatureIndex) const;
+	/**
+	 * Checks the overworld map for an entity (creature or vechile) at a given position.
+	 * @param x		X position
+	 * @param y		Y position
+	 * @param startingIndex		Starting index array
+	 * @return 
+	*/
+	int getEntityAt(int x, int y, int startingIndex = 1) const;
 };
 
 } // namespace Data

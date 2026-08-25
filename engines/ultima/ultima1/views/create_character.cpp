@@ -383,7 +383,7 @@ void CreateCharacter::confirmAndSave() {
 	p._soundOn = true;
 
 	for (int i = 0; i < QUEST_COUNT; ++i)
-		p._quests[i] = 0;
+		p._questStatus[i] = 0;
 	p._redGems = p._greenGems = p._blueGem = p._whiteGem = 0;
 
 	for (int i = 0; i < ARMOR_COUNT; ++i)

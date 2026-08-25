@@ -21,6 +21,7 @@
 
 #include "ultima/ultima1/data/player.h"
 #include "ultima/ultima1/data/map.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -29,6 +30,10 @@ namespace Data {
 const char *SEX_NAMES[] = { "Male", "Female" };
 const char *RACE_NAMES[] = { nullptr, "Human", "Elf", "Dwarf", "Bobbit" };
 const char *CLASS_NAMES[] = { nullptr, "Fighter", "Cleric", "Wizard", "Thief" };
+
+void OverworldEntity::synchronize(Common::Serializer &s) {
+	s.syncMultipleLE(_type, _data, _x, _y, _hits, _unused1, _unused2, _unused3);
+}
 
 void Player::synchronizeBasic(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, MAX_NAME_LENGTH + 2);
@@ -59,7 +64,7 @@ void Player::synchronizeBasic(Common::Serializer &s) {
 	s.syncAsByte(_soundOn);
 
 	for (int i = 0; i < QUEST_COUNT; ++i)
-		s.syncAsSint16LE(_quests[i]);
+		s.syncAsSint16LE(_questStatus[i]);
 
 	s.syncAsSint16LE(_redGems);
 	s.syncAsSint16LE(_greenGems);
@@ -77,7 +82,12 @@ void Player::synchronizeBasic(Common::Serializer &s) {
 
 	s.syncAsSint16LE(_enemyVessels);
 	s.syncAsSint16LE(_signMarker);
-	s.syncAsSint16LE(_moveCount);
+	s.syncAsSint16LE(_overworldEntityCount);
+	s.syncAsUint32LE(_moveCount);
+	s.syncAsUint16LE(_shipFuel);
+	s.syncAsUint16LE(_shipShield);
+	for (int i = 0; i < OVERWORLD_ENTITY_COUNT; ++i)
+		_overworldEntities[i].synchronize(s);
 }
 
 void Player::synchronizeExtra(Common::Serializer &s) {
@@ -96,9 +106,15 @@ void Player::synchronizeOriginal(Common::Serializer &s) {
 	_mapNum = MAP_OVERWORLD;
 }
 
-int Player::getCreatureAt(int x, int y, int creatureIndex) const {
-	// TODO
-	return -1;
+int Player::getEntityAt(int x, int y, int startingIndex) const {
+	int foundIndex = 0;
+	for (; startingIndex <= g_engine->_overworldEntityCount && !foundIndex; ++startingIndex) {
+		const auto &e = _overworldEntities[startingIndex];
+		if (e._x == x && e._y == y)
+			foundIndex = startingIndex;
+	}
+
+	return startingIndex;
 }
 
 } // namespace Data

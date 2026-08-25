@@ -93,11 +93,10 @@ int OverworldLogic::getViewportY(int yp) const {
 }
 
 int OverworldLogic::getTileAt(int x, int y, int creatureIndex) const {
-	int index = g_engine->_player.getCreatureAt(x, y, creatureIndex);
+	int entityIndex = g_engine->_player.getEntityAt(x, y, creatureIndex);
 
-	if (index >= 0)
-		// TODO: overworldwidgets
-		return -1;
+	if (entityIndex >= 0)
+		return g_engine->_player._overworldEntities[entityIndex]._type;
 
 	return g_engine->_map.getMapTile(x, y);
 }
