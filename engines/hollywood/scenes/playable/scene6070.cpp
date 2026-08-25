@@ -28,12 +28,6 @@
 
 namespace Hollywood {
 
-const char *const kScene6070ArchiveName = "RESOURCE.F07";
-const char *const kScene6070MusicArchiveName = "RESOURCE.M06";
-const char *const kScene6070SoundArchiveName = "RESOURCE.S06";
-const uint kScene6070InitialRequiredChunkCount = 15;
-const uint kScene6070ArenaFirstChunk = 5;
-const uint kScene6070ArenaLastChunk = 13;
 const uint kScene6070StageIndex = 607;
 const uint kScene6070AlternateStageIndex = 609;
 const uint16 kScene6070FirstState = 0x17b6;
@@ -72,22 +66,6 @@ const byte kScene6070SueIdleSpeechGroup = 4;
 const byte kScene6070TransferFrameHook = 1;
 const uint kScene6070FixedGiveHandlerIndex = 0x110;
 const uint16 kScene6070FixedGiveHandlerDefault = 0x79;
-
-const byte kScene6070ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9};
-
-const byte kScene6070SpecialActorPathStepDeltaTable[] = {
-	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
-	3, 2, 8, 6, 6, 7, 6, 4, 10, 3, 2, 9,
-	8, 8, 7, 5, 10, 6, 10, 10, 4, 6, 4, 10,
-	4, 3, 3, 4, 0, 4, 4, 2, 0, 4, 2, 5,
-	6, 10, 10, 4, 6, 4, 10, 8, 8, 7, 5, 10,
-	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7};
 
 const byte kScene6070ArrivalFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 12,
@@ -143,34 +121,19 @@ static uint16 scene6070InitialViewport(const HollywoodEngine *vm) {
 }
 
 static PlayableSceneConfig scene6070Config(HollywoodEngine *vm) {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene6070ArchiveName;
-	config.initialRequiredChunkCount = kScene6070InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene6070ArenaFirstChunk;
-	config.arenaLastChunk = kScene6070ArenaLastChunk;
+	PlayableSceneConfig config(6070,
+		SceneResourceLayout(15, 5, 13),
+		SceneViewport(scene6070InitialViewport(vm), kScene6070ViewportMinX, kScene6070ViewportMaxX),
+		SceneActorPose(0x0fc, 0x156, 5));
 	config.stageIndex = isScene6070AlternateCutscene(vm) ? kScene6070AlternateStageIndex : kScene6070StageIndex;
-	config.debugName = "Scene 6070";
-	config.viewportXOffset = scene6070InitialViewport(vm);
-	config.viewportMinXOffset = kScene6070ViewportMinX;
-	config.viewportMaxXOffset = kScene6070ViewportMaxX;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 6;
-	config.actorBankTableEntry = kScene6070ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene6070ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene6070Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene6070SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene6070ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene6070ActorPathStepDeltaTable);
+	config.setActorResources(kScene6070ActorBankTableEntry, kScene6070ActorPaletteTableEntry);
+	config.setTextResources(kScene6070Resource003RowsOffsetIndex, kScene6070SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 6;
-	config.musicArchiveName = kScene6070MusicArchiveName;
-	config.soundBank0ArchiveName = kScene6070SoundArchiveName;
-	config.useActorDepthTest = false;
 	return config;
 }
 
 Scene6070::Scene6070(HollywoodEngine *vm) :
-		PlayableScene(vm, scene6070Config(vm), "scene6070", 0x0fc, 0x156, 5, 0xfd, 0xfb),
+		PlayableScene(vm, scene6070Config(vm)),
 		_originalColorToItemMap(),
 		_sueLayer(),
 		_arrivalLayer(),
@@ -401,7 +364,7 @@ bool Scene6070::customizeRouteSegment(byte currentRegion, byte nextRegion,
 		return false;
 
 	for (uint i = 0; i < 0x0c && 0x30 + i < _actorPathStepDeltas.size(); ++i)
-		_actorPathStepDeltas[0x30 + i] = kScene6070SpecialActorPathStepDeltaTable[0x30 + i];
+		_actorPathStepDeltas[0x30 + i] = kActorPathStepDeltaTableSet87[0x30 + i];
 	requestedFacing = 4;
 	restoredStepDeltas = true;
 	return true;
@@ -418,7 +381,7 @@ bool Scene6070::customizeRouteFinal(byte currentRegion, byte targetRegion,
 		return false;
 
 	for (uint i = 0; i < 0x0c && 0x0c + i < _actorPathStepDeltas.size(); ++i)
-		_actorPathStepDeltas[0x0c + i] = kScene6070SpecialActorPathStepDeltaTable[0x0c + i];
+		_actorPathStepDeltas[0x0c + i] = kActorPathStepDeltaTableSet87[0x0c + i];
 	requestedFacing = 1;
 	restoredStepDeltas = true;
 	return true;

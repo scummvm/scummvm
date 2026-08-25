@@ -28,13 +28,6 @@
 
 namespace Hollywood {
 
-const char *const kScene4080ArchiveName = "RESOURCE.D08";
-const char *const kScene4080MusicArchiveName = "RESOURCE.M04";
-const char *const kScene4080SoundArchiveName = "RESOURCE.S04";
-const uint kScene4080InitialRequiredChunkCount = 5;
-const uint kScene4080ArenaFirstChunk = 5;
-const uint kScene4080ArenaLastChunk = 22;
-const uint kScene4080StageIndex = 408;
 const uint16 kScene4080ExitState = 0x1006;
 const int kScene4080DefaultActorX = 0x0121;
 const int kScene4080DefaultActorY = 0x012e;
@@ -89,15 +82,6 @@ const byte kScene4080StakeItem = 0x31;
 const byte kScene4080OilBottleItem = 0x43;
 const byte kScene4080GominolaItem = 0x44;
 const byte kScene4080SteakItem = 0x45;
-
-const byte kScene4080ActorPathStepDeltaTableSetB4[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
 
 const byte kScene4080PalettePatchState1FrameMap[] = {
 	0, 0, 1, 2, 3, 2, 1, 0, 1, 4, 5, 6, 7, 8, 9, 2,
@@ -179,36 +163,18 @@ const Scene4080DialogueSeedRecord kScene4080DialogueSeedRecords[] = {
 };
 
 PlayableSceneConfig scene4080Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene4080ArchiveName;
-	config.initialRequiredChunkCount = kScene4080InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene4080ArenaFirstChunk;
-	config.arenaLastChunk = kScene4080ArenaLastChunk;
-	config.stageIndex = kScene4080StageIndex;
-	config.debugName = "Scene 4080";
-	config.viewportXOffset = kScene4080ViewportInitialX;
-	config.viewportMinXOffset = kScene4080ViewportMinX;
-	config.viewportMaxXOffset = kScene4080ViewportMaxX;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 4;
-	config.actorBankTableEntry = kScene4080ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene4080ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene4080Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene4080SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene4080ActorPathStepDeltaTableSetB4;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene4080ActorPathStepDeltaTableSetB4);
+	PlayableSceneConfig config(4080,
+		SceneResourceLayout(5, 5, 22),
+		SceneViewport(kScene4080ViewportInitialX, kScene4080ViewportMinX, kScene4080ViewportMaxX),
+		SceneActorPose(kScene4080DefaultActorX, kScene4080DefaultActorY, kScene4080DefaultActorFacing));
+	config.setActorResources(kScene4080ActorBankTableEntry, kScene4080ActorPaletteTableEntry);
+	config.setTextResources(kScene4080Resource003RowsOffsetIndex, kScene4080SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
-	config.musicArchiveName = kScene4080MusicArchiveName;
-	config.soundBank0ArchiveName = kScene4080SoundArchiveName;
-	config.loadActorDepthTables = true;
-	config.useActorDepthTest = false;
 	return config;
 }
 
 Scene4080::Scene4080(HollywoodEngine *vm) :
-		PlayableScene(vm, scene4080Config(), "scene4080", kScene4080DefaultActorX, kScene4080DefaultActorY,
-			kScene4080DefaultActorFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene4080Config()),
 		_palettePatchLayer(),
 		_foregroundFlickerLayer(),
 		_scriptLayer(),

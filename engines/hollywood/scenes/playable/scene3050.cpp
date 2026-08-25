@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene3050ArchiveName = "RESOURCE.C05";
-const char *const kScene3050MusicArchiveName = "RESOURCE.M03";
-const char *const kScene3050SoundArchiveName = "RESOURCE.S03";
-const uint kScene3050InitialRequiredChunkCount = 8;
-const uint kScene3050ArenaFirstChunk = 5;
-const uint kScene3050ArenaLastChunk = 7;
-const uint kScene3050StageIndex = 305;
 const uint16 kScene3050EntryFromScene3010State = 0x0bea;
 const uint16 kScene3050EntryFromScene3060State = 0x0beb;
 const uint16 kScene3010EntryFromScene3050State = 0x0bc4;
@@ -88,31 +81,19 @@ const byte kScene3050ForegroundActorFrameMap[] = {
 };
 
 static PlayableSceneConfig scene3050Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene3050ArchiveName;
-	config.initialRequiredChunkCount = kScene3050InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene3050ArenaFirstChunk;
-	config.arenaLastChunk = kScene3050ArenaLastChunk;
-	config.stageIndex = kScene3050StageIndex;
-	config.debugName = "Scene 3050";
-	config.viewportXOffset = kScene3050ViewportXOffset;
-	config.viewportMinXOffset = kScene3050ViewportMinXOffset;
-	config.viewportMaxXOffset = kScene3050ViewportMaxXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 3;
-	config.actorBankTableEntry = kScene3050ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene3050ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene3050Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene3050SpeechCueDescriptorTableOffset;
+	PlayableSceneConfig config(3050,
+		SceneResourceLayout(8, 5, 7),
+		SceneViewport(kScene3050ViewportXOffset, kScene3050ViewportMinXOffset, kScene3050ViewportMaxXOffset),
+		SceneActorPose(0x2a4, 0x19e, 5));
+	config.setActorResources(kScene3050ActorBankTableEntry, kScene3050ActorPaletteTableEntry);
+	config.setTextResources(kScene3050Resource003RowsOffsetIndex, kScene3050SpeechCueDescriptorTableOffset);
+	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet00);
 	config.walkablePaletteMaxRegion = 20;
-	config.musicArchiveName = kScene3050MusicArchiveName;
-	config.soundBank0ArchiveName = kScene3050SoundArchiveName;
 	return config;
 }
 
 Scene3050::Scene3050(HollywoodEngine *vm) :
-		PlayableScene(vm, scene3050Config(), "scene3050", 0x2a4, 0x19e, 5, 0xfd, 0xfb),
+		PlayableScene(vm, scene3050Config()),
 		_backgroundChannel(),
 		_foregroundActorChannel(),
 		_dialogueActorChannel(),

@@ -29,13 +29,6 @@
 
 namespace Hollywood {
 
-const char *const kScene8020ArchiveName = "RESOURCE.H02";
-const char *const kScene8020MusicArchiveName = "RESOURCE.M08";
-const char *const kScene8020SoundArchiveName = "RESOURCE.S08";
-const uint kScene8020InitialRequiredChunkCount = 5;
-const uint kScene8020ArenaFirstChunk = 5;
-const uint kScene8020ArenaLastChunk = 11;
-const uint kScene8020StageIndex = 802;
 const uint16 kScene8010ReturnEntryState = 0x1f4b;
 const uint kScene8020ActorBankTableEntry = 0x0000;
 const uint kScene8020ActorPaletteTableEntry = 0x00cc;
@@ -85,33 +78,20 @@ const byte kScene8020Reverse6cFrameMap[] = {
 };
 
 PlayableSceneConfig scene8020Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene8020ArchiveName;
-	config.initialRequiredChunkCount = kScene8020InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene8020ArenaFirstChunk;
-	config.arenaLastChunk = kScene8020ArenaLastChunk;
-	config.stageIndex = kScene8020StageIndex;
-	config.debugName = "Scene 8020";
-	config.viewportXOffset = 0;
-	config.viewportMinXOffset = 0;
-	config.viewportMaxXOffset = 0;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 8;
-	config.actorBankTableEntry = kScene8020ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene8020ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene8020Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene8020SpeechCueDescriptorTableOffset;
+	PlayableSceneConfig config(8020,
+		SceneResourceLayout(5, 5, 11),
+		SceneViewport(0),
+		SceneActorPose(kScene8020EntryTargetX, kScene8020EntryTargetY, kScene8020EntryFacing));
+	config.setActorResources(kScene8020ActorBankTableEntry, kScene8020ActorPaletteTableEntry);
+	config.setTextResources(kScene8020Resource003RowsOffsetIndex, kScene8020SpeechCueDescriptorTableOffset);
+	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet00);
 	config.walkablePaletteMaxRegion = 20;
-	config.musicArchiveName = kScene8020MusicArchiveName;
-	config.soundBank0ArchiveName = kScene8020SoundArchiveName;
 	config.loadActorDepthTables = false;
 	return config;
 }
 
 Scene8020::Scene8020(HollywoodEngine *vm) :
-		PlayableScene(vm, scene8020Config(), "scene8020", kScene8020EntryTargetX, kScene8020EntryTargetY,
-			kScene8020EntryFacing, 0xfd, 0xfb),
+		PlayableScene(vm, scene8020Config()),
 		_foregroundLayer(),
 		_foregroundChannel(),
 		_originalColorToItemMap(),

@@ -82,9 +82,7 @@ public:
 	bool play();
 
 protected:
-	PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config, const char *randomName,
-		int defaultActorX, int defaultActorY, byte defaultActorFacing,
-		byte secondarySpeechTextColor, byte primarySpeechTextColor);
+	PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config);
 
 	// Resource format constants
 	enum {

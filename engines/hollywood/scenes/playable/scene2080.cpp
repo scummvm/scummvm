@@ -29,13 +29,6 @@
 
 namespace Hollywood {
 
-const char *const kScene2080ArchiveName = "RESOURCE.B08";
-const char *const kScene2080MusicArchiveName = "RESOURCE.M02";
-const char *const kScene2080SoundArchiveName = "RESOURCE.S02";
-const uint kScene2080InitialRequiredChunkCount = 13;
-const uint kScene2080ArenaFirstChunk = 5;
-const uint kScene2080ArenaLastChunk = 12;
-const uint kScene2080StageIndex = 208;
 const uint16 kScene2080LastState = 0x0821;
 const uint16 kScene2070ReturnState = 0x0817;
 const uint16 kScene2090FirstState = 0x082a;
@@ -82,15 +75,6 @@ enum Scene2080OverlayHook {
 	kScene2080ForegroundExitSoundHook = 1
 };
 
-const byte kScene2080ActorPathStepDeltaTable[] = {
-	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
-	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
-	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
-	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
-	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
-	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
-};
-
 const byte kScene2080ForegroundActorFrameMap[] = {
 	1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 };
@@ -122,7 +106,6 @@ const byte kScene2080PrincessHairSearchSecondFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
-static_assert(ARRAYSIZE(kScene2080ActorPathStepDeltaTable) == 72, "Scene 2080 actor path table size changed");
 static_assert(ARRAYSIZE(kScene2080ForegroundActorFrameMap) == 0x10, "Scene 2080 foreground actor frame map size changed");
 static_assert(ARRAYSIZE(kScene2080AmbientFrameMap) == 0x1a, "Scene 2080 ambient frame map size changed");
 static_assert(ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap) == 13, "Scene 2080 forward exit overlay frame map size changed");
@@ -131,35 +114,18 @@ static_assert(ARRAYSIZE(kScene2080PrincessHairSearchFirstFrameMap) == 0x2c, "Sce
 static_assert(ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap) == 0x0c, "Scene 2080 princess hair search second frame map size changed");
 
 static PlayableSceneConfig scene2080Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene2080ArchiveName;
-	config.initialRequiredChunkCount = kScene2080InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene2080ArenaFirstChunk;
-	config.arenaLastChunk = kScene2080ArenaLastChunk;
-	config.stageIndex = kScene2080StageIndex;
-	config.debugName = "Scene 2080";
-	config.viewportXOffset = kScene2080ViewportXOffset;
-	config.viewportMinXOffset = kScene2080ViewportXOffset;
-	config.viewportMaxXOffset = kScene2080ViewportMaxXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 2;
-	config.actorBankTableEntry = kScene2080ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene2080ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene2080Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene2080SpeechCueDescriptorTableOffset;
-	config.actorPathStepDeltaTable = kScene2080ActorPathStepDeltaTable;
-	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene2080ActorPathStepDeltaTable);
+	PlayableSceneConfig config(2080,
+		SceneResourceLayout(13, 5, 12),
+		SceneViewport(kScene2080ViewportXOffset, kScene2080ViewportXOffset, kScene2080ViewportMaxXOffset),
+		SceneActorPose(0x168, 0x143, 1));
+	config.setActorResources(kScene2080ActorBankTableEntry, kScene2080ActorPaletteTableEntry);
+	config.setTextResources(kScene2080Resource003RowsOffsetIndex, kScene2080SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
-	config.musicArchiveName = kScene2080MusicArchiveName;
-	config.soundBank0ArchiveName = kScene2080SoundArchiveName;
-	config.loadActorDepthTables = true;
-	config.useActorDepthTest = false;
 	return config;
 }
 
 Scene2080::Scene2080(HollywoodEngine *vm) :
-		PlayableScene(vm, scene2080Config(), "scene2080", 0x168, 0x143, 1, 0xfd, 0xfb),
+		PlayableScene(vm, scene2080Config()),
 		_ambientChannel(),
 		_foregroundActorChannel(),
 		_ambientLayer(),

@@ -27,13 +27,6 @@
 
 namespace Hollywood {
 
-const char *const kScene6080ArchiveName = "RESOURCE.F08";
-const char *const kScene6080MusicArchiveName = "RESOURCE.M06";
-const char *const kScene6080SoundArchiveName = "RESOURCE.S06";
-const uint kScene6080InitialRequiredChunkCount = 10;
-const uint kScene6080ArenaFirstChunk = 5;
-const uint kScene6080ArenaLastChunk = 9;
-const uint kScene6080StageIndex = 608;
 const uint16 kScene6070ReturnState = 0x17b7;
 const uint16 kScene6070EscapeState = 0x17b9;
 const uint16 kScene6080ViewportXOffset = 0x00a8;
@@ -79,32 +72,19 @@ const byte kScene6080WaxBallFrameMap[] = {
 	0};
 
 static PlayableSceneConfig scene6080Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = kScene6080ArchiveName;
-	config.initialRequiredChunkCount = kScene6080InitialRequiredChunkCount;
-	config.arenaFirstChunk = kScene6080ArenaFirstChunk;
-	config.arenaLastChunk = kScene6080ArenaLastChunk;
-	config.stageIndex = kScene6080StageIndex;
-	config.debugName = "Scene 6080";
-	config.viewportXOffset = kScene6080ViewportXOffset;
-	config.viewportMinXOffset = 0;
-	config.viewportMaxXOffset = kScene6080ViewportXOffset;
-	config.inventoryOwnerIndex = 0;
-	config.activeAudioChapterIndex = 6;
-	config.actorBankTableEntry = kScene6080ActorBankTableEntry;
-	config.actorPaletteTableEntry = kScene6080ActorPaletteTableEntry;
-	config.inventoryActionTableExtraOffset = 0;
-	config.inventoryRowsOffsetIndex = kScene6080Resource003RowsOffsetIndex;
-	config.speechCueDescriptorTableOffset = kScene6080SpeechCueDescriptorTableOffset;
+	PlayableSceneConfig config(6080,
+		SceneResourceLayout(10, 5, 9),
+		SceneViewport(kScene6080ViewportXOffset, 0, kScene6080ViewportXOffset),
+		SceneActorPose(0x2cb, 0x156, 4));
+	config.setActorResources(kScene6080ActorBankTableEntry, kScene6080ActorPaletteTableEntry);
+	config.setTextResources(kScene6080Resource003RowsOffsetIndex, kScene6080SpeechCueDescriptorTableOffset);
+	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet00);
 	config.walkablePaletteMaxRegion = 1;
-	config.musicArchiveName = kScene6080MusicArchiveName;
-	config.soundBank0ArchiveName = kScene6080SoundArchiveName;
-	config.useActorDepthTest = false;
 	return config;
 }
 
 Scene6080::Scene6080(HollywoodEngine *vm) :
-		PlayableScene(vm, scene6080Config(), "scene6080", 0x2cb, 0x156, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene6080Config()),
 		_sueNormalLayer(),
 		_sueAlternateLayer(),
 		_guardNormalLayer(),

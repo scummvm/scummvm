@@ -136,19 +136,15 @@ const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
 };
 
 static PlayableSceneConfig scene7040Config() {
-	PlayableSceneConfig config;
-	config.resourceArchiveName = "RESOURCE.G04";
-	config.initialRequiredChunkCount = 20;
-	config.arenaFirstChunk = 5;
-	config.arenaLastChunk = 18;
-	config.stageIndex = 704;
-	config.debugName = "Scene 7040";
-	config.viewportXOffset = 0xc8;
+	PlayableSceneConfig config(7040,
+		SceneResourceLayout(20, 5, 18),
+		SceneViewport(0xc8),
+		SceneActorPose(0x14a, 0x139, 1));
 	return config;
 }
 
 Scene7040::Scene7040(HollywoodEngine *vm) :
-		PlayableScene(vm, scene7040Config(), "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb),
+		PlayableScene(vm, scene7040Config()),
 		_postItemIdleState(0),
 		_primarySpeechLeadInTicks(0),
 		_primarySpeechLastMouthFrameOffset(0),
